@@ -1,49 +1,56 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELudEOzRsPMyxmAl4SngHEgucJ+AI46KHjShLzessRMqX59S8eGdpC9C9vFSPiWmVqy7FfpN
-ARC-Seal: i=1; a=rsa-sha256; t=1520451583; cv=none;
+X-Google-Smtp-Source: AG47ELvjnk4Ba66geGWfnUEiiNZDiQ304ZD5yCe1ow8D66kYwXuQEyrBcHtSLCpbbk9/xSK5CqnG
+ARC-Seal: i=1; a=rsa-sha256; t=1520451580; cv=none;
         d=google.com; s=arc-20160816;
-        b=cb0X1RPLIUsmWZkbe0UVxXFfP5mAXaDUU80eYOSuxjDp72EaUGUKcjN582wQH0qjFP
-         Yqbd6AjTBFIRP1I9OQNwjlRKDzlwHnV+Co/HYWsxHjOszAnRihBZDFV4ahIuuFRR06ng
-         I/09fSNg5Fnu+jBhZKV/loYR/0Iqg8N6Y+sETnqP0eoMOXp4GPZNxz7MuvEbtvu4kYbM
-         A3GctBjyGvsxhm7yhSm/6i4GCZcp24/wS0VSuddnipwXyIpOpMZYd58p7cNwZronZGJU
-         TyVPduhedagrz930qvMqen0rFz1o9zNQ6EYgGfCn+ZducMsjMKK738CNESS4AYrnk1Ge
-         wdJA==
+        b=LW3TT7zF/1ikIioRk54oLVd3Qx8cnsozcnJvo8MUCOPuHEg1aHmq8QH7JTgk9JYTeR
+         5BdOlx607AdpRS0BQReOTabp98LgCuwlze/UVy19q4zkJo8O2c8WNwSHBE9PXGmmfl/d
+         NVhMIvIch6yXBxvsn/xLXdaWJxSJyMCs8vdP92Fn9bjXhxJdMWEMc90lNPZJveh3l9VM
+         qe7UeN7FQA+DfMcG5amSWMeEsRWfiN7JyGASY/Rp200NqSEhl76BA9XqUvZAbZj+i4Vn
+         le4BEnQdX2fBROEmVYbBnpGU077JQ7cD3LwnJ0XR6K2gJZwhAryCh08EjvWKO+IClSvs
+         5/Jw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ss7HwkzFBZwxrHkJJCuDkBA7rxobGKmCUi1u7y0w2U0=;
-        b=dUHraYtwWfDRxAi0l8NL+OErrgzEZEZFlrEkSpUW3A0RUMGMD+mbnd3vVHO/HsIl1f
-         VUoNUbyO9NDqApYOmTkw7W0zEEgbSycL33uAUbcsyF59NHuHoQIEEmhflqbrG/26ZS9Z
-         /YpyYuu+jDw5u3IHw1qGWFBBfiTHePQLGeTJKDDScMGhaQAA0W8Aoeq1Q/SFT6NER16h
-         OKaACDCNv4hM6yrpWQq5GFmPsMp5J7IonOGd7vp0D9LPZk0WL8ZgBIt79rCOSrneDp4A
-         m9kh0/o8LsHqq26P/rnMOJZUT5qQKh/3qoY7M9GwMCquE1Lt9LG/JAesb30tqCqCVKT1
-         1HKA==
+        bh=e7CqiNFKFYnuagURskU9IhD9/O52u1qm3L7F/ycYD5A=;
+        b=bMF4rv3HdlvrFkZIVEHjL70gTTUK3HOOxeHOJq6ZvNuqitovW9m1VNly/nzjSUYg9I
+         JkjECZhKXzjHY+7ZeL/H5jQqoafLNZQJeyyeCsmxG4xaOMwdx3NwPSvba21rheJcgavH
+         3BwjdvW7qOFiTO79EWQNZ+h6KIIC9H2r2Vd+o8Oune8dagNZyamhyDDNDWLAnzIbavA8
+         BRTTm6jO4UGW2gdO3tn6+gCtf90AoihR+5KVL65MHZbCn4d0rKCJx2w8a3mjSaQQHU4u
+         rmCMdOV1CE6SFbtDBwnYSm0E/9vndLt0v2p48Od0n5gHERibqZu2MJXL/EbySVwWUkC1
+         5yCw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jeremy Boone <jeremy.boone@nccgroup.trust>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	James Morris <james.morris@microsoft.com>
-Subject: [PATCH 4.15 010/122] tpm_i2c_infineon: fix potential buffer overruns caused by bit glitches on the bus
-Date: Wed,  7 Mar 2018 11:37:02 -0800
-Message-Id: <20180307191730.714925568@linuxfoundation.org>
+	Andrew Morton <akpm@linux-foundation.org>,
+	Joe Perches <joe@perches.com>,
+	Kees Cook <keescook@chromium.org>,
+	"Roberts, William C" <william.c.roberts@intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	David Laight <David.Laight@ACULAB.COM>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Adam Borowski <kilobyte@angband.pl>,
+	Petr Mladek <pmladek@suse.com>
+Subject: [PATCH 4.15 001/122] vsprintf: avoid misleading "(null)" for %px
+Date: Wed,  7 Mar 2018 11:36:53 -0800
+Message-Id: <20180307191729.373118279@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309040040928003?=
-X-GMAIL-MSGID: =?utf-8?q?1594309040040928003?=
+X-GMAIL-THRID: =?utf-8?q?1594309036618641205?=
+X-GMAIL-MSGID: =?utf-8?q?1594309036618641205?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,48 +58,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jeremy Boone <jeremy.boone@nccgroup.trust>
+From: Adam Borowski <kilobyte@angband.pl>
 
-commit 9b8cb28d7c62568a5916bdd7ea1c9176d7f8f2ed upstream.
+commit 3a129cc2151425e5aeb69aeb25fbc994ec738137 upstream.
 
-Discrete TPMs are often connected over slow serial buses which, on
-some platforms, can have glitches causing bit flips.  In all the
-driver _recv() functions, we need to use a u32 to unmarshal the
-response size, otherwise a bit flip of the 31st bit would cause the
-expected variable to go negative, which would then try to read a huge
-amount of data.  Also sanity check that the expected amount of data is
-large enough for the TPM header.
+Like %pK already does, print "00000000" instead.
 
-Signed-off-by: Jeremy Boone <jeremy.boone@nccgroup.trust>
-Cc: stable@vger.kernel.org
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: James Morris <james.morris@microsoft.com>
+This confused people -- the convention is that "(null)" means you tried to
+dereference a null pointer as opposed to printing the address.
+
+Link: http://lkml.kernel.org/r/20180204174521.21383-1-kilobyte@angband.pl
+To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Joe Perches <joe@perches.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: "Roberts, William C" <william.c.roberts@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Laight <David.Laight@ACULAB.COM>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Adam Borowski <kilobyte@angband.pl>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm_i2c_infineon.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ lib/vsprintf.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/char/tpm/tpm_i2c_infineon.c
-+++ b/drivers/char/tpm/tpm_i2c_infineon.c
-@@ -473,7 +473,8 @@ static int recv_data(struct tpm_chip *ch
- static int tpm_tis_i2c_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1849,7 +1849,7 @@ char *pointer(const char *fmt, char *buf
  {
- 	int size = 0;
--	int expected, status;
-+	int status;
-+	u32 expected;
+ 	const int default_width = 2 * sizeof(void *);
  
- 	if (count < TPM_HEADER_SIZE) {
- 		size = -EIO;
-@@ -488,7 +489,7 @@ static int tpm_tis_i2c_recv(struct tpm_c
- 	}
- 
- 	expected = be32_to_cpu(*(__be32 *)(buf + 2));
--	if ((size_t) expected > count) {
-+	if (((size_t) expected > count) || (expected < TPM_HEADER_SIZE)) {
- 		size = -EIO;
- 		goto out;
- 	}
+-	if (!ptr && *fmt != 'K') {
++	if (!ptr && *fmt != 'K' && *fmt != 'x') {
+ 		/*
+ 		 * Print (null) with the same width as a pointer so it makes
+ 		 * tabular output look nice.
