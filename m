@@ -1,59 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933183AbeCGCsD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 21:48:03 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:42883 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932078AbeCGCsB (ORCPT
+        id S933325AbeCGCsh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 21:48:37 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35444 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932362AbeCGCse (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 21:48:01 -0500
-X-Google-Smtp-Source: AG47ELvj2L+SA/seBCJtlq6K13U/eBp3/Dj+bapkD2W9d3fjU71ivRuush4qGc/05uf6woJqAVokKA==
-Date: Wed, 7 Mar 2018 11:44:41 +0900
-From: Namhyung Kim <namhyung@kernel.org>
-To: changbin.du@intel.com
-Cc: acme@kernel.org, jolsa@redhat.com, peterz@infradead.org,
-        mingo@redhat.com, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, kernel-team@lge.com
-Subject: Re: [PATCH v2 1/2] perf sched: move thread::shortname to
- thread_runtime
-Message-ID: <20180307024441.GA10527@danjae.aot.lge.com>
-References: <1520307457-23668-1-git-send-email-changbin.du@intel.com>
- <1520307457-23668-2-git-send-email-changbin.du@intel.com>
+        Tue, 6 Mar 2018 21:48:34 -0500
+X-Google-Smtp-Source: AG47ELv6bY3ytPtQ/hl+sbEO1y17bTZY4kz03PfR2V1OuHlNlHySYrZ6LX7+spbXWw/Bh/05tdhrO5MZZ4lTT125+AQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1520307457-23668-2-git-send-email-changbin.du@intel.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CAL_Jsq+QRTi6MnsnZeDVzUXsj5ya0OBROp8HeZ1cX+F=EGtoCA@mail.gmail.com>
+References: <cover.1520340931.git.amit.kucheria@linaro.org>
+ <9f7199f0027ef2382e5ccc61a5118d0a00fa2e63.1520340931.git.amit.kucheria@linaro.org>
+ <CAL_Jsq+QRTi6MnsnZeDVzUXsj5ya0OBROp8HeZ1cX+F=EGtoCA@mail.gmail.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Date: Wed, 7 Mar 2018 08:18:33 +0530
+X-Google-Sender-Auth: 07qTKbnlknuqL3vDHf3C-GXTB6U
+Message-ID: <CAOh2x=n0zQMCtC2=NF9rRbSkNUrUJBxu1KWAoOpDh3CBDkCFgQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] arm64: dts: msm8916: Add cpu cooling maps
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Amit Kucheria <amit.kucheria@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Mar 6, 2018 at 8:13 PM, Rob Herring <robh+dt@kernel.org> wrote:
+> On Tue, Mar 6, 2018 at 7:05 AM, Amit Kucheria <amit.kucheria@linaro.org> wrote:
 
-On Tue, Mar 06, 2018 at 11:37:36AM +0800, changbin.du@intel.com wrote:
-> From: Changbin Du <changbin.du@intel.com>
-> 
-> The thread::shortname only used by sched command, so move it
-> to sched private structure.
-> 
-> Signed-off-by: Changbin Du <changbin.du@intel.com>
-> ---
+>>         model = "Qualcomm Technologies, Inc. MSM8916";
+>> @@ -115,6 +116,10 @@
+>>                         cpu-idle-states = <&CPU_SPC>;
+>>                         clocks = <&apcs 0>;
+>>                         operating-points-v2 = <&cpu_opp_table>;
+>> +                       /* cooling options */
+>> +                       cooling-min-level = <0>;
+>> +                       cooling-max-level = <7>;
+>
+> Viresh is working on removing these from the binding...
 
-[SNIP]
-> diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-> index 40cfa36..14d44c3 100644
-> --- a/tools/perf/util/thread.h
-> +++ b/tools/perf/util/thread.h
-> @@ -26,7 +26,6 @@ struct thread {
->  	pid_t			ppid;
->  	int			cpu;
->  	refcount_t		refcnt;
-> -	char			shortname[3];
->  	bool			comm_set;
->  	int			comm_len;
->  	bool			dead; /* if set thread has exited */
-
-I also suggest to move the 'dead' field to pack two bools.
-
-Thanks,
-Namhyung
+Yep, just drop all cooling-{min|max}-level lines from your code. That
+is not used
+anywhere by the kernel.
