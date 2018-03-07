@@ -1,77 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754331AbeCGMIb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 07:08:31 -0500
-Received: from foss.arm.com ([217.140.101.70]:49396 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751257AbeCGMI3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 07:08:29 -0500
-Date: Wed, 7 Mar 2018 12:08:24 +0000
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>, bcousson@baylibre.com,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        nsekhar@ti.com
-Subject: Re: [PATCH 0/7] ARM: dts: dra7: Enable x2 lane mode support
-Message-ID: <20180307120824.GC15139@e107981-ln.cambridge.arm.com>
-References: <20171219093133.16565-1-kishon@ti.com>
+        id S1754283AbeCGMJf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 07:09:35 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49438 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751142AbeCGMJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 07:09:31 -0500
+Subject: Re: [PATCH v4 10/10] ARM: sunxi: smp: Add initialization of CNTVOFF
+To: Chen-Yu Tsai <wens@csie.org>,
+        =?UTF-8?Q?Myl=c3=a8ne_Josserand?= <mylene.josserand@bootlin.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>, quentin.schulz@bootlin.com,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        LABBE Corentin <clabbe.montjoie@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <20180223133742.26044-1-mylene.josserand@bootlin.com>
+ <20180223133742.26044-11-mylene.josserand@bootlin.com>
+ <CAGb2v67SuK9Xr7_dVb7RVGXUJwYRKnTiJwDrOJ-Su5CXmm7HXA@mail.gmail.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <dd55eee9-8ddc-f186-0bef-0a15764ff368@arm.com>
+Date: Wed, 7 Mar 2018 12:09:27 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20171219093133.16565-1-kishon@ti.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAGb2v67SuK9Xr7_dVb7RVGXUJwYRKnTiJwDrOJ-Su5CXmm7HXA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 19, 2017 at 03:01:26PM +0530, Kishon Vijay Abraham I wrote:
-> Add properties to enable PCIe x2 lane mode since all dra7
-> based SoCs support x2 lane mode.
+On 23/02/18 16:17, Chen-Yu Tsai wrote:
+> On Fri, Feb 23, 2018 at 9:37 PM, Mylène Josserand
+> <mylene.josserand@bootlin.com> wrote:
+>> On Cortex-A7, the CNTVOFF register from arch timer is uninitialized.
+>> It should be done by the bootloader but it is currently not the case,
+>> even for boot CPU because this SoC is booting in secure mode.
+>> It leads to an random offset value meaning that each CPU will have a
+>> different time, which isn't working very well.
+>>
+>> Add assembly code used for boot CPU and secondary CPU cores to make
+>> sure that the CNTVOFF register is initialized.
+>>
+>> Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+>> ---
+>>  arch/arm/mach-sunxi/headsmp.S | 21 +++++++++++++++++++++
+>>  arch/arm/mach-sunxi/sunxi.c   |  4 ++++
+>>  2 files changed, 25 insertions(+)
+>>
+>> diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
+>> index d5c97e945e69..605896251927 100644
+>> --- a/arch/arm/mach-sunxi/headsmp.S
+>> +++ b/arch/arm/mach-sunxi/headsmp.S
+>> @@ -65,9 +65,30 @@ ENTRY(sunxi_mc_smp_cluster_cache_enable)
+>>         first: .word sunxi_mc_smp_first_comer - .
+>>  ENDPROC(sunxi_mc_smp_cluster_cache_enable)
+>>
+>> +ENTRY(sunxi_init_cntvoff)
+>> +       /*
+>> +        * CNTVOFF has to be initialized either from non-secure Hypervisor
+>> +        * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
+>> +        * then it should be handled by the secure code
+>> +        */
+>> +       cps     #MON_MODE
+>> +       mrc     p15, 0, r1, c1, c1, 0           /* Get Secure Config */
+>> +       orr     r0, r1, #1
+>> +       mcr     p15, 0, r0, c1, c1, 0           /* Set Non Secure bit */
+>> +       instr_sync
+>> +       mov     r0, #0
+>> +       mcrr    p15, 4, r0, r0, c14             /* CNTVOFF = 0 */
+>> +       instr_sync
+>> +       mcr     p15, 0, r1, c1, c1, 0           /* Set Secure bit */
+>> +       instr_sync
+>> +       cps     #SVC_MODE
+>> +       ret     lr
+>> +ENDPROC(sunxi_init_cntvoff)
 > 
-> However only dra76-evm has a slot which can support x2 lane
-> cards. Hence only enable x2 lane mode in dra76-evm.
-> (am571x-idk can support x2 lane mode but that makes usb port
-> not functional so not including the patch to enable
-> x2 mode in am571x-idk)
+> There is no need to move all the assembly into a separate file, just
+> to add this function. Everything can be inlined as a naked function.
+> The "instr_sync" macro can be replaced with "isb", which is what it
+> expands to anyway.
 > 
-> Also included in this series is patch to enable PCIe configs
-> (both host and device) in omap2plus_defconfig and
-> multi_v7_defconfig
+> I really want to keep everything self-contained without global symbols,
+> and in C files if possible.
 > 
-> In order to get x2 mode working [1] is required.
+>> +
+>>  #ifdef CONFIG_SMP
+>>  ENTRY(sunxi_boot)
+>>         bl      sunxi_mc_smp_cluster_cache_enable
+>> +       bl      sunxi_init_cntvoff
+>>         b       secondary_startup
+>>  ENDPROC(sunxi_boot)
+>>
+>> diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+>> index 5e9602ce1573..4bb041492b54 100644
+>> --- a/arch/arm/mach-sunxi/sunxi.c
+>> +++ b/arch/arm/mach-sunxi/sunxi.c
+>> @@ -37,8 +37,12 @@ static const char * const sun6i_board_dt_compat[] = {
+>>  };
+>>
+>>  extern void __init sun6i_reset_init(void);
+>> +extern void sunxi_init_cntvoff(void);
+>> +
+>>  static void __init sun6i_timer_init(void)
+>>  {
+>> +       sunxi_init_cntvoff();
 > 
-> However by keeping the older compatible, this series won't
-> break functionality if this series is merged before [1]
-> 
-> [1] -> https://lkml.org/lkml/2017/12/19/175
-> 
-> Kishon Vijay Abraham I (7):
->   ARM: dts: dra7: Add properties to enable PCIe x2 lane mode
->   ARM: dts: DRA74x: Use PCIe compatible specific to dra74
->   ARM: dts: DRA72x: Use PCIe compatible specific to dra72
->   ARM: dts: dra76-evm: Enable x2 PCIe lanes
->   ARM: dts: dra7: Remove deprecated PCI compatible string
->   ARM: omap2plus_defconfig: Enable CONFIG_PCI_DRA7XX (Host & Device
->     modes)
->   ARM: multi_v7_defconfig: Enable CONFIG_PCI_DRA7XX (Host & Device
->     modes)
-> 
->  arch/arm/boot/dts/dra7.dtsi          |  9 +++++----
->  arch/arm/boot/dts/dra72x.dtsi        | 12 ++++++++++++
->  arch/arm/boot/dts/dra74x.dtsi        | 12 ++++++++++++
->  arch/arm/boot/dts/dra76-evm.dts      | 16 ++++++++++++++++
->  arch/arm/configs/multi_v7_defconfig  |  6 ++++++
->  arch/arm/configs/omap2plus_defconfig |  8 ++++++++
->  6 files changed, 59 insertions(+), 4 deletions(-)
+> You should check the enable-method to see if PSCI is set or not,
+> as an indicator whether the kernel is booted secure or non-secure.
+> AFAIK trying to set CNTVOFF under non-secure would be very bad.
 
-Hi Kishon,
+Absolutely not. CNTVOFF *is* a non-secure register. The fact that it is
+not accessible from NS-PL1 is another problem. Please don't conflate the
+two things together.
 
-I would like to ask you please what are your expectations with this
-series, which tree these changes are going to be queued through ?
+Thanks,
 
-Please let me know, thanks.
-
-Lorenzo
+	M.
+-- 
+Jazz is not dead. It just smells funny...
