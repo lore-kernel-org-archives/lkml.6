@@ -1,75 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933982AbeCGQfP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:35:15 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33956 "EHLO
+        id S934000AbeCGQgS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:36:18 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54792 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933487AbeCGQfL (ORCPT
+        by vger.kernel.org with ESMTP id S933576AbeCGQgQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:35:11 -0500
-Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
- commands.
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Winkler, Tomas" <tomas.winkler@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Wed, 07 Mar 2018 11:35:03 -0500
-In-Reply-To: <20180307085454.2c820a13@lwn.net>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
-         <20180305125642.GA3425@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
-         <20180306074932.GB3624@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
-         <1520353933.5393.21.camel@HansenPartnership.com>
-         <1520361396.10396.396.camel@linux.vnet.ibm.com>
-         <20180307085454.2c820a13@lwn.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 7 Mar 2018 11:36:16 -0500
+From: Eddie James <eajames@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-clk@vger.kernel.org, joel@jms.id.au, mturquette@baylibre.com,
+        sboyd@kernel.org, Eddie James <eajames@linux.vnet.ibm.com>
+Subject: [PATCH] clk: aspeed: Prevent reset if clock is enabled
+Date: Wed,  7 Mar 2018 10:36:10 -0600
+X-Mailer: git-send-email 1.8.3.1
 X-TM-AS-GCONF: 00
-x-cbid: 18030716-0008-0000-0000-000004D8FDAE
+x-cbid: 18030716-0028-0000-0000-000009450F2B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008629; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00999643; UDB=6.00508487; IPR=6.00779049;
+ MB=3.00019895; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-07 16:36:14
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030716-0009-0000-0000-00001E6C19F9
-Message-Id: <1520440503.10396.534.camel@linux.vnet.ibm.com>
+x-cbparentid: 18030716-0029-0000-0000-000039E006AD
+Message-Id: <1520440570-25280-1-git-send-email-eajames@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-07_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
  definitions=main-1803070190
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-03-07 at 08:54 -0700, Jonathan Corbet wrote:
-> On Tue, 06 Mar 2018 13:36:36 -0500
-> Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> 
-> > I've heard that some maintainers are moving away from cover letters,
-> > since they are not include in the git repo and are lost.
-> 
-> If I get a patch series with a cover letter that should be preserved, I
-> apply the series in a branch then do a no-ff merge; the cover letter can
-> then go into the merge commit.  There's no reason why cover letters need to
-> be lost.
+According to the Aspeed specification, the reset and enable sequence
+should be done when the clock is stopped. The specification doesn't
+define behavior if the reset is done while the clock is enabled.
 
-Thanks, Jon.  That sounds like a really, good idea.
+>From testing on the AST2500, the LPC Controller has problems if the
+clock is reset while enabled.
 
-Some maintainers are saying to put the Changelog after the "---" so
-that it isn't included in the patch description.
+Therefore, check whether the clock is enabled or not before performing
+the reset and enable sequence in the Aspeed clock driver.
 
-One of the reasons for including the Changelog in the patch
-description, is to credit people with bug fixes, important rework of
-the patch, etc.
+Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+---
+ drivers/clk/clk-aspeed.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Do you have any thoughts on this?
-
-Mimi
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index 9f7f931..a13054d 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -212,6 +212,12 @@ static int aspeed_clk_enable(struct clk_hw *hw)
+ 	u32 clk = BIT(gate->clock_idx);
+ 	u32 rst = BIT(gate->reset_idx);
+ 	u32 enval;
++	u32 reg;
++
++	/* Only reset/enable/unreset if clock is stopped */
++	regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
++	if (!(reg & clk))
++		return 0;
+ 
+ 	spin_lock_irqsave(gate->lock, flags);
+ 
+-- 
+1.8.3.1
