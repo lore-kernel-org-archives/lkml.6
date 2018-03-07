@@ -1,82 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933848AbeCGQaf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:30:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51516 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933335AbeCGQad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:30:33 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9660F2177B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
-X-Google-Smtp-Source: AG47ELskAh568tD4eHtHbTJ7C84qomOWUMyLjvpTJbKhAwdPIbJpU606DwL06FRbymnxc+kNfsRcPvqUZqkJyERMtkM=
+        id S933937AbeCGQax (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:30:53 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:40014 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933665AbeCGQat (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 11:30:49 -0500
+X-Google-Smtp-Source: AG47ELutvm4JqLAGJTckFeH/yfLDHd7XHu+SjizReO8nPwrFoM1NpiER1u4pVUYC1hyB1hY/yUI+TA==
+Date: Wed, 7 Mar 2018 16:30:45 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCHv5 1/5] dt-bindings: mfd: motorola-cpcap: document
+ audio-codec
+Message-ID: <20180307163045.cwufiv2xhi4fdxo2@dell>
+References: <20180223200254.25685-1-sebastian.reichel@collabora.co.uk>
+ <20180223200254.25685-2-sebastian.reichel@collabora.co.uk>
 MIME-Version: 1.0
-In-Reply-To: <20180307063219.14409-1-vivek.gautam@codeaurora.org>
-References: <20180307063219.14409-1-vivek.gautam@codeaurora.org>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Wed, 7 Mar 2018 10:30:09 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+WWR5r-RcuE2KGpswdRgwzOV_BZjEOzHj5bAULFD6_Xg@mail.gmail.com>
-Message-ID: <CAL_Jsq+WWR5r-RcuE2KGpswdRgwzOV_BZjEOzHj5bAULFD6_Xg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] iommu/arm-smmu: Add support for qcom,smmu-500 variant
-To: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>, Robin Murphy <robin.murphy@arm.com>,
-        Tomasz Figa <tfiga@chromium.org>, Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM SMMU DRIVERS"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180223200254.25685-2-sebastian.reichel@collabora.co.uk>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 7, 2018 at 12:32 AM, Vivek Gautam
-<vivek.gautam@codeaurora.org> wrote:
-> Qualcomm's arm-smmu 500 implementation supports runtime pm
-> so enable the same.
+On Fri, 23 Feb 2018, Sebastian Reichel wrote:
 
-That's a driver detail unrelated to the binding.
-
->
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> This adds the DT binding for the audio-codec sub-module found
+> inside the Motorola CPCAP PMIC.
+> 
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 > ---
->
->  Based on iommu/arm-smmu pm runtime support series [1]:
->  [PATCH v8 0/5] iommu/arm-smmu: Add runtime pm/sleep support
->
->  Tested on sdm845 with necessary support to enable the smmu
->  and with necessary user.
->
->  [1] https://lkml.org/lkml/2018/3/2/325
->
->  Documentation/devicetree/bindings/iommu/arm,smmu.txt | 14 ++++++++++++++
+>  .../devicetree/bindings/mfd/motorola-cpcap.txt     | 42 ++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/motorola-cpcap.txt b/Documentation/devicetree/bindings/mfd/motorola-cpcap.txt
+> index 15bc885f9df4..82c3a7140660 100644
+> --- a/Documentation/devicetree/bindings/mfd/motorola-cpcap.txt
+> +++ b/Documentation/devicetree/bindings/mfd/motorola-cpcap.txt
+> @@ -12,6 +12,30 @@ Required properties:
+>  - spi-max-frequency	: Typically set to 3000000
+>  - spi-cs-high		: SPI chip select direction
+>  
+> +Optional subnodes:
+> +
+> +The sub-functions of CPCAP get their own node with their own compatible values,
+> +which are described in the following files:
+> +
+> +- Documentation/devicetree/bindings/power/supply/cpcap-battery.txt
+> +- Documentation/devicetree/bindings/power/supply/cpcap-charger.txt
+> +- Documentation/devicetree/bindings/regulator/cpcap-regulator.txt
+> +- Documentation/devicetree/bindings/phy/phy-cpcap-usb.txt
+> +- Documentation/devicetree/bindings/input/cpcap-pwrbutton.txt
+> +- Documentation/devicetree/bindings/rtc/cpcap-rtc.txt
+> +- Documentation/devicetree/bindings/leds/leds-cpcap.txt
+> +- Documentation/devicetree/bindings/iio/adc/cpcap-adc.txt
 
-Please split bindings to separate patches.
+Nit: Best to use relative path names here (hint: DT docs might not
+live in there kernel forever).
 
->  drivers/iommu/arm-smmu.c                             |  8 ++++++++
->  2 files changed, 22 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> index 6ea27bd4f785..0b5c6d2a9865 100644
-> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> @@ -18,6 +18,7 @@ conditions.
->                          "arm,mmu-500"
->                          "cavium,smmu-v2"
->                          "qcom,<soc>-smmu-v2", "qcom,smmu-v2"
+Other than that:
 
-I don't even see this one in the tree yet...
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
-> +                        "qcom,<soc>-smmu-500", "qcom,smmu-500"
-
-IIRC, the mmu-500 is SMMU v2 implementation, right? Having
-qcom,smmu-500 seems kind of pointless.
-
-Given that we're there's only 1 SoC for "qcom,<soc>-smmu-v2" and
-you're already on to a new genericish compatible, just do SoC specific
-compatible strings.
-
-Rob
+-- 
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
