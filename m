@@ -1,30 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754473AbeCGOPZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:15:25 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49868 "EHLO
+        id S1754507AbeCGOP2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:15:28 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50102 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754052AbeCGOPR (ORCPT
+        with ESMTP id S1754456AbeCGOP0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:15:17 -0500
+        Wed, 7 Mar 2018 09:15:26 -0500
 From: Mark Brown <broonie@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: Applied "regmap: debugfs: Don't leak dummy names" to the regmap tree
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "ASoC: wm8524: Remove unit address" to the regulator tree
 In-Reply-To: 
-Message-Id: <E1etZqd-0001Zu-SP@debutante>
-Date: Wed, 07 Mar 2018 14:15:15 +0000
+Message-Id: <E1etZqm-0001c4-3g@debutante>
+Date: Wed, 07 Mar 2018 14:15:24 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regmap: debugfs: Don't leak dummy names
+   ASoC: wm8524: Remove unit address
 
-has been applied to the regmap tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -45,33 +45,35 @@ to this mail.
 Thanks,
 Mark
 
->From 46589e9c753b7c905e8671a89cbb9728f3b99855 Mon Sep 17 00:00:00 2001
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 5 Mar 2018 20:26:51 +0000
-Subject: [PATCH] regmap: debugfs: Don't leak dummy names
+>From 770981f5a8dc61a10c7e8248d07aa558079527a1 Mon Sep 17 00:00:00 2001
+From: Fabio Estevam <festevam@gmail.com>
+Date: Wed, 7 Mar 2018 00:24:13 -0300
+Subject: [PATCH] ASoC: wm8524: Remove unit address
 
-When allocating dummy names we need to store a pointer to the string we
-allocate so that we don't leak it on free.
+WM8524 does not use I2C nor SPI, hence no 'reg' property is used,
+so remove the unit address from the bindings example to conform.
 
+This avoids users getting dtc warnings when they copy the
+binding example to a real dts file.
+
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/base/regmap/regmap-debugfs.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/sound/wm8524.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/base/regmap/regmap-debugfs.c b/drivers/base/regmap/regmap-debugfs.c
-index e3e7b91cc421..dd3a16894e3c 100644
---- a/drivers/base/regmap/regmap-debugfs.c
-+++ b/drivers/base/regmap/regmap-debugfs.c
-@@ -575,7 +575,9 @@ void regmap_debugfs_init(struct regmap *map, const char *name)
- 	}
+diff --git a/Documentation/devicetree/bindings/sound/wm8524.txt b/Documentation/devicetree/bindings/sound/wm8524.txt
+index 20c62002cbcd..0f0553563fc1 100644
+--- a/Documentation/devicetree/bindings/sound/wm8524.txt
++++ b/Documentation/devicetree/bindings/sound/wm8524.txt
+@@ -10,7 +10,7 @@ Required properties:
  
- 	if (!strcmp(name, "dummy")) {
--		name = kasprintf(GFP_KERNEL, "dummy%d", dummy_index);
-+		map->debugfs_name = kasprintf(GFP_KERNEL, "dummy%d",
-+						dummy_index);
-+		name = map->debugfs_name;
- 		dummy_index++;
- 	}
+ Example:
  
+-codec: wm8524@0 {
++codec: wm8524 {
+ 	compatible = "wlf,wm8524";
+ 	wlf,mute-gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;
+ };
 -- 
 2.16.2
