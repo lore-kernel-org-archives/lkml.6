@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754052AbeCGODY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:03:24 -0500
-Received: from mga02.intel.com ([134.134.136.20]:30693 "EHLO mga02.intel.com"
+        id S933646AbeCGOD0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:03:26 -0500
+Received: from mga02.intel.com ([134.134.136.20]:30695 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933589AbeCGODV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:03:21 -0500
+        id S1754189AbeCGODW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 09:03:22 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,436,1515484800";
-   d="scan'208";a="36206796"
+   d="scan'208";a="36206804"
 From: Adrian Hunter <adrian.hunter@intel.com>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/9] perf intel-pt: Fix sync_switch
-Date: Wed,  7 Mar 2018 16:02:22 +0200
-Message-Id: <1520431349-30689-3-git-send-email-adrian.hunter@intel.com>
+Subject: [PATCH 3/9] perf intel-pt: Fix error recovery from missing TIP packet
+Date: Wed,  7 Mar 2018 16:02:23 +0200
+Message-Id: <1520431349-30689-4-git-send-email-adrian.hunter@intel.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520431349-30689-1-git-send-email-adrian.hunter@intel.com>
 References: <1520431349-30689-1-git-send-email-adrian.hunter@intel.com>
@@ -25,116 +25,28 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sync_switch is a facility to synchronize decoding more closely with the
-point in the kernel when the context actually switched. The flag when
-sync_switch is enabled was global to the decoding, whereas it is really
-specific to the CPU. The trace data for different CPUs is put on different
-queues, so add sync_switch to the intel_pt_queue structure and use that in
-preference to the global setting in the intel_pt structure. That fixes
-problems decoding one CPU's trace because sync_switch was disabled on a
-different CPU's queue.
+When a TIP packet is expected but there is a different packet, it is an
+error. However the unexpected packet might be something important like a
+TSC packet, so after the error, it is necessary to continue from there,
+rather than the next packet. That is achieved by setting pkt_step to zero.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: <stable@vger.kernel.org>
 ---
- tools/perf/util/intel-pt.c | 32 +++++++++++++++++++++++++-------
- 1 file changed, 25 insertions(+), 7 deletions(-)
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index 4a7746249999..0979a6e8b2b7 100644
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -143,6 +143,7 @@ struct intel_pt_queue {
- 	bool stop;
- 	bool step_through_buffers;
- 	bool use_buffer_pid_tid;
-+	bool sync_switch;
- 	pid_t pid, tid;
- 	int cpu;
- 	int switch_state;
-@@ -963,10 +964,12 @@ static int intel_pt_setup_queue(struct intel_pt *pt,
- 			if (pt->timeless_decoding || !pt->have_sched_switch)
- 				ptq->use_buffer_pid_tid = true;
- 		}
-+
-+		ptq->sync_switch = pt->sync_switch;
- 	}
+diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+index 00f25f4b5f48..5e4d0bbafc8b 100644
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -1616,6 +1616,7 @@ static int intel_pt_walk_fup_tip(struct intel_pt_decoder *decoder)
+ 		case INTEL_PT_PWRX:
+ 			intel_pt_log("ERROR: Missing TIP after FUP\n");
+ 			decoder->pkt_state = INTEL_PT_STATE_ERR3;
++			decoder->pkt_step = 0;
+ 			return -ENOENT;
  
- 	if (!ptq->on_heap &&
--	    (!pt->sync_switch ||
-+	    (!ptq->sync_switch ||
- 	     ptq->switch_state != INTEL_PT_SS_EXPECTING_SWITCH_EVENT)) {
- 		const struct intel_pt_state *state;
- 		int ret;
-@@ -1549,7 +1552,7 @@ static int intel_pt_sample(struct intel_pt_queue *ptq)
- 	if (pt->synth_opts.last_branch)
- 		intel_pt_update_last_branch_rb(ptq);
- 
--	if (!pt->sync_switch)
-+	if (!ptq->sync_switch)
- 		return 0;
- 
- 	if (intel_pt_is_switch_ip(ptq, state->to_ip)) {
-@@ -1630,6 +1633,21 @@ static u64 intel_pt_switch_ip(struct intel_pt *pt, u64 *ptss_ip)
- 	return switch_ip;
- }
- 
-+static void intel_pt_enable_sync_switch(struct intel_pt *pt)
-+{
-+	unsigned int i;
-+
-+	pt->sync_switch = true;
-+
-+	for (i = 0; i < pt->queues.nr_queues; i++) {
-+		struct auxtrace_queue *queue = &pt->queues.queue_array[i];
-+		struct intel_pt_queue *ptq = queue->priv;
-+
-+		if (ptq)
-+			ptq->sync_switch = true;
-+	}
-+}
-+
- static int intel_pt_run_decoder(struct intel_pt_queue *ptq, u64 *timestamp)
- {
- 	const struct intel_pt_state *state = ptq->state;
-@@ -1646,7 +1664,7 @@ static int intel_pt_run_decoder(struct intel_pt_queue *ptq, u64 *timestamp)
- 			if (pt->switch_ip) {
- 				intel_pt_log("switch_ip: %"PRIx64" ptss_ip: %"PRIx64"\n",
- 					     pt->switch_ip, pt->ptss_ip);
--				pt->sync_switch = true;
-+				intel_pt_enable_sync_switch(pt);
- 			}
- 		}
- 	}
-@@ -1662,9 +1680,9 @@ static int intel_pt_run_decoder(struct intel_pt_queue *ptq, u64 *timestamp)
- 		if (state->err) {
- 			if (state->err == INTEL_PT_ERR_NODATA)
- 				return 1;
--			if (pt->sync_switch &&
-+			if (ptq->sync_switch &&
- 			    state->from_ip >= pt->kernel_start) {
--				pt->sync_switch = false;
-+				ptq->sync_switch = false;
- 				intel_pt_next_tid(pt, ptq);
- 			}
- 			if (pt->synth_opts.errors) {
-@@ -1690,7 +1708,7 @@ static int intel_pt_run_decoder(struct intel_pt_queue *ptq, u64 *timestamp)
- 				     state->timestamp, state->est_timestamp);
- 			ptq->timestamp = state->est_timestamp;
- 		/* Use estimated TSC in unknown switch state */
--		} else if (pt->sync_switch &&
-+		} else if (ptq->sync_switch &&
- 			   ptq->switch_state == INTEL_PT_SS_UNKNOWN &&
- 			   intel_pt_is_switch_ip(ptq, state->to_ip) &&
- 			   ptq->next_tid == -1) {
-@@ -1837,7 +1855,7 @@ static int intel_pt_sync_switch(struct intel_pt *pt, int cpu, pid_t tid,
- 		return 1;
- 
- 	ptq = intel_pt_cpu_to_ptq(pt, cpu);
--	if (!ptq)
-+	if (!ptq || !ptq->sync_switch)
- 		return 1;
- 
- 	switch (ptq->switch_state) {
+ 		case INTEL_PT_OVF:
 -- 
 1.9.1
