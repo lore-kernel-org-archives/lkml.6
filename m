@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELushfDwqmLb9wzWZ7exeNzJPQaFP4EOmPgrYAzQhM/KLeNvE9V+4Q4ghFqnh40m6ADZDKee
-ARC-Seal: i=1; a=rsa-sha256; t=1520451853; cv=none;
+X-Google-Smtp-Source: AG47ELtFk/npb2zzHFW7vQt1wmnCSJiXEJiMzwsZMaB3p/LcDi7+aJ0olGzLLam1n0XgaIWGnQm2
+ARC-Seal: i=1; a=rsa-sha256; t=1520451849; cv=none;
         d=google.com; s=arc-20160816;
-        b=PuzIbxyNXMZWfmjM3r1sXV6c20OhznJc/gtXLAZny8QYbbZ1NA7gR6i09TT1O1WIHe
-         7p+hEcTLWJ7jQl/2D6WBwvEXVbxhcB2OepNPomq8isdLOjsP+kq3G3eLnLmZaI37/0ks
-         Zg1RGvJm56eBKo8Y1el97plrtOaax473D5ydIOg9FyRD+Mw2h6wpMGAkYRfJ8murd7jR
-         n4mvnwJkJm6Iysymncm4PYxbXfhSYf63vzJdLl9Rt2jlIJPqA6BjDYlE0Xdeoy6eT+aP
-         wTfSVMmbv6+ir4LZL97ZQG4IB/ZfBfe/zUOb0Xg//xSvNpfKW51oEycOo0YOqigFqASW
-         KWEw==
+        b=A6pjaWMMgXR4SAMoCNIcDwPgLx5Z7vDt2ByMzRDy8t0GrPmwpVpj8uzIVcTSdWUmiV
+         OAFGjVa8ul+XH6Xfz+Qm8RRzlsTUtemwii8scSP1UkP6iHMLjisrBYTN/Jb86QZrTGJX
+         67EPNo7bmFSLZiVrwwSqkxr46VrlkQ1z2o86NiakefXhCYxEMbRth8iXlKOlt4M4nXbn
+         As/XsDmH49eczQVkLXj7Yy5Jogw/BxR5mFfPu4mob0KbPBR5V6NTB/KBAd/cfV/pKqdd
+         h39eYGBwg1pYmLO7QxcL6n88I0X3RYuq4NZDCRuZsYF4YjQdGQMtOhpYgc0Ibk7CsQh5
+         VF4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=8q0Lna9tT+hg3eDTmApR5YniLEX9eA/xCtMdNuBv3zg=;
-        b=CRVRlEEmkKc3lBIhYzJIiVs3MeVw7K5dQyM9VJeVz4wPIVQbnkvxxKAy4BjdiPw2bu
-         MHw0TPPMtbXIERGrEcGivka7rwGyhqS1VG+wjsLPHrZjSZRrB3Fh7t+jKjwoLrSBhoJX
-         3EUjbUQvSDw2k3ebkibxL6fBUaAxx9y7E2VmsvmNQOrWyAQTIk0ezJpfZ0LKzRJ354ne
-         Sh5l3fEKyAdlJ2Wq4+e90QJ2V9ImuOYFQT9yATaUEy5cUpmYe6+81psCveyvCPtB7V1a
-         ok3iZUYeFOf8lA5ewjkcuz7Z5E2fL3t57hTPJ9KyVhhdnsQOdzHpkVlyNVxyqOD0vZGu
-         36jA==
+        bh=i2CAfjsgdnfgScdobTRv+BOYwy+VNm5eSQEvhMUNiyw=;
+        b=mCtSsZepiVpi5kFMEqHBfvyhrIMRR3V1wVUh3r7L4C7Tlrubn7VSFLXj2Y7CstmYNt
+         kZI6feI6477PKSZ5SbX89NPKD31dH4k1seVGS3EW1fll89RB2mmeTgfyOBr2yOSHzP28
+         XhYDwAoXPLf4yvHiTZXlG5kE7dT3c/0OBSOfbn+8uPXRSNt4xO+Bs2fqGh01Sc5Inj1L
+         1/8YAx36aey28w3M5EvI8VpL7Bxno/U3lmFO6AcKv0mFtbFMuJQof5nA51AWEKY2Pwyh
+         7+YnCjSyQ/6p+flUCikRCI8FX3hhbZ1kP0qiJvT7ekFpAwiYLcJeUujNYofnk8UEMewW
+         K/1Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+c1d9517cab094dae65e446c0c5b4de6c40f4dc58@syzkaller.appspotmail.com,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	Wanpeng Li <wanpengli@tencent.com>
-Subject: [PATCH 4.15 111/122] KVM: X86: Fix SMRAM accessing even if VM is shutdown
-Date: Wed,  7 Mar 2018 11:38:43 -0800
-Message-Id: <20180307191745.702724812@linuxfoundation.org>
+	yuyufen <yuyufen@huawei.com>,
+	Tomasz Majchrzak <tomasz.majchrzak@intel.com>,
+	stable@ver.kernel.org ("v4.8+"),
+	NeilBrown <neilb@suse.com>,
+	Shaohua Li <sh.li@alibaba-inc.com>
+Subject: [PATCH 4.15 122/122] md: only allow remove_and_add_spares when no sync_thread running.
+Date: Wed,  7 Mar 2018 11:38:54 -0800
+Message-Id: <20180307191747.295854504@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309322777209417?=
-X-GMAIL-MSGID: =?utf-8?q?1594309322777209417?=
+X-GMAIL-THRID: =?utf-8?q?1594309318369465472?=
+X-GMAIL-MSGID: =?utf-8?q?1594309318369465472?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,52 +52,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Wanpeng Li <wanpengli@tencent.com>
+From: NeilBrown <neilb@suse.com>
 
-commit 95e057e25892eaa48cad1e2d637b80d0f1a4fac5 upstream.
+commit 39772f0a7be3b3dc26c74ea13fe7847fd1522c8b upstream.
 
-Reported by syzkaller:
+The locking protocols in md assume that a device will
+never be removed from an array during resync/recovery/reshape.
+When that isn't happening, rcu or reconfig_mutex is needed
+to protect an rdev pointer while taking a refcount.  When
+it is happening, that protection isn't needed.
 
-   WARNING: CPU: 6 PID: 2434 at arch/x86/kvm/vmx.c:6660 handle_ept_misconfig+0x54/0x1e0 [kvm_intel]
-   CPU: 6 PID: 2434 Comm: repro_test Not tainted 4.15.0+ #4
-   RIP: 0010:handle_ept_misconfig+0x54/0x1e0 [kvm_intel]
-   Call Trace:
-    vmx_handle_exit+0xbd/0xe20 [kvm_intel]
-    kvm_arch_vcpu_ioctl_run+0xdaf/0x1d50 [kvm]
-    kvm_vcpu_ioctl+0x3e9/0x720 [kvm]
-    do_vfs_ioctl+0xa4/0x6a0
-    SyS_ioctl+0x79/0x90
-    entry_SYSCALL_64_fastpath+0x25/0x9c
+Unfortunately there are cases were remove_and_add_spares() is
+called when recovery might be happening: is state_store(),
+slot_store() and hot_remove_disk().
+In each case, this is just an optimization, to try to expedite
+removal from the personality so the device can be removed from
+the array.  If resync etc is happening, we just have to wait
+for md_check_recover to find a suitable time to call
+remove_and_add_spares().
 
-The testcase creates a first thread to issue KVM_SMI ioctl, and then creates
-a second thread to mmap and operate on the same vCPU.  This triggers a race
-condition when running the testcase with multiple threads. Sometimes one thread
-exits with a triple fault while another thread mmaps and operates on the same
-vCPU.  Because CS=0x3000/IP=0x8000 is not mapped, accessing the SMI handler
-results in an EPT misconfig. This patch fixes it by returning RET_PF_EMULATE
-in kvm_handle_bad_page(), which will go on to cause an emulation failure and an
-exit with KVM_EXIT_INTERNAL_ERROR.
+This optimization and not essential so it doesn't
+matter if it fails.
+So change remove_and_add_spares() to abort early if
+resync/recovery/reshape is happening, unless it is called
+from md_check_recovery() as part of a newly started recovery.
+The parameter "this" is only NULL when called from
+md_check_recovery() so when it is NULL, there is no need to abort.
 
-Reported-by: syzbot+c1d9517cab094dae65e446c0c5b4de6c40f4dc58@syzkaller.appspotmail.com
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+As this can result in a NULL dereference, the fix is suitable
+for -stable.
+
+cc: yuyufen <yuyufen@huawei.com>
+Cc: Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+Fixes: 8430e7e0af9a ("md: disconnect device from personality before trying to remove it.")
+Cc: stable@ver.kernel.org (v4.8+)
+Signed-off-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Shaohua Li <sh.li@alibaba-inc.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/mmu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/md.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -3017,7 +3017,7 @@ static int kvm_handle_bad_page(struct kv
- 		return RET_PF_RETRY;
- 	}
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -8554,6 +8554,10 @@ static int remove_and_add_spares(struct
+ 	int removed = 0;
+ 	bool remove_some = false;
  
--	return -EFAULT;
-+	return RET_PF_EMULATE;
- }
- 
- static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
++	if (this && test_bit(MD_RECOVERY_RUNNING, &mddev->recovery))
++		/* Mustn't remove devices when resync thread is running */
++		return 0;
++
+ 	rdev_for_each(rdev, mddev) {
+ 		if ((this == NULL || rdev == this) &&
+ 		    rdev->raid_disk >= 0 &&
