@@ -1,75 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965844AbeCGTyE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 14:54:04 -0500
-Received: from mga06.intel.com ([134.134.136.31]:37690 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965786AbeCGTyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 14:54:00 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,437,1515484800";
-   d="scan'208";a="26071900"
-Date: Wed, 7 Mar 2018 11:46:29 -0800
-From: Ivan Gorinov <ivan.gorinov@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v4 1/4] x86/devicetree: Initialize device tree before using it
-Message-ID: <c8c7e941efc63b5d25ebf9b6350b0f3df38f6098.1520450752.git.ivan.gorinov@intel.com>
-References: <cover.1520450752.git.ivan.gorinov@intel.com>
+        id S965887AbeCGTyU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 14:54:20 -0500
+Received: from gateway32.websitewelcome.com ([192.185.145.184]:26405 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S965340AbeCGTyR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 14:54:17 -0500
+Date: Wed, 7 Mar 2018 13:54:15 -0600
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH] video: fbdev: via_aux_vt1632: remove VLA usage
+Message-ID: <20180307195415.GA666@embeddedgus>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1520450752.git.ivan.gorinov@intel.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.117.58
+X-Source-L: No
+X-Exim-ID: 1etf8h-002QFN-Ti
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.175.117.58]:47330
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 08d53aa58cb162e6 ("of/fdt: export fdt blob as /sys/firmware/fdt")
-adds CRC32 calculation in early_init_dt_verify() and checking in late
-initcall of_fdt_raw_init(), making early_init_dt_verify() mandatory.
-Required call to early_init_dt_verify() was not added to the x86-specific
-implementation, causing failure to create sysfs entry in of_fdt_raw_init().
+In preparation to enabling -Wvla, remove VLA and replace it
+with a fixed-length array instead. Also, remove variable 'len'.
 
-Signed-off-by: Ivan Gorinov <ivan.gorinov@intel.com>
+Notice that no new IDs have been added in seven years.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- arch/x86/kernel/devicetree.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/video/fbdev/via/via_aux_vt1632.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/devicetree.c b/arch/x86/kernel/devicetree.c
-index 25de5f6..63d2ebc 100644
---- a/arch/x86/kernel/devicetree.c
-+++ b/arch/x86/kernel/devicetree.c
-@@ -11,6 +11,7 @@
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/of_irq.h>
-+#include <linux/libfdt.h>
- #include <linux/slab.h>
- #include <linux/pci.h>
- #include <linux/of_pci.h>
-@@ -270,14 +271,15 @@ static void __init x86_flattree_get_config(void)
+diff --git a/drivers/video/fbdev/via/via_aux_vt1632.c b/drivers/video/fbdev/via/via_aux_vt1632.c
+index d24f4cd..0cd0d2a 100644
+--- a/drivers/video/fbdev/via/via_aux_vt1632.c
++++ b/drivers/video/fbdev/via/via_aux_vt1632.c
+@@ -35,10 +35,10 @@ static void probe(struct via_aux_bus *bus, u8 addr)
+ 		.addr	=	addr,
+ 		.name	=	name};
+ 	/* check vendor id and device id */
+-	const u8 id[] = {0x06, 0x11, 0x92, 0x31}, len = ARRAY_SIZE(id);
+-	u8 tmp[len];
++	const u8 id[4] = {0x06, 0x11, 0x92, 0x31};
++	u8 tmp[4];
  
- 	map_len = max(PAGE_SIZE - (initial_dtb & ~PAGE_MASK), (u64)128);
+-	if (!via_aux_read(&drv, 0x00, tmp, len) || memcmp(id, tmp, len))
++	if (!via_aux_read(&drv, 0x00, tmp, 4) || memcmp(id, tmp, 4))
+ 		return;
  
--	initial_boot_params = dt = early_memremap(initial_dtb, map_len);
--	size = of_get_flat_dt_size();
-+	dt = early_memremap(initial_dtb, map_len);
-+	size = fdt_totalsize(dt);
- 	if (map_len < size) {
- 		early_memunmap(dt, map_len);
--		initial_boot_params = dt = early_memremap(initial_dtb, size);
-+		dt = early_memremap(initial_dtb, size);
- 		map_len = size;
- 	}
- 
-+	early_init_dt_verify(dt);
- 	unflatten_and_copy_device_tree();
- 	early_memunmap(dt, map_len);
- }
+ 	printk(KERN_INFO "viafb: Found %s at address 0x%x\n", name, addr);
 -- 
 2.7.4
