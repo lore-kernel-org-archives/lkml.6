@@ -1,53 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933688AbeCGSW2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 13:22:28 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51212 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754547AbeCGSWR (ORCPT
+        id S1754643AbeCGSXT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 13:23:19 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:55234 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754052AbeCGSXQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 13:22:17 -0500
-Date: Wed, 7 Mar 2018 10:22:12 -0800
-From: Matthew Wilcox <willy@infradead.org>
-To: Christopher Lameter <cl@linux.com>
-Cc: Chintan Pandya <cpandya@codeaurora.org>, penberg@kernel.org,
-        rientjes@google.com, iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] slub: Fix misleading 'age' in verbose slub prints
-Message-ID: <20180307182212.GA23411@bombadil.infradead.org>
-References: <1520423266-28830-1-git-send-email-cpandya@codeaurora.org>
- <alpine.DEB.2.20.1803071212150.6373@nuc-kabylake>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1803071212150.6373@nuc-kabylake>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Wed, 7 Mar 2018 13:23:16 -0500
+Date: Wed, 07 Mar 2018 13:23:13 -0500 (EST)
+Message-Id: <20180307.132313.862901353807914148.davem@davemloft.net>
+To: jeremy.linton@arm.com
+Cc: netdev@vger.kernel.org, steve.glendinning@shawell.net,
+        matt.sealey@arm.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: smsc911x: Fix unload crash when link is up
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180306150006.31512-1-jeremy.linton@arm.com>
+References: <20180306150006.31512-1-jeremy.linton@arm.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 12:13:56PM -0600, Christopher Lameter wrote:
-> On Wed, 7 Mar 2018, Chintan Pandya wrote:
-> > In this case, object got freed later but 'age' shows
-> > otherwise. This could be because, while printing
-> > this info, we print allocation traces first and
-> > free traces thereafter. In between, if we get schedule
-> > out, (jiffies - t->when) could become meaningless.
-> 
-> Ok then get the jiffies earlier?
-> 
-> > So, simply print when the object was allocated/freed.
-> 
-> The tick value may not related to anything in the logs that is why the
-> "age" is there. How do I know how long ago the allocation was if I look at
-> the log and only see long and large number of ticks since bootup?
+From: Jeremy Linton <jeremy.linton@arm.com>
+Date: Tue,  6 Mar 2018 09:00:06 -0600
 
-I missed that the first read-through too.  The trick is that there are two printks:
+> The smsc911x driver will crash if it is rmmod'ed while the netdev
+> is up like:
+> 
+> Call trace:
+ ...
+> This is caused by the mdiobus being unregistered/free'd
+> and the code in phy_detach() attempting to manipulate mdio
+> related structures from unregister_netdev() calling close()
+> 
+> To fix this, we delay the mdiobus teardown until after
+> the netdev is deregistered.
+> 
+> Reported-by: Matt Sealey <matt.sealey@arm.com>
+> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
 
-[ 6044.170804] INFO: Allocated in binder_transaction+0x4b0/0x2448 age=731 cpu=3 pid=5314
-...
-[ 6044.216696] INFO: Freed in binder_free_transaction+0x2c/0x58 age=735 cpu=6 pid=2079
-
-If you print the raw value, then you can do the subtraction yourself;
-if you've subtracted it from jiffies each time, you've at least introduced
-jitter, and possibly enough jitter to confuse and mislead.
+Applied, thanks.
