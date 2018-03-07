@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvdvY2Y8aB4WdAZ1FH36ZhuJo0WwUs2liAQNgakBjDo5LgR1cAfyAHGxrVdz5Ty74qSvVif
-ARC-Seal: i=1; a=rsa-sha256; t=1520451766; cv=none;
+X-Google-Smtp-Source: AG47ELv5QGAOZVCi2YCXl4RpA6WGA0dqk7yJJhEfT8f76z03ywaz4lI7PHCiqEZy1vfEXRBm35mp
+ARC-Seal: i=1; a=rsa-sha256; t=1520451760; cv=none;
         d=google.com; s=arc-20160816;
-        b=Tcv/DrtYfFzFRZf5wc1zSUn/TZeFPpCIIHHGpuIWJqk2PrJv7uI1SrQA+5bWAKtpL1
-         8W0P4mK0DMrjnAmMGdVhTcKh+v4A+KzKs0WJFeF9iD1RXuszlcW2IjtMlHGu6ZFrAbwC
-         sZWLzwBmhZzXulSk1IlgXzncsSN4eckVpGtldbIUeGFQS6ZsJkjHS6eo2U5uF6wqv10j
-         mUrzpaSFdVsdkIw89QhhcwnPEs3j+FEOflJteDajzbsJQxMK1g/1mACrMPIQ2VwFRUbh
-         t1K0ZjeRlKMSD+XkzgzotrZJpiubNbbIEfDUDp8OPdUXZ264dr1Lxef22gHuSRFDm55Z
-         KOew==
+        b=aO84QV8qJJB4ajTZJ1NhZIdA9HYDi8SUaTBcgt8M8S24su0YuuCfn0YEeGrsFKBXos
+         9dGEK+BwKamTPHABbuEDiLTJ2pE9ESo29fTkYMs0TFtDHRAznAktBwoXHYQXoZRmJ6qy
+         cLAVvJg81akQ2NC5VrSo7xQ0JcV8pxrXpzpQUn5ugNO4luPTcJvHhCYW6VWkb45+pO/f
+         z7gl66anZbEB4nqEOWGYmmsdNyBgm0RXhdtxCyW5czFT1ZgQVB7C4IUorEFDUClTstCQ
+         XPhnxVwkBWpdrbRrQEeGgcyvYKBNOX2Sm/gFmql0jF4jOJBwYxaBAPJBPmsnPZBSWvbA
+         nQOQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=KIEXMspndCZT9vhkdurr5K9vrhrDa7odVFaRiSh8TVk=;
-        b=hTmXqphSF//+pRAS+BdCEpnIHmmz2Z+ZJoFdpIJc4rF7xHYJ4afzOOiW65W/WhorHY
-         64fvZ8D4h+AD+8swawMnf8Nw9FMJCbXZpZpZUZrM7gGTwddqdeZJIXrX9xJ/zb3HLVjC
-         mYBNbewoALE2pGj0f72Xu3dSf7c/P8jIoAOthLg6D8p3OrFX34xF++UBQjlVngxGl17z
-         EZz4N/b53mEeG0RblJVHsnqUUT6Yb8okND7y1/YRck6Zwf7FLFsuWJFfcz6uiuOB/8dd
-         xCZBJ6gw9oRogPIabBLaNmBm92FXmtkP8HYADdYifv4a7tee8XuabnQpY97mhzy8drug
-         MLLg==
+        bh=Kh/0AYoAQtqNXc03MExCU3uho7yIZa5rRIsMEF/Jb+c=;
+        b=pTO6PgwTRNd3XsGKfuUeQTMrL4AwEu4Q2zGuozoGhF3LhB99KxSQ8IF3XInbzLXi/z
+         hy+biPeU5e8hOKLky4HoixikMLBnqXWi9NFue4HyGaUHBCszY8luWmmcSPlPCLzmOh6b
+         SI2leyUu+sCDty5uuQgg5YoD7n2F4tZrctic40pxh64jqV7MfMviK5219TsDxeim74+u
+         UgNdFdEDxL5vxHaorA1yYGQinflE+Vheg26lITz75v4M9RJpcsCUbuRFi93M0rsbXoZO
+         I1WrzVqmL4iB/U30MphMFjJ9qmH3PwGw6aCyzPOjvhla8pc1OxvDlFvUy/8VFxYTqCgf
+         N6/w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ursula Braun <ubraun@linux.vnet.ibm.com>,
-	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
+	James Chapman <jchapman@katalix.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 088/122] s390/qeth: fix underestimated count of buffer elements
-Date: Wed,  7 Mar 2018 11:38:20 -0800
-Message-Id: <20180307191742.109099514@linuxfoundation.org>
+Subject: [PATCH 4.15 086/122] l2tp: fix race in pppol2tp_release with session object destroy
+Date: Wed,  7 Mar 2018 11:38:18 -0800
+Message-Id: <20180307191741.835237557@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309232041553292?=
-X-GMAIL-MSGID: =?utf-8?q?1594309232041553292?=
+X-GMAIL-THRID: =?utf-8?q?1594309225500883164?=
+X-GMAIL-MSGID: =?utf-8?q?1594309225500883164?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,38 +49,170 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ursula Braun <ubraun@linux.vnet.ibm.com>
+From: James Chapman <jchapman@katalix.com>
 
 
-[ Upstream commit 89271c65edd599207dd982007900506283c90ae3 ]
+[ Upstream commit d02ba2a6110c530a32926af8ad441111774d2893 ]
 
-For a memory range/skb where the last byte falls onto a page boundary
-(ie. 'end' is of the form xxx...xxx001), the PFN_UP() part of the
-calculation currently doesn't round up to the next PFN due to an
-off-by-one error.
-Thus qeth believes that the skb occupies one page less than it
-actually does, and may select a IO buffer that doesn't have enough spare
-buffer elements to fit all of the skb's data.
-HW detects this as a malformed buffer descriptor, and raises an
-exception which then triggers device recovery.
+pppol2tp_release uses call_rcu to put the final ref on its socket. But
+the session object doesn't hold a ref on the session socket so may be
+freed while the pppol2tp_put_sk RCU callback is scheduled. Fix this by
+having the session hold a ref on its socket until the session is
+destroyed. It is this ref that is dropped via call_rcu.
 
-Fixes: 2863c61334aa ("qeth: refactor calculation of SBALE count")
-Signed-off-by: Ursula Braun <ubraun@linux.vnet.ibm.com>
-Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+Sessions are also deleted via l2tp_tunnel_closeall. This must now also put
+the final ref via call_rcu. So move the call_rcu call site into
+pppol2tp_session_close so that this happens in both destroy paths. A
+common destroy path should really be implemented, perhaps with
+l2tp_tunnel_closeall calling l2tp_session_delete like pppol2tp_release
+does, but this will be looked at later.
+
+ODEBUG: activate active (active state 1) object type: rcu_head hint:           (null)
+WARNING: CPU: 3 PID: 13407 at lib/debugobjects.c:291 debug_print_object+0x166/0x220
+Modules linked in:
+CPU: 3 PID: 13407 Comm: syzbot_19c09769 Not tainted 4.16.0-rc2+ #38
+Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+RIP: 0010:debug_print_object+0x166/0x220
+RSP: 0018:ffff880013647a00 EFLAGS: 00010082
+RAX: dffffc0000000008 RBX: 0000000000000003 RCX: ffffffff814d3333
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff88001a59f6d0
+RBP: ffff880013647a40 R08: 0000000000000000 R09: 0000000000000001
+R10: ffff8800136479a8 R11: 0000000000000000 R12: 0000000000000001
+R13: ffffffff86161420 R14: ffffffff85648b60 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff88001a580000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020e77000 CR3: 0000000006022000 CR4: 00000000000006e0
+Call Trace:
+ debug_object_activate+0x38b/0x530
+ ? debug_object_assert_init+0x3b0/0x3b0
+ ? __mutex_unlock_slowpath+0x85/0x8b0
+ ? pppol2tp_session_destruct+0x110/0x110
+ __call_rcu.constprop.66+0x39/0x890
+ ? __call_rcu.constprop.66+0x39/0x890
+ call_rcu_sched+0x17/0x20
+ pppol2tp_release+0x2c7/0x440
+ ? fcntl_setlk+0xca0/0xca0
+ ? sock_alloc_file+0x340/0x340
+ sock_release+0x92/0x1e0
+ sock_close+0x1b/0x20
+ __fput+0x296/0x6e0
+ ____fput+0x1a/0x20
+ task_work_run+0x127/0x1a0
+ do_exit+0x7f9/0x2ce0
+ ? SYSC_connect+0x212/0x310
+ ? mm_update_next_owner+0x690/0x690
+ ? up_read+0x1f/0x40
+ ? __do_page_fault+0x3c8/0xca0
+ do_group_exit+0x10d/0x330
+ ? do_group_exit+0x330/0x330
+ SyS_exit_group+0x22/0x30
+ do_syscall_64+0x1e0/0x730
+ ? trace_hardirqs_off_thunk+0x1a/0x1c
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x7f362e471259
+RSP: 002b:00007ffe389abe08 EFLAGS: 00000202 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f362e471259
+RDX: 00007f362e471259 RSI: 000000000000002e RDI: 0000000000000000
+RBP: 00007ffe389abe30 R08: 0000000000000000 R09: 00007f362e944270
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000400b60
+R13: 00007ffe389abf50 R14: 0000000000000000 R15: 0000000000000000
+Code: 8d 3c dd a0 8f 64 85 48 89 fa 48 c1 ea 03 80 3c 02 00 75 7b 48 8b 14 dd a0 8f 64 85 4c 89 f6 48 c7 c7 20 85 64 85 e
+8 2a 55 14 ff <0f> 0b 83 05 ad 2a 68 04 01 48 83 c4 18 5b 41 5c 41 5d 41 5e 41
+
+Fixes: ee40fb2e1eb5b ("l2tp: protect sock pointer of struct pppol2tp_session with RCU")
+Signed-off-by: James Chapman <jchapman@katalix.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_core.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/l2tp/l2tp_ppp.c |   52 +++++++++++++++++++++++++++-------------------------
+ 1 file changed, 27 insertions(+), 25 deletions(-)
 
---- a/drivers/s390/net/qeth_core.h
-+++ b/drivers/s390/net/qeth_core.h
-@@ -836,7 +836,7 @@ struct qeth_trap_id {
+--- a/net/l2tp/l2tp_ppp.c
++++ b/net/l2tp/l2tp_ppp.c
+@@ -416,10 +416,28 @@ abort:
+  * Session (and tunnel control) socket create/destroy.
+  *****************************************************************************/
+ 
++static void pppol2tp_put_sk(struct rcu_head *head)
++{
++	struct pppol2tp_session *ps;
++
++	ps = container_of(head, typeof(*ps), rcu);
++	sock_put(ps->__sk);
++}
++
+ /* Called by l2tp_core when a session socket is being closed.
   */
- static inline int qeth_get_elements_for_range(addr_t start, addr_t end)
+ static void pppol2tp_session_close(struct l2tp_session *session)
  {
--	return PFN_UP(end - 1) - PFN_DOWN(start);
-+	return PFN_UP(end) - PFN_DOWN(start);
++	struct pppol2tp_session *ps;
++
++	ps = l2tp_session_priv(session);
++	mutex_lock(&ps->sk_lock);
++	ps->__sk = rcu_dereference_protected(ps->sk,
++					     lockdep_is_held(&ps->sk_lock));
++	RCU_INIT_POINTER(ps->sk, NULL);
++	if (ps->__sk)
++		call_rcu(&ps->rcu, pppol2tp_put_sk);
++	mutex_unlock(&ps->sk_lock);
  }
  
- static inline int qeth_get_micros(void)
+ /* Really kill the session socket. (Called from sock_put() if
+@@ -439,14 +457,6 @@ static void pppol2tp_session_destruct(st
+ 	}
+ }
+ 
+-static void pppol2tp_put_sk(struct rcu_head *head)
+-{
+-	struct pppol2tp_session *ps;
+-
+-	ps = container_of(head, typeof(*ps), rcu);
+-	sock_put(ps->__sk);
+-}
+-
+ /* Called when the PPPoX socket (session) is closed.
+  */
+ static int pppol2tp_release(struct socket *sock)
+@@ -470,26 +480,17 @@ static int pppol2tp_release(struct socke
+ 	sock_orphan(sk);
+ 	sock->sk = NULL;
+ 
++	/* If the socket is associated with a session,
++	 * l2tp_session_delete will call pppol2tp_session_close which
++	 * will drop the session's ref on the socket.
++	 */
+ 	session = pppol2tp_sock_to_session(sk);
+-
+-	if (session != NULL) {
+-		struct pppol2tp_session *ps;
+-
++	if (session) {
+ 		l2tp_session_delete(session);
+-
+-		ps = l2tp_session_priv(session);
+-		mutex_lock(&ps->sk_lock);
+-		ps->__sk = rcu_dereference_protected(ps->sk,
+-						     lockdep_is_held(&ps->sk_lock));
+-		RCU_INIT_POINTER(ps->sk, NULL);
+-		mutex_unlock(&ps->sk_lock);
+-		call_rcu(&ps->rcu, pppol2tp_put_sk);
+-
+-		/* Rely on the sock_put() call at the end of the function for
+-		 * dropping the reference held by pppol2tp_sock_to_session().
+-		 * The last reference will be dropped by pppol2tp_put_sk().
+-		 */
++		/* drop the ref obtained by pppol2tp_sock_to_session */
++		sock_put(sk);
+ 	}
++
+ 	release_sock(sk);
+ 
+ 	/* This will delete the session context via
+@@ -786,6 +787,7 @@ static int pppol2tp_connect(struct socke
+ 
+ out_no_ppp:
+ 	/* This is how we get the session context from the socket. */
++	sock_hold(sk);
+ 	sk->sk_user_data = session;
+ 	rcu_assign_pointer(ps->sk, sk);
+ 	mutex_unlock(&ps->sk_lock);
