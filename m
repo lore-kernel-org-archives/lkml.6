@@ -1,90 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754109AbeCGIqW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 03:46:22 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:53857 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751179AbeCGIqM (ORCPT
+        id S1754166AbeCGIqh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 03:46:37 -0500
+Received: from mail-it0-f66.google.com ([209.85.214.66]:50814 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751197AbeCGIqa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 03:46:12 -0500
-X-Google-Smtp-Source: AG47ELs1nkApE65N4vJEfNfRlioLeQe1TOdGZWwMNzN4CV27jZ3Ii628pnWUvpoo8gPa22JTwgCXzA==
-X-ME-Sender: <xms:z6afWhf3E-K3DTLI-UuzVSK1B-RfEh-J72Ia5nP-iRMlGcowfynogg>
-From: Boqun Feng <boqun.feng@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [PATCH] rcu: exp: Fix "must hold exp_mutex" comments for QS reporting functions
-Date: Wed,  7 Mar 2018 16:49:39 +0800
-Message-Id: <20180307084944.10229-1-boqun.feng@gmail.com>
-X-Mailer: git-send-email 2.16.2
+        Wed, 7 Mar 2018 03:46:30 -0500
+X-Google-Smtp-Source: AG47ELteHPsbkS13a/ZTN2YZWxbzMBiZh7Fmijm5FTUruJYL1TUpEQ0u2yy81aHtyzDHwTxevkdo7K5KDwUM6CR4Yvo=
+MIME-Version: 1.0
+In-Reply-To: <20180307022127.GB802@jagdpanzerIV>
+References: <20180305053742.9149-1-sergey.senozhatsky@gmail.com>
+ <CAK8P3a1aCQWwrJuCmx-nrMG58NQFCkCPRuAT5g43Lty13nE2dg@mail.gmail.com> <20180307022127.GB802@jagdpanzerIV>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 7 Mar 2018 09:46:27 +0100
+X-Google-Sender-Auth: E40iPK53N7olRssOv6vWGztDXmQ
+Message-ID: <CAK8P3a172j6r2HEwQ3cOOqXgXkFbxYifQ96VRFZ3+=wGawYNLQ@mail.gmail.com>
+Subject: Re: [PATCH] dump_stack: convert generic dump_stack into a weak symbol
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>, Tejun Heo <tj@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, Dave Young <dyoung@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>, Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        adi-buildroot-devel@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit d9a3da0699b2 ("rcu: Add expedited grace-period support for
-preemptible RCU"), there are comments for some funtions in
-rcu_report_exp_rnp()'s call-chain saying that exp_mutex or its
-predecessors needs to be held.
+On Wed, Mar 7, 2018 at 3:21 AM, Sergey Senozhatsky
+<sergey.senozhatsky.work@gmail.com> wrote:
+> Hello Arnd,
+>
+> On (03/06/18 14:27), Arnd Bergmann wrote:
+> [..]
+>> As we are now removing blackfin, based on the latest discussion, this
+>> part should no longer be necessary.
+>
+> When is this going to happen? 4.17?
 
-However, exp_mutex and its predecessors are merely used for synchronize
-between GPs, and it's clearly that all variables visited by those
-functions are under the protection of rcu_node's ->lock. Moreover, those
-functions are currently called without held exp_mutex, and seems that
-doesn't introduce any trouble.
+Originally I planned to wait a few more releases, but the last maintainer
+has commented that he will now send a patch for immediate removal,
+so 4.17 is almost certain at this point.
 
-So this patch fix this problem by correcting the comments
+> [..]
+>> nds32 currently only exists in linux-next, not in the mainline kernel.
+>> If it's the only architecture that does something different from everyone
+>> else, I think we should change nds32.
+>>
+>> I looked at the nds32 show_stack() implementation now and it
+>> seems to me that it is completely unnecessary, as the implementation
+>> from lib/dump_stack.c does basically the same thing (by calling
+>> show_stack(NULL, NULL)).
+>
+> Interesting point. I'll leave it to nds32 maintainers.
+> OTOH blackfin is still in linux-next, so I assume we need
+> that __weak dump_stack() for the time being.
 
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-Fixes: d9a3da0699b2 ("rcu: Add expedited grace-period support for preemptible RCU")
----
- kernel/rcu/tree_exp.h | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+I did the review of all the nds32 patches, and would have commented
+on this if I had noticed it earlier. I see no reason not to change it,
+and would suggest that you continue under the assumption that
+nds32 is going to be fixed, leaving it up to Greentime to add a fix
+to his tree before he sends the pull request.
 
-diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-index f8e4571efabf..2fd882b08b7c 100644
---- a/kernel/rcu/tree_exp.h
-+++ b/kernel/rcu/tree_exp.h
-@@ -154,7 +154,7 @@ static void __maybe_unused sync_exp_reset_tree(struct rcu_state *rsp)
-  * for the current expedited grace period.  Works only for preemptible
-  * RCU -- other RCU implementation use other means.
-  *
-- * Caller must hold the rcu_state's exp_mutex.
-+ * Caller must hold the specificed rcu_node structure's ->lock
-  */
- static bool sync_rcu_preempt_exp_done(struct rcu_node *rnp)
- {
-@@ -170,8 +170,7 @@ static bool sync_rcu_preempt_exp_done(struct rcu_node *rnp)
-  * recursively up the tree.  (Calm down, calm down, we do the recursion
-  * iteratively!)
-  *
-- * Caller must hold the rcu_state's exp_mutex and the specified rcu_node
-- * structure's ->lock.
-+ * Caller must hold the specified rcu_node structure's ->lock.
-  */
- static void __rcu_report_exp_rnp(struct rcu_state *rsp, struct rcu_node *rnp,
- 				 bool wake, unsigned long flags)
-@@ -207,8 +206,6 @@ static void __rcu_report_exp_rnp(struct rcu_state *rsp, struct rcu_node *rnp,
- /*
-  * Report expedited quiescent state for specified node.  This is a
-  * lock-acquisition wrapper function for __rcu_report_exp_rnp().
-- *
-- * Caller must hold the rcu_state's exp_mutex.
-  */
- static void __maybe_unused rcu_report_exp_rnp(struct rcu_state *rsp,
- 					      struct rcu_node *rnp, bool wake)
-@@ -221,8 +218,7 @@ static void __maybe_unused rcu_report_exp_rnp(struct rcu_state *rsp,
- 
- /*
-  * Report expedited quiescent state for multiple CPUs, all covered by the
-- * specified leaf rcu_node structure.  Caller must hold the rcu_state's
-- * exp_mutex.
-+ * specified leaf rcu_node structure.
-  */
- static void rcu_report_exp_cpu_mult(struct rcu_state *rsp, struct rcu_node *rnp,
- 				    unsigned long mask, bool wake)
--- 
-2.16.2
+>> > +asmlinkage __weak __visible void dump_stack(void)
+>> >  {
+>> >         __dump_stack();
+>> >  }
+>>
+>> Weak symbols are generally discouraged in the kernel. We have
+>> them in a couple of places, but I find them rather confusing as they
+>> make it harder to figure out what is actually going on.
+>
+> Honestly, I kind of find __weak less confusing than EXPORT_SYMBOL(dump_stack)
+> in 3 different places. __weak hints that the symbol likely will be overridden
+> somewhere, while EXPORT_SYMBOL() does not (at least not to me). Dunno.
+
+It's not either/or, they are both wrong ;-)
+
+The EXPORT_SYMBOL() is not the thing that makes it work. The duplicate
+declaration today only works because lib/dump_stack.o is listed as lib-y
+in the Makefile instead of obj-y. On blackfin and nds32, this causes the entire
+file to just not be included in the final vmlinux, because there are no
+references to it.
+
+With your patch, I would actually expect the lib/dump_stack.o file
+to still not be picked up, so now you have a missing EXPORT_SYMBOL()
+on the two unusual architectures until the point when you add another
+(referenced) symbol to it.
+
+       Arnd
