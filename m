@@ -1,49 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934214AbeCGWXt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 17:23:49 -0500
-Received: from mail-pl0-f48.google.com ([209.85.160.48]:40121 "EHLO
-        mail-pl0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933746AbeCGWXs (ORCPT
+        id S934280AbeCGWZv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 17:25:51 -0500
+Received: from mail-io0-f182.google.com ([209.85.223.182]:46945 "EHLO
+        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933412AbeCGWZu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 17:23:48 -0500
-X-Google-Smtp-Source: AG47ELv1l8robqghpZdT6LHi0HnN0pQ8XYYWMWOpyxNVBKgdyhlkLyyumrcA8/UGyq8mtoLdkPaQYw==
-Date: Wed, 7 Mar 2018 14:23:43 -0800
-From: Tyson Nottingham <tgnottingham@gmail.com>
-To: Lennart Sorensen <lsorense@csclub.uwaterloo.ca>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: ext4 ignoring rootfs default mount options
-Message-ID: <20180307222343.GA4353@L-66Y>
-References: <20180306190315.puocf5bu3bfz6yct@csclub.uwaterloo.ca>
- <20180307040608.GA2462@thunk.org>
- <20180307151427.i6vbeq6kqo55cdgs@csclub.uwaterloo.ca>
- <20180307160856.GD7507@thunk.org>
- <20180307191324.qtloesy4zdlkfnwv@csclub.uwaterloo.ca>
+        Wed, 7 Mar 2018 17:25:50 -0500
+X-Google-Smtp-Source: AG47ELv2qJzce3cB0UwZp1LnyfjT4zEq40mHf5l+hCBfVCJ7aecK+ce1BbdApRENRzrDnKDU6AbR0X8VPL4Re5bQObc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180307191324.qtloesy4zdlkfnwv@csclub.uwaterloo.ca>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180308073921.5c104e74@canb.auug.org.au>
+References: <20180308073921.5c104e74@canb.auug.org.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 7 Mar 2018 23:25:48 +0100
+Message-ID: <CACRpkdaWd_7QWd7t5i6DvU3_Gu1giR9v2uoqQiLNXVWTPEty8w@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the pinctrl tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 02:13:24PM -0500, Lennart Sorensen wrote:
+On Wed, Mar 7, 2018 at 9:39 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> Trying to use tune2fs -E mount_opts to set some default options, and
-> can't figure out how to enter two options at once.
+> Hi Linus,
+>
+> Commit
+>
+>   fc08fa6009a0 ("pinctrl: sh-pfc: r8a7795: remove duplicate of CLKOUT pin in pinmux_pins[]")
+>
+> is missing a Signed-off-by from its committer.
 
-Lennart,
+Looping in Geert,
 
-I noticed this a while back, too. I don't believe you can currently. As a
-workaround, you can use debugfs:
+I guess this came in through the Renesas PFC pull request.
 
-    debugfs -w -R 'set_super_value mount_opts opt1,opt2,opt3' <dev>
+Geert do you prefer that I back it all out so you can send me
+a new pull request? Or some other solution?
 
-Note that when printing superblock info, the e2fsprogs tools call the bit-based
-default mount options "Default mount options" and the string-based default mount
-options "Mount options".
-
-Tyson
+Yours,
+Linus Walleij
