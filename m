@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933402AbeCGIVO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 03:21:14 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50185 "EHLO mx2.suse.de"
+        id S933479AbeCGIVo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 03:21:44 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50158 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933324AbeCGIVI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 03:21:08 -0500
+        id S933278AbeCGIVH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 03:21:07 -0500
 From: Petr Mladek <pmladek@suse.com>
 To: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
         Miroslav Benes <mbenes@suse.cz>
@@ -14,9 +14,9 @@ Cc: Jason Baron <jbaron@akamai.com>,
         Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
         live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
         Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v10 09/10] livepatch: Allow to replace even disabled patches
-Date: Wed,  7 Mar 2018 09:20:38 +0100
-Message-Id: <20180307082039.10196-10-pmladek@suse.com>
+Subject: [PATCH v10 08/10] livepatch: Improve dynamic struct klp_object detection and manipulation
+Date: Wed,  7 Mar 2018 09:20:37 +0100
+Message-Id: <20180307082039.10196-9-pmladek@suse.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180307082039.10196-1-pmladek@suse.com>
 References: <20180307082039.10196-1-pmladek@suse.com>
@@ -24,81 +24,93 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Patches without the replace flag might depend on each other. It makes
-sense to enforce the order in which they are enabled and disabled.
+The check for dynamically allocated objects was too optimistic. There
+might exist livepatches that modify an object only with callbacks. They
+are statically defined and have "funcs" array empty.
 
-The situation is different when the patch replaces all existing ones.
-It should make the life easier for both: patch producers and users.
-Such a patch should be ready to replace basically any older patch.
-It should work well even in situations when the previous patches
-were not installed or when they were disabled from some reasons.
+A solution would be to check also the callback pointers in
+klp_is_object_dynamic(). But it still might be error prone.
 
-The code is almost ready for this:
+Note that we must avoid calling klp_free_object_dynamic() even for useless
+structures that were defined statically.
 
-  + klp_add_nops() takes into account even disabled patches. In the worst
-    case, we might enable some NOPs that are not really needed.
+Therefore this patch takes a more safe approach. It adds an extra flag
+into struct klp_object. The type is different from a similar flag on
+the func level. It is because one object structure might point to func
+structures of different types. In general, only two states make sense
+on the object level.
 
-  + klp_throw_away_replaced_patches() removes all patches down the stack.
-
-We only need to make sure that the livepatch module is put only when
-it was gotten (enabled) before.
-
-Also we need to stop enforcing the stack order for the patches
-with the replace flag. Instead, we need to make sure that they
-are still usable (not replaced).
+This fixed the problem _how_ the structures were freed. But there
+was also a bug _when_ this happened. For this we added a check
+to keep statically defined structures until the statically defined
+function structures are being freed.
 
 Signed-off-by: Petr Mladek <pmladek@suse.com>
 ---
- kernel/livepatch/core.c | 24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+ include/linux/livepatch.h |  8 +++++++-
+ kernel/livepatch/core.c   | 10 ++++++++++
+ 2 files changed, 17 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index 73ce3f93e0bc..b098dc10d4d5 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -376,17 +376,19 @@ void klp_throw_away_replaced_patches(struct klp_patch *new_patch,
- 		if (old_patch == new_patch)
- 			return;
+diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
+index ed598d849029..7222b801d63a 100644
+--- a/include/linux/livepatch.h
++++ b/include/linux/livepatch.h
+@@ -45,6 +45,11 @@ enum klp_func_type {
+ 	KLP_FUNC_NOP,		/* Dynamically allocated NOP function patch */
+ };
  
--		klp_unpatch_objects(old_patch, KLP_FUNC_ANY);
--		old_patch->enabled = false;
-+		if (old_patch->enabled) {
-+			klp_unpatch_objects(old_patch, KLP_FUNC_ANY);
-+			old_patch->enabled = false;
++enum klp_object_type {
++	KLP_OBJECT_STATIC = 0,  /* Original statically defined structure */
++	KLP_OBJECT_DYNAMIC,	/* Dynamically allocated structure. */
++};
 +
-+			if (!keep_module)
-+				module_put(old_patch->mod);
-+		}
+ /**
+  * struct klp_func - function structure for live patching
+  * @old_name:	name of the function to be patched
+@@ -143,6 +148,7 @@ struct klp_object {
+ 	struct klp_callbacks callbacks;
  
- 		/*
- 		 * Replaced patches could not get re-enabled to keep
- 		 * the code sane.
- 		 */
- 		list_move(&old_patch->list, &klp_replaced_patches);
--
--		if (!keep_module)
--			module_put(old_patch->mod);
- 	}
+ 	/* internal */
++	enum klp_object_type otype;
+ 	struct kobject kobj;
+ 	struct list_head func_list;
+ 	struct list_head obj_entry;
+@@ -198,7 +204,7 @@ struct klp_patch {
+ 
+ static inline bool klp_is_object_dynamic(struct klp_object *obj)
+ {
+-	return !obj->funcs;
++	return obj->otype == KLP_OBJECT_DYNAMIC;
  }
  
-@@ -470,8 +472,16 @@ static int __klp_enable_patch(struct klp_patch *patch)
- 	if (WARN_ON(patch->enabled))
- 		return -EINVAL;
+ static inline bool klp_is_func_dynamic(struct klp_func *func)
+diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+index 67aa4ec9e087..73ce3f93e0bc 100644
+--- a/kernel/livepatch/core.c
++++ b/kernel/livepatch/core.c
+@@ -743,6 +743,7 @@ static struct klp_object *klp_alloc_object_dynamic(const char *name)
+ 			return ERR_PTR(-ENOMEM);
+ 		}
+ 	}
++	obj->otype = KLP_OBJECT_DYNAMIC;
  
--	/* enforce stacking: only the first disabled patch can be enabled */
--	if (patch->list.prev != &klp_patches &&
-+	if (!klp_is_patch_usable(patch))
-+		return -EINVAL;
+ 	return obj;
+ }
+@@ -970,6 +971,15 @@ void klp_free_objects(struct klp_patch *patch, enum klp_func_type ftype)
+ 		if (!list_empty(&obj->func_list))
+ 			continue;
+ 
++		/*
++		 * Keep objects from the original patch initialized until
++		 * the entire patch is being freed.
++		 */
++		if (!klp_is_object_dynamic(obj) &&
++		    ftype != KLP_FUNC_STATIC &&
++		    ftype != KLP_FUNC_ANY)
++			continue;
 +
-+	/*
-+	 * Enforce stacking: only the first disabled patch can be enabled.
-+	 * This is not required for patches with the replace flags. They
-+	 * override even disabled patches that were registered earlier.
-+	 */
-+	if (!patch->replace &&
-+	    patch->list.prev != &klp_patches &&
- 	    !list_prev_entry(patch, list)->enabled)
- 		return -EBUSY;
+ 		/* Avoid freeing the object twice. */
+ 		list_del(&obj->obj_entry);
  
 -- 
 2.13.6
