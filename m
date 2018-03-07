@@ -1,84 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933871AbeCGR17 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 12:27:59 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36815 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933816AbeCGR1y (ORCPT
+        id S933976AbeCGR23 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 12:28:29 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:34585 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933903AbeCGR2Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 12:27:54 -0500
-X-Google-Smtp-Source: AG47ELuHViQTll+nwshY1Bot1BqW1I0QyqzGnEDWSTfaxJFKrS2rWHroYel8A7NsZMDEnqClTSEa90ouSHg5lekkiOw=
+        Wed, 7 Mar 2018 12:28:24 -0500
+X-Google-Smtp-Source: AG47ELuALuRMOZzcLL0A+xo3FnQpINV9HdQ3oveAhSzDjZ56n8ue5uGVzpPfEIIq0e4vhkQ9qN2tBQ==
+Subject: Re: [PATCH v4 2/2] clocksource: npcm: add NPCM7xx timer driver
+To: Tomer Maimon <tmaimon77@gmail.com>, robh+dt@kernel.org,
+        mark.rutland@arm.com, tglx@linutronix.de, avifishman70@gmail.com,
+        brendanhiggins@google.com, joel@jms.id.au
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org
+References: <1519655769-25836-1-git-send-email-tmaimon77@gmail.com>
+ <1519655769-25836-3-git-send-email-tmaimon77@gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <f0330114-1704-a464-94ce-aeafb43115ea@linaro.org>
+Date: Wed, 7 Mar 2018 18:28:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <20180307.114139.680250568317481879.davem@davemloft.net>
-References: <20180305124054.09966cb0@canb.auug.org.au> <CADvbK_cMVBWO7zgnyG=L8T5cTKfjyUXQAAv+a2ne5WVZ9TBJ4g@mail.gmail.com>
- <CAHC9VhST6LhUj6H28Ws96EaRzkp4FN91h46iGKpd2Yk44H7Jpw@mail.gmail.com> <20180307.114139.680250568317481879.davem@davemloft.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 7 Mar 2018 12:27:52 -0500
-Message-ID: <CAHC9VhTUORhy1dADEza8tr4DW6gTjqxXyg0wb0cwFCRy+WRkMQ@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the selinux tree with the net-next tree
-To: David Miller <davem@davemloft.net>
-Cc: lucien.xin@gmail.com, sfr@canb.auug.org.au, netdev@vger.kernel.org,
-        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-        richard_c_haines@btinternet.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1519655769-25836-3-git-send-email-tmaimon77@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 7, 2018 at 11:41 AM, David Miller <davem@davemloft.net> wrote:
-> From: Paul Moore <paul@paul-moore.com>
-> Date: Wed, 7 Mar 2018 11:34:31 -0500
->> On Mon, Mar 5, 2018 at 2:03 AM, Xin Long <lucien.xin@gmail.com> wrote:
->>> On Mon, Mar 5, 2018 at 9:40 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>> Hi Paul,
->>>>
->>>> Today's linux-next merge of the selinux tree got a conflict in:
->>>>
->>>>   net/sctp/socket.c
->>>>
->>>> between several refactoring commits from the net-next tree and commit:
->>>>
->>>>   2277c7cd75e3 ("sctp: Add LSM hooks")
->>>>
->>>> from the selinux tree.
->>>>
->>>> I fixed it up (I think - see below) and can carry the fix as
->>> The fixup is great!  the same as I mentioned in:
->>> https://patchwork.ozlabs.org/patch/879898/
->>> for net-next.git
->>>
->>>> necessary. This is now fixed as far as linux-next is concerned, but any
->>>> non trivial conflicts should be mentioned to your upstream maintainer
->>>> when your tree is submitted for merging.  You may also want to consider
->>>> cooperating with the maintainer of the conflicting tree to minimise any
->>>> particularly complex conflicts.
->>>
->>> [net-next,0/9] sctp: clean up sctp_sendmsg, this patchset was just applied
->>> in net-next. So I just guess it might not yet be there when selinux tree was
->>> being submitted.
->>
->> The selinux/next branch is based on v4.16-rc1 and doesn't feed into
->> the netdev tree, it goes straight to Linus during the merge window so
->> unfortunately I think we may need to carry this for some time and
->> relay this fix-up patch up to Linus during the merge window.
->
-> What a mess.
->
-> The SCTP option changes should have gone through my tree in retrospect.
 
-It's unfortunate.
+Hi Tomer,
 
-I'm not sure we could have cleanly separated the core network stack
-changes from the rest of the SELinux/SCTP enablement, regardless it's
-a bit late at this point.  The only other thought would have been to
-simply push Xin Long's cleanup patches until after the next merge
-window, but that would only be worth considering if they truly were
-just cleanup patches, and even then it doesn't seem very fair to Xin
-Long to have to wait.
+change the subject to: clocksource/drivers/npcm: Add NPCM7xx timer driver
 
-Thankfully stuff like this is rare (at least from a netdev/SELinux POV).
+On 26/02/2018 15:36, Tomer Maimon wrote:
+> Add Nuvoton BMC NPCM7xx timer driver.
+> 
+> the clocksource Enable 24-bit TIMER0 and TIMER1 counters,
+> while TIMER0 serve as clockevent and TIMER1 serve as clocksource.
+> 
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> Reviewed-by: Brendan Higgins <brendanhiggins@xxxxxxxxxx>
+
+
+[ ... ]
+
+> +config NPCM7XX_TIMER
+> +	bool "NPCM7xx timer driver" if COMPILE_TEST
+> +	depends on HAS_IOMEM
+> +	select CLKSRC_MMIO
+> +	help
+> +	  Enable 24-bit TIMER0 and TIMER1 counters in the NPCM7xx arcithcture,
+
+architecture
+
+> +	  While TIMER0 serves as clockevent and TIMER1 serves as clocksource.
+> +
+>  config CADENCE_TTC_TIMER
+>  	bool "Cadence TTC timer driver" if COMPILE_TEST
+>  	depends on COMMON_CLK
+> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+> index d6dec4489d66..b16c1a2b9e0d 100644
+> --- a/drivers/clocksource/Makefile
+> +++ b/drivers/clocksource/Makefile
+> @@ -55,6 +55,7 @@ obj-$(CONFIG_CLKSRC_NPS)	+= timer-nps.o
+>  obj-$(CONFIG_OXNAS_RPS_TIMER)	+= timer-oxnas-rps.o
+>  obj-$(CONFIG_OWL_TIMER)		+= owl-timer.o
+>  obj-$(CONFIG_SPRD_TIMER)	+= timer-sprd.o
+> +obj-$(CONFIG_NPCM7XX_TIMER)	+= npcm7xx-timer.o
+
+Not mandatory but if you can change to timer-npcm7xx that would be nice.
+
+>  obj-$(CONFIG_ARC_TIMERS)		+= arc_timer.o
+
+[ ... ]
+
+> +static int npcm7xx_clockevent_setnextevent(unsigned long evt,
+> +		struct clock_event_device *clk)
+
+npcm7xx_timer_set_next_event()
+
+[ ... ]
+
+> +static int __init npcm7xx_timer_init(struct device_node *np)
+> +{
+> +	struct clk *clk;
+> +	int ret;
+> +	u32 rate;
+> +
+> +	clk = of_clk_get(np, 0);
+> +
+> +	if (IS_ERR(clk)) {
+> +		ret = of_property_read_u32(np, "clock-frequency", &rate);
+> +		if (ret)
+> +			return ret;
+> +	} else {
+> +		clk_prepare_enable(clk);
+> +		rate = clk_get_rate(clk);
+> +		npcm7xx_to.of_clk.clk = clk;
+> +	}
+
+[ ... ]
+
+See comment on DT binding patch 1/2
+
+> +err_timer_of_init:
+> +	if (!IS_ERR(clk)) {
+> +		clk_disable_unprepare(clk);
+> +		clk_put(clk);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +TIMER_OF_DECLARE(npcm7xx, "nuvoton,npcm750-timer", npcm7xx_timer_init);
+> +
+> 
+
 
 -- 
-paul moore
-www.paul-moore.com
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
