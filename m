@@ -1,159 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934082AbeCGPzv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 10:55:51 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37158 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934001AbeCGPun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 10:50:43 -0500
-From: Jiri Olsa <jolsa@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH 09/19] perf tests: Add mem2node object test
-Date: Wed,  7 Mar 2018 16:50:10 +0100
-Message-Id: <20180307155020.32613-10-jolsa@kernel.org>
-In-Reply-To: <20180307155020.32613-1-jolsa@kernel.org>
-References: <20180307155020.32613-1-jolsa@kernel.org>
+        id S934085AbeCGP4S (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 10:56:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47462 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934094AbeCGP4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 10:56:13 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FBC2204EE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Wed, 7 Mar 2018 15:56:07 +0000
+From: James Hogan <jhogan@kernel.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+        Allan Nielsen <Allan.Nielsen@microsemi.com>, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] MIPS: mscc: add ocelot dtsi
+Message-ID: <20180307155605.GS4197@saruman>
+References: <20180306121607.1567-1-alexandre.belloni@bootlin.com>
+ <20180306121607.1567-3-alexandre.belloni@bootlin.com>
+ <20180307151753.GQ4197@saruman>
+ <20180307152751.GM3035@piout.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="PhxIMoEr374zxJm2"
+Content-Disposition: inline
+In-Reply-To: <20180307152751.GM3035@piout.net>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding mem2node object automated test.
 
-The test prepares few artificial node - memory maps and
-verifies the mem2node object returns proper node values
-to given addresses.
+--PhxIMoEr374zxJm2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Link: http://lkml.kernel.org/n/tip-17xdxr5k1zfca9o3fymowqa5@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/tests/Build          |  1 +
- tools/perf/tests/builtin-test.c |  4 +++
- tools/perf/tests/mem2node.c     | 73 +++++++++++++++++++++++++++++++++++++++++
- tools/perf/tests/tests.h        |  1 +
- 4 files changed, 79 insertions(+)
- create mode 100644 tools/perf/tests/mem2node.c
+On Wed, Mar 07, 2018 at 04:27:51PM +0100, Alexandre Belloni wrote:
+> On 07/03/2018 at 15:17:56 +0000, James Hogan wrote:
+> > On Tue, Mar 06, 2018 at 01:16:04PM +0100, Alexandre Belloni wrote:
+> > > diff --git a/arch/mips/boot/dts/mscc/ocelot.dtsi b/arch/mips/boot/dts=
+/mscc/ocelot.dtsi
+> > > new file mode 100644
+> > > index 000000000000..8c3210577410
+> > > --- /dev/null
+> > > +++ b/arch/mips/boot/dts/mscc/ocelot.dtsi
+> > > @@ -0,0 +1,117 @@
+> > > +//SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> >=20
+> > Niggle: there should be a space after // for consistency with other
+> > files. Same in patch 3.
+> >=20
+>=20
+> Ah, yes...
+>=20
+> If that is the only thing left, I can resend right away
 
-diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
-index 87bf3edb037c..45782220ac23 100644
---- a/tools/perf/tests/Build
-+++ b/tools/perf/tests/Build
-@@ -47,6 +47,7 @@ perf-y += bitmap.o
- perf-y += perf-hooks.o
- perf-y += clang.o
- perf-y += unit_number__scnprintf.o
-+perf-y += mem2node.o
- 
- $(OUTPUT)tests/llvm-src-base.c: tests/bpf-script-example.c tests/Build
- 	$(call rule_mkdir)
-diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-index fafa014240cd..09071ef4434f 100644
---- a/tools/perf/tests/builtin-test.c
-+++ b/tools/perf/tests/builtin-test.c
-@@ -271,6 +271,10 @@ static struct test generic_tests[] = {
- 		.func = test__unit_number__scnprint,
- 	},
- 	{
-+		.desc = "mem2node",
-+		.func = test__mem2node,
-+	},
-+	{
- 		.func = NULL,
- 	},
- };
-diff --git a/tools/perf/tests/mem2node.c b/tools/perf/tests/mem2node.c
-new file mode 100644
-index 000000000000..c883607dcd22
---- /dev/null
-+++ b/tools/perf/tests/mem2node.c
-@@ -0,0 +1,73 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/compiler.h>
-+#include <linux/bitmap.h>
-+#include "cpumap.h"
-+#include "mem2node.h"
-+#include "tests.h"
-+
-+static struct node {
-+	int		 node;
-+	const char 	*map;
-+} test_nodes[] = {
-+	{ .node = 0, .map = "0"     },
-+	{ .node = 1, .map = "1-2"   },
-+	{ .node = 3, .map = "5-7,9" },
-+};
-+
-+#define T TEST_ASSERT_VAL
-+
-+static unsigned long *get_bitmap(const char *str, int nbits)
-+{
-+	struct cpu_map *map = cpu_map__new(str);
-+	unsigned long *bm = NULL;
-+	int i;
-+
-+	bm = bitmap_alloc(nbits);
-+
-+	if (map && bm) {
-+		bitmap_zero(bm, nbits);
-+
-+		for (i = 0; i < map->nr; i++) {
-+			set_bit(map->map[i], bm);
-+		}
-+	}
-+
-+	if (map)
-+		cpu_map__put(map);
-+	else
-+		free(bm);
-+
-+	return bm && map ? bm : NULL;
-+}
-+
-+int test__mem2node(struct test *t __maybe_unused, int subtest __maybe_unused)
-+{
-+	struct mem2node map;
-+	struct memory_node nodes[3];
-+	struct perf_env env = {
-+		.memory_nodes    = (struct memory_node *) &nodes[0],
-+		.nr_memory_nodes = ARRAY_SIZE(nodes),
-+		.memory_bsize    = 0x100,
-+	};
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(nodes); i++) {
-+		nodes[i].node = test_nodes[i].node;
-+		nodes[i].size = 10;
-+
-+		T("failed: alloc bitmap",
-+		  (nodes[i].set = get_bitmap(test_nodes[i].map, 10)));
-+	}
-+
-+	T("failed: mem2node__init", !mem2node__init(&map, &env));
-+	T("failed: mem2node__node",  0 == mem2node__node(&map,   0x50));
-+	T("failed: mem2node__node",  1 == mem2node__node(&map,  0x100));
-+	T("failed: mem2node__node",  1 == mem2node__node(&map,  0x250));
-+	T("failed: mem2node__node",  3 == mem2node__node(&map,  0x500));
-+	T("failed: mem2node__node",  3 == mem2node__node(&map,  0x650));
-+	T("failed: mem2node__node", -1 == mem2node__node(&map,  0x450));
-+	T("failed: mem2node__node", -1 == mem2node__node(&map, 0x1050));
-+
-+	mem2node__exit(&map);
-+	return 0;
-+}
-diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
-index 2862b80bc288..2e169819e647 100644
---- a/tools/perf/tests/tests.h
-+++ b/tools/perf/tests/tests.h
-@@ -102,6 +102,7 @@ int test__clang(struct test *test, int subtest);
- const char *test__clang_subtest_get_desc(int subtest);
- int test__clang_subtest_get_nr(void);
- int test__unit_number__scnprint(struct test *test, int subtest);
-+int test__mem2node(struct test *t, int subtest);
- 
- bool test__bp_signal_is_supported(void);
- 
--- 
-2.13.6
+There are a couple of irqchip patches from v2 which have gone from the
+latest versions:
+https://patchwork.linux-mips.org/project/linux-mips/list/?series=3D568
+
+and the vendor prefix too from v4:
+https://patchwork.linux-mips.org/project/linux-mips/list/?series=3D856
+
+I presume they're all still relevant. Were you expecting the irqchip
+ones to go through MIPS too? We'd need an ack from the irqchip folk if
+so.
+
+Cheers
+James
+
+--PhxIMoEr374zxJm2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqgC5UACgkQbAtpk944
+dnqpZxAAhdOHk4mQz5uDlvDsxv02A9Zn0D04DY5dAfGqYa6PoqNNrx7+Mj0rxo5s
+G0LweMNaHETxNlIae1bbOEF0FqT3jlRw4t6QQE4cdBYKq+v02rcmCCKlSPBLACSy
+gVpvSvl9QU3bJjMFErUTtboS3Ohn0SAC5TmSyVnUFxNGTCfZfT14/xLVE+nZLhBv
+R79kLdKwwWm/Cmk8yfSFAWEDygkSAPWoZ2VYgeE9DHbRMWTNUPNujF5HMug3j4rx
+suHmOpI1Hr/aP0eD5iY5YW5wXCeDqSCAQN8U6QVjttE9O1MZrWW3iKzSkuFc0f8h
+dgfDIj8sNazAO7rrvgwEMG8L4KiAD3fdwKazIxtkH941lJVJlOYPnXsG+i5agadw
+VpNJR/WvkQdXsUIOp5F9ETwSTwXbTti2DaoPqtOC7eC9fXFIx5Ie+5IaeZF3/uEv
+RKRkHcOrc2jxxQzF9SX9CM+n/ZDsr8zbfLSlsuDfZQEsDbLQr2ul69IqY7h5WOWH
+6coqoXWJESUG1mZwoLn62uschdbcALLFRoJ8Thm+u5moFkcXxaTRwPqerb9IqXLP
+X6eTgIyUvMIxCJNpMAv/W1dBZ3FRdL8IYzGbdHnRxfED+pF4T4IKpe4K6PRiJAK9
+gSfYeKJ3NCjAGMldOjtkzGkJ27o2wwpgXnpL2CcZKxXbSfoAXcg=
+=vF5I
+-----END PGP SIGNATURE-----
+
+--PhxIMoEr374zxJm2--
