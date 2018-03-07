@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4098462-1520453113-2-8920435317976664067
+X-Cyrus-Session-Id: sloti22d1t05-4098462-1520453082-2-6067509905100673222
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520453113; b=iZ0JzVkfXBNCFTsiTai0W4NtH0/p8Hg2389x3WFhMEYBTNV
-    04y++zkd9DmQvtOsV7BNIHvVCR4Uzx6vZY0UGXeYGz2ACqezduMqSG8+2GQl7au0
-    JIGPWr7utvFtPv8PtNcl0CwCtpHF56+Nz6zSS/Uh1sVpdzywZIwhbVXQjGU5aUaV
-    JxnnNkGF5yn9YY/1QAomUGfura7NgtDVnkgjqZombpd5HuJFF8lJ0yLK7Gli5Zvh
-    5A6kxPzUVJ+Y4aTW4UeXolVVMaiWE9S0rzoOiQFizFuQLUDOUs4GU4j35ZS3/eNY
-    uS8yGJ0LQNcLIgluFXl4YTTscUFm3jq1FfgVjIg==
+    t=1520453081; b=TZx79AIS8gUeHfzC0QJ3eM6FHybmw2qqTX+L1jv9jz81rhs
+    OGYUBkK2lAGImk6zf2OPrXn7BmPh6UKsxmXhtsGh1A1z2Rc0Mb6R+0F9hmZYG4XG
+    bM+qLvvdk2spZEBiyI1RQam02/gkt0kgWbBlexZGosBaXFczms1uqFQfBSPSieC4
+    AqR/I0rgoVcGd8Lac0Yz4805wEk8UKLZflnzelVWyp55BCf7DOjkxJqOX8tTbWsD
+    ++jZrGJN4Ev5v8HcEHy71ju2Y6VosXenDD9/dAiSgD6ilQKo114MX6e4hppPGWJC
+    GdDMcSNo8GOtJIpCxgQaPtC8NA4blafT7wYWczQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520453113; bh=uP4eP94G4VB0UOYVwLQsbQtLjO
-    PzXouOBhRpWx8/wRk=; b=G8a5kMQ4Bzjl5T243eMG8OydOq7RDpXGb9wE2Vl92j
-    62U7jnp/tT18KaMR+3NghYxiHg35WXKTQ16ElCY4UF1YKWNM4s/JeSPp+e57scMe
-    YE4K2fbe+dACMxf4gnTz4c0mq5I36zA6Ci/+fKemlqy8zHhDR854nVsZNNResoyX
-    w+8p0Ynftn9JLhfYKbgcCr6Cw+oPSYz0mCAeZhM72Ar0T3iAIXkvBpvaQ8yIhINV
-    jzkL2AV5qGp1IvA8LIrLfzrfaqqIZRUWpLFrEtLRlR7NHb/uP1iipeQk0eBxc1ah
-    BDN7MCm7yiGCFTsCS1R5I7TesNExPDfAuXd56pb6YS/A==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1520453081; bh=Z4DTuwlFekou0ka4yyh1dNyyHX
+    J1pmwoVuXjQ0uwEUY=; b=iUDXy4aNY2pPHqYZ30i8u2LvysHMkz49DZjAGfY4yl
+    mVrfzGU6ra8up0axgxB2E6rawR+alcVJYz/UUvs0AV5OeYNgVlmhhI6Hza8hrJFU
+    PDi7MBoyqhb/71wa6hCq4kxP6fuhJKH5JkTYjwyFoSt7ygfgj/0HJSuRC6dg4u8/
+    n+fBuG/bmD7aF+I8HKgzniuDKE3R5xWcTUNcvugGKcL+rRg6VucBBDfLAC8DZ4Hc
+    uSDkmibrGuLJPWo0VaiPvY5NSk9gZzJKBHRKVWXF3HIp0kYnHsImhM8epL2UEvHz
+    skNq2iUc4Cx3h1zfCXnkdxsONNjSbrKT0aFc1cAUqwNA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,20 +49,22 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934803AbeCGUE4 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 15:04:56 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44536 "EHLO
+        id S964912AbeCGUEj (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Mar 2018 15:04:39 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44564 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965509AbeCGTqT (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:46:19 -0500
+        with ESMTP id S965465AbeCGTqX (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:46:23 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gal Pressman <galp@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.14 050/110] net/mlx5e: Specify numa node when allocating drop rq
-Date: Wed,  7 Mar 2018 11:38:33 -0800
-Message-Id: <20180307191046.119870190@linuxfoundation.org>
+        stable@vger.kernel.org, Teodor Milkov <tm@del.bg>,
+        Yuchung Cheng <ycheng@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 060/110] tcp: revert F-RTO middle-box workaround
+Date: Wed,  7 Mar 2018 11:38:43 -0800
+Message-Id: <20180307191047.255266311@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -80,63 +82,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Gal Pressman <galp@mellanox.com>
+From: Yuchung Cheng <ycheng@google.com>
 
 
-[ Upstream commit 2f0db87901698cd73d828cc6fb1957b8916fc911 ]
+[ Upstream commit d4131f09770d9b7471c9da65e6ecd2477746ac5c ]
 
-When allocating a drop rq, no numa node is explicitly set which means
-allocations are done on node zero. This is not necessarily the nearest
-numa node to the HCA, and even worse, might even be a memoryless numa
-node.
+This reverts commit cc663f4d4c97b7297fb45135ab23cfd508b35a77. While fixing
+some broken middle-boxes that modifies receive window fields, it does not
+address middle-boxes that strip off SACK options. The best solution is
+to fully revert this patch and the root F-RTO enhancement.
 
-Choose the numa_node given to us by the pci device in order to properly
-allocate the coherent dma memory instead of assuming zero is valid.
-
-Fixes: 556dd1b9c313 ("net/mlx5e: Set drop RQ's necessary parameters only")
-Signed-off-by: Gal Pressman <galp@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Fixes: cc663f4d4c97 ("tcp: restrict F-RTO to work-around broken middle-boxes")
+Reported-by: Teodor Milkov <tm@del.bg>
+Signed-off-by: Yuchung Cheng <ycheng@google.com>
+Signed-off-by: Neal Cardwell <ncardwell@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ net/ipv4/tcp_input.c |   17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-@@ -1918,13 +1918,16 @@ static void mlx5e_build_rq_param(struct
- 	param->wq.linear = 1;
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -1947,7 +1947,6 @@ void tcp_enter_loss(struct sock *sk)
+ 	struct tcp_sock *tp = tcp_sk(sk);
+ 	struct net *net = sock_net(sk);
+ 	struct sk_buff *skb;
+-	bool new_recovery = icsk->icsk_ca_state < TCP_CA_Recovery;
+ 	bool is_reneg;			/* is receiver reneging on SACKs? */
+ 	bool mark_lost;
+ 
+@@ -2010,17 +2009,15 @@ void tcp_enter_loss(struct sock *sk)
+ 	tp->high_seq = tp->snd_nxt;
+ 	tcp_ecn_queue_cwr(tp);
+ 
+-	/* F-RTO RFC5682 sec 3.1 step 1: retransmit SND.UNA if no previous
+-	 * loss recovery is underway except recurring timeout(s) on
+-	 * the same SND.UNA (sec 3.2). Disable F-RTO on path MTU probing
+-	 *
+-	 * In theory F-RTO can be used repeatedly during loss recovery.
+-	 * In practice this interacts badly with broken middle-boxes that
+-	 * falsely raise the receive window, which results in repeated
+-	 * timeouts and stop-and-go behavior.
++	/* F-RTO RFC5682 sec 3.1 step 1 mandates to disable F-RTO
++	 * if a previous recovery is underway, otherwise it may incorrectly
++	 * call a timeout spurious if some previously retransmitted packets
++	 * are s/acked (sec 3.2). We do not apply that retriction since
++	 * retransmitted skbs are permanently tagged with TCPCB_EVER_RETRANS
++	 * so FLAG_ORIG_SACK_ACKED is always correct. But we do disable F-RTO
++	 * on PTMU discovery to avoid sending new data.
+ 	 */
+ 	tp->frto = sysctl_tcp_frto &&
+-		   (new_recovery || icsk->icsk_retransmits) &&
+ 		   !inet_csk(sk)->icsk_mtup.probe_size;
  }
  
--static void mlx5e_build_drop_rq_param(struct mlx5e_rq_param *param)
-+static void mlx5e_build_drop_rq_param(struct mlx5_core_dev *mdev,
-+				      struct mlx5e_rq_param *param)
- {
- 	void *rqc = param->rqc;
- 	void *wq = MLX5_ADDR_OF(rqc, rqc, wq);
- 
- 	MLX5_SET(wq, wq, wq_type, MLX5_WQ_TYPE_LINKED_LIST);
- 	MLX5_SET(wq, wq, log_wq_stride,    ilog2(sizeof(struct mlx5e_rx_wqe)));
-+
-+	param->wq.buf_numa_node = dev_to_node(&mdev->pdev->dev);
- }
- 
- static void mlx5e_build_sq_param_common(struct mlx5e_priv *priv,
-@@ -2778,6 +2781,9 @@ static int mlx5e_alloc_drop_cq(struct ml
- 			       struct mlx5e_cq *cq,
- 			       struct mlx5e_cq_param *param)
- {
-+	param->wq.buf_numa_node = dev_to_node(&mdev->pdev->dev);
-+	param->wq.db_numa_node  = dev_to_node(&mdev->pdev->dev);
-+
- 	return mlx5e_alloc_cq_common(mdev, param, cq);
- }
- 
-@@ -2789,7 +2795,7 @@ static int mlx5e_open_drop_rq(struct mlx
- 	struct mlx5e_cq *cq = &drop_rq->cq;
- 	int err;
- 
--	mlx5e_build_drop_rq_param(&rq_param);
-+	mlx5e_build_drop_rq_param(mdev, &rq_param);
- 
- 	err = mlx5e_alloc_drop_cq(mdev, cq, &cq_param);
- 	if (err)
