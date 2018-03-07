@@ -1,83 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964819AbeCGUfC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 15:35:02 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:35663 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934327AbeCGUe7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 15:34:59 -0500
-X-Google-Smtp-Source: AG47ELtRBodsIKw9syRI1qJGOpTCoyVZ71WHcPL2rJa9ccBOuDIjhgZq9buvZ2Ng2LGiXljIjbzpIA==
-From: Mathieu Malaterre <malat@debian.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org (open list:LINUX FOR POWERPC (32-BIT AND
-        64-BIT)),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 05/21] powerpc: Avoid comparison of unsigned long >= 0 in pfn_valid
-Date: Wed,  7 Mar 2018 21:34:35 +0100
-Message-Id: <20180307203436.23696-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180225172236.29650-6-malat@debian.org>
-References: <20180225172236.29650-6-malat@debian.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S964940AbeCGUfx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 15:35:53 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53420 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934327AbeCGUfI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 15:35:08 -0500
+From: Waiman Long <longman@redhat.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>, Waiman Long <longman@redhat.com>
+Subject: [PATCH 0/5] sysctl: Enable easy addition of range showing sysctl parameters
+Date: Wed,  7 Mar 2018 15:34:24 -0500
+Message-Id: <1520454869-13871-1-git-send-email-longman@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rewrite comparison since all values compared are of type `unsigned long`.
+This patch series is to be applied on top of the patch
+series "ipc: Clamp *mni to the real IPCMNI limit"
+(https://lkml.org/lkml/2018/3/1/716).
 
-Instead of using unsigned properties and rewriting the original code as:
-(originally suggested by Segher Boessenkool <segher@kernel.crashing.org>)
+The purpose of this patch series is to enable easy addition of new
+auxillary sysctl parameters that can be read to display ranges of
+other sysctl parameters they are associated with.
 
-  #define pfn_valid(pfn) \
-               (((pfn) - ARCH_PFN_OFFSET) < (max_mapnr - ARCH_PFN_OFFSET))
+With this patch series applied, a developer can add a range-showing
+auxillary sysctl entries by just setting the CTL_FLAGS_SHOW_RANGE
+flag in the ctl_table entry that has a range to show and add one more
+to the number of reserved range entries in the CTL_RESERVE_RANGES()
+macro before the terminating null entry. The new auxillary sysctl
+parameters will have the "_range" suffix added.
 
-Prefer a static inline function to make code as readable as possible.
+The number of ctl_table entries that have the CTL_FLAGS_SHOW_RANGE flag
+should match the number of reserved entries in the CTL_RESERVE_RANGES()
+macro. Otherwise, warning or error like below will be logged in the
+kernel ring buffer.
 
-Fix a warning (treated as error in W=1):
+  Warning: Too many reserved ctl_table range entries ("shmmax")!
 
-  CC      arch/powerpc/kernel/irq.o
-In file included from ./include/linux/bug.h:5:0,
-                 from ./include/linux/cpumask.h:13,
-                 from ./include/linux/smp.h:13,
-                 from ./include/linux/kernel_stat.h:5,
-                 from arch/powerpc/kernel/irq.c:35:
-./include/linux/dma-mapping.h: In function ‘dma_map_resource’:
-./arch/powerpc/include/asm/page.h:129:32: error: comparison of unsigned expression >= 0 is always true [-Werror=type-limits]
- #define pfn_valid(pfn)  ((pfn) >= ARCH_PFN_OFFSET && (pfn) < max_mapnr)
-                                ^
-Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
- arch/powerpc/include/asm/page.h | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+  Error: Insufficient reserved ctl_table range entries ("shmmax")!
 
-diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
-index 8da5d4c1cab2..6f74938483b7 100644
---- a/arch/powerpc/include/asm/page.h
-+++ b/arch/powerpc/include/asm/page.h
-@@ -126,7 +126,15 @@ extern long long virt_phys_offset;
- 
- #ifdef CONFIG_FLATMEM
- #define ARCH_PFN_OFFSET		((unsigned long)(MEMORY_START >> PAGE_SHIFT))
--#define pfn_valid(pfn)		((pfn) >= ARCH_PFN_OFFSET && (pfn) < max_mapnr)
-+#ifndef __ASSEMBLY__
-+extern unsigned long max_mapnr;
-+static inline bool pfn_valid(unsigned long pfn)
-+{
-+	unsigned long min_pfn = ARCH_PFN_OFFSET;
-+
-+	return pfn >= min_pfn && pfn < max_mapnr;
-+}
-+#endif
- #endif
- 
- #define virt_to_pfn(kaddr)	(__pa(kaddr) >> PAGE_SHIFT)
+The IPC sysctl parameters msgmni and shmmni are extended to have
+those auxillary sysctl entries. As a result, one can now find out
+the range of allowable value by looking at the corresponding
+auxillary _range sysctl parameters. For example,
+
+  % cat msgmni_range
+  [0, 32768]
+
+That means the msgmni sysctl parameter has to be within the 0 - 32768
+range inclusively.
+
+Patch 1 clarifies how the ctl_table.flags field should be used.
+
+Patch 2 adds a new proc_show_minmax() handler to display a min/max
+range.
+
+Patch 3 defines the new CTL_FLAGS_SHOW_RANGE flag and the
+CTL_RESERVE_RANGES() macro.
+
+Patch 4 modifies the proc_sysctl.c file to handle the
+CTL_FLAGS_SHOW_RANGE in ctl_table registration and un-registration.
+
+Patch 5 extends msgmni and shmmni to have their corresponding range
+showing sysctl parameters.
+
+Waiman Long (5):
+  sysctl: Clarify how the ctl_table.flags should be set
+  sysctl: Add a new handler proc_show_minmax()
+  sysctl: Add a new ctl_table flag to show min/max range
+  proc/sysctl: Handle CTL_FLAGS_SHOW_RANGE ctl_table flag
+  ipc: Show ranges of msgmni and shmmni with CTL_FLAGS_SHOW_RANGE
+
+ fs/proc/proc_sysctl.c  | 99 +++++++++++++++++++++++++++++++++++++++++++++++---
+ include/linux/sysctl.h | 52 +++++++++++++++++++++++++-
+ ipc/ipc_sysctl.c       |  5 ++-
+ kernel/sysctl.c        | 91 ++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 238 insertions(+), 9 deletions(-)
+
 -- 
-2.11.0
+1.8.3.1
