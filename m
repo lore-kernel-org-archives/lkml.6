@@ -1,114 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751151AbeCGHCD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 02:02:03 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54953 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751029AbeCGHCC (ORCPT
+        id S1751160AbeCGHEe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 02:04:34 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:57127 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750994AbeCGHEc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 02:02:02 -0500
-X-Google-Smtp-Source: AG47ELuBFSdbVogaY8CJkwSokEdabs0u/3KG8M9grI27Hq2SbA8W/xj+e5DSb9sGlvorbI4aJ/QK0Q==
-Date: Wed, 7 Mar 2018 08:01:57 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>, Borislav Petkov <bp@suse.de>,
-        Andi Kleen <ak@linux.intel.com>, Matthew Wilcox <willy@infradead.org>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 2/5] x86/boot/compressed/64: Find a place for 32-bit
- trampoline
-Message-ID: <20180307070157.jgf2omu4hs2xh7pd@gmail.com>
-References: <20180227154217.69347-1-kirill.shutemov@linux.intel.com>
- <20180227154217.69347-3-kirill.shutemov@linux.intel.com>
- <20180228131905.ypzjmaqg3zjke2ud@node.shutemov.name>
+        Wed, 7 Mar 2018 02:04:32 -0500
+Subject: Re: [PATCH v6] mmc: Export host capabilities to debugfs.
+To: Avri Altman <Avri.Altman@wdc.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>,
+        "andriy.shevchenko@linux.intel.com"
+        <andriy.shevchenko@linux.intel.com>
+CC: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Vladimir_Zapolskiy@mentor.com" <Vladimir_Zapolskiy@mentor.com>
+References: <1520401051-11135-1-git-send-email-harish_kandiga@mentor.com>
+ <DM5PR04MB10857D9F0177C760047100D1FCD80@DM5PR04MB1085.namprd04.prod.outlook.com>
+From: Harish Jenny K N <harish_kandiga@mentor.com>
+Message-ID: <af726c5a-edd4-94f9-7789-4527e9aff93d@mentor.com>
+Date: Wed, 7 Mar 2018 12:34:07 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180228131905.ypzjmaqg3zjke2ud@node.shutemov.name>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <DM5PR04MB10857D9F0177C760047100D1FCD80@DM5PR04MB1085.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [137.202.0.87]
+X-ClientProxiedBy: svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2) To
+ SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Kirill A. Shutemov <kirill@shutemov.name> wrote:
 
-> On Tue, Feb 27, 2018 at 06:42:14PM +0300, Kirill A. Shutemov wrote:
-> > If a bootloader enables 64-bit mode with 4-level paging, we might need to
-> > switch over to 5-level paging. The switching requires the disabling of
-> > paging, which works fine if kernel itself is loaded below 4G.
-> > 
-> > But if the bootloader puts the kernel above 4G (not sure if anybody does
-> > this), we would lose control as soon as paging is disabled, because the
-> > code becomes unreachable to the CPU.
-> > 
-> > To handle the situation, we need a trampoline in lower memory that would
-> > take care of switching on 5-level paging.
-> > 
-> > This patch finds a spot in low memory for a trampoline.
-> > 
-> > The heuristic is based on code in reserve_bios_regions().
-> > 
-> > We find the end of low memory based on BIOS and EBDA start addresses.
-> > The trampoline is put just before end of low memory. It's mimic approach
-> > taken to allocate memory for realtime trampoline.
-> > 
-> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > Tested-by: Borislav Petkov <bp@suse.de>
-> > ---
-> >  arch/x86/boot/compressed/misc.c       |  4 ++++
-> >  arch/x86/boot/compressed/pgtable.h    | 11 +++++++++++
-> >  arch/x86/boot/compressed/pgtable_64.c | 34 ++++++++++++++++++++++++++++++++++
-> >  3 files changed, 49 insertions(+)
-> >  create mode 100644 arch/x86/boot/compressed/pgtable.h
-> > 
-> > diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
-> > index b50c42455e25..e58409667b13 100644
-> > --- a/arch/x86/boot/compressed/misc.c
-> > +++ b/arch/x86/boot/compressed/misc.c
-> > @@ -14,6 +14,7 @@
-> >  
-> >  #include "misc.h"
-> >  #include "error.h"
-> > +#include "pgtable.h"
-> >  #include "../string.h"
-> >  #include "../voffset.h"
-> >  
-> > @@ -372,6 +373,9 @@ asmlinkage __visible void *extract_kernel(void *rmode, memptr heap,
-> >  	debug_putaddr(output_len);
-> >  	debug_putaddr(kernel_total_size);
-> >  
-> > +	/* Report address of 32-bit trampoline */
-> > +	debug_putaddr(trampoline_32bit);
-> > +
-> >  	/*
-> >  	 * The memory hole needed for the kernel is the larger of either
-> >  	 * the entire decompressed kernel plus relocation table, or the
-> 
-> 0-day found problem with the patch on 32-bit config.
-> 
-> Here's fixup:
-> 
-> diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
-> index e58409667b13..8e4b55dd5df9 100644
-> --- a/arch/x86/boot/compressed/misc.c
-> +++ b/arch/x86/boot/compressed/misc.c
-> @@ -373,8 +373,10 @@ asmlinkage __visible void *extract_kernel(void *rmode, memptr heap,
->  	debug_putaddr(output_len);
->  	debug_putaddr(kernel_total_size);
->  
-> +#ifdef CONFIG_X86_64
->  	/* Report address of 32-bit trampoline */
->  	debug_putaddr(trampoline_32bit);
-> +#endif
+On Wednesday 07 March 2018 12:10 PM, Avri Altman wrote:
+>
+>> -----Original Message-----
+>> From: Harish Jenny K N [mailto:harish_kandiga@mentor.com]
+>> Sent: Wednesday, March 07, 2018 7:38 AM
+>> To: ulf.hansson@linaro.org; linus.walleij@linaro.org;
+>> adrian.hunter@intel.com; shawn.lin@rock-chips.com; Avri Altman
+>> <Avri.Altman@wdc.com>; andriy.shevchenko@linux.intel.com
+>> Cc: linux-mmc@vger.kernel.org; linux-kernel@vger.kernel.org;
+>> harish_kandiga@mentor.com; Vladimir_Zapolskiy@mentor.com
+>> Subject: [PATCH v6] mmc: Export host capabilities to debugfs.
+>>
+>> This patch exports the host capabilities to debugfs
+>>
+>> This idea of sharing host capabilities over debugfs came up from Abbas Raza
+>> <Abbas_Raza@mentor.com> Earlier discussions:
+>> https://lkml.org/lkml/2018/3/5/357
+>> https://www.spinics.net/lists/linux-mmc/msg48219.html
+>>
+>> Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
+>> ---
+>>
+>>
+>> +static int mmc_caps_show(struct seq_file *s, void *unused) {
+>> +	struct mmc_host *host = s->private;
+>> +	u32 caps = host->caps;
+>> +
+>> +	seq_puts(s, "\nMMC Host capabilities are:\n");
+>> +	seq_puts(s,
+>> "=============================================\n");
+>> +	seq_printf(s, "Can the host do 4 bit transfers :\t%s\n",
+>> +		   ((caps & MMC_CAP_4_BIT_DATA) ? "Yes" : "No"));
+> Maybe use a more compact form, and just call a macro with the applicable (stringified) bit?
 
-The prototype of trampoline_32bit should be in an #ifdef as well, as the variable 
-only exists on 64-bit kernels.
+Something like this ?
+
+#define YN(bit) ((caps & bit) ? "Yes" : "No")
+and then call
+seq_printf(s, "Can the host do 4 bit transfers :\t%s\n", YN(MMC_CAP_4_BIT_DATA));
+
+
 
 Thanks,
-
-	Ingo
+Harish Jenny K N
