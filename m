@@ -1,44 +1,70 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsoEqhVcGpMglFPc9wp5L5ACSe72ZGtfDvca4oVGUvD+dE9OETpUgXjS7CevDCXrQExjc0c
-ARC-Seal: i=1; a=rsa-sha256; t=1520451804; cv=none;
-        d=google.com; s=arc-20160816;
-        b=U73CHsSCunU7ZC5eb9ys4RJ/CkgioUC4FKz0+GVUCDbetxuFBhiNLzagOd/t5RB8w9
-         xvP4JvF3oXgPRz0IdQ/9LmJAU5eMUmwFf3bpcl+Czb/m+zStHfkECYSVpOHKvyY0++ZA
-         x2lCUBf5/V8JZVvLnRMTY9paa+Yj4b0MGoQR16axRv8JqXznhoIMccPf/l8FlVhwdX70
-         GQgv2x8aqvmvci4M2eM3psn/zNKqlWNndu5ppV61hIs1sLpWy5Si/Ag4/Kddz25Q4ZfK
-         ynAICm9rrQkSHWxqZRYXtu8Ou1N+Ba3JeZeJDKRlOTVUSnZc1Y8FSkOeaSqL0ozCb06q
-         qloA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=TR3vbmIfRFS0WQodX+PQGNrmnvzRGLgvVbWejijQ79o=;
-        b=iU50y3vye70Eix6NSYYwDm0hK2K50R2ApuEotH8U29ywZT5ZB6+NrRxTJ6TeddoaY9
-         3Nx1r356vZ4GzrEuXsrntQIHfqNJ2v0Y56iKtyAXSKoCaA6NYZPcrgCJk4GQ8dg3512r
-         UgaozEtGY16YMGttvajK+0Xi5VR28VEHBxwYCDto4BQ8uZM3D121FZe29oSm0cPQivXB
-         P3wiuBlhvk67ruF9yXq6UtkzDbUqV+nB2lnECE/dSW+YrO5sFFf2noSGEU86RfA2k/fQ
-         G5QxOXmapKazqSn86FCh02K4RknlOQKYmPdxaQwfw7pW0wGBvNOEoB27pFao49UZWeNh
-         z3aQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4098462-1520451804-2-15190010728734734408
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520451803; b=L6hQBkZ3b1SjX/y8olVCfDoy9Y/ch6P4J1g03Tru6s08D0n
+    XtTUeifxlaHWsM94GZYThkvCO/5/93gMPu5qpDB46XlGVRh29uT8p/alr7bUj0kF
+    GXTQmQ22R1CmqscZGhSnP6vemJxyLiEMaZjyNyFWy9wJ9N9ZPFN/SBAaInBvLXvJ
+    S7J6ttubnpeFXrqLSSNRoxq63XvPlLN+6HE1zu60UPQUTNl/zo8Tp+GG4vKI/McT
+    x17ap1NpaK4rYAJcXvdbKl+qUQE4HvmxUE/LOuJjTW/XtMiqqDIYDvJkSry8T/h7
+    KOCBHb8ZRR23UyBLuR1ZOyh9t5L1FQsQujttXtg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520451803; bh=bmF3GNNmo2EXkWIjDJkrdf5B5x
+    Y+nFqVhUsxre5C/sA=; b=R8m7gwmAC0Dz8KTkN9pwfndflEPujwPdC6EitMp99a
+    SyoxtwlOedkdpBZE+Ef+tmsUHd/0v+p7QDg8tqsRXbckTugN/jduURrFz5o019iA
+    FQsNnVc1blC+Hr7oWDINCRd8YdzPKHRAEg0VM7qugR+bxFIdDUDqjkkN4RIGoZNg
+    W2BIZvB1erK3inv2PvWIH4jlCSTLhhp/4tRMczAG7TFQUtxYNKqkueBTIKYH8VKT
+    ILydsZDdq63eQojQVr0nD5HyOW2jId5SSL3TlBrU2CbUZb75CVAzy6Cl83dVqEc2
+    3speWC8v7SdSQ2GS1gBdMb33xYW7VDI7XZNEnLWkYxCw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S934950AbeCGTnQ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Mar 2018 14:43:16 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42666 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933537AbeCGTnO (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:43:14 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Anna Karbownik <anna.karbownik@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	jim.m.snow@intel.com,
-	krzysztof.paliswiat@intel.com,
-	lukasz.odzioba@intel.com,
-	qiuxu.zhuo@intel.com,
-	linux-edac <linux-edac@vger.kernel.org>,
-	Borislav Petkov <bp@suse.de>
-Subject: [PATCH 4.15 100/122] EDAC, sb_edac: Fix out of bound writes during DIMM configuration on KNL
-Date: Wed,  7 Mar 2018 11:38:32 -0800
-Message-Id: <20180307191743.848319164@linuxfoundation.org>
+        stable@vger.kernel.org, Teodor Milkov <tm@del.bg>,
+        Yuchung Cheng <ycheng@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.15 097/122] tcp: revert F-RTO extension to detect more spurious timeouts
+Date: Wed,  7 Mar 2018 11:38:29 -0800
+Message-Id: <20180307191743.379913626@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -46,10 +72,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309271673449358?=
-X-GMAIL-MSGID: =?utf-8?q?1594309271673449358?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,54 +82,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Anna Karbownik <anna.karbownik@intel.com>
+From: Yuchung Cheng <ycheng@google.com>
 
-commit bf8486709ac7fad99e4040dea73fe466c57a4ae1 upstream.
 
-Commit
+[ Upstream commit fc68e171d376c322e6777a3d7ac2f0278b68b17f ]
 
-  3286d3eb906c ("EDAC, sb_edac: Drop NUM_CHANNELS from 8 back to 4")
+This reverts commit 89fe18e44f7ee5ab1c90d0dff5835acee7751427.
 
-decreased NUM_CHANNELS from 8 to 4, but this is not enough for Knights
-Landing which supports up to 6 channels.
+While the patch could detect more spurious timeouts, it could cause
+poor TCP performance on broken middle-boxes that modifies TCP packets
+(e.g. receive window, SACK options). Since the performance gain is
+much smaller compared to the potential loss. The best solution is
+to fully revert the change.
 
-This caused out-of-bounds writes to pvt->mirror_mode and pvt->tolm
-variables which don't pay critical role on KNL code path, so the memory
-corruption wasn't causing any visible driver failures.
-
-The easiest way of fixing it is to change NUM_CHANNELS to 6. Do that.
-
-An alternative solution would be to restructure the KNL part of the
-driver to 2MC/3channel representation.
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Anna Karbownik <anna.karbownik@intel.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: jim.m.snow@intel.com
-Cc: krzysztof.paliswiat@intel.com
-Cc: lukasz.odzioba@intel.com
-Cc: qiuxu.zhuo@intel.com
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: <stable@vger.kernel.org>
-Fixes: 3286d3eb906c ("EDAC, sb_edac: Drop NUM_CHANNELS from 8 back to 4")
-Link: http://lkml.kernel.org/r/1519312693-4789-1-git-send-email-anna.karbownik@intel.com
-[ Massage commit message. ]
-Signed-off-by: Borislav Petkov <bp@suse.de>
+Fixes: 89fe18e44f7e ("tcp: extend F-RTO to catch more spurious timeouts")
+Reported-by: Teodor Milkov <tm@del.bg>
+Signed-off-by: Yuchung Cheng <ycheng@google.com>
+Signed-off-by: Neal Cardwell <ncardwell@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/edac/sb_edac.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/tcp_input.c |   30 ++++++++++++------------------
+ 1 file changed, 12 insertions(+), 18 deletions(-)
 
---- a/drivers/edac/sb_edac.c
-+++ b/drivers/edac/sb_edac.c
-@@ -279,7 +279,7 @@ static const u32 correrrthrsld[] = {
-  * sbridge structs
-  */
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -1915,6 +1915,7 @@ void tcp_enter_loss(struct sock *sk)
+ 	struct tcp_sock *tp = tcp_sk(sk);
+ 	struct net *net = sock_net(sk);
+ 	struct sk_buff *skb;
++	bool new_recovery = icsk->icsk_ca_state < TCP_CA_Recovery;
+ 	bool is_reneg;			/* is receiver reneging on SACKs? */
+ 	bool mark_lost;
  
--#define NUM_CHANNELS		4	/* Max channels per MC */
-+#define NUM_CHANNELS		6	/* Max channels per MC */
- #define MAX_DIMMS		3	/* Max DIMMS per channel */
- #define KNL_MAX_CHAS		38	/* KNL max num. of Cache Home Agents */
- #define KNL_MAX_CHANNELS	6	/* KNL max num. of PCI channels */
+@@ -1973,15 +1974,12 @@ void tcp_enter_loss(struct sock *sk)
+ 	tp->high_seq = tp->snd_nxt;
+ 	tcp_ecn_queue_cwr(tp);
+ 
+-	/* F-RTO RFC5682 sec 3.1 step 1 mandates to disable F-RTO
+-	 * if a previous recovery is underway, otherwise it may incorrectly
+-	 * call a timeout spurious if some previously retransmitted packets
+-	 * are s/acked (sec 3.2). We do not apply that retriction since
+-	 * retransmitted skbs are permanently tagged with TCPCB_EVER_RETRANS
+-	 * so FLAG_ORIG_SACK_ACKED is always correct. But we do disable F-RTO
+-	 * on PTMU discovery to avoid sending new data.
++	/* F-RTO RFC5682 sec 3.1 step 1: retransmit SND.UNA if no previous
++	 * loss recovery is underway except recurring timeout(s) on
++	 * the same SND.UNA (sec 3.2). Disable F-RTO on path MTU probing
+ 	 */
+ 	tp->frto = net->ipv4.sysctl_tcp_frto &&
++		   (new_recovery || icsk->icsk_retransmits) &&
+ 		   !inet_csk(sk)->icsk_mtup.probe_size;
+ }
+ 
+@@ -2634,18 +2632,14 @@ static void tcp_process_loss(struct sock
+ 	    tcp_try_undo_loss(sk, false))
+ 		return;
+ 
+-	/* The ACK (s)acks some never-retransmitted data meaning not all
+-	 * the data packets before the timeout were lost. Therefore we
+-	 * undo the congestion window and state. This is essentially
+-	 * the operation in F-RTO (RFC5682 section 3.1 step 3.b). Since
+-	 * a retransmitted skb is permantly marked, we can apply such an
+-	 * operation even if F-RTO was not used.
+-	 */
+-	if ((flag & FLAG_ORIG_SACK_ACKED) &&
+-	    tcp_try_undo_loss(sk, tp->undo_marker))
+-		return;
+-
+ 	if (tp->frto) { /* F-RTO RFC5682 sec 3.1 (sack enhanced version). */
++		/* Step 3.b. A timeout is spurious if not all data are
++		 * lost, i.e., never-retransmitted data are (s)acked.
++		 */
++		if ((flag & FLAG_ORIG_SACK_ACKED) &&
++		    tcp_try_undo_loss(sk, true))
++			return;
++
+ 		if (after(tp->snd_nxt, tp->high_seq)) {
+ 			if (flag & FLAG_DATA_SACKED || is_dupack)
+ 				tp->frto = 0; /* Step 3.a. loss was real */
