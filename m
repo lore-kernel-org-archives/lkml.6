@@ -1,38 +1,68 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtcfO1URyZYuU4rNtg4/8bErx8gXzFAHKafIgdl2L7fTgYMcNL8IUwo+owr1NntrFKJhvxu
-ARC-Seal: i=1; a=rsa-sha256; t=1520451773; cv=none;
-        d=google.com; s=arc-20160816;
-        b=fNjgpdvMPWfLbNi9LC/MXBNB1pPL1d+UWnhSz5RoHXXRBu56aaEGCnARjZTOH9KslM
-         jsHRpVyVZe0yFvPHB2y1CLiVUV4Ju+A9N5lj1x3B0wkomoq+DETQp+Fp89l2w5Ysym7j
-         QjJjcJ2wH860/x4YidmrXD8M4eOEQE0EERfeD95oL/9xvbuykO8Fk6SYlKxa6XwS7krt
-         k/o7umBE+/5RRjR3OgsaTcYu1DnmgxnbRymp1FGrVmzq7NWFlJFCQntL14efPaqTNyBx
-         QNxnEPlVxAG+YRfOWw79ug4lsJMAL0CTpgfJlaU1R7dHaVnJdpvqu3bK5hx/21nsKAeW
-         r7lg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=uRZJTYTQxH6s915g5xey7oDbLPTPw3j0hr94nPVCUJE=;
-        b=IRqgxHl7Gs08xVSKWdwweratXblfYw6GLufhq6D1hcui3Bs2TwE7G2UnsIgO3OHY2O
-         GLp+mwukqtcXFPBkOz5NQW0qjribu794MpBY7xsFUMV5dSOHU+rmn6Q/BenF5HzGnAVN
-         Bfx5p2T4kAb/kdFElJYiyq1Lh09pabNtWPkcOmI3gjbkRS4mekZoT4PWy9BH40eVxqxV
-         KPpGPGz9EGFSxJUuX0CQE6n5qPzHJ/lWavtsV8svUWcJe7hDPzZiViMHoAO14gBJSbfl
-         LfNBa/2vSBKItuYNdXsDHGch4hC7nDkJrtWGVmpRT4IjMYPylLU1H2Nim3BYlowdCCsi
-         6EcQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4098462-1520451772-2-5634996837020399295
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520451771; b=vNWxgtp/hm3zLhXcyrJWnydgMfwWodIs7D3QCWv7SibUM53
+    tp+u1cEh7H6BLvw0ZB1RJqS8q4uhmU3s9T3/pngwgmYXZbjycVsWiqaO0P8m/d7p
+    o3xXg6FrBB1Izhyy87AjLazfdYOEyGg2eV/Ojxx3yqJPUVWJFpOE0wiUvJyCJpaR
+    r5s3bj6giIsPTE613xwhNcCS4kpc6nsHBfqU1eFivvV8Ldq8S+qrGriXgCgGvV7f
+    t3j+RGgTWwwegYetgmK1latUld9xaD/Colz/Nfxga/bAuWawYp4/6+kTknvZZz9k
+    pCbqETPkOHvU/JNxUG+7rQJepKhxNh+CSzvjcsA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520451771; bh=xFj3pZGB16CtzlJ3RgI0ecfo9E
+    sDjqnp7wwyl3NrMhg=; b=ONrvPH50YyOOqgNWJWg4/lNl7Se+lEmf/Qi1zylJKC
+    TGhq7ow/UAZnd2KjyV3L3nzq5UrM+B/4Fu1b87ro2J61TZFbNr4IusZmv1mqHNkX
+    z7aRf8twiz2+S6Z7q74JglK8CzZCWUAEaHlr2Kqbe5JO1HnjREY+7QntOxRib+lC
+    iTYyl86Oq6195E5L9ZW7i3ckn/R37aXD7Fl5MkleoAkM+oEJIfxCtV9kNv17QEXW
+    V8FiaX9ef59ISlJAYHUnJaXmdGVHjJzxUzfrczzezWEobVC7SyNyPw0lCwcZ3rZw
+    YGUG7Yd9DoAnRwDVFskPITO4QKn3azulaieCMKu1+sCA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S934899AbeCGTmo (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Mar 2018 14:42:44 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42520 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933537AbeCGTmm (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:42:42 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Li Shuang <shuali@redhat.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 072/122] cls_u32: fix use after free in u32_destroy_key()
-Date: Wed,  7 Mar 2018 11:38:04 -0800
-Message-Id: <20180307191739.748361550@linuxfoundation.org>
+        stable@vger.kernel.org, James Chapman <jchapman@katalix.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.15 087/122] l2tp: fix tunnel lookup use-after-free race
+Date: Wed,  7 Mar 2018 11:38:19 -0800
+Message-Id: <20180307191741.971623639@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -40,10 +70,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309238741645152?=
-X-GMAIL-MSGID: =?utf-8?q?1594309238741645152?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,191 +80,114 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: James Chapman <jchapman@katalix.com>
 
 
-[ Upstream commit d7cdee5ea8d28ae1b6922deb0c1badaa3aa0ef8c ]
+[ Upstream commit 28f5bfb819195ad9c2eb9486babe7b0e4efe925f ]
 
-Li Shuang reported an Oops with cls_u32 due to an use-after-free
-in u32_destroy_key(). The use-after-free can be triggered with:
+l2tp_tunnel_get walks the tunnel list to find a matching tunnel
+instance and if a match is found, its refcount is increased before
+returning the tunnel pointer. But when tunnel objects are destroyed,
+they are on the tunnel list after their refcount hits zero. Fix this
+by moving the code that removes the tunnel from the tunnel list from
+the tunnel socket destructor into in the l2tp_tunnel_delete path,
+before the tunnel refcount is decremented.
 
-dev=lo
-tc qdisc add dev $dev root handle 1: htb default 10
-tc filter add dev $dev parent 1: prio 5 handle 1: protocol ip u32 divisor 256
-tc filter add dev $dev protocol ip parent 1: prio 5 u32 ht 800:: match ip dst\
- 10.0.0.0/8 hashkey mask 0x0000ff00 at 16 link 1:
-tc qdisc del dev $dev root
+refcount_t: increment on 0; use-after-free.
+WARNING: CPU: 3 PID: 13507 at lib/refcount.c:153 refcount_inc+0x47/0x50
+Modules linked in:
+CPU: 3 PID: 13507 Comm: syzbot_6e6a5ec8 Not tainted 4.16.0-rc2+ #36
+Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+RIP: 0010:refcount_inc+0x47/0x50
+RSP: 0018:ffff8800136ffb20 EFLAGS: 00010286
+RAX: dffffc0000000008 RBX: ffff880017068e68 RCX: ffffffff814d3333
+RDX: 0000000000000000 RSI: ffff88001a59f6d8 RDI: ffff88001a59f6d8
+RBP: ffff8800136ffb28 R08: 0000000000000000 R09: 0000000000000000
+R10: ffff8800136ffab0 R11: 0000000000000000 R12: ffff880017068e50
+R13: 0000000000000000 R14: ffff8800174da800 R15: 0000000000000004
+FS:  00007f403ab1e700(0000) GS:ffff88001a580000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000205fafd2 CR3: 0000000016770000 CR4: 00000000000006e0
+Call Trace:
+ l2tp_tunnel_get+0x2dd/0x4e0
+ pppol2tp_connect+0x428/0x13c0
+ ? pppol2tp_session_create+0x170/0x170
+ ? __might_fault+0x115/0x1d0
+ ? lock_downgrade+0x860/0x860
+ ? __might_fault+0xe5/0x1d0
+ ? security_socket_connect+0x8e/0xc0
+ SYSC_connect+0x1b6/0x310
+ ? SYSC_bind+0x280/0x280
+ ? __do_page_fault+0x5d1/0xca0
+ ? up_read+0x1f/0x40
+ ? __do_page_fault+0x3c8/0xca0
+ SyS_connect+0x29/0x30
+ ? SyS_accept+0x40/0x40
+ do_syscall_64+0x1e0/0x730
+ ? trace_hardirqs_off_thunk+0x1a/0x1c
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x7f403a42f259
+RSP: 002b:00007f403ab1dee8 EFLAGS: 00000296 ORIG_RAX: 000000000000002a
+RAX: ffffffffffffffda RBX: 00000000205fafe4 RCX: 00007f403a42f259
+RDX: 000000000000002e RSI: 00000000205fafd2 RDI: 0000000000000004
+RBP: 00007f403ab1df20 R08: 00007f403ab1e700 R09: 0000000000000000
+R10: 00007f403ab1e700 R11: 0000000000000296 R12: 0000000000000000
+R13: 00007ffc81906cbf R14: 0000000000000000 R15: 00007f403ab2b040
+Code: 3b ff 5b 5d c3 e8 ca 5f 3b ff 80 3d 49 8e 66 04 00 75 ea e8 bc 5f 3b ff 48 c7 c7 60 69 64 85 c6 05 34 8e 66 04 01 e8 59 49 15 ff <0f> 0b eb ce 0f 1f 44 00 00 55 48 89 e5 41 56 41 55 41 54 53 49
 
-Which causes the following kasan splat:
-
- ==================================================================
- BUG: KASAN: use-after-free in u32_destroy_key.constprop.21+0x117/0x140 [cls_u32]
- Read of size 4 at addr ffff881b83dae618 by task kworker/u48:5/571
-
- CPU: 17 PID: 571 Comm: kworker/u48:5 Not tainted 4.15.0+ #87
- Hardware name: Dell Inc. PowerEdge R730/072T6D, BIOS 2.1.7 06/16/2016
- Workqueue: tc_filter_workqueue u32_delete_key_freepf_work [cls_u32]
- Call Trace:
-  dump_stack+0xd6/0x182
-  ? dma_virt_map_sg+0x22e/0x22e
-  print_address_description+0x73/0x290
-  kasan_report+0x277/0x360
-  ? u32_destroy_key.constprop.21+0x117/0x140 [cls_u32]
-  u32_destroy_key.constprop.21+0x117/0x140 [cls_u32]
-  u32_delete_key_freepf_work+0x1c/0x30 [cls_u32]
-  process_one_work+0xae0/0x1c80
-  ? sched_clock+0x5/0x10
-  ? pwq_dec_nr_in_flight+0x3c0/0x3c0
-  ? _raw_spin_unlock_irq+0x29/0x40
-  ? trace_hardirqs_on_caller+0x381/0x570
-  ? _raw_spin_unlock_irq+0x29/0x40
-  ? finish_task_switch+0x1e5/0x760
-  ? finish_task_switch+0x208/0x760
-  ? preempt_notifier_dec+0x20/0x20
-  ? __schedule+0x839/0x1ee0
-  ? check_noncircular+0x20/0x20
-  ? firmware_map_remove+0x73/0x73
-  ? find_held_lock+0x39/0x1c0
-  ? worker_thread+0x434/0x1820
-  ? lock_contended+0xee0/0xee0
-  ? lock_release+0x1100/0x1100
-  ? init_rescuer.part.16+0x150/0x150
-  ? retint_kernel+0x10/0x10
-  worker_thread+0x216/0x1820
-  ? process_one_work+0x1c80/0x1c80
-  ? lock_acquire+0x1a5/0x540
-  ? lock_downgrade+0x6b0/0x6b0
-  ? sched_clock+0x5/0x10
-  ? lock_release+0x1100/0x1100
-  ? compat_start_thread+0x80/0x80
-  ? do_raw_spin_trylock+0x190/0x190
-  ? _raw_spin_unlock_irq+0x29/0x40
-  ? trace_hardirqs_on_caller+0x381/0x570
-  ? _raw_spin_unlock_irq+0x29/0x40
-  ? finish_task_switch+0x1e5/0x760
-  ? finish_task_switch+0x208/0x760
-  ? preempt_notifier_dec+0x20/0x20
-  ? __schedule+0x839/0x1ee0
-  ? kmem_cache_alloc_trace+0x143/0x320
-  ? firmware_map_remove+0x73/0x73
-  ? sched_clock+0x5/0x10
-  ? sched_clock_cpu+0x18/0x170
-  ? find_held_lock+0x39/0x1c0
-  ? schedule+0xf3/0x3b0
-  ? lock_downgrade+0x6b0/0x6b0
-  ? __schedule+0x1ee0/0x1ee0
-  ? do_wait_intr_irq+0x340/0x340
-  ? do_raw_spin_trylock+0x190/0x190
-  ? _raw_spin_unlock_irqrestore+0x32/0x60
-  ? process_one_work+0x1c80/0x1c80
-  ? process_one_work+0x1c80/0x1c80
-  kthread+0x312/0x3d0
-  ? kthread_create_worker_on_cpu+0xc0/0xc0
-  ret_from_fork+0x3a/0x50
-
- Allocated by task 1688:
-  kasan_kmalloc+0xa0/0xd0
-  __kmalloc+0x162/0x380
-  u32_change+0x1220/0x3c9e [cls_u32]
-  tc_ctl_tfilter+0x1ba6/0x2f80
-  rtnetlink_rcv_msg+0x4f0/0x9d0
-  netlink_rcv_skb+0x124/0x320
-  netlink_unicast+0x430/0x600
-  netlink_sendmsg+0x8fa/0xd60
-  sock_sendmsg+0xb1/0xe0
-  ___sys_sendmsg+0x678/0x980
-  __sys_sendmsg+0xc4/0x210
-  do_syscall_64+0x232/0x7f0
-  return_from_SYSCALL_64+0x0/0x75
-
- Freed by task 112:
-  kasan_slab_free+0x71/0xc0
-  kfree+0x114/0x320
-  rcu_process_callbacks+0xc3f/0x1600
-  __do_softirq+0x2bf/0xc06
-
- The buggy address belongs to the object at ffff881b83dae600
-  which belongs to the cache kmalloc-4096 of size 4096
- The buggy address is located 24 bytes inside of
-  4096-byte region [ffff881b83dae600, ffff881b83daf600)
- The buggy address belongs to the page:
- page:ffffea006e0f6a00 count:1 mapcount:0 mapping:          (null) index:0x0 compound_mapcount: 0
- flags: 0x17ffffc0008100(slab|head)
- raw: 0017ffffc0008100 0000000000000000 0000000000000000 0000000100070007
- raw: dead000000000100 dead000000000200 ffff880187c0e600 0000000000000000
- page dumped because: kasan: bad access detected
-
- Memory state around the buggy address:
-  ffff881b83dae500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff881b83dae580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- >ffff881b83dae600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                             ^
-  ffff881b83dae680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff881b83dae700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ==================================================================
-
-The problem is that the htnode is freed before the linked knodes and the
-latter will try to access the first at u32_destroy_key() time.
-This change addresses the issue using the htnode refcnt to guarantee
-the correct free order. While at it also add a RCU annotation,
-to keep sparse happy.
-
-v1 -> v2: use rtnl_derefence() instead of RCU read locks
-v2 -> v3:
-  - don't check refcnt in u32_destroy_hnode()
-  - cleaned-up u32_destroy() implementation
-  - cleaned-up code comment
-v3 -> v4:
-  - dropped unneeded comment
-
-Reported-by: Li Shuang <shuali@redhat.com>
-Fixes: c0d378ef1266 ("net_sched: use tcf_queue_work() in u32 filter")
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
+Fixes: f8ccac0e44934 ("l2tp: put tunnel socket release on a workqueue")
+Reported-and-tested-by: syzbot+19c09769f14b48810113@syzkaller.appspotmail.com
+Reported-and-tested-by: syzbot+347bd5acde002e353a36@syzkaller.appspotmail.com
+Reported-and-tested-by: syzbot+6e6a5ec8de31a94cd015@syzkaller.appspotmail.com
+Reported-and-tested-by: syzbot+9df43faf09bd400f2993@syzkaller.appspotmail.com
+Signed-off-by: James Chapman <jchapman@katalix.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/cls_u32.c |   21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ net/l2tp/l2tp_core.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/net/sched/cls_u32.c
-+++ b/net/sched/cls_u32.c
-@@ -397,10 +397,12 @@ static int u32_init(struct tcf_proto *tp
- static int u32_destroy_key(struct tcf_proto *tp, struct tc_u_knode *n,
- 			   bool free_pf)
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -1173,7 +1173,6 @@ EXPORT_SYMBOL_GPL(l2tp_xmit_skb);
+ static void l2tp_tunnel_destruct(struct sock *sk)
  {
-+	struct tc_u_hnode *ht = rtnl_dereference(n->ht_down);
-+
- 	tcf_exts_destroy(&n->exts);
- 	tcf_exts_put_net(&n->exts);
--	if (n->ht_down)
--		n->ht_down->refcnt--;
-+	if (ht && --ht->refcnt == 0)
-+		kfree(ht);
- #ifdef CONFIG_CLS_U32_PERF
- 	if (free_pf)
- 		free_percpu(n->pf);
-@@ -653,16 +655,15 @@ static void u32_destroy(struct tcf_proto
+ 	struct l2tp_tunnel *tunnel = l2tp_tunnel(sk);
+-	struct l2tp_net *pn;
  
- 		hlist_del(&tp_c->hnode);
+ 	if (tunnel == NULL)
+ 		goto end;
+@@ -1196,12 +1195,6 @@ static void l2tp_tunnel_destruct(struct
+ 	sk->sk_destruct = tunnel->old_sk_destruct;
+ 	sk->sk_user_data = NULL;
  
--		for (ht = rtnl_dereference(tp_c->hlist);
--		     ht;
--		     ht = rtnl_dereference(ht->next)) {
--			ht->refcnt--;
--			u32_clear_hnode(tp, ht);
--		}
+-	/* Remove the tunnel struct from the tunnel list */
+-	pn = l2tp_pernet(tunnel->l2tp_net);
+-	spin_lock_bh(&pn->l2tp_tunnel_list_lock);
+-	list_del_rcu(&tunnel->list);
+-	spin_unlock_bh(&pn->l2tp_tunnel_list_lock);
 -
- 		while ((ht = rtnl_dereference(tp_c->hlist)) != NULL) {
-+			u32_clear_hnode(tp, ht);
- 			RCU_INIT_POINTER(tp_c->hlist, ht->next);
--			kfree_rcu(ht, rcu);
-+
-+			/* u32_destroy_key() will later free ht for us, if it's
-+			 * still referenced by some knode
-+			 */
-+			if (--ht->refcnt == 0)
-+				kfree_rcu(ht, rcu);
- 		}
+ 	/* Call the original destructor */
+ 	if (sk->sk_destruct)
+ 		(*sk->sk_destruct)(sk);
+@@ -1280,6 +1273,7 @@ static void l2tp_tunnel_del_work(struct
+ 						  del_work);
+ 	struct sock *sk = tunnel->sock;
+ 	struct socket *sock = sk->sk_socket;
++	struct l2tp_net *pn;
  
- 		idr_destroy(&tp_c->handle_idr);
+ 	l2tp_tunnel_closeall(tunnel);
+ 
+@@ -1293,6 +1287,12 @@ static void l2tp_tunnel_del_work(struct
+ 		}
+ 	}
+ 
++	/* Remove the tunnel struct from the tunnel list */
++	pn = l2tp_pernet(tunnel->l2tp_net);
++	spin_lock_bh(&pn->l2tp_tunnel_list_lock);
++	list_del_rcu(&tunnel->list);
++	spin_unlock_bh(&pn->l2tp_tunnel_list_lock);
++
+ 	/* drop initial ref */
+ 	l2tp_tunnel_dec_refcount(tunnel);
+ 
