@@ -1,68 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933757AbeCGODx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:03:53 -0500
-Received: from mga02.intel.com ([134.134.136.20]:30695 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933701AbeCGODb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:03:31 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,436,1515484800";
-   d="scan'208";a="36206864"
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 9/9] perf intel-pt: Adjust overlap-checking to support sampling mode
-Date: Wed,  7 Mar 2018 16:02:29 +0200
-Message-Id: <1520431349-30689-10-git-send-email-adrian.hunter@intel.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520431349-30689-1-git-send-email-adrian.hunter@intel.com>
-References: <1520431349-30689-1-git-send-email-adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        id S933537AbeCGOCl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:02:41 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40692 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933293AbeCGOCh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 09:02:37 -0500
+Date: Wed, 7 Mar 2018 11:02:31 -0300
+From: Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Antti Palosaari <crope@iki.fi>
+Cc: Nigel Kettlewell <nigel.kettlewell@googlemail.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Fix for hanging si2168 in PCTV 292e, making the code
+ match
+Message-ID: <20180307110231.10f5b6ef@vento.lan>
+In-Reply-To: <e169f37e-8ca9-bd28-74c8-b8e7a12beb54@iki.fi>
+References: <59C10A00.2070000@googlemail.com>
+        <20171214124841.7943b325@vento.lan>
+        <e169f37e-8ca9-bd28-74c8-b8e7a12beb54@iki.fi>
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adjust overlap-checking to support sampling mode.
+Em Wed, 7 Mar 2018 15:23:52 +0200
+Antti Palosaari <crope@iki.fi> escreveu:
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- tools/perf/util/intel-pt.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+> On 12/14/2017 04:48 PM, Mauro Carvalho Chehab wrote:
+> > Em Tue, 19 Sep 2017 13:13:52 +0100
+> > Nigel Kettlewell <nigel.kettlewell@googlemail.com> escreveu:
+> >   
+> >> [re-sending as plain text]
+> >>
+> >> Fix for hanging si2168 in PCTV 292e USB, making the code match the comment.
+> >>
+> >> Using firmware v4.0.11 the 292e would work once and then hang on
+> >> subsequent attempts to view DVB channels, until physically unplugged and
+> >> plugged back in.
+> >>
+> >> With this patch, the warm state is reset for v4.0.11 and it appears to
+> >> work both on the first attempt and on subsequent attempts.  
+> 
+> It is comment which is wrong. With firmware 4.0.11 it works well without 
+> need of download it every time. But firmware 4.0.19 needs to be 
+> downloaded every time after device is put to sleep.
 
-diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index 5c5c155fba78..0effaff57020 100644
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -230,6 +230,7 @@ static int intel_pt_get_trace(struct intel_pt_buffer *b, void *data)
- 	struct auxtrace_buffer *buffer = ptq->buffer;
- 	struct auxtrace_buffer *old_buffer = ptq->old_buffer;
- 	struct auxtrace_queue *queue;
-+	bool might_overlap;
+Ok. Let's then apply the enclosed patch (or something similar to it).
+
+> Probably your issue is coming from some other reason.
+
+I've no idea why Nigel proposed this patch. From my side, all I
+want is to update the status of this patch:
+
+	https://patchwork.linuxtv.org/patch/44304/
+
+and keep cleaning up my patch queue ;-)
+
+Thanks,
+Mauro
+
+[PATCH] media: si2168: fix a comment about firmware version
+
+There's a comment there at s82168 that it is wrong.
+
+With firmware 4.0.11, sleep/resume works well without
+need of download it every time. But firmware 4.0.19
+needs to be downloaded again after sleep.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+
+diff --git a/drivers/media/dvb-frontends/si2168.c b/drivers/media/dvb-frontends/si2168.c
+index a91947784842..324493e05f9f 100644
+--- a/drivers/media/dvb-frontends/si2168.c
++++ b/drivers/media/dvb-frontends/si2168.c
+@@ -614,7 +614,7 @@ static int si2168_sleep(struct dvb_frontend *fe)
+ 	if (ret)
+ 		goto err;
  
- 	if (ptq->stop) {
- 		b->len = 0;
-@@ -256,7 +257,8 @@ static int intel_pt_get_trace(struct intel_pt_buffer *b, void *data)
- 			return -ENOMEM;
- 	}
+-	/* Firmware B 4.0-11 or later loses warm state during sleep */
++	/* Firmware later than B 4.0-11 loses warm state during sleep */
+ 	if (dev->version > ('B' << 24 | 4 << 16 | 0 << 8 | 11 << 0))
+ 		dev->warm = false;
  
--	if (ptq->pt->snapshot_mode && !buffer->consecutive && old_buffer &&
-+	might_overlap = ptq->pt->snapshot_mode || ptq->pt->sampling_mode;
-+	if (might_overlap && !buffer->consecutive && old_buffer &&
- 	    intel_pt_do_fix_overlap(ptq->pt, old_buffer, buffer))
- 		return -ENOMEM;
- 
-@@ -269,8 +271,7 @@ static int intel_pt_get_trace(struct intel_pt_buffer *b, void *data)
- 	}
- 	b->ref_timestamp = buffer->reference;
- 
--	if (!old_buffer || ptq->pt->sampling_mode || (ptq->pt->snapshot_mode &&
--						      !buffer->consecutive)) {
-+	if (!old_buffer || (might_overlap && !buffer->consecutive)) {
- 		b->consecutive = false;
- 		b->trace_nr = buffer->buffer_nr + 1;
- 	} else {
--- 
-1.9.1
