@@ -1,101 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934089AbeCGRjR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 12:39:17 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54746 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932801AbeCGRjN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 12:39:13 -0500
-Subject: Re: [PATCH v3 21/22] arm64: Delay enabling hardware DBM feature
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
-        robin.murphy@arm.com
-References: <20180209175513.17100-1-suzuki.poulose@arm.com>
- <20180209175513.17100-43-suzuki.poulose@arm.com>
- <20180209185840.GJ5862@e103592.cambridge.arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <e8b40320-10d2-6117-ef7f-7bbb46823ffb@arm.com>
-Date: Wed, 7 Mar 2018 17:39:09 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S933824AbeCGRjL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 12:39:11 -0500
+Received: from bues.ch ([80.190.117.144]:48930 "EHLO bues.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932801AbeCGRjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 12:39:09 -0500
+Date: Wed, 7 Mar 2018 18:38:58 +0100
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+To: arvindY <arvind.yadav.cs@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
+Subject: Re: [PATCH] ssb:: use put_device() if device_register fail
+Message-ID: <20180307183858.63172de9@wiggum>
+In-Reply-To: <5AA01E5E.8070002@gmail.com>
+References: <bdd20c00cba68044d82e387072b39f0176448e97.1520416785.git.arvind.yadav.cs@gmail.com>
+ <20180307174700.013e20ae@wiggum>
+ <5AA01E5E.8070002@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180209185840.GJ5862@e103592.cambridge.arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ boundary="Sig_/8QLP00ucAYYl=k.ayzL1Mj3"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/02/18 18:58, Dave Martin wrote:
-> On Fri, Feb 09, 2018 at 05:55:12PM +0000, Suzuki K Poulose wrote:
->> We enable hardware DBM bit in a capable CPU, very early in the
->> boot via __cpu_setup. This doesn't give us a flexibility of
->> optionally disable the feature, as the clearing the bit
->> is a bit costly as the TLB can cache the settings. Instead,
->> we delay enabling the feature until the CPU is brought up
->> into the kernel. We use the feature capability mechanism
->> to handle it.
->>
->> The hardware DBM is a non-conflicting feature. i.e, the kernel
->> can safely run with a mix of CPUs with some using the feature
->> and the others don't. So, it is safe for a late CPU to have
->> this capability and enable it, even if the active CPUs don't.
->>
->> To get this handled properly by the infrastructure, we
->> unconditionally set the capability and only enable it
->> on CPUs which really have the feature. Also, we print the
->> feature detection from the "matches" call back to make sure
->> we don't mislead the user when none of the CPUs could use the
->> feature.
->>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Dave Martin <dave.martin@arm.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->> Changes since V2
->>   - Print the feature detection message only when at least one CPU
->>     is actually using it.
+--Sig_/8QLP00ucAYYl=k.ayzL1Mj3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, 7 Mar 2018 22:46:14 +0530
+arvindY <arvind.yadav.cs@gmail.com> wrote:
+> >> diff --git a/drivers/ssb/main.c b/drivers/ssb/main.c
+> >> index 65420a9..c4449e0 100644
+> >> --- a/drivers/ssb/main.c
+> >> +++ b/drivers/ssb/main.c
+> >> @@ -521,6 +521,7 @@ static int ssb_devices_register(struct ssb_bus *bu=
+s)
+> >>   			ssb_err("Could not register %s\n", dev_name(dev));
+> >>   			/* Set dev to NULL to not unregister
+> >>   			 * dev on error unwinding. */
+> >> +			put_device(dev);
+> >>   			sdev->dev =3D NULL;
+> >>   			kfree(devwrap);
+> >>   			goto error; =20
+> >
+> > I don't think this is correct.
+> > The dev structure is allocated as part of devwrap, which is freed here.
+> >
+> > Why do you think we need put_device here?
+> > =20
+> Yes this patch is not correct, We must not use kfree() after you called=20
+> device_register() (even
+> if it was not successful!) -- see the comment for device_register().
+> I will delete kfree() and send updated patch.
 
 
->> +static bool has_hw_dbm(const struct arm64_cpu_capabilities *cap,
->> +		       int __unused)
->> +{
->> +	static bool detected = false;
->> +	/*
->> +	 * DBM is a non-conflicting feature. i.e, the kernel can safely
->> +	 * run a mix of CPUs with and without the feature. So, we
->> +	 * unconditionally enable the capability to allow any late CPU
->> +	 * to use the feature. We only enable the control bits on the
->> +	 * CPU, if it actually supports.
->> +	 *
->> +	 * We have to make sure we print the "feature" detection only
->> +	 * when at least one CPU actually uses it. So check if this CPU
->> +	 * can actually use it and print the message exactly once.
->> +	 *
->> +	 * This is safe as all CPUs (including secondary CPUs - due to the
->> +	 * LOCAL_CPU scope - and the hotplugged CPUs - via verification)
->> +	 * goes through the "matches" check exactly once. Also if a CPU
->> +	 * matches the criteria, it is guaranteed that the CPU will turn
->> +	 * the DBM on, as the capability is unconditionally enabled.
->> +	 */
->> +	if (!detected && cpu_can_use_dbm(cap)) {
->> +		detected = true;
->> +		pr_info("detected feature: Hardware dirty bit management\n");
->> +	}
-> 
-> Can we just do
-> 
-> 	if (cpu_can_use_dbm(cap))
-> 		pr_info_once(...);
-> 
-> Then we can get rid of "detected".
+Is device_put() going to call ssb_release_dev() to free the structure?
 
-The reason for open coding is the cost of cpu_can_use_dbm() with
-addition of black listed CPUs in the next patch in the series.
+Can you please elaborate on why device_put() must be used? The comment
+is not really of any use here.
 
-Cheers
-Suzuki
+--=20
+Michael
+
+--Sig_/8QLP00ucAYYl=k.ayzL1Mj3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAlqgI7IACgkQ9TK+HZCN
+iw68Rg//ZUagsjDMEb+Raec3BZ2Bec1NIM5qruLG6GrmRVkja6vGfKeUkv8Z59NO
+zXjO2QMl0v4CvZjpG8G8kq0SuXOFgP9j33xcQ0wZ/MarTRhtg99YbMSiRswqDYsD
+I6dZNgDv2x57FO92ns6d43pzds9JW4C5nESwdwHQ5r0xcvMdHqkdeO93QqEI7Oym
+8/wM0/5bPV6T3j6JRiqfyF4XAGli2FPMv9FzanybiHPZKAGTQOgUCheObph3pDtX
+FzqhnLfWRZFYQpt1K/3Lam068v+XmdMTikbwiFDKvNZ8wrhDP55zonK+WL0Jr2Jn
+mhrTIa5Vy1sejnMUsUMUUmz5MR89Xnf3fY52gS3SX7FSrQBjeeB/u9pBvOdP2urr
+HxwnFU57VixEGb9+dobpsf4WHGLkzVF9fWO00/meT4LCDFZH+5aYkVk8rvbfOKI9
+62t1DA+rPLxe1Uyu6rfRlVgwX88zH8J2/MY2Jvgyb1pGqIZW6D0cfj+Zb6VmFeDF
+pq33pj5K2krGDDHCCyQsDntGGJWubTtp0LLybo809Sp8XSq59E0PuKyBij1L8OCL
+drIB1pEzJjr2GecpfvJrDzd7KGkq60seBOLJcEhGV6lbeknSnEjPb4LL58j2bx+Y
+awtiyTEYufi6n+HPqy9KJjzDbs4q5ty1bTEpH46grPsMhx/HPAY=
+=+HuV
+-----END PGP SIGNATURE-----
+
+--Sig_/8QLP00ucAYYl=k.ayzL1Mj3--
