@@ -1,49 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754458AbeCGSyc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 13:54:32 -0500
-Received: from mga14.intel.com ([192.55.52.115]:14581 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753901AbeCGSyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 13:54:31 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,436,1515484800";
-   d="scan'208";a="23745669"
-Date: Wed, 7 Mar 2018 10:54:15 -0800
-From: Andi Kleen <ak@linux.intel.com>
-To: Agustin Vega-Frias <agustinv@codeaurora.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        timur@codeaurora.org
-Subject: Re: [RFC V3 1/3] perf, tools: Support wildcards on pmu name in
- dynamic pmu events
-Message-ID: <20180307185415.GK25017@tassilo.jf.intel.com>
-References: <1520345084-42646-1-git-send-email-agustinv@codeaurora.org>
- <1520345084-42646-2-git-send-email-agustinv@codeaurora.org>
- <20180307160224.GN3701@kernel.org>
- <d3bd59db56fbc13b931ae45573bf94d8@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d3bd59db56fbc13b931ae45573bf94d8@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1754583AbeCGS4G (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 13:56:06 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46498 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754553AbeCGS4D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 13:56:03 -0500
+Subject: Re: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>, Jiandi An <anjiandi@codeaurora.org>
+Cc: dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org, linux-ima-devel@lists.sourceforge.net,
+        linux-ima-user@lists.sourceforge.net,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 07 Mar 2018 13:55:53 -0500
+In-Reply-To: <20180307185132.GA30102@ziepe.ca>
+References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
+         <20180307185132.GA30102@ziepe.ca>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18030718-0008-0000-0000-000004D90961
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030718-0009-0000-0000-00001E6C2618
+Message-Id: <1520448953.10396.565.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-07_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803070215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Sorry about that. That's probably because FNM_EXTMATCH is a GNU extension,
-> not POSIX, and the Alpine and Android runtimes likely don't implement
-> that...
-> I'll send a fix reverting back to the strncmp to ignore the uncore_ prefix,
-> and dropping that extension.
+On Wed, 2018-03-07 at 11:51 -0700, Jason Gunthorpe wrote:
+> On Tue, Mar 06, 2018 at 11:26:26PM -0600, Jiandi An wrote:
+> > TPM_CRB driver is the TPM support for ARM64.  If it
+> > is built as module, TPM chip is registered after IMA
+> > init.  tpm_pcr_read() in IMA driver would fail and
+> > display the following message even though eventually
+> > there is TPM chip on the system:
+> > 
+> > ima: No TPM chip found, activating TPM-bypass! (rc=-19)
+> > 
+> > Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is
+> > built in kernel and initializes before IMA driver.
+> > 
+> > Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
+> >  security/integrity/ima/Kconfig | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+> > index 35ef693..6a8f677 100644
+> > +++ b/security/integrity/ima/Kconfig
+> > @@ -10,6 +10,7 @@ config IMA
+> >  	select CRYPTO_HASH_INFO
+> >  	select TCG_TPM if HAS_IOMEM && !UML
+> >  	select TCG_TIS if TCG_TPM && X86
+> > +	select TCG_CRB if TCG_TPM && ACPI
+> >  	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
+> >  	help
+> >  	  The Trusted Computing Group(TCG) runtime Integrity
+> 
+> This seems really weird, why are any specific TPM drivers linked to
+> IMA config, we have lots of drivers..
+> 
+> I don't think I've ever seen this pattern in Kconfig before?
 
-Just don't set it? Even the basic glob patterns are useful.
+As you've seen by the current discussions, the TPM driver needs to be
+initialized prior to IMA.  Otherwise IMA goes into TPM-bypass mode.
+ That implies that the TPM must be builtin to the kernel, and not as a
+kernel module.
 
--Andi
+Mimi
