@@ -1,69 +1,36 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4009650-1520451600-2-2700172043797989572
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520451599; b=PAVOqYNxL56e33Hmc9CqsVHSVOPpnWjMVOU1YXcki/a8/gz
-    i4mDtdmKe2XF6eaHfEEEvjq7o8hvMLBPyotuy6ud++lFrE1bTvevSShKHS+8iBoG
-    nwXXIzz1j83U32qNT9Oqvoo/jwitc+ONRHXiZFgnad8yREu/G8kAFIw6qf52GXzD
-    qTQrMkJAc4cF/EAJexsO7hU3M2A6RhkQ6eTrkayZ0UYUtr9GrxlMF65w6XBgL7R8
-    25VXplEwXr3ZKRDPk//2azx5SpSmFJSBYDIEtzPV/YF+qgjEuEJI4fa4sTjVzLVw
-    inuFwKoVfo21gFz2kkobozTHiUOZ9bTKxdy9TrQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520451599; bh=Ow1stb4kTiPPoQ17vp88lqY/Np
-    H0Oz5k1Jt9ZJaJUbg=; b=fI/WcdJP7KJj5SdbTgGsRwRxIcIGq0rZhvG2ItiM1F
-    NYQ/QFxxoDnXU831a9YI1As/Ye/pE1nJWDd88SDZrG9Ljc/Q9CL6qDtbJUKXHpxw
-    y/OWz13ZtZFfOf6+8ihA3PczWzW4a3eJpTIq6FPR0qPDHd+rJuBi+LLUYI7EaI9C
-    NWUmc3FeQWVsnRWatypMOvF2GREnL2kflxoDVYd1O3jU2chY/PGlgDU2S8iDvaJk
-    eaOFl67+Oqwccy1ILzMZ2L3/Fekad3Cok2QKZx2Be+rztYOSE+SmBMA3FGolVnFh
-    XSx1XLQsTVWcbt/WoHnndn3+j8pw9PphpRzFRoR8m5SA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933935AbeCGTjy (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 14:39:54 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40380 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934169AbeCGTjw (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:39:52 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELvYiMmqDG33TdewsJRE8gtmakB0NiQhKQDZFkqO/lmhVcMMbslh0M650geebs1akM4CrXkD
+ARC-Seal: i=1; a=rsa-sha256; t=1520451599; cv=none;
+        d=google.com; s=arc-20160816;
+        b=d5Rb9ftoYhrfXxfIxM3MdgMp6eNMGOeF7JAKPiNZ2vlFapjQnwirsSRvSjgdhMf1vs
+         EVz58Z6oZxzv1s0qlq0ZsTJcqcCra03nSNSdvjfSE4S+iL+NItHhLzMN0UCk/sLvpY82
+         pK9LErzJoz7CCGYQPsLoly0jiz5d7ILc+oSL/yO7zWpdkNrwQeeyJWZW7p7lf88Vux8m
+         V0LtR0GXSugFYwnhDLBCs5k4a75Tyk57YaJLHP8NEcgiq196Bcf7VHuB2P/IXctH4uZ+
+         i3CNOZnB1mBS8eGnmNTRwxKhkfrdL1lmOSnPUgHiSJQo12HsGKDmzH674hUteK9jpBIN
+         XQEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=9j2zni39Iu6HBupxCn2OCvQwPjsmxfcrMvRGVnT7LHQ=;
+        b=OgksvxbAt4hEY3x++BjqVVvst32vJ8Czb0Qg8v1OlicwskjJuN2lljrbJV6u0gd3YY
+         jZYh+wjuZWvKSy8L/rJopgprUfxmdp97OeQWWgfhABRK6/6TyC9lHKe+0quHoweA6oT7
+         JTzdtTHUQYhofZRpWq5DispHJQKt0hYM9wUBfBnZ/rdGlAcE5c7jyt/sOTuH+hDFj/+S
+         mt2u6IlpVfrCQ2f549/rpsBSwE4dfHR/utzNtHd+M/TYyr6+7Ena3fTVibBum/RDPjik
+         adHzxhaPbp3Xqka/jWHlX7llG/h0tXCEw8e1TEQknfOb2baFNMIWrXsKzW0LV7waW8qZ
+         Q0JQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.15 014/122] ALSA: control: Fix memory corruption risk in snd_ctl_elem_read
-Date: Wed,  7 Mar 2018 11:37:06 -0800
-Message-Id: <20180307191731.293936119@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.15 016/122] ALSA: hda: Add a power_save blacklist
+Date: Wed,  7 Mar 2018 11:37:08 -0800
+Message-Id: <20180307191731.621882863@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -71,9 +38,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594309056556553398?=
+X-GMAIL-MSGID: =?utf-8?q?1594309056556553398?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -81,50 +49,108 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 5a23699a39abc5328921a81b89383d088f6ba9cc upstream.
+commit 1ba8f9d308174e647b864c36209b4d7934d99888 upstream.
 
-The patch "ALSA: control: code refactoring for ELEM_READ/ELEM_WRITE
-operations" introduced a potential for kernel memory corruption due
-to an incorrect if statement allowing non-readable controls to fall
-through and call the get function. For TLV controls a driver can omit
-SNDRV_CTL_ELEM_ACCESS_READ to ensure that only the TLV get function
-can be called. Instead the normal get() can be invoked unexpectedly
-and as the driver expects that this will only be called for controls
-<= 512 bytes, potentially try to copy >512 bytes into the 512 byte
-return array, so corrupting kernel memory.
+On some boards setting power_save to a non 0 value leads to clicking /
+popping sounds when ever we enter/leave powersaving mode. Ideally we would
+figure out how to avoid these sounds, but that is not always feasible.
 
-The problem is an attempt to refactor the snd_ctl_elem_read function
-to invert the logic so that it conditionally aborted if the control
-is unreadable instead of conditionally executing. But the if statement
-wasn't inverted correctly.
+This commit adds a blacklist for devices where powersaving is known to
+cause problems and disables it on these devices.
 
-The correct inversion of
+Note I tried to put this blacklist in userspace first:
+https://github.com/systemd/systemd/pull/8128
 
-    if (a && !b)
+But the systemd maintainers rightfully pointed out that it would be
+impossible to then later remove entries once we actually find a way to
+make power-saving work on listed boards without issues. Having this list
+in the kernel will allow removal of the blacklist entry in the same commit
+which fixes the clicks / plops.
 
-is
-    if (!a || b)
+The blacklist only applies to the default power_save module-option value,
+if a user explicitly sets the module-option then the blacklist is not
+used.
 
-Fixes: becf9e5d553c2 ("ALSA: control: code refactoring for ELEM_READ/ELEM_WRITE operations")
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: <stable@vger.kernel.org>
+[ added an ifdef CONFIG_PM for the build error -- tiwai]
+
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1525104
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=198611
+Cc: stable@vger.kernel.org
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/control.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/hda_intel.c |   38 ++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 36 insertions(+), 2 deletions(-)
 
---- a/sound/core/control.c
-+++ b/sound/core/control.c
-@@ -888,7 +888,7 @@ static int snd_ctl_elem_read(struct snd_
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -181,7 +181,7 @@ static const struct kernel_param_ops par
+ };
+ #define param_check_xint param_check_int
  
- 	index_offset = snd_ctl_get_ioff(kctl, &control->id);
- 	vd = &kctl->vd[index_offset];
--	if (!(vd->access & SNDRV_CTL_ELEM_ACCESS_READ) && kctl->get == NULL)
-+	if (!(vd->access & SNDRV_CTL_ELEM_ACCESS_READ) || kctl->get == NULL)
- 		return -EPERM;
+-static int power_save = CONFIG_SND_HDA_POWER_SAVE_DEFAULT;
++static int power_save = -1;
+ module_param(power_save, xint, 0644);
+ MODULE_PARM_DESC(power_save, "Automatic power-saving timeout "
+ 		 "(in second, 0 = disable).");
+@@ -2186,6 +2186,24 @@ out_free:
+ 	return err;
+ }
  
- 	snd_ctl_build_ioff(&control->id, kctl, index_offset);
++#ifdef CONFIG_PM
++/* On some boards setting power_save to a non 0 value leads to clicking /
++ * popping sounds when ever we enter/leave powersaving mode. Ideally we would
++ * figure out how to avoid these sounds, but that is not always feasible.
++ * So we keep a list of devices where we disable powersaving as its known
++ * to causes problems on these devices.
++ */
++static struct snd_pci_quirk power_save_blacklist[] = {
++	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
++	SND_PCI_QUIRK(0x1849, 0x0c0c, "Asrock B85M-ITX", 0),
++	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
++	SND_PCI_QUIRK(0x1043, 0x8733, "Asus Prime X370-Pro", 0),
++	/* https://bugzilla.kernel.org/show_bug.cgi?id=198611 */
++	SND_PCI_QUIRK(0x17aa, 0x2227, "Lenovo X1 Carbon 3rd Gen", 0),
++	{}
++};
++#endif /* CONFIG_PM */
++
+ /* number of codec slots for each chipset: 0 = default slots (i.e. 4) */
+ static unsigned int azx_max_codecs[AZX_NUM_DRIVERS] = {
+ 	[AZX_DRIVER_NVIDIA] = 8,
+@@ -2198,6 +2216,7 @@ static int azx_probe_continue(struct azx
+ 	struct hdac_bus *bus = azx_bus(chip);
+ 	struct pci_dev *pci = chip->pci;
+ 	int dev = chip->dev_index;
++	int val;
+ 	int err;
+ 
+ 	hda->probe_continued = 1;
+@@ -2278,7 +2297,22 @@ static int azx_probe_continue(struct azx
+ 
+ 	chip->running = 1;
+ 	azx_add_card_list(chip);
+-	snd_hda_set_power_save(&chip->bus, power_save * 1000);
++
++	val = power_save;
++#ifdef CONFIG_PM
++	if (val == -1) {
++		const struct snd_pci_quirk *q;
++
++		val = CONFIG_SND_HDA_POWER_SAVE_DEFAULT;
++		q = snd_pci_quirk_lookup(chip->pci, power_save_blacklist);
++		if (q && val) {
++			dev_info(chip->card->dev, "device %04x:%04x is on the power_save blacklist, forcing power_save to 0\n",
++				 q->subvendor, q->subdevice);
++			val = 0;
++		}
++	}
++#endif /* CONFIG_PM */
++	snd_hda_set_power_save(&chip->bus, val * 1000);
+ 	if (azx_has_pm_runtime(chip) || hda->use_vga_switcheroo)
+ 		pm_runtime_put_autosuspend(&pci->dev);
+ 
