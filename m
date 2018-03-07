@@ -1,58 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934016AbeCGQy4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:54:56 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:52746 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933922AbeCGQx0 (ORCPT
+        id S934272AbeCGQzG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:55:06 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:58636 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933956AbeCGQy4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:53:26 -0500
-X-Google-Smtp-Source: AG47ELuqeB7+ayTaOBjo10tL4q+Npw99HPx0cVPWPFzFvH0oNVApVQnyRu2kVuc4SipSWEXlvEfkWQ==
-Date: Wed, 7 Mar 2018 16:53:22 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, linux-kernel@vger.kernel.org,
-        Chris Healy <cphealy@gmail.com>, Lucas Stach <l.stach@pengutronix.de>,
-        Aleksander Morgado <aleksander@aleksander.es>
-Subject: Re: [PATCH 1/2] backlight: Add RAVE SP backlight driver
-Message-ID: <20180307165322.dpp2a3wz3cjh7wbj@dell>
-References: <20180307024011.25033-1-andrew.smirnov@gmail.com>
+        Wed, 7 Mar 2018 11:54:56 -0500
+Subject: Re: [GIT PULL 2/2] SOC: Couple of drivers changes for v4.17
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: arm-soc <arm@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Kevin Hilman <khilman@kernel.org>, Olof Johansson <olof@lixom.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1520296873-12982-1-git-send-email-santosh.shilimkar@oracle.com>
+ <1520296873-12982-2-git-send-email-santosh.shilimkar@oracle.com>
+ <CAK8P3a3HbkMJsppb4jN-755T-8CyASsN7kJ1ZLTg31XXeBnO=A@mail.gmail.com>
+From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <dd550f16-00cd-2c66-1a9e-dfbb02a6418b@oracle.com>
+Date: Wed, 7 Mar 2018 08:54:33 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180307024011.25033-1-andrew.smirnov@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAK8P3a3HbkMJsppb4jN-755T-8CyASsN7kJ1ZLTg31XXeBnO=A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8825 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=4 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=649
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803070194
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 06 Mar 2018, Andrey Smirnov wrote:
-
-> This driver provides access to RAVE SP backlight control
-> functionality.
+On 3/7/18 7:50 AM, Arnd Bergmann wrote:
+> On Tue, Mar 6, 2018 at 1:41 AM, Santosh Shilimkar
+> <santosh.shilimkar@oracle.com> wrote:
+>> The following changes since commit 91ab883eb21325ad80f3473633f794c78ac87f51:
+>>
+>>    Linux 4.16-rc2 (2018-02-18 17:29:42 -0800)
+>>
+>> are available in the git repository at:
+>>
+>>    git://git.kernel.org/pub/scm/linux/kernel/git/ssantosh/linux-keystone.git tags/soc_drivers_for_4.17
+>>
+>> for you to fetch changes up to a817e5d82a2dc5daaa0a8a66cfab268fdf2f6bb6:
+>>
+>>    memory: ti-emif-sram: remove redundant dev_err call in ti_emif_probe() (2018-03-05 16:21:31 -0800)
+>>
+>> ----------------------------------------------------------------
+>> SOC driver changes for v4.17
+>>
+>>   - Remove deundant dev_err from probe in ti-emif-srma driver
+>                       ^^ I fixed the typo while applying
 > 
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Daniel Thompson <daniel.thompson@linaro.org>
-> Cc: Jingoo Han <jingoohan1@gmail.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Aleksander Morgado <aleksander@aleksander.es>
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> ---
->  drivers/video/backlight/Kconfig             |  6 +++
->  drivers/video/backlight/Makefile            |  1 +
->  drivers/video/backlight/rave-sp-backlight.c | 82 +++++++++++++++++++++++++++++
+Thanks Arnd !!
 
->  include/linux/mfd/rave-sp.h                 |  1 +
-
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-
--- 
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Regards,
+Santosh
