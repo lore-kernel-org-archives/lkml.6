@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754575AbeCGR24 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 12:28:56 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:27857 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933736AbeCGR1m (ORCPT
+        id S1754642AbeCGR3T (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 12:29:19 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:41832 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933598AbeCGR10 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 12:27:42 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180307172740epoutp02ddaafd065aaa65501c86cda3c8f458b4~Zs3QlWrqb1384813848epoutp02e
-X-AuditID: b6c32a45-3ebff70000001023-1a-5aa0210b524b
+        Wed, 7 Mar 2018 12:27:26 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180307172724epoutp046a978fe8ada2f1406661a810465a8706~Zs3BoBLEr2863728637epoutp04G
+X-AuditID: b6c32a35-891ff70000001031-bd-5aa020fcd4f3
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 To: krzk@kernel.org
 Cc: kgene@kernel.org, devicetree@vger.kernel.org,
@@ -16,70 +16,63 @@ Cc: kgene@kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
         Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 3/4] ARM: dts: exynos5250-snow MAX98095 CODEC node update
-Date: Wed, 07 Mar 2018 18:27:10 +0100
-Message-id: <20180307172711.15697-3-s.nawrocki@samsung.com>
+Subject: [PATCH 1/4] ARM: dts: exynos5250: Add #sound-dai-cells property to
+ hdmi device node
+Date: Wed, 07 Mar 2018 18:27:08 +0100
+Message-id: <20180307172711.15697-1-s.nawrocki@samsung.com>
 X-Mailer: git-send-email 2.14.2
-In-reply-to: <20180307172711.15697-1-s.nawrocki@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFIsWRmVeSWpSXmKPExsWy7bCmmS634oIog8a/shYbZ6xntZh/5Byr
-        Rf/j18wW589vYLfY9Pgaq8XlXXPYLGac38dksfbIXXaLw2/aWR04PTat6mTz2Lyk3qNvyypG
-        j8+b5AJYorhsUlJzMstSi/TtErgy/j+cwlzwi63iUd8fxgbGZ6xdjJwcEgImEouP7WPvYuTi
-        EBLYwShx88wqNgjnO6PE2lVd7DBVn2YtYIZI7GaUuP9xEZTzi1Fiff8MsFlsAoYSvUf7GEFs
-        EQFhiXtLl4PNZRb4xyixbuVeNpCEsICnxNsJH5hAbBYBVYl3dxaDNfAKWEu8mPOZCWKdvMT7
-        BffB4pwCNhIL70xnARkkITCBTaL91EpmiCIXiWNr70B9ISzx6vgWqFulJZ6t2sgIYVdLdLZ1
-        sUM0tzBK/Jl2iQ0iYS1x+PhFsGZmAT6JjsN/gYo4gOK8Eh1tQhAlHhLdm7qgDnKU2H6sAerl
-        fkaJTbNPM05glFrAyLCKUSy1oDg3PbXYqMBQrzgxt7g0L10vOT93EyM4RrVcdzDOOOdziFGA
-        g1GJh1fiz/woIdbEsuLK3EOMEhzMSiK8RvILooR4UxIrq1KL8uOLSnNSiw8xSnOwKInztgW4
-        RAkJpCeWpGanphakFsFkmTg4pRoYX1x1uThpQ+zi5uVHf85ffXC6YmX0X7nLzBpl/u1aFp3H
-        rln13fwsMsM4uzerZluH84Kfzyetm83M8FVWnuOixm6XqEnLJobeme82R8O34Xguk+8ity/N
-        whmnkyafzLnCWfLKhcPvj+DRDlVJrevnJq45vFY/em4059HqErEw1/dt5yYXGNxkVWIpzkg0
-        1GIuKk4EACEbfeTNAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprILMWRmVeSWpSXmKPExsVy+t9jAV0uxQVRBvs/8FtsnLGe1WL+kXOs
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJIsWRmVeSWpSXmKPExsWy7bCmvu4fhQVRBns/8VtsnLGe1WL+kXOs
         Fv2PXzNbnD+/gd1i0+NrrBaXd81hs5hxfh+Txdojd9ktDr9pZ3Xg9Ni0qpPNY/OSeo++LasY
-        PT5vkgtgieKySUnNySxLLdK3S+DK+P9wCnPBL7aKR31/GBsYn7F2MXJySAiYSHyatYC5i5GL
-        Q0hgJ6PEvDUfWCCcX0DO9oNsIFVsAoYSvUf7GEFsEQFhiXtLl7ODFDEL/GOUeDb9MViRsICn
-        xNsJH5hAbBYBVYl3dxaDNfAKWEu8mPOZCWKdvMT7BffB4pwCNhIL70xnAbGFgGre7Glin8DI
-        s4CRYRWjZGpBcW56brFRgVFearlecWJucWleul5yfu4mRmBAbTus1b+D8fGS+EOMAhyMSjy8
-        En/mRwmxJpYVV+YeYpTgYFYS4TWSXxAlxJuSWFmVWpQfX1Sak1p8iFGag0VJnJc//1ikkEB6
-        YklqdmpqQWoRTJaJg1OqgZGl0GEOQwC3W6OM3OmuTJ93WfNiWNwyz03ZdPfC04kWJkEc6ifS
-        Nkwrff99dvGu27sDG5m3MX6RiBIzkFrqqakbxbJwak7K9SsWz3LOX0/lE963+VJT0UyDjM9+
-        a2UePrhhWCxmcV/Vtv3mvM6G+uxPsxL7QrrE8r9kv3Aru77njJjkMbn7akosxRmJhlrMRcWJ
-        AKgVRJ0kAgAA
-X-CMS-MailID: 20180307172738epcas2p20b57ae0b00fc1a422cd3e9b1b297753c
+        PT5vkgtgieKySUnNySxLLdK3S+DKeLF4C2PBAtaKjxOzGxhXsXQxcnJICJhIHOqezNTFyMUh
+        JLCDUeLM+vesEM53RollvbOZuxg5wKr+TlSBiO9mlJjybR0jhPOLUeL7pgnMIKPYBAwleo/2
+        MYLYIgLCEveWLmcHKWIW+McosW7lXjaQhLBAnMTPo/OYQGwWAVWJU0sPgTXzClhLdD2BGCQh
+        IC/xfsF9sA0SAj9ZJXYsamaHSLhITL35mhXCFpZ4dXwLO8R50hKXjtpChKslOtu62CF6Wxgl
+        /ky7xAaRsJY4fPwiWC+zAJ/Eu689rBC9vBIdbUIQJR4SfQdPQ8PFUWLC7Y9MICVCArESP3cU
+        T2CUXMDIsIpRLLWgODc9tdiwwFCvODG3uDQvXS85P3cTIzgCtUx3ME4553OIUYCDUYmHV+LP
+        /Cgh1sSy4srcQ4wSHMxKIrxG8guihHhTEiurUovy44tKc1KLDzFKc7AoifMGBLhECQmkJ5ak
+        ZqemFqQWwWSZODilGhj7fPi1HuiZ58RsE7t7aFfGkj03f3T6Bwm+270i/e0sxq4Hm1494nab
+        Mu23/47Uefvn+e+PSVlwQqZ47bM/h+WtbXjUMj77qSVYmX33zF1TmWr3befGydt1Z06Ztfxr
+        doUV04KjHlabrVsmzK65sf2d3d2Sh3/tX35KOf9JIfTLw+4Hv/0fXrq4RImlOCPRUIu5qDgR
+        AI++GlG8AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOJMWRmVeSWpSXmKPExsVy+t9jAd3fCguiDPomWVhsnLGe1WL+kXOs
+        Fv2PXzNbnD+/gd1i0+NrrBaXd81hs5hxfh+Txdojd9ktDr9pZ3Xg9Ni0qpPNY/OSeo++LasY
+        PT5vkgtgieKySUnNySxLLdK3S+DKeLF4C2PBAtaKjxOzGxhXsXQxcnBICJhI/J2o0sXIxSEk
+        sJNRYmnXdUYI5xejRO+cR0BFnBxsAoYSvUf7GEFsEQFhiXtLl7ODFDEL/GOUeDb9MRtIQlgg
+        TuLn0XlMIDaLgKrEqaWHmEFsXgFria4nE8BsCQF5ifcL7jNOYORawMiwilEytaA4Nz232KjA
+        MC+1XK84Mbe4NC9dLzk/dxMjMDi2Hdbq28F4f0n8IUYBDkYlHl6JP/OjhFgTy4orcw8xSnAw
+        K4nwGskviBLiTUmsrEotyo8vKs1JLT7EKM3BoiTOezvvWKSQQHpiSWp2ampBahFMlomDU6qB
+        scP08A65p/YNi04wyvVfumB6Zqey+L7L79yn2U31VJ+SF796vlTom/DFSU6pcg3v+BUm9IUu
+        UGxiT3V2TfqZWHfzwe7D588kBzT1zi6pv5R8pOlogbBR9DfL/af+Sj8zk1Z1adt/9PqR1LRT
+        TNHHdLJsmZt0cmzXKLHc3czuP3eqTFpOBv8dJZbijERDLeai4kQAjLVv7AoCAAA=
+X-CMS-MailID: 20180307172723epcas1p1b8879bb555737cab7406a172b7d13a56
 X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20180307172738epcas2p20b57ae0b00fc1a422cd3e9b1b297753c
-X-RootMTR: 20180307172738epcas2p20b57ae0b00fc1a422cd3e9b1b297753c
-References: <20180307172711.15697-1-s.nawrocki@samsung.com>
-        <CGME20180307172738epcas2p20b57ae0b00fc1a422cd3e9b1b297753c@epcas2p2.samsung.com>
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20180307172723epcas1p1b8879bb555737cab7406a172b7d13a56
+X-RootMTR: 20180307172723epcas1p1b8879bb555737cab7406a172b7d13a56
+References: <CGME20180307172723epcas1p1b8879bb555737cab7406a172b7d13a56@epcas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds missing clocks, clock-names properties so the CODEC can
-properly handle its master clock. Without this change sound on exynos5250-snow
-doesn't work.
-Missing #sound-dai-cells property is also added so it is possible to specify
-the DAI links properly for HDMI audio support.
+This property is required for specifying link between the HDMI IP block
+and the SoC's audio subsystem.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- arch/arm/boot/dts/exynos5250-snow.dts | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/exynos5250.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index 4827cb506fa3..16e37c337a3f 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -27,6 +27,9 @@
- 		reg = <0x11>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&max98095_en>;
-+		clocks = <&pmu_system_controller 0>;
-+		clock-names = "mclk";
-+		#sound-dai-cells = <1>;
- 	};
- };
-
---
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 56626d1a4235..71d2ede118e3 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -700,6 +700,7 @@
+ 					"sclk_hdmiphy", "mout_hdmi";
+ 			samsung,syscon-phandle = <&pmu_system_controller>;
+ 			phy = <&hdmiphy>;
++			#sound-dai-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+-- 
 2.14.2
