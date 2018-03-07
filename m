@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsARgtPgWFo2TQYDveTlkbxHgky+5cbWqI6js8W1MOwozt8ScdihDJhdOCObVWEm9hnZqTU
-ARC-Seal: i=1; a=rsa-sha256; t=1520451673; cv=none;
+X-Google-Smtp-Source: AG47ELuS+nn/sfdAR+ZZZhY46JHVekk8EdFXfR5FHtozlnumgAYM3Va6TvoCSH4V4LnsPNBq67pD
+ARC-Seal: i=1; a=rsa-sha256; t=1520451671; cv=none;
         d=google.com; s=arc-20160816;
-        b=C3I3Jw5YdENb9LbG77P96kXNqi2FupmZa/URkqbqzAXsujSh22u29HsTpqL+GA1frB
-         M7L2F99Q15eGgg9vyPC3PzlAwDGtoSTLv7YSSXFHSjyCx5XkY7kx+zMDGie2W7l9xMjc
-         rXUhuMgOBUZ68Y8PgUygckPsSfRTvHpTPHQ/FRdJgH8pTkFi1wF+rbeZhhMoPIUbeIS6
-         jfRU4igptLJgKaw7JhhSQIPNAiZfER78mPqpbWxUvR9QjAYY8TBLd2q5++95O0of1iFX
-         xl2SJGrzq8rmrZnH0hnH+j1VJxqc/tKYI9W9EwjqojxF2CQVZExmgeq7YLTDiD/M4wPy
-         tCMA==
+        b=CADBn1rutEg3GA3mIh2kBTOwoWmPsfB/R4LLyR4HnwnXGWE9DYiTGV//lYu/Lpjsy9
+         Gu/wrBklz5uo4Zpk8WdlmgQuYcr1pPYJU1OFHTw7B2Ql4fZ5MMUkewuuqCQBu8CEuRbY
+         GCS99P1iGAqECjL1+WyxievTybkJf7q+uc7B7RUaXU1zxS1S8wJPHWQ8tNirFdN88UpO
+         3J4/CA4XAHI9MWGjGk70+rjexr/EFy3IEJGNoqyyT707BnO5qr7Ec4w2fv/Uek/HcR/b
+         94FCpviM7hoKKN6+RFFHbPTwX5Y45bEqQD6JpPMybvzABHd3V3zmdlat3nCKIsQIEwgm
+         LNTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=nf0lqoHxdbxfAdRttvwC6inxGs4TJg3hLGm4h4dZ/bQ=;
-        b=Xt9PriuXEAcbb2wFZWb+pMctwKDa0Zt5J941g9sBWXsC6FL4tMf6mSoG0MGn5eExcX
-         dQlEfP2lk2SABS4Ai9GjbS1nA0eJAeXOt2E6KFAyPa8nh3SRacNfZw2zjkFNEBtpWwDL
-         fUgdUEXxo+wvQW0IdYqR83Nb8VCWBS4oYsE+Pg6LF5VRePQeRx/1SNUL1rgvowEeQLq2
-         zFQ5DoVpSwtG9hRma2zSUmJrmeHjwM7RUF5VDHb4DfD4ITb/ECzkiHtnVdJT/KupU010
-         E1KwP+wtDXLv8QDo23Gjal69xfdF+0KHD6ngm3Ki0S/mwhM8zyxiaxA8bfXfBc/necmv
-         LTrg==
+        bh=NBrtvk0HuVYDbif7hfHCtwz1cp4drZOHoEU0cUbIOd4=;
+        b=hyANBB/sV4BSFROlws01N13v5AonOUWz0a2e46tqF9lzAZa1YhRTmeSDIy2bSJ3QQv
+         cpO+XymR4a3QBZCiYH8ZA3tEVwm8ePmEt4JxxHnY06wshaLXhOcJlBukjDEosjjmxnLZ
+         WBB7QZKaljdfB79sJNEq9jJA133ZTn2FVnu4Wxl4yRrWkVDGdOhtTRIFgBW0UzEczSua
+         P68tpfCp6OsUhqFKdIjnqiLkF4UPSN9AaPTtFJk/qgIXqY5mNbogCpvhXzk3SGyLXcy3
+         +yUMvMFCLIkzloWQ+RoJRA2z39bloNrrTqZmHYvVt3XrFUuPCyHdFOirRX/4NTXZpz1t
+         nELw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Roman Kapl <code@rkapl.cz>,
-	Jiri Pirko <jiri@mellanox.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Nicolas Dichtel <nicolas.dichtel@6wind.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 048/122] net: sched: report if filter is too large to dump
-Date: Wed,  7 Mar 2018 11:37:40 -0800
-Message-Id: <20180307191735.949703125@linuxfoundation.org>
+Subject: [PATCH 4.15 047/122] netlink: ensure to loop over all netns in genlmsg_multicast_allns()
+Date: Wed,  7 Mar 2018 11:37:39 -0800
+Message-Id: <20180307191735.784440687@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309134390300102?=
-X-GMAIL-MSGID: =?utf-8?q?1594309134390300102?=
+X-GMAIL-THRID: =?utf-8?q?1594309132128532441?=
+X-GMAIL-MSGID: =?utf-8?q?1594309132128532441?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,52 +50,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Roman Kapl <code@rkapl.cz>
+From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
 
 
-[ Upstream commit 5ae437ad5a2ed573b1ebb04e0afa70b8869f88dd ]
+[ Upstream commit cb9f7a9a5c96a773bbc9c70660dc600cfff82f82 ]
 
-So far, if the filter was too large to fit in the allocated skb, the
-kernel did not return any error and stopped dumping. Modify the dumper
-so that it returns -EMSGSIZE when a filter fails to dump and it is the
-first filter in the skb. If we are not first, we will get a next chance
-with more room.
+Nowadays, nlmsg_multicast() returns only 0 or -ESRCH but this was not the
+case when commit 134e63756d5f was pushed.
+However, there was no reason to stop the loop if a netns does not have
+listeners.
+Returns -ESRCH only if there was no listeners in all netns.
 
-I understand this is pretty near to being an API change, but the
-original design (silent truncation) can be considered a bug.
+To avoid having the same problem in the future, I didn't take the
+assumption that nlmsg_multicast() returns only 0 or -ESRCH.
 
-Note: The error case can happen pretty easily if you create a filter
-with 32 actions and have 4kb pages. Also recent versions of iproute try
-to be clever with their buffer allocation size, which in turn leads to
-
-Signed-off-by: Roman Kapl <code@rkapl.cz>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
+Fixes: 134e63756d5f ("genetlink: make netns aware")
+CC: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/cls_api.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ net/netlink/genetlink.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/net/sched/cls_api.c
-+++ b/net/sched/cls_api.c
-@@ -1054,13 +1054,18 @@ static int tc_dump_tfilter(struct sk_buf
- 		    nla_get_u32(tca[TCA_CHAIN]) != chain->index)
- 			continue;
- 		if (!tcf_chain_dump(chain, q, parent, skb, cb,
--				    index_start, &index))
-+				    index_start, &index)) {
-+			err = -EMSGSIZE;
- 			break;
-+		}
+--- a/net/netlink/genetlink.c
++++ b/net/netlink/genetlink.c
+@@ -1081,6 +1081,7 @@ static int genlmsg_mcast(struct sk_buff
+ {
+ 	struct sk_buff *tmp;
+ 	struct net *net, *prev = NULL;
++	bool delivered = false;
+ 	int err;
+ 
+ 	for_each_net_rcu(net) {
+@@ -1092,14 +1093,21 @@ static int genlmsg_mcast(struct sk_buff
+ 			}
+ 			err = nlmsg_multicast(prev->genl_sock, tmp,
+ 					      portid, group, flags);
+-			if (err)
++			if (!err)
++				delivered = true;
++			else if (err != -ESRCH)
+ 				goto error;
+ 		}
+ 
+ 		prev = net;
  	}
  
- 	cb->args[0] = index;
- 
- out:
-+	/* If we did no progress, the error (EMSGSIZE) is real */
-+	if (skb->len == 0 && err)
-+		return err;
- 	return skb->len;
- }
- 
+-	return nlmsg_multicast(prev->genl_sock, skb, portid, group, flags);
++	err = nlmsg_multicast(prev->genl_sock, skb, portid, group, flags);
++	if (!err)
++		delivered = true;
++	else if (err != -ESRCH)
++		goto error;
++	return delivered ? 0 : -ESRCH;
+  error:
+ 	kfree_skb(skb);
+ 	return err;
