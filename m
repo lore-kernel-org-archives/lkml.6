@@ -1,64 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934024AbeCGQFU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:05:20 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51884 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933502AbeCGQFQ (ORCPT
+        id S934056AbeCGQFs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:05:48 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:40417 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933487AbeCGQFo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:05:16 -0500
-X-Google-Smtp-Source: AG47ELsd1hyS3DpbNiBPBB9wkF33tb1AwWXEI2gCYpGn1501icV/zM0CBJeoP6IYeE/j/GWco+0smA==
-Date: Wed, 7 Mar 2018 16:05:13 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: groeck@chromium.org, andy.shevchenko@gmail.com, kernel@collabora.com,
-        gwendal@chromium.org, linux-kernel@vger.kernel.org,
-        Daniel Hung-yu Wu <hywu@google.com>,
-        Daniel Hung-yu Wu <hywu@chromium.org>
-Subject: Re: [PATCH v3 6/8] mfd: cros_ec_dev: register shutdown function for
- debugfs
-Message-ID: <20180307160513.wv3vjkw77hx456gt@dell>
-References: <20180226102606.15093-1-enric.balletbo@collabora.com>
- <20180226102606.15093-7-enric.balletbo@collabora.com>
+        Wed, 7 Mar 2018 11:05:44 -0500
+X-Google-Smtp-Source: AG47ELvKuHDTbPmdhrV9FNSFuovQcrsw7cmtLu3gSZxOHSLo/4+sf+1fmdRFZkMSvDEhBNFG7yuvIDTKagH+FTpPyy4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180226102606.15093-7-enric.balletbo@collabora.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <44a75f98-8639-fdbd-6545-5c261f10fe06@monstr.eu>
+References: <CAK8P3a1KE_0+vDC48-NzzW8eT1YZ8MZRun-1GeRMNg+o8dqZUg@mail.gmail.com>
+ <44a75f98-8639-fdbd-6545-5c261f10fe06@monstr.eu>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 7 Mar 2018 17:05:43 +0100
+X-Google-Sender-Auth: U9L53NdPEdhwzsnJQ3tS9rpcBUw
+Message-ID: <CAK8P3a3sij2SZCe5JRgFsTqLB1gQq71MT8BfYqN--Wsd15g9pg@mail.gmail.com>
+Subject: Re: CRIS port status, was: [PATCH] dump_stack: convert generic
+ dump_stack into a weak symbol
+To: Michal Simek <monstr@monstr.eu>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, Tejun Heo <tj@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, Dave Young <dyoung@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>, Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        adi-buildroot-devel@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jesper Nilsson <jesper@jni.nu>, Mikael Starvik <starvik@axis.com>,
+        linux-cris-kernel@axis.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Feb 2018, Enric Balletbo i Serra wrote:
+On Wed, Mar 7, 2018 at 4:01 PM, Michal Simek <monstr@monstr.eu> wrote:
+> On 7.3.2018 15:09, Arnd Bergmann wrote:
+>> On Wed, Mar 7, 2018 at 2:40 PM, Sergey Senozhatsky
+>> <sergey.senozhatsky@gmail.com> wrote:
 
-> From: Daniel Hung-yu Wu <hywu@google.com>
-> 
-> Reboot or shutdown during delayed works could corrupt communication with
-> EC and certain I2C controller may not be able to recover from the error
-> state.
-> 
-> This patch registers a shutdown callback used to cancel the debugfs log
-> worker thread.
-> 
-> Signed-off-by: Daniel Hung-yu Wu <hywu@chromium.org>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> ---
-> 
-> Changes in v3:
-> - [6/8] Add the Reviewed-by Andy Shevchenko.
-> 
-> Changes in v2:
-> - [6/8] This patch is new in this series.
-> 
->  drivers/mfd/cros_ec_dev.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>> If we remove cris, it's probably also appropriate to ask the question
+>> about microblaze: Michal, I know your work on microblaze linux has
+>> been winding down over the years as the user base shrinks (just
+>> like for all others above). Should we keep it for a few more years for
+>> the remaining users, or is it time to let go? I would guess we still
+>> have active users on modern kernels, but that's what I thought
+>> about cris as well ;-)
+>
+> It is not like that. I definitely have less time for Microblaze to
+> develop new stuff but Microblaze HW is still regularly updated and new
+> hw features are coming there and new versions are created. We are also
+> updating and testing newer kernels and using latest kernel at Xilinx. It
+> is definitely not in state that we should just remove it.
+>
+> There are still a lot of users which are happy with current state and
+> there is no pressure to add new features like SMP/address extension/etc
+> that's why there is no huge development in arch/microblaze.
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Ok, glad to hear that, thanks a lot for the clarification.
 
--- 
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+       Arnd
