@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754501AbeCGM1V (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 07:27:21 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6169 "EHLO huawei.com"
+        id S1754362AbeCGM3H (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 07:29:07 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6166 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753972AbeCGM0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 07:26:01 -0500
+        id S1751067AbeCGMZ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 07:25:58 -0500
 From: John Garry <john.garry@huawei.com>
 To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
         <robh+dt@kernel.org>, <mark.rutland@arm.com>, <hare@suse.de>
 CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-        Xiaofei Tan <tanxiaofei@huawei.com>,
+        Xiang Chen <chenxiang66@hisilicon.com>,
         John Garry <john.garry@huawei.com>
-Subject: [PATCH v4 05/10] scsi: hisi_sas: increase timer expire of internal abort task
-Date: Wed, 7 Mar 2018 20:25:09 +0800
-Message-ID: <1520425514-205565-6-git-send-email-john.garry@huawei.com>
+Subject: [PATCH v4 06/10] scsi: hisi_sas: remove unused variable hisi_sas_devices.running_req
+Date: Wed, 7 Mar 2018 20:25:10 +0800
+Message-ID: <1520425514-205565-7-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520425514-205565-1-git-send-email-john.garry@huawei.com>
 References: <1520425514-205565-1-git-send-email-john.garry@huawei.com>
@@ -27,44 +27,86 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaofei Tan <tanxiaofei@huawei.com>
+From: Xiang Chen <chenxiang66@hisilicon.com>
 
-The current 110ms expiry time is not long enough for the internal
-abort task.
+The structure element hisi_sas_devices.running_req to count how
+many commands are active is in effect only ever written in the
+code, so remove it.
 
-The reason is that the internal abort task could be blocked in HW
-if the HW is retrying to set up link. The internal abort task will
-be executed only when the retry process finished.
-
-The maximum time is 5s for the retry of setting up link. So, the timer
-expire should be more than 5s. This patch increases it from 110ms to 6s.
-
-Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
+Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/scsi/hisi_sas/hisi_sas.h       | 1 -
+ drivers/scsi/hisi_sas/hisi_sas_main.c  | 9 ---------
+ drivers/scsi/hisi_sas/hisi_sas_v1_hw.c | 3 ---
+ 3 files changed, 13 deletions(-)
 
+diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
+index e7fd287..d1153e8 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas.h
++++ b/drivers/scsi/hisi_sas/hisi_sas.h
+@@ -175,7 +175,6 @@ struct hisi_sas_device {
+ 	struct hisi_sas_dq	*dq;
+ 	struct list_head	list;
+ 	u64 attached_phy;
+-	atomic64_t running_req;
+ 	enum sas_device_type	dev_type;
+ 	int device_id;
+ 	int sata_idx;
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index 9d16372..9ff8790 100644
+index 9ff8790..88ad8d4 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -871,6 +871,7 @@ static void hisi_sas_tmf_timedout(struct timer_list *t)
+@@ -200,8 +200,6 @@ void hisi_sas_slot_task_free(struct hisi_hba *hisi_hba, struct sas_task *task,
  
- #define TASK_TIMEOUT 20
- #define TASK_RETRY 3
-+#define INTERNAL_ABORT_TIMEOUT 6
- static int hisi_sas_exec_internal_tmf_task(struct domain_device *device,
- 					   void *parameter, u32 para_len,
- 					   struct hisi_sas_tmf_task *tmf)
-@@ -1574,7 +1575,7 @@ static int hisi_sas_query_task(struct sas_task *task)
- 	task->task_proto = device->tproto;
- 	task->task_done = hisi_sas_task_done;
- 	task->slow_task->timer.function = hisi_sas_tmf_timedout;
--	task->slow_task->timer.expires = jiffies + msecs_to_jiffies(110);
-+	task->slow_task->timer.expires = jiffies + INTERNAL_ABORT_TIMEOUT*HZ;
- 	add_timer(&task->slow_task->timer);
+ 	if (task) {
+ 		struct device *dev = hisi_hba->dev;
+-		struct domain_device *device = task->dev;
+-		struct hisi_sas_device *sas_dev = device->lldd_dev;
  
- 	res = hisi_sas_internal_abort_task_exec(hisi_hba, sas_dev->device_id,
+ 		if (!task->lldd_task)
+ 			return;
+@@ -213,9 +211,6 @@ void hisi_sas_slot_task_free(struct hisi_hba *hisi_hba, struct sas_task *task,
+ 				dma_unmap_sg(dev, task->scatter,
+ 					     task->num_scatter,
+ 					     task->data_dir);
+-
+-		if (sas_dev)
+-			atomic64_dec(&sas_dev->running_req);
+ 	}
+ 
+ 	if (slot->buf)
+@@ -431,8 +426,6 @@ static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq
+ 	spin_unlock_irqrestore(&task->task_state_lock, flags);
+ 
+ 	dq->slot_prep = slot;
+-
+-	atomic64_inc(&sas_dev->running_req);
+ 	++(*pass);
+ 
+ 	return 0;
+@@ -1517,8 +1510,6 @@ static int hisi_sas_query_task(struct sas_task *task)
+ 
+ 	dq->slot_prep = slot;
+ 
+-	atomic64_inc(&sas_dev->running_req);
+-
+ 	/* send abort command to the chip */
+ 	hisi_hba->hw->start_delivery(dq);
+ 	spin_unlock_irqrestore(&dq->lock, flags_dq);
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+index 2eb8980..8dd0e6a6 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+@@ -1407,9 +1407,6 @@ static int slot_complete_v1_hw(struct hisi_hba *hisi_hba,
+ 	}
+ 
+ out:
+-	if (sas_dev)
+-		atomic64_dec(&sas_dev->running_req);
+-
+ 	hisi_sas_slot_task_free(hisi_hba, task, slot);
+ 	sts = ts->stat;
+ 
 -- 
 1.9.1
