@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4098462-1520452841-2-9966931331448933387
+X-Cyrus-Session-Id: sloti22d1t05-4119318-1520452839-2-5851347285317819282
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520452840; b=f6ClBOF3fyK360wazUhO2qh/X5U0ocyl1KMHRRJ+JAZXJEH
-    dEXdedyDvtAdrR+CQ6gpHQ5nAMkNb3uzdAzG31baTcKOKvKHV0PcknzCd1GE+YXq
-    xT3k2OS0lcApqXCgkxa6bF2i8SUqucW4HEKNKlLg15tFrFMM2h3wmgYz3iXRT7Xy
-    8tKqPZbL6060lve9e9u7z74wf2L8fcMZQ6sIkvHBo0diwxN8UA0ONcHhFKqypFDI
-    YR9pzgMIov95+HpSSir0Fa3e17QXLq2PFfaId+oGYNciTipbTquiEX7G0fKvsZOA
-    +gA4UXMnPmYMI2rijLp1HxZhR38XEuMGjKkh25g==
+    t=1520452838; b=Ijl2RFWWNEmMUgP80ZNb2F3uaBQ9Ng0sbsVpHKxrMyQB+0g
+    bUOZfN45Oi+VsxeRwkXUQ8wHSA4zVirfS8IojRbqoof7OJuruKYObpsNle6Se0Ql
+    IrT77d7bKruhE77gfF7dSBp8/+z1zq5Rdo3JirE/4O25Luc1ijKZrpikfZ3Gu2UD
+    N0OlD/u+Mk2P+Cz7JTUOS+isqUvGTsHyCgZB0d1N6koejnvoT/E2DPN3jGoqJ3/m
+    C2Jm3nbsU8ED1aopp3gfJEDH6AWHW4u6/wHx9kHe1iXSl56PpdNGkCpEhkhkclkL
+    KBeYrm8hHXDLtgR7MI5TCy0pRCulS0slouPsxUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520452840; bh=TbnDrxfB1amsavc1a13Z90BiLP
-    H+39FNMJ0JVRDoSU0=; b=VDMGTtwWeJfZZVKAyxxW6e/PT1WNoQA/Fsi4LrBQ4C
-    iklkb30Xp62oeRlTNDdOIwkvJERQPxefyGBasCbfkH7Yvwn73wvKYQHAuYTyIpER
-    iG47V8fM1UzVdpUDk8vFv0bm8LLuA997QvIYiAK3kmcA9GW4w8+KpUK35fY9J/Hp
-    CRAtN4LBiqrRMECVSytxFaUM9e0c830I4Usu+Mkzp1MVlPXz4bVZON+0Q/yRpgli
-    /+jApeTNfY3OX68QctzGCK+DNSItbCdvWb3qzwGEhLDxm10VHf3Bfs5oZxUhqENO
-    SQYOmG8utV0HcQM8rCKHilFIS6V6AW2K1l3aY+PXH6NA==
+    :list-id; s=arctest; t=1520452838; bh=8bWBQvjfVONqXX4ePa2bWVcgzI
+    vytBmLeG9dVxMkp3U=; b=XXoiDBhuQIqkNkZ5502kWjOLBQxmMukKv5Z9lEpZBu
+    ktvEJhwmHh7nR9zqCp+EcmGONCi9mSy0SxaTXtfTTBK3n8fgdXFLyKwbWcdIf79z
+    qoRKK3iwPVMa5gylM7RYaN4MUhQt3DHho0V3kgs4HJR85XMWrERCWjZn9B+Ir1VS
+    5fiJeUCR0q8awDdgu/QpndiK3Ql3RCfgx/lYsqwvhp3u+ZkMhdxcvz1lgCZO8gtV
+    foFHdnuJs25eLmHHcK7YV701xT0avkjs7lYfeDIarT5yqlX+6Pe/o+NJ9+tfiiUV
+    VoH2XN/IyOlOBrnys60UGGwgLJWYRZhb4NSveh3pFfDg==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,20 +49,20 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934506AbeCGUAj (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 15:00:39 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44852 "EHLO
+        id S935045AbeCGT6j (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Mar 2018 14:58:39 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44874 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965654AbeCGTrB (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:47:01 -0500
+        with ESMTP id S965667AbeCGTrG (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:47:06 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Julian Wiedmann <jwi@linux.vnet.ibm.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 076/110] s390/qeth: fix SETIP command handling
-Date: Wed,  7 Mar 2018 11:38:59 -0800
-Message-Id: <20180307191049.429281327@linuxfoundation.org>
+Subject: [PATCH 4.14 078/110] s390/qeth: fix IP removal on offline cards
+Date: Wed,  7 Mar 2018 11:39:01 -0800
+Message-Id: <20180307191049.719974800@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -83,71 +83,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 
 
-[ Upstream commit 1c5b2216fbb973a9410e0b06389740b5c1289171 ]
+[ Upstream commit 98d823ab1fbdcb13abc25b420f9bb71bade42056 ]
 
-send_control_data() applies some special handling to SETIP v4 IPA
-commands. But current code parses *all* command types for the SETIP
-command code. Limit the command code check to IPA commands.
+If the HW is not reachable, then none of the IPs in qeth's internal
+table has been registered with the HW yet. So when deleting such an IP,
+there's no need to stage it for deregistration - just drop it from
+the table.
 
-Fixes: 5b54e16f1a54 ("qeth: do not spin for SETIP ip assist command")
+This fixes the "add-delete-add" scenario on an offline card, where the
+the second "add" merely increments the IP's use count. But as the IP is
+still set to DISP_ADDR_DELETE from the previous "delete" step,
+l3_recover_ip() won't register it with the HW when the card goes online.
+
+Fixes: 5f78e29ceebf ("qeth: optimize IP handling in rx_mode callback")
 Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_core.h      |    5 +++++
- drivers/s390/net/qeth_core_main.c |   14 ++++++++------
- 2 files changed, 13 insertions(+), 6 deletions(-)
+ drivers/s390/net/qeth_l3_main.c |   14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
---- a/drivers/s390/net/qeth_core.h
-+++ b/drivers/s390/net/qeth_core.h
-@@ -580,6 +580,11 @@ struct qeth_cmd_buffer {
- 	void (*callback) (struct qeth_channel *, struct qeth_cmd_buffer *);
- };
+--- a/drivers/s390/net/qeth_l3_main.c
++++ b/drivers/s390/net/qeth_l3_main.c
+@@ -255,12 +255,8 @@ int qeth_l3_delete_ip(struct qeth_card *
+ 	if (addr->in_progress)
+ 		return -EINPROGRESS;
  
-+static inline struct qeth_ipa_cmd *__ipa_cmd(struct qeth_cmd_buffer *iob)
-+{
-+	return (struct qeth_ipa_cmd *)(iob->data + IPA_PDU_HEADER_SIZE);
-+}
-+
- /**
-  * definition of a qeth channel, used for read and write
-  */
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -2073,7 +2073,7 @@ int qeth_send_control_data(struct qeth_c
- 	unsigned long flags;
- 	struct qeth_reply *reply = NULL;
- 	unsigned long timeout, event_timeout;
--	struct qeth_ipa_cmd *cmd;
-+	struct qeth_ipa_cmd *cmd = NULL;
+-	if (!qeth_card_hw_is_reachable(card)) {
+-		addr->disp_flag = QETH_DISP_ADDR_DELETE;
+-		return 0;
+-	}
+-
+-	rc = qeth_l3_deregister_addr_entry(card, addr);
++	if (qeth_card_hw_is_reachable(card))
++		rc = qeth_l3_deregister_addr_entry(card, addr);
  
- 	QETH_CARD_TEXT(card, 2, "sendctl");
+ 	hash_del(&addr->hnode);
+ 	kfree(addr);
+@@ -403,11 +399,7 @@ static void qeth_l3_recover_ip(struct qe
+ 	spin_lock_bh(&card->ip_lock);
  
-@@ -2100,10 +2100,13 @@ int qeth_send_control_data(struct qeth_c
- 	while (atomic_cmpxchg(&card->write.irq_pending, 0, 1)) ;
- 	qeth_prepare_control_data(card, len, iob);
- 
--	if (IS_IPA(iob->data))
-+	if (IS_IPA(iob->data)) {
-+		cmd = __ipa_cmd(iob);
- 		event_timeout = QETH_IPA_TIMEOUT;
--	else
-+	} else {
- 		event_timeout = QETH_TIMEOUT;
-+	}
-+
- 	timeout = jiffies + event_timeout;
- 
- 	QETH_CARD_TEXT(card, 6, "noirqpnd");
-@@ -2128,9 +2131,8 @@ int qeth_send_control_data(struct qeth_c
- 
- 	/* we have only one long running ipassist, since we can ensure
- 	   process context of this command we can sleep */
--	cmd = (struct qeth_ipa_cmd *)(iob->data+IPA_PDU_HEADER_SIZE);
--	if ((cmd->hdr.command == IPA_CMD_SETIP) &&
--	    (cmd->hdr.prot_version == QETH_PROT_IPV4)) {
-+	if (cmd && cmd->hdr.command == IPA_CMD_SETIP &&
-+	    cmd->hdr.prot_version == QETH_PROT_IPV4) {
- 		if (!wait_event_timeout(reply->wait_q,
- 		    atomic_read(&reply->received), event_timeout))
- 			goto time_err;
+ 	hash_for_each_safe(card->ip_htable, i, tmp, addr, hnode) {
+-		if (addr->disp_flag == QETH_DISP_ADDR_DELETE) {
+-			qeth_l3_deregister_addr_entry(card, addr);
+-			hash_del(&addr->hnode);
+-			kfree(addr);
+-		} else if (addr->disp_flag == QETH_DISP_ADDR_ADD) {
++		if (addr->disp_flag == QETH_DISP_ADDR_ADD) {
+ 			if (addr->proto == QETH_PROT_IPV4) {
+ 				addr->in_progress = 1;
+ 				spin_unlock_bh(&card->ip_lock);
