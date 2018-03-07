@@ -1,100 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934022AbeCGQZM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:25:12 -0500
-Received: from mout.kundenserver.de ([212.227.17.10]:51197 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933502AbeCGQZL (ORCPT
+        id S934045AbeCGQZm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:25:42 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:33851 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933502AbeCGQZj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:25:11 -0500
-From: Arnd Bergmann <arnd@arndb.de>
-To: Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] ARM: npcm: drop extraneous 'select' statements
-Date: Wed,  7 Mar 2018 17:24:13 +0100
-Message-Id: <20180307162430.2664523-2-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180307162430.2664523-1-arnd@arndb.de>
-References: <20180307162430.2664523-1-arnd@arndb.de>
-X-Provags-ID: V03:K0:nU2rZ+Wml/8E+9GxQtEn7StbOIsGHQSOb1gZPPg5n8LkDIxZMUH
- tA0mPmE/YAjJ2v2rsmIE9KeNtSghCfoEw7dmoNhdsHpubT0ZHxisOfpRv7sFCiMoQ6EejU+
- ARNbxhBIOjTUPHqfkf7y+RddFLYW3WVMkSL4boOsu8e+LOqEx625mUPOQ3wJ2j31zVridYk
- seetRZWfncMKJpTL2lU3A==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:RHv5hhLc8kY=:AGgcS3Yu+VsbhdrBi0KxCp
- AkF0wr8Frl9PH5tYW5Vw2R4XEeTtWTkaAlz5DJlrWgtMB+pMYPaNKlmYbnCIM58U//fPsNxcH
- M7DGiP+mAyjuMFK3A4UXf8fqbl1UWK7+ta+XvGBBOFjeCSxd1wy/7s/eqzq/cVPxZHdQQMhcN
- 9a1FEATs1qn4jcCzV5y3Jeu3Hs01iYKSMtbNfbscvPk/ltkhlvGSiTIm6o+dxAMB7NlUcp7yT
- KGS9cKSRsbw6F0WHbeESbyn8T551gRhWb8iLRGeLD1J2fBg/Vop0u0UxwZDkcDr109iRCjPNw
- cTBpCCJQZUp4tSIhB+wJMiWUNDpDwhhEpmSbfSt9rd6lJG3jixNpc/adbgTNNRCltzAa4sglF
- IrQer4r5a+ZoKKXauZS2sK7sc8q5G/LjdLTn3ps2eBKaTl5KnX4VnniHJ6+QevVNxMvq3HlJP
- mA7epMJAOBIPlOHRJXDhCKoe+12KoB/bo5BQE0RRF9FFdGaorev6LBuEH9qo3Po2rMQ+zFJ0E
- Idpa1+8jFgw/0TSHNP6p+C8HYHW6ZufgaqULoCmp0RPFzhHMBvPaMw3LCL1ZQr/WPiU0LF3dF
- mCN346Sd1pKpShmciGlweuG3rkgVR8macxYabAc5mVpL4h6CrjGNgqT/viMi3/bnFcyyiQw5X
- 6XEwHxijqZM8Dn0uGbLukFE1tza5zC82Tl6ZtdML04Rs8ypUUClb1hwJgX4UFlt0jQBFQZnNQ
- UDXkKkQArBTuhFGbPmAHDLJ6lBiZabnl4KPQow==
+        Wed, 7 Mar 2018 11:25:39 -0500
+X-Google-Smtp-Source: AG47ELu62nEAK1uzWq42mk2VRL8+a4yhyPLYcJSIXH1/fLDcQ1ZStU9X71DD4+vrP+upeirrkRDi0Eds5U0hWiPUBZM=
+MIME-Version: 1.0
+In-Reply-To: <1520437971.3731.22.camel@flygoat.com>
+References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
+ <20170927151527.25570-4-prasannatsmkumar@gmail.com> <20180306000832.GL4197@saruman>
+ <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
+ <20180307143541.GN4197@saruman> <CANc+2y5wsvGWszu3pePYhs2wb1_AgPdjG+ugfOCzbZVfVHDMvw@mail.gmail.com>
+ <1520437971.3731.22.camel@flygoat.com>
+From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Date: Wed, 7 Mar 2018 21:55:38 +0530
+Message-ID: <CANc+2y42BAF=bZo9WxujMBR-x6y=rKDagA3R68phuAsi1P8BLw@mail.gmail.com>
+Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: James Hogan <jhogan@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Dominik Peklo <dom.peklo@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w27GPkvW007737
 
-While looking at the build regression, I noticed that the
-platform selects a lot of other Kconfig symbols that it really
-should not:
+On 7 March 2018 at 21:22, Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
+> 在 2018-03-07三的 20:35 +0530，PrasannaKumar Muralidharan写道：
+>> Hi James,
+>>
+>> Seems Jiaxun is interested in the board and is willing to help.
+>>
+>> I have been told that Ingenic is focusing on IoT market and X1000 is
+>> intended for IoT segment. I think that they would be selling several
+>> 100Ks of chip over the coming years. But I feel Ingenic spends time
+>> only on maintaining their Linux port which is usually based on very
+>> old kernel version.
+>
+> Ingenic is going to release their XBrust2 core with it's products such
+> as X2000 a few days later. Witch is a pure MIPS64r5 with MXU2(A
+> superset of MIPS's MSA SIMD instruction set). The newest kernel port of
+> X1000 maintain by Ingenic is based on Linux-4.4 [1]. After communicated
+> with Ingenic, they said they are forcusing on China domestic market.
+> But they're looking for partners to enter foriegn market.
+>
+> [1] https://pan.baidu.com/s/1o8MeYts (Well you can download from this
+> Chinese website, ingenic have a gerrit but I don't have access to it.
+> As my experience, it's hard to develop on Chinese-made chips wihout
+> reading Chinese documents.)
 
-CPU_V7, ARM_GIC, HAVE_SMP, COMMON_CLK, GENERIC_CLOCKEVENTS,
-and CLKDEV_LOOKUP are all implied by ARCH_MULTI_V7, so they
-can be dropped.
-
-CACHE_L2X0, SMP and USB are meant to be user-selectable, we
-want to be able to turn those off for testing purposes.
-
-CPU_USE_DOMAINS looks completely misplaced here, we should not
-select that for an ARMv7 platform.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/mach-npcm/Kconfig | 18 ------------------
- 1 file changed, 18 deletions(-)
-
-diff --git a/arch/arm/mach-npcm/Kconfig b/arch/arm/mach-npcm/Kconfig
-index 2bc6697c8d97..c6a16230e8ef 100644
---- a/arch/arm/mach-npcm/Kconfig
-+++ b/arch/arm/mach-npcm/Kconfig
-@@ -12,12 +12,6 @@ comment "NPCM7XX CPU type"
- config ARCH_NPCM750
- 	depends on ARCH_NPCM
- 	bool "Support for NPCM750 BMC CPU (Poleg)"
--	select CACHE_L2X0
--	select CPU_V7
--	select ARM_GIC
--	select HAVE_SMP
--	select SMP
--	select SMP_ON_UP
- 	select HAVE_ARM_SCU
- 	select HAVE_ARM_TWD if SMP
- 	select ARM_ERRATA_720789
-@@ -26,18 +20,6 @@ config ARCH_NPCM750
- 	select ARM_ERRATA_794072
- 	select PL310_ERRATA_588369
- 	select PL310_ERRATA_727915
--	select USB_EHCI_ROOT_HUB_TT
--	select USB_ARCH_HAS_HCD
--	select USB_ARCH_HAS_EHCI
--	select USB_EHCI_HCD
--	select USB_ARCH_HAS_OHCI
--	select USB_OHCI_HCD
--	select USB
--	select FIQ
--	select CPU_USE_DOMAINS
--	select GENERIC_CLOCKEVENTS
--	select CLKDEV_LOOKUP
--	select COMMON_CLK if OF
- 	select NPCM750_TIMER
- 	select MFD_SYSCON
- 	help
--- 
-2.9.0
+Can you take a diff and upload it somewhere else? Download speed is a
+couple of bytes per second. Can you put the diff in github or similar
+other service?
+I would like to see if the port uses DT.
