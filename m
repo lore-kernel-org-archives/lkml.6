@@ -1,87 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754608AbeCGO5O (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:57:14 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46044 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754557AbeCGO5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:57:09 -0500
-Date: Wed, 7 Mar 2018 15:56:28 +0100
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        KarimAllah Ahmed <karahmed@amazon.de>
-Subject: Re: [PATCH] KVM: VMX: expose the host's ARCH_CAPABILITIES MSR to
- userspace
-Message-ID: <20180307145628.GA12299@flask>
-References: <1519433546-33879-1-git-send-email-pbonzini@redhat.com>
- <20180226221300.GK22024@char.us.oracle.com>
- <20180301213205.GB29001@flask>
- <ccead1df-ba70-f365-c816-7892834a290c@redhat.com>
- <20180302214212.GB13606@flask>
- <9cad32c8-fdb6-95db-2cd3-a0e3297b1811@redhat.com>
+        id S1754643AbeCGO7k (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:59:40 -0500
+Received: from foss.arm.com ([217.140.101.70]:52246 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754389AbeCGO7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 09:59:38 -0500
+Subject: Re: [PATCH v11 8/8] perf: ARM DynamIQ Shared Unit PMU support
+To: Saravana Kannan <skannan@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: robh@kernel.org, mathieu.poirier@linaro.org, peterz@infradead.org,
+        sudeep.holla@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
+        jonathan.cameron@huawei.com, frowand.list@gmail.com,
+        leo.yan@linaro.org, linux-arm-kernel@lists.infradead.org
+References: <20180102112533.13640-1-suzuki.poulose@arm.com>
+ <20180102112533.13640-9-suzuki.poulose@arm.com>
+ <5A90B77E.8040105@codeaurora.org> <20180225143653.peb4quk3ha5h3t5x@salmiak>
+ <5A972A7D.9020301@codeaurora.org>
+ <20180301114911.fundyuqxtj5klk4e@lakrids.cambridge.arm.com>
+ <5A986425.9080007@codeaurora.org>
+ <20180302104223.7tpsyhsum7nej237@lakrids.cambridge.arm.com>
+ <5A99A3DC.9020400@codeaurora.org>
+ <20180305105925.4cjiqejfid7rswe6@lakrids.cambridge.arm.com>
+ <5A9DC03B.8020201@codeaurora.org>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <f340190f-8286-bd3c-c743-79a3d48cc33d@arm.com>
+Date: Wed, 7 Mar 2018 14:59:34 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9cad32c8-fdb6-95db-2cd3-a0e3297b1811@redhat.com>
+In-Reply-To: <5A9DC03B.8020201@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-07 12:53+0100, Paolo Bonzini:
-> On 02/03/2018 22:42, Radim Krčmář wrote:
-> > Ok, sounds good.  I've deferred it to rc5 as I think we'll want to use
-> > this to replace the auto setting:  I would not bet that it is going to
-> > be safe to expose future bits, so having the userspace always sanitize
-> > the capabilities would be safer (and more in line with what we do with
-> > other MSRs).  i.e. this patch would also
-> > 
-> > diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> > index 051dab74e4e9..86ea4a83af1f 100644
-> > --- a/arch/x86/kvm/vmx.c
-> > +++ b/arch/x86/kvm/vmx.c
-> > @@ -5740,9 +5740,6 @@ static void vmx_vcpu_setup(struct vcpu_vmx *vmx)
-> >  		++vmx->nmsrs;
-> >  	}
-> >  
-> > -	if (boot_cpu_has(X86_FEATURE_ARCH_CAPABILITIES))
-> > -		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, vmx->arch_capabilities);
-> > -
-> >  	vm_exit_controls_init(vmx, vmcs_config.vmexit_ctrl);
-> >  
-> >  	/* 22.2.1, 20.8.1 */
+
+
+Hi Saravana,
+
+Sorry for the late response, I was out on vacation.
+
+On 05/03/18 22:10, Saravana Kannan wrote:
+> On 03/05/2018 02:59 AM, Mark Rutland wrote:
+>> On Fri, Mar 02, 2018 at 11:19:56AM -0800, Saravana Kannan wrote:
+>>> On 03/02/2018 02:42 AM, Mark Rutland wrote:
+>>>> It's important to note that the DSU PMU's event_init() ensures events
+>>>> are affine to a single CPU, and the perf core code serializes operations
+>>>> on those events via the context lock.
+>>>
+>>> Ah, I see that now. Thanks!
+>>>
+>>>> Therefore, two CPUs *won't* try to access the registers simultaneously.
+>>>
+>>> Right, and this driver seems to be going through a lot of work to make sure
+>>> all events are read in one CPU.
+>>>
+>>> Do you even have an upstream target where there are multiple DSU's in a
+>>> system?
+>>
+>> I have no idea, though I do beleive that it's possible for a system to
+>> have multiple DSUs.
+>>
+>>> If not, we can simplify a ton of this code (no hotplug notifiers, no
+>>> migrating PMUs, no SMP calls, etc) by just adding a spinlock and letting any
+>>> CPU read these DSU counters.
+>>
+>> Regardless of whether we allow arbitrary CPUs to read the counters,
+>> other logic still needs to be CPU affine, and we'll still need hotplug
+>> notifiers and event migration.
 > 
-> I don't know. There are good reasons for both behaviors, and especially
-> the following two for _not_ removing the rdmsr:
+> If you have to support multiple DSUs in a system, then the need is obvious. But if you don't have to support multiple DSU, it's not obvious to me on why you still need CPU affining or hotplug notifiers. Could you please provide me pointers for general understanding?
 > 
-> 1) so far you could just pass the result of KVM_GET_SUPPORTED_CPUID to
-> KVM_SET_CPUID2, and expect the result to be "as close as possible to the
-> host";
->
-> 2) having different behavior for VMX and ARCH_CAPABILITIES MSRs would be
-> confusing.
 
-Right, we can't just stop setting them by default ...
+We need to support multiple DSUs as such configurations are possible.
 
-(I am in favor of forcing the userspace to configure everything and I'd
- accept this exception as a mistake of the past.)
+> 
+>> I am not necessarily opposed to allowing read() calls from associated
+>> CPUs, but as before, I'll leave that to Suzuki.
 
-> I think I'm leaning more towards the following direction: whitelist
-> ARCH_CAPABILITIES, like we do for the AMD LFENCE MSR already, and
-> default the AMD LFENCE MSR to the host value.
+I am fine with reading the registers from any of the associated CPUs.
 
-The whitelisting is a good idea and I'm ok with just that, thanks.
+> 
+> Can you make sure this thread is on Suzuki's radar?
+> 
+> Suzuki,
+> 
+> Could please respond? IPI for DSUs are definitely a pain for us.
 
-The MSR_F10H_DECFG default is questionable -- MSR_F10H_DECFG is an
-architectural MSR, so we'd be changing the guest under the sight of
-existing userspaces.
-A potential security risk if they migrate the guest to a CPU that
-doesn't serialize LFENCE.  ARCH_CAPABILITIES are at least hidden by a
-new CPUID bit.
-
-The feature MSR defaults are going to be a mess anyway: we have
-MSR_IA32_UCODE_REV that is tightly coupled with CPUID.  Not a good
-candidate for passing by default and currently also has a default value.
+Thanks
+Suzuki
