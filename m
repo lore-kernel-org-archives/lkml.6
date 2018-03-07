@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsdAruQxkbtdIAgtFDOPAW3/O3alk5gZlOhRMiFuwWGYlkFf36T+5n6gGAvSnVY511bwArV
-ARC-Seal: i=1; a=rsa-sha256; t=1520451699; cv=none;
+X-Google-Smtp-Source: AG47ELthWHKlGZm0IhtoEYSLSUDqlgLLojHEUyrLKlvIHQG7pyWZnD7xRLWvWxs+B8LtPalhWmmS
+ARC-Seal: i=1; a=rsa-sha256; t=1520451697; cv=none;
         d=google.com; s=arc-20160816;
-        b=ze2c3zFcEpmi9wZQuzIk+eMi18JkjA7zg0/rjtm8/yNOivb0fjVDbfxFgKoC4S8E+E
-         S3Jmpxxree9qSD/kg3DehwPv2UN7GjMrUvy2ukBwAQrtvpu4rkZbjFUEg/7NfKtIu7c/
-         0Rn6Umgr27ONt/ihWJcPd3aJqfPgRLsXM2U0KR/gydiVbAVvYgXcQwlBBAsbCTy4rwEk
-         tz+G/cK4gC0qxCZUhOvGsuWSe6BuQ/fY6WNhSBi2YmAVkUR4Er4vSxrCg+kHtWeF/IT4
-         hhwjKOe7GKTua2rB2y1J9MEihRdlryi40yH+ABbUmJLClPHM2hJ6dEBctv8uTwxgPnls
-         Ue8w==
+        b=H0sE4aobFefzEWU2s1K8NP4WhkMcuUuccBCg7qfDKiaAoMxH1QYKXfuTY3UEPgHtmL
+         wG+OqkvnXt2Luoyox0TiVFFDlfafsyc536fSFGgesl6zl1//hEuN6KHuDg24gkhchYsb
+         ovtUXf1BTI+/iBKvBfU8Eh8D/VToiBtRneQ08+jng1BuCOHqSaQiPj5aiLTjPbHrw4tO
+         aCsi9D2TLsEk/TTfaoTvLxupDiDtcrzjormL7s7OsdS9TbrG4GyKEfJPr3GWj2gfwndx
+         rFOkH/yj+6owZs11kOXUl0GwsDSMxXk+3YMPwXprZ/y2KV8YHo2GLmZY13QZY6QAgwqJ
+         hOOQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qJrx53BHK8tlkpogOjC1ICydeDqnOFHKPrQp3JNXLfA=;
-        b=f2c4GnPguh3z/PRQXCiNpPInYDSmY8W/ygGwrR+LvXPx9lKhIQt1ukAZjLAGZUH5lk
-         khDzJhNCoEgPr4z9fXHtOkoVlu3UbEZ/ZZglivFSpqio5BpXL94hpkA9L3+vfrtbeaPP
-         6tcj7AKXsqmeFNgQFr05e6Vf7GJ+JpPdjFpupPGtXi55UdGn16NoFFc/+0rzH6ycUp3g
-         YlVBSMShHRXA04YLfgdGbqJnYdlh/jYU7KJesggg6VP7cHGeo0dmnYUYwNfsN/CnUgQ/
-         UZDrew9NJ7De4jSIs1ickx69QVmtbXQ9cGaGEpo7SdhRzVzCZ/ThDr4Bm5GrBuRvI1a1
-         aKMA==
+        bh=TYhcRLNA5QuDjociTiJxLyMTzoqkd/p1fAa3KWm7xGo=;
+        b=tgpTeymIogmUtmk9mzM+DztcfvrpGqgq/pq7GaO1zo/lrBF5xhob4RI/NH+RsImUZz
+         7/UNUyTHaKfYDcneNXbAXEXwBZRssq+P5bq5iqd3/9icWGJnoMLVDuyQQ9zqsG7qz2yp
+         dyPCSNp5OuzZotT6GaQU6USqurhpXkhz4ZuSpfKfsiZRs5i/cvinVTjxpFt47A/x5UW4
+         DS/3JqDXqlWP+7oa3raWfiPlUhjwPdeeb4JrTK9VyLtW1gl0C6fXNxCTFHDWqO+HCczV
+         Zt88PBSpkJZ2TkBZpN8xpW3GUvcbDHTWUeBOgPUbODiXV27VF6p2RpC38PJgzYjqmWeB
+         kjwg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Oleksandr Natalenko <oleksandr@natalenko.name>,
-	Neal Cardwell <ncardwell@google.com>,
-	Soheil Hassas Yeganeh <soheil@google.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	David Howells <dhowells@redhat.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 059/122] tcp_bbr: better deal with suboptimal GSO
-Date: Wed,  7 Mar 2018 11:37:51 -0800
-Message-Id: <20180307191737.784959092@linuxfoundation.org>
+Subject: [PATCH 4.15 058/122] rxrpc: Fix send in rxrpc_send_data_packet()
+Date: Wed,  7 Mar 2018 11:37:50 -0800
+Message-Id: <20180307191737.620276949@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309161153019394?=
-X-GMAIL-MSGID: =?utf-8?q?1594309161153019394?=
+X-GMAIL-THRID: =?utf-8?q?1594309159068259804?=
+X-GMAIL-MSGID: =?utf-8?q?1594309159068259804?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,87 +50,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: David Howells <dhowells@redhat.com>
 
 
-[ Upstream commit 350c9f484bde93ef229682eedd98cd5f74350f7f ]
+[ Upstream commit 93c62c45ed5fad1b87e3a45835b251cd68de9c46 ]
 
-BBR uses tcp_tso_autosize() in an attempt to probe what would be the
-burst sizes and to adjust cwnd in bbr_target_cwnd() with following
-gold formula :
+All the kernel_sendmsg() calls in rxrpc_send_data_packet() need to send
+both parts of the iov[] buffer, but one of them does not.  Fix it so that
+it does.
 
-/* Allow enough full-sized skbs in flight to utilize end systems. */
-cwnd += 3 * bbr->tso_segs_goal;
+Without this, short IPv6 rxrpc DATA packets may be seen that have the rxrpc
+header included, but no payload.
 
-But GSO can be lacking or be constrained to very small
-units (ip link set dev ... gso_max_segs 2)
-
-What we really want is to have enough packets in flight so that both
-GSO and GRO are efficient.
-
-So in the case GSO is off or downgraded, we still want to have the same
-number of packets in flight as if GSO/TSO was fully operational, so
-that GRO can hopefully be working efficiently.
-
-To fix this issue, we make tcp_tso_autosize() unaware of
-sk->sk_gso_max_segs
-
-Only tcp_tso_segs() has to enforce the gso_max_segs limit.
-
-Tested:
-
-ethtool -K eth0 tso off gso off
-tc qd replace dev eth0 root pfifo_fast
-
-Before patch:
-for f in {1..5}; do ./super_netperf 1 -H lpaa24 -- -K bbr; done
-    691  (ss -temoi shows cwnd is stuck around 6 )
-    667
-    651
-    631
-    517
-
-After patch :
-# for f in {1..5}; do ./super_netperf 1 -H lpaa24 -- -K bbr; done
-   1733 (ss -temoi shows cwnd is around 386 )
-   1778
-   1746
-   1781
-   1718
-
-Fixes: 0f8782ea1497 ("tcp_bbr: add BBR congestion control")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Oleksandr Natalenko <oleksandr@natalenko.name>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Fixes: 5a924b8951f8 ("rxrpc: Don't store the rxrpc header in the Tx queue sk_buffs")
+Reported-by: Marc Dionne <marc.dionne@auristor.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_output.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ net/rxrpc/output.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -1730,7 +1730,7 @@ u32 tcp_tso_autosize(const struct sock *
- 	 */
- 	segs = max_t(u32, bytes / mss_now, min_tso_segs);
+--- a/net/rxrpc/output.c
++++ b/net/rxrpc/output.c
+@@ -445,7 +445,7 @@ send_fragmentable:
+ 					(char *)&opt, sizeof(opt));
+ 		if (ret == 0) {
+ 			ret = kernel_sendmsg(conn->params.local->socket, &msg,
+-					     iov, 1, iov[0].iov_len);
++					     iov, 2, len);
  
--	return min_t(u32, segs, sk->sk_gso_max_segs);
-+	return segs;
- }
- EXPORT_SYMBOL(tcp_tso_autosize);
- 
-@@ -1742,9 +1742,10 @@ static u32 tcp_tso_segs(struct sock *sk,
- 	const struct tcp_congestion_ops *ca_ops = inet_csk(sk)->icsk_ca_ops;
- 	u32 tso_segs = ca_ops->tso_segs_goal ? ca_ops->tso_segs_goal(sk) : 0;
- 
--	return tso_segs ? :
--		tcp_tso_autosize(sk, mss_now,
--				 sock_net(sk)->ipv4.sysctl_tcp_min_tso_segs);
-+	if (!tso_segs)
-+		tso_segs = tcp_tso_autosize(sk, mss_now,
-+				sock_net(sk)->ipv4.sysctl_tcp_min_tso_segs);
-+	return min_t(u32, tso_segs, sk->sk_gso_max_segs);
- }
- 
- /* Returns the portion of skb which can be sent right away */
+ 			opt = IPV6_PMTUDISC_DO;
+ 			kernel_setsockopt(conn->params.local->socket,
