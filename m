@@ -1,39 +1,69 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELstQglpY9aUYB0u2QumWxLfHzX/4dkE508r6pOK9OTqBKZSLmclh27/Agqm0MpmEI7ISDCl
-ARC-Seal: i=1; a=rsa-sha256; t=1520452097; cv=none;
-        d=google.com; s=arc-20160816;
-        b=FyV1WmHoL/KFD/dp1rcwW2ZbqrM2kt93jRuC1UVSq/KqsVnKSw7s6bcsKLjnK2Yrej
-         EGvCXcmEV8rQkS+rcBGMp0eClh3DZ9kkdVzO5juGgCq9DtQoxencnuFlp7heclh5TgH9
-         iVZoTtXEvGTRY72afJIGaq/QoEO6KIP7QM6TcsyCfLaxB907UiuCdhswcqgSZh3aUWUY
-         dzqQIuAz84KVTXOluQZTxzmPFX/Cbavl9M5jtA7Rep5YCQZ6sFjCtsu+NHlbO9HL0Z1C
-         V/MEMifP56FBQ/03AISBzACViqUB0xtyW8wK/mBx/nnmvOcVlNqLIjTvUy9+kXHKjBBH
-         6JlA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=QIjiD+NZCpUbvK/kScf7A5kwHFLeVZK3etxiSC7wX9E=;
-        b=Zhyea5ullpcpc4CgK3QX6Pyu8uKOmr3WedkVYZq/VSukgh/qmSBWp0HD+LLhrz/Qtt
-         5aBBYAfW4cZKUMto06xWO4hmhNn1ukxpBlP5Pv8FiwmFpdjElW0+ulrINDQTXBHtja2z
-         1uEB+q3W10esTD5CBnCC3zABpQDRcPRvrgpT3Cm4c/zPZmfpanHJ03DkEKoA55oPzvyJ
-         OHy3TmspukZt10B/HCLAoduh1nNlWj+1EXQ4QsriA3MF4nw9PIjguQNdFQ7XoYvIcCWE
-         m+gFZZCGQoymfrK8Fd9wW13wAK7i4wbTt/K3eIBVMTHIiR9JSkcNiVj0kXWE1/9TTB8j
-         kphg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4098462-1520452097-2-13430412597817996455
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520452096; b=mlxahaj88JDLo7gZk+DuXPJY+ng6md+uRECoAuJ+7adwuqF
+    EUlWJyFDGWVT9L7x4N3VF2OwPSVW3afq9WXH35ex4PVMhh+yZEEFuTNd14zt7doZ
+    I6GcdKtzAr22E5l9ognmTb3t6NDIVxLGmEKVpIzy4MLlmRETox/qddRezn4ct3Jp
+    BmLD0DofjwxxKMHqkLlchMfXetXR+0wi3ExpdW5zmDfyssnz+E0OyAEdD4rtGwrA
+    I07UNi/Nt6QPC52d4yCpCxDuPvNqbYJ4dqXVv8amM7aw+7yTht1xy9h3UJ4fPk1z
+    0PDbhvza2EYqatyLWnNxuHwxI6KS3REnZMWCa2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520452096; bh=sPiW7dTGv9tbOoYCUqA4UG388W
+    7pim6bHKOZEUj3I9c=; b=jQ8fvD9I66kbBnunjmVZBm3VFeKV48ryGSvNyJD8q0
+    XXmzKilf3RRfVjV22KFBqHTFhEOTcIiBeTEtHpYP2ZVUgVa+5fp5ml/XvS6DuLW4
+    uV1U9JAMikYGh0szS67Mc22C4CtCoVVeKM1eiRk6l1U8ma9GsF0GmgPcy/PIKqTK
+    K+pmkwX72lQUbiI7q9USU9bxaa1fAwWEm5vgk1tRJgLm8y0Oaie606BMj0EKIwWG
+    Gq5GB3YwUJ1t5s3+icaIoz7XdPycrggxFfwLj9p6lyDwnUC+tjxg09BR3jMmrwzc
+    ZAGW0sjw1xZFnRNJ7FCLBN7jtsbbYthiQMwFc1M7WvdQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S965564AbeCGTsJ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Mar 2018 14:48:09 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45292 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965178AbeCGTsI (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:48:08 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	yuyufen <yuyufen@huawei.com>,
-	Tomasz Majchrzak <tomasz.majchrzak@intel.com>,
-	stable@ver.kernel.org ("v4.8+"),
-	NeilBrown <neilb@suse.com>,
-	Shaohua Li <sh.li@alibaba-inc.com>
-Subject: [PATCH 4.14 109/110] md: only allow remove_and_add_spares when no sync_thread running.
-Date: Wed,  7 Mar 2018 11:39:32 -0800
-Message-Id: <20180307191053.934934129@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.14 106/110] ACPI / bus: Parse tables as term_list for Dell XPS 9570 and Precision M5530
+Date: Wed,  7 Mar 2018 11:39:29 -0800
+Message-Id: <20180307191053.550476543@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -41,10 +71,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309318369465472?=
-X-GMAIL-MSGID: =?utf-8?q?1594309578219431286?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,58 +81,94 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: NeilBrown <neilb@suse.com>
+From: Kai Heng Feng <kai.heng.feng@canonical.com>
 
-commit 39772f0a7be3b3dc26c74ea13fe7847fd1522c8b upstream.
+commit 36904703aeeeb6cd31993f1353c8325006229f9a upstream.
 
-The locking protocols in md assume that a device will
-never be removed from an array during resync/recovery/reshape.
-When that isn't happening, rcu or reconfig_mutex is needed
-to protect an rdev pointer while taking a refcount.  When
-it is happening, that protection isn't needed.
+The i2c touchpad on Dell XPS 9570 and Precision M5530 doesn't work out
+of box.
 
-Unfortunately there are cases were remove_and_add_spares() is
-called when recovery might be happening: is state_store(),
-slot_store() and hot_remove_disk().
-In each case, this is just an optimization, to try to expedite
-removal from the personality so the device can be removed from
-the array.  If resync etc is happening, we just have to wait
-for md_check_recover to find a suitable time to call
-remove_and_add_spares().
+The touchpad relies on its _INI method to update its _HID value from
+XXXX0000 to SYNA2393.
 
-This optimization and not essential so it doesn't
-matter if it fails.
-So change remove_and_add_spares() to abort early if
-resync/recovery/reshape is happening, unless it is called
-from md_check_recovery() as part of a newly started recovery.
-The parameter "this" is only NULL when called from
-md_check_recovery() so when it is NULL, there is no need to abort.
+Also, the _STA relies on value of I2CN to report correct status.
 
-As this can result in a NULL dereference, the fix is suitable
-for -stable.
+Set acpi_gbl_parse_table_as_term_list so the value of I2CN can be
+correctly set up, and _INI can get run. The ACPI table in this machine
+is designed to get parsed this way.
 
-cc: yuyufen <yuyufen@huawei.com>
-Cc: Tomasz Majchrzak <tomasz.majchrzak@intel.com>
-Fixes: 8430e7e0af9a ("md: disconnect device from personality before trying to remove it.")
-Cc: stable@ver.kernel.org (v4.8+)
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Shaohua Li <sh.li@alibaba-inc.com>
+Also, change the quirk table to a more generic name.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=198515
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/md.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/acpi/bus.c |   38 +++++++++++++++++++++++++++++++-------
+ 1 file changed, 31 insertions(+), 7 deletions(-)
 
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -8522,6 +8522,10 @@ static int remove_and_add_spares(struct
- 	int removed = 0;
- 	bool remove_some = false;
+--- a/drivers/acpi/bus.c
++++ b/drivers/acpi/bus.c
+@@ -66,10 +66,37 @@ static int set_copy_dsdt(const struct dm
+ 	return 0;
+ }
+ #endif
++static int set_gbl_term_list(const struct dmi_system_id *id)
++{
++	acpi_gbl_parse_table_as_term_list = 1;
++	return 0;
++}
  
-+	if (this && test_bit(MD_RECOVERY_RUNNING, &mddev->recovery))
-+		/* Mustn't remove devices when resync thread is running */
-+		return 0;
-+
- 	rdev_for_each(rdev, mddev) {
- 		if ((this == NULL || rdev == this) &&
- 		    rdev->raid_disk >= 0 &&
+-static const struct dmi_system_id dsdt_dmi_table[] __initconst = {
++static const struct dmi_system_id acpi_quirks_dmi_table[] __initconst = {
++	/*
++	 * Touchpad on Dell XPS 9570/Precision M5530 doesn't work under I2C
++	 * mode.
++	 * https://bugzilla.kernel.org/show_bug.cgi?id=198515
++	 */
++	{
++		.callback = set_gbl_term_list,
++		.ident = "Dell Precision M5530",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Precision M5530"),
++		},
++	},
++	{
++		.callback = set_gbl_term_list,
++		.ident = "Dell XPS 15 9570",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "XPS 15 9570"),
++		},
++	},
+ 	/*
+ 	 * Invoke DSDT corruption work-around on all Toshiba Satellite.
++	 * DSDT will be copied to memory.
+ 	 * https://bugzilla.kernel.org/show_bug.cgi?id=14679
+ 	 */
+ 	{
+@@ -83,7 +110,7 @@ static const struct dmi_system_id dsdt_d
+ 	{}
+ };
+ #else
+-static const struct dmi_system_id dsdt_dmi_table[] __initconst = {
++static const struct dmi_system_id acpi_quirks_dmi_table[] __initconst = {
+ 	{}
+ };
+ #endif
+@@ -1001,11 +1028,8 @@ void __init acpi_early_init(void)
+ 
+ 	acpi_permanent_mmap = true;
+ 
+-	/*
+-	 * If the machine falls into the DMI check table,
+-	 * DSDT will be copied to memory
+-	 */
+-	dmi_check_system(dsdt_dmi_table);
++	/* Check machine-specific quirks */
++	dmi_check_system(acpi_quirks_dmi_table);
+ 
+ 	status = acpi_reallocate_root_table();
+ 	if (ACPI_FAILURE(status)) {
