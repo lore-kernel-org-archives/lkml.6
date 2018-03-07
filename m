@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933479AbeCGIVo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 03:21:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50158 "EHLO mx2.suse.de"
+        id S933537AbeCGIV7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 03:21:59 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50149 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933278AbeCGIVH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 03:21:07 -0500
+        id S933206AbeCGIVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 03:21:05 -0500
 From: Petr Mladek <pmladek@suse.com>
 To: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
         Miroslav Benes <mbenes@suse.cz>
@@ -14,9 +14,9 @@ Cc: Jason Baron <jbaron@akamai.com>,
         Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
         live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
         Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v10 08/10] livepatch: Improve dynamic struct klp_object detection and manipulation
-Date: Wed,  7 Mar 2018 09:20:37 +0100
-Message-Id: <20180307082039.10196-9-pmladek@suse.com>
+Subject: [PATCH v10 07/10] livepatch: Correctly handle atomic replace for not yet loaded modules
+Date: Wed,  7 Mar 2018 09:20:36 +0100
+Message-Id: <20180307082039.10196-8-pmladek@suse.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180307082039.10196-1-pmladek@suse.com>
 References: <20180307082039.10196-1-pmladek@suse.com>
@@ -24,93 +24,101 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The check for dynamically allocated objects was too optimistic. There
-might exist livepatches that modify an object only with callbacks. They
-are statically defined and have "funcs" array empty.
+The atomic replace feature uses dynamically allocated struct klp_func to
+handle functions that will no longer be patched. These structures are
+of the type KLP_FUNC_NOP. They cause the ftrace handler to jump to
+the original code. But the address of the original code is not known
+until the patched module is loaded.
 
-A solution would be to check also the callback pointers in
-klp_is_object_dynamic(). But it still might be error prone.
+This patch allows the late initialization. Also it adds a sanity check
+into the ftrace handler.
 
-Note that we must avoid calling klp_free_object_dynamic() even for useless
-structures that were defined statically.
-
-Therefore this patch takes a more safe approach. It adds an extra flag
-into struct klp_object. The type is different from a similar flag on
-the func level. It is because one object structure might point to func
-structures of different types. In general, only two states make sense
-on the object level.
-
-This fixed the problem _how_ the structures were freed. But there
-was also a bug _when_ this happened. For this we added a check
-to keep statically defined structures until the statically defined
-function structures are being freed.
+Alternative solution would be not to set the address at all. The ftrace
+handler could just return to the original code when NOP struct klp_func
+is used. But this would require another changes. For example, in the stack
+checking. Note that NOP structures might be available even when the patch
+is being disabled. This would happen when the patch enable transition is
+reverted.
 
 Signed-off-by: Petr Mladek <pmladek@suse.com>
 ---
- include/linux/livepatch.h |  8 +++++++-
- kernel/livepatch/core.c   | 10 ++++++++++
- 2 files changed, 17 insertions(+), 1 deletion(-)
+ kernel/livepatch/core.c  | 24 ++++++++++++++++++++----
+ kernel/livepatch/patch.c |  5 +++++
+ 2 files changed, 25 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-index ed598d849029..7222b801d63a 100644
---- a/include/linux/livepatch.h
-+++ b/include/linux/livepatch.h
-@@ -45,6 +45,11 @@ enum klp_func_type {
- 	KLP_FUNC_NOP,		/* Dynamically allocated NOP function patch */
- };
- 
-+enum klp_object_type {
-+	KLP_OBJECT_STATIC = 0,  /* Original statically defined structure */
-+	KLP_OBJECT_DYNAMIC,	/* Dynamically allocated structure. */
-+};
-+
- /**
-  * struct klp_func - function structure for live patching
-  * @old_name:	name of the function to be patched
-@@ -143,6 +148,7 @@ struct klp_object {
- 	struct klp_callbacks callbacks;
- 
- 	/* internal */
-+	enum klp_object_type otype;
- 	struct kobject kobj;
- 	struct list_head func_list;
- 	struct list_head obj_entry;
-@@ -198,7 +204,7 @@ struct klp_patch {
- 
- static inline bool klp_is_object_dynamic(struct klp_object *obj)
- {
--	return !obj->funcs;
-+	return obj->otype == KLP_OBJECT_DYNAMIC;
- }
- 
- static inline bool klp_is_func_dynamic(struct klp_func *func)
 diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index 67aa4ec9e087..73ce3f93e0bc 100644
+index ad508a86b2f9..67aa4ec9e087 100644
 --- a/kernel/livepatch/core.c
 +++ b/kernel/livepatch/core.c
-@@ -743,6 +743,7 @@ static struct klp_object *klp_alloc_object_dynamic(const char *name)
- 			return ERR_PTR(-ENOMEM);
+@@ -781,8 +781,10 @@ static struct klp_func *klp_alloc_func_nop(struct klp_func *old_func,
  		}
  	}
-+	obj->otype = KLP_OBJECT_DYNAMIC;
+ 	func->old_sympos = old_func->old_sympos;
+-	/* NOP func is the same as using the original implementation. */
+-	func->new_func = (void *)old_func->old_addr;
++	/*
++	 * func->new_func is same as func->old_addr. These addresses are
++	 * set when the object is loaded, see klp_init_object_loaded().
++	 */
+ 	func->ftype = KLP_FUNC_NOP;
  
- 	return obj;
- }
-@@ -970,6 +971,15 @@ void klp_free_objects(struct klp_patch *patch, enum klp_func_type ftype)
- 		if (!list_empty(&obj->func_list))
- 			continue;
+ 	return func;
+@@ -945,8 +947,12 @@ static void klp_free_object_loaded(struct klp_object *obj)
  
-+		/*
-+		 * Keep objects from the original patch initialized until
-+		 * the entire patch is being freed.
-+		 */
-+		if (!klp_is_object_dynamic(obj) &&
-+		    ftype != KLP_FUNC_STATIC &&
-+		    ftype != KLP_FUNC_ANY)
-+			continue;
+ 	obj->mod = NULL;
+ 
+-	klp_for_each_func(obj, func)
++	klp_for_each_func(obj, func) {
+ 		func->old_addr = 0;
 +
- 		/* Avoid freeing the object twice. */
- 		list_del(&obj->obj_entry);
++		if (klp_is_func_type(func, KLP_FUNC_NOP))
++			func->new_func = NULL;
++	}
+ }
  
+ /*
+@@ -984,7 +990,14 @@ static void klp_free_patch(struct klp_patch *patch)
+ 
+ static int klp_init_func(struct klp_object *obj, struct klp_func *func)
+ {
+-	if (!func->old_name || !func->new_func)
++	if (!func->old_name)
++		return -EINVAL;
++
++	/*
++	 * NOPs get the address later. The the patched module must be loaded,
++	 * see klp_init_object_loaded().
++	 */
++	if (!func->new_func && !klp_is_func_type(func, KLP_FUNC_NOP))
+ 		return -EINVAL;
+ 
+ 	INIT_LIST_HEAD(&func->stack_node);
+@@ -1039,6 +1052,9 @@ static int klp_init_object_loaded(struct klp_patch *patch,
+ 			return -ENOENT;
+ 		}
+ 
++		if (klp_is_func_type(func, KLP_FUNC_NOP))
++			func->new_func = (void *)func->old_addr;
++
+ 		ret = kallsyms_lookup_size_offset((unsigned long)func->new_func,
+ 						  &func->new_size, NULL);
+ 		if (!ret) {
+diff --git a/kernel/livepatch/patch.c b/kernel/livepatch/patch.c
+index 54b3c379bb0f..1f5c3eea9ee1 100644
+--- a/kernel/livepatch/patch.c
++++ b/kernel/livepatch/patch.c
+@@ -118,7 +118,12 @@ static void notrace klp_ftrace_handler(unsigned long ip,
+ 		}
+ 	}
+ 
++	/* Survive ugly mistakes, for example, when handling NOPs. */
++	if (WARN_ON_ONCE(!func->new_func))
++		goto unlock;
++
+ 	klp_arch_set_pc(regs, (unsigned long)func->new_func);
++
+ unlock:
+ 	preempt_enable_notrace();
+ }
 -- 
 2.13.6
