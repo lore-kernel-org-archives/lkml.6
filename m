@@ -1,80 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751059AbeCGFBt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 00:01:49 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:48298 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750803AbeCGFBs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 00:01:48 -0500
-From: Harish Jenny K N <harish_kandiga@mentor.com>
-To: <ulf.hansson@linaro.org>, <linus.walleij@linaro.org>,
-        <adrian.hunter@intel.com>, <shawn.lin@rock-chips.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <harish_kandiga@mentor.com>
-Subject: [PATCH v2] mmc: Export card RCA register to sysfs.
-Date: Wed, 7 Mar 2018 10:31:42 +0530
-Message-ID: <1520398902-23012-1-git-send-email-harish_kandiga@mentor.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1751075AbeCGFEV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 00:04:21 -0500
+Received: from mga04.intel.com ([192.55.52.120]:46483 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750957AbeCGFEU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 00:04:20 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,434,1515484800";
+   d="scan'208";a="36571570"
+From: Haiyue Wang <haiyue.wang@linux.intel.com>
+To: joel@jms.id.au, andrew@aj.id.au, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc: Haiyue Wang <haiyue.wang@linux.intel.com>
+Subject: [PATCH dts/arm/aspeed-g5 v1] ARM: dts: aspeed-g5: Add IPMI KCS node
+Date: Wed,  7 Mar 2018 13:04:50 +0800
+Message-Id: <1520399090-2455-1-git-send-email-haiyue.wang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch exports RCA register to sysfs which will help in
-reading the disk identification information.
+The IPMI KCS device part of the LPC interface and is used for
+communication with the host processor.
 
-Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
-Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
+Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
 ---
+ arch/arm/boot/dts/aspeed-g5.dtsi | 43 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 42 insertions(+), 1 deletion(-)
 
-Changes in v2:
-- Used 0x%04x to display 16 bit register
-
- drivers/mmc/core/mmc.c | 2 ++
- drivers/mmc/core/sd.c  | 2 ++
- 2 files changed, 4 insertions(+)
-
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index 208a762..6f8ebd6 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -792,6 +792,7 @@ static int mmc_compare_ext_csds(struct mmc_card *card, unsigned bus_width)
- MMC_DEV_ATTR(raw_rpmb_size_mult, "%#x\n", card->ext_csd.raw_rpmb_size_mult);
- MMC_DEV_ATTR(rel_sectors, "%#x\n", card->ext_csd.rel_sectors);
- MMC_DEV_ATTR(ocr, "0x%08x\n", card->ocr);
-+MMC_DEV_ATTR(rca, "0x%04x\n", card->rca);
- MMC_DEV_ATTR(cmdq_en, "%d\n", card->ext_csd.cmdq_en);
-
- static ssize_t mmc_fwrev_show(struct device *dev,
-@@ -848,6 +849,7 @@ static ssize_t mmc_dsr_show(struct device *dev,
- 	&dev_attr_raw_rpmb_size_mult.attr,
- 	&dev_attr_rel_sectors.attr,
- 	&dev_attr_ocr.attr,
-+	&dev_attr_rca.attr,
- 	&dev_attr_dsr.attr,
- 	&dev_attr_cmdq_en.attr,
- 	NULL,
-diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
-index 62b84dd..2ecd098 100644
---- a/drivers/mmc/core/sd.c
-+++ b/drivers/mmc/core/sd.c
-@@ -676,6 +676,7 @@ static int mmc_sd_init_uhs_card(struct mmc_card *card)
- MMC_DEV_ATTR(oemid, "0x%04x\n", card->cid.oemid);
- MMC_DEV_ATTR(serial, "0x%08x\n", card->cid.serial);
- MMC_DEV_ATTR(ocr, "0x%08x\n", card->ocr);
-+MMC_DEV_ATTR(rca, "0x%04x\n", card->rca);
-
-
- static ssize_t mmc_dsr_show(struct device *dev,
-@@ -709,6 +710,7 @@ static ssize_t mmc_dsr_show(struct device *dev,
- 	&dev_attr_oemid.attr,
- 	&dev_attr_serial.attr,
- 	&dev_attr_ocr.attr,
-+	&dev_attr_rca.attr,
- 	&dev_attr_dsr.attr,
- 	NULL,
- };
---
-1.9.1
+diff --git a/arch/arm/boot/dts/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed-g5.dtsi
+index 8eac57c..f443169 100644
+--- a/arch/arm/boot/dts/aspeed-g5.dtsi
++++ b/arch/arm/boot/dts/aspeed-g5.dtsi
+@@ -267,8 +267,40 @@
+ 				ranges = <0x0 0x1e789000 0x1000>;
+ 
+ 				lpc_bmc: lpc-bmc@0 {
+-					compatible = "aspeed,ast2500-lpc-bmc";
++					compatible = "aspeed,ast2500-lpc-bmc", "simple-mfd", "syscon";
+ 					reg = <0x0 0x80>;
++					reg-io-width = <4>;
++
++					#address-cells = <1>;
++					#size-cells = <1>;
++					ranges = <0x0 0x0 0x80>;
++
++					kcs1: kcs1@0 {
++						compatible = "aspeed,ast2500-kcs-bmc";
++						reg = <0x0 0x80>;
++						interrupts = <8>;
++						kcs_chan = <1>;
++						kcs_addr = <0x0>;
++						status = "disabled";
++					};
++
++					kcs2: kcs2@0 {
++						compatible = "aspeed,ast2500-kcs-bmc";
++						reg = <0x0 0x80>;
++						interrupts = <8>;
++						kcs_chan = <2>;
++						kcs_addr = <0x0>;
++						status = "disabled";
++					};
++
++					kcs3: kcs3@0 {
++						compatible = "aspeed,ast2500-kcs-bmc";
++						reg = <0x0 0x80>;
++						interrupts = <8>;
++						kcs_chan = <3>;
++						kcs_addr = <0x0>;
++						status = "disabled";
++					};
+ 				};
+ 
+ 				lpc_host: lpc-host@80 {
+@@ -294,6 +326,15 @@
+ 						status = "disabled";
+ 					};
+ 
++					kcs4: kcs4@0 {
++						compatible = "aspeed,ast2500-kcs-bmc";
++						reg = <0x0 0xa0>;
++						interrupts = <8>;
++						kcs_chan = <4>;
++						kcs_addr = <0x0>;
++						status = "disabled";
++					};
++
+ 					lhc: lhc@20 {
+ 						compatible = "aspeed,ast2500-lhc";
+ 						reg = <0x20 0x24 0x48 0x8>;
+-- 
+2.7.4
