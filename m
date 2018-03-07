@@ -1,75 +1,78 @@
-Return-Path: <jeffy.chen@rock-chips.com>
-X-Google-Smtp-Source: AG47ELtpKBTbR/fhNer4aKCOq8wSWdf2RyMEvPgKmx1EekdGec5Z5x2tOORm9yyjDFpC1QLHHwK3
-ARC-Seal: i=1; a=rsa-sha256; t=1520420184; cv=none;
+Return-Path: <lee.jones@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1520428410; cv=none;
         d=google.com; s=arc-20160816;
-        b=XEHsurzpCW4QHn0zQ5mOfFNfIJhMhXDxPddMwqRPGzm89jjekvJ46wN88w+q98OuEf
-         Nyt+XaTOROG9POx1kgq+DhlyD2JdAoaA+yJg5O3jRvtX4zXLfBgaNxc4ONjLRNZY0BC0
-         84DOQG3nITDhxLI0iB4xEHkVLdfLFQ+XJkODkfH58UicxB7kkQ+Lz70nVIEBu6z3SNOy
-         iZMmDg4E8iVZxti7QuRUnclON0Dfuf/9OYtzHYRqGALKScw285PBVyixFA/k7MdBkK0P
-         Im2U41jhr9WPCKICuxXsfZIEhewt+CuDw2nnby44zEORa7CuPxGL8mrGTzvqyn3VtXyj
-         tM6g==
+        b=ZIy5AfDJerqufFYO7RJea/VeOIPpCmk1UrUNKIBdo9AxcTKTIQz9Ed9E3ESmG9cTOt
+         weXKUmuAKm4MXCnOkMqRQ1RzhkvLWQNmiuko+7kSNX9+1ppbSFBTLAsOCYMYhOEDDpgB
+         l1yJ3+YWKG3FrTmAPK+LDxBM+GV5TJTYfuM1W3A/sUVYwP0ePBNKZoFzMhCXDRgIVaq/
+         229k8zOLVArZiGjrdcnrYErrlbDXYad/GWHGqfKmBl1XTFE4YThf2GxW3Ms5drUWs8gj
+         irKdwu+WLC6oMYZtZfGW6fo7Hc+mwxz5CSpfWnxFL0jL7M1eOKiXoUL63tPE5UbA9VcX
+         Sm9w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:in-reply-to:references:subject:cc:to
-         :mime-version:user-agent:from:date:message-id
-         :arc-authentication-results;
-        bh=WNe+RP4ji2YmdB14fgBFKuFeXqHMsQyp32k5oXudsKI=;
-        b=mIBMqF1cAu//XDKowYuYK6peS91oZiwHQvOHLvEs/k/vpQBHpwXpPUiprv13XDWtS3
-         0u5PyR25js355B0fdX8HmUJq5JXDKuO62iLAxiTKpt+KbaXY22DwbZXzVJCMI1HYZx/Z
-         cjMEhZaUsugMJiSp5NbSvanMHp/UE+BL03wCy9xv00ovYA+iKakcP0qWx80xLMQWTwx0
-         qoY9sclYEZbd/V4QhkGNPKvHTcnLrw9bXhFe84KhUGr8gqSIOVYnqqp1Cgw6M85i8XRn
-         OOf49ukV1Tjio5RntsTj+1gHxS0YMx3YvBe71uVDtSn6YBQffDPwpg47CJwHdl+lQYpg
-         nczw==
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=gTUOd17ZwDdn2T1UrBZYDQ2Y4gS7ifY5uNwWuNTknMA=;
+        b=aRU3MJW/2Z8QsPAma3NF3B7f3VoYxLIgnWN9Cbvwh28k+rd2BCv18sTVTfvcdCQuoM
+         DaCcNrJdB84L2S77vSb+AGf4t4+150BgqdMnzR/qpAB3l5g8UvG2W2aiZ/8wxmhYL4Fj
+         JCWAusjz4JKmc7RXcrAEQldNyKvkIf+Blom0tfdH4OgBo0M0YdI8wbJukGH/D4xcuYRc
+         QOtjgu6/PMzaVBM7N8SEjeNyCQ9ZUGFFJJksA9fTy93ppIZ1zmf7Qrg9saKFG3INWSr4
+         KEU8XuaLikxQ3b7ROTHj+5p6ch7Epj88AscEhnav9t8lQH45XMM40s4qk2jPl9Tbie8d
+         TeIQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.27 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
+       dkim=pass header.i=@linaro.org header.s=google header.b=ef3H42dF;
+       spf=pass (google.com: domain of lee.jones@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=lee.jones@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.27 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
-X-263anti-spam: KSV:0;BIG:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ADDR-CHECKED4: 1
-X-ABS-CHECKED: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: broonie@kernel.org
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <a4f03df5b8ef8fc9192b6648bb17a11c>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Message-ID: <5A9FC551.5090909@rock-chips.com>
-Date: Wed, 07 Mar 2018 18:56:17 +0800
-From: JeffyChen <jeffy.chen@rock-chips.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20130126 Thunderbird/19.0
+       dkim=pass header.i=@linaro.org header.s=google header.b=ef3H42dF;
+       spf=pass (google.com: domain of lee.jones@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=lee.jones@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AG47ELsytAPzT7TFnjH+7uDD7fQU1B6ig5nI/Z6qHbb/lnqFmiRdy+UhaEFlK6LZI6C79ri/aCNWxw==
+Date: Wed, 7 Mar 2018 13:13:27 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Joel Stanley <joel@jms.id.au>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Jeffery <andrew@aj.id.au>, Cyril Bur <cyrilbur@gmail.com>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Ryan Chen <ryan_chen@aspeedtech.com>, Lei YU <mine260309@gmail.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: aspeed-lpc: Document LPC Host
+ Interface Controller
+Message-ID: <20180307131327.u2tvgabim62zeb6a@dell>
+References: <20180219072422.22733-1-joel@jms.id.au>
+ <20180219072422.22733-2-joel@jms.id.au>
 MIME-Version: 1.0
-To: Mark Brown <broonie@kernel.org>
-CC: linux-kernel@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2 2/3] regmap: debugfs: Fix kmemleak in regmap_debugfs_init
-References: <20180306110403.14438-1-jeffy.chen@rock-chips.com> <20180306110403.14438-2-jeffy.chen@rock-chips.com> <20180306125916.GA13586@sirena.org.uk>
-In-Reply-To: <20180306125916.GA13586@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180219072422.22733-2-joel@jms.id.au>
+User-Agent: NeoMutt/20170609 (1.8.3)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594186041905499825?=
-X-GMAIL-MSGID: =?utf-8?q?1594276114971326502?=
+X-GMAIL-THRID: =?utf-8?q?1592813249308453980?=
+X-GMAIL-MSGID: =?utf-8?q?1594284741100777071?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Mark,
+On Mon, 19 Feb 2018, Joel Stanley wrote:
 
-Thanks for your reply.
+> The LPC Host Interface Controller is part of a BMC SoC that is used for
+> communication with the host.
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> ---
+> v2:
+>  - Move the content to below the Host Node Children heading
+>  - Add Rob's review tag
+> ---
+>  .../devicetree/bindings/mfd/aspeed-lpc.txt         | 41 ++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
 
-On 03/06/2018 08:59 PM, Mark Brown wrote:
-> On Tue, Mar 06, 2018 at 07:04:02PM +0800, Jeffy Chen wrote:
->> Use map->debugfs_name to store allocated debugfs name, so it would be
->> freed in regmap_debugfs_exit().
->
-> I'm missing patch 1 in this series and I think this collides with a fix
-> I already have locally.
->
-sorry for that, i should CC you the whole seires.
+Applied, thanks.
 
-the patch 1 should be:
-https://patchwork.kernel.org/patch/10261413
+-- 
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
