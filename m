@@ -1,51 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754977AbeCGXta (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 18:49:30 -0500
-Received: from mga04.intel.com ([192.55.52.120]:36606 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754771AbeCGXt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 18:49:28 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,437,1515484800";
-   d="scan'208";a="32169350"
-Date: Wed, 7 Mar 2018 16:24:29 -0700
-From: Scott Bauer <scott.bauer@intel.com>
-To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Cc: Jonathan Derrick <jonathan.derrick@intel.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] block: sed-opal: fix u64 short atom length
-Message-ID: <20180307232428.hv3zkcxldbu5w3tx@sbauer-Z170X-UD5>
-References: <1520379912.4178.83.camel@intel.com>
- <20180301132700.1279-1-jonas.rabenstein@studium.uni-erlangen.de>
- <20180307165556.2618-1-jonas.rabenstein@studium.uni-erlangen.de>
+        id S1755107AbeCGXwT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 18:52:19 -0500
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34763 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755079AbeCGXwR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 18:52:17 -0500
+X-Google-Smtp-Source: AG47ELtXAXV2ZOn5E9MpYrhLvifgKFUL1fWjuB5Oyf7sHgVyOOAEXpf/fj/OWYTRJsnCbupv9+K+1A==
+Date: Wed, 7 Mar 2018 15:52:15 -0800 (PST)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Gaurav Kohli <gkohli@codeaurora.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+cc: mhocko@suse.com, kirill.shutemov@linux.intel.com,
+        Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: [patch] mm, oom: remove 3% bonus for CAP_SYS_ADMIN processes
+Message-ID: <alpine.DEB.2.20.1803071548510.6996@chino.kir.corp.google.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180307165556.2618-1-jonas.rabenstein@studium.uni-erlangen.de>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 05:55:56PM +0100, Jonas Rabenstein wrote:
-> The length must be given as bytes and not as 4 bit tuples.
-> 
-> Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-> ---
-> v2:
->   - use fls64
->   - shorten loop body
-> ---
->  block/sed-opal.c | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
-> 
+Since the 2.6 kernel, the oom killer has slightly biased away from 
+CAP_SYS_ADMIN processes by discounting some of its memory usage in 
+comparison to other processes.
 
-Reviewed-by: Scott Bauer <scott.bauer@intel.com>
+This has always been implicit and nothing exactly relies on the behavior.
 
-Your two patches should be sent to stable for 4.14. I can queue those up and do it,
-or if you want to you can do it as well. Let me know what you prefer!
+Gaurav notices that __task_cred() can dereference a potentially freed 
+pointer if the task under consideration is exiting because a reference to 
+the task_struct is not held.
+
+Remove the CAP_SYS_ADMIN bias so that all processes are treated equally.
+
+If any CAP_SYS_ADMIN process would like to be biased against, it is always 
+allowed to adjust /proc/pid/oom_score_adj.
+
+Reported-by: Gaurav Kohli <gkohli@codeaurora.org>
+Signed-off-by: David Rientjes <rientjes@google.com>
+---
+ mm/oom_kill.c | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -224,13 +224,6 @@ unsigned long oom_badness(struct task_struct *p, struct mem_cgroup *memcg,
+ 		mm_pgtables_bytes(p->mm) / PAGE_SIZE;
+ 	task_unlock(p);
+ 
+-	/*
+-	 * Root processes get 3% bonus, just like the __vm_enough_memory()
+-	 * implementation used by LSMs.
+-	 */
+-	if (has_capability_noaudit(p, CAP_SYS_ADMIN))
+-		points -= (points * 3) / 100;
+-
+ 	/* Normalize to oom_score_adj units */
+ 	adj *= totalpages / 1000;
+ 	points += adj;
