@@ -1,51 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934216AbeCGPzA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 10:55:00 -0500
-Received: from ms.lwn.net ([45.79.88.28]:58150 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933728AbeCGPy4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 10:54:56 -0500
-Date: Wed, 7 Mar 2018 08:54:54 -0700
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Winkler, Tomas" <tomas.winkler@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org\" <linux-security-module@vger.kernel.org>, "@lwn.net,
-        linux-kernel@vger.kernel.org,
-        " <linux-kernel@vger.kernel.org>"@lwn.net
-Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
- commands.
-Message-ID: <20180307085454.2c820a13@lwn.net>
-In-Reply-To: <1520361396.10396.396.camel@linux.vnet.ibm.com>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
-        <20180305125642.GA3425@linux.intel.com>
-        <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
-        <20180306074932.GB3624@linux.intel.com>
-        <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
-        <1520353933.5393.21.camel@HansenPartnership.com>
-        <1520361396.10396.396.camel@linux.vnet.ibm.com>
-Organization: LWN.net
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+        id S934193AbeCGPzf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 10:55:35 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40650 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934033AbeCGPur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 10:50:47 -0500
+From: Jiri Olsa <jolsa@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: [PATCH 11/19] perf c2c report: Make calc_width work with struct c2c_hist_entry
+Date: Wed,  7 Mar 2018 16:50:12 +0100
+Message-Id: <20180307155020.32613-12-jolsa@kernel.org>
+In-Reply-To: <20180307155020.32613-1-jolsa@kernel.org>
+References: <20180307155020.32613-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 06 Mar 2018 13:36:36 -0500
-Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+We are going to calculate column width based on the
+struct c2c_hist_entry data, so making calc_width to
+work with struct c2c_hist_entry.
 
-> I've heard that some maintainers are moving away from cover letters,
-> since they are not include in the git repo and are lost.
+Link: http://lkml.kernel.org/n/tip-p775ak70wpca93dm9q5jowre@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/builtin-c2c.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-If I get a patch series with a cover letter that should be preserved, I
-apply the series in a branch then do a no-ff merge; the cover letter can
-then go into the merge commit.  There's no reason why cover letters need to
-be lost.
-
-jon
+diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+index 95765a1db903..43ce55550c9d 100644
+--- a/tools/perf/builtin-c2c.c
++++ b/tools/perf/builtin-c2c.c
+@@ -1839,20 +1839,24 @@ static inline int valid_hitm_or_store(struct hist_entry *he)
+ 	return has_hitm || c2c_he->stats.store;
+ }
+ 
+-static void calc_width(struct hist_entry *he)
++static void calc_width(struct c2c_hist_entry *c2c_he)
+ {
+ 	struct c2c_hists *c2c_hists;
+ 
+-	c2c_hists = container_of(he->hists, struct c2c_hists, hists);
+-	hists__calc_col_len(&c2c_hists->hists, he);
++	c2c_hists = container_of(c2c_he->he.hists, struct c2c_hists, hists);
++	hists__calc_col_len(&c2c_hists->hists, &c2c_he->he);
+ }
+ 
+ static int filter_cb(struct hist_entry *he)
+ {
++	struct c2c_hist_entry *c2c_he;
++
++	c2c_he = container_of(he, struct c2c_hist_entry, he);
++
+ 	if (c2c.show_src && !he->srcline)
+ 		he->srcline = hist_entry__get_srcline(he);
+ 
+-	calc_width(he);
++	calc_width(c2c_he);
+ 
+ 	if (!valid_hitm_or_store(he))
+ 		he->filtered = HIST_FILTER__C2C;
+@@ -1869,7 +1873,7 @@ static int resort_cl_cb(struct hist_entry *he)
+ 	c2c_he = container_of(he, struct c2c_hist_entry, he);
+ 	c2c_hists = c2c_he->hists;
+ 
+-	calc_width(he);
++	calc_width(c2c_he);
+ 
+ 	if (display && c2c_hists) {
+ 		static unsigned int idx;
+-- 
+2.13.6
