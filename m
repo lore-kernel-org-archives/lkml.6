@@ -1,104 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754528AbeCGNpe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 08:45:34 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:35766 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754423AbeCGNov (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 08:44:51 -0500
-X-Google-Smtp-Source: AG47ELvKeokPpWFhnHpbFTXl+YjJKuwbhFOTrPaq6rr2+rKf2g4TBk3nXFg0CAY2LMZ6hgNQeJX6gs9CTg8rznCSPwM=
+        id S1754173AbeCGNvN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 08:51:13 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36514 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751150AbeCGNvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 08:51:10 -0500
+Date: Wed, 7 Mar 2018 14:51:05 +0100
+From: Jiri Olsa <jolsa@redhat.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Andi Kleen <andi@firstfloor.org>,
+        Agustin Vega-Frias <agustinv@codeaurora.org>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>, timur@codeaurora.org
+Subject: Re: [RFC V3 0/3] perf stat: improvements for handling of multiple
+ PMUs
+Message-ID: <20180307135105.GA9080@krava>
+References: <1520345084-42646-1-git-send-email-agustinv@codeaurora.org>
+ <20180307100408.GA22848@krava>
+ <20180307133630.GD3701@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180306000832.GL4197@saruman>
-References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
- <20170927151527.25570-4-prasannatsmkumar@gmail.com> <20180306000832.GL4197@saruman>
-From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Date: Wed, 7 Mar 2018 19:14:49 +0530
-Message-ID: <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
-Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
-To: James Hogan <jhogan@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Dominik Peklo <dom.peklo@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180307133630.GD3701@kernel.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+On Wed, Mar 07, 2018 at 10:36:30AM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Wed, Mar 07, 2018 at 11:04:08AM +0100, Jiri Olsa escreveu:
+> > On Tue, Mar 06, 2018 at 09:04:41AM -0500, Agustin Vega-Frias wrote:
+> > > This series of patches adds some simple improvements to the way perf stat
+> > > handles PMUs that have multiple instances by:
+> > > 
+> > > 1. Adding glob-like matching in addition to the prefix-based matching
+> > >    introduced previously (patch 1).
+> > > 2. Adding the ability to recover the PMU names when printing the events
+> > >    separately with the --no-merge option (patch 2).
+> > > 3. Restoring auto-merge for events created by prefix or glob-like match
+> > >    (patch 3). Note that this still keeps the behavior that disables
+> > >    auto-merging of legacy symbolic events (e.g. cycles).
+> > > 
+> > > V3:
+> > > 
+> > > - Consolidated prefix and glob matching into a single glob match with a
+> > >   trailing * to maintain prefix matching and have more consistent behavior.
+> > >   E.g., all of these match all the uncore_imc PMUs: imc, imc*, *imc, *imc*
+> > 
+> > Acked-by: Jiri Olsa <jolsa@kernel.org>
+> 
+> Thanks, applied.
+> 
+> I guess Andi had Acked or Reviewed this, no?
 
-Thanks for reviewing this.
+not the latest version.. please wait for his ack
 
-On 6 March 2018 at 05:38, James Hogan <jhogan@kernel.org> wrote:
-> On Wed, Sep 27, 2017 at 08:45:26PM +0530, PrasannaKumar Muralidharan wrote:
->> Add initial Ingenic X1000 SoC support. Provide minimum necessary
->> information to boot kernel to an initramfs userspace.
->>
->> Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
->> ---
->>  arch/mips/boot/dts/ingenic/x1000.dtsi | 93 +++++++++++++++++++++++++++++++++++
->>  arch/mips/jz4740/Kconfig              |  6 +++
->>  arch/mips/jz4740/time.c               |  2 +-
->>  3 files changed, 100 insertions(+), 1 deletion(-)
->>  create mode 100644 arch/mips/boot/dts/ingenic/x1000.dtsi
->
-> arch/mips/jz4780/setup.c, specifically get_board_mach_type() and
-> get_system_type() will need updating too.
-
-Missed it. Will make necessary changes.
-
-> Does X1000 use a different PRID, or is it basically just a JZ4780 core
-> with different SoC peripherals?
-
-Yes X1000 does have a different PRID (PRID = 0x2ed1024f). X1000 has
-single CPU core so it is definitely not JZ4780.
-
->> diff --git a/arch/mips/boot/dts/ingenic/x1000.dtsi b/arch/mips/boot/dts/ingenic/x1000.dtsi
->> new file mode 100644
->> index 0000000..abbb9ec
->> --- /dev/null
->> +++ b/arch/mips/boot/dts/ingenic/x1000.dtsi
->> @@ -0,0 +1,93 @@
->> +/*
->> + * Copyright (C) 2016 PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
->> + *
->> + * This file is licensed under the terms of the GNU General Public
->> + * License version 2. This program is licensed "as is" without any
->> + * warranty of any kind, whether express or implied.
->
-> (these will need updating to use SPDX identifiers if you respin)
-
-Sure. Will take care while submitting next version.
-
->> +     cgu: jz4780-cgu@10000000 {
->
-> not sure jz4780 is appropriate here.
-
-No, it is not. Copy pasted from jz4780.dtsi but missed updating this.
-
->> +             compatible = "ingenic,x1000-cgu";
->> +             reg = <0x10000000 0x100>;
->> +
->> +             clocks = <&ext>, <&rtc>;
->> +             clock-names = "ext", "rtc";
->> +
->> +             #clock-cells = <1>;
->> +     };
->
-> Cheers
-> James
-
-I used to get my code tested from Domink but I could not reach him for
-quite some time. Before buying the development board myself I would
-like to see if anyone can help me in testing. Do you have any contact
-with Ingenic who can help in testing this?
-
-Thanks,
-PrasannaKumar
+jirka
