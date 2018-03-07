@@ -1,69 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4025272-1520451931-2-162858570949646816
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520451930; b=vy5iyzOkNQ1OCE/CEtD7eDWhwcDuYuwGWXWFNhcaEb23hre
-    9GvugeQnYwHNBcjJrlZp8ayenSUfIE35M3EzVdwms3JS+Syp/T1lMConRFvrIc9C
-    z//c1xuFOPttUGejOLv9HU2w4qn+3RN/yKa8tjwIv2yI80R2nD9fnN+4MgqKpiwz
-    8xF0HcsZPY777aWr4euLUS47f3Twi6XidwiYcbIIz4ku9fVZXSdhgtC5rUz/9Fd0
-    TO0rtDO5XHMrFcPb442uxfiOmNo73z6qx6SfqofPhSevLaZ8/DcdU/wNkGIZmlXe
-    IQyxEV/7CgIUEfwche4wtQVxs7okT2s1hXpXBew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520451930; bh=hBsf6bRo5SR8Gbp6s/Rg9wDC/8
-    arM/lQ4MeGSjejrLU=; b=YXU4LhjgW/7H3E/R9C2NmEfLTXenOd8DQNNWY50X3i
-    f4303dp61gHMY5iTuXLDan9V6PHOu45LimoDiOiDLjGLYjfCFgjTlw7QRntkYyKp
-    sH53lPaE/8p08LC+zrV2c71UEAiQm2F70sTXJgUrFOnevmI5iMD1kDGGD7jRZqKl
-    /LPT+MkxRukPh8HoH3DhsHkGAylmZunnkUBj84CnjPQQQK91ZfN/lZFJnXswUzbR
-    VMMttHH6z6titEEyZKBc/UAyWjXE1COY3olva5JLhIJPHGELVYRrWcLLssv86FxN
-    Y95qmuzIgpitV4eCuJcCcEt/Sasroq3zLSx45Fae1g0w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965313AbeCGTp0 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 14:45:26 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44170 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965311AbeCGTpY (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:45:24 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELux4geyIQX93cGaEawXjp0Eucovzd34qtO/xXd164MDLb0Cd03qaz96u1Wx6pSz87DkoCWq
+ARC-Seal: i=1; a=rsa-sha256; t=1520451929; cv=none;
+        d=google.com; s=arc-20160816;
+        b=xuDIKHj15S5dwJ+3A2nQiolUGiXnZRJWRFu4Yhne/EeAHLqLZ5Ph3/JYeqSDDx7PUB
+         j6MxZ/DG4N2I/j6OUm72Vlh4imoQXF9nNP0upe2bpMwPNkLSblya3EdHvtiz9ahMy1p0
+         zsQArM4moMOY82D0g7re2a7AJMQ1oKIk0AM0VGLmnjmZqUAHtdK3k3pfPs8dwHvFLdgd
+         LtE4M9mfBTjkP2rc4HLOkktxtqU9lTgvvcymVjk9cZk+/mauXOoUs67jcGkXl9WJuOBo
+         y+70Z9hEL3f6cOjrkhbrL0kwWCnvJcophJES3Kb6twIyIzdfej8kmCQmEG4YMFsBLfIT
+         m+Ow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=2s8TRWxxKauhm8zCI/Xk6KJFW04RrSX1Pp2N10+UkRo=;
+        b=svHn7raqCyO8yc3+ERIS376TNrxf6oVCsyi+Ya3ZfxxgYDqzAtkARGRdgGB/BOHeoz
+         GR4bkEXufEv2/LLKyP66Owi6O3umiIm6NvX1jyirhiMPJFAmt03vtTc9Y9DC0qY6Ryw5
+         BWSG7P+91AK3GB81qNX4uv61uSQ6frTdzsTY9lKRpQTTy11698NqqhcY6SOwnfpn2V9L
+         R6knabVyRxDFmmUzjp7Ny/MLTgY2QUb7r0LeVy649z6feu3EKiCzoHVp3czfjor0tuF1
+         S8haWEu7lX/lKTQK7D6TMBuJ5QmVu6il+uIN4D+awtAUUOG28v4C1FfJv59MZ8htzaSQ
+         lOuA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sebastian Panceac <sebastian@resin.io>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH 4.14 032/110] x86/platform/intel-mid: Handle Intel Edison reboot correctly
-Date: Wed,  7 Mar 2018 11:38:15 -0800
-Message-Id: <20180307191043.871641268@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Xiong Zhou <xzhou@redhat.com>,
+	Xin Long <lucien.xin@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 034/110] bridge: check brport attr show in brport_show
+Date: Wed,  7 Mar 2018 11:38:17 -0800
+Message-Id: <20180307191044.105042038@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -71,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594309203094602682?=
+X-GMAIL-MSGID: =?utf-8?q?1594309403065061619?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -81,43 +50,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sebastian Panceac <sebastian@resin.io>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit 028091f82eefd5e84f81cef81a7673016ecbe78b upstream.
 
-When the Intel Edison module is powered with 3.3V, the reboot command makes
-the module stuck.  If the module is powered at a greater voltage, like 4.4V
-(as the Edison Mini Breakout board does), reboot works OK.
+[ Upstream commit 1b12580af1d0677c3c3a19e35bfe5d59b03f737f ]
 
-The official Intel Edison BSP sends the IPCMSG_COLD_RESET message to the
-SCU by default. The IPCMSG_COLD_BOOT which is used by the upstream kernel
-is only sent when explicitely selected on the kernel command line.
+Now br_sysfs_if file flush doesn't have attr show. To read it will
+cause kernel panic after users chmod u+r this file.
 
-Use IPCMSG_COLD_RESET unconditionally which makes reboot work independent
-of the power supply voltage.
+Xiong found this issue when running the commands:
 
-[ tglx: Massaged changelog ]
+  ip link add br0 type bridge
+  ip link add type veth
+  ip link set veth0 master br0
+  chmod u+r /sys/devices/virtual/net/veth0/brport/flush
+  timeout 3 cat /sys/devices/virtual/net/veth0/brport/flush
 
-Fixes: bda7b072de99 ("x86/platform/intel-mid: Implement power off sequence")
-Signed-off-by: Sebastian Panceac <sebastian@resin.io>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/1519810849-15131-1-git-send-email-sebastian@resin.io
+kernel crashed with NULL a pointer dereference call trace.
+
+This patch is to fix it by return -EINVAL when brport_attr->show
+is null, just the same as the check for brport_attr->store in
+brport_store().
+
+Fixes: 9cf637473c85 ("bridge: add sysfs hook to flush forwarding table")
+Reported-by: Xiong Zhou <xzhou@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/platform/intel-mid/intel-mid.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/bridge/br_sysfs_if.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/x86/platform/intel-mid/intel-mid.c
-+++ b/arch/x86/platform/intel-mid/intel-mid.c
-@@ -79,7 +79,7 @@ static void intel_mid_power_off(void)
+--- a/net/bridge/br_sysfs_if.c
++++ b/net/bridge/br_sysfs_if.c
+@@ -235,6 +235,9 @@ static ssize_t brport_show(struct kobjec
+ 	struct brport_attribute *brport_attr = to_brport_attr(attr);
+ 	struct net_bridge_port *p = to_brport(kobj);
  
- static void intel_mid_reboot(void)
- {
--	intel_scu_ipc_simple_command(IPCMSG_COLD_BOOT, 0);
-+	intel_scu_ipc_simple_command(IPCMSG_COLD_RESET, 0);
++	if (!brport_attr->show)
++		return -EINVAL;
++
+ 	return brport_attr->show(p, buf);
  }
  
- static unsigned long __init intel_mid_calibrate_tsc(void)
