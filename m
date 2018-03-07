@@ -1,120 +1,94 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2240270-1520401117-2-16724838797351090988
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES dasven, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520401116; b=F3Fr9FhFs2iW31YeWZIPiEatGrvnNq/awrEeEa7A8Q+4bn0
-    UuV74BsOXtYEmkNkt5jFSEO0oIHRSDthtHrRK0qtNBmfCqHQU55v2sd5jhcKCYlc
-    Y9S7sVF7nh7GnxmeMTWH68YMrFDPJ0sGeZknM8Ovs4o7ynFO513IrrDK9Xr7O85z
-    QQXHXJMGIauzDpZclEFP5xQTr4mmLe8w26822I+vdRHzzl9IDV7F+S7m/uGnoEUZ
-    Hsck24DA6mds59h+QrevlceTzDW9P+EPA/QcRIohPtTOwN2IHzQ/NUEQTCimzeLF
-    GGd+Ps/dyAZ3CWcdRrQbF2GJ1Pz4zG00kbte3VQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520401116; bh=+
-    TTLl0RNnRMjBn25xkvD+AD+5FGzblqw6TUudyoihX4=; b=bEv5xE4yxwbCz9e/S
-    xyznEqz3QJdzHaC76D7IAVLTRya2PnltWmf8511UR4y9yfGtD3psUCANSoL+IZZA
-    YUM025KSOfqjAL4WACPpZXH5Kmm83wpPBj5LqbXiyAnJriL5N95LazN2QRfF2ZjE
-    jevZtI8vuTEfNMAtgukYcRZiSFqadQbRAXo7fQDCM7kTzdnl3yw3VtebA9KSPv4s
-    7asBsd6LISqRl8Ty74aPlxuYJ7EV6JLwb47b9Ub2Xv6JyEW/WiGw8Mlg4RoaRvvf
-    EFJkHOIZBhB/MHmW39C2RcOx49LTe9lsUVGbtP3RmfcjTl9PHiQLq88HMVBe5wVU
-    dPLng==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=k6eVjshV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TJs4OwJT;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=k6eVjshV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TJs4OwJT;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELu6MtnPJk/2LI1JjgGBDhgY72HuKci82ZGDDGC3idDwchwPzeVzQc1L0F52Oi6efJi5ViunqA==
-From: hariprasath.elango@gmail.com
-To: lars@metafoo.de
-Subject: [PATCH] staging: iio: meter: Remove reduntant __func__ from debug
- print
-Date: Wed,  7 Mar 2018 11:08:04 +0530
-Message-Id: <20180307053804.13730-1-hariprasath.elango@gmail.com>
-X-Mailer: git-send-email 2.10.0.GIT
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org,
- Michael Hennerich <Michael.Hennerich@analog.com>, linux-iio@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
- hariprasath.elango@gmail.com, Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
- Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>
+Return-Path: <jic23@kernel.org>
+X-Google-Smtp-Source: AG47ELsoDx2vpSCCxLh/jOt14Ko6JsNGo36654HmKWg8h4gODCzLkPqbIgaIbIQe2lMKhwxPgPfj
+ARC-Seal: i=1; a=rsa-sha256; t=1520452803; cv=none;
+        d=google.com; s=arc-20160816;
+        b=GGVBgSBWdikotsAKYUtgI2v1iyYxCWslIhRhQ7hUYOoxLFyFM3QLgGxfOdjUJGjJrQ
+         AsUrLHqTJRjtjt5aS4yfleBQObbsrKQWr+0+AAgmblSR67Eu/pPaGeQ6HGLgYJPbaaqy
+         qzTETgZCyqxdMqHVQMyOVSgC49u4WSbJ9AZn9+rM5FWhctB+u5jME4ba3xC7yt6+Nato
+         XguqXEFhGDgfQllhn8vzYHd0w2OvNsyykaKmsvhQ/8UtKamncBP5iCvHuUsw/hPSjrt1
+         XBAG5sTLWUKb2TS1nga8+fimloXmxSyPLpidsoqcKWcV0OPMIS2XDMTRcXyioy15GDXG
+         6MYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:dmarc-filter
+         :arc-authentication-results;
+        bh=y9vy8Wt/xN9UORlVNAeX4cEydkzu0FD8OiWM5KCcLn8=;
+        b=iAH4kkGaSUL9gJo8+osznUqEkEcR28sjLnrUIwtZix4morUDZt13NO288EamERdqVz
+         UKbncAesFokXC4wIPSy16SfP2zSq+ciDUPup2P8X6cf+mgdouS9RqXzEO1n4WYrUpbR+
+         7pzY3gfoZWnhOaGRwYxZFXsqWsvfSU7BHZygGelyfboM5JmSO24F5K9VRiBeGhaHjNZM
+         eKwfFbPhSY4sergt2eUh2rqIBzmsOWZpbOQ21GULEYJfjvuHeVJJwhRQKOFaPf7ZCK5K
+         CVbgc8JDq6BQkdBMWHimZEn2qzGe90JcUinvek6o/meKgrtyVQiNgMXeX4UcOD9VGpxW
+         bQQw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5A2820685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
+Date: Wed, 7 Mar 2018 19:59:57 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: hariprasath.elango@gmail.com
+Cc: lars@metafoo.de, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler
+ <pmeerw@pmeerw.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: iio: meter: Remove reduntant __func__ from
+ debug print
+Message-ID: <20180307195957.436c4c74@archlinux>
+In-Reply-To: <20180307053804.13730-1-hariprasath.elango@gmail.com>
+References: <20180307053804.13730-1-hariprasath.elango@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594256112698574000?=
+X-GMAIL-MSGID: =?utf-8?q?1594310318838535246?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: HariPrasath Elango <hariprasath.elango@gmail.com>
+On Wed,  7 Mar 2018 11:08:04 +0530
+hariprasath.elango@gmail.com wrote:
 
-dev_dbg includes the function name & line number by default when dynamic
-debugging is enabled. Hence__func__ is reduntant here and removed.
+> From: HariPrasath Elango <hariprasath.elango@gmail.com>
+> 
+> dev_dbg includes the function name & line number by default when dynamic
+> debugging is enabled. Hence__func__ is reduntant here and removed.
+> 
+> Signed-off-by: HariPrasath Elango <hariprasath.elango@gmail.com>
+Applied to the togreg branch of iio.git and pushed out as testing for
+the autobuilders to play with it.
 
-Signed-off-by: HariPrasath Elango <hariprasath.elango@gmail.com>
----
- drivers/staging/iio/meter/ade7758_trigger.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please note that, after discussions with Michael, I'm planning to send
+out an email stating these meter drivers will be dropped next cycle
+unless we have someone come forward who can test them.
 
-diff --git a/drivers/staging/iio/meter/ade7758_trigger.c b/drivers/staging/iio/meter/ade7758_trigger.c
-index 1f0d1a0..da489ae 100644
---- a/drivers/staging/iio/meter/ade7758_trigger.c
-+++ b/drivers/staging/iio/meter/ade7758_trigger.c
-@@ -34,7 +34,7 @@ static int ade7758_data_rdy_trigger_set_state(struct iio_trigger *trig,
- {
- 	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
- 
--	dev_dbg(&indio_dev->dev, "%s (%d)\n", __func__, state);
-+	dev_dbg(&indio_dev->dev, "(%d)\n", state);
- 	return ade7758_set_irq(&indio_dev->dev, state);
- }
- 
--- 
-2.10.0.GIT
+We can't realistically do the work needed to move them out of testing
+without a high risk of breaking them and they are 'not suitable
+for new designs'.
 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Ah well, we'll see - someone might care and be able to help
+
+Thanks
+
+Jonathan
+
+> ---
+>  drivers/staging/iio/meter/ade7758_trigger.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/iio/meter/ade7758_trigger.c b/drivers/staging/iio/meter/ade7758_trigger.c
+> index 1f0d1a0..da489ae 100644
+> --- a/drivers/staging/iio/meter/ade7758_trigger.c
+> +++ b/drivers/staging/iio/meter/ade7758_trigger.c
+> @@ -34,7 +34,7 @@ static int ade7758_data_rdy_trigger_set_state(struct iio_trigger *trig,
+>  {
+>  	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
+>  
+> -	dev_dbg(&indio_dev->dev, "%s (%d)\n", __func__, state);
+> +	dev_dbg(&indio_dev->dev, "(%d)\n", state);
+>  	return ade7758_set_irq(&indio_dev->dev, state);
+>  }
+>  
