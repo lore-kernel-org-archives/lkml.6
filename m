@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtkRsxlYDa73f5zBfeD0xLNES97DYrvaAiJ+FoepXc6wHi7O7mSuxuo2iBitu0yyAue0SLq
-ARC-Seal: i=1; a=rsa-sha256; t=1520451819; cv=none;
+X-Google-Smtp-Source: AG47ELuVziUgqhMcbipyD24hy5I1WcijM/xUg8i326TbDjBEiepqyV70rwsUkABFZmRne3POwkX8
+ARC-Seal: i=1; a=rsa-sha256; t=1520451818; cv=none;
         d=google.com; s=arc-20160816;
-        b=wbQofbZEZU53v5ZwbKOl9Xcol3S34YKBYGYEA7rVX5xcL67Zn14ONhEY2Z4SR534M3
-         drdy/kjy264U8bPcChwbWA3D9dvk9tXqGQNaYSGqwyLhQdwN2YOnL1SQLrLDsXphBuaU
-         CYStHCsHTc9TE9lt+5ZWexViS/kjODJioSxq5StF0lsTmykZH6RhKW2Iuv/Sh/4/3QmS
-         IQdwFnifegZGHWbLRZXnXa+bplqWj9BhaTgunYGEmbwGd0BAw9vaoHv4t2hFO7pGWZEw
-         c9NIBmjP/Z7u+G4xswcULDl6g7FAz4YYRlx23YvbqXdCUbhFSX6MeMNQn+VSoZGG5IHR
-         tZxA==
+        b=IBHHjkkXdbKIaNGqGfTK1z/yjNmhJdsmQu0EKG3VkswDQFYJfOh+pEqYE2uH8GKzPA
+         XmroBzAtdH5uEEm2Yi5dmY7r5vvEC8TQHaXgexaOf7l8R1vYWVG8Ap6tZER5CPRi9lvw
+         o5aYQ/9YV5Xlp/EjAekDzGv1yOZUukHg6Y2kqviWLuHPvVCvr2O6AN1eLqZHL8LeMPsv
+         WO+ek8uAAs2i2WZUaOq6IWUTCVlbu9GsjhETnHX7m+j+MemuC8zM8Dx6GCqIqUK6hDgS
+         KpsYdIXRbwEpk54465xpQU/LN12wLMyD74mga/s/VQ1+mHxpK1jMb2+rtQgjyRwexjaO
+         EN/w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Tvndk3W9eFZDOsnHHXNC3RVfhU+uL9WpUUyQL+Mxj60=;
-        b=kJKVhesMlkK5zCU2Z3kOJu8epbieRJIgbSuvyvdUmJzzDXXOY6tUSQbgKmVPCFdNFy
-         mZ1ASTeFIggg9S6HXcudVzeCTt5qMSabJjHRiIeE/+S1j9Zy5AL/eRvWUUgjJpZlzBOx
-         nfgy/JdbGhNSs8vUjKx0wbtHb/W/yBMR4QVnrXWRjjrrackB17XC0QtnX/qfqJMbb02M
-         rSp6IIapknp2+6UJ0kSmSuZw8tO1zDduAjp5gU8nUZ6+//zI/SD0YuHn5Ae26WHMilkN
-         4/aeIIVjS3nLVmeKdE8eWYFskpG7knN1VHzG185SwxPdrJWCUhpDwXYgqVptfE0kfKGI
-         NqAw==
+        bh=YuChzTQZKsL80q0mPf1dkWjfKiBl4nOyflrnyNaVYos=;
+        b=u9K6qySAYBCBI4UTlDaQ+yGTaxhNhHTyNF3/lKR4jzQ7nY62I2KGDn8T+ykqLaqb1x
+         Ur+DB1aZpGt46PNwdah6MUnT096d8VcA0eB87S1OH54GijHyW6R7iPqbP+IErYn9pTOh
+         I1f5pCDlO3wioFim3YwnzlHxoy9hZtw4bfDWzH6g2FpPXmGhcppHIvS1Cl8WygCvHXDf
+         Zjfmt4LmhiSVTO/twYtEtNpNxgDhg0Fi5v3aynJDpKdAp+0Ux1YS2SQDIydrm3lv2sSD
+         Tvx2JszIr7ewKXY49WC7uyTiW7c801ljeRaH/X7Jes99MqntMgzzB4D4pR70XQRZhHUj
+         u0Hw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,22 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andrew Lunn <andrew@lunn.ch>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.15 107/122] ARM: orion: fix orion_ge00_switch_board_info initialization
-Date: Wed,  7 Mar 2018 11:38:39 -0800
-Message-Id: <20180307191745.049545718@linuxfoundation.org>
+	Jan Beulich <jbeulich@suse.com>,
+	Juergen Gross <jgross@suse.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andy Lutomirski <luto@kernel.org>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Brian Gerst <brgerst@gmail.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.15 106/122] x86/mm: Fix {pmd,pud}_{set,clear}_flags()
+Date: Wed,  7 Mar 2018 11:38:38 -0800
+Message-Id: <20180307191744.867428031@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -40,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309287292591217?=
-X-GMAIL-MSGID: =?utf-8?q?1594309287292591217?=
+X-GMAIL-THRID: =?utf-8?q?1594309285828589431?=
+X-GMAIL-MSGID: =?utf-8?q?1594309285828589431?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,80 +60,97 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Jan Beulich <JBeulich@suse.com>
 
-commit 8337d083507b9827dfb36d545538b7789df834fd upstream.
+commit 842cef9113c2120f74f645111ded1e020193d84c upstream.
 
-A section type mismatch warning shows up when building with LTO,
-since orion_ge00_mvmdio_bus_name was put in __initconst but not marked
-const itself:
+Just like pte_{set,clear}_flags() their PMD and PUD counterparts should
+not do any address translation. This was outright wrong under Xen
+(causing a dead boot with no useful output on "suitable" systems), and
+produced needlessly more complicated code (even if just slightly) when
+paravirt was enabled.
 
-include/linux/of.h: In function 'spear_setup_of_timer':
-arch/arm/mach-spear/time.c:207:34: error: 'timer_of_match' causes a section type conflict with 'orion_ge00_mvmdio_bus_name'
- static const struct of_device_id timer_of_match[] __initconst = {
-                                  ^
-arch/arm/plat-orion/common.c:475:32: note: 'orion_ge00_mvmdio_bus_name' was declared here
- static __initconst const char *orion_ge00_mvmdio_bus_name = "orion-mii";
-                                ^
-
-As pointed out by Andrew Lunn, it should in fact be 'const' but not
-'__initconst' because the string is never copied but may be accessed
-after the init sections are freed. To fix that, I get rid of the
-extra symbol and rewrite the initialization in a simpler way that
-assigns both the bus_id and modalias statically.
-
-I spotted another theoretical bug in the same place, where d->netdev[i]
-may be an out of bounds access, this can be fixed by moving the device
-assignment into the loop.
-
+Signed-off-by: Jan Beulich <jbeulich@suse.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: stable@vger.kernel.org
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Link: http://lkml.kernel.org/r/5A8AF1BB02000078001A91C3@prv-mh.provo.novell.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/plat-orion/common.c |   23 +++++++++++------------
- 1 file changed, 11 insertions(+), 12 deletions(-)
+ arch/x86/include/asm/pgtable.h       |    8 ++++----
+ arch/x86/include/asm/pgtable_types.h |   10 ++++++++++
+ 2 files changed, 14 insertions(+), 4 deletions(-)
 
---- a/arch/arm/plat-orion/common.c
-+++ b/arch/arm/plat-orion/common.c
-@@ -472,28 +472,27 @@ void __init orion_ge11_init(struct mv643
- /*****************************************************************************
-  * Ethernet switch
-  ****************************************************************************/
--static __initconst const char *orion_ge00_mvmdio_bus_name = "orion-mii";
--static __initdata struct mdio_board_info
--		  orion_ge00_switch_board_info;
-+static __initdata struct mdio_board_info orion_ge00_switch_board_info = {
-+	.bus_id   = "orion-mii",
-+	.modalias = "mv88e6085",
-+};
- 
- void __init orion_ge00_switch_init(struct dsa_chip_data *d)
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -350,14 +350,14 @@ static inline pmd_t pmd_set_flags(pmd_t
  {
--	struct mdio_board_info *bd;
- 	unsigned int i;
+ 	pmdval_t v = native_pmd_val(pmd);
  
- 	if (!IS_BUILTIN(CONFIG_PHYLIB))
- 		return;
- 
--	for (i = 0; i < ARRAY_SIZE(d->port_names); i++)
--		if (!strcmp(d->port_names[i], "cpu"))
-+	for (i = 0; i < ARRAY_SIZE(d->port_names); i++) {
-+		if (!strcmp(d->port_names[i], "cpu")) {
-+			d->netdev[i] = &orion_ge00.dev;
- 			break;
-+		}
-+	}
- 
--	bd = &orion_ge00_switch_board_info;
--	bd->bus_id = orion_ge00_mvmdio_bus_name;
--	bd->mdio_addr = d->sw_addr;
--	d->netdev[i] = &orion_ge00.dev;
--	strcpy(bd->modalias, "mv88e6085");
--	bd->platform_data = d;
-+	orion_ge00_switch_board_info.mdio_addr = d->sw_addr;
-+	orion_ge00_switch_board_info.platform_data = d;
- 
- 	mdiobus_register_board_info(&orion_ge00_switch_board_info, 1);
+-	return __pmd(v | set);
++	return native_make_pmd(v | set);
  }
+ 
+ static inline pmd_t pmd_clear_flags(pmd_t pmd, pmdval_t clear)
+ {
+ 	pmdval_t v = native_pmd_val(pmd);
+ 
+-	return __pmd(v & ~clear);
++	return native_make_pmd(v & ~clear);
+ }
+ 
+ static inline pmd_t pmd_mkold(pmd_t pmd)
+@@ -409,14 +409,14 @@ static inline pud_t pud_set_flags(pud_t
+ {
+ 	pudval_t v = native_pud_val(pud);
+ 
+-	return __pud(v | set);
++	return native_make_pud(v | set);
+ }
+ 
+ static inline pud_t pud_clear_flags(pud_t pud, pudval_t clear)
+ {
+ 	pudval_t v = native_pud_val(pud);
+ 
+-	return __pud(v & ~clear);
++	return native_make_pud(v & ~clear);
+ }
+ 
+ static inline pud_t pud_mkold(pud_t pud)
+--- a/arch/x86/include/asm/pgtable_types.h
++++ b/arch/x86/include/asm/pgtable_types.h
+@@ -323,6 +323,11 @@ static inline pudval_t native_pud_val(pu
+ #else
+ #include <asm-generic/pgtable-nopud.h>
+ 
++static inline pud_t native_make_pud(pudval_t val)
++{
++	return (pud_t) { .p4d.pgd = native_make_pgd(val) };
++}
++
+ static inline pudval_t native_pud_val(pud_t pud)
+ {
+ 	return native_pgd_val(pud.p4d.pgd);
+@@ -344,6 +349,11 @@ static inline pmdval_t native_pmd_val(pm
+ #else
+ #include <asm-generic/pgtable-nopmd.h>
+ 
++static inline pmd_t native_make_pmd(pmdval_t val)
++{
++	return (pmd_t) { .pud.p4d.pgd = native_make_pgd(val) };
++}
++
+ static inline pmdval_t native_pmd_val(pmd_t pmd)
+ {
+ 	return native_pgd_val(pmd.pud.p4d.pgd);
