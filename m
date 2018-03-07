@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu/2v+o22abeegJ9cJ8NLk62rFL1tAOIzVwi9YAiEUvxD33IClLpSsQHLRiczpXR73nnCX0
-ARC-Seal: i=1; a=rsa-sha256; t=1520451962; cv=none;
+X-Google-Smtp-Source: AG47ELt8fyQ4BaxcxF6Ug1uUOxe9PLJ+a0H5PXe7hxaxmlrWP13knBzBEso4icHce2MZsRtGh/Y2
+ARC-Seal: i=1; a=rsa-sha256; t=1520451960; cv=none;
         d=google.com; s=arc-20160816;
-        b=aQp4Vop5R/HukUsOGP4yUeiZ5x+8bDdQV1ZpREHMD56OuewPTOeKDmraP3woLqHFIp
-         4V+fVOKrYgclRBeNyAinygyGK1Vcgm+sf8tm69BrrFai802NdJjsNma8Q1Q0c7R6V9fB
-         /kNqM0MyeepD9ugsjQ0fJgUNNlH9p+vv8wK2QDmkMqb4AL86Au2P3LrzozjWwb0kiGAj
-         Wr4iRL6bxE/+I7KOHS+QNEAhOUGylwBb/CS1tp2otg+gRLcLxwSGsr39Jv7m3aqGASUY
-         7cSCvy/qttEXmaTkbsSCyZPAcTLttv17rtUbGv8qTx3hkvtBpAIbRpKBk6O+tOoHK72l
-         53vQ==
+        b=HWRIwkP9DmvGw0hPIgr8XYVd5qlLHW85kAmVlWGPzDSVcMvThnV6R6WMvqqGAGiPRZ
+         zjmfe/UuwNYWqVLH9qc8kAuLIWxSY/OqBTFLYtkPkrFM/2ebP8471hLFZ7TJ31TZsFLQ
+         ReiKAPPXjBGaNZFsaAfY5BEHjSZsAejeEdeNMmXMmqyDCOqIYS0624+YVFwKKjpby119
+         Zwf7xUyYIf6UU0rOUXOOTDJkbotVjSzn47MkxMj/hkY9ZNtvX+QtIcrOzjsW9Ui10Poo
+         pBovv3LYoBVeEX3vRziF8d67K/wsul+kI02+m7wfV7cPCTj80DC2cte16vBdd36ATjE1
+         XunQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=RvYIcvU61ivm+3eFfEu/8nQVXqQaqIaw1jdVLaA4tHY=;
-        b=clJozIOEhe8hCB3CbsFV4P6RF+sKZ1mtJZovvyidY5msF3j+ycdxozPJCipO+gXCvv
-         SnwQ4SWUwLJ9CPHSBYHBTzKFzts2Pswbe9DjKhtwA50B+KaXmNJVFIOfDZTA2RKbYxhl
-         zFFlLFO1yePnuA7WnCioJg+oqP26bgYoBOowEQBW4RfhqHqU8q/HPzSi1XGGkg3vOc5t
-         ejtPv7sBtfRQTmp5lDBNvX4lxN3JUVbzE9zHfCUX/57Etm7YeQrIfwWIuSio8jEKLpND
-         rx8+NWum8DNa294u7qXLqn9yqJeevA4HQPtz5G2YCSfunn7bcFrP6s5SvRx4TWiP3hS/
-         ynNw==
+        bh=YcxxbHPlUGcgUJnwKAz+zQDyuZr32Jhc1p4pberEVfo=;
+        b=cFg269bGWSzLch4vO0JLEfarj693THLZSseoTg+u/jbUR65ODhuTqJyEyUxf5V01Dk
+         HTzM0GcAAnwniNEP++QmZ37mnpqQ75hKF//gp1Fgli/i0UuHmbRv0mp9ij9J6Q3quNJg
+         hxIOHym8K75eF4mCMvH66AitiVKMLtpMFxjvjW6PclLe+Zxwrj4srfm5nCXGonKM4pPe
+         qdlEfQi1F2iDB7g/jcgzvMVaLAynsXGGEPh2fgmFI5vi2CQ2asUo8TttoQY+klKKbkM8
+         fuxaIaHfWVFlS4hgMjv8YLD8L0Jvo6Fb8LvadWpUEsPTLpi488KwKnvusrmJ9F63eVzm
+         xQ6w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tommi Rantala <tommi.t.rantala@nokia.com>,
-	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-	Neil Horman <nhorman@tuxdriver.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 048/110] sctp: fix dst refcnt leak in sctp_v4_get_dst
-Date: Wed,  7 Mar 2018 11:38:31 -0800
-Message-Id: <20180307191045.865516721@linuxfoundation.org>
+	Gal Pressman <galp@mellanox.com>,
+	Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.14 047/110] net/mlx5e: Fix TCP checksum in LRO buffers
+Date: Wed,  7 Mar 2018 11:38:30 -0800
+Message-Id: <20180307191045.744657805@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309148513653241?=
-X-GMAIL-MSGID: =?utf-8?q?1594309437047192040?=
+X-GMAIL-THRID: =?utf-8?q?1594309146234864843?=
+X-GMAIL-MSGID: =?utf-8?q?1594309434835629693?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,84 +49,123 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tommi Rantala <tommi.t.rantala@nokia.com>
+From: Gal Pressman <galp@mellanox.com>
 
 
-[ Upstream commit 4a31a6b19f9ddf498c81f5c9b089742b7472a6f8 ]
+[ Upstream commit 8babd44d2079079f9d5a4aca7005aed80236efe0 ]
 
-Fix dst reference count leak in sctp_v4_get_dst() introduced in commit
-410f03831 ("sctp: add routing output fallback"):
+When receiving an LRO packet, the checksum field is set by the hardware
+to the checksum of the first coalesced packet. Obviously, this checksum
+is not valid for the merged LRO packet and should be fixed.  We can use
+the CQE checksum which covers the checksum of the entire merged packet
+TCP payload to help us calculate the checksum incrementally.
 
-When walking the address_list, successive ip_route_output_key() calls
-may return the same rt->dst with the reference incremented on each call.
+Tested by sending IPv4/6 traffic with LRO enabled, RX checksum disabled
+and watching nstat checksum error counters (in addition to the obvious
+bandwidth drop caused by checksum errors).
 
-The code would not decrement the dst refcount when the dst pointer was
-identical from the previous iteration, causing the dst refcnt leak.
+This bug is usually "hidden" since LRO packets would go through the
+CHECKSUM_UNNECESSARY flow which does not validate the packet checksum.
 
-Testcase:
-  ip netns add TEST
-  ip netns exec TEST ip link set lo up
-  ip link add dummy0 type dummy
-  ip link add dummy1 type dummy
-  ip link add dummy2 type dummy
-  ip link set dev dummy0 netns TEST
-  ip link set dev dummy1 netns TEST
-  ip link set dev dummy2 netns TEST
-  ip netns exec TEST ip addr add 192.168.1.1/24 dev dummy0
-  ip netns exec TEST ip link set dummy0 up
-  ip netns exec TEST ip addr add 192.168.1.2/24 dev dummy1
-  ip netns exec TEST ip link set dummy1 up
-  ip netns exec TEST ip addr add 192.168.1.3/24 dev dummy2
-  ip netns exec TEST ip link set dummy2 up
-  ip netns exec TEST sctp_test -H 192.168.1.2 -P 20002 -h 192.168.1.1 -p 20000 -s -B 192.168.1.3
-  ip netns del TEST
+It's important to note that previous to this patch, LRO packets provided
+with CHECKSUM_UNNECESSARY are indeed packets with a correct validated
+checksum (even though the checksum inside the TCP header is incorrect),
+since the hardware LRO aggregation is terminated upon receiving a packet
+with bad checksum.
 
-In 4.4 and 4.9 kernels this results to:
-  [  354.179591] unregister_netdevice: waiting for lo to become free. Usage count = 1
-  [  364.419674] unregister_netdevice: waiting for lo to become free. Usage count = 1
-  [  374.663664] unregister_netdevice: waiting for lo to become free. Usage count = 1
-  [  384.903717] unregister_netdevice: waiting for lo to become free. Usage count = 1
-  [  395.143724] unregister_netdevice: waiting for lo to become free. Usage count = 1
-  [  405.383645] unregister_netdevice: waiting for lo to become free. Usage count = 1
-  ...
-
-Fixes: 410f03831 ("sctp: add routing output fallback")
-Fixes: 0ca50d12f ("sctp: fix src address selection if using secondary addresses")
-Signed-off-by: Tommi Rantala <tommi.t.rantala@nokia.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: e586b3b0baee ("net/mlx5: Ethernet Datapath files")
+Signed-off-by: Gal Pressman <galp@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/protocol.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_rx.c |   47 +++++++++++++++++-------
+ 1 file changed, 34 insertions(+), 13 deletions(-)
 
---- a/net/sctp/protocol.c
-+++ b/net/sctp/protocol.c
-@@ -514,22 +514,20 @@ static void sctp_v4_get_dst(struct sctp_
- 		if (IS_ERR(rt))
- 			continue;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+@@ -36,6 +36,7 @@
+ #include <linux/tcp.h>
+ #include <linux/bpf_trace.h>
+ #include <net/busy_poll.h>
++#include <net/ip6_checksum.h>
+ #include "en.h"
+ #include "en_tc.h"
+ #include "eswitch.h"
+@@ -546,20 +547,33 @@ bool mlx5e_post_rx_mpwqes(struct mlx5e_r
+ 	return true;
+ }
  
--		if (!dst)
--			dst = &rt->dst;
++static void mlx5e_lro_update_tcp_hdr(struct mlx5_cqe64 *cqe, struct tcphdr *tcp)
++{
++	u8 l4_hdr_type = get_cqe_l4_hdr_type(cqe);
++	u8 tcp_ack     = (l4_hdr_type == CQE_L4_HDR_TYPE_TCP_ACK_NO_DATA) ||
++			 (l4_hdr_type == CQE_L4_HDR_TYPE_TCP_ACK_AND_DATA);
++
++	tcp->check                      = 0;
++	tcp->psh                        = get_cqe_lro_tcppsh(cqe);
++
++	if (tcp_ack) {
++		tcp->ack                = 1;
++		tcp->ack_seq            = cqe->lro_ack_seq_num;
++		tcp->window             = cqe->lro_tcp_win;
++	}
++}
++
+ static void mlx5e_lro_update_hdr(struct sk_buff *skb, struct mlx5_cqe64 *cqe,
+ 				 u32 cqe_bcnt)
+ {
+ 	struct ethhdr	*eth = (struct ethhdr *)(skb->data);
+ 	struct tcphdr	*tcp;
+ 	int network_depth = 0;
++	__wsum check;
+ 	__be16 proto;
+ 	u16 tot_len;
+ 	void *ip_p;
+ 
+-	u8 l4_hdr_type = get_cqe_l4_hdr_type(cqe);
+-	u8 tcp_ack = (l4_hdr_type == CQE_L4_HDR_TYPE_TCP_ACK_NO_DATA) ||
+-		(l4_hdr_type == CQE_L4_HDR_TYPE_TCP_ACK_AND_DATA);
 -
- 		/* Ensure the src address belongs to the output
- 		 * interface.
- 		 */
- 		odev = __ip_dev_find(sock_net(sk), laddr->a.v4.sin_addr.s_addr,
- 				     false);
- 		if (!odev || odev->ifindex != fl4->flowi4_oif) {
--			if (&rt->dst != dst)
-+			if (!dst)
-+				dst = &rt->dst;
-+			else
- 				dst_release(&rt->dst);
- 			continue;
- 		}
+ 	skb->mac_len = ETH_HLEN;
+ 	proto = __vlan_get_protocol(skb, eth->h_proto, &network_depth);
  
--		if (dst != &rt->dst)
--			dst_release(dst);
-+		dst_release(dst);
- 		dst = &rt->dst;
- 		break;
+@@ -577,23 +591,30 @@ static void mlx5e_lro_update_hdr(struct
+ 		ipv4->check             = 0;
+ 		ipv4->check             = ip_fast_csum((unsigned char *)ipv4,
+ 						       ipv4->ihl);
++
++		mlx5e_lro_update_tcp_hdr(cqe, tcp);
++		check = csum_partial(tcp, tcp->doff * 4,
++				     csum_unfold((__force __sum16)cqe->check_sum));
++		/* Almost done, don't forget the pseudo header */
++		tcp->check = csum_tcpudp_magic(ipv4->saddr, ipv4->daddr,
++					       tot_len - sizeof(struct iphdr),
++					       IPPROTO_TCP, check);
+ 	} else {
++		u16 payload_len = tot_len - sizeof(struct ipv6hdr);
+ 		struct ipv6hdr *ipv6 = ip_p;
+ 
+ 		tcp = ip_p + sizeof(struct ipv6hdr);
+ 		skb_shinfo(skb)->gso_type = SKB_GSO_TCPV6;
+ 
+ 		ipv6->hop_limit         = cqe->lro_min_ttl;
+-		ipv6->payload_len       = cpu_to_be16(tot_len -
+-						      sizeof(struct ipv6hdr));
+-	}
++		ipv6->payload_len       = cpu_to_be16(payload_len);
+ 
+-	tcp->psh = get_cqe_lro_tcppsh(cqe);
+-
+-	if (tcp_ack) {
+-		tcp->ack                = 1;
+-		tcp->ack_seq            = cqe->lro_ack_seq_num;
+-		tcp->window             = cqe->lro_tcp_win;
++		mlx5e_lro_update_tcp_hdr(cqe, tcp);
++		check = csum_partial(tcp, tcp->doff * 4,
++				     csum_unfold((__force __sum16)cqe->check_sum));
++		/* Almost done, don't forget the pseudo header */
++		tcp->check = csum_ipv6_magic(&ipv6->saddr, &ipv6->daddr, payload_len,
++					     IPPROTO_TCP, check);
  	}
+ }
+ 
