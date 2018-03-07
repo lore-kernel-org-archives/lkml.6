@@ -1,143 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754302AbeCGKdr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 05:33:47 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:56472 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751149AbeCGKdo (ORCPT
+        id S1751241AbeCGKjH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 05:39:07 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:43266 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751112AbeCGKjE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 05:33:44 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
-        Sinan Kaya <okaya@codeaurora.org>, Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH v1 6/9] PCI/portdrv: Remove unused PCIE_PORT_SERVICE_VC
-Date: Wed, 07 Mar 2018 11:34:26 +0100
-Message-ID: <3478220.q9pgEXZY9y@aspire.rjw.lan>
-In-Reply-To: <152040323671.240786.17190514268346362843.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152040297576.240786.1532465558381209070.stgit@bhelgaas-glaptop.roam.corp.google.com> <152040323671.240786.17190514268346362843.stgit@bhelgaas-glaptop.roam.corp.google.com>
+        Wed, 7 Mar 2018 05:39:04 -0500
+Date: Wed, 7 Mar 2018 11:38:52 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
+        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH v5 4/4] sched/fair: update util_est only on util_avg
+ updates
+Message-ID: <20180307103852.GJ25201@hirez.programming.kicks-ass.net>
+References: <20180222170153.673-1-patrick.bellasi@arm.com>
+ <20180222170153.673-5-patrick.bellasi@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180222170153.673-5-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, March 7, 2018 7:13:56 AM CET Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> No driver registers for PCIE_PORT_SERVICE_VC, so remove it.
-> 
-> This removes the VC "service" files from /sys/bus/pci_express/devices,
-> e.g., 0000:07:00.0:pcie108, 0000:08:04.0:pcie208 (all the files that
-> contained "8" as the last digit of the "pcieXXX" part).  The port driver
-> created these files for PCIe port devices that have a VC Capability.
-> 
-> Since this reduces PCIE_PORT_DEVICE_MAXSERVICES and moves DPC down into the
-> spot where VC used to be, the DPC sysfs files will now be named "pcieXX8".
-> I don't think there's anything useful userspace can do with those files, so
-> I hope nobody cares about these filenames.
-> 
-> There is no VC driver that calls pcie_port_service_register(), so there
-> never was a /sys/bus/pci_express/drivers/vc directory.
-> 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
->  drivers/pci/pcie/portdrv.h      |    2 +-
->  drivers/pci/pcie/portdrv_acpi.c |    2 +-
->  drivers/pci/pcie/portdrv_core.c |   14 ++++----------
->  include/linux/pcieport_if.h     |    4 +---
->  4 files changed, 7 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
-> index a4fc44d52206..749d200936d9 100644
-> --- a/drivers/pci/pcie/portdrv.h
-> +++ b/drivers/pci/pcie/portdrv.h
-> @@ -12,7 +12,7 @@
->  
->  #include <linux/compiler.h>
->  
-> -#define PCIE_PORT_DEVICE_MAXSERVICES   5
-> +#define PCIE_PORT_DEVICE_MAXSERVICES   4
->  /*
->   * The PCIe Capability Interrupt Message Number (PCIe r3.1, sec 7.8.2) must
->   * be one of the first 32 MSI-X entries.  Per PCI r3.0, sec 6.8.3.1, MSI
-> diff --git a/drivers/pci/pcie/portdrv_acpi.c b/drivers/pci/pcie/portdrv_acpi.c
-> index 319c94976873..4a1b50867c98 100644
-> --- a/drivers/pci/pcie/portdrv_acpi.c
-> +++ b/drivers/pci/pcie/portdrv_acpi.c
-> @@ -48,7 +48,7 @@ void pcie_port_acpi_setup(struct pci_dev *port, int *srv_mask)
->  
->  	flags = root->osc_control_set;
->  
-> -	*srv_mask = PCIE_PORT_SERVICE_VC | PCIE_PORT_SERVICE_DPC;
-> +	*srv_mask = PCIE_PORT_SERVICE_DPC;
->  	if (flags & OSC_PCI_EXPRESS_NATIVE_HP_CONTROL)
->  		*srv_mask |= PCIE_PORT_SERVICE_HP;
->  	if (flags & OSC_PCI_EXPRESS_PME_CONTROL)
-> diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
-> index 9db77c683732..94ce4dc50d1a 100644
-> --- a/drivers/pci/pcie/portdrv_core.c
-> +++ b/drivers/pci/pcie/portdrv_core.c
-> @@ -189,10 +189,8 @@ static int pcie_init_service_irqs(struct pci_dev *dev, int *irqs, int mask)
->  	if (ret < 0)
->  		return -ENODEV;
->  
-> -	for (i = 0; i < PCIE_PORT_DEVICE_MAXSERVICES; i++) {
-> -		if (i != PCIE_PORT_SERVICE_VC_SHIFT)
-> -			irqs[i] = pci_irq_vector(dev, 0);
-> -	}
-> +	for (i = 0; i < PCIE_PORT_DEVICE_MAXSERVICES; i++)
-> +		irqs[i] = pci_irq_vector(dev, 0);
->  
->  	return 0;
+On Thu, Feb 22, 2018 at 05:01:53PM +0000, Patrick Bellasi wrote:
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 8364771f7301..1bf9a86ebc39 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -3047,6 +3047,29 @@ static inline void cfs_rq_util_change(struct cfs_rq *cfs_rq)
+>  	}
 >  }
-> @@ -212,8 +210,7 @@ static int get_port_device_capability(struct pci_dev *dev)
->  	int services = 0;
->  	int cap_mask = 0;
 >  
-> -	cap_mask = PCIE_PORT_SERVICE_PME | PCIE_PORT_SERVICE_HP
-> -			| PCIE_PORT_SERVICE_VC;
-> +	cap_mask = PCIE_PORT_SERVICE_PME | PCIE_PORT_SERVICE_HP;
->  	if (pci_aer_available())
->  		cap_mask |= PCIE_PORT_SERVICE_AER | PCIE_PORT_SERVICE_DPC;
->  
-> @@ -240,9 +237,6 @@ static int get_port_device_capability(struct pci_dev *dev)
->  		 */
->  		pci_disable_pcie_error_reporting(dev);
->  	}
-> -	/* VC support */
-> -	if (pci_find_ext_capability(dev, PCI_EXT_CAP_ID_VC))
-> -		services |= PCIE_PORT_SERVICE_VC;
->  	/* Root ports are capable of generating PME too */
->  	if ((cap_mask & PCIE_PORT_SERVICE_PME)
->  	    && pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT) {
-> @@ -332,7 +326,7 @@ int pcie_port_device_register(struct pci_dev *dev)
->  	 */
->  	status = pcie_init_service_irqs(dev, irqs, capabilities);
->  	if (status) {
-> -		capabilities &= PCIE_PORT_SERVICE_VC | PCIE_PORT_SERVICE_HP;
-> +		capabilities &= PCIE_PORT_SERVICE_HP;
->  		if (!capabilities)
->  			goto error_disable;
->  	}
-> diff --git a/include/linux/pcieport_if.h b/include/linux/pcieport_if.h
-> index b69769dbf659..28eb21731db6 100644
-> --- a/include/linux/pcieport_if.h
-> +++ b/include/linux/pcieport_if.h
-> @@ -20,9 +20,7 @@
->  #define PCIE_PORT_SERVICE_AER		(1 << PCIE_PORT_SERVICE_AER_SHIFT)
->  #define PCIE_PORT_SERVICE_HP_SHIFT	2	/* Native Hotplug */
->  #define PCIE_PORT_SERVICE_HP		(1 << PCIE_PORT_SERVICE_HP_SHIFT)
-> -#define PCIE_PORT_SERVICE_VC_SHIFT	3	/* Virtual Channel */
-> -#define PCIE_PORT_SERVICE_VC		(1 << PCIE_PORT_SERVICE_VC_SHIFT)
-> -#define PCIE_PORT_SERVICE_DPC_SHIFT	4	/* Downstream Port Containment */
-> +#define PCIE_PORT_SERVICE_DPC_SHIFT	3	/* Downstream Port Containment */
->  #define PCIE_PORT_SERVICE_DPC		(1 << PCIE_PORT_SERVICE_DPC_SHIFT)
->  
->  struct pcie_device {
-> 
-> 
+> +/*
+> + * When a task is dequeued, its estimated utilization should not be update if
+> + * its util_avg has not been updated at least once.
+> + * This flag is used to synchronize util_avg updates with util_est updates.
+> + * We map this information into the LSB bit of the utilization saved at
+> + * dequeue time (i.e. util_est.dequeued).
+> + */
+> +#define UTIL_EST_NEED_UPDATE_FLAG 0x1
+> +
+> +static inline void cfs_se_util_change(struct sched_avg *avg)
+> +{
+	if (!sched_feat(UTIL_EST))
+		return;
 
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> +	if (sched_feat(UTIL_EST)) {
+> +		struct util_est ue = READ_ONCE(avg->util_est);
+> +
+> +		if (!(ue.enqueued & UTIL_EST_NEED_UPDATE_FLAG))
+> +			return;
+> +
+> +		/* Reset flag to report util_avg has been updated */
+> +		ue.enqueued &= ~UTIL_EST_NEED_UPDATE_FLAG;
+> +		WRITE_ONCE(avg->util_est, ue);
+> +	}
+
+and loose the indent. Also, since we only update the enqueued value, we
+don't need to load/store the entire util_est thing here.
+
+> +}
+> +
+>  #ifdef CONFIG_SMP
+>  /*
+>   * Approximate:
+> @@ -3308,6 +3331,7 @@ __update_load_avg_se(u64 now, int cpu, struct cfs_rq *cfs_rq, struct sched_entit
+>  				cfs_rq->curr == se)) {
+>  
+>  		___update_load_avg(&se->avg, se_weight(se), se_runnable(se));
+> +		cfs_se_util_change(&se->avg);
+>  		return 1;
+>  	}
+>  
+
+So we only clear the bit for @se updates.
+
+> @@ -5218,7 +5242,7 @@ static inline void util_est_enqueue(struct cfs_rq *cfs_rq,
+>  
+>  	/* Update root cfs_rq's estimated utilization */
+>  	enqueued  = READ_ONCE(cfs_rq->avg.util_est.enqueued);
+> -	enqueued += _task_util_est(p);
+> +	enqueued += (_task_util_est(p) | 0x1);
+
+UTIL_EST_NEED_UPDATE_FLAG, although I do agree that 0x1 is much easier
+to type ;-)
+
+But you set it for the cfs_rq value ?! That doesn't seem right.
+
+>  	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, enqueued);
+>  }
+>  
+> @@ -5310,7 +5334,7 @@ static inline void util_est_dequeue(struct cfs_rq *cfs_rq,
+>  	if (cfs_rq->nr_running) {
+>  		ue.enqueued  = READ_ONCE(cfs_rq->avg.util_est.enqueued);
+>  		ue.enqueued -= min_t(unsigned int, ue.enqueued,
+> -				     _task_util_est(p));
+> +				     (_task_util_est(p) | UTIL_EST_NEED_UPDATE_FLAG));
+>  	}
+>  	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, ue.enqueued);
+>  
+
+Would it be really horrible if you separate the value and flag using a
+bitfield/shifts?
+
+> @@ -5321,12 +5345,19 @@ static inline void util_est_dequeue(struct cfs_rq *cfs_rq,
+>  	if (!task_sleep)
+>  		return;
+>  
+> +	/*
+> +	 * Skip update of task's estimated utilization if the PELT signal has
+> +	 * never been updated (at least once) since last enqueue time.
+> +	 */
+> +	ue = READ_ONCE(p->se.avg.util_est);
+> +	if (ue.enqueued & UTIL_EST_NEED_UPDATE_FLAG)
+> +		return;
+> +
+>  	/*
+>  	 * Skip update of task's estimated utilization when its EWMA is
+>  	 * already ~1% close to its last activation value.
+>  	 */
+> +	ue.enqueued = (task_util(p) | UTIL_EST_NEED_UPDATE_FLAG);
+>  	last_ewma_diff = ue.enqueued - ue.ewma;
+>  	if (within_margin(last_ewma_diff, (SCHED_CAPACITY_SCALE / 100)))
+>  		return;
+
+
+I see what you do, but Yuck! that's really nasty. Then again, I've not
+actually got a better suggestion.
