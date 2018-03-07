@@ -1,56 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754210AbeCGKES (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 05:04:18 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48394 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751127AbeCGKEQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 05:04:16 -0500
-Date: Wed, 7 Mar 2018 10:04:20 +0000
-From: Will Deacon <will.deacon@arm.com>
-To: Shanker Donthineni <shankerd@codeaurora.org>
-Cc: Philip Elcan <pelcan@codeaurora.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        kvmarm <kvmarm@lists.cs.columbia.edu>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v6] arm64: Add support for new control bits CTR_EL0.DIC
- and CTR_EL0.IDC
-Message-ID: <20180307100419.GA9111@arm.com>
-References: <1519877640-11944-1-git-send-email-shankerd@codeaurora.org>
- <20180306134405.GB18080@arm.com>
- <d6182273-c23a-c4fa-ce40-c87055bfb338@codeaurora.org>
- <20180306152318.GE17454@arm.com>
- <cbdce6fd-a1db-4f12-ccea-adfe9fe7c057@codeaurora.org>
- <dbc6e162-d245-a685-8bfe-f506d18e19e3@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dbc6e162-d245-a685-8bfe-f506d18e19e3@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1754087AbeCGKLS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 05:11:18 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:46871 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751127AbeCGKLP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 05:11:15 -0500
+X-Google-Smtp-Source: AG47ELsUkhjzAR1JEj/OsSeg8vCdSzmGrGohgUL/2RksI52pGWoJgSHJ8UCWMQi9ShRQ09QyO7OONg==
+From: Greentime Hu <green.hu@gmail.com>
+X-Google-Original-From: Greentime Hu <greentime@andestech.com>
+To: linux-kernel@vger.kernel.org, arnd@arndb.de, greentime@andestech.com,
+        green.hu@gmail.com, sergey.senozhatsky.work@gmail.com,
+        sergey.senozhatsky@gmail.com, sfr@canb.auug.org.au,
+        peterz@infradead.org, pmladek@suse.com
+Subject: [PATCH] nds32: To use the generic dump_stack()
+Date: Wed,  7 Mar 2018 18:10:11 +0800
+Message-Id: <20180307101011.28689-1-greentime@andestech.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 06, 2018 at 01:33:00PM -0600, Shanker Donthineni wrote:
-> > I also confirmed with Thomas Speier, we can skip __flush_icache_all() if DIC=1.
+Use the generic dump_stack() instead of nds32 one because they are doing
+the same thing.
 
-Thanks,
+Signed-off-by: Greentime Hu <greentime@andestech.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/nds32/kernel/traps.c | 12 ------------
+ 1 file changed, 12 deletions(-)
 
-> Planning to patch __flush_icache_all() itself instead of changing the callers. This
-> way we can avoid "ic ialluis" completely. Is this okay for you? 
-> 
-> static inline void __flush_icache_all(void)
-> {
->        /* Instruction cache invalidation is not required for I/D coherence? */
->       if (!cpus_have_const_cap(ARM64_HAS_CACHE_DIC)) {
->                asm("ic ialluis");
->                dsb(ish);
->        }
-> }
-
-Yup, that's what I meant, cheers.
-
-Will
+diff --git a/arch/nds32/kernel/traps.c b/arch/nds32/kernel/traps.c
+index 8828b4aeb72b..6e34eb9824a4 100644
+--- a/arch/nds32/kernel/traps.c
++++ b/arch/nds32/kernel/traps.c
+@@ -156,18 +156,6 @@ static void __dump(struct task_struct *tsk, unsigned long *base_reg)
+ 	pr_emerg("\n");
+ }
+ 
+-void dump_stack(void)
+-{
+-	unsigned long *base_reg;
+-	if (!IS_ENABLED(CONFIG_FRAME_POINTER))
+-		__asm__ __volatile__("\tori\t%0, $sp, #0\n":"=r"(base_reg));
+-	else
+-		__asm__ __volatile__("\tori\t%0, $fp, #0\n":"=r"(base_reg));
+-	__dump(NULL, base_reg);
+-}
+-
+-EXPORT_SYMBOL(dump_stack);
+-
+ void show_stack(struct task_struct *tsk, unsigned long *sp)
+ {
+ 	unsigned long *base_reg;
+-- 
+2.16.1
