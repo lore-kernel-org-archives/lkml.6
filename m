@@ -1,71 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754534AbeCGOaK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:30:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38192 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753168AbeCGOaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:30:08 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBE32204EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Wed, 7 Mar 2018 11:30:04 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>
-Cc: Andi Kleen <andi@firstfloor.org>,
-        Agustin Vega-Frias <agustinv@codeaurora.org>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, timur@codeaurora.org
-Subject: Re: [RFC V3 0/3] perf stat: improvements for handling of multiple
- PMUs
-Message-ID: <20180307143004.GH3701@kernel.org>
-References: <1520345084-42646-1-git-send-email-agustinv@codeaurora.org>
- <20180307100408.GA22848@krava>
- <20180307133630.GD3701@kernel.org>
- <20180307135105.GA9080@krava>
+        id S1754397AbeCGOcH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:32:07 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42938 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751189AbeCGOcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 09:32:06 -0500
+Subject: Re: [PATCH] perf vendor events arm64: Enable JSON events for
+ ThunderX2 B0
+To: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: acme@kernel.org, alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        peterz@infradead.org, mingo@redhat.com, john.garry@huawei.com,
+        Will.Deacon@arm.com, mark.rutland@arm.com, jnair@caviumnetworks.com,
+        Robert.Richter@cavium.com
+References: <20180307110803.32418-1-ganapatrao.kulkarni@cavium.com>
+From: William Cohen <wcohen@redhat.com>
+Message-ID: <3384d33f-c927-740a-97f1-b20775ef2c7b@redhat.com>
+Date: Wed, 7 Mar 2018 09:32:05 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180307135105.GA9080@krava>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180307110803.32418-1-ganapatrao.kulkarni@cavium.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Mar 07, 2018 at 02:51:05PM +0100, Jiri Olsa escreveu:
-> On Wed, Mar 07, 2018 at 10:36:30AM -0300, Arnaldo Carvalho de Melo wrote:
-> > Em Wed, Mar 07, 2018 at 11:04:08AM +0100, Jiri Olsa escreveu:
-> > > On Tue, Mar 06, 2018 at 09:04:41AM -0500, Agustin Vega-Frias wrote:
-> > > > This series of patches adds some simple improvements to the way perf stat
-> > > > handles PMUs that have multiple instances by:
-> > > > 
-> > > > 1. Adding glob-like matching in addition to the prefix-based matching
-> > > >    introduced previously (patch 1).
-> > > > 2. Adding the ability to recover the PMU names when printing the events
-> > > >    separately with the --no-merge option (patch 2).
-> > > > 3. Restoring auto-merge for events created by prefix or glob-like match
-> > > >    (patch 3). Note that this still keeps the behavior that disables
-> > > >    auto-merging of legacy symbolic events (e.g. cycles).
-> > > > 
-> > > > V3:
-> > > > 
-> > > > - Consolidated prefix and glob matching into a single glob match with a
-> > > >   trailing * to maintain prefix matching and have more consistent behavior.
-> > > >   E.g., all of these match all the uncore_imc PMUs: imc, imc*, *imc, *imc*
-> > > 
-> > > Acked-by: Jiri Olsa <jolsa@kernel.org>
-> > 
-> > Thanks, applied.
-> > 
-> > I guess Andi had Acked or Reviewed this, no?
+On 03/07/2018 06:08 AM, Ganapatrao Kulkarni wrote:
+> There is MIDR change on ThunderX2 B0, adding an entry to mapfile
+> to enable JSON events for B0.
 > 
-> not the latest version.. please wait for his ack
+> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+> ---
+>  tools/perf/pmu-events/arch/arm64/mapfile.csv | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
+> index e61c9ca..93c5d14 100644
+> --- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
+> +++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
+> @@ -13,4 +13,5 @@
+>  #
+>  #Family-model,Version,Filename,EventType
+>  0x00000000420f5160,v1,cavium,core
+> +0x00000000430f0af0,v1,cavium,core
+>  0x00000000410fd03[[:xdigit:]],v1,cortex-a53,core
+> 
 
-Sure, I have this applied to my local branch, and will add his acks or
-drop the patches if he still has any objection, Andi?
+Hi,
+Like the cortex-a53 the last digit '0' of the match for the MIDR should be replaced with [[:xdigit:]] to allow for possible future revisions of chip:
 
-- Arnaldo
+0x00000000430f0af[[:xdigit:]],v1,cavium,core
+
+
+-Will Cohen
