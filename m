@@ -1,87 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754592AbeCGSDo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 13:03:44 -0500
-Received: from gateway33.websitewelcome.com ([192.185.146.21]:21132 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754039AbeCGSDn (ORCPT
+        id S1754632AbeCGSD6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 13:03:58 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:32860 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753949AbeCGSDw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 13:03:43 -0500
-Date: Wed, 7 Mar 2018 12:03:33 -0600
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: David Miller <davem@davemloft.net>,
-        Santosh Raspatur <santosh@chelsio.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH v2] cxgb3: remove VLA usage
-Message-ID: <20180307180333.GA13800@embeddedgus>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.117.58
-X-Source-L: No
-X-Exim-ID: 1etdPg-000YOM-PC
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.175.117.58]:44660
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Wed, 7 Mar 2018 13:03:52 -0500
+X-Google-Smtp-Source: AG47ELtfvZ1xWFwNLt0kxmx1mcUbnlwaKA8nLjUY5eHyHBqBZouGNo0SUtDU8tJ9Yv56XWkV6js/CA==
+From: Himanshu Jha <himanshujha199640@gmail.com>
+To: linux-graphics-maintainer@vmware.com, airlied@linux.ie
+Cc: syeh@vmware.com, thellstrom@vmware.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Himanshu Jha <himanshujha199640@gmail.com>
+Subject: [PATCH] drm/vmwgfx: Use kasprintf
+Date: Wed,  7 Mar 2018 23:33:22 +0530
+Message-Id: <1520445802-11894-1-git-send-email-himanshujha199640@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove VLA usage and change the 'len' argument to a u8 and use a 256
-byte buffer on the stack. Notice that these lengths are limited by the
-encoding field in the VPD structure, which is a u8 [1].
+Use kasprintf instead of combination of kmalloc and sprintf. Also,
+remove the local variables used for storing the string length as they
+are not required now.
 
-[1] https://marc.info/?l=linux-netdev&m=152044354814024&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
 ---
-Changes in v2:
- - Update the code as suggested by David Miller.
- - Update changelog based on David's comments.
- - Update subject.
+ drivers/gpu/drm/vmwgfx/vmwgfx_msg.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
- drivers/net/ethernet/chelsio/cxgb3/t3_hw.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/ethernet/chelsio/cxgb3/t3_hw.c b/drivers/net/ethernet/chelsio/cxgb3/t3_hw.c
-index a89721f..080918a 100644
---- a/drivers/net/ethernet/chelsio/cxgb3/t3_hw.c
-+++ b/drivers/net/ethernet/chelsio/cxgb3/t3_hw.c
-@@ -681,18 +681,18 @@ int t3_seeprom_wp(struct adapter *adapter, int enable)
- 	return t3_seeprom_write(adapter, EEPROM_STAT_ADDR, enable ? 0xc : 0);
- }
- 
--static int vpdstrtouint(char *s, int len, unsigned int base, unsigned int *val)
-+static int vpdstrtouint(char *s, u8 len, unsigned int base, unsigned int *val)
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
+index 9700099..cdff992 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
+@@ -328,7 +328,7 @@ int vmw_host_get_guestinfo(const char *guest_info_param,
  {
--	char tok[len + 1];
-+	char tok[256];
+ 	struct rpc_channel channel;
+ 	char *msg, *reply = NULL;
+-	size_t msg_len, reply_len = 0;
++	size_t reply_len = 0;
+ 	int ret = 0;
  
- 	memcpy(tok, s, len);
- 	tok[len] = 0;
- 	return kstrtouint(strim(tok), base, val);
- }
  
--static int vpdstrtou16(char *s, int len, unsigned int base, u16 *val)
-+static int vpdstrtou16(char *s, u8 len, unsigned int base, u16 *val)
+@@ -338,15 +338,12 @@ int vmw_host_get_guestinfo(const char *guest_info_param,
+ 	if (!guest_info_param || !length)
+ 		return -EINVAL;
+ 
+-	msg_len = strlen(guest_info_param) + strlen("info-get ") + 1;
+-	msg = kzalloc(msg_len, GFP_KERNEL);
++	msg = kasprintf(GFP_KERNEL, "info-get %s", guest_info_param);
+ 	if (!msg) {
+ 		DRM_ERROR("Cannot allocate memory to get %s", guest_info_param);
+ 		return -ENOMEM;
+ 	}
+ 
+-	sprintf(msg, "info-get %s", guest_info_param);
+-
+ 	if (vmw_open_channel(&channel, RPCI_PROTOCOL_NUM) ||
+ 	    vmw_send_msg(&channel, msg) ||
+ 	    vmw_recv_msg(&channel, (void *) &reply, &reply_len) ||
+@@ -388,7 +385,6 @@ int vmw_host_log(const char *log)
  {
--	char tok[len + 1];
-+	char tok[256];
+ 	struct rpc_channel channel;
+ 	char *msg;
+-	int msg_len;
+ 	int ret = 0;
  
- 	memcpy(tok, s, len);
- 	tok[len] = 0;
+ 
+@@ -398,15 +394,12 @@ int vmw_host_log(const char *log)
+ 	if (!log)
+ 		return ret;
+ 
+-	msg_len = strlen(log) + strlen("log ") + 1;
+-	msg = kzalloc(msg_len, GFP_KERNEL);
++	msg = kasprintf(GFP_KERNEL, "log %s", log);
+ 	if (!msg) {
+ 		DRM_ERROR("Cannot allocate memory for log message\n");
+ 		return -ENOMEM;
+ 	}
+ 
+-	sprintf(msg, "log %s", log);
+-
+ 	if (vmw_open_channel(&channel, RPCI_PROTOCOL_NUM) ||
+ 	    vmw_send_msg(&channel, msg) ||
+ 	    vmw_close_channel(&channel)) {
 -- 
 2.7.4
