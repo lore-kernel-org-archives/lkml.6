@@ -1,79 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934005AbeCGQJC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:09:02 -0500
-Received: from imap.thunk.org ([74.207.234.97]:38696 "EHLO imap.thunk.org"
+        id S934082AbeCGQJJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:09:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933409AbeCGQI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:08:59 -0500
-Date: Wed, 7 Mar 2018 11:08:56 -0500
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Lennart Sorensen <lsorense@csclub.uwaterloo.ca>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: ext4 ignoring rootfs default mount options
-Message-ID: <20180307160856.GD7507@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Lennart Sorensen <lsorense@csclub.uwaterloo.ca>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180306190315.puocf5bu3bfz6yct@csclub.uwaterloo.ca>
- <20180307040608.GA2462@thunk.org>
- <20180307151427.i6vbeq6kqo55cdgs@csclub.uwaterloo.ca>
+        id S933409AbeCGQJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 11:09:03 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B3312133D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
+X-Google-Smtp-Source: AG47ELvFGL1XfTmn38YKKZTaTda+OBha7Liq1O54uXyHH+OSZUDQgb7vqaFSK6a9+tr+v1vr2mpYfU0+wW/NLTrnsZA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180307151427.i6vbeq6kqo55cdgs@csclub.uwaterloo.ca>
-User-Agent: Mutt/1.9.3 (2018-01-21)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <20180306121607.1567-3-alexandre.belloni@bootlin.com>
+References: <20180306121607.1567-1-alexandre.belloni@bootlin.com> <20180306121607.1567-3-alexandre.belloni@bootlin.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Wed, 7 Mar 2018 10:08:28 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKzEUO1DiaVtw8vBtiO9Xw7_5EprrC8z3C9JA6bFq1KmQ@mail.gmail.com>
+Message-ID: <CAL_JsqKzEUO1DiaVtw8vBtiO9Xw7_5EprrC8z3C9JA6bFq1KmQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/5] MIPS: mscc: add ocelot dtsi
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
+        Allan Nielsen <Allan.Nielsen@microsemi.com>,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 10:14:28AM -0500, Lennart Sorensen wrote:
-> 
-> But delalloc is the default for ext4, so a filesystem mounted with
-> nodelalloc ought to show that in /proc/mounts as far as I am concerned.
-> The comment in the code says anything that is different than the global
-> defaults and the filesystem defaults will be shown, but in this case it
-> is not.  Maybe the comment is just wrong or unclear and this is actually
-> the intended behaviour.  I don't think I like the behaviour if it is
-> intended to work this way.  The /proc/fs/ext4/ option at least looks
-> workable.  Strangely I found the function that implements it but couldn't
-> find anything using it for some reason.  I must have just missed it
-> since it obviously is there.
+On Tue, Mar 6, 2018 at 6:16 AM, Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
+> Add a device tree include file for the Microsemi Ocelot SoC.
+>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> ---
+>  arch/mips/boot/dts/Makefile         |   1 +
+>  arch/mips/boot/dts/mscc/Makefile    |   1 +
+>  arch/mips/boot/dts/mscc/ocelot.dtsi | 117 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 119 insertions(+)
+>  create mode 100644 arch/mips/boot/dts/mscc/Makefile
+>  create mode 100644 arch/mips/boot/dts/mscc/ocelot.dtsi
+>
+> diff --git a/arch/mips/boot/dts/Makefile b/arch/mips/boot/dts/Makefile
+> index e2c6f131c8eb..1e79cab8e269 100644
+> --- a/arch/mips/boot/dts/Makefile
+> +++ b/arch/mips/boot/dts/Makefile
+> @@ -4,6 +4,7 @@ subdir-y        += cavium-octeon
+>  subdir-y       += img
+>  subdir-y       += ingenic
+>  subdir-y       += lantiq
+> +subdir-y       += mscc
+>  subdir-y       += mti
+>  subdir-y       += netlogic
+>  subdir-y       += ni
+> diff --git a/arch/mips/boot/dts/mscc/Makefile b/arch/mips/boot/dts/mscc/Makefile
+> new file mode 100644
+> index 000000000000..dd08e63a10ba
+> --- /dev/null
+> +++ b/arch/mips/boot/dts/mscc/Makefile
+> @@ -0,0 +1 @@
+> +obj-y                          += $(patsubst %.dtb, %.dtb.o, $(dtb-y))
+> diff --git a/arch/mips/boot/dts/mscc/ocelot.dtsi b/arch/mips/boot/dts/mscc/ocelot.dtsi
+> new file mode 100644
+> index 000000000000..8c3210577410
+> --- /dev/null
+> +++ b/arch/mips/boot/dts/mscc/ocelot.dtsi
+> @@ -0,0 +1,117 @@
+> +//SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/* Copyright (c) 2017 Microsemi Corporation */
+> +
+> +/ {
+> +       #address-cells = <1>;
+> +       #size-cells = <1>;
+> +       compatible = "mscc,ocelot";
+> +
+> +       cpus {
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +
+> +               cpu@0 {
+> +                       compatible = "mips,mips24KEc";
+> +                       device_type = "cpu";
+> +                       clocks = <&cpu_clk>;
+> +                       reg = <0>;
+> +               };
+> +       };
+> +
+> +       aliases {
+> +               serial0 = &uart0;
+> +       };
+> +
+> +       cpuintc: interrupt-controller@0 {
 
-This is where it's critcal to understand that the "tune2fs -o" changes
-the *default* mount options.  The key in the comment is the anything
-different from the *filesystem* defaults (that is, the defaults of the
-particular ext4 file system, as opposed to the global defaults).  The
-idea is that /proc/mounts, and /etc/mtab shows the options string that
-if used in /etc/fstab, or in the mount command line, will replicate
-the current mount option state.  Furthermore, that /proc/mounts is the
-minimal set of mount option strings.
+Please compile with W=1 and fix any issues like this one which is a
+unit-address without a reg property. Drop the unit-address.
 
-You may not like the behavior, but it's been this way forever, and the
-reasoning behind it is that the low-level file system code doesn't
-really know what the actual mount option string that would be in
-/etc/fstab or in the /sbin/mount command line.  That's because
-/sbin/mount command actually parses the mount options, and things like
-"ro" is actually translated into bitflag passed to the mount option.
-So for example, it's impossible to know whether "rw" was in the
-user-specified mount string, since we never see it by the time the
-string gets sent to ext4_fill_super (in fact the kernel never sees
-it).  So when we try to make /proc/mounts a replacement for /etc/mtab
-(since some people make /etc/mtab as symlink /proc/mounts), it's
-actually impossible.  Trying to make it be the minimal set of options
-was at least a consitent thing.  That is, if you use "tune2fs -o
-nodelalloc", it's not necessary to put nodelalloc in /etc/fstab or in
-the mount command line.  And hence, it should not be in /proc/mounts.
-
-As far as where ext4_seq_options_show() gets called, it's because we
-have a fair amount of macro shortcuts in fs/ext4/sysfs.c (which is
-where we put all of the pseudo file system support for ext4, which
-means it includes procfs).  Search for macros PROC_FILE_SHOW_DEFN and
-PROC_FILE_LIST.
-
-						- Ted
+> +               #address-cells = <0>;
+> +               #interrupt-cells = <1>;
+> +               interrupt-controller;
+> +               compatible = "mti,cpu-interrupt-controller";
