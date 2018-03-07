@@ -1,101 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754076AbeCGCM7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 21:12:59 -0500
-Received: from mail-pg0-f52.google.com ([74.125.83.52]:41704 "EHLO
-        mail-pg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753857AbeCGCM5 (ORCPT
+        id S1754141AbeCGCRF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 21:17:05 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:45600 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753940AbeCGCRC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 21:12:57 -0500
-X-Google-Smtp-Source: AG47ELsEfKfd3fkffaZiZ7+7yCVBaUMbCmdjpNgtHq7i71Z3EvRJjoM0icIerWgEMAuwwVcpnPtJ1g==
-Date: Wed, 7 Mar 2018 11:12:52 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
-Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net, minchan@kernel.org, ngupta@vflare.org,
-        sergey.senozhatsky.work@gmail.com
-Subject: Re: [RESEND PATCH v3] crypto: add zBeWalgo compression for zram
-Message-ID: <20180307021252.GA802@jagdpanzerIV>
-References: <8CFBD60E-6A2B-4766-B6F9-09A98DEA26CB@informatik.uni-hamburg.de>
+        Tue, 6 Mar 2018 21:17:02 -0500
+To: Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        Bart.VanAssche@wdc.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH V4] scsi: core: use blk_mq_requeue_request in __scsi_queue_insert
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1520042049-8874-1-git-send-email-jianchao.w.wang@oracle.com>
+Date: Tue, 06 Mar 2018 21:16:51 -0500
+In-Reply-To: <1520042049-8874-1-git-send-email-jianchao.w.wang@oracle.com>
+        (Jianchao Wang's message of "Sat, 3 Mar 2018 09:54:09 +0800")
+Message-ID: <yq1fu5cpr3g.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8CFBD60E-6A2B-4766-B6F9-09A98DEA26CB@informatik.uni-hamburg.de>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8824 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803070021
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-On (03/06/18 20:59), Benjamin Warnke wrote:
->    Currently ZRAM uses compression-algorithms from the crypto-api. ZRAM
->    compresses each page individually. As a result the compression algorithm
->    is
->    forced to use a very small sliding window. None of the available
->    compression
->    algorithms is designed to achieve high compression ratios with small
->    inputs.
+Jianchao,
 
-I think you first need to merge zBeWalgo (looks like a long way to go)
-And then add ZRAM support, as a separate patch.
+> In scsi core, __scsi_queue_insert should just put request back on
+> the queue and retry using the same command as before. However, for
+> blk-mq, scsi_mq_requeue_cmd is employed here which will unprepare
+> the request. To align with the semantics of __scsi_queue_insert,
+> use blk_mq_requeue_request with kick_requeue_list == true and put
+> the reference of scsi_device.
 
->    - 'ecoham' (100 MiB) This dataset is one of the input files for the
->    scientific
->    application ECOHAM which runs an ocean simulation. This dataset contains a
->    lot of zeros. Where the data is not zero there are arrays of floating
->    point
->    values, adjacent float values are likely to be similar to each other,
->    allowing for high compression ratios.
-> 
->    algorithm | ratio   | compression    | decompression
->    zbewalgo  |   12.94 |  294.10 MBit/s | 1242.59 MBit/s
->    deflate   |   12.54 |   75.51 MBit/s |  736.39 MBit/s
->    842       |   12.26 |  182.59 MBit/s |  683.61 MBit/s
->    lz4hc     |   12.00 |   51.23 MBit/s | 1524.73 MBit/s
->    lz4       |   10.68 | 1334.37 MBit/s | 1603.54 MBit/s
->    lzo       |    9.79 | 1333.76 MBit/s | 1534.63 MBit/s
-> 
->    - 'source-code' (800 MiB) This dataset is a tarball of the source-code
->    from a
->    linux-kernel.
-> 
->    algorithm | ratio   | compression    | decompression
->    deflate   |    3.27 |   42.48 MBit/s |  250.36 MBit/s
->    lz4hc     |    2.40 |  104.14 MBit/s | 1150.53 MBit/s
->    lzo       |    2.27 |  444.77 MBit/s |  886.97 MBit/s
->    lz4       |    2.18 |  453.08 MBit/s | 1101.45 MBit/s
->    842       |    1.65 |   64.10 MBit/s |  158.40 MBit/s
->    zbewalgo  |    1.19 |   52.89 MBit/s |  197.58 MBit/s
-> 
->    - 'hpcg' (8 GiB) This dataset is a (partial) memory-snapshot of the
->    running hpcg-benchmark. At the time of the snapshot, that application
->    performed a sparse matrix - vector multiplication.
-> 
->    algorithm | ratio   | compression    | decompression
->    zbewalgo  |   16.16 |  179.97 MBit/s |  468.36 MBit/s
->    deflate   |    9.52 |   65.11 MBit/s |  632.69 MBit/s
->    lz4hc     |    4.96 |  193.33 MBit/s | 1607.12 MBit/s
->    842       |    4.20 |  150.99 MBit/s |  316.22 MBit/s
->    lzo       |    4.14 |  922.74 MBit/s |  865.32 MBit/s
->    lz4       |    3.79 |  908.39 MBit/s | 1375.33 MBit/s
-> 
->    - 'partdiff' (8 GiB) Array of double values. Adjacent doubles are similar,
->    but
->    not equal. This array is produced by a partial differential equation
->    solver
->    using a Jakobi-implementation.
-> 
->    algorithm | ratio   | compression    | decompression
->    zbewalgo  |    1.30 |  203.30 MBit/s |  530.87 MBit/s
->    deflate   |    1.02 |   37.06 MBit/s | 1131.88 MBit/s
->    lzo       |    1.00 | 1741.46 MBit/s | 2012.78 MBit/s
->    lz4       |    1.00 | 1458.08 MBit/s | 2013.88 MBit/s
->    lz4hc     |    1.00 |  173.19 MBit/s | 2012.37 MBit/s
->    842       |    1.00 |   64.10 MBit/s | 2013.64 MBit/s
+Applied to 4.17/scsi-queue, thank you!
 
-Hm, mixed feelings.
-
-	-ss
+-- 
+Martin K. Petersen	Oracle Linux Engineering
