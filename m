@@ -1,60 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933335AbeCGPM6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 10:12:58 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:42288 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754683AbeCGPM4 (ORCPT
+        id S1754745AbeCGPNk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 10:13:40 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35164 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754656AbeCGPNg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 10:12:56 -0500
-X-Google-Smtp-Source: AG47ELsm/IzpuowsQzwYC/Kp37g7vwOThWxcR2MdRDE6rshYdGNuIf0tBzLH01SpOdDcxutbjviXJQ==
-Date: Wed, 7 Mar 2018 15:12:53 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: groeck@chromium.org, gwendal@chromium.org, bleung@chromium.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com,
-        Vincent Palatin <vpalatin@chromium.org>
-Subject: Re: [PATCH 1/6] mfd: cros_ec: fail early if we cannot identify the EC
-Message-ID: <20180307151253.pytqvo55svirgc6z@dell>
-References: <20180219224602.22582-1-enric.balletbo@collabora.com>
+        Wed, 7 Mar 2018 10:13:36 -0500
+Date: Wed, 7 Mar 2018 15:13:29 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] ASoC: dapm: add support to pinctrl dapm
+Message-ID: <20180307151329.GJ7290@sirena.org.uk>
+References: <20180305123213.2045-1-srinivas.kandagatla@linaro.org>
+ <20180305155208.GK8588@sirena.org.uk>
+ <21635274-1d7b-5ed9-6832-2e12fd844f7a@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ELVYuRnMxQ5nnKRy"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180219224602.22582-1-enric.balletbo@collabora.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <21635274-1d7b-5ed9-6832-2e12fd844f7a@linaro.org>
+X-Cookie: If you can read this, you're too close.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Feb 2018, Enric Balletbo i Serra wrote:
 
-> From: Vincent Palatin <vpalatin@chromium.org>
-> 
-> If we cannot communicate with the EC chip to detect the protocol version
-> and its features, it's very likely useless to continue. Else we will
-> commit all kind of uninformed mistakes (using the wrong protocol, the
-> wrong buffer size, mixing the EC with other chips).
-> 
-> Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
-> Acked-by: Benson Leung <bleung@chromium.org>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
->  drivers/mfd/cros_ec.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+--ELVYuRnMxQ5nnKRy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Unless it is my mailer that is playing up, it looks as though you have
-sent this set un-threaded, which means that when others or myself
-start replying to them one-by-one, they will be sprawled throughout my
-inbox.  It also seems as though there is no 0th (cover letter) patch,
-which means I am lacking potentially important information regarding
-the history of the set and what you are trying to achieve.
+On Mon, Mar 05, 2018 at 08:35:48PM +0000, Srinivas Kandagatla wrote:
+> On 05/03/18 15:52, Mark Brown wrote:
 
-Anyway, the patch has been applied this time (hopefully there aren't
-any inter-dependencies.
+> > This doesn't look right - we're trying to synchronize with the DAPM
+> > async queue from something that should be run inside that very queue.
+> > What is this supposed to be doing?
 
--- 
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> I thought this is supposed to ensure that any pending asynchronous I/O is
+> completed before touching pinctrl framework.
+
+No, it completes all the pending DAPM operations.  async I/O is part of
+that but it's not the only thing.
+
+--ELVYuRnMxQ5nnKRy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqgAZgACgkQJNaLcl1U
+h9B8kQf/ZaByvWyPdq0w1KVI43QSJ2IDyyHNiDD+VktR8ZxPg/4jFOrjRQRZC139
+CpODTu//1fn2QYjZrzAEhLSHBTdrrWKJTe1gJl4vWPAsXpQyeGQknsT8ig2BFy1+
+eShwYsezPcTD7faHItEyCAKeX/IpmY0tHe73BUDkpNgrvxR4N50OCAPXgtFJ7aAi
+YxLcSv2yVkP00tDPiszdA4iqZnZ0r2zgFNb7jzBkZCHVVfvWX/k/FgABdCAtVOrQ
+7HqlahZvhNFirTCnfNZ/b1TzaRcaEZFiWv0jukH/sEYkT9TvuSRSKJ5B/alYPt+J
+KHDBLOhlGWFJeBkJOtHF1oB6cjgwJg==
+=xWwj
+-----END PGP SIGNATURE-----
+
+--ELVYuRnMxQ5nnKRy--
