@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuMOMyLeJIQhZSa9/31c8CpH27RQkfTcINndFLi91tIR6qSYMU0pn/HrCZmqnEEMN38TVPR
-ARC-Seal: i=1; a=rsa-sha256; t=1520451793; cv=none;
+X-Google-Smtp-Source: AG47ELtz28tiM4L+QAEuhpjaeO4Cn/9UkTbfEpG3K3ICf8M0/V39YdQqLfbRfWzBnbH9QPXhoE0u
+ARC-Seal: i=1; a=rsa-sha256; t=1520451790; cv=none;
         d=google.com; s=arc-20160816;
-        b=GdWZE7kj/F9c+fbqifrW3nQ298yYOIZuYcc5cjGcMPB1G3Pj1skzw8Vim8rzWyvBHq
-         t2LR/z371/kDCDqZPl7kBpF/Dm1arVXQ/UukbDH2oBuTJuwhlXjq7ZhJYOFeX5FcxokO
-         wqMGbptajXww3aVisSHPxx5S1anbD4mUzjfZXSzlgy6Hy2I8fKd5YFhIcQGwV18nDqbP
-         V+8hNqM/3/ZoDupRAFN4qTAi1Rcdn6TJVTxhW7aKpaIpQ58DA+vz2scyS1GOctqcN6co
-         vvw8sPQp5NYpmCrCvbdMQ+Jz9HCrTpNIkcL1NvzkXtJpiZi3gQ5+SMONSddVDZL9kY4y
-         FoLQ==
+        b=se232y3NPE76scwohsqVSCyD/Juoo51sUBQK6Lrz7fbTci2aQgI/GvgG2ikt0vaeSw
+         Nnh+3m7qSVZrMOgdXlSzBD6TW7YRYV6EAliz+RAh03dKs4D/H4ofBZ6rXyAcOzWCmHOY
+         pI+wLgC2K9Vg+AGiT1QYEWVY627URzFIf5AsUSx2SXBssh8shNPYnYRQMep/R21bscyJ
+         q0JnpP5inEdFRLuDsdQmhjyBlgTeF3pFWMtnPq1LY6mbDAjs8k6TavJTQkiRBzJl69KQ
+         SV+xmB/wNsMxAozW5ZcQOjlc73usN+7eoNML1ybKZr4N0Gf6h5190BrIUyP1XZ71Qkbo
+         MQiw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=nw5vl3bevftyBim6zkajlXLsZ3DwDcrbtG9IiFsMifc=;
-        b=JXS3LGu49h7en1STwnR01IpQRFcnYAeB9OoAojLPRHi5KUoypG8BDIxaaFJuln06qW
-         rEZsptCDgL1kWfHn7to8RA3cFFCMVcndONLhpGgIaCnbObWOUUKBdou6X7kL+4DhzqG2
-         wo+FhjseN0AvR2ebfJyDQcnjmBaWd6AshWkawRcxR+tqBLXdAWvTu64TTBDWQ8Fzwuha
-         dxTRo5pgGgTvKAFsvGRChFh8cttTdFFP5mtfNq83BI/lovTRSXMvbhdMErJrUYPm6+8J
-         2+FG6OnRIt5jebHNk4DdvdxwLvmtPB6eOk2so23TnzXaUurQXd3Id2Wbb2Yet75MQlxY
-         /Eqg==
+        bh=Labv2660blhCQNG+vKAirnTmhn4UgJgy0X17liQgU9o=;
+        b=mCiiiNcmCHTjB4XKtgB7yIOBOpNtbV/UArEYuiQ0wCZEyMk8r9c6Us27+JicruTHRZ
+         m9Gb1Nu3H0ej03Lc5u+LTLdxLdyorLtPyyneWs0FgOHWNqmJN67sEDYSx0/GEhfePs2t
+         gX09wTzRD7ySxnDAnakWNStfcvb+QQrJud5LBjYJfjee/nvi69iTw8YgVM+VzTHYGsVa
+         LpNOCiWOFyPSBL6WTP9+6oCZIpAkZkqzNH7dnDBGBpEneUhyJ7hDIWO4GXQOszmFmXl3
+         jBSeHnIqdyy1c6SzsbwPIdQrkEq1qREHtHpup2EYwFBOJCuF5cGVZ1OrLzZGQfAzrJ3F
+         +r3g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Teodor Milkov <tm@del.bg>,
-	Yuchung Cheng <ycheng@google.com>,
-	Neal Cardwell <ncardwell@google.com>,
+	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 096/122] tcp: revert F-RTO middle-box workaround
-Date: Wed,  7 Mar 2018 11:38:28 -0800
-Message-Id: <20180307191743.245437591@linuxfoundation.org>
+Subject: [PATCH 4.15 095/122] s390/qeth: fix IPA command submission race
+Date: Wed,  7 Mar 2018 11:38:27 -0800
+Message-Id: <20180307191743.082510521@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309259230127880?=
-X-GMAIL-MSGID: =?utf-8?q?1594309259230127880?=
+X-GMAIL-THRID: =?utf-8?q?1594309256560639579?=
+X-GMAIL-MSGID: =?utf-8?q?1594309256560639579?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,62 +49,81 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yuchung Cheng <ycheng@google.com>
+From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 
 
-[ Upstream commit d4131f09770d9b7471c9da65e6ecd2477746ac5c ]
+[ Upstream commit d22ffb5a712f9211ffd104c38fc17cbfb1b5e2b0 ]
 
-This reverts commit cc663f4d4c97b7297fb45135ab23cfd508b35a77. While fixing
-some broken middle-boxes that modifies receive window fields, it does not
-address middle-boxes that strip off SACK options. The best solution is
-to fully revert this patch and the root F-RTO enhancement.
+If multiple IPA commands are build & sent out concurrently,
+fill_ipacmd_header() may assign a seqno value to a command that's
+different from what send_control_data() later assigns to this command's
+reply.
+This is due to other commands passing through send_control_data(),
+and incrementing card->seqno.ipa along the way.
 
-Fixes: cc663f4d4c97 ("tcp: restrict F-RTO to work-around broken middle-boxes")
-Reported-by: Teodor Milkov <tm@del.bg>
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
-Signed-off-by: Neal Cardwell <ncardwell@google.com>
+So one IPA command has no reply that's waiting for its seqno, while some
+other IPA command has multiple reply objects waiting for it.
+Only one of those waiting replies wins, and the other(s) times out and
+triggers a recovery via send_ipa_cmd().
+
+Fix this by making sure that the same seqno value is assigned to
+a command and its reply object.
+Do so immediately before submitting the command & while holding the
+irq_pending "lock", to produce nicely ascending seqnos.
+
+As a side effect, *all* IPA commands now use a reply object that's
+waiting for its actual seqno. Previously, early IPA commands that were
+submitted while the card was still DOWN used the "catch-all" IDX seqno.
+
+Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_input.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ drivers/s390/net/qeth_core_main.c |   19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 45f750e85714..50963f92a67d 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -1915,7 +1915,6 @@ void tcp_enter_loss(struct sock *sk)
- 	struct tcp_sock *tp = tcp_sk(sk);
- 	struct net *net = sock_net(sk);
- 	struct sk_buff *skb;
--	bool new_recovery = icsk->icsk_ca_state < TCP_CA_Recovery;
- 	bool is_reneg;			/* is receiver reneging on SACKs? */
- 	bool mark_lost;
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -2071,24 +2071,25 @@ int qeth_send_control_data(struct qeth_c
+ 	}
+ 	reply->callback = reply_cb;
+ 	reply->param = reply_param;
+-	if (card->state == CARD_STATE_DOWN)
+-		reply->seqno = QETH_IDX_COMMAND_SEQNO;
+-	else
+-		reply->seqno = card->seqno.ipa++;
++
+ 	init_waitqueue_head(&reply->wait_q);
+-	spin_lock_irqsave(&card->lock, flags);
+-	list_add_tail(&reply->list, &card->cmd_waiter_list);
+-	spin_unlock_irqrestore(&card->lock, flags);
  
-@@ -1974,17 +1973,15 @@ void tcp_enter_loss(struct sock *sk)
- 	tp->high_seq = tp->snd_nxt;
- 	tcp_ecn_queue_cwr(tp);
+ 	while (atomic_cmpxchg(&card->write.irq_pending, 0, 1)) ;
+-	qeth_prepare_control_data(card, len, iob);
  
--	/* F-RTO RFC5682 sec 3.1 step 1: retransmit SND.UNA if no previous
--	 * loss recovery is underway except recurring timeout(s) on
--	 * the same SND.UNA (sec 3.2). Disable F-RTO on path MTU probing
--	 *
--	 * In theory F-RTO can be used repeatedly during loss recovery.
--	 * In practice this interacts badly with broken middle-boxes that
--	 * falsely raise the receive window, which results in repeated
--	 * timeouts and stop-and-go behavior.
-+	/* F-RTO RFC5682 sec 3.1 step 1 mandates to disable F-RTO
-+	 * if a previous recovery is underway, otherwise it may incorrectly
-+	 * call a timeout spurious if some previously retransmitted packets
-+	 * are s/acked (sec 3.2). We do not apply that retriction since
-+	 * retransmitted skbs are permanently tagged with TCPCB_EVER_RETRANS
-+	 * so FLAG_ORIG_SACK_ACKED is always correct. But we do disable F-RTO
-+	 * on PTMU discovery to avoid sending new data.
- 	 */
- 	tp->frto = net->ipv4.sysctl_tcp_frto &&
--		   (new_recovery || icsk->icsk_retransmits) &&
- 		   !inet_csk(sk)->icsk_mtup.probe_size;
- }
+ 	if (IS_IPA(iob->data)) {
+ 		cmd = __ipa_cmd(iob);
++		cmd->hdr.seqno = card->seqno.ipa++;
++		reply->seqno = cmd->hdr.seqno;
+ 		event_timeout = QETH_IPA_TIMEOUT;
+ 	} else {
++		reply->seqno = QETH_IDX_COMMAND_SEQNO;
+ 		event_timeout = QETH_TIMEOUT;
+ 	}
++	qeth_prepare_control_data(card, len, iob);
++
++	spin_lock_irqsave(&card->lock, flags);
++	list_add_tail(&reply->list, &card->cmd_waiter_list);
++	spin_unlock_irqrestore(&card->lock, flags);
  
--- 
-2.14.3
+ 	timeout = jiffies + event_timeout;
+ 
+@@ -2870,7 +2871,7 @@ static void qeth_fill_ipacmd_header(stru
+ 	memset(cmd, 0, sizeof(struct qeth_ipa_cmd));
+ 	cmd->hdr.command = command;
+ 	cmd->hdr.initiator = IPA_CMD_INITIATOR_HOST;
+-	cmd->hdr.seqno = card->seqno.ipa;
++	/* cmd->hdr.seqno is set by qeth_send_control_data() */
+ 	cmd->hdr.adapter_type = qeth_get_ipa_adp_type(card->info.link_type);
+ 	cmd->hdr.rel_adapter_no = (__u8) card->info.portno;
+ 	if (card->options.layer2)
