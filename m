@@ -1,92 +1,100 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-551923-1520473602-2-3146352709199511410
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520473601; b=nHCEzuaYjEqzb8/d0RdVCA2mlh6x+EsOT8fsxW+FjOJuNsd
-    aKX8dL1iiEceYYZIazzGLi4ibqYS2UVorQhAoL/yu/+V7gUMP09xKFjRBOJkyY//
-    p8SswCTIPZtFzrJp1FAbfqTy4B7YJt9yQ3B8Esa26h5pGL7QksrI2lgKAqOHfyLN
-    x1l07uNIrjB/KvgwuZNfAPKOIHSn9TZeXGGbFqZIIQNwnTrtIe6hX4pFmHiyx1/V
-    LOpj3Qe1rbh01Jlf+zDH/6Y+3hi8n+m8x6G5kxwY7fj7p/ejFCNUs7y9KrZ6sZH8
-    bgK1mlGIxo+qpqCCviG0c/00odDFLe5ka3FggHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1520473601; bh=fBNHTP//AJCNZ6NCRI5DBOG5ZX
-    EPrxX8m3X0ELSHu7Y=; b=XGejpGIvLJzqlWm8t/w0Sb0QEZn7Zq3EJHyV1/OppQ
-    l7HWLr2MtLaWpW1s3SvdJAoYRrl8Ne+YYRO+0vYN+rzZptpQmPwlBUNYzN7v5Cpw
-    qnfsSxiVRiaRuAeepRBbgrCM2Vk98aSK8ilv8lsSGBelTkwrg1lf1YIDAJqw/icC
-    NfKMa0GZLgtTvYwIirL5q44gs1GBjBEFKIa0XmvHaXPQMq98y4+QszmZFPpTIMM4
-    bKb7g1TSNYZ+ZKjIlhd/tjvVuj/CzqUNeK3D2o2YcH874ws+B35sXaFPJMwp071z
-    m5KrR1mL6BK+Wk+yCspDtx/fHCrLAkf0dxDtYwkYBJmQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934521AbeCHBqk (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 20:46:40 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48370 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933351AbeCHBqk (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 20:46:40 -0500
-Date: Wed, 7 Mar 2018 17:46:42 -0800
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Mario.Limonciello@dell.com
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        pali.rohar@gmail.com, andriy.shevchenko@linux.intel.com
-Subject: Re: [PATCH 4.15 004/122] platform/x86: dell-laptop: Allocate buffer
- on heap rather than globally
-Message-ID: <20180308014642.GA24330@kroah.com>
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELuBcJZet0c9eOsgxZBd6zgfFoFYYaWbQ4kDbYns+fHMSv5LzDviO203t3mC9shadobmwvOW
+ARC-Seal: i=1; a=rsa-sha256; t=1520451869; cv=none;
+        d=google.com; s=arc-20160816;
+        b=KHrpFT/+UO6ngwNAzWmXGPLtMQZVXdw0aAvwqM2jbNWMoBV4EM1Iwko3ALdr/fjPlU
+         jVqtnX0qr0ReOzzz/XrHmVs+0LNi4Ayc5pxO4ytqzc4Ua/QiOrUiiGVl//UsUyB4JfNk
+         /1WTMPHBoARuoP5qdIOBzHkfNtppD9L7PoG6RxCXqerfknBK9rTcPYWo2sRukXxgtFj/
+         fvFxx/zkdTFaAiU6gioxWkEXpgcurL0g55CgstJ9uykcauC5z9Jd//hk5xBxbfI8j7IV
+         sDRH9Zuk3/BThrZ7SSnL3pZcPfR3NywgfWun3TrOEXiyTjbVZ9tZr4JZ9KCXdWI0JoKH
+         grlQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=Zr17cgz5iC8bGwnAuURhRSM5S58dPBB0v9/4TZywsuQ=;
+        b=lqTe3vrijj5PO3E3FSsrSr4flBD1NndyUue4KVduQDc9KLD8nzAMhVPieAwMiLiNVr
+         T4DYbX2IpvkEY6sKIBeWu3Ed0dS7mecwcrExcCGC6bTjXoGNb7HaIvYp136xQUUV8mz3
+         5uW1SHOVmmVSBmU2xI3ohbtNV0MWjS3wappDFJY07fn8C+NMkTPpehBv2UBDbI4kcQHH
+         LqljNeBfqtl5+0I/BfidJEfDSgyMTAlMY/SZkxSp63m2Vc6Ld+qAx4Eh0KXp94Ir3ger
+         8vu5iWgyAQ8bU7Pz2MwlXAe+Vjl0eEd1b38yOj3UGBqvw+LltUR32mm4oL0wQ4Mm2XFG
+         SdeQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Daniel Schultz <d.schultz@phytec.de>,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 4.15 108/122] ARM: dts: rockchip: Remove 1.8 GHz operation point from phycore som
+Date: Wed,  7 Mar 2018 11:38:40 -0800
+Message-Id: <20180307191745.198396494@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
- <20180307191729.867541449@linuxfoundation.org>
- <1a37a9b60e8c49ce9955e1d04ba7ff8e@ausx13mpc124.AMER.DELL.COM>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1a37a9b60e8c49ce9955e1d04ba7ff8e@ausx13mpc124.AMER.DELL.COM>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594309339325517996?=
+X-GMAIL-MSGID: =?utf-8?q?1594309339325517996?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 08, 2018 at 01:14:39AM +0000, Mario.Limonciello@dell.com wrote:
-> Greg,
-> 
-> Can you please make sure that the one that came in right after this is also applied at the same time?
-> https://www.spinics.net/lists/stable/msg215268.html
-> 
-> As you recommended before they weren't squashed together, but they should both come in at the
-> same time.
+4.15-stable review patch.  If anyone has any objections, please let me know.
 
-Oops, for some reason I thought that was going to have a stable@ tag on
-it.  Now queued up.
+------------------
 
-greg k-h
+From: Daniel Schultz <d.schultz@phytec.de>
+
+commit 5ce0bad4ccd04c8a989e94d3c89e4e796ac22e48 upstream.
+
+Rockchip recommends to run the CPU cores only with operations points of
+1.6 GHz or lower.
+
+Removed the cpu0 node with too high operation points and use the default
+values instead.
+
+Fixes: 903d31e34628 ("ARM: dts: rockchip: Add support for phyCORE-RK3288 SoM")
+Cc: stable@vger.kernel.org
+Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/arm/boot/dts/rk3288-phycore-som.dtsi |   20 --------------------
+ 1 file changed, 20 deletions(-)
+
+--- a/arch/arm/boot/dts/rk3288-phycore-som.dtsi
++++ b/arch/arm/boot/dts/rk3288-phycore-som.dtsi
+@@ -110,26 +110,6 @@
+ 	};
+ };
+ 
+-&cpu0 {
+-	cpu0-supply = <&vdd_cpu>;
+-	operating-points = <
+-		/* KHz    uV */
+-		1800000	1400000
+-		1608000	1350000
+-		1512000 1300000
+-		1416000 1200000
+-		1200000 1100000
+-		1008000 1050000
+-		 816000 1000000
+-		 696000  950000
+-		 600000  900000
+-		 408000  900000
+-		 312000  900000
+-		 216000  900000
+-		 126000  900000
+-	>;
+-};
+-
+ &emmc {
+ 	status = "okay";
+ 	bus-width = <8>;
