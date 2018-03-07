@@ -1,175 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933842AbeCGQij (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:38:39 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:43676 "EHLO mail.bootlin.com"
+        id S933969AbeCGQjH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:39:07 -0500
+Received: from foss.arm.com ([217.140.101.70]:53930 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933386AbeCGQig (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:38:36 -0500
-Message-ID: <1520440654.1092.15.camel@bootlin.com>
-Subject: Re: [RFCv4,19/21] media: vim2m: add request support
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To: Alexandre Courbot <acourbot@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Gustavo Padovan <gustavo.padovan@collabora.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Date: Wed, 07 Mar 2018 17:37:34 +0100
-In-Reply-To: <20180220044425.169493-20-acourbot@chromium.org>
-References: <20180220044425.169493-20-acourbot@chromium.org>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-hHNWd2u71U+t6RHgvHqQ"
-X-Mailer: Evolution 3.26.5 
-Mime-Version: 1.0
+        id S933894AbeCGQjG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 11:39:06 -0500
+Subject: Re: [PATCH v1 2/2] perf/core: Add support for PMUs that can be read
+ from any CPU
+To: Peter Zijlstra <peterz@infradead.org>, skannan@codeaurora.org
+Cc: mark.rutland@arm.com, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        avilaj@codeaurora.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <1519431578-11995-1-git-send-email-skannan@codeaurora.org>
+ <1519431578-11995-2-git-send-email-skannan@codeaurora.org>
+ <20180224084106.GC25201@hirez.programming.kicks-ass.net>
+ <7cab1b91545e81e4b6b09e85c2f81d7e@codeaurora.org>
+ <20180303154113.GH25201@hirez.programming.kicks-ass.net>
+From: Jeremy Linton <jeremy.linton@arm.com>
+Message-ID: <dcf756fa-4e12-68de-2848-b3192a064a6f@arm.com>
+Date: Wed, 7 Mar 2018 10:39:04 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <20180303154113.GH25201@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---=-hHNWd2u71U+t6RHgvHqQ
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
 Hi,
 
-First off, I'd like to take the occasion to say thank-you for your work.
-This is a major piece of plumbing that is required for me to add support
-for the Allwinner CedarX VPU hardware in upstream Linux. Other drivers,
-such as tegra-vde (that was recently merged in staging) are also badly
-in need of this API.
+On 03/03/2018 09:41 AM, Peter Zijlstra wrote:
+> On Mon, Feb 26, 2018 at 05:53:57PM -0800, skannan@codeaurora.org wrote:
+>> On 2018-02-24 00:41, Peter Zijlstra wrote:
+>>> On Fri, Feb 23, 2018 at 04:19:38PM -0800, Saravana Kannan wrote:
+>>>> Some PMUs events can be read from any CPU. So allow the PMU to mark
+>>>> events as such. For these events, we don't need to reject reads or
+>>>> make smp calls to the event's CPU and cause unnecessary wake ups.
+>>>>
+>>>> Good examples of such events would be events from caches shared across
+>>>> all CPUs.
+>>>
+>>> So why would the existing ACTIVE_PKG not work for you? Because clearly
+>>> your example does not cross a package.
+>>
+>> Because based on testing it on hardware, it looks like the two clusters in
+>> an ARM DynamIQ design are not considered part of the same "package". When I
+>> say clusters, I using the more common interpretation of "homogeneous CPUs
+>> running on the same clock"/CPUs in a cpufreq policy and not ARM's new
+>> redefinition of cluster. So, on a SoC with 4 little and 4 big cores, it'll
+>> still trigger a lot of unnecessary smp calls/IPIs that cause unnecessary
+>> wakeups.
+> 
+> arch/arm64/include/asm/topology.h:#define topology_physical_package_id(cpu)     (cpu_topology[cpu].cluster_id)
+> 
+> *sigh*... that's just broken...
+> 
 
-I have a few comments based on my experience integrating this request
-API with the Cedrus VPU driver (and the associated libva backend), that
-also concern the vim2m driver.
+Its being reworked in the PPTT (currently v7) patch set. For ACPI 
+systems (and hopefully DT machines with the package property set) 
+topology_physical_package and core siblings represent the socket as one 
+would expect.
 
-On Tue, 2018-02-20 at 13:44 +0900, Alexandre Courbot wrote:
-> Set the necessary ops for supporting requests in vim2m.
->=20
-> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
-> ---
->  drivers/media/platform/Kconfig |  1 +
->  drivers/media/platform/vim2m.c | 75
-> ++++++++++++++++++++++++++++++++++
->  2 files changed, 76 insertions(+)
->=20
-> diff --git a/drivers/media/platform/Kconfig
-> b/drivers/media/platform/Kconfig
-> index 614fbef08ddc..09be0b5f9afe 100644
-> --- a/drivers/media/platform/Kconfig
-> +++ b/drivers/media/platform/Kconfig
-
-[...]
-
-> +static int vim2m_request_submit(struct media_request *req,
-> +				struct media_request_entity_data
-> *_data)
-> +{
-> +	struct v4l2_request_entity_data *data;
-> +
-> +	data =3D to_v4l2_entity_data(_data);
-
-We need to call v4l2_m2m_try_schedule here so that m2m scheduling can
-happen when only 2 buffers were queued and no other action was taken
-from usespace. In that scenario, m2m scheduling currently doesn't
-happen.
-
-However, this requires access to the m2m context, which is not easy to
-get from req or _data. I'm not sure that some container_of magic would
-even do the trick here.
-
-> +	return vb2_request_submit(data);
-
-vb2_request_submit does not lock the associated request mutex although
-it accesses the associated queued buffers list, which I believe this
-mutex is supposed to protect.
-
-We could either wrap this call with media_request_lock(req) and
-media_request_unlock(req) or have the lock in the function itself, which
-would require passing it the req pointer.
-
-The latter would probably be safer for future use of the function.
-
-> +}
-> +
-> +static const struct media_request_entity_ops vim2m_request_entity_ops
-> =3D {
-> +	.data_alloc	=3D vim2m_entity_data_alloc,
-> +	.data_free	=3D v4l2_request_entity_data_free,
-> +	.submit		=3D vim2m_request_submit,
-> +};
-> +
->  /*
->   * File operations
->   */
-> @@ -900,6 +967,9 @@ static int vim2m_open(struct file *file)
->  	ctx->dev =3D dev;
->  	hdl =3D &ctx->hdl;
->  	v4l2_ctrl_handler_init(hdl, 4);
-> +	v4l2_request_entity_init(&ctx->req_entity,
-> &vim2m_request_entity_ops,
-> +				 &ctx->dev->vfd);
-> +	ctx->fh.entity =3D &ctx->req_entity.base;
->  	v4l2_ctrl_new_std(hdl, &vim2m_ctrl_ops, V4L2_CID_HFLIP, 0, 1,
-> 1, 0);
->  	v4l2_ctrl_new_std(hdl, &vim2m_ctrl_ops, V4L2_CID_VFLIP, 0, 1,
-> 1, 0);
->  	v4l2_ctrl_new_custom(hdl, &vim2m_ctrl_trans_time_msec, NULL);
-> @@ -999,6 +1069,9 @@ static int vim2m_probe(struct platform_device
-> *pdev)
->  	if (!dev)
->  		return -ENOMEM;
-> =20
-> +	v4l2_request_mgr_init(&dev->req_mgr, &dev->vfd,
-> +			      &v4l2_request_ops);
-> +
->  	spin_lock_init(&dev->irqlock);
-> =20
->  	ret =3D v4l2_device_register(&pdev->dev, &dev->v4l2_dev);
-> @@ -1012,6 +1085,7 @@ static int vim2m_probe(struct platform_device
-> *pdev)
->  	vfd =3D &dev->vfd;
->  	vfd->lock =3D &dev->dev_mutex;
->  	vfd->v4l2_dev =3D &dev->v4l2_dev;
-> +	vfd->req_mgr =3D &dev->req_mgr.base;
-> =20
->  	ret =3D video_register_device(vfd, VFL_TYPE_GRABBER, 0);
->  	if (ret) {
-> @@ -1054,6 +1128,7 @@ static int vim2m_remove(struct platform_device
-> *pdev)
->  	del_timer_sync(&dev->timer);
->  	video_unregister_device(&dev->vfd);
->  	v4l2_device_unregister(&dev->v4l2_dev);
-> +	v4l2_request_mgr_free(&dev->req_mgr);
-> =20
->  	return 0;
->  }
-
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
---=-hHNWd2u71U+t6RHgvHqQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlqgFU4ACgkQ3cLmz3+f
-v9FUQwf/S4dKb/GrPnFohSVyWLIgt0BO+v5Ksf0XTY3rFUZsLfSkwz/uSvJSxNOD
-1gJ9tj/hm4KfYeqnhKbrOWFuEfqhv92px8ft6p8iFgmkhrFoe5UtMI3/k1IakV2f
-daV5wFxUSu2d3qIHcdlIAm27oQGxriGD42yJ6Aqtqs3Rcaxl2wwmoxdW+3aHMLG2
-AJQavhbUg0irwEwW71Pq9L3sNB9U8FQKgZSXljujdRlYg6G1cQzkEdnWOwvBK23B
-cikR6rB+RbuKeFDKWzoj2XCvZJpBDRMxGLTVxgtXPZWxDbq5mGa4Lptp/RUTpkbE
-HnQfv0WEDw3isrE9QH5g/CmtcuRBzQ==
-=kMeS
------END PGP SIGNATURE-----
-
---=-hHNWd2u71U+t6RHgvHqQ--
+Thanks,
