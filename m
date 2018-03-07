@@ -1,106 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934195AbeCGRkp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 12:40:45 -0500
-Received: from sonic313-17.consmr.mail.ne1.yahoo.com ([66.163.185.40]:45922
-        "EHLO sonic313-17.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933415AbeCGRkj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 12:40:39 -0500
-X-YMail-OSG: ncix7ZgVM1k2kJkZoZ2dRwXkMXGPLU93GxTy7LsA8zpvElMfYjQGAhNhaRuGjUc
- Rqu0ISb_OjStKw0YysB.7b85MfmSDyQlX5YG5ElOYSIXR3d5ntj4yTYnr1cTqkiSNiv7jlOQ8nts
- Cyp19tMVmgwh9klONz0XWEBNNIKfA.pSovJL90AgMazEavi1jftQwShAfg2tKwHctmzTUlL4XrhM
- v7UrM.AfVfFPPxJYulVWIdO.RGA7Qx43_oZvGFX_2D.ABxmXTJu.7k.6EcWjZTOgVbM6w.HZTnPt
- ka5Yk.LD56Rwwa8e70wHSFzQhdtnheg2R0uDlkD4zT6g3whADMJoOLMOl8r.hNRdPQG9MocHVjBz
- 7bjqu0lz2YQOoVf7o7HTaOwJUF3iV2RzXgBgjLtbPsdkPMspfK0vdkKK3smqqW8k9mUbIGLmWcBq
- 62hXuEwDJ8A4mPA0fEKPF_yMrJyr9OSl_R7CpJjWPvPdhOKCNTJY3p2tsMNYfd4wBXXyMHfGj5zZ
- 5kKZugXC.udP7.PdLB1VeL7PFKNbmdRNh5OH5F1QGkSYOsfg-
-Subject: Re: [PATCH v4 0/3] Safe, dynamically loadable LSM hooks
-To: Sargun Dhillon <sargun@sargun.me>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: penguin-kernel@i-love.sakura.ne.jp, keescook@chromium.org,
-        igor.stoppa@huawei.com
-References: <cover.1520407240.git.sargun@sargun.me>
-From: Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <d2b31866-def9-dd2a-766c-b55ebbff9f8a@schaufler-ca.com>
-Date: Wed, 7 Mar 2018 09:40:31 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        id S933700AbeCGRmg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 12:42:36 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54842 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932801AbeCGRmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 12:42:31 -0500
+Subject: Re: [PATCH v3 14/22] arm64: capabilities: Add support for features
+ enabled early
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+        Julien Thierry <julien.thierry@arm.com>, ckadabi@codeaurora.org,
+        ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
+        robin.murphy@arm.com
+References: <20180209175513.17100-1-suzuki.poulose@arm.com>
+ <20180209175513.17100-28-suzuki.poulose@arm.com>
+ <20180212171712.GK5862@e103592.cambridge.arm.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <986f7445-8f67-96e9-21f7-6eb1ff5a23c1@arm.com>
+Date: Wed, 7 Mar 2018 17:42:27 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1520407240.git.sargun@sargun.me>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180212171712.GK5862@e103592.cambridge.arm.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/6/2018 11:22 PM, Sargun Dhillon wrote:
-> This patchset introduces safe dynamic LSM support. These are currently
-> not unloadable, until we figure out a use case that needs that. Adding
-> an unload hook is trivial given the way the patch is written.
+On 12/02/18 17:17, Dave Martin wrote:
+> On Fri, Feb 09, 2018 at 05:54:57PM +0000, Suzuki K Poulose wrote:
+>> The kernel detects and uses some of the features based on the boot
+>> CPU and expects that all the following CPUs conform to it. e.g,
+>> with VHE and the boot CPU running at EL2, the kernel decides to
+>> keep the kernel running at EL2. If another CPU is brought up without
+>> this capability, we use custom hooks (via check_early_cpu_features())
+>> to handle it. To handle such capabilities add support for detecting
+>> and enabling capabilities based on the boot CPU.
+>>
 
-If I recall correctly (it's been a decade since the discussion)
-one of the reasons for not having loadable security modules was
-that no one had a good idea on how they might be unloaded safely.
-I'm not 100% convinced that there are no cases where you might
-want to load a module that you can't unload, but I can definitely
-come up with scenarios where it could be harmful.
+>> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+>> index 383c69c95f23..5f56a8342065 100644
+>> --- a/arch/arm64/include/asm/cpufeature.h
+>> +++ b/arch/arm64/include/asm/cpufeature.h
+>> @@ -104,7 +104,7 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+>>    *    some checks at runtime. This could be, e.g, checking the value of a field
+>>    *    in CPU ID feature register or checking the cpu model. The capability
+>>    *    provides a call back ( @matches() ) to perform the check.
+>> - *    Scope defines how the checks should be performed. There are two cases:
+>> + *    Scope defines how the checks should be performed. There are three cases:
+>>    *
+>>    *     a) SCOPE_LOCAL_CPU: check all the CPUs and "detect" if at least one
+>>    *        matches. This implies, we have to run the check on all the booting
+>> @@ -117,6 +117,11 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
+>>    *        field in one of the CPU ID feature registers, we use the sanitised
+>>    *        value of the register from the CPU feature infrastructure to make
+>>    *        the decision.
+>> + *		Or
+>> + *     c) SCOPE_BOOT_CPU: Check only on the primary boot CPU to detect the feature.
+>> + *        This category is for features that are "finalised" (or used) by the kernel
+>> + *        very early even before the SMP cpus are brought up.
+>> + *
+> 
+> Nit: the overlong lines bring no benefit here.  Please wrap them if
+> possible -- but to avoid patch churn only bother for lines actually
+> changed/added by this patch.
 
-> This exposes a second mechanism of loading hooks which are in modules.
-> These hooks are behind static keys, so they should come at low performance
-> overhead. The built-in hook heads are read-only, whereas the dynamic hooks
-> are mutable.
+Sure
 
-I don't like having two mechanisms and I really don't like the
-way you replace the structure of hooks with an array of pointers.
+>>   static void update_cpu_ftr_reg(struct arm64_ftr_reg *reg, u64 new)
+>> @@ -1277,12 +1277,21 @@ __enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps, u16 scope_m
+>>   
+>>   		if (caps->cpu_enable) {
+>>   			/*
+>> -			 * Use stop_machine() as it schedules the work allowing
+>> -			 * us to modify PSTATE, instead of on_each_cpu() which
+>> -			 * uses an IPI, giving us a PSTATE that disappears when
+>> -			 * we return.
+>> +			 * If we are dealing with a boot CPU capability, we
+>> +			 * have to enable this only on the Boot CPU, where it
+>> +			 * is detected. All the secondaries enable it via
+>> +			 * check_local_cpu_capabilities().
+> 
+> I found this confusing to read, because it's not 100% clear whether the
+> "If we are dealing with a boot CPU capability" applies to the second
+> sentence as well.
+> 
+> Maybe this would be clearer as:
+> 
+> "Capabilities with SCOPE_BOOT_CPU are finalised before any secondary
+> CPU boots.  Thus, each secondary will enable the capability as
+> appropriate via check_local_cpu_capabilities().  The only exception is
+> the boot CPU, for which the capability must be enabled here.  This
+> approach avoids costly stop_machine() calls for this case."
+> 
+> Thoughts?
 
-> Not all hooks can be loaded into. Some hooks are blacklisted, and therefore
-> trying to load a module which plugs into those hooks will fail.
+Definitely better, will change it.
 
-Which hooks, and why?
 
-> One of the big benefits with loadable security modules is to help with
-> "unknown unknowns". Although, livepatch is excellent, sometimes, a
-> surgical LSM is simpler.
+>> @@ -1362,6 +1371,12 @@ static void check_early_cpu_features(void)
+>>   {
+>>   	verify_cpu_run_el();
+>>   	verify_cpu_asid_bits();
+>> +	/*
+>> +	 * Early features are used by the kernel already. If there
+>> +	 * is a conflict, we cannot proceed further.
+>> +	 */
+>> +	if (!verify_local_cpu_caps(SCOPE_BOOT_CPU))
+>> +		cpu_panic_kernel();
+>>   }
+>>   
+>>   static void
+>> @@ -1403,9 +1418,8 @@ static void verify_sve_features(void)
+>>    */
+>>   static void verify_local_cpu_capabilities(void)
+>>   {
+> 
+> Nit: Maybe add a comment saying where SCOPE_BOOT_CPU capabilities are
+> checked.
 
-I could buy this if you could unload the module when the surgery
-is done. As it is, you are stuck with whatever restrictions you
-have introduced forever.
+Ok
 
-> It includes an example LSM that prevents specific time travel.
->
-> Changes since v3:
->   * readded hook blacklisted
->   * return error, rather than panic if unable to allocate memory
->
-> Changes since v2:
->   * inode get/set security is readded
->   * xfrm singleton hook readded
->   * Security hooks are turned into an array
->   * Security hooks and dynamic hooks enum is collapsed
->
-> Changes since v1:
->   * It no longer allows unloading of modules
->   * prctl is fixed
->   * inode get/set security is removed
->   * xfrm singleton hook removed
->
->
-> Sargun Dhillon (3):
->   security: Refactor LSM hooks into an array and enum
->   security: Expose a mechanism to load lsm hooks dynamically at runtime
->   security: Add an example sample dynamic LSM
->
->  include/linux/lsm_hooks.h | 459 ++++++++++++++++++++++++----------------------
->  samples/Kconfig           |   6 +
->  samples/Makefile          |   2 +-
->  samples/lsm/Makefile      |   4 +
->  samples/lsm/lsm_example.c |  33 ++++
->  security/Kconfig          |   9 +
->  security/inode.c          |  13 +-
->  security/security.c       | 222 ++++++++++++++++++++--
->  8 files changed, 508 insertions(+), 240 deletions(-)
->  create mode 100644 samples/lsm/Makefile
->  create mode 100644 samples/lsm/lsm_example.c
->
+> 
+>> -	if (!verify_local_cpu_caps(SCOPE_ALL))
+>> +	if (!verify_local_cpu_caps(SCOPE_ALL & ~SCOPE_BOOT_CPU))
+>>   		cpu_die_early();
+>> -
+> 
+> Nit: keep blank line?
+> 
+> Otherwise it looks like the if() falls through, where really
+> cpu_die_early() does not return.
+> 
+
+ok
+
+>>   void __init setup_cpu_features(void)
+>> -- 
+>> 2.14.3
+> 
+> With fair consideration given to the nits above:
+> 
+> Reviewed-by: Dave Martin <Dave.Martin@arm.com>
+
+Cheers
+Suzuki
