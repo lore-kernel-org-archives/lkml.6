@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4098462-1520452631-2-13473568599570809899
+X-Cyrus-Session-Id: sloti22d1t05-4025272-1520452162-2-3337868980959597135
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enrosk.us-ascii,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520452630; b=YtS1/ItzG4lmGL3BsSuYYB2YPIspN4VWeyctMNyALVRZcn1
-    t4kr0eov/n2P9r4BpDc27A49r+e5i2zyPQISJBcFDEuA3VdWaVGyHt3yZGm6oZbY
-    EcQNG4+YzGs62qIvG6q9CQpqcuquEowFjIkvsLVcg7qC02m33v0rXd86GJ+Z/4ai
-    BWkKbNfW5WDgagsJkdwHdks4FQePaw+J3ckItiejIr+GpK2JEDxRdFC/nA2+gSy4
-    p6KDlRd8ulYlSDINyE4FAuiMr3zpXVTQm4s0kKaBwYB11t9ZNtn5lWkNVsc4Pz4g
-    G+um5gQMkYZKdTzBfTbuhENV+EM7WOqko2it+5Q==
+    t=1520452161; b=DBvPm0YQQlvQM/0GwAQ/2astxyOL/iME4HtLqln2c8clmoX
+    mfbNBqY86SSYgJP4OhH9hhqfFh5QqxbnDemESZMs9kkEnnFAkCXRyZcGbiYYST4I
+    Z5AZ3fg9DndvkiYjxwoAG+ksfGDQOdU8A9VOM1v97dzpKOBwRQOuIWOitZ9zyZ4f
+    kcFoK8colX2D53BRFDTGuJs5JIfZV2h4LFiIXXYrzPyosUExULOXFwh+3aH4Q4bN
+    zngDv8r4tOKxrUCxWYJ62lUENmVv7LHGY7mVDUGxvbBL1IC1sJUDgNinSMZydnjn
+    eOzoTFC4vVqu6+0pU9Tmuio1Ivv0k5GfJAs6LqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520452630; bh=16ZpBjPyuFMh9obP3BljfxE7wI
-    DtgJ15kEokFCMPTBw=; b=Vpj4PY0/RRVmt+KWgv0b6EiE+uqRM9du/6Md3mLeBZ
-    x6oSZdRIC3hva7hbiO4xZnvy4cfus6kzEnj8hRlDtfksi64PJRMP4jLnMn4o7zQy
-    QrfMrDvccrlNVfBASf/mXh/bKa9TJcbv9/fw6bDCDt7B7CxxtDkcF5EfBJFT94Re
-    XD5jhP6jaNOm+4V5NwAcz56Qq9cEoAUG7eNDpzhn/u4sKFakAqa7h99K8AfE5Fsm
-    7hOerAYiurgzJoqHBIQ7DAFEz8te1iOonR1H6Kd0iKkARTCrbQukdk9cMEOCVvRL
-    bBPdM2qc3kFWNpDfuPdnAxngIHxpifrEajlHCFCsQIow==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1520452161; bh=5duhG4hFlOoBBQrFeSm4bhG1pS
+    YLy9G2Ouw390nAaGs=; b=mAut3muJMoOfhzVQVOgdrx7EOy8Wyu8Kf78JCmoKLs
+    kDlLVHWNJ+fpCq2zlgkTswf1IoqrMtA6pvXL5r+iy3e6o0Tj28vsEplABQkI9JqN
+    /0uEiw83o5i6vL04Iqec7OdgEouGbON5xIl8V4IDdVzJeaZ8ow8aGwW7kWhNrjYY
+    rdR9ucHT10+fFtkKlKZefyvNjJSiUONWgeJ+OJjNaq5vTPsXJrl9SszQPbjxfa3U
+    Hx/xo+UKtwiRqSmI+URbRrzOrP8/Hg5k6zo6yvYIiuz6Hs0mp3Wt94hnhVNFWT4R
+    tOgQy+FUa/U9B57ah7pNY6ATjlJSg4PMRuBxSfS2JBPw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,20 +49,20 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935040AbeCGTrZ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 14:47:25 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44980 "EHLO
+        id S935068AbeCGTsd (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Mar 2018 14:48:33 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45680 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935038AbeCGTrY (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:47:24 -0500
+        with ESMTP id S965910AbeCGTsa (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:48:30 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.14 084/110] media: m88ds3103: dont call a non-initalized function
-Date: Wed,  7 Mar 2018 11:39:07 -0800
-Message-Id: <20180307191050.604302793@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Backlund <tmb@mageia.org>
+Subject: [PATCH 4.14 096/110] KVM: x86: extend usage of RET_MMIO_PF_* constants
+Date: Wed,  7 Mar 2018 11:39:19 -0800
+Message-Id: <20180307191052.144322273@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -80,121 +80,330 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit b9c97c67fd19262c002d94ced2bfb513083e161e upstream.
+commit 9b8ebbdb74b5ad76b9dfd8b101af17839174b126 upstream.
 
-If m88d3103 chip ID is not recognized, the device is not initialized.
+The x86 MMU if full of code that returns 0 and 1 for retry/emulate.  Use
+the existing RET_MMIO_PF_RETRY/RET_MMIO_PF_EMULATE enum, renaming it to
+drop the MMIO part.
 
-However, it returns from probe without any error, causing this OOPS:
-
-[    7.689289] Unable to handle kernel NULL pointer dereference at virtual address 00000000
-[    7.689297] pgd = 7b0bd7a7
-[    7.689302] [00000000] *pgd=00000000
-[    7.689318] Internal error: Oops: 80000005 [#1] SMP ARM
-[    7.689322] Modules linked in: dvb_usb_dvbsky(+) m88ds3103 dvb_usb_v2 dvb_core videobuf2_vmalloc videobuf2_memops videobuf2_core crc32_arm_ce videodev media
-[    7.689358] CPU: 3 PID: 197 Comm: systemd-udevd Not tainted 4.15.0-mcc+ #23
-[    7.689361] Hardware name: BCM2835
-[    7.689367] PC is at 0x0
-[    7.689382] LR is at m88ds3103_attach+0x194/0x1d0 [m88ds3103]
-[    7.689386] pc : [<00000000>]    lr : [<bf0ae1ec>]    psr: 60000013
-[    7.689391] sp : ed8e5c20  ip : ed8c1e00  fp : ed8945c0
-[    7.689395] r10: ed894000  r9 : ed894378  r8 : eda736c0
-[    7.689400] r7 : ed894070  r6 : ed8e5c44  r5 : bf0bb040  r4 : eda77600
-[    7.689405] r3 : 00000000  r2 : 00000000  r1 : 00000000  r0 : eda77600
-[    7.689412] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-[    7.689417] Control: 10c5383d  Table: 2d8e806a  DAC: 00000051
-[    7.689423] Process systemd-udevd (pid: 197, stack limit = 0xe9dbfb63)
-[    7.689428] Stack: (0xed8e5c20 to 0xed8e6000)
-[    7.689439] 5c20: ed853a80 eda73640 ed894000 ed8942c0 ed853a80 bf0b9e98 ed894070 bf0b9f10
-[    7.689449] 5c40: 00000000 00000000 bf08c17c c08dfc50 00000000 00000000 00000000 00000000
-[    7.689459] 5c60: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[    7.689468] 5c80: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[    7.689479] 5ca0: 00000000 00000000 ed8945c0 ed8942c0 ed894000 ed894830 bf0b9e98 00000000
-[    7.689490] 5cc0: ed894378 bf0a3cb4 bf0bc3b0 0000533b ed920540 00000000 00000034 bf0a6434
-[    7.689500] 5ce0: ee952070 ed826600 bf0a7038 bf0a2dd8 00000001 bf0a6768 bf0a2f90 ed8943c0
-[    7.689511] 5d00: 00000000 c08eca68 ed826620 ed826620 00000000 ee952070 bf0bc034 ee952000
-[    7.689521] 5d20: ed826600 bf0bb080 ffffffed c0aa9e9c c0aa9dac ed826620 c16edf6c c168c2c8
-[    7.689531] 5d40: c16edf70 00000000 bf0bc034 0000000d 00000000 c08e268c bf0bb080 ed826600
-[    7.689541] 5d60: bf0bc034 ed826654 ed826620 bf0bc034 c164c8bc 00000000 00000001 00000000
-[    7.689553] 5d80: 00000028 c08e2948 00000000 bf0bc034 c08e2848 c08e0778 ee9f0a58 ed88bab4
-[    7.689563] 5da0: bf0bc034 ed90ba80 c168c1f0 c08e1934 bf0bb3bc c17045ac bf0bc034 c164c8bc
-[    7.689574] 5dc0: bf0bc034 bf0bb3bc ed91f564 c08e34ec bf0bc000 c164c8bc bf0bc034 c0aa8dc4
-[    7.689584] 5de0: ffffe000 00000000 bf0bf000 ed91f600 ed91f564 c03021e4 00000001 00000000
-[    7.689595] 5e00: c166e040 8040003f ed853a80 bf0bc448 00000000 c1678174 ed853a80 f0f22000
-[    7.689605] 5e20: f0f21fff 8040003f 014000c0 ed91e700 ed91e700 c16d8e68 00000001 ed91e6c0
-[    7.689615] 5e40: bf0bc400 00000001 bf0bc400 ed91f564 00000001 00000000 00000028 c03c9a24
-[    7.689625] 5e60: 00000001 c03c8c94 ed8e5f50 ed8e5f50 00000001 bf0bc400 ed91f540 c03c8cb0
-[    7.689637] 5e80: bf0bc40c 00007fff bf0bc400 c03c60b0 00000000 bf0bc448 00000028 c0e09684
-[    7.689647] 5ea0: 00000002 bf0bc530 c1234bf8 bf0bc5dc bf0bc514 c10ebbe8 ffffe000 bf000000
-[    7.689657] 5ec0: 00011538 00000000 ed8e5f48 00000000 00000000 00000000 00000000 00000000
-[    7.689666] 5ee0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[    7.689676] 5f00: 00000000 00000000 7fffffff 00000000 00000013 b6e55a18 0000017b c0309104
-[    7.689686] 5f20: ed8e4000 00000000 00510af0 c03c9430 7fffffff 00000000 00000003 00000000
-[    7.689697] 5f40: 00000000 f0f0f000 00011538 00000000 f0f107b0 f0f0f000 00011538 f0f1fdb8
-[    7.689707] 5f60: f0f1fbe8 f0f1b974 00004000 000041e0 bf0bc3d0 00000001 00000000 000024c4
-[    7.689717] 5f80: 0000002d 0000002e 00000019 00000000 00000010 00000000 16894000 00000000
-[    7.689727] 5fa0: 00000000 c0308f20 16894000 00000000 00000013 b6e55a18 00000000 b6e5652c
-[    7.689737] 5fc0: 16894000 00000000 00000000 0000017b 00020000 00508110 00000000 00510af0
-[    7.689748] 5fe0: bef68948 bef68938 b6e4d3d0 b6d32590 60000010 00000013 00000000 00000000
-[    7.689790] [<bf0ae1ec>] (m88ds3103_attach [m88ds3103]) from [<bf0b9f10>] (dvbsky_s960c_attach+0x78/0x280 [dvb_usb_dvbsky])
-[    7.689821] [<bf0b9f10>] (dvbsky_s960c_attach [dvb_usb_dvbsky]) from [<bf0a3cb4>] (dvb_usbv2_probe+0xa3c/0x1024 [dvb_usb_v2])
-[    7.689849] [<bf0a3cb4>] (dvb_usbv2_probe [dvb_usb_v2]) from [<c0aa9e9c>] (usb_probe_interface+0xf0/0x2a8)
-[    7.689869] [<c0aa9e9c>] (usb_probe_interface) from [<c08e268c>] (driver_probe_device+0x2f8/0x4b4)
-[    7.689881] [<c08e268c>] (driver_probe_device) from [<c08e2948>] (__driver_attach+0x100/0x11c)
-[    7.689895] [<c08e2948>] (__driver_attach) from [<c08e0778>] (bus_for_each_dev+0x4c/0x9c)
-[    7.689909] [<c08e0778>] (bus_for_each_dev) from [<c08e1934>] (bus_add_driver+0x1c0/0x264)
-[    7.689919] [<c08e1934>] (bus_add_driver) from [<c08e34ec>] (driver_register+0x78/0xf4)
-[    7.689931] [<c08e34ec>] (driver_register) from [<c0aa8dc4>] (usb_register_driver+0x70/0x134)
-[    7.689946] [<c0aa8dc4>] (usb_register_driver) from [<c03021e4>] (do_one_initcall+0x44/0x168)
-[    7.689963] [<c03021e4>] (do_one_initcall) from [<c03c9a24>] (do_init_module+0x64/0x1f4)
-[    7.689979] [<c03c9a24>] (do_init_module) from [<c03c8cb0>] (load_module+0x20a0/0x25c8)
-[    7.689993] [<c03c8cb0>] (load_module) from [<c03c9430>] (SyS_finit_module+0xb4/0xec)
-[    7.690007] [<c03c9430>] (SyS_finit_module) from [<c0308f20>] (ret_fast_syscall+0x0/0x54)
-[    7.690018] Code: bad PC value
-
-This may happen on normal circumstances, if, for some reason, the demod
-hangs and start returning an invalid chip ID:
-
-[   10.394395] m88ds3103 3-0068: Unknown device. Chip_id=00
-
-So, change the logic to cause probe to fail with -ENODEV, preventing
-the OOPS.
-
-Detected while testing DVB MMAP patches on Raspberry Pi 3 with
-DVBSky S960CI.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Thomas Backlund <tmb@mageia.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/dvb-frontends/m88ds3103.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/x86/kvm/mmu.c         |   95 +++++++++++++++++++++------------------------
+ arch/x86/kvm/paging_tmpl.h |   18 ++++----
+ 2 files changed, 55 insertions(+), 58 deletions(-)
 
---- a/drivers/media/dvb-frontends/m88ds3103.c
-+++ b/drivers/media/dvb-frontends/m88ds3103.c
-@@ -1262,11 +1262,12 @@ static int m88ds3103_select(struct i2c_m
-  * New users must use I2C client binding directly!
-  */
- struct dvb_frontend *m88ds3103_attach(const struct m88ds3103_config *cfg,
--		struct i2c_adapter *i2c, struct i2c_adapter **tuner_i2c_adapter)
-+				      struct i2c_adapter *i2c,
-+				      struct i2c_adapter **tuner_i2c_adapter)
- {
- 	struct i2c_client *client;
- 	struct i2c_board_info board_info;
--	struct m88ds3103_platform_data pdata;
-+	struct m88ds3103_platform_data pdata = {};
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -150,6 +150,20 @@ module_param(dbg, bool, 0644);
+ /* make pte_list_desc fit well in cache line */
+ #define PTE_LIST_EXT 3
  
- 	pdata.clk = cfg->clock;
- 	pdata.i2c_wr_max = cfg->i2c_wr_max;
-@@ -1409,6 +1410,8 @@ static int m88ds3103_probe(struct i2c_cl
- 	case M88DS3103_CHIP_ID:
- 		break;
- 	default:
-+		ret = -ENODEV;
-+		dev_err(&client->dev, "Unknown device. Chip_id=%02x\n", dev->chip_id);
- 		goto err_kfree;
++/*
++ * Return values of handle_mmio_page_fault and mmu.page_fault:
++ * RET_PF_RETRY: let CPU fault again on the address.
++ * RET_PF_EMULATE: mmio page fault, emulate the instruction directly.
++ *
++ * For handle_mmio_page_fault only:
++ * RET_PF_INVALID: the spte is invalid, let the real page fault path update it.
++ */
++enum {
++	RET_PF_RETRY = 0,
++	RET_PF_EMULATE = 1,
++	RET_PF_INVALID = 2,
++};
++
+ struct pte_list_desc {
+ 	u64 *sptes[PTE_LIST_EXT];
+ 	struct pte_list_desc *more;
+@@ -2794,13 +2808,13 @@ done:
+ 	return ret;
+ }
+ 
+-static bool mmu_set_spte(struct kvm_vcpu *vcpu, u64 *sptep, unsigned pte_access,
+-			 int write_fault, int level, gfn_t gfn, kvm_pfn_t pfn,
+-			 bool speculative, bool host_writable)
++static int mmu_set_spte(struct kvm_vcpu *vcpu, u64 *sptep, unsigned pte_access,
++			int write_fault, int level, gfn_t gfn, kvm_pfn_t pfn,
++		       	bool speculative, bool host_writable)
+ {
+ 	int was_rmapped = 0;
+ 	int rmap_count;
+-	bool emulate = false;
++	int ret = RET_PF_RETRY;
+ 
+ 	pgprintk("%s: spte %llx write_fault %d gfn %llx\n", __func__,
+ 		 *sptep, write_fault, gfn);
+@@ -2830,12 +2844,12 @@ static bool mmu_set_spte(struct kvm_vcpu
+ 	if (set_spte(vcpu, sptep, pte_access, level, gfn, pfn, speculative,
+ 	      true, host_writable)) {
+ 		if (write_fault)
+-			emulate = true;
++			ret = RET_PF_EMULATE;
+ 		kvm_make_request(KVM_REQ_TLB_FLUSH, vcpu);
  	}
  
+ 	if (unlikely(is_mmio_spte(*sptep)))
+-		emulate = true;
++		ret = RET_PF_EMULATE;
+ 
+ 	pgprintk("%s: setting spte %llx\n", __func__, *sptep);
+ 	pgprintk("instantiating %s PTE (%s) at %llx (%llx) addr %p\n",
+@@ -2855,7 +2869,7 @@ static bool mmu_set_spte(struct kvm_vcpu
+ 
+ 	kvm_release_pfn_clean(pfn);
+ 
+-	return emulate;
++	return ret;
+ }
+ 
+ static kvm_pfn_t pte_prefetch_gfn_to_pfn(struct kvm_vcpu *vcpu, gfn_t gfn,
+@@ -2994,14 +3008,13 @@ static int kvm_handle_bad_page(struct kv
+ 	 * Do not cache the mmio info caused by writing the readonly gfn
+ 	 * into the spte otherwise read access on readonly gfn also can
+ 	 * caused mmio page fault and treat it as mmio access.
+-	 * Return 1 to tell kvm to emulate it.
+ 	 */
+ 	if (pfn == KVM_PFN_ERR_RO_FAULT)
+-		return 1;
++		return RET_PF_EMULATE;
+ 
+ 	if (pfn == KVM_PFN_ERR_HWPOISON) {
+ 		kvm_send_hwpoison_signal(kvm_vcpu_gfn_to_hva(vcpu, gfn), current);
+-		return 0;
++		return RET_PF_RETRY;
+ 	}
+ 
+ 	return -EFAULT;
+@@ -3286,13 +3299,13 @@ static int nonpaging_map(struct kvm_vcpu
+ 	}
+ 
+ 	if (fast_page_fault(vcpu, v, level, error_code))
+-		return 0;
++		return RET_PF_RETRY;
+ 
+ 	mmu_seq = vcpu->kvm->mmu_notifier_seq;
+ 	smp_rmb();
+ 
+ 	if (try_async_pf(vcpu, prefault, gfn, v, &pfn, write, &map_writable))
+-		return 0;
++		return RET_PF_RETRY;
+ 
+ 	if (handle_abnormal_pfn(vcpu, v, gfn, pfn, ACC_ALL, &r))
+ 		return r;
+@@ -3312,7 +3325,7 @@ static int nonpaging_map(struct kvm_vcpu
+ out_unlock:
+ 	spin_unlock(&vcpu->kvm->mmu_lock);
+ 	kvm_release_pfn_clean(pfn);
+-	return 0;
++	return RET_PF_RETRY;
+ }
+ 
+ 
+@@ -3659,54 +3672,38 @@ exit:
+ 	return reserved;
+ }
+ 
+-/*
+- * Return values of handle_mmio_page_fault:
+- * RET_MMIO_PF_EMULATE: it is a real mmio page fault, emulate the instruction
+- *			directly.
+- * RET_MMIO_PF_INVALID: invalid spte is detected then let the real page
+- *			fault path update the mmio spte.
+- * RET_MMIO_PF_RETRY: let CPU fault again on the address.
+- * RET_MMIO_PF_BUG: a bug was detected (and a WARN was printed).
+- */
+-enum {
+-	RET_MMIO_PF_EMULATE = 1,
+-	RET_MMIO_PF_INVALID = 2,
+-	RET_MMIO_PF_RETRY = 0,
+-	RET_MMIO_PF_BUG = -1
+-};
+-
+ static int handle_mmio_page_fault(struct kvm_vcpu *vcpu, u64 addr, bool direct)
+ {
+ 	u64 spte;
+ 	bool reserved;
+ 
+ 	if (mmio_info_in_cache(vcpu, addr, direct))
+-		return RET_MMIO_PF_EMULATE;
++		return RET_PF_EMULATE;
+ 
+ 	reserved = walk_shadow_page_get_mmio_spte(vcpu, addr, &spte);
+ 	if (WARN_ON(reserved))
+-		return RET_MMIO_PF_BUG;
++		return -EINVAL;
+ 
+ 	if (is_mmio_spte(spte)) {
+ 		gfn_t gfn = get_mmio_spte_gfn(spte);
+ 		unsigned access = get_mmio_spte_access(spte);
+ 
+ 		if (!check_mmio_spte(vcpu, spte))
+-			return RET_MMIO_PF_INVALID;
++			return RET_PF_INVALID;
+ 
+ 		if (direct)
+ 			addr = 0;
+ 
+ 		trace_handle_mmio_page_fault(addr, gfn, access);
+ 		vcpu_cache_mmio_info(vcpu, addr, gfn, access);
+-		return RET_MMIO_PF_EMULATE;
++		return RET_PF_EMULATE;
+ 	}
+ 
+ 	/*
+ 	 * If the page table is zapped by other cpus, let CPU fault again on
+ 	 * the address.
+ 	 */
+-	return RET_MMIO_PF_RETRY;
++	return RET_PF_RETRY;
+ }
+ EXPORT_SYMBOL_GPL(handle_mmio_page_fault);
+ 
+@@ -3756,7 +3753,7 @@ static int nonpaging_page_fault(struct k
+ 	pgprintk("%s: gva %lx error %x\n", __func__, gva, error_code);
+ 
+ 	if (page_fault_handle_page_track(vcpu, error_code, gfn))
+-		return 1;
++		return RET_PF_EMULATE;
+ 
+ 	r = mmu_topup_memory_caches(vcpu);
+ 	if (r)
+@@ -3877,7 +3874,7 @@ static int tdp_page_fault(struct kvm_vcp
+ 	MMU_WARN_ON(!VALID_PAGE(vcpu->arch.mmu.root_hpa));
+ 
+ 	if (page_fault_handle_page_track(vcpu, error_code, gfn))
+-		return 1;
++		return RET_PF_EMULATE;
+ 
+ 	r = mmu_topup_memory_caches(vcpu);
+ 	if (r)
+@@ -3894,13 +3891,13 @@ static int tdp_page_fault(struct kvm_vcp
+ 	}
+ 
+ 	if (fast_page_fault(vcpu, gpa, level, error_code))
+-		return 0;
++		return RET_PF_RETRY;
+ 
+ 	mmu_seq = vcpu->kvm->mmu_notifier_seq;
+ 	smp_rmb();
+ 
+ 	if (try_async_pf(vcpu, prefault, gfn, gpa, &pfn, write, &map_writable))
+-		return 0;
++		return RET_PF_RETRY;
+ 
+ 	if (handle_abnormal_pfn(vcpu, 0, gfn, pfn, ACC_ALL, &r))
+ 		return r;
+@@ -3920,7 +3917,7 @@ static int tdp_page_fault(struct kvm_vcp
+ out_unlock:
+ 	spin_unlock(&vcpu->kvm->mmu_lock);
+ 	kvm_release_pfn_clean(pfn);
+-	return 0;
++	return RET_PF_RETRY;
+ }
+ 
+ static void nonpaging_init_context(struct kvm_vcpu *vcpu,
+@@ -4919,25 +4916,25 @@ int kvm_mmu_page_fault(struct kvm_vcpu *
+ 		vcpu->arch.gpa_val = cr2;
+ 	}
+ 
++	r = RET_PF_INVALID;
+ 	if (unlikely(error_code & PFERR_RSVD_MASK)) {
+ 		r = handle_mmio_page_fault(vcpu, cr2, direct);
+-		if (r == RET_MMIO_PF_EMULATE) {
++		if (r == RET_PF_EMULATE) {
+ 			emulation_type = 0;
+ 			goto emulate;
+ 		}
+-		if (r == RET_MMIO_PF_RETRY)
+-			return 1;
+-		if (r < 0)
+-			return r;
+-		/* Must be RET_MMIO_PF_INVALID.  */
+ 	}
+ 
+-	r = vcpu->arch.mmu.page_fault(vcpu, cr2, lower_32_bits(error_code),
+-				      false);
++	if (r == RET_PF_INVALID) {
++		r = vcpu->arch.mmu.page_fault(vcpu, cr2, lower_32_bits(error_code),
++					      false);
++		WARN_ON(r == RET_PF_INVALID);
++	}
++
++	if (r == RET_PF_RETRY)
++		return 1;
+ 	if (r < 0)
+ 		return r;
+-	if (!r)
+-		return 1;
+ 
+ 	/*
+ 	 * Before emulating the instruction, check if the error code
+--- a/arch/x86/kvm/paging_tmpl.h
++++ b/arch/x86/kvm/paging_tmpl.h
+@@ -593,7 +593,7 @@ static int FNAME(fetch)(struct kvm_vcpu
+ 	struct kvm_mmu_page *sp = NULL;
+ 	struct kvm_shadow_walk_iterator it;
+ 	unsigned direct_access, access = gw->pt_access;
+-	int top_level, emulate;
++	int top_level, ret;
+ 
+ 	direct_access = gw->pte_access;
+ 
+@@ -659,15 +659,15 @@ static int FNAME(fetch)(struct kvm_vcpu
+ 	}
+ 
+ 	clear_sp_write_flooding_count(it.sptep);
+-	emulate = mmu_set_spte(vcpu, it.sptep, gw->pte_access, write_fault,
+-			       it.level, gw->gfn, pfn, prefault, map_writable);
++	ret = mmu_set_spte(vcpu, it.sptep, gw->pte_access, write_fault,
++			   it.level, gw->gfn, pfn, prefault, map_writable);
+ 	FNAME(pte_prefetch)(vcpu, gw, it.sptep);
+ 
+-	return emulate;
++	return ret;
+ 
+ out_gpte_changed:
+ 	kvm_release_pfn_clean(pfn);
+-	return 0;
++	return RET_PF_RETRY;
+ }
+ 
+  /*
+@@ -762,12 +762,12 @@ static int FNAME(page_fault)(struct kvm_
+ 		if (!prefault)
+ 			inject_page_fault(vcpu, &walker.fault);
+ 
+-		return 0;
++		return RET_PF_RETRY;
+ 	}
+ 
+ 	if (page_fault_handle_page_track(vcpu, error_code, walker.gfn)) {
+ 		shadow_page_table_clear_flood(vcpu, addr);
+-		return 1;
++		return RET_PF_EMULATE;
+ 	}
+ 
+ 	vcpu->arch.write_fault_to_shadow_pgtable = false;
+@@ -789,7 +789,7 @@ static int FNAME(page_fault)(struct kvm_
+ 
+ 	if (try_async_pf(vcpu, prefault, walker.gfn, addr, &pfn, write_fault,
+ 			 &map_writable))
+-		return 0;
++		return RET_PF_RETRY;
+ 
+ 	if (handle_abnormal_pfn(vcpu, addr, walker.gfn, pfn, walker.pte_access, &r))
+ 		return r;
+@@ -834,7 +834,7 @@ static int FNAME(page_fault)(struct kvm_
+ out_unlock:
+ 	spin_unlock(&vcpu->kvm->mmu_lock);
+ 	kvm_release_pfn_clean(pfn);
+-	return 0;
++	return RET_PF_RETRY;
+ }
+ 
+ static gpa_t FNAME(get_level1_sp_gpa)(struct kvm_mmu_page *sp)
