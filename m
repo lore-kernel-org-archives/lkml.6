@@ -1,65 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933791AbeCGRtx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 12:49:53 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:45416 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751211AbeCGRtw (ORCPT
+        id S1754464AbeCGRxN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 12:53:13 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:34140 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751284AbeCGRxL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 12:49:52 -0500
-Subject: Re: [PATCH v1] xen: acpi: upload _PSD info for offline CPUs too
-To: Joao Martins <joao.m.martins@oracle.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Cc: Juergen Gross <jgross@suse.com>
-References: <20180306201209.21890-1-joao.m.martins@oracle.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Message-ID: <a62621c6-ca44-fae4-7661-b7fe5380bbc0@oracle.com>
-Date: Wed, 7 Mar 2018 12:51:12 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 7 Mar 2018 12:53:11 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Date: Wed, 7 Mar 2018 17:53:03 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Lee Jones <lee.jones@linaro.org>
+CC: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <linus.walleij@linaro.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
+Subject: Re: [PATCH v3 1/2] mfd: arizona: Update reset pin to use GPIOD
+Message-ID: <20180307175303.bl5qgn6tjzka5byf@localhost.localdomain>
+References: <20180220163540.6704-1-ckeepax@opensource.cirrus.com>
+ <20180307132812.r5epcs26clpnh72t@dell>
+ <20180307141509.e3dpxteodxeoy2k3@localhost.localdomain>
+ <20180307162537.pryp3qz3lgm7a4zs@dell>
 MIME-Version: 1.0
-In-Reply-To: <20180306201209.21890-1-joao.m.martins@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8825 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803070204
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180307162537.pryp3qz3lgm7a4zs@dell>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1803070204
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/06/2018 03:12 PM, Joao Martins wrote:
-> All uploaded PM data from offline CPUs takes the info from vCPU 0 and
+On Wed, Mar 07, 2018 at 04:25:37PM +0000, Lee Jones wrote:
+> On Wed, 07 Mar 2018, Charles Keepax wrote:
+> 
+> > On Wed, Mar 07, 2018 at 01:28:12PM +0000, Lee Jones wrote:
+> > > On Tue, 20 Feb 2018, Charles Keepax wrote:
+> > I would guess most of the time yes, but I would rather not assume
+> > that. I can redo this as if's if you prefer it that way? The if is
+> > slightly less lines although I do think the switch is much
+> > clearer as to intent.
+> > 
+> > if (ret == -EPROBE_DEFER) {
+> > 	return ret;
+> > } else if (ret != -ENOENT && ret != -ENOSYS {
+> > 	dev_err(arizona->dev, ....);
+> > }
+> 
+> I don't know enough about the API to see why -ENOENT and -ENOSYS do
+> not deserve error messages.
+> 
 
-"offline" may not be the right term here. Maybe "non-dom0"?
+ENOENT means the property was not found, and ENOSYS means that
+there is no GPIOLIB built into the kernel.
 
-> changing only the acpi_id. For processors which P-state coordination type
-> is HW_ALL (0xFD) it is OK to upload bogus P-state dependency information
-> (_PSD), because Xen will ignore cpufreq domains existence.
->
-> Albeit for hardware exposing Px coordination types as SW_ANY or SW_ALL,
-> this will have some unintended side effects. Effectively, it will look at
-> the P-state domain existence and *if it already exists* it will skip the
-> acpi-cpufreq initialization and thus inherit the policy from the first CPU
-> in the cpufreq domain. This will finally lead to the original cpu not
-> changing target freq to P0 other than the first in the domain. Which will
-> make turbo boost not getting enabled (e.g. for 'performance' governor) for
-> all cpus.
->
-> This patch fixes that, by also evaluating _PSD when enumerating all ACPI
-> procesors (online and offline) and always uploading the correct P-State
-> dependency up to Xen.
->
-> Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
-> ---
-> xen_processor_get_psd() is taken from acpi_processor_get_psd()
-> (drivers/acpi/processor_perflib.c) simply because only Xen Dom0 needs
-> to handle vcpus != pcpus. If preferred I could try exporting that API
-> instead and use it here.
+In hindsight really I think this did deserve a comment. Basically
+what is going on here, is we are supporting both the old and the
+new binding, this is the code that looks for the old binding. If
+we don't find anything then we don't want to print a message now
+because we will print a message when we later check for the newer
+binding. However if the binding is present but somehow invalid
+then we would like to print the error. The newer binding read
+later won't detect if the older binding is present and corrupt.
 
-I think this would be a preferable approach.
+> What do the other users of the API do?
+> 
 
--boris
+Alas this looks like one of the first users.
+
+Thanks,
+Charles
