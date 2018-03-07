@@ -1,109 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934023AbeCGQQf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:16:35 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:45482 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933335AbeCGQQe (ORCPT
+        id S934033AbeCGQQr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:16:47 -0500
+Received: from mtaout.hs-regensburg.de ([194.95.104.10]:1894 "EHLO
+        mtaout.hs-regensburg.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933985AbeCGQQe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Mar 2018 11:16:34 -0500
-X-IronPort-AV: E=Sophos;i="5.47,436,1515427200";
-   d="scan'208";a="72960586"
-From: Bart Van Assche <Bart.VanAssche@wdc.com>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tursulin@ursulin.net" <tursulin@ursulin.net>
-CC: "tvrtko.ursulin@intel.com" <tvrtko.ursulin@intel.com>,
-        "hare@suse.com" <hare@suse.com>,
-        "jthumshirn@suse.de" <jthumshirn@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>
-Subject: Re: [PATCH 3/6] lib/scatterlist: Do not leak pages when high-order
- allocation fails
-Thread-Topic: [PATCH 3/6] lib/scatterlist: Do not leak pages when high-order
- allocation fails
-Thread-Index: AQHTthJ29ElMPnlnbEiOlFlrboqlxKPE8yeA
-Date: Wed, 7 Mar 2018 16:16:30 +0000
-Message-ID: <1520439389.2890.16.camel@wdc.com>
-References: <20180307124712.14963-1-tvrtko.ursulin@linux.intel.com>
-         <20180307124712.14963-4-tvrtko.ursulin@linux.intel.com>
-In-Reply-To: <20180307124712.14963-4-tvrtko.ursulin@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com;
-x-originating-ip: [199.255.44.172]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB0814;7:+epKcE+7MxnRsXx65kvqQcb5gHOJD9qsIbugpeHCuOFRbPK05i1V7wEGiuA2F5NcjX4bYMjhCqo/3WSOugi9AHwVxird4f6EbopO9CFeE5NeuT21cGPRWKkkOwLwY7g81KK5sbLR43h9ZVeSdDMVsEhyRSbLRhqGELoFi41SiXafx6o4iBF0Ez8Jc9PDIRSeKNtZSlS4CLxYkrnCEGsG6LEbQMSCFGRjrARw2HX3VjoRfPDehe3ngIqYzr515xJB;20:qhSZfK8UN/Rbqk+Qezjir5f/xvhG7kNMYbp/pK1V9bCWqbIqWr2ukBPyb2Nvy6/zN9b1svvusedDlLsl+R+2xEtwa3qeNggHnIQkZjMQuQXKnBeNMTsKKATrJq9GPiEkGGWkQk+BEpBu0/ogk/8gBcXY9UUGFTL5PR1fN4xWXBQ=
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: e7f5ddc7-dfbe-4124-4f91-08d58446c9ad
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0814;
-x-ms-traffictypediagnostic: MWHPR04MB0814:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB0814A9D19D636C57E06C8C5798D80@MWHPR04MB0814.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231220)(944501244)(52105095)(93006095)(93001095)(6055026)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:MWHPR04MB0814;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0814;
-x-forefront-prvs: 0604AFA86B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(39860400002)(396003)(366004)(39380400002)(199004)(189003)(377424004)(3846002)(186003)(25786009)(478600001)(68736007)(72206003)(6116002)(103116003)(26005)(2950100002)(106356001)(229853002)(8936002)(8676002)(3660700001)(54906003)(316002)(81156014)(81166006)(4326008)(2501003)(2906002)(5660300001)(110136005)(105586002)(6486002)(66066001)(5250100002)(3280700002)(76176011)(102836004)(86362001)(6506007)(59450400001)(305945005)(7736002)(6512007)(97736004)(6246003)(2900100001)(99286004)(14454004)(6436002)(36756003)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0814;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: 3i01C1QFqO6siAyRWREVmMqcBfeEK1mH0Jo1Qoo7k/ZT3Q9Ce98ypZWTTwsNt0r6FATPsML/ctYYiCG+vWx4VBZ5NUqEQwNrUdarIlMUjyz6LGMAhVvzk/t/aMvhG61LxuDhOw7skSOsov2H5NxQmvbik89NJFOn6y18ILY/L0fTolW+wgV7LjUHLUS0TdoNKmWRHUwGuyC5FqD2aRUhtjVGcfGmZypQMjfIux7Mv34/8y+ZmpkL6friO23OIAhZrViPaXRkLUPET7nEbuD6NxLniQaCCLwe0k4MnQ9JXhweugjbNGznk1NO4JdyNrsSxitSa7DUnDmMUhzHpPsx7g==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <37BBBBDCE889EC4AB78F69AC4267790A@namprd04.prod.outlook.com>
-MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e7f5ddc7-dfbe-4124-4f91-08d58446c9ad
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2018 16:16:30.6761
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0814
+From: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>
+Cc: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Gayatri Kammela <gayatri.kammela@intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/cpuid: Switch to 'static const' specifier
+Date: Wed,  7 Mar 2018 17:07:34 +0100
+Message-Id: <20180307160734.6691-1-ralf.ramsauer@oth-regensburg.de>
+X-Mailer: git-send-email 2.16.2
+X-PMX-Version: 6.3.3.2656215, Antispam-Engine: 2.7.2.2107409, Antispam-Data: 2018.3.7.160016, AntiVirus-Engine: 5.33.0, AntiVirus-Data: 2017.1.26.5330002
+X-PMX-Spam: Gauge=IIIIIIII, Probability=8%, Report='
+ MULTIPLE_RCPTS 0.1, HTML_00_01 0.05, HTML_00_10 0.05, BODYTEXTP_SIZE_3000_LESS 0, BODY_SIZE_1000_1099 0, BODY_SIZE_2000_LESS 0, BODY_SIZE_5000_LESS 0, BODY_SIZE_7000_LESS 0, LEGITIMATE_SIGNS 0, MULTIPLE_REAL_RCPTS 0, NO_URI_HTTPS 0, RDNS_NXDOMAIN 0, RDNS_SUSP 0, RDNS_SUSP_GENERIC 0, __ANY_URI 0, __CC_NAME 0, __CC_NAME_DIFF_FROM_ACC 0, __CC_REAL_NAMES 0, __HAS_CC_HDR 0, __HAS_FROM 0, __HAS_MSGID 0, __HAS_X_MAILER 0, __MIME_TEXT_ONLY 0, __MIME_TEXT_P 0, __MIME_TEXT_P1 0, __MULTIPLE_RCPTS_CC_X2 0, __NO_HTML_TAG_RAW 0, __SANE_MSGID 0, __SUBJ_ALPHA_END 0, __TO_MALFORMED_2 0, __TO_NAME 0, __TO_NAME_DIFF_FROM_ACC 0, __TO_REAL_NAMES 0, __URI_NO_WWW 0, __URI_NS '
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w27GGfwg006791
 
-On Wed, 2018-03-07 at 12:47 +0000, Tvrtko Ursulin wrote:
-> diff --git a/lib/scatterlist.c b/lib/scatterlist.c
-> index 9884be50a2c0..e13a759c5c49 100644
-> --- a/lib/scatterlist.c
-> +++ b/lib/scatterlist.c
-> @@ -493,7 +493,7 @@ struct scatterlist *sgl_alloc_order(unsigned long length, unsigned int order,
->  {
->  	unsigned int chunk_len = PAGE_SIZE << order;
->  	struct scatterlist *sgl, *sg;
-> -	unsigned int nent;
-> +	unsigned int nent, i;
->  
->  	nent = round_up(length, chunk_len) >> (PAGE_SHIFT + order);
->  
-> @@ -517,11 +517,12 @@ struct scatterlist *sgl_alloc_order(unsigned long length, unsigned int order,
->  
->  	sg_init_table(sgl, nent);
->  	sg = sgl;
-> +	i = 0;
->  	while (length) {
->  		struct page *page = alloc_pages(gfp, order);
->  
->  		if (!page) {
-> -			sgl_free(sgl);
-> +			sgl_free_n_order(sgl, i, order);
->  			return NULL;
->  		}
->  
-> @@ -529,6 +530,7 @@ struct scatterlist *sgl_alloc_order(unsigned long length, unsigned int order,
->  		sg_set_page(sg, page, chunk_len, 0);
->  		length -= chunk_len;
->  		sg = sg_next(sg);
-> +		i++;
->  	}
+This is the only spot where the 'const static' specifier is used;
+everywhere else 'static const' is preferred, as static should be the
+first specifier.
 
-Since the entire sg-list is zero-initialized before this loop starts, since
-the sg-list is not chained onto another sg-list before this function returns
-and since sgl_free_n_order() checks whether or not each page pointer is NULL
-before freeing it I think we don't need the new loop variable 'i' and that
-we can call sgl_free_order() instead of sgl_free_n_order().
+This is just a cosmetic fix that aligns this, no functional change.
 
-Bart.
+Signed-off-by: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>
+---
+ arch/x86/kernel/cpu/cpuid-deps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
+index 904b0a3c4e53..2c0bd38a44ab 100644
+--- a/arch/x86/kernel/cpu/cpuid-deps.c
++++ b/arch/x86/kernel/cpu/cpuid-deps.c
+@@ -19,7 +19,7 @@ struct cpuid_dep {
+  * called from cpu hotplug. It shouldn't do anything in this case,
+  * but it's difficult to tell that to the init reference checker.
+  */
+-const static struct cpuid_dep cpuid_deps[] = {
++static const struct cpuid_dep cpuid_deps[] = {
+ 	{ X86_FEATURE_XSAVEOPT,		X86_FEATURE_XSAVE     },
+ 	{ X86_FEATURE_XSAVEC,		X86_FEATURE_XSAVE     },
+ 	{ X86_FEATURE_XSAVES,		X86_FEATURE_XSAVE     },
+-- 
+2.16.2
