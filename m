@@ -1,141 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933806AbeCGPYk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 10:24:40 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36262 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933545AbeCGPYe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 10:24:34 -0500
-X-Google-Smtp-Source: AG47ELtTUGMXm6hdGK1tciu3WzqrjlFI05AQzL32DT9+eGOoEi1bAhYjZWPQyoF/315Y1KqC98d4BA==
-Date: Wed, 7 Mar 2018 16:24:30 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@infradead.org>
-Cc: Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] perf report: Show zero counters as well in 'perf report
- --stat'
-Message-ID: <20180307152430.7e5h7e657b7bgd7q@gmail.com>
+        id S933829AbeCGPZF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 10:25:05 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52780 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933335AbeCGPZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 10:25:03 -0500
+Date: Wed, 7 Mar 2018 15:24:58 +0000
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
+        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH v5 1/4] sched/fair: add util_est on top of PELT
+Message-ID: <20180307152458.GE2211@e110439-lin>
+References: <20180222170153.673-1-patrick.bellasi@arm.com>
+ <20180222170153.673-2-patrick.bellasi@arm.com>
+ <20180306185851.GG25201@hirez.programming.kicks-ass.net>
+ <20180307113149.GA2211@e110439-lin>
+ <20180307122437.GM25181@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180307122437.GM25181@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07-Mar 13:24, Peter Zijlstra wrote:
+> On Wed, Mar 07, 2018 at 11:31:49AM +0000, Patrick Bellasi wrote:
+> > > It appears to me this isn't a stable situation and completely relies on
+> > > the !nr_running case to recalibrate. If we ensure that doesn't happen
+> > > for a significant while the sum can run-away, right?
+> > 
+> > By away you mean go over 1024 or overflow the unsigned int storage?
+> 
+> the later, I think you can make it arbitrarily large. Have a busy task
+> on CPU0, this ensure !nr_running never happens.
+> 
+> Start a busy task on CPU1, wait for it to hit u=1, then migrate it to
+> CPU0, 
 
-When recently using 'perf report --stat' it was not clear to me from the output 
-whether a particular statistics field (LOST_SAMPLES) was not present, or just 
-zero:
+At this point util_est(CPU0) = 2048, which is:
 
-  fomalhaut:~> perf report --stat
+   +1024 for the busy running task
+         assuming it has been enqueued with the utilization since the beginning
+   +1024 for the newly migrated task from CPU1
+         which is enqueued with the value he reached at dequeued time
+         from CPU1
 
-  Aggregated stats:
-           TOTAL events:     495984
-            MMAP events:         85
-            COMM events:       3389
-            EXIT events:       1605
-        THROTTLE events:          2
-      UNTHROTTLE events:          2
-            FORK events:       3377
-          SAMPLE events:     472629
-           MMAP2 events:      14753
-  FINISHED_ROUND events:        139
-      THREAD_MAP events:          1
-         CPU_MAP events:          1
-       TIME_CONV events:          1
+> then wait for it to hit u=.5 then kill it,
 
-I had to check the output several times to ascertain that I'm not misreading the 
-output, that the field didn't change and that I didn't misremember the name. In 
-fact I had to look into the perf source to make sure that zero fields are indeed 
-not shown.
+... but when we kill it, the task is dequeued, and thus we remove
+1024.
 
-With the patch applied:
+Maybe that's the tricky bit: we remove the value we enqueued, _not_
+the current util_avg. Notice we use _task_util_est(p)... with the
+leading "_".
 
-  fomalhaut:~> perf report --stat
+> this effectively adds
+> .5 to the enqueued value, repeat indefinitely.
 
-  Aggregated stats:
-           TOTAL events:     495984
-            MMAP events:         85
-            LOST events:          0
-            COMM events:       3389
-            EXIT events:       1605
-        THROTTLE events:          2
-      UNTHROTTLE events:          2
-            FORK events:       3377
-            READ events:          0
-          SAMPLE events:     472629
-           MMAP2 events:      14753
-             AUX events:          0
-    ITRACE_START events:          0
-    LOST_SAMPLES events:          0
-          SWITCH events:          0
- SWITCH_CPU_WIDE events:          0
-      NAMESPACES events:          0
-            ATTR events:          0
-      EVENT_TYPE events:          0
-    TRACING_DATA events:          0
-        BUILD_ID events:          0
-  FINISHED_ROUND events:        139
-        ID_INDEX events:          0
-   AUXTRACE_INFO events:          0
-        AUXTRACE events:          0
-  AUXTRACE_ERROR events:          0
-      THREAD_MAP events:          1
-         CPU_MAP events:          1
-     STAT_CONFIG events:          0
-            STAT events:          0
-      STAT_ROUND events:          0
-    EVENT_UPDATE events:          0
-       TIME_CONV events:          1
-         FEATURE events:          0
+Thus this should not happen.
 
-It's pretty clear at a glance that LOST_SAMPLES is present but zero.
+Basically, the RQ's util_est is the sum of the RUNNABLE tasks's
+util_est at their enqueue time... which has been update at their last
+dequeue time, hence the usage of name "dequeued" for both tasks and
+rqs.
 
-The original output can still be gotten via:
+Does it make sense now?
 
-  fomalhaut:~> perf report --stat | grep -vw 0
+-- 
+#include <best/regards.h>
 
-  Aggregated stats:
-           TOTAL events:     495984
-            MMAP events:         85
-            COMM events:       3389
-            EXIT events:       1605
-        THROTTLE events:          2
-      UNTHROTTLE events:          2
-            FORK events:       3377
-          SAMPLE events:     472629
-           MMAP2 events:      14753
-  FINISHED_ROUND events:        139
-      THREAD_MAP events:          1
-         CPU_MAP events:          1
-       TIME_CONV events:          1
-
-So I don't think there's any real loss in functionality.
-
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- tools/perf/ui/stdio/hist.c |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-Index: linux/tools/perf/ui/stdio/hist.c
-===================================================================
---- linux.orig/tools/perf/ui/stdio/hist.c
-+++ linux/tools/perf/ui/stdio/hist.c
-@@ -840,15 +840,11 @@ size_t events_stats__fprintf(struct even
- 	for (i = 0; i < PERF_RECORD_HEADER_MAX; ++i) {
- 		const char *name;
- 
--		if (stats->nr_events[i] == 0)
--			continue;
--
- 		name = perf_event__name(i);
- 		if (!strcmp(name, "UNKNOWN"))
- 			continue;
- 
--		ret += fprintf(fp, "%16s events: %10d\n", name,
--			       stats->nr_events[i]);
-+		ret += fprintf(fp, "%16s events: %10d\n", name, stats->nr_events[i]);
- 	}
- 
- 	return ret;
+Patrick Bellasi
