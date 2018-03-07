@@ -1,62 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933939AbeCGQHF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:07:05 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38809 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933479AbeCGQHB (ORCPT
+        id S933989AbeCGQHi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:07:38 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:35077 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933479AbeCGQHh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:07:01 -0500
-X-Google-Smtp-Source: AG47ELuF/g7KaNbHUvylgbYbiIJvWwer9draxkUkBUlA7maxQIQT6cOkqfJP+7pkrho724vsM+HpNQ==
-Date: Wed, 7 Mar 2018 16:06:58 +0000
+        Wed, 7 Mar 2018 11:07:37 -0500
+X-Google-Smtp-Source: AG47ELu6lck0RWjpWYrwCikU7MA2uEQPwmYYG1jHHeC+eod9SOLZvV7rz2mLkRQPl9D+luLoOKAltA==
+Date: Wed, 7 Mar 2018 16:07:33 +0000
 From: Lee Jones <lee.jones@linaro.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: groeck@chromium.org, andy.shevchenko@gmail.com, kernel@collabora.com,
-        gwendal@chromium.org, linux-kernel@vger.kernel.org,
-        Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH v3 8/8] mfd: cros_ec_i2c: moving the system sleep pm ops
- to late
-Message-ID: <20180307160658.eezwydvv44oruw32@dell>
-References: <20180226102606.15093-1-enric.balletbo@collabora.com>
- <20180226102606.15093-9-enric.balletbo@collabora.com>
+To: Wenkai Du <wenkai.du@intel.com>
+Cc: Benson Leung <bleung@chromium.org>, linux-kernel@vger.kernel.org,
+        Archana Patni <archana.patni@intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH] Revert "mfd: cros_ec: Add ACPI GPE handler for LID0
+ devices"
+Message-ID: <20180307160733.6p2oaon4ducz3f6r@dell>
+References: <20180222213052.126692-1-wenkai.du@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180226102606.15093-9-enric.balletbo@collabora.com>
+In-Reply-To: <20180222213052.126692-1-wenkai.du@intel.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Feb 2018, Enric Balletbo i Serra wrote:
+On Thu, 22 Feb 2018, Wenkai Du wrote:
 
-> From: Joseph Lo <josephl@nvidia.com>
+> This reverts commit e04653a9dcf4d98defe2149c885382e5cc72082f.
 > 
-> The cros_ec_i2c driver is still active after it had suspended or before it
-> resumes. Besides that, it also tried to transfer data even after the I2C
-> host had been suspended. This will lead the system to crash.
+> It is no longer needed to install Chrome EC GPE handler to have
+> GPE enabled in suspend to idle path. It is found that with this
+> handler installed, EC wake up doesn't work because default EC
+> event handler that can wake up system is not getting called.
 > 
-> During the test, we also observe that the EC needs to be resumed earlier
-> due to some status polling from the EC FW (e.g. battery status). So we
-> move the PM ops to late stage to make it work normally.
-> 
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: Wenkai Du <wenkai.du@intel.com>
 > ---
-> 
-> Changes in v3:
-> - [8/8] Add static to cros_ec_i2c_pm_ops.
-> - [8/8] Add the Reviewed-by Andy Shevchenko.
-> 
-> Changes in v2:
-> - [8/8] This patch is new in this series replacing [5/6] of v1.
-> 
->  drivers/mfd/cros_ec_i2c.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>  drivers/mfd/Makefile           |   1 -
+>  drivers/mfd/cros_ec.c          |  15 ++----
+>  drivers/mfd/cros_ec_acpi_gpe.c | 103 -----------------------------------------
+>  include/linux/mfd/cros_ec.h    |  18 -------
+>  4 files changed, 3 insertions(+), 134 deletions(-)
+>  delete mode 100644 drivers/mfd/cros_ec_acpi_gpe.c
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Applied, thanks.
 
 -- 
 Lee Jones
