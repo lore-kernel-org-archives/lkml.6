@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvCHeOna3d6zCAb65Oifdt1lrFAHBNNG2dgbWrlr1fMXGtc7WWk/xLZIQJfJckVeb72C2Bo
-ARC-Seal: i=1; a=rsa-sha256; t=1520451826; cv=none;
+X-Google-Smtp-Source: AG47ELvL4SsFVvlfKZqoOxb5zfSm6XwTi3lKwcm2u5mRaLmMYiL/DPGupaQjx2TImRi7fyuP7Xjy
+ARC-Seal: i=1; a=rsa-sha256; t=1520451824; cv=none;
         d=google.com; s=arc-20160816;
-        b=aYNE8MsSsfWgMc/x/WZIbOXnpqL713V5+QlfCbbUVLEY7Cc8uSweDbPpkxpsnbpacJ
-         LniihXNXjvnny5CFuDqzhmVO2WK6Q1232quvQ3hrd8bIYXBd5HBCMUOZClTesQypvZ6p
-         r1OdikCFqiAWTfKVL8/0hmFEZnVkzqwYUgLBiiiiKX3CM5ZTh8GpBVWO4TCWcaEX4YPz
-         /hbI276CZYIlAbHEgUYO7MDmsGy8bDTHMxrdVorZ+zQM2guKbU/lESrL71lIK2CiHTHH
-         TZ2yWipkMlPol8KwEVWR5qWDmmRtnnKGXvs1/McLCjK5CWiCVEJ34dNOSXcbtF5QwGtQ
-         Y8UQ==
+        b=rP9DXdcR2/X6Xu/lDFzsACiq2fzREesUPNI40mrlsQDJqpO9+KAsxPfWAN9iKO2Y1P
+         7YKoUKa0adhjbA7aAMblIy1S8ExrmHENrFY/W9wRAfVbHzvhLmAxtNV+kmDbPJa7GNKq
+         lI8bacjDzxOXtBiWcP4EZgEyPONqs/cWeDuKMynZ5FY6t9XKvr8ZIvZdNC7PnFY6VM5d
+         p8uv5+IRfE0kb6og7PbdOyDeCnz6h/sUb0bt+d2QO+79ZN8kyGyUkioI7JJ/jGuXIRNm
+         dUKFAl8nXVO/XxAic/q7sO1NlrZSk+MGQtA/9qoL+GLPlcdtN7XUpqjNtZvDDcNhePrg
+         RSAg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=B44WBYwN23NoMwWyyKnj0MhlGMPaey3O1x1oj5brrTA=;
-        b=oe/4/ZX4wzBnVJTUPUjKlh0LkMaTELmVSYZediKaF4CxyZR7VXFa49Ie8XkBjrT0YR
-         6LIaXlsthCvn0Zh4VotguIE6e/LhXJp9QBNstFocONcx/DWOHBYPe4iagguT5IhLfSG4
-         6wuBjl334rGG9ComD1MLF61U+I0qQPNZw2l8hn3ACuDDmJEQRICkC45nTLPTDCd6Ln+I
-         /WMVGkbLBQjYoD/dkTMf39x6yS47YAhTUCgWBoXNE1bB0ojc3Re8pGZ0kT25UtnD+AyQ
-         hT3wDeAgSz7+vVX9WriJsyvjSNbXnqh/RPCloNqm5WhzaA8asRBqMMJcp1uBKvLbVlwY
-         UmCQ==
+        bh=FmaiPhXf+XRn8T2HJb+v+fLRFqPI8gl3Nu/8QNf4cZQ=;
+        b=NGIRLEyaZxf4oqGu0jwz89/T10aagndrsBnL9Kzq7TIquH/ira3/c4zsJ62Cf/wcCt
+         FBzKb2iHf+N8uI0OPfrX1ACam/2s0Vx2hN7QSjFT0ZoIvy8ZswSTLe6J0an03+WANok9
+         p7CC2MWtV1eEepbYSufXpbwl6o/i9makTMhvMKRFbt2qWch6r/1yXg1SMU4j0TTZIgu9
+         CLRz1vkH5IQUJ6iajsgVH2tjIsjSXUFgLCKcuK3mgXTlzg+BGenM+qFbQj+1xXtcCVrB
+         emTAE5fnxMtFciJKkAS4DPFC8/jUEgfQg52XhbbEy3tlbR0zlbASEjtH/TyvNU7er0bs
+         HRmQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christoffer Dall <christoffer.dall@linaro.org>,
-	Jason Wang <jasowang@redhat.com>,
+	Soheil Hassas Yeganeh <soheil@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Yuchung Cheng <ycheng@google.com>,
+	Neal Cardwell <ncardwell@google.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 076/122] tuntap: correctly add the missing XDP flush
-Date: Wed,  7 Mar 2018 11:38:08 -0800
-Message-Id: <20180307191740.280849456@linuxfoundation.org>
+Subject: [PATCH 4.15 075/122] tcp: purge write queue upon RST
+Date: Wed,  7 Mar 2018 11:38:07 -0800
+Message-Id: <20180307191740.121639703@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309294599371891?=
-X-GMAIL-MSGID: =?utf-8?q?1594309294599371891?=
+X-GMAIL-THRID: =?utf-8?q?1594309292043056777?=
+X-GMAIL-MSGID: =?utf-8?q?1594309292043056777?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,35 +52,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Soheil Hassas Yeganeh <soheil@google.com>
 
 
-[ Upstream commit 1bb4f2e868a2891ab8bc668b8173d6ccb8c4ce6f ]
+[ Upstream commit a27fd7a8ed3856faaf5a2ff1c8c5f00c0667aaa0 ]
 
-We don't flush batched XDP packets through xdp_do_flush_map(), this
-will cause packets stall at TX queue. Consider we don't do XDP on NAPI
-poll(), the only possible fix is to call xdp_do_flush_map()
-immediately after xdp_do_redirect().
+When the connection is reset, there is no point in
+keeping the packets on the write queue until the connection
+is closed.
 
-Note, this in fact won't try to batch packets through devmap, we could
-address in the future.
+RFC 793 (page 70) and RFC 793-bis (page 64) both suggest
+purging the write queue upon RST:
+https://tools.ietf.org/html/draft-ietf-tcpm-rfc793bis-07
 
-Reported-by: Christoffer Dall <christoffer.dall@linaro.org>
-Fixes: 761876c857cb ("tap: XDP support")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
+Moreover, this is essential for a correct MSG_ZEROCOPY
+implementation, because userspace cannot call close(fd)
+before receiving zerocopy signals even when the connection
+is reset.
+
+Fixes: f214f915e7db ("tcp: enable MSG_ZEROCOPY")
+Signed-off-by: Soheil Hassas Yeganeh <soheil@google.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Yuchung Cheng <ycheng@google.com>
+Signed-off-by: Neal Cardwell <ncardwell@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/tun.c |    1 +
+ net/ipv4/tcp_input.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -1490,6 +1490,7 @@ static struct sk_buff *tun_build_skb(str
- 			get_page(alloc_frag->page);
- 			alloc_frag->offset += buflen;
- 			err = xdp_do_redirect(tun->dev, &xdp, xdp_prog);
-+			xdp_do_flush_map();
- 			if (err)
- 				goto err_redirect;
- 			rcu_read_unlock();
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -3988,6 +3988,7 @@ void tcp_reset(struct sock *sk)
+ 	/* This barrier is coupled with smp_rmb() in tcp_poll() */
+ 	smp_wmb();
+ 
++	tcp_write_queue_purge(sk);
+ 	tcp_done(sk);
+ 
+ 	if (!sock_flag(sk, SOCK_DEAD))
