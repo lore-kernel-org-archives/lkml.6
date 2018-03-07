@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvpBPYtNq9BVEpsRHwnLLs3DBYPWpvvr/pM29+0QZA/W9AkGIWyouF/TvsGlFML0UeWmbNT
-ARC-Seal: i=1; a=rsa-sha256; t=1520451885; cv=none;
+X-Google-Smtp-Source: AG47ELslrQFP38uvpBrWkdWz0B2E5LhVnUBqtF3RHB5iBCYugszlf6JyOTSj3VJGB4I7bMdZx9G1
+ARC-Seal: i=1; a=rsa-sha256; t=1520451880; cv=none;
         d=google.com; s=arc-20160816;
-        b=qc/EJAj9hKMaSNVL1q8TrVgZPvnu9LdSQ0FcHW5tp5Eb/tYOyoOD/h4xrxgBFyEoBB
-         JO8X3pzX+IVujjXOy9pQolaE+rYXmCm60nL4/O5yGpBhL73ofSJKtEuVy9nPYNueRcTx
-         TMdMpIu1hOaJcUejNbBMUVcc5zFsGv5J2S2AgIOWQz98SakpoK6bvYnwqXQq+GlUM2wG
-         W8VUQpZ7InwGMKdUNlVswsv9CYdvZp/hvch7wVEom2qifq7saY+w9FQlMnSsb+dDwUhc
-         sRgRWsFkG4dfyb9hBAKT//LoH++NgOLewP7/JJB+K8Nd1TSz+v5vkSD+YpkrvDoeCfl6
-         YCtA==
+        b=FnT0VEoNU3eRH5z80sPrmsepT+vjhFGa9Lq94JIWTH2hPO6UC07Y9MhHcpmdLV7Fb1
+         6QZlPQZNAi5QYcJSOBhqHrFHBABlmeCIKRbi+GD1YHgSLEXZTIkt4+Iz6sRUH/MrtzwT
+         ZXMiQWQRM0pctn8Y/ia+ByIbHUDlhL/rs4rAhOTh+pMU/EV5mFmE17VBdnVrKCfzCxBK
+         MeVge1ryuOSu+Z52RjQ2jZqFD+17HUnSsGzPMH6bgjpgT/4tYtSniE6IITrMKQ56mJP1
+         tG+qvYDiDqmZfRMXpdaOGXYBMb25bn2gwVK4xArPw3O3mXkAXk6W/pesCTeLOetFpmu0
+         VTLg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=UAcFsXJKarPN4jzCImMei86s06PxzTOfTjssh2ixrZU=;
-        b=qoVsMnLkuF7yy981WFFaaY1a1et8k2Q8BiYRKIPQ6IudyQZi8Z3OWlII3Oi8qIo8TM
-         svagmoUNXZAz2vMAELtOVp4v12k/4u8sJQUt+X1FWMNHbY1OJO1okiUSmrUM0WAgjm6k
-         qXLpFzCGkKOVYVK0Q64Cdpk+INzWhhlHmH/Yq8h1nsIYRyNYJX2tvaGBO0jfdk20K42b
-         Kn0xhPiB9y0Swno044slHXBmkhqH6daP8s7usl+XTqFNizDhEu7G7l16SVaEi0oTOFbh
-         abKpYSaw/9zJHk9M8BXzD8stf6R+wAscl0uHg4llDGk8na5gpUmFM7yRpleV04vmmpuT
-         1cOg==
+        bh=p/QXb8NcE9HUzzbAKxS9aJds3gWcLERFV4Rbj7cXD4c=;
+        b=azUkRR6biIHViDvQsJk2+FpimagIaeDolEZUigzJiPv1GioWp+wmMgqybuG7CKUhNj
+         QGMAGymX5YIhPHEYIxCYValxjBb2DMf4bTt/g0shM69PsTuj3ADVeQL0Ryk3NoQ4xiEg
+         /fh0Zs4+KHOPFXhHucWvMjdbGv+64m03sLWwT8R8T5bszbqo27t8URcrUUknJuVia8aB
+         phB3OkMr1dHS72nZQ0ZYWYlRyE9lAD3XROigINj3C5/z/ObF8OcTrm9Q0He2P8CjN/0V
+         LJnb2WIwwRx34MmBRDSk2E+qk8IgKAjxyS8EzpH3ycLEU2Apa3Oh5NGt6TMqLsoB0hG1
+         rFtg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	James Bottomley <James.Bottomley@HansenPartnership.com>,
 	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
 	James Morris <james.morris@microsoft.com>
-Subject: [PATCH 4.14 006/110] tpm_i2c_nuvoton: fix potential buffer overruns caused by bit glitches on the bus
-Date: Wed,  7 Mar 2018 11:37:49 -0800
-Message-Id: <20180307191040.594935763@linuxfoundation.org>
+Subject: [PATCH 4.14 004/110] tpm: fix potential buffer overruns caused by bit glitches on the bus
+Date: Wed,  7 Mar 2018 11:37:47 -0800
+Message-Id: <20180307191040.380529457@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309042312731785?=
-X-GMAIL-MSGID: =?utf-8?q?1594309356253103818?=
+X-GMAIL-THRID: =?utf-8?q?1594309110993937114?=
+X-GMAIL-MSGID: =?utf-8?q?1594309351450508853?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,49 +53,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Jeremy Boone <jeremy.boone@nccgroup.trust>
 
-commit f9d4d9b5a5ef2f017bc344fb65a58a902517173b upstream.
+commit 3be23274755ee85771270a23af7691dc9b3a95db upstream.
 
 Discrete TPMs are often connected over slow serial buses which, on
-some platforms, can have glitches causing bit flips.  In all the
-driver _recv() functions, we need to use a u32 to unmarshal the
-response size, otherwise a bit flip of the 31st bit would cause the
-expected variable to go negative, which would then try to read a huge
-amount of data.  Also sanity check that the expected amount of data is
-large enough for the TPM header.
+some platforms, can have glitches causing bit flips.  If a bit does
+flip it could cause an overrun if it's in one of the size parameters,
+so sanity check that we're not overrunning the provided buffer when
+doing a memcpy().
 
 Signed-off-by: Jeremy Boone <jeremy.boone@nccgroup.trust>
 Cc: stable@vger.kernel.org
 Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm_i2c_nuvoton.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/char/tpm/tpm-interface.c |    4 ++++
+ drivers/char/tpm/tpm2-cmd.c      |    4 ++++
+ 2 files changed, 8 insertions(+)
 
---- a/drivers/char/tpm/tpm_i2c_nuvoton.c
-+++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
-@@ -281,7 +281,11 @@ static int i2c_nuvoton_recv(struct tpm_c
- 	struct device *dev = chip->dev.parent;
- 	struct i2c_client *client = to_i2c_client(dev);
- 	s32 rc;
--	int expected, status, burst_count, retries, size = 0;
-+	int status;
-+	int burst_count;
-+	int retries;
-+	int size = 0;
-+	u32 expected;
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -1228,6 +1228,10 @@ int tpm_get_random(u32 chip_num, u8 *out
+ 			break;
  
- 	if (count < TPM_HEADER_SIZE) {
- 		i2c_nuvoton_ready(chip);    /* return to idle */
-@@ -323,7 +327,7 @@ static int i2c_nuvoton_recv(struct tpm_c
- 		 * to machine native
- 		 */
- 		expected = be32_to_cpu(*(__be32 *) (buf + 2));
--		if (expected > count) {
-+		if (expected > count || expected < size) {
- 			dev_err(dev, "%s() expected > count\n", __func__);
- 			size = -EIO;
- 			continue;
+ 		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
++		if (recd > num_bytes) {
++			total = -EFAULT;
++			break;
++		}
+ 
+ 		rlength = be32_to_cpu(tpm_cmd.header.out.length);
+ 		if (rlength < offsetof(struct tpm_getrandom_out, rng_data) +
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -683,6 +683,10 @@ static int tpm2_unseal_cmd(struct tpm_ch
+ 	if (!rc) {
+ 		data_len = be16_to_cpup(
+ 			(__be16 *) &buf.data[TPM_HEADER_SIZE + 4]);
++		if (data_len < MIN_KEY_SIZE ||  data_len > MAX_KEY_SIZE + 1) {
++			rc = -EFAULT;
++			goto out;
++		}
+ 
+ 		rlength = be32_to_cpu(((struct tpm2_cmd *)&buf)
+ 					->header.out.length);
