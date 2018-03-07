@@ -1,76 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754446AbeCGL6a convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 06:58:30 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:55907 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751241AbeCGL61 (ORCPT
+        id S1754433AbeCGMAw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 07:00:52 -0500
+Received: from mail-wr0-f169.google.com ([209.85.128.169]:42107 "EHLO
+        mail-wr0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754353AbeCGMAt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 06:58:27 -0500
-Date: Wed, 7 Mar 2018 12:58:07 +0100 (CET)
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: linus.walleij@linaro.org, Matheus Castello <matheus@castello.eng.br>
-Cc: eric@anholt.net, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Message-ID: <821312841.275581.1520423887935@email.1und1.de>
-In-Reply-To: <1520216960-19880-1-git-send-email-matheus@castello.eng.br>
-References: <431699005.307231.1520086916739@email.1und1.de>
- <1520216960-19880-1-git-send-email-matheus@castello.eng.br>
-Subject: Re: [PATCH v2 0/3] pinctrl: bcm2835: Add brcm,level property
+        Wed, 7 Mar 2018 07:00:49 -0500
+X-Google-Smtp-Source: AG47ELvANjeImyhqFvS36qujfaibQwUD0gQZAFjTzxEgQovH9/+6778/hXhY8FZAbqXFSyUUwHj7ag==
+Subject: Re: Regression from efi: call get_event_log before ExitBootServices
+To: Hans de Goede <hdegoede@redhat.com>,
+        Thiebaud Weksteen <tweek@google.com>, jeremy@jcline.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
+ <CA+zpnLdSyuyKjJEH3Oowmha2mF0B-j5b4A7CLuXXY7RH47SiFQ@mail.gmail.com>
+ <185d1c06-c379-ee7d-496b-2f4e49f8c9a3@redhat.com>
+From: Javier Martinez Canillas <javierm@redhat.com>
+Message-ID: <ec9d004b-4bd1-896f-b132-9fd84cac47eb@redhat.com>
+Date: Wed, 7 Mar 2018 13:00:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev22
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K0:XWhppvzj83o3fRpzwIUGtnj4ruwEitjkFmnyVzPAnElFEyrQ43F
- +ryLlqUEny1VLXijJA/wsmBPSAk+x7u1aVy1Uxi1r/sav7suoCxdd6MmvaoC+sDr/nwl5xG
- OTJj0vGbRlGGqggH7dbfFFmD5EFz3LsdFalbu/Cg2YL8z4hc2AJIByvWfSEMVzANI/bAB2q
- zJx85ZcPs8JQlmZ632hxg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:hP+TZK582jc=:3fdLT3h8rvoFFcjn8cvvNC
- eJNfkCErerY/69C7YV9d3CzQarnSInwr4+o2q5EtvapBuB4ac6jffwTtpArOEacObdFWTIm9l
- Wg5sU151E9x4PliXLaJfedl2h9yzVmGSI/fFmf3lp7t0QUZ1nRmcZljtXE6o5TsDHawuv0LUD
- FnGQefY9MPaD9SvEtuIg8pl6YIi/gIffuBP8j/cNSU7bvJlHxD1tgJ6qqTYJJNUI9TkjBeBNY
- LW4ax9GpyNsaXGqg+7tWe7GvxALBcgPYzdGccWvCSBm+L5oIIC0O6wZadUO0PE9N84uPoJVC0
- RUAnaKEjQAkbM580QADc/ohDBOk+lkeX31Q2Dwgg524GJQx5uwu07duaXw5wK3wjfeI+ZsuaB
- pPQRFWhHKnIa/eTV5sjFDzQuVF6ZNdC1OYKb7jzXRqQoXnyit9I5Lu36TOmv0cw6Fdw68pczt
- ALEJcis9Zk6iR2z4jXfSlUyGQn+Xpc41MIYNcwre2UsR+1j+YmDWP09pFNHHaLfJ+S+zmjNPb
- OsY4s3LqcfKRL/Ee76lgQSA6EiT3kb2CtB0ctnFqO6kJ7ib6HGCDpLC2LYrsCySuZvK0NZ2gZ
- CT5bNeINxGDxKu6YbNmdEY7QKhsmDAcoJqNufY4Xb7nuQx0LARG8h17IExihMfdGcbs7W+nBE
- fehfeShT8aQCs28RoUPKuVxhD93dNhaBTSrbNgPCIVD1MUBFIF+k5qI5wgEM/plxfVJtH/d/O
- pjjPrHccKMixLor+6m0d9jmDoPJRyyYhtgafbuwMj1rwdANLlHN6BP42InM=
+In-Reply-To: <185d1c06-c379-ee7d-496b-2f4e49f8c9a3@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matheus,
+Hi Hans,
 
-> Matheus Castello <matheus@castello.eng.br> hat am 5. März 2018 um 03:29 geschrieben:
+On 03/07/2018 12:16 PM, Hans de Goede wrote:
+> Hi,
 > 
+> On 07-03-18 09:41, Thiebaud Weksteen wrote:
+>> Hi,
+>>
+>> Thanks for testing and sending this report! This patch relies heavily on
+>> the functions exposed by the firmware. My first guess would be that some of
+>> these may not be implemented correctly by the manufacturer.
+>>
+>> Could you share more information on this specific device?
 > 
-> Hi Linus and Stefan,
+> I've the same device as Jeremy, but I just tried a 4.16-rc3 kernel
+> and I'm not seeing this problem, BIOS settings all default (I loaded
+> the BIOS defaults to make sure).
 > 
-> thanks for the tips.
+>> Do you have any link to the manufacturer website (I found [1] but it is
+>> based on an ARM CPU)?
+>> Do you have the option to update your firmware? Is a copy of the firmware
+>> available from the manufacturer?
 > 
-> This series adds support for generic binding for pinctrl bcm2835 driver,
-> and add the code for set output buffer of a pin using the output-low and
-> output-high generic properties.
+> This is a really cheap Windows tablet which was given away for free in
+> the Netherlands with some home-schooling language courses, or something
+> similar.
 > 
-> Tested on Raspberry Pi Zero W, based on bcm2835 SoC.
+> Both mine and Jeremy tablets come from a website in the Netherlands
+> where people can buy/sell used goods.
 > 
-> Matheus Castello (3):
-
-looks like you missed the changes to the dt binding. Please also add Rob Herring and Mark Rutland to CC. We need a ACK from them.
-
->   pinctrl: bcm2835: switch to GENERIC_PINCONF
->   pinctrl: bcm2835: Add support for generic pinctrl binding
->   pinctrl: bcm2835: Add support for output-low output-high properties
+> Most relevant for this discussion I guess is that this device is
+> based on a Bay Trail Z3735G SoC, on which according to the internets:
+> https://embedded.communities.intel.com/thread/7868
 > 
->  drivers/pinctrl/bcm/Kconfig           |  1 +
->  drivers/pinctrl/bcm/pinctrl-bcm2835.c | 88 +++++++++++++++++++++++------------
->  2 files changed, 60 insertions(+), 29 deletions(-)
+> The TPM 2.0 it contains is implemented as part of the TXE firmware.
 > 
-> --
-> 2.7.4
+> Since I cannot reproduce I'm thinking that maybe Jeremy actually has
+> some log messages in the TPM log, where as mine is empty.  Is there a
+> way to make sure some messages are in there?
 >
+
+The UEFI firmware does some measurements and so does shim. So you should
+have some event logs. What version of shim are you using? And also would
+be good to know if it's the same shim version that Jeremy is using.
+
+> Regards,
+> 
+> Hans
+> 
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Software Engineer - Desktop Hardware Enablement
+Red Hat
