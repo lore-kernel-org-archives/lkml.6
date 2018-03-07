@@ -1,80 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754583AbeCGS4G (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 13:56:06 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46498 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754553AbeCGS4D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 13:56:03 -0500
-Subject: Re: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>, Jiandi An <anjiandi@codeaurora.org>
-Cc: dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        linux-integrity@vger.kernel.org, linux-ima-devel@lists.sourceforge.net,
-        linux-ima-user@lists.sourceforge.net,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 07 Mar 2018 13:55:53 -0500
-In-Reply-To: <20180307185132.GA30102@ziepe.ca>
-References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
-         <20180307185132.GA30102@ziepe.ca>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18030718-0008-0000-0000-000004D90961
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030718-0009-0000-0000-00001E6C2618
-Message-Id: <1520448953.10396.565.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-07_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803070215
+        id S933351AbeCGS5J (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 13:57:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39896 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753934AbeCGS5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 13:57:08 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 542E320685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Wed, 7 Mar 2018 15:56:59 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH 05/19] perf tools: Add refcnt into struct mem_info
+Message-ID: <20180307185659.GP3701@kernel.org>
+References: <20180307155020.32613-1-jolsa@kernel.org>
+ <20180307155020.32613-6-jolsa@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180307155020.32613-6-jolsa@kernel.org>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-03-07 at 11:51 -0700, Jason Gunthorpe wrote:
-> On Tue, Mar 06, 2018 at 11:26:26PM -0600, Jiandi An wrote:
-> > TPM_CRB driver is the TPM support for ARM64.  If it
-> > is built as module, TPM chip is registered after IMA
-> > init.  tpm_pcr_read() in IMA driver would fail and
-> > display the following message even though eventually
-> > there is TPM chip on the system:
-> > 
-> > ima: No TPM chip found, activating TPM-bypass! (rc=-19)
-> > 
-> > Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is
-> > built in kernel and initializes before IMA driver.
-> > 
-> > Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
-> >  security/integrity/ima/Kconfig | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-> > index 35ef693..6a8f677 100644
-> > +++ b/security/integrity/ima/Kconfig
-> > @@ -10,6 +10,7 @@ config IMA
-> >  	select CRYPTO_HASH_INFO
-> >  	select TCG_TPM if HAS_IOMEM && !UML
-> >  	select TCG_TIS if TCG_TPM && X86
-> > +	select TCG_CRB if TCG_TPM && ACPI
-> >  	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
-> >  	help
-> >  	  The Trusted Computing Group(TCG) runtime Integrity
-> 
-> This seems really weird, why are any specific TPM drivers linked to
-> IMA config, we have lots of drivers..
-> 
-> I don't think I've ever seen this pattern in Kconfig before?
+Em Wed, Mar 07, 2018 at 04:50:06PM +0100, Jiri Olsa escreveu:
+> It's passed along several hists entries in --hierarchy mode,
+> so it's better we keep track of it.
 
-As you've seen by the current discussions, the TPM driver needs to be
-initialized prior to IMA.  Otherwise IMA goes into TPM-bypass mode.
- That implies that the TPM must be builtin to the kernel, and not as a
-kernel module.
+I like this, but you called it...
+ 
+> +
+> +struct mem_info *mem_info__aloc(void)
+> +{
+> +	struct mem_info *mi = zalloc(sizeof(*mi));
+> +
+> +	if (mi)
+> +		refcount_set(&mi->refcnt, 1);
+> +	return mi;
 
-Mimi
+"aloc" with just one 'l', so I have to fix the typo, while at it I'll
+use what is used elsewhere for this operation, i.e.
+
+struct mem_info *mem_info__new(void);
+
+:-)
+
+- Arnaldo
