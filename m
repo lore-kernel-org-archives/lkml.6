@@ -1,65 +1,120 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELtPY61T2mwhDckn5sCLO5IyphKtfAfWetLx3Hee7gr56jmvyCIL5pCT9QDZ1aCL9jYODPCW
-ARC-Seal: i=1; a=rsa-sha256; t=1520452822; cv=none;
-        d=google.com; s=arc-20160816;
-        b=CDYZN3tiS4YEILhwPYXVfqJoco2G4XnXPTd+yVK6B5MT1akUdtr6c40VAVWb9icmha
-         mNxr806OldC4jYaWyQag8WEUQsg+qZgbotgPxIrP5Tbz3wLSnRWQa36teLEiDw3/8mBe
-         rEU4uU4D0ekDst8tGcWfP1tYC5BK1/jwdTd8FHx3+ysRYaSxuA5cYg7IQHwWaCPUzg5h
-         AGsE+MPGYo+zyW3FPUXdnso88HX5WCYOQ37e3VTD5HHGZHfpeD74ASqscD/h5hmfBB88
-         Cu/gZp4KbauvBbZg1ICAFA/zvrBVe6psub8WXozMmkRiF3+O9UIBd6c76/reU/EGTwit
-         F6aQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding:mime-version
-         :references:in-reply-to:from:subject:cc:to:message-id:date
-         :arc-authentication-results;
-        bh=TckQ75j6PC4H0jR1WVEbtlX2jxzMXdWRSGsiJ/uIo00=;
-        b=mzKKoqsO19oKV7tpNSQX/yAiybdc62ktR5MbeGryDYgmDixp1r4HkljZit9LW0WURI
-         TDgOZLzfdJrTYBJwLvjJzaRXWCHLmkLxOmmsfN8U2O0VBPzPkG6DmLdIoMt1UifXU8Pa
-         aFiPoPGkipcHdW7+3kjvoQF7yCPi1rVi3A2U9iE+/idgTlmRH8JE0XjUI9Bk0xqddZRc
-         ako780LKuwWvfL8m9Gd6hlJhoagIpQZVLv35nI3Pq4MXu2l1VVIbHv5X4HQ5UVFv1aOb
-         xoRzUflEZyQ8/qebTtHKh78tFGOJREKQ6v/rvJ0lftnROfwwOznpKjP3+fgrIIWjTooP
-         RUGg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964895AbeCGT7m (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Wed, 7 Mar 2018 14:59:42 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:56424 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965521AbeCGT7b (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Wed, 7 Mar 2018 14:59:31 -0500
-Date: Wed, 07 Mar 2018 14:59:28 -0500 (EST)
-Message-Id: <20180307.145928.456070038633384401.davem@davemloft.net>
-To: shuah@kernel.org
-Cc: anders.roxell@linaro.org, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shuahkh@osg.samsung.com
-Subject: Re: [PATCH] selftest: net: reuseport_bpf_numa: don't fail if no
- numa support
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1a84294d-babc-e4ff-1e2f-9265450fee8f@kernel.org>
-References: <20180306151004.31336-1-anders.roxell@linaro.org>
-        <20180307.132500.40232199631094354.davem@davemloft.net>
-        <1a84294d-babc-e4ff-1e2f-9265450fee8f@kernel.org>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2240270-1520401117-2-16724838797351090988
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES dasven, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520401116; b=F3Fr9FhFs2iW31YeWZIPiEatGrvnNq/awrEeEa7A8Q+4bn0
+    UuV74BsOXtYEmkNkt5jFSEO0oIHRSDthtHrRK0qtNBmfCqHQU55v2sd5jhcKCYlc
+    Y9S7sVF7nh7GnxmeMTWH68YMrFDPJ0sGeZknM8Ovs4o7ynFO513IrrDK9Xr7O85z
+    QQXHXJMGIauzDpZclEFP5xQTr4mmLe8w26822I+vdRHzzl9IDV7F+S7m/uGnoEUZ
+    Hsck24DA6mds59h+QrevlceTzDW9P+EPA/QcRIohPtTOwN2IHzQ/NUEQTCimzeLF
+    GGd+Ps/dyAZ3CWcdRrQbF2GJ1Pz4zG00kbte3VQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520401116; bh=+
+    TTLl0RNnRMjBn25xkvD+AD+5FGzblqw6TUudyoihX4=; b=bEv5xE4yxwbCz9e/S
+    xyznEqz3QJdzHaC76D7IAVLTRya2PnltWmf8511UR4y9yfGtD3psUCANSoL+IZZA
+    YUM025KSOfqjAL4WACPpZXH5Kmm83wpPBj5LqbXiyAnJriL5N95LazN2QRfF2ZjE
+    jevZtI8vuTEfNMAtgukYcRZiSFqadQbRAXo7fQDCM7kTzdnl3yw3VtebA9KSPv4s
+    7asBsd6LISqRl8Ty74aPlxuYJ7EV6JLwb47b9Ub2Xv6JyEW/WiGw8Mlg4RoaRvvf
+    EFJkHOIZBhB/MHmW39C2RcOx49LTe9lsUVGbtP3RmfcjTl9PHiQLq88HMVBe5wVU
+    dPLng==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=k6eVjshV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TJs4OwJT;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=k6eVjshV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TJs4OwJT;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELu6MtnPJk/2LI1JjgGBDhgY72HuKci82ZGDDGC3idDwchwPzeVzQc1L0F52Oi6efJi5ViunqA==
+From: hariprasath.elango@gmail.com
+To: lars@metafoo.de
+Subject: [PATCH] staging: iio: meter: Remove reduntant __func__ from debug
+ print
+Date: Wed,  7 Mar 2018 11:08:04 +0530
+Message-Id: <20180307053804.13730-1-hariprasath.elango@gmail.com>
+X-Mailer: git-send-email 2.10.0.GIT
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org,
+ Michael Hennerich <Michael.Hennerich@analog.com>, linux-iio@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
+ hariprasath.elango@gmail.com, Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+ Hartmut Knaack <knaack.h@gmx.de>, Jonathan Cameron <jic23@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594201505777703046?=
-X-GMAIL-MSGID: =?utf-8?q?1594310338657215314?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Shuah Khan <shuah@kernel.org>
-Date: Wed, 7 Mar 2018 12:51:06 -0700
+From: HariPrasath Elango <hariprasath.elango@gmail.com>
 
-> That said, I am open to adding a distinct state for skipped because
-> can't be run.
+dev_dbg includes the function name & line number by default when dynamic
+debugging is enabled. Hence__func__ is reduntant here and removed.
 
-That is what I think should happen.
+Signed-off-by: HariPrasath Elango <hariprasath.elango@gmail.com>
+---
+ drivers/staging/iio/meter/ade7758_trigger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/iio/meter/ade7758_trigger.c b/drivers/staging/iio/meter/ade7758_trigger.c
+index 1f0d1a0..da489ae 100644
+--- a/drivers/staging/iio/meter/ade7758_trigger.c
++++ b/drivers/staging/iio/meter/ade7758_trigger.c
+@@ -34,7 +34,7 @@ static int ade7758_data_rdy_trigger_set_state(struct iio_trigger *trig,
+ {
+ 	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
+ 
+-	dev_dbg(&indio_dev->dev, "%s (%d)\n", __func__, state);
++	dev_dbg(&indio_dev->dev, "(%d)\n", state);
+ 	return ade7758_set_irq(&indio_dev->dev, state);
+ }
+ 
+-- 
+2.10.0.GIT
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
