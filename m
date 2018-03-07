@@ -1,54 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934062AbeCGRpE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 12:45:04 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:54730 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933412AbeCGRpC (ORCPT
+        id S934087AbeCGRpu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 12:45:50 -0500
+Received: from sonic304-27.consmr.mail.ne1.yahoo.com ([66.163.191.153]:33154
+        "EHLO sonic304-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933478AbeCGRpp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 12:45:02 -0500
-Date: Wed, 07 Mar 2018 12:45:00 -0500 (EST)
-Message-Id: <20180307.124500.1863183408172828694.davem@davemloft.net>
-To: paul@paul-moore.com
-Cc: lucien.xin@gmail.com, sfr@canb.auug.org.au, netdev@vger.kernel.org,
-        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-        richard_c_haines@btinternet.com
-Subject: Re: linux-next: manual merge of the selinux tree with the net-next
- tree
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <CAHC9VhTUORhy1dADEza8tr4DW6gTjqxXyg0wb0cwFCRy+WRkMQ@mail.gmail.com>
-References: <CAHC9VhST6LhUj6H28Ws96EaRzkp4FN91h46iGKpd2Yk44H7Jpw@mail.gmail.com>
-        <20180307.114139.680250568317481879.davem@davemloft.net>
-        <CAHC9VhTUORhy1dADEza8tr4DW6gTjqxXyg0wb0cwFCRy+WRkMQ@mail.gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Wed, 7 Mar 2018 12:45:45 -0500
+X-YMail-OSG: xBLNtAUVM1mDi7tTkLSJJhbSuaZQeygt8Cr_CAStHizzO33mpRFzlogiH3_7rKj
+ vGserMFLw0PrqeZHqk.35J.Kl2uvKHUqQcPvgVO6LF9UO7nlbwoF_WIbqiEi.G3fNxGrLDH3F6co
+ 0_VnnVrai98P8kj.guc6cfAdQAk_CRK6uv_YQg.WSGW9cqE9Ddz8N32QUKJeRSkI9GvgJErvvJ5b
+ vqkOLIJqVOcmU4NQsSrSoRmYEiWw0TAYAHhoWkNT5YpVz408xqzSp6iBa927K8UGANBCi1Ubqt2N
+ EYCUI8NTsiCn9Jj_fq585g0rwhGH7db6FnQ_4LQYNMZq_1YaoSh38vMXC4A1UkFxEdxt4vFXBj49
+ 2XDm0eP7jUY6Gxyd5bD7_WX7fXAjfYJptKx1Ku6BHd7a6LqKqGLWwezYRtJCB6TydHZyyWsD6BuH
+ RqFThHL2z7COkBhzZHCkabDFw9x5aE23EkxXL__LZNH5H0EDRYYxKoEEMuFXGw2U71qPTy.P0aiB
+ AVOrhMsjxtG9tdnS5XNR4AfOzTZHT7SxeK.5RKku_A1I62M8-
+Subject: Re: [PATCH v4 1/3] security: Refactor LSM hooks into an array and
+ enum
+To: Sargun Dhillon <sargun@sargun.me>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: penguin-kernel@i-love.sakura.ne.jp, keescook@chromium.org,
+        igor.stoppa@huawei.com
+References: <cover.1520407240.git.sargun@sargun.me>
+ <3646ff78915fcbadbc660257d92921e5442553e0.1520407240.git.sargun@sargun.me>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <ad43c9ed-9314-1787-911a-f4b206bc5cff@schaufler-ca.com>
+Date: Wed, 7 Mar 2018 09:45:40 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <3646ff78915fcbadbc660257d92921e5442553e0.1520407240.git.sargun@sargun.me>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 7 Mar 2018 12:27:52 -0500
+On 3/6/2018 11:23 PM, Sargun Dhillon wrote:
+> This commit should have no functional change. It changes the security hook
+> list heads struct into an array. Additionally, it exposes all of the hooks
+> via an enum. This loses memory layout randomization as the enum is not
+> randomized.
 
-> I'm not sure we could have cleanly separated the core network stack
-> changes from the rest of the SELinux/SCTP enablement, regardless it's
-> a bit late at this point.  The only other thought would have been to
-> simply push Xin Long's cleanup patches until after the next merge
-> window, but that would only be worth considering if they truly were
-> just cleanup patches, and even then it doesn't seem very fair to Xin
-> Long to have to wait.
-
-I think you wanted to have more integration, rather than less.
-
-What others have done in the past, is they simply pull my networking
-tree into their's.
-
-I never rebase, ever.
-
-My tree often goes in reasonable early in the merge window.
-
-So you would only have to wait until my tree went in before
-sending your pull request.
-
-That's really the way to handle something like this.
+Please explain why you want to do this. I still dislike it.
