@@ -1,35 +1,36 @@
-Return-Path: <kernel-hardening-return-12148-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELtE55fIj1LFT1aZYIDmRPc3nwr1zsldV/2DFIlx+mNwAtCqXpzRto0S++xABWBTsU9LG8aB
-ARC-Seal: i=1; a=rsa-sha256; t=1520352352; cv=none;
+Return-Path: <kernel-hardening-return-12193-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELsu7LOtnCgzQ5j8Ny2+m3fXnASRO2GeSejw/P3uUYWmiTZmH/yqnsp5nFn5zxxZ6Of13pgB
+ARC-Seal: i=1; a=rsa-sha256; t=1520419968; cv=none;
         d=google.com; s=arc-20160816;
-        b=Q8XylSsVbBbSQO7NFOeX6L1CQ3NKTgXlGCGFG7FfuWkXzmhADVFp10ZqNcxT593mgT
-         /4t8RxkmxOpIusZDdl06fq4pXclg93Y75FAyYqjAneZp+LwOONx008mKmAqfM6neR8J2
-         GYqqqCAGKXwL+g+gF+DYUbvrW6hsxqiV7qG+QrCKij71FMSgwL8jUtj905d/wlKDj0dn
-         POYmg/ueB6295aYm380C3gng+enHSOYQEf+pVmv+1GNqf/1z7djrlDSomCwfCqSy2a2q
-         16Jyp0DQTTsvG+a9GaSgHcYAg1qEzPIb0tTD/00SrE3LCiELuFeN2XRtwzIIXSGFT+uq
-         Xj7g==
+        b=TFgoP6k8cPBSAXRkNKh47Pxyb5muQGYlGQs7dQl9aREDeOabXnlRLHchCVaNg2ynee
+         bt1vejwwjCfbo0bM4ZAUA75X81NZef73q1eZqClHEjcrRiyPLgkTwv7LlQ33vMtP8b+u
+         ZOfSERb+5a/ZyHc4Yc99srXpq6SWqQlWJcT94Qcfnie1dMg+oJuCwmqJFp+GXLRmmMn9
+         0EaJXAFvYczWdovSpl0LXOWtsa1WkouHLFvi7evtstT+aYK3Jtmwd9cGkpkkCoFcfwm+
+         aVazWdDIzdTa8Cd8IT7pqV2gzWW0g5SGiz7mgXizr6evPyH3i5XNwSyU/Fv++QVmHWlT
+         K9iA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+         :user-agent:date:message-id:references:cc:to:from:subject
          :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
          :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=YDTJC6WUKwAY53JzA8e8qG8563JPhMdYYc5N5vfgN5g=;
-        b=eRNU6PR0Kf5872dtnZ4eT2dDYtktYBvegf3J447UQ+ob7bHvatPUeu/ciNfCRP9yFy
-         qRiYAJvsgEgEK4fi89tIAVU+dG136NabcTy25aFXljHzW2x1uU9fyjt6X0WPfm8SCwmz
-         R4s60wh6/lMyFSS81HI88ySrkcbv06oeOJ7LyG5/VErkayQRu8ZXNYIM2t/snkSJ5uKv
-         ZVfZS2es+ti1CEtEmx5kafF7GfVjcFHrqzHzay4k9BNKtk6KL6zGKsJgYEvE+N7vAEgx
-         MBDWFqWTskVQVKo2kGhJjwqg0awCAaj3ScEDueCRGPAJinEXp6aKgah9RQZFY/LAAJD1
-         uEKA==
+        bh=euuOf8uDTa5EENVWavXntgCEAFPMvLY3RoEE8U/khJk=;
+        b=ZwhlmSCMMNxByuAgvCgbibYKqRa/OkXPK1ZOjTCdAs4G/Loya72HbiF0OUnn7CZInf
+         vQ+jC5hBYdLZ/S6BvWBCnvoVoqlloYcINpavR2Hvk9Z1wq9ug3w0s1CpPKpBDvJjXtaa
+         8Y6JQdptLUPpu+HxSoYNhU06+d5p7gXXIgFPoJz1WYqggvz7aHTARxt++ioGP0KcryBu
+         KkjqOaL7+1mPQVJz2Hwljtfu7jEwr2qfgdOmm/vS86zoGWIe5M41HE51mIHSJJbBgcop
+         MXjGDoiKPuD0Ub66PQbA4xN2OU+MM4JXw1Ufgu6TvwAiRfcJ5GBgWAaYoV4Wk5bxEi7p
+         9S+w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12148-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12148-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12193-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12193-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12148-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12148-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12193-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12193-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
 Subject: Re: [PATCH 1/7] genalloc: track beginning of allocations
+From: Igor Stoppa <igor.stoppa@huawei.com>
 To: Matthew Wilcox <willy@infradead.org>
 CC: <david@fromorbit.com>, <keescook@chromium.org>, <mhocko@kernel.org>,
 	<labbott@redhat.com>, <linux-security-module@vger.kernel.org>,
@@ -38,128 +39,42 @@ CC: <david@fromorbit.com>, <keescook@chromium.org>, <mhocko@kernel.org>,
 References: <20180228200620.30026-1-igor.stoppa@huawei.com>
  <20180228200620.30026-2-igor.stoppa@huawei.com>
  <20180306141047.GB13722@bombadil.infradead.org>
-From: Igor Stoppa <igor.stoppa@huawei.com>
-Message-ID: <6d27845d-a8f3-607b-1b6b-8464de65162c@huawei.com>
-Date: Tue, 6 Mar 2018 18:05:20 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ <6d27845d-a8f3-607b-1b6b-8464de65162c@huawei.com>
+Message-ID: <a667773c-59fa-33d1-9621-16e702c1859f@huawei.com>
+Date: Wed, 7 Mar 2018 12:51:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180306141047.GB13722@bombadil.infradead.org>
+In-Reply-To: <6d27845d-a8f3-607b-1b6b-8464de65162c@huawei.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.185.64]
+X-Originating-IP: [10.122.225.51]
 X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593676614912638441?=
-X-GMAIL-MSGID: =?utf-8?q?1594204988271600318?=
+X-GMAIL-MSGID: =?utf-8?q?1594275888777114424?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 06/03/2018 16:10, Matthew Wilcox wrote:
-> On Wed, Feb 28, 2018 at 10:06:14PM +0200, Igor Stoppa wrote:
->> + * Encoding of the bitmap tracking the allocations
->> + * -----------------------------------------------
->> + *
->> + * The bitmap is composed of units of allocations.
->> + *
->> + * Each unit of allocation is represented using 2 consecutive bits.
->> + *
->> + * This makes it possible to encode, for each unit of allocation,
->> + * information about:
->> + *  - allocation status (busy/free)
->> + *  - beginning of a sequennce of allocation units (first / successive)
->> + *
->> + *
->> + * Dictionary of allocation units (msb to the left, lsb to the right):
->> + *
->> + * 11: first allocation unit in the allocation
->> + * 10: any subsequent allocation unit (if any) in the allocation
->> + * 00: available allocation unit
->> + * 01: invalid
->> + *
->> + * Example, using the same notation as above - MSb.......LSb:
->> + *
->> + *  ...000010111100000010101011   <-- Read in this direction.
->> + *     \__|\__|\|\____|\______|
->> + *        |   | |     |       \___ 4 used allocation units
->> + *        |   | |     \___________ 3 empty allocation units
->> + *        |   | \_________________ 1 used allocation unit
->> + *        |   \___________________ 2 used allocation units
->> + *        \_______________________ 2 empty allocation units
->> + *
->> + * The encoding allows for lockless operations, such as:
->> + * - search for a sufficiently large range of allocation units
->> + * - reservation of a selected range of allocation units
->> + * - release of a specific allocation
->> + *
->> + * The alignment at which to perform the research for sequence of empty
->> + * allocation units (marked as zeros in the bitmap) is 2^1.
->> + *
->> + * This means that an allocation can start only at even places
->> + * (bit 0, bit 2, etc.) in the bitmap.
->> + *
->> + * Therefore, the number of zeroes to look for must be twice the number
->> + * of desired allocation units.
->> + *
->> + * When it's time to free the memory associated to an allocation request,
->> + * it's a matter of checking if the corresponding allocation unit is
->> + * really the beginning of an allocation (both bits are set to 1).
->> + *
->> + * Looking for the ending can also be performed locklessly.
->> + * It's sufficient to identify the first mapped allocation unit
->> + * that is represented either as free (00) or busy (11).
->> + * Even if the allocation status should change in the meanwhile, it
->> + * doesn't matter, since it can only transition between free (00) and
->> + * first-allocated (11).
+
+
+On 06/03/18 18:05, Igor Stoppa wrote:
+> On 06/03/2018 16:10, Matthew Wilcox wrote:
+
+[...]
+
+>> This seems unnecessarily complicated.
 > 
-> This seems unnecessarily complicated.
+> TBH it seemed to me a natural extension of the existing encoding :-)
 
-TBH it seemed to me a natural extension of the existing encoding :-)
+BTW, to provide some background, this is where it begun:
 
->  Why not handle it like this:
-> 
->  - Double the bitmap in size (as you have done) but
->  - The first half of the bits are unchanged from the existing implementation
->  - The second half of the bits are used for determining the length
+http://www.openwall.com/lists/kernel-hardening/2017/08/18/4
 
-Wouldn't that mean a less tight loop and less localized data?
-The implementation from this patch does not have to jump elsewhere, when
-(un)marking the allocation units and the start.
-
-> On allocation, you look for a sufficiently-large string of 0 bits in
-> the first-half.  When you find it, you set all of them to 1, and set one
-> bit in the second-half to indicate where the tail of the allocation is
-> (you might actually want to use an rbtree or something to handle this ...
-> using all these bits seems pretty inefficient).
-
-1 bit maps to 1 unit of allocation, which is very seldom 1 byte.
-For pmalloc use, I expect that the average allocation is likely to be
-2-4 units, where 1 unit equals either a 32 or 64 bits word.
-So it's probably likely that for every couple of allocation units, one
-is marked as start-of-allocation.
-
-In other cases where genalloc is used, like the tracking of uncached
-pages, 1 unit of allocation equals to 1 page.
-
-I would expect the rbtree to end up generating a far larger footprint.
-
-For the same reasons, since the bitmap is implemented using unsigned
-longs, chances are high that one allocation will fit in one bitmap
-"word", which means that if the "beginning" bit and the "occupied" bit
-are adjacent, one write is sufficient.
-
-In the case you describe, it would be almost always at least 2.
-
-I do not have factual evidence to back my reasoning, but it seems more
-likely to be the case, from my analysis of data types that could belong
-to pools (both existing users of genalloc and my experiments with
-SELinux data structures and pmalloc).
-
-Even in the XFS case, if I understood correctly, it was about protecting
-1 or 2 pages at a time, which seems to fit what I have empirically observed.
-
-What makes you think otherwise?
+Probably that comment about "keeping existing behavior and managing two
+bitmaps locklessly" is what made me think of growing the 1-bit-per-unit
+into a 1-word-per-unit.
 
 --
 igor
