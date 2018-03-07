@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934190AbeCGWjz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 17:39:55 -0500
-Received: from gateway34.websitewelcome.com ([192.185.149.46]:37546 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933251AbeCGWjy (ORCPT
+        id S934303AbeCGWkN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 17:40:13 -0500
+Received: from gateway23.websitewelcome.com ([192.185.49.219]:39046 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934240AbeCGWkM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 17:39:54 -0500
+        Wed, 7 Mar 2018 17:40:12 -0500
 Subject: Re: [PATCH] rtc: remove VLA usage
 To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
@@ -15,8 +15,8 @@ Cc: Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org,
 References: <20180307201133.GA5860@embeddedgus>
  <20180307212506.GO3035@piout.net>
 From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Message-ID: <3e8e1515-0f0e-73d4-72eb-3a2a2fbf04e9@embeddedor.com>
-Date: Wed, 7 Mar 2018 16:39:51 -0600
+Message-ID: <4b85f83a-cbf7-ffe7-ec92-03aeb7fbd958@embeddedor.com>
+Date: Wed, 7 Mar 2018 16:40:05 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
@@ -32,13 +32,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 187.162.24.133
 X-Source-L: No
-X-Exim-ID: 1ethiz-000jxh-7P
+X-Exim-ID: 1ethjF-000kL3-Tm
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: 187-162-24-133.static.axtel.net ([192.168.3.98]) [187.162.24.133]:53450
+X-Source-Sender: 187-162-24-133.static.axtel.net ([192.168.3.98]) [187.162.24.133]:18934
 X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 4
+X-Email-Count: 8
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
