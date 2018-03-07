@@ -1,54 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754736AbeCGTGC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 14:06:02 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:43328 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754500AbeCGTGA (ORCPT
+        id S1754583AbeCGTIo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 14:08:44 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:51268 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754333AbeCGTIm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 14:06:00 -0500
-X-Google-Smtp-Source: AG47ELthI8llHBt5tVDpF7wtb3JsLknKgmkCNyrFFqOUzlVMaFOVpJGa1V1KqJTgafwahriNl+uzKLmTTY/5aXjmrFw=
-MIME-Version: 1.0
-In-Reply-To: <20180307064612.GA10926@infradead.org>
-References: <20180306192423.3153.42741.stgit@localhost.localdomain> <20180307064612.GA10926@infradead.org>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Wed, 7 Mar 2018 11:05:58 -0800
-Message-ID: <CAKgT0UdRFxGUPu4jY0xrUuv8Um62ndPnknhHXuF4Abu6D7GEqg@mail.gmail.com>
-Subject: Re: [pci PATCH v3 0/3] Add support for unmanaged SR-IOV
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
-        "Daly, Dan" <dan.daly@intel.com>, LKML <linux-kernel@vger.kernel.org>,
-        Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, dwmw@amazon.co.uk
+        Wed, 7 Mar 2018 14:08:42 -0500
+Message-ID: <1520449719.5558.28.camel@HansenPartnership.com>
+Subject: Re: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Jiandi An <anjiandi@codeaurora.org>
+Cc: dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org, linux-ima-devel@lists.sourceforge.net,
+        linux-ima-user@lists.sourceforge.net,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 07 Mar 2018 11:08:39 -0800
+In-Reply-To: <1520448953.10396.565.camel@linux.vnet.ibm.com>
+References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
+         <20180307185132.GA30102@ziepe.ca>
+         <1520448953.10396.565.camel@linux.vnet.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 6, 2018 at 10:46 PM, Christoph Hellwig <hch@infradead.org> wrote:
-> On Tue, Mar 06, 2018 at 11:29:08AM -0800, Alexander Duyck wrote:
->> This series is meant to add support for SR-IOV on devices when the VFs are
->> not managed by the kernel. Examples of recent patches attempting to do this
->> include:
->> virto - https://patchwork.kernel.org/patch/10241225/
->> pci-stub - https://patchwork.kernel.org/patch/10109935/
->> vfio - https://patchwork.kernel.org/patch/10103353/
->> uio - https://patchwork.kernel.org/patch/9974031/
->
-> nvme and ema seems to be existing examples.  Care to throw in
-> conversions while you're at it?
+On Wed, 2018-03-07 at 13:55 -0500, Mimi Zohar wrote:
+> On Wed, 2018-03-07 at 11:51 -0700, Jason Gunthorpe wrote:
+> > 
+> > On Tue, Mar 06, 2018 at 11:26:26PM -0600, Jiandi An wrote:
+> > > 
+> > > TPM_CRB driver is the TPM support for ARM64.  If it
+> > > is built as module, TPM chip is registered after IMA
+> > > init.  tpm_pcr_read() in IMA driver would fail and
+> > > display the following message even though eventually
+> > > there is TPM chip on the system:
+> > > 
+> > > ima: No TPM chip found, activating TPM-bypass! (rc=-19)
+> > > 
+> > > Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is
+> > > built in kernel and initializes before IMA driver.
+> > > 
+> > > Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
+> > >  security/integrity/ima/Kconfig | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > > 
+> > > diff --git a/security/integrity/ima/Kconfig
+> > > b/security/integrity/ima/Kconfig
+> > > index 35ef693..6a8f677 100644
+> > > +++ b/security/integrity/ima/Kconfig
+> > > @@ -10,6 +10,7 @@ config IMA
+> > >  	select CRYPTO_HASH_INFO
+> > >  	select TCG_TPM if HAS_IOMEM && !UML
+> > >  	select TCG_TIS if TCG_TPM && X86
 
-Yeah, I can do that. I assume you meant "ena" not "ema".
+Well, this explains why IMA doesn't work on one of my X86 systems: it's
+got a non i2c infineon TPM.
 
-I'm probably looking at doing a v4 that will drop the vfio userspace
-driver bits for now as it sounds like there are additional issues that
-still need to be addressed.
+> > > +	select TCG_CRB if TCG_TPM && ACPI
+> > >  	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
+> > >  	help
+> > >  	  The Trusted Computing Group(TCG) runtime Integrity
+> > 
+> > This seems really weird, why are any specific TPM drivers linked to
+> > IMA config, we have lots of drivers..
+> > 
+> > I don't think I've ever seen this pattern in Kconfig before?
+> 
+> As you've seen by the current discussions, the TPM driver needs to be
+> initialized prior to IMA.  Otherwise IMA goes into TPM-bypass mode.
+>  That implies that the TPM must be builtin to the kernel, and not as
+> a kernel module.
 
-Thanks.
+Actually, that's not necessarily true:  If we don't begin appraisal
+until after the initrd phase, then the initrd can load TPM modules
+before IMA starts.
 
-- Alex
+This would involve a bit of code rejigging to not require a TPM until
+IMA wants to write its first measurement, but it looks doable and would
+get us out of having to second guess TPM selections.
+
+James
