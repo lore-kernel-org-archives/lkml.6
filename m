@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933736AbeCGODf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:03:35 -0500
+        id S1754491AbeCGOEK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:04:10 -0500
 Received: from mga02.intel.com ([134.134.136.20]:30695 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933661AbeCGOD2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:03:28 -0500
+        id S933670AbeCGODa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 09:03:30 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,436,1515484800";
-   d="scan'208";a="36206843"
+   d="scan'208";a="36206854"
 From: Adrian Hunter <adrian.hunter@intel.com>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 7/9] perf intel-pt: Tidy old_buffer handling in intel_pt_get_trace()
-Date: Wed,  7 Mar 2018 16:02:27 +0200
-Message-Id: <1520431349-30689-8-git-send-email-adrian.hunter@intel.com>
+Subject: [PATCH 8/9] perf intel-pt: Remove a check for sampling mode
+Date: Wed,  7 Mar 2018 16:02:28 +0200
+Message-Id: <1520431349-30689-9-git-send-email-adrian.hunter@intel.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520431349-30689-1-git-send-email-adrian.hunter@intel.com>
 References: <1520431349-30689-1-git-send-email-adrian.hunter@intel.com>
@@ -25,80 +25,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-intel_pt_get_trace() fixes overlaps between the current buffer and the
-previous buffer ('old_buffer'). However the previous buffer might not have
-had usable data (no PSB) so the comparison must be made against the
-previous buffer that had usable data. Tidy that by keeping a pointer for
-that purpose in struct intel_pt_queue.
+Intel PT code already has some preparation for AUX area sampling mode.
+However the implementation has changed from the first proposal and one
+of the side-effects is that it will not be impossible to support snapshot
+mode and sampling mode at the same time. Although there are no plans to
+support it, let validation (not yet implemented) control whether it is
+allowed rather than low-level functions.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- tools/perf/util/intel-pt.c | 24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+ tools/perf/util/intel-pt.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index cfb3614f5def..9a4f9cdb752f 100644
+index 9a4f9cdb752f..5c5c155fba78 100644
 --- a/tools/perf/util/intel-pt.c
 +++ b/tools/perf/util/intel-pt.c
-@@ -132,6 +132,7 @@ struct intel_pt_queue {
- 	struct intel_pt *pt;
- 	unsigned int queue_nr;
- 	struct auxtrace_buffer *buffer;
-+	struct auxtrace_buffer *old_buffer;
- 	void *decoder;
- 	const struct intel_pt_state *state;
- 	struct ip_callchain *chain;
-@@ -226,7 +227,8 @@ static int intel_pt_do_fix_overlap(struct intel_pt *pt, struct auxtrace_buffer *
- static int intel_pt_get_trace(struct intel_pt_buffer *b, void *data)
- {
- 	struct intel_pt_queue *ptq = data;
--	struct auxtrace_buffer *buffer = ptq->buffer, *old_buffer = buffer;
-+	struct auxtrace_buffer *buffer = ptq->buffer;
-+	struct auxtrace_buffer *old_buffer = ptq->old_buffer;
- 	struct auxtrace_queue *queue;
+@@ -2061,9 +2061,6 @@ static int intel_pt_process_auxtrace_event(struct perf_session *session,
+ 	struct intel_pt *pt = container_of(session->auxtrace, struct intel_pt,
+ 					   auxtrace);
  
- 	if (ptq->stop) {
-@@ -235,7 +237,7 @@ static int intel_pt_get_trace(struct intel_pt_buffer *b, void *data)
- 	}
- 
- 	queue = &ptq->pt->queues.queue_array[ptq->queue_nr];
--next:
-+
- 	buffer = auxtrace_buffer__next(queue, buffer);
- 	if (!buffer) {
- 		if (old_buffer)
-@@ -267,16 +269,6 @@ static int intel_pt_get_trace(struct intel_pt_buffer *b, void *data)
- 	}
- 	b->ref_timestamp = buffer->reference;
- 
--	/*
--	 * If in snapshot mode and the buffer has no usable data, get next
--	 * buffer and again check overlap against old_buffer.
--	 */
--	if (ptq->pt->snapshot_mode && !b->len)
--		goto next;
+-	if (pt->sampling_mode)
+-		return 0;
 -
--	if (old_buffer)
--		auxtrace_buffer__drop_data(old_buffer);
--
- 	if (!old_buffer || ptq->pt->sampling_mode || (ptq->pt->snapshot_mode &&
- 						      !buffer->consecutive)) {
- 		b->consecutive = false;
-@@ -288,8 +280,14 @@ static int intel_pt_get_trace(struct intel_pt_buffer *b, void *data)
- 	if (ptq->step_through_buffers)
- 		ptq->stop = true;
- 
--	if (!b->len)
-+	if (b->len) {
-+		if (old_buffer)
-+			auxtrace_buffer__drop_data(old_buffer);
-+		ptq->old_buffer = buffer;
-+	} else {
-+		auxtrace_buffer__drop_data(buffer);
- 		return intel_pt_get_trace(b, data);
-+	}
- 
- 	return 0;
- }
+ 	if (!pt->data_queued) {
+ 		struct auxtrace_buffer *buffer;
+ 		off_t data_offset;
 -- 
 1.9.1
