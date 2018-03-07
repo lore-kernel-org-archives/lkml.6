@@ -1,113 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754492AbeCGMsP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 07:48:15 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50130 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754251AbeCGMrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 07:47:33 -0500
-Subject: Re: [PATCH v8 4/5] iommu/arm-smmu: Add the device_link between
- masters and smmu
-To: Vivek Gautam <vivek.gautam@codeaurora.org>, joro@8bytes.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, rjw@rjwysocki.net,
-        will.deacon@arm.com, robdclark@gmail.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: tfiga@chromium.org, jcrouse@codeaurora.org, sboyd@codeaurora.org,
-        sricharan@codeaurora.org, m.szyprowski@samsung.com,
-        architt@codeaurora.org, linux-arm-msm@vger.kernel.org
-References: <20180302101050.6191-1-vivek.gautam@codeaurora.org>
- <20180302101050.6191-5-vivek.gautam@codeaurora.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <f3011ef1-7ffe-8c2b-b9d6-3fb094789656@arm.com>
-Date: Wed, 7 Mar 2018 12:47:28 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1754477AbeCGMsO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 07:48:14 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:37700 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754449AbeCGMsK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 07:48:10 -0500
+X-Google-Smtp-Source: AG47ELuVXW2qOsi4VMR6eAModBj9iaDjP4DpoAS/zlc/I7nOcmev32hPAzzhsNjfY9gtIL6uvZF8hhG8l9dUWNaVOAk=
 MIME-Version: 1.0
-In-Reply-To: <20180302101050.6191-5-vivek.gautam@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180307234142.1c7d2710@canb.auug.org.au>
+References: <20180305053742.9149-1-sergey.senozhatsky@gmail.com>
+ <CAK8P3a1aCQWwrJuCmx-nrMG58NQFCkCPRuAT5g43Lty13nE2dg@mail.gmail.com>
+ <20180307022127.GB802@jagdpanzerIV> <CAK8P3a172j6r2HEwQ3cOOqXgXkFbxYifQ96VRFZ3+=wGawYNLQ@mail.gmail.com>
+ <20180307104002.GA505@jagdpanzerIV> <CAK8P3a3eK4iS9rEWvoRfH75zjj7KHpsPnofoGdWH28Dqbz-UyQ@mail.gmail.com>
+ <20180307114845.GA894@jagdpanzerIV> <20180307234142.1c7d2710@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 7 Mar 2018 13:48:09 +0100
+X-Google-Sender-Auth: OPwGv8BmwYmkaUka-SDkNbtFIrM
+Message-ID: <CAK8P3a2sA0BmR4cS4Af+d42MabzkZZEBvMaTpoWwOu-N7pP=dg@mail.gmail.com>
+Subject: Re: [PATCH] dump_stack: convert generic dump_stack into a weak symbol
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, Tejun Heo <tj@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, Dave Young <dyoung@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>, Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        adi-buildroot-devel@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/03/18 10:10, Vivek Gautam wrote:
-> From: Sricharan R <sricharan@codeaurora.org>
-> 
-> Finally add the device link between the master device and
-> smmu, so that the smmu gets runtime enabled/disabled only when the
-> master needs it. This is done from add_device callback which gets
-> called once when the master is added to the smmu.
-> 
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> ---
->   drivers/iommu/arm-smmu.c | 21 +++++++++++++++++++++
->   1 file changed, 21 insertions(+)
-> 
-> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-> index 3d6a1875431f..bb1ea82c1003 100644
-> --- a/drivers/iommu/arm-smmu.c
-> +++ b/drivers/iommu/arm-smmu.c
-> @@ -217,6 +217,9 @@ struct arm_smmu_device {
->   
->   	/* IOMMU core code handle */
->   	struct iommu_device		iommu;
-> +
-> +	/* runtime PM link to master */
-> +	struct device_link *link;
+On Wed, Mar 7, 2018 at 1:41 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Sergey,
+>
+> On Wed, 7 Mar 2018 20:48:56 +0900 Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+>>
+>> On (03/07/18 11:57), Arnd Bergmann wrote:
+>> [..]
+>> > >> Originally I planned to wait a few more releases, but the last maintainer
+>> > >> has commented that he will now send a patch for immediate removal,
+>> > >> so 4.17 is almost certain at this point.
+>> > >
+>> > > Would be great to get it removed as soon as possible then. Otherwise we
+>> > > will get broken blackfin build errors from Stephen (or would need to hold
+>> > > off Dave's patch).
+>> >
+>> > You could also add a patch to your tree that removes the blackfin
+>> > dump_stack() function, or we could ask Stephen and the other
+>> > people operating build bots to stop building blackfin right now
+>> > (they will have to do that anyway once the arch gets removed).
+>>
+>> OK. Petr, Stephen, what would be your preference?
+>
+> I can easily stop building blackfin - and, if the intention is to
+> remove it, there is not much point in wasting resources building it any
+> anyway.
 
-Just the one?
+Right. At the moment, the plan is to remove metag, score, unicore32,
+m32r, frv and blackfin. If you are building any more of those, you can
+stop that as well.
 
->   };
->   
->   enum arm_smmu_context_fmt {
-> @@ -1470,10 +1473,26 @@ static int arm_smmu_add_device(struct device *dev)
->   
->   	iommu_device_link(&smmu->iommu, dev);
->   
-> +	/*
-> +	 * Establish the link between smmu and master, so that the
-> +	 * smmu gets runtime enabled/disabled as per the master's
-> +	 * needs.
-> +	 */
-> +	smmu->link = device_link_add(dev, smmu->dev, DL_FLAG_PM_RUNTIME);
+The fate of tile and mn10300 is still open, but I suspect they won't
+last long either.
 
-Maybe I've misunderstood how the API works, but AFAICS the second and 
-subsequent devices are all just going to overwrite (and leak) the link 
-of the previous one...
-
-> +	if (!smmu->link) {
-> +		dev_warn(smmu->dev, "Unable to create device link between %s and %s\n",
-> +			 dev_name(smmu->dev), dev_name(dev));
-> +		ret = -ENODEV;
-> +		goto out_unlink;
-> +	}
-> +
->   	arm_smmu_rpm_put(smmu);
->   
->   	return 0;
->   
-> +out_unlink:
-> +	iommu_device_unlink(&smmu->iommu, dev);
-> +	arm_smmu_master_free_smes(fwspec);
->   out_rpm_put:
->   	arm_smmu_rpm_put(smmu);
->   out_cfg_free:
-> @@ -1496,6 +1515,8 @@ static void arm_smmu_remove_device(struct device *dev)
->   	cfg  = fwspec->iommu_priv;
->   	smmu = cfg->smmu;
->   
-> +	device_link_del(smmu->link);
-
-...and equivalently you end up with a double-free (or more) here of a 
-link which may not have belonged to dev anyway.
-
-Robin.
-
-> +
->   	ret = arm_smmu_rpm_get(smmu);
->   	if (ret < 0)
->   		return;
-> 
+      Arnd
