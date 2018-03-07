@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuMqaX1cAFBiXW15rojRaxdeEjxEIkUle9OVKGDpGHZzCUCxssZYznpY1JgvKllOmAG4+Q7
-ARC-Seal: i=1; a=rsa-sha256; t=1520451644; cv=none;
+X-Google-Smtp-Source: AG47ELuz9I7LvX0cNkJacW2Bc8LWl3imDCXx1s+zhe309t9+ORfnDrPpKOUqykZrPLWH1Lbmz81I
+ARC-Seal: i=1; a=rsa-sha256; t=1520451642; cv=none;
         d=google.com; s=arc-20160816;
-        b=JhrR0DeJIQcvo/Sk6CysuQ5d9UIAZphNRxTFnsM8iJ4JbDIAEFwlsEfFqWiFZ1lvRS
-         0IcAa9LiMN34RsjoWJNd7Nk7Adzz2JHwz1rsotXSlPkjKZ2Zbfn2Ee3ctHJpC6AQC6bT
-         uxbLjNXsafLu0lGW3U8JE3wlF1qG6PX8pdVox8gkLLQEWLoqR9OmyUBAiRsJrBpl0Fjr
-         W5QF/6rwkenLe9eVfOYhwkMRZZYKT+KsS6o0ThJsKX+Sdjui+/IL/JeAQjLr/0sV8hZf
-         9maE3NM53jehLKcDvfnF5VuMPrVtOWnv0oe1gVL5vpNBf+tWu2VnTjOZHLX7pnnQzm67
-         BH2w==
+        b=XL7wtcwRlMwyT0s81jA8xezPhXjq2WZYY5XoVbes+sU7e01FqqQnW8hOGv2sS59r8+
+         La5oTt3YcZnQnvitg3b3Na9ghnVy869PNKB/Boo8+PTdxw7m90T+eOUcp0OLcOqYDiTH
+         JtxY/oTQVsyG+rWQLpDapeiOjDs2AUbrj5lnFdGdNW4yEoSU2nX6iA9611R0egLSC9TV
+         s2HG6lyOpOZhidaRTVSdwmhIvTYFt5zF8k2KRMRS9UXQ0ZEEb80ua9wyfJK/tJTUfNaK
+         ZhlD17TnAL281yA9COFeUeHi327U+Bse80WyjWyEy/bvJEOU7WOHiSJqWLWXOUWhLOV9
+         Umfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=oYdQR94sBQi9MPcxackKOakJ+OzvG9S6ymBU+6JLPII=;
-        b=eqO/V19wwnsyTrXT2ISHS5XtscNmIE2krc1mnH7qxvPuepms9zNN271GlZ0O06iAQ/
-         N+1CAkYcnlpb76zd9OPDbTqZKVfjJJP06PQAYaYK5qKgYxxqz6OSjGUxolPH0Qx4vUWs
-         obcHsG/nm+ng8iAU4bh4DIRq2MT+IBBMceIrp0P2ctIXFGaz5rXEg+i696sM3hr3hq+J
-         zqJizghdvNrilDc+uwO1oAz+jdngFDEpkqYnPJ8Apwmeck2twkmLstrOKIq1rn9pIbW8
-         xsX3TR7gOm644crF5/bGlP74OLXu2TveMpZaEIlx3BmLC3mqh4X5ADNYfm/bMiWpqpxx
-         wdJw==
+        bh=D25R6zUW/pfOiA+Udal7Bdu3c2L/mWg0NxuGglkN4bE=;
+        b=HqlEsKJug92b9ICJX47E0Xykn4zDm2A6dOuuRRHsTh6zzsPzxEpzjpBET6obM2rH9+
+         BsCOfCJRYZQ+GBL+QlmEoPGIU9uGXeeBiQYht3M2qGXcvitncGm43tbLQje9i+680k/Q
+         CahOoulXbVOM7001i5PllEdzdKdNo1UW/Y2u2LXA6YpsISjchkpbWL2noLSfL1VKQN1M
+         ZZ9+EQR7ZSv1BH0DsbkIq5d0ksgBKlemaHV+yiICD4CAheAYhh/qO8oW7RqFH1IZVx+t
+         bOe+e5hMKYeVOIJBVNWD7C8fVPvomCfixn3I93jLqPZFJlK61KDOV3X8NcsHoarIv5Me
+         yP7w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Brian Norris <briannorris@chromium.org>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Marcel Holtmann <marcel@holtmann.org>
-Subject: [PATCH 4.15 006/122] Bluetooth: btusb: Use DMI matching for QCA reset_resume quirking
-Date: Wed,  7 Mar 2018 11:36:58 -0800
-Message-Id: <20180307191730.225023436@linuxfoundation.org>
+	Sam Bobroff <sam.bobroff@au1.ibm.com>,
+	Balbir Singh <bsingharora@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.15 005/122] powerpc/pseries: Enable RAS hotplug events later
+Date: Wed,  7 Mar 2018 11:36:57 -0800
+Message-Id: <20180307191730.038226969@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309103997173719?=
-X-GMAIL-MSGID: =?utf-8?q?1594309103997173719?=
+X-GMAIL-THRID: =?utf-8?q?1594309101612595577?=
+X-GMAIL-MSGID: =?utf-8?q?1594309101612595577?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,119 +50,77 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Sam Bobroff <sam.bobroff@au1.ibm.com>
 
-commit 1fdb926974695d3dbc05a429bafa266fdd16510e upstream.
+commit c9dccf1d074a67d36c510845f663980d69e3409b upstream.
 
-Commit 61f5acea8737 ("Bluetooth: btusb: Restore QCA Rome suspend/resume fix
-with a "rewritten" version") applied the USB_QUIRK_RESET_RESUME to all QCA
-USB Bluetooth modules. But it turns out that the resume problems are not
-caused by the QCA Rome chipset, on most platforms it resumes fine. The
-resume problems are actually a platform problem (likely the platform
-cutting all power when suspended).
+Currently if the kernel receives a memory hot-unplug event early
+enough, it may get stuck in an infinite loop in
+dissolve_free_huge_pages(). This appears as a stall just after:
 
-The USB_QUIRK_RESET_RESUME quirk also disables runtime suspend, so by
-matching on usb-ids, we're causing all boards with these chips to use extra
-power, to fix resume problems which only happen on some boards.
+  pseries-hotplug-mem: Attempting to hot-remove XX LMB(s) at YYYYYYYY
 
-This commit fixes this by applying the quirk based on DMI matching instead
-of on usb-ids, so that we match the platform and not the chipset.
+It appears to be caused by "minimum_order" being uninitialized, due to
+init_ras_IRQ() executing before hugetlb_init().
 
-Here is the /sys/kernel/debug/usb/devices for the Bluetooth module:
+To correct this, extract the part of init_ras_IRQ() that enables
+hotplug event processing and place it in the machine_late_initcall
+phase, which is guaranteed to be after hugetlb_init() is called.
 
-T:  Bus=01 Lev=01 Prnt=01 Port=07 Cnt=04 Dev#=  5 Spd=12   MxCh= 0
-D:  Ver= 2.01 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=0cf3 ProdID=e300 Rev= 0.01
-C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=100mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1514836
-Fixes: 61f5acea8737 ("Bluetooth: btusb: Restore QCA Rome suspend/resume..")
-Cc: stable@vger.kernel.org
-Cc: Brian Norris <briannorris@chromium.org>
-Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Reported-and-tested-by: Kevin Fenzi <kevin@scrye.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Sam Bobroff <sam.bobroff@au1.ibm.com>
+Acked-by: Balbir Singh <bsingharora@gmail.com>
+[mpe: Reorder the functions to make the diff readable]
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/bluetooth/btusb.c |   25 +++++++++++++++++++------
- 1 file changed, 19 insertions(+), 6 deletions(-)
+ arch/powerpc/platforms/pseries/ras.c |   31 ++++++++++++++++++++++---------
+ 1 file changed, 22 insertions(+), 9 deletions(-)
 
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -21,6 +21,7 @@
-  *
-  */
+--- a/arch/powerpc/platforms/pseries/ras.c
++++ b/arch/powerpc/platforms/pseries/ras.c
+@@ -49,6 +49,28 @@ static irqreturn_t ras_error_interrupt(i
  
-+#include <linux/dmi.h>
- #include <linux/module.h>
- #include <linux/usb.h>
- #include <linux/usb/quirks.h>
-@@ -376,6 +377,21 @@ static const struct usb_device_id blackl
- 	{ }	/* Terminating entry */
- };
  
-+/* The Bluetooth USB module build into some devices needs to be reset on resume,
-+ * this is a problem with the platform (likely shutting off all power) not with
-+ * the module itself. So we use a DMI list to match known broken platforms.
+ /*
++ * Enable the hotplug interrupt late because processing them may touch other
++ * devices or systems (e.g. hugepages) that have not been initialized at the
++ * subsys stage.
 + */
-+static const struct dmi_system_id btusb_needs_reset_resume_table[] = {
-+	{
-+		/* Lenovo Yoga 920 (QCA Rome device 0cf3:e300) */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+			DMI_MATCH(DMI_PRODUCT_VERSION, "Lenovo YOGA 920"),
-+		},
-+	},
-+	{}
-+};
++int __init init_ras_hotplug_IRQ(void)
++{
++	struct device_node *np;
 +
- #define BTUSB_MAX_ISOC_FRAMES	10
- 
- #define BTUSB_INTR_RUNNING	0
-@@ -3031,6 +3047,9 @@ static int btusb_probe(struct usb_interf
- 	hdev->send   = btusb_send_frame;
- 	hdev->notify = btusb_notify;
- 
-+	if (dmi_check_system(btusb_needs_reset_resume_table))
-+		interface_to_usbdev(intf)->quirks |= USB_QUIRK_RESET_RESUME;
++	/* Hotplug Events */
++	np = of_find_node_by_path("/event-sources/hot-plug-events");
++	if (np != NULL) {
++		if (dlpar_workqueue_init() == 0)
++			request_event_sources_irqs(np, ras_hotplug_interrupt,
++						   "RAS_HOTPLUG");
++		of_node_put(np);
++	}
 +
- #ifdef CONFIG_PM
- 	err = btusb_config_oob_wake(hdev);
- 	if (err)
-@@ -3117,12 +3136,6 @@ static int btusb_probe(struct usb_interf
- 	if (id->driver_info & BTUSB_QCA_ROME) {
- 		data->setup_on_usb = btusb_setup_qca;
- 		hdev->set_bdaddr = btusb_set_bdaddr_ath3012;
--
--		/* QCA Rome devices lose their updated firmware over suspend,
--		 * but the USB hub doesn't notice any status change.
--		 * explicitly request a device reset on resume.
--		 */
--		interface_to_usbdev(intf)->quirks |= USB_QUIRK_RESET_RESUME;
++	return 0;
++}
++machine_late_initcall(pseries, init_ras_hotplug_IRQ);
++
++/*
+  * Initialize handlers for the set of interrupts caused by hardware errors
+  * and power system events.
+  */
+@@ -66,15 +88,6 @@ static int __init init_ras_IRQ(void)
+ 		of_node_put(np);
  	}
  
- #ifdef CONFIG_BT_HCIBTUSB_RTL
+-	/* Hotplug Events */
+-	np = of_find_node_by_path("/event-sources/hot-plug-events");
+-	if (np != NULL) {
+-		if (dlpar_workqueue_init() == 0)
+-			request_event_sources_irqs(np, ras_hotplug_interrupt,
+-					   "RAS_HOTPLUG");
+-		of_node_put(np);
+-	}
+-
+ 	/* EPOW Events */
+ 	np = of_find_node_by_path("/event-sources/epow-events");
+ 	if (np != NULL) {
