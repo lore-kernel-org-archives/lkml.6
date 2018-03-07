@@ -1,103 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754192AbeCGK51 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 05:57:27 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:37331 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751059AbeCGK5Z (ORCPT
+        id S1754309AbeCGK5i (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 05:57:38 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56800 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754248AbeCGK5e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 05:57:25 -0500
-X-Google-Smtp-Source: AG47ELttEKN/eX5eOpH9A9qNrAftH/QU11sp7Q42C6h7c3iwWfMJS4SN/1zslce+wPjqoGtDDKAayw==
-Date: Wed, 7 Mar 2018 10:57:21 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Patrice CHOTARD <patrice.chotard@st.com>
-Cc: Alexandre TORGUE <alexandre.torgue@st.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH v2 0/6] Add mmc support for STM32F7 boards
-Message-ID: <20180307105721.yxrun3xztrgun4me@dell>
-References: <1519901623-23216-1-git-send-email-patrice.chotard@st.com>
- <44ed2e2c-83f1-77f5-fa70-29c5525b9ee7@st.com>
- <20180307083538.vicxhbu72jex7zi6@dell>
- <f006750d-1fa9-4bbf-8f4d-32abee21cadd@st.com>
+        Wed, 7 Mar 2018 05:57:34 -0500
+Date: Wed, 7 Mar 2018 10:57:31 +0000
+From: Mark Brown <broonie@kernel.org>
+To: JeffyChen <jeffy.chen@rock-chips.com>
+Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 1/3] mfd: syscon: Set name of regmap_config
+Message-ID: <20180307105731.GB7290@sirena.org.uk>
+References: <20180306110403.14438-1-jeffy.chen@rock-chips.com>
+ <5A9EAC92.4050702@rock-chips.com>
+ <20180307102006.GA7290@sirena.org.uk>
+ <5A9FC3E0.5020600@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="zx4FCpZtqtKETZ7O"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f006750d-1fa9-4bbf-8f4d-32abee21cadd@st.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <5A9FC3E0.5020600@rock-chips.com>
+X-Cookie: If you can read this, you're too close.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 07 Mar 2018, Patrice CHOTARD wrote:
 
-> Hi Lee
-> 
-> On 03/07/2018 09:35 AM, Lee Jones wrote:
-> > On Mon, 05 Mar 2018, Alexandre Torgue wrote:
-> > 
-> >> Hi Patrice,
-> >>
-> >> On 03/01/2018 11:53 AM, patrice.chotard@st.com wrote:
-> >>> From: Patrice Chotard <patrice.chotard@st.com>
-> >>>
-> >>> This series adds :
-> >>>    _ SDIO pins definition for STM32F7 SoCs family
-> >>>    _ add sdio1 DT entry for STM32F746 Discovery board
-> >>>    _ add sdio1 DT entry for STM32F746 Evaluation board
-> >>>    _ add sdio1 DT entry for STM32F769 Discovery board
-> >>>    _ add SDMMC2 entry in stm32f7-rcc.h
-> >>>    _ replace sdio2 hard coded value in stm32f746.dtsi
-> >>>
-> >>> v2: _ rename sdio_pins / sdio_od_pins to sdio_pins_a / sdio_od_pins_a
-> >>>         and update board dts files accordingly.
-> >>>
-> >>>
-> >>> Patrice Chotard (6):
-> >>>     ARM: dts: stm32: Add sdio pins definition for stm32f7
-> >>>     ARM: dts: stm32: Enable sdio1 for stm32f746-disco
-> >>>     ARM: dts: stm32: Enable sdio1 for stm32f746-eval
-> >>>     ARM: dts: stm32: Enable sdio1 for stm32f769-disco
-> >>>     dt-bindings: mfd: Add STM32F7 SDMMC2 rcc entry
-> >>>     ARM: dts: stm32: Fix sdio2 rcc hard coded value
-> >>>
-> >>>    arch/arm/boot/dts/stm32746g-eval.dts   | 17 ++++++++++
-> >>>    arch/arm/boot/dts/stm32f7-pinctrl.dtsi | 62 ++++++++++++++++++++++++++++++++++
-> >>>    arch/arm/boot/dts/stm32f746-disco.dts  | 19 +++++++++++
-> >>>    arch/arm/boot/dts/stm32f746.dtsi       |  2 +-
-> >>>    arch/arm/boot/dts/stm32f769-disco.dts  | 19 +++++++++++
-> >>>    include/dt-bindings/mfd/stm32f7-rcc.h  |  1 +
-> >>>    6 files changed, 119 insertions(+), 1 deletion(-)
-> >>>
-> >> Series applied on stm32-next.
-> > 
-> > Even the MFD patch?
-> > 
-> 
-> Yes, the MFD part has been taken by Alex.
+--zx4FCpZtqtKETZ7O
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-You should really wait for all of the appropriate Acks.  This helps to
-avoid possible merge conflicts when Linus starts pulling branches
-during the merge-window.
+On Wed, Mar 07, 2018 at 06:50:08PM +0800, JeffyChen wrote:
 
-As it happens, I do not think Alex's tree and MFD will conflict this
-time, but it's something to bear in mind in the future.
+> so i sent this patch to fix that by using the of_node name to create
+> debugfs.
 
-Please add my:
+> but later i found we have:
+> commit a430ab205d29e7d1537b220fcf989b8080d8267f
+> Author: Fabio Estevam <fabio.estevam@nxp.com>
+> Date:   Mon Mar 5 15:52:09 2018 -0300
 
-  Acked-by: Lee Jones <lee.jones@linaro.org>
+>     regmap: debugfs: Disambiguate dummy debugfs file name
 
-... to the patch.
+> which would fix that in another way by naming dummy0, dummy1, dummy2.
 
--- 
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> even if the issue is fixed, i wonder could we still have this patch to make
+> it more readable:
+
+Yes, like I say I think that's a good idea anyway - that sort of usage
+is the reason we've got the facility to set an explicit name.
+
+--zx4FCpZtqtKETZ7O
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqfxZoACgkQJNaLcl1U
+h9APdQf/Q4izSNZYh9F/+UF/EwZCfLz7J8XPU0TVpPb3wdPnW7WMf/7RdASgEPDI
+1LJrJyaNH3t5ocY5n4mCdf8msE8yFFU/Wu5YfySh6OM+zflqlGBlP0+HVsRYzuB0
+pzPlebOdoSY1xfCmstUKkQfmJx3zB7DzBmb9FAK8M37m2eh9bpc/6Ci1hByfqF+W
+fHy0Md2SPJHML856OHKbm5A2qBrjME+VeMgmiE4WQ0K3Bq6Pu21BF5OZcMNjNWOV
+WZQ9XPLfLhbFQO7Z3Ld77GNBndP2VzdnkGYpXa+4i2it7nDeO5g+GPmBgWWlxoAL
+yetsi8AlszM9QFB/b7/OS4xibQWSoA==
+=XCW5
+-----END PGP SIGNATURE-----
+
+--zx4FCpZtqtKETZ7O--
