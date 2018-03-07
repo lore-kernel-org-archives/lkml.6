@@ -1,73 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933183AbeCGCAo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 21:00:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37752 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932078AbeCGCAn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 21:00:43 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9697F20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 6 Mar 2018 21:00:41 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Alan Kao <alankao@andestech.com>
-Cc: Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        "sw-dev@groups.riscv.org" <sw-dev@groups.riscv.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Greentime Ying-Han =?UTF-8?B?SHU=?=(=?UTF-8?B?6IOh6Iux5ryi?=)"
-        <greentime@andestech.com>,
-        "Zong Zong-Xian =?UTF-8?B?TGk=?=( =?UTF-8?B?5p2O5a6X5oay?=)"
-        <zong@andestech.com>
-Subject: Re: ftrace: Proposal for an Alternative RecordMcount framework
-Message-ID: <20180306210041.56736b13@vmware.local.home>
-In-Reply-To: <20180307014746.GA25460@andestech.com>
-References: <20180227100425.GB20904@andestech.com>
-        <20180227161252.25162d81@vmware.local.home>
-        <20180301020507.GA24550@andestech.com>
-        <20180307014746.GA25460@andestech.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S933352AbeCGCCc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 21:02:32 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:35062 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932313AbeCGCC2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 21:02:28 -0500
+X-Google-Smtp-Source: AG47ELuk4M9cl0VEUdWJwbZmjhYgIKoYl86JbnD79/uhznDz80K+Z+7uhhT7IHdhejJag0FbChEG1A==
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Andrey Smirnov <andrew.smirnov@gmail.com>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>, Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+Subject: [PATCH v3 2/2] dt-bindings: input: Add binding for RAVE SP input driver
+Date: Tue,  6 Mar 2018 18:01:34 -0800
+Message-Id: <20180307020134.26293-2-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180307020134.26293-1-andrew.smirnov@gmail.com>
+References: <20180307020134.26293-1-andrew.smirnov@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 7 Mar 2018 09:47:47 +0800
-Alan Kao <alankao@andestech.com> wrote:
+Add Device Tree bindings for RAVE SP input drvier - an MFD cell of
+parent RAVE SP driver (documented in
+Documentation/devicetree/bindings/mfd/zii,rave-sp.txt).
 
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Acked-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+---
 
-> > Please allow me to state the problem more clearly here.  I hope this helps.
-> > 
-> > 1. locations of mcount are recorded in a per-file basis.
-> > 2. to optimize the binary, the linker turns on some aggressive
-> >    options, including relaxation.
-> > 3. the optimizations changes the original offset.
-> > 4. already recorded mcount call-sites no longer point to their
-> >    real positions.
-> > 5. still a linked vmlinux is made.
-> > 6. dynamic ftrace breaks the real logic in the kernel space,
-> >    panics happen.
-> > 
-> > Thanks,
-> > Alan  
-> 
-> Any comments on this?
+Changes since [v2]:
 
-Sorry, I've been traveling and falling behind in this. I did read this
-when I was offline but forgot to reply when I was back online.
+	- Collected Acked-by from Lucas
 
-> 
-> BTW, the introduced framework has no effects on any other architectures that
-> works fine.  This feature should be configurable and turned on only when the
-> arch has aggressive link-time optimizations.
-> 
-> If you consider this appropriate, I will send the patch to this once it gets 
-> ready.  Currently this is targeting at RISC-V and upcoming NDS32.
+	- Removed unnecessary status="okay"
 
-I see the issue you explained above and it makes sense. Perhaps make it
-an option that can be enabled by anyone, and archs that require
-aggressive link time optimizations would just select it.
+No changes between v1 and v2, so v1 is not referenced here.
 
--- Steve
+[v2] lkml.kernel.org/r/20180301165527.22274-2-andrew.smirnov@gmail.com
+
+ .../bindings/input/zii,rave-sp-pwrbutton.txt       | 23 ++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/zii,rave-sp-pwrbutton.txt
+
+diff --git a/Documentation/devicetree/bindings/input/zii,rave-sp-pwrbutton.txt b/Documentation/devicetree/bindings/input/zii,rave-sp-pwrbutton.txt
+new file mode 100644
+index 000000000000..b217018d03e9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/input/zii,rave-sp-pwrbutton.txt
+@@ -0,0 +1,23 @@
++Zodiac Inflight Innovations RAVE Supervisory Processor Power Button Bindings
++
++RAVE SP input device is a "MFD cell" device corresponding to power
++button functionality of RAVE Supervisory Processor. It is expected
++that its Device Tree node is specified as a child of the node
++corresponding to the parent RAVE SP device (as documented in
++Documentation/devicetree/bindings/mfd/zii,rave-sp.txt)
++
++Required properties:
++
++- compatible: Should be "zii,rave-sp-pwrbutton"
++
++Example:
++
++	rave-sp {
++		compatible = "zii,rave-sp-rdu1";
++		current-speed = <38400>;
++
++		pwrbutton {
++			compatible = "zii,rave-sp-pwrbutton";
++		};
++	}
++
+-- 
+2.14.3
