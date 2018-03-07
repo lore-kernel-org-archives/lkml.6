@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsFRRXNRO04L46Q9iwwOweZ5aQcSkJGkgBOeP57rUGI9E7bYjmieKTQ4lxUWgZeVYNhHC8S
-ARC-Seal: i=1; a=rsa-sha256; t=1520451693; cv=none;
+X-Google-Smtp-Source: AG47ELtK7vEejZWVHSh0EamgaGNjIpasxaIXWUJBFAxsNhKxKucEnD3w5GPBykBX4GH9wQpByEP9
+ARC-Seal: i=1; a=rsa-sha256; t=1520451691; cv=none;
         d=google.com; s=arc-20160816;
-        b=Wdn35mlzghT79++PMxLN7+l1HI6lNkldz9sAtcoJQuJ68UK2XINitkzi6kRwOo3u7I
-         qisFZ624gxmGPjwZSakzfUERZ/kYmfxCV6e5bbaNn8ALAugj3utyEPAR3icDjwjVQ7NK
-         pCgOWwcrYRNVzSKQvpq4//rVnGUwJSp2pzkI3kUhqrCd9Dj27B05JOHpPBPyZz/A8gzb
-         ULX/jPQHA6dlDSOQfyATTAg49wJQr8w/b17WHKpuk8+ZPNzI8aRTDdTXseKRGW30aT1E
-         7K0JYiBafnAl704p7fq0b+K6LZrVuvVa86jcXqkP+n2xwzO9k2MlH7uMBmfdctP0JxBb
-         wlrg==
+        b=zp+lnoSQ1jPrM2zV0CFXuuoikBedZbtNcwMxAxlP55DVbHdhZtCSOwHzUNGqhPYxET
+         IHY5o1mpg4GyR6MBUFopVP7r3yNWJ46SyZLLr5+pxc/M5o22VUr/mXINE2AZQUldueBz
+         HAucHZumE5xvQGV2h5i1Z2O9RhUt1ICmZSX3AHt6TTxelgC1N9UgyK/LypzMj8KVmzC8
+         WQstZOQm6Ze8zlrjoWTE6MLStZpPJkntCExLG2hUAMjZIcCeObgEjYc7qhSe/COwqy/x
+         OtR6BCOD9u9FQgYmyCp/dFw/1lIrINgf0noOLr/sdmzEGAFuGDJMQVeRWjmfRfCkafh6
+         zZnA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=jUNX888lgMji6Xm/BRJfbdzZbTPlopaVEy21SQENzuE=;
-        b=cLmHFbTHGhZo+RjzC/LtCPZujAGnZ96Ws5hKwvs36DsfWFLEEHOOhfMc/Rb1zoAxTT
-         CcBKQxYxJatovNdywhjwgAmimYnOfWGszfBI3uTwkOf8vik0Goa971k/w8ZpryZUUMwC
-         nsrSsb5oP27bZTgy1nQWhPFSCw+JLWJ4K97L2sfrVAZT3nHaMHFxw0BeCnW10Ux5cZLX
-         hO1k3Z+Ue+iRdtTvMN9TAZR/hmhwscJOekSpuj57KKbyoC/vNwPtziw/OuxjhPY//pxF
-         ZFbQSnBcOv7dD1armwlXm19AznuOD+BBPlBQTK5hCXYmLbbmKAYc+nDBEKLyq8gFMEXH
-         wkjQ==
+        bh=47u1IIVB613sBLh00yvxu82uyS2XbyD/xwX/2D3l+i8=;
+        b=OEmit+tO03yFxrDxwmi7wrr8Qqwwdo4INd5vOyJaUCukP7gybF5J9UBdiVTNY7bsGu
+         JoBVIb2YegLQq5u70RhSlSybaHDHqZipy0l5tyYraOwrfsU1UMBcxKuZk5e2g2fPw8Mz
+         r3GbdKU0ozm3wOcroeKsr4litT90LRru+vi3s8l06YGRLtsX8LRFsxON6KjFBfWHrJZR
+         ykYIvPI4zE/JcWEqoQW44gnQB8UzHPivBt2jMGkZKP8xS819VM2N9USAq1bM0SNcgfyu
+         cEOUTdjb+26VWAF1+Yhwhb8C/OIdYZWOyN62dqQHu9HUZTaE0DtvXq9sw+1TuYuXE3lq
+         x1lg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 056/122] net: phy: fix phy_start to consider PHY_IGNORE_INTERRUPT
-Date: Wed,  7 Mar 2018 11:37:48 -0800
-Message-Id: <20180307191737.297732221@linuxfoundation.org>
+	Gal Pressman <galp@mellanox.com>,
+	Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.15 055/122] net/mlx5e: Specify numa node when allocating drop rq
+Date: Wed,  7 Mar 2018 11:37:47 -0800
+Message-Id: <20180307191737.137654010@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309154741334905?=
-X-GMAIL-MSGID: =?utf-8?q?1594309154741334905?=
+X-GMAIL-THRID: =?utf-8?q?1594309152401504243?=
+X-GMAIL-MSGID: =?utf-8?q?1594309152401504243?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,32 +49,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Heiner Kallweit <hkallweit1@gmail.com>
+From: Gal Pressman <galp@mellanox.com>
 
 
-[ Upstream commit 08f5138512180a479ce6b9d23b825c9f4cd3be77 ]
+[ Upstream commit 2f0db87901698cd73d828cc6fb1957b8916fc911 ]
 
-This condition wasn't adjusted when PHY_IGNORE_INTERRUPT (-2) was added
-long ago. In case of PHY_IGNORE_INTERRUPT the MAC interrupt indicates
-also PHY state changes and we should do what the symbol says.
+When allocating a drop rq, no numa node is explicitly set which means
+allocations are done on node zero. This is not necessarily the nearest
+numa node to the HCA, and even worse, might even be a memoryless numa
+node.
 
-Fixes: 84a527a41f38 ("net: phylib: fix interrupts re-enablement in phy_start")
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Choose the numa_node given to us by the pci device in order to properly
+allocate the coherent dma memory instead of assuming zero is valid.
+
+Fixes: 556dd1b9c313 ("net/mlx5e: Set drop RQ's necessary parameters only")
+Signed-off-by: Gal Pressman <galp@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/phy.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/net/phy/phy.c
-+++ b/drivers/net/phy/phy.c
-@@ -844,7 +844,7 @@ void phy_start(struct phy_device *phydev
- 		phy_resume(phydev);
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+@@ -1911,13 +1911,16 @@ static void mlx5e_build_rq_param(struct
+ 	param->wq.linear = 1;
+ }
  
- 		/* make sure interrupts are re-enabled for the PHY */
--		if (phydev->irq != PHY_POLL) {
-+		if (phy_interrupt_is_valid(phydev)) {
- 			err = phy_enable_interrupts(phydev);
- 			if (err < 0)
- 				break;
+-static void mlx5e_build_drop_rq_param(struct mlx5e_rq_param *param)
++static void mlx5e_build_drop_rq_param(struct mlx5_core_dev *mdev,
++				      struct mlx5e_rq_param *param)
+ {
+ 	void *rqc = param->rqc;
+ 	void *wq = MLX5_ADDR_OF(rqc, rqc, wq);
+ 
+ 	MLX5_SET(wq, wq, wq_type, MLX5_WQ_TYPE_LINKED_LIST);
+ 	MLX5_SET(wq, wq, log_wq_stride,    ilog2(sizeof(struct mlx5e_rx_wqe)));
++
++	param->wq.buf_numa_node = dev_to_node(&mdev->pdev->dev);
+ }
+ 
+ static void mlx5e_build_sq_param_common(struct mlx5e_priv *priv,
+@@ -2774,6 +2777,9 @@ static int mlx5e_alloc_drop_cq(struct ml
+ 			       struct mlx5e_cq *cq,
+ 			       struct mlx5e_cq_param *param)
+ {
++	param->wq.buf_numa_node = dev_to_node(&mdev->pdev->dev);
++	param->wq.db_numa_node  = dev_to_node(&mdev->pdev->dev);
++
+ 	return mlx5e_alloc_cq_common(mdev, param, cq);
+ }
+ 
+@@ -2785,7 +2791,7 @@ static int mlx5e_open_drop_rq(struct mlx
+ 	struct mlx5e_cq *cq = &drop_rq->cq;
+ 	int err;
+ 
+-	mlx5e_build_drop_rq_param(&rq_param);
++	mlx5e_build_drop_rq_param(mdev, &rq_param);
+ 
+ 	err = mlx5e_alloc_drop_cq(mdev, cq, &cq_param);
+ 	if (err)
