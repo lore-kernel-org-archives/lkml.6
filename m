@@ -1,73 +1,87 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3808880-1520443242-5-14309663968522559776
+X-Cyrus-Session-Id: sloti22d1t05-29808-1520455725-2-14212142836946983103
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
   SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='dk', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520443242; b=geiSfkAd2ofiK6evzjHu6xRbAVZnZxM2bZugTYmv7MI8ofi
-    b0g30CDqju88g8q3SqI/gQwdT1XjDeb+XK/brpRTODxaSELzOd8oMjMcXotyxX82
-    7kolN/OTNGDj241GJmaZFNuVPiuVBRFJ8AdJKMlTgsURQCF6GzgUp4VXjZjENxWl
-    TZkAcbqR5RbnZN9EbdVTIHc1XyAKjf+LqkVDJmtoTrrLnZP+vl6JqobVanZ55mnH
-    ysW+JAcI3PLq1O9/+hKop3a1yzNEgq/x9WXdmuYdA/wcXwwPQlPeKcpWw+Z2h+sX
-    ZzQyNTW+3OnqrORtuqUyJlTOgtjmK4tp+SperyQ==
+    t=1520455724; b=DL4ZYVe6SuSAHeyi5kqYNwihrsb6II3tsk20Df5peswHVju
+    zYLIoh1p1bPFmAKbe8UPNAxNhUAUalrDiw6Svk8kcWpXLwX+7/qAwS8XnfwFxQsj
+    CuP1xi72G83XpF2TVBZhqajTRQDDdDJhjULbEJKtW2L8gs/HyQn9B/hYZP1fcOYy
+    +RIFsMMa7DqRY0ZS7QxOblYC2WzXTeYtyu2o2bMrIHZo7QMwgNs8XYoNa6cZVHLm
+    lm9J+odGur2CFQpnzRez8Y1PvPks3EZxvsq60qzrW2Few0ICBuLAsBD7K/IXpgx9
+    5gaTzj1KWeVd2uUUymavq3+Bd2RSrpBGP5cTMvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:list-id:list-unsubscribe
+    messagingengine.com; h=from:to:subject:references:date
+    :in-reply-to:message-id:mime-version:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520443242; bh=l
-    U+Kfr2vRkWQ8auiAnACW2i7bWnTBMvOmGkw+92ZJdI=; b=M1HFLz2uxTxu69WzU
-    gQK2mAzD0tt4tdZR4BrDWOzQFV0cmc+qwPWFRhpCDLO/NjcLRz+MR2SymAcJp1Fo
-    n9u+B4XUEPsKLPV6TElazul6B0RZooK7WqlyyqHU6D+7UMdMWR6uqbacmhSv948u
-    GJxXjMnbqMU3PL3ZkZ8ZDxgFuOtA4Jrfsj9FELpVyOc2IWC5pHeMBk8EUSMWaEBA
-    8gKChZGNqaIV5QvnW3dpjrwxxdAXG2fdkDS7uYONbgReo8OYwLYmrtqpUxExs5vt
-    nnShT3th2f+VUQ1wUP85Il8pQqxCYFa39sIdN7MtivS/V1ECq7iUn6dj+BtPdJ4H
-    i6CSw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=esDeVges x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=XmGK4pQ4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    :content-transfer-encoding:sender; s=arctest; t=1520455724; bh=i
+    STG+DG2E8eHSj9iE6LQGU0G5jgMrpyzoLKddwgKaSM=; b=QOn7QbaCZ6tgCQ3ht
+    W6VaHkoBfVi7Twif+9gGXwz0fwatHnwiWtLuDCGzN3PVvkDeFru1uUYT53L2Epvp
+    HoD+ad8gGp+1t+XgRyfXcty5jM3CKdtVf2QWnb527OysizHbdNGX1wZcp5cW/OUS
+    yYcYZwTV59JYioijJBiNMfjpa/+p78HtLdqJ7YV/2LIAzC7+C2EN/tghfD+4TMtX
+    Phpnk+nAlC3fO3Eg0d+B3t7/zuZ3E4QAwo8zY2M2L0Qf1d9c4+pQLgw1b2EX4zII
+    B3SaDaQliQ5kYmWBf1on4rWsbxryZYbB62lz+8i+zm8JK6xJLeHiQ4tAL6joLqRX
+    yDeng==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=XfxZTL6p x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rasmusvillemoes.dk;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TS5FNHOV;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=chromium.org header.result=pass header_is_org_domain=yes;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=RUf1gZEJ;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=rasmusvillemoes.dk header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=esDeVges x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=XmGK4pQ4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=XfxZTL6p x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rasmusvillemoes.dk;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TS5FNHOV;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=chromium.org header.result=pass header_is_org_domain=yes;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=RUf1gZEJ;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=rasmusvillemoes.dk header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELuch/3WOpmrgdRWAgGq8kljYq9JW8cKIgYes/UdPsD2mNo81j5fQRB2slrNM9TN1a63HHKqt3cPoJ1z6y0PzJI=
-MIME-Version: 1.0
-In-Reply-To: <d5de0034-6f74-5b73-2df8-dbe5b366c2fc@prevas.dk>
+X-Google-Smtp-Source: AG47ELvZBaV4alfrR1tutwFLMJrmPc4xEJBdhgUnzSoKhvcV9Ycjc/PEHrIUZECBDol8lkdHRv6yaA==
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To: Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] staging: lustre: Remove VLA usage
+Organization: D03
 References: <20180307054608.GA9300@beast>
  <d5de0034-6f74-5b73-2df8-dbe5b366c2fc@prevas.dk>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 7 Mar 2018 09:20:31 -0800
-X-Google-Sender-Auth: d1LCYAsV7ZqQx-5-nsStnbT0xj4
-Message-ID: <CAGXu5j+OTu84ohuR3f4_xKRw9vikVi-K2TnH3+n_ekX1m1Vv8A@mail.gmail.com>
-Subject: Re: [PATCH] staging: lustre: Remove VLA usage
-To: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+ <CAGXu5j+OTu84ohuR3f4_xKRw9vikVi-K2TnH3+n_ekX1m1Vv8A@mail.gmail.com>
+X-Hashcash: 1:20:180307:jsimmons@infradead.org::jwKTMsYIgTblGTrI:0000000000000000000000000000000000000000Pf2
+X-Hashcash: 1:20:180307:rasmus.villemoes@prevas.dk::GHx/16nYwsBGkjQt:000000000000000000000000000000000000s8o
+X-Hashcash: 1:20:180307:keescook@chromium.org::mqn6DkALIa4WFSCT:00000000000000000000000000000000000000001e0A
+X-Hashcash: 1:20:180307:devel@driverdev.osuosl.org::dOTWbIRM26WxfJZQ:000000000000000000000000000000000001w6H
+X-Hashcash: 1:20:180307:oleg.drokin@intel.com::g7iVdmC3Cfs+FpQO:00000000000000000000000000000000000000002O/l
+X-Hashcash: 1:20:180307:kernel-hardening@lists.openwall.com::BsLtWe3IrMj5VzhL:000000000000000000000000003cWK
+X-Hashcash: 1:20:180307:dmitry.eremin@intel.com::fW+9NZ1rm/deI/yO:000000000000000000000000000000000000004hIl
+X-Hashcash: 1:20:180307:tycho@tycho.ws::A+QE4sU1jvqEyqno:0005e+y
+X-Hashcash: 1:20:180307:andreas.dilger@intel.com::ri2ZzzCQEB7YTr1S:00000000000000000000000000000000000005m3C
+X-Hashcash: 1:20:180307:me@tobin.cc::GhQDwlyz82Sx2P9N:0000006L2I
+X-Hashcash: 1:20:180307:gregkh@linuxfoundation.org::7wwrIHQlvQtIno8x:000000000000000000000000000000000006dhD
+X-Hashcash: 1:20:180307:linux-kernel@vger.kernel.org::WaAsaArf4vtKiCiT:00000000000000000000000000000000093Um
+X-Hashcash: 1:20:180307:lustre-devel@lists.lustre.org::AYuO+MFuGLBlGHjC:00000000000000000000000000000000CKOl
+X-Hashcash: 1:20:180307:gs051095@gmail.com::wQkU9pHIUzNi+sLk:0000000000000000000000000000000000000000000FNFP
+Date: Wed, 07 Mar 2018 21:48:33 +0100
+In-Reply-To: <CAGXu5j+OTu84ohuR3f4_xKRw9vikVi-K2TnH3+n_ekX1m1Vv8A@mail.gmail.com>
+ (Kees Cook's message of "Wed, 7 Mar 2018 09:20:31 -0800")
+Message-ID: <87ina7ehni.fsf@rasmusvillemoes.dk>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+MIME-Version: 1.0
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -80,8 +94,9 @@ List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driver
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
 Cc: devel@driverdev.osuosl.org, Dmitry Eremin <dmitry.eremin@intel.com>,
  Tycho Andersen <tycho@tycho.ws>, Andreas Dilger <andreas.dilger@intel.com>,
- Kernel Hardening <kernel-hardening@lists.openwall.com>,
+ Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Kernel Hardening <kernel-hardening@lists.openwall.com>,
  LKML <linux-kernel@vger.kernel.org>, Gargi Sharma <gs051095@gmail.com>,
  Oleg Drokin <oleg.drokin@intel.com>,
  Lustre Development List <lustre-devel@lists.lustre.org>
@@ -93,89 +108,34 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Mar 7, 2018 at 5:10 AM, Rasmus Villemoes
-<rasmus.villemoes@prevas.dk> wrote:
-> On 2018-03-07 06:46, Kees Cook wrote:
->> The kernel would like to remove all VLA usage. This switches to a
->> simple kasprintf() instead.
+On Wed, Mar 07 2018, Kees Cook <keescook@chromium.org> wrote:
+
+> On Wed, Mar 7, 2018 at 5:10 AM, Rasmus Villemoes
+> <rasmus.villemoes@prevas.dk> wrote:
+>> On 2018-03-07 06:46, Kees Cook wrote:
+>>> The kernel would like to remove all VLA usage. This switches to a
+>>> simple kasprintf() instead.
+>>>
 >>
->> Signed-off-by: Kees Cook <keescook@chromium.org>
->> ---
->>  drivers/staging/lustre/lustre/llite/xattr.c | 19 +++++++++++++------
->>  1 file changed, 13 insertions(+), 6 deletions(-)
+>> It's probably worth pointing out that this actually fixes an
+>> unconditional buffer overflow: fullname only has room for the two
+>> strings and the '\n', but vsnprintf() is told that the buffer has
+>> infinite size (well, INT_MAX), so there should be plenty of room to
+>> append the '\0' after the '\n'.
 >>
->> diff --git a/drivers/staging/lustre/lustre/llite/xattr.c b/drivers/staging/lustre/lustre/llite/xattr.c
->> index 532384c91447..aab4eab64289 100644
->> --- a/drivers/staging/lustre/lustre/llite/xattr.c
->> +++ b/drivers/staging/lustre/lustre/llite/xattr.c
->> @@ -87,7 +87,7 @@ ll_xattr_set_common(const struct xattr_handler *handler,
->>                   const char *name, const void *value, size_t size,
->>                   int flags)
->>  {
->> -     char fullname[strlen(handler->prefix) + strlen(name) + 1];
->> +     char *fullname;
->>       struct ll_sb_info *sbi = ll_i2sbi(inode);
->>       struct ptlrpc_request *req = NULL;
->>       const char *pv = value;
->> @@ -141,10 +141,13 @@ ll_xattr_set_common(const struct xattr_handler *handler,
->>                       return -EPERM;
->>       }
->>
->> -     sprintf(fullname, "%s%s\n", handler->prefix, name);
 >
-> It's probably worth pointing out that this actually fixes an
-> unconditional buffer overflow: fullname only has room for the two
-> strings and the '\n', but vsnprintf() is told that the buffer has
-> infinite size (well, INT_MAX), so there should be plenty of room to
-> append the '\0' after the '\n'.
+> Oh yes, hah. I didn't even see the \n in the string. :P
 >
->> +     fullname = kasprintf(GFP_KERNEL, "%s%s\n", handler->prefix, name);
->> +     if (!fullname)
->> +             return -ENOMEM;
->>       rc = md_setxattr(sbi->ll_md_exp, ll_inode2fid(inode),
->>                        valid, fullname, pv, size, 0, flags,
->>                        ll_i2suppgid(inode), &req);
->> +     kfree(fullname);
->>       if (rc) {
->>               if (rc == -EOPNOTSUPP && handler->flags == XATTR_USER_T) {
->>                       LCONSOLE_INFO("Disabling user_xattr feature because it is not supported on the server\n");
->> @@ -364,7 +367,7 @@ static int ll_xattr_get_common(const struct xattr_handler *handler,
->>                              struct dentry *dentry, struct inode *inode,
->>                              const char *name, void *buffer, size_t size)
->>  {
->> -     char fullname[strlen(handler->prefix) + strlen(name) + 1];
->> +     char *fullname;
->>       struct ll_sb_info *sbi = ll_i2sbi(inode);
->>  #ifdef CONFIG_FS_POSIX_ACL
->>       struct ll_inode_info *lli = ll_i2info(inode);
->> @@ -411,9 +414,13 @@ static int ll_xattr_get_common(const struct xattr_handler *handler,
->>       if (handler->flags == XATTR_ACL_DEFAULT_T && !S_ISDIR(inode->i_mode))
->>               return -ENODATA;
->>  #endif
->> -     sprintf(fullname, "%s%s\n", handler->prefix, name);
->
-> Same here.
->
-> I'm a little surprised this hasn't been caugt by static analysis, I
-> thought gcc/coverity/smatch/whatnot had gotten pretty good at computing
-> the size of the output generated by a given format string with "known"
-> arguments and comparing to the size of the output buffer. Though of
-> course it does require the tool to be able to do symbolic manipulations,
-> in this case realizing that
->
-> outsize == strlen(x)+strlen(y)+1+1 > bufsize == strlen(x)+strlen(y)+1
->
-> Rasmus
+> So, both a VLA fix and a buffer over-run fix. Can I add your "Reviewed-by"? :)
 
-Oh yes, hah. I didn't even see the \n in the string. :P
+Sure,
 
-So, both a VLA fix and a buffer over-run fix. Can I add your "Reviewed-by"? :)
+Reviewed-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
--Kees
-
--- 
-Kees Cook
-Pixel Security
+A nit, if you're resending anyway: can you move the "char *fullname"
+declarations down a bit, to between pv,valid, and lli,rc, respectively?
+That keeps the initialized and uninitialized variables nicely together
+and ends up looking better.
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
