@@ -1,192 +1,274 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933258AbeCGCCa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 21:02:30 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:41733 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932078AbeCGCC1 (ORCPT
+        id S933426AbeCGCCq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 21:02:46 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:39513 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933190AbeCGCCa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 21:02:27 -0500
-X-Google-Smtp-Source: AG47ELvZf+jNueV9LELHwun2q+MYM/MVJjpciaRBCz6xsfUfMKabYZqXOyRbBTltlEBDFoAeysxB2A==
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Andrey Smirnov <andrew.smirnov@gmail.com>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Guenter Roeck <linux@roeck-us.net>, Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>
-Subject: [PATCH v3 1/2] input: Add RAVE SP Powerbutton driver
-Date: Tue,  6 Mar 2018 18:01:33 -0800
-Message-Id: <20180307020134.26293-1-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.14.3
+        Tue, 6 Mar 2018 21:02:30 -0500
+X-Google-Smtp-Source: AG47ELvNx+MicZW+5xvRG6AJaUACxeodvce1BVpZgRZ8VYh54d1ZSWhuE9xME4wLkD1Lfuhu0dF5AQ==
+Date: Tue, 06 Mar 2018 18:02:28 -0800 (PST)
+X-Google-Original-Date: Tue, 06 Mar 2018 17:58:10 PST (-0800)
+Subject: Re: [RFC PATCH 1/2] riscv/spinlock: Strengthen implementations with fences
+In-Reply-To: <1520274249-21815-1-git-send-email-parri.andrea@gmail.com>
+CC: albert@sifive.com, Daniel Lustig <dlustig@nvidia.com>,
+        stern@rowland.harvard.edu, Will Deacon <will.deacon@arm.com>,
+        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+        paulmck@linux.vnet.ibm.com, akiyks@gmail.com, mingo@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        parri.andrea@gmail.com
+From: Palmer Dabbelt <palmer@sifive.com>
+To: parri.andrea@gmail.com
+Message-ID: <mhng-e21e88a4-fa27-4d22-8862-6e0377300edd@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add driver that properly handles input event emitted by RAVE SP
-devices.
+On Mon, 05 Mar 2018 10:24:09 PST (-0800), parri.andrea@gmail.com wrote:
+> Current implementations map locking operations using .rl and .aq
+> annotations.  However, this mapping is unsound w.r.t. the kernel
+> memory consistency model (LKMM) [1]:
+>
+> Referring to the "unlock-lock-read-ordering" test reported below,
+> Daniel wrote:
+>
+>   "I think an RCpc interpretation of .aq and .rl would in fact
+>    allow the two normal loads in P1 to be reordered [...]
+>
+>    The intuition would be that the amoswap.w.aq can forward from
+>    the amoswap.w.rl while that's still in the store buffer, and
+>    then the lw x3,0(x4) can also perform while the amoswap.w.rl
+>    is still in the store buffer, all before the l1 x1,0(x2)
+>    executes.  That's not forbidden unless the amoswaps are RCsc,
+>    unless I'm missing something.
+>
+>    Likewise even if the unlock()/lock() is between two stores.
+>    A control dependency might originate from the load part of
+>    the amoswap.w.aq, but there still would have to be something
+>    to ensure that this load part in fact performs after the store
+>    part of the amoswap.w.rl performs globally, and that's not
+>    automatic under RCpc."
+>
+> Simulation of the RISC-V memory consistency model confirmed this
+> expectation.
+>
+> In order to "synchronize" LKMM and RISC-V's implementation, this
+> commit strengthens the implementations of the locking operations
+> by replacing .rl and .aq with the use of ("lightweigth") fences,
+> resp., "fence rw,  w" and "fence r , rw".
+>
+> C unlock-lock-read-ordering
+>
+> {}
+> /* s initially owned by P1 */
+>
+> P0(int *x, int *y)
+> {
+>         WRITE_ONCE(*x, 1);
+>         smp_wmb();
+>         WRITE_ONCE(*y, 1);
+> }
+>
+> P1(int *x, int *y, spinlock_t *s)
+> {
+>         int r0;
+>         int r1;
+>
+>         r0 = READ_ONCE(*y);
+>         spin_unlock(s);
+>         spin_lock(s);
+>         r1 = READ_ONCE(*x);
+> }
+>
+> exists (1:r0=1 /\ 1:r1=0)
+>
+> [1] https://marc.info/?l=linux-kernel&m=151930201102853&w=2
+>     https://groups.google.com/a/groups.riscv.org/forum/#!topic/isa-dev/hKywNHBkAXM
+>     https://marc.info/?l=linux-kernel&m=151633436614259&w=2
+>
+> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+> Cc: Palmer Dabbelt <palmer@sifive.com>
+> Cc: Albert Ou <albert@sifive.com>
+> Cc: Daniel Lustig <dlustig@nvidia.com>
+> Cc: Alan Stern <stern@rowland.harvard.edu>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+> Cc: Luc Maranget <luc.maranget@inria.fr>
+> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> Cc: Akira Yokosawa <akiyks@gmail.com>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: linux-riscv@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  arch/riscv/include/asm/fence.h    | 12 ++++++++++++
+>  arch/riscv/include/asm/spinlock.h | 29 +++++++++++++++--------------
+>  2 files changed, 27 insertions(+), 14 deletions(-)
+>  create mode 100644 arch/riscv/include/asm/fence.h
 
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
----
+Oh, sorry about this -- I thought I'd deleted all this code, but I guess I just 
+wrote a patch and then forgot about it.  Here's my original patch, which I have 
+marked as a WIP:
 
-Changes since [v2]:
+commit 39908f1f8b75ae88ce44dc77b8219a94078ad298
+Author: Palmer Dabbelt <palmer@sifive.com>
+Date:   Tue Dec 5 16:26:50 2017 -0800
 
-	- Collected Reviewed-by from Lucas
+    RISC-V: Use generic spin and rw locks
 
-Changes since [v1]:
+    This might not be exactly the right thing to do: we could use LR/SC to
+    produce slightly better locks by rolling the tests into the LR/SC.  I'm
+    going to defer that until I get a better handle on the new memory model
+    and just be safe here: after some discussion I'm pretty sure the AMOs
+    are good, and cmpxchg is safe (by being way too string).
 
-	- Removed redundant dev.parent assignment
+    Since we'd want to rewrite the spinlocks anyway so they queue, I don't
+    see any reason to keep the old implementations around.
 
-	- Various cosmetic changes
+    Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 
-[v2] lkml.kernel.org/r/20180301165527.22274-1-andrew.smirnov@gmail.com
-[v1] lkml.kernel.org/r/20180226154130.25774-1-andrew.smirnov@gmail.com
+diff --git a/arch/riscv/include/asm/spinlock.h b/arch/riscv/include/asm/spinlock.h
+index 2fd27e8ef1fd..9b166ea81fe5 100644
+--- a/arch/riscv/include/asm/spinlock.h
++++ b/arch/riscv/include/asm/spinlock.h
+@@ -15,128 +15,7 @@
+ #ifndef _ASM_RISCV_SPINLOCK_H
+ #define _ASM_RISCV_SPINLOCK_H
 
- drivers/input/misc/Kconfig             |  9 ++++
- drivers/input/misc/Makefile            |  1 +
- drivers/input/misc/rave-sp-pwrbutton.c | 94 ++++++++++++++++++++++++++++++++++
- 3 files changed, 104 insertions(+)
- create mode 100644 drivers/input/misc/rave-sp-pwrbutton.c
+-#include <linux/kernel.h>
+-#include <asm/current.h>
+-
+-/*
+- * Simple spin lock operations.  These provide no fairness guarantees.
+- */
+-
+-/* FIXME: Replace this with a ticket lock, like MIPS. */
+-
+-#define arch_spin_is_locked(x)	(READ_ONCE((x)->lock) != 0)
+-
+-static inline void arch_spin_unlock(arch_spinlock_t *lock)
+-{
+-	__asm__ __volatile__ (
+-		"amoswap.w.rl x0, x0, %0"
+-		: "=A" (lock->lock)
+-		:: "memory");
+-}
+-
+-static inline int arch_spin_trylock(arch_spinlock_t *lock)
+-{
+-	int tmp = 1, busy;
+-
+-	__asm__ __volatile__ (
+-		"amoswap.w.aq %0, %2, %1"
+-		: "=r" (busy), "+A" (lock->lock)
+-		: "r" (tmp)
+-		: "memory");
+-
+-	return !busy;
+-}
+-
+-static inline void arch_spin_lock(arch_spinlock_t *lock)
+-{
+-	while (1) {
+-		if (arch_spin_is_locked(lock))
+-			continue;
+-
+-		if (arch_spin_trylock(lock))
+-			break;
+-	}
+-}
+-
+-/***********************************************************/
+-
+-static inline void arch_read_lock(arch_rwlock_t *lock)
+-{
+-	int tmp;
+-
+-	__asm__ __volatile__(
+-		"1:	lr.w	%1, %0\n"
+-		"	bltz	%1, 1b\n"
+-		"	addi	%1, %1, 1\n"
+-		"	sc.w.aq	%1, %1, %0\n"
+-		"	bnez	%1, 1b\n"
+-		: "+A" (lock->lock), "=&r" (tmp)
+-		:: "memory");
+-}
+-
+-static inline void arch_write_lock(arch_rwlock_t *lock)
+-{
+-	int tmp;
+-
+-	__asm__ __volatile__(
+-		"1:	lr.w	%1, %0\n"
+-		"	bnez	%1, 1b\n"
+-		"	li	%1, -1\n"
+-		"	sc.w.aq	%1, %1, %0\n"
+-		"	bnez	%1, 1b\n"
+-		: "+A" (lock->lock), "=&r" (tmp)
+-		:: "memory");
+-}
+-
+-static inline int arch_read_trylock(arch_rwlock_t *lock)
+-{
+-	int busy;
+-
+-	__asm__ __volatile__(
+-		"1:	lr.w	%1, %0\n"
+-		"	bltz	%1, 1f\n"
+-		"	addi	%1, %1, 1\n"
+-		"	sc.w.aq	%1, %1, %0\n"
+-		"	bnez	%1, 1b\n"
+-		"1:\n"
+-		: "+A" (lock->lock), "=&r" (busy)
+-		:: "memory");
+-
+-	return !busy;
+-}
+-
+-static inline int arch_write_trylock(arch_rwlock_t *lock)
+-{
+-	int busy;
+-
+-	__asm__ __volatile__(
+-		"1:	lr.w	%1, %0\n"
+-		"	bnez	%1, 1f\n"
+-		"	li	%1, -1\n"
+-		"	sc.w.aq	%1, %1, %0\n"
+-		"	bnez	%1, 1b\n"
+-		"1:\n"
+-		: "+A" (lock->lock), "=&r" (busy)
+-		:: "memory");
+-
+-	return !busy;
+-}
+-
+-static inline void arch_read_unlock(arch_rwlock_t *lock)
+-{
+-	__asm__ __volatile__(
+-		"amoadd.w.rl x0, %1, %0"
+-		: "+A" (lock->lock)
+-		: "r" (-1)
+-		: "memory");
+-}
+-
+-static inline void arch_write_unlock(arch_rwlock_t *lock)
+-{
+-	__asm__ __volatile__ (
+-		"amoswap.w.rl x0, x0, %0"
+-		: "=A" (lock->lock)
+-		:: "memory");
+-}
++#include <asm-generic/qspinlock.h>
++#include <asm-generic/qrwlock.h>
 
-diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
-index 62a1312a7387..6a3c753b093b 100644
---- a/drivers/input/misc/Kconfig
-+++ b/drivers/input/misc/Kconfig
-@@ -841,4 +841,13 @@ config INPUT_HISI_POWERKEY
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called hisi_powerkey.
- 
-+config INPUT_RAVE_SP_PWRBUTTON
-+	tristate "RAVE SP Power button Driver"
-+	depends on RAVE_SP_CORE
-+	help
-+	  Say Y here if you want to enable power key reporting from RAVE SP
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called rave-sp-pwrbutton.
-+
- endif
-diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
-index a8f61af865aa..8cc58f362bb8 100644
---- a/drivers/input/misc/Makefile
-+++ b/drivers/input/misc/Makefile
-@@ -60,6 +60,7 @@ obj-$(CONFIG_INPUT_PMIC8XXX_PWRKEY)	+= pmic8xxx-pwrkey.o
- obj-$(CONFIG_INPUT_POWERMATE)		+= powermate.o
- obj-$(CONFIG_INPUT_PWM_BEEPER)		+= pwm-beeper.o
- obj-$(CONFIG_INPUT_PWM_VIBRA)		+= pwm-vibra.o
-+obj-$(CONFIG_INPUT_RAVE_SP_PWRBUTTON)	+= rave-sp-pwrbutton.o
- obj-$(CONFIG_INPUT_RB532_BUTTON)	+= rb532_button.o
- obj-$(CONFIG_INPUT_REGULATOR_HAPTIC)	+= regulator-haptic.o
- obj-$(CONFIG_INPUT_RETU_PWRBUTTON)	+= retu-pwrbutton.o
-diff --git a/drivers/input/misc/rave-sp-pwrbutton.c b/drivers/input/misc/rave-sp-pwrbutton.c
-new file mode 100644
-index 000000000000..bcab3cdb7ebd
---- /dev/null
-+++ b/drivers/input/misc/rave-sp-pwrbutton.c
-@@ -0,0 +1,94 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// Power Button driver for RAVE SP
-+//
-+// Copyright (C) 2017 Zodiac Inflight Innovations
-+//
-+//
-+
-+#include <linux/input.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/mfd/rave-sp.h>
-+#include <linux/platform_device.h>
-+
-+#define RAVE_SP_EVNT_BUTTON_PRESS	(RAVE_SP_EVNT_BASE + 0x00)
-+
-+struct rave_sp_power_button {
-+	struct input_dev *idev;
-+	struct notifier_block nb;
-+};
-+
-+static int rave_sp_power_button_event(struct notifier_block *nb,
-+				      unsigned long action, void *data)
-+{
-+	struct rave_sp_power_button *pb =
-+		container_of(nb, struct rave_sp_power_button, nb);
-+	const u8 event = rave_sp_action_unpack_event(action);
-+	const u8 value = rave_sp_action_unpack_value(action);
-+	struct input_dev *idev = pb->idev;
-+
-+	if (event == RAVE_SP_EVNT_BUTTON_PRESS) {
-+		input_report_key(idev, KEY_POWER, value);
-+		input_sync(idev);
-+
-+		return NOTIFY_STOP;
-+	}
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static int rave_sp_pwrbutton_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct rave_sp_power_button *pb;
-+	struct input_dev *idev;
-+	int error;
-+
-+	pb = devm_kzalloc(dev, sizeof(*pb), GFP_KERNEL);
-+	if (!pb)
-+		return -ENOMEM;
-+
-+	idev = devm_input_allocate_device(dev);
-+	if (!idev)
-+		return -ENOMEM;
-+
-+	idev->name = pdev->name;
-+
-+	input_set_capability(idev, EV_KEY, KEY_POWER);
-+
-+	error = input_register_device(idev);
-+	if (error)
-+		return error;
-+
-+	pb->idev = idev;
-+	pb->nb.notifier_call = rave_sp_power_button_event;
-+	pb->nb.priority = 128;
-+
-+	error = devm_rave_sp_register_event_notifier(dev, &pb->nb);
-+	if (error)
-+		return error;
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id rave_sp_pwrbutton_of_match[] = {
-+	{ .compatible = "zii,rave-sp-pwrbutton" },
-+	{}
-+};
-+
-+static struct platform_driver rave_sp_pwrbutton_driver = {
-+	.probe = rave_sp_pwrbutton_probe,
-+	.driver	= {
-+		.name = KBUILD_MODNAME,
-+		.of_match_table = rave_sp_pwrbutton_of_match,
-+	},
-+};
-+module_platform_driver(rave_sp_pwrbutton_driver);
-+
-+MODULE_DEVICE_TABLE(of, rave_sp_pwrbutton_of_match);
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Andrey Vostrikov <andrey.vostrikov@cogentembedded.com>");
-+MODULE_AUTHOR("Nikita Yushchenko <nikita.yoush@cogentembedded.com>");
-+MODULE_AUTHOR("Andrey Smirnov <andrew.smirnov@gmail.com>");
-+MODULE_DESCRIPTION("RAVE SP Power Button driver");
--- 
-2.14.3
+ #endif /* _ASM_RISCV_SPINLOCK_H */
