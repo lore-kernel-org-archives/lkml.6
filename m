@@ -1,156 +1,106 @@
-Return-Path: <kernel-hardening-return-12472-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELsYTM8bZYc9bQFL7EwVguOu8VCQmyZQpQCPocvv+4wzFqzw2OGvLwQgfQOathv9Y9YsgX77
-ARC-Seal: i=1; a=rsa-sha256; t=1520875753; cv=none;
+Return-Path: <djkurtz@chromium.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1520465057; cv=none;
         d=google.com; s=arc-20160816;
-        b=YPRLou/D1tin0VLAbEKlUrOFQ64tHAu39mt4bomFuQNDCsT1kRhARbdrI9OI7F9Drt
-         tBNplsd6s0PFz/cRg1rRpLt4kKOpEqlMWSlTps9YqVg0rzg+Y4PxR9PJyb/zoqMik+MY
-         3iiAH8FjNcvsZv8y4pIqxc4r/2yUb0c/dAKr5CcZOgafPJqCqZVk5yRcalyBPVtiUeLu
-         Ciw1IuXVphGjmOS35RXflTkHIRnE8gmakq+QcQiUBLKU0cLCoPB1OQcolF6tYsziQFVX
-         hiAK0twP2BGUX2rcaM/yEcf62K3Xo5dYegrPdZnckUsMFprAjRSkfXb69eRTJTWh3PWf
-         dnAA==
+        b=HRLOrETINBvDEFMNeBNkH1MvBgnhSmz/x3Ol3Nv/3sY/XLGOGmb4rx4y8aJ4utnYOp
+         4P9G90kib2JE2nb7lAsyWHCFvFYy4fhXCSg9ri4OpgucVLuoGrOb0cMzjUsmmb6b//2F
+         SeELZQwdrdSNhMTbhEnc8JHaROsnRWoQaie9Pxofis+1nWEGUEkDt0DpUg3b/77W4h+b
+         Gwk/WO5Je6vctO2rdZG+G3Yrk6PhcPEIYX0PQXbMDQvoBBRsVbygONJzeZXALYI4RNQn
+         P70B5z3gAWrjppliDn/zhYxNzd3P/wGYzVBX+tmOAgtfgvaLDXzuOXmqvPLpLEKQ2kaI
+         Liug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature:delivered-to
-         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
-         :precedence:mailing-list:arc-authentication-results;
-        bh=FLm1+b/vyyx7T0YppXiRuaSuDRaimGQ6Ze+jV6YYxww=;
-        b=DYzhtErSk1wXIZJKUMyAhktO8XJ9Bdv39khC3Q7nM6g7AeDRIxLIawJXg+SjBdcDmz
-         3tR30grpazUsLIGfSA6nWcLYf/f17J29vxYBLnAULIssOBA4nvPl+CzHh0R4X1mxn8Fy
-         +V6Zd6IuElaqI/4fZIR6dZUpBca9NBj8W/sPqta8BmEqo4VXZ7MFyvWk0/Zw/5yGPfaf
-         Ig0kgcLZuWlBWaIL03MEeD9E6TfIW+9fh0xqoFQegrEMm6rw8RkJVitg3vWehHIiCKE6
-         NDVVB3t/iYTn0/3Dl+8dZkYjHSZU3jF3DAzqwGIYllkw3mFtm/RDwdeqzPXJLwhH3O/8
-         I78g==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=V4jhfRjAq669UzzZjW1EncMUKEE934aU2Qy9E0+S6xw=;
+        b=SDEChoLNcEkRRtNKH1KWV4bZ79zoKFTKZx0ctxB8rIOyLSydjz+/FHYTwU8rQmNytJ
+         9MOW3JP9/DczTkOgYxkDFmQyv55XQ9uh5yevwPb12KNnKatffyva6YWx3OOc1J4IeWBA
+         175PIzAHaewx47pA/zJ5ou9K6MRtpjW/pwg29nzDx4rSnrMK+UeR30t08m931yz15Ar5
+         9JhoW5WSMbem9VbR8UhsSbH+G9dAZmpBYYeG4x/+URUt9JO/tdm+Rm1ArlxvQKhSSDOc
+         19FHfO1AsSuELKo6MO6MzKMd8TVKiODTSYxopO45qVZZ7fbaEXv2jREJjbdP/AoK6z1h
+         jlxw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=trRpidUF;
-       spf=pass (google.com: domain of kernel-hardening-return-12472-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12472-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@chromium.org header.s=google header.b=ZEEUEelX;
+       spf=pass (google.com: domain of djkurtz@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=djkurtz@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=trRpidUF;
-       spf=pass (google.com: domain of kernel-hardening-return-12472-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12472-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: kernel-hardening@lists.openwall.com,
-	linux-scsi@vger.kernel.org,
-	"James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	"Tobin C. Harding" <tobin@apporbit.com>,
-	Dario Ballabio <ballabio_dario@emc.com>,
-	Kees Cook <keescook@chromium.org>,
-	Salvatore Mesoraca <s.mesoraca16@gmail.com>,
-	valdis.kletnieks@vt.edu
-Subject: [PATCH v3] scsi: eata: drop VLAs in reorder()
-Date: Mon, 12 Mar 2018 18:28:34 +0100
-Message-Id: <1520875714-16903-1-git-send-email-s.mesoraca16@gmail.com>
-X-Mailer: git-send-email 1.9.1
+       dkim=pass header.i=@chromium.org header.s=google header.b=ZEEUEelX;
+       spf=pass (google.com: domain of djkurtz@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=djkurtz@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AG47ELtp/5aM1yDvY07tvkxKuaNuKIWVn+lbQZX89d6fzcnhXSvBhdHGSA6EKPE89H+l9Ty7P5Ud1w==
+From: Daniel Kurtz <djkurtz@chromium.org>
+To: 
+Cc: adurbin@chromium.org,
+	Daniel Kurtz <djkurtz@chromium.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+Subject: [PATCH 1/2] x86/Kconfig: Add config for specifying BASE_BAUD
+Date: Wed,  7 Mar 2018 16:24:09 -0700
+Message-Id: <20180307232410.248434-2-djkurtz@chromium.org>
+X-Mailer: git-send-email 2.16.2.395.g2e18187dfd-goog
+In-Reply-To: <20180307232410.248434-1-djkurtz@chromium.org>
+References: <20180307232410.248434-1-djkurtz@chromium.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594753814907865736?=
-X-GMAIL-MSGID: =?utf-8?q?1594753814907865736?=
+X-GMAIL-THRID: =?utf-8?q?1594323168937167564?=
+X-GMAIL-MSGID: =?utf-8?q?1594323168937167564?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Avoid 3 VLAs[1] by using a single dinamically allocated array
-and some helper variables: we don't need 3 arrays.
+Not all x86 CPUs have UARTs that use a baud reference clock (BASE_BAUD) of
+115200 = 1843200 / 16.  For example, the UARTs on AMD Carrizo and later
+use a fixed input clock of 48000000, and hence require BASE_BAUD=3000000.
 
-[1] https://lkml.org/lkml/2018/3/7/621
+The BASE_BAUD value is used by the generic earlycon driver to compute the
+UART clock used early in boot before the real serial drivers have a
+chance to load and read their input clock configuration from ACPI.
 
-Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Add a Kconfig option to override this default hard coded value.
+
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
 ---
- drivers/scsi/eata.c | 40 ++++++++++++++++++++++++++--------------
- 1 file changed, 26 insertions(+), 14 deletions(-)
+ arch/x86/Kconfig              | 9 +++++++++
+ arch/x86/include/asm/serial.h | 4 ++++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/drivers/scsi/eata.c b/drivers/scsi/eata.c
-index 6501c33..8ba44b7 100644
---- a/drivers/scsi/eata.c
-+++ b/drivers/scsi/eata.c
-@@ -2091,12 +2091,14 @@ static void sort(unsigned long sk[], unsigned int da[], unsigned int n,
- static int reorder(struct hostdata *ha, unsigned long cursec,
- 		   unsigned int ihdlr, unsigned int il[], unsigned int n_ready)
- {
-+	int overlap;
- 	struct scsi_cmnd *SCpnt;
- 	struct mscp *cpp;
- 	unsigned int k, n;
- 	unsigned int rev = 0, s = 1, r = 1;
--	unsigned int input_only = 1, overlap = 0;
--	unsigned long sl[n_ready], pl[n_ready], ll[n_ready];
-+	unsigned int input_only = 1;
-+	unsigned long *sl;
-+	unsigned long sl_zero, sl_cur, sl_prev, ll_cur, ll_prev;
- 	unsigned long maxsec = 0, minsec = ULONG_MAX, seek = 0, iseek = 0;
- 	unsigned long ioseek = 0;
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index eb7f43f23521..0a258bb30159 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -454,6 +454,15 @@ config INTEL_RDT
  
-@@ -2115,6 +2117,12 @@ static int reorder(struct hostdata *ha, unsigned long cursec,
- 	if (n_ready <= 1)
- 		return 0;
+ 	  Say N if unsure.
  
-+	overlap = -ENOMEM;
-+	sl = kmalloc_array(n_ready, sizeof(*sl), GFP_ATOMIC);
-+	if (!sl)
-+		goto out;
-+	overlap = 0;
++config X86_SERIAL_BASE_BAUD
++	int "UART input clock for platform 8250/16550 serial ports"
++	default "115200"
++	help
++	  This specifies the default frequency for the reference clock of the
++	  serial ports.  For many systems this is 1843200 / 16, which is the
++	  default, but may need to be changed to get earlycon to work on
++	  some hardware, such as those that use AMD Carrizo or later SoCs.
 +
- 	for (n = 0; n < n_ready; n++) {
- 		k = il[n];
- 		cpp = &ha->cp[k];
-@@ -2164,31 +2172,33 @@ static int reorder(struct hostdata *ha, unsigned long cursec,
- 	if (!((rev && r) || (!rev && s)))
- 		sort(sl, il, n_ready, rev);
+ if X86_32
+ config X86_BIGSMP
+ 	bool "Support for big SMP systems with more than 8 CPUs"
+diff --git a/arch/x86/include/asm/serial.h b/arch/x86/include/asm/serial.h
+index ece8299d2695..c28151090b51 100644
+--- a/arch/x86/include/asm/serial.h
++++ b/arch/x86/include/asm/serial.h
+@@ -9,7 +9,11 @@
+  * clock, since the 16550A is capable of handling a top speed of 1.5
+  * megabits/second; but this requires a faster clock.
+  */
++#ifdef CONFIG_X86_SERIAL_BASE_BAUD
++#define BASE_BAUD CONFIG_X86_SERIAL_BASE_BAUD
++#else
+ #define BASE_BAUD (1843200/16)
++#endif
  
-+	sl_zero = sl[0];
-+
- 	if (!input_only)
- 		for (n = 0; n < n_ready; n++) {
- 			k = il[n];
- 			cpp = &ha->cp[k];
- 			SCpnt = cpp->SCpnt;
--			ll[n] = blk_rq_sectors(SCpnt->request);
--			pl[n] = SCpnt->serial_number;
-+			ll_cur = blk_rq_sectors(SCpnt->request);
-+			sl_cur = sl[n];
-+			sl[n] = SCpnt->serial_number;
- 
--			if (!n)
--				continue;
--
--			if ((sl[n] == sl[n - 1])
--			    || (!rev && ((sl[n - 1] + ll[n - 1]) > sl[n]))
--			    || (rev && ((sl[n] + ll[n]) > sl[n - 1])))
-+			if (n && ((sl_cur == sl_prev)
-+				  || (!rev && ((sl_prev + ll_prev) > sl_cur))
-+				  || (rev && ((sl_cur + ll_cur) > sl_prev))))
- 				overlap = 1;
-+			ll_prev = ll_cur;
-+			sl_prev = sl_cur;
- 		}
- 
- 	if (overlap)
--		sort(pl, il, n_ready, 0);
-+		sort(sl, il, n_ready, 0);
- 
- 	if (link_statistics) {
--		if (cursec > sl[0])
--			iseek = cursec - sl[0];
-+		if (cursec > sl_zero)
-+			iseek = cursec - sl_zero;
- 		else
--			iseek = sl[0] - cursec;
-+			iseek = sl_zero - cursec;
- 		batchcount++;
- 		readycount += n_ready;
- 		seeknosort += seek / 1024;
-@@ -2225,6 +2235,8 @@ static int reorder(struct hostdata *ha, unsigned long cursec,
- 			     YESNO(overlap), cpp->din);
- 		}
- #endif
-+	kfree(sl);
-+out:
- 	return overlap;
- }
- 
+ /* Standard COM flags (except for COM4, because of the 8514 problem) */
+ #ifdef CONFIG_SERIAL_8250_DETECT_IRQ
 -- 
-1.9.1
+2.16.2.395.g2e18187dfd-goog
