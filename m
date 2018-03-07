@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt9zS4g8C0cDAGl0g2zMkwjOysNn1SJtBaz+QOyLrNlCMD27Tmym1udKHCRmSTZ9YG7zi7g
-ARC-Seal: i=1; a=rsa-sha256; t=1520451619; cv=none;
+X-Google-Smtp-Source: AG47ELvwWxyZGq+rkwln1uOr+D+vi1Zh5v9aHdmsEnWhuNEinEXnId6rKH3ZukGJ/gsR1MFFjKU+
+ARC-Seal: i=1; a=rsa-sha256; t=1520451616; cv=none;
         d=google.com; s=arc-20160816;
-        b=eke9uE1/E0TepL1MlzeLvBj9L6ySG7EK5RjyVWMUPhk59mIjDA3Xi5C0qDEgcEWDXd
-         ISUYaSIYahCONU7hWS7b7uHTMPvKuaBIitcTBrZq+9/ZxuPSD7Tr+2/qoYNohQlu/2H4
-         MOV+1Zomkxz46/IPa3mlaI/8YWkyd6Fj+rqXZLUgnjzCLBzJee8SKK6TLuc7gvpruVLo
-         SrjNEYW2YvftCdTzg6LrM6PTJ6W+qvOgnYTYsn0lwKlEaGQ5GCkMgrLJAOgaWe+dHCuw
-         5OH8j1c+rvfehzycgkTpzqMyC0YgWeSwvJ1RUZQ9AHkIber6lVm4K++ZAkjURZvPuJGj
-         mL4A==
+        b=vheTA84lDlvVV5b4+xnCUqKoGHCDjUVRK3a49RRMdoPleSsM2jjPGrRYyEHe2HUMkW
+         Wk81fEokAM6WUHWiVQ14h+lqIyB9du+Ofn8GFYTKDn78LxL/REa4IBthnE5ipt0+aJmq
+         b16zasP2EfSWBKo2m7XhLQfDAoUOHYkMUOGR1L0aNVDQAPP2jhx1PKhBMQ/c70CA7oK+
+         mYZfTtMV05N1d3ma1UqlzVkwKRtlolplxD7mMw50d78gaodEQIJAweY3TKJXb61ONNQJ
+         X6fvh2AIU5Ui9JVgw0Ea4JgiwPz7RK0eqVoHnA7dYTnFFg1YYg6/OcJvBSmQeCK4hUt8
+         dIdA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=t0SqZolyxhUdvgbsu84HZuygaeYyLSh+cqIhpSeGrHc=;
-        b=sir2HUYhTg/zjM/4LyWqYlwErjF4TFGFWVaobaSyFC0kaPDdK8LPiBRlC2dIWz6mko
-         ezU1bAULgbK8yQpOd0MAEEzgs9hns4O2HtDSogW18QCQq60X8MCsJ0O+gRro5KeyrD6a
-         2xqfNpdr67FSqq83HRKnm2Uw7hB73NiC9vTVH3iiIwEw8Se0DlTJmW3mbjjPUHAeO3nY
-         NLOOvJRROZQpgi61Ka1VEOFDIFcvFXafu4kssB2dbw9LT4UhhtJIc/8w2Qgs9Fw18Oeb
-         uVam1s4FW0e+1jiXj5bXOXi8mTp0H8/t8R0BrLyn9hD8zH95BGUVPDwaRBwZRSNV/c6f
-         MpIQ==
+        bh=2gThD77z4Jf3yRC4oTMNCnrmdvILpZl55rZCFqcgOAM=;
+        b=O3bUV/6mIeU6JeDn9j/NbthHPoCwTfMeeVpk/2gVWqmniZxngku4XEBUJyazcQz+RN
+         iYdjC/H63QV/yjXui383kiRGu6pn0xSgkJXjK+uIP8oaNCMUMYXbLcz55H4UK3s915H8
+         1p5tdHNoynGgTBOI8GKd/y/885BWQabK9TSyzmI8eyQCVXKJRAbtuUMS4Wye/C2OLtd0
+         P+XZI2swto8J2C+TchEQ00fSJSGZnfgO6pjLOIK8qA1CyWI0M24wwwe4wo4KZIBNKNh3
+         rc0C7XvDJgQFy6nuB1d9h7VkWuT2Tj7U9Kz83sb/hkxIfsWwOQRGwTgUEyAZ27jsFnHI
+         2/ug==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Shawn Lin <shawn.lin@rock-chips.com>,
 	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.15 022/122] mmc: dw_mmc: Fix out-of-bounds access for slots caps
-Date: Wed,  7 Mar 2018 11:37:14 -0800
-Message-Id: <20180307191732.561620659@linuxfoundation.org>
+Subject: [PATCH 4.15 021/122] mmc: dw_mmc: Factor out dw_mci_init_slot_caps
+Date: Wed,  7 Mar 2018 11:37:13 -0800
+Message-Id: <20180307191732.401979026@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309077088716305?=
-X-GMAIL-MSGID: =?utf-8?q?1594309077088716305?=
+X-GMAIL-THRID: =?utf-8?q?1594309074889292291?=
+X-GMAIL-MSGID: =?utf-8?q?1594309074889292291?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,12 +51,12 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Shawn Lin <shawn.lin@rock-chips.com>
 
-commit 0d84b9e5631d923744767dc6608672df906dd092 upstream.
+commit a4faa4929ed3be15e2d500d2405f992f6dedc8eb upstream.
 
-Add num_caps field for dw_mci_drv_data to validate the controller
-id from DT alias and non-DT ways.
+Factor out dw_mci_init_slot_caps to consolidate parsing
+all differents types of capabilities from host contrllers.
+No functional change intended.
 
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 Fixes: 800d78bfccb3 ("mmc: dw_mmc: add support for implementation specific callbacks")
 Cc: <stable@vger.kernel.org>
@@ -65,88 +64,103 @@ Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/dw_mmc-exynos.c   |    1 +
- drivers/mmc/host/dw_mmc-k3.c       |    1 +
- drivers/mmc/host/dw_mmc-rockchip.c |    1 +
- drivers/mmc/host/dw_mmc-zx.c       |    1 +
- drivers/mmc/host/dw_mmc.c          |    9 ++++++++-
- drivers/mmc/host/dw_mmc.h          |    2 ++
- 6 files changed, 14 insertions(+), 1 deletion(-)
+ drivers/mmc/host/dw_mmc.c |   73 +++++++++++++++++++++++++++-------------------
+ 1 file changed, 43 insertions(+), 30 deletions(-)
 
---- a/drivers/mmc/host/dw_mmc-exynos.c
-+++ b/drivers/mmc/host/dw_mmc-exynos.c
-@@ -487,6 +487,7 @@ static unsigned long exynos_dwmmc_caps[4
- 
- static const struct dw_mci_drv_data exynos_drv_data = {
- 	.caps			= exynos_dwmmc_caps,
-+	.num_caps		= ARRAY_SIZE(exynos_dwmmc_caps),
- 	.init			= dw_mci_exynos_priv_init,
- 	.set_ios		= dw_mci_exynos_set_ios,
- 	.parse_dt		= dw_mci_exynos_parse_dt,
---- a/drivers/mmc/host/dw_mmc-k3.c
-+++ b/drivers/mmc/host/dw_mmc-k3.c
-@@ -210,6 +210,7 @@ static int dw_mci_hi6220_execute_tuning(
- 
- static const struct dw_mci_drv_data hi6220_data = {
- 	.caps			= dw_mci_hi6220_caps,
-+	.num_caps		= ARRAY_SIZE(dw_mci_hi6220_caps),
- 	.switch_voltage		= dw_mci_hi6220_switch_voltage,
- 	.set_ios		= dw_mci_hi6220_set_ios,
- 	.parse_dt		= dw_mci_hi6220_parse_dt,
---- a/drivers/mmc/host/dw_mmc-rockchip.c
-+++ b/drivers/mmc/host/dw_mmc-rockchip.c
-@@ -319,6 +319,7 @@ static const struct dw_mci_drv_data rk29
- 
- static const struct dw_mci_drv_data rk3288_drv_data = {
- 	.caps			= dw_mci_rk3288_dwmmc_caps,
-+	.num_caps		= ARRAY_SIZE(dw_mci_rk3288_dwmmc_caps),
- 	.set_ios		= dw_mci_rk3288_set_ios,
- 	.execute_tuning		= dw_mci_rk3288_execute_tuning,
- 	.parse_dt		= dw_mci_rk3288_parse_dt,
---- a/drivers/mmc/host/dw_mmc-zx.c
-+++ b/drivers/mmc/host/dw_mmc-zx.c
-@@ -195,6 +195,7 @@ static unsigned long zx_dwmmc_caps[3] =
- 
- static const struct dw_mci_drv_data zx_drv_data = {
- 	.caps			= zx_dwmmc_caps,
-+	.num_caps		= ARRAY_SIZE(zx_dwmmc_caps),
- 	.execute_tuning		= dw_mci_zx_execute_tuning,
- 	.prepare_hs400_tuning	= dw_mci_zx_prepare_hs400_tuning,
- 	.parse_dt               = dw_mci_zx_parse_dt,
 --- a/drivers/mmc/host/dw_mmc.c
 +++ b/drivers/mmc/host/dw_mmc.c
-@@ -2808,8 +2808,15 @@ static int dw_mci_init_slot_caps(struct
- 	} else {
- 		ctrl_id = to_platform_device(host->dev)->id;
- 	}
--	if (drv_data && drv_data->caps)
-+
-+	if (drv_data && drv_data->caps) {
-+		if (ctrl_id >= drv_data->num_caps) {
-+			dev_err(host->dev, "invalid controller id %d\n",
-+				ctrl_id);
-+			return -EINVAL;
-+		}
- 		mmc->caps |= drv_data->caps[ctrl_id];
-+	}
+@@ -2782,12 +2782,50 @@ static irqreturn_t dw_mci_interrupt(int
+ 	return IRQ_HANDLED;
+ }
  
- 	if (host->pdata->caps2)
- 		mmc->caps2 = host->pdata->caps2;
---- a/drivers/mmc/host/dw_mmc.h
-+++ b/drivers/mmc/host/dw_mmc.h
-@@ -543,6 +543,7 @@ struct dw_mci_slot {
- /**
-  * dw_mci driver data - dw-mshc implementation specific driver data.
-  * @caps: mmc subsystem specified capabilities of the controller(s).
-+ * @num_caps: number of capabilities specified by @caps.
-  * @init: early implementation specific initialization.
-  * @set_ios: handle bus specific extensions.
-  * @parse_dt: parse implementation specific device tree properties.
-@@ -554,6 +555,7 @@ struct dw_mci_slot {
-  */
- struct dw_mci_drv_data {
- 	unsigned long	*caps;
-+	u32		num_caps;
- 	int		(*init)(struct dw_mci *host);
- 	void		(*set_ios)(struct dw_mci *host, struct mmc_ios *ios);
- 	int		(*parse_dt)(struct dw_mci *host);
++static int dw_mci_init_slot_caps(struct dw_mci_slot *slot)
++{
++	struct dw_mci *host = slot->host;
++	const struct dw_mci_drv_data *drv_data = host->drv_data;
++	struct mmc_host *mmc = slot->mmc;
++	int ctrl_id;
++
++	if (host->pdata->caps)
++		mmc->caps = host->pdata->caps;
++
++	/*
++	 * Support MMC_CAP_ERASE by default.
++	 * It needs to use trim/discard/erase commands.
++	 */
++	mmc->caps |= MMC_CAP_ERASE;
++
++	if (host->pdata->pm_caps)
++		mmc->pm_caps = host->pdata->pm_caps;
++
++	if (host->dev->of_node) {
++		ctrl_id = of_alias_get_id(host->dev->of_node, "mshc");
++		if (ctrl_id < 0)
++			ctrl_id = 0;
++	} else {
++		ctrl_id = to_platform_device(host->dev)->id;
++	}
++	if (drv_data && drv_data->caps)
++		mmc->caps |= drv_data->caps[ctrl_id];
++
++	if (host->pdata->caps2)
++		mmc->caps2 = host->pdata->caps2;
++
++	/* Process SDIO IRQs through the sdio_irq_work. */
++	if (mmc->caps & MMC_CAP_SDIO_IRQ)
++		mmc->caps2 |= MMC_CAP2_SDIO_IRQ_NOTHREAD;
++
++	return 0;
++}
++
+ static int dw_mci_init_slot(struct dw_mci *host)
+ {
+ 	struct mmc_host *mmc;
+ 	struct dw_mci_slot *slot;
+-	const struct dw_mci_drv_data *drv_data = host->drv_data;
+-	int ctrl_id, ret;
++	int ret;
+ 	u32 freq[2];
+ 
+ 	mmc = mmc_alloc_host(sizeof(struct dw_mci_slot), host->dev);
+@@ -2821,38 +2859,13 @@ static int dw_mci_init_slot(struct dw_mc
+ 	if (!mmc->ocr_avail)
+ 		mmc->ocr_avail = MMC_VDD_32_33 | MMC_VDD_33_34;
+ 
+-	if (host->pdata->caps)
+-		mmc->caps = host->pdata->caps;
+-
+-	/*
+-	 * Support MMC_CAP_ERASE by default.
+-	 * It needs to use trim/discard/erase commands.
+-	 */
+-	mmc->caps |= MMC_CAP_ERASE;
+-
+-	if (host->pdata->pm_caps)
+-		mmc->pm_caps = host->pdata->pm_caps;
+-
+-	if (host->dev->of_node) {
+-		ctrl_id = of_alias_get_id(host->dev->of_node, "mshc");
+-		if (ctrl_id < 0)
+-			ctrl_id = 0;
+-	} else {
+-		ctrl_id = to_platform_device(host->dev)->id;
+-	}
+-	if (drv_data && drv_data->caps)
+-		mmc->caps |= drv_data->caps[ctrl_id];
+-
+-	if (host->pdata->caps2)
+-		mmc->caps2 = host->pdata->caps2;
+-
+ 	ret = mmc_of_parse(mmc);
+ 	if (ret)
+ 		goto err_host_allocated;
+ 
+-	/* Process SDIO IRQs through the sdio_irq_work. */
+-	if (mmc->caps & MMC_CAP_SDIO_IRQ)
+-		mmc->caps2 |= MMC_CAP2_SDIO_IRQ_NOTHREAD;
++	ret = dw_mci_init_slot_caps(slot);
++	if (ret)
++		goto err_host_allocated;
+ 
+ 	/* Useful defaults if platform data is unset. */
+ 	if (host->use_dma == TRANS_MODE_IDMAC) {
