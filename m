@@ -1,84 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754566AbeCGO4L (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:56:11 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:46506 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754463AbeCGO4H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:56:07 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Date: Wed, 7 Mar 2018 14:55:59 +0000
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Fabio Estevam <festevam@gmail.com>
-CC: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: Re: [PATCH v3 1/2] mfd: arizona: Update reset pin to use GPIOD
-Message-ID: <20180307145559.y4tyyzd2pbqrk4yb@localhost.localdomain>
-References: <20180220163540.6704-1-ckeepax@opensource.cirrus.com>
- <CAOMZO5BNYkuz6pH2qZmj+4kBPQB=j-JniiqVbqzdH8nTOXVZQQ@mail.gmail.com>
+        id S1754608AbeCGO5O (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:57:14 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46044 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754557AbeCGO5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 09:57:09 -0500
+Date: Wed, 7 Mar 2018 15:56:28 +0100
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        KarimAllah Ahmed <karahmed@amazon.de>
+Subject: Re: [PATCH] KVM: VMX: expose the host's ARCH_CAPABILITIES MSR to
+ userspace
+Message-ID: <20180307145628.GA12299@flask>
+References: <1519433546-33879-1-git-send-email-pbonzini@redhat.com>
+ <20180226221300.GK22024@char.us.oracle.com>
+ <20180301213205.GB29001@flask>
+ <ccead1df-ba70-f365-c816-7892834a290c@redhat.com>
+ <20180302214212.GB13606@flask>
+ <9cad32c8-fdb6-95db-2cd3-a0e3297b1811@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAOMZO5BNYkuz6pH2qZmj+4kBPQB=j-JniiqVbqzdH8nTOXVZQQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=969 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
- definitions=main-1803070173
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9cad32c8-fdb6-95db-2cd3-a0e3297b1811@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 11:24:10AM -0300, Fabio Estevam wrote:
-> >  static inline void arizona_enable_reset(struct arizona *arizona)
-> >  {
-> >         if (arizona->pdata.reset)
-> > -               gpio_set_value_cansleep(arizona->pdata.reset, 0);
-> > +               gpiod_set_value_cansleep(arizona->pdata.reset, 0);
+2018-03-07 12:53+0100, Paolo Bonzini:
+> On 02/03/2018 22:42, Radim Krčmář wrote:
+> > Ok, sounds good.  I've deferred it to rc5 as I think we'll want to use
+> > this to replace the auto setting:  I would not bet that it is going to
+> > be safe to expose future bits, so having the userspace always sanitize
+> > the capabilities would be safer (and more in line with what we do with
+> > other MSRs).  i.e. this patch would also
+> > 
+> > diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> > index 051dab74e4e9..86ea4a83af1f 100644
+> > --- a/arch/x86/kvm/vmx.c
+> > +++ b/arch/x86/kvm/vmx.c
+> > @@ -5740,9 +5740,6 @@ static void vmx_vcpu_setup(struct vcpu_vmx *vmx)
+> >  		++vmx->nmsrs;
+> >  	}
+> >  
+> > -	if (boot_cpu_has(X86_FEATURE_ARCH_CAPABILITIES))
+> > -		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, vmx->arch_capabilities);
+> > -
+> >  	vm_exit_controls_init(vmx, vmcs_config.vmexit_ctrl);
+> >  
+> >  	/* 22.2.1, 20.8.1 */
 > 
-> This should be:
+> I don't know. There are good reasons for both behaviors, and especially
+> the following two for _not_ removing the rdmsr:
 > 
-> gpiod_set_value_cansleep(arizona->pdata.reset, 1);
-> 
-> as here you want to put the reset GPIO into its active state.
-> 
-> Assuming that in the dts this GPIO is defined as GPIO_ACTIVE_LOW, then
-> the command should put it to logic level 0 as done originally.
-> 
-> >  static void arizona_disable_reset(struct arizona *arizona)
-> > @@ -295,7 +295,7 @@ static void arizona_disable_reset(struct arizona *arizona)
-> >                         break;
-> >                 }
-> >
-> > -               gpio_set_value_cansleep(arizona->pdata.reset, 1);
-> > +               gpiod_set_value_cansleep(arizona->pdata.reset, 1);
-> 
-> This should be:
-> 
-> gpiod_set_value_cansleep(arizona->pdata.reset, 0);
-> 
-> as here you want to put the reset GPIO into its inactive state.
+> 1) so far you could just pass the result of KVM_GET_SUPPORTED_CPUID to
+> KVM_SET_CPUID2, and expect the result to be "as close as possible to the
+> host";
+>
+> 2) having different behavior for VMX and ARCH_CAPABILITIES MSRs would be
+> confusing.
 
-Hmm... this raises a rather good point that I hadn't considered.
-This driver is used in a lot of shipping devices and the old
-style GPIO calls didn't take the activeness of the GPIO into
-account just blindly setting the value you asked for. However the
-new style calls do take this into account.
+Right, we can't just stop setting them by default ...
 
-The trouble is I guess we don't know whether most users bothered
-to set GPIO_ACTIVE_LOW or not. So it is very hard to say here if
-we are about to breaking a lot of existing device trees here.
+(I am in favor of forcing the userspace to configure everything and I'd
+ accept this exception as a mistake of the past.)
 
-I guess probably the safest approach is to use
-gpiod_set_raw_value_cansleep here?
+> I think I'm leaning more towards the following direction: whitelist
+> ARCH_CAPABILITIES, like we do for the AMD LFENCE MSR already, and
+> default the AMD LFENCE MSR to the host value.
 
-Thanks,
-Charles
+The whitelisting is a good idea and I'm ok with just that, thanks.
+
+The MSR_F10H_DECFG default is questionable -- MSR_F10H_DECFG is an
+architectural MSR, so we'd be changing the guest under the sight of
+existing userspaces.
+A potential security risk if they migrate the guest to a CPU that
+doesn't serialize LFENCE.  ARCH_CAPABILITIES are at least hidden by a
+new CPUID bit.
+
+The feature MSR defaults are going to be a mess anyway: we have
+MSR_IA32_UCODE_REV that is tightly coupled with CPUID.  Not a good
+candidate for passing by default and currently also has a default value.
