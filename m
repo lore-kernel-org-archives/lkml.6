@@ -1,141 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751241AbeCGKjH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 05:39:07 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:43266 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751112AbeCGKjE (ORCPT
+        id S1754210AbeCGKkM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 05:40:12 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:42952 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751112AbeCGKkH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 05:39:04 -0500
-Date: Wed, 7 Mar 2018 11:38:52 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
-        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
-Subject: Re: [PATCH v5 4/4] sched/fair: update util_est only on util_avg
- updates
-Message-ID: <20180307103852.GJ25201@hirez.programming.kicks-ass.net>
-References: <20180222170153.673-1-patrick.bellasi@arm.com>
- <20180222170153.673-5-patrick.bellasi@arm.com>
+        Wed, 7 Mar 2018 05:40:07 -0500
+X-Google-Smtp-Source: AG47ELsk2xDF0TboiLZX6wKSIXx16z0OEJe9pKLIc5oMAkZAQ40ifRzAWrSx5dMiC1aqgmRkmOJxHQ==
+Date: Wed, 7 Mar 2018 19:40:02 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, Tejun Heo <tj@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, Dave Young <dyoung@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>, Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        adi-buildroot-devel@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH] dump_stack: convert generic dump_stack into a weak symbol
+Message-ID: <20180307104002.GA505@jagdpanzerIV>
+References: <20180305053742.9149-1-sergey.senozhatsky@gmail.com>
+ <CAK8P3a1aCQWwrJuCmx-nrMG58NQFCkCPRuAT5g43Lty13nE2dg@mail.gmail.com>
+ <20180307022127.GB802@jagdpanzerIV>
+ <CAK8P3a172j6r2HEwQ3cOOqXgXkFbxYifQ96VRFZ3+=wGawYNLQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180222170153.673-5-patrick.bellasi@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAK8P3a172j6r2HEwQ3cOOqXgXkFbxYifQ96VRFZ3+=wGawYNLQ@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 05:01:53PM +0000, Patrick Bellasi wrote:
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 8364771f7301..1bf9a86ebc39 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -3047,6 +3047,29 @@ static inline void cfs_rq_util_change(struct cfs_rq *cfs_rq)
->  	}
->  }
->  
-> +/*
-> + * When a task is dequeued, its estimated utilization should not be update if
-> + * its util_avg has not been updated at least once.
-> + * This flag is used to synchronize util_avg updates with util_est updates.
-> + * We map this information into the LSB bit of the utilization saved at
-> + * dequeue time (i.e. util_est.dequeued).
-> + */
-> +#define UTIL_EST_NEED_UPDATE_FLAG 0x1
-> +
-> +static inline void cfs_se_util_change(struct sched_avg *avg)
-> +{
-	if (!sched_feat(UTIL_EST))
-		return;
+On (03/07/18 09:46), Arnd Bergmann wrote:
+> >
+> > When is this going to happen? 4.17?
+> 
+> Originally I planned to wait a few more releases, but the last maintainer
+> has commented that he will now send a patch for immediate removal,
+> so 4.17 is almost certain at this point.
 
-> +	if (sched_feat(UTIL_EST)) {
-> +		struct util_est ue = READ_ONCE(avg->util_est);
-> +
-> +		if (!(ue.enqueued & UTIL_EST_NEED_UPDATE_FLAG))
-> +			return;
-> +
-> +		/* Reset flag to report util_avg has been updated */
-> +		ue.enqueued &= ~UTIL_EST_NEED_UPDATE_FLAG;
-> +		WRITE_ONCE(avg->util_est, ue);
-> +	}
+Would be great to get it removed as soon as possible then. Otherwise we
+will get broken blackfin build errors from Stephen (or would need to hold
+off Dave's patch).
 
-and loose the indent. Also, since we only update the enqueued value, we
-don't need to load/store the entire util_est thing here.
+> > [..]
+> I did the review of all the nds32 patches, and would have commented
+> on this if I had noticed it earlier. I see no reason not to change it,
+> and would suggest that you continue under the assumption that
+> nds32 is going to be fixed, leaving it up to Greentime to add a fix
+> to his tree before he sends the pull request.
 
-> +}
-> +
->  #ifdef CONFIG_SMP
->  /*
->   * Approximate:
-> @@ -3308,6 +3331,7 @@ __update_load_avg_se(u64 now, int cpu, struct cfs_rq *cfs_rq, struct sched_entit
->  				cfs_rq->curr == se)) {
->  
->  		___update_load_avg(&se->avg, se_weight(se), se_runnable(se));
-> +		cfs_se_util_change(&se->avg);
->  		return 1;
->  	}
->  
+Good.
 
-So we only clear the bit for @se updates.
+> > Honestly, I kind of find __weak less confusing than EXPORT_SYMBOL(dump_stack)
+> > in 3 different places. __weak hints that the symbol likely will be overridden
+> > somewhere, while EXPORT_SYMBOL() does not (at least not to me). Dunno.
+> 
+> It's not either/or, they are both wrong ;-)
+> 
+> The EXPORT_SYMBOL() is not the thing that makes it work. The duplicate
+> declaration today only works because lib/dump_stack.o is listed as lib-y
+> in the Makefile instead of obj-y. On blackfin and nds32, this causes the entire
+> file to just not be included in the final vmlinux, because there are no
+> references to it.
 
-> @@ -5218,7 +5242,7 @@ static inline void util_est_enqueue(struct cfs_rq *cfs_rq,
->  
->  	/* Update root cfs_rq's estimated utilization */
->  	enqueued  = READ_ONCE(cfs_rq->avg.util_est.enqueued);
-> -	enqueued += _task_util_est(p);
-> +	enqueued += (_task_util_est(p) | 0x1);
+Yeah.
+But, admittedly, I learned that "obj-y vs lib-y" stuff quite recently.
 
-UTIL_EST_NEED_UPDATE_FLAG, although I do agree that 0x1 is much easier
-to type ;-)
+> With your patch, I would actually expect the lib/dump_stack.o file
+> to still not be picked up, so now you have a missing EXPORT_SYMBOL()
+> on the two unusual architectures until the point when you add another
+> (referenced) symbol to it.
 
-But you set it for the cfs_rq value ?! That doesn't seem right.
+Interesting point. Didn't check it. But I checked that we have at least
+one reference to lib/dump_stack from every arch so __weak could work its
+magic. The function is show_regs_print_info(). AFAICT, every arch calls
+it (we have it in lib/dump_stack now, so we will link with lib/dump_stack).
+Anyway, I'll be happy to drop my patch. Thanks for taking a look.
 
->  	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, enqueued);
->  }
->  
-> @@ -5310,7 +5334,7 @@ static inline void util_est_dequeue(struct cfs_rq *cfs_rq,
->  	if (cfs_rq->nr_running) {
->  		ue.enqueued  = READ_ONCE(cfs_rq->avg.util_est.enqueued);
->  		ue.enqueued -= min_t(unsigned int, ue.enqueued,
-> -				     _task_util_est(p));
-> +				     (_task_util_est(p) | UTIL_EST_NEED_UPDATE_FLAG));
->  	}
->  	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, ue.enqueued);
->  
-
-Would it be really horrible if you separate the value and flag using a
-bitfield/shifts?
-
-> @@ -5321,12 +5345,19 @@ static inline void util_est_dequeue(struct cfs_rq *cfs_rq,
->  	if (!task_sleep)
->  		return;
->  
-> +	/*
-> +	 * Skip update of task's estimated utilization if the PELT signal has
-> +	 * never been updated (at least once) since last enqueue time.
-> +	 */
-> +	ue = READ_ONCE(p->se.avg.util_est);
-> +	if (ue.enqueued & UTIL_EST_NEED_UPDATE_FLAG)
-> +		return;
-> +
->  	/*
->  	 * Skip update of task's estimated utilization when its EWMA is
->  	 * already ~1% close to its last activation value.
->  	 */
-> +	ue.enqueued = (task_util(p) | UTIL_EST_NEED_UPDATE_FLAG);
->  	last_ewma_diff = ue.enqueued - ue.ewma;
->  	if (within_margin(last_ewma_diff, (SCHED_CAPACITY_SCALE / 100)))
->  		return;
-
-
-I see what you do, but Yuck! that's really nasty. Then again, I've not
-actually got a better suggestion.
+	-ss
