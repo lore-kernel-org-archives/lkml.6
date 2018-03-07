@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELstU8bcPohmBk6Mtie9tx2wcWUOFJj4VP60KEDE/Ziy7m41+7OgAPnsSZw8X2ebEHhAcBAq
-ARC-Seal: i=1; a=rsa-sha256; t=1520451915; cv=none;
+X-Google-Smtp-Source: AG47ELvE29w9HeKJrwiyb//5Du3pUtEmuoPQewLIQ0xHpa8Sb6i8YS02GkBVakMNuMwtAA6kFWSs
+ARC-Seal: i=1; a=rsa-sha256; t=1520451908; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZS7geWb2g7iza+wT+stUMD4+rR1MlkDeYxWQ9b9mw8ex4PD81hhClr8n4f+MlIa/Sv
-         0xVSWpwijKeQxxSW1hZp+zg2//pon7jYefooZGlSTjq8qwiD1EjVA5W7nJS7ut8L8HW8
-         wrbXQe/ZQaBVirv4/Q1/7vnQJBQwAITM2mIkX0r/Zx3M3z0JEouIufLbEsR970vVsq0n
-         9G6yJHgCIlTJOS/B4MrinsUvAXMKAtLgeM5eMREEaeIlAMrpYpKJSxeg9wis+qJhhczB
-         fOrzoHYa4XV/G7u4MLTnK5minVLZSUHi+T3M/M37eXdwz+zQPM71LMFsbjkbbkBK9OSQ
-         +HGw==
+        b=XQ8wVMtVHQJFXYqXUYG68ooIxQOPl4sqiTuf0xSoUM9418KgVQ46k46l2Yv5eLLHpA
+         Xbs3sIzUz0FqPYXbKBqfnEaAwazkxHdPYtPg70vDM1/psDxmjn0Z2UKQUgbS2j1RXnDy
+         wgLFmldBhjugYTLaHAhjr2s1NCUo0SNIb2fQx9tQSYWGUy3upSh6M5eBWt1ybZjiifHT
+         ZjKy3NcNHcBhh1XEkMO7u/t1P+5wYlAOcKpiIOskspt2fO+fXIVVmrLW1lww2alibn6W
+         GomCJkusdDnfi1NreQxbnFak9YcwMYGE3C1dBIvosHI7iRQrn01RDLaurzceQYHuQJAe
+         30WA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=BySxhBICl1y8gmW8BQrfUh3wzHC/P69yEmTtEdg16rc=;
-        b=hAdQ2Y6v1SKGieVDVV32yTKD309pbDr4/LJ8i6Z/eMeP6T2xqTjJFb1urKrM7vBN6e
-         YTQwBUM9R1ZT7KylOrk09EtY6nmIm/1ZlprDTC6UFEIMm2cA+P7HoB61znFHJ1Ki4mVb
-         FUmpfm/syl9HUkUk3B8xGda+tMMrrkpW8y4t/EkuhLGDOJJU9qJkeRJF0ZEsYHxtyZkU
-         tGKxq+HNJK8nqp6Lcc6l0wEHoUf2BDzULiaSmZBWIETEqxT5PjSqyaUTUSt8D54KmEjJ
-         0bxWo3P5JCrlfxyawks2Jf7vMtPNMIBjJXyV3U8vRvqlELX4RNKSW9yw7sZcJzkTlrJG
-         9WaA==
+        bh=v/DPd072h6iAIwkb4GxnEYm6+isM+El+B8pdPrg5vUk=;
+        b=zVQnJ02CwCtXNpnkhUvX8oC67oJxMA+dlCHG/mojpFbDZqtBuFz8Tk9jA8m9YB5e68
+         LAh6oztoEUJcSIneQBL02bCKSr6GjjZvX3OQ+STpgY4VAbg5FEeUVh88IMVWuNTRHURM
+         bbdwfyJ1GmZZ0LDPUj21FVe/EoYwKBCfO9M+RAoRyhYBiGLCn//DCBz5rlPPcmc7MuYY
+         zER7UHi+NbiDwVwMeWP9bG1VtKHYPhiW5qvQI16zbkZw0IThdsv/nbgGRwJHpCzxIUr5
+         VID4iaXsEJ8v35UF4+Tehxvp1793kyIMuJmhtmDISxNII6VX3bV9llhvJejaPE0bs3Se
+         2A/A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.14 028/110] cpufreq: s3c24xx: Fix broken s3c_cpufreq_init()
-Date: Wed,  7 Mar 2018 11:38:11 -0800
-Message-Id: <20180307191043.342127421@linuxfoundation.org>
+	Omar Sandoval <osandov@fb.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Jiufei Xue <jiufei.xue@linux.alibaba.com>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.14 025/110] block: fix the count of PGPGOUT for WRITE_SAME
+Date: Wed,  7 Mar 2018 11:38:08 -0800
+Message-Id: <20180307191042.938315225@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309141082260799?=
-X-GMAIL-MSGID: =?utf-8?q?1594309387716321610?=
+X-GMAIL-THRID: =?utf-8?q?1594309092397136741?=
+X-GMAIL-MSGID: =?utf-8?q?1594309380373882093?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,45 +51,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Jiufei Xue <jiufei.xue@linux.alibaba.com>
 
-commit 0373ca74831b0f93cd4cdbf7ad3aec3c33a479a5 upstream.
+commit 7c5a0dcf557c6511a61e092ba887de28882fe857 upstream.
 
-commit a307a1e6bc0d "cpufreq: s3c: use cpufreq_generic_init()"
-accidentally broke cpufreq on s3c2410 and s3c2412.
+The vm counters is counted in sectors, so we should do the conversation
+in submit_bio.
 
-These two platforms don't have a CPU frequency table and used to skip
-calling cpufreq_table_validate_and_show() for them.  But with the
-above commit, we started calling it unconditionally and that will
-eventually fail as the frequency table pointer is NULL.
-
-Fix this by calling cpufreq_table_validate_and_show() conditionally
-again.
-
-Fixes: a307a1e6bc0d "cpufreq: s3c: use cpufreq_generic_init()"
-Cc: 3.13+ <stable@vger.kernel.org> # v3.13+
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: 74d46992e0d9 ("block: replace bi_bdev with a gendisk pointer and partitions index")
+Cc: stable@vger.kernel.org
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cpufreq/s3c24xx-cpufreq.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ block/blk-core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/cpufreq/s3c24xx-cpufreq.c
-+++ b/drivers/cpufreq/s3c24xx-cpufreq.c
-@@ -351,7 +351,13 @@ struct clk *s3c_cpufreq_clk_get(struct d
- static int s3c_cpufreq_init(struct cpufreq_policy *policy)
- {
- 	policy->clk = clk_arm;
--	return cpufreq_generic_init(policy, ftab, cpu_cur.info->latency);
-+
-+	policy->cpuinfo.transition_latency = cpu_cur.info->latency;
-+
-+	if (ftab)
-+		return cpufreq_table_validate_and_show(policy, ftab);
-+
-+	return 0;
- }
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -2277,7 +2277,7 @@ blk_qc_t submit_bio(struct bio *bio)
+ 		unsigned int count;
  
- static int __init s3c_cpufreq_initclks(void)
+ 		if (unlikely(bio_op(bio) == REQ_OP_WRITE_SAME))
+-			count = queue_logical_block_size(bio->bi_disk->queue);
++			count = queue_logical_block_size(bio->bi_disk->queue) >> 9;
+ 		else
+ 			count = bio_sectors(bio);
+ 
