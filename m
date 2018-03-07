@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtK7vEejZWVHSh0EamgaGNjIpasxaIXWUJBFAxsNhKxKucEnD3w5GPBykBX4GH9wQpByEP9
-ARC-Seal: i=1; a=rsa-sha256; t=1520451691; cv=none;
+X-Google-Smtp-Source: AG47ELs139j6Y3nnU4cybT5fgudu38uGkNDZZzcea7SjknOZuOemVhntkuqSo+/cZLqWQrdJjYGv
+ARC-Seal: i=1; a=rsa-sha256; t=1520451689; cv=none;
         d=google.com; s=arc-20160816;
-        b=zp+lnoSQ1jPrM2zV0CFXuuoikBedZbtNcwMxAxlP55DVbHdhZtCSOwHzUNGqhPYxET
-         IHY5o1mpg4GyR6MBUFopVP7r3yNWJ46SyZLLr5+pxc/M5o22VUr/mXINE2AZQUldueBz
-         HAucHZumE5xvQGV2h5i1Z2O9RhUt1ICmZSX3AHt6TTxelgC1N9UgyK/LypzMj8KVmzC8
-         WQstZOQm6Ze8zlrjoWTE6MLStZpPJkntCExLG2hUAMjZIcCeObgEjYc7qhSe/COwqy/x
-         OtR6BCOD9u9FQgYmyCp/dFw/1lIrINgf0noOLr/sdmzEGAFuGDJMQVeRWjmfRfCkafh6
-         zZnA==
+        b=Jay8lmENk1qBi8h+GMn/oNPTYAh3Qb1Z/ATSgjTfUcJvCiIr18I++WMg81bD3YWYz7
+         xo9dc1Yt2O1RJP6B5Anjv/CnAZAXieh/t/sCfOzq5XBbNdMu749awb6FACNlpne+FLfb
+         +wiI3VOdmrKQLy81My3mLRPpNI8I1IfVO1iHIWmpkiBdKwxxHGltkUWy+1DCgB1Z+v8t
+         Llz57ZIh2Ft+XxRglZVTdkixk3r0ZlWYF0dZo+BZ9g4AKpnyBoBP951lvckaPfxXkBQr
+         HKZ1nw4Wk1Z/4wKferqzFy5yv9wb+fsOqi3LrFZUqITNRekJzF9kMx8SQZRhYYV/ngii
+         ixug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=47u1IIVB613sBLh00yvxu82uyS2XbyD/xwX/2D3l+i8=;
-        b=OEmit+tO03yFxrDxwmi7wrr8Qqwwdo4INd5vOyJaUCukP7gybF5J9UBdiVTNY7bsGu
-         JoBVIb2YegLQq5u70RhSlSybaHDHqZipy0l5tyYraOwrfsU1UMBcxKuZk5e2g2fPw8Mz
-         r3GbdKU0ozm3wOcroeKsr4litT90LRru+vi3s8l06YGRLtsX8LRFsxON6KjFBfWHrJZR
-         ykYIvPI4zE/JcWEqoQW44gnQB8UzHPivBt2jMGkZKP8xS819VM2N9USAq1bM0SNcgfyu
-         cEOUTdjb+26VWAF1+Yhwhb8C/OIdYZWOyN62dqQHu9HUZTaE0DtvXq9sw+1TuYuXE3lq
-         x1lg==
+        bh=ecewe6VNhvtZ6KB6YDshOG5q5HENs++eo8jBcm3dUdY=;
+        b=sJUU1pUQ7aOZVxtg5blegBGJARKHRKtQ8PPrRVMP4xK5kZjyn6FbSQxU93mLW3CgMY
+         UkAi4cs8YYOzIU3gIR34+S18AMRIhlHkDbgHYyrvusVlP3TFnxUIIDQ9zbabKlT1fh1j
+         x0luDNE/IZvvWfNqQrXRTDDIbq/mMvBRUg/wWlWP1qqjFHv0MzBKYwYVKHNNYH3RjH3Y
+         N1JFUCTsfqKDkbOPscXJZ9fys77/qdxyZQz1YbWDyOLZGgDiXrREU+mj9EqKB1KBH5as
+         yrDLjDC6HhQmRSEJfqMM33VlGg2MO4LMcLDiAPtmL8avXgmnT4NkVhevcCTB8otGkJT/
+         i/nA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Gal Pressman <galp@mellanox.com>,
-	Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.15 055/122] net/mlx5e: Specify numa node when allocating drop rq
-Date: Wed,  7 Mar 2018 11:37:47 -0800
-Message-Id: <20180307191737.137654010@linuxfoundation.org>
+	Ido Schimmel <idosch@mellanox.com>,
+	Shalom Toledo <shalomt@mellanox.com>,
+	Jiri Pirko <jiri@mellanox.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.15 054/122] mlxsw: spectrum_switchdev: Check success of FDB add operation
+Date: Wed,  7 Mar 2018 11:37:46 -0800
+Message-Id: <20180307191736.966289092@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309152401504243?=
-X-GMAIL-MSGID: =?utf-8?q?1594309152401504243?=
+X-GMAIL-THRID: =?utf-8?q?1594309150715591734?=
+X-GMAIL-MSGID: =?utf-8?q?1594309150715591734?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,63 +51,102 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Gal Pressman <galp@mellanox.com>
+From: Shalom Toledo <shalomt@mellanox.com>
 
 
-[ Upstream commit 2f0db87901698cd73d828cc6fb1957b8916fc911 ]
+[ Upstream commit 0a8a1bf17e3af34f1f8d2368916a6327f8b3bfd5 ]
 
-When allocating a drop rq, no numa node is explicitly set which means
-allocations are done on node zero. This is not necessarily the nearest
-numa node to the HCA, and even worse, might even be a memoryless numa
-node.
+Until now, we assumed that in case of error when adding FDB entries, the
+write operation will fail, but this is not the case. Instead, we need to
+check that the number of entries reported in the response is equal to
+the number of entries specified in the request.
 
-Choose the numa_node given to us by the pci device in order to properly
-allocate the coherent dma memory instead of assuming zero is valid.
-
-Fixes: 556dd1b9c313 ("net/mlx5e: Set drop RQ's necessary parameters only")
-Signed-off-by: Gal Pressman <galp@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Fixes: 56ade8fe3fe1 ("mlxsw: spectrum: Add initial support for Spectrum ASIC")
+Reported-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: Shalom Toledo <shalomt@mellanox.com>
+Reviewed-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c |   29 +++++++++++++--
+ 1 file changed, 27 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-@@ -1911,13 +1911,16 @@ static void mlx5e_build_rq_param(struct
- 	param->wq.linear = 1;
- }
- 
--static void mlx5e_build_drop_rq_param(struct mlx5e_rq_param *param)
-+static void mlx5e_build_drop_rq_param(struct mlx5_core_dev *mdev,
-+				      struct mlx5e_rq_param *param)
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+@@ -1203,6 +1203,7 @@ static int __mlxsw_sp_port_fdb_uc_op(str
+ 				     bool dynamic)
  {
- 	void *rqc = param->rqc;
- 	void *wq = MLX5_ADDR_OF(rqc, rqc, wq);
- 
- 	MLX5_SET(wq, wq, wq_type, MLX5_WQ_TYPE_LINKED_LIST);
- 	MLX5_SET(wq, wq, log_wq_stride,    ilog2(sizeof(struct mlx5e_rx_wqe)));
-+
-+	param->wq.buf_numa_node = dev_to_node(&mdev->pdev->dev);
- }
- 
- static void mlx5e_build_sq_param_common(struct mlx5e_priv *priv,
-@@ -2774,6 +2777,9 @@ static int mlx5e_alloc_drop_cq(struct ml
- 			       struct mlx5e_cq *cq,
- 			       struct mlx5e_cq_param *param)
- {
-+	param->wq.buf_numa_node = dev_to_node(&mdev->pdev->dev);
-+	param->wq.db_numa_node  = dev_to_node(&mdev->pdev->dev);
-+
- 	return mlx5e_alloc_cq_common(mdev, param, cq);
- }
- 
-@@ -2785,7 +2791,7 @@ static int mlx5e_open_drop_rq(struct mlx
- 	struct mlx5e_cq *cq = &drop_rq->cq;
+ 	char *sfd_pl;
++	u8 num_rec;
  	int err;
  
--	mlx5e_build_drop_rq_param(&rq_param);
-+	mlx5e_build_drop_rq_param(mdev, &rq_param);
+ 	sfd_pl = kmalloc(MLXSW_REG_SFD_LEN, GFP_KERNEL);
+@@ -1212,9 +1213,16 @@ static int __mlxsw_sp_port_fdb_uc_op(str
+ 	mlxsw_reg_sfd_pack(sfd_pl, mlxsw_sp_sfd_op(adding), 0);
+ 	mlxsw_reg_sfd_uc_pack(sfd_pl, 0, mlxsw_sp_sfd_rec_policy(dynamic),
+ 			      mac, fid, action, local_port);
++	num_rec = mlxsw_reg_sfd_num_rec_get(sfd_pl);
+ 	err = mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(sfd), sfd_pl);
+-	kfree(sfd_pl);
++	if (err)
++		goto out;
++
++	if (num_rec != mlxsw_reg_sfd_num_rec_get(sfd_pl))
++		err = -EBUSY;
  
- 	err = mlx5e_alloc_drop_cq(mdev, cq, &cq_param);
- 	if (err)
++out:
++	kfree(sfd_pl);
+ 	return err;
+ }
+ 
+@@ -1239,6 +1247,7 @@ static int mlxsw_sp_port_fdb_uc_lag_op(s
+ 				       bool adding, bool dynamic)
+ {
+ 	char *sfd_pl;
++	u8 num_rec;
+ 	int err;
+ 
+ 	sfd_pl = kmalloc(MLXSW_REG_SFD_LEN, GFP_KERNEL);
+@@ -1249,9 +1258,16 @@ static int mlxsw_sp_port_fdb_uc_lag_op(s
+ 	mlxsw_reg_sfd_uc_lag_pack(sfd_pl, 0, mlxsw_sp_sfd_rec_policy(dynamic),
+ 				  mac, fid, MLXSW_REG_SFD_REC_ACTION_NOP,
+ 				  lag_vid, lag_id);
++	num_rec = mlxsw_reg_sfd_num_rec_get(sfd_pl);
+ 	err = mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(sfd), sfd_pl);
+-	kfree(sfd_pl);
++	if (err)
++		goto out;
+ 
++	if (num_rec != mlxsw_reg_sfd_num_rec_get(sfd_pl))
++		err = -EBUSY;
++
++out:
++	kfree(sfd_pl);
+ 	return err;
+ }
+ 
+@@ -1296,6 +1312,7 @@ static int mlxsw_sp_port_mdb_op(struct m
+ 				u16 fid, u16 mid_idx, bool adding)
+ {
+ 	char *sfd_pl;
++	u8 num_rec;
+ 	int err;
+ 
+ 	sfd_pl = kmalloc(MLXSW_REG_SFD_LEN, GFP_KERNEL);
+@@ -1305,7 +1322,15 @@ static int mlxsw_sp_port_mdb_op(struct m
+ 	mlxsw_reg_sfd_pack(sfd_pl, mlxsw_sp_sfd_op(adding), 0);
+ 	mlxsw_reg_sfd_mc_pack(sfd_pl, 0, addr, fid,
+ 			      MLXSW_REG_SFD_REC_ACTION_NOP, mid_idx);
++	num_rec = mlxsw_reg_sfd_num_rec_get(sfd_pl);
+ 	err = mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(sfd), sfd_pl);
++	if (err)
++		goto out;
++
++	if (num_rec != mlxsw_reg_sfd_num_rec_get(sfd_pl))
++		err = -EBUSY;
++
++out:
+ 	kfree(sfd_pl);
+ 	return err;
+ }
