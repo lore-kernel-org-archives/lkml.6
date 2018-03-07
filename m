@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933780AbeCGR1o (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 12:27:44 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:17964 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933733AbeCGR1h (ORCPT
+        id S933827AbeCGR1y (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 12:27:54 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:32198 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933733AbeCGR1p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 12:27:37 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180307172735epoutp03aac53e0bdc18a5563b1ec8d0b9d261b2~Zs3L6J4P22132321323epoutp03e
-X-AuditID: b6c32a36-ca9ff70000001028-ea-5aa02106bbc3
+        Wed, 7 Mar 2018 12:27:45 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180307172743epoutp016d90b771c7dbfb3c557b9c8b5cf0cd57~Zs3TguGct2424424244epoutp01I
+X-AuditID: b6c32a46-3a9ff70000001029-35-5aa0210f9777
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 To: krzk@kernel.org
 Cc: kgene@kernel.org, devicetree@vger.kernel.org,
@@ -16,89 +16,96 @@ Cc: kgene@kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
         Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 2/4] ARM: dts: Add audio clocks configuration for
- exynos5250-snow
-Date: Wed, 07 Mar 2018 18:27:09 +0100
-Message-id: <20180307172711.15697-2-s.nawrocki@samsung.com>
+Subject: [PATCH 4/4] ARM: dts: Enable HDMI audio on Snow Chromebook
+Date: Wed, 07 Mar 2018 18:27:11 +0100
+Message-id: <20180307172711.15697-4-s.nawrocki@samsung.com>
 X-Mailer: git-send-email 2.14.2
 In-reply-to: <20180307172711.15697-1-s.nawrocki@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOIsWRmVeSWpSXmKPExsWy7bCmgS6b4oIog/etihYbZ6xntZh/5Byr
-        Rf/j18wW589vYLfY9Pgaq8XlXXPYLGac38dksfbIXXaLw2/aWR04PTat6mTz2Lyk3qNvyypG
-        j8+b5AJYorhsUlJzMstSi/TtErgy5vxYw1qwiKti7tQjLA2MJzi6GDk5JARMJPo73jF3MXJx
-        CAnsYJTYfPEaE4TznVFi1YeXjDBVxy6fZYNI7GaU6N0zjRXC+cUocXHbDXaQKjYBQ4neo31g
-        HSICwhL3li5nByliFvjHKLFu5V42kISwQLDEtAdTwGwWAVWJQ58egzXzClhLLOr9BbVOXuL9
-        gvtgNqeAjcTCO9NZQAZJCExgk7h1dy1QMweQ4yJx8LkZRL2wxKvjW9ghwtISl47aQoSrJTrb
-        utghWlsYJf5Mu8QGkbCWOHz8IiuIzSzAJ/Huaw8rRC+vREebEESJh0Tr2QssEGFHiXn3jCH+
-        7Qd6fu8f9gmMUgsYGVYxiqUWFOempxYbFhjpFSfmFpfmpesl5+duYgRHp5bZDsZF53wOMQpw
-        MCrx8B74OT9KiDWxrLgy9xCjBAezkgivkfyCKCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8AQEu
-        UUIC6YklqdmpqQWpRTBZJg5OqQbGiA/t9cLGGc5W1mecubMFPermbJe83pwX9slkilj+uf82
-        V+zcDU4IX1r+55rcow0LvxhO2BHqxnfHPZ57aYmEvKWgnoWmzNu/Pm821q7afErOqe5jpuY7
-        j5b7d3Vb2+ccWXw1KGEC0+RDtloi815ecQuq2Xn9uMgtg20bAzbues0jHrR/v8FaJZbijERD
-        Leai4kQAWJsO58oCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprALMWRmVeSWpSXmKPExsVy+t9jAV02xQVRBo9f8FhsnLGe1WL+kXOs
-        Fv2PXzNbnD+/gd1i0+NrrBaXd81hs5hxfh+Txdojd9ktDr9pZ3Xg9Ni0qpPNY/OSeo++LasY
-        PT5vkgtgieKySUnNySxLLdK3S+DKmPNjDWvBIq6KuVOPsDQwnuDoYuTkkBAwkTh2+SwbiC0k
-        sJNR4uLGui5GLiD7F6PE5qP97CAJNgFDid6jfYwgtoiAsMS9pcvZQYqYBf4xSjyb/hisW1gg
-        WGLagylgNouAqsShT4/BmnkFrCUW9f5ihNgmL/F+wX0wm1PARmLhneksEJutJd7saWKfwMiz
-        gJFhFaNkakFxbnpusVGBYV5quV5xYm5xaV66XnJ+7iZGYDhtO6zVt4Px/pL4Q4wCHIxKPLwS
-        f+ZHCbEmlhVX5h5ilOBgVhLhNZJfECXEm5JYWZValB9fVJqTWnyIUZqDRUmc93besUghgfTE
-        ktTs1NSC1CKYLBMHp1QDY3PzAo6JK5azL1WrYnyervxBhPlUav/VKpHAopXHt+x8/bz05ivb
-        Xy/vvNVMf1e3XSPqB2t2yWXWet+WFVZlSuHbFbeXfX4Tpbe03pspZGn118/nl3XzGt06c26j
-        dbdCgsgru+LiiTP3mM6uzo+UyrXZtZXFiqHzh0WijfWdR2UF7DV7fdaUKLEUZyQaajEXFScC
-        AHrZ+ZgjAgAA
-X-CMS-MailID: 20180307172734epcas1p49c88df114f4e3b32999fbfb6159773ed
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFIsWRmVeSWpSXmKPExsWy7bCmmS6/4oIogx0vRS02zljPajH/yDlW
+        i/7Hr5ktzp/fwG6x6fE1VovLu+awWcw4v4/JYu2Ru+wWh9+0szpwemxa1cnmsXlJvUffllWM
+        Hp83yQWwRHHZpKTmZJalFunbJXBl/PqxlLFgEU/FxRtzWBoYV3N1MXJySAiYSJw5Pou5i5GL
+        Q0hgB6PE5d072CCc74wSF5afZISperztMSNEYjejxJpZX9khnF+MEvt+bWQHqWITMJToPdoH
+        1iEiICxxb+lysCJmgX+MEutW7mUDSQgLOEs0HTjJAmKzCKhKzD72kBnE5hWwlvj3cDobxDp5
+        ifcL7oMN4hSwkVh4ZzoLyCAJgSlsEosu7WGFKHKR2P11NzuELSzx6vgWKFta4tmqjVB3V0t0
+        tnWxQzS3MEr8mXYJaoO1xOHjF8EGMQvwSXQc/gtUxAEU55XoaBOCKPGQ+LD3LNQuR4mLx/ZC
+        /d/PKPHr0hqWCYxSCxgZVjGKpRYU56anFhsVGOkVJ+YWl+al6yXn525iBMeoltsOxiXnfA4x
+        CnAwKvHwSvyZHyXEmlhWXJl7iFGCg1lJhNdIfkGUEG9KYmVValF+fFFpTmrxIUZpDhYlcd7W
+        AJcoIYH0xJLU7NTUgtQimCwTB6dUA+PReyvPnNJa1vnptPxjDrHM6tPh6z45i1x+tUPtjf1s
+        yRSDFZa3WyxU9u5XFYy8uSehb0b9ooe+jgq37R/2zfitInhdUZuf5egFJ9eSRd9v8lpJr/i7
+        /sVxoXl3nteua7K97h6cU6r19fTUdxMEpY0nPw5peftqs66K/4yKi3/Orn5bc/forrRCJZbi
+        jERDLeai4kQA92srfM0CAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprILMWRmVeSWpSXmKPExsVy+t9jAV0+xQVRBmv6eCw2zljPajH/yDlW
+        i/7Hr5ktzp/fwG6x6fE1VovLu+awWcw4v4/JYu2Ru+wWh9+0szpwemxa1cnmsXlJvUffllWM
+        Hp83yQWwRHHZpKTmZJalFunbJXBl/PqxlLFgEU/FxRtzWBoYV3N1MXJySAiYSDze9pixi5GL
+        Q0hgJ6PEwn3tzBDOL0aJi4+PsoJUsQkYSvQe7WMEsUUEhCXuLV3ODlLELPCPUeLZ9MdsIAlh
+        AWeJpgMnWUBsFgFVidnHHjKD2LwC1hL/Hk5ng1gnL/F+wX2wQZwCNhIL70wHqxcCqnmzp4l9
+        AiPPAkaGVYySqQXFuem5xUYFRnmp5XrFibnFpXnpesn5uZsYgQG17bBW/w7Gx0viDzEKcDAq
+        8fBK/JkfJcSaWFZcmXuIUYKDWUmE10h+QZQQb0piZVVqUX58UWlOavEhRmkOFiVxXv78Y5FC
+        AumJJanZqakFqUUwWSYOTqkGRifPr5vMJmW+spx5K/XpJtG/FbaJCuHm1fnlbRb98d3M8ZrH
+        pyWfiU39Ih4ZFeH+2HhGmJKz6Twxxzze/R5MBnOU3z9kcVu880Tlcq7C2ObwuXOa9SZYz5vn
+        a5l+O+MO7+IzTt/MXlsmL/hY+zR9+87vUtkbdinPmGwjd7f7wtVs1uO9GY/eKLEUZyQaajEX
+        FScCACHTuhAkAgAA
+X-CMS-MailID: 20180307172742epcas2p2c0ef2394412da71b6d0ee172c47c3420
 X-Msg-Generator: CA
-CMS-TYPE: 101P
-X-CMS-RootMailID: 20180307172734epcas1p49c88df114f4e3b32999fbfb6159773ed
-X-RootMTR: 20180307172734epcas1p49c88df114f4e3b32999fbfb6159773ed
+CMS-TYPE: 102P
+X-CMS-RootMailID: 20180307172742epcas2p2c0ef2394412da71b6d0ee172c47c3420
+X-RootMTR: 20180307172742epcas2p2c0ef2394412da71b6d0ee172c47c3420
 References: <20180307172711.15697-1-s.nawrocki@samsung.com>
-        <CGME20180307172734epcas1p49c88df114f4e3b32999fbfb6159773ed@epcas1p4.samsung.com>
+        <CGME20180307172742epcas2p2c0ef2394412da71b6d0ee172c47c3420@epcas2p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the audio subsystem clocks are not configured properly on Snow
-and sound is not working. The MAX98095 CODEC is not getting its master clock
-on the MCLK pin connected to the SOC's CLKOUT GPIO. This patch adds CLKOUT
-and other clocks configuration so HDMI audio can also be supported.
+This patch adds new cpu, codec subnodes according to the updated
+"google,snow-audio-max98095" bindings and the I2S clock tree
+configuration so sound on the HDMI interface can also be supported.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- arch/arm/boot/dts/exynos5250-snow-common.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi | 4 ++++
+ arch/arm/boot/dts/exynos5250-snow.dts         | 8 ++++++++
+ 2 files changed, 12 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-index 59cf1b202849..bdf59dd3654b 100644
+index bdf59dd3654b..932a00cfd716 100644
 --- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
 +++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-@@ -225,6 +225,16 @@
- 	};
+@@ -9,6 +9,7 @@
+ #include <dt-bindings/clock/maxim,max77686.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/sound/samsung-i2s.h>
+ #include "exynos5250.dtsi"
+
+ / {
+@@ -523,6 +524,9 @@
  };
- 
-+&clock {
-+	assigned-clocks = <&clock CLK_FOUT_EPLL>;
-+	assigned-clock-rates = <49152000>;
-+};
-+
-+&clock_audss {
-+	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>;
-+	assigned-clock-parents = <&clock CLK_FOUT_EPLL>;
-+};
-+
- &cpu0 {
- 	cpu0-supply = <&buck2_reg>;
- };
-@@ -649,6 +659,11 @@
- 	};
- };
- 
-+&pmu_system_controller {
-+	assigned-clocks = <&pmu_system_controller 0>;
-+	assigned-clock-parents = <&clock CLK_FIN_PLL>;
-+};
-+
- &rtc {
+
+ &i2s0 {
++	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
++	assigned-clock-parents = <&clock_audss EXYNOS_I2S_BUS>;
++	#clock-cells = <1>;
  	status = "okay";
- 	clocks = <&clock CLK_RTC>, <&max77686 MAX77686_CLK_AP>;
--- 
+ };
+
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index 16e37c337a3f..8c3f1573a994 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -18,6 +18,14 @@
+
+ 		samsung,model = "Snow-I2S-MAX98095";
+ 		samsung,audio-codec = <&max98095>;
++
++		cpu {
++			sound-dai = <&i2s0 0>;
++		};
++
++		codec {
++			sound-dai = <&hdmi>, <&max98095 0>;
++		};
+ 	};
+ };
+
+--
 2.14.2
