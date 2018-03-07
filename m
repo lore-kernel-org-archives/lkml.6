@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4098462-1520452161-2-18299169017145724324
+X-Cyrus-Session-Id: sloti22d1t05-4025272-1520452144-2-13947150591623315399
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520452161; b=G3ELudTtK14ozbQmXOgw/3uBu38rAhOFOS9IGrK5UTgEYQh
-    4IMfIq9GfpE/Dlr+9Anw/xVTlCo2wZX8tFg1Mga+f2OmdeJFxTnKiSUCupdlO4OO
-    qKTJBwFVbm3H89tNmf6bsG0gN5NRUKxQ490ePz7d1YADSaGOYqUUQhNfKi4aOkWK
-    wPMn0CKUnlcNbuZprT0k8+NDNUmuAZSRW/Sz17P8VDAkXbs5HpCgT2EzF+wSSw2h
-    rCwyX+TmrmyB+mXu4KhSCl3hycYcs5cJYxO6OeMzKFLAv3hTmcgJsRKGiZUO17O7
-    +n3EWJf1Jo1LnXCqDCCoHIyLbSFcK+Eqt+Lvmjw==
+    t=1520452143; b=WhnDAA8NjSPlfQHRU9dU4p8kLi3f/k886xBKT/imF+Sw9ex
+    TysdPUZUCY0EAH+mUHYMoYYyZbXegbLK/0wSiVj4sTY56oD2uliEV1VhU+FZE47v
+    I4tSV+vISKpc4fzG67nSzsHTrMGsuhWX6KSrv7RXbxPTljCWLYzUOwn2vB3cVxrD
+    0hKpkdQSPk76zs38rGQdZt8M+nNiYMJlf4sAqIp/nwsVxHgBOzZfaW9+4WkNfxD0
+    GWJ4lP7ZjA+cDOOfa3GbRmyY4GgEQSW5GNwvT6H7kDUPvGN5vI7Iuvh55cD+CE4t
+    PxnEln0XfhYXTOMHpMmLt0R0r2ntrdxJncI7yNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520452161; bh=dEFlMm1xB/uMZZyDlqyEGztfIQ
-    XebBF61TkOS022MKY=; b=HEUwhXihAHKVYlJbqBcbKCBF81t/UMz+34xgQD11mA
-    sCmYG6k6bKjSLS525HxKLFEGiyhPCKG2HUvsI+scXWdZAx7Mix1LL4mNtYYlFWuJ
-    t3usYrfJu8IxGoWA4BKy3MZwgVG+pqk+Zj0+4OPj/hAxNti38SaxcZwsNI582/jB
-    LvQbd1Lhr1EDLYDvNgPUU0Msk7Cf81yAVO3X2707D4U75yGPyr3Uizk8etRPTIGr
-    ixWLk0BliqZZbR/TiChbJxHVrl0lMOMtW+bwKGcCV0taPo3JL8qO+BowpDh/2Iia
-    CGwEOHJs/gAwe/01tYxOIu10X7OQvIDkIlAA2UAHbiIQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1520452143; bh=P5mS3l/Z1dXm5+gkr+57UlS5lb
+    imt4Eks3NS/Z0lPnY=; b=a8K0765pY04mw0AGiThmgwxTYrpaJYP3466rsfB0Ha
+    kLCRHiTzclS5vFDxrgQIQsyGKHqR4ne7xYXPO3tz6kbdMYaNEbm65dWkHg6W7p0P
+    DLq8Wjcbqrk0mNn0Y+NZ8TIVbL20gWtbmEIvJi5fxVx2qmMnGdqrBdJxj++np4UP
+    6pcuoUwpQzBy+8P9kc8dRTLTXDI76M9F9VlozoPJyEJWqR3EyePl6E0DZ071/Tqv
+    sU+82hNHvyZOdKQqLNUVB/2jbIYB2tO+TI7/iNoIfvpSMKFiWlYRkwJ1hTxSY9xP
+    N5A8UcPuQ4ItxKq+qRLf/dtP1PWThudcrcaBUheH4B6Q==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,20 +49,20 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935073AbeCGTsd (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 14:48:33 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45594 "EHLO
+        id S965975AbeCGTsi (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Mar 2018 14:48:38 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45914 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965954AbeCGTs2 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:48:28 -0500
+        with ESMTP id S965954AbeCGTsh (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:48:37 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Christoffer Dall <christoffer.dall@linaro.org>
-Subject: [PATCH 4.14 095/110] ARM: kvm: fix building with gcc-8
-Date: Wed,  7 Mar 2018 11:39:18 -0800
-Message-Id: <20180307191052.008235354@linuxfoundation.org>
+        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: [PATCH 4.14 089/110] KVM: s390: consider epoch index on TOD clock syncs
+Date: Wed,  7 Mar 2018 11:39:12 -0800
+Message-Id: <20180307191051.269268206@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -80,77 +80,83 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: David Hildenbrand <david@redhat.com>
 
-commit 67870eb1204223598ea6d8a4467b482e9f5875b5 upstream.
+commit 1575767ef3cf5326701d2ae3075b7732cbc855e4 upstream.
 
-In banked-sr.c, we use a top-level '__asm__(".arch_extension virt")'
-statement to allow compilation of a multi-CPU kernel for ARMv6
-and older ARMv7-A that don't normally support access to the banked
-registers.
+For now, we don't take care of over/underflows. Especially underflows
+are critical:
 
-This is considered to be a programming error by the gcc developers
-and will no longer work in gcc-8, where we now get a build error:
+Assume the epoch is currently 0 and we get a sync request for delta=1,
+meaning the TOD is moved forward by 1 and we have to fix it up by
+subtracting 1 from the epoch. Right now, this will leave the epoch
+index untouched, resulting in epoch=-1, epoch_idx=0, which is wrong.
 
-/tmp/cc4Qy7GR.s:34: Error: Banked registers are not available with this architecture. -- `mrs r3,SP_usr'
-/tmp/cc4Qy7GR.s:41: Error: Banked registers are not available with this architecture. -- `mrs r3,ELR_hyp'
-/tmp/cc4Qy7GR.s:55: Error: Banked registers are not available with this architecture. -- `mrs r3,SP_svc'
-/tmp/cc4Qy7GR.s:62: Error: Banked registers are not available with this architecture. -- `mrs r3,LR_svc'
-/tmp/cc4Qy7GR.s:69: Error: Banked registers are not available with this architecture. -- `mrs r3,SPSR_svc'
-/tmp/cc4Qy7GR.s:76: Error: Banked registers are not available with this architecture. -- `mrs r3,SP_abt'
+We have to take care of over and underflows, also for the VSIE case. So
+let's factor out calculation into a separate function.
 
-Passign the '-march-armv7ve' flag to gcc works, and is ok here, because
-we know the functions won't ever be called on pre-ARMv7VE machines.
-Unfortunately, older compiler versions (4.8 and earlier) do not understand
-that flag, so we still need to keep the asm around.
-
-Backporting to stable kernels (4.6+) is needed to allow those to be built
-with future compilers as well.
-
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84129
-Fixes: 33280b4cd1dc ("ARM: KVM: Add banked registers save/restore")
+Signed-off-by: David Hildenbrand <david@redhat.com>
+Message-Id: <20180207114647.6220-5-david@redhat.com>
+Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Fixes: 8fa1696ea781 ("KVM: s390: Multiple Epoch Facility support")
 Cc: stable@vger.kernel.org
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Christoffer Dall <christoffer.dall@linaro.org>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+[use u8 for idx]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/kvm/hyp/Makefile    |    5 +++++
- arch/arm/kvm/hyp/banked-sr.c |    4 ++++
- 2 files changed, 9 insertions(+)
+ arch/s390/kvm/kvm-s390.c |   32 +++++++++++++++++++++++++++++---
+ 1 file changed, 29 insertions(+), 3 deletions(-)
 
---- a/arch/arm/kvm/hyp/Makefile
-+++ b/arch/arm/kvm/hyp/Makefile
-@@ -7,6 +7,8 @@ ccflags-y += -fno-stack-protector -DDISA
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -169,6 +169,28 @@ int kvm_arch_hardware_enable(void)
+ static void kvm_gmap_notifier(struct gmap *gmap, unsigned long start,
+ 			      unsigned long end);
  
- KVM=../../../../virt/kvm
- 
-+CFLAGS_ARMV7VE		   :=$(call cc-option, -march=armv7ve)
++static void kvm_clock_sync_scb(struct kvm_s390_sie_block *scb, u64 delta)
++{
++	u8 delta_idx = 0;
 +
- obj-$(CONFIG_KVM_ARM_HOST) += $(KVM)/arm/hyp/vgic-v2-sr.o
- obj-$(CONFIG_KVM_ARM_HOST) += $(KVM)/arm/hyp/vgic-v3-sr.o
- obj-$(CONFIG_KVM_ARM_HOST) += $(KVM)/arm/hyp/timer-sr.o
-@@ -15,7 +17,10 @@ obj-$(CONFIG_KVM_ARM_HOST) += tlb.o
- obj-$(CONFIG_KVM_ARM_HOST) += cp15-sr.o
- obj-$(CONFIG_KVM_ARM_HOST) += vfp.o
- obj-$(CONFIG_KVM_ARM_HOST) += banked-sr.o
-+CFLAGS_banked-sr.o	   += $(CFLAGS_ARMV7VE)
++	/*
++	 * The TOD jumps by delta, we have to compensate this by adding
++	 * -delta to the epoch.
++	 */
++	delta = -delta;
 +
- obj-$(CONFIG_KVM_ARM_HOST) += entry.o
- obj-$(CONFIG_KVM_ARM_HOST) += hyp-entry.o
- obj-$(CONFIG_KVM_ARM_HOST) += switch.o
-+CFLAGS_switch.o		   += $(CFLAGS_ARMV7VE)
- obj-$(CONFIG_KVM_ARM_HOST) += s2-setup.o
---- a/arch/arm/kvm/hyp/banked-sr.c
-+++ b/arch/arm/kvm/hyp/banked-sr.c
-@@ -20,6 +20,10 @@
++	/* sign-extension - we're adding to signed values below */
++	if ((s64)delta < 0)
++		delta_idx = -1;
++
++	scb->epoch += delta;
++	if (scb->ecd & ECD_MEF) {
++		scb->epdx += delta_idx;
++		if (scb->epoch < delta)
++			scb->epdx += 1;
++	}
++}
++
+ /*
+  * This callback is executed during stop_machine(). All CPUs are therefore
+  * temporarily stopped. In order not to change guest behavior, we have to
+@@ -184,13 +206,17 @@ static int kvm_clock_sync(struct notifie
+ 	unsigned long long *delta = v;
  
- #include <asm/kvm_hyp.h>
- 
-+/*
-+ * gcc before 4.9 doesn't understand -march=armv7ve, so we have to
-+ * trick the assembler.
-+ */
- __asm__(".arch_extension     virt");
- 
- void __hyp_text __banked_save_state(struct kvm_cpu_context *ctxt)
+ 	list_for_each_entry(kvm, &vm_list, vm_list) {
+-		kvm->arch.epoch -= *delta;
+ 		kvm_for_each_vcpu(i, vcpu, kvm) {
+-			vcpu->arch.sie_block->epoch -= *delta;
++			kvm_clock_sync_scb(vcpu->arch.sie_block, *delta);
++			if (i == 0) {
++				kvm->arch.epoch = vcpu->arch.sie_block->epoch;
++				kvm->arch.epdx = vcpu->arch.sie_block->epdx;
++			}
+ 			if (vcpu->arch.cputm_enabled)
+ 				vcpu->arch.cputm_start += *delta;
+ 			if (vcpu->arch.vsie_block)
+-				vcpu->arch.vsie_block->epoch -= *delta;
++				kvm_clock_sync_scb(vcpu->arch.vsie_block,
++						   *delta);
+ 		}
+ 	}
+ 	return NOTIFY_OK;
