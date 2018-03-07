@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsQd/FzCq6e8Od1Uf8NXd5dvYw8ku4dJu69gs8QtkA0BiLq8+T7clS5/fJr3nqvJTIuY8/S
-ARC-Seal: i=1; a=rsa-sha256; t=1520451728; cv=none;
+X-Google-Smtp-Source: AG47ELtISzs3odLvkPfLXK8EQeN3oIq6SoVySurgw5r6DmPYCziOTT5W/9YpyiUliZfvbOQsGSx0
+ARC-Seal: i=1; a=rsa-sha256; t=1520451726; cv=none;
         d=google.com; s=arc-20160816;
-        b=v2gWuWMW6PahtfJ2qZaLdTT4VkUEqywxhTE98rgxMc+Gdu0bCxYDVuTVRngmOVKLwo
-         HfAmLEoNWQ+baskDHKsZpMT007REcWfHv0NY7bemLj5pmfi675qxFdHi8p4YYIKTWXpq
-         CSAWI+t/y2rKbg5Uvxwz5T38/22H6wgP/rYbEPIYeP9ssAjN6VcZE1dSKqhWQk1Mq1qP
-         tn+Q+grl58+50WBLUqSxdOgKRfTvIHP3GyaRVGu0NR8bVPNaU3a1StNEcvhsu8YbIwms
-         RulJdikTW7URoTHTSr+Xu3KA/ARoS6xwUCJC/hJgQ6TUGnTSA2+51teQa/Ol13qhSVw2
-         nBng==
+        b=nJPFDUG8cIdTrhlizoJ2reaunIitLyHVUHBG+K7QKQXUckVrNnzUS1NoSkJnjgDgE7
+         l9VuLGoHRyj5ZkxBMGuaH0wq4B+P8nD3fXUEdAHVAC99xZsZMScOOHDz3qL5mnqGTi/A
+         wNwvlTR6/ZroOCjGhtxLDtUAnfxcbNPhuSA9Xrdc8tr5pIcD7sux/r+nBrDLM8KACdCT
+         BJsWH7kQEF452iifrIt+H/7WlalQ1+StxuYOHS/Ay8cSSF8gQRJ/e2of1JFpjq6PIeB1
+         B0wY+0b9xJmB9wr6eg24k2ezd8I16XrCZfS/IFKoJxW/XHFdHJHy1u8Mvw0nv6rMPXyw
+         mPbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZmrzP02aFpb5tg4zDIZIFWp5eS1NqS/be3q3NgtF6FA=;
-        b=pByZhkvaExF1zlchOk9SVPAMNsRNdUmy9nU1VCm2fs4tUgOT3Uu0Pbl7GwkyY6nEs4
-         V2M7yMvC7sqFGQUWDdANAbJtHSado7jBowpGtSeDATQHgmwQC0Px/yLWEmfqmn9V4Jut
-         9NRLUQOtmufXHGeEtejow3SG+c6Cy9VNTPDIM2+5d+6cZPFCBKxLaTA6DmJOoM/jYOiw
-         cyvuz9+jtjr9xe3jbeMPLjH3X/oaLRWnf2jjhJTB/LepIa8/7B0ciczYJL9KIZcoPiu7
-         Aq171rTx/9Fr/GSCUg8aIMcjffD3l4eK1Yv5QjeXsrieFNDhKl8eJjksZw2UocxRl9ts
-         Gj5g==
+        bh=UjmWtRLLpxFxrerOKYPIz7CnINahb1XCvWzNMLrU2GQ=;
+        b=hlMcuJ+/h8illUvlEBhYkP3LVuxSX5UluzAuo5FIIVbfuOroLqrUMWq3N+P/XP9nK8
+         +OTLsLwunlTrKSUw0doocnVP6pUQxZ7ZbwqnwtV/li/532WHfzT9rB+6Gn7FUNHFYm38
+         9z7cqe3h5IYumzzzypu9QvPWVLJjEhv5MuwbgaEapqs4DvN2WfQWM3HP6ZbkoQWxW0l9
+         4SJzCGRc53Nr4UjCifC39zhvJFczdRdOob/dGlCOHBHXluDHF+B9YkFyJMPgORbdD5eC
+         Y5BIBiqUOHWpUk19TVYSxr0Z/4sdKQtJrabC3wkDv6AfqwZOX3J7UVdaoXy+BDMbLJmE
+         tOTA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Juergen Gross <jgross@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jan Beulich <jbeulich@suse.com>,
-	xen-devel@lists.xenproject.org,
-	boris.ostrovsky@oracle.com
-Subject: [PATCH 4.15 036/122] x86/xen: Zero MSR_IA32_SPEC_CTRL before suspend
-Date: Wed,  7 Mar 2018 11:37:28 -0800
-Message-Id: <20180307191734.376131923@linuxfoundation.org>
+	Christoph Hellwig <hch@lst.de>,
+	Goldwyn Rodrigues <rgoldwyn@suse.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jan Kara <jack@suse.cz>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.15 035/122] direct-io: Fix sleep in atomic due to sync AIO
+Date: Wed,  7 Mar 2018 11:37:27 -0800
+Message-Id: <20180307191734.231518222@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309192061179507?=
-X-GMAIL-MSGID: =?utf-8?q?1594309192061179507?=
+X-GMAIL-THRID: =?utf-8?q?1594309189650061540?=
+X-GMAIL-MSGID: =?utf-8?q?1594309189650061540?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,77 +52,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Jan Kara <jack@suse.cz>
 
-commit 71c208dd54ab971036d83ff6d9837bae4976e623 upstream.
+commit d9c10e5b8863cfb6886d1640386455075c6e979d upstream.
 
-Older Xen versions (4.5 and before) might have problems migrating pv
-guests with MSR_IA32_SPEC_CTRL having a non-zero value. So before
-suspending zero that MSR and restore it after being resumed.
+Commit e864f39569f4 "fs: add RWF_DSYNC aand RWF_SYNC" added additional
+way for direct IO to become synchronous and thus trigger fsync from the
+IO completion handler. Then commit 9830f4be159b "fs: Use RWF_* flags for
+AIO operations" allowed these flags to be set for AIO as well. However
+that commit forgot to update the condition checking whether the IO
+completion handling should be defered to a workqueue and thus AIO DIO
+with RWF_[D]SYNC set will call fsync() from IRQ context resulting in
+sleep in atomic.
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Jan Beulich <jbeulich@suse.com>
-Cc: stable@vger.kernel.org
-Cc: xen-devel@lists.xenproject.org
-Cc: boris.ostrovsky@oracle.com
-Link: https://lkml.kernel.org/r/20180226140818.4849-1-jgross@suse.com
+Fix the problem by checking directly iocb flags (the same way as it is
+done in dio_complete()) instead of checking all conditions that could
+lead to IO being synchronous.
+
+CC: Christoph Hellwig <hch@lst.de>
+CC: Goldwyn Rodrigues <rgoldwyn@suse.com>
+CC: stable@vger.kernel.org
+Reported-by: Mark Rutland <mark.rutland@arm.com>
+Tested-by: Mark Rutland <mark.rutland@arm.com>
+Fixes: 9830f4be159b29399d107bffb99e0132bc5aedd4
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/xen/suspend.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ fs/direct-io.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/arch/x86/xen/suspend.c
-+++ b/arch/x86/xen/suspend.c
-@@ -1,12 +1,15 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/types.h>
- #include <linux/tick.h>
-+#include <linux/percpu-defs.h>
- 
- #include <xen/xen.h>
- #include <xen/interface/xen.h>
- #include <xen/grant_table.h>
- #include <xen/events.h>
- 
-+#include <asm/cpufeatures.h>
-+#include <asm/msr-index.h>
- #include <asm/xen/hypercall.h>
- #include <asm/xen/page.h>
- #include <asm/fixmap.h>
-@@ -15,6 +18,8 @@
- #include "mmu.h"
- #include "pmu.h"
- 
-+static DEFINE_PER_CPU(u64, spec_ctrl);
-+
- void xen_arch_pre_suspend(void)
- {
- 	xen_save_time_memory_area();
-@@ -35,6 +40,9 @@ void xen_arch_post_suspend(int cancelled
- 
- static void xen_vcpu_notify_restore(void *data)
- {
-+	if (xen_pv_domain() && boot_cpu_has(X86_FEATURE_SPEC_CTRL))
-+		wrmsrl(MSR_IA32_SPEC_CTRL, this_cpu_read(spec_ctrl));
-+
- 	/* Boot processor notified via generic timekeeping_resume() */
- 	if (smp_processor_id() == 0)
- 		return;
-@@ -44,7 +52,15 @@ static void xen_vcpu_notify_restore(void
- 
- static void xen_vcpu_notify_suspend(void *data)
- {
-+	u64 tmp;
-+
- 	tick_suspend_local();
-+
-+	if (xen_pv_domain() && boot_cpu_has(X86_FEATURE_SPEC_CTRL)) {
-+		rdmsrl(MSR_IA32_SPEC_CTRL, tmp);
-+		this_cpu_write(spec_ctrl, tmp);
-+		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
-+	}
- }
- 
- void xen_arch_resume(void)
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -1252,8 +1252,7 @@ do_blockdev_direct_IO(struct kiocb *iocb
+ 	 */
+ 	if (dio->is_async && iov_iter_rw(iter) == WRITE) {
+ 		retval = 0;
+-		if ((iocb->ki_filp->f_flags & O_DSYNC) ||
+-		    IS_SYNC(iocb->ki_filp->f_mapping->host))
++		if (iocb->ki_flags & IOCB_DSYNC)
+ 			retval = dio_set_defer_completion(dio);
+ 		else if (!dio->inode->i_sb->s_dio_done_wq) {
+ 			/*
