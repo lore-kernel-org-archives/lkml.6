@@ -1,89 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754632AbeCGSD6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 13:03:58 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:32860 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753949AbeCGSDw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 13:03:52 -0500
-X-Google-Smtp-Source: AG47ELtfvZ1xWFwNLt0kxmx1mcUbnlwaKA8nLjUY5eHyHBqBZouGNo0SUtDU8tJ9Yv56XWkV6js/CA==
-From: Himanshu Jha <himanshujha199640@gmail.com>
-To: linux-graphics-maintainer@vmware.com, airlied@linux.ie
-Cc: syeh@vmware.com, thellstrom@vmware.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Himanshu Jha <himanshujha199640@gmail.com>
-Subject: [PATCH] drm/vmwgfx: Use kasprintf
-Date: Wed,  7 Mar 2018 23:33:22 +0530
-Message-Id: <1520445802-11894-1-git-send-email-himanshujha199640@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        id S933478AbeCGSF2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 13:05:28 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44694 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751211AbeCGSF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 13:05:26 -0500
+Date: Wed, 7 Mar 2018 19:04:43 +0100
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Roman Kagan <rkagan@virtuozzo.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org,
+        x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] x86/kvm: rename HV_X64_MSR_APIC_ASSIST_PAGE to
+ HV_X64_MSR_VP_ASSIST_PAGE
+Message-ID: <20180307180442.GA16795@flask>
+References: <20180226171121.18974-1-vkuznets@redhat.com>
+ <20180226171121.18974-2-vkuznets@redhat.com>
+ <20180307161944.GE12290@flask>
+ <20180307164812.GA2366@rkaganb.sw.ru>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180307164812.GA2366@rkaganb.sw.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use kasprintf instead of combination of kmalloc and sprintf. Also,
-remove the local variables used for storing the string length as they
-are not required now.
+2018-03-07 19:48+0300, Roman Kagan:
+> On Wed, Mar 07, 2018 at 05:19:44PM +0100, Radim Krčmář wrote:
+> > 2018-02-26 18:11+0100, Vitaly Kuznetsov:
+> > > diff --git a/arch/x86/include/uapi/asm/hyperv.h b/arch/x86/include/uapi/asm/hyperv.h
+> > > @@ -275,10 +275,10 @@ struct hv_tsc_emulation_status {
+> > >  #define HVCALL_POST_MESSAGE			0x005c
+> > >  #define HVCALL_SIGNAL_EVENT			0x005d
+> > >  
+> > > -#define HV_X64_MSR_APIC_ASSIST_PAGE_ENABLE		0x00000001
+> > > -#define HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_SHIFT	12
+> > > -#define HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_MASK	\
+> > > -		(~((1ull << HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_SHIFT) - 1))
+> > 
+> > Removing definitions from userspace api isn't a good idea.
+> > 
+> > I have no idea why hyper.h is a userspace api, though -- Linux doesn't
+> > define any of those, so we could copy the definitions to a private
+> > header, rename, and never look at this file again.
+> 
+> That was a thinko when it was moved to uapi, and it has already been
+> identified as a problem, so now QEMU has its own header with the
+> definitions it needs, and I'm unaware of any other userspace project
+> that depends on this stuff.  So I've been planning to remove it from
+> uapi but still haven't got around to posting the patch :(
 
-Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
----
- drivers/gpu/drm/vmwgfx/vmwgfx_msg.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-index 9700099..cdff992 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-@@ -328,7 +328,7 @@ int vmw_host_get_guestinfo(const char *guest_info_param,
- {
- 	struct rpc_channel channel;
- 	char *msg, *reply = NULL;
--	size_t msg_len, reply_len = 0;
-+	size_t reply_len = 0;
- 	int ret = 0;
- 
- 
-@@ -338,15 +338,12 @@ int vmw_host_get_guestinfo(const char *guest_info_param,
- 	if (!guest_info_param || !length)
- 		return -EINVAL;
- 
--	msg_len = strlen(guest_info_param) + strlen("info-get ") + 1;
--	msg = kzalloc(msg_len, GFP_KERNEL);
-+	msg = kasprintf(GFP_KERNEL, "info-get %s", guest_info_param);
- 	if (!msg) {
- 		DRM_ERROR("Cannot allocate memory to get %s", guest_info_param);
- 		return -ENOMEM;
- 	}
- 
--	sprintf(msg, "info-get %s", guest_info_param);
--
- 	if (vmw_open_channel(&channel, RPCI_PROTOCOL_NUM) ||
- 	    vmw_send_msg(&channel, msg) ||
- 	    vmw_recv_msg(&channel, (void *) &reply, &reply_len) ||
-@@ -388,7 +385,6 @@ int vmw_host_log(const char *log)
- {
- 	struct rpc_channel channel;
- 	char *msg;
--	int msg_len;
- 	int ret = 0;
- 
- 
-@@ -398,15 +394,12 @@ int vmw_host_log(const char *log)
- 	if (!log)
- 		return ret;
- 
--	msg_len = strlen(log) + strlen("log ") + 1;
--	msg = kzalloc(msg_len, GFP_KERNEL);
-+	msg = kasprintf(GFP_KERNEL, "log %s", log);
- 	if (!msg) {
- 		DRM_ERROR("Cannot allocate memory for log message\n");
- 		return -ENOMEM;
- 	}
- 
--	sprintf(msg, "log %s", log);
--
- 	if (vmw_open_channel(&channel, RPCI_PROTOCOL_NUM) ||
- 	    vmw_send_msg(&channel, msg) ||
- 	    vmw_close_channel(&channel)) {
--- 
-2.7.4
+Great, let's be bold here.
