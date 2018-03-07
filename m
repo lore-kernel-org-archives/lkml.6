@@ -1,303 +1,255 @@
-Return-Path: <shreeya.patel23498@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520168833; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Mtg7+8ADOlp+rAUALiYxLSnOR6dOsLp0znWh+8W4gPLrgna7xqMxuKIja/cKKi3aHx
-         o7m1AryX8pOx48KgRId+8kuls31g4mM5egudQby9PIY0YpSPEW3zYyCZGBN4UXHMN/9r
-         fksLbESEH8tCjB8UfyuASyCAt3qWXbeYBpI2AAZTZM6u5s/8V+LKjuwUKegX1/944oJb
-         X4EoNol1mlv4Alka3WKVvv4wwgLke7FPc0d1x+d/asWYr4jSIucAaSZJLiKQQdAdykiO
-         l0gK2esIxQ0QaTJsyRIfb3UxRjHC7o2ZI77v8rXKuVLSOgkhh+hHu4fVdtJfGF5U2A1u
-         Zw3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:dkim-signature
-         :arc-authentication-results;
-        bh=N2W5UE3fAUayODVeSGgpJ5daj0We/eisH8rEWEs4ksw=;
-        b=elF8RlI9w+NmkBETHuRLjssZQOZIz/UFybBWWTXwL2mZJRoZB8A0OQn4ocuZOSkLxy
-         xBcdshYRL27edUG1AedTdaA3HUmpPZc0rNWwhJrD9YJsUV8FfUCrzLylmmfmkQFR+wRA
-         0oTi6YKWfS3Bspv2vASbB27f6cVug9QyqmImKOq1a7OwBsjecO/o8LZXq/ZF2TSFOLPP
-         wC46h2aSsLfeqmteaMWTL2gittr5mt23RZuUWQPS+m09anYTn27eZlktvaEHYnyh33cd
-         QKOIZbvsW9Upl2EF4Scufhzf5z+XcrueYbcpM+RWwnfVM/gZrUkLCmRqCKUyWxqA0JU8
-         JApg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=PGHqnKEk;
-       spf=pass (google.com: domain of shreeya.patel23498@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=shreeya.patel23498@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=PGHqnKEk;
-       spf=pass (google.com: domain of shreeya.patel23498@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=shreeya.patel23498@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELuNIpxZ3B0mppYXI/sOisbpa1O1GRY7TD6W1J62Khmsk1Fy480iDLLl5PPILQsgnRFXrUhpkA==
-Message-ID: <1520168824.8495.2.camel@gmail.com>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-29808-1520456581-2-10063881335043316580
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520456580; b=Pxyth2XI9HsQFvfAYYxpCmHrZGemxIX00wfI5p8cSIdNIiC
+    3b7kmo9saXNsjfHCaKP3hSwoWDtvIgwrywxZc1oNdTW7Lo7oK5UEjeETxAlkRTcE
+    FXSPtroGebU3xEM1hbP1iC6+p8CZDumZmRz9xp16ZjK+RSm94+m6uWebNzZng65t
+    tTlYGFMh7QRT5kKFZuXgw4rOdDbeS6ZF11pu5GbYEk16oeWZa/l5wZp+gWClfBmq
+    KvcCJ2j02bjIF0/I0IXAyX/e9Dj45whwLgt0AJKYG8iHc9nSgjm8YbNlth3BevcC
+    VS4aIHe/Mn1vQsWsCfX/UZ/hybz6KxCVs0jQUXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :in-reply-to:references:mime-version:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520456580; bh=o
+    hns0q5/OJ5ar9q5GGphiH8YYJd5OQCROtLKYe9tyDU=; b=kfZZHiQkau7PH8hO7
+    /3nNkFrgJqmIZ2xTLkgbmP2aVPyGv25A+EY591skcuds5IEW4xK/2+Fiuo25HB/z
+    t1sfMV0e7VbUGl5kxrcXmUvFjsz0042OgJyhS6h1QJ4PZT0baN024HFSIhfl1D9j
+    GcXc3vfaJ6BGrpQ+DhBHJXyoTUKmvRDCyyRSKVa/YDBe9gfE2kUZxOFV/emlnhSW
+    t1R/vH8AW9iH378D2/6AONslh4/3WLURwmYI38/6/7m1/hrooiL0RI9cBVRlEn4J
+    ehmReNAUv41uLzUmiWnbBFitOMe2NjYxLZd5QefXCmUAwweK4XEVyucLD45qRP5n
+    wKCbw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11667206B2
+Authentication-Results: mail.kernel.org;
+ dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org;
+ spf=none smtp.mailfrom=jic23@kernel.org
+Date: Wed, 7 Mar 2018 21:02:46 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Shreeya Patel <shreeya.patel23498@gmail.com>
 Subject: Re: [PATCH v3 1/4] Staging: iio: adis16209: Remove and add some
  comments and group the definitions
-From: Shreeya Patel <shreeya.patel23498@gmail.com>
-To: Himanshu Jha <himanshujha199640@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-	knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
-	linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org, daniel.baluta@gmail.com
-Date: Sun, 04 Mar 2018 18:37:04 +0530
-In-Reply-To: <20180304125604.GA7613@himanshu-Vostro-3559>
+Message-ID: <20180307210246.235456d9@archlinux>
+In-Reply-To: <1520168824.8495.2.camel@gmail.com>
 References: <cover.1520164945.git.shreeya.patel23498@gmail.com>
-	 <982742b1bb71d4d97c2f5edc6f95b85129d8667b.1520164945.git.shreeya.patel23498@gmail.com>
-	 <20180304125604.GA7613@himanshu-Vostro-3559>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+ <982742b1bb71d4d97c2f5edc6f95b85129d8667b.1520164945.git.shreeya.patel23498@gmail.com>
+ <20180304125604.GA7613@himanshu-Vostro-3559>
+ <1520168824.8495.2.camel@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, daniel.baluta@gmail.com, lars@metafoo.de,
+ Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
+ gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ Himanshu Jha <himanshujha199640@gmail.com>, pmeerw@pmeerw.net, knaack.h@gmx.de
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594010618985487019?=
-X-GMAIL-MSGID: =?utf-8?q?1594012554265775654?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, 2018-03-04 at 18:26 +0530, Himanshu Jha wrote:
-> Hi Shreeya,
-> 
-> On Sun, Mar 04, 2018 at 06:06:22PM +0530, Shreeya Patel wrote:
-> > 
-> > Remove some unnecessay comments and group the control
-> > register and register field macros together.
-> > Some of the register names does not make it's puporse
-> > very clear and hence, add some comments for more
-> > information.
-> > Also there are certain unit based comments which are not
-> > providing sufficient information, so expand those comments.
-> > 
-> > Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
-> > ---
-> > 
-> > Changes in v3
-> >   -This patch is the combination of two patches from the
-> > previous series. Also add some more comments.
-> > 
-> > 
-> >  drivers/staging/iio/accel/adis16209.c | 132 ++++++++++----------
-> > --------------
-> >  1 file changed, 39 insertions(+), 93 deletions(-)
-> > 
-> > diff --git a/drivers/staging/iio/accel/adis16209.c
-> > b/drivers/staging/iio/accel/adis16209.c
-> > index 151120f..d8aef9c 100644
-> > --- a/drivers/staging/iio/accel/adis16209.c
-> > +++ b/drivers/staging/iio/accel/adis16209.c
-> > @@ -21,135 +21,70 @@
-> >  #include <linux/iio/imu/adis.h>
-> >  
-> >  #define ADIS16209_STARTUP_DELAY_MS	220
-> > -
-> > -/* Flash memory write count */
-> >  #define ADIS16209_FLASH_CNT_REG		0x00
-> >  
-> > -/* Output, power supply */
-> > +/* Data Output Register Definitions */
-> >  #define ADIS16209_SUPPLY_OUT_REG	0x02
-> > -
-> > -/* Output, x-axis accelerometer */
-> >  #define ADIS16209_XACCL_OUT_REG		0x04
-> > -
-> > -/* Output, y-axis accelerometer */
-> >  #define ADIS16209_YACCL_OUT_REG		0x06
-> > -
-> >  /* Output, auxiliary ADC input */
-> >  #define ADIS16209_AUX_ADC_REG		0x08
-> > -
-> >  /* Output, temperature */
-> >  #define ADIS16209_TEMP_OUT_REG		0x0A
-> > -
-> > -/* Output, x-axis inclination */
-> > +/* Output, +/- 90 degrees X-axis inclination */
-> >  #define ADIS16209_XINCL_OUT_REG		0x0C
-> > -
-> > -/* Output, y-axis inclination */
-> >  #define ADIS16209_YINCL_OUT_REG		0x0E
-> > -
-> >  /* Output, +/-180 vertical rotational position */
-> >  #define ADIS16209_ROT_OUT_REG		0x10
-> >  
-> > -/* Calibration, x-axis acceleration offset null */
-> > +/*
-> > + * Calibration Register Definitions.
-> > + * Acceleration, inclination or rotation offset null.
-> > + */
-> >  #define ADIS16209_XACCL_NULL_REG	0x12
-> > -
-> > -/* Calibration, y-axis acceleration offset null */
-> >  #define ADIS16209_YACCL_NULL_REG	0x14
-> > -
-> > -/* Calibration, x-axis inclination offset null */
-> >  #define ADIS16209_XINCL_NULL_REG	0x16
-> > -
-> > -/* Calibration, y-axis inclination offset null */
-> >  #define ADIS16209_YINCL_NULL_REG	0x18
-> > -
-> > -/* Calibration, vertical rotation offset null */
-> >  #define ADIS16209_ROT_NULL_REG		0x1A
-> >  
-> > -/* Alarm 1 amplitude threshold */
-> > +/* Alarm Register Definitions */
-> >  #define ADIS16209_ALM_MAG1_REG		0x20
-> > -
-> > -/* Alarm 2 amplitude threshold */
-> >  #define ADIS16209_ALM_MAG2_REG		0x22
-> > -
-> > -/* Alarm 1, sample period */
-> >  #define ADIS16209_ALM_SMPL1_REG		0x24
-> > -
-> > -/* Alarm 2, sample period */
-> >  #define ADIS16209_ALM_SMPL2_REG		0x26
-> > -
-> > -/* Alarm control */
-> >  #define ADIS16209_ALM_CTRL_REG		0x28
-> >  
-> > -/* Auxiliary DAC data */
-> >  #define ADIS16209_AUX_DAC_REG		0x30
-> > -
-> > -/* General-purpose digital input/output control */
-> >  #define ADIS16209_GPIO_CTRL_REG		0x32
-> > -
-> > -/* Miscellaneous control */
-> > -#define ADIS16209_MSC_CTRL_REG		0x34
-> > -
-> > -/* Internal sample period (rate) control */
-> >  #define ADIS16209_SMPL_PRD_REG		0x36
-> > -
-> > -/* Operation, filter configuration */
-> >  #define ADIS16209_AVG_CNT_REG		0x38
-> > -
-> > -/* Operation, sleep mode control */
-> >  #define ADIS16209_SLP_CNT_REG		0x3A
-> >  
-> > -/* Diagnostics, system status register */
-> > -#define ADIS16209_DIAG_STAT_REG		0x3C
-> > -
-> > -/* Operation, system command register */
-> > -#define ADIS16209_GLOB_CMD_REG		0x3E
-> > -
-> > -/* MSC_CTRL */
-> > -
-> > -/* Self-test at power-on: 1 = disabled, 0 = enabled */
-> > -#define ADIS16209_MSC_CTRL_PWRUP_SELF_TEST	BIT(10)
-> > -
-> > -/* Self-test enable */
-> > -#define ADIS16209_MSC_CTRL_SELF_TEST_EN	        BIT(8)
-> > -
-> > -/* Data-ready enable: 1 = enabled, 0 = disabled */
-> > -#define ADIS16209_MSC_CTRL_DATA_RDY_EN	        BIT(2)
-> > -
-> > +#define ADIS16209_MSC_CTRL_REG			0x34
-> > +#define  ADIS16209_MSC_CTRL_PWRUP_SELF_TEST	BIT(10)
-> > +#define  ADIS16209_MSC_CTRL_SELF_TEST_EN	BIT(8)
-> > +#define  ADIS16209_MSC_CTRL_DATA_RDY_EN		BIT(2)
-> >  /* Data-ready polarity: 1 = active high, 0 = active low */
-> > -#define ADIS16209_MSC_CTRL_ACTIVE_HIGH	        BIT(1)
-> > +#define  ADIS16209_MSC_CTRL_ACTIVE_HIGH		BIT(1)
-> > +#define  ADIS16209_MSC_CTRL_DATA_RDY_DIO2	BIT(0)
-> >  
-> > -/* Data-ready line selection: 1 = DIO2, 0 = DIO1 */
-> > -#define ADIS16209_MSC_CTRL_DATA_RDY_DIO2	BIT(0)
-> > -
-> > -/* DIAG_STAT */
-> > -
-> > -/* Alarm 2 status: 1 = alarm active, 0 = alarm inactive */
-> > -#define ADIS16209_DIAG_STAT_ALARM2        BIT(9)
-> > -
-> > -/* Alarm 1 status: 1 = alarm active, 0 = alarm inactive */
-> > -#define ADIS16209_DIAG_STAT_ALARM1        BIT(8)
-> > -
-> > -/* Self-test diagnostic error flag: 1 = error condition, 0 =
-> > normal operation */
-> > +#define ADIS16209_DIAG_STAT_REG			0x3C
-> > +#define  ADIS16209_DIAG_STAT_ALARM2		BIT(9)
-> > +#define  ADIS16209_DIAG_STAT_ALARM1		BIT(8)
-> >  #define ADIS16209_DIAG_STAT_SELFTEST_FAIL_BIT	5
-> > -
-> > -/* SPI communications failure */
-> >  #define ADIS16209_DIAG_STAT_SPI_FAIL_BIT	3
-> > -
-> > -/* Flash update failure */
-> >  #define ADIS16209_DIAG_STAT_FLASH_UPT_BIT	2
-> > -
-> >  /* Power supply above 3.625 V */
-> >  #define ADIS16209_DIAG_STAT_POWER_HIGH_BIT	1
-> > -
-> >  /* Power supply below 3.15 V */
-> >  #define ADIS16209_DIAG_STAT_POWER_LOW_BIT	0
-> >  
-> > -/* GLOB_CMD */
-> > -
-> > -#define ADIS16209_GLOB_CMD_SW_RESET	BIT(7)
-> > -#define ADIS16209_GLOB_CMD_CLEAR_STAT	BIT(4)
-> > -#define ADIS16209_GLOB_CMD_FACTORY_CAL	BIT(1)
-> > +#define ADIS16209_GLOB_CMD_REG			0x3E
-> > +#define  ADIS16209_GLOB_CMD_SW_RESET		BIT(7)
-> > +#define  ADIS16209_GLOB_CMD_CLEAR_STAT		BIT(4)
-> > +#define  ADIS16209_GLOB_CMD_FACTORY_CAL		BIT(1)
-> >  
-> > -#define ADIS16209_ERROR_ACTIVE          BIT(14)
-> > +#define ADIS16209_ERROR_ACTIVE			BIT(14)
-> >  
-> >  enum adis16209_scan {
-> >  	ADIS16209_SCAN_SUPPLY,
-> > @@ -226,24 +161,38 @@ static int adis16209_read_raw(struct iio_dev
-> > *indio_dev,
-> >  				*val2 = 610500; /* 0.6105 mV */
-> >  			return IIO_VAL_INT_PLUS_MICRO;
-> >  		case IIO_TEMP:
-> > -			*val = -470; /* -0.47 C */
-> > +			*val = -470;
-> >  			*val2 = 0;
-> >  			return IIO_VAL_INT_PLUS_MICRO;
-> >  		case IIO_ACCEL:
-> > +			/*
-> > +			 * IIO base unit for sensitivity of
-> > accelerometer
-> > +			 * is milli g.
-> > +			 * 1 LSB represents 0.244 mg.
-> > +			 */
-> >  			*val = 0;
-> > -			*val2 = IIO_G_TO_M_S_2(244140); /*
-> > 0.244140 mg */
-> > +			*val2 = IIO_G_TO_M_S_2(244140);
-> >  			return IIO_VAL_INT_PLUS_NANO;
-> >  		case IIO_INCLI:
-> >  		case IIO_ROT:
-> > +			/*
-> > +			 * IIO base units for rotation are
-> > degrees.
-> > +			 * 1 LSB represents 0.025 milli degrees.
-> > +			 */
-> >  			*val = 0;
-> > -			*val2 = 25000; /* 0.025 degree */
-> > +			*val2 = 25000;
-> >  			return IIO_VAL_INT_PLUS_MICRO;
-> >  		default:
-> >  			return -EINVAL;
-> >  		}
-> >  		break;
-> >  	case IIO_CHAN_INFO_OFFSET:
-> > -		*val = 25000 / -470 - 0x4FE; /* 25 C = 0x4FE */
-> > +		/*
-> > +		 * The raw ADC value is 0x4FE when the temperature
-> > +		 * is 45 degrees and the scale factor per milli
-> > +		 * degree celcius is -470.
-> Are you sure it is *45 degrees* and not *25 degrees* instead ?
-> 
-> As I can clearly see from the datasheet :
-> 
-> "sensitivity = −0.47°/LSB, 25°C = 1278 LSB = 0x04FE"
-> 
-> Please check it :)
-> 
-> I found this because I'm also doing a similar cleanup for adis16201.
-
-Hi Himanshu,
-
-Thanks for pointing this out :)
-Yes it is 25 degrees.
-
-I'll make the change after Jonathan's reviews on the other changes
-
-Thank you
-
-> 
+T24gU3VuLCAwNCBNYXIgMjAxOCAxODozNzowNCArMDUzMApTaHJlZXlhIFBhdGVsIDxzaHJlZXlh
+LnBhdGVsMjM0OThAZ21haWwuY29tPiB3cm90ZToKCj4gT24gU3VuLCAyMDE4LTAzLTA0IGF0IDE4
+OjI2ICswNTMwLCBIaW1hbnNodSBKaGEgd3JvdGU6Cj4gPiBIaSBTaHJlZXlhLAo+ID4gCj4gPiBP
+biBTdW4sIE1hciAwNCwgMjAxOCBhdCAwNjowNjoyMlBNICswNTMwLCBTaHJlZXlhIFBhdGVsIHdy
+b3RlOiAgCj4gPiA+IAo+ID4gPiBSZW1vdmUgc29tZSB1bm5lY2Vzc2F5IGNvbW1lbnRzIGFuZCBn
+cm91cCB0aGUgY29udHJvbAo+ID4gPiByZWdpc3RlciBhbmQgcmVnaXN0ZXIgZmllbGQgbWFjcm9z
+IHRvZ2V0aGVyLgo+ID4gPiBTb21lIG9mIHRoZSByZWdpc3RlciBuYW1lcyBkb2VzIG5vdCBtYWtl
+IGl0J3MgcHVwb3JzZQo+ID4gPiB2ZXJ5IGNsZWFyIGFuZCBoZW5jZSwgYWRkIHNvbWUgY29tbWVu
+dHMgZm9yIG1vcmUKPiA+ID4gaW5mb3JtYXRpb24uCj4gPiA+IEFsc28gdGhlcmUgYXJlIGNlcnRh
+aW4gdW5pdCBiYXNlZCBjb21tZW50cyB3aGljaCBhcmUgbm90Cj4gPiA+IHByb3ZpZGluZyBzdWZm
+aWNpZW50IGluZm9ybWF0aW9uLCBzbyBleHBhbmQgdGhvc2UgY29tbWVudHMuCj4gPiA+IAo+ID4g
+PiBTaWduZWQtb2ZmLWJ5OiBTaHJlZXlhIFBhdGVsIDxzaHJlZXlhLnBhdGVsMjM0OThAZ21haWwu
+Y29tPgo+ID4gPiAtLS0KPiA+ID4gCj4gPiA+IENoYW5nZXMgaW4gdjMKPiA+ID4gwqAgLVRoaXMg
+cGF0Y2ggaXMgdGhlIGNvbWJpbmF0aW9uIG9mIHR3byBwYXRjaGVzIGZyb20gdGhlCj4gPiA+IHBy
+ZXZpb3VzIHNlcmllcy4gQWxzbyBhZGQgc29tZSBtb3JlIGNvbW1lbnRzLgo+ID4gPiAKPiA+ID4g
+Cj4gPiA+IMKgZHJpdmVycy9zdGFnaW5nL2lpby9hY2NlbC9hZGlzMTYyMDkuYyB8IDEzMiArKysr
+KysrKysrLS0tLS0tLS0tLQo+ID4gPiAtLS0tLS0tLS0tLS0tLQo+ID4gPiDCoDEgZmlsZSBjaGFu
+Z2VkLCAzOSBpbnNlcnRpb25zKCspLCA5MyBkZWxldGlvbnMoLSkKPiA+ID4gCj4gPiA+IGRpZmYg
+LS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvaWlvL2FjY2VsL2FkaXMxNjIwOS5jCj4gPiA+IGIvZHJp
+dmVycy9zdGFnaW5nL2lpby9hY2NlbC9hZGlzMTYyMDkuYwo+ID4gPiBpbmRleCAxNTExMjBmLi5k
+OGFlZjljIDEwMDY0NAo+ID4gPiAtLS0gYS9kcml2ZXJzL3N0YWdpbmcvaWlvL2FjY2VsL2FkaXMx
+NjIwOS5jCj4gPiA+ICsrKyBiL2RyaXZlcnMvc3RhZ2luZy9paW8vYWNjZWwvYWRpczE2MjA5LmMK
+PiA+ID4gQEAgLTIxLDEzNSArMjEsNzAgQEAKPiA+ID4gwqAjaW5jbHVkZSA8bGludXgvaWlvL2lt
+dS9hZGlzLmg+Cj4gPiA+IMKgCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfU1RBUlRVUF9ERUxB
+WV9NUwkyMjAKPiA+ID4gLQo+ID4gPiAtLyogRmxhc2ggbWVtb3J5IHdyaXRlIGNvdW50ICovCj4g
+PiA+IMKgI2RlZmluZSBBRElTMTYyMDlfRkxBU0hfQ05UX1JFRwkJMHgwMAo+ID4gPiDCoAo+ID4g
+PiAtLyogT3V0cHV0LCBwb3dlciBzdXBwbHkgKi8KPiA+ID4gKy8qIERhdGEgT3V0cHV0IFJlZ2lz
+dGVyIERlZmluaXRpb25zICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfU1VQUExZX09VVF9S
+RUcJMHgwMgo+ID4gPiAtCj4gPiA+IC0vKiBPdXRwdXQsIHgtYXhpcyBhY2NlbGVyb21ldGVyICov
+Cj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfWEFDQ0xfT1VUX1JFRwkJMHgwNAo+ID4gPiAtCj4g
+PiA+IC0vKiBPdXRwdXQsIHktYXhpcyBhY2NlbGVyb21ldGVyICovCj4gPiA+IMKgI2RlZmluZSBB
+RElTMTYyMDlfWUFDQ0xfT1VUX1JFRwkJMHgwNgo+ID4gPiAtCj4gPiA+IMKgLyogT3V0cHV0LCBh
+dXhpbGlhcnkgQURDIGlucHV0ICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfQVVYX0FEQ19S
+RUcJCTB4MDgKPiA+ID4gLQo+ID4gPiDCoC8qIE91dHB1dCwgdGVtcGVyYXR1cmUgKi8KPiA+ID4g
+wqAjZGVmaW5lIEFESVMxNjIwOV9URU1QX09VVF9SRUcJCTB4MEEKPiA+ID4gLQo+ID4gPiAtLyog
+T3V0cHV0LCB4LWF4aXMgaW5jbGluYXRpb24gKi8KPiA+ID4gKy8qIE91dHB1dCwgKy8tIDkwIGRl
+Z3JlZXMgWC1heGlzIGluY2xpbmF0aW9uICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfWElO
+Q0xfT1VUX1JFRwkJMHgwQwo+ID4gPiAtCj4gPiA+IC0vKiBPdXRwdXQsIHktYXhpcyBpbmNsaW5h
+dGlvbiAqLwo+ID4gPiDCoCNkZWZpbmUgQURJUzE2MjA5X1lJTkNMX09VVF9SRUcJCTB4MEUKPiA+
+ID4gLQo+ID4gPiDCoC8qIE91dHB1dCwgKy8tMTgwIHZlcnRpY2FsIHJvdGF0aW9uYWwgcG9zaXRp
+b24gKi8KPiA+ID4gwqAjZGVmaW5lIEFESVMxNjIwOV9ST1RfT1VUX1JFRwkJMHgxMAo+ID4gPiDC
+oAo+ID4gPiAtLyogQ2FsaWJyYXRpb24sIHgtYXhpcyBhY2NlbGVyYXRpb24gb2Zmc2V0IG51bGwg
+Ki8KPiA+ID4gKy8qCj4gPiA+ICsgKiBDYWxpYnJhdGlvbiBSZWdpc3RlciBEZWZpbml0aW9ucy4K
+PiA+ID4gKyAqIEFjY2VsZXJhdGlvbiwgaW5jbGluYXRpb24gb3Igcm90YXRpb24gb2Zmc2V0IG51
+bGwuCj4gPiA+ICsgKi8KPiA+ID4gwqAjZGVmaW5lIEFESVMxNjIwOV9YQUNDTF9OVUxMX1JFRwkw
+eDEyCj4gPiA+IC0KPiA+ID4gLS8qIENhbGlicmF0aW9uLCB5LWF4aXMgYWNjZWxlcmF0aW9uIG9m
+ZnNldCBudWxsICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfWUFDQ0xfTlVMTF9SRUcJMHgx
+NAo+ID4gPiAtCj4gPiA+IC0vKiBDYWxpYnJhdGlvbiwgeC1heGlzIGluY2xpbmF0aW9uIG9mZnNl
+dCBudWxsICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfWElOQ0xfTlVMTF9SRUcJMHgxNgo+
+ID4gPiAtCj4gPiA+IC0vKiBDYWxpYnJhdGlvbiwgeS1heGlzIGluY2xpbmF0aW9uIG9mZnNldCBu
+dWxsICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfWUlOQ0xfTlVMTF9SRUcJMHgxOAo+ID4g
+PiAtCj4gPiA+IC0vKiBDYWxpYnJhdGlvbiwgdmVydGljYWwgcm90YXRpb24gb2Zmc2V0IG51bGwg
+Ki8KPiA+ID4gwqAjZGVmaW5lIEFESVMxNjIwOV9ST1RfTlVMTF9SRUcJCTB4MUEKPiA+ID4gwqAK
+PiA+ID4gLS8qIEFsYXJtIDEgYW1wbGl0dWRlIHRocmVzaG9sZCAqLwo+ID4gPiArLyogQWxhcm0g
+UmVnaXN0ZXIgRGVmaW5pdGlvbnMgKi8KPiA+ID4gwqAjZGVmaW5lIEFESVMxNjIwOV9BTE1fTUFH
+MV9SRUcJCTB4MjAKPiA+ID4gLQo+ID4gPiAtLyogQWxhcm0gMiBhbXBsaXR1ZGUgdGhyZXNob2xk
+ICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfQUxNX01BRzJfUkVHCQkweDIyCj4gPiA+IC0K
+PiA+ID4gLS8qIEFsYXJtIDEsIHNhbXBsZSBwZXJpb2QgKi8KPiA+ID4gwqAjZGVmaW5lIEFESVMx
+NjIwOV9BTE1fU01QTDFfUkVHCQkweDI0Cj4gPiA+IC0KPiA+ID4gLS8qIEFsYXJtIDIsIHNhbXBs
+ZSBwZXJpb2QgKi8KPiA+ID4gwqAjZGVmaW5lIEFESVMxNjIwOV9BTE1fU01QTDJfUkVHCQkweDI2
+Cj4gPiA+IC0KPiA+ID4gLS8qIEFsYXJtIGNvbnRyb2wgKi8KPiA+ID4gwqAjZGVmaW5lIEFESVMx
+NjIwOV9BTE1fQ1RSTF9SRUcJCTB4MjgKPiA+ID4gwqAKPiA+ID4gLS8qIEF1eGlsaWFyeSBEQUMg
+ZGF0YSAqLwo+ID4gPiDCoCNkZWZpbmUgQURJUzE2MjA5X0FVWF9EQUNfUkVHCQkweDMwCj4gPiA+
+IC0KPiA+ID4gLS8qIEdlbmVyYWwtcHVycG9zZSBkaWdpdGFsIGlucHV0L291dHB1dCBjb250cm9s
+ICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfR1BJT19DVFJMX1JFRwkJMHgzMgo+ID4gPiAt
+Cj4gPiA+IC0vKiBNaXNjZWxsYW5lb3VzIGNvbnRyb2wgKi8KPiA+ID4gLSNkZWZpbmUgQURJUzE2
+MjA5X01TQ19DVFJMX1JFRwkJMHgzNAo+ID4gPiAtCj4gPiA+IC0vKiBJbnRlcm5hbCBzYW1wbGUg
+cGVyaW9kIChyYXRlKSBjb250cm9sICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfU01QTF9Q
+UkRfUkVHCQkweDM2Cj4gPiA+IC0KPiA+ID4gLS8qIE9wZXJhdGlvbiwgZmlsdGVyIGNvbmZpZ3Vy
+YXRpb24gKi8KPiA+ID4gwqAjZGVmaW5lIEFESVMxNjIwOV9BVkdfQ05UX1JFRwkJMHgzOAo+ID4g
+PiAtCj4gPiA+IC0vKiBPcGVyYXRpb24sIHNsZWVwIG1vZGUgY29udHJvbCAqLwo+ID4gPiDCoCNk
+ZWZpbmUgQURJUzE2MjA5X1NMUF9DTlRfUkVHCQkweDNBCj4gPiA+IMKgCj4gPiA+IC0vKiBEaWFn
+bm9zdGljcywgc3lzdGVtIHN0YXR1cyByZWdpc3RlciAqLwo+ID4gPiAtI2RlZmluZSBBRElTMTYy
+MDlfRElBR19TVEFUX1JFRwkJMHgzQwo+ID4gPiAtCj4gPiA+IC0vKiBPcGVyYXRpb24sIHN5c3Rl
+bSBjb21tYW5kIHJlZ2lzdGVyICovCj4gPiA+IC0jZGVmaW5lIEFESVMxNjIwOV9HTE9CX0NNRF9S
+RUcJCTB4M0UKPiA+ID4gLQo+ID4gPiAtLyogTVNDX0NUUkwgKi8KPiA+ID4gLQo+ID4gPiAtLyog
+U2VsZi10ZXN0IGF0IHBvd2VyLW9uOiAxID0gZGlzYWJsZWQsIDAgPSBlbmFibGVkICovCj4gPiA+
+IC0jZGVmaW5lIEFESVMxNjIwOV9NU0NfQ1RSTF9QV1JVUF9TRUxGX1RFU1QJQklUKDEwKQo+ID4g
+PiAtCj4gPiA+IC0vKiBTZWxmLXRlc3QgZW5hYmxlICovCj4gPiA+IC0jZGVmaW5lIEFESVMxNjIw
+OV9NU0NfQ1RSTF9TRUxGX1RFU1RfRU4JwqDCoMKgwqDCoMKgwqDCoEJJVCg4KQo+ID4gPiAtCj4g
+PiA+IC0vKiBEYXRhLXJlYWR5IGVuYWJsZTogMSA9IGVuYWJsZWQsIDAgPSBkaXNhYmxlZCAqLwo+
+ID4gPiAtI2RlZmluZSBBRElTMTYyMDlfTVNDX0NUUkxfREFUQV9SRFlfRU4JwqDCoMKgwqDCoMKg
+wqDCoEJJVCgyKQo+ID4gPiAtCj4gPiA+ICsjZGVmaW5lIEFESVMxNjIwOV9NU0NfQ1RSTF9SRUcJ
+CQkweDM0Cj4gPiA+ICsjZGVmaW5lwqDCoEFESVMxNjIwOV9NU0NfQ1RSTF9QV1JVUF9TRUxGX1RF
+U1QJQklUKDEwKQo+ID4gPiArI2RlZmluZcKgwqBBRElTMTYyMDlfTVNDX0NUUkxfU0VMRl9URVNU
+X0VOCUJJVCg4KQo+ID4gPiArI2RlZmluZcKgwqBBRElTMTYyMDlfTVNDX0NUUkxfREFUQV9SRFlf
+RU4JCUJJVCgyKQo+ID4gPiDCoC8qIERhdGEtcmVhZHkgcG9sYXJpdHk6IDEgPSBhY3RpdmUgaGln
+aCwgMCA9IGFjdGl2ZSBsb3cgKi8KPiA+ID4gLSNkZWZpbmUgQURJUzE2MjA5X01TQ19DVFJMX0FD
+VElWRV9ISUdICcKgwqDCoMKgwqDCoMKgwqBCSVQoMSkKPiA+ID4gKyNkZWZpbmXCoMKgQURJUzE2
+MjA5X01TQ19DVFJMX0FDVElWRV9ISUdICQlCSVQoMSkKPiA+ID4gKyNkZWZpbmXCoMKgQURJUzE2
+MjA5X01TQ19DVFJMX0RBVEFfUkRZX0RJTzIJQklUKDApCj4gPiA+IMKgCj4gPiA+IC0vKiBEYXRh
+LXJlYWR5IGxpbmUgc2VsZWN0aW9uOiAxID0gRElPMiwgMCA9IERJTzEgKi8KPiA+ID4gLSNkZWZp
+bmUgQURJUzE2MjA5X01TQ19DVFJMX0RBVEFfUkRZX0RJTzIJQklUKDApCj4gPiA+IC0KPiA+ID4g
+LS8qIERJQUdfU1RBVCAqLwo+ID4gPiAtCj4gPiA+IC0vKiBBbGFybSAyIHN0YXR1czogMSA9IGFs
+YXJtIGFjdGl2ZSwgMCA9IGFsYXJtIGluYWN0aXZlICovCj4gPiA+IC0jZGVmaW5lIEFESVMxNjIw
+OV9ESUFHX1NUQVRfQUxBUk0ywqDCoMKgwqDCoMKgwqDCoEJJVCg5KQo+ID4gPiAtCj4gPiA+IC0v
+KiBBbGFybSAxIHN0YXR1czogMSA9IGFsYXJtIGFjdGl2ZSwgMCA9IGFsYXJtIGluYWN0aXZlICov
+Cj4gPiA+IC0jZGVmaW5lIEFESVMxNjIwOV9ESUFHX1NUQVRfQUxBUk0xwqDCoMKgwqDCoMKgwqDC
+oEJJVCg4KQo+ID4gPiAtCj4gPiA+IC0vKiBTZWxmLXRlc3QgZGlhZ25vc3RpYyBlcnJvciBmbGFn
+OiAxID0gZXJyb3IgY29uZGl0aW9uLCAwID0KPiA+ID4gbm9ybWFsIG9wZXJhdGlvbiAqLwo+ID4g
+PiArI2RlZmluZSBBRElTMTYyMDlfRElBR19TVEFUX1JFRwkJCTB4M0MKPiA+ID4gKyNkZWZpbmXC
+oMKgQURJUzE2MjA5X0RJQUdfU1RBVF9BTEFSTTIJCUJJVCg5KQo+ID4gPiArI2RlZmluZcKgwqBB
+RElTMTYyMDlfRElBR19TVEFUX0FMQVJNMQkJQklUKDgpCj4gPiA+IMKgI2RlZmluZSBBRElTMTYy
+MDlfRElBR19TVEFUX1NFTEZURVNUX0ZBSUxfQklUCTUKPiA+ID4gLQo+ID4gPiAtLyogU1BJIGNv
+bW11bmljYXRpb25zIGZhaWx1cmUgKi8KPiA+ID4gwqAjZGVmaW5lIEFESVMxNjIwOV9ESUFHX1NU
+QVRfU1BJX0ZBSUxfQklUCTMKPiA+ID4gLQo+ID4gPiAtLyogRmxhc2ggdXBkYXRlIGZhaWx1cmUg
+Ki8KPiA+ID4gwqAjZGVmaW5lIEFESVMxNjIwOV9ESUFHX1NUQVRfRkxBU0hfVVBUX0JJVAkyCj4g
+PiA+IC0KPiA+ID4gwqAvKiBQb3dlciBzdXBwbHkgYWJvdmUgMy42MjUgViAqLwo+ID4gPiDCoCNk
+ZWZpbmUgQURJUzE2MjA5X0RJQUdfU1RBVF9QT1dFUl9ISUdIX0JJVAkxCj4gPiA+IC0KPiA+ID4g
+wqAvKiBQb3dlciBzdXBwbHkgYmVsb3cgMy4xNSBWICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYy
+MDlfRElBR19TVEFUX1BPV0VSX0xPV19CSVQJMAo+ID4gPiDCoAo+ID4gPiAtLyogR0xPQl9DTUQg
+Ki8KPiA+ID4gLQo+ID4gPiAtI2RlZmluZSBBRElTMTYyMDlfR0xPQl9DTURfU1dfUkVTRVQJQklU
+KDcpCj4gPiA+IC0jZGVmaW5lIEFESVMxNjIwOV9HTE9CX0NNRF9DTEVBUl9TVEFUCUJJVCg0KQo+
+ID4gPiAtI2RlZmluZSBBRElTMTYyMDlfR0xPQl9DTURfRkFDVE9SWV9DQUwJQklUKDEpCj4gPiA+
+ICsjZGVmaW5lIEFESVMxNjIwOV9HTE9CX0NNRF9SRUcJCQkweDNFCj4gPiA+ICsjZGVmaW5lwqDC
+oEFESVMxNjIwOV9HTE9CX0NNRF9TV19SRVNFVAkJQklUKDcpCj4gPiA+ICsjZGVmaW5lwqDCoEFE
+SVMxNjIwOV9HTE9CX0NNRF9DTEVBUl9TVEFUCQlCSVQoNCkKPiA+ID4gKyNkZWZpbmXCoMKgQURJ
+UzE2MjA5X0dMT0JfQ01EX0ZBQ1RPUllfQ0FMCQlCSVQoMSkKPiA+ID4gwqAKPiA+ID4gLSNkZWZp
+bmUgQURJUzE2MjA5X0VSUk9SX0FDVElWRcKgwqDCoMKgwqDCoMKgwqDCoMKgQklUKDE0KQo+ID4g
+PiArI2RlZmluZSBBRElTMTYyMDlfRVJST1JfQUNUSVZFCQkJQklUKDE0KQo+ID4gPiDCoAo+ID4g
+PiDCoGVudW0gYWRpczE2MjA5X3NjYW4gewo+ID4gPiDCoAlBRElTMTYyMDlfU0NBTl9TVVBQTFks
+Cj4gPiA+IEBAIC0yMjYsMjQgKzE2MSwzOCBAQCBzdGF0aWMgaW50IGFkaXMxNjIwOV9yZWFkX3Jh
+dyhzdHJ1Y3QgaWlvX2Rldgo+ID4gPiAqaW5kaW9fZGV2LAo+ID4gPiDCoAkJCQkqdmFsMiA9IDYx
+MDUwMDsgLyogMC42MTA1IG1WICovCj4gPiA+IMKgCQkJcmV0dXJuIElJT19WQUxfSU5UX1BMVVNf
+TUlDUk87Cj4gPiA+IMKgCQljYXNlIElJT19URU1QOgo+ID4gPiAtCQkJKnZhbCA9IC00NzA7IC8q
+IC0wLjQ3IEMgKi8KPiA+ID4gKwkJCSp2YWwgPSAtNDcwOwo+ID4gPiDCoAkJCSp2YWwyID0gMDsK
+PiA+ID4gwqAJCQlyZXR1cm4gSUlPX1ZBTF9JTlRfUExVU19NSUNSTzsKPiA+ID4gwqAJCWNhc2Ug
+SUlPX0FDQ0VMOgo+ID4gPiArCQkJLyoKPiA+ID4gKwkJCcKgKiBJSU8gYmFzZSB1bml0IGZvciBz
+ZW5zaXRpdml0eSBvZgo+ID4gPiBhY2NlbGVyb21ldGVyCj4gPiA+ICsJCQnCoCogaXMgbWlsbGkg
+Zy4KPiA+ID4gKwkJCcKgKiAxIExTQiByZXByZXNlbnRzIDAuMjQ0IG1nLgo+ID4gPiArCQkJwqAq
+Lwo+ID4gPiDCoAkJCSp2YWwgPSAwOwo+ID4gPiAtCQkJKnZhbDIgPSBJSU9fR19UT19NX1NfMigy
+NDQxNDApOyAvKgo+ID4gPiAwLjI0NDE0MCBtZyAqLwo+ID4gPiArCQkJKnZhbDIgPSBJSU9fR19U
+T19NX1NfMigyNDQxNDApOwo+ID4gPiDCoAkJCXJldHVybiBJSU9fVkFMX0lOVF9QTFVTX05BTk87
+Cj4gPiA+IMKgCQljYXNlIElJT19JTkNMSToKPiA+ID4gwqAJCWNhc2UgSUlPX1JPVDoKPiA+ID4g
+KwkJCS8qCj4gPiA+ICsJCQnCoCogSUlPIGJhc2UgdW5pdHMgZm9yIHJvdGF0aW9uIGFyZQo+ID4g
+PiBkZWdyZWVzLgo+ID4gPiArCQkJwqAqIDEgTFNCIHJlcHJlc2VudHMgMC4wMjUgbWlsbGkgZGVn
+cmVlcy4KPiA+ID4gKwkJCcKgKi8KPiA+ID4gwqAJCQkqdmFsID0gMDsKPiA+ID4gLQkJCSp2YWwy
+ID0gMjUwMDA7IC8qIDAuMDI1IGRlZ3JlZSAqLwo+ID4gPiArCQkJKnZhbDIgPSAyNTAwMDsKPiA+
+ID4gwqAJCQlyZXR1cm4gSUlPX1ZBTF9JTlRfUExVU19NSUNSTzsKPiA+ID4gwqAJCWRlZmF1bHQ6
+Cj4gPiA+IMKgCQkJcmV0dXJuIC1FSU5WQUw7Cj4gPiA+IMKgCQl9Cj4gPiA+IMKgCQlicmVhazsK
+PiA+ID4gwqAJY2FzZSBJSU9fQ0hBTl9JTkZPX09GRlNFVDoKPiA+ID4gLQkJKnZhbCA9IDI1MDAw
+IC8gLTQ3MCAtIDB4NEZFOyAvKiAyNSBDID0gMHg0RkUgKi8KPiA+ID4gKwkJLyoKPiA+ID4gKwkJ
+wqAqIFRoZSByYXcgQURDIHZhbHVlIGlzIDB4NEZFIHdoZW4gdGhlIHRlbXBlcmF0dXJlCj4gPiA+
+ICsJCcKgKiBpcyA0NSBkZWdyZWVzIGFuZCB0aGUgc2NhbGUgZmFjdG9yIHBlciBtaWxsaQo+ID4g
+PiArCQnCoCogZGVncmVlIGNlbGNpdXMgaXMgLTQ3MC4gIAo+ID4gQXJlIHlvdSBzdXJlIGl0IGlz
+ICo0NSBkZWdyZWVzKiBhbmQgbm90ICoyNSBkZWdyZWVzKiBpbnN0ZWFkID8KPiA+IAo+ID4gQXMg
+SSBjYW4gY2xlYXJseSBzZWUgZnJvbSB0aGUgZGF0YXNoZWV0IDoKPiA+IAo+ID4gInNlbnNpdGl2
+aXR5ID0g4oiSMC40N8KwL0xTQiwgMjXCsEMgPSAxMjc4IExTQiA9IDB4MDRGRSIKPiA+IAo+ID4g
+UGxlYXNlIGNoZWNrIGl0IDopCj4gPiAKPiA+IEkgZm91bmQgdGhpcyBiZWNhdXNlIEknbSBhbHNv
+IGRvaW5nIGEgc2ltaWxhciBjbGVhbnVwIGZvciBhZGlzMTYyMDEuICAKPiAKPiBIaSBIaW1hbnNo
+dSwKPiAKPiBUaGFua3MgZm9yIHBvaW50aW5nIHRoaXMgb3V0IDopCj4gWWVzIGl0IGlzIDI1IGRl
+Z3JlZXMuCj4gCj4gSSdsbCBtYWtlIHRoZSBjaGFuZ2UgYWZ0ZXIgSm9uYXRoYW4ncyByZXZpZXdz
+IG9uIHRoZSBvdGhlciBjaGFuZ2VzCkdvb2QgY2F0Y2ggLSBJIHdvdWxkIHByb2JhYmx5IGhhdmUg
+bWlzc2VkIHRoYXQuCgpBbnlob3cgdGhlIHJlc3Qgb2YgdGhlIHBhdGNoIGxvb2tlZCBnb29kIHRv
+IG1lIHNvIEkndmUgYXBwbGllZCBpdCB0bwp0aGUgdG9ncmVnIGJyYW5jaCBvZiBpaW8uZ2l0IChm
+aXhlZCB1cCkgYW5kIHB1c2hlZCBvdXQgYXMgdGVzdGluZwpmb3IgdGhlIGF1dG9idWlsZGVycyB0
+byBwbGF5IHdpdGggaXQuCgpUaGFua3MsCgpKb25hdGhhbgoKPiAKPiBUaGFuayB5b3UKPiAKPiA+
+ICAgCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZl
+bCBtYWlsaW5nIGxpc3QKZGV2ZWxAbGludXhkcml2ZXJwcm9qZWN0Lm9yZwpodHRwOi8vZHJpdmVy
+ZGV2LmxpbnV4ZHJpdmVycHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcml2ZXJkZXYtZGV2
+ZWwK
