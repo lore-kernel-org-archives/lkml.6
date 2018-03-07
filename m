@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuBcJZet0c9eOsgxZBd6zgfFoFYYaWbQ4kDbYns+fHMSv5LzDviO203t3mC9shadobmwvOW
-ARC-Seal: i=1; a=rsa-sha256; t=1520451869; cv=none;
+X-Google-Smtp-Source: AG47ELsstpijfp8HxrrIzumv+qNFrlb/hwf5hnIZF3q7RSnVH3ZrNgI0IcKuOEoSBgDnmBkz+W4p
+ARC-Seal: i=1; a=rsa-sha256; t=1520451866; cv=none;
         d=google.com; s=arc-20160816;
-        b=KHrpFT/+UO6ngwNAzWmXGPLtMQZVXdw0aAvwqM2jbNWMoBV4EM1Iwko3ALdr/fjPlU
-         jVqtnX0qr0ReOzzz/XrHmVs+0LNi4Ayc5pxO4ytqzc4Ua/QiOrUiiGVl//UsUyB4JfNk
-         /1WTMPHBoARuoP5qdIOBzHkfNtppD9L7PoG6RxCXqerfknBK9rTcPYWo2sRukXxgtFj/
-         fvFxx/zkdTFaAiU6gioxWkEXpgcurL0g55CgstJ9uykcauC5z9Jd//hk5xBxbfI8j7IV
-         sDRH9Zuk3/BThrZ7SSnL3pZcPfR3NywgfWun3TrOEXiyTjbVZ9tZr4JZ9KCXdWI0JoKH
-         grlQ==
+        b=iy6m7HiC0VECMlRH0xV3DB7OoTG+Zd5Gs9rmTVOwDYUClMPC0jvcKCrD6Tq2qt5Txo
+         lRAeQLGBolnbPAG26GhOq2NKpUenU0vuMdzWmrLfNka8dfCT2zamjUDDQNOOc26+/0ww
+         aM9wgHbMbTJrmJzmQ4f31PBp4/puwZxsiMNDYuPHMMPSAhcZtUje+U+8Oav/6WENGde3
+         T6oRA4uKiW7C/WmE9kUZXmZzIteOLuIK+kjgcGBzbLf0A8SXo09lSDXQOo/YeO9ty5WR
+         cD/9YCWLTj28aEG67HPFeZj3MkS4dq7BSaoqgRbUQdevTz3gkzQH/ieFjOZORgXUi+cB
+         iQCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Zr17cgz5iC8bGwnAuURhRSM5S58dPBB0v9/4TZywsuQ=;
-        b=lqTe3vrijj5PO3E3FSsrSr4flBD1NndyUue4KVduQDc9KLD8nzAMhVPieAwMiLiNVr
-         T4DYbX2IpvkEY6sKIBeWu3Ed0dS7mecwcrExcCGC6bTjXoGNb7HaIvYp136xQUUV8mz3
-         5uW1SHOVmmVSBmU2xI3ohbtNV0MWjS3wappDFJY07fn8C+NMkTPpehBv2UBDbI4kcQHH
-         LqljNeBfqtl5+0I/BfidJEfDSgyMTAlMY/SZkxSp63m2Vc6Ld+qAx4Eh0KXp94Ir3ger
-         8vu5iWgyAQ8bU7Pz2MwlXAe+Vjl0eEd1b38yOj3UGBqvw+LltUR32mm4oL0wQ4Mm2XFG
-         SdeQ==
+        bh=pO79eqV/ivxr92ESKEKQ91WmldfTs098eVNQR9JdH/Y=;
+        b=XBufRvYejphdI9KLRk7dtfiCxnb2b/cbnpa1ixEeNPhuZX7YJ4AJlLEIb3KpXUQXf7
+         +G8YhXXxZ26JHGOq5ELZMuZODNFTd6NGAFOo7pBNdep2XXVOFwH6yujCThJL1yrFUiQa
+         hzjfhrRlIKN6eSjb7nPZWhVwJXqmYGX0WJku+c+wK/AjZFmvZvz0mDx5p2GdzbHr7kvz
+         elf0pG6YHGCHQfIHzgLA6N0uD6TOBaGff2yn/pDmWO6TdYd5xnhgjD5NYOzsXO1BrsuL
+         91WSXXIDQbHntsF0X9nEwT9M8U4fP+pyoPqvjhDsqhFAABuoki60PGhbvro4TVgRUeSp
+         XpKQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Daniel Schultz <d.schultz@phytec.de>,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4.15 108/122] ARM: dts: rockchip: Remove 1.8 GHz operation point from phycore som
-Date: Wed,  7 Mar 2018 11:38:40 -0800
-Message-Id: <20180307191745.198396494@linuxfoundation.org>
+	syzbot <syzkaller@googlegroups.com>,
+	Eric Biggers <ebiggers@google.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	Jack Wang <jinpu.wang@profitbricks.com>
+Subject: [PATCH 4.15 117/122] KVM/x86: remove WARN_ON() for when vm_munmap() fails
+Date: Wed,  7 Mar 2018 11:38:49 -0800
+Message-Id: <20180307191746.615812700@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309339325517996?=
-X-GMAIL-MSGID: =?utf-8?q?1594309339325517996?=
+X-GMAIL-THRID: =?utf-8?q?1594309336045746286?=
+X-GMAIL-MSGID: =?utf-8?q?1594309336045746286?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,52 +51,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel Schultz <d.schultz@phytec.de>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 5ce0bad4ccd04c8a989e94d3c89e4e796ac22e48 upstream.
+commit 103c763c72dd2df3e8c91f2d7ec88f98ed391111 upstream.
 
-Rockchip recommends to run the CPU cores only with operations points of
-1.6 GHz or lower.
+On x86, special KVM memslots such as the TSS region have anonymous
+memory mappings created on behalf of userspace, and these mappings are
+removed when the VM is destroyed.
 
-Removed the cpu0 node with too high operation points and use the default
-values instead.
+It is however possible for removing these mappings via vm_munmap() to
+fail.  This can most easily happen if the thread receives SIGKILL while
+it's waiting to acquire ->mmap_sem.   This triggers the 'WARN_ON(r < 0)'
+in __x86_set_memory_region().  syzkaller was able to hit this, using
+'exit()' to send the SIGKILL.  Note that while the vm_munmap() failure
+results in the mapping not being removed immediately, it is not leaked
+forever but rather will be freed when the process exits.
 
-Fixes: 903d31e34628 ("ARM: dts: rockchip: Add support for phyCORE-RK3288 SoM")
-Cc: stable@vger.kernel.org
-Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+It's not really possible to handle this failure properly, so almost
+every other caller of vm_munmap() doesn't check the return value.  It's
+a limitation of having the kernel manage these mappings rather than
+userspace.
+
+So just remove the WARN_ON() so that users can't spam the kernel log
+with this warning.
+
+Fixes: f0d648bdf0a5 ("KVM: x86: map/unmap private slots in __x86_set_memory_region")
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/rk3288-phycore-som.dtsi |   20 --------------------
- 1 file changed, 20 deletions(-)
+ arch/x86/kvm/x86.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/arch/arm/boot/dts/rk3288-phycore-som.dtsi
-+++ b/arch/arm/boot/dts/rk3288-phycore-som.dtsi
-@@ -110,26 +110,6 @@
- 	};
- };
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -8281,10 +8281,8 @@ int __x86_set_memory_region(struct kvm *
+ 			return r;
+ 	}
  
--&cpu0 {
--	cpu0-supply = <&vdd_cpu>;
--	operating-points = <
--		/* KHz    uV */
--		1800000	1400000
--		1608000	1350000
--		1512000 1300000
--		1416000 1200000
--		1200000 1100000
--		1008000 1050000
--		 816000 1000000
--		 696000  950000
--		 600000  900000
--		 408000  900000
--		 312000  900000
--		 216000  900000
--		 126000  900000
--	>;
--};
--
- &emmc {
- 	status = "okay";
- 	bus-width = <8>;
+-	if (!size) {
+-		r = vm_munmap(old.userspace_addr, old.npages * PAGE_SIZE);
+-		WARN_ON(r < 0);
+-	}
++	if (!size)
++		vm_munmap(old.userspace_addr, old.npages * PAGE_SIZE);
+ 
+ 	return 0;
+ }
