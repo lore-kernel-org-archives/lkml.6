@@ -1,71 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754530AbeCGOpN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:45:13 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43838 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753949AbeCGOpJ (ORCPT
+        id S1754507AbeCGOsy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:48:54 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:46037 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753901AbeCGOsw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:45:09 -0500
-Date: Wed, 7 Mar 2018 14:45:05 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Tony Lindgren <tony@atomide.com>, Maciej Purski <m.purski@samsung.com>,
-        linux-omap@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: Regulator regression in next-20180305
-Message-ID: <20180307144505.GH7290@sirena.org.uk>
-References: <20180305231246.GB5799@atomide.com>
- <CAOMZO5CXy=7ZKVapp_2Q4wq=mY-dJ0owZZN84vqUj1j1xasOKg@mail.gmail.com>
- <20180306163035.GE13586@sirena.org.uk>
- <CAOMZO5DL_a8DOKgyZ4j2-bcPZLeUtQ9ekc74yVwtKYofbpOafg@mail.gmail.com>
- <20180306191218.GF13586@sirena.org.uk>
- <CAOMZO5BfEfXN6OgxXswm8qFDbxDJKdUJmhDZGr_DBOh8fbtodA@mail.gmail.com>
- <20180306213350.GH13586@sirena.org.uk>
- <CAOMZO5BPyY3WUYUhV76HGdb_NbCv9riFdtEFaku2k4dd9-A_FQ@mail.gmail.com>
+        Wed, 7 Mar 2018 09:48:52 -0500
+X-Google-Smtp-Source: AG47ELtlzZR07Ki9/fyGgnzobY0hiBNzbrQmUP5TnFUPdH7erD6d5SYgc8ljNrWRVWt4YrqDu+qs3J6VR2Mju9xukhI=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="/9ZOS6odDaRI+0hI"
-Content-Disposition: inline
-In-Reply-To: <CAOMZO5BPyY3WUYUhV76HGdb_NbCv9riFdtEFaku2k4dd9-A_FQ@mail.gmail.com>
-X-Cookie: If you can read this, you're too close.
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180307144027.GA17727@axis.com>
+References: <20180221090000.18091-1-niklas.cassel@axis.com>
+ <CAK8P3a0ykwsO40w49TL9xgVKv3wrvx7KXz1o6XD5+qXQ6n8YUA@mail.gmail.com> <20180307144027.GA17727@axis.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 7 Mar 2018 15:48:49 +0100
+X-Google-Sender-Auth: P6-yQ8PwE-KAWXqV7aKcjsgBMzg
+Message-ID: <CAK8P3a3=nNvR=Dk_fYKwbb+srgQ6XQ73E1i_2GNwvs44ZhFyug@mail.gmail.com>
+Subject: Re: [PATCH v2 0/8] ARTPEC-6 ARM SoC device tree updates
+To: Niklas Cassel <niklas.cassel@axis.com>
+Cc: arm-soc <arm@kernel.org>, linux-arm-kernel@axis.com,
+        DTML <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Mar 7, 2018 at 3:40 PM, Niklas Cassel <niklas.cassel@axis.com> wrote:
+> On Tue, Mar 06, 2018 at 05:45:30PM +0100, Arnd Bergmann wrote:
+>> On Wed, Feb 21, 2018 at 9:59 AM, Niklas Cassel <niklas.cassel@axis.com> wrote:
+>> > Hello,
+>> >
+>> > Here comes some ARTPEC-6 ARM SoC device tree updates.
+>> >
+>> > Niklas Cassel (8):
+>> >   ARM: dts: artpec: disable Accelerator Coherency Port
+>> >   ARM: dts: artpec: use 1 GiB RAM
+>> >   ARM: dts: artpec: remove 0x prefix from clkctrl unit address
+>> >   ARM: dts: artpec: migrate ethernet to stmmac binding
+>> >   ARM: dts: artpec: add and utilize artpec6 pin controller
+>> >   ARM: dts: artpec: add and utilize nbpfaxi DMA controllers
+>> >   ARM: dts: artpec: add disabled node for PCIe endpoint mode
+>> >   ARM: dts: artpec: add node for hardware crypto accelerator
+>>
+>> For a series eight patches, a pull request would save me some work, but
+>> I applied it anyway.
+>
+> Thank you Arnd.
+> You will receive pull requests in the future.
+>
+>>
+>> Are you sure that the first three patches shouldn't be applied to stable
+>> backports?
+>
+> The only DTS available upstream is for the ARTPEC-6 devboard.
+> Considering that ARTPEC-6 devboards are only used in-house,
+> I don't see a reason to backport anything from this series.
 
---/9ZOS6odDaRI+0hI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Ok, makes sense. Thanks for checking!
 
-On Tue, Mar 06, 2018 at 07:10:01PM -0300, Fabio Estevam wrote:
-
-> Yesterday I spent a few hours trying to understand this locking issue,
-> but didn't get any success on this task.
-
-Right, so I'm thinking that if it's taking this much effort to think
-about the problem we should just drop the patch set for now.  I've moved
-the code to a branch test/coupled in my git so it's not getting in
-people's way in -next.  Maciej, I suspect that you might be able to
-reproduce this if you set supply names in the regulator definitons for
-the PMICs on your boards.  I think that's the difference here.
-
---/9ZOS6odDaRI+0hI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqf+vEACgkQJNaLcl1U
-h9BKogf9F0boHNGnHBqZtD2wGZhRaJ8/T7H8EYEeUHUCTxywbLrKSKy2VMRlSzTZ
-0ImVGUxHInTddk/Q9SNcG1FPg1mkrdt/hqhKeeZrlYJ/T9SgJrni2AGccctcmmKB
-av34yHlGfusEpAa8EhfLbkh4dH9K6F8UG0BF4+Z6NP8D65aUDg/AEwo1sF/cIN0k
-lhwIRyj2Z9ZPCsLyZP9QtQwNxFQ0i4k4IdV1ffWlITEhrhgVoU/nNOd5dJ3vf76Z
-rV+2LokVtu38YmKdlgLYTgLtwFj9bLfBduFS6pf0XjmHvLil8YcBw9xhejg6fbqX
-IJoVUs1e/K/UlsZWn2JoKErlIvOK2Q==
-=Bkec
------END PGP SIGNATURE-----
-
---/9ZOS6odDaRI+0hI--
+      Arnd
