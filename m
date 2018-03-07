@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4098462-1520453054-5-9339629592270241771
+X-Cyrus-Session-Id: sloti22d1t05-4098462-1520453043-2-496286890823131478
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520453053; b=PEGO9Tg0SOsIfoYYIqDvtz8WrsI6hWQRRc80i+hSvwWesfw
-    6og3p340Pzm+qCTHmZO74kIcECtofgyESts3bXvGeOtX+jVyZLhrQJ4ZVq7TdxJ4
-    JzT4ArPjR4ckZVOfsOqM5DSj7jAnmCsnw5r58tCAR0EZCisNh5BVVVbxz4Keu64Y
-    i4YhWXRVwfSgEASJ0mzCKbPc/6rMs7CgO/wysEv4T1D+YrdG8HT0zTk2SwLOWd5P
-    NX9jde+D2IjAg7H96tnQqK0u2gVRKHesxSMtFFzQZ7MzBTyjD1ew5vEre9tvU0Z1
-    6f7S1LvP8rIWk1n5gk0ZvgZTbQfHspzwYkNKmtQ==
+    t=1520453042; b=hRIETpbgDwKUWhUjmRafRRRqoJ/YNKRbzPO9ukvWa/yrpVa
+    fhpj4sJXwrIJakp44svp0/7xncy7Am53IhBQETC6bkrpWPFL1gGkT2h/jKLFQGte
+    RaBeo5Qs893Wq9EeZwm49Zar9Ey2hCCps4SI9hWbqVt+5A7B9X0in8pv+ac9t82q
+    IWF5f5bvV2tooFfr60YBYM2xsVeYs/5czpUvd3cR51Cih6qsnADBu53Qa+l4bdWb
+    M2I+/0p1gNHRruTXIhv7jqAhfAGrAix26fIuNxdU2V21yMdghOqN78eScRD9ITFj
+    pgru63TfB20QNvbjkeKbjTKk6vX3Y9+t+s9tpYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520453053; bh=UwF8tTKD8BupD7+siWD5ruQgT+
-    EaaaMQ94OJPaYf+8E=; b=YiJ26+jcIZ/LS5SYiLYW/CKLOUozOh3wls0MNQtjU5
-    GIbJ7yJC6m6I3tAvNI4a3c5BHRDQI27M/ORoKfRxCnsF433Rt4Vl27LY244ZU71e
-    8q3RR929Uk0VyL8BcOEA7jtStUIChkDNpZcjCXLfdkx+rpI/0CYtmX2xeHydkMrR
-    9OQhdGIHFzPDaIdP+d2PYS1SnWGz8MojoGheil43jONlcWKpTG3FSSXcC6GtyrSZ
-    nXlglFpoqJtqFFcfSt2e1/4q6w+5kUk6INtnJBjGaeFLi9g+4+dlP9tBmCizKND8
-    xBIP/158saB0sm1Skdj2w/2O1lGN2ztAf9f9dZqnzaYg==
+    :list-id; s=arctest; t=1520453042; bh=zKlzBdirsUbwbNlGmhJlroNNIw
+    qKG1kF+W6i73SZBFI=; b=wermVmm6pIxHkm0Mu6JmI6OlwIaRl8lsv3xa4OuCNS
+    Y0Nv0VIoLq35YMsDbAgbqNC6fZ7wJLDtWjeQlcvhT3SN49XnoBLEtm0RUT1gHnjT
+    zPc40zU5AxlbgG8oxLbO4ZNc717JDZ9QgighxsDEdM8RFFLqPeTYUPDGkpybOyz4
+    DZVsIDeLjTifxYaJptIygiire6VkA/kR6bf+OfwLhYCME4zyQ0C4Yv3Hp2rZlJNk
+    IcZnbEHgr4vmwoldlo41UHfNgdAp9lUD7MvQagQ2ILO8jxm/58ErjDCRvLiZGaS1
+    tsjcRIe+oWYw5ODEEH1xnogwBasqXrEBX4ad+Rl8D+Cg==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,23 +49,21 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965406AbeCGUED (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 15:04:03 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44628 "EHLO
+        id S965540AbeCGTqa (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Mar 2018 14:46:30 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44612 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965539AbeCGTqa (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:46:30 -0500
+        with ESMTP id S965521AbeCGTq2 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:46:28 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ido Schimmel <idosch@idosch.org>,
-        David Ahern <dsahern@gmail.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        stable@vger.kernel.org, Jiri Pirko <jiri@mellanox.com>,
         Ido Schimmel <idosch@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 063/110] net: ipv4: Set addr_type in hash_keys for forwarded case
-Date: Wed,  7 Mar 2018 11:38:46 -0800
-Message-Id: <20180307191047.652583652@linuxfoundation.org>
+Subject: [PATCH 4.14 062/110] mlxsw: spectrum_router: Fix error path in mlxsw_sp_vr_create
+Date: Wed,  7 Mar 2018 11:38:45 -0800
+Message-Id: <20180307191047.501874963@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -83,34 +81,73 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+From: Jiri Pirko <jiri@mellanox.com>
 
 
-[ Upstream commit 1fe4b1184c2ae2bfbf9e8b14c9c0c1945c98f205 ]
+[ Upstream commit 0f2d2b2736b08dafa3bde31d048750fbc8df3a31 ]
 
-The result of the skb flow dissect is copied from keys to hash_keys to
-ensure only the intended data is hashed. The original L4 hash patch
-overlooked setting the addr_type for this case; add it.
+Since mlxsw_sp_fib_create() and mlxsw_sp_mr_table_create()
+use ERR_PTR macro to propagate int err through return of a pointer,
+the return value is not NULL in case of failure. So if one
+of the calls fails, one of vr->fib4, vr->fib6 or vr->mr4_table
+is not NULL and mlxsw_sp_vr_is_used wrongly assumes
+that vr is in use which leads to crash like following one:
 
-Fixes: bf4e0a3db97eb ("net: ipv4: add support for ECMP hash policy choice")
-Reported-by: Ido Schimmel <idosch@idosch.org>
-Signed-off-by: David Ahern <dsahern@gmail.com>
-Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+[ 1293.949291] BUG: unable to handle kernel NULL pointer dereference at 00000000000006c9
+[ 1293.952729] IP: mlxsw_sp_mr_table_flush+0x15/0x70 [mlxsw_spectrum]
+
+Fix this by using local variables to hold the pointers and set vr->*
+only in case everything went fine.
+
+Fixes: 76610ebbde18 ("mlxsw: spectrum_router: Refactor virtual router handling")
+Fixes: a3d9bc506d64 ("mlxsw: spectrum_router: Extend virtual routers with IPv6 support")
+Fixes: d42b0965b1d4 ("mlxsw: spectrum_router: Add multicast routes notification handling functionality")
+Signed-off-by: Jiri Pirko <jiri@mellanox.com>
 Reviewed-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/route.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c |   19 ++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -1832,6 +1832,8 @@ int fib_multipath_hash(const struct fib_
- 				return skb_get_hash_raw(skb) >> 1;
- 			memset(&hash_keys, 0, sizeof(hash_keys));
- 			skb_flow_dissect_flow_keys(skb, &keys, flag);
-+
-+			hash_keys.control.addr_type = FLOW_DISSECTOR_KEY_IPV4_ADDRS;
- 			hash_keys.addrs.v4addrs.src = keys.addrs.v4addrs.src;
- 			hash_keys.addrs.v4addrs.dst = keys.addrs.v4addrs.dst;
- 			hash_keys.ports.src = keys.ports.src;
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
+@@ -729,26 +729,29 @@ static struct mlxsw_sp_fib *mlxsw_sp_vr_
+ static struct mlxsw_sp_vr *mlxsw_sp_vr_create(struct mlxsw_sp *mlxsw_sp,
+ 					      u32 tb_id)
+ {
++	struct mlxsw_sp_fib *fib4;
++	struct mlxsw_sp_fib *fib6;
+ 	struct mlxsw_sp_vr *vr;
+ 	int err;
+ 
+ 	vr = mlxsw_sp_vr_find_unused(mlxsw_sp);
+ 	if (!vr)
+ 		return ERR_PTR(-EBUSY);
+-	vr->fib4 = mlxsw_sp_fib_create(vr, MLXSW_SP_L3_PROTO_IPV4);
+-	if (IS_ERR(vr->fib4))
+-		return ERR_CAST(vr->fib4);
+-	vr->fib6 = mlxsw_sp_fib_create(vr, MLXSW_SP_L3_PROTO_IPV6);
+-	if (IS_ERR(vr->fib6)) {
+-		err = PTR_ERR(vr->fib6);
++	fib4 = mlxsw_sp_fib_create(vr, MLXSW_SP_L3_PROTO_IPV4);
++	if (IS_ERR(fib4))
++		return ERR_CAST(fib4);
++	fib6 = mlxsw_sp_fib_create(vr, MLXSW_SP_L3_PROTO_IPV6);
++	if (IS_ERR(fib6)) {
++		err = PTR_ERR(fib6);
+ 		goto err_fib6_create;
+ 	}
++	vr->fib4 = fib4;
++	vr->fib6 = fib6;
+ 	vr->tb_id = tb_id;
+ 	return vr;
+ 
+ err_fib6_create:
+-	mlxsw_sp_fib_destroy(vr->fib4);
+-	vr->fib4 = NULL;
++	mlxsw_sp_fib_destroy(fib4);
+ 	return ERR_PTR(err);
+ }
+ 
