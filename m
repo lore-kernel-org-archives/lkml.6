@@ -1,143 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933960AbeCGPrt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 10:47:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46114 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933386AbeCGPro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 10:47:44 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3296F2172D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Wed, 7 Mar 2018 15:47:39 +0000
-From: James Hogan <jhogan@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-        Allan Nielsen <Allan.Nielsen@microsemi.com>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/5] MIPS: generic: Add support for Microsemi Ocelot
-Message-ID: <20180307154739.GR4197@saruman>
-References: <20180306121607.1567-1-alexandre.belloni@bootlin.com>
- <20180306121607.1567-5-alexandre.belloni@bootlin.com>
+        id S933956AbeCGPsJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 10:48:09 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38184 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933386AbeCGPsD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 10:48:03 -0500
+Date: Wed, 7 Mar 2018 07:48:29 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: Re: [PATCH] rcu: exp: Fix "must hold exp_mutex" comments for QS
+ reporting functions
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180307084944.10229-1-boqun.feng@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Ayym4vmyMU9P4uDb"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180306121607.1567-5-alexandre.belloni@bootlin.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <20180307084944.10229-1-boqun.feng@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18030715-0008-0000-0000-000002E0D4C6
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008629; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00999627; UDB=6.00508477; IPR=6.00779033;
+ MB=3.00019894; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-07 15:47:59
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030715-0009-0000-0000-0000387CF69C
+Message-Id: <20180307154829.GE3918@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-07_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803070182
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Mar 07, 2018 at 04:49:39PM +0800, Boqun Feng wrote:
+> Since commit d9a3da0699b2 ("rcu: Add expedited grace-period support for
+> preemptible RCU"), there are comments for some funtions in
+> rcu_report_exp_rnp()'s call-chain saying that exp_mutex or its
+> predecessors needs to be held.
+> 
+> However, exp_mutex and its predecessors are merely used for synchronize
+> between GPs, and it's clearly that all variables visited by those
+> functions are under the protection of rcu_node's ->lock. Moreover, those
+> functions are currently called without held exp_mutex, and seems that
+> doesn't introduce any trouble.
+> 
+> So this patch fix this problem by correcting the comments
+> 
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> Fixes: d9a3da0699b2 ("rcu: Add expedited grace-period support for preemptible RCU")
 
---Ayym4vmyMU9P4uDb
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Good catch, applied!
 
-On Tue, Mar 06, 2018 at 01:16:06PM +0100, Alexandre Belloni wrote:
-> diff --git a/arch/mips/Makefile b/arch/mips/Makefile
-> index d1ca839c3981..d2882244cf1f 100644
-> --- a/arch/mips/Makefile
-> +++ b/arch/mips/Makefile
-> @@ -543,6 +543,10 @@ generic_defconfig:
->  # now that the boards have been converted to use the generic kernel they are
->  # wrappers around the generic rules above.
->  #
-> +.PHONY: ocelot_defconfig
-> +ocelot_defconfig:
-> +	$(Q)$(MAKE) -f $(srctree)/Makefile 32r2el_defconfig BOARDS=ocelot
+These have been around for almost a decade!  ;-)  They happened because
+I ended up rewriting expedited support several times before it was
+accepted, and apparently failed to update the comments towards the end.
 
-FYI this conflicts with https://patchwork.linux-mips.org/patch/18596/,
-but can be trivially fixed up when applied to the following, so no need
-for you to rebase:
+So thank you for catching this one!
 
-diff --git a/arch/mips/Makefile b/arch/mips/Makefile
-index 2ed4c8927701..646a2d98012d 100644
---- a/arch/mips/Makefile
-+++ b/arch/mips/Makefile
-@@ -565,6 +565,9 @@ generic_defconfig:
- # now that the boards have been converted to use the generic kernel they are
- # wrappers around the generic rules above.
- #
-+legacy_defconfigs		+= ocelot_defconfig
-+ocelot_defconfig-y		:= 32r2el_defconfig BOARDS=ocelot
-+
- legacy_defconfigs		+= sead3_defconfig
- sead3_defconfig-y		:= 32r2el_defconfig BOARDS=sead-3
+But wouldn't it be better to use lockdep instead of comments in this case?
 
-> +
->  .PHONY: sead3_defconfig
->  sead3_defconfig:
->  	$(Q)$(MAKE) -f $(srctree)/Makefile 32r2el_defconfig BOARDS=sead-3
-> diff --git a/arch/mips/configs/generic/board-ocelot.config b/arch/mips/configs/generic/board-ocelot.config
-> new file mode 100644
-> index 000000000000..fa4e8988ebc8
-> --- /dev/null
-> +++ b/arch/mips/configs/generic/board-ocelot.config
-> @@ -0,0 +1,36 @@
-> +# require CONFIG_32BIT=y
+							Thanx, Paul
 
-That should be implied now by CPU_SUPPORTS_64BIT_KERNEL=n since
-CONFIG_CPU_MIPS32_R2=y.
-
-> +# require CONFIG_CPU_MIPS32_R2=y
-
-> +static __init bool ocelot_detect(void)
-> +{
-> +	u32 rev;
-> +
-> +	rev = __raw_readl((void *)DEVCPU_GCB_CHIP_REGS_CHIP_ID);
-
-How about a TLB check first, a bit like _kvm_mips_host_tlb_inv() in
-arch/mips/kvm/tlb.c, i.e.:
-
-	int idx;
-
-	/* Look for the TLB entry set up by redboot before trying to use it */
-	write_c0_entryhi(DEVCPU_GCB_CHIP_REGS_CHIP_ID);
-	mtc0_tlbw_hazard();
-	tlb_probe();
-	tlb_probe_hazard();
-	idx = read_c0_index();
-	if (idx < 0)
-		return 0;
-
-	/* A TLB entry exists, lets assume its usable and check the CHIP ID */
-	rev = __raw_readl((void __iomem *)DEVCPU_GCB_CHIP_REGS_CHIP_ID);
-
-(That assumes that if a TLB entry exists that it will be usable, which
-isn't technically complete since the entry may not be marked valid, but
-its probably sufficient in practice).
-
-Incidentally you need to use __iomem there to avoid the following sparse
-error:
-
-arch/mips/generic/board-ocelot.c:21:28: warning: incorrect type in argument 1 (different address spaces)
-arch/mips/generic/board-ocelot.c:21:28:    expected void const volatile [noderef] <asn:2>*mem
-arch/mips/generic/board-ocelot.c:21:28:    got void *<noident>
-
-Cheers
-James
-
---Ayym4vmyMU9P4uDb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqgCZsACgkQbAtpk944
-dnrKjg//cqAgqz2QxebXprkbAg4FBbkE+q3fhBURg0O4tIS93jrslAybY8Ej7558
-gMr6RTNhE2sZVjZpE4zHOoDYd4ruow8+1UVSezqwPErZMD0IZJSF1xl3XX4eDoSq
-i3zz1Vb8iQBYNRDoQEpJhpZ/B7bqUgI0cmY/obbxJTnVIg9e6PowzXuIVJj/5txm
-tE8yRlPdT+uhOuAP2fl39/sM8R6Eq0t/ZoJ/bdaJg9Q6/lDBoTbqxEdPaj+06YLn
-vJb2IcqCVSclLBJQ10Psxxl31+28Qk6Z00rpTaHof0Koc2GmXRVqi0oXILdeZEUG
-UxoB6wKJibtSgbqFHhn3grzbDKQ/UPkltdE6+vy8XlRDrDuZbhBWf68mbk3ThB6y
-ftMvcNIL0vGwxAilBx1Xf6pBPLf6AG6IujoLiXMrYB1BlojBUYm5sNUZe3L1JAih
-poVchrZDX5QLOrpqarYgfEeM3XOm/2MvNzBVlFnonp6Rbu7MOd6Srbj0vbfvdehq
-ypWi18MrisCktP7k9pAtGxPL7DNfNNhpYjwRpD6BNQzruZn4DVLN04e8pxbdrxk5
-rtekEC2nnxxslfuCUsYs6loxWUD+FWOb8cmHRQVY+nlqVS9TNC6K+8cpFiFrDRzo
-XgeebXOH27wBTSz8FI+AB5Pu1vO76hXbtBaVfPZ3eICuI8v+Hvs=
-=sWNK
------END PGP SIGNATURE-----
-
---Ayym4vmyMU9P4uDb--
+> ---
+>  kernel/rcu/tree_exp.h | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+> index f8e4571efabf..2fd882b08b7c 100644
+> --- a/kernel/rcu/tree_exp.h
+> +++ b/kernel/rcu/tree_exp.h
+> @@ -154,7 +154,7 @@ static void __maybe_unused sync_exp_reset_tree(struct rcu_state *rsp)
+>   * for the current expedited grace period.  Works only for preemptible
+>   * RCU -- other RCU implementation use other means.
+>   *
+> - * Caller must hold the rcu_state's exp_mutex.
+> + * Caller must hold the specificed rcu_node structure's ->lock
+>   */
+>  static bool sync_rcu_preempt_exp_done(struct rcu_node *rnp)
+>  {
+> @@ -170,8 +170,7 @@ static bool sync_rcu_preempt_exp_done(struct rcu_node *rnp)
+>   * recursively up the tree.  (Calm down, calm down, we do the recursion
+>   * iteratively!)
+>   *
+> - * Caller must hold the rcu_state's exp_mutex and the specified rcu_node
+> - * structure's ->lock.
+> + * Caller must hold the specified rcu_node structure's ->lock.
+>   */
+>  static void __rcu_report_exp_rnp(struct rcu_state *rsp, struct rcu_node *rnp,
+>  				 bool wake, unsigned long flags)
+> @@ -207,8 +206,6 @@ static void __rcu_report_exp_rnp(struct rcu_state *rsp, struct rcu_node *rnp,
+>  /*
+>   * Report expedited quiescent state for specified node.  This is a
+>   * lock-acquisition wrapper function for __rcu_report_exp_rnp().
+> - *
+> - * Caller must hold the rcu_state's exp_mutex.
+>   */
+>  static void __maybe_unused rcu_report_exp_rnp(struct rcu_state *rsp,
+>  					      struct rcu_node *rnp, bool wake)
+> @@ -221,8 +218,7 @@ static void __maybe_unused rcu_report_exp_rnp(struct rcu_state *rsp,
+> 
+>  /*
+>   * Report expedited quiescent state for multiple CPUs, all covered by the
+> - * specified leaf rcu_node structure.  Caller must hold the rcu_state's
+> - * exp_mutex.
+> + * specified leaf rcu_node structure.
+>   */
+>  static void rcu_report_exp_cpu_mult(struct rcu_state *rsp, struct rcu_node *rnp,
+>  				    unsigned long mask, bool wake)
+> -- 
+> 2.16.2
+> 
