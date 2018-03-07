@@ -1,268 +1,122 @@
-Return-Path: <hejianet@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522397809; cv=none;
-        d=google.com; s=arc-20160816;
-        b=mnapGLTDPfkV/oa+Sp7IPYv9DlFlHaSZmSJyrFIUHSD+pZcK2uxAFg8UmuK7KmxIhg
-         vinJWzEsbPFPlZ9Fc1I5d30vV3JREbmYx+XmmNPe46dNNMhUzS2+FwrWR/EwmhcBzm6O
-         cyEMSEOlKO7VTVg1OrD1ajZ7QqFeAyMLxUSIbC5hEGcgjupJcY3aq6u5IuIbX2slpP+P
-         66sdjB9f/EIOdK3/QD6P3idthPXgJHMnbvN/v8rvgUMrGBBct0+qFzS4nRtAm1v3rIUz
-         OGYZ9mt7hmxBD56yNudrtUMdClojXa2l9INNLDgMB5KqK8j8F0zE8GL66A0qzu+Mvqzc
-         /OeA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=47sVWvofKdNwuFJvbzgAe8kFJ6Tq+S03IUJifBHaXXU=;
-        b=aq/DzkZ8gyu7ItUwgR7mBPL3SvVQqsEd01MJBovgn3ghUer6ded7fQjAM2OfAJgQ/V
-         MEnk6dx3dK04Zo1TiYrC74JDTT7/4l+9Wn4Qqm2DyLjmdezU0j9hrOyZ29bnAG2ZTBld
-         cpLvvGmLfMAYBipN8XczQZi55pmGUMhd4VJlgzddd2vA0mJR+0A+3Vkv5eU7MvNi1HQn
-         SCjgPFgT7Fffk7kerXVKNb+4hI04gDVR8qNV8nr+hTnmfZkJQCCvW+FZ9r1ScJajAvxN
-         RAwptVQ6S944ZA1R+Mig5PGEQAquSwGEFAfinnCdLJEOaol66HUDdYrWgS4pDFVE4IFE
-         Pv4g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Yjzc+gRf;
-       spf=pass (google.com: domain of hejianet@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hejianet@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Yjzc+gRf;
-       spf=pass (google.com: domain of hejianet@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hejianet@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx49esvadygjyZB0eJlzssdtdrFKJF9ueE+BcR4YlDj7/WIYv27X0tVAi41jZXajjohsg6tRxVw==
-From: Jia He <hejianet@gmail.com>
-To: Russell King <linux@armlinux.org.uk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@suse.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Will Deacon <will.deacon@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: Pavel Tatashin <pasha.tatashin@oracle.com>,
-	Daniel Jordan <daniel.m.jordan@oracle.com>,
-	AKASHI Takahiro <takahiro.akashi@linaro.org>,
-	Gioh Kim <gi-oh.kim@profitbricks.com>,
-	Steven Sistare <steven.sistare@oracle.com>,
-	Daniel Vacek <neelx@redhat.com>,
-	Eugeniu Rosca <erosca@de.adit-jv.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	James Morse <james.morse@arm.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Steve Capper <steve.capper@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	x86@kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Kemi Wang <kemi.wang@intel.com>,
-	Petr Tesarik <ptesarik@suse.com>,
-	YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-	Andrey Ryabinin <aryabinin@virtuozzo.com>,
-	Nikolay Borisov <nborisov@suse.com>,
-	richard.weiyang@gmail.com,
-	Jia He <hejianet@gmail.com>,
-	Jia He <jia.he@hxt-semitech.com>
-Subject: [PATCH v4 2/5] arm: arm64: page_alloc: reduce unnecessary binary search in memblock_next_valid_pfn()
-Date: Fri, 30 Mar 2018 01:15:52 -0700
-Message-Id: <1522397755-33393-3-git-send-email-hejianet@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522397755-33393-1-git-send-email-hejianet@gmail.com>
-References: <1522397755-33393-1-git-send-email-hejianet@gmail.com>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1675485-1520383410-2-3694484381918114131
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520383410; b=saqYVyi2s48HLi/veg9yDxt1AfONlAIFkhmgQ4wEMMGgxwv
+    ER725OX6lBc+oDpjTeny+5nx/h8MhgQvtyqKN/pIrvoE7Itmb2HTUVklmvlMjGvv
+    EKF5pn82zI2TuqlDhZnkzy8qXzbTPTvrTqCBd08dLKLzpBE3CrtsG2zVuFK5eOUx
+    EbpFBvMSLJV++RePO1vC7TpAkxWjRER2CS+dEkwxm9JDD8+WH/qA76hyJeus8/l2
+    7TfxhqZQtdXl86W90gT25oJSNewJDRE6+Yw8iCLM+eBiUhAABiG7DKJ+Z82/M2+S
+    fGEbsdoj/+TF0grCzIc9sy4LNJb2uAv3ym431gg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520383410; bh=s
+    ftg7mmKhWrTHY8fJL4m8fr/hPwFAoOE5C5e8DZNJgI=; b=CAC59iXDn/CqRI0kO
+    iTXAWeefUB+HXUaMDfY9s8f7u/3Xxy7Q2KrmOi74JZid2iYAmcC2NYMoasDqsIWU
+    WU/mJeeAEWUfKpF3SZhynf7oMbVbMp+AnpxNMKLb5NJbfpyK/STEYZ0U1jOelTNr
+    5hdvQN72/wr4PqiYGYc9LA7YlOuekzs+qUO1bN/0CFlggGi46vZhKBOVnQ9EAdWY
+    M2LF4VmkQFlOYqijFCvIl5DVgoMAhY2c+npXa0uYk/sA7efZvLuVMBNG+auM8pWy
+    MOaKH3lTqsU2/Nvobc8qslk0viSEqAmZr9pKUJIgjXaGGTlAkm6m6tK6UmqjEwFv
+    sU2gw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=hrbc3rfJ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=lkBz9JfI;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=hrbc3rfJ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=lkBz9JfI;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELt1UGlQXZICfHUqRB4R1+wMGy8tToxXyYfxMj/6KoTq50dWwsoaPU/EACpPu0ZAf98MGqyBkw==
+Date: Tue, 6 Mar 2018 21:43:17 -0300
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v2 0/3] staging:iio:meter: Checkpatch cleanup for meter
+Message-ID: <cover.1520382753.git.rodrigosiqueiramelo@gmail.com>
+MIME-Version: 1.0
+Content-Disposition: inline
+User-Agent: NeoMutt/20171215
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+ daniel.baluta@nxp.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596349805736411755?=
-X-GMAIL-MSGID: =?utf-8?q?1596349805736411755?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
-where possible") optimized the loop in memmap_init_zone(). But there is
-still some room for improvement. E.g. if pfn and pfn+1 are in the same
-memblock region, we can simply pfn++ instead of doing the binary search
-in memblock_next_valid_pfn.
+This patchset fixes errors and checks found by checkpatch.pl in the
+staging/iio/meter. These series fixes:
 
-Signed-off-by: Jia He <jia.he@hxt-semitech.com>
----
- arch/arm/include/asm/page.h   |  1 +
- arch/arm/mm/init.c            | 31 ++++++++++++++++++++++++-------
- arch/arm64/include/asm/page.h |  1 +
- arch/arm64/mm/init.c          | 31 ++++++++++++++++++++++++-------
- mm/page_alloc.c               |  5 +++--
- 5 files changed, 53 insertions(+), 16 deletions(-)
+* Removes the use of 4 digit octal by replaces IIO_DEV_ATTR_CH_OFF by
+        IIO_DEVICE_ATTR;
+* Removes unnecessary macro;
+* Aligns open parenthesis;
 
-diff --git a/arch/arm/include/asm/page.h b/arch/arm/include/asm/page.h
-index 4355f0e..7a0404f 100644
---- a/arch/arm/include/asm/page.h
-+++ b/arch/arm/include/asm/page.h
-@@ -157,6 +157,7 @@ extern void copy_page(void *to, const void *from);
- typedef struct page *pgtable_t;
- 
- #ifdef CONFIG_HAVE_ARCH_PFN_VALID
-+extern int early_region_idx;
- extern int pfn_valid(unsigned long);
- #endif
- 
-diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
-index 0fb85ca..7779804 100644
---- a/arch/arm/mm/init.c
-+++ b/arch/arm/mm/init.c
-@@ -193,6 +193,8 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max_low,
- }
- 
- #ifdef CONFIG_HAVE_ARCH_PFN_VALID
-+int early_region_idx __meminitdata = -1;
-+
- int pfn_valid(unsigned long pfn)
- {
- 	return memblock_is_map_memory(__pfn_to_phys(pfn));
-@@ -200,31 +202,46 @@ int pfn_valid(unsigned long pfn)
- EXPORT_SYMBOL(pfn_valid);
- 
- /* HAVE_MEMBLOCK is always enabled on arm */
--unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn)
-+unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn,
-+							int *last_idx)
- {
- 	struct memblock_type *type = &memblock.memory;
-+	struct memblock_region *regions = type->regions;
- 	unsigned int right = type->cnt;
- 	unsigned int mid, left = 0;
-+	unsigned long start_pfn, end_pfn;
- 	phys_addr_t addr = PFN_PHYS(++pfn);
- 
-+	/* fast path, return pfn+1 if next pfn is in the same region */
-+	if (*last_idx != -1) {
-+		start_pfn = PFN_DOWN(regions[*last_idx].base);
-+		end_pfn = PFN_DOWN(regions[*last_idx].base +
-+				regions[*last_idx].size);
-+
-+		if (pfn >= start_pfn && pfn < end_pfn)
-+			return pfn;
-+	}
-+
-+	/* slow path, do the binary searching */
- 	do {
- 		mid = (right + left) / 2;
- 
--		if (addr < type->regions[mid].base)
-+		if (addr < regions[mid].base)
- 			right = mid;
--		else if (addr >= (type->regions[mid].base +
--				  type->regions[mid].size))
-+		else if (addr >= (regions[mid].base + regions[mid].size))
- 			left = mid + 1;
- 		else {
--			/* addr is within the region, so pfn is valid */
-+			*last_idx = mid;
- 			return pfn;
- 		}
- 	} while (left < right);
- 
- 	if (right == type->cnt)
- 		return -1UL;
--	else
--		return PHYS_PFN(type->regions[right].base);
-+
-+	*last_idx = right;
-+
-+	return PHYS_PFN(regions[*last_idx].base);
- }
- EXPORT_SYMBOL(memblock_next_valid_pfn);
- #endif /*CONFIG_HAVE_ARCH_PFN_VALID*/
-diff --git a/arch/arm64/include/asm/page.h b/arch/arm64/include/asm/page.h
-index 60d02c8..84b503a 100644
---- a/arch/arm64/include/asm/page.h
-+++ b/arch/arm64/include/asm/page.h
-@@ -38,6 +38,7 @@ extern void clear_page(void *to);
- typedef struct page *pgtable_t;
- 
- #ifdef CONFIG_HAVE_ARCH_PFN_VALID
-+extern int early_region_idx;
- extern int pfn_valid(unsigned long);
- #endif
- 
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index 13e43ff..cd9b473 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -285,6 +285,8 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max)
- #endif /* CONFIG_NUMA */
- 
- #ifdef CONFIG_HAVE_ARCH_PFN_VALID
-+int early_region_idx __meminitdata = -1;
-+
- int pfn_valid(unsigned long pfn)
- {
- 	return memblock_is_map_memory(pfn << PAGE_SHIFT);
-@@ -292,31 +294,46 @@ int pfn_valid(unsigned long pfn)
- EXPORT_SYMBOL(pfn_valid);
- 
- /* HAVE_MEMBLOCK is always enabled on arm64 */
--unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn)
-+unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn,
-+							int *last_idx)
- {
- 	struct memblock_type *type = &memblock.memory;
-+	struct memblock_region *regions = type->regions;
- 	unsigned int right = type->cnt;
- 	unsigned int mid, left = 0;
-+	unsigned long start_pfn, end_pfn;
- 	phys_addr_t addr = PFN_PHYS(++pfn);
- 
-+	/* fast path, return pfn+1 if next pfn is in the same region */
-+	if (*last_idx != -1) {
-+		start_pfn = PFN_DOWN(regions[*last_idx].base);
-+		end_pfn = PFN_DOWN(regions[*last_idx].base +
-+				regions[*last_idx].size);
-+
-+		if (pfn >= start_pfn && pfn < end_pfn)
-+			return pfn;
-+	}
-+
-+	/* slow path, do the binary searching */
- 	do {
- 		mid = (right + left) / 2;
- 
--		if (addr < type->regions[mid].base)
-+		if (addr < regions[mid].base)
- 			right = mid;
--		else if (addr >= (type->regions[mid].base +
--				  type->regions[mid].size))
-+		else if (addr >= (regions[mid].base + regions[mid].size))
- 			left = mid + 1;
- 		else {
--			/* addr is within the region, so pfn is valid */
-+			*last_idx = mid;
- 			return pfn;
- 		}
- 	} while (left < right);
- 
- 	if (right == type->cnt)
- 		return -1UL;
--	else
--		return PHYS_PFN(type->regions[right].base);
-+
-+	*last_idx = right;
-+
-+	return PHYS_PFN(regions[*last_idx].base);
- }
- EXPORT_SYMBOL(memblock_next_valid_pfn);
- #endif /*CONFIG_HAVE_ARCH_PFN_VALID*/
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 8a92df7..f99b513 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5453,8 +5453,9 @@ void __ref build_all_zonelists(pg_data_t *pgdat)
-  * done. Non-atomic initialization, single-pass.
-  */
- #if (defined CONFIG_HAVE_MEMBLOCK) && (defined CONFIG_HAVE_ARCH_PFN_VALID)
--extern unsigned long memblock_next_valid_pfn(unsigned long pfn);
--#define skip_to_last_invalid_pfn(pfn) (memblock_next_valid_pfn(pfn) - 1)
-+extern unsigned long memblock_next_valid_pfn(unsigned long pfn, int *last_idx);
-+#define skip_to_last_invalid_pfn(pfn) \
-+		(memblock_next_valid_pfn(pfn, &early_region_idx) - 1)
- #endif
- 
- #ifndef skip_to_last_invalid_pfn
+Changes v2:
+- Aligns one extra open parenthesis in Patch 3.
+
+After apply this patch series, meter going to be checkpatch
+
+Rodrigo Siqueira (3):
+  staging:iio:meter: Replaces IIO_DEV_ATTR_CH_OFF by IIO_DEVICE_ATTR
+  staging:iio:meter: Remove unused macro IIO_DEV_ATTR_CH_OFF
+  staging:iio:meter: Aligns open parenthesis
+
+ drivers/staging/iio/meter/ade7753.c         | 18 +++++++------
+ drivers/staging/iio/meter/ade7758_trigger.c |  6 ++---
+ drivers/staging/iio/meter/ade7759.c         | 18 +++++++------
+ drivers/staging/iio/meter/ade7854-spi.c     | 40 ++++++++++++++---------------
+ drivers/staging/iio/meter/meter.h           |  3 ---
+ 5 files changed, 43 insertions(+), 42 deletions(-)
+
 -- 
-2.7.4
+2.16.2
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
