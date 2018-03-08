@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1084890-1520489487-2-7694054733824832019
+X-Cyrus-Session-Id: sloti22d1t05-1086562-1520489460-2-9264688012703841949
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES endaro, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520489486; b=QW7/OcE0NQO+MCtTkPBsgGqbgftpJaIjpNMxysGV+L2+5Wh
-    +JRJa5TCpgKAU3rTO2o1RfNCGJgqoAoN3ecVcyzacNF/n7Nyowd0TDLi0YyjNmAN
-    wUm4HtNY8oC582UqjR5Wjooqkmfm2YQNOlpVcaHeKoYIcXJHXmCAj2O9YbwM4iiU
-    ElGplYYJ0+UubS9q9AWEGZqdaqLNaj1+SbVMOChvLO+rlmCyhIWpJCViRKBtmzqj
-    hu15b72KdPVPtRQrxDptA/VgypJRSdPm36RzaeuXMQbVolx3nZAuhSng8Dmq4Weh
-    VkUlynEIN5SYiqQFtZZD/nW31N+7y3TGsX8YBGQ==
+    t=1520489459; b=nFXe/w5eXMVsJqFo4X12BfVwhOFzNqXtywdVoo7+5OKiGAC
+    zAf48r6rovBkbN6wYF6XUA7mIH/Xcao8CUNKwoZ9m/HWGP/HfCDY5wJrmNMUGmKb
+    sStJGSQzoqKFAl+XmGLSbTdZOZaDl3v4wPGpAo9OOziQeforKRUJzd9C2UXdFgzi
+    sKw9nUXv1JmynwAqBn16JISxBSDfAvJpDtw4F4jAxawTfwLhXdCCz13bZT9W8Mcn
+    FX30HWl+4qw+OIf9q9lnR5oX+xgifdDjjxu5/syzBybiudWE829tsVeSSgZ1gmG6
+    ElrII0Hnzt3b8WMktVf42bEHfIWzEgRqbBM2zjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520489486; bh=07xX+9
-    yIBmCYEnuVb1z8dh5tu9/nyEBJW3G8p9psXMA=; b=M+s0ZPboJlY2kmgoCbg5OE
-    1/umFbTH2GEzVSr1W3vHTK3bTeg2g12hu821FY03xxUQQAeRwULmlzZ4zD7H4vD/
-    8IWAJVBFPRcwNtj14M1JQdKrM90AIaq7fGpWspz6fFOBtAO8MgyRpgW5GFbLArD/
-    6DlBltTOTMceSwLPjcB2YnEZfD4a3tW5gWGsLV7pM7prFksQfE7cthO/cEkY3/s2
-    eL4ic/2qJKib4VbYcfh9QyBMC8L/qrgmmlhX51M7LUX97EgEkHNOmdDt6nbpdxan
-    yqesljS1RmxYn02gbzJeC+sepychgCu8OPZd56NIl00rJse9PQ+JdqZK8EUqE0Mw
+    :mime-version:sender:list-id; s=arctest; t=1520489459; bh=g8PLdo
+    /8Jz/fCXeT34G1E3r3pm4jgvGabHipWrRpN4c=; b=D8kTYMKD4KhQfuA31KzBUp
+    EKugvPv8gG0m0Y975pfGQytdBVipJo9Qc7zf/841t4NVinRVfJJg7dwStYjWV1sB
+    ibUld2WwGgEHRl7VTEW4sjTQD7oCs637F+flqDRWkfyrrRmH9paHyk0SGhNe1Ts+
+    J2TvO3peMmDJc6FCx/nzsJ4s5nk9j0Y+V1reBwurmlUMlrLkyx4okbl/gkuzhKFO
+    JEBVjWOlM73fHyaxsnfKVBxVFw0GWSoea4rpzewgV93vBHgCXmixJPCptxvh6OTW
+    Yual6Vj+YFchFm6v/Dc/JnTqMgwPLFDfTg8BiKy2kS6wNUsFIPdJ6MNILT2i20uw
     ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=naXaW4mW x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=M0BuVGsw x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=naXaW4mW x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=M0BuVGsw x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,25 +50,26 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965875AbeCHGLE (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 01:11:04 -0500
-Received: from mail-dm3nam03on0116.outbound.protection.outlook.com ([104.47.41.116]:61650
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        id S1755357AbeCHGKo (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 01:10:44 -0500
+Received: from mail-co1nam03on0097.outbound.protection.outlook.com ([104.47.40.97]:43648
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965401AbeCHFBi (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 8 Mar 2018 00:01:38 -0500
+        id S965754AbeCHFBj (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 8 Mar 2018 00:01:39 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Pan Bian <bianpan2016@163.com>,
-        "David S . Miller" <davem@davemloft.net>,
+CC: Vlad Tsyrklevich <vlad@tsyrklevich.net>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 079/190] tipc: check return value of nlmsg_new
-Thread-Topic: [PATCH AUTOSEL for 4.9 079/190] tipc: check return value of
- nlmsg_new
-Thread-Index: AQHTtpo7EqhIhIxAqUeeCkNlVJwHuw==
-Date: Thu, 8 Mar 2018 04:59:26 +0000
-Message-ID: <20180308045810.8041-79-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 085/190] infiniband/uverbs: Fix integer
+ overflows
+Thread-Topic: [PATCH AUTOSEL for 4.9 085/190] infiniband/uverbs: Fix integer
+ overflows
+Thread-Index: AQHTtpo94q24Kbc1VkOZ44Z/KX6YZw==
+Date: Thu, 8 Mar 2018 04:59:29 +0000
+Message-ID: <20180308045810.8041-85-alexander.levin@microsoft.com>
 References: <20180308045810.8041-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045810.8041-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -77,67 +78,90 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0901;7:sxOvtI3OK/UgZgv+P81ktJGCNwHsNKj22O+Zkrkf7B2/pJ4uaIXe5z+0894g7AKFAxR5pIhqOv2x3sE70xVLFY6g6tCqtxbNKZfKEueR2nfPhkBNLuFgam6ByDkIIUoS54OO+AWKyGSMB5Q9WuvKgC179GAMtXEkacOo3RM4DbIniythY96k24VtB6AD7GcxZIse/eRGhoAtqkb1bf4zC3a2HMWgiUHXDyqR0YVAkI86ZGwoLtZ9dP/PpLrZQoKW;20:IVA6ndvAdjAHGQR7h/4BWRJChW2N7yLOaFkjmmtKcKbiJI+Z5wDCzhvJxRFI2xiwDdMfABgCAff20fk1p3D5BwO53gzptqh+SzSmXsZwhaCjAnLZ4ym/gWCtjFnMFFQM2bIoZgRtqk8VoKqq+s7LOLYrgEj+aJ4ceG8SCV/uSgg=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0999;7:PffL5pvLSKLaW90AFFwrMCcy+7F5r/SE1wEOQ9iHABSzA4c1fN4UUN8092pgsmbiO/D++hvUa+ZNbMeEDtIyaciEdW2XVdoamk+EPgNQ25+7xR9a5garSfW3c6E7lN92h0QcyM7ehYzLDG150iP8E3Z1D5FF/yuNlf0YNqNNjxlw4X6+4hj30UOPlAMr+/xgHOc+Tkj+qFdm/4/IXYggRZ7gei/+fDYp3F+uRjYxcSqE3vm09n6TQaSV/4TXha4v;20:3ivkBxuzJuKix0fmlpP5Z3q0XoLVz+Kdd3wnB+iUw2waCLYrj5pVIPQvqfKYQTMIZG+qm+jGPDmRuALSrJTBdnxCqtVntu5DqRQDyR3G7pG1AQSwwbwAXjpsttBho4+6RAXM73j0x8Ydk4g9Mn8r090+rIltPm8arPYSZSJL4so=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 21509a82-fb50-4ccc-d29b-08d584b1a64e
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0901;
-x-ms-traffictypediagnostic: DM5PR2101MB0901:
+x-ms-office365-filtering-correlation-id: f9e0e1ad-12a6-41f1-d6de-08d584b1a9ba
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0999;
+x-ms-traffictypediagnostic: DM5PR2101MB0999:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB09017AF1FE68551CE0D9A4DCFBDF0@DM5PR2101MB0901.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(130843839470238);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(3231220)(944501244)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB0901;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0901;
+x-microsoft-antispam-prvs: <DM5PR2101MB09997C833DF603CF9198E477FBDF0@DM5PR2101MB0999.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0999;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0999;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(39380400002)(366004)(376002)(346002)(396003)(189003)(199004)(2501003)(5250100002)(99286004)(10290500003)(53936002)(14454004)(72206003)(76176011)(97736004)(6512007)(106356001)(86362001)(10090500001)(7736002)(6436002)(8936002)(6486002)(36756003)(110136005)(305945005)(54906003)(81166006)(105586002)(2900100001)(66066001)(6116002)(22452003)(3846002)(1076002)(478600001)(3660700001)(102836004)(81156014)(6506007)(107886003)(8676002)(25786009)(68736007)(4326008)(3280700002)(2906002)(86612001)(2950100002)(26005)(316002)(5660300001)(186003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0901;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: q26ti6Qwr4gbZaFkHCupatSHomIZTTz8quAVmtmhvA9RN1gW/wkl56xRfaUcE+1Gmgk5Dvf86dzn5lZQTTYkrFqMPk2B7zT+rulTlC2mTI9TP/8HNoSMPLX1/SxR70L52XqY8wu3BvGnBW6uu7vZSBF5gZQJnlF1WK4DZta0ArzrCoIncjz7BGs3WHm4o85UrVpd+7AANpFZTxUwm/xqtPFmsTDA0JuFppq3srJUTdOArh1IRfQ/sy6W9PrU6eCGBSHNyzdVf4N3Mq1uOGDptuVoroAozcib8bqEb46S9gmv4Wf3JUIBXLpggXBTLohzB9uhQb/ElobxgJI3GL9dcA==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(39380400002)(376002)(396003)(346002)(189003)(199004)(72206003)(3846002)(106356001)(8676002)(6116002)(1076002)(6512007)(14454004)(81156014)(66066001)(2906002)(3660700001)(478600001)(10290500003)(8936002)(6486002)(305945005)(7736002)(36756003)(2900100001)(81166006)(4326008)(25786009)(6436002)(5250100002)(105586002)(54906003)(22452003)(76176011)(5660300001)(10090500001)(110136005)(316002)(6506007)(86362001)(575784001)(186003)(2950100002)(97736004)(3280700002)(102836004)(99286004)(107886003)(59450400001)(68736007)(86612001)(53936002)(26005)(6666003)(2501003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0999;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: OwQ9jL28trhIvhITlsPIL0QNFrB/PXYCElPEPsVQsFFZmf9S68v93TQn77tXpD0acMJN35qSK79B3Ohfe8aky4yEA6JSZ+q6Yto1tgbZ8u86PVCIEIk3xO3zxGcwR3Fj/gIAhXAmyDmGdZ6HqeRsCGPvEe3gwm6vqQ5JcM8GTBBW7TrHBcrSs/KST5nP+ESRZHEmmftLoi4WfcVX/R9EejKGiUYAqTJSD0OfThNBrQsIcVSFlrWuUDCvxgXOlcJClzd7uBPsxcbNsJUWodhAriFq8loZ1NVcXhbmhRzE2ityuAfnTdVaOoEk1fHrxG8Ogmmw/t6yJQjMbfUGM3kPQA==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21509a82-fb50-4ccc-d29b-08d584b1a64e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:59:26.7178
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9e0e1ad-12a6-41f1-d6de-08d584b1a9ba
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:59:29.2136
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0901
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0999
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Pan Bian <bianpan2016@163.com>
+From: Vlad Tsyrklevich <vlad@tsyrklevich.net>
 
-[ Upstream commit 78302fd405769c9a9379e9adda119d533dce2eed ]
+[ Upstream commit 4f7f4dcfff2c19debbcdbcc861c325610a15e0c5 ]
 
-Function nlmsg_new() will return a NULL pointer if there is no enough
-memory, and its return value should be checked before it is used.
-However, in function tipc_nl_node_get_monitor(), the validation of the
-return value of function nlmsg_new() is missed. This patch fixes the
-bug.
+The 'num_sge' variable is verfied to be smaller than the 'sge_count'
+variable; however, since both are user-controlled it's possible to cause
+an integer overflow for the kmalloc multiply on 32-bit platforms
+(num_sge and sge_count are both defined u32). By crafting an input that
+causes a smaller-than-expected allocation it's possible to write
+controlled data out-of-bounds.
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Vlad Tsyrklevich <vlad@tsyrklevich.net>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/tipc/node.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/infiniband/core/uverbs_cmd.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/net/tipc/node.c b/net/tipc/node.c
-index 5b3e1ea37b6d..db8fbc076e1a 100644
---- a/net/tipc/node.c
-+++ b/net/tipc/node.c
-@@ -2094,6 +2094,8 @@ int tipc_nl_node_get_monitor(struct sk_buff *skb, str=
-uct genl_info *info)
- 	int err;
+diff --git a/drivers/infiniband/core/uverbs_cmd.c b/drivers/infiniband/core=
+/uverbs_cmd.c
+index d118ffe0bfb6..4b717cf50d27 100644
+--- a/drivers/infiniband/core/uverbs_cmd.c
++++ b/drivers/infiniband/core/uverbs_cmd.c
+@@ -2491,9 +2491,13 @@ ssize_t ib_uverbs_destroy_qp(struct ib_uverbs_file *=
+file,
 =20
- 	msg.skb =3D nlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
-+	if (!msg.skb)
-+		return -ENOMEM;
- 	msg.portid =3D info->snd_portid;
- 	msg.seq =3D info->snd_seq;
+ static void *alloc_wr(size_t wr_size, __u32 num_sge)
+ {
++	if (num_sge >=3D (U32_MAX - ALIGN(wr_size, sizeof (struct ib_sge))) /
++		       sizeof (struct ib_sge))
++		return NULL;
++
+ 	return kmalloc(ALIGN(wr_size, sizeof (struct ib_sge)) +
+ 			 num_sge * sizeof (struct ib_sge), GFP_KERNEL);
+-};
++}
 =20
+ ssize_t ib_uverbs_post_send(struct ib_uverbs_file *file,
+ 			    struct ib_device *ib_dev,
+@@ -2720,6 +2724,13 @@ static struct ib_recv_wr *ib_uverbs_unmarshall_recv(=
+const char __user *buf,
+ 			goto err;
+ 		}
+=20
++		if (user_wr->num_sge >=3D
++		    (U32_MAX - ALIGN(sizeof *next, sizeof (struct ib_sge))) /
++		    sizeof (struct ib_sge)) {
++			ret =3D -EINVAL;
++			goto err;
++		}
++
+ 		next =3D kmalloc(ALIGN(sizeof *next, sizeof (struct ib_sge)) +
+ 			       user_wr->num_sge * sizeof (struct ib_sge),
+ 			       GFP_KERNEL);
 --=20
 2.14.1
