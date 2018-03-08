@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1084890-1520489586-2-4334870369018846223
+X-Cyrus-Session-Id: sloti22d1t05-1086562-1520489516-2-8422037647266529709
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520489586; b=R4jIBsixM6T3t19PbFQJEU5PuD04KRBbduX7zwpGcC3P6A5
-    ikgqsqYw7bsYBlDrk97q9ETb+RPwH/xgkoYF0BawSb9jXVp5b/k+wwrGc74qMks/
-    gLAO9glOpx95UBUIoYgSAGlaxxqHEFLWoPqxbtuld9AuWhiIzODWZRWMza4onmUS
-    jGrxKqUVqv7yic7WTVPY5eQPp9dN5jDVBgpZz93qecqKlwVqltuJFOl2TJo56bD2
-    vHufK869T01hOkw2aXn2ybAZDfd6BjEti6r1Owk5LvY+eif7ETZRT26WTnZ6yazr
-    9GquRSacvvqKetYLpohoNWUZJTnd6BVil76EImQ==
+    t=1520489516; b=G69rg9ZICOY3pwLMmZgfHopryFt3275G96bePpwWSYX/Scq
+    gDeBeYf9UQYQpH7U32vEUnNLwtBmms9+n8nkep/5XiQhQZUIxZK5ePguoDffF3GE
+    SqnHbBxNSrRvI+6De387gI3AoUyg2/TFvMwvowFSF18a3evnyELsqGIbHDuoMZcC
+    hV0DX57BlWaPEaVbSETqNO214Wz3wZST94e+56za1dObXddquGhh4jAh8V56Qvm5
+    8x8QtNjrbgP1lwsikZnxa5YBQxNe/JAZx40AO3J7w9iZPPzoXxkT2JyjnThm6Fm6
+    xbdBtvLGsRhwjy1FcyPu7gXenbHIeHg8wHNONJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520489586; bh=KwyyYd
-    VgICZSYM8X3wXHwQEfoMl4kS8MQkUBJvIsYXk=; b=HZY+83gsm187KNGjE21Fn3
-    RRT4eXSrNjtMYDZyP3a/hoccx6ILcYBfkc7vJ2y0CyrAmYRyp72yTZzEvlukiPDr
-    W6NBlZUoP5z0kKiUuK6Wad6u5eud19qrEId7Of+PoFdEVzC8CIJscQH10tO1Nv3N
-    Ot4cCeH4QViqPYOw2/1ZS69SphRD+PEZUPBjCcvMhijbUR1EVHVlZfPhNPxYhVbj
-    mW6MUZIltX3KvDhIQP5XFdR/Ieh7oRrjTmPTifYGyFAlrUi9fm0lsVeyCsysLalV
-    QwEIfSnbdlkdVWRAki0bEdjHELs58VLOxDrpO582dZVldYHCQ8FPp/vq76ZVa5IQ
+    :mime-version:sender:list-id; s=arctest; t=1520489516; bh=MR0ZSK
+    ZojuOIOjC73SubFpzCyclv/8tvxoEqeZ472/A=; b=g8MzksxkgzpbHbdWX8zYJq
+    UXIwyNZiFljZNK9xfcIRrnNsc/rkqX4dA5q0Lu0DOjMGUKKCLiyrNIJfje0cv7Pz
+    /xEHd78/Y6aovsVLJzaBFe/JHON0OmKVEvHqaqRIYSaIA/6Kidn6flQrUBTfew+R
+    hH18jCQR2rkxbE4Mg+cV3UZiZDSXVpcW+85vVG40clfekmzak78ZyD7S1fE4giMk
+    XPNkcoUzeUB+ss9rafPK2tKlBz0diOD64/ChD6hJW1XnzMdsBcFtjYa6UFoL3gKv
+    8MS2hM9X5QIdUh+onUDnCcagbLzsWx1CYjbx2IJpkCsA9nt5pjazKf30I5vobzSw
     ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=EIIRSYSO x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=k9Cp8zms x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=EIIRSYSO x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=k9Cp8zms x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,26 +50,26 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965404AbeCHGL6 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 01:11:58 -0500
-Received: from mail-dm3nam03on0125.outbound.protection.outlook.com ([104.47.41.125]:20160
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        id S965392AbeCHGLx (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 01:11:53 -0500
+Received: from mail-bn3nam01on0131.outbound.protection.outlook.com ([104.47.33.131]:60864
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965695AbeCHFBg (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S965391AbeCHFBg (ORCPT <rfc822;stable@vger.kernel.org>);
         Thu, 8 Mar 2018 00:01:36 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Dan Carpenter <dan.carpenter@oracle.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+CC: NeilBrown <neilb@suse.com>,
+        "J . Bruce Fields" <bfields@redhat.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 078/190] mmc: host: omap_hsmmc: checking for
- NULL instead of IS_ERR()
-Thread-Topic: [PATCH AUTOSEL for 4.9 078/190] mmc: host: omap_hsmmc: checking
- for NULL instead of IS_ERR()
-Thread-Index: AQHTtpo7h15Rd7BIAkaaify54ym3lA==
-Date: Thu, 8 Mar 2018 04:59:26 +0000
-Message-ID: <20180308045810.8041-78-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 088/190] NFS: don't try to cross a mountpount
+ when there isn't one there.
+Thread-Topic: [PATCH AUTOSEL for 4.9 088/190] NFS: don't try to cross a
+ mountpount when there isn't one there.
+Thread-Index: AQHTtpo9E1xFXLh1a0Od34dAK4IeRQ==
+Date: Thu, 8 Mar 2018 04:59:30 +0000
+Message-ID: <20180308045810.8041-88-alexander.levin@microsoft.com>
 References: <20180308045810.8041-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045810.8041-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,68 +78,138 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0901;7:ynrr5K5WUtgcbRLWTM+ckKSr0eq94i5JVwaB6+9liwYP7pb92DKSROrl6ilWqMX9cAd3l+vc8qoOUOP3W2dm7jiWBZd0tvGAYgtsDbv3k/K1qD+NPVUoaRdOQv4zU/hi7y7PVuttrowX3zIOr1Q6D8EmFfdShgW2o/8bKq3U6S8GsybNb/bUbrzK5lXjZrS2w8b6gyfH0bjkOwYsFn1pmTI1rwxfbduAaEgmsWBhLxEmO7JjMsgw0ly96xVqZpCO;20:jWQjWP3lCnnz5t7pOhxq3Fj746FL36Iz1cyb1VM7ZL/GX/FD9v43Bl+L5FbwPSXLRaHYN6DJ7T9KMZ0uYdF9IvbuP89SNWRTZr/BtO0BCyAFWtyc/Aj1JPAA0buz6iFp7bclgf12wJR437XE4RdcSoklfnkJ4MIG3TlCNzwqM7Q=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0983;20:urj5fAr1trC8wd0DZOaNvLLG2NMhcpBdp3Sr4QjEBNXZ1i7TXyLyPZ0iCioBYcLLkmdEVZRBXLX7CEdomdNEfJGZFWoXukZHwezRwxSgwECVAlG58doFVKeDzcsnSS7ca2SieRcoYfT9mpkqlMxFqKVTNPG7V2IVR3rotG30Bkc=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: fc58b7e1-a449-4b5a-068d-08d584b1a60b
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0901;
-x-ms-traffictypediagnostic: DM5PR2101MB0901:
+x-ms-office365-filtering-correlation-id: 6a8af9eb-b621-4e21-714a-08d584b1aa7e
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0983;
+x-ms-traffictypediagnostic: DM5PR2101MB0983:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB090102287DD5AFC27807EB50FBDF0@DM5PR2101MB0901.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(31051911155226)(89211679590171)(146099531331640);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(3231220)(944501244)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB0901;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0901;
+x-microsoft-antispam-prvs: <DM5PR2101MB0983853153A374FF9CCC0317FBDF0@DM5PR2101MB0983.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(265634631926514);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0983;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0983;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(39380400002)(366004)(376002)(346002)(396003)(189003)(199004)(2501003)(5250100002)(99286004)(10290500003)(53936002)(14454004)(72206003)(76176011)(97736004)(6512007)(106356001)(86362001)(10090500001)(7736002)(6436002)(8936002)(6486002)(36756003)(110136005)(305945005)(54906003)(81166006)(105586002)(2900100001)(66066001)(6116002)(22452003)(3846002)(1076002)(478600001)(3660700001)(102836004)(81156014)(6506007)(107886003)(8676002)(25786009)(68736007)(4326008)(3280700002)(2906002)(86612001)(2950100002)(26005)(316002)(5660300001)(186003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0901;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: cAoKQdfVMdi6+fStINDq6JFOH8iKLmjXKIhfZuvtA9SeNFX25wqgIqTnztkzlKyhIrFfNTfc0mAK39ZM1xf7CjlUzvUaDJ2wGjPewRJ6q68WdyhnwszVJG7BKdv4rnl1XeboGCYNvJV/j0q48eFa6y0yHywlCUl8wNuFWM6kd35HvD+DDTsVu08jiULfj2tFgXrHWD0lvOEY3ABlLbrHjo1RA7GY+XqK6nf9AWbeWnm78c2OMUmotnY3Q2Dqd/L9tKNpSZfOaBhFJUB/7fsaAno+NGfdOLlkjjtbwe0f21446Aaylp3xiONTJzFSrOIajIwR2A+Jfgesmgwt6CojMg==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(39860400002)(39380400002)(376002)(366004)(189003)(199004)(6512007)(22452003)(54906003)(3280700002)(186003)(316002)(6436002)(110136005)(8936002)(2900100001)(10090500001)(5660300001)(99286004)(6486002)(106356001)(86362001)(575784001)(97736004)(7736002)(107886003)(25786009)(305945005)(76176011)(36756003)(8676002)(6506007)(5250100002)(105586002)(10290500003)(102836004)(26005)(1076002)(53936002)(81156014)(2950100002)(14454004)(81166006)(6666003)(2906002)(68736007)(478600001)(66066001)(3846002)(3660700001)(2501003)(4326008)(6116002)(86612001)(72206003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0983;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: OJQ2eIjCNUslScb/Egoc02A5CyHItfvlVqnhl6wCydDp90UGPI75jDgjYturORcKqa8iJ/NSuTAU6ecJsxxEfqCNZOCIga9Rk6hBUcCmNM4r/VmSTsbHwAMi2h65Ly6tRIXIU+CWZ7+9Kmr2s9D9HfEnP/mxqFF+L/Lz/0ioGU1KAPpFP6plkfqPaAeW27x+LJTjOhZLWEbYV9okKHj18GSxH9t7/u6N0lD+xKgArL8oMLF0mDVOB7EBcC4B1kGUvyTDxiaKlA+205IVjsqyPB/P+MGa1sgbqgjasTlqKkxV80Fa8KZ0CF9khzd8CFW3WWaBC3+r8CyFlawiGN+zGQ==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc58b7e1-a449-4b5a-068d-08d584b1a60b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:59:26.2905
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a8af9eb-b621-4e21-714a-08d584b1aa7e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:59:30.4264
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0901
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0983
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: NeilBrown <neilb@suse.com>
 
-[ Upstream commit ec5ab8933772c87f24ad62a4a602fe8949f423c2 ]
+[ Upstream commit 99bbf6ecc694dfe0b026e15359c5aa2a60b97a93 ]
 
-devm_pinctrl_get() returns error pointers, it never returns NULL.
+consider the sequence of commands:
+ mkdir -p /import/nfs /import/bind /import/etc
+ mount --bind / /import/bind
+ mount --make-private /import/bind
+ mount --bind /import/etc /import/bind/etc
 
-Fixes: 455e5cd6f736 ("mmc: omap_hsmmc: Pin remux workaround to support SDIO=
- interrupt on AM335x")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+ exportfs -o rw,no_root_squash,crossmnt,async,no_subtree_check localhost:/
+ mount -o vers=3D4 localhost:/ /import/nfs
+ ls -l /import/nfs/etc
+
+You would not expect this to report a stale file handle.
+Yet it does.
+
+The manipulations under /import/bind cause the dentry for
+/etc to get the DCACHE_MOUNTED flag set, even though nothing
+is mounted on /etc.  This causes nfsd to call
+nfsd_cross_mnt() even though there is no mountpoint.  So an
+upcall to mountd for "/etc" is performed.
+
+The 'crossmnt' flag on the export of / causes mountd to
+report that /etc is exported as it is a descendant of /.  It
+assumes the kernel wouldn't ask about something that wasn't
+a mountpoint.  The filehandle returned identifies the
+filesystem and the inode number of /etc.
+
+When this filehandle is presented to rpc.mountd, via
+"nfsd.fh", the inode cannot be found associated with any
+name in /etc/exports, or with any mountpoint listed by
+getmntent().  So rpc.mountd says the filehandle doesn't
+exist. Hence ESTALE.
+
+This is fixed by teaching nfsd not to trust DCACHE_MOUNTED
+too much.  It is just a hint, not a guarantee.
+Change nfsd_mountpoint() to return '1' for a certain mountpoint,
+'2' for a possible mountpoint, and 0 otherwise.
+
+Then change nfsd_crossmnt() to check if follow_down()
+actually found a mountpount and, if not, to avoid performing
+a lookup if the location is not known to certainly require
+an export-point.
+
+Signed-off-by: NeilBrown <neilb@suse.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/mmc/host/omap_hsmmc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/nfsd/vfs.c | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
-index 5f2f24a7360d..a082aa330f47 100644
---- a/drivers/mmc/host/omap_hsmmc.c
-+++ b/drivers/mmc/host/omap_hsmmc.c
-@@ -1762,8 +1762,8 @@ static int omap_hsmmc_configure_wake_irq(struct omap_=
-hsmmc_host *host)
- 	 */
- 	if (host->pdata->controller_flags & OMAP_HSMMC_SWAKEUP_MISSING) {
- 		struct pinctrl *p =3D devm_pinctrl_get(host->dev);
--		if (!p) {
--			ret =3D -ENODEV;
-+		if (IS_ERR(p)) {
-+			ret =3D PTR_ERR(p);
- 			goto err_free_irq;
- 		}
- 		if (IS_ERR(pinctrl_lookup_state(p, PINCTRL_STATE_DEFAULT))) {
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index b829cc9a9b39..8f0b19a3ca81 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -94,6 +94,12 @@ nfsd_cross_mnt(struct svc_rqst *rqstp, struct dentry **d=
+pp,
+ 	err =3D follow_down(&path);
+ 	if (err < 0)
+ 		goto out;
++	if (path.mnt =3D=3D exp->ex_path.mnt && path.dentry =3D=3D dentry &&
++	    nfsd_mountpoint(dentry, exp) =3D=3D 2) {
++		/* This is only a mountpoint in some other namespace */
++		path_put(&path);
++		goto out;
++	}
+=20
+ 	exp2 =3D rqst_exp_get_by_name(rqstp, &path);
+ 	if (IS_ERR(exp2)) {
+@@ -167,16 +173,26 @@ static int nfsd_lookup_parent(struct svc_rqst *rqstp,=
+ struct dentry *dparent, st
+ /*
+  * For nfsd purposes, we treat V4ROOT exports as though there was an
+  * export at *every* directory.
++ * We return:
++ * '1' if this dentry *must* be an export point,
++ * '2' if it might be, if there is really a mount here, and
++ * '0' if there is no chance of an export point here.
+  */
+ int nfsd_mountpoint(struct dentry *dentry, struct svc_export *exp)
+ {
+-	if (d_mountpoint(dentry))
++	if (!d_inode(dentry))
++		return 0;
++	if (exp->ex_flags & NFSEXP_V4ROOT)
+ 		return 1;
+ 	if (nfsd4_is_junction(dentry))
+ 		return 1;
+-	if (!(exp->ex_flags & NFSEXP_V4ROOT))
+-		return 0;
+-	return d_inode(dentry) !=3D NULL;
++	if (d_mountpoint(dentry))
++		/*
++		 * Might only be a mountpoint in a different namespace,
++		 * but we need to check.
++		 */
++		return 2;
++	return 0;
+ }
+=20
+ __be32
 --=20
 2.14.1
