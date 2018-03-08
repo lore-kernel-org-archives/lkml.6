@@ -1,131 +1,228 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750896AbeCHWs5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 17:48:57 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38437 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750783AbeCHWsz (ORCPT
+        id S1751178AbeCHWuO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 17:50:14 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:9803 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751122AbeCHWuM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 17:48:55 -0500
-X-Google-Smtp-Source: AG47ELt0+I84eELwluEIswkxnKK229Tj8gj1YCFww4VB5J7E5Ebw99J/eOZLRQdy8auowB3cK5rlzA==
-X-ME-Sender: <xms:0r2hWmGkwMrseHm8qyD8wNh6zY0Zf779vEqqjgpXIEP0LBsvudocVQ>
-Date: Fri, 9 Mar 2018 06:52:34 +0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: kbuild test robot <fengguang.wu@intel.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [rcu:rcu/dev 39/39] kernel/rcu/tree_exp.h:163:9: sparse:
- incorrect type in argument 1 (different modifiers)
-Message-ID: <20180308225234.v2v6v5tnfkutwu5u@tardis>
-References: <201803090524.gbCGY9DF%fengguang.wu@intel.com>
+        Thu, 8 Mar 2018 17:50:12 -0500
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 08 Mar 2018 14:50:11 -0800
+Subject: Re: [PATCH v3 05/11] clk: tegra: prepare dfll driver for PWM
+ regulator
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-6-git-send-email-pdeschrijver@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <011f626d-8bd5-3cae-bfbf-f49a1b2833fb@nvidia.com>
+Date: Thu, 8 Mar 2018 22:50:06 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qwe4jb2eidhy67w2"
-Content-Disposition: inline
-In-Reply-To: <201803090524.gbCGY9DF%fengguang.wu@intel.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <1517934852-23255-6-git-send-email-pdeschrijver@nvidia.com>
+X-Originating-IP: [10.26.11.23]
+X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To UKMAIL101.nvidia.com
+ (10.26.138.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---qwe4jb2eidhy67w2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Mar 09, 2018 at 05:41:27AM +0800, kbuild test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu=
-=2Egit rcu/dev
-> head:   b8909ec707bb5beba94e7c7d62cc6b3115ceae50
-> commit: b8909ec707bb5beba94e7c7d62cc6b3115ceae50 [39/39] rcu: Protect all=
- sync_rcu_preempt_exp_done() with rcu_node lock
-> reproduce:
->         # apt-get install sparse
->         git checkout b8909ec707bb5beba94e7c7d62cc6b3115ceae50
->         make ARCH=3Dx86_64 allmodconfig
->         make C=3D1 CF=3D-D__CHECK_ENDIAN__
->=20
->=20
-> sparse warnings: (new ones prefixed by >>)
->=20
-[...]
->    kernel/rcu/tree.c:345:6: sparse: symbol 'rcu_dynticks_curr_cpu_in_eqs'=
- was not declared. Should it be static?
->    kernel/rcu/tree.c:3953:21: sparse: incorrect type in argument 1 (diffe=
-rent modifiers) @@    expected int ( *threadfn )( ... ) @@    got int ( [no=
-reint ( *threadfn )( ... ) @@
->    kernel/rcu/tree.c:3953:21:    expected int ( *threadfn )( ... )
->    kernel/rcu/tree.c:3953:21:    got int ( [noreturn] *<noident> )( ... )
-> >> kernel/rcu/tree_exp.h:163:9: sparse: incorrect type in argument 1 (dif=
-ferent modifiers) @@    expected struct lockdep_map const *lock @@    got s=
-trustruct lockdep_map const *lock @@
->    kernel/rcu/tree_exp.h:163:9:    expected struct lockdep_map const *lock
->    kernel/rcu/tree_exp.h:163:9:    got struct lockdep_map [noderef] *<noi=
-dent>
->    kernel/rcu/tree.c:1752:9: sparse: context imbalance in 'rcu_start_futu=
-re_gp' - different lock contexts for basic block
->    kernel/rcu/tree.c:2786:9: sparse: context imbalance in 'force_qs_rnp' =
-- different lock contexts for basic block
->    kernel/rcu/tree.c:2849:25: sparse: context imbalance in 'force_quiesce=
-nt_state' - unexpected unlock
->    kernel/rcu/tree_exp.h:203:9: sparse: too many warnings
->=20
-> vim +163 kernel/rcu/tree_exp.h
->=20
->    151=09
->    152	/*
->    153	 * Return non-zero if there is no RCU expedited grace period in pr=
-ogress
->    154	 * for the specified rcu_node structure, in other words, if all CP=
-Us and
->    155	 * tasks covered by the specified rcu_node structure have done the=
-ir bit
->    156	 * for the current expedited grace period.  Works only for preempt=
-ible
->    157	 * RCU -- other RCU implementation use other means.
->    158	 *
->    159	 * Caller must hold the specificed rcu_node structure's ->lock
->    160	 */
->    161	static bool sync_rcu_preempt_exp_done(struct rcu_node *rnp)
->    162	{
->  > 163		lockdep_assert_held(&rnp->lock);
-
-OK, so we need ACCESS_PRIVATE() to visit ->lock in rcu_node. I will
-introduce something like:
-
-	#define rcu_node_lock_assert_held(rnp) lockdep_assert_held(&ACCESS_PRIVATE=
-(rnp, lock))
-
-in v3.
-
-Regards,
-Boqun
->    164=09
->    165		return rnp->exp_tasks =3D=3D NULL &&
->    166		       READ_ONCE(rnp->expmask) =3D=3D 0;
->    167	}
->    168=09
->=20
+On 06/02/18 16:34, Peter De Schrijver wrote:
+> This patch prepares the dfll driver to work with PWM regulators.
+> To do this we introduce a new array lut_uv which gives the voltage for
+> a given index generated by the dfll logic. This index will then be
+> translated to a PMIC voltage ID in case of I2C using the i2c_lut. In case
+> of a PWM regulator, it will be used to determine the PWM duty cycle.
+> We also introduce lut_bottom which holds the lowest voltage we will ever
+> need. In case of I2C this can be set to zero because the i2c_lut will be
+> initialized such that entry 0 will be the lowest voltage we will ever
+> need. In case of PWM, the lowest voltage is determined by the regulator
+> hardware so we need this software limit. Note that this is different
+> from lut_min which gives the lowest voltage we allow taking temperature
+> into account. In a future patchset we will update lut_vmin dynamically.
+> Similarly lut_max will be the highest voltage allowed taking temperature
+> into accouint. Also this will be updated dynamically once temperature
+> dependence will be introduced.
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > ---
-> 0-DAY kernel test infrastructure                Open Source Technology Ce=
-nter
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corpora=
-tion
+>  drivers/clk/tegra/clk-dfll.c | 62 ++++++++++++++++++++++++++------------------
+>  1 file changed, 37 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+> index 0a7deee..fa97763 100644
+> --- a/drivers/clk/tegra/clk-dfll.c
+> +++ b/drivers/clk/tegra/clk-dfll.c
+> @@ -301,9 +301,10 @@ struct tegra_dfll {
+>  	u32				i2c_slave_addr;
+>  
+>  	/* i2c_lut array entries are regulator framework selectors */
+> -	unsigned			i2c_lut[MAX_DFLL_VOLTAGES];
+> -	int				i2c_lut_size;
+> -	u8				lut_min, lut_max, lut_safe;
+> +	unsigned int			i2c_lut[MAX_DFLL_VOLTAGES];
+> +	unsigned int			lut_uv[MAX_DFLL_VOLTAGES];
+> +	int				lut_size;
+> +	u8				lut_bottom, lut_min, lut_max, lut_safe;
+>  };
+>  
+>  #define clk_hw_to_dfll(_hw) container_of(_hw, struct tegra_dfll, dfll_clk_hw)
+> @@ -531,10 +532,10 @@ static void dfll_load_i2c_lut(struct tegra_dfll *td)
+>  	u32 val;
+>  
+>  	for (i = 0; i < MAX_DFLL_VOLTAGES; i++) {
+> -		if (i < td->lut_min)
+> -			lut_index = td->lut_min;
+> -		else if (i > td->lut_max)
+> -			lut_index = td->lut_max;
+> +		if (i < td->lut_bottom)
+> +			lut_index = td->lut_bottom;
+> +		else if (i > td->lut_size - 1)
+> +			lut_index = td->lut_size - 1;
+>  		else
+>  			lut_index = i;
+>  
+> @@ -594,9 +595,9 @@ static void dfll_init_out_if(struct tegra_dfll *td)
+>  {
+>  	u32 val;
+>  
+> -	td->lut_min = 0;
+> -	td->lut_max = td->i2c_lut_size - 1;
+> -	td->lut_safe = td->lut_min + 1;
+> +	td->lut_min = td->lut_bottom;
+> +	td->lut_max = td->lut_size - 1;
+> +	td->lut_safe = td->lut_min + (td->lut_min < td->lut_max ? 1 : 0);
+>  
+>  	dfll_i2c_writel(td, 0, DFLL_OUTPUT_CFG);
+>  	val = (td->lut_safe << DFLL_OUTPUT_CFG_SAFE_SHIFT) |
+> @@ -619,11 +620,11 @@ static void dfll_init_out_if(struct tegra_dfll *td)
+>   */
+>  
+>  /**
+> - * find_lut_index_for_rate - determine I2C LUT index for given DFLL rate
+> + * find_lut_index_for_rate - determine LUT index for given DFLL rate
+>   * @td: DFLL instance
+>   * @rate: clock rate
+>   *
+> - * Determines the index of a I2C LUT entry for a voltage that approximately
+> + * Determines the index of a LUT entry for a voltage that approximately
+>   * produces the given DFLL clock rate. This is used when forcing a value
+>   * to the integrator during rate changes. Returns -ENOENT if a suitable
+>   * LUT index is not found.
+> @@ -637,11 +638,11 @@ static int find_lut_index_for_rate(struct tegra_dfll *td, unsigned long rate)
+>  	if (IS_ERR(opp))
+>  		return PTR_ERR(opp);
+>  
+> -	uv = dev_pm_opp_get_voltage(opp);
+> +	uv = dev_pm_opp_get_voltage(opp) / td->soc->alignment.step_uv;
+>  	dev_pm_opp_put(opp);
+>  
+> -	for (i = 0; i < td->i2c_lut_size; i++) {
+> -		if (regulator_list_voltage(td->vdd_reg, td->i2c_lut[i]) == uv)
+> +	for (i = td->lut_bottom; i < td->lut_size; i++) {
+> +		if ((td->lut_uv[i] / td->soc->alignment.step_uv) >= uv)
+>  			return i;
+>  	}
+>  
+> @@ -1377,15 +1378,17 @@ static int dfll_init(struct tegra_dfll *td)
+>   */
+>  static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
+>  {
+> -	int i, n_voltages, reg_uV;
+> +	int i, n_voltages, reg_mult, align_mult;
+>  
+> +	align_mult = uV / td->soc->alignment.step_uv;
+>  	n_voltages = regulator_count_voltages(td->vdd_reg);
+>  	for (i = 0; i < n_voltages; i++) {
+> -		reg_uV = regulator_list_voltage(td->vdd_reg, i);
+> -		if (reg_uV < 0)
+> +		reg_mult = regulator_list_voltage(td->vdd_reg, i) /
+> +				td->soc->alignment.step_uv;
+> +		if (reg_mult < 0)
+>  			break;
+>  
+> -		if (uV == reg_uV)
+> +		if (align_mult == reg_mult)
+>  			return i;
+>  	}
+>  
+> @@ -1399,15 +1402,17 @@ static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
+>   * */
+>  static int find_vdd_map_entry_min(struct tegra_dfll *td, int uV)
+>  {
+> -	int i, n_voltages, reg_uV;
+> +	int i, n_voltages, reg_mult, align_mult;
+>  
+> +	align_mult = uV / td->soc->alignment.step_uv;
+>  	n_voltages = regulator_count_voltages(td->vdd_reg);
+>  	for (i = 0; i < n_voltages; i++) {
+> -		reg_uV = regulator_list_voltage(td->vdd_reg, i);
+> -		if (reg_uV < 0)
+> +		reg_mult = regulator_list_voltage(td->vdd_reg, i) /
+> +				td->soc->alignment.step_uv;
+> +		if (reg_mult < 0)
+>  			break;
+>  
+> -		if (uV <= reg_uV)
+> +		if (align_mult <= reg_mult)
+>  			return i;
+>  	}
+>  
+> @@ -1450,8 +1455,10 @@ static int dfll_build_i2c_lut(struct tegra_dfll *td)
+>  	if (lut < 0)
+>  		goto out;
+>  	td->i2c_lut[0] = lut;
+> +	td->lut_bottom = 0;
+>  
+>  	for (j = 1, rate = 0; ; rate++) {
+> +
+>  		opp = dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
+>  		if (IS_ERR(opp))
+>  			break;
+> @@ -1484,13 +1491,18 @@ static int dfll_build_i2c_lut(struct tegra_dfll *td)
+>  		if (v >= v_max)
+>  			break;
+>  	}
+> -	td->i2c_lut_size = j;
+> +	td->lut_size = j;
+>  
+>  	if (!td->dvco_rate_min)
+>  		dev_err(td->dev, "no opp above DFLL minimum voltage %d mV\n",
+>  			td->soc->cvb->min_millivolts);
+> -	else
+> +	else {
+>  		ret = 0;
+> +		for (j = 0; j < td->lut_size; j++)
+> +			td->lut_uv[j] =
+> +				regulator_list_voltage(td->vdd_reg,
+> +						       td->i2c_lut[j]);
+> +	}
+>  
+>  out:
+>  	return ret;
+> 
 
---qwe4jb2eidhy67w2
-Content-Type: application/pgp-signature; name="signature.asc"
+I am a bit confused by this patch as I don't fully understand from the
+description what is being changed. For example, there are a few places
+where you are dividing by td->soc->alignment.step_uv, which seems to be
+changing the calculations/behaviour for I2C unless I am missing something?
 
------BEGIN PGP SIGNATURE-----
+I would also consider renaming lut_bottom and lut_min as something like
+lut_abs_min and lut_cur_min, to indicate that one is the absolute min
+and the other is the current min depending on operating conditions.
 
-iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlqhvq4ACgkQSXnow7UH
-+rishggAmltAWp48hBQYJCdcjMV7v5vCI/sXUxsNJ31gv7Z3olltfHlpn794oaU6
-uw+dk8p3t1TIcBKQYOzfDeUn5jEXzvpYI+BsKfuUsOMvPJ04IgR5sH7SnDrW2B+R
-+kWB569m4SQIoEMKpSZqU5duNwB/J4FBT6Wqa1DFNEaiAHbeTTi7tsPH0O1G/BaB
-MCRmRlOJ6XLpHoGBj0t5UgyWCmYI+mdLd7f5VqOskMq89fgAifVm3uVnkcSkq6sk
-CvQCXA8uI8njUghujMtf3Sacys+2JI1zJc5tE1NR3tvOYPtPT3YifA9i4XPJeJFj
-39R0hPT2H9FDZg07kTHjOtNRDnrWXA==
-=qhJf
------END PGP SIGNATURE-----
+Cheers
+Jon
 
---qwe4jb2eidhy67w2--
+-- 
+nvpublic
