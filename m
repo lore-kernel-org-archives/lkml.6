@@ -1,88 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754830AbeCHEdH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 23:33:07 -0500
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:42177 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754066AbeCHEdE (ORCPT
+        id S1755044AbeCHEd5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 23:33:57 -0500
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:45311 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753901AbeCHEdz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 23:33:04 -0500
-X-Google-Smtp-Source: AG47ELsXEa4dRp1J6t8l9nCx5qjQrco8v47MFu+fuB7eNUrhSLe926BtRRBvYtKEiUK3Tgu2h2ZppQCP3dLcTeWGu2s=
+        Wed, 7 Mar 2018 23:33:55 -0500
+X-Google-Smtp-Source: AG47ELsE3D3PLmzq3uzSif7m7g2sPMBqnveQBpIof+NSW917vxqvy1WG612HTii1/bOno7+WiTLo2A==
 MIME-Version: 1.0
-In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F2E5817CE@ORSMSX114.amr.corp.intel.com>
-References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <1520292190-5027-4-git-send-email-sai.praneeth.prakhya@intel.com>
- <20180306112610.7izxtuy33bt7ivfs@lakrids.cambridge.arm.com> <FFF73D592F13FD46B8700F0A279B802F2E5817CE@ORSMSX114.amr.corp.intel.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Wed, 7 Mar 2018 20:33:03 -0800
-Message-ID: <CAPcyv4jL-Js14GEWe26E4wQSYnQtk_oXCv_RQwr6DvC2wFVNPQ@mail.gmail.com>
-Subject: Re: [PATCH V2 3/3] efi: Use efi_rts_workqueue to invoke EFI Runtime Services
-To: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Lee@lakrids.cambridge.arm.com" <Lee@lakrids.cambridge.arm.com>,
-        Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
-        "Luck, Tony" <tony.luck@intel.com>, Will Deacon <will.deacon@arm.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        "Neri, Ricardo" <ricardo.neri@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        "Zijlstra, Peter" <peter.zijlstra@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+In-Reply-To: <30a2fa5e-3d8e-acb6-ab31-bec652f1be99@arm.com>
+References: <20180302101050.6191-1-vivek.gautam@codeaurora.org>
+ <20180302101050.6191-4-vivek.gautam@codeaurora.org> <d0f2b3ed-136d-7704-2aef-1173a342a89c@arm.com>
+ <CAAFQd5BTdF176x5ycatCmCHrMyVX2OZqdXd-JGq06RyDUb0N3g@mail.gmail.com> <30a2fa5e-3d8e-acb6-ab31-bec652f1be99@arm.com>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Thu, 8 Mar 2018 13:33:31 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5BKkKc2binDe-MCDeP42b6O26Hu9nYjvYRE160EMvi1fA@mail.gmail.com>
+Message-ID: <CAAFQd5BKkKc2binDe-MCDeP42b6O26Hu9nYjvYRE160EMvi1fA@mail.gmail.com>
+Subject: Re: [PATCH v8 3/5] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Will Deacon <will.deacon@arm.com>, Rob Clark <robdclark@gmail.com>,
+        "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jcrouse@codeaurora.org, Stephen Boyd <sboyd@codeaurora.org>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 7, 2018 at 8:11 PM, Prakhya, Sai Praneeth
-<sai.praneeth.prakhya@intel.com> wrote:
-> 05, 2018 at 03:23:10PM -0800, Sai Praneeth Prakhya wrote:
->> > From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
->> >
->> > Presently, efi_runtime_services() are executed by firmware in process
->> > context. To execute efi_runtime_service(), kernel switches the page
->> > directory from swapper_pgd to efi_pgd. However, efi_pgd doesn't have
->> > any user space mappings. A potential issue could be, for instance, an
->> > NMI interrupt (like perf) trying to profile some user data while in efi_pgd.
+On Thu, Mar 8, 2018 at 1:58 AM, Robin Murphy <robin.murphy@arm.com> wrote:
+> On 07/03/18 13:52, Tomasz Figa wrote:
 >>
->> It might be worth pointing out that this could result in disaster (e.g.
->> if the frame pointer happens to point at MMIO in the EFI runtime services
->> mappings).
+>> On Wed, Mar 7, 2018 at 9:38 PM, Robin Murphy <robin.murphy@arm.com> wrote:
+>>>
+>>> On 02/03/18 10:10, Vivek Gautam wrote:
+>>>>
+>>>>
+>>>> From: Sricharan R <sricharan@codeaurora.org>
+>>>>
+>>>> The smmu device probe/remove and add/remove master device callbacks
+>>>> gets called when the smmu is not linked to its master, that is without
+>>>> the context of the master device. So calling runtime apis in those
+>>>> places
+>>>> separately.
+>>>>
+>>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>>>> [vivek: Cleanup pm runtime calls]
+>>>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+>>>> ---
+>>>>    drivers/iommu/arm-smmu.c | 96
+>>>> ++++++++++++++++++++++++++++++++++++++++++++----
+>>>>    1 file changed, 88 insertions(+), 8 deletions(-)
+>>>>
+>>>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+>>>> index c8b16f53f597..3d6a1875431f 100644
+>>>> --- a/drivers/iommu/arm-smmu.c
+>>>> +++ b/drivers/iommu/arm-smmu.c
+>>>> @@ -209,6 +209,8 @@ struct arm_smmu_device {
+>>>>          struct clk_bulk_data            *clks;
+>>>>          int                             num_clks;
+>>>>    +     bool                            rpm_supported;
+>>>> +
+>>>
+>>>
+>>>
+>>> Can we not automatically infer this from whether clocks and/or power
+>>> domains
+>>> are specified or not, then just use pm_runtime_enabled() as the fast-path
+>>> check as Tomasz originally proposed?
 >>
+>>
+>> I wouldn't tie this to presence of clocks, since as a next step we
+>> would want to actually control the clocks separately. (As far as I
+>> understand, on QCom SoCs we might want to have runtime PM active for
+>> the translation to work, but clocks gated whenever access to SMMU
+>> registers is not needed.) Moreover, you might still have some super
+>> high scale thousand-core systems that require clocks to be
+>> prepare-enabled, but runtime PM would be undesirable for the reasons
+>> we discussed before.
+>>
+>>>
+>>> I worry that relying on statically-defined matchdata is just going to
+>>> blow
+>>> up the driver and DT binding into a maintenance nightmare; I really don't
+>>> want to start needing separate definitions for e.g.
+>>> "arm,juno-etr-mmu-401"
+>>> and "arm,juno-hdlcd-mmu-401" just because one otherwise-identical
+>>> instance
+>>> within the SoC is in a separate controllable power domain while the
+>>> others
+>>> aren't.
+>>
+>>
+>> I don't see a reason why both couldn't just have RPM supported
+>> regardless of whether there is a real power domain. It would
+>> effectively be just a no-op for those that don't have one.
 >
-> Sorry! I didn't get it. I would like to add this point, so could you please
-> explain it more?
 >
->> [...]
->>
->> > pstore writes could potentially be invoked in interrupt context and it
->> > uses set_variable<>() and query_variable_info<>() to store logs. If we
->> > invoke efi_runtime_services() through efi_rts_wq while in atomic()
->> > kernel issues a warning ("scheduling wile in atomic") and prints stack
->> > trace. One way to overcome this is to not make the caller process wait
->> > for the worker thread to finish. This approach breaks pstore i.e. the
->> > log messages aren't written to efi variables. Hence, pstore calls
->> > efi_runtime_services() without using efi_rts_wq or in other words
->> > efi_rts_wq will be used unconditionally for all the
->> > efi_runtime_services() except set_variable<>() and
->> > query_variable_info<>()
->>
->> Can't NMIs still come in during this?
->>
->> ... or do we assume that since something has already gone wrong, this doesn't
->> matter?
->>
+> Because you're then effectively defining "compatible" values for the sake of
+> attaching software policy to them, rather than actually describing different
+> hardware implementations.
 >
-> I think they can come. AFAIK, pstore (if enabled) runs only when we crashed.
-> Since, we are still executing stuff to log messages and NMI's can't be masked,
-> there is still a possibility for NMI's to occur (please correct me if I am wrong).
-> But, as you said earlier, I guess it doesn't matter because anyways we are going down.
+> The fact that RPM can't do anything meaningful unless relevant clock/power
+> aspects *are* described, however, means that we shouldn't need additional
+> information redundant with that. Much like the fact that we don't *already*
+> have an "arm,juno-hdlcd-mmu-401" compatible to account for those being
+> integrated such that IDR0.CTTW has the wrong value, since the presence or
+> not of the "dma-coherent" property already describes the truth in that
+> regard.
 
-The problem is that we are not always in a "already going down"
-condition for typical set_variable and query_variable_info calls. So
-are we actually fixing anything with this patchset? In other words if
-the NMI vs EFI mapping problem requires the workqueue context then we
-can't have any EFI calls outside of that context.  Am I missing how
-this scheme addresses that problem?
+Fair enough.
+
+>
+>> IMHO the
+>> only reason to avoid having the RPM enabled is the scalability issue
+>> we discussed before.
+>
+>
+> Yes, but that's kind of my point; in reality high throughput/minimal latency
+> and aggressive power management are more or less mutually exclusive. Mobile
+> SoCs with fine-grained clock trees and power domains won't have multiple
+> 40GBe/NVMf/whatever links running flat out in parallel; conversely
+> networking/infrastructure/server SoCs aren't designed around saving every
+> last microamp of leakage current - even in the (fairly unlikely) case of the
+> interconnect clocks being software-gateable at all I would be very surprised
+> if that were ever exposed directly to Linux (FWIW I believe ACPI essentially
+> *requires* clocks to be abstracted behind firmware).
+>
+> Realistically then, explicit clocks are only expected on systems which care
+> about power management. We can always revisit that assumption if anything
+> crazy where it isn't the case ever becomes non-theoretical, but for now it's
+> one I'm entirely comfortable with. If on the other hand it turns out that we
+> can rely on just a power domain being present wherever we want RPM, making
+> clocks moot, then all the better.
+
+Alright. Since Qcom would be the only user of clock and power handling
+for the time being, I think checking power domain presence could work
+for us. +/- the fact that clocks need to be handled even if power
+domain is not present, but we should normally always have both.
+
+Now we need a way to do the check. Perhaps for the time being it would
+be enough to just check for the power-domains property in DT?
+
+Best regards,
+Tomasz
