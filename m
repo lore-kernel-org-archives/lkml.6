@@ -1,56 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934207AbeCHEON (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 23:14:13 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45145 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750761AbeCHEOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 23:14:12 -0500
-Date: Thu, 8 Mar 2018 04:14:11 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-Cc: "French, Nicholas A." <naf@ou.edu>,
-        "hans.verkuil@cisco.com" <hans.verkuil@cisco.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
-Subject: Re: ivtv: use arch_phys_wc_add() and require PAT disabled
-Message-ID: <20180308041411.GR14069@wotan.suse.de>
-References: <DM5PR03MB3035EE1AFCEE298AFB15AC46D3C60@DM5PR03MB3035.namprd03.prod.outlook.com>
- <20180301171936.GU14069@wotan.suse.de>
- <DM5PR03MB303587F12D7E56B951730A76D3D90@DM5PR03MB3035.namprd03.prod.outlook.com>
- <20180307190205.GA14069@wotan.suse.de>
- <DM5PR03MB30352350D588A81D2D02BE93D3DF0@DM5PR03MB3035.namprd03.prod.outlook.com>
- <20180308040601.GQ14069@wotan.suse.de>
+        id S934549AbeCHEPD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 23:15:03 -0500
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:38090 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933890AbeCHEPC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 23:15:02 -0500
+X-Google-Smtp-Source: AG47ELsEvr8Uzvsye6oYuI6Hb3cRXYlNF77O+8X2AqDIVYBmicEd/ShFC+MLhLAOwjAKiwTkKLXByjb5NpLxoWmzXKg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180308040601.GQ14069@wotan.suse.de>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <52328144-3a2a-af03-273b-3a2f3bdadda6@redhat.com>
+References: <20180307110803.32418-1-ganapatrao.kulkarni@cavium.com>
+ <3384d33f-c927-740a-97f1-b20775ef2c7b@redhat.com> <20180307143832.GJ3701@kernel.org>
+ <CAKTKpr4zMcRLykw8xwWJKf2eiuCrf2RuJ7kexGRQNN7_OdJ=uQ@mail.gmail.com> <52328144-3a2a-af03-273b-3a2f3bdadda6@redhat.com>
+From: Ganapatrao Kulkarni <gklkml16@gmail.com>
+Date: Thu, 8 Mar 2018 09:44:59 +0530
+Message-ID: <CAKTKpr7HgsdZ90k0_evSq_aZW-uGSKwLndHOQ2Jahajj3Gkc0Q@mail.gmail.com>
+Subject: Re: [PATCH] perf vendor events arm64: Enable JSON events for
+ ThunderX2 B0
+To: William Cohen <wcohen@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, mark.rutland@arm.com,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        John Garry <john.garry@huawei.com>, Will Deacon <Will.Deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Robert Richter <Robert.Richter@cavium.com>,
+        Ingo Molnar <mingo@redhat.com>, jnair@caviumnetworks.com,
+        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        Jiri Olsa <jolsa@redhat.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w284F7e5027664
 
-On Thu, Mar 08, 2018 at 04:06:01AM +0000, Luis R. Rodriguez wrote:
-> On Thu, Mar 08, 2018 at 03:16:29AM +0000, French, Nicholas A. wrote:
-> > On Wed, Mar 07, 2018 at 07:02:05PM +0000, Luis R. Rodriguez wrote:
-> > > On Tue, Mar 06, 2018 at 09:01:10PM +0000, French, Nicholas A. wrote:
-> > > > any reason why PAT can't be enabled for ivtvfb as simply as in the attached
-> > > > patch?
-> > >
-> > > Prior to your change the OSD buffer was obtained using the itv->dec_mem + oi->video_rbase
-> > > given itv->dec_mem was initialized via [...]
-> > >         itv->dec_mem = ioremap_nocache(itv->base_addr + IVTV_DECODER_OFFSET - oi->video_buffer_size,
-> > >                                 IVTV_DECODER_SIZE);
-> > 
-> > Ah, I see. So my proposed ioremap_wc call was only "working" by aliasing the
-> > ioremap_nocache()'d mem area and not actually using write combining at all.
-> 
-> There are some debugging PAT toys out there I think but I haven't played with
-> them yet or I forgot how to to confirm or deny this sort of effort, but
-> likeley.
+On Thu, Mar 8, 2018 at 12:01 AM, William Cohen <wcohen@redhat.com> wrote:
+> On 03/07/2018 12:35 PM, Ganapatrao Kulkarni wrote:
+>> Hi Will Cohen,
+>>
+>> On Wed, Mar 7, 2018 at 8:08 PM, Arnaldo Carvalho de Melo
+>> <acme@kernel.org> wrote:
+>>> Em Wed, Mar 07, 2018 at 09:32:05AM -0500, William Cohen escreveu:
+>>>> On 03/07/2018 06:08 AM, Ganapatrao Kulkarni wrote:
+>>>>> There is MIDR change on ThunderX2 B0, adding an entry to mapfile
+>>>>> to enable JSON events for B0.
+>>>>>
+>>>>> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+>>>
+>>> Ganapatrao, can you please take this in consideration and if agreeing
+>>> send a v2 patch?
+>>>
+>>> With that I can add an Acked-by: wcohen, Right?
+>>>
+>>> - Arnaldo
+>>>>> ---
+>>>>>  tools/perf/pmu-events/arch/arm64/mapfile.csv | 1 +
+>>>>>  1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
+>>>>> index e61c9ca..93c5d14 100644
+>>>>> --- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
+>>>>> +++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
+>>>>> @@ -13,4 +13,5 @@
+>>>>>  #
+>>>>>  #Family-model,Version,Filename,EventType
+>>>>>  0x00000000420f5160,v1,cavium,core
+>>>>> +0x00000000430f0af0,v1,cavium,core
+>>>>>  0x00000000410fd03[[:xdigit:]],v1,cortex-a53,core
+>>>>>
+>>>>
+>>>> Hi,
+>>>> Like the cortex-a53 the last digit '0' of the match for the MIDR should be replaced with [[:xdigit:]] to allow for possible future revisions of chip:
+>>
+>> for arm64 implementation,  bits 3:0(Revision) and bits 23:20(Variant)
+>> are ignored/dont-care.
+>
+> Thanks for pointing that out.  See the code masking out those bits in linux/toos/perf/arch/util/header.c. For the ppc64 it just copies the equivalent of the MIDR including the revision bits. Thus, the need for regular expression matching to avoid having to create a new entry for each revision.
 
-In fact come to think of it I believe some neurons are telling me that if
-two type does not match we'd get an error?
+It is same for arm64 too, there is no need to add an entry for every
+revision change,  need to add when part number changes.
+This patch is not intended to add entry for revision change, the fact
+of the matter is that, there  is complete MIDR change (vulcan to
+thunderx2) in B0.
+as per current arm64
+implementation(.tools/perf/arch/arm64/util/header.c), it is not
+required to have any dontcare marking in mapfile for revision/variant
+bits.
 
-  Luis
+thanks
+Ganapat
+
+>
+> -Will
+>
+>>
+>>>>
+>>>> 0x00000000430f0af[[:xdigit:]],v1,cavium,core
+>>>>
+>>>>
+>>>> -Will Cohen
+>>>
+>>
+>> thanks
+>> Ganapat
+>>> _______________________________________________
+>>> linux-arm-kernel mailing list
+>>> linux-arm-kernel@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
