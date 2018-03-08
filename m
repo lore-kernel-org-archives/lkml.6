@@ -1,172 +1,495 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935072AbeCHNim (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 08:38:42 -0500
-Received: from mail-ve1eur01on0061.outbound.protection.outlook.com ([104.47.1.61]:36040
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754990AbeCHNij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 08:38:39 -0500
-Date: Thu, 8 Mar 2018 15:38:30 +0200
-From: Leon Romanovsky <leonro@mellanox.com>
-To: Doug Ledford <dledford@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the rdma-fixes
- tree
-Message-ID: <20180308133830.GU15340@mtr-leonro.local>
-References: <20180308164058.2ad5a158@canb.auug.org.au>
- <20180308060920.GQ15340@mtr-leonro.local>
- <1520515725.3126.88.camel@redhat.com>
+        id S965613AbeCHNjb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 08:39:31 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60906 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755002AbeCHNj3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 08:39:29 -0500
+Subject: Re: [RFC PATCH 1/5] ima: extend clone() with IMA namespace support
+To: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>,
+        ima-devel <linux-ima-devel@lists.sourceforge.net>
+References: <20170720225033.21298-1-mkayaalp@linux.vnet.ibm.com>
+ <20170720225033.21298-2-mkayaalp@linux.vnet.ibm.com>
+Cc: containers <containers@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Tycho Andersen <tycho@docker.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Yuqiong Sun <sunyuqiong1988@gmail.com>,
+        David Safford <david.safford@ge.com>,
+        Mehmet Kayaalp <mkayaalp@cs.binghamton.edu>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Date: Thu, 8 Mar 2018 08:39:22 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="RtGa12sjXv8gVUZO"
-Content-Disposition: inline
-In-Reply-To: <1520515725.3126.88.camel@redhat.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
-X-Originating-IP: [213.57.247.242]
-X-ClientProxiedBy: AM5PR0701CA0007.eurprd07.prod.outlook.com
- (2603:10a6:203:51::17) To VI1PR0502MB3920.eurprd05.prod.outlook.com
- (2603:10a6:803:11::29)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 8c25aae6-9568-4c88-6390-08d584f9e557
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0502MB3920;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0502MB3920;3:YnPFklnYuiNRUR3qXbZCkndLH/lan5eCIz6cqDfYsNqt8zA1ZHrh0AEnQnAspaEljl2nv4rc28pHrC3UkJVk0GFB81IMmyzuGENBXB8Ce5Txd0RhW8hKmPwvV6433EKn14aoUBY9KsO4s15R1L3PttF/CFcwNEg8qMCn27FsqaDADqDlhf8e75jhejO4qyXy+4/+/+sTVOaAmsJR5k1i2HPp7KoLTjxlmGvOEDtDRAql7QaID9TROrPAfSJfCbac;25:c9UxbS3vwwLEuiS2WpK+dpjS6mG8S5RVwHr1zS+w0Qla8/z4RG3j1/1kNEa/iOHtY9v7MtGiR1s4XG8LMUqqD+OGJ2WF2VOsvyPNtkVphAwUDEBhJd3g5qabYg3PLIFF+4H96Rn/brd68gbyHaxEMf5nplrQ11r5UNkBY8OMcZCKqbCe5s9UTYa3WSjhcdGtGATLmS7MqGBy0tvhAguX7Xf9gHbJ3jswqz4ie2rEV/3Uy41kc6vL5QUf0MM+AzhM5OXGGyq9FMrT62ZP/ZsPuppzF/HTTiBrSaJJQtDWSs9Gc8up3mpmAyyThh03JwjqcBgYMRnBGTdbUfda1FkJwA==;31:16eMOtRuFVMGAq7ILtUcIJd/7lSrlFGSr24dyD2OsoLJ/MdRm5OJLzJ2QtCInKbqje3rfZ8sAm2AnHxNuaGP23fusiUGOKranTefv85PLIflN/TUmF98Kn9dBjvN/Ujj+KWTI1sKP27mNimc6RP6/bILxjhgn+GCi2pnAznXNlK+YcATP19r50T/Yn3diMck1FQM9f77nWvx7nyr880ZWWOJDjfeWsFkf9kFAdoXbEM=
-X-MS-TrafficTypeDiagnostic: VI1PR0502MB3920:
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=leonro@mellanox.com;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0502MB3920;20:gNP7ycYzpDXqYuaTrUGzs5Fcf3JqesGWU2nXZWcEcp+4Wf8V+0OQHWW4J8oi2kDHu9Oywea8RfHX4iRY9WefftR3MU5ItZcxsxn+L7VG5crjztKd1wUjA5QWgXBPmNVB9BydUr8O5I+3DzYIS9yEawSqv8QrQo+uVyxfNw4W0ixngcONJ/dG3zfcalmsoONsyzWq6FJfR5k8cDHjHkTBSBoRZMaUb+TkPwPRqDh1tFCAeGEuG1KbRVvFNmTEgNqLNALzId0O/gY3aiH9AwTGUowlS21hK4JGMJZKskEOyR4VNOViLFpEzl6cuItzVWrZKNz/0p7OxtTUCeu1DyAmDGZ0/uoPsw+dvf9cy26aBuo0si5GPn1lIQe9Vezn6VRUHNgtjDVclt1QMsgiqhPFSCXPlC/aGZVIPWXsq589lxorODl+joFG480CJ3ofKRmrDpiwXchLoa3wpK3Yrcdxm7VMgAiE6froRmCsyGVmVa8dL1pPmMU4CNDY/j9iIj89;4:tdsTKQE7RH78NPzDjU9L4QZJ4Il/Gp9O2wJV//B1faLXhMifpAfL5xxbpKA77Cg/buegYbiZCwceYzQ/MaBnvc1UYBKMQul7VSCoX+ZhQhWNzAyJ8N4zXakmdbQpnWguLT9qwHnNHoeqXeKruqlol9WEsVWpo05E4t6LjmDK9BaFHFYgNvjeUFK9V+HqnV+1ZqUDHj/np8oSDV540mAI9PlVrOCBgKpGbVF80or47QmJR4/ksCZs2N9kSgHD/cNJNrNSHJlaG3Gdrf5ktq8wETBYOMZmRDplnDax614jQp113xJS9GQkR8iLiKWsCPu1
-X-Microsoft-Antispam-PRVS: <VI1PR0502MB392060A8360A806B6FD286F7B0DF0@VI1PR0502MB3920.eurprd05.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(84791874153150);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(5005006)(8121501046)(10201501046)(3231220)(944501244)(52105095)(3002001)(93006095)(93001095)(6055026)(6041288)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);SRVR:VI1PR0502MB3920;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0502MB3920;
-X-Forefront-PRVS: 060503E79B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(39380400002)(376002)(366004)(39860400002)(346002)(396003)(189003)(52314003)(52024003)(377424004)(53754006)(199004)(2950100002)(5660300001)(86362001)(81166006)(81156014)(575784001)(6246003)(7736002)(305945005)(84326002)(97736004)(6306002)(229853002)(8676002)(98436002)(6666003)(33656002)(6916009)(6486002)(105586002)(53936002)(9686003)(76506005)(44144004)(386003)(33896004)(186003)(4326008)(68736007)(106356001)(966005)(25786009)(21480400003)(478600001)(52116002)(6116002)(58126008)(54906003)(16586007)(26005)(16526019)(3846002)(66066001)(2906002)(1076002)(8936002)(6496006)(76176011)(316002)(63394003)(18370500001)(2700100001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0502MB3920;H:localhost;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR0502MB3920;23:GjSllx0U3eeRjljMHnfFmDz+gb1UBcsjimwJ8Pp?=
- =?us-ascii?Q?mrKdRNQobUkf6xDMxnln+o4vHnMTrMHBcapB99EWOl2g7AM6KWoG1Z34PXV6?=
- =?us-ascii?Q?97Iz860TLUR7hFgJVkBgLxp0mGH9/a82Ys42wPOtS58er3318gBzTX5yGPmR?=
- =?us-ascii?Q?WgTSgRWFfQdDpFSVPHsTxglECVGEJk5682+NmTQs1hot4Mr6hYHvSckPKhv9?=
- =?us-ascii?Q?vqQQKOz/8WAKKtmTiVTreTAhPDjRNUgK7whOE7FFmCdAnAGjBa8OG9uGw1rq?=
- =?us-ascii?Q?sR/DfCfEcl79kKCcATL1JwhwfStIdUh7r1g9i2eTz+YpdMUeqPgOAkF/32pO?=
- =?us-ascii?Q?DjC09SL6C14rHaHI6ZmFnkQNGE2Q9n7puqLS7620RRbswtH48a33g3TUaiQR?=
- =?us-ascii?Q?yc8sJDgbNp32sxnBDmcucp0VkOzmcF23NVWNJ0uB1PRZtlRQIqJqS62Pnf6I?=
- =?us-ascii?Q?wp/XYGrOLSD3UuxcK5RqlsLBSzQ0aIXFWAzu4FeR9xu+aILgUNBYWgwOIcXZ?=
- =?us-ascii?Q?JF7nN6r7OS+EKSDa7PrhISb6SHSvDX0a1UvGGmtm6tMqSnbMNWrEAsTb+tcl?=
- =?us-ascii?Q?cr0VXVde2ELl7GNVdiAbnEE16cPgmCW7trLZR+peSO9//gyGvqem9juFINkV?=
- =?us-ascii?Q?kBbIS22h1Jz1NnLB/zWobep+KyUy1FQOOVuJKfqrFDl38QZALKaOvFEJb+iM?=
- =?us-ascii?Q?6Dbm+UogD/2/ydnEwNYvRhCskk61M0zt+bhXIZMbXGK8mYMQ7Sd3dWIoUAoR?=
- =?us-ascii?Q?s/I0KFdDpaLh8dwGrSZlc+1s7b4WP+v1ktwI4fMuJYJCXc5HR8fjWUpwWwT0?=
- =?us-ascii?Q?1hBnlZy2GS6svKxXpgI+qv/8S3IT3lXOSHh2txu+ceNKd3i4kDdR/7qo7WXJ?=
- =?us-ascii?Q?+OMuyUQcR6HfW1Q+4wp0jDvJQgW8oGmHM2Hb2/Gny9isFa7oGHRKixUbH6jo?=
- =?us-ascii?Q?wR1Jvcf1K/oXvetd0Vvo+i9ojxQZoefxmYXA+WRLibjq1COi/8RbY7+c9fja?=
- =?us-ascii?Q?9GphvscGzKugHSlccyMaS2sNCSI7TL/V3FfabMgo0BEwhjs38COOQ2TZM9GL?=
- =?us-ascii?Q?98htT2vssE/BZ7mWhj2f64DkVeTdQ59mCr1YJrYbAnS6URG2q/rqyf/5nvp+?=
- =?us-ascii?Q?SE5jxvnrjGsFuktAiLyZImw7NDfYb+j4kf7rayxnMjcRRVJGalCNt5XTRbwv?=
- =?us-ascii?Q?8h8NfhPorBxO3G5oJfmWUpzBf51YpbMy94oIqPZ7EO54K2pfleStT5xEPxQK?=
- =?us-ascii?Q?pbycodY8sP8l/77LBMS2CkvSGyjTYcSXUWR5Fwo6RiW9tV4ZhqBk3pEdOM+e?=
- =?us-ascii?Q?kK6z7MUil08NaUhWbnuVse7V4eB8+jzUgyFWa3wJ3RFyEMqKAtYr9yFgZ0Lr?=
- =?us-ascii?Q?9egES/VPe4AhmhAOiyuWdyCHDqsd0cTXmBw6Qurhhq0cY8eqnn5xf0T2I+iJ?=
- =?us-ascii?Q?y58cJXKgCv1dwXo/Tkx44zG6STRO8vPT2RJlWQ48opA/Y934gH4Z6?=
-X-Microsoft-Antispam-Message-Info: VXYSePhiT9a6At7cOwJeZmw/MjxpAwK3/bOkiluvZGDeGyCv8wXUtOv5aNE3FZhMEZ2lRCnl9OFST4o94DbsF8Q4PZYl4CX8AGifmsnS3MkKWbJ1JbrbB+XVtqluYjslqno5qXoGQHtxMt6HLx49slTCoPugVH2zHi9ceizpgdxKj4Zq/VpdllncLtlktV97
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0502MB3920;6:20iBD/++TEh4p2QrRITtMpOIeePlfZTuQHXRBWyuMU4mOAujdB6jjvPKNKunDYRZuT3I67uY3G+h8b5OsBCQMW+8K8tRRZPNGFuulAOWNka7EvsbqknULU0V+JILvUOVySjJ1OE2XvAM6C8JJc+ySJJzAi67QdisKNdsAi8tDheUDIkWk8/E9gVVY2t/EpgfbhUV3fF9jimpputBFM9bjDxFjsdg4P//jU8ZpPYUgylEd80gSqE+OUvoOxugSCIbV1cSc33iEP5ClpsEKfZDbWCKxxIOfXYoFb7dC3sxZYz1wpGcCvhF3w1JKQwNKaneLj5R76/tS0Ez1GR83WkRvIfvZkykptIiyuK7udWzK4k=;5:jNbzd0Q+lwsA+EFFAlah/BgZi4v+TFfxhKjMId2kgnv7gh+eBgJ4ZWcBuSP9BNsXvMK/bHOHXgSkAOITgnPC5bIUGj6uT4v2xMKu8YnAI9ipq05HfOJa35II/9yU9zZ0N+h9v9kbDDmyHqfc9po3XbU6F4DqPOQtEpwRQVTyy4M=;24:qbF5MF4k1Ou3v3yswZO0FPBkENbEI1SW+nKNx94VR8ei26Kb3GdVIalmGNMf6Q7flopWdsFGNHiqZgOpTCYMJrKOoAIPxr457U5fn9+Iswo=;7:mkO0BlqbqL0VMwoznE9zMSzhU9B1gB3moFVnI9sxsNiO/t/rUqj8EoSbexwl8Wa55v3vIANzlSgUgNYHC7/OfWVSRZ4oTFRLdg4LZ/cstbDq5AIexlMSyQo+bYv8jS8BlTH6eWTcLBXWGbWeOS5Iqkig7Wtslu2AL/vHNcDLGCnUPQ4wo2FEQUWvEZgjtbBMxsiCiTkY2UJVU6U8PE+a9gbsZ1WRAoPdQlSWkzPvK451McLWWXsLExb+uEIuWlAV
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Mar 2018 13:38:36.9569 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c25aae6-9568-4c88-6390-08d584f9e557
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0502MB3920
+In-Reply-To: <20170720225033.21298-2-mkayaalp@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18030813-0008-0000-0000-000002E1881A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008635; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01000054; UDB=6.00508647; IPR=6.00779385;
+ MB=3.00019914; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-08 13:39:26
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030813-0009-0000-0000-0000387FACAE
+Message-Id: <2fac8414-6957-1fce-6b40-ad4b687ca83c@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-08_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803080160
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---RtGa12sjXv8gVUZO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Mar 08, 2018 at 08:28:45AM -0500, Doug Ledford wrote:
-> On Thu, 2018-03-08 at 08:09 +0200, Leon Romanovsky wrote:
-> > On Thu, Mar 08, 2018 at 04:40:58PM +1100, Stephen Rothwell wrote:
-> > > Hi all,
-> > >
-> > > Commit
-> > >
-> > >   aa0de36a40f4 ("RDMA/mlx5: Fix integer overflow while resizing CQ")
-> > >
-> > > is missing a Signed-off-by from its author.
-> >
-> > Doug, something went wrong with your scripts
-> >
-> > In patchworks it is with SOB and lengthy commit message:
-> > https://patchwork.kernel.org/patch/10264089/
-> >
-> > In the tree, it is cut:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/commit/?h=for-rc&id=aa0de36a40f446f5a21a7c1e677b98206e242edb
+On 07/20/2017 06:50 PM, Mehmet Kayaalp wrote:
+> From: Yuqiong Sun <suny@us.ibm.com>
 >
-> I use git am -s <mboxfile> to bring the patch in, so this usually
-> indicates that there was something wrong with the email and it caused
-> patchworks to improperly parse it.  Sure enough, when I look in
-> patchworks (https://patchwork.kernel.org/patch/10264089/, the exact link
-> you listed above so I'm surprised you didn't catch this), patchworks
-> parsed that separator line you put in the commit message:
-> ====================================================================
-> as the end of message and start of patch.  So, in patchworks, that line
-> and everything after it is considered part of the patch and not part of
-> the message.  So, when I download the mbox file, patchworks placed this:
+> Add new CONFIG_IMA_NS config option.  Let clone() create a new IMA
+> namespace upon CLONE_NEWNS flag. Add ima_ns data structure in nsproxy.
+> ima_ns is allocated and freed upon IMA namespace creation and exit.
+> Currently, the ima_ns contains no useful IMA data but only a dummy
+> interface. This patch creates the framework for namespacing the different
+> aspects of IMA (eg. IMA-audit, IMA-measurement, IMA-appraisal).
 >
+> Signed-off-by: Yuqiong Sun <suny@us.ibm.com>
+>
+> Changelog:
+> * Use CLONE_NEWNS instead of a new CLONE_NEWIMA flag
+> * Use existing ima.h headers
+> * Move the ima_namespace.c to security/integrity/ima/ima_ns.c
+> * Fix typo INFO->INO
+> * Each namespace free's itself, removed recursively free'ing
+> until init_ima_ns from free_ima_ns()
+
+With this patch we would use CLONE_NEWNS and create an IMA and mount 
+namespace at the same time. However, the code below creates two inodes 
+to handle the two namespaces separately via setns(). The consequence of 
+this is that an application doing a setns() on the created mount 
+namespace will not join the IMA namespace that was created as part of 
+the clone(CLONE_NEWNS). Is that expected behavior? If not, we'll have to 
+modify the code below and remove its proc_ns_operations and modify the 
+mount namespace's proc_ns_operations to call into IMA code as well. I 
+don't know of another namespace that would do something like this. Is 
+that an acceptable solution?
+
+    Stefan
+
+>
+> Signed-off-by: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
 > ---
-> 2.6.12
+>   fs/proc/namespaces.c              |   3 +
+>   include/linux/ima.h               |  37 ++++++++
+>   include/linux/nsproxy.h           |   1 +
+>   include/linux/proc_ns.h           |   2 +
+>   init/Kconfig                      |   8 ++
+>   kernel/nsproxy.c                  |  15 ++++
+>   security/integrity/ima/Makefile   |   1 +
+>   security/integrity/ima/ima.h      |   9 ++
+>   security/integrity/ima/ima_init.c |   4 +
+>   security/integrity/ima/ima_ns.c   | 183 ++++++++++++++++++++++++++++++++++++++
+>   10 files changed, 263 insertions(+)
+>   create mode 100644 security/integrity/ima/ima_ns.c
 >
-> at the end of the truncated commit message, so git am would also ignore
-> everything after your separator line.
+> diff --git a/fs/proc/namespaces.c b/fs/proc/namespaces.c
+> index 3803b24..222a64e 100644
+> --- a/fs/proc/namespaces.c
+> +++ b/fs/proc/namespaces.c
+> @@ -32,6 +32,9 @@ static const struct proc_ns_operations *ns_entries[] = {
+>   #ifdef CONFIG_CGROUPS
+>   	&cgroupns_operations,
+>   #endif
+> +#ifdef CONFIG_IMA_NS
+> +	&imans_operations,
+> +#endif
+>   };
 >
-> Anyway, I've hand edited the mbox file and I pushed a rebased version of
-> my wip branch.  However, during the night Jason must have moved my
-> wip/for-rc branch to the official for-rc because it's there now, so the
-> only way to fix this (that I know of) in our official for-rc branch is a
-> rebase :-(
-
-It is harmless and not worth of rebase at all. Leave it as is. Thanks Doug.
-
+>   static const char *proc_ns_get_link(struct dentry *dentry,
+> diff --git a/include/linux/ima.h b/include/linux/ima.h
+> index 0e4647e..11e4841 100644
+> --- a/include/linux/ima.h
+> +++ b/include/linux/ima.h
+> @@ -105,4 +105,41 @@ static inline int ima_inode_removexattr(struct dentry *dentry,
+>   	return 0;
+>   }
+>   #endif /* CONFIG_IMA_APPRAISE */
+> +
+> +struct ima_namespace {
+> +	struct kref kref;
+> +	struct user_namespace *user_ns;
+> +	struct ns_common ns;
+> +	struct ima_namespace *parent;
+> +};
+> +
+> +extern struct ima_namespace init_ima_ns;
+> +
+> +#ifdef CONFIG_IMA_NS
+> +void put_ima_ns(struct ima_namespace *ns);
+> +struct ima_namespace *copy_ima(unsigned long flags,
+> +			       struct user_namespace *user_ns,
+> +			       struct ima_namespace *old_ns);
+> +static inline struct ima_namespace *get_current_ns(void)
+> +{
+> +	return current->nsproxy->ima_ns;
+> +}
+> +#else
+> +static inline void put_ima_ns(struct ima_namespace *ns)
+> +{
+> +	return;
+> +}
+> +
+> +static inline struct ima_namespace *copy_ima(unsigned long flags,
+> +					     struct user_namespace *user_ns,
+> +					     struct ima_namespace *old_ns)
+> +{
+> +	return old_ns;
+> +}
+> +
+> +static inline struct ima_namespace *get_current_ns(void)
+> +{
+> +	return NULL;
+> +}
+> +#endif /* CONFIG_IMA_NS */
+>   #endif /* _LINUX_IMA_H */
+> diff --git a/include/linux/nsproxy.h b/include/linux/nsproxy.h
+> index ac0d65b..a97031d 100644
+> --- a/include/linux/nsproxy.h
+> +++ b/include/linux/nsproxy.h
+> @@ -35,6 +35,7 @@ struct nsproxy {
+>   	struct pid_namespace *pid_ns_for_children;
+>   	struct net 	     *net_ns;
+>   	struct cgroup_namespace *cgroup_ns;
+> +	struct ima_namespace *ima_ns;
+>   };
+>   extern struct nsproxy init_nsproxy;
 >
-> FWIW, be careful using those big separator lines like that.  They can
-> and, as you see here, do trip up the automated tools sometimes :-(.
-> Would be better to just not put a guard around the copied in stuff.
-
-I'll do and will clean it from my next patches.
-
-Thanks again.
-
+> diff --git a/include/linux/proc_ns.h b/include/linux/proc_ns.h
+> index 58ab28d..c7c1239 100644
+> --- a/include/linux/proc_ns.h
+> +++ b/include/linux/proc_ns.h
+> @@ -31,6 +31,7 @@ extern const struct proc_ns_operations pidns_for_children_operations;
+>   extern const struct proc_ns_operations userns_operations;
+>   extern const struct proc_ns_operations mntns_operations;
+>   extern const struct proc_ns_operations cgroupns_operations;
+> +extern const struct proc_ns_operations imans_operations;
 >
-> --
-> Doug Ledford <dledford@redhat.com>
->     GPG KeyID: B826A3330E572FDD
->     Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
-
-
-
---RtGa12sjXv8gVUZO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlqhPNUACgkQ5GN7iDZy
-WKdLCA//e7iVwDHNgfe7HeA5CoGWQsR7W0cXjW4SHJ/wXpB2piA0QvMBbjNpD9Fi
-2W986cFko5KS3pcdy2Fc684BOc1nljgZad/ybKoUAkuyQnhUKumQIR7aAQrHypgx
-YT/2iD2Zr2/LnTwqWFEoAw7bWg93gWfpre86aGfhAZAGEe9Ia0mBTQjoUD3H89+G
-ZiM1p7lUnh6ZLgzejRyNlPYXIzHVn1HhiYY+kIACpAdkiDHiicFglZ/ZWMOUVI0P
-+xoBIcvNutuliTY7vZUm6XAYccMfkatjByQo44t301Anw4uQbpDzl2OYYZitLlab
-jQ0TW3FNkqGZDzIslqzQkdj6xwKLSqZ/wqyMNkkfWkp93QbW/TSgM+SilUDmwr7n
-gmYbnzg7/FkUWwXvpmrUbwPB30mAB82yoBeqR8+r5b9jaleEz5lZeRrMhYnw/NH4
-qj6Er0I8YN/tdcJZZdD8xiDHPMoi0MHykL69dYQtPXWTn2cBeaNCz1yz8B3CXlB0
-JhhwALEEoMRJNYir9HnqYXjjHzjSidslyJm7Me3EuIKkz+GWgpA4Y3qd7dOAtK9o
-VgPSMe90dybYAeN6UGPKRcqgPy1gQGMOttfUj9ft3Ql6vowkg231cmB/wcesGdF+
-MEPDyJbzaH7V54A0Pxci7bLiz8yP5DWExtw3bCSc4YWtwlsbrYM=
-=6CaH
------END PGP SIGNATURE-----
-
---RtGa12sjXv8gVUZO--
+>   /*
+>    * We always define these enumerators
+> @@ -42,6 +43,7 @@ enum {
+>   	PROC_USER_INIT_INO	= 0xEFFFFFFDU,
+>   	PROC_PID_INIT_INO	= 0xEFFFFFFCU,
+>   	PROC_CGROUP_INIT_INO	= 0xEFFFFFFBU,
+> +	PROC_IMA_INIT_INO	= 0xEFFFFFFAU,
+>   };
+>
+>   #ifdef CONFIG_PROC_FS
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 1d3475f..339f84d 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -1287,6 +1287,14 @@ config NET_NS
+>   	help
+>   	  Allow user space to create what appear to be multiple instances
+>   	  of the network stack.
+> +config IMA_NS
+> +	bool "IMA namespace"
+> +	depends on IMA
+> +	default y
+> +	help
+> +	  Allow the creation of IMA namespaces for each mount namespace.
+> +	  Namespaced IMA data enables having IMA features work separately
+> +	  for each mount namespace.
+>
+>   endif # NAMESPACES
+>
+> diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+> index f6c5d33..85be341 100644
+> --- a/kernel/nsproxy.c
+> +++ b/kernel/nsproxy.c
+> @@ -27,6 +27,7 @@
+>   #include <linux/syscalls.h>
+>   #include <linux/cgroup.h>
+>   #include <linux/perf_event.h>
+> +#include <linux/ima.h>
+>
+>   static struct kmem_cache *nsproxy_cachep;
+>
+> @@ -44,6 +45,9 @@ struct nsproxy init_nsproxy = {
+>   #ifdef CONFIG_CGROUPS
+>   	.cgroup_ns		= &init_cgroup_ns,
+>   #endif
+> +#ifdef CONFIG_IMA_NS
+> +	.ima_ns                 = &init_ima_ns,
+> +#endif
+>   };
+>
+>   static inline struct nsproxy *create_nsproxy(void)
+> @@ -110,8 +114,17 @@ static struct nsproxy *create_new_namespaces(unsigned long flags,
+>   		goto out_net;
+>   	}
+>
+> +	new_nsp->ima_ns = copy_ima(flags, user_ns, tsk->nsproxy->ima_ns);
+> +	if (IS_ERR(new_nsp->ima_ns)) {
+> +		err = PTR_ERR(new_nsp->ima_ns);
+> +		goto out_ima;
+> +	}
+> +
+>   	return new_nsp;
+>
+> +out_ima:
+> +	if (new_nsp->ima_ns)
+> +		put_ima_ns(new_nsp->ima_ns);
+>   out_net:
+>   	put_cgroup_ns(new_nsp->cgroup_ns);
+>   out_cgroup:
+> @@ -181,6 +194,8 @@ void free_nsproxy(struct nsproxy *ns)
+>   	if (ns->pid_ns_for_children)
+>   		put_pid_ns(ns->pid_ns_for_children);
+>   	put_cgroup_ns(ns->cgroup_ns);
+> +	if (ns->ima_ns)
+> +		put_ima_ns(ns->ima_ns);
+>   	put_net(ns->net_ns);
+>   	kmem_cache_free(nsproxy_cachep, ns);
+>   }
+> diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
+> index 29f198b..20493f0 100644
+> --- a/security/integrity/ima/Makefile
+> +++ b/security/integrity/ima/Makefile
+> @@ -8,5 +8,6 @@ obj-$(CONFIG_IMA) += ima.o
+>   ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
+>   	 ima_policy.o ima_template.o ima_template_lib.o
+>   ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
+> +ima-$(CONFIG_IMA_NS) += ima_ns.o
+>   ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
+>   obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index d52b487..8a8234a 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -291,6 +291,15 @@ static inline int ima_read_xattr(struct dentry *dentry,
+>
+>   #endif /* CONFIG_IMA_APPRAISE */
+>
+> +#ifdef CONFIG_IMA_NS
+> +int ima_ns_init(void);
+> +#else
+> +static inline int ima_ns_init(void)
+> +{
+> +	return 0;
+> +}
+> +#endif /* CONFIG_IMA_NS */
+> +
+>   /* LSM based policy rules require audit */
+>   #ifdef CONFIG_IMA_LSM_RULES
+>
+> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+> index 2967d49..7f884a7 100644
+> --- a/security/integrity/ima/ima_init.c
+> +++ b/security/integrity/ima/ima_init.c
+> @@ -137,5 +137,9 @@ int __init ima_init(void)
+>
+>   	ima_init_policy();
+>
+> +	rc = ima_ns_init();
+> +	if (rc != 0)
+> +		return rc;
+> +
+>   	return ima_fs_init();
+>   }
+> diff --git a/security/integrity/ima/ima_ns.c b/security/integrity/ima/ima_ns.c
+> new file mode 100644
+> index 0000000..383217b
+> --- /dev/null
+> +++ b/security/integrity/ima/ima_ns.c
+> @@ -0,0 +1,183 @@
+> +/*
+> + * Copyright (C) 2008 IBM Corporation
+> + * Author: Yuqiong Sun <suny@us.ibm.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation, version 2 of the License.
+> + */
+> +
+> +#include <linux/export.h>
+> +#include <linux/user_namespace.h>
+> +#include <linux/proc_ns.h>
+> +#include <linux/kref.h>
+> +#include <linux/slab.h>
+> +#include <linux/ima.h>
+> +
+> +#include "ima.h"
+> +
+> +static void get_ima_ns(struct ima_namespace *ns);
+> +
+> +int ima_init_namespace(struct ima_namespace *ns)
+> +{
+> +	return 0;
+> +}
+> +
+> +int ima_ns_init(void)
+> +{
+> +	return ima_init_namespace(&init_ima_ns);
+> +}
+> +
+> +static struct ima_namespace *create_ima_ns(void)
+> +{
+> +	struct ima_namespace *ima_ns;
+> +
+> +	ima_ns = kmalloc(sizeof(*ima_ns), GFP_KERNEL);
+> +	if (ima_ns)
+> +		kref_init(&ima_ns->kref);
+> +
+> +	return ima_ns;
+> +}
+> +
+> +/**
+> + * Clone a new ns copying an original ima namespace, setting refcount to 1
+> + *
+> + * @old_ns: old ima namespace to clone
+> + * @user_ns: user namespace that current task runs in
+> + * Return ERR_PTR(-ENOMEM) on error (failure to kmalloc), new ns otherwise
+> + */
+> +static struct ima_namespace *clone_ima_ns(struct user_namespace *user_ns,
+> +					  struct ima_namespace *old_ns)
+> +{
+> +	struct ima_namespace *ns;
+> +	int err;
+> +
+> +	ns = create_ima_ns();
+> +	if (!ns)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	err = ns_alloc_inum(&ns->ns);
+> +	if (err) {
+> +		kfree(ns);
+> +		return ERR_PTR(err);
+> +	}
+> +
+> +	ns->ns.ops = &imans_operations;
+> +	get_ima_ns(old_ns);
+> +	ns->parent = old_ns;
+> +	ns->user_ns = get_user_ns(user_ns);
+> +
+> +	ima_init_namespace(ns);
+> +
+> +	return ns;
+> +}
+> +
+> +/**
+> + * Copy task's ima namespace, or clone it if flags specifies CLONE_NEWNS.
+> + *
+> + * @flags: flags used in the clone syscall
+> + * @user_ns: user namespace that current task runs in
+> + * @old_ns: old ima namespace to clone
+> + */
+> +
+> +struct ima_namespace *copy_ima(unsigned long flags,
+> +			       struct user_namespace *user_ns,
+> +			       struct ima_namespace *old_ns)
+> +{
+> +	struct ima_namespace *new_ns;
+> +
+> +	BUG_ON(!old_ns);
+> +	get_ima_ns(old_ns);
+> +
+> +	if (!(flags & CLONE_NEWNS))
+> +		return old_ns;
+> +
+> +	new_ns = clone_ima_ns(user_ns, old_ns);
+> +	put_ima_ns(old_ns);
+> +
+> +	return new_ns;
+> +}
+> +
+> +static void destroy_ima_ns(struct ima_namespace *ns)
+> +{
+> +	put_user_ns(ns->user_ns);
+> +	ns_free_inum(&ns->ns);
+> +	kfree(ns);
+> +}
+> +
+> +static void free_ima_ns(struct kref *kref)
+> +{
+> +	struct ima_namespace *ns;
+> +
+> +	ns = container_of(kref, struct ima_namespace, kref);
+> +	destroy_ima_ns(ns);
+> +}
+> +
+> +static void get_ima_ns(struct ima_namespace *ns)
+> +{
+> +	kref_get(&ns->kref);
+> +}
+> +
+> +void put_ima_ns(struct ima_namespace *ns)
+> +{
+> +	kref_put(&ns->kref, free_ima_ns);
+> +}
+> +
+> +static inline struct ima_namespace *to_ima_ns(struct ns_common *ns)
+> +{
+> +	return container_of(ns, struct ima_namespace, ns);
+> +}
+> +
+> +static struct ns_common *imans_get(struct task_struct *task)
+> +{
+> +	struct ima_namespace *ns = NULL;
+> +	struct nsproxy *nsproxy;
+> +
+> +	task_lock(task);
+> +	nsproxy = task->nsproxy;
+> +	if (nsproxy) {
+> +		ns = nsproxy->ima_ns;
+> +		get_ima_ns(ns);
+> +	}
+> +	task_unlock(task);
+> +
+> +	return ns ? &ns->ns : NULL;
+> +}
+> +
+> +static void imans_put(struct ns_common *ns)
+> +{
+> +	put_ima_ns(to_ima_ns(ns));
+> +}
+> +
+> +static int imans_install(struct nsproxy *nsproxy, struct ns_common *new)
+> +{
+> +	struct ima_namespace *ns = to_ima_ns(new);
+> +
+> +	if (!ns_capable(ns->user_ns, CAP_SYS_ADMIN) ||
+> +	    !ns_capable(current_user_ns(), CAP_SYS_ADMIN))
+> +		return -EPERM;
+> +
+> +	get_ima_ns(ns);
+> +	put_ima_ns(nsproxy->ima_ns);
+> +	nsproxy->ima_ns = ns;
+> +	return 0;
+> +}
+> +
+> +const struct proc_ns_operations imans_operations = {
+> +	.name = "ima",
+> +	.type = CLONE_NEWNS,
+> +	.get = imans_get,
+> +	.put = imans_put,
+> +	.install = imans_install,
+> +};
+> +
+> +struct ima_namespace init_ima_ns = {
+> +	.kref = KREF_INIT(2),
+> +	.user_ns = &init_user_ns,
+> +	.ns.inum = PROC_IMA_INIT_INO,
+> +#ifdef CONFIG_IMA_NS
+> +	.ns.ops = &imans_operations,
+> +#endif
+> +	.parent = NULL,
+> +};
+> +EXPORT_SYMBOL(init_ima_ns);
