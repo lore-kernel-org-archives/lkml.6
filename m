@@ -1,83 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935624AbeCHINV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 03:13:21 -0500
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:39431 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755036AbeCHINT (ORCPT
+        id S935487AbeCHITJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 03:19:09 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:45131 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934158AbeCHITI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 03:13:19 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w288D84f029876
-X-Nifty-SrcIP: [209.85.217.177]
-X-Google-Smtp-Source: AG47ELtrQ+LIyhL7jicHcAwFDLP5Px2so13Fu1PL4cZcMGFDDPoe3zbNYYpSBp/U9/PdHXZWvh4nTOjkMpJTs/DBWnU=
+        Thu, 8 Mar 2018 03:19:08 -0500
+X-Google-Smtp-Source: AG47ELsYzlU7lHeB8scJSAG2z05LRqpwO6qr5E9HI9l33KBFOQuHsjqpxI/v+oD+9isOgeX/wKEZfA==
+From: Christian Brauner <christian.brauner@canonical.com>
+X-Google-Original-From: Christian Brauner <christian.brauner@ubuntu.com>
+Date: Thu, 8 Mar 2018 09:19:04 +0100
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: Re: Invalid /proc/<pid>/fd/{0,1,2} symlinks with TIOCGPTPEER
+Message-ID: <20180308081903.GC22728@gmail.com>
+References: <20180307161744.GA17562@gmail.com>
+ <CA+55aFx+dcUPK4A19ewpjNKkes7AgmEuTcqY8wYopZ-31ujpjQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180308080929.30982-1-suzuki.katsuhiro@socionext.com>
-References: <20180308080929.30982-1-suzuki.katsuhiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 8 Mar 2018 17:12:28 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQkq6t7zhaNRGUM7nU4NGBAT3FEQTg0xKXHPZOmBcc-OA@mail.gmail.com>
-Message-ID: <CAK7LNAQkq6t7zhaNRGUM7nU4NGBAT3FEQTg0xKXHPZOmBcc-OA@mail.gmail.com>
-Subject: Re: [PATCH] reset: uniphier: add Pro4/Pro5/PXs2 audio systems reset control
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CA+55aFx+dcUPK4A19ewpjNKkes7AgmEuTcqY8wYopZ-31ujpjQ@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-08 17:09 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
-> Add reset lines for audio subsystem (AIO) on UniPhier
-> Pro4/Pro5/PXs2 SoCs.
->
-> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> ---
+On Wed, Mar 07, 2018 at 11:44:35AM -0800, Linus Torvalds wrote:
+> On Wed, Mar 7, 2018 at 8:17 AM, Christian Brauner
+> <christian.brauner@canonical.com> wrote:
+> >
+> > unshare --mount
+> > mount --bind /dev/pts/ptmx /dev/ptmx
+> > chmod 666 /dev/ptmx
+> 
+> Oh. Why are you using a bind mount in the first place?
 
+Containers employing user namespaces can't mknod() and because of the
+way some LSMs check access permissions (path-based AppArmor being one
+example) a symlink to /dev/pts/ptmx won't work either so a bind-mount
+seems like the most reliable solution.
 
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> 
+> Anyway, I guess we just have to add another special case for this.
+> 
+> Which doesn't look horrible. Right now path_pts() just does
+> 
+>         ret = path_parent_directory(path);
+> 
+> and that simply doesn't work for a bind mount file.
+> 
+> I think we could just change path_parent_directory() to go through
+> file bind mounts. The other user is follow_dotdot(), but that always
+> takes a directory, so it wouldn't be affected.
+> 
+> But it's probably safer to just teach path_pts to just walk up the
+> bind mount first, and then do the existing path_parent_directory.
+> 
+> Anybody want to just try that thing?
 
+Sure. I can try and take a look.
 
-
->  drivers/reset/reset-uniphier.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/reset/reset-uniphier.c b/drivers/reset/reset-uniphier.c
-> index e8bb023ff15e..0fa23129d343 100644
-> --- a/drivers/reset/reset-uniphier.c
-> +++ b/drivers/reset/reset-uniphier.c
-> @@ -63,6 +63,7 @@ static const struct uniphier_reset_data uniphier_pro4_sys_reset_data[] = {
->         UNIPHIER_RESETX(12, 0x2000, 6),         /* GIO (Ether, SATA, USB3) */
->         UNIPHIER_RESETX(14, 0x2000, 17),        /* USB30 */
->         UNIPHIER_RESETX(15, 0x2004, 17),        /* USB31 */
-> +       UNIPHIER_RESETX(40, 0x2000, 13),        /* AIO */
->         UNIPHIER_RESET_END,
->  };
->
-> @@ -72,6 +73,7 @@ static const struct uniphier_reset_data uniphier_pro5_sys_reset_data[] = {
->         UNIPHIER_RESETX(12, 0x2000, 6),         /* GIO (PCIe, USB3) */
->         UNIPHIER_RESETX(14, 0x2000, 17),        /* USB30 */
->         UNIPHIER_RESETX(15, 0x2004, 17),        /* USB31 */
-> +       UNIPHIER_RESETX(40, 0x2000, 13),        /* AIO */
->         UNIPHIER_RESET_END,
->  };
->
-> @@ -88,6 +90,7 @@ static const struct uniphier_reset_data uniphier_pxs2_sys_reset_data[] = {
->         UNIPHIER_RESETX(21, 0x2014, 1),         /* USB31-PHY1 */
->         UNIPHIER_RESETX(28, 0x2014, 12),        /* SATA */
->         UNIPHIER_RESET(29, 0x2014, 8),          /* SATA-PHY (active high) */
-> +       UNIPHIER_RESETX(40, 0x2000, 13),        /* AIO */
->         UNIPHIER_RESET_END,
->  };
->
-> --
-> 2.16.1
->
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Christian
