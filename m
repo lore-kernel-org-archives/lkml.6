@@ -1,102 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755644AbeCHKDk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 05:03:40 -0500
-Received: from mail-yw0-f201.google.com ([209.85.161.201]:52376 "EHLO
-        mail-yw0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752039AbeCHKDh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 05:03:37 -0500
-X-Google-Smtp-Source: AG47ELtmzyLfyEHzIxDNq2fKsRcMiOfrVnToYJwilxbORc40194JB3eJ9NlsZp+F7a+UODRI+9ANXQcU4A==
+        id S1755709AbeCHKFQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 05:05:16 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37704 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755613AbeCHKFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 05:05:15 -0500
+Date: Thu, 8 Mar 2018 18:05:01 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, Laurence Oberman <loberman@redhat.com>
+Subject: Re: [PATCH V2 3/5] genirq/affinity: move actual irq vector spread
+ into one helper
+Message-ID: <20180308100454.GA31062@ming.t460p>
+References: <20180305031357.23950-4-ming.lei@redhat.com>
+ <201803060052.L1IpJHee%fengguang.wu@intel.com>
 MIME-Version: 1.0
-Date: Thu,  8 Mar 2018 11:03:19 +0100
-Message-Id: <20180308100319.131536-1-tweek@google.com>
-X-Mailer: git-send-email 2.16.2.395.g2e18187dfd-goog
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-From: Thiebaud Weksteen <tweek@google.com>
-To: Jeremy Cline <jeremy@jcline.org>
-Cc: Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, hdegoede@redhat.com,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Thiebaud Weksteen <tweek@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201803060052.L1IpJHee%fengguang.wu@intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
----
- drivers/firmware/efi/libstub/tpm.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+On Tue, Mar 06, 2018 at 12:28:32AM +0800, kbuild test robot wrote:
+> Hi Ming,
+> 
+> Thank you for the patch! Perhaps something to improve:
+> 
+> [auto build test WARNING on tip/irq/core]
+> [also build test WARNING on v4.16-rc4 next-20180305]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Ming-Lei/genirq-affinity-irq-vector-spread-among-online-CPUs-as-far-as-possible/20180305-184912
+> config: i386-randconfig-a1-201809 (attached as .config)
+> compiler: gcc-4.9 (Debian 4.9.4-2) 4.9.4
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=i386 
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>    kernel/irq/affinity.c: In function 'irq_create_affinity_masks':
+> >> kernel/irq/affinity.c:201:50: warning: passing argument 3 of 'irq_build_affinity_masks' from incompatible pointer type
+>      curvec += irq_build_affinity_masks(nvecs, affd, node_to_cpumask,
+>                                                      ^
+>    kernel/irq/affinity.c:97:12: note: expected 'const struct cpumask (*)[1]' but argument is of type 'struct cpumask (*)[1]'
+>     static int irq_build_affinity_masks(int nvecs, const struct irq_affinity *affd,
 
-diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
-index da661bf8cb96..773afcd6a37c 100644
---- a/drivers/firmware/efi/libstub/tpm.c
-+++ b/drivers/firmware/efi/libstub/tpm.c
-@@ -74,19 +74,23 @@ void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- 	efi_bool_t truncated;
- 	void *tcg2_protocol;
- 
-+	efi_printk(sys_table_arg, "Locating the TCG2Protocol\n");
- 	status = efi_call_early(locate_protocol, &tcg2_guid, NULL,
- 				&tcg2_protocol);
- 	if (status != EFI_SUCCESS)
- 		return;
- 
-+	efi_printk(sys_table_arg, "Calling GetEventLog on TCG2Protocol\n");
- 	status = efi_call_proto(efi_tcg2_protocol, get_event_log, tcg2_protocol,
- 				EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2,
- 				&log_location, &log_last_entry, &truncated);
- 	if (status != EFI_SUCCESS)
- 		return;
-+	efi_printk(sys_table_arg, "Log returned\n");
- 
- 	if (!log_location)
- 		return;
-+	efi_printk(sys_table_arg, "log_location is not empty\n");
- 	first_entry_addr = (unsigned long) log_location;
- 
- 	/*
-@@ -94,7 +98,9 @@ void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- 	 */
- 	if (!log_last_entry) {
- 		log_size = 0;
-+		efi_printk(sys_table_arg, "log_size = 0\n");
- 	} else {
-+		efi_printk(sys_table_arg, "log_size != 0\n");
- 		last_entry_addr = (unsigned long) log_last_entry;
- 		/*
- 		 * get_event_log only returns the address of the last entry.
-@@ -106,26 +112,31 @@ void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
- 		log_size = log_last_entry - log_location + last_entry_size;
- 	}
- 
-+	efi_printk(sys_table_arg, "Allocating memory for storing the logs\n");
- 	/* Allocate space for the logs and copy them. */
- 	status = efi_call_early(allocate_pool, EFI_LOADER_DATA,
- 				sizeof(*log_tbl) + log_size,
- 				(void **) &log_tbl);
- 
-+	efi_printk(sys_table_arg, "Returned from memory allocation\n");
- 	if (status != EFI_SUCCESS) {
- 		efi_printk(sys_table_arg,
- 			   "Unable to allocate memory for event log\n");
- 		return;
- 	}
-+	efi_printk(sys_table_arg, "Copying log to new location\n");
- 
- 	memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
- 	log_tbl->size = log_size;
- 	log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
- 	memcpy(log_tbl->log, (void *) first_entry_addr, log_size);
- 
-+	efi_printk(sys_table_arg, "Installing the log into the configuration table\n");
- 	status = efi_call_early(install_configuration_table,
- 				&linux_eventlog_guid, log_tbl);
- 	if (status != EFI_SUCCESS)
- 		goto err_free;
-+	efi_printk(sys_table_arg, "Done\n");
- 	return;
- 
- err_free:
--- 
-2.16.2.395.g2e18187dfd-goog
+Looks this warning can only be triggered on ARCH=i386 with gcc-4.X.
+
+Can't reproduce it when building on other ARCHs, and can't reproduce
+it with gcc-6 too.
+
+
+Thanks,
+Ming
