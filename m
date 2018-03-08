@@ -1,75 +1,45 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-912290-1520485110-2-2925951214909679148
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='iso-8859-1'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520485109; b=O2vGKrLH+zQV8J0bwU5o2e96FXy80mn6cO0Pfih/0k1+GrP
-    qisHgTjMJx2LoXicF0YiIItMrmNz5b/mwpgp6A/qUEMyczelvbbJELeyeEf5AE/m
-    CR2nLxaaK1MY34KRwxU3eX2kFxyTGJdAvfF0lmvybdA7OiLroegjcsemmgbXKhC8
-    SkZ3YSqZWSMYeLUh5t8xa/yq+yrOpsHSbtIbSeg19BeDU3vbo8FzwaAyMljHOTIt
-    rjTM4VFmlPlwiAkr1H11mjJYLBo7KqC7AqV7MRA0zPX0MG3PzgzFhhu4ON6iSX2A
-    hnSGHjJlNdiAjtvKNnfI7Y5ZY9gbho+6Ud8VjIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520485109; bh=plMtU7
-    X17hriuG/J/4La4ZA9DV9FIO962JiVa2FZubA=; b=LL7vJhVMW94Lkqzeyr9xZ/
-    EinBP0/RVY5WDUnaWLZ0tID5rXaw/IHNAUO05O3bOpCf3Z3UYJbiHW0M+7vhwhhV
-    3Kz27vnpu1qCs4VDOCUsrGIel0ycedgwK8B2qE4zdV/y1nZRGZ4xJs3zAodTjnwl
-    WSVH08MDTqGWUicL+nAUzgczLstLdWbbOiZAjvNUap4ArSNvY75QQNS1pti4KQZy
-    NSpWkvix0xmOCcfJHUdN2dtj6JQMxVE11w7c8IcUkCL3s6h8BlcuW4Fl10ciEsQn
-    YrD5E/fr54TXQrCyY36Vmq5/QVj9Ti0HgAHMeIXlzAhgVRMKolgnDiObIx0aJGGw
-    ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=oDKuqnU1 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=oDKuqnU1 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965145AbeCHE6Z (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 23:58:25 -0500
-Received: from mail-co1nam03on0091.outbound.protection.outlook.com ([104.47.40.91]:60295
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965053AbeCHE6N (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 7 Mar 2018 23:58:13 -0500
+Return-Path: <Alexander.Levin@microsoft.com>
+X-Google-Smtp-Source: AG47ELsoHLW+PgYZs9I2BOdryWFNJ1p+PybVvR2+q7OEXNqSxa/VppnedjURuctJqidnFgSpg9AW
+ARC-Seal: i=1; a=rsa-sha256; t=1520485104; cv=none;
+        d=google.com; s=arc-20160816;
+        b=SUZe9A4CItM/iw43GrrFhqxBqVdssgGRmlrtljG9jsZJnbnt52Lb7d+xc8M5z3B7aV
+         64Ds//i8zN13sTZ65w3loil4Jo2+2xyAvfwc3jUEELjf+Q6CQp/Nh3kNeZgc9P7BQPQD
+         rxQREVMR0WgU5TOAGDVtxMDdHCQgzX8orR7Yr63NX8DlTvF/1A4Eg8BpbOg/rY6maOag
+         XaBsRloZnsJKM/ZW1DglxdkoE/FJlvWIbPKlkTafMFZgFN1FhpYbXCFK4eedMHV8hFyj
+         CmBlozSbbIQtFgATn9+Ef/v23EYUR7EbQ/qNFPduGbDEAI6OK+c4PyQx68ItnAMXUWXk
+         t98A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:cc:to
+         :from:dkim-signature:arc-authentication-results;
+        bh=2XdQnpZe3yIpXDGeVY6g4s0pKgUP+KAmsyrl5xQYAcs=;
+        b=bZyRYcgqG66Jm0y3d4btSqJ82Qibu0+RkN9619Cj5Hqdy03TGiiozfcwKtjtYp1hZy
+         UM/uT9QcHFGBbE9fkWF1fP1pMD2nTtFZraBgwTsP/5cTXMJL7BagcJWlV4qbEw+AhtKv
+         1gGg6P6j+IjeIj3tWGaOoYtuwQMRHXgtcRCk+ugoeBWaCLDAJNNbzweoKQWJYNTIm6Jt
+         zDD2w6cVfpQ6NKrPCK39UfAHM4vi2yH8tSEEjvnuFdx3l9hC9PnEjh46d+fGO+5tH4M8
+         eBYtzoWZwe58ToKrlVPYdoDJSPXllxZROMmwN/RVb39/oraah3I4ZtQOdrMbTOKROG4o
+         HtpQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=iGNGSmOB;
+       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.41.117 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=iGNGSmOB;
+       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.41.117 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 13/67] spi: sh-msiof: Avoid writing to
- registers from spi_master.setup()
-Thread-Topic: [PATCH AUTOSEL for 4.14 13/67] spi: sh-msiof: Avoid writing to
- registers from spi_master.setup()
-Thread-Index: AQHTtpn6UmDy1mi050+etHEqWe6e/Q==
-Date: Thu, 8 Mar 2018 04:57:37 +0000
-Message-ID: <20180308045641.7814-13-alexander.levin@microsoft.com>
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: Kees Cook <keescook@chromium.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 30/67] /dev/mem: Add bounce buffer for
+ copy-out
+Thread-Topic: [PATCH AUTOSEL for 4.14 30/67] /dev/mem: Add bounce buffer for
+ copy-out
+Thread-Index: AQHTtpn+M4lycXwz4U6ejCg7vjTWag==
+Date: Thu, 8 Mar 2018 04:57:44 +0000
+Message-ID: <20180308045641.7814-30-alexander.levin@microsoft.com>
 References: <20180308045641.7814-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045641.7814-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,124 +48,158 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0888;20:N2vq4vLXecSXgJfU5LrEUDNDCXZCjRCez1xhxkhyZplO+ZI0Jo/wQkPOc0/9PFHH9CHs57Qc8Ha9tNPiB8EtROBgXCFlyiixTWFewefwi0ewWjB2dRY2G77tSo3CZ14Q7KqN5Ehacr1pV00Vu9UJeOfdOAVw+KBOR9nUkpPLSwo=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0808;20:8T+6X2pc0X6Am5XacTYZR1wcYKw3xl2x76b4X4YSriPnjKDwgueZHA6LZOWG45yFQeFz+H21U0ByNk2vcT3ql/kKZr3DNq38C916FeqhzCE2AXyN4xSOG+Vrd1MpCV5/lPunt5YIkTFJfzam+ArS65EygFVlwjasjR150dSddE4=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: cfe6db6b-9e99-457c-12de-08d584b130a2
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0888;
-x-ms-traffictypediagnostic: DM5PR2101MB0888:
+x-ms-office365-filtering-correlation-id: 464ebb8b-fcc2-487c-92a9-08d584b1364f
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0808;
+x-ms-traffictypediagnostic: DM5PR2101MB0808:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0888B8260B0032FA48BC8D53FBDF0@DM5PR2101MB0888.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0888;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0888;
+x-microsoft-antispam-prvs: <DM5PR2101MB0808D206DD0B02AA87D9E880FBDF0@DM5PR2101MB0808.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(192374486261705)(104084551191319);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0808;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0808;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(346002)(376002)(39380400002)(396003)(189003)(199004)(6116002)(99286004)(2950100002)(6512007)(6666003)(10290500003)(36756003)(5660300001)(106356001)(1076002)(22452003)(3846002)(97736004)(316002)(53936002)(68736007)(105586002)(4326008)(25786009)(54906003)(478600001)(2501003)(186003)(66066001)(76176011)(3280700002)(86362001)(575784001)(14454004)(2900100001)(5250100002)(110136005)(305945005)(7736002)(72206003)(3660700001)(6436002)(2906002)(26005)(6486002)(10090500001)(8676002)(81156014)(107886003)(81166006)(86612001)(6506007)(8936002)(102836004)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0888;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: ry+Y0HE3jcOo86J/PzphMcHBlGvuwBzWqmGoQX3ZdT6Nu8b+aPcQh2USZOnQDecrN/mo2WcxP/J4WAESzmBKsFm/eiS75bt9JAiUZ0Tu1VitX4NLeHisMAT4uIa1EUBCM91PYjjtKVCWCVA0ZXFitrdeCOjlf6uNssY5HxU0IeefDVWNlo56PHNHnIMIZImpVQopE7kJlo0RTASdL3vfFfWMqMYo5OR8fWXt+/wcjqqXwX911PDpEwg4uOmB4yufVN74MzVIIoSTGoHWIKwwJFJOnvWRHsFEHJU0rLm+a+XfgtNiII2MLYy4vVpY0DTrRqZO2gRmLEo4WQJ1WWQ2vQ==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(39860400002)(366004)(376002)(346002)(199004)(189003)(22452003)(99286004)(76176011)(2906002)(105586002)(3846002)(86612001)(478600001)(72206003)(14454004)(2900100001)(8676002)(102836004)(68736007)(5660300001)(316002)(6116002)(54906003)(26005)(6506007)(575784001)(59450400001)(1076002)(86362001)(36756003)(186003)(10090500001)(110136005)(106356001)(4326008)(6512007)(6486002)(7736002)(5250100002)(3280700002)(3660700001)(2501003)(6666003)(81166006)(2950100002)(305945005)(53936002)(107886003)(8936002)(6436002)(81156014)(66066001)(25786009)(10290500003)(97736004)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0808;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: MiIR6mS/H/kwBYzsNxKSAhOqI+JWLLJqPkvhvYvPwTX48dgOUTbLUM3lw04VWkwe+xEYL5wSYjOmWC8tnGPXQZJQIhD8aC1DuXjJtFpyjp6k3OEpBaZSazhffUGVDiGjc5pTjv9hlNZj5fXOlTPQTrMsUzgoO+9fOVBV/67iArqBv9JqMv0U/iCMFbOriADp9RlqR18YvPZ1lOUB3N45E9UirGv10vcJoLwyf64ETqdOpk5T9TBvO8CoESsQhrO4zsymkx31G5a02wo1S1Xm643C+mMvBPm2Pyuu8A7odz9f7JMKrsHR4O/vvNS+/KhRhHsqLDylZqa+wq+R4VabZw==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cfe6db6b-9e99-457c-12de-08d584b130a2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:57:37.0597
+X-MS-Exchange-CrossTenant-Network-Message-Id: 464ebb8b-fcc2-487c-92a9-08d584b1364f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:57:44.7020
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0888
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0808
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594344106875288352?=
+X-GMAIL-MSGID: =?utf-8?q?1594344188969557609?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Kees Cook <keescook@chromium.org>
 
-[ Upstream commit 7ff0b53c4051145d1cf992d2f60987e6447eed4f ]
+[ Upstream commit 22ec1a2aea73b9dfe340dff7945bd85af4cc6280 ]
 
-The spi_master.setup() callback must not change configuration registers,
-as that could corrupt I/O that is in progress for other SPI slaves.
+As done for /proc/kcore in
 
-The only exception is the configuration of the native chip select
-polarity in SPI master mode, as a wrong chip select polarity will cause
-havoc during all future transfers to any other SPI slave.
+  commit df04abfd181a ("fs/proc/kcore.c: Add bounce buffer for ktext data")
 
-Hence stop writing to registers in sh_msiof_spi_setup(), unless it is
-the first call for a controller using a native chip select, or unless
-native chip select polarity has changed (note that you'll loose anyway
-if I/O is in progress).  Even then, only do what is strictly necessary,
-instead of calling sh_msiof_spi_set_pin_regs().
+this adds a bounce buffer when reading memory via /dev/mem. This
+is needed to allow kernel text memory to be read out when built with
+CONFIG_HARDENED_USERCOPY (which refuses to read out kernel text) and
+without CONFIG_STRICT_DEVMEM (which would have refused to read any RAM
+contents at all).
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Since this build configuration isn't common (most systems with
+CONFIG_HARDENED_USERCOPY also have CONFIG_STRICT_DEVMEM), this also tries
+to inform Kconfig about the recommended settings.
+
+This patch is modified from Brad Spengler/PaX Team's changes to /dev/mem
+code in the last public patch of grsecurity/PaX based on my understanding
+of the code. Changes or omissions from the original code are mine and
+don't reflect the original grsecurity/PaX code.
+
+Reported-by: Michael Holzheu <holzheu@linux.vnet.ibm.com>
+Fixes: f5509cc18daa ("mm: Hardened usercopy")
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/spi/spi-sh-msiof.c | 35 ++++++++++++++++++++++++-----------
- 1 file changed, 24 insertions(+), 11 deletions(-)
+ drivers/char/mem.c | 27 ++++++++++++++++++++++-----
+ security/Kconfig   |  1 +
+ 2 files changed, 23 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 837bb95eea62..092a5fc85b9a 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -55,6 +55,8 @@ struct sh_msiof_spi_priv {
- 	void *rx_dma_page;
- 	dma_addr_t tx_dma_addr;
- 	dma_addr_t rx_dma_addr;
-+	bool native_cs_inited;
-+	bool native_cs_high;
- 	bool slave_aborted;
- };
+diff --git a/drivers/char/mem.c b/drivers/char/mem.c
+index 970e1242a282..3a70dba2c645 100644
+--- a/drivers/char/mem.c
++++ b/drivers/char/mem.c
+@@ -107,6 +107,8 @@ static ssize_t read_mem(struct file *file, char __user =
+*buf,
+ 	phys_addr_t p =3D *ppos;
+ 	ssize_t read, sz;
+ 	void *ptr;
++	char *bounce;
++	int err;
 =20
-@@ -528,8 +530,7 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
- {
- 	struct device_node	*np =3D spi->master->dev.of_node;
- 	struct sh_msiof_spi_priv *p =3D spi_master_get_devdata(spi->master);
--
--	pm_runtime_get_sync(&p->pdev->dev);
-+	u32 clr, set, tmp;
-=20
- 	if (!np) {
- 		/*
-@@ -539,19 +540,31 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
- 		spi->cs_gpio =3D (uintptr_t)spi->controller_data;
+ 	if (p !=3D *ppos)
+ 		return 0;
+@@ -129,15 +131,22 @@ static ssize_t read_mem(struct file *file, char __use=
+r *buf,
  	}
+ #endif
 =20
--	/* Configure pins before deasserting CS */
--	sh_msiof_spi_set_pin_regs(p, !!(spi->mode & SPI_CPOL),
--				  !!(spi->mode & SPI_CPHA),
--				  !!(spi->mode & SPI_3WIRE),
--				  !!(spi->mode & SPI_LSB_FIRST),
--				  !!(spi->mode & SPI_CS_HIGH));
++	bounce =3D kmalloc(PAGE_SIZE, GFP_KERNEL);
++	if (!bounce)
++		return -ENOMEM;
++
+ 	while (count > 0) {
+ 		unsigned long remaining;
+ 		int allowed;
+=20
+ 		sz =3D size_inside_page(p, count);
+=20
++		err =3D -EPERM;
+ 		allowed =3D page_is_allowed(p >> PAGE_SHIFT);
+ 		if (!allowed)
+-			return -EPERM;
++			goto failed;
++
++		err =3D -EFAULT;
+ 		if (allowed =3D=3D 2) {
+ 			/* Show zeros for restricted memory. */
+ 			remaining =3D clear_user(buf, sz);
+@@ -149,24 +158,32 @@ static ssize_t read_mem(struct file *file, char __use=
+r *buf,
+ 			 */
+ 			ptr =3D xlate_dev_mem_ptr(p);
+ 			if (!ptr)
+-				return -EFAULT;
 -
--	if (spi->cs_gpio >=3D 0)
-+	if (spi->cs_gpio >=3D 0) {
- 		gpio_set_value(spi->cs_gpio, !(spi->mode & SPI_CS_HIGH));
-+		return 0;
-+	}
+-			remaining =3D copy_to_user(buf, ptr, sz);
++				goto failed;
 =20
-+	if (spi_controller_is_slave(p->master))
-+		return 0;
++			err =3D probe_kernel_read(bounce, ptr, sz);
+ 			unxlate_dev_mem_ptr(p, ptr);
++			if (err)
++				goto failed;
++
++			remaining =3D copy_to_user(buf, bounce, sz);
+ 		}
 =20
--	pm_runtime_put(&p->pdev->dev);
-+	if (p->native_cs_inited &&
-+	    (p->native_cs_high =3D=3D !!(spi->mode & SPI_CS_HIGH)))
-+		return 0;
+ 		if (remaining)
+-			return -EFAULT;
++			goto failed;
 =20
-+	/* Configure native chip select mode/polarity early */
-+	clr =3D MDR1_SYNCMD_MASK;
-+	set =3D MDR1_TRMD | TMDR1_PCON | MDR1_SYNCMD_SPI;
-+	if (spi->mode & SPI_CS_HIGH)
-+		clr |=3D BIT(MDR1_SYNCAC_SHIFT);
-+	else
-+		set |=3D BIT(MDR1_SYNCAC_SHIFT);
-+	pm_runtime_get_sync(&p->pdev->dev);
-+	tmp =3D sh_msiof_read(p, TMDR1) & ~clr;
-+	sh_msiof_write(p, TMDR1, tmp | set);
-+	pm_runtime_put(&p->pdev->dev);
-+	p->native_cs_high =3D spi->mode & SPI_CS_HIGH;
-+	p->native_cs_inited =3D true;
- 	return 0;
+ 		buf +=3D sz;
+ 		p +=3D sz;
+ 		count -=3D sz;
+ 		read +=3D sz;
+ 	}
++	kfree(bounce);
+=20
+ 	*ppos +=3D read;
+ 	return read;
++
++failed:
++	kfree(bounce);
++	return err;
  }
 =20
+ static ssize_t write_mem(struct file *file, const char __user *buf,
+diff --git a/security/Kconfig b/security/Kconfig
+index b5c2b5d0c6c0..87f2a6f842fd 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -154,6 +154,7 @@ config HARDENED_USERCOPY
+ 	bool "Harden memory copies between kernel and userspace"
+ 	depends on HAVE_HARDENED_USERCOPY_ALLOCATOR
+ 	select BUG
++	imply STRICT_DEVMEM
+ 	help
+ 	  This option checks for obviously wrong memory regions when
+ 	  copying memory to/from the kernel (via copy_to_user() and
 --=20
 2.14.1
