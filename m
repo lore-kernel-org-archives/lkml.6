@@ -1,234 +1,234 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755566AbeCHJbq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 04:31:46 -0500
-Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:47057
-        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755537AbeCHJbl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 04:31:41 -0500
-X-ASG-Debug-ID: 1520501497-093b7e4ca912b60001-xx1T2L
-X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
-From: "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
-To: "eric.auger@redhat.com" <eric.auger@redhat.com>,
-        "cdall@kernel.org" <cdall@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "david.daney@cavium.com" <david.daney@cavium.com>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>
-Subject: =?utf-8?B?UmU6IFvmraTpgq7ku7blj6/og73lrZjlnKjpo47pmaldICBSZTogW1JGQyBQ?=
- =?utf-8?B?QVRDSF0gS1ZNOiBhcm0vYXJtNjQ6IHZnaWM6IGNoYW5nZSBjb25kaXRpb24g?=
- =?utf-8?Q?for_level_interrupt_resampling?=
-Thread-Topic: =?utf-8?B?W+atpOmCruS7tuWPr+iDveWtmOWcqOmjjumZqV0gIFJlOiBbUkZDIFBBVENI?=
- =?utf-8?B?XSBLVk06IGFybS9hcm02NDogdmdpYzogY2hhbmdlIGNvbmRpdGlvbiBmb3Ig?=
- =?utf-8?Q?level_interrupt_resampling?=
-X-ASG-Orig-Subj: =?utf-8?B?UmU6IFvmraTpgq7ku7blj6/og73lrZjlnKjpo47pmaldICBSZTogW1JGQyBQ?=
- =?utf-8?B?QVRDSF0gS1ZNOiBhcm0vYXJtNjQ6IHZnaWM6IGNoYW5nZSBjb25kaXRpb24g?=
- =?utf-8?Q?for_level_interrupt_resampling?=
-Thread-Index: AQHTtquoFGdOJ9stn0iMRL6AbYCzvaPFg4+AgAAJfYA=
-Date: Thu, 8 Mar 2018 09:31:36 +0000
-Message-ID: <1520501495.2583.19.camel@hxt-semitech.com>
-References: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
-         <9b3763f2-1dfa-5506-d7f2-93389647111c@redhat.com>
-In-Reply-To: <9b3763f2-1dfa-5506-d7f2-93389647111c@redhat.com>
-Accept-Language: en-US
+        id S1755547AbeCHJfc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 04:35:32 -0500
+Received: from lhrrgout.huawei.com ([194.213.3.17]:28629 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752126AbeCHJf2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 04:35:28 -0500
+From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To: Robin Murphy <robin.murphy@arm.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+CC: Auger Eric <eric.auger@redhat.com>,
+        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linuxarm <linuxarm@huawei.com>, John Garry <john.garry@huawei.com>,
+        "xuwei (O)" <xuwei5@huawei.com>
+Subject: RE: [PATCH v4 4/6] vfio/type1: check dma map request is within a
+ valid iova range
+Thread-Topic: [PATCH v4 4/6] vfio/type1: check dma map request is within a
+ valid iova range
+Thread-Index: AQHTqw7IDIDDogvQkEq1sqcC26ySeqO3NQKAgAAS2QCAAJqhgIAAKFgQgAFz7gCAABQHgIAAG9KAgAA66ICAAw3zcIAAIeSAgAAUM4CABGgHkIAElSsA
+Date: Thu, 8 Mar 2018 09:35:15 +0000
+Message-ID: <5FC3163CFD30C246ABAA99954A238FA83866B53C@FRAEML521-MBX.china.huawei.com>
+References: <20180221122209.9292-1-shameerali.kolothum.thodi@huawei.com>
+ <20180221122209.9292-5-shameerali.kolothum.thodi@huawei.com>
+ <818b3bc3-e2e1-e8df-8cca-17e6ecaf4ef9@redhat.com>
+ <20180226161310.061ce3a8@w520.home>
+ <aefca16f-570f-36d1-a493-f0a477736ef0@redhat.com>
+ <5FC3163CFD30C246ABAA99954A238FA83865CDE3@FRAEML521-MBX.china.huawei.com>
+ <238c74e1-dd3c-f626-0cda-82c6d840d772@redhat.com>
+ <5FC3163CFD30C246ABAA99954A238FA83865DBD3@FRAEML521-MBX.china.huawei.com>
+ <2056267c-dab1-fa71-5dcb-4db80266c568@redhat.com>
+ <20180228082417.07c42a88@w520.home>
+ <5FC3163CFD30C246ABAA99954A238FA838664702@FRAEML521-MBX.china.huawei.com>
+ <20180302090417.05ade6df@t450s.home>
+ <22b61209-61b6-207d-9d70-1db6ae630fc1@arm.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [10.64.6.48]
+x-originating-ip: [10.202.227.237]
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <C1D13CDF0C82D54E9A24F79F60D2A4EC@hxt-semitech.com>
 MIME-Version: 1.0
-X-Barracuda-Connect: UNKNOWN[10.128.0.15]
-X-Barracuda-Start-Time: 1520501497
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.5104 1.0000 0.7500
-X-Barracuda-Spam-Score: 0.75
-X-Barracuda-Spam-Status: No, SCORE=0.75 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=BSF_SC0_MV0113c
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.48722
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
-        0.00 BSF_SC0_MV0113c        BSF_SC0_MV0113c
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w289Vpcx007750
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w289Zd0L008138
 
-Hi, Eric,
 
-First, please let me change Christoffer's email to cdall@kernel.org. I
-add more information about my test below, please check.
 
-On Thu, 2018-03-08 at 09:57 +0100, Auger Eric wrote:
-> Hi,
+> -----Original Message-----
+> From: Shameerali Kolothum Thodi
+> Sent: Monday, March 05, 2018 11:44 AM
+> To: 'Robin Murphy' <robin.murphy@arm.com>; Alex Williamson
+> <alex.williamson@redhat.com>
+> Cc: Auger Eric <eric.auger@redhat.com>; pmorel@linux.vnet.ibm.com;
+> kvm@vger.kernel.org; linux-kernel@vger.kernel.org; Linuxarm
+> <linuxarm@huawei.com>; John Garry <john.garry@huawei.com>; xuwei (O)
+> <xuwei5@huawei.com>
+> Subject: RE: [PATCH v4 4/6] vfio/type1: check dma map request is within a valid
+> iova range
+
+ [...]
+
+> > >>> I still think you're overstretching the IOMMU reserved region interface
+> > >>> by trying to report possible ACS conflicts.  Are we going to update the
+> > >>> reserved list on device hotplug?  Are we going to update the list when
+> > >>> MMIO is enabled or disabled for each device?  What if the BARs are
+> > >>> reprogrammed or bridge apertures changed?  IMO, the IOMMU
+> reserved
+> > list
+> > >>> should account for specific IOVA exclusions that apply to transactions
+> > >>> that actually reach the IOMMU, not aliasing that might occur in the
+> > >>> downstream topology.  Additionally, the IOMMU group composition must
+> > be
+> > >>> such that these sorts of aliasing issues can only occur within an IOMMU
+> > >>> group.  If a transaction can be affected by the MMIO programming of
+> > >>> another group, then the groups are drawn incorrectly for the isolation
+> > >>> capabilities of the hardware.  Thanks,
+> > >>
+> > >> Agree that this is not a perfect thing to do covering all scenarios. As Robin
+> > >> pointed out, the current code is playing safe by reserving the full windows.
+> > >>
+> > >> My suggestion will be to limit this reservation to non-ACS cases only.  This
+> > will
+> > >> make sure that ACS ARM hardware is not broken by this series and nos-
+> ACS
+> > >> ones has a chance to run once Qemu is updated to take care of the
+> reserved
+> > >> regions (at least in some user scenarios).
+> > >>
+> > >> If you all are fine with this, I can include the ACS check I mentioned earlier
+> > in
+> > >> iommu_dma_get_resv_regions() and sent out the revised  series.
+> > >>
+> > >> Please let me know your thoughts.
+> > >
+> > > IMO, the IOMMU should be concerned with ACS as far as isolation is
+> > > concerned and reporting reserved ranges that are imposed at the IOMMU
+> > > and leave any aliasing or routing issues in the downstream topology to
+> > > other layers, or perhaps to the user.  Unfortunately, enforcing the
+> > > iova list in vfio is gated by some movement here since we can't break
+> > > existing users.  Thanks,
+> >
+> > FWIW, given the discussion we've had here I wouldn't object to pushing
+> > the PCI window reservation back into the DMA-specific path, such that it
+> > doesn't get exposed via the general IOMMU API interface. We *do* want to
+> > do it there where we are in total control of our own address space and
+> > it just avoids a whole class of problems (even with ACS I'm not sure the
+> > root complex can be guaranteed to send a "bad" IOVA out to the SMMU
+> > instead of just terminating it for looking like a peer-to-peer attempt).
+> >
+> > I do agree that it's not scalable for the IOMMU layer to attempt to
+> > detect and describe upstream PCI limitations to userspace by itself -
+> > they are "reserved regions" rather than "may or may not work regions"
+> > after all. If there is a genuine integration issue between an IOMMU and
+> > an upstream PCI RC which restricts usable addresses on a given system,
+> > that probably needs to be explicitly communicated from firmware to the
+> > IOMMU driver anyway, at which point that driver can report the relevant
+> > region(s) directly from its own callback.
+> >
+> > I suppose there's an in-between option of keeping generic window
+> > reservations but giving them a new "only reserve this if you're being
+> > super-cautious or don't know better" region type which we hide from
+> > userspace and ignore in VFIO, but maybe that leaves the lines a but too
+> > blurred still.
 > 
-> On 08/03/18 08:01, Shunyong Yang wrote:
-> > 
-> > When resampling irqfds is enabled, level interrupt should be
-> > de-asserted when resampling happens. On page 4-47 of GIC v3
-> > specification IHI0069D, it said,
-> > "When the PE acknowledges an SGI, a PPI, or an SPI at the CPU
-> > interface, the IRI changes the status of the interrupt to active
-> > and pending if:
-> > • It is an edge-triggered interrupt, and another edge has been
-> > detected since the interrupt was acknowledged.
-> > • It is a level-sensitive interrupt, and the level has not been
-> > deasserted since the interrupt was acknowledged."
-> > 
-> > GIC v2 specification IHI0048B.b has similar description on page
-> > 3-42 for state machine transition.
-> > 
-> > When some VFIO device, like mtty(8250 VFIO mdev emulation driver
-> > in samples/vfio-mdev) triggers a level interrupt, the status
-> > transition in LR is pending-->active-->active and pending.
-> > Then it will wait resampling to de-assert the interrupt.
-> > 
-> > Current design of lr_signals_eoi_mi() will return false if state
-> > in LR is not invalid(Inactive). It causes resampling will not
-> > happen
-> > in mtty case.
-> > 
-> > This will cause interrupt fired continuously to guest even 8250 IIR
-> > has no interrupt. When 8250's interrupt is configured in shared
-> > mode,
-> > it will pass interrupt to other drivers to handle. However, there
-> > is no other driver involved. Then, a "nobody cared" kernel
-> > complaint
-> > occurs.
-> > 
-> > / # cat /dev/ttyS0
-> > [    4.826836] random: crng init done
-> > [    6.373620] irq 41: nobody cared (try booting with the "irqpoll"
-> > option)
-> > [    6.376414] CPU: 0 PID: 1307 Comm: cat Not tainted 4.16.0-rc4 #4
-> > [    6.378927] Hardware name: linux,dummy-virt (DT)
-> > [    6.380876] Call trace:
-> > [    6.381937]  dump_backtrace+0x0/0x180
-> > [    6.383495]  show_stack+0x14/0x1c
-> > [    6.384902]  dump_stack+0x90/0xb4
-> > [    6.386312]  __report_bad_irq+0x38/0xe0
-> > [    6.387944]  note_interrupt+0x1f4/0x2b8
-> > [    6.389568]  handle_irq_event_percpu+0x54/0x7c
-> > [    6.391433]  handle_irq_event+0x44/0x74
-> > [    6.393056]  handle_fasteoi_irq+0x9c/0x154
-> > [    6.394784]  generic_handle_irq+0x24/0x38
-> > [    6.396483]  __handle_domain_irq+0x60/0xb4
-> > [    6.398207]  gic_handle_irq+0x98/0x1b0
-> > [    6.399796]  el1_irq+0xb0/0x128
-> > [    6.401138]  _raw_spin_unlock_irqrestore+0x18/0x40
-> > [    6.403149]  __setup_irq+0x41c/0x678
-> > [    6.404669]  request_threaded_irq+0xe0/0x190
-> > [    6.406474]  univ8250_setup_irq+0x208/0x234
-> > [    6.408250]  serial8250_do_startup+0x1b4/0x754
-> > [    6.410123]  serial8250_startup+0x20/0x28
-> > [    6.411826]  uart_startup.part.21+0x78/0x144
-> > [    6.413633]  uart_port_activate+0x50/0x68
-> > [    6.415328]  tty_port_open+0x84/0xd4
-> > [    6.416851]  uart_open+0x34/0x44
-> > [    6.418229]  tty_open+0xec/0x3c8
-> > [    6.419610]  chrdev_open+0xb0/0x198
-> > [    6.421093]  do_dentry_open+0x200/0x310
-> > [    6.422714]  vfs_open+0x54/0x84
-> > [    6.424054]  path_openat+0x2dc/0xf04
-> > [    6.425569]  do_filp_open+0x68/0xd8
-> > [    6.427044]  do_sys_open+0x16c/0x224
-> > [    6.428563]  SyS_openat+0x10/0x18
-> > [    6.429972]  el0_svc_naked+0x30/0x34
-> > [    6.431494] handlers:
-> > [    6.432479] [<000000000e9fb4bb>] serial8250_interrupt
-> > [    6.434597] Disabling IRQ #41
-> > 
-> > This patch changes the lr state condition in lr_signals_eoi_mi()
-> > from
-> > invalid(Inactive) to active and pending to avoid this.
-> > 
-> > I am not sure about the original design of the condition of
-> > invalid(active). So, This RFC is sent out for comments.
-> > 
-> > Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
-> > Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
-> > ---
-> >  virt/kvm/arm/vgic/vgic-v2.c | 4 ++--
-> >  virt/kvm/arm/vgic/vgic-v3.c | 4 ++--
-> >  2 files changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/virt/kvm/arm/vgic/vgic-v2.c b/virt/kvm/arm/vgic/vgic-
-> > v2.c
-> > index e9d840a75e7b..740ee9a5f551 100644
-> > --- a/virt/kvm/arm/vgic/vgic-v2.c
-> > +++ b/virt/kvm/arm/vgic/vgic-v2.c
-> > @@ -46,8 +46,8 @@ void vgic_v2_set_underflow(struct kvm_vcpu *vcpu)
-> >  
-> >  static bool lr_signals_eoi_mi(u32 lr_val)
-> >  {
-> > -	return !(lr_val & GICH_LR_STATE) && (lr_val & GICH_LR_EOI)
-> > &&
-> > -	       !(lr_val & GICH_LR_HW);
-> > +	return !((lr_val & GICH_LR_STATE) ^ GICH_LR_STATE) &&
-> > +	       (lr_val & GICH_LR_EOI) && !(lr_val & GICH_LR_HW);
-> >  }
-> >  
-> >  /*
-> > diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-
-> > v3.c
-> > index 6b329414e57a..43111bba7af9 100644
-> > --- a/virt/kvm/arm/vgic/vgic-v3.c
-> > +++ b/virt/kvm/arm/vgic/vgic-v3.c
-> > @@ -35,8 +35,8 @@ void vgic_v3_set_underflow(struct kvm_vcpu *vcpu)
-> >  
-> >  static bool lr_signals_eoi_mi(u64 lr_val)
-> >  {
-> > -	return !(lr_val & ICH_LR_STATE) && (lr_val & ICH_LR_EOI)
-> > &&
-> > -	       !(lr_val & ICH_LR_HW);
-> > +	return !((lr_val & ICH_LR_STATE) ^ ICH_LR_STATE) &&
-> > +	       (lr_val & ICH_LR_EOI) && !(lr_val & ICH_LR_HW);
-> 
-> In general don't we have this state transition
-> 
-> inactive -> pending -> pending + active (1) -> active -> inactive.
-> 
-> In that case won't we lower the virt irq level when folding the LR on
-> Pending + Active state, which is not was we want?
-> 
-> Thanks
-> 
-> Eric
+> Thanks for your reply and details. I have made an attempt to revert the PCI
+> window reservation back  into the DMA path. Could you please take a look
+> at the below changes and let me know.
+> (This is on top of HW MSI reserve patches which is now part of linux-next)
 
-In current code, in my test, when I output LR value of the mtty IRQ 41
-(hwirq = 36) in vgic_v3_fold_lr_state(). The LR's transition starts
-like following,
+Hi Robin,
 
-0-->50a0020000000024-->90a0020000000024-->d0a0020000000024
+Please take a look at the below changes if you get sometime and let me know.
+Not sure this is what you have in mind.
 
-That is inactive-->pending-->active-->pending + active.
-Then it keep running cyclic pending-->active-->pending + active.
-
-The level interrupt de-assert should happen in following code
-/* Notify fds when the guest EOI'ed a level-triggered IRQ */
-	if (lr_signals_eoi_mi(val) && vgic_valid_spi(vcpu->kvm, intid))
-		kvm_notify_acked_irq(vcpu->kvm, 0,
-				     intid - VGIC_NR_PRIVATE_IRQS);
-
-But as addressed in commit message, lr_signals_eoi_mi() will return
-false if state in LR is not invalid(inactive), so it has no chance to
-de-assert the level interrupt in my test. 
-
-Thanks.
-Shunyong.
+Thanks,
+Shameer
 
 > 
-> > 
-> >  }
-> >  
-> >  void vgic_v3_fold_lr_state(struct kvm_vcpu *vcpu)
-> > 
+> -->8--
+> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> index f05f3cf..ddcbbdb 100644
+> --- a/drivers/iommu/dma-iommu.c
+> +++ b/drivers/iommu/dma-iommu.c
+> @@ -167,40 +167,16 @@ EXPORT_SYMBOL(iommu_put_dma_cookie);
+>   * @list: Reserved region list from iommu_get_resv_regions()
+>   *
+>   * IOMMU drivers can use this to implement their .get_resv_regions callback
+> - * for general non-IOMMU-specific reservations. Currently, this covers host
+> - * bridge windows for PCI devices and GICv3 ITS region reservation on ACPI
+> - * based ARM platforms that may require HW MSI reservation.
+> + * for general non-IOMMU-specific reservations. Currently, this covers GICv3
+> + * ITS region reservation on ACPI based ARM platforms that may require HW
+> MSI
+> + * reservation.
+>   */
+>  void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list)
+>  {
+> -	struct pci_host_bridge *bridge;
+> -	struct resource_entry *window;
+> -
+> -	if (!is_of_node(dev->iommu_fwspec->iommu_fwnode) &&
+> -		iort_iommu_msi_get_resv_regions(dev, list) < 0)
+> -		return;
+> -
+> -	if (!dev_is_pci(dev))
+> -		return;
+> -
+> -	bridge = pci_find_host_bridge(to_pci_dev(dev)->bus);
+> -	resource_list_for_each_entry(window, &bridge->windows) {
+> -		struct iommu_resv_region *region;
+> -		phys_addr_t start;
+> -		size_t length;
+> -
+> -		if (resource_type(window->res) != IORESOURCE_MEM)
+> -			continue;
+> 
+> -		start = window->res->start - window->offset;
+> -		length = window->res->end - window->res->start + 1;
+> -		region = iommu_alloc_resv_region(start, length, 0,
+> -				IOMMU_RESV_RESERVED);
+> -		if (!region)
+> -			return;
+> +	if (!is_of_node(dev->iommu_fwspec->iommu_fwnode))
+> +		iort_iommu_msi_get_resv_regions(dev, list);
+> 
+> -		list_add_tail(&region->list, list);
+> -	}
+>  }
+>  EXPORT_SYMBOL(iommu_dma_get_resv_regions);
+> 
+> @@ -229,6 +205,23 @@ static int cookie_init_hw_msi_region(struct
+> iommu_dma_cookie *cookie,
+>  	return 0;
+>  }
+> 
+> +static void iova_reserve_pci_windows(struct pci_dev *dev,
+> +		struct iova_domain *iovad)
+> +{
+> +	struct pci_host_bridge *bridge = pci_find_host_bridge(dev->bus);
+> +	struct resource_entry *window;
+> +	unsigned long lo, hi;
+> +
+> +	resource_list_for_each_entry(window, &bridge->windows) {
+> +		if (resource_type(window->res) != IORESOURCE_MEM)
+> +			continue;
+> +
+> +		lo = iova_pfn(iovad, window->res->start - window->offset);
+> +		hi = iova_pfn(iovad, window->res->end - window->offset);
+> +		reserve_iova(iovad, lo, hi);
+> +	}
+> +}
+> +
+>  static int iova_reserve_iommu_regions(struct device *dev,
+>  		struct iommu_domain *domain)
+>  {
+> @@ -238,6 +231,9 @@ static int iova_reserve_iommu_regions(struct device
+> *dev,
+>  	LIST_HEAD(resv_regions);
+>  	int ret = 0;
+> 
+> +	if (dev_is_pci(dev))
+> +		iova_reserve_pci_windows(to_pci_dev(dev), iovad);
+> +
+>  	iommu_get_resv_regions(dev, &resv_regions);
+>  	list_for_each_entry(region, &resv_regions, list) {
+>  		unsigned long lo, hi;
+> 
+> 
