@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1171329-1520492704-2-2009094942775422639
+X-Cyrus-Session-Id: sloti22d1t05-1171329-1520492699-2-723769601116214624
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520492704; b=hJ8nc+b+JwO0NELwmznYzTedpL/hDPa8LHL5Rx1R/Pi+I+X
-    CtgspLAjZ7aRK/tT1y+aHjfwr9K450cITh8HWN0M6DScJLa6A3w9A0XjFSqPZBAq
-    pysThwAGb9+c4mhiXrvmiNXO09FIRpuicA1oE10MFx5esZqPuW0NW7ZxtMpl2SnL
-    yQKNrTax7fuNXggFpn4X28O10ELcpm+67AYrbrDyth7ti+RZnM0jyM34vqco6W0h
-    0D/5l0ilM7t5xF26grqXPAGp+sWx7OQyBSxEzMAslUh+pDCNznK3eJJYM8vYDNxI
-    mfVN1zKuxUPXa8/wrdPDHJLZGQ1KivxoG7f0Ikw==
+    t=1520492698; b=EQhLB+UZh+0zca0HtcLPxsLLEpSCaKYOjbzhtPuu8CiDJp1
+    jUF9Z0fFuSzSmKmngGPEsDPgRtdrymUtdHgmfjblA+/+82LgpEGjjGQY7xxRvTLT
+    aFD034UfwHXYAvRxHzWYfisI5/VD9YKe/LNFUgqxkA/dEWKXUC9uUSUUBAWy0iju
+    9wJIsQOPSO8Wsy5B1+69jvlCFyWE8HfZzHedLC0PnWyyr8kOpa1IIBvDAdJGS53m
+    NGIwrjyERvutnSka84b8w+B6Womn/xjGiy1OJD2uAmZSug9zndOpVK6CLqo2gYaD
+    xjlOdAGKYGU/hVcll+WAdSQzIXPtKBhKb4FwerQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520492704; bh=elanxn
-    A2z4eXclXOlsZNwwVeA1Tgd4RmwkZmfoqc47s=; b=XkH76SBa4TZB7WTUdSJbdv
-    1KjxwpJ+mmKpfAoGG2U0eOwajdxc9hCdlWIrRSzs/gl7pHCjpSDBufLcOpTEKFtk
-    CLEIBINtUZrxqmx7n3GzGswdQCKLIbPMfDGVRG0ApsKIDMqm9usDyR2j58rTk+A9
-    11LKJ2PIhD1TKq+zSCbrwz4vXXHOzjxxcg4ZgHYAO0WejTyMajj9ARXzLW56vsia
-    9+LpDtZL3lrmEVd2eZwqLV6HOaUN7daDJpa4UfsCVJZIFY6+TnMXX7ZFbO7s380G
-    3jeIFVc2ZOzhGdq2T0475xrN8B7ga4T1JjtiMK8qeyNuGl/FbEx+iHTimSRfHGmQ
+    :mime-version:sender:list-id; s=arctest; t=1520492698; bh=DgNuya
+    pp6pM0+pCvUX7Fn+3mo36vhmSgS2TIlMDdnRg=; b=sIWMZAAty8k6qbGbmmYGL3
+    MWH1p2yoyxm2S65yGzv8uClnV3SPNZ2sK22LJU0W1WZ/7POoyJ0AmXE9ILvk5FBo
+    ItadEb0tRh920QSbPz/5jEt8d+MsO80jrt3VLP7u+4d9S7PQZNaNL0J95VHa9OyC
+    I2Q8z1MxFb05zosPXSd+IpqnuSZ6Ot33xIwplOuqb72Eadx/ZC/oxIFJK1uaixyJ
+    tkxvHa7spDGq0cGTGFJQVIMjIlCtHcHX847ARGH9hReAj/ilpRCz6x+sV+0znbft
+    h5l3ASuup2TtGaFojNow3DYh45ez0rT2Lm2TRUHFyT1/9oSd04zs4+gXjR09oxaw
     ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Kq839Y0m x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=EbIgt9pC x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Kq839Y0m x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=EbIgt9pC x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,26 +50,28 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935058AbeCHHEH (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 02:04:07 -0500
-Received: from mail-bn3nam01on0102.outbound.protection.outlook.com ([104.47.33.102]:13054
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        id S1755331AbeCHHEJ (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 02:04:09 -0500
+Received: from mail-by2nam03on0100.outbound.protection.outlook.com ([104.47.42.100]:45128
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755300AbeCHE5F (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 7 Mar 2018 23:57:05 -0500
+        id S1755299AbeCHE5E (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 7 Mar 2018 23:57:04 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Daniel Drake <drake@endlessm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+CC: Logan Gunthorpe <logang@deltatee.com>, Jyri Sarha <jsarha@ti.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        David Airlie <airlied@linux.ie>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 33/78] mmc: avoid removing non-removable
- hosts during suspend
-Thread-Topic: [PATCH AUTOSEL for 4.15 33/78] mmc: avoid removing non-removable
- hosts during suspend
-Thread-Index: AQHTtpnK8k3o0cj9JkmN890GOvpr+w==
-Date: Thu, 8 Mar 2018 04:56:16 +0000
-Message-ID: <20180308045525.7662-33-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 32/78] drm/tilcdc: ensure nonatomic iowrite64
+ is not used
+Thread-Topic: [PATCH AUTOSEL for 4.15 32/78] drm/tilcdc: ensure nonatomic
+ iowrite64 is not used
+Thread-Index: AQHTtpnJfCxZpFiK8EWzCktX2oj7Ew==
+Date: Thu, 8 Mar 2018 04:56:15 +0000
+Message-ID: <20180308045525.7662-32-alexander.levin@microsoft.com>
 References: <20180308045525.7662-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045525.7662-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,94 +80,86 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1079;7:oB0p6FyoniI5Wj1okQmHctuUkPjZthTJZBBU9pKq5ui/vPtJraRsViIvY9Iw/VOP1//FIZAhuU8vJIDrvwdIMemZz+xF0sOQHRzeulefW1xN+toccVq8DwwDQ34Q5waoJcQ7/vxhbc0vB2BX0HyARBu/CkWLb2N8CYmtANZrXqBr9l1q//sU/Se08HOcCG4/ET+i9x3uxPdrF5GNTdmJzyIztNd8KvHECaSIzIvj3QI8NG9Aw4/nK+y4SP4UxW8f;20:iMRP6MbtkJX75tLSBmarsq8aL2I2DJC3TLjsCTg7A3eamDQAUSipchK4DNJJrSB1e84/IJJQ5T60NZMVDQDm0SmJYMvvhA6WTXIA0vPWChzvP4d+kywzOYlNowXX88BzOrrsP/NimaaPhCOcO/HLytH2nzQWLSAjIcE2hmbpkm4=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0902;7:/dKuUmapY7XxUubbs1JGYn7/mgnQpEm9V9voIkgWVG//diB2apWmfjh2dp7fTGRB47FAnVLXhn0WS//pFoEpCkwdFqS5DTWdz6qSZhj04OuB+8rXHZlbb3pAUpiQqIGMYwGShD2KOJ63/2G2MWeRWXQM+jL+xACyXdkxcETD48H1XU2T5OHYe+9zrnHjvnrjweRj/wQhgPKwt1bfm+lCuDlNn6Bfh2CvmH7YlfOdd4sr4UB92gpGtVcnmqhdd4Hx;20:Yxn9+Mnske0bYkbijAV6VdmrCaVgdJ/vbztI3/YQkhRUvpG6izlF/VqpH/3Lwx6nDNm5cLxsTQ3VPgAgg+RwjaVgFJmIV9NYayxG/BWrTY0XI6M32iAroO8vMSvrv7wIkTuwS1S6axnnz9bvzpGCpR7pVC07ptWKc7569HPTTxQ=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: a69ee051-b14c-4934-0a75-08d584b1085f
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1079;
-x-ms-traffictypediagnostic: DM5PR2101MB1079:
+x-ms-office365-filtering-correlation-id: d83c64e3-8d63-4c0c-5f8a-08d584b10814
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0902;
+x-ms-traffictypediagnostic: DM5PR2101MB0902:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1079E8CB2D2101BF16A21B52FBDF0@DM5PR2101MB1079.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(3231220)(944501244)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR2101MB1079;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1079;
+x-microsoft-antispam-prvs: <DM5PR2101MB0902F1396811A4519D09F5B9FBDF0@DM5PR2101MB0902.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(31051911155226)(89211679590171)(85827821059158)(42068640409301);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231220)(944501244)(52105095)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0902;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0902;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39860400002)(39380400002)(396003)(346002)(366004)(189003)(199004)(36756003)(107886003)(4326008)(97736004)(2906002)(2950100002)(1076002)(6666003)(105586002)(7736002)(186003)(3660700001)(5660300001)(106356001)(305945005)(6512007)(3280700002)(25786009)(14454004)(575784001)(86362001)(86612001)(81156014)(10090500001)(76176011)(26005)(99286004)(15650500001)(66066001)(102836004)(110136005)(81166006)(72206003)(54906003)(5250100002)(478600001)(59450400001)(10290500003)(6116002)(2501003)(8936002)(68736007)(53936002)(6506007)(6486002)(8676002)(6436002)(3846002)(22452003)(316002)(2900100001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1079;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: CRKg/7Rk9FR2YS8sj+RlKcJkUZAG2fh66DFgJVnFjgQwev+IA4pf9z8FYpHQxH2xoQ3kTX/y5XVZ4zJM9cAeBDBr4RPUTje7atctFLKbZ+TCJuFsPM9VKxKP+/jf3946TSp7iTvT8sA/HVBufQUeEtE1ir2TmzV9NGEth4XV7z9Od6+WCIdRgBpTnd1a5TY4arn5a/JnV2dHlaMS3M+vNP6uSxNqaWeKUkR+suUcDrHdaGO9KgFYVMbBRocTDbfGgoVtZP21XJ4d0CWH7wXErVhuodm41wOX4u39yDeqv8IRgg7ABg2eH++PXlDhRyMk3owm6LyrmgqOnx94zim6Rw==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(39380400002)(376002)(366004)(396003)(189003)(199004)(8936002)(81156014)(81166006)(7736002)(5250100002)(8676002)(99286004)(26005)(107886003)(186003)(6666003)(2950100002)(106356001)(10090500001)(575784001)(305945005)(66066001)(97736004)(2501003)(86362001)(3846002)(3660700001)(72206003)(6436002)(1076002)(6486002)(5660300001)(54906003)(110136005)(68736007)(53936002)(14454004)(36756003)(25786009)(478600001)(10290500003)(6506007)(59450400001)(2900100001)(102836004)(76176011)(6512007)(22452003)(6116002)(316002)(4326008)(105586002)(86612001)(2906002)(3280700002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0902;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: DmZN82Pv2+Q9kDKimbQloGPyCcspMLpvtW6Ds7fVjJ/H8AW5J9d0gHWB1xTxWo05kwdDjFauVoqquydPWXoDUKdTdcJ/7JNJSczI2sGM4lPvH5kMj5iC6eSCufnH+gL2ujN693qPLvZUxPfLolcZ1MT1kOkBviHVmNtkeuvy30gOgQQPeq6g2M/AC4uiZxLAwFUoYKyft4PYgGdtOcGMHHymCsC8SrxcgrXDrpVQLO6pjlFnJHPJix0F0LOgWeftOKmsAIkaqIafQFDBq/s+KqnkmIHZ6JEr6z44Hu8cRgwCDkRkuChjYqmwTqrSt7i/EsmV4oLpbLn/jH7APOVC6Q==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a69ee051-b14c-4934-0a75-08d584b1085f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:56:16.0271
+X-MS-Exchange-CrossTenant-Network-Message-Id: d83c64e3-8d63-4c0c-5f8a-08d584b10814
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:56:15.5227
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1079
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0902
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Daniel Drake <drake@endlessm.com>
+From: Logan Gunthorpe <logang@deltatee.com>
 
-[ Upstream commit de8dcc3d2c0e08e5068ee1e26fc46415c15e3637 ]
+[ Upstream commit 4e5ca2d930aa8714400aedf4bf1dc959cb04280f ]
 
-The Weibu F3C MiniPC has an onboard AP6255 module, presenting
-two SDIO functions on a single MMC host (Bluetooth/btsdio and
-WiFi/brcmfmac), and the mmc layer correctly detects this as
-non-removable.
+Add a check to ensure iowrite64 is only used if it is atomic.
 
-After suspend/resume, the wifi and bluetooth interfaces disappear
-and do not get probed again.
+It was decided in [1] that the tilcdc driver should not be using an
+atomic operation (so it was left out of this patchset). However, it turns
+out that through the drm code, a nonatomic header is actually included:
 
-The conditions here are:
+include/linux/io-64-nonatomic-lo-hi.h
+is included from include/drm/drm_os_linux.h:9:0,
+            from include/drm/drmP.h:74,
+            from include/drm/drm_modeset_helper.h:26,
+            from include/drm/drm_atomic_helper.h:33,
+            from drivers/gpu/drm/tilcdc/tilcdc_crtc.c:19:
 
- 1. During suspend, we reach mmc_pm_notify()
+And thus, without this change, this patchset would inadvertantly
+change the behaviour of the tilcdc driver.
 
- 2. mmc_pm_notify() calls mmc_sdio_pre_suspend() to see if we can
-    suspend the SDIO host. However, mmc_sdio_pre_suspend() returns
-    -ENOSYS because btsdio_driver does not have a suspend method.
+[1] lkml.kernel.org/r/CAK8P3a2HhO_zCnsTzq7hmWSz5La5Thu19FWZpun16iMnyyNreQ@m=
+ail.gmail.com
 
- 3. mmc_pm_notify() proceeds to remove the card
-
- 4. Upon resume, mmc_rescan() does nothing with this host, because of
-    the rescan_entered check which aims to only scan a non-removable
-    device a single time (i.e. during boot).
-
-Fix the loss of functionality by detecting that we are unable to
-suspend a non-removable host, so avoid the forced removal in that
-case. The comment above this function already indicates that this
-code was only intended for removable devices.
-
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jyri Sarha <jsarha@ti.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: David Airlie <airlied@linux.ie>
+Signed-off-by: Jyri Sarha <jsarha@ti.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/mmc/core/core.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/gpu/drm/tilcdc/tilcdc_regs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index 1f0f44f4dd5f..af194640dbc6 100644
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -2959,6 +2959,14 @@ static int mmc_pm_notify(struct notifier_block *noti=
-fy_block,
- 		if (!err)
- 			break;
+diff --git a/drivers/gpu/drm/tilcdc/tilcdc_regs.h b/drivers/gpu/drm/tilcdc/=
+tilcdc_regs.h
+index 9d528c0a67a4..5048ebb86835 100644
+--- a/drivers/gpu/drm/tilcdc/tilcdc_regs.h
++++ b/drivers/gpu/drm/tilcdc/tilcdc_regs.h
+@@ -133,7 +133,7 @@ static inline void tilcdc_write64(struct drm_device *de=
+v, u32 reg, u64 data)
+ 	struct tilcdc_drm_private *priv =3D dev->dev_private;
+ 	volatile void __iomem *addr =3D priv->mmio + reg;
 =20
-+		if (!mmc_card_is_removable(host)) {
-+			dev_warn(mmc_dev(host),
-+				 "pre_suspend failed for non-removable host: "
-+				 "%d\n", err);
-+			/* Avoid removing non-removable hosts */
-+			break;
-+		}
-+
- 		/* Calling bus_ops->remove() with a claimed host can deadlock */
- 		host->bus_ops->remove(host);
- 		mmc_claim_host(host);
+-#ifdef iowrite64
++#if defined(iowrite64) && !defined(iowrite64_is_nonatomic)
+ 	iowrite64(data, addr);
+ #else
+ 	__iowmb();
 --=20
 2.14.1
