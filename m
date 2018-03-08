@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1084890-1520489931-2-6894958357921928529
+X-Cyrus-Session-Id: sloti22d1t05-1086562-1520489911-2-4234240083163446516
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,62 +13,63 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520489931; b=n4n59VlM8naF30u96qqkNp2/NGVNkpAG8nEpG1an3fPisOk
-    FVfGM+mrINLEX6u3bHuFyMR/ad71MLDK/aloABAjRiL2ke4Omym7gLaS/LUXz1OF
-    tfJKOIq4p1qMbJEEoAxAQBV/7QU5td4w4VypxBufO7rQAFnYKYvJE6yM1+OSKo0k
-    u8aEk9mjsuv3tCe482uKFe3xTxLURDAcGWQ763RnetD3gglWyLqDc6oQ36BJA3k5
-    1/KUVE5c5+wHrZ3YRDNkUoKVAvdM0drd+VCW1IrDgFn9s+8znRwXZAj3cP82So7a
-    gBoSqHPYmvXgv4fSywPhjKyP+YwXFonnfVsk1ew==
+    t=1520489910; b=tuX495rtJou3jFy3seAxzGJQ6AVkNhjkDGC+clFNM1FPYtm
+    I39RDs6NnyhwVbLr4k9n2EeTx4wr+6WOOh98G0mSzsj37k9F4FFr1JCnSiI1oxGm
+    tls0dAC/uNRCDOsq2Hv/rsE4BtN4Nq2KU5XojDeQCYUzeaCwoTHX6hbkN9oLAAHb
+    xy+iAsmMSzigweN4pA2J7OO4C9VO6RGnXfnD01wd7GhsNpLtp65q+UkCad3ms5wl
+    054sJHKGsas9hWr6nZn8pDhwkfc2B8xNWQ76m3SXZ/FKPX0y5vfngGCsvsEqbzEr
+    NIMHzr2+qw4eTkHDil5WcWzmUgvrubS75aY6D8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520489931; bh=mprOHp
-    6bzgB6BF81p/UMnwzq5mxhHhHM0l8P5ZdVztA=; b=qV8y4uZOp9tSwpokyF1E2t
-    76nzrZ1IAxP9/ohVr6YIqygLnmAk+GUrGv6G7uUmhH9IGw0E5lhsn3gqjfKumU+w
-    /zQjnW+ItD26d4icMvJxehBJRlWQzpOK+LXzKKhS3o7iq2w9NgXZMhub7uM/VcHN
-    KFc9JN84lhuMoAkj19flc2o9m9/KiQ5GRqouy4tYgUUfalLcpamQRJ8jNCT8hs72
-    ciY5NfKYncFfJpExxIefxLGEyRwYLZcwlIJ/tRLd0VEad6A7I43hIkiXHXE/07xs
-    0lfrV0HVpV7g/mG0Kz/uU3SqrpK2p46ziF9czi/veVBifaTntbDS7WcStPi2+Eyg
+    :mime-version:sender:list-id; s=arctest; t=1520489910; bh=nB8Q6K
+    cl7AYWwwlks+tLVbi3xtZezPO/E83f/lHsLcw=; b=FXLSibxv9okXY82ZMe5yQ0
+    fX1h8F+8/3aAjgbKNwGiu643GHm6jaZn4latuxrcgDpXxRVHJz2eield3gplOoMd
+    dizYQ6LaQ9yepczYB+A7KBAZVFGYKRCQk34Nhn9TbwW7rFxO9yAuB0lcqJ8oxvwi
+    uC8SnqDHzR1lDU29rIVR91m2t9qLbqxfjBL+TJ30mxtfSy93HqkKoN0rSdbsdond
+    upqjhxG4wkdcbxOrwor9BKOafYV0uX83RCv68Gt6vCSnGCZYz8wd+OqOcAHCtTXj
+    H2PV82jj5cs8kmS57NdfbWYj0kb+jz3N2MURGWjtnY1IBxvw6j9H187LW200mrEw
     ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=b0mf6PDX x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=gLerC8mv x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    x-category=clean score=0 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=b0mf6PDX x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=gLerC8mv x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    x-category=clean score=0 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964869AbeCHGSg (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 01:18:36 -0500
-Received: from mail-co1nam03on0123.outbound.protection.outlook.com ([104.47.40.123]:45238
+        id S965628AbeCHFBD (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 00:01:03 -0500
+Received: from mail-co1nam03on0105.outbound.protection.outlook.com ([104.47.40.105]:45079
         "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965611AbeCHFBC (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 8 Mar 2018 00:01:02 -0500
+        id S965197AbeCHFAz (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 8 Mar 2018 00:00:55 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Mikhail Paulyshka <me@mixaill.tk>, Takashi Iwai <tiwai@suse.de>,
+CC: Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Paul Mackerras <paulus@ozlabs.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 060/190] ALSA: hda - Fix headset microphone
- detection for ASUS N551 and N751
-Thread-Topic: [PATCH AUTOSEL for 4.9 060/190] ALSA: hda - Fix headset
- microphone detection for ASUS N551 and N751
-Thread-Index: AQHTtpo2c4n7OVOiuEucBJU6B/dCRw==
-Date: Thu, 8 Mar 2018 04:59:18 +0000
-Message-ID: <20180308045810.8041-60-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 050/190] KVM: PPC: Book3S PR: Exit KVM on
+ failed mapping
+Thread-Topic: [PATCH AUTOSEL for 4.9 050/190] KVM: PPC: Book3S PR: Exit KVM on
+ failed mapping
+Thread-Index: AQHTtpozjR2c9weYrkGLabzNU8moCA==
+Date: Thu, 8 Mar 2018 04:59:13 +0000
+Message-ID: <20180308045810.8041-50-alexander.levin@microsoft.com>
 References: <20180308045810.8041-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045810.8041-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -77,27 +78,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1109;7:Fq8NJ+eBEpWBwn/TsUbvecRqMjzDztEnWa/s74/uKcnQOu5i6kn975PPQtarNJPBrHYvxgU8KMahvg5aDRO35pSeoplm/AjLjQiScDooIFyKgaswJ2Lep0U7o/9YNJdE9TdHuvLiQw3ocsE45SR/JNa/8rOj8eGw79jTnu6jYGo4CLKGFP+bpnwCbywY2kGELdXpgg5O9/kJDn6qihNYXP9Aaa+cyLNjPQNJ7pv/GKmmi9ScVuUjxKv8qIfrsg2B;20:ZX/djNgkAbBIYmu1Yf4vVh/MpPOWpf80pc+K2UxxSfGNqXqbn8G2BeNmcEzrLjxnOM2OGzj8vGp/a2Uwt1nXtO2TLidoUFP7UY9e63fHCvZcA4bVRX4JB8aRe994fSwQI996mYfOr2rI3dXRet+ZZ+3//S5TYL+THV3N8/OSrVI=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1109;20:kbCbq9DTfnhb9yJGUina+4JhI9AC3G8XrqtHAQZXlnhmJmmDkpwL3Yt/0g6kwccj14tj2otYGvxryiLpYhf34aI4Rhz3HChzQ5yF+xTlHoLiUMsbbRapwS8E0/D7CTha8E1vi7rR2A+uP3Uvp5rcbflZyrssFDDGwmFgZIjJ7Kk=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 857faa8f-a2a5-4f7c-af59-08d584b18f52
+x-ms-office365-filtering-correlation-id: f1b37c5e-be28-4d50-b0d4-08d584b18ca5
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1109;
 x-ms-traffictypediagnostic: DM5PR2101MB1109:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB11092964EB34EAEC7C1B6EE3FBDF0@DM5PR2101MB1109.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <DM5PR2101MB110941CE050DE3C0B83383E6FBDF0@DM5PR2101MB1109.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(3231220)(944501244)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB1109;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1109;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(39380400002)(39860400002)(366004)(199004)(189003)(3660700001)(5250100002)(102836004)(6436002)(2501003)(81166006)(8936002)(6486002)(81156014)(53936002)(6306002)(6512007)(8676002)(6506007)(5660300001)(86612001)(76176011)(10290500003)(86362001)(575784001)(4326008)(59450400001)(105586002)(25786009)(10090500001)(26005)(2900100001)(316002)(106356001)(97736004)(54906003)(305945005)(7736002)(186003)(36756003)(22452003)(110136005)(14454004)(966005)(72206003)(6116002)(3846002)(68736007)(3280700002)(66066001)(2906002)(2950100002)(478600001)(6666003)(99286004)(1076002)(107886003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1109;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: ZBaNrxElHsUmEvIum0fS4oTvUOZEQR0fErfsw7TseH2ZtRy9SjtX3qdp5uVPMy+4pVatRNOpDqK5bhPefzz1/PpeOPsDSxCzlIk4y1Tmh3pmwKaA/Bt5Od4VVUjuMBka+/ZJXeY/8r6aLGFYCGBC0+oRN83BWd0DNLWJB9ZlcsyU9BuSygw4YqefYjZNNhgix5IefVxRmRtuEN46IQg4VwEkTxsroehUHWPiMA14z5bnyEAz2FX5MiN4UtXIgKg9hlJBsJLxGxG1i4Bp+JBxdqqS/KziIyMX3QHUq1vJP5fgKUs7aGkG4eAo3P/ol5CDnQvNrtoGhmhxmmijqCcVKA==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(39380400002)(39860400002)(366004)(199004)(189003)(3660700001)(5250100002)(102836004)(6436002)(2501003)(81166006)(8936002)(6486002)(81156014)(53936002)(6512007)(8676002)(6506007)(5660300001)(86612001)(76176011)(10290500003)(4477795004)(86362001)(575784001)(4326008)(59450400001)(105586002)(25786009)(10090500001)(26005)(2900100001)(316002)(106356001)(97736004)(54906003)(305945005)(7736002)(186003)(36756003)(22452003)(110136005)(14454004)(72206003)(6116002)(3846002)(68736007)(3280700002)(66066001)(2906002)(2950100002)(478600001)(6666003)(99286004)(1076002)(107886003)(22906009)(32563001)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1109;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: R51fhXKKntcv6njQckbYJW8Z4pXG0tOG/hyj5+6GVOCp8VpuiUY0jO6PukMY9n53uDdhNuRp2hgWt5BVbj1Xl1TFog7+FjuL7sui0Fe3wlEgJzPrgrf/uyu9FlKziTfrZ0SIu1A99++ewk18oOxc4IYliZNlPHGe1UoKDTCGoHSaiTZZDEnfhvDaS+vxJ2qspHoeHVJfCuTJ2vApMSfl4AfRSorqfIGdYC3eoYTzYAkIsV/GsNQ7rt5M4IsbJHcIpWiGmd1igUnmscFL/3DmU0LPBiogZPfIYeaIvTdTsyNdY41ChDhO+lfT6WU0qZ5+GPM2Eq1FPEo4nWoBlZ7dQQ==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 857faa8f-a2a5-4f7c-af59-08d584b18f52
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:59:18.2818
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1b37c5e-be28-4d50-b0d4-08d584b18ca5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:59:13.7807
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -108,63 +109,74 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Mikhail Paulyshka <me@mixaill.tk>
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
 
-[ Upstream commit fc7438b1eb12b6c93d7b7a62423779eb5dfc673c ]
+[ Upstream commit bd9166ffe624000140fc6b606b256df01fc0d060 ]
 
-Headset microphone does not work out of the box on ASUS Nx51
-laptops. This patch fixes it.
+At the moment kvmppc_mmu_map_page() returns -1 if
+mmu_hash_ops.hpte_insert() fails for any reason so the page fault handler
+resumes the guest and it faults on the same address again.
 
-Patch tested on Asus N551 laptop. Asus N751 part is not tested, but
-according to [1] this laptop uses the same audiosystem.
+This adds distinction to kvmppc_mmu_map_page() to return -EIO if
+mmu_hash_ops.hpte_insert() failed for a reason other than full pteg.
+At the moment only pSeries_lpar_hpte_insert() returns -2 if
+plpar_pte_enter() failed with a code other than H_PTEG_FULL.
+Other mmu_hash_ops.hpte_insert() instances can only fail with
+-1 "full pteg".
 
-1. https://bugzilla.kernel.org/show_bug.cgi?id=3D117781
+With this change, if PR KVM fails to update HPT, it can signal
+the userspace about this instead of returning to guest and having
+the very same page fault over and over again.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=3D195437
-Signed-off-by: Mikhail Paulyshka <me@mixaill.tk>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Reviewed-by: David Gibson <david@gibson.dropbear.id.au>
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- sound/pci/hda/patch_realtek.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ arch/powerpc/kvm/book3s_64_mmu_host.c | 5 ++++-
+ arch/powerpc/kvm/book3s_pr.c          | 6 +++++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 89c166b97e81..bfdc0a7f1376 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -6761,6 +6761,7 @@ enum {
- 	ALC668_FIXUP_DELL_DISABLE_AAMIX,
- 	ALC668_FIXUP_DELL_XPS13,
- 	ALC662_FIXUP_ASUS_Nx50,
-+	ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE,
- 	ALC668_FIXUP_ASUS_Nx51,
- 	ALC891_FIXUP_HEADSET_MODE,
- 	ALC891_FIXUP_DELL_MIC_NO_PRESENCE,
-@@ -7012,14 +7013,21 @@ static const struct hda_fixup alc662_fixups[] =3D {
- 		.chained =3D true,
- 		.chain_id =3D ALC662_FIXUP_BASS_1A
- 	},
-+	[ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE] =3D {
-+		.type =3D HDA_FIXUP_FUNC,
-+		.v.func =3D alc_fixup_headset_mode_alc668,
-+		.chain_id =3D ALC662_FIXUP_BASS_CHMAP
-+	},
- 	[ALC668_FIXUP_ASUS_Nx51] =3D {
- 		.type =3D HDA_FIXUP_PINS,
- 		.v.pins =3D (const struct hda_pintbl[]) {
--			{0x1a, 0x90170151}, /* bass speaker */
-+			{ 0x19, 0x03a1913d }, /* use as headphone mic, without its own jack det=
-ect */
-+			{ 0x1a, 0x90170151 }, /* bass speaker */
-+			{ 0x1b, 0x03a1113c }, /* use as headset mic, without its own jack detec=
-t */
- 			{}
- 		},
- 		.chained =3D true,
--		.chain_id =3D ALC662_FIXUP_BASS_CHMAP,
-+		.chain_id =3D ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE,
- 	},
- 	[ALC891_FIXUP_HEADSET_MODE] =3D {
- 		.type =3D HDA_FIXUP_FUNC,
+diff --git a/arch/powerpc/kvm/book3s_64_mmu_host.c b/arch/powerpc/kvm/book3=
+s_64_mmu_host.c
+index a587e8f4fd26..4b4e927c4822 100644
+--- a/arch/powerpc/kvm/book3s_64_mmu_host.c
++++ b/arch/powerpc/kvm/book3s_64_mmu_host.c
+@@ -177,12 +177,15 @@ int kvmppc_mmu_map_page(struct kvm_vcpu *vcpu, struct=
+ kvmppc_pte *orig_pte,
+ 	ret =3D mmu_hash_ops.hpte_insert(hpteg, vpn, hpaddr, rflags, vflags,
+ 				       hpsize, hpsize, MMU_SEGSIZE_256M);
+=20
+-	if (ret < 0) {
++	if (ret =3D=3D -1) {
+ 		/* If we couldn't map a primary PTE, try a secondary */
+ 		hash =3D ~hash;
+ 		vflags ^=3D HPTE_V_SECONDARY;
+ 		attempt++;
+ 		goto map_again;
++	} else if (ret < 0) {
++		r =3D -EIO;
++		goto out_unlock;
+ 	} else {
+ 		trace_kvm_book3s_64_mmu_map(rflags, hpteg,
+ 					    vpn, hpaddr, orig_pte);
+diff --git a/arch/powerpc/kvm/book3s_pr.c b/arch/powerpc/kvm/book3s_pr.c
+index 826c541a12af..e0d88d0890aa 100644
+--- a/arch/powerpc/kvm/book3s_pr.c
++++ b/arch/powerpc/kvm/book3s_pr.c
+@@ -627,7 +627,11 @@ int kvmppc_handle_pagefault(struct kvm_run *run, struc=
+t kvm_vcpu *vcpu,
+ 			kvmppc_mmu_unmap_page(vcpu, &pte);
+ 		}
+ 		/* The guest's PTE is not mapped yet. Map on the host */
+-		kvmppc_mmu_map_page(vcpu, &pte, iswrite);
++		if (kvmppc_mmu_map_page(vcpu, &pte, iswrite) =3D=3D -EIO) {
++			/* Exit KVM if mapping failed */
++			run->exit_reason =3D KVM_EXIT_INTERNAL_ERROR;
++			return RESUME_HOST;
++		}
+ 		if (data)
+ 			vcpu->stat.sp_storage++;
+ 		else if (vcpu->arch.mmu.is_dcbz32(vcpu) &&
 --=20
 2.14.1
