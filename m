@@ -1,48 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935884AbeCHTaf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 14:30:35 -0500
-Received: from mga01.intel.com ([192.55.52.88]:37109 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932076AbeCHTac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 14:30:32 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,442,1515484800";
-   d="scan'208";a="32386422"
-Subject: Re: mm, x86, powerpc: pkey semantics for key-0 ?
-To: Ram Pai <linuxram@us.ibm.com>
-References: <1519257138-23797-1-git-send-email-linuxram@us.ibm.com>
- <1519257138-23797-4-git-send-email-linuxram@us.ibm.com>
- <2a7737cf-a5ba-c814-fdc7-45b5cdd47376@intel.com>
- <20180308182517.GO1060@ram.oc3035372033.ibm.com>
-Cc: mpe@ellerman.id.au, mingo@redhat.com, akpm@linux-foundation.org,
-        linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        benh@kernel.crashing.org, paulus@samba.org,
-        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
-        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
-        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com, corbet@lwn.net,
-        arnd@arndb.de, fweimer@redhat.com, msuchanek@suse.com,
-        Ulrich.Weigand@de.ibm.com
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <1bfaa8c0-cd9c-b590-9930-e9584dfb928d@intel.com>
-Date: Thu, 8 Mar 2018 11:30:29 -0800
+        id S1755009AbeCHTff (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 14:35:35 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36554 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752060AbeCHTfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 14:35:34 -0500
+Subject: Re: [PATCH v3 3/6] sysctl: Add flags to support min/max range
+ clamping
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>
+References: <1519926220-7453-1-git-send-email-longman@redhat.com>
+ <1519926220-7453-4-git-send-email-longman@redhat.com>
+ <20180301133117.1d4b27e327f8e51275c82489@linux-foundation.org>
+ <20180308175109.GA4449@wotan.suse.de> <20180308175747.GD4449@wotan.suse.de>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <2feea08e-7772-e0aa-af69-05cd7b281725@redhat.com>
+Date: Thu, 8 Mar 2018 14:35:32 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180308182517.GO1060@ram.oc3035372033.ibm.com>
+In-Reply-To: <20180308175747.GD4449@wotan.suse.de>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/08/2018 10:25 AM, Ram Pai wrote:
-> Is there a reason why the default key; key-0, is not allowed to be
-> explicitly associated with pages using pkey_mprotect()?
+On 03/08/2018 12:57 PM, Luis R. Rodriguez wrote:
+> On Thu, Mar 08, 2018 at 05:51:09PM +0000, Luis R. Rodriguez wrote:
+>> On Thu, Mar 01, 2018 at 01:31:17PM -0800, Andrew Morton wrote:
+>>> On Thu,  1 Mar 2018 12:43:37 -0500 Waiman Long <longman@redhat.com> wrote:
+>>>
+>>>> When minimum/maximum values are specified for a sysctl parameter in
+>>>> the ctl_table structure with proc_dointvec_minmax() handler, update
+>>>> to that parameter will fail with error if the given value is outside
+>>>> of the required range.
+>>>>
+>>>> There are use cases where it may be better to clamp the value of
+>>>> the sysctl parameter to the given range without failing the update,
+>>>> especially if the users are not aware of the actual range limits.
+>>>> Reading the value back after the update will now be a good practice
+>>>> to see if the provided value exceeds the range limits.
+>>>>
+>>>> To provide this less restrictive form of range checking, a new flags
+>>>> field is added to the ctl_table structure. The new field is a 16-bit
+>>>> value that just fits into the hole left by the 16-bit umode_t field
+>>>> without increasing the size of the structure.
+>>>>
+>>>> When the CTL_FLAGS_CLAMP_RANGE flag is set in the ctl_table entry,
+>>>> any update from the userspace will be clamped to the given range
+>>>> without error.
+>>>>
+>>>> ...
+>>>>
+>>>> --- a/include/linux/sysctl.h
+>>>> +++ b/include/linux/sysctl.h
+>>>> @@ -116,6 +116,7 @@ struct ctl_table
+>>>>  	void *data;
+>>>>  	int maxlen;
+>>>>  	umode_t mode;
+>>>> +	uint16_t flags;
+>>> It would be nice to make this have type `enum ctl_table_flags', but I
+>>> guess there's then no reliable way of forcing it to be 16-bit.
+>>>
+>>> I guess this is the best we can do...
+>>>
+>> We can add this to the enum:
+>>
+>> enum ctl_table_flags {                                                                                                                                                                       
+>>        CTL_FLAGS_CLAMP_RANGE           = BIT(0),                                                                                                                                             
+>> +	__CTL_FLAGS_CLAMP_MAX          = BIT(16),
+>> }; 
+>>
+>>
+>> Then also:
+>>
+>> #define CTL_TABLE_FLAGS_ALL	((BIT(__CTL_FLAGS_CLAMP_MAX + 1))-1)
+>>
+>> at the end of the definition, then a helper which can be used during
+>> parsing:
+>>
+>> static int check_ctl_table_flags(u16 flags)
+>> {
+>> 	if (flags & ~(CTL_TABLE_FLAGS_ALL))
+>> 		return -ERANGE;
+>> 	return 0;
+>> }
+>>
+>> Waiman please evaluate and add.
+> Also, I guess we have ... max bit used and max allowed (16) really, where one is the
+> max allowed bit field given current definitions, the other is the max flag possible
+> setting in the future. We might as well go with the smaller one, which is the current
+> max, so it can just be
+>
+> enum ctl_table_flags {
+> 	CTL_FLAGS_CLAMP_RANGE	 = BIT(0),
+> 	__CTL_FLAGS_CLAMP_MAX    = BIT(1),
+> };
+>
+>
+> #define CTL_TABLE_FLAGS_ALL	((BIT(__CTL_FLAGS_CLAMP_MAX))-1)
+>
+> That way we just check against the actual max defined, now the max allowed on
+> the entire flag setting.
+>
+>   Luis
 
-No, it's a bug if it is not permitted.  I have a vague recollection of
-knowing about this and having a patch.
+Yes, I can certainly add check to see if the flags are out of range.
+However, I would like to know your opinion of what to do when an invalid
+flag bit is set. Do we just print a warning in the ring buffer or fail
+the registration of the ctl table?
+
+Cheers,
+Longman
