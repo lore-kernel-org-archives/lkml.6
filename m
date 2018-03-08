@@ -1,28 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935741AbeCHLeT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 06:34:19 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:46293 "EHLO
+        id S965736AbeCHLem (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 06:34:42 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:45289 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751434AbeCHLeR (ORCPT
+        with ESMTP id S934653AbeCHLek (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 06:34:17 -0500
-Date: Thu, 8 Mar 2018 03:33:54 -0800
+        Thu, 8 Mar 2018 06:34:40 -0500
+Date: Thu, 8 Mar 2018 03:34:26 -0800
 From: tip-bot for Jan Kiszka <tipbot@zytor.com>
-Message-ID: <tip-63338a38db955cb4e0352c11b78732157c78d30b@git.kernel.org>
+Message-ID: <tip-690f4304104f37e473bd5e43fc5247f5cd35b225@git.kernel.org>
 Cc: linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com,
-        bhelgaas@google.com, mark.rutland@arm.com, jan.kiszka@siemens.com,
-        hpa@zytor.com, robh+dt@kernel.org, tglx@linutronix.de,
-        mingo@kernel.org, jgross@suse.com
-Reply-To: jgross@suse.com, tglx@linutronix.de, mingo@kernel.org,
-        robh+dt@kernel.org, linux-kernel@vger.kernel.org, bhelgaas@google.com,
-        andy.shevchenko@gmail.com, mark.rutland@arm.com,
-        jan.kiszka@siemens.com, hpa@zytor.com
-In-Reply-To: <dae9fe0c6e63141c28ca90492fa5712b4c33ffb5.1520408357.git.jan.kiszka@siemens.com>
-References: <dae9fe0c6e63141c28ca90492fa5712b4c33ffb5.1520408357.git.jan.kiszka@siemens.com>
+        tglx@linutronix.de, hpa@zytor.com, b.spranger@linutronix.de,
+        jan.kiszka@siemens.com, bhelgaas@google.com, mingo@kernel.org
+Reply-To: andy.shevchenko@gmail.com, linux-kernel@vger.kernel.org,
+        bhelgaas@google.com, mingo@kernel.org, jan.kiszka@siemens.com,
+        b.spranger@linutronix.de, tglx@linutronix.de, hpa@zytor.com
+In-Reply-To: <06e279b2a3e06cf6689ab3975f8ab592bba02362.1520408357.git.jan.kiszka@siemens.com>
+References: <06e279b2a3e06cf6689ab3975f8ab592bba02362.1520408357.git.jan.kiszka@siemens.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/platform] jailhouse: Provide detection for non-x86 systems
-Git-Commit-ID: 63338a38db955cb4e0352c11b78732157c78d30b
+Subject: [tip:x86/platform] PCI: Scan all functions when running over
+ Jailhouse
+Git-Commit-ID: 690f4304104f37e473bd5e43fc5247f5cd35b225
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,95 +34,118 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  63338a38db955cb4e0352c11b78732157c78d30b
-Gitweb:     https://git.kernel.org/tip/63338a38db955cb4e0352c11b78732157c78d30b
+Commit-ID:  690f4304104f37e473bd5e43fc5247f5cd35b225
+Gitweb:     https://git.kernel.org/tip/690f4304104f37e473bd5e43fc5247f5cd35b225
 Author:     Jan Kiszka <jan.kiszka@siemens.com>
-AuthorDate: Wed, 7 Mar 2018 08:39:12 +0100
+AuthorDate: Wed, 7 Mar 2018 08:39:13 +0100
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Thu, 8 Mar 2018 12:30:37 +0100
 
-jailhouse: Provide detection for non-x86 systems
+PCI: Scan all functions when running over Jailhouse
 
-Implement jailhouse_paravirt() via device tree probing on architectures
-!= x86. Will be used by the PCI core.
+Per PCIe r4.0, sec 7.5.1.1.9, multi-function devices are required to have a
+function 0.  Therefore, Linux scans for devices at function 0 (devfn
+0/8/16/...) and only scans for other functions if function 0 has its
+Multi-Function Device bit set or ARI or SR-IOV indicate there are more
+functions.
 
+The Jailhouse hypervisor may pass individual functions of a multi-function
+device to a guest without passing function 0, which means a Linux guest
+won't find them.
+
+Change Linux PCI probing so it scans all function numbers when running as a
+guest over Jailhouse.
+
+This is technically prohibited by the spec, so it is possible that PCI
+devices without the Multi-Function Device bit set may have unexpected
+behavior in response to this probe.
+
+Originally-by: Benedikt Spranger <b.spranger@linutronix.de>
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 Cc: jailhouse-dev@googlegroups.com
-Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Benedikt Spranger <b.spranger@linutronix.de>
 Cc: linux-pci@vger.kernel.org
 Cc: virtualization@lists.linux-foundation.org
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Link: https://lkml.kernel.org/r/dae9fe0c6e63141c28ca90492fa5712b4c33ffb5.1520408357.git.jan.kiszka@siemens.com
+Link: https://lkml.kernel.org/r/06e279b2a3e06cf6689ab3975f8ab592bba02362.1520408357.git.jan.kiszka@siemens.com
 
 ---
- Documentation/devicetree/bindings/jailhouse.txt |  8 ++++++++
- arch/x86/include/asm/jailhouse_para.h           |  2 +-
- include/linux/hypervisor.h                      | 17 +++++++++++++++--
- 3 files changed, 24 insertions(+), 3 deletions(-)
+ arch/x86/pci/legacy.c |  4 +++-
+ drivers/pci/probe.c   | 22 +++++++++++++++++++---
+ 2 files changed, 22 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/jailhouse.txt b/Documentation/devicetree/bindings/jailhouse.txt
-new file mode 100644
-index 000000000000..2901c25ff340
---- /dev/null
-+++ b/Documentation/devicetree/bindings/jailhouse.txt
-@@ -0,0 +1,8 @@
-+Jailhouse non-root cell device tree bindings
-+--------------------------------------------
-+
-+When running in a non-root Jailhouse cell (partition), the device tree of this
-+platform shall have a top-level "hypervisor" node with the following
-+properties:
-+
-+- compatible = "jailhouse,cell"
-diff --git a/arch/x86/include/asm/jailhouse_para.h b/arch/x86/include/asm/jailhouse_para.h
-index 875b54376689..b885a961a150 100644
---- a/arch/x86/include/asm/jailhouse_para.h
-+++ b/arch/x86/include/asm/jailhouse_para.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: GPL2.0 */
+diff --git a/arch/x86/pci/legacy.c b/arch/x86/pci/legacy.c
+index 1cb01abcb1be..dfbe6ac38830 100644
+--- a/arch/x86/pci/legacy.c
++++ b/arch/x86/pci/legacy.c
+@@ -4,6 +4,7 @@
+ #include <linux/init.h>
+ #include <linux/export.h>
+ #include <linux/pci.h>
++#include <asm/jailhouse_para.h>
+ #include <asm/pci_x86.h>
  
  /*
-- * Jailhouse paravirt_ops implementation
-+ * Jailhouse paravirt detection
-  *
-  * Copyright (c) Siemens AG, 2015-2017
-  *
-diff --git a/include/linux/hypervisor.h b/include/linux/hypervisor.h
-index b19563f9a8eb..fc08b433c856 100644
---- a/include/linux/hypervisor.h
-+++ b/include/linux/hypervisor.h
-@@ -8,15 +8,28 @@
-  */
+@@ -34,13 +35,14 @@ int __init pci_legacy_init(void)
  
- #ifdef CONFIG_X86
-+
-+#include <asm/jailhouse_para.h>
- #include <asm/x86_init.h>
-+
- static inline void hypervisor_pin_vcpu(int cpu)
+ void pcibios_scan_specific_bus(int busn)
  {
- 	x86_platform.hyper.pin_vcpu(cpu);
- }
--#else
-+
-+#else /* !CONFIG_X86 */
-+
-+#include <linux/of.h>
-+
- static inline void hypervisor_pin_vcpu(int cpu)
- {
- }
--#endif
-+
-+static inline bool jailhouse_paravirt(void)
-+{
-+	return of_find_compatible_node(NULL, NULL, "jailhouse,cell");
-+}
-+
-+#endif /* !CONFIG_X86 */
++	int stride = jailhouse_paravirt() ? 1 : 8;
+ 	int devfn;
+ 	u32 l;
  
- #endif /* __LINUX_HYPEVISOR_H */
+ 	if (pci_find_bus(0, busn))
+ 		return;
+ 
+-	for (devfn = 0; devfn < 256; devfn += 8) {
++	for (devfn = 0; devfn < 256; devfn += stride) {
+ 		if (!raw_pci_read(0, busn, devfn, PCI_VENDOR_ID, 2, &l) &&
+ 		    l != 0x0000 && l != 0xffff) {
+ 			DBG("Found device at %02x:%02x [%04x]\n", busn, devfn, l);
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index ef5377438a1e..3c365dc996e7 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -16,6 +16,7 @@
+ #include <linux/pci-aspm.h>
+ #include <linux/aer.h>
+ #include <linux/acpi.h>
++#include <linux/hypervisor.h>
+ #include <linux/irqdomain.h>
+ #include <linux/pm_runtime.h>
+ #include "pci.h"
+@@ -2518,14 +2519,29 @@ static unsigned int pci_scan_child_bus_extend(struct pci_bus *bus,
+ {
+ 	unsigned int used_buses, normal_bridges = 0, hotplug_bridges = 0;
+ 	unsigned int start = bus->busn_res.start;
+-	unsigned int devfn, cmax, max = start;
++	unsigned int devfn, fn, cmax, max = start;
+ 	struct pci_dev *dev;
++	int nr_devs;
+ 
+ 	dev_dbg(&bus->dev, "scanning bus\n");
+ 
+ 	/* Go find them, Rover! */
+-	for (devfn = 0; devfn < 0x100; devfn += 8)
+-		pci_scan_slot(bus, devfn);
++	for (devfn = 0; devfn < 256; devfn += 8) {
++		nr_devs = pci_scan_slot(bus, devfn);
++
++		/*
++		 * The Jailhouse hypervisor may pass individual functions of a
++		 * multi-function device to a guest without passing function 0.
++		 * Look for them as well.
++		 */
++		if (jailhouse_paravirt() && nr_devs == 0) {
++			for (fn = 1; fn < 8; fn++) {
++				dev = pci_scan_single_device(bus, devfn + fn);
++				if (dev)
++					dev->multifunction = 1;
++			}
++		}
++	}
+ 
+ 	/* Reserve buses for SR-IOV capability */
+ 	used_buses = pci_iov_bus_range(bus);
