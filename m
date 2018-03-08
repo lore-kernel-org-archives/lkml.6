@@ -1,49 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965134AbeCHJEt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 04:04:49 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57737 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755425AbeCHJEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 04:04:41 -0500
-Subject: Re: [PATCH v2] f2fs: add nowait aio support
-To: Hyunchul Lee <hyc.lee@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <kernel-team@lge.com>,
-        Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Hyunchul Lee <cheol.lee@lge.com>
-References: <1520493679-17778-1-git-send-email-hyc.lee@gmail.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <9dce3494-50c1-4cf8-52b9-f8e8ead2f82b@huawei.com>
-Date: Thu, 8 Mar 2018 17:04:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S965313AbeCHJFQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 04:05:16 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:41894 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755373AbeCHJFM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 04:05:12 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC/RFT][PATCH v2 2/6] sched: idle: Do not stop the tick upfront in the idle loop
+Date: Thu, 08 Mar 2018 10:05:52 +0100
+Message-ID: <2273590.04PyvAHADg@aspire.rjw.lan>
+In-Reply-To: <20180307233911.GB9367@lerouge>
+References: <2067762.1uWBf5RSRc@aspire.rjw.lan> <3346281.BDGJiv2ZOp@aspire.rjw.lan> <20180307233911.GB9367@lerouge>
 MIME-Version: 1.0
-In-Reply-To: <1520493679-17778-1-git-send-email-hyc.lee@gmail.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/3/8 15:21, Hyunchul Lee wrote:
-> From: Hyunchul Lee <cheol.lee@lge.com>
+On Thursday, March 8, 2018 12:39:12 AM CET Frederic Weisbecker wrote:
+> On Tue, Mar 06, 2018 at 10:02:15AM +0100, Rafael J. Wysocki wrote:
+> > Index: linux-pm/kernel/sched/idle.c
+> > ===================================================================
+> > --- linux-pm.orig/kernel/sched/idle.c
+> > +++ linux-pm/kernel/sched/idle.c
+> > @@ -220,13 +220,17 @@ static void do_idle(void)
+> >  	 */
+> >  
+> >  	__current_set_polling();
+> > -	tick_nohz_idle_enter();
+> > +	tick_nohz_idle_prepare();
 > 
-> This patch adds nowait aio support[1].
+> Since we leave tick_nohz_idle_exit() unchanged, can we keep tick_nohz_idle_prepare()
+> under the name tick_nohz_idle_enter() so that we stay symetric? And then make xen call
+> the two functions:
 > 
-> Return EAGAIN if any of the following checks fail for direct I/O:
->   - i_rwsem is not lockable
->   - Blocks are not allocated at the write location
-> 
-> And xfstests generic/471 is passed.
-> 
->  [1]: 6be96d "Introduce RWF_NOWAIT and FMODE_AIO_NOWAIT"
-> 
-> Signed-off-by: Hyunchul Lee <cheol.lee@lge.com>
+>     tick_nohz_idle_enter();
+>     tick_nohz_idle_go_idle();
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+No problem with that.
 
-Thanks,
+> Also can we rename tick_nohz_idle_go_idle() to tick_nohz_idle_stop_tick() ?
+> This will be more self-explanatory.
+
+But it doesn't always stop the tick which is why I chose the other name.
