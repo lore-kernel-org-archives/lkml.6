@@ -1,56 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751232AbeCHUzV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 15:55:21 -0500
-Received: from ozlabs.org ([103.22.144.67]:34123 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750857AbeCHUzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 15:55:20 -0500
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Fri, 9 Mar 2018 07:54:57 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jessica Yu <jeyu@kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the modules tree
-Message-ID: <20180309075457.5fb444d1@canb.auug.org.au>
+        id S1751102AbeCHU4B (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 15:56:01 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38782 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750896AbeCHU4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 15:56:00 -0500
+Date: Thu, 8 Mar 2018 21:55:19 +0100
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Wanpeng Li <kernellwp@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH 1/3] KVM: X86: Provides userspace with a capability to
+ not intercept MWAIT
+Message-ID: <20180308205519.GM12290@flask>
+References: <1519897782-8124-1-git-send-email-wanpengli@tencent.com>
+ <20180308203132.GJ12290@flask>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/iv3AWUYQh9ry3AgmJsSKH/j"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180308203132.GJ12290@flask>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/iv3AWUYQh9ry3AgmJsSKH/j
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+2018-03-08 21:31+0100, Radim Krčmář:
+> 2018-03-01 17:49+0800, Wanpeng Li:
+> > @@ -264,10 +262,12 @@ static inline u64 nsec_to_cycles(struct kvm_vcpu *vcpu, u64 nsec)
+> >  	    __rem;						\
+> >  	 })
+> >  
+> > -static inline bool kvm_mwait_in_guest(void)
+> > +#define KVM_X86_DISABLE_EXITS_MWAIT          (1 << 0)
+> > +#define KVM_X86_DISABLE_VALID_EXITS          (KVM_X86_DISABLE_EXITS_MWAIT)
+> > +
+> > +static inline bool kvm_mwait_in_guest(struct kvm *kvm)
+> >  {
+> > -	return boot_cpu_has(X86_FEATURE_MWAIT) &&
+> > -		!boot_cpu_has_bug(X86_BUG_MONITOR);
+> > +	return kvm->arch.mwait_in_guest;
+> 
+> With this nice variable, the wrapper actually makes the code harder to
+> read.  Please use kvm->arch.mwait_in_guest directly (and the same for
+> the other two future exits),
 
-Hi Jessica,
-
-Commit
-
-  934ccf7248dd ("module: propagate error in modules_open()")
-
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/iv3AWUYQh9ry3AgmJsSKH/j
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqhoyEACgkQAVBC80lX
-0GzcMAf/a0Kga2lq0fFUrPt/V7lqSjlGLk3jms5XJBPHZWd52HS7u+kczuo3ZA9Y
-ybZ62eAJQq3WAT12m8YzBgL11YdiFBFqNymrLbZqhEbWIs00Zdz8eDdJQhQKRN61
-kTRgAIysaa5zc93X680XUsV9+m+cdP4LtwHrzkMbW/K4SMsZo5RpG0gGhKsvR/W9
-eV1D95/hcyKHKhbjnz/AqUSLkbOmcliXL37XzBZDVgyVY7ZN2+mUa1y4Mmdy2pBm
-o/EZi3vZqCTin4P16ILVk+PxCkQfuSr444oVfJkiam47p2KwPzFfBBNeW2sWjipI
-0WT06IW1IBK6J37ewipwBK2aVjYz2A==
-=5wn+
------END PGP SIGNATURE-----
-
---Sig_/iv3AWUYQh9ry3AgmJsSKH/j--
+I take that back.  kvm->arch.mwait_in_guest looks ok, but it would be
+vmx->vcpu.kvm->arch.mwait_in_guest elsewhere and that is just too bad.
