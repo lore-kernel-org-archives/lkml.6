@@ -1,76 +1,50 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-966195-1520485220-2-2019770278635886468
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='iso-8859-1'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520485219; b=YgENhaYb0ih9EGC401lu3ug7KrFEuGzRSDY3LB/UZw8+OJV
-    mNa6oZGtb2t4CaVTCArsFox82FPSXlAwRA5YI+CqmAKnf8g3TRJ8Lr9XN02DxmCI
-    p5HwZ9l+Oo4BZVJoIDe+e9dec6BwrhlEjITqiUKAf0UiRqWiwQ+qlnlYgWsyeqKe
-    CglVvMmIBTVIiDRcJRgdC/BiZYQBYuOQOkW2TI5vRBHjLz+jtifGRANfdEsvjYqb
-    /LK1UgbZQcr9de4oK3Zlnda11It4RpntkVaEMZJUEbQ7/4f9qLdHIiBdQtx9HCsp
-    CIImRxNOLTw9LGeCt/wH56V4HDXe0UlAzadbR/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520485219; bh=uMrB+6
-    zi67e7mqjpRDXSJNaFAr5r22xyDd3qLIA2DNk=; b=YhY8ooJEbbufeJUd1qf5Cb
-    YkEiz58iRk1KzvaHCF2w/BZU/KiIT2MXqDinHURo/aJ6vCxWfZWMstvPRiFlfLhP
-    VUOrOIEkhKaEdWNnfNVU50EDzuxC+Qj5rMA51t8DGhrFhzahc39X9CBDtqSzxM2l
-    xOXABvkOeo0x9z10mJvMuFIljTJa/kuxwwH72CpBZQnphNdCgbQD6gM0uL6KnJ68
-    wz2vx6vbxPXJyjiODZI+mHbVDHtcjcjwV7+svm0V7vliALxoRy4BiSHQpvYkHAM0
-    lNwvcipIXRkchyedSTa4xRkT76tmByi4BWAwwndB8ZLRDZy3eMgwyJiIznyUYGzg
-    ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=A96OauGi x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=A96OauGi x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751419AbeCHFAQ (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 00:00:16 -0500
-Received: from mail-bn3nam01on0102.outbound.protection.outlook.com ([104.47.33.102]:44208
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751254AbeCHFAK (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 8 Mar 2018 00:00:10 -0500
+Return-Path: <Alexander.Levin@microsoft.com>
+X-Google-Smtp-Source: AG47ELu0xzSwKKU+zZBWl5gAnD2XzhebB/68JvPzBphFwpvq/nKIWO0QvqjFZpSMGREfbCIfPaiG
+ARC-Seal: i=1; a=rsa-sha256; t=1520485193; cv=none;
+        d=google.com; s=arc-20160816;
+        b=C0U3lCS7venu6YSidqioDGLP1bfe2a29xS4wQfoTRtHDgy8W/i8Z/X8sL2yenD2hRs
+         4jLIFT53xmNzY1OdY3YI6BJd9AVtt/0P2exU6wNvHi0m5riN+w1r5jqJJaRZcGy4dmwR
+         ev58GU8l1qtrX9I8ytEudGfDs3tp7kUoOchDuA/sI5F+NkNyqiKEZUk76V84kvlrxnQu
+         X0TBv+5p50SsKBKmt6f9h/2QNDq5WEYNFwSxcd2zYGWLQ6vPCYm5+BQrAR4XUTLoJ/lz
+         /TUsPRIqFgU7S8x0LMifcuWkT7KyAKWvgyInSSVLB0WX0hqJX1kEQUHObAYNOiayE+cq
+         GO7Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:cc:to
+         :from:dkim-signature:arc-authentication-results;
+        bh=UeNFVzNLnGAZT8iKZ99wlrgkFPz9MTFU/KtoJSv8POs=;
+        b=s+hf0Vm3+lS3ncPqwGNSv4EEEoStJmSNtUquZ5PPMA2xSc0sh1nNTiTkPmuEhbjZh6
+         rzVEYV8tRCL2/38FVaFrtYh4G3t5pmbM2aPKdBsddD7YxfOXNfE1YwmHRoa0azoTo9Zc
+         7q3VJ0huH+L6bxVJr70hs7ZZ+z2ShM6sXLNzJJyEtWKOhI5bZi+5CFpPQxHXB/DxbnSL
+         Tj5xO9GXPD6U8hkbNEIHQUPOwOGvqwHqZ/sIr4g1xgUKeMO5pFjpPUeZYliTh0sw/0er
+         +phXezhzmZov3yTSuFsJA+dNoXB6MfBOjN61R+9/MV8A7caJmKAO7aTeon/C0N5U3axK
+         POyQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=k/4akz5h;
+       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.40.105 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=k/4akz5h;
+       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.40.105 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>,
-        Michal Kazior <michal.kazior@tieto.com>,
-        Kalle Valo <kvalo@qca.qualcomm.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 020/190] ath10k: fix compile time sanity check
- for CE4 buffer size
-Thread-Topic: [PATCH AUTOSEL for 4.9 020/190] ath10k: fix compile time sanity
- check for CE4 buffer size
-Thread-Index: AQHTtporuVkFGkjnPUOk2ahiFFocPw==
-Date: Thu, 8 Mar 2018 04:58:58 +0000
-Message-ID: <20180308045810.8041-20-alexander.levin@microsoft.com>
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: John Stultz <john.stultz@linaro.org>, Wei Xu <xuwei5@hisilicon.com>,
+	Guodong Xu <guodong.xu@linaro.org>, Amit Pundir <amit.pundir@linaro.org>, Rob
+ Herring <robh+dt@kernel.org>, John Youn <johnyoun@synopsys.com>, Douglas
+ Anderson <dianders@chromium.org>, Chen Yu <chenyu56@huawei.com>, Felipe Balbi
+	<felipe.balbi@linux.intel.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org"
+	<linux-usb@vger.kernel.org>, Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 002/190] usb: dwc2: Make sure we disconnect
+ the gadget state
+Thread-Topic: [PATCH AUTOSEL for 4.9 002/190] usb: dwc2: Make sure we
+ disconnect the gadget state
+Thread-Index: AQHTtpokoLy+kagVSka7vFFKiMmORg==
+Date: Thu, 8 Mar 2018 04:58:47 +0000
+Message-ID: <20180308045810.8041-2-alexander.levin@microsoft.com>
 References: <20180308045810.8041-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045810.8041-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -79,68 +53,88 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0983;7:L/iyFYQ0WSfUN9Nus/QS730QDFRoII8gT+YvLD4EqlBhWEKhP0K12H5uk0rx4iOHK58XrHLq7NFshyTuIay94oWLgAkXvRuJKMnMHsnAn/Mm0bSkGH92B1ytDzZuUZFjd/fPIx5h/uqJ9FEWGP1cbjOmhMHN5X3PekXZim7OWyA2lYBVDbIMHjscM62tZwQI/0FH9IrJwjC6jWmfV6sVXd9D2P2/RMHmAI52xDaX80eC2keK7aorPI1QW6O1Eo6K;20:w0VObmrdxFgwQPRAZwfcpPb3yUhwXs4W/c8bQeZWvjnqsZ4JwKN0uP1lBWTfwH0LdNuUb/tgWkwokyios20RjrJQidsMVeRuW/d+tURqDxyDVXR3n27p2fAB91tydkqGLV9RPU1EPB2xcYaB6Ik+5Jq0kvFLC1O/jaPgnhcrIog=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0920;7:J1O5R6pBAUR2LwBXsqlDUUoFByWY/fzkPHzAZ7Lgdg09k3UyH+2Nc4DYKjp28C88ZK4EKNFOODKVqC3PUv39snvQjCa+GZUY4UNjP7ZNcd+zs0+uHxvk59HGNGKOMLRl38b799Q5y17tH6umJoFFJMuiLRv2aYFbO1LPRYuek/jh2JQx75wsSP1f7Q4eqCEwTXQH+Pv59+GtIMy28eldXYEMjugWATE8WbxLPakDatuqjFA7LPzp4/KxFlb0TAuW;20:TfsfLdx9vxIqgLIyd1KpNFhojnKN9inP2yRi9VsHTGNs/PH8JKQ8+Z9Cpu43xno9dS/jUTSZuJwA8wAm+ff60KkzGbZbYWSqyYDyxUAS0bZKAbPcYD3/cOkUubTJXnRSUx3s4uKKuJmvJXPscfyFTeo4+7zfnSJy6UAKggIx+qo=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 63ac6ea2-9617-4e51-e927-08d584b1723e
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0983;
-x-ms-traffictypediagnostic: DM5PR2101MB0983:
+x-ms-office365-filtering-correlation-id: bb0b05f5-0e91-4718-4b69-08d584b16d05
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0920;
+x-ms-traffictypediagnostic: DM5PR2101MB0920:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB09830974952380782EEFE781FBDF0@DM5PR2101MB0983.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0983;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0983;
+x-microsoft-antispam-prvs: <DM5PR2101MB0920A872FDC3375396073E52FBDF0@DM5PR2101MB0920.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055)(50582790962513)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0920;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0920;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(39860400002)(39380400002)(376002)(366004)(189003)(199004)(6512007)(22452003)(54906003)(3280700002)(186003)(316002)(6436002)(110136005)(8936002)(2900100001)(10090500001)(5660300001)(99286004)(6486002)(106356001)(86362001)(575784001)(97736004)(7736002)(107886003)(25786009)(305945005)(76176011)(36756003)(8676002)(6506007)(5250100002)(105586002)(10290500003)(102836004)(59450400001)(26005)(1076002)(53936002)(81156014)(2950100002)(14454004)(81166006)(2906002)(68736007)(478600001)(66066001)(3846002)(3660700001)(2501003)(4326008)(6116002)(86612001)(72206003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0983;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: kNic4q+DLfimsksMRSDDRCTmnwMW5G6cgGFylWX06ygL1VSN/a6T/vZRvPCZyB8Os7kl8MKoTiPHyb9LSabsRnwJ91LIsFPq8T4pW77oaaYB1v81ty6Hny1EC1IgLsKw3XoDCc2AN3qLYfgFalC/n13GpcWeVI7CUP7DY8WCEnmGB+nLelZ4z/I7GOTymJMF7Bm936EO33yhU/j7sd7TjGX7ox6kmtkGdeRbMR2kx5zAFEykZhzLYJf3Y8Dmi0o6riknkxF71jEyxWY973YhXHlHmLiaJ0vW1fhGWWyaxwP469AE7QvH2Sc3F3U9NUyt9Fy5u9I4Zp37ygOpY2x0Sg==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(39380400002)(346002)(366004)(376002)(189003)(199004)(81156014)(81166006)(5250100002)(8936002)(54906003)(2501003)(305945005)(8676002)(107886003)(110136005)(97736004)(99286004)(6436002)(36756003)(316002)(72206003)(76176011)(14454004)(6486002)(7736002)(478600001)(10290500003)(186003)(22452003)(59450400001)(68736007)(105586002)(2950100002)(106356001)(7416002)(102836004)(575784001)(26005)(6506007)(86362001)(3660700001)(5660300001)(2906002)(10090500001)(1076002)(25786009)(2900100001)(53936002)(4326008)(66066001)(6512007)(6666003)(6116002)(3280700002)(3846002)(86612001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0920;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: vRcjc97Sv/1Js7Qz5CG3OF+0V6tLrwz8XPy3N8f0b2SYOI+dIJTu1Q+Xekim8WkWrqF/ottDxsJpEjRnK69InXQijYD3JeFMNOojvp1jYAUPLJpUwPrHJXWQQspAATRl6XFXwg++S6ruLdffUN/EXn7DUtO1rPsHJzxKlgiN+O4TLYve/ojE5W0V7GdSjXZvjW2XVvKu8Vw8n5JTEYDoECXruLrnfA8aXxo4u6jirH80CpaRVWS6mAVcHHAn215FSAuY0omvU0zuTndVJ/gfQHIarkjtuySzRCoBEjFHwKAdEDRzZVIGpMORraCqbxDJ/61V7O5JveExf3VVAYFEbw==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 63ac6ea2-9617-4e51-e927-08d584b1723e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:58:58.8671
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb0b05f5-0e91-4718-4b69-08d584b16d05
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:58:47.2038
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0983
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0920
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594344282249070978?=
+X-GMAIL-MSGID: =?utf-8?q?1594344282249070978?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>
+From: John Stultz <john.stultz@linaro.org>
 
-[ Upstream commit 62ca0690cd495bb7c1414cdf0cf790c2922a1d79 ]
+[ Upstream commit dad3f793f20fbb5c0c342f0f5a0bdf69a4d76089 ]
 
-In 'ath10k_ce_alloc_pipe' the compile time sanity check to
-ensure that there is sufficient buffers in CE4 for HTT Tx
-MSDU descriptors, but this did not take into account of the
-case with 'peer flow control' enabled, fix this.
+I had seen some odd behavior with HiKey's usb-gadget interface
+that I finally seemed to have chased down. Basically every other
+time I plugged in the OTG port, the gadget interface would
+properly initialize. The other times, I'd get a big WARN_ON
+in dwc2_hsotg_init_fifo() about the fifo_map not being clear.
 
-Cc: Michal Kazior <michal.kazior@tieto.com>
-Signed-off-by: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>
-Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
+Ends up if we don't disconnect the gadget state, the fifo-map
+doesn't get cleared properly, which causes WARN_ON messages and
+also results in the device not properly being setup as a gadget
+every other time the OTG port is connected.
+
+So this patch adds a call to dwc2_hsotg_disconnect() in the
+reset path so the state is properly cleared.
+
+With it, the gadget interface initializes properly on every
+plug in.
+
+Cc: Wei Xu <xuwei5@hisilicon.com>
+Cc: Guodong Xu <guodong.xu@linaro.org>
+Cc: Amit Pundir <amit.pundir@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: John Youn <johnyoun@synopsys.com>
+Cc: Douglas Anderson <dianders@chromium.org>
+Cc: Chen Yu <chenyu56@huawei.com>
+Cc: Felipe Balbi <felipe.balbi@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org
+Acked-by: John Youn <johnyoun@synopsys.com>
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/wireless/ath/ath10k/ce.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/dwc2/hcd.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/ath/ath10k/ce.c b/drivers/net/wireless/at=
-h/ath10k/ce.c
-index 0b4d79659884..041ef3be87b9 100644
---- a/drivers/net/wireless/ath/ath10k/ce.c
-+++ b/drivers/net/wireless/ath/ath10k/ce.c
-@@ -1059,7 +1059,7 @@ int ath10k_ce_alloc_pipe(struct ath10k *ar, int ce_id=
-,
- 	 */
- 	BUILD_BUG_ON(2 * TARGET_NUM_MSDU_DESC >
- 		     (CE_HTT_H2T_MSG_SRC_NENTRIES - 1));
--	BUILD_BUG_ON(2 * TARGET_10X_NUM_MSDU_DESC >
-+	BUILD_BUG_ON(2 * TARGET_10_4_NUM_MSDU_DESC_PFC >
- 		     (CE_HTT_H2T_MSG_SRC_NENTRIES - 1));
- 	BUILD_BUG_ON(2 * TARGET_TLV_NUM_MSDU_DESC >
- 		     (CE_HTT_H2T_MSG_SRC_NENTRIES - 1));
+diff --git a/drivers/usb/dwc2/hcd.c b/drivers/usb/dwc2/hcd.c
+index df5a06578005..dfc0566bb155 100644
+--- a/drivers/usb/dwc2/hcd.c
++++ b/drivers/usb/dwc2/hcd.c
+@@ -3220,6 +3220,7 @@ static void dwc2_conn_id_status_change(struct work_st=
+ruct *work)
+ 		dwc2_core_init(hsotg, false);
+ 		dwc2_enable_global_interrupts(hsotg);
+ 		spin_lock_irqsave(&hsotg->lock, flags);
++		dwc2_hsotg_disconnect(hsotg);
+ 		dwc2_hsotg_core_init_disconnected(hsotg, false);
+ 		spin_unlock_irqrestore(&hsotg->lock, flags);
+ 		dwc2_hsotg_core_connect(hsotg);
 --=20
 2.14.1
