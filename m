@@ -1,146 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965206AbeCHLMA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 06:12:00 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5766 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755135AbeCHLKT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 06:10:19 -0500
-From: Peng Li <lipeng321@huawei.com>
-To: <davem@davemloft.net>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
-        <lipeng321@huawei.com>
-Subject: [Patch net-next 4/6] net: hns3: fix the queue id for tqp enable&&reset
-Date: Thu, 8 Mar 2018 19:41:53 +0800
-Message-ID: <1520509315-40895-5-git-send-email-lipeng321@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520509315-40895-1-git-send-email-lipeng321@huawei.com>
-References: <1520509315-40895-1-git-send-email-lipeng321@huawei.com>
+        id S1755741AbeCHLKN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 06:10:13 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:47333 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751971AbeCHLKL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 06:10:11 -0500
+Date: Thu, 8 Mar 2018 03:09:48 -0800
+From: tip-bot for Borislav Petkov <tipbot@zytor.com>
+Message-ID: <tip-9558080935e0bd744d68a7e1747a7117310623cf@git.kernel.org>
+Cc: hpa@zytor.com, linux-kernel@vger.kernel.org, luto@amacapital.net,
+        tglx@linutronix.de, torvalds@linux-foundation.org,
+        peterz@infradead.org, jpoimboe@redhat.com, mingo@kernel.org,
+        bp@suse.de
+Reply-To: bp@suse.de, peterz@infradead.org, mingo@kernel.org,
+        jpoimboe@redhat.com, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        luto@amacapital.net
+In-Reply-To: <20180306094920.16917-3-bp@alien8.de>
+References: <20180306094920.16917-3-bp@alien8.de>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cleanups] x86/fault: Do not print IP in show_fault_oops()
+Git-Commit-ID: 9558080935e0bd744d68a7e1747a7117310623cf
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.71.200.31]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Command HCLGE_OPC_CFG_COM_TQP_QUEUE should use queue id in the
-function, but command HCLGE_OPC_RESET_TQP_QUEUE should use global
-queue id.
-This patch fixes the queue id about queue enable/disable/reset.
+Commit-ID:  9558080935e0bd744d68a7e1747a7117310623cf
+Gitweb:     https://git.kernel.org/tip/9558080935e0bd744d68a7e1747a7117310623cf
+Author:     Borislav Petkov <bp@suse.de>
+AuthorDate: Tue, 6 Mar 2018 10:49:13 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 8 Mar 2018 12:04:59 +0100
 
-Signed-off-by: Peng Li <lipeng321@huawei.com>
+x86/fault: Do not print IP in show_fault_oops()
+
+... because __show_regs() already does that.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Link: https://lkml.kernel.org/r/20180306094920.16917-3-bp@alien8.de
+
 ---
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 50 +++++++++++-----------
- 1 file changed, 24 insertions(+), 26 deletions(-)
+ arch/x86/mm/fault.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 32bc6f6..39bc0e6 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -3717,20 +3717,11 @@ static int hclge_ae_start(struct hnae3_handle *handle)
- {
- 	struct hclge_vport *vport = hclge_get_vport(handle);
- 	struct hclge_dev *hdev = vport->back;
--	int i, queue_id, ret;
-+	int i, ret;
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index c88573d90f3e..93505990df10 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -699,7 +699,6 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code,
+ 		printk(KERN_CONT "paging request");
  
--	for (i = 0; i < vport->alloc_tqps; i++) {
--		/* todo clear interrupt */
--		/* ring enable */
--		queue_id = hclge_get_queue_id(handle->kinfo.tqp[i]);
--		if (queue_id < 0) {
--			dev_warn(&hdev->pdev->dev,
--				 "Get invalid queue id, ignore it\n");
--			continue;
--		}
-+	for (i = 0; i < vport->alloc_tqps; i++)
-+		hclge_tqp_enable(hdev, i, 0, true);
+ 	printk(KERN_CONT " at %px\n", (void *) address);
+-	printk(KERN_ALERT "IP: %pS\n", (void *)regs->ip);
  
--		hclge_tqp_enable(hdev, queue_id, 0, true);
--	}
- 	/* mac enable */
- 	hclge_cfg_mac_mode(hdev, true);
- 	clear_bit(HCLGE_STATE_DOWN, &hdev->state);
-@@ -3750,19 +3741,11 @@ static void hclge_ae_stop(struct hnae3_handle *handle)
- {
- 	struct hclge_vport *vport = hclge_get_vport(handle);
- 	struct hclge_dev *hdev = vport->back;
--	int i, queue_id;
-+	int i;
- 
--	for (i = 0; i < vport->alloc_tqps; i++) {
--		/* Ring disable */
--		queue_id = hclge_get_queue_id(handle->kinfo.tqp[i]);
--		if (queue_id < 0) {
--			dev_warn(&hdev->pdev->dev,
--				 "Get invalid queue id, ignore it\n");
--			continue;
--		}
-+	for (i = 0; i < vport->alloc_tqps; i++)
-+		hclge_tqp_enable(hdev, i, 0, false);
- 
--		hclge_tqp_enable(hdev, queue_id, 0, false);
--	}
- 	/* Mac disable */
- 	hclge_cfg_mac_mode(hdev, false);
- 
-@@ -4848,21 +4831,36 @@ static int hclge_get_reset_status(struct hclge_dev *hdev, u16 queue_id)
- 	return hnae_get_bit(req->ready_to_reset, HCLGE_TQP_RESET_B);
+ 	dump_pagetable(address);
  }
- 
-+static u16 hclge_covert_handle_qid_global(struct hnae3_handle *handle,
-+					  u16 queue_id)
-+{
-+	struct hnae3_queue *queue;
-+	struct hclge_tqp *tqp;
-+
-+	queue = handle->kinfo.tqp[queue_id];
-+	tqp = container_of(queue, struct hclge_tqp, q);
-+
-+	return tqp->index;
-+}
-+
- void hclge_reset_tqp(struct hnae3_handle *handle, u16 queue_id)
- {
- 	struct hclge_vport *vport = hclge_get_vport(handle);
- 	struct hclge_dev *hdev = vport->back;
- 	int reset_try_times = 0;
- 	int reset_status;
-+	u16 queue_gid;
- 	int ret;
- 
-+	queue_gid = hclge_covert_handle_qid_global(handle, queue_id);
-+
- 	ret = hclge_tqp_enable(hdev, queue_id, 0, false);
- 	if (ret) {
- 		dev_warn(&hdev->pdev->dev, "Disable tqp fail, ret = %d\n", ret);
- 		return;
- 	}
- 
--	ret = hclge_send_reset_tqp_cmd(hdev, queue_id, true);
-+	ret = hclge_send_reset_tqp_cmd(hdev, queue_gid, true);
- 	if (ret) {
- 		dev_warn(&hdev->pdev->dev,
- 			 "Send reset tqp cmd fail, ret = %d\n", ret);
-@@ -4873,7 +4871,7 @@ void hclge_reset_tqp(struct hnae3_handle *handle, u16 queue_id)
- 	while (reset_try_times++ < HCLGE_TQP_RESET_TRY_TIMES) {
- 		/* Wait for tqp hw reset */
- 		msleep(20);
--		reset_status = hclge_get_reset_status(hdev, queue_id);
-+		reset_status = hclge_get_reset_status(hdev, queue_gid);
- 		if (reset_status)
- 			break;
- 	}
-@@ -4883,7 +4881,7 @@ void hclge_reset_tqp(struct hnae3_handle *handle, u16 queue_id)
- 		return;
- 	}
- 
--	ret = hclge_send_reset_tqp_cmd(hdev, queue_id, false);
-+	ret = hclge_send_reset_tqp_cmd(hdev, queue_gid, false);
- 	if (ret) {
- 		dev_warn(&hdev->pdev->dev,
- 			 "Deassert the soft reset fail, ret = %d\n", ret);
--- 
-2.9.3
