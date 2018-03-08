@@ -1,145 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751247AbeCHVnv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 16:43:51 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:45436 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750792AbeCHVnt (ORCPT
+        id S1750898AbeCHVwS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 16:52:18 -0500
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:37867 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750713AbeCHVwR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 16:43:49 -0500
-X-Google-Smtp-Source: AG47ELtsAtvbgn+siClIrXgLt84Ro65O63ij7vzr8tFM/IBOWZEK/hu+Rvqcc+3D5l9zwoVRFNQUNg==
-Date: Fri, 9 Mar 2018 08:43:33 +1100
-From: Balbir Singh <bsingharora@gmail.com>
-To: Torsten Duwe <duwe@lst.de>
-Cc: Miroslav Benes <mbenes@suse.cz>, Michael Ellerman <mpe@ellerman.id.au>,
-        Jiri Kosina <jkosina@suse.cz>, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, live-patching@vger.kernel.org
-Subject: Re: [PATCH 2/2] ppc64le save_stack_trace_tsk_reliable (Was:
- HAVE_RELIABLE_STACKTRACE)
-Message-ID: <20180309084333.23287074@gmail.com>
-In-Reply-To: <20180227160924.GA19111@lst.de>
-References: <20171004152516.25803-1-kamalesh@linux.vnet.ibm.com>
-        <20171005124313.GA25100@lst.de>
-        <9f388c9a-8d74-865a-b113-f77322918b39@linux.vnet.ibm.com>
-        <20171017144733.GB2136@lst.de>
-        <95e6f942-88b7-0208-0eb0-2f5462aec410@linux.vnet.ibm.com>
-        <20171020120739.GA20306@lst.de>
-        <1508547548.5662.2.camel@gmail.com>
-        <39bb7180-1adf-4df6-c9ba-c6f92754767f@linux.vnet.ibm.com>
-        <20171212113912.GA1907@lst.de>
-        <alpine.LSU.2.21.1712121308440.21907@pobox.suse.cz>
-        <20180227160924.GA19111@lst.de>
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+        Thu, 8 Mar 2018 16:52:17 -0500
+X-Google-Smtp-Source: AG47ELvXmsp3pvahvlnU5mFIdCGwALoXvmIg1cNKhK/v1z1NsA1et08YseKIt9GX1V7qpjc1ae0c1MiKBljdUWSZZQM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180307170411.GI25017@tassilo.jf.intel.com>
+References: <20180306064353.31930-1-xiyou.wangcong@gmail.com>
+ <20180306170011.GD25017@tassilo.jf.intel.com> <CAM_iQpUfRMW4aGfaTdFqCRwuuLXFX69Aewg+k-aa6BMUKSrhTA@mail.gmail.com>
+ <20180306175320.GE25017@tassilo.jf.intel.com> <CAM_iQpVQs0YTckbo9F0zjPsSL+=ksVZvdcLO-QHTONcZc84eKg@mail.gmail.com>
+ <CA+Xn3kw2FZ4m1TossMT35KKJ7EsSV=ykdWKCHtjRs1oefdXWNw@mail.gmail.com> <20180307170411.GI25017@tassilo.jf.intel.com>
+From: Ilya Pronin <ipronin@twitter.com>
+Date: Thu, 8 Mar 2018 13:52:15 -0800
+Message-ID: <CA+Xn3kzwsHZU7wbgVVVGTtu-En9g8mWPTCe5q-8CPETSgMzatw@mail.gmail.com>
+Subject: Re: [PATCH] perf stat: fix cvs output format
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Feb 2018 17:09:24 +0100
-Torsten Duwe <duwe@lst.de> wrote:
+The patch merely eliminated those 2 unexpected fields. But from what I
+saw they were violating the assumption that all lines have the same
+number of fields.
 
-> On Tue, Dec 12, 2017 at 01:12:37PM +0100, Miroslav Benes wrote:
-> > 
-> > I think that this is not enough. You need to also implement 
-> > save_stack_trace_tsk_reliable() for powerpc defined as __weak in 
-> > kernel/stacktrace.c.  
-> 
-> So here is my initial proposal. I'd really like to get the successful
-> exit stricter, i.e. hit the initial stack value exactly instead of just
-> a window. Also, the check for kernel code looks clumsy IMHO. IOW:
-> Comments more than welcome!
-> 
-> Most of it is Copy&Waste, nonetheless:
+On Wed, Mar 7, 2018 at 9:04 AM, Andi Kleen <ak@linux.intel.com> wrote:
+> On Tue, Mar 06, 2018 at 12:31:03PM -0800, Ilya Pronin wrote:
+>> Speaking from the user's seat. An optional (not just empty) cgroup
+>> field is fine as long it consistently appears when requested with -G
+>> option. The problem with print_metric_csv() was that in the case of
+>> unsupported counters 2 additional empty fields in the output are
+>> completely unexpected and not documented anywhere.
+>>
+>> Andi, in the output example in your commit
+>> 92a61f6412d3a09d6462252a522fa79c9290f405 stalled-cycles-backend event
+>> has counter run time field, counter run time percentage field, empty
+>> metric value, empty metric unit, and then 2 other empty fields. Are
+>> they expected? If yes, what are they and why other events, e.g.
+>
+> No two extra empty fields are not expected. All lines should
+> have the same number of fields so that a tool that looks
+> at the first like can keep using the same number.
+>
+> But I don't think that was it what the patch fixed, or did I
+> misread it?
+>
+> -Andi
 
-:)
 
-> 
-> Signed-off-by: Torsten Duwe <duwe@suse.de>
-> 
-> 
-> diff --git a/arch/powerpc/kernel/stacktrace.c b/arch/powerpc/kernel/stacktrace.c
-> index d534ed901538..e08af49e71d0 100644
-> --- a/arch/powerpc/kernel/stacktrace.c
-> +++ b/arch/powerpc/kernel/stacktrace.c
-> @@ -13,6 +13,7 @@
->  #include <linux/export.h>
->  #include <linux/sched.h>
->  #include <linux/sched/debug.h>
-> +#include <linux/sched/task_stack.h>
->  #include <linux/stacktrace.h>
->  #include <asm/ptrace.h>
->  #include <asm/processor.h>
-> @@ -76,3 +77,58 @@ save_stack_trace_regs(struct pt_regs *regs, struct stack_trace *trace)
->  	save_context_stack(trace, regs->gpr[1], current, 0);
->  }
->  EXPORT_SYMBOL_GPL(save_stack_trace_regs);
-> +
-> +#ifdef CONFIG_HAVE_RELIABLE_STACKTRACE
-> +int
-> +save_stack_trace_tsk_reliable(struct task_struct *tsk,
-> +                              struct stack_trace *trace)
 
-Just double checking this is called under the task_rq_lock, so its safe
-to call task_stack_page() as opposed to try_get_task_stack()
-
-> +{
-> +	unsigned long sp;
-> +	unsigned long stack_page = (unsigned long)task_stack_page(tsk);
-> +	/* the last frame (unwinding first) may not yet have saved its LR onto the stack. */
-> +	int firstframe = 1;
-> +
-> +	if (tsk == current)
-> +		sp = current_stack_pointer();
-> +	else
-> +		sp = tsk->thread.ksp;
-> +
-> +	if (sp < stack_page + sizeof(struct thread_struct)
-> +	    || sp > stack_page + THREAD_SIZE - STACK_FRAME_OVERHEAD)
-> +		return 1;
-
-Some of this is already present in validate_sp(), it also validates
-irq stacks, should we just reuse that?
-
-> +	
-> +	for (;;) {
-> +		unsigned long *stack = (unsigned long *) sp;
-> +		unsigned long newsp, ip;
-> +
-> +		newsp = stack[0];
-> +		/* Stack grows downwards; unwinder may only go up */
-> +		if (newsp <= sp)
-> +			return 1;
-> +
-> +		if (newsp >= stack_page + THREAD_SIZE)
-> +			return 1; /* invalid backlink, too far up! */
-> +
-> +		/* Examine the saved LR: it must point into kernel code. */
-> +		ip = stack[STACK_FRAME_LR_SAVE];
-> +		if ( (ip & 0xEFFF000000000000) != CONFIG_KERNEL_START
-> +		     && !firstframe)
-> +			return 1;
-> +		firstframe = 0;
-> +
-> +		if (!trace->skip)
-> +			trace->entries[trace->nr_entries++] = ip;
-> +		else
-> +			trace->skip--;
-> +
-> +		if (newsp > stack_page + THREAD_SIZE - STACK_FRAME_OVERHEAD)
-> +			break; /* hit the window for last frame */
-> +
-> +		if (trace->nr_entries >= trace->max_entries)
-> +			return -E2BIG;
-> +
-> +		sp = newsp;
-> +	}
-> +	return 0;
-> +}
-> +#endif /* CONFIG_HAVE_RELIABLE_STACKTRACE */
-> 
-
-Looks good to me otherwise.
-
-Acked-by: Balbir Singh <bsingharora@gmail.com>
+-- 
+Ilya
