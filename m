@@ -1,161 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751892AbeCHXmM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 18:42:12 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33156 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751025AbeCHXl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 18:41:28 -0500
-From: Lyude Paul <lyude@redhat.com>
-To: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: Manasi Navare <manasi.d.navare@intel.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
-        <ville.syrjala@linux.intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/6] drm/i915: Move DP modeset retry work into intel_dp
-Date: Thu,  8 Mar 2018 18:41:22 -0500
-Message-Id: <20180308234122.16641-1-lyude@redhat.com>
-In-Reply-To: <20180308232421.14049-3-lyude@redhat.com>
-References: <20180308232421.14049-3-lyude@redhat.com>
+        id S1751333AbeCHXlT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 18:41:19 -0500
+Received: from mout.gmx.net ([212.227.15.19]:59351 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750857AbeCHXlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 18:41:17 -0500
+From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH 3/8] Documentation: gpio: Move introduction to driver-api
+Date: Fri,  9 Mar 2018 00:40:19 +0100
+Message-Id: <20180308234024.24145-4-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180308234024.24145-1-j.neuschaefer@gmx.net>
+References: <20180308234024.24145-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K0:TwEs7abHjTdQq9mYXNP744jhC/hLBDAHPYv1kxVTFArKYWY+i8x
+ bauym80iLZfjoMQ1m37yzsqIdi4u8JCIigLla3SW+FHrAWkBPeKJHQfS7C140pnJSszoRZG
+ PzT5lK7vl+MGQh/VoB5UxwiQy7tuSpBJYvHiCf92mPgPiZB69qsflbc7EIQejYh1zJzpYx8
+ //zOh4jkVbeCPHiI5X08Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:vCb4CZ6r7j4=:wRpNFpHkMDmA1gvVF9JEZo
+ IjB8Nt4cHgEE9Ty2Jn9zlS+4lMuhczVwt6vLECozS4gen2HBxZqRYMQZs4PLiQfDRor428VOt
+ jrL/usHBeFf6yxb73MnePl/j9uNVHz5HCD7J7ahHrWnSod5zg1zslKpZvfcTB7jr3fL/nZUNS
+ DRk1T1TTfn+yQwOvjgPcg7QmUWS51QreP/8LE/Jr14XCD2hzI3D/HXEcX4JyqIEFWlGSn+yQr
+ P6uAgYznIM91h8KmIbvnIDYPunSRbZQ63pnG6qyVwNzwEkaudDdcjb0XuzbYo0EuIjB63Y+oq
+ wfPQdFYB7N4TCAI2hGwQj0uu+S3L9HEFUq+QOrzxKIXVxEtQOfdJDMTKBQnXh+Ksq0Ad4bnbO
+ EYKhSR5fuzwfqyB6W2iNaH3jC2yK/NDuguvUNVg9C1WAhEbFg2130Cw6LCdd9cO1LXsz0wiDR
+ R4YTQqs6IzqqclRXCjbLr1+BGmpT34X3mFRdG3PURwno8vbnkDHti4Lk7YRjK2NfVXnOc/ltC
+ dv6jEPY+qdQrriyaBoqlxI18v3vyavUUdqPGNv4+/FDDIBHAXhuUrYVWmE0o79XdDUqKOjwzl
+ l48hOUUJ/eXuEkzRh83RX3Vx3fJ6QuH1GqbOW6KAXy4DrDyW0Ugk+pYp3+s++oDkNPj/hEPg3
+ i04Vbeux4e+SAv3FMU3kXc6iy3GWqpNCROQ0EpIrbYrkCLGOGjSYgaco4bsLw+8OEVfZ5ijId
+ 02uEBDBytXtqyqMcHWTNwRssfUuhAJKgoLIKyy9Tz7pnSHnh6jwQUbPmGPkizq0wI/+RMhqMR
+ q0BnMBiB2JikUt42kstYFKVO5v/hDOm19tHKC2KELhLTLwg4y8=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While having the modeset_retry_work in intel_connector makes sense with
-SST, this paradigm doesn't make a whole ton of sense when it comes to
-MST since we have to deal with multiple connectors. In most cases, it's
-more useful to just use the intel_dp struct since it indicates whether
-or not we're dealing with an MST device, along with being able to easily
-trace the intel_dp struct back to it's respective connector (if there is
-any). So, move the modeset_retry_work function out of the
-intel_connector struct and into intel_dp.
+Move gpio/intro.txt to driver-api/gpio/intro.rst and make sure it builds
+cleanly as ReST.
 
-V2:
- - Remove accidental duplicate modeset_retry_work in intel_connector
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: Manasi Navare <manasi.d.navare@intel.com>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 ---
- drivers/gpu/drm/i915/intel_display.c          | 23 +++++++++++++++++++++--
- drivers/gpu/drm/i915/intel_dp.c               | 10 ++++------
- drivers/gpu/drm/i915/intel_dp_link_training.c |  2 +-
- drivers/gpu/drm/i915/intel_drv.h              |  6 +++---
- 4 files changed, 29 insertions(+), 12 deletions(-)
+ Documentation/driver-api/gpio/index.rst                    | 7 +++++++
+ Documentation/{gpio/gpio.txt => driver-api/gpio/intro.rst} | 9 +++++++--
+ Documentation/gpio/00-INDEX                                | 2 --
+ 3 files changed, 14 insertions(+), 4 deletions(-)
+ rename Documentation/{gpio/gpio.txt => driver-api/gpio/intro.rst} (96%)
 
-diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-index f424fff477f6..85d5af4e4f5b 100644
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -15394,16 +15394,35 @@ static void intel_hpd_poll_fini(struct drm_device *dev)
- {
- 	struct intel_connector *connector;
- 	struct drm_connector_list_iter conn_iter;
-+	struct work_struct *work;
+diff --git a/Documentation/driver-api/gpio/index.rst b/Documentation/driver-api/gpio/index.rst
+index 6dd4aa647f27..db47d845f473 100644
+--- a/Documentation/driver-api/gpio/index.rst
++++ b/Documentation/driver-api/gpio/index.rst
+@@ -2,6 +2,13 @@
+ General Purpose Input/Output (GPIO)
+ ===================================
  
- 	/* Kill all the work that may have been queued by hpd. */
- 	drm_connector_list_iter_begin(dev, &conn_iter);
- 	for_each_intel_connector_iter(connector, &conn_iter) {
--		if (connector->modeset_retry_work.func)
--			cancel_work_sync(&connector->modeset_retry_work);
- 		if (connector->hdcp_shim) {
- 			cancel_delayed_work_sync(&connector->hdcp_check_work);
- 			cancel_work_sync(&connector->hdcp_prop_work);
- 		}
++Contents:
 +
-+		if (connector->base.connector_type !=
-+		    DRM_MODE_CONNECTOR_DisplayPort)
-+			continue;
++.. toctree::
++   :maxdepth: 2
 +
-+		if (connector->mst_port) {
-+			work = &connector->mst_port->modeset_retry_work;
-+		} else {
-+			struct intel_encoder *intel_encoder =
-+				connector->encoder;
-+			struct intel_dp *intel_dp;
++   intro
 +
-+			if (!intel_encoder)
-+				continue;
+ Core
+ ====
+ 
+diff --git a/Documentation/gpio/gpio.txt b/Documentation/driver-api/gpio/intro.rst
+similarity index 96%
+rename from Documentation/gpio/gpio.txt
+rename to Documentation/driver-api/gpio/intro.rst
+index cd9b356e88cd..74591489d0b5 100644
+--- a/Documentation/gpio/gpio.txt
++++ b/Documentation/driver-api/gpio/intro.rst
+@@ -1,3 +1,8 @@
++============
++Introduction
++============
 +
-+			intel_dp = enc_to_intel_dp(&intel_encoder->base);
-+			work = &intel_dp->modeset_retry_work;
-+		}
 +
-+		cancel_work_sync(work);
- 	}
- 	drm_connector_list_iter_end(&conn_iter);
- }
-diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
-index 4dd1b2287dd6..5abf0c95725a 100644
---- a/drivers/gpu/drm/i915/intel_dp.c
-+++ b/drivers/gpu/drm/i915/intel_dp.c
-@@ -6261,12 +6261,10 @@ static bool intel_edp_init_connector(struct intel_dp *intel_dp,
+ GPIO Interfaces
+ ===============
  
- static void intel_dp_modeset_retry_work_fn(struct work_struct *work)
- {
--	struct intel_connector *intel_connector;
--	struct drm_connector *connector;
-+	struct intel_dp *intel_dp = container_of(work, typeof(*intel_dp),
-+						 modeset_retry_work);
-+	struct drm_connector *connector = &intel_dp->attached_connector->base;
+@@ -9,9 +14,9 @@ Due to the history of GPIO interfaces in the kernel, there are two different
+ ways to obtain and use GPIOs:
  
--	intel_connector = container_of(work, typeof(*intel_connector),
--				       modeset_retry_work);
--	connector = &intel_connector->base;
- 	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n", connector->base.id,
- 		      connector->name);
+   - The descriptor-based interface is the preferred way to manipulate GPIOs,
+-and is described by all the files in this directory excepted gpio-legacy.txt.
++    and is described by all the files in this directory excepted gpio-legacy.txt.
+   - The legacy integer-based interface which is considered deprecated (but still
+-usable for compatibility reasons) is documented in gpio-legacy.txt.
++    usable for compatibility reasons) is documented in gpio-legacy.txt.
  
-@@ -6295,7 +6293,7 @@ intel_dp_init_connector(struct intel_digital_port *intel_dig_port,
- 	int type;
- 
- 	/* Initialize the work for modeset in case of link train failure */
--	INIT_WORK(&intel_connector->modeset_retry_work,
-+	INIT_WORK(&intel_dp->modeset_retry_work,
- 		  intel_dp_modeset_retry_work_fn);
- 
- 	if (WARN(intel_dig_port->max_lanes < 1,
-diff --git a/drivers/gpu/drm/i915/intel_dp_link_training.c b/drivers/gpu/drm/i915/intel_dp_link_training.c
-index f59b59bb0a21..2cfa58ce1f95 100644
---- a/drivers/gpu/drm/i915/intel_dp_link_training.c
-+++ b/drivers/gpu/drm/i915/intel_dp_link_training.c
-@@ -340,7 +340,7 @@ intel_dp_start_link_train(struct intel_dp *intel_dp)
- 							     intel_dp->link_rate,
- 							     intel_dp->lane_count))
- 			/* Schedule a Hotplug Uevent to userspace to start modeset */
--			schedule_work(&intel_connector->modeset_retry_work);
-+			schedule_work(&intel_dp->modeset_retry_work);
- 	} else {
- 		DRM_ERROR("[CONNECTOR:%d:%s] Link Training failed at link rate = %d, lane count = %d",
- 			  intel_connector->base.base.id,
-diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
-index 83e5ca889d9c..3f19dc80997f 100644
---- a/drivers/gpu/drm/i915/intel_drv.h
-+++ b/drivers/gpu/drm/i915/intel_drv.h
-@@ -406,9 +406,6 @@ struct intel_connector {
- 
- 	struct intel_dp *mst_port;
- 
--	/* Work struct to schedule a uevent on link train failure */
--	struct work_struct modeset_retry_work;
--
- 	const struct intel_hdcp_shim *hdcp_shim;
- 	struct mutex hdcp_mutex;
- 	uint64_t hdcp_value; /* protected by hdcp_mutex */
-@@ -1135,6 +1132,9 @@ struct intel_dp {
- 
- 	/* Displayport compliance testing */
- 	struct intel_dp_compliance compliance;
-+
-+	/* Work struct to schedule a uevent on link train failure */
-+	struct work_struct modeset_retry_work;
- };
- 
- struct intel_lspcon {
+ The remainder of this document applies to the new descriptor-based interface.
+ gpio-legacy.txt contains the same information applied to the legacy
+diff --git a/Documentation/gpio/00-INDEX b/Documentation/gpio/00-INDEX
+index 179beb234f98..52fe0fa6c964 100644
+--- a/Documentation/gpio/00-INDEX
++++ b/Documentation/gpio/00-INDEX
+@@ -1,7 +1,5 @@
+ 00-INDEX
+ 	- This file
+-gpio.txt
+-	- Introduction to GPIOs and their kernel interfaces
+ consumer.txt
+ 	- How to obtain and use GPIOs in a driver
+ driver.txt
 -- 
-2.14.3
+2.16.1
