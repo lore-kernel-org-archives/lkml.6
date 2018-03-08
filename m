@@ -1,214 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966180AbeCHLB0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 06:01:26 -0500
-Received: from foss.arm.com ([217.140.101.70]:35930 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755105AbeCHLBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 06:01:23 -0500
-Subject: =?UTF-8?B?UmU6IFvmraTpgq7ku7blj6/og73lrZjlnKjpo47pmaldIFJlOiBbUkZD?=
- =?UTF-8?Q?_PATCH]_KVM:_arm/arm64:_vgic:_change_condition_for_level_interrup?=
- =?UTF-8?Q?t_resampling?=
-To: "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>,
-        "cdall@kernel.org" <cdall@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "david.daney@cavium.com" <david.daney@cavium.com>
-References: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
- <9b3763f2-1dfa-5506-d7f2-93389647111c@redhat.com>
- <1520501495.2583.19.camel@hxt-semitech.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <9fa18b3f-61c5-eb1c-5d9f-5e872d88a6e5@arm.com>
-Date: Thu, 8 Mar 2018 11:01:16 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1755819AbeCHK7q (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 05:59:46 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6178 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755322AbeCHK7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 05:59:44 -0500
+From: John Garry <john.garry@huawei.com>
+To: <jolsa@redhat.com>, <ak@linux.intel.com>, <peterz@infradead.org>,
+        <mingo@redhat.com>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <namhyung@kernel.org>,
+        <wcohen@redhat.com>, <will.deacon@arm.com>,
+        <ganapatrao.kulkarni@cavium.com>
+CC: <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <zhangshaokun@hisilicon.com>,
+        "John Garry" <john.garry@huawei.com>
+Subject: [PATCH v3 00/11] perf events patches for improved ARM64 support
+Date: Thu, 8 Mar 2018 18:58:25 +0800
+Message-ID: <1520506716-197429-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <1520501495.2583.19.camel@hxt-semitech.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/03/18 09:31, Yang, Shunyong wrote:
-> Hi, Eric,
-> 
-> First, please let me change Christoffer's email to cdall@kernel.org. I
-> add more information about my test below, please check.
-> 
-> On Thu, 2018-03-08 at 09:57 +0100, Auger Eric wrote:
->> Hi,
->>
->> On 08/03/18 08:01, Shunyong Yang wrote:
->>>
->>> When resampling irqfds is enabled, level interrupt should be
->>> de-asserted when resampling happens. On page 4-47 of GIC v3
->>> specification IHI0069D, it said,
->>> "When the PE acknowledges an SGI, a PPI, or an SPI at the CPU
->>> interface, the IRI changes the status of the interrupt to active
->>> and pending if:
->>> • It is an edge-triggered interrupt, and another edge has been
->>> detected since the interrupt was acknowledged.
->>> • It is a level-sensitive interrupt, and the level has not been
->>> deasserted since the interrupt was acknowledged."
->>>
->>> GIC v2 specification IHI0048B.b has similar description on page
->>> 3-42 for state machine transition.
->>>
->>> When some VFIO device, like mtty(8250 VFIO mdev emulation driver
->>> in samples/vfio-mdev) triggers a level interrupt, the status
->>> transition in LR is pending-->active-->active and pending.
->>> Then it will wait resampling to de-assert the interrupt.
->>>
->>> Current design of lr_signals_eoi_mi() will return false if state
->>> in LR is not invalid(Inactive). It causes resampling will not
->>> happen
->>> in mtty case.
->>>
->>> This will cause interrupt fired continuously to guest even 8250 IIR
->>> has no interrupt. When 8250's interrupt is configured in shared
->>> mode,
->>> it will pass interrupt to other drivers to handle. However, there
->>> is no other driver involved. Then, a "nobody cared" kernel
->>> complaint
->>> occurs.
->>>
->>> / # cat /dev/ttyS0
->>> [    4.826836] random: crng init done
->>> [    6.373620] irq 41: nobody cared (try booting with the "irqpoll"
->>> option)
->>> [    6.376414] CPU: 0 PID: 1307 Comm: cat Not tainted 4.16.0-rc4 #4
->>> [    6.378927] Hardware name: linux,dummy-virt (DT)
->>> [    6.380876] Call trace:
->>> [    6.381937]  dump_backtrace+0x0/0x180
->>> [    6.383495]  show_stack+0x14/0x1c
->>> [    6.384902]  dump_stack+0x90/0xb4
->>> [    6.386312]  __report_bad_irq+0x38/0xe0
->>> [    6.387944]  note_interrupt+0x1f4/0x2b8
->>> [    6.389568]  handle_irq_event_percpu+0x54/0x7c
->>> [    6.391433]  handle_irq_event+0x44/0x74
->>> [    6.393056]  handle_fasteoi_irq+0x9c/0x154
->>> [    6.394784]  generic_handle_irq+0x24/0x38
->>> [    6.396483]  __handle_domain_irq+0x60/0xb4
->>> [    6.398207]  gic_handle_irq+0x98/0x1b0
->>> [    6.399796]  el1_irq+0xb0/0x128
->>> [    6.401138]  _raw_spin_unlock_irqrestore+0x18/0x40
->>> [    6.403149]  __setup_irq+0x41c/0x678
->>> [    6.404669]  request_threaded_irq+0xe0/0x190
->>> [    6.406474]  univ8250_setup_irq+0x208/0x234
->>> [    6.408250]  serial8250_do_startup+0x1b4/0x754
->>> [    6.410123]  serial8250_startup+0x20/0x28
->>> [    6.411826]  uart_startup.part.21+0x78/0x144
->>> [    6.413633]  uart_port_activate+0x50/0x68
->>> [    6.415328]  tty_port_open+0x84/0xd4
->>> [    6.416851]  uart_open+0x34/0x44
->>> [    6.418229]  tty_open+0xec/0x3c8
->>> [    6.419610]  chrdev_open+0xb0/0x198
->>> [    6.421093]  do_dentry_open+0x200/0x310
->>> [    6.422714]  vfs_open+0x54/0x84
->>> [    6.424054]  path_openat+0x2dc/0xf04
->>> [    6.425569]  do_filp_open+0x68/0xd8
->>> [    6.427044]  do_sys_open+0x16c/0x224
->>> [    6.428563]  SyS_openat+0x10/0x18
->>> [    6.429972]  el0_svc_naked+0x30/0x34
->>> [    6.431494] handlers:
->>> [    6.432479] [<000000000e9fb4bb>] serial8250_interrupt
->>> [    6.434597] Disabling IRQ #41
->>>
->>> This patch changes the lr state condition in lr_signals_eoi_mi()
->>> from
->>> invalid(Inactive) to active and pending to avoid this.
->>>
->>> I am not sure about the original design of the condition of
->>> invalid(active). So, This RFC is sent out for comments.
->>>
->>> Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
->>> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
->>> ---
->>>  virt/kvm/arm/vgic/vgic-v2.c | 4 ++--
->>>  virt/kvm/arm/vgic/vgic-v3.c | 4 ++--
->>>  2 files changed, 4 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/virt/kvm/arm/vgic/vgic-v2.c b/virt/kvm/arm/vgic/vgic-
->>> v2.c
->>> index e9d840a75e7b..740ee9a5f551 100644
->>> --- a/virt/kvm/arm/vgic/vgic-v2.c
->>> +++ b/virt/kvm/arm/vgic/vgic-v2.c
->>> @@ -46,8 +46,8 @@ void vgic_v2_set_underflow(struct kvm_vcpu *vcpu)
->>>  
->>>  static bool lr_signals_eoi_mi(u32 lr_val)
->>>  {
->>> -	return !(lr_val & GICH_LR_STATE) && (lr_val & GICH_LR_EOI)
->>> &&
->>> -	       !(lr_val & GICH_LR_HW);
->>> +	return !((lr_val & GICH_LR_STATE) ^ GICH_LR_STATE) &&
->>> +	       (lr_val & GICH_LR_EOI) && !(lr_val & GICH_LR_HW);
->>>  }
->>>  
->>>  /*
->>> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-
->>> v3.c
->>> index 6b329414e57a..43111bba7af9 100644
->>> --- a/virt/kvm/arm/vgic/vgic-v3.c
->>> +++ b/virt/kvm/arm/vgic/vgic-v3.c
->>> @@ -35,8 +35,8 @@ void vgic_v3_set_underflow(struct kvm_vcpu *vcpu)
->>>  
->>>  static bool lr_signals_eoi_mi(u64 lr_val)
->>>  {
->>> -	return !(lr_val & ICH_LR_STATE) && (lr_val & ICH_LR_EOI)
->>> &&
->>> -	       !(lr_val & ICH_LR_HW);
->>> +	return !((lr_val & ICH_LR_STATE) ^ ICH_LR_STATE) &&
->>> +	       (lr_val & ICH_LR_EOI) && !(lr_val & ICH_LR_HW);
->>
->> In general don't we have this state transition
->>
->> inactive -> pending -> pending + active (1) -> active -> inactive.
->>
->> In that case won't we lower the virt irq level when folding the LR on
->> Pending + Active state, which is not was we want?
->>
->> Thanks
->>
->> Eric
-> 
-> In current code, in my test, when I output LR value of the mtty IRQ 41
-> (hwirq = 36) in vgic_v3_fold_lr_state(). The LR's transition starts
-> like following,
-> 
-> 0-->50a0020000000024-->90a0020000000024-->d0a0020000000024
-> 
-> That is inactive-->pending-->active-->pending + active.
-> Then it keep running cyclic pending-->active-->pending + active.
-> 
-> The level interrupt de-assert should happen in following code
-> /* Notify fds when the guest EOI'ed a level-triggered IRQ */
-> 	if (lr_signals_eoi_mi(val) && vgic_valid_spi(vcpu->kvm, intid))
-> 		kvm_notify_acked_irq(vcpu->kvm, 0,
-> 				     intid - VGIC_NR_PRIVATE_IRQS);
-> 
-> But as addressed in commit message, lr_signals_eoi_mi() will return
-> false if state in LR is not invalid(inactive), so it has no chance to
-> de-assert the level interrupt in my test. 
+This patchset adds support for some perf events features,
+targeted at ARM64, implemented in a generic fashion.
 
-The problem is that pending+active is not an indication that the guest
-has actually EOI'd anything. In only indicates that it has been activated.
+The two main features are as follows:
+- support for arch/vendor/platform pmu events directory structure
+   - to support this, topic subdirectory support needs to be dropped
+- support for parsing standard architecture pmu events
 
-Note that there is a bit of vocabulary discrepancy between KVM and the
-ARM architecture: KVM uses "acked" where ARM uses EOI. ARM uses "ACK" or
-"Activate" for something entirely different. Maybe the confusion stems
-from this difference.
+On the back of these, the Cavium ThunderX2, ARM Cortex-A53,
+and HiSilicon hip08 JSONs are relocated/added/updated.
 
-Thanks,
+In addition, there is a patch to drop mutli-mapfile.csv support and
+also a bugfix in jevents.c for an error code value.
 
-	M.
+Note: Patch #5 will conflict with https://lkml.org/lkml/2018/3/7/183
+The simple merge resolution is:
+ 0x00000000420f5160,v1,cavium/thunderx2,core
++0x00000000430f0af0,v1,cavium/thunderx2,core
+
+Differences to v2:
+- Change standard arch event matching to use EventName
+  - update JSONs based on this
+- add review tags from Jiri Olsa
+
+Differences to v1:
+- Address coding issues from Jiri Olsa in adding arch std event
+   support (https://lkml.org/lkml/2018/2/6/501)
+- add patch to drop topic subdirectory support
+- add patch for bug fix in json_events() 
+- add review tags from Jiri Olsa
+
+Differences to RFC:
+- reworked patch for arch standard events
+	- added arch standard event keyword support
+	- use some macros to make the code more condense
+	- use <linux/list_head.h>
+- standardised some function names
+- updated README
+- for patch to support vendor subdir, add check for
+  unknown dirent type
+ -add patch to drop mutliple mapfile.csv support
+ - dealt with new cortex a53 JSONs
+
+John Garry (11):
+  perf vendor events: drop incomplete multiple mapfile support
+  perf vendor events: fix error code in json_events()
+  perf vendor events: drop support for unused topic directories
+  perf vendor events: add support for pmu events vendor subdirectory
+  perf vendor events arm64: Relocate ThunderX2 JSON to cavium
+    subdirectory
+  perf vendor events arm64: Relocate Cortex A53 JSONs to arm
+    subdirectory
+  perf vendor events: add support for arch standard events
+  perf vendor events arm64: add armv8-recommended.json
+  perf vendor events arm64: fixup ThunderX2 to use recommended events
+  perf vendor events arm64: fixup A53 to use recommended events
+  perf vendor events arm64: add HiSilicon hip08 JSON file
+
+ tools/perf/pmu-events/Build                        |   2 +
+ tools/perf/pmu-events/README                       |  15 +-
+ .../arch/arm64/arm/cortex-a53/branch.json          |  25 ++
+ .../pmu-events/arch/arm64/arm/cortex-a53/bus.json  |   8 +
+ .../arch/arm64/arm/cortex-a53/cache.json           |  27 ++
+ .../arch/arm64/arm/cortex-a53/memory.json          |  12 +
+ .../arch/arm64/arm/cortex-a53/other.json           |  28 ++
+ .../arch/arm64/arm/cortex-a53/pipeline.json        |  52 +++
+ .../pmu-events/arch/arm64/armv8-recommended.json   | 452 +++++++++++++++++++++
+ .../arch/arm64/cavium/thunderx2-imp-def.json       |  62 ---
+ .../arch/arm64/cavium/thunderx2/core-imp-def.json  |  32 ++
+ .../pmu-events/arch/arm64/cortex-a53/branch.json   |  27 --
+ .../perf/pmu-events/arch/arm64/cortex-a53/bus.json |  22 -
+ .../pmu-events/arch/arm64/cortex-a53/cache.json    |  27 --
+ .../pmu-events/arch/arm64/cortex-a53/memory.json   |  22 -
+ .../pmu-events/arch/arm64/cortex-a53/other.json    |  32 --
+ .../pmu-events/arch/arm64/cortex-a53/pipeline.json |  52 ---
+ .../arch/arm64/hisilicon/hip08/core-imp-def.json   | 122 ++++++
+ tools/perf/pmu-events/arch/arm64/mapfile.csv       |   5 +-
+ tools/perf/pmu-events/jevents.c                    | 287 ++++++++++---
+ 20 files changed, 1014 insertions(+), 297 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/branch.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/bus.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/cache.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/memory.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/other.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/pipeline.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/armv8-recommended.json
+ delete mode 100644 tools/perf/pmu-events/arch/arm64/cavium/thunderx2-imp-def.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
+ delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
+ delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
+ delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
+ delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
+ delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
+ delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
+ create mode 100644 tools/perf/pmu-events/arch/arm64/hisilicon/hip08/core-imp-def.json
+
 -- 
-Jazz is not dead. It just smells funny...
+1.9.1
