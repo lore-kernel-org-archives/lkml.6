@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966096AbeCHK7z (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 05:59:55 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:60466 "EHLO huawei.com"
+        id S965928AbeCHK7x (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 05:59:53 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:60454 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935524AbeCHK7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S934957AbeCHK7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 8 Mar 2018 05:59:49 -0500
 From: John Garry <john.garry@huawei.com>
 To: <jolsa@redhat.com>, <ak@linux.intel.com>, <peterz@infradead.org>,
@@ -15,9 +15,9 @@ To: <jolsa@redhat.com>, <ak@linux.intel.com>, <peterz@infradead.org>,
 CC: <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <zhangshaokun@hisilicon.com>,
         "John Garry" <john.garry@huawei.com>
-Subject: [PATCH v3 07/11] perf vendor events: add support for arch standard events
-Date: Thu, 8 Mar 2018 18:58:32 +0800
-Message-ID: <1520506716-197429-8-git-send-email-john.garry@huawei.com>
+Subject: [PATCH v3 10/11] perf vendor events arm64: fixup A53 to use recommended events
+Date: Thu, 8 Mar 2018 18:58:35 +0800
+Message-ID: <1520506716-197429-11-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520506716-197429-1-git-send-email-john.garry@huawei.com>
 References: <1520506716-197429-1-git-send-email-john.garry@huawei.com>
@@ -29,337 +29,293 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For some architectures (like arm), there are architecture-
-defined events. Sometimes these events may be "recommended"
-according to the architecture standard, in that the
-implementer is free ignore the "recommendation" and create
-its custom event.
+This patch fixes the ARM Cortex-A53 json to use event definition
+from the ARMv8 recommended events.
 
-This patch adds support for parsing standard events from
-arch-defined JSONs, and fixing up vendor events when they
-have implemented these events as standard.
+In addition to this change, other changes were made:
+- remove stray ','
+- remove mirrored events in memory.json and bus.json
+- fixed indentation to be consistent with other ARM
+  JSONs
 
-Support is also ensured that the vendor may implement their
-own custom events.
-
-A new step is added to the pmu events parsing to fix up the
-vendor events with the arch-standard events.
-
-The arch-defined JSONs must be placed in the arch root
-folder for preprocessing prior to tree JSON processing.
-
-In the vendor JSON, to specify that the arch event is
-supported, the keyword "ArchStdEvent" should be used,
-like this:
-[
-    {
-        "ArchStdEvent": "L1D_CACHE_WR",
-    },
-]
-
-Matching is based on the "EventName" field in the
-architecture JSON.
-
-No other JSON objects are strictly required. However,
-for other objects added, these take precedence over
-architecture defined standard events, thus supporting
-separate events which have the same event code.
-
+Cc: William Cohen <wcohen@redhat.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- tools/perf/pmu-events/Build     |   2 +
- tools/perf/pmu-events/README    |   6 ++
- tools/perf/pmu-events/jevents.c | 167 +++++++++++++++++++++++++++++++++++++++-
- 3 files changed, 172 insertions(+), 3 deletions(-)
+ .../arch/arm64/arm/cortex-a53/branch.json          | 14 +++----
+ .../pmu-events/arch/arm64/arm/cortex-a53/bus.json  | 22 ++---------
+ .../arch/arm64/arm/cortex-a53/cache.json           | 40 ++++++++++----------
+ .../arch/arm64/arm/cortex-a53/memory.json          | 14 +------
+ .../arch/arm64/arm/cortex-a53/other.json           | 44 ++++++++++------------
+ .../arch/arm64/arm/cortex-a53/pipeline.json        | 20 +++++-----
+ 6 files changed, 62 insertions(+), 92 deletions(-)
 
-diff --git a/tools/perf/pmu-events/Build b/tools/perf/pmu-events/Build
-index 999a4e8..1778391 100644
---- a/tools/perf/pmu-events/Build
-+++ b/tools/perf/pmu-events/Build
-@@ -1,10 +1,12 @@
- hostprogs := jevents
- 
- jevents-y	+= json.o jsmn.o jevents.o
-+CHOSTFLAGS_jevents.o	= -I$(srctree)/tools/include
- pmu-events-y	+= pmu-events.o
- JDIR		=  pmu-events/arch/$(SRCARCH)
- JSON		=  $(shell [ -d $(JDIR) ] &&				\
- 			find $(JDIR) -name '*.json' -o -name 'mapfile.csv')
-+
- #
- # Locate/process JSON files in pmu-events/arch/
- # directory and create tables in pmu-events.c.
-diff --git a/tools/perf/pmu-events/README b/tools/perf/pmu-events/README
-index 655286f..e62b09b 100644
---- a/tools/perf/pmu-events/README
-+++ b/tools/perf/pmu-events/README
-@@ -16,6 +16,12 @@ tree tools/perf/pmu-events/arch/foo.
- 
- 	- Directories are traversed, but all other files are ignored.
- 
-+	- To reduce JSON event duplication per architecture, platform JSONs may
-+	  use "ArchStdEvent" keyword to dereference an "Architecture standard
-+	  events", defined in architecture standard JSONs.
-+	  Architecture standard JSONs must be located in the architecture root
-+	  folder. Matching is based on the "EventName" field.
-+
- The PMU events supported by a CPU model are expected to grouped into topics
- such as Pipelining, Cache, Memory, Floating-point etc. All events for a topic
- should be placed in a separate JSON file - where the file name identifies
-diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
-index 7b9e210..9b970a0 100644
---- a/tools/perf/pmu-events/jevents.c
-+++ b/tools/perf/pmu-events/jevents.c
-@@ -44,6 +44,7 @@
- #include <sys/resource.h>		/* getrlimit */
- #include <ftw.h>
- #include <sys/stat.h>
-+#include <linux/list.h>
- #include "jsmn.h"
- #include "json.h"
- #include "jevents.h"
-@@ -350,6 +351,81 @@ static int print_events_table_entry(void *data, char *name, char *event,
- 	return 0;
- }
- 
-+struct event_struct {
-+	struct list_head list;
-+	char *name;
-+	char *event;
-+	char *desc;
-+	char *long_desc;
-+	char *pmu;
-+	char *unit;
-+	char *perpkg;
-+	char *metric_expr;
-+	char *metric_name;
-+	char *metric_group;
-+};
-+
-+#define ADD_EVENT_FIELD(field) do { if (field) {		\
-+	es->field = strdup(field);				\
-+	if (!es->field)						\
-+		goto out_free;					\
-+} } while (0)
-+
-+#define FREE_EVENT_FIELD(field) free(es->field)
-+
-+#define TRY_FIXUP_FIELD(field) do { if (es->field && !*field) {\
-+	*field = strdup(es->field);				\
-+	if (!*field)						\
-+		return -ENOMEM;					\
-+} } while (0)
-+
-+#define FOR_ALL_EVENT_STRUCT_FIELDS(op) do {			\
-+	op(name);						\
-+	op(event);						\
-+	op(desc);						\
-+	op(long_desc);						\
-+	op(pmu);						\
-+	op(unit);						\
-+	op(perpkg);						\
-+	op(metric_expr);					\
-+	op(metric_name);					\
-+	op(metric_group);					\
-+} while (0)
-+
-+static LIST_HEAD(arch_std_events);
-+
-+static void free_arch_std_events(void)
-+{
-+	struct event_struct *es, *next;
-+
-+	list_for_each_entry_safe(es, next, &arch_std_events, list) {
-+		FOR_ALL_EVENT_STRUCT_FIELDS(FREE_EVENT_FIELD);
-+		list_del(&es->list);
-+		free(es);
-+	}
-+}
-+
-+static int save_arch_std_events(void *data, char *name, char *event,
-+				char *desc, char *long_desc, char *pmu,
-+				char *unit, char *perpkg, char *metric_expr,
-+				char *metric_name, char *metric_group)
-+{
-+	struct event_struct *es;
-+	struct stat *sb = data;
-+
-+	es = malloc(sizeof(*es));
-+	if (!es)
-+		return -ENOMEM;
-+	memset(es, 0, sizeof(*es));
-+	FOR_ALL_EVENT_STRUCT_FIELDS(ADD_EVENT_FIELD);
-+	list_add_tail(&es->list, &arch_std_events);
-+	return 0;
-+out_free:
-+	FOR_ALL_EVENT_STRUCT_FIELDS(FREE_EVENT_FIELD);
-+	free(es);
-+	return -ENOMEM;
-+}
-+
- static void print_events_table_suffix(FILE *outfp)
- {
- 	fprintf(outfp, "{\n");
-@@ -391,6 +467,32 @@ static char *real_event(const char *name, char *event)
- 	return event;
- }
- 
-+static int
-+try_fixup(const char *fn, char *arch_std, char **event, char **desc,
-+	  char **name, char **long_desc, char **pmu, char **filter,
-+	  char **perpkg, char **unit, char **metric_expr, char **metric_name,
-+	  char **metric_group, unsigned long long eventcode)
-+{
-+	/* try to find matching event from arch standard values */
-+	struct event_struct *es;
-+
-+	list_for_each_entry(es, &arch_std_events, list) {
-+		if (!strcmp(arch_std, es->name)) {
-+			if (!eventcode && es->event) {
-+				/* allow EventCode to be overridden */
-+				free(*event);
-+				*event = NULL;
-+			}
-+			FOR_ALL_EVENT_STRUCT_FIELDS(TRY_FIXUP_FIELD);
-+			return 0;
-+		}
-+	}
-+
-+	pr_err("%s: could not find matching %s for %s\n",
-+					prog, arch_std, fn);
-+	return -1;
-+}
-+
- /* Call func with each event in the json file */
- int json_events(const char *fn,
- 	  int (*func)(void *data, char *name, char *event, char *desc,
-@@ -426,6 +528,7 @@ int json_events(const char *fn,
- 		char *metric_expr = NULL;
- 		char *metric_name = NULL;
- 		char *metric_group = NULL;
-+		char *arch_std = NULL;
- 		unsigned long long eventcode = 0;
- 		struct msrmap *msr = NULL;
- 		jsmntok_t *msrval = NULL;
-@@ -511,6 +614,10 @@ int json_events(const char *fn,
- 				addfield(map, &metric_expr, "", "", val);
- 				for (s = metric_expr; *s; s++)
- 					*s = tolower(*s);
-+			} else if (json_streq(map, field, "ArchStdEvent")) {
-+				addfield(map, &arch_std, "", "", val);
-+				for (s = arch_std; *s; s++)
-+					*s = tolower(*s);
- 			}
- 			/* ignore unknown fields */
- 		}
-@@ -535,8 +642,21 @@ int json_events(const char *fn,
- 		if (name)
- 			fixname(name);
- 
-+		if (arch_std) {
-+			/*
-+			 * An arch standard event is referenced, so try to
-+			 * fixup any unassigned values.
-+			 */
-+			err = try_fixup(fn, arch_std, &event, &desc, &name,
-+					&long_desc, &pmu, &filter, &perpkg,
-+					&unit, &metric_expr, &metric_name,
-+					&metric_group, eventcode);
-+			if (err)
-+				goto free_strings;
-+		}
- 		err = func(data, name, real_event(name, event), desc, long_desc,
- 			   pmu, unit, perpkg, metric_expr, metric_name, metric_group);
-+free_strings:
- 		free(event);
- 		free(desc);
- 		free(name);
-@@ -549,6 +669,8 @@ int json_events(const char *fn,
- 		free(metric_expr);
- 		free(metric_name);
- 		free(metric_group);
-+		free(arch_std);
-+
- 		if (err)
- 			break;
- 		tok += j;
-@@ -773,6 +895,32 @@ static int is_leaf_dir(const char *fpath)
- 	return res;
- }
- 
-+static int is_json_file(const char *name)
-+{
-+	const char *suffix;
-+
-+	if (strlen(name) < 5)
-+		return 0;
-+
-+	suffix = name + strlen(name) - 5;
-+
-+	if (strncmp(suffix, ".json", 5) == 0)
-+		return 1;
-+	return 0;
-+}
-+
-+static int preprocess_arch_std_files(const char *fpath, const struct stat *sb,
-+				int typeflag, struct FTW *ftwbuf)
-+{
-+	int level = ftwbuf->level;
-+	int is_file = typeflag == FTW_F;
-+
-+	if (level == 1 && is_file && is_json_file(fpath))
-+		return json_events(fpath, save_arch_std_events, (void *)sb);
-+
-+	return 0;
-+}
-+
- static int process_one_file(const char *fpath, const struct stat *sb,
- 			    int typeflag, struct FTW *ftwbuf)
- {
-@@ -850,9 +998,7 @@ static int process_one_file(const char *fpath, const struct stat *sb,
- 	 * ignore it. It could be a readme.txt for instance.
- 	 */
- 	if (is_file) {
--		char *suffix = bname + strlen(bname) - 5;
--
--		if (strncmp(suffix, ".json", 5)) {
-+		if (!is_json_file(bname)) {
- 			pr_info("%s: Ignoring file without .json suffix %s\n", prog,
- 				fpath);
- 			return 0;
-@@ -958,12 +1104,26 @@ int main(int argc, char *argv[])
- 
- 	maxfds = get_maxfds();
- 	mapfile = NULL;
-+	rc = nftw(ldirname, preprocess_arch_std_files, maxfds, 0);
-+	if (rc && verbose) {
-+		pr_info("%s: Error preprocessing arch standard files %s\n",
-+			prog, ldirname);
-+		goto empty_map;
-+	} else if (rc < 0) {
-+		/* Make build fail */
-+		free_arch_std_events();
-+		return 1;
-+	} else if (rc) {
-+		goto empty_map;
-+	}
-+
- 	rc = nftw(ldirname, process_one_file, maxfds, 0);
- 	if (rc && verbose) {
- 		pr_info("%s: Error walking file tree %s\n", prog, ldirname);
- 		goto empty_map;
- 	} else if (rc < 0) {
- 		/* Make build fail */
-+		free_arch_std_events();
- 		return 1;
- 	} else if (rc) {
- 		goto empty_map;
-@@ -988,5 +1148,6 @@ int main(int argc, char *argv[])
- empty_map:
- 	fclose(eventsfp);
- 	create_empty_mapping(output_file);
-+	free_arch_std_events();
- 	return 0;
- }
+diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/branch.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/branch.json
+index 3b62087..0b0e6b2 100644
+--- a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/branch.json
++++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/branch.json
+@@ -1,25 +1,23 @@
+ [
+-  {,
+-    "EventCode": "0x7A",
+-    "EventName": "BR_INDIRECT_SPEC",
+-    "BriefDescription": "Branch speculatively executed - Indirect branch"
++  {
++    "ArchStdEvent":  "BR_INDIRECT_SPEC",
+   },
+-  {,
++  {
+     "EventCode": "0xC9",
+     "EventName": "BR_COND",
+     "BriefDescription": "Conditional branch executed"
+   },
+-  {,
++  {
+     "EventCode": "0xCA",
+     "EventName": "BR_INDIRECT_MISPRED",
+     "BriefDescription": "Indirect branch mispredicted"
+   },
+-  {,
++  {
+     "EventCode": "0xCB",
+     "EventName": "BR_INDIRECT_MISPRED_ADDR",
+     "BriefDescription": "Indirect branch mispredicted because of address miscompare"
+   },
+-  {,
++  {
+     "EventCode": "0xCC",
+     "EventName": "BR_COND_MISPRED",
+     "BriefDescription": "Conditional branch mispredicted"
+diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/bus.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/bus.json
+index 480d9f7..ce33b25 100644
+--- a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/bus.json
++++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/bus.json
+@@ -1,22 +1,8 @@
+ [
+-  {,
+-    "EventCode": "0x60",
+-    "EventName": "BUS_ACCESS_LD",
+-    "BriefDescription": "Bus access - Read"
++  {
++        "ArchStdEvent": "BUS_ACCESS_RD",
+   },
+-  {,
+-    "EventCode": "0x61",
+-    "EventName": "BUS_ACCESS_ST",
+-    "BriefDescription": "Bus access - Write"
+-  },
+-  {,
+-    "EventCode": "0xC0",
+-    "EventName": "EXT_MEM_REQ",
+-    "BriefDescription": "External memory request"
+-  },
+-  {,
+-    "EventCode": "0xC1",
+-    "EventName": "EXT_MEM_REQ_NC",
+-    "BriefDescription": "Non-cacheable external memory request"
++  {
++        "ArchStdEvent": "BUS_ACCESS_WR",
+   }
+ ]
+diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/cache.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/cache.json
+index 11baad6..5dfbec4 100644
+--- a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/cache.json
++++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/cache.json
+@@ -1,27 +1,27 @@
+ [
+-  {,
+-    "EventCode": "0xC2",
+-    "EventName": "PREFETCH_LINEFILL",
+-    "BriefDescription": "Linefill because of prefetch"
++  {
++        "EventCode": "0xC2",
++        "EventName": "PREFETCH_LINEFILL",
++        "BriefDescription": "Linefill because of prefetch"
+   },
+-  {,
+-    "EventCode": "0xC3",
+-    "EventName": "PREFETCH_LINEFILL_DROP",
+-    "BriefDescription": "Instruction Cache Throttle occurred"
++  {
++        "EventCode": "0xC3",
++        "EventName": "PREFETCH_LINEFILL_DROP",
++        "BriefDescription": "Instruction Cache Throttle occurred"
+   },
+-  {,
+-    "EventCode": "0xC4",
+-    "EventName": "READ_ALLOC_ENTER",
+-    "BriefDescription": "Entering read allocate mode"
++  {
++        "EventCode": "0xC4",
++        "EventName": "READ_ALLOC_ENTER",
++        "BriefDescription": "Entering read allocate mode"
+   },
+-  {,
+-    "EventCode": "0xC5",
+-    "EventName": "READ_ALLOC",
+-    "BriefDescription": "Read allocate mode"
++  {
++        "EventCode": "0xC5",
++        "EventName": "READ_ALLOC",
++        "BriefDescription": "Read allocate mode"
+   },
+-  {,
+-    "EventCode": "0xC8",
+-    "EventName": "EXT_SNOOP",
+-    "BriefDescription": "SCU Snooped data from another CPU for this CPU"
++  {
++        "EventCode": "0xC8",
++        "EventName": "EXT_SNOOP",
++        "BriefDescription": "SCU Snooped data from another CPU for this CPU"
+   }
+ ]
+diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/memory.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/memory.json
+index 480d9f7..25ae642 100644
+--- a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/memory.json
++++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/memory.json
+@@ -1,20 +1,10 @@
+ [
+-  {,
+-    "EventCode": "0x60",
+-    "EventName": "BUS_ACCESS_LD",
+-    "BriefDescription": "Bus access - Read"
+-  },
+-  {,
+-    "EventCode": "0x61",
+-    "EventName": "BUS_ACCESS_ST",
+-    "BriefDescription": "Bus access - Write"
+-  },
+-  {,
++  {
+     "EventCode": "0xC0",
+     "EventName": "EXT_MEM_REQ",
+     "BriefDescription": "External memory request"
+   },
+-  {,
++  {
+     "EventCode": "0xC1",
+     "EventName": "EXT_MEM_REQ_NC",
+     "BriefDescription": "Non-cacheable external memory request"
+diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/other.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/other.json
+index 73a2240..6cc6cbd 100644
+--- a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/other.json
++++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/other.json
+@@ -1,32 +1,28 @@
+ [
+-  {,
+-    "EventCode": "0x86",
+-    "EventName": "EXC_IRQ",
+-    "BriefDescription": "Exception taken, IRQ"
++  {
++        "ArchStdEvent": "EXC_IRQ",
+   },
+-  {,
+-    "EventCode": "0x87",
+-    "EventName": "EXC_FIQ",
+-    "BriefDescription": "Exception taken, FIQ"
++  {
++        "ArchStdEvent": "EXC_FIQ",
+   },
+-  {,
+-    "EventCode": "0xC6",
+-    "EventName": "PRE_DECODE_ERR",
+-    "BriefDescription": "Pre-decode error"
++  {
++        "EventCode": "0xC6",
++        "EventName": "PRE_DECODE_ERR",
++        "BriefDescription": "Pre-decode error"
+   },
+-  {,
+-    "EventCode": "0xD0",
+-    "EventName": "L1I_CACHE_ERR",
+-    "BriefDescription": "L1 Instruction Cache (data or tag) memory error"
++  {
++        "EventCode": "0xD0",
++        "EventName": "L1I_CACHE_ERR",
++        "BriefDescription": "L1 Instruction Cache (data or tag) memory error"
+   },
+-  {,
+-    "EventCode": "0xD1",
+-    "EventName": "L1D_CACHE_ERR",
+-    "BriefDescription": "L1 Data Cache (data, tag or dirty) memory error, correctable or non-correctable"
++  {
++        "EventCode": "0xD1",
++        "EventName": "L1D_CACHE_ERR",
++        "BriefDescription": "L1 Data Cache (data, tag or dirty) memory error, correctable or non-correctable"
+   },
+-  {,
+-    "EventCode": "0xD2",
+-    "EventName": "TLB_ERR",
+-    "BriefDescription": "TLB memory error"
++  {
++        "EventCode": "0xD2",
++        "EventName": "TLB_ERR",
++        "BriefDescription": "TLB memory error"
+   }
+ ]
+diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/pipeline.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/pipeline.json
+index 3149fb9..f45a6b5 100644
+--- a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/pipeline.json
++++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/pipeline.json
+@@ -1,50 +1,50 @@
+ [
+-  {,
++  {
+     "EventCode": "0xC7",
+     "EventName": "STALL_SB_FULL",
+     "BriefDescription": "Data Write operation that stalls the pipeline because the store buffer is full"
+   },
+-  {,
++  {
+     "EventCode": "0xE0",
+     "EventName": "OTHER_IQ_DEP_STALL",
+     "BriefDescription": "Cycles that the DPU IQ is empty and that is not because of a recent micro-TLB miss, instruction cache miss or pre-decode error"
+   },
+-  {,
++  {
+     "EventCode": "0xE1",
+     "EventName": "IC_DEP_STALL",
+     "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction cache miss being processed"
+   },
+-  {,
++  {
+     "EventCode": "0xE2",
+     "EventName": "IUTLB_DEP_STALL",
+     "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction micro-TLB miss being processed"
+   },
+-  {,
++  {
+     "EventCode": "0xE3",
+     "EventName": "DECODE_DEP_STALL",
+     "BriefDescription": "Cycles the DPU IQ is empty and there is a pre-decode error being processed"
+   },
+-  {,
++  {
+     "EventCode": "0xE4",
+     "EventName": "OTHER_INTERLOCK_STALL",
+     "BriefDescription": "Cycles there is an interlock other than  Advanced SIMD/Floating-point instructions or load/store instruction"
+   },
+-  {,
++  {
+     "EventCode": "0xE5",
+     "EventName": "AGU_DEP_STALL",
+     "BriefDescription": "Cycles there is an interlock for a load/store instruction waiting for data to calculate the address in the AGU"
+   },
+-  {,
++  {
+     "EventCode": "0xE6",
+     "EventName": "SIMD_DEP_STALL",
+     "BriefDescription": "Cycles there is an interlock for an Advanced SIMD/Floating-point operation."
+   },
+-  {,
++  {
+     "EventCode": "0xE7",
+     "EventName": "LD_DEP_STALL",
+     "BriefDescription": "Cycles there is a stall in the Wr stage because of a load miss"
+   },
+-  {,
++  {
+     "EventCode": "0xE8",
+     "EventName": "ST_DEP_STALL",
+     "BriefDescription": "Cycles there is a stall in the Wr stage because of a store"
 -- 
 1.9.1
