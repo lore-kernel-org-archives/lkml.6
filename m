@@ -1,316 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966810AbeCHFWW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 00:22:22 -0500
-Received: from mga11.intel.com ([192.55.52.93]:54974 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966445AbeCHFWS (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 00:22:18 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,439,1515484800";
-   d="scan'208";a="36405964"
-Subject: Re: [PATCH v2] perf annotate: Support to display the IPC/Cycle in tui
- mode
-To: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc: Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com
-References: <1519724327-7773-1-git-send-email-yao.jin@linux.intel.com>
-From: "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <13267feb-fb71-cb7e-26c8-9285d256a332@linux.intel.com>
-Date: Thu, 8 Mar 2018 13:22:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1519724327-7773-1-git-send-email-yao.jin@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S966799AbeCHFXe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 00:23:34 -0500
+Received: from mx0a-00272701.pphosted.com ([67.231.145.144]:52580 "EHLO
+        mx0a-00272701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S966464AbeCHFXO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 00:23:14 -0500
+From: "French, Nicholas A." <naf@ou.edu>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>
+CC: "hans.verkuil@cisco.com" <hans.verkuil@cisco.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Subject: Re: ivtv: use arch_phys_wc_add() and require PAT disabled
+Thread-Topic: ivtv: use arch_phys_wc_add() and require PAT disabled
+Thread-Index: AQHTsXBOQGvUe478EUWv+ObGTFYl4qO7oBEAgAgWYqaAAXQ9gIAAhKi/gAATUYCAAAJIgIAADbrR
+Date: Thu, 8 Mar 2018 05:23:09 +0000
+Message-ID: <DM5PR03MB3035CCBF9718D7E42B35357FD3DF0@DM5PR03MB3035.namprd03.prod.outlook.com>
+References: <DM5PR03MB3035EE1AFCEE298AFB15AC46D3C60@DM5PR03MB3035.namprd03.prod.outlook.com>
+ <20180301171936.GU14069@wotan.suse.de>
+ <DM5PR03MB303587F12D7E56B951730A76D3D90@DM5PR03MB3035.namprd03.prod.outlook.com>
+ <20180307190205.GA14069@wotan.suse.de>
+ <DM5PR03MB30352350D588A81D2D02BE93D3DF0@DM5PR03MB3035.namprd03.prod.outlook.com>
+ <20180308040601.GQ14069@wotan.suse.de>,<20180308041411.GR14069@wotan.suse.de>
+In-Reply-To: <20180308041411.GR14069@wotan.suse.de>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [70.185.212.125]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR03MB2940;7:LWSEYzvrtgmEqX0Gu1dD1DenXVRR2JZtPt/C72n82f8AgGxrkckOk35y/GXZLmeX/nxomFbdZ7Ut5cAGlY+s94JkeS+IGRsOCbs22Rn7rAwOndpaTFZVaq3zyutLrCNv1qE+0UKBJ56m/X/17ForjowPybbSoQI4TDq1B8ThUwNwFXhLKuuKbPpdLQBXOZTHVOh9U6iHUg+juXYmVpaWoY54XhOw0M0gcjnXzzn1mt0QHUVXFA4U4Z5xkSZOQPXC;20:ny6mUx7Mo376JSI03Hf52nGcuXSfs/DunooTRgUA/BzLSRaGbMNMhNA8hxaiN9oQhvtK/6We/cr/GyANTKFDRjsMHjHF0a5oFebD+v0NGeBW3GrDlU8/YbnwXjK4rXz2evMM6/opGLj8Szgq69739L37cqa1NwA4A/eFqXZIXAY=
+x-ms-office365-filtering-correlation-id: 28aad507-a663-4f5d-ebf3-08d584b4ae60
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989060)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(8990040)(2017052603328)(7153060)(7193020);SRVR:DM5PR03MB2940;
+x-ms-traffictypediagnostic: DM5PR03MB2940:
+x-microsoft-antispam-prvs: <DM5PR03MB29400E7F42F3DB90D0C8869AD3DF0@DM5PR03MB2940.namprd03.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(17755550239193);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231220)(944501244)(52105095)(6041288)(20161123560045)(20161123562045)(201703131423095)(201702281529075)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR03MB2940;BCL:0;PCL:0;RULEID:;SRVR:DM5PR03MB2940;
+x-forefront-prvs: 060503E79B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(366004)(39860400002)(376002)(396003)(346002)(199004)(189003)(3280700002)(33656002)(4326008)(68736007)(7696005)(86362001)(2900100001)(966005)(5660300001)(76176011)(7736002)(305945005)(110136005)(54906003)(316002)(2950100002)(478600001)(88552002)(3660700001)(229853002)(14454004)(74316002)(2906002)(3846002)(6116002)(75432002)(97736004)(102836004)(26005)(25786009)(106356001)(66066001)(93886005)(186003)(99286004)(6506007)(55016002)(59450400001)(53936002)(786003)(9686003)(8936002)(6306002)(6436002)(8676002)(81156014)(81166006)(5250100002)(105586002)(6246003);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR03MB2940;H:DM5PR03MB3035.namprd03.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: zUTLhzChocjx/3AtI5OB6ntQHUW8njIJydZYjgTmUAjXiWH8ZbLqKIdjfxbsLWpFObrWcZD4CYGKxfcwPEFgPUd5zUBSdLNBA0EP88IOlvEYp0Zp5p04mEsekQ+VwcdQ0AUmIWrriElOgdif6o0BZB63t+pHKU29Sfn6SKG/KVNIxrI/PeZCzU6wIzMjiY94LwTeP52w2TZ/LqZ3NabjV238/ZvgaWa9nftyx6o5cvkrYtcYqGUnblUKMnr7OpiqYcCIrCQRr65P/L+051r5y3QwxHLXNhJEcbE/PBSlI1ceqP7yTW0eDId9V5sBD/Sw5jx+LQYqF0HDmiOW+gZ9Rw==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+X-OriginatorOrg: ou.edu
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28aad507-a663-4f5d-ebf3-08d584b4ae60
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 05:23:09.6266
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 9c7de09d-9034-44c1-b462-c464fece204a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB2940
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-08_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1711220000 definitions=main-1803080067
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w285NfEn010944
 
-Hi,
+On Thu, Mar 08, 2018 at 04:14:11AM +0000, Luis R. Rodriguez wrote:
+> On Thu, Mar 08, 2018 at 04:06:01AM +0000, Luis R. Rodriguez wrote:
+>  > On Thu, Mar 08, 2018 at 03:16:29AM +0000, French, Nicholas A. wrote:
+> > > 
+>  > > Ah, I see. So my proposed ioremap_wc call was only "working" by aliasing the
+>  > > ioremap_nocache()'d mem area and not actually using write combining at all.
+>  > 
+>  > There are some debugging PAT toys out there I think but I haven't played with
+>  > them yet or I forgot how to to confirm or deny this sort of effort, but
+>  > likeley.
+> 
+>  In fact come to think of it I believe some neurons are telling me that if
+>  two type does not match we'd get an error?
 
-Could this patch be accepted?
+I based my guess on some text i read in "PATting Linux" [1]:
+"ioremap interfaces will succeed if there is an existing,
+more lenient mapping. Example: If there is an existing
+uncached mapping to a physical range, any request for
+write-back or write-combine mapping will succeed, but
+will eventually map the memory as uncached"
 
-I'm working on the supporting for stdio mode. I just wish to post the 
-patch series after this patch being merged.
+But I will try to get some debugpat going to confirm.
 
-Thanks
-Jin Yao
+[1] = https://www.kernel.org/doc/ols/2008/ols2008v2-pages-135-144.pdf
 
-On 2/27/2018 5:38 PM, Jin Yao wrote:
-> Unlike the perf report interactive annotate mode, the perf annotate
-> doesn't display the IPC/Cycle even if branch info is recorded in perf
-> data file.
+> > So unless there is a io-re-remap to change the caching status of a subset of
+> > the decoder's memory once we find out what the framebuffer offset is inside
+> > the original iremap_nocache'd area, then its a no go for write combining to
+> > the framebuffer with PAT.
 > 
-> perf record -b ...
-> perf annotate function
-> 
-> It should show IPC/cycle, but it doesn't.
-> 
-> This patch lets perf annotate support the displaying of IPC/Cycle if
-> branch info is in perf data.
-> 
-> For example,
-> 
-> perf annotate compute_flag
-> 
-> Percent│ IPC Cycle
->         │
->         │
->         │                Disassembly of section .text:
->         │
->         │                0000000000400640 <compute_flag>:
->         │                compute_flag():
->         │                volatile int count;
->         │                static unsigned int s_randseed;
->         │
->         │                __attribute__((noinline))
->         │                int compute_flag()
->         │                {
->   22.96 │1.18   584        sub    $0x8,%rsp
->         │                        int i;
->         │
->         │                        i = rand() % 2;
->   23.02 │1.18     1      → callq  rand@plt
->         │
->         │                        return i;
->   27.05 │3.37              mov    %eax,%edx
->         │                }
->         │3.37              add    $0x8,%rsp
->         │                {
->         │                        int i;
->         │
->         │                        i = rand() % 2;
->         │
->         │                        return i;
->         │3.37              shr    $0x1f,%edx
->         │3.37              add    %edx,%eax
->         │3.37              and    $0x1,%eax
->         │3.37              sub    %edx,%eax
->         │                }
->   26.97 │3.37     2      ← retq
-> 
-> Note that, this patch only supports tui mode. For stdio,
-> now it just keeps original behavior. Will support it in a
-> follow-up patch.
-> 
-> perf annotate compute_flag --stdio
-> 
->   Percent |      Source code & Disassembly of div for cycles:ppp (7993 samples)
-> ------------------------------------------------------------------------------
->           :
->           :
->           :
->           :            Disassembly of section .text:
->           :
->           :            0000000000400640 <compute_flag>:
->           :            compute_flag():
->           :            volatile int count;
->           :            static unsigned int s_randseed;
->           :
->           :            __attribute__((noinline))
->           :            int compute_flag()
->           :            {
->      0.29 :   400640:       sub    $0x8,%rsp     # +100.00%
->           :                    int i;
->           :
->           :                    i = rand() % 2;
->     42.93 :   400644:       callq  400490 <rand@plt>     # -100.00% (p:100.00%)
->           :
->           :                    return i;
->      0.10 :   400649:       mov    %eax,%edx     # +100.00%
->           :            }
->      0.94 :   40064b:       add    $0x8,%rsp
->           :            {
->           :                    int i;
->           :
->           :                    i = rand() % 2;
->           :
->           :                    return i;
->     27.02 :   40064f:       shr    $0x1f,%edx
->      0.15 :   400652:       add    %edx,%eax
->      1.24 :   400654:       and    $0x1,%eax
->      2.08 :   400657:       sub    %edx,%eax
->           :            }
->     25.26 :   400659:       retq # -100.00% (p:100.00%)
-> 
-> Change-log:
-> -----------
-> v2:
-> ---
-> No code change. Just change the patch description to make it more clear.
-> 
-> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-> ---
->   tools/perf/builtin-annotate.c | 88 ++++++++++++++++++++++++++++++++++++++++---
->   1 file changed, 82 insertions(+), 6 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-> index f15731a..ead6ae4 100644
-> --- a/tools/perf/builtin-annotate.c
-> +++ b/tools/perf/builtin-annotate.c
-> @@ -44,6 +44,7 @@ struct perf_annotate {
->   	bool	   full_paths;
->   	bool	   print_line;
->   	bool	   skip_missing;
-> +	bool	   has_br_stack;
->   	const char *sym_hist_filter;
->   	const char *cpu_list;
->   	DECLARE_BITMAP(cpu_bitmap, MAX_NR_CPUS);
-> @@ -146,16 +147,73 @@ static void process_branch_stack(struct branch_stack *bs, struct addr_location *
->   	free(bi);
->   }
->   
-> +static int hist_iter__branch_callback(struct hist_entry_iter *iter,
-> +				      struct addr_location *al __maybe_unused,
-> +				      bool single __maybe_unused,
-> +				      void *arg __maybe_unused)
-> +{
-> +	struct hist_entry *he = iter->he;
-> +	struct branch_info *bi;
-> +	struct perf_sample *sample = iter->sample;
-> +	struct perf_evsel *evsel = iter->evsel;
-> +	int err;
-> +
-> +	hist__account_cycles(sample->branch_stack, al, sample, false);
-> +
-> +	bi = he->branch_info;
-> +	err = addr_map_symbol__inc_samples(&bi->from, sample, evsel->idx);
-> +
-> +	if (err)
-> +		goto out;
-> +
-> +	err = addr_map_symbol__inc_samples(&bi->to, sample, evsel->idx);
-> +
-> +out:
-> +	return err;
-> +}
-> +
-> +static int process_branch_callback(struct perf_evsel *evsel,
-> +				   struct perf_sample *sample,
-> +				   struct addr_location *al __maybe_unused,
-> +				   struct perf_annotate *ann,
-> +				   struct machine *machine)
-> +{
-> +	struct hist_entry_iter iter = {
-> +		.evsel		= evsel,
-> +		.sample		= sample,
-> +		.add_entry_cb	= hist_iter__branch_callback,
-> +		.hide_unresolved	= symbol_conf.hide_unresolved,
-> +		.ops		= &hist_iter_branch,
-> +	};
-> +
-> +	struct addr_location a;
-> +	int ret;
-> +
-> +	if (machine__resolve(machine, &a, sample) < 0)
-> +		return -1;
-> +
-> +	if (a.sym == NULL)
-> +		return 0;
-> +
-> +	if (a.map != NULL)
-> +		a.map->dso->hit = 1;
-> +
-> +	ret = hist_entry_iter__add(&iter, &a, PERF_MAX_STACK_DEPTH, ann);
-> +	return ret;
-> +}
-> +
->   static int perf_evsel__add_sample(struct perf_evsel *evsel,
->   				  struct perf_sample *sample,
->   				  struct addr_location *al,
-> -				  struct perf_annotate *ann)
-> +				  struct perf_annotate *ann,
-> +				  struct machine *machine)
->   {
->   	struct hists *hists = evsel__hists(evsel);
->   	struct hist_entry *he;
->   	int ret;
->   
-> -	if (ann->sym_hist_filter != NULL &&
-> +	if ((!ann->has_br_stack || !ui__has_annotation()) &&
-> +	    ann->sym_hist_filter != NULL &&
->   	    (al->sym == NULL ||
->   	     strcmp(ann->sym_hist_filter, al->sym->name) != 0)) {
->   		/* We're only interested in a symbol named sym_hist_filter */
-> @@ -178,6 +236,9 @@ static int perf_evsel__add_sample(struct perf_evsel *evsel,
->   	 */
->   	process_branch_stack(sample->branch_stack, al, sample);
->   
-> +	if (ann->has_br_stack && ui__has_annotation())
-> +		return process_branch_callback(evsel, sample, al, ann, machine);
-> +
->   	he = hists__add_entry(hists, al, NULL, NULL, NULL, sample, true);
->   	if (he == NULL)
->   		return -ENOMEM;
-> @@ -206,7 +267,8 @@ static int process_sample_event(struct perf_tool *tool,
->   	if (ann->cpu_list && !test_bit(sample->cpu, ann->cpu_bitmap))
->   		goto out_put;
->   
-> -	if (!al.filtered && perf_evsel__add_sample(evsel, sample, &al, ann)) {
-> +	if (!al.filtered &&
-> +	    perf_evsel__add_sample(evsel, sample, &al, ann, machine)) {
->   		pr_warning("problem incrementing symbol count, "
->   			   "skipping event\n");
->   		ret = -1;
-> @@ -238,6 +300,10 @@ static void hists__find_annotations(struct hists *hists,
->   		if (he->ms.sym == NULL || he->ms.map->dso->annotate_warned)
->   			goto find_next;
->   
-> +		if (ann->sym_hist_filter &&
-> +		    (strcmp(he->ms.sym->name, ann->sym_hist_filter) != 0))
-> +			goto find_next;
-> +
->   		notes = symbol__annotation(he->ms.sym);
->   		if (notes->src == NULL) {
->   find_next:
-> @@ -269,6 +335,7 @@ static void hists__find_annotations(struct hists *hists,
->   			nd = rb_next(nd);
->   		} else if (use_browser == 1) {
->   			key = hist_entry__tui_annotate(he, evsel, NULL);
-> +
->   			switch (key) {
->   			case -1:
->   				if (!ann->skip_missing)
-> @@ -489,6 +556,9 @@ int cmd_annotate(int argc, const char **argv)
->   	if (annotate.session == NULL)
->   		return -1;
->   
-> +	annotate.has_br_stack = perf_header__has_feat(&annotate.session->header,
-> +						      HEADER_BRANCH_STACK);
-> +
->   	ret = symbol__annotation_init();
->   	if (ret < 0)
->   		goto out_delete;
-> @@ -499,9 +569,6 @@ int cmd_annotate(int argc, const char **argv)
->   	if (ret < 0)
->   		goto out_delete;
->   
-> -	if (setup_sorting(NULL) < 0)
-> -		usage_with_options(annotate_usage, options);
-> -
->   	if (annotate.use_stdio)
->   		use_browser = 0;
->   	else if (annotate.use_tui)
-> @@ -511,6 +578,15 @@ int cmd_annotate(int argc, const char **argv)
->   
->   	setup_browser(true);
->   
-> +	if (use_browser == 1 && annotate.has_br_stack) {
-> +		sort__mode = SORT_MODE__BRANCH;
-> +		if (setup_sorting(annotate.session->evlist) < 0)
-> +			usage_with_options(annotate_usage, options);
-> +	} else {
-> +		if (setup_sorting(NULL) < 0)
-> +			usage_with_options(annotate_usage, options);
-> +	}
-> +
->   	ret = __cmd_annotate(&annotate);
->   
->   out_delete:
-> 
+> No what if the framebuffer driver is just requested as a secondary step
+> after firmware loading?
+
+Its a possibility. The decoder firmware gets loaded at the beginning of the decoder
+memory range and we know its length, so its possible to ioremap_nocache enough 
+room for the firmware only on init and then ioremap the remaining non-firmware
+decoder memory areas appropriately after the firmware load succeeds...
+ 
+> > > On the other hand, it works fine for me with a nocache'd framebuffer. It's
+> > > certainly better for me personally to have a nocache framebuffer with
+> > > PAT-enabled than the framebuffer completely disabled with PAT-enabled, but I
+> > > don't think I would even propose to rollback the x86 nopat requirement in
+> > > general. Apparently the throngs of people using this super-popular driver
+> > > feature haven't complained in the last couple years, so maybe its OK for me
+> > > to just patch the pat-enabled guard out and deal with a nocache'd
+> > > framebuffer.
+> > 
+> > Nope, best you add a feature to just let you disable wc stuff, to enable
+> > life with PAT.
+
+I'm not sure I understand what you mean.
+
+Perhaps the easy answer is to change the fatal is-pat-enabled check to just a
+warning like "you have PAT enabled, so wc is disabled for the framebuffer. 
+if you want wc, use the nopat parameter"?
+
+- Nick
