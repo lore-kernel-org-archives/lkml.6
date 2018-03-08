@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1131037-1520492174-2-8468907593033725758
+X-Cyrus-Session-Id: sloti22d1t05-1171329-1520492157-2-6328669593894715152
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES enro, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enca, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520492173; b=CUN7HtL0tFyGPDrAmzE1avw1RGIKKe4G55E2pnZDErXdZI+
-    gcDyzjjIthNdWgHVrvnp1SIPEtKO/+elI1fSXFk0UKynuvv61/IG82EoGnh2CFDU
-    cSlDac5InH/pkr1pDeQxQ1ToSovZaJel3BEP4PLg+flOhc4XHqVqKq73IBCBHM/W
-    BJGjCPy8j/+n+TQV1vBbSS8YYBM6H6tB/QRcgxDjHwcKjT+r/BmgVU/ZNWwEY6MB
-    e2k5MoJlG0KfG5nDxZyh5h6CmOQpfReBtGorWa1gODJI7fZZBNBPmwikduykgwFu
-    FXr/Qip2vXCvQwh4Xybmr/2y1AeqA21RpadFvtQ==
+    t=1520492157; b=U49e0cEfkSql6MGr9CQ63+5m6td0yKhwIkzscj9HPnJeJss
+    TlHLrmtjmqEALHAnnP1CeYiKF2RPYTZ7EPyAvPLxEr1N9FwUZC4F6MLfTMETTxoR
+    kS4t83ModZetaTfHp5BmJFLSGDzvSOBIWsol9o45DiX5+ljP08o7qQTXfJQsMqrg
+    n4yBHGRYAxMYAAGPDWq6Cc3Z4WWWh7CsHkYKQ9mLavWRqdmRXKsOtiIiWDlQQ9CV
+    AarwDpEi6VAzB60Wvdg3IvIiBurgYSBoyCTenR+FOIofs97ndkRJCC8qQJ0LcBwl
+    ZJ+Q1P+046cZWKIf/Xmd6IQhePgX+K3lZAzv/+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520492173; bh=9JwCqv
-    LwgPidFySbpB3klQdjTPVgXfaCFPiMwaOZ2Zs=; b=iUD/KsapoLsApxFxLRHbrG
-    X+qT52XkDTfStBCqLEWd0aU6Lag7ZIFDKQnYcSnKtSBBWE3E9Y735uzmwBPAf3+O
-    cVaYnSqydNsdwZDa3o32G+8Tsbs5gqHHkQRqeYcGtcUCDcp3bYRV+F+wunJDYWy0
-    Ltb3fouWTukf1d0zeS2Urhjkg/EmEPcLEr/OWuMp8YvXbKgvWVRCF2gI82WY0hZw
-    4R/RV0dKASlsNILUKeFJfyccr7t81cQOPL243VzOF/CBwKojU3YxH61WmDsM073V
-    fSyxvYavS25ImIZHY8UhvOMfjXFFNDpBpPbOfZ4IZ18mjTTm4OnQiFRm3xaFiUrQ
+    :mime-version:sender:list-id; s=arctest; t=1520492157; bh=fRH3EK
+    8ueiCdO9OS8hnoiiPPyeIU9e3LNhX0nKeCRCk=; b=JHwndc5t9blK6qRBu2XeIY
+    z9mfQsT94ojbyfFcxHx9rZdFL5A9Dec1N09rvcqRKxkWDbxFpi31BrdCSqNP0hEC
+    M1TuMreXKYR2s1287qHdyqUpzqOgm64Cu2PmwFHEJUwf5Gkgl6R6sdbAEJud7lnD
+    DDT+pTfS97Vr9x3e5N1IKi4AaKuWu9rgtAy+/5chZ0n518whZbSgwDQ2lymztNRC
+    1Fh4kUVuybVYpEUObE3MneC2RAWgKYj9Hch3E297JPFoB3FwTPZWGVIa4Ct/RV0g
+    87RJ/UWpYSRae/7fdJJLcTwEGYUmO35tSHwvFPRCGjt+nK7SKuco5m8/MLe7R0MQ
     ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=BRBcmCUB x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=caPlr/Op x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=BRBcmCUB x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=caPlr/Op x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,28 +50,28 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935083AbeCHGz6 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 01:55:58 -0500
-Received: from mail-sn1nam01on0120.outbound.protection.outlook.com ([104.47.32.120]:33969
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        id S934654AbeCHE6B (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Mar 2018 23:58:01 -0500
+Received: from mail-by2nam03on0124.outbound.protection.outlook.com ([104.47.42.124]:24768
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935169AbeCHE6A (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 7 Mar 2018 23:58:00 -0500
+        id S964948AbeCHE54 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 7 Mar 2018 23:57:56 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: James Smart <jsmart2021@gmail.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <james.smart@broadcom.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
+CC: Jerry Snitselaar <jsnitsel@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Ashok Raj <ashok.raj@intel.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 67/78] scsi: lpfc: Fix SCSI LUN discovery
- when SCSI and NVME enabled
-Thread-Topic: [PATCH AUTOSEL for 4.15 67/78] scsi: lpfc: Fix SCSI LUN
- discovery when SCSI and NVME enabled
-Thread-Index: AQHTtpnTPFI6Bs98P0CvK1vXB9QZTQ==
-Date: Thu, 8 Mar 2018 04:56:31 +0000
-Message-ID: <20180308045525.7662-67-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 62/78] iommu/vt-d: clean up pr_irq if
+ request_threaded_irq fails
+Thread-Topic: [PATCH AUTOSEL for 4.15 62/78] iommu/vt-d: clean up pr_irq if
+ request_threaded_irq fails
+Thread-Index: AQHTtpnR6ftwno2ifUqs3R8tPCnHZw==
+Date: Thu, 8 Mar 2018 04:56:28 +0000
+Message-ID: <20180308045525.7662-62-alexander.levin@microsoft.com>
 References: <20180308045525.7662-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045525.7662-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -80,271 +80,183 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0888;7:DFHAewe9fig8yxN5whFTa4Hc2DOLAG1BigcNTXtJOQmf+dCVcAT1/TdeYQEVXk41AxG67E9ChvyygcttD9z8HeFDA2c/pUUcxooefSJ/BzbTaHCGe3SzeYcZWI5d6co7i/3bignBeCp/r1A+9UWDZarXnYfas7vvmm7jHZ9RSVIXtAIvmSy9320KpmIz4fPweN5fQWMyDJjFF6FmY+x1iNUyYFwU7UlPRUMwvkn1TLw4RGPLI0a7iAEzaOi0otQK;20:uzgD8DK1zqEPYi4ppEFY096AX+MF3KuVhf3zp2aoN4Yd/WXVg4ffGhtNH9gPPuYQ/k3sgBKUV02fqei+60D6NxQb3E+uuU6K/xyPbIwNyyIbJJ/lNocRVAv9n+Qrxo9+JxS/tdQqwyoLcxk2+mdiwkC4yo0hVltJ7+8Grzzw+Ds=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1080;7:ud8je7AXIiDpuPrZuUSJZ1lQuBIplOljJg8owGBNhjFuF00C/hOQiQ3q0cwekB4gYdYMNbjHd7PGYYyYEjrhUKwtu7pcAiLLxY4/tPrtRS7EM107iiYnk7DEJZ7dI7zsRvo3BFa0ytoBouqj05ZywZfED/w0L5gHfPaO9VDQqtIKAd+IMDM7RYcUzWFOWQdgYfs35gmHhNLeceCI+KYy/tDtUQDhbdU/7mDQ4yQxJaZz1uCxz9qProapXTBIfU8o;20:RZu59s1+meFv2//+570vKvKJzDpLxioMQkVmZQJVFvJUYCRfd+Z95/igFRgy4PQjVC9RnqPJTm6IuyDq/z74vthw+iwKKeVzm++M948guHY8fbTA6ONGe6+jhF09za1ftOnFNThbLKNKHmO1p0YyRxhi8llOYV9PVzsAhU63wzo=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 6b4cac19-a651-4157-234d-08d584b1281d
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0888;
-x-ms-traffictypediagnostic: DM5PR2101MB0888:
+x-ms-office365-filtering-correlation-id: 3ac64295-809b-4a48-11b7-08d584b126b7
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1080;
+x-ms-traffictypediagnostic: DM5PR2101MB1080:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0888CC83333B2E37B64401C3FBDF0@DM5PR2101MB0888.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158)(146099531331640);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0888;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0888;
+x-microsoft-antispam-prvs: <DM5PR2101MB1080665D74039692C8011B0EFBDF0@DM5PR2101MB1080.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(3231220)(944501244)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB1080;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1080;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(39860400002)(366004)(346002)(376002)(39380400002)(396003)(189003)(199004)(6116002)(99286004)(2950100002)(6512007)(6666003)(10290500003)(36756003)(5660300001)(106356001)(1076002)(22452003)(39060400002)(3846002)(97736004)(316002)(53936002)(68736007)(105586002)(4326008)(25786009)(54906003)(478600001)(2501003)(186003)(66066001)(76176011)(3280700002)(86362001)(575784001)(14454004)(2900100001)(5250100002)(110136005)(305945005)(7736002)(72206003)(3660700001)(6436002)(2906002)(26005)(6486002)(10090500001)(8676002)(81156014)(107886003)(81166006)(86612001)(6506007)(59450400001)(8936002)(102836004)(22906009)(217873001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0888;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: lYthjrBeLBlkN4f6g5Sg/WTH9UZ29lVsjcSPNN2vtN1bQ8Bbia3I5ZmO4sWyNaKSM4Tdwz4Ku1HWBHVHq4FRWwTQAA17EEDaqNaZ17TINfdzTnCG3GK/g2LRywr58jXn/DILbXDAA/WngewA1K7MFIvodZT/ldggU9c9s8P+5ol5RfLoVgMLl/46tEM67bvE0RNOsKfyoBFPNwcKIf8rtl7QVLhrkU3k+cxIjSB6xIvsuekmq/RFqCV9FvTVLHXAZnfBtIqOeHBbYHBwOwAWoXsGJPXiF7wPtkg4VzNf1ztvv6fARKDlz0iFhAYn6tf7hCcV4GTNhFyEWKefeoej3g==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(366004)(39380400002)(346002)(39860400002)(189003)(199004)(6116002)(1076002)(5250100002)(26005)(102836004)(2501003)(3846002)(59450400001)(186003)(6506007)(25786009)(3280700002)(4326008)(2906002)(68736007)(66066001)(86612001)(3660700001)(22452003)(6486002)(6436002)(14454004)(8676002)(81166006)(2900100001)(72206003)(81156014)(8936002)(478600001)(10090500001)(105586002)(10290500003)(53936002)(6512007)(6666003)(107886003)(2950100002)(106356001)(76176011)(316002)(7736002)(86362001)(575784001)(36756003)(97736004)(54906003)(110136005)(5660300001)(99286004)(305945005)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1080;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: yKoeQR342iJlYDtDsduGQHKYokOWa8qMCTCi9GB8tCEeACuXZd+g86N8Y/D3Qbgh7xEsQ1iRmJA0uZmBDWRX5mFLwyVTPwL+S/ouqA+dWpyj0/v9Ipxz32n1XZ85gTChoNZyMp9pB634fLOtKR3S0nYrt3Q5383XuAQwDTUhitBH6EvltiCrhrS2PCV+YZuPcXA7GSrBTEnkxFpxoZIViB/glx//O916MTkKGS0HR9/eFnHfGrWOZx4+DgsgLn+vg0r1FEQogcmeq4hLsYrdMmM/bocs9H7EwmUlE6KwPxVbNPABrzBP6RZ/LIPPLsuRW9N6WkgG2SSFUw4uR0qGBw==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b4cac19-a651-4157-234d-08d584b1281d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:56:31.1006
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3ac64295-809b-4a48-11b7-08d584b126b7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:56:28.6459
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0888
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1080
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: James Smart <jsmart2021@gmail.com>
+From: Jerry Snitselaar <jsnitsel@redhat.com>
 
-[ Upstream commit 9de416ac67b54d666327ba927a190f4b7259f4a0 ]
+[ Upstream commit 72d548113881dd32bf7f0b221d031e6586468437 ]
 
-When enabled for both SCSI and NVME support, and connected pt2pt to a
-SCSI only target, the driver nodelist entry for the remote port is left
-in PRLI_ISSUE state and no SCSI LUNs are discovered. Works fine if only
-configured for SCSI support.
+It is unlikely request_threaded_irq will fail, but if it does for some
+reason we should clear iommu->pr_irq in the error path. Also
+intel_svm_finish_prq shouldn't try to clean up the page request
+interrupt if pr_irq is 0. Without these, if request_threaded_irq were
+to fail the following occurs:
 
-Error was due to some of the prli points still reflecting the need to
-send only 1 PRLI. On a lot of fabric configs, targets were NVME only,
-which meant the fabric-reported protocol attributes were only telling
-the driver one protocol or the other. Thus things worked fine. With
-pt2pt, the driver must send a PRLI for both protocols as there are no
-hints on what the target supports. Thus pt2pt targets were hitting the
-multiple PRLI issues.
+fail with no fixes:
 
-Complete the dual PRLI support. Track explicitly whether scsi (fcp) or
-nvme prli's have been sent. Accurately track protocol support detected
-on each node as reported by the fabric or probed by PRLI traffic.
+[    0.683147] ------------[ cut here ]------------
+[    0.683148] NULL pointer, cannot free irq
+[    0.683158] WARNING: CPU: 1 PID: 1 at kernel/irq/irqdomain.c:1632 irq_do=
+main_free_irqs+0x126/0x140
+[    0.683160] Modules linked in:
+[    0.683163] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc2 #3
+[    0.683165] Hardware name:                  /NUC7i3BNB, BIOS BNKBL357.86=
+A.0036.2017.0105.1112 01/05/2017
+[    0.683168] RIP: 0010:irq_domain_free_irqs+0x126/0x140
+[    0.683169] RSP: 0000:ffffc90000037ce8 EFLAGS: 00010292
+[    0.683171] RAX: 000000000000001d RBX: ffff880276283c00 RCX: ffffffff81c=
+5e5e8
+[    0.683172] RDX: 0000000000000001 RSI: 0000000000000096 RDI: 00000000000=
+00246
+[    0.683174] RBP: ffff880276283c00 R08: 0000000000000000 R09: 00000000000=
+0023c
+[    0.683175] R10: 0000000000000007 R11: 0000000000000000 R12: 00000000000=
+0007a
+[    0.683176] R13: 0000000000000001 R14: 0000000000000000 R15: 00000100100=
+00000
+[    0.683178] FS:  0000000000000000(0000) GS:ffff88027ec80000(0000) knlGS:=
+0000000000000000
+[    0.683180] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    0.683181] CR2: 0000000000000000 CR3: 0000000001c09001 CR4: 00000000003=
+606e0
+[    0.683182] Call Trace:
+[    0.683189]  intel_svm_finish_prq+0x3c/0x60
+[    0.683191]  free_dmar_iommu+0x1ac/0x1b0
+[    0.683195]  init_dmars+0xaaa/0xaea
+[    0.683200]  ? klist_next+0x19/0xc0
+[    0.683203]  ? pci_do_find_bus+0x50/0x50
+[    0.683205]  ? pci_get_dev_by_id+0x52/0x70
+[    0.683208]  intel_iommu_init+0x498/0x5c7
+[    0.683211]  pci_iommu_init+0x13/0x3c
+[    0.683214]  ? e820__memblock_setup+0x61/0x61
+[    0.683217]  do_one_initcall+0x4d/0x1a0
+[    0.683220]  kernel_init_freeable+0x186/0x20e
+[    0.683222]  ? set_debug_rodata+0x11/0x11
+[    0.683225]  ? rest_init+0xb0/0xb0
+[    0.683226]  kernel_init+0xa/0xff
+[    0.683229]  ret_from_fork+0x1f/0x30
+[    0.683259] Code: 89 ee 44 89 e7 e8 3b e8 ff ff 5b 5d 44 89 e7 44 89 ee =
+41 5c 41 5d 41 5e e9 a8 84 ff ff 48 c7 c7 a8 71 a7 81 31 c0 e8 6a d3 f9 ff =
+<0f> ff 5b 5d 41 5c 41 5d 41 5
+e c3 0f 1f 44 00 00 66 2e 0f 1f 84
+[    0.683285] ---[ end trace f7650e42792627ca ]---
 
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+with iommu->pr_irq =3D 0, but no check in intel_svm_finish_prq:
+
+[    0.669561] ------------[ cut here ]------------
+[    0.669563] Trying to free already-free IRQ 0
+[    0.669573] WARNING: CPU: 3 PID: 1 at kernel/irq/manage.c:1546 __free_ir=
+q+0xa4/0x2c0
+[    0.669574] Modules linked in:
+[    0.669577] CPU: 3 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc2 #4
+[    0.669579] Hardware name:                  /NUC7i3BNB, BIOS BNKBL357.86=
+A.0036.2017.0105.1112 01/05/2017
+[    0.669581] RIP: 0010:__free_irq+0xa4/0x2c0
+[    0.669582] RSP: 0000:ffffc90000037cc0 EFLAGS: 00010082
+[    0.669584] RAX: 0000000000000021 RBX: 0000000000000000 RCX: ffffffff81c=
+5e5e8
+[    0.669585] RDX: 0000000000000001 RSI: 0000000000000086 RDI: 00000000000=
+00046
+[    0.669587] RBP: 0000000000000000 R08: 0000000000000000 R09: 00000000000=
+0023c
+[    0.669588] R10: 0000000000000007 R11: 0000000000000000 R12: ffff8802762=
+53960
+[    0.669589] R13: ffff8802762538a4 R14: ffff880276253800 R15: ffff8802762=
+83600
+[    0.669593] FS:  0000000000000000(0000) GS:ffff88027ed80000(0000) knlGS:=
+0000000000000000
+[    0.669594] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    0.669596] CR2: 0000000000000000 CR3: 0000000001c09001 CR4: 00000000003=
+606e0
+[    0.669602] Call Trace:
+[    0.669616]  free_irq+0x30/0x60
+[    0.669620]  intel_svm_finish_prq+0x34/0x60
+[    0.669623]  free_dmar_iommu+0x1ac/0x1b0
+[    0.669627]  init_dmars+0xaaa/0xaea
+[    0.669631]  ? klist_next+0x19/0xc0
+[    0.669634]  ? pci_do_find_bus+0x50/0x50
+[    0.669637]  ? pci_get_dev_by_id+0x52/0x70
+[    0.669639]  intel_iommu_init+0x498/0x5c7
+[    0.669642]  pci_iommu_init+0x13/0x3c
+[    0.669645]  ? e820__memblock_setup+0x61/0x61
+[    0.669648]  do_one_initcall+0x4d/0x1a0
+[    0.669651]  kernel_init_freeable+0x186/0x20e
+[    0.669653]  ? set_debug_rodata+0x11/0x11
+[    0.669656]  ? rest_init+0xb0/0xb0
+[    0.669658]  kernel_init+0xa/0xff
+[    0.669661]  ret_from_fork+0x1f/0x30
+[    0.669662] Code: 7a 08 75 0e e9 c3 01 00 00 4c 39 7b 08 74 57 48 89 da =
+48 8b 5a 18 48 85 db 75 ee 89 ee 48 c7 c7 78 67 a7 81 31 c0 e8 4c 37 fa ff =
+<0f> ff 48 8b 34 24 4c 89 ef e
+8 0e 4c 68 00 49 8b 46 40 48 8b 80
+[    0.669688] ---[ end trace 58a470248700f2fc ]---
+
+Cc: Alex Williamson <alex.williamson@redhat.com>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+Reviewed-by: Ashok Raj <ashok.raj@intel.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/scsi/lpfc/lpfc_ct.c        |  1 +
- drivers/scsi/lpfc/lpfc_els.c       | 30 ++++++++++++++++++++----------
- drivers/scsi/lpfc/lpfc_nportdisc.c | 30 +++++++++++++-----------------
- 3 files changed, 34 insertions(+), 27 deletions(-)
+ drivers/iommu/intel-svm.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_ct.c b/drivers/scsi/lpfc/lpfc_ct.c
-index f77673ab4a84..3a8ec82e685a 100644
---- a/drivers/scsi/lpfc/lpfc_ct.c
-+++ b/drivers/scsi/lpfc/lpfc_ct.c
-@@ -471,6 +471,7 @@ lpfc_prep_node_fc4type(struct lpfc_vport *vport, uint32=
-_t Did, uint8_t fc4_type)
- 				"Parse GID_FTrsp: did:x%x flg:x%x x%x",
- 				Did, ndlp->nlp_flag, vport->fc_flag);
-=20
-+			ndlp->nlp_fc4_type &=3D ~(NLP_FC4_FCP | NLP_FC4_NVME);
- 			/* By default, the driver expects to support FCP FC4 */
- 			if (fc4_type =3D=3D FC_TYPE_FCP)
- 				ndlp->nlp_fc4_type |=3D NLP_FC4_FCP;
-diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
-index 39d5b146202e..537ee0c44198 100644
---- a/drivers/scsi/lpfc/lpfc_els.c
-+++ b/drivers/scsi/lpfc/lpfc_els.c
-@@ -2088,6 +2088,10 @@ lpfc_cmpl_els_prli(struct lpfc_hba *phba, struct lpf=
-c_iocbq *cmdiocb,
- 	ndlp =3D (struct lpfc_nodelist *) cmdiocb->context1;
- 	spin_lock_irq(shost->host_lock);
- 	ndlp->nlp_flag &=3D ~NLP_PRLI_SND;
-+
-+	/* Driver supports multiple FC4 types.  Counters matter. */
-+	vport->fc_prli_sent--;
-+	ndlp->fc4_prli_sent--;
- 	spin_unlock_irq(shost->host_lock);
-=20
- 	lpfc_debugfs_disc_trc(vport, LPFC_DISC_TRC_ELS_CMD,
-@@ -2095,9 +2099,6 @@ lpfc_cmpl_els_prli(struct lpfc_hba *phba, struct lpfc=
-_iocbq *cmdiocb,
- 		irsp->ulpStatus, irsp->un.ulpWord[4],
- 		ndlp->nlp_DID);
-=20
--	/* Ddriver supports multiple FC4 types.  Counters matter. */
--	vport->fc_prli_sent--;
--
- 	/* PRLI completes to NPort <nlp_DID> */
- 	lpfc_printf_vlog(vport, KERN_INFO, LOG_ELS,
- 			 "0103 PRLI completes to NPort x%06x "
-@@ -2111,7 +2112,6 @@ lpfc_cmpl_els_prli(struct lpfc_hba *phba, struct lpfc=
-_iocbq *cmdiocb,
-=20
- 	if (irsp->ulpStatus) {
- 		/* Check for retry */
--		ndlp->fc4_prli_sent--;
- 		if (lpfc_els_retry(phba, cmdiocb, rspiocb)) {
- 			/* ELS command is being retried */
- 			goto out;
-@@ -2190,6 +2190,15 @@ lpfc_issue_els_prli(struct lpfc_vport *vport, struct=
- lpfc_nodelist *ndlp,
- 		ndlp->nlp_fc4_type |=3D NLP_FC4_NVME;
- 	local_nlp_type =3D ndlp->nlp_fc4_type;
-=20
-+	/* This routine will issue 1 or 2 PRLIs, so zero all the ndlp
-+	 * fields here before any of them can complete.
-+	 */
-+	ndlp->nlp_type &=3D ~(NLP_FCP_TARGET | NLP_FCP_INITIATOR);
-+	ndlp->nlp_type &=3D ~(NLP_NVME_TARGET | NLP_NVME_INITIATOR);
-+	ndlp->nlp_fcp_info &=3D ~NLP_FCP_2_DEVICE;
-+	ndlp->nlp_flag &=3D ~NLP_FIRSTBURST;
-+	ndlp->nvme_fb_size =3D 0;
-+
-  send_next_prli:
- 	if (local_nlp_type & NLP_FC4_FCP) {
- 		/* Payload is 4 + 16 =3D 20 x14 bytes. */
-@@ -2298,6 +2307,13 @@ lpfc_issue_els_prli(struct lpfc_vport *vport, struct=
- lpfc_nodelist *ndlp,
- 	elsiocb->iocb_cmpl =3D lpfc_cmpl_els_prli;
- 	spin_lock_irq(shost->host_lock);
- 	ndlp->nlp_flag |=3D NLP_PRLI_SND;
-+
-+	/* The vport counters are used for lpfc_scan_finished, but
-+	 * the ndlp is used to track outstanding PRLIs for different
-+	 * FC4 types.
-+	 */
-+	vport->fc_prli_sent++;
-+	ndlp->fc4_prli_sent++;
- 	spin_unlock_irq(shost->host_lock);
- 	if (lpfc_sli_issue_iocb(phba, LPFC_ELS_RING, elsiocb, 0) =3D=3D
- 	    IOCB_ERROR) {
-@@ -2308,12 +2324,6 @@ lpfc_issue_els_prli(struct lpfc_vport *vport, struct=
- lpfc_nodelist *ndlp,
- 		return 1;
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index ed1cf7c5a43b..6643277e321e 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -129,6 +129,7 @@ int intel_svm_enable_prq(struct intel_iommu *iommu)
+ 		pr_err("IOMMU: %s: Failed to request IRQ for page request queue\n",
+ 		       iommu->name);
+ 		dmar_free_hwirq(irq);
++		iommu->pr_irq =3D 0;
+ 		goto err;
  	}
+ 	dmar_writeq(iommu->reg + DMAR_PQH_REG, 0ULL);
+@@ -144,9 +145,11 @@ int intel_svm_finish_prq(struct intel_iommu *iommu)
+ 	dmar_writeq(iommu->reg + DMAR_PQT_REG, 0ULL);
+ 	dmar_writeq(iommu->reg + DMAR_PQA_REG, 0ULL);
 =20
--	/* The vport counters are used for lpfc_scan_finished, but
--	 * the ndlp is used to track outstanding PRLIs for different
--	 * FC4 types.
--	 */
--	vport->fc_prli_sent++;
--	ndlp->fc4_prli_sent++;
+-	free_irq(iommu->pr_irq, iommu);
+-	dmar_free_hwirq(iommu->pr_irq);
+-	iommu->pr_irq =3D 0;
++	if (iommu->pr_irq) {
++		free_irq(iommu->pr_irq, iommu);
++		dmar_free_hwirq(iommu->pr_irq);
++		iommu->pr_irq =3D 0;
++	}
 =20
- 	/* The driver supports 2 FC4 types.  Make sure
- 	 * a PRLI is issued for all types before exiting.
-diff --git a/drivers/scsi/lpfc/lpfc_nportdisc.c b/drivers/scsi/lpfc/lpfc_np=
-ortdisc.c
-index b6957d944b9a..678bfdd53eb2 100644
---- a/drivers/scsi/lpfc/lpfc_nportdisc.c
-+++ b/drivers/scsi/lpfc/lpfc_nportdisc.c
-@@ -390,6 +390,11 @@ lpfc_rcv_plogi(struct lpfc_vport *vport, struct lpfc_n=
-odelist *ndlp,
- 		break;
- 	}
-=20
-+	ndlp->nlp_type &=3D ~(NLP_FCP_TARGET | NLP_FCP_INITIATOR);
-+	ndlp->nlp_type &=3D ~(NLP_NVME_TARGET | NLP_NVME_INITIATOR);
-+	ndlp->nlp_fcp_info &=3D ~NLP_FCP_2_DEVICE;
-+	ndlp->nlp_flag &=3D ~NLP_FIRSTBURST;
-+
- 	/* Check for Nport to NPort pt2pt protocol */
- 	if ((vport->fc_flag & FC_PT2PT) &&
- 	    !(vport->fc_flag & FC_PT2PT_PLOGI)) {
-@@ -742,9 +747,6 @@ lpfc_rcv_prli(struct lpfc_vport *vport, struct lpfc_nod=
-elist *ndlp,
- 	lp =3D (uint32_t *) pcmd->virt;
- 	npr =3D (PRLI *) ((uint8_t *) lp + sizeof (uint32_t));
-=20
--	ndlp->nlp_type &=3D ~(NLP_FCP_TARGET | NLP_FCP_INITIATOR);
--	ndlp->nlp_fcp_info &=3D ~NLP_FCP_2_DEVICE;
--	ndlp->nlp_flag &=3D ~NLP_FIRSTBURST;
- 	if ((npr->prliType =3D=3D PRLI_FCP_TYPE) ||
- 	    (npr->prliType =3D=3D PRLI_NVME_TYPE)) {
- 		if (npr->initiatorFunc) {
-@@ -769,8 +771,12 @@ lpfc_rcv_prli(struct lpfc_vport *vport, struct lpfc_no=
-delist *ndlp,
- 		 * type.  Target mode does not issue gft_id so doesn't get
- 		 * the fc4 type set until now.
- 		 */
--		if ((phba->nvmet_support) && (npr->prliType =3D=3D PRLI_NVME_TYPE))
-+		if (phba->nvmet_support && (npr->prliType =3D=3D PRLI_NVME_TYPE)) {
- 			ndlp->nlp_fc4_type |=3D NLP_FC4_NVME;
-+			lpfc_nlp_set_state(vport, ndlp, NLP_STE_UNMAPPED_NODE);
-+		}
-+		if (npr->prliType =3D=3D PRLI_FCP_TYPE)
-+			ndlp->nlp_fc4_type |=3D NLP_FC4_FCP;
- 	}
- 	if (rport) {
- 		/* We need to update the rport role values */
-@@ -1552,7 +1558,6 @@ lpfc_rcv_prli_reglogin_issue(struct lpfc_vport *vport=
-,
- 		if (ndlp->nlp_flag & NLP_RPI_REGISTERED) {
- 			lpfc_rcv_prli(vport, ndlp, cmdiocb);
- 			lpfc_els_rsp_prli_acc(vport, cmdiocb, ndlp);
--			lpfc_nlp_set_state(vport, ndlp, NLP_STE_UNMAPPED_NODE);
- 		} else {
- 			/* RPI registration has not completed. Reject the PRLI
- 			 * to prevent an illegal state transition when the
-@@ -1568,6 +1573,7 @@ lpfc_rcv_prli_reglogin_issue(struct lpfc_vport *vport=
-,
- 			stat.un.b.lsRjtRsnCodeExp =3D LSEXP_CMD_IN_PROGRESS;
- 			lpfc_els_rsp_reject(vport, stat.un.lsRjtError, cmdiocb,
- 					    ndlp, NULL);
-+			return ndlp->nlp_state;
- 		}
- 	} else {
- 		/* Initiator mode. */
-@@ -1922,13 +1928,6 @@ lpfc_cmpl_prli_prli_issue(struct lpfc_vport *vport, =
-struct lpfc_nodelist *ndlp,
- 		return ndlp->nlp_state;
- 	}
-=20
--	/* Check out PRLI rsp */
--	ndlp->nlp_type &=3D ~(NLP_FCP_TARGET | NLP_FCP_INITIATOR);
--	ndlp->nlp_fcp_info &=3D ~NLP_FCP_2_DEVICE;
--
--	/* NVME or FCP first burst must be negotiated for each PRLI. */
--	ndlp->nlp_flag &=3D ~NLP_FIRSTBURST;
--	ndlp->nvme_fb_size =3D 0;
- 	if (npr && (npr->acceptRspCode =3D=3D PRLI_REQ_EXECUTED) &&
- 	    (npr->prliType =3D=3D PRLI_FCP_TYPE)) {
- 		lpfc_printf_vlog(vport, KERN_INFO, LOG_NVME_DISC,
-@@ -1945,8 +1944,6 @@ lpfc_cmpl_prli_prli_issue(struct lpfc_vport *vport, s=
-truct lpfc_nodelist *ndlp,
- 		if (npr->Retry)
- 			ndlp->nlp_fcp_info |=3D NLP_FCP_2_DEVICE;
-=20
--		/* PRLI completed.  Decrement count. */
--		ndlp->fc4_prli_sent--;
- 	} else if (nvpr &&
- 		   (bf_get_be32(prli_acc_rsp_code, nvpr) =3D=3D
- 		    PRLI_REQ_EXECUTED) &&
-@@ -1991,8 +1988,6 @@ lpfc_cmpl_prli_prli_issue(struct lpfc_vport *vport, s=
-truct lpfc_nodelist *ndlp,
- 				 be32_to_cpu(nvpr->word5),
- 				 ndlp->nlp_flag, ndlp->nlp_fcp_info,
- 				 ndlp->nlp_type);
--		/* PRLI completed.  Decrement count. */
--		ndlp->fc4_prli_sent--;
- 	}
- 	if (!(ndlp->nlp_type & NLP_FCP_TARGET) &&
- 	    (vport->port_type =3D=3D LPFC_NPIV_PORT) &&
-@@ -2016,7 +2011,8 @@ lpfc_cmpl_prli_prli_issue(struct lpfc_vport *vport, s=
-truct lpfc_nodelist *ndlp,
- 		ndlp->nlp_prev_state =3D NLP_STE_PRLI_ISSUE;
- 		if (ndlp->nlp_type & (NLP_FCP_TARGET | NLP_NVME_TARGET))
- 			lpfc_nlp_set_state(vport, ndlp, NLP_STE_MAPPED_NODE);
--		else
-+		else if (ndlp->nlp_type &
-+			 (NLP_FCP_INITIATOR | NLP_NVME_INITIATOR))
- 			lpfc_nlp_set_state(vport, ndlp, NLP_STE_UNMAPPED_NODE);
- 	} else
- 		lpfc_printf_vlog(vport,
+ 	free_pages((unsigned long)iommu->prq, PRQ_ORDER);
+ 	iommu->prq =3D NULL;
 --=20
 2.14.1
