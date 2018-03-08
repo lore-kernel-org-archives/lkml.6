@@ -1,565 +1,178 @@
-Return-Path: <lurodriguez@suse.de>
-X-Google-Smtp-Source: AG47ELvEmL0SoznRo7T9TSyM+JRgrhsIIVrbV9Q4q32XV+9rk+4vFSs8S/IiaaLMSAKZN594tyvc
-ARC-Seal: i=1; a=rsa-sha256; t=1520472238; cv=none;
+Return-Path: <prvs=66055eecd2=ast@fb.com>
+X-Google-Smtp-Source: AG47ELsFpo7rQHM1p7R3kb0itg+ta4FwGlr4RLFMr00jWlyO9MHEBn1Q1USjknvKkrVK0wB7/1i9
+ARC-Seal: i=1; a=rsa-sha256; t=1520550451; cv=none;
         d=google.com; s=arc-20160816;
-        b=sDiFVKOuqwqlbbmX3U3/KiMpEHSaXvheKl4+bSZv3KZ9szkOzjfwglAQkI5dW7duOt
-         WAZ49Ze6SWg83ppv/pDhvDZsXX6ESO1zTBZJAHl9vbDF8nu5kU/xandUWt363XlKK0tP
-         lwxpc9shx2v8zMFBWkxYhqUoIgA187F29f2zgGOs5+KeURQ0fJBF/mY6Z/n8EfIIfSK9
-         K6AQrEXuWJ3Rwt3UzYJvBdMk9/RZBgH9b8VKG3irUG+qkhe5SWMBg/5V+3uqlcK4/GCh
-         Bwra+JvH9Zmov4GnLhF7zx5ANxf1Y7q3Yvhr57VN1mp17Iyh6zmKmEjV42dyapowMt8b
-         L5FA==
+        b=ZKyfL+p1oaG00C73rmMuPbpJR+zXUdj0TDfGP5sE+6RmT+Hwpwxc/HtbxOEuyZcono
+         zvY1pxyhiYx0Qd/s/9cW4M0qYqom3sIKff+MeGF5P9nsjhKd8XFgA/Xk2y8Owd1hxvA1
+         w8W29vRsF7IXXyfxMVzg0aJ1yjI10/GcHETvppmD9VKL9BMWsEsy29SRwvCGkwmnIF1S
+         gdg3C7qO25TXw21iFp7MK8bUZqZqRLFGdCy7VN8UI1AV7iOWpMSvc9ln+zFlTQzFgXv8
+         4WGcmcX5u1ve8NKrxbdN7GtltNR0DpfjzIAEZWt+0zW3JTjlIS0W/BZTTKhRWhR3AGNy
+         orCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=jXjShfr0KKylwtv18dlfCGa5KzZTezA2L3SpdWzdOuM=;
-        b=T4w6p0qvymXM2qCeZl+l/svIC5R4HWA+Ww+UZfztk7LUXbKLV10G3IaGV//p7HZxnn
-         bsgdZHmDGi3S0/hkbbCj4VZyXUygKINyPFuJdESGD051QG05aSmiDtHGIjYsZ6k6ASNa
-         79CRP/Ifzaj5iN5+uxMih158snhEfchGuKQbnaFOxrAWbl3JSKJGbO/Qy0bshxtAvCFv
-         aGaKTpMZ1iTSP9OjenKvg0G/SAcMqPlsvtMCeQ3tUeEXtDJPSOILsSvaFxhmAcz/BAIf
-         SSGys8IRADNEpA5e5qDRhfk6wwyHqajD/jaS//paUR+yAqDUwRCXRghHFe2OUJawHjYx
-         PJVA==
+        h=spamdiagnosticmetadata:spamdiagnosticoutput
+         :content-transfer-encoding:in-reply-to:mime-version:user-agent:date
+         :message-id:from:cc:references:to:subject:dkim-signature
+         :dkim-signature:arc-authentication-results;
+        bh=ggThZ85XyjEgdzl5cxsQj/p0L4QjrNfvIQ5kK42gC+A=;
+        b=VIXmiOUD3MorIqXKRSu786NcX+zHl+p0wIvf3W3MZ9DOGjcrB2RphqTook0Ks1RoC7
+         0Czm9PGSddNwKnC30DiC6viow56c3vQm4226+Ut97DRtAMbpN1kk3gr9Q4+BEILFOLDG
+         y82G6uoqLujDtP2ZeRF4/jpS+C2riwsleJOCWbMCbEmhDgRFl5XU4+0EsuGEzOAv/z/9
+         Q+ANuv3/risU6D8JWJR/ZpVhZXyYCpuF9Z3NicRKor7L9hfA/LyUt1CQgrwT6mZ+3WqU
+         QB+8bDpEUS00D7hPhLIhVbTEW5DgGbUsespDxphHPkbjadk0bHYFfehqZXmaIsixv3If
+         4G2g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
+       dkim=pass header.i=@fb.com header.s=facebook header.b=LNHdeXGV;
+       dkim=fail header.i=@fb.onmicrosoft.com header.s=selector1-fb-com header.b=KMi8fffc;
+       spf=pass (google.com: domain of prvs=66055eecd2=ast@fb.com designates 67.231.153.30 as permitted sender) smtp.mailfrom=prvs=66055eecd2=ast@fb.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=fb.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
-Date: Thu, 8 Mar 2018 01:23:53 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Alexei Starovoitov <ast@kernel.org>
-Cc: davem@davemloft.net, daniel@iogearbox.net,
-	torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
-	mcgrof@kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@fb.com,
-	linux-api@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Mimi Zohar <zohar@linux.vnet.ibm.com>,
-	Jiri Kosina <jikos@kernel.org>
+       dkim=pass header.i=@fb.com header.s=facebook header.b=LNHdeXGV;
+       dkim=fail header.i=@fb.onmicrosoft.com header.s=selector1-fb-com header.b=KMi8fffc;
+       spf=pass (google.com: domain of prvs=66055eecd2=ast@fb.com designates 67.231.153.30 as permitted sender) smtp.mailfrom=prvs=66055eecd2=ast@fb.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=fb.com
 Subject: Re: [PATCH net-next] modules: allow modprobe load regular elf
  binaries
-Message-ID: <20180308012353.GO14069@wotan.suse.de>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Alexei Starovoitov
+	<ast@kernel.org>
 References: <20180306013457.1955486-1-ast@kernel.org>
+ <20180308012353.GO14069@wotan.suse.de>
+CC: <davem@davemloft.net>, <daniel@iogearbox.net>,
+        <torvalds@linux-foundation.org>, <gregkh@linuxfoundation.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-team@fb.com>, <linux-api@vger.kernel.org>,
+        Jessica Yu
+	<jeyu@kernel.org>, Kees Cook <keescook@chromium.org>,
+        "Rafael J. Wysocki"
+	<rjw@rjwysocki.net>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>, Jiri Kosina
+	<jikos@kernel.org>
+From: Alexei Starovoitov <ast@fb.com>
+Message-ID: <d83869b4-260e-179d-d469-83b8d8068399@fb.com>
+Date: Thu, 8 Mar 2018 15:07:01 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:45.0)
+ Gecko/20100101 Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180306013457.1955486-1-ast@kernel.org>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <20180308012353.GO14069@wotan.suse.de>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [2620:10d:c090:180::1:b108]
+X-ClientProxiedBy: MWHPR20CA0003.namprd20.prod.outlook.com
+ (2603:10b6:300:13d::13) To SN6PR15MB2510.namprd15.prod.outlook.com
+ (2603:10b6:805:25::23)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 82c75465-6bcd-47f5-b046-08d585494ffe
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:SN6PR15MB2510;
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR15MB2510;3:+eQMREbBPW0gDlnfosc0ZWiBY8FeBCJ4F6lmuM7YhSBwcWO7eez2w5HZtiOnI3Bo4CXy6YFa+D+vRPNzOgKDrsGkRW8a3aGNM2qxSvS5QkqkpsljhJRnKHfTo21v7kUok5IthCni7a/utmo99GtosPywrp87hTSCWzDByclnn7XC/Gwtj530HcO7SpsgSdkQa1fredMAybvx73TJ7eI0utZ1xCqnoR0tVfliegWf/EsekBcAD6/eWW/HdQWyVWuN;25:6irITEYxhojKCLFfNGv2ISDyIviOx5JgoFsP3YYyWm750ieKa+tsorFPKqvfdbj1h4jRWvO71MY9EiQCgHYU87c8+5cRmP/pHXtSqm3s2yNeKNeiQr7TkZpjihoxigdiSpLfnpSzzFNwRR23gTMZj89c/nUqcuySTEh3EjDDNq4CLXo6FYX4CZcf7k9F8nIzGdDixspVxpZ+C9HBAoFzvcaL5aNOvR72h83G5ZslKY4aeQHTWh+MuSNHf4LJ0HhG6quy4zpNt35sR6UP3ysfjdDzRJxZ4NTs1VGbS31kOUmmZRjVO/n8R87w0ak+UBSLQ4PE5ONeduM14a1lMnBgLw==;31:2ZH17IyTHLufH46nCVqFGXhYalpMSN4uKgYW/NagI4PRvBqUlv/ggDxOY8tQ5GZSIWEFXzHRSZVmw9sAeLfBSyprSksSbtSNjDtRDqkuq6Vvbi5Q2LRw53gKtpRHTbJolSXRd4gueLFGNdtrFDBV88ACQA7ND4FiwLqIEWapgvUFlFzUeVZT0S576Q4mCeJRAro/p5OekYXVYNr2ewA8OXjtEJ79xxZt+sguy5pr+qY=
+X-MS-TrafficTypeDiagnostic: SN6PR15MB2510:
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR15MB2510;20:bKeoQw0EJTmrelDJZtwFUvm9iHG62q11eWCDrI2NL7el4BDvbl2HrpNMYse9bmJnKHQ5lJyXfA7rLQK+C6XxH6jIWi+fecf6+7CcyRiL0i0lmJQyuwqK6DM12TZK8OvoG8GKzjp1nQM0OCqMzqDqR5aKsnrVu0fNvN+f4k9ksoD3klf4WsFooY3kbh4KLtos6+T4L2+hBE9ft8bTSwsOKhyjLFROeCFjBhmaTG2GpfQqwgTpjlnVWYttEbPlhBwEUp3FU9YTRdfSs5mzq/MCwOiykDkuICthwM/+ZwY5mR0sIC/Zrzf/fL+G1waw+8yVTHgspRFcuwltk1HVTPcxCF0MItf5y17X+LAQyxFxRW+qDCrzOp7u6f0xiHYjtRO651tUY6WDB0MICqtmK0ruUfo2R0mRON4NSCvb/gxelD6ObY9T3qCXjt8S9rnbL4HsxR7JG6URjIfKoY+PabPYPPKsNgOEpttlDiRvIY1F4zMcHfsoyQR7NntogpCcyqZ6;4:2k3dH020zy4zzCmwyoKunEP4ZDwp9ZPJlyCpVXOiTaarcn4QYGLNXw9nSbDqZYKghEzn3DeS5rxE9TJPBG4LORp/Qq1GxJn1uOAk0Cv8Rlpo8zEoGw5p0JtQ5F6Kedp7Lw9oxDxXu5/Fg+poyM2gypkIyPVJHA4DJVS3ZT/X+HvjKAudjDOf44RbxgSyB6Phe8U/f79t9ECNQcGXY/yHf/t3muwE2//KS4/IoAktefz4vJvvD3Dn2eYiN1b92PiXPfsPNYCUOPixSXP/L3EenA==
+X-Microsoft-Antispam-PRVS: <SN6PR15MB25101AC0906A1C84E8C034DFD7DF0@SN6PR15MB2510.namprd15.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040518)(2401047)(8121501046)(5005006)(3231220)(11241501184)(944501244)(52105095)(93006095)(93001095)(3002001)(10201501046)(6041306)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:SN6PR15MB2510;BCL:0;PCL:0;RULEID:;SRVR:SN6PR15MB2510;
+X-Forefront-PRVS: 060503E79B
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(979002)(376002)(366004)(39860400002)(346002)(396003)(39380400002)(199004)(189003)(386003)(53546011)(31686004)(59450400001)(186003)(68736007)(4326008)(25786009)(105586002)(230700001)(106356001)(305945005)(6666003)(23746002)(2950100002)(81156014)(6486002)(81166006)(8936002)(7736002)(7416002)(16526019)(65826007)(50466002)(229853002)(64126003)(6246003)(53936002)(5660300001)(8676002)(36756003)(2906002)(97736004)(58126008)(110136005)(52116002)(76176011)(47776003)(31696002)(46003)(54906003)(316002)(478600001)(52396003)(6116002)(65806001)(67846002)(65956001)(86362001)(1706002)(42262002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR15MB2510;H:[IPv6:2620:10d:c081:1131::116e];FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?Windows-1252?Q?1;SN6PR15MB2510;23:gmKjP3H0+cr9EfQW4aaDTZoUWZH2vkrvJNBEQ?=
+ =?Windows-1252?Q?6aUuhv16d+pRdfl3TclwP3gCT6mYJRoFj5pz78mVK9qR+lhfdkAzISCa?=
+ =?Windows-1252?Q?BtHp4HcwdcIGV817l4D4pU17YsvWnRhd1fnPAK/RCbGhel0pd7d9x+6/?=
+ =?Windows-1252?Q?tXNB7bUMsixOJiXn3HJGP3i+rxBuAigVl2gxUYzhX2UhXeGIS3vpIF24?=
+ =?Windows-1252?Q?9FkzokMd+0j/TsK7reiFO+eSeIaypiwHbjdug4EKtsiigUbWtYZaHcog?=
+ =?Windows-1252?Q?mNIGTxPg8vqSHWlBI9lXZ3Ea7UYkYczgqIazZ2WjTDGxmUgTJsLjhXfg?=
+ =?Windows-1252?Q?GX+k/Pm4BTeVB1cVfsT7nmxNns57gLOVvPYZ3oTU7qp2uYtJV6idBL7l?=
+ =?Windows-1252?Q?s0IXF368hYXHjaEgJ/W3TdEmdBkQyhJ9S6XrgL/XC7q1w7shSeF0G3H/?=
+ =?Windows-1252?Q?h6gWVUcIDaieyhp+3M3kbfs597IaQ5s54GvfVlzj49q6n17NrOQLPSow?=
+ =?Windows-1252?Q?ILHeYjxDHUztxcUD78baF23KkbB7B3DvQDt1bKDh+u2A2xdb34wlea2T?=
+ =?Windows-1252?Q?5wi9G43Z/QXGtgkrpfz/2c0U0aT6arf/ByoukPzIQONDlrahW3oL2uFu?=
+ =?Windows-1252?Q?tKC0YeLFnZPtTqHJUJ7Tyc89HuQIZK6jGKeqTBpQQfJh4iV7QnU7WaEx?=
+ =?Windows-1252?Q?wnsmb1EFFOVTT/+DTDLP8YdExybFPIdngwcYfuDAL19WoSiIge6wMbPU?=
+ =?Windows-1252?Q?dVUkiUW9J8AVECrYsMQXSErv+LuntoNyv61V9LrA9v05XXi/33/AT13e?=
+ =?Windows-1252?Q?u90VVkWi1ROyflwU+xkzh0pfo19MO5eAahMdCuFJUijm9tlewQNFafU0?=
+ =?Windows-1252?Q?GJqC1y/A0dYtvBeIFSb6uhEhWagKQhqYo7NwKEwv608EKUqrqlcXjc2y?=
+ =?Windows-1252?Q?j2RL0SChpJBnFSvbcOj9A7HNKd3orW/5SEm7z2O6ccesXXJMkHTTFu5H?=
+ =?Windows-1252?Q?wf4+WyvwKQIGTaMRSZdIrIV6T8Rqj9uhZx2n09OtqviTEJQbVic5G8gT?=
+ =?Windows-1252?Q?etsNQVn6pWrCg/UPeQoyn4uShgxOttCGSLb5Yv1CXLXjx0zy115n2FPy?=
+ =?Windows-1252?Q?9KnCY85rd8cWtphTUBt6h9DD5dg8L5pmnaL2FiZexd96IcIYZhwf0hsW?=
+ =?Windows-1252?Q?S+iz1IKKg5AYT1SRcaAb7s6OKT51ZP2M5Spwwls+LGJuUKAdRkPxhzQA?=
+ =?Windows-1252?Q?/jFFDswaVmmwrIyDNwP19CI3Wo7uTxXP8BCdirQp4P3B/RCp9gXO5JB+?=
+ =?Windows-1252?Q?PbrJ1HqI09UVq/5KPCv2gp1eTWsYFt8cFSjMzmkyMe1V7jZjP0NyAJ7W?=
+ =?Windows-1252?Q?XT0qvo16FliSXYLuMjfhocrimou64inTq88MZuy6Hx5F9frzYJwBpunD?=
+ =?Windows-1252?Q?MEGUZXkmae6j76aM2XuC/nzEr4VE3JgIIvr+vye9rKF3/quPApxwqbFg?=
+ =?Windows-1252?Q?JWs5glS+xQCKYASEtSsU4zeCftuNiU9V4Q1ZqCkaB2tnvrw+kiNPSxDu?=
+ =?Windows-1252?Q?7MWA8XUg2gDuz8=3D?=
+X-Microsoft-Antispam-Message-Info: h85ZiZ3T/+rSrnES4dO635ZocXRjzfyesYC+oQPzoaz4sLz2qc7jjb+7qC5hrGn5RtDv5WbcShdAL68QwUq1v70vafc75SKWxUxEDj80dQ9GvxJpqGjWnSrPvgGNTdUFQyWypn2Sf39nh+6qbE0V3YQCdKUNQxPYE5Iru0j4LsuzEA089JMZV5MnWZBMejTJ
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR15MB2510;6:H58X8ol74dneg+KAYX1MIzmhuXkO2ozNMibfA2Ftp2x1ZLFfhMeMXCRJ26KH1UhXMdKIsBx4dJ2EnjhNx5FOhQF4TDlgcd6AB4xpxGnk2XBkGyJ7U5JVgSAcOdNNFiRea6WhlfJYjVqxpPfgqQMlzPWulBGBtHhQatRYNYp4L+4Tw8/5GXe2ogTKT2r8I2U+kgWXK6Yb47mRgxwusG96J9opd9huefjdXjVaQDlEHlPb36zFUnLzEJ+qp/bqUFNko5Opg9k47rxiVwjKT4c02y1SYnkvAjRi+Y/U5ZTWbIsVhmiHkZW5iRibNWMx9HO3crs9NGxuavA8HUVeiHQ7/PlhIaO2mOuCPn34LVEF7Yg=;5:GhVw8HOnD7sCP6fStR9FVJjQ850psFhcjPEp+ohtTt2rv6i9DJnRMoQxpn1/Qzg5xaca7EKLcFO9B8bZnoNmzzjtJvohao0QKBJ6zKolvXrVTEC3b+O/L77GF6qkoJJ+3d7K3vdaH15LQegKRRoHLYyWwy9yBXz+nrSU8r+LW1U=;24:bfvSbixSsO6xpdQuU1SAfvqQrT1p3qoo4NAn9aetkFOsjIP/TbcYQBPGDyvJQvYfgbXwGIARCYRIy58ctHiIz93n7aWTjZgtuSnLw/YYK1w=;7:iJNpOVYUxyZkQwlnkiPnLS79H5mqCP1NdXFS4IwSLeYTDRvdyERq95cF47Y5lrFro0fOWJEjyxMJFirWhQT6m7oNe0PQNewsbHmkSUIAtm9A7cNON7jgfqOR15AtmTtfEzPuuXiDBXqWzLW8BOinPHa887zSlITtZ1/MYNR7YcT6Vs8iH65pd/pxdh6LHsa1oRBhFcxVLR9YqqIBQqAmEqlq1vE0clowIRGDWnb+jFkHXTKqXPqhixqeh6BAMwyW
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR15MB2510;20:6AyNQ0O0HmxImQ6ObExYU9sVuduHD6QYwqQg8mrhzoONbVAk0xXlCotwvv7iHlUmj+7iown0bfz2rfMdiP9fLIrdQ2ucV3cKk3o+28GWeRAWGkQteT10k8GsP08XNbDabetYOYQQDjoYdnqSt0bou6qQswq9ifoaiOKasiWpLnE=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Mar 2018 23:07:04.8209 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 82c75465-6bcd-47f5-b046-08d585494ffe
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR15MB2510
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-08_13:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594150201283124044?=
-X-GMAIL-MSGID: =?utf-8?q?1594330697963532844?=
+X-GMAIL-MSGID: =?utf-8?q?1594412710085512517?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 05, 2018 at 05:34:57PM -0800, Alexei Starovoitov wrote:
-> As the first step in development of bpfilter project [1]
-
-So meta :) The URL refers an lwn article, which in turn refers to this effort's
-first RFC.  As someone only getting *one* of these patches in emails, It would
-be useful if the cover letter referenced instead an optional git tree and
-branch so one could easily get the patches for more careful inspection. In the
-meantime, can you make such tree available with a branch?
-
-Also, since kernel/module.c is involved it would be wise to include Jessica,
-which I've Cc'd. I'm going to guess Kees may like to review this too. Mimi
-might want to help review as well.
-
-Rafael may care about suspend/resume implications of these "umh modules" as
-you put it.
-
-> the request_module()
-> code is extended to allow user mode helpers to be invoked. 
-
-Upon inspection you never touch or use request_module() so this is
-false and misleading. You don't use or extend request_module() at all, you rely
-on extending finit_module() so that load_module() itself will now execute (via
-modified do_execve_file()) the same file which was loaded as an module.
-
-This is *very* different given request_module() has its own full magic and is
-in and of itself a UMH of the kernel implemented in kernel/kmod.c.
-
-Nevertheless, why?
-
-> Idea is that
-> user mode helpers are built as part of the kernel build and installed as
-> traditional kernel modules with .ko file extension into distro specified
-> location, such that from a distribution point of view, they are no different
-> than regular kernel modules.
-
-It sounds like finit_module() module loading is used as a convenience factor
-simply to take advantage of being able to ship / maintain/ compile these umh
-programs as part of the kernel. Is that right?
-
-So the finit_module() interface was just a convenient mechanism. Is that right?
-
-Ie, if folks had these binaries in place the regular UMH interface / API could be
-used so that these could be looked for, but instead we want to carry these
-in tandem with the kernel?
-
-If so this still seems like an overly complex way to deal with this.
-
-> Thus, allow request_module() logic to load such
-> user mode helper (umh) modules via:
-> 
->   request_module("foo") ->
->     call_umh("modprobe foo") ->
->       sys_finit_module(FD of /lib/modules/.../foo.ko) ->
->         call_umh(struct file)
-
-OK so the use case envisioned here was for networking code to do
-something like:
-
-	if (!loaded) {
-		err = request_module("bpfilter");
-		...
-	}
-
-This is visible on your third patch (this is from your RFC, not this series):
-
-https://www.mail-archive.com/netfilter-devel@vger.kernel.org/msg11129.html
-
-So indeed all this patch does in the end is just putting tons of wrappers in
-place so that kernel code can load certain trusted UMH programs we ship, and
-maintain in the kernel.
-
-request_module() has its own world though too. How often in your proof of
-concept is request_module() called? How many times do you envision it being
-called?
-
-Please review lib/test_kmod.c and tools/testing/selftests/kmod/ for testing
-your stuff too or consider extending appropriately.
-
-Are aliases something which you expect we'll need to support for these
-userspace... modules?
-
-> Such approach enables kernel to delegate functionality traditionally done
-> by kernel modules into user space processes (either root or !root) and
-> reduces security attack surface of such new code, meaning in case of
-> potential bugs only the umh would crash but not the kernel.
-
-Now, this sounds great, however I think that the proof of concept chosen is
-pretty complex to start off with. Even if its not designed to be a real
-world life use case, a much simpler proof of concept to do something
-more simple may be useful, if possible. One wouldn't need to to have it
-replace a kernel functionality in real life. lib/ is full of CONFIG_TEST_*
-examples, a simple new stupid kernel functionality which can in turn be replaced
-with a respective userspace counterpart may be useful, and both kconfig
-entries would be mutually exclusive.
-
-> Another
-> advantage coming with that would be that bpfilter.ko 
-
-You mean foo.ko
-
-> can be debugged and
-> tested out of user space as well (e.g. opening the possibility to run
-> all clang sanitizers, fuzzers or test suites for checking translation).
-
-Great too.
-
-> Also, such architecture makes the kernel/user boundary very precise:
-> control plane is done by the user space while data plane stays in the kernel.
-
-I don't see how this is defining any boundary, I see just a loader for a
-userspace program, and re-using a kernel interface known, finit_module() which
-makes it convenient for us to load pre-compiled kernel junk. I'm still
-not convinced this is the right approach.
-
-> It's easy to distinguish "umh module" from traditional kernel module:
-
-Ah you said it, "umh module". I don't see what makes it a "umh module" so far,
-all we are doing is executing a userspace program a la UMH. But its a
-synchronous call, so we wait. The only modular thing here I see is we took the
-finit_module() to be able to loader programs compiled in the kernel. Its not
-using existing kernel symbols, its not exported symbols, etc.
-
-> $ readelf -h bld/net/bpfilter/bpfilter.ko|grep Type
->   Type:                              EXEC (Executable file)
-> $ readelf -h bld/net/ipv4/netfilter/iptable_filter.ko |grep Type
->   Type:                              REL (Relocatable file)
-> 
-> Since umh can crash, can be oom-ed by the kernel, killed by admin,
-> the subsystem that uses them (like bpfilter) need to manage life
-> time of umh on its own, so module infra doesn't do any accounting
-> of them.
-
-Trying to avoid the "module infra" in theory sounds great, however you
-did extend it a bit.
-
-Also, the umh has its own infrastructure which I've slowly also been trying to
-groom and cleanup with a few wtf's still left in place and which if we don't
-take care, extending this use could backfire in other ways. Feedback
-below.
-
-> They don't appear in "lsmod" and cannot be "rmmod".
-> Multiple request_module("umh") will load multiple umh.ko processes.
-
-That also means we have a namespace collision between these programs
-and kernel modules. Does compilation warn if we hit a conflict here
-already? What about with aliases?
-
-> Similar to kernel modules the kernel will be tainted if "umh module"
-> has invalid signature.
-> 
-> [1] https://lwn.net/Articles/747551/
-> 
-> Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-> ---
->  fs/exec.c               | 40 +++++++++++++++++++++++++++++++---------
->  include/linux/binfmts.h |  1 +
->  include/linux/umh.h     |  3 +++
->  kernel/module.c         | 43 ++++++++++++++++++++++++++++++++++++++-----
->  kernel/umh.c            | 24 +++++++++++++++++++++---
->  5 files changed, 94 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 7eb8d21bcab9..0483c438de7d 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1691,14 +1691,13 @@ static int exec_binprm(struct linux_binprm *bprm)
->  /*
->   * sys_execve() executes a new program.
->   */
-> -static int do_execveat_common(int fd, struct filename *filename,
-> -			      struct user_arg_ptr argv,
-> -			      struct user_arg_ptr envp,
-> -			      int flags)
-> +static int __do_execve_file(int fd, struct filename *filename,
-> +			    struct user_arg_ptr argv,
-> +			    struct user_arg_ptr envp,
-> +			    int flags, struct file *file)
->  {
->  	char *pathbuf = NULL;
->  	struct linux_binprm *bprm;
-> -	struct file *file;
->  	struct files_struct *displaced;
->  	int retval;
->  
-> @@ -1737,7 +1736,8 @@ static int do_execveat_common(int fd, struct filename *filename,
->  	check_unsafe_exec(bprm);
->  	current->in_execve = 1;
->  
-> -	file = do_open_execat(fd, filename, flags);
-> +	if (!file)
-> +		file = do_open_execat(fd, filename, flags);
->  	retval = PTR_ERR(file);
->  	if (IS_ERR(file))
->  		goto out_unmark;
-> @@ -1745,7 +1745,9 @@ static int do_execveat_common(int fd, struct filename *filename,
->  	sched_exec();
->  
->  	bprm->file = file;
-> -	if (fd == AT_FDCWD || filename->name[0] == '/') {
-> +	if (!filename) {
-> +		bprm->filename = "/dev/null";
-> +	} else if (fd == AT_FDCWD || filename->name[0] == '/') {
->  		bprm->filename = filename->name;
->  	} else {
->  		if (filename->name[0] == '\0')
-> @@ -1811,7 +1813,8 @@ static int do_execveat_common(int fd, struct filename *filename,
->  	task_numa_free(current);
->  	free_bprm(bprm);
->  	kfree(pathbuf);
-> -	putname(filename);
-> +	if (filename)
-> +		putname(filename);
->  	if (displaced)
->  		put_files_struct(displaced);
->  	return retval;
-> @@ -1834,10 +1837,29 @@ static int do_execveat_common(int fd, struct filename *filename,
->  	if (displaced)
->  		reset_files_struct(displaced);
->  out_ret:
-> -	putname(filename);
-> +	if (filename)
-> +		putname(filename);
->  	return retval;
->  }
->  
-> +static int do_execveat_common(int fd, struct filename *filename,
-> +			      struct user_arg_ptr argv,
-> +			      struct user_arg_ptr envp,
-> +			      int flags)
-> +{
-> +	struct file *file = NULL;
-> +
-> +	return __do_execve_file(fd, filename, argv, envp, flags, file);
-> +}
-> +
-> +int do_execve_file(struct file *file, void *__argv, void *__envp)
-> +{
-> +	struct user_arg_ptr argv = { .ptr.native = __argv };
-> +	struct user_arg_ptr envp = { .ptr.native = __envp };
-> +
-> +	return __do_execve_file(AT_FDCWD, NULL, argv, envp, 0, file);
-> +}
-> +
->  int do_execve(struct filename *filename,
->  	const char __user *const __user *__argv,
->  	const char __user *const __user *__envp)
-> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-> index b0abe21d6cc9..c783a7b9f284 100644
-> --- a/include/linux/binfmts.h
-> +++ b/include/linux/binfmts.h
-> @@ -147,5 +147,6 @@ extern int do_execveat(int, struct filename *,
->  		       const char __user * const __user *,
->  		       const char __user * const __user *,
->  		       int);
-> +int do_execve_file(struct file *file, void *__argv, void *__envp);
->  
->  #endif /* _LINUX_BINFMTS_H */
-> diff --git a/include/linux/umh.h b/include/linux/umh.h
-> index 244aff638220..2b10d5f70bd9 100644
-> --- a/include/linux/umh.h
-> +++ b/include/linux/umh.h
-> @@ -22,6 +22,7 @@ struct subprocess_info {
->  	const char *path;
->  	char **argv;
->  	char **envp;
-> +	struct file *file;
->  	int wait;
->  	int retval;
->  	int (*init)(struct subprocess_info *info, struct cred *new);
-> @@ -38,6 +39,8 @@ call_usermodehelper_setup(const char *path, char **argv, char **envp,
->  			  int (*init)(struct subprocess_info *info, struct cred *new),
->  			  void (*cleanup)(struct subprocess_info *), void *data);
->  
-> +struct subprocess_info *call_usermodehelper_setup_file(struct file *file);
-> +
->  extern int
->  call_usermodehelper_exec(struct subprocess_info *info, int wait);
->  
-> diff --git a/kernel/module.c b/kernel/module.c
-> index ad2d420024f6..6cfa35795741 100644
-> --- a/kernel/module.c
-> +++ b/kernel/module.c
-> @@ -325,6 +325,7 @@ struct load_info {
->  	struct {
->  		unsigned int sym, str, mod, vers, info, pcpu;
->  	} index;
-> +	struct file *file;
->  };
->  
->  /*
-> @@ -2801,6 +2802,15 @@ static int module_sig_check(struct load_info *info, int flags)
->  }
->  #endif /* !CONFIG_MODULE_SIG */
->  
-> +static int run_umh(struct file *file)
-> +{
-> +	struct subprocess_info *sub_info = call_usermodehelper_setup_file(file);
-> +
-> +	if (!sub_info)
-> +		return -ENOMEM;
-> +	return call_usermodehelper_exec(sub_info, UMH_WAIT_EXEC);
-> +}
-
-run_umh() calls the program and waits. Note that while we are running a UMH we
-can't suspend. What if they take forever, who is hosing them down with an
-equivalent:
-
-	schedule();
-	try_to_freeze();
-
-Say they are buggy and never return, will they stall suspend, have you tried?
-
-call_usermodehelper_exec() uses helper_lock() which in turn is used for
-umh's accounting for number of running umh's. One of the sad obscure uses
-for this is to deal with suspend/resume. Refer to __usermodehelper* calls
-on kernel/power/process.c
-
-Note how you use UMH_WAIT_EXEC too, so this is all synchronous.
-
-How many of these calls do you expect to be flying through? Is there any
-chance a system could want to keep spawning a lot of these without any
-chance of them yielding a bit?
-
-I'm not a fan of this use of the UMH lock thing, but the reason for it was back
-in the day today's firmware fallback mechanism used to be the default firmware
-loading interface, and it relied on a sysfs loading interface, and *with* this
-UMH locking thing we prevented system stalls on suspend/resume by first
-checking if they were supposed to run or not. But *only* the firmware loader
-interface uses the UMH lock API calls:
-
-  o usermodehelper_read_lock_wait()
-  o usermodehelper_read_trylock()
-
-A long term goal which I had recently was to actually get rid of these stupid
-calls at least out of the way from the direct firmware lookup calls since no
-UMH was involved and fortunately we fast-paced that that upstream [0], refer to
-"devil is in the details".
-
-[0] https://patchwork.kernel.org/patch/9949775/
-
-But -- other than not stalling suspend, an other implicit reason for it, was in
-turn the assumption that the files would be available whenever the callers (in
-this case the firmware API) needed them, and then there could be a race with
-the UMH callers and any respective subsystem filesystem which provides the files
-going down. This is a *theoretical* consideration any other UMH caller needs to
-make today.
-
-This later race is addressed today with the firmware cache implementation, for
-direct firmware filesystem lookups. 
-
-And yes, if you are trying to poke around files from the filesystem and are
-suspending/resuming you may just not get access to some of them today, I just
-dealt with one case recently reported [1]. So the firmware cache is *still*
-required today.
-
-Seeing any new broad user of of the UMH gives me concern if the above lessons
-are not taken into consideration. Do we *need* these files to be sure to be
-present during suspend/resume? How are we sure we won't race with
-suspend/resume?
-
-What if the same file is loaded multiple times, why not have one shared file
-pointer, and have all users use that while such requests are in place?  The
-firmware loader has this in place with "batched requests".
-
-[1] https://lkml.kernel.org/r/20180227232101.20786-1-mcgrof@kernel.org
-
-If it sounds like the direct firmware loading interface is more robust, and
-reliable, and tested to load files its because that is exactly what it was
-designed to do. The kernel UMH is a simple interface with limited use and I'd
-caution further *extensive* uses of it.
-
-> +
->  /* Sanity checks against invalid binaries, wrong arch, weird elf version. */
->  static int elf_header_check(struct load_info *info)
->  {
-> @@ -2808,7 +2818,6 @@ static int elf_header_check(struct load_info *info)
->  		return -ENOEXEC;
->  
->  	if (memcmp(info->hdr->e_ident, ELFMAG, SELFMAG) != 0
-> -	    || info->hdr->e_type != ET_REL
->  	    || !elf_check_arch(info->hdr)
->  	    || info->hdr->e_shentsize != sizeof(Elf_Shdr))
->  		return -ENOEXEC;
-> @@ -2818,6 +2827,11 @@ static int elf_header_check(struct load_info *info)
->  		info->len - info->hdr->e_shoff))
->  		return -ENOEXEC;
->  
-> +	if (info->hdr->e_type == ET_EXEC)
-> +		return run_umh(info->file);
-
-Note you run_umh() on elf_header_check().
-
-> +
-> +	if (info->hdr->e_type != ET_REL)
-> +		return -ENOEXEC;
->  	return 0;
->  }
->  
-> @@ -3669,6 +3683,17 @@ static int load_module(struct load_info *info, const char __user *uargs,
-
-The missing context line below is:
-
-        err = elf_header_check(info);
->  	if (err)
->  		goto free_copy;
->  
-> +	if (info->hdr->e_type == ET_EXEC) {
-> +#ifdef CONFIG_MODULE_SIG
-> +		if (!info->sig_ok) {
-> +			pr_notice_once("umh %s verification failed: signature and/or required key missing - tainting kernel\n",
-> +				       info->file->f_path.dentry->d_name.name);
-> +			add_taint(TAINT_UNSIGNED_MODULE, LOCKDEP_STILL_OK);
-> +		}
-> +#endif
-
-So I guess this check is done *after* run_umh() then, what about the enforce mode,
-don't we want to reject loading at all in any circumstance?
-
-> +		return 0;
-> +	}
-> +
->  	/* Figure out module layout, and allocate all the memory. */
->  	mod = layout_and_allocate(info, flags);
->  	if (IS_ERR(mod)) {
-> @@ -3856,6 +3881,7 @@ SYSCALL_DEFINE3(init_module, void __user *, umod,
->  SYSCALL_DEFINE3(finit_module, int, fd, const char __user *, uargs, int, flags)
->  {
->  	struct load_info info = { };
-> +	struct fd f;
->  	loff_t size;
->  	void *hdr;
->  	int err;
-> @@ -3870,14 +3896,21 @@ SYSCALL_DEFINE3(finit_module, int, fd, const char __user *, uargs, int, flags)
->  		      |MODULE_INIT_IGNORE_VERMAGIC))
->  		return -EINVAL;
->  
-> -	err = kernel_read_file_from_fd(fd, &hdr, &size, INT_MAX,
-> -				       READING_MODULE);
-> +	f = fdget(fd);
-> +	if (!f.file)
-> +		return -EBADF;
-> +
-> +	err = kernel_read_file(f.file, &hdr, &size, INT_MAX, READING_MODULE);
->  	if (err)
-
-I wonder if from an LSM perspective security_kernel_read_file() and
-READING_MODULE will suffice or if we want to have a different identifier here.
-
-  Luis
-
-> -		return err;
-> +		goto out;
->  	info.hdr = hdr;
->  	info.len = size;
-> +	info.file = f.file;
->  
-> -	return load_module(&info, uargs, flags);
-> +	err = load_module(&info, uargs, flags);
-> +out:
-> +	fdput(f);
-> +	return err;
->  }
->  
->  static inline int within(unsigned long addr, void *start, unsigned long size)
-> diff --git a/kernel/umh.c b/kernel/umh.c
-> index 18e5fa4b0e71..4361c694bdb1 100644
-> --- a/kernel/umh.c
-> +++ b/kernel/umh.c
-> @@ -97,9 +97,13 @@ static int call_usermodehelper_exec_async(void *data)
->  
->  	commit_creds(new);
->  
-> -	retval = do_execve(getname_kernel(sub_info->path),
-> -			   (const char __user *const __user *)sub_info->argv,
-> -			   (const char __user *const __user *)sub_info->envp);
-> +	if (sub_info->file)
-> +		retval = do_execve_file(sub_info->file,
-> +					sub_info->argv, sub_info->envp);
-> +	else
-> +		retval = do_execve(getname_kernel(sub_info->path),
-> +				   (const char __user *const __user *)sub_info->argv,
-> +				   (const char __user *const __user *)sub_info->envp);
->  out:
->  	sub_info->retval = retval;
->  	/*
-> @@ -393,6 +397,20 @@ struct subprocess_info *call_usermodehelper_setup(const char *path, char **argv,
->  }
->  EXPORT_SYMBOL(call_usermodehelper_setup);
->  
-> +struct subprocess_info *call_usermodehelper_setup_file(struct file *file)
-> +{
-> +	struct subprocess_info *sub_info;
-> +
-> +	sub_info = kzalloc(sizeof(struct subprocess_info), GFP_KERNEL);
-> +	if (!sub_info)
-> +		return NULL;
-> +
-> +	INIT_WORK(&sub_info->work, call_usermodehelper_exec_work);
-> +	sub_info->path = "/dev/null";
-> +	sub_info->file = file;
-> +	return sub_info;
-> +}
-> +
->  /**
->   * call_usermodehelper_exec - start a usermode application
->   * @sub_info: information about the subprocessa
-> -- 
-> 2.9.5
-> 
-> 
-
--- 
-Luis Rodriguez, SUSE LINUX GmbH
-Maxfeldstrasse 5; D-90409 Nuernberg
+On 3/7/18 5:23 PM, Luis R. Rodriguez wrote:
+>
+> request_module() has its own world though too. How often in your proof of
+> concept is request_module() called? How many times do you envision it being
+> called?
+
+once.
+
+>> +static int run_umh(struct file *file)
+>> +{
+>> +	struct subprocess_info *sub_info = call_usermodehelper_setup_file(file);
+>> +
+>> +	if (!sub_info)
+>> +		return -ENOMEM;
+>> +	return call_usermodehelper_exec(sub_info, UMH_WAIT_EXEC);
+>> +}
+>
+> run_umh() calls the program and waits. Note that while we are running a UMH we
+> can't suspend. What if they take forever, who is hosing them down with an
+> equivalent:
+>
+> 	schedule();
+> 	try_to_freeze();
+>
+> Say they are buggy and never return, will they stall suspend, have you tried?
+>
+> call_usermodehelper_exec() uses helper_lock() which in turn is used for
+> umh's accounting for number of running umh's. One of the sad obscure uses
+> for this is to deal with suspend/resume. Refer to __usermodehelper* calls
+> on kernel/power/process.c
+>
+> Note how you use UMH_WAIT_EXEC too, so this is all synchronous.
+
+looks like you misread this code and the rest of your concerns
+with suspend/resume are not applicable any more.
+
+#define UMH_NO_WAIT     0       /* don't wait at all */
+#define UMH_WAIT_EXEC   1       /* wait for the exec, but not the process */
+#define UMH_WAIT_PROC   2       /* wait for the process to complete */
+#define UMH_KILLABLE    4       /* wait for EXEC/PROC killable */
+
+bpftiler.ko is started once and runs non-stop from there on.
+Unless it crashes, but it's a different discussion.
+
+>> +	if (info->hdr->e_type == ET_EXEC) {
+>> +#ifdef CONFIG_MODULE_SIG
+>> +		if (!info->sig_ok) {
+>> +			pr_notice_once("umh %s verification failed: signature and/or required key missing - tainting kernel\n",
+>> +				       info->file->f_path.dentry->d_name.name);
+>> +			add_taint(TAINT_UNSIGNED_MODULE, LOCKDEP_STILL_OK);
+>> +		}
+>> +#endif
+>
+> So I guess this check is done *after* run_umh() then, what about the enforce mode,
+> don't we want to reject loading at all in any circumstance?
+
+already answered this twice in the thread.
