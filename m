@@ -1,94 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934149AbeCHKWJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 05:22:09 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:62064 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751616AbeCHKWH (ORCPT
+        id S935598AbeCHKWZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 05:22:25 -0500
+Received: from regular1.263xmail.com ([211.150.99.139]:38332 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755101AbeCHKWV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 05:22:07 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w28ALtN8029611
-X-Nifty-SrcIP: [209.85.217.171]
-X-Google-Smtp-Source: AG47ELuJGhixhOz80dgJyga8XZ8T5Bpg7RjjEybGBcC2/16fI2wvAYyeZA/ifTOgqHJbQWQyPB5Zb9rdqDlz+D2vUIs=
-MIME-Version: 1.0
-In-Reply-To: <4022257e-9ab0-b038-df0e-b15b98cb999f@cn.fujitsu.com>
-References: <1520471103-10089-1-git-send-email-yamada.masahiro@socionext.com>
- <1520471103-10089-3-git-send-email-yamada.masahiro@socionext.com> <4022257e-9ab0-b038-df0e-b15b98cb999f@cn.fujitsu.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 8 Mar 2018 19:21:14 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARhhs4o-cKKzW9exRjbCYpTntdBvUgsx6o-egsTc2pQ0g@mail.gmail.com>
-Message-ID: <CAK7LNARhhs4o-cKKzW9exRjbCYpTntdBvUgsx6o-egsTc2pQ0g@mail.gmail.com>
-Subject: Re: [PATCH 2/5] kbuild: define KBUILD_MODNAME even if multiple
- modules share objects
-To: Cao jin <caoj.fnst@cn.fujitsu.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Govind Singh <govinds@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 8 Mar 2018 05:22:21 -0500
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: jeffy.chen@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: jeffy.chen@rock-chips.com
+X-UNIQUE-TAG: <38a1b3c45e22e1253283d19dfc8d130d>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+To: linux-kernel@vger.kernel.org, broonie@kernel.org
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>, linux-rtc@vger.kernel.org,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-rockchip@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>,
+        linux-clk@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Russell King <linux@armlinux.org.uk>, Lee Jones <lee.jones@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 0/4] Set name of regmap_config
+Date: Thu,  8 Mar 2018 18:21:50 +0800
+Message-Id: <20180308102154.25686-1-jeffy.chen@rock-chips.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-08 19:11 GMT+09:00 Cao jin <caoj.fnst@cn.fujitsu.com>:
->
->
-> On 03/08/2018 09:05 AM, Masahiro Yamada wrote:
->> Currently, KBUILD_MODNAME is defined only when $(modname) contains
->> just one word.  If an object is shared among multiple modules,
->> undefined KBUILD_MODNAME could cause a build error.  For example,
->> if CONFIG_DYNAMIC_DEBUG is enabled, any call of printk() populates
->> .modname, then fails to build due to undefined KBUILD_MODNAME.
->>
->> Take the following code as an example:
->>
->>   obj-m += foo.o
->>   obj-m += bar.o
->>   foo-objs := foo-bar-common.o foo-main.o
->>   bar-objs := foo-bar-common.o bar-main.o
->>
->> In this case, there is room for argument what to define for
->> KBUILD_MODNAME when foo-bar-common.o is being compiled.
->> "foo", "bar", or what else?
->>
->> One idea is to define colon-separated modules that share the object,
->> in this case, "bar:foo" (modules are sorted alphabetically by
->> $(sort ...).
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> ---
->>
->>  scripts/Makefile.lib | 9 +++++----
->>  1 file changed, 5 insertions(+), 4 deletions(-)
->>
->> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
->> index a7e315f..a1fbd6a 100644
->> --- a/scripts/Makefile.lib
->> +++ b/scripts/Makefile.lib
->> @@ -92,8 +92,7 @@ subdir-ym   := $(addprefix $(obj)/,$(subdir-ym))
->>  #       differ in different configs.
->>  name-fix = $(squote)$(quote)$(subst $(comma),_,$(subst -,_,$1))$(quote)$(squote)
->>  basename_flags = -DKBUILD_BASENAME=$(call name-fix,$(basetarget))
->> -modname_flags  = $(if $(filter 1,$(words $(modname))),\
->> -                 -DKBUILD_MODNAME=$(call name-fix,$(modname)))
->> +modname_flags  = -DKBUILD_MODNAME=$(call name-fix,$(modname))
->>
->
-> I guess there is comment also need to be modified above this code hunk:
->
-> Note: Files that end up in two or more modules are compiled without the
->       KBUILD_MODNAME definition. The reason is that any made-up name
->       would differ in different configs.
+
+After 9b947a13e7f6 ("regmap: use debugfs even when no device"), we are
+allowing regmap to create debugfs without a valid device. Some of them
+would end up using "dummy*" as debugfs name.
+
+This series try to set names in some regmap_config to avoid that.
 
 
-Why do I have to add lying comments here?
+Changes in v3:
+Modify commit message.
 
-The commit subject/log claims KBUILD_MODNAME should be _always_ defined.
+Jeffy Chen (4):
+  mfd: syscon: Set name of regmap_config
+  rtc: at91sam9: Pass pdev->dev to regmap_init_mmio()
+  clk: lpc32xx: Set name of regmap_config
+  ARM: rockchip: Set name of regmap_config
 
-
+ arch/arm/mach-rockchip/platsmp.c | 1 +
+ drivers/clk/nxp/clk-lpc32xx.c    | 1 +
+ drivers/mfd/syscon.c             | 1 +
+ drivers/rtc/rtc-at91sam9.c       | 2 +-
+ 4 files changed, 4 insertions(+), 1 deletion(-)
 
 -- 
-Best Regards
-Masahiro Yamada
+2.11.0
