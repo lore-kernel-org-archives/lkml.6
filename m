@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965012AbeCHCip (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 21:38:45 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5756 "EHLO huawei.com"
+        id S935134AbeCHCkE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 21:40:04 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5751 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934848AbeCHCfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S934793AbeCHCfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Mar 2018 21:35:00 -0500
 From: Peng Li <lipeng321@huawei.com>
 To: <davem@davemloft.net>
 CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
         <lipeng321@huawei.com>
-Subject: [PATCH net-next 07/23] {topost} net: hns3: unify the pause params setup function
-Date: Thu, 8 Mar 2018 11:06:32 +0800
-Message-ID: <1520478408-116992-8-git-send-email-lipeng321@huawei.com>
+Subject: [PATCH net-next 11/23] {topost} net: hns3: refactor the hclge_get/set_rss_tuple function
+Date: Thu, 8 Mar 2018 11:06:36 +0800
+Message-ID: <1520478408-116992-12-git-send-email-lipeng321@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520478408-116992-1-git-send-email-lipeng321@huawei.com>
 References: <1520478408-116992-1-git-send-email-lipeng321@huawei.com>
@@ -25,109 +25,198 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fuyun Liang <liangfuyun1@huawei.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-Since the firmware cmd to setup mac pause params is the same as the
-firmware cmd to pfc pause params, this patch unifies the pause params
-setup function.
+This patch refactors the hclge_get/set_rss_tuple function
+in order to fix the rss configuration loss problem during
+reset process.
 
-Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 ---
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    |  2 +-
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  | 23 +++++++++++-----------
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  |  2 +-
- 3 files changed, 13 insertions(+), 14 deletions(-)
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 91 +++++++++++++---------
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    | 13 ++++
+ 2 files changed, 67 insertions(+), 37 deletions(-)
 
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 83be4d5..cc72ed8 100644
+index 9ba012b..0271960 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -4431,7 +4431,7 @@ static int hclge_set_mac_addr(struct hnae3_handle *handle, void *p,
- 		return -EIO;
- 	}
+@@ -3091,14 +3091,16 @@ static int hclge_set_rss_input_tuple(struct hclge_dev *hdev)
+ 	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_RSS_INPUT_TUPLE, false);
  
--	ret = hclge_mac_pause_addr_cfg(hdev, new_addr);
-+	ret = hclge_pause_addr_cfg(hdev, new_addr);
+ 	req = (struct hclge_rss_input_tuple_cmd *)desc.data;
+-	req->ipv4_tcp_en = HCLGE_RSS_INPUT_TUPLE_OTHER;
+-	req->ipv4_udp_en = HCLGE_RSS_INPUT_TUPLE_OTHER;
+-	req->ipv4_sctp_en = HCLGE_RSS_INPUT_TUPLE_SCTP;
+-	req->ipv4_fragment_en = HCLGE_RSS_INPUT_TUPLE_OTHER;
+-	req->ipv6_tcp_en = HCLGE_RSS_INPUT_TUPLE_OTHER;
+-	req->ipv6_udp_en = HCLGE_RSS_INPUT_TUPLE_OTHER;
+-	req->ipv6_sctp_en = HCLGE_RSS_INPUT_TUPLE_SCTP;
+-	req->ipv6_fragment_en = HCLGE_RSS_INPUT_TUPLE_OTHER;
++
++	/* Get the tuple cfg from pf */
++	req->ipv4_tcp_en = hdev->vport[0].rss_tuple_sets.ipv4_tcp_en;
++	req->ipv4_udp_en = hdev->vport[0].rss_tuple_sets.ipv4_udp_en;
++	req->ipv4_sctp_en = hdev->vport[0].rss_tuple_sets.ipv4_sctp_en;
++	req->ipv4_fragment_en = hdev->vport[0].rss_tuple_sets.ipv4_fragment_en;
++	req->ipv6_tcp_en = hdev->vport[0].rss_tuple_sets.ipv6_tcp_en;
++	req->ipv6_udp_en = hdev->vport[0].rss_tuple_sets.ipv6_udp_en;
++	req->ipv6_sctp_en = hdev->vport[0].rss_tuple_sets.ipv6_sctp_en;
++	req->ipv6_fragment_en = hdev->vport[0].rss_tuple_sets.ipv6_fragment_en;
+ 	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
  	if (ret) {
  		dev_err(&hdev->pdev->dev,
- 			"configure mac pause address fail, ret =%d.\n",
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-index 36bd79a..4134a82 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-@@ -138,8 +138,8 @@ static int hclge_pfc_pause_en_cfg(struct hclge_dev *hdev, u8 tx_rx_bitmap,
- 	return hclge_cmd_send(&hdev->hw, &desc, 1);
- }
+@@ -3204,15 +3206,16 @@ static int hclge_set_rss_tuple(struct hnae3_handle *handle,
+ 		return -EINVAL;
  
--static int hclge_mac_pause_param_cfg(struct hclge_dev *hdev, const u8 *addr,
--				     u8 pause_trans_gap, u16 pause_trans_time)
-+static int hclge_pause_param_cfg(struct hclge_dev *hdev, const u8 *addr,
-+				 u8 pause_trans_gap, u16 pause_trans_time)
- {
- 	struct hclge_cfg_pause_param_cmd *pause_param;
- 	struct hclge_desc desc;
-@@ -155,7 +155,7 @@ static int hclge_mac_pause_param_cfg(struct hclge_dev *hdev, const u8 *addr,
- 	return hclge_cmd_send(&hdev->hw, &desc, 1);
- }
- 
--int hclge_mac_pause_addr_cfg(struct hclge_dev *hdev, const u8 *mac_addr)
-+int hclge_pause_addr_cfg(struct hclge_dev *hdev, const u8 *mac_addr)
- {
- 	struct hclge_cfg_pause_param_cmd *pause_param;
- 	struct hclge_desc desc;
-@@ -174,7 +174,7 @@ int hclge_mac_pause_addr_cfg(struct hclge_dev *hdev, const u8 *mac_addr)
- 	trans_gap = pause_param->pause_trans_gap;
- 	trans_time = le16_to_cpu(pause_param->pause_trans_time);
- 
--	return hclge_mac_pause_param_cfg(hdev, mac_addr, trans_gap,
-+	return hclge_pause_param_cfg(hdev, mac_addr, trans_gap,
- 					 trans_time);
- }
- 
-@@ -1096,11 +1096,11 @@ static int hclge_tm_schd_setup_hw(struct hclge_dev *hdev)
- 	return hclge_tm_schd_mode_hw(hdev);
- }
- 
--static int hclge_mac_pause_param_setup_hw(struct hclge_dev *hdev)
-+static int hclge_pause_param_setup_hw(struct hclge_dev *hdev)
- {
- 	struct hclge_mac *mac = &hdev->hw.mac;
- 
--	return hclge_mac_pause_param_cfg(hdev, mac->mac_addr,
-+	return hclge_pause_param_cfg(hdev, mac->mac_addr,
- 					 HCLGE_DEFAULT_PAUSE_TRANS_GAP,
- 					 HCLGE_DEFAULT_PAUSE_TRANS_TIME);
- }
-@@ -1151,13 +1151,12 @@ int hclge_pause_setup_hw(struct hclge_dev *hdev)
- 	int ret;
- 	u8 i;
- 
--	if (hdev->tm_info.fc_mode != HCLGE_FC_PFC) {
--		ret = hclge_mac_pause_setup_hw(hdev);
--		if (ret)
--			return ret;
-+	ret = hclge_pause_param_setup_hw(hdev);
-+	if (ret)
-+		return ret;
- 
--		return hclge_mac_pause_param_setup_hw(hdev);
+ 	req = (struct hclge_rss_input_tuple_cmd *)desc.data;
+-	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_RSS_INPUT_TUPLE, true);
+-	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
+-	if (ret) {
+-		dev_err(&hdev->pdev->dev,
+-			"Read rss tuple fail, status = %d\n", ret);
+-		return ret;
 -	}
-+	if (hdev->tm_info.fc_mode != HCLGE_FC_PFC)
-+		return hclge_mac_pause_setup_hw(hdev);
++	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_RSS_INPUT_TUPLE, false);
  
- 	/* Only DCB-supported dev supports qset back pressure and pfc cmd */
- 	if (!hnae3_dev_dcb_supported(hdev))
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-index 5401e75..c30c85b 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-@@ -129,5 +129,5 @@ int hclge_tm_dwrr_cfg(struct hclge_dev *hdev);
- int hclge_tm_map_cfg(struct hclge_dev *hdev);
- int hclge_tm_init_hw(struct hclge_dev *hdev);
- int hclge_mac_pause_en_cfg(struct hclge_dev *hdev, bool tx, bool rx);
--int hclge_mac_pause_addr_cfg(struct hclge_dev *hdev, const u8 *mac_addr);
-+int hclge_pause_addr_cfg(struct hclge_dev *hdev, const u8 *mac_addr);
- #endif
+-	hclge_cmd_reuse_desc(&desc, false);
++	req->ipv4_tcp_en = vport->rss_tuple_sets.ipv4_tcp_en;
++	req->ipv4_udp_en = vport->rss_tuple_sets.ipv4_udp_en;
++	req->ipv4_sctp_en = vport->rss_tuple_sets.ipv4_sctp_en;
++	req->ipv4_fragment_en = vport->rss_tuple_sets.ipv4_fragment_en;
++	req->ipv6_tcp_en = vport->rss_tuple_sets.ipv6_tcp_en;
++	req->ipv6_udp_en = vport->rss_tuple_sets.ipv6_udp_en;
++	req->ipv6_sctp_en = vport->rss_tuple_sets.ipv6_sctp_en;
++	req->ipv6_fragment_en = vport->rss_tuple_sets.ipv6_fragment_en;
+ 
+ 	tuple_sets = hclge_get_rss_hash_bits(nfc);
+ 	switch (nfc->flow_type) {
+@@ -3249,52 +3252,49 @@ static int hclge_set_rss_tuple(struct hnae3_handle *handle,
+ 	}
+ 
+ 	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
+-	if (ret)
++	if (ret) {
+ 		dev_err(&hdev->pdev->dev,
+ 			"Set rss tuple fail, status = %d\n", ret);
++		return ret;
++	}
+ 
+-	return ret;
++	vport->rss_tuple_sets.ipv4_tcp_en = req->ipv4_tcp_en;
++	vport->rss_tuple_sets.ipv4_udp_en = req->ipv4_udp_en;
++	vport->rss_tuple_sets.ipv4_sctp_en = req->ipv4_sctp_en;
++	vport->rss_tuple_sets.ipv4_fragment_en = req->ipv4_fragment_en;
++	vport->rss_tuple_sets.ipv6_tcp_en = req->ipv6_tcp_en;
++	vport->rss_tuple_sets.ipv6_udp_en = req->ipv6_udp_en;
++	vport->rss_tuple_sets.ipv6_sctp_en = req->ipv6_sctp_en;
++	vport->rss_tuple_sets.ipv6_fragment_en = req->ipv6_fragment_en;
++	return 0;
+ }
+ 
+ static int hclge_get_rss_tuple(struct hnae3_handle *handle,
+ 			       struct ethtool_rxnfc *nfc)
+ {
+ 	struct hclge_vport *vport = hclge_get_vport(handle);
+-	struct hclge_dev *hdev = vport->back;
+-	struct hclge_rss_input_tuple_cmd *req;
+-	struct hclge_desc desc;
+ 	u8 tuple_sets;
+-	int ret;
+ 
+ 	nfc->data = 0;
+ 
+-	req = (struct hclge_rss_input_tuple_cmd *)desc.data;
+-	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_RSS_INPUT_TUPLE, true);
+-	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
+-	if (ret) {
+-		dev_err(&hdev->pdev->dev,
+-			"Read rss tuple fail, status = %d\n", ret);
+-		return ret;
+-	}
+-
+ 	switch (nfc->flow_type) {
+ 	case TCP_V4_FLOW:
+-		tuple_sets = req->ipv4_tcp_en;
++		tuple_sets = vport->rss_tuple_sets.ipv4_tcp_en;
+ 		break;
+ 	case UDP_V4_FLOW:
+-		tuple_sets = req->ipv4_udp_en;
++		tuple_sets = vport->rss_tuple_sets.ipv4_udp_en;
+ 		break;
+ 	case TCP_V6_FLOW:
+-		tuple_sets = req->ipv6_tcp_en;
++		tuple_sets = vport->rss_tuple_sets.ipv6_tcp_en;
+ 		break;
+ 	case UDP_V6_FLOW:
+-		tuple_sets = req->ipv6_udp_en;
++		tuple_sets = vport->rss_tuple_sets.ipv6_udp_en;
+ 		break;
+ 	case SCTP_V4_FLOW:
+-		tuple_sets = req->ipv4_sctp_en;
++		tuple_sets = vport->rss_tuple_sets.ipv4_sctp_en;
+ 		break;
+ 	case SCTP_V6_FLOW:
+-		tuple_sets = req->ipv6_sctp_en;
++		tuple_sets = vport->rss_tuple_sets.ipv6_sctp_en;
+ 		break;
+ 	case IPV4_FLOW:
+ 	case IPV6_FLOW:
+@@ -3349,6 +3349,23 @@ int hclge_rss_init_hw(struct hclge_dev *hdev)
+ 
+ 	/* Initialize RSS indirect table for each vport */
+ 	for (j = 0; j < hdev->num_vmdq_vport + 1; j++) {
++		vport[j].rss_tuple_sets.ipv4_tcp_en =
++			HCLGE_RSS_INPUT_TUPLE_OTHER;
++		vport[j].rss_tuple_sets.ipv4_udp_en =
++			HCLGE_RSS_INPUT_TUPLE_OTHER;
++		vport[j].rss_tuple_sets.ipv4_sctp_en =
++			HCLGE_RSS_INPUT_TUPLE_SCTP;
++		vport[j].rss_tuple_sets.ipv4_fragment_en =
++			HCLGE_RSS_INPUT_TUPLE_OTHER;
++		vport[j].rss_tuple_sets.ipv6_tcp_en =
++			HCLGE_RSS_INPUT_TUPLE_OTHER;
++		vport[j].rss_tuple_sets.ipv6_udp_en =
++			HCLGE_RSS_INPUT_TUPLE_OTHER;
++		vport[j].rss_tuple_sets.ipv6_sctp_en =
++			HCLGE_RSS_INPUT_TUPLE_SCTP;
++		vport[j].rss_tuple_sets.ipv6_fragment_en =
++			HCLGE_RSS_INPUT_TUPLE_OTHER;
++
+ 		for (i = 0; i < HCLGE_RSS_IND_TBL_SIZE; i++) {
+ 			vport[j].rss_indirection_tbl[i] =
+ 				i % vport[j].alloc_rss_size;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+index 7e762c4..13d3999 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -573,6 +573,17 @@ struct hclge_rx_vtag_cfg {
+ 	bool vlan2_vlan_prionly;/* Outer VLAN Tag up to descriptor Enable */
+ };
+ 
++struct hclge_rss_tuple_cfg {
++	u8 ipv4_tcp_en;
++	u8 ipv4_udp_en;
++	u8 ipv4_sctp_en;
++	u8 ipv4_fragment_en;
++	u8 ipv6_tcp_en;
++	u8 ipv6_udp_en;
++	u8 ipv6_sctp_en;
++	u8 ipv6_fragment_en;
++};
++
+ struct hclge_vport {
+ 	u16 alloc_tqps;	/* Allocated Tx/Rx queues */
+ 
+@@ -580,6 +591,8 @@ struct hclge_vport {
+ 	/* User configured lookup table entries */
+ 	u8  rss_indirection_tbl[HCLGE_RSS_IND_TBL_SIZE];
+ 	int rss_algo;		/* User configured hash algorithm */
++	/* User configured rss tuple sets */
++	struct hclge_rss_tuple_cfg rss_tuple_sets;
+ 
+ 	u16 alloc_rss_size;
+ 
 -- 
 2.9.3
