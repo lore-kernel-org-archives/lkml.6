@@ -1,129 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934614AbeCHDI6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 22:08:58 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:7942 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932759AbeCHDI4 (ORCPT
+        id S933780AbeCHDT2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 22:19:28 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38022 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751234AbeCHDT0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 22:08:56 -0500
-X-UUID: 162e289610ba48058ef9ccd942fab38e-20180308
-Message-ID: <1520478530.4049.3.camel@mtkswgap22>
-Subject: Re: [PATCH v3 0/4] PINCTRL: Mediatek pinctrl driver for mt2712
-From: Sean Wang <sean.wang@mediatek.com>
-To: Zhiyong Tao <zhiyong.tao@mediatek.com>
-CC: <robh+dt@kernel.org>, <linus.walleij@linaro.org>,
-        <mark.rutland@arm.com>, <matthias.bgg@gmail.com>,
-        <devicetree@vger.kernel.org>, <hongkun.cao@mediatek.com>,
-        <srv_heupstream@mediatek.com>, <linux-gpio@vger.kernel.org>,
-        <biao.huang@mediatek.com>, <erin.lo@mediatek.com>,
-        <liguo.zhang@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <hongzhou.yang@mediatek.com>, <linux-mediatek@lists.infradead.org>,
-        <yingjoe.chen@mediatek.com>, <linux-arm-kernel@lists.infradead.org>
-Date: Thu, 8 Mar 2018 11:08:50 +0800
-In-Reply-To: <1520249745-6757-1-git-send-email-zhiyong.tao@mediatek.com>
-References: <1520249745-6757-1-git-send-email-zhiyong.tao@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 7 Mar 2018 22:19:26 -0500
+X-Google-Smtp-Source: AG47ELvZL/NLcpca19uXd2IiXDs4S4an/o5Qo2k/Y+Uzwpbk2A2OXSOeSLYpgGDIHAJ2JiQ2rQAC3Q==
 MIME-Version: 1.0
-X-MTK: N
+In-Reply-To: <20180308033746.fc65a8101bf9255b742b2f56@bidouilliste.com>
+References: <20180308093532.7fcfb205@canb.auug.org.au> <20180308033746.fc65a8101bf9255b742b2f56@bidouilliste.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 8 Mar 2018 11:19:03 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66m13KiVfsKADGPSTNZHPi4+AGMhKtewXGvFAh=2bNFag@mail.gmail.com>
+Message-ID: <CAGb2v66m13KiVfsKADGPSTNZHPi4+AGMhKtewXGvFAh=2bNFag@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the sunxi tree
+To: Emmanuel Vadot <manu@bidouilliste.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Emmanuel Vadot <manu@freebsd.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Zhiyong
+Hi,
 
-you should checkpatch every patch before sending them out
+On Thu, Mar 8, 2018 at 10:37 AM, Emmanuel Vadot <manu@bidouilliste.com> wrote:
+>
+>  Hi All,
+>
+> On Thu, 8 Mar 2018 09:35:32 +1100
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+>> Hi all,
+>>
+>> After merging the sunxi tree, today's linux-next build (arm
+>> multi_v7_defconfig) failed like this:
+>>
+>> arch/arm/boot/dts/sun8i-h3-nanopi-m1-plus.dtb: ERROR (phandle_references): Reference to non-existent node or label "mmc2_8bits_pins"
+>>
+>> Caused by commit
+>>
+>>   89fd776b2b9f ("dts: sunxi: Add eMMC for NanoPi M1 Plus")
+>>
+>> I have merged the version of the sunxi tree from next-20180307 for today.
+>>
+>> --
+>> Cheers,
+>> Stephen Rothwell
+>
+>  I don't even know how I managed to screw this patch.
+>  Maxime, Chen-Yu,  how would you like this problem to be handled ?
 
-because I saw tons of check messages like below result for scanning v3
-3/4
+There was a typo: "mmc2_8bits_pins" should have been "mmc2_8bit_pins".
 
-CHECK:PARENTHESIS_ALIGNMENT: Alignment should match open parenthesis
-#152: FILE: drivers/pinctrl/mediatek/pinctrl-mt2712.c:85:
-+static int mt2712_spec_pull_set(struct regmap *regmap, unsigned int
-pin,
-+               unsigned char align, bool isup, unsigned int r1r0)
+I've fixed it and updated our branches.
 
-CHECK:PARENTHESIS_ALIGNMENT: Alignment should match open parenthesis
-#353: FILE: drivers/pinctrl/mediatek/pinctrl-mt2712.c:286:
-+static int mt2712_ies_smt_set(struct regmap *regmap, unsigned int pin,
-+               unsigned char align, int value, enum pin_config_param
-arg)
+ChenYu
 
-CHECK:LINE_SPACING: Please don't use multiple blank lines
-#423: FILE: drivers/pinctrl/mediatek/pinctrl-mt2712.c:356:
-+
-+
-
-CHECK:LINE_SPACING: Please don't use multiple blank lines
-#473: FILE: drivers/pinctrl/mediatek/pinctrl-mt2712.c:406:
-+
-+
-
-CHECK:OPEN_ENDED_LINE: Lines should not end with a '('
-#719: FILE: drivers/pinctrl/mediatek/pinctrl-mtk-mt2712.h:14:
-+       MTK_PIN(
-
-CHECK:OPEN_ENDED_LINE: Lines should not end with a '('
-#731: FILE: drivers/pinctrl/mediatek/pinctrl-mtk-mt2712.h:26:
-+       MTK_PIN(
-
-CHECK:OPEN_ENDED_LINE: Lines should not end with a '('
-#742: FILE: drivers/pinctrl/mediatek/pinctrl-mtk-mt2712.h:37:
-+       MTK_PIN(
-
-....
-
-total: 0 errors, 1 warnings, 214 checks, 2619 lines checked
-
-
-
-
-On Mon, 2018-03-05 at 19:35 +0800, Zhiyong Tao wrote:
-> This series includes four patches:
-> 1.Add mt2712 pintcrl head file.
-> 2.Add mt2712 pinctrl device node.
-> 3.Add mt2712 pinctrl driver.
-> 4.Support bias-disable of generic and special pins simultaneously.
-> 
-> Changes in patch v3:
-> 1)Use SPDX identifiers for all new files.
-> 2)Use right data for Copyright and Author.
-> 3)Correct some spelling mistake.
-> 4)Reusing original logic and change solution to support bias-disable of generic and special pins simultaneously.
-> 5)Add some comments for the speical path of special pins bias-disable.
-> 
-> Changes in patch v2:
-> 1)Separate patch4 for supporting bias-disable of generic and special pins.
-> 2)GPIO16~17 direction setting is changed as generic pins in mt2712 E2,
->   So remove GPIO16~17 special direction setting and remove apmixedsys node in pinctrl device node.
-> 3)Add pinmux define in "mt2712-pinfunc.h" and "pinctrl-mtk-mt2712.h" for mt2712 E2 design.
-> 
-> Zhiyong Tao (4):
->   arm64: dts: mt2712: add pintcrl file
->   arm64: dts: mt2712: add pintcrl device node.
->   pinctrl: add mt2712 pinctrl driver
->   pintcrl: support bias-disable of generic and special pins
->     simultaneously
-> 
->  arch/arm64/boot/dts/mediatek/mt2712-pinfunc.h | 1123 ++++++++++++++
->  arch/arm64/boot/dts/mediatek/mt2712e.dtsi     |   18 +
->  drivers/pinctrl/mediatek/Kconfig              |    7 +
->  drivers/pinctrl/mediatek/Makefile             |    1 +
->  drivers/pinctrl/mediatek/pinctrl-mt2712.c     |  632 ++++++++
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    6 +
->  drivers/pinctrl/mediatek/pinctrl-mtk-mt2712.h | 1967 +++++++++++++++++++++++++
->  7 files changed, 3754 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt2712-pinfunc.h
->  create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt2712.c
->  create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt2712.h
-> 
+>
+>  Cheers,
+>
 > --
-> 2.6.4 
-> 
-> 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+> Emmanuel Vadot <manu@bidouilliste.com> <manu@freebsd.org>
