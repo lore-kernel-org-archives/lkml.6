@@ -1,94 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755914AbeCHNn4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 08:43:56 -0500
-Received: from foss.arm.com ([217.140.101.70]:38176 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755892AbeCHNnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 08:43:55 -0500
-Date: Thu, 8 Mar 2018 13:43:50 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: mark.rutland@arm.com, ckadabi@codeaurora.org,
-        ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
-        robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 15/22] arm64: capabilities: Change scope of VHE to
- Boot CPU feature
-Message-ID: <20180308134348.GP32331@e103592.cambridge.arm.com>
-References: <20180209175513.17100-1-suzuki.poulose@arm.com>
- <20180209175513.17100-30-suzuki.poulose@arm.com>
- <20180212171727.GL5862@e103592.cambridge.arm.com>
- <25d774db-0ebd-b06d-20b5-5e31ede58fa3@arm.com>
+        id S1755941AbeCHNoc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 08:44:32 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:33107 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755144AbeCHNo3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 08:44:29 -0500
+X-Google-Smtp-Source: AG47ELsXcKUFddb6zt/dNdIOOqYAE14FMQhTDNFnUthCwvsdoI45XOq5fcw0hfhdh6IVZoUAh5W19A==
+Date: Thu, 8 Mar 2018 14:44:26 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: jonathanh@nvidia.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        talho@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, pombredanne@nexb.com
+Subject: Re: [PATCH v4 0/7] Initial support for NVIDIA Tegra194
+Message-ID: <20180308134426.GE3529@ulmo>
+References: <20180220115812.24108-1-mperttunen@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ep0oHQY+/Gbo/zt0"
 Content-Disposition: inline
-In-Reply-To: <25d774db-0ebd-b06d-20b5-5e31ede58fa3@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180220115812.24108-1-mperttunen@nvidia.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 08, 2018 at 12:10:22PM +0000, Suzuki K Poulose wrote:
-> On 12/02/18 17:17, Dave Martin wrote:
-> >On Fri, Feb 09, 2018 at 05:54:59PM +0000, Suzuki K Poulose wrote:
-> >>We expect all CPUs to be running at the same EL inside the kernel
-> >>with or without VHE enabled and we have strict checks to ensure
-> >>that any mismatch triggers a kernel panic. If VHE is enabled,
-> >>we use the feature based on the boot CPU and all other CPUs
-> >>should follow. This makes it a perfect candidate for a cpability
-> >
-> >capability
-> >
-> >>based on the boot CPU,  which should be matched by all the CPUs
-> >>(both when is ON and OFF). This saves us some not-so-pretty
-> >>hooks and special code, just for verifying the conflict.
-> >>
-> >>Cc: Marc Zyngier <marc.zyngier@arm.com>
-> >>Cc: Dave Martin <dave.martin@arm.com>
-> >>Cc: Will Deacon <will.deacon@arm.com>
-> >>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >>---
-> >>  arch/arm64/include/asm/cpufeature.h |  7 +++++++
-> >>  arch/arm64/include/asm/virt.h       |  6 ------
-> >>  arch/arm64/kernel/cpufeature.c      |  5 +++--
-> >>  arch/arm64/kernel/smp.c             | 38 -------------------------------------
-> >>  4 files changed, 10 insertions(+), 46 deletions(-)
-> >>
-> >>diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> >>index 5f56a8342065..dfce93f79ae7 100644
-> >>--- a/arch/arm64/include/asm/cpufeature.h
-> >>+++ b/arch/arm64/include/asm/cpufeature.h
-> >>@@ -276,6 +276,13 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
-> >>  	(ARM64_CPUCAP_SCOPE_LOCAL_CPU		|	\
-> >>  	 ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU)
-> >>+/*
-> >>+ * Critical CPU feature used early in the boot based on the boot CPU.
-> >>+ * The feature should be matched by all booting CPU (both miss and hit
-> >>+ * cases).
-> >>+ */
-> >>+#define ARM64_CPUCAP_CRITICAL_BOOT_CPU_FEATURE ARM64_CPUCAP_SCOPE_BOOT_CPU
-> >>+
-> >
-> >Nit: would it be consistent with the uses we already have for the word
-> >"strict" to use that word here?  i.e.,
-> >ARM64_CPUCAP_STRICT_BOOT_CPU_FEATURE.
-> >Or do you think that would be more confusing?
-> 
-> We don't use the "STRICT" tag anymore. Moreover, I used CRITICAL to indicate
-> that it is special in a way that all the "late" CPUs (in this case all
-> secondaries) should match the "state" of the capability  (i.e, both ON and OFF)
-> as that of the boot CPU. I am OK to change it to STRICT.
 
-OK, I think so long as the definition is clear the precise name doesn't
-matter too much.
+--ep0oHQY+/Gbo/zt0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I suggest deleting "critical" from the comment though, since that
-suggests a circular definition.  The meaning seems clear(er) without
-it.
+On Tue, Feb 20, 2018 at 01:58:05PM +0200, Mikko Perttunen wrote:
+> Hello everyone,
+>=20
+> this series adds initial support for the NVIDIA Tegra194 "Xavier"
+> system-on-chip. Initially UART, I2C, SDMMC, as well as the PMIC
+> are supported, allowing booting to a console.
+>=20
+> The changes consist almost completely of the new device trees,
+> however some fixes are required in the BPMP driver to support the
+> new channel layout in Tegra194.
+>=20
+> The series has been tested on Tegra186 (Jetson TX2) and Tegra194
+> (P2972).
+>=20
+> Cheers,
+> Mikko
+>=20
+> Mikko Perttunen (7):
+>   firmware: tegra: Simplify channel management
+>   soc/tegra: Add Tegra194 SoC configuration option
+>   soc/tegra: pmc: Add Tegra194 compatibility string
+>   dt-bindings: tegra: Add missing chips and NVIDIA boards
+>   dt-bindings: tegra: Add documentation for nvidia,tegra194-pmc
+>   arm64: tegra: Add Tegra194 chip device tree
+>   arm64: tegra: Add device tree for the Tegra194 P2972-0000 board
+>=20
+>  Documentation/devicetree/bindings/arm/tegra.txt    |  16 +
+>  .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |   2 +
+>  arch/arm64/boot/dts/nvidia/Makefile                |   1 +
+>  arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     | 248 +++++++++++++++
+>  arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts |  16 +
+>  arch/arm64/boot/dts/nvidia/tegra194.dtsi           | 344 +++++++++++++++=
+++++++
+>  arch/arm64/configs/defconfig                       |   1 +
+>  drivers/firmware/tegra/bpmp.c                      | 142 ++++-----
+>  drivers/soc/tegra/Kconfig                          |  10 +
+>  drivers/soc/tegra/pmc.c                            |   1 +
+>  include/dt-bindings/clock/tegra194-clock.h         | 321 +++++++++++++++=
+++++
+>  include/dt-bindings/gpio/tegra194-gpio.h           |  61 ++++
+>  include/dt-bindings/power/tegra194-powergate.h     |  35 +++
+>  include/dt-bindings/reset/tegra194-reset.h         | 152 +++++++++
+>  include/soc/tegra/bpmp.h                           |   4 +-
+>  15 files changed, 1274 insertions(+), 80 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
+>  create mode 100644 arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+>  create mode 100644 arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>  create mode 100644 include/dt-bindings/clock/tegra194-clock.h
+>  create mode 100644 include/dt-bindings/gpio/tegra194-gpio.h
+>  create mode 100644 include/dt-bindings/power/tegra194-powergate.h
+>  create mode 100644 include/dt-bindings/reset/tegra194-reset.h
 
-[...]
+Applied, thanks.
 
-Cheers
----Dave
+Thierry
+
+--ep0oHQY+/Gbo/zt0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhPjoACgkQ3SOs138+
+s6Ffeg/8DhaIZ2XeWg/oQ7SOEVS/1ykCnG6zZZVXxcC8AkVbwOjaKVFpzJa5fs4T
+ohbU/9V0WqvDecXSLGdqq4vq6mgFzACxqkuGZBhtIRiNbGswVwFSnBgZkUKdiasa
+elOQYz6kMYKl/MfoLqfxrvQmhciXukF19VKVZLBT6GRDoFDccN7wXjFr6CMxaeh0
+LfcNGCslLYbHq8IAjmM3qRkK3n+N/6tjrQzwqIvH6hO8qmzRY4ms/005/91iqNj+
+/b7JBgr9STN1S1smyZqMxS0Fv0E70avInFDso15HZgaiF88IODBIylR2ZYDKzAey
+IZ9flNUwcXk6hSGng8oxd5CgKTDUhZLtt56KHZau/rF8BfnTCjVwEV4mLRqdQyFe
+d9JiHVk8bsRoXoZ1wAUDQWC+9Xpv423YLV36FA5g/JPA68+GvVqWI1cT0blNMnw6
+QsoypJq36HzPCbjOlwYVZswhxi0Yyw7BIG3VHYF51Y6nGYxrIRoCA+8Cf3FvIaTX
+8sm3SxYJ1XEBnW1NVnyEhCvKKsFG3QG/Ub0TpXzQpB98LRydjmvEVxpDMb6Sn0gA
+oPFF57dP9RhLbk0piMp6U6fqomj6KvA6Cn+cNTnNhvJkARGkUdAF2aiPjMLAaDyN
+myyuokzxii3BantL+pIcP4qAr8/lpT4WvaPOjN9eKj3bADPxfmw=
+=pSgW
+-----END PGP SIGNATURE-----
+
+--ep0oHQY+/Gbo/zt0--
