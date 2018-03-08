@@ -1,43 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935952AbeCHSMx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 13:12:53 -0500
-Received: from resqmta-ch2-07v.sys.comcast.net ([69.252.207.39]:55360 "EHLO
-        resqmta-ch2-07v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932177AbeCHSMw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 13:12:52 -0500
-Date: Thu, 8 Mar 2018 12:12:50 -0600 (CST)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Chintan Pandya <cpandya@codeaurora.org>
-cc: penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] slub: use jitter-free reference while printing age
-In-Reply-To: <1520492010-19389-1-git-send-email-cpandya@codeaurora.org>
-Message-ID: <alpine.DEB.2.20.1803081211230.14668@nuc-kabylake>
-References: <1520492010-19389-1-git-send-email-cpandya@codeaurora.org>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        id S1754809AbeCHSOI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 13:14:08 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45909 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751642AbeCHSOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 13:14:06 -0500
+Date: Thu, 8 Mar 2018 18:14:04 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Waiman Long <longman@redhat.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v3 5/6] ipc: Clamp msgmni and shmmni to the real IPCMNI
+ limit
+Message-ID: <20180308181404.GF4449@wotan.suse.de>
+References: <1519926220-7453-1-git-send-email-longman@redhat.com>
+ <1519926220-7453-6-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfOc8GG1wz7Fb0QlqA2e5GmNZbKUBZP2fsUitNCmE4NHBJRifJOkLYPZ+jNQVLeKqifS8Usi8pAk/hgxfTGDZhqb8ilp5HAxIYjUXK2ykzLHXk8FkV3fo
- hftWL5ttwHvSvenXAFLZT496BUNBRJS0Bf1qwJDKEtSi9IUFxZyZY8kR8qYNEAxuSfCzI9+hZ3WTUMvnKxBttHt+CIyWGhuVhV8/UuCjTmpqKUlcfHiA3LGK
- 6Fngn/dYyiDEXLbbbIADmGuSAlmsLxgulHGF4ikidJGBqnKebx6oz8K/PMnfrgr7l0I50JmHK6AHDEtP7UB6aABsT5CehDaQuL6eijVUKw/SniUY4tEdS+Ak
- UOq0PyK0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519926220-7453-6-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Mar 2018, Chintan Pandya wrote:
+On Thu, Mar 01, 2018 at 12:43:39PM -0500, Waiman Long wrote:
+> A user can write arbitrary integer values to msgmni and shmmni sysctl
+> parameters without getting error, but the actual limit is really
+> IPCMNI (32k). This can mislead users as they think they can get a
+> value that is not real.
+> 
+> Enforcing the limit by failing the sysctl parameter write, however,
+> can break existing user applications. Instead, the range clamping flag
+> is set to enforce the limit without failing existing user code. Users
+> can easily figure out if the sysctl parameter value is out of range
+> by either reading back the parameter value or checking the kernel
+> ring buffer for warning.
+> 
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  ipc/ipc_sysctl.c | 20 +++++++++++++++++---
+>  1 file changed, 17 insertions(+), 3 deletions(-)
+> 
+> diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
+> index 8ad93c2..8eb7268 100644
+> --- a/ipc/ipc_sysctl.c
+> +++ b/ipc/ipc_sysctl.c
+> @@ -41,12 +41,21 @@ static int proc_ipc_dointvec(struct ctl_table *table, int write,
+>  static int proc_ipc_dointvec_minmax(struct ctl_table *table, int write,
+>  	void __user *buffer, size_t *lenp, loff_t *ppos)
+>  {
+> +	int ret;
+>  	struct ctl_table ipc_table;
+>  
+>  	memcpy(&ipc_table, table, sizeof(ipc_table));
+>  	ipc_table.data = get_ipc(table);
+>  
+> -	return proc_dointvec_minmax(&ipc_table, write, buffer, lenp, ppos);
+> +	ret = proc_dointvec_minmax(&ipc_table, write, buffer, lenp, ppos);
+> +
+> +	/*
+> +	 * Copy back the CTL_FLAGS_OOR_WARNED flag which may be set in
+> +	 * the temporary ctl_table entry.
+> +	 */
+> +	table->flags |= (ipc_table.flags & CTL_FLAGS_OOR_WARNED);
 
-> In this case, object got freed later but 'age'
-> shows otherwise. This could be because, while
-> printing this info, we print allocation traces
-> first and free traces thereafter. In between,
-> if we get schedule out or jiffies increment,
-> (jiffies - t->when) could become meaningless.
+Again, why is this needed? Cant' we do this for the developer somehow?
+Seems fragile, and if we can do it why not?
 
-Could you show the new output style too?
-
-Acked-by: Christoph Lameter <cl@linux.com>
+  Luis
