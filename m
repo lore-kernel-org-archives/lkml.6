@@ -1,234 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755547AbeCHJfc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 04:35:32 -0500
-Received: from lhrrgout.huawei.com ([194.213.3.17]:28629 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752126AbeCHJf2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 04:35:28 -0500
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: Robin Murphy <robin.murphy@arm.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-CC: Auger Eric <eric.auger@redhat.com>,
-        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>, John Garry <john.garry@huawei.com>,
-        "xuwei (O)" <xuwei5@huawei.com>
-Subject: RE: [PATCH v4 4/6] vfio/type1: check dma map request is within a
- valid iova range
-Thread-Topic: [PATCH v4 4/6] vfio/type1: check dma map request is within a
- valid iova range
-Thread-Index: AQHTqw7IDIDDogvQkEq1sqcC26ySeqO3NQKAgAAS2QCAAJqhgIAAKFgQgAFz7gCAABQHgIAAG9KAgAA66ICAAw3zcIAAIeSAgAAUM4CABGgHkIAElSsA
-Date: Thu, 8 Mar 2018 09:35:15 +0000
-Message-ID: <5FC3163CFD30C246ABAA99954A238FA83866B53C@FRAEML521-MBX.china.huawei.com>
-References: <20180221122209.9292-1-shameerali.kolothum.thodi@huawei.com>
- <20180221122209.9292-5-shameerali.kolothum.thodi@huawei.com>
- <818b3bc3-e2e1-e8df-8cca-17e6ecaf4ef9@redhat.com>
- <20180226161310.061ce3a8@w520.home>
- <aefca16f-570f-36d1-a493-f0a477736ef0@redhat.com>
- <5FC3163CFD30C246ABAA99954A238FA83865CDE3@FRAEML521-MBX.china.huawei.com>
- <238c74e1-dd3c-f626-0cda-82c6d840d772@redhat.com>
- <5FC3163CFD30C246ABAA99954A238FA83865DBD3@FRAEML521-MBX.china.huawei.com>
- <2056267c-dab1-fa71-5dcb-4db80266c568@redhat.com>
- <20180228082417.07c42a88@w520.home>
- <5FC3163CFD30C246ABAA99954A238FA838664702@FRAEML521-MBX.china.huawei.com>
- <20180302090417.05ade6df@t450s.home>
- <22b61209-61b6-207d-9d70-1db6ae630fc1@arm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.227.237]
-Content-Type: text/plain; charset="utf-8"
+        id S934960AbeCHJgk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 04:36:40 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33666 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755229AbeCHJgh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 04:36:37 -0500
+X-Google-Smtp-Source: AG47ELvi7T5HyWvGZmfadOKg5juwUrgsLM6eiGHWO2hcsN1F4fWG33xV13Fl2R7EcdGISkwcDOK0Gw==
+Subject: Re: [PATCH] amlogic: meson-gx-socinfo: Update soc ids
+To: Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1518620335-17716-1-git-send-email-narmstrong@baylibre.com>
+ <1518689694.2883.68.camel@baylibre.com> <7ho9jzgyr2.fsf@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Organization: Baylibre
+Message-ID: <37263741-e817-9a48-615e-13c5b1e2cec0@baylibre.com>
+Date: Thu, 8 Mar 2018 10:36:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <7ho9jzgyr2.fsf@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w289Zd0L008138
 
+Hi Kevin,
 
-
-> -----Original Message-----
-> From: Shameerali Kolothum Thodi
-> Sent: Monday, March 05, 2018 11:44 AM
-> To: 'Robin Murphy' <robin.murphy@arm.com>; Alex Williamson
-> <alex.williamson@redhat.com>
-> Cc: Auger Eric <eric.auger@redhat.com>; pmorel@linux.vnet.ibm.com;
-> kvm@vger.kernel.org; linux-kernel@vger.kernel.org; Linuxarm
-> <linuxarm@huawei.com>; John Garry <john.garry@huawei.com>; xuwei (O)
-> <xuwei5@huawei.com>
-> Subject: RE: [PATCH v4 4/6] vfio/type1: check dma map request is within a valid
-> iova range
-
- [...]
-
-> > >>> I still think you're overstretching the IOMMU reserved region interface
-> > >>> by trying to report possible ACS conflicts.  Are we going to update the
-> > >>> reserved list on device hotplug?  Are we going to update the list when
-> > >>> MMIO is enabled or disabled for each device?  What if the BARs are
-> > >>> reprogrammed or bridge apertures changed?  IMO, the IOMMU
-> reserved
-> > list
-> > >>> should account for specific IOVA exclusions that apply to transactions
-> > >>> that actually reach the IOMMU, not aliasing that might occur in the
-> > >>> downstream topology.  Additionally, the IOMMU group composition must
-> > be
-> > >>> such that these sorts of aliasing issues can only occur within an IOMMU
-> > >>> group.  If a transaction can be affected by the MMIO programming of
-> > >>> another group, then the groups are drawn incorrectly for the isolation
-> > >>> capabilities of the hardware.  Thanks,
-> > >>
-> > >> Agree that this is not a perfect thing to do covering all scenarios. As Robin
-> > >> pointed out, the current code is playing safe by reserving the full windows.
-> > >>
-> > >> My suggestion will be to limit this reservation to non-ACS cases only.  This
-> > will
-> > >> make sure that ACS ARM hardware is not broken by this series and nos-
-> ACS
-> > >> ones has a chance to run once Qemu is updated to take care of the
-> reserved
-> > >> regions (at least in some user scenarios).
-> > >>
-> > >> If you all are fine with this, I can include the ACS check I mentioned earlier
-> > in
-> > >> iommu_dma_get_resv_regions() and sent out the revised  series.
-> > >>
-> > >> Please let me know your thoughts.
-> > >
-> > > IMO, the IOMMU should be concerned with ACS as far as isolation is
-> > > concerned and reporting reserved ranges that are imposed at the IOMMU
-> > > and leave any aliasing or routing issues in the downstream topology to
-> > > other layers, or perhaps to the user.  Unfortunately, enforcing the
-> > > iova list in vfio is gated by some movement here since we can't break
-> > > existing users.  Thanks,
-> >
-> > FWIW, given the discussion we've had here I wouldn't object to pushing
-> > the PCI window reservation back into the DMA-specific path, such that it
-> > doesn't get exposed via the general IOMMU API interface. We *do* want to
-> > do it there where we are in total control of our own address space and
-> > it just avoids a whole class of problems (even with ACS I'm not sure the
-> > root complex can be guaranteed to send a "bad" IOVA out to the SMMU
-> > instead of just terminating it for looking like a peer-to-peer attempt).
-> >
-> > I do agree that it's not scalable for the IOMMU layer to attempt to
-> > detect and describe upstream PCI limitations to userspace by itself -
-> > they are "reserved regions" rather than "may or may not work regions"
-> > after all. If there is a genuine integration issue between an IOMMU and
-> > an upstream PCI RC which restricts usable addresses on a given system,
-> > that probably needs to be explicitly communicated from firmware to the
-> > IOMMU driver anyway, at which point that driver can report the relevant
-> > region(s) directly from its own callback.
-> >
-> > I suppose there's an in-between option of keeping generic window
-> > reservations but giving them a new "only reserve this if you're being
-> > super-cautious or don't know better" region type which we hide from
-> > userspace and ignore in VFIO, but maybe that leaves the lines a but too
-> > blurred still.
+On 08/03/2018 02:08, Kevin Hilman wrote:
+> Jerome Brunet <jbrunet@baylibre.com> writes:
 > 
-> Thanks for your reply and details. I have made an attempt to revert the PCI
-> window reservation back  into the DMA path. Could you please take a look
-> at the below changes and let me know.
-> (This is on top of HW MSI reserve patches which is now part of linux-next)
+>> On Wed, 2018-02-14 at 15:58 +0100, Neil Armstrong wrote:
+>>> Updates the Amlogic Meson SoCs IDs for the Armv8 based SoCs.
+>>> It includes the new families and packages.
+>>>
+>>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>>> ---
+>>>  drivers/soc/amlogic/meson-gx-socinfo.c | 8 ++++++++
+>>>  1 file changed, 8 insertions(+)
+>>>
+>>> diff --git a/drivers/soc/amlogic/meson-gx-socinfo.c b/drivers/soc/amlogic/meson-gx-socinfo.c
+>>> index f2d8c3c..a7efe30 100644
+>>> --- a/drivers/soc/amlogic/meson-gx-socinfo.c
+>>> +++ b/drivers/soc/amlogic/meson-gx-socinfo.c
+>>> @@ -33,6 +33,10 @@ static const struct meson_gx_soc_id {
+>>>  	{ "GXL", 0x21 },
+>>>  	{ "GXM", 0x22 },
+>>>  	{ "TXL", 0x23 },
+>>> +	{ "TXLX", 0x24 },
+>>> +	{ "AXG", 0x25 },
+>>> +	{ "GXLX", 0x26 },
+>>> +	{ "TXHD", 0x27 },
+>>>  };
+>>>  
+>>>  static const struct meson_gx_package_id {
+>>> @@ -47,6 +51,10 @@ static const struct meson_gx_package_id {
+>>>  	{ "S905L", 0x21, 0xc0 },
+>>>  	{ "S905M2", 0x21, 0xe0 },
+>>>  	{ "S912", 0x22, 0 },
+>>> +	{ "962X", 0x24, 0x10 },
+>>> +	{ "962E", 0x24, 0x20 },
+>>> +	{ "A113X", 0x25, 0x37 },
+>>> +	{ "A113D", 0x25, 0xd0 },
+>>>  };
+>>>  
+>>>  static inline unsigned int socinfo_to_major(u32 socinfo)
+>>
+>> Tested on my s400 board which, according to the marking, features an AXG A113D.
+>> AXG is detected correctly but the package id read is 0x22 instead of 0xd0.
+> 
+> Neil, can you update accordingly?  Have you seen 0xd0 on other A11x
+> chips?  or is this from the docs?
 
-Hi Robin,
-
-Please take a look at the below changes if you get sometime and let me know.
-Not sure this is what you have in mind.
-
-Thanks,
-Shameer
+I got it from the Amlogic lastest Linux and U-boot code.
+I will set 0x22 and squash the "meson-gx-socinfo: Add package id for S905H" patch, is it ok ?
 
 > 
-> -->8--
-> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> index f05f3cf..ddcbbdb 100644
-> --- a/drivers/iommu/dma-iommu.c
-> +++ b/drivers/iommu/dma-iommu.c
-> @@ -167,40 +167,16 @@ EXPORT_SYMBOL(iommu_put_dma_cookie);
->   * @list: Reserved region list from iommu_get_resv_regions()
->   *
->   * IOMMU drivers can use this to implement their .get_resv_regions callback
-> - * for general non-IOMMU-specific reservations. Currently, this covers host
-> - * bridge windows for PCI devices and GICv3 ITS region reservation on ACPI
-> - * based ARM platforms that may require HW MSI reservation.
-> + * for general non-IOMMU-specific reservations. Currently, this covers GICv3
-> + * ITS region reservation on ACPI based ARM platforms that may require HW
-> MSI
-> + * reservation.
->   */
->  void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list)
->  {
-> -	struct pci_host_bridge *bridge;
-> -	struct resource_entry *window;
-> -
-> -	if (!is_of_node(dev->iommu_fwspec->iommu_fwnode) &&
-> -		iort_iommu_msi_get_resv_regions(dev, list) < 0)
-> -		return;
-> -
-> -	if (!dev_is_pci(dev))
-> -		return;
-> -
-> -	bridge = pci_find_host_bridge(to_pci_dev(dev)->bus);
-> -	resource_list_for_each_entry(window, &bridge->windows) {
-> -		struct iommu_resv_region *region;
-> -		phys_addr_t start;
-> -		size_t length;
-> -
-> -		if (resource_type(window->res) != IORESOURCE_MEM)
-> -			continue;
-> 
-> -		start = window->res->start - window->offset;
-> -		length = window->res->end - window->res->start + 1;
-> -		region = iommu_alloc_resv_region(start, length, 0,
-> -				IOMMU_RESV_RESERVED);
-> -		if (!region)
-> -			return;
-> +	if (!is_of_node(dev->iommu_fwspec->iommu_fwnode))
-> +		iort_iommu_msi_get_resv_regions(dev, list);
-> 
-> -		list_add_tail(&region->list, list);
-> -	}
->  }
->  EXPORT_SYMBOL(iommu_dma_get_resv_regions);
-> 
-> @@ -229,6 +205,23 @@ static int cookie_init_hw_msi_region(struct
-> iommu_dma_cookie *cookie,
->  	return 0;
->  }
-> 
-> +static void iova_reserve_pci_windows(struct pci_dev *dev,
-> +		struct iova_domain *iovad)
-> +{
-> +	struct pci_host_bridge *bridge = pci_find_host_bridge(dev->bus);
-> +	struct resource_entry *window;
-> +	unsigned long lo, hi;
-> +
-> +	resource_list_for_each_entry(window, &bridge->windows) {
-> +		if (resource_type(window->res) != IORESOURCE_MEM)
-> +			continue;
-> +
-> +		lo = iova_pfn(iovad, window->res->start - window->offset);
-> +		hi = iova_pfn(iovad, window->res->end - window->offset);
-> +		reserve_iova(iovad, lo, hi);
-> +	}
-> +}
-> +
->  static int iova_reserve_iommu_regions(struct device *dev,
->  		struct iommu_domain *domain)
->  {
-> @@ -238,6 +231,9 @@ static int iova_reserve_iommu_regions(struct device
-> *dev,
->  	LIST_HEAD(resv_regions);
->  	int ret = 0;
-> 
-> +	if (dev_is_pci(dev))
-> +		iova_reserve_pci_windows(to_pci_dev(dev), iovad);
-> +
->  	iommu_get_resv_regions(dev, &resv_regions);
->  	list_for_each_entry(region, &resv_regions, list) {
->  		unsigned long lo, hi;
-> 
+> Kevin
 > 
