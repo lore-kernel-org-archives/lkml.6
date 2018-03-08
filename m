@@ -1,188 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936101AbeCHQ61 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 11:58:27 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:56242 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935923AbeCHQ6Y (ORCPT
+        id S936069AbeCHQ50 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 11:57:26 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:57405 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932131AbeCHQyr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 11:58:24 -0500
-X-Google-Smtp-Source: AG47ELsANXfdh+vxGfIdAmOV/bzRRBfh872dw/jBYhE6OJYr6JCJaH2iF+jwZjN1PRh+jRAnqqKSQQ==
-Subject: Re: [PATCH 1/2] backlight: Add RAVE SP backlight driver
-To: Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>, linux-kernel@vger.kernel.org,
-        Chris Healy <cphealy@gmail.com>, Lucas Stach <l.stach@pengutronix.de>,
-        Aleksander Morgado <aleksander@aleksander.es>
-References: <20180307024011.25033-1-andrew.smirnov@gmail.com>
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Message-ID: <e90aba60-9126-17c2-7c70-66b5cab32d93@linaro.org>
-Date: Thu, 8 Mar 2018 16:58:21 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 8 Mar 2018 11:54:47 -0500
+From: <gabriel.fernandez@st.com>
+To: <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>
+Subject: [PATCH v2 04/12] clk: stm32mp1: add Source Clocks for PLLs
+Date: Thu, 8 Mar 2018 17:53:57 +0100
+Message-ID: <1520528045-18330-5-git-send-email-gabriel.fernandez@st.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
+References: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20180307024011.25033-1-andrew.smirnov@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG4NODE2.st.com
+ (10.75.127.11)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-08_10:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/03/18 02:40, Andrey Smirnov wrote:
-> This driver provides access to RAVE SP backlight control
-> functionality.
-> 
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Daniel Thompson <daniel.thompson@linaro.org>
-> Cc: Jingoo Han <jingoohan1@gmail.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Aleksander Morgado <aleksander@aleksander.es>
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> ---
->   drivers/video/backlight/Kconfig             |  6 +++
->   drivers/video/backlight/Makefile            |  1 +
->   drivers/video/backlight/rave-sp-backlight.c | 82 +++++++++++++++++++++++++++++
->   include/linux/mfd/rave-sp.h                 |  1 +
->   4 files changed, 90 insertions(+)
->   create mode 100644 drivers/video/backlight/rave-sp-backlight.c
-> 
-> diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
-> index 4e1d2ad50ba1..5d2d0d7e8100 100644
-> --- a/drivers/video/backlight/Kconfig
-> +++ b/drivers/video/backlight/Kconfig
-> @@ -467,6 +467,12 @@ config BACKLIGHT_ARCXCNN
->   	  If you have an ARCxCnnnn family backlight say Y to enable
->   	  the backlight driver.
->   
-> +config BACKLIGHT_RAVE_SP
-> +	tristate "RAVE SP Backlight driver"
-> +	depends on RAVE_SP_CORE
-> +	help
-> +	  Support for backlight control on RAVE SP device.
-> +
->   endif # BACKLIGHT_CLASS_DEVICE
->   
->   endif # BACKLIGHT_LCD_SUPPORT
-> diff --git a/drivers/video/backlight/Makefile b/drivers/video/backlight/Makefile
-> index 5e28f01c8391..19da71d518bf 100644
-> --- a/drivers/video/backlight/Makefile
-> +++ b/drivers/video/backlight/Makefile
-> @@ -57,3 +57,4 @@ obj-$(CONFIG_BACKLIGHT_TOSA)		+= tosa_bl.o
->   obj-$(CONFIG_BACKLIGHT_TPS65217)	+= tps65217_bl.o
->   obj-$(CONFIG_BACKLIGHT_WM831X)		+= wm831x_bl.o
->   obj-$(CONFIG_BACKLIGHT_ARCXCNN) 	+= arcxcnn_bl.o
-> +obj-$(CONFIG_BACKLIGHT_RAVE_SP)		+= rave-sp-backlight.o
-> diff --git a/drivers/video/backlight/rave-sp-backlight.c b/drivers/video/backlight/rave-sp-backlight.c
-> new file mode 100644
-> index 000000000000..62836ba561db
-> --- /dev/null
-> +++ b/drivers/video/backlight/rave-sp-backlight.c
-> @@ -0,0 +1,82 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +
-> +/*
-> + * LCD Backlight driver for RAVE SP
-> + *
-> + * Copyright (C) 2018 Zodiac Inflight Innovations
-> + *
-> + */
-> +
-> +#include <linux/backlight.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/mfd/rave-sp.h>
-> +#include <linux/platform_device.h>
-> +
-> +#define	RAVE_SP_BACKLIGHT_LCD_EN	BIT(7)
-> +
-> +static int rave_sp_backlight_update_status(struct backlight_device *bd)
-> +{
-> +	const struct backlight_properties *p = &bd->props;
-> +	const u8 intensity =
-> +		(p->power == FB_BLANK_UNBLANK) ? p->brightness : 0;
-> +	struct rave_sp *sp = dev_get_drvdata(&bd->dev);
-> +	u8 cmd[] = {
-> +		[0] = RAVE_SP_CMD_SET_BACKLIGHT,
-> +		[1] = 0,
-> +		[2] = intensity ? RAVE_SP_BACKLIGHT_LCD_EN | intensity : 0,
-> +		[3] = 0,
-> +		[4] = 0,
-> +	};
-> +
-> +	return rave_sp_exec(sp, cmd, sizeof(cmd), NULL, 0);
-> +}
-> +
-> +static const struct backlight_ops rave_sp_backlight_ops = {
-> +	.options	= BL_CORE_SUSPENDRESUME,
-> +	.update_status	= rave_sp_backlight_update_status,
-> +};
-> +
-> +static struct backlight_properties rave_sp_backlight_props = {
-> +	.type		= BACKLIGHT_FIRMWARE,
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-I would have thought BACKLIGHT_PLATFORM would be more suitable here. 
-BACKLIGHT_FIRMWARE is used for things like the ACPI backlight driver.
+This patch adds source clocks for PLLs
+This patch also introduces MUX clock API.
 
-Why did you select this one?
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ drivers/clk/clk-stm32mp1.c | 60 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-
-Daniel.
-
-
-> +	.max_brightness = 100,
-> +	.brightness	= 50,
-> +};
-> +
-> +static int rave_sp_backlight_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct backlight_device *bd;
-> +
-> +	bd = devm_backlight_device_register(dev, pdev->name, dev->parent,
-> +					    dev_get_drvdata(dev->parent),
-> +					    &rave_sp_backlight_ops,
-> +					    &rave_sp_backlight_props);
-> +	if (IS_ERR(bd))
-> +		return PTR_ERR(bd);
-> +
-> +	backlight_update_status(bd);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id rave_sp_backlight_of_match[] = {
-> +	{ .compatible = "zii,rave-sp-backlight" },
-> +	{}
-> +};
-> +
-> +static struct platform_driver rave_sp_backlight_driver = {
-> +	.probe = rave_sp_backlight_probe,
-> +	.driver	= {
-> +		.name = KBUILD_MODNAME,
-> +		.of_match_table = rave_sp_backlight_of_match,
-> +	},
-> +};
-> +module_platform_driver(rave_sp_backlight_driver);
-> +
-> +MODULE_DEVICE_TABLE(of, rave_sp_backlight_of_match);
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Andrey Vostrikov <andrey.vostrikov@cogentembedded.com>");
-> +MODULE_AUTHOR("Nikita Yushchenko <nikita.yoush@cogentembedded.com>");
-> +MODULE_AUTHOR("Andrey Smirnov <andrew.smirnov@gmail.com>");
-> +MODULE_DESCRIPTION("RAVE SP Backlight driver");
-> diff --git a/include/linux/mfd/rave-sp.h b/include/linux/mfd/rave-sp.h
-> index 796fb9794c9e..fe0ce7bc59cf 100644
-> --- a/include/linux/mfd/rave-sp.h
-> +++ b/include/linux/mfd/rave-sp.h
-> @@ -21,6 +21,7 @@ enum rave_sp_command {
->   	RAVE_SP_CMD_STATUS			= 0xA0,
->   	RAVE_SP_CMD_SW_WDT			= 0xA1,
->   	RAVE_SP_CMD_PET_WDT			= 0xA2,
-> +	RAVE_SP_CMD_SET_BACKLIGHT		= 0xA6,
->   	RAVE_SP_CMD_RESET			= 0xA7,
->   	RAVE_SP_CMD_RESET_REASON		= 0xA8,
->   
-> 
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index 56b738e..47984f3 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -103,6 +103,18 @@
+ 
+ #define RCC_CLR	0x4
+ 
++static const char * const ref12_parents[] = {
++	"ck_hsi", "ck_hse"
++};
++
++static const char * const ref3_parents[] = {
++	"ck_hsi", "ck_hse", "ck_csi"
++};
++
++static const char * const ref4_parents[] = {
++	"ck_hsi", "ck_hse", "ck_csi"
++};
++
+ struct clock_config {
+ 	u32 id;
+ 	const char *name;
+@@ -140,6 +152,14 @@ struct div_cfg {
+ 	const struct clk_div_table *table;
+ };
+ 
++struct mux_cfg {
++	u32 reg_off;
++	u8 shift;
++	u8 width;
++	u8 mux_flags;
++	u32 *table;
++};
++
+ struct stm32_gate_cfg {
+ 	struct gate_cfg		*gate;
+ 	const struct clk_ops	*ops;
+@@ -196,6 +216,20 @@ struct stm32_gate_cfg {
+ 					     lock);
+ }
+ 
++static struct clk_hw *
++_clk_hw_register_mux(struct device *dev,
++		     struct clk_hw_onecell_data *clk_data,
++		     void __iomem *base, spinlock_t *lock,
++		     const struct clock_config *cfg)
++{
++	struct mux_cfg *mux_cfg = cfg->cfg;
++
++	return clk_hw_register_mux(dev, cfg->name, cfg->parent_names,
++				   cfg->num_parents, cfg->flags,
++				   mux_cfg->reg_off + base, mux_cfg->shift,
++				   mux_cfg->width, mux_cfg->mux_flags, lock);
++}
++
+ /* MP1 Gate clock with set & clear registers */
+ 
+ static int mp1_gate_clk_enable(struct clk_hw *hw)
+@@ -350,6 +384,22 @@ static void mp1_gate_clk_disable(struct clk_hw *hw)
+ 	DIV_TABLE(_id, _name, _parent, _flags, _offset, _shift, _width,\
+ 		  _div_flags, NULL)
+ 
++#define MUX(_id, _name, _parents, _flags, _offset, _shift, _width, _mux_flags)\
++{\
++	.id		= _id,\
++	.name		= _name,\
++	.parent_names	= _parents,\
++	.num_parents	= ARRAY_SIZE(_parents),\
++	.flags		= _flags,\
++	.cfg		=  &(struct mux_cfg) {\
++		.reg_off	= _offset,\
++		.shift		= _shift,\
++		.width		= _width,\
++		.mux_flags	= _mux_flags,\
++	},\
++	.func		= _clk_hw_register_mux,\
++}
++
+ /* STM32 GATE */
+ #define STM32_GATE(_id, _name, _parent, _flags, _gate)\
+ {\
+@@ -392,6 +442,16 @@ static void mp1_gate_clk_disable(struct clk_hw *hw)
+ 	GATE(CK_LSE, "ck_lse", "clk-lse", 0, RCC_BDCR, 0, 0),
+ 
+ 	FIXED_FACTOR(CK_HSE_DIV2, "clk-hse-div2", "ck_hse", 0, 1, 2),
++
++	/* ref clock pll */
++	MUX(NO_ID, "ref1", ref12_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK12SELR,
++	    0, 2, CLK_MUX_READ_ONLY),
++
++	MUX(NO_ID, "ref3", ref3_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK3SELR,
++	    0, 2, CLK_MUX_READ_ONLY),
++
++	MUX(NO_ID, "ref4", ref4_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK4SELR,
++	    0, 2, CLK_MUX_READ_ONLY),
+ };
+ 
+ struct stm32_clock_match_data {
+-- 
+1.9.1
