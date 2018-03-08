@@ -1,246 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935895AbeCHQDS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 11:03:18 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39992 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933415AbeCHQDQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 11:03:16 -0500
-Subject: Re: [PATCH 04/13] x86: use generic swiotlb_ops
-To: Christoph Hellwig <hch@lst.de>, x86@kernel.org
-Cc: Tom Lendacky <thomas.lendacky@amd.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        linux-kernel@vger.kernel.org, Muli Ben-Yehuda <mulix@mulix.org>,
-        iommu@lists.linux-foundation.org,
-        David Woodhouse <dwmw2@infradead.org>
-References: <20180305174655.9878-1-hch@lst.de>
- <20180305174655.9878-5-hch@lst.de>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <825d4b49-8fa2-e670-75e3-77a88258af3a@arm.com>
-Date: Thu, 8 Mar 2018 16:03:12 +0000
+        id S934950AbeCHQG2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 11:06:28 -0500
+Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:43534 "EHLO
+        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754580AbeCHQG1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 11:06:27 -0500
+Subject: Re: RFC: remove the "tile" architecture from glibc
+To: Arnd Bergmann <arnd@arndb.de>, Helmut Grohne <helmut@subdivi.de>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        linux-arch <linux-arch@vger.kernel.org>, metcalf@alum.mit.edu,
+        Henrik Grindal Bakken <hgb@ifi.uio.no>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1a57be83-3349-5450-ee4f-d2a33569a728@mellanox.com>
+ <d6c8e425-a6b6-6594-05e3-965536f06da3@physik.fu-berlin.de>
+ <abce89d0-6798-069a-1a54-06e664665b78@mellanox.com>
+ <dc3c52ce-f082-0da0-7828-0d4e6751e2a5@physik.fu-berlin.de>
+ <CAK8P3a3itR8i2ayG7e4ku7kz+CQU7qHhptdmtmgTz+CzFGmCiw@mail.gmail.com>
+ <20180307181407.GA24350@alf.mars>
+ <CAK8P3a2VuYxzy6RmL_w_5f2qHepVRhfVR5P4x9nCUYav1s5n7g@mail.gmail.com>
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Message-ID: <9a60ac70-21e4-3f48-5cd7-ffd3aabc5c21@physik.fu-berlin.de>
+Date: Thu, 8 Mar 2018 17:06:24 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180305174655.9878-5-hch@lst.de>
+In-Reply-To: <CAK8P3a2VuYxzy6RmL_w_5f2qHepVRhfVR5P4x9nCUYav1s5n7g@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: 160.45.32.140
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
+On 03/08/2018 04:55 PM, Arnd Bergmann wrote:
+> I originally helped get tile, blackfin, metag, unicore32 and score into
+> the kernel, and it's always sad to see them go away after all the work
+> that was put into making them work. Out of the above, tile was
+> probably the best supported, and the most ambitious architecture
+> design, but in the end it seems it is just as dead as the others, so
+> I'll now add a patch to remove it along with the others in linux-4.17.
 
-On 05/03/18 17:46, Christoph Hellwig wrote:
-> The generic swiotlb dma ops were based on the x86 ones and provide
-> equivalent functionality, so use them.
-> 
-> Also fix the sta2x11 case.  For that SOC the dma map ops need an
-> additional physical to dma address translations.  For swiotlb buffers
-> that is done throught the phys_to_dma helper, but the sta2x11_dma_ops
-> also added an additional translation on the return value from
-> x86_swiotlb_alloc_coherent, which is only correct if that functions
-> returns a direct allocation and not a swiotlb buffer.  With the
-> generic swiotlb and dma-direct code phys_to_dma is not always used
-> and the separate sta2x11_dma_ops can be replaced with a simple
-> bit that marks if the additional physical to dma address translation
-> is needed.
+Out of curiosity: Is there any reason why the removal of tilegx is now
+being rushed? Did any of the policies regarding architectures in the
+kernel change? I had the impression that architectures could previously
+stay unmaintained for a while before being removed.
 
-FWIW, last time I looked I got the impression that STA2x11 could just 
-use dma_pfn_offset - the comments and a2p/p2a logic in sta2x11-fixup.c 
-certainly imply that the underlying hardware situation is pretty much 
-exactly that for which dma_pfn_offset exists.
+> - sh3/sh4 looked like they would get revived a few years ago
+>    for the j-core project. The 2015 roadmap on
+>    http://j-core.org/roadmap.html had ambitious plans for
+>    an sh3 compatible core in 2017 and an sh4 compatible one
+>    in 2018. However, not much has happened  at all since 2016,
+>    and now the website is down as well. You might want to
+>    contact the j-core developers for clarification.
+>    I suspect this has also become a victim of the RISC-V
+>    success.
 
-Robin.
+Well, that's quite a bummer. I don't know what Rich Felker's and
+Rob Landley's plans now are. Rich told that he would be doing paid
+SH work again in the upcoming weeks. I even sent him and Rob SH4
+hardware to support their efforts.
 
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   arch/x86/include/asm/device.h  |  3 +++
->   arch/x86/include/asm/swiotlb.h |  8 -------
->   arch/x86/kernel/pci-swiotlb.c  | 47 +-----------------------------------------
->   arch/x86/pci/sta2x11-fixup.c   | 46 +++++------------------------------------
->   4 files changed, 9 insertions(+), 95 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/device.h b/arch/x86/include/asm/device.h
-> index 5e12c63b47aa..812bd6c5d602 100644
-> --- a/arch/x86/include/asm/device.h
-> +++ b/arch/x86/include/asm/device.h
-> @@ -6,6 +6,9 @@ struct dev_archdata {
->   #if defined(CONFIG_INTEL_IOMMU) || defined(CONFIG_AMD_IOMMU)
->   	void *iommu; /* hook for IOMMU specific extension */
->   #endif
-> +#ifdef CONFIG_STA2X11
-> +	bool is_sta2x11 : 1;
-> +#endif
->   };
->   
->   #if defined(CONFIG_X86_DEV_DMA_OPS) && defined(CONFIG_PCI_DOMAINS)
-> diff --git a/arch/x86/include/asm/swiotlb.h b/arch/x86/include/asm/swiotlb.h
-> index 1c6a6cb230ff..ff6c92eff035 100644
-> --- a/arch/x86/include/asm/swiotlb.h
-> +++ b/arch/x86/include/asm/swiotlb.h
-> @@ -27,12 +27,4 @@ static inline void pci_swiotlb_late_init(void)
->   {
->   }
->   #endif
-> -
-> -extern void *x86_swiotlb_alloc_coherent(struct device *hwdev, size_t size,
-> -					dma_addr_t *dma_handle, gfp_t flags,
-> -					unsigned long attrs);
-> -extern void x86_swiotlb_free_coherent(struct device *dev, size_t size,
-> -					void *vaddr, dma_addr_t dma_addr,
-> -					unsigned long attrs);
-> -
->   #endif /* _ASM_X86_SWIOTLB_H */
-> diff --git a/arch/x86/kernel/pci-swiotlb.c b/arch/x86/kernel/pci-swiotlb.c
-> index bcb6a9bf64ad..661583662430 100644
-> --- a/arch/x86/kernel/pci-swiotlb.c
-> +++ b/arch/x86/kernel/pci-swiotlb.c
-> @@ -17,51 +17,6 @@
->   
->   int swiotlb __read_mostly;
->   
-> -void *x86_swiotlb_alloc_coherent(struct device *hwdev, size_t size,
-> -					dma_addr_t *dma_handle, gfp_t flags,
-> -					unsigned long attrs)
-> -{
-> -	void *vaddr;
-> -
-> -	/*
-> -	 * Don't print a warning when the first allocation attempt fails.
-> -	 * swiotlb_alloc_coherent() will print a warning when the DMA
-> -	 * memory allocation ultimately failed.
-> -	 */
-> -	flags |= __GFP_NOWARN;
-> -
-> -	vaddr = dma_direct_alloc(hwdev, size, dma_handle, flags, attrs);
-> -	if (vaddr)
-> -		return vaddr;
-> -
-> -	return swiotlb_alloc_coherent(hwdev, size, dma_handle, flags);
-> -}
-> -
-> -void x86_swiotlb_free_coherent(struct device *dev, size_t size,
-> -				      void *vaddr, dma_addr_t dma_addr,
-> -				      unsigned long attrs)
-> -{
-> -	if (is_swiotlb_buffer(dma_to_phys(dev, dma_addr)))
-> -		swiotlb_free_coherent(dev, size, vaddr, dma_addr);
-> -	else
-> -		dma_direct_free(dev, size, vaddr, dma_addr, attrs);
-> -}
-> -
-> -static const struct dma_map_ops x86_swiotlb_dma_ops = {
-> -	.mapping_error = swiotlb_dma_mapping_error,
-> -	.alloc = x86_swiotlb_alloc_coherent,
-> -	.free = x86_swiotlb_free_coherent,
-> -	.sync_single_for_cpu = swiotlb_sync_single_for_cpu,
-> -	.sync_single_for_device = swiotlb_sync_single_for_device,
-> -	.sync_sg_for_cpu = swiotlb_sync_sg_for_cpu,
-> -	.sync_sg_for_device = swiotlb_sync_sg_for_device,
-> -	.map_sg = swiotlb_map_sg_attrs,
-> -	.unmap_sg = swiotlb_unmap_sg_attrs,
-> -	.map_page = swiotlb_map_page,
-> -	.unmap_page = swiotlb_unmap_page,
-> -	.dma_supported = NULL,
-> -};
-> -
->   /*
->    * pci_swiotlb_detect_override - set swiotlb to 1 if necessary
->    *
-> @@ -111,7 +66,7 @@ void __init pci_swiotlb_init(void)
->   {
->   	if (swiotlb) {
->   		swiotlb_init(0);
-> -		dma_ops = &x86_swiotlb_dma_ops;
-> +		dma_ops = &swiotlb_dma_ops;
->   	}
->   }
->   
-> diff --git a/arch/x86/pci/sta2x11-fixup.c b/arch/x86/pci/sta2x11-fixup.c
-> index 6c712fe11bdc..eac58e03f43c 100644
-> --- a/arch/x86/pci/sta2x11-fixup.c
-> +++ b/arch/x86/pci/sta2x11-fixup.c
-> @@ -159,43 +159,6 @@ static dma_addr_t a2p(dma_addr_t a, struct pci_dev *pdev)
->   	return p;
->   }
->   
-> -/**
-> - * sta2x11_swiotlb_alloc_coherent - Allocate swiotlb bounce buffers
-> - *     returns virtual address. This is the only "special" function here.
-> - * @dev: PCI device
-> - * @size: Size of the buffer
-> - * @dma_handle: DMA address
-> - * @flags: memory flags
-> - */
-> -static void *sta2x11_swiotlb_alloc_coherent(struct device *dev,
-> -					    size_t size,
-> -					    dma_addr_t *dma_handle,
-> -					    gfp_t flags,
-> -					    unsigned long attrs)
-> -{
-> -	void *vaddr;
-> -
-> -	vaddr = x86_swiotlb_alloc_coherent(dev, size, dma_handle, flags, attrs);
-> -	*dma_handle = p2a(*dma_handle, to_pci_dev(dev));
-> -	return vaddr;
-> -}
-> -
-> -/* We have our own dma_ops: the same as swiotlb but from alloc (above) */
-> -static const struct dma_map_ops sta2x11_dma_ops = {
-> -	.alloc = sta2x11_swiotlb_alloc_coherent,
-> -	.free = x86_swiotlb_free_coherent,
-> -	.map_page = swiotlb_map_page,
-> -	.unmap_page = swiotlb_unmap_page,
-> -	.map_sg = swiotlb_map_sg_attrs,
-> -	.unmap_sg = swiotlb_unmap_sg_attrs,
-> -	.sync_single_for_cpu = swiotlb_sync_single_for_cpu,
-> -	.sync_single_for_device = swiotlb_sync_single_for_device,
-> -	.sync_sg_for_cpu = swiotlb_sync_sg_for_cpu,
-> -	.sync_sg_for_device = swiotlb_sync_sg_for_device,
-> -	.mapping_error = swiotlb_dma_mapping_error,
-> -	.dma_supported = dma_direct_supported,
-> -};
-> -
->   /* At setup time, we use our own ops if the device is a ConneXt one */
->   static void sta2x11_setup_pdev(struct pci_dev *pdev)
->   {
-> @@ -205,7 +168,8 @@ static void sta2x11_setup_pdev(struct pci_dev *pdev)
->   		return;
->   	pci_set_consistent_dma_mask(pdev, STA2X11_AMBA_SIZE - 1);
->   	pci_set_dma_mask(pdev, STA2X11_AMBA_SIZE - 1);
-> -	pdev->dev.dma_ops = &sta2x11_dma_ops;
-> +	pdev->dev.dma_ops = &swiotlb_dma_ops;
-> +	pdev->dev.archdata.is_sta2x11 = true;
->   
->   	/* We must enable all devices as master, for audio DMA to work */
->   	pci_set_master(pdev);
-> @@ -225,7 +189,7 @@ bool dma_capable(struct device *dev, dma_addr_t addr, size_t size)
->   {
->   	struct sta2x11_mapping *map;
->   
-> -	if (dev->dma_ops != &sta2x11_dma_ops) {
-> +	if (!dev->archdata.is_sta2x11) {
->   		if (!dev->dma_mask)
->   			return false;
->   		return addr + size - 1 <= *dev->dma_mask;
-> @@ -249,7 +213,7 @@ bool dma_capable(struct device *dev, dma_addr_t addr, size_t size)
->    */
->   dma_addr_t phys_to_dma(struct device *dev, phys_addr_t paddr)
->   {
-> -	if (dev->dma_ops != &sta2x11_dma_ops)
-> +	if (!dev->archdata.is_sta2x11)
->   		return paddr;
->   	return p2a(paddr, to_pci_dev(dev));
->   }
-> @@ -261,7 +225,7 @@ dma_addr_t phys_to_dma(struct device *dev, phys_addr_t paddr)
->    */
->   phys_addr_t dma_to_phys(struct device *dev, dma_addr_t daddr)
->   {
-> -	if (dev->dma_ops != &sta2x11_dma_ops)
-> +	if (!dev->archdata.is_sta2x11)
->   		return daddr;
->   	return a2p(daddr, to_pci_dev(dev));
->   }
-> 
+I have personally invested a lot of work into the SH port over the
+past three years in Debian and I was involved fixing many bugs
+and as a result, the port is quite usable. It would be really
+disappointing to see it being removed all of a sudden :(.
+
+I will get in touch with Rich and Rob to figure out what's going
+on.
+
+Adrian
+
+-- 
+  .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer - glaubitz@debian.org
+`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
+   `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
