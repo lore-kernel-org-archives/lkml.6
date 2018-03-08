@@ -1,114 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965632AbeCHKrE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 05:47:04 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:14654 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934574AbeCHKrC (ORCPT
+        id S935747AbeCHKsi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 05:48:38 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:37689 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934902AbeCHKsg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 05:47:02 -0500
-From: Hugues Fruchet <hugues.fruchet@st.com>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Hans Verkuil" <hverkuil@xs4all.nl>
-CC: <linux-media@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>
-Subject: [PATCH v2] media: stm32-dcmi: rework overrun/error case
-Date: Thu, 8 Mar 2018 11:46:23 +0100
-Message-ID: <1520505983-29242-1-git-send-email-hugues.fruchet@st.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 8 Mar 2018 05:48:36 -0500
+X-Google-Smtp-Source: AG47ELs+36uejzXzvonhHM3ZpCnYD12jEYtUA85jBguNmcLHoTg+OBSecG7GuP44xqKxVaGc1MH55Q==
+Date: Thu, 8 Mar 2018 10:48:31 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCHv5 3/5] mfd: motorola-cpcap: Add audio-codec support
+Message-ID: <20180308104831.fflq2arj5dxgntia@dell>
+References: <20180223200254.25685-1-sebastian.reichel@collabora.co.uk>
+ <20180223200254.25685-4-sebastian.reichel@collabora.co.uk>
+ <20180307163211.rytfli5tb47yhtug@dell>
+ <20180308094652.qg4atjw5c3hayaz3@earth.universe>
+ <20180308095315.mpcmx2ob6yhsnrm6@dell>
+ <20180308102757.jyi7uo566n6nuct5@earth.universe>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.73]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-08_06:,,
- signatures=0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180308102757.jyi7uo566n6nuct5@earth.universe>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do not stop/restart dma on overrun or errors.
-Dma will be restarted on current frame transfer
-completion. Frame transfer completion is ensured
-even if overrun or error occurs by DCMI continuous
-capture mode which restarts data transfer at next
-frame sync.
-Do no warn on overrun while in irq thread, this slows down
-system and lead to more overrun errors. Use a counter
-instead and log errors at stop streaming.
+On Thu, 08 Mar 2018, Sebastian Reichel wrote:
+> On Thu, Mar 08, 2018 at 09:53:15AM +0000, Lee Jones wrote:
+> > On Thu, 08 Mar 2018, Sebastian Reichel wrote:
+> > > On Wed, Mar 07, 2018 at 04:32:11PM +0000, Lee Jones wrote:
+> > > > On Fri, 23 Feb 2018, Sebastian Reichel wrote:
+> > > > > +static const struct mfd_cell cpcap_mfd_devices[] = {
+> > > 
+> > > [...]
+> > > 
+> > > > > +	}, {
+> > > > > +		.name          = "cpcap-led",
+> > > > > +		.id            = 4,
+> > > > > +		.of_compatible = "motorola,cpcap-led-cp",
+> > > > > +	}, {
+> > > > > +		.name          = "cpcap-codec",
+> > > > > +	}
+> > > > > +};
+> > > > 
+> > > > With none of the entries containing platform_data /me wonders why you
+> > > > can't still use devm_of_platform_populate()?
+> > > 
+> > > Because devm_of_platform_populate works with compatible properties and
+> > > cpcap-codec does not have one after I removed it for Mark.
+> > 
+> > Sorry, I missed that conversation.  Why was it removed?
+> 
+> I had it in PATCHv1-PATCHv4. It was removed, since Mark didn't want
+> to have it in the DT ABI.
 
-Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
----
-version 2:
-  - typo: remove blank line at the end of stop_streaming()
+Right, but why?  Is it not a hardware device?  I think converting from
+devm_of_platform_populate() for one sub-device is a bit drastic.
 
- drivers/media/platform/stm32/stm32-dcmi.c | 29 +++++++++++------------------
- 1 file changed, 11 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
-index 37d82d3..95ace0f 100644
---- a/drivers/media/platform/stm32/stm32-dcmi.c
-+++ b/drivers/media/platform/stm32/stm32-dcmi.c
-@@ -160,6 +160,7 @@ struct stm32_dcmi {
- 	dma_cookie_t			dma_cookie;
- 	u32				misr;
- 	int				errors_count;
-+	int				overrun_count;
- 	int				buffers_count;
- };
- 
-@@ -373,23 +374,9 @@ static irqreturn_t dcmi_irq_thread(int irq, void *arg)
- 	}
- 
- 	if ((dcmi->misr & IT_OVR) || (dcmi->misr & IT_ERR)) {
--		/*
--		 * An overflow or an error has been detected,
--		 * stop current DMA transfert & restart it
--		 */
--		dev_warn(dcmi->dev, "%s: Overflow or error detected\n",
--			 __func__);
--
- 		dcmi->errors_count++;
--		dev_dbg(dcmi->dev, "Restarting capture after DCMI error\n");
--
--		spin_unlock_irq(&dcmi->irqlock);
--		dmaengine_terminate_all(dcmi->dma_chan);
--
--		if (dcmi_start_capture(dcmi))
--			dev_err(dcmi->dev, "%s: Cannot restart capture on overflow or error\n",
--				__func__);
--		return IRQ_HANDLED;
-+		if (dcmi->misr & IT_OVR)
-+			dcmi->overrun_count++;
- 	}
- 
- 	spin_unlock_irq(&dcmi->irqlock);
-@@ -572,6 +559,7 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
- 
- 	dcmi->sequence = 0;
- 	dcmi->errors_count = 0;
-+	dcmi->overrun_count = 0;
- 	dcmi->buffers_count = 0;
- 	dcmi->active = NULL;
- 
-@@ -682,8 +670,13 @@ static void dcmi_stop_streaming(struct vb2_queue *vq)
- 
- 	clk_disable(dcmi->mclk);
- 
--	dev_dbg(dcmi->dev, "Stop streaming, errors=%d buffers=%d\n",
--		dcmi->errors_count, dcmi->buffers_count);
-+	if (dcmi->errors_count)
-+		dev_warn(dcmi->dev, "Some errors found while streaming: errors=%d (overrun=%d), buffers=%d\n",
-+			 dcmi->errors_count, dcmi->overrun_count,
-+			 dcmi->buffers_count);
-+	dev_dbg(dcmi->dev, "Stop streaming, errors=%d (overrun=%d), buffers=%d\n",
-+		dcmi->errors_count, dcmi->overrun_count,
-+		dcmi->buffers_count);
- }
- 
- static const struct vb2_ops dcmi_video_qops = {
 -- 
-1.9.1
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
