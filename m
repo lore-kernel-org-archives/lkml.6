@@ -1,96 +1,116 @@
-Return-Path: <jarkko.sakkinen@linux.intel.com>
-X-Google-Smtp-Source: AG47ELtqzt8eg/ldiaEvIvyzHsEqpl6IGnj8SKBiAyio4FC3Z27sZAu6RiH67oOAcvOeDqIUPR0u
-ARC-Seal: i=1; a=rsa-sha256; t=1521470532; cv=none;
+Return-Path: <why2jjj.linux@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520545624; cv=none;
         d=google.com; s=arc-20160816;
-        b=x4hn/mwPdRPzRAdxy5lSlIc4H4iqIUOv9dmRwX/rElWMayAjgNFYSK5GGjt9vZs4R7
-         cEq+ktXymZINAkUcfdoRjODNw7hqEJ6og+xjXj/C6QhxdBB8KRDzgVaDwPGR45d5of5M
-         0CG7WAO+Qt0lrpkC27gmbEjeXQOSaly0uoRmPFCn3YJ992NbJz98UuswHkFJLfleP8Le
-         23pwUwsllFObOagAFuUfRWHP1Ejv4Ql1cmYRtKjSXSBJF2CE1jbIuo50G8ZATsI0F0Hy
-         V951skqiQ4Ciwzv3kM7lpwajRWr3Vw5bSmLSy5Bepat60O8j+oH8HTRdzhaUbESDHBeu
-         fkHw==
+        b=r8/Td2SMK0MToLYOm/OUNEW3bDGaZO3e5Eslt1JmNUatpMiadgOcvCENrlqLjlCPed
+         98IlSAV93eWV1jATv5Fb4LWdptP7QRUxvxn8iYNMUJHCWbcGiJEnM9Uz5qLpmuEqfaND
+         TkJpKyxZT2lxba1LSn4mckl6c/+cisKY8MbAs6J4BOT27dgVaI2pesC+mOXCiC7yoTEN
+         6VtjGuy7p/7a58k6qAhUDNGLHvlaos/1Q6o9LiGBiURrR+p7XqUnegYFnsKFh5T5TJj4
+         IKlAl3AoPEPfrO78sBr0rOv7emj7hth1hgWuvYassx3axSpKDpC9PqBAVqKXhcl2aSsM
+         ADaw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:organization:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:arc-authentication-results;
-        bh=lWD6tulG9EUkWxHpWH1nHZRFoOpIyiybyhYdpU5peqk=;
-        b=JvNr3rlchhUozGdWtKMe2Ec+KxDXp7a43JSz1aKsgnHMPTfsSI5sFpd5xf691EyiSj
-         xkzaU9CDodMyTz3JOkaTeZ35lZ0Wjn2xa2HXmsv6NlfWe0TTHiaSv8324TA/s/j2H8Ub
-         e7LsLGsrbTMG2Rqx1CE6l5/itq6i0yrXkaRPzbQrieL1bCOus4rc9t00mfRY+ma62X+n
-         9o3eNBEvSutRbXZBNCTl5lM7P5QLHctK/XJZ1eAT1g8bAw7pdzzQErgpxeD9k5Jyry0Z
-         JqUnxj7yp+eCwh+5g+hDApfQAPgnlyRvhh893BPQKtOaTPI9gT0l5Mfha2KC5dreFkkf
-         DmsQ==
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dkim-signature:arc-authentication-results;
+        bh=Nml4PfKv9x7fKrN9PnwJcnSvg5DnBnPpLFJdnwj3Eto=;
+        b=hd3PVkNIrHEQ9EY/RSbWi6N35PU6vYTvDZVZndBDXsLwnFtyLKoZ+r0/qGbV3aKDkC
+         zqsFp72i1CZe/SkjFFcQyHWZVOHYMHS+GMY3yTRPUequijL0Bf++Fiumc358ZoXbVqSm
+         TqK6L4WyXjPFJgeemCi7JaMiZAMAQ6Y+SkU9VcyTdJ3fY7l6PLJ8pea2sjT8ta/Nfa26
+         9SfDFfOYfxv/0PiAH20MHHFi3FQyDe3iMRGInqwAarwUqOYkNyboMmn3iZtpD8W5wTLr
+         yBWkMe1KTES4pbQGy4OUvmUKIxONoOGVNLM/xCWCAATrPXkivR1Cy+725RXPrPfWQhQV
+         nwjQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jarkko.sakkinen@linux.intel.com designates 134.134.136.20 as permitted sender) smtp.mailfrom=jarkko.sakkinen@linux.intel.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=h+mPhX/O;
+       spf=pass (google.com: domain of why2jjj.linux@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=why2jjj.linux@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jarkko.sakkinen@linux.intel.com designates 134.134.136.20 as permitted sender) smtp.mailfrom=jarkko.sakkinen@linux.intel.com
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,330,1517904000";
-   d="scan'208";a="212660090"
-Date: Mon, 19 Mar 2018 16:42:05 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-	keyrings@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	open list <linux-kernel@vger.kernel.org>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=h+mPhX/O;
+       spf=pass (google.com: domain of why2jjj.linux@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=why2jjj.linux@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELvLbZGMvkAZMQhQGX4Y4OvvcKmht1ZQsIgOH8mDtIQTvbMgMTGmDOiUmucc7PmhHXBxqDEj/Q==
 Subject: Re: [PATCH v3 3/5] tpm: migrate tpm2_probe() to use struct tpm_buf
-Message-ID: <20180319144205.GA4619@linux.intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+ linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+ Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ open list <linux-kernel@vger.kernel.org>
 References: <20180305165614.5469-1-jarkko.sakkinen@linux.intel.com>
  <20180305165614.5469-4-jarkko.sakkinen@linux.intel.com>
- <1520290344.10396.357.camel@linux.vnet.ibm.com>
- <20180316122129.GA2458@linux.intel.com>
- <1521203812.3503.19.camel@linux.vnet.ibm.com>
+From: J Freyensee <why2jjj.linux@gmail.com>
+Message-ID: <3f3f9059-06ae-cb78-0d02-2658b2edc234@gmail.com>
+Date: Thu, 8 Mar 2018 13:47:00 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1521203812.3503.19.camel@linux.vnet.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180305165614.5469-4-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593676067717266056?=
-X-GMAIL-MSGID: =?utf-8?q?1595377485142893626?=
+X-GMAIL-MSGID: =?utf-8?q?1594407648338691553?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 16, 2018 at 08:36:52AM -0400, Mimi Zohar wrote:
-> On Fri, 2018-03-16 at 14:21 +0200, Jarkko Sakkinen wrote:
-> > On Mon, Mar 05, 2018 at 05:52:24PM -0500, Mimi Zohar wrote:
-> > > Hi Jarrko,
-> > > 
-> > > On Mon, 2018-03-05 at 18:56 +0200, Jarkko Sakkinen wrote:
-> > > > In order to make struct tpm_buf the first class object for constructing TPM
-> > > > commands, migrate tpm2_probe() to use it.
-> > > > 
-> > > > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > 
-> > > With this patch, the Pi doesn't find the TPM.  I'm seeing the
-> > > following line in dmesg.
-> > > 
-> > > [    1.087414] tpm_tis_spi: probe of spi0.0 failed with error 256
-> > 
-> > Thank you for reporting this Mimi. Does it have TPM1/TPM2?
-> 
-> The pi has a TPM 2.0 attached to the GPIO.  James pointed out the
-> change in return codes.
-> 
-> 
-> +       if (be16_to_cpu(out->tag) == TPM2_ST_NO_SESSIONS)
->                 chip->flags |= TPM_CHIP_FLAG_TPM2;
+
+
+On 3/5/18 8:56 AM, Jarkko Sakkinen wrote:
+> In order to make struct tpm_buf the first class object for constructing TPM
+> commands, migrate tpm2_probe() to use it.
+>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>   drivers/char/tpm/tpm2-cmd.c | 27 +++++++++++++++------------
+>   1 file changed, 15 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index abe6ef4a7a0b..890d83c5c78b 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -851,22 +851,25 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
+>    */
+>   int tpm2_probe(struct tpm_chip *chip)
+>   {
+> -	struct tpm2_cmd cmd;
+> +	struct tpm_output_header *out;
+> +	struct tpm_buf buf;
+>   	int rc;
+>   
+> -	cmd.header.in = tpm2_get_tpm_pt_header;
+> -	cmd.params.get_tpm_pt_in.cap_id = cpu_to_be32(TPM2_CAP_TPM_PROPERTIES);
+> -	cmd.params.get_tpm_pt_in.property_id = cpu_to_be32(0x100);
+> -	cmd.params.get_tpm_pt_in.property_cnt = cpu_to_be32(1);
 > -
-> -       return 0;
+> -	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd), 0, 0, NULL);
+> -	if (rc <  0)
+> +	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
+> +	if (rc)
+>   		return rc;
+> -
+> -	if (be16_to_cpu(cmd.header.out.tag) == TPM2_ST_NO_SESSIONS)
+> +	tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
+> +	tpm_buf_append_u32(&buf, TPM_PT_TOTAL_COMMANDS);
+> +	tpm_buf_append_u32(&buf, 1);
+> +	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0, NULL);
+> +	if (rc <  0)
+> +		goto out;
+> +	out = (struct tpm_output_header *)buf.data;
+> +	if (be16_to_cpu(out->tag) == TPM2_ST_NO_SESSIONS)
+>   		chip->flags |= TPM_CHIP_FLAG_TPM2;
+> -
+> -	return 0;
 > +out:
-> +       tpm_buf_destroy(&buf);
-> +       return rc;
->  }
->  EXPORT_SYMBOL_GPL(tpm2_probe);
-> 
-> Mimi
+> +	tpm_buf_destroy(&buf);
+> +	return rc;
 
-Oops, thank you James and Mimi for pointing this out. I'll refine
-the patch set.
 
-/Jarkko
+Looks better :-).
+
+
+Acked-by: Jay Freyensee <why2jjj.linux@gmail.com>
+
+
+>   }
+>   EXPORT_SYMBOL_GPL(tpm2_probe);
+>   
