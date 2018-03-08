@@ -1,59 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751333AbeCHUtq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 15:49:46 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:35616 "EHLO mail.bootlin.com"
+        id S1751205AbeCHUvo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 15:51:44 -0500
+Received: from ozlabs.org ([103.22.144.67]:48273 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750761AbeCHUtn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 15:49:43 -0500
-Date: Thu, 8 Mar 2018 21:49:41 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc: linux-kernel@vger.kernel.org, broonie@kernel.org,
-        linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 2/4] rtc: at91sam9: Pass pdev->dev to
- regmap_init_mmio()
-Message-ID: <20180308204941.GK20370@piout.net>
-References: <20180308102154.25686-1-jeffy.chen@rock-chips.com>
- <20180308102154.25686-3-jeffy.chen@rock-chips.com>
+        id S1750761AbeCHUvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 15:51:42 -0500
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Fri, 9 Mar 2018 07:51:19 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commits in the rdma tree
+Message-ID: <20180309075119.7b536dcd@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180308102154.25686-3-jeffy.chen@rock-chips.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/LlBxNeKIfEg24y=8bDH65p0"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/03/2018 at 18:21:52 +0800, Jeffy Chen wrote:
-> Otherwise it would use "dummy*" to create regmap debugfs dir.
-> 
-> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-> ---
-> 
-> Changes in v3: None
-> 
->  drivers/rtc/rtc-at91sam9.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/rtc/rtc-at91sam9.c b/drivers/rtc/rtc-at91sam9.c
-> index 7418a763ce52..0d6a17a77841 100644
-> --- a/drivers/rtc/rtc-at91sam9.c
-> +++ b/drivers/rtc/rtc-at91sam9.c
-> @@ -402,7 +402,7 @@ static int at91_rtc_probe(struct platform_device *pdev)
->  		if (IS_ERR(gpbr))
->  			return PTR_ERR(gpbr);
->  
-> -		rtc->gpbr = regmap_init_mmio(NULL, gpbr,
-> +		rtc->gpbr = regmap_init_mmio(&pdev->dev, gpbr,
->  					     &gpbr_regmap_config);
+--Sig_/LlBxNeKIfEg24y=8bDH65p0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This would be misleading as the gpbr is not directly related to the rtc.
+Hi all,
 
+Commits
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+  63cf1a902c9d ("IB/srpt: Add RDMA/CM support")
+  86af61764151 ("IB/rxe: remove unnecessary skb_clone")
+  31f1bd14cbfe ("IB/rxe: remove unnecessary rxe in rxe_send")
+  befd8d98f230 ("IB/rxe: change the function rxe_init_device_param type")
+
+are missing a Signed-off-by from their committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/LlBxNeKIfEg24y=8bDH65p0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqhokcACgkQAVBC80lX
+0GyHyQgApLL5laroPtc+4Z2GOyunGs1dmdfMTfMGxeTVm2FQzRAeFIxtRc/0SK3B
+sW+cfyKMOaZMxaWl0uZbin03WyKS/Tj/1NdewrAaTqnUZ4cJ7/ui+r1vU5qd8v83
+PFZhGvzeje7O2P/zwpPjrez86H2+W8IKE+s41Fqd5A9TLNvDc6z+gj0NK962xunh
+6SJWup0HwVEBW4AHeZRyJkTRdjP5Qgv6uOo+mM/KmikHcP9CNJcR6cmY2kGVs6oG
+JqiRMljLCCT96kt7A1Q0Hs7jbiBDDa8FI15IhZMAhWEzof/c79vQt3CxYny6ubcK
+nUCwxSTDiaozmz9AHrP8bpee+7t7yQ==
+=dKGq
+-----END PGP SIGNATURE-----
+
+--Sig_/LlBxNeKIfEg24y=8bDH65p0--
