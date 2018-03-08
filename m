@@ -1,66 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935925AbeCHQjI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 11:39:08 -0500
-Received: from a.mx.secunet.com ([62.96.220.36]:42914 "EHLO a.mx.secunet.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934087AbeCHQjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 11:39:01 -0500
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Daniel Drake <drake@endlessm.com>,
-        "Kai-Heng Feng" <kai.heng.feng@canonical.com>
-CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Dennis Wassenberg <dennis.wassenberg@secunet.com>
-Organization: secunet Security Networks
-Subject: [PATCH] Input: i8042: add Lenovo ThinkPad L460 to i8042 reset list
-Message-ID: <3063cecf-a893-6c0e-06cd-dfe325c45e2f@secunet.com>
-Date: Thu, 8 Mar 2018 17:35:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
-X-G-Data-MailSecurity-for-Exchange-State: 0
-X-G-Data-MailSecurity-for-Exchange-Error: 0
-X-G-Data-MailSecurity-for-Exchange-Sender: 23
-X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
-X-G-Data-MailSecurity-for-Exchange-Guid: 13E148E2-311F-4AF8-8B92-B41B01F68A13
+        id S935941AbeCHQjp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 11:39:45 -0500
+Received: from smtprelay0184.hostedemail.com ([216.40.44.184]:46681 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933478AbeCHQjn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 11:39:43 -0500
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:541:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3653:3865:3867:3870:3871:3872:3874:4321:4605:5007:6119:7903:10004:10400:10848:11026:11232:11473:11658:11914:12109:12555:12740:12760:12895:12986:13069:13311:13357:13439:14180:14659:14721:14777:21060:21080:21433:21627:30022:30046:30054:30060:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
+X-HE-Tag: goat58_1a3ecc9baad63
+X-Filterd-Recvd-Size: 1787
+Message-ID: <1520527178.11634.9.camel@perches.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the rdma-fixes
+ tree
+From: Joe Perches <joe@perches.com>
+To: Jason Gunthorpe <jgg@mellanox.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andy Whitcroft <apw@canonical.com>
+Cc: Doug Ledford <dledford@redhat.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Leon Romanovsky <leonro@mellanox.com>
+Date: Thu, 08 Mar 2018 08:39:38 -0800
+In-Reply-To: <20180308161845.GC6773@mellanox.com>
+References: <20180308164058.2ad5a158@canb.auug.org.au>
+         <20180308161845.GC6773@mellanox.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reset i8042 before probing because of insufficient
-BIOS initialisation of the i8042 serial controller.
-This makes synaptics touchpad detection possible.
-Without resetting the synaptics touchpad is not detected
-because there are always NACK messages from AUX port.
+On Thu, 2018-03-08 at 09:18 -0700, Jason Gunthorpe wrote:
+> On Thu, Mar 08, 2018 at 04:40:58PM +1100, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Commit
+> > 
+> >   aa0de36a40f4 ("RDMA/mlx5: Fix integer overflow while resizing CQ")
+> > 
+> > is missing a Signed-off-by from its author.
+> 
+> Thanks Stephen,
+> 
+> May I suggest to the checkpatch maintainers that checkpack should look
+> for this too?
 
-Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
----
- drivers/input/serio/i8042-x86ia64io.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+No such commit in current -hext
+$ git status HEAD
+HEAD detached at next-20180308
 
-diff --git a/drivers/input/serio/i8042-x86ia64io.h b/drivers/input/serio/i8042-x86ia64io.h
-index 6cbbdc6..7755134 100644
---- a/drivers/input/serio/i8042-x86ia64io.h
-+++ b/drivers/input/serio/i8042-x86ia64io.h
-@@ -627,6 +627,13 @@ static inline void i8042_write_command(int val)
- 			DMI_MATCH(DMI_PRODUCT_NAME, "P65xRP"),
- 		},
- 	},
-+	{
-+		/* Lenovo ThinkPad L460 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+			DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkPad L460"),
-+		},
-+	},
- 	{ }
- };
- 
--- 
-1.9.1
+checkpatch doesn't try to match email sender to sign-off
+as the email sender doesn't have to sign-off on a patch.
+
+It currently does:
+
+	if ($is_patch && $has_commit_log && $chk_signoff && $signoff == 0) {
+		ERROR("MISSING_SIGN_OFF",
+		      "Missing Signed-off-by: line(s)\n");
+	}
