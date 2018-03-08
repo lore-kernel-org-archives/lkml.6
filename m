@@ -1,36 +1,36 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELvYXhis6w5tUzqb/yabdZQ048b8eY7h8DGZoCkYWaNOKLwXzqmpAmyxlslDDBn0uH0fyu1f
-ARC-Seal: i=1; a=rsa-sha256; t=1520498724; cv=none;
+X-Google-Smtp-Source: AG47ELuamGvpa4XLTxz1YqNZl9PEDxEFnGHswhHlJVBYBqOUwTYqK1wQdNBmzlhpo3e8rzFFBICt
+ARC-Seal: i=1; a=rsa-sha256; t=1520498670; cv=none;
         d=google.com; s=arc-20160816;
-        b=o8+UiR5Wlut7nJLfjarUQu0CJnCXTb+769RrmDDol05D3uV5jGfYhi8KSX7tQQfoTM
-         ymgszMdQaAsXJrH6b5/a2FKLXUZ+FYDK5yRoF8hDv/EjoCxU4zx7Csx4G3B4EFNeZS5y
-         Q5jaC+zKWINhbwUyBVacVXsPlDblhQxe8r2+E4bL1AhMvfC1UKVpj09QZKxj+eK1J8s9
-         cCFq0Rq+/bGWeWOdeMrLAHE1Hnik2j6F2dhaf53lokirPYIDys5fZQ4Yx3D7zaNBpJ8H
-         c5NzcrYFP7cgwgklfF+/U9NK7uUJiEx/krPMnUnEyErPQLLpmsQ7TzAA98FTloGcVfa2
-         MgPA==
+        b=z+WKhLvOHX93obzUUqMT3xiMxHEiJBEFc/ryK8ULFrKRz7/C3U20dmanoTSle81aND
+         xf0MkrF0XwszYeMtY4ezbDakEFLo+zbukJgPK+/r/LGk3eCKV5aQz2IIp4lU6L+62ggB
+         BTM5zLYuwiGwCF2nAW0CWyr3uZs4cjQ7eV5JU1e/1HBtl6jDx3cDkSLRGkUug0yQeYYm
+         JM6JJ376GMuL0xdTlkeynKPXBuNbxLOw7anqw5GJASsx94v+82iW7F5cGw2ttXcCeSHn
+         pqRc663iB27728c0la2sXMsl/KMhnVr86duiZKPZnTwzBK9aH4jchJYhk7jQ9vdTUv3J
+         S0TQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-id:precedence:sender:content-transfer-encoding:mime-version
          :user-agent:references:in-reply-to:message-id:date:subject:cc:to
          :from:dmarc-filter:arc-authentication-results;
-        bh=My0Y7cjct5gMcofuRdT/TMuxdaCuuwcOCok22TdhQvA=;
-        b=mfdPkbfokFGEbf8jJ82/P0Sm3dtP94CkMlXSG6C9dClGkywytw02Km9+dZMdZ1k2uB
-         I1gyJaDiteFMATuS9e5ZNR5LNyUnLD3UbGZs1nY0ssS8knRgGUiTV2SFtHJXMtz/OKCl
-         Iwa2g+4MfIpt1Os73eLWDxinfzHDrb6iOPPsVeZ6S7o4aWnTX5PSazEKN6eryqjofK3l
-         XBnrP89OL1OmYACsgxsME2wnMyn1+TDs6VNWbXEAk8cv6d85o+uVXT0LlHdKCWBAS3en
-         2fdKdei0sOx3g36K0hhf6PXQoCEzD9Nebc5hBZYFPAiTE4fmBThBsWbgdvuFVi1qa+nk
-         vKSA==
+        bh=sliGKI2MPPEEFbY5Sc7eWDMOQD4FncA2T51tJ1qIG5c=;
+        b=0lIm9ma1DSWnaofQQUtI+nc8hHzlH1MBjcqmaZWtgwrJSNl3knbI0KSNFLx+k82vm7
+         m/XiprxKwsMxGFGC2SJT0stCCforR8wnk79zvbPSZyJaXX856Ty7WF8DBxL+GoEe4OLZ
+         Fu+94M2xuXGkdvZmnQwdVM6Zqql91TqYq6MWC6iL9J6ir/wIgA9eyNg9HekshLyHSyWe
+         PQylscSiwpmjwjHsHn7R+BYp6yJo/xJzBKriOCn9XzwH/Z1bVSKf/iVgMFdSmQjgjTK7
+         4BMFKu7AmFk4I7Ipnk3OHJRiI12w/RDzmH0pHFsrCjxEnNr18Tlm+u90PHv4cZfgbPtU
+         gxeA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755406AbeCHIpA (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Thu, 8 Mar 2018 03:45:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49988 "EHLO mail.kernel.org"
+        id S935527AbeCHIoa (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Thu, 8 Mar 2018 03:44:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755382AbeCHIo6 (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Thu, 8 Mar 2018 03:44:58 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A49A82133D
+        id S935490AbeCHIo3 (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Thu, 8 Mar 2018 03:44:29 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77DD82172D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
 From: Masami Hiramatsu <mhiramat@kernel.org>
@@ -41,9 +41,9 @@ Cc: mhiramat@kernel.org, Ingo Molnar <mingo@redhat.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
         shuah@kernel.org
-Subject: [PATCH v5 02/19] selftests: ftrace: Add probe event argument syntax testcase
-Date: Thu,  8 Mar 2018 17:44:34 +0900
-Message-Id: <152049867449.7289.11414429946367300873.stgit@devbox>
+Subject: [PATCH v5 01/19] [BUGFIX] tracing: probeevent: Fix to support minus offset from symbol
+Date: Thu,  8 Mar 2018 17:44:05 +0900
+Message-Id: <152049864528.7289.5084202890843376447.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <152049860385.7289.14079393589900496424.stgit@devbox>
 References: <152049860385.7289.14079393589900496424.stgit@devbox>
@@ -54,122 +54,101 @@ Content-Transfer-Encoding: 7bit
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594358470389592130?=
-X-GMAIL-MSGID: =?utf-8?q?1594358470389592130?=
+X-GMAIL-THRID: =?utf-8?q?1594358414300063310?=
+X-GMAIL-MSGID: =?utf-8?q?1594358414300063310?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add a testcase for probe event argument syntax which
-ensures the kprobe_events interface correctly parses
-given event arguments.
+In Documentation/trace/kprobetrace.txt, it says
 
+ @SYM[+|-offs] : Fetch memory at SYM +|- offs (SYM should be a data symbol)
+
+However, the parser doesn't parse minus offset correctly, since
+commit 2fba0c8867af ("tracing/kprobes: Fix probe offset to be
+unsigned") drops minus ("-") offset support for kprobe probe
+address usage.
+
+This fixes the traceprobe_split_symbol_offset() to parse minus
+offset again with checking the offset range, and add a minus
+offset check in kprobe probe address usage.
+
+Fixes: 2fba0c8867af ("tracing/kprobes: Fix probe offset to be unsigned")
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 ---
- .../ftrace/test.d/kprobe/kprobe_args_syntax.tc     |   97 ++++++++++++++++++++
- 1 file changed, 97 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
+ Changes in v3:
+  - Use kstrtol instead of kstrtoul. (Thanks Namhyung!)
+ Changes in v4:
+  - Fix to decode sign. (Thanks Namhyung!)
+  - Fix to check UINT_MAX for kprobe offset.
+---
+ kernel/trace/trace_kprobe.c |    4 ++--
+ kernel/trace/trace_probe.c  |    8 +++-----
+ kernel/trace/trace_probe.h  |    2 +-
+ 3 files changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-new file mode 100644
-index 000000000000..231bcd2c4eb5
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-@@ -0,0 +1,97 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Kprobe event argument syntax
-+
-+[ -f kprobe_events ] || exit_unsupported # this is configurable
-+
-+grep "x8/16/32/64" README > /dev/null || exit_unsupported # version issue
-+
-+echo 0 > events/enable
-+echo > kprobe_events
-+
-+PROBEFUNC="vfs_read"
-+GOODREG=
-+BADREG=
-+GOODSYM="_sdata"
-+if ! grep -qw ${GOODSYM} /proc/kallsyms ; then
-+  GOODSYM=$PROBEFUNC
-+fi
-+BADSYM="deaqswdefr"
-+SYMADDR=0x`grep -w ${GOODSYM} /proc/kallsyms | cut -f 1 -d " "`
-+GOODTYPE="x16"
-+BADTYPE="y16"
-+
-+case `uname -m` in
-+x86_64|i[3456]86)
-+  GOODREG=%ax
-+  BADREG=%ex
-+;;
-+aarch64)
-+  GOODREG=%x0
-+  BADREG=%ax
-+;;
-+arm*)
-+  GOODREG=%r0
-+  BADREG=%ax
-+;;
-+esac
-+
-+test_goodarg() # Good-args
-+{
-+  while [ "$1" ]; do
-+    echo "p ${PROBEFUNC} $1" > kprobe_events
-+    shift 1
-+  done;
-+}
-+
-+test_badarg() # Bad-args
-+{
-+  while [ "$1" ]; do
-+    ! echo "p ${PROBEFUNC} $1" > kprobe_events
-+    shift 1
-+  done;
-+}
-+
-+echo > kprobe_events
-+
-+: "Register access"
-+test_goodarg ${GOODREG}
-+test_badarg ${BADREG}
-+
-+: "Symbol access"
-+test_goodarg "@${GOODSYM}" "@${SYMADDR}" "@${GOODSYM}+10" "@${GOODSYM}-10"
-+test_badarg "@" "@${BADSYM}" "@${GOODSYM}*10" "@${GOODSYM}/10" \
-+	    "@${GOODSYM}%10" "@${GOODSYM}&10" "@${GOODSYM}|10"
-+
-+: "Stack access"
-+test_goodarg "\$stack" "\$stack0" "\$stack1"
-+test_badarg "\$stackp" "\$stack0+10" "\$stack1-10"
-+
-+: "Retval access"
-+echo "r ${PROBEFUNC} \$retval" > kprobe_events
-+! echo "p ${PROBEFUNC} \$retval" > kprobe_events
-+
-+: "Comm access"
-+test_goodarg "\$comm"
-+
-+: "Indirect memory access"
-+test_goodarg "+0(${GOODREG})" "-0(${GOODREG})" "+10(\$stack)" \
-+	"+0(\$stack1)" "+10(@${GOODSYM}-10)" "+0(+10(+20(\$stack)))"
-+test_badarg "+(${GOODREG})" "(${GOODREG}+10)" "-(${GOODREG})" "(${GOODREG})" \
-+	"+10(\$comm)" "+0(${GOODREG})+10"
-+
-+: "Name assignment"
-+test_goodarg "varname=${GOODREG}"
-+test_badarg "varname=varname2=${GOODREG}"
-+
-+: "Type syntax"
-+test_goodarg "${GOODREG}:${GOODTYPE}"
-+test_badarg "${GOODREG}::${GOODTYPE}" "${GOODREG}:${BADTYPE}" \
-+	"${GOODTYPE}:${GOODREG}"
-+
-+: "Combination check"
-+
-+test_goodarg "\$comm:string" "+0(\$stack):string"
-+test_badarg "\$comm:x64" "\$stack:string" "${GOODREG}:string"
-+
-+echo > kprobe_events
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 5ce9b8cf7be3..1cd3fb4d70f8 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -667,7 +667,7 @@ static int create_trace_kprobe(int argc, char **argv)
+ 	char *symbol = NULL, *event = NULL, *group = NULL;
+ 	int maxactive = 0;
+ 	char *arg;
+-	unsigned long offset = 0;
++	long offset = 0;
+ 	void *addr = NULL;
+ 	char buf[MAX_EVENT_NAME_LEN];
+ 
+@@ -755,7 +755,7 @@ static int create_trace_kprobe(int argc, char **argv)
+ 		symbol = argv[1];
+ 		/* TODO: support .init module functions */
+ 		ret = traceprobe_split_symbol_offset(symbol, &offset);
+-		if (ret) {
++		if (ret || offset < 0 || offset > UINT_MAX) {
+ 			pr_info("Failed to parse either an address or a symbol.\n");
+ 			return ret;
+ 		}
+diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+index d59357308677..daf54bda4dc8 100644
+--- a/kernel/trace/trace_probe.c
++++ b/kernel/trace/trace_probe.c
+@@ -320,7 +320,7 @@ static fetch_func_t get_fetch_size_function(const struct fetch_type *type,
+ }
+ 
+ /* Split symbol and offset. */
+-int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset)
++int traceprobe_split_symbol_offset(char *symbol, long *offset)
+ {
+ 	char *tmp;
+ 	int ret;
+@@ -328,13 +328,11 @@ int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset)
+ 	if (!offset)
+ 		return -EINVAL;
+ 
+-	tmp = strchr(symbol, '+');
++	tmp = strpbrk(symbol, "+-");
+ 	if (tmp) {
+-		/* skip sign because kstrtoul doesn't accept '+' */
+-		ret = kstrtoul(tmp + 1, 0, offset);
++		ret = kstrtol(tmp, 0, offset);
+ 		if (ret)
+ 			return ret;
+-
+ 		*tmp = '\0';
+ 	} else
+ 		*offset = 0;
+diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
+index 0745f895f780..75daff22ccea 100644
+--- a/kernel/trace/trace_probe.h
++++ b/kernel/trace/trace_probe.h
+@@ -365,7 +365,7 @@ extern int traceprobe_conflict_field_name(const char *name,
+ extern void traceprobe_update_arg(struct probe_arg *arg);
+ extern void traceprobe_free_probe_arg(struct probe_arg *arg);
+ 
+-extern int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset);
++extern int traceprobe_split_symbol_offset(char *symbol, long *offset);
+ 
+ /* Sum up total data length for dynamic arraies (strings) */
+ static nokprobe_inline int
 
