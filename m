@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755203AbeCHICX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 03:02:23 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36958 "EHLO
+        id S965663AbeCHICv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 03:02:51 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36317 "EHLO
         mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965528AbeCHICS (ORCPT
+        with ESMTP id S965572AbeCHICU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 03:02:18 -0500
-X-Google-Smtp-Source: AG47ELs9xP/ozeqmz66bTsBlerVvKK1M3Uno35TicJdNidFPuHClVVUZIyeJgWrD+bmoJREjhfNg7Q==
+        Thu, 8 Mar 2018 03:02:20 -0500
+X-Google-Smtp-Source: AG47ELv1tkZqUROs0fdcDD83ui0WRqZHN3+Ke9i9C7S26Qu2PAE/jiE08qvOA+ELSpp70w6cjjOTRQ==
 From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To: linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 10/12] efi: reorder pr_notice() with add_device_randomness() call
-Date: Thu,  8 Mar 2018 08:00:18 +0000
-Message-Id: <20180308080020.22828-11-ard.biesheuvel@linaro.org>
+Subject: [PATCH 11/12] efi/apple-properties: Use memremap() instead of ioremap()
+Date: Thu,  8 Mar 2018 08:00:19 +0000
+Message-Id: <20180308080020.22828-12-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
 References: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
@@ -23,35 +24,68 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, when we receive a random seed from the EFI stub, we call
-add_device_randomness() to incorporate it into the entropy pool, and
-issue a pr_notice() saying we are about to do that, e.g.,
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-  [    0.000000] efi:  RNG=0x87ff92cf18
-  [    0.000000] random: fast init done
-  [    0.000000] efi: seeding entropy pool
+The memory we are accessing through virtual address has no IO side
+effects. Moreover, for IO memory we have to use special accessors,
+which we don't use.
 
-Let's reorder those calls to make the output look less confusing.
+Due to above, convert the driver to use memremap() instead of ioremap().
 
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Tested-by: Lukas Wunner <lukas@wunner.de>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- drivers/firmware/efi/efi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/firmware/efi/apple-properties.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index c0dda400d22a..232f4915223b 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -551,9 +551,9 @@ int __init efi_config_parse_tables(void *config_tables, int count, int sz,
- 			seed = early_memremap(efi.rng_seed,
- 					      sizeof(*seed) + size);
- 			if (seed != NULL) {
-+				pr_notice("seeding entropy pool\n");
- 				add_device_randomness(seed->bits, seed->size);
- 				early_memunmap(seed, sizeof(*seed) + size);
--				pr_notice("seeding entropy pool\n");
- 			} else {
- 				pr_err("Could not map UEFI random seed!\n");
- 			}
+diff --git a/drivers/firmware/efi/apple-properties.c b/drivers/firmware/efi/apple-properties.c
+index b9602e0d7b50..adaa9a3714b9 100644
+--- a/drivers/firmware/efi/apple-properties.c
++++ b/drivers/firmware/efi/apple-properties.c
+@@ -19,6 +19,7 @@
+ 
+ #include <linux/bootmem.h>
+ #include <linux/efi.h>
++#include <linux/io.h>
+ #include <linux/platform_data/x86/apple.h>
+ #include <linux/property.h>
+ #include <linux/slab.h>
+@@ -189,7 +190,7 @@ static int __init map_properties(void)
+ 
+ 	pa_data = boot_params.hdr.setup_data;
+ 	while (pa_data) {
+-		data = ioremap(pa_data, sizeof(*data));
++		data = memremap(pa_data, sizeof(*data), MEMREMAP_WB);
+ 		if (!data) {
+ 			pr_err("cannot map setup_data header\n");
+ 			return -ENOMEM;
+@@ -197,14 +198,14 @@ static int __init map_properties(void)
+ 
+ 		if (data->type != SETUP_APPLE_PROPERTIES) {
+ 			pa_data = data->next;
+-			iounmap(data);
++			memunmap(data);
+ 			continue;
+ 		}
+ 
+ 		data_len = data->len;
+-		iounmap(data);
++		memunmap(data);
+ 
+-		data = ioremap(pa_data, sizeof(*data) + data_len);
++		data = memremap(pa_data, sizeof(*data) + data_len, MEMREMAP_WB);
+ 		if (!data) {
+ 			pr_err("cannot map setup_data payload\n");
+ 			return -ENOMEM;
+@@ -229,7 +230,7 @@ static int __init map_properties(void)
+ 		 * to avoid breaking the chain of ->next pointers.
+ 		 */
+ 		data->len = 0;
+-		iounmap(data);
++		memunmap(data);
+ 		free_bootmem_late(pa_data + sizeof(*data), data_len);
+ 
+ 		return ret;
 -- 
 2.15.1
