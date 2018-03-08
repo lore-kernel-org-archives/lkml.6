@@ -1,94 +1,73 @@
-Return-Path: <dvyukov@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519921395; cv=none;
+Return-Path: <davem@davemloft.net>
+X-Google-Smtp-Source: AG47ELvCzwqxIytaP6gvYju0KU7TWPXeG5HkY0lU9hrA+cWOHDZRV0ouusJgwZfyGR6+2B/Btknw
+ARC-Seal: i=1; a=rsa-sha256; t=1520539391; cv=none;
         d=google.com; s=arc-20160816;
-        b=TYDlKw+H9TLBF7dZ2WRinNJwg5s1gSeBuz4UUsrQR9q5FhEGcnnxgQFxUK2aWUrPIC
-         azNTDPx/fUNYEL2Srx4GFN1i0NDg76F694hIrWycleKdVsi2XqojYxx1EzoTQt4EVLGn
-         SKPsEVOc7D0n8S95KrRwyWKzC1vsMF/rtXruYHSKW8/XUHUd5ezG1IWIOHY4F8eIb3fq
-         2Aue1hzzqe9ZO0BIVdOKuo/LqR81FOp7qnc7yOJlRdZMj+t27yYIzMlHhF7HhXxRqiHZ
-         Zhgj8wDxqj5xl4GxhaM4ywU0meMaP5KFuhqOP+KDuCxRGojhOejmwX9OTOpH5BgE+ctw
-         sMLg==
+        b=W6lt3IrUKyiq3GBVcB+mLRFUEDKi2IOexXtfioMirTvsCGgLIOBe+Dbt01maTlTb7G
+         0/xSCK4c++YRNTgCHyA9w2KoezivBLAIWFBhH1+7vGE4hCwjI1lwBrVkDC7BoBUpmplq
+         Z0SLZmcZnYmIqpFpgaIm1CaU8WCJ58dQ3Hjl5jOXYyu0JKZSE7clHDaRSPC19UQ+fTGg
+         8WQ5xwn3f0pkN5gYRvB0iDmnehBvn3O/U5S5YPWV/7066nvluqmVYc7876N2JaNUZ5pz
+         P7V6tnCPaVNeciRC9VOm3FZSPWoNKWN8Zgfig0MWlkiwUkhokemg9A262lVOEyGNqZ/q
+         LA2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=svW4ZtT3d8Ky1L43fjcMPbyE+chJwsq92DVRkaM1Wgg=;
-        b=apJrW/UWZdipY74LGeF9re9uD6vqUNJw07hV8ngl337yBd2jHrpcz43PTPa+DJenbF
-         LOAo881cqkXhvtnl5ZH3E5Ai2oBXCqd5uzjZNoKajN/a+rNZXe97ASlUVQ4CvRWcJkHd
-         Oi+2BJFsXkLeEKe3UrWG/BWg8+8ySpWY7Oi93Pq6lZzOm7x2uo2atlyYsd0hmANYE/8w
-         t/XTJQVtGttgCHhou1XHOgK66a7kE0zokkL/TDMap9ur1zZshbauJbQoSuc0/y9WdJ3m
-         xN4s0XkrI/iKxaYoRvr5dMrQm/Y3xcGZLXWvZn2jVdJGXMI7jAUu5RSkzhbiSPuoo6f0
-         2Xtg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:arc-authentication-results;
+        bh=2bmZZ18SZsJOu450dJq3oSEzKT5N4s4lQO+mTjsow2c=;
+        b=s+ZMaHK4fvzhhKM+RQO0g24DimSFsWeFUE1DuPjQIhbmfxZ2hr0eaMf90OFLW0UcEF
+         A2KHQ2Js4FhYP6eFutxFy/EeQLe2cy1tvGSHnz/aUrq0BOEUuHUlwvyidc8RJM0E0UD7
+         TRMz00pprtd/EAWuxCdgRO9IwvJwubm3EJEPNcjIalm89mObKJtdbNpzjzKqvx3pztBu
+         ur6xQ5gk5ihqFtPVcwXwdUOHqBgs573HOQYc4lG5tebDJiXxci3LkJXM65puwbqKYYLo
+         SHq7XbbqURm3eBdpKFpJ6Q1/f9/XteC3KMW1tK2srQVs+5Sssp5MSj7lJGT/buOiujrG
+         G+fQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=QH6NFtAQ;
-       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=dvyukov@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+       spf=neutral (google.com: 184.105.139.130 is neither permitted nor denied by best guess record for domain of davem@davemloft.net) smtp.mailfrom=davem@davemloft.net
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=QH6NFtAQ;
-       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=dvyukov@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AG47ELuoEkEofLU4GjmevkNzmCZaVkUEadiDIGtxQyO+dMG8RiZ32s/O6jQua9xpjGZCV3t7HG3rs/5IYr962PP6PyY=
-MIME-Version: 1.0
-In-Reply-To: <20180104112028.GA7583@kroah.com>
-References: <CACT4Y+ZNJRzPxxPQNR88vcPxD54mHY-evhMwR39iMsJh_NwaEA@mail.gmail.com>
- <20180104092327.GA26245@kroah.com> <CACT4Y+aN4TxTE4PYjL7Uos7hatWMonU73As5ddq8iU0cPb29rg@mail.gmail.com>
- <CACT4Y+Z_DV6sgQ7FodoxBj8MdVkcij3bS0P1pp9GOMDS4-f92A@mail.gmail.com> <20180104112028.GA7583@kroah.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 1 Mar 2018 17:22:54 +0100
-Message-ID: <CACT4Y+Z2-Z6GN0SDb5jySJkCrTRxf9qvdzuyM_OoruCTB9EoqQ@mail.gmail.com>
+       spf=neutral (google.com: 184.105.139.130 is neither permitted nor denied by best guess record for domain of davem@davemloft.net) smtp.mailfrom=davem@davemloft.net
+Date: Thu, 08 Mar 2018 15:03:09 -0500 (EST)
+Message-Id: <20180308.150309.1043571795208899259.davem@davemloft.net>
+To: dvyukov@google.com
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ akpm@linux-foundation.org, torvalds@linux-foundation.org,
+ syzkaller@googlegroups.com
 Subject: Re: LKML admins (syzbot emails are not delivered)
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>, syzkaller <syzkaller@googlegroups.com>,
-	David Miller <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <CACT4Y+Z2-Z6GN0SDb5jySJkCrTRxf9qvdzuyM_OoruCTB9EoqQ@mail.gmail.com>
+References: <CACT4Y+Z_DV6sgQ7FodoxBj8MdVkcij3bS0P1pp9GOMDS4-f92A@mail.gmail.com>
+	<20180104112028.GA7583@kroah.com>
+	<CACT4Y+Z2-Z6GN0SDb5jySJkCrTRxf9qvdzuyM_OoruCTB9EoqQ@mail.gmail.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1588652385455174541?=
-X-GMAIL-MSGID: =?utf-8?q?1593753097546797559?=
+X-GMAIL-MSGID: =?utf-8?q?1594401112735585906?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Jan 4, 2018 at 12:20 PM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->> > On Thu, Jan 04, 2018 at 10:09:16AM +0100, Dmitry Vyukov wrote:
->> > > Hello,
->> > >
->> > > Some of syzbot emails don't appear on LKML mailing lists, while they
->> > > were mailed as any other emails. Here are few examples:
->> > >
->> > > "KASAN: use-after-free Read in rds_tcp_dev_event"
->> > > https://groups.google.com/d/msg/syzkaller-bugs/nEeIAsNLWL4/1GzamOmRAwAJ
->> > >
->> > > "general protection fault in __wake_up_common"
->> > > https://groups.google.com/d/msg/syzkaller-bugs/4TrrZ0bIViw/rBcYLUJHAgAJ
->> > >
->> > > Does anybody know how to get in contact with real people behind LKML
->> > > and/or bugzilla?
->> > >
->> > > I am trying to understand why this happens, but failed so far (it does
->> > > not do any obviously prohibited stuff, and replies to these emails are
->> > > delivered).
->> >
->> > You should get a bounce notice from vger if the email is being rejected.
->>
->>
->> The problem is that it's not _me_, it's a computer program which uses
->> some mail delivery system which I don't have full visibility into.
->
-> But you, or someone, should have access to that email address to see any
-> responses sent to it.  If no one can, then it's just a spam bot and if I
-> were vger's postmaster, I would blacklist it as well :)
->
-> Good luck!
->
-> greg k-h
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Thu, 1 Mar 2018 17:22:54 +0100
 
+> The problem strikes back.
+> Again people complain that a email does not appear on LKML:
+> https://www.spinics.net/lists/kernel/msg2735905.html
+> Though, it appeared on syzkaller-bugs group:
+> https://groups.google.com/d/msg/syzkaller-bugs/OkwLGoS6UQA/hHAtCdnNBgAJ
+> https://groups.google.com/forum/message/raw?msg=syzkaller-bugs/OkwLGoS6UQA/hHAtCdnNBgAJ
+> syzbot now receives and logs bounce notifications, but there were none...
 
-The problem strikes back.
-Again people complain that a email does not appear on LKML:
-https://www.spinics.net/lists/kernel/msg2735905.html
-Though, it appeared on syzkaller-bugs group:
-https://groups.google.com/d/msg/syzkaller-bugs/OkwLGoS6UQA/hHAtCdnNBgAJ
-https://groups.google.com/forum/message/raw?msg=syzkaller-bugs/OkwLGoS6UQA/hHAtCdnNBgAJ
-syzbot now receives and logs bounce notifications, but there were none...
+The problem is that the name 'kernelci.orgbot' has a special character
+in it, namely "."
 
-FWIW I've filed support ticket
-https://rt.linuxfoundation.org/SelfService/Display.html?id=53105
+And when such special characters occur in email headers, the string
+in question must be surrounded by double quotes.
+
+People have to do this when they use my name "David S. Miller" as
+well, for example.
+
+So I think if you put double quotes around kernelci.orgbot when it
+is provided in email headers, the problem will go away.
+
+Please also make sure that multiple From: headers are not being
+generated or anything like that.
+
+Thanks.
