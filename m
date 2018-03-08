@@ -1,106 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754832AbeCHO5t (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 09:57:49 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:33106 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751239AbeCHO5r (ORCPT
+        id S1755606AbeCHO7U (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 09:59:20 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:41384 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752059AbeCHO7S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 09:57:47 -0500
-X-Google-Smtp-Source: AG47ELuGmiTNj1KOr8rEcRmF2rFtL4LVyaiEktuZ3695I7JD8xgu2B0qWIanoP0DPgv68i8jbr1OjA==
-Date: Thu, 8 Mar 2018 15:57:43 +0100
+        Thu, 8 Mar 2018 09:59:18 -0500
+X-Google-Smtp-Source: AG47ELvgV6nbqzMvPEX3NAw1CwvCRK2x3b2lcf98qSJ03VqREbo1cci/7A3n+Pc3d/6a9jOgqf7Puw==
+Date: Thu, 8 Mar 2018 15:59:14 +0100
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
-Message-ID: <20180308145743.GK3529@ulmo>
-References: <20180222230451.15515-1-marcel@ziswiler.com>
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "digetx@gmail.com" <digetx@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2] ARM: tegra: fix ulpi regression on tegra20
+Message-ID: <20180308145914.GA13814@ulmo>
+References: <20180222143825.1517-1-marcel@ziswiler.com>
+ <20180308141501.GH3529@ulmo>
+ <1520519485.23006.6.camel@toradex.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="YQEH9CATo+4lan7A"
+        protocol="application/pgp-signature"; boundary="+HP7ph2BbKc20aGI"
 Content-Disposition: inline
-In-Reply-To: <20180222230451.15515-1-marcel@ziswiler.com>
+In-Reply-To: <1520519485.23006.6.camel@toradex.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---YQEH9CATo+4lan7A
+--+HP7ph2BbKc20aGI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 23, 2018 at 12:04:51AM +0100, Marcel Ziswiler wrote:
-> Turns out latest upstream U-Boot does not configure/enable pllu which
-> leaves it at some default rate of 500 kHz:
+On Thu, Mar 08, 2018 at 02:31:26PM +0000, Marcel Ziswiler wrote:
+> On Thu, 2018-03-08 at 15:15 +0100, Thierry Reding wrote:
+> > On Thu, Feb 22, 2018 at 03:38:25PM +0100, Marcel Ziswiler wrote:
+> > > From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> > >=20
+> > > Since commit f8f8f1d04494 ("clk: Don't touch hardware when
+> > > reparenting
+> > > during registration") ULPI has been broken on Tegra20 leading to
+> > > the
+> > > following error message during boot:
+> > >=20
+> > > [    1.974698] ulpi_phy_power_on: ulpi write failed
+> > > [    1.979384] tegra-ehci c5004000.usb: Failed to power on the phy
+> > > [    1.985434] tegra-ehci: probe of c5004000.usb failed with error
+> > > -110
+> > >=20
+> > > Debugging through the changes and finally also consulting the TRM
+> > > revealed that rather than the CDEV2 clock off OSC requiring such
+> > > pin
+> > > muxing actually the PLL_P_OUT4 clock is in use. It looks like so
+> > > far it
+> > > just worked by chance of that one having been enabled which
+> > > Stephen's
+> > > commit now changed when reparenting sclk away from pll_p_out4
+> > > leaving
+> > > that one disabled. Fix this by properly assigning the PLL_P_OUT4
+> > > clock
+> > > as the ULPI PHY clock.
+> > >=20
+> > > Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> > >=20
+> > > ---
+> > >=20
+> > > Changes in v2:
+> > > - Updated device tree binding documentation as well.
+> > > - CCing Dmitry as well.
+> > >=20
+> > >  Documentation/devicetree/bindings/phy/nvidia,tegra20-usb-phy.txt |
+> > > 4 +++-
+> > >  arch/arm/boot/dts/tegra20.dtsi                                   |
+> > > 2 +-
+> > >  2 files changed, 4 insertions(+), 2 deletions(-)
+> >=20
+> > Applied, though I've split this into two separate patches, one going
+> > into for-4.17/dt-bindings and the other going into for-4.17/arm/dt.
 >=20
-> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep pll_u
->        pll_u                  3        3        0      500000          0
+> Thanks, Thierry!
 >=20
-> Of course this won't quite work leading to the following messages:
->=20
-> [    6.559593] usb 2-1: new full-speed USB device number 2 using tegra-
-> ehci
-> [   11.759173] usb 2-1: device descriptor read/64, error -110
-> [   27.119453] usb 2-1: device descriptor read/64, error -110
-> [   27.389217] usb 2-1: new full-speed USB device number 3 using tegra-
-> ehci
-> [   32.559454] usb 2-1: device descriptor read/64, error -110
-> [   47.929777] usb 2-1: device descriptor read/64, error -110
-> [   48.049658] usb usb2-port1: attempt power cycle
-> [   48.759475] usb 2-1: new full-speed USB device number 4 using tegra-
-> ehci
-> [   59.349457] usb 2-1: device not accepting address 4, error -110
-> [   59.509449] usb 2-1: new full-speed USB device number 5 using tegra-
-> ehci
-> [   70.069457] usb 2-1: device not accepting address 5, error -110
-> [   70.079721] usb usb2-port1: unable to enumerate USB device
->=20
-> Fix this by actually allowing the rate also being set from within
-> the Linux kernel.
->=20
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->=20
-> ---
->=20
->  drivers/clk/tegra/clk-pll.c | 2 ++
->  1 file changed, 2 insertions(+)
+> BTW: Do you know what is happening with my T30 USB patch? Is there
+> anything I may do about it?
 
-I'm aware of the discussion about how best to implement this, but this
-seems like a reasonable fix until we have something better.
-
-Peter, Jon: if you want to fix this more properly, please take point on
-this.
-
-Applied this to for-4.17/clk, thanks.
+I just took care of that.
 
 Thierry
 
---YQEH9CATo+4lan7A
+--+HP7ph2BbKc20aGI
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhT2QACgkQ3SOs138+
-s6HfIg//QKMJaDaJsNPOL3kC7s3piPoVc3qyNEdrNAafHWTrnt25IU22tV/X2RV2
-uAAGQVTk5MOunhgKNbBhz/i1I6FIyTqyQWx+QyB8NFjZQ8HXNfc+O2cl/IQGLq+k
-BESU2HOISJ7THKGteMsMw3wJLKRFjBMHllLYxd9DEdvA+04SaIf318eBeHMeQyIQ
-Dh+QMtq7FyAmrEDQLFTJhEkB627kty2bD/3BXhLZpHjG0Qb8MpXp4/BBPcqWubju
-HsVeEJjcpfshp7k9uIAACnnh0TqtfliFdmksuis5NIpzIO9jzLkXbIc6Zyy+sDTk
-2UyrJj7FGVG7fHGkLzLbI2wFpTq8sYu1om7Qp9vWk6GVTm+uBdWjQeym1ocKw6SM
-R5voboBXMtDuTuBQ9FRzj2gf9AckOCgipOQsWK3dbp4u6H4aaRdaIJ6wwYz5DRMZ
-8P/OMON/BJCuIF+sM4b5ddrLmhkiE0Pz4MCt5/LnRe7p+9pEHG5mFBV7bTwsJZsr
-Dd+zgI4L8ReBStB7UAhD2fZFH+kz03BSQbwVn2UbaWt2Z3mF29KDMHkhHT8jwHH+
-MEGStWJuCCenVgwP69IowpKkJlqusgJh9WmUXDBMqkgwc0WYo7hGKf8JCmfT10Xr
-GCMzihI1h8TQb01sjJX5Yp9lkxy40Qd27jLPiMy0Zpi8RR4hk8E=
-=9v9j
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhT8IACgkQ3SOs138+
+s6HEWQ/+IpurCJ+DLVaLiqdVwkAKVfwuAD0Sf7Ln1ApZ0ZJS+30Ei1nEyq9o9FOJ
+zveMml2Oop0LYfhHBtqaHa9LB8T9Uefd/y6Wfg1FbrN/w/rnBLBvCKBVbTiMtj9j
+IEdOvDUd5hNDjd4wZ/LJV6TNONfEl+cPJfU5TnfYuhZRyrX3vCOq9nWvzs0s8brp
+5LAcYz0QoVM9UGvVFG34nIfR7mGywLkTS03TbY1lpj2xQkqG1DVvt78qe/sWlkjA
+g/BipoYe2zfTGLw9wJQoqdZax1RG0Z4MHqaWJtIyYlaxePsXF7l9tMNjt5VJdKh/
+kbPBmxlqfmeG1cPIssmSoR9qOQl1ABjB2AIZ3bXF4tFpSHRIKHgD5FeX94rZzZrD
+HRnCpmGHblFhfI58LXFUu8HYookINFekP323B+X2DEm1aYszCbNziHqYOlGPkWpy
+J800u+1DEzazlUaLVzFwylnSwpBvlsORN1liYzlbF/bpU12n0O+5VJJCE71DA//K
+nVsYSP19DDGRlXuFp5ejccwDVuxY3MHMb39cXENV6/gQiTWPM90pJjoIrLGgsUHL
+gsrDOqZ0+MxC6qwhuOTz0npFVy3LypQ5B6/1oEW0l2eiN61ch4rhrGFgxoSFMWCq
+cBMssn6hSu+PkAusdeNZr33iwbKHuDSb8IH1uEeXClqdyrr4bpA=
+=iszK
 -----END PGP SIGNATURE-----
 
---YQEH9CATo+4lan7A--
+--+HP7ph2BbKc20aGI--
