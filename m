@@ -1,99 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751078AbeCHVkU convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 16:40:20 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37786 "EHLO mx1.redhat.com"
+        id S1751206AbeCHVlN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 16:41:13 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35732 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750783AbeCHVkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 16:40:19 -0500
-Subject: Re: [PATCH v3 4/6] sysctl: Warn when a clamped sysctl parameter is
- set out of range
+        id S1751048AbeCHVlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 16:41:11 -0500
+Subject: Re: [PATCH v3 3/6] sysctl: Add flags to support min/max range
+ clamping
 To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         Matthew Wilcox <willy@infradead.org>
 References: <1519926220-7453-1-git-send-email-longman@redhat.com>
- <1519926220-7453-5-git-send-email-longman@redhat.com>
- <20180308183140.GI4449@wotan.suse.de>
- <deaeacc7-96a3-1c93-8565-cdce5ece6876@redhat.com>
- <20180308204906.GM4449@wotan.suse.de>
+ <1519926220-7453-4-git-send-email-longman@redhat.com>
+ <20180301133117.1d4b27e327f8e51275c82489@linux-foundation.org>
+ <20180308175109.GA4449@wotan.suse.de> <20180308175747.GD4449@wotan.suse.de>
+ <2feea08e-7772-e0aa-af69-05cd7b281725@redhat.com>
+ <20180308204518.GL4449@wotan.suse.de>
 From: Waiman Long <longman@redhat.com>
 Organization: Red Hat
-Message-ID: <6b10b07a-8d07-db42-eba1-a71eb124aa2f@redhat.com>
-Date: Thu, 8 Mar 2018 16:40:17 -0500
+Message-ID: <cfec8282-353b-a0d1-071b-5ca51a2a9e29@redhat.com>
+Date: Thu, 8 Mar 2018 16:41:09 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180308204906.GM4449@wotan.suse.de>
+In-Reply-To: <20180308204518.GL4449@wotan.suse.de>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/08/2018 03:49 PM, Luis R. Rodriguez wrote:
-> On Thu, Mar 08, 2018 at 02:57:09PM -0500, Waiman Long wrote:
->> On 03/08/2018 01:31 PM, Luis R. Rodriguez wrote:
->>> On Thu, Mar 01, 2018 at 12:43:38PM -0500, Waiman Long wrote:
->>>> Even with clamped sysctl parameters, it is still not that straight
->>>> forward to figure out the exact range of those parameters. One may
->>>> try to write extreme parameter values to see if they get clamped.
->>>> To make it easier, a warning with the expected range will now be
->>>> printed in the kernel ring buffer when a clamped sysctl parameter
->>>> receives an out of range value.
+On 03/08/2018 03:45 PM, Luis R. Rodriguez wrote:
+> On Thu, Mar 08, 2018 at 02:35:32PM -0500, Waiman Long wrote:
+>> On 03/08/2018 12:57 PM, Luis R. Rodriguez wrote:
+>>> On Thu, Mar 08, 2018 at 05:51:09PM +0000, Luis R. Rodriguez wrote:
+>>>> On Thu, Mar 01, 2018 at 01:31:17PM -0800, Andrew Morton wrote:
+>>>>> On Thu,  1 Mar 2018 12:43:37 -0500 Waiman Long <longman@redhat.com> wrote:
+>>>>>
+>>>>>> When minimum/maximum values are specified for a sysctl parameter in
+>>>>>> the ctl_table structure with proc_dointvec_minmax() handler, update
+>>>>>> to that parameter will fail with error if the given value is outside
+>>>>>> of the required range.
+>>>>>>
+>>>>>> There are use cases where it may be better to clamp the value of
+>>>>>> the sysctl parameter to the given range without failing the update,
+>>>>>> especially if the users are not aware of the actual range limits.
+>>>>>> Reading the value back after the update will now be a good practice
+>>>>>> to see if the provided value exceeds the range limits.
+>>>>>>
+>>>>>> To provide this less restrictive form of range checking, a new flags
+>>>>>> field is added to the ctl_table structure. The new field is a 16-bit
+>>>>>> value that just fits into the hole left by the 16-bit umode_t field
+>>>>>> without increasing the size of the structure.
+>>>>>>
+>>>>>> When the CTL_FLAGS_CLAMP_RANGE flag is set in the ctl_table entry,
+>>>>>> any update from the userspace will be clamped to the given range
+>>>>>> without error.
+>>>>>>
+>>>>>> ...
+>>>>>>
+>>>>>> --- a/include/linux/sysctl.h
+>>>>>> +++ b/include/linux/sysctl.h
+>>>>>> @@ -116,6 +116,7 @@ struct ctl_table
+>>>>>>  	void *data;
+>>>>>>  	int maxlen;
+>>>>>>  	umode_t mode;
+>>>>>> +	uint16_t flags;
+>>>>> It would be nice to make this have type `enum ctl_table_flags', but I
+>>>>> guess there's then no reliable way of forcing it to be 16-bit.
+>>>>>
+>>>>> I guess this is the best we can do...
+>>>>>
+>>>> We can add this to the enum:
 >>>>
->>>> Signed-off-by: Waiman Long <longman@redhat.com>
->>>> ---
->>>>  include/linux/sysctl.h |  3 +++
->>>>  kernel/sysctl.c        | 52 ++++++++++++++++++++++++++++++++++++++++++--------
->>>>  2 files changed, 47 insertions(+), 8 deletions(-)
+>>>> enum ctl_table_flags {                                                                                                                                                                       
+>>>>        CTL_FLAGS_CLAMP_RANGE           = BIT(0),                                                                                                                                             
+>>>> +	__CTL_FLAGS_CLAMP_MAX          = BIT(16),
+>>>> }; 
 >>>>
->>>> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
->>>> index 448aa72..3db57af 100644
->>>> --- a/include/linux/sysctl.h
->>>> +++ b/include/linux/sysctl.h
->>>> @@ -130,11 +130,14 @@ struct ctl_table
->>>>   * @CTL_FLAGS_CLAMP_RANGE: Set to indicate that the entry should be
->>>>   *	flexibly clamped to min/max range in case the user provided
->>>>   *	an incorrect value.
->>>> + * @CTL_FLAGS_OOR_WARNED: Set to indicate that an out of range warning
->>>> + * 	had been issued for that entry.
->>>>   *
->>>>   * At most 16 different flags will be allowed.
->>>>   */
->>>>  enum ctl_table_flags {
->>>>  	CTL_FLAGS_CLAMP_RANGE		= BIT(0),
->>>> +	CTL_FLAGS_OOR_WARNED		= BIT(1),
->>>>  };
->>> Ugh, no. Now I see why you had to set this flag later.
+>>>>
+>>>> Then also:
+>>>>
+>>>> #define CTL_TABLE_FLAGS_ALL	((BIT(__CTL_FLAGS_CLAMP_MAX + 1))-1)
+>>>>
+>>>> at the end of the definition, then a helper which can be used during
+>>>> parsing:
+>>>>
+>>>> static int check_ctl_table_flags(u16 flags)
+>>>> {
+>>>> 	if (flags & ~(CTL_TABLE_FLAGS_ALL))
+>>>> 		return -ERANGE;
+>>>> 	return 0;
+>>>> }
+>>>>
+>>>> Waiman please evaluate and add.
+>>> Also, I guess we have ... max bit used and max allowed (16) really, where one is the
+>>> max allowed bit field given current definitions, the other is the max flag possible
+>>> setting in the future. We might as well go with the smaller one, which is the current
+>>> max, so it can just be
 >>>
->>> You are not using this flag to "warn" but rather for an internal
->>> status checker if you have warned or not. Internal flags should
->>> not be something the user sets. If we want a flag for warning
->>> that's one thing. If we need a flag to keep tabs if we have
->>> warned or not that needs to be kept separately and internally,
->>> nothing the user has to do set or reset.
+>>> enum ctl_table_flags {
+>>> 	CTL_FLAGS_CLAMP_RANGE	 = BIT(0),
+>>> 	__CTL_FLAGS_CLAMP_MAX    = BIT(1),
+>>> };
+>>>
+>>>
+>>> #define CTL_TABLE_FLAGS_ALL	((BIT(__CTL_FLAGS_CLAMP_MAX))-1)
+>>>
+>>> That way we just check against the actual max defined, now the max allowed on
+>>> the entire flag setting.
 >>>
 >>>   Luis
->> What I want to do is a printk_once for each sysctl parameter. So the
->> flag is used as a marker that a warning has been printed.
->>
->> I do understand that it gets somewhat ugly in the case of msgmni and
->> shmmni because of the copying back of the flag. Another alternative that
->> had been suggested by Kees is to use prink_ratelimited. That we don't
->> need that flag at all.
-> However it is done, a user flag should not be used also for internal
-> flag settings. That's just gross. Internal state machine stuff should
-> remain far from what the user is able to modify.
+>> Yes, I can certainly add check to see if the flags are out of range.
+>> However, I would like to know your opinion of what to do when an invalid
+>> flag bit is set. Do we just print a warning in the ring buffer or fail
+>> the registration of the ctl table?
+> We should fail setting. See sysctl_check_table_array(), that should just
+> reject the entry.
 >
-> Also, why can't it just use pr_warn_once() and be done with it?
+>   Luis
 
-Different sysctl parameters can use the same minmax proc_handler. Using
-pr_warn_once() means mistake in one will prevent mistakes in other
-parameters from showing up.
+OK, got it.
 
 Cheers,
-Longman 
+Longman
