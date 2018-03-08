@@ -1,107 +1,168 @@
-Return-Path: <mathias.nyman@linux.intel.com>
-X-Google-Smtp-Source: AG47ELuFsJgvcwezSIIGhKl5Zjjmhqeo2BXoUnrc3d8SNBptiQvWiFsiP1S+mr7AdHn2M9/yKujf
-ARC-Seal: i=1; a=rsa-sha256; t=1519913695; cv=none;
-        d=google.com; s=arc-20160816;
-        b=L8EDkjqayI6jagtEZqN9pd1iSqGQfFwcp1iaP9X5Wx/t2ffvYFSipdIW7Cl2K/Z4hk
-         mCQjMIFdvUTRBS7Ax6ir4WahHoed1KnMbemNN4ifW6LC+2JYpC9JM8gJ/AMPce4/CSDI
-         +/EVcMPcdBNtsxXnCcwWi4pGp2bGf3XvEmgbqA7k8zBhvBMyKDGuSMWiEvhVISt3nqeo
-         h2xuSuDIwZ3gbzeNKS+JL5qhjTGRWyDRG3SYEVwwCtUsaASGhmp3WmOWxf/WjzBwHodu
-         Bl/mdSic7qycP892X8R8aSPMvNkLOt0JgcKQ065TJ0ZX2rnRlxqeie1fA5kjwxZW/DU1
-         Yaug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=PTjCr3HW3r5DemgZuyTgaZyQkjgrqFQCMqX1wrUDNQs=;
-        b=rbfCn4RBSqqC2U2QMMM4Xl2t8i/eMopOmTnVwK1F83NQn12gLftj/i072OhehXKsP0
-         ztlhlUXtGXUEuQN2Txo5qtGEdr1BwJr3TtYlzwvyzqXx0E3QWsGs3QW0i8DOiyoUVsBT
-         p1H0qv8ZGVFI5fw7HJb18J/TdDgN6cCq2PaSPf4lUz1VGz3b2s9a/zEpazHbvbElsSeX
-         6oVUEG/VNVoa9WUNJ1vTW7VNTF/e27pC2Bl+fX60AYer1NV/r/uQF6ozV6VfU0Z8u6a7
-         YKH4a9LA8hD0P8pEnipy3C/bwATYe+pt7l3stIC3lyNzFlaCDiTQASBUr+Orw59oseLG
-         V5KA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of mathias.nyman@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=mathias.nyman@linux.intel.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of mathias.nyman@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=mathias.nyman@linux.intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,408,1515484800";
-   d="scan'208";a="22074853"
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2938067-1520544686-2-7825763210965879232
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520544685; b=HN4lE26tZSi8PaqFpNNpU7FE9ItSbXIxf12vYhzrKIL/ywe
+    KjRGBO7ZW0fuEs25rNKwipKvwSWJow784aejlEYCM3GmEs2lX5jR2WhGtz+nSSk8
+    A5y/u54s8ArE0/oWi6YN9AP8WUfUxgAE8FkwAkjGKvIAUyeZi5LWg67IbkfwbqZV
+    vWf5uBfyKnhKMyP/JAbM8MWeEiMeQCDETPYHZxOx3J8J4dJqxmFYwwSU1lSWf/EF
+    nWn/7D2ZUY7LgJpgxOeJ45HeG95l60cqFqQEe9ThXkO15EEIz+xhY0I9GA7ge89B
+    uwQTNSfG1FkIQ4simhOyk5Ja5fC5D0eRw/IzUSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1520544685; bh=C7jbdvqj3ZqnUYlUB+7OaPGtddt8jAjvgT8jBt/+USg=; b=v
+    xAONlZWiRqsWU7CJhJZJZ3cYh4cO8lIIXKV+OXLCQ3axIEmTkqnjHE9Ex4HZjf07
+    yxbDz+STC6Pu7TsSXm5PviZx01WT/av5d9JwTQx/v/3hndQZFyszPwApVst+5Sop
+    hUhIXJIJqDVUM69b/39+seOVZn/G8/5XVQO5sYR7mSL6YMw70/TrzYRidH63gOnF
+    2pOFLqLQyWzFgugRRROQ2nUhVXf33QYfItJMYc8q6+lYi6KVBK7AT2VENB17q9lC
+    e7wLw53MFDwnoUJWnMBr2Fjqe2Otm+rT4+odV3sbDUbyshdMvGzJWh0uhGaS6kRs
+    BelPfpk+EJjsWuG5lH8Bw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nvidia.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=nvidia.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nvidia.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=nvidia.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1750926AbeCHVbN convert rfc822-to-8bit (ORCPT
+        <rfc822;greg@kroah.com>); Thu, 8 Mar 2018 16:31:13 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:8947 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750728AbeCHVbM (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Thu, 8 Mar 2018 16:31:12 -0500
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 08 Mar 2018 13:31:11 -0800
 Subject: Re: [PATCH 2/3] usb: xhci: tegra: Add runtime PM support
-To: Jon Hunter <jonathanh@nvidia.com>, Mathias Nyman
- <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
+To: Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC: <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
 References: <1518626085-29102-1-git-send-email-jonathanh@nvidia.com>
  <1518626085-29102-2-git-send-email-jonathanh@nvidia.com>
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <54bd00b7-2835-a253-0399-370e8c8203b8@linux.intel.com>
-Date: Thu, 1 Mar 2018 16:18:09 +0200
+ <54bd00b7-2835-a253-0399-370e8c8203b8@linux.intel.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <f1a1c300-a558-f31a-bcfa-c3eda697b0fd@nvidia.com>
+Date: Thu, 8 Mar 2018 21:31:07 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1518626085-29102-2-git-send-email-jonathanh@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <54bd00b7-2835-a253-0399-370e8c8203b8@linux.intel.com>
+X-Originating-IP: [10.26.11.23]
+X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To UKMAIL101.nvidia.com
+ (10.26.138.13)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592394886362728213?=
-X-GMAIL-MSGID: =?utf-8?q?1593745023252742977?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 14.02.2018 18:34, Jon Hunter wrote:
-> Add runtime PM support to the Tegra XHCI driver and move the function
-> calls to enable/disable the clocks, regulators and PHY into the runtime
-> PM callbacks.
+
+On 01/03/18 14:18, Mathias Nyman wrote:
+> On 14.02.2018 18:34, Jon Hunter wrote:
+>> Add runtime PM support to the Tegra XHCI driver and move the function
+>> calls to enable/disable the clocks, regulators and PHY into the runtime
+>> PM callbacks.
+>>
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>> ---
+>>   drivers/usb/host/xhci-tegra.c | 80
+>> ++++++++++++++++++++++++++++++-------------
+>>   1 file changed, 56 insertions(+), 24 deletions(-)
+>>
+>> diff --git a/drivers/usb/host/xhci-tegra.c
+>> b/drivers/usb/host/xhci-tegra.c
+>> index 02b0b24faa58..42aa67858b53 100644
+>> --- a/drivers/usb/host/xhci-tegra.c
+>> +++ b/drivers/usb/host/xhci-tegra.c
+>> @@ -18,6 +18,7 @@
+>>   #include <linux/phy/tegra/xusb.h>
+>>   #include <linux/platform_device.h>
+>>   #include <linux/pm.h>
+>> +#include <linux/pm_runtime.h>
+>>   #include <linux/regulator/consumer.h>
+>>   #include <linux/reset.h>
+>>   #include <linux/slab.h>
+>> @@ -1067,22 +1068,12 @@ static int tegra_xusb_probe(struct
+>> platform_device *pdev)
+>>        */
+>>       platform_set_drvdata(pdev, tegra);
+>>   -    err = tegra_xusb_clk_enable(tegra);
+>> -    if (err) {
+>> -        dev_err(&pdev->dev, "failed to enable clocks: %d\n", err);
+>> -        goto put_usb2;
+>> -    }
+>> -
+>> -    err = regulator_bulk_enable(tegra->soc->num_supplies,
+>> tegra->supplies);
+>> -    if (err) {
+>> -        dev_err(&pdev->dev, "failed to enable regulators: %d\n", err);
+>> -        goto disable_clk;
+>> -    }
+>> +    pm_runtime_enable(&pdev->dev);
+>>   -    err = tegra_xusb_phy_enable(tegra);
+>> +    err = pm_runtime_get_sync(&pdev->dev);
+>>       if (err < 0) {
 > 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->   drivers/usb/host/xhci-tegra.c | 80 ++++++++++++++++++++++++++++++-------------
->   1 file changed, 56 insertions(+), 24 deletions(-)
+> Does this mean that if runtime PM is disabled then clocks and regulator
+> will never be enabled
+> for Tegra xhci?
 > 
-> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-> index 02b0b24faa58..42aa67858b53 100644
-> --- a/drivers/usb/host/xhci-tegra.c
-> +++ b/drivers/usb/host/xhci-tegra.c
-> @@ -18,6 +18,7 @@
->   #include <linux/phy/tegra/xusb.h>
->   #include <linux/platform_device.h>
->   #include <linux/pm.h>
-> +#include <linux/pm_runtime.h>
->   #include <linux/regulator/consumer.h>
->   #include <linux/reset.h>
->   #include <linux/slab.h>
-> @@ -1067,22 +1068,12 @@ static int tegra_xusb_probe(struct platform_device *pdev)
->   	 */
->   	platform_set_drvdata(pdev, tegra);
->   
-> -	err = tegra_xusb_clk_enable(tegra);
-> -	if (err) {
-> -		dev_err(&pdev->dev, "failed to enable clocks: %d\n", err);
-> -		goto put_usb2;
-> -	}
-> -
-> -	err = regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies);
-> -	if (err) {
-> -		dev_err(&pdev->dev, "failed to enable regulators: %d\n", err);
-> -		goto disable_clk;
-> -	}
-> +	pm_runtime_enable(&pdev->dev);
->   
-> -	err = tegra_xusb_phy_enable(tegra);
-> +	err = pm_runtime_get_sync(&pdev->dev);
->   	if (err < 0) {
+> How about keeping the clock and regualtor enabling in probe, and instead
+> add something like:
+> 
+> pm_runtime_set_active(&pdev->dev);
+> pm_runtime_enable(&pdev->dev);
+> pm_runtime_get_noresume(&pdev->dev);
 
-Does this mean that if runtime PM is disabled then clocks and regulator will never be enabled
-for Tegra xhci?
+For 64-bit Tegra there is a dependency on CONFIG_PM, but for 32-bit
+AFAIK there is not and so yes we should handle the case when PM_RUNTIME
+is disabled.
 
-How about keeping the clock and regualtor enabling in probe, and instead add something like:
+Typically we do something like ...
 
-pm_runtime_set_active(&pdev->dev);
-pm_runtime_enable(&pdev->dev);
-pm_runtime_get_noresume(&pdev->dev);
+    pm_runtime_enable(&pdev->dev);
+    if (!pm_runtime_enabled(&pdev->dev))
+	ret = tegra_xusb_runtime_resume(&pdev->dev);
+    else
+        ret = pm_runtime_get_sync(&pdev->dev);
 
--Mathias
+That way we can keep the regulator and clock stuff in the handler. I
+will update this series.
+
+Cheers
+Jon
+
+-- 
+nvpublic
