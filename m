@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966541AbeCHTPk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 14:15:40 -0500
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:37648 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934141AbeCHTMc (ORCPT
+        id S934085AbeCHTMa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 14:12:30 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:41086 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933755AbeCHTM1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 14:12:32 -0500
-X-Google-Smtp-Source: AG47ELsXdmMiKqjVKVxT2KbD6c4wKGvSNLPxtili4jVOnmRRxQvM9pqhlqpwkAJau9NM9mbQ9ggaBg==
+        Thu, 8 Mar 2018 14:12:27 -0500
+X-Google-Smtp-Source: AG47ELv8TxIThkN0urih7prVyB8BqjDSug9/P0M3mj7zGPqnjqWSB6W8TU2NQ1rweShPlUR/S88fXQ==
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -18,9 +18,9 @@ Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
         linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 08/21] nvmem: rockchip-efuse: Convert to use devm_nvmem_register()
-Date: Thu,  8 Mar 2018 11:11:52 -0800
-Message-Id: <20180308191205.26943-9-andrew.smirnov@gmail.com>
+Subject: [PATCH v5 05/21] nvmem: imx-ocotp: Convert to use devm_nvmem_register()
+Date: Thu,  8 Mar 2018 11:11:49 -0800
+Message-Id: <20180308191205.26943-6-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180308191205.26943-1-andrew.smirnov@gmail.com>
 References: <20180308191205.26943-1-andrew.smirnov@gmail.com>
@@ -45,28 +45,29 @@ Cc: linux-amlogic@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/nvmem/rockchip-efuse.c | 16 ++--------------
+ drivers/nvmem/imx-ocotp.c | 16 ++--------------
  1 file changed, 2 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/nvmem/rockchip-efuse.c b/drivers/nvmem/rockchip-efuse.c
-index f13a8335f364..fec6e4c48b9a 100644
---- a/drivers/nvmem/rockchip-efuse.c
-+++ b/drivers/nvmem/rockchip-efuse.c
-@@ -289,25 +289,13 @@ static int rockchip_efuse_probe(struct platform_device *pdev)
- 	econfig.reg_read = match->data;
- 	econfig.priv = efuse;
- 	econfig.dev = efuse->dev;
--	nvmem = nvmem_register(&econfig);
+diff --git a/drivers/nvmem/imx-ocotp.c b/drivers/nvmem/imx-ocotp.c
+index d7ba351a70c9..f1482c664b19 100644
+--- a/drivers/nvmem/imx-ocotp.c
++++ b/drivers/nvmem/imx-ocotp.c
+@@ -466,26 +466,14 @@ static int imx_ocotp_probe(struct platform_device *pdev)
+ 	imx_ocotp_nvmem_config.dev = dev;
+ 	imx_ocotp_nvmem_config.priv = priv;
+ 	priv->config = &imx_ocotp_nvmem_config;
+-	nvmem = nvmem_register(&imx_ocotp_nvmem_config);
++	nvmem = devm_nvmem_register(dev, &imx_ocotp_nvmem_config);
+ 
 -	if (IS_ERR(nvmem))
 -		return PTR_ERR(nvmem);
-+	nvmem = devm_nvmem_register(dev, &econfig);
  
 -	platform_set_drvdata(pdev, nvmem);
 -
 -	return 0;
 -}
 -
--static int rockchip_efuse_remove(struct platform_device *pdev)
+-static int imx_ocotp_remove(struct platform_device *pdev)
 -{
 -	struct nvmem_device *nvmem = platform_get_drvdata(pdev);
 -
@@ -74,11 +75,11 @@ index f13a8335f364..fec6e4c48b9a 100644
 +	return PTR_ERR_OR_ZERO(nvmem);
  }
  
- static struct platform_driver rockchip_efuse_driver = {
- 	.probe = rockchip_efuse_probe,
--	.remove = rockchip_efuse_remove,
+ static struct platform_driver imx_ocotp_driver = {
+ 	.probe	= imx_ocotp_probe,
+-	.remove	= imx_ocotp_remove,
  	.driver = {
- 		.name = "rockchip-efuse",
- 		.of_match_table = rockchip_efuse_match,
+ 		.name	= "imx_ocotp",
+ 		.of_match_table = imx_ocotp_dt_ids,
 -- 
 2.14.3
