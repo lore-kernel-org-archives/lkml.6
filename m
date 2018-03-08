@@ -1,133 +1,128 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2879378-1520417302-2-18401781964419937701
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1560392-1520503082-2-688803135119781081
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES roensv, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520417301; b=wz/pAaks+c4QdvI6b/espNylPtWnB0oDJB6lI+nw2s+qwyj
-    KGOmFp6bPvtzQP+4H0ucvcBFK6LCwxH8rEn1sLc3/Adu2DzsNmjXc3nu34aMGELO
-    008rdFtSftDGaTW9lg20DJl9dnsoGtnA1rAE1+Pj143KNOcYFGKWQtcwAd6Zpwld
-    E5gprAhvJQf7yzkb8CPdPdYTBIaNbtpOlJSKIsPnlvs0VmKd3sfF8vaL0gTUJtUc
-    Verh226fg9Ssq7fAsn9PJQqaM5OO3WndvKeAhe7CzAiI9QPge3hxobzzQjjW1o6Q
-    IikS3qBGEvci/Hen0GMOsUV2sv4VErVc4grY60Q==
+    t=1520503081; b=tEvTr3kEeySG7ZJ/4PjHoIcAVxuq7C0Pf91e36UCP22vqJ/
+    J3i7tm5A38hTGlzYl4q3AM+2advkBnqGfuo1ewLzdUiDOw9KF1tDTwzmRzHpMA/L
+    6NIEM9z8XQSd0hsqY1zRQftSEwukZex0HLc1Oa5ReGL5e16cL9mI1Ppm4FMdXYWs
+    zsp+pYOwzO/96dWrcLLayCt3UVV0Xkr/6E3/mx04JPfOjzgop8t9jbNFNyAuSSCU
+    SukKImHQHZadWCB+1z9Q6cYXqf0elD6BVtmYY2WjLd/xWSpoXbp0E+5noKrx89kW
+    WuCyU+R/CgUbkHjOjnZuK8h8mvVxDW/Ci0CZ11Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520417301; bh=O
-    G+ZKeC3OMqyoMbCh90XT9UtMS6gVKFy9EBePi9xhUY=; b=TnYGX8UCiQkRpwD2J
-    OGp9JF2rm+96k32Cx0q0zj+UJUTrCBmd5to3AyY9vGWjrK2VgrpLwzITRXbAr4pk
-    5vYGflpJJsA+smW7za0hb+8wD4pQPXlCxZ6j5ai3nRxKh2yUxZ0ImwNos9JfPEZz
-    6D1bqkhnC97FE/fCRa6dIDjgnV57fcVZwIFh8tu5LFsW1/xDMplCc8hnqY9gfrtg
-    ZYLXCsKayUQZ6PCvezF8GxmaOPTtJxC3GjkS4NjFmCHJsEuv7d5/MWNHHDvsmHjh
-    b0yJPDMqqHdD/t/FuYC3NczImBEycg8qcOVtdCgd8Q7cG0Tp4Af7gcIAKrQHxRpt
-    zJY1A==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=messagingengine.com header.i=@messagingengine.com header.b=MDuZDOZI x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=apporbit.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1520503081; bh=Ct2XdzfD8OvkLHmjQsD1omKy7Z
+    LKIoSrtgfi7dRU+v0=; b=EveL0tddCTho/Q7qvk1zSB6ZLFF21AcCUFF6fxHzpO
+    mdda2gUAP5IZ7fTQr0aJUWXa/Hq0r28PaJMDGwU5Ts1m0mwd5IylYHL7oIp7/4Qu
+    5oLULkGkjIk5OvLpgg8s/VX1U1i3A2l3ks01L65PZ2QtjiyJCqfHNGwgnaNPZAfC
+    AA+CzBABomlb6FOAig12T0/E0xYAbzj4nyDZnvMrMZwBaYDl+DwxTdDdogGJSWDl
+    q94G9xhFa4zm8gHzI5bN1t4IIcXl7TRMQaTLlZ53Yx9/MNHXLy27xQ4CS4m+RML+
+    kjoW6TrJfaVDwQyV0WY3pOArOuTb9CDIzjcQNyYrAZJg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linutronix.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=apporbit.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx4.messagingengine.com;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linutronix.de header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=messagingengine.com header.i=@messagingengine.com header.b=MDuZDOZI x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=apporbit.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linutronix.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=apporbit.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-ME-Sender: <xms:oLifWkbR3WBhS7v8l83FjEJkMbf93yr3IlBRToDHo0wKXENmncF7fA>
-Date: Wed, 7 Mar 2018 21:02:05 +1100
-From: "Tobin C. Harding" <tobin@apporbit.com>
-To: Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] staging: lustre: Remove VLA usage
-Message-ID: <20180307100205.GF11750@eros>
-References: <20180307054608.GA9300@beast>
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linutronix.de header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1755256AbeCHJ5r (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 04:57:47 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:38310 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751355AbeCHJ5q (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Thu, 8 Mar 2018 04:57:46 -0500
+Date: Thu, 8 Mar 2018 10:57:39 +0100
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        linux-usb@vger.kernel.org
+Subject: Re: [RFC PATCH] usb: hcd: complete URBs in threaded-IRQ context
+ instead of tasklet
+Message-ID: <20180308095739.okdn7ghvlpy4oiy5@linutronix.de>
+References: <20180216170450.yl5owfphuvltstnt@breakpoint.cc>
+ <20180227143934.2aa847ac@vento.lan>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180307054608.GA9300@beast>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Dmitry Eremin <dmitry.eremin@intel.com>,
- Tycho Andersen <tycho@tycho.ws>, Andreas Dilger <andreas.dilger@intel.com>,
- Kernel Hardening <kernel-hardening@lists.openwall.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
- Gargi Sharma <gs051095@gmail.com>, Oleg Drokin <oleg.drokin@intel.com>,
- lustre-devel@lists.lustre.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20180227143934.2aa847ac@vento.lan>
+User-Agent: NeoMutt/20171215
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 06, 2018 at 09:46:08PM -0800, Kees Cook wrote:
-> The kernel would like to remove all VLA usage. This switches to a
-> simple kasprintf() instead.
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  drivers/staging/lustre/lustre/llite/xattr.c | 19 +++++++++++++------
->  1 file changed, 13 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/staging/lustre/lustre/llite/xattr.c b/drivers/staging/lustre/lustre/llite/xattr.c
-> index 532384c91447..aab4eab64289 100644
-> --- a/drivers/staging/lustre/lustre/llite/xattr.c
-> +++ b/drivers/staging/lustre/lustre/llite/xattr.c
-> @@ -87,7 +87,7 @@ ll_xattr_set_common(const struct xattr_handler *handler,
->  		    const char *name, const void *value, size_t size,
->  		    int flags)
->  {
-> -	char fullname[strlen(handler->prefix) + strlen(name) + 1];
-> +	char *fullname;
->  	struct ll_sb_info *sbi = ll_i2sbi(inode);
->  	struct ptlrpc_request *req = NULL;
->  	const char *pv = value;
-> @@ -141,10 +141,13 @@ ll_xattr_set_common(const struct xattr_handler *handler,
->  			return -EPERM;
->  	}
->  
-> -	sprintf(fullname, "%s%s\n", handler->prefix, name);
-> +	fullname = kasprintf(GFP_KERNEL, "%s%s\n", handler->prefix, name);
-> +	if (!fullname)
-> +		return -ENOMEM;
->  	rc = md_setxattr(sbi->ll_md_exp, ll_inode2fid(inode),
->  			 valid, fullname, pv, size, 0, flags,
->  			 ll_i2suppgid(inode), &req);
-> +	kfree(fullname);
+On 2018-02-27 14:39:34 [-0300], Mauro Carvalho Chehab wrote:
+> Hi Sebastian,
+Hi Mauro,
 
-This is cool.  We've had kasprintf() since 2007, who knew?!
+> Sorry for taking some time to test it, has been busy those days...
+:)
 
-thanks,
-Tobin.
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+> Anyway, I tested it today. Didn't work. It keep losing data.
+
+Okay, this was unexpected. What I learned from the thread is that you
+use the dwc2 controller and once upgrade to a kernel which completes the
+URBs in BH context then you starting losing data from your DVB-s USB
+device. And it was assumed that this is because BH/ksoftirq is getting
+"paused" if it is running for too long. If that is the case then a
+revert of "let us complete the URB in BH context" should get it working
+again. Is that so?
+
+diff --git a/drivers/usb/dwc2/hcd.c b/drivers/usb/dwc2/hcd.c
+--- a/drivers/usb/dwc2/hcd.c
++++ b/drivers/usb/dwc2/hcd.c
+@@ -4287,7 +4287,9 @@ void dwc2_host_complete(struct dwc2_hsotg *hsotg, struct dwc2_qtd *qtd,
+ 	kfree(qtd->urb);
+ 	qtd->urb = NULL;
+ 
++	spin_unlock(&hsotg->lock);
+ 	usb_hcd_giveback_urb(dwc2_hsotg_to_hcd(hsotg), urb, status);
++	spin_lock(&hsotg->lock);
+ }
+ 
+ /*
+@@ -4968,7 +4970,7 @@ static struct hc_driver dwc2_hc_driver = {
+ 	.hcd_priv_size = sizeof(struct wrapper_priv_data),
+ 
+ 	.irq = _dwc2_hcd_irq,
+-	.flags = HCD_MEMORY | HCD_USB2 | HCD_BH,
++	.flags = HCD_MEMORY | HCD_USB2,
+ 
+ 	.start = _dwc2_hcd_start,
+ 	.stop = _dwc2_hcd_stop,
+-- 
+2.16.2
+
+
+> Regards,
+
+Sebastian
