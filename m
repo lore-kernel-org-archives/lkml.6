@@ -1,94 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756057AbeCHPv1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 10:51:27 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:50104 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755696AbeCHPv0 (ORCPT
+        id S934335AbeCHPzj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 10:55:39 -0500
+Received: from mail-it0-f65.google.com ([209.85.214.65]:54616 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754052AbeCHPzh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 10:51:26 -0500
-Date: Thu, 8 Mar 2018 16:51:16 +0100
-From: Jesper Nilsson <jesper.nilsson@axis.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Michal Simek <monstr@monstr.eu>, Andi Kleen <ak@linux.intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-cris-kernel@axis.com, Petr Mladek <pmladek@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        adi-buildroot-devel@lists.sourceforge.net,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jesper Nilsson <jesper@jni.nu>, Greentime Hu <green.hu@gmail.com>,
-        Tejun Heo <tj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
-        Vincent Chen <deanbo422@gmail.com>, Dave Young <dyoung@redhat.com>
-Subject: Re: CRIS port status, was: [PATCH] dump_stack: convert generic
- dump_stack into a weak symbol
-Message-ID: <20180308155116.GW17177@axis.com>
-References: <CAK8P3a1KE_0+vDC48-NzzW8eT1YZ8MZRun-1GeRMNg+o8dqZUg@mail.gmail.com>
+        Thu, 8 Mar 2018 10:55:37 -0500
+X-Google-Smtp-Source: AG47ELvmRXoTQXNXcoPsZpbmdY41RrCIUNyD6cn3NkPVCf0qHGGyKcXFHQjiZC8Da33mzYw94Ej4ZYfVv+cBKwD4aPw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1KE_0+vDC48-NzzW8eT1YZ8MZRun-1GeRMNg+o8dqZUg@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-TM-AS-GCONF: 00
+In-Reply-To: <20180307181407.GA24350@alf.mars>
+References: <1a57be83-3349-5450-ee4f-d2a33569a728@mellanox.com>
+ <d6c8e425-a6b6-6594-05e3-965536f06da3@physik.fu-berlin.de>
+ <abce89d0-6798-069a-1a54-06e664665b78@mellanox.com> <dc3c52ce-f082-0da0-7828-0d4e6751e2a5@physik.fu-berlin.de>
+ <CAK8P3a3itR8i2ayG7e4ku7kz+CQU7qHhptdmtmgTz+CzFGmCiw@mail.gmail.com> <20180307181407.GA24350@alf.mars>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 8 Mar 2018 16:55:33 +0100
+X-Google-Sender-Auth: -bN2fhmTNiFhVtWiBRoh4P8p-eM
+Message-ID: <CAK8P3a2VuYxzy6RmL_w_5f2qHepVRhfVR5P4x9nCUYav1s5n7g@mail.gmail.com>
+Subject: Re: RFC: remove the "tile" architecture from glibc
+To: Helmut Grohne <helmut@subdivi.de>, Arnd Bergmann <arnd@arndb.de>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        linux-arch <linux-arch@vger.kernel.org>, metcalf@alum.mit.edu,
+        Henrik Grindal Bakken <hgb@ifi.uio.no>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 03:09:27PM +0100, Arnd Bergmann wrote:
-> On Wed, Mar 7, 2018 at 2:40 PM, Sergey Senozhatsky
-> <sergey.senozhatsky@gmail.com> wrote:
-> > On (03/07/18 13:48), Arnd Bergmann wrote:
-> > [..]
-> >> >
-> >> > I can easily stop building blackfin - and, if the intention is to
-> >> > remove it, there is not much point in wasting resources building it any
-> >> > anyway.
-> >>
-> >> Right. At the moment, the plan is to remove metag, score, unicore32,
-> >> m32r, frv and blackfin. If you are building any more of those, you can
-> >> stop that as well.
-> >>
-> >> The fate of tile and mn10300 is still open, but I suspect they won't
-> >> last long either.
-> >
-> > That's a huge list.
-> >
-> > I heard that CRIS is having some problems as well:
-> > https://lkml.org/lkml/2018/1/11/403
-> 
-> Interesting. I thought I looked at cris when I made the list and found that
-> it was still (semi-)regularly updated, so I assumed it was still needed.
+On Wed, Mar 7, 2018 at 7:14 PM, Helmut Grohne <helmut@subdivi.de> wrote:
+> On Wed, Mar 07, 2018 at 04:39:47PM +0100, Arnd Bergmann wrote:
+>> - Helmut Grohne has done the work to add tile-gx to debian
+>>    rebootstrap, and send several patches, as seen in
+>>    https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=823167
+>>    However, I could find no information on this actually
+>>    being turned into a full port, or anyone still actively involved
+>>    in it. The Debian rebootstrap page at
+>>    https://wiki.debian.org/HelmutGrohne/rebootstrap
+>>    mentions lots of other architectures, but not this one.
+>
+> I happened help tilegx, because Adrian found someone with hw and tilegx
+> appeared to be very well maintained upstream. Very little needed to be
+> done to make it work in Debian. The patches I sent were pretty generic
+> and addressed issues that most ports face. What is there allows
+> constructing most of an essential package set and (unlike a number of
+> other architectures) bootstrapping tilegx works fairly well.  Debian has
+> a number of source-only ports and tilegx is now one of them.
+>
+> That said, nobody has taken up the work to proceed a native bootstrap.
+> Like with nios2, progress is stalled, because the tooling for fully
+> automating the native phase is missing.
+>
+> In any case, I won't be able to fix binutils/gcc/glibc/linux issues with
+> tilegx. So unless someone steps up to do that work, I won't object to
+> dropping it. It would be sad to see tilegx go, but it certainly isn't my
+> core interest either.
+>
+> I'd appreciate a note if it gets dropped from any of these, because I'd
+> clean up outstanding bug reports then.
 
-Yeah, I've tried to keep it chugging along, but as I mentioned
-in that thread, time and working hardware are running low.
+I originally helped get tile, blackfin, metag, unicore32 and score into
+the kernel, and it's always sad to see them go away after all the work
+that was put into making them work. Out of the above, tile was
+probably the best supported, and the most ambitious architecture
+design, but in the end it seems it is just as dead as the others, so
+I'll now add a patch to remove it along with the others in linux-4.17.
 
-I've not heard of anyone using real CRIS-hardware with mainline
-releases for a couple of years now (except me :-)
+Thanks for providing some more background, that definitely helped
+make the decision easier. The other point that I found is that the
+Mikrotik CCR hardware is from 2012 when tilegx was still fairly
+new, and if nobody has done a full port in the first six years of the
+product life-cycle, it seems very unlikely to change before the CCR
+itself becomes obsolete.
 
-> Jesper/Mikael: If you are considering to drop the port, I think it
-> would make sense to do it at the same time as the others, so feel
-> free to send me a removal pull request for 4.17 that I'll merge with
-> the other removal patches, or I can offer to remove it myself.
+> The reverse is also true: If you want to see an new architecture in
+> Debian, I also appreciate an early conversation to avoid duplicating
+> work.
 
-I'm having mixed feelings, but I think it's time for Linux to
-drop the CRIS-port. I'll prepare some patches for you in the CRIS-tree.
+I checked the list of architectures in rebootstrap, and besides tile,
+no other is currently in danger of being removed. There are however
+a couple things I'd note:
 
-> Obviously if your plans have changed in the meantime and you
-> prefer to keep it for a while longer, just let me know and I'll document
-> the state in the tag description for the arch removal for future reference.
-> 
-> If we remove cris, it's probably also appropriate to ask the question
-> about microblaze: Michal, I know your work on microblaze linux has
-> been winding down over the years as the user base shrinks (just
-> like for all others above). Should we keep it for a few more years for
-> the remaining users, or is it time to let go? I would guess we still
-> have active users on modern kernels, but that's what I thought
-> about cris as well ;-)
-> 
->       Arnd
+- The openrisc debian port was "declared dead" a few years ago
+  due to copyright issues. These are apparently getting addressed
+  now at least for gcc (I know nothing about the glibc problems or
+  any work on solutions). This might come back soon, but at
+  the same time my impression is that the OpenRISC community
+  is shrinking due to RISC-V replacing it in many new projects.
 
-/^JN - Jesper Nilsson
--- 
-               Jesper Nilsson -- jesper.nilsson@axis.com
+- The latest architecture to get merged into linux (also 4.17) is
+  nds32. I'm meeting the maintainer (Greentime Hu) next week
+  and will ask him about whether they are interested in a Debian
+  port. nds32 is widely deployed in certain markets today, but the
+  latest Andestech CPUs are RISC-V based, so it's also unclear
+  whether this one has a long-term future.
+
+- sh3/sh4 looked like they would get revived a few years ago
+  for the j-core project. The 2015 roadmap on
+  http://j-core.org/roadmap.html had ambitious plans for
+  an sh3 compatible core in 2017 and an sh4 compatible one
+  in 2018. However, not much has happened  at all since 2016,
+  and now the website is down as well. You might want to
+  contact the j-core developers for clarification.
+  I suspect this has also become a victim of the RISC-V
+  success.
+
+- arm64be has some active users, and is supported in the toolchain
+  and by most arm64 hardware (notably not those using UEFI to
+  boot IIRC).
+
+- riscv32 is not yet supported by Linux or glibc, but that seems
+  very likely to come in the future, maybe one or two years from
+  now.
+
+       Arnd
