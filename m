@@ -1,61 +1,316 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750880AbeCHVfu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 16:35:50 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:34232 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750728AbeCHVfs (ORCPT
+        id S1750917AbeCHVhl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 16:37:41 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:49230 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750728AbeCHVhj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 16:35:48 -0500
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: [PATCH] arm64: defconfig: enable Rockchip io-domain driver
-Date: Thu,  8 Mar 2018 22:35:40 +0100
-Message-Id: <20180308213540.4309-1-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.16.1
+        Thu, 8 Mar 2018 16:37:39 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9B667602A0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Thu, 8 Mar 2018 14:37:36 -0700
+From: Lina Iyer <ilina@codeaurora.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 04/10] drivers: qcom: rpmh: add RPMH helper functions
+Message-ID: <20180308213736.GA3577@codeaurora.org>
+References: <20180302164317.10554-1-ilina@codeaurora.org>
+ <20180302164317.10554-5-ilina@codeaurora.org>
+ <152053545255.219802.8090966652300734692@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <152053545255.219802.8090966652300734692@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Heiko Stübner justified pretty well the change in commit e330eb86ba0
-'ARM: multi_v7_defconfig: enable Rockchip io-domain driver'. This change
-is also needed for arm64 rockchip boards, so, do the same for arm64.
+On Thu, Mar 08 2018 at 11:57 -0700, Stephen Boyd wrote:
+>Quoting Lina Iyer (2018-03-02 08:43:11)
+>> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+>> new file mode 100644
+>> index 000000000000..d95ea3fa8b67
+>> --- /dev/null
+>> +++ b/drivers/soc/qcom/rpmh.c
+>> @@ -0,0 +1,257 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/atomic.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/mailbox_client.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/types.h>
+>> +#include <linux/wait.h>
+>> +
+>> +#include <soc/qcom/rpmh.h>
+>> +
+>> +#include "rpmh-internal.h"
+>> +
+>> +#define RPMH_MAX_MBOXES                        2
+>> +#define RPMH_TIMEOUT                   (10 * HZ)
+>
+>Can this be in ms instead of HZ units?
+>
+Hmm.. I changed it upon recommendation from Bjorn.
 
-The io-domain driver is necessary to notify the soc about voltages
-changes happening on supplying regulators. Probably the most important
-user right now is the mmc tuning code, where the soc needs to get
-notified when the voltage is dropped to the 1.8V point.
+>> +
+>> +/**
+>> + * rpmh_ctrlr: our representation of the controller
+>> + *
+>> + * @drv: the controller instance
+>> + */
+>> +struct rpmh_ctrlr {
+>> +       struct rsc_drv *drv;
+>> +};
+>> +
+>> +/**
+>> + * rpmh_client: the client object
+>
+>same kernel doc issues here.
+>
+Have addressed it in the rev I am working on.
 
-As this option is necessary to successfully tune UHS cards etc, it
-should get built in. Otherwise, tunning will fail with,
+>> + *
+>> + * @dev: the platform device that is the owner
+>> + * @ctrlr: the controller associated with this client.
+>> + */
+>> +struct rpmh_client {
+>> +       struct device *dev;
+>> +       struct rpmh_ctrlr *ctrlr;
+>> +};
+>> +
+>> +static struct rpmh_ctrlr rpmh_rsc[RPMH_MAX_MBOXES];
+>> +static DEFINE_MUTEX(rpmh_ctrlr_mutex);
+>> +
+>> +void rpmh_tx_done(struct tcs_request *msg, int r)
+>> +{
+>> +       struct rpmh_request *rpm_msg = container_of(msg,
+>> +                                                  struct rpmh_request, msg);
+>> +       atomic_t *wc = rpm_msg->wait_count;
+>> +       struct completion *compl = rpm_msg->completion;
+>> +
+>> +       rpm_msg->err = r;
+>> +
+>> +       if (r)
+>> +               dev_err(rpm_msg->rc->dev,
+>> +                      "RPMH TX fail in msg addr 0x%x, err=%d\n",
+>> +                      rpm_msg->msg.payload[0].addr, r);
+>> +
+>> +       /* Signal the blocking thread we are done */
+>> +       if (wc && atomic_dec_and_test(wc) && compl)
+>
+>I don't understand this whole thing. The atomic variable is always set
+>to 1 in this patch, and then we will do a dec and test and then complete
+>when that happens. There is the case where it isn't assigned, but then
+>this logic doesn't happen at all. There must be some future code that
+>uses this? Can you add the atomic counting stuff in that patch when we
+>need to count more than one?
+>
+Yes. This is needed for batch requests. I felt it would be much of a
+change to get this removed and added back in. Let me see what I can do.
 
-   dwmmc_rockchip fe320000.dwmmc: All phases bad!
-   mmc0: tuning execution failed: -5
+>And then if that future happens, maybe consider changing from a count to
+>a chained DMA list style type of thing, where each message has a single
+>element that's written, but each message can have a 'wait' bit or not
+>that would cause this code to call complete if it's there. Then drivers
+>can wait on any certain part of the message completion (or multiple of
+>them) without us having to do a count.
+>
+Not sure what is the benefit of that. This accomplishes just the same.
 
-Cc: Heiko Stübner <heiko@sntech.de>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+>> +               complete(compl);
+>> +}
+>> +EXPORT_SYMBOL(rpmh_tx_done);
+>> +
+>> +/**
+>> + * wait_for_tx_done: Wait until the response is received.
+>> + *
+>> + * @rc: The RPMH client
+>> + * @compl: The completion object
+>> + * @addr: An addr that we sent in that request
+>> + * @data: The data for the address in that request
+>> + *
+>> + */
+>> +static int wait_for_tx_done(struct rpmh_client *rc,
+>> +                          struct completion *compl, u32 addr, u32 data)
+>> +{
+>> +       int ret;
+>> +
+>> +       ret = wait_for_completion_timeout(compl, RPMH_TIMEOUT);
+>> +       if (ret)
+>> +               dev_dbg(rc->dev,
+>> +                      "RPMH response received addr=0x%x data=0x%x\n",
+>> +                      addr, data);
+>> +       else
+>> +               dev_err(rc->dev,
+>> +                       "RPMH response timeout addr=0x%x data=0x%x\n",
+>> +                       addr, data);
+>> +
+>> +       return (ret > 0) ? 0 : -ETIMEDOUT;
+>> +}
+>> +
+>> +/**
+>> + * __rpmh_write: send the RPMH request
+>> + *
+>> + * @rc: The RPMH client
+>> + * @state: Active/Sleep request type
+>> + * @rpm_msg: The data that needs to be sent (payload).
+>> + */
+>> +static int __rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
+>> +                      struct rpmh_request *rpm_msg)
+>> +{
+>> +       int ret = -EFAULT;
+>
+>Not sure -EFAULT is the right error value here. -EINVAL?
+>
+Sure.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index ba859709c2d4..d65d53b1ff77 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -313,6 +313,8 @@ CONFIG_GPIO_XGENE_SB=y
- CONFIG_GPIO_PCA953X=y
- CONFIG_GPIO_PCA953X_IRQ=y
- CONFIG_GPIO_MAX77620=y
-+CONFIG_POWER_AVS=y
-+CONFIG_ROCKCHIP_IODOMAIN=y
- CONFIG_POWER_RESET_MSM=y
- CONFIG_POWER_RESET_XGENE=y
- CONFIG_POWER_RESET_SYSCON=y
--- 
-2.16.1
+>> +
+>> +       rpm_msg->msg.state = state;
+>> +
+>> +       if (state == RPMH_ACTIVE_ONLY_STATE) {
+>> +               WARN_ON(irqs_disabled());
+>> +               ret = rpmh_rsc_send_data(rc->ctrlr->drv, &rpm_msg->msg);
+>> +               if (!ret)
+>> +                       dev_dbg(rc->dev,
+>> +                              "RPMH request sent addr=0x%x, data=0x%x\n",
+>> +                              rpm_msg->msg.payload[0].addr,
+>> +                              rpm_msg->msg.payload[0].data);
+>> +               else
+>> +                       dev_warn(rc->dev,
+>> +                               "Error in RPMH request addr=0x%x, data=0x%x\n",
+>> +                               rpm_msg->msg.payload[0].addr,
+>> +                               rpm_msg->msg.payload[0].data);
+>> +       }
+>> +
+>> +       return ret;
+>> +}
+>> +
+>> +/**
+>> + * rpmh_write: Write a set of RPMH commands and block until response
+>> + *
+>> + * @rc: The RPMh handle got from rpmh_get_dev_channel
+>> + * @state: Active/sleep set
+>> + * @cmd: The payload data
+>> + * @n: The number of elements in payload
+>> + *
+>> + * May sleep. Do not call from atomic contexts.
+>> + */
+>> +int rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
+>> +             struct tcs_cmd *cmd, int n)
+>> +{
+>> +       DECLARE_COMPLETION_ONSTACK(compl);
+>> +       atomic_t wait_count = ATOMIC_INIT(1);
+>> +       DEFINE_RPMH_MSG_ONSTACK(rc, state, &compl, &wait_count, rpm_msg);
+>> +       int ret;
+>> +
+>> +       if (IS_ERR_OR_NULL(rc) || !cmd || n <= 0 || n > MAX_RPMH_PAYLOAD)
+>
+>How is rc IS_ERR_OR_NULL at this point?
+>
+If the rpmh_get_client() had failed and the driver failed to check that.
+
+>Should n be unsigned then?
+>
+OK
+
+>> +               return -EINVAL;
+>> +
+>> +       might_sleep();
+>
+>The wait_for_tx_done() would handle this might_sleep?
+>
+Not that I am failing here.. but it just felt right to report this
+earlier than later.
+
+>> +
+>> +       memcpy(rpm_msg.cmd, cmd, n * sizeof(*cmd));
+>> +       rpm_msg.msg.num_payload = n;
+>> +
+>> +       ret = __rpmh_write(rc, state, &rpm_msg);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       return wait_for_tx_done(rc, &compl, cmd[0].addr, cmd[0].data);
+>> +}
+>> +EXPORT_SYMBOL(rpmh_write);
+>> +
+>> +static struct rpmh_ctrlr *get_rpmh_ctrlr(struct platform_device *pdev)
+>> +{
+>> +       int i;
+>> +       struct rsc_drv *drv = dev_get_drvdata(pdev->dev.parent);
+>> +       struct rpmh_ctrlr *ctrlr = ERR_PTR(-EFAULT);
+>
+>Not sure -EFAULT is the right error value here.
+>
+Will fix.
+
+>> +
+>> +       if (!drv)
+>> +               return ctrlr;
+>> +
+>> +       mutex_lock(&rpmh_ctrlr_mutex);
+>> +       for (i = 0; i < RPMH_MAX_MBOXES; i++) {
+>> +               if (rpmh_rsc[i].drv == drv) {
+>> +                       ctrlr = &rpmh_rsc[i];
+>> +                       goto unlock;
+>> +               }
+>> +       }
+>> +
+>> +       for (i = 0; i < RPMH_MAX_MBOXES; i++) {
+>> +               if (rpmh_rsc[i].drv == NULL) {
+>> +                       ctrlr = &rpmh_rsc[i];
+>> +                       ctrlr->drv = drv;
+>> +                       break;
+>> +               }
+>> +       }
+>> +       WARN_ON(i == RPMH_MAX_MBOXES);
+>> +unlock:
+>> +       mutex_unlock(&rpmh_ctrlr_mutex);
+>> +       return ctrlr;
+>> +}
+>> +
+>> +/**
+>> + * rpmh_get_client: Get the RPMh handle
+>> + *
+>> + * @pdev: the platform device which needs to communicate with RPM
+>> + * accelerators
+>> + * May sleep.
+>> + */
+>> +struct rpmh_client *rpmh_get_client(struct platform_device *pdev)
+>
+>Given that the child devices are fairly well aware that they're rpmh
+>device drivers, why do we need this set of APIs in a different file and
+>also why do we need to have a client cookie design? It would make sense
+>to have the cookie if the device hierarchy wasn't direct, but that
+>doesn't seem to be the case here. Also it would make things easier to
+>follow if the code was folded into the same C file. It looks like we may
+>have two files exporting symbols to each other but not anywhere else.
+>
+There are so many concepts in these files that clobbering them would
+just make them too ugly and hard to maintain. rpmh-rsc.c is a file that
+deals with the hardware and this is the helper set of functions. This
+does buffer management and caching that need to be burdened on a file
+that is hardware centric.
+
+>Take a look at clk-rpm.c in clk/qcom and you'll see that we don't do any
+>sort of client cookie. Instead, the parent device drv data has the
+>pointer we want to get, and then the rpm APIs take that pointer.
+>
+You still have to get a cookie of sorts. It just uses the parent deivce
+data as a cookie. The way I see, it's no better or worse than this.
+
+-- Lina
