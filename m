@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1171329-1520492969-2-17148152113222261605
+X-Cyrus-Session-Id: sloti22d1t05-1171329-1520492922-2-18000530950620958452
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES enroca, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,67 +13,63 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520492969; b=eO+skvp1T3glVrHgTijgbJxWHQqAzFJAG6w/OWjLOrxBas3
-    93kUvldRHhQz0mC0OEcwDm19NQUYQR8cdrGk30KEJFuC8BU6y1o1C0HRxQvwrS6e
-    J0kDDC0QRTTWYEPdIwPIAE8IZoL16LcC42hTkdmu26GOXwyC9I+4sTOY+Dn3OOk0
-    xMvQW39Pu5CdUH1HS8JPhn+Zo8ghMByY7apWESJaS5J/OFCRPBARVuARNqZDD976
-    CwvOTrr3957+wnSnN6kvAhymHSIX+s4cRzfTP/tQPlVcSF4UM57Hybq0fDcBc75A
-    9Ab5Jd+Eutm2cIk8wOcKBJlNLO0OTe1CjtsrSig==
+    t=1520492921; b=QZ9sNr/Wf42U/GTQmr0JofLnhcITXTAW7BgMIC8XRKiM4X3
+    /5WaqS+0ZMYRUOJtXgzgQztfuvhSKIz0tf/tMfPj1JXM8EQWCY6psCBdTZmY9IrB
+    Rr1kzkyvKsN9/+f4H+OAs5wHSUnhG+8J5bVUn2EQ11nsIdx3Gnkatrg+gJood926
+    59EHajX3euSYpJ8kBZxFcnKF+3j5vrXV+9iJher1jf1YVbq3zvTsOObPexV4dI2Q
+    ix1IQ+sQUaz5jrropoc/FN5mn/XvvLPGu8+NYBNwvpg1oIavFBRpKLbuJfW+B5Hd
+    8xVlYLWZS1I0yl0ke8og5kmm/tguQtmL1IGD4SQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520492969; bh=j/fQ97
-    j4cN1pWAAGCC+z8OvdRjDICyV0g9BEIvWEYQ4=; b=K0TrNgquc/UrPvR0uzIUZu
-    HU+WnfCYtZJtSnW+h29WAD1Wxjg5NwkTgc6FwGtEiQj0LEDGSjJO3SLFy0XpIysh
-    ujLGDa2Kts6MW4fVdVvUF6A47itSchXu7TOV8rJ1qWodjJlrESPhom9E+pZpOJyc
-    vR9cxOMPpeB3aEfDOepkFmaHqP55x2+/bxl3vVTg+OZeNwAC3TtG/MjEP+iSA0N8
-    rTneSL4T8o13a+iKrbOcicuhVtSVeXvoIY5mMSNFWqMCw7wuw2svmDk49UWy5BWe
-    q+a3nhJV+eUGcP7xAK7Q/oU1O5EquG7pLAIA3sOCx7H2b5Me6gXCXlHr4mqIGXxw
+    :mime-version:sender:list-id; s=arctest; t=1520492921; bh=DcbIAV
+    TqW7y49fDjNuzc88QomLIUu7t/E6+7YN24nkw=; b=wws+nvv65jadiU52jyZPeb
+    vtYmezO3o8Ovb/bBTp6oG/PrLCoNN055jfyPIJC+rAEKZmEG+y8y/Hqf2luKuFUS
+    iYe009eIhfYLoe1dd5PB6COmOp5dGDqu+yDK7xHAFRbu02lPsyPvYni9jrQCEb+I
+    JIoK7PI09PvWkZit9QJQcwTwaAuQoLbBfGXNcEPdOPU6RyMHm1z83pgspf9U1ANY
+    CfTtZHLsPDBstaiEqjwpcQwBKBfQBhV2IUuToBOK8LZqTGzHvN+3VdXQCd0qMGkU
+    iEmmYwIUoTEUXky4QRvd4nquuCQgnvzVbY4LMePtnprlzvVujtaYBjiAoZi4bYiQ
     ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=CX+O1iQ0 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=gKLIc7Ak x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    x-category=clean score=0 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=CX+O1iQ0 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=gKLIc7Ak x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    x-category=clean score=0 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934542AbeCHHIg (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 02:08:36 -0500
-Received: from mail-bn3nam01on0130.outbound.protection.outlook.com ([104.47.33.130]:45246
+        id S964971AbeCHHIi (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 02:08:38 -0500
+Received: from mail-bn3nam01on0138.outbound.protection.outlook.com ([104.47.33.138]:1475
         "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755107AbeCHE4R (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S1755009AbeCHE4R (ORCPT <rfc822;stable@vger.kernel.org>);
         Wed, 7 Mar 2018 23:56:17 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Roman Gushchin <guro@fb.com>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        David Ahern <dsahern@gmail.com>,
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 18/78] libbpf: prefer global symbols as bpf
- program name source
-Thread-Topic: [PATCH AUTOSEL for 4.15 18/78] libbpf: prefer global symbols as
- bpf program name source
-Thread-Index: AQHTtpnF176Z+OChAk2NQaqhgN6DyA==
+Subject: [PATCH AUTOSEL for 4.15 17/78] spi: sh-msiof: Avoid writing to
+ registers from spi_master.setup()
+Thread-Topic: [PATCH AUTOSEL for 4.15 17/78] spi: sh-msiof: Avoid writing to
+ registers from spi_master.setup()
+Thread-Index: AQHTtpnFhHMHnLWLZ0OiZpRKfpEY9A==
 Date: Thu, 8 Mar 2018 04:56:08 +0000
-Message-ID: <20180308045525.7662-18-alexander.levin@microsoft.com>
+Message-ID: <20180308045525.7662-17-alexander.levin@microsoft.com>
 References: <20180308045525.7662-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045525.7662-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -82,27 +78,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1111;7:IeDDgO7TLfQ805/s1QMRCGNgBTR3GPBM9Efj6SuaMZd9yiO+Ej79Yjgz2LYbDQkndN/599ZAFPL9e41hU+9c33NgmeSsrnug8ROYgGkcMOnA/P7svVWcvRUf/SxVgilW24y+D6eiTVnxWMk+1KPOgpNctz5JdXtTLyDaGfz0kOOUqbav811KKOX3CMoEMluE/zLn8Czgqg1CmATQ9tbPLjR73UuQrh5AxS6mkFO3xXDq47x7s4bVHUe2jAX1OdWL;20:TKn+0ZMRxOK/XH+NqEvYTGrtEhdfmkgRFZDeLst4o063xaSzkDofIzHfwZtgrxx64eEgiFKJV0cT3JsqWBV8ZMsgp4Cy3E1MnN0QAOev4M2EYkmBWRGSbNn2h5kFKH5DV3yLPvLP9A7wAHEKKeyfO67m6r2dZymjlyR44Q8LYM4=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1111;20:wPyRiG2hdrrTFC/ACWV86Ccolnq5aqmZeshJfU8CbDzUACC6SRYGZxDK2krAJrEuWRm8o3oaiLg86lYkMWVnNK4X2LPpD5oioDEhSKU9oacVKWawHfScRahef0TTRpBTAQuKVzgdwTVdYjOuBmBtp+LmumG3nKkF4c/zthddqbI=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 022d0275-aef7-4ad9-fc42-08d584b0eaea
+x-ms-office365-filtering-correlation-id: 7995b04d-b7a1-4785-691f-08d584b0eaa8
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1111;
 x-ms-traffictypediagnostic: DM5PR2101MB1111:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1111C3FA8027136FD3A5C715FBDF0@DM5PR2101MB1111.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158)(67672495146484);
+x-microsoft-antispam-prvs: <DM5PR2101MB1111A41294BC38886300B567FBDF0@DM5PR2101MB1111.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(3231220)(944501244)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB1111;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1111;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(346002)(396003)(376002)(39860400002)(366004)(199004)(189003)(39060400002)(86612001)(22452003)(99286004)(7736002)(54906003)(305945005)(86362001)(5660300001)(66066001)(6512007)(81156014)(14454004)(53936002)(2900100001)(10090500001)(1076002)(110136005)(107886003)(6116002)(6436002)(3846002)(72206003)(36756003)(102836004)(316002)(3280700002)(3660700001)(478600001)(106356001)(6486002)(76176011)(6666003)(81166006)(10290500003)(4326008)(2950100002)(97736004)(25786009)(59450400001)(105586002)(8676002)(26005)(2501003)(2906002)(5250100002)(8936002)(186003)(68736007)(6506007)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1111;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: RUinPadF6K/u5Re+2ewclkIp0PKak5SdfJgtKYZyMDifkQhw8LqbQkR1q7FBw4RkfgiYcUfamIVpOA5KNDwRsP2NlCXRL5IYE8Hoududlz5UdXYUGIf9687qfB/cCuHI6mCWE0kR2cWCDjQMKwpbukIxOMXIUEcsOjDDoO2opDfU6Ze3NCpCX0blM8sr0vRWQY0aGK/pltiAPUuiopRtxpb0JvWyEefzpCTw55sT8Byn7K6nM/ZgOTFLv+sptmfnArw9DFzYkVwbSxqoGKe/sJ/xEr10UonPEik8ZICplANPx8uiWIWCAOnH3ukhA+lTZV7gL6Xdw0TOqapsjPwrdA==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(346002)(396003)(376002)(39860400002)(366004)(199004)(189003)(86612001)(22452003)(99286004)(7736002)(54906003)(305945005)(86362001)(5660300001)(66066001)(6512007)(81156014)(14454004)(53936002)(2900100001)(10090500001)(1076002)(110136005)(107886003)(575784001)(6116002)(6436002)(3846002)(72206003)(36756003)(102836004)(316002)(3280700002)(3660700001)(478600001)(106356001)(6486002)(76176011)(6666003)(81166006)(10290500003)(4326008)(2950100002)(97736004)(25786009)(105586002)(8676002)(26005)(2501003)(2906002)(5250100002)(8936002)(186003)(68736007)(6506007)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1111;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: 6Hmrg7U7DxIguYGSegcl22t4ic8lI3ud0yIl8lv8WiiwJjs0B+Ke0kcl1DWujuByggGkGUkGUplsEBIjo/UnBy42nMDYSC07IaJVsuwuxj3apGGSctqH0TAckh2R6MZ8ZpRWpo+HWSOpYX1OhqX6ysPHbD+dPCHGx+xnC/n2jYLjETPgU/+GgAniaN5LBvQ3zKaxBniCFXfH5pLfTIz/2av2SC2ntyu82DIq55Np5i2jh6OexnvyksEAroltgG/eXYTovKdaF1kexvx+dHy0zg2vexGd0CG+6lCyEcFCuVWYJyhdpMGyg7WX7G/WZk99qQhmLWNDFm8biZh2C/VAwQ==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 022d0275-aef7-4ad9-fc42-08d584b0eaea
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:56:09.0052
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7995b04d-b7a1-4785-691f-08d584b0eaa8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:56:08.4538
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -113,53 +109,93 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Roman Gushchin <guro@fb.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit fe4d44b23f6b38194a92c6b8a50d921a071c4db4 ]
+[ Upstream commit 7ff0b53c4051145d1cf992d2f60987e6447eed4f ]
 
-Libbpf picks the name of the first symbol in the corresponding
-elf section to use as a program name. But without taking symbol's
-scope into account it may end's up with some local label
-as a program name. E.g.:
+The spi_master.setup() callback must not change configuration registers,
+as that could corrupt I/O that is in progress for other SPI slaves.
 
-$ bpftool prog
-1: type 15  name LBB0_10    tag 0390a5136ba23f5c
-	loaded_at Dec 07/17:22  uid 0
-	xlated 456B  not jited  memlock 4096B
+The only exception is the configuration of the native chip select
+polarity in SPI master mode, as a wrong chip select polarity will cause
+havoc during all future transfers to any other SPI slave.
 
-Fix this by preferring global symbols as program name.
+Hence stop writing to registers in sh_msiof_spi_setup(), unless it is
+the first call for a controller using a native chip select, or unless
+native chip select polarity has changed (note that you'll loose anyway
+if I/O is in progress).  Even then, only do what is strictly necessary,
+instead of calling sh_msiof_spi_set_pin_regs().
 
-For instance:
-$ bpftool prog
-1: type 15  name bpf_prog1  tag 0390a5136ba23f5c
-	loaded_at Dec 07/17:26  uid 0
-	xlated 456B  not jited  memlock 4096B
-
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc: Martin KaFai Lau <kafai@fb.com>
-Cc: Quentin Monnet <quentin.monnet@netronome.com>
-Cc: David Ahern <dsahern@gmail.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- tools/lib/bpf/libbpf.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/spi/spi-sh-msiof.c | 35 ++++++++++++++++++++++++-----------
+ 1 file changed, 24 insertions(+), 11 deletions(-)
 
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 5aa45f89da93..cda652a12880 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -387,6 +387,8 @@ bpf_object__init_prog_names(struct bpf_object *obj)
- 				continue;
- 			if (sym.st_shndx !=3D prog->idx)
- 				continue;
-+			if (GELF_ST_BIND(sym.st_info) !=3D STB_GLOBAL)
-+				continue;
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index fcd261f98b9f..bf34e9b238af 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -55,6 +55,8 @@ struct sh_msiof_spi_priv {
+ 	void *rx_dma_page;
+ 	dma_addr_t tx_dma_addr;
+ 	dma_addr_t rx_dma_addr;
++	bool native_cs_inited;
++	bool native_cs_high;
+ 	bool slave_aborted;
+ };
 =20
- 			name =3D elf_strptr(obj->efile.elf,
- 					  obj->efile.strtabidx,
+@@ -528,8 +530,7 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
+ {
+ 	struct device_node	*np =3D spi->master->dev.of_node;
+ 	struct sh_msiof_spi_priv *p =3D spi_master_get_devdata(spi->master);
+-
+-	pm_runtime_get_sync(&p->pdev->dev);
++	u32 clr, set, tmp;
+=20
+ 	if (!np) {
+ 		/*
+@@ -539,19 +540,31 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
+ 		spi->cs_gpio =3D (uintptr_t)spi->controller_data;
+ 	}
+=20
+-	/* Configure pins before deasserting CS */
+-	sh_msiof_spi_set_pin_regs(p, !!(spi->mode & SPI_CPOL),
+-				  !!(spi->mode & SPI_CPHA),
+-				  !!(spi->mode & SPI_3WIRE),
+-				  !!(spi->mode & SPI_LSB_FIRST),
+-				  !!(spi->mode & SPI_CS_HIGH));
+-
+-	if (spi->cs_gpio >=3D 0)
++	if (spi->cs_gpio >=3D 0) {
+ 		gpio_set_value(spi->cs_gpio, !(spi->mode & SPI_CS_HIGH));
++		return 0;
++	}
+=20
++	if (spi_controller_is_slave(p->master))
++		return 0;
+=20
+-	pm_runtime_put(&p->pdev->dev);
++	if (p->native_cs_inited &&
++	    (p->native_cs_high =3D=3D !!(spi->mode & SPI_CS_HIGH)))
++		return 0;
+=20
++	/* Configure native chip select mode/polarity early */
++	clr =3D MDR1_SYNCMD_MASK;
++	set =3D MDR1_TRMD | TMDR1_PCON | MDR1_SYNCMD_SPI;
++	if (spi->mode & SPI_CS_HIGH)
++		clr |=3D BIT(MDR1_SYNCAC_SHIFT);
++	else
++		set |=3D BIT(MDR1_SYNCAC_SHIFT);
++	pm_runtime_get_sync(&p->pdev->dev);
++	tmp =3D sh_msiof_read(p, TMDR1) & ~clr;
++	sh_msiof_write(p, TMDR1, tmp | set);
++	pm_runtime_put(&p->pdev->dev);
++	p->native_cs_high =3D spi->mode & SPI_CS_HIGH;
++	p->native_cs_inited =3D true;
+ 	return 0;
+ }
+=20
 --=20
 2.14.1
