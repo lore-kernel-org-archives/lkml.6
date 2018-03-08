@@ -1,74 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935747AbeCHKsi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 05:48:38 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:37689 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934902AbeCHKsg (ORCPT
+        id S965528AbeCHKvs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 05:51:48 -0500
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:38687 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933352AbeCHKvq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 05:48:36 -0500
-X-Google-Smtp-Source: AG47ELs+36uejzXzvonhHM3ZpCnYD12jEYtUA85jBguNmcLHoTg+OBSecG7GuP44xqKxVaGc1MH55Q==
-Date: Thu, 8 Mar 2018 10:48:31 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCHv5 3/5] mfd: motorola-cpcap: Add audio-codec support
-Message-ID: <20180308104831.fflq2arj5dxgntia@dell>
-References: <20180223200254.25685-1-sebastian.reichel@collabora.co.uk>
- <20180223200254.25685-4-sebastian.reichel@collabora.co.uk>
- <20180307163211.rytfli5tb47yhtug@dell>
- <20180308094652.qg4atjw5c3hayaz3@earth.universe>
- <20180308095315.mpcmx2ob6yhsnrm6@dell>
- <20180308102757.jyi7uo566n6nuct5@earth.universe>
+        Thu, 8 Mar 2018 05:51:46 -0500
+X-Google-Smtp-Source: AG47ELuUXE8YAObBrMRipx/9AEP/9LcEXglHxU9lPc8h6tPROOameJmyGgmyqDQ15rVBGBYcex6D4zEpMUvxpSOOPaA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180308102757.jyi7uo566n6nuct5@earth.universe>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAKKbWA5F29HJFOTNfVmt14Qg5rMgrLSsHjY4NQESZL6OKmA95w@mail.gmail.com>
+References: <20180307162430.2664523-1-arnd@arndb.de> <20180307162430.2664523-2-arnd@arndb.de>
+ <CACPK8XeVMSeQNkPNp1_vms97H_9rMuk1-DzUAc=s-7o=FmVncw@mail.gmail.com> <CAKKbWA5F29HJFOTNfVmt14Qg5rMgrLSsHjY4NQESZL6OKmA95w@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 8 Mar 2018 11:51:45 +0100
+X-Google-Sender-Auth: _TPr3GpUACcAIUZ8KfPMho9Z5qs
+Message-ID: <CAK8P3a3fCRAuBjLXbjzc+1rYJsW90TDN2URZ=sOHvRNB3kyd6Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: npcm: drop extraneous 'select' statements
+To: Avi Fishman <avifishman70@gmail.com>
+Cc: Joel Stanley <joel@jms.id.au>, Tomer Maimon <tmaimon77@gmail.com>,
+        Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 08 Mar 2018, Sebastian Reichel wrote:
-> On Thu, Mar 08, 2018 at 09:53:15AM +0000, Lee Jones wrote:
-> > On Thu, 08 Mar 2018, Sebastian Reichel wrote:
-> > > On Wed, Mar 07, 2018 at 04:32:11PM +0000, Lee Jones wrote:
-> > > > On Fri, 23 Feb 2018, Sebastian Reichel wrote:
-> > > > > +static const struct mfd_cell cpcap_mfd_devices[] = {
-> > > 
-> > > [...]
-> > > 
-> > > > > +	}, {
-> > > > > +		.name          = "cpcap-led",
-> > > > > +		.id            = 4,
-> > > > > +		.of_compatible = "motorola,cpcap-led-cp",
-> > > > > +	}, {
-> > > > > +		.name          = "cpcap-codec",
-> > > > > +	}
-> > > > > +};
-> > > > 
-> > > > With none of the entries containing platform_data /me wonders why you
-> > > > can't still use devm_of_platform_populate()?
-> > > 
-> > > Because devm_of_platform_populate works with compatible properties and
-> > > cpcap-codec does not have one after I removed it for Mark.
-> > 
-> > Sorry, I missed that conversation.  Why was it removed?
-> 
-> I had it in PATCHv1-PATCHv4. It was removed, since Mark didn't want
-> to have it in the DT ABI.
+On Thu, Mar 8, 2018 at 11:46 AM, Avi Fishman <avifishman70@gmail.com> wrote:
+> So at least replace CACHE_L2X0 with MIGHT_HAVE_CACHE_L2X0 then
+> CACHE_L2X0 will be selected by default and user can still remove it.
 
-Right, but why?  Is it not a hardware device?  I think converting from
-devm_of_platform_populate() for one sub-device is a bit drastic.
+I looked at the other platforms for this one again, and found that most simply
+select CONFIG_CACHE_L2X0 directly, so we probably want the same here
+after all.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+The ones that use MIGHT_HAVE_CACHE_L2X0 are the platforms
+that have multiple SoCs in one family, and only some of them have an
+L2X0. Is that the case here as well? Usually, the L2X0 is used with
+Cortex-A9 and A5, rarely on older cores, and never on newer
+ones.
+
+       Arnd
