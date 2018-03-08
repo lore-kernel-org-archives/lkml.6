@@ -1,271 +1,288 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755494AbeCHSuw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 13:50:52 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40946 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754724AbeCHSut (ORCPT
+        id S932173AbeCHS5g (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 13:57:36 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:33523 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752072AbeCHS5e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 13:50:49 -0500
-Date: Thu, 8 Mar 2018 19:50:47 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: Suman Anna <s-anna@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>, pali.rohar@gmail.com, sre@kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, khilman@kernel.org, aaro.koskinen@iki.fi,
-        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
-        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
-        sakari.ailus@linux.intel.com,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>
-Subject: Re: Nokia N900: refcount_t underflow, use after free
-Message-ID: <20180308185046.GA22796@amd>
-References: <20180308143053.GA17267@amd>
- <20180308165903.GM5799@atomide.com>
- <57c9f17b-fc9d-8506-4b5d-70ac216c9248@ti.com>
+        Thu, 8 Mar 2018 13:57:34 -0500
+X-Google-Smtp-Source: AG47ELu94zqU13GB1fThK5J5/ODZt/aa7n2PQlgCSCvlarRNeGZUa0Ch6gNOFv5gurq++/y5UYXAxg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="r5Pyd7+fXNt84Ff3"
-Content-Disposition: inline
-In-Reply-To: <57c9f17b-fc9d-8506-4b5d-70ac216c9248@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+To: Lina Iyer <ilina@codeaurora.org>, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org
+From: Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20180302164317.10554-5-ilina@codeaurora.org>
+Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
+References: <20180302164317.10554-1-ilina@codeaurora.org>
+ <20180302164317.10554-5-ilina@codeaurora.org>
+Message-ID: <152053545255.219802.8090966652300734692@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 04/10] drivers: qcom: rpmh: add RPMH helper functions
+Date: Thu, 08 Mar 2018 10:57:32 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w28IviWe019944
 
+Quoting Lina Iyer (2018-03-02 08:43:11)
+> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+> new file mode 100644
+> index 000000000000..d95ea3fa8b67
+> --- /dev/null
+> +++ b/drivers/soc/qcom/rpmh.c
+> @@ -0,0 +1,257 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/atomic.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mailbox_client.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +#include <linux/types.h>
+> +#include <linux/wait.h>
+> +
+> +#include <soc/qcom/rpmh.h>
+> +
+> +#include "rpmh-internal.h"
+> +
+> +#define RPMH_MAX_MBOXES                        2
+> +#define RPMH_TIMEOUT                   (10 * HZ)
 
---r5Pyd7+fXNt84Ff3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Can this be in ms instead of HZ units?
 
-Hi!
+> +
+> +/**
+> + * rpmh_ctrlr: our representation of the controller
+> + *
+> + * @drv: the controller instance
+> + */
+> +struct rpmh_ctrlr {
+> +       struct rsc_drv *drv;
+> +};
+> +
+> +/**
+> + * rpmh_client: the client object
 
-> > * Pavel Machek <pavel@ucw.cz> [180308 14:31]:
-> >> Hi!
-> >>
-> >> I'm getting this warning... Has anyone seen/debugged that before?
-> >> Unfortunately the backtrace does not seem to be too useful :-(.
-> >=20
-> > Adding Suman to Cc, as it points to arm_iommu_release_mapping().
->=20
-> Hmm, we need to find out if the failure paths in isp_probe() are
-> mismatched, or if this is coming from some mismatch between the OMAP
-> IOMMU driver and the DMA plumbing. AFAIK, the cleanup paths in this
+same kernel doc issues here.
 
-Well, camera only started to work on N900 pretty recently. Let me add
-some debug printks...
+> + *
+> + * @dev: the platform device that is the owner
+> + * @ctrlr: the controller associated with this client.
+> + */
+> +struct rpmh_client {
+> +       struct device *dev;
+> +       struct rpmh_ctrlr *ctrlr;
+> +};
+> +
+> +static struct rpmh_ctrlr rpmh_rsc[RPMH_MAX_MBOXES];
+> +static DEFINE_MUTEX(rpmh_ctrlr_mutex);
+> +
+> +void rpmh_tx_done(struct tcs_request *msg, int r)
+> +{
+> +       struct rpmh_request *rpm_msg = container_of(msg,
+> +                                                  struct rpmh_request, msg);
+> +       atomic_t *wc = rpm_msg->wait_count;
+> +       struct completion *compl = rpm_msg->completion;
+> +
+> +       rpm_msg->err = r;
+> +
+> +       if (r)
+> +               dev_err(rpm_msg->rc->dev,
+> +                      "RPMH TX fail in msg addr 0x%x, err=%d\n",
+> +                      rpm_msg->msg.payload[0].addr, r);
+> +
+> +       /* Signal the blocking thread we are done */
+> +       if (wc && atomic_dec_and_test(wc) && compl)
 
-Camera does not work in 4.16.0-rc4-next-20180308-dirty.
+I don't understand this whole thing. The atomic variable is always set
+to 1 in this patch, and then we will do a dec and test and then complete
+when that happens. There is the case where it isn't assigned, but then
+this logic doesn't happen at all. There must be some future code that
+uses this? Can you add the atomic counting stuff in that patch when we
+need to count more than one?
 
-I see this. It looks like problem in isp error paths, indeed:
+And then if that future happens, maybe consider changing from a count to
+a chained DMA list style type of thing, where each message has a single
+element that's written, but each message can have a 'wait' bit or not
+that would cause this code to call complete if it's there. Then drivers
+can wait on any certain part of the message completion (or multiple of
+them) without us having to do a count.
 
-[    1.672210] bus: 'platform': driver_probe_device: matched device
-480bc000.isp with dr
-iver omap3isp
-[    1.681976] isp_probe: 1
-[    1.684906] isp_probe: 2
-[    1.687591] isp_probe: 3
-[    1.690338] isp_probe: 4
-[    1.693054] omap3isp 480bc000.isp: 480bc000.isp supply vdd-csiphy1
-not found, using d
-ummy regulator
-[    1.702728] omap3isp 480bc000.isp: 480bc000.isp supply vdd-csiphy2
-not found, using d
-ummy regulator
-[    1.712402] isp_probe: 5
-[    1.715393] omap3isp 480bc000.isp: Revision 2.0 found
-[    1.720794] isp_probe: 6
-[    1.723815] isp_probe: 7
-[    1.726715] omap-iommu 480bd400.mmu: 480bd400.mmu: version 1.1
-[    1.732849] isp_probe: 8
-[    1.735656] isp_probe: 9
-[    1.738403] isp_probe: 10
-[    1.741241] isp_probe: f3
-[    1.744018] iommu_release_mapping... ce4d9500 ce4d949c
-[    1.749450] iommu_release_mapping... ok
-[    1.753479] isp_probe: f4
-[    1.756286] clk_unregister: unregistering prepared clock: cam_xclka
-[    1.762878] clk_unregister: unregistering prepared clock: cam_xclkb
-[    1.769500] isp_probe: f5
-[    1.772430] iommu_release_mapping... ce4d9500 ce4d949c
-[    1.777862] ------------[ cut here ]------------
-[    1.782745] WARNING: CPU: 0 PID: 1 at lib/refcount.c:187
-refcount_sub_and_test+0x94/0
-xa8
-[    1.791290] refcount_t: underflow; use-after-free.
-[    1.796356] Modules linked in:
-[    1.799591] CPU: 0 PID: 1 Comm: swapper Not tainted
-4.16.0-rc4-next-20180308-dirty #7
-3
-[    1.807922] Hardware name: Nokia RX-51 board
-[    1.812469] [<c010d6cc>] (unwind_backtrace) from [<c010b568>]
-(show_stack+0x10/0x14)
-[    1.820648] [<c010b568>] (show_stack) from [<c0127df4>]
-(__warn+0xe8/0x110)
-=2E..
-[    1.968688] iommu_release_mapping... ok
-[    1.973754] bus: 'platform': driver_probe_device: matched device
-n900-battery with driver rx51-battery
-[    1.984436] bus: 'platform': driver_probe_device: matched device
-48002524.bandgap with driver ti-soc-thermal
+> +               complete(compl);
+> +}
+> +EXPORT_SYMBOL(rpmh_tx_done);
+> +
+> +/**
+> + * wait_for_tx_done: Wait until the response is received.
+> + *
+> + * @rc: The RPMH client
+> + * @compl: The completion object
+> + * @addr: An addr that we sent in that request
+> + * @data: The data for the address in that request
+> + *
+> + */
+> +static int wait_for_tx_done(struct rpmh_client *rc,
+> +                          struct completion *compl, u32 addr, u32 data)
+> +{
+> +       int ret;
+> +
+> +       ret = wait_for_completion_timeout(compl, RPMH_TIMEOUT);
+> +       if (ret)
+> +               dev_dbg(rc->dev,
+> +                      "RPMH response received addr=0x%x data=0x%x\n",
+> +                      addr, data);
+> +       else
+> +               dev_err(rc->dev,
+> +                       "RPMH response timeout addr=0x%x data=0x%x\n",
+> +                       addr, data);
+> +
+> +       return (ret > 0) ? 0 : -ETIMEDOUT;
+> +}
+> +
+> +/**
+> + * __rpmh_write: send the RPMH request
+> + *
+> + * @rc: The RPMH client
+> + * @state: Active/Sleep request type
+> + * @rpm_msg: The data that needs to be sent (payload).
+> + */
+> +static int __rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
+> +                      struct rpmh_request *rpm_msg)
+> +{
+> +       int ret = -EFAULT;
 
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index 8c398fe..16f4c69 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -2251,8 +2251,11 @@ static int extend_iommu_mapping(struct dma_iommu_map=
-ping *mapping)
-=20
- void arm_iommu_release_mapping(struct dma_iommu_mapping *mapping)
- {
-+	printk("iommu_release_mapping... %lx %lx\n", mapping, mapping->domain);
- 	if (mapping)
- 		kref_put(&mapping->kref, release_iommu_mapping);
-+	printk("iommu_release_mapping... ok\n");
-+=09
- }
- EXPORT_SYMBOL_GPL(arm_iommu_release_mapping);
-=20
-diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform=
-/omap3isp/isp.c
-index 8eb000e..4d58683 100644
---- a/drivers/media/platform/omap3isp/isp.c
-+++ b/drivers/media/platform/omap3isp/isp.c
-@@ -2193,12 +2193,14 @@ static int isp_probe(struct platform_device *pdev)
- 	int ret;
- 	int i, m;
-=20
-+	printk("isp_probe: 1\n");
- 	isp =3D devm_kzalloc(&pdev->dev, sizeof(*isp), GFP_KERNEL);
- 	if (!isp) {
- 		dev_err(&pdev->dev, "could not allocate memory\n");
- 		return -ENOMEM;
- 	}
-=20
-+		printk("isp_probe: 2\n");
- 	ret =3D fwnode_property_read_u32(of_fwnode_handle(pdev->dev.of_node),
- 				       "ti,phy-type", &isp->phy_type);
- 	if (ret)
-@@ -2219,6 +2221,8 @@ static int isp_probe(struct platform_device *pdev)
- 	mutex_init(&isp->isp_mutex);
- 	spin_lock_init(&isp->stat_lock);
-=20
-+			printk("isp_probe: 3\n");
-+
- 	ret =3D v4l2_async_notifier_parse_fwnode_endpoints(
- 		&pdev->dev, &isp->notifier, sizeof(struct isp_async_subdev),
- 		isp_fwnode_parse);
-@@ -2232,6 +2236,7 @@ static int isp_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto error;
-=20
-+				printk("isp_probe: 4\n");
- 	platform_set_drvdata(pdev, isp);
-=20
- 	/* Regulators */
-@@ -2258,6 +2263,7 @@ static int isp_probe(struct platform_device *pdev)
- 			return PTR_ERR(isp->mmio_base[map_idx]);
- 	}
-=20
-+	printk("isp_probe: 5\n");
- 	ret =3D isp_get_clocks(isp);
- 	if (ret < 0)
- 		goto error;
-@@ -2277,6 +2283,7 @@ static int isp_probe(struct platform_device *pdev)
- 		goto error;
- 	}
-=20
-+		printk("isp_probe: 6\n");
- 	ret =3D isp_reset(isp);
- 	if (ret < 0)
- 		goto error_isp;
-@@ -2306,6 +2313,7 @@ static int isp_probe(struct platform_device *pdev)
- 			isp->mmio_base[OMAP3_ISP_IOMEM_CSI2A_REGS1]
- 			+ isp_res_maps[m].offset[i];
-=20
-+		printk("isp_probe: 7\n");
- 	isp->mmio_hist_base_phys =3D
- 		mem->start + isp_res_maps[m].offset[OMAP3_ISP_IOMEM_HIST];
-=20
-@@ -2316,6 +2324,8 @@ static int isp_probe(struct platform_device *pdev)
- 		goto error_isp;
- 	}
-=20
-+		printk("isp_probe: 8\n");
-+
- 	/* Interrupt */
- 	ret =3D platform_get_irq(pdev, 0);
- 	if (ret <=3D 0) {
-@@ -2325,6 +2335,7 @@ static int isp_probe(struct platform_device *pdev)
- 	}
- 	isp->irq_num =3D ret;
-=20
-+			printk("isp_probe: 9\n");
- 	if (devm_request_irq(isp->dev, isp->irq_num, isp_isr, IRQF_SHARED,
- 			     "OMAP3 ISP", isp)) {
- 		dev_err(isp->dev, "Unable to request IRQ\n");
-@@ -2332,6 +2343,7 @@ static int isp_probe(struct platform_device *pdev)
- 		goto error_iommu;
- 	}
-=20
-+				printk("isp_probe: 10\n");
- 	/* Entities */
- 	ret =3D isp_initialize_modules(isp);
- 	if (ret < 0)
-@@ -2345,27 +2357,35 @@ static int isp_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto error_register_entities;
-=20
-+					printk("isp_probe: 11\n");
- 	isp->notifier.ops =3D &isp_subdev_notifier_ops;
-=20
- 	ret =3D v4l2_async_notifier_register(&isp->v4l2_dev, &isp->notifier);
- 	if (ret)
- 		goto error_register_entities;
-=20
-+					printk("isp_probe: 12\n");=09
- 	isp_core_init(isp, 1);
-+					printk("isp_probe: 13\n");	=09
- 	omap3isp_put(isp);
-=20
- 	return 0;
-=20
- error_register_entities:
-+					printk("isp_probe: f1\n");	=09
- 	isp_unregister_entities(isp);
- error_modules:
-+						printk("isp_probe: f2\n");	=09
- 	isp_cleanup_modules(isp);
- error_iommu:
-+							printk("isp_probe: f3\n");	=09
- 	isp_detach_iommu(isp);
- error_isp:
-+							printk("isp_probe: f4\n");	=09
- 	isp_xclk_cleanup(isp);
- 	__omap3isp_put(isp, false);
- error:
-+						printk("isp_probe: f5\n");		=09
- 	v4l2_async_notifier_cleanup(&isp->notifier);
- 	mutex_destroy(&isp->isp_mutex);
-=20
+Not sure -EFAULT is the right error value here. -EINVAL?
 
+> +
+> +       rpm_msg->msg.state = state;
+> +
+> +       if (state == RPMH_ACTIVE_ONLY_STATE) {
+> +               WARN_ON(irqs_disabled());
+> +               ret = rpmh_rsc_send_data(rc->ctrlr->drv, &rpm_msg->msg);
+> +               if (!ret)
+> +                       dev_dbg(rc->dev,
+> +                              "RPMH request sent addr=0x%x, data=0x%x\n",
+> +                              rpm_msg->msg.payload[0].addr,
+> +                              rpm_msg->msg.payload[0].data);
+> +               else
+> +                       dev_warn(rc->dev,
+> +                               "Error in RPMH request addr=0x%x, data=0x%x\n",
+> +                               rpm_msg->msg.payload[0].addr,
+> +                               rpm_msg->msg.payload[0].data);
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +/**
+> + * rpmh_write: Write a set of RPMH commands and block until response
+> + *
+> + * @rc: The RPMh handle got from rpmh_get_dev_channel
+> + * @state: Active/sleep set
+> + * @cmd: The payload data
+> + * @n: The number of elements in payload
+> + *
+> + * May sleep. Do not call from atomic contexts.
+> + */
+> +int rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
+> +             struct tcs_cmd *cmd, int n)
+> +{
+> +       DECLARE_COMPLETION_ONSTACK(compl);
+> +       atomic_t wait_count = ATOMIC_INIT(1);
+> +       DEFINE_RPMH_MSG_ONSTACK(rc, state, &compl, &wait_count, rpm_msg);
+> +       int ret;
+> +
+> +       if (IS_ERR_OR_NULL(rc) || !cmd || n <= 0 || n > MAX_RPMH_PAYLOAD)
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+How is rc IS_ERR_OR_NULL at this point?
 
---r5Pyd7+fXNt84Ff3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Should n be unsigned then?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> +               return -EINVAL;
+> +
+> +       might_sleep();
 
-iEYEARECAAYFAlqhhgYACgkQMOfwapXb+vKCSQCfWsJ5G+Yd3K5RWxyVRZuylcFz
-0kIAnRkP10VOtBofjcGg9sjZA+pcWEME
-=mR/E
------END PGP SIGNATURE-----
+The wait_for_tx_done() would handle this might_sleep?
 
---r5Pyd7+fXNt84Ff3--
+> +
+> +       memcpy(rpm_msg.cmd, cmd, n * sizeof(*cmd));
+> +       rpm_msg.msg.num_payload = n;
+> +
+> +       ret = __rpmh_write(rc, state, &rpm_msg);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return wait_for_tx_done(rc, &compl, cmd[0].addr, cmd[0].data);
+> +}
+> +EXPORT_SYMBOL(rpmh_write);
+> +
+> +static struct rpmh_ctrlr *get_rpmh_ctrlr(struct platform_device *pdev)
+> +{
+> +       int i;
+> +       struct rsc_drv *drv = dev_get_drvdata(pdev->dev.parent);
+> +       struct rpmh_ctrlr *ctrlr = ERR_PTR(-EFAULT);
+
+Not sure -EFAULT is the right error value here.
+
+> +
+> +       if (!drv)
+> +               return ctrlr;
+> +
+> +       mutex_lock(&rpmh_ctrlr_mutex);
+> +       for (i = 0; i < RPMH_MAX_MBOXES; i++) {
+> +               if (rpmh_rsc[i].drv == drv) {
+> +                       ctrlr = &rpmh_rsc[i];
+> +                       goto unlock;
+> +               }
+> +       }
+> +
+> +       for (i = 0; i < RPMH_MAX_MBOXES; i++) {
+> +               if (rpmh_rsc[i].drv == NULL) {
+> +                       ctrlr = &rpmh_rsc[i];
+> +                       ctrlr->drv = drv;
+> +                       break;
+> +               }
+> +       }
+> +       WARN_ON(i == RPMH_MAX_MBOXES);
+> +unlock:
+> +       mutex_unlock(&rpmh_ctrlr_mutex);
+> +       return ctrlr;
+> +}
+> +
+> +/**
+> + * rpmh_get_client: Get the RPMh handle
+> + *
+> + * @pdev: the platform device which needs to communicate with RPM
+> + * accelerators
+> + * May sleep.
+> + */
+> +struct rpmh_client *rpmh_get_client(struct platform_device *pdev)
+
+Given that the child devices are fairly well aware that they're rpmh
+device drivers, why do we need this set of APIs in a different file and
+also why do we need to have a client cookie design? It would make sense
+to have the cookie if the device hierarchy wasn't direct, but that
+doesn't seem to be the case here. Also it would make things easier to
+follow if the code was folded into the same C file. It looks like we may
+have two files exporting symbols to each other but not anywhere else.
+
+Take a look at clk-rpm.c in clk/qcom and you'll see that we don't do any
+sort of client cookie. Instead, the parent device drv data has the
+pointer we want to get, and then the rpm APIs take that pointer.
+
+> +{
+> +       struct rpmh_client *rc;
+> +
+> +       rc = kzalloc(sizeof(*rc), GFP_KERNEL);
+> +       if (!rc)
