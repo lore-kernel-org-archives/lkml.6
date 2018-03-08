@@ -1,70 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755310AbeCHHIr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 02:08:47 -0500
-Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:43314
-        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755009AbeCHHIm (ORCPT
+        id S935536AbeCHHMZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 02:12:25 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:43939 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754570AbeCHHMW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 02:08:42 -0500
-X-ASG-Debug-ID: 1520492919-093b7e4ca910e20001-xx1T2L
-X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
-From: Shunyong Yang <shunyong.yang@hxt-semitech.com>
-To: <kwankhede@nvidia.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Shunyong Yang <shunyong.yang@hxt-semitech.com>,
-        Joey Zheng <yu.zheng@hxt-semitech.com>
-Subject: [PATCH] vfio-mdev/samples: change RDI interrupt condition
-Date: Thu, 8 Mar 2018 15:08:07 +0800
-X-ASG-Orig-Subj: [PATCH] vfio-mdev/samples: change RDI interrupt condition
-Message-ID: <1520492887-8021-1-git-send-email-shunyong.yang@hxt-semitech.com>
-X-Mailer: git-send-email 1.8.3.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.5.21.109]
-X-ClientProxiedBy: HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) To
- HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14)
-X-Barracuda-Connect: UNKNOWN[10.128.0.14]
-X-Barracuda-Start-Time: 1520492919
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.5975 1.0000 0.7500
-X-Barracuda-Spam-Score: 0.75
-X-Barracuda-Spam-Status: No, SCORE=0.75 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.48719
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+        Thu, 8 Mar 2018 02:12:22 -0500
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+To: mjg59@srcf.ucam.org, pali.rohar@gmail.com, dvhart@infradead.org,
+        andy@infradead.org, mario.limonciello@dell.com, tiwai@suse.com
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH 1/2] dell-led: Change dell-led.h to dell-common.h
+Date: Thu,  8 Mar 2018 15:12:06 +0800
+Message-Id: <20180308071207.19850-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When FIFO mode is enabled, the receive data available interrupt
-(UART_IIR_RDI in code) should be triggered when the number of data
-in FIFO is equal or larger than interrupt trigger level.
+This header will be used for more than just led. Change it to a more
+generic name.
 
-This patch changes the trigger level check to ensure multiple bytes
-received from upper layer can trigger RDI interrupt correctly.
-
-Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
-Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 ---
- samples/vfio-mdev/mtty.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/x86/dell-laptop.c          | 2 +-
+ include/linux/{dell-led.h => dell-common.h} | 4 ++--
+ sound/pci/hda/dell_wmi_helper.c             | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+ rename include/linux/{dell-led.h => dell-common.h} (61%)
 
-diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
-index 09f255bdf3ac..7abb79d8313d 100644
---- a/samples/vfio-mdev/mtty.c
-+++ b/samples/vfio-mdev/mtty.c
-@@ -534,7 +534,7 @@ static void handle_bar_read(unsigned int index, struct mdev_state *mdev_state,
+diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
+index c52c6723374b..8ba820e6c3d0 100644
+--- a/drivers/platform/x86/dell-laptop.c
++++ b/drivers/platform/x86/dell-laptop.c
+@@ -29,7 +29,7 @@
+ #include <linux/mm.h>
+ #include <linux/i8042.h>
+ #include <linux/debugfs.h>
+-#include <linux/dell-led.h>
++#include <linux/dell-common.h>
+ #include <linux/seq_file.h>
+ #include <acpi/video.h>
+ #include "dell-rbtn.h"
+diff --git a/include/linux/dell-led.h b/include/linux/dell-common.h
+similarity index 61%
+rename from include/linux/dell-led.h
+rename to include/linux/dell-common.h
+index 92521471517f..37e4b614dd74 100644
+--- a/include/linux/dell-led.h
++++ b/include/linux/dell-common.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef __DELL_LED_H__
+-#define __DELL_LED_H__
++#ifndef __DELL_COMMON_H__
++#define __DELL_COMMON_H__
  
- 		/* Interrupt priority 2: Fifo trigger level reached */
- 		if ((ier & UART_IER_RDI) &&
--		    (mdev_state->s[index].rxtx.count ==
-+		    (mdev_state->s[index].rxtx.count >=
- 		      mdev_state->s[index].intr_trigger_level))
- 			*buf |= UART_IIR_RDI;
+ int dell_micmute_led_set(int on);
  
+diff --git a/sound/pci/hda/dell_wmi_helper.c b/sound/pci/hda/dell_wmi_helper.c
+index 1b48a8c19d28..56050cc3c0ee 100644
+--- a/sound/pci/hda/dell_wmi_helper.c
++++ b/sound/pci/hda/dell_wmi_helper.c
+@@ -4,7 +4,7 @@
+  */
+ 
+ #if IS_ENABLED(CONFIG_DELL_LAPTOP)
+-#include <linux/dell-led.h>
++#include <linux/dell-common.h>
+ 
+ enum {
+ 	MICMUTE_LED_ON,
 -- 
-1.8.3.1
+2.15.1
