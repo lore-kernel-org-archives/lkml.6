@@ -1,71 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935713AbeCHKaR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 05:30:17 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:40649 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755301AbeCHKaP (ORCPT
+        id S965542AbeCHKa2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 05:30:28 -0500
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:43904 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935716AbeCHKa0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 05:30:15 -0500
-From: Niklas Cassel <niklas.cassel@axis.com>
-To: Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Jose.Abreu@synopsys.com, pavel@ucw.cz,
-        Niklas Cassel <niklass@axis.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] net: stmmac: remove superfluous wmb() memory barriers
-Date: Thu,  8 Mar 2018 11:30:05 +0100
-Message-Id: <20180308103006.1197-1-niklas.cassel@axis.com>
-X-Mailer: git-send-email 2.14.2
-X-TM-AS-GCONF: 00
+        Thu, 8 Mar 2018 05:30:26 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w28AUJSV020696
+X-Nifty-SrcIP: [209.85.217.170]
+X-Google-Smtp-Source: AG47ELsxDDJBXpDr7ke+y+ZFy+pD+wZKzItwcQYoP5OpaFK4YCGKyeAF6SRi+NtIqCec5Q+3iPEWa66ICAJlWnyvgoo=
+MIME-Version: 1.0
+In-Reply-To: <2bb55c11-bffb-4099-f1fc-d31fb058d422@cn.fujitsu.com>
+References: <1520471103-10089-1-git-send-email-yamada.masahiro@socionext.com>
+ <1520471103-10089-3-git-send-email-yamada.masahiro@socionext.com>
+ <4022257e-9ab0-b038-df0e-b15b98cb999f@cn.fujitsu.com> <CAK7LNARhhs4o-cKKzW9exRjbCYpTntdBvUgsx6o-egsTc2pQ0g@mail.gmail.com>
+ <2bb55c11-bffb-4099-f1fc-d31fb058d422@cn.fujitsu.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 8 Mar 2018 19:29:38 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASVo=q2DJOM=AY+v_Yowx6Vm7k2uQNibOSWQ4TCvQQGPA@mail.gmail.com>
+Message-ID: <CAK7LNASVo=q2DJOM=AY+v_Yowx6Vm7k2uQNibOSWQ4TCvQQGPA@mail.gmail.com>
+Subject: Re: [PATCH 2/5] kbuild: define KBUILD_MODNAME even if multiple
+ modules share objects
+To: Cao jin <caoj.fnst@cn.fujitsu.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Govind Singh <govinds@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These wmb() memory barriers are performed after the last descriptor write,
-and they are followed by enable_dma_transmission()/set_tx_tail_ptr(),
-i.e. a writel() to MMIO register space.
-Since writel() itself performs the equivalent of a wmb() before doing the
-actual write, these barriers are superfluous, and removing them should
-thus not change any existing behavior.
+2018-03-08 19:25 GMT+09:00 Cao jin <caoj.fnst@cn.fujitsu.com>:
+> Masahiro-san
+>
+> On 03/08/2018 06:21 PM, Masahiro Yamada wrote:
+>> 2018-03-08 19:11 GMT+09:00 Cao jin <caoj.fnst@cn.fujitsu.com>:
+>>>
+>>>
+>>> On 03/08/2018 09:05 AM, Masahiro Yamada wrote:
+>>>> Currently, KBUILD_MODNAME is defined only when $(modname) contains
+>>>> just one word.  If an object is shared among multiple modules,
+>>>> undefined KBUILD_MODNAME could cause a build error.  For example,
+>>>> if CONFIG_DYNAMIC_DEBUG is enabled, any call of printk() populates
+>>>> .modname, then fails to build due to undefined KBUILD_MODNAME.
+>>>>
+>>>> Take the following code as an example:
+>>>>
+>>>>   obj-m += foo.o
+>>>>   obj-m += bar.o
+>>>>   foo-objs := foo-bar-common.o foo-main.o
+>>>>   bar-objs := foo-bar-common.o bar-main.o
+>>>>
+>>>> In this case, there is room for argument what to define for
+>>>> KBUILD_MODNAME when foo-bar-common.o is being compiled.
+>>>> "foo", "bar", or what else?
+>>>>
+>>>> One idea is to define colon-separated modules that share the object,
+>>>> in this case, "bar:foo" (modules are sorted alphabetically by
+>>>> $(sort ...).
+>>>>
+>>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>>> ---
+>>>>
+>>>>  scripts/Makefile.lib | 9 +++++----
+>>>>  1 file changed, 5 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+>>>> index a7e315f..a1fbd6a 100644
+>>>> --- a/scripts/Makefile.lib
+>>>> +++ b/scripts/Makefile.lib
+>>>> @@ -92,8 +92,7 @@ subdir-ym   := $(addprefix $(obj)/,$(subdir-ym))
+>>>>  #       differ in different configs.
+>>>>  name-fix = $(squote)$(quote)$(subst $(comma),_,$(subst -,_,$1))$(quote)$(squote)
+>>>>  basename_flags = -DKBUILD_BASENAME=$(call name-fix,$(basetarget))
+>>>> -modname_flags  = $(if $(filter 1,$(words $(modname))),\
+>>>> -                 -DKBUILD_MODNAME=$(call name-fix,$(modname)))
+>>>> +modname_flags  = -DKBUILD_MODNAME=$(call name-fix,$(modname))
+>>>>
+>>>
+>>> I guess there is comment also need to be modified above this code hunk:
+>>>
+>>> Note: Files that end up in two or more modules are compiled without the
+>>>       KBUILD_MODNAME definition. The reason is that any made-up name
+>>>       would differ in different configs.
+>>
+>>
+>> Why do I have to add lying comments here?
+>>
+>> The commit subject/log claims KBUILD_MODNAME should be _always_ defined.
+>>
+>
+> I feel you misunderstand my intention, the comment I mentioned is
+> already there, so they should be modified according to your patch.
+>
 
-Ordering within the descriptor writes is already ensured with dma_wmb()
-barriers inside prepare_tx_desc(first, ..)/prepare_tso_tx_desc(first, ..).
+Ugh.  Sorry I missed your intention.
 
-Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 12 ------------
- 1 file changed, 12 deletions(-)
+I will remove the comment.  Thanks!
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index a9856a8bf8ad..005fb45ace30 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2998,12 +2998,6 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
- 		priv->hw->desc->set_tx_owner(mss_desc);
- 	}
- 
--	/* The own bit must be the latest setting done when prepare the
--	 * descriptor and then barrier is needed to make sure that
--	 * all is coherent before granting the DMA engine.
--	 */
--	wmb();
--
- 	if (netif_msg_pktdata(priv)) {
- 		pr_info("%s: curr=%d dirty=%d f=%d, e=%d, f_p=%p, nfrags %d\n",
- 			__func__, tx_q->cur_tx, tx_q->dirty_tx, first_entry,
-@@ -3221,12 +3215,6 @@ static netdev_tx_t stmmac_xmit(struct sk_buff *skb, struct net_device *dev)
- 		priv->hw->desc->prepare_tx_desc(first, 1, nopaged_len,
- 						csum_insertion, priv->mode, 1,
- 						last_segment, skb->len);
--
--		/* The own bit must be the latest setting done when prepare the
--		 * descriptor and then barrier is needed to make sure that
--		 * all is coherent before granting the DMA engine.
--		 */
--		wmb();
- 	}
- 
- 	netdev_tx_sent_queue(netdev_get_tx_queue(dev, queue), skb->len);
+
+
 -- 
-2.14.2
+Best Regards
+Masahiro Yamada
