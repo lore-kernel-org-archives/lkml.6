@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965227AbeCHICB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 03:02:01 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:45616 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965050AbeCHIB6 (ORCPT
+        id S965325AbeCHICG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 03:02:06 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:46341 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965106AbeCHICB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 03:01:58 -0500
-X-Google-Smtp-Source: AG47ELt3yrVAylKBQG2vOWbxZc7AuSxSoD+f4etCrgly44Tx25+twRP/nUCYZk8iiOJBHIZvA1qDLA==
+        Thu, 8 Mar 2018 03:02:01 -0500
+X-Google-Smtp-Source: AG47ELv+skjwl4Pg+TbFow5+Vu9hJeToOmKOoUT8Dvi3ZFVtGKhf/d+ZRkEy8AQBvtvIjqESAoCU7Q==
 From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To: linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+Cc: Luis de Bethencourt <luisbg@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 03/12] efi/arm*: Stop printing addresses of virtual mappings
-Date: Thu,  8 Mar 2018 08:00:11 +0000
-Message-Id: <20180308080020.22828-4-ard.biesheuvel@linaro.org>
+Subject: [PATCH 04/12] efi/x86: Fix trailing semicolons
+Date: Thu,  8 Mar 2018 08:00:12 +0000
+Message-Id: <20180308080020.22828-5-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
 References: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
@@ -23,40 +24,38 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the recent %p -> %px changes, we now get something like this in
-the kernel boot log on ARM/arm64 EFI systems:
+From: Luis de Bethencourt <luisbg@kernel.org>
 
-     Remapping and enabling EFI services.
-       EFI remap 0x00000087fb830000 =>         (ptrval)
-       EFI remap 0x00000087fbdb0000 =>         (ptrval)
-       EFI remap 0x00000087fffc0000 =>         (ptrval)
+The trailing semicolon is an empty statement that does no operation.
+Removing them since they don't do anything.
 
-The physical addresses of the UEFI runtime regions will also be
-printed when booting with the efi=debug command line option, and the
-virtual addresses can be inspected via /sys/kernel/debug/efi_page_tables
-(if enabled). So let's just remove the lines above.
-
-Acked-by: Leif Lindholm <leif.lindholm@linaro.org>
+Signed-off-by: Luis de Bethencourt <luisbg@kernel.org>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- drivers/firmware/efi/arm-runtime.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ arch/x86/boot/compressed/eboot.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
-index 86a1ad17a32e..13561aeb7396 100644
---- a/drivers/firmware/efi/arm-runtime.c
-+++ b/drivers/firmware/efi/arm-runtime.c
-@@ -83,10 +83,7 @@ static bool __init efi_virtmap_init(void)
- 			return false;
+diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
+index 353e20c3f114..886a9115af62 100644
+--- a/arch/x86/boot/compressed/eboot.c
++++ b/arch/x86/boot/compressed/eboot.c
+@@ -439,7 +439,7 @@ setup_uga32(void **uga_handle, unsigned long size, u32 *width, u32 *height)
+ 	struct efi_uga_draw_protocol *uga = NULL, *first_uga;
+ 	efi_guid_t uga_proto = EFI_UGA_PROTOCOL_GUID;
+ 	unsigned long nr_ugas;
+-	u32 *handles = (u32 *)uga_handle;;
++	u32 *handles = (u32 *)uga_handle;
+ 	efi_status_t status = EFI_INVALID_PARAMETER;
+ 	int i;
  
- 		ret = efi_create_mapping(&efi_mm, md);
--		if  (!ret) {
--			pr_info("  EFI remap %pa => %p\n",
--				&phys, (void *)(unsigned long)md->virt_addr);
--		} else {
-+		if (ret) {
- 			pr_warn("  EFI remap %pa: failed to create mapping (%d)\n",
- 				&phys, ret);
- 			return false;
+@@ -484,7 +484,7 @@ setup_uga64(void **uga_handle, unsigned long size, u32 *width, u32 *height)
+ 	struct efi_uga_draw_protocol *uga = NULL, *first_uga;
+ 	efi_guid_t uga_proto = EFI_UGA_PROTOCOL_GUID;
+ 	unsigned long nr_ugas;
+-	u64 *handles = (u64 *)uga_handle;;
++	u64 *handles = (u64 *)uga_handle;
+ 	efi_status_t status = EFI_INVALID_PARAMETER;
+ 	int i;
+ 
 -- 
 2.15.1
