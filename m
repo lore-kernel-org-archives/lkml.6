@@ -1,200 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755651AbeCHKYI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 05:24:08 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37136 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751616AbeCHKYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 05:24:06 -0500
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: kvm@vger.kernel.org, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] x86/kvm: use Enlightened VMCS when running on Hyper-V
-References: <20180226171121.18974-1-vkuznets@redhat.com>
-        <20180226171121.18974-6-vkuznets@redhat.com>
-        <20180307175611.GF12290@flask>
-Date: Thu, 08 Mar 2018 11:23:59 +0100
-In-Reply-To: <20180307175611.GF12290@flask> ("Radim \=\?utf-8\?B\?S3LEjW3DocWZ\?\=
- \=\?utf-8\?B\?Iidz\?\= message of "Wed,
-        7 Mar 2018 18:56:11 +0100")
-Message-ID: <87h8pqyif4.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S935661AbeCHKZJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 05:25:09 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:45479 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755107AbeCHKZF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 05:25:05 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w28AOpsF027953
+X-Nifty-SrcIP: [209.85.213.47]
+X-Google-Smtp-Source: AG47ELuhSAOb5RXtlr0FItGE8DPSkrhLma1OHOQL590rZCc9UNHlCFM1hAj77ladrWUK6/cSDq6ibs/LGgrhkld5WZM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1520471103-10089-2-git-send-email-yamada.masahiro@socionext.com>
+References: <1520471103-10089-1-git-send-email-yamada.masahiro@socionext.com> <1520471103-10089-2-git-send-email-yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 8 Mar 2018 19:24:10 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASpT5-f9kmxHTXCtxv+p-t8XT4j6SOHyiReXK6_5jwz8g@mail.gmail.com>
+Message-ID: <CAK7LNASpT5-f9kmxHTXCtxv+p-t8XT4j6SOHyiReXK6_5jwz8g@mail.gmail.com>
+Subject: Re: [PATCH 1/5] kbuild: remove unnecessary $(subst $(obj)/,,...) in modname-multi
+To: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc: Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Cao jin <caoj.fnst@cn.fujitsu.com>,
+        Govind Singh <govinds@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Radim Krčmář <rkrcmar@redhat.com> writes:
+2018-03-08 10:04 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> In the context ...
+>
+>     $(obj)/%.s: $(src)/%.c FORCE
+>             $(call if_changed_dep,cc_s_c)
+>
+>     $(obj)/%.i: $(src)/%.c FORCE
+>             $(call if_changed_dep,cpp_i_c)
+>
+>     $(obj)/%.o: $(src)/%.c $(recordmcount_source) $(objtool_dep) FORCE
+>             $(call cmd,force_checksrc)
+>             $(call if_changed_rule,cc_o_c)
+>
+>     $(obj)/%.lst: $(src)/%.c FORCE
+>             $(call if_changed_dep,cc_lst_c)
+>
+> '$*' returns the stem of the target (the part of '%'), so $(obj)/ has
+> already been ripped off.
+>
+> $(subst $(obj)/,,$*.o) is the same as $(*.o)
 
-> 2018-02-26 18:11+0100, Vitaly Kuznetsov:
->> Enlightened VMCS is just a structure in memory, the main benefit
->> besides avoiding somewhat slower VMREAD/VMWRITE is using clean field
->> mask: we tell the underlying hypervisor which fields were modified
->> since VMEXIT so there's no need to inspect them all.
->> 
->> Tight CPUID loop test shows significant speedup:
->> Before: 20766 cycles
->> After: 8912 cycles
->> 
->> Static key is being used to avoid performance penalty for non-Hyper-V
->> deployments. Tests show we add around 3 (three) CPU cycles on each
->> VMEXIT (1077.5 cycles before, 1080.7 cycles after for the same CPUID
->> loop on bare metal). We can probably avoid one test/jmp in vmx_vcpu_run()
->> but I don't see a clean way to use static key in assembly.
->
-> Patching the correct instruction should be simpler than replicating
-> static_branch (because we have to support assemblers without ASM_GOTO),
-> but I'd care about that later, if ever.
->
->> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->> ---
->> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
->> @@ -999,6 +1000,442 @@ static const u32 vmx_msr_index[] = {
->> +/*
->> + *  Enlightened VMCSv1 doesn't support these:
->
-> I take it that the code assumes that the hypervisor will never enable
-> these features if we have enlightened VMCS.  I think it would be best to
-> disable those features when turning on evmcs.
 
-Sure.
+Log fix-up:
 
->
->> + *	POSTED_INTR_NV                  = 0x00000002,
->> + *	GUEST_INTR_STATUS               = 0x00000810,
->> + *	APIC_ACCESS_ADDR		= 0x00002014,
->> + *	POSTED_INTR_DESC_ADDR           = 0x00002016,
->> + *	EOI_EXIT_BITMAP0                = 0x0000201c,
->> + *	EOI_EXIT_BITMAP1                = 0x0000201e,
->> + *	EOI_EXIT_BITMAP2                = 0x00002020,
->> + *	EOI_EXIT_BITMAP3                = 0x00002022,
->
-> enable_apicv, flexpriority_enabled
->
->> + *	GUEST_PML_INDEX			= 0x00000812,
->> + *	PML_ADDRESS			= 0x0000200e,
->
-> enable_pml
->
->> + *	VM_FUNCTION_CONTROL             = 0x00002018,
->> + *	EPTP_LIST_ADDRESS               = 0x00002024,
->
-> (only vm controls)
->
->> + *	VMREAD_BITMAP                   = 0x00002026,
->> + *	VMWRITE_BITMAP                  = 0x00002028,
->
-> enable_shadow_vmcs
->
->> + *	TSC_MULTIPLIER                  = 0x00002032,
->
-> (only vm controls)
->
->> + *	GUEST_IA32_PERF_GLOBAL_CTRL	= 0x00002808,
->> + *	GUEST_IA32_RTIT_CTL		= 0x00002814,
->> + *	HOST_IA32_PERF_GLOBAL_CTRL	= 0x00002c04,
->
-> (only vm controls)
->
->> + *	PLE_GAP                         = 0x00004020,
->> + *	PLE_WINDOW                      = 0x00004022,
->
-> ple_gap
->
->> + *	VMX_PREEMPTION_TIMER_VALUE      = 0x0000482E,
->
-> enable_preemption_timer
->
->> + */
->> +};
->> +
->> +static inline u16 get_evmcs_offset(unsigned long field)
->> +{
->> +	unsigned int index = ROL16(field, 6);
->> +
->> +	if (index >= ARRAY_SIZE(vmcs_field_to_evmcs_1))
->> +		return 0;
->
-> Please add a warning when trying to use an EVMCS that doesn't exist,
-> just like the VMREAD/WRITE does -- it's an internal KVM error.
->
+ ... is the same as $*.o
 
-Will do.
 
->> +
->> +	return (u16)vmcs_field_to_evmcs_1[index];
->> +}
->> +
->> @@ -3828,7 +4302,12 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf)
->>  	vmcs_conf->size = vmx_msr_high & 0x1fff;
->>  	vmcs_conf->order = get_order(vmcs_conf->size);
->>  	vmcs_conf->basic_cap = vmx_msr_high & ~0x1fff;
->> -	vmcs_conf->revision_id = vmx_msr_low;
->> +
->> +	/* KVM supports Enlightened VMCS v1 only */
->> +	if (static_branch_unlikely(&enable_evmcs))
->> +		vmcs_conf->revision_id = 1;
+
+
+
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 >
-> I think we have to put the bottom bits from ms_hyperv.nested_features
-> here. 16.5.1 Enlightened VMCS Versioning:
+>  scripts/Makefile.lib | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
->   Each enlightened VMCS structure contains a version field, which is
->   reported by the L0 hypervisor (see 2.4.11)
-
-see below
-
+> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> index 5589bae..a7e315f 100644
+> --- a/scripts/Makefile.lib
+> +++ b/scripts/Makefile.lib
+> @@ -175,7 +175,7 @@ dtc_cpp_flags  = -Wp,-MD,$(depfile).pre.tmp -nostdinc                    \
 >
->> +	else
->> +		vmcs_conf->revision_id = vmx_msr_low;
->>  
->>  	vmcs_conf->pin_based_exec_ctrl = _pin_based_exec_control;
->>  	vmcs_conf->cpu_based_exec_ctrl = _cpu_based_exec_control;
->> @@ -12414,7 +12908,35 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
->>  
->>  static int __init vmx_init(void)
->>  {
->> -	int r = kvm_init(&vmx_x86_ops, sizeof(struct vcpu_vmx),
->> +	int r;
->> +
->> +#if IS_ENABLED(CONFIG_HYPERV)
->> +	/*
->> +	 * Enlightened VMCS usage should be recommended and the host needs
->> +	 * to support eVMCS v1 or above. We can also disable eVMCS support
->> +	 * with module parameter.
->> +	 */
->> +	if (enlightened_vmcs &&
->> +	    ms_hyperv.hints & HV_X64_ENLIGHTENED_VMCS_RECOMMENDED &&
->> +	    (ms_hyperv.nested_features & 0xff) >= 1) {
+>  # Finds the multi-part object the current object will be linked into
+>  modname-multi = $(sort $(foreach m,$(multi-used),\
+> -               $(if $(filter $(subst $(obj)/,,$*.o), $($(m:.o=-objs)) $($(m:.o=-y))),$(m:.o=))))
+> +               $(if $(filter $*.o, $($(m:.o=-objs)) $($(m:.o=-y))),$(m:.o=))))
 >
-> Please add macros like HV_X64_ENLIGHTENED_VMCS_VERSION and
-> KVM_EVMCS_VERSION for those numbers.
+>  # Useful for describing the dependency of composite objects
+>  # Usage:
+> --
+> 2.7.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-This can be arranged
 
-> I think we should not proceed with version other than 1 for now -- there
-> is no mention of backward compatibility in the spec.
-
-I think the check is correct. eVMCS version represents the format of the
-structure in memory. New versions may have nothing in common but at the
-same time Ver1 support can't be dropped from future Hyper-V versions
-without regressing L1s which don't support new version.
-
-So currently we check that L0 supports at least ver1 (or some newer
-version which implies all previously released versions are supported
-too) and we declare that KVM supports ver1 exactly (this is the format
-of the structure we put to memory and share with L0). We can't declare
-support for any other version.
-
-Currently, it is only Ver1 on WS2016.
 
 -- 
-  Vitaly
+Best Regards
+Masahiro Yamada
