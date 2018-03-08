@@ -1,90 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936126AbeCHSKC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 13:10:02 -0500
-Received: from mga01.intel.com ([192.55.52.88]:32067 "EHLO mga01.intel.com"
+        id S1754718AbeCHSLj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 13:11:39 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45493 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933221AbeCHSJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 13:09:58 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,441,1515484800";
-   d="scan'208";a="33456795"
-From: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-CC: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Lee@vger.kernel.org" <Lee@vger.kernel.org>, Chun-Yi <jlee@suse.com>,
-        Borislav Petkov <bp@alien8.de>, "Luck, Tony" <tony.luck@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        "Neri, Ricardo" <ricardo.neri@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        "Zijlstra, Peter" <peter.zijlstra@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Williams, Dan J" <dan.j.williams@intel.com>
-Subject: RE: [PATCH V2 2/3] efi: Introduce efi_rts_workqueue and some
- infrastructure to invoke all efi_runtime_services()
-Thread-Topic: [PATCH V2 2/3] efi: Introduce efi_rts_workqueue and some
- infrastructure to invoke all efi_runtime_services()
-Thread-Index: AQHTtNngYFyf2e7B30yWdA6aWmV0oqPFMqUAgACLVvCAANmVgIAAD2Gg
-Date: Thu, 8 Mar 2018 18:09:56 +0000
-Message-ID: <FFF73D592F13FD46B8700F0A279B802F2E581AE7@ORSMSX114.amr.corp.intel.com>
-References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <1520292190-5027-3-git-send-email-sai.praneeth.prakhya@intel.com>
- <CANiq72m6_WCXSrBPesgvO1rsF1_AT5Jod_rY-y1f4JjO-SMCDg@mail.gmail.com>
- <FFF73D592F13FD46B8700F0A279B802F2E5817F2@ORSMSX114.amr.corp.intel.com>
- <CANiq72krjVviT0mPqpK5jbLWEbDx_OhG6+eUmyT8thZPEjkJKg@mail.gmail.com>
-In-Reply-To: <CANiq72krjVviT0mPqpK5jbLWEbDx_OhG6+eUmyT8thZPEjkJKg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzAwZDBjYzItNDEyNy00ZjQ1LTgzOGQtZTI5ZmE4NDJkOWNmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiI2XC9GTGhURUdsOGFGZSs0VVY2VmNJOVNlNENcLzZyR2J1cjduZ0c3c2E4UEx0MkJrcXdEaHNyYjFUZlE5TXVWODEifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="utf-8"
+        id S1751984AbeCHSLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 13:11:37 -0500
+Date: Thu, 8 Mar 2018 18:11:36 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Waiman Long <longman@redhat.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v3 4/6] sysctl: Warn when a clamped sysctl parameter is
+ set out of range
+Message-ID: <20180308181136.GE4449@wotan.suse.de>
+References: <1519926220-7453-1-git-send-email-longman@redhat.com>
+ <1519926220-7453-5-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519926220-7453-5-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w28IA65v001055
 
-/*
-> >> > +        * Since we process only one efi_runtime_service() at a time, an
-> >> > +        * ordered workqueue (which creates only one execution context)
-> >> > +        * should suffice all our needs.
-> >> > +        */
-> >> > +       efi_rts_wq = alloc_ordered_workqueue("efi_rts_workqueue",
-> >> > + 0);
-> >>
-> >> efi_rts_wq or efi_rts_workqueue?
-> >>
-> >> > +       if (!efi_rts_wq) {
-> >> > +               pr_err("Failed to create efi_rts_workqueue, EFI runtime services "
-> >>
-> >> Same here.
-> >
-> > Sure! I will make it consistent with "efi_rts_wq". Just tried to be
-> > more verbose with names :)
-> >
+On Thu, Mar 01, 2018 at 12:43:38PM -0500, Waiman Long wrote:
+> Even with clamped sysctl parameters, it is still not that straight
+> forward to figure out the exact range of those parameters. One may
+> try to write extreme parameter values to see if they get clamped.
+> To make it easier, a warning with the expected range will now be
+> printed in the kernel ring buffer when a clamped sysctl parameter
+> receives an out of range value.
 > 
-> It is not a big deal, but using the exact same name is better for the purposes of
-> grepping and things like that :-)
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  include/linux/sysctl.h |  3 +++
+>  kernel/sysctl.c        | 52 ++++++++++++++++++++++++++++++++++++++++++--------
+>  2 files changed, 47 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+> index 448aa72..3db57af 100644
+> --- a/include/linux/sysctl.h
+> +++ b/include/linux/sysctl.h
+> @@ -130,11 +130,14 @@ struct ctl_table
+>   * @CTL_FLAGS_CLAMP_RANGE: Set to indicate that the entry should be
+>   *	flexibly clamped to min/max range in case the user provided
+>   *	an incorrect value.
+> + * @CTL_FLAGS_OOR_WARNED: Set to indicate that an out of range warning
+> + * 	had been issued for that entry.
+>   *
+>   * At most 16 different flags will be allowed.
+>   */
+>  enum ctl_table_flags {
+>  	CTL_FLAGS_CLAMP_RANGE		= BIT(0),
+> +	CTL_FLAGS_OOR_WARNED		= BIT(1),
+>  };
+>  
+>  struct ctl_node {
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index af351ed..6c68e77 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -2505,6 +2505,7 @@ static int proc_dointvec_minmax_sysadmin(struct ctl_table *table, int write,
+>   * @min: pointer to minimum allowable value
+>   * @max: pointer to maximum allowable value
+>   * @flags: pointer to flags
+> + * @name: sysctl parameter name
+>   *
+>   * The do_proc_dointvec_minmax_conv_param structure provides the
+>   * minimum and maximum values for doing range checking for those sysctl
+> @@ -2514,31 +2515,50 @@ struct do_proc_dointvec_minmax_conv_param {
+>  	int *min;
+>  	int *max;
+>  	uint16_t *flags;
+> +	const char *name;
+>  };
+>  
+> +/* Out of range warning message */
+> +#define proc_ctl_warn(type, ...)				  \
+> +	pr_warn("Kernel parameter \"%s\" was set out of range [%" \
+> +	#type ", %" #type "], clamped to %" #type ".\n", __VA_ARGS__)
+> +
 
-Yes, that makes sense.
+Usage of pr_*() macros are best used if and when you first
+also define
 
-> By the way, check the commit title/message, there are some others there too.
+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
-Sure! I will make changes to commit/title messages too.
+Also if we can avoid adding a new define for a pr_warn wrapper
+even better. I'd much prefer to have a helper static void routine
+which gets some params and does the print than have a define.
 
-Regards,
-Sai
+However you choose, I just don't want a #define around a simple
+pr_warn().
+
+   Luis
