@@ -1,123 +1,162 @@
-Return-Path: <poza@codeaurora.org>
-X-Google-Smtp-Source: AG47ELtnR2UXJx1KkwtcUm+uXoDV2OVVQ7nKCTKOAHccJ7GeZTWppRaFxM0rzsDNfZWNbLkjE84G
-ARC-Seal: i=1; a=rsa-sha256; t=1519919269; cv=none;
+Return-Path: <kernel-hardening-return-12238-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELtYWfKqMLO+BghTrv9TaS88TZa8L1sN6yVLQ7YkbQ7jxXyFDyFUYf4MM4/NWH7/bkA/5kyw
+ARC-Seal: i=1; a=rsa-sha256; t=1520528528; cv=none;
         d=google.com; s=arc-20160816;
-        b=V8tdZ/4Vb6rJBBM5hUeZIkUwno5gBFQzNUx3Fy9geB3c7w2AycsPiClX9NEaZv5DbY
-         cAZMpwo0XaIvhyo1qcWAqiGfyJ0dXFSU7H0jqa6jTKsgizOnUpHdQVziBbv0vWrLv2RG
-         4mZuk4UZXbtriak0Lhjo89YSM0X3Bs+dSQRvvksQohf7f6SWGAvohAhawvvhgzRWCtCp
-         ckSn6vxRvikhGWFfcq/+r1kDZpT0Wp+j1tXwWfJIiuzX3SsBDhvDpk3NhrhdkFJ3kcgX
-         SzRBm6xlhD59deuiucspgFiCEHMLqygsMOacCLGWF8vK4nHCyG9gdqqjTrDs40dWplJu
-         fRXg==
+        b=f9S6a4HcmPbj6lNf5AJ3NpUCwg9+grKJaiB/InGCNBdPgjS72TDxHedpVVWj8wo3Jc
+         8JZKHV0M5CQTMpL6M0bx/rOKyKkp+UyLopTPJX5DYVBENusR9lBI21pWUS9WQVnca2kq
+         +swCBfaZBXeMWSBAeSyCJ1+BMnAhiw4YIyoGRd/dSMp57DkpSgDHyzBi57cDdZfmh+pu
+         rJRTIfDlocgtcQgFXb+eGt7ysu2P6Xj+86xn7snN36Zlyx8UB1a2VDvkYNV6YbKqMeor
+         tnWo4FRIFaaYUpYNUsvu86VoWnwJUzrjqyo2rtko2t2ZqiyCShU8EYonDx4SEQikzGES
+         IdEg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:message-id:references:in-reply-to:subject:cc:to:from
-         :date:content-transfer-encoding:mime-version:dkim-signature
-         :dkim-signature:arc-authentication-results;
-        bh=tXCaxfnu769KYVb9sAJfEhWTkUpYBPK0xn45galsqT8=;
-        b=aSBiAluluPabNd5IAAAtE1ZG0P1RScJkHXh3UHvkrZwxeBRscXXB0bVD+016u5F6tB
-         Dmqn/wq4Jo8gkJlqJHHHWynB7PEknJSLcvx6nOulNghQgdWu6LnmGEVevUUYYQs5NZWe
-         iHRur5HQSSbu9JzTefowJ3kcDTd1BImFdhftb2+6X8TGGKgMw+v99ufaFEgx6Ij5JQRM
-         NHMKXVtzGtaLb4Faf3RU5fjgvm4Z7uHHdy92Tm3zPGwnx5L9xiACXkFyG/RebW4XvGEL
-         O3Zds1V3tUs4jX0Y+HVaUuhAqzQ9/0gBSY7BrCCZubRSHOfd3gZEY6gXxAqC+gMIXnV1
-         pw0w==
+        h=message-id:date:subject:cc:to:from:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=BAOnLg8xz/HX7iBPazryjgGzDg7+l7+F3AbP7nH4BXY=;
+        b=sAXz6HlHGFLLiNlU//dRWooCRNEfC71QLTmzC59iRWinVDlAyB+Z0xH+YfjE2M/Dxw
+         tcMsz3mYGYWtOWcZeLP0sOQh/cHkcAKo02v7JXAu8cZqT/jcCf2Q5f3d85Y2Dev8BG0W
+         HFZuW5+KB1DjO5Y59WK1fdR5lyj1y+4rOzAdaiC7HBEfn0t8gRyApc1mj4t/mkBEntLh
+         3J6cfzCo+6Ebf2CBp8s/EpNo3SCWpaUTb6kncPXssuCNrsUXYCnzfjwCjwFsgR7MBnYT
+         wNV7o6DxFCYSkT3c6jJnB6sHnUPUfIONLQeT1SRAtZYw+PAIpbVGElBpNRHqV2KPcao0
+         MQRA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=OW8QNYaf;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=JZE3cjhL;
-       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
+       dkim=pass header.i=@tycho-ws.20150623.gappssmtp.com header.s=20150623 header.b=qKanPzRL;
+       spf=pass (google.com: domain of kernel-hardening-return-12238-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12238-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=OW8QNYaf;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=JZE3cjhL;
-       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Thu, 01 Mar 2018 21:17:47 +0530
-From: poza@codeaurora.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Philippe Ombredanne
- <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Kate Stewart
- <kstewart@linuxfoundation.org>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>, Keith
- Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>, Sinan Kaya
- <okaya@codeaurora.org>, Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH] PCI/DPC: Fix INT legacy interrupt in dpc_irq
-In-Reply-To: <20180301153802.GD13722@bhelgaas-glaptop.roam.corp.google.com>
-References: <1517415535-21850-1-git-send-email-poza@codeaurora.org>
- <20180301153802.GD13722@bhelgaas-glaptop.roam.corp.google.com>
-Message-ID: <d759fe9efb8e5ece4097375e97772565@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+       dkim=pass header.i=@tycho-ws.20150623.gappssmtp.com header.s=20150623 header.b=qKanPzRL;
+       spf=pass (google.com: domain of kernel-hardening-return-12238-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12238-gregkh=linuxfoundation.org@lists.openwall.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Tycho Andersen <tycho@tycho.ws>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: linux-ima-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	Tycho Andersen <tycho@tycho.ws>
+Subject: [PATCH] ima: drop vla in ima_audit_measurement()
+Date: Thu,  8 Mar 2018 10:00:51 -0700
+Message-Id: <20180308170051.30840-1-tycho@tycho.ws>
+X-Mailer: git-send-email 2.14.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1591125527357545721?=
-X-GMAIL-MSGID: =?utf-8?q?1593750867601395648?=
+X-GMAIL-THRID: =?utf-8?q?1594389722092015419?=
+X-GMAIL-MSGID: =?utf-8?q?1594389722092015419?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 2018-03-01 21:08, Bjorn Helgaas wrote:
-> Hi Oza,
-> 
-> On Wed, Jan 31, 2018 at 09:48:55PM +0530, Oza Pawandeep wrote:
->> Current dpc driver acknowledge the interrupt in deferred work, which 
->> works
->> okay since LPI are edge triggered.
->> But when RP does not have MSI support, port service driver falls back 
->> to
->> legacy GIC SPI interrupts, and with current code we do not acknowledge 
->> the
->> interrupt and we get dpc interrupt storm.
->> This patch acknowledges the interrupt in interrupt handler.
-> 
-> Would you mind rephrasing this changelog in generic PCIe terms?  E.g.,
-> "LPI" and "GIC SPI" are meaningless to me (I assume they're
-> arm64-specific things), but I don't think it's any arm64-specific
-> thing that motivates this change.  IIUC, the issue should occur any
-> time we're not using MSI, so we should be able to describe it in
-> purely PCIe terms.
-> 
-> s/dpc/DPC/ in text.
-> 
-> It looks like this changelog is intended to be multiple paragraphs; if
-> so, please leave a blank line between them.  It's a little awkward to
-> infer "this is a new paragraph" from the fact that "the previous line
-> didn't look full" :)
-> 
-> Please rebase to my "master" branch (v4.16-rc1).  There was some minor
-> change that made this not apply cleanly.
-> 
+In keeping with the directive to get rid of VLAs [1], let's drop the VLA
+from ima_audit_measurement(). We need to adjust the return type of
+ima_audit_measurement, because now this function can fail if an allocation
+fails.
 
-sure will do these changes and re-post the same.
+[1]: https://lkml.org/lkml/2018/3/7/621
 
-Regards,
-Oza.
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+---
+ security/integrity/ima/ima.h      |  4 ++--
+ security/integrity/ima/ima_api.c  | 31 +++++++++++++++++++++++--------
+ security/integrity/ima/ima_main.c |  7 +++++--
+ 3 files changed, 30 insertions(+), 12 deletions(-)
 
->> Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
->> 
->> diff --git a/drivers/pci/pcie/pcie-dpc.c b/drivers/pci/pcie/pcie-dpc.c
->> index 2d976a6..570b561 100644
->> --- a/drivers/pci/pcie/pcie-dpc.c
->> +++ b/drivers/pci/pcie/pcie-dpc.c
->> @@ -134,7 +134,7 @@ static void interrupt_event_handler(struct 
->> work_struct *work)
->>  	}
->> 
->>  	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_STATUS,
->> -		PCI_EXP_DPC_STATUS_TRIGGER | PCI_EXP_DPC_STATUS_INTERRUPT);
->> +			      PCI_EXP_DPC_STATUS_TRIGGER);
->>  }
->> 
->>  static void dpc_rp_pio_print_tlp_header(struct device *dev,
->> @@ -277,6 +277,8 @@ static irqreturn_t dpc_irq(int irq, void *context)
->> 
->>  		schedule_work(&dpc->work);
->>  	}
->> +	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_STATUS,
->> +			      PCI_EXP_DPC_STATUS_INTERRUPT);
->>  	return IRQ_HANDLED;
->>  }
->> 
->> --
->> Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm 
->> Technologies, Inc.,
->> a Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a 
->> Linux Foundation Collaborative Project.
->> 
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index d52b487ad259..8e2470f72f7f 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -201,8 +201,8 @@ void ima_store_measurement(struct integrity_iint_cache *iint, struct file *file,
+ 			   const unsigned char *filename,
+ 			   struct evm_ima_xattr_data *xattr_value,
+ 			   int xattr_len, int pcr);
+-void ima_audit_measurement(struct integrity_iint_cache *iint,
+-			   const unsigned char *filename);
++int ima_audit_measurement(struct integrity_iint_cache *iint,
++			  const unsigned char *filename);
+ int ima_alloc_init_template(struct ima_event_data *event_data,
+ 			    struct ima_template_entry **entry);
+ int ima_store_template(struct ima_template_entry *entry, int violation,
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index 08fe405338e1..008d3887ae00 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -304,17 +304,28 @@ void ima_store_measurement(struct integrity_iint_cache *iint,
+ 		ima_free_template_entry(entry);
+ }
+ 
+-void ima_audit_measurement(struct integrity_iint_cache *iint,
+-			   const unsigned char *filename)
++int ima_audit_measurement(struct integrity_iint_cache *iint,
++			  const unsigned char *filename)
+ {
+ 	struct audit_buffer *ab;
+-	char hash[(iint->ima_hash->length * 2) + 1];
++	char *hash, *algo_hash;
+ 	const char *algo_name = hash_algo_name[iint->ima_hash->algo];
+-	char algo_hash[sizeof(hash) + strlen(algo_name) + 2];
+-	int i;
++	int i, hash_len, algo_hash_len;
+ 
+ 	if (iint->flags & IMA_AUDITED)
+-		return;
++		return 0;
++
++	hash_len = (iint->ima_hash->length * 2) + 1;
++	hash = kzalloc(hash_len, GFP_KERNEL);
++	if (!hash)
++		return -ENOMEM;
++
++	algo_hash_len = hash_len + strlen(algo_name) + 2;
++	algo_hash = kzalloc(algo_hash_len, GFP_KERNEL);
++	if (!algo_hash) {
++		kfree(hash);
++		return -ENOMEM;
++	}
+ 
+ 	for (i = 0; i < iint->ima_hash->length; i++)
+ 		hex_byte_pack(hash + (i * 2), iint->ima_hash->digest[i]);
+@@ -323,18 +334,22 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
+ 	ab = audit_log_start(current->audit_context, GFP_KERNEL,
+ 			     AUDIT_INTEGRITY_RULE);
+ 	if (!ab)
+-		return;
++		goto out;
+ 
+ 	audit_log_format(ab, "file=");
+ 	audit_log_untrustedstring(ab, filename);
+ 	audit_log_format(ab, " hash=");
+-	snprintf(algo_hash, sizeof(algo_hash), "%s:%s", algo_name, hash);
++	snprintf(algo_hash, algo_hash_len, "%s:%s", algo_name, hash);
+ 	audit_log_untrustedstring(ab, algo_hash);
+ 
+ 	audit_log_task_info(ab, current);
+ 	audit_log_end(ab);
+ 
+ 	iint->flags |= IMA_AUDITED;
++out:
++	kfree(hash);
++	kfree(algo_hash);
++	return 0;
+ }
+ 
+ /*
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 2cfb0c714967..356faae6f09c 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -288,8 +288,11 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+ 					      xattr_value, xattr_len, opened);
+ 		inode_unlock(inode);
+ 	}
+-	if (action & IMA_AUDIT)
+-		ima_audit_measurement(iint, pathname);
++	if (action & IMA_AUDIT) {
++		rc = ima_audit_measurement(iint, pathname);
++		if (rc < 0)
++			goto out_locked;
++	}
+ 
+ 	if ((file->f_flags & O_DIRECT) && (iint->flags & IMA_PERMIT_DIRECTIO))
+ 		rc = 0;
+-- 
+2.14.1
