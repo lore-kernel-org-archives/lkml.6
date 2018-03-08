@@ -1,562 +1,414 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4025272-1520451647-2-14780721912917558078
+X-Cyrus-Session-Id: sloti22d1t05-529228-1520471686-2-1005238939523342578
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520451646; b=RqMrRMHSIBE9hjOBtjjj2Zy+5n1FPxt3Nvo2BU8/VU/ndZJ
-    ZtNnxdcyZWTSy5D9LvALP23u7SI+TZfuYFPaqgSFFGReq5V0s55xOOMVMpukWqbu
-    DD4y3SllUvcctOeOrtOt/tbjQxQkwlxN2cRH7/I7rHjXcj7KQfiq7CtXSxlZdowH
-    NDrbjXhQFtCE5YJ/XpRA/S8A0Mfd5ngW3VZMzK8r828AEr5S9vl6nyDOcLYPAFJu
-    pEHl6511JRfYW6r9t81k91pEUgL8TQbc0fRnR9teWQAS6xXZ3/OZ5pAi5BFa0Ced
-    CNn7deYqU/BNQetHAIhnVF0clOTnrX7dgo8WpMA==
+    t=1520471685; b=uKYXJ6LB/Sm/tMflNmxQSeK8VZ3hwYEm4HhRKdF6NZWsVz/
+    SC9gjqqPRrAHoPLlP8N0dUfQxbAuLDbBi32fmZd3z/wtCbxcb/z5UN4cjOsmiAy+
+    eSEfseLesrEkQvW98J3+tECzVI/TUcRqbP6EZg1u+HzX/ZhcKtxOcSdm1U/kjF2V
+    dVCeRMUyyE3gcstVWKJzYlWt8n1Sn4QIq/8N0VeM32x6xwag4KBNx19RFzACkY1W
+    ojzIs8CDrQjrBYy0hkmJX2wcRYtl0fR1Zz5CMdGdohofBs0efg4SqxFz/BL3jD+U
+    vlXxmjXtGVF+iKUz/WK6nGmM98b8V5xcOXwldUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520451646; bh=lL/OovEvyTPBSv4GxgORjt7EM1
-    ++Kz5HwsNCBbTZJxw=; b=UM96lc3Jg0BRDR4IXOESTWzOo/UDHpoLfJlzL1Ltpu
-    awxkdEJL2/nYuszoS11gIIjV8tgYQr2elkdKnnujs5PSe/T4+6UM9T1TKKmSB1EE
-    wWGHQ1Y7u8ozl6mPsj3syIvK2G1B6VzjrsTvHDKpLYYJ+X5JEdr8UP+CE8830qZs
-    KwVcRdmcFiIKWs0r8zQhwETdSKxQBWp2HrJs6WiB8aJKMiuQGoOTgKG6vWphY0g/
-    r+vbCNRxnthQuIVuyI+VKNO9kgMlllMB5h/mf5taRGMNug8/d49B2t8sWhMZAwQ1
-    l8/O+d1715oxnwCpxrW+/eAvuCATRd+xHqlAdX75R3aw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    :references:in-reply-to:content-type:content-transfer-encoding
+    :mime-version:sender:list-id; s=arctest; t=1520471685; bh=5TU2Sz
+    7J3hHlZAqP5GHb+dDCHCwoZNwRpQGqw/rTG5I=; b=DOhlDnOdXpQxTnW2Mqqg/B
+    j/6F4PBMTAsCO0CX+el1BCLiQ7Bn2QpccmbueIWfb3IUii0JXxscyd/zLfWGJ90Q
+    pV8yBB80+4M8+/Ts2tlwAKA9Wg8dTaEx8yMKkexFpNZ3ULPMCFKyxHVMroVadW/K
+    6xMJDLav3f9fRv+kUrSmoXrZne7wHbLLkNc7STs85ZID1sCb+tPXEro7Xuk6vbkm
+    sBcpBuH0pwiW+Av67wkqsbotl8YrCGM8vvVW421Rco25s9B6i7bZ6I3rjrfl21IB
+    j5+vYFLY+7NTOA0jzlSPd42VgKKMz1uTime0qdq2qAvljifYqGCGjm47qzpIzsRw
+    ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=dell.com header.i=@dell.com header.b=lg5UuLT/ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=smtpout;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=dell.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    x-category=clean score=0 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=dell.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=dell.com header.i=@dell.com header.b=lg5UuLT/ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=smtpout;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=dell.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    x-category=clean score=0 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=dell.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934420AbeCGTkm (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 14:40:42 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40666 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934350AbeCGTkj (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:40:39 -0500
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pali Rohar <pali.rohar@gmail.com>,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 4.15 004/122] platform/x86: dell-laptop: Allocate buffer on heap rather than globally
-Date: Wed,  7 Mar 2018 11:36:56 -0800
-Message-Id: <20180307191729.867541449@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
+        id S1754875AbeCHBOn (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Mar 2018 20:14:43 -0500
+Received: from esa8.dell-outbound.iphmx.com ([68.232.149.218]:54455 "EHLO
+        esa8.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754837AbeCHBOm (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 20:14:42 -0500
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2HOAQANjqBah2Ka6EReGQEBAQEBAQEBA?=
+ =?us-ascii?q?QEBAQcBAQEBAYQmEHAoCoNKmCCCAoEWhyOPJgoYC4UNAhqCcCE3FQECAQEBAQE?=
+ =?us-ascii?q?BAgECEAEBAQoLCQgoLoI4IhF4AQEBAQEBAQEBTAIIYgEBAQQBIgQNRQwEAgEIE?=
+ =?us-ascii?q?QQBAQMCIwMCAgIfBx4BCAgCBAENBQiEewMVEKpvgW06hy0NgTCCGAWBD4Qjgi6?=
+ =?us-ascii?q?GaoJqRAOBdxAjglGCYgSII5ITMQmMU3CDMoFxhDeIXIo3hyCBLjSBdXCDEoIxE?=
+ =?us-ascii?q?AwWgWV3AYpsgRgBAQE?=
+X-IPAS-Result: =?us-ascii?q?A2HOAQANjqBah2Ka6EReGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
+ =?us-ascii?q?mEHAoCoNKmCCCAoEWhyOPJgoYC4UNAhqCcCE3FQECAQEBAQEBAgECEAEBAQoLC?=
+ =?us-ascii?q?QgoLoI4IhF4AQEBAQEBAQEBTAIIYgEBAQQBIgQNRQwEAgEIEQQBAQMCIwMCAgI?=
+ =?us-ascii?q?fBx4BCAgCBAENBQiEewMVEKpvgW06hy0NgTCCGAWBD4Qjgi6GaoJqRAOBdxAjg?=
+ =?us-ascii?q?lGCYgSII5ITMQmMU3CDMoFxhDeIXIo3hyCBLjSBdXCDEoIxEAwWgWV3AYpsgRg?=
+ =?us-ascii?q?BAQE?=
+From: <Mario.Limonciello@dell.com>
+X-LoopCount0: from 10.166.132.169
+X-IronPort-AV: E=Sophos;i="5.47,438,1515477600";
+   d="scan'208";a="146533520"
+X-DLP: DLP_GlobalPCIDSS
+To: <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>
+CC: <stable@vger.kernel.org>, <pali.rohar@gmail.com>,
+        <andriy.shevchenko@linux.intel.com>
+Subject: RE: [PATCH 4.15 004/122] platform/x86: dell-laptop: Allocate buffer
+ on heap rather than globally
+Thread-Topic: [PATCH 4.15 004/122] platform/x86: dell-laptop: Allocate buffer
+ on heap rather than globally
+Thread-Index: AQHTtkw3g3zwtSRRh0Ck7MbS73wdeKPFiNoQ
+Date: Thu, 8 Mar 2018 01:14:39 +0000
+Message-ID: <1a37a9b60e8c49ce9955e1d04ba7ff8e@ausx13mpc124.AMER.DELL.COM>
 References: <20180307191729.190879024@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+ <20180307191729.867541449@linuxfoundation.org>
+In-Reply-To: <20180307191729.867541449@linuxfoundation.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.15-stable review patch.  If anyone has any objections, please let me know.
-
-------------------
-
-From: Mario Limonciello <mario.limonciello@dell.com>
-
-commit 9862b43624a5450a097cc4122732857b869dbbca upstream.
-
-There is no longer a need for the buffer to be defined in
-first 4GB physical address space.
-
-Furthermore there may be race conditions with multiple different functions
-working on a module wide buffer causing incorrect results.
-
-Fixes: 549b4930f057658dc50d8010e66219233119a4d8
-Suggested-by: Pali Rohar <pali.rohar@gmail.com>
-Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
----
- drivers/platform/x86/dell-laptop.c |  188 ++++++++++++++++++++-----------------
- 1 file changed, 103 insertions(+), 85 deletions(-)
-
---- a/drivers/platform/x86/dell-laptop.c
-+++ b/drivers/platform/x86/dell-laptop.c
-@@ -78,7 +78,6 @@ static struct platform_driver platform_d
- 	}
- };
- 
--static struct calling_interface_buffer *buffer;
- static struct platform_device *platform_device;
- static struct backlight_device *dell_backlight_device;
- static struct rfkill *wifi_rfkill;
-@@ -286,7 +285,8 @@ static const struct dmi_system_id dell_q
- 	{ }
- };
- 
--void dell_set_arguments(u32 arg0, u32 arg1, u32 arg2, u32 arg3)
-+static void dell_fill_request(struct calling_interface_buffer *buffer,
-+			      u32 arg0, u32 arg1, u32 arg2, u32 arg3)
- {
- 	memset(buffer, 0, sizeof(struct calling_interface_buffer));
- 	buffer->input[0] = arg0;
-@@ -295,7 +295,8 @@ void dell_set_arguments(u32 arg0, u32 ar
- 	buffer->input[3] = arg3;
- }
- 
--int dell_send_request(u16 class, u16 select)
-+static int dell_send_request(struct calling_interface_buffer *buffer,
-+			     u16 class, u16 select)
- {
- 	int ret;
- 
-@@ -432,21 +433,22 @@ static int dell_rfkill_set(void *data, b
- 	int disable = blocked ? 1 : 0;
- 	unsigned long radio = (unsigned long)data;
- 	int hwswitch_bit = (unsigned long)data - 1;
-+	struct calling_interface_buffer buffer;
- 	int hwswitch;
- 	int status;
- 	int ret;
- 
--	dell_set_arguments(0, 0, 0, 0);
--	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
-+	dell_fill_request(&buffer, 0, 0, 0, 0);
-+	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
- 	if (ret)
- 		return ret;
--	status = buffer->output[1];
-+	status = buffer.output[1];
- 
--	dell_set_arguments(0x2, 0, 0, 0);
--	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
-+	dell_fill_request(&buffer, 0x2, 0, 0, 0);
-+	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
- 	if (ret)
- 		return ret;
--	hwswitch = buffer->output[1];
-+	hwswitch = buffer.output[1];
- 
- 	/* If the hardware switch controls this radio, and the hardware
- 	   switch is disabled, always disable the radio */
-@@ -454,8 +456,8 @@ static int dell_rfkill_set(void *data, b
- 	    (status & BIT(0)) && !(status & BIT(16)))
- 		disable = 1;
- 
--	dell_set_arguments(1 | (radio<<8) | (disable << 16), 0, 0, 0);
--	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
-+	dell_fill_request(&buffer, 1 | (radio<<8) | (disable << 16), 0, 0, 0);
-+	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
- 	return ret;
- }
- 
-@@ -464,9 +466,11 @@ static void dell_rfkill_update_sw_state(
- {
- 	if (status & BIT(0)) {
- 		/* Has hw-switch, sync sw_state to BIOS */
-+		struct calling_interface_buffer buffer;
- 		int block = rfkill_blocked(rfkill);
--		dell_set_arguments(1 | (radio << 8) | (block << 16), 0, 0, 0);
--		dell_send_request(CLASS_INFO, SELECT_RFKILL);
-+		dell_fill_request(&buffer,
-+				   1 | (radio << 8) | (block << 16), 0, 0, 0);
-+		dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
- 	} else {
- 		/* No hw-switch, sync BIOS state to sw_state */
- 		rfkill_set_sw_state(rfkill, !!(status & BIT(radio + 16)));
-@@ -483,21 +487,22 @@ static void dell_rfkill_update_hw_state(
- static void dell_rfkill_query(struct rfkill *rfkill, void *data)
- {
- 	int radio = ((unsigned long)data & 0xF);
-+	struct calling_interface_buffer buffer;
- 	int hwswitch;
- 	int status;
- 	int ret;
- 
--	dell_set_arguments(0, 0, 0, 0);
--	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
--	status = buffer->output[1];
-+	dell_fill_request(&buffer, 0, 0, 0, 0);
-+	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
-+	status = buffer.output[1];
- 
- 	if (ret != 0 || !(status & BIT(0))) {
- 		return;
- 	}
- 
--	dell_set_arguments(0, 0x2, 0, 0);
--	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
--	hwswitch = buffer->output[1];
-+	dell_fill_request(&buffer, 0, 0x2, 0, 0);
-+	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
-+	hwswitch = buffer.output[1];
- 
- 	if (ret != 0)
- 		return;
-@@ -514,22 +519,23 @@ static struct dentry *dell_laptop_dir;
- 
- static int dell_debugfs_show(struct seq_file *s, void *data)
- {
-+	struct calling_interface_buffer buffer;
- 	int hwswitch_state;
- 	int hwswitch_ret;
- 	int status;
- 	int ret;
- 
--	dell_set_arguments(0, 0, 0, 0);
--	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
-+	dell_fill_request(&buffer, 0, 0, 0, 0);
-+	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
- 	if (ret)
- 		return ret;
--	status = buffer->output[1];
-+	status = buffer.output[1];
- 
--	dell_set_arguments(0, 0x2, 0, 0);
--	hwswitch_ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
-+	dell_fill_request(&buffer, 0, 0x2, 0, 0);
-+	hwswitch_ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
- 	if (hwswitch_ret)
- 		return hwswitch_ret;
--	hwswitch_state = buffer->output[1];
-+	hwswitch_state = buffer.output[1];
- 
- 	seq_printf(s, "return:\t%d\n", ret);
- 	seq_printf(s, "status:\t0x%X\n", status);
-@@ -610,22 +616,23 @@ static const struct file_operations dell
- 
- static void dell_update_rfkill(struct work_struct *ignored)
- {
-+	struct calling_interface_buffer buffer;
- 	int hwswitch = 0;
- 	int status;
- 	int ret;
- 
--	dell_set_arguments(0, 0, 0, 0);
--	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
--	status = buffer->output[1];
-+	dell_fill_request(&buffer, 0, 0, 0, 0);
-+	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
-+	status = buffer.output[1];
- 
- 	if (ret != 0)
- 		return;
- 
--	dell_set_arguments(0, 0x2, 0, 0);
--	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
-+	dell_fill_request(&buffer, 0, 0x2, 0, 0);
-+	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
- 
- 	if (ret == 0 && (status & BIT(0)))
--		hwswitch = buffer->output[1];
-+		hwswitch = buffer.output[1];
- 
- 	if (wifi_rfkill) {
- 		dell_rfkill_update_hw_state(wifi_rfkill, 1, status, hwswitch);
-@@ -683,6 +690,7 @@ static struct notifier_block dell_laptop
- 
- static int __init dell_setup_rfkill(void)
- {
-+	struct calling_interface_buffer buffer;
- 	int status, ret, whitelisted;
- 	const char *product;
- 
-@@ -698,9 +706,9 @@ static int __init dell_setup_rfkill(void
- 	if (!force_rfkill && !whitelisted)
- 		return 0;
- 
--	dell_set_arguments(0, 0, 0, 0);
--	ret = dell_send_request(CLASS_INFO, SELECT_RFKILL);
--	status = buffer->output[1];
-+	dell_fill_request(&buffer, 0, 0, 0, 0);
-+	ret = dell_send_request(&buffer, CLASS_INFO, SELECT_RFKILL);
-+	status = buffer.output[1];
- 
- 	/* dell wireless info smbios call is not supported */
- 	if (ret != 0)
-@@ -853,6 +861,7 @@ static void dell_cleanup_rfkill(void)
- 
- static int dell_send_intensity(struct backlight_device *bd)
- {
-+	struct calling_interface_buffer buffer;
- 	struct calling_interface_token *token;
- 	int ret;
- 
-@@ -860,17 +869,21 @@ static int dell_send_intensity(struct ba
- 	if (!token)
- 		return -ENODEV;
- 
--	dell_set_arguments(token->location, bd->props.brightness, 0, 0);
-+	dell_fill_request(&buffer,
-+			   token->location, bd->props.brightness, 0, 0);
- 	if (power_supply_is_system_supplied() > 0)
--		ret = dell_send_request(CLASS_TOKEN_WRITE, SELECT_TOKEN_AC);
-+		ret = dell_send_request(&buffer,
-+					CLASS_TOKEN_WRITE, SELECT_TOKEN_AC);
- 	else
--		ret = dell_send_request(CLASS_TOKEN_WRITE, SELECT_TOKEN_BAT);
-+		ret = dell_send_request(&buffer,
-+					CLASS_TOKEN_WRITE, SELECT_TOKEN_BAT);
- 
- 	return ret;
- }
- 
- static int dell_get_intensity(struct backlight_device *bd)
- {
-+	struct calling_interface_buffer buffer;
- 	struct calling_interface_token *token;
- 	int ret;
- 
-@@ -878,14 +891,17 @@ static int dell_get_intensity(struct bac
- 	if (!token)
- 		return -ENODEV;
- 
--	dell_set_arguments(token->location, 0, 0, 0);
-+	dell_fill_request(&buffer, token->location, 0, 0, 0);
- 	if (power_supply_is_system_supplied() > 0)
--		ret = dell_send_request(CLASS_TOKEN_READ, SELECT_TOKEN_AC);
-+		ret = dell_send_request(&buffer,
-+					CLASS_TOKEN_READ, SELECT_TOKEN_AC);
- 	else
--		ret = dell_send_request(CLASS_TOKEN_READ, SELECT_TOKEN_BAT);
-+		ret = dell_send_request(&buffer,
-+					CLASS_TOKEN_READ, SELECT_TOKEN_BAT);
- 
- 	if (ret == 0)
--		ret = buffer->output[1];
-+		ret = buffer.output[1];
-+
- 	return ret;
- }
- 
-@@ -1149,31 +1165,33 @@ static DEFINE_MUTEX(kbd_led_mutex);
- 
- static int kbd_get_info(struct kbd_info *info)
- {
-+	struct calling_interface_buffer buffer;
- 	u8 units;
- 	int ret;
- 
--	dell_set_arguments(0, 0, 0, 0);
--	ret = dell_send_request(CLASS_KBD_BACKLIGHT, SELECT_KBD_BACKLIGHT);
-+	dell_fill_request(&buffer, 0, 0, 0, 0);
-+	ret = dell_send_request(&buffer,
-+				CLASS_KBD_BACKLIGHT, SELECT_KBD_BACKLIGHT);
- 	if (ret)
- 		return ret;
- 
--	info->modes = buffer->output[1] & 0xFFFF;
--	info->type = (buffer->output[1] >> 24) & 0xFF;
--	info->triggers = buffer->output[2] & 0xFF;
--	units = (buffer->output[2] >> 8) & 0xFF;
--	info->levels = (buffer->output[2] >> 16) & 0xFF;
-+	info->modes = buffer.output[1] & 0xFFFF;
-+	info->type = (buffer.output[1] >> 24) & 0xFF;
-+	info->triggers = buffer.output[2] & 0xFF;
-+	units = (buffer.output[2] >> 8) & 0xFF;
-+	info->levels = (buffer.output[2] >> 16) & 0xFF;
- 
- 	if (quirks && quirks->kbd_led_levels_off_1 && info->levels)
- 		info->levels--;
- 
- 	if (units & BIT(0))
--		info->seconds = (buffer->output[3] >> 0) & 0xFF;
-+		info->seconds = (buffer.output[3] >> 0) & 0xFF;
- 	if (units & BIT(1))
--		info->minutes = (buffer->output[3] >> 8) & 0xFF;
-+		info->minutes = (buffer.output[3] >> 8) & 0xFF;
- 	if (units & BIT(2))
--		info->hours = (buffer->output[3] >> 16) & 0xFF;
-+		info->hours = (buffer.output[3] >> 16) & 0xFF;
- 	if (units & BIT(3))
--		info->days = (buffer->output[3] >> 24) & 0xFF;
-+		info->days = (buffer.output[3] >> 24) & 0xFF;
- 
- 	return ret;
- }
-@@ -1233,31 +1251,34 @@ static int kbd_set_level(struct kbd_stat
- 
- static int kbd_get_state(struct kbd_state *state)
- {
-+	struct calling_interface_buffer buffer;
- 	int ret;
- 
--	dell_set_arguments(0x1, 0, 0, 0);
--	ret = dell_send_request(CLASS_KBD_BACKLIGHT, SELECT_KBD_BACKLIGHT);
-+	dell_fill_request(&buffer, 0, 0, 0, 0);
-+	ret = dell_send_request(&buffer,
-+				CLASS_KBD_BACKLIGHT, SELECT_KBD_BACKLIGHT);
- 	if (ret)
- 		return ret;
- 
--	state->mode_bit = ffs(buffer->output[1] & 0xFFFF);
-+	state->mode_bit = ffs(buffer.output[1] & 0xFFFF);
- 	if (state->mode_bit != 0)
- 		state->mode_bit--;
- 
--	state->triggers = (buffer->output[1] >> 16) & 0xFF;
--	state->timeout_value = (buffer->output[1] >> 24) & 0x3F;
--	state->timeout_unit = (buffer->output[1] >> 30) & 0x3;
--	state->als_setting = buffer->output[2] & 0xFF;
--	state->als_value = (buffer->output[2] >> 8) & 0xFF;
--	state->level = (buffer->output[2] >> 16) & 0xFF;
--	state->timeout_value_ac = (buffer->output[2] >> 24) & 0x3F;
--	state->timeout_unit_ac = (buffer->output[2] >> 30) & 0x3;
-+	state->triggers = (buffer.output[1] >> 16) & 0xFF;
-+	state->timeout_value = (buffer.output[1] >> 24) & 0x3F;
-+	state->timeout_unit = (buffer.output[1] >> 30) & 0x3;
-+	state->als_setting = buffer.output[2] & 0xFF;
-+	state->als_value = (buffer.output[2] >> 8) & 0xFF;
-+	state->level = (buffer.output[2] >> 16) & 0xFF;
-+	state->timeout_value_ac = (buffer.output[2] >> 24) & 0x3F;
-+	state->timeout_unit_ac = (buffer.output[2] >> 30) & 0x3;
- 
- 	return ret;
- }
- 
- static int kbd_set_state(struct kbd_state *state)
- {
-+	struct calling_interface_buffer buffer;
- 	int ret;
- 	u32 input1;
- 	u32 input2;
-@@ -1270,8 +1291,9 @@ static int kbd_set_state(struct kbd_stat
- 	input2 |= (state->level & 0xFF) << 16;
- 	input2 |= (state->timeout_value_ac & 0x3F) << 24;
- 	input2 |= (state->timeout_unit_ac & 0x3) << 30;
--	dell_set_arguments(0x2, input1, input2, 0);
--	ret = dell_send_request(CLASS_KBD_BACKLIGHT, SELECT_KBD_BACKLIGHT);
-+	dell_fill_request(&buffer, 0x2, input1, input2, 0);
-+	ret = dell_send_request(&buffer,
-+				CLASS_KBD_BACKLIGHT, SELECT_KBD_BACKLIGHT);
- 
- 	return ret;
- }
-@@ -1298,6 +1320,7 @@ static int kbd_set_state_safe(struct kbd
- 
- static int kbd_set_token_bit(u8 bit)
- {
-+	struct calling_interface_buffer buffer;
- 	struct calling_interface_token *token;
- 	int ret;
- 
-@@ -1308,14 +1331,15 @@ static int kbd_set_token_bit(u8 bit)
- 	if (!token)
- 		return -EINVAL;
- 
--	dell_set_arguments(token->location, token->value, 0, 0);
--	ret = dell_send_request(CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
-+	dell_fill_request(&buffer, token->location, token->value, 0, 0);
-+	ret = dell_send_request(&buffer, CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
- 
- 	return ret;
- }
- 
- static int kbd_get_token_bit(u8 bit)
- {
-+	struct calling_interface_buffer buffer;
- 	struct calling_interface_token *token;
- 	int ret;
- 	int val;
-@@ -1327,9 +1351,9 @@ static int kbd_get_token_bit(u8 bit)
- 	if (!token)
- 		return -EINVAL;
- 
--	dell_set_arguments(token->location, 0, 0, 0);
--	ret = dell_send_request(CLASS_TOKEN_READ, SELECT_TOKEN_STD);
--	val = buffer->output[1];
-+	dell_fill_request(&buffer, token->location, 0, 0, 0);
-+	ret = dell_send_request(&buffer, CLASS_TOKEN_READ, SELECT_TOKEN_STD);
-+	val = buffer.output[1];
- 
- 	if (ret)
- 		return ret;
-@@ -2046,6 +2070,7 @@ static struct notifier_block dell_laptop
- 
- int dell_micmute_led_set(int state)
- {
-+	struct calling_interface_buffer buffer;
- 	struct calling_interface_token *token;
- 
- 	if (state == 0)
-@@ -2058,8 +2083,8 @@ int dell_micmute_led_set(int state)
- 	if (!token)
- 		return -ENODEV;
- 
--	dell_set_arguments(token->location, token->value, 0, 0);
--	dell_send_request(CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
-+	dell_fill_request(&buffer, token->location, token->value, 0, 0);
-+	dell_send_request(&buffer, CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
- 
- 	return state;
- }
-@@ -2090,13 +2115,6 @@ static int __init dell_init(void)
- 	if (ret)
- 		goto fail_platform_device2;
- 
--	buffer = kzalloc(sizeof(struct calling_interface_buffer), GFP_KERNEL);
--	if (!buffer) {
--		ret = -ENOMEM;
--		goto fail_buffer;
--	}
--
--
- 	ret = dell_setup_rfkill();
- 
- 	if (ret) {
-@@ -2121,10 +2139,13 @@ static int __init dell_init(void)
- 
- 	token = dell_smbios_find_token(BRIGHTNESS_TOKEN);
- 	if (token) {
--		dell_set_arguments(token->location, 0, 0, 0);
--		ret = dell_send_request(CLASS_TOKEN_READ, SELECT_TOKEN_AC);
-+		struct calling_interface_buffer buffer;
-+
-+		dell_fill_request(&buffer, token->location, 0, 0, 0);
-+		ret = dell_send_request(&buffer,
-+					CLASS_TOKEN_READ, SELECT_TOKEN_AC);
- 		if (ret)
--			max_intensity = buffer->output[3];
-+			max_intensity = buffer.output[3];
- 	}
- 
- 	if (max_intensity) {
-@@ -2158,8 +2179,6 @@ static int __init dell_init(void)
- fail_get_brightness:
- 	backlight_device_unregister(dell_backlight_device);
- fail_backlight:
--	kfree(buffer);
--fail_buffer:
- 	dell_cleanup_rfkill();
- fail_rfkill:
- 	platform_device_del(platform_device);
-@@ -2179,7 +2198,6 @@ static void __exit dell_exit(void)
- 		touchpad_led_exit();
- 	kbd_led_exit();
- 	backlight_device_unregister(dell_backlight_device);
--	kfree(buffer);
- 	dell_cleanup_rfkill();
- 	if (platform_device) {
- 		platform_device_unregister(platform_device);
+R3JlZywNCg0KQ2FuIHlvdSBwbGVhc2UgbWFrZSBzdXJlIHRoYXQgdGhlIG9uZSB0aGF0IGNhbWUg
+aW4gcmlnaHQgYWZ0ZXIgdGhpcyBpcyBhbHNvIGFwcGxpZWQgYXQgdGhlIHNhbWUgdGltZT8NCmh0
+dHBzOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL3N0YWJsZS9tc2cyMTUyNjguaHRtbA0KDQpBcyB5
+b3UgcmVjb21tZW5kZWQgYmVmb3JlIHRoZXkgd2VyZW4ndCBzcXVhc2hlZCB0b2dldGhlciwgYnV0
+IHRoZXkgc2hvdWxkIGJvdGggY29tZSBpbiBhdCB0aGUNCnNhbWUgdGltZS4NCg0KVGhhbmtzLA0K
+DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEdyZWcgS3JvYWgtSGFydG1h
+biBbbWFpbHRvOmdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnXQ0KPiBTZW50OiBUaHVyc2RheSwg
+TWFyY2ggOCwgMjAxOCAzOjM3IEFNDQo+IFRvOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3Jn
+DQo+IENjOiBHcmVnIEtyb2FoLUhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPjsg
+c3RhYmxlQHZnZXIua2VybmVsLm9yZzsNCj4gUGFsaSBSb2hhciA8cGFsaS5yb2hhckBnbWFpbC5j
+b20+OyBMaW1vbmNpZWxsbywgTWFyaW8NCj4gPE1hcmlvX0xpbW9uY2llbGxvQERlbGwuY29tPjsg
+QW5keSBTaGV2Y2hlbmtvDQo+IDxhbmRyaXkuc2hldmNoZW5rb0BsaW51eC5pbnRlbC5jb20+DQo+
+IFN1YmplY3Q6IFtQQVRDSCA0LjE1IDAwNC8xMjJdIHBsYXRmb3JtL3g4NjogZGVsbC1sYXB0b3A6
+IEFsbG9jYXRlIGJ1ZmZlciBvbiBoZWFwDQo+IHJhdGhlciB0aGFuIGdsb2JhbGx5DQo+IA0KPiA0
+LjE1LXN0YWJsZSByZXZpZXcgcGF0Y2guICBJZiBhbnlvbmUgaGFzIGFueSBvYmplY3Rpb25zLCBw
+bGVhc2UgbGV0IG1lIGtub3cuDQo+IA0KPiAtLS0tLS0tLS0tLS0tLS0tLS0NCj4gDQo+IEZyb206
+IE1hcmlvIExpbW9uY2llbGxvIDxtYXJpby5saW1vbmNpZWxsb0BkZWxsLmNvbT4NCj4gDQo+IGNv
+bW1pdCA5ODYyYjQzNjI0YTU0NTBhMDk3Y2M0MTIyNzMyODU3Yjg2OWRiYmNhIHVwc3RyZWFtLg0K
+PiANCj4gVGhlcmUgaXMgbm8gbG9uZ2VyIGEgbmVlZCBmb3IgdGhlIGJ1ZmZlciB0byBiZSBkZWZp
+bmVkIGluDQo+IGZpcnN0IDRHQiBwaHlzaWNhbCBhZGRyZXNzIHNwYWNlLg0KPiANCj4gRnVydGhl
+cm1vcmUgdGhlcmUgbWF5IGJlIHJhY2UgY29uZGl0aW9ucyB3aXRoIG11bHRpcGxlIGRpZmZlcmVu
+dCBmdW5jdGlvbnMNCj4gd29ya2luZyBvbiBhIG1vZHVsZSB3aWRlIGJ1ZmZlciBjYXVzaW5nIGlu
+Y29ycmVjdCByZXN1bHRzLg0KPiANCj4gRml4ZXM6IDU0OWI0OTMwZjA1NzY1OGRjNTBkODAxMGU2
+NjIxOTIzMzExOWE0ZDgNCj4gU3VnZ2VzdGVkLWJ5OiBQYWxpIFJvaGFyIDxwYWxpLnJvaGFyQGdt
+YWlsLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogTWFyaW8gTGltb25jaWVsbG8gPG1hcmlvLmxpbW9u
+Y2llbGxvQGRlbGwuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBBbmR5IFNoZXZjaGVua28gPGFuZHJp
+eS5zaGV2Y2hlbmtvQGxpbnV4LmludGVsLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogR3JlZyBLcm9h
+aC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz4NCj4gDQo+IA0KPiAtLS0NCj4g
+IGRyaXZlcnMvcGxhdGZvcm0veDg2L2RlbGwtbGFwdG9wLmMgfCAgMTg4ICsrKysrKysrKysrKysr
+KysrKysrLS0tLS0tLS0tLS0tLS0tLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxMDMgaW5zZXJ0aW9u
+cygrKSwgODUgZGVsZXRpb25zKC0pDQo+IA0KPiAtLS0gYS9kcml2ZXJzL3BsYXRmb3JtL3g4Ni9k
+ZWxsLWxhcHRvcC5jDQo+ICsrKyBiL2RyaXZlcnMvcGxhdGZvcm0veDg2L2RlbGwtbGFwdG9wLmMN
+Cj4gQEAgLTc4LDcgKzc4LDYgQEAgc3RhdGljIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgcGxhdGZv
+cm1fZA0KPiAgCX0NCj4gIH07DQo+IA0KPiAtc3RhdGljIHN0cnVjdCBjYWxsaW5nX2ludGVyZmFj
+ZV9idWZmZXIgKmJ1ZmZlcjsNCj4gIHN0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwbGF0
+Zm9ybV9kZXZpY2U7DQo+ICBzdGF0aWMgc3RydWN0IGJhY2tsaWdodF9kZXZpY2UgKmRlbGxfYmFj
+a2xpZ2h0X2RldmljZTsNCj4gIHN0YXRpYyBzdHJ1Y3QgcmZraWxsICp3aWZpX3Jma2lsbDsNCj4g
+QEAgLTI4Niw3ICsyODUsOCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGRtaV9zeXN0ZW1faWQgZGVs
+bF9xDQo+ICAJeyB9DQo+ICB9Ow0KPiANCj4gLXZvaWQgZGVsbF9zZXRfYXJndW1lbnRzKHUzMiBh
+cmcwLCB1MzIgYXJnMSwgdTMyIGFyZzIsIHUzMiBhcmczKQ0KPiArc3RhdGljIHZvaWQgZGVsbF9m
+aWxsX3JlcXVlc3Qoc3RydWN0IGNhbGxpbmdfaW50ZXJmYWNlX2J1ZmZlciAqYnVmZmVyLA0KPiAr
+CQkJICAgICAgdTMyIGFyZzAsIHUzMiBhcmcxLCB1MzIgYXJnMiwgdTMyIGFyZzMpDQo+ICB7DQo+
+ICAJbWVtc2V0KGJ1ZmZlciwgMCwgc2l6ZW9mKHN0cnVjdCBjYWxsaW5nX2ludGVyZmFjZV9idWZm
+ZXIpKTsNCj4gIAlidWZmZXItPmlucHV0WzBdID0gYXJnMDsNCj4gQEAgLTI5NSw3ICsyOTUsOCBA
+QCB2b2lkIGRlbGxfc2V0X2FyZ3VtZW50cyh1MzIgYXJnMCwgdTMyIGFyDQo+ICAJYnVmZmVyLT5p
+bnB1dFszXSA9IGFyZzM7DQo+ICB9DQo+IA0KPiAtaW50IGRlbGxfc2VuZF9yZXF1ZXN0KHUxNiBj
+bGFzcywgdTE2IHNlbGVjdCkNCj4gK3N0YXRpYyBpbnQgZGVsbF9zZW5kX3JlcXVlc3Qoc3RydWN0
+IGNhbGxpbmdfaW50ZXJmYWNlX2J1ZmZlciAqYnVmZmVyLA0KPiArCQkJICAgICB1MTYgY2xhc3Ms
+IHUxNiBzZWxlY3QpDQo+ICB7DQo+ICAJaW50IHJldDsNCj4gDQo+IEBAIC00MzIsMjEgKzQzMywy
+MiBAQCBzdGF0aWMgaW50IGRlbGxfcmZraWxsX3NldCh2b2lkICpkYXRhLCBiDQo+ICAJaW50IGRp
+c2FibGUgPSBibG9ja2VkID8gMSA6IDA7DQo+ICAJdW5zaWduZWQgbG9uZyByYWRpbyA9ICh1bnNp
+Z25lZCBsb25nKWRhdGE7DQo+ICAJaW50IGh3c3dpdGNoX2JpdCA9ICh1bnNpZ25lZCBsb25nKWRh
+dGEgLSAxOw0KPiArCXN0cnVjdCBjYWxsaW5nX2ludGVyZmFjZV9idWZmZXIgYnVmZmVyOw0KPiAg
+CWludCBod3N3aXRjaDsNCj4gIAlpbnQgc3RhdHVzOw0KPiAgCWludCByZXQ7DQo+IA0KPiAtCWRl
+bGxfc2V0X2FyZ3VtZW50cygwLCAwLCAwLCAwKTsNCj4gLQlyZXQgPSBkZWxsX3NlbmRfcmVxdWVz
+dChDTEFTU19JTkZPLCBTRUxFQ1RfUkZLSUxMKTsNCj4gKwlkZWxsX2ZpbGxfcmVxdWVzdCgmYnVm
+ZmVyLCAwLCAwLCAwLCAwKTsNCj4gKwlyZXQgPSBkZWxsX3NlbmRfcmVxdWVzdCgmYnVmZmVyLCBD
+TEFTU19JTkZPLCBTRUxFQ1RfUkZLSUxMKTsNCj4gIAlpZiAocmV0KQ0KPiAgCQlyZXR1cm4gcmV0
+Ow0KPiAtCXN0YXR1cyA9IGJ1ZmZlci0+b3V0cHV0WzFdOw0KPiArCXN0YXR1cyA9IGJ1ZmZlci5v
+dXRwdXRbMV07DQo+IA0KPiAtCWRlbGxfc2V0X2FyZ3VtZW50cygweDIsIDAsIDAsIDApOw0KPiAt
+CXJldCA9IGRlbGxfc2VuZF9yZXF1ZXN0KENMQVNTX0lORk8sIFNFTEVDVF9SRktJTEwpOw0KPiAr
+CWRlbGxfZmlsbF9yZXF1ZXN0KCZidWZmZXIsIDB4MiwgMCwgMCwgMCk7DQo+ICsJcmV0ID0gZGVs
+bF9zZW5kX3JlcXVlc3QoJmJ1ZmZlciwgQ0xBU1NfSU5GTywgU0VMRUNUX1JGS0lMTCk7DQo+ICAJ
+aWYgKHJldCkNCj4gIAkJcmV0dXJuIHJldDsNCj4gLQlod3N3aXRjaCA9IGJ1ZmZlci0+b3V0cHV0
+WzFdOw0KPiArCWh3c3dpdGNoID0gYnVmZmVyLm91dHB1dFsxXTsNCj4gDQo+ICAJLyogSWYgdGhl
+IGhhcmR3YXJlIHN3aXRjaCBjb250cm9scyB0aGlzIHJhZGlvLCBhbmQgdGhlIGhhcmR3YXJlDQo+
+ICAJICAgc3dpdGNoIGlzIGRpc2FibGVkLCBhbHdheXMgZGlzYWJsZSB0aGUgcmFkaW8gKi8NCj4g
+QEAgLTQ1NCw4ICs0NTYsOCBAQCBzdGF0aWMgaW50IGRlbGxfcmZraWxsX3NldCh2b2lkICpkYXRh
+LCBiDQo+ICAJICAgIChzdGF0dXMgJiBCSVQoMCkpICYmICEoc3RhdHVzICYgQklUKDE2KSkpDQo+
+ICAJCWRpc2FibGUgPSAxOw0KPiANCj4gLQlkZWxsX3NldF9hcmd1bWVudHMoMSB8IChyYWRpbzw8
+OCkgfCAoZGlzYWJsZSA8PCAxNiksIDAsIDAsIDApOw0KPiAtCXJldCA9IGRlbGxfc2VuZF9yZXF1
+ZXN0KENMQVNTX0lORk8sIFNFTEVDVF9SRktJTEwpOw0KPiArCWRlbGxfZmlsbF9yZXF1ZXN0KCZi
+dWZmZXIsIDEgfCAocmFkaW88PDgpIHwgKGRpc2FibGUgPDwgMTYpLCAwLCAwLCAwKTsNCj4gKwly
+ZXQgPSBkZWxsX3NlbmRfcmVxdWVzdCgmYnVmZmVyLCBDTEFTU19JTkZPLCBTRUxFQ1RfUkZLSUxM
+KTsNCj4gIAlyZXR1cm4gcmV0Ow0KPiAgfQ0KPiANCj4gQEAgLTQ2NCw5ICs0NjYsMTEgQEAgc3Rh
+dGljIHZvaWQgZGVsbF9yZmtpbGxfdXBkYXRlX3N3X3N0YXRlKA0KPiAgew0KPiAgCWlmIChzdGF0
+dXMgJiBCSVQoMCkpIHsNCj4gIAkJLyogSGFzIGh3LXN3aXRjaCwgc3luYyBzd19zdGF0ZSB0byBC
+SU9TICovDQo+ICsJCXN0cnVjdCBjYWxsaW5nX2ludGVyZmFjZV9idWZmZXIgYnVmZmVyOw0KPiAg
+CQlpbnQgYmxvY2sgPSByZmtpbGxfYmxvY2tlZChyZmtpbGwpOw0KPiAtCQlkZWxsX3NldF9hcmd1
+bWVudHMoMSB8IChyYWRpbyA8PCA4KSB8IChibG9jayA8PCAxNiksIDAsIDAsIDApOw0KPiAtCQlk
+ZWxsX3NlbmRfcmVxdWVzdChDTEFTU19JTkZPLCBTRUxFQ1RfUkZLSUxMKTsNCj4gKwkJZGVsbF9m
+aWxsX3JlcXVlc3QoJmJ1ZmZlciwNCj4gKwkJCQkgICAxIHwgKHJhZGlvIDw8IDgpIHwgKGJsb2Nr
+IDw8IDE2KSwgMCwgMCwgMCk7DQo+ICsJCWRlbGxfc2VuZF9yZXF1ZXN0KCZidWZmZXIsIENMQVNT
+X0lORk8sIFNFTEVDVF9SRktJTEwpOw0KPiAgCX0gZWxzZSB7DQo+ICAJCS8qIE5vIGh3LXN3aXRj
+aCwgc3luYyBCSU9TIHN0YXRlIHRvIHN3X3N0YXRlICovDQo+ICAJCXJma2lsbF9zZXRfc3dfc3Rh
+dGUocmZraWxsLCAhIShzdGF0dXMgJiBCSVQocmFkaW8gKyAxNikpKTsNCj4gQEAgLTQ4MywyMSAr
+NDg3LDIyIEBAIHN0YXRpYyB2b2lkIGRlbGxfcmZraWxsX3VwZGF0ZV9od19zdGF0ZSgNCj4gIHN0
+YXRpYyB2b2lkIGRlbGxfcmZraWxsX3F1ZXJ5KHN0cnVjdCByZmtpbGwgKnJma2lsbCwgdm9pZCAq
+ZGF0YSkNCj4gIHsNCj4gIAlpbnQgcmFkaW8gPSAoKHVuc2lnbmVkIGxvbmcpZGF0YSAmIDB4Rik7
+DQo+ICsJc3RydWN0IGNhbGxpbmdfaW50ZXJmYWNlX2J1ZmZlciBidWZmZXI7DQo+ICAJaW50IGh3
+c3dpdGNoOw0KPiAgCWludCBzdGF0dXM7DQo+ICAJaW50IHJldDsNCj4gDQo+IC0JZGVsbF9zZXRf
+YXJndW1lbnRzKDAsIDAsIDAsIDApOw0KPiAtCXJldCA9IGRlbGxfc2VuZF9yZXF1ZXN0KENMQVNT
+X0lORk8sIFNFTEVDVF9SRktJTEwpOw0KPiAtCXN0YXR1cyA9IGJ1ZmZlci0+b3V0cHV0WzFdOw0K
+PiArCWRlbGxfZmlsbF9yZXF1ZXN0KCZidWZmZXIsIDAsIDAsIDAsIDApOw0KPiArCXJldCA9IGRl
+bGxfc2VuZF9yZXF1ZXN0KCZidWZmZXIsIENMQVNTX0lORk8sIFNFTEVDVF9SRktJTEwpOw0KPiAr
+CXN0YXR1cyA9IGJ1ZmZlci5vdXRwdXRbMV07DQo+IA0KPiAgCWlmIChyZXQgIT0gMCB8fCAhKHN0
+YXR1cyAmIEJJVCgwKSkpIHsNCj4gIAkJcmV0dXJuOw0KPiAgCX0NCj4gDQo+IC0JZGVsbF9zZXRf
+YXJndW1lbnRzKDAsIDB4MiwgMCwgMCk7DQo+IC0JcmV0ID0gZGVsbF9zZW5kX3JlcXVlc3QoQ0xB
+U1NfSU5GTywgU0VMRUNUX1JGS0lMTCk7DQo+IC0JaHdzd2l0Y2ggPSBidWZmZXItPm91dHB1dFsx
+XTsNCj4gKwlkZWxsX2ZpbGxfcmVxdWVzdCgmYnVmZmVyLCAwLCAweDIsIDAsIDApOw0KPiArCXJl
+dCA9IGRlbGxfc2VuZF9yZXF1ZXN0KCZidWZmZXIsIENMQVNTX0lORk8sIFNFTEVDVF9SRktJTEwp
+Ow0KPiArCWh3c3dpdGNoID0gYnVmZmVyLm91dHB1dFsxXTsNCj4gDQo+ICAJaWYgKHJldCAhPSAw
+KQ0KPiAgCQlyZXR1cm47DQo+IEBAIC01MTQsMjIgKzUxOSwyMyBAQCBzdGF0aWMgc3RydWN0IGRl
+bnRyeSAqZGVsbF9sYXB0b3BfZGlyOw0KPiANCj4gIHN0YXRpYyBpbnQgZGVsbF9kZWJ1Z2ZzX3No
+b3coc3RydWN0IHNlcV9maWxlICpzLCB2b2lkICpkYXRhKQ0KPiAgew0KPiArCXN0cnVjdCBjYWxs
+aW5nX2ludGVyZmFjZV9idWZmZXIgYnVmZmVyOw0KPiAgCWludCBod3N3aXRjaF9zdGF0ZTsNCj4g
+IAlpbnQgaHdzd2l0Y2hfcmV0Ow0KPiAgCWludCBzdGF0dXM7DQo+ICAJaW50IHJldDsNCj4gDQo+
+IC0JZGVsbF9zZXRfYXJndW1lbnRzKDAsIDAsIDAsIDApOw0KPiAtCXJldCA9IGRlbGxfc2VuZF9y
+ZXF1ZXN0KENMQVNTX0lORk8sIFNFTEVDVF9SRktJTEwpOw0KPiArCWRlbGxfZmlsbF9yZXF1ZXN0
+KCZidWZmZXIsIDAsIDAsIDAsIDApOw0KPiArCXJldCA9IGRlbGxfc2VuZF9yZXF1ZXN0KCZidWZm
+ZXIsIENMQVNTX0lORk8sIFNFTEVDVF9SRktJTEwpOw0KPiAgCWlmIChyZXQpDQo+ICAJCXJldHVy
+biByZXQ7DQo+IC0Jc3RhdHVzID0gYnVmZmVyLT5vdXRwdXRbMV07DQo+ICsJc3RhdHVzID0gYnVm
+ZmVyLm91dHB1dFsxXTsNCj4gDQo+IC0JZGVsbF9zZXRfYXJndW1lbnRzKDAsIDB4MiwgMCwgMCk7
+DQo+IC0JaHdzd2l0Y2hfcmV0ID0gZGVsbF9zZW5kX3JlcXVlc3QoQ0xBU1NfSU5GTywgU0VMRUNU
+X1JGS0lMTCk7DQo+ICsJZGVsbF9maWxsX3JlcXVlc3QoJmJ1ZmZlciwgMCwgMHgyLCAwLCAwKTsN
+Cj4gKwlod3N3aXRjaF9yZXQgPSBkZWxsX3NlbmRfcmVxdWVzdCgmYnVmZmVyLCBDTEFTU19JTkZP
+LCBTRUxFQ1RfUkZLSUxMKTsNCj4gIAlpZiAoaHdzd2l0Y2hfcmV0KQ0KPiAgCQlyZXR1cm4gaHdz
+d2l0Y2hfcmV0Ow0KPiAtCWh3c3dpdGNoX3N0YXRlID0gYnVmZmVyLT5vdXRwdXRbMV07DQo+ICsJ
+aHdzd2l0Y2hfc3RhdGUgPSBidWZmZXIub3V0cHV0WzFdOw0KPiANCj4gIAlzZXFfcHJpbnRmKHMs
+ICJyZXR1cm46XHQlZFxuIiwgcmV0KTsNCj4gIAlzZXFfcHJpbnRmKHMsICJzdGF0dXM6XHQweCVY
+XG4iLCBzdGF0dXMpOw0KPiBAQCAtNjEwLDIyICs2MTYsMjMgQEAgc3RhdGljIGNvbnN0IHN0cnVj
+dCBmaWxlX29wZXJhdGlvbnMgZGVsbA0KPiANCj4gIHN0YXRpYyB2b2lkIGRlbGxfdXBkYXRlX3Jm
+a2lsbChzdHJ1Y3Qgd29ya19zdHJ1Y3QgKmlnbm9yZWQpDQo+ICB7DQo+ICsJc3RydWN0IGNhbGxp
+bmdfaW50ZXJmYWNlX2J1ZmZlciBidWZmZXI7DQo+ICAJaW50IGh3c3dpdGNoID0gMDsNCj4gIAlp
+bnQgc3RhdHVzOw0KPiAgCWludCByZXQ7DQo+IA0KPiAtCWRlbGxfc2V0X2FyZ3VtZW50cygwLCAw
+LCAwLCAwKTsNCj4gLQlyZXQgPSBkZWxsX3NlbmRfcmVxdWVzdChDTEFTU19JTkZPLCBTRUxFQ1Rf
+UkZLSUxMKTsNCj4gLQlzdGF0dXMgPSBidWZmZXItPm91dHB1dFsxXTsNCj4gKwlkZWxsX2ZpbGxf
+cmVxdWVzdCgmYnVmZmVyLCAwLCAwLCAwLCAwKTsNCj4gKwlyZXQgPSBkZWxsX3NlbmRfcmVxdWVz
+dCgmYnVmZmVyLCBDTEFTU19JTkZPLCBTRUxFQ1RfUkZLSUxMKTsNCj4gKwlzdGF0dXMgPSBidWZm
+ZXIub3V0cHV0WzFdOw0KPiANCj4gIAlpZiAocmV0ICE9IDApDQo+ICAJCXJldHVybjsNCj4gDQo+
+IC0JZGVsbF9zZXRfYXJndW1lbnRzKDAsIDB4MiwgMCwgMCk7DQo+IC0JcmV0ID0gZGVsbF9zZW5k
+X3JlcXVlc3QoQ0xBU1NfSU5GTywgU0VMRUNUX1JGS0lMTCk7DQo+ICsJZGVsbF9maWxsX3JlcXVl
+c3QoJmJ1ZmZlciwgMCwgMHgyLCAwLCAwKTsNCj4gKwlyZXQgPSBkZWxsX3NlbmRfcmVxdWVzdCgm
+YnVmZmVyLCBDTEFTU19JTkZPLCBTRUxFQ1RfUkZLSUxMKTsNCj4gDQo+ICAJaWYgKHJldCA9PSAw
+ICYmIChzdGF0dXMgJiBCSVQoMCkpKQ0KPiAtCQlod3N3aXRjaCA9IGJ1ZmZlci0+b3V0cHV0WzFd
+Ow0KPiArCQlod3N3aXRjaCA9IGJ1ZmZlci5vdXRwdXRbMV07DQo+IA0KPiAgCWlmICh3aWZpX3Jm
+a2lsbCkgew0KPiAgCQlkZWxsX3Jma2lsbF91cGRhdGVfaHdfc3RhdGUod2lmaV9yZmtpbGwsIDEs
+IHN0YXR1cywgaHdzd2l0Y2gpOw0KPiBAQCAtNjgzLDYgKzY5MCw3IEBAIHN0YXRpYyBzdHJ1Y3Qg
+bm90aWZpZXJfYmxvY2sgZGVsbF9sYXB0b3ANCj4gDQo+ICBzdGF0aWMgaW50IF9faW5pdCBkZWxs
+X3NldHVwX3Jma2lsbCh2b2lkKQ0KPiAgew0KPiArCXN0cnVjdCBjYWxsaW5nX2ludGVyZmFjZV9i
+dWZmZXIgYnVmZmVyOw0KPiAgCWludCBzdGF0dXMsIHJldCwgd2hpdGVsaXN0ZWQ7DQo+ICAJY29u
+c3QgY2hhciAqcHJvZHVjdDsNCj4gDQo+IEBAIC02OTgsOSArNzA2LDkgQEAgc3RhdGljIGludCBf
+X2luaXQgZGVsbF9zZXR1cF9yZmtpbGwodm9pZA0KPiAgCWlmICghZm9yY2VfcmZraWxsICYmICF3
+aGl0ZWxpc3RlZCkNCj4gIAkJcmV0dXJuIDA7DQo+IA0KPiAtCWRlbGxfc2V0X2FyZ3VtZW50cygw
+LCAwLCAwLCAwKTsNCj4gLQlyZXQgPSBkZWxsX3NlbmRfcmVxdWVzdChDTEFTU19JTkZPLCBTRUxF
+Q1RfUkZLSUxMKTsNCj4gLQlzdGF0dXMgPSBidWZmZXItPm91dHB1dFsxXTsNCj4gKwlkZWxsX2Zp
+bGxfcmVxdWVzdCgmYnVmZmVyLCAwLCAwLCAwLCAwKTsNCj4gKwlyZXQgPSBkZWxsX3NlbmRfcmVx
+dWVzdCgmYnVmZmVyLCBDTEFTU19JTkZPLCBTRUxFQ1RfUkZLSUxMKTsNCj4gKwlzdGF0dXMgPSBi
+dWZmZXIub3V0cHV0WzFdOw0KPiANCj4gIAkvKiBkZWxsIHdpcmVsZXNzIGluZm8gc21iaW9zIGNh
+bGwgaXMgbm90IHN1cHBvcnRlZCAqLw0KPiAgCWlmIChyZXQgIT0gMCkNCj4gQEAgLTg1Myw2ICs4
+NjEsNyBAQCBzdGF0aWMgdm9pZCBkZWxsX2NsZWFudXBfcmZraWxsKHZvaWQpDQo+IA0KPiAgc3Rh
+dGljIGludCBkZWxsX3NlbmRfaW50ZW5zaXR5KHN0cnVjdCBiYWNrbGlnaHRfZGV2aWNlICpiZCkN
+Cj4gIHsNCj4gKwlzdHJ1Y3QgY2FsbGluZ19pbnRlcmZhY2VfYnVmZmVyIGJ1ZmZlcjsNCj4gIAlz
+dHJ1Y3QgY2FsbGluZ19pbnRlcmZhY2VfdG9rZW4gKnRva2VuOw0KPiAgCWludCByZXQ7DQo+IA0K
+PiBAQCAtODYwLDE3ICs4NjksMjEgQEAgc3RhdGljIGludCBkZWxsX3NlbmRfaW50ZW5zaXR5KHN0
+cnVjdCBiYQ0KPiAgCWlmICghdG9rZW4pDQo+ICAJCXJldHVybiAtRU5PREVWOw0KPiANCj4gLQlk
+ZWxsX3NldF9hcmd1bWVudHModG9rZW4tPmxvY2F0aW9uLCBiZC0+cHJvcHMuYnJpZ2h0bmVzcywg
+MCwgMCk7DQo+ICsJZGVsbF9maWxsX3JlcXVlc3QoJmJ1ZmZlciwNCj4gKwkJCSAgIHRva2VuLT5s
+b2NhdGlvbiwgYmQtPnByb3BzLmJyaWdodG5lc3MsIDAsIDApOw0KPiAgCWlmIChwb3dlcl9zdXBw
+bHlfaXNfc3lzdGVtX3N1cHBsaWVkKCkgPiAwKQ0KPiAtCQlyZXQgPSBkZWxsX3NlbmRfcmVxdWVz
+dChDTEFTU19UT0tFTl9XUklURSwgU0VMRUNUX1RPS0VOX0FDKTsNCj4gKwkJcmV0ID0gZGVsbF9z
+ZW5kX3JlcXVlc3QoJmJ1ZmZlciwNCj4gKwkJCQkJQ0xBU1NfVE9LRU5fV1JJVEUsDQo+IFNFTEVD
+VF9UT0tFTl9BQyk7DQo+ICAJZWxzZQ0KPiAtCQlyZXQgPSBkZWxsX3NlbmRfcmVxdWVzdChDTEFT
+U19UT0tFTl9XUklURSwNCj4gU0VMRUNUX1RPS0VOX0JBVCk7DQo+ICsJCXJldCA9IGRlbGxfc2Vu
+ZF9yZXF1ZXN0KCZidWZmZXIsDQo+ICsJCQkJCUNMQVNTX1RPS0VOX1dSSVRFLA0KPiBTRUxFQ1Rf
+VE9LRU5fQkFUKTsNCj4gDQo+ICAJcmV0dXJuIHJldDsNCj4gIH0NCj4gDQo+ICBzdGF0aWMgaW50
+IGRlbGxfZ2V0X2ludGVuc2l0eShzdHJ1Y3QgYmFja2xpZ2h0X2RldmljZSAqYmQpDQo+ICB7DQo+
+ICsJc3RydWN0IGNhbGxpbmdfaW50ZXJmYWNlX2J1ZmZlciBidWZmZXI7DQo+ICAJc3RydWN0IGNh
+bGxpbmdfaW50ZXJmYWNlX3Rva2VuICp0b2tlbjsNCj4gIAlpbnQgcmV0Ow0KPiANCj4gQEAgLTg3
+OCwxNCArODkxLDE3IEBAIHN0YXRpYyBpbnQgZGVsbF9nZXRfaW50ZW5zaXR5KHN0cnVjdCBiYWMN
+Cj4gIAlpZiAoIXRva2VuKQ0KPiAgCQlyZXR1cm4gLUVOT0RFVjsNCj4gDQo+IC0JZGVsbF9zZXRf
+YXJndW1lbnRzKHRva2VuLT5sb2NhdGlvbiwgMCwgMCwgMCk7DQo+ICsJZGVsbF9maWxsX3JlcXVl
+c3QoJmJ1ZmZlciwgdG9rZW4tPmxvY2F0aW9uLCAwLCAwLCAwKTsNCj4gIAlpZiAocG93ZXJfc3Vw
+cGx5X2lzX3N5c3RlbV9zdXBwbGllZCgpID4gMCkNCj4gLQkJcmV0ID0gZGVsbF9zZW5kX3JlcXVl
+c3QoQ0xBU1NfVE9LRU5fUkVBRCwgU0VMRUNUX1RPS0VOX0FDKTsNCj4gKwkJcmV0ID0gZGVsbF9z
+ZW5kX3JlcXVlc3QoJmJ1ZmZlciwNCj4gKwkJCQkJQ0xBU1NfVE9LRU5fUkVBRCwgU0VMRUNUX1RP
+S0VOX0FDKTsNCj4gIAllbHNlDQo+IC0JCXJldCA9IGRlbGxfc2VuZF9yZXF1ZXN0KENMQVNTX1RP
+S0VOX1JFQUQsIFNFTEVDVF9UT0tFTl9CQVQpOw0KPiArCQlyZXQgPSBkZWxsX3NlbmRfcmVxdWVz
+dCgmYnVmZmVyLA0KPiArCQkJCQlDTEFTU19UT0tFTl9SRUFELA0KPiBTRUxFQ1RfVE9LRU5fQkFU
+KTsNCj4gDQo+ICAJaWYgKHJldCA9PSAwKQ0KPiAtCQlyZXQgPSBidWZmZXItPm91dHB1dFsxXTsN
+Cj4gKwkJcmV0ID0gYnVmZmVyLm91dHB1dFsxXTsNCj4gKw0KPiAgCXJldHVybiByZXQ7DQo+ICB9
+DQo+IA0KPiBAQCAtMTE0OSwzMSArMTE2NSwzMyBAQCBzdGF0aWMgREVGSU5FX01VVEVYKGtiZF9s
+ZWRfbXV0ZXgpOw0KPiANCj4gIHN0YXRpYyBpbnQga2JkX2dldF9pbmZvKHN0cnVjdCBrYmRfaW5m
+byAqaW5mbykNCj4gIHsNCj4gKwlzdHJ1Y3QgY2FsbGluZ19pbnRlcmZhY2VfYnVmZmVyIGJ1ZmZl
+cjsNCj4gIAl1OCB1bml0czsNCj4gIAlpbnQgcmV0Ow0KPiANCj4gLQlkZWxsX3NldF9hcmd1bWVu
+dHMoMCwgMCwgMCwgMCk7DQo+IC0JcmV0ID0gZGVsbF9zZW5kX3JlcXVlc3QoQ0xBU1NfS0JEX0JB
+Q0tMSUdIVCwgU0VMRUNUX0tCRF9CQUNLTElHSFQpOw0KPiArCWRlbGxfZmlsbF9yZXF1ZXN0KCZi
+dWZmZXIsIDAsIDAsIDAsIDApOw0KPiArCXJldCA9IGRlbGxfc2VuZF9yZXF1ZXN0KCZidWZmZXIs
+DQo+ICsJCQkJQ0xBU1NfS0JEX0JBQ0tMSUdIVCwgU0VMRUNUX0tCRF9CQUNLTElHSFQpOw0KPiAg
+CWlmIChyZXQpDQo+ICAJCXJldHVybiByZXQ7DQo+IA0KPiAtCWluZm8tPm1vZGVzID0gYnVmZmVy
+LT5vdXRwdXRbMV0gJiAweEZGRkY7DQo+IC0JaW5mby0+dHlwZSA9IChidWZmZXItPm91dHB1dFsx
+XSA+PiAyNCkgJiAweEZGOw0KPiAtCWluZm8tPnRyaWdnZXJzID0gYnVmZmVyLT5vdXRwdXRbMl0g
+JiAweEZGOw0KPiAtCXVuaXRzID0gKGJ1ZmZlci0+b3V0cHV0WzJdID4+IDgpICYgMHhGRjsNCj4g
+LQlpbmZvLT5sZXZlbHMgPSAoYnVmZmVyLT5vdXRwdXRbMl0gPj4gMTYpICYgMHhGRjsNCj4gKwlp
+bmZvLT5tb2RlcyA9IGJ1ZmZlci5vdXRwdXRbMV0gJiAweEZGRkY7DQo+ICsJaW5mby0+dHlwZSA9
+IChidWZmZXIub3V0cHV0WzFdID4+IDI0KSAmIDB4RkY7DQo+ICsJaW5mby0+dHJpZ2dlcnMgPSBi
+dWZmZXIub3V0cHV0WzJdICYgMHhGRjsNCj4gKwl1bml0cyA9IChidWZmZXIub3V0cHV0WzJdID4+
+IDgpICYgMHhGRjsNCj4gKwlpbmZvLT5sZXZlbHMgPSAoYnVmZmVyLm91dHB1dFsyXSA+PiAxNikg
+JiAweEZGOw0KPiANCj4gIAlpZiAocXVpcmtzICYmIHF1aXJrcy0+a2JkX2xlZF9sZXZlbHNfb2Zm
+XzEgJiYgaW5mby0+bGV2ZWxzKQ0KPiAgCQlpbmZvLT5sZXZlbHMtLTsNCj4gDQo+ICAJaWYgKHVu
+aXRzICYgQklUKDApKQ0KPiAtCQlpbmZvLT5zZWNvbmRzID0gKGJ1ZmZlci0+b3V0cHV0WzNdID4+
+IDApICYgMHhGRjsNCj4gKwkJaW5mby0+c2Vjb25kcyA9IChidWZmZXIub3V0cHV0WzNdID4+IDAp
+ICYgMHhGRjsNCj4gIAlpZiAodW5pdHMgJiBCSVQoMSkpDQo+IC0JCWluZm8tPm1pbnV0ZXMgPSAo
+YnVmZmVyLT5vdXRwdXRbM10gPj4gOCkgJiAweEZGOw0KPiArCQlpbmZvLT5taW51dGVzID0gKGJ1
+ZmZlci5vdXRwdXRbM10gPj4gOCkgJiAweEZGOw0KPiAgCWlmICh1bml0cyAmIEJJVCgyKSkNCj4g
+LQkJaW5mby0+aG91cnMgPSAoYnVmZmVyLT5vdXRwdXRbM10gPj4gMTYpICYgMHhGRjsNCj4gKwkJ
+aW5mby0+aG91cnMgPSAoYnVmZmVyLm91dHB1dFszXSA+PiAxNikgJiAweEZGOw0KPiAgCWlmICh1
+bml0cyAmIEJJVCgzKSkNCj4gLQkJaW5mby0+ZGF5cyA9IChidWZmZXItPm91dHB1dFszXSA+PiAy
+NCkgJiAweEZGOw0KPiArCQlpbmZvLT5kYXlzID0gKGJ1ZmZlci5vdXRwdXRbM10gPj4gMjQpICYg
+MHhGRjsNCj4gDQo+ICAJcmV0dXJuIHJldDsNCj4gIH0NCj4gQEAgLTEyMzMsMzEgKzEyNTEsMzQg
+QEAgc3RhdGljIGludCBrYmRfc2V0X2xldmVsKHN0cnVjdCBrYmRfc3RhdA0KPiANCj4gIHN0YXRp
+YyBpbnQga2JkX2dldF9zdGF0ZShzdHJ1Y3Qga2JkX3N0YXRlICpzdGF0ZSkNCj4gIHsNCj4gKwlz
+dHJ1Y3QgY2FsbGluZ19pbnRlcmZhY2VfYnVmZmVyIGJ1ZmZlcjsNCj4gIAlpbnQgcmV0Ow0KPiAN
+Cj4gLQlkZWxsX3NldF9hcmd1bWVudHMoMHgxLCAwLCAwLCAwKTsNCj4gLQlyZXQgPSBkZWxsX3Nl
+bmRfcmVxdWVzdChDTEFTU19LQkRfQkFDS0xJR0hULCBTRUxFQ1RfS0JEX0JBQ0tMSUdIVCk7DQo+
+ICsJZGVsbF9maWxsX3JlcXVlc3QoJmJ1ZmZlciwgMCwgMCwgMCwgMCk7DQo+ICsJcmV0ID0gZGVs
+bF9zZW5kX3JlcXVlc3QoJmJ1ZmZlciwNCj4gKwkJCQlDTEFTU19LQkRfQkFDS0xJR0hULCBTRUxF
+Q1RfS0JEX0JBQ0tMSUdIVCk7DQo+ICAJaWYgKHJldCkNCj4gIAkJcmV0dXJuIHJldDsNCj4gDQo+
+IC0Jc3RhdGUtPm1vZGVfYml0ID0gZmZzKGJ1ZmZlci0+b3V0cHV0WzFdICYgMHhGRkZGKTsNCj4g
+KwlzdGF0ZS0+bW9kZV9iaXQgPSBmZnMoYnVmZmVyLm91dHB1dFsxXSAmIDB4RkZGRik7DQo+ICAJ
+aWYgKHN0YXRlLT5tb2RlX2JpdCAhPSAwKQ0KPiAgCQlzdGF0ZS0+bW9kZV9iaXQtLTsNCj4gDQo+
+IC0Jc3RhdGUtPnRyaWdnZXJzID0gKGJ1ZmZlci0+b3V0cHV0WzFdID4+IDE2KSAmIDB4RkY7DQo+
+IC0Jc3RhdGUtPnRpbWVvdXRfdmFsdWUgPSAoYnVmZmVyLT5vdXRwdXRbMV0gPj4gMjQpICYgMHgz
+RjsNCj4gLQlzdGF0ZS0+dGltZW91dF91bml0ID0gKGJ1ZmZlci0+b3V0cHV0WzFdID4+IDMwKSAm
+IDB4MzsNCj4gLQlzdGF0ZS0+YWxzX3NldHRpbmcgPSBidWZmZXItPm91dHB1dFsyXSAmIDB4RkY7
+DQo+IC0Jc3RhdGUtPmFsc192YWx1ZSA9IChidWZmZXItPm91dHB1dFsyXSA+PiA4KSAmIDB4RkY7
+DQo+IC0Jc3RhdGUtPmxldmVsID0gKGJ1ZmZlci0+b3V0cHV0WzJdID4+IDE2KSAmIDB4RkY7DQo+
+IC0Jc3RhdGUtPnRpbWVvdXRfdmFsdWVfYWMgPSAoYnVmZmVyLT5vdXRwdXRbMl0gPj4gMjQpICYg
+MHgzRjsNCj4gLQlzdGF0ZS0+dGltZW91dF91bml0X2FjID0gKGJ1ZmZlci0+b3V0cHV0WzJdID4+
+IDMwKSAmIDB4MzsNCj4gKwlzdGF0ZS0+dHJpZ2dlcnMgPSAoYnVmZmVyLm91dHB1dFsxXSA+PiAx
+NikgJiAweEZGOw0KPiArCXN0YXRlLT50aW1lb3V0X3ZhbHVlID0gKGJ1ZmZlci5vdXRwdXRbMV0g
+Pj4gMjQpICYgMHgzRjsNCj4gKwlzdGF0ZS0+dGltZW91dF91bml0ID0gKGJ1ZmZlci5vdXRwdXRb
+MV0gPj4gMzApICYgMHgzOw0KPiArCXN0YXRlLT5hbHNfc2V0dGluZyA9IGJ1ZmZlci5vdXRwdXRb
+Ml0gJiAweEZGOw0KPiArCXN0YXRlLT5hbHNfdmFsdWUgPSAoYnVmZmVyLm91dHB1dFsyXSA+PiA4
+KSAmIDB4RkY7DQo+ICsJc3RhdGUtPmxldmVsID0gKGJ1ZmZlci5vdXRwdXRbMl0gPj4gMTYpICYg
+MHhGRjsNCj4gKwlzdGF0ZS0+dGltZW91dF92YWx1ZV9hYyA9IChidWZmZXIub3V0cHV0WzJdID4+
+IDI0KSAmIDB4M0Y7DQo+ICsJc3RhdGUtPnRpbWVvdXRfdW5pdF9hYyA9IChidWZmZXIub3V0cHV0
+WzJdID4+IDMwKSAmIDB4MzsNCj4gDQo+ICAJcmV0dXJuIHJldDsNCj4gIH0NCj4gDQo+ICBzdGF0
+aWMgaW50IGtiZF9zZXRfc3RhdGUoc3RydWN0IGtiZF9zdGF0ZSAqc3RhdGUpDQo+ICB7DQo+ICsJ
+c3RydWN0IGNhbGxpbmdfaW50ZXJmYWNlX2J1ZmZlciBidWZmZXI7DQo+ICAJaW50IHJldDsNCj4g
+IAl1MzIgaW5wdXQxOw0KPiAgCXUzMiBpbnB1dDI7DQo+IEBAIC0xMjcwLDggKzEyOTEsOSBAQCBz
+dGF0aWMgaW50IGtiZF9zZXRfc3RhdGUoc3RydWN0IGtiZF9zdGF0DQo+ICAJaW5wdXQyIHw9IChz
+dGF0ZS0+bGV2ZWwgJiAweEZGKSA8PCAxNjsNCj4gIAlpbnB1dDIgfD0gKHN0YXRlLT50aW1lb3V0
+X3ZhbHVlX2FjICYgMHgzRikgPDwgMjQ7DQo+ICAJaW5wdXQyIHw9IChzdGF0ZS0+dGltZW91dF91
+bml0X2FjICYgMHgzKSA8PCAzMDsNCj4gLQlkZWxsX3NldF9hcmd1bWVudHMoMHgyLCBpbnB1dDEs
+IGlucHV0MiwgMCk7DQo+IC0JcmV0ID0gZGVsbF9zZW5kX3JlcXVlc3QoQ0xBU1NfS0JEX0JBQ0tM
+SUdIVCwgU0VMRUNUX0tCRF9CQUNLTElHSFQpOw0KPiArCWRlbGxfZmlsbF9yZXF1ZXN0KCZidWZm
+ZXIsIDB4MiwgaW5wdXQxLCBpbnB1dDIsIDApOw0KPiArCXJldCA9IGRlbGxfc2VuZF9yZXF1ZXN0
+KCZidWZmZXIsDQo+ICsJCQkJQ0xBU1NfS0JEX0JBQ0tMSUdIVCwgU0VMRUNUX0tCRF9CQUNLTElH
+SFQpOw0KPiANCj4gIAlyZXR1cm4gcmV0Ow0KPiAgfQ0KPiBAQCAtMTI5OCw2ICsxMzIwLDcgQEAg
+c3RhdGljIGludCBrYmRfc2V0X3N0YXRlX3NhZmUoc3RydWN0IGtiZA0KPiANCj4gIHN0YXRpYyBp
+bnQga2JkX3NldF90b2tlbl9iaXQodTggYml0KQ0KPiAgew0KPiArCXN0cnVjdCBjYWxsaW5nX2lu
+dGVyZmFjZV9idWZmZXIgYnVmZmVyOw0KPiAgCXN0cnVjdCBjYWxsaW5nX2ludGVyZmFjZV90b2tl
+biAqdG9rZW47DQo+ICAJaW50IHJldDsNCj4gDQo+IEBAIC0xMzA4LDE0ICsxMzMxLDE1IEBAIHN0
+YXRpYyBpbnQga2JkX3NldF90b2tlbl9iaXQodTggYml0KQ0KPiAgCWlmICghdG9rZW4pDQo+ICAJ
+CXJldHVybiAtRUlOVkFMOw0KPiANCj4gLQlkZWxsX3NldF9hcmd1bWVudHModG9rZW4tPmxvY2F0
+aW9uLCB0b2tlbi0+dmFsdWUsIDAsIDApOw0KPiAtCXJldCA9IGRlbGxfc2VuZF9yZXF1ZXN0KENM
+QVNTX1RPS0VOX1dSSVRFLCBTRUxFQ1RfVE9LRU5fU1REKTsNCj4gKwlkZWxsX2ZpbGxfcmVxdWVz
+dCgmYnVmZmVyLCB0b2tlbi0+bG9jYXRpb24sIHRva2VuLT52YWx1ZSwgMCwgMCk7DQo+ICsJcmV0
+ID0gZGVsbF9zZW5kX3JlcXVlc3QoJmJ1ZmZlciwgQ0xBU1NfVE9LRU5fV1JJVEUsDQo+IFNFTEVD
+VF9UT0tFTl9TVEQpOw0KPiANCj4gIAlyZXR1cm4gcmV0Ow0KPiAgfQ0KPiANCj4gIHN0YXRpYyBp
+bnQga2JkX2dldF90b2tlbl9iaXQodTggYml0KQ0KPiAgew0KPiArCXN0cnVjdCBjYWxsaW5nX2lu
+dGVyZmFjZV9idWZmZXIgYnVmZmVyOw0KPiAgCXN0cnVjdCBjYWxsaW5nX2ludGVyZmFjZV90b2tl
+biAqdG9rZW47DQo+ICAJaW50IHJldDsNCj4gIAlpbnQgdmFsOw0KPiBAQCAtMTMyNyw5ICsxMzUx
+LDkgQEAgc3RhdGljIGludCBrYmRfZ2V0X3Rva2VuX2JpdCh1OCBiaXQpDQo+ICAJaWYgKCF0b2tl
+bikNCj4gIAkJcmV0dXJuIC1FSU5WQUw7DQo+IA0KPiAtCWRlbGxfc2V0X2FyZ3VtZW50cyh0b2tl
+bi0+bG9jYXRpb24sIDAsIDAsIDApOw0KPiAtCXJldCA9IGRlbGxfc2VuZF9yZXF1ZXN0KENMQVNT
+X1RPS0VOX1JFQUQsIFNFTEVDVF9UT0tFTl9TVEQpOw0KPiAtCXZhbCA9IGJ1ZmZlci0+b3V0cHV0
+WzFdOw0KPiArCWRlbGxfZmlsbF9yZXF1ZXN0KCZidWZmZXIsIHRva2VuLT5sb2NhdGlvbiwgMCwg
+MCwgMCk7DQo+ICsJcmV0ID0gZGVsbF9zZW5kX3JlcXVlc3QoJmJ1ZmZlciwgQ0xBU1NfVE9LRU5f
+UkVBRCwNCj4gU0VMRUNUX1RPS0VOX1NURCk7DQo+ICsJdmFsID0gYnVmZmVyLm91dHB1dFsxXTsN
+Cj4gDQo+ICAJaWYgKHJldCkNCj4gIAkJcmV0dXJuIHJldDsNCj4gQEAgLTIwNDYsNiArMjA3MCw3
+IEBAIHN0YXRpYyBzdHJ1Y3Qgbm90aWZpZXJfYmxvY2sgZGVsbF9sYXB0b3ANCj4gDQo+ICBpbnQg
+ZGVsbF9taWNtdXRlX2xlZF9zZXQoaW50IHN0YXRlKQ0KPiAgew0KPiArCXN0cnVjdCBjYWxsaW5n
+X2ludGVyZmFjZV9idWZmZXIgYnVmZmVyOw0KPiAgCXN0cnVjdCBjYWxsaW5nX2ludGVyZmFjZV90
+b2tlbiAqdG9rZW47DQo+IA0KPiAgCWlmIChzdGF0ZSA9PSAwKQ0KPiBAQCAtMjA1OCw4ICsyMDgz
+LDggQEAgaW50IGRlbGxfbWljbXV0ZV9sZWRfc2V0KGludCBzdGF0ZSkNCj4gIAlpZiAoIXRva2Vu
+KQ0KPiAgCQlyZXR1cm4gLUVOT0RFVjsNCj4gDQo+IC0JZGVsbF9zZXRfYXJndW1lbnRzKHRva2Vu
+LT5sb2NhdGlvbiwgdG9rZW4tPnZhbHVlLCAwLCAwKTsNCj4gLQlkZWxsX3NlbmRfcmVxdWVzdChD
+TEFTU19UT0tFTl9XUklURSwgU0VMRUNUX1RPS0VOX1NURCk7DQo+ICsJZGVsbF9maWxsX3JlcXVl
+c3QoJmJ1ZmZlciwgdG9rZW4tPmxvY2F0aW9uLCB0b2tlbi0+dmFsdWUsIDAsIDApOw0KPiArCWRl
+bGxfc2VuZF9yZXF1ZXN0KCZidWZmZXIsIENMQVNTX1RPS0VOX1dSSVRFLCBTRUxFQ1RfVE9LRU5f
+U1REKTsNCj4gDQo+ICAJcmV0dXJuIHN0YXRlOw0KPiAgfQ0KPiBAQCAtMjA5MCwxMyArMjExNSw2
+IEBAIHN0YXRpYyBpbnQgX19pbml0IGRlbGxfaW5pdCh2b2lkKQ0KPiAgCWlmIChyZXQpDQo+ICAJ
+CWdvdG8gZmFpbF9wbGF0Zm9ybV9kZXZpY2UyOw0KPiANCj4gLQlidWZmZXIgPSBremFsbG9jKHNp
+emVvZihzdHJ1Y3QgY2FsbGluZ19pbnRlcmZhY2VfYnVmZmVyKSwgR0ZQX0tFUk5FTCk7DQo+IC0J
+aWYgKCFidWZmZXIpIHsNCj4gLQkJcmV0ID0gLUVOT01FTTsNCj4gLQkJZ290byBmYWlsX2J1ZmZl
+cjsNCj4gLQl9DQo+IC0NCj4gLQ0KPiAgCXJldCA9IGRlbGxfc2V0dXBfcmZraWxsKCk7DQo+IA0K
+PiAgCWlmIChyZXQpIHsNCj4gQEAgLTIxMjEsMTAgKzIxMzksMTMgQEAgc3RhdGljIGludCBfX2lu
+aXQgZGVsbF9pbml0KHZvaWQpDQo+IA0KPiAgCXRva2VuID0gZGVsbF9zbWJpb3NfZmluZF90b2tl
+bihCUklHSFRORVNTX1RPS0VOKTsNCj4gIAlpZiAodG9rZW4pIHsNCj4gLQkJZGVsbF9zZXRfYXJn
+dW1lbnRzKHRva2VuLT5sb2NhdGlvbiwgMCwgMCwgMCk7DQo+IC0JCXJldCA9IGRlbGxfc2VuZF9y
+ZXF1ZXN0KENMQVNTX1RPS0VOX1JFQUQsIFNFTEVDVF9UT0tFTl9BQyk7DQo+ICsJCXN0cnVjdCBj
+YWxsaW5nX2ludGVyZmFjZV9idWZmZXIgYnVmZmVyOw0KPiArDQo+ICsJCWRlbGxfZmlsbF9yZXF1
+ZXN0KCZidWZmZXIsIHRva2VuLT5sb2NhdGlvbiwgMCwgMCwgMCk7DQo+ICsJCXJldCA9IGRlbGxf
+c2VuZF9yZXF1ZXN0KCZidWZmZXIsDQo+ICsJCQkJCUNMQVNTX1RPS0VOX1JFQUQsIFNFTEVDVF9U
+T0tFTl9BQyk7DQo+ICAJCWlmIChyZXQpDQo+IC0JCQltYXhfaW50ZW5zaXR5ID0gYnVmZmVyLT5v
+dXRwdXRbM107DQo+ICsJCQltYXhfaW50ZW5zaXR5ID0gYnVmZmVyLm91dHB1dFszXTsNCj4gIAl9
+DQo+IA0KPiAgCWlmIChtYXhfaW50ZW5zaXR5KSB7DQo+IEBAIC0yMTU4LDggKzIxNzksNiBAQCBz
+dGF0aWMgaW50IF9faW5pdCBkZWxsX2luaXQodm9pZCkNCj4gIGZhaWxfZ2V0X2JyaWdodG5lc3M6
+DQo+ICAJYmFja2xpZ2h0X2RldmljZV91bnJlZ2lzdGVyKGRlbGxfYmFja2xpZ2h0X2RldmljZSk7
+DQo+ICBmYWlsX2JhY2tsaWdodDoNCj4gLQlrZnJlZShidWZmZXIpOw0KPiAtZmFpbF9idWZmZXI6
+DQo+ICAJZGVsbF9jbGVhbnVwX3Jma2lsbCgpOw0KPiAgZmFpbF9yZmtpbGw6DQo+ICAJcGxhdGZv
+cm1fZGV2aWNlX2RlbChwbGF0Zm9ybV9kZXZpY2UpOw0KPiBAQCAtMjE3OSw3ICsyMTk4LDYgQEAg
+c3RhdGljIHZvaWQgX19leGl0IGRlbGxfZXhpdCh2b2lkKQ0KPiAgCQl0b3VjaHBhZF9sZWRfZXhp
+dCgpOw0KPiAgCWtiZF9sZWRfZXhpdCgpOw0KPiAgCWJhY2tsaWdodF9kZXZpY2VfdW5yZWdpc3Rl
+cihkZWxsX2JhY2tsaWdodF9kZXZpY2UpOw0KPiAtCWtmcmVlKGJ1ZmZlcik7DQo+ICAJZGVsbF9j
+bGVhbnVwX3Jma2lsbCgpOw0KPiAgCWlmIChwbGF0Zm9ybV9kZXZpY2UpIHsNCj4gIAkJcGxhdGZv
+cm1fZGV2aWNlX3VucmVnaXN0ZXIocGxhdGZvcm1fZGV2aWNlKTsNCj4gDQoNCg==
