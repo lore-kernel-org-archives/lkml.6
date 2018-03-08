@@ -1,57 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935679AbeCHJhU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 04:37:20 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:40580 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755238AbeCHJhD (ORCPT
+        id S935701AbeCHJix (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 04:38:53 -0500
+Received: from bmailout1.hostsharing.net ([83.223.95.100]:47529 "EHLO
+        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755153AbeCHJiu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 04:37:03 -0500
-X-Google-Smtp-Source: AG47ELsX4NNGOYXV3pfj58HSaNfg+FdHJhe1YAfIowlERZY8TAcZHEpDkWAV/2Nu1LYOYCcdwxwEmA==
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: [PATCH 2/2] rpmsg: smd: use put_device() if device_register fail
-Date: Thu,  8 Mar 2018 15:06:08 +0530
-Message-Id: <340cac8a81a84cf3054f8adcdb169f740b212c34.1520501519.git.arvind.yadav.cs@gmail.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <cover.1520501519.git.arvind.yadav.cs@gmail.com>
-References: <cover.1520501519.git.arvind.yadav.cs@gmail.com>
-In-Reply-To: <cover.1520501519.git.arvind.yadav.cs@gmail.com>
-References: <cover.1520501519.git.arvind.yadav.cs@gmail.com>
+        Thu, 8 Mar 2018 04:38:50 -0500
+Date: Thu, 8 Mar 2018 10:38:48 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: mjg59@srcf.ucam.org, pali.rohar@gmail.com, dvhart@infradead.org,
+        andy@infradead.org, mario.limonciello@dell.com, tiwai@suse.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+Subject: Re: [alsa-devel] [PATCH v2 3/3] ALSA: hda: Disabled unused audio
+ controller for Dell platforms with Switchable Graphics
+Message-ID: <20180308093848.GA24068@wunner.de>
+References: <20180308091023.9061-1-kai.heng.feng@canonical.com>
+ <20180308091023.9061-3-kai.heng.feng@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180308091023.9061-3-kai.heng.feng@canonical.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-if device_register() returned an error! Always use put_device()
-to give up the reference initialized. unregister device for
-other return error.
+On Thu, Mar 08, 2018 at 05:10:23PM +0800, Kai-Heng Feng wrote:
+> Some Dell platforms (Preicsion 7510/7710/7520/7720) have a BIOS option
+> "Switchable Graphics" (SG).
+> 
+> When SG is enabled, we have:
+> 00:02.0 VGA compatible controller: Intel Corporation Device 591b (rev 04)
+> 00:1f.3 Audio device: Intel Corporation CM238 HD Audio Controller (rev 31)
+> 01:00.0 VGA compatible controller: Advanced Micro Devices, Inc.  [AMD/ATI] Ellesmere [Polaris10]
+> 01:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Ellesmere [Radeon RX 580]
+> 
+> The Intel Audio outputs all the sound, including HDMI audio. The audio
+> controller comes with AMD graphics doesn't get used.
+> 
+> When SG is disabled, we have:
+> 00:1f.3 Audio device: Intel Corporation CM238 HD Audio Controller (rev 31)
+> 01:00.0 VGA compatible controller: Advanced Micro Devices, Inc.  [AMD/ATI] Ellesmere [Polaris10]
+> 01:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Ellesmere [Radeon RX 580]
+> 
+> Now it's a typical discrete-only system. HDMI audio comes from AMD audio
+> controller, others from Intel audio controller.
+> 
+> When SG is enabled, the unused AMD audio controller still exposes its
+> sysfs, so userspace still opens the control file and stream. If
+> userspace tries to output sound through the stream, it hangs when
+> runtime suspend kicks in:
+> [ 12.796265] snd_hda_intel 0000:01:00.1: Disabling via vga_switcheroo
+> [ 12.796367] snd_hda_intel 0000:01:00.1: Cannot lock devices!
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- drivers/rpmsg/qcom_smd.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This should be fixed by the following series:
+https://lists.freedesktop.org/archives/dri-devel/2018-March/168012.html
 
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 92d0c6a..ff8101a 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -1408,6 +1408,7 @@ struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
- 	ret = device_register(&edge->dev);
- 	if (ret) {
- 		pr_err("failed to register smd edge\n");
-+		put_device(&edge->dev);
- 		return ERR_PTR(ret);
- 	}
- 
-@@ -1428,7 +1429,7 @@ struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
- 	return edge;
- 
- unregister_dev:
--	put_device(&edge->dev);
-+	device_unregister(&edge->dev);
- 	return ERR_PTR(ret);
- }
- EXPORT_SYMBOL(qcom_smd_register_edge);
--- 
-1.9.1
+Please verify that by testing the series on the machine in question.
+I'm hoping to get those patches in for 4.17.  I suspect that your
+patch may not be necessary then.
+
+
+> Since the discrete audio controller isn't useful when SG enabled, we
+> should just disable the device.
+
+I don't quite follow, when SG is enabled but hda_intel doesn't bind
+to the AMD audio device, how are you going to stream audio to
+external displays?  Are external DP/HDMI ports muxed to the integrated
+GPU when SG is enabled?
+
+Thanks,
+
+Lukas
+
+> 
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> ---
+> v2: Mario suggested to squash the HDA part into the same series.
+> 
+>  sound/pci/hda/hda_intel.c | 35 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+> 
+> diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+> index 96143df19b21..8e3e8b88624a 100644
+> --- a/sound/pci/hda/hda_intel.c
+> +++ b/sound/pci/hda/hda_intel.c
+> @@ -49,6 +49,7 @@
+>  #include <linux/clocksource.h>
+>  #include <linux/time.h>
+>  #include <linux/completion.h>
+> +#include <linux/dell-common.h>
+>  
+>  #ifdef CONFIG_X86
+>  /* for snoop control */
+> @@ -1620,6 +1621,35 @@ static void check_msi(struct azx *chip)
+>  	}
+>  }
+>  
+> +#if IS_ENABLED(CONFIG_DELL_LAPTOP)
+> +static bool check_dell_switchable_gfx(struct pci_dev *pdev)
+> +{
+> +	static int (*dell_switchable_gfx_enabled_func)(bool *);
+> +	bool enabled;
+> +	int err;
+> +
+> +	if (pdev->vendor != PCI_VENDOR_ID_ATI ||
+> +	    pdev->subsystem_vendor != PCI_VENDOR_ID_DELL)
+> +		return false;
+> +
+> +	dell_switchable_gfx_enabled_func =
+> +		symbol_request(dell_switchable_gfx_enabled);
+> +	if (!dell_switchable_gfx_enabled_func)
+> +		return false;
+> +
+> +	err = dell_switchable_gfx_enabled_func(&enabled);
+> +
+> +	symbol_put(dell_switchable_gfx_enabled);
+> +
+> +	return !err ? enabled : false;
+> +}
+> +#else
+> +static bool check_dell_switchable_gfx(struct pci_dev *pdev)
+> +{
+> +	return false;
+> +}
+> +#endif
+> +
+>  /* check the snoop mode availability */
+>  static void azx_check_snoop_available(struct azx *chip)
+>  {
+> @@ -1702,6 +1732,11 @@ static int azx_create(struct snd_card *card, struct pci_dev *pci,
+>  	if (err < 0)
+>  		return err;
+>  
+> +	if (check_dell_switchable_gfx(pci)) {
+> +		pci_disable_device(pci);
+> +		return -ENODEV;
+> +	}
+> +
+>  	hda = kzalloc(sizeof(*hda), GFP_KERNEL);
+>  	if (!hda) {
+>  		pci_disable_device(pci);
+> -- 
+> 2.15.1
+> 
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@alsa-project.org
+> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
