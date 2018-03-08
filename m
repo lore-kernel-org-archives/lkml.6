@@ -1,213 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934272AbeCHD1u (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 22:27:50 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5762 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753901AbeCHD1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 22:27:48 -0500
-Subject: Re: [PATCH] f2fs: add nowait aio support
-To: Hyunchul Lee <hyc.lee@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-CC: Goldwyn Rodrigues <rgoldwyn@suse.com>, Christoph Hellwig <hch@lst.de>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <kernel-team@lge.com>,
-        Hyunchul Lee <cheol.lee@lge.com>
-References: <1519976914-32491-1-git-send-email-hyc.lee@gmail.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <dac1ca36-613b-a60a-9321-b2bc18f9da3f@huawei.com>
-Date: Thu, 8 Mar 2018 11:27:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1754704AbeCHD3B (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 22:29:01 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:45813 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753168AbeCHD27 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 22:28:59 -0500
+X-Google-Smtp-Source: AG47ELsgWvmFcXr05tcK+ET99iISpcE/hTeFfwTPE0P3fkrDTpWO/MQqoays8nGKnQ9qrW0F2yViSA==
+Date: Thu, 8 Mar 2018 11:28:50 +0800
+From: Wang YanQing <udknight@gmail.com>
+To: acme@kernel.org
+Cc: peterz@infradead.org, mingo@redhat.com, jolsa@redhat.com,
+        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] perf report: Provide libtraceevent with a kernel symbol
+ resolver
+Message-ID: <20180308032850.GA12383@udknight-ThinkPad-E550>
+Mail-Followup-To: Wang YanQing <udknight@gmail.com>, acme@kernel.org,
+        peterz@infradead.org, mingo@redhat.com, jolsa@redhat.com,
+        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-In-Reply-To: <1519976914-32491-1-git-send-email-hyc.lee@gmail.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.7.1 (2016-10-04)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/3/2 15:48, Hyunchul Lee wrote:
-> From: Hyunchul Lee <cheol.lee@lge.com>
-> 
-> This patch adds nowait aio support[1].
-> 
-> Return EAGAIN if any of the following checks fail for direct I/O:
->   - i_rwsem is not lockable
->   - Blocks are not allocated at the write location
-> 
-> And xfstests generic/471 is passed.
-> 
->  [1]: 6be96d "Introduce RWF_NOWAIT and FMODE_AIO_NOWAIT"
-> 
-> Signed-off-by: Hyunchul Lee <cheol.lee@lge.com>
-> ---
->  fs/f2fs/data.c | 36 +++++++++++++++++++++++++++---------
->  fs/f2fs/f2fs.h |  8 ++++++++
->  fs/f2fs/file.c | 35 +++++++++++++++++++++++++++++------
->  3 files changed, 64 insertions(+), 15 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 6c3c978..9a550c5 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -839,13 +839,6 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
->  	return 0;
->  }
->  
-> -static inline bool __force_buffered_io(struct inode *inode, int rw)
-> -{
-> -	return (f2fs_encrypted_file(inode) ||
-> -			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
-> -			F2FS_I_SB(inode)->s_ndevs);
-> -}
-> -
->  int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
->  {
->  	struct inode *inode = file_inode(iocb->ki_filp);
-> @@ -877,7 +870,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
->  
->  	if (direct_io) {
->  		map.m_seg_type = rw_hint_to_seg_type(iocb->ki_hint);
-> -		flag = __force_buffered_io(inode, WRITE) ?
-> +		flag = f2fs_force_buffered_io(inode, WRITE) ?
->  					F2FS_GET_BLOCK_PRE_AIO :
->  					F2FS_GET_BLOCK_PRE_DIO;
->  		goto map_blocks;
-> @@ -1121,6 +1114,31 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->  	return err;
->  }
->  
-> +bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len)
-> +{
-> +	struct f2fs_map_blocks map;
-> +	block_t last_lblk;
-> +	int err;
-> +
-> +	if (pos + len > i_size_read(inode))
-> +		return false;
-> +
-> +	map.m_lblk = F2FS_BYTES_TO_BLK(pos);
-> +	map.m_next_pgofs = 0;
-> +	map.m_next_extent = NULL;
-> +	map.m_seg_type = NO_CHECK_TYPE;
-> +	last_lblk = F2FS_BYTES_TO_BLK(pos + len) + 1;
-> +
-> +	while (map.m_lblk < last_lblk) {
-> +		map.m_len = last_lblk - map.m_lblk;
-> +		err = f2fs_map_blocks(inode, &map, 0, 0);
-> +		if (err || map.m_len == 0)
-> +			return false;
-> +		map.m_lblk += map.m_len;
-> +	}
-> +	return true;
-> +}
-> +
->  static int __get_data_block(struct inode *inode, sector_t iblock,
->  			struct buffer_head *bh, int create, int flag,
->  			pgoff_t *next_pgofs, int seg_type)
-> @@ -2306,7 +2324,7 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->  	if (err)
->  		return err;
->  
-> -	if (__force_buffered_io(inode, rw))
-> +	if (f2fs_force_buffered_io(inode, rw))
->  		return 0;
->  
->  	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index f6dc706..351226e 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -2875,6 +2875,7 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
->  int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
->  			struct page *page, enum migrate_mode mode);
->  #endif
-> +bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len);
->  
->  /*
->   * gc.c
-> @@ -3259,4 +3260,11 @@ static inline bool f2fs_may_encrypt(struct inode *inode)
->  #endif
->  }
->  
-> +static inline bool f2fs_force_buffered_io(struct inode *inode, int rw)
-> +{
-> +	return (f2fs_encrypted_file(inode) ||
-> +			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
-> +			F2FS_I_SB(inode)->s_ndevs);
-> +}
-> +
->  #endif
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 6a202e5..1051edd 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -479,6 +479,9 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
->  
->  	if (err)
->  		return err;
-> +
-> +	filp->f_mode |= FMODE_NOWAIT;
-> +
->  	return dquot_file_open(inode, filp);
->  }
->  
-> @@ -2895,7 +2898,15 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  	if (unlikely(f2fs_cp_error(F2FS_I_SB(inode))))
->  		return -EIO;
->  
-> -	inode_lock(inode);
-> +	if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIRECT))
-> +		return -EINVAL;
+So that beautifiers wanting to resolve kernel function addresses to
+names can do its work, and when we use "perf report" for output of
+"perf kmem record", we will get kernel symbol output.
 
-EOPNOTSUPP to keep line with ext4?
+This patch affect the output of "perf report" for the record data
+generated by "perf kmem record" looks like below:
 
-> +
-> +	if (!inode_trylock(inode)) {
-> +		if (iocb->ki_flags & IOCB_NOWAIT)
-> +			return -EAGAIN;
-> +		inode_lock(inode);
-> +	}
-> +
->  	ret = generic_write_checks(iocb, from);
->  	if (ret > 0) {
->  		int err;
-> @@ -2903,11 +2914,23 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  		if (iov_iter_fault_in_readable(from, iov_iter_count(from)))
->  			set_inode_flag(inode, FI_NO_PREALLOC);
->  
-> -		err = f2fs_preallocate_blocks(iocb, from);
-> -		if (err) {
-> -			clear_inode_flag(inode, FI_NO_PREALLOC);
-> -			inode_unlock(inode);
-> -			return err;
-> +		if ((iocb->ki_flags & IOCB_NOWAIT) &&
-> +			(iocb->ki_flags & IOCB_DIRECT)) {
-> +				if (!f2fs_overwrite_io(inode, iocb->ki_pos,
-> +						iov_iter_count(from)) ||
-> +					f2fs_has_inline_data(inode) ||
-> +					f2fs_force_buffered_io(inode, WRITE)) {
-> +						inode_unlock(inode);
-> +						return -EAGAIN;
-> +				}
-> +
-> +		} else {
-> +			err = f2fs_preallocate_blocks(iocb, from);
-> +			if (err) {
-> +				clear_inode_flag(inode, FI_NO_PREALLOC);
-> +				inode_unlock(inode);
-> +				return err;
-> +			}
+Before patch:
+0.01%  call_site=ffffffff814e5828 ptr=0x99bb000 bytes_req=3616 bytes_alloc=4096 gfp_flags=GFP_ATOMIC
+0.01%  call_site=ffffffff81370b87 ptr=0x428a3060 bytes_req=32 bytes_alloc=32 gfp_flags=GFP_KERNEL|GFP_ZERO
 
-Do we need to change down_read to down_read_trylock in f2fs_direct_IO when we
-use 'nowait' mode of aio?
+After patch:
+0.01%  (aa_alloc_task_context+0x27) call_site=ffffffff81370b87 ptr=0x428a3060 bytes_req=32 bytes_alloc=32 gfp_flags=GFP_KERNEL|GFP_ZERO
+0.01%  (__tty_buffer_request_room+0x88) call_site=ffffffff814e5828 ptr=0x99bb000 bytes_req=3616 bytes_alloc=4096 gfp_flags=GFP_ATOMIC
 
-Thanks,
+Signed-off-by: Wang YanQing <udknight@gmail.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+---
+ Changes v2-v3:
+ 1: Fix one WARNING reported by ./scripts/checkpatch.pl
+ Note: the ./scripts/checkpatch.pl report "WARNING: Possible unwrapped commit description"
+       for the output of "perf report", I think we can avoid that warning, because the
+       original output of "perf report" is unwrapped.
 
->  		}
->  		blk_start_plug(&plug);
->  		ret = __generic_file_write_iter(iocb, from);
-> 
+ Changes v1-v2:
+ 1: Add a before and after output of tools affected by the patch in the changelog.
+ 2: Rebase the patch to last kernel version.
+
+ tools/perf/builtin-report.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 1eedb18..677ff58 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -1337,6 +1337,15 @@ int cmd_report(int argc, const char **argv)
+ 		report.range_num = 1;
+ 	}
+ 
++	if (session->tevent.pevent &&
++	    pevent_set_function_resolver(session->tevent.pevent,
++					 machine__resolve_kernel_addr,
++					 &session->machines.host) < 0) {
++		pr_err("%s: failed to set libtraceevent function resolver\n",
++		       __func__);
++		return -1;
++	}
++
+ 	sort__setup_elide(stdout);
+ 
+ 	ret = __cmd_report(&report);
+-- 
+1.8.5.6.2.g3d8a54e.dirty
