@@ -1,84 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751239AbeCHU6x (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 15:58:53 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:33746 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750898AbeCHU6v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 15:58:51 -0500
-X-Google-Smtp-Source: AG47ELuwUTYDokC5hGyI4eTvYIWJh4ViRLxzQibwTovXeIWRSNWXyYdEZsECKiGv9vAUV0jOivNNUg==
-From: Mathieu Malaterre <malat@debian.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Malaterre <malat@debian.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] trace: Use __printf markup to silence compiler
-Date: Thu,  8 Mar 2018 21:58:43 +0100
-Message-Id: <20180308205843.27447-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
+        id S1751282AbeCHU7p (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 15:59:45 -0500
+Received: from ozlabs.org ([103.22.144.67]:53851 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751047AbeCHU7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 15:59:44 -0500
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Fri, 9 Mar 2018 07:59:21 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Felipe Balbi <balbi@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Youn <johnyoun@synopsys.com>,
+        Sevak Arakelyan <sevaka@synopsys.com>,
+        Grigor Tovmasyan <tovmasya@synopsys.com>
+Subject: linux-next: Signed-off-by missing for commit in the usb-gadget tree
+Message-ID: <20180309075921.46b573e2@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/EVedlK6aHjERXWwU=FhMWsw"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Silence warnings (triggered at W=1) by adding relevant __printf attributes.
+--Sig_/EVedlK6aHjERXWwU=FhMWsw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-  CC      kernel/trace/trace.o
-kernel/trace/trace.c: In function ‘__trace_array_vprintk’:
-kernel/trace/trace.c:2979:2: warning: function might be possible candidate for ‘gnu_printf’ format attribute [-Wsuggest-attribute=format]
-  len = vscnprintf(tbuffer, TRACE_BUF_SIZE, fmt, args);
-  ^~~
-  AR      kernel/trace/built-in.o
+Hi Felipe,
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
- kernel/trace/trace.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Commit
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 926718fa846d..117e246d0a49 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -2949,6 +2949,7 @@ int trace_vbprintk(unsigned long ip, const char *fmt, va_list args)
- }
- EXPORT_SYMBOL_GPL(trace_vbprintk);
- 
-+__printf(3, 0)
- static int
- __trace_array_vprintk(struct ring_buffer *buffer,
- 		      unsigned long ip, const char *fmt, va_list args)
-@@ -3003,12 +3004,14 @@ __trace_array_vprintk(struct ring_buffer *buffer,
- 	return len;
- }
- 
-+__printf(3, 0)
- int trace_array_vprintk(struct trace_array *tr,
- 			unsigned long ip, const char *fmt, va_list args)
- {
- 	return __trace_array_vprintk(tr->trace_buffer.buffer, ip, fmt, args);
- }
- 
-+__printf(3, 0)
- int trace_array_printk(struct trace_array *tr,
- 		       unsigned long ip, const char *fmt, ...)
- {
-@@ -3024,6 +3027,7 @@ int trace_array_printk(struct trace_array *tr,
- 	return ret;
- }
- 
-+__printf(3, 4)
- int trace_array_printk_buf(struct ring_buffer *buffer,
- 			   unsigned long ip, const char *fmt, ...)
- {
-@@ -3039,6 +3043,7 @@ int trace_array_printk_buf(struct ring_buffer *buffer,
- 	return ret;
- }
- 
-+__printf(2, 0)
- int trace_vprintk(unsigned long ip, const char *fmt, va_list args)
- {
- 	return trace_array_vprintk(&global_trace, ip, fmt, args);
--- 
-2.11.0
+  bcef07fa2454 ("usb: dwc2: Enable LPM")
+
+is missing a Signed-off-by from its author.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/EVedlK6aHjERXWwU=FhMWsw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqhpCkACgkQAVBC80lX
+0GyUQQf+ImldOfOtHgvWVCI0sZNkHp21h7XQaLggF6r/h8bE/ipYd5yH4k0bUc2P
+1xCGhn/vRMZUAjEMcJioR5eaJiuwgu2bm428feRnoZfm3QYaoum5MIPM5gTPu6Te
+WW/NdoDtIvd/QY4hArQ+RnlhQVoZaT4VYGqVonoEKmABvGaw/sTc1mvlT09zmjVt
+ktLLVpSads/Npc5VPN0a1HJ/CoADXsyljPIhiEkYQuiO9IR3SGD2oCBmiynvHtfb
+gH35pocMgVjzro/hfgVukQ6tEo1yhoUNz+1YT9lXriWj4Q6qArwPoKFOuiNvX+Gr
++bYAaEIB+OlZr99r8uHOS8fUvznE4w==
+=S+YO
+-----END PGP SIGNATURE-----
+
+--Sig_/EVedlK6aHjERXWwU=FhMWsw--
