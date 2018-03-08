@@ -1,99 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966345AbeCHTVa convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 14:21:30 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35978 "EHLO mx1.redhat.com"
+        id S934865AbeCHTWs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 14:22:48 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60510 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966219AbeCHTV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 14:21:29 -0500
-Subject: Re: [PATCH 0/5] sysctl: Enable easy addition of range showing sysctl
- parameters
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        id S1754580AbeCHTWq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 14:22:46 -0500
+Subject: Re: [PATCH v3 0/6] ipc: Clamp *mni to the real IPCMNI limit
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         Matthew Wilcox <willy@infradead.org>
-References: <1520454869-13871-1-git-send-email-longman@redhat.com>
- <20180307144805.224a39e2ab72172f40c3f3d2@linux-foundation.org>
+References: <1519926220-7453-1-git-send-email-longman@redhat.com>
+ <20180308182335.GH4449@wotan.suse.de> <20180308183820.GK4449@wotan.suse.de>
 From: Waiman Long <longman@redhat.com>
 Organization: Red Hat
-Message-ID: <aa2a17ec-9327-e504-27eb-26fca645ea26@redhat.com>
-Date: Thu, 8 Mar 2018 14:21:27 -0500
+Message-ID: <28bcd296-0045-f7be-ab77-6d92f7d91e20@redhat.com>
+Date: Thu, 8 Mar 2018 14:22:44 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180307144805.224a39e2ab72172f40c3f3d2@linux-foundation.org>
+In-Reply-To: <20180308183820.GK4449@wotan.suse.de>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/07/2018 05:48 PM, Andrew Morton wrote:
-> On Wed,  7 Mar 2018 15:34:24 -0500 Waiman Long <longman@redhat.com> wrote:
+On 03/08/2018 01:38 PM, Luis R. Rodriguez wrote:
+> On Thu, Mar 08, 2018 at 06:23:35PM +0000, Luis R. Rodriguez wrote:
+>> On Thu, Mar 01, 2018 at 12:43:34PM -0500, Waiman Long wrote:
+>>> v2->v3:
+>>>  - Fix kdoc comment errors.
+>>>  - Incorporate comments and suggestions from Luis R. Rodriguez.
+>>>  - Add a patch to fix a typo error in fs/proc/proc_sysctl.c.
+>>>
+>>> v1->v2:
+>>>  - Add kdoc comments to the do_proc_do{u}intvec_minmax_conv_param
+>>>    structures.
+>>>  - Add a new flags field to the ctl_table structure for specifying
+>>>    whether range clamping should be activated instead of adding new
+>>>    sysctl parameter handlers.
+>>>  - Clamp the semmni value embedded in the multi-values sem parameter.
+>>>
+>>> v1 patch: https://lkml.org/lkml/2018/2/19/453
+>>> v2 patch: https://lkml.org/lkml/2018/2/27/627
+>>>
+>>> The sysctl parameters msgmni, shmmni and semmni have an inherent limit
+>>> of IPC_MNI (32k). However, users may not be aware of that because they
+>>> can write a value much higher than that without getting any error or
+>>> notification. Reading the parameters back will show the newly written
+>>> values which are not real.
+>>>
+>>> Enforcing the limit by failing sysctl parameter write, however, can
+>>> break existing user applications. To address this delemma, a new flags
+>>> field is introduced into the ctl_table. The value CTL_FLAGS_CLAMP_RANGE
+>>> can be added to any ctl_table entries to enable a looser range clamping
+>>> without returning any error. For example,
+>>>
+>>>   .flags = CTL_FLAGS_CLAMP_RANGE,
+>>>
+>>> This flags value are now used for the range checking of shmmni,
+>>> msgmni and semmni without breaking existing applications. If any out
+>>> of range value is written to those sysctl parameters, the following
+>>> warning will be printed instead.
+>>>
+>>>   Kernel parameter "shmmni" was set out of range [0, 32768], clamped to 32768.
+>>>
+>>> Reading the values back will show 32768 instead of some fake values.
+>> I don't see any addition of respective tests cases, I thought I asked
+>> for this. Please add respective tests cases for all the API you are
+>> adding on lib/test_sysctl.c and respective tests on
+>> tools/testing/selftests/sysctl/sysctl.sh
+> Andrew,
 >
->> This patch series is to be applied on top of the patch
->> series "ipc: Clamp *mni to the real IPCMNI limit"
->> (https://lkml.org/lkml/2018/3/1/716).
->>
->> The purpose of this patch series is to enable easy addition of new
->> auxillary sysctl parameters that can be read to display ranges of
->> other sysctl parameters they are associated with.
->>
->> With this patch series applied, a developer can add a range-showing
->> auxillary sysctl entries by just setting the CTL_FLAGS_SHOW_RANGE
->> flag in the ctl_table entry that has a range to show and add one more
->> to the number of reserved range entries in the CTL_RESERVE_RANGES()
->> macro before the terminating null entry. The new auxillary sysctl
->> parameters will have the "_range" suffix added.
->>
->> The number of ctl_table entries that have the CTL_FLAGS_SHOW_RANGE flag
->> should match the number of reserved entries in the CTL_RESERVE_RANGES()
->> macro. Otherwise, warning or error like below will be logged in the
->> kernel ring buffer.
->>
->>   Warning: Too many reserved ctl_table range entries ("shmmax")!
->>
->>   Error: Insufficient reserved ctl_table range entries ("shmmax")!
->>
->> The IPC sysctl parameters msgmni and shmmni are extended to have
->> those auxillary sysctl entries. As a result, one can now find out
->> the range of allowable value by looking at the corresponding
->> auxillary _range sysctl parameters. For example,
->>
->>   % cat msgmni_range
->>   [0, 32768]
->>
->> That means the msgmni sysctl parameter has to be within the 0 - 32768
->> range inclusively.
->>
->> ...
->>
->>  fs/proc/proc_sysctl.c  | 99 +++++++++++++++++++++++++++++++++++++++++++++++---
->>  include/linux/sysctl.h | 52 +++++++++++++++++++++++++-
->>  ipc/ipc_sysctl.c       |  5 ++-
->>  kernel/sysctl.c        | 91 ++++++++++++++++++++++++++++++++++++++++++++++
->>  4 files changed, 238 insertions(+), 9 deletions(-)
-> That quite a bunch of new code and it's not clear to me that we get a
-> lot of value from it all.  Perhaps I'm missing the point.
+> If its not too much trouble please only apply the first two patches of this
+> series. The rest should be dropped. I think it would be a mistake for us to
+> take start carrying the rest at this point in time.
 >
-> A worked example would help, along the lines of:
->
->
-> a) Here's how we do X at present and here's the output
->
-> b) Here's how we X after these patches and here's the new output
->
-> c) b) is better than a) for <reasons>
+>   Luis
 
-We do have a big customer asking for ways to find out what are the
-actual ranges of sysctl parameters that they are using other than
-digging into the source code to figure it out. This patch series and
-previous one are part of the effort to fulfill this customer need.
+So I am going to assume that the first 2 will be in and drop them in my
+v4 patch.
 
-Please ignore this patch series. I will focus on getting the first one
-right and upstream first before working on a followup.
-
-Thanks,
+Cheers,
 Longman
