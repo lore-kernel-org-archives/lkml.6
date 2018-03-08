@@ -1,114 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935801AbeCHLOW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 06:14:22 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:31198 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934456AbeCHLOT (ORCPT
+        id S935349AbeCHLW6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 06:22:58 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:48586 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751434AbeCHLW4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 06:14:19 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180308111417epoutp047003777572260d73cf460aae67631834~Z7ah57KEM1374613746epoutp04c
-X-AuditID: b6c32a35-891ff70000001031-df-5aa11b08f9e0
-From: Alim Akhtar <alim.akhtar@samsung.com>
-To: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        vinholikatti@gmail.com, subhashj@codeaurora.org,
-        devicetree@vger.kernel.org, shaik.ameer@samsung.com
-Subject: [RFC PATCH V2] scsi: ufs: Add specific callback for setting DMA
- mask
-Date: Thu, 08 Mar 2018 16:33:33 +0530
-Message-id: <1520507013-2410-1-git-send-email-alim.akhtar@samsung.com>
-X-Mailer: git-send-email 2.7.4
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHIsWRmVeSWpSXmKPExsWy7bCmri6H9MIog78PtS3mHznHarFqYp7F
-        5V1z2Cy6r+9gs1h+/B+TxZGHu9ktbizeyWaxY2GVA4fH5b5eJo+ds+6yezw4tJnF4+PTWywe
-        fVtWMXp83iQXwBbFZZOSmpNZllqkb5fAlXH34VHWgnVCFQvOzWZtYOzk72Lk5JAQMJGY+GYz
-        UxcjF4eQwA5Gifd7frFCON8ZJbafaGeHqZo+oZUNIrGBUeLxy8nsEM4PRolZJ/tYQKrYBLQl
-        7k7fwgRiiwjYSJy/+QBsLrPAQkaJPbdOAHVwcAgL+Esc7kgHqWERUJXYsGALM4jNK+AmsX7W
-        FVaIbXISN891MoP0Sgj8ZZV4dWUzI0TCRWLS3J9sELawxKvjW8BmSghIS1w6agsRzpb4cPwk
-        M4RdIzHrYi9Uub3EgStzwO5kFuCTePe1hxWilVeio00IosRD4tzbL0wQtqPE82//wM4REoiV
-        WHvpBesERskFjAyrGMVSC4pz01OLDQsM9YoTc4tL89L1kvNzNzGCY1HLdAfjlHM+hxgFOBiV
-        eHgl/syPEmJNLCuuzD3EKMHBrCTCy7VsQZQQb0piZVVqUX58UWlOavEhRmkOFiVx3oAAlygh
-        gfTEktTs1NSC1CKYLBMHp1QD4/GyRzFnZ3QLmqctatVbcInF+9rD2xsf8GiET793ij1rwr5H
-        LUybX7rP/PPkgKroliSemLMOlq2OOavt5a/L9sxRybnyvdL9x5vFDzdw2ghmf3AsK0hekndn
-        p8XqfQoh9SECgbMcud2m+Jd3SXT82iR/q/mApkP7beZd83WzVsX3XMpazf5jhRJLcUaioRZz
-        UXEiABewK0LBAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLJMWRmVeSWpSXmKPExsVy+t9jQV0O6YVRBqt/C1nMP3KO1WLVxDyL
-        y7vmsFl0X9/BZrH8+D8miyMPd7Nb3Fi8k81ix8IqBw6Py329TB47Z91l93hwaDOLx8ent1g8
-        +rasYvT4vEkugC2KyyYlNSezLLVI3y6BK+Puw6OsBeuEKhacm83awNjJ38XIySEhYCIxfUIr
-        WxcjF4eQwDpGiVd/+5kgnB+MEqt23WMBqWIT0Ja4O30LE4gtImAjcf7mA7AiZoGFjBInu7Yy
-        giSEBXwl1h1qB7NZBFQlNizYwgxi8wq4SayfdYUVYp2cxM1zncwTGLkWMDKsYpRMLSjOTc8t
-        NiowzEst1ytOzC0uzUvXS87P3cQIDJRth7X6djDeXxJ/iFGAg1GJh1fiz/woIdbEsuLK3EOM
-        EhzMSiK8XMsWRAnxpiRWVqUW5ccXleakFh9ilOZgURLnvZ13LFJIID2xJDU7NbUgtQgmy8TB
-        KdXAuO5i7hq5TQlzt5h0na4zvPEjLZHjqNOpSf7mPMw3DVz0jnWVygvxLvg39Y+gUzdzzR6O
-        z+G1a/R3f85nCD1fdrXk+AxDpcg5m74c31LBlGAsuFPfUGeiidkkH1a/J9ITPjlkpOf+NKte
-        Ux758+XN2KLMGcosaczzr7Tqd9s1pa2o+bvxaMl0JZbijERDLeai4kQAOxFd2BACAAA=
-X-CMS-MailID: 20180308111416epcas1p4f9f1dbb36e8567121c6236ac0e9b4e03
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-X-CMS-RootMailID: 20180308111416epcas1p4f9f1dbb36e8567121c6236ac0e9b4e03
-X-RootMTR: 20180308111416epcas1p4f9f1dbb36e8567121c6236ac0e9b4e03
-References: <CGME20180308111416epcas1p4f9f1dbb36e8567121c6236ac0e9b4e03@epcas1p4.samsung.com>
+        Thu, 8 Mar 2018 06:22:56 -0500
+X-Google-Smtp-Source: AG47ELumjQVVyWglq799ZggnlvJX7os849sSuu/Ga5LQPnsVkEGSCfecc0074P78+xhCkOoBAOOvgQ==
+From: Christian Brauner <christian.brauner@canonical.com>
+X-Google-Original-From: Christian Brauner <christian.brauner@ubuntu.com>
+Date: Thu, 8 Mar 2018 12:22:49 +0100
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+Subject: Re: Invalid /proc/<pid>/fd/{0,1,2} symlinks with TIOCGPTPEER
+Message-ID: <20180308112248.GA5918@gmail.com>
+References: <20180307161744.GA17562@gmail.com>
+ <878tb3u1hv.fsf@xmission.com>
+ <20180308082228.GD22728@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180308082228.GD22728@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently DMA mask for UFS HCI is set by reading CAP register's
-[64AS] bit. Some HCI controller like Exynos support 36-bit bus address.
-This works perfectly fine with DMA mask set as 64 in case there is no
-IOMMU attached to HCI.
-In case if HCI is behind an IOMMU, setting DMA mask as 64 bit won't
-work as HCI has only 36bit addressing and SMMU has created mapping of
-64 bit and as the device truncates the address, its mapping will not
-be found by iommu.
-To resolve such issues, let the variant driver sets its own DMA mask.
+On Thu, Mar 08, 2018 at 09:22:29AM +0100, Christian Brauner wrote:
+> On Wed, Mar 07, 2018 at 01:30:52PM -0600, Eric W. Biederman wrote:
+> > Christian Brauner <christian.brauner@canonical.com> writes:
+> > 
+> > > Hey,
+> > >
+> > > We discovered a potential bug in the devpts implementation via
+> > > TIOCGPTPEER ioctl()s today. We've tackled a similar problem already in:
+> > >
+> > > commit 311fc65c9fb9c966bca8e6f3ff8132ce57344ab9
+> > > Author: Eric W. Biederman <ebiederm@xmission.com>
+> > > Date:   Thu Aug 24 15:13:29 2017 -0500
+> > >
+> > >     pty: Repair TIOCGPTPEER
+> > >
+> > > Most libcs will *still* look at /dev/ptmx when opening the master fd of
+> > > pty device. Usually, /dev/ptmx will nowadays be either a symlink to
+> > > /dev/pts/ptmx or it will be a second device node with permissions 666
+> > > whereas /dev/pts/ptmx will usually have permissions 000. Afaik, we've
+> > > also always supported making /dev/ptmx a bind-mount to /dev/pts/ptmx or
+> > > at least I haven't observed any issues with this so far and it's
+> > > something fairly common in containers. So in short, it should be legal
+> > > to do:
+> > >
+> > > mount --bind /dev/pts/ptmx /dev/ptmx
+> > > chmod 666 /dev/ptmx
+> > >
+> > > However, for any libc implementation or program that uses TIOCGPTPEER
+> > > the /proc/<pid>/fd/{0,1,2} symlinks are broken (currently affects at
+> > > least glibc 2.27) with bind-mounts of /dev/pts/ptmx to /dev/ptmx. A
+> > > quick reproducer is:
+> > >
+> > > unshare --mount
+> > > mount --bind /dev/pts/ptmx /dev/ptmx
+> > > chmod 666 /dev/ptmx
+> > > script
+> > > ls -al /proc/self/fd/0
+> > >
+> > > Let's assume the slave device index I received was 5 then I would expect to
+> > > see:
+> > >
+> > > ls -al /proc/self/fd/0
+> > > lrwx------ 1 chb chb 64 Mar  7 16:41 /proc/self/fd/0 -> /dev/pts/5
+> > >
+> > > But what I actually see is:
+> > >
+> > > ls -al /proc/self/fd/0
+> > > lrwx------ 1 chb chb 64 Mar  7 16:41 /proc/self/fd/0 -> /
+> > >
+> > > I think the explanation for this is fairly straightforward. When
+> > > userspace does:
+> > >
+> > > master = open("/dev/ptmx", O_RDWR | O_NOCTTY);
+> > > slave = ioctl(master, TIOCGPTPEER, O_RDWR | O_NOCTTY);
+> > >
+> > > and /dev/ptmx is a bind-mount of /dev/pts/ptmx looking up the root mount
+> > > of the dentry for the slave it appears to the kernel as if the dentry is
+> > > escaping it's bind-mount:
+> > >
+> > > ├─/dev        udev          devtmpfs   rw,nosuid,relatime,size=4001260k,nr_inodes=1000315,mode=755
+> > > │ ├─/dev/pts  devpts        devpts     rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000
+> > > │ └─/dev/ptmx devpts[/ptmx] devpts     rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000
+> > >
+> > > since the root mount of the dentry is /dev/pts but the root mount of
+> > > /dev/ptmx is /dev if I'm correct so similar to what Linus pointed out in
+> > > a previous discussion (see [1]) before. So we still record the "wrong"
+> > > vfsmount when /dev/ptmx is a bind-mount and then hit the problem when we
+> > > call devpts_mntget() in drivers/tty/pty.c.
+> > 
+> > I think your analysis of why we return / is correct. If the root of the
+> > mount is a file (aka /dev/pts/ptmx).  Then any other file will on that
+> > mount will not be under the root of the mount, and will be displayed
+> > as '/'.  Because we have in fact escaped the root of the mount.
+> > 
+> > I think this is more of a quality of implementation issue more than a
+> > bug per se.
+> 
+> It's at least a regression since this used to work before. :)
+> 
+> > 
+> > > So I thought about this and - in case my analysis is correct - the
+> > > solution didn't seem obvious to me as a bind-mount has no concept of
+> > > what it's "parent" is (Which in this case should be the devpts mount at
+> > > /dev/pts.).
+> > 
+> > We might be able to improve the quality of the implementation, by
+> > noticing this case early (sb->s_root != mnt->mnt_root) and using the
+> > same tricks on /dev/pts/ptmx as we do on /dev/ptmx.  That is looking
+> > in ../pts and see if the filesystem we want is there.
+> > 
+> > It would be a wee bit tricky but doable.  The practical question becomes
+> > what breaks and what makes it worth maintaining such a mechanism.
+> > 
+> > I don't remember how important it is to have a valid path in proc.  So
+> > I won't comment on how important it is to improve the quality of
+> > the implementation.
+> 
+> It's quite important for containers. The problem is that we can't (yet)
+> mknod() in a user namespace and making /dev/ptmx a symlink to
+> /dev/pts/ptmx will cause issues when used together with path-based LSMs
+> like AppArmor so a bind-mount is the only reliable option.
+> 
+> > 
+> > The code can be improved by doing something like:
+> 
+> Right, what do you think about Linus suggestion? I'm happy to look into
+> it.
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- drivers/scsi/ufs/ufshcd.c | 3 +++
- drivers/scsi/ufs/ufshcd.h | 2 ++
- 2 files changed, 5 insertions(+)
+Ah you're pointing at a similar solution. Sorry, I missed it on the
+first pass. I'll send a patch soon.
 
-I am not sure if there are other ways available to handle such cases.
-The IOMMU I am talking about is arm-smmu and it DT binding does not
-give much idea about handling such cases.
-Have tested this patch with HCI controller with IOMMU attached.
+Christian
 
-Changes Since V1: 
-	- Fixed build issue as reported by Kbuild test robot.
-
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index a355d98..9a1374e 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -7781,6 +7781,9 @@ EXPORT_SYMBOL_GPL(ufshcd_dealloc_host);
-  */
- static int ufshcd_set_dma_mask(struct ufs_hba *hba)
- {
-+	if (hba->vops && hba->vops->set_dma_mask)
-+		return hba->vops->set_dma_mask(hba);
-+
- 	if (hba->capabilities & MASK_64_ADDRESSING_SUPPORT) {
- 		if (!dma_set_mask_and_coherent(hba->dev, DMA_BIT_MASK(64)))
- 			return 0;
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 1332e54..89c6dae 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -297,6 +297,7 @@ struct ufs_pwr_mode_info {
-  * @resume: called during host controller PM callback
-  * @dbg_register_dump: used to dump controller debug information
-  * @phy_initialization: used to initialize phys
-+ * @set_dma_mask: used to set variant specific DMA mask
-  */
- struct ufs_hba_variant_ops {
- 	const char *name;
-@@ -325,6 +326,7 @@ struct ufs_hba_variant_ops {
- 	int     (*resume)(struct ufs_hba *, enum ufs_pm_op);
- 	void	(*dbg_register_dump)(struct ufs_hba *hba);
- 	int	(*phy_initialization)(struct ufs_hba *);
-+	int	(*set_dma_mask)(struct ufs_hba *hba);
- };
- 
- /* clock gating state  */
--- 
-2.7.4
+> 
+> Christian
+> 
+> > 
+> > static int devpts_ptmx_pts_path(struct path *path)
+> > {
+> > 	struct super_block *sb;
+> > 	int err;
+> > 
+> > 	/* Is a devpts filesystem at "pts" in the same directory? */
+> > 	err = path_pts(path);
+> > 	if (err)
+> > 		return err;
+> > 
+> > 	/* Is the path the root of a devpts filesystem? */
+> > 	sb = path->mnt->mnt_sb;
+> > 	if ((sb->s_magic != DEVPTS_SUPER_MAGIC) ||
+> > 	    (path->mnt->mnt_root != sb->s_root))
+> > 		return -ENODEV;
+> > 
+> > 	return 0;
+> > }
+> > 
+> > ....
+> > 	if ((DEVPTS_SB(path.mnt->mnt_sb) == fsi) &&
+> > 	    (path.mnt->mnt_root == fsi->ptmx_dentry)) {
+> > 		/* While the start point is a bind mount of single file
+> >                  * walk upwards.
+> >                  */
+> >             	while ((path.mnt->mnt_root == path.dentry) && follow_up(&path))
+> > 			;
+> > 		if (devpts_ptmx_pts_path(&path) == 0) {
+> >                 	dput(path.dentry);
+> >                    	return path.mnt;     
+> >                 }
+> >                 /* No luck fall through to the old code */
+> >                 path_put(path);
+> >                 path = filp->f_path;
+> >                 path_get(&path);
+> >         }
+> > 
+> > The fall through vs fail would be a judgement on how important it is to
+> > have a useable path in proc for TIOCPTPEER.
+> > 
+> > Eric
