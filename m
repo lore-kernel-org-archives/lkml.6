@@ -1,89 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966636AbeCHTQq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 14:16:46 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:35882 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756003AbeCHTMW (ORCPT
+        id S966105AbeCHTU7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 14:20:59 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:41240 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934329AbeCHTU5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 14:12:22 -0500
-X-Google-Smtp-Source: AG47ELtBaOeVzP5MifJurjzcGfmk+GPPLFGfCzDzqeyrJMS2fz5Evmwn7MPUuKPNwr2K3iN2UdkdnQ==
+        Thu, 8 Mar 2018 14:20:57 -0500
+X-Google-Smtp-Source: AG47ELuFMCF3G2r00+kWWFAPsCT+3kdJsd7yZiw8IW2tkH8WGcLt8/2d3bswGZ8h3JbPgLsksJ4qTA==
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Lee Jones <lee.jones@linaro.org>
 Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>, cphealy@gmail.com,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 02/21] nvmem: core: Allow specifying device name verbatim
-Date: Thu,  8 Mar 2018 11:11:46 -0800
-Message-Id: <20180308191205.26943-3-andrew.smirnov@gmail.com>
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, linux-kernel@vger.kernel.org,
+        Chris Healy <cphealy@gmail.com>, Lucas Stach <l.stach@pengutronix.de>,
+        Aleksander Morgado <aleksander@aleksander.es>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 2/2] dt-bindings: backlight: Add binding for RAVE SP backlight driver
+Date: Thu,  8 Mar 2018 11:20:46 -0800
+Message-Id: <20180308192046.27670-2-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180308191205.26943-1-andrew.smirnov@gmail.com>
-References: <20180308191205.26943-1-andrew.smirnov@gmail.com>
+In-Reply-To: <20180308192046.27670-1-andrew.smirnov@gmail.com>
+References: <20180308192046.27670-1-andrew.smirnov@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add code to allow avoid having nvmem core append a numeric suffix to
-the end of the name by passing config->id of -1.
+Add Device Tree bindings for RAVE SP backlight driver - an MFD cell of
+parent RAVE SP driver (documented in
+Documentation/devicetree/bindings/mfd/zii,rave-sp.txt).
 
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Carlo Caione <carlo@caione.org>
-Cc: Kevin Hilman <khilman@baylibre.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: cphealy@gmail.com
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Jingoo Han <jingoohan1@gmail.com>
 Cc: linux-kernel@vger.kernel.org
-Cc: linux-mediatek@lists.infradead.org
-Cc: linux-rockchip@lists.infradead.org
-Cc: linux-amlogic@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Aleksander Morgado <aleksander@aleksander.es>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/nvmem/core.c           | 11 ++++++++---
- include/linux/nvmem-provider.h |  3 +++
- 2 files changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 35a3dbeea324..99e04cfcc723 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -473,9 +473,14 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 	nvmem->reg_read = config->reg_read;
- 	nvmem->reg_write = config->reg_write;
- 	nvmem->dev.of_node = config->dev->of_node;
--	dev_set_name(&nvmem->dev, "%s%d",
--		     config->name ? : "nvmem",
--		     config->name ? config->id : nvmem->id);
+Changes since [v1]:
+
+ - Fixed typos in commit message and incorrect node name in example section
+
+[v1] https://lkml.kernel.org/r/20180307024011.25033-2-andrew.smirnov@gmail.com
+
+ .../leds/backlight/zii,rave-sp-backlight.txt       | 23 ++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.txt
+
+diff --git a/Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.txt
+new file mode 100644
+index 000000000000..ff5c92138650
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.txt
+@@ -0,0 +1,23 @@
++Zodiac Inflight Innovations RAVE Supervisory Processor Backlight Bindings
 +
-+	if (config->id == -1 && config->name) {
-+		dev_set_name(&nvmem->dev, "%s", config->name);
-+	} else {
-+		dev_set_name(&nvmem->dev, "%s%d",
-+			     config->name ? : "nvmem",
-+			     config->name ? config->id : nvmem->id);
++RAVE SP backlight device is a "MFD cell" device corresponding to
++backlight functionality of RAVE Supervisory Processor. It is expected
++that its Device Tree node is specified as a child of the node
++corresponding to the parent RAVE SP device (as documented in
++Documentation/devicetree/bindings/mfd/zii,rave-sp.txt)
++
++Required properties:
++
++- compatible: Should be "zii,rave-sp-backlight"
++
++Example:
++
++	rave-sp {
++		compatible = "zii,rave-sp-rdu1";
++		current-speed = <38400>;
++
++		backlight {
++			compatible = "zii,rave-sp-backlight";
++		};
 +	}
- 
- 	nvmem->read_only = device_property_present(config->dev, "read-only") |
- 			   config->read_only;
-diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
-index a39f76ff2ccd..b00567a07496 100644
---- a/include/linux/nvmem-provider.h
-+++ b/include/linux/nvmem-provider.h
-@@ -43,6 +43,9 @@ typedef int (*nvmem_reg_write_t)(void *priv, unsigned int offset,
-  * Note: A default "nvmem<id>" name will be assigned to the device if
-  * no name is specified in its configuration. In such case "<id>" is
-  * generated with ida_simple_get() and provided id field is ignored.
-+ *
-+ * Note: Specifying name and setting id to -1 implies a unique device
-+ * whose name is provided as-is (kept unaltered).
-  */
- struct nvmem_config {
- 	struct device		*dev;
++
 -- 
 2.14.3
