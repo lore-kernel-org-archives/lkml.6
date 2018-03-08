@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965057AbeCHIB6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 03:01:58 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36225 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935358AbeCHIBx (ORCPT
+        id S965227AbeCHICB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 03:02:01 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:45616 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965050AbeCHIB6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 03:01:53 -0500
-X-Google-Smtp-Source: AG47ELuN5CUA0BSbG+ujHwl8J7HvVeQJ+5iFqmepsBU9Y0G3huMxoSAxBRc9ghrQ8IDZr9HA1SV+/w==
+        Thu, 8 Mar 2018 03:01:58 -0500
+X-Google-Smtp-Source: AG47ELt3yrVAylKBQG2vOWbxZc7AuSxSoD+f4etCrgly44Tx25+twRP/nUCYZk8iiOJBHIZvA1qDLA==
 From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To: linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 01/12] efi/arm*: Only register page tables when they exist
-Date: Thu,  8 Mar 2018 08:00:09 +0000
-Message-Id: <20180308080020.22828-2-ard.biesheuvel@linaro.org>
+Subject: [PATCH 03/12] efi/arm*: Stop printing addresses of virtual mappings
+Date: Thu,  8 Mar 2018 08:00:11 +0000
+Message-Id: <20180308080020.22828-4-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
 References: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
@@ -24,90 +23,40 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Rutland <mark.rutland@arm.com>
+With the recent %p -> %px changes, we now get something like this in
+the kernel boot log on ARM/arm64 EFI systems:
 
-Currently the arm/arm64 runtime code registers the runtime servies
-pagetables with ptdump regardless of whether runtime services page
-tables have been created.
+     Remapping and enabling EFI services.
+       EFI remap 0x00000087fb830000 =>         (ptrval)
+       EFI remap 0x00000087fbdb0000 =>         (ptrval)
+       EFI remap 0x00000087fffc0000 =>         (ptrval)
 
-As efi_mm.pgd is NULL in these cases, attempting to dump the efi page
-tables results in a NULL pointer dereference in the ptdump code:
+The physical addresses of the UEFI runtime regions will also be
+printed when booting with the efi=debug command line option, and the
+virtual addresses can be inspected via /sys/kernel/debug/efi_page_tables
+(if enabled). So let's just remove the lines above.
 
-/sys/kernel/debug# cat efi_page_tables
-[  479.522600] Unable to handle kernel NULL pointer dereference at virtual address 00000000
-[  479.522715] Mem abort info:
-[  479.522764]   ESR = 0x96000006
-[  479.522850]   Exception class = DABT (current EL), IL = 32 bits
-[  479.522899]   SET = 0, FnV = 0
-[  479.522937]   EA = 0, S1PTW = 0
-[  479.528200] Data abort info:
-[  479.528230]   ISV = 0, ISS = 0x00000006
-[  479.528317]   CM = 0, WnR = 0
-[  479.528317] user pgtable: 4k pages, 48-bit VAs, pgd = 0000000064ab0cb0
-[  479.528449] [0000000000000000] *pgd=00000000fbbe4003, *pud=00000000fb66e003, *pmd=0000000000000000
-[  479.528600] Internal error: Oops: 96000006 [#1] PREEMPT SMP
-[  479.528664] Modules linked in:
-[  479.528699] CPU: 0 PID: 2457 Comm: cat Not tainted 4.15.0-rc3-00065-g2ad2ee7ecb5c-dirty #7
-[  479.528799] Hardware name: FVP Base (DT)
-[  479.528899] pstate: 00400009 (nzcv daif +PAN -UAO)
-[  479.528941] pc : walk_pgd.isra.1+0x20/0x1d0
-[  479.529011] lr : ptdump_walk_pgd+0x30/0x50
-[  479.529105] sp : ffff00000bf4bc20
-[  479.529185] x29: ffff00000bf4bc20 x28: 0000ffff9d22e000
-[  479.529271] x27: 0000000000020000 x26: ffff80007b4c63c0
-[  479.529358] x25: 00000000014000c0 x24: ffff80007c098900
-[  479.529445] x23: ffff00000bf4beb8 x22: 0000000000000000
-[  479.529532] x21: ffff00000bf4bd70 x20: 0000000000000001
-[  479.529618] x19: ffff00000bf4bcb0 x18: 0000000000000000
-[  479.529760] x17: 000000000041a1c8 x16: ffff0000082139d8
-[  479.529800] x15: 0000ffff9d3c6030 x14: 0000ffff9d2527f4
-[  479.529924] x13: 00000000000003f3 x12: 0000000000000038
-[  479.530000] x11: 0000000000000003 x10: 0101010101010101
-[  479.530099] x9 : 0000000017e94050 x8 : 000000000000003f
-[  479.530226] x7 : 0000000000000000 x6 : 0000000000000000
-[  479.530313] x5 : 0000000000000001 x4 : 0000000000000000
-[  479.530416] x3 : ffff000009069fd8 x2 : 0000000000000000
-[  479.530500] x1 : 0000000000000000 x0 : 0000000000000000
-[  479.530599] Process cat (pid: 2457, stack limit = 0x000000005d1b0e6f)
-[  479.530660] Call trace:
-[  479.530746]  walk_pgd.isra.1+0x20/0x1d0
-[  479.530833]  ptdump_walk_pgd+0x30/0x50
-[  479.530907]  ptdump_show+0x10/0x20
-[  479.530920]  seq_read+0xc8/0x470
-[  479.531023]  full_proxy_read+0x60/0x90
-[  479.531100]  __vfs_read+0x18/0x100
-[  479.531180]  vfs_read+0x88/0x160
-[  479.531267]  SyS_read+0x48/0xb0
-[  479.531299]  el0_svc_naked+0x20/0x24
-[  479.531400] Code: 91400420 f90033a0 a90707a2 f9403fa0 (f9400000)
-[  479.531499] ---[ end trace bfe8e28d8acb2b67 ]---
-Segmentation fault
-
-Let's avoid this problem by only registering the tables after their
-successful creation, which is also less confusing when EFI runtime
-services are not in use.
-
-Reported-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
+Acked-by: Leif Lindholm <leif.lindholm@linaro.org>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- drivers/firmware/efi/arm-runtime.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/firmware/efi/arm-runtime.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
-index 1cc41c3d6315..86a1ad17a32e 100644
+index 86a1ad17a32e..13561aeb7396 100644
 --- a/drivers/firmware/efi/arm-runtime.c
 +++ b/drivers/firmware/efi/arm-runtime.c
-@@ -54,6 +54,9 @@ static struct ptdump_info efi_ptdump_info = {
+@@ -83,10 +83,7 @@ static bool __init efi_virtmap_init(void)
+ 			return false;
  
- static int __init ptdump_init(void)
- {
-+	if (!efi_enabled(EFI_RUNTIME_SERVICES))
-+		return 0;
-+
- 	return ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
- }
- device_initcall(ptdump_init);
+ 		ret = efi_create_mapping(&efi_mm, md);
+-		if  (!ret) {
+-			pr_info("  EFI remap %pa => %p\n",
+-				&phys, (void *)(unsigned long)md->virt_addr);
+-		} else {
++		if (ret) {
+ 			pr_warn("  EFI remap %pa: failed to create mapping (%d)\n",
+ 				&phys, ret);
+ 			return false;
 -- 
 2.15.1
