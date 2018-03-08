@@ -1,65 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934743AbeCHCet (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 21:34:49 -0500
-Received: from mail-wr0-f182.google.com ([209.85.128.182]:40637 "EHLO
-        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934554AbeCHCeq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 21:34:46 -0500
-X-Google-Smtp-Source: AG47ELtmsDs8yIoyb16dzIW4XftKyfTq8moskHIlKcuITz+f/4p3ZKq1UvvuRKdKRlSPPxTrMizZs0c+Hf+cuIYXBFI=
+        id S934945AbeCHCfF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 21:35:05 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5743 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934612AbeCHCe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 21:34:58 -0500
+From: Peng Li <lipeng321@huawei.com>
+To: <davem@davemloft.net>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
+        <lipeng321@huawei.com>
+Subject: [PATCH net-next 09/23] {topost} net: hns3: add support for querying pfc puase packets statistic
+Date: Thu, 8 Mar 2018 11:06:34 +0800
+Message-ID: <1520478408-116992-10-git-send-email-lipeng321@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1520478408-116992-1-git-send-email-lipeng321@huawei.com>
+References: <1520478408-116992-1-git-send-email-lipeng321@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <d6ec23eb-a886-9fef-99c7-51c7ba4f5d18@infradead.org>
-References: <20180308002016.L3JwBaNZ9%akpm@linux-foundation.org>
- <41ec9eeb-f0bf-e26d-e3ae-4a684c314360@infradead.org> <d6ec23eb-a886-9fef-99c7-51c7ba4f5d18@infradead.org>
-From: Shakeel Butt <shakeelb@google.com>
-Date: Wed, 7 Mar 2018 18:34:44 -0800
-Message-ID: <CALvZod53CV+R0CeVPDJ=3JAtFjyOfSSSrr3x0tqAWHec0AshTA@mail.gmail.com>
-Subject: Re: mmotm 2018-03-07-16-19 uploaded (UML & memcg)
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        linux-next@vger.kernel.org, Michal Hocko <mhocko@suse.cz>,
-        mm-commits@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.71.200.31]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 7, 2018 at 6:23 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 03/07/2018 06:20 PM, Randy Dunlap wrote:
->> On 03/07/2018 04:20 PM, akpm@linux-foundation.org wrote:
->>> The mm-of-the-moment snapshot 2018-03-07-16-19 has been uploaded to
->>>
->>>    http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> mmotm-readme.txt says
->>>
->>> README for mm-of-the-moment:
->>>
->>> http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->>> more than once a week.
->>
->> UML on i386 and/or x86_64:
->>
->> defconfig, CONFIG_MEMCG is not set:
->>
->> ../fs/notify/group.c: In function 'fsnotify_final_destroy_group':
->> ../fs/notify/group.c:41:24: error: dereferencing pointer to incomplete type
->>    css_put(&group->memcg->css);
->>                         ^
->>
->> From: Shakeel Butt <shakeelb@google.com>
->> Subject: fs: fsnotify: account fsnotify metadata to kmemcg
->
->
->
-> or x86 any time that CONFIG_MEMCG is not enabled.
->
->
+This patch add support for querying pfc puase packets statistic
+in hclge_ieee_getpfc, which is used to tell user how many pfc
+puase packets have been sent and received by this mac port.
 
-Sorry about that. Replacing this with mem_cgroup_put(group->memcg)
-should solve the issue on the mm tree.
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+---
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c | 14 ++++++
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  | 53 ++++++++++++++++++++++
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  |  6 +++
+ 3 files changed, 73 insertions(+)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
+index 5018d66..c5270b5 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
+@@ -203,9 +203,11 @@ static int hclge_ieee_setets(struct hnae3_handle *h, struct ieee_ets *ets)
+ 
+ static int hclge_ieee_getpfc(struct hnae3_handle *h, struct ieee_pfc *pfc)
+ {
++	u64 requests[HNAE3_MAX_TC], indications[HNAE3_MAX_TC];
+ 	struct hclge_vport *vport = hclge_get_vport(h);
+ 	struct hclge_dev *hdev = vport->back;
+ 	u8 i, j, pfc_map, *prio_tc;
++	int ret;
+ 
+ 	memset(pfc, 0, sizeof(*pfc));
+ 	pfc->pfc_cap = hdev->pfc_max;
+@@ -220,6 +222,18 @@ static int hclge_ieee_getpfc(struct hnae3_handle *h, struct ieee_pfc *pfc)
+ 		}
+ 	}
+ 
++	ret = hclge_pfc_tx_stats_get(hdev, requests);
++	if (ret)
++		return ret;
++
++	ret = hclge_pfc_rx_stats_get(hdev, indications);
++	if (ret)
++		return ret;
++
++	for (i = 0; i < HCLGE_MAX_TC_NUM; i++) {
++		pfc->requests[i] = requests[i];
++		pfc->indications[i] = indications[i];
++	}
+ 	return 0;
+ }
+ 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+index 4134a82..885f25c 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+@@ -23,6 +23,9 @@ enum hclge_shaper_level {
+ 	HCLGE_SHAPER_LVL_PF	= 1,
+ };
+ 
++#define HCLGE_TM_PFC_PKT_GET_CMD_NUM	3
++#define HCLGE_TM_PFC_NUM_GET_PER_CMD	3
++
+ #define HCLGE_SHAPER_BS_U_DEF	5
+ #define HCLGE_SHAPER_BS_S_DEF	20
+ 
+@@ -112,6 +115,56 @@ static int hclge_shaper_para_calc(u32 ir, u8 shaper_level,
+ 	return 0;
+ }
+ 
++static int hclge_pfc_stats_get(struct hclge_dev *hdev,
++			       enum hclge_opcode_type opcode, u64 *stats)
++{
++	struct hclge_desc desc[HCLGE_TM_PFC_PKT_GET_CMD_NUM];
++	int ret, i, j;
++
++	if (!(opcode == HCLGE_OPC_QUERY_PFC_RX_PKT_CNT ||
++	      opcode == HCLGE_OPC_QUERY_PFC_TX_PKT_CNT))
++		return -EINVAL;
++
++	for (i = 0; i < HCLGE_TM_PFC_PKT_GET_CMD_NUM; i++) {
++		hclge_cmd_setup_basic_desc(&desc[i], opcode, true);
++		if (i != (HCLGE_TM_PFC_PKT_GET_CMD_NUM - 1))
++			desc[i].flag |= cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
++		else
++			desc[i].flag &= ~cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
++	}
++
++	ret = hclge_cmd_send(&hdev->hw, desc, HCLGE_TM_PFC_PKT_GET_CMD_NUM);
++	if (ret) {
++		dev_err(&hdev->pdev->dev,
++			"Get pfc pause stats fail, ret = %d.\n", ret);
++		return ret;
++	}
++
++	for (i = 0; i < HCLGE_TM_PFC_PKT_GET_CMD_NUM; i++) {
++		struct hclge_pfc_stats_cmd *pfc_stats =
++				(struct hclge_pfc_stats_cmd *)desc[i].data;
++
++		for (j = 0; j < HCLGE_TM_PFC_NUM_GET_PER_CMD; j++) {
++			u32 index = i * HCLGE_TM_PFC_PKT_GET_CMD_NUM + j;
++
++			if (index < HCLGE_MAX_TC_NUM)
++				stats[index] =
++					le64_to_cpu(pfc_stats->pkt_num[j]);
++		}
++	}
++	return 0;
++}
++
++int hclge_pfc_rx_stats_get(struct hclge_dev *hdev, u64 *stats)
++{
++	return hclge_pfc_stats_get(hdev, HCLGE_OPC_QUERY_PFC_RX_PKT_CNT, stats);
++}
++
++int hclge_pfc_tx_stats_get(struct hclge_dev *hdev, u64 *stats)
++{
++	return hclge_pfc_stats_get(hdev, HCLGE_OPC_QUERY_PFC_TX_PKT_CNT, stats);
++}
++
+ int hclge_mac_pause_en_cfg(struct hclge_dev *hdev, bool tx, bool rx)
+ {
+ 	struct hclge_desc desc;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
+index c30c85b..2dbe177 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
+@@ -109,6 +109,10 @@ struct hclge_cfg_pause_param_cmd {
+ 	__le16 pause_trans_time;
+ };
+ 
++struct hclge_pfc_stats_cmd {
++	__le64 pkt_num[3];
++};
++
+ struct hclge_port_shapping_cmd {
+ 	__le32 port_shapping_para;
+ };
+@@ -130,4 +134,6 @@ int hclge_tm_map_cfg(struct hclge_dev *hdev);
+ int hclge_tm_init_hw(struct hclge_dev *hdev);
+ int hclge_mac_pause_en_cfg(struct hclge_dev *hdev, bool tx, bool rx);
+ int hclge_pause_addr_cfg(struct hclge_dev *hdev, const u8 *mac_addr);
++int hclge_pfc_rx_stats_get(struct hclge_dev *hdev, u64 *stats);
++int hclge_pfc_tx_stats_get(struct hclge_dev *hdev, u64 *stats);
+ #endif
+-- 
+2.9.3
