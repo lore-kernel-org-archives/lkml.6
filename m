@@ -1,117 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935177AbeCHK2C (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 05:28:02 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:57918 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754822AbeCHK2B (ORCPT
+        id S1755628AbeCHK3Z (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 05:29:25 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:38854 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755279AbeCHK3W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 05:28:01 -0500
-Date: Thu, 8 Mar 2018 11:27:57 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCHv5 3/5] mfd: motorola-cpcap: Add audio-codec support
-Message-ID: <20180308102757.jyi7uo566n6nuct5@earth.universe>
-References: <20180223200254.25685-1-sebastian.reichel@collabora.co.uk>
- <20180223200254.25685-4-sebastian.reichel@collabora.co.uk>
- <20180307163211.rytfli5tb47yhtug@dell>
- <20180308094652.qg4atjw5c3hayaz3@earth.universe>
- <20180308095315.mpcmx2ob6yhsnrm6@dell>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="zsrhboitvomsevkd"
-Content-Disposition: inline
-In-Reply-To: <20180308095315.mpcmx2ob6yhsnrm6@dell>
-User-Agent: NeoMutt/20171215
+        Thu, 8 Mar 2018 05:29:22 -0500
+X-Google-Smtp-Source: AG47ELsXFIl8IZo8u29DvEfdad9AegJPaU9hg3pgls9kKTZfoeGdI6aztb+yD9hoXlMPEjcL9F6lVg==
+From: Claudio Scordino <claudio@evidence.eu.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Claudio Scordino <claudio@evidence.eu.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Todd Kjos <tkjos@android.com>, Joel Fernandes <joelaf@google.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] cpufreq: schedutil: rate limits for SCHED_DEADLINE
+Date: Thu,  8 Mar 2018 11:29:10 +0100
+Message-Id: <1520504950-8544-1-git-send-email-claudio@evidence.eu.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When the SCHED_DEADLINE scheduling class increases the CPU utilization,
+we should not wait for the rate limit, otherwise we may miss some
+deadline.
 
---zsrhboitvomsevkd
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Tests using rt-app on Exynos5422 with up to 10 SCHED_DEADLINE tasks have
+shown reductions of even 10% of deadline misses with a negligible
+increase of energy consumption (measured through Baylibre Cape).
 
-Hi,
+Signed-off-by: Claudio Scordino <claudio@evidence.eu.com>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Patrick Bellasi <patrick.bellasi@arm.com>
+CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
+CC: Morten Rasmussen <morten.rasmussen@arm.com>
+CC: Juri Lelli <juri.lelli@redhat.com>
+CC: Viresh Kumar <viresh.kumar@linaro.org>
+CC: Vincent Guittot <vincent.guittot@linaro.org>
+CC: Todd Kjos <tkjos@android.com>
+CC: Joel Fernandes <joelaf@google.com>
+CC: linux-pm@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+---
+Changes from v2:
+ - Rate limit ignored also in case of "fast switch"
+ - Specific routine added
+---
+Changes from v1:
+ - Logic moved from sugov_should_update_freq() to
+   sugov_update_single()/_shared() to not duplicate data structures
+ - Rate limit not ignored in case of "fast switch"
+---
+ kernel/sched/cpufreq_schedutil.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-On Thu, Mar 08, 2018 at 09:53:15AM +0000, Lee Jones wrote:
-> On Thu, 08 Mar 2018, Sebastian Reichel wrote:
-> > On Wed, Mar 07, 2018 at 04:32:11PM +0000, Lee Jones wrote:
-> > > On Fri, 23 Feb 2018, Sebastian Reichel wrote:
-> > > > +static const struct mfd_cell cpcap_mfd_devices[] =3D {
-> >=20
-> > [...]
-> >=20
-> > > > +	}, {
-> > > > +		.name          =3D "cpcap-led",
-> > > > +		.id            =3D 4,
-> > > > +		.of_compatible =3D "motorola,cpcap-led-cp",
-> > > > +	}, {
-> > > > +		.name          =3D "cpcap-codec",
-> > > > +	}
-> > > > +};
-> > >=20
-> > > With none of the entries containing platform_data /me wonders why you
-> > > can't still use devm_of_platform_populate()?
-> >=20
-> > Because devm_of_platform_populate works with compatible properties and
-> > cpcap-codec does not have one after I removed it for Mark.
->=20
-> Sorry, I missed that conversation.  Why was it removed?
-
-I had it in PATCHv1-PATCHv4. It was removed, since Mark didn't want
-to have it in the DT ABI.
-
--- Sebastian
-
-> > > >  static int cpcap_probe(struct spi_device *spi)
-> > > >  {
-> > > >  	const struct of_device_id *match;
-> > > > @@ -260,7 +308,8 @@ static int cpcap_probe(struct spi_device *spi)
-> > > >  	if (ret)
-> > > >  		return ret;
-> > > > =20
-> > > > -	return devm_of_platform_populate(&cpcap->spi->dev);
-> > > > +	return devm_mfd_add_devices(&spi->dev, 0, cpcap_mfd_devices,
-> > > > +				    ARRAY_SIZE(cpcap_mfd_devices), NULL, 0, NULL);
-> > > >  }
-> > > > =20
-> > > >  static struct spi_driver cpcap_driver =3D {
-> > >=20
->=20
->=20
->=20
-> --=20
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
-> Linaro Services Technical Lead
-> Linaro.org =E2=94=82 Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
-
---zsrhboitvomsevkd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqhECkACgkQ2O7X88g7
-+poVWw/+OSqG/ke08GEveyHvyECKhfxk6wW0ijT0H2UKBrs/8jO1ePyXLOrBlteV
-RyXSGWg5Z3IUKeepp67ON9UgPfYI23oT8RulwRtVxs/Zhxv0nlRMrED3SSa3rC3P
-i5ffXHxzyM8zMBqXJnLvDObUHORL+SRpEl3KmySr1oujiS6JS30eHJZSfIfneZ8O
-7xM25vSquYCBWI/36leOljBuffRJM+S+p8Wtihn3EEFQ9MB0kyZ+4l7WSak+lmBf
-AzLREilx+Y88vX6XSxvpHt2m+daK/VHhLI0I3biN4qfI6fUlh3PyiFEigdhmDmJL
-Ip8SsNGnHvIc2GlyJ3VX5QwurgTXI7pqLknhbfT9nNORczesr+w7sRunBIX8xcqh
-prHXvDtUBFY3jdIswcu49EFf5Bq5h3Aa3nCeHGYnC3Yx/y2szoOMZ4c/las4oTqZ
-/wUJs3WiUm+q8W09pvbK16tExZIHdGPXsDX27bKslLrF2Fcye8lCEJcAgaZfP78A
-hfAOD2IMF9a/v+bAQJz9o4HU46CWXEZ/kTD4ETJKXS5huT1oj1lAd6Mip5rMgWQt
-cTfd+YCd0C/2fdRcy/xPtRDc9KKz4HobhGqQQBNjVrKKE6/9jzVSnrajgbqXLLU0
-rpeVuih04pgjestGMcpDzDuQNKs5VzGCqY4D4JFEGeNa8O0EaJA=
-=gES4
------END PGP SIGNATURE-----
-
---zsrhboitvomsevkd--
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index 7936f54..13f9cce 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -260,6 +260,17 @@ static bool sugov_cpu_is_busy(struct sugov_cpu *sg_cpu)
+ static inline bool sugov_cpu_is_busy(struct sugov_cpu *sg_cpu) { return false; }
+ #endif /* CONFIG_NO_HZ_COMMON */
+ 
++/*
++ * Make sugov_should_update_freq() ignore the rate limit when DL
++ * has increased the utilization.
++ */
++static inline
++void set_dl_rate_limit(struct sugov_cpu *sg_cpu, struct sugov_policy *sg_policy)
++{
++	if (cpu_util_dl(cpu_rq(sg_cpu->cpu)) > sg_cpu->util_dl)
++		sg_policy->need_freq_update = true;
++}
++
+ static void sugov_update_single(struct update_util_data *hook, u64 time,
+ 				unsigned int flags)
+ {
+@@ -273,6 +284,8 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
+ 	sugov_set_iowait_boost(sg_cpu, time);
+ 	sg_cpu->last_update = time;
+ 
++	set_dl_rate_limit(sg_cpu, sg_policy);
++
+ 	if (!sugov_should_update_freq(sg_policy, time))
+ 		return;
+ 
+@@ -354,6 +367,8 @@ static void sugov_update_shared(struct update_util_data *hook, u64 time,
+ 
+ 	raw_spin_lock(&sg_policy->update_lock);
+ 
++	set_dl_rate_limit(sg_cpu, sg_policy);
++
+ 	sugov_get_util(sg_cpu);
+ 	sg_cpu->flags = flags;
+ 
+-- 
+2.7.4
