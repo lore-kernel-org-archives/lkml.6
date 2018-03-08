@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755274AbeCHJvl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 04:51:41 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:42525 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935762AbeCHJto (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S935772AbeCHJto (ORCPT <rfc822;w@1wt.eu>);
         Thu, 8 Mar 2018 04:49:44 -0500
-X-Google-Smtp-Source: AG47ELvOF5YfIIvF3l4cW/DHlc0OfRiToXieI/sarJ/VU7MsxRifP/DA9bb06Yp/uNlkbKEc83m+hg==
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:39837 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935657AbeCHJtk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 04:49:40 -0500
+X-Google-Smtp-Source: AG47ELtTOTsFHLx9iMN9YLz0AkhWZRk91yzFJzpA3k7KZiIHOvjGHWWHXqpMaQLrTYBhNMCkYg3Nsw==
 From: Jacob Chen <jacob-chen@iotwrt.com>
 To: linux-rockchip@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -18,9 +18,9 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         eddie.cai.linux@gmail.com, jeffy.chen@rock-chips.com,
         devicetree@vger.kernel.org, heiko@sntech.de,
         Jacob Chen <jacob2.chen@rock-chips.com>
-Subject: [PATCH v6 13/17] ARM: dts: rockchip: add rx0 mipi-phy for rk3288
-Date: Thu,  8 Mar 2018 17:48:03 +0800
-Message-Id: <20180308094807.9443-14-jacob-chen@iotwrt.com>
+Subject: [PATCH v6 12/17] ARM: dts: rockchip: add isp node for rk3288
+Date: Thu,  8 Mar 2018 17:48:02 +0800
+Message-Id: <20180308094807.9443-13-jacob-chen@iotwrt.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180308094807.9443-1-jacob-chen@iotwrt.com>
 References: <20180308094807.9443-1-jacob-chen@iotwrt.com>
@@ -30,30 +30,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jacob Chen <jacob2.chen@rock-chips.com>
 
-It's a Designware MIPI D-PHY, used by ISP in rk3288.
+rk3288 have a Embedded 13M ISP
 
 Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
 ---
- arch/arm/boot/dts/rk3288.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/boot/dts/rk3288.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
 diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index 6c122aaf06a7..3a530b72c057 100644
+index ad6bda85c85a..6c122aaf06a7 100644
 --- a/arch/arm/boot/dts/rk3288.dtsi
 +++ b/arch/arm/boot/dts/rk3288.dtsi
-@@ -864,6 +864,13 @@
- 			status = "disabled";
- 		};
+@@ -962,6 +962,23 @@
+ 		status = "disabled";
+ 	};
  
-+		mipi_phy_rx0: mipi-phy-rx0 {
-+			compatible = "rockchip,rk3288-mipi-dphy";
-+			clocks = <&cru SCLK_MIPIDSI_24M>, <&cru PCLK_MIPI_CSI>;
-+			clock-names = "dphy-ref", "pclk";
-+			status = "disabled";
-+		};
++	isp: isp@ff910000 {
++		compatible = "rockchip,rk3288-cif-isp";
++		reg = <0x0 0xff910000 0x0 0x4000>;
++		interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru SCLK_ISP>, <&cru ACLK_ISP>,
++			 <&cru HCLK_ISP>, <&cru PCLK_ISP_IN>,
++			 <&cru SCLK_ISP_JPE>;
++		clock-names = "clk_isp", "aclk_isp",
++			      "hclk_isp", "pclk_isp_in",
++			      "sclk_isp_jpe";
++		assigned-clocks = <&cru SCLK_ISP>, <&cru SCLK_ISP_JPE>;
++		assigned-clock-rates = <400000000>, <400000000>;
++		power-domains = <&power RK3288_PD_VIO>;
++		iommus = <&isp_mmu>;
++		status = "disabled";
++	};
 +
- 		io_domains: io-domains {
- 			compatible = "rockchip,rk3288-io-voltage-domain";
- 			status = "disabled";
+ 	isp_mmu: iommu@ff914000 {
+ 		compatible = "rockchip,iommu";
+ 		reg = <0x0 0xff914000 0x0 0x100>, <0x0 0xff915000 0x0 0x100>;
 -- 
 2.16.1
