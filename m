@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1171329-1520492157-2-6328669593894715152
+X-Cyrus-Session-Id: sloti22d1t05-1131037-1520492155-2-14368314638369365275
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES enca, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520492157; b=U49e0cEfkSql6MGr9CQ63+5m6td0yKhwIkzscj9HPnJeJss
-    TlHLrmtjmqEALHAnnP1CeYiKF2RPYTZ7EPyAvPLxEr1N9FwUZC4F6MLfTMETTxoR
-    kS4t83ModZetaTfHp5BmJFLSGDzvSOBIWsol9o45DiX5+ljP08o7qQTXfJQsMqrg
-    n4yBHGRYAxMYAAGPDWq6Cc3Z4WWWh7CsHkYKQ9mLavWRqdmRXKsOtiIiWDlQQ9CV
-    AarwDpEi6VAzB60Wvdg3IvIiBurgYSBoyCTenR+FOIofs97ndkRJCC8qQJ0LcBwl
-    ZJ+Q1P+046cZWKIf/Xmd6IQhePgX+K3lZAzv/+g==
+    t=1520492155; b=e/Gzf1Y+9UVEXhFV1FaceOxvEb/+1fsAZ9s0P8s9Ae6Hn6A
+    NMb85tukmC3+SSmPaaCbXAmaB3oMNWcCBb5CHfmm6yWN9iz2x8stS3d7Hm1MSvIX
+    2lpZCan9mh+MAEejpwsMsLcX0jJ3EfHxyyy1otkfWBvwuPtmKc1JkSBhx5/4rMrm
+    M18aDIfmb5D6E7vjBp6nqaKANPcXeTdZcA6YTNH78Jdsy7iS41IojPgJUQGiU8YY
+    4OSpXJ3Wt+WZnH0YBtDbQy9sB+p6wpZ5mdHRojb08vVGf0wV6mySfQ9ujedp0hjL
+    KnZRyRYpYtrYkQDBJ/Z0zRZAbPDGeCJZsQfef2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520492157; bh=fRH3EK
-    8ueiCdO9OS8hnoiiPPyeIU9e3LNhX0nKeCRCk=; b=JHwndc5t9blK6qRBu2XeIY
-    z9mfQsT94ojbyfFcxHx9rZdFL5A9Dec1N09rvcqRKxkWDbxFpi31BrdCSqNP0hEC
-    M1TuMreXKYR2s1287qHdyqUpzqOgm64Cu2PmwFHEJUwf5Gkgl6R6sdbAEJud7lnD
-    DDT+pTfS97Vr9x3e5N1IKi4AaKuWu9rgtAy+/5chZ0n518whZbSgwDQ2lymztNRC
-    1Fh4kUVuybVYpEUObE3MneC2RAWgKYj9Hch3E297JPFoB3FwTPZWGVIa4Ct/RV0g
-    87RJ/UWpYSRae/7fdJJLcTwEGYUmO35tSHwvFPRCGjt+nK7SKuco5m8/MLe7R0MQ
+    :mime-version:sender:list-id; s=arctest; t=1520492155; bh=vMrPe5
+    FC1G6KZ++CM6ifRcj9v8mB/LmBE4oRcsEks5E=; b=ZEXPpvP5XxV6Rtjjvl4kpt
+    BXuz0EZcj52v8t1QnhYeUGLYN9cUPEwNbd3uAIB91RPGzMn0IG8/0L4qPKSUKTVx
+    Ie7b47TfPlj1gOMb1Elzo0iNqvcvoiSun4+1aiNxt/V6BVFFaZmZjVkDI9+Ctusy
+    6Pio0LkPH/+H8e/ypePQsOWdVtdnboSsgs6bP2TnhMVYTGUCrY5ZfvaNZBqFg584
+    ddlWjtBR3VjwxqSM43CECmrwL8wyBZmL2b60xnCIS4LjdniMGKDTScVEjDzmqZRV
+    E572fqkoraGTz+sxWd6GlahnOP1K36QyodlocKsn47fMjTvlA6hJcZx2S4UFG+bw
     ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=caPlr/Op x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Pn8YjPkP x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -41,7 +41,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=caPlr/Op x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Pn8YjPkP x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,28 +50,27 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934654AbeCHE6B (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 23:58:01 -0500
-Received: from mail-by2nam03on0124.outbound.protection.outlook.com ([104.47.42.124]:24768
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        id S965009AbeCHGzk (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 01:55:40 -0500
+Received: from mail-sn1nam02on0119.outbound.protection.outlook.com ([104.47.36.119]:48736
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S964948AbeCHE54 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 7 Mar 2018 23:57:56 -0500
+        id S935174AbeCHE6B (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 7 Mar 2018 23:58:01 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Jerry Snitselaar <jsnitsel@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Ashok Raj <ashok.raj@intel.com>,
+CC: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 62/78] iommu/vt-d: clean up pr_irq if
- request_threaded_irq fails
-Thread-Topic: [PATCH AUTOSEL for 4.15 62/78] iommu/vt-d: clean up pr_irq if
- request_threaded_irq fails
-Thread-Index: AQHTtpnR6ftwno2ifUqs3R8tPCnHZw==
-Date: Thu, 8 Mar 2018 04:56:28 +0000
-Message-ID: <20180308045525.7662-62-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 73/78] clk: Don't touch hardware when
+ reparenting during registration
+Thread-Topic: [PATCH AUTOSEL for 4.15 73/78] clk: Don't touch hardware when
+ reparenting during registration
+Thread-Index: AQHTtpnUzMIw9XDvFkKBFW1PjVhoEw==
+Date: Thu, 8 Mar 2018 04:56:33 +0000
+Message-ID: <20180308045525.7662-73-alexander.levin@microsoft.com>
 References: <20180308045525.7662-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045525.7662-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -80,183 +79,149 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1080;7:ud8je7AXIiDpuPrZuUSJZ1lQuBIplOljJg8owGBNhjFuF00C/hOQiQ3q0cwekB4gYdYMNbjHd7PGYYyYEjrhUKwtu7pcAiLLxY4/tPrtRS7EM107iiYnk7DEJZ7dI7zsRvo3BFa0ytoBouqj05ZywZfED/w0L5gHfPaO9VDQqtIKAd+IMDM7RYcUzWFOWQdgYfs35gmHhNLeceCI+KYy/tDtUQDhbdU/7mDQ4yQxJaZz1uCxz9qProapXTBIfU8o;20:RZu59s1+meFv2//+570vKvKJzDpLxioMQkVmZQJVFvJUYCRfd+Z95/igFRgy4PQjVC9RnqPJTm6IuyDq/z74vthw+iwKKeVzm++M948guHY8fbTA6ONGe6+jhF09za1ftOnFNThbLKNKHmO1p0YyRxhi8llOYV9PVzsAhU63wzo=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0936;7:FZrkUe1HVJ1K03VN7RFkHAce3Z6hhsipYmpwpILJBtf3fWcD1lPvBmcaYrd2Dom+uZ3huqDGZ7xM1TM2mSHD+B/9nvTbw3ka5jKTT5WnPE7JtoBCsH3ohGC4jO1MqeUNv1mDLUys5wcEywmKAMOFQikubgYf2C57WwfzZmjkRXpnyjfhXkTzcqhmmnljFB7dulm+Thc5dxZEN2herhbS4wCmG6DpHKA7vuRkiffyXxKoxC7ubAb3UDh9pUpbwrLy;20:XdAoj7cUPENJ4u42WF59rYKDVKcwD5ApOmg6aV2psJS1HB7c510S4g4DpE+WDL51lGXcsgcoSE4EB8HQr9gEgsuZsrN/DeS16/MBasX5GeKFecYjShGP8j+o+sOR7nNmQwrp5ZKSniJHsiQhxTttxkGxRqp1x+CZdKyMC7KzQxw=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 3ac64295-809b-4a48-11b7-08d584b126b7
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1080;
-x-ms-traffictypediagnostic: DM5PR2101MB1080:
+x-ms-office365-filtering-correlation-id: bf908e75-048c-4fb2-6a80-08d584b12a00
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0936;
+x-ms-traffictypediagnostic: DM5PR2101MB0936:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1080665D74039692C8011B0EFBDF0@DM5PR2101MB1080.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(3231220)(944501244)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB1080;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1080;
+x-microsoft-antispam-prvs: <DM5PR2101MB09362A27E6D910B89BD746C3FBDF0@DM5PR2101MB0936.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(185117386973197);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0936;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0936;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(366004)(39380400002)(346002)(39860400002)(189003)(199004)(6116002)(1076002)(5250100002)(26005)(102836004)(2501003)(3846002)(59450400001)(186003)(6506007)(25786009)(3280700002)(4326008)(2906002)(68736007)(66066001)(86612001)(3660700001)(22452003)(6486002)(6436002)(14454004)(8676002)(81166006)(2900100001)(72206003)(81156014)(8936002)(478600001)(10090500001)(105586002)(10290500003)(53936002)(6512007)(6666003)(107886003)(2950100002)(106356001)(76176011)(316002)(7736002)(86362001)(575784001)(36756003)(97736004)(54906003)(110136005)(5660300001)(99286004)(305945005)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1080;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: yKoeQR342iJlYDtDsduGQHKYokOWa8qMCTCi9GB8tCEeACuXZd+g86N8Y/D3Qbgh7xEsQ1iRmJA0uZmBDWRX5mFLwyVTPwL+S/ouqA+dWpyj0/v9Ipxz32n1XZ85gTChoNZyMp9pB634fLOtKR3S0nYrt3Q5383XuAQwDTUhitBH6EvltiCrhrS2PCV+YZuPcXA7GSrBTEnkxFpxoZIViB/glx//O916MTkKGS0HR9/eFnHfGrWOZx4+DgsgLn+vg0r1FEQogcmeq4hLsYrdMmM/bocs9H7EwmUlE6KwPxVbNPABrzBP6RZ/LIPPLsuRW9N6WkgG2SSFUw4uR0qGBw==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(39380400002)(346002)(376002)(199004)(189003)(478600001)(99286004)(575784001)(6506007)(59450400001)(3660700001)(36756003)(86362001)(54906003)(6116002)(110136005)(2950100002)(102836004)(1076002)(3846002)(6486002)(3280700002)(10090500001)(10290500003)(305945005)(72206003)(6436002)(6666003)(26005)(5250100002)(2906002)(186003)(2501003)(105586002)(76176011)(66066001)(7736002)(68736007)(25786009)(6512007)(106356001)(86612001)(8936002)(107886003)(81166006)(2900100001)(5660300001)(4326008)(81156014)(53936002)(14454004)(97736004)(316002)(22452003)(8676002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0936;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: HABNWlHl2u10gUERyTazYIBmGyvQShfrZ4Tki99UPR6l+kh0tsAsRfw98Cb8vSffwqs/9rQyRe0HGzsd0B7QJAuDP3W6ZSJnc1KCB/92OXDjeRN7CBHRB0zUWae83f6fkAmcPzkZ76Rb78WVOs5GngiqVc7bNGTvpkETqm0b06FaXMPNuuhjogtZ1l+bIwSNbbTLtD56aIzJqIa9ARqYweV9nJaecWHfmzEIy/3xfhGEw6rIqYEV4vg1NiRxRLB3eK/KUCDp3Yr2nBXNZpgSoKaYELz8HK1NVzQuypBeCmnscQeDIbN3Xepg93qeGYwSgbwdU0I5zCWMEWp0SP+tjg==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ac64295-809b-4a48-11b7-08d584b126b7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:56:28.6459
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf908e75-048c-4fb2-6a80-08d584b12a00
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:56:33.8735
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1080
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0936
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Jerry Snitselaar <jsnitsel@redhat.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-[ Upstream commit 72d548113881dd32bf7f0b221d031e6586468437 ]
+[ Upstream commit f8f8f1d04494d3a6546bee3f0618c4dba31d7b72 ]
 
-It is unlikely request_threaded_irq will fail, but if it does for some
-reason we should clear iommu->pr_irq in the error path. Also
-intel_svm_finish_prq shouldn't try to clean up the page request
-interrupt if pr_irq is 0. Without these, if request_threaded_irq were
-to fail the following occurs:
+The orphan clocks reparent operation shouldn't touch the hardware
+if clocks are enabled, otherwise it may get a chance to disable a
+newly registered critical clock which triggers the warning below.
 
-fail with no fixes:
+Assuming we have two clocks: A and B, B is the parent of A.
+Clock A has flag: CLK_OPS_PARENT_ENABLE
+Clock B has flag: CLK_IS_CRITICAL
 
-[    0.683147] ------------[ cut here ]------------
-[    0.683148] NULL pointer, cannot free irq
-[    0.683158] WARNING: CPU: 1 PID: 1 at kernel/irq/irqdomain.c:1632 irq_do=
-main_free_irqs+0x126/0x140
-[    0.683160] Modules linked in:
-[    0.683163] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc2 #3
-[    0.683165] Hardware name:                  /NUC7i3BNB, BIOS BNKBL357.86=
-A.0036.2017.0105.1112 01/05/2017
-[    0.683168] RIP: 0010:irq_domain_free_irqs+0x126/0x140
-[    0.683169] RSP: 0000:ffffc90000037ce8 EFLAGS: 00010292
-[    0.683171] RAX: 000000000000001d RBX: ffff880276283c00 RCX: ffffffff81c=
-5e5e8
-[    0.683172] RDX: 0000000000000001 RSI: 0000000000000096 RDI: 00000000000=
-00246
-[    0.683174] RBP: ffff880276283c00 R08: 0000000000000000 R09: 00000000000=
-0023c
-[    0.683175] R10: 0000000000000007 R11: 0000000000000000 R12: 00000000000=
-0007a
-[    0.683176] R13: 0000000000000001 R14: 0000000000000000 R15: 00000100100=
-00000
-[    0.683178] FS:  0000000000000000(0000) GS:ffff88027ec80000(0000) knlGS:=
-0000000000000000
-[    0.683180] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    0.683181] CR2: 0000000000000000 CR3: 0000000001c09001 CR4: 00000000003=
-606e0
-[    0.683182] Call Trace:
-[    0.683189]  intel_svm_finish_prq+0x3c/0x60
-[    0.683191]  free_dmar_iommu+0x1ac/0x1b0
-[    0.683195]  init_dmars+0xaaa/0xaea
-[    0.683200]  ? klist_next+0x19/0xc0
-[    0.683203]  ? pci_do_find_bus+0x50/0x50
-[    0.683205]  ? pci_get_dev_by_id+0x52/0x70
-[    0.683208]  intel_iommu_init+0x498/0x5c7
-[    0.683211]  pci_iommu_init+0x13/0x3c
-[    0.683214]  ? e820__memblock_setup+0x61/0x61
-[    0.683217]  do_one_initcall+0x4d/0x1a0
-[    0.683220]  kernel_init_freeable+0x186/0x20e
-[    0.683222]  ? set_debug_rodata+0x11/0x11
-[    0.683225]  ? rest_init+0xb0/0xb0
-[    0.683226]  kernel_init+0xa/0xff
-[    0.683229]  ret_from_fork+0x1f/0x30
-[    0.683259] Code: 89 ee 44 89 e7 e8 3b e8 ff ff 5b 5d 44 89 e7 44 89 ee =
-41 5c 41 5d 41 5e e9 a8 84 ff ff 48 c7 c7 a8 71 a7 81 31 c0 e8 6a d3 f9 ff =
-<0f> ff 5b 5d 41 5c 41 5d 41 5
-e c3 0f 1f 44 00 00 66 2e 0f 1f 84
-[    0.683285] ---[ end trace f7650e42792627ca ]---
+Step 1:
+Clock A is registered, then it becomes orphan.
 
-with iommu->pr_irq =3D 0, but no check in intel_svm_finish_prq:
+Step 2:
+Clock B is registered. Before clock B reach the critical clock enable
+operation, orphan A will find the newly registered parent B and do
+reparent operation, then parent B will be finally disabled in
+__clk_set_parent_after() due to CLK_OPS_PARENT_ENABLE flag as there's
+still no users of B which will then trigger the following warning.
 
-[    0.669561] ------------[ cut here ]------------
-[    0.669563] Trying to free already-free IRQ 0
-[    0.669573] WARNING: CPU: 3 PID: 1 at kernel/irq/manage.c:1546 __free_ir=
-q+0xa4/0x2c0
-[    0.669574] Modules linked in:
-[    0.669577] CPU: 3 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc2 #4
-[    0.669579] Hardware name:                  /NUC7i3BNB, BIOS BNKBL357.86=
-A.0036.2017.0105.1112 01/05/2017
-[    0.669581] RIP: 0010:__free_irq+0xa4/0x2c0
-[    0.669582] RSP: 0000:ffffc90000037cc0 EFLAGS: 00010082
-[    0.669584] RAX: 0000000000000021 RBX: 0000000000000000 RCX: ffffffff81c=
-5e5e8
-[    0.669585] RDX: 0000000000000001 RSI: 0000000000000086 RDI: 00000000000=
-00046
-[    0.669587] RBP: 0000000000000000 R08: 0000000000000000 R09: 00000000000=
-0023c
-[    0.669588] R10: 0000000000000007 R11: 0000000000000000 R12: ffff8802762=
-53960
-[    0.669589] R13: ffff8802762538a4 R14: ffff880276253800 R15: ffff8802762=
-83600
-[    0.669593] FS:  0000000000000000(0000) GS:ffff88027ed80000(0000) knlGS:=
-0000000000000000
-[    0.669594] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    0.669596] CR2: 0000000000000000 CR3: 0000000001c09001 CR4: 00000000003=
-606e0
-[    0.669602] Call Trace:
-[    0.669616]  free_irq+0x30/0x60
-[    0.669620]  intel_svm_finish_prq+0x34/0x60
-[    0.669623]  free_dmar_iommu+0x1ac/0x1b0
-[    0.669627]  init_dmars+0xaaa/0xaea
-[    0.669631]  ? klist_next+0x19/0xc0
-[    0.669634]  ? pci_do_find_bus+0x50/0x50
-[    0.669637]  ? pci_get_dev_by_id+0x52/0x70
-[    0.669639]  intel_iommu_init+0x498/0x5c7
-[    0.669642]  pci_iommu_init+0x13/0x3c
-[    0.669645]  ? e820__memblock_setup+0x61/0x61
-[    0.669648]  do_one_initcall+0x4d/0x1a0
-[    0.669651]  kernel_init_freeable+0x186/0x20e
-[    0.669653]  ? set_debug_rodata+0x11/0x11
-[    0.669656]  ? rest_init+0xb0/0xb0
-[    0.669658]  kernel_init+0xa/0xff
-[    0.669661]  ret_from_fork+0x1f/0x30
-[    0.669662] Code: 7a 08 75 0e e9 c3 01 00 00 4c 39 7b 08 74 57 48 89 da =
-48 8b 5a 18 48 85 db 75 ee 89 ee 48 c7 c7 78 67 a7 81 31 c0 e8 4c 37 fa ff =
-<0f> ff 48 8b 34 24 4c 89 ef e
-8 0e 4c 68 00 49 8b 46 40 48 8b 80
-[    0.669688] ---[ end trace 58a470248700f2fc ]---
+WARNING: CPU: 0 PID: 0 at drivers/clk/clk.c:597 clk_core_disable+0xb4/0xe0
+Modules linked in:
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.11.0-rc1-00056-gdff1f66-dirty #=
+1373
+Hardware name: Generic DT based system
+Backtrace:
+[<c010c4bc>] (dump_backtrace) from [<c010c764>] (show_stack+0x18/0x1c)
+ r6:600000d3 r5:00000000 r4:c0e26358 r3:00000000
+[<c010c74c>] (show_stack) from [<c040599c>] (dump_stack+0xb4/0xe8)
+[<c04058e8>] (dump_stack) from [<c0125c94>] (__warn+0xd8/0x104)
+ r10:c0c21cd0 r9:c048aa78 r8:00000255 r7:00000009 r6:c0c1cd90 r5:00000000
+ r4:00000000 r3:c0e01d34
+[<c0125bbc>] (__warn) from [<c0125d74>] (warn_slowpath_null+0x28/0x30)
+ r9:00000000 r8:ef00bf80 r7:c165ac4c r6:ef00bf80 r5:ef00bf80 r4:ef00bf80
+[<c0125d4c>] (warn_slowpath_null) from [<c048aa78>] (clk_core_disable+0xb4/=
+0xe0)
+[<c048a9c4>] (clk_core_disable) from [<c048be88>] (clk_core_disable_lock+0x=
+20/0x2c)
+ r4:000000d3 r3:c0e0af00
+[<c048be68>] (clk_core_disable_lock) from [<c048c224>] (clk_core_disable_un=
+prepare+0x14/0x28)
+ r5:00000000 r4:ef00bf80
+[<c048c210>] (clk_core_disable_unprepare) from [<c048c270>] (__clk_set_pare=
+nt_after+0x38/0x54)
+ r4:ef00bd80 r3:000010a0
+[<c048c238>] (__clk_set_parent_after) from [<c048daa8>] (clk_register+0x4d0=
+/0x648)
+ r6:ef00d500 r5:ef00bf80 r4:ef00bd80 r3:ef00bfd4
+[<c048d5d8>] (clk_register) from [<c048dc30>] (clk_hw_register+0x10/0x1c)
+ r9:00000000 r8:00000003 r7:00000000 r6:00000824 r5:00000001 r4:ef00d500
+[<c048dc20>] (clk_hw_register) from [<c048e698>] (_register_divider+0xcc/0x=
+120)
+[<c048e5cc>] (_register_divider) from [<c048e730>] (clk_register_divider+0x=
+44/0x54)
+ r10:00000004 r9:00000003 r8:00000001 r7:00000000 r6:00000003 r5:00000001
+ r4:f0810030
+[<c048e6ec>] (clk_register_divider) from [<c0d3ff58>] (imx7ulp_clocks_init+=
+0x558/0xe98)
+ r7:c0e296f8 r6:c165c808 r5:00000000 r4:c165c808
+[<c0d3fa00>] (imx7ulp_clocks_init) from [<c0d24db0>] (of_clk_init+0x118/0x1=
+e0)
+ r10:00000001 r9:c0e01f68 r8:00000000 r7:c0e01f60 r6:ef7f8974 r5:ef0035c0
+ r4:00000006
+[<c0d24c98>] (of_clk_init) from [<c0d04a50>] (time_init+0x2c/0x38)
+ r10:efffed40 r9:c0d61a48 r8:c0e78000 r7:c0e07900 r6:ffffffff r5:c0e78000
+ r4:00000000
+[<c0d04a24>] (time_init) from [<c0d00b8c>] (start_kernel+0x218/0x394)
+[<c0d00974>] (start_kernel) from [<6000807c>] (0x6000807c)
+ r10:00000000 r9:410fc075 r8:6000406a r7:c0e0c930 r6:c0d61a44 r5:c0e07918
+ r4:c0e78294
 
-Cc: Alex Williamson <alex.williamson@redhat.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
-Reviewed-by: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+We know that the clk isn't enabled with any sort of prepare_count
+here so we don't need to enable anything to prevent a race. And
+we're holding the prepare mutex so set_rate/set_parent can't race
+here either. Based on an earlier patch by Dong Aisheng.
+
+Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents enab=
+le (part 2)")
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Reported-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/iommu/intel-svm.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/clk/clk.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index ed1cf7c5a43b..6643277e321e 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -129,6 +129,7 @@ int intel_svm_enable_prq(struct intel_iommu *iommu)
- 		pr_err("IOMMU: %s: Failed to request IRQ for page request queue\n",
- 		       iommu->name);
- 		dmar_free_hwirq(irq);
-+		iommu->pr_irq =3D 0;
- 		goto err;
- 	}
- 	dmar_writeq(iommu->reg + DMAR_PQH_REG, 0ULL);
-@@ -144,9 +145,11 @@ int intel_svm_finish_prq(struct intel_iommu *iommu)
- 	dmar_writeq(iommu->reg + DMAR_PQT_REG, 0ULL);
- 	dmar_writeq(iommu->reg + DMAR_PQA_REG, 0ULL);
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 0cca063f70e7..6c18fa7bcc23 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2597,14 +2597,17 @@ static int __clk_core_init(struct clk_core *core)
+ 	 */
+ 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
+ 		struct clk_core *parent =3D __clk_init_parent(orphan);
++		unsigned long flags;
 =20
--	free_irq(iommu->pr_irq, iommu);
--	dmar_free_hwirq(iommu->pr_irq);
--	iommu->pr_irq =3D 0;
-+	if (iommu->pr_irq) {
-+		free_irq(iommu->pr_irq, iommu);
-+		dmar_free_hwirq(iommu->pr_irq);
-+		iommu->pr_irq =3D 0;
-+	}
-=20
- 	free_pages((unsigned long)iommu->prq, PRQ_ORDER);
- 	iommu->prq =3D NULL;
+ 		/*
+ 		 * we could call __clk_set_parent, but that would result in a
+ 		 * redundant call to the .set_rate op, if it exists
+ 		 */
+ 		if (parent) {
+-			__clk_set_parent_before(orphan, parent);
+-			__clk_set_parent_after(orphan, parent, NULL);
++			/* update the clk tree topology */
++			flags =3D clk_enable_lock();
++			clk_reparent(orphan, parent);
++			clk_enable_unlock(flags);
+ 			__clk_recalc_accuracies(orphan);
+ 			__clk_recalc_rates(orphan, 0);
+ 		}
 --=20
 2.14.1
