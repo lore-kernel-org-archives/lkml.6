@@ -1,144 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755785AbeCHMK1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 07:10:27 -0500
-Received: from foss.arm.com ([217.140.101.70]:36870 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750705AbeCHMK0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 07:10:26 -0500
-Subject: Re: [PATCH v3 15/22] arm64: capabilities: Change scope of VHE to Boot
- CPU feature
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
-        robin.murphy@arm.com
-References: <20180209175513.17100-1-suzuki.poulose@arm.com>
- <20180209175513.17100-30-suzuki.poulose@arm.com>
- <20180212171727.GL5862@e103592.cambridge.arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <25d774db-0ebd-b06d-20b5-5e31ede58fa3@arm.com>
-Date: Thu, 8 Mar 2018 12:10:22 +0000
+        id S1755358AbeCHMM2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 07:12:28 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36930 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751862AbeCHMM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 07:12:26 -0500
+Subject: Re: [PATCH v8 3/5] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To: Tomasz Figa <tfiga@chromium.org>
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Will Deacon <will.deacon@arm.com>, Rob Clark <robdclark@gmail.com>,
+        "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jcrouse@codeaurora.org, Stephen Boyd <sboyd@codeaurora.org>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+References: <20180302101050.6191-1-vivek.gautam@codeaurora.org>
+ <20180302101050.6191-4-vivek.gautam@codeaurora.org>
+ <d0f2b3ed-136d-7704-2aef-1173a342a89c@arm.com>
+ <CAAFQd5BTdF176x5ycatCmCHrMyVX2OZqdXd-JGq06RyDUb0N3g@mail.gmail.com>
+ <30a2fa5e-3d8e-acb6-ab31-bec652f1be99@arm.com>
+ <CAAFQd5BKkKc2binDe-MCDeP42b6O26Hu9nYjvYRE160EMvi1fA@mail.gmail.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <6fe36177-a8a5-5f17-bf65-1a53538221a4@arm.com>
+Date: Thu, 8 Mar 2018 12:12:21 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180212171727.GL5862@e103592.cambridge.arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
+In-Reply-To: <CAAFQd5BKkKc2binDe-MCDeP42b6O26Hu9nYjvYRE160EMvi1fA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/02/18 17:17, Dave Martin wrote:
-> On Fri, Feb 09, 2018 at 05:54:59PM +0000, Suzuki K Poulose wrote:
->> We expect all CPUs to be running at the same EL inside the kernel
->> with or without VHE enabled and we have strict checks to ensure
->> that any mismatch triggers a kernel panic. If VHE is enabled,
->> we use the feature based on the boot CPU and all other CPUs
->> should follow. This makes it a perfect candidate for a cpability
-> 
-> capability
-> 
->> based on the boot CPU,  which should be matched by all the CPUs
->> (both when is ON and OFF). This saves us some not-so-pretty
->> hooks and special code, just for verifying the conflict.
+On 08/03/18 04:33, Tomasz Figa wrote:
+> On Thu, Mar 8, 2018 at 1:58 AM, Robin Murphy <robin.murphy@arm.com> wrote:
+>> On 07/03/18 13:52, Tomasz Figa wrote:
+>>>
+>>> On Wed, Mar 7, 2018 at 9:38 PM, Robin Murphy <robin.murphy@arm.com> wrote:
+>>>>
+>>>> On 02/03/18 10:10, Vivek Gautam wrote:
+>>>>>
+>>>>>
+>>>>> From: Sricharan R <sricharan@codeaurora.org>
+>>>>>
+>>>>> The smmu device probe/remove and add/remove master device callbacks
+>>>>> gets called when the smmu is not linked to its master, that is without
+>>>>> the context of the master device. So calling runtime apis in those
+>>>>> places
+>>>>> separately.
+>>>>>
+>>>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>>>>> [vivek: Cleanup pm runtime calls]
+>>>>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+>>>>> ---
+>>>>>     drivers/iommu/arm-smmu.c | 96
+>>>>> ++++++++++++++++++++++++++++++++++++++++++++----
+>>>>>     1 file changed, 88 insertions(+), 8 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+>>>>> index c8b16f53f597..3d6a1875431f 100644
+>>>>> --- a/drivers/iommu/arm-smmu.c
+>>>>> +++ b/drivers/iommu/arm-smmu.c
+>>>>> @@ -209,6 +209,8 @@ struct arm_smmu_device {
+>>>>>           struct clk_bulk_data            *clks;
+>>>>>           int                             num_clks;
+>>>>>     +     bool                            rpm_supported;
+>>>>> +
+>>>>
+>>>>
+>>>>
+>>>> Can we not automatically infer this from whether clocks and/or power
+>>>> domains
+>>>> are specified or not, then just use pm_runtime_enabled() as the fast-path
+>>>> check as Tomasz originally proposed?
+>>>
+>>>
+>>> I wouldn't tie this to presence of clocks, since as a next step we
+>>> would want to actually control the clocks separately. (As far as I
+>>> understand, on QCom SoCs we might want to have runtime PM active for
+>>> the translation to work, but clocks gated whenever access to SMMU
+>>> registers is not needed.) Moreover, you might still have some super
+>>> high scale thousand-core systems that require clocks to be
+>>> prepare-enabled, but runtime PM would be undesirable for the reasons
+>>> we discussed before.
+>>>
+>>>>
+>>>> I worry that relying on statically-defined matchdata is just going to
+>>>> blow
+>>>> up the driver and DT binding into a maintenance nightmare; I really don't
+>>>> want to start needing separate definitions for e.g.
+>>>> "arm,juno-etr-mmu-401"
+>>>> and "arm,juno-hdlcd-mmu-401" just because one otherwise-identical
+>>>> instance
+>>>> within the SoC is in a separate controllable power domain while the
+>>>> others
+>>>> aren't.
+>>>
+>>>
+>>> I don't see a reason why both couldn't just have RPM supported
+>>> regardless of whether there is a real power domain. It would
+>>> effectively be just a no-op for those that don't have one.
 >>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Dave Martin <dave.martin@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   arch/arm64/include/asm/cpufeature.h |  7 +++++++
->>   arch/arm64/include/asm/virt.h       |  6 ------
->>   arch/arm64/kernel/cpufeature.c      |  5 +++--
->>   arch/arm64/kernel/smp.c             | 38 -------------------------------------
->>   4 files changed, 10 insertions(+), 46 deletions(-)
 >>
->> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
->> index 5f56a8342065..dfce93f79ae7 100644
->> --- a/arch/arm64/include/asm/cpufeature.h
->> +++ b/arch/arm64/include/asm/cpufeature.h
->> @@ -276,6 +276,13 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
->>   	(ARM64_CPUCAP_SCOPE_LOCAL_CPU		|	\
->>   	 ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU)
->>   
->> +/*
->> + * Critical CPU feature used early in the boot based on the boot CPU.
->> + * The feature should be matched by all booting CPU (both miss and hit
->> + * cases).
->> + */
->> +#define ARM64_CPUCAP_CRITICAL_BOOT_CPU_FEATURE ARM64_CPUCAP_SCOPE_BOOT_CPU
->> +
+>> Because you're then effectively defining "compatible" values for the sake of
+>> attaching software policy to them, rather than actually describing different
+>> hardware implementations.
+>>
+>> The fact that RPM can't do anything meaningful unless relevant clock/power
+>> aspects *are* described, however, means that we shouldn't need additional
+>> information redundant with that. Much like the fact that we don't *already*
+>> have an "arm,juno-hdlcd-mmu-401" compatible to account for those being
+>> integrated such that IDR0.CTTW has the wrong value, since the presence or
+>> not of the "dma-coherent" property already describes the truth in that
+>> regard.
 > 
-> Nit: would it be consistent with the uses we already have for the word
-> "strict" to use that word here?  i.e.,
-> ARM64_CPUCAP_STRICT_BOOT_CPU_FEATURE.
-> Or do you think that would be more confusing?
+> Fair enough.
+> 
+>>
+>>> IMHO the
+>>> only reason to avoid having the RPM enabled is the scalability issue
+>>> we discussed before.
+>>
+>>
+>> Yes, but that's kind of my point; in reality high throughput/minimal latency
+>> and aggressive power management are more or less mutually exclusive. Mobile
+>> SoCs with fine-grained clock trees and power domains won't have multiple
+>> 40GBe/NVMf/whatever links running flat out in parallel; conversely
+>> networking/infrastructure/server SoCs aren't designed around saving every
+>> last microamp of leakage current - even in the (fairly unlikely) case of the
+>> interconnect clocks being software-gateable at all I would be very surprised
+>> if that were ever exposed directly to Linux (FWIW I believe ACPI essentially
+>> *requires* clocks to be abstracted behind firmware).
+>>
+>> Realistically then, explicit clocks are only expected on systems which care
+>> about power management. We can always revisit that assumption if anything
+>> crazy where it isn't the case ever becomes non-theoretical, but for now it's
+>> one I'm entirely comfortable with. If on the other hand it turns out that we
+>> can rely on just a power domain being present wherever we want RPM, making
+>> clocks moot, then all the better.
+> 
+> Alright. Since Qcom would be the only user of clock and power handling
+> for the time being, I think checking power domain presence could work
+> for us. +/- the fact that clocks need to be handled even if power
+> domain is not present, but we should normally always have both.
 
-We don't use the "STRICT" tag anymore. Moreover, I used CRITICAL to indicate
-that it is special in a way that all the "late" CPUs (in this case all
-secondaries) should match the "state" of the capability  (i.e, both ON and OFF)
-as that of the boot CPU. I am OK to change it to STRICT.
+Great! (the issue of Qcom-specific clock handling is a separate argument 
+which I don't feel like reigniting just now...)
 
-> 
-> Otherwise, "critical" sounds a bit like we depend on the capability
-> being available.
-> 
-> If "strict" doesn't fit though and no other option suggests itself,
-> it's probably not worth changing this.
-> 
->>   struct arm64_cpu_capabilities {
->>   	const char *desc;
->>   	u16 capability;
->> diff --git a/arch/arm64/include/asm/virt.h b/arch/arm64/include/asm/virt.h
->> index c5f89442785c..9d1e24e030b3 100644
->> --- a/arch/arm64/include/asm/virt.h
->> +++ b/arch/arm64/include/asm/virt.h
->> @@ -102,12 +102,6 @@ static inline bool has_vhe(void)
->>   	return false;
->>   }
->>   
->> -#ifdef CONFIG_ARM64_VHE
->> -extern void verify_cpu_run_el(void);
->> -#else
->> -static inline void verify_cpu_run_el(void) {}
->> -#endif
->> -
->>   #endif /* __ASSEMBLY__ */
->>   
->>   #endif /* ! __ASM__VIRT_H */
->> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
->> index 7625e2962e2b..f66e66c79916 100644
->> --- a/arch/arm64/kernel/cpufeature.c
->> +++ b/arch/arm64/kernel/cpufeature.c
->> @@ -1016,11 +1016,13 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
->>   	},
->>   #endif /* CONFIG_ARM64_PAN */
->>   	{
->> +#ifdef CONFIG_ARM64_VHE
->>   		.desc = "Virtualization Host Extensions",
->>   		.capability = ARM64_HAS_VIRT_HOST_EXTN,
->> -		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
->> +		.type = ARM64_CPUCAP_CRITICAL_BOOT_CPU_FEATURE,
->>   		.matches = runs_at_el2,
->>   		.cpu_enable = cpu_copy_el2regs,
->> +#endif
-> 
-> Shouldn't the #ifdef...#endif be outside the { ... },?
-> 
-> Otherwise this yields an empty block that will truncate the list in the
-> CONFIG_ARM64_VHE case...
+> Now we need a way to do the check. Perhaps for the time being it would
+> be enough to just check for the power-domains property in DT?
 
-Good catch. You're right, I will fix it.
+AFAICS, it might be as simple as arm_smmu_probe() doing this:
 
-> 
-> 
-> Removal of this block for !CONFIG_ARM64_VHE is a change rather than just
-> refactoring, so the commit message should explain it.
+	/*
+	 * We want to avoid touching dev->power.lock in fastpaths unless
+	 * it's really going to do something useful - pm_runtime_enabled()
+	 * can serve as an ideal proxy for that decision.
+	 */
+	if (dev->pm_domain)
+		pm_runtime_enable(dev);
 
-Ok.
+or maybe even just gate all the calls with "if (smmu->dev.pm_domain)" 
+directly (like pcie-mediatek does), but I'm not sure which would be 
+conceptually cleaner.
 
-Cheers
-Suzuki
+Robin.
