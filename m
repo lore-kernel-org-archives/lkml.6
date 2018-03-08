@@ -1,71 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755265AbeCHBH3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 20:07:29 -0500
-Received: from conuserg-10.nifty.com ([210.131.2.77]:60402 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755044AbeCHBF4 (ORCPT
+        id S1755000AbeCHBIi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 20:08:38 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:42266 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754771AbeCHBIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 20:05:56 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w28156G6018694
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org
-Cc: Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
-        Govind Singh <govinds@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/5] kbuild: remove unnecessary $(subst $(obj)/,,...) in modname-multi
-Date: Thu,  8 Mar 2018 10:04:59 +0900
-Message-Id: <1520471103-10089-2-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520471103-10089-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1520471103-10089-1-git-send-email-yamada.masahiro@socionext.com>
+        Wed, 7 Mar 2018 20:08:36 -0500
+X-Google-Smtp-Source: AG47ELvxjIIWFV5GxtecLJaqvp1FjYSuac2Pc8j8vLRt+4YCPXUNGZevUrU2U7y8MUwkr9EoS8ZDdA==
+From: Kevin Hilman <khilman@baylibre.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] amlogic: meson-gx-socinfo: Update soc ids
+Organization: BayLibre
+References: <1518620335-17716-1-git-send-email-narmstrong@baylibre.com>
+        <1518689694.2883.68.camel@baylibre.com>
+Date: Wed, 07 Mar 2018 17:08:33 -0800
+In-Reply-To: <1518689694.2883.68.camel@baylibre.com> (Jerome Brunet's message
+        of "Thu, 15 Feb 2018 11:14:54 +0100")
+Message-ID: <7ho9jzgyr2.fsf@baylibre.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the context ...
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-    $(obj)/%.s: $(src)/%.c FORCE
-            $(call if_changed_dep,cc_s_c)
+> On Wed, 2018-02-14 at 15:58 +0100, Neil Armstrong wrote:
+>> Updates the Amlogic Meson SoCs IDs for the Armv8 based SoCs.
+>> It includes the new families and packages.
+>> 
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>> ---
+>>  drivers/soc/amlogic/meson-gx-socinfo.c | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+>> 
+>> diff --git a/drivers/soc/amlogic/meson-gx-socinfo.c b/drivers/soc/amlogic/meson-gx-socinfo.c
+>> index f2d8c3c..a7efe30 100644
+>> --- a/drivers/soc/amlogic/meson-gx-socinfo.c
+>> +++ b/drivers/soc/amlogic/meson-gx-socinfo.c
+>> @@ -33,6 +33,10 @@ static const struct meson_gx_soc_id {
+>>  	{ "GXL", 0x21 },
+>>  	{ "GXM", 0x22 },
+>>  	{ "TXL", 0x23 },
+>> +	{ "TXLX", 0x24 },
+>> +	{ "AXG", 0x25 },
+>> +	{ "GXLX", 0x26 },
+>> +	{ "TXHD", 0x27 },
+>>  };
+>>  
+>>  static const struct meson_gx_package_id {
+>> @@ -47,6 +51,10 @@ static const struct meson_gx_package_id {
+>>  	{ "S905L", 0x21, 0xc0 },
+>>  	{ "S905M2", 0x21, 0xe0 },
+>>  	{ "S912", 0x22, 0 },
+>> +	{ "962X", 0x24, 0x10 },
+>> +	{ "962E", 0x24, 0x20 },
+>> +	{ "A113X", 0x25, 0x37 },
+>> +	{ "A113D", 0x25, 0xd0 },
+>>  };
+>>  
+>>  static inline unsigned int socinfo_to_major(u32 socinfo)
+>
+> Tested on my s400 board which, according to the marking, features an AXG A113D.
+> AXG is detected correctly but the package id read is 0x22 instead of 0xd0.
 
-    $(obj)/%.i: $(src)/%.c FORCE
-            $(call if_changed_dep,cpp_i_c)
+Neil, can you update accordingly?  Have you seen 0xd0 on other A11x
+chips?  or is this from the docs?
 
-    $(obj)/%.o: $(src)/%.c $(recordmcount_source) $(objtool_dep) FORCE
-            $(call cmd,force_checksrc)
-            $(call if_changed_rule,cc_o_c)
-
-    $(obj)/%.lst: $(src)/%.c FORCE
-            $(call if_changed_dep,cc_lst_c)
-
-'$*' returns the stem of the target (the part of '%'), so $(obj)/ has
-already been ripped off.
-
-$(subst $(obj)/,,$*.o) is the same as $(*.o)
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- scripts/Makefile.lib | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index 5589bae..a7e315f 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -175,7 +175,7 @@ dtc_cpp_flags  = -Wp,-MD,$(depfile).pre.tmp -nostdinc                    \
- 
- # Finds the multi-part object the current object will be linked into
- modname-multi = $(sort $(foreach m,$(multi-used),\
--		$(if $(filter $(subst $(obj)/,,$*.o), $($(m:.o=-objs)) $($(m:.o=-y))),$(m:.o=))))
-+		$(if $(filter $*.o, $($(m:.o=-objs)) $($(m:.o=-y))),$(m:.o=))))
- 
- # Useful for describing the dependency of composite objects
- # Usage:
--- 
-2.7.4
+Kevin
