@@ -1,85 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935123AbeCHHnU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 02:43:20 -0500
-Received: from regular1.263xmail.com ([211.150.99.133]:33364 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751773AbeCHHnS (ORCPT
+        id S935318AbeCHHna (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 02:43:30 -0500
+Received: from mail-it0-f67.google.com ([209.85.214.67]:40742 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935202AbeCHHnZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 02:43:18 -0500
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <3310b7f3a7009457acd81a04261a3f11>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org
-Cc: briannorris@google.com, heiko@sntech.de, dtor@google.com,
-        dianders@google.com, Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Matthias Kaehlcke <mka@chromium.org>, devicetree@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Emil Renner Berthing <kernel@esmil.dk>,
-        Brian Norris <briannorris@chromium.org>,
-        linux-rockchip@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH v5 3/3] arm64: dts: rockchip: kevin: Avoid wakeup when inserting the pen
-Date: Thu,  8 Mar 2018 15:42:26 +0800
-Message-Id: <20180308074226.18974-1-jeffy.chen@rock-chips.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180308073213.8419-1-jeffy.chen@rock-chips.com>
-References: <20180308073213.8419-1-jeffy.chen@rock-chips.com>
+        Thu, 8 Mar 2018 02:43:25 -0500
+X-Google-Smtp-Source: AG47ELvDHxWnjOUi5vALS+fpd+z51KcIQ85isbZHoS2yFFGqRU/pXEcyJTLhTSSloG1//j1gCBSQWhAPkxWJQ06EdUI=
+MIME-Version: 1.0
+In-Reply-To: <1520292190-5027-2-git-send-email-sai.praneeth.prakhya@intel.com>
+References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com> <1520292190-5027-2-git-send-email-sai.praneeth.prakhya@intel.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Thu, 8 Mar 2018 07:43:23 +0000
+Message-ID: <CAKv+Gu_ZYGwgORet4ruL8=GUy75LMAuLeYD987FA3UVYuw8GMg@mail.gmail.com>
+Subject: Re: [PATCH V2 1/3] x86/efi: Call efi_delete_dummy_variable() during
+ efi subsystem initialization
+To: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: linux-efi@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
+        Tony Luck <tony.luck@intel.com>, Will Deacon <will.deacon@arm.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Peter Zijlstra <peter.zijlstra@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add wakeup event action for Pen Insert gpio key, to avoid wakeup when
-inserting the pen.
+Hello Sai,
 
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+On 5 March 2018 at 23:23, Sai Praneeth Prakhya
+<sai.praneeth.prakhya@intel.com> wrote:
+> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+>
+> Invoking efi_runtime_services() through efi_workqueue means all accesses
+> to efi_runtime_services() should be done after efi_rts_wq has been
+> created. efi_delete_dummy_variable() calls set_variable(), hence
+> efi_delete_dummy_variable() should be called after efi_rts_wq has been
+> created.
+>
+> efi_delete_dummy_variable() is called from efi_enter_virtual_mode()
+> which is early in the boot phase (efi_rts_wq isn't created yet), so call
+> efi_delete_dummy_variable() later in the boot phase i.e. while
+> initializing efi subsystem. In the next patch, this is the place where
+> we create efi_rts_wq and all the efi_runtime_services() will be called
+> using efi_rts_wq.
+>
+> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+> Suggested-by: Andy Lutomirski <luto@kernel.org>
+> Cc: Lee, Chun-Yi <jlee@suse.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Bhupesh Sharma <bhsharma@redhat.com>
+> Cc: Ricardo Neri <ricardo.neri@intel.com>
+> Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+> Cc: Matt Fleming <matt@codeblueprint.co.uk>
+> Cc: Peter Zijlstra <peter.zijlstra@intel.com>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  arch/x86/include/asm/efi.h  | 1 -
+>  arch/x86/platform/efi/efi.c | 6 ------
+>  drivers/firmware/efi/efi.c  | 6 ++++++
+>  include/linux/efi.h         | 3 +++
+>  4 files changed, 9 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
+> index a399c1ebf6f0..43009e3f821b 100644
+> --- a/arch/x86/include/asm/efi.h
+> +++ b/arch/x86/include/asm/efi.h
+> @@ -143,7 +143,6 @@ extern void __init efi_runtime_update_mappings(void);
+>  extern void __init efi_dump_pagetable(void);
+>  extern void __init efi_apply_memmap_quirks(void);
+>  extern int __init efi_reuse_config(u64 tables, int nr_tables);
+> -extern void efi_delete_dummy_variable(void);
+>
+>  struct efi_setup_data {
+>         u64 fw_vendor;
+> diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
+> index 9061babfbc83..a3169d14583f 100644
+> --- a/arch/x86/platform/efi/efi.c
+> +++ b/arch/x86/platform/efi/efi.c
+> @@ -893,9 +893,6 @@ static void __init kexec_enter_virtual_mode(void)
+>
+>         if (efi_enabled(EFI_OLD_MEMMAP) && (__supported_pte_mask & _PAGE_NX))
+>                 runtime_code_page_mkexec();
+> -
+> -       /* clean DUMMY object */
+> -       efi_delete_dummy_variable();
+>  #endif
+>  }
+>
+> @@ -1015,9 +1012,6 @@ static void __init __efi_enter_virtual_mode(void)
+>          * necessary relocation fixups for the new virtual addresses.
+>          */
+>         efi_runtime_update_mappings();
+> -
+> -       /* clean DUMMY object */
+> -       efi_delete_dummy_variable();
+>  }
+>
+>  void __init efi_enter_virtual_mode(void)
+> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+> index cd42f66a7c85..838b8efe639c 100644
+> --- a/drivers/firmware/efi/efi.c
+> +++ b/drivers/firmware/efi/efi.c
+> @@ -328,6 +328,12 @@ static int __init efisubsys_init(void)
+>         if (!efi_enabled(EFI_BOOT))
+>                 return 0;
+>
+> +       /*
+> +        * Clean DUMMY object calls EFI Runtime Service, set_variable(), so
+> +        * it should be invoked only after efi_rts_workqueue is ready.
+> +        */
+> +       efi_delete_dummy_variable();
+> +
 
-Changes in v5: None
-Changes in v4:
-Include dt-binding gpio-keys.h
+Is there any way to keep this local to arch/x86?
 
-Changes in v3: None
-Changes in v2:
-Specify wakeup event action instead of irq trigger type as Brian
-suggested.
-
- arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts b/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
-index 191a6bcb1704..89126dbe5d91 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
-@@ -44,6 +44,7 @@
- 
- /dts-v1/;
- #include "rk3399-gru.dtsi"
-+#include <dt-bindings/input/gpio-keys.h>
- #include <dt-bindings/input/linux-event-codes.h>
- 
- /*
-@@ -134,6 +135,8 @@
- 		gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
- 		linux,code = <SW_PEN_INSERTED>;
- 		linux,input-type = <EV_SW>;
-+		/* Wakeup only when ejecting */
-+		wakeup-event-action = <EV_ACT_DEASSERTED>;
- 		wakeup-source;
- 	};
- };
--- 
-2.11.0
+>         /* We register the efi directory at /sys/firmware/efi */
+>         efi_kobj = kobject_create_and_add("efi", firmware_kobj);
+>         if (!efi_kobj) {
+> diff --git a/include/linux/efi.h b/include/linux/efi.h
+> index f5083aa72eae..c4efb3ef0dfa 100644
+> --- a/include/linux/efi.h
+> +++ b/include/linux/efi.h
+> @@ -992,6 +992,7 @@ extern efi_status_t efi_query_variable_store(u32 attributes,
+>                                              unsigned long size,
+>                                              bool nonblocking);
+>  extern void efi_find_mirror(void);
+> +extern void efi_delete_dummy_variable(void);
+>  #else
+>  static inline void efi_late_init(void) {}
+>  static inline void efi_free_boot_services(void) {}
+> @@ -1002,6 +1003,8 @@ static inline efi_status_t efi_query_variable_store(u32 attributes,
+>  {
+>         return EFI_SUCCESS;
+>  }
+> +
+> +static inline void efi_delete_dummy_variable(void) {}
+>  #endif
+>  extern void __iomem *efi_lookup_mapped_addr(u64 phys_addr);
+>
+> --
+> 2.7.4
+>
