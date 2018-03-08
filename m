@@ -1,98 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754780AbeCHOkH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 09:40:07 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:34295 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751773AbeCHOkF (ORCPT
+        id S933827AbeCHOon (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 09:44:43 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:33115 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751994AbeCHOol (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 09:40:05 -0500
-Date: Thu, 8 Mar 2018 06:39:52 -0800
-From: tip-bot for Tony Luck <tipbot@zytor.com>
-Message-ID: <tip-fa94d0c6e0f3431523f5701084d799c77c7d4a4f@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, yazen.ghannam@amd.com, mingo@kernel.org,
-        linux-edac@vger.kernel.org, tony.luck@intel.com, bp@suse.de,
-        hpa@zytor.com, tglx@linutronix.de
-Reply-To: tony.luck@intel.com, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, yazen.ghannam@amd.com,
-        hpa@zytor.com, tglx@linutronix.de, bp@suse.de
-In-Reply-To: <20180301233449.24311-1-tony.luck@intel.com>
-References: <20180301233449.24311-1-tony.luck@intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:ras/urgent] x86/MCE: Save microcode revision in machine check
- records
-Git-Commit-ID: fa94d0c6e0f3431523f5701084d799c77c7d4a4f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 8 Mar 2018 09:44:41 -0500
+X-Google-Smtp-Source: AG47ELuPB3VLJeq5PBTHYZ29HWg9fMOjxxdqf3xvwGaVkigUg5KdKaGAyVTHmyB8AGc6jMqOq5fFLg==
+Date: Thu, 8 Mar 2018 15:44:37 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] clk: tegra: Mark HCLK, SCLK and EMC as critical
+Message-ID: <20180308144437.GJ3529@ulmo>
+References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
+ <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
+ <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="J2uG6jHjFLimDtBY"
 Content-Disposition: inline
+In-Reply-To: <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  fa94d0c6e0f3431523f5701084d799c77c7d4a4f
-Gitweb:     https://git.kernel.org/tip/fa94d0c6e0f3431523f5701084d799c77c7d4a4f
-Author:     Tony Luck <tony.luck@intel.com>
-AuthorDate: Tue, 6 Mar 2018 15:21:41 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 8 Mar 2018 15:34:49 +0100
 
-x86/MCE: Save microcode revision in machine check records
+--J2uG6jHjFLimDtBY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Updating microcode used to be relatively rare. Now that it has become
-more common we should save the microcode version in a machine check
-record to make sure that those people looking at the error have this
-important information bundled with the rest of the logged information.
+On Thu, Mar 01, 2018 at 04:33:29PM +0300, Dmitry Osipenko wrote:
+> On 15.01.2018 13:56, Dmitry Osipenko wrote:
+> > On 10.01.2018 16:59, Dmitry Osipenko wrote:
+> >> Machine dies if HCLK, SCLK or EMC is disabled. Hence mark these clocks
+> >> as critical.
+> >>
+> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> >> ---
+> >>
+> >> Change log:
+> >> v2:     Fixed accidentally missed marking EMC as critical on Tegra30 a=
+nd
+> >>         Tegra124. Switched to a use of common EMC gate definition on T=
+egra20
+> >>         and Tegra30.
+> >>
+> >> v3:     Dropped marking PLL_P outputs as critical, because seems they =
+are
+> >>         not so critical. Although, I still haven't got a definitive an=
+swer
+> >>         about what exact HW functions are affected by the fixed-clocks.
+> >>         Anyway it should be cleaner to correct the actual drivers.
+> >=20
+> > Stephen / Michael, would it be possible to schedule these patches for 4=
+=2E16? My
+> > T20 and T30 devices aren't working without the 'critical clocks' patch.=
+ Things
+> > happen to work with the opensource u-boot, but not with the proprietary
+> > bootloader. It's probably not a big deal that out-of-tree devices are b=
+roken,
+> > although would be nice to have one problem less.
+>=20
+> Guys, is there anything I could do to get these patches in linux-next?
 
-[ Borislav: Simplify a bit. ]
+I've picked these up into the for-4.17/clk branch in the Tegra tree. I
+already have that branch for the MBIST patches which are a dependency
+for the for-4.17/soc branch.
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180301233449.24311-1-tony.luck@intel.com
----
- arch/x86/include/uapi/asm/mce.h  | 1 +
- arch/x86/kernel/cpu/mcheck/mce.c | 4 +++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+Stephen, Mike, let me know if you have any objections to carrying these
+in the Tegra tree.
 
-diff --git a/arch/x86/include/uapi/asm/mce.h b/arch/x86/include/uapi/asm/mce.h
-index 91723461dc1f..435db58a7bad 100644
---- a/arch/x86/include/uapi/asm/mce.h
-+++ b/arch/x86/include/uapi/asm/mce.h
-@@ -30,6 +30,7 @@ struct mce {
- 	__u64 synd;	/* MCA_SYND MSR: only valid on SMCA systems */
- 	__u64 ipid;	/* MCA_IPID MSR: only valid on SMCA systems */
- 	__u64 ppin;	/* Protected Processor Inventory Number */
-+	__u32 microcode;/* Microcode revision */
- };
- 
- #define MCE_GET_RECORD_LEN   _IOR('M', 1, int)
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index 8ff94d1e2dce..b3323cab9139 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -130,6 +130,8 @@ void mce_setup(struct mce *m)
- 
- 	if (this_cpu_has(X86_FEATURE_INTEL_PPIN))
- 		rdmsrl(MSR_PPIN, m->ppin);
-+
-+	m->microcode = boot_cpu_data.microcode;
- }
- 
- DEFINE_PER_CPU(struct mce, injectm);
-@@ -262,7 +264,7 @@ static void __print_mce(struct mce *m)
- 	 */
- 	pr_emerg(HW_ERR "PROCESSOR %u:%x TIME %llu SOCKET %u APIC %x microcode %x\n",
- 		m->cpuvendor, m->cpuid, m->time, m->socketid, m->apicid,
--		cpu_data(m->extcpu).microcode);
-+		m->microcode);
- }
- 
- static void print_mce(struct mce *m)
+Thanks,
+Thierry
+
+--J2uG6jHjFLimDtBY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhTFUACgkQ3SOs138+
+s6HkiQ/+O0EfjH6ZS4NOtc7o8vllzUKFMVlWp/b/GfzgQYT9Pab3GAgJhR0HxFN9
+zmKxaO5MxiWZnD4PNR5J9ZpApe5oDMt7lmOHoa7VeuXQCqVvC3Ykf4NbR8YAZ9Cd
+O4i8dsSqeU7QRpplvCkYiRauWRfl09NZiPtn60xHXQyFwE5r/k2ZXcmYrP2mkKjU
+fgbIYJBNixxCtCsa/hjAVegi2woWy+3YdygIdo/buDtNUAQsLEX4QmFnbFmie0Lt
++O9nDeTCfRh05Bq3MrC55lC6UrKyNy012Sdf//fgTlyF0eDVlkqWiN+4yHhvpSMO
+PpS3aiAekYod0RfxVmfRseNO26e7Mu+9QlyxY9EEgDs+RY6Nv5pTny3b606K5b6w
+dtTnJmzX3jVYEiRGl1I5efCKwf1VuinyF9e/uEArI+BzK6yefIqsMzsZo76LZWSs
+y2db0ra4E9astiyShVjEy5F14yq9R59XGZ8wemYNLyjkJwqM15bnBDFtxKDY7+O1
+UcvczgBwRzjaYZOj3OHHeQnk68IBwgieHDHhr9srloox00usLqkgqlz/JdZ6Q1IM
+pq7Bys6L3MZv9X0H1Se6ie8kuJMLKOea5r8VnHZDiZSDF6glm1Bk8RF9eGukcPnn
+xkrQKwbqVK+jBPa5fGWSR4fdM9Cm+WMDj4PQ+6yZrZprVBSpf6A=
+=rzzQ
+-----END PGP SIGNATURE-----
+
+--J2uG6jHjFLimDtBY--
