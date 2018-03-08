@@ -1,49 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934064AbeCHQiu convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 11:38:50 -0500
-Received: from gloria.sntech.de ([95.129.55.99]:53244 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932087AbeCHQir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 11:38:47 -0500
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Sandy Huang <hjc@rock-chips.com>, Andrzej Hajda <a.hajda@samsung.com>,
-        linux-rockchip@lists.infradead.org,
-        Archit Taneja <architt@codeaurora.org>, linux-kernel@vger.kernel.org,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        dri-devel@lists.freedesktop.org, Jose Abreu <Jose.Abreu@synopsys.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        linux-arm-kernel@lists.infradead.org, David Airlie <airlied@linux.ie>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>, kernel@collabora.com
-Subject: Re: [PATCH v9 3/5] drm/rockchip: inno_hdmi: reorder clk_disable_unprepare call in unbind
-Date: Thu, 08 Mar 2018 17:38:42 +0100
-Message-ID: <7281273.So3vQhM8Nz@diego>
-In-Reply-To: <20180302175757.28192-4-enric.balletbo@collabora.com>
-References: <20180302175757.28192-1-enric.balletbo@collabora.com> <20180302175757.28192-4-enric.balletbo@collabora.com>
+        id S933854AbeCHQio (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 11:38:44 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34978 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932087AbeCHQil (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 11:38:41 -0500
+X-Google-Smtp-Source: AG47ELsGE3yIwqIOwtvq4LIVMNK/sLc+beVgtWW/VbA7dC1eNob3adPc+lFU6D5wbcpjM3H4wjvjIQ==
+Date: Thu, 8 Mar 2018 17:38:37 +0100
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: mjg59@srcf.ucam.org, dvhart@infradead.org, andy@infradead.org,
+        mario.limonciello@dell.com, tiwai@suse.com,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH v2 2/3] platform/x86: dell-*: Add interface for
+ switchable graphics status query
+Message-ID: <20180308163837.myfmnowz5ogto52w@pali>
+References: <20180308091023.9061-1-kai.heng.feng@canonical.com>
+ <20180308091023.9061-2-kai.heng.feng@canonical.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="qk6dsxcavtjhuczj"
+Content-Disposition: inline
+In-Reply-To: <20180308091023.9061-2-kai.heng.feng@canonical.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, 2. März 2018, 18:57:55 CET schrieb Enric Balletbo i Serra:
-> From: Jeffy Chen <jeffy.chen@rock-chips.com>
-> 
-> In bind the clk_prepare_enable of the HDMI pclk is called before adding the
-> i2c_adapter. So it should be the other way around in unbind, first remove
-> the i2c_adapter and then call the clk_disable_unprepare.
-> 
-> Fixes: 412d4ae6b7a5 ("drm/rockchip: hdmi: add Innosilicon HDMI support")
-> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-applied to drm-misc-next
+--qk6dsxcavtjhuczj
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks
-Heiko
+On Thursday 08 March 2018 17:10:22 Kai-Heng Feng wrote:
+> +int dell_switchable_gfx_enabled(bool *enabled);
+
+What about following API?
+
+bool dell_switchable_gfx_is_enabled(void);
+
+Are you really interested in errors? Then what about?
+
+int dell_switchable_gfx_is_enabled(void);
+
+with e.g.
+  < 0 - error
+  =3D 0 - disabled
+  > 0 - enabled
+
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
+
+--qk6dsxcavtjhuczj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCWqFnBgAKCRCL8Mk9A+RD
+Uv37AKDH/cgvznJjDKcmEdMbu1ruHksJogCfV+C3N7NwJFZfaToBx9dNPNj7ze4=
+=lj6p
+-----END PGP SIGNATURE-----
+
+--qk6dsxcavtjhuczj--
