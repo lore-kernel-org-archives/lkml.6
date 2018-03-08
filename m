@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1021398-1520488834-2-14278982328602779350
+X-Cyrus-Session-Id: sloti22d1t05-1025811-1520488828-2-17990473829572461495
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -8,30 +8,30 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='iso-8859-1'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520488833; b=wARTF5Z0Hg7r8edgjocrJGrgXU4b5ixz2Fxt0yzHOPNNq5x
-    d0XsTECTgY4Sr4lt1yaHqJ/aICZ83RToPGclb6PANwlex49k9PPenrBVM9fkWccX
-    OLVp7qsQimvsAE2HGspeiqu0JBk9tO1el+3rswQCuJegNCyeuusGypcCqSLv0nbR
-    OiHvLHf5zw/KiZhJIoCKssRRTDgZ6w3gLQwF8ZAth+Rpc1EZfMclofLSJm+O3IME
-    fwQKcuNoka+P60EXqG20zcF8S92umHcswzD/rbWyasvZLpTJAKGQ25pHQJpHHCsi
-    RIIgS94QbaXLyLVuibUHS5kNWfNHVYzwFUBeAVg==
+    t=1520488828; b=caSHLSjhM8ZHyaUfxlfopLMBz61ZdLrJ5S9xOfL9e3oqKmc
+    uLiYGQJVTU6OlgKsdD/eBW+oNue7jTurN5xW4/07kM0hnUbMJKMLY6gLkZh+OBKt
+    Sh8mXj2pObnuFUDgzov4PwxdJAAECVlyPAEQ3QHJtz0U7MwM06+DUwCd9v1vktDC
+    LEZpPLhsUcOXt4CfZ5gWqeafO3Tue+mBoqOLs9v/KSc2kty48gAESaybziyUzU/H
+    Oj9gjIC5+bL95lae6jZUanNHa8xIpFsP2WlAlvPipQclCqP8D/0UJ9Njg3f2mhQH
+    dAyrU3eVjlUNvPCZKceLzWs/OlG7RhZPyaHxI/Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520488833; bh=RXjD/X
-    CrsJux30HkLrjUA/0zKzTxie7Elt1Cl4ZjGNM=; b=OJlZ5q73VCopVRvdmjhbpN
-    o5xuuVxgs5xLg8jsjpDEyz7suWLbwk2xJ6zYbL4LIBF3c8adygsdAVR+7UA4sQ7V
-    Jx1sLcN6ZJe0ohyYhJhkLUmBZYyxkTohiXF4XuYhrqXdEqWb8irQD5DESxgIwq8l
-    iFBxeTEwNjx0yK7JsWb8sDS5s8qCMRhce2IKVhrs3WGtCRDfmXjQqXJ4jHotfqH/
-    5FruIWkLdw+t6uFXvWCg6GQXoq+KRQwPyy59Ac7dHQDiac365z2yLmhp4XzbC1k3
-    qYY9cp5vtT8mjlVkZo09+l4LXuoQltMKq/pXgVwk8jU8c9OC8+0BfgqCenzYxdjA
-    ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=JWjnVCVe x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :references:in-reply-to:content-type:content-id
+    :content-transfer-encoding:mime-version:sender:list-id; s=
+    arctest; t=1520488828; bh=RTe1PoiaIWOxjLeKvYuMmPY076wA14Hkr6wet1
+    o7/H0=; b=pj+Cu8tHtT9yemeFvxR5w25FbEVKCvyHk9WyoloSc5mFu/+EyISq/8
+    Cn8fZVOELSP02vdMovO2kgkdHEJNDivncYFyOHhZFDLGABwkjrtCBnEcFfPPqf99
+    5lvFDzNixLv+wmpFM87Z4rnbPjukE0wwwH3OmuK3FVq8PRNf75ZmkxV+UUE3XTIF
+    NSdYQOsgS9L2tO4xRFXORMN/opIuemHKLgdeS/ACIRs8Rplyd9oFSBXVdTomg7Ju
+    syMr/ucdxhQoHU57kVipg3MElo3N2nuLamoA9VzpyTifKThwxC7W3EHK8Gn3uK2Z
+    aLCWDAnJ6mlW9F0cJ+U2dcdlt68bqbFw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=cDD3fp+d x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=JWjnVCVe x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=cDD3fp+d x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,28 +50,26 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965684AbeCHGAa (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 01:00:30 -0500
+        id S965689AbeCHFDQ (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 00:03:16 -0500
 Received: from mail-sn1nam01on0117.outbound.protection.outlook.com ([104.47.32.117]:16747
         "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965678AbeCHFDP (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 8 Mar 2018 00:03:15 -0500
+        id S965335AbeCHFDO (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 8 Mar 2018 00:03:14 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Hans de Goede <hdegoede@redhat.com>,
-        Liam Breck <kernel@networkimprov.net>,
-        Tony Lindgren <tony@atomide.com>,
+CC: Pan Bian <bianpan2016@163.com>,
         Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 128/190] power: supply: bq24190_charger: Add
- disable-reset device-property
-Thread-Topic: [PATCH AUTOSEL for 4.9 128/190] power: supply: bq24190_charger:
- Add disable-reset device-property
-Thread-Index: AQHTtppIT92vg3crykCr1HzEL0yXLA==
-Date: Thu, 8 Mar 2018 04:59:47 +0000
-Message-ID: <20180308045810.8041-128-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 129/190] power: supply: isp1704: Fix unchecked
+ return value of devm_kzalloc
+Thread-Topic: [PATCH AUTOSEL for 4.9 129/190] power: supply: isp1704: Fix
+ unchecked return value of devm_kzalloc
+Thread-Index: AQHTtppI9CObU1FV/kelGioWVFvfaA==
+Date: Thu, 8 Mar 2018 04:59:48 +0000
+Message-ID: <20180308045810.8041-129-alexander.levin@microsoft.com>
 References: <20180308045810.8041-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045810.8041-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -80,27 +78,28 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1013;7:6MnlPvkUynXp1m5t6fABcfkI8CHYt9itKhloXbb3KkeRSYYNFdpah5BTKbcD9sVZjEBtR/FlDEZyU1j2Mg9/ta3oeDT4rXlQZLOwotI0JCkL4K/YuZDcxipRLTMumzFLXW2O35gE/8Bhnq6Ko2jC5awoSHTjeyEZ5nRZRNLkpmzNCSo0aB1+KmY6EBIiH5eo4Ok4ED/e9+OQq2nM5nuonpvHyfKKEUstvk3ANL4yxdGOEQerjM5sLb1gJ1oblhSO;20:pTy/nSoc7Z0yKS3TRrIX60V0e23OhWjrd4n+rR8fnfFJ71O2mxdzbjs1Mkjjto0THqXOraiRs3lV6mWcfk6hOKMmVMeXNEjkhRHux4J1ArDoYt0IkKwevQnRaXWEWqn3hMP9NDFFeo37uWS6MSvvxOzUdVDenluJrOQ9h+T+GlA=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1013;7:Xkzubw1tIdfWjGoxMDZ0KY4CLEJEnteFZ/f/083ECbJnZBhGTyb5nntZeuPBWBoiWO1hKQ5DTe4xScbMGdNEPKqM/yLjyGUhiPgngASMJfzlP68l09D4f3MjFEE/4p11sQ0Ea6OdX9/ec37uU1imtLQaiALYS8hHwckZHIIaHjyABnKK3OdRHo4ltT2HXlK1zeUP24ne2tS3r/Ov1xHp0I3LqBfI5sEoGeQQPQ5VuR29Zb6Q69VBzxOkf5hrWd4A;20:g2VlR2foFRwhSUgvWAnC2q8XBSPJXIJM3fcGPaDhqmgGRCnZ0EV+K5az8iIrLU4hZYJt3i2zjrjahYeoB32Z8G3euF9r/tZab+qfDLpGqaP1lBYZgfaSgjk+Y0L4D0MiZFRgA5/ruapU6XozotwzGr41ryPHbHH17xfldxvEk5s=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 09e5e394-94aa-4f45-a650-08d584b1dc40
+x-ms-office365-filtering-correlation-id: 614fc694-34ee-453c-47cd-08d584b1e4f5
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1013;
 x-ms-traffictypediagnostic: DM5PR2101MB1013:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB10132F58AE0F5125D2DD3F35FBDF0@DM5PR2101MB1013.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <DM5PR2101MB1013D4A841E318791A4D9F32FBDF0@DM5PR2101MB1013.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158)(130843839470238);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231220)(944501244)(52105095)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB1013;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1013;
 x-forefront-prvs: 060503E79B
 x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(39380400002)(366004)(39860400002)(346002)(189003)(199004)(76176011)(6506007)(107886003)(6486002)(22452003)(105586002)(2950100002)(6436002)(26005)(99286004)(53936002)(6666003)(97736004)(36756003)(3280700002)(102836004)(5660300001)(2501003)(68736007)(6512007)(186003)(2900100001)(59450400001)(106356001)(3660700001)(4326008)(2906002)(25786009)(5250100002)(14454004)(7736002)(10090500001)(66066001)(3846002)(305945005)(6116002)(316002)(10290500003)(478600001)(86612001)(8936002)(54906003)(72206003)(8676002)(86362001)(81166006)(110136005)(1076002)(81156014)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1013;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: DgnQaeQ6vS6uMUPTyfbkhj0ZGFiRklxB6W7LyXXEGFKRFo1GmTkhXKIZzQ2uf/rZqqjQ2EUoiwYKdxXtBYQ5W3Q3UBPhK40FS4qWWKiv6HUZZRjKrnFOb7aGfiSJjioEtB9sFgk6uUu8UY1h35V/6ZJYvYOjYiwJaqdRNLYfqR6knDLfh35riPP08DLjwmy+TiMzMydiyG3AZBkQ2tr7Srw5PDihna/mjAhdw/vbL60T9v2SkGHen/W8pXVnbwjWOIpWZkx7uqCTah20bf2GstAB5JxbWdt+wNLohQ1pBXMgHZQtIzQK++lBruK6Dm64weIS01M/lhBkKXpIdC+S4g==
+x-microsoft-antispam-message-info: O27iaRo6L7Hxs+83hgmX+IX3YKZZqj01C2CX7VBmPQjgMA5qC/kI41xtJfc0KbOpPaeNBVyOVTTMHrJlR1np6jUQSx3V1uGLGQKMegSaFeEQ9q3gwvw+xThfV3V8OT6sRnAi+tkHtZJIyUwDgSZCEUD/nvA6p6aF28yR2fNkSBO7dU2Rb162vVSunZFSGP1YdFQTcbDG8izs8tw/+msJ5Q/d7JH+PzFx4VUhQKY1nHqNH3zqaDVTeEjBeVa26iGVBO7r7cyZWGE/eJAq+9yAQhn57p7RXbZTLGg7UwmJmuKLl/6vLpiq72K6pEMhC6z3qRI3qDlZA/rD7nka3xVThA==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E19F4F08297E414593F770B9A9EB0794@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 09e5e394-94aa-4f45-a650-08d584b1dc40
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:59:47.9829
+X-MS-Exchange-CrossTenant-Network-Message-Id: 614fc694-34ee-453c-47cd-08d584b1e4f5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:59:48.3631
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -111,76 +110,26 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Hans de Goede <hdegoede@redhat.com>
-
-[ Upstream commit 6cf62a3b97e78ba41d31390e59a1ddc98a9e3622 ]
-
-Allow platform-code to disable the reset on probe and suspend/resume
-by setting a "disable-reset" boolean device property on the device.
-
-There are several reasons why the platform-code may want to disable
-the reset on probe and suspend/resume:
-
-1) Resetting the charger should never be necessary it should always have
-sane values programmed. If it is running with invalid values while we
-are not running (system turned off or suspended) there is a big problem
-as that may lead to overcharging the battery.
-
-2) The reset in suspend() is meant to put the charger back into default
-mode, but this is not necessary and not a good idea. If the charger has
-been programmed with a higher max charge_current / charge_voltage then
-putting it back in default-mode will reset those to the safe power-on
-defaults, leading to slower charging, or charging to a lower voltage
-(and thus not using the full capacity) while suspended which is
-undesirable. Reprogramming the max charge_current / charge_voltage
-after the reset will not help here as that will put the charger back
-in host mode and start the i2c watchdog if the host then does not do
-anything for 40s (iow if we're suspended for more then 40s) the watchdog
-expires resetting the device to default-mode, including resetting all
-the registers to there safe power-on defaults. So the only way to keep
-using custom charge settings while suspending is to keep the charger in
-its normal running state with the i2c watchdog disabled. This is fine
-as the charger will still automatically switch from constant current
-to constant voltage and stop charging when the battery is full.
-
-3) Besides never being necessary resetting the charger also causes
-problems on systems where the charge voltage limit is set higher then the
-reset value, if this is the case and the charger is reset while charging
-and the battery voltage is between the 2 voltages, then about half the
-time the charger gets confused and claims to be charging (REG08 contains
-0x64) but in reality the charger has decoupled itself from VBUS (Q1 off)
-and is drawing 0A from VBUS, leaving the system running from the battery.
-
-This last problem is happening on a GPD-win mini PC with a bq24292i
-charger chip combined with a max17047 fuel-gauge and a LiHV battery.
-I've checked and TI does not list any errata for the bq24292i which
-could explain this (there are no errata at all).
-
-Cc: Liam Breck <kernel@networkimprov.net>
-Cc: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Liam Breck <kernel@networkimprov.net>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- drivers/power/supply/bq24190_charger.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/power/supply/bq24190_charger.c b/drivers/power/supply/=
-bq24190_charger.c
-index cdd71ecd72ed..8ed2782d1bb1 100644
---- a/drivers/power/supply/bq24190_charger.c
-+++ b/drivers/power/supply/bq24190_charger.c
-@@ -506,6 +506,9 @@ static int bq24190_register_reset(struct bq24190_dev_in=
-fo *bdi)
- 	int ret, limit =3D 100;
- 	u8 v;
-=20
-+	if (device_property_read_bool(bdi->dev, "disable-reset"))
-+		return 0;
-+
- 	/* Reset the registers */
- 	ret =3D bq24190_write_mask(bdi, BQ24190_REG_POC,
- 			BQ24190_REG_POC_RESET_MASK,
---=20
-2.14.1
+RnJvbTogUGFuIEJpYW4gPGJpYW5wYW4yMDE2QDE2My5jb20+DQoNClsgVXBzdHJlYW0gY29tbWl0
+IDhiMjA4Mzk5ODhmMWVkNWU1MzRiMjcwZjM3NzY3MDliNjQwZGM3ZTAgXQ0KDQpGdW5jdGlvbiBk
+ZXZtX2t6YWxsb2MoKSB3aWxsIHJldHVybiBhIE5VTEwgcG9pbnRlci4gSG93ZXZlciwgaW4gZnVu
+Y3Rpb24NCmlzcDE3MDRfY2hhcmdlcl9wcm9iZSgpLCB0aGUgcmV0dXJuIHZhbHVlIG9mIGRldm1f
+a3phbGxvYygpIGlzIGRpcmVjdGx5DQp1c2VkIHdpdGhvdXQgdmFsaWRhdGlvbi4gVGhpcyBtYXkg
+cmVzdWx0IGluIGEgYmFkIG1lbW9yeSBhY2Nlc3MgYnVnLg0KDQpGaXhlczogMzRhMTA5NjEwZTJh
+ICgiaXNwMTcwNF9jaGFyZ2VyOiBBZGQgRFQgc3VwcG9ydCIpDQpTaWduZWQtb2ZmLWJ5OiBQYW4g
+QmlhbiA8YmlhbnBhbjIwMTZAMTYzLmNvbT4NClJldmlld2VkLWJ5OiBQYWxpIFJvaMOhciA8cGFs
+aS5yb2hhckBnbWFpbC5jb20+DQpTaWduZWQtb2ZmLWJ5OiBTZWJhc3RpYW4gUmVpY2hlbCA8c2Vi
+YXN0aWFuLnJlaWNoZWxAY29sbGFib3JhLmNvLnVrPg0KU2lnbmVkLW9mZi1ieTogU2FzaGEgTGV2
+aW4gPGFsZXhhbmRlci5sZXZpbkBtaWNyb3NvZnQuY29tPg0KLS0tDQogZHJpdmVycy9wb3dlci9z
+dXBwbHkvaXNwMTcwNF9jaGFyZ2VyLmMgfCA0ICsrKysNCiAxIGZpbGUgY2hhbmdlZCwgNCBpbnNl
+cnRpb25zKCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3Bvd2VyL3N1cHBseS9pc3AxNzA0X2No
+YXJnZXIuYyBiL2RyaXZlcnMvcG93ZXIvc3VwcGx5L2lzcDE3MDRfY2hhcmdlci5jDQppbmRleCA0
+Y2Q2ODk5Yjk2MWUuLjk1YWY1ZjMwNTgzOCAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvcG93ZXIvc3Vw
+cGx5L2lzcDE3MDRfY2hhcmdlci5jDQorKysgYi9kcml2ZXJzL3Bvd2VyL3N1cHBseS9pc3AxNzA0
+X2NoYXJnZXIuYw0KQEAgLTQxOCw2ICs0MTgsMTAgQEAgc3RhdGljIGludCBpc3AxNzA0X2NoYXJn
+ZXJfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCiANCiAJCXBkYXRhID0gZGV2
+bV9remFsbG9jKCZwZGV2LT5kZXYsDQogCQkJc2l6ZW9mKHN0cnVjdCBpc3AxNzA0X2NoYXJnZXJf
+ZGF0YSksIEdGUF9LRVJORUwpOw0KKwkJaWYgKCFwZGF0YSkgew0KKwkJCXJldCA9IC1FTk9NRU07
+DQorCQkJZ290byBmYWlsMDsNCisJCX0NCiAJCXBkYXRhLT5lbmFibGVfZ3BpbyA9IGdwaW87DQog
+DQogCQlkZXZfaW5mbygmcGRldi0+ZGV2LCAiaW5pdCBncGlvICVkXG4iLCBwZGF0YS0+ZW5hYmxl
+X2dwaW8pOw0KLS0gDQoyLjE0LjENCg==
