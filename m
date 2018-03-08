@@ -1,116 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936116AbeCHQ7X convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 11:59:23 -0500
-Received: from muru.com ([72.249.23.125]:60142 "EHLO muru.com"
+        id S935911AbeCHRA0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 12:00:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933717AbeCHQ7I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 11:59:08 -0500
-Date: Thu, 8 Mar 2018 08:59:03 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: pali.rohar@gmail.com, sre@kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, khilman@kernel.org, aaro.koskinen@iki.fi,
-        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
-        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
-        sakari.ailus@linux.intel.com,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Suman Anna <s-anna@ti.com>
-Subject: Re: Nokia N900: refcount_t underflow, use after free
-Message-ID: <20180308165903.GM5799@atomide.com>
-References: <20180308143053.GA17267@amd>
+        id S932137AbeCHRAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 12:00:23 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0840208FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
+Date: Thu, 8 Mar 2018 18:00:20 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC/RFT][PATCH v2 1/6] time: tick-sched: Reorganize idle tick
+ management code
+Message-ID: <20180308170018.GB11118@lerouge>
+References: <2067762.1uWBf5RSRc@aspire.rjw.lan>
+ <4136227.b9g9WnMbNJ@aspire.rjw.lan>
+ <20180307231827.GA9367@lerouge>
+ <1938066.lrFpnYERYl@aspire.rjw.lan>
+ <20180308151407.GA11118@lerouge>
+ <CAJZ5v0gGzBY2YGLeY-jqRghoDJ_Ao+HxhZkttC-_hS6atrwC1Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180308143053.GA17267@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAJZ5v0gGzBY2YGLeY-jqRghoDJ_Ao+HxhZkttC-_hS6atrwC1Q@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Pavel Machek <pavel@ucw.cz> [180308 14:31]:
-> Hi!
+On Thu, Mar 08, 2018 at 05:34:20PM +0100, Rafael J. Wysocki wrote:
+> On Thu, Mar 8, 2018 at 4:14 PM, Frederic Weisbecker <frederic@kernel.org> wrote:
+> > On Thu, Mar 08, 2018 at 10:22:26AM +0100, Rafael J. Wysocki wrote:
+> >> On Thursday, March 8, 2018 12:18:29 AM CET Frederic Weisbecker wrote:
+> >> > On Tue, Mar 06, 2018 at 10:02:01AM +0100, Rafael J. Wysocki wrote:
+> >> > > Index: linux-pm/kernel/time/tick-sched.c
+> >> > > ===================================================================
+> >> > > --- linux-pm.orig/kernel/time/tick-sched.c
+> >> > > +++ linux-pm/kernel/time/tick-sched.c
+> >> > > +
+> >> > > +/**
+> >> > > + * tick_nohz_idle_prepare - prepare for entering idle on the current CPU.
+> >> > > + *
+> >> > > + * Called when we start the idle loop.
+> >> > > + */
+> >> > > +void tick_nohz_idle_prepare(void)
+> >> > > +{
+> >> > > + struct tick_sched *ts;
+> >> > > +
+> >> > > + __tick_nohz_idle_prepare();
+> >> > > +
+> >> > > + local_irq_disable();
+> >> > > +
+> >> > > + ts = this_cpu_ptr(&tick_cpu_sched);
+> >> > > + ts->inidle = 1;
+> >> > > +
+> >> > > + local_irq_enable();
+> >> > > +}
+> >> >
+> >> > Why not calling tick_nohz_start_idle() from there? This is going to
+> >> > simplify the rest, you won't need to call tick_nohz_idle_go_idle()
+> >> > from places that don't want to stop the tick and you can then remove
+> >> > the stop_tick argument.
+> >>
+> >> So I guess I would then use ts->idle_entrytime as "now" in the
+> >> tick_nohz_get_sleep_length() computation, right?
+> >
+> > Ah right, I missed the need for ktime_get().
+> >
+> > You can't use ts->idle_entrytime in tick_nohz_get_sleep_length() because
+> > full dynticks doesn't rely on it.
+> >
+> > But I think you can just do the following, with a comment explaining that
+> > idle_entrytime is expected to be fresh enough at this point:
+> >
+> > diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+> > index 57b3de4..8e61796 100644
+> > --- a/kernel/time/tick-sched.c
+> > +++ b/kernel/time/tick-sched.c
+> > @@ -923,7 +923,7 @@ static void __tick_nohz_idle_enter(struct tick_sched *ts, bool stop_tick)
+> >
+> >                 ts->idle_calls++;
+> >
+> > -               expires = tick_nohz_stop_sched_tick(ts, now, cpu);
+> > +               expires = tick_nohz_stop_sched_tick(ts, ts->idle_entrytime, cpu);
+> >                 if (expires > 0LL) {
+> >                         ts->idle_sleeps++;
+> >                         ts->idle_expires = expires;
+> >
 > 
-> I'm getting this warning... Has anyone seen/debugged that before?
-> Unfortunately the backtrace does not seem to be too useful :-(.
+> That's what I was thinking about, but ktime_get() seems to be working too.
 
-Adding Suman to Cc, as it points to arm_iommu_release_mapping().
-
-Regards,
-
-Tony
-
-> [    0.000000] Booting Linux on physical CPU 0x0
-> [    0.000000] Linux version 4.16.0-rc3-next-20180302 (pavel@duo) (gcc
-> version 4.7.2 (GC
-> C)) #70 Fri Mar 2 10:16:00 CET 2018
-> [    0.000000] CPU: ARMv7 Processor [411fc083] revision 3 (ARMv7),
-> cr=10c5387d
-> [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT
-> nonaliasing instruction cac
-> ...
-> [    1.244140] omap3isp 480bc000.isp: 480bc000.isp supply vdd-csiphy2
-> not found, using d
-> ummy regulator
-> [    1.254089] omap3isp 480bc000.isp: Revision 2.0 found
-> [    1.260009] omap-iommu 480bd400.mmu: 480bd400.mmu: version 1.1
-> [    1.266693] ------------[ cut here ]------------
-> [    1.271606] WARNING: CPU: 0 PID: 1 at lib/refcount.c:187
-> refcount_sub_and_test+0x94/0xa8
-> [    1.280181] refcount_t: underflow; use-after-free.
-> [    1.285247] Modules linked in:
-> [    1.288482] CPU: 0 PID: 1 Comm: swapper Not tainted
-> 4.16.0-rc3-next-20180302 #70
-> [    1.296295] Hardware name: Nokia RX-51 board
-> [    1.300811] [<c010d6cc>] (unwind_backtrace) from [<c010b560>]
-> (show_stack+0x10/0x14)
-> [    1.309020] [<c010b560>] (show_stack) from [<c0127dec>]
-> (__warn+0xe8/0x110)
-> [    1.316375] [<c0127dec>] (__warn) from [<c0127edc>]
-> (warn_slowpath_fmt+0x38/0x48)
-> [    1.324310] [<c0127edc>] (warn_slowpath_fmt) from [<c034e630>]
-> (refcount_sub_and_test+0x94/0xa8)
-> [    1.333557] [<c034e630>] (refcount_sub_and_test) from [<c01109a8>]
-> (arm_iommu_release_mapping+0x18/0x2c)
-> [    1.343597] [<c01109a8>] (arm_iommu_release_mapping) from
-> [<c041752c>] (driver_probe_device+0x24c/0x314)
-> [    1.353637] [<c041752c>] (driver_probe_device) from [<c04176a0>]
-> (__driver_attach+0xac/0xb0)
-> [    1.362548] [<c04176a0>] (__driver_attach) from [<c0415b94>]
-> (bus_for_each_dev+0x58/0x7c)
-> [    1.371185] [<c0415b94>] (bus_for_each_dev) from [<c0416a14>]
-> (bus_add_driver+0xe0/0x1f0)
-> [    1.379852] [<c0416a14>] (bus_add_driver) from [<c0417f10>]
-> (driver_register+0x78/0xf4)
-> [    1.388305] [<c0417f10>] (driver_register) from [<c010257c>]
-> (do_one_initcall+0x3c/0x16c)
-> [    1.396972] [<c010257c>] (do_one_initcall) from [<c0b00d5c>]
-> (kernel_init_freeable+0xf8/0x1c4)
-> [    1.406066] [<c0b00d5c>] (kernel_init_freeable) from [<c071640c>]
-> (kernel_init+0x8/0x108)
-> [    1.414703] [<c071640c>] (kernel_init) from [<c01010e8>]
-> (ret_from_fork+0x14/0x2c)
-> [    1.422698] Exception stack(0xce049fb0 to 0xce049ff8)
-> [    1.428039] 9fa0:                                     00000000
-> 00000000 00000000 00000000
-> [    1.436676] 9fc0: 00000000 00000000 00000000 00000000 00000000
-> 00000000 00000000 00000000
-> [    1.445312] 9fe0: 00000000 00000000 00000000 00000000 00000013
-> 00000000
-> [    1.452270] ---[ end trace dcb3a72772bbfe7a ]---
-> [    1.459045] ti-soc-thermal 48002524.bandgap: This OMAP thermal
-> sensor is unreliable. You've been warned
-> [    1.469055] ti-soc-thermal 48002524.bandgap: Non-trimmed BGAP, Temp
-> not accurate
-> [    1.476898] ti-soc-thermal 48002524.bandgap: thermal zone device is
-> NULL
-> [    1.485198] omap_wdt: OMAP Watchdog Timer Rev 0x31: initial timeout
-> 60 sec
-> [    1.495208] omap_hsmmc 4809c000.mmc: GPIO lookup for consumer cd
-> 
-> -- 
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Well, ktime_get() has its share of overhead, so if we can avoid a call and use
+a cache...
