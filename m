@@ -1,96 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934257AbeCHPOR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 10:14:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38668 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933478AbeCHPON (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 10:14:13 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE6D12133D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
-Date: Thu, 8 Mar 2018 16:14:10 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC/RFT][PATCH v2 1/6] time: tick-sched: Reorganize idle tick
- management code
-Message-ID: <20180308151407.GA11118@lerouge>
-References: <2067762.1uWBf5RSRc@aspire.rjw.lan>
- <4136227.b9g9WnMbNJ@aspire.rjw.lan>
- <20180307231827.GA9367@lerouge>
- <1938066.lrFpnYERYl@aspire.rjw.lan>
+        id S935812AbeCHPOw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 10:14:52 -0500
+Received: from mail-qk0-f178.google.com ([209.85.220.178]:34344 "EHLO
+        mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933478AbeCHPOt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 10:14:49 -0500
+X-Google-Smtp-Source: AG47ELtsbpRPxic6xWB2txb1Hy15Xr4o9o9PsixT5E+aIWKXqOTmPFh5turpBuHoijpQ/hvS2HNzMQ==
+Date: Thu, 8 Mar 2018 16:14:44 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/6] ARM: dts: tegra: apalis-tk1: activate pwm pin muxing
+ for pwm3
+Message-ID: <20180308151444.GD13814@ulmo>
+References: <20180210013806.28496-1-marcel@ziswiler.com>
+ <20180210013806.28496-3-marcel@ziswiler.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="LKTjZJSUETSlgu2t"
 Content-Disposition: inline
-In-Reply-To: <1938066.lrFpnYERYl@aspire.rjw.lan>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180210013806.28496-3-marcel@ziswiler.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 08, 2018 at 10:22:26AM +0100, Rafael J. Wysocki wrote:
-> On Thursday, March 8, 2018 12:18:29 AM CET Frederic Weisbecker wrote:
-> > On Tue, Mar 06, 2018 at 10:02:01AM +0100, Rafael J. Wysocki wrote:
-> > > Index: linux-pm/kernel/time/tick-sched.c
-> > > ===================================================================
-> > > --- linux-pm.orig/kernel/time/tick-sched.c
-> > > +++ linux-pm/kernel/time/tick-sched.c
-> > > +
-> > > +/**
-> > > + * tick_nohz_idle_prepare - prepare for entering idle on the current CPU.
-> > > + *
-> > > + * Called when we start the idle loop.
-> > > + */
-> > > +void tick_nohz_idle_prepare(void)
-> > > +{
-> > > +	struct tick_sched *ts;
-> > > +
-> > > +	__tick_nohz_idle_prepare();
-> > > +
-> > > +	local_irq_disable();
-> > > +
-> > > +	ts = this_cpu_ptr(&tick_cpu_sched);
-> > > +	ts->inidle = 1;
-> > > +
-> > > +	local_irq_enable();
-> > > +}
-> > 
-> > Why not calling tick_nohz_start_idle() from there? This is going to
-> > simplify the rest, you won't need to call tick_nohz_idle_go_idle()
-> > from places that don't want to stop the tick and you can then remove
-> > the stop_tick argument.
-> 
-> So I guess I would then use ts->idle_entrytime as "now" in the
-> tick_nohz_get_sleep_length() computation, right?
 
-Ah right, I missed the need for ktime_get().
+--LKTjZJSUETSlgu2t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You can't use ts->idle_entrytime in tick_nohz_get_sleep_length() because
-full dynticks doesn't rely on it.
+On Sat, Feb 10, 2018 at 02:38:02AM +0100, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>=20
+> Activate PWM pin muxing for Apalis PWM3. Note that the same PWM3 is
+> already active on pu6 being Apalis BKL1_PWM as well. Therefore exporting
+> that one for raw sysfs access will fail and one has to revert to using
+> the pwm backlight.
+>=20
+> Downstream commit 668ddb921800 ("apalis-tk1: activate pwm pin muxing for
+> pwm3").
 
-But I think you can just do the following, with a comment explaining that
-idle_entrytime is expected to be fresh enough at this point:
+That line is rather meaningless without knowing what exactly
+"downstream" is. I've removed that line.
 
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index 57b3de4..8e61796 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -923,7 +923,7 @@ static void __tick_nohz_idle_enter(struct tick_sched *ts, bool stop_tick)
- 
- 		ts->idle_calls++;
- 
--		expires = tick_nohz_stop_sched_tick(ts, now, cpu);
-+		expires = tick_nohz_stop_sched_tick(ts, ts->idle_entrytime, cpu);
- 		if (expires > 0LL) {
- 			ts->idle_sleeps++;
- 			ts->idle_expires = expires;
+Thierry
+
+--LKTjZJSUETSlgu2t
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhU2QACgkQ3SOs138+
+s6F4/g//aegrx5okEY5hxiGSgLoAC8/pDkHsiMA3jH4jz16P/0NUy3yWAFLql19q
+bUtIn6cXXY5qREFM2IbcXgZDK0pYoMuoPiVn331pPSic0rWqv1K8SJL+GdHthQtf
+we2gdOwZEhUYvf2i3aXWdImBZ92lSSGcOgJXU7dXZ9iWiNkIxLm3j4oQMdWURgaO
+FYsD6zmcV0xw/7OILQ9z4Yt3ukMLJEyvUSA2XZV020QZIFTW8Ppdd5HtfW3MJ/8k
+WSnB/O850OZuvf/niZ+fFWkgUp1++UbRhI8U0aIASOvzAq0CPKQ3l5XPoPr4T0aF
+P60jL09uvN4WtNlAebgSfZZh7GQSpy1tqxK9RT3yMgyccJC1KVRjPW1REHeMC/Op
+9S5xT5hIDCTKt+i9yQ5lbr1+Ly4Vr4D0gE2Pf/FcfW9RS2ASfn7e5MhogepDGgjC
+GYrgRGuGjNIrioh4o+OpV9CuRVV5dIV6zjqqk8hdHYhIstXUnlNz4L5cH1Vd7OW0
+qWpl+5AfMmgH9qeBoqyXRbZJcnTvCbZAHHSjdJX+fGtP8fQwa5yCnPK+pvhDNh7B
+f6ZO1kkwBRtEBN3qHKHCZPDGK8Cx8kDcVVu+SODv9t04d5abkzbtfVY2oJTKebEk
+ajE0HT68Ssp0L5mKzDn2vfXDkcYXGneQN9uGFvD4dqhRfUPmI7E=
+=mb8a
+-----END PGP SIGNATURE-----
+
+--LKTjZJSUETSlgu2t--
