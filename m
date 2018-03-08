@@ -1,57 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965026AbeCHK3q (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 05:29:46 -0500
-Received: from mail-vk0-f41.google.com ([209.85.213.41]:46378 "EHLO
-        mail-vk0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933575AbeCHK3o (ORCPT
+        id S935713AbeCHKaR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 05:30:17 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:40649 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755301AbeCHKaP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 05:29:44 -0500
-X-Google-Smtp-Source: AG47ELtl81nEPv+dDWiKXjOOsEb/ba8+VfJZJw3iO2lb1jVuJUvCe7RJm2utgt7N1w0Eg/qOO8EzRg==
-MIME-Version: 1.0
-In-Reply-To: <20180308094807.9443-1-jacob-chen@iotwrt.com>
-References: <20180308094807.9443-1-jacob-chen@iotwrt.com>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Thu, 8 Mar 2018 19:29:21 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5D1FMm4FTugstxk_6bE-QbLeNsMZM6EaVVfN_mu8_RQUA@mail.gmail.com>
-Message-ID: <CAAFQd5D1FMm4FTugstxk_6bE-QbLeNsMZM6EaVVfN_mu8_RQUA@mail.gmail.com>
-Subject: Re: [PATCH v6 00/17] Rockchip ISP1 Driver
-To: Jacob Chen <jacob-chen@iotwrt.com>
-Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Shunqian Zheng <zhengsq@rock-chips.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?B?6ZKf5Lul5bSH?= <zyc@rock-chips.com>,
-        Eddie Cai <eddie.cai.linux@gmail.com>,
-        Jeffy <jeffy.chen@rock-chips.com>, devicetree@vger.kernel.org,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Jacob Chen <jacob2.chen@rock-chips.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 8 Mar 2018 05:30:15 -0500
+From: Niklas Cassel <niklas.cassel@axis.com>
+To: Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose.Abreu@synopsys.com, pavel@ucw.cz,
+        Niklas Cassel <niklass@axis.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: stmmac: remove superfluous wmb() memory barriers
+Date: Thu,  8 Mar 2018 11:30:05 +0100
+Message-Id: <20180308103006.1197-1-niklas.cassel@axis.com>
+X-Mailer: git-send-email 2.14.2
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 8, 2018 at 6:47 PM, Jacob Chen <jacob-chen@iotwrt.com> wrote:
-> From: Jacob Chen <jacob2.chen@rock-chips.com>
->
-> changes in V6:
->   - add mipi txrx phy support
->   - remove bool and enum from uapi header
->   - add buf_prepare op
->   - correct some spelling problems
->   - return all queued buffers when starting stream failed
+These wmb() memory barriers are performed after the last descriptor write,
+and they are followed by enable_dma_transmission()/set_tx_tail_ptr(),
+i.e. a writel() to MMIO register space.
+Since writel() itself performs the equivalent of a wmb() before doing the
+actual write, these barriers are superfluous, and removing them should
+thus not change any existing behavior.
 
-Thanks Jacob.
+Ordering within the descriptor writes is already ensured with dma_wmb()
+barriers inside prepare_tx_desc(first, ..)/prepare_tso_tx_desc(first, ..).
 
-For anyone planning to review, especially Hans, who pointed it out in
-previous version, g_mbus_config is still there and we're working on
-replacing it with something less controversial.
+Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 12 ------------
+ 1 file changed, 12 deletions(-)
 
-Best regards,
-Tomasz
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index a9856a8bf8ad..005fb45ace30 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -2998,12 +2998,6 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
+ 		priv->hw->desc->set_tx_owner(mss_desc);
+ 	}
+ 
+-	/* The own bit must be the latest setting done when prepare the
+-	 * descriptor and then barrier is needed to make sure that
+-	 * all is coherent before granting the DMA engine.
+-	 */
+-	wmb();
+-
+ 	if (netif_msg_pktdata(priv)) {
+ 		pr_info("%s: curr=%d dirty=%d f=%d, e=%d, f_p=%p, nfrags %d\n",
+ 			__func__, tx_q->cur_tx, tx_q->dirty_tx, first_entry,
+@@ -3221,12 +3215,6 @@ static netdev_tx_t stmmac_xmit(struct sk_buff *skb, struct net_device *dev)
+ 		priv->hw->desc->prepare_tx_desc(first, 1, nopaged_len,
+ 						csum_insertion, priv->mode, 1,
+ 						last_segment, skb->len);
+-
+-		/* The own bit must be the latest setting done when prepare the
+-		 * descriptor and then barrier is needed to make sure that
+-		 * all is coherent before granting the DMA engine.
+-		 */
+-		wmb();
+ 	}
+ 
+ 	netdev_tx_sent_queue(netdev_get_tx_queue(dev, queue), skb->len);
+-- 
+2.14.2
