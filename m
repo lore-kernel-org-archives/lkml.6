@@ -1,162 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935227AbeCHHEV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 02:04:21 -0500
-Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:43201
-        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934860AbeCHHEQ (ORCPT
+        id S964834AbeCHHFz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 02:05:55 -0500
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:45676 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755378AbeCHHFv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 02:04:16 -0500
-X-ASG-Debug-ID: 1520492651-093b7e4ca910d00001-xx1T2L
-X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
-From: Shunyong Yang <shunyong.yang@hxt-semitech.com>
-To: <christoffer.dall@linaro.org>
-CC: <marc.zyngier@arm.com>, <ard.biesheuvel@linaro.org>,
-        <will.deacon@arm.com>, <eric.auger@redhat.com>,
-        <david.daney@cavium.com>, <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
-        Shunyong Yang <shunyong.yang@hxt-semitech.com>,
-        Joey Zheng <yu.zheng@hxt-semitech.com>
-Subject: [RFC PATCH] KVM: arm/arm64: vgic: change condition for level interrupt resampling
-Date: Thu, 8 Mar 2018 15:01:30 +0800
-X-ASG-Orig-Subj: [RFC PATCH] KVM: arm/arm64: vgic: change condition for level interrupt resampling
-Message-ID: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
-X-Mailer: git-send-email 1.8.3.1
+        Thu, 8 Mar 2018 02:05:51 -0500
+X-Google-Smtp-Source: AG47ELtJTJLP8mjPC/BvMekmulEScYbYZkMUb8gJhxUfZwJS+17MEM2Wl+m0vLcTHbXFoRmXLj4xHg76xgauH6XBJ7M=
 MIME-Version: 1.0
+In-Reply-To: <20180308113647.75279391@canb.auug.org.au>
+References: <20180308073921.5c104e74@canb.auug.org.au> <CACRpkdaWd_7QWd7t5i6DvU3_Gu1giR9v2uoqQiLNXVWTPEty8w@mail.gmail.com>
+ <20180308113647.75279391@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 8 Mar 2018 08:05:50 +0100
+X-Google-Sender-Auth: Kagbl91sxXj1PYFec6_PkEUjie0
+Message-ID: <CAMuHMdX05OjHcTyKXx4o7is2Vpi1ToQeuB-xGkGj-Cx7vOcTrQ@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the pinctrl tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.5.21.109]
-X-ClientProxiedBy: HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) To
- HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14)
-X-Barracuda-Connect: UNKNOWN[10.128.0.14]
-X-Barracuda-Start-Time: 1520492651
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.7508 1.0000 1.7796
-X-Barracuda-Spam-Score: 1.78
-X-Barracuda-Spam-Status: No, SCORE=1.78 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.48719
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When resampling irqfds is enabled, level interrupt should be
-de-asserted when resampling happens. On page 4-47 of GIC v3
-specification IHI0069D, it said,
-"When the PE acknowledges an SGI, a PPI, or an SPI at the CPU
-interface, the IRI changes the status of the interrupt to active
-and pending if:
-• It is an edge-triggered interrupt, and another edge has been
-detected since the interrupt was acknowledged.
-• It is a level-sensitive interrupt, and the level has not been
-deasserted since the interrupt was acknowledged."
+Hi Stephen,
 
-GIC v2 specification IHI0048B.b has similar description on page
-3-42 for state machine transition.
+On Thu, Mar 8, 2018 at 1:36 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> On Wed, 7 Mar 2018 23:25:48 +0100 Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Wed, Mar 7, 2018 at 9:39 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> > Commit
+>> >
+>> >   fc08fa6009a0 ("pinctrl: sh-pfc: r8a7795: remove duplicate of CLKOUT pin in pinmux_pins[]")
+>> >
+>> > is missing a Signed-off-by from its committer.
+>>
+>> Looping in Geert,
+>>
+>> I guess this came in through the Renesas PFC pull request.
+>>
+>> Geert do you prefer that I back it all out so you can send me
+>> a new pull request? Or some other solution?
+>
+> But you are listed as the committer ...
 
-When some VFIO device, like mtty(8250 VFIO mdev emulation driver
-in samples/vfio-mdev) triggers a level interrupt, the status
-transition in LR is pending-->active-->active and pending.
-Then it will wait resampling to de-assert the interrupt.
+Right, that's the bug fix I had asked Linus to take directly, as a fix
+for v4.16.
 
-Current design of lr_signals_eoi_mi() will return false if state
-in LR is not invalid(Inactive). It causes resampling will not happen
-in mtty case.
+Gr{oetje,eeting}s,
 
-This will cause interrupt fired continuously to guest even 8250 IIR
-has no interrupt. When 8250's interrupt is configured in shared mode,
-it will pass interrupt to other drivers to handle. However, there
-is no other driver involved. Then, a "nobody cared" kernel complaint
-occurs.
+                        Geert
 
-/ # cat /dev/ttyS0
-[    4.826836] random: crng init done
-[    6.373620] irq 41: nobody cared (try booting with the "irqpoll"
-option)
-[    6.376414] CPU: 0 PID: 1307 Comm: cat Not tainted 4.16.0-rc4 #4
-[    6.378927] Hardware name: linux,dummy-virt (DT)
-[    6.380876] Call trace:
-[    6.381937]  dump_backtrace+0x0/0x180
-[    6.383495]  show_stack+0x14/0x1c
-[    6.384902]  dump_stack+0x90/0xb4
-[    6.386312]  __report_bad_irq+0x38/0xe0
-[    6.387944]  note_interrupt+0x1f4/0x2b8
-[    6.389568]  handle_irq_event_percpu+0x54/0x7c
-[    6.391433]  handle_irq_event+0x44/0x74
-[    6.393056]  handle_fasteoi_irq+0x9c/0x154
-[    6.394784]  generic_handle_irq+0x24/0x38
-[    6.396483]  __handle_domain_irq+0x60/0xb4
-[    6.398207]  gic_handle_irq+0x98/0x1b0
-[    6.399796]  el1_irq+0xb0/0x128
-[    6.401138]  _raw_spin_unlock_irqrestore+0x18/0x40
-[    6.403149]  __setup_irq+0x41c/0x678
-[    6.404669]  request_threaded_irq+0xe0/0x190
-[    6.406474]  univ8250_setup_irq+0x208/0x234
-[    6.408250]  serial8250_do_startup+0x1b4/0x754
-[    6.410123]  serial8250_startup+0x20/0x28
-[    6.411826]  uart_startup.part.21+0x78/0x144
-[    6.413633]  uart_port_activate+0x50/0x68
-[    6.415328]  tty_port_open+0x84/0xd4
-[    6.416851]  uart_open+0x34/0x44
-[    6.418229]  tty_open+0xec/0x3c8
-[    6.419610]  chrdev_open+0xb0/0x198
-[    6.421093]  do_dentry_open+0x200/0x310
-[    6.422714]  vfs_open+0x54/0x84
-[    6.424054]  path_openat+0x2dc/0xf04
-[    6.425569]  do_filp_open+0x68/0xd8
-[    6.427044]  do_sys_open+0x16c/0x224
-[    6.428563]  SyS_openat+0x10/0x18
-[    6.429972]  el0_svc_naked+0x30/0x34
-[    6.431494] handlers:
-[    6.432479] [<000000000e9fb4bb>] serial8250_interrupt
-[    6.434597] Disabling IRQ #41
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-This patch changes the lr state condition in lr_signals_eoi_mi() from
-invalid(Inactive) to active and pending to avoid this.
-
-I am not sure about the original design of the condition of
-invalid(active). So, This RFC is sent out for comments.
-
-Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
-Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
----
- virt/kvm/arm/vgic/vgic-v2.c | 4 ++--
- virt/kvm/arm/vgic/vgic-v3.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/virt/kvm/arm/vgic/vgic-v2.c b/virt/kvm/arm/vgic/vgic-v2.c
-index e9d840a75e7b..740ee9a5f551 100644
---- a/virt/kvm/arm/vgic/vgic-v2.c
-+++ b/virt/kvm/arm/vgic/vgic-v2.c
-@@ -46,8 +46,8 @@ void vgic_v2_set_underflow(struct kvm_vcpu *vcpu)
- 
- static bool lr_signals_eoi_mi(u32 lr_val)
- {
--	return !(lr_val & GICH_LR_STATE) && (lr_val & GICH_LR_EOI) &&
--	       !(lr_val & GICH_LR_HW);
-+	return !((lr_val & GICH_LR_STATE) ^ GICH_LR_STATE) &&
-+	       (lr_val & GICH_LR_EOI) && !(lr_val & GICH_LR_HW);
- }
- 
- /*
-diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
-index 6b329414e57a..43111bba7af9 100644
---- a/virt/kvm/arm/vgic/vgic-v3.c
-+++ b/virt/kvm/arm/vgic/vgic-v3.c
-@@ -35,8 +35,8 @@ void vgic_v3_set_underflow(struct kvm_vcpu *vcpu)
- 
- static bool lr_signals_eoi_mi(u64 lr_val)
- {
--	return !(lr_val & ICH_LR_STATE) && (lr_val & ICH_LR_EOI) &&
--	       !(lr_val & ICH_LR_HW);
-+	return !((lr_val & ICH_LR_STATE) ^ ICH_LR_STATE) &&
-+	       (lr_val & ICH_LR_EOI) && !(lr_val & ICH_LR_HW);
- }
- 
- void vgic_v3_fold_lr_state(struct kvm_vcpu *vcpu)
--- 
-1.8.3.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
