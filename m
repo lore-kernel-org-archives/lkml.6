@@ -1,11 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1131037-1520491351-5-11305185347894664609
+X-Cyrus-Session-Id: sloti22d1t05-1131037-1520491346-2-527873986233474073
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, URIBL_BLACK 1.7, LANGUAGES ensvda,
-  BAYES_USED global, SA_VERSION 3.4.0
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
 X-Spam-charsets: plain='iso-8859-1'
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520491351; b=oIkT1rWXAtbiLgKXzgTx+NImZDZWUFuaO8nPzQmLp9wJ+tk
-    IAk8RqlxEOTzAh9l+V7YieumQ/9bTRUvPzmKyxwHrwwo/xWVDkXZnUIArJ0zAx3s
-    0P6/dMWlM6bl9z11y3jJ1OYyx7uahy6krK43rRcZJ3KeAoIdmf5bJe7hL69YD/PD
-    3jQXY7ae/uo6qK6Hpx6yXtE1avAos5jxKGM7anX1T4J48c6fIxeGVTf6KldiZfz7
-    03MR40DgbtCm2Ao6BSo40isEAXdUbEAIRWSN04eDNSixq1vXaSzl/fY9pz4Py1tb
-    wT/mzRslhhuALk0UJGK4okNldN27gl2GsSwpydw==
+    t=1520491345; b=lQbMoyEYL5JqKaah2iZ1OWRmsJkTVdobl5+WCmnWlT1Z1N0
+    K3jHl0JpXlCialNJaWH5wCX2ARW9lmH35sP+aDTXeNWbQ23irgizrEn/2Iuc63Jr
+    cqvf8YKDJPZPNWD8vJBltnR2EaxvL0DpVTx9dDRkDzyx51kkR8oa8cz8BXxIlRTC
+    W/ZhLdJYd/5soOqA4SwIY94V25dX3HLA13Z4+DWY1MRWKb+tJmFUNxtmqqp/mPQJ
+    l3nz2wYj6cYibe/8GxwJbyPodMDlJV4TrzX/IEGPu9Qyh/e59XwlH/+8AvBJGlss
+    wNdIi9iKgwKVUvX/afA1UunaIHDVH2rE+dwuq8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520491351; bh=M/p5lL
-    tKVEsGnu8qL3M0hVb15Bjpd+oQ0upQvRJcHbU=; b=u+bF5IX8wywgzG1fsADgy/
-    2hbMlVf0K1DUAzZYjcgTG1JhGGM6vkiGlvvqSUS6z0hCfWrbD0H/IDgT3X/xzaG+
-    ZU7inNFNomKS4DdUeujUNdK3XZ9bRUpdjLdfpiP7M9f8ivXh5a49vL9wPeb892JI
-    qmOJe+fLMwXu0Glar6GU726pXV1cMBHWv21zKswvVB/FgeREVYECdV2oHyx2xmMl
-    WTBTmWkhGeS7N/yXb3hOJkjRLOzOgvfMhacOEyH9xbzx0BrTHmg3XWmwA/9AOJa/
-    OQ8+rlWwvl1gnF2Q3sMX8941cqTTBTktbkQUA/7EcmlrdLP0OGoQ8zVdU4NCehkQ
+    :mime-version:sender:list-id; s=arctest; t=1520491345; bh=4AokKI
+    r66tmXAwVEyJYDUBrmRZfS6IwstzeiGnlskqc=; b=nh5zpKQaRbI1BKB0A3QxzF
+    1vI7jvQ1BWjsKK3WX+8Yrpm2f1R6Gk3StKOD2CruylDi9iup+XwjVznP7WRevpRh
+    Iny7Kw2e/dfjkWWEECROCsC5yPc/iEc69qV7H0P0PdTRNiq+cfKpjt9TkbiZ96UP
+    myaM7i71F2+S2jsr8MG8kfgFVuSOnhLaQqQ2gOsZqvvfaUryY0JPNXkD8DjWMZK2
+    Pk+q/ShgSwM0ut8jaJuKaNBF8pd2Hb87n3Ze14QCj3eeAW4QV+lzyWOIe6BPcqJU
+    yEFErPSOo70kD4XY/n9sm1huIBKQtuhtryDQb70a4JZaxC3dFWLHAsQFPzAle5zA
     ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=nVh4a4od x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=jYmdjRsx x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=nVh4a4od x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=jYmdjRsx x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,26 +50,26 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965379AbeCHGm0 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 01:42:26 -0500
-Received: from mail-sn1nam01on0102.outbound.protection.outlook.com ([104.47.32.102]:61147
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935243AbeCHE7A (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S935358AbeCHE7A (ORCPT <rfc822;greg@kroah.com>);
         Wed, 7 Mar 2018 23:59:00 -0500
+Received: from mail-co1nam03on0132.outbound.protection.outlook.com ([104.47.40.132]:62208
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934966AbeCHE6z (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 7 Mar 2018 23:58:55 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Bharat Potnuri <bharat@chelsio.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+CC: Jerome Brunet <jbrunet@baylibre.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 39/67] iser-target: avoid reinitializing rdma
- contexts for isert commands
-Thread-Topic: [PATCH AUTOSEL for 4.14 39/67] iser-target: avoid reinitializing
- rdma contexts for isert commands
-Thread-Index: AQHTtpoBojOIARTzaE2eLQNdl3gbjw==
-Date: Thu, 8 Mar 2018 04:57:48 +0000
-Message-ID: <20180308045641.7814-39-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 31/67] net: phy: meson-gxl: check phy_write
+ return value
+Thread-Topic: [PATCH AUTOSEL for 4.14 31/67] net: phy: meson-gxl: check
+ phy_write return value
+Thread-Index: AQHTtpn/0rpeOFkckkCFrTyhejy4jg==
+Date: Thu, 8 Mar 2018 04:57:45 +0000
+Message-ID: <20180308045641.7814-31-alexander.levin@microsoft.com>
 References: <20180308045641.7814-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045641.7814-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,122 +78,121 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1015;7:8WaKrYgYwtrHkTAcpi51e5MCtklLSnXqh/Ns6wI+95nQRIc+9F8oT12R59PTALtaXG59ZsMM4fWWdmBHMoWpyxnAT2XUEfX3UydjYVgBM+SwJL3vQ0QSGBsiFjyxNc4YkHV9xcs0jNXawHH0HTkXOt6g9jB4sF9O/pZb+JvLG3++zyeF6/P7EGqdP6W6gnZaLGM3Igo1DnhqTdImZx5FJCARSglG+0dcMEAHl6S5IbTCH1kRdxKV3LX7RABgMFVI;20:okiNS/yoMXBvbcrpC/RaGQjb/FwX/tKUVNbzCJ6EYpj1SIiiAOW1S5gRrr4tP06I5fWwvX5nLmp/EYazJV89Jh4zBNwdU4CiXl3KRMsVq2QMT3p5j3kupAZejs/YrHqS2HGZjG/GtZ2clOUwKTiGNZNCqj5fo3SP8fJEONHAEHc=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0999;7:+ibYY1qKdkvRtCfMEDRHcRHryI94mcyuCBLzTZBkXcAEvZ9y2XSZZtEIYqvDzCqJpPKmWJePo6JBfRea+qVBmhmxk3JsIIKjyHJWFoyqHok8fkMNtkFyPA8a3xMO9JUil9uOd/shYDMsl0z/0qCe8Dk4e/Sp9GpO2pN34j73BbD/ElPoF1gv/WUyABqCYM4eqEtlAy6k0nIMqvRerfXDSdgONUjwpphhKVyy4102IrWZ+fbhaxHe4iQagPKrdiom;20:pKDNFZxV9hZy/+L3zGb0i2Q0ktqw0LuUgdFteJtqRLMlkPZhRXr3JjE0gyK7bWWhD0QGe0BGY5hWAheP53u/R0tAv6Hb/TAdHcIJbDWcnPsz14zCHyPRknHQlNaWj4WaswPoakYLt6K27qoDvOJsxkoWVdxu3UAuXTBXDL2kT58=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: e6f47a21-2b84-49ca-81ec-08d584b14ccc
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1015;
-x-ms-traffictypediagnostic: DM5PR2101MB1015:
+x-ms-office365-filtering-correlation-id: c1d9f7e9-04e2-4593-8efd-08d584b14a19
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0999;
+x-ms-traffictypediagnostic: DM5PR2101MB0999:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1015997C877C9CCE41BE75BFFBDF0@DM5PR2101MB1015.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <DM5PR2101MB0999ED263B959EAF24ED5698FBDF0@DM5PR2101MB0999.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB1015;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1015;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0999;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0999;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(366004)(39860400002)(39380400002)(346002)(189003)(199004)(6116002)(53936002)(1076002)(107886003)(3846002)(3660700001)(10090500001)(6666003)(2950100002)(2906002)(6512007)(99286004)(8936002)(6486002)(76176011)(6506007)(68736007)(316002)(110136005)(81156014)(81166006)(8676002)(54906003)(3280700002)(2900100001)(6436002)(97736004)(72206003)(25786009)(10290500003)(86612001)(4326008)(305945005)(7736002)(66066001)(22452003)(478600001)(5660300001)(86362001)(575784001)(14454004)(106356001)(36756003)(102836004)(5250100002)(105586002)(26005)(2501003)(186003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1015;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: e9YNFhXCmpkq/8hawviEEQJSEMJCrX4WjheaHpLn9CV9TGqSH/h4/s4jjznLSSFNj1vBIwuZxq8Bq1EAFMFFLd1RhJSK2Wl/Q/AUopE0fe/87x28SNJb58vyjZSpcr3u7b8M5Mg4MNOdrOgU4E3SehkEbCTQCtP4SxveLr1dg+FbLVKShBSDwHGElV5xvEAtK/7+TdAi04RfqYKt2pdLt1FhYMvVeso/8C0E/ctczpnPSRnHsbuWA3DVrQvOvbog8uVxEy05mOQe7fvBX+HRVOktSUadOsjg6tuXHdYdorpTkYrKfkhZPuU4SzPqp+j+aXRxsukST/T3drFLaSJ2mQ==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(39380400002)(376002)(396003)(346002)(189003)(199004)(72206003)(3846002)(106356001)(8676002)(6116002)(1076002)(6512007)(14454004)(81156014)(66066001)(2906002)(3660700001)(478600001)(10290500003)(8936002)(6486002)(305945005)(7736002)(36756003)(2900100001)(81166006)(4326008)(25786009)(6436002)(5250100002)(105586002)(54906003)(22452003)(76176011)(5660300001)(10090500001)(110136005)(316002)(6506007)(86362001)(575784001)(186003)(2950100002)(97736004)(3280700002)(102836004)(99286004)(107886003)(59450400001)(68736007)(86612001)(53936002)(26005)(6666003)(2501003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0999;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: 5EUMjFWl7AfYAHde/mfO1DiZDnIFiWlDdZZfs5k58pwusuz/X+X4/I6TuHS+2ugIXd5pxCuzX3lRpV3ifEALdEjZQYK39w3tkZetldTcSBMk/ybk9Cs1nIM9jry4rlpz04upV3DzN3A0NKOwGgl9GxzixYPb1GYSQs78909pRyGM9NxBItILH0l9EaQ98cGIhmWLTmKl+HcgAsyv/CupkmkZY0tSLBPWm6Z8uKMZUbiL8diRlZasVeKjIHUrgs/gbqGXban7fcUsR9Cue5Rw2RCVOWQ6TVBJIn5zodkKm7wrVoszWhwGqTorKo7bDiu5naGMDCzrKjYtvlXKjaZIIg==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e6f47a21-2b84-49ca-81ec-08d584b14ccc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:57:48.6287
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1d9f7e9-04e2-4593-8efd-08d584b14a19
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:57:45.1263
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1015
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0999
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Bharat Potnuri <bharat@chelsio.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-[ Upstream commit 66f53e6f5400578bae58db0c06d85a8820831f40 ]
+[ Upstream commit 9042b46eda33ef5db3cdfc9e12b3c8cabb196141 ]
 
-isert commands that failed during isert_rdma_rw_ctx_post() are queued to
-Queue-Full(QF) queue and are scheduled to be reposted during queue-full
-queue processing. During this reposting, the rdma contexts are initialised
-again in isert_rdma_rw_ctx_post(), which is leaking significant memory.
+Always check phy_write return values. Better to be safe than sorry
 
-unreferenced object 0xffff8830201d9640 (size 64):
-  comm "kworker/0:2", pid 195, jiffies 4295374851 (age 4528.436s)
-  hex dump (first 32 bytes):
-    00 60 8b cb 2e 00 00 00 00 10 00 00 00 00 00 00  .`..............
-    00 90 e3 cb 2e 00 00 00 00 10 00 00 00 00 00 00  ................
-  backtrace:
-    [<ffffffff8170711e>] kmemleak_alloc+0x4e/0xb0
-    [<ffffffff811f8ba5>] __kmalloc+0x125/0x2b0
-    [<ffffffffa046b24f>] rdma_rw_ctx_init+0x15f/0x6f0 [ib_core]
-    [<ffffffffa07ab644>] isert_rdma_rw_ctx_post+0xc4/0x3c0 [ib_isert]
-    [<ffffffffa07ad972>] isert_put_datain+0x112/0x1c0 [ib_isert]
-    [<ffffffffa07dddce>] lio_queue_data_in+0x2e/0x30 [iscsi_target_mod]
-    [<ffffffffa076c322>] target_qf_do_work+0x2b2/0x4b0 [target_core_mod]
-    [<ffffffff81080c3b>] process_one_work+0x1db/0x5d0
-    [<ffffffff8108107d>] worker_thread+0x4d/0x3e0
-    [<ffffffff81088667>] kthread+0x117/0x150
-    [<ffffffff81713fa7>] ret_from_fork+0x27/0x40
-    [<ffffffffffffffff>] 0xffffffffffffffff
-
-Here is patch to use the older rdma contexts while reposting
-the isert commands intead of reinitialising them.
-
-Signed-off-by: Potnuri Bharat Teja <bharat@chelsio.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/infiniband/ulp/isert/ib_isert.c | 7 +++++++
- drivers/infiniband/ulp/isert/ib_isert.h | 1 +
- 2 files changed, 8 insertions(+)
+ drivers/net/phy/meson-gxl.c | 50 ++++++++++++++++++++++++++++++++++-------=
+----
+ 1 file changed, 38 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/infiniband/ulp/isert/ib_isert.c b/drivers/infiniband/u=
-lp/isert/ib_isert.c
-index 9d4785ba24cb..e770c17cbca9 100644
---- a/drivers/infiniband/ulp/isert/ib_isert.c
-+++ b/drivers/infiniband/ulp/isert/ib_isert.c
-@@ -2124,6 +2124,9 @@ isert_rdma_rw_ctx_post(struct isert_cmd *cmd, struct =
-isert_conn *conn,
- 	u32 rkey, offset;
- 	int ret;
+diff --git a/drivers/net/phy/meson-gxl.c b/drivers/net/phy/meson-gxl.c
+index 1ea69b7585d9..7ddb709f69fc 100644
+--- a/drivers/net/phy/meson-gxl.c
++++ b/drivers/net/phy/meson-gxl.c
+@@ -25,27 +25,53 @@
 =20
-+	if (cmd->ctx_init_done)
-+		goto rdma_ctx_post;
+ static int meson_gxl_config_init(struct phy_device *phydev)
+ {
++	int ret;
 +
- 	if (dir =3D=3D DMA_FROM_DEVICE) {
- 		addr =3D cmd->write_va;
- 		rkey =3D cmd->write_stag;
-@@ -2151,11 +2154,15 @@ isert_rdma_rw_ctx_post(struct isert_cmd *cmd, struc=
-t isert_conn *conn,
- 				se_cmd->t_data_sg, se_cmd->t_data_nents,
- 				offset, addr, rkey, dir);
- 	}
-+
- 	if (ret < 0) {
- 		isert_err("Cmd: %p failed to prepare RDMA res\n", cmd);
- 		return ret;
- 	}
+ 	/* Enable Analog and DSP register Bank access by */
+-	phy_write(phydev, 0x14, 0x0000);
+-	phy_write(phydev, 0x14, 0x0400);
+-	phy_write(phydev, 0x14, 0x0000);
+-	phy_write(phydev, 0x14, 0x0400);
++	ret =3D phy_write(phydev, 0x14, 0x0000);
++	if (ret)
++		return ret;
++	ret =3D phy_write(phydev, 0x14, 0x0400);
++	if (ret)
++		return ret;
++	ret =3D phy_write(phydev, 0x14, 0x0000);
++	if (ret)
++		return ret;
++	ret =3D phy_write(phydev, 0x14, 0x0400);
++	if (ret)
++		return ret;
 =20
-+	cmd->ctx_init_done =3D true;
-+
-+rdma_ctx_post:
- 	ret =3D rdma_rw_ctx_post(&cmd->rw, conn->qp, port_num, cqe, chain_wr);
- 	if (ret < 0)
- 		isert_err("Cmd: %p failed to post RDMA res\n", cmd);
-diff --git a/drivers/infiniband/ulp/isert/ib_isert.h b/drivers/infiniband/u=
-lp/isert/ib_isert.h
-index d6fd248320ae..3b296bac4f60 100644
---- a/drivers/infiniband/ulp/isert/ib_isert.h
-+++ b/drivers/infiniband/ulp/isert/ib_isert.h
-@@ -126,6 +126,7 @@ struct isert_cmd {
- 	struct rdma_rw_ctx	rw;
- 	struct work_struct	comp_work;
- 	struct scatterlist	sg;
-+	bool			ctx_init_done;
- };
+ 	/* Write Analog register 23 */
+-	phy_write(phydev, 0x17, 0x8E0D);
+-	phy_write(phydev, 0x14, 0x4417);
++	ret =3D phy_write(phydev, 0x17, 0x8E0D);
++	if (ret)
++		return ret;
++	ret =3D phy_write(phydev, 0x14, 0x4417);
++	if (ret)
++		return ret;
 =20
- static inline struct isert_cmd *tx_desc_to_cmd(struct iser_tx_desc *desc)
+ 	/* Enable fractional PLL */
+-	phy_write(phydev, 0x17, 0x0005);
+-	phy_write(phydev, 0x14, 0x5C1B);
++	ret =3D phy_write(phydev, 0x17, 0x0005);
++	if (ret)
++		return ret;
++	ret =3D phy_write(phydev, 0x14, 0x5C1B);
++	if (ret)
++		return ret;
+=20
+ 	/* Program fraction FR_PLL_DIV1 */
+-	phy_write(phydev, 0x17, 0x029A);
+-	phy_write(phydev, 0x14, 0x5C1D);
++	ret =3D phy_write(phydev, 0x17, 0x029A);
++	if (ret)
++		return ret;
++	ret =3D phy_write(phydev, 0x14, 0x5C1D);
++	if (ret)
++		return ret;
+=20
+ 	/* Program fraction FR_PLL_DIV1 */
+-	phy_write(phydev, 0x17, 0xAAAA);
+-	phy_write(phydev, 0x14, 0x5C1C);
++	ret =3D phy_write(phydev, 0x17, 0xAAAA);
++	if (ret)
++		return ret;
++	ret =3D phy_write(phydev, 0x14, 0x5C1C);
++	if (ret)
++		return ret;
+=20
+ 	return 0;
+ }
 --=20
 2.14.1
