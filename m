@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1086562-1520491126-2-4854198836263373696
+X-Cyrus-Session-Id: sloti22d1t05-1086562-1520491096-2-17037847232851761560
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520491125; b=UdOpyp2Z6QVKz21t+ausW16TjrPpqkafhaZGZcOTzSjepcR
-    dsF4ATeuLhG5WiTIJscLdFsNmvKI57v6+OQfGG1ZiptwMiLbqM9dBfEqk1FTpuwm
-    rwLFmtjEVGR1kKpG2eXQGZxFl4KqzcUcKXgv26td8oY2nyo/flaWk5aFlNgo+1rS
-    7TVeI6WmdPYNL4svLBAa07DjV98HLAmtf8nn8e9H+OE/zRbgBpCNGU7WzklxSYuM
-    rtCPTa1vQYhuv9B7FCQbnGNwb/Zu/HQ/oSE8yatosliI4CHl6TfJk4Kstp7eQIBI
-    cOhcN98pp97ybsMKnIjJ8PWJpfvic8Pxgo4WbKw==
+    t=1520491096; b=Vn1uwZrELUpRnmNa5x+RvXWhKBZnhtX3lNNqcDvCKSXvw2h
+    Cy1rx08ISdBI35UozE0M2soKOpzOu7YlVq+59XOvUPNy/Q8RV0Nm51ZGFBWckddN
+    b9M6O6fbSfjI0Pc8WvSUfeaNFF2lrzkKfaToEGy1TbIM/e0HeDpXpWl7pMC76V8q
+    jWdhOBJcTSEh0m6jK7vdTD3oblpW0ZE1RhIrX/LoL6j4BSm85AZE4szwTw+NOonA
+    ucqlnx4+bDzH62ovKEy9oLFZDnip5kTo0x/xzF+x07BUe7ENWbfDj94cyyVuKgxb
+    Ei6eyekT4ly+JCAWbkuY8MxClUTxhO4b4E/PmYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520491125; bh=qqhIMu
-    W55xgZvMIvTtFD1tXcIao1PIXr92Jj87WUO0g=; b=BT4Dq8jF3USiS/1pWQzpKK
-    CjaVlCkiEm6anjkVU+3t5nWW0UIe2Xt3gFkKs4VzFRUCyBHXJDu84f9SPXWSy/4J
-    GciUtzzS4M/MPbB0bKvgkv6wjZLKj6DolPyZhREbF5cCHYTKnyKLlO/oeoWlR7z7
-    0InG9GHL253Sn5i55BX+RrC6GJzglLmumKbihrcW39CL60uCPkE45d+ir/aEVWoL
-    IUgf74r3l+M8otgmlQUtnyor1Dya8DvGhsffKVcRQG/PFILEqik7tV45yR03yx3A
-    mTUjwUEd0My9rwVpvy8XA6X66K11ltFZZZVG3CEydJX/5DtaucvMrhi1luHQHYcA
+    :mime-version:sender:list-id; s=arctest; t=1520491096; bh=Y32cmx
+    pt0k6D+MFOVCSdL7bchDh74FQCLkL3xxLVsOs=; b=gBabQ8Cg2By/B2Z7V/380S
+    yWnf4JX0eIAvIef7xDS5qc3t3wUu8zIU+nb2UjhPXT+K4W/25wM6D53PA+JmrkiJ
+    NHjBtWM1Aen/utwAtdr6W6XNPc+PjQyq9vmTWKZz2kbr67mNQYqjEGsSy9u0G0Tf
+    ayAeQO8Eaam8T9YUtSuqMLLfgXPXO39YGVef9JxFMW7fDKMAzd6ZM61MnTd0tPPe
+    rSBi9SZ2JvzbSbvfztrEJaZ1q19WzSUHlKC+uybbB1e1d+MkVKh2Nns6hnT66UF7
+    i4yL2Eg4GTFh6jSj2I65zvLmG0qD+AaWldyW0fO5TereU2Q/vAiF1yzUmddD7ryg
     ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=AEZP3jQ4 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=aJj1LinG x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -41,7 +41,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=AEZP3jQ4 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=aJj1LinG x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,28 +50,27 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755531AbeCHGiN (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 01:38:13 -0500
-Received: from mail-sn1nam01on0106.outbound.protection.outlook.com ([104.47.32.106]:14491
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        id S1754836AbeCHGiM (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 01:38:12 -0500
+Received: from mail-co1nam03on0126.outbound.protection.outlook.com ([104.47.40.126]:14720
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935357AbeCHE7M (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S935383AbeCHE7M (ORCPT <rfc822;stable@vger.kernel.org>);
         Wed, 7 Mar 2018 23:59:12 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Jerry Snitselaar <jsnitsel@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Ashok Raj <ashok.raj@intel.com>,
+CC: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
+        William Tu <u9012063@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 52/67] iommu/vt-d: clean up pr_irq if
- request_threaded_irq fails
-Thread-Topic: [PATCH AUTOSEL for 4.14 52/67] iommu/vt-d: clean up pr_irq if
- request_threaded_irq fails
-Thread-Index: AQHTtpoEjILtS77DcU2dgvbfBxltEA==
-Date: Thu, 8 Mar 2018 04:57:54 +0000
-Message-ID: <20180308045641.7814-52-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 55/67] ip_gre: fix potential memory leak in
+ erspan_rcv
+Thread-Topic: [PATCH AUTOSEL for 4.14 55/67] ip_gre: fix potential memory leak
+ in erspan_rcv
+Thread-Index: AQHTtpoFKIcqDtfUnUGz+dUTHbHPuw==
+Date: Thu, 8 Mar 2018 04:57:55 +0000
+Message-ID: <20180308045641.7814-55-alexander.levin@microsoft.com>
 References: <20180308045641.7814-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045641.7814-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -80,183 +79,69 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1015;7:HDfUi94sWBzELsmJWCJqCrpG6P0edg+AXXg2NIpfxPXAYtpsWeF/5FcDQSWn/+EN1cvOc9/yAdb9+2IGoJ97yQCMs0e7dZEW1J+iRuGVn6vmCNr3ClO2EeVicOldrg69WGa4hHU22EHdtBdTTJAqUalbSZ21nWAZybQ0SzwbTowBbzkwlF/A5pY4sELqRWFRvuBe2tYGsyAdqOr32qGhU2gWc5S8LX+NZwenjhREqudbo7N418+RuxncvcKOJ4y5;20:gHzD9IMVugdni5Tt36d21JrWMNuVoMhl9psAp/EpM4RBrhI3F5XE96Au17IN8ocIAzm484+R7ue+Iu3QW3Kku88m6Z/lj3pqFZPqIK98JPXaLUeko1jzPeDi9/PQ/6DqqVcJbL8k89xu/EjV95xgrtOlGAauVs4p5E9FDb3V/ok=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0999;7:ejIUS7sFFCHCQf4xcNYlfiGUrNsSltBmcm30dyanJYopAK5ueOdIwu3t+dboZvfIJLiLleDsx//ZuyOtLOxoMSal+CqV747sFBxkcXPNU3Sd92l10WTFZ9pE/HaYPVlLROtrTirBcWdGT3MfqYyxkrafnNWOJTldju20nHJ50ubyuO57xnVabH/MZ4i/XdKSY8NxAzYd6LyslqZjkqNk+WaCKosgpErz5i0afVK/U8/Rkk4hD13IzVDVyAMWoe4h;20:h8v7er/SJEUOcx43bmtKUQtgaL1teDG1/+agUxEKlIqVfVZWAJUUcQEL/asgi/yndFvR8CrsSiNlXKlMVYKV6gl3RUCCmQynjdBM/aAFIbywVn91EQ97RSYiQb1SSTJ2VHLeCozyz//M4IinMhUCb4GRkO1ehzSnpZRIg5cn9c4=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: f98b3c8e-0369-41d8-43e3-08d584b153a0
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1015;
-x-ms-traffictypediagnostic: DM5PR2101MB1015:
+x-ms-office365-filtering-correlation-id: 1d6bafa2-9b88-4be8-2124-08d584b1549d
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0999;
+x-ms-traffictypediagnostic: DM5PR2101MB0999:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1015EC8CDFB50DD5992BEBA2FBDF0@DM5PR2101MB1015.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB1015;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1015;
+x-microsoft-antispam-prvs: <DM5PR2101MB09990D854278A6E35D7193A9FBDF0@DM5PR2101MB0999.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(173505980823694)(85827821059158);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0999;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0999;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(366004)(39860400002)(39380400002)(346002)(189003)(199004)(6116002)(53936002)(1076002)(107886003)(3846002)(3660700001)(10090500001)(6666003)(2950100002)(2906002)(6512007)(99286004)(8936002)(6486002)(76176011)(6506007)(68736007)(59450400001)(316002)(110136005)(81156014)(81166006)(8676002)(54906003)(3280700002)(2900100001)(6436002)(97736004)(72206003)(25786009)(10290500003)(86612001)(4326008)(305945005)(7736002)(66066001)(22452003)(478600001)(5660300001)(86362001)(575784001)(14454004)(106356001)(36756003)(102836004)(5250100002)(105586002)(26005)(2501003)(186003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1015;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: LrSudLxFXIGF0t20HOOpwYbfH4WcpQiYlJ9OVM2iAzkeLU/glwr05VE/2dH9Jh5Sll4EWtbpnXptIjVBoint+Y7gjD9VN8sJorhGUp58lKF8Saxzdz7SbjzkQDGqfiXMmOy46mB3TxBVstNemCZVELilsLBwWlak2CzomJDMQdZzwRCiQi6VE6XiXFo8SHkIYmz5RMOcNRt6j5fpWWfRosVsjYPHF9inRooqhj2VlVnwpDEK3LhP8bIqo+mCOrfSdiGwq+Z/TKQmgl6iHg8rDstI958mGJKld75mN2ezpnhMWUhvHbfb2W6I0XWP5HSXsiPDf13GlKaOpQtdO6eZoA==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(39380400002)(376002)(396003)(346002)(189003)(199004)(72206003)(3846002)(106356001)(8676002)(6116002)(1076002)(6512007)(14454004)(81156014)(66066001)(2906002)(3660700001)(478600001)(10290500003)(8936002)(6486002)(305945005)(7736002)(36756003)(2900100001)(81166006)(4326008)(25786009)(6436002)(5250100002)(105586002)(54906003)(22452003)(76176011)(5660300001)(10090500001)(110136005)(316002)(39060400002)(6506007)(86362001)(575784001)(186003)(2950100002)(97736004)(3280700002)(102836004)(99286004)(107886003)(59450400001)(68736007)(86612001)(53936002)(26005)(6666003)(2501003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0999;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: 3Hqew4151n3CRSln0mGhqDE2ifXzHzKNoANc6LyM4xA7BHz8qBSxGXhYO7wOLjUoXXQ/2Xs9/M4Z7FXSzGkHrkhYTovb+uJ5dnVThQgj5mBrSmPXEBd3lUi0/mr1WeIF/XTD7xey0wl7qtE1E4fxMFFTg/4Fpvy8hpgVojhucwi15Vn6hpnn9eQFGgVOLnmoK8QjEnEDs1tKPIiKrp/KRi5HxwzLm+qtZGXncCmNIumEq4SF1P4N+Xb4czeVVv64qtrsZ2POgHdgsmWzBwH1diCf14H9HoWThEI6IKyGWmESM7f1lmVTf2XrE6MgA96asad/bb3q4zxDBHD2S0HT4w==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f98b3c8e-0369-41d8-43e3-08d584b153a0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:57:54.2967
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1d6bafa2-9b88-4be8-2124-08d584b1549d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:57:55.8388
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1015
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0999
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Jerry Snitselaar <jsnitsel@redhat.com>
+From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
 
-[ Upstream commit 72d548113881dd32bf7f0b221d031e6586468437 ]
+[ Upstream commit 50670b6ee9bc4ae8f9ce3112b437987adf273245 ]
 
-It is unlikely request_threaded_irq will fail, but if it does for some
-reason we should clear iommu->pr_irq in the error path. Also
-intel_svm_finish_prq shouldn't try to clean up the page request
-interrupt if pr_irq is 0. Without these, if request_threaded_irq were
-to fail the following occurs:
+If md is NULL, tun_dst must be freed, otherwise it will cause memory
+leak.
 
-fail with no fixes:
-
-[    0.683147] ------------[ cut here ]------------
-[    0.683148] NULL pointer, cannot free irq
-[    0.683158] WARNING: CPU: 1 PID: 1 at kernel/irq/irqdomain.c:1632 irq_do=
-main_free_irqs+0x126/0x140
-[    0.683160] Modules linked in:
-[    0.683163] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc2 #3
-[    0.683165] Hardware name:                  /NUC7i3BNB, BIOS BNKBL357.86=
-A.0036.2017.0105.1112 01/05/2017
-[    0.683168] RIP: 0010:irq_domain_free_irqs+0x126/0x140
-[    0.683169] RSP: 0000:ffffc90000037ce8 EFLAGS: 00010292
-[    0.683171] RAX: 000000000000001d RBX: ffff880276283c00 RCX: ffffffff81c=
-5e5e8
-[    0.683172] RDX: 0000000000000001 RSI: 0000000000000096 RDI: 00000000000=
-00246
-[    0.683174] RBP: ffff880276283c00 R08: 0000000000000000 R09: 00000000000=
-0023c
-[    0.683175] R10: 0000000000000007 R11: 0000000000000000 R12: 00000000000=
-0007a
-[    0.683176] R13: 0000000000000001 R14: 0000000000000000 R15: 00000100100=
-00000
-[    0.683178] FS:  0000000000000000(0000) GS:ffff88027ec80000(0000) knlGS:=
-0000000000000000
-[    0.683180] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    0.683181] CR2: 0000000000000000 CR3: 0000000001c09001 CR4: 00000000003=
-606e0
-[    0.683182] Call Trace:
-[    0.683189]  intel_svm_finish_prq+0x3c/0x60
-[    0.683191]  free_dmar_iommu+0x1ac/0x1b0
-[    0.683195]  init_dmars+0xaaa/0xaea
-[    0.683200]  ? klist_next+0x19/0xc0
-[    0.683203]  ? pci_do_find_bus+0x50/0x50
-[    0.683205]  ? pci_get_dev_by_id+0x52/0x70
-[    0.683208]  intel_iommu_init+0x498/0x5c7
-[    0.683211]  pci_iommu_init+0x13/0x3c
-[    0.683214]  ? e820__memblock_setup+0x61/0x61
-[    0.683217]  do_one_initcall+0x4d/0x1a0
-[    0.683220]  kernel_init_freeable+0x186/0x20e
-[    0.683222]  ? set_debug_rodata+0x11/0x11
-[    0.683225]  ? rest_init+0xb0/0xb0
-[    0.683226]  kernel_init+0xa/0xff
-[    0.683229]  ret_from_fork+0x1f/0x30
-[    0.683259] Code: 89 ee 44 89 e7 e8 3b e8 ff ff 5b 5d 44 89 e7 44 89 ee =
-41 5c 41 5d 41 5e e9 a8 84 ff ff 48 c7 c7 a8 71 a7 81 31 c0 e8 6a d3 f9 ff =
-<0f> ff 5b 5d 41 5c 41 5d 41 5
-e c3 0f 1f 44 00 00 66 2e 0f 1f 84
-[    0.683285] ---[ end trace f7650e42792627ca ]---
-
-with iommu->pr_irq =3D 0, but no check in intel_svm_finish_prq:
-
-[    0.669561] ------------[ cut here ]------------
-[    0.669563] Trying to free already-free IRQ 0
-[    0.669573] WARNING: CPU: 3 PID: 1 at kernel/irq/manage.c:1546 __free_ir=
-q+0xa4/0x2c0
-[    0.669574] Modules linked in:
-[    0.669577] CPU: 3 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc2 #4
-[    0.669579] Hardware name:                  /NUC7i3BNB, BIOS BNKBL357.86=
-A.0036.2017.0105.1112 01/05/2017
-[    0.669581] RIP: 0010:__free_irq+0xa4/0x2c0
-[    0.669582] RSP: 0000:ffffc90000037cc0 EFLAGS: 00010082
-[    0.669584] RAX: 0000000000000021 RBX: 0000000000000000 RCX: ffffffff81c=
-5e5e8
-[    0.669585] RDX: 0000000000000001 RSI: 0000000000000086 RDI: 00000000000=
-00046
-[    0.669587] RBP: 0000000000000000 R08: 0000000000000000 R09: 00000000000=
-0023c
-[    0.669588] R10: 0000000000000007 R11: 0000000000000000 R12: ffff8802762=
-53960
-[    0.669589] R13: ffff8802762538a4 R14: ffff880276253800 R15: ffff8802762=
-83600
-[    0.669593] FS:  0000000000000000(0000) GS:ffff88027ed80000(0000) knlGS:=
-0000000000000000
-[    0.669594] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    0.669596] CR2: 0000000000000000 CR3: 0000000001c09001 CR4: 00000000003=
-606e0
-[    0.669602] Call Trace:
-[    0.669616]  free_irq+0x30/0x60
-[    0.669620]  intel_svm_finish_prq+0x34/0x60
-[    0.669623]  free_dmar_iommu+0x1ac/0x1b0
-[    0.669627]  init_dmars+0xaaa/0xaea
-[    0.669631]  ? klist_next+0x19/0xc0
-[    0.669634]  ? pci_do_find_bus+0x50/0x50
-[    0.669637]  ? pci_get_dev_by_id+0x52/0x70
-[    0.669639]  intel_iommu_init+0x498/0x5c7
-[    0.669642]  pci_iommu_init+0x13/0x3c
-[    0.669645]  ? e820__memblock_setup+0x61/0x61
-[    0.669648]  do_one_initcall+0x4d/0x1a0
-[    0.669651]  kernel_init_freeable+0x186/0x20e
-[    0.669653]  ? set_debug_rodata+0x11/0x11
-[    0.669656]  ? rest_init+0xb0/0xb0
-[    0.669658]  kernel_init+0xa/0xff
-[    0.669661]  ret_from_fork+0x1f/0x30
-[    0.669662] Code: 7a 08 75 0e e9 c3 01 00 00 4c 39 7b 08 74 57 48 89 da =
-48 8b 5a 18 48 85 db 75 ee 89 ee 48 c7 c7 78 67 a7 81 31 c0 e8 4c 37 fa ff =
-<0f> ff 48 8b 34 24 4c 89 ef e
-8 0e 4c 68 00 49 8b 46 40 48 8b 80
-[    0.669688] ---[ end trace 58a470248700f2fc ]---
-
-Cc: Alex Williamson <alex.williamson@redhat.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
-Reviewed-by: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Fixes: 1a66a836da6 ("gre: add collect_md mode to ERSPAN tunnel")
+Cc: William Tu <u9012063@gmail.com>
+Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/iommu/intel-svm.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ net/ipv4/ip_gre.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index f6697e55c2d4..003b4a4d4b78 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -129,6 +129,7 @@ int intel_svm_enable_prq(struct intel_iommu *iommu)
- 		pr_err("IOMMU: %s: Failed to request IRQ for page request queue\n",
- 		       iommu->name);
- 		dmar_free_hwirq(irq);
-+		iommu->pr_irq =3D 0;
- 		goto err;
- 	}
- 	dmar_writeq(iommu->reg + DMAR_PQH_REG, 0ULL);
-@@ -144,9 +145,11 @@ int intel_svm_finish_prq(struct intel_iommu *iommu)
- 	dmar_writeq(iommu->reg + DMAR_PQT_REG, 0ULL);
- 	dmar_writeq(iommu->reg + DMAR_PQA_REG, 0ULL);
+diff --git a/net/ipv4/ip_gre.c b/net/ipv4/ip_gre.c
+index e0cc6a38b701..5e0e0db341ca 100644
+--- a/net/ipv4/ip_gre.c
++++ b/net/ipv4/ip_gre.c
+@@ -303,8 +303,10 @@ static int erspan_rcv(struct sk_buff *skb, struct tnl_=
+ptk_info *tpi,
+ 				return PACKET_REJECT;
 =20
--	free_irq(iommu->pr_irq, iommu);
--	dmar_free_hwirq(iommu->pr_irq);
--	iommu->pr_irq =3D 0;
-+	if (iommu->pr_irq) {
-+		free_irq(iommu->pr_irq, iommu);
-+		dmar_free_hwirq(iommu->pr_irq);
-+		iommu->pr_irq =3D 0;
-+	}
+ 			md =3D ip_tunnel_info_opts(&tun_dst->u.tun_info);
+-			if (!md)
++			if (!md) {
++				dst_release((struct dst_entry *)tun_dst);
+ 				return PACKET_REJECT;
++			}
 =20
- 	free_pages((unsigned long)iommu->prq, PRQ_ORDER);
- 	iommu->prq =3D NULL;
+ 			md->index =3D index;
+ 			info =3D &tun_dst->u.tun_info;
 --=20
 2.14.1
