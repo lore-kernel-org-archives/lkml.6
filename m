@@ -1,109 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965542AbeCHKa2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 05:30:28 -0500
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:43904 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935716AbeCHKa0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 05:30:26 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w28AUJSV020696
-X-Nifty-SrcIP: [209.85.217.170]
-X-Google-Smtp-Source: AG47ELsxDDJBXpDr7ke+y+ZFy+pD+wZKzItwcQYoP5OpaFK4YCGKyeAF6SRi+NtIqCec5Q+3iPEWa66ICAJlWnyvgoo=
-MIME-Version: 1.0
-In-Reply-To: <2bb55c11-bffb-4099-f1fc-d31fb058d422@cn.fujitsu.com>
-References: <1520471103-10089-1-git-send-email-yamada.masahiro@socionext.com>
- <1520471103-10089-3-git-send-email-yamada.masahiro@socionext.com>
- <4022257e-9ab0-b038-df0e-b15b98cb999f@cn.fujitsu.com> <CAK7LNARhhs4o-cKKzW9exRjbCYpTntdBvUgsx6o-egsTc2pQ0g@mail.gmail.com>
- <2bb55c11-bffb-4099-f1fc-d31fb058d422@cn.fujitsu.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 8 Mar 2018 19:29:38 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASVo=q2DJOM=AY+v_Yowx6Vm7k2uQNibOSWQ4TCvQQGPA@mail.gmail.com>
-Message-ID: <CAK7LNASVo=q2DJOM=AY+v_Yowx6Vm7k2uQNibOSWQ4TCvQQGPA@mail.gmail.com>
-Subject: Re: [PATCH 2/5] kbuild: define KBUILD_MODNAME even if multiple
- modules share objects
-To: Cao jin <caoj.fnst@cn.fujitsu.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Govind Singh <govinds@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S964945AbeCHKbp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 05:31:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57093 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754816AbeCHKbo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 05:31:44 -0500
+Message-ID: <1520505099.7807.60.camel@suse.de>
+Subject: Re: [RFC/RFT][PATCH v2 0/6] sched/cpuidle: Idle loop rework
+From: Mike Galbraith <mgalbraith@suse.de>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Date: Thu, 08 Mar 2018 11:31:39 +0100
+In-Reply-To: <2067762.1uWBf5RSRc@aspire.rjw.lan>
+References: <2067762.1uWBf5RSRc@aspire.rjw.lan>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-08 19:25 GMT+09:00 Cao jin <caoj.fnst@cn.fujitsu.com>:
-> Masahiro-san
->
-> On 03/08/2018 06:21 PM, Masahiro Yamada wrote:
->> 2018-03-08 19:11 GMT+09:00 Cao jin <caoj.fnst@cn.fujitsu.com>:
->>>
->>>
->>> On 03/08/2018 09:05 AM, Masahiro Yamada wrote:
->>>> Currently, KBUILD_MODNAME is defined only when $(modname) contains
->>>> just one word.  If an object is shared among multiple modules,
->>>> undefined KBUILD_MODNAME could cause a build error.  For example,
->>>> if CONFIG_DYNAMIC_DEBUG is enabled, any call of printk() populates
->>>> .modname, then fails to build due to undefined KBUILD_MODNAME.
->>>>
->>>> Take the following code as an example:
->>>>
->>>>   obj-m += foo.o
->>>>   obj-m += bar.o
->>>>   foo-objs := foo-bar-common.o foo-main.o
->>>>   bar-objs := foo-bar-common.o bar-main.o
->>>>
->>>> In this case, there is room for argument what to define for
->>>> KBUILD_MODNAME when foo-bar-common.o is being compiled.
->>>> "foo", "bar", or what else?
->>>>
->>>> One idea is to define colon-separated modules that share the object,
->>>> in this case, "bar:foo" (modules are sorted alphabetically by
->>>> $(sort ...).
->>>>
->>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->>>> ---
->>>>
->>>>  scripts/Makefile.lib | 9 +++++----
->>>>  1 file changed, 5 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
->>>> index a7e315f..a1fbd6a 100644
->>>> --- a/scripts/Makefile.lib
->>>> +++ b/scripts/Makefile.lib
->>>> @@ -92,8 +92,7 @@ subdir-ym   := $(addprefix $(obj)/,$(subdir-ym))
->>>>  #       differ in different configs.
->>>>  name-fix = $(squote)$(quote)$(subst $(comma),_,$(subst -,_,$1))$(quote)$(squote)
->>>>  basename_flags = -DKBUILD_BASENAME=$(call name-fix,$(basetarget))
->>>> -modname_flags  = $(if $(filter 1,$(words $(modname))),\
->>>> -                 -DKBUILD_MODNAME=$(call name-fix,$(modname)))
->>>> +modname_flags  = -DKBUILD_MODNAME=$(call name-fix,$(modname))
->>>>
->>>
->>> I guess there is comment also need to be modified above this code hunk:
->>>
->>> Note: Files that end up in two or more modules are compiled without the
->>>       KBUILD_MODNAME definition. The reason is that any made-up name
->>>       would differ in different configs.
->>
->>
->> Why do I have to add lying comments here?
->>
->> The commit subject/log claims KBUILD_MODNAME should be _always_ defined.
->>
->
-> I feel you misunderstand my intention, the comment I mentioned is
-> already there, so they should be modified according to your patch.
->
+On Tue, 2018-03-06 at 09:57 +0100, Rafael J. Wysocki wrote:
+> Hi All,
 
-Ugh.  Sorry I missed your intention.
+Greetings,
 
-I will remove the comment.  Thanks!
+> Thanks a lot for the discussion so far!
+> 
+> Here's a new version of the series addressing some comments from the
+> discussion and (most importantly) replacing patches 4 and 5 with another
+> (simpler) patch.
 
+Oddity: these patches seemingly manage to cost a bit of power when
+lightly loaded.  (but didn't cut cross core nohz cost much.. darn)
 
+i4790 booted nopti nospectre_v2
 
--- 
-Best Regards
-Masahiro Yamada
+30 sec tbench
+4.16.0.g1b88acc-master (virgin)
+Throughput 559.279 MB/sec  1 clients  1 procs  max_latency=0.046 ms
+Throughput 997.119 MB/sec  2 clients  2 procs  max_latency=0.246 ms
+Throughput 1693.04 MB/sec  4 clients  4 procs  max_latency=4.309 ms
+Throughput 3597.2 MB/sec  8 clients  8 procs  max_latency=6.760 ms
+Throughput 3474.55 MB/sec  16 clients  16 procs  max_latency=6.743 ms
+
+4.16.0.g1b88acc-master (+v2)
+Throughput 588.929 MB/sec  1 clients  1 procs  max_latency=0.291 ms
+Throughput 1080.93 MB/sec  2 clients  2 procs  max_latency=0.639 ms
+Throughput 1826.3 MB/sec  4 clients  4 procs  max_latency=0.647 ms
+Throughput 3561.01 MB/sec  8 clients  8 procs  max_latency=1.279 ms
+Throughput 3382.98 MB/sec  16 clients  16 procs  max_latency=4.817 ms
+
+4.16.0.g1b88acc-master (+local nohz mitigation etc for reference [1])
+Throughput 722.559 MB/sec  1 clients  1 procs  max_latency=0.087 ms
+Throughput 1208.59 MB/sec  2 clients  2 procs  max_latency=0.289 ms
+Throughput 2071.94 MB/sec  4 clients  4 procs  max_latency=0.654 ms
+Throughput 3784.91 MB/sec  8 clients  8 procs  max_latency=0.974 ms
+Throughput 3644.4 MB/sec  16 clients  16 procs  max_latency=5.620 ms
+
+turbostat -q -- firefox /root/tmp/video/BigBuckBunny-DivXPlusHD.mkv & sleep 300;killall firefox
+
+                        PkgWatt
+                              1     2     3
+4.16.0.g1b88acc-master     6.95  7.03  6.91 (virgin)
+4.16.0.g1b88acc-master     7.20  7.25  7.26 (+v2)
+4.16.0.g1b88acc-master     6.90  7.06  6.95 (+local)
+
+Why would v2 charge the light firefox load a small but consistent fee?
+
+	-Mike
+
+1. see low end, that's largely due to nohz throttling
