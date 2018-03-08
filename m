@@ -1,50 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964999AbeCHCoE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 21:44:04 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5746 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934577AbeCHCe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 21:34:57 -0500
-From: Peng Li <lipeng321@huawei.com>
-To: <davem@davemloft.net>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
-        <lipeng321@huawei.com>
-Subject: [PATCH net-next 01/23] {topost} net: hns3: VF should get the real rss_size instead of rss_size_max
-Date: Thu, 8 Mar 2018 11:06:26 +0800
-Message-ID: <1520478408-116992-2-git-send-email-lipeng321@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520478408-116992-1-git-send-email-lipeng321@huawei.com>
-References: <1520478408-116992-1-git-send-email-lipeng321@huawei.com>
+        id S934818AbeCHCrZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 21:47:25 -0500
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:46802 "EHLO
+        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934597AbeCHCrX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 21:47:23 -0500
+X-Google-Smtp-Source: AG47ELvNUPh+Zt9VprohmHv7Ifx0toXUmB33BTDOEyN1TxEz6yo1P9m/bl0Jgv5Az9Ec3UXpFYUJH4Z05Wwo9zaJLlU=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.71.200.31]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180307225411.GA20370@piout.net>
+References: <b8a475beaa4739032e3346572af2e412ebccb787.1519633350.git.baolin.wang@linaro.org>
+ <20180307225411.GA20370@piout.net>
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Thu, 8 Mar 2018 10:47:22 +0800
+Message-ID: <CAMz4kuKcLif02j6VwfAgQ1=4orhydboj9yXgvau=KQofkuosLA@mail.gmail.com>
+Subject: Re: [RESEND PATCH 1/3] rtc: Use time64_t to save range_max of RTC
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>, linux-rtc@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VF driver should get the real rss_size which is assigned
-by host PF, not rss_size_max.
+Hi Alexandre,
 
-Signed-off-by: Peng Li <lipeng321@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 8 March 2018 at 06:54, Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
+> Hi,
+>
+> On 26/02/2018 at 16:33:56 +0800, Baolin Wang wrote:
+>> We need use rtc->range_max to valid if the time values are valid,
+>> and the time values are saved by time64_t type. So change the
+>> rtc->range_max to time64_t type for comparison correctly.
+>>
+>
+> I'm not applying this one because the described issue will never happen
+> as negative times are forbidden by the rtc subsystem.
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-index f38fc5c..31383a6 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-@@ -291,7 +291,7 @@ static int hclge_get_vf_queue_info(struct hclge_vport *vport,
- 
- 	/* get the queue related info */
- 	memcpy(&resp_data[0], &vport->alloc_tqps, sizeof(u16));
--	memcpy(&resp_data[2], &hdev->rss_size_max, sizeof(u16));
-+	memcpy(&resp_data[2], &vport->nic.kinfo.rss_size, sizeof(u16));
- 	memcpy(&resp_data[4], &hdev->num_desc, sizeof(u16));
- 	memcpy(&resp_data[6], &hdev->rx_buf_len, sizeof(u16));
- 
+OK.
+
+>
+> I've applied the two following patches
+>
+
+Thanks.
+
+
 -- 
-2.9.3
+Baolin.wang
+Best Regards
