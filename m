@@ -1,59 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751205AbeCHUvo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 15:51:44 -0500
-Received: from ozlabs.org ([103.22.144.67]:48273 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750761AbeCHUvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 15:51:42 -0500
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Fri, 9 Mar 2018 07:51:19 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commits in the rdma tree
-Message-ID: <20180309075119.7b536dcd@canb.auug.org.au>
+        id S1751316AbeCHUw4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 15:52:56 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36554 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751185AbeCHUwz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 15:52:55 -0500
+Date: Thu, 8 Mar 2018 21:52:14 +0100
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Wanpeng Li <kernellwp@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH 3/3] KVM: X86: Provides userspace with a capability to
+ not intercept PAUSE
+Message-ID: <20180308205213.GL12290@flask>
+References: <1519897782-8124-1-git-send-email-wanpengli@tencent.com>
+ <1519897782-8124-3-git-send-email-wanpengli@tencent.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/LlBxNeKIfEg24y=8bDH65p0"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1519897782-8124-3-git-send-email-wanpengli@tencent.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/LlBxNeKIfEg24y=8bDH65p0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+2018-03-01 17:49+0800, Wanpeng Li:
+> From: Wanpeng Li <wanpengli@tencent.com>
+> 
+> Allow to disable pause loop exit/pause filtering on a per VM basis.
+> 
+> If some VMs have dedicated host CPUs, they won't be negatively affected
+> due to needlessly intercepted PAUSE instructions.
+> 
+> Thanks to Jan H. Schönherr's initial patch.
 
-Hi all,
-
-Commits
-
-  63cf1a902c9d ("IB/srpt: Add RDMA/CM support")
-  86af61764151 ("IB/rxe: remove unnecessary skb_clone")
-  31f1bd14cbfe ("IB/rxe: remove unnecessary rxe in rxe_send")
-  befd8d98f230 ("IB/rxe: change the function rxe_init_device_param type")
-
-are missing a Signed-off-by from their committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/LlBxNeKIfEg24y=8bDH65p0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqhokcACgkQAVBC80lX
-0GyHyQgApLL5laroPtc+4Z2GOyunGs1dmdfMTfMGxeTVm2FQzRAeFIxtRc/0SK3B
-sW+cfyKMOaZMxaWl0uZbin03WyKS/Tj/1NdewrAaTqnUZ4cJ7/ui+r1vU5qd8v83
-PFZhGvzeje7O2P/zwpPjrez86H2+W8IKE+s41Fqd5A9TLNvDc6z+gj0NK962xunh
-6SJWup0HwVEBW4AHeZRyJkTRdjP5Qgv6uOo+mM/KmikHcP9CNJcR6cmY2kGVs6oG
-JqiRMljLCCT96kt7A1Q0Hs7jbiBDDa8FI15IhZMAhWEzof/c79vQt3CxYny6ubcK
-nUCwxSTDiaozmz9AHrP8bpee+7t7yQ==
-=dKGq
------END PGP SIGNATURE-----
-
---Sig_/LlBxNeKIfEg24y=8bDH65p0--
+Please Cc him on v2.
