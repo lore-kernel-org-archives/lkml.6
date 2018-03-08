@@ -1,145 +1,180 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755254AbeCHIUK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 03:20:10 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:45155 "EHLO
+        id S1755261AbeCHIWe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 03:22:34 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:45207 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751025AbeCHIUI (ORCPT
+        with ESMTP id S1751315AbeCHIWc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 03:20:08 -0500
-X-Google-Smtp-Source: AG47ELsmewVArC2hPwiiXxbTDsNMfmUXoqAvI1waKLhpkk5zJB43B5/Bij+0PYXnHlpEEp5fMdErsQ==
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.15\))
-Subject: Re: [PATCH 2/2] platform/x86: dell-*: Add interface for switchable
- graphics status query
-From: Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <d96477ef9ee24fb59d251f29dc0a3f81@ausx13mpc124.AMER.DELL.COM>
-Date: Thu, 8 Mar 2018 16:20:00 +0800
-Cc: mjg59@srcf.ucam.org, pali.rohar@gmail.com, dvhart@infradead.org,
-        andy@infradead.org, tiwai@suse.com,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <3B4D9410-9CD4-410D-A1FB-7EB6CD2C058B@canonical.com>
-References: <20180308071207.19850-1-kai.heng.feng@canonical.com>
- <20180308071207.19850-2-kai.heng.feng@canonical.com>
- <d96477ef9ee24fb59d251f29dc0a3f81@ausx13mpc124.AMER.DELL.COM>
-To: Mario.Limonciello@dell.com
-X-Mailer: Apple Mail (2.3445.6.15)
+        Thu, 8 Mar 2018 03:22:32 -0500
+X-Google-Smtp-Source: AG47ELv6vXTO5ZLjNUVw5B4ZtnU/pOI3eMDA36Rh3HMauauDlURZMqQQih5wno2gmDn4WZM0/DmxIA==
+From: Christian Brauner <christian.brauner@canonical.com>
+X-Google-Original-From: Christian Brauner <christian.brauner@ubuntu.com>
+Date: Thu, 8 Mar 2018 09:22:29 +0100
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+Subject: Re: Invalid /proc/<pid>/fd/{0,1,2} symlinks with TIOCGPTPEER
+Message-ID: <20180308082228.GD22728@gmail.com>
+References: <20180307161744.GA17562@gmail.com>
+ <878tb3u1hv.fsf@xmission.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <878tb3u1hv.fsf@xmission.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Mar 07, 2018 at 01:30:52PM -0600, Eric W. Biederman wrote:
+> Christian Brauner <christian.brauner@canonical.com> writes:
+> 
+> > Hey,
+> >
+> > We discovered a potential bug in the devpts implementation via
+> > TIOCGPTPEER ioctl()s today. We've tackled a similar problem already in:
+> >
+> > commit 311fc65c9fb9c966bca8e6f3ff8132ce57344ab9
+> > Author: Eric W. Biederman <ebiederm@xmission.com>
+> > Date:   Thu Aug 24 15:13:29 2017 -0500
+> >
+> >     pty: Repair TIOCGPTPEER
+> >
+> > Most libcs will *still* look at /dev/ptmx when opening the master fd of
+> > pty device. Usually, /dev/ptmx will nowadays be either a symlink to
+> > /dev/pts/ptmx or it will be a second device node with permissions 666
+> > whereas /dev/pts/ptmx will usually have permissions 000. Afaik, we've
+> > also always supported making /dev/ptmx a bind-mount to /dev/pts/ptmx or
+> > at least I haven't observed any issues with this so far and it's
+> > something fairly common in containers. So in short, it should be legal
+> > to do:
+> >
+> > mount --bind /dev/pts/ptmx /dev/ptmx
+> > chmod 666 /dev/ptmx
+> >
+> > However, for any libc implementation or program that uses TIOCGPTPEER
+> > the /proc/<pid>/fd/{0,1,2} symlinks are broken (currently affects at
+> > least glibc 2.27) with bind-mounts of /dev/pts/ptmx to /dev/ptmx. A
+> > quick reproducer is:
+> >
+> > unshare --mount
+> > mount --bind /dev/pts/ptmx /dev/ptmx
+> > chmod 666 /dev/ptmx
+> > script
+> > ls -al /proc/self/fd/0
+> >
+> > Let's assume the slave device index I received was 5 then I would expect to
+> > see:
+> >
+> > ls -al /proc/self/fd/0
+> > lrwx------ 1 chb chb 64 Mar  7 16:41 /proc/self/fd/0 -> /dev/pts/5
+> >
+> > But what I actually see is:
+> >
+> > ls -al /proc/self/fd/0
+> > lrwx------ 1 chb chb 64 Mar  7 16:41 /proc/self/fd/0 -> /
+> >
+> > I think the explanation for this is fairly straightforward. When
+> > userspace does:
+> >
+> > master = open("/dev/ptmx", O_RDWR | O_NOCTTY);
+> > slave = ioctl(master, TIOCGPTPEER, O_RDWR | O_NOCTTY);
+> >
+> > and /dev/ptmx is a bind-mount of /dev/pts/ptmx looking up the root mount
+> > of the dentry for the slave it appears to the kernel as if the dentry is
+> > escaping it's bind-mount:
+> >
+> > ├─/dev        udev          devtmpfs   rw,nosuid,relatime,size=4001260k,nr_inodes=1000315,mode=755
+> > │ ├─/dev/pts  devpts        devpts     rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000
+> > │ └─/dev/ptmx devpts[/ptmx] devpts     rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000
+> >
+> > since the root mount of the dentry is /dev/pts but the root mount of
+> > /dev/ptmx is /dev if I'm correct so similar to what Linus pointed out in
+> > a previous discussion (see [1]) before. So we still record the "wrong"
+> > vfsmount when /dev/ptmx is a bind-mount and then hit the problem when we
+> > call devpts_mntget() in drivers/tty/pty.c.
+> 
+> I think your analysis of why we return / is correct. If the root of the
+> mount is a file (aka /dev/pts/ptmx).  Then any other file will on that
+> mount will not be under the root of the mount, and will be displayed
+> as '/'.  Because we have in fact escaped the root of the mount.
+> 
+> I think this is more of a quality of implementation issue more than a
+> bug per se.
 
+It's at least a regression since this used to work before. :)
 
-> On Mar 8, 2018, at 3:34 PM, Mario.Limonciello@dell.com wrote:
->
->> -----Original Message-----
->> From: Kai-Heng Feng [mailto:kai.heng.feng@canonical.com]
->> Sent: Thursday, March 8, 2018 3:12 PM
->> To: mjg59@srcf.ucam.org; pali.rohar@gmail.com; dvhart@infradead.org;
->> andy@infradead.org; Limonciello, Mario <Mario_Limonciello@Dell.com>;
->> tiwai@suse.com
->> Cc: platform-driver-x86@vger.kernel.org; linux-kernel@vger.kernel.org;  
->> alsa-
->> devel@alsa-project.org; Kai-Heng Feng <kai.heng.feng@canonical.com>
->> Subject: [PATCH 2/2] platform/x86: dell-*: Add interface for switchable  
->> graphics
->> status query
->>
->> On some Dell platforms, there's a BIOS option "Enable Switchable
->> Graphics". This information is useful if we want to do different things
->> based on this value, e.g. disable unused audio controller that comes
->> with the discrete graphics.
->
-> I was expecting the follow on patch that uses this interface too as part  
-> of the
-> series. This patch itself however looks like.
+> 
+> > So I thought about this and - in case my analysis is correct - the
+> > solution didn't seem obvious to me as a bind-mount has no concept of
+> > what it's "parent" is (Which in this case should be the devpts mount at
+> > /dev/pts.).
+> 
+> We might be able to improve the quality of the implementation, by
+> noticing this case early (sb->s_root != mnt->mnt_root) and using the
+> same tricks on /dev/pts/ptmx as we do on /dev/ptmx.  That is looking
+> in ../pts and see if the filesystem we want is there.
+> 
+> It would be a wee bit tricky but doable.  The practical question becomes
+> what breaks and what makes it worth maintaining such a mechanism.
+> 
+> I don't remember how important it is to have a valid path in proc.  So
+> I won't comment on how important it is to improve the quality of
+> the implementation.
 
-I thought it should be easier to separate patch series for different  
-subsystems.
-But of course I can make them the as one series.
+It's quite important for containers. The problem is that we can't (yet)
+mknod() in a user namespace and making /dev/ptmx a symlink to
+/dev/pts/ptmx will cause issues when used together with path-based LSMs
+like AppArmor so a bind-mount is the only reliable option.
 
-I'll resend a v2 for this.
+> 
+> The code can be improved by doing something like:
 
-Kai-Heng
+Right, what do you think about Linus suggestion? I'm happy to look into
+it.
 
->
-> Reviewed-by: Mario Limonciello <mario.limonciello@dell.com>
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> ---
->>  drivers/platform/x86/dell-laptop.c | 23 +++++++++++++++++++++++
->>  drivers/platform/x86/dell-smbios.c |  2 ++
->>  drivers/platform/x86/dell-smbios.h |  2 ++
->>  3 files changed, 27 insertions(+)
->>
->> diff --git a/drivers/platform/x86/dell-laptop.c  
->> b/drivers/platform/x86/dell-laptop.c
->> index 8ba820e6c3d0..3f6fc07b8cf2 100644
->> --- a/drivers/platform/x86/dell-laptop.c
->> +++ b/drivers/platform/x86/dell-laptop.c
->> @@ -2116,6 +2116,29 @@ int dell_micmute_led_set(int state)
->>  }
->>  EXPORT_SYMBOL_GPL(dell_micmute_led_set);
->>
->> +int dell_switchable_gfx_enabled(bool *enabled)
->> +{
->> +	struct calling_interface_buffer buffer;
->> +	struct calling_interface_token *token;
->> +	int ret;
->> +
->> +	*enabled = false;
->> +
->> +	token = dell_smbios_find_token(SWITCHABLE_GRAPHICS_ENABLE);
->> +	if (!token)
->> +		return -ENODEV;
->> +
->> +	dell_fill_request(&buffer, token->location, 0, 0, 0);
->> +	ret = dell_send_request(&buffer, CLASS_TOKEN_READ,
->> SELECT_TOKEN_STD);
->> +	if (ret)
->> +		return ret;
->> +
->> +	*enabled = !!buffer.output[1];
->> +
->> +	return 0;
->> +}
->> +EXPORT_SYMBOL_GPL(dell_switchable_gfx_enabled);
->> +
->>  static int __init dell_init(void)
->>  {
->>  	struct calling_interface_token *token;
->> diff --git a/drivers/platform/x86/dell-smbios.c  
->> b/drivers/platform/x86/dell-smbios.c
->> index 8541cde4cb7d..ca38b9d9dcf4 100644
->> --- a/drivers/platform/x86/dell-smbios.c
->> +++ b/drivers/platform/x86/dell-smbios.c
->> @@ -86,6 +86,8 @@ struct token_range {
->>  static struct token_range token_whitelist[] = {
->>  	/* used by userspace: fwupdate */
->>  	{CAP_SYS_ADMIN,	CAPSULE_EN_TOKEN,	CAPSULE_DIS_TOKEN},
->> +	/* can indicate to userspace Switchable Graphics enable status */
->> +	{CAP_SYS_ADMIN,	SWITCHABLE_GRAPHICS_ENABLE,
->> 	SWITCHABLE_GRAPHICS_DISABLE},
->>  	/* can indicate to userspace that WMI is needed */
->>  	{0x0000,	WSMT_EN_TOKEN,		WSMT_DIS_TOKEN}
->>  };
->> diff --git a/drivers/platform/x86/dell-smbios.h  
->> b/drivers/platform/x86/dell-smbios.h
->> index 138d478d9adc..b012d4abd239 100644
->> --- a/drivers/platform/x86/dell-smbios.h
->> +++ b/drivers/platform/x86/dell-smbios.h
->> @@ -37,6 +37,8 @@
->>  #define KBD_LED_AUTO_100_TOKEN	0x02F6
->>  #define GLOBAL_MIC_MUTE_ENABLE	0x0364
->>  #define GLOBAL_MIC_MUTE_DISABLE	0x0365
->> +#define SWITCHABLE_GRAPHICS_ENABLE	0x037A
->> +#define SWITCHABLE_GRAPHICS_DISABLE	0x037B
->>
->>  struct notifier_block;
->>
->> --
->> 2.15.1
+Christian
+
+> 
+> static int devpts_ptmx_pts_path(struct path *path)
+> {
+> 	struct super_block *sb;
+> 	int err;
+> 
+> 	/* Is a devpts filesystem at "pts" in the same directory? */
+> 	err = path_pts(path);
+> 	if (err)
+> 		return err;
+> 
+> 	/* Is the path the root of a devpts filesystem? */
+> 	sb = path->mnt->mnt_sb;
+> 	if ((sb->s_magic != DEVPTS_SUPER_MAGIC) ||
+> 	    (path->mnt->mnt_root != sb->s_root))
+> 		return -ENODEV;
+> 
+> 	return 0;
+> }
+> 
+> ....
+> 	if ((DEVPTS_SB(path.mnt->mnt_sb) == fsi) &&
+> 	    (path.mnt->mnt_root == fsi->ptmx_dentry)) {
+> 		/* While the start point is a bind mount of single file
+>                  * walk upwards.
+>                  */
+>             	while ((path.mnt->mnt_root == path.dentry) && follow_up(&path))
+> 			;
+> 		if (devpts_ptmx_pts_path(&path) == 0) {
+>                 	dput(path.dentry);
+>                    	return path.mnt;     
+>                 }
+>                 /* No luck fall through to the old code */
+>                 path_put(path);
+>                 path = filp->f_path;
+>                 path_get(&path);
+>         }
+> 
+> The fall through vs fail would be a judgement on how important it is to
+> have a useable path in proc for TIOCPTPEER.
+> 
+> Eric
