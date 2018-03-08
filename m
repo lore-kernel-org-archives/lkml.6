@@ -1,76 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935516AbeCHFgB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 00:36:01 -0500
-Received: from mail-qt0-f174.google.com ([209.85.216.174]:40200 "EHLO
-        mail-qt0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935430AbeCHFf6 (ORCPT
+        id S966611AbeCHFiv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 00:38:51 -0500
+Received: from mail-it0-f43.google.com ([209.85.214.43]:40005 "EHLO
+        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966074AbeCHFis (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 00:35:58 -0500
-X-Google-Smtp-Source: AG47ELv6aDD3zRZF2OimR14/girKiJpxmnnyHhotYux91f6LrXkmWWbemRIxGxePTA7dZifyAVuaoNlTjLKlST6UgTk=
+        Thu, 8 Mar 2018 00:38:48 -0500
+X-Google-Smtp-Source: AG47ELukZFX98D7pgdPsPJiyd1UgunJvdQPLf2lO2hGFGi00+TVQUx5hmlInps+EJwRRBXAOdyAQdcPPGqjuuLPoSjo=
 MIME-Version: 1.0
-In-Reply-To: <CAOh2x=njFxcwDfQs1g3-Estrun5j=fSYVnG-EaVw0UcRaDKsSg@mail.gmail.com>
-References: <cover.1520274879.git.amit.kucheria@linaro.org>
- <3b80853abb45a9e067cf7a16754b07bb67712457.1520274879.git.amit.kucheria@linaro.org>
- <6d5aeab8-aafe-fa3b-585e-953a34864e7d@arm.com> <CAP245DVwaY84+fZrbne1RLK9gKsfSTE2TELDAC0RkZGMzFkpWg@mail.gmail.com>
- <CAOh2x=njFxcwDfQs1g3-Estrun5j=fSYVnG-EaVw0UcRaDKsSg@mail.gmail.com>
-From: Amit Kucheria <amit.kucheria@linaro.org>
-Date: Thu, 8 Mar 2018 11:05:55 +0530
-Message-ID: <CAP245DWAnYqbKJ_+NMqYvP9suwgmmkZ6twSBfAD64FxqztgnuA@mail.gmail.com>
-Subject: Re: [PATCH] thermal: of: Allow selection of thermal governor in DT
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-        Ram Chandrasekar <rkumbako@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>, Lina Iyer <ilina@codeaurora.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <CACPK8Xe5rVtB6hUo4xW9qSz-T+kehvXSRv5g1_6KOO=BYr8Qwg@mail.gmail.com>
+References: <1520440570-25280-1-git-send-email-eajames@linux.vnet.ibm.com> <CACPK8Xe5rVtB6hUo4xW9qSz-T+kehvXSRv5g1_6KOO=BYr8Qwg@mail.gmail.com>
+From: Lei YU <mine260309@gmail.com>
+Date: Thu, 8 Mar 2018 13:38:47 +0800
+Message-ID: <CAARXrtk6ZynSzm=xA1E1M8aSJNb=BZ7jxg4gvWa_QJ_=LaQeog@mail.gmail.com>
+Subject: Re: [PATCH] clk: aspeed: Prevent reset if clock is enabled
+To: Joel Stanley <joel@jms.id.au>
+Cc: Eddie James <eajames@linux.vnet.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+        sboyd@kernel.org, Ryan Chen <ryan_chen@aspeedtech.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 8, 2018 at 10:19 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> On Wed, Mar 7, 2018 at 4:29 PM, Amit Kucheria <amit.kucheria@linaro.org> wrote:
->> Cpufreq/cpuidle are designed to control a single parameter while
->> thermal framework is trying to mitigate heat from several disparate
->> sources that are throttled in different ways. Besides, cpufreq/cpuidle
->> have somewhat mature governors. Cpuidle has only one governor (for
->> tickless) - menu governor, cpufreq has ondemand in mainline, replaced
->> by interactive in android and hopefully soon both will be replaced by
+On Thu, Mar 8, 2018 at 11:42 AM, Joel Stanley <joel@jms.id.au> wrote:
+>> +       /* Only reset/enable/unreset if clock is stopped */
+>> +       regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
+>> +       if (!(reg & clk))
+>> +               return 0;
 >
-> Interactive and schedfreq are already removed from Android 4.4 and 4.9.
-> It used schedutil now.
-
-Good to hear.
-
->> schedutil.
->>
->> Badly configured cpufreq/cpuidle/devfreq only leads to wasted power,
->> while badly configured thermal zone leads to the loss of operation
->> e.g. reboots, too hot to touch, etc.
+> This doesn't generalise to all of the clocks, as some clocks use set
+> to disable. Perhaps we could do something like this:
 >
-> I don't think such heat-ups will happen right during boot, where some
-> init.rc should
-> come up and change the governor.
+>        /* Only reset/enable/unreset if clock is stopped. The LPC clock
+> on ast2500 has issues otherwise */
+>        enval = (gate->flags & CLK_GATE_SET_TO_DISABLE) ? 0 : clk;
+>        regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
+>        if ((reg & clk) == enval) {
+>                spin_unlock_irqrestore(gate->lock, flags);
+>                return 0;
+>        }
+>
+> I think we should also do this operation under the lock.
+>
+> Please cc Ryan Chen <ryan_chen@aspeedtech.com> so he can confirm that
+> this workaround is valid, and credit Lei who spent a lot of time
+> investigating this issue. Perhaps "Root-caused-by".
+>
 
-Interestingly enough, there are some patches that make the thermal
-framework start earlier to deal with boot-time thermal issues. I
-expect to post them soon. :-) These are required, for example, if the
-device goes into a reboot loop - the device might not even make it to
-the point in userspace where the governors are setup. In such a loop,
-the temperature constantly keeps increasing.
+The code has aspeed_clk_is_enabled() already, why not just:
 
-> Over that if we are worried about production images only, then what prevents us
-> to select the right default governor in the defconfig ? We shouldn't
-> be worried about
-> multi-platform kernels for production images.
-
-I was refering to the 'make defconfig' out-of-box experience that
-makes the majority of developer boards/devices out there stable to
-work on. I can't do that today.
-
-Regards,
-Amit
+    if (aspeed_clk_is_enabled(hw))
+        return 0;
