@@ -1,158 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966240AbeCHKzA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 05:55:00 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39316 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934907AbeCHKy6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 05:54:58 -0500
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Cc: linux-block@vger.kernel.org, Laurence Oberman <loberman@redhat.com>,
-        Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V3 4/4] genirq/affinity: irq vector spread among online CPUs as far as possible
-Date: Thu,  8 Mar 2018 18:53:58 +0800
-Message-Id: <20180308105358.1506-5-ming.lei@redhat.com>
-In-Reply-To: <20180308105358.1506-1-ming.lei@redhat.com>
-References: <20180308105358.1506-1-ming.lei@redhat.com>
+        id S1755663AbeCHK5O (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 05:57:14 -0500
+Received: from mga12.intel.com ([192.55.52.136]:8003 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755478AbeCHK5M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 05:57:12 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,440,1515484800";
+   d="scan'208";a="22726247"
+Date: Thu, 8 Mar 2018 18:56:14 +0800
+From: kbuild test robot <fengguang.wu@intel.com>
+To: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Cc: kbuild-all@01.org, Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org
+Subject: [linux-next:master 6181/6533] net/rds/message.c:336:5: sparse:
+ symbol 'rds_message_zcopy_from_user' was not declared. Should it be static?
+Message-ID: <201803081854.WYn8kS5Y%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
-may cause irq vector assigned to all offline CPUs, and this kind of
-assignment may cause much less irq vectors mapped to online CPUs, and
-performance may get hurt.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+head:   c6f1a8c953479b390458e36fb838d96199a5f466
+commit: d40a126b16ea851f858f97b0e214d97c8355cecb [6181/6533] rds: refactor zcopy code into rds_message_zcopy_from_user
+reproduce:
+        # apt-get install sparse
+        git checkout d40a126b16ea851f858f97b0e214d97c8355cecb
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
-For example, in a 8 cores system, 0~3 online, 4~8 offline/not present,
-see 'lscpu':
 
-	[ming@box]$lscpu
-	Architecture:          x86_64
-	CPU op-mode(s):        32-bit, 64-bit
-	Byte Order:            Little Endian
-	CPU(s):                4
-	On-line CPU(s) list:   0-3
-	Thread(s) per core:    1
-	Core(s) per socket:    2
-	Socket(s):             2
-	NUMA node(s):          2
-	...
-	NUMA node0 CPU(s):     0-3
-	NUMA node1 CPU(s):
-	...
+sparse warnings: (new ones prefixed by >>)
 
-For example, one device has 4 queues:
+>> net/rds/message.c:336:5: sparse: symbol 'rds_message_zcopy_from_user' was not declared. Should it be static?
 
-1) before 84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
-	irq 39, cpu list 0
-	irq 40, cpu list 1
-	irq 41, cpu list 2
-	irq 42, cpu list 3
+Please review and possibly fold the followup patch.
 
-2) after 84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
-	irq 39, cpu list 0-2
-	irq 40, cpu list 3-4,6
-	irq 41, cpu list 5
-	irq 42, cpu list 7
-
-3) after applying this patch against V4.15+:
-	irq 39, cpu list 0,4
-	irq 40, cpu list 1,6
-	irq 41, cpu list 2,5
-	irq 42, cpu list 3,7
-
-This patch tries to do irq vector spread among online CPUs as far as
-possible by 2 stages spread.
-
-The above assignment 3) isn't the optimal result from NUMA view, but it
-returns more irq vectors with online CPU mapped, given in reality one CPU
-should be enough to handle one irq vector, so it is better to do this way.
-
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reported-by: Laurence Oberman <loberman@redhat.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- kernel/irq/affinity.c | 35 +++++++++++++++++++++++++++++------
- 1 file changed, 29 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-index 616f040c5d02..253c5bf85d18 100644
---- a/kernel/irq/affinity.c
-+++ b/kernel/irq/affinity.c
-@@ -106,6 +106,9 @@ static int irq_build_affinity_masks(const struct irq_affinity *affd,
- 	nodemask_t nodemsk = NODE_MASK_NONE;
- 	int n, nodes, cpus_per_vec, extra_vecs, done = 0;
- 
-+	if (!cpumask_weight(cpu_mask))
-+		return 0;
-+
- 	nodes = get_nodes_in_cpumask(node_to_cpumask, cpu_mask, &nodemsk);
- 
- 	/*
-@@ -175,9 +178,9 @@ struct cpumask *
- irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- {
- 	int affv = nvecs - affd->pre_vectors - affd->post_vectors;
--	int curvec;
-+	int curvec, vecs_offline, vecs_online;
- 	struct cpumask *masks;
--	cpumask_var_t nmsk, *node_to_cpumask;
-+	cpumask_var_t nmsk, cpu_mask, *node_to_cpumask;
- 
- 	/*
- 	 * If there aren't any vectors left after applying the pre/post
-@@ -193,9 +196,12 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- 	if (!masks)
- 		goto out;
- 
-+	if (!alloc_cpumask_var(&cpu_mask, GFP_KERNEL))
-+		goto out;
-+
- 	node_to_cpumask = alloc_node_to_cpumask();
- 	if (!node_to_cpumask)
--		goto out;
-+		goto out_free_cpu_mask;
- 
- 	/* Fill out vectors at the beginning that don't need affinity */
- 	for (curvec = 0; curvec < affd->pre_vectors; curvec++)
-@@ -204,15 +210,32 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- 	/* Stabilize the cpumasks */
- 	get_online_cpus();
- 	build_node_to_cpumask(node_to_cpumask);
--	curvec += irq_build_affinity_masks(affd, curvec, affv,
--					   node_to_cpumask,
--					   cpu_possible_mask, nmsk, masks);
-+	/* spread on online CPUs starting from the vector of affd->pre_vectors */
-+	vecs_online = irq_build_affinity_masks(affd, curvec, affv,
-+					       node_to_cpumask,
-+					       cpu_online_mask, nmsk, masks);
-+
-+	/* spread on offline CPUs starting from the next vector to be handled */
-+	if (vecs_online >= affv)
-+		curvec = affd->pre_vectors;
-+	else
-+		curvec = affd->pre_vectors + vecs_online;
-+	cpumask_andnot(cpu_mask, cpu_possible_mask, cpu_online_mask);
-+	vecs_offline = irq_build_affinity_masks(affd, curvec, affv,
-+						node_to_cpumask,
-+					        cpu_mask, nmsk, masks);
- 	put_online_cpus();
- 
- 	/* Fill out vectors at the end that don't need affinity */
-+	if (vecs_online + vecs_offline >= affv)
-+		curvec = affv + affd->pre_vectors;
-+	else
-+		curvec = affd->pre_vectors + vecs_online + vecs_offline;
- 	for (; curvec < nvecs; curvec++)
- 		cpumask_copy(masks + curvec, irq_default_affinity);
- 	free_node_to_cpumask(node_to_cpumask);
-+out_free_cpu_mask:
-+	free_cpumask_var(cpu_mask);
- out:
- 	free_cpumask_var(nmsk);
- 	return masks;
--- 
-2.9.5
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
