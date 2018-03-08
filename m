@@ -1,45 +1,46 @@
 Return-Path: <Alexander.Levin@microsoft.com>
-X-Google-Smtp-Source: AG47ELvsgjbHwNAUsDqdmrCEIBpzAaTWcgaROyaqEczBlMbIB8VkUBl8KyPymUBWIz8z3uboIVfW
+X-Google-Smtp-Source: AG47ELuXOWY8ancIu9+LIzJeYyaJnI9azUI8AsNuyRfdccG5ONxKqDH7zg5OTlD7KOyHefWVUDa2
 ARC-Seal: i=1; a=rsa-sha256; t=1520485035; cv=none;
         d=google.com; s=arc-20160816;
-        b=dSDSASdJ/hlF3Et0nAGl6Zkt2E91YubxOIbXJDZOsRuLZxSjmkse4s572vSQw7KdEo
-         elAqoysP/wQxawXHq6gdZlksvNp7Qg81OSgj/FFwZXzToRqsW9QCeKLQAF0bZB78N3JF
-         lsuELcaiEMIkWXiHlf02lNj24BuRzBX9M4agHqvticS86lxisaX7i1ExxEb1rxBM956I
-         ey4ytCJq7arJPsTWp49YOTjhn1654kjJGp77ZerXWFcqcMMS/EJpjMRWFJJ4GGQ1tUrg
-         4ZUr3r6r9EwqkHodQ7pmmVlnPgQbi0+4hTzv45Y6mmzL/7lfrkYlJL3w2XXX9R/6caAF
-         gi9A==
+        b=ufr9RSCB9SsXbsm97AhkNrzwOtpZ/o3rX8dzuGcZAqf8YdljEViXaal8fGQ2Ou5mEW
+         YOmbUSNGoa/1pZ4z1jDPQ0rwNGhHOKSdVUJW0Bu2DWtVhg/oV+VcL08ARIACTNHCQvny
+         yDeuIiDGEnNH8nUF1QpZZZw6J/ExQoix9r3IgmHrqysM9NmwlO/u2XfXVkUPv5455/5D
+         XwZ1JzE5KTUIR0sn+kDversBxOtpSBpfhPtpzf70SsNyAFC3mE1Pb5ZPSZ7fykpzRho8
+         oJKX+ocHR7eOfmCLCITyFn3Uxp9/jR0+BV12+VRPN2JP07EBwqQWVwyghJATctOgmE85
+         cioQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
          :spamdiagnosticoutput:content-language:accept-language:in-reply-to
          :references:message-id:date:thread-index:thread-topic:subject:cc:to
          :from:dkim-signature:arc-authentication-results;
-        bh=D56isBxvg5mdybr7u+zGckHt2dEPj0DTbRMHZ2wWzEw=;
-        b=Ue/9o5z92vMo92a/TB1YvIde3kEQo7uJZcuCz3Ew8+tDr7z8DncPq+2f0tLLqTdkjX
-         j40EAYc+IwaiZcl7b0ub0X+iSc/qDDZVYy5cZbV6tNXao8+gXsGpGOz4CKurWtgtl8e+
-         4pR9d7XQq9s760569MPcSJrYuq5jx48oQgItN+MihhxBNlWtkuUdx7EotfDHXKRC76jY
-         d6iZHL+QYpKBPUMMmsjpjYQg5JuIXzxTsy1ptU3VAc1fGLkoJNbRiLoK8rQOUIT7PnKf
-         2jkfUETC6nYHS9KfyC5VWHcYDMT+k2TCrw9B+KHywIMU6moYq+nTDnVOzPz6G234c+2z
-         jKUg==
+        bh=uZaRY5qwlrvKuJ4dpjMNRzMkezdzXo4P21hiJaVf1Pk=;
+        b=UM2aaWmu2pxj8LGAq1lDADyPHd9r89PXbPXgD6SPzJIwSJzc/amdE7WJrUjDQODDDa
+         bBEfRPH90yk7pfU0bKFCjO9KmtS/OMhwW9wIQohlV4mcKOEJybZqdw6zxAdq1iv/xLf0
+         y6dsG1cVr+JhZb4GdlDfElcSm+1rVw772BXm5IjoLPbg+j8vzwEOXL3IkCFD7kTeRn65
+         ZfjYLbWBxbyPN0KYuGXn91MqF8fLuE787TOW/t1gp4Bs8cy/6XOB1DxJMSYFvvVExnkO
+         COoWnlefjSNOCxiOlPK8GLYU5T6bdmHlwjdv+faUvcw+c2qCwDjRS6XTqfTFhfQy7T4f
+         a4MQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=MVgOJTip;
-       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.33.101 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=V0G5TuTW;
+       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.36.96 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=MVgOJTip;
-       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.33.101 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=V0G5TuTW;
+       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.36.96 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	"stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Sahara <keun-o.park@darkmatter.ae>, Greg Kroah-Hartman
+CC: Robert Walker <robert.walker@arm.com>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Greg Kroah-Hartman
 	<gregkh@linuxfoundation.org>, Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 51/78] pty: cancel pty slave port buf's work
- in tty_release
-Thread-Topic: [PATCH AUTOSEL for 4.15 51/78] pty: cancel pty slave port buf's
- work in tty_release
-Thread-Index: AQHTtpnOTAu58E2VdEuTlr2cF/rtkQ==
-Date: Thu, 8 Mar 2018 04:56:23 +0000
-Message-ID: <20180308045525.7662-51-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 52/78] coresight: Fix disabling of CoreSight
+ TPIU
+Thread-Topic: [PATCH AUTOSEL for 4.15 52/78] coresight: Fix disabling of
+ CoreSight TPIU
+Thread-Index: AQHTtpnP68bRYyHOv0OEW5BwkSUMDQ==
+Date: Thu, 8 Mar 2018 04:56:24 +0000
+Message-ID: <20180308045525.7662-52-alexander.levin@microsoft.com>
 References: <20180308045525.7662-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045525.7662-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -48,115 +49,93 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1079;20:xk6RKGMIt9v+AWpxupICxqeIEEJoCLP63i/1Z3eR4iyhU+7jytoy70ebhqYl1H+jq5k7QHE1rL8YDbC0ErwW8GQNrBv64qOaJeQrMBzpwxIj6eD6x67CfV20SSfM1yNJ6xLPg7Jq0ohUEHK8DWdPbmRQ9/P6C5Z7Gi77dvjHwXQ=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1032;7:3/pUsxF1T7BJLveZ30dlqX57qkOHzgSvNAdGLcoL7ipYPXraIXfcxaSTT7x1IfhGLHcoQ1m4VIQu67QhJdcUAe+Eyk5xV3wh8RpPyIvMNUzPF6r6w65UKRG+/iV2nAkd2Ca7IxVWXRPlkiDFGqKsnFm6RXwK+FHc/lvsHg2bAcBMl6vzLlKlClLgPMSg6AJgUSI3eQSWqe9jZ/9EM+9YcHv5ug2hI57xiy6Ritmfrza/fMFclPGmsa51L8UrRHGW;20:C8nMPe3z/iftpjk3drO23nUcjwlNO5hRz4k5FGM10KA/kZw43rUw8wOY/0ro1pevc+OPNyC8eU9Gef8mimeVa/pJIIVLOD3mnQN+E+NeeqXf6fP+2d4jx4IritO9ZLEcJEsOmy3OhybFcO7eVS9TAKXor3W5Ys5ssD1g02bl2X8=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: f7110fc9-154d-4251-4789-08d584b10e9f
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1079;
-x-ms-traffictypediagnostic: DM5PR2101MB1079:
+x-ms-office365-filtering-correlation-id: 4dd64622-7ca3-44f9-3f11-08d584b10ef5
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1032;
+x-ms-traffictypediagnostic: DM5PR2101MB1032:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1079195ED1AC631F609D5E22FBDF0@DM5PR2101MB1079.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(3231220)(944501244)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR2101MB1079;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1079;
+x-microsoft-antispam-prvs: <DM5PR2101MB1032E29AB1E76F53A9B5D8B0FBDF0@DM5PR2101MB1032.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(180628864354917)(89211679590171);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB1032;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1032;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39860400002)(39380400002)(396003)(346002)(366004)(189003)(199004)(51234002)(36756003)(107886003)(4326008)(97736004)(2906002)(2950100002)(1076002)(6666003)(105586002)(7736002)(186003)(3660700001)(5660300001)(106356001)(305945005)(6512007)(3280700002)(25786009)(14454004)(575784001)(86362001)(86612001)(81156014)(10090500001)(76176011)(26005)(99286004)(66066001)(102836004)(110136005)(81166006)(72206003)(54906003)(5250100002)(478600001)(59450400001)(10290500003)(6116002)(2501003)(8936002)(68736007)(53936002)(6506007)(6486002)(8676002)(6436002)(3846002)(22452003)(316002)(2900100001)(22906009)(217873001)(309714004);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1079;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: LhrCa2umrgXIVFtahkRlynjO6QA+TAfg/o+i24tj1O0BDP53LUJw8rQ42uiicPpiBLzxyjrRvCo9mqibu5aqD0nk4o+9xAmuLZaoweKj4KLTcC7ampiexMQq4Ge2SwRONwW8UQViRVo/Kxendjs4mKLMdh6lCRtn20Xrvmm/lrAT4f1McHyIqtJwK9NcdvLT50whDWee3NJaFm3xMyqVDPJoHi1WcuOme/TbFaHlKg2Cg1sx7Zvs4XEsYg1Gx5zhdHvBci0XK7zZ0iBq7NJMfPHK9IP1jVkqEj/WwQ57zy8QTNqtcZJ/QXJJ3WPCefHZL/2nzqHrIXmq8UkxtwIIJA==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(39860400002)(39380400002)(366004)(396003)(199004)(189003)(97736004)(36756003)(8936002)(105586002)(2950100002)(2501003)(6666003)(186003)(8676002)(5250100002)(86362001)(2900100001)(3846002)(5660300001)(6116002)(10090500001)(2906002)(7736002)(22452003)(81156014)(26005)(6506007)(1076002)(102836004)(59450400001)(81166006)(305945005)(3280700002)(72206003)(110136005)(86612001)(54906003)(99286004)(10290500003)(316002)(107886003)(4326008)(25786009)(68736007)(6486002)(6436002)(6512007)(53936002)(76176011)(66066001)(3660700001)(478600001)(14454004)(106356001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1032;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: Rl/ytQc40w+Fh3FQheVpCU7e40Jt16AMaQ39HosIbwBXyuwzc/HpN17ysiM1vsOwI0KAXZinxjo9Q18PlCqmFHZYPoX9yRAwACurXzbF8wJboLJM7onNl6dPKYw6iIGSgLrr+uvwxgX3xjpEA0BFjPu2u2DPqsLrQD1lEUtraYkOtrifTrkwXXxHlYcKhKdNTk+aGJfAV0RUNq3hLg3TawFtTgqIeINEyV+ofzNP2DD1iZ/hIsPvJLtPaU6STH2Wj3iahjdLEjoGVrDQqdfUVc/7CS0SVrsQ+Sdo4zerhJx2VvJdiXMNXTGfDCKx12/gCeEePjmv282OyH3TbVX7Eg==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7110fc9-154d-4251-4789-08d584b10e9f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:56:23.9666
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4dd64622-7ca3-44f9-3f11-08d584b10ef5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:56:24.4069
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1079
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1032
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594344116293921024?=
-X-GMAIL-MSGID: =?utf-8?q?1594344116293921024?=
+X-GMAIL-THRID: =?utf-8?q?1594344116420518797?=
+X-GMAIL-MSGID: =?utf-8?q?1594344116420518797?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Sahara <keun-o.park@darkmatter.ae>
+From: Robert Walker <robert.walker@arm.com>
 
-[ Upstream commit 2b022ab7542df60021ab57854b3faaaf42552eaf ]
+[ Upstream commit 11595db8e17faaa05fadc25746c870e31276962f ]
 
-In case that CONFIG_SLUB_DEBUG is on and pty is used, races between
-release_one_tty and flush_to_ldisc work threads may happen and lead
-to use-after-free condition on tty->link->port. Because SLUB_DEBUG
-is turned on, freed tty->link->port is filled with POISON_FREE value.
-So far without SLUB_DEBUG, port was filled with zero and flush_to_ldisc
-could return without a problem by checking if tty is NULL.
+The CoreSight TPIU should be disabled when tracing to other sinks to allow
+them to operate at full bandwidth.
 
-CPU 0                                 CPU 1
------                                 -----
-release_tty                           pty_write
-   cancel_work_sync(tty)                 to =3D tty->link
-   tty_kref_put(tty->link)               tty_schedule_flip(to->port)
-      << workqueue >>                 ...
-      release_one_tty                 ...
-         pty_cleanup                  ...
-            kfree(tty->link->port)       << workqueue >>
-                                         flush_to_ldisc
-                                            tty =3D READ_ONCE(port->itty)
-                                            tty is 0x6b6b6b6b6b6b6b6b
-                                            !!PANIC!! access tty->ldisc
+This patch fixes tpiu_disable_hw() to correctly disable the TPIU by
+configuring the TPIU to stop on flush, initiating a manual flush, waiting
+for the flush to complete and then waits for the TPIU to indicate it has
+stopped.
 
- Unable to handle kernel paging request at virtual address 6b6b6b6b6b6b6b93
- pgd =3D ffffffc0eb1c3000
- [6b6b6b6b6b6b6b93] *pgd=3D0000000000000000, *pud=3D0000000000000000
- ------------[ cut here ]------------
- Kernel BUG at ffffff800851154c [verbose debug info unavailable]
- Internal error: Oops - BUG: 96000004 [#1] PREEMPT SMP
- CPU: 3 PID: 265 Comm: kworker/u8:9 Tainted: G        W 3.18.31-g0a58eeb #1
- Hardware name: Qualcomm Technologies, Inc. MSM 8996pro v1.1 + PMI8996 Carb=
-ide (DT)
- Workqueue: events_unbound flush_to_ldisc
- task: ffffffc0ed610ec0 ti: ffffffc0ed624000 task.ti: ffffffc0ed624000
- PC is at ldsem_down_read_trylock+0x0/0x4c
- LR is at tty_ldisc_ref+0x24/0x4c
- pc : [<ffffff800851154c>] lr : [<ffffff800850f6c0>] pstate: 80400145
- sp : ffffffc0ed627cd0
- x29: ffffffc0ed627cd0 x28: 0000000000000000
- x27: ffffff8009e05000 x26: ffffffc0d382cfa0
- x25: 0000000000000000 x24: ffffff800a012f08
- x23: 0000000000000000 x22: ffffffc0703fbc88
- x21: 6b6b6b6b6b6b6b6b x20: 6b6b6b6b6b6b6b93
- x19: 0000000000000000 x18: 0000000000000001
- x17: 00e80000f80d6f53 x16: 0000000000000001
- x15: 0000007f7d826fff x14: 00000000000000a0
- x13: 0000000000000000 x12: 0000000000000109
- x11: 0000000000000000 x10: 0000000000000000
- x9 : ffffffc0ed624000 x8 : ffffffc0ed611580
- x7 : 0000000000000000 x6 : ffffff800a42e000
- x5 : 00000000000003fc x4 : 0000000003bd1201
- x3 : 0000000000000001 x2 : 0000000000000001
- x1 : ffffff800851004c x0 : 6b6b6b6b6b6b6b93
-
-Signed-off-by: Sahara <keun-o.park@darkmatter.ae>
-
+Signed-off-by: Robert Walker <robert.walker@arm.com>
+Tested-by: Mike Leach <mike.leach@linaro.org>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/tty/tty_io.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/hwtracing/coresight/coresight-tpiu.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 4b506f2d3522..688bd25aa6b0 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -1482,6 +1482,8 @@ static void release_tty(struct tty_struct *tty, int i=
-dx)
- 	if (tty->link)
- 		tty->link->port->itty =3D NULL;
- 	tty_buffer_cancel_work(tty->port);
-+	if (tty->link)
-+		tty_buffer_cancel_work(tty->link->port);
+diff --git a/drivers/hwtracing/coresight/coresight-tpiu.c b/drivers/hwtraci=
+ng/coresight/coresight-tpiu.c
+index bef49a3a5ca7..4b46c494be5e 100644
+--- a/drivers/hwtracing/coresight/coresight-tpiu.c
++++ b/drivers/hwtracing/coresight/coresight-tpiu.c
+@@ -46,8 +46,11 @@
+ #define TPIU_ITATBCTR0		0xef8
 =20
- 	tty_kref_put(tty->link);
- 	tty_kref_put(tty);
+ /** register definition **/
++/* FFSR - 0x300 */
++#define FFSR_FT_STOPPED		BIT(1)
+ /* FFCR - 0x304 */
+ #define FFCR_FON_MAN		BIT(6)
++#define FFCR_STOP_FI		BIT(12)
+=20
+ /**
+  * @base:	memory mapped base address for this component.
+@@ -85,10 +88,14 @@ static void tpiu_disable_hw(struct tpiu_drvdata *drvdat=
+a)
+ {
+ 	CS_UNLOCK(drvdata->base);
+=20
+-	/* Clear formatter controle reg. */
+-	writel_relaxed(0x0, drvdata->base + TPIU_FFCR);
++	/* Clear formatter and stop on flush */
++	writel_relaxed(FFCR_STOP_FI, drvdata->base + TPIU_FFCR);
+ 	/* Generate manual flush */
+-	writel_relaxed(FFCR_FON_MAN, drvdata->base + TPIU_FFCR);
++	writel_relaxed(FFCR_STOP_FI | FFCR_FON_MAN, drvdata->base + TPIU_FFCR);
++	/* Wait for flush to complete */
++	coresight_timeout(drvdata->base, TPIU_FFCR, FFCR_FON_MAN, 0);
++	/* Wait for formatter to stop */
++	coresight_timeout(drvdata->base, TPIU_FFSR, FFSR_FT_STOPPED, 1);
+=20
+ 	CS_LOCK(drvdata->base);
+ }
 --=20
 2.14.1
