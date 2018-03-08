@@ -1,70 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934961AbeCHNSi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 08:18:38 -0500
-Received: from mga04.intel.com ([192.55.52.120]:5725 "EHLO mga04.intel.com"
+        id S935814AbeCHNWP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 08:22:15 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:48556 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752041AbeCHNSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 08:18:36 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,441,1515484800";
-   d="scan'208";a="23527420"
-Message-ID: <1520515113.20980.31.camel@gmail.com>
-Subject: Re: [PATCH V3 0/4] genirq/affinity: irq vector spread among online
- CPUs as far as possible
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Reply-To: dedekind1@gmail.com
-To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Cc: linux-block@vger.kernel.org, Laurence Oberman <loberman@redhat.com>
-Date: Thu, 08 Mar 2018 15:18:33 +0200
-In-Reply-To: <20180308105358.1506-1-ming.lei@redhat.com>
-References: <20180308105358.1506-1-ming.lei@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S933173AbeCHNWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 08:22:13 -0500
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Richard Genoud <richard.genoud@gmail.com>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Gregory CLEMENT <gregory.clement@free-electrons.com>,
+        Ralph Sennhauser <ralph.sennhauser@gmail.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: mvebu: armada-38x: add support for missing clocks
+References: <20180308090300.23544-1-richard.genoud@gmail.com>
+Date: Thu, 08 Mar 2018 14:22:01 +0100
+In-Reply-To: <20180308090300.23544-1-richard.genoud@gmail.com> (Richard
+        Genoud's message of "Thu, 8 Mar 2018 10:03:00 +0100")
+Message-ID: <87h8pq4s92.fsf@bootlin.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-03-08 at 18:53 +0800, Ming Lei wrote:
-> Hi,
-> 
-> This patchset tries to spread among online CPUs as far as possible, so
-> that we can avoid to allocate too less irq vectors with online CPUs
-> mapped.
-> 
-> For example, in a 8cores system, 4 cpu cores(4~7) are offline/non present,
-> on a device with 4 queues:
-> 
-> 1) before this patchset
-> 	irq 39, cpu list 0-2
-> 	irq 40, cpu list 3-4,6
-> 	irq 41, cpu list 5
-> 	irq 42, cpu list 7
-> 
-> 2) after this patchset
-> 	irq 39, cpu list 0,4
-> 	irq 40, cpu list 1,6
-> 	irq 41, cpu list 2,5
-> 	irq 42, cpu list 3,7
-> 
-> Without this patchset, only two vectors(39, 40) can be active, but there
-> can be 4 active irq vectors after applying this patchset.
+Hi Richard,
+ 
+ On jeu., mars 08 2018, Richard Genoud <richard.genoud@gmail.com> wrote:
 
-Tested-by: Artem Bityutskiy <artem.bityutskiy@intel.com>
-Link: https://lkml.kernel.org/r/1519311270.2535.53.camel@intel.com
+> Clearfog boards can come with a CPU clocked at 1600MHz (commercial)
+> or 1333MHz (industrial).
+>
+> They have also some dip-switches to select a different clock (666, 800,
+> 1066, 1200).
 
-Ming,
+The patch looks goo and it will also be usefull for any other board
+using these frequencies, thanks for this. I have only one small comment,
+see below.
 
-this patchset fixes the v4.16-rcX regression that I reported few weeks
-ago. I applied it and verified that Dell R640 server that I mentioned
-in the bug report boots up and the disk works.
 
-So this is not just an improvement, it also includes a bugfix. 
+>
+> The funny thing is that the recovery button is on the MPP34 fq selector.
+> So, when booting an industrial board with this button down, the frequency
+> 666MHz is selected (and the kernel didn't boot).
+>
+> This patch add all the missing clocks.
+>
+> The only mode I didn't test is 2GHz (uboot found 4294MHz instead :/ ).
+>
+> Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
+> ---
+>  drivers/clk/mvebu/armada-38x.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
+> index 394aa6f03f01..9ff4ea63932d 100644
+> --- a/drivers/clk/mvebu/armada-38x.c
+> +++ b/drivers/clk/mvebu/armada-38x.c
+> @@ -46,11 +46,11 @@ static u32 __init armada_38x_get_tclk_freq(void __iomem *sar)
+>  }
+>  
+>  static const u32 armada_38x_cpu_frequencies[] __initconst = {
+> -	0, 0, 0, 0,
+> -	1066 * 1000 * 1000, 0, 0, 0,
+> +	666 * 1000 * 1000,  0, 800 * 1000 * 1000, 0,
+> +	1066 * 1000 * 1000, 0, 1200 * 1000 * 1000, 0,
+>  	1332 * 1000 * 1000, 0, 0, 0,
+>  	1600 * 1000 * 1000, 0, 0, 0,
+> -	1866 * 1000 * 1000,
+> +	1866 * 1000 * 1000, 0, 0, 2000 * 1000 * 1000,
 
-Thanks!
+Maybe you could add a comment here to say that the 2GHz mode didn't have
+been tested.
+
+Thanks,
+Gregory
+
+
+>  };
+>  
+>  static u32 __init armada_38x_get_cpu_freq(void __iomem *sar)
+> @@ -76,11 +76,11 @@ static const struct coreclk_ratio armada_38x_coreclk_ratios[] __initconst = {
+>  };
+>  
+>  static const int armada_38x_cpu_l2_ratios[32][2] __initconst = {
+> -	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+> +	{1, 2}, {0, 1}, {1, 2}, {0, 1},
+> +	{1, 2}, {0, 1}, {1, 2}, {0, 1},
+>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+> +	{1, 2}, {0, 1}, {0, 1}, {1, 2},
+>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+> @@ -91,7 +91,7 @@ static const int armada_38x_cpu_ddr_ratios[32][2] __initconst = {
+>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+> +	{1, 2}, {0, 1}, {0, 1}, {7, 15},
+>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+
+-- 
+Gregory Clement, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
