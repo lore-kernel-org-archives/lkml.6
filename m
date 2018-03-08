@@ -1,26 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755000AbeCHBIi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 20:08:38 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:42266 "EHLO
+        id S1755112AbeCHBJr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 20:09:47 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:36055 "EHLO
         mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754771AbeCHBIg (ORCPT
+        with ESMTP id S1755024AbeCHBJo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 20:08:36 -0500
-X-Google-Smtp-Source: AG47ELvxjIIWFV5GxtecLJaqvp1FjYSuac2Pc8j8vLRt+4YCPXUNGZevUrU2U7y8MUwkr9EoS8ZDdA==
+        Wed, 7 Mar 2018 20:09:44 -0500
+X-Google-Smtp-Source: AG47ELvt5AE/YiPsyW4iLdJaFx0mY35iIpqTnlwyCoEg0PEpwjKQJGtFflZQndYLQKHGMGnqiLlnQg==
 From: Kevin Hilman <khilman@baylibre.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] amlogic: meson-gx-socinfo: Update soc ids
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>,
+        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM64: dts: meson-axg: add sec_AO system controller
 Organization: BayLibre
-References: <1518620335-17716-1-git-send-email-narmstrong@baylibre.com>
-        <1518689694.2883.68.camel@baylibre.com>
-Date: Wed, 07 Mar 2018 17:08:33 -0800
-In-Reply-To: <1518689694.2883.68.camel@baylibre.com> (Jerome Brunet's message
-        of "Thu, 15 Feb 2018 11:14:54 +0100")
-Message-ID: <7ho9jzgyr2.fsf@baylibre.com>
+References: <20180215101207.19186-1-jbrunet@baylibre.com>
+        <412132e7-904d-61c4-d09f-0239e07a92be@baylibre.com>
+Date: Wed, 07 Mar 2018 17:09:42 -0800
+In-Reply-To: <412132e7-904d-61c4-d09f-0239e07a92be@baylibre.com> (Neil
+        Armstrong's message of "Thu, 15 Feb 2018 12:55:35 +0100")
+Message-ID: <7hina7gyp5.fsf@baylibre.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -28,48 +28,37 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+Neil Armstrong <narmstrong@baylibre.com> writes:
 
-> On Wed, 2018-02-14 at 15:58 +0100, Neil Armstrong wrote:
->> Updates the Amlogic Meson SoCs IDs for the Armv8 based SoCs.
->> It includes the new families and packages.
+> On 15/02/2018 11:12, Jerome Brunet wrote:
+>> add the secure AO system controller with chipid enabled
 >> 
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 >> ---
->>  drivers/soc/amlogic/meson-gx-socinfo.c | 8 ++++++++
->>  1 file changed, 8 insertions(+)
+>>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 6 ++++++
+>>  1 file changed, 6 insertions(+)
 >> 
->> diff --git a/drivers/soc/amlogic/meson-gx-socinfo.c b/drivers/soc/amlogic/meson-gx-socinfo.c
->> index f2d8c3c..a7efe30 100644
->> --- a/drivers/soc/amlogic/meson-gx-socinfo.c
->> +++ b/drivers/soc/amlogic/meson-gx-socinfo.c
->> @@ -33,6 +33,10 @@ static const struct meson_gx_soc_id {
->>  	{ "GXL", 0x21 },
->>  	{ "GXM", 0x22 },
->>  	{ "TXL", 0x23 },
->> +	{ "TXLX", 0x24 },
->> +	{ "AXG", 0x25 },
->> +	{ "GXLX", 0x26 },
->> +	{ "TXHD", 0x27 },
->>  };
+>> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+>> index 880e25b113c1..7f4c00216b82 100644
+>> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+>> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+>> @@ -836,6 +836,12 @@
+>>  				};
+>>  			};
 >>  
->>  static const struct meson_gx_package_id {
->> @@ -47,6 +51,10 @@ static const struct meson_gx_package_id {
->>  	{ "S905L", 0x21, 0xc0 },
->>  	{ "S905M2", 0x21, 0xe0 },
->>  	{ "S912", 0x22, 0 },
->> +	{ "962X", 0x24, 0x10 },
->> +	{ "962E", 0x24, 0x20 },
->> +	{ "A113X", 0x25, 0x37 },
->> +	{ "A113D", 0x25, 0xd0 },
->>  };
->>  
->>  static inline unsigned int socinfo_to_major(u32 socinfo)
+>> +			sec_AO: ao-secure@140 {
+>> +				compatible = "amlogic,meson-gx-ao-secure", "syscon";
+>> +				reg = <0x0 0x140 0x0 0x140>;
+>> +				amlogic,has-chip-id;
+>> +			};
+>> +
+>>  			pwm_AO_ab: pwm@7000 {
+>>  				compatible = "amlogic,meson-axg-ao-pwm";
+>>  				reg = <0x0 0x07000 0x0 0x20>;
+>> 
 >
-> Tested on my s400 board which, according to the marking, features an AXG A113D.
-> AXG is detected correctly but the package id read is 0x22 instead of 0xd0.
+> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Neil, can you update accordingly?  Have you seen 0xd0 on other A11x
-chips?  or is this from the docs?
+Applied to v4.17/dt64,
 
 Kevin
