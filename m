@@ -1,108 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933560AbeCHQq6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 11:46:58 -0500
-Received: from muru.com ([72.249.23.125]:60112 "EHLO muru.com"
+        id S933796AbeCHQsS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 11:48:18 -0500
+Received: from botnar.kaiser.cx ([176.28.20.183]:56376 "EHLO botnar.kaiser.cx"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932076AbeCHQq5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 11:46:57 -0500
-Date: Thu, 8 Mar 2018 08:46:52 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: pali.rohar@gmail.com, sre@kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, khilman@kernel.org, aaro.koskinen@iki.fi,
-        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
-        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
-        sakari.ailus@linux.intel.com,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Dave Gerlach <d-gerlach@ti.com>
-Subject: Re: Nokia N900: insecure W+X mapping at 0xd0050000
-Message-ID: <20180308164652.GL5799@atomide.com>
-References: <20180308142818.GA9439@amd>
- <20180308162446.GK5799@atomide.com>
+        id S1752132AbeCHQsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 11:48:16 -0500
+Date: Thu, 8 Mar 2018 17:46:54 +0100
+From: Martin Kaiser <martin@kaiser.cx>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: imx25: set correct parents for ssi ipg clocks
+Message-ID: <20180308164654.GA31199@botnar.kaiser.cx>
+References: <1520373735-13699-1-git-send-email-martin@kaiser.cx>
+ <CAOMZO5A7W4rbPbZB8ERs518obrg+6F6mDeojkwJaGComFAJB0A@mail.gmail.com>
+ <20180308140851.GA25601@botnar.kaiser.cx>
+ <CAOMZO5BdBWExt9FvPrfUG74Y62e4EUs6cqFyfVs5JuUtym00hQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180308162446.GK5799@atomide.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAOMZO5BdBWExt9FvPrfUG74Y62e4EUs6cqFyfVs5JuUtym00hQ@mail.gmail.com>
+User-Agent: Mutt/1.5.20 (2009-06-14)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Tony Lindgren <tony@atomide.com> [180308 16:25]:
-> * Pavel Machek <pavel@ucw.cz> [180308 06:29]:
-> > Insecure W+X mappings, who cares about those? I have 7 pages...
-> 
-> Is this with CONFIG_DEBUG_WX=y?
-> 
-> My guess is that it's for mapping the PM assembly to SRAM. This
-> is already fixed for am335x that is using drivers/misc/sram*.c.
-> I think omap2 - omap4 still need fixing if this is the culprit.
+Hi Fabio,
 
-Adding Dave to Cc, here's a quick fix for this one.
+thanks for the quick response.
 
-Regards,
+Thus wrote Fabio Estevam (festevam@gmail.com):
 
-Tony
+> Hi Martin,
 
-8< -------------------
->From tony Mon Sep 17 00:00:00 2001
-From: Tony Lindgren <tony@atomide.com>
-Date: Thu, 8 Mar 2018 08:41:16 -0800
-Subject: [PATCH] ARM: OMAP: Fix SRAM W+X mapping
+> On Thu, Mar 8, 2018 at 11:08 AM, Martin Kaiser <martin@kaiser.cx> wrote:
+> > Hi Fabio,
 
-We are still using custom SRAM code for some SoCs and are not marking
-the PM code mapped to SRAM as read-only and executable after we're
-done. With CONFIG_DEBUG_WX=y, we will get "Found insecure W+X mapping
-at address" warning.
+> > Thus wrote Fabio Estevam (festevam@gmail.com):
 
-Let's fix this issue the same way as commit 728bbe75c82f ("misc: sram:
-Introduce support code for protect-exec sram type") is doing for
-drivers/misc/sram-exec.c.
+> >> I get audio working from SSI1, but I guess this is due to the fact
+> >> that the bootloader enables the SSI clock:
 
-Note that eventually we should be using sram-exec.c for all SoCs.
+> >> I have the following in U-Boot:
 
-Cc: Dave Gerlach <d-gerlach@ti.com>
-Reported-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- arch/arm/plat-omap/sram.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+> >> /* Enable the clocks */
+> >> DATA 4 0x53f8000c 0x1fffffff
+> >> DATA 4 0x53f80010 0xffffffff
+> >> DATA 4 0x53f80014 0xfdfff
 
-diff --git a/arch/arm/plat-omap/sram.c b/arch/arm/plat-omap/sram.c
---- a/arch/arm/plat-omap/sram.c
-+++ b/arch/arm/plat-omap/sram.c
-@@ -23,6 +23,7 @@
- #include <asm/fncpy.h>
- #include <asm/tlb.h>
- #include <asm/cacheflush.h>
-+#include <asm/set_memory.h>
- 
- #include <asm/mach/map.h>
- 
-@@ -96,3 +97,21 @@ void __init omap_map_sram(unsigned long start, unsigned long size,
- 	memset_io(omap_sram_base + omap_sram_skip, 0,
- 		  omap_sram_size - omap_sram_skip);
- }
-+
-+static int __init omap_sram_lock(void)
-+{
-+	unsigned long base;
-+	int pages;
-+
-+	if (!omap_sram_base || !omap_sram_size)
-+		return 0;
-+
-+	base = (unsigned long)omap_sram_base;
-+	pages = PAGE_ALIGN(omap_sram_size) / PAGE_SIZE;
-+
-+	set_memory_ro((unsigned long)base, pages);
-+	set_memory_x((unsigned long)base, pages);
-+
-+	return 0;
-+}
-+late_initcall(omap_sram_lock);
--- 
-2.16.2
+> > I'm using the same initial settings.
+
+> > Nevertheless, ssi1_ipg_per is disbled after loading the kernel.
+
+> > Digging into this a bit more, it turned out that without my patch,
+> > clk_disable_unused() recognizes ssi1_ipg_per as unused and disables it.
+
+> > If my patch is applied and ssi1_ipg_per is declared as parent of
+> > ssi1_ipg, clk_disable_unused() will not disable it and fsl_ssi_startup()
+> > will enable both ssi1_ipg_per and ssi1_ipg before playing sound.
+
+> I can get audio to work fine without your patch on a mx25pdk.
+
+this is surprising. How come the ssi1_ipg_per clock is not turned off by
+clk_disable_unused()? Where is it used? Do you have
+
+<&clks 55>
+
+anywhere in your DT?
+
+> In the other i.MX clock drivers we have this same pattern:
+
+> clks[IMX6SL_CLK_SSI1_IPG]     = imx_clk_gate2_shared("ssi1_ipg",     "ipg",
+
+It seems to the that imx25 uses a different clock hierarchy for ssi than other
+imx chips.
+
+Documentation/devicetree/bindings/clock/imx25-clock.txt: ssi1_ipg_per      55
+Documentation/devicetree/bindings/clock/imx25-clock.txt: ssi2_ipg_per      56
+Documentation/devicetree/bindings/clock/imx25-clock.txt: ssi1_ipg    117
+Documentation/devicetree/bindings/clock/imx25-clock.txt: ssi2_ipg    118
+Documentation/devicetree/bindings/clock/imx31-clock.txt: ssi1_gate            32
+Documentation/devicetree/bindings/clock/imx31-clock.txt: ssi2_gate            52
+Documentation/devicetree/bindings/clock/imx35-clock.txt: ssi_sel        22
+Documentation/devicetree/bindings/clock/imx35-clock.txt: ssi1_div_pre      23
+Documentation/devicetree/bindings/clock/imx35-clock.txt: ssi1_div_post     24
+Documentation/devicetree/bindings/clock/imx35-clock.txt: ssi2_div_pre      25
+Documentation/devicetree/bindings/clock/imx35-clock.txt: ssi2_div_post     26
+Documentation/devicetree/bindings/clock/imx35-clock.txt: ssi1_gate      68
+Documentation/devicetree/bindings/clock/imx35-clock.txt: ssi2_gate      69
+
+Others don't have ssiX_ipg_per.
+
+> It is not clear to me what is the real issue this patch is trying to fix.
+
+True. This needs clarification.
+
+I found that, in oder to get a tx clock out of the SSI, both ssi1_ipg_per and
+ssi1_ipg clocks must be active.
+
+The fsl_ssi driver only activates ssi1_ipg.
+
+If I activate ssi1_ipg_per in the bootloader, clk_disable_unused() deactivates it.
+
+(My codec chip does not use a dedicated clock line. It takes the bit clock that
+is the output of SSI. Are you maybe using ssi1_ipg_per for your codec and
+enable it there?)
+
+In my first mail, I was wondering about imx25 uart1, where we also have
+uart1_ipg and uart_ipg_per and the clock seeting is
+
+   clk[uart1_ipg] = imx_clk_gate("uart1_ipg", "ipg", ccm(CCM_CGCR2), 14);
+
+In this case, both uart1 and uart_ipg_per are listed in the device tree
+
+         uart1: serial@43f90000 {                                                                                                      
+...
+            clocks = <&clks 120>, <&clks 57>;                                                                                          
+            clock-names = "ipg", "per";                                                                                                
+         };                                                                                                                            
+
+Documentation/devicetree/bindings/clock/imx25-clock.txt
+   uart_ipg_per      57
+   uart1_ipg      120
+
+and the driver enables both clocks explicitly. So they are not unused.
+
+
+Doing something like this is not an option for ssi, this will not work with
+imx31, 35 etc.
+
+Therefore, I suggest setting ssi1_ipg_per as parent of ssi1_ipg.
+
+
+Best regards,
+
+   Martin
