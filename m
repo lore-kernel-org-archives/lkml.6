@@ -1,124 +1,495 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751075AbeCHW5P (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 17:57:15 -0500
-Received: from vps.xff.cz ([195.181.215.36]:55956 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750783AbeCHW5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 17:57:13 -0500
-Date: Thu, 8 Mar 2018 23:47:17 +0100
-From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
-        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] [PATCH v3 06/16] drm/sun4i: Release exclusive
- clock lock when disabling TCON
-Message-ID: <20180308224717.a6ieadihwh7u5rbu@core.my.home>
-Mail-Followup-To: Jernej Skrabec <jernej.skrabec@siol.net>,
-        maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
-        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-References: <20180301213442.16677-1-jernej.skrabec@siol.net>
- <20180301213442.16677-7-jernej.skrabec@siol.net>
+        id S1750948AbeCHXDt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 18:03:49 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55964 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750713AbeCHXDr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 18:03:47 -0500
+Subject: Re: [PATCH v2 07/15] KVM: s390: Interfaces to configure/deconfigure
+ guest's AP matrix
+To: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com, akrowiak@stny.rr.com
+References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1519741693-17440-8-git-send-email-akrowiak@linux.vnet.ibm.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Thu, 8 Mar 2018 18:03:33 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180301213442.16677-7-jernej.skrabec@siol.net>
+In-Reply-To: <1519741693-17440-8-git-send-email-akrowiak@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18030823-0008-0000-0000-0000096EFF54
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008637; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01000243; UDB=6.00508758; IPR=6.00779572;
+ MB=3.00019923; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-08 23:03:41
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030823-0009-0000-0000-00004651691F
+Message-Id: <678c933a-ed36-6ca2-26e9-ab89f81f6fd9@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-08_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803080249
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Thu, Mar 01, 2018 at 10:34:32PM +0100, Jernej Skrabec wrote:
-> Currently exclusive TCON clock lock is never released, which, for
-> example, prevents changing resolution on HDMI.
-> 
-> In order to fix that, release clock when disabling TCON. TCON is always
-> disabled first before new mode is set.
-> 
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+On 02/27/2018 09:28 AM, Tony Krowiak wrote:
+> Provides interfaces to assign AP adapters, usage domains
+> and control domains to a KVM guest.
+>
+> A KVM guest is started by executing the Start Interpretive Execution (SIE)
+> instruction. The SIE state description is a control block that contains the
+> state information for a KVM guest and is supplied as input to the SIE
+> instruction. The SIE state description has a satellite structure called the
+> Crypto Control Block (CRYCB). The CRYCB contains three bitmask fields
+> identifying the adapters, queues (domains) and control domains assigned to
+> the KVM guest:
+>
+> * The AP Adapter Mask (APM) field identifies the AP adapters assigned to
+>    the KVM guest
+>
+> * The AP Queue Mask (AQM) field identifies the AP queues assigned to
+>    the KVM guest. Each AP queue is connected to a usage domain within
+>    an AP adapter.
+>
+> * The AP Domain Mask (ADM) field identifies the control domains
+>    assigned to the KVM guest.
+>
+> Each adapter, queue (usage domain) and control domain are identified by
+> a number from 0 to 255. The bits in each mask, from most significant to
+> least significant bit, correspond to the numbers 0-255. When a bit is
+> set, the corresponding adapter, queue (usage domain) or control domain
+> is assigned to the KVM guest.
+>
+> This patch will set the bits in the APM, AQM and ADM fields of the
+> CRYCB referenced by the KVM guest's SIE state description. The process
+> used is:
+>
+> 1. Verify that the bits to be set do not exceed the maximum bit
+>     number for the given mask.
+>
+> 2. Verify that the APQNs that can be derived from the intersection
+>     of the bits set in the APM and AQM fields of the KVM guest's CRYCB
+>     are not assigned to any other KVM guest running on the same linux
+>     host.
+>
+> 3. Set the APM, AQM and ADM in the CRYCB according to the matrix
+>     configured for the mediated matrix device via its sysfs
+>     adapter, domain and control domain attribute files respectively.
+>
+> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
 > ---
->  drivers/gpu/drm/sun4i/sun4i_tcon.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> index 1d714c06ec9d..7f6c4125c89f 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -102,10 +102,12 @@ static void sun4i_tcon_channel_set_status(struct sun4i_tcon *tcon, int channel,
->  		return;
->  	}
->  
-> -	if (enabled)
-> +	if (enabled) {
->  		clk_prepare_enable(clk);
-> -	else
-> +	} else {
-> +		clk_rate_exclusive_put(clk);
->  		clk_disable_unprepare(clk);
+>   arch/s390/include/asm/kvm-ap.h        |   36 +++++
+>   arch/s390/kvm/kvm-ap.c                |  257 +++++++++++++++++++++++++++++++++
+>   drivers/s390/crypto/vfio_ap_ops.c     |   19 +++
+>   drivers/s390/crypto/vfio_ap_private.h |    4 +
+>   4 files changed, 316 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/s390/include/asm/kvm-ap.h b/arch/s390/include/asm/kvm-ap.h
+> index ef749e7..46e7c5b 100644
+> --- a/arch/s390/include/asm/kvm-ap.h
+> +++ b/arch/s390/include/asm/kvm-ap.h
+> @@ -10,9 +10,45 @@
+>   #define _ASM_KVM_AP
+>   #include <linux/types.h>
+>   #include <linux/kvm_host.h>
+> +#include <linux/types.h>
+> +#include <linux/kvm_host.h>
+> +#include <linux/bitops.h>
+> +
+> +#define KVM_AP_MASK_BYTES(n)(n / BITS_PER_BYTE)
+> +
+> +/**
+> + * The AP matrix is comprised of three bit masks identifying the adapters,
+> + * queues (domains) and control domains that belong to an AP matrix. The bits in
+> + * each mask, from least significant to most significant bit, correspond to IDs
+> + * 0 to the maximum ID allowed for a given mask. When a bit is set, the
+> + * corresponding ID belongs to the matrix.
+> + *
+> + * @apm_max: max number of bits in @apm
+> + * @apm identifies the AP adapters in the matrix
+> + * @aqm_max: max number of bits in @aqm
+> + * @aqm identifies the AP queues (domains) in the matrix
+> + * @adm_max: max number of bits in @adm
+> + * @adm identifies the AP control domains in the matrix
+> + */
+> +struct kvm_ap_matrix {
+> +	int apm_max;
+> +	unsigned long *apm;
+> +	int aqm_max;
+> +	unsigned long *aqm;
+> +	int adm_max;
+> +	unsigned long *adm;
+> +};
+>
+>   void kvm_ap_set_crycb_format(struct kvm *kvm, __u32 *crycbd);
+>
+>   int kvm_ap_get_crycb_format(struct kvm *kvm);
+>
+> +int kvm_ap_matrix_create(struct kvm_ap_matrix **ap_matrix);
+> +
+> +void kvm_ap_matrix_destroy(struct kvm_ap_matrix *ap_matrix);
+> +
+> +int kvm_ap_configure_matrix(struct kvm *kvm, struct kvm_ap_matrix *matrix);
+> +
+> +void kvm_ap_deconfigure_matrix(struct kvm *kvm);
+> +
+>   #endif /* _ASM_KVM_AP */
+> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
+> index bafe63b..bb29045 100644
+> --- a/arch/s390/kvm/kvm-ap.c
+> +++ b/arch/s390/kvm/kvm-ap.c
+> @@ -8,6 +8,7 @@
+>
+>   #include <asm/kvm-ap.h>
+>   #include <asm/ap.h>
+> +#include <linux/bitops.h>
+>
+>   #include "kvm-s390.h"
+>
+> @@ -16,6 +17,125 @@ int kvm_ap_get_crycb_format(struct kvm *kvm)
+>   	return kvm->arch.crypto.crycbd & CRYCB_FORMAT_MASK;
+>   }
+>
+> +static inline void kvm_ap_clear_crycb_masks(struct kvm *kvm)
+> +{
+> +	int crycb_fmt = kvm_ap_get_crycb_format(kvm);
+> +
+> +	if (crycb_fmt == CRYCB_FORMAT2)
+> +		memset(&kvm->arch.crypto.crycb->apcb1, 0,
+> +		       sizeof(kvm->arch.crypto.crycb->apcb1));
+> +	else
+> +		memset(&kvm->arch.crypto.crycb->apcb0, 0,
+> +		       sizeof(kvm->arch.crypto.crycb->apcb0));
+> +}
+> +
+> +static inline unsigned long *kvm_ap_get_crycb_apm(struct kvm *kvm)
+> +{
+> +	unsigned long *apm;
+> +	int crycb_fmt = kvm_ap_get_crycb_format(kvm);
+> +
+> +	if (crycb_fmt == CRYCB_FORMAT2)
+> +		apm = (unsigned long *)kvm->arch.crypto.crycb->apcb1.apm;
+> +	else
+> +		apm = (unsigned long *)kvm->arch.crypto.crycb->apcb0.apm;
+> +
+> +	return apm;
+> +}
+> +
+> +static inline unsigned long *kvm_ap_get_crycb_aqm(struct kvm *kvm)
+> +{
+> +	unsigned long *aqm;
+> +	int crycb_fmt = kvm_ap_get_crycb_format(kvm);
+> +
+> +	if (crycb_fmt == CRYCB_FORMAT2)
+> +		aqm = (unsigned long *)kvm->arch.crypto.crycb->apcb1.aqm;
+> +	else
+> +		aqm = (unsigned long *)kvm->arch.crypto.crycb->apcb0.aqm;
+> +
+> +	return aqm;
+> +}
+> +
+> +static inline unsigned long *kvm_ap_get_crycb_adm(struct kvm *kvm)
+> +{
+> +	unsigned long *adm;
+> +	int crycb_fmt = kvm_ap_get_crycb_format(kvm);
+> +
+> +	if (crycb_fmt == CRYCB_FORMAT2)
+> +		adm = (unsigned long *)kvm->arch.crypto.crycb->apcb1.adm;
+> +	else
+> +		adm = (unsigned long *)kvm->arch.crypto.crycb->apcb0.adm;
+> +
+> +	return adm;
+> +}
+> +
+> +static void kvm_ap_set_crycb_masks(struct kvm *kvm,
+> +				   struct kvm_ap_matrix *matrix)
+> +{
+> +	unsigned long *apm = kvm_ap_get_crycb_apm(kvm);
+> +	unsigned long *aqm = kvm_ap_get_crycb_aqm(kvm);
+> +	unsigned long *adm = kvm_ap_get_crycb_adm(kvm);
+> +
+> +	kvm_ap_clear_crycb_masks(kvm);
+> +	memcpy(apm, matrix->apm, KVM_AP_MASK_BYTES(matrix->apm_max));
+> +	memcpy(aqm, matrix->aqm, KVM_AP_MASK_BYTES(matrix->aqm_max));
+> +
+> +	/*
+> +	 * Merge the AQM and ADM since the ADM is a superset of the
+> +	 * AQM by architectural convention.
+> +	 */
+> +	bitmap_or(adm, adm, aqm, matrix->adm_max);
+> +}
+> +
+> +static void kvm_ap_log_sharing_err(struct kvm *kvm, unsigned long apid,
+> +				   unsigned long apqi)
+> +{
+> +	pr_err("%s: AP queue %02lx.%04lx is registered to guest %s", __func__,
+> +	       apid, apqi, kvm->arch.dbf->name);
+> +}
+> +
+> +/**
+> + * kvm_ap_validate_queue_sharing
+> + *
+> + * Verifies that the APQNs derived from the intersection of the AP adapter IDs
+> + * and AP queue indexes comprising the AP matrix are not configured for
+> + * another guest. AP queue sharing is not allowed.
+> + *
+> + * @kvm: the KVM guest
+> + * @matrix: the AP matrix
+> + *
+> + * Returns 0 if the APQNs are valid, otherwise; returns -EBUSY.
+> + */
+> +static int kvm_ap_validate_queue_sharing(struct kvm *kvm,
+> +					 struct kvm_ap_matrix *matrix)
+> +{
+> +	struct kvm *vm;
+> +	unsigned long *apm, *aqm;
+> +	unsigned long apid, apqi;
+> +
+> +
+> +	/* No other VM may share an AP Queue with the input VM */
+> +	list_for_each_entry(vm, &vm_list, vm_list) {
+> +		if (kvm == vm)
+> +			continue;
+> +
+> +		apm = kvm_ap_get_crycb_apm(vm);
+> +		if (!bitmap_and(apm, apm, matrix->apm, matrix->apm_max))
+> +			continue;
+> +
+> +		aqm = kvm_ap_get_crycb_aqm(vm);
+> +		if (!bitmap_and(aqm, aqm, matrix->aqm, matrix->aqm_max))
+> +			continue;
+> +
+> +		for_each_set_bit_inv(apid, apm, matrix->apm_max)
+> +			for_each_set_bit_inv(apqi, aqm, matrix->aqm_max)
+> +				kvm_ap_log_sharing_err(kvm, apid, apqi);
+> +
+> +		return -EBUSY;
 > +	}
->  }
-
-At least in the linux-next/master I can't see clk_rate_exclusive_get call:
-
-$ git grep 'exclusive' linux-next/master -- drivers/gpu/drm/sun4i
-
-linux-next/master:sun4i_hdmi.h:    * On sun5i the threshold is exclusive, i.e. does not include,
-linux-next/master:sun4i_tcon.c:           clk_rate_exclusive_put(clk);
-linux-next/master:sun4i_tcon.c:   clk_set_rate_exclusive(tcon->dclk, mode->crtc_clock * 1000);
-linux-next/master:sun4i_tcon.c:   clk_set_rate_exclusive(tcon->sclk1, mode->crtc_clock * 1000);
-
-and the kernel complains too:
-
-[  841.915161] ------------[ cut here ]------------
-[  841.915187] WARNING: CPU: 0 PID: 273 at /workspace/megous.com/orangepi-pc/linux-4.16/drivers/clk/clk.c:608 clk_rate_exclusive_put+0x48/0x4c
-[  841.915194] CPU: 0 PID: 273 Comm: Xorg Not tainted 4.16.0-rc4-00268-gbac2ecf73ed0 #13
-[  841.915196] Hardware name: Allwinner sun8i Family
-[  841.915217] [<c0228440>] (unwind_backtrace) from [<c0225b90>] (show_stack+0x10/0x14)
-[  841.915228] [<c0225b90>] (show_stack) from [<c0b094bc>] (dump_stack+0x88/0x9c)
-[  841.915237] [<c0b094bc>] (dump_stack) from [<c0240294>] (__warn+0xd4/0xf0)
-[  841.915244] [<c0240294>] (__warn) from [<c0240380>] (warn_slowpath_null+0x40/0x48)
-[  841.915250] [<c0240380>] (warn_slowpath_null) from [<c0619b6c>] (clk_rate_exclusive_put+0x48/0x4c)
-[  841.915261] [<c0619b6c>] (clk_rate_exclusive_put) from [<c0694624>] (sun4i_tcon_set_status+0x178/0x2f0)
-[  841.915269] [<c0694624>] (sun4i_tcon_set_status) from [<c06930c0>] (sun4i_crtc_atomic_disable+0x7c/0xe4)
-[  841.915279] [<c06930c0>] (sun4i_crtc_atomic_disable) from [<c06637fc>] (drm_atomic_helper_commit_modeset_disables+0x390/0x46c)
-[  841.915288] [<c06637fc>] (drm_atomic_helper_commit_modeset_disables) from [<c0664df4>] (drm_atomic_helper_commit_tail_rpm+0x18/0x64)
-[  841.915295] [<c0664df4>] (drm_atomic_helper_commit_tail_rpm) from [<c0664da8>] (commit_tail+0x40/0x6c)
-[  841.915302] [<c0664da8>] (commit_tail) from [<c06652b0>] (drm_atomic_helper_commit+0xbc/0x128)
-[  841.915311] [<c06652b0>] (drm_atomic_helper_commit) from [<c0668d40>] (restore_fbdev_mode_atomic+0x100/0x1fc)
-[  841.915319] [<c0668d40>] (restore_fbdev_mode_atomic) from [<c0668f1c>] (drm_fb_helper_dpms+0x50/0x130)
-[  841.915328] [<c0668f1c>] (drm_fb_helper_dpms) from [<c0669e9c>] (drm_fb_helper_blank+0x54/0x90)
-[  841.915337] [<c0669e9c>] (drm_fb_helper_blank) from [<c06088cc>] (fb_blank+0x54/0xa8)
-[  841.915343] [<c06088cc>] (fb_blank) from [<c0608c80>] (do_fb_ioctl+0x360/0x62c)
-[  841.915351] [<c0608c80>] (do_fb_ioctl) from [<c0362648>] (do_vfs_ioctl+0x9c/0x774)
-[  841.915358] [<c0362648>] (do_vfs_ioctl) from [<c0362d54>] (SyS_ioctl+0x34/0x58)
-[  841.915364] [<c0362d54>] (SyS_ioctl) from [<c0201120>] (ret_fast_syscall+0x0/0x4c)
-[  841.915368] Exception stack(0xe5fc5fa8 to 0xe5fc5ff0)
-[  841.915373] 5fa0:                   00674f10 00675460 0000000b 00004611 00000001 00000000
-[  841.915379] 5fc0: 00674f10 00675460 00000001 00000036 00650474 00000000 006504a4 00675df8
-[  841.915382] 5fe0: b61a502c be8acb2c b6192c38 b6b152ec
-[  841.915386] ---[ end trace fa81b956197707f8 ]---
-
-It looks like clk_rate_exclusive_put inside sun4i_tcon_channel_set_status is
-called without first calling some function that would call
-clk_set_rate_exclusive, leading to unbalanced get/put calls.
-
-regards,
-  o.
-
->  static void sun4i_tcon_lvds_set_status(struct sun4i_tcon *tcon,
-> -- 
-> 2.16.2
-> 
-> -- 
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+> +
+> +	return 0;
+> +}
+> +
+>   static int kvm_ap_apxa_installed(void)
+>   {
+>   	int ret;
+> @@ -50,3 +170,140 @@ void kvm_ap_set_crycb_format(struct kvm *kvm, __u32 *crycbd)
+>   			*crycbd |= CRYCB_FORMAT1;
+>   	}
+>   }
+> +
+> +static int kvm_ap_matrix_apm_create(struct kvm_ap_matrix *ap_matrix, int apxa)
+> +{
+> +	if (apxa)
+> +		ap_matrix->apm_max = 256;
+> +	else
+> +		ap_matrix->apm_max = 64;
+> +
+> +	ap_matrix->apm = kzalloc(KVM_AP_MASK_BYTES(ap_matrix->apm_max),
+> +				 GFP_KERNEL);
+> +	if (!ap_matrix->apm)
+> +		return -ENOMEM;
+> +
+> +	return 0;
+> +}
+> +
+> +static int kvm_ap_matrix_aqm_create(struct kvm_ap_matrix *ap_matrix, int apxa)
+> +{
+> +	if (apxa)
+> +		ap_matrix->aqm_max = 256;
+> +	else
+> +		ap_matrix->aqm_max = 16;
+> +
+> +	ap_matrix->aqm = kzalloc(KVM_AP_MASK_BYTES(ap_matrix->aqm_max),
+> +				 GFP_KERNEL);
+> +	if (!ap_matrix->aqm)
+> +		return -ENOMEM;
+> +
+> +	return 0;
+> +}
+> +
+> +static int kvm_ap_matrix_adm_create(struct kvm_ap_matrix *ap_matrix, int apxa)
+> +{
+> +	if (apxa)
+> +		ap_matrix->adm_max = 256;
+> +	else
+> +		ap_matrix->adm_max = 16;
+> +
+> +	ap_matrix->adm = kzalloc(KVM_AP_MASK_BYTES(ap_matrix->adm_max),
+> +				 GFP_KERNEL);
+> +	if (!ap_matrix->adm)
+> +		return -ENOMEM;
+> +
+> +	return 0;
+> +}
+> +
+> +static void kvm_ap_matrix_masks_destroy(struct kvm_ap_matrix *ap_matrix)
+> +{
+> +	kfree(ap_matrix->apm);
+> +	kfree(ap_matrix->aqm);
+> +	kfree(ap_matrix->adm);
+> +}
+> +
+> +int kvm_ap_matrix_create(struct kvm_ap_matrix **ap_matrix)
+> +{
+> +	int ret;
+> +	int apxa = kvm_ap_apxa_installed();
+> +	struct kvm_ap_matrix *matrix;
+> +
+> +	matrix = kzalloc(sizeof(*matrix), GFP_KERNEL);
+> +	if (!matrix)
+> +		return -ENOMEM;
+> +
+> +	ret = kvm_ap_matrix_apm_create(matrix, apxa);
+> +	if (ret)
+> +		goto mask_create_err;
+> +
+> +	ret = kvm_ap_matrix_aqm_create(matrix, apxa);
+> +	if (ret)
+> +		goto mask_create_err;
+> +
+> +	ret = kvm_ap_matrix_adm_create(matrix, apxa);
+> +	if (ret)
+> +		goto mask_create_err;
+> +
+> +	*ap_matrix = matrix;
+> +
+> +	return 0;
+> +
+> +mask_create_err:
+> +	kvm_ap_matrix_masks_destroy(matrix);
+> +	kfree(matrix);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(kvm_ap_matrix_create);
+> +
+> +void kvm_ap_matrix_destroy(struct kvm_ap_matrix *ap_matrix)
+> +{
+> +	kvm_ap_matrix_masks_destroy(ap_matrix);
+> +	kfree(ap_matrix);
+> +}
+> +EXPORT_SYMBOL(kvm_ap_matrix_destroy);
+> +
+> +/**
+> + * kvm_ap_configure_matrix
+> + *
+> + * Configure the AP matrix for a KVM guest.
+> + *
+> + * @kvm:		 the KVM guest
+> + * @matrix:		 the matrix configuration information
+> + *
+> + * Returns 0 if the APQNs derived from the intersection of the set of adapter
+> + * IDs (APM) and queue indexes (AQM) in @matrix are not configured for any
+> + * other KVM guest running on the same linux host. Otherwise returns an error
+> + * code.
+> + */
+> +int kvm_ap_configure_matrix(struct kvm *kvm, struct kvm_ap_matrix *matrix)
+> +{
+> +	int ret = 0;
+> +
+> +	mutex_lock(&kvm->lock);
+> +
+> +	ret = kvm_ap_validate_queue_sharing(kvm, matrix);
+> +	if (ret)
+> +		return ret;
+The kvm->lock needs to be unlocked.
+> +
+> +	kvm_ap_set_crycb_masks(kvm, matrix);
+> +
+> +	mutex_unlock(&kvm->lock);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(kvm_ap_configure_matrix);
+> +
+> +/**
+> + * kvm_ap_deconfigure_matrix
+> + *
+> + * Deconfigure the AP matrix for a KVM guest. Clears all of the bits in the
+> + * APM, AQM and ADM in the guest's CRYCB.
+> + *
+> + * @kvm: the KVM guest
+> + */
+> +void kvm_ap_deconfigure_matrix(struct kvm *kvm)
+> +{
+> +	kvm_ap_clear_crycb_masks(kvm);
+> +}
+> +EXPORT_SYMBOL(kvm_ap_deconfigure_matrix);
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+> index 4292a5e..4fda44e 100644
+> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -10,6 +10,7 @@
+>   #include <linux/device.h>
+>   #include <linux/list.h>
+>   #include <linux/ctype.h>
+> +#include <asm/kvm-ap.h>
+>
+>   #include "vfio_ap_private.h"
+>
+> @@ -18,8 +19,23 @@
+>
+>   static int vfio_ap_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
+>   {
+> +	int ret;
+> +	struct ap_matrix_mdev *matrix_mdev;
+>   	struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
+> +	struct kvm_ap_matrix *matrix;
+> +
+> +	ret = kvm_ap_matrix_create(&matrix);
+> +	if (ret)
+> +		return ret;
+> +
+> +	matrix_mdev = kzalloc(sizeof(*matrix_mdev), GFP_KERNEL);
+> +	if (!matrix_mdev) {
+> +		kvm_ap_matrix_destroy(matrix);
+> +		return -ENOMEM;
+> +	}
+>
+> +	matrix_mdev->matrix = matrix;
+> +	mdev_set_drvdata(mdev, matrix_mdev);
+>   	ap_matrix->available_instances--;
+>
+>   	return 0;
+> @@ -28,7 +44,10 @@ static int vfio_ap_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
+>   static int vfio_ap_mdev_remove(struct mdev_device *mdev)
+>   {
+>   	struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
+> +	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+>
+> +	kvm_ap_matrix_destroy(matrix_mdev->matrix);
+> +	kfree(matrix_mdev);
+>   	ap_matrix->available_instances++;
+>
+>   	return 0;
+> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
+> index c264415..522564e 100644
+> --- a/drivers/s390/crypto/vfio_ap_private.h
+> +++ b/drivers/s390/crypto/vfio_ap_private.h
+> @@ -27,6 +27,10 @@ struct ap_matrix {
+>   	int available_instances;
+>   };
+>
+> +struct ap_matrix_mdev {
+> +	struct kvm_ap_matrix *matrix;
+> +};
+> +
+>   static inline struct ap_matrix *to_ap_matrix(struct device *dev)
+>   {
+>   	return container_of(dev, struct ap_matrix, device);
