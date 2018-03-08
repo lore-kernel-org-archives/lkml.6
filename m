@@ -1,60 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755574AbeCHJnM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 04:43:12 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:36037 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755180AbeCHJnK (ORCPT
+        id S1755560AbeCHJq6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 04:46:58 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:57322 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751355AbeCHJq4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 04:43:10 -0500
-X-Google-Smtp-Source: AG47ELtBzSUtz8fw6m6z0edEiIQeUgu3OyLoVf+o/qI5ACilpFCugkpsg1Zb+j4M2ogAmkyO1C6vQQ==
-Message-ID: <1520502187.4264.5.camel@baylibre.com>
-Subject: Re: [PATCH] clk: fix phase reported being zero
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 08 Mar 2018 10:43:07 +0100
-In-Reply-To: <20180215101958.22676-1-jbrunet@baylibre.com>
-References: <20180215101958.22676-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 8 Mar 2018 04:46:56 -0500
+Date: Thu, 8 Mar 2018 10:46:52 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCHv5 3/5] mfd: motorola-cpcap: Add audio-codec support
+Message-ID: <20180308094652.qg4atjw5c3hayaz3@earth.universe>
+References: <20180223200254.25685-1-sebastian.reichel@collabora.co.uk>
+ <20180223200254.25685-4-sebastian.reichel@collabora.co.uk>
+ <20180307163211.rytfli5tb47yhtug@dell>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="apgfiynhdwpmzzxl"
+Content-Disposition: inline
+In-Reply-To: <20180307163211.rytfli5tb47yhtug@dell>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-02-15 at 11:19 +0100, Jerome Brunet wrote:
-> While introducing clk_core_set_phase_nolock, assigning core->phase was
-> mistakenly removed. Fixing this now
-> 
-> Fixes: 9e4d04adeb1a ("clk: add clk_core_set_phase_nolock function")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-Please drop this patch if favor of 
+--apgfiynhdwpmzzxl
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-https://lkml.kernel.org/r/1520491781-132529-1-git-send-email-shawn.lin@rock-chip
-s.com
+Hi Lee,
 
-Thanks
-Jerome
+On Wed, Mar 07, 2018 at 04:32:11PM +0000, Lee Jones wrote:
+> On Fri, 23 Feb 2018, Sebastian Reichel wrote:
+> > +static const struct mfd_cell cpcap_mfd_devices[] =3D {
 
-> ---
->  drivers/clk/clk.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 9d56be6ead39..b33d362239e7 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2314,6 +2314,9 @@ static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
->  	if (core->ops->set_phase)
->  		ret = core->ops->set_phase(core->hw, degrees);
->  
-> +	if (!ret)
-> +		core->phase = degrees;
-> +
->  	trace_clk_set_phase_complete(core, degrees);
->  
->  	return ret;
+[...]
+
+> > +	}, {
+> > +		.name          =3D "cpcap-led",
+> > +		.id            =3D 4,
+> > +		.of_compatible =3D "motorola,cpcap-led-cp",
+> > +	}, {
+> > +		.name          =3D "cpcap-codec",
+> > +	}
+> > +};
+>=20
+> With none of the entries containing platform_data /me wonders why you
+> can't still use devm_of_platform_populate()?
+
+Because devm_of_platform_populate works with compatible properties and
+cpcap-codec does not have one after I removed it for Mark.
+
+-- Sebastian
+
+> >  static int cpcap_probe(struct spi_device *spi)
+> >  {
+> >  	const struct of_device_id *match;
+> > @@ -260,7 +308,8 @@ static int cpcap_probe(struct spi_device *spi)
+> >  	if (ret)
+> >  		return ret;
+> > =20
+> > -	return devm_of_platform_populate(&cpcap->spi->dev);
+> > +	return devm_mfd_add_devices(&spi->dev, 0, cpcap_mfd_devices,
+> > +				    ARRAY_SIZE(cpcap_mfd_devices), NULL, 0, NULL);
+> >  }
+> > =20
+> >  static struct spi_driver cpcap_driver =3D {
+>=20
+> --=20
+> Lee Jones
+> Linaro Services Technical Lead
+> Linaro.org =E2=94=82 Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
+
+--apgfiynhdwpmzzxl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqhBnsACgkQ2O7X88g7
++pqSmBAAgX8CzEdb4wxp/qgqjQaEcdjL7sz7MkodTGO2PkqWChQCuWYK+IDa2k36
+KcJ+YZ/cEw0QgD1cmMz+swhz9UrvDYriqsBZ0A4Bcu8Tbc0JR12QIQEjVWYrvhQi
+Tj5nMbsF7t70J3Eg6i3Eorkx5ipyON5L/Uu08Mog8xZOK46aAeG5W6K44pg6GJ8v
+ov1EE7ubCZIL1gPXOkjXjbl9uetAAXWDYvKURSELm+EeRtrvcfB8iSQy8IF2QPOh
+Nk1p+eRuOTw2ZCBypqDF8o1TGciKLeS3RRGN4hhCV+j+EDc/tmIY/a70MqaVqywh
+Vw514RImpP6B5X2UZqxZg7SSg1ERx2CYPNE7ctZCDpGg+jIJ5YAHHzyJlcTJQHl2
+AxEQF6sLgFfPp/f2wCAjf5wlp+a2SkWlKfM34JPT1+gUNW8Tw/lUwuAVBmFBTOzp
+1DOGROzoeVwrKINAueyzf3FHyuGZ8f60IKMyU3kOwJRaOK/tww2KcltdilcjVx3V
+ESlbEB0XuLn5mbgC61JuCagsIFIBc9d6OTGHfar/DKU2+oE5Kqg7rW4SSwGThEim
+/ivMveujAR7c9NWgkyukzeiNG1o5XYj74c9AUljqBKdnRWTbIkmNwjlcQgHl7OxR
+lhVfMGJu0EvVbcKBoQXeM0W3YoibCRZwx2Vabzc/d1zIEK+O0Ww=
+=dxXu
+-----END PGP SIGNATURE-----
+
+--apgfiynhdwpmzzxl--
