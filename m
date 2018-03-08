@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964817AbeCHCfS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 21:35:18 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5760 "EHLO huawei.com"
+        id S934990AbeCHCfR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 21:35:17 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5758 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934903AbeCHCfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S934900AbeCHCfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Mar 2018 21:35:03 -0500
 From: Peng Li <lipeng321@huawei.com>
 To: <davem@davemloft.net>
 CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
         <lipeng321@huawei.com>
-Subject: [PATCH net-next 21/23] {topost} net: hns3: fix the queue id for tqp enable&&reset
-Date: Thu, 8 Mar 2018 11:06:46 +0800
-Message-ID: <1520478408-116992-22-git-send-email-lipeng321@huawei.com>
+Subject: [PATCH net-next 15/23] {topost} net: hns3: refactor the get/put_vector function
+Date: Thu, 8 Mar 2018 11:06:40 +0800
+Message-ID: <1520478408-116992-16-git-send-email-lipeng321@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520478408-116992-1-git-send-email-lipeng321@huawei.com>
 References: <1520478408-116992-1-git-send-email-lipeng321@huawei.com>
@@ -25,122 +25,152 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Command HCLGE_OPC_CFG_COM_TQP_QUEUE should use queue id in the
-function, but command HCLGE_OPC_RESET_TQP_QUEUE should use global
-queue id.
-This patch fixes the queue id about queue enable/disable/reset.
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
+There is a get_vector function, which allocate the vectors
+for a client, but there is not a put_vector to free the
+vector.
+
+This patch introduces the put_vector function in order to
+fix the coalesce configuration lost problem during reset
+process.
+
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 ---
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 50 +++++++++++-----------
- 1 file changed, 24 insertions(+), 26 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |  3 +++
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |  4 ++++
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 28 ++++++++++++++++------
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  | 12 +++++++---
+ 4 files changed, 37 insertions(+), 10 deletions(-)
 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+index 3c653eb..70441d2 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+@@ -265,6 +265,8 @@ struct hnae3_ae_dev {
+  *   Get tc size of handle
+  * get_vector()
+  *   Get vector number and vector information
++ * put_vector()
++ *   Put the vector in hdev
+  * map_ring_to_vector()
+  *   Map rings to vector
+  * unmap_ring_from_vector()
+@@ -376,6 +378,7 @@ struct hnae3_ae_ops {
+ 
+ 	int (*get_vector)(struct hnae3_handle *handle, u16 vector_num,
+ 			  struct hnae3_vector_info *vector_info);
++	int (*put_vector)(struct hnae3_handle *handle, int vector_num);
+ 	int (*map_ring_to_vector)(struct hnae3_handle *handle,
+ 				  int vector_num,
+ 				  struct hnae3_ring_chain_node *vr_chain);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 2bed73e..fef65b9 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -2709,6 +2709,10 @@ static int hns3_nic_uninit_vector_data(struct hns3_nic_priv *priv)
+ 		if (ret)
+ 			return ret;
+ 
++		ret = h->ae_algo->ops->put_vector(h, tqp_vector->vector_irq);
++		if (ret)
++			return ret;
++
+ 		hns3_free_vector_ring_chain(tqp_vector, &vector_ring_chain);
+ 
+ 		if (priv->tqp_vector[i].irq_init_flag == HNS3_VECTOR_INITED) {
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 323f95b..ea33cc5 100644
+index c0f6939..323f95b 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -3720,20 +3720,11 @@ static int hclge_ae_start(struct hnae3_handle *handle)
- {
- 	struct hclge_vport *vport = hclge_get_vport(handle);
- 	struct hclge_dev *hdev = vport->back;
--	int i, queue_id, ret;
-+	int i, ret;
- 
--	for (i = 0; i < vport->alloc_tqps; i++) {
--		/* todo clear interrupt */
--		/* ring enable */
--		queue_id = hclge_get_queue_id(handle->kinfo.tqp[i]);
--		if (queue_id < 0) {
--			dev_warn(&hdev->pdev->dev,
--				 "Get invalid queue id, ignore it\n");
--			continue;
--		}
-+	for (i = 0; i < vport->alloc_tqps; i++)
-+		hclge_tqp_enable(hdev, i, 0, true);
- 
--		hclge_tqp_enable(hdev, queue_id, 0, true);
--	}
- 	/* mac enable */
- 	hclge_cfg_mac_mode(hdev, true);
- 	clear_bit(HCLGE_STATE_DOWN, &hdev->state);
-@@ -3753,19 +3744,11 @@ static void hclge_ae_stop(struct hnae3_handle *handle)
- {
- 	struct hclge_vport *vport = hclge_get_vport(handle);
- 	struct hclge_dev *hdev = vport->back;
--	int i, queue_id;
-+	int i;
- 
--	for (i = 0; i < vport->alloc_tqps; i++) {
--		/* Ring disable */
--		queue_id = hclge_get_queue_id(handle->kinfo.tqp[i]);
--		if (queue_id < 0) {
--			dev_warn(&hdev->pdev->dev,
--				 "Get invalid queue id, ignore it\n");
--			continue;
--		}
-+	for (i = 0; i < vport->alloc_tqps; i++)
-+		hclge_tqp_enable(hdev, i, 0, false);
- 
--		hclge_tqp_enable(hdev, queue_id, 0, false);
--	}
- 	/* Mac disable */
- 	hclge_cfg_mac_mode(hdev, false);
- 
-@@ -4851,21 +4834,36 @@ static int hclge_get_reset_status(struct hclge_dev *hdev, u16 queue_id)
- 	return hnae_get_bit(req->ready_to_reset, HCLGE_TQP_RESET_B);
+@@ -2969,6 +2969,24 @@ static int hclge_get_vector_index(struct hclge_dev *hdev, int vector)
+ 	return -EINVAL;
  }
  
-+static u16 hclge_covert_handle_qid_global(struct hnae3_handle *handle,
-+					  u16 queue_id)
++static int hclge_put_vector(struct hnae3_handle *handle, int vector)
 +{
-+	struct hnae3_queue *queue;
-+	struct hclge_tqp *tqp;
++	struct hclge_vport *vport = hclge_get_vport(handle);
++	struct hclge_dev *hdev = vport->back;
++	int vector_id;
 +
-+	queue = handle->kinfo.tqp[queue_id];
-+	tqp = container_of(queue, struct hclge_tqp, q);
++	vector_id = hclge_get_vector_index(hdev, vector);
++	if (vector_id < 0) {
++		dev_err(&hdev->pdev->dev,
++			"Get vector index fail. vector_id =%d\n", vector_id);
++		return vector_id;
++	}
 +
-+	return tqp->index;
++	hclge_free_vector(hdev, vector_id);
++
++	return 0;
 +}
 +
- void hclge_reset_tqp(struct hnae3_handle *handle, u16 queue_id)
+ static u32 hclge_get_rss_key_size(struct hnae3_handle *handle)
  {
- 	struct hclge_vport *vport = hclge_get_vport(handle);
- 	struct hclge_dev *hdev = vport->back;
- 	int reset_try_times = 0;
- 	int reset_status;
-+	u16 queue_gid;
- 	int ret;
+ 	return HCLGE_RSS_KEY_SIZE;
+@@ -3523,18 +3541,13 @@ static int hclge_unmap_ring_frm_vector(struct hnae3_handle *handle,
+ 	}
  
-+	queue_gid = hclge_covert_handle_qid_global(handle, queue_id);
+ 	ret = hclge_bind_ring_with_vector(vport, vector_id, false, ring_chain);
+-	if (ret) {
++	if (ret)
+ 		dev_err(&handle->pdev->dev,
+ 			"Unmap ring from vector fail. vectorid=%d, ret =%d\n",
+ 			vector_id,
+ 			ret);
+-		return ret;
+-	}
+-
+-	/* Free this MSIX or MSI vector */
+-	hclge_free_vector(hdev, vector_id);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ int hclge_cmd_set_promisc_mode(struct hclge_dev *hdev,
+@@ -5996,6 +6009,7 @@ static const struct hnae3_ae_ops hclge_ops = {
+ 	.map_ring_to_vector = hclge_map_ring_to_vector,
+ 	.unmap_ring_from_vector = hclge_unmap_ring_frm_vector,
+ 	.get_vector = hclge_get_vector,
++	.put_vector = hclge_put_vector,
+ 	.set_promisc_mode = hclge_set_promisc_mode,
+ 	.set_loopback = hclge_set_loopback,
+ 	.start = hclge_ae_start,
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+index eee5e20..6bce99a 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+@@ -627,13 +627,18 @@ static int hclgevf_unmap_ring_from_vector(
+ 	}
+ 
+ 	ret = hclgevf_bind_ring_to_vector(handle, false, vector, ring_chain);
+-	if (ret) {
++	if (ret)
+ 		dev_err(&handle->pdev->dev,
+ 			"Unmap ring from vector fail. vector=%d, ret =%d\n",
+ 			vector_id,
+ 			ret);
+-		return ret;
+-	}
 +
- 	ret = hclge_tqp_enable(hdev, queue_id, 0, false);
- 	if (ret) {
- 		dev_warn(&hdev->pdev->dev, "Disable tqp fail, ret = %d\n", ret);
- 		return;
- 	}
++	return ret;
++}
++
++static int hclgevf_put_vector(struct hnae3_handle *handle, int vector)
++{
++	struct hclgevf_dev *hdev = hclgevf_ae_get_hdev(handle);
  
--	ret = hclge_send_reset_tqp_cmd(hdev, queue_id, true);
-+	ret = hclge_send_reset_tqp_cmd(hdev, queue_gid, true);
- 	if (ret) {
- 		dev_warn(&hdev->pdev->dev,
- 			 "Send reset tqp cmd fail, ret = %d\n", ret);
-@@ -4876,7 +4874,7 @@ void hclge_reset_tqp(struct hnae3_handle *handle, u16 queue_id)
- 	while (reset_try_times++ < HCLGE_TQP_RESET_TRY_TIMES) {
- 		/* Wait for tqp hw reset */
- 		msleep(20);
--		reset_status = hclge_get_reset_status(hdev, queue_id);
-+		reset_status = hclge_get_reset_status(hdev, queue_gid);
- 		if (reset_status)
- 			break;
- 	}
-@@ -4886,7 +4884,7 @@ void hclge_reset_tqp(struct hnae3_handle *handle, u16 queue_id)
- 		return;
- 	}
+ 	hclgevf_free_vector(hdev, vector);
  
--	ret = hclge_send_reset_tqp_cmd(hdev, queue_id, false);
-+	ret = hclge_send_reset_tqp_cmd(hdev, queue_gid, false);
- 	if (ret) {
- 		dev_warn(&hdev->pdev->dev,
- 			 "Deassert the soft reset fail, ret = %d\n", ret);
+@@ -1464,6 +1469,7 @@ static const struct hnae3_ae_ops hclgevf_ops = {
+ 	.map_ring_to_vector = hclgevf_map_ring_to_vector,
+ 	.unmap_ring_from_vector = hclgevf_unmap_ring_from_vector,
+ 	.get_vector = hclgevf_get_vector,
++	.put_vector = hclgevf_put_vector,
+ 	.reset_queue = hclgevf_reset_tqp,
+ 	.set_promisc_mode = hclgevf_set_promisc_mode,
+ 	.get_mac_addr = hclgevf_get_mac_addr,
 -- 
 2.9.3
