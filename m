@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3114250-1521472979-2-13207898064016023702
+X-Cyrus-Session-Id: sloti22d1t05-1131037-1520491757-2-96984452666028793
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -8,151 +8,162 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521472978; b=mdlsGeD3rvMSIMxF/5xnWuS/hAnMOTjm0aJNzMB/87dbjsi
-    UBdfW+sBGCsTlFojv3mJCGKZuTi+hMce/Tl4oZU7cYxMPqN5dPJy6VpfqcRBwjNi
-    xJabLJw5UoNznt1t+HM/mcZYrCmEX/3jp7WVtMW4LOmPKDVRT7h0RqC0fGeNrMbv
-    XGQeE3bQX6xSyZ5T0OE8YU5WH8X7BLmFp1sHKX8ltBQz5HCWOCYGRG/PT5Vj6dRG
-    67f+2Jw+DTYG83/oB4LWTWFZXIgEe6vvUYNW8XW56dn7xImF/Aju5qMTOLDZhO2W
-    sLW/Ud+ThvNtlIUJLVm6tMA5Gw+XPgL2Ay//0GQ==
+    t=1520491756; b=efdfGDMTTs13Mk4RQGmG5Ad8+dgXJXOlHYrLpd3pIs83OkM
+    +KOhUgYN5/vlWS/xXeI3j+zV/d+/rHjfhhol9kGxtyFi+e8YS4+ivoUBqdeb7YT7
+    U78YUJpqp9NLILJRcwdRN+EGusylmGPk5FbjCMsHRajivNmtWytlyNUNPXSjwL/V
+    hLuFLlHwU267OW5Dlo+dAR1E04qih8NQ5bWIQgHf2aNuITYwELXW61WfSb5hLD/N
+    RMYBzMjbyjMIL7U5OejsNaRwVLEbAOKBflHnzXnUASkiKRNUFXUql4XPRYcFibNl
+    mGxQ1zeZkKyi4uLEFDD/MR9cQEHwCW+N4TQzb4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-id
-    :content-transfer-encoding:mime-version:sender:list-id; s=
-    arctest; t=1521472978; bh=b7PAtkHzMvDLPQdxINnrdOmM4E/TBejquyUYJw
-    ON+kg=; b=ljphWeo8mvZQ/bqq/e7zEgv2q/F7duZAP4RbDwYdfSsnVqsqt75J4o
-    obKZzMjm+qgrJQZrlYBHS6RJ5U3b7W/m7i6mK1PJQeA3IytRl3fht0N9tpAOklrN
-    j3JARrWmUAdwbnd1liFG6vliP8T329fPYIchg8og3M0L/LO2+U4vikEOgpF7GZ1O
-    8yL3GNYkAHvjqes55iEyhdCvQlgnbfsYl3NMVfKSAho1KMh4T31ArjhXBX8Nr7vb
-    JdCGDc6CfuZiP7yieGwBg2g564G6MfJ8VrkrBDRTx8t+tS88aFrX5o8YqmRbErpI
-    hT5tYMZbVz6PvQccTyYDARTnnzPwyIFg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=fONsnL/4 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :references:in-reply-to:content-type:content-transfer-encoding
+    :mime-version:sender:list-id; s=arctest; t=1520491756; bh=AHGEzA
+    m8jh98t7+3dDyHsN00jLfrtg1Y5dTsFqcz0Q8=; b=aU0ubFb1YbnM4N/HLxmCad
+    ZcO2+HjKwUsA6sq/2YxsgZD396HHNpVtsbXufIcTDjGNCiTWMR3lkC5NI6WshxZk
+    hQroiWZJwvdw7/0p123e43NkpyfKLD8lXuTDLnCDl7iIKh0viV2oMy2ReA5WUgCS
+    VICdByNTphIBgLRWgvnZlk8+gPuYHOW2wf93DspKfRinUbF7wkiFrrwJGKs2OIz3
+    nSnbbZ6sWP4epIN7NPcwwJh7r9Ecctrw7NXl+twnpvEYDPCcmNGH8s14vVcTURqc
+    BiyDasSYVvETPUMTpQU3CKy5EhfdoHC23B2uJnPIo2faGxkOKI4uhETE41mpL3fg
+    ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=NKe7V482 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdejgeculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtvdenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepjeeltddunecuvehluhhsthgvrhfuihiivgeptd;
+    x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=fONsnL/4 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=NKe7V482 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdejgeculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufhtfffkfhgjihgtgfggshhpjeesthhqredttddtvdenucfhrhhomhepufgrshhhrgcunfgvvhhinhcuoeetlhgvgigrnhguvghrrdfnvghvihhnsehmihgtrhhoshhofhhtrdgtohhmqeenucfkphepvddtledrudefvddrudektddrieejpdehvddrudeikedrheegrddvhedvpdhfvgektdemmeefugelsgemjeelvgejmeelgegvsgemheguiedvnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepjeeltddunecuvehluhhsthgvrhfuihiivgeptd;
+    x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933088AbeCSPW4 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 11:22:56 -0400
-Received: from mail-co1nam03on0121.outbound.protection.outlook.com ([104.47.40.121]:10592
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        id S965096AbeCHE6Q (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Mar 2018 23:58:16 -0500
+Received: from mail-by2nam03on0117.outbound.protection.outlook.com ([104.47.42.117]:8510
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932878AbeCSPWv (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 19 Mar 2018 11:22:51 -0400
+        id S965050AbeCHE6M (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 7 Mar 2018 23:58:12 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH AUTOSEL for 4.14 12/67] KVM: x86: add support for
- emulating UMIP
-Thread-Topic: [PATCH AUTOSEL for 4.14 12/67] KVM: x86: add support for
- emulating UMIP
-Thread-Index: AQHTtpn6RxGhJxHWy02eLbnawN2M7MGVFwZS4kKoBwA=
-Date: Mon, 19 Mar 2018 15:22:47 +0000
-Message-ID: <20180319152244.ekaloppjdbtg4gjo@sasha-lappy>
+CC: David Lechner <david@lechnology.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 04/67] dt-bindings: net: add TI CC2560
+ Bluetooth chip
+Thread-Topic: [PATCH AUTOSEL for 4.14 04/67] dt-bindings: net: add TI CC2560
+ Bluetooth chip
+Thread-Index: AQHTtpn3jW0erqkYkUOnCRUgIQMRMA==
+Date: Thu, 8 Mar 2018 04:57:33 +0000
+Message-ID: <20180308045641.7814-4-alexander.levin@microsoft.com>
 References: <20180308045641.7814-1-alexander.levin@microsoft.com>
- <20180308045641.7814-12-alexander.levin@microsoft.com>
- <1211566882.5943983.1520491599636.JavaMail.zimbra@redhat.com>
-In-Reply-To: <1211566882.5943983.1520491599636.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20180308045641.7814-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1048;7:PWAMkCl5GnW7V7S0pAqFaGbvskKiRQ0ZxT440gnRNdoa85RrHdAe9NQzj+NFPtF/Q3gJjWRV2e/86aAxLgvGWuHJTZoT8YQsq/6LxQq6qQCAwtI8lG9OTpGmiTgUt4kKV/xxOkquABW+R8fvbYwbfav2LU9wsYjLT9m1VPus67xniLqwCmA1b9XwBz1k6aYp/ZN729J6mnA2IRco+pMkp8BhngnOzfwBhdiFqk+/YzEsouOFIM98VLzZL0bwPI34;20:Wz+8+Y1lnp41fKLn4QnrgMrvTzozA74cumcPyT+ulQnIe4cr2DUVHaW18p67ngZj4n6jp+Sgi2x+iXJHNRl7SdGczCZ4EaURelhHv8veMkA3PcRL+FV7rZ71ZWAdOsgx4O+BugN5TFjfQY3z2WHrAo9qartzdWxLlT07y6YPPrU=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0936;7:6Nh3PXyzSO4H/nvGDiOfmbyMyfUZQCVkV9TyCAhBTGMsOMCH+v8EmFMdE+ZSElArtRAWoaa78IC4KKCaoweSLYmtiRoJmx5Pyw9VyDCDLoEP2ZfubNbfurd2gWqiBGQAK2mZNEa8asRk0NUs9VwYf/rI43RRp4dwC1jPc9FPpmrd+8/nguZGGbwDFHWNp39m7uh8RojeQ4D2wt74Wg4xBGm2MKsMLiz0tlVcjfYV06sHbTDMyLulH5qSPv1dQ7ph;20:PbZXbI190fQizguujesF0D95A3ctVNFmzBrbm2a9qflYWNxiKgSEmlI5imSOQ3O0jH4pfzh4xS5qSmwO6k4t/3choYDCb8GJe3LYpUSu0S5Vbd1WgV7JIdGfxbzezUCKm7rPOl/AIAH4daOi6TJjtT7cPwTJCWR26jaFXzcl1Nk=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: e25d9ed6-26fe-43a0-674a-08d58dad453b
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1048;
-x-ms-traffictypediagnostic: DM5PR2101MB1048:
+x-ms-office365-filtering-correlation-id: 1ee368c2-0213-42e7-e1f8-08d584b12ca0
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0936;
+x-ms-traffictypediagnostic: DM5PR2101MB0936:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1048EDE93D30C056B2C71417FBD40@DM5PR2101MB1048.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055)(130873036417446)(194151415913766);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501300)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB1048;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1048;
-x-forefront-prvs: 06167FAD59
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(39380400002)(39860400002)(396003)(346002)(366004)(376002)(13464003)(189003)(199004)(10090500001)(25786009)(106356001)(5660300001)(102836004)(26005)(6506007)(8936002)(2906002)(575784001)(186003)(2950100002)(6916009)(86362001)(66066001)(5250100002)(3280700002)(4326008)(72206003)(68736007)(10290500003)(86612001)(478600001)(81156014)(81166006)(8676002)(2900100001)(1076002)(33716001)(105586002)(6436002)(54906003)(53936002)(6116002)(3846002)(33896004)(305945005)(6246003)(316002)(6512007)(9686003)(6486002)(229853002)(14454004)(3660700001)(97736004)(7736002)(76176011)(22452003)(99286004)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1048;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: 7FM5wz6wHsHxc7EsGy+F6dOF689rAeH/B3TRdwOWJjXXOPBtsqb4huz8GOPtZ3jvhZSv7UJ7UVY+Ohz/NUfGbQ4lgB9+7EWq+PiAtU3EG3l8U614c7Fjt+LQgDROBjXRz3myV8rq6DVfTaJ1gLPzcfoA5TjsAbGCk9VvBLMoJbJS8GhZixvAr/PEKO1hsde7N81Ac/IJBVWfEbOAIxZ3syX2HOiY/3eVioGQ0OOWLCidv/iZ/ToBiS3EDZpl2o28XIGeyttK39fhE8o/ryfUZLoL98N+l/fKszPiKK3o3Y4n5u3SPZA37eqSxSCjAfpouP9nryqAQqpM5DLX/EYhRg==
+x-microsoft-antispam-prvs: <DM5PR2101MB09363224426B44B420CB7310FBDF0@DM5PR2101MB0936.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0936;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0936;
+x-forefront-prvs: 060503E79B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(39380400002)(346002)(376002)(199004)(189003)(478600001)(99286004)(575784001)(6506007)(3660700001)(36756003)(86362001)(54906003)(6116002)(110136005)(2950100002)(102836004)(1076002)(3846002)(6486002)(3280700002)(10090500001)(10290500003)(305945005)(72206003)(5890100001)(6436002)(6666003)(26005)(5250100002)(2906002)(186003)(2501003)(105586002)(76176011)(66066001)(7736002)(68736007)(25786009)(6512007)(106356001)(86612001)(8936002)(107886003)(81166006)(2900100001)(5660300001)(4326008)(81156014)(53936002)(14454004)(97736004)(316002)(22452003)(8676002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0936;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: yhgP7ONg7leR1mi1+6DfhG4tG67m2j5PiLbgfoodRnDZNgFUP9XAGLkGlR2GZFclmRYy+9LCmvGMGn7DVhJ1f0J9ojtZOjnHeiTJbO6d4O0fUAEdybOuJ48x0MJHmMsnd8BaCBdxm9vtHMEuN6raLeKO/xDcTEwlLDWAQhW8oCflolye6XC0L9PYtN61b9yf3Y2jIoG2gbT18RSJESHL+vvtFklxAIGTQIg/CuD9dWJN8oz4t0BQ2SG3XKGHe68A7jTG0FLxt/hj3fi/WlpeK41UfrhbqZGgPGcyUzu+aTGE4pNtEf2mrGfWucEvGs8R6FSvhyc3zDMDtEySL79ezA==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <05587E6C657F0B4AB75B5650B05F95C8@namprd21.prod.outlook.com>
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e25d9ed6-26fe-43a0-674a-08d58dad453b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Mar 2018 15:22:47.1371
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ee368c2-0213-42e7-e1f8-08d584b12ca0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:57:33.1319
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1048
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0936
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 08, 2018 at 01:46:39AM -0500, Paolo Bonzini wrote:
->
->
->----- Original Message -----
->> From: "Sasha Levin" <Alexander.Levin@microsoft.com>
->> To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
->> Cc: "Paolo Bonzini" <pbonzini@redhat.com>, "Sasha Levin" <Alexander.Levi=
-n@microsoft.com>
->> Sent: Thursday, March 8, 2018 5:57:36 AM
->> Subject: [PATCH AUTOSEL for 4.14 12/67] KVM: x86: add support for emulat=
-ing UMIP
->>
->> From: Paolo Bonzini <pbonzini@redhat.com>
->>
->> [ Upstream commit 66336cab3531d3325ebde36a04725dddd0c42cb5 ]
->>
->> The User-Mode Instruction Prevention feature present in recent Intel
->> processor prevents a group of instructions (sgdt, sidt, sldt, smsw, and
->> str) from being executed with CPL > 0. Otherwise, a general protection
->> fault is issued.
->>
->> UMIP instructions in general are also able to trigger vmexits, so we can
->> actually emulate UMIP on older processors.  This commit sets up the
->> infrastructure so that kvm-intel.ko and kvm-amd.ko can set the UMIP
->> feature bit for CPUID even if the feature is not actually available
->> in hardware.
->>
->> Reviewed-by: Wanpeng Li <wanpeng.li@hotmail.com>
->> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
->> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
->
->This is not enough (there were a couple bugs, plus you have not
->added the changes needed to the handle SLDT, STR, etc. in the
->emulator).  But since this is a feature, why is it being backported
->to 4.14, especially without any testing??
+From: David Lechner <david@lechnology.com>
 
-Hi Paolo,
+[ Upstream commit 07c7edd0db441f83eeee087470add5be280cc018 ]
 
-They were proposed for stable as part of the automatic patch selection
-process. I'll drop this patch.
+This adds a compatible string for the Texas Instruments CC2560 Bluetooth
+chip to the existing TI WiLink shared transport bindings. These chips are
+similar enough that the same bindings work for both. The file is renamed
+to ti-bluetooth.txt to make it more generic.
 
+Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ .../bindings/net/{ti,wilink-st.txt =3D> ti-bluetooth.txt}     | 13 +++++++=
+++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+ rename Documentation/devicetree/bindings/net/{ti,wilink-st.txt =3D> ti-blu=
+etooth.txt} (75%)
+
+diff --git a/Documentation/devicetree/bindings/net/ti,wilink-st.txt b/Docum=
+entation/devicetree/bindings/net/ti-bluetooth.txt
+similarity index 75%
+rename from Documentation/devicetree/bindings/net/ti,wilink-st.txt
+rename to Documentation/devicetree/bindings/net/ti-bluetooth.txt
+index 1649c1f66b07..3690732750f0 100644
+--- a/Documentation/devicetree/bindings/net/ti,wilink-st.txt
++++ b/Documentation/devicetree/bindings/net/ti-bluetooth.txt
+@@ -1,10 +1,18 @@
+-TI WiLink 7/8 (wl12xx/wl18xx) Shared Transport BT/FM/GPS devices
++Texas Instruments Bluetooth Chips
++---------------------------------
++
++This documents the binding structure and common properties for serial
++attached TI Bluetooth devices. The following chips are included in this
++binding:
++
++* TI CC256x Bluetooth devices
++* TI WiLink 7/8 (wl12xx/wl18xx) Shared Transport BT/FM/GPS devices
+=20
+ TI WiLink devices have a UART interface for providing Bluetooth, FM radio,
+ and GPS over what's called "shared transport". The shared transport is
+ standard BT HCI protocol with additional channels for the other functions.
+=20
+-These devices also have a separate WiFi interface as described in
++TI WiLink devices also have a separate WiFi interface as described in
+ wireless/ti,wlcore.txt.
+=20
+ This bindings follows the UART slave device binding in
+@@ -12,6 +20,7 @@ This bindings follows the UART slave device binding in
+=20
+ Required properties:
+  - compatible: should be one of the following:
++    "ti,cc2560"
+     "ti,wl1271-st"
+     "ti,wl1273-st"
+     "ti,wl1281-st"
 --=20
-
-Thanks,
-Sasha=
+2.14.1
