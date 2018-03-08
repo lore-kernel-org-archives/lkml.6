@@ -1,77 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755817AbeCHPJt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 10:09:49 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:52640 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754898AbeCHPJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 10:09:48 -0500
-Date: Thu, 8 Mar 2018 16:09:44 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Mylene Josserand <mylene.josserand@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/4] ARM: dts: sun9i: Add enable-method for SMP support
- for the A80 SoC
-Message-ID: <20180308150944.mlkgsrwhsk7hrlcp@flea.lan>
-References: <20180308150012.19045-1-wens@csie.org>
- <20180308150012.19045-4-wens@csie.org>
+        id S934343AbeCHPJz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 10:09:55 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45608 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932085AbeCHPJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 10:09:50 -0500
+Subject: Re: [PATCH v10 00/10] livepatch: Atomic replace feature
+To: Petr Mladek <pmladek@suse.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>, Jason Baron <jbaron@akamai.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180307082039.10196-1-pmladek@suse.com>
+ <45877626-2d41-4af8-a8ff-5897585122ad@redhat.com>
+ <20180308150150.guwwj2exrymugoeq@pathway.suse.cz>
+From: Joe Lawrence <joe.lawrence@redhat.com>
+Organization: Red Hat
+Message-ID: <2f94c399-fe72-58f9-bd63-b08c46bb47b3@redhat.com>
+Date: Thu, 8 Mar 2018 10:09:48 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="22gesboi3cwo33jg"
-Content-Disposition: inline
-In-Reply-To: <20180308150012.19045-4-wens@csie.org>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <20180308150150.guwwj2exrymugoeq@pathway.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 03/08/2018 10:01 AM, Petr Mladek wrote:
+> On Wed 2018-03-07 16:55:53, Joe Lawrence wrote:
+>> Running against v10, callbacks seem to be good up until I disable an
+>> atomic replace patch.  My understanding is that the original patch's
+>> unpatch callbacks should be skipped (as they were).  I was surprised to
+>> see that atomic replacement patch only ran it's post-unpatch callback.
+> 
+> Great catch!
+> 
+> I guess that it is caused by the heuristic used in
+> klp_unpatch_object() to decide whether the object is patched
+> or not.
+> 
+> We need to change the state only when manipulating the
+> statically defined functions.
+> 
+> Thanks a lot for so extensive testing!!!
 
---22gesboi3cwo33jg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sorry for not getting to this series sooner.  I'm trying to refit these
+tests into a kselftest so we can more easily reuse them.  Still hacking
+away at it, but I'll post when something soon to start a livepatch
+selftests conversation :)
 
-On Thu, Mar 08, 2018 at 11:00:11PM +0800, Chen-Yu Tsai wrote:
-> Using the enable-method property for SMP support would allow future PSCI
-> implementations to override any in-OS support. This is better than just
-> matching against the machine compatible, and then having to determine
-> whether other methods are available or not.
->=20
-> This adds enable-method properties to all CPU nodes.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---22gesboi3cwo33jg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqhUjcACgkQ0rTAlCFN
-r3RH/Q/+PMF0nKf4Bo592DAtUNM88kk7y2NhRJjfizmMN2gObNoaqG6myczNM0bm
-XMIl5whmglM64iVwd/TOxfqLTq/kaElCQ+YQGRigmPv1/wgo14bMh5zaWJwWqMQX
-YNexhJRMIuKvxkluZIHYgNo0NkWcDhk89vpcQL45hUqPSBhVFt4bSwV6zcfshZA2
-NZE73OKG1A8Ki2r4dLaliESwmJvg5fwbD4U9N2ar70NwAaVP4OAnCNLR97YPa+Bx
-94WnqzlL0MbBc9wFMn6in4ZG/dgMVR4FiNoIJav3d7QY0JQcgSEX7Lm98LvXMEe1
-yYzmGk8szWazJNLOUkKihcjaNse0fafh338rjfF4GHFGJsDYqMaEqXC5ungvLk7r
-Mpr3bYXbmDVzcxcZpq6fAdC3YASJa3+ZLx5NtWXHQMfgm1NC/0uRTnXAFMWvkCAe
-PNlYug7gD7Zqwc3nHeG5Vz3dLN4Zec8tQIdAe4tusbMtV4ikjUeiINuVyYgFmED6
-dm4jvmlvVT+YYB3LXOdLhM+qlK9e4RY9DYXVcTmb0YKzI3TJe+FcM3NaofYFvlyp
-4iXBrTpF6Y74gWbLkR8604UukD0uTqdT6xsfrTSzaZ4xt+G60W22+IVFUiygD1q7
-dGDm8fiRlbwLzFTqYnNZq3/3xdibDzLukws/0oXbQi1lLxsuD/4=
-=mR8N
------END PGP SIGNATURE-----
-
---22gesboi3cwo33jg--
+-- Joe
