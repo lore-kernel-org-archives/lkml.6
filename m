@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966459AbeCHTPY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 14:15:24 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45047 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934478AbeCHTMd (ORCPT
+        id S966541AbeCHTPk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 14:15:40 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:37648 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934141AbeCHTMc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 14:12:33 -0500
-X-Google-Smtp-Source: AG47ELvp3G410oBO1qB3gMm8t3erfKtRY6qsCt7gKtDureXpm+2qITWCrdQ/79WG+riZYwymfrJNpA==
+        Thu, 8 Mar 2018 14:12:32 -0500
+X-Google-Smtp-Source: AG47ELsXdmMiKqjVKVxT2KbD6c4wKGvSNLPxtili4jVOnmRRxQvM9pqhlqpwkAJau9NM9mbQ9ggaBg==
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -18,9 +18,9 @@ Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
         linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 09/21] nvmem: mtk-efuse: Convert to use devm_nvmem_register()
-Date: Thu,  8 Mar 2018 11:11:53 -0800
-Message-Id: <20180308191205.26943-10-andrew.smirnov@gmail.com>
+Subject: [PATCH v5 08/21] nvmem: rockchip-efuse: Convert to use devm_nvmem_register()
+Date: Thu,  8 Mar 2018 11:11:52 -0800
+Message-Id: <20180308191205.26943-9-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180308191205.26943-1-andrew.smirnov@gmail.com>
 References: <20180308191205.26943-1-andrew.smirnov@gmail.com>
@@ -45,17 +45,17 @@ Cc: linux-amlogic@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/nvmem/mtk-efuse.c | 16 ++--------------
+ drivers/nvmem/rockchip-efuse.c | 16 ++--------------
  1 file changed, 2 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/nvmem/mtk-efuse.c b/drivers/nvmem/mtk-efuse.c
-index 9ee3479cfc7b..e66adf17a747 100644
---- a/drivers/nvmem/mtk-efuse.c
-+++ b/drivers/nvmem/mtk-efuse.c
-@@ -72,20 +72,9 @@ static int mtk_efuse_probe(struct platform_device *pdev)
- 	econfig.size = resource_size(res);
- 	econfig.priv = priv;
- 	econfig.dev = dev;
+diff --git a/drivers/nvmem/rockchip-efuse.c b/drivers/nvmem/rockchip-efuse.c
+index f13a8335f364..fec6e4c48b9a 100644
+--- a/drivers/nvmem/rockchip-efuse.c
++++ b/drivers/nvmem/rockchip-efuse.c
+@@ -289,25 +289,13 @@ static int rockchip_efuse_probe(struct platform_device *pdev)
+ 	econfig.reg_read = match->data;
+ 	econfig.priv = efuse;
+ 	econfig.dev = efuse->dev;
 -	nvmem = nvmem_register(&econfig);
 -	if (IS_ERR(nvmem))
 -		return PTR_ERR(nvmem);
@@ -66,7 +66,7 @@ index 9ee3479cfc7b..e66adf17a747 100644
 -	return 0;
 -}
 -
--static int mtk_efuse_remove(struct platform_device *pdev)
+-static int rockchip_efuse_remove(struct platform_device *pdev)
 -{
 -	struct nvmem_device *nvmem = platform_get_drvdata(pdev);
 -
@@ -74,14 +74,11 @@ index 9ee3479cfc7b..e66adf17a747 100644
 +	return PTR_ERR_OR_ZERO(nvmem);
  }
  
- static const struct of_device_id mtk_efuse_of_match[] = {
-@@ -97,7 +86,6 @@ MODULE_DEVICE_TABLE(of, mtk_efuse_of_match);
- 
- static struct platform_driver mtk_efuse_driver = {
- 	.probe = mtk_efuse_probe,
--	.remove = mtk_efuse_remove,
+ static struct platform_driver rockchip_efuse_driver = {
+ 	.probe = rockchip_efuse_probe,
+-	.remove = rockchip_efuse_remove,
  	.driver = {
- 		.name = "mediatek,efuse",
- 		.of_match_table = mtk_efuse_of_match,
+ 		.name = "rockchip-efuse",
+ 		.of_match_table = rockchip_efuse_match,
 -- 
 2.14.3
