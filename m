@@ -1,138 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935261AbeCHJMw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 04:12:52 -0500
-Received: from mail-qk0-f172.google.com ([209.85.220.172]:41038 "EHLO
-        mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751355AbeCHJMt (ORCPT
+        id S935639AbeCHJNE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 04:13:04 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:46198 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935359AbeCHJM7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 04:12:49 -0500
-X-Google-Smtp-Source: AG47ELuoanWHOLlk/yLzN5hsMhMYGT1hgBOIwYpiW5U2f+gcimCrUnj6lvCLs5xQLJohJm2wdQjPNrdT+I7ff7d2cbs=
+        Thu, 8 Mar 2018 04:12:59 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Keith Busch <keith.busch@intel.com>, Sinan Kaya <okaya@codeaurora.org>
+Subject: Re: [PATCH v1 2/9] PCI/PM: Clear PCIe PME Status bit in core, not PCIe port driver
+Date: Thu, 08 Mar 2018 10:13:39 +0100
+Message-ID: <8601339.xFspzpXtrk@aspire.rjw.lan>
+In-Reply-To: <20180308080331.GA5671@wunner.de>
+References: <152040297576.240786.1532465558381209070.stgit@bhelgaas-glaptop.roam.corp.google.com> <152040321483.240786.16597888035806933750.stgit@bhelgaas-glaptop.roam.corp.google.com> <20180308080331.GA5671@wunner.de>
 MIME-Version: 1.0
-In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F2E5817F2@ORSMSX114.amr.corp.intel.com>
-References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <1520292190-5027-3-git-send-email-sai.praneeth.prakhya@intel.com>
- <CANiq72m6_WCXSrBPesgvO1rsF1_AT5Jod_rY-y1f4JjO-SMCDg@mail.gmail.com> <FFF73D592F13FD46B8700F0A279B802F2E5817F2@ORSMSX114.amr.corp.intel.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 8 Mar 2018 10:12:27 +0100
-Message-ID: <CANiq72krjVviT0mPqpK5jbLWEbDx_OhG6+eUmyT8thZPEjkJKg@mail.gmail.com>
-Subject: Re: [PATCH V2 2/3] efi: Introduce efi_rts_workqueue and some
- infrastructure to invoke all efi_runtime_services()
-To: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-Cc: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Lee@vger.kernel.org" <Lee@vger.kernel.org>, Chun-Yi <jlee@suse.com>,
-        Borislav Petkov <bp@alien8.de>, "Luck, Tony" <tony.luck@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        "Neri, Ricardo" <ricardo.neri@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        "Zijlstra, Peter" <peter.zijlstra@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Williams, Dan J" <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 8, 2018 at 5:22 AM, Prakhya, Sai Praneeth
-<sai.praneeth.prakhya@intel.com> wrote:
->> > +struct workqueue_struct *efi_rts_wq;
->> > +
->> >  static bool disable_runtime;
->> >  static int __init setup_noefi(char *arg)  { @@ -329,6 +331,19 @@
->> > static int __init efisubsys_init(void)
->> >                 return 0;
->> >
->> >         /*
->> > +        * Since we process only one efi_runtime_service() at a time, an
->> > +        * ordered workqueue (which creates only one execution context)
->> > +        * should suffice all our needs.
->> > +        */
->> > +       efi_rts_wq = alloc_ordered_workqueue("efi_rts_workqueue", 0);
->>
->> efi_rts_wq or efi_rts_workqueue?
->>
->> > +       if (!efi_rts_wq) {
->> > +               pr_err("Failed to create efi_rts_workqueue, EFI runtime services "
->>
->> Same here.
->
-> Sure! I will make it consistent with "efi_rts_wq". Just tried to be more verbose
-> with names :)
->
+On Thursday, March 8, 2018 9:03:31 AM CET Lukas Wunner wrote:
+> On Wed, Mar 07, 2018 at 12:13:34AM -0600, Bjorn Helgaas wrote:
+> > From: Bjorn Helgaas <bhelgaas@google.com>
+> > 
+> > fe31e69740ed ("PCI/PCIe: Clear Root PME Status bits early during system
+> > resume") added a .resume_noirq() callback to the PCIe port driver to clear
+> > the PME Status bit during resume to work around a BIOS issue.
+> > 
+> > The BIOS evidently enabled PME interrupts for ACPI-based runtime wakeups
+> > but did not clear the PME Status bit during resume, which meant PMEs after
+> > resume did not trigger interrupts because PME Status did not transition
+> > from cleared to set.
+> > 
+> > The fix was in the PCIe port driver, so it worked when CONFIG_PCIEPORTBUS
+> > was set.  But I think we *always* want the fix because the platform may use
+> > PME interrupts even if Linux is built without the PCIe port driver.
+> > 
+> > Move the fix from the port driver to the PCI core so we can work around
+> > this "PME doesn't work after waking from a sleep state" issue regardless of
+> > CONFIG_PCIEPORTBUS.
+> > 
+> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> > ---
+> >  drivers/pci/pci-driver.c       |   14 ++++++++++++++
+> >  drivers/pci/pcie/portdrv_pci.c |   15 ---------------
+> >  2 files changed, 14 insertions(+), 15 deletions(-)
+> > 
+> > diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> > index 3bed6beda051..bf0704b75f79 100644
+> > --- a/drivers/pci/pci-driver.c
+> > +++ b/drivers/pci/pci-driver.c
+> > @@ -525,6 +525,18 @@ static void pci_pm_default_resume_early(struct pci_dev *pci_dev)
+> >  	pci_fixup_device(pci_fixup_resume_early, pci_dev);
+> >  }
+> >  
+> > +static void pcie_resume_early(struct pci_dev *pci_dev)
+> > +{
+> > +	/*
+> > +	 * Some BIOSes forget to clear Root PME Status bits after system wakeup
+> > +	 * which breaks ACPI-based runtime wakeup on PCI Express, so clear those
+> > +	 * bits now just in case (shouldn't hurt).
+> > +	 */
+> > +	if (pci_is_pcie(pci_dev) &&
+> > +	    pci_pcie_type(pci_dev) == PCI_EXP_TYPE_ROOT_PORT)
+> > +		pcie_clear_root_pme_status(pci_dev);
+> > +}
+> > +
+> >  /*
+> >   * Default "suspend" method for devices that have no driver provided suspend,
+> >   * or not even a driver at all (second part).
+> > @@ -873,6 +885,8 @@ static int pci_pm_resume_noirq(struct device *dev)
+> >  	if (pci_has_legacy_pm_support(pci_dev))
+> >  		return pci_legacy_resume_early(dev);
+> >  
+> > +	pcie_resume_early(pci_dev);
+> 
+> I'm wondering if it would be better to implement this as a PCI quirk:
+> 
+> DECLARE_PCI_FIXUP_CLASS_RESUME_EARLY(PCI_ANY_ID, PCI_ANY_ID,
+> 				     PCI_CLASS_BRIDGE_PCI, 8, ...)
+> 
+> Then it would also be executed for the ->restore_noirq phase, not only
+> ->resume_noirq.  And it could be constrained to only the affected PCI
+> or DMI IDs.
+> 
+> However it would then also be executed on ->runtime_resume, I'm not
+> sure if that's a problem or not.
 
-It is not a big deal, but using the exact same name is better for the
-purposes of grepping and things like that :-) By the way, check the
-commit title/message, there are some others there too.
+While that may not be a problem strictly speaking (the root port resume
+only takes place when the port itself has been suspended, so this should
+not interfere with PME handling for the devices under it), but it also is
+not necessary in that case, because the platform firmware doesn't mess up
+with the root port's PM registers then.
 
-> [...]
->
->> > +#define efi_queue_work(_rts, _arg1, _arg2, _arg3, _arg4, _arg5)                \
->> > +({                                                                     \
->> > +       struct efi_runtime_work efi_rts_work;                           \
->> > +                                                                       \
->> > +       INIT_WORK_ONSTACK(&efi_rts_work.work, efi_call_rts);            \
->> > +       efi_rts_work.func = _rts;                                       \
->> > +       efi_rts_work.arg1 = _arg1;                                      \
->> > +       efi_rts_work.arg2 = _arg2;                                      \
->> > +       efi_rts_work.arg3 = _arg3;                                      \
->> > +       efi_rts_work.arg4 = _arg4;                                      \
->> > +       efi_rts_work.arg5 = _arg5;                                      \
->> > +       /*                                                              \
->> > +        * queue_work() returns 0 if work was already on queue,         \
->> > +        * _ideally_ this should never happen.                          \
->> > +        */                                                             \
->> > +       if (queue_work(efi_rts_wq, &efi_rts_work.work))                 \
->> > +               flush_work(&efi_rts_work.work);                         \
->> > +       else                                                            \
->> > +               BUG();                                                  \
->>
->> Thanks for the change! One remark, I would just do:
->
-> Sorry! but I am planning to remove BUG(). Looks like it could defeat the purpose
-> of patch. Please see Boris comments on the other thread.
-
-No problem. Let's see how it looks in v3 :-)
-
->
-> [...]
->
->> > +/*
->> > + * efi_runtime_work:   Details of EFI Runtime Service work
->> > + * @func:              EFI Runtime Service function identifier
->> > + * @arg<1-5>:          EFI Runtime Service function arguments
->> > + * @status:            Status of executing EFI Runtime Service
->> > + */
->> > +struct efi_runtime_work {
->> > +       u8 func;
->> > +       void *arg1;
->> > +       void *arg2;
->> > +       void *arg3;
->> > +       void *arg4;
->> > +       void *arg5;
->> > +       efi_status_t status;
->> > +       struct work_struct work;
->> > +};
->>
->> Why is efi_runtime_work in the .h at all?
->>
->
-> Thanks for the catch. I will move it to runtime-wrappers.c file and will make it
-> static too. It isn't being used in any other place.
->
->> Please CC me for the next version! :-)
->
-> Sure! Sorry for that. I should have done in V2.
-
-Thanks!
-
-Cheers,
-Miguel
-
->
-> Regards,
-> Sai
+Or if it does, the whole PCIe PM is managed by AML/SMM and we should not
+even touch this register at all.
