@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1025811-1520488393-2-6627344222012903462
+X-Cyrus-Session-Id: sloti22d1t05-1025811-1520488377-2-14671241738927870293
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520488392; b=LPwF5ROQYAiCOzBLJzLijqzCVIDEKcqDOyQnxILfExTBpid
-    2F3hK7Okbp/PFdZ4+hQ7DuhJZGQ9IejvEzi2wdxOcmImNpt0au1xfpNUxOwGpqe/
-    bBn9ItGNfR9EbxJQSNGeMu59X/YShMUbpm123kY4MFV32pxx22hIvLnCtn2Vewuk
-    gdKq6Y7xlpqqSRsVvLvwpdF0qLLfG3l2VvehQFqEnCtc1ana7znxnflM6WiwkorD
-    s4nZpNEpfHVZbq1QZRMj0dgkeMiimHtoNgC4KdqlkNnUy3oSJ8pqDKc2oyUotSmu
-    MTQU9NVFiXhWlN75d1LgAK4BMSXI1wmEZ2QlnEw==
+    t=1520488377; b=lbZ9vLrvVCj1OA4eHY0/PuQR7qs2HGvk2sRtMUdhph6M0d0
+    vmFlQgTINXYfEtufv0rOTojMyMjN9kaGDERQTutHZiEvnxZShV/VwRlRTcsTciuq
+    3QT8jiI1UJFy6RbihcINYe8mlcX3NLo7gSvwJlO+yDYEK6bHC0mggkknAISkzDA5
+    A52j07APIzqPsbnM0TbBbc1SHprPARgkLU/40vB5jB3sTSg4Ixx3cke0oR2fUgQe
+    bVdcuU1wvDEqj6vhZ7bn8Gakzu74j+1lsbk4iCYixxpCUJp9MM6K9rblHRLMtCZH
+    1wzzX5Z/zmosIdOcRewG3AiLjECwsEt8/IRmvgA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520488392; bh=yFZF4o
-    aso+QzxEv7KI4I4EWRM/9PYIVqJBZ4ReIymY4=; b=sdJcXSHdNohhqlvlEUE6Jh
-    d86I2SiISfd3JG89M3VmpGgnpsFZqEcmcvKTAVuxFuRTMmsdf1Olj/zkOA24J7e+
-    uFBEOAnaMURZmtk/UZNQpFggvNrD1gwZahkYMCHyd7llSdWLdQjYpYYsIug7Wo+A
-    AEucnEWStpPdPWaegD066uBfMHywGHwg8knRxRuDkBL/ngUbKU8rqyBkOnqtvs7d
-    hq3RbDeDbE1K4n5qjUgU3ycvMq7EgybLAC2lb4yW6pq2gyriM/ffjM24sMSujNMQ
-    4ciN9Bb4g1DHxtZOcqsnGZCSChfQlE90W5wfe3tUfH6c7qbjLflViecy0wZNEJMQ
+    :mime-version:sender:list-id; s=arctest; t=1520488377; bh=x0wbzz
+    qRiCksxIpk+eAl6+19uerlS6VOl/Bckj0znlE=; b=IfmQZFwiVsUhvSEcONTcw2
+    hlop+6JYHZ/wQjUpgIa3NHaSI1EZnSvNqyRztXz5vqWy0jvjd0Ry4PKJQkXlQNgm
+    6V0CDu5acBrmfDl6As65+wRoLhIRM/mDo49+3SwuhokU68nr8sAtVBzyF9pIKviv
+    lJy4bhBT6i5lPtqeJC3XYy1DyKfXX5LTV2zLcTbYPrs/tra1iy5YO+D3LnhscE3R
+    78iaiukZ8QbFoI72KSQP3ytPsv3BwJD1uOffoPlOJaF6UaVSr+z6DFqbmSF8ecUz
+    bcngmS1O4G3Zw5vBx2qUkxiX2nn/UdpFg2MtkJ9a9YBPuK0vhT/9MoXdiTTPv0iA
     ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=QLUT1B5/ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ntOOEUhy x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=QLUT1B5/ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ntOOEUhy x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,27 +50,28 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965792AbeCHFxJ (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 00:53:09 -0500
-Received: from mail-sn1nam01on0105.outbound.protection.outlook.com ([104.47.32.105]:60007
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        id S966155AbeCHFwl (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 00:52:41 -0500
+Received: from mail-co1nam03on0090.outbound.protection.outlook.com ([104.47.40.90]:13700
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966085AbeCHFEF (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 8 Mar 2018 00:04:05 -0500
+        id S966121AbeCHFEH (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 8 Mar 2018 00:04:07 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Shawn Nematbakhsh <shawnn@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
+CC: Logan Gunthorpe <logang@deltatee.com>, Jyri Sarha <jsarha@ti.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        David Airlie <airlied@linux.ie>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 166/190] platform/chrome: Use proper protocol
- transfer function
-Thread-Topic: [PATCH AUTOSEL for 4.9 166/190] platform/chrome: Use proper
- protocol transfer function
-Thread-Index: AQHTtppT++mSvSIXK0mGQ4GwFhLvGA==
+Subject: [PATCH AUTOSEL for 4.9 168/190] drm/tilcdc: ensure nonatomic
+ iowrite64 is not used
+Thread-Topic: [PATCH AUTOSEL for 4.9 168/190] drm/tilcdc: ensure nonatomic
+ iowrite64 is not used
+Thread-Index: AQHTtppT65mU3mw6Bk6tfa8kw51rng==
 Date: Thu, 8 Mar 2018 05:00:06 +0000
-Message-ID: <20180308045810.8041-166-alexander.levin@microsoft.com>
+Message-ID: <20180308045810.8041-168-alexander.levin@microsoft.com>
 References: <20180308045810.8041-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045810.8041-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -79,88 +80,86 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0872;20:5ODwsiHFu1T5gxIBYwDlDh+2nxs1jT32AMZjSePJUFjdHqjMZvk+OvGlF3k3utAEksGsREr5zLs8ErpR6PVam+RoLItOJd53tmGzfZMIluFk9FY0+SQewfcXi6H9svl061qHH2E/ggO38g7889k4MHLKSzxAYlM34O852llEXT0=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0919;7:LzgsHdcz/LjH4dt93Og95IdwZmEfSjEZjLH/g8bSkNCrQks2f8JMejPl/ntD1VaPcyi8Z/dYxswzJje6OkLCo9ThK137ZML4ba1KCQtZrN7Hnu2uCoUotiXOJNEIyVMfL5CEuaNmcAS0I09yh+pFcbRstiMPhSJ6FjROt495TIwjS93PmJPKqH0I37zBs4iIDKg/4nsn5/lXb6OhcTCU5yhCZ84dAIB2/N4VvRGbQoSJypj7AZZPyEGtIjq3DkvQ;20:HFAHN0Prg743eXVAsuJEkGOUyMOnELRQJaouLGecfuke4NZtpzS3gdJQgtGTTAV24pOvtQoiRfJyf7Lo86KRxjeNhpECHpEu8l0wxyIWQe/odQ1t7zq7HosbCeVCw3p/h69MxL8iPb2ssddmUMmHEr98pXhFY4zP2I8xIVwj2a0=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 24affd0d-9581-41c5-c3fa-08d584b20183
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0872;
-x-ms-traffictypediagnostic: DM5PR2101MB0872:
+x-ms-office365-filtering-correlation-id: 5348b065-994b-4705-19fa-08d584b20257
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0919;
+x-ms-traffictypediagnostic: DM5PR2101MB0919:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB08724473496FF63C11DD2D47FBDF0@DM5PR2101MB0872.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(7411616537696);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0872;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0872;
+x-microsoft-antispam-prvs: <DM5PR2101MB0919187FDB1630BA07B18C52FBDF0@DM5PR2101MB0919.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(31051911155226)(89211679590171)(85827821059158)(42068640409301);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231220)(944501244)(52105095)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB0919;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0919;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(376002)(346002)(39860400002)(39380400002)(189003)(199004)(5660300001)(186003)(5250100002)(26005)(316002)(1076002)(4326008)(2501003)(2906002)(25786009)(76176011)(99286004)(6436002)(6486002)(6116002)(36756003)(3846002)(575784001)(22452003)(3280700002)(2950100002)(86362001)(97736004)(8676002)(10090500001)(305945005)(2900100001)(66066001)(102836004)(68736007)(3660700001)(14454004)(7736002)(53936002)(6512007)(86612001)(110136005)(54906003)(6506007)(106356001)(478600001)(107886003)(105586002)(81156014)(81166006)(72206003)(8936002)(10290500003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0872;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: UOrK3aa+n5DZs3WzaN534HTtfQrZlqpTdAkwJ+dfNkj5mIl3PjZ+5m4W+XsqLpDCp6bX0qW/2yglZapPp9CiWHe6YE1S7dwjDh+bPvm8NGBWgs5e9By5xnk1rtda3mmud6SxluHHGm5ZPJtdirpmvpusZPbjzsAJEzFcD9Jwgi1ckk/KyOrS1qs9TCgu23F0PIRYNl+2LkHWGXwD9d9JnJsFsVePD+k92u7ZM34d3B71BM9HEfy0K/baVlhVNP23plSAseZ0fhWFnsUUlvxx7DKqyrbWI/zi1UP9sF1vh6wLIF0d+CK+ZShbEooD7AKr1L4huH/1EfVMctT+FsEniA==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(396003)(366004)(39380400002)(39860400002)(199004)(189003)(3846002)(305945005)(2501003)(26005)(6116002)(7736002)(186003)(2906002)(316002)(3660700001)(5250100002)(8936002)(4326008)(86362001)(575784001)(76176011)(107886003)(25786009)(5660300001)(10090500001)(66066001)(10290500003)(22452003)(3280700002)(36756003)(86612001)(1076002)(478600001)(68736007)(110136005)(14454004)(54906003)(99286004)(2950100002)(106356001)(6512007)(2900100001)(59450400001)(6436002)(6506007)(97736004)(102836004)(53936002)(72206003)(81156014)(6486002)(81166006)(8676002)(105586002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0919;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: 71VrZXpkLXkYXKcTXJAZUKiGJMsW6CjHqg8IN5vVTKzHTSey1cJM2tnh2S/vGFNayKAQQbsYrJYCY/i9WZlCGhdsFFtR1N3jT+lg4BYy4E9okgqyqUnwp5nF7cpSdJJObpaPOgjIK3pW2z6gQmS1wlLzhQKg8QEDbB2Y+ZSzSbX+M3scqhrudcAMGCGSHJb3wymTYocxSQYEo+mQg7Og3BGXojOJeixugTLlFfMGTxnVgenzQVAlyrA3pe/XQSnxlRzc2JPnP7X3emX8lKhddVsAH/IrpKLmH42ZAX1Hwod9VBkQ6fQdtoedMWG/eL+u0HuxsTehcYgMXPY1VW4TBg==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 24affd0d-9581-41c5-c3fa-08d584b20183
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 05:00:06.0797
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5348b065-994b-4705-19fa-08d584b20257
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 05:00:07.0053
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0872
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0919
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Shawn Nematbakhsh <shawnn@chromium.org>
+From: Logan Gunthorpe <logang@deltatee.com>
 
-[ Upstream commit d48b8c58c57f6edbe2965f0a5f62c5cf9593ca96 ]
+[ Upstream commit 4e5ca2d930aa8714400aedf4bf1dc959cb04280f ]
 
-pkt_xfer should be used for protocol v3, and cmd_xfer otherwise. We had
-one instance of these functions correct, but not the second, fall-back
-case. We use the fall-back only when the first command returns an
-IN_PROGRESS status, which is only used on some EC firmwares where we
-don't want to constantly poll the bus, but instead back off and
-sleep/retry for a little while.
+Add a check to ensure iowrite64 is only used if it is atomic.
 
-Fixes: 2c7589af3c4d ("mfd: cros_ec: add proto v3 skeleton")
-Signed-off-by: Shawn Nematbakhsh <shawnn@chromium.org>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Signed-off-by: Benson Leung <bleung@chromium.org>
+It was decided in [1] that the tilcdc driver should not be using an
+atomic operation (so it was left out of this patchset). However, it turns
+out that through the drm code, a nonatomic header is actually included:
+
+include/linux/io-64-nonatomic-lo-hi.h
+is included from include/drm/drm_os_linux.h:9:0,
+            from include/drm/drmP.h:74,
+            from include/drm/drm_modeset_helper.h:26,
+            from include/drm/drm_atomic_helper.h:33,
+            from drivers/gpu/drm/tilcdc/tilcdc_crtc.c:19:
+
+And thus, without this change, this patchset would inadvertantly
+change the behaviour of the tilcdc driver.
+
+[1] lkml.kernel.org/r/CAK8P3a2HhO_zCnsTzq7hmWSz5La5Thu19FWZpun16iMnyyNreQ@m=
+ail.gmail.com
+
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jyri Sarha <jsarha@ti.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: David Airlie <airlied@linux.ie>
+Signed-off-by: Jyri Sarha <jsarha@ti.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/platform/chrome/cros_ec_proto.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/tilcdc/tilcdc_regs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chr=
-ome/cros_ec_proto.c
-index 04053fe1e980..cfa3e850c49f 100644
---- a/drivers/platform/chrome/cros_ec_proto.c
-+++ b/drivers/platform/chrome/cros_ec_proto.c
-@@ -60,12 +60,14 @@ static int send_command(struct cros_ec_device *ec_dev,
- 			struct cros_ec_command *msg)
- {
- 	int ret;
-+	int (*xfer_fxn)(struct cros_ec_device *ec, struct cros_ec_command *msg);
+diff --git a/drivers/gpu/drm/tilcdc/tilcdc_regs.h b/drivers/gpu/drm/tilcdc/=
+tilcdc_regs.h
+index f57c0d62c76a..19d8dc3cdd40 100644
+--- a/drivers/gpu/drm/tilcdc/tilcdc_regs.h
++++ b/drivers/gpu/drm/tilcdc/tilcdc_regs.h
+@@ -124,7 +124,7 @@ static inline void tilcdc_write64(struct drm_device *de=
+v, u32 reg, u64 data)
+ 	struct tilcdc_drm_private *priv =3D dev->dev_private;
+ 	volatile void __iomem *addr =3D priv->mmio + reg;
 =20
- 	if (ec_dev->proto_version > 2)
--		ret =3D ec_dev->pkt_xfer(ec_dev, msg);
-+		xfer_fxn =3D ec_dev->pkt_xfer;
- 	else
--		ret =3D ec_dev->cmd_xfer(ec_dev, msg);
-+		xfer_fxn =3D ec_dev->cmd_xfer;
-=20
-+	ret =3D (*xfer_fxn)(ec_dev, msg);
- 	if (msg->result =3D=3D EC_RES_IN_PROGRESS) {
- 		int i;
- 		struct cros_ec_command *status_msg;
-@@ -88,7 +90,7 @@ static int send_command(struct cros_ec_device *ec_dev,
- 		for (i =3D 0; i < EC_COMMAND_RETRIES; i++) {
- 			usleep_range(10000, 11000);
-=20
--			ret =3D ec_dev->cmd_xfer(ec_dev, status_msg);
-+			ret =3D (*xfer_fxn)(ec_dev, status_msg);
- 			if (ret < 0)
- 				break;
-=20
+-#ifdef iowrite64
++#if defined(iowrite64) && !defined(iowrite64_is_nonatomic)
+ 	iowrite64(data, addr);
+ #else
+ 	__iowmb();
 --=20
 2.14.1
