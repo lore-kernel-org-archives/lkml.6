@@ -1,80 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751178AbeCHTvC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 14:51:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59812 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751030AbeCHTu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 14:50:59 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F27B82177B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Stephane Eranian <eranian@google.com>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 06/54] perf cgroup: Introduce find_cgroup() method
-Date: Thu,  8 Mar 2018 16:49:41 -0300
-Message-Id: <20180308195029.14991-7-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180308195029.14991-1-acme@kernel.org>
-References: <20180308195029.14991-1-acme@kernel.org>
+        id S1751268AbeCHUG6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 15:06:58 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:44116 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750907AbeCHUG4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 15:06:56 -0500
+X-Google-Smtp-Source: AG47ELtel4LXml+A5rIa3iMnoFoOrXm85s6HxM06IwjvJ1KH/vdqE6nxQYAd7LzqHSfRFwXKUEjcHQ==
+Date: Thu, 8 Mar 2018 12:06:53 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Takashi Iwai <tiwai@suse.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: soc-core: Add missing NULL check
+Message-ID: <20180308200653.GA47801@beast>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+If a codec is not attached to the sound soc, a NULL deref is possible as a
+regular user in /sys.
 
-To break down complexity in add_cgroup().
+[ 2278.331878] DSS: context saved
+[ 2278.820343] Unable to handle kernel NULL pointer dereference at virtual address 00000004
+[ 2278.828948] pgd = c36040a2
+[ 2278.831787] [00000004] *pgd=876c4831, *pte=00000000, *ppte=00000000
+[ 2278.838439] Internal error: Oops: 17 [#1] ARM
+[ 2278.843017] Modules linked in:
+[ 2278.846221] CPU: 0 PID: 16337 Comm: grep Tainted: G        W 4.16.0-rc4-next-20180308 #71
+[ 2278.855529] Hardware name: Nokia RX-51 board
+[ 2278.860015] PC is at soc_codec_reg_show+0x8/0x19c
+[ 2278.864959] LR is at codec_reg_show+0x28/0x30
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-5yqshcf5hm837n7c86u7lhjf@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Reported-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- tools/perf/util/cgroup.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+No idea if this is the _right_ fix, but it should stop the crash from
+unprivileged userspace.
+---
+ sound/soc/soc-core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/perf/util/cgroup.c b/tools/perf/util/cgroup.c
-index 8ea964461eb7..84dfc34a6d0f 100644
---- a/tools/perf/util/cgroup.c
-+++ b/tools/perf/util/cgroup.c
-@@ -90,11 +90,10 @@ static int open_cgroup(char *name)
- 	return fd;
- }
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 96c44f6576c9..78ad165ad424 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -137,6 +137,9 @@ static ssize_t soc_codec_reg_show(struct snd_soc_codec *codec, char *buf,
+ 	size_t total = 0;
+ 	loff_t p = 0;
  
--static int add_cgroup(struct perf_evlist *evlist, char *str)
-+static struct cgroup *evlist__find_cgroup(struct perf_evlist *evlist, char *str)
- {
- 	struct perf_evsel *counter;
- 	struct cgroup *cgrp = NULL;
--	int n;
- 	/*
- 	 * check if cgrp is already defined, if so we reuse it
- 	 */
-@@ -107,6 +106,15 @@ static int add_cgroup(struct perf_evlist *evlist, char *str)
- 		}
- 	}
++	if (!codec || !codec->driver)
++		return 0;
++
+ 	wordsize = min_bytes_needed(codec->driver->reg_cache_size) * 2;
+ 	regsize = codec->driver->reg_word_size * 2;
  
-+	return cgrp;
-+}
-+
-+static int add_cgroup(struct perf_evlist *evlist, char *str)
-+{
-+	struct perf_evsel *counter;
-+	struct cgroup *cgrp = evlist__find_cgroup(evlist, str);
-+	int n;
-+
- 	if (!cgrp) {
- 		cgrp = zalloc(sizeof(*cgrp));
- 		if (!cgrp)
 -- 
-2.14.3
+2.7.4
+
+
+-- 
+Kees Cook
+Pixel Security
