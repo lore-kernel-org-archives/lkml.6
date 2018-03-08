@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-981117-1520486081-2-17494621816893414721
+X-Cyrus-Session-Id: sloti22d1t05-981117-1520486067-2-1917241951437377066
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520486080; b=BAr4MUX7scibQKj18rbUqVbGAOXqjLbvDGtnGVL9/YYHclG
-    xzh8gBdbiiMBPR4uje8GcB7u8jEBXcuUm1+g3DT03H+jIf4upU/NfBoNqHrpd+Sn
-    5uiNUlC/g+UbAF7IbQjx64EXshlYyMTifvj+CcdxKnYZthIJzVx25mSuNmux0ZXU
-    jEMsZgjkBvC68SiA4GglL/c1ho/0i8P4bBgbMJVtJcaRtDXTyJ6PRnvtpTl8dnLy
-    7WLdyzHnHJNImaRfKqdv7Fo+d9fVO6hfUp3AzA+A3S8+hvjo3+CIMjqjlMN+gZdS
-    4IdgvuI4uxC8Kojn4KtdmaTsUMKkfYfMGPadqnw==
+    t=1520486067; b=iQM0Zi/QtAzcwrj7UzdzwviRSiRmK+HRq8txh0CyfQx4H84
+    lkHmPbivkNgVSyoBNyK52zYrVZhVVYvxr4x4q+xNc8LnDJYotIasokDU4VRa0SGY
+    7Ct/hYZhZ6BxM2vOmYD69p5v6Ugj0PnE/AdnIgEHVms0h5NCnFz+v5EIRUBA7QKU
+    7bMek1aILRrPZV7ZnN1KyoQ23a/jxOyNwkPlIVgNTDjBqpuFBUtq9IQMqG47pleC
+    n5E7Fz9ra1qvqBJNKSbDaTppHd01N/Uk9WECWQNWsgdMel7afbNKZ+WpWriE3c6Y
+    zd93dtcwCHx9YlNq7FR7Flyb1pEz9nH56iyMtsQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520486080; bh=hra1a8
-    zug22Z0SLFB9nTAFiuesNcnNTeV2jXwLliI4c=; b=O/ry8Y0dvlCDH77PNUszcz
-    ao2wCpJdayUF5B4BW/j2NouxEJ+8eLoKUkcK06wDvFNw73WRombPvv3A/0v+fkcz
-    VpfSG2qi/spoZD/Ufz/aoXtHaS3Yh9vN5FnPwLSoPBuDKnvUJuqCvY/hc89gC4gx
-    6aHdgUwTyELyMlP6lDIg+Xmf71MIKAfXvdPzenQjF/H7rOUQCzJjQHimG7JvGlxO
-    e1A/XmLLCsZXhKM/6u85nsGTdA+pZTdpqHvzdfKwtOeE8gEStMNbqVOWI0YtFrG9
-    l8x1En34xmJgcfgSZ3d6C7lhEVOlQ02Yw0JNtYXDaUF0GcuW3Pgldg4KVxnCqgpg
+    :mime-version:sender:list-id; s=arctest; t=1520486067; bh=Rla+RB
+    WwYeWtGl2XWtEiqqbPbdNaAP/bqQBrNvNkggc=; b=NUZeKKOeEp4XeklEyBvgUx
+    Iww/dSgKufk5tQq7OFLk2Hd3dXqDszLhKc1gpjoSZdF3dDRgeKZCJAh7YpJt3u9q
+    6/kuP3BBAv5I7JNHG5CZ1gQxJR6f15eOw4oLJUXmqYSmTjWuOvI7xE4+bo/Wh9Hz
+    Hbzpcps2KIhcA78+1qs2U4hk40dvbw9CWaiawS9UbENBwEqxGTbj09LyK3fJPAcL
+    ZvxDK+9aOMH6s+eSdU0rN8DKdQxZ+k8x8jR9Vl3qo574tR3qLPXE5kJ0frE2TuXN
+    PaaJccugFyTNomE4MVFZC1+25lm9xVbS30CjNAyU3EQIvP3m6If0drdaWMftgixQ
     ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=DBT58nGs x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=VWh1ruNZ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=DBT58nGs x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=VWh1ruNZ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,26 +50,26 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965759AbeCHFOJ (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 00:14:09 -0500
-Received: from mail-dm3nam03on0132.outbound.protection.outlook.com ([104.47.41.132]:45039
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        id S1751696AbeCHFOK (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 00:14:10 -0500
+Received: from mail-bl2nam02on0117.outbound.protection.outlook.com ([104.47.38.117]:29164
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751696AbeCHFLt (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 8 Mar 2018 00:11:49 -0500
+        id S966914AbeCHFLs (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 8 Mar 2018 00:11:48 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Daniel Drake <drake@endlessm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+CC: Ron Economos <w6rz@comcast.net>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 3.18 47/53] mmc: avoid removing non-removable
- hosts during suspend
-Thread-Topic: [PATCH AUTOSEL for 3.18 47/53] mmc: avoid removing non-removable
- hosts during suspend
-Thread-Index: AQHTtprLpYcbAiHlvUSo58gBHmCDeQ==
-Date: Thu, 8 Mar 2018 05:03:28 +0000
-Message-ID: <20180308050230.8876-47-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 3.18 46/53] media: [RESEND] media: dvb-frontends:
+ Add delay to Si2168 restart
+Thread-Topic: [PATCH AUTOSEL for 3.18 46/53] media: [RESEND] media:
+ dvb-frontends: Add delay to Si2168 restart
+Thread-Index: AQHTtprLMerSdDmFi0Gytve0ocGS8A==
+Date: Thu, 8 Mar 2018 05:03:27 +0000
+Message-ID: <20180308050230.8876-46-alexander.levin@microsoft.com>
 References: <20180308050230.8876-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308050230.8876-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,94 +78,76 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1112;7:rQoNVKi/ZHPxxZjck8iEkgdRFL/NJkifYH4F4XKgTZgvmQpPgCbESo9iRErDjZHXBfFZiQbOUzRxCKAQgE9AagCpPO9wdnwiXuiXAwiu7MEKfCtiQHLA7Wmw7fo5Fe5r0IB656+NWMIe5t5n0zsBrhNPnAKyJXYAHwLyjxQb8WXuK9pXLf3WFnU6rLe/g9D8EsbTtYw34F1JbDAqceiaXYLr11wzIwxqpu5cMDo+yI4zZ63TWOFop/gwju7iv7TU;20:2Q3urclp83Z1QQJ6L2AMYU18O+QhsEWKU1x6kt2ZMaQvJaH5x3FlCvb1LXNuwZYOI3zmknx5AYcq0/jaTo0FDxHvaDM9qPoeX+PzbqluT/fgwAXTbpgqjFP61gb+uOFLP3rfyd9dnJ4LgY4Id52OaJXyEd3impI6O6VBFuOBuMI=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1030;20:er+iLNDRita5/t7grLCYGfQTICgSf4OhEXX3rpgn8zdkf++CKQgUo+0gIrZRSJX/2AOAHb1CGLAmi/kN8e8PibbI0kR+glK+CO4qHSlOvzKebP2l8N0z6PQYY61SWv0+zUS2OiyxUzwHSxOUtJImwzMifWS7csqFAg67HToLeY4=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 518533e2-098c-41ee-5fff-08d584b3174f
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1112;
-x-ms-traffictypediagnostic: DM5PR2101MB1112:
+x-ms-office365-filtering-correlation-id: 2f19d3c4-2cba-4322-ab18-08d584b314c3
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1030;
+x-ms-traffictypediagnostic: DM5PR2101MB1030:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1112A1567C6FD8C1D2D443C1FBDF0@DM5PR2101MB1112.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB1112;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1112;
+x-microsoft-antispam-prvs: <DM5PR2101MB1030E5B6257A838AFCFAFCA1FBDF0@DM5PR2101MB1030.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(68173958961439)(89211679590171);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231220)(944501244)(52105095)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB1030;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1030;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(376002)(39380400002)(366004)(396003)(189003)(199004)(54906003)(81156014)(7736002)(86612001)(25786009)(81166006)(6512007)(6486002)(4326008)(3846002)(1076002)(6436002)(36756003)(305945005)(6116002)(8936002)(2900100001)(6666003)(97736004)(66066001)(2950100002)(105586002)(68736007)(14454004)(72206003)(3660700001)(478600001)(10290500003)(15650500001)(3280700002)(53936002)(106356001)(10090500001)(5660300001)(102836004)(107886003)(316002)(59450400001)(110136005)(22452003)(86362001)(575784001)(2501003)(5250100002)(6506007)(76176011)(99286004)(2906002)(26005)(186003)(8676002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1112;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: 0rTU7mQChISBc9wwHs/fHfNvIveb+6ha62ekpcE3Q2kuTMinh1TADVzmOQQFOE8Nfqq2sLL8DdE/BpSmP10UQ91O3WHU3WJxIDHMy+wj70VzpraRKO2qmp1Vrcb9IBgC/yiSrhYZid8xRSEMOsCF3xYlUoQd+gJNjAhhb6u0s5UglW89M6bhwhf9Kig593133Ai2ytLYQvX3VWJUB22EoJ2Ds4a9ABbcx/ODun+csR4aKJRJWQOTc4iupyuI3uIHddAETOwT2kPHaxj9cHD6du29/BvsUaqEJF1ku4HbZ6TGvggCVA/Ehtvf5vLU6g6tqVMhugOV2qfxERRmvbVYLQ==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(366004)(396003)(39860400002)(346002)(376002)(199004)(189003)(5250100002)(316002)(6666003)(6506007)(2950100002)(26005)(76176011)(68736007)(53936002)(6512007)(6306002)(2900100001)(86612001)(3660700001)(106356001)(10090500001)(99286004)(2501003)(4326008)(14454004)(102836004)(575784001)(25786009)(97736004)(6486002)(86362001)(36756003)(7736002)(6116002)(2906002)(478600001)(6436002)(107886003)(72206003)(186003)(3846002)(66066001)(8666007)(81156014)(10290500003)(966005)(1076002)(22452003)(305945005)(110136005)(81166006)(105586002)(3280700002)(54906003)(8936002)(5660300001)(8676002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1030;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: een1WupddUDBv1bpLcoaPTmQNEjm0ILLlNk/j2TCbT00Q9Fgl+BbsllFzQU5JH+4byQcNYlygPVtrLbWOIqrFYv68b/+z1MBu40XbjGKjVNwlk7wr0vOni16UwcqRwpeFlVMpBrwqW1YK+eHOb+UOns0+9wolFn6ns0W1uufttctynQ7y95NvgPpp0FXK8kPvpfaimgskzfFr2XVMX2Ml727Qu+H5W0PGXDjZwaxYx1+5rZh4h/369jo1z/FB+y1My9eZk0xBKvQyECf3hp+r+zByT2kv9x3nW7T56hr+xzVpLwwUp6Nb3OEQNT3FiMpin+osmw+0vlWYIqG5ELgaQ==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 518533e2-098c-41ee-5fff-08d584b3174f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 05:03:28.0372
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f19d3c4-2cba-4322-ab18-08d584b314c3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 05:03:27.6419
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1112
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1030
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Daniel Drake <drake@endlessm.com>
+From: Ron Economos <w6rz@comcast.net>
 
-[ Upstream commit de8dcc3d2c0e08e5068ee1e26fc46415c15e3637 ]
+[ Upstream commit 380a6c86457573aa42d27ae11e025eb25941a0b7 ]
 
-The Weibu F3C MiniPC has an onboard AP6255 module, presenting
-two SDIO functions on a single MMC host (Bluetooth/btsdio and
-WiFi/brcmfmac), and the mmc layer correctly detects this as
-non-removable.
+On faster CPUs a delay is required after the resume command and the restart=
+ command. Without the delay, the restart command often returns -EREMOTEIO a=
+nd the Si2168 does not restart.
 
-After suspend/resume, the wifi and bluetooth interfaces disappear
-and do not get probed again.
+Note that this patch fixes the same issue as https://patchwork.linuxtv.org/=
+patch/44304/, but I believe my udelay() fix addresses the actual problem.
 
-The conditions here are:
-
- 1. During suspend, we reach mmc_pm_notify()
-
- 2. mmc_pm_notify() calls mmc_sdio_pre_suspend() to see if we can
-    suspend the SDIO host. However, mmc_sdio_pre_suspend() returns
-    -ENOSYS because btsdio_driver does not have a suspend method.
-
- 3. mmc_pm_notify() proceeds to remove the card
-
- 4. Upon resume, mmc_rescan() does nothing with this host, because of
-    the rescan_entered check which aims to only scan a non-removable
-    device a single time (i.e. during boot).
-
-Fix the loss of functionality by detecting that we are unable to
-suspend a non-removable host, so avoid the forced removal in that
-case. The comment above this function already indicates that this
-code was only intended for removable devices.
-
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Ron Economos <w6rz@comcast.net>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/mmc/core/core.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/media/dvb-frontends/si2168.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index eefe36afa601..386691b41960 100644
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -2656,6 +2656,14 @@ int mmc_pm_notify(struct notifier_block *notify_bloc=
-k,
- 		if (!err)
- 			break;
+diff --git a/drivers/media/dvb-frontends/si2168.c b/drivers/media/dvb-front=
+ends/si2168.c
+index 64a759c017d4..09fde4e51210 100644
+--- a/drivers/media/dvb-frontends/si2168.c
++++ b/drivers/media/dvb-frontends/si2168.c
+@@ -14,6 +14,8 @@
+  *    GNU General Public License for more details.
+  */
 =20
-+		if (!mmc_card_is_removable(host)) {
-+			dev_warn(mmc_dev(host),
-+				 "pre_suspend failed for non-removable host: "
-+				 "%d\n", err);
-+			/* Avoid removing non-removable hosts */
-+			break;
-+		}
++#include <linux/delay.h>
 +
- 		/* Calling bus_ops->remove() with a claimed host can deadlock */
- 		host->bus_ops->remove(host);
- 		mmc_claim_host(host);
+ #include "si2168_priv.h"
+=20
+ static const struct dvb_frontend_ops si2168_ops;
+@@ -380,6 +382,7 @@ static int si2168_init(struct dvb_frontend *fe)
+ 		if (ret)
+ 			goto err;
+=20
++		udelay(100);
+ 		memcpy(cmd.args, "\x85", 1);
+ 		cmd.wlen =3D 1;
+ 		cmd.rlen =3D 1;
 --=20
 2.14.1
