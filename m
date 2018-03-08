@@ -1,75 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934137AbeCHSXi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 13:23:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46772 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751984AbeCHSXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 13:23:37 -0500
-Date: Thu, 8 Mar 2018 18:23:35 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v3 0/6] ipc: Clamp *mni to the real IPCMNI limit
-Message-ID: <20180308182335.GH4449@wotan.suse.de>
-References: <1519926220-7453-1-git-send-email-longman@redhat.com>
+        id S1752263AbeCHSZg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 13:25:36 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58140 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751642AbeCHSZe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 13:25:34 -0500
+Date: Thu, 8 Mar 2018 10:25:17 -0800
+From: Ram Pai <linuxram@us.ibm.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: mpe@ellerman.id.au, mingo@redhat.com, akpm@linux-foundation.org,
+        linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        benh@kernel.crashing.org, paulus@samba.org,
+        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
+        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
+        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com, corbet@lwn.net,
+        arnd@arndb.de, fweimer@redhat.com, msuchanek@suse.com,
+        Ulrich.Weigand@de.ibm.com
+Subject: mm, x86, powerpc: pkey semantics for key-0 ?
+Reply-To: Ram Pai <linuxram@us.ibm.com>
+References: <1519257138-23797-1-git-send-email-linuxram@us.ibm.com>
+ <1519257138-23797-4-git-send-email-linuxram@us.ibm.com>
+ <2a7737cf-a5ba-c814-fdc7-45b5cdd47376@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1519926220-7453-1-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <2a7737cf-a5ba-c814-fdc7-45b5cdd47376@intel.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-TM-AS-GCONF: 00
+x-cbid: 18030818-0012-0000-0000-000005BA81C1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030818-0013-0000-0000-00001936A343
+Message-Id: <20180308182517.GO1060@ram.oc3035372033.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-08_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803080208
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 12:43:34PM -0500, Waiman Long wrote:
-> v2->v3:
->  - Fix kdoc comment errors.
->  - Incorporate comments and suggestions from Luis R. Rodriguez.
->  - Add a patch to fix a typo error in fs/proc/proc_sysctl.c.
-> 
-> v1->v2:
->  - Add kdoc comments to the do_proc_do{u}intvec_minmax_conv_param
->    structures.
->  - Add a new flags field to the ctl_table structure for specifying
->    whether range clamping should be activated instead of adding new
->    sysctl parameter handlers.
->  - Clamp the semmni value embedded in the multi-values sem parameter.
-> 
-> v1 patch: https://lkml.org/lkml/2018/2/19/453
-> v2 patch: https://lkml.org/lkml/2018/2/27/627
-> 
-> The sysctl parameters msgmni, shmmni and semmni have an inherent limit
-> of IPC_MNI (32k). However, users may not be aware of that because they
-> can write a value much higher than that without getting any error or
-> notification. Reading the parameters back will show the newly written
-> values which are not real.
-> 
-> Enforcing the limit by failing sysctl parameter write, however, can
-> break existing user applications. To address this delemma, a new flags
-> field is introduced into the ctl_table. The value CTL_FLAGS_CLAMP_RANGE
-> can be added to any ctl_table entries to enable a looser range clamping
-> without returning any error. For example,
-> 
->   .flags = CTL_FLAGS_CLAMP_RANGE,
-> 
-> This flags value are now used for the range checking of shmmni,
-> msgmni and semmni without breaking existing applications. If any out
-> of range value is written to those sysctl parameters, the following
-> warning will be printed instead.
-> 
->   Kernel parameter "shmmni" was set out of range [0, 32768], clamped to 32768.
-> 
-> Reading the values back will show 32768 instead of some fake values.
+Dave,
 
-I don't see any addition of respective tests cases, I thought I asked
-for this. Please add respective tests cases for all the API you are
-adding on lib/test_sysctl.c and respective tests on
-tools/testing/selftests/sysctl/sysctl.sh
+Is there a reason why the default key; key-0, is not allowed to be
+explicitly associated with pages using pkey_mprotect()?
 
-  Luis
+I see valid usecases where an application may initially want to
+associate an address-range with some key and latter choose to revert to
+its initial state, by associating key-0.  However our implementation
+(both x86 and power) do not allow pkey_mprotect() to be called with
+key-0.
+
+I do not see a reason why it must be blocked.
+
+Thoughts?
+RP
