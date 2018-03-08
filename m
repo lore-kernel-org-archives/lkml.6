@@ -1,99 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935565AbeCHHM3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 02:12:29 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:43943 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754570AbeCHHM0 (ORCPT
+        id S1755043AbeCHHSb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 02:18:31 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:59794 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751377AbeCHHS2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 02:12:26 -0500
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-To: mjg59@srcf.ucam.org, pali.rohar@gmail.com, dvhart@infradead.org,
-        andy@infradead.org, mario.limonciello@dell.com, tiwai@suse.com
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH 2/2] platform/x86: dell-*: Add interface for switchable graphics status query
-Date: Thu,  8 Mar 2018 15:12:07 +0800
-Message-Id: <20180308071207.19850-2-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180308071207.19850-1-kai.heng.feng@canonical.com>
-References: <20180308071207.19850-1-kai.heng.feng@canonical.com>
+        Thu, 8 Mar 2018 02:18:28 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CF0DE601D3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=anischal@codeaurora.org
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v2 0/4] Misc patches to support clocks for SDM845
+Date: Thu,  8 Mar 2018 12:48:11 +0530
+Message-Id: <1520493495-3084-1-git-send-email-anischal@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On some Dell platforms, there's a BIOS option "Enable Switchable
-Graphics". This information is useful if we want to do different things
-based on this value, e.g. disable unused audio controller that comes
-with the discrete graphics.
+Changes in v2:
+Fixup for recalc_rate ops for clk_rcg2_shared_ops:
+There could be few scenarios where shared clocks are configured
+at rate other than CXO by boot. In those cases there would be a
+mismatch between the rate calculated by the recalc shared ops
+and the actual HW register configuration. Fix the same by adding
+an additional check to read current src from CFG register and
+make a decision based on that.
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- drivers/platform/x86/dell-laptop.c | 23 +++++++++++++++++++++++
- drivers/platform/x86/dell-smbios.c |  2 ++
- drivers/platform/x86/dell-smbios.h |  2 ++
- 3 files changed, 27 insertions(+)
+Changes in v1:
+https://lkml.org/lkml/2018/1/31/209
 
-diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
-index 8ba820e6c3d0..3f6fc07b8cf2 100644
---- a/drivers/platform/x86/dell-laptop.c
-+++ b/drivers/platform/x86/dell-laptop.c
-@@ -2116,6 +2116,29 @@ int dell_micmute_led_set(int state)
- }
- EXPORT_SYMBOL_GPL(dell_micmute_led_set);
- 
-+int dell_switchable_gfx_enabled(bool *enabled)
-+{
-+	struct calling_interface_buffer buffer;
-+	struct calling_interface_token *token;
-+	int ret;
-+
-+	*enabled = false;
-+
-+	token = dell_smbios_find_token(SWITCHABLE_GRAPHICS_ENABLE);
-+	if (!token)
-+		return -ENODEV;
-+
-+	dell_fill_request(&buffer, token->location, 0, 0, 0);
-+	ret = dell_send_request(&buffer, CLASS_TOKEN_READ, SELECT_TOKEN_STD);
-+	if (ret)
-+		return ret;
-+
-+	*enabled = !!buffer.output[1];
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(dell_switchable_gfx_enabled);
-+
- static int __init dell_init(void)
- {
- 	struct calling_interface_token *token;
-diff --git a/drivers/platform/x86/dell-smbios.c b/drivers/platform/x86/dell-smbios.c
-index 8541cde4cb7d..ca38b9d9dcf4 100644
---- a/drivers/platform/x86/dell-smbios.c
-+++ b/drivers/platform/x86/dell-smbios.c
-@@ -86,6 +86,8 @@ struct token_range {
- static struct token_range token_whitelist[] = {
- 	/* used by userspace: fwupdate */
- 	{CAP_SYS_ADMIN,	CAPSULE_EN_TOKEN,	CAPSULE_DIS_TOKEN},
-+	/* can indicate to userspace Switchable Graphics enable status */
-+	{CAP_SYS_ADMIN,	SWITCHABLE_GRAPHICS_ENABLE,	SWITCHABLE_GRAPHICS_DISABLE},
- 	/* can indicate to userspace that WMI is needed */
- 	{0x0000,	WSMT_EN_TOKEN,		WSMT_DIS_TOKEN}
- };
-diff --git a/drivers/platform/x86/dell-smbios.h b/drivers/platform/x86/dell-smbios.h
-index 138d478d9adc..b012d4abd239 100644
---- a/drivers/platform/x86/dell-smbios.h
-+++ b/drivers/platform/x86/dell-smbios.h
-@@ -37,6 +37,8 @@
- #define KBD_LED_AUTO_100_TOKEN	0x02F6
- #define GLOBAL_MIC_MUTE_ENABLE	0x0364
- #define GLOBAL_MIC_MUTE_DISABLE	0x0365
-+#define SWITCHABLE_GRAPHICS_ENABLE	0x037A
-+#define SWITCHABLE_GRAPHICS_DISABLE	0x037B
- 
- struct notifier_block;
- 
--- 
-2.15.1
+This patch series does the miscellaneous changes to support
+clock nodes for SDM845. Below are the major changes for
+which the existing code does not have support.
+
+1. Clear hardware clock control bit of RCGs where HW clock
+   control bit is set by default so that software can control
+   those root clocks.
+2. Introduces clk_rcg2_shared_ops to support clock controller
+   drivers for SDM845. With new shared ops, RCGs with shared
+   branches will be configured to a safe source in disable
+   path and actual RCG update configuration will be done in
+   enable path instead of doing config update in set_rate.
+   In set_rate(), just cache the rate instead of doing actual
+   configuration update. Also each RCG in clock controller
+   driver will have their own safe configuration frequency
+   table to switch to safe frequency.
+3. Add support for controlling Fabia PLL for which the support
+   is not available in existing alpha PLL code.
+4. Add Global Clock controller (GCC) driver for SDM845. This
+   should allow most non-multimedia device drivers to probe
+   and control their clocks.
+
+Amit Nischal (3):
+  clk: qcom: Clear hardware clock control bit of RCG
+  clk: qcom: Configure the RCGs to a safe source as needed
+  clk: qcom: Add support for controlling Fabia PLL
+
+Taniya Das (1):
+  clk: qcom: Add Global Clock controller (GCC) driver for SDM845
+
+ .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+ drivers/clk/qcom/Kconfig                           |   11 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-alpha-pll.c                   |  324 +-
+ drivers/clk/qcom/clk-alpha-pll.h                   |   18 +-
+ drivers/clk/qcom/clk-rcg.h                         |    8 +-
+ drivers/clk/qcom/clk-rcg2.c                        |  160 +-
+ drivers/clk/qcom/gcc-sdm845.c                      | 3619 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdm845.h        |  242 ++
+ 9 files changed, 4373 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/clk/qcom/gcc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
+
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
