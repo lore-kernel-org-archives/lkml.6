@@ -1,43 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756127AbeCHQYw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 11:24:52 -0500
-Received: from muru.com ([72.249.23.125]:60076 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752093AbeCHQYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 11:24:50 -0500
-Date: Thu, 8 Mar 2018 08:24:46 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: pali.rohar@gmail.com, sre@kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, khilman@kernel.org, aaro.koskinen@iki.fi,
-        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
-        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
-        sakari.ailus@linux.intel.com,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>
-Subject: Re: Nokia N900: insecure W+X mapping at 0xd0050000
-Message-ID: <20180308162446.GK5799@atomide.com>
-References: <20180308142818.GA9439@amd>
+        id S1756134AbeCHQZ4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 11:25:56 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:45157 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752059AbeCHQZz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 11:25:55 -0500
+X-Google-Smtp-Source: AG47ELsR1EVf4ZyeX6AJk2meop63yd/rzYZ/d0X8f/5bZiZabKs5zfbJZ7r4gI/iunhXF+9/Fu9s3g==
+Subject: Re: [GIT PULL] (xen) stable/for-jens-4.15
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xensource.com
+References: <20180308161914.GN12029@char.us.oracle.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <f386ba9b-d331-ee8d-2b2f-27ff0074ed7d@kernel.dk>
+Date: Thu, 8 Mar 2018 09:25:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+ Thunderbird/59.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180308142818.GA9439@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180308161914.GN12029@char.us.oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Pavel Machek <pavel@ucw.cz> [180308 06:29]:
-> Insecure W+X mappings, who cares about those? I have 7 pages...
+On 3/8/18 9:19 AM, Konrad Rzeszutek Wilk wrote:
+> Hi Jens,
+> 
+> Please git pull the following branch for your for-linus branch:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/konrad/xen.git stable/for-jens-4.15
+> 
+> It has one simple fix for the multi-queue support not showing up after a block
+> device was detached/re-attached.
+> 
+> The patch was originally posted in Dec 22nd but with the Spectre/Meltdown
+> circus I forgot about it until now.
+> 
+> Thank you!
+>  
+> drivers/block/xen-blkfront.c | 17 ++++++++---------
+>  1 file changed, 8 insertions(+), 9 deletions(-)
+> 
+> Bhavesh Davda (1):
+>       xen-blkfront: move negotiate_mq to cover all cases of new VBDs
 
-Is this with CONFIG_DEBUG_WX=y?
+Pulled, thanks.
 
-My guess is that it's for mapping the PM assembly to SRAM. This
-is already fixed for am335x that is using drivers/misc/sram*.c.
-I think omap2 - omap4 still need fixing if this is the culprit.
-
-Regards,
-
-Tony
+-- 
+Jens Axboe
