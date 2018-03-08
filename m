@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966205AbeCHJuD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 04:50:03 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:44758 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966137AbeCHJt7 (ORCPT
+        id S966049AbeCHJtz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 04:49:55 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:40937 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965803AbeCHJts (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 04:49:59 -0500
-X-Google-Smtp-Source: AG47ELsutozNleUH/phiwLznr6/peSqi0umXzdCdwUJIkRYPKME2xPU928Gn3ts17pVoD62WJ9m2iQ==
+        Thu, 8 Mar 2018 04:49:48 -0500
+X-Google-Smtp-Source: AG47ELuT3JV3aJLi3hc0iurSBMJ4+a3iPcPibVREXRECgcV1DMiMl4IX7p6xpTxfEixL1cAQs14nRQ==
 From: Jacob Chen <jacob-chen@iotwrt.com>
 To: linux-rockchip@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -17,10 +17,10 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         laurent.pinchart@ideasonboard.com, zyc@rock-chips.com,
         eddie.cai.linux@gmail.com, jeffy.chen@rock-chips.com,
         devicetree@vger.kernel.org, heiko@sntech.de,
-        Jacob Chen <jacob2.chen@rock-chips.com>
-Subject: [PATCH v6 17/17] MAINTAINERS: add entry for Rockchip ISP1 driver
-Date: Thu,  8 Mar 2018 17:48:07 +0800
-Message-Id: <20180308094807.9443-18-jacob-chen@iotwrt.com>
+        Wen Nuan <leo.wen@rock-chips.com>
+Subject: [PATCH v6 14/17] ARM: dts: rockchip: Add dts mipi-dphy TXRX1 node for rk3288
+Date: Thu,  8 Mar 2018 17:48:04 +0800
+Message-Id: <20180308094807.9443-15-jacob-chen@iotwrt.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180308094807.9443-1-jacob-chen@iotwrt.com>
 References: <20180308094807.9443-1-jacob-chen@iotwrt.com>
@@ -28,37 +28,33 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jacob Chen <jacob2.chen@rock-chips.com>
+From: Wen Nuan <leo.wen@rock-chips.com>
 
-Add MAINTAINERS entry for the rockchip isp1 driver.
-This driver is maintained by rockchip officially and it
-will be used for rockchip SoC on all linux-kernel based OS.
-
-Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
+Change-Id: I0b6122b2b34ae0f24f0d4a1111c1bbe6018cac4e
+Signed-off-by: Wen Nuan <leo.wen@rock-chips.com>
 ---
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/boot/dts/rk3288.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4623caf8d72d..7a9ff4fa4592 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11852,6 +11852,16 @@ F:	drivers/hid/hid-roccat*
- F:	include/linux/hid-roccat*
- F:	Documentation/ABI/*/sysfs-driver-hid-roccat*
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index 3a530b72c057..ed05f3d77358 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -1164,6 +1164,15 @@
+ 		};
+ 	};
  
-+ROCKCHIP ISP V1 DRIVER
-+M:	Jacob chen <jacob2.chen@rock-chips.com>
-+M:	Shunqian Zheng <zhengsq@rock-chips.com>
-+M:	Yichong Zhong <zyc@rock-chips.com>
-+L:	linux-media@vger.kernel.org
-+S:	Maintained
-+F:	drivers/media/platform/rockchip/isp1/
-+F:	Documentation/devicetree/bindings/media/rockchip-isp1.txt
-+F:	Documentation/devicetree/bindings/media/rockchip-mipi-dphy.txt
++	mipi_phy_tx1rx1: mipi-phy-tx1rx1@ff968000 {
++		compatible = "rockchip,rk3288-mipi-dphy";
++		reg = <0x0 0xff968000 0x0 0x4000>;
++		rockchip,grf = <&grf>;
++		clocks = <&cru SCLK_MIPIDSI_24M>, <&cru PCLK_MIPI_CSI>;
++		clock-names = "dphy-ref", "pclk";
++		status = "disabled";
++	};
 +
- ROCKCHIP RASTER 2D GRAPHIC ACCELERATION UNIT DRIVER
- M:	Jacob chen <jacob2.chen@rock-chips.com>
- L:	linux-media@vger.kernel.org
+ 	edp: dp@ff970000 {
+ 		compatible = "rockchip,rk3288-dp";
+ 		reg = <0x0 0xff970000 0x0 0x4000>;
 -- 
 2.16.1
