@@ -1,72 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755741AbeCHLKN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 06:10:13 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:47333 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751971AbeCHLKL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 06:10:11 -0500
-Date: Thu, 8 Mar 2018 03:09:48 -0800
-From: tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-9558080935e0bd744d68a7e1747a7117310623cf@git.kernel.org>
-Cc: hpa@zytor.com, linux-kernel@vger.kernel.org, luto@amacapital.net,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        peterz@infradead.org, jpoimboe@redhat.com, mingo@kernel.org,
-        bp@suse.de
-Reply-To: bp@suse.de, peterz@infradead.org, mingo@kernel.org,
-        jpoimboe@redhat.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        luto@amacapital.net
-In-Reply-To: <20180306094920.16917-3-bp@alien8.de>
-References: <20180306094920.16917-3-bp@alien8.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cleanups] x86/fault: Do not print IP in show_fault_oops()
-Git-Commit-ID: 9558080935e0bd744d68a7e1747a7117310623cf
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S935765AbeCHLMb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 06:12:31 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5763 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751971AbeCHLKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 06:10:14 -0500
+From: Peng Li <lipeng321@huawei.com>
+To: <davem@davemloft.net>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
+        <lipeng321@huawei.com>
+Subject: [Patch net-next 0/6] fix some bugs for hns3 driver
+Date: Thu, 8 Mar 2018 19:41:49 +0800
+Message-ID: <1520509315-40895-1-git-send-email-lipeng321@huawei.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain
+X-Originating-IP: [10.71.200.31]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9558080935e0bd744d68a7e1747a7117310623cf
-Gitweb:     https://git.kernel.org/tip/9558080935e0bd744d68a7e1747a7117310623cf
-Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Tue, 6 Mar 2018 10:49:13 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 8 Mar 2018 12:04:59 +0100
+This patchset fix some bugs for hns3 driver.
+[Patch 1/6 - Patch 3/6] fix bugs related about VF driver.
+[Patch 3/6 - Patch 6/6] fix the bugs about ethtool_ops.set_channels.
 
-x86/fault: Do not print IP in show_fault_oops()
+Peng Li (6):
+  net: hns3: VF should get the real rss_size instead of rss_size_max
+  net: hns3: set the cmdq out_vld bit to 0 after used
+  net: hns3: fix endian issue when PF get mbx message flag
+  net: hns3: fix the queue id for tqp enable&&reset
+  net: hns3: set the max ring num when alloc netdev
+  net: hns3: add support for VF driver inner interface
+    hclgevf_ops.get_tqps_and_rss_info
 
-... because __show_regs() already does that.
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    | 27 ++++++------
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 50 +++++++++++-----------
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c | 10 +++--
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  | 10 +++++
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c   |  1 +
+ 5 files changed, 54 insertions(+), 44 deletions(-)
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Link: https://lkml.kernel.org/r/20180306094920.16917-3-bp@alien8.de
-
----
- arch/x86/mm/fault.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index c88573d90f3e..93505990df10 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -699,7 +699,6 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code,
- 		printk(KERN_CONT "paging request");
- 
- 	printk(KERN_CONT " at %px\n", (void *) address);
--	printk(KERN_ALERT "IP: %pS\n", (void *)regs->ip);
- 
- 	dump_pagetable(address);
- }
+-- 
+2.9.3
