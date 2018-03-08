@@ -1,76 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750897AbeCHUbc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 15:31:32 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:35633 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750761AbeCHUba (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 15:31:30 -0500
-X-Google-Smtp-Source: AG47ELtua9VEESBfygO/N2+5b6/tM1B7qtOSbdNqJlEriZfGhTu5QSg2KBb8eghCUp77X7UACDQezQ==
-Date: Thu, 08 Mar 2018 12:31:28 -0800 (PST)
-X-Google-Original-Date: Thu, 08 Mar 2018 12:30:57 PST (-0800)
-Subject: Re: [PATCH] riscv: Implement free_initrd_mem.
-In-Reply-To: <874llquz7n.fsf@xps13.shealevy.com>
-CC: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-From: Palmer Dabbelt <palmer@sifive.com>
-To: shea@shealevy.com
-Message-ID: <mhng-a815a939-8405-42db-ba34-2a49a622e663@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1751075AbeCHUcP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 15:32:15 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59102 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750761AbeCHUcN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 15:32:13 -0500
+Date: Thu, 8 Mar 2018 21:31:32 +0100
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Wanpeng Li <kernellwp@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH 1/3] KVM: X86: Provides userspace with a capability to
+ not intercept MWAIT
+Message-ID: <20180308203132.GJ12290@flask>
+References: <1519897782-8124-1-git-send-email-wanpengli@tencent.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1519897782-8124-1-git-send-email-wanpengli@tencent.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 08 Mar 2018 11:47:08 PST (-0800), shea@shealevy.com wrote:
-> Palmer Dabbelt <palmer@sifive.com> writes:
->
->> On Thu, 08 Mar 2018 11:14:52 PST (-0800), shea@shealevy.com wrote:
->>> Hi Palmer,
->>>
->>> Palmer Dabbelt <palmer@sifive.com> writes:
->>>
->>>> On Tue, 20 Feb 2018 05:50:43 PST (-0800), shea@shealevy.com wrote:
->>>>> Signed-off-by: Shea Levy <shea@shealevy.com>
->>>>> ---
->>>>>  arch/riscv/mm/init.c | 6 ++++++
->>>>>  1 file changed, 6 insertions(+)
->>>>>
->>>>> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
->>>>> index c77df8142be2..1c832b541e95 100644
->>>>> --- a/arch/riscv/mm/init.c
->>>>> +++ b/arch/riscv/mm/init.c
->>>>> @@ -66,5 +66,11 @@ void free_initmem(void)
->>>>>  #ifdef CONFIG_BLK_DEV_INITRD
->>>>>  void free_initrd_mem(unsigned long start, unsigned long end)
->>>>>  {
->>>>> +	if (start == initrd_start)
->>>>> +		start = round_down(start, PAGE_SIZE);
->>>>> +	if (end == initrd_end)
->>>>> +		end = round_up(end, PAGE_SIZE);
->>>>> +
->>>>> +	free_reserved_area((void *)start, (void *)end, -1, "initrd");
->>>>>  }
->>>>>  #endif /* CONFIG_BLK_DEV_INITRD */
->>>>
->>>> It looks like everyone is doing something slightly different here:
->>>>
->>>> * arm64 doesn't round to a page size, and has keep_initrd.
->>>> * arm calls poison_init_mem(), and has keep_initrd.
->>>> * sparc64 doesn't round, and doesn't have a keep_initrd.
->>>> * mips doesn't round, and doesn't have a keep_initrd.
->>>> * x86 rounds end to a page size but not start, and doesn't have a keep_initrd.
->>>>
->>>> It feels like this should be something generic.  I'm adding linux-kernel to see 
->>>> what people think.
->>>
->>> Should I try to whip up something generic?
->>
->> I think that'd be best.  Nobody has said anything specific, but it's generally 
->> been suggested to take bits that we copy into our port and make them generic.  
->> If there's no clean way do to so then I'm OK taking this, though.
->
-> OK, will add it to my queue.
+2018-03-01 17:49+0800, Wanpeng Li:
+> From: Wanpeng Li <wanpengli@tencent.com>
+> 
+> Allowing a guest to execute MWAIT without interception enables a guest
+> to put a (physical) CPU into a power saving state, where it takes
+> longer to return from than what may be desired by the host.
+> 
+> Don't give a guest that power over a host by default. (Especially,
+> since nothing prevents a guest from using MWAIT even when it is not
+> advertised via CPUID.)
+> 
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> ---
+> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+> @@ -1041,7 +1041,8 @@ On systems that do not support this ioctl, it always fails. On systems that
+>  do support it, it only works for extensions that are supported for enablement.
+>  
+>  To check if a capability can be enabled, the KVM_CHECK_EXTENSION ioctl should
+> -be used.
+> +be used. Blindly passing the KVM_CHECK_EXTENSION result to KVM_ENABLE_CAP is
+> +a valid thing to do when vCPUs are associated to dedicated physical CPUs.
 
-Thanks!
+This is not true even for x86 KVM_CAP_SPLIT_IRQCHIP and neither is is a
+need to limit ourselves.  Just leave it be.
+
+> +7.13 KVM_CAP_X86_DISABLE_EXITS
+> +
+> +Architectures: x86
+> +Parameters: args[0] defines which exits are disabled
+> +Returns: 0 on success, -EINVAL when args[0] contains invalid exits
+> +
+> +Valid exits in args[0] are
+> +
+> +#define KVM_X86_DISABLE_EXITS_MWAIT            (1 << 0)
+> +
+> +Enabling this capability on a VM provides userspace with a way to no
+> +longer intercepts some instructions for improved latency in some
+> +workloads. Not enable KVM_FEATURE_PV_UNHALT if you block HLT.
+
+The last sentence belong to the patch that enables HLT.
+KVM could in theory handle the case (although it makes no sense), so if
+it doesn't currently work, please add a check to kvm_update_cpuid() that
+forbids KVM_FEATURE_PV_UNHALT when halt exits are disabled.
+
+Also, it would be nicer to write that as
+"Do not enable KVM_FEATURE_PV_UNHALT if you disable HLT exits."
+
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> @@ -2780,9 +2780,15 @@ static int msr_io(struct kvm_vcpu *vcpu, struct kvm_msrs __user *user_msrs,
+>  	return r;
+>  }
+>  
+> +static inline bool kvm_mwait_can_in_guest(void)
+
+I think kvm_can_mwait_in_guest would be a better name.
+
+> +{
+> +	return boot_cpu_has(X86_FEATURE_MWAIT) &&
+> +		!boot_cpu_has_bug(X86_BUG_MONITOR);
+> +}
+> +
+> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+> index b91215d..cd1215e 100644
+> --- a/arch/x86/kvm/x86.h
+> +++ b/arch/x86/kvm/x86.h
+> @@ -2,8 +2,6 @@
+>  #ifndef ARCH_X86_KVM_X86_H
+>  #define ARCH_X86_KVM_X86_H
+>  
+> -#include <asm/processor.h>
+> -#include <asm/mwait.h>
+>  #include <linux/kvm_host.h>
+>  #include <asm/pvclock.h>
+>  #include "kvm_cache_regs.h"
+> @@ -264,10 +262,12 @@ static inline u64 nsec_to_cycles(struct kvm_vcpu *vcpu, u64 nsec)
+>  	    __rem;						\
+>  	 })
+>  
+> -static inline bool kvm_mwait_in_guest(void)
+> +#define KVM_X86_DISABLE_EXITS_MWAIT          (1 << 0)
+> +#define KVM_X86_DISABLE_VALID_EXITS          (KVM_X86_DISABLE_EXITS_MWAIT)
+> +
+> +static inline bool kvm_mwait_in_guest(struct kvm *kvm)
+>  {
+> -	return boot_cpu_has(X86_FEATURE_MWAIT) &&
+> -		!boot_cpu_has_bug(X86_BUG_MONITOR);
+> +	return kvm->arch.mwait_in_guest;
+
+With this nice variable, the wrapper actually makes the code harder to
+read.  Please use kvm->arch.mwait_in_guest directly (and the same for
+the other two future exits),
+
+thanks.
