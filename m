@@ -1,44 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935053AbeCHHmW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 02:42:22 -0500
-Received: from verein.lst.de ([213.95.11.211]:33799 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751696AbeCHHmV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 02:42:21 -0500
-Date: Thu, 8 Mar 2018 08:42:20 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Keith Busch <keith.busch@intel.com>
-Cc: Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Jianchao Wang <jianchao.w.wang@oracle.com>, axboe@fb.com,
-        sagi@grimberg.me, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Subject: Re: [PATCH V2] nvme-pci: assign separate irq vectors for adminq
-        and ioq0
-Message-ID: <20180308074220.GC15748@lst.de>
-References: <1519832921-13915-1-git-send-email-jianchao.w.wang@oracle.com> <20180228164726.GB16536@lst.de> <20180301150329.GB6795@ming.t460p> <20180301161042.GA14799@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180301161042.GA14799@localhost.localdomain>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        id S935123AbeCHHnU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 02:43:20 -0500
+Received: from regular1.263xmail.com ([211.150.99.133]:33364 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751773AbeCHHnS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 02:43:18 -0500
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: jeffy.chen@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: jeffy.chen@rock-chips.com
+X-UNIQUE-TAG: <3310b7f3a7009457acd81a04261a3f11>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+To: linux-kernel@vger.kernel.org
+Cc: briannorris@google.com, heiko@sntech.de, dtor@google.com,
+        dianders@google.com, Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Matthias Kaehlcke <mka@chromium.org>, devicetree@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Emil Renner Berthing <kernel@esmil.dk>,
+        Brian Norris <briannorris@chromium.org>,
+        linux-rockchip@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH v5 3/3] arm64: dts: rockchip: kevin: Avoid wakeup when inserting the pen
+Date: Thu,  8 Mar 2018 15:42:26 +0800
+Message-Id: <20180308074226.18974-1-jeffy.chen@rock-chips.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180308073213.8419-1-jeffy.chen@rock-chips.com>
+References: <20180308073213.8419-1-jeffy.chen@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 09:10:42AM -0700, Keith Busch wrote:
-> On Thu, Mar 01, 2018 at 11:03:30PM +0800, Ming Lei wrote:
-> > If all CPUs for the 1st IRQ vector of admin queue are offline, then I
-> > guess NVMe can't work any more.
-> 
-> Yikes, with respect to admin commands, it appears you're right if your
-> system allows offlining CPU0.
-> 
-> > So looks it is a good idea to make admin queue's IRQ vector assigned as
-> > non-managed IRQs.
-> 
-> It'd still be considered managed even if it's a 'pre_vector', though
-> it would get the default mask with all possible CPUs.
+Add wakeup event action for Pen Insert gpio key, to avoid wakeup when
+inserting the pen.
 
-Which basically does the right thing.  So I suspect we'll need to
-go with a patch like this, just with a way better changelog.
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
+
+Changes in v5: None
+Changes in v4:
+Include dt-binding gpio-keys.h
+
+Changes in v3: None
+Changes in v2:
+Specify wakeup event action instead of irq trigger type as Brian
+suggested.
+
+ arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts b/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
+index 191a6bcb1704..89126dbe5d91 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
+@@ -44,6 +44,7 @@
+ 
+ /dts-v1/;
+ #include "rk3399-gru.dtsi"
++#include <dt-bindings/input/gpio-keys.h>
+ #include <dt-bindings/input/linux-event-codes.h>
+ 
+ /*
+@@ -134,6 +135,8 @@
+ 		gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
+ 		linux,code = <SW_PEN_INSERTED>;
+ 		linux,input-type = <EV_SW>;
++		/* Wakeup only when ejecting */
++		wakeup-event-action = <EV_ACT_DEASSERTED>;
+ 		wakeup-source;
+ 	};
+ };
+-- 
+2.11.0
