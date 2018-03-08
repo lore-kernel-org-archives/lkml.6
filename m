@@ -1,116 +1,114 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2757900-1520414514-2-5333530383855770687
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, UNPARSEABLE_RELAY 0.001,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520414513; b=UwstZVuNv/z/WRNQWUSXHMxbg3YHKiwQ8ELQni53sin1pUX
-    qNIvbfqE2qL3Oq/M5ASqbRbxa7So5Gl4kxMt5brCtA/MG4CeXxlFNSrEUigB+MxE
-    2kYWdWxn/djWPWC0lifplwmL90/tEcyeWc1Vx1omAgSMUhvo3+K8XWMB725AWi/W
-    gZngar9UczoYIIfUYRafjQFM5Qn1oDvpvbRfi1W9nSrCEhb6hufUREgW3an5vckH
-    qoB5moGcwhV19If0ky49SgLcpPGbXuqAM2B/lzf+9RwCH9/cTmIF3LugdCoYVZA/
-    TALoJ+HT8KQ2QNt3Ehyi5iDs5xR9n/BSKN4oOiQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:cc:date
-    :in-reply-to:references:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520414513; bh=a6lmrJ
-    yJ4CFr/MZzW9aOHk55+azjDTiKZyg7y6Mix/w=; b=Pa1mvizIjrNtQ8+k20/zGv
-    2I+1SktxzTK53yBNwgCjI0emGnFK9gDYxUieq5jfZ3EML3uhzYcgcBs9ra2MIXcx
-    MhJW8fHNxFESoItw2zGrS8qa4kG/LtVAkUwTugc5TPoMf9ahVdjbaeSe0Jys6ns6
-    nkkkbJpgD1tSTCDjd0m+gON2mFrhPdF1zGURiBSFXAKsmVrkD7hR1KttuBP2GQWf
-    5RgHrCDvrPQXxaTkYw0LDBOW18bnh3jHRmKPBdL4fH4ZUk46cC+EANE+t640U+4b
-    IX8tUAm6Q/U7A42FAZgmvXxKLTm0mLHcB1GtfHhVI9lHoAhG/MnxyVxKmt7fYSpA
-    ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mediatek.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mediatek.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751109AbeCGJVu (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 04:21:50 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:43422 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751036AbeCGJVu (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 04:21:50 -0500
-X-UUID: 540e87e85c8047f98d76054730a301a0-20180307
-Message-ID: <1520414499.677.5.camel@mtkswgap22>
-Subject: Re: [PATCH] soc: mediatek: fix the mistaken pointer accessed when
- subdomains are added
-From: Sean Wang <sean.wang@mediatek.com>
-To: <matthias.bgg@gmail.com>
-CC: <rjw@rjwysocki.net>, <khilman@baylibre.com>,
-        <ulf.hansson@linaro.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-Date: Wed, 7 Mar 2018 17:21:39 +0800
-In-Reply-To: <9d9d75250bf62b491294a0c550c35ab7aba05eef.1518113047.git.sean.wang@mediatek.com>
-References: <9d9d75250bf62b491294a0c550c35ab7aba05eef.1518113047.git.sean.wang@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-MTK: N
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <kernel-hardening-return-12279-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELttiMGwP/x3XoWooMd7B6LArs92sp86HQTep5rq1mxOojhz/rJ7VivYo5JR6u/QPWDQseQM
+ARC-Seal: i=1; a=rsa-sha256; t=1520550595; cv=none;
+        d=google.com; s=arc-20160816;
+        b=mETvXU+ubvVVgJrB3JxWokHeE9FpdCwFyWpX4ddSeIq5v7VJqoaqTtH8ZLAVyq5f48
+         j73cGllj1NaMyput6bmy3U+hS2MjmSPqY6GHcz/AxgqDbwKHBtIIKL3aHThSn3b4eQDn
+         552mrsiUDlyGmez9kSImt8TnkE4BPmwBR34DJf5IJ3BOmwk46Nf/yta3lMRaLPDeAv9l
+         0MAhohIwWrH8Q3tiK86bCrENqfF2G61oIcaK9lOYDCQ15Gm16WjyB/EaZAUflWobzw+q
+         UChoge/xtkABbliY+pQYA7SzESvq8fcadlODZRfGxP9Qbok+aca9ytnzpb8i80GncrMp
+         oe+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=OmEZEDaS6hpyR5iA9/rKKJIhauokv+9y1XDmRE6gT94=;
+        b=Osr+880Qln0cXWFQpsYijEtWxOx4srtaWGekSPFccWvKrymVvlAoVK3Wqz3b2bR6P0
+         EQ5VDHD5/OYOjuVEfo4NHqKKHXBKOP2E9d+Zei7uPRT3JcORqzJVbiuN8byfLtGfveSP
+         YRNLT2oQNaYO1dyJ6JViXj2Axv7bbm/J11qXU9zF3iiAUhtJu15fyVueDZW3NsvdpOYQ
+         I/nbhq2V2Nm5qsEyykbMRKeMK7LyVtrDu+Q9GJtuZVSDFTL9l/scTxzBLn7p9zRd2XKS
+         JjhQ/Iwn6DsaPkU2G0AwFH+d0eUz6NCDuXF2ub5DHlbmQc5sF8sZVX5nKgAqL8/EME00
+         3m6w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@tycho-ws.20150623.gappssmtp.com header.s=20150623 header.b=yzPkTp1p;
+       spf=pass (google.com: domain of kernel-hardening-return-12279-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12279-gregkh=linuxfoundation.org@lists.openwall.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@tycho-ws.20150623.gappssmtp.com header.s=20150623 header.b=yzPkTp1p;
+       spf=pass (google.com: domain of kernel-hardening-return-12279-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12279-gregkh=linuxfoundation.org@lists.openwall.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Tycho Andersen <tycho@tycho.ws>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	Tycho Andersen <tycho@tycho.ws>
+Subject: [PATCH v3] ima: drop vla in ima_audit_measurement()
+Date: Thu,  8 Mar 2018 16:08:36 -0700
+Message-Id: <20180308230836.24329-1-tycho@tycho.ws>
+X-Mailer: git-send-email 2.14.1
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594412861096605696?=
+X-GMAIL-MSGID: =?utf-8?q?1594412861096605696?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi, Matthis
-	
-also a gentle ping for the patch
-	
-	Sean
+In keeping with the directive to get rid of VLAs [1], let's drop the VLA
+from ima_audit_measurement(). We need to adjust the return type of
+ima_audit_measurement, because now this function can fail if an allocation
+fails.
 
-On Fri, 2018-02-09 at 02:07 +0800, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
-> 
-> Fix the pointer to struct scp_subdomian not being moved forward
-> when each sub-domain is expected to be iteratively added through
-> pm_genpd_add_subdomain call.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 53fddb1a66dd ("soc: mediatek: reduce code duplication of scpsys_probe across all SoCs")
-> Reported-by: Weiyi Lu <weiyi.lu@mediatek.com>
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> ---
->  drivers/soc/mediatek/mtk-scpsys.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-> index fc55faa..9de801e 100644
-> --- a/drivers/soc/mediatek/mtk-scpsys.c
-> +++ b/drivers/soc/mediatek/mtk-scpsys.c
-> @@ -1048,7 +1048,7 @@ static int scpsys_probe(struct platform_device *pdev)
->  
->  	pd_data = &scp->pd_data;
->  
-> -	for (i = 0, sd = soc->subdomains ; i < soc->num_subdomains ; i++) {
-> +	for (i = 0, sd = soc->subdomains; i < soc->num_subdomains; i++, sd++) {
->  		ret = pm_genpd_add_subdomain(pd_data->domains[sd->origin],
->  					     pd_data->domains[sd->subdomain]);
->  		if (ret && IS_ENABLED(CONFIG_PM))
+[1]: https://lkml.org/lkml/2018/3/7/621
+
+v2: just use audit_log_format instead of doing a second allocation
+v3: ignore failures in ima_audit_measurement()
+
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+---
+ security/integrity/ima/ima_api.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index 08fe405338e1..2aab9170ef68 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -308,14 +308,17 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
+ 			   const unsigned char *filename)
+ {
+ 	struct audit_buffer *ab;
+-	char hash[(iint->ima_hash->length * 2) + 1];
++	char *hash;
+ 	const char *algo_name = hash_algo_name[iint->ima_hash->algo];
+-	char algo_hash[sizeof(hash) + strlen(algo_name) + 2];
+ 	int i;
+ 
+ 	if (iint->flags & IMA_AUDITED)
+ 		return;
+ 
++	hash = kzalloc((iint->ima_hash->length * 2) + 1, GFP_KERNEL);
++	if (!hash)
++		return;
++
+ 	for (i = 0; i < iint->ima_hash->length; i++)
+ 		hex_byte_pack(hash + (i * 2), iint->ima_hash->digest[i]);
+ 	hash[i * 2] = '\0';
+@@ -323,18 +326,19 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
+ 	ab = audit_log_start(current->audit_context, GFP_KERNEL,
+ 			     AUDIT_INTEGRITY_RULE);
+ 	if (!ab)
+-		return;
++		goto out;
+ 
+ 	audit_log_format(ab, "file=");
+ 	audit_log_untrustedstring(ab, filename);
+-	audit_log_format(ab, " hash=");
+-	snprintf(algo_hash, sizeof(algo_hash), "%s:%s", algo_name, hash);
+-	audit_log_untrustedstring(ab, algo_hash);
++	audit_log_format(ab, " hash=\"%s:%s\"", algo_name, hash);
+ 
+ 	audit_log_task_info(ab, current);
+ 	audit_log_end(ab);
+ 
+ 	iint->flags |= IMA_AUDITED;
++out:
++	kfree(hash);
++	return;
+ }
+ 
+ /*
+-- 
+2.14.1
