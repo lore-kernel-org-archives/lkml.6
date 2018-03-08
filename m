@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934085AbeCHTMa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 14:12:30 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:41086 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933755AbeCHTM1 (ORCPT
+        id S966602AbeCHTQA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 14:16:00 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:44793 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933969AbeCHTMa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 14:12:27 -0500
-X-Google-Smtp-Source: AG47ELv8TxIThkN0urih7prVyB8BqjDSug9/P0M3mj7zGPqnjqWSB6W8TU2NQ1rweShPlUR/S88fXQ==
+        Thu, 8 Mar 2018 14:12:30 -0500
+X-Google-Smtp-Source: AG47ELsPkaadNABsqR6in3/ayDs7awIJ/rqeeaZ2jKyaTuMQC2+j0e3/l6hGxXwZMtSMbNN/eDQs9w==
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -18,9 +18,9 @@ Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
         linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 05/21] nvmem: imx-ocotp: Convert to use devm_nvmem_register()
-Date: Thu,  8 Mar 2018 11:11:49 -0800
-Message-Id: <20180308191205.26943-6-andrew.smirnov@gmail.com>
+Subject: [PATCH v5 07/21] nvmem: snvs_lgpr: Convert to use devm_nvmem_register()
+Date: Thu,  8 Mar 2018 11:11:51 -0800
+Message-Id: <20180308191205.26943-8-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180308191205.26943-1-andrew.smirnov@gmail.com>
 References: <20180308191205.26943-1-andrew.smirnov@gmail.com>
@@ -45,29 +45,28 @@ Cc: linux-amlogic@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/nvmem/imx-ocotp.c | 16 ++--------------
+ drivers/nvmem/snvs_lpgpr.c | 16 ++--------------
  1 file changed, 2 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/nvmem/imx-ocotp.c b/drivers/nvmem/imx-ocotp.c
-index d7ba351a70c9..f1482c664b19 100644
---- a/drivers/nvmem/imx-ocotp.c
-+++ b/drivers/nvmem/imx-ocotp.c
-@@ -466,26 +466,14 @@ static int imx_ocotp_probe(struct platform_device *pdev)
- 	imx_ocotp_nvmem_config.dev = dev;
- 	imx_ocotp_nvmem_config.priv = priv;
- 	priv->config = &imx_ocotp_nvmem_config;
--	nvmem = nvmem_register(&imx_ocotp_nvmem_config);
-+	nvmem = devm_nvmem_register(dev, &imx_ocotp_nvmem_config);
+diff --git a/drivers/nvmem/snvs_lpgpr.c b/drivers/nvmem/snvs_lpgpr.c
+index e5c2a4a17f03..cb471d5e8e86 100644
+--- a/drivers/nvmem/snvs_lpgpr.c
++++ b/drivers/nvmem/snvs_lpgpr.c
+@@ -117,20 +117,9 @@ static int snvs_lpgpr_probe(struct platform_device *pdev)
+ 	cfg->reg_read  = snvs_lpgpr_read,
+ 	cfg->reg_write = snvs_lpgpr_write,
  
+-	nvmem = nvmem_register(cfg);
 -	if (IS_ERR(nvmem))
 -		return PTR_ERR(nvmem);
++	nvmem = devm_nvmem_register(dev, cfg);
  
 -	platform_set_drvdata(pdev, nvmem);
 -
 -	return 0;
 -}
 -
--static int imx_ocotp_remove(struct platform_device *pdev)
+-static int snvs_lpgpr_remove(struct platform_device *pdev)
 -{
 -	struct nvmem_device *nvmem = platform_get_drvdata(pdev);
 -
@@ -75,11 +74,14 @@ index d7ba351a70c9..f1482c664b19 100644
 +	return PTR_ERR_OR_ZERO(nvmem);
  }
  
- static struct platform_driver imx_ocotp_driver = {
- 	.probe	= imx_ocotp_probe,
--	.remove	= imx_ocotp_remove,
+ static const struct of_device_id snvs_lpgpr_dt_ids[] = {
+@@ -143,7 +132,6 @@ MODULE_DEVICE_TABLE(of, snvs_lpgpr_dt_ids);
+ 
+ static struct platform_driver snvs_lpgpr_driver = {
+ 	.probe	= snvs_lpgpr_probe,
+-	.remove	= snvs_lpgpr_remove,
  	.driver = {
- 		.name	= "imx_ocotp",
- 		.of_match_table = imx_ocotp_dt_ids,
+ 		.name	= "snvs_lpgpr",
+ 		.of_match_table = snvs_lpgpr_dt_ids,
 -- 
 2.14.3
