@@ -1,151 +1,183 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754633AbeCHRhR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 12:37:17 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43958 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752135AbeCHRhQ (ORCPT
+        id S932104AbeCHRiS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 12:38:18 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:34364 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932137AbeCHRiQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 12:37:16 -0500
-Date: Thu, 8 Mar 2018 09:37:47 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: Re: [PATCH v2] rcu: exp: Protect all sync_rcu_preempt_exp_done()
- with rcu_node lock
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180308084831.29674-1-boqun.feng@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180308084831.29674-1-boqun.feng@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18030817-2213-0000-0000-0000027CA0F9
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008636; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.01000134; UDB=6.00508695; IPR=6.00779464;
- MB=3.00019919; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-08 17:37:13
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030817-2214-0000-0000-0000595A3ACD
-Message-Id: <20180308173747.GO3918@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-08_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803080199
+        Thu, 8 Mar 2018 12:38:16 -0500
+X-Google-Smtp-Source: AG47ELuYEKwDjci1GoLnnRUAfUecg0qpNZ2iE7lMan6uyXUEEDNREhjGzIzAaMEkRWdiQKpm+einlA==
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
+        linux-kernel@vger.kernel.org, cphealy@gmail.com,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH v2 1/3] mfd: rave-sp: Add code to print firmware versions
+Date: Thu,  8 Mar 2018 09:37:54 -0800
+Message-Id: <20180308173756.13787-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 08, 2018 at 04:48:27PM +0800, Boqun Feng wrote:
-> Currently some callsites of sync_rcu_preempt_exp_done() are not called
-> with the corresponding rcu_node's ->lock held, which could introduces
-> bugs as per Paul:
-> 
-> o	CPU 0 in sync_rcu_preempt_exp_done() reads ->exp_tasks and
-> 	sees that it is NULL.
-> 
-> o	CPU 1 blocks within an RCU read-side critical section, so
-> 	it enqueues the task and points ->exp_tasks at it and
-> 	clears CPU 1's bit in ->expmask.
-> 
-> o	All other CPUs clear their bits in ->expmask.
-> 
-> o	CPU 0 reads ->expmask, sees that it is zero, so incorrectly
-> 	concludes that all quiescent states have completed, despite
-> 	the fact that ->exp_tasks is non-NULL.
-> 
-> To fix this, sync_rcu_preempt_exp_unlocked() is introduced to replace
-> lockless callsites of sync_rcu_preempt_exp_done().
-> 
-> Further, a lockdep annotation is added into sync_rcu_preempt_exp_done()
-> to prevent mis-use in the future.
-> 
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+Add code that would query and print out bootloader and application
+firmware version info.
 
-Again, good catch, applied for testing and review.  Thank you!
+Cc: linux-kernel@vger.kernel.org
+Cc: cphealy@gmail.com
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+---
 
-							Thanx, Paul
+Changes since [v1]:
 
-> ---
-> v1 --> v2:
-> 	Kill unnecessary blank lines
-> 
-> 
->  kernel/rcu/tree_exp.h | 28 +++++++++++++++++++++++++---
->  1 file changed, 25 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-> index 2fd882b08b7c..3f30cc3b7669 100644
-> --- a/kernel/rcu/tree_exp.h
-> +++ b/kernel/rcu/tree_exp.h
-> @@ -20,6 +20,8 @@
->   * Authors: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
->   */
-> 
-> +#include <linux/lockdep.h>
-> +
->  /*
->   * Record the start of an expedited grace period.
->   */
-> @@ -158,10 +160,30 @@ static void __maybe_unused sync_exp_reset_tree(struct rcu_state *rsp)
->   */
->  static bool sync_rcu_preempt_exp_done(struct rcu_node *rnp)
->  {
-> +	lockdep_assert_held(&rnp->lock);
-> +
->  	return rnp->exp_tasks == NULL &&
->  	       READ_ONCE(rnp->expmask) == 0;
->  }
-> 
-> +/*
-> + * Like sync_rcu_preempt_exp_done(), but this function assumes the caller
-> + * doesn't hold the rcu_node's ->lock, and will acquire and release the lock
-> + * itself
-> + */
-> +static bool sync_rcu_preempt_exp_done_unlocked(struct rcu_node *rnp)
-> +{
-> +	unsigned long flags;
-> +	bool ret;
-> +
-> +	raw_spin_lock_irqsave_rcu_node(rnp, flags);
-> +	ret = sync_rcu_preempt_exp_done(rnp);
-> +	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
-> +
-> +	return ret;
-> +}
-> +
-> +
->  /*
->   * Report the exit from RCU read-side critical section for the last task
->   * that queued itself during or before the current expedited preemptible-RCU
-> @@ -498,9 +520,9 @@ static void synchronize_sched_expedited_wait(struct rcu_state *rsp)
->  	for (;;) {
->  		ret = swait_event_timeout(
->  				rsp->expedited_wq,
-> -				sync_rcu_preempt_exp_done(rnp_root),
-> +				sync_rcu_preempt_exp_done_unlocked(rnp_root),
->  				jiffies_stall);
-> -		if (ret > 0 || sync_rcu_preempt_exp_done(rnp_root))
-> +		if (ret > 0 || sync_rcu_preempt_exp_done_unlocked(rnp_root))
->  			return;
->  		WARN_ON(ret < 0);  /* workqueues should not be signaled. */
->  		if (rcu_cpu_stall_suppress)
-> @@ -533,7 +555,7 @@ static void synchronize_sched_expedited_wait(struct rcu_state *rsp)
->  			rcu_for_each_node_breadth_first(rsp, rnp) {
->  				if (rnp == rnp_root)
->  					continue; /* printed unconditionally */
-> -				if (sync_rcu_preempt_exp_done(rnp))
-> +				if (sync_rcu_preempt_exp_done_unlocked(rnp))
->  					continue;
->  				pr_cont(" l=%u:%d-%d:%#lx/%c",
->  					rnp->level, rnp->grplo, rnp->grphi,
-> -- 
-> 2.16.2
-> 
+	- Removed unused deving from the middle of 'struct rave_status'
+
+[v1] https://lkml.kernel.org/r/20180226150739.13457-1-andrew.smirnov@gmail.com
+
+ drivers/mfd/rave-sp.c | 95 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 95 insertions(+)
+
+diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
+index c8173de5653a..be243678a61e 100644
+--- a/drivers/mfd/rave-sp.c
++++ b/drivers/mfd/rave-sp.c
+@@ -160,6 +160,8 @@ struct rave_sp_variant {
+  * @variant:			Device variant specific information
+  * @event_notifier_list:	Input event notification chain
+  *
++ * @part_number_firmware:	Firmware version
++ * @part_number_bootloader:	Bootloader version
+  */
+ struct rave_sp {
+ 	struct serdev_device *serdev;
+@@ -171,8 +173,40 @@ struct rave_sp {
+ 
+ 	const struct rave_sp_variant *variant;
+ 	struct blocking_notifier_head event_notifier_list;
++
++	const char *part_number_firmware;
++	const char *part_number_bootloader;
+ };
+ 
++struct rave_sp_version {
++	u8     hardware;
++	__le16 major;
++	u8     minor;
++	u8     letter[2];
++} __packed;
++
++struct rave_sp_status {
++	struct rave_sp_version bootloader_version;
++	struct rave_sp_version firmware_version;
++	u16 rdu_eeprom_flag;
++	u16 dds_eeprom_flag;
++	u8  pic_flag;
++	u8  orientation;
++	u32 etc;
++	s16 temp[2];
++	u8  backlight_current[3];
++	u8  dip_switch;
++	u8  host_interrupt;
++	u16 voltage_28;
++	u8  i2c_device_status;
++	u8  power_status;
++	u8  general_status;
++	u8  deprecated1;
++	u8  power_led_status;
++	u8  deprecated2;
++	u8  periph_power_shutoff;
++} __packed;
++
+ static bool rave_sp_id_is_event(u8 code)
+ {
+ 	return (code & 0xF0) == RAVE_SP_EVNT_BASE;
+@@ -609,6 +643,52 @@ static int rave_sp_default_cmd_translate(enum rave_sp_command command)
+ 	}
+ }
+ 
++static const char *devm_rave_sp_version(struct device *dev,
++					struct rave_sp_version *version)
++{
++	/*
++	 * NOTE: The format string below uses %02d to display u16
++	 * intentionally for the sake of backwards compatibility with
++	 * legacy software.
++	 */
++	return devm_kasprintf(dev, GFP_KERNEL, "%02d%02d%02d.%c%c\n",
++			      version->hardware,
++			      le16_to_cpu(version->major),
++			      version->minor,
++			      version->letter[0],
++			      version->letter[1]);
++}
++
++static int rave_sp_get_status(struct rave_sp *sp)
++{
++	struct device *dev = &sp->serdev->dev;
++	u8 cmd[] = {
++		[0] = RAVE_SP_CMD_STATUS,
++		[1] = 0
++	};
++	struct rave_sp_status status;
++	const char *version;
++	int ret;
++
++	ret = rave_sp_exec(sp, cmd, sizeof(cmd), &status, sizeof(status));
++	if (ret)
++		return ret;
++
++	version = devm_rave_sp_version(dev, &status.firmware_version);
++	if (!version)
++		return -ENOMEM;
++
++	sp->part_number_firmware = version;
++
++	version = devm_rave_sp_version(dev, &status.bootloader_version);
++	if (!version)
++		return -ENOMEM;
++
++	sp->part_number_bootloader = version;
++
++	return 0;
++}
++
+ static const struct rave_sp_checksum rave_sp_checksum_8b2c = {
+ 	.length     = 1,
+ 	.subroutine = csum_8b2c,
+@@ -657,6 +737,7 @@ static const struct serdev_device_ops rave_sp_serdev_device_ops = {
+ static int rave_sp_probe(struct serdev_device *serdev)
+ {
+ 	struct device *dev = &serdev->dev;
++	const char *unknown = "unknown\n";
+ 	struct rave_sp *sp;
+ 	u32 baud;
+ 	int ret;
+@@ -689,6 +770,20 @@ static int rave_sp_probe(struct serdev_device *serdev)
+ 
+ 	serdev_device_set_baudrate(serdev, baud);
+ 
++	ret = rave_sp_get_status(sp);
++	if (ret) {
++		dev_warn(dev, "Failed to get firmware status: %d\n", ret);
++		sp->part_number_firmware   = unknown;
++		sp->part_number_bootloader = unknown;
++	}
++
++	/*
++	 * Those strings already have a \n embedded, so there's no
++	 * need to have one in format string.
++	 */
++	dev_info(dev, "Firmware version: %s",   sp->part_number_firmware);
++	dev_info(dev, "Bootloader version: %s", sp->part_number_bootloader);
++
+ 	return devm_of_platform_populate(dev);
+ }
+ 
+-- 
+2.14.3
