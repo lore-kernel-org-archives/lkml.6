@@ -1,65 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755305AbeCHMYo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 07:24:44 -0500
-Received: from foss.arm.com ([217.140.101.70]:37130 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754822AbeCHMYn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 07:24:43 -0500
-Subject: Re: [PATCH v3 09/22] arm64: capabilities: Split the processing of
- errata work arounds
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
-        robin.murphy@arm.com
-References: <20180209175513.17100-1-suzuki.poulose@arm.com>
- <20180209175513.17100-19-suzuki.poulose@arm.com>
- <20180209181834.GG5862@e103592.cambridge.arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <b5b90236-7734-2c05-65fd-57fcbe732b6c@arm.com>
-Date: Thu, 8 Mar 2018 12:24:40 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180209181834.GG5862@e103592.cambridge.arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1755851AbeCHM05 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 07:26:57 -0500
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:54704 "EHLO
+        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751271AbeCHM0w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 07:26:52 -0500
+From: Luca Ceresoli <luca@lucaceresoli.net>
+To: linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Luca Ceresoli <luca@lucaceresoli.net>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: [PATCH v2 1/3] media: vb2-core: vb2_buffer_done: consolidate docs
+Date: Thu,  8 Mar 2018 13:26:20 +0100
+Message-Id: <1520511982-985-1-git-send-email-luca@lucaceresoli.net>
+X-Mailer: git-send-email 2.7.4
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/02/18 18:18, Dave Martin wrote:
-> On Fri, Feb 09, 2018 at 05:54:48PM +0000, Suzuki K Poulose wrote:
->> Right now we run through the errata workarounds check on all boot
->> active CPUs, with SCOPE_ALL. This doesn't help with detecting the
->> errata's with a SYSTEM_SCOPE. While nobody uses it, let us clean
->> this up in preparation for merging capability handling.
-> 
-> errata; and SCOPE_SYSTEM (if I'm being pedantic)
-> 
-> To make it clearer this this is adding support for new behaviour rather
-> than changing old behaviour, perhaps change "This doesn't help ...
-> While nobody uses it ..." to something like:
-> 
-> "This wouldn't help for detecting erratum workarounds with SCOPE_SYSTEM.
-> There are none yet, but we plan to introduce some: let us clean this up
-> so that such workarounds can be detected and enabled correctly."
+Documentation about what start_streaming() should do on failure are
+scattered in two places and mostly duplicated, so consolidate them in
+one of the two places.
 
-Fixed
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Pawel Osciak <pawel@osciak.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
 
->>
->> So, we run the checks with SCOPE_LOCAL_CPU on all CPUs and SCOPE_SYSTEM
->> checks are run only once after all the boot time CPUs are active.
->>
->> Cc: Dave Martin <dave.martin@arm.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> 
-> Otherwise,
-> 
-> Reviewed-by: Dave Martin <Dave.Martin@arm.com>
+---
+Changes v1 -> v2: none.
+---
+ include/media/videobuf2-core.h | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-Thanks
-Suzuki
+diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
+index 5b6c541e4e1b..f1a479060f9e 100644
+--- a/include/media/videobuf2-core.h
++++ b/include/media/videobuf2-core.h
+@@ -602,9 +602,7 @@ void *vb2_plane_cookie(struct vb2_buffer *vb, unsigned int plane_no);
+  *		Either %VB2_BUF_STATE_DONE if the operation finished
+  *		successfully, %VB2_BUF_STATE_ERROR if the operation finished
+  *		with an error or %VB2_BUF_STATE_QUEUED if the driver wants to
+- *		requeue buffers. If start_streaming fails then it should return
+- *		buffers with state %VB2_BUF_STATE_QUEUED to put them back into
+- *		the queue.
++ *		requeue buffers.
+  *
+  * This function should be called by the driver after a hardware operation on
+  * a buffer is finished and the buffer may be returned to userspace. The driver
+@@ -613,9 +611,9 @@ void *vb2_plane_cookie(struct vb2_buffer *vb, unsigned int plane_no);
+  * to the driver by &vb2_ops->buf_queue can be passed to this function.
+  *
+  * While streaming a buffer can only be returned in state DONE or ERROR.
+- * The start_streaming op can also return them in case the DMA engine cannot
+- * be started for some reason. In that case the buffers should be returned with
+- * state QUEUED.
++ * The &vb2_ops->start_streaming op can also return them in case the DMA engine
++ * cannot be started for some reason. In that case the buffers should be
++ * returned with state QUEUED to put them back into the queue.
+  */
+ void vb2_buffer_done(struct vb2_buffer *vb, enum vb2_buffer_state state);
+ 
+-- 
+2.7.4
