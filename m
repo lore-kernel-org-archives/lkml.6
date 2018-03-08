@@ -1,76 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965329AbeCHKRq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 05:17:46 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36754 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S964954AbeCHKRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 05:17:40 -0500
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: Roman Kagan <rkagan@virtuozzo.com>, kvm@vger.kernel.org,
-        x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] x86/kvm: rename HV_X64_MSR_APIC_ASSIST_PAGE to HV_X64_MSR_VP_ASSIST_PAGE
-References: <20180226171121.18974-1-vkuznets@redhat.com>
-        <20180226171121.18974-2-vkuznets@redhat.com>
-        <20180307161944.GE12290@flask> <20180307164812.GA2366@rkaganb.sw.ru>
-        <20180307180442.GA16795@flask>
-Date: Thu, 08 Mar 2018 11:17:34 +0100
-In-Reply-To: <20180307180442.GA16795@flask> ("Radim \=\?utf-8\?B\?S3LEjW3DocWZ\?\=
- \=\?utf-8\?B\?Iidz\?\= message of "Wed,
-        7 Mar 2018 19:04:43 +0100")
-Message-ID: <87lgf2yipt.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S934944AbeCHKUt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 05:20:49 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:40148 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1755373AbeCHKUr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 05:20:47 -0500
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="37611897"
+Subject: Re: [PATCH 1/5] kbuild: remove unnecessary $(subst $(obj)/,,...) in
+ modname-multi
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        <linux-kbuild@vger.kernel.org>
+CC: Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Govind Singh <govinds@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>, <linux-kernel@vger.kernel.org>
+References: <1520471103-10089-1-git-send-email-yamada.masahiro@socionext.com>
+ <1520471103-10089-2-git-send-email-yamada.masahiro@socionext.com>
+From: Cao jin <caoj.fnst@cn.fujitsu.com>
+Message-ID: <cc031caa-3bf6-f8f0-6d82-1f01985ddd8a@cn.fujitsu.com>
+Date: Thu, 8 Mar 2018 18:19:52 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1520471103-10089-2-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.167.226.60]
+X-yoursite-MailScanner-ID: 1DE4B48AE762.A61CF
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Radim Krčmář <rkrcmar@redhat.com> writes:
 
-> 2018-03-07 19:48+0300, Roman Kagan:
->> On Wed, Mar 07, 2018 at 05:19:44PM +0100, Radim Krčmář wrote:
->> > 2018-02-26 18:11+0100, Vitaly Kuznetsov:
->> > > diff --git a/arch/x86/include/uapi/asm/hyperv.h b/arch/x86/include/uapi/asm/hyperv.h
->> > > @@ -275,10 +275,10 @@ struct hv_tsc_emulation_status {
->> > >  #define HVCALL_POST_MESSAGE			0x005c
->> > >  #define HVCALL_SIGNAL_EVENT			0x005d
->> > >  
->> > > -#define HV_X64_MSR_APIC_ASSIST_PAGE_ENABLE		0x00000001
->> > > -#define HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_SHIFT	12
->> > > -#define HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_MASK	\
->> > > -		(~((1ull << HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_SHIFT) - 1))
->> > 
->> > Removing definitions from userspace api isn't a good idea.
->> > 
->> > I have no idea why hyper.h is a userspace api, though -- Linux doesn't
->> > define any of those, so we could copy the definitions to a private
->> > header, rename, and never look at this file again.
->> 
->> That was a thinko when it was moved to uapi, and it has already been
->> identified as a problem, so now QEMU has its own header with the
->> definitions it needs, and I'm unaware of any other userspace project
->> that depends on this stuff.  So I've been planning to remove it from
->> uapi but still haven't got around to posting the patch :(
->
-> Great, let's be bold here.
 
-asm/hyperv.h is not uapi.
+On 03/08/2018 09:04 AM, Masahiro Yamada wrote:
+> In the context ...
+> 
+>     $(obj)/%.s: $(src)/%.c FORCE
+>             $(call if_changed_dep,cc_s_c)
+> 
+>     $(obj)/%.i: $(src)/%.c FORCE
+>             $(call if_changed_dep,cpp_i_c)
+> 
+>     $(obj)/%.o: $(src)/%.c $(recordmcount_source) $(objtool_dep) FORCE
+>             $(call cmd,force_checksrc)
+>             $(call if_changed_rule,cc_o_c)
+> 
+>     $(obj)/%.lst: $(src)/%.c FORCE
+>             $(call if_changed_dep,cc_lst_c)
+> 
+> '$*' returns the stem of the target (the part of '%'), so $(obj)/ has
+> already been ripped off.
+> 
+> $(subst $(obj)/,,$*.o) is the same as $(*.o)
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+>  scripts/Makefile.lib | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> index 5589bae..a7e315f 100644
+> --- a/scripts/Makefile.lib
+> +++ b/scripts/Makefile.lib
+> @@ -175,7 +175,7 @@ dtc_cpp_flags  = -Wp,-MD,$(depfile).pre.tmp -nostdinc                    \
+>  
+>  # Finds the multi-part object the current object will be linked into
+>  modname-multi = $(sort $(foreach m,$(multi-used),\
+> -		$(if $(filter $(subst $(obj)/,,$*.o), $($(m:.o=-objs)) $($(m:.o=-y))),$(m:.o=))))
+> +		$(if $(filter $*.o, $($(m:.o=-objs)) $($(m:.o=-y))),$(m:.o=))))
+>  
+>  # Useful for describing the dependency of composite objects
+>  # Usage:
+> 
 
-I would include a patch renaming arch/x86/include/uapi/asm/hyperv.h to
-arch/x86/include/asm/hyperv.h but we already have 'mshyperv.h' there and
-I don't quite understand the difference. We can either merge them or
-come up with a rule distinguishing them.
+A subtle catch! And in my test, a debug line
 
-K. Y., Michael, what do you think?
+    $(info $@ = $*)
 
+in rule:
+
+    $(obj)/%.o: $(src)/%.c xxx
+
+does tell me it is correct. So,
+
+Reviewed-by: Cao jin <caoj.fnst@cn.fujitsu.com>
 -- 
-  Vitaly
+Sincerely,
+Cao jin
