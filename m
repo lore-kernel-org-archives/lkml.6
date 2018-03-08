@@ -1,53 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756134AbeCHQZ4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 11:25:56 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:45157 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752059AbeCHQZz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 11:25:55 -0500
-X-Google-Smtp-Source: AG47ELsR1EVf4ZyeX6AJk2meop63yd/rzYZ/d0X8f/5bZiZabKs5zfbJZ7r4gI/iunhXF+9/Fu9s3g==
-Subject: Re: [GIT PULL] (xen) stable/for-jens-4.15
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xensource.com
-References: <20180308161914.GN12029@char.us.oracle.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <f386ba9b-d331-ee8d-2b2f-27ff0074ed7d@kernel.dk>
-Date: Thu, 8 Mar 2018 09:25:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
- Thunderbird/59.0
+        id S935912AbeCHQ0e (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 11:26:34 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50946 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933513AbeCHQ0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 11:26:18 -0500
+Date: Thu, 8 Mar 2018 10:26:16 -0600
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Torsten Duwe <duwe@lst.de>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Jiri Kosina <jkosina@suse.cz>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Nicholas Piggin <npiggin@gmail.com>, live-patching@vger.kernel.org
+Subject: Re: [PATCH v2] On ppc64le we HAVE_RELIABLE_STACKTRACE
+Message-ID: <20180308162616.yhbymodggnfzpskx@treble>
+References: <20180305164928.GA17953@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20180308161914.GN12029@char.us.oracle.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180305164928.GA17953@lst.de>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/8/18 9:19 AM, Konrad Rzeszutek Wilk wrote:
-> Hi Jens,
+On Mon, Mar 05, 2018 at 05:49:28PM +0100, Torsten Duwe wrote:
+> The "Power Architecture 64-Bit ELF V2 ABI" says in section 2.3.2.3:
 > 
-> Please git pull the following branch for your for-linus branch:
+> [...] There are several rules that must be adhered to in order to ensure
+> reliable and consistent call chain backtracing:
 > 
-> git://git.kernel.org/pub/scm/linux/kernel/git/konrad/xen.git stable/for-jens-4.15
+> * Before a function calls any other function, it shall establish its
+>   own stack frame, whose size shall be a multiple of 16 bytes.
 > 
-> It has one simple fix for the multi-queue support not showing up after a block
-> device was detached/re-attached.
+>  – In instances where a function’s prologue creates a stack frame, the
+>    back-chain word of the stack frame shall be updated atomically with
+>    the value of the stack pointer (r1) when a back chain is implemented.
+>    (This must be supported as default by all ELF V2 ABI-compliant
+>    environments.)
+> [...]
+>  – The function shall save the link register that contains its return
+>    address in the LR save doubleword of its caller’s stack frame before
+>    calling another function.
 > 
-> The patch was originally posted in Dec 22nd but with the Spectre/Meltdown
-> circus I forgot about it until now.
+> To me this sounds like the equivalent of HAVE_RELIABLE_STACKTRACE.
+> This patch may be unneccessarily limited to ppc64le, but OTOH the only
+> user of this flag so far is livepatching, which is only implemented on
+> PPCs with 64-LE, a.k.a. ELF ABI v2.
 > 
-> Thank you!
->  
-> drivers/block/xen-blkfront.c | 17 ++++++++---------
->  1 file changed, 8 insertions(+), 9 deletions(-)
+> This change also implements save_stack_trace_tsk_reliable() for ppc64
+> that checks for the above conditions, where possible.
 > 
-> Bhavesh Davda (1):
->       xen-blkfront: move negotiate_mq to cover all cases of new VBDs
+> Signed-off-by:   Torsten Duwe <duwe@suse.de>
 
-Pulled, thanks.
+This doesn't seem to address some of my previous concerns:
+
+- Bailing on interrupt/exception frames
+
+- Function graph tracing return address conversion
+
+- kretprobes return address conversion
 
 -- 
-Jens Axboe
+Josh
