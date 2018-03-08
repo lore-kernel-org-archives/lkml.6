@@ -1,183 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934378AbeCHTU5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 14:20:57 -0500
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:41239 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754547AbeCHTU4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 14:20:56 -0500
-X-Google-Smtp-Source: AG47ELuBqaoVZpxc1h5srI/Rd6q5L9icgpx5qaF5sjFuXZ0VhXDfUrgU0hGsfbN3O154HWKrFcPl5w==
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>, linux-kernel@vger.kernel.org,
-        Chris Healy <cphealy@gmail.com>, Lucas Stach <l.stach@pengutronix.de>,
-        Aleksander Morgado <aleksander@aleksander.es>
-Subject: [PATCH v2 1/2] backlight: Add RAVE SP backlight driver
-Date: Thu,  8 Mar 2018 11:20:45 -0800
-Message-Id: <20180308192046.27670-1-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.14.3
+        id S966345AbeCHTVa convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 14:21:30 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35978 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S966219AbeCHTV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 14:21:29 -0500
+Subject: Re: [PATCH 0/5] sysctl: Enable easy addition of range showing sysctl
+ parameters
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>
+References: <1520454869-13871-1-git-send-email-longman@redhat.com>
+ <20180307144805.224a39e2ab72172f40c3f3d2@linux-foundation.org>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <aa2a17ec-9327-e504-27eb-26fca645ea26@redhat.com>
+Date: Thu, 8 Mar 2018 14:21:27 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180307144805.224a39e2ab72172f40c3f3d2@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver provides access to RAVE SP backlight control
-functionality.
+On 03/07/2018 05:48 PM, Andrew Morton wrote:
+> On Wed,  7 Mar 2018 15:34:24 -0500 Waiman Long <longman@redhat.com> wrote:
+>
+>> This patch series is to be applied on top of the patch
+>> series "ipc: Clamp *mni to the real IPCMNI limit"
+>> (https://lkml.org/lkml/2018/3/1/716).
+>>
+>> The purpose of this patch series is to enable easy addition of new
+>> auxillary sysctl parameters that can be read to display ranges of
+>> other sysctl parameters they are associated with.
+>>
+>> With this patch series applied, a developer can add a range-showing
+>> auxillary sysctl entries by just setting the CTL_FLAGS_SHOW_RANGE
+>> flag in the ctl_table entry that has a range to show and add one more
+>> to the number of reserved range entries in the CTL_RESERVE_RANGES()
+>> macro before the terminating null entry. The new auxillary sysctl
+>> parameters will have the "_range" suffix added.
+>>
+>> The number of ctl_table entries that have the CTL_FLAGS_SHOW_RANGE flag
+>> should match the number of reserved entries in the CTL_RESERVE_RANGES()
+>> macro. Otherwise, warning or error like below will be logged in the
+>> kernel ring buffer.
+>>
+>>   Warning: Too many reserved ctl_table range entries ("shmmax")!
+>>
+>>   Error: Insufficient reserved ctl_table range entries ("shmmax")!
+>>
+>> The IPC sysctl parameters msgmni and shmmni are extended to have
+>> those auxillary sysctl entries. As a result, one can now find out
+>> the range of allowable value by looking at the corresponding
+>> auxillary _range sysctl parameters. For example,
+>>
+>>   % cat msgmni_range
+>>   [0, 32768]
+>>
+>> That means the msgmni sysctl parameter has to be within the 0 - 32768
+>> range inclusively.
+>>
+>> ...
+>>
+>>  fs/proc/proc_sysctl.c  | 99 +++++++++++++++++++++++++++++++++++++++++++++++---
+>>  include/linux/sysctl.h | 52 +++++++++++++++++++++++++-
+>>  ipc/ipc_sysctl.c       |  5 ++-
+>>  kernel/sysctl.c        | 91 ++++++++++++++++++++++++++++++++++++++++++++++
+>>  4 files changed, 238 insertions(+), 9 deletions(-)
+> That quite a bunch of new code and it's not clear to me that we get a
+> lot of value from it all.  Perhaps I'm missing the point.
+>
+> A worked example would help, along the lines of:
+>
+>
+> a) Here's how we do X at present and here's the output
+>
+> b) Here's how we X after these patches and here's the new output
+>
+> c) b) is better than a) for <reasons>
 
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Aleksander Morgado <aleksander@aleksander.es>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
----
+We do have a big customer asking for ways to find out what are the
+actual ranges of sysctl parameters that they are using other than
+digging into the source code to figure it out. This patch series and
+previous one are part of the effort to fulfill this customer need.
 
-Changes since [v1]:
+Please ignore this patch series. I will focus on getting the first one
+right and upstream first before working on a followup.
 
- - Collected various Acked-by form Lee and Daniel
-
- - Changes BACKLIGHT_FIRMARE to BACKLIGHT_PLATFORM
-
-[v1] https://lkml.kernel.org/r/20180307024011.25033-1-andrew.smirnov@gmail.com
-
- drivers/video/backlight/Kconfig             |  6 +++
- drivers/video/backlight/Makefile            |  1 +
- drivers/video/backlight/rave-sp-backlight.c | 82 +++++++++++++++++++++++++++++
- include/linux/mfd/rave-sp.h                 |  1 +
- 4 files changed, 90 insertions(+)
- create mode 100644 drivers/video/backlight/rave-sp-backlight.c
-
-diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
-index 4e1d2ad50ba1..5d2d0d7e8100 100644
---- a/drivers/video/backlight/Kconfig
-+++ b/drivers/video/backlight/Kconfig
-@@ -467,6 +467,12 @@ config BACKLIGHT_ARCXCNN
- 	  If you have an ARCxCnnnn family backlight say Y to enable
- 	  the backlight driver.
- 
-+config BACKLIGHT_RAVE_SP
-+	tristate "RAVE SP Backlight driver"
-+	depends on RAVE_SP_CORE
-+	help
-+	  Support for backlight control on RAVE SP device.
-+
- endif # BACKLIGHT_CLASS_DEVICE
- 
- endif # BACKLIGHT_LCD_SUPPORT
-diff --git a/drivers/video/backlight/Makefile b/drivers/video/backlight/Makefile
-index 5e28f01c8391..19da71d518bf 100644
---- a/drivers/video/backlight/Makefile
-+++ b/drivers/video/backlight/Makefile
-@@ -57,3 +57,4 @@ obj-$(CONFIG_BACKLIGHT_TOSA)		+= tosa_bl.o
- obj-$(CONFIG_BACKLIGHT_TPS65217)	+= tps65217_bl.o
- obj-$(CONFIG_BACKLIGHT_WM831X)		+= wm831x_bl.o
- obj-$(CONFIG_BACKLIGHT_ARCXCNN) 	+= arcxcnn_bl.o
-+obj-$(CONFIG_BACKLIGHT_RAVE_SP)		+= rave-sp-backlight.o
-diff --git a/drivers/video/backlight/rave-sp-backlight.c b/drivers/video/backlight/rave-sp-backlight.c
-new file mode 100644
-index 000000000000..462f14a1b19d
---- /dev/null
-+++ b/drivers/video/backlight/rave-sp-backlight.c
-@@ -0,0 +1,82 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+
-+/*
-+ * LCD Backlight driver for RAVE SP
-+ *
-+ * Copyright (C) 2018 Zodiac Inflight Innovations
-+ *
-+ */
-+
-+#include <linux/backlight.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/mfd/rave-sp.h>
-+#include <linux/platform_device.h>
-+
-+#define	RAVE_SP_BACKLIGHT_LCD_EN	BIT(7)
-+
-+static int rave_sp_backlight_update_status(struct backlight_device *bd)
-+{
-+	const struct backlight_properties *p = &bd->props;
-+	const u8 intensity =
-+		(p->power == FB_BLANK_UNBLANK) ? p->brightness : 0;
-+	struct rave_sp *sp = dev_get_drvdata(&bd->dev);
-+	u8 cmd[] = {
-+		[0] = RAVE_SP_CMD_SET_BACKLIGHT,
-+		[1] = 0,
-+		[2] = intensity ? RAVE_SP_BACKLIGHT_LCD_EN | intensity : 0,
-+		[3] = 0,
-+		[4] = 0,
-+	};
-+
-+	return rave_sp_exec(sp, cmd, sizeof(cmd), NULL, 0);
-+}
-+
-+static const struct backlight_ops rave_sp_backlight_ops = {
-+	.options	= BL_CORE_SUSPENDRESUME,
-+	.update_status	= rave_sp_backlight_update_status,
-+};
-+
-+static struct backlight_properties rave_sp_backlight_props = {
-+	.type		= BACKLIGHT_PLATFORM,
-+	.max_brightness = 100,
-+	.brightness	= 50,
-+};
-+
-+static int rave_sp_backlight_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct backlight_device *bd;
-+
-+	bd = devm_backlight_device_register(dev, pdev->name, dev->parent,
-+					    dev_get_drvdata(dev->parent),
-+					    &rave_sp_backlight_ops,
-+					    &rave_sp_backlight_props);
-+	if (IS_ERR(bd))
-+		return PTR_ERR(bd);
-+
-+	backlight_update_status(bd);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id rave_sp_backlight_of_match[] = {
-+	{ .compatible = "zii,rave-sp-backlight" },
-+	{}
-+};
-+
-+static struct platform_driver rave_sp_backlight_driver = {
-+	.probe = rave_sp_backlight_probe,
-+	.driver	= {
-+		.name = KBUILD_MODNAME,
-+		.of_match_table = rave_sp_backlight_of_match,
-+	},
-+};
-+module_platform_driver(rave_sp_backlight_driver);
-+
-+MODULE_DEVICE_TABLE(of, rave_sp_backlight_of_match);
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Andrey Vostrikov <andrey.vostrikov@cogentembedded.com>");
-+MODULE_AUTHOR("Nikita Yushchenko <nikita.yoush@cogentembedded.com>");
-+MODULE_AUTHOR("Andrey Smirnov <andrew.smirnov@gmail.com>");
-+MODULE_DESCRIPTION("RAVE SP Backlight driver");
-diff --git a/include/linux/mfd/rave-sp.h b/include/linux/mfd/rave-sp.h
-index 796fb9794c9e..fe0ce7bc59cf 100644
---- a/include/linux/mfd/rave-sp.h
-+++ b/include/linux/mfd/rave-sp.h
-@@ -21,6 +21,7 @@ enum rave_sp_command {
- 	RAVE_SP_CMD_STATUS			= 0xA0,
- 	RAVE_SP_CMD_SW_WDT			= 0xA1,
- 	RAVE_SP_CMD_PET_WDT			= 0xA2,
-+	RAVE_SP_CMD_SET_BACKLIGHT		= 0xA6,
- 	RAVE_SP_CMD_RESET			= 0xA7,
- 	RAVE_SP_CMD_RESET_REASON		= 0xA8,
- 
--- 
-2.14.3
+Thanks,
+Longman
