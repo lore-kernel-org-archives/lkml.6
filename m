@@ -1,68 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966839AbeCHFn5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 00:43:57 -0500
-Received: from mail-qt0-f171.google.com ([209.85.216.171]:39195 "EHLO
-        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966380AbeCHFnt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 00:43:49 -0500
-X-Google-Smtp-Source: AG47ELuSgWgNxVJCm6Tf49hOdF9FIu7dqR6yS7jrNg3ARu984468/+Og2A+3fEHDXLCnIYwm+xDPsLscLJME17NhVVY=
+        id S966050AbeCHGDe convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 01:03:34 -0500
+Received: from mailoutvs4.siol.net ([213.250.19.137]:49188 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755374AbeCHGDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 01:03:30 -0500
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: alsa-devel@alsa-project.org
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        linux-kernel@vger.kernel.org, wens@csie.org,
+        Mark Brown <broonie@kernel.org>, maxime.ripard@free-electrons.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [alsa-devel] [BUG] Kernel crash on Allwinner H3 due to sound core changes
+Date: Thu, 08 Mar 2018 07:03:25 +0100
+Message-ID: <4224437.y2AcdKYxFF@jernej-laptop>
+In-Reply-To: <87efkvtldx.wl%kuninori.morimoto.gx@renesas.com>
+References: <2424862.oPtAVTfrB9@jernej-laptop> <1832733.mujlD9skaR@jernej-laptop> <87efkvtldx.wl%kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <CAARXrtk6ZynSzm=xA1E1M8aSJNb=BZ7jxg4gvWa_QJ_=LaQeog@mail.gmail.com>
-References: <1520440570-25280-1-git-send-email-eajames@linux.vnet.ibm.com>
- <CACPK8Xe5rVtB6hUo4xW9qSz-T+kehvXSRv5g1_6KOO=BYr8Qwg@mail.gmail.com> <CAARXrtk6ZynSzm=xA1E1M8aSJNb=BZ7jxg4gvWa_QJ_=LaQeog@mail.gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-Date: Thu, 8 Mar 2018 16:13:28 +1030
-X-Google-Sender-Auth: kfj-5iGcso1lRjhLfWBEhp_-YH0
-Message-ID: <CACPK8Xe55+_aOJD+dhpLrYfnw8_kjE-daXuRhu42p=O3K5Rztw@mail.gmail.com>
-Subject: Re: [PATCH] clk: aspeed: Prevent reset if clock is enabled
-To: Lei YU <mine260309@gmail.com>
-Cc: Eddie James <eajames@linux.vnet.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-        sboyd@kernel.org, Ryan Chen <ryan_chen@aspeedtech.com>
+Content-Transfer-Encoding: 8BIT
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 8, 2018 at 4:08 PM, Lei YU <mine260309@gmail.com> wrote:
-> On Thu, Mar 8, 2018 at 11:42 AM, Joel Stanley <joel@jms.id.au> wrote:
->>> +       /* Only reset/enable/unreset if clock is stopped */
->>> +       regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
->>> +       if (!(reg & clk))
->>> +               return 0;
->>
->> This doesn't generalise to all of the clocks, as some clocks use set
->> to disable. Perhaps we could do something like this:
->>
->>        /* Only reset/enable/unreset if clock is stopped. The LPC clock
->> on ast2500 has issues otherwise */
->>        enval = (gate->flags & CLK_GATE_SET_TO_DISABLE) ? 0 : clk;
->>        regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
->>        if ((reg & clk) == enval) {
->>                spin_unlock_irqrestore(gate->lock, flags);
->>                return 0;
->>        }
->>
->> I think we should also do this operation under the lock.
->>
->> Please cc Ryan Chen <ryan_chen@aspeedtech.com> so he can confirm that
->> this workaround is valid, and credit Lei who spent a lot of time
->> investigating this issue. Perhaps "Root-caused-by".
->>
->
-> The code has aspeed_clk_is_enabled() already, why not just:
->
->     if (aspeed_clk_is_enabled(hw))
->         return 0;
+Hi,
 
-Good suggestion.
+Thank you for looking into it so quickly.
 
-We should also fix up aspeed_clk_is_enabled() for clocks that have
-CLK_GATE_SET_TO_DISABLE set.
+Dne četrtek, 08. marec 2018 ob 02:21:02 CET je Kuninori Morimoto napisal(a):
+> Hi Jernej
+> 
+> Thank you for your hard work
+> 
+> > I found the issue. Commit be7ee5f32a9a ("ASoC: soc-generic-dmaengine-pcm:
+> > 
+> > replace platform to component") changes struct dmaengine_pcm:
+> >  struct dmaengine_pcm {
+> >  
+> >  	struct dma_chan *chan[SNDRV_PCM_STREAM_LAST + 1];
+> >  	const struct snd_dmaengine_pcm_config *config;
+> > 
+> > -	struct snd_soc_platform platform;
+> > +	struct snd_soc_component component;
+> > 
+> >  	unsigned int flags;
+> >  
+> >  };
+> > 
+> > In snd_dmaengine_pcm_register():
+> > ret = snd_soc_add_component(dev, &pcm->component,
+> > 
+> > 				    &dmaengine_pcm_component, NULL, 0);
+> > 
+> > And now, sun4i-codec first time returns -EPROBE_DEFER since driver for
+> > analog part is not yet loaded. Because of that, all components get
+> > destroyed.
+> > 
+> > snd_dmaengine_pcm_unregister() calls snd_soc_unregister_component() and
+> > that one calls __snd_soc_unregister_component() multiple times (until it
+> > fails).
+> > 
+> > Issue is that __snd_soc_unregister_component() uses kfree() on component
+> > pointer and that naturally can't succed since component was never
+> > kmalloc'ed since it is a part of a bigger structure - struct
+> > dmaengine_pcm.
+> > 
+> > What would be the best fix? Changing struct dmaengine_pcm to have pointer
+> > to a component, so it can be freed?
+> 
+> Ahh.. indeed. Good catch !
+> How about to add such flag ?
+> This is just idea. No tested, No compiled, but can help you ?
+> 
+> One note here is that reusing "registered_as_component" flag is
+> not good idea, because it will be removed
+> when platform/codec were removed
+> 
+> ------------------------
+> diff --git a/include/sound/soc.h b/include/sound/soc.h
+> index 1a73232..b9b1b4c 100644
+> --- a/include/sound/soc.h
+> +++ b/include/sound/soc.h
+> @@ -853,6 +853,7 @@ struct snd_soc_component {
+>  	unsigned int ignore_pmdown_time:1; /* pmdown_time is ignored at stop */
+>  	unsigned int registered_as_component:1;
+>  	unsigned int suspended:1; /* is in suspend PM state */
+> +	unsigned int alloced_component:1;
+> 
+>  	struct list_head list;
+>  	struct list_head card_aux_list; /* for auxiliary bound components */
+> diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+> index c0edac8..0e33bcf 100644
+> --- a/sound/soc/soc-core.c
+> +++ b/sound/soc/soc-core.c
+> @@ -3492,6 +3492,7 @@ int snd_soc_register_component(struct device *dev,
+>  	if (!component)
+>  		return -ENOMEM;
+> 
+> +	component->alloced_component = 1;
+>  	return snd_soc_add_component(dev, component, component_driver,
+>  				     dai_drv, num_dai);
+>  }
+> @@ -3523,7 +3524,9 @@ static int __snd_soc_unregister_component(struct
+> device *dev)
+> 
+>  	if (found) {
+>  		snd_soc_component_cleanup(component);
+> -		kfree(component);
+> +
+> +		if (component->alloced_component)
+> +			kfree(component);
+>  	}
+> 
+>  	return found;
+> ------------------------
 
-Cheers,
+I tested this patch and there is no crash anymore. If you will send it as a 
+fix, you can add:
 
-Joel
+Reported-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Tested-by: Jernej Skrabec <jernej.skrabec@siol.net>
+
+Best regards,
+Jernej
