@@ -1,36 +1,36 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELvQcqX7qkpLbGXgmzymAPxbB+gXY2xzE2+Mp6vY1FSwx60gMX9hbznGCozziU4pbu0vchYq
-ARC-Seal: i=1; a=rsa-sha256; t=1520498787; cv=none;
+X-Google-Smtp-Source: AG47ELvQmQTf1hXVdjFAR9Jdcq3i00HaB40WAMHk53pN2/q9ayVpdOc4NfYYtzXnodM7XbgDl3NS
+ARC-Seal: i=1; a=rsa-sha256; t=1520498771; cv=none;
         d=google.com; s=arc-20160816;
-        b=abo2OOcEc3fBVWgcBQclBLzctXOPeB1NX05It409p16FAuOkKFyPrNLjAngAzzfWN4
-         dDsdZQPBVl7bmTqfWhLJP+takjmi24DDAiOCdjRnSkY5MJWdGQQ+nQcH8pHpAeseEATn
-         NI2QZDjWNNMcJkJfKOZaSHp3Yz6nzclcFQCueKR6SdY7ESxsR51tyhfyy9/TDFQzMdX3
-         KHmRJfjs6F3uaBWBy3lOgR5o3aRDxK92wk/eNNicYkDj8C1B9HrthyLclk9OqOAYaru8
-         PacOomq1HUB397sHWcT+s0JwoNS0ZBWrE1n5NF7HTKFIlDz9p2pLg0KyUPgRkta/VjvI
-         u/TA==
+        b=n1gKvXOFDwrYzLm73AnseRzYzYb3tOrieSmXxPB2aP59R7C2OQtqcAlZrek1/BLweD
+         KY1oI/kAmjGkD3b5VusVW/0B4ODrvTEBdVHn4/IqMvqh+okvzM93k9VVTnQOyJNd7y6o
+         bLXkpukuhj3GN+JVgULeGMzh88FTquiz3SPTKdgIn17mbt9nl4hSPkFOIhXBe6etE0hJ
+         3mdvQXI6aOPY7os7lYRLWNYR8F7qrtpMvuFn9JeG8yiErcPJ9OvAAc8Y1L8WBdFshEy0
+         HyqHWYDTb0nhVJBmLBSkTO2ODWliPCVVj4pRYh87lQNhy79BJnBzoPTPortXBwPY2LvO
+         bIPA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-id:precedence:sender:content-transfer-encoding:mime-version
          :user-agent:references:in-reply-to:message-id:date:subject:cc:to
          :from:dmarc-filter:arc-authentication-results;
-        bh=90XgKAxpVpMV9HgYIdvfQrs0rSaa+pxCZaNw+E0JqUQ=;
-        b=s6nvY+1qclMq1WNHn/PkK0OdMMtmlpFg/XF3f1yTJs9NVJZ/XFArxDGs2nENXPs2Kx
-         qe7WQdDwm7Z86CL7m4jXCgRtzXuI251juvYz9ZKTTudb5o0BF/NBhpxfvgxVjsJo214o
-         0vacGytFKt76Yoo9ruyUGbrQEeb5WVOc1mEOt/cl7/Me2AR9xs14HFK8F8Sg3pcUAQEz
-         MqGwuL2azMv620gY6gnC86St98sRuMR8Uoxk1RpdRqOIkxg0oQ3EqENqz8sHqdHFGpIj
-         x0jz+wDZZvu20xYyU0DcE7WyaGgiQC+gkeZrI2WbbtJT2aKp1YZ9XF7IZoZC/teIj+Lf
-         VLEQ==
+        bh=GfTXTHo79NzIzS+EIBbaAvgtLvhNddF0fLEzdPm3z/E=;
+        b=VzWMhfjTRzpWOneB53lI255GrJJyAVceVP5rUT72vzpSD1ahpOcWTC3QIxTjfG2bpo
+         CxAidg/ZeLQ5U8xTnc53Gg4hgxpL/NasFPPIYhcV53kbC9MwPrcqVEc51wnmE5D2lBNS
+         xS2W613BYCIuZd6YoTqTiYwoPFDtTPnkOdqt027akrCtSlM8B3FRy3uuuhOG1aD/OLSh
+         /FuFGI9gmhFlBV9GJ/YxEBIAv/asYWm2QgQAlmyq1lAs7gMv2T1PI0BepCcJWPd0DOYt
+         GFHESXET7XlkRZze0agwaIyGMcOaQ6omlb5nSUu0iMtAhfEvvgrBt6Uo2I34pRPLLEZG
+         PjsQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755256AbeCHIq0 (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Thu, 8 Mar 2018 03:46:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50208 "EHLO mail.kernel.org"
+        id S934653AbeCHIp5 (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Thu, 8 Mar 2018 03:45:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755224AbeCHIqZ (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Thu, 8 Mar 2018 03:46:25 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2B632172D
+        id S934542AbeCHIp4 (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Thu, 8 Mar 2018 03:45:56 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A962B2133D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
 From: Masami Hiramatsu <mhiramat@kernel.org>
@@ -41,9 +41,9 @@ Cc: mhiramat@kernel.org, Ingo Molnar <mingo@redhat.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
         shuah@kernel.org
-Subject: [PATCH v5 05/19] tracing: probeevent: Cleanup print argument functions
-Date: Thu,  8 Mar 2018 17:46:01 +0900
-Message-Id: <152049876156.7289.14806674758348309502.stgit@devbox>
+Subject: [PATCH v5 04/19] selftests: ftrace: Add a testcase for probepoint
+Date: Thu,  8 Mar 2018 17:45:32 +0900
+Message-Id: <152049873256.7289.3073863568299389050.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <152049860385.7289.14079393589900496424.stgit@devbox>
 References: <152049860385.7289.14079393589900496424.stgit@devbox>
@@ -54,181 +54,68 @@ Content-Transfer-Encoding: 7bit
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594358536215239677?=
-X-GMAIL-MSGID: =?utf-8?q?1594358536215239677?=
+X-GMAIL-THRID: =?utf-8?q?1594358519687245811?=
+X-GMAIL-MSGID: =?utf-8?q?1594358519687245811?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Current print argument functions prints the argument
-name too. It is not good for printing out multiple
-values for one argument. This change it to just print
-out the value.
+Add a testcase for probe point definition. This tests
+symbol, address and symbol+offset syntax. The offset
+must be positive and smaller than UINT_MAX.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- kernel/trace/trace_kprobe.c |   20 ++++++--------------
- kernel/trace/trace_probe.c  |   12 +++++-------
- kernel/trace/trace_probe.h  |   19 ++++++++++++++++---
- kernel/trace/trace_uprobe.c |    9 ++-------
- 4 files changed, 29 insertions(+), 31 deletions(-)
+ .../selftests/ftrace/test.d/kprobe/probepoint.tc   |   43 ++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
 
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 1cd3fb4d70f8..81e2eb5a1566 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -1090,8 +1090,6 @@ print_kprobe_event(struct trace_iterator *iter, int flags,
- 	struct kprobe_trace_entry_head *field;
- 	struct trace_seq *s = &iter->seq;
- 	struct trace_probe *tp;
--	u8 *data;
--	int i;
- 
- 	field = (struct kprobe_trace_entry_head *)iter->ent;
- 	tp = container_of(event, struct trace_probe, call.event);
-@@ -1103,11 +1101,9 @@ print_kprobe_event(struct trace_iterator *iter, int flags,
- 
- 	trace_seq_putc(s, ')');
- 
--	data = (u8 *)&field[1];
--	for (i = 0; i < tp->nr_args; i++)
--		if (!tp->args[i].type->print(s, tp->args[i].name,
--					     data + tp->args[i].offset, field))
--			goto out;
-+	if (print_probe_args(s, tp->args, tp->nr_args,
-+			     (u8 *)&field[1], field) < 0)
-+		goto out;
- 
- 	trace_seq_putc(s, '\n');
-  out:
-@@ -1121,8 +1117,6 @@ print_kretprobe_event(struct trace_iterator *iter, int flags,
- 	struct kretprobe_trace_entry_head *field;
- 	struct trace_seq *s = &iter->seq;
- 	struct trace_probe *tp;
--	u8 *data;
--	int i;
- 
- 	field = (struct kretprobe_trace_entry_head *)iter->ent;
- 	tp = container_of(event, struct trace_probe, call.event);
-@@ -1139,11 +1133,9 @@ print_kretprobe_event(struct trace_iterator *iter, int flags,
- 
- 	trace_seq_putc(s, ')');
- 
--	data = (u8 *)&field[1];
--	for (i = 0; i < tp->nr_args; i++)
--		if (!tp->args[i].type->print(s, tp->args[i].name,
--					     data + tp->args[i].offset, field))
--			goto out;
-+	if (print_probe_args(s, tp->args, tp->nr_args,
-+			     (u8 *)&field[1], field) < 0)
-+		goto out;
- 
- 	trace_seq_putc(s, '\n');
- 
-diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index daf54bda4dc8..8894b81e29b0 100644
---- a/kernel/trace/trace_probe.c
-+++ b/kernel/trace/trace_probe.c
-@@ -38,10 +38,9 @@ const char *reserved_field_names[] = {
- 
- /* Printing  in basic type function template */
- #define DEFINE_BASIC_PRINT_TYPE_FUNC(tname, type, fmt)			\
--int PRINT_TYPE_FUNC_NAME(tname)(struct trace_seq *s, const char *name,	\
--				void *data, void *ent)			\
-+int PRINT_TYPE_FUNC_NAME(tname)(struct trace_seq *s, void *data, void *ent)\
- {									\
--	trace_seq_printf(s, " %s=" fmt, name, *(type *)data);		\
-+	trace_seq_printf(s, fmt, *(type *)data);			\
- 	return !trace_seq_has_overflowed(s);				\
- }									\
- const char PRINT_TYPE_FMT_NAME(tname)[] = fmt;				\
-@@ -61,15 +60,14 @@ DEFINE_BASIC_PRINT_TYPE_FUNC(x32, u32, "0x%x")
- DEFINE_BASIC_PRINT_TYPE_FUNC(x64, u64, "0x%Lx")
- 
- /* Print type function for string type */
--int PRINT_TYPE_FUNC_NAME(string)(struct trace_seq *s, const char *name,
--				 void *data, void *ent)
-+int PRINT_TYPE_FUNC_NAME(string)(struct trace_seq *s, void *data, void *ent)
- {
- 	int len = *(u32 *)data >> 16;
- 
- 	if (!len)
--		trace_seq_printf(s, " %s=(fault)", name);
-+		trace_seq_puts(s, "(fault)");
- 	else
--		trace_seq_printf(s, " %s=\"%s\"", name,
-+		trace_seq_printf(s, "\"%s\"",
- 				 (const char *)get_loc_data(data, ent));
- 	return !trace_seq_has_overflowed(s);
- }
-diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-index 75daff22ccea..0c8e66f9c855 100644
---- a/kernel/trace/trace_probe.h
-+++ b/kernel/trace/trace_probe.h
-@@ -94,7 +94,7 @@ static nokprobe_inline void *get_loc_data(u32 *dl, void *ent)
- /* Data fetch function type */
- typedef	void (*fetch_func_t)(struct pt_regs *, void *, void *);
- /* Printing function type */
--typedef int (*print_type_func_t)(struct trace_seq *, const char *, void *, void *);
-+typedef int (*print_type_func_t)(struct trace_seq *, void *, void *);
- 
- /* Fetch types */
- enum {
-@@ -136,8 +136,7 @@ typedef u32 string_size;
- 
- /* Printing  in basic type function template */
- #define DECLARE_BASIC_PRINT_TYPE_FUNC(type)				\
--int PRINT_TYPE_FUNC_NAME(type)(struct trace_seq *s, const char *name,	\
--				void *data, void *ent);			\
-+int PRINT_TYPE_FUNC_NAME(type)(struct trace_seq *s, void *data, void *ent);\
- extern const char PRINT_TYPE_FMT_NAME(type)[]
- 
- DECLARE_BASIC_PRINT_TYPE_FUNC(u8);
-@@ -415,6 +414,20 @@ store_trace_args(int ent_size, struct trace_probe *tp, struct pt_regs *regs,
- 	}
- }
- 
-+static inline int
-+print_probe_args(struct trace_seq *s, struct probe_arg *args, int nr_args,
-+		 u8 *data, void *field)
-+{
-+	int i;
+diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc b/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
+new file mode 100644
+index 000000000000..4fda01a08da4
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
+@@ -0,0 +1,43 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: Kprobe events - probe points
 +
-+	for (i = 0; i < nr_args; i++) {
-+		trace_seq_printf(s, " %s=", args[i].name);
-+		if (!args[i].type->print(s, data + args[i].offset, field))
-+			return -ENOMEM;
-+	}
-+	return 0;
++[ -f kprobe_events ] || exit_unsupported # this is configurable
++
++TARGET_FUNC=create_trace_kprobe
++
++dec_addr() { # hexaddr
++  printf "%d" "0x"`echo $1 | tail -c 8`
 +}
 +
- extern int set_print_fmt(struct trace_probe *tp, bool is_return);
- 
- #ifdef CONFIG_PERF_EVENTS
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 2014f4351ae0..4c006a693663 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -864,7 +864,6 @@ print_uprobe_event(struct trace_iterator *iter, int flags, struct trace_event *e
- 	struct trace_seq *s = &iter->seq;
- 	struct trace_uprobe *tu;
- 	u8 *data;
--	int i;
- 
- 	entry = (struct uprobe_trace_entry_head *)iter->ent;
- 	tu = container_of(event, struct trace_uprobe, tp.call.event);
-@@ -881,12 +880,8 @@ print_uprobe_event(struct trace_iterator *iter, int flags, struct trace_event *e
- 		data = DATAOF_TRACE_ENTRY(entry, false);
- 	}
- 
--	for (i = 0; i < tu->tp.nr_args; i++) {
--		struct probe_arg *parg = &tu->tp.args[i];
--
--		if (!parg->type->print(s, parg->name, data + parg->offset, entry))
--			goto out;
--	}
-+	if (print_probe_args(s, tu->tp.args, tu->tp.nr_args, data, entry) < 0)
-+		goto out;
- 
- 	trace_seq_putc(s, '\n');
- 
++set_offs() { # prev target next
++  A1=`dec_addr $1`
++  A2=`dec_addr $2`
++  A3=`dec_addr $3`
++  TARGET="0x$2" # an address
++  PREV=`expr $A1 - $A2` # offset to previous symbol
++  NEXT=+`expr $A3 - $A2` # offset to next symbol
++  OVERFLOW=+`printf "0x%x" ${PREV}` # overflow offset to previous symbol
++}
++
++# We have to decode symbol addresses to get correct offsets.
++# If the offset is not an instruction boundary, it cause -EILSEQ.
++set_offs `grep -A1 -B1 ${TARGET_FUNC} /proc/kallsyms | cut -f 1 -d " " | xargs`
++
++UINT_TEST=no
++# printf "%x" -1 returns (unsigned long)-1.
++if [ `printf "%x" -1 | wc -c` != 9 ]; then
++  UINT_TEST=yes
++fi
++
++echo 0 > events/enable
++echo > kprobe_events
++echo "p:testprobe ${TARGET_FUNC}" > kprobe_events
++echo "p:testprobe ${TARGET}" > kprobe_events
++echo "p:testprobe ${TARGET_FUNC}${NEXT}" > kprobe_events
++! echo "p:testprobe ${TARGET_FUNC}${PREV}" > kprobe_events
++if [ "${UINT_TEST}" = yes ]; then
++! echo "p:testprobe ${TARGET_FUNC}${OVERFLOW}" > kprobe_events
++fi
++echo > kprobe_events
++clear_trace
 
