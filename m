@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934399AbeCHTMc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 14:12:32 -0500
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:46394 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754547AbeCHTM0 (ORCPT
+        id S966459AbeCHTPY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 14:15:24 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:45047 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934478AbeCHTMd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 14:12:26 -0500
-X-Google-Smtp-Source: AG47ELuwGjYOSgMjyO0TlHv4B7cvblGWC+04xnS9NpCI+/gOPvIetqxqeVadvR433gyl7SHpwN3V4w==
+        Thu, 8 Mar 2018 14:12:33 -0500
+X-Google-Smtp-Source: AG47ELvp3G410oBO1qB3gMm8t3erfKtRY6qsCt7gKtDureXpm+2qITWCrdQ/79WG+riZYwymfrJNpA==
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -18,9 +18,9 @@ Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
         linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 04/21] nvmem: vf610-ocotp: Convert to use devm_nvmem_register()
-Date: Thu,  8 Mar 2018 11:11:48 -0800
-Message-Id: <20180308191205.26943-5-andrew.smirnov@gmail.com>
+Subject: [PATCH v5 09/21] nvmem: mtk-efuse: Convert to use devm_nvmem_register()
+Date: Thu,  8 Mar 2018 11:11:53 -0800
+Message-Id: <20180308191205.26943-10-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180308191205.26943-1-andrew.smirnov@gmail.com>
 References: <20180308191205.26943-1-andrew.smirnov@gmail.com>
@@ -45,57 +45,43 @@ Cc: linux-amlogic@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/nvmem/vf610-ocotp.c | 21 ++++-----------------
- 1 file changed, 4 insertions(+), 17 deletions(-)
+ drivers/nvmem/mtk-efuse.c | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/nvmem/vf610-ocotp.c b/drivers/nvmem/vf610-ocotp.c
-index 5ae9e002f195..5a395ffb2ca8 100644
---- a/drivers/nvmem/vf610-ocotp.c
-+++ b/drivers/nvmem/vf610-ocotp.c
-@@ -217,13 +217,6 @@ static const struct of_device_id ocotp_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, ocotp_of_match);
+diff --git a/drivers/nvmem/mtk-efuse.c b/drivers/nvmem/mtk-efuse.c
+index 9ee3479cfc7b..e66adf17a747 100644
+--- a/drivers/nvmem/mtk-efuse.c
++++ b/drivers/nvmem/mtk-efuse.c
+@@ -72,20 +72,9 @@ static int mtk_efuse_probe(struct platform_device *pdev)
+ 	econfig.size = resource_size(res);
+ 	econfig.priv = priv;
+ 	econfig.dev = dev;
+-	nvmem = nvmem_register(&econfig);
+-	if (IS_ERR(nvmem))
+-		return PTR_ERR(nvmem);
++	nvmem = devm_nvmem_register(dev, &econfig);
  
--static int vf610_ocotp_remove(struct platform_device *pdev)
--{
--	struct vf610_ocotp *ocotp_dev = platform_get_drvdata(pdev);
--
--	return nvmem_unregister(ocotp_dev->nvmem);
--}
--
- static int vf610_ocotp_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -246,26 +239,20 @@ static int vf610_ocotp_probe(struct platform_device *pdev)
- 			PTR_ERR(ocotp_dev->clk));
- 		return PTR_ERR(ocotp_dev->clk);
- 	}
-+	ocotp_dev->dev = dev;
-+	ocotp_dev->timing = vf610_ocotp_calculate_timing(ocotp_dev);
- 
- 	ocotp_config.size = resource_size(res);
- 	ocotp_config.priv = ocotp_dev;
- 	ocotp_config.dev = dev;
- 
--	ocotp_dev->nvmem = nvmem_register(&ocotp_config);
--	if (IS_ERR(ocotp_dev->nvmem))
--		return PTR_ERR(ocotp_dev->nvmem);
-+	ocotp_dev->nvmem = devm_nvmem_register(dev, &ocotp_config);
- 
--	ocotp_dev->dev = dev;
--	platform_set_drvdata(pdev, ocotp_dev);
--
--	ocotp_dev->timing = vf610_ocotp_calculate_timing(ocotp_dev);
+-	platform_set_drvdata(pdev, nvmem);
 -
 -	return 0;
-+	return PTR_ERR_OR_ZERO(ocotp_dev->nvmem);
+-}
+-
+-static int mtk_efuse_remove(struct platform_device *pdev)
+-{
+-	struct nvmem_device *nvmem = platform_get_drvdata(pdev);
+-
+-	return nvmem_unregister(nvmem);
++	return PTR_ERR_OR_ZERO(nvmem);
  }
  
- static struct platform_driver vf610_ocotp_driver = {
- 	.probe = vf610_ocotp_probe,
--	.remove = vf610_ocotp_remove,
+ static const struct of_device_id mtk_efuse_of_match[] = {
+@@ -97,7 +86,6 @@ MODULE_DEVICE_TABLE(of, mtk_efuse_of_match);
+ 
+ static struct platform_driver mtk_efuse_driver = {
+ 	.probe = mtk_efuse_probe,
+-	.remove = mtk_efuse_remove,
  	.driver = {
- 		.name = "vf610-ocotp",
- 		.of_match_table = ocotp_of_match,
+ 		.name = "mediatek,efuse",
+ 		.of_match_table = mtk_efuse_of_match,
 -- 
 2.14.3
