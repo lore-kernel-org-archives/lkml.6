@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966662AbeCHTOG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 14:14:06 -0500
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:38379 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966228AbeCHTMn (ORCPT
+        id S966173AbeCHTMl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 14:12:41 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:38440 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933700AbeCHTMf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 14:12:43 -0500
-X-Google-Smtp-Source: AG47ELtikmkgjzlOdPpH9nllcS41OAy3rnO67ZGbTNbo/qYbXVF8ZUp+dEOucHi6pIX/D/aNFLDXOQ==
+        Thu, 8 Mar 2018 14:12:35 -0500
+X-Google-Smtp-Source: AG47ELs5UxkIE+lk8wigpMdYCs2T04k/4oicrkZVc14Pao0TWOsYAdxtDoe1rI5u50eZYtH6SwHjyQ==
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -18,9 +18,9 @@ Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
         linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 15/21] nvmem: qfprom: Convert to use devm_nvmem_register()
-Date: Thu,  8 Mar 2018 11:11:59 -0800
-Message-Id: <20180308191205.26943-16-andrew.smirnov@gmail.com>
+Subject: [PATCH v5 10/21] nvmem: meson-mx-efuse: Convert to use devm_nvmem_register()
+Date: Thu,  8 Mar 2018 11:11:54 -0800
+Message-Id: <20180308191205.26943-11-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180308191205.26943-1-andrew.smirnov@gmail.com>
 References: <20180308191205.26943-1-andrew.smirnov@gmail.com>
@@ -45,50 +45,40 @@ Cc: linux-amlogic@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/nvmem/qfprom.c | 16 ++--------------
+ drivers/nvmem/meson-mx-efuse.c | 16 ++--------------
  1 file changed, 2 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/nvmem/qfprom.c b/drivers/nvmem/qfprom.c
-index cb3b48b47d64..4f650baad983 100644
---- a/drivers/nvmem/qfprom.c
-+++ b/drivers/nvmem/qfprom.c
-@@ -47,13 +47,6 @@ static int qfprom_reg_write(void *context,
- 	return 0;
- }
+diff --git a/drivers/nvmem/meson-mx-efuse.c b/drivers/nvmem/meson-mx-efuse.c
+index 41d3a3c1104e..a085563e39e3 100644
+--- a/drivers/nvmem/meson-mx-efuse.c
++++ b/drivers/nvmem/meson-mx-efuse.c
+@@ -233,25 +233,13 @@ static int meson_mx_efuse_probe(struct platform_device *pdev)
+ 		return PTR_ERR(efuse->core_clk);
+ 	}
  
--static int qfprom_remove(struct platform_device *pdev)
--{
--	struct nvmem_device *nvmem = platform_get_drvdata(pdev);
+-	efuse->nvmem = nvmem_register(&efuse->config);
+-	if (IS_ERR(efuse->nvmem))
+-		return PTR_ERR(efuse->nvmem);
++	efuse->nvmem = devm_nvmem_register(&pdev->dev, &efuse->config);
+ 
+-	platform_set_drvdata(pdev, efuse);
 -
--	return nvmem_unregister(nvmem);
+-	return 0;
 -}
 -
- static struct nvmem_config econfig = {
- 	.name = "qfprom",
- 	.stride = 1,
-@@ -82,13 +75,9 @@ static int qfprom_probe(struct platform_device *pdev)
- 	econfig.dev = dev;
- 	econfig.priv = priv;
- 
--	nvmem = nvmem_register(&econfig);
--	if (IS_ERR(nvmem))
--		return PTR_ERR(nvmem);
+-static int meson_mx_efuse_remove(struct platform_device *pdev)
+-{
+-	struct meson_mx_efuse *efuse = platform_get_drvdata(pdev);
 -
--	platform_set_drvdata(pdev, nvmem);
-+	nvmem = devm_nvmem_register(dev, &econfig);
- 
--	return 0;
-+	return PTR_ERR_OR_ZERO(nvmem);
+-	return nvmem_unregister(efuse->nvmem);
++	return PTR_ERR_OR_ZERO(efuse->nvmem);
  }
  
- static const struct of_device_id qfprom_of_match[] = {
-@@ -99,7 +88,6 @@ MODULE_DEVICE_TABLE(of, qfprom_of_match);
- 
- static struct platform_driver qfprom_driver = {
- 	.probe = qfprom_probe,
--	.remove = qfprom_remove,
+ static struct platform_driver meson_mx_efuse_driver = {
+ 	.probe = meson_mx_efuse_probe,
+-	.remove = meson_mx_efuse_remove,
  	.driver = {
- 		.name = "qcom,qfprom",
- 		.of_match_table = qfprom_of_match,
+ 		.name = "meson-mx-efuse",
+ 		.of_match_table = meson_mx_efuse_match,
 -- 
 2.14.3
