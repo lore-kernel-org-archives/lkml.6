@@ -1,53 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755552AbeCHLiW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 06:38:22 -0500
-Received: from mga07.intel.com ([134.134.136.100]:3483 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934653AbeCHLiU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 06:38:20 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,440,1515484800";
-   d="scan'208";a="35610237"
-Date: Thu, 8 Mar 2018 19:37:29 +0800
-From: kbuild test robot <fengguang.wu@intel.com>
-To: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Cc: kbuild-all@01.org, Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org
-Subject: [linux-next:master 6182/6533] net/rds/message.c:70:27: sparse:
- symbol 'rds_info_from_znotifier' was not declared. Should it be static?
-Message-ID: <201803081946.adQaZcK5%fengguang.wu@intel.com>
+        id S935819AbeCHLjy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 06:39:54 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:59129 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933352AbeCHLjw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 06:39:52 -0500
+Date: Thu, 8 Mar 2018 03:39:46 -0800
+From: tip-bot for Seunghun Han <tipbot@zytor.com>
+Message-ID: <tip-c5b679f5c9e3851ee118d95961def374bb3b4ce6@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        mingo@kernel.org, kkamagui@gmail.com
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        kkamagui@gmail.com, mingo@kernel.org
+In-Reply-To: <1520397135-132809-1-git-send-email-kkamagui@gmail.com>
+References: <1520397135-132809-1-git-send-email-kkamagui@gmail.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/pti: Fix a comment typo
+Git-Commit-ID: c5b679f5c9e3851ee118d95961def374bb3b4ce6
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-head:   c6f1a8c953479b390458e36fb838d96199a5f466
-commit: 9426bbc6de99b8649d897b94e8f5916b58195643 [6182/6533] rds: use list structure to track information for zerocopy completion notification
-reproduce:
-        # apt-get install sparse
-        git checkout 9426bbc6de99b8649d897b94e8f5916b58195643
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+Commit-ID:  c5b679f5c9e3851ee118d95961def374bb3b4ce6
+Gitweb:     https://git.kernel.org/tip/c5b679f5c9e3851ee118d95961def374bb3b4ce6
+Author:     Seunghun Han <kkamagui@gmail.com>
+AuthorDate: Wed, 7 Mar 2018 13:32:15 +0900
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 8 Mar 2018 12:33:21 +0100
 
+x86/pti: Fix a comment typo
 
-sparse warnings: (new ones prefixed by >>)
+s/visinble/visible/
 
->> net/rds/message.c:70:27: sparse: symbol 'rds_info_from_znotifier' was not declared. Should it be static?
-   net/rds/message.c:358:5: sparse: symbol 'rds_message_zcopy_from_user' was not declared. Should it be static?
-
-Please review and possibly fold the followup patch.
+Signed-off-by: Seunghun Han <kkamagui@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/1520397135-132809-1-git-send-email-kkamagui@gmail.com
 
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ arch/x86/mm/pti.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index ce38f165489b..631507f0c198 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -332,7 +332,7 @@ static void __init pti_clone_user_shared(void)
+ }
+ 
+ /*
+- * Clone the ESPFIX P4D into the user space visinble page table
++ * Clone the ESPFIX P4D into the user space visible page table
+  */
+ static void __init pti_setup_espfix64(void)
+ {
