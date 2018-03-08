@@ -1,103 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935977AbeCHR0n (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 12:26:43 -0500
-Received: from a8-200.smtp-out.amazonses.com ([54.240.8.200]:37946 "EHLO
-        a8-200.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934055AbeCHR0l (ORCPT
+        id S936020AbeCHR1b (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 12:27:31 -0500
+Received: from gateway31.websitewelcome.com ([192.185.144.94]:11684 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935740AbeCHR13 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 12:26:41 -0500
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-To: Hans de Goede <hdegoede@redhat.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Thiebaud Weksteen <tweek@google.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
- <e7c2be5c-cf21-fc2d-efda-d9222d93ffad@redhat.com>
- <b32f335c-0d77-1749-f7fe-65f512280255@redhat.com>
- <ade378f6-c997-1d48-a30d-cceee6435fc8@redhat.com>
- <a3b5f822-f8f4-e2f5-46da-e23e13174f28@redhat.com>
- <cec36124-0950-6ad9-58a8-9bd69e63aa04@redhat.com>
-From: Jeremy Cline <jeremy@jcline.org>
-Message-ID: <0100016206a68850-bd5c96b3-f275-46ea-98b1-1317e02a5d6e-000000@email.amazonses.com>
-Date: Thu, 8 Mar 2018 17:26:40 +0000
+        Thu, 8 Mar 2018 12:27:29 -0500
+Subject: Re: [PATCH] video: fbdev: via_aux_vt1632: remove VLA usage
+To: Emil Velikov <emil.l.velikov@gmail.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-fbdev <linux-fbdev@vger.kernel.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>
+References: <20180307195415.GA666@embeddedgus>
+ <CACvgo5055A0yVCY4vFp1zN+gW0XVu+DbrmrL4dEXoR7PqDXFmA@mail.gmail.com>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Message-ID: <469f6c0d-186e-aaf7-469f-3d5b416b2b3f@embeddedor.com>
+Date: Thu, 8 Mar 2018 11:27:25 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <cec36124-0950-6ad9-58a8-9bd69e63aa04@redhat.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CACvgo5055A0yVCY4vFp1zN+gW0XVu+DbrmrL4dEXoR7PqDXFmA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SES-Outgoing: 2018.03.08-54.240.8.200
-Feedback-ID: 1.us-east-1.z18Isoc/FaoPOvCyJyi1mnTt8STwoRuibXVNoUcvG6g=:AmazonSES
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.117.58
+X-Source-L: No
+X-Exim-ID: 1etzKA-0020Xd-IB
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.66]) [189.175.117.58]:52988
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 22
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/08/2018 11:50 AM, Hans de Goede wrote:
-> <somehow this part of the thread was missing some email addresses, I've
-> added these now>
-> 
-> Hi,
-> 
-> On 07-03-18 12:34, Javier Martinez Canillas wrote:
+Hi Emil,
 
-<snip>
-
->> Are you also able to read the TPM event logs?
+On 03/08/2018 05:58 AM, Emil Velikov wrote:
+> Hi Gustavo,
+> 
+> On 7 March 2018 at 19:54, Gustavo A. R. Silva <gustavo@embeddedor.com> wrote:
+>> In preparation to enabling -Wvla, remove VLA and replace it
+>> with a fixed-length array instead. Also, remove variable 'len'.
 >>
->> $ hexdump /sys/kernel/security/tpm0/binary_bios_measurements
+> What is the reason behind adding -Wvla? Is there a thread some that I
+> can read up on?
 > 
-> Yes for me that outputs a lot of hex :)
 
-For me, /sys/kernel/security/tmp0 doesn't exist on 4.15.6 or 4.16 with
-the patch reverted.
+Sure. This is the thread: https://lkml.org/lkml/2018/3/7/621
 
->> The UEFI firmware does some measurements and so does shim. So you should
->> have some event logs. What version of shim are you using? And also would
->> be good to know if it's the same shim version that Jeremy is using.
+>> Notice that no new IDs have been added in seven years.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>   drivers/video/fbdev/via/via_aux_vt1632.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/video/fbdev/via/via_aux_vt1632.c b/drivers/video/fbdev/via/via_aux_vt1632.c
+>> index d24f4cd..0cd0d2a 100644
+>> --- a/drivers/video/fbdev/via/via_aux_vt1632.c
+>> +++ b/drivers/video/fbdev/via/via_aux_vt1632.c
+>> @@ -35,10 +35,10 @@ static void probe(struct via_aux_bus *bus, u8 addr)
+>>                  .addr   =       addr,
+>>                  .name   =       name};
+>>          /* check vendor id and device id */
+>> -       const u8 id[] = {0x06, 0x11, 0x92, 0x31}, len = ARRAY_SIZE(id);
+>> -       u8 tmp[len];
+>> +       const u8 id[4] = {0x06, 0x11, 0x92, 0x31};
+>> +       u8 tmp[4];
+>>
+>> -       if (!via_aux_read(&drv, 0x00, tmp, len) || memcmp(id, tmp, len))
+>> +       if (!via_aux_read(&drv, 0x00, tmp, 4) || memcmp(id, tmp, 4))
 > 
-> That is a very good question, I'm using: shim-ia32-13-0.7.x86_64, which is
-> the last version for F27 AFAICT.
-
-All my tablet has installed is shim-0.8-10.x86_64, no shim-ia32.
-
+> Generally, hard coding a bunch of numbers like that makes for
+> confusing and fragile code.
 > 
-> But Jeremy's tablet might very well be not using the shim at all, as
-> I manually installed Fedora 25 on the tablet he now has, before Fedora
-> supported
-> machines with 32 bit EFI. I then later did a "dnf distro-sync" to
-> Fedora-27.
+
+You are correct.
+
+> A lot simpler and more obvious solution is like the following.
+> It silences the compiler warning (-Wvla - pedantic) you while keeping
+> the original clarity.
 > 
-> Jeremy might also very well still be booting using a grub binary I build
-> manually back then, without any shim being involved.
+>          const u8 id[] = {0x06, 0x11, 0x92, 0x31}, len = ARRAY_SIZE(id);
+> -       u8 tmp[len];
+> +       u8 tmp[ARRAY_SIZE(id)]; // Using len causes a Wvla warning
 > 
-> Jeremy what does efibootmgr -v output on your device ?
 
-# efibootmgr -v
-BootCurrent: 0003
-Timeout: 4 seconds
-BootOrder: 0003,0000,0001,2001,2002,2003
-Boot0000* Android X64 OS
-HD(1,GPT,215e6cf3-e97d-4735-9c4e-7338c8f5a645,0x800,0x32000)/File(\EFI\BOOT\bootx64.efi)RC
-Boot0001* Internal EFI Shell
-FvVol(a881d567-6cb0-4eee-8435-2e72d33e45b5)/FvFile(c57ad6b7-0515-40a8-9d21-551652854e37)RCM&".
-Boot0003* Fedora
-HD(1,GPT,215e6cf3-e97d-4735-9c4e-7338c8f5a645,0x800,0x32000)/File(\EFI\fedora\grubx64.efi)
-Boot2001* EFI USB Device	RC
-Boot2002* EFI DVD/CDROM	RC
-Boot2003* EFI Network	RC
-Boot8087* Udm
-FvVol(a881d567-6cb0-4eee-8435-2e72d33e45b5)/FvFile(9a9ab4c1-ee1b-488b-b300-24544a7bd418)
+Yeah, this works just fine.
 
-I think you're right about it using the old grub binary. I'm
-embarrassingly unfamiliar with both UEFI and grub, but I'm guessing you
-set the location of grub.cfg at compile time? When I boot
-\EFI\fedora\grubx64.efi, it's pulling the grub.cfg from
-\EFI\redhat\grub.cfg.
+There are a total of four instances of this same issue in other files 
+for the VIA component. I'll fix them and send a single patch shortly.
 
-Regards,
-Jeremy
+Thanks for the feedback.
+I appreciate it.
+--
+Gustavo
