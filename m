@@ -1,5 +1,5 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-120844-1520458940-2-14663821265713985361
+X-Cyrus-Session-Id: sloti22d1t05-1437685-1520499660-2-17112962592974553254
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -8,133 +8,101 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520458940; b=sCuAbl4vp5s3UTPQoXgZ+AcubbmrcCd141iKdfjAXDBUB9H
-    EorDWtOUU2W3CVB6peqlxwrgM2rX1p5RyZol/Mz7o977LEyj8S6j18+Q7fbWPYiQ
-    EhU2I9RvbWUBBimIbNFMq45AkRx/lhUuxIqxwNw3m6VsUd0ySg3M2Y2u+g9kWyNr
-    q9VeFRowBzfxP8wU6l99RLB1cbk4SxRfOpWlH9wIK8SNAs0RvG1yVBW1S8VzpOuf
-    hWKt4lR1JjvzAg1p+9b8cLMDhzZDF2a8jS5Xt4Q4F5kq2+goFRgx4GFRALK7Piaa
-    YY4B7V0Of/hQdIo2M/EWGIecgv0Ob2Yv7/J/uQQ==
+    t=1520499660; b=YYCwcbhIUoFe1BAXTf9lDWVkvKUtlWU6fBHdLd+AFvlqWxK
+    2tkA5SmyjiYSZz2XZCEc12c0TTmqBssouuRt0Ih8bqgleManrRuaZw50LgkIvKnT
+    IIJsoY+o4sacO96LLHjl8lk572Pmg20PMphsD9zq9SVT2NvFOadV8To9O1hmcyz1
+    SGeegrmtnu/efMX0VB5AYI8a31vaXE1SvO18KzyeHnQ4m0yrQa5hX0K/iiNDxCkv
+    MUpI/1OknqO6lul6JvVl9yVVly9GKu8eAb6IepivGlwGpJcpHsCqzILxPBaaVhM3
+    Zv+sV77mUBRJ03sc1ERKmWoEakjIqbGs9c76BAg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=reply-to:subject:to:cc:references:from
-    :message-id:date:mime-version:in-reply-to:content-type
+    messagingengine.com; h=message-id:subject:from:to:cc:date
+    :in-reply-to:references:content-type:mime-version
     :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1520458940; bh=F8un6KR2CsEZ5duSIVCkivfOex5ji8d3dCXaqqIJUbI=; b=Y
-    pASIsL0NyEE9CGc8E0BebF/9uAq4e2x2eQI5M9s3qPOZ/0yw5hSvH+snqZ+/nSNM
-    1zFHE0UvXtpFUkKmgKjc4SBVdP3J1LQamPw2Gy+qR58ZLZtz3cYoDpsBDwZQ1cmn
-    sXsYQwOReiJB8CpFw1FztJRuorLNUhQ/Z0jf4dueUJtYy5KNpchLMeg8ZsWmbOmL
-    8YmqUFwl5qCWajTBCitePVOZT052oqJ0dLrnaKp1iDY+anVc6xj0D/ADSpgTsdIQ
-    VdIgQeC3SxWpFzCZbwGiSNuS2Gbrv1DPDGKsUr5oN3QMVO6zvimeB+0JCliu8wYN
-    vYb0o2vUFrIN4TCFmGmKA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    1520499660; bh=NEiYbpGlJB1VS4yMymM+T5sUkfC0qPnRZYumnRW17N8=; b=M
+    XYSBje6isLWx3eORrFVhyZDvc0KqqQEX42++PvvFLfmji3/gQB5IhYY1cuZU1n8V
+    PQkEvoSITDJUycPw+o3oHba7YTnULbSLvXiw+/GCvYbXjFP4BVcyj4X8H6ZYlsz4
+    FUYAbe4l2lEZ2klLmq+r0GVefjjhxkMUSbXRgqE3g8aZIugIXzsn/nAouG6kNcwS
+    AdZQBKxIQ34tpcI8x/2TkWfmA1LLEWfTftxML709hzIMPIzoxt7VeyUdJOXP2XPM
+    EzNoRqv2JsGfUtqWkV422TUCKHBLzg45eB+pU3ODVy1jCRbb5GGjkdc4WBJdoPjx
+    oI+z1KXNY3CMDlEzY7ZQg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754745AbeCGVmF (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 16:42:05 -0500
-Received: from mga17.intel.com ([192.55.52.151]:38278 "EHLO mga17.intel.com"
+        id S1755304AbeCHJAn (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 04:00:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42022 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754547AbeCGVmF (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Wed, 7 Mar 2018 16:42:05 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,437,1515484800";
-   d="scan'208";a="22840671"
-Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: Re: [PATCH v1 1/1] USB: serial: Add boundry check for read_urbs array
- access
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: johan@kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        id S1751971AbeCHJAm (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Thu, 8 Mar 2018 04:00:42 -0500
+Message-ID: <1520499297.2983.3.camel@suse.com>
+Subject: Re: [PATCH v1 1/1] USB: serial: Add boundry check for read_urbs
+ array access
+From: Oliver Neukum <oneukum@suse.com>
+To: sathyanarayanan.kuppuswamy@linux.intel.com,
+        Greg KH <gregkh@linuxfoundation.org>
+Cc: johan@kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Date: Thu, 08 Mar 2018 09:54:57 +0100
+In-Reply-To: <0055f93b-8497-5dfc-4233-9cc72bf690fc@linux.intel.com>
 References: <f48feae7582a5669422066b4821a9e310eebc9ba.1520454192.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <20180307205840.GA6242@kroah.com>
-From: sathyanarayanan kuppuswamy
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Organization: Intel
-Message-ID: <0055f93b-8497-5dfc-4233-9cc72bf690fc@linux.intel.com>
-Date: Wed, 7 Mar 2018 13:41:51 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180307205840.GA6242@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+         <20180307205840.GA6242@kroah.com>
+         <0055f93b-8497-5dfc-4233-9cc72bf690fc@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Am Mittwoch, den 07.03.2018, 13:41 -0800 schrieb sathyanarayanan
+kuppuswamy       :
+> 
+> On 03/07/2018 12:58 PM, Greg KH wrote:
 
+> > So I don't see why your check is needed, what other code path would ever
+> > call this function in a way that the bounds check would be needed?
+> void usb_serial_generic_read_bulk_callback(struct urb *urb)
+> 
+> 385         for (i = 0; i < ARRAY_SIZE(port->read_urbs); ++i) {
+> 386                 if (urb == port->read_urbs[i])
+> 387                         break;
+> 388         }
+> 
+> In here, after this for loop is done (without any matching urb), i value 
+> will be equal to ARRAY_SIZE(port->read_urbs). So there is a possibility 
+> of usb_serial_generic_submit_read_urb() getting called with this invalid 
+> index.
 
-On 03/07/2018 12:58 PM, Greg KH wrote:
-> On Wed, Mar 07, 2018 at 12:23:56PM -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
->> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->>
->> In usb_serial_generic_submit_read_urb() function we are accessing the
->> port->read_urbs array without any boundry checks. This might lead to
->> kernel panic when index value goes above array length.
->>
->> One posible call path for this issue is,
->>
->> usb_serial_generic_read_bulk_callback()
->> {
->>   ...
->>   if (!port->throttled) {
->> 	usb_serial_generic_submit_read_urb(port, i, GFP_ATOMIC);
->>   ...
->> }
-> How does i ever get to be greater than the array size here in this
-> function?  It directly came from looking in that array in the first
-> place :)
->
-> So I don't see why your check is needed, what other code path would ever
-> call this function in a way that the bounds check would be needed?
-void usb_serial_generic_read_bulk_callback(struct urb *urb)
+If this happens the function was called for a stray URB.
+Your check comes to late. We have called set_bit with an invalid index
+and other shit.
+We definitely do not just want to return an error in that case.
 
-385         for (i = 0; i < ARRAY_SIZE(port->read_urbs); ++i) {
-386                 if (urb == port->read_urbs[i])
-387                         break;
-388         }
-
-In here, after this for loop is done (without any matching urb), i value 
-will be equal to ARRAY_SIZE(port->read_urbs). So there is a possibility 
-of usb_serial_generic_submit_read_urb() getting called with this invalid 
-index.
-
->
-> thanks,
->
-> greg k-h
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-
--- 
-Sathyanarayanan Kuppuswamy
-Linux kernel developer
+	Regards
+		Oliver
 
