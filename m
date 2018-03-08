@@ -1,83 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756147AbeCHTEO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 14:04:14 -0500
-Received: from mail-it0-f67.google.com ([209.85.214.67]:56297 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752173AbeCHTEJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 14:04:09 -0500
-X-Google-Smtp-Source: AG47ELtnoUN+YTPXRANzErx5jDa2p/eJguh74vVwFLgbthnG/+NySGdHccmEp02kLmIunHbNun3G9g==
-Subject: [pci PATCH v4 4/4] nvme: Migrate over to "unmanaged SR-IOV" support
-From: Alexander Duyck <alexander.duyck@gmail.com>
-To: bhelgaas@google.com, alexander.h.duyck@intel.com,
-        linux-pci@vger.kernel.org
-Cc: virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, dan.daly@intel.com,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        keith.busch@intel.com, netanel@amazon.com, mheyne@amazon.de,
-        liang-min.wang@intel.com, mark.d.rustad@intel.com, dwmw2@infradead.org,
-        hch@lst.de, dwmw@amazon.co.uk
-Date: Thu, 08 Mar 2018 11:04:06 -0800
-Message-ID: <20180308190401.5433.13861.stgit@localhost.localdomain>
-In-Reply-To: <20180308185507.5433.98830.stgit@localhost.localdomain>
-References: <20180308185507.5433.98830.stgit@localhost.localdomain>
-User-Agent: StGit/0.17.1-dirty
+        id S1755699AbeCHTLL convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 14:11:11 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52056 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752250AbeCHTLK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 14:11:10 -0500
+Subject: Re: [PATCH 0/5] sysctl: Enable easy addition of range showing sysctl
+ parameters
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>
+References: <1520454869-13871-1-git-send-email-longman@redhat.com>
+ <20180308183442.GJ4449@wotan.suse.de>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <b1c56ec2-3c26-9235-7f16-f1ebf7109304@redhat.com>
+Date: Thu, 8 Mar 2018 14:11:08 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180308183442.GJ4449@wotan.suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Duyck <alexander.h.duyck@intel.com>
+On 03/08/2018 01:34 PM, Luis R. Rodriguez wrote:
+> On Wed, Mar 07, 2018 at 03:34:24PM -0500, Waiman Long wrote:
+>>   % cat msgmni_range
+>>   [0, 32768]
+> All that sounds promising but I think you are jumping a few
+> steps ahead of what needs to get done. Let's first sort out the
+> first series well.
+>
+>   Luis
 
-Instead of implementing our own version of a SR-IOV configuration stub in
-the nvme driver we can just reuse the existing
-pci_sriov_configure_unmanaged function.
+Yes, you are right. I will focus on the getting the first series right
+first, before considering that.
 
-Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
----
- drivers/nvme/host/pci.c |   22 +++-------------------
- 1 file changed, 3 insertions(+), 19 deletions(-)
+In fact, I have a slight change of mind on how to do it. Instead of
+adding a new _range parameter to show just the range of a particular
+sysctl parameter, I am thinking of a generic sysctl_ranges parameter
+that iterates all the ctl_table entries and list out the ranges of all
+the parameters that are flagged to have a min/max range. That will
+eliminate the interface clutter due to a bunch of new *_range /proc/sys
+files.
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 6fe7af00a1f4..2c753ccc1771 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -2570,24 +2570,6 @@ static void nvme_remove(struct pci_dev *pdev)
- 	nvme_put_ctrl(&dev->ctrl);
- }
- 
--static int nvme_pci_sriov_configure(struct pci_dev *pdev, int numvfs)
--{
--	int ret = 0;
--
--	if (numvfs == 0) {
--		if (pci_vfs_assigned(pdev)) {
--			dev_warn(&pdev->dev,
--				"Cannot disable SR-IOV VFs while assigned\n");
--			return -EPERM;
--		}
--		pci_disable_sriov(pdev);
--		return 0;
--	}
--
--	ret = pci_enable_sriov(pdev, numvfs);
--	return ret ? ret : numvfs;
--}
--
- #ifdef CONFIG_PM_SLEEP
- static int nvme_suspend(struct device *dev)
- {
-@@ -2706,7 +2688,9 @@ static void nvme_error_resume(struct pci_dev *pdev)
- 	.driver		= {
- 		.pm	= &nvme_dev_pm_ops,
- 	},
--	.sriov_configure = nvme_pci_sriov_configure,
-+#ifdef CONFIG_PCI_IOV
-+	.sriov_configure = pci_sriov_configure_unmanaged,
-+#endif
- 	.err_handler	= &nvme_err_handler,
- };
- 
+-Longman
