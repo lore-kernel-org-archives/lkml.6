@@ -1,63 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964834AbeCHHFz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 02:05:55 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:45676 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755378AbeCHHFv (ORCPT
+        id S1755310AbeCHHIr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 02:08:47 -0500
+Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:43314
+        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755009AbeCHHIm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 02:05:51 -0500
-X-Google-Smtp-Source: AG47ELtJTJLP8mjPC/BvMekmulEScYbYZkMUb8gJhxUfZwJS+17MEM2Wl+m0vLcTHbXFoRmXLj4xHg76xgauH6XBJ7M=
+        Thu, 8 Mar 2018 02:08:42 -0500
+X-ASG-Debug-ID: 1520492919-093b7e4ca910e20001-xx1T2L
+X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
+From: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+To: <kwankhede@nvidia.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Shunyong Yang <shunyong.yang@hxt-semitech.com>,
+        Joey Zheng <yu.zheng@hxt-semitech.com>
+Subject: [PATCH] vfio-mdev/samples: change RDI interrupt condition
+Date: Thu, 8 Mar 2018 15:08:07 +0800
+X-ASG-Orig-Subj: [PATCH] vfio-mdev/samples: change RDI interrupt condition
+Message-ID: <1520492887-8021-1-git-send-email-shunyong.yang@hxt-semitech.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-In-Reply-To: <20180308113647.75279391@canb.auug.org.au>
-References: <20180308073921.5c104e74@canb.auug.org.au> <CACRpkdaWd_7QWd7t5i6DvU3_Gu1giR9v2uoqQiLNXVWTPEty8w@mail.gmail.com>
- <20180308113647.75279391@canb.auug.org.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 8 Mar 2018 08:05:50 +0100
-X-Google-Sender-Auth: Kagbl91sxXj1PYFec6_PkEUjie0
-Message-ID: <CAMuHMdX05OjHcTyKXx4o7is2Vpi1ToQeuB-xGkGj-Cx7vOcTrQ@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the pinctrl tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.5.21.109]
+X-ClientProxiedBy: HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) To
+ HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14)
+X-Barracuda-Connect: UNKNOWN[10.128.0.14]
+X-Barracuda-Start-Time: 1520492919
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.5975 1.0000 0.7500
+X-Barracuda-Spam-Score: 0.75
+X-Barracuda-Spam-Status: No, SCORE=0.75 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.48719
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+When FIFO mode is enabled, the receive data available interrupt
+(UART_IIR_RDI in code) should be triggered when the number of data
+in FIFO is equal or larger than interrupt trigger level.
 
-On Thu, Mar 8, 2018 at 1:36 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> On Wed, 7 Mar 2018 23:25:48 +0100 Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Wed, Mar 7, 2018 at 9:39 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> > Commit
->> >
->> >   fc08fa6009a0 ("pinctrl: sh-pfc: r8a7795: remove duplicate of CLKOUT pin in pinmux_pins[]")
->> >
->> > is missing a Signed-off-by from its committer.
->>
->> Looping in Geert,
->>
->> I guess this came in through the Renesas PFC pull request.
->>
->> Geert do you prefer that I back it all out so you can send me
->> a new pull request? Or some other solution?
->
-> But you are listed as the committer ...
+This patch changes the trigger level check to ensure multiple bytes
+received from upper layer can trigger RDI interrupt correctly.
 
-Right, that's the bug fix I had asked Linus to take directly, as a fix
-for v4.16.
+Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+---
+ samples/vfio-mdev/mtty.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
+index 09f255bdf3ac..7abb79d8313d 100644
+--- a/samples/vfio-mdev/mtty.c
++++ b/samples/vfio-mdev/mtty.c
+@@ -534,7 +534,7 @@ static void handle_bar_read(unsigned int index, struct mdev_state *mdev_state,
+ 
+ 		/* Interrupt priority 2: Fifo trigger level reached */
+ 		if ((ier & UART_IER_RDI) &&
+-		    (mdev_state->s[index].rxtx.count ==
++		    (mdev_state->s[index].rxtx.count >=
+ 		      mdev_state->s[index].intr_trigger_level))
+ 			*buf |= UART_IIR_RDI;
+ 
+-- 
+1.8.3.1
