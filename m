@@ -1,59 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755822AbeCHMEk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 07:04:40 -0500
-Received: from mail-io0-f194.google.com ([209.85.223.194]:33415 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751373AbeCHMEi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 07:04:38 -0500
-X-Google-Smtp-Source: AG47ELvNHvlqP+haON6w8MLw+aUUn4TTeXEqwkvtcoKPV6Fae1pi+nwvksmPqjesUjgo4zn4jdFC7QQX3L6bkPzxIag=
+        id S1755813AbeCHMFx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 07:05:53 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:46811 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750705AbeCHMFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 07:05:51 -0500
+Date: Thu, 8 Mar 2018 13:05:49 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Denis OSTERLAND <denis.osterland@diehl.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mgr@pengutronix.de" <mgr@pengutronix.de>,
+        "m.grzeschik@pengutronix.de" <m.grzeschik@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "jdelvare@suse.com" <jdelvare@suse.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [PATCH v3 3/4] rtc: isl1208: add support for isl1219 with tamper
+ detection
+Message-ID: <20180308120549.GG20370@piout.net>
+References: <1520246373-19023-1-git-send-email-Denis.Osterland@diehl.com>
+ <1520246373-19023-4-git-send-email-Denis.Osterland@diehl.com>
+ <20180306204255.GI3035@piout.net>
+ <1520410754.5976.27.camel@diehl.com>
+ <20180307104714.GL3035@piout.net>
+ <1520509988.5415.17.camel@diehl.com>
 MIME-Version: 1.0
-In-Reply-To: <20180308113647.75279391@canb.auug.org.au>
-References: <20180308073921.5c104e74@canb.auug.org.au> <CACRpkdaWd_7QWd7t5i6DvU3_Gu1giR9v2uoqQiLNXVWTPEty8w@mail.gmail.com>
- <20180308113647.75279391@canb.auug.org.au>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 8 Mar 2018 13:04:37 +0100
-Message-ID: <CACRpkdYcBrL_o4ygShJ=Tzt+UxOVQnekgd576Ko1zGkgNQrkPg@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the pinctrl tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520509988.5415.17.camel@diehl.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 8, 2018 at 1:36 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On 08/03/2018 at 11:53:09 +0000, Denis OSTERLAND wrote:
+> Am Mittwoch, den 07.03.2018, 11:47 +0100 schrieb Alexandre Belloni:
+> > > > > +
+> > > > > +	tv64.tv_sec = rtc_tm_to_time64(&tm);
+> > > > Why not using an unsigned long long directly here? time64_t is not the
+> > > > correct type.
+> > > Do you mean timespec64 is not the correct type here?
+> > > Then yes, sould be time64_t.
+> > > If you mean time64_t is not the correct type here,
+> > > then can you give me some detail why there is no rtc_tm_to_u64,
+> > > or something like that?
+> > The rtc subsystem forbids negative times, the proper type should be
+> > unsigned.
+> I will add rtc_vaild_tm check.
+> 
+> Which sequence for time conversion would you expect?
+> 
+> time64_t secs = rtc_tm_to_time64(&tm);
+> BUG_ON(secs < 0);
+> return sprintf(buf, "%llu\n", (unsigned long long)secs);
+> 
+> or
+> 
+> return sprintf(buf, "%llu\n", (unsigned long long)rtc_tm_to_time64(&tm));
 
-> Hi Linus,
->
-> On Wed, 7 Mar 2018 23:25:48 +0100 Linus Walleij <linus.walleij@linaro.org> wrote:
->>
->> On Wed, Mar 7, 2018 at 9:39 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> > Commit
->> >
->> >   fc08fa6009a0 ("pinctrl: sh-pfc: r8a7795: remove duplicate of CLKOUT pin in pinmux_pins[]")
->> >
->> > is missing a Signed-off-by from its committer.
->>
->> Looping in Geert,
->>
->> I guess this came in through the Renesas PFC pull request.
->>
->> Geert do you prefer that I back it all out so you can send me
->> a new pull request? Or some other solution?
->
-> But you are listed as the committer ...
+rtc_vaild_tm will already return EINVAL in case of negative time so this
+is the one you should use.
 
-Bah yeah this commit is on the fixes branch like Geert says, sorry it
-is 100% my sloppy mistake.
-
-I fixed it up and pushed the result for-next.
-
-Sorry for the fuzz!
-
-Yours,
-Linus Walleij
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
