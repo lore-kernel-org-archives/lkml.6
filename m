@@ -1,105 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755300AbeCHM0y (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 07:26:54 -0500
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:58572 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751434AbeCHM0w (ORCPT
+        id S934158AbeCHMfM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 07:35:12 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38544 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755009AbeCHMfI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 07:26:52 -0500
-From: Luca Ceresoli <luca@lucaceresoli.net>
-To: linux-media@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Luca Ceresoli <luca@lucaceresoli.net>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH v2 2/3] media: vb2-core: document the REQUEUEING state
-Date: Thu,  8 Mar 2018 13:26:21 +0100
-Message-Id: <1520511982-985-2-git-send-email-luca@lucaceresoli.net>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520511982-985-1-git-send-email-luca@lucaceresoli.net>
-References: <1520511982-985-1-git-send-email-luca@lucaceresoli.net>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Thu, 8 Mar 2018 07:35:08 -0500
+X-Google-Smtp-Source: AG47ELvu2JlY98+mw54ymqpz+PapwtHWJcHns5dRGm+b+LL6SkkzELPvIGgnKgsm145KdClmMt6kHw==
+Subject: Re: [PATCH] Add an option to dm-verity to validate hashes at most
+ once
+To: Patrik Torstensson <totte@google.com>,
+        Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com
+Cc: linux-kernel@vger.kernel.org, ebiggers@google.com,
+        samitolvanen@google.com, gkaiser@google.com, paulcrowley@google.com
+References: <20180306231456.210504-1-totte@google.com>
+From: Milan Broz <gmazyland@gmail.com>
+Message-ID: <c7e42498-8de2-2048-f53f-6de8557aadf4@gmail.com>
+Date: Thu, 8 Mar 2018 13:35:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+ Thunderbird/31.3.0
+MIME-Version: 1.0
+In-Reply-To: <20180306231456.210504-1-totte@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VB2_BUF_STATE_REQUEUEING is accepted by vb2_buffer_done() but not
-documented, so add it along with notes about calls in interrupt
-context.
+On 03/07/2018 12:14 AM, Patrik Torstensson wrote:
+> Add an option to dm-verity to validate hashes at most once
+> to allow platforms that is CPU/memory contraint to be
+> protected by dm-verity against offline attacks.
+> 
+> The option introduces a bitset that is used to check if
+> a block has been validated before or not. A block can
+> be validated more than once as there is no thread protection
+> for the bitset.
 
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Pawel Osciak <pawel@osciak.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Hi,
 
----
-Changes v1 -> v2: none.
----
- include/media/videobuf2-core.h | 24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+what happens, if a block is read, validated, marked in bitset and 
 
-diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
-index f1a479060f9e..f20000887d3c 100644
---- a/include/media/videobuf2-core.h
-+++ b/include/media/videobuf2-core.h
-@@ -358,12 +358,12 @@ struct vb2_buffer {
-  *			driver can return an error if hardware fails, in that
-  *			case all buffers that have been already given by
-  *			the @buf_queue callback are to be returned by the driver
-- *			by calling vb2_buffer_done() with %VB2_BUF_STATE_QUEUED.
-- *			If you need a minimum number of buffers before you can
-- *			start streaming, then set
-- *			&vb2_queue->min_buffers_needed. If that is non-zero then
-- *			@start_streaming won't be called until at least that
-- *			many buffers have been queued up by userspace.
-+ *			by calling vb2_buffer_done() with %VB2_BUF_STATE_QUEUED
-+ *			or %VB2_BUF_STATE_REQUEUEING. If you need a minimum
-+ *			number of buffers before you can start streaming, then
-+ *			set &vb2_queue->min_buffers_needed. If that is non-zero
-+ *			then @start_streaming won't be called until at least
-+ *			that many buffers have been queued up by userspace.
-  * @stop_streaming:	called when 'streaming' state must be disabled; driver
-  *			should stop any DMA transactions or wait until they
-  *			finish and give back all buffers it got from &buf_queue
-@@ -601,8 +601,9 @@ void *vb2_plane_cookie(struct vb2_buffer *vb, unsigned int plane_no);
-  * @state:	state of the buffer, as defined by &enum vb2_buffer_state.
-  *		Either %VB2_BUF_STATE_DONE if the operation finished
-  *		successfully, %VB2_BUF_STATE_ERROR if the operation finished
-- *		with an error or %VB2_BUF_STATE_QUEUED if the driver wants to
-- *		requeue buffers.
-+ *		with an error or any of %VB2_BUF_STATE_QUEUED or
-+ *		%VB2_BUF_STATE_REQUEUEING if the driver wants to
-+ *		requeue buffers (see below).
-  *
-  * This function should be called by the driver after a hardware operation on
-  * a buffer is finished and the buffer may be returned to userspace. The driver
-@@ -613,7 +614,12 @@ void *vb2_plane_cookie(struct vb2_buffer *vb, unsigned int plane_no);
-  * While streaming a buffer can only be returned in state DONE or ERROR.
-  * The &vb2_ops->start_streaming op can also return them in case the DMA engine
-  * cannot be started for some reason. In that case the buffers should be
-- * returned with state QUEUED to put them back into the queue.
-+ * returned with state QUEUED or REQUEUEING to put them back into the queue.
-+ *
-+ * %VB2_BUF_STATE_REQUEUEING is like %VB2_BUF_STATE_QUEUED, but it also calls
-+ * &vb2_ops->buf_queue to queue buffers back to the driver. Note that calling
-+ * vb2_buffer_done(..., VB2_BUF_STATE_REQUEUEING) from interrupt context will
-+ * result in &vb2_ops->buf_queue being called in interrupt context as well.
-  */
- void vb2_buffer_done(struct vb2_buffer *vb, enum vb2_buffer_state state);
- 
--- 
-2.7.4
+1) something changes in the underlying device (data corruption, FTL hiccup,
+intentional remapping to different device-mapper device through table change)
+
+2) user flushes all page caches
+
+3) the same block is read again.
+
+Does it read and use unverified block from the corrupted device in this case?
+
+(In general, just reading the whole device means de-facto verification deactivation.)
+
+If so, your thread model assumes that you cannot attack underlying storage while
+it is in operation, is it the correct assumption?
+
+Milan
+
+> 
+> This patch has been developed and tested on entry-level
+> Android Go devices.
+> 
+> Signed-off-by: Patrik Torstensson <totte@google.com>
+> ---
+>  drivers/md/dm-verity-target.c | 58 +++++++++++++++++++++++++++++++++--
+>  drivers/md/dm-verity.h        |  1 +
+>  2 files changed, 56 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+> index aedb8222836b..479d0af212bf 100644
+> --- a/drivers/md/dm-verity-target.c
+> +++ b/drivers/md/dm-verity-target.c
+> @@ -32,6 +32,7 @@
+>  #define DM_VERITY_OPT_LOGGING		"ignore_corruption"
+>  #define DM_VERITY_OPT_RESTART		"restart_on_corruption"
+>  #define DM_VERITY_OPT_IGN_ZEROES	"ignore_zero_blocks"
+> +#define DM_VERITY_OPT_AT_MOST_ONCE	"check_at_most_once"
+>  
+>  #define DM_VERITY_OPTS_MAX		(2 + DM_VERITY_OPTS_FEC)
+>  
+> @@ -432,6 +433,19 @@ static int verity_bv_zero(struct dm_verity *v, struct dm_verity_io *io,
+>  	return 0;
+>  }
+>  
+> +/*
+> + * Moves the bio iter one data block forward.
+> + */
+> +static inline void verity_bv_skip_block(struct dm_verity *v,
+> +					struct dm_verity_io *io,
+> +					struct bvec_iter *iter)
+> +{
+> +	struct bio *bio = dm_bio_from_per_bio_data(io,
+> +						   v->ti->per_io_data_size);
+> +
+> +	bio_advance_iter(bio, iter, 1 << v->data_dev_block_bits);
+> +}
+> +
+>  /*
+>   * Verify one "dm_verity_io" structure.
+>   */
+> @@ -445,8 +459,15 @@ static int verity_verify_io(struct dm_verity_io *io)
+>  
+>  	for (b = 0; b < io->n_blocks; b++) {
+>  		int r;
+> +		sector_t cur_block = io->block + b;
+>  		struct ahash_request *req = verity_io_hash_req(v, io);
+>  
+> +		if (v->validated_blocks &&
+> +		    likely(test_bit(cur_block, v->validated_blocks))) {
+> +			verity_bv_skip_block(v, io, &io->iter);
+> +			continue;
+> +		}
+> +
+>  		r = verity_hash_for_block(v, io, io->block + b,
+>  					  verity_io_want_digest(v, io),
+>  					  &is_zero);
+> @@ -481,13 +502,17 @@ static int verity_verify_io(struct dm_verity_io *io)
+>  			return r;
+>  
+>  		if (likely(memcmp(verity_io_real_digest(v, io),
+> -				  verity_io_want_digest(v, io), v->digest_size) == 0))
+> +				  verity_io_want_digest(v, io),
+> +				  v->digest_size) == 0)) {
+> +			if (v->validated_blocks)
+> +				set_bit(cur_block, v->validated_blocks);
+>  			continue;
+> +		}
+>  		else if (verity_fec_decode(v, io, DM_VERITY_BLOCK_TYPE_DATA,
+> -					   io->block + b, NULL, &start) == 0)
+> +					   cur_block, NULL, &start) == 0)
+>  			continue;
+>  		else if (verity_handle_err(v, DM_VERITY_BLOCK_TYPE_DATA,
+> -					   io->block + b))
+> +					   cur_block))
+>  			return -EIO;
+>  	}
+>  
+> @@ -740,6 +765,7 @@ static void verity_dtr(struct dm_target *ti)
+>  	if (v->bufio)
+>  		dm_bufio_client_destroy(v->bufio);
+>  
+> +	kvfree(v->validated_blocks);
+>  	kfree(v->salt);
+>  	kfree(v->root_digest);
+>  	kfree(v->zero_digest);
+> @@ -760,6 +786,26 @@ static void verity_dtr(struct dm_target *ti)
+>  	kfree(v);
+>  }
+>  
+> +static int verity_alloc_most_once(struct dm_verity *v)
+> +{
+> +	struct dm_target *ti = v->ti;
+> +
+> +	/* the bitset can only handle INT_MAX blocks */
+> +	if (v->data_blocks > INT_MAX) {
+> +		ti->error = "device too large to use check_at_most_once";
+> +		return -E2BIG;
+> +	}
+> +
+> +	v->validated_blocks = kvzalloc(BITS_TO_LONGS(v->data_blocks)
+> +				     * sizeof(unsigned long), GFP_KERNEL);
+> +	if (!v->validated_blocks) {
+> +		ti->error = "failed to allocate bitset for check_at_most_once";
+> +		return -ENOMEM;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int verity_alloc_zero_digest(struct dm_verity *v)
+>  {
+>  	int r = -ENOMEM;
+> @@ -829,6 +875,12 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
+>  			}
+>  			continue;
+>  
+> +		} else if (!strcasecmp(arg_name, DM_VERITY_OPT_AT_MOST_ONCE)) {
+> +			r = verity_alloc_most_once(v);
+> +			if (r)
+> +				return r;
+> +			continue;
+> +
+>  		} else if (verity_is_fec_opt_arg(arg_name)) {
+>  			r = verity_fec_parse_opt_args(as, v, &argc, arg_name);
+>  			if (r)
+> diff --git a/drivers/md/dm-verity.h b/drivers/md/dm-verity.h
+> index b675bc015512..ace5ec781b5f 100644
+> --- a/drivers/md/dm-verity.h
+> +++ b/drivers/md/dm-verity.h
+> @@ -63,6 +63,7 @@ struct dm_verity {
+>  	sector_t hash_level_block[DM_VERITY_MAX_LEVELS];
+>  
+>  	struct dm_verity_fec *fec;	/* forward error correction */
+> +	unsigned long *validated_blocks; /* bitset blocks validated */
+>  };
+>  
+>  struct dm_verity_io {
+> 
