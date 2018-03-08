@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755927AbeCHPY1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 10:24:27 -0500
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:32769 "EHLO
+        id S1756011AbeCHPYf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 10:24:35 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:38088 "EHLO
         relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754052AbeCHPYZ (ORCPT
+        with ESMTP id S1754052AbeCHPYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 10:24:25 -0500
+        Thu, 8 Mar 2018 10:24:33 -0500
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: architt@codeaurora.org, a.hajda@samsung.com,
         Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
@@ -16,65 +16,88 @@ To: architt@codeaurora.org, a.hajda@samsung.com,
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] drm: Add LVDS decoder bridge
-Date: Thu,  8 Mar 2018 16:24:00 +0100
-Message-Id: <1520522643-11756-1-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH 1/3] dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
+Date: Thu,  8 Mar 2018 16:24:01 +0100
+Message-Id: <1520522643-11756-2-git-send-email-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520522643-11756-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1520522643-11756-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-   this small series add a driver for transparent LVDS decoders, as
-Thine THC63LVD1024 device.
+Document Thine THC63LVD1024 LVDS decoder.
 
-The R-Car Gen3 V3M Eagle board feature such a converter, that has been so far
-not described as part of the display output pipeline. Now that a driver has
-been added, the Eagle DTS file has been updated to include the transparent
-decoder chip.
-
-So far so good, but currently the current DRM Bridge API do not provide support
-to query a mode from another bridge as it is possible to do on panel devices.
-In our case the LVDS decoder is connected to the output of R-Car DU lvds encoder
-(drivers/gpu/drm/rcar-du/rcar_lvds.c). As its 'mode_set' function shows, LVDS
-modes cannot be propagated from bridge to another bridge, but are instead
-inferred from the bus_format field of the panel's connector.
-
-It is my intention to propose an API extension to allow formats to be propagated
-through bridges, but knowing the DRM/KMS subsystem very superficially I would
-appreciate any pointer from more experienced developers.
-
-For Renesas side:
-The series is based on Laurent's drm/next/du branch with patches on top for:
-- Sergei: Enable PFC, I2c, GPIOs for r8a77970
-- Sergei: Add support for r8a77970 in DU and add display device nodes in
-  r8a77970 DTSI
-- Niklas: Connect DU LVDS output to HDMI bridge adv7511w in Eagle DTS
-- Sergei: fix video output on R8A77970
-
-A base branch with these patches applied is available at
-git://jmondi.org/linux v3m/v4.16-rc3/base
-
-Tested on Eagle board, making sure DU probes and testing all available output
-modes (of which only a few are actually working, I suspect due to faulty mode
-propagation through DRM bridges).
-
-Thanks
-   j
-
-Jacopo Mondi (3):
-  dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
-  drm: bridge: Add LVDS decoder driver
-  arm64: dts: renesas: Add LVDS decoder to R-Car V3M Eagle
-
- .../bindings/display/bridge/thine,thc63lvd1024.txt |  59 +++++
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts     |  31 ++-
- drivers/gpu/drm/bridge/Kconfig                     |   8 +
- drivers/gpu/drm/bridge/Makefile                    |   1 +
- drivers/gpu/drm/bridge/lvds-decoder.c              | 239 +++++++++++++++++++++
- 5 files changed, 336 insertions(+), 2 deletions(-)
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ .../bindings/display/bridge/thine,thc63lvd1024.txt | 59 ++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
- create mode 100644 drivers/gpu/drm/bridge/lvds-decoder.c
 
---
+diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+new file mode 100644
+index 0000000..53b6453
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+@@ -0,0 +1,59 @@
++THine Electronics THC63LVD1024 LVDS receiver
++--------------------------------------------
++
++The THC63LVD1024 is an LVDS receiver designed to convert multiple LVDS streams
++to digital CMOS/TTL parallel data.
++
++Required properties:
++- compatible: Shall be one of the following:
++  "thine,thc63lvd1024",
++  "lvds-decoder"
++
++Optional properties:
++- supply-vcc: Power supply for TTL output and digital circuitry
++- supply-cvcc: Power supply for TTL CLOCKOUT signal
++- supply-lvcc: Power supply for LVDS inputs
++- supply-pvcc: Power supply for PLL circuitry
++- pwnd-gpio: Power down GPIO signal. Active low.
++- oe-gpio: Output enable GPIO signal. Active high.
++
++The THC63LVD1024 has two video ports, whose connections are modeled according
++to OF graph bindings specified by Documentation/devicetree/bindings/graph.txt
++
++- Port@0: LVDS input port
++- Port@1: Digital CMOS/TTL parallel output
++
++Example:
++-------
++
++	lvds_decoder: decoder-0 {
++		compatible = "thine,thc63lvd1024";
++
++		vcc-supply = <&reg_lvds_vcc>;
++		lvcc-supply = <&reg_lvds_lvcc>;
++
++		pwdn-gpio = <&gpio4 15 GPIO_ACTIVE_LOW>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++
++				lvds_dec_in: endpoint {
++					remote-endpoint = <&lvds_out>;
++				};
++			};
++
++			port@1{
++				reg = <1>;
++
++				lvds_dec_out: endpoint {
++					remote-endpoint = <&adv7511_in>;
++				};
++
++			};
++
++		};
++	};
+-- 
 2.7.4
