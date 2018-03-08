@@ -1,52 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754052AbeCHSp4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 13:45:56 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:45846 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751859AbeCHSpy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 13:45:54 -0500
-X-Google-Smtp-Source: AG47ELvfKeuw95dRJVVs/ZZebLDDnV0Ab+lmJLnu95HTYMsUQhBU+BOvOdN8ToeFTTRGb7adDRu2cw==
-From: Himanshu Jha <himanshujha199640@gmail.com>
-To: jic23@kernel.org
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        garsilva@embeddedor.com, keescook@chromium.org,
-        Himanshu Jha <himanshujha199640@gmail.com>
-Subject: [PATCH] iio: potentiometer: ds1803: Remove VLA usage
-Date: Fri,  9 Mar 2018 00:15:33 +0530
-Message-Id: <1520534733-1743-1-git-send-email-himanshujha199640@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        id S1754627AbeCHSsC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 13:48:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53422 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752052AbeCHSsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 13:48:01 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93C1220685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=djwong@kernel.org
+Date: Thu, 8 Mar 2018 10:48:00 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>
+Subject: [GIT PULL] xfs: fixes for 4.16-rc5
+Message-ID: <20180308184800.GA18989@magnolia>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wvla, remove VLA usage and replace it
-with fixed a fixed length array and therefore, prevent potential
-stack overflow attacks.
+Hi Linus,
 
-Fixed as a part of the discussion to remove all VLAs from the kernel:
-https://lkml.org/lkml/2018/3/7/621
+Here's a few more fixes for locking problems and incorrect copy on
+write behaviors on 4.16.  It should merge cleanly, but please let me
+know if it doesn't.
 
-Cc: keescook@chromium.org
-Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
----
- drivers/iio/potentiometer/ds1803.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--Darrick
 
-diff --git a/drivers/iio/potentiometer/ds1803.c b/drivers/iio/potentiometer/ds1803.c
-index 9b0ff4a..6bf12c9 100644
---- a/drivers/iio/potentiometer/ds1803.c
-+++ b/drivers/iio/potentiometer/ds1803.c
-@@ -64,7 +64,7 @@ static int ds1803_read_raw(struct iio_dev *indio_dev,
- 	struct ds1803_data *data = iio_priv(indio_dev);
- 	int pot = chan->channel;
- 	int ret;
--	u8 result[indio_dev->num_channels];
-+	u8 result[ARRAY_SIZE(ds1803_channels)];
- 
- 	switch (mask) {
- 	case IIO_CHAN_INFO_RAW:
--- 
-2.7.4
+The following changes since commit 5b4c845ea4f4b86c43096eb924354c83a2e26f3c:
+
+  xfs: fix potential memory leak in mount option parsing (2018-02-26 10:02:13 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-4.16-fixes-3
+
+for you to fetch changes up to ff3d8b9c4cb95180ae6ef9eed28409840525b9fa:
+
+  xfs: don't block on the ilock for RWF_NOWAIT (2018-03-01 14:12:45 -0800)
+
+----------------------------------------------------------------
+Changes since last update:
+- Fix some iomap locking problems
+- Don't allocate cow blocks when we're zeroing file data
+
+----------------------------------------------------------------
+Christoph Hellwig (3):
+      xfs: don't allocate COW blocks for zeroing holes or unwritten extents
+      xfs: don't start out with the exclusive ilock for direct I/O
+      xfs: don't block on the ilock for RWF_NOWAIT
+
+ fs/xfs/xfs_iomap.c | 42 ++++++++++++++++++++++++++++++------------
+ 1 file changed, 30 insertions(+), 12 deletions(-)
