@@ -1,50 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965669AbeCHGYP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 01:24:15 -0500
-Received: from mail-io0-f195.google.com ([209.85.223.195]:37007 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965210AbeCHGYN (ORCPT
+        id S965729AbeCHG1Y (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 01:27:24 -0500
+Received: from mail-it0-f68.google.com ([209.85.214.68]:54105 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965405AbeCHG1U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 01:24:13 -0500
-X-Google-Smtp-Source: AG47ELujlEOeTMKmB+4K1NapOA1o8WT+J+dZuJFZKaOBRAQbRwRpc/SfOFKHpHHbwAYJAru+XezkOA==
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: m@bues.ch
-Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: [PATCH v3] ssb: use put_device() if device_register fail
-Date: Thu,  8 Mar 2018 11:53:24 +0530
-Message-Id: <1520490204-10411-1-git-send-email-arvind.yadav.cs@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 8 Mar 2018 01:27:20 -0500
+X-Google-Smtp-Source: AG47ELsWcTM1nvFVQvt1pR7tXinzfnl1H+5tJaeg98cf1aDZsQDL1GCSqHKaEccJy9TtrmqfMhfKcQ==
+Date: Wed, 7 Mar 2018 22:27:16 -0800
+From: Benson Leung <bleung@google.com>
+To: torvalds@linux-foundation.org
+Cc: dtor@chromium.org, dmitry.torokhov@gmail.com, bleung@google.com,
+        bleung@chromium.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] chrome-platform fixes on v4.16-rc4
+Message-ID: <20180308062716.GA62475@decatoncale.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="TB36FDmn/VVEgNH/"
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Never directly free @dev after calling device_register(), even
-if it returned an error! Always use put_device() to give up the
-reference initialized.
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
-changes in v2:
-             Removed kfree() call for @dev.
-changes in v3:
-             Add put_device() in place of kfree().
+--TB36FDmn/VVEgNH/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- drivers/ssb/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Linus,
 
-diff --git a/drivers/ssb/main.c b/drivers/ssb/main.c
-index 65420a9..e732fd3 100644
---- a/drivers/ssb/main.c
-+++ b/drivers/ssb/main.c
-@@ -522,7 +522,7 @@ static int ssb_devices_register(struct ssb_bus *bus)
- 			/* Set dev to NULL to not unregister
- 			 * dev on error unwinding. */
- 			sdev->dev = NULL;
--			kfree(devwrap);
-+			put_device(dev);
- 			goto error;
- 		}
- 		dev_idx++;
--- 
-1.9.1
+The following changes since commit 661e50bc853209e41a5c14a290ca4decc43cbfd1:
+
+  Linux 4.16-rc4 (2018-03-04 14:54:11 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git =
+tags/chrome-platform-4.16-rc4-fixes
+
+for you to fetch changes up to fc88bbdae049683f321dfa19648d035c93a0b613:
+
+  Revert "platform/chrome: chromeos_laptop: make chromeos_laptop const" (20=
+18-03-07 21:18:04 -0800)
+
+----------------------------------------------------------------
+Revert a problematic patch that constified something imporperly.
+
+----------------------------------------------------------------
+Dmitry Torokhov (1):
+      Revert "platform/chrome: chromeos_laptop: make chromeos_laptop const"
+
+ drivers/platform/chrome/chromeos_laptop.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+
+Thanks,
+Benson
+
+--=20
+Benson Leung
+Staff Software Engineer
+Chrome OS Kernel
+Google Inc.
+bleung@google.com
+Chromium OS Project
+bleung@chromium.org
+
+--TB36FDmn/VVEgNH/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6gYDF28Li+nEiKLaHwn1ewov5lgFAlqg18QACgkQHwn1ewov
+5lgTuxAAn5Jg69+0iVSrd5ZuL3Rmse0ZGjzeWJARSRlZ40eO8LHaehhfQONxLMY+
+bi5gFHsW4GVV+K54IvV9tejYxmKnSoOvshw3OmaxjQ3UKGXajKwPlTXgwU9w+aN3
+FZPIcE7c3SBhrCHL17UN6+WnXNbclYGPY/sz2rDlSC3OSWvaGnL3GWELLscXhE6Y
+L1u1bWQYT96rMsf12E3VJAkNSetCsz+VWlmORFGKT+JYYbIQlQSga3vjsYF2tGXj
+UYMsFccr4AoGlaQFfqZfpH+j+lTkjqXtWACDqAd7tg3DSlOp2cI+gyKKm1Q4dGfX
+rZ9aE/RlRfr3u6ZO/UwLYrMCfZF2rdP8e78toN4cT2ua2K+Kt/w9gOS3rXRgcqtJ
+fJMI1zwYSZOFyEo2eQUFW+CNekMdA9PKnU7wetos2xeEks7IY9hkX9AsrVryEMcM
+kppeMFXRO5a4YUrgi3OJZSmiByjL2Oz/5huHS/yAXoHRLTBdh4hZ4nhz5Tf75J62
+8bh+9259MFaXgwIDDtvWttTSrVe5Ng3kfCs1xmPb82De4HEWjpl2TWuLudLNt8Vk
+5SYNrzOBsNUJ6qWyV1TrA3Q+jq8He/WRu0bOGvIMil6XYFs3DqG0UL8arHQsllbb
+zFORoyXZmuvMWRtPIhzf7A61YVT1RPLxl8FTaZoEr+vHYasoYtI=
+=pMVz
+-----END PGP SIGNATURE-----
+
+--TB36FDmn/VVEgNH/--
