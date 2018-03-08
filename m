@@ -1,51 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935498AbeCHILp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 03:11:45 -0500
-Received: from conuserg-08.nifty.com ([210.131.2.75]:62999 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935333AbeCHILo (ORCPT
+        id S935594AbeCHIMX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 03:12:23 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:34085 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935520AbeCHIMT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 03:11:44 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w2889iit018027
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Jaroslav Kysela <perex@perex.cz>, linux-kernel@vger.kernel.org,
-        Takashi Iwai <tiwai@suse.com>, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ASoC: uniphier: remove superfluous <linux/mfd/syscon.h> inclusion
-Date: Thu,  8 Mar 2018 17:09:29 +0900
-Message-Id: <1520496569-32032-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 8 Mar 2018 03:12:19 -0500
+X-Google-Smtp-Source: AG47ELvCn9DSrAz6AHnsKt63xscYIPiRNT7PmE064BKrUO2MmOsIHE5rK7cKQEI4YnoIC1PIX6e5NQ==
+Date: Thu, 8 Mar 2018 08:12:15 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Baolin Wang <baolin.wang@linaro.org>, Mark Brown <broonie@kernel.org>,
+        David Lechner <david@lechnology.com>
+Subject: Re: linux-next: manual merge of the mfd tree with Linus' tree
+Message-ID: <20180308081215.n2m6hixmpfhpgn6f@dell>
+References: <20180308123331.36eab22c@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180308123331.36eab22c@canb.auug.org.au>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-None of aio-compress.c depends on the syscon header.
+On Thu, 08 Mar 2018, Stephen Rothwell wrote:
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Acked-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
----
+> Hi Lee,
+> 
+> Today's linux-next merge of the mfd tree got a conflict in:
+> 
+>   drivers/mfd/syscon.c
+> 
+> between commit:
+> 
+>   3bafc09e7797 ("mfd: syscon: Add hardware spinlock support")
+> 
+> from Linus' tree and commit:
+> 
+>   34c90dcce6b1 ("mfd: syscon: Set regmap name to DT node name")
+> 
+> from the mfd tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
- sound/soc/uniphier/aio-compress.c | 1 -
- 1 file changed, 1 deletion(-)
+Now fixed in my tree.  You may withdraw your patch.
 
-diff --git a/sound/soc/uniphier/aio-compress.c b/sound/soc/uniphier/aio-compress.c
-index 4751c8b..4c1027a 100644
---- a/sound/soc/uniphier/aio-compress.c
-+++ b/sound/soc/uniphier/aio-compress.c
-@@ -22,7 +22,6 @@
- #include <linux/dma-mapping.h>
- #include <linux/errno.h>
- #include <linux/kernel.h>
--#include <linux/mfd/syscon.h>
- #include <linux/module.h>
- #include <sound/core.h>
- #include <sound/pcm.h>
+Thanks Stephen.
+
 -- 
-2.7.4
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
