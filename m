@@ -1,82 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934703AbeCHEve (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 23:51:34 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:40188 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934059AbeCHEvc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 23:51:32 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7698C6022C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=gkohli@codeaurora.org
-Subject: Re: [PATCH] mm: oom: Fix race condition between oom_badness and
- do_exit of task
-To: David Rientjes <rientjes@google.com>
-Cc: akpm@linux-foundation.org, mhocko@suse.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <1520427454-22813-1-git-send-email-gkohli@codeaurora.org>
- <alpine.DEB.2.20.1803071254410.165297@chino.kir.corp.google.com>
-From: "Kohli, Gaurav" <gkohli@codeaurora.org>
-Message-ID: <22ebd655-ece4-37e5-5a98-e9750cb20665@codeaurora.org>
-Date: Thu, 8 Mar 2018 10:21:26 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S934806AbeCHEwt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 23:52:49 -0500
+Received: from ozlabs.org ([103.22.144.67]:44165 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933575AbeCHEws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 23:52:48 -0500
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 8 Mar 2018 15:52:26 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Huacai Chen <chenhc@lemote.com>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Message-ID: <20180308155226.1ae520e5@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1803071254410.165297@chino.kir.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/DHP7VtWh+09kF/gO1aOeDW3"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/8/2018 2:26 AM, David Rientjes wrote:
+--Sig_/DHP7VtWh+09kF/gO1aOeDW3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Wed, 7 Mar 2018, Gaurav Kohli wrote:
->
->> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
->> index 6fd9773..5f4cc4b 100644
->> --- a/mm/oom_kill.c
->> +++ b/mm/oom_kill.c
->> @@ -114,9 +114,11 @@ struct task_struct *find_lock_task_mm(struct task_struct *p)
->>   
->>   	for_each_thread(p, t) {
->>   		task_lock(t);
->> +		get_task_struct(t);
->>   		if (likely(t->mm))
->>   			goto found;
->>   		task_unlock(t);
->> +		put_task_struct(t);
->>   	}
->>   	t = NULL;
->>   found:
-> We hold rcu_read_lock() here, so perhaps only do get_task_struct() before
-> doing rcu_read_unlock() and we have a non-NULL t?
+Hi Andrew,
 
-Here rcu_read_lock will not help, as our task may change due to below algo:
+After merging the akpm-current tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-for_each_thread(p, t) {
-  		task_lock(t);
-+		get_task_struct(t);
-  		if (likely(t->mm))
-  			goto found;
-  		task_unlock(t);
-+		put_task_struct(t)
+`__stack_chk_guard' referenced in section `.text' of arch/arm/boot/compress=
+ed/decompress.o: defined in discarded section `.data' of arch/arm/boot/comp=
+ressed/misc.o
+`__stack_chk_guard' referenced in section `.text' of arch/arm/boot/compress=
+ed/decompress.o: defined in discarded section `.data' of arch/arm/boot/comp=
+ressed/misc.o
+arch/arm/boot/compressed/Makefile:185: recipe for target 'arch/arm/boot/com=
+pressed/vmlinux' failed
 
+Caused by commit
 
-So only we can increase usage counter here only at the current task.
+  2412eae312bf ("zboot: fix stack protector in compressed boot phase")
 
-I have seen you new patch, that seems valid to me and it will resolve our issue.
-Thanks for support.
+I have reverted that commit for today.
 
-Regards
+--=20
+Cheers,
+Stephen Rothwell
 
-Gaurav
+--Sig_/DHP7VtWh+09kF/gO1aOeDW3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
->
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqgwYoACgkQAVBC80lX
+0Gy/iAf/YUHnclh7pQDILR9jbr/jH3deriIobLYB5Ju42GkBElX2wn8b8+zY1dbJ
+eO21bchpGyPeN1+Kowc79oPfBnV4dc81vQvvjnpuX5VJTDEqZNngERxchasV43qx
+7HiguFRE80mbCxPH6+BvgJfxTtY3mKK2ID3rWNTl08w7aVB70CkbUqQ0HyTAQwWc
+Q07s35alE+FQi+Hs9ya2t44jEXVQBnyUbVXP4WXiAJyjfbyjRHrd4BMxGRrBUt71
+bDdMCjuPAqOGSzuETXDHKQWp8mAQPyD9AtZ/IUWRvblmJoydqA/trelPFRfiiD2G
+NINspCGTRvEib+7h0SIT/gpqlhXgNA==
+=LOEy
+-----END PGP SIGNATURE-----
+
+--Sig_/DHP7VtWh+09kF/gO1aOeDW3--
