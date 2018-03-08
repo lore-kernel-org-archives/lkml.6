@@ -1,22 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755932AbeCHNd5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 08:33:57 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:60617 "EHLO
+        id S965929AbeCHNeE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 08:34:04 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:60671 "EHLO
         bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755824AbeCHNdz (ORCPT
+        with ESMTP id S1755824AbeCHNeA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 08:33:55 -0500
+        Thu, 8 Mar 2018 08:34:00 -0500
 From: Niklas Cassel <niklas.cassel@axis.com>
-To: kishon@ti.com, Jingoo Han <jingoohan1@gmail.com>,
+To: kishon@ti.com, Alan Douglas <adouglas@cadence.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
         Joao Pinto <Joao.Pinto@synopsys.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
+        Sekhar Nori <nsekhar@ti.com>, Shawn Lin <shawn.lin@rock-chips.com>,
+        Niklas Cassel <niklass@axis.com>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
 Cc: Niklas Cassel <niklass@axis.com>, linux-pci@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/5] PCI: designware-ep: Make dw_pcie_ep_reset_bar() handle 64-bit BARs properly
-Date: Thu,  8 Mar 2018 14:33:28 +0100
-Message-Id: <20180308133331.19464-4-niklas.cassel@axis.com>
+Subject: [PATCH v4 4/5] PCI: endpoint: Make pci_epc_set_bar() return the BAR width that was set-up
+Date: Thu,  8 Mar 2018 14:33:29 +0100
+Message-Id: <20180308133331.19464-5-niklas.cassel@axis.com>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180308133331.19464-1-niklas.cassel@axis.com>
 References: <20180308133331.19464-1-niklas.cassel@axis.com>
@@ -25,36 +28,81 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since a 64-bit BAR consists of a BAR pair, we need to write to both
-BARs in the BAR pair to clear the BAR properly.
+In order to properly handle 64-bit BARs, we need to know what BAR width
+that was actually set-up by specific pci_epc_set_bar() implementations.
+
+This is done so that we can know if we need to skip a BAR,
+since a 64-bit BAR consists of a BAR pair.
+
+It is important to know the BAR width that was actually set-up,
+since some drivers, like the Cadence EP controller, does not
+simply look at PCI_BASE_ADDRESS_MEM_TYPE_64, as it configures
+all BARs larger than 2G as 64-bit.
 
 Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
 ---
- drivers/pci/dwc/pcie-designware-ep.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/pci/cadence/pcie-cadence-ep.c         | 2 +-
+ drivers/pci/dwc/pcie-designware-ep.c          | 4 ++--
+ drivers/pci/endpoint/functions/pci-epf-test.c | 7 ++++++-
+ 3 files changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
-index 946bbdf53c4d..b20b2651caf9 100644
---- a/drivers/pci/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/dwc/pcie-designware-ep.c
-@@ -22,11 +22,18 @@ void dw_pcie_ep_linkup(struct dw_pcie_ep *ep)
- void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
- {
- 	u32 reg;
-+	u32 val;
+diff --git a/drivers/pci/cadence/pcie-cadence-ep.c b/drivers/pci/cadence/pcie-cadence-ep.c
+index 3c3a97743453..0e4cc4cca56d 100644
+--- a/drivers/pci/cadence/pcie-cadence-ep.c
++++ b/drivers/pci/cadence/pcie-cadence-ep.c
+@@ -135,7 +135,7 @@ static int cdns_pcie_ep_set_bar(struct pci_epc *epc, u8 fn, enum pci_barno bar,
+ 		CDNS_PCIE_LM_EP_FUNC_BAR_CFG_BAR_CTRL(b, ctrl));
+ 	cdns_pcie_writel(pcie, reg, cfg);
  
- 	reg = PCI_BASE_ADDRESS_0 + (4 * bar);
-+	val = dw_pcie_readl_dbi(pci, reg);
- 	dw_pcie_dbi_ro_wr_en(pci);
- 	dw_pcie_writel_dbi2(pci, reg, 0x0);
- 	dw_pcie_writel_dbi(pci, reg, 0x0);
-+	if (!(val & PCI_BASE_ADDRESS_SPACE_IO) &&
-+	    (val & PCI_BASE_ADDRESS_MEM_TYPE_64)) {
-+		dw_pcie_writel_dbi2(pci, reg + 4, 0x0);
-+		dw_pcie_writel_dbi(pci, reg + 4, 0x0);
-+	}
- 	dw_pcie_dbi_ro_wr_dis(pci);
+-	return 0;
++	return is_64bits ? 1 : 0;
  }
  
+ static void cdns_pcie_ep_clear_bar(struct pci_epc *epc, u8 fn,
+diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
+index b20b2651caf9..f3c19f8ff8e5 100644
+--- a/drivers/pci/dwc/pcie-designware-ep.c
++++ b/drivers/pci/dwc/pcie-designware-ep.c
+@@ -139,7 +139,7 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no,
+ 		as_type = DW_PCIE_AS_IO;
+ 
+ 	ret = dw_pcie_ep_inbound_atu(ep, bar, bar_phys, as_type);
+-	if (ret)
++	if (ret < 0)
+ 		return ret;
+ 
+ 	dw_pcie_dbi_ro_wr_en(pci);
+@@ -154,7 +154,7 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no,
+ 	}
+ 	dw_pcie_dbi_ro_wr_dis(pci);
+ 
+-	return 0;
++	return (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) ? 1 : 0;
+ }
+ 
+ static int dw_pcie_find_index(struct dw_pcie_ep *ep, phys_addr_t addr,
+diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+index 7c70433b11a7..09878e011284 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-test.c
++++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+@@ -379,12 +379,17 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
+ 		ret = pci_epc_set_bar(epc, epf->func_no, bar,
+ 				      epf_bar->phys_addr,
+ 				      epf_bar->size, bar_flags[bar]);
+-		if (ret) {
++		if (ret < 0) {
+ 			pci_epf_free_space(epf, epf_test->reg[bar], bar);
+ 			dev_err(dev, "failed to set BAR%d\n", bar);
+ 			if (bar == test_reg_bar)
+ 				return ret;
+ 		}
++		/*
++		 * pci_epc_set_bar() returns 1 if a 64-bit BAR was set-up,
++		 * or 0 if a 32-bit BAR was set-up.
++		 */
++		bar += ret;
+ 	}
+ 
+ 	return 0;
 -- 
 2.14.2
