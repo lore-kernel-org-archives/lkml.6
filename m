@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1021398-1520488920-2-13259568781166318616
+X-Cyrus-Session-Id: sloti22d1t05-1021398-1520488889-2-3816128559979807146
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES ensvda, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520488919; b=qIBo/XZxlADcingLZbW44Bvv8n+L3NWBGsAF+qThR35TXs1
-    Usrqi/Fn/fJIYEurr9Veo0Xzz8xoS5dp8XACB24I+CCXTzUkMgW6Lnq/u2Z/lPXu
-    iiry1aB2rdcJrdEtRxGE6pEwb5UrNdHqI9sQlB7u+s4TzsWLmRSI23FRr8ukBz7L
-    68sjL57Oh4LUHxVuMI8RE0UNSs0HAf+iiC4iP26Ivm1lILnPvN00zca+ZbguinjM
-    0VMCLMahexkh2Hch13laGCySEa+ujDVlilSoyMW0i5mVqA1wEjGJtJKtPsZqo8P7
-    lhYtF8gCpqFGWlymqRxchKPi7TT6k4BIHAQU/Fw==
+    t=1520488888; b=Dfp615cAXXga5AOx4iznH7HSEVWgEJ5i1b+MX9mAtbUpUd5
+    /8XyLQwjhXppJRjyuc2Q04aJgFrDT1dHMAfLT0fD9hG6g91xFQbJ0r80gQjdWBuR
+    p6AG81PFQNlny0wXYWrrEzk43cMDATDcvc1qffp67LyMv2s3Bi5pWTnzjJrkKowv
+    OwKxAPnHo3ikR+pyiU/ljk6jcXcIzX7Gzf8IxlkGAfRAUuQ9R8hgTzWHAT/AlgCi
+    PZevga8WEWHaj/XgYImzDLB5xw9T4Tch3mheazx+FTWGylYYYP3IiaT9o0DuZz9+
+    jkji0Mm0ETD+32hKfCWupxZrQvvASRiBeMDK5+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520488919; bh=ghYC8I
-    9jstGs5we12+srcmlk0KrUOpaPR/CrJKEtmZs=; b=FC0duCEnMN5khFdLjhjDhl
-    flbB41+PW9y7mrVno503b8or6zhGShr1x0DinNbV6T9ZG3Q5S77KM4qWfq87fQIs
-    S8/W4Musj5TttURbxvDJhu7rcCXU0ooh41qFc2dUriu1iNn7Bl0OgoKZbU25NqFi
-    vi6bbtalhVtdeNb8fQzTDU5JgkfqJaHQtsOo/8LV1wOIMU2xZr+OLSfIT2TMOOy4
-    wbo3Ovu0cYTcGcFVfQg/gS7ap4bPesJqlKwrtKe2Oj4kJ7GJGGW+uOfkjTZoMFQ6
-    xzTL1mjAC2uIX9GZxoq8QbrIH+D9hy1RweEy/NRovq6oRsQ19yWptgT8DHEna4og
+    :mime-version:sender:list-id; s=arctest; t=1520488888; bh=LNz/u8
+    3Dh3ebbP0F/xVEi292MMqJ3Ox9o70c3F3GPRI=; b=QKEjfGaOVuIhEYlk3QeNq0
+    UvPiv901dLnGX6WGYLTnkhetV4UipjLYpnyC0pEaNMTFjEifUDKd4vnIF4Zxw27l
+    ciGQ+jY/ZWiSsqQmERfqFhAlJ7kBeg2I9JVlCqNvkpacRv18JxtuGdrzQ5ezRF1F
+    6gw0jEkJcJY7XZTwGbYu+rrehQ7rlRGC7OM7dEMN1zOfXB7j75T66vWMatS13dYD
+    dX+T6Y2qmvuefOe94eAn/sqpBaCu5lm5fF9sF3metrYaJ8ylupitoHgOnm9zF31g
+    QdK+BfMYLm+sCFCfcP9sIBw/OuH0htuHGXoMlf6hEm2CYVfx8qhum4mUYrNfc99Q
     ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=IGTTnc+y x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ZGCfZNeh x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=IGTTnc+y x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ZGCfZNeh x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,26 +50,26 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935211AbeCHGBn (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 01:01:43 -0500
+        id S965755AbeCHGBZ (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 01:01:25 -0500
 Received: from mail-sn1nam01on0105.outbound.protection.outlook.com ([104.47.32.105]:54752
         "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965904AbeCHFC6 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 8 Mar 2018 00:02:58 -0500
+        id S965927AbeCHFC7 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 8 Mar 2018 00:02:59 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Dean Jenkins <Dean_Jenkins@mentor.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
+CC: Jiri Benc <jbenc@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 124/190] Bluetooth: hci_ldisc: Add protocol
- check to hci_uart_tx_wakeup()
-Thread-Topic: [PATCH AUTOSEL for 4.9 124/190] Bluetooth: hci_ldisc: Add
- protocol check to hci_uart_tx_wakeup()
-Thread-Index: AQHTtppH81A3FcZObkS3K9pRFqOkSQ==
+Subject: [PATCH AUTOSEL for 4.9 125/190] vxlan: correctly handle ipv6.disable
+ module parameter
+Thread-Topic: [PATCH AUTOSEL for 4.9 125/190] vxlan: correctly handle
+ ipv6.disable module parameter
+Thread-Index: AQHTtppHwNnID05msU65ToeJBP5yAg==
 Date: Thu, 8 Mar 2018 04:59:46 +0000
-Message-ID: <20180308045810.8041-124-alexander.levin@microsoft.com>
+Message-ID: <20180308045810.8041-125-alexander.levin@microsoft.com>
 References: <20180308045810.8041-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045810.8041-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,27 +78,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1013;7:GcqqaIi8BC8xqyswy21zEYXj5Nx5sUQ7vr0a+ShCFOIUNB3m6U8bJ39AlIL6gxHc/04urYjnB36hpbn13fyAkgdgibhA6vx12BusNNF8P8fQ7Vu0rcpTpdefOOPtbRs69ZJpdYV3fWuZ1xnvgTZmTL2FPgYpILHIhmWCuhAWyG63RUFIV+MtjEmDSbMAOCKktX/l/VrbAVT1gsPz7quljuGD8ZrgUGN97n0D2wPGG4BlbbzDC9KcboQ4g4IOt6FU;20:M6dHHrazpl4ki+oXZvowwlBupSA8tFsFoRjRhxCX183MdL8l9+d+nwDXNagcesTYNbcN7HKQ9bro2hkrQfGX3Uvo/Thvwe+t5iBg+qDpV2pMyq5GNR7QAamURBDxfO1/YctcbIG346tuOrv40Yx88eHp5gfidoqmmSc7Vbvh7fg=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1013;7:TSdlLU94NcfCdBoqf55nzLkI7NfuGNcFxFzQjDcEclqeyUs+NLLpJUyptjJEduEMqv14Hai0F33WSl9UqMkfDtNKuIFS5wUlXhzGPg1+4CuX590GZSfjDwlW3JvmBYGKjDmVvQnSpJiU9nTbgou93JagqjpRYa1z7oNiJPf/xrbzRXEmnAIOqB2n1rXtMP/6jKclyhYHDCNediYWHLvj9p3aBgXz146aCLP6+Ko5KIsE2LeCrGFMlKwX6y3nJT/M;20:11kiuebHvJ3inX8H6PhCz8KLjO5rBN3xBZdhM8dnTgI2N21v5mycr8ka0/aaOVAZvBIiqITBmb3JageaGGrHgI2Vcr3l47hZCTjhTXIICzAiO3EeuyIhaB9G8hwKCzfMcUxKIdP+VuOBxxZY9lqo+TtAoKmITcmJ+jbDwJPNvf4=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 1ac33d9f-8edd-445f-f165-08d584b1db38
+x-ms-office365-filtering-correlation-id: 8383397a-35f1-4c09-211f-08d584b1db7c
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1013;
 x-ms-traffictypediagnostic: DM5PR2101MB1013:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1013779CE03C408C841AB53AFBDF0@DM5PR2101MB1013.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <DM5PR2101MB10130FA05DC90828AB99D496FBDF0@DM5PR2101MB1013.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231220)(944501244)(52105095)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB1013;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1013;
 x-forefront-prvs: 060503E79B
 x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(39380400002)(366004)(39860400002)(346002)(189003)(199004)(76176011)(6506007)(107886003)(6486002)(22452003)(105586002)(2950100002)(6436002)(26005)(99286004)(53936002)(6666003)(97736004)(36756003)(3280700002)(102836004)(5660300001)(2501003)(68736007)(6512007)(186003)(2900100001)(59450400001)(106356001)(3660700001)(4326008)(2906002)(25786009)(5250100002)(14454004)(7736002)(10090500001)(66066001)(3846002)(305945005)(6116002)(316002)(10290500003)(478600001)(86612001)(8936002)(54906003)(72206003)(8676002)(86362001)(81166006)(110136005)(1076002)(81156014)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1013;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: HXpCAQJx+BvIrjdb3d8eZveMFglvD9PwzdBn2ltjqqbI4dFdUtMvDArwwtOrvDhT35zP0MHzixcq/ULP+fxq17o/Dx89gN9AERzwHT+btpEL5tdUxlxTFQvitZyJeOIw3tsLJDAY8TqRIrSln3v+ZnWb0tKOFvo+eqvZyhcCofhUHAKMUL+pF9uvOCm1VW675K6rjBZ+lNyIs0kjR1sfMNdZs/bpJtH3wuf5CeIWpkl+qnMBsopLQX5D49RIccEfTTIbyBbiJ1/iwaliKswIPfihhQ50/4Qh7prYFDhfuK1D4iR95eJ3NuGjbf8vJ+88A+AjCVcZNF3zvakHTN2Mog==
+x-microsoft-antispam-message-info: 7hQ/v1YFwpcokFlmNOjv4/QBz2mO4zNXSIvoZU2AQVcRJbgE5bb4M4OMPBn9F0N0JR98GFzT9FkpeqLtjPNkHPCUqgdjzFXcQd4Lyq9MN3KiplVXE+sZiPTdxOWqlWOfwERvw+LtbVT+0wnNwZSDOdzd+ufa6pkDEDK1UEq3i3xzvQRv5LbjXoEOkWQABhvfbfZVgL+pGUs0Q7HTXp0zA/4wyqrNW2F1eekRJLgNQdAPRIcAjW5CoDe2TerGGJZzDhshc2ZHj81KS1tY82UZLvr2L12KpGcLlqYygqbqt6D4Vh2Xrgb7CdiXEbQAjIgUr9DujY46lmYFE+VR0rZVlQ==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1ac33d9f-8edd-445f-f165-08d584b1db38
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:59:46.3337
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8383397a-35f1-4c09-211f-08d584b1db7c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:59:46.7490
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -109,52 +109,55 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Dean Jenkins <Dean_Jenkins@mentor.com>
+From: Jiri Benc <jbenc@redhat.com>
 
-[ Upstream commit 2d6f1da168e1d62c47f7d50135ac4cbd8411dcb1 ]
+[ Upstream commit d074bf9600443403aa24fbc12c1f18eadc90f5aa ]
 
-Before attempting to schedule a work-item onto hu->write_work in
-hci_uart_tx_wakeup(), check that the Data Link protocol layer is
-still bound to the HCI UART driver.
+When IPv6 is compiled but disabled at runtime, __vxlan_sock_add returns
+-EAFNOSUPPORT. For metadata based tunnels, this causes failure of the whole
+operation of bringing up the tunnel.
 
-Failure to perform this protocol check causes a race condition between
-the work queue hu->write_work running hci_uart_write_work() and the
-Data Link protocol layer being unbound (closed) in hci_uart_tty_close().
+Ignore failure of IPv6 socket creation for metadata based tunnels caused by
+IPv6 not being available.
 
-Note hci_uart_tty_close() does have a "cancel_work_sync(&hu->write_work)"
-but it is ineffective because it cannot prevent work-items being added
-to hu->write_work after cancel_work_sync() has run.
-
-Therefore, add a check for HCI_UART_PROTO_READY into hci_uart_tx_wakeup()
-which prevents scheduling of the work queue when HCI_UART_PROTO_READY
-is in the clear state. However, note a small race condition remains
-because the hci_uart_tx_wakeup() thread can run in parallel with the
-hci_uart_tty_close() thread so it is possible that a schedule of
-hu->write_work can occur when HCI_UART_PROTO_READY is cleared. A complete
-solution needs locking of the threads which is implemented in a future
-commit.
-
-Signed-off-by: Dean Jenkins <Dean_Jenkins@mentor.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Fixes: b1be00a6c39f ("vxlan: support both IPv4 and IPv6 sockets in a single=
+ vxlan device")
+Signed-off-by: Jiri Benc <jbenc@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/bluetooth/hci_ldisc.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/vxlan.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
-index 7ec73945351c..2230f9368c21 100644
---- a/drivers/bluetooth/hci_ldisc.c
-+++ b/drivers/bluetooth/hci_ldisc.c
-@@ -125,6 +125,9 @@ static inline struct sk_buff *hci_uart_dequeue(struct h=
-ci_uart *hu)
+diff --git a/drivers/net/vxlan.c b/drivers/net/vxlan.c
+index 983e941bdf29..817b22f913da 100644
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@ -2816,17 +2816,21 @@ static int __vxlan_sock_add(struct vxlan_dev *vxlan=
+, bool ipv6)
 =20
- int hci_uart_tx_wakeup(struct hci_uart *hu)
+ static int vxlan_sock_add(struct vxlan_dev *vxlan)
  {
-+	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags))
-+		return 0;
-+
- 	if (test_and_set_bit(HCI_UART_SENDING, &hu->tx_state)) {
- 		set_bit(HCI_UART_TX_WAKEUP, &hu->tx_state);
- 		return 0;
+-	bool ipv6 =3D vxlan->flags & VXLAN_F_IPV6;
+ 	bool metadata =3D vxlan->flags & VXLAN_F_COLLECT_METADATA;
++	bool ipv6 =3D vxlan->flags & VXLAN_F_IPV6 || metadata;
++	bool ipv4 =3D !ipv6 || metadata;
+ 	int ret =3D 0;
+=20
+ 	RCU_INIT_POINTER(vxlan->vn4_sock, NULL);
+ #if IS_ENABLED(CONFIG_IPV6)
+ 	RCU_INIT_POINTER(vxlan->vn6_sock, NULL);
+-	if (ipv6 || metadata)
++	if (ipv6) {
+ 		ret =3D __vxlan_sock_add(vxlan, true);
++		if (ret < 0 && ret !=3D -EAFNOSUPPORT)
++			ipv4 =3D false;
++	}
+ #endif
+-	if (!ret && (!ipv6 || metadata))
++	if (ipv4)
+ 		ret =3D __vxlan_sock_add(vxlan, false);
+ 	if (ret < 0)
+ 		vxlan_sock_release(vxlan);
 --=20
 2.14.1
