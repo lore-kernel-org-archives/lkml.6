@@ -1,99 +1,107 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELu57WyntrQnMNZuSZhS65aaIJSZWVlzL8PqcIBmhO0fJoKgfVYGEDEB/5Cq4AMsoJgtbKkb
-ARC-Seal: i=1; a=rsa-sha256; t=1521100757; cv=none;
+X-Google-Smtp-Source: AG47ELvrgcoZD86F0SbW3yPJG5pMXwjaust/O5woh63kzYwJyNSskiittqxsAxjDYeTUkX6UMpFB
+ARC-Seal: i=1; a=rsa-sha256; t=1520499165; cv=none;
         d=google.com; s=arc-20160816;
-        b=wDBMc1fYlrtFzISHzGZfAMC2Rj7PuscoXI4YWtMkPNxCzzsTWD+ZjsBOfpeYiv8o3J
-         SE46O2+cPdwVUk38c/JEKHr4GhAdga23ZgVSiWGG34D/TrnLJ1ukDzU50LjnR0bmm83E
-         qbrsMqa3D3e78K/di392cZt3V0HlL0vY0+wEjoYDPTJh0Qnj7om6wP4O2kj+YohotJjQ
-         t1B0Px9OonHnfeVQu4n3uGmNuU3VXjotebo9t40UQp6zf4M6kY+xawCM3jALGpkk612x
-         6kcWn3SmjU8YH/nDf8Uol9+G8FA0jkYhDdIVcw9xEx454Cvj7gO650rtmLv8hOaalQGw
-         sZSA==
+        b=hAZNHCcUOMKAzjuXr8+lNXiqJOEEmnmCL1ffNsJ8KS0FAToHYspX1E+GtDZDMVtV9Y
+         ZkI6HOCg4aXChnGgZfz7xk2CJUid3RM1ZMYXwUcWNNPEYxARt4u5UNFwVHJOl2MlcTUz
+         0Pxy64XKQ33ExHVso+OJKHQxNo5YQfu1ytvv7gVzLQF/5Ise38I7i6EbTTe96iiTjRRK
+         JbzcuLZ2acxl1HcZ9EFoSl2QcQBfmAQNToabRmZKRTPv23rwXGtiRGIZB6XXTfLVUqwZ
+         R/WeOB/yLPmZami43Y4cMtuw5OGccbo8mrzpneuilFor0QZROP5peeOpzCe0GDMGE3Ym
+         r7eQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:message-id:content-language
-         :content-transfer-encoding:in-reply-to:mime-version:user-agent:date
-         :from:references:cc:to:subject:arc-authentication-results;
-        bh=dBQHzrkIkvP5BeqpRItaT3YIkE90MATh6HBMeCQAccE=;
-        b=dQKooDFvxOb6jtnmubnGyBGINAulDMtR2SHDQt04IzndRF4U4v8qDMImveX7FRWVI1
-         6681GQmgIXkkgNCIcLukIFmRIFyiQ2s1EqO5pJ49buwLw0Vi5I/xdGH21yiDpXd6ZkdH
-         dqnRPANYDQVPfFx3MT86mCNZtxgGQAma75cGyhFiRIhVYucQNVtpdq/1o4PjU/qrMNoN
-         LyjL3UzCTvkGTq2bpJRszwXKn6ViFFlv6R8RraX7UtCBa70X1LpXWN9Ft46pamPEtYXy
-         8ghSzBuBLLV1WlDiSSBMRzMPz/4mU+Mu+AwWfEkQnRRLS/Ixaq4zECeLl+qP21ve3b5f
-         3y5A==
+        h=list-id:precedence:sender:content-transfer-encoding:mime-version
+         :user-agent:references:in-reply-to:message-id:date:subject:cc:to
+         :from:dmarc-filter:arc-authentication-results;
+        bh=DalFNfqyUNMZvr1wDP6/QRmFOU4lKwB2alolEgDBA2w=;
+        b=vuD2nF+U+e4Am7F73R/heo8vIr1uEXiyrloUfSoFPkNS4RYl+uVY3/Ylv+9LEKE5in
+         h8cuEH35UH/BUc/nQKxalerv7jPWVBfLQqMZVw0ki5p8GjuKdboedwrtK4J5lsGBLR9y
+         fI/IQrhyKp0ZD1ZhsYAn4PpVL6NW+N3UEhTwIZgOrMJpEdauF2Oau/6PjTxugKxSA3NV
+         jDPpJwrwM2z1p67TfoPzYc1hHjNPfyt8yGMXBhPdKEZuA0E6m23Qu8x74IKVp446j3XQ
+         FXxHOuLNNXND4Ikugo6UrJ7/oirb5kQ/sgvha5zhzzpgMb7JQq4XVGenu4AUvW4/+BiR
+         Dmxw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751619AbeCOH7P (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Thu, 15 Mar 2018 03:59:15 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59382 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751571AbeCOH7O (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Thu, 15 Mar 2018 03:59:14 -0400
-Subject: Re: [PATCH v5 16/19] tracing: probeevent: Add array type support
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
+        id S935648AbeCHIwP (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Thu, 8 Mar 2018 03:52:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51152 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935643AbeCHIwN (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Thu, 8 Mar 2018 03:52:13 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94BF42133D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
+Cc: mhiramat@kernel.org, Ingo Molnar <mingo@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>,
         Tom Zanussi <tom.zanussi@linux.intel.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        shuah@kernel.org, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+        shuah@kernel.org
+Subject: [PATCH v5 18/19] selftests: ftrace: Add a testcase for $argN with kprobe_event
+Date: Thu,  8 Mar 2018 17:51:49 +0900
+Message-Id: <152049910927.7289.5675699018820188003.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <152049860385.7289.14079393589900496424.stgit@devbox>
 References: <152049860385.7289.14079393589900496424.stgit@devbox>
- <152049905133.7289.17516121776689315422.stgit@devbox>
- <72be81a4-710a-b942-277d-9156c3debc5d@linux.vnet.ibm.com>
- <20180315161840.71d524a73307881febfe34c2@kernel.org>
- <20180315162303.1250dea1500aea420ecd85c6@kernel.org>
-From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Date: Thu, 15 Mar 2018 13:31:29 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20180315162303.1250dea1500aea420ecd85c6@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18031507-0016-0000-0000-00000532E64A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031507-0017-0000-0000-0000286FEEC2
-Message-Id: <d94e56c0-4096-5b8d-9e84-6a83b3daa84f@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-15_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803150091
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594358839822578667?=
-X-GMAIL-MSGID: =?utf-8?q?1594989748191668648?=
+X-GMAIL-THRID: =?utf-8?q?1594358932355013585?=
+X-GMAIL-MSGID: =?utf-8?q?1594358932355013585?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Add a testcase for $argN with kprobe event.
+This tests whether the traced data is correct or not.
+If the kernel doesn't support $argN (depends on arch),
+it skips the test as UNSUPPORTED.
 
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ Changes in v5:
+  - Fix description.
+---
+ .../ftrace/test.d/kprobe/kprobe_args_argN.tc       |   25 ++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_argN.tc
 
-On 03/15/2018 12:53 PM, Masami Hiramatsu wrote:
->
-> Sorry, that is too complicated than enough. you should try to specify a[0] instead of a.
->
->  $ sudo ./perf probe -x ~/hello foo1 'a=a[0]:x32[3]'
-
-Cool.. that works fine.
-
-$ sudo ./perf script
-           hello  1779 [034]    76.081971: probe_hello:foo1: (100005fc) a={0x4,0x5,0x6}
-
-Thanks,
-Ravi
-
-> :)
->
-> Thank you,
->
+diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_argN.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_argN.tc
+new file mode 100644
+index 000000000000..d5c5c8c3a51e
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_argN.tc
+@@ -0,0 +1,25 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: Kprobe event argN argument
++
++[ -f kprobe_events ] || exit_unsupported # this is configurable
++
++grep -q "arg<N>" README || exit_unsupported # version issue
++
++echo 0 > events/enable
++echo > kprobe_events
++
++: "Test bad pattern : arg0 is not allowed"
++! echo 'p:testprobe create_trace_kprobe $arg0' > kprobe_events
++
++: "Test get argument"
++echo 'p:testprobe create_trace_kprobe $arg1' > kprobe_events
++echo 1 > events/kprobes/testprobe/enable
++! echo test >> kprobe_events
++tail -n 1 trace | grep -qe "testprobe.* arg1=0x1"
++
++! echo test test test >> kprobe_events
++tail -n 1 trace | grep -qe "testprobe.* arg1=0x3"
++
++echo 0 > events/enable
++echo > kprobe_events
 
