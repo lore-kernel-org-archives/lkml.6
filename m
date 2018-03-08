@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756111AbeCHPZw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 10:25:52 -0500
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:57631 "EHLO
+        id S1756097AbeCHPZu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 10:25:50 -0500
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:57630 "EHLO
         herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1756067AbeCHPZq (ORCPT
+        with ESMTP id S1756055AbeCHPZq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 8 Mar 2018 10:25:46 -0500
 From: Tomer Maimon <tmaimon77@gmail.com>
@@ -13,55 +13,52 @@ To: robh+dt@kernel.org, mark.rutland@arm.com, daniel.lezcano@linaro.org,
         venture@google.com, joel@jms.id.au
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         openbmc@lists.ozlabs.org, Tomer Maimon <tmaimon77@gmail.com>
-Subject: [PATCH v5 0/2] clocksource/drivers/npcm: Add NPCM7xx timer driver
-Date: Thu,  8 Mar 2018 17:24:56 +0200
-Message-Id: <1520522698-16153-1-git-send-email-tmaimon77@gmail.com>
+Subject: [PATCH v5 1/2] dt-binding: timer: document NPCM7xx timer DT bindings
+Date: Thu,  8 Mar 2018 17:24:57 +0200
+Message-Id: <1520522698-16153-2-git-send-email-tmaimon77@gmail.com>
 X-Mailer: git-send-email 1.8.3.4
+In-Reply-To: <1520522698-16153-1-git-send-email-tmaimon77@gmail.com>
+References: <1520522698-16153-1-git-send-email-tmaimon77@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Addressed comments from:.
- - Daniel Lezcano: https://www.spinics.net/lists/kernel/msg2741546.html
-				   https://www.spinics.net/lists/kernel/msg2741548.html
- - Joel Stanley:   https://www.spinics.net/lists/kernel/msg2736646.html					
+Added device tree binding documentation for Nuvoton NPCM7xx timer.
 
-Changes since version 4:
- - Remove clock-frequency option.
- - Rename driver name.
- - Enable TIMER_OF_CLOCK flag.
- - Modify register size in the dt-binding.
- 
-Changes since version 3:
- - Modify prefix to npcm7xx_
- - Modify licensing to SPDX license format
-
-Changes since version 2:
- - The shutdown function called oneshot function that can cause a crash in the system,
-   Modify shutdown call to unique shutdown function.
- - Adding support to resume function
- - Using timer-of.c API
- - Modify NPCM750 compatible name.
-
-Changes since version 1:
- - Rename driver name
- - Removing unnecessary dependencies in configuration
- - Adding prefix to the macros
- - No changes to dt-binding documentation since v1
- 
-Modified driver have been tested on the NPCM750 evaluation board.
-
-Tomer Maimon (2):
-  dt-binding: timer: document NPCM7xx timer DT bindings
-  clocksource/drivers/npcm: Add NPCM7xx timer driver
-
- .../bindings/timer/nuvoton,npcm7xx-timer.txt       |  21 ++
- drivers/clocksource/Kconfig                        |   8 +
- drivers/clocksource/Makefile                       |   1 +
- drivers/clocksource/timer-npcm7xx.c                | 215 +++++++++++++++++++++
- 4 files changed, 245 insertions(+)
+Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+---
+ .../bindings/timer/nuvoton,npcm7xx-timer.txt        | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/timer/nuvoton,npcm7xx-timer.txt
- create mode 100644 drivers/clocksource/timer-npcm7xx.c
 
+diff --git a/Documentation/devicetree/bindings/timer/nuvoton,npcm7xx-timer.txt b/Documentation/devicetree/bindings/timer/nuvoton,npcm7xx-timer.txt
+new file mode 100644
+index 000000000000..ea22dfe485be
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/nuvoton,npcm7xx-timer.txt
+@@ -0,0 +1,21 @@
++Nuvoton NPCM7xx timer
++
++Nuvoton NPCM7xx have three timer modules, each timer module provides five 24-bit
++timer counters.
++
++Required properties:
++- compatible      : "nuvoton,npcm750-timer" for Poleg NPCM750.
++- reg             : Offset and length of the register set for the device.
++- interrupts      : Contain the timer interrupt with flags for
++                    falling edge.
++- clocks          : phandle of timer reference clock (usually a 25 MHz clock).
++
++Example:
++
++timer@f0008000 {
++    compatible = "nuvoton,npcm750-timer";
++    interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
++    reg = <0xf0008000 0x50>;
++    clocks = <&clk NPCM7XX_CLK_TIMER>;
++};
++
 -- 
 2.14.1
