@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966232AbeCHJvN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 04:51:13 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:37460 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965827AbeCHJtw (ORCPT
+        id S1755274AbeCHJvl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 04:51:41 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:42525 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935762AbeCHJto (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 04:49:52 -0500
-X-Google-Smtp-Source: AG47ELvtrvnJEimYFeHClR0SZL61Mc9mkL7M7vex73VzsiPZCldMlXhA1+UD+UvPZJihYgL4DJ1LrA==
+        Thu, 8 Mar 2018 04:49:44 -0500
+X-Google-Smtp-Source: AG47ELvOF5YfIIvF3l4cW/DHlc0OfRiToXieI/sarJ/VU7MsxRifP/DA9bb06Yp/uNlkbKEc83m+hg==
 From: Jacob Chen <jacob-chen@iotwrt.com>
 To: linux-rockchip@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -18,9 +18,9 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         eddie.cai.linux@gmail.com, jeffy.chen@rock-chips.com,
         devicetree@vger.kernel.org, heiko@sntech.de,
         Jacob Chen <jacob2.chen@rock-chips.com>
-Subject: [PATCH v6 15/17] arm64: dts: rockchip: add isp0 node for rk3399
-Date: Thu,  8 Mar 2018 17:48:05 +0800
-Message-Id: <20180308094807.9443-16-jacob-chen@iotwrt.com>
+Subject: [PATCH v6 13/17] ARM: dts: rockchip: add rx0 mipi-phy for rk3288
+Date: Thu,  8 Mar 2018 17:48:03 +0800
+Message-Id: <20180308094807.9443-14-jacob-chen@iotwrt.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180308094807.9443-1-jacob-chen@iotwrt.com>
 References: <20180308094807.9443-1-jacob-chen@iotwrt.com>
@@ -28,41 +28,32 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shunqian Zheng <zhengsq@rock-chips.com>
+From: Jacob Chen <jacob2.chen@rock-chips.com>
 
-rk3399 have two ISP, but we havn't test isp1, so just add isp0 at present.
+It's a Designware MIPI D-PHY, used by ISP in rk3288.
 
-Signed-off-by: Shunqian Zheng <zhengsq@rock-chips.com>
 Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3399.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm/boot/dts/rk3288.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-index 2605118d4b4c..14ed016f2fdd 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-@@ -1614,6 +1614,21 @@
- 		status = "disabled";
- 	};
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index 6c122aaf06a7..3a530b72c057 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -864,6 +864,13 @@
+ 			status = "disabled";
+ 		};
  
-+	isp0: isp0@ff910000 {
-+		compatible = "rockchip,rk3399-cif-isp";
-+		reg = <0x0 0xff910000 0x0 0x4000>;
-+		interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH 0>;
-+		clocks = <&cru SCLK_ISP0>,
-+			 <&cru ACLK_ISP0>, <&cru ACLK_ISP0_WRAPPER>,
-+			 <&cru HCLK_ISP0>, <&cru HCLK_ISP0_WRAPPER>;
-+		clock-names = "clk_isp",
-+			      "aclk_isp", "aclk_isp_wrap",
-+			      "hclk_isp", "hclk_isp_wrap";
-+		power-domains = <&power RK3399_PD_ISP0>;
-+		iommus = <&isp0_mmu>;
-+		status = "disabled";
-+	};
++		mipi_phy_rx0: mipi-phy-rx0 {
++			compatible = "rockchip,rk3288-mipi-dphy";
++			clocks = <&cru SCLK_MIPIDSI_24M>, <&cru PCLK_MIPI_CSI>;
++			clock-names = "dphy-ref", "pclk";
++			status = "disabled";
++		};
 +
- 	isp0_mmu: iommu@ff914000 {
- 		compatible = "rockchip,iommu";
- 		reg = <0x0 0xff914000 0x0 0x100>, <0x0 0xff915000 0x0 0x100>;
+ 		io_domains: io-domains {
+ 			compatible = "rockchip,rk3288-io-voltage-domain";
+ 			status = "disabled";
 -- 
 2.16.1
