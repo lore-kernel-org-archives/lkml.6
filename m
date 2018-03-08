@@ -1,114 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966334AbeCHNkv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 08:40:51 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:46150 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966282AbeCHNkt (ORCPT
+        id S1755883AbeCHNnl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 08:43:41 -0500
+Received: from mail-qt0-f182.google.com ([209.85.216.182]:32990 "EHLO
+        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755002AbeCHNnj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 08:40:49 -0500
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date: Thu, 08 Mar 2018 19:10:47 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Andy Gross <andy.gross@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, David Brown <david.brown@linaro.org>,
-        Sricharan R <sricharan@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Thu, 8 Mar 2018 08:43:39 -0500
+X-Google-Smtp-Source: AG47ELtDl6lXVIDiyYrPY35wCckQCxTNqGCzlSpih+IEy4vzcYhbyaP2xyyMDWMDmRM9J1CNh3CUNA==
+Date: Thu, 8 Mar 2018 14:43:35 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/12] i2c: qup: schedule EOT and FLUSH tags at the end of
- transfer
-In-Reply-To: <20180227223654.GE20901@hector.attlocal.net>
-References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
- <1517644697-30806-5-git-send-email-absahu@codeaurora.org>
- <20180227223654.GE20901@hector.attlocal.net>
-Message-ID: <bc9c8dced56448f69ebad0848f5c0f34@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Subject: Re: [PATCH] firmware: tegra: adjust tested variable
+Message-ID: <20180308134335.GD3529@ulmo>
+References: <1517063308-16679-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="P+33d92oIH25kiaB"
+Content-Disposition: inline
+In-Reply-To: <1517063308-16679-1-git-send-email-Julia.Lawall@lip6.fr>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-28 04:06, Andy Gross wrote:
-> On Sat, Feb 03, 2018 at 01:28:09PM +0530, Abhishek Sahu wrote:
->> A single BAM transfer can have multiple read and write messages.
->> The EOT and FLUSH tags should be scheduled at the end of BAM HW
->> descriptors. Since the READ and WRITE can be present in any order
->> so for some of the cases, these tags are not being written
->> correctly.
->> 
->> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
->> ---
->>  drivers/i2c/busses/i2c-qup.c | 54 
->> ++++++++++++++++++++------------------------
->>  1 file changed, 24 insertions(+), 30 deletions(-)
->> 
->> diff --git a/drivers/i2c/busses/i2c-qup.c 
->> b/drivers/i2c/busses/i2c-qup.c
->> index bb83a2967..6357aff 100644
->> --- a/drivers/i2c/busses/i2c-qup.c
->> +++ b/drivers/i2c/busses/i2c-qup.c
->> @@ -560,7 +560,7 @@ static int qup_i2c_set_tags_smb(u16 addr, u8 
->> *tags, struct qup_i2c_dev *qup,
->>  }
->> 
->>  static int qup_i2c_set_tags(u8 *tags, struct qup_i2c_dev *qup,
->> -			    struct i2c_msg *msg,  int is_dma)
->> +			    struct i2c_msg *msg)
->>  {
->>  	u16 addr = i2c_8bit_addr_from_msg(msg);
->>  	int len = 0;
->> @@ -601,11 +601,6 @@ static int qup_i2c_set_tags(u8 *tags, struct 
->> qup_i2c_dev *qup,
->>  	else
->>  		tags[len++] = data_len;
->> 
->> -	if ((msg->flags & I2C_M_RD) && last && is_dma) {
->> -		tags[len++] = QUP_BAM_INPUT_EOT;
->> -		tags[len++] = QUP_BAM_FLUSH_STOP;
->> -	}
->> -
-> 
-> So lets say you have multiple read and 1 write message.  These changes 
-> will send
-> a EOT/FLUSH for all reads.  I think the intent here was that the last 
-> read
-> message (not the last message) would have the EOT+FLUSH.  Can there be 
-> an issue
-> with sending EOT/FLUSH for all reads?  And how does this mesh up with 
-> the BAM
-> signaling?
-> 
 
-  Thanks Andy and Austin for reviewing these patches.
+--P+33d92oIH25kiaB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  The role of FLUSH and EOT tag is to flush already scheduled descriptors
-  in HW. EOT is required only when descriptors are scheduled in RX FIFO.
-  If all the messages are WRITE, then only FLUSH tag will be used.
+On Sat, Jan 27, 2018 at 03:28:28PM +0100, Julia Lawall wrote:
+> Check the variable that was most recently initialized.
+>=20
+> The semantic match that finds this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+>=20
+> // <smpl>
+> @@
+> expression x, y, f, g, e, m;
+> statement S1,S2,S3,S4;
+> @@
+>=20
+> x =3D f(...);
+> if (\(<+...x...+>\&e\)) S1 else S2
+> (
+> x =3D g(...);
+> |
+> m =3D g(...,&x,...);
+> |
+> y =3D g(...);
+> *if (e)
+>  S3 else S4
+> )
+> // </smpl>
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> ---
+>  drivers/firmware/tegra/bpmp.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-  Let’s take following example
+Applied, thanks.
 
-  READ, READ, READ, READ
+Thierry
 
-  Currently EOT and FLUSH tags are being written after each READ. If we
-  get the NACK for first READ itself, then flush will be triggered. It
-  will look for first FLUSH tag in TX FIFO and will stop there so only
-  descriptors for first READ will be flushed. We need to clear all
-  scheduled descriptors to generate the completion.
+--P+33d92oIH25kiaB
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  Now this patch is scheduling FLUSH and EOT only once after all the
-  descriptors. So, flush will clear all the scheduled descriptors and
-  BAM will generate the completion interrupt. For multiple READ and
-  single WRITE also, this will work fine.
+-----BEGIN PGP SIGNATURE-----
 
-  I tested with
-  - single xfer with multiple read messages
-  - single xfer with multiple write messages
-  - single xfer with multiple alternate read and write messages
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhPgUACgkQ3SOs138+
+s6HFwQ/+OPn2T/yc9RXznPlpyt5yMNxjvCUFFnugI3o+WQu1wvM42JahxvRFe3rY
+HgWdRrg/7AMMIpFU+uXOjjDxBhCzGT+91CoOdD3ugACu9lvCNAxxvw+wlrOvcP9k
+aMB63V8RxtEzlsEIowVlt3uS6TDiHJSCSGVj1tTq3JuLRQZ6mZ5Kw2sU4827tR/4
+sdrlElA9F4s7fJbDxvQK8l16BQKa9KqH38v/uNyH8Bomn3mtknV7IrrdgYiYBXAZ
+ytACHn8ifEziLZI1F1RKR4yJ4lEmOVQsFaD7Uk920M4y+mmKlOSyIDLQpZdJtcxg
+KFCVqo8bE1Jmv12fypPn4hkj27JSTLpu0Kb1D3xEEIfXdL0JMfihgKyy/CwOZO7d
+1AFynLn0n+ZAaJgqKpCgfFTiX/5YBD7LvGqhikowVLg2l5XZxdZdl83YKzh0/JIL
+xsMD1Ieg34xszH/0qfNGNbi0NhxRJrcyLZTF8OU32cVXYQkRAWahJupLro02q9Uv
+kDlDfMNWllZl/3landBv/IjFq5RefKDRwOiOFYP9+6jWOU9B/VPBQqC3yMp0CDx6
+biYU1SjlMLhNm0K5XX0vOvheyiekM/ht5+7qibEryurFtkqRYqhqF5wmZan09uru
+7MOzjmu+S20S/mxvZB4yvqAoz3XR4r/zLFpuC/UJr+2oqMyQ2o8=
+=Bc3N
+-----END PGP SIGNATURE-----
 
-  for non-connected address in forceful DMA mode which will generate
-  the NACK for first byte itself.
-
-  Thanks,
-  Abhishek
+--P+33d92oIH25kiaB--
