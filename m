@@ -1,99 +1,253 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756038AbeCHQTB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 11:19:01 -0500
-Received: from mail-eopbgr20080.outbound.protection.outlook.com ([40.107.2.80]:7072
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752059AbeCHQTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 11:19:00 -0500
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com;
-Date: Thu, 8 Mar 2018 09:18:45 -0700
-From: Jason Gunthorpe <jgg@mellanox.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
-Cc: Doug Ledford <dledford@redhat.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the rdma-fixes
- tree
-Message-ID: <20180308161845.GC6773@mellanox.com>
-References: <20180308164058.2ad5a158@canb.auug.org.au>
+        id S1756079AbeCHQTK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 11:19:10 -0500
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:41677 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752059AbeCHQTI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 11:19:08 -0500
+X-Google-Smtp-Source: AG47ELsVCw09e+UaqLcWPCA/3DDLXsPquKglYEt4XvG+gksrXtiGPq1gp2vKkHQ2WlofVrnTGT+53Q==
+Date: Thu, 8 Mar 2018 08:19:00 -0800
+From: Christoffer Dall <cdall@kernel.org>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Shunyong Yang <shunyong.yang@hxt-semitech.com>,
+        ard.biesheuvel@linaro.org, will.deacon@arm.com, eric.auger@redhat.com,
+        david.daney@cavium.com, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
+        Joey Zheng <yu.zheng@hxt-semitech.com>
+Subject: Re: [RFC PATCH] KVM: arm/arm64: vgic: change condition for level
+ interrupt resampling
+Message-ID: <20180308161900.GC1917@lvm>
+References: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
+ <9ad47673-068e-f732-d2ca-9c76a8fbdfbc@arm.com>
+ <0a15633d-8944-cb9b-3e6b-b08ee5ec42b9@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180308164058.2ad5a158@canb.auug.org.au>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0a15633d-8944-cb9b-3e6b-b08ee5ec42b9@arm.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [174.3.196.123]
-X-ClientProxiedBy: MWHPR02CA0014.namprd02.prod.outlook.com
- (2603:10b6:300:4b::24) To VI1PR0501MB2861.eurprd05.prod.outlook.com
- (2603:10a6:800:9a::23)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: f555ac77-153a-4526-38e3-08d585104b3b
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0501MB2861;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0501MB2861;3:whzZtCVOs2qeUtM0LI+rVN7eBKuRMPBM5giQIJoD29n9LyG0KbQ5QHjae9PF1JydvYwZ+/n7aXn6UIBBYqYQA1qgvrdHe5ShMwz+OPn/xL+Jt+Kr8SiHjnVQHFvPLfzlt63bVyou+FVsipBbvfuToOILeAmjDnpFPQhB1e+6Q1nisvkEGdfnPYl1IgpJGUaqwZhEi+iaYt2dlUoLbkqx1FERFyncJsIaylDldY3fyWM6fr9hfSVqChGGRD49HhRR;25:HwNsgpm72Qfs0VWquOaAD4bl/tLLioqxRk3/bT04/6JoBv6dmhlAgO4VLQoJe2AyJva1M/xO5y1yxsMcsZfdLeKU9MhVMfNJXATxWqTrY6qFwvtcbRLkIGmnHniysUZH8WI2zJxOZhzP5a30nYN55Lsuu5vwkTOlk3xtKumbnZ1q3UFauIy2NTu9oK6pIHKTETg+4BGHhi3xL898pLn6vzqnFspBksOuAayf/UbTf3FiIdBviivlQONUh3Zq8mRPTzqnl4SFhpm9ZzTmCRJ/jWS1hPFLmuw7fMx5MmW6rBAt15OXF58nM0DZcn+0qo4SjqbrDfS5RgBA15drohW7Uw==;31:Jaryh18ageW0XPIZ60AqoZjplBUKKsaTK5oF8KdYwVRnhWinMLmLiPn1lqU8CIYTfCN2OwJ3KWRvJt9Setxt5FLVzFk3mq6DJyJL46yBxseEX8ZVxjvRNrIIYRi02IuGmKK+6QSAU5uvUPNbvxP1f3hLgrioZ9S5yev5eRNqcrQSHECBfMVgH9w6Tol9/mOvzVXtnPZNXCxY4GCh+z9MnPZhHhieGeiJUpa7S5aUV9I=
-X-MS-TrafficTypeDiagnostic: VI1PR0501MB2861:
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0501MB2861;20:QkClhlbLXXQzWXqoztvIAKtLMnT1zWH1Id6ltN7ih112DB/pHhBJA5AZSaKELq40d44WtwYExYpePjyAq+AnnP0ZtdYcVcWURHZcPqEhze111nkBWnhl1DCtgrDMocSqefFOUSMa7C7V8cf0bZLG5pKL2apg9crmiESL8r7T+fEorEa1EcFrcEgyMxqKfGD7mH9rV5Ecm6yoa6VVLf6QJ28RkxlqesqYueC2SA2WjSq+tylCCOZucBMGemhbN0mvdDuxPp91ugCtVDQj+pCzu/v//LbTXKj6UEFcokvIw2ECJAU+XEYeBvp3ZrgJOHIuPYfJaprTwLJMd+RBk+Ts8/5Flu6IRR+82Mtatk6SYTUamWVV2/TFe4+90axLWTDt59DtBxk+8LOsc762Dv6F8KfUA2kor+Qtj8ORsjA/SGZnjJDxfhFCo6cJUluTRUN+SyruxmrJvP+PcHKZDXS88uyXIo5kgCBcDqo96bMq4pxRENy+bmfSa19hJOM8OBcz;4:AnM9Kp79UQpBL12K1O8A/5xyOFxl4k+dAxaCaIAkX2DBYerfs0Ehn3CZRx5/CitZegGDEATXtbKLD+0HXvUeTDX9HD26zi/2wxFaZoo0Bp9sAry8wFZNieCx1OpUSQVSj+d508E/SkBiZJfsYOI4aX3MtSoaVkVaJQ6WOXyS/Wr6/kECpu0pFwhaGMB4sDPlH4lBoxPVF2nMWqB5zjptycggDP/YWMsJ8kDJXgzZkl3oAu/3ay/B17p1/hg38dRtQ1T6kplwDAMpKj4qLyBIrQ==
-X-Microsoft-Antispam-PRVS: <VI1PR0501MB2861AB68102AF9166DB441ACCFDF0@VI1PR0501MB2861.eurprd05.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(8121501046)(5005006)(3231220)(944501244)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(6041288)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:VI1PR0501MB2861;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0501MB2861;
-X-Forefront-PRVS: 060503E79B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(366004)(346002)(39860400002)(396003)(39380400002)(199004)(189003)(53754006)(47776003)(105586002)(68736007)(83796002)(57986006)(2950100002)(33656002)(107886003)(66066001)(46656002)(53936002)(9786002)(9746002)(7736002)(478600001)(305945005)(8936002)(6246003)(5660300001)(229853002)(4326008)(575784001)(86362001)(81156014)(8676002)(81166006)(26005)(106356001)(186003)(122856001)(2906002)(76176011)(386003)(16586007)(58126008)(110136005)(316002)(69596002)(3846002)(54906003)(36756003)(97736004)(52116002)(50466002)(23726003)(6116002)(1076002)(18370500001)(24400500001)(42262002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0501MB2861;H:mlx.ziepe.ca;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR0501MB2861;23:mWf/ZhlWCmh+3DwIqJ9e1TXek0ahKw+Kbbr5Egz?=
- =?us-ascii?Q?ChfqrhTDZ/aOansb/jD3whLrujGwqMuV2JKECm1p/LMnZxEm1Discpuw0Btg?=
- =?us-ascii?Q?N+FROX0U3sjaDtxI5OPNtmRSZavvQ8/Gc8si87BdLn1pZ4IZ60OSyyGCRv9U?=
- =?us-ascii?Q?lS9CeAFyHlRHXmXTKspBbFBz083cQPB+UcCfiiGGegSgUQz5kdpP+/f50fkZ?=
- =?us-ascii?Q?LcfnE0xBXbqmfyELhD2Fd2SYPitHNAmVvkzmiJBysDQcbKjjr22YL4yhz20O?=
- =?us-ascii?Q?D8pWJJNGDhMjQ7b4CdGK0x2WF9ZiWDuxHhRl4Z0y7zOZZj6pKGB+2gKH5WiK?=
- =?us-ascii?Q?jY/YmladNqAPMcZGFv07YpNw5VwhZtnKRVlFHQ32XMbfCZT+zs8CYN6FWR2a?=
- =?us-ascii?Q?38HCeASvo5DWNcVSEH1emy27VSYThVax03WySSpEHlz+pEebCCNsIFX3WIHQ?=
- =?us-ascii?Q?MSUDI6N88UEv7Oc9HdeiEXzovtRL/1W62KhTeWs6pdW95tEjTRlk0g9rB1WC?=
- =?us-ascii?Q?zdqp6SzGXdiJBpK2dRAmX8l8ZOe8Kc9UJ74806vhgjQ67kO/1/M0tD+nvRQr?=
- =?us-ascii?Q?Ip/bFR/bdLPc2cO8f8rKQOXGPWv/QxrOL6M3tbhIWpfLtvcEz9btkcaNf940?=
- =?us-ascii?Q?E79E90RsP1Tq7alPNNPZ5g6nHoPJobj/9NbBUUZxPP2hf+xARw91JxGq7rFq?=
- =?us-ascii?Q?RaITqEQJ3c6Fkj91pK8b/SiqjkZbKU71M4gO58Cle9u+B0JtesYax2wT1USq?=
- =?us-ascii?Q?xMonaoSRxvjODSfIn7KWelcwrLpHazheZUZjk5pZ76/uvFMqB9XQ7XlFav3b?=
- =?us-ascii?Q?iuErDCT7eWTklzeic4deo0hasHW2zpmrEQhSFyuntctyWAwjQbD3QXS2FfSs?=
- =?us-ascii?Q?jRjfUJHvJarKkA2yldpC+EG+1KDamTM30ofoiAHPwWfeyH8OGb3q3Xh8jw7B?=
- =?us-ascii?Q?NwzbsuxI6IsPdNTWjQkP4/TcSRf2ZoBqBGtXWBxcM3Xi1EiGdDtaDkS/U/f/?=
- =?us-ascii?Q?ZNCIg0dowWnWDEexxAZPo9UxidhJfLdJUN6plGJfJZdWAYE8SAiO8XdtEO31?=
- =?us-ascii?Q?qzN1PMrwVlL2FPIqAvpI6PM9yBPJiF4SEFsnCerkVb6AJDaazX0HOEl48+HK?=
- =?us-ascii?Q?DnfG65n9eY+yFdnLybuMabycceIUCA5Oj2NSwMwRm9vwQDRZ66wp70F9BFCT?=
- =?us-ascii?Q?K8B8ngHQJl+APkGEcNkkdIBNRuxaNr2DnFh9+91W4njcLpgYtDq0JqnyLx5O?=
- =?us-ascii?Q?VMkRn7wp+RACMp6o9jlPxrsDnqRr7sI7kO5O0CWX53yCZfuyDA827aBYtGLp?=
- =?us-ascii?Q?ybNzbswn/KXkoYFGHbkFWOEe1EBuAX2z/upZ1MurKBNbIxjEG0y45QAjFw2q?=
- =?us-ascii?Q?M4Qctiw=3D=3D?=
-X-Microsoft-Antispam-Message-Info: AuVojrss6/OK2suz73chSDR9TZ/BR13glTE9DDqvGUGAq66mcW8i9QdAGddT++3Gc5cLsYxRHcUaPE5F4zHyJ+UO16ngewcwIJZeOjkiI2kp4sgauIW0Y/5iuUMfo2WwbVTGIel6DDl7rpKL4e/sLkcrqrjfcQ1jJI2VTf5gbJ0gtq/+I6WEX8gqelnCnUn4
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0501MB2861;6:vSm2QFZVj+xLj/zEEo+qIy67+bskwKu2FS6+a4ase9Asv24UqnzaqVXiUPYgJSDKiZnhgaIUjNfYuW9Zbrez3SWfqaGXE5e68qpzRLTw67pjGuNDKkDUwrL2bIJ422vxGWugeqPm6EGA7d/63W3JJsj3rr72ZDfMuI55dnjsMdSXs0WfIh5zauGvWd0RzJH1RrwLqWga+aCfFVe9AHFFIwiR2PPzZuAjCG/NhJAOpLxQ9VsoZp2UOMNqugl4O8v0i94A2pohGgMJfHAeKG8AROfUYxfku6K1XcIa7ZzcKnv6s6nSPnUhoXh4rq1Km39mIGTrMDXZZ7s0Fcor+anuvyKU40xy9aW5RtGTVkrAluQ=;5:O1sEq3X17mD113N6FRgjV7md2bS6KzZNoc6bBvzYwXs5arU8GpV4jd48PbDiaywt9kWn9MHq/jN5o5K05Zv3fHN1eDjMyMMk4o1zd7nMevbnV+va6woK6+I5ekmwreNSWstzbt4TGcasf71/db+j4P2O1HiNglzuKyKPPKJdMWk=;24:CPQw4bZAvsBqC7e8oJFZ+Wnel+mWqS2wmmYG/MWZMsiv+555Z7fRPrpOcqA+2B76iAVhR/96WxMNVd1KmTSnhCjXcUA88iLRRLEZYqUPAgM=;7:G5Ct+ddmDPzA/dN1SyE5DVIpvoyKgKWVJcH2TYZULC9dkqM4jApERGqTemmHTor/j7/boG9Xgmk8BPGC2hflLrFcdJFIyavVlqmKfzmg337EjqNcpNM7VXoVBXTq+PodY2z1Qb/c1j7rDLySNKkqxEGm1+GgmcBt5zGSFLh2s8eZ4Z5A4vqCmQRKPRoYvgCbWstGeQTWK+rzDQy7Gfi6nLpLnTzIuxFLerqMuS2ap4GzzcGMY8hNWKXNPEQ71d+8
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Mar 2018 16:18:56.8905
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f555ac77-153a-4526-38e3-08d585104b3b
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2861
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 08, 2018 at 04:40:58PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Thu, Mar 08, 2018 at 11:54:27AM +0000, Marc Zyngier wrote:
+> On 08/03/18 09:49, Marc Zyngier wrote:
+> > [updated Christoffer's email address]
+> > 
+> > Hi Shunyong,
+> > 
+> > On 08/03/18 07:01, Shunyong Yang wrote:
+> >> When resampling irqfds is enabled, level interrupt should be
+> >> de-asserted when resampling happens. On page 4-47 of GIC v3
+> >> specification IHI0069D, it said,
+> >> "When the PE acknowledges an SGI, a PPI, or an SPI at the CPU
+> >> interface, the IRI changes the status of the interrupt to active
+> >> and pending if:
+> >> • It is an edge-triggered interrupt, and another edge has been
+> >> detected since the interrupt was acknowledged.
+> >> • It is a level-sensitive interrupt, and the level has not been
+> >> deasserted since the interrupt was acknowledged."
+> >>
+> >> GIC v2 specification IHI0048B.b has similar description on page
+> >> 3-42 for state machine transition.
+> >>
+> >> When some VFIO device, like mtty(8250 VFIO mdev emulation driver
+> >> in samples/vfio-mdev) triggers a level interrupt, the status
+> >> transition in LR is pending-->active-->active and pending.
+> >> Then it will wait resampling to de-assert the interrupt.
+> >>
+> >> Current design of lr_signals_eoi_mi() will return false if state
+> >> in LR is not invalid(Inactive). It causes resampling will not happen
+> >> in mtty case.
+> > 
+> > Let me rephrase this, and tell me if I understood it correctly:
+> > 
+> > - A level interrupt is injected, activated by the guest (LR state=active)
+> > - guest exits, re-enters, (LR state=pending+active)
+> > - guest EOIs the interrupt (LR state=pending)
+> > - maintenance interrupt
+> > - we don't signal the resampling because we're not in an invalid state
+> > 
+> > Is that correct?
+> > 
+> > That's an interesting case, because it seems to invalidate some of the 
+> > optimization that went in over a year ago.
+> > 
+> > 096f31c4360f KVM: arm/arm64: vgic: Get rid of MISR and EISR fields
+> > b6095b084d87 KVM: arm/arm64: vgic: Get rid of unnecessary save_maint_int_state
+> > af0614991ab6 KVM: arm/arm64: vgic: Get rid of unnecessary process_maintenance operation
+> > 
+> > We could compare the value of the LR before the guest entry with
+> > the value at exit time, but we still could miss it if we have a
+> > transition such as P+A -> P -> A and assume a long enough propagation
+> > delay for the maintenance interrupt (which is very likely).
+> > 
+> > In essence, we have lost the benefit of EISR, which was to give us a
+> > way to deal with asynchronous signalling.
+> > 
+> >>
+> >> This will cause interrupt fired continuously to guest even 8250 IIR
+> >> has no interrupt. When 8250's interrupt is configured in shared mode,
+> >> it will pass interrupt to other drivers to handle. However, there
+> >> is no other driver involved. Then, a "nobody cared" kernel complaint
+> >> occurs.
+> >>
+> >> / # cat /dev/ttyS0
+> >> [    4.826836] random: crng init done
+> >> [    6.373620] irq 41: nobody cared (try booting with the "irqpoll"
+> >> option)
+> >> [    6.376414] CPU: 0 PID: 1307 Comm: cat Not tainted 4.16.0-rc4 #4
+> >> [    6.378927] Hardware name: linux,dummy-virt (DT)
+> >> [    6.380876] Call trace:
+> >> [    6.381937]  dump_backtrace+0x0/0x180
+> >> [    6.383495]  show_stack+0x14/0x1c
+> >> [    6.384902]  dump_stack+0x90/0xb4
+> >> [    6.386312]  __report_bad_irq+0x38/0xe0
+> >> [    6.387944]  note_interrupt+0x1f4/0x2b8
+> >> [    6.389568]  handle_irq_event_percpu+0x54/0x7c
+> >> [    6.391433]  handle_irq_event+0x44/0x74
+> >> [    6.393056]  handle_fasteoi_irq+0x9c/0x154
+> >> [    6.394784]  generic_handle_irq+0x24/0x38
+> >> [    6.396483]  __handle_domain_irq+0x60/0xb4
+> >> [    6.398207]  gic_handle_irq+0x98/0x1b0
+> >> [    6.399796]  el1_irq+0xb0/0x128
+> >> [    6.401138]  _raw_spin_unlock_irqrestore+0x18/0x40
+> >> [    6.403149]  __setup_irq+0x41c/0x678
+> >> [    6.404669]  request_threaded_irq+0xe0/0x190
+> >> [    6.406474]  univ8250_setup_irq+0x208/0x234
+> >> [    6.408250]  serial8250_do_startup+0x1b4/0x754
+> >> [    6.410123]  serial8250_startup+0x20/0x28
+> >> [    6.411826]  uart_startup.part.21+0x78/0x144
+> >> [    6.413633]  uart_port_activate+0x50/0x68
+> >> [    6.415328]  tty_port_open+0x84/0xd4
+> >> [    6.416851]  uart_open+0x34/0x44
+> >> [    6.418229]  tty_open+0xec/0x3c8
+> >> [    6.419610]  chrdev_open+0xb0/0x198
+> >> [    6.421093]  do_dentry_open+0x200/0x310
+> >> [    6.422714]  vfs_open+0x54/0x84
+> >> [    6.424054]  path_openat+0x2dc/0xf04
+> >> [    6.425569]  do_filp_open+0x68/0xd8
+> >> [    6.427044]  do_sys_open+0x16c/0x224
+> >> [    6.428563]  SyS_openat+0x10/0x18
+> >> [    6.429972]  el0_svc_naked+0x30/0x34
+> >> [    6.431494] handlers:
+> >> [    6.432479] [<000000000e9fb4bb>] serial8250_interrupt
+> >> [    6.434597] Disabling IRQ #41
+> >>
+> >> This patch changes the lr state condition in lr_signals_eoi_mi() from
+> >> invalid(Inactive) to active and pending to avoid this.
+> >>
+> >> I am not sure about the original design of the condition of
+> >> invalid(active). So, This RFC is sent out for comments.
+> >>
+> >> Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+> >> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+> >> ---
+> >>  virt/kvm/arm/vgic/vgic-v2.c | 4 ++--
+> >>  virt/kvm/arm/vgic/vgic-v3.c | 4 ++--
+> >>  2 files changed, 4 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/virt/kvm/arm/vgic/vgic-v2.c b/virt/kvm/arm/vgic/vgic-v2.c
+> >> index e9d840a75e7b..740ee9a5f551 100644
+> >> --- a/virt/kvm/arm/vgic/vgic-v2.c
+> >> +++ b/virt/kvm/arm/vgic/vgic-v2.c
+> >> @@ -46,8 +46,8 @@ void vgic_v2_set_underflow(struct kvm_vcpu *vcpu)
+> >>  
+> >>  static bool lr_signals_eoi_mi(u32 lr_val)
+> >>  {
+> >> -	return !(lr_val & GICH_LR_STATE) && (lr_val & GICH_LR_EOI) &&
+> >> -	       !(lr_val & GICH_LR_HW);
+> >> +	return !((lr_val & GICH_LR_STATE) ^ GICH_LR_STATE) &&
+> > 
+> > That feels very wrong. You're now signalling the resampling in both
+> > invalid and pending+active, and the latter state doesn't mean you've
+> > EOIed anything. You're now over-signalling, and signalling the
+> > wrong event.
+> > 
+> >> +	       (lr_val & GICH_LR_EOI) && !(lr_val & GICH_LR_HW);
+> >>  }
+> >>  
+> >>  /*
+> >> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+> >> index 6b329414e57a..43111bba7af9 100644
+> >> --- a/virt/kvm/arm/vgic/vgic-v3.c
+> >> +++ b/virt/kvm/arm/vgic/vgic-v3.c
+> >> @@ -35,8 +35,8 @@ void vgic_v3_set_underflow(struct kvm_vcpu *vcpu)
+> >>  
+> >>  static bool lr_signals_eoi_mi(u64 lr_val)
+> >>  {
+> >> -	return !(lr_val & ICH_LR_STATE) && (lr_val & ICH_LR_EOI) &&
+> >> -	       !(lr_val & ICH_LR_HW);
+> >> +	return !((lr_val & ICH_LR_STATE) ^ ICH_LR_STATE) &&
+> >> +	       (lr_val & ICH_LR_EOI) && !(lr_val & ICH_LR_HW);
+> >>  }
+> >>  
+> >>  void vgic_v3_fold_lr_state(struct kvm_vcpu *vcpu)
+> >>
+> > 
+> > Assuming I understand the issue correctly, I cannot really see how
+> > to solve this without reintroducing EISR, which sucks majorly.
+> > 
+> > I'll try to cook something shortly and we can all have a good
+> > fight about how crap this is.
 > 
-> Commit
+> Here's what I came up with. I don't really like it, but that's
+> the least invasive this I could come up with. Please let me
+> know if that helps with your test case. Note that I have only
+> boot-tested this on a sample of 1 machine, so I don't expect this
+> to be perfect.
 > 
->   aa0de36a40f4 ("RDMA/mlx5: Fix integer overflow while resizing CQ")
+> Also, any guideline on how to reproduce this would be much appreciated.
+> I never used this mdev/mtty thing, so please bear with me.
 > 
-> is missing a Signed-off-by from its author.
+> Thanks,
+> 
+> 	M.
+> 
+> From 66a7c4cfc1029b0169dd771e196e2876ba3f17b1 Mon Sep 17 00:00:00 2001
+> From: Marc Zyngier <marc.zyngier@arm.com>
+> Date: Thu, 8 Mar 2018 11:14:06 +0000
+> Subject: [PATCH] KVM: arm/arm64: Do not rely on LR state to guess EOI MI
+>  status
+> 
+> We so far rely on the LR state to decide whether the guest has
+> EOI'd a level interrupt or not. While this looks like a good
+> idea on the surface, it leads to a couple of annoying corner
+> cases:
+> 
+> Example 1: (P = Pending, A = Active, MI = Maintenance Interrupt)
+> P -> guest IAR -> A -> exit/entry -> P+A -> guest EOI -> P -> MI
 
-Thanks Stephen,
+Do we really get an EOI maintenance interrupt here?  Reading the MISR
+and EISR descriptions make me thing this is not the case...
 
-May I suggest to the checkpatch maintainers that checkpack should look
-for this too?
+> 
+> The state is now pending, we've really EOI'd the interrupt, and
+> yet lr_signals_eoi_mi() returns false, since the state is not 0.
+> The result is that we won't signal anything on the corresponding
+> irqfd, which people complain about. Meh.
+
+So the core of the problem is that when we've entered the guest with
+PENDING+ACTIVE and when we exit (for some reason) we don't signal the
+resamplefd, right?  The solution seems to me that we don't ever do
+PENDING+ACTIVE if you need to resample after each deactivate.  What
+would be the point of appending a pending state that you only know to be
+valid after a resample anyway?
+
+> 
+> Example 2:
+> P+A -> guest EOI -> P -> delayed MI -> guest IAR -> A -> MI fires
+
+We could be more clever and do the following calculation on every exit:
+
+If you enter with P, and exit with either A or 0, then signal.
+
+If you enter with P+A, and you exit with either P, A, or 0, then signal.
+
+Wouldn't that also solve it?  (Although I have a feeling you'd miss some
+exits in this case).
 
 Thanks,
-Jason
+-Christoffer
