@@ -1,89 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966145AbeCHGMZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 01:12:25 -0500
-Received: from bues.ch ([80.190.117.144]:49954 "EHLO bues.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965207AbeCHGMU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 01:12:20 -0500
-Date: Thu, 8 Mar 2018 07:11:49 +0100
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Re: [PATCH v2] ssb: use put_device() if device_register fail
-Message-ID: <20180308071149.75f3c872@wiggum>
-In-Reply-To: <1520485789-8550-1-git-send-email-arvind.yadav.cs@gmail.com>
-References: <1520485789-8550-1-git-send-email-arvind.yadav.cs@gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S965801AbeCHGRc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 01:17:32 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:45333 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965642AbeCHFBH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 00:01:07 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w2850iqr005981
+X-Nifty-SrcIP: [209.85.213.41]
+X-Google-Smtp-Source: AG47ELso2y0tzT33/TFAK+2wNhQNBqoAQmQs4ToPZWVkVWuHup7zZopupcXuQc5m3El0dywebb4OiX4uLyT36rBtzN8=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- boundary="Sig_/YpWQxs8wW6p/c029KPOf7O/"; protocol="application/pgp-signature"
+In-Reply-To: <1520450729.13685.19.camel@nxp.com>
+References: <1520450729.13685.19.camel@nxp.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 8 Mar 2018 14:00:03 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARDPOaLyvcijXe5VX3hJhxzS-R5hdbk310bRUuZwQFMmw@mail.gmail.com>
+Message-ID: <CAK7LNARDPOaLyvcijXe5VX3hJhxzS-R5hdbk310bRUuZwQFMmw@mail.gmail.com>
+Subject: Re: arm crypto .S_shipped files sometimes get rebuilt randomly
+To: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/YpWQxs8wW6p/c029KPOf7O/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+2018-03-08 4:25 GMT+09:00 Leonard Crestez <leonard.crestez@nxp.com>:
+> Hello,
+>
+> I am using a toolchain with a broken/old version of perl which doesn't
+> include integer.pm and I noticed it triggers occasional build failures
+> on arch/arm64/crypto/sha512-core.S_shipped. Workarounds are easy, but
+> if the purpose of the .S_shipped is to avoid the need to have all
+> dependencies on the build machine then something went wrong?
+>
+> This was introduced by commit 7918ecef073f ("crypto: arm64/sha2 -
+> integrate OpenSSL implementations of SHA256/SHA512"). The makefile
+> rules are not terribly complicated:
+>
+> quiet_cmd_perlasm = PERLASM $@
+>       cmd_perlasm = $(PERL) $(<) void $(@)
+>
+> $(src)/sha512-core.S_shipped: $(src)/sha512-armv8.pl
+>         $(call cmd,perlasm)
+>
+> If a decision to rerun the rule is made based on their relative
+> timestamps but both .S_shipped and sha512-armv8.pl are included in git
+> then won't the result be essentially random, depending on file checkout
+> order?
+>
+> I see random success/failure by just running something like the
+> following multiple times:
+>         rm -rf arch/arm64/crypto
+>         git co -f arch/arm64/crypto
+>         make -- arch/arm64/crypto/
+>
+> A reasonable fix might be to simply drop .S_shipped and require a
+> functional recent version of perl. Then if it fails it will fail
+> reliably.
+>
 
-On Thu,  8 Mar 2018 10:39:49 +0530
-Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
-
-> Never directly free @dev after calling device_register(), even
-> if it returned an error! Always use put_device() to give up the
-> reference initialized.
->=20
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> ---
-> changes in v2:
->              Removed kfree() call for @dev.
->=20
->  drivers/ssb/main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/ssb/main.c b/drivers/ssb/main.c
-> index 65420a9..a7a062b 100644
-> --- a/drivers/ssb/main.c
-> +++ b/drivers/ssb/main.c
-> @@ -521,8 +521,8 @@ static int ssb_devices_register(struct ssb_bus *bus)
->  			ssb_err("Could not register %s\n", dev_name(dev));
->  			/* Set dev to NULL to not unregister
->  			 * dev on error unwinding. */
-> +			put_device(dev);
->  			sdev->dev =3D NULL;
-> -			kfree(devwrap);
->  			goto error;
->  		}
->  		dev_idx++;
+Indeed, this Makefile is weird.
+We have two choices.
 
 
-Would you please put the put_device where the kfree was?
-So that the comment still matches.
-Thanks.
+[1] If we intend to generate
+sha{256,512}-core.S from the perl script during the build,
+this should be:
+
+$(obj)/sha512-core.S: $(src)/sha512-armv8.pl
+        $(call cmd,perlasm)
+
+$(obj)/sha512-core.S: $(src)/sha512-armv8.pl
+        $(call cmd,perlasm)
 
 
---=20
-Michael
+[2] If we want to check-in _shipped files
+and avoid running perl during the build,
+we can surround unnecessary rules with if-conditional, like
 
---Sig_/YpWQxs8wW6p/c029KPOf7O/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
+if REGENERATE_ARM64_SHA
+$(src)/sha256-core.S_shipped: $(src)/sha512-armv8.pl
+        $(call cmd,perlasm)
 
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAlqg1CUACgkQ9TK+HZCN
-iw5sSBAAw3XKYDfxFMPby85iueyKrVC3BA8mW7ExSG8dmmzKQT+8GVBDeBVWQ/Pe
-4fq8DLIxfSi1ONvW7ulSFCqkVlRaDKXWYy2a45q/zSq3HCgocsed2uxPioEKV9Yk
-1KFb/5GhKlBRRkYy50wCXcC4oo5SNcfD2Mlbb9bo3ZE9HFZwgOmdNp1PWjmXuA1O
-6NCKNlg8++gh6g7T8iVF/CyXBwjD0Y18qrr6anJ6J9LrjhndHGZRlcFw+gtVdyuX
-BIgDumUb0TC7h4Z9UvCfvPM9CfGbY7ZEqq9FFdqiLXTwu5HRbwm6SurVsSU7fXB0
-ssHTjGF93DFw4OfyrpZkQSoinZj6xOL3eABrHhdNTxGTVZk5C25XybWXAtFpxvkW
-adNKMw555WQcuzLYLd4/8a9Ty+YOoBRhIrcKpcTXC8Nae58giHp0DlSg9g9t9ywx
-AUhBYp/0bU7Nyn9wQ+8pTQaDHjFSrALrX8+SYM4O3USuyE91x6+7F6LrJJt5eHvj
-hbb0X848zsOgUk9h84IcP1zbcx+CJh4jjjYKm9cBgfNtDfAfDIToX4CkY7+wdrGz
-IXq0usbB11D7cAzuaHXG6SEi7WOO9UjZZdlW8efgRpjjjD8TbmU+VCkw+/USSuMN
-vm6KFyo0Fh/eAvuaOzD8MmMc/XWCuQCyRQtlo2RJ63aGtG0ZYOk=
-=Z4k3
------END PGP SIGNATURE-----
+$(src)/sha512-core.S_shipped: $(src)/sha512-armv8.pl
+        $(call cmd,perlasm)
+endif
 
---Sig_/YpWQxs8wW6p/c029KPOf7O/--
+
+Set REGENERATE_ARM64_SHA=1 from the command line
+only when you need to update the _shipped files.
+
+This is what commit 7373f4f83c71d50f0aece6d94309ab7fde42180f did.
+
+
+
+
+Recently, Kconfig switched to [1].
+So, flex and bison are required to build the kernel.
+
+-- 
+Best Regards
+Masahiro Yamada
