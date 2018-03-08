@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932121AbeCHTwi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 14:52:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60730 "EHLO mail.kernel.org"
+        id S1752342AbeCHTwn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 14:52:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932084AbeCHTwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 14:52:33 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 177782177B
+        id S932084AbeCHTwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 14:52:39 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EF67208FE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -17,9 +17,9 @@ Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 41/54] perf report: Display perf.data header info
-Date: Thu,  8 Mar 2018 16:50:16 -0300
-Message-Id: <20180308195029.14991-42-acme@kernel.org>
+Subject: [PATCH 43/54] perf record: Remove progname from struct record
+Date: Thu,  8 Mar 2018 16:50:18 -0300
+Message-Id: <20180308195029.14991-44-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180308195029.14991-1-acme@kernel.org>
 References: <20180308195029.14991-1-acme@kernel.org>
@@ -29,46 +29,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiri Olsa <jolsa@kernel.org>
 
-Display more header info from perf.data file, following values:
-
-  $ perf report -i perf.data --header-only
-  ...
-  # header version : 1
-  # data offset    : 424
-  # data size      : 3364280
-  # feat offset    : 3364704
-
-It's handy for debuging.
+It's no longer used.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180307155020.32613-3-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20180307155020.32613-5-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/header.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ tools/perf/builtin-record.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index a326e0d8b5b6..e0c3cad0fd8d 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -2318,7 +2318,12 @@ int perf_header__fprintf_info(struct perf_session *session, FILE *fp, bool full)
- 	if (ret == -1)
- 		return -1;
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 31d4d70e2f6a..b81494587120 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -71,7 +71,6 @@ struct record {
+ 	struct auxtrace_record	*itr;
+ 	struct perf_evlist	*evlist;
+ 	struct perf_session	*session;
+-	const char		*progname;
+ 	int			realtime_prio;
+ 	bool			no_buildid;
+ 	bool			no_buildid_set;
+@@ -861,8 +860,6 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 	bool disabled = false, draining = false;
+ 	int fd;
  
--	fprintf(fp, "# captured on: %s", ctime(&st.st_ctime));
-+	fprintf(fp, "# captured on    : %s", ctime(&st.st_ctime));
-+
-+	fprintf(fp, "# header version : %u\n", header->version);
-+	fprintf(fp, "# data offset    : %" PRIu64 "\n", header->data_offset);
-+	fprintf(fp, "# data size      : %" PRIu64 "\n", header->data_size);
-+	fprintf(fp, "# feat offset    : %" PRIu64 "\n", header->feat_offset);
- 
- 	perf_header__process_sections(header, fd, &hd,
- 				      perf_file_section__fprintf_info);
+-	rec->progname = argv[0];
+-
+ 	atexit(record__sig_exit);
+ 	signal(SIGCHLD, sig_handler);
+ 	signal(SIGINT, sig_handler);
 -- 
 2.14.3
