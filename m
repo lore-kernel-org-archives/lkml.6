@@ -1,157 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756017AbeCHPSf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 10:18:35 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:58758 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754184AbeCHPSd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 10:18:33 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BE6BB6024C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: pull-request: wireless-drivers 2018-03-08
-Date: Thu, 08 Mar 2018 17:18:29 +0200
-Message-ID: <87muzifvei.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        id S1756031AbeCHPTD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 10:19:03 -0500
+Received: from cmta18.telus.net ([209.171.16.91]:46923 "EHLO cmta18.telus.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755671AbeCHPTB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 10:19:01 -0500
+X-Authority-Analysis: v=2.2 cv=ebrSR/MH c=1 sm=1 tr=0
+ a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
+ a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=IkcTkHD0fZMA:10 a=aatUQebYAAAA:8
+ a=7R1OktSSXV60aff11NoA:9 a=QEXdDO2ut3YA:10 a=7715FyvI7WU-l6oqrZBK:22
+From: "Doug Smythies" <dsmythies@telus.net>
+To: "'Rafael J. Wysocki'" <rafael@kernel.org>
+Cc: "'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
+        "'Thomas Gleixner'" <tglx@linutronix.de>,
+        "'Frederic Weisbecker'" <fweisbec@gmail.com>,
+        "'Paul McKenney'" <paulmck@linux.vnet.ibm.com>,
+        "'Thomas Ilsche'" <thomas.ilsche@tu-dresden.de>,
+        "'Rik van Riel'" <riel@surriel.com>,
+        "'Aubrey Li'" <aubrey.li@linux.intel.com>,
+        "'Mike Galbraith'" <mgalbraith@suse.de>,
+        "'LKML'" <linux-kernel@vger.kernel.org>,
+        "'Linux PM'" <linux-pm@vger.kernel.org>,
+        "'Peter Zijlstra'" <peterz@infradead.org>,
+        "'Doug Smythies'" <dsmythies@telus.net>
+References: <000a01d3b636$57b75c00$07261400$@net> thHZenCOVQdbpthHaeaJ1a tkIhevBcspApstkMJea2ob
+In-Reply-To: tkIhevBcspApstkMJea2ob
+Subject: RE: [RFC/RFT][PATCH v2 0/6] sched/cpuidle: Idle loop rework
+Date: Thu, 8 Mar 2018 07:18:54 -0800
+Message-ID: <000a01d3b6f0$c870d380$59527a80$@net>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Office Outlook 12.0
+Content-Language: en-ca
+Thread-Index: AdO2YUFyoX23OKWuSDqB3IDDCEMKzwAFca6QAB2782A=
+X-CMAE-Envelope: MS4wfApwp/HThVR1NgJi+8raP+mCJ+VivE3Q0v7hSzPN1dnvzEKvLTCOIVgcc/+JBYRmQGh92npKmQJXrZq2tvJxsSdR8Qo+vJ4KVhFsMuT3u5ChAkmBKUzj
+ uQ9sYnSRqTDwqlTBCeseXJCgJaoZgKolcYj0OEi5srFfCt7DJISWfa+BJIBFFy1pA8MPX/AW2ISw1kJi31FnQjTMPNedBuAouvAXd8cA0bo+YkIzNni0BSKx
+ px3TGV5e2ZJNGDCBskstlzD3UlfNKXXLF6/LW28tLinPPbImV0phgfgvMPp+iLyfkZEBD+rjU0B+b5iU8Q5s0le7+9Gr4/nq0bwNBQHnwyXNw7C3LAAiGQLc
+ U7tamCHV6Ijge9/Zq8Y5SWtNE9SK5DRYjJym2GKKuzKUDbo8Bj7fcimVFi3irK8vf6NlkGiRePKLVxqt+YkN8hRdAEZl7OawL01YyfxG+/xt1TMpvJitrTl6
+ 1Qo4JMVQblfYhdSdseaN6Yso+hh59zvUloqVQFPqWxTmszdiEjR5Ju7eFcKoXYJzWgqjiZ7zF3lj9ocvi0yx1b2HvuHougN2TdRhBw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dave,
+On 2018.03.07 17:29 Doug wrote:
+> On 2018.03.07 14:12 Rafael J. Wysocki wrote:
+>> On Wed, Mar 7, 2018 at 6:04 PM, Doug Smythies <dsmythies@telus.net> wrote:
+>>> On 2018.03.06 12:57 Rafael J. Wysocki wrote:
+>>
+>>> During the test I got some messages (I also got some with the V1 patch set):
+>
+>> Can you please check if that's reporoducible with just the first three
+>> patches in the series applied?
+>
+> I will.
 
-here's a pull requsest to net tree for 4.16. Since the merge window I
-have had some clannges to keep up with some patches but catching up now.
+No issues. Test duration: 7 hours and 26 minutes.
+Boot seems normal. Times re-booted 4.
 
-There should be nothing special here but please let me know if you have
-any problems.
-
-Kalle
-
-The following changes since commit 7ac8ff95f48cbfa609a060fd6a1e361dd62feeb3:
-
-  mvpp2: fix multicast address filter (2018-02-11 22:37:04 -0500)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers.git tags/wireless-drivers-for-davem-2018-03-08
-
-for you to fetch changes up to 455f3e76cfc0d893585a5f358b9ddbe9c1e1e53b:
-
-  brcmfmac: fix P2P_DEVICE ethernet address generation (2018-03-07 16:36:41 +0200)
-
-----------------------------------------------------------------
-wireless-drivers fixes for 4.16
-
-Quote a few fixes as I have not been able to send a pull request
-earlier. Most of the fixes for iwlwifi but also few others, nothing
-really standing out though.
-
-iwlwifi
-
-* fix a bogus warning when freeing a TFD
-
-* fix severe throughput problem with 9000 series
-
-* fix for a bug that caused queue hangs in certain situations
-
-* fix for an issue with IBSS
-
-* fix an issue with rate-scaling in AP-mode
-
-* fix Channel Switch Announcement (CSA) issues with count 0 and 1
-
-* some firmware debugging fixes
-
-* remov a wrong error message when removing keys
-
-* fix a firmware sysassert most usually triggered in IBSS
-
-* a couple of fixes on multicast queues
-
-* a fix with CCMP 256
-
-rtlwifi
-
-* fix loss of signal for rtl8723be
-
-brcmfmac
-
-* add possibility to obtain firmware error
-
-* fix P2P_DEVICE ethernet address generation
-
-----------------------------------------------------------------
-Andrei Otcheretianski (1):
-      iwlwifi: mvm: Fix channel switch for count 0 and 1
-
-Arend Van Spriel (2):
-      brcmfmac: add possibility to obtain firmware error
-      brcmfmac: fix P2P_DEVICE ethernet address generation
-
-Emmanuel Grumbach (1):
-      iwlwifi: pcie: don't warn if we use all the transmit pointers
-
-Haim Dreyfuss (1):
-      iwlwifi: Cancel and set MARKER_CMD timer during suspend-resume
-
-Ilan Peer (2):
-      iwlwifi: mvm: Direct multicast frames to the correct station
-      iwlwifi: mvm: Correctly set the tid for mcast queue
-
-Kalle Valo (2):
-      Merge tag 'iwlwifi-for-kalle-2018-02-16-2' of git://git.kernel.org/.../iwlwifi/iwlwifi-fixes
-      Merge tag 'iwlwifi-for-kalle-2018-03-02' of git://git.kernel.org/.../iwlwifi/iwlwifi-fixes
-
-Larry Finger (1):
-      rtlwifi: rtl8723be: Fix loss of signal
-
-Naftali Goldstein (1):
-      iwlwifi: mvm: always init rs with 20mhz bandwidth rates
-
-Sara Sharon (5):
-      iwlwifi: mvm: fix security bug in PN checking
-      iwlwifi: mvm: fix IBSS for devices that support station type API
-      iwlwifi: mvm: fix TX of CCMP 256
-      iwlwifi: mvm: fix assert 0x2B00 on older FWs
-      iwlwifi: mvm: fix "failed to remove key" message
-
-Shaul Triebitz (2):
-      iwlwifi: align timestamp cancel with timestamp start
-      iwlwifi: avoid collecting firmware dump if not loaded
-
-Ulf Magnusson (1):
-      iwlwifi: fix malformed CONFIG_IWLWIFI_PCIE_RTPM default
-
- .../wireless/broadcom/brcm80211/brcmfmac/core.h    |  2 +
- .../wireless/broadcom/brcm80211/brcmfmac/feature.c | 10 +++++
- .../wireless/broadcom/brcm80211/brcmfmac/fwil.c    |  3 ++
- .../net/wireless/broadcom/brcm80211/brcmfmac/p2p.c | 24 +++++------
- drivers/net/wireless/intel/iwlwifi/Kconfig         |  1 -
- .../net/wireless/intel/iwlwifi/fw/api/time-event.h |  4 +-
- drivers/net/wireless/intel/iwlwifi/fw/dbg.c        | 13 +++++-
- drivers/net/wireless/intel/iwlwifi/fw/dbg.h        |  3 ++
- drivers/net/wireless/intel/iwlwifi/fw/debugfs.h    | 18 ++++++++
- drivers/net/wireless/intel/iwlwifi/fw/init.c       | 12 ++++--
- drivers/net/wireless/intel/iwlwifi/fw/runtime.h    |  7 ++++
- drivers/net/wireless/intel/iwlwifi/mvm/d3.c        |  8 ++++
- drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c   |  5 +--
- drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c  |  3 +-
- drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c  | 49 +++++++++++++++++-----
- drivers/net/wireless/intel/iwlwifi/mvm/mvm.h       |  2 +
- drivers/net/wireless/intel/iwlwifi/mvm/ops.c       | 10 ++++-
- drivers/net/wireless/intel/iwlwifi/mvm/rs.c        | 28 +++++++++----
- drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c      | 39 ++++++++---------
- drivers/net/wireless/intel/iwlwifi/mvm/sta.c       | 33 ++++++++-------
- .../net/wireless/intel/iwlwifi/mvm/time-event.c    |  6 ++-
- drivers/net/wireless/intel/iwlwifi/mvm/tx.c        | 13 ++++--
- drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c  |  2 +-
- drivers/net/wireless/intel/iwlwifi/pcie/tx.c       |  2 +-
- .../net/wireless/realtek/rtlwifi/rtl8723be/hw.c    |  3 +-
- 25 files changed, 212 insertions(+), 88 deletions(-)
+... Doug
