@@ -1,82 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935350AbeCHGo6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 01:44:58 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:42963 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935280AbeCHE63 (ORCPT
+        id S965272AbeCHGwU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 01:52:20 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:42232 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935227AbeCHGv0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 23:58:29 -0500
-X-Google-Smtp-Source: AG47ELv0bpCm3CPAaaz+nHR2MOM8Ld2cEgXvzlISUVn91N1w2rUwDhpmTPcJRjDg3Nnw+/bwRjqE3Q==
-Date: Thu, 8 Mar 2018 10:28:26 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Amit Kucheria <amit.kucheria@linaro.org>
-Cc: linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] arm64: dts: msm8916: Add cpu cooling maps
-Message-ID: <20180308045826.GE6842@vireshk-i7>
-References: <cover.1520398076.git.amit.kucheria@linaro.org>
- <9f7199f0027ef2382e5ccc61a5118d0a00fa2e63.1520340931.git.amit.kucheria@linaro.org>
- <4d134dee2154ae3fa56b375aaed9568e21b1a777.1520398076.git.amit.kucheria@linaro.org>
- <CAOh2x=k6aXd=pPaNKhd-fna58wk4mNcMWgy1Eb=VYwECRtqLaA@mail.gmail.com>
- <CAP245DU-VO9S7jh9d8gZNgM6Hr29P=Uzi4kxb_T8QLqbuQwFig@mail.gmail.com>
+        Thu, 8 Mar 2018 01:51:26 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 817F36024C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
+Subject: Re: [PATCH] slub: Fix misleading 'age' in verbose slub prints
+To: Matthew Wilcox <willy@infradead.org>,
+        Christopher Lameter <cl@linux.com>
+Cc: penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1520423266-28830-1-git-send-email-cpandya@codeaurora.org>
+ <alpine.DEB.2.20.1803071212150.6373@nuc-kabylake>
+ <20180307182212.GA23411@bombadil.infradead.org>
+From: Chintan Pandya <cpandya@codeaurora.org>
+Message-ID: <da1be252-403f-6725-a1b8-223222f7f946@codeaurora.org>
+Date: Thu, 8 Mar 2018 12:21:19 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAP245DU-VO9S7jh9d8gZNgM6Hr29P=Uzi4kxb_T8QLqbuQwFig@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180307182212.GA23411@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07-03-18, 16:56, Amit Kucheria wrote:
-> On Wed, Mar 7, 2018 at 10:44 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > On Wed, Mar 7, 2018 at 10:30 AM, Amit Kucheria <amit.kucheria@linaro.org> wrote:
-> >> From: Rajendra Nayak <rnayak@codeaurora.org>
-> >>
-> >> Add cpu cooling maps for cpu passive trip points. The cpu cooling
-> >> device states are mapped to cpufreq based scaling frequencies.
-> >>
-> >> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> >> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> >> ---
-> >>  arch/arm64/boot/dts/qcom/msm8916.dtsi | 19 +++++++++++++++++++
-> >>  1 file changed, 19 insertions(+)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> >> index e468277..66b318e 100644
-> >> --- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> >> +++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> >> @@ -15,6 +15,7 @@
-> >>  #include <dt-bindings/clock/qcom,gcc-msm8916.h>
-> >>  #include <dt-bindings/reset/qcom,gcc-msm8916.h>
-> >>  #include <dt-bindings/clock/qcom,rpmcc.h>
-> >> +#include <dt-bindings/thermal/thermal.h>
-> >>
-> >>  / {
-> >>         model = "Qualcomm Technologies, Inc. MSM8916";
-> >> @@ -115,6 +116,7 @@
-> >>                         cpu-idle-states = <&CPU_SPC>;
-> >>                         clocks = <&apcs 0>;
-> >>                         operating-points-v2 = <&cpu_opp_table>;
-> >> +                       #cooling-cells = <2>;
-> >
-> > LGTM.
+
+
+On 3/7/2018 11:52 PM, Matthew Wilcox wrote:
+> On Wed, Mar 07, 2018 at 12:13:56PM -0600, Christopher Lameter wrote:
+>> On Wed, 7 Mar 2018, Chintan Pandya wrote:
+>>> In this case, object got freed later but 'age' shows
+>>> otherwise. This could be because, while printing
+>>> this info, we print allocation traces first and
+>>> free traces thereafter. In between, if we get schedule
+>>> out, (jiffies - t->when) could become meaningless.
+>>
+>> Ok then get the jiffies earlier?
+>>
+>>> So, simply print when the object was allocated/freed.
+>>
+>> The tick value may not related to anything in the logs that is why the
+>> "age" is there. How do I know how long ago the allocation was if I look at
+>> the log and only see long and large number of ticks since bootup?
 > 
-> Can I take that as a Reviewed-by?
+> I missed that the first read-through too.  The trick is that there are two printks:
+> 
+> [ 6044.170804] INFO: Allocated in binder_transaction+0x4b0/0x2448 age=731 cpu=3 pid=5314
+> ...
+> [ 6044.216696] INFO: Freed in binder_free_transaction+0x2c/0x58 age=735 cpu=6 pid=2079
+> 
+> If you print the raw value, then you can do the subtraction yourself;
+> if you've subtracted it from jiffies each time, you've at least introduced
+> jitter, and possibly enough jitter to confuse and mislead.
+> 
+This is exactly what I was thinking. But looking up 'age' is easy 
+compared to 'when' and this seems required as from Christopher's
+reply. So, will raise new patch cleaning commit message a bit.
 
-Sure.
-
-Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
-
+Chintan
 -- 
-viresh
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
+Inc. is a member of the Code Aurora Forum, a Linux Foundation
+Collaborative Project
