@@ -1,181 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755842AbeCHMCH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 07:02:07 -0500
-Received: from guitar.tcltek.co.il ([192.115.133.116]:56054 "EHLO
-        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755449AbeCHMCF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 07:02:05 -0500
-Date: Thu, 8 Mar 2018 14:02:00 +0200
-From: Baruch Siach <baruch@tkos.co.il>
-To: Jacob Chen <jacob-chen@iotwrt.com>
-Cc: linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mchehab@kernel.org,
-        linux-media@vger.kernel.org, sakari.ailus@linux.intel.com,
-        hans.verkuil@cisco.com, tfiga@chromium.org, zhengsq@rock-chips.com,
-        laurent.pinchart@ideasonboard.com, zyc@rock-chips.com,
-        eddie.cai.linux@gmail.com, jeffy.chen@rock-chips.com,
-        devicetree@vger.kernel.org, heiko@sntech.de,
-        Jacob Chen <jacob2.chen@rock-chips.com>
-Subject: Re: [PATCH v6 00/17] Rockchip ISP1 Driver
-Message-ID: <20180308120200.wpcjnbglf4x32vrp@tarshish>
-References: <20180308094807.9443-1-jacob-chen@iotwrt.com>
+        id S1755845AbeCHMDM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 07:03:12 -0500
+Received: from enterprise03.smtp.diehl.com ([193.201.238.214]:4014 "EHLO
+        enterprise03.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755460AbeCHMDJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 07:03:09 -0500
+X-$ESA-Groupmapping: true
+X-IronPort-AV: E=Sophos;i="5.47,440,1515452400";
+   d="scan'208";a="9088310"
+From: Denis OSTERLAND <denis.osterland@diehl.com>
+To: "alexandre.belloni@free-electrons.com"
+        <alexandre.belloni@free-electrons.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mgr@pengutronix.de" <mgr@pengutronix.de>,
+        "m.grzeschik@pengutronix.de" <m.grzeschik@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "jdelvare@suse.com" <jdelvare@suse.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [PATCH v3 3/4] rtc: isl1208: add support for isl1219 with tamper
+ detection
+Thread-Topic: [PATCH v3 3/4] rtc: isl1208: add support for isl1219 with tamper
+ detection
+Thread-Index: AQHTtG7aretG2oRbs0uZL0jAjmeJ1KPDncaAgADCjQCAAClaAIABpL4A
+Date: Thu, 8 Mar 2018 11:53:09 +0000
+Message-ID: <1520509988.5415.17.camel@diehl.com>
+References: <1520246373-19023-1-git-send-email-Denis.Osterland@diehl.com>
+         <1520246373-19023-4-git-send-email-Denis.Osterland@diehl.com>
+         <20180306204255.GI3035@piout.net> <1520410754.5976.27.camel@diehl.com>
+         <20180307104714.GL3035@piout.net>
+In-Reply-To: <20180307104714.GL3035@piout.net>
+Accept-Language: de-DE, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.153.3.249]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180308094807.9443-1-jacob-chen@iotwrt.com>
-User-Agent: NeoMutt/20171215
+X-GBS-PROC: byQFdw3ukCM+zy1/poiPc4VMo5BK5JTrdScSVFFRRqOLWuU0OwKxyXw1gXO5gE64
+X-MIMETrack: Itemize by SMTP Server on DIGNS29/SRV/DIEHL-HUB(Release 9.0.1FP10 HF66|February
+ 09, 2018) at 08.03.2018 12:53:09,
+        Serialize by ntm_grab.EXE on DIGNS29/SRV/DIEHL-HUB(Release 9.0.1FP10 HF66|February
+ 09, 2018) at 08.03.2018 12:53:09,
+        Serialize complete at 08.03.2018 12:53:09,
+        Itemize by ntm_grab.EXE on DIGNS29/SRV/DIEHL-HUB(Release 9.0.1FP10 HF66|February
+ 09, 2018) at 08.03.2018 12:53:09,
+        Serialize by Router on DIGNS29/SRV/DIEHL-HUB(Release 9.0.1FP10 HF66|February
+ 09, 2018) at 08.03.2018 12:53:09
+X-TNEFEvaluated: 1
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-ID: <637C70F0AB4BE240999DCB55B60C6422@diehl.internal>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w28C3IqU001049
 
-Hi Jacob,
+Am Mittwoch, den 07.03.2018, 11:47 +0100 schrieb Alexandre Belloni:
+> > > > +
+> > > > +	tv64.tv_sec = rtc_tm_to_time64(&tm);
+> > > Why not using an unsigned long long directly here? time64_t is not the
+> > > correct type.
+> > Do you mean timespec64 is not the correct type here?
+> > Then yes, sould be time64_t.
+> > If you mean time64_t is not the correct type here,
+> > then can you give me some detail why there is no rtc_tm_to_u64,
+> > or something like that?
+> The rtc subsystem forbids negative times, the proper type should be
+> unsigned.
+I will add rtc_vaild_tm check.
 
-On Thu, Mar 08, 2018 at 05:47:50PM +0800, Jacob Chen wrote:
-> This patch series add a ISP(Camera) v4l2 driver for rockchip rk3288/rk3399 
-> SoC.
-> 
-> Wiki Pages:
-> http://opensource.rock-chips.com/wiki_Rockchip-isp1
-> 
-> The deprecated g_mbus_config op is not dropped in  V6 because i am waiting 
-> tomasz's patches.
+Which sequence for time conversion would you expect?
 
-Which tree is this series based on? On top of v4.16-rc4 I get the build 
-failure below. The V4L2_BUF_TYPE_META_OUTPUT macro, for example, is not even 
-in media_tree.git.
+time64_t secs = rtc_tm_to_time64(&tm);
+BUG_ON(secs < 0);
+return sprintf(buf, "%llu\n", (unsigned long long)secs);
 
-drivers/media/platform/rockchip/isp1/isp_params.c:1321:3: error: ‘const struct v4l2_ioctl_ops’ has no member named ‘vidioc_enum_fmt_meta_out’; did you mean ‘vidioc_enum_fmt_meta_cap’?
-  .vidioc_enum_fmt_meta_out = rkisp1_params_enum_fmt_meta_out,
-   ^~~~~~~~~~~~~~~~~~~~~~~~
-   vidioc_enum_fmt_meta_cap
-drivers/media/platform/rockchip/isp1/isp_params.c:1321:30: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-  .vidioc_enum_fmt_meta_out = rkisp1_params_enum_fmt_meta_out,
-                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/media/platform/rockchip/isp1/isp_params.c:1321:30: note: (near initialization for ‘rkisp1_params_ioctl.vidioc_g_std’)
-drivers/media/platform/rockchip/isp1/isp_params.c:1322:3: error: ‘const struct v4l2_ioctl_ops’ has no member named ‘vidioc_g_fmt_meta_out’; did you mean ‘vidioc_g_fmt_meta_cap’?
-  .vidioc_g_fmt_meta_out = rkisp1_params_g_fmt_meta_out,
-   ^~~~~~~~~~~~~~~~~~~~~
-   vidioc_g_fmt_meta_cap
-drivers/media/platform/rockchip/isp1/isp_params.c:1322:27: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-  .vidioc_g_fmt_meta_out = rkisp1_params_g_fmt_meta_out,
-                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/media/platform/rockchip/isp1/isp_params.c:1322:27: note: (near initialization for ‘rkisp1_params_ioctl.vidioc_s_std’)
-drivers/media/platform/rockchip/isp1/isp_params.c:1323:3: error: ‘const struct v4l2_ioctl_ops’ has no member named ‘vidioc_s_fmt_meta_out’; did you mean ‘vidioc_s_fmt_meta_cap’?
-  .vidioc_s_fmt_meta_out = rkisp1_params_g_fmt_meta_out,
-   ^~~~~~~~~~~~~~~~~~~~~
-   vidioc_s_fmt_meta_cap
-drivers/media/platform/rockchip/isp1/isp_params.c:1323:27: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-  .vidioc_s_fmt_meta_out = rkisp1_params_g_fmt_meta_out,
-                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/media/platform/rockchip/isp1/isp_params.c:1323:27: note: (near initialization for ‘rkisp1_params_ioctl.vidioc_querystd’)
-drivers/media/platform/rockchip/isp1/isp_params.c:1324:3: error: ‘const struct v4l2_ioctl_ops’ has no member named ‘vidioc_try_fmt_meta_out’; did you mean ‘vidioc_try_fmt_meta_cap’?
-  .vidioc_try_fmt_meta_out = rkisp1_params_g_fmt_meta_out,
-   ^~~~~~~~~~~~~~~~~~~~~~~
-   vidioc_try_fmt_meta_cap
-drivers/media/platform/rockchip/isp1/isp_params.c:1324:29: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-  .vidioc_try_fmt_meta_out = rkisp1_params_g_fmt_meta_out,
-                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/media/platform/rockchip/isp1/isp_params.c:1324:29: note: (near initialization for ‘rkisp1_params_ioctl.vidioc_enum_input’)
-drivers/media/platform/rockchip/isp1/isp_params.c: In function ‘rkisp1_params_init_vb2_queue’:
-drivers/media/platform/rockchip/isp1/isp_params.c:1462:12: error: ‘V4L2_BUF_TYPE_META_OUTPUT’ undeclared (first use in this function); did you mean ‘V4L2_BUF_TYPE_SDR_OUTPUT’?
-  q->type = V4L2_BUF_TYPE_META_OUTPUT;
-            ^~~~~~~~~~~~~~~~~~~~~~~~~
-            V4L2_BUF_TYPE_SDR_OUTPUT
-drivers/media/platform/rockchip/isp1/isp_params.c:1462:12: note: each undeclared identifier is reported only once for each function it appears in
-  CC      drivers/media/platform/rockchip/isp1/mipi_dphy_sy.o
-drivers/media/platform/rockchip/isp1/isp_params.c: In function ‘rkisp1_register_params_vdev’:
-drivers/media/platform/rockchip/isp1/isp_params.c:1507:43: error: ‘V4L2_CAP_META_OUTPUT’ undeclared (first use in this function); did you mean ‘V4L2_CAP_VBI_OUTPUT’?
-  vdev->device_caps = V4L2_CAP_STREAMING | V4L2_CAP_META_OUTPUT;
-                                           ^~~~~~~~~~~~~~~~~~~~
-                                           V4L2_CAP_VBI_OUTPUT
+or
 
-Thanks,
-baruch
+return sprintf(buf, "%llu\n", (unsigned long long)rtc_tm_to_time64(&tm));
+> 
+> > 
+> > sprintf(buf, "%lld\n", rtc_tm_to_time64(&tm)) seems correct to me.
+> > By the way, is it needed to check for seconds < 0 and return error?
+> Indeed, you shoud check the tm with rtc_valid_tm before calling
+> rtc_tm_to_time64.
+> 
+> > 
+> > > 
+> > > > 
+> > > > -	rc = sysfs_create_group(&client->dev.kobj, &isl1208_rtc_sysfs_files);
+> > > > +	if (id->driver_data == TYPE_ISL1219) {
+> > > > +		rc = i2c_smbus_write_byte_data(client, ISL1208_REG_09, 0x10);
+> > > > +		if (rc < 0) {
+> > > > +			dev_err(&client->dev, "could not enable tamper detection\n");
+> > > > +			return rc;
+> > > > +		}
+> > > > +		isl1208->sysfs_files = &isl1219_rtc_sysfs_files;
+> > > > +	} else {
+> > > > +		isl1208->sysfs_files = &isl1208_rtc_sysfs_files;
+> > > > +	}
+> > > > +
+> > > I don't think the whole isl1208 is necessary. You should probably use
+> > > the .is_visible callback of isl1219_rtc_sysfs_files. This will make the
+> > > changelog quite smaller.
+> > > 
+> > Well, I don´t know how to access i2c_device_id from kobject.
+> > rtc_attr_is_visible shows how to convert kobject to device and rtc_device,
+> > but how to do (id->driver_data == TYPE_ISL1219) here?
+> I'd use i2c_set_clientdata/i2c_get_clientdata but I agree that then it
+> is basically the same as having isl1208->sysfs_files.
+> 
+> but this makes me realize that the timestamp file doesn't end up at the
+> correct location. What you do now is placing it under the i2c device
+> while it should be placed under the rtc device (i.e. in
+> /sys/class/rtc/rtcX/). This was a mistake made back in 2006.
+> 
+> I guess you'll have to add a new group instead of adding to the current
+> one.
+I guess I found a way to do it.
 
-> Jacob Chen (12):
->   media: doc: add document for rkisp1 meta buffer format
->   media: rkisp1: add Rockchip MIPI Synopsys DPHY driver
->   media: rkisp1: add Rockchip ISP1 subdev driver
->   media: rkisp1: add ISP1 statistics driver
->   media: rkisp1: add ISP1 params driver
->   media: rkisp1: add capture device driver
->   media: rkisp1: add rockchip isp1 core driver
->   dt-bindings: Document the Rockchip ISP1 bindings
->   dt-bindings: Document the Rockchip MIPI RX D-PHY bindings
->   ARM: dts: rockchip: add isp node for rk3288
->   ARM: dts: rockchip: add rx0 mipi-phy for rk3288
->   MAINTAINERS: add entry for Rockchip ISP1 driver
-> 
-> Jeffy Chen (1):
->   media: rkisp1: Add user space ABI definitions
-> 
-> Shunqian Zheng (3):
->   media: videodev2.h, v4l2-ioctl: add rkisp1 meta buffer format
->   arm64: dts: rockchip: add isp0 node for rk3399
->   arm64: dts: rockchip: add rx0 mipi-phy for rk3399
-> 
-> Wen Nuan (1):
->   ARM: dts: rockchip: Add dts mipi-dphy TXRX1 node for rk3288
-> 
->  .../devicetree/bindings/media/rockchip-isp1.txt    |   69 +
->  .../bindings/media/rockchip-mipi-dphy.txt          |   90 +
->  Documentation/media/uapi/v4l/meta-formats.rst      |    2 +
->  .../media/uapi/v4l/pixfmt-meta-rkisp1-params.rst   |   20 +
->  .../media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst     |   18 +
->  MAINTAINERS                                        |   10 +
->  arch/arm/boot/dts/rk3288.dtsi                      |   33 +
->  arch/arm64/boot/dts/rockchip/rk3399.dtsi           |   25 +
->  drivers/media/platform/Kconfig                     |   10 +
->  drivers/media/platform/Makefile                    |    1 +
->  drivers/media/platform/rockchip/isp1/Makefile      |    8 +
->  drivers/media/platform/rockchip/isp1/capture.c     | 1751 ++++++++++++++++++++
->  drivers/media/platform/rockchip/isp1/capture.h     |  167 ++
->  drivers/media/platform/rockchip/isp1/common.h      |  110 ++
->  drivers/media/platform/rockchip/isp1/dev.c         |  626 +++++++
->  drivers/media/platform/rockchip/isp1/dev.h         |   93 ++
->  drivers/media/platform/rockchip/isp1/isp_params.c  | 1539 +++++++++++++++++
->  drivers/media/platform/rockchip/isp1/isp_params.h  |   49 +
->  drivers/media/platform/rockchip/isp1/isp_stats.c   |  508 ++++++
->  drivers/media/platform/rockchip/isp1/isp_stats.h   |   58 +
->  .../media/platform/rockchip/isp1/mipi_dphy_sy.c    |  868 ++++++++++
->  .../media/platform/rockchip/isp1/mipi_dphy_sy.h    |   15 +
->  drivers/media/platform/rockchip/isp1/regs.c        |  239 +++
->  drivers/media/platform/rockchip/isp1/regs.h        | 1550 +++++++++++++++++
->  drivers/media/platform/rockchip/isp1/rkisp1.c      | 1177 +++++++++++++
->  drivers/media/platform/rockchip/isp1/rkisp1.h      |  105 ++
->  drivers/media/v4l2-core/v4l2-ioctl.c               |    2 +
->  include/uapi/linux/rkisp1-config.h                 |  798 +++++++++
->  include/uapi/linux/videodev2.h                     |    4 +
->  29 files changed, 9945 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/rockchip-isp1.txt
->  create mode 100644 Documentation/devicetree/bindings/media/rockchip-mipi-dphy.txt
->  create mode 100644 Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst
->  create mode 100644 Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst
->  create mode 100644 drivers/media/platform/rockchip/isp1/Makefile
->  create mode 100644 drivers/media/platform/rockchip/isp1/capture.c
->  create mode 100644 drivers/media/platform/rockchip/isp1/capture.h
->  create mode 100644 drivers/media/platform/rockchip/isp1/common.h
->  create mode 100644 drivers/media/platform/rockchip/isp1/dev.c
->  create mode 100644 drivers/media/platform/rockchip/isp1/dev.h
->  create mode 100644 drivers/media/platform/rockchip/isp1/isp_params.c
->  create mode 100644 drivers/media/platform/rockchip/isp1/isp_params.h
->  create mode 100644 drivers/media/platform/rockchip/isp1/isp_stats.c
->  create mode 100644 drivers/media/platform/rockchip/isp1/isp_stats.h
->  create mode 100644 drivers/media/platform/rockchip/isp1/mipi_dphy_sy.c
->  create mode 100644 drivers/media/platform/rockchip/isp1/mipi_dphy_sy.h
->  create mode 100644 drivers/media/platform/rockchip/isp1/regs.c
->  create mode 100644 drivers/media/platform/rockchip/isp1/regs.h
->  create mode 100644 drivers/media/platform/rockchip/isp1/rkisp1.c
->  create mode 100644 drivers/media/platform/rockchip/isp1/rkisp1.h
->  create mode 100644 include/uapi/linux/rkisp1-config.h
-> 
-> -- 
-> 2.16.1
-> 
+static struct attribute *isl1219_rtc_attrs[] = {
+	&dev_attr_timestamp0.attr,
+	NULL
+};
 
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
+in probe
+	if (id->driver_data == TYPE_ISL1219) {
+		sysfs_merge_group(&rtc->kobj, &isl1219_rtc_sysfs_files);
+
+in remove
+	struct rtc_device *rtc = i2c_get_clientdata(client);
+	sysfs_unmerge_group(&rtc->kobj, &isl1219_rtc_sysfs_files);
+
+As far as I got it, I can call unmerge even if group was not merged before.
+If it works I don´t need struct isl1208 at all.
+> 
+Diehl AKO Stiftung & Co. KG, Pfannerstraße 75-83, 88239 Wangen im Allgäu
+Bereichsvorstand: Dr.-Ing. Michael Siedentop (Sprecher), Josef Fellner (Mitglied)
+Sitz der Gesellschaft: Wangen i.A. – Registergericht: Amtsgericht Ulm HRA 620609 – Persönlich haftende Gesellschafterin: Diehl Verwaltungs-Stiftung – Sitz: Nürnberg – Registergericht: Amtsgericht Nürnberg HRA 11756 –
+Vorstand: Dr.-Ing. E.h. Thomas Diehl (†) (Vorsitzender), Herr Dipl.-Wirtsch.-Ing. Wolfgang Weggen (stellvertretender Vorsitzender), Dipl.-Kfm. Claus Günther, Dipl.-Kfm. Frank Gutzeit, Dr.-Ing. Heinrich Schunk, Dr.-Ing. Michael Siedentop , Dipl.-Kfm. Dr.-Ing. Martin Sommer, Dipl.-Ing. (FH) Rainer von Borstel, Vorsitzender des Aufsichtsrates: Dr. Klaus Maier
+___________________________________________________________________________________________________
+Der Inhalt der vorstehenden E-Mail ist nicht rechtlich bindend. Diese E-Mail enthaelt vertrauliche und/oder rechtlich geschuetzte Informationen.
+Informieren Sie uns bitte, wenn Sie diese E-Mail faelschlicherweise erhalten haben. Bitte loeschen Sie in diesem Fall die Nachricht. Jede unerlaubte Form der Reproduktion, Bekanntgabe, Aenderung, Verteilung und/oder Publikation dieser E-Mail ist strengstens untersagt.
+The contents of the above mentioned e-mail is not legally binding. This e-mail contains confidential and/or legally protected information. Please inform us if you have received this e-mail by mistake and delete it in such a case. Each unauthorized reproduction, disclosure, alteration, distribution and/or publication of this e-mail is strictly prohibited.
