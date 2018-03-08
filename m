@@ -1,116 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935664AbeCHJQ7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 04:16:59 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43476 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755101AbeCHJQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 04:16:53 -0500
-Date: Thu, 8 Mar 2018 04:12:20 -0500
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-        linux-audit@redhat.com, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Oleg Nesterov <oleg@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] audit: set TIF_AUDIT_SYSCALL only if audit filter has
- been populated
-Message-ID: <20180308091220.5hzxjztbiugkxpna@madcap2.tricolour.ca>
-References: <nycvar.YFH.7.76.1803071120410.15778@cbobk.fhfr.pm>
- <CALCETrWhZ5ermtpfMt6UdLAC0M9mv7L_TsTfErGStPxznz-AWg@mail.gmail.com>
- <nycvar.YFH.7.76.1803071745180.15778@cbobk.fhfr.pm>
- <CAHC9VhRnM0FKrHvSgf=Pm2BpQSVT2pLWWH8Z7YvG5ExBYb_Ekg@mail.gmail.com>
- <CAHC9VhTipRUv+RB6JPTrHYkVW1vktg5yodD7iZCqgR9Z57Y+zg@mail.gmail.com>
+        id S935381AbeCHJVH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 04:21:07 -0500
+Received: from mail-pl0-f54.google.com ([209.85.160.54]:33179 "EHLO
+        mail-pl0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751374AbeCHJVF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 04:21:05 -0500
+X-Google-Smtp-Source: AG47ELurogrMJjoOEq1sNM0q/rwp1PXptZzyr6w4tJEt7+WNVzc+VtvAcQ83NGbwf7imqs6tqZ1f6bMpee9PxS1Wl2U=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhTipRUv+RB6JPTrHYkVW1vktg5yodD7iZCqgR9Z57Y+zg@mail.gmail.com>
-User-Agent: NeoMutt/20171027
+In-Reply-To: <CACT4Y+Z6SS2AzYnMjbx_cmrataCLUhdjAx8XyYAnTMdVzndH5w@mail.gmail.com>
+References: <CACT4Y+Z6SS2AzYnMjbx_cmrataCLUhdjAx8XyYAnTMdVzndH5w@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Thu, 8 Mar 2018 10:20:44 +0100
+Message-ID: <CACT4Y+aLOqSqdfRYEyQB33MSXXb-3=APs5B1ZHsXJ2XYXF_Ppw@mail.gmail.com>
+Subject: Re: KASAN poisoning for skb linear data
+To: David Miller <davem@davemloft.net>,
+        Willem de Bruijn <willemb@google.com>,
+        Eric Dumazet <edumazet@google.com>, netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        andreyknvl <andreyknvl@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-07 18:43, Paul Moore wrote:
-> On Wed, Mar 7, 2018 at 6:41 PM, Paul Moore <paul@paul-moore.com> wrote:
-> > On Wed, Mar 7, 2018 at 11:48 AM, Jiri Kosina <jikos@kernel.org> wrote:
-> >> On Wed, 7 Mar 2018, Andy Lutomirski wrote:
-> >>> Wow, this was a long time ago.
-> >>
-> >> Oh yeah; but it now resurfaced on our side, as we are of course receiving
-> >> a lot of requests with respect to making syscall performance great again
-> >> :)
-> >
-> > Ooof.  I'm not sure I can handle making more things "great again" ;)
-> >
-> >>> From memory and a bit of email diving, there are two reasons.
-> >>>
-> >>> 1. The probably was partially solved (by Oleg, IIRC) by making auditctl
-> >>>    -a task,never cause newly spawned tasks to not suck.  Yes, it's a
-> >>>    very partial solution.  After considerable nagging, I got Fedora to
-> >>>    default to -a task,never.
-> >>
-> >> Hm, right; that's a bit inconvenient, because it takes each and every
-> >> vendor having to realize this option, and put it in. Making kernel do the
-> >> right thing automatically sounds like a better option to me.
-> >
-> > This predates audit falling into my lap, but speaking generally I
-> > think it would be good if the kernel did The Right Thing, so long as
-> > it isn't too painful.
-> >
-> >>> 2. This patch, as is, may be a bit problematic.  In particular, if one
-> >>>    task changes the audit rules while another task is in the middle of
-> >>>    the syscall, then it's too late to audit that syscall correctly.
-> >>>    This could be seen as a bug or it could be seen as being just fine.
-> >>
-> >> I don't think this should be a problem, given the fact that the whole
-> >> timing/ordering is not predictable anyway due to scheduling.
-> >>
-> >> Paul, what do you think?
-> >
-> > I'm not overly concerned about the race condition between configuring
-> > the audit filters and syscalls that are currently in-flight; after all
-> > we have that now and "fixing" it would be pretty much impractical
-> > (impossible maybe?).  Most serious audit users configure it during
-> > boot and let it run, frequent runtime changes are not common as far as
-> > I can tell.
+On Mon, Jan 15, 2018 at 3:15 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> Hi,
+>
+> As far as I understand pskb_may_pull() plays important role in packet
+> parsing for all protocols. And we did custom fragmentation of packets
+> emitted via tun (IFF_NAPI_FRAGS). However, it seems that it does not
+> give any results (bugs found), and I think the reason for this is that
+> linear data is rounded up and is usually quite large. So if a parsing
+> function does pskb_may_pull(1), or does not do it at all, it can
+> usually access more and it will go unnoticed. KASAN has an ability to
+> do custom poisoning: it can poison/unpoison any memory range, and then
+> detect any reads/writes to that range. What do you think about adding
+> custom KASAN poisoning to pskb_may_pull() and switching it to
+> non-eager mode (pull only what was requested) under KASAN? Do you
+> think it has potential for finding important bugs? What amount of work
+> is this?
 
-I'd agree the race condition here can't easily be fixed and isn't worth
-fixing for the reasons already stated (rules don't change often and may
-even be locked once in place relatively early, scheduling uncertainties).
-
-> > I just looked quickly at the patch and decided it isn't something I'm
-> > going to be able to carefully review in the time I've got left today,
-> > so it's going to have to wait until tomorrow and Friday ... however,
-> > speaking on general principle I don't have an objection to the ideas
-> > put forth here.
-
-The approach seems a bit draconian since it touches all tasks but only
-when adding the first rule or deleting the last.
-
-What we lose is the ability to set or clear individual task auditing and
-have it stick to speed up non-audited tasks when there are rules
-present, though this isn't currently used, in favour of audit_context
-presence.
-
-> > Andy, if you've got any Reviewed-by/Tested-by/NACK/etc. you want to
-> > add, that would be good to have.
-> 
-> ... and I just realized that linux-audit isn't on the To/CC line,
-> adding them now.
-
-(and Andy's non-NACK missed too...)  The mailing list *is* in MAINTAINERS.
-
-> Link to the patch is below.
-> 
-> * https://marc.info/?t=152041887600003&r=1&w=2
-> 
-> paul moore
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Filed https://bugzilla.kernel.org/show_bug.cgi?id=199055 for this so
+it's not get lost.
