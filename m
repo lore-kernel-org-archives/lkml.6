@@ -1,424 +1,173 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1025811-1520487456-2-1755747263677454605
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-966195-1520486414-2-8966739157549890173
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enro, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520487455; b=FLHVZDRUr0Ca49pxKA5ea+offkqSjpLtdx+IIMdENUPaGJ8
-    UtSFdzRVbyY4dJHERbQwBXTNHucn2QqO4FDRjP976aAIRHRs+IcD+7K9Uuwm1NSe
-    oL4EW11/iQ6831BkOJf5mibMntVXJ8Am4cA4tfODkc8cU3VbvXFQaMCtPDDB7FGG
-    qaeRr1vqUd69s6ZuD84WlJXvY42cjdSGAYRBE38KDKOeSvV+M6sIciJGA5RXLHFC
-    8TXQ4pSRduCD2xDkok0nNwKJoL6DqyaOhpBsL1Yg0gT+flyJtiV2rD7i0Arx3fO7
-    SefU7hDn6y726dUV0sg8StdkSg1zYx0io+JyKvg==
+    t=1520486413; b=pGxsDSORyRjsByCGdZ6p3sce0AMLNZXDaM62lKWruUdNT3y
+    urTPPfnW4yBLSsMkvOnUiAtNKUIdg5ldlpXgjEBS8QEZtZ0I5Es+E1CTsTsmVPSM
+    Dqaubcim2UgImWwFWaQXF8CMNnH4Urc0CBh1Ftb3efKLSLKJqXAVAVCBq44cfY5T
+    PnECK5tAWsybrofRjeVQflOeELCfeVZ19B0Kg0zldYZYoO1EovBeIm9fuvMLrblD
+    6XxFKRjGCQ2lhFU8yxnFnMxCiDMXBwP/A8bbx4Zu7zmo+SXt+p5prfmPApFvEZ4a
+    woizahaNf+HS/Oc8pQcS33IJAK34C5IV9rfH58Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1520487455; bh=zc8kn1y/cS0IIYzHrcRd6dFUkm
-    ZSEhlAroHJqHU8wCg=; b=WfW6XtprbU/6o8EgvuzGEDAYsZ+VqIAnxUQggeZPv8
-    yHL6Cy9DWrKMBVUtPHofrMNuqhYr3Ma9W5n4gK6mWafN73b5dlS1t+fJAYpDplqK
-    5WNwQzVhpVrkVSavyKAlkv9c6M1ZAuX0Tqa4kWGX33edIYPw+N8iY+X3QKYqiS7/
-    9O19Q63vDEe+D1JzHu1aBS8v8V6okfSe35vuhVqc7fd0A0Re34UtNaxZUR3LTuAD
-    4Fd2vRMsXpWy0Y8ql+uFE2K0aylVRFT6YBc1aAaWppJS5RETQSj/4HSzdaNOW0P5
-    adWwsCaHfDrQlfiHx5oohqaDujFsMiiAib8rr7lNlouQ==
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :content-type:content-transfer-encoding:mime-version:sender
+    :list-id; s=arctest; t=1520486413; bh=/uUNOakKj/II4KAwwEfer+Oyyi
+    QmVqQDHtDFOLBWejE=; b=DfcwP2oNtROPaiHlOlg+IvGI4jIwVtsXOtYH5TNZoX
+    QpOF14JdCZaG5KATdQnUphpiJrSxeA3ktRMrnntaBbgkfHmBBkh/zqm6jbC/H9e5
+    ybG+ks09TKdEwN87qF4/5r06WAkM93Zx2lX1b1gcemX/KEB8H79WRTLTux4ZPFoW
+    vUKfDxVRQZBAcDqQOzGDE9ISzErlMFFSG0A1F6Heq1MXnBHUFjlR9PkZIG6tfXp2
+    4+gl347IXU0PnKPYTOgkGDfBN0o9ZpqVr316T9q9UTDkX+zYahipILbTDDiEG1uJ
+    v0jZo8MhsNnX7Oa4evhyMJUhSpt/jk/wxzn6F5OSy+Dw==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=kxtmsEUV x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=0 state=0;
+    x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=canonical.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=kxtmsEUV x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=0 state=0;
+    x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=canonical.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966332AbeCHFhR (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 00:37:17 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:42896 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965533AbeCHFhP (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Thu, 8 Mar 2018 00:37:15 -0500
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-To: gregkh@linuxfoundation.org
-Cc: oneukum@suse.com, willy@infradead.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH v5] usb: core: Add "quirks" parameter for usbcore
-Date: Thu,  8 Mar 2018 13:37:05 +0800
-Message-Id: <20180308053705.2559-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.15.1
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+        id S966708AbeCHFII (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 00:08:08 -0500
+Received: from mail-bl2nam02on0136.outbound.protection.outlook.com ([104.47.38.136]:43456
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S966697AbeCHFIH (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 8 Mar 2018 00:08:07 -0500
+From: Sasha Levin <Alexander.Levin@microsoft.com>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: Yuyang Du <yuyang.du@intel.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 3.18 01/53] usb: gadget: dummy_hcd: Fix wrong
+ power status bit clear/reset in dummy_hub_control()
+Thread-Topic: [PATCH AUTOSEL for 3.18 01/53] usb: gadget: dummy_hcd: Fix wrong
+ power status bit clear/reset in dummy_hub_control()
+Thread-Index: AQHTtpq+uO6dDaGuukSwUDxeiOCyDg==
+Date: Thu, 8 Mar 2018 05:03:05 +0000
+Message-ID: <20180308050230.8876-1-alexander.levin@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0727;7:TKI3ATCJgxF52FEBVp8PNOa51Q6FHFNDMfS6mFz/wm4cY6ufhOmkKhdEXvl1UUjogGwEME81dueVCEUWqJx0LZBlBbru4M6YxxiVWfYdHlN0zbzn2Zi7LkVJaUpoxew04y0iGQTadNGMQmXMv6KLIlTNwvzChaBX4+LbRjA0+vLbTcSWYCzFHtKNms8VEJ92iiEKnO+pVpwKhmaG/r6ycp3lzMixtrIiJ8y/UhdemAHPci/X8kucUWAikSQRtvri;20:F1wONg68Uv7FtDqqleILRdTirX9W/xbwqnA+Vv4qxz3bOaWSJAT2yNtN9gwQXFs/trYxOnAbSHv4qQea/7To2pi26asvC0V/nvN+4s655GUUo92yza2WBWNJnF80kMOFPD8hqXz0N1A13SGEvNpMkaYyj2R49t3/i03BIXR3trI=
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 2b90bd5f-5346-4540-1874-08d584b29066
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0727;
+x-ms-traffictypediagnostic: DM5PR2101MB0727:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com;
+x-microsoft-antispam-prvs: <DM5PR2101MB072728E9CD896E31A891436EFBDF0@DM5PR2101MB0727.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(35762410373642)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231220)(944501244)(52105095)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB0727;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0727;
+x-forefront-prvs: 060503E79B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(39380400002)(396003)(366004)(376002)(346002)(199004)(189003)(81156014)(4326008)(97736004)(105586002)(2906002)(8676002)(26005)(10290500003)(186003)(110136005)(22452003)(7736002)(54906003)(25786009)(3280700002)(305945005)(81166006)(2900100001)(8936002)(102836004)(6506007)(68736007)(106356001)(10090500001)(1076002)(6512007)(86362001)(3846002)(2501003)(14454004)(478600001)(99286004)(575784001)(72206003)(6116002)(3660700001)(5250100002)(53936002)(107886003)(6436002)(5660300001)(316002)(6486002)(36756003)(86612001)(66066001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0727;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: 5QxKTPypJ+c0kgX/vuyI5PWK0AXAGAUx1CU0cdHRcSw77HiuJZmjcQVjb7QnBlj+44YKzisDtXTrL83mqAICP9W90KuPfXZflmWUoUR2cVy+v6KwJdC3+ZZEH3t1JlpuJT67fJ3i0yAUbsi6uLiutEyM/lAShIZO73taSPkKPr9MPig834a3lwAQseOxIMAssEfF/Njp4eZBEOv1YoU+AevK7Q40ihyGWH/AhGc9R8KuwARNY49sPdv71BEcBZ3PDjmz2/u4gfe/1V4KdNuTXj6ObD5F6JBAl4MUvYFmK/Y/WUePtTF/1N4iL+Qg0pYTF6vvOSBAEiOlezi+2hmVdw==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2b90bd5f-5346-4540-1874-08d584b29066
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 05:03:05.3586
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0727
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Trying quirks in usbcore needs to rebuild the driver or the entire
-kernel if it's builtin. It can save a lot of time if usbcore has similar
-ability like "usbhid.quirks=" and "usb-storage.quirks=".
+From: Yuyang Du <yuyang.du@intel.com>
 
-Rename the original quirk detection function to "static" as we introduce
-this new "dynamic" function.
+[ Upstream commit 9f20dfb44d03745d0d3cef2ffb3abf8d8024fa61 ]
 
-Now users can use "usbcore.quirks=" as short term workaround before the
-next kernel release. Also, the quirk parameter can XOR the builtin
-quirks for debugging purpose.
+This fixes the commit: 1cd8fd2887e1 ("usb: gadget: dummy_hcd: add
+SuperSpeed support").
 
-This is inspired by usbhid and usb-storage.
+In the case of ClearPortFeature and USB_PORT_FEAT_POWER, simply clear
+the right bit regardless of what the wValue is.
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Yuyang Du <yuyang.du@intel.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
-v5: Use module_param_cb() to get notified when parameter changes.
-    Replace linked list with array.
+ drivers/usb/gadget/udc/dummy_hcd.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-v4: Use kmalloc() to reduce memory usage.
-    Remove tolower() so we can use capital character in the future.
-
-v3: Stop overridding static quirks.
-    Use XOR for dynamic quirks.
-    Save parsed quirk as a list to avoid parsing quirk table everytime.
-
-v2: Use in-kernel tolower() function.
-
- Documentation/admin-guide/kernel-parameters.txt |  55 ++++++++
- drivers/usb/core/quirks.c                       | 177 +++++++++++++++++++++++-
- drivers/usb/core/usb.c                          |   1 +
- drivers/usb/core/usb.h                          |   1 +
- 4 files changed, 229 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 1d1d53f85ddd..70a7398c20e2 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4368,6 +4368,61 @@
- 
- 	usbcore.nousb	[USB] Disable the USB subsystem
- 
-+	usbcore.quirks=
-+			[USB] A list of quirks entries to supplement or
-+			override the built-in usb core quirk list.  List
-+			entries are separated by commas.  Each entry has
-+			the form VID:PID:Flags where VID and PID are Vendor
-+			and Product ID values (4-digit hex numbers) and
-+			Flags is a set of characters, each corresponding
-+			to a common usb core quirk flag as follows:
-+				a = USB_QUIRK_STRING_FETCH_255 (string
-+					descriptors must not be fetched using
-+					a 255-byte read);
-+				b = USB_QUIRK_RESET_RESUME (device can't resume
-+					correctly so reset it instead);
-+				c = USB_QUIRK_NO_SET_INTF (device can't handle
-+					Set-Interface requests);
-+				d = USB_QUIRK_CONFIG_INTF_STRINGS (device can't
-+					handle its Configuration or Interface
-+					strings);
-+				e = USB_QUIRK_RESET (device can't be reset
-+					(e.g morph devices), don't use reset);
-+				f = USB_QUIRK_HONOR_BNUMINTERFACES (device has
-+					more interface descriptions than the
-+					bNumInterfaces count, and can't handle
-+					talking to these interfaces);
-+				g = USB_QUIRK_DELAY_INIT (device needs a pause
-+					during initialization, after we read
-+					the device descriptor);
-+				h = USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL (For
-+					high speed and super speed interrupt
-+					endpoints, the USB 2.0 and USB 3.0 spec
-+					require the interval in microframes (1
-+					microframe = 125 microseconds) to be
-+					calculated as interval = 2 ^
-+					(bInterval-1).
-+					Devices with this quirk report their
-+					bInterval as the result of this
-+					calculation instead of the exponent
-+					variable used in the calculation);
-+				i = USB_QUIRK_DEVICE_QUALIFIER (device can't
-+					handle device_qualifier descriptor
-+					requests);
-+				j = USB_QUIRK_IGNORE_REMOTE_WAKEUP (device
-+					generates spurious wakeup, ignore
-+					remote wakeup capability);
-+				k = USB_QUIRK_NO_LPM (device can't handle Link
-+					Power Management);
-+				l = USB_QUIRK_LINEAR_FRAME_INTR_BINTERVAL
-+					(Device reports its bInterval as linear
-+					frames instead of the USB 2.0
-+					calculation);
-+				m = USB_QUIRK_DISCONNECT_SUSPEND (Device needs
-+					to be disconnected before suspend to
-+					prevent spurious wakeup)
-+			Example: quirks=0781:5580:bk,0a5c:5834:gij
-+
- 	usbhid.mousepoll=
- 			[USBHID] The interval which mice are to be polled at.
- 
-diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-index f4a548471f0f..42faaeead81b 100644
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -11,6 +11,143 @@
- #include <linux/usb/hcd.h>
- #include "usb.h"
- 
-+struct quirk_entry {
-+	u16 vid;
-+	u16 pid;
-+	u32 flags;
-+};
-+
-+static DEFINE_MUTEX(quirk_mutex);
-+
-+static struct quirk_entry *quirk_list;
-+static unsigned int quirk_count;
-+
-+static char quirks_param[128];
-+
-+static int quirks_param_set(const char *val, const struct kernel_param *kp)
-+{
-+	char *p, *field;
-+	u16 vid, pid;
-+	u32 flags;
-+	size_t i;
-+
-+	mutex_lock(&quirk_mutex);
-+
-+	if (!val || !*val) {
-+		quirk_count = 0;
-+		kfree(quirk_list);
-+		quirk_list = NULL;
-+		goto unlock;
-+	}
-+
-+	for (quirk_count = 1, i = 0; val[i]; i++)
-+		if (val[i] == ',')
-+			quirk_count++;
-+
-+	if (quirk_list) {
-+		kfree(quirk_list);
-+		quirk_list = NULL;
-+	}
-+
-+	quirk_list = kcalloc(quirk_count, sizeof(struct quirk_entry),
-+			     GFP_KERNEL);
-+	if (!quirk_list) {
-+		mutex_unlock(&quirk_mutex);
-+		return -ENOMEM;
-+	}
-+
-+	for (i = 0, p = (char *)val; p && *p;) {
-+		/* Each entry consists of VID:PID:flags */
-+		field = strsep(&p, ":");
-+		if (!field)
+diff --git a/drivers/usb/gadget/udc/dummy_hcd.c b/drivers/usb/gadget/udc/du=
+mmy_hcd.c
+index 783715a9e399..215441690d32 100644
+--- a/drivers/usb/gadget/udc/dummy_hcd.c
++++ b/drivers/usb/gadget/udc/dummy_hcd.c
+@@ -2001,16 +2001,13 @@ static int dummy_hub_control(
+ 			}
+ 			break;
+ 		case USB_PORT_FEAT_POWER:
+-			if (hcd->speed =3D=3D HCD_USB3) {
+-				if (dum_hcd->port_status & USB_PORT_STAT_POWER)
+-					dev_dbg(dummy_dev(dum_hcd),
+-						"power-off\n");
+-			} else
+-				if (dum_hcd->port_status &
+-							USB_SS_PORT_STAT_POWER)
+-					dev_dbg(dummy_dev(dum_hcd),
+-						"power-off\n");
+-			/* FALLS THROUGH */
++			dev_dbg(dummy_dev(dum_hcd), "power-off\n");
++			if (hcd->speed =3D=3D HCD_USB3)
++				dum_hcd->port_status &=3D ~USB_SS_PORT_STAT_POWER;
++			else
++				dum_hcd->port_status &=3D ~USB_PORT_STAT_POWER;
++			set_link_state(dum_hcd);
 +			break;
-+
-+		if (kstrtou16(field, 16, &vid))
-+			break;
-+
-+		field = strsep(&p, ":");
-+		if (!field)
-+			break;
-+
-+		if (kstrtou16(field, 16, &pid))
-+			break;
-+
-+		field = strsep(&p, ",");
-+		if (!field || !*field)
-+			break;
-+
-+		/* Collect the flags */
-+		for (flags = 0; *field; field++) {
-+			switch (*field) {
-+			case 'a':
-+				flags |= USB_QUIRK_STRING_FETCH_255;
-+				break;
-+			case 'b':
-+				flags |= USB_QUIRK_RESET_RESUME;
-+				break;
-+			case 'c':
-+				flags |= USB_QUIRK_NO_SET_INTF;
-+				break;
-+			case 'd':
-+				flags |= USB_QUIRK_CONFIG_INTF_STRINGS;
-+				break;
-+			case 'e':
-+				flags |= USB_QUIRK_RESET;
-+				break;
-+			case 'f':
-+				flags |= USB_QUIRK_HONOR_BNUMINTERFACES;
-+				break;
-+			case 'g':
-+				flags |= USB_QUIRK_DELAY_INIT;
-+				break;
-+			case 'h':
-+				flags |= USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL;
-+				break;
-+			case 'i':
-+				flags |= USB_QUIRK_DEVICE_QUALIFIER;
-+				break;
-+			case 'j':
-+				flags |= USB_QUIRK_IGNORE_REMOTE_WAKEUP;
-+				break;
-+			case 'k':
-+				flags |= USB_QUIRK_NO_LPM;
-+				break;
-+			case 'l':
-+				flags |= USB_QUIRK_LINEAR_FRAME_INTR_BINTERVAL;
-+				break;
-+			case 'm':
-+				flags |= USB_QUIRK_DISCONNECT_SUSPEND;
-+				break;
-+			/* Ignore unrecognized flag characters */
-+			}
-+		}
-+
-+		quirk_list[i++] = (struct quirk_entry)
-+			{ .vid = vid, .pid = pid, .flags = flags };
-+	}
-+
-+	if (i < quirk_count)
-+		quirk_count = i;
-+
-+unlock:
-+	mutex_unlock(&quirk_mutex);
-+
-+	return param_set_copystring(val, kp);
-+}
-+
-+static const struct kernel_param_ops quirks_param_ops = {
-+	.set = quirks_param_set,
-+	.get = param_get_string,
-+};
-+
-+static struct kparam_string quirks_param_string = {
-+	.maxlen = sizeof(quirks_param),
-+	.string = quirks_param,
-+};
-+
-+module_param_cb(quirks, &quirks_param_ops, &quirks_param_string, 0644);
-+MODULE_PARM_DESC(quirks, "Add/modify USB quirks by specifying quirks=vendorID:productID:quirks");
-+
- /* Lists of quirky USB devices, split in device quirks and interface quirks.
-  * Device quirks are applied at the very beginning of the enumeration process,
-  * right after reading the device descriptor. They can thus only match on device
-@@ -320,8 +457,8 @@ static int usb_amd_resume_quirk(struct usb_device *udev)
- 	return 0;
- }
- 
--static u32 __usb_detect_quirks(struct usb_device *udev,
--			       const struct usb_device_id *id)
-+static u32 usb_detect_static_quirks(struct usb_device *udev,
-+				    const struct usb_device_id *id)
- {
- 	u32 quirks = 0;
- 
-@@ -339,21 +476,43 @@ static u32 __usb_detect_quirks(struct usb_device *udev,
- 	return quirks;
- }
- 
-+static u32 usb_detect_dynamic_quirks(struct usb_device *udev)
-+{
-+	u16 vid = le16_to_cpu(udev->descriptor.idVendor);
-+	u16 pid = le16_to_cpu(udev->descriptor.idProduct);
-+	int i, flags = 0;
-+
-+	mutex_lock(&quirk_mutex);
-+
-+	for (i = 0; i < quirk_count; i++) {
-+		if (vid == quirk_list[i].vid && pid == quirk_list[i].pid) {
-+			flags = quirk_list[i].flags;
-+			break;
-+		}
-+	}
-+
-+	mutex_unlock(&quirk_mutex);
-+
-+	return flags;
-+}
-+
- /*
-  * Detect any quirks the device has, and do any housekeeping for it if needed.
-  */
- void usb_detect_quirks(struct usb_device *udev)
- {
--	udev->quirks = __usb_detect_quirks(udev, usb_quirk_list);
-+	udev->quirks = usb_detect_static_quirks(udev, usb_quirk_list);
- 
- 	/*
- 	 * Pixart-based mice would trigger remote wakeup issue on AMD
- 	 * Yangtze chipset, so set them as RESET_RESUME flag.
- 	 */
- 	if (usb_amd_resume_quirk(udev))
--		udev->quirks |= __usb_detect_quirks(udev,
-+		udev->quirks |= usb_detect_static_quirks(udev,
- 				usb_amd_resume_quirk_list);
- 
-+	udev->quirks ^= usb_detect_dynamic_quirks(udev);
-+
- 	if (udev->quirks)
- 		dev_dbg(&udev->dev, "USB quirks for this device: %x\n",
- 			udev->quirks);
-@@ -372,7 +531,7 @@ void usb_detect_interface_quirks(struct usb_device *udev)
- {
- 	u32 quirks;
- 
--	quirks = __usb_detect_quirks(udev, usb_interface_quirk_list);
-+	quirks = usb_detect_static_quirks(udev, usb_interface_quirk_list);
- 	if (quirks == 0)
- 		return;
- 
-@@ -380,3 +539,11 @@ void usb_detect_interface_quirks(struct usb_device *udev)
- 		quirks);
- 	udev->quirks |= quirks;
- }
-+
-+void usb_release_quirk_list(void)
-+{
-+	mutex_lock(&quirk_mutex);
-+	kfree(quirk_list);
-+	quirk_list = NULL;
-+	mutex_unlock(&quirk_mutex);
-+}
-diff --git a/drivers/usb/core/usb.c b/drivers/usb/core/usb.c
-index 2f5fbc56a9dd..0adb6345ff2e 100644
---- a/drivers/usb/core/usb.c
-+++ b/drivers/usb/core/usb.c
-@@ -1259,6 +1259,7 @@ static void __exit usb_exit(void)
- 	if (usb_disabled())
- 		return;
- 
-+	usb_release_quirk_list();
- 	usb_deregister_device_driver(&usb_generic_driver);
- 	usb_major_cleanup();
- 	usb_deregister(&usbfs_driver);
-diff --git a/drivers/usb/core/usb.h b/drivers/usb/core/usb.h
-index 149cc7480971..546a2219454b 100644
---- a/drivers/usb/core/usb.h
-+++ b/drivers/usb/core/usb.h
-@@ -36,6 +36,7 @@ extern void usb_deauthorize_interface(struct usb_interface *);
- extern void usb_authorize_interface(struct usb_interface *);
- extern void usb_detect_quirks(struct usb_device *udev);
- extern void usb_detect_interface_quirks(struct usb_device *udev);
-+extern void usb_release_quirk_list(void);
- extern int usb_remove_device(struct usb_device *udev);
- 
- extern int usb_get_device_descriptor(struct usb_device *dev,
--- 
-2.15.1
-
+ 		default:
+ 			dum_hcd->port_status &=3D ~(1 << wValue);
+ 			set_link_state(dum_hcd);
+@@ -2181,14 +2178,13 @@ static int dummy_hub_control(
+ 				if ((dum_hcd->port_status &
+ 				     USB_SS_PORT_STAT_POWER) !=3D 0) {
+ 					dum_hcd->port_status |=3D (1 << wValue);
+-					set_link_state(dum_hcd);
+ 				}
+ 			} else
+ 				if ((dum_hcd->port_status &
+ 				     USB_PORT_STAT_POWER) !=3D 0) {
+ 					dum_hcd->port_status |=3D (1 << wValue);
+-					set_link_state(dum_hcd);
+ 				}
++			set_link_state(dum_hcd);
+ 		}
+ 		break;
+ 	case GetPortErrorCount:
+--=20
+2.14.1
