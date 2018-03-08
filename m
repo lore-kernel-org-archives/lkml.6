@@ -1,73 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935142AbeCHCk7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 21:40:59 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5749 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934785AbeCHCfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 21:35:00 -0500
-From: Peng Li <lipeng321@huawei.com>
-To: <davem@davemloft.net>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
-        <lipeng321@huawei.com>
-Subject: [PATCH net-next 05/23] {topost} net: hns3: fix for netdev not running problem after calling net_stop and net_open
-Date: Thu, 8 Mar 2018 11:06:30 +0800
-Message-ID: <1520478408-116992-6-git-send-email-lipeng321@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520478408-116992-1-git-send-email-lipeng321@huawei.com>
-References: <1520478408-116992-1-git-send-email-lipeng321@huawei.com>
+        id S935200AbeCHClW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 21:41:22 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35086 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935202AbeCHClH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 21:41:07 -0500
+X-Google-Smtp-Source: AG47ELuOjQKmk2pOej3nzGdPoNwZfDj8FdHqTwcYd4QA/8cQsLa/XZXVnf4Du0GkjjPhOqVwm+2FDUvT+QbpReMz3Ys=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.71.200.31]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CALvZod53CV+R0CeVPDJ=3JAtFjyOfSSSrr3x0tqAWHec0AshTA@mail.gmail.com>
+References: <20180308002016.L3JwBaNZ9%akpm@linux-foundation.org>
+ <41ec9eeb-f0bf-e26d-e3ae-4a684c314360@infradead.org> <d6ec23eb-a886-9fef-99c7-51c7ba4f5d18@infradead.org>
+ <CALvZod53CV+R0CeVPDJ=3JAtFjyOfSSSrr3x0tqAWHec0AshTA@mail.gmail.com>
+From: Shakeel Butt <shakeelb@google.com>
+Date: Wed, 7 Mar 2018 18:41:04 -0800
+Message-ID: <CALvZod7qDS7YN1P45uaOwMK3qPBv=VSMC=8TZSRE_DTaspXxjA@mail.gmail.com>
+Subject: Re: mmotm 2018-03-07-16-19 uploaded (UML & memcg)
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        linux-next@vger.kernel.org, Michal Hocko <mhocko@suse.cz>,
+        mm-commits@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fuyun Liang <liangfuyun1@huawei.com>
+On Wed, Mar 7, 2018 at 6:34 PM, Shakeel Butt <shakeelb@google.com> wrote:
+> On Wed, Mar 7, 2018 at 6:23 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+>> On 03/07/2018 06:20 PM, Randy Dunlap wrote:
+>>> On 03/07/2018 04:20 PM, akpm@linux-foundation.org wrote:
+>>>> The mm-of-the-moment snapshot 2018-03-07-16-19 has been uploaded to
+>>>>
+>>>>    http://www.ozlabs.org/~akpm/mmotm/
+>>>>
+>>>> mmotm-readme.txt says
+>>>>
+>>>> README for mm-of-the-moment:
+>>>>
+>>>> http://www.ozlabs.org/~akpm/mmotm/
+>>>>
+>>>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>>>> more than once a week.
+>>>
+>>> UML on i386 and/or x86_64:
+>>>
+>>> defconfig, CONFIG_MEMCG is not set:
+>>>
+>>> ../fs/notify/group.c: In function 'fsnotify_final_destroy_group':
+>>> ../fs/notify/group.c:41:24: error: dereferencing pointer to incomplete type
+>>>    css_put(&group->memcg->css);
+>>>                         ^
+>>>
+>>> From: Shakeel Butt <shakeelb@google.com>
+>>> Subject: fs: fsnotify: account fsnotify metadata to kmemcg
+>>
+>>
+>>
+>> or x86 any time that CONFIG_MEMCG is not enabled.
+>>
+>>
+>
+> Sorry about that. Replacing this with mem_cgroup_put(group->memcg)
+> should solve the issue on the mm tree.
 
-The link status update function is called by timer every second. But
-net_stop and net_open may be called with very short intervals. The link
-status update function can not detect the link state has changed. It
-causes the netdev not running problem.
-
-This patch fixes it by updating the link state in ae_stop function.
-
-Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c   | 3 +++
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 3 +++
- 2 files changed, 6 insertions(+)
-
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 0b74461..83be4d5 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -3770,6 +3770,9 @@ static void hclge_ae_stop(struct hnae3_handle *handle)
- 
- 	/* reset tqp stats */
- 	hclge_reset_tqp_stats(handle);
-+	del_timer_sync(&hdev->service_timer);
-+	cancel_work_sync(&hdev->service_task);
-+	hclge_update_link_status(hdev);
- }
- 
- static int hclge_get_mac_vlan_cmd_status(struct hclge_vport *vport,
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index ccb6756..eee5e20 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -1061,6 +1061,9 @@ static void hclgevf_ae_stop(struct hnae3_handle *handle)
- 
- 	/* reset tqp stats */
- 	hclgevf_reset_tqp_stats(handle);
-+	del_timer_sync(&hdev->service_timer);
-+	cancel_work_sync(&hdev->service_task);
-+	hclgevf_update_link_status(hdev, 0);
- }
- 
- static void hclgevf_state_init(struct hclgevf_dev *hdev)
--- 
-2.9.3
+Andrew, do you want me to extract mem_cgroup_put() API from Roman's
+patches as a separate patch?
