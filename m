@@ -1,79 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755938AbeCHPN1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 10:13:27 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:53004 "EHLO mail.bootlin.com"
+        id S934257AbeCHPOR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 10:14:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752093AbeCHPNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 10:13:25 -0500
-Date: Thu, 8 Mar 2018 16:13:22 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Mylene Josserand <mylene.josserand@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 4/4] ARM: sunxi: mc-smp: Split out SoC-specific device
- node lookup sequence
-Message-ID: <20180308151322.pz5p26r6bdyngxok@flea.lan>
-References: <20180308150012.19045-1-wens@csie.org>
- <20180308150012.19045-5-wens@csie.org>
+        id S933478AbeCHPON (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 10:14:13 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE6D12133D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
+Date: Thu, 8 Mar 2018 16:14:10 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC/RFT][PATCH v2 1/6] time: tick-sched: Reorganize idle tick
+ management code
+Message-ID: <20180308151407.GA11118@lerouge>
+References: <2067762.1uWBf5RSRc@aspire.rjw.lan>
+ <4136227.b9g9WnMbNJ@aspire.rjw.lan>
+ <20180307231827.GA9367@lerouge>
+ <1938066.lrFpnYERYl@aspire.rjw.lan>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kp4ihnhg32prhomx"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180308150012.19045-5-wens@csie.org>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <1938066.lrFpnYERYl@aspire.rjw.lan>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 08, 2018 at 10:22:26AM +0100, Rafael J. Wysocki wrote:
+> On Thursday, March 8, 2018 12:18:29 AM CET Frederic Weisbecker wrote:
+> > On Tue, Mar 06, 2018 at 10:02:01AM +0100, Rafael J. Wysocki wrote:
+> > > Index: linux-pm/kernel/time/tick-sched.c
+> > > ===================================================================
+> > > --- linux-pm.orig/kernel/time/tick-sched.c
+> > > +++ linux-pm/kernel/time/tick-sched.c
+> > > +
+> > > +/**
+> > > + * tick_nohz_idle_prepare - prepare for entering idle on the current CPU.
+> > > + *
+> > > + * Called when we start the idle loop.
+> > > + */
+> > > +void tick_nohz_idle_prepare(void)
+> > > +{
+> > > +	struct tick_sched *ts;
+> > > +
+> > > +	__tick_nohz_idle_prepare();
+> > > +
+> > > +	local_irq_disable();
+> > > +
+> > > +	ts = this_cpu_ptr(&tick_cpu_sched);
+> > > +	ts->inidle = 1;
+> > > +
+> > > +	local_irq_enable();
+> > > +}
+> > 
+> > Why not calling tick_nohz_start_idle() from there? This is going to
+> > simplify the rest, you won't need to call tick_nohz_idle_go_idle()
+> > from places that don't want to stop the tick and you can then remove
+> > the stop_tick argument.
+> 
+> So I guess I would then use ts->idle_entrytime as "now" in the
+> tick_nohz_get_sleep_length() computation, right?
 
---kp4ihnhg32prhomx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ah right, I missed the need for ktime_get().
 
-On Thu, Mar 08, 2018 at 11:00:12PM +0800, Chen-Yu Tsai wrote:
-> The multi-cluster SMP code maps the address spaces of several hardware
-> control blocks. The device nodes for them are SoC-specific. To help with
-> supporting other SoCs to re-use this code, these bits should be split
-> out to a separate function tied to the enable-method string.
->=20
-> This patch splits out and groups the device node lookup sequence, and
-> adds new data structures to have the newly created function tied to
-> the enable method string. This structure can also be used to encode
-> other differences between the SoCs.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+You can't use ts->idle_entrytime in tick_nohz_get_sleep_length() because
+full dynticks doesn't rely on it.
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+But I think you can just do the following, with a comment explaining that
+idle_entrytime is expected to be fresh enough at this point:
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---kp4ihnhg32prhomx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqhUxEACgkQ0rTAlCFN
-r3Si6g/+PiEOy4bSG1Vv+GHsBt+wlcyM7Z0ifEhSi4D5d3PgQpUxJjf9q+DOvSTH
-GUqya/nqBd2xlXX2pGAMQQE4oivMAm+iT/oVBx4vmwDHVgKAjhei0y9LFftxiV4R
-rTO7dtYayEDFhrzWPJgAqvlXJl9dYTNSvez8Bfc+NLFK2dCk8Edj8f0fZwZig5aO
-daP5wsWyAwl7lTX4Q0Ym0MEpPZYY2uODsfl5zwbNfSo7hWEb4AzTYYF2JkUIBY88
-Wqd0wMYOqDQMteykvJesOPdR+7SgAppaDueELkIuzjCWYoy2A7So5AHR0Vaj8MQo
-GR79kW2OVI8ybnCTmd5CwIhq3yZDKjB00BxvU75URQ4QExbG4bYDBjIS8e/8OiXf
-1dw07vTQmOIWI/GaaZxNU++4JDg0Y5JwIu6/nlzdPcMP156BkUmYBBBS7kNkKpMW
-legQ0xpYR0Jtn5+/QV24o+0ue/kUCNKynq2h3ALOin/PWLEdG+RCDzxSTqQrYtVB
-TTSNdsL62JfPVkdR96cTm6cBpAMtyI6PdOLaluidwwyUQNN+BnkON99BSx+PA5mq
-Dur32iTjuGPq/b+8H8p6yvX//hdP4X5l7QinsRZDLKPPAdNhnNMFlcpwy6tHN3bY
-/osY8i7H5PLBpX3loka5TAl0VERcE6vPMuYZzbE7AoE+2kYtPyQ=
-=L9Mb
------END PGP SIGNATURE-----
-
---kp4ihnhg32prhomx--
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index 57b3de4..8e61796 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -923,7 +923,7 @@ static void __tick_nohz_idle_enter(struct tick_sched *ts, bool stop_tick)
+ 
+ 		ts->idle_calls++;
+ 
+-		expires = tick_nohz_stop_sched_tick(ts, now, cpu);
++		expires = tick_nohz_stop_sched_tick(ts, ts->idle_entrytime, cpu);
+ 		if (expires > 0LL) {
+ 			ts->idle_sleeps++;
+ 			ts->idle_expires = expires;
