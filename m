@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966229AbeCHLAp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 06:00:45 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:60439 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934902AbeCHK7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 05:59:48 -0500
+        id S966284AbeCHLBC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 06:01:02 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6183 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755802AbeCHK7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 05:59:47 -0500
 From: John Garry <john.garry@huawei.com>
 To: <jolsa@redhat.com>, <ak@linux.intel.com>, <peterz@infradead.org>,
         <mingo@redhat.com>, <acme@kernel.org>,
@@ -15,9 +15,9 @@ To: <jolsa@redhat.com>, <ak@linux.intel.com>, <peterz@infradead.org>,
 CC: <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <zhangshaokun@hisilicon.com>,
         "John Garry" <john.garry@huawei.com>
-Subject: [PATCH v3 09/11] perf vendor events arm64: fixup ThunderX2 to use recommended events
-Date: Thu, 8 Mar 2018 18:58:34 +0800
-Message-ID: <1520506716-197429-10-git-send-email-john.garry@huawei.com>
+Subject: [PATCH v3 04/11] perf vendor events: add support for pmu events vendor subdirectory
+Date: Thu, 8 Mar 2018 18:58:29 +0800
+Message-ID: <1520506716-197429-5-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520506716-197429-1-git-send-email-john.garry@huawei.com>
 References: <1520506716-197429-1-git-send-email-john.garry@huawei.com>
@@ -29,91 +29,166 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the Cavium ThunderX2 JSON to use event definitions
-from the ARMv8 recommended events.
+For some architectures (like arm), it is required to support
+a vendor subdirectory and not locate all the JSONs for a
+specific vendor in the same folder.
 
-Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+This is because all the events for the same vendor will be
+placed in the same pmu events table, which may cause conflict.
+This conflict would be in the instance that a vendor's custom
+implemented events do have the same meaning on different platforms,
+so events in the pmu table would conflict. In addition, per list
+command may show events which are not even supported for a given
+platform.
+
+This patch adds support for a arch/vendor/platform directory
+hierarchy, while maintaining backwards-compatibility for existing
+arch/platform structure. In this, each platform would always have
+its own pmu events table.
+
+In generated file pmu_events.c, each platform table name is in
+the format pme{_vendor}_platform, like this:
+
+struct pmu_events_map pmu_events_map[] = {
+{
+	.cpuid = "0x00000000420f5160",
+	.version = "v1",
+	.type = "core",
+	.table = pme_cavium_thunderx2
+},
+{
+	.cpuid = 0,
+	.version = 0,
+	.type = 0,
+	.table = 0,
+},
+};
+
 Signed-off-by: John Garry <john.garry@huawei.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 ---
- .../arch/arm64/cavium/thunderx2/core-imp-def.json  | 50 +++++-----------------
- 1 file changed, 10 insertions(+), 40 deletions(-)
+ tools/perf/pmu-events/README    |  4 +++
+ tools/perf/pmu-events/jevents.c | 64 +++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 62 insertions(+), 6 deletions(-)
 
-diff --git a/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json b/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
-index 2db45c4..bc03c06 100644
---- a/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
-+++ b/tools/perf/pmu-events/arch/arm64/cavium/thunderx2/core-imp-def.json
-@@ -1,62 +1,32 @@
- [
-     {
--        "PublicDescription": "Attributable Level 1 data cache access, read",
--        "EventCode": "0x40",
--        "EventName": "l1d_cache_rd",
--        "BriefDescription": "L1D cache read",
-+        "ArchStdEvent": "L1D_CACHE_RD",
-     },
-     {
--        "PublicDescription": "Attributable Level 1 data cache access, write ",
--        "EventCode": "0x41",
--        "EventName": "l1d_cache_wr",
--        "BriefDescription": "L1D cache write",
-+        "ArchStdEvent": "L1D_CACHE_WR",
-     },
-     {
--        "PublicDescription": "Attributable Level 1 data cache refill, read",
--        "EventCode": "0x42",
--        "EventName": "l1d_cache_refill_rd",
--        "BriefDescription": "L1D cache refill read",
-+        "ArchStdEvent": "L1D_CACHE_REFILL_RD",
-     },
-     {
--        "PublicDescription": "Attributable Level 1 data cache refill, write",
--        "EventCode": "0x43",
--        "EventName": "l1d_cache_refill_wr",
--        "BriefDescription": "L1D refill write",
-+        "ArchStdEvent": "L1D_CACHE_REFILL_WR",
-     },
-     {
--        "PublicDescription": "Attributable Level 1 data TLB refill, read",
--        "EventCode": "0x4C",
--        "EventName": "l1d_tlb_refill_rd",
--        "BriefDescription": "L1D tlb refill read",
-+        "ArchStdEvent": "L1D_TLB_REFILL_RD",
-     },
-     {
--        "PublicDescription": "Attributable Level 1 data TLB refill, write",
--        "EventCode": "0x4D",
--        "EventName": "l1d_tlb_refill_wr",
--        "BriefDescription": "L1D tlb refill write",
-+        "ArchStdEvent": "L1D_TLB_REFILL_WR",
-     },
-     {
--        "PublicDescription": "Attributable Level 1 data or unified TLB access, read",
--        "EventCode": "0x4E",
--        "EventName": "l1d_tlb_rd",
--        "BriefDescription": "L1D tlb read",
-+        "ArchStdEvent": "L1D_TLB_RD",
-     },
-     {
--        "PublicDescription": "Attributable Level 1 data or unified TLB access, write",
--        "EventCode": "0x4F",
--        "EventName": "l1d_tlb_wr",
--        "BriefDescription": "L1D tlb write",
-+        "ArchStdEvent": "L1D_TLB_WR",
-     },
-     {
--        "PublicDescription": "Bus access read",
--        "EventCode": "0x60",
--        "EventName": "bus_access_rd",
--        "BriefDescription": "Bus access read",
-+        "ArchStdEvent": "BUS_ACCESS_RD",
-    },
-    {
--        "PublicDescription": "Bus access write",
--        "EventCode": "0x61",
--        "EventName": "bus_access_wr",
--        "BriefDescription": "Bus access write",
-+        "ArchStdEvent": "BUS_ACCESS_WR",
-    }
- ]
+diff --git a/tools/perf/pmu-events/README b/tools/perf/pmu-events/README
+index 2407abc..655286f 100644
+--- a/tools/perf/pmu-events/README
++++ b/tools/perf/pmu-events/README
+@@ -28,6 +28,10 @@ sub directory. Thus for the Silvermont X86 CPU:
+ 	Cache.json 	Memory.json 	Virtual-Memory.json
+ 	Frontend.json 	Pipeline.json
+ 
++The JSONs folder for a CPU model/family may be placed in the root arch
++folder, or may be placed in a vendor sub-folder under the arch folder
++for instances where the arch and vendor are not the same.
++
+ Using the JSON files and the mapfile, 'jevents' generates the C source file,
+ 'pmu-events.c', which encodes the two sets of tables:
+ 
+diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
+index 1d02faf..7b9e210 100644
+--- a/tools/perf/pmu-events/jevents.c
++++ b/tools/perf/pmu-events/jevents.c
+@@ -572,7 +572,7 @@ static char *file_name_to_table_name(char *fname)
+ 	 * Derive rest of table name from basename of the JSON file,
+ 	 * replacing hyphens and stripping out .json suffix.
+ 	 */
+-	n = asprintf(&tblname, "pme_%s", basename(fname));
++	n = asprintf(&tblname, "pme_%s", fname);
+ 	if (n < 0) {
+ 		pr_info("%s: asprintf() error %s for file %s\n", prog,
+ 				strerror(errno), fname);
+@@ -582,7 +582,7 @@ static char *file_name_to_table_name(char *fname)
+ 	for (i = 0; i < strlen(tblname); i++) {
+ 		c = tblname[i];
+ 
+-		if (c == '-')
++		if (c == '-' || c == '/')
+ 			tblname[i] = '_';
+ 		else if (c == '.') {
+ 			tblname[i] = '\0';
+@@ -739,25 +739,77 @@ static int get_maxfds(void)
+ static FILE *eventsfp;
+ static char *mapfile;
+ 
++static int is_leaf_dir(const char *fpath)
++{
++	DIR *d;
++	struct dirent *dir;
++	int res = 1;
++
++	d = opendir(fpath);
++	if (!d)
++		return 0;
++
++	while ((dir = readdir(d)) != NULL) {
++		if (dir->d_type == DT_DIR && dir->d_name[0] != '.') {
++			res = 0;
++			break;
++		} else if (dir->d_type == DT_UNKNOWN) {
++			char path[PATH_MAX];
++			struct stat st;
++
++			sprintf(path, "%s/%s", fpath, dir->d_name);
++			if (stat(path, &st))
++				break;
++
++			if (S_ISDIR(st.st_mode)) {
++				res = 0;
++				break;
++			}
++		}
++	}
++
++	closedir(d);
++
++	return res;
++}
++
+ static int process_one_file(const char *fpath, const struct stat *sb,
+ 			    int typeflag, struct FTW *ftwbuf)
+ {
+-	char *tblname, *bname  = (char *) fpath + ftwbuf->base;
++	char *tblname, *bname;
+ 	int is_dir  = typeflag == FTW_D;
+ 	int is_file = typeflag == FTW_F;
+ 	int level   = ftwbuf->level;
+ 	int err = 0;
+ 
++	if (level == 2 && is_dir) {
++		/*
++		 * For level 2 directory, bname will include parent name,
++		 * like vendor/platform. So search back from platform dir
++		 * to find this.
++		 */
++		bname = (char *) fpath + ftwbuf->base - 2;
++		for (;;) {
++			if (*bname == '/')
++				break;
++			bname--;
++		}
++		bname++;
++	} else
++		bname = (char *) fpath + ftwbuf->base;
++
+ 	pr_debug("%s %d %7jd %-20s %s\n",
+ 		 is_file ? "f" : is_dir ? "d" : "x",
+ 		 level, sb->st_size, bname, fpath);
+ 
+-	/* base dir */
+-	if (level == 0)
++	/* base dir or too deep */
++	if (level == 0 || level > 3)
+ 		return 0;
+ 
++
+ 	/* model directory, reset topic */
+-	if (level == 1 && is_dir) {
++	if ((level == 1 && is_dir && is_leaf_dir(fpath)) ||
++	    (level == 2 && is_dir)) {
+ 		if (close_table)
+ 			print_events_table_suffix(eventsfp);
+ 
 -- 
 1.9.1
