@@ -1,97 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755156AbeCHBSc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 20:18:32 -0500
-Received: from mga01.intel.com ([192.55.52.88]:45875 "EHLO mga01.intel.com"
+        id S1755165AbeCHBUZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 20:20:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754963AbeCHBSb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 20:18:31 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,438,1515484800";
-   d="scan'208";a="32184272"
-Message-ID: <1520471460.55728.73.camel@intel.com>
-Subject: Re: [PATCH v4 3/4] of: Documentation: Add x86 local APIC ID property
-From: Ivan Gorinov <ivan.gorinov@intel.com>
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>
-Date: Wed, 07 Mar 2018 17:11:00 -0800
-In-Reply-To: <CAL_JsqJ=CPRxCMzTyxhPvSXiT2MNQdfc1tmzXD0utikqqCp+Bw@mail.gmail.com>
-References: <cover.1520450752.git.ivan.gorinov@intel.com>
-         <3a0359afad71abc0c0d682bfcd0dd66055f5d7e5.1520450752.git.ivan.gorinov@intel.com>
-         <CAL_JsqJ=CPRxCMzTyxhPvSXiT2MNQdfc1tmzXD0utikqqCp+Bw@mail.gmail.com>
-Organization: Intel Corporation
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1754875AbeCHBUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 20:20:23 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AF172178B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
+X-Google-Smtp-Source: AG47ELsMb8Yzy8I90H/OlUkNGNRF476j1X2ljkssH2yaaRfQTFLH4P9HMwkkzjQI901waNQQ+ngNP2myZIs9sHqFAFM=
+MIME-Version: 1.0
+In-Reply-To: <DM2PR0201MB0767031248A9F773620722FDB8D80@DM2PR0201MB0767.namprd02.prod.outlook.com>
+References: <1519856861-31384-1-git-send-email-jollys@xilinx.com>
+ <1519856861-31384-3-git-send-email-jollys@xilinx.com> <20180306014549.6t3ae5adzc3cpi5v@rob-hp-laptop>
+ <DM2PR0201MB0767031248A9F773620722FDB8D80@DM2PR0201MB0767.namprd02.prod.outlook.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 7 Mar 2018 19:20:00 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKUC47xB5O2Y6c3efVCjJY=V+XO3xyLTU9rNia40bdZkg@mail.gmail.com>
+Message-ID: <CAL_JsqKUC47xB5O2Y6c3efVCjJY=V+XO3xyLTU9rNia40bdZkg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: clock: Add bindings for ZynqMP clock driver
+To: Jolly Shah <JOLLYS@xilinx.com>
+Cc: "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Shubhrajyoti Datta <shubhraj@xilinx.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rajan Vaja <RAJANV@xilinx.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-03-07 at 14:23 -0600, Rob Herring wrote:
+On Wed, Mar 7, 2018 at 4:47 PM, Jolly Shah <JOLLYS@xilinx.com> wrote:
+> Hi Rob,
+>
+>
+>> -----Original Message-----
+>> From: Rob Herring [mailto:robh@kernel.org]
+>> Sent: Monday, March 05, 2018 5:46 PM
+>> To: Jolly Shah <JOLLYS@xilinx.com>
+>> Cc: mturquette@baylibre.com; sboyd@codeaurora.org;
+>> michal.simek@xilinx.com; mark.rutland@arm.com; linux-clk@vger.kernel.org;
+>> devicetree@vger.kernel.org; Shubhrajyoti Datta <shubhraj@xilinx.com>; linux-
+>> kernel@vger.kernel.org; Jolly Shah <JOLLYS@xilinx.com>; Rajan Vaja
+>> <RAJANV@xilinx.com>; linux-arm-kernel@lists.infradead.org
+>> Subject: Re: [PATCH 2/3] dt-bindings: clock: Add bindings for ZynqMP clock
+>> driver
+>>
+>> On Wed, Feb 28, 2018 at 02:27:40PM -0800, Jolly Shah wrote:
+>> > Add documentation to describe Xilinx ZynqMP clock driver bindings.
+>> >
+>> > Signed-off-by: Jolly Shah <jollys@xilinx.com>
+>> > Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+>> > Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+>> > ---
 
-> > Add new "intel,apic-id" property to allow using CPU descriptions
-> > in Device Tree data provided by the U-Boot loader.
-> > Address specified in 'reg' to be used as default local APIC ID
-> > to avoid breaking existing systems with DTB provided by firmware.
-> Is there some reason to not always use reg? For when the numbering of
-> cpus and timers is different?
+>> > +95         dpll_post_src
+>> > +96         vpll_int
+>> > +97         vpll_pre_src
+>> > +98         vpll_half
+>> > +99         vpll_int_mux
+>> > +100                vpll_post_src
+>> > +101                can0_mio
+>> > +102                can1_mio
+>> > +
+>> > +Example:
+>> > +
+>> > +clk: clk {
+>> > +   #clock-cells = <1>;
+>> > +   compatible = "xlnx,zynqmp-clk";
+>>
+>> How do you control the clocks?
+>
+> Clocks are controlled by a dedicated platform management controller. Above clock ids are used to identify clocks between master and PMU.
 
-Yes, local APIC ID may differ from CPU number.
-For example, in Atom E38xx (u-boot/arch/x86/dts/minnowmax.dts):
+What is the interface to the "platform management controller"? Because
+you have no registers, I'm guessing a firmware interface? If so, then
+just define the firmware node as a clock provider.
 
-	cpus {
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		cpu@0 {
-			device_type = "cpu";
-			compatible = "intel,baytrail-cpu";
-			reg = <0>;
-			intel,apic-id = <0>;
-		};
-
-		cpu@1 {
-			device_type = "cpu";
-			compatible = "intel,baytrail-cpu";
-			reg = <1>;
-			intel,apic-id = <4>;
-		};
-	};
-
-> Of course, we do have the situation on ARM with the GIC that the GIC
-> CPU IDs may be
-> > 
-> > 
-> > Signed-off-by: Ivan Gorinov <ivan.gorinov@intel.com>
-> > ---
-> >  Documentation/devicetree/bindings/x86/ce4100.txt | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/x86/ce4100.txt b/Documentation/devicetree/bindings/x86/ce4100.txt
-> > index b49ae59..d15de48 100644
-> > --- a/Documentation/devicetree/bindings/x86/ce4100.txt
-> > +++ b/Documentation/devicetree/bindings/x86/ce4100.txt
-> > @@ -14,11 +14,17 @@ The CPU node
-> >                 compatible = "intel,ce4100";
-> >                 reg = <0>;
-> >                 lapic = <&lapic0>;
-> Isn't this enough? I can't tell because whatever this points to has no
-> binding documentation.
-
-Local APIC is a part of CPU, not an external device (except for 486 and early Pentium).
-Every CPU has access to its own local APIC registers at the same base address (0xfee00000).
-Therefore, one "lapic" device node can work for all processors in the system.
-
-With more changes in the code, the local APIC description could be made optional
-because every processor can always read its local APIC base address from MSR 0x1b.
-And when x2APIC mode is enabled, the local APIC registers are accessed as model
-specific registers instead of memory-mapped I/O.
-
-> You could perhaps extend it and add a cell with the id value.
-
-This may require different DT data for Linux and U-Boot, or changes in the latter.
+Rob
