@@ -1,196 +1,246 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965968AbeCHJtx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 04:49:53 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34936 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965800AbeCHJtr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 04:49:47 -0500
-Subject: Re: [RFC PATCH] KVM: arm/arm64: vgic: change condition for level
- interrupt resampling
-To: Shunyong Yang <shunyong.yang@hxt-semitech.com>
-Cc: ard.biesheuvel@linaro.org, will.deacon@arm.com, eric.auger@redhat.com,
-        david.daney@cavium.com, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
-        Joey Zheng <yu.zheng@hxt-semitech.com>,
-        Christoffer Dall <cdall@kernel.org>
-References: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <9ad47673-068e-f732-d2ca-9c76a8fbdfbc@arm.com>
-Date: Thu, 8 Mar 2018 09:49:43 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S966030AbeCHJuz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 04:50:55 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:42786 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965100AbeCHJuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 04:50:51 -0500
+Subject: Re: [PATCH v2] f2fs: add nowait aio support
+To: Hyunchul Lee <hyc.lee@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <kernel-team@lge.com>,
+        Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Hyunchul Lee <cheol.lee@lge.com>
+References: <1520493679-17778-1-git-send-email-hyc.lee@gmail.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <40c19e83-cb8c-c9b6-4aa5-74b56f01595f@huawei.com>
+Date: Thu, 8 Mar 2018 17:50:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1520493679-17778-1-git-send-email-hyc.lee@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[updated Christoffer's email address]
-
-Hi Shunyong,
-
-On 08/03/18 07:01, Shunyong Yang wrote:
-> When resampling irqfds is enabled, level interrupt should be
-> de-asserted when resampling happens. On page 4-47 of GIC v3
-> specification IHI0069D, it said,
-> "When the PE acknowledges an SGI, a PPI, or an SPI at the CPU
-> interface, the IRI changes the status of the interrupt to active
-> and pending if:
-> • It is an edge-triggered interrupt, and another edge has been
-> detected since the interrupt was acknowledged.
-> • It is a level-sensitive interrupt, and the level has not been
-> deasserted since the interrupt was acknowledged."
+On 2018/3/8 15:21, Hyunchul Lee wrote:
+> From: Hyunchul Lee <cheol.lee@lge.com>
 > 
-> GIC v2 specification IHI0048B.b has similar description on page
-> 3-42 for state machine transition.
+> This patch adds nowait aio support[1].
 > 
-> When some VFIO device, like mtty(8250 VFIO mdev emulation driver
-> in samples/vfio-mdev) triggers a level interrupt, the status
-> transition in LR is pending-->active-->active and pending.
-> Then it will wait resampling to de-assert the interrupt.
+> Return EAGAIN if any of the following checks fail for direct I/O:
+>   - i_rwsem is not lockable
+>   - Blocks are not allocated at the write location
 > 
-> Current design of lr_signals_eoi_mi() will return false if state
-> in LR is not invalid(Inactive). It causes resampling will not happen
-> in mtty case.
-
-Let me rephrase this, and tell me if I understood it correctly:
-
-- A level interrupt is injected, activated by the guest (LR state=active)
-- guest exits, re-enters, (LR state=pending+active)
-- guest EOIs the interrupt (LR state=pending)
-- maintenance interrupt
-- we don't signal the resampling because we're not in an invalid state
-
-Is that correct?
-
-That's an interesting case, because it seems to invalidate some of the 
-optimization that went in over a year ago.
-
-096f31c4360f KVM: arm/arm64: vgic: Get rid of MISR and EISR fields
-b6095b084d87 KVM: arm/arm64: vgic: Get rid of unnecessary save_maint_int_state
-af0614991ab6 KVM: arm/arm64: vgic: Get rid of unnecessary process_maintenance operation
-
-We could compare the value of the LR before the guest entry with
-the value at exit time, but we still could miss it if we have a
-transition such as P+A -> P -> A and assume a long enough propagation
-delay for the maintenance interrupt (which is very likely).
-
-In essence, we have lost the benefit of EISR, which was to give us a
-way to deal with asynchronous signalling.
-
+> And xfstests generic/471 is passed.
 > 
-> This will cause interrupt fired continuously to guest even 8250 IIR
-> has no interrupt. When 8250's interrupt is configured in shared mode,
-> it will pass interrupt to other drivers to handle. However, there
-> is no other driver involved. Then, a "nobody cared" kernel complaint
-> occurs.
+>  [1]: 6be96d "Introduce RWF_NOWAIT and FMODE_AIO_NOWAIT"
 > 
-> / # cat /dev/ttyS0
-> [    4.826836] random: crng init done
-> [    6.373620] irq 41: nobody cared (try booting with the "irqpoll"
-> option)
-> [    6.376414] CPU: 0 PID: 1307 Comm: cat Not tainted 4.16.0-rc4 #4
-> [    6.378927] Hardware name: linux,dummy-virt (DT)
-> [    6.380876] Call trace:
-> [    6.381937]  dump_backtrace+0x0/0x180
-> [    6.383495]  show_stack+0x14/0x1c
-> [    6.384902]  dump_stack+0x90/0xb4
-> [    6.386312]  __report_bad_irq+0x38/0xe0
-> [    6.387944]  note_interrupt+0x1f4/0x2b8
-> [    6.389568]  handle_irq_event_percpu+0x54/0x7c
-> [    6.391433]  handle_irq_event+0x44/0x74
-> [    6.393056]  handle_fasteoi_irq+0x9c/0x154
-> [    6.394784]  generic_handle_irq+0x24/0x38
-> [    6.396483]  __handle_domain_irq+0x60/0xb4
-> [    6.398207]  gic_handle_irq+0x98/0x1b0
-> [    6.399796]  el1_irq+0xb0/0x128
-> [    6.401138]  _raw_spin_unlock_irqrestore+0x18/0x40
-> [    6.403149]  __setup_irq+0x41c/0x678
-> [    6.404669]  request_threaded_irq+0xe0/0x190
-> [    6.406474]  univ8250_setup_irq+0x208/0x234
-> [    6.408250]  serial8250_do_startup+0x1b4/0x754
-> [    6.410123]  serial8250_startup+0x20/0x28
-> [    6.411826]  uart_startup.part.21+0x78/0x144
-> [    6.413633]  uart_port_activate+0x50/0x68
-> [    6.415328]  tty_port_open+0x84/0xd4
-> [    6.416851]  uart_open+0x34/0x44
-> [    6.418229]  tty_open+0xec/0x3c8
-> [    6.419610]  chrdev_open+0xb0/0x198
-> [    6.421093]  do_dentry_open+0x200/0x310
-> [    6.422714]  vfs_open+0x54/0x84
-> [    6.424054]  path_openat+0x2dc/0xf04
-> [    6.425569]  do_filp_open+0x68/0xd8
-> [    6.427044]  do_sys_open+0x16c/0x224
-> [    6.428563]  SyS_openat+0x10/0x18
-> [    6.429972]  el0_svc_naked+0x30/0x34
-> [    6.431494] handlers:
-> [    6.432479] [<000000000e9fb4bb>] serial8250_interrupt
-> [    6.434597] Disabling IRQ #41
-> 
-> This patch changes the lr state condition in lr_signals_eoi_mi() from
-> invalid(Inactive) to active and pending to avoid this.
-> 
-> I am not sure about the original design of the condition of
-> invalid(active). So, This RFC is sent out for comments.
-> 
-> Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
-> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+> Signed-off-by: Hyunchul Lee <cheol.lee@lge.com>
 > ---
->  virt/kvm/arm/vgic/vgic-v2.c | 4 ++--
->  virt/kvm/arm/vgic/vgic-v3.c | 4 ++--
->  2 files changed, 4 insertions(+), 4 deletions(-)
+> Changes from v1:
+>  - Return EGAIN if dio_rwsem is not lockable in f2fs_direct_IO
+>  - Fix the wrong calculation of last_lblk in f2fs_overwrite_io 
 > 
-> diff --git a/virt/kvm/arm/vgic/vgic-v2.c b/virt/kvm/arm/vgic/vgic-v2.c
-> index e9d840a75e7b..740ee9a5f551 100644
-> --- a/virt/kvm/arm/vgic/vgic-v2.c
-> +++ b/virt/kvm/arm/vgic/vgic-v2.c
-> @@ -46,8 +46,8 @@ void vgic_v2_set_underflow(struct kvm_vcpu *vcpu)
->  
->  static bool lr_signals_eoi_mi(u32 lr_val)
->  {
-> -	return !(lr_val & GICH_LR_STATE) && (lr_val & GICH_LR_EOI) &&
-> -	       !(lr_val & GICH_LR_HW);
-> +	return !((lr_val & GICH_LR_STATE) ^ GICH_LR_STATE) &&
-
-That feels very wrong. You're now signalling the resampling in both
-invalid and pending+active, and the latter state doesn't mean you've
-EOIed anything. You're now over-signalling, and signalling the
-wrong event.
-
-> +	       (lr_val & GICH_LR_EOI) && !(lr_val & GICH_LR_HW);
+>  fs/f2fs/data.c | 47 +++++++++++++++++++++++++++++++++++++----------
+>  fs/f2fs/f2fs.h |  8 ++++++++
+>  fs/f2fs/file.c | 35 +++++++++++++++++++++++++++++------
+>  3 files changed, 74 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 6c3c978..b27ea1e 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -839,13 +839,6 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
+>  	return 0;
 >  }
 >  
->  /*
-> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
-> index 6b329414e57a..43111bba7af9 100644
-> --- a/virt/kvm/arm/vgic/vgic-v3.c
-> +++ b/virt/kvm/arm/vgic/vgic-v3.c
-> @@ -35,8 +35,8 @@ void vgic_v3_set_underflow(struct kvm_vcpu *vcpu)
->  
->  static bool lr_signals_eoi_mi(u64 lr_val)
+> -static inline bool __force_buffered_io(struct inode *inode, int rw)
+> -{
+> -	return (f2fs_encrypted_file(inode) ||
+> -			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
+> -			F2FS_I_SB(inode)->s_ndevs);
+> -}
+> -
+>  int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
 >  {
-> -	return !(lr_val & ICH_LR_STATE) && (lr_val & ICH_LR_EOI) &&
-> -	       !(lr_val & ICH_LR_HW);
-> +	return !((lr_val & ICH_LR_STATE) ^ ICH_LR_STATE) &&
-> +	       (lr_val & ICH_LR_EOI) && !(lr_val & ICH_LR_HW);
+>  	struct inode *inode = file_inode(iocb->ki_filp);
+> @@ -877,7 +870,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+>  
+>  	if (direct_io) {
+>  		map.m_seg_type = rw_hint_to_seg_type(iocb->ki_hint);
+> -		flag = __force_buffered_io(inode, WRITE) ?
+> +		flag = f2fs_force_buffered_io(inode, WRITE) ?
+>  					F2FS_GET_BLOCK_PRE_AIO :
+>  					F2FS_GET_BLOCK_PRE_DIO;
+>  		goto map_blocks;
+> @@ -1121,6 +1114,31 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>  	return err;
 >  }
 >  
->  void vgic_v3_fold_lr_state(struct kvm_vcpu *vcpu)
-> 
+> +bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len)
+> +{
+> +	struct f2fs_map_blocks map;
+> +	block_t last_lblk;
+> +	int err;
+> +
+> +	if (pos + len > i_size_read(inode))
+> +		return false;
+> +
+> +	map.m_lblk = F2FS_BYTES_TO_BLK(pos);
+> +	map.m_next_pgofs = 0;
 
-Assuming I understand the issue correctly, I cannot really see how
-to solve this without reintroducing EISR, which sucks majorly.
+Sorry, additional minor comments,
 
-I'll try to cook something shortly and we can all have a good
-fight about how crap this is.
+map.m_next_pgofs = NULL;
+
+> +	map.m_next_extent = NULL;
+> +	map.m_seg_type = NO_CHECK_TYPE;
+> +	last_lblk = F2FS_BYTES_TO_BLK(pos + len - 1) + 1;
+
+F2FS_BLK_ALIGN(pos + len)?
+
+> +
+> +	while (map.m_lblk < last_lblk) {
+> +		map.m_len = last_lblk - map.m_lblk;
+> +		err = f2fs_map_blocks(inode, &map, 0, 0);
+
+f2fs_map_blocks(.., F2FS_GET_BLOCK_DEFAULT);
 
 Thanks,
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+> +		if (err || map.m_len == 0)
+> +			return false;
+> +		map.m_lblk += map.m_len;
+> +	}
+> +	return true;
+> +}
+> +
+>  static int __get_data_block(struct inode *inode, sector_t iblock,
+>  			struct buffer_head *bh, int create, int flag,
+>  			pgoff_t *next_pgofs, int seg_type)
+> @@ -2306,7 +2324,7 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>  	if (err)
+>  		return err;
+>  
+> -	if (__force_buffered_io(inode, rw))
+> +	if (f2fs_force_buffered_io(inode, rw))
+>  		return 0;
+>  
+>  	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
+> @@ -2314,7 +2332,15 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>  	if (rw == WRITE && whint_mode == WHINT_MODE_OFF)
+>  		iocb->ki_hint = WRITE_LIFE_NOT_SET;
+>  
+> -	down_read(&F2FS_I(inode)->dio_rwsem[rw]);
+> +	if (!down_read_trylock(&F2FS_I(inode)->dio_rwsem[rw])) {
+> +		if (iocb->ki_flags & IOCB_NOWAIT) {
+> +			iocb->ki_hint = hint;
+> +			err = -EAGAIN;
+> +			goto out;
+> +		}
+> +		down_read(&F2FS_I(inode)->dio_rwsem[rw]);
+> +	}
+> +
+>  	err = blockdev_direct_IO(iocb, inode, iter, get_data_block_dio);
+>  	up_read(&F2FS_I(inode)->dio_rwsem[rw]);
+>  
+> @@ -2330,6 +2356,7 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>  		}
+>  	}
+>  
+> +out:
+>  	trace_f2fs_direct_IO_exit(inode, offset, count, rw, err);
+>  
+>  	return err;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index f6dc706..351226e 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -2875,6 +2875,7 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
+>  int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
+>  			struct page *page, enum migrate_mode mode);
+>  #endif
+> +bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len);
+>  
+>  /*
+>   * gc.c
+> @@ -3259,4 +3260,11 @@ static inline bool f2fs_may_encrypt(struct inode *inode)
+>  #endif
+>  }
+>  
+> +static inline bool f2fs_force_buffered_io(struct inode *inode, int rw)
+> +{
+> +	return (f2fs_encrypted_file(inode) ||
+> +			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
+> +			F2FS_I_SB(inode)->s_ndevs);
+> +}
+> +
+>  #endif
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 6a202e5..1051edd 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -479,6 +479,9 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
+>  
+>  	if (err)
+>  		return err;
+> +
+> +	filp->f_mode |= FMODE_NOWAIT;
+> +
+>  	return dquot_file_open(inode, filp);
+>  }
+>  
+> @@ -2895,7 +2898,15 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  	if (unlikely(f2fs_cp_error(F2FS_I_SB(inode))))
+>  		return -EIO;
+>  
+> -	inode_lock(inode);
+> +	if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIRECT))
+> +		return -EINVAL;
+> +
+> +	if (!inode_trylock(inode)) {
+> +		if (iocb->ki_flags & IOCB_NOWAIT)
+> +			return -EAGAIN;
+> +		inode_lock(inode);
+> +	}
+> +
+>  	ret = generic_write_checks(iocb, from);
+>  	if (ret > 0) {
+>  		int err;
+> @@ -2903,11 +2914,23 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  		if (iov_iter_fault_in_readable(from, iov_iter_count(from)))
+>  			set_inode_flag(inode, FI_NO_PREALLOC);
+>  
+> -		err = f2fs_preallocate_blocks(iocb, from);
+> -		if (err) {
+> -			clear_inode_flag(inode, FI_NO_PREALLOC);
+> -			inode_unlock(inode);
+> -			return err;
+> +		if ((iocb->ki_flags & IOCB_NOWAIT) &&
+> +			(iocb->ki_flags & IOCB_DIRECT)) {
+> +				if (!f2fs_overwrite_io(inode, iocb->ki_pos,
+> +						iov_iter_count(from)) ||
+> +					f2fs_has_inline_data(inode) ||
+> +					f2fs_force_buffered_io(inode, WRITE)) {
+> +						inode_unlock(inode);
+> +						return -EAGAIN;
+> +				}
+> +
+> +		} else {
+> +			err = f2fs_preallocate_blocks(iocb, from);
+> +			if (err) {
+> +				clear_inode_flag(inode, FI_NO_PREALLOC);
+> +				inode_unlock(inode);
+> +				return err;
+> +			}
+>  		}
+>  		blk_start_plug(&plug);
+>  		ret = __generic_file_write_iter(iocb, from);
+> 
