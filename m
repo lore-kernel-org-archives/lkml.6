@@ -1,82 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751067AbeCHXfs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 18:35:48 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33034 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750783AbeCHXfr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 18:35:47 -0500
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20180306085530.7b51aa29@vento.lan>
-References: <20180306085530.7b51aa29@vento.lan> <151559583569.13545.12649741692530472663.stgit@warthog.procyon.org.uk>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: dhowells@redhat.com, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH] dvb: Save port number and provide sysfs attributes to pass values to udev
+        id S1751255AbeCHXgQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 18:36:16 -0500
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:38813 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750885AbeCHXgN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 18:36:13 -0500
+X-Google-Smtp-Source: AG47ELu+DNXVG1wy+72f9A8kyYZ85Ltj45LTzaaJVi9LZ5GT2VCvsjH2QKP9jJMYm0W1AQEY+TqnMjkeLjAVGYOnrcM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <536.1520552145.1@warthog.procyon.org.uk>
-Date: Thu, 08 Mar 2018 23:35:45 +0000
-Message-ID: <537.1520552145@warthog.procyon.org.uk>
+In-Reply-To: <mhng-160eeec9-bd53-4c63-901a-630c66a78534@palmer-si-x1c4>
+References: <CAK8P3a2VuYxzy6RmL_w_5f2qHepVRhfVR5P4x9nCUYav1s5n7g@mail.gmail.com>
+ <mhng-160eeec9-bd53-4c63-901a-630c66a78534@palmer-si-x1c4>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 9 Mar 2018 00:36:11 +0100
+X-Google-Sender-Auth: g63zI7HuhWVBVUHI0f1qpwJIhlQ
+Message-ID: <CAK8P3a0nBfwyUS7DuCp46O6NnBQOD8Hb-4B78TeqXQhoRanMPA@mail.gmail.com>
+Subject: Re: RFC: remove the "tile" architecture from glibc
+To: Palmer Dabbelt <palmer@sifive.com>
+Cc: Helmut Grohne <helmut@subdivi.de>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        linux-arch <linux-arch@vger.kernel.org>, metcalf@alum.mit.edu,
+        Henrik Grindal Bakken <hgb@ifi.uio.no>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mauro Carvalho Chehab <mchehab@kernel.org> wrote:
+On Thu, Mar 8, 2018 at 6:14 PM, Palmer Dabbelt <palmer@sifive.com> wrote:
+> On Thu, 08 Mar 2018 07:55:33 PST (-0800), Arnd Bergmann wrote:
+>>
+>> - riscv32 is not yet supported by Linux or glibc, but that seems
+>>   very likely to come in the future, maybe one or two years from
+>>   now.
+>
+>
+> I'm hoping it'll be a lot less than a year away :).
 
-> > +	dvb_class->dev_groups = dvb_class_groups,
-> >  	dvb_class->dev_uevent = dvb_uevent;
-> >  	dvb_class->devnode = dvb_devnode;
-> >  	return 0;
-> 
-> The patch itself looks good, but I'm not seeing any documentation.
+Ah, very good. For some reason I was under the impression that all
+the early hardware with Linux support was 64-bit only, and the
+32-bit Linux port therefore a low priority, but even better if that's
+coming soon.
 
-I should probably add something to Documentation/media/dvb-drivers/udev.rst
-
-> You should likely add something to Documentation/ABI
-
-Any suggestions as to where to add stuff in there?  The README there leaves
-a lot to be desired as to how to name elements - for instance, DVB devices can
-be seen through /sys/class/ and /sys/devices/.
-
-I could put it in sys-class-dvb or sys-devices-dvb - or, arguably, both.
-
-> and to the DVB uAPI (Documentation/media/uapi/dvb).
-
-Likewise, any suggestion as to where in here?  As far as I can tell, the docs
-here don't currently mention sysfs at all.  I'm guessing I'll need to create a
-file specifically to talk about how to use this stuff with udev.
-
-> > +	port->frontends.adapter.port_num = port->nr;
-> > +
-> 
-> Doing it for each multi-adapter device is something that bothers
-> me. The better would be if we could move this to the DVB Kernel,
-> in order to not need to check/fix every driver.
-
-I'm not sure how achievable that is: *port in this case is a private
-cx23885-specific structure object.
-
-> If, otherwise, this is not possible, then we need a patch fixing port_num
-> for all drivers that support multiple adapters.
-> 
-> Also, the risk of forgetting it seems high. So, perhaps we should
-> add a new parameter to some function (like at dvb_register_device
-> or at dvb_register_frontend), in order to make the port number
-> a mandatory attribute.
-
-Hmmm...  The cx23885 driver doesn't call either of these functions as far as I
-can tell - at least, not directly.  Maybe by vb2_dvb_register_bus()?
-
-Note that these attribute files appear for the demux, dvr and net directories
-as well as for the frontend.
-
-Hmmm... further, the port number is no longer getting through and all adapters
-are showing port 0.  The MAC address works, though.  Maybe I should drop the
-port number.
-
-David
+     Arnd
