@@ -1,37 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936100AbeCHRv5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 12:51:57 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44139 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936048AbeCHRvk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 12:51:40 -0500
-Date: Thu, 8 Mar 2018 17:51:39 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v3 1/6] proc/sysctl: Fix typo in
- sysctl_check_table_array()
-Message-ID: <20180308175139.GB4449@wotan.suse.de>
-References: <1519926220-7453-1-git-send-email-longman@redhat.com>
- <1519926220-7453-2-git-send-email-longman@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519926220-7453-2-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+        id S936129AbeCHRwQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 12:52:16 -0500
+Received: from smtprelay0135.hostedemail.com ([216.40.44.135]:34186 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932087AbeCHRwO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 12:52:14 -0500
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:541:599:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1538:1568:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2693:2828:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:3872:4321:5007:7903:10004:10400:10848:11232:11658:11914:12109:12740:12760:12895:13069:13311:13357:13439:14659:21080:21627:30054:30060:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: cub97_4d673d7e0620c
+X-Filterd-Recvd-Size: 1577
+Message-ID: <1520531530.11634.18.camel@perches.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the rdma-fixes
+ tree
+From: Joe Perches <joe@perches.com>
+To: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andy Whitcroft <apw@canonical.com>, Doug Ledford <dledford@redhat.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Leon Romanovsky <leonro@mellanox.com>
+Date: Thu, 08 Mar 2018 09:52:10 -0800
+In-Reply-To: <20180308174444.GG6773@mellanox.com>
+References: <20180308164058.2ad5a158@canb.auug.org.au>
+         <20180308161845.GC6773@mellanox.com> <1520527178.11634.9.camel@perches.com>
+         <20180308170317.GE6773@mellanox.com>
+         <1520529792.11634.12.camel@perches.com>
+         <20180308174444.GG6773@mellanox.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 12:43:35PM -0500, Waiman Long wrote:
-> Signed-off-by: Waiman Long <longman@redhat.com>
+On Thu, 2018-03-08 at 10:44 -0700, Jason Gunthorpe wrote:
+> I only ask becuase I keep seeing these reports from Stephen and
+> usuaully by the time it gets to him it requires a disruptive rebase to
+> fix..
 
-Acked-by: Luis R. Rodriguez <mcgrof@kernel.org>
+If it's a part of a series, it will always require a rebase.
 
-  Luis
+Generally, I think it's a small and relatively unlikely
+problem for checkpatch to bother with as there's already
+a reporting mechanism in-place.
