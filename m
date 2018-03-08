@@ -1,83 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755656AbeCHPMF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 10:12:05 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:37688 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752058AbeCHPMD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 10:12:03 -0500
-X-Google-Smtp-Source: AG47ELu8NUonEyRJDl86uGFygalbtuyWT+HnBodUj6rHtKcLQZKChcoPFRa3RdsAOwzECnkrMpW/rw==
-Date: Thu, 8 Mar 2018 16:11:59 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/3] ARM: dts: tegra: apalis/colibri updates
-Message-ID: <20180308151159.GC13814@ulmo>
-References: <20180210013638.28164-1-marcel@ziswiler.com>
+        id S1755938AbeCHPN1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 10:13:27 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:53004 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752093AbeCHPNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 10:13:25 -0500
+Date: Thu, 8 Mar 2018 16:13:22 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Mylene Josserand <mylene.josserand@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 4/4] ARM: sunxi: mc-smp: Split out SoC-specific device
+ node lookup sequence
+Message-ID: <20180308151322.pz5p26r6bdyngxok@flea.lan>
+References: <20180308150012.19045-1-wens@csie.org>
+ <20180308150012.19045-5-wens@csie.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="MnLPg7ZWsaic7Fhd"
+        protocol="application/pgp-signature"; boundary="kp4ihnhg32prhomx"
 Content-Disposition: inline
-In-Reply-To: <20180210013638.28164-1-marcel@ziswiler.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180308150012.19045-5-wens@csie.org>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---MnLPg7ZWsaic7Fhd
+--kp4ihnhg32prhomx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Feb 10, 2018 at 02:36:35AM +0100, Marcel Ziswiler wrote:
+On Thu, Mar 08, 2018 at 11:00:12PM +0800, Chen-Yu Tsai wrote:
+> The multi-cluster SMP code maps the address spaces of several hardware
+> control blocks. The device nodes for them are SoC-specific. To help with
+> supporting other SoCs to re-use this code, these bits should be split
+> out to a separate function tied to the enable-method string.
 >=20
-> This series fixes the I2C bus frequencies, uses the correct compatible
-> for the RTC and removes an unneeded reg property for Tegra based
-> Toradex Apalis and Colibri modules.
+> This patch splits out and groups the device node lookup sequence, and
+> adds new data structures to have the newly created function tied to
+> the enable method string. This structure can also be used to encode
+> other differences between the SoCs.
 >=20
->=20
-> Marcel Ziswiler (3):
->   apalis_t30/tk1, colibri_t20/t30: fix i2c bus frequencies
->   ARM: dts: tegra: apalis/colibri: use correct compatible for rtc
->   ARM: dts: tegra: apalis/colibri: remove unneeded reg property
->=20
->  arch/arm/boot/dts/tegra124-apalis-eval.dts    |  7 +++----
->  arch/arm/boot/dts/tegra124-apalis.dtsi        |  2 +-
->  arch/arm/boot/dts/tegra20-colibri-512.dtsi    | 16 +++++++++++-----
->  arch/arm/boot/dts/tegra30-apalis-eval.dts     |  4 ++--
->  arch/arm/boot/dts/tegra30-apalis.dtsi         |  3 +--
->  arch/arm/boot/dts/tegra30-colibri-eval-v3.dts |  4 ++--
->  arch/arm/boot/dts/tegra30-colibri.dtsi        |  3 +--
->  7 files changed, 21 insertions(+), 18 deletions(-)
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-Applied, thanks.
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-Thierry
+Maxime
 
---MnLPg7ZWsaic7Fhd
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--kp4ihnhg32prhomx
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhUr8ACgkQ3SOs138+
-s6GusxAAqCyCkcL688gAHUc3s0CGQmJJqeguHAyhM0HFi+z+6z2rtlnSYoJSGq7J
-emp74DisYPJTkQjZV1ZnDf8ZqTXxAaujxHyXeS1uOAnVZC4v8qgUWIl+RsphRu9S
-/P+YTzjeXtTuq8BJSpYGAy/jmzr95j/C10Ko9OHS1tuxgEmS4opXd1QH8VuJZpQI
-SmWNmmjLbrKPzqKeIZJynJUHSMqVVmNTkjbEwmM/4onYWhD4pUzK4j3rooqbAqM6
-IpLFvgkOboC1rJ+eua9ovDjN5FAiUAC/SBCjcB0BgqWiN6NiY+OOP4MFIEsOewmL
-GlJXYHq/V0PFhQFSulfnskG6fyA2QVU/ZnPlnJqrtAXWNYEujSDx9dNEeQa0RNVa
-ilxCp6KtH4XZuD44wiMLeJe7U64D/4B4w0JgDs1DXrpBhf+9ikyDyYl3wJU85L4A
-NMDJvFOBYFAhw12cCEzPUymUeIbbWTbUH03ebqs+2nR//aUbKXgHnkqexQ4UYtUB
-fiusw4dyFvcrx95nQkba64mk7uFXKc6+wuoNPfBcLwf5XlTwZ+ZzwnrMw84R9exN
-G3GgysdJb4wHOL1XPf9xyNGsOjDjBSOSpdEqzVX5+L/cq1bkzBRBOwkTI/MFsQ4y
-MbvXNbUk7Uj8wDCTdsYsItOoXZ4XjhmBG5mGYY0b+2kAKN0lhXw=
-=9g5E
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqhUxEACgkQ0rTAlCFN
+r3Si6g/+PiEOy4bSG1Vv+GHsBt+wlcyM7Z0ifEhSi4D5d3PgQpUxJjf9q+DOvSTH
+GUqya/nqBd2xlXX2pGAMQQE4oivMAm+iT/oVBx4vmwDHVgKAjhei0y9LFftxiV4R
+rTO7dtYayEDFhrzWPJgAqvlXJl9dYTNSvez8Bfc+NLFK2dCk8Edj8f0fZwZig5aO
+daP5wsWyAwl7lTX4Q0Ym0MEpPZYY2uODsfl5zwbNfSo7hWEb4AzTYYF2JkUIBY88
+Wqd0wMYOqDQMteykvJesOPdR+7SgAppaDueELkIuzjCWYoy2A7So5AHR0Vaj8MQo
+GR79kW2OVI8ybnCTmd5CwIhq3yZDKjB00BxvU75URQ4QExbG4bYDBjIS8e/8OiXf
+1dw07vTQmOIWI/GaaZxNU++4JDg0Y5JwIu6/nlzdPcMP156BkUmYBBBS7kNkKpMW
+legQ0xpYR0Jtn5+/QV24o+0ue/kUCNKynq2h3ALOin/PWLEdG+RCDzxSTqQrYtVB
+TTSNdsL62JfPVkdR96cTm6cBpAMtyI6PdOLaluidwwyUQNN+BnkON99BSx+PA5mq
+Dur32iTjuGPq/b+8H8p6yvX//hdP4X5l7QinsRZDLKPPAdNhnNMFlcpwy6tHN3bY
+/osY8i7H5PLBpX3loka5TAl0VERcE6vPMuYZzbE7AoE+2kYtPyQ=
+=L9Mb
 -----END PGP SIGNATURE-----
 
---MnLPg7ZWsaic7Fhd--
+--kp4ihnhg32prhomx--
