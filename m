@@ -1,46 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965528AbeCHKvs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 05:51:48 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:38687 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933352AbeCHKvq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 05:51:46 -0500
-X-Google-Smtp-Source: AG47ELuUXE8YAObBrMRipx/9AEP/9LcEXglHxU9lPc8h6tPROOameJmyGgmyqDQ15rVBGBYcex6D4zEpMUvxpSOOPaA=
-MIME-Version: 1.0
-In-Reply-To: <CAKKbWA5F29HJFOTNfVmt14Qg5rMgrLSsHjY4NQESZL6OKmA95w@mail.gmail.com>
-References: <20180307162430.2664523-1-arnd@arndb.de> <20180307162430.2664523-2-arnd@arndb.de>
- <CACPK8XeVMSeQNkPNp1_vms97H_9rMuk1-DzUAc=s-7o=FmVncw@mail.gmail.com> <CAKKbWA5F29HJFOTNfVmt14Qg5rMgrLSsHjY4NQESZL6OKmA95w@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 8 Mar 2018 11:51:45 +0100
-X-Google-Sender-Auth: _TPr3GpUACcAIUZ8KfPMho9Z5qs
-Message-ID: <CAK8P3a3fCRAuBjLXbjzc+1rYJsW90TDN2URZ=sOHvRNB3kyd6Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: npcm: drop extraneous 'select' statements
-To: Avi Fishman <avifishman70@gmail.com>
-Cc: Joel Stanley <joel@jms.id.au>, Tomer Maimon <tmaimon77@gmail.com>,
-        Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S965875AbeCHKyR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 05:54:17 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39300 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934907AbeCHKyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 05:54:16 -0500
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Cc: linux-block@vger.kernel.org, Laurence Oberman <loberman@redhat.com>,
+        Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH V3 0/4] genirq/affinity: irq vector spread among online CPUs as far as possible
+Date: Thu,  8 Mar 2018 18:53:54 +0800
+Message-Id: <20180308105358.1506-1-ming.lei@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 8, 2018 at 11:46 AM, Avi Fishman <avifishman70@gmail.com> wrote:
-> So at least replace CACHE_L2X0 with MIGHT_HAVE_CACHE_L2X0 then
-> CACHE_L2X0 will be selected by default and user can still remove it.
+Hi,
 
-I looked at the other platforms for this one again, and found that most simply
-select CONFIG_CACHE_L2X0 directly, so we probably want the same here
-after all.
+This patchset tries to spread among online CPUs as far as possible, so
+that we can avoid to allocate too less irq vectors with online CPUs
+mapped.
 
-The ones that use MIGHT_HAVE_CACHE_L2X0 are the platforms
-that have multiple SoCs in one family, and only some of them have an
-L2X0. Is that the case here as well? Usually, the L2X0 is used with
-Cortex-A9 and A5, rarely on older cores, and never on newer
-ones.
+For example, in a 8cores system, 4 cpu cores(4~7) are offline/non present,
+on a device with 4 queues:
 
-       Arnd
+1) before this patchset
+	irq 39, cpu list 0-2
+	irq 40, cpu list 3-4,6
+	irq 41, cpu list 5
+	irq 42, cpu list 7
+
+2) after this patchset
+	irq 39, cpu list 0,4
+	irq 40, cpu list 1,6
+	irq 41, cpu list 2,5
+	irq 42, cpu list 3,7
+
+Without this patchset, only two vectors(39, 40) can be active, but there
+can be 4 active irq vectors after applying this patchset.
+
+One disadvantage is that CPUs from different NUMA node can be mapped to
+one same irq vector. Given generally one CPU should be enough to handle
+one irq vector, it shouldn't be a big deal. Especailly more vectors have
+to be allocated, otherwise performance can be hurt in current
+assignment.
+
+V3:
+	- fix one compile warning reported by kbuild test robot
+
+V2:
+	- address coments from Christoph
+	- mark irq_build_affinity_masks as static
+	- move constification of get_nodes_in_cpumask's parameter into one
+	  prep patch
+	- add Reviewed-by tag
+
+Thanks
+Ming
+
+Ming Lei (4):
+  genirq/affinity: rename *node_to_possible_cpumask as *node_to_cpumask
+  genirq/affinity: move actual irq vector spread into one helper
+  genirq/affinity: support to do irq vectors spread starting from any
+    vector
+  genirq/affinity: irq vector spread among online CPUs as far as
+    possible
+
+ kernel/irq/affinity.c | 145 ++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 94 insertions(+), 51 deletions(-)
+
+-- 
+2.9.5
