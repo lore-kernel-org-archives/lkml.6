@@ -1,104 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936042AbeCHQ4y (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 11:56:54 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48546 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932100AbeCHQ4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 11:56:52 -0500
-Date: Thu, 8 Mar 2018 17:56:10 +0100
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm@vger.kernel.org, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] x86/kvm: use Enlightened VMCS when running on
- Hyper-V
-Message-ID: <20180308165610.GI12290@flask>
-References: <20180226171121.18974-1-vkuznets@redhat.com>
- <20180226171121.18974-6-vkuznets@redhat.com>
- <20180307175611.GF12290@flask>
- <87h8pqyif4.fsf@vitty.brq.redhat.com>
+        id S936029AbeCHQ4k (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 11:56:40 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:41854 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934328AbeCHQyx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 11:54:53 -0500
+From: <gabriel.fernandez@st.com>
+To: <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>
+Subject: [PATCH v2 00/12] Introduce STM32MP1 clock driver
+Date: Thu, 8 Mar 2018 17:53:53 +0100
+Message-ID: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87h8pqyif4.fsf@vitty.brq.redhat.com>
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG4NODE2.st.com
+ (10.75.127.11)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-08_10:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-08 11:23+0100, Vitaly Kuznetsov:
-> Radim Krčmář <rkrcmar@redhat.com> writes:
-> > 2018-02-26 18:11+0100, Vitaly Kuznetsov:
-> >> @@ -3828,7 +4302,12 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf)
-> >>  	vmcs_conf->size = vmx_msr_high & 0x1fff;
-> >>  	vmcs_conf->order = get_order(vmcs_conf->size);
-> >>  	vmcs_conf->basic_cap = vmx_msr_high & ~0x1fff;
-> >> -	vmcs_conf->revision_id = vmx_msr_low;
-> >> +
-> >> +	/* KVM supports Enlightened VMCS v1 only */
-> >> +	if (static_branch_unlikely(&enable_evmcs))
-> >> +		vmcs_conf->revision_id = 1;
-> >
-> > I think we have to put the bottom bits from ms_hyperv.nested_features
-> > here. 16.5.1 Enlightened VMCS Versioning:
-> >
-> >   Each enlightened VMCS structure contains a version field, which is
-> >   reported by the L0 hypervisor (see 2.4.11)
-> 
-> see below
-> 
-> >
-> >> +	else
-> >> +		vmcs_conf->revision_id = vmx_msr_low;
-> >>  
-> >>  	vmcs_conf->pin_based_exec_ctrl = _pin_based_exec_control;
-> >>  	vmcs_conf->cpu_based_exec_ctrl = _cpu_based_exec_control;
-> >> @@ -12414,7 +12908,35 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
-> >>  
-> >>  static int __init vmx_init(void)
-> >>  {
-> >> -	int r = kvm_init(&vmx_x86_ops, sizeof(struct vcpu_vmx),
-> >> +	int r;
-> >> +
-> >> +#if IS_ENABLED(CONFIG_HYPERV)
-> >> +	/*
-> >> +	 * Enlightened VMCS usage should be recommended and the host needs
-> >> +	 * to support eVMCS v1 or above. We can also disable eVMCS support
-> >> +	 * with module parameter.
-> >> +	 */
-> >> +	if (enlightened_vmcs &&
-> >> +	    ms_hyperv.hints & HV_X64_ENLIGHTENED_VMCS_RECOMMENDED &&
-> >> +	    (ms_hyperv.nested_features & 0xff) >= 1) {
-> 
-> > I think we should not proceed with version other than 1 for now -- there
-> > is no mention of backward compatibility in the spec.
-> 
-> I think the check is correct. eVMCS version represents the format of the
-> structure in memory. New versions may have nothing in common but at the
-> same time Ver1 support can't be dropped from future Hyper-V versions
-> without regressing L1s which don't support new version.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-I am concerned because Intel doesn't and eVMCS is based on VMCS, so
-maybe they are going to use the live migration notifier to disable eVMCS
-on incompatible versions.  TLFS points that they plan to handle eVMCS
-versions the same as Intel, but the spec might just be misleading.
+v2:
+  - Don't use MFD, use existing binding of STM32 RCC.
+  - Rework Peripheral and Kernel clocks
+  - cosmetic changes
 
-> So currently we check that L0 supports at least ver1 (or some newer
-> version which implies all previously released versions are supported
-> too) and we declare that KVM supports ver1 exactly (this is the format
-> of the structure we put to memory and share with L0). We can't declare
-> support for any other version.
+This patch-set introduces clock driver for STM32MP157 based on Arm Cortex-A7.
+The driver patch is split in several patches (by kind of clock) to facilitate
+code reviewing.
 
-Yes, I'm saying that we don't proceed with any other version than 1.
+Gabriel Fernandez (12):
+  dt-bindings: Document STM32MP1 Reset Clock Controller (RCC) bindings
+  clk: stm32mp1: Introduce STM32MP1 clock driver
+  clk: stm32mp1: add MP1 gate for hse/hsi/csi oscillators
+  clk: stm32mp1: add Source Clocks for PLLs
+  clk: stm32mp1: add PLL clocks
+  clk: stm32mp1: add Post-dividers for PLL
+  clk: stm32mp1: add Sub System clocks
+  clk: stm32mp1: add Kernel timers
+  clk: stm32mp1: add Peripheral & Kernel Clocks
+  clk: stm32mp1: add RTC clock
+  clk: stm32mp1: add MCO clocks
+  clk: stm32mp1: add Debug clocks
 
-> Currently, it is only Ver1 on WS2016.
+ .../devicetree/bindings/clock/st,stm32mp1-rcc.txt  |   60 +
+ drivers/clk/Kconfig                                |    6 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-stm32mp1.c                         | 2117 ++++++++++++++++++++
+ include/dt-bindings/clock/stm32mp1-clks.h          |  254 +++
+ 5 files changed, 2438 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.txt
+ create mode 100644 drivers/clk/clk-stm32mp1.c
+ create mode 100644 include/dt-bindings/clock/stm32mp1-clks.h
 
-Right.  It should be an easy bug to spot, so I'm ok with the current
-version.
+-- 
+1.9.1
