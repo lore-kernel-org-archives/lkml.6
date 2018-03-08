@@ -1,100 +1,86 @@
-Return-Path: <sudeep.holla@arm.com>
-X-Google-Smtp-Source: AG47ELssdZ34th/MUC2+Cu4+JUrJt5S3TjQHwO86Y3+TOxmgGntLn8nrnYl8WmnVA0GQXZtquHpt
-ARC-Seal: i=1; a=rsa-sha256; t=1520511547; cv=none;
+Return-Path: <stefan.wahren@i2se.com>
+X-Google-Smtp-Source: AG47ELshFnh4QiQV1kpn4HnV+35KwPkMkgAY91kcOWi0bNLIjaQBtM5fueM+yD+I/gWkGzcppEM7
+ARC-Seal: i=1; a=rsa-sha256; t=1520537422; cv=none;
         d=google.com; s=arc-20160816;
-        b=G/4CS4iO96znfRqcox1ptVPoMOSQfWchEsGPmjgAKRuluEmYQ7TJcYzXQ89nd2RqrM
-         FnSSHgH7q0QruT+LnV0/j3fzdwNeCD6EYHBUxiyRAIJStNv+iRkB8RanY+xHk5DMYsPa
-         LrWo55Ru0zqEKBTcqe1g7AkboPDUg+FN61lnYqDF/jF9TMVM32lwOrUPnHjyGNuzqDkI
-         Y7car5HbnFMOuYgbUfXclzqApXlpfm0UtMoR0R63PEbB3ee85Y1YJLJBkuIniuLYVm6u
-         0c9A76xLT2wKYHGPemoZELTexOXPNet6KespcMBOveHr3nf16H+IAI2d/dSyUAq9I0i6
-         p9ow==
+        b=b1airEvHeJAzwfu8t2F2H3h/dpoDpZhRvHJ0tjVH7u9mga7dL8EP8m4uW80srcjLfE
+         1eSZBsmgRDCv2xt3IsNXsUzm2OnMa3mJyIXwjzmTxcxWZpL6fpQgS/Y2J0pDI+a8/mMi
+         M8ZCORy3lxj9wN9/8+SqpCbDX5K1LmPAu+spo5fj3Bj3UyGruNFVr8qg7BgXWZAqArU+
+         jDNV/oUtrU6IOf+ZBmP0E/i9tITsZTcCAdW1wluJWyYgA7M3Gz2h0vRdAy++xDbkYLZM
+         Y0Fw3SagCynYjvfWXFfQFq2pkPx+pEWgCTqEFA2brOnyrxwaL/CZJN98ObsrZ6U8RdhW
+         azoA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:organization:from:references:to:subject
-         :cc:arc-authentication-results;
-        bh=b0/XVmZExlqJwgvL4HDa6ig4VN6G2SccwrgyVTwEd84=;
-        b=lNfdkn0LKi9ogAAS0wZwtmz3buUb9lbxfZy6AcuKndQdcXit6FQV3Jsr/HABmY3rs1
-         aYsXc8L5XSGhaKK0uiFNVaEe0FUgInffmwpIY+DcVX5P1k1Ix5dpvK24YRJTlm8CmRFR
-         V/9q0h1Boa3fk+w4+b52G/yVRlKSyJXw3UqLlvl6b0SHVgsmnNnogp/DWDnK673wWZJx
-         M/gktVOIKrooZSyZfaq49csjjkwHAJUgQdku+FBTc2gSm7MKATze8XFlVq72lr3Zz1TE
-         e6UxPnpZVIMiHasZFt9B1TW/70UYsShY4r72ctSRFgg14lTj8NnnQaLNi2OYXGrsWJ8Z
-         DF/Q==
+        h=importance:content-transfer-encoding:mime-version:subject
+         :references:in-reply-to:message-id:cc:to:from:date
+         :arc-authentication-results;
+        bh=5Q4NO8D8jXrpQF7IZl1ra8cWAePUOYT762deyhyfQbg=;
+        b=lyQ9SQVEZ4XiuIyZJA9nSFlp1SFCaPYUPimmWmtY5D8qHUFfT/aUfGYR32lDnVFMw2
+         5Y4QKVibmcc69MUZMczLvEhRVh1foMNdy8EmD7hv46R/gFOw7v9u96fXEZ+ddY2C6t/B
+         Jf9a2s/n8paFJdrS64HTEotbr5TC4xgnict36zDECFRYHJX1D1kxLoXkzfLJkT8R3Dec
+         ajISFZ4erivpQI16NOAkvyY0/PNdVEsM4oTR/7q9W4IBdlzX6BzimJmOMY6c53OG2478
+         ppfNLc35CVTxlkCMdtwAIJBRt6g/gAThGdw8MSfIYfXrofWrLTMpFTmIAvHDkHT3lwvL
+         oQvQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of sudeep.holla@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=sudeep.holla@arm.com
+       spf=neutral (google.com: 212.227.17.24 is neither permitted nor denied by best guess record for domain of stefan.wahren@i2se.com) smtp.mailfrom=stefan.wahren@i2se.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of sudeep.holla@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=sudeep.holla@arm.com
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
- bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH v2 3/6] dt-bindings: soc: Add a binding for the Broadcom
- VCHIQ services.
-To: Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>,
- Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
- devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Phil Elwell <phil@raspberrypi.org>
+       spf=neutral (google.com: 212.227.17.24 is neither permitted nor denied by best guess record for domain of stefan.wahren@i2se.com) smtp.mailfrom=stefan.wahren@i2se.com
+Date: Thu, 8 Mar 2018 20:30:17 +0100 (CET)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Eric Anholt <eric@anholt.net>, Mark Rutland <mark.rutland@arm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Phil Elwell <phil@raspberrypi.org>, devicetree@vger.kernel.org
+Cc: linux-rpi-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Message-ID: <1088519723.430987.1520537417525@email.1und1.de>
+In-Reply-To: <20180307185716.17449-1-eric@anholt.net>
 References: <20180307185716.17449-1-eric@anholt.net>
- <20180307185716.17449-3-eric@anholt.net>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <616b5c0c-ca31-c041-ba5a-f73febf62fe6@arm.com>
-Date: Thu, 8 Mar 2018 12:18:58 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Subject: Re: [PATCH v2 1/6] staging: vc04_services: Replace "firmware" node
+ with a compatible lookup.
 MIME-Version: 1.0
-In-Reply-To: <20180307185716.17449-3-eric@anholt.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev22
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K0:hczMKCHky6dKerhfECSarVJha5qv7P3eGw6wbG17n9iSUxi4bYB
+ AZirBgQRn2nnEPBVSlKkLuOV2SwuF4kVH2UFJJ++hEbIQTeqIV0RxM+mm23sxdNJHs68YYu
+ LDgd3shUeLxIvABXqK2CtozUY6bXZOk7vKbc6gxpXBaVrYi98EuAS8GlE7SKMSMvzUQ8M3Z
+ A8SFzJKOl4feTsS63atFQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:cDZrUcv6w+Y=:RzAomfS9Sbb/zQ9WUemyp9
+ IWQ4eG2rHSwWzA7Qkqo4CoxDnN34b4Txys4gSCb/EDXpR+rSHa/e328Z9XAIgVeLqkaIYxicV
+ abjGxgLLX9GLkwL4DGYBb5+oV0iDIgn/S73x5JnxZX4segNfIAN/XF35jbrdLW4aw89WZv2Y+
+ RnzbXWGh/MctTh0WtrcvjRFab8jVXvIwQH2/qnlYpOB7ONy1jYD4005qUhd+reeR4bMzBbw/w
+ LuvpxDzCCsKLEpQSz+SLbQeM4ndOK0EKMzkQnbkkjhWYV8CjP5pBxelGqLYoHAZzXGBFMgl/n
+ p5oNDE8HNxvq469w/CtTq4RZ0CqGhajiLKzdMepvEEX9/NREtjKc0o11oh7iz9wuxCa2XTPR2
+ rvj3qflSQm7guZQOmPayUFhRBQjYmuYJjU+Ewjmdk/bF4BXdc3aTlVr+eFGq7l/evDt91VeKo
+ mnVfbAYUOBs5uctZdj4QDFk1C1L773EJr4gtZuClF09p9bvTghyc/WMHsEdPW4d1pIlSvgwx+
+ W/uiXeb6zMvpOvSUX0aFllVw579SIOdz58uvlR0zz8A2U36Dn2kVNAKbv4qrhQzx7ZGqXKbvP
+ WZpQXM96c0P9J23qGFa1krs5bBuSxjWeYM6X+a3g5dC2a6kDjYPlNe0HV4K65ICko9yj6NX9u
+ ECK1IIjEnYwqCrjgtmCQrsDsPjeo5izw7vu24Jc7BCt7RNveuzdAxCMnz9//MZHE9J2F+yYmt
+ wfcLEHGh4xGkj/Z5XylKRCyI4/KSH4InF7q0SU8sLt20PKv261F/FUGFDlc=
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594306376933935522?=
-X-GMAIL-MSGID: =?utf-8?q?1594371916826835366?=
+X-GMAIL-THRID: =?utf-8?q?1594306372971918175?=
+X-GMAIL-MSGID: =?utf-8?q?1594399049040926404?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Hi Eric,
 
-
-On 07/03/18 18:57, Eric Anholt wrote:
-> The VCHIQ communication channel can be provided by BCM283x and Capri
-> SoCs, to communicate with the VPU-side OS services.
-> 
+> Eric Anholt <eric@anholt.net> hat am 7. M=C3=A4rz 2018 um 19:57 geschrieb=
+en:
+>=20
+>=20
+> This was requested by Rob Herring in DT bindings review.
+>=20
 > Signed-off-by: Eric Anholt <eric@anholt.net>
-> ---
-> 
-> v2: dropped firmware property, added cache-line-size.
-> 
->  .../bindings/soc/bcm/brcm,bcm2835-vchiq.txt        | 28 ++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-vchiq.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-vchiq.txt b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-vchiq.txt
-> new file mode 100644
-> index 000000000000..cdef4abc5e47
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-vchiq.txt
-> @@ -0,0 +1,28 @@
-> +Broadcom VCHIQ firmware services
-> +
-> +Required properties:
-> +
-> +- compatible:	Should be "brcm,bcm2835-vchiq"
-> +- reg:		Physical base address and length of the doorbell register pair
-> +- interrupts:	The interrupt number
-> +		  See bindings/interrupt-controller/brcm,bcm2835-armctrl-ic.txt
-> +
-> +Optional properties:
-> +
-> +- cache-line-size:
-> +		Size of L2 cache lines.  The VPU firmware detects
 
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
 
-Which L2 cache is this ? VPU or CPUs ?
-If CPUs, just drop it and get it from CPU nodes if you need it.
+for Patches V2: #1, #4, #5
 
-If VPUs, it's better add that to the name as CPUs use "cache-line-size"
-At-least for me, it looked like you are specifying CPU L2 cache line
-size and hence thought to comment.
+I'm okay with #6 as long as it's unused by any new driver.
 
--- 
-Regards,
-Sudeep
+Stefan
