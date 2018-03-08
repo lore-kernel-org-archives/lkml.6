@@ -1,52 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936048AbeCHSJw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 13:09:52 -0500
-Received: from resqmta-ch2-08v.sys.comcast.net ([69.252.207.40]:39334 "EHLO
-        resqmta-ch2-08v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933221AbeCHSJv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 13:09:51 -0500
-Date: Thu, 8 Mar 2018 12:09:49 -0600 (CST)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Chintan Pandya <cpandya@codeaurora.org>
-cc: Matthew Wilcox <willy@infradead.org>, penberg@kernel.org,
-        rientjes@google.com, iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] slub: Fix misleading 'age' in verbose slub prints
-In-Reply-To: <da1be252-403f-6725-a1b8-223222f7f946@codeaurora.org>
-Message-ID: <alpine.DEB.2.20.1803081204230.14628@nuc-kabylake>
-References: <1520423266-28830-1-git-send-email-cpandya@codeaurora.org> <alpine.DEB.2.20.1803071212150.6373@nuc-kabylake> <20180307182212.GA23411@bombadil.infradead.org> <da1be252-403f-6725-a1b8-223222f7f946@codeaurora.org>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        id S936126AbeCHSKC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 13:10:02 -0500
+Received: from mga01.intel.com ([192.55.52.88]:32067 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933221AbeCHSJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 13:09:58 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,441,1515484800";
+   d="scan'208";a="33456795"
+From: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+CC: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Lee@vger.kernel.org" <Lee@vger.kernel.org>, Chun-Yi <jlee@suse.com>,
+        Borislav Petkov <bp@alien8.de>, "Luck, Tony" <tony.luck@intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        "Neri, Ricardo" <ricardo.neri@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        "Zijlstra, Peter" <peter.zijlstra@intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Williams, Dan J" <dan.j.williams@intel.com>
+Subject: RE: [PATCH V2 2/3] efi: Introduce efi_rts_workqueue and some
+ infrastructure to invoke all efi_runtime_services()
+Thread-Topic: [PATCH V2 2/3] efi: Introduce efi_rts_workqueue and some
+ infrastructure to invoke all efi_runtime_services()
+Thread-Index: AQHTtNngYFyf2e7B30yWdA6aWmV0oqPFMqUAgACLVvCAANmVgIAAD2Gg
+Date: Thu, 8 Mar 2018 18:09:56 +0000
+Message-ID: <FFF73D592F13FD46B8700F0A279B802F2E581AE7@ORSMSX114.amr.corp.intel.com>
+References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com>
+ <1520292190-5027-3-git-send-email-sai.praneeth.prakhya@intel.com>
+ <CANiq72m6_WCXSrBPesgvO1rsF1_AT5Jod_rY-y1f4JjO-SMCDg@mail.gmail.com>
+ <FFF73D592F13FD46B8700F0A279B802F2E5817F2@ORSMSX114.amr.corp.intel.com>
+ <CANiq72krjVviT0mPqpK5jbLWEbDx_OhG6+eUmyT8thZPEjkJKg@mail.gmail.com>
+In-Reply-To: <CANiq72krjVviT0mPqpK5jbLWEbDx_OhG6+eUmyT8thZPEjkJKg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzAwZDBjYzItNDEyNy00ZjQ1LTgzOGQtZTI5ZmE4NDJkOWNmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiI2XC9GTGhURUdsOGFGZSs0VVY2VmNJOVNlNENcLzZyR2J1cjduZ0c3c2E4UEx0MkJrcXdEaHNyYjFUZlE5TXVWODEifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfJVKUAmpm5Tr1XYPCWphAvU+gD4wFLCXiZOOJkSzuFFBqqfxK57Y+RoPbwBZwOAuRncnNTnsl2kqAL2dnu6FUfDQhonBG/sdtoTI744eTn4ctm77tgqX
- VzgDYjkQi0Q/5r3hizZMUiQFua69IgLlnxp1AgOAIIm0mf24y0tW9xjllF+SwzQg3CamZ7fByHXqSwnWEOKBbNLeQl6p5cugR9AfCqLgqYgoD+nHaP8foZ6/
- owjfwrWKis4MsondOq3j4xmXqtuTPU6HJTztXHmnZ8fPKXzeM2yRrc5iHGaXik18DjkQ7AiV2yyn/E4U7HcJbzPDodE33pRrAVBIm2ernc7asoYfIrgJXkwH
- FdOk86d/NzHuPPjAH904uB7IlkfdbEjqPMh/sJgZHUpR/OSlBXA=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w28IA65v001055
 
-On Thu, 8 Mar 2018, Chintan Pandya wrote:
-
-> > If you print the raw value, then you can do the subtraction yourself;
-> > if you've subtracted it from jiffies each time, you've at least introduced
-> > jitter, and possibly enough jitter to confuse and mislead.
+/*
+> >> > +        * Since we process only one efi_runtime_service() at a time, an
+> >> > +        * ordered workqueue (which creates only one execution context)
+> >> > +        * should suffice all our needs.
+> >> > +        */
+> >> > +       efi_rts_wq = alloc_ordered_workqueue("efi_rts_workqueue",
+> >> > + 0);
+> >>
+> >> efi_rts_wq or efi_rts_workqueue?
+> >>
+> >> > +       if (!efi_rts_wq) {
+> >> > +               pr_err("Failed to create efi_rts_workqueue, EFI runtime services "
+> >>
+> >> Same here.
 > >
-> This is exactly what I was thinking. But looking up 'age' is easy compared to
-> 'when' and this seems required as from Christopher's
-> reply. So, will raise new patch cleaning commit message a bit.
+> > Sure! I will make it consistent with "efi_rts_wq". Just tried to be
+> > more verbose with names :)
+> >
+> 
+> It is not a big deal, but using the exact same name is better for the purposes of
+> grepping and things like that :-)
 
-Well then you need to provide some sort of log text processor I think.
-Otherwise you need to get the object address from the log message, then
-scan back through the log to find the correct allocation entry, retrieve
-both jiffy values and subtract them. If the age is there then you can
-simply see how far in the past the object was allocated.
+Yes, that makes sense.
 
-One advantage in favor of jiffies would be the ability to correlate
-multiple events if each log line would have a jiffies like timestamps.
+> By the way, check the commit title/message, there are some others there too.
 
-But it does not. So I think outputting jiffies there is causing more
-problems that benefits.
+Sure! I will make changes to commit/title messages too.
+
+Regards,
+Sai
