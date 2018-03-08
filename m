@@ -1,63 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934901AbeCHCs7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 21:48:59 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:36612 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934577AbeCHCs5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 21:48:57 -0500
-X-Google-Smtp-Source: AG47ELu1+zi9/O+H1P7ieJZQx6LwmZm7Z7ojJ64Gw1Pht7SkxVf/637peJ7tS3UhU2BH2xc1rJIuEg==
-From: Shakeel Butt <shakeelb@google.com>
-To: Roman Gushchin <guro@fb.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>, Greg Thelen <gthelen@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        cgroups@vger.kernel.org, Shakeel Butt <shakeelb@google.com>
-Subject: [PATCH] mm: memcg: expose mem_cgroup_put API
-Date: Wed,  7 Mar 2018 18:48:50 -0800
-Message-Id: <20180308024850.39737-1-shakeelb@google.com>
-X-Mailer: git-send-email 2.16.2.395.g2e18187dfd-goog
+        id S934672AbeCHCvN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 21:51:13 -0500
+Received: from mga06.intel.com ([134.134.136.31]:58073 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934149AbeCHCvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 21:51:12 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,438,1515484800";
+   d="scan'208";a="32198981"
+Date: Thu, 8 Mar 2018 10:42:07 +0800
+From: "Du, Changbin" <changbin.du@intel.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        "Du, Changbin" <changbin.du@intel.com>, mingo@kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/17] Include linux trace docs to Sphinx TOC tree
+Message-ID: <20180308024207.x7mxbo75gtk433is@intel.com>
+References: <1518845990-20733-1-git-send-email-changbin.du@intel.com>
+ <20180227093421.yd674oaklthaljgh@intel.com>
+ <20180227174337.37ecb348@vmware.local.home>
+ <20180307104649.4db521a5@lwn.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180307104649.4db521a5@lwn.net>
+User-Agent: NeoMutt/20171027-42-ad8712
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch exports mem_cgroup_put API to put the refcnt of the memory
-cgroup.
+On Wed, Mar 07, 2018 at 10:46:49AM -0700, Jonathan Corbet wrote:
+> On Tue, 27 Feb 2018 17:43:37 -0500
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > On Tue, 27 Feb 2018 17:34:22 +0800
+> > "Du, Changbin" <changbin.du@intel.com> wrote:
+> >
+> > > Ten days past, will you accept this serias? Thank you!
+> > 
+> > Currently I'm very overloaded with other code that needs to get done
+> > ASAP, and I need to balance what is critical and what is not. I don't
+> > have time to review this, as this isn't critical, and can wait.
+> > 
+> > If Jon can review it to make sure that it doesn't change the
+> > readability of the text, then I'll trust his judgment. 
+> 
+> So I've spent a while working through the patches.  I think it's a
+> well-done RST conversion carried out with a light hand; I do not believe
+> there are any readability issues with the resulting text files.
+> 
+> I will note that the series adds some new build warnings:
+> 
+> > Documentation/trace/events.rst:45: WARNING: Inline emphasis start-string without end-string.
+> > Documentation/trace/events.rst:49: WARNING: Inline emphasis start-string without end-string.
+> > Documentation/trace/events.rst:193: WARNING: Inline emphasis start-string without end-string.
+> > Documentation/trace/events.rst:114: WARNING: Unknown target name: "common".
+> > Documentation/trace/ftrace.rst:2620: WARNING: Inline emphasis start-string without end-string.
+> 
+> These point to places where the resulting formatted docs are, in fact,
+> incorrect.  I had to append the attached patch to the series to make those
+> problems go away.  The warnings are there for a purpose!
+> 
+> Anyway, with that, the patch series is applied.  Thanks for helping to
+> improve the docs, and my apologies for taking so long to get to this.
+> 
+> jon
+> 
+I am also appriciated for your review. And I am glade to see these docs can appear
+in the new beautiful html documentation! Thnak you.
 
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
----
- include/linux/memcontrol.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index c46016bb25eb..0da79e116a07 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -344,6 +344,11 @@ struct mem_cgroup *mem_cgroup_from_css(struct cgroup_subsys_state *css){
- 	return css ? container_of(css, struct mem_cgroup, css) : NULL;
- }
- 
-+static inline void mem_cgroup_put(struct mem_cgroup *memcg)
-+{
-+	css_put(&memcg->css);
-+}
-+
- #define mem_cgroup_from_counter(counter, member)	\
- 	container_of(counter, struct mem_cgroup, member)
- 
-@@ -789,6 +794,10 @@ static inline bool task_in_mem_cgroup(struct task_struct *task,
- 	return true;
- }
- 
-+static inline void mem_cgroup_put(struct mem_cgroup *memcg)
-+{
-+}
-+
- static inline struct mem_cgroup *
- mem_cgroup_iter(struct mem_cgroup *root,
- 		struct mem_cgroup *prev,
--- 
-2.16.2.395.g2e18187dfd-goog
+- changbin
