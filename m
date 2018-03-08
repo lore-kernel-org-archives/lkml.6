@@ -1,82 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756015AbeCHTC7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 14:02:59 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56476 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754558AbeCHTC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 14:02:58 -0500
-Subject: Re: [PATCH v3 0/6] ipc: Clamp *mni to the real IPCMNI limit
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>
-References: <1519926220-7453-1-git-send-email-longman@redhat.com>
- <20180308182335.GH4449@wotan.suse.de>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <90323260-02ee-b7b8-5de3-79378fc972a6@redhat.com>
-Date: Thu, 8 Mar 2018 14:02:54 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1756084AbeCHTDv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 14:03:51 -0500
+Received: from mail-io0-f195.google.com ([209.85.223.195]:35877 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752173AbeCHTDp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 14:03:45 -0500
+X-Google-Smtp-Source: AG47ELti3Q5L4QrF/W9SRih+G8DBvHJC36dkyWwGn14JVDNlsEPYC5c1iCjkjRlYLx5dDvd5GIptHw==
+Subject: [pci PATCH v4 2/4] virtio_pci: Add support for unmanaged SR-IOV on
+ virtio_pci devices
+From: Alexander Duyck <alexander.duyck@gmail.com>
+To: bhelgaas@google.com, alexander.h.duyck@intel.com,
+        linux-pci@vger.kernel.org
+Cc: virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, dan.daly@intel.com,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        keith.busch@intel.com, netanel@amazon.com, mheyne@amazon.de,
+        liang-min.wang@intel.com, mark.d.rustad@intel.com, dwmw2@infradead.org,
+        hch@lst.de, dwmw@amazon.co.uk
+Date: Thu, 08 Mar 2018 11:03:42 -0800
+Message-ID: <20180308190236.5433.64788.stgit@localhost.localdomain>
+In-Reply-To: <20180308185507.5433.98830.stgit@localhost.localdomain>
+References: <20180308185507.5433.98830.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20180308182335.GH4449@wotan.suse.de>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/08/2018 01:23 PM, Luis R. Rodriguez wrote:
-> On Thu, Mar 01, 2018 at 12:43:34PM -0500, Waiman Long wrote:
->> v2->v3:
->>  - Fix kdoc comment errors.
->>  - Incorporate comments and suggestions from Luis R. Rodriguez.
->>  - Add a patch to fix a typo error in fs/proc/proc_sysctl.c.
->>
->> v1->v2:
->>  - Add kdoc comments to the do_proc_do{u}intvec_minmax_conv_param
->>    structures.
->>  - Add a new flags field to the ctl_table structure for specifying
->>    whether range clamping should be activated instead of adding new
->>    sysctl parameter handlers.
->>  - Clamp the semmni value embedded in the multi-values sem parameter.
->>
->> v1 patch: https://lkml.org/lkml/2018/2/19/453
->> v2 patch: https://lkml.org/lkml/2018/2/27/627
->>
->> The sysctl parameters msgmni, shmmni and semmni have an inherent limit
->> of IPC_MNI (32k). However, users may not be aware of that because they
->> can write a value much higher than that without getting any error or
->> notification. Reading the parameters back will show the newly written
->> values which are not real.
->>
->> Enforcing the limit by failing sysctl parameter write, however, can
->> break existing user applications. To address this delemma, a new flags
->> field is introduced into the ctl_table. The value CTL_FLAGS_CLAMP_RANGE
->> can be added to any ctl_table entries to enable a looser range clamping
->> without returning any error. For example,
->>
->>   .flags = CTL_FLAGS_CLAMP_RANGE,
->>
->> This flags value are now used for the range checking of shmmni,
->> msgmni and semmni without breaking existing applications. If any out
->> of range value is written to those sysctl parameters, the following
->> warning will be printed instead.
->>
->>   Kernel parameter "shmmni" was set out of range [0, 32768], clamped to 32768.
->>
->> Reading the values back will show 32768 instead of some fake values.
-> I don't see any addition of respective tests cases, I thought I asked
-> for this. Please add respective tests cases for all the API you are
-> adding on lib/test_sysctl.c and respective tests on
-> tools/testing/selftests/sysctl/sysctl.sh
->
->   Luis
+From: Alexander Duyck <alexander.h.duyck@intel.com>
 
-I probably missed that. I will add a test case in the next version.
+Hardware-realized virtio_pci devices can implement SR-IOV, so this
+patch enables its use. The device in question is an upcoming Intel
+NIC that implements both a virtio_net PF and virtio_net VFs. These
+are hardware realizations of what has been up to now been a software
+interface.
 
--Longman
+The device in question has the following 4-part PCI IDs:
+
+PF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 15fe
+VF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 05fe
+
+The patch currently needs no check for device ID, because the callback
+will never be made for devices that do not assert the capability or
+when run on a platform incapable of SR-IOV.
+
+One reason for this patch is because the hardware requires the
+vendor ID of a VF to be the same as the vendor ID of the PF that
+created it. So it seemed logical to simply have a fully-functioning
+virtio_net PF create the VFs. This patch makes that possible.
+
+Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
+Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+---
+
+v4: Dropped call to pci_disable_sriov in virtio_pci_remove function
+
+ drivers/virtio/virtio_pci_common.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
+index 48d4d1cf1cb6..27ab090163b4 100644
+--- a/drivers/virtio/virtio_pci_common.c
++++ b/drivers/virtio/virtio_pci_common.c
+@@ -596,6 +596,9 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
+ #ifdef CONFIG_PM_SLEEP
+ 	.driver.pm	= &virtio_pci_pm_ops,
+ #endif
++#ifdef CONFIG_PCI_IOV
++	.sriov_configure = pci_sriov_configure_unmanaged,
++#endif
+ };
+ 
+ module_pci_driver(virtio_pci_driver);
