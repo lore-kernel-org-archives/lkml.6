@@ -1,157 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935318AbeCHHna (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 02:43:30 -0500
-Received: from mail-it0-f67.google.com ([209.85.214.67]:40742 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935202AbeCHHnZ (ORCPT
+        id S934889AbeCHHrC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 02:47:02 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:39065 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751700AbeCHHrA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 02:43:25 -0500
-X-Google-Smtp-Source: AG47ELvDHxWnjOUi5vALS+fpd+z51KcIQ85isbZHoS2yFFGqRU/pXEcyJTLhTSSloG1//j1gCBSQWhAPkxWJQ06EdUI=
+        Thu, 8 Mar 2018 02:47:00 -0500
+X-Google-Smtp-Source: AG47ELteF7O5aXg9sRn1C68y8pfd1RFfmyM/KUCDocE7P+BfXMQ4uAnGGQBJO/OOXyFHx6L713NEwKVcMSIo/DkEP64=
 MIME-Version: 1.0
-In-Reply-To: <1520292190-5027-2-git-send-email-sai.praneeth.prakhya@intel.com>
-References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com> <1520292190-5027-2-git-send-email-sai.praneeth.prakhya@intel.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Thu, 8 Mar 2018 07:43:23 +0000
-Message-ID: <CAKv+Gu_ZYGwgORet4ruL8=GUy75LMAuLeYD987FA3UVYuw8GMg@mail.gmail.com>
-Subject: Re: [PATCH V2 1/3] x86/efi: Call efi_delete_dummy_variable() during
- efi subsystem initialization
-To: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: linux-efi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
-        Tony Luck <tony.luck@intel.com>, Will Deacon <will.deacon@arm.com>,
-        Dave Hansen <dave.hansen@intel.com>,
+In-Reply-To: <20180305114541.9917-2-joel@jms.id.au>
+References: <20180305114541.9917-1-joel@jms.id.au> <20180305114541.9917-2-joel@jms.id.au>
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Thu, 8 Mar 2018 09:46:59 +0200
+Message-ID: <CAP6Zq1g44N_zzV18089m1MTeZqxCdiLddSunjqqA2fK0-TBfvA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: watchdog: Add Nuvoton NPCM description
+To: Joel Stanley <joel@jms.id.au>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Peter Zijlstra <peter.zijlstra@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
+        Marcus Folkesson <marcus.folkesson@gmail.com>,
+        linux-watchdog@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Sai,
-
-On 5 March 2018 at 23:23, Sai Praneeth Prakhya
-<sai.praneeth.prakhya@intel.com> wrote:
-> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+On 5 March 2018 at 13:45, Joel Stanley <joel@jms.id.au> wrote:
+> These bindings describe the watchdog IP as used by the Nuvoton NPCM750
+> (Poleg) BMC SoC.
 >
-> Invoking efi_runtime_services() through efi_workqueue means all accesses
-> to efi_runtime_services() should be done after efi_rts_wq has been
-> created. efi_delete_dummy_variable() calls set_variable(), hence
-> efi_delete_dummy_variable() should be called after efi_rts_wq has been
-> created.
->
-> efi_delete_dummy_variable() is called from efi_enter_virtual_mode()
-> which is early in the boot phase (efi_rts_wq isn't created yet), so call
-> efi_delete_dummy_variable() later in the boot phase i.e. while
-> initializing efi subsystem. In the next patch, this is the place where
-> we create efi_rts_wq and all the efi_runtime_services() will be called
-> using efi_rts_wq.
->
-> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-> Suggested-by: Andy Lutomirski <luto@kernel.org>
-> Cc: Lee, Chun-Yi <jlee@suse.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Bhupesh Sharma <bhsharma@redhat.com>
-> Cc: Ricardo Neri <ricardo.neri@intel.com>
-> Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-> Cc: Matt Fleming <matt@codeblueprint.co.uk>
-> Cc: Peter Zijlstra <peter.zijlstra@intel.com>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
 > ---
->  arch/x86/include/asm/efi.h  | 1 -
->  arch/x86/platform/efi/efi.c | 6 ------
->  drivers/firmware/efi/efi.c  | 6 ++++++
->  include/linux/efi.h         | 3 +++
->  4 files changed, 9 insertions(+), 7 deletions(-)
+> V2: Add optional timeout property
+> ---
+>  .../bindings/watchdog/nuvoton,npcm-wdt.txt         | 28 ++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/watchdog/nuvoton,npcm-wdt.txt
 >
-> diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
-> index a399c1ebf6f0..43009e3f821b 100644
-> --- a/arch/x86/include/asm/efi.h
-> +++ b/arch/x86/include/asm/efi.h
-> @@ -143,7 +143,6 @@ extern void __init efi_runtime_update_mappings(void);
->  extern void __init efi_dump_pagetable(void);
->  extern void __init efi_apply_memmap_quirks(void);
->  extern int __init efi_reuse_config(u64 tables, int nr_tables);
-> -extern void efi_delete_dummy_variable(void);
->
->  struct efi_setup_data {
->         u64 fw_vendor;
-> diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-> index 9061babfbc83..a3169d14583f 100644
-> --- a/arch/x86/platform/efi/efi.c
-> +++ b/arch/x86/platform/efi/efi.c
-> @@ -893,9 +893,6 @@ static void __init kexec_enter_virtual_mode(void)
->
->         if (efi_enabled(EFI_OLD_MEMMAP) && (__supported_pte_mask & _PAGE_NX))
->                 runtime_code_page_mkexec();
-> -
-> -       /* clean DUMMY object */
-> -       efi_delete_dummy_variable();
->  #endif
->  }
->
-> @@ -1015,9 +1012,6 @@ static void __init __efi_enter_virtual_mode(void)
->          * necessary relocation fixups for the new virtual addresses.
->          */
->         efi_runtime_update_mappings();
-> -
-> -       /* clean DUMMY object */
-> -       efi_delete_dummy_variable();
->  }
->
->  void __init efi_enter_virtual_mode(void)
-> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-> index cd42f66a7c85..838b8efe639c 100644
-> --- a/drivers/firmware/efi/efi.c
-> +++ b/drivers/firmware/efi/efi.c
-> @@ -328,6 +328,12 @@ static int __init efisubsys_init(void)
->         if (!efi_enabled(EFI_BOOT))
->                 return 0;
->
-> +       /*
-> +        * Clean DUMMY object calls EFI Runtime Service, set_variable(), so
-> +        * it should be invoked only after efi_rts_workqueue is ready.
-> +        */
-> +       efi_delete_dummy_variable();
+> diff --git a/Documentation/devicetree/bindings/watchdog/nuvoton,npcm-wdt.txt b/Documentation/devicetree/bindings/watchdog/nuvoton,npcm-wdt.txt
+> new file mode 100644
+> index 000000000000..615eacd0b9d6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/watchdog/nuvoton,npcm-wdt.txt
+> @@ -0,0 +1,28 @@
+> +Nuvoton NPCM Watchdog
 > +
-
-Is there any way to keep this local to arch/x86?
-
->         /* We register the efi directory at /sys/firmware/efi */
->         efi_kobj = kobject_create_and_add("efi", firmware_kobj);
->         if (!efi_kobj) {
-> diff --git a/include/linux/efi.h b/include/linux/efi.h
-> index f5083aa72eae..c4efb3ef0dfa 100644
-> --- a/include/linux/efi.h
-> +++ b/include/linux/efi.h
-> @@ -992,6 +992,7 @@ extern efi_status_t efi_query_variable_store(u32 attributes,
->                                              unsigned long size,
->                                              bool nonblocking);
->  extern void efi_find_mirror(void);
-> +extern void efi_delete_dummy_variable(void);
->  #else
->  static inline void efi_late_init(void) {}
->  static inline void efi_free_boot_services(void) {}
-> @@ -1002,6 +1003,8 @@ static inline efi_status_t efi_query_variable_store(u32 attributes,
->  {
->         return EFI_SUCCESS;
->  }
+> +Nuvoton NPCM timer module provides five 24-bit timer counters, and a watchdog.
+> +The watchdog supports a pre-timeout interrupt that fires 10ms before the
+> +expiry.
 > +
-> +static inline void efi_delete_dummy_variable(void) {}
->  #endif
->  extern void __iomem *efi_lookup_mapped_addr(u64 phys_addr);
->
+> +Required properties:
+> +- compatible      : "nuvoton,npcm750-wdt" for NPCM750 (Poleg).
+> +- reg             : Offset and length of the register set for the device.
+> +- interrupts      : Contain the timer interrupt with flags for
+> +                    falling edge.
+> +
+> +Required clocking property, have to be one of:
+> +- clocks          : phandle of timer reference clock.
+> +- clock-frequency : The frequency in Hz of the clock that drives the NPCM7xx
+> +                    timer (usually 25000000).
+> +
+> +Optional properties:
+> +- timeout-sec : Contains the watchdog timeout in seconds
+> +
+> +Example:
+> +
+> +timer@f00080c1 {
+Little address mistake, suppose to be f000801c
+> +    compatible = "nuvoton,npcm750-wdt";
+> +    interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
+> +    reg = <0xf00080c1 0x4>;
+Little address mistake, suppose to be  0xf000801c
+> +    clocks = <&clk NPCM7XX_CLK_TIMER>;
+> +};
 > --
-> 2.7.4
+> 2.15.1
 >
