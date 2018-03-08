@@ -1,75 +1,45 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-912290-1520485069-2-821495457189561550
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='iso-8859-1'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520485068; b=EZzFGmXux9oRZ+KwmoUu1VTGpKvkJ+1CqVhyg5Bgk507cdK
-    ar5zeyogerPQbytI9cJX81NsW0Dx95zOF0Vf1E1ZGFCgrJizaW5jsNQWow66f38a
-    yEYldbDtR9t20EGPb0fx68tPbXg/Ijou+2S8IMuAFgYTXnsFLHUSmymUAzF46aky
-    VG+inAUsAeVIKd7vDXMjLKchUUUMqjq+ip2K7sepoAGUtiqaB5soPxK88rak8eCl
-    UW8XXSHIIdkDi942Dagxy1bzaVLrKuEYBy/EMGnnNBroMja33hME2vv4TMh3xsQX
-    onE+z9W2fPSs6F86gGEHNPXKhSeHPcCo31nfJqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520485068; bh=pJW4eP
-    ko26ffFmv15vUGGujGMsT3xCJ1lo6zYoRPnSQ=; b=R/m2iFDWihgbrqglaz+3Cr
-    pNP39ERtwmqZnPuyVbNEdTCBR7SDZgdPLpQXBV3X6O0IJp4q5vFVsxVPhPl0Vbps
-    kOsvoplGSJqFc94ijosymC5d3ju35EqOw/3sRUHAea11Xp/hWAfKyOKZlLpLImVS
-    KHfTFt4iQV8yuEu0u174TtJDqc63QalgL/Nrs7r3AEiJwJdIQVD1ty+H6aROBzDT
-    o18/uQAcA3e5OQBeo96kW+5bVJuY8GVDODjp4uLgkQOSIwvMf+r/zqAcUNpwHmUn
-    k7S7XSNRyxfLOsQZTvkcyt5o52QoOvpoXi6QRz+ePvPldb/wbvmWO0gtNj2t1Yzg
-    ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=osUNeozt x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=osUNeozt x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964864AbeCHE5o (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 23:57:44 -0500
-Received: from mail-bn3nam01on0119.outbound.protection.outlook.com ([104.47.33.119]:51237
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935068AbeCHE51 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 7 Mar 2018 23:57:27 -0500
+Return-Path: <Alexander.Levin@microsoft.com>
+X-Google-Smtp-Source: AG47ELvsgjbHwNAUsDqdmrCEIBpzAaTWcgaROyaqEczBlMbIB8VkUBl8KyPymUBWIz8z3uboIVfW
+ARC-Seal: i=1; a=rsa-sha256; t=1520485035; cv=none;
+        d=google.com; s=arc-20160816;
+        b=dSDSASdJ/hlF3Et0nAGl6Zkt2E91YubxOIbXJDZOsRuLZxSjmkse4s572vSQw7KdEo
+         elAqoysP/wQxawXHq6gdZlksvNp7Qg81OSgj/FFwZXzToRqsW9QCeKLQAF0bZB78N3JF
+         lsuELcaiEMIkWXiHlf02lNj24BuRzBX9M4agHqvticS86lxisaX7i1ExxEb1rxBM956I
+         ey4ytCJq7arJPsTWp49YOTjhn1654kjJGp77ZerXWFcqcMMS/EJpjMRWFJJ4GGQ1tUrg
+         4ZUr3r6r9EwqkHodQ7pmmVlnPgQbi0+4hTzv45Y6mmzL/7lfrkYlJL3w2XXX9R/6caAF
+         gi9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:cc:to
+         :from:dkim-signature:arc-authentication-results;
+        bh=D56isBxvg5mdybr7u+zGckHt2dEPj0DTbRMHZ2wWzEw=;
+        b=Ue/9o5z92vMo92a/TB1YvIde3kEQo7uJZcuCz3Ew8+tDr7z8DncPq+2f0tLLqTdkjX
+         j40EAYc+IwaiZcl7b0ub0X+iSc/qDDZVYy5cZbV6tNXao8+gXsGpGOz4CKurWtgtl8e+
+         4pR9d7XQq9s760569MPcSJrYuq5jx48oQgItN+MihhxBNlWtkuUdx7EotfDHXKRC76jY
+         d6iZHL+QYpKBPUMMmsjpjYQg5JuIXzxTsy1ptU3VAc1fGLkoJNbRiLoK8rQOUIT7PnKf
+         2jkfUETC6nYHS9KfyC5VWHcYDMT+k2TCrw9B+KHywIMU6moYq+nTDnVOzPz6G234c+2z
+         jKUg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=MVgOJTip;
+       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.33.101 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=MVgOJTip;
+       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.33.101 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 50/78] drm/omap: DMM: Check for DMM readiness
- after successful transaction commit
-Thread-Topic: [PATCH AUTOSEL for 4.15 50/78] drm/omap: DMM: Check for DMM
- readiness after successful transaction commit
-Thread-Index: AQHTtpnOgw/BpTksT0Cw02egVJiDkw==
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: Sahara <keun-o.park@darkmatter.ae>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 51/78] pty: cancel pty slave port buf's work
+ in tty_release
+Thread-Topic: [PATCH AUTOSEL for 4.15 51/78] pty: cancel pty slave port buf's
+ work in tty_release
+Thread-Index: AQHTtpnOTAu58E2VdEuTlr2cF/rtkQ==
 Date: Thu, 8 Mar 2018 04:56:23 +0000
-Message-ID: <20180308045525.7662-50-alexander.levin@microsoft.com>
+Message-ID: <20180308045525.7662-51-alexander.levin@microsoft.com>
 References: <20180308045525.7662-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045525.7662-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,74 +48,115 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1079;7:6UTOavEyJosnDMykc7AsnGzEcYQUsYZXKRvLWV9YokFbW3qRT4mHdAd01GqguCBD6jMW4TuMICB9tBjomYuuW7oI45N3q8ZnCtjhZ5n2K5oG8ldsM2d5O3qtdCpKSNXp/SHz1iMBPQEnWt/jVwS1CouyhGFEU00Ewi6ysQQgzN8BX1PZpMtkbv5RZBiYkXhUIzc+jdIOluZPZY5rHPwnk0SHJ/nM3lHv2s9Cr//Ekf3NwKNWO1HV01H3mORWw16z;20:3w8QiI4FNFHG4LQLUvYXBZCJan2vj1fauKcKA4gqbEL6DUwMvKxmWAqPSG5dthDYAAbdL4cuPWjY475vzIQEFsmjtC8sb5rq14xw8HNcH3r+O2TRxCd9EgvivN8VnoysJphTCeUC9RFT1ltTZwKiJRHkjbfg5H0IXo+2c3Hr00g=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1079;20:xk6RKGMIt9v+AWpxupICxqeIEEJoCLP63i/1Z3eR4iyhU+7jytoy70ebhqYl1H+jq5k7QHE1rL8YDbC0ErwW8GQNrBv64qOaJeQrMBzpwxIj6eD6x67CfV20SSfM1yNJ6xLPg7Jq0ohUEHK8DWdPbmRQ9/P6C5Z7Gi77dvjHwXQ=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: bea406a1-02b6-405a-b6b1-08d584b10e65
+x-ms-office365-filtering-correlation-id: f7110fc9-154d-4251-4789-08d584b10e9f
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1079;
 x-ms-traffictypediagnostic: DM5PR2101MB1079:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB107955F92A1062BB7B91FF70FBDF0@DM5PR2101MB1079.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(31051911155226)(89211679590171);
+x-microsoft-antispam-prvs: <DM5PR2101MB1079195ED1AC631F609D5E22FBDF0@DM5PR2101MB1079.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(3231220)(944501244)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR2101MB1079;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1079;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39860400002)(39380400002)(396003)(346002)(366004)(189003)(199004)(36756003)(107886003)(4326008)(97736004)(2906002)(2950100002)(1076002)(6666003)(105586002)(7736002)(186003)(3660700001)(5660300001)(106356001)(305945005)(6512007)(3280700002)(25786009)(14454004)(86362001)(86612001)(81156014)(551934003)(10090500001)(76176011)(26005)(99286004)(66066001)(102836004)(110136005)(81166006)(72206003)(54906003)(5250100002)(478600001)(10290500003)(6116002)(2501003)(8936002)(68736007)(53936002)(6506007)(6486002)(8676002)(6436002)(3846002)(22452003)(316002)(2900100001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1079;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: 2HedMEO3affbwpr/IioqGJertc+Y8slwsk0YvUdjDoJRnOx7XXo+w7sNE7gDd7Q3pxEkaulxJQHF31v5VHFq8rUeROLMlDet3XkpjX06nYEyS85Uxnrr5/1CYcEtE39o9rQiK2W53bmBPpG4ilut/5bF7tTRcCg5l8PYZyudITawKw+UMt8RVBXmhhaZSSG80Dt7AOc6D9vCsH8F8uVfw82JbQ+QpU/uwYR4SbJ280v6t0ENk7VJipjwAenYKsjAyopsnHa0ONmv9SVsf4ezjrb+bBwY7T0j81+qnPjdq305PHoMoriYHtwL8gbBAhgsKV9dA5sme3Z3CzukoPpmVw==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39860400002)(39380400002)(396003)(346002)(366004)(189003)(199004)(51234002)(36756003)(107886003)(4326008)(97736004)(2906002)(2950100002)(1076002)(6666003)(105586002)(7736002)(186003)(3660700001)(5660300001)(106356001)(305945005)(6512007)(3280700002)(25786009)(14454004)(575784001)(86362001)(86612001)(81156014)(10090500001)(76176011)(26005)(99286004)(66066001)(102836004)(110136005)(81166006)(72206003)(54906003)(5250100002)(478600001)(59450400001)(10290500003)(6116002)(2501003)(8936002)(68736007)(53936002)(6506007)(6486002)(8676002)(6436002)(3846002)(22452003)(316002)(2900100001)(22906009)(217873001)(309714004);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1079;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: LhrCa2umrgXIVFtahkRlynjO6QA+TAfg/o+i24tj1O0BDP53LUJw8rQ42uiicPpiBLzxyjrRvCo9mqibu5aqD0nk4o+9xAmuLZaoweKj4KLTcC7ampiexMQq4Ge2SwRONwW8UQViRVo/Kxendjs4mKLMdh6lCRtn20Xrvmm/lrAT4f1McHyIqtJwK9NcdvLT50whDWee3NJaFm3xMyqVDPJoHi1WcuOme/TbFaHlKg2Cg1sx7Zvs4XEsYg1Gx5zhdHvBci0XK7zZ0iBq7NJMfPHK9IP1jVkqEj/WwQ57zy8QTNqtcZJ/QXJJ3WPCefHZL/2nzqHrIXmq8UkxtwIIJA==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bea406a1-02b6-405a-b6b1-08d584b10e65
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:56:23.5453
+X-MS-Exchange-CrossTenant-Network-Message-Id: f7110fc9-154d-4251-4789-08d584b10e9f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:56:23.9666
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1079
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594344116293921024?=
+X-GMAIL-MSGID: =?utf-8?q?1594344116293921024?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: Sahara <keun-o.park@darkmatter.ae>
 
-[ Upstream commit b7ea6b286c4051e043f691781785e3c4672f014a ]
+[ Upstream commit 2b022ab7542df60021ab57854b3faaaf42552eaf ]
 
-Check the status of the DMM engine after it is reported that the
-transaction was completed as in rare cases the engine might not reached a
-working state.
+In case that CONFIG_SLUB_DEBUG is on and pty is used, races between
+release_one_tty and flush_to_ldisc work threads may happen and lead
+to use-after-free condition on tty->link->port. Because SLUB_DEBUG
+is turned on, freed tty->link->port is filled with POISON_FREE value.
+So far without SLUB_DEBUG, port was filled with zero and flush_to_ldisc
+could return without a problem by checking if tty is NULL.
 
-The wait_status() will print information in case the DMM is not reached the
-expected state and the dmm_txn_commit() will return with an error code to
-make sure that we are not continuing with a broken setup.
+CPU 0                                 CPU 1
+-----                                 -----
+release_tty                           pty_write
+   cancel_work_sync(tty)                 to =3D tty->link
+   tty_kref_put(tty->link)               tty_schedule_flip(to->port)
+      << workqueue >>                 ...
+      release_one_tty                 ...
+         pty_cleanup                  ...
+            kfree(tty->link->port)       << workqueue >>
+                                         flush_to_ldisc
+                                            tty =3D READ_ONCE(port->itty)
+                                            tty is 0x6b6b6b6b6b6b6b6b
+                                            !!PANIC!! access tty->ldisc
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+ Unable to handle kernel paging request at virtual address 6b6b6b6b6b6b6b93
+ pgd =3D ffffffc0eb1c3000
+ [6b6b6b6b6b6b6b93] *pgd=3D0000000000000000, *pud=3D0000000000000000
+ ------------[ cut here ]------------
+ Kernel BUG at ffffff800851154c [verbose debug info unavailable]
+ Internal error: Oops - BUG: 96000004 [#1] PREEMPT SMP
+ CPU: 3 PID: 265 Comm: kworker/u8:9 Tainted: G        W 3.18.31-g0a58eeb #1
+ Hardware name: Qualcomm Technologies, Inc. MSM 8996pro v1.1 + PMI8996 Carb=
+ide (DT)
+ Workqueue: events_unbound flush_to_ldisc
+ task: ffffffc0ed610ec0 ti: ffffffc0ed624000 task.ti: ffffffc0ed624000
+ PC is at ldsem_down_read_trylock+0x0/0x4c
+ LR is at tty_ldisc_ref+0x24/0x4c
+ pc : [<ffffff800851154c>] lr : [<ffffff800850f6c0>] pstate: 80400145
+ sp : ffffffc0ed627cd0
+ x29: ffffffc0ed627cd0 x28: 0000000000000000
+ x27: ffffff8009e05000 x26: ffffffc0d382cfa0
+ x25: 0000000000000000 x24: ffffff800a012f08
+ x23: 0000000000000000 x22: ffffffc0703fbc88
+ x21: 6b6b6b6b6b6b6b6b x20: 6b6b6b6b6b6b6b93
+ x19: 0000000000000000 x18: 0000000000000001
+ x17: 00e80000f80d6f53 x16: 0000000000000001
+ x15: 0000007f7d826fff x14: 00000000000000a0
+ x13: 0000000000000000 x12: 0000000000000109
+ x11: 0000000000000000 x10: 0000000000000000
+ x9 : ffffffc0ed624000 x8 : ffffffc0ed611580
+ x7 : 0000000000000000 x6 : ffffff800a42e000
+ x5 : 00000000000003fc x4 : 0000000003bd1201
+ x3 : 0000000000000001 x2 : 0000000000000001
+ x1 : ffffff800851004c x0 : 6b6b6b6b6b6b6b93
+
+Signed-off-by: Sahara <keun-o.park@darkmatter.ae>
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/gpu/drm/omapdrm/omap_dmm_tiler.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/tty/tty_io.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c b/drivers/gpu/drm/oma=
-pdrm/omap_dmm_tiler.c
-index c60a85e82c6d..fd05f7e9f43f 100644
---- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-+++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-@@ -298,7 +298,12 @@ static int dmm_txn_commit(struct dmm_txn *txn, bool wa=
-it)
- 				msecs_to_jiffies(100))) {
- 			dev_err(dmm->dev, "timed out waiting for done\n");
- 			ret =3D -ETIMEDOUT;
-+			goto cleanup;
- 		}
-+
-+		/* Check the engine status before continue */
-+		ret =3D wait_status(engine, DMM_PATSTATUS_READY |
-+				  DMM_PATSTATUS_VALID | DMM_PATSTATUS_DONE);
- 	}
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 4b506f2d3522..688bd25aa6b0 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -1482,6 +1482,8 @@ static void release_tty(struct tty_struct *tty, int i=
+dx)
+ 	if (tty->link)
+ 		tty->link->port->itty =3D NULL;
+ 	tty_buffer_cancel_work(tty->port);
++	if (tty->link)
++		tty_buffer_cancel_work(tty->link->port);
 =20
- cleanup:
+ 	tty_kref_put(tty->link);
+ 	tty_kref_put(tty);
 --=20
 2.14.1
