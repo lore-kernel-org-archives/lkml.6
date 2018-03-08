@@ -1,37 +1,37 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1131037-1520491545-3-9908792017889328124
+X-Cyrus-Session-Id: sloti22d1t05-1131037-1520491445-2-12824558125841448595
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES enda, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520491544; b=fQqEsBWhyfAUpAyOJBtcrZMQBW+L4wQoRDcbMYp32ZNigEh
-    Luz3JcD5ark7omJmeWi/sg6mevKr5tizfGLK+8H/14Yzx4QydwFAylNKvOa9FZwL
-    u3rD46dHfwslHNGG8WV+tEzFR8jXlja+sSEEId3i2rnJc7NaXags9fOyEMxLaHe5
-    8IiE5dYGNaDw0pUkGnv0GjjPfsqbSOYG7n8kgquwJJfuKoVc/JAjFRRxm84COH7G
-    7ARCH0VbJgYUhto1VHmz4MsFovXGI2D3KkqWCTSUFg/sf737cZxafco7Pyy/n+pS
-    lh5VnBLRP0OonrNuFu6NmsFGxCjHcG4L/mkq/UQ==
+    t=1520491444; b=T3ppGLYmVqdsCCbV5zIZ6jRFaUZcaQDZo2RL8xt/BDT6RU2
+    lmuZInK4mfMyeZ7KjAgyxMu+0ji7J2BN6ohub7F6VFnunqofGtpiQ1MqrX0T14lQ
+    xlX19r5xc2UdreOyFtfFZB5KX4gHrj/u+5k0iI+e50K5ERd1mNW1XqSpZW7rImdF
+    0WfNJpmH5QaubevY42KR4BcX3Ixw+m38/Q2UnyeEB4VIAhhml+PnFBDW6aUkTRyl
+    tMP/hZY0Fpf4Pzps9l8blYZejuaDIbDqQnyQN4pI5ipBvTCYHQ8+TIXl17B5cj8q
+    TwDjihgcd/bTfbD6w12biT745Vnv8kGOq7P4QDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-id
-    :content-transfer-encoding:mime-version:sender:list-id; s=
-    arctest; t=1520491544; bh=0iEyqKWYCncOBC9g3raUgLa2K1tOrJi3lete+n
-    zPNDA=; b=L6TR4zL71La6TDwBpH09hwdsvFtnXjS0lvH7xoo1t3Q3POmt6bnemk
-    kz+6PtlZhHcCTh0pA558WwyV9SARZS7eCmz0X/PMGdI8WuGBvqvCfT5JfyjdQXxJ
-    4Fs73Cjk+ms2u45xpHea4wwpSi4snmJ7fM1+L62+6SPgK9Ru7yjx7fu8xE8ZdShv
-    QIfT3tp6FU+zuJsBeAHgt4jLO54QXqurxpPN9vXeqBGb67nAEqgXgU9G5q+haZOk
-    XsbOgqNh0Fp2VS0igvp6s1mIVfDa/08R/GpDasWid166d2ELccm6VEXwohG1tqKb
-    2BehAP56gpkw4zRWcELdd2zJpv9C78xg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PDwmyuEv x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :references:in-reply-to:content-type:content-transfer-encoding
+    :mime-version:sender:list-id; s=arctest; t=1520491444; bh=ZDsPA8
+    MFOqQMPTtrH+tyb6h1t34qhwuthoeUxMNNbcQ=; b=aRW68MXFxPBsMD8ol07atF
+    M5NnBdE4NQeUxQ//e88KOZgndLItDlPTI9s87LDCU25QIiiHkrps3TotWgEVi+dv
+    k37gqDk5oJD+DTQga+8IL8uMxBacSRGCdZP1s2bbhhcWdAbud1jXK+VN/E/9nM9D
+    kwOzmmPAf/+Z0FCJnyX6bH+cW5Y2d4dP1IGO4D5XdY0wv5agqPXVnq/pHyXGTWbV
+    7qRmErdD9KViLeGDnWEWtQoWbNn0aA70fFQTbU1nf9z6BcP8D82/ieMcrbfTE+nm
+    Z4/7pA7OuXxpEgzt4TMdY0JIjyyqoTKEfCPVmC4oqvhtW8Zmk7yQ1HppaEc9TbEg
+    ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=c95ui//S x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PDwmyuEv x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=c95ui//S x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,26 +50,27 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965162AbeCHE60 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 23:58:26 -0500
-Received: from mail-co1nam03on0091.outbound.protection.outlook.com ([104.47.40.91]:60295
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        id S1751588AbeCHGne (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 01:43:34 -0500
+Received: from mail-sn1nam01on0102.outbound.protection.outlook.com ([104.47.32.102]:61147
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965028AbeCHE6L (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 7 Mar 2018 23:58:11 -0500
+        id S965225AbeCHE66 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 7 Mar 2018 23:58:58 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Geert Uytterhoeven <geert@linux-m68k.org>,
+CC: Erez Shitrit <erezsh@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
         Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 09/67] RDMA/iwpm: Fix uninitialized error
- code in iwpm_send_mapinfo()
-Thread-Topic: [PATCH AUTOSEL for 4.14 09/67] RDMA/iwpm: Fix uninitialized
- error code in iwpm_send_mapinfo()
-Thread-Index: AQHTtpn5I+WSrJHseUySkJDhmm9aEQ==
-Date: Thu, 8 Mar 2018 04:57:35 +0000
-Message-ID: <20180308045641.7814-9-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 36/67] IB/ipoib: Avoid memory leak if the SA
+ returns a different DGID
+Thread-Topic: [PATCH AUTOSEL for 4.14 36/67] IB/ipoib: Avoid memory leak if
+ the SA returns a different DGID
+Thread-Index: AQHTtpoACoC/5KiOg0e+RWWe8okAZw==
+Date: Thu, 8 Mar 2018 04:57:47 +0000
+Message-ID: <20180308045641.7814-36-alexander.levin@microsoft.com>
 References: <20180308045641.7814-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045641.7814-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,60 +79,96 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0888;7:RjSXlmo2rJIBQuxCKXgq2HytuDzJLJ+p51Xa9EWQ67zsmuNSM3t6Oikjs7SuVy3iYLOaL+jq3bqOyh+RcaxMqdVQbAJM4LAaaqXL9ppNF6+Yr85uN+P5ChpkP1Nrvri7WnM4ioVXHUX1q1B5HPF+mRDdFYeHGhb9lnB4XO37vdBJQKP8iPQwCRwgaNuMb5XH5okFLSJkOsCL/jugtht0k0embb9LWmYD3stTXY1Wvy8FK7TF8YKn9Wrzo/5/r+0G;20:KZrpWAL4f+UPo3iMuO3etopvtfSNiMOoJNPVA4XLqnOxOC7BCIBjLMPaa+pHAfwTc1fxwKfF0GjFvEuzMKX0ePptsuPRbTuUIsm2y1Nr1yQ5TC1c7oSRE846d4PUgdd/nStE+XFwvy+mpXbmZgsqzVfRvERa6ccDvBeMhgGkxAc=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1015;7:VeL7jM7Yx/EGraKoTzxXVqdIvcRyDnxKmwO3yyF9s+Gi/lCDl3GMXUOrj8S/FUJy9DM8mMtTIieEbep9cEwlTEG7LNTIOrch9izxlJW5cc3APVuprjedksOwZdQp0tdkoZ3LXOJL8zXjLSEbnofxIQ0qK8ad5+sWLuZCeRr1iodQmRrlH2qgPGf0+svnS+hehdYbR08IXZ/oCgNyS+LxKEH2/qo8/2ZwVPHEuYEJ72aKOjlePadgnsNXQ1Hk23ca;20:iLGCJiY4wZep/QKWZRrKWg1yWhZT0NoVKw1lxJ0y3R0EgDCz06xkoz/jEkPTg6GrCqlar5X0M84uT4lWiqDhDRER2Qy17DhO47Ak2M3g6QVwXQks/ggzfGNtPVh3uCIO7LlMgIlnrgb0josGEtjDTsWQJ3RzXWrsYOKd4qjU1f8=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 94424dd8-f75d-4d2f-e993-08d584b12e34
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0888;
-x-ms-traffictypediagnostic: DM5PR2101MB0888:
+x-ms-office365-filtering-correlation-id: b5488110-0aa0-4421-c322-08d584b14b8c
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1015;
+x-ms-traffictypediagnostic: DM5PR2101MB1015:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB08886927E8201CCB83F60650FBDF0@DM5PR2101MB0888.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0888;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0888;
+x-microsoft-antispam-prvs: <DM5PR2101MB101575A783197D14421BF653FBDF0@DM5PR2101MB1015.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB1015;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1015;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(346002)(376002)(39380400002)(396003)(189003)(199004)(6116002)(99286004)(2950100002)(6512007)(6666003)(10290500003)(36756003)(5660300001)(106356001)(1076002)(22452003)(3846002)(97736004)(316002)(53936002)(68736007)(105586002)(4326008)(25786009)(54906003)(478600001)(2501003)(186003)(66066001)(76176011)(3280700002)(86362001)(14454004)(2900100001)(5250100002)(110136005)(305945005)(7736002)(72206003)(3660700001)(6436002)(2906002)(26005)(6486002)(10090500001)(8676002)(81156014)(107886003)(81166006)(86612001)(6506007)(59450400001)(8936002)(102836004)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0888;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: JA/iWlu7sjj607sXUs8RvRw1+5wUpvCLXiRXDFmhn/ULu13efKwfHjY+jwNx7lNKu7oVlqpFmV9vqpl9ZY1mqWmW3yJHXLim1vCbiYEOqmXbZJbJFdCBh6i3ExxYncsGwuVwKY6hgvOCuUjZ4rWkZ6p4YSqj21jN3F+6kmAD6rdhpy/NL4xRLJuku7A6XXXVApsEd6Wl+pDCPouq62/zTtJEh/X2FKhQs6Cfz4GeF/p4OaED2NXmiyE/bj5Qnenhs3hUYnjUagPn9lnkARu1q4OYeP7iJ+fdq87ARij7LYeRRS51K0CrxkMhMuUdnpyVZnh1/q/4VGgIXu/IjC5xJw==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(366004)(39860400002)(39380400002)(346002)(189003)(199004)(6116002)(53936002)(1076002)(107886003)(3846002)(3660700001)(10090500001)(6666003)(2950100002)(2906002)(6512007)(99286004)(8936002)(6486002)(76176011)(6506007)(68736007)(59450400001)(316002)(110136005)(81156014)(81166006)(8676002)(54906003)(3280700002)(2900100001)(6436002)(97736004)(72206003)(25786009)(10290500003)(86612001)(4326008)(305945005)(7736002)(66066001)(22452003)(478600001)(5660300001)(86362001)(14454004)(106356001)(36756003)(102836004)(5250100002)(105586002)(26005)(2501003)(186003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1015;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: JQ8X9Uzp39jiD5oIu1P7dWeRRGvmVfaDsgqen09ErqXqYKuMJowwsRJ9JpJFbFU7+/Rj+FKGBAE0UFTonFVt4HoQfbIumJf2ujitGTviS4+31lovSDZn8Mg+W8g1/RMDm+K5yoqVkXf1BNC39xnVxYKjBr8x8pTwzNwkKlAyURPHupqwHCfWpX+6vb6tEltQdZhFykFh2zpSe0uBkkBHZSlwFXBg4/48vqnQSBvLgtgOMrGdBdyKgGiFUzVgOvlWe4hS49Qw4LcVLj2Ll/gp94YWhXNfYT3kMoiQ5QLlnPdsd3vPdXHHfD3QEeD9IDzYrnkSZsk87V9NHkfTvv0WoQ==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <42D06B9FCCAEBD4F8190566D7E2C682F@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94424dd8-f75d-4d2f-e993-08d584b12e34
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:57:35.2864
+X-MS-Exchange-CrossTenant-Network-Message-Id: b5488110-0aa0-4421-c322-08d584b14b8c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:57:47.3198
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0888
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1015
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-RnJvbTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1tNjhrLm9yZz4NCg0KWyBVcHN0
-cmVhbSBjb21taXQgMzAyZDY0MjRlNGEyOTNhNTc2MTk5N2U2YzlmYzNkZmIxZTRjMzU1ZiBdDQoN
-CldpdGggZ2NjLTQuMS4yOg0KDQogICAgZHJpdmVycy9pbmZpbmliYW5kL2NvcmUvaXdwbV91dGls
-LmM6IEluIGZ1bmN0aW9uIOKAmGl3cG1fc2VuZF9tYXBpbmZv4oCZOg0KICAgIGRyaXZlcnMvaW5m
-aW5pYmFuZC9jb3JlL2l3cG1fdXRpbC5jOjY0Nzogd2FybmluZzog4oCYcmV04oCZIG1heSBiZSB1
-c2VkIHVuaW5pdGlhbGl6ZWQgaW4gdGhpcyBmdW5jdGlvbg0KDQpJbmRlZWQsIGlmIG5sX2NsaWVu
-dCBpcyBub3QgZm91bmQgaW4gYW55IG9mIHRoZSBzY2FubmVkIGhhcyBidWNrZXRzLCByZXQNCndp
-bGwgYmUgdXNlZCB1bmluaXRpYWxpemVkLg0KDQpQcmVpbml0aWFsaXplIHJldCB0byAtRUlOVkFM
-IHRvIGZpeCB0aGlzLg0KDQpGaXhlczogMzBkYzVlNjNkNmE1YWQyNCAoIlJETUEvY29yZTogQWRk
-IHN1cHBvcnQgZm9yIGlXQVJQIFBvcnQgTWFwcGVyIHVzZXIgc3BhY2Ugc2VydmljZSIpDQpTaWdu
-ZWQtb2ZmLWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0QGxpbnV4LW02OGsub3JnPg0KUmV2
-aWV3ZWQtYnk6IFRhdHlhbmEgTmlrb2xvdmEgPHRhdHlhbmEuZS5uaWtvbG92YUBpbnRlbC5jb20+
-DQpTaWduZWQtb2ZmLWJ5OiBKYXNvbiBHdW50aG9ycGUgPGpnZ0BtZWxsYW5veC5jb20+DQpTaWdu
-ZWQtb2ZmLWJ5OiBTYXNoYSBMZXZpbiA8YWxleGFuZGVyLmxldmluQG1pY3Jvc29mdC5jb20+DQot
-LS0NCiBkcml2ZXJzL2luZmluaWJhbmQvY29yZS9pd3BtX3V0aWwuYyB8IDEgKw0KIDEgZmlsZSBj
-aGFuZ2VkLCAxIGluc2VydGlvbigrKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9pbmZpbmliYW5k
-L2NvcmUvaXdwbV91dGlsLmMgYi9kcml2ZXJzL2luZmluaWJhbmQvY29yZS9pd3BtX3V0aWwuYw0K
-aW5kZXggM2M0ZmFhZGI4Y2RkLi44MTUyOGY2NDA2MWEgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2lu
-ZmluaWJhbmQvY29yZS9pd3BtX3V0aWwuYw0KKysrIGIvZHJpdmVycy9pbmZpbmliYW5kL2NvcmUv
-aXdwbV91dGlsLmMNCkBAIC02NTQsNiArNjU0LDcgQEAgaW50IGl3cG1fc2VuZF9tYXBpbmZvKHU4
-IG5sX2NsaWVudCwgaW50IGl3cG1fcGlkKQ0KIAl9DQogCXNrYl9udW0rKzsNCiAJc3Bpbl9sb2Nr
-X2lycXNhdmUoJml3cG1fbWFwaW5mb19sb2NrLCBmbGFncyk7DQorCXJldCA9IC1FSU5WQUw7DQog
-CWZvciAoaSA9IDA7IGkgPCBJV1BNX01BUElORk9fSEFTSF9TSVpFOyBpKyspIHsNCiAJCWhsaXN0
-X2Zvcl9lYWNoX2VudHJ5KG1hcF9pbmZvLCAmaXdwbV9oYXNoX2J1Y2tldFtpXSwNCiAJCQkJICAg
-ICBobGlzdF9ub2RlKSB7DQotLSANCjIuMTQuMQ0K
+From: Erez Shitrit <erezsh@mellanox.com>
+
+[ Upstream commit 439000892ee17a9c92f1e4297818790ef8bb4ced ]
+
+The ipoib path database is organized around DGIDs from the LLADDR, but the
+SA is free to return a different GID when asked for path. This causes a
+bug because the SA's modified DGID is copied into the database key, even
+though it is no longer the correct lookup key, causing a memory leak and
+other malfunctions.
+
+Ensure the database key does not change after the SA query completes.
+
+Demonstration of the bug is as  follows
+ipoib wants to send to GID fe80:0000:0000:0000:0002:c903:00ef:5ee2, it
+creates new record in the DB with that gid as a key, and issues a new
+request to the SM.
+Now, the SM from some reason returns path-record with other SGID (for
+example, 2001:0000:0000:0000:0002:c903:00ef:5ee2 that contains the local
+subnet prefix) now ipoib will overwrite the current entry with the new
+one, and if new request to the original GID arrives ipoib  will not find
+it in the DB (was overwritten) and will create new record that in its
+turn will also be overwritten by the response from the SM, and so on
+till the driver eats all the device memory.
+
+Signed-off-by: Erez Shitrit <erezsh@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ drivers/infiniband/ulp/ipoib/ipoib_main.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/drivers/infiniband/ulp/ipoib/ipoib_main.c b/drivers/infiniband=
+/ulp/ipoib/ipoib_main.c
+index dcc77014018d..a47a7944d650 100644
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -776,6 +776,22 @@ static void path_rec_completion(int status,
+ 	spin_lock_irqsave(&priv->lock, flags);
+=20
+ 	if (!IS_ERR_OR_NULL(ah)) {
++		/*
++		 * pathrec.dgid is used as the database key from the LLADDR,
++		 * it must remain unchanged even if the SA returns a different
++		 * GID to use in the AH.
++		 */
++		if (memcmp(pathrec->dgid.raw, path->pathrec.dgid.raw,
++			   sizeof(union ib_gid))) {
++			ipoib_dbg(
++				priv,
++				"%s got PathRec for gid %pI6 while asked for %pI6\n",
++				dev->name, pathrec->dgid.raw,
++				path->pathrec.dgid.raw);
++			memcpy(pathrec->dgid.raw, path->pathrec.dgid.raw,
++			       sizeof(union ib_gid));
++		}
++
+ 		path->pathrec =3D *pathrec;
+=20
+ 		old_ah   =3D path->ah;
+--=20
+2.14.1
