@@ -1,90 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934476AbeCHAgw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 19:36:52 -0500
-Received: from gateway34.websitewelcome.com ([192.185.149.46]:43170 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933935AbeCHAgu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 19:36:50 -0500
-Subject: Re: [PATCH v2 0/3] pinctrl: bcm2835: Add brcm,level property
-To: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: linus.walleij@linaro.org, eric@anholt.net, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <431699005.307231.1520086916739@email.1und1.de>
- <1520216960-19880-1-git-send-email-matheus@castello.eng.br>
- <821312841.275581.1520423887935@email.1und1.de>
-From: Matheus Castello <matheus@castello.eng.br>
-Message-ID: <047e47b4-daf7-2ba2-ea86-0060a59049b7@castello.eng.br>
-Date: Wed, 7 Mar 2018 20:12:25 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S934523AbeCHAhK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 19:37:10 -0500
+Received: from ozlabs.org ([103.22.144.67]:60083 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933935AbeCHAhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 19:37:09 -0500
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 8 Mar 2018 11:36:47 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the pinctrl
+ tree
+Message-ID: <20180308113647.75279391@canb.auug.org.au>
+In-Reply-To: <CACRpkdaWd_7QWd7t5i6DvU3_Gu1giR9v2uoqQiLNXVWTPEty8w@mail.gmail.com>
+References: <20180308073921.5c104e74@canb.auug.org.au>
+        <CACRpkdaWd_7QWd7t5i6DvU3_Gu1giR9v2uoqQiLNXVWTPEty8w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <821312841.275581.1520423887935@email.1und1.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - castello.eng.br
-X-BWhitelist: no
-X-Source-IP: 191.189.21.134
-X-Source-L: No
-X-Exim-ID: 1etjAv-0037rZ-JW
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.0.11]) [191.189.21.134]:24401
-X-Source-Auth: matheus@castello.eng.br
-X-Email-Count: 5
-X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
-X-Local-Domain: yes
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/fPX23p+65JglBHjx_00rr7J"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stefan,
+--Sig_/fPX23p+65JglBHjx_00rr7J
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 03/07/2018 07:58 AM, Stefan Wahren wrote:
-> Hi Matheus,
-> 
->> Matheus Castello <matheus@castello.eng.br> hat am 5. März 2018 um 03:29 geschrieben:
->>
->>
->> Hi Linus and Stefan,
->>
->> thanks for the tips.
->>
->> This series adds support for generic binding for pinctrl bcm2835 driver,
->> and add the code for set output buffer of a pin using the output-low and
->> output-high generic properties.
->>
->> Tested on Raspberry Pi Zero W, based on bcm2835 SoC.
->>
->> Matheus Castello (3):
-> 
-> looks like you missed the changes to the dt binding. Please also add Rob Herring and Mark Rutland to CC. We need a ACK from them.
+Hi Linus,
 
-are you talking about the .dts files? I add an overlay file for my tests. 
-I was thinking it would be better to start with this changes in the driver and then in another series to convert to the generic style in the .dts.
-If you find it better already add the conversion also in this series let me know.
+On Wed, 7 Mar 2018 23:25:48 +0100 Linus Walleij <linus.walleij@linaro.org> =
+wrote:
+>
+> On Wed, Mar 7, 2018 at 9:39 PM, Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>=20
+> > Commit
+> >
+> >   fc08fa6009a0 ("pinctrl: sh-pfc: r8a7795: remove duplicate of CLKOUT p=
+in in pinmux_pins[]")
+> >
+> > is missing a Signed-off-by from its committer. =20
+>=20
+> Looping in Geert,
+>=20
+> I guess this came in through the Renesas PFC pull request.
+>=20
+> Geert do you prefer that I back it all out so you can send me
+> a new pull request? Or some other solution?
 
-I understood that I should put the device tree maintainers in thread only if I were to introduce a new property. As I am using generic properties and not introducing new ones I did not add them.
-Let me know if it is still necessary I stayed in this doubt.
+But you are listed as the committer ...
+--=20
+Cheers,
+Stephen Rothwell
 
-Best Regards
-Matheus Castello
-> 
->>   pinctrl: bcm2835: switch to GENERIC_PINCONF
->>   pinctrl: bcm2835: Add support for generic pinctrl binding
->>   pinctrl: bcm2835: Add support for output-low output-high properties
->>
->>  drivers/pinctrl/bcm/Kconfig           |  1 +
->>  drivers/pinctrl/bcm/pinctrl-bcm2835.c | 88 +++++++++++++++++++++++------------
->>  2 files changed, 60 insertions(+), 29 deletions(-)
->>
->> --
->> 2.7.4
->>
+--Sig_/fPX23p+65JglBHjx_00rr7J
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqghZ8ACgkQAVBC80lX
+0Gy8ZAf/QWwQ8GKG7GLgDnkAvk3Pp7zF0N+cqMN5iz7J0s8kcnoiNS42iegfus/h
+5h97ggHsBo2zDNbeKqO0jDywOcuP84uGZ6lPt3Vk56/be7OgXyx6SoNSmtWyuqOP
+OZBMpilQzYarOFP8lGPAcwdyZDw5WFqraCh7zIyESZWFf5uOYdNtGi7tZDoPwh5m
+6tabb0mDCa7JH60jAAZxH9yP6DBfha/wn36Nds0TDMFED9WACXjPUeUN0vocjKns
+eDexZPvHQFbXHGFGMxAdA1bXfEhAcDpf8/emwNz1/++oxiHBeclSGu0DZcXlPBqL
+Ybo/ynu5jq7unRUQCmvD36DNTbAmFw==
+=SMLf
+-----END PGP SIGNATURE-----
+
+--Sig_/fPX23p+65JglBHjx_00rr7J--
