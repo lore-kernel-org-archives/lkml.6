@@ -1,90 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756045AbeCHPTg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 10:19:36 -0500
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:44611 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754993AbeCHPTd (ORCPT
+        id S1755927AbeCHPY1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 10:24:27 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:32769 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754052AbeCHPYZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 10:19:33 -0500
-X-Google-Smtp-Source: AG47ELuX8F0b11JAr7fVVN39agVuf8BOFYEDlUUnHIvSCTr39xPIn0xEVnDyL4+wgKyoND1+NoFE6w==
-Date: Thu, 8 Mar 2018 16:19:29 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/6] ARM: dts: tegra: apalis-tk1: updates incl. v1.2
- hardware support
-Message-ID: <20180308151929.GE13814@ulmo>
-References: <20180210013806.28496-1-marcel@ziswiler.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="a1QUDc0q7S3U7/Jg"
-Content-Disposition: inline
-In-Reply-To: <20180210013806.28496-1-marcel@ziswiler.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Thu, 8 Mar 2018 10:24:25 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] drm: Add LVDS decoder bridge
+Date: Thu,  8 Mar 2018 16:24:00 +0100
+Message-Id: <1520522643-11756-1-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
+   this small series add a driver for transparent LVDS decoders, as
+Thine THC63LVD1024 device.
 
---a1QUDc0q7S3U7/Jg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The R-Car Gen3 V3M Eagle board feature such a converter, that has been so far
+not described as part of the display output pipeline. Now that a driver has
+been added, the Eagle DTS file has been updated to include the transparent
+decoder chip.
 
-On Sat, Feb 10, 2018 at 02:38:00AM +0100, Marcel Ziswiler wrote:
->=20
-> This series sets critical trips, activates PWM pin muxing for PWM3,
-> adds a missing AS3722 GPIO0 configuration, adds a hog group for
-> Ethernet, PCIe, reset GPIOs, updates the copyright period, removes
-> spurious newlines and adds support for the V1.2 hardware revision of
-> the Toradex Apalis TK1 system on module.
->=20
->=20
-> Marcel Ziswiler (6):
->   arm: tegra: apalis-tk1: set critical trips
->   ARM: dts: tegra: apalis-tk1: activate pwm pin muxing for pwm3
->   ARM: dts: tegra: apalis-tk1: add missing as3722 gpio0 configuration
->   ARM: dts: tegra: apalis-tk1: hog group for ethernet, pcie, reset gpios
->   ARM: dts: tegra: apalis-tk1: copyright period, spurious newlines
->   ARM: dts: tegra: apalis-tk1: support v1.2 hardware revision
->=20
->  arch/arm/boot/dts/Makefile                      |    1 +
->  arch/arm/boot/dts/tegra124-apalis-eval.dts      |   16 +-
->  arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts |  250 +++
->  arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi     | 2052 +++++++++++++++++=
-++++++
->  arch/arm/boot/dts/tegra124-apalis.dtsi          |   70 +-
->  5 files changed, 2344 insertions(+), 45 deletions(-)
->  create mode 100644 arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts
->  create mode 100644 arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+So far so good, but currently the current DRM Bridge API do not provide support
+to query a mode from another bridge as it is possible to do on panel devices.
+In our case the LVDS decoder is connected to the output of R-Car DU lvds encoder
+(drivers/gpu/drm/rcar-du/rcar_lvds.c). As its 'mode_set' function shows, LVDS
+modes cannot be propagated from bridge to another bridge, but are instead
+inferred from the bus_format field of the panel's connector.
 
-Applied, thanks.
+It is my intention to propose an API extension to allow formats to be propagated
+through bridges, but knowing the DRM/KMS subsystem very superficially I would
+appreciate any pointer from more experienced developers.
 
-Thierry
+For Renesas side:
+The series is based on Laurent's drm/next/du branch with patches on top for:
+- Sergei: Enable PFC, I2c, GPIOs for r8a77970
+- Sergei: Add support for r8a77970 in DU and add display device nodes in
+  r8a77970 DTSI
+- Niklas: Connect DU LVDS output to HDMI bridge adv7511w in Eagle DTS
+- Sergei: fix video output on R8A77970
 
---a1QUDc0q7S3U7/Jg
-Content-Type: application/pgp-signature; name="signature.asc"
+A base branch with these patches applied is available at
+git://jmondi.org/linux v3m/v4.16-rc3/base
 
------BEGIN PGP SIGNATURE-----
+Tested on Eagle board, making sure DU probes and testing all available output
+modes (of which only a few are actually working, I suspect due to faulty mode
+propagation through DRM bridges).
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhVIEACgkQ3SOs138+
-s6GdFBAArxRzFoP2qvn5sTy+YxuR35WGzCzljcKp+Sem03Frmn2znFS3iehH6dT7
-IU2xjdyN2J8CKc2AXxodLYWVM/EFMvpldvZNyzd2XfpzGvUO3hwAYTdtU5XGcXub
-uSV+/UJcXjcGgLVerMv6/+JcddE/KX/WsyzAWhRwaGxdxc/ILZe2rk1LGsv3/d7S
-sUqYjPKZdbxkx2yhLPGH0PmBGTG6utU0s7BCJAzlSPlQ8hn4Ia6aYapRhXWtc7Q3
-7KD30irjMETNG1VbwJym55oG40kkBG9dMrQEws/7X30vUWD+DOlXmLxXGeCflqTI
-55ltG5JIYOcV2C6cqqdFuB18P3T7vwaPBty2UG7kjpEgVY0KikrXAwhQbrG9kCTB
-Xwj+k8etRbX5IOcZVs9Xr3BUjNpL0lz6HnfTfQNv6nwZ5KWG+C0nHhGcFpigWDWH
-jMAFoqH2Xhrjo9ym7AOQiWYj9tFI7brI2O29tz6vX8EqaFe/ynnrGTScGHF2Xoyx
-jWc5OBRpKGjMdjvamoxr+D/1DZpUabETo1Nxjs9uQUHWtnd8qJXHgNsauuZOxnJ+
-i1SoBPaZ39xN8ZE49m61MMn9QTYF7ghhUL+N7gk2BvMhlg9b2zdy5o2wnvLL6FdK
-fD7dX6T9FKQW++l6w58gT4AKuOo7mqx5JSB7WO1g9spK3nmVAP4=
-=hCn0
------END PGP SIGNATURE-----
+Thanks
+   j
 
---a1QUDc0q7S3U7/Jg--
+Jacopo Mondi (3):
+  dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
+  drm: bridge: Add LVDS decoder driver
+  arm64: dts: renesas: Add LVDS decoder to R-Car V3M Eagle
+
+ .../bindings/display/bridge/thine,thc63lvd1024.txt |  59 +++++
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts     |  31 ++-
+ drivers/gpu/drm/bridge/Kconfig                     |   8 +
+ drivers/gpu/drm/bridge/Makefile                    |   1 +
+ drivers/gpu/drm/bridge/lvds-decoder.c              | 239 +++++++++++++++++++++
+ 5 files changed, 336 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+ create mode 100644 drivers/gpu/drm/bridge/lvds-decoder.c
+
+--
+2.7.4
