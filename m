@@ -1,89 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936041AbeCHQ7K (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 11:59:10 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:37252 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752087AbeCHQ7F (ORCPT
+        id S936104AbeCHQ6w (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 11:58:52 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:46134 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933717AbeCHQyq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 11:59:05 -0500
-X-Google-Smtp-Source: AG47ELt9V4wvFcIZraoSxhUR5yVQA92m0/OG9rC/sIzJJHsDuQVDqNo4PKXEAqKqA6w9F27ECAPntg==
-Subject: Re: [PATCH 2/2] dt-bindings: backlight: Add binding for RAVE SP
- backlight driver
-To: Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>, linux-kernel@vger.kernel.org,
-        Chris Healy <cphealy@gmail.com>, Lucas Stach <l.stach@pengutronix.de>,
-        Aleksander Morgado <aleksander@aleksander.es>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org
-References: <20180307024011.25033-1-andrew.smirnov@gmail.com>
- <20180307024011.25033-2-andrew.smirnov@gmail.com>
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Message-ID: <f9650ab5-4d6a-a710-6af7-c6f2e4c9c686@linaro.org>
-Date: Thu, 8 Mar 2018 16:59:02 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 8 Mar 2018 11:54:46 -0500
+From: <gabriel.fernandez@st.com>
+To: <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>
+Subject: [PATCH v2 11/12] clk: stm32mp1: add MCO clocks
+Date: Thu, 8 Mar 2018 17:54:04 +0100
+Message-ID: <1520528045-18330-12-git-send-email-gabriel.fernandez@st.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
+References: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20180307024011.25033-2-andrew.smirnov@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG4NODE2.st.com
+ (10.75.127.11)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-08_09:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/03/18 02:40, Andrey Smirnov wrote:
-> Add Device Tree bindings for RAVE SP backlihgt drvier - an MFD cell of
-> parent RAVE SP driver (documented in
-> Documentation/devicetree/bindings/mfd/zii,rave-sp.txt).
-> 
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Daniel Thompson <daniel.thompson@linaro.org>
-> Cc: Jingoo Han <jingoohan1@gmail.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Aleksander Morgado <aleksander@aleksander.es>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Two micro-controller clock output (MCO) pins are available:
+MCO1 and MCO2.
+For each output, it is possible to select a clock source.
+The selected clock can be divided thanks to configurable
+prescaler.
 
-> ---
->   .../leds/backlight/zii,rave-sp-backlight.txt       | 23 ++++++++++++++++++++++
->   1 file changed, 23 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.txt
-> new file mode 100644
-> index 000000000000..2eba8322fc28
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.txt
-> @@ -0,0 +1,23 @@
-> +Zodiac Inflight Innovations RAVE Supervisory Processor Backlight Bindings
-> +
-> +RAVE SP backlight device is a "MFD cell" device corresponding to
-> +backlight functionality of RAVE Supervisory Processor. It is expected
-> +that its Device Tree node is specified as a child of the node
-> +corresponding to the parent RAVE SP device (as documented in
-> +Documentation/devicetree/bindings/mfd/zii,rave-sp.txt)
-> +
-> +Required properties:
-> +
-> +- compatible: Should be "zii,rave-sp-backlight"
-> +
-> +Example:
-> +
-> +	rave-sp {
-> +		compatible = "zii,rave-sp-rdu1";
-> +		current-speed = <38400>;
-> +
-> +		pwrbutton {
-> +			compatible = "zii,rave-sp-backlight";
-> +		};
-> +	}
-> +
-> 
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ drivers/clk/clk-stm32mp1.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index 51e3e76..b3a6ec4 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -252,6 +252,14 @@
+ 	"off", "ck_lse", "ck_lsi", "ck_hse_rtc"
+ };
+ 
++static const char * const mco1_src[] = {
++	"ck_hsi", "ck_hse", "ck_csi", "ck_lsi", "ck_lse"
++};
++
++static const char * const mco2_src[] = {
++	"ck_mpu", "ck_axi", "ck_mcu", "pll4_p", "ck_hse", "ck_hsi"
++};
++
+ static const struct clk_div_table axi_div_table[] = {
+ 	{ 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 4 },
+ 	{ 4, 4 }, { 5, 4 }, { 6, 4 }, { 7, 4 },
+@@ -1960,6 +1968,18 @@ enum {
+ 		  _MUX(RCC_BDCR, 16, 2, 0),
+ 		  _NO_DIV),
+ 
++	/* MCO clocks */
++	COMPOSITE(CK_MCO1, "ck_mco1", mco1_src, CLK_OPS_PARENT_ENABLE |
++		  CLK_SET_RATE_NO_REPARENT,
++		  _GATE(RCC_MCO1CFGR, 12, 0),
++		  _MUX(RCC_MCO1CFGR, 0, 3, 0),
++		  _DIV(RCC_MCO1CFGR, 4, 4, 0, NULL)),
++
++	COMPOSITE(CK_MCO2, "ck_mco2", mco2_src, CLK_OPS_PARENT_ENABLE |
++		  CLK_SET_RATE_NO_REPARENT,
++		  _GATE(RCC_MCO2CFGR, 12, 0),
++		  _MUX(RCC_MCO2CFGR, 0, 3, 0),
++		  _DIV(RCC_MCO2CFGR, 4, 4, 0, NULL)),
+ };
+ 
+ struct stm32_clock_match_data {
+-- 
+1.9.1
