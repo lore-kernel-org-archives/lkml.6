@@ -1,70 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755813AbeCHMFx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 07:05:53 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:46811 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750705AbeCHMFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 07:05:51 -0500
-Date: Thu, 8 Mar 2018 13:05:49 +0100
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Denis OSTERLAND <denis.osterland@diehl.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mgr@pengutronix.de" <mgr@pengutronix.de>,
-        "m.grzeschik@pengutronix.de" <m.grzeschik@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "jdelvare@suse.com" <jdelvare@suse.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [PATCH v3 3/4] rtc: isl1208: add support for isl1219 with tamper
- detection
-Message-ID: <20180308120549.GG20370@piout.net>
-References: <1520246373-19023-1-git-send-email-Denis.Osterland@diehl.com>
- <1520246373-19023-4-git-send-email-Denis.Osterland@diehl.com>
- <20180306204255.GI3035@piout.net>
- <1520410754.5976.27.camel@diehl.com>
- <20180307104714.GL3035@piout.net>
- <1520509988.5415.17.camel@diehl.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520509988.5415.17.camel@diehl.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1755538AbeCHMJV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 07:09:21 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54850 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751373AbeCHMJU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 07:09:20 -0500
+From: Thomas Richter <tmricht@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Cc: brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.vnet.ibm.com>
+Subject: [PATCH] perf annotate: Handle s390 pc relative load and store instruction.
+Date: Thu,  8 Mar 2018 13:09:13 +0100
+X-Mailer: git-send-email 2.13.5
+X-TM-AS-GCONF: 00
+x-cbid: 18030812-0020-0000-0000-0000040043B0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030812-0021-0000-0000-0000429488DB
+Message-Id: <20180308120913.14802-1-tmricht@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-08_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=20
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803080142
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/03/2018 at 11:53:09 +0000, Denis OSTERLAND wrote:
-> Am Mittwoch, den 07.03.2018, 11:47 +0100 schrieb Alexandre Belloni:
-> > > > > +
-> > > > > +	tv64.tv_sec = rtc_tm_to_time64(&tm);
-> > > > Why not using an unsigned long long directly here? time64_t is not the
-> > > > correct type.
-> > > Do you mean timespec64 is not the correct type here?
-> > > Then yes, sould be time64_t.
-> > > If you mean time64_t is not the correct type here,
-> > > then can you give me some detail why there is no rtc_tm_to_u64,
-> > > or something like that?
-> > The rtc subsystem forbids negative times, the proper type should be
-> > unsigned.
-> I will add rtc_vaild_tm check.
-> 
-> Which sequence for time conversion would you expect?
-> 
-> time64_t secs = rtc_tm_to_time64(&tm);
-> BUG_ON(secs < 0);
-> return sprintf(buf, "%llu\n", (unsigned long long)secs);
-> 
-> or
-> 
-> return sprintf(buf, "%llu\n", (unsigned long long)rtc_tm_to_time64(&tm));
+S390 has several load and store instructions with target operand
+addressing relative to the program counter, for example lrl, lgrl,
+strl, stgrl.
 
-rtc_vaild_tm will already return EINVAL in case of negative time so this
-is the one you should use.
+These instructions are handled similar to x86. Objdump output
+displays those instructions as:
+   9595c: c4 2d 00 09 9c 54   lgrl   %r7,1c8540 <mp_+0x60>
+This output is parsed (like on x86) and perf annotate shows those
+lines as:
+   lgrl   %r7,mp_+0x60
 
+This patch handles the s390 specific instruction parsing for
+pc relative load and store instructions.
+
+Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+---
+ tools/perf/arch/s390/annotate/instructions.c | 63 ++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
+
+diff --git a/tools/perf/arch/s390/annotate/instructions.c b/tools/perf/arch/s390/annotate/instructions.c
+index 0a3e39b5143d..0c54f1b33ac0 100644
+--- a/tools/perf/arch/s390/annotate/instructions.c
++++ b/tools/perf/arch/s390/annotate/instructions.c
+@@ -52,6 +52,61 @@ static struct ins_ops s390_call_ops = {
+ 	.scnprintf = call__scnprintf,
+ };
+ 
++static int s390_mov__parse(struct arch *arch __maybe_unused,
++			   struct ins_operands *ops,
++			   struct map *map __maybe_unused)
++{
++	char *s = strchr(ops->raw, ','), *target, *endptr;
++
++	if (s == NULL)
++		return -1;
++
++	*s = '\0';
++	ops->source.raw = strdup(ops->raw);
++	*s = ',';
++
++	if (ops->source.raw == NULL)
++		return -1;
++
++	target = ++s;
++	ops->target.raw = strdup(target);
++	if (ops->target.raw == NULL)
++		goto out_free_source;
++
++	ops->target.addr = strtoull(target, &endptr, 16);
++	if (endptr == target)
++		goto out_free_target;
++
++	s = strchr(endptr, '<');
++	if (s == NULL)
++		goto out_free_target;
++	endptr = strchr(s + 1, '>');
++	if (endptr == NULL)
++		goto out_free_target;
++
++	*endptr = '\0';
++	ops->target.name = strdup(s + 1);
++	*endptr = '>';
++	if (ops->target.name == NULL)
++		goto out_free_target;
++
++	return 0;
++
++out_free_target:
++	zfree(&ops->target.raw);
++out_free_source:
++	zfree(&ops->source.raw);
++	return -1;
++}
++
++static int mov__scnprintf(struct ins *ins, char *bf, size_t size,
++			  struct ins_operands *ops);
++
++static struct ins_ops s390_mov_ops = {
++	.parse	   = s390_mov__parse,
++	.scnprintf = mov__scnprintf,
++};
++
+ static struct ins_ops *s390__associate_ins_ops(struct arch *arch, const char *name)
+ {
+ 	struct ins_ops *ops = NULL;
+@@ -68,6 +123,14 @@ static struct ins_ops *s390__associate_ins_ops(struct arch *arch, const char *na
+ 		ops = &s390_call_ops;
+ 	if (!strcmp(name, "br"))
+ 		ops = &ret_ops;
++	/* override load/store relative to PC */
++	if (!strcmp(name, "lrl") ||
++	    !strcmp(name, "lgrl") ||
++	    !strcmp(name, "lgfrl") ||
++	    !strcmp(name, "llgfrl") ||
++	    !strcmp(name, "strl") ||
++	    !strcmp(name, "stgrl"))
++		ops = &s390_mov_ops;
+ 
+ 	if (ops)
+ 		arch__associate_ins_ops(arch, name, ops);
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.14.3
