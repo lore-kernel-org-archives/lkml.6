@@ -1,103 +1,102 @@
-Return-Path: <robherring2@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519942118; cv=none;
+Return-Path: <mpatocka@redhat.com>
+X-Google-Smtp-Source: AG47ELtJWVFQgl3DhV6JbkFhm4q4JbL6pegebK8F/xJa9o6oa3e7kYNI7VI7SNtlrPR/MPYVzMoc
+ARC-Seal: i=1; a=rsa-sha256; t=1520489488; cv=none;
         d=google.com; s=arc-20160816;
-        b=Fx53mziDpteMbIqwoJYNaxi/dgCL2cc0CGipwvvihmGx5+OLJPBG1FHjdQLPe02vpI
-         GLp00gg5PracBtz5V+iggAkYtQTtQOwlREMgL7bW/P1LJCAXymPMY0teSh+tpablYQSf
-         CFictYLzk+ncmP+wuyo88K0M0oryDe67k3Vku/vTILXJTx85R3lnZCJwn//39dsZ7HBM
-         RMSSqLAfd94K8Dugz1eS1QadTq28+kIZhYe/pMd+A9ZCHJyfl3pYYlJ/2p/nba3oCIFg
-         FW1Jxe2NzkGtoFdWGwfgYUWDI9xFVRdbti3T6mtiM3JmtaCSxqWdwFNz3KI4GfL6RgVK
-         +8Cg==
+        b=MNuaeT5qsN3urmAptYmyVY+UlMH81o64pNY8RDD2uONZnawXC1h+vHsTgYTgJKtRAZ
+         uyvDSU1DciWX59rb5QrUXTA3iV+L4qRDc6WyR08NCo2Qq7heXYFiXtx3S+89/cUC+aHG
+         q+4+vrwHNFBaNzpaYkurqV4Oh5ysjs4Bk3S+AtJzvcujwr8Jl/KpssRub+b+GL7N7ZhD
+         6LupXYAFyWFq2gcEZiIfTPlfM+N5rT1qHqOZN1eZ7Io49uzuGe076yy2BTgWFhfxOaUk
+         7PriTlCGVxAwANZoebU5eeElz48CO8mTjNI22mZl2qAz6Xlrlb6j5ao7zqGdJaJykhTA
+         Az3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=rrE3V/1s6uhEJA+mAK0pTPRONQTA91dzkQfFPjvMj6c=;
-        b=yC80rcaXGJdK6YBoYzkMqsvBTheaiwWfT0HYxY0aShyLDk6QuWp7ZC1jlOYQLgk43j
-         iWL//zrliIeAQFCtSX+n+W4zXHwrQMVXVHwFHEgMnIX8wP0+odqMh2lt6GarByE0ZjmR
-         UEyRglPR7foUduiJ/kfHSEN9c6SJoqEXiKYGmJeyNGk3LX5R7ETZbddstWXb3Db7Y+s/
-         FlkYB8uM4TLzvc9wZNN+t/XcE+56qOLwXp5yYcahgVC9p3bYVQCIm3BsxJmwf2+VXnRT
-         QEESYXxLU5V4q6PkNT8aOGi/dv2B3o4lvlxcukyCmc/3MGdGOWQp3i+UvngOkwE2+eZL
-         V/yg==
+        h=mime-version:user-agent:message-id:subject:cc:to:from:date
+         :arc-authentication-results;
+        bh=92/JbIJ3PXJ7SNM67BLg4WAMe526jskGIt/WdA/nDAk=;
+        b=sIPUHPdaIifRFoO+rskqmeYhXAGKw5SMKKkbPk3yg779EHor8jQhPOpWza0dAETGUF
+         YSQuQl72dVPEan1IxYz13jkKWAQ93HQb7RX8CWYzTzdBZCJy3H1nwIn/DtJ2/jGeWwF+
+         x6uLt4RUxRjL3hbI+laKP5gOlLpBvVOcCRF7wVGy4/rt84453jWXzZY+lNRzcj7jv4k3
+         lGHTr6Fhln/MAIGzS9wTAMWKeQ6zSzYuS5CXYMGU6bRxXKR/awrrEi+dWbcNK6L3aRVl
+         awRQmZVCk1QjD6ANQuZc/zvcQXrrTK+xXI6mQFIQpVn7npyeuJIcqTQYsT1TyBMkPlvI
+         Rpbw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
+       spf=pass (google.com: domain of mpatocka@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=mpatocka@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
-X-Google-Smtp-Source: AG47ELsB4AzKRygEQ8hYsnqLs4aCfAYgJG7i9zeFS/kDtYvC7KSJiihmLo5PTNQnu7UbXQTvO/eZ+Q==
-Date: Thu, 1 Mar 2018 16:08:36 -0600
-From: Rob Herring <robh@kernel.org>
-To: Mikko Perttunen <cyndis@kapsi.fi>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	Rajkumar Rampelli <rrajk@nvidia.com>, mark.rutland@arm.com,
-	thierry.reding@gmail.com, jonathanh@nvidia.com, jdelvare@suse.com,
-	corbet@lwn.net, catalin.marinas@arm.com, will.deacon@arm.com,
-	kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
-	pombredanne@nexb.com, mmaddireddy@nvidia.com, mperttunen@nvidia.com,
-	arnd@arndb.de, gregory.clement@free-electrons.com,
-	timur@codeaurora.org, andy.gross@linaro.org, xuwei5@hisilicon.com,
-	elder@linaro.org, heiko@sntech.de, krzk@kernel.org,
-	ard.biesheuvel@linaro.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	ldewangan@nvidia.com
-Subject: Re: [PATCH 05/10] hwmon: generic-pwm-tachometer: Add generic PWM
- based tachometer
-Message-ID: <20180301220836.a77o5i5g7g2k7lei@rob-hp-laptop>
-References: <1519196339-9377-1-git-send-email-rrajk@nvidia.com>
- <1519196339-9377-6-git-send-email-rrajk@nvidia.com>
- <ee03e1e5-bbeb-1238-04ed-b992fe3a3ce6@kapsi.fi>
- <c1192f75-0e6e-c735-67e1-2901624831ae@roeck-us.net>
- <a5db25f7-6999-ff3a-21c2-161cfcf4db35@kapsi.fi>
+       spf=pass (google.com: domain of mpatocka@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=mpatocka@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Date: Thu, 8 Mar 2018 01:11:26 -0500 (EST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: Peter Zijlstra <peterz@infradead.org>
+cc: David Woodhouse <dwmw2@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] fix compilation of 64-bit kernel with 32-bit compiler
+Message-ID: <alpine.LRH.2.02.1803080107001.7847@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a5db25f7-6999-ff3a-21c2-161cfcf4db35@kapsi.fi>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592992898629636853?=
-X-GMAIL-MSGID: =?utf-8?q?1593774827021842338?=
+X-GMAIL-THRID: =?utf-8?q?1594348785980298320?=
+X-GMAIL-MSGID: =?utf-8?q?1594348785980298320?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Feb 21, 2018 at 05:20:29PM +0200, Mikko Perttunen wrote:
-> On 21.02.2018 16:46, Guenter Roeck wrote:
-> > On 02/20/2018 11:15 PM, Mikko Perttunen wrote:
-> > > AIUI, the PWM framework already exposes a sysfs node with period
-> > > information. We should just use that instead of adding a new driver
-> > > for this.
-> > > 
-> > 
-> > I am kind of lost. Please explain.
-> > 
-> > Are you saying that we should drop the pwm-fan driver as well (which goes
-> > the opposite way), as well as any other drivers doing anything with pwm
-> > signals,
-> > because after all those signals are already exposed to userspace a sysfs
-> > attributes,
-> > and a kernel driver to abstract those values is thus not needed ?
-> 
-> The only thing this driver does is do a constant division in kernelspace.
-> I'm not really seeing why that couldn't be done in userspace. But if you
-> think it's appropriate to do the RPM conversion in kernelspace then I'm not
-> greatly opposed to that.
-> 
-> > 
-> > > In any case, we cannot add something like this to device tree since
-> > > it's not a hardware device.
-> > > 
-> > 
-> > So you are saying there is no means to express in devicetree that
-> > a pwm input is connected to a fan ? How is that not hardware ?
-> > 
-> > If so, how do you express in devicetree that a pwm signal is connected
-> > to anything ?
-> 
-> If we want to describe that the tachometer is connected to a fan, then we
-> should have a fan node in the board's device tree. We don't have a chip that
-> has a thing called "generic-pwm-tachometer" attached to it. (We have chips
-> that have a "nvidia,tegra186-tachometer", so it's proper to have that.)
+The patch b5bc2231b8ad4387c9641f235ca0ad8cd300b6df ("objtool: Add 
+retpoline validation") broke compiling 64-bit kernel with 32-bit compiler.
 
-We already have some fan control bindings in the tree. Follow those. 
-There's only so many ways to control fans, so lets have some alignment. 
-And yes, we should have a fan node. 
+This patch fixes the following error and a large number of "can't find
+rela for retpoline_safe" errors that occur when using x32 or i386 gcc.
 
-Rob
+You shouldn't use the type 'unsigned long' in objtool at all - because its
+size depends on the compiler and not on the kernel you are compiling.
+
+In file included from check.c:26:0:
+check.c: In function 'read_retpoline_hints':
+warn.h:57:3: error: format '%ld' expects argument of type 'long int', but argument 5 has type 'unsigned int' [-Werror=format=]
+   "%s: warning: objtool: " format "\n", \
+   ^
+check.c:1135:3: note: in expansion of macro 'WARN'
+   WARN("retpoline_safe size mismatch: %d %ld", sec->len, sizeof(unsigned long));
+   ^~~~
+check.c:1135:44: note: format string is defined here
+   WARN("retpoline_safe size mismatch: %d %ld", sec->len, sizeof(unsigned long));
+                                          ~~^
+                                          %d
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Fixes: b5bc2231b8ad ("objtool: Add retpoline validation")
+
+---
+ tools/objtool/check.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+Index: linux-2.6/tools/objtool/check.c
+===================================================================
+--- linux-2.6.orig/tools/objtool/check.c	2018-03-08 06:53:03.535471000 +0100
++++ linux-2.6/tools/objtool/check.c	2018-03-08 06:56:32.975471000 +0100
+@@ -1131,13 +1131,13 @@ static int read_retpoline_hints(struct o
+ 		return -1;
+ 	}
+ 
+-	if (sec->len % sizeof(unsigned long)) {
+-		WARN("retpoline_safe size mismatch: %d %ld", sec->len, sizeof(unsigned long));
++	if (sec->len % sizeof(uint64_t)) {
++		WARN("retpoline_safe size mismatch: %d %d", sec->len, (int)sizeof(uint64_t));
+ 		return -1;
+ 	}
+ 
+-	for (i = 0; i < sec->len / sizeof(unsigned long); i++) {
+-		rela = find_rela_by_dest(sec, i * sizeof(unsigned long));
++	for (i = 0; i < sec->len / sizeof(uint64_t); i++) {
++		rela = find_rela_by_dest(sec, i * sizeof(uint64_t));
+ 		if (!rela) {
+ 			WARN("can't find rela for retpoline_safe[%d]", i);
+ 			return -1;
