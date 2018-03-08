@@ -1,184 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750966AbeCHWxP convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 17:53:15 -0500
-Received: from gloria.sntech.de ([95.129.55.99]:34380 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750792AbeCHWxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 17:53:13 -0500
-From: Heiko Stuebner <heiko@sntech.de>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
-        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
-        tfiga@chromium.org, hshi@chromium.org, wzz@rock-chips.com,
-        hl@rock-chips.com, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, dianders@chromium.org,
-        linux-rockchip@lists.infradead.org, orjan.eide@arm.com,
-        m.szyprowski@samsung.com, Yakir Yang <ykk@rock-chips.com>,
-        =?ISO-8859-1?Q?St=E9phane?= Marchesin <marcheu@chromium.org>
-Subject: Re: [PATCH v4 03/38] drm/bridge: analogix_dp: detect Sink PSR state after configuring the PSR
-Date: Thu, 08 Mar 2018 23:53:08 +0100
-Message-ID: <2008042.2u3JRVEU5A@phil>
-In-Reply-To: <20180305222324.5872-4-enric.balletbo@collabora.com>
-References: <20180305222324.5872-1-enric.balletbo@collabora.com> <20180305222324.5872-4-enric.balletbo@collabora.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+        id S1751160AbeCHWx0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 17:53:26 -0500
+Received: from bran.ispras.ru ([83.149.199.196]:10298 "EHLO smtp.ispras.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751114AbeCHWxZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 17:53:25 -0500
+From: Alexander Monakov <amonakov@ispras.ru>
+To: linux-kernel@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Alexander Monakov <amonakov@ispras.ru>
+Subject: [PATCH 1/2] regulator: 88pg86x: add DT bindings document
+Date: Fri,  9 Mar 2018 01:53:02 +0300
+Message-Id: <20180308225303.329-1-amonakov@ispras.ru>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enric,
+The only device-specific node names are "buck1" and "buck2" for the two
+regulators present on the device. Sleep mode GPIO and per-regulator GPIO
+enable pins are not exposed (the driver does not support them either).
 
-Am Montag, 5. März 2018, 23:22:55 CET schrieb Enric Balletbo i Serra:
-> From: Yakir Yang <ykk@rock-chips.com>
-> 
-> Make sure the request PSR state takes effect in analogix_dp_send_psr_spd()
-> function, or print the sink PSR error state if we failed to apply the
-> requested PSR setting.
-> 
-> Cc: 征增 王 <wzz@rock-chips.com>
-> Cc: Stéphane Marchesin <marcheu@chromium.org>
-> Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-> [seanpaul changed timeout loop to a readx poll]
-> Signed-off-by: Sean Paul <seanpaul@chromium.org>
-> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Signed-off-by: Alexander Monakov <amonakov@ispras.ru>
+---
+ .../devicetree/bindings/regulator/88pg86x.txt      | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/88pg86x.txt
 
-as this modifies the generic part of the analogix_dp, I think we'll
-need some form of Ack from the drm-bridge maintainers.
-[Or bridge maintainers applying it].
-Change itself looks good, at least to me :-) .
-
-It seems your recipient list is missing some bridge maintainers though.
-MAINTAINERS, tells us that
-	Archit Taneja <architt@codeaurora.org>
-	Andrzej Hajda <a.hajda@samsung.com>
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-should be CCed, but right now I only see Archit.
-
-As there are quite a lot of general patches in here, I'd think this calls
-for a v5, including Mareks tested-tag and including the missing people.
-
-
-Heiko
-
-> 
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |  6 ++--
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  6 ++--
->  drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 35 +++++++++++++++++++---
->  3 files changed, 37 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> index a693ab3078f0..e738aa6de1af 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> @@ -122,8 +122,7 @@ int analogix_dp_enable_psr(struct analogix_dp_device *dp)
->  	psr_vsc.DB0 = 0;
->  	psr_vsc.DB1 = EDP_VSC_PSR_STATE_ACTIVE | EDP_VSC_PSR_CRC_VALUES_VALID;
->  
-> -	analogix_dp_send_psr_spd(dp, &psr_vsc);
-> -	return 0;
-> +	return analogix_dp_send_psr_spd(dp, &psr_vsc);
->  }
->  EXPORT_SYMBOL_GPL(analogix_dp_enable_psr);
->  
-> @@ -149,8 +148,7 @@ int analogix_dp_disable_psr(struct analogix_dp_device *dp)
->  	if (ret != 1)
->  		dev_err(dp->dev, "Failed to set DP Power0 %d\n", ret);
->  
-> -	analogix_dp_send_psr_spd(dp, &psr_vsc);
-> -	return 0;
-> +	return analogix_dp_send_psr_spd(dp, &psr_vsc);
->  }
->  EXPORT_SYMBOL_GPL(analogix_dp_disable_psr);
->  
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-> index 5c6a28806129..b039b28d8fcc 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-> @@ -20,6 +20,8 @@
->  #define MAX_CR_LOOP 5
->  #define MAX_EQ_LOOP 5
->  
-> +#define DP_TIMEOUT_PSR_LOOP_MS			300
-> +
->  /* DP_MAX_LANE_COUNT */
->  #define DPCD_ENHANCED_FRAME_CAP(x)		(((x) >> 7) & 0x1)
->  #define DPCD_MAX_LANE_COUNT(x)			((x) & 0x1f)
-> @@ -247,8 +249,8 @@ void analogix_dp_config_video_slave_mode(struct analogix_dp_device *dp);
->  void analogix_dp_enable_scrambling(struct analogix_dp_device *dp);
->  void analogix_dp_disable_scrambling(struct analogix_dp_device *dp);
->  void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp);
-> -void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
-> -			      struct edp_vsc_psr *vsc);
-> +int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
-> +			     struct edp_vsc_psr *vsc);
->  ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
->  			     struct drm_dp_aux_msg *msg);
->  
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> index 303083ad28e3..005a3f7005d2 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-> @@ -10,10 +10,11 @@
->   * option) any later version.
->   */
->  
-> -#include <linux/device.h>
-> -#include <linux/io.h>
->  #include <linux/delay.h>
-> +#include <linux/device.h>
->  #include <linux/gpio.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
->  
->  #include <drm/bridge/analogix_dp.h>
->  
-> @@ -992,10 +993,25 @@ void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp)
->  	writel(PSR_VID_CRC_ENABLE, dp->reg_base + ANALOGIX_DP_CRC_CON);
->  }
->  
-> -void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
-> -			      struct edp_vsc_psr *vsc)
-> +static ssize_t analogix_dp_get_psr_status(struct analogix_dp_device *dp)
-> +{
-> +	ssize_t val;
-> +	u8 status;
-> +
-> +	val = drm_dp_dpcd_readb(&dp->aux, DP_PSR_STATUS, &status);
-> +	if (val < 0) {
-> +		dev_err(dp->dev, "PSR_STATUS read failed ret=%zd", val);
-> +		return val;
-> +	}
-> +	return status;
-> +}
-> +
-> +int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
-> +			     struct edp_vsc_psr *vsc)
->  {
->  	unsigned int val;
-> +	int ret;
-> +	ssize_t psr_status;
->  
->  	/* don't send info frame */
->  	val = readl(dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
-> @@ -1036,6 +1052,17 @@ void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
->  	val = readl(dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
->  	val |= IF_EN;
->  	writel(val, dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
-> +
-> +	ret = readx_poll_timeout(analogix_dp_get_psr_status, dp, psr_status,
-> +		psr_status >= 0 &&
-> +		((vsc->DB1 && psr_status == DP_PSR_SINK_ACTIVE_RFB) ||
-> +		(!vsc->DB1 && psr_status == DP_PSR_SINK_INACTIVE)), 1500,
-> +		DP_TIMEOUT_PSR_LOOP_MS * 1000);
-> +	if (ret) {
-> +		dev_warn(dp->dev, "Failed to apply PSR %d\n", ret);
-> +		return ret;
-> +	}
-> +	return 0;
->  }
->  
->  ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
-> 
+diff --git a/Documentation/devicetree/bindings/regulator/88pg86x.txt b/Documentation/devicetree/bindings/regulator/88pg86x.txt
+new file mode 100644
+index 000000000000..13b7f49a2ea8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/88pg86x.txt
+@@ -0,0 +1,22 @@
++Marvell 88PG867/88PG868 voltage regulators
++
++Required properties:
++- compatible: one of "marvell,88pg867", "marvell,88pg868";
++- reg: I2C slave address.
++
++Optional subnodes for regulators: "buck1", "buck2", using common regulator
++bindings given in <Documentation/devicetree/bindings/regulator/regulator.txt>.
++
++Example:
++
++	pg868@19 {
++		compatible = "marvell,88pg868";
++		reg = <0x19>;
++
++		vcpu: buck1 {
++			regulator-boot-on;
++			regulator-always-on;
++			regulator-min-microvolt = <1000000>;
++			regulator-max-microvolt = <1350000>;
++		};
++	};
+-- 
+2.11.0
