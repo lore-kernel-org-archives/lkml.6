@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935727AbeCHKWz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 05:22:55 -0500
-Received: from regular1.263xmail.com ([211.150.99.139]:38403 "EHLO
+        id S935358AbeCHKWX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 05:22:23 -0500
+Received: from regular1.263xmail.com ([211.150.99.140]:52727 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934175AbeCHKWf (ORCPT
+        with ESMTP id S1754816AbeCHKWV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 05:22:35 -0500
+        Thu, 8 Mar 2018 05:22:21 -0500
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -16,18 +16,16 @@ X-RL-SENDER: jeffy.chen@rock-chips.com
 X-FST-TO: linux-kernel@vger.kernel.org
 X-SENDER-IP: 103.29.142.67
 X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <62487f1ee71b4eda896284dd0e8b651f>
+X-UNIQUE-TAG: <b2b3354dd476dced5813278bf0d0de96>
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From: Jeffy Chen <jeffy.chen@rock-chips.com>
 To: linux-kernel@vger.kernel.org, broonie@kernel.org
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        Russell King <linux@armlinux.org.uk>, Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v3 4/4] ARM: rockchip: Set name of regmap_config
-Date: Thu,  8 Mar 2018 18:21:54 +0800
-Message-Id: <20180308102154.25686-5-jeffy.chen@rock-chips.com>
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>, Arnd Bergmann <arnd@arndb.de>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH v3 1/4] mfd: syscon: Set name of regmap_config
+Date: Thu,  8 Mar 2018 18:21:51 +0800
+Message-Id: <20180308102154.25686-2-jeffy.chen@rock-chips.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180308102154.25686-1-jeffy.chen@rock-chips.com>
 References: <20180308102154.25686-1-jeffy.chen@rock-chips.com>
@@ -41,22 +39,23 @@ having a valid name will end up using "dummy*" to create debugfs dir.
 Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 ---
 
-Changes in v3: None
+Changes in v3:
+Modify commit message.
 
- arch/arm/mach-rockchip/platsmp.c | 1 +
+ drivers/mfd/syscon.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-rockchip/platsmp.c b/arch/arm/mach-rockchip/platsmp.c
-index ecec340ca345..51984a40b097 100644
---- a/arch/arm/mach-rockchip/platsmp.c
-+++ b/arch/arm/mach-rockchip/platsmp.c
-@@ -208,6 +208,7 @@ static int __init rockchip_smp_prepare_sram(struct device_node *node)
- }
+diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+index fc9ba0ea4e44..b6d05cd934e6 100644
+--- a/drivers/mfd/syscon.c
++++ b/drivers/mfd/syscon.c
+@@ -110,6 +110,7 @@ static struct syscon *of_syscon_register(struct device_node *np)
+ 	syscon_config.reg_stride = reg_io_width;
+ 	syscon_config.val_bits = reg_io_width * 8;
+ 	syscon_config.max_register = resource_size(&res) - reg_io_width;
++	syscon_config.name = of_node_full_name(np);
  
- static const struct regmap_config rockchip_pmu_regmap_config = {
-+	.name = "rockchip-pmu",
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.reg_stride = 4,
+ 	regmap = regmap_init_mmio(NULL, base, &syscon_config);
+ 	if (IS_ERR(regmap)) {
 -- 
 2.11.0
