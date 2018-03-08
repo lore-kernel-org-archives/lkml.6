@@ -1,184 +1,565 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3342454-1520558657-2-10708988345464743713
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520558656; b=kf4p+rycrIGfgXgjTz8eoKaz9e61jlR8BI1ioBun43InpLg
-    gxvpN8EQNCCom8X3HO577p7/22pbNo+wTTZhXA9p3UbOfychKfIoyFwIzyNxkqPg
-    CVZewJf05SZ6L6O89g5piIfYPlOXJBYHxffa2EuCbzR5kDn9mjytE7t/2zaIs+UB
-    W35+f1v9s/WBvOsc7hYAuL5c0ar1ju1lMOFQXgv8L0tllJa/9V/HMJwQCtrXKw1A
-    aarm6rne+MG2TD7wARlaMgU3oiagquTZ0zkibodm0gE/UAt9F1VVkUPjvB7IGG/L
-    d9/joLJEPfFWCXVYXqTrahzIVoda84raCGuPpbQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1520558656; bh=xbXrcyHq2pTNbbtVQOg2jWT0SctUD7KSN7lE5p
-    Z4KX8=; b=bdPM5mhv+AzoUduPfHBxpi34jaRMDNMkDLHnM7l3Fwsbp21hRewMWz
-    uCUzqXjd7nDSV3TVzV1X3DD5/IJCms5jLI2tqo5u2hWUB2P5ipdtZKHfxq1Ak5en
-    yM77qkocyiXcO92c9rGgpHexcLB26kU40s+eE/gsPhKvhetv//33jjNXy+58tn4U
-    UMX4sJ+PcT5PwHAQBMUcFK9LtV67BhG7kDhg5xpwkbHAQ2rlUW3vylCHN3kg+i1J
-    VR6ROi7GperZXkyY7NPEXc7jd/6Z73fHSJGu25J+RWDj9ZteevpzmryLNqm8Y+DV
-    Z33avKgjSDas4FTXZ6SY3Ds4qlQoDZYg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=UEAVHk/Y x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=bI59rta+ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=SnuJpFY+;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=UEAVHk/Y x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=bI59rta+ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=SnuJpFY+;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751183AbeCIBYO (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 20:24:14 -0500
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:41050 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750813AbeCIBYN (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 8 Mar 2018 20:24:13 -0500
-X-Google-Smtp-Source: AG47ELthzkyhcC8Vi8OP8La1HMfzH+dLbcCu2O2aEbYsXRTZxlIvl6RvlpuMpLxadEvG5vUOoLdZcD0Jsi+JC7/ObDo=
+Return-Path: <lurodriguez@suse.de>
+X-Google-Smtp-Source: AG47ELvEmL0SoznRo7T9TSyM+JRgrhsIIVrbV9Q4q32XV+9rk+4vFSs8S/IiaaLMSAKZN594tyvc
+ARC-Seal: i=1; a=rsa-sha256; t=1520472238; cv=none;
+        d=google.com; s=arc-20160816;
+        b=sDiFVKOuqwqlbbmX3U3/KiMpEHSaXvheKl4+bSZv3KZ9szkOzjfwglAQkI5dW7duOt
+         WAZ49Ze6SWg83ppv/pDhvDZsXX6ESO1zTBZJAHl9vbDF8nu5kU/xandUWt363XlKK0tP
+         lwxpc9shx2v8zMFBWkxYhqUoIgA187F29f2zgGOs5+KeURQ0fJBF/mY6Z/n8EfIIfSK9
+         K6AQrEXuWJ3Rwt3UzYJvBdMk9/RZBgH9b8VKG3irUG+qkhe5SWMBg/5V+3uqlcK4/GCh
+         Bwra+JvH9Zmov4GnLhF7zx5ANxf1Y7q3Yvhr57VN1mp17Iyh6zmKmEjV42dyapowMt8b
+         L5FA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=jXjShfr0KKylwtv18dlfCGa5KzZTezA2L3SpdWzdOuM=;
+        b=T4w6p0qvymXM2qCeZl+l/svIC5R4HWA+Ww+UZfztk7LUXbKLV10G3IaGV//p7HZxnn
+         bsgdZHmDGi3S0/hkbbCj4VZyXUygKINyPFuJdESGD051QG05aSmiDtHGIjYsZ6k6ASNa
+         79CRP/Ifzaj5iN5+uxMih158snhEfchGuKQbnaFOxrAWbl3JSKJGbO/Qy0bshxtAvCFv
+         aGaKTpMZ1iTSP9OjenKvg0G/SAcMqPlsvtMCeQ3tUeEXtDJPSOILsSvaFxhmAcz/BAIf
+         SSGys8IRADNEpA5e5qDRhfk6wwyHqajD/jaS//paUR+yAqDUwRCXRghHFe2OUJawHjYx
+         PJVA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
+Date: Thu, 8 Mar 2018 01:23:53 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>
+Cc: davem@davemloft.net, daniel@iogearbox.net,
+	torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
+	mcgrof@kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@fb.com,
+	linux-api@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Mimi Zohar <zohar@linux.vnet.ibm.com>,
+	Jiri Kosina <jikos@kernel.org>
+Subject: Re: [PATCH net-next] modules: allow modprobe load regular elf
+ binaries
+Message-ID: <20180308012353.GO14069@wotan.suse.de>
+References: <20180306013457.1955486-1-ast@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <357c330f-0165-b7a4-7ecc-4cd797e61e15@fb.com>
-References: <20180306013457.1955486-1-ast@kernel.org> <CAGXu5j+Q=S5sw9N5avyByxi2ekM6povT5Tajjhdb6D9g9ggKxQ@mail.gmail.com>
- <357c330f-0165-b7a4-7ecc-4cd797e61e15@fb.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Thu, 8 Mar 2018 17:24:11 -0800
-X-Google-Sender-Auth: D_IR42H8ayeCUfO0OokZm1Odnl8
-Message-ID: <CAGXu5j+tL-3BM70kfY-XfEovKB30XuSFCaom5yaGHOD-ngokFA@mail.gmail.com>
-Subject: Re: [PATCH net-next] modules: allow modprobe load regular elf binaries
-To: Alexei Starovoitov <ast@fb.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@fb.com,
-        Linux API <linux-api@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Paul Moore <pmoore@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180306013457.1955486-1-ast@kernel.org>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594150201283124044?=
+X-GMAIL-MSGID: =?utf-8?q?1594330697963532844?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 8, 2018 at 4:57 PM, Alexei Starovoitov <ast@fb.com> wrote:
-> The above are three paragraphs of security paranoia without single
-> concrete example of a security issue.
+On Mon, Mar 05, 2018 at 05:34:57PM -0800, Alexei Starovoitov wrote:
+> As the first step in development of bpfilter project [1]
 
-How is running an arbitrary ELF as full init_ns root from a container
-not a concrete example?
+So meta :) The URL refers an lwn article, which in turn refers to this effort's
+first RFC.  As someone only getting *one* of these patches in emails, It would
+be useful if the cover letter referenced instead an optional git tree and
+branch so one could easily get the patches for more careful inspection. In the
+meantime, can you make such tree available with a branch?
 
-I'm not saying this approach can never happen. And this isn't
-paranoia. There are very real security boundary violations in this
-model, IMO. Though, as Andy says, it's more about autoloading than umh
-itself. I just don't want to extend that problem further.
+Also, since kernel/module.c is involved it would be wise to include Jessica,
+which I've Cc'd. I'm going to guess Kees may like to review this too. Mimi
+might want to help review as well.
 
->> As Andy asked earlier, why not DYN too to catch PIE executables? Seems
->> like forcing the userspace helper to be non-PIE would defeat some of
->> the userspace defenses in use in most distros.
->
->
-> because we don't add features without concrete users.
+Rafael may care about suspend/resume implications of these "umh modules" as
+you put it.
 
-It's just a two-line change, and then it would work on distros that
-build PIE-by-default. That seems like a concrete use-case.
+> the request_module()
+> code is extended to allow user mode helpers to be invoked. 
 
->> The exec.c changes should be split into a separate patch. Something
->> feels incorrectly refactored here, though. Passing all three of fd,
->> filename, and file to __do_execve_file() seems wrong; perhaps the fd
->> to file handling needs to happen externally in what you have here as
->> do_execveat_common()? The resulting __do_execve_file() has repeated
->> conditionals on filename... maybe what I object to is being able to
->> pass a NULL filename at all. The filename can be (painfully)
->> reconstructed from the struct file.
->
-> reconstruct the path and instantly introduce the race between execing
-> something by path vs prior check that it's actual elf of already
-> opened file ?!
-> excellent suggestion to improve security.
+Upon inspection you never touch or use request_module() so this is
+false and misleading. You don't use or extend request_module() at all, you rely
+on extending finit_module() so that load_module() itself will now execute (via
+modified do_execve_file()) the same file which was loaded as an module.
 
-I'm not sure why you're being so hostile. We're both interested in
-improving the kernel.
+This is *very* different given request_module() has its own full magic and is
+in and of itself a UMH of the kernel implemented in kernel/kmod.c.
 
-Path names aren't stable, but they provide good _debugging_ about
-things when needed. For example, the LSM hooks, if they report on one
-of these loads, can produce a hint to the user about what happened.
-Passing "/dev/null" around is confusing at the very least. The ELF is
-absolutely not /dev/null. Why make someone guess?
+Nevertheless, why?
 
->>> [...]
->>> diff --git a/kernel/module.c b/kernel/module.c
->>> index ad2d420024f6..6cfa35795741 100644
->>> --- a/kernel/module.c
->>> +++ b/kernel/module.c
->>> [...]
->>> @@ -3870,14 +3896,21 @@ SYSCALL_DEFINE3(finit_module, int, fd, const char
->>> __user *, uargs, int, flags)
->>>                       |MODULE_INIT_IGNORE_VERMAGIC))
->>>                 return -EINVAL;
->>>
->>> -       err = kernel_read_file_from_fd(fd, &hdr, &size, INT_MAX,
->>> -                                      READING_MODULE);
->>> +       f = fdget(fd);
->>> +       if (!f.file)
->>> +               return -EBADF;
->>> +
->>> +       err = kernel_read_file(f.file, &hdr, &size, INT_MAX,
->>> READING_MODULE);
->>
->>
->> For the LSM subsystem, I think this should also get it's own enum
->> kernel_read_file_id. This is really no longer a kernel module...
->
->
-> at this point it's a _file_. It could have been text file just well.
-> If lsm is thinking that at this point kernel is processing
-> kernel module that lsm is badly broken.
+> Idea is that
+> user mode helpers are built as part of the kernel build and installed as
+> traditional kernel modules with .ko file extension into distro specified
+> location, such that from a distribution point of view, they are no different
+> than regular kernel modules.
 
-Again, this is about making things more discoverable. We already know
-if we're loading a kernel module or a umh ELF. Passing this
-information to the LSM is valuable to the LSM to distinguish between
-types of files. They have very different effects on the system, for
-example. The issue is about validating intent with target. "Is this
-kernel module allowed?" and "Is this umh ELF allowed?" are better
-questions that "Is something loaded through finit_module() allowed?"
-Note already that the LSM distinguishes between many other file types
-in kernel_read_file*().
+It sounds like finit_module() module loading is used as a convenience factor
+simply to take advantage of being able to ship / maintain/ compile these umh
+programs as part of the kernel. Is that right?
 
--Kees
+So the finit_module() interface was just a convenient mechanism. Is that right?
+
+Ie, if folks had these binaries in place the regular UMH interface / API could be
+used so that these could be looked for, but instead we want to carry these
+in tandem with the kernel?
+
+If so this still seems like an overly complex way to deal with this.
+
+> Thus, allow request_module() logic to load such
+> user mode helper (umh) modules via:
+> 
+>   request_module("foo") ->
+>     call_umh("modprobe foo") ->
+>       sys_finit_module(FD of /lib/modules/.../foo.ko) ->
+>         call_umh(struct file)
+
+OK so the use case envisioned here was for networking code to do
+something like:
+
+	if (!loaded) {
+		err = request_module("bpfilter");
+		...
+	}
+
+This is visible on your third patch (this is from your RFC, not this series):
+
+https://www.mail-archive.com/netfilter-devel@vger.kernel.org/msg11129.html
+
+So indeed all this patch does in the end is just putting tons of wrappers in
+place so that kernel code can load certain trusted UMH programs we ship, and
+maintain in the kernel.
+
+request_module() has its own world though too. How often in your proof of
+concept is request_module() called? How many times do you envision it being
+called?
+
+Please review lib/test_kmod.c and tools/testing/selftests/kmod/ for testing
+your stuff too or consider extending appropriately.
+
+Are aliases something which you expect we'll need to support for these
+userspace... modules?
+
+> Such approach enables kernel to delegate functionality traditionally done
+> by kernel modules into user space processes (either root or !root) and
+> reduces security attack surface of such new code, meaning in case of
+> potential bugs only the umh would crash but not the kernel.
+
+Now, this sounds great, however I think that the proof of concept chosen is
+pretty complex to start off with. Even if its not designed to be a real
+world life use case, a much simpler proof of concept to do something
+more simple may be useful, if possible. One wouldn't need to to have it
+replace a kernel functionality in real life. lib/ is full of CONFIG_TEST_*
+examples, a simple new stupid kernel functionality which can in turn be replaced
+with a respective userspace counterpart may be useful, and both kconfig
+entries would be mutually exclusive.
+
+> Another
+> advantage coming with that would be that bpfilter.ko 
+
+You mean foo.ko
+
+> can be debugged and
+> tested out of user space as well (e.g. opening the possibility to run
+> all clang sanitizers, fuzzers or test suites for checking translation).
+
+Great too.
+
+> Also, such architecture makes the kernel/user boundary very precise:
+> control plane is done by the user space while data plane stays in the kernel.
+
+I don't see how this is defining any boundary, I see just a loader for a
+userspace program, and re-using a kernel interface known, finit_module() which
+makes it convenient for us to load pre-compiled kernel junk. I'm still
+not convinced this is the right approach.
+
+> It's easy to distinguish "umh module" from traditional kernel module:
+
+Ah you said it, "umh module". I don't see what makes it a "umh module" so far,
+all we are doing is executing a userspace program a la UMH. But its a
+synchronous call, so we wait. The only modular thing here I see is we took the
+finit_module() to be able to loader programs compiled in the kernel. Its not
+using existing kernel symbols, its not exported symbols, etc.
+
+> $ readelf -h bld/net/bpfilter/bpfilter.ko|grep Type
+>   Type:                              EXEC (Executable file)
+> $ readelf -h bld/net/ipv4/netfilter/iptable_filter.ko |grep Type
+>   Type:                              REL (Relocatable file)
+> 
+> Since umh can crash, can be oom-ed by the kernel, killed by admin,
+> the subsystem that uses them (like bpfilter) need to manage life
+> time of umh on its own, so module infra doesn't do any accounting
+> of them.
+
+Trying to avoid the "module infra" in theory sounds great, however you
+did extend it a bit.
+
+Also, the umh has its own infrastructure which I've slowly also been trying to
+groom and cleanup with a few wtf's still left in place and which if we don't
+take care, extending this use could backfire in other ways. Feedback
+below.
+
+> They don't appear in "lsmod" and cannot be "rmmod".
+> Multiple request_module("umh") will load multiple umh.ko processes.
+
+That also means we have a namespace collision between these programs
+and kernel modules. Does compilation warn if we hit a conflict here
+already? What about with aliases?
+
+> Similar to kernel modules the kernel will be tainted if "umh module"
+> has invalid signature.
+> 
+> [1] https://lwn.net/Articles/747551/
+> 
+> Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+> ---
+>  fs/exec.c               | 40 +++++++++++++++++++++++++++++++---------
+>  include/linux/binfmts.h |  1 +
+>  include/linux/umh.h     |  3 +++
+>  kernel/module.c         | 43 ++++++++++++++++++++++++++++++++++++++-----
+>  kernel/umh.c            | 24 +++++++++++++++++++++---
+>  5 files changed, 94 insertions(+), 17 deletions(-)
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 7eb8d21bcab9..0483c438de7d 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1691,14 +1691,13 @@ static int exec_binprm(struct linux_binprm *bprm)
+>  /*
+>   * sys_execve() executes a new program.
+>   */
+> -static int do_execveat_common(int fd, struct filename *filename,
+> -			      struct user_arg_ptr argv,
+> -			      struct user_arg_ptr envp,
+> -			      int flags)
+> +static int __do_execve_file(int fd, struct filename *filename,
+> +			    struct user_arg_ptr argv,
+> +			    struct user_arg_ptr envp,
+> +			    int flags, struct file *file)
+>  {
+>  	char *pathbuf = NULL;
+>  	struct linux_binprm *bprm;
+> -	struct file *file;
+>  	struct files_struct *displaced;
+>  	int retval;
+>  
+> @@ -1737,7 +1736,8 @@ static int do_execveat_common(int fd, struct filename *filename,
+>  	check_unsafe_exec(bprm);
+>  	current->in_execve = 1;
+>  
+> -	file = do_open_execat(fd, filename, flags);
+> +	if (!file)
+> +		file = do_open_execat(fd, filename, flags);
+>  	retval = PTR_ERR(file);
+>  	if (IS_ERR(file))
+>  		goto out_unmark;
+> @@ -1745,7 +1745,9 @@ static int do_execveat_common(int fd, struct filename *filename,
+>  	sched_exec();
+>  
+>  	bprm->file = file;
+> -	if (fd == AT_FDCWD || filename->name[0] == '/') {
+> +	if (!filename) {
+> +		bprm->filename = "/dev/null";
+> +	} else if (fd == AT_FDCWD || filename->name[0] == '/') {
+>  		bprm->filename = filename->name;
+>  	} else {
+>  		if (filename->name[0] == '\0')
+> @@ -1811,7 +1813,8 @@ static int do_execveat_common(int fd, struct filename *filename,
+>  	task_numa_free(current);
+>  	free_bprm(bprm);
+>  	kfree(pathbuf);
+> -	putname(filename);
+> +	if (filename)
+> +		putname(filename);
+>  	if (displaced)
+>  		put_files_struct(displaced);
+>  	return retval;
+> @@ -1834,10 +1837,29 @@ static int do_execveat_common(int fd, struct filename *filename,
+>  	if (displaced)
+>  		reset_files_struct(displaced);
+>  out_ret:
+> -	putname(filename);
+> +	if (filename)
+> +		putname(filename);
+>  	return retval;
+>  }
+>  
+> +static int do_execveat_common(int fd, struct filename *filename,
+> +			      struct user_arg_ptr argv,
+> +			      struct user_arg_ptr envp,
+> +			      int flags)
+> +{
+> +	struct file *file = NULL;
+> +
+> +	return __do_execve_file(fd, filename, argv, envp, flags, file);
+> +}
+> +
+> +int do_execve_file(struct file *file, void *__argv, void *__envp)
+> +{
+> +	struct user_arg_ptr argv = { .ptr.native = __argv };
+> +	struct user_arg_ptr envp = { .ptr.native = __envp };
+> +
+> +	return __do_execve_file(AT_FDCWD, NULL, argv, envp, 0, file);
+> +}
+> +
+>  int do_execve(struct filename *filename,
+>  	const char __user *const __user *__argv,
+>  	const char __user *const __user *__envp)
+> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+> index b0abe21d6cc9..c783a7b9f284 100644
+> --- a/include/linux/binfmts.h
+> +++ b/include/linux/binfmts.h
+> @@ -147,5 +147,6 @@ extern int do_execveat(int, struct filename *,
+>  		       const char __user * const __user *,
+>  		       const char __user * const __user *,
+>  		       int);
+> +int do_execve_file(struct file *file, void *__argv, void *__envp);
+>  
+>  #endif /* _LINUX_BINFMTS_H */
+> diff --git a/include/linux/umh.h b/include/linux/umh.h
+> index 244aff638220..2b10d5f70bd9 100644
+> --- a/include/linux/umh.h
+> +++ b/include/linux/umh.h
+> @@ -22,6 +22,7 @@ struct subprocess_info {
+>  	const char *path;
+>  	char **argv;
+>  	char **envp;
+> +	struct file *file;
+>  	int wait;
+>  	int retval;
+>  	int (*init)(struct subprocess_info *info, struct cred *new);
+> @@ -38,6 +39,8 @@ call_usermodehelper_setup(const char *path, char **argv, char **envp,
+>  			  int (*init)(struct subprocess_info *info, struct cred *new),
+>  			  void (*cleanup)(struct subprocess_info *), void *data);
+>  
+> +struct subprocess_info *call_usermodehelper_setup_file(struct file *file);
+> +
+>  extern int
+>  call_usermodehelper_exec(struct subprocess_info *info, int wait);
+>  
+> diff --git a/kernel/module.c b/kernel/module.c
+> index ad2d420024f6..6cfa35795741 100644
+> --- a/kernel/module.c
+> +++ b/kernel/module.c
+> @@ -325,6 +325,7 @@ struct load_info {
+>  	struct {
+>  		unsigned int sym, str, mod, vers, info, pcpu;
+>  	} index;
+> +	struct file *file;
+>  };
+>  
+>  /*
+> @@ -2801,6 +2802,15 @@ static int module_sig_check(struct load_info *info, int flags)
+>  }
+>  #endif /* !CONFIG_MODULE_SIG */
+>  
+> +static int run_umh(struct file *file)
+> +{
+> +	struct subprocess_info *sub_info = call_usermodehelper_setup_file(file);
+> +
+> +	if (!sub_info)
+> +		return -ENOMEM;
+> +	return call_usermodehelper_exec(sub_info, UMH_WAIT_EXEC);
+> +}
+
+run_umh() calls the program and waits. Note that while we are running a UMH we
+can't suspend. What if they take forever, who is hosing them down with an
+equivalent:
+
+	schedule();
+	try_to_freeze();
+
+Say they are buggy and never return, will they stall suspend, have you tried?
+
+call_usermodehelper_exec() uses helper_lock() which in turn is used for
+umh's accounting for number of running umh's. One of the sad obscure uses
+for this is to deal with suspend/resume. Refer to __usermodehelper* calls
+on kernel/power/process.c
+
+Note how you use UMH_WAIT_EXEC too, so this is all synchronous.
+
+How many of these calls do you expect to be flying through? Is there any
+chance a system could want to keep spawning a lot of these without any
+chance of them yielding a bit?
+
+I'm not a fan of this use of the UMH lock thing, but the reason for it was back
+in the day today's firmware fallback mechanism used to be the default firmware
+loading interface, and it relied on a sysfs loading interface, and *with* this
+UMH locking thing we prevented system stalls on suspend/resume by first
+checking if they were supposed to run or not. But *only* the firmware loader
+interface uses the UMH lock API calls:
+
+  o usermodehelper_read_lock_wait()
+  o usermodehelper_read_trylock()
+
+A long term goal which I had recently was to actually get rid of these stupid
+calls at least out of the way from the direct firmware lookup calls since no
+UMH was involved and fortunately we fast-paced that that upstream [0], refer to
+"devil is in the details".
+
+[0] https://patchwork.kernel.org/patch/9949775/
+
+But -- other than not stalling suspend, an other implicit reason for it, was in
+turn the assumption that the files would be available whenever the callers (in
+this case the firmware API) needed them, and then there could be a race with
+the UMH callers and any respective subsystem filesystem which provides the files
+going down. This is a *theoretical* consideration any other UMH caller needs to
+make today.
+
+This later race is addressed today with the firmware cache implementation, for
+direct firmware filesystem lookups. 
+
+And yes, if you are trying to poke around files from the filesystem and are
+suspending/resuming you may just not get access to some of them today, I just
+dealt with one case recently reported [1]. So the firmware cache is *still*
+required today.
+
+Seeing any new broad user of of the UMH gives me concern if the above lessons
+are not taken into consideration. Do we *need* these files to be sure to be
+present during suspend/resume? How are we sure we won't race with
+suspend/resume?
+
+What if the same file is loaded multiple times, why not have one shared file
+pointer, and have all users use that while such requests are in place?  The
+firmware loader has this in place with "batched requests".
+
+[1] https://lkml.kernel.org/r/20180227232101.20786-1-mcgrof@kernel.org
+
+If it sounds like the direct firmware loading interface is more robust, and
+reliable, and tested to load files its because that is exactly what it was
+designed to do. The kernel UMH is a simple interface with limited use and I'd
+caution further *extensive* uses of it.
+
+> +
+>  /* Sanity checks against invalid binaries, wrong arch, weird elf version. */
+>  static int elf_header_check(struct load_info *info)
+>  {
+> @@ -2808,7 +2818,6 @@ static int elf_header_check(struct load_info *info)
+>  		return -ENOEXEC;
+>  
+>  	if (memcmp(info->hdr->e_ident, ELFMAG, SELFMAG) != 0
+> -	    || info->hdr->e_type != ET_REL
+>  	    || !elf_check_arch(info->hdr)
+>  	    || info->hdr->e_shentsize != sizeof(Elf_Shdr))
+>  		return -ENOEXEC;
+> @@ -2818,6 +2827,11 @@ static int elf_header_check(struct load_info *info)
+>  		info->len - info->hdr->e_shoff))
+>  		return -ENOEXEC;
+>  
+> +	if (info->hdr->e_type == ET_EXEC)
+> +		return run_umh(info->file);
+
+Note you run_umh() on elf_header_check().
+
+> +
+> +	if (info->hdr->e_type != ET_REL)
+> +		return -ENOEXEC;
+>  	return 0;
+>  }
+>  
+> @@ -3669,6 +3683,17 @@ static int load_module(struct load_info *info, const char __user *uargs,
+
+The missing context line below is:
+
+        err = elf_header_check(info);
+>  	if (err)
+>  		goto free_copy;
+>  
+> +	if (info->hdr->e_type == ET_EXEC) {
+> +#ifdef CONFIG_MODULE_SIG
+> +		if (!info->sig_ok) {
+> +			pr_notice_once("umh %s verification failed: signature and/or required key missing - tainting kernel\n",
+> +				       info->file->f_path.dentry->d_name.name);
+> +			add_taint(TAINT_UNSIGNED_MODULE, LOCKDEP_STILL_OK);
+> +		}
+> +#endif
+
+So I guess this check is done *after* run_umh() then, what about the enforce mode,
+don't we want to reject loading at all in any circumstance?
+
+> +		return 0;
+> +	}
+> +
+>  	/* Figure out module layout, and allocate all the memory. */
+>  	mod = layout_and_allocate(info, flags);
+>  	if (IS_ERR(mod)) {
+> @@ -3856,6 +3881,7 @@ SYSCALL_DEFINE3(init_module, void __user *, umod,
+>  SYSCALL_DEFINE3(finit_module, int, fd, const char __user *, uargs, int, flags)
+>  {
+>  	struct load_info info = { };
+> +	struct fd f;
+>  	loff_t size;
+>  	void *hdr;
+>  	int err;
+> @@ -3870,14 +3896,21 @@ SYSCALL_DEFINE3(finit_module, int, fd, const char __user *, uargs, int, flags)
+>  		      |MODULE_INIT_IGNORE_VERMAGIC))
+>  		return -EINVAL;
+>  
+> -	err = kernel_read_file_from_fd(fd, &hdr, &size, INT_MAX,
+> -				       READING_MODULE);
+> +	f = fdget(fd);
+> +	if (!f.file)
+> +		return -EBADF;
+> +
+> +	err = kernel_read_file(f.file, &hdr, &size, INT_MAX, READING_MODULE);
+>  	if (err)
+
+I wonder if from an LSM perspective security_kernel_read_file() and
+READING_MODULE will suffice or if we want to have a different identifier here.
+
+  Luis
+
+> -		return err;
+> +		goto out;
+>  	info.hdr = hdr;
+>  	info.len = size;
+> +	info.file = f.file;
+>  
+> -	return load_module(&info, uargs, flags);
+> +	err = load_module(&info, uargs, flags);
+> +out:
+> +	fdput(f);
+> +	return err;
+>  }
+>  
+>  static inline int within(unsigned long addr, void *start, unsigned long size)
+> diff --git a/kernel/umh.c b/kernel/umh.c
+> index 18e5fa4b0e71..4361c694bdb1 100644
+> --- a/kernel/umh.c
+> +++ b/kernel/umh.c
+> @@ -97,9 +97,13 @@ static int call_usermodehelper_exec_async(void *data)
+>  
+>  	commit_creds(new);
+>  
+> -	retval = do_execve(getname_kernel(sub_info->path),
+> -			   (const char __user *const __user *)sub_info->argv,
+> -			   (const char __user *const __user *)sub_info->envp);
+> +	if (sub_info->file)
+> +		retval = do_execve_file(sub_info->file,
+> +					sub_info->argv, sub_info->envp);
+> +	else
+> +		retval = do_execve(getname_kernel(sub_info->path),
+> +				   (const char __user *const __user *)sub_info->argv,
+> +				   (const char __user *const __user *)sub_info->envp);
+>  out:
+>  	sub_info->retval = retval;
+>  	/*
+> @@ -393,6 +397,20 @@ struct subprocess_info *call_usermodehelper_setup(const char *path, char **argv,
+>  }
+>  EXPORT_SYMBOL(call_usermodehelper_setup);
+>  
+> +struct subprocess_info *call_usermodehelper_setup_file(struct file *file)
+> +{
+> +	struct subprocess_info *sub_info;
+> +
+> +	sub_info = kzalloc(sizeof(struct subprocess_info), GFP_KERNEL);
+> +	if (!sub_info)
+> +		return NULL;
+> +
+> +	INIT_WORK(&sub_info->work, call_usermodehelper_exec_work);
+> +	sub_info->path = "/dev/null";
+> +	sub_info->file = file;
+> +	return sub_info;
+> +}
+> +
+>  /**
+>   * call_usermodehelper_exec - start a usermode application
+>   * @sub_info: information about the subprocessa
+> -- 
+> 2.9.5
+> 
+> 
 
 -- 
-Kees Cook
-Pixel Security
+Luis Rodriguez, SUSE LINUX GmbH
+Maxfeldstrasse 5; D-90409 Nuernberg
