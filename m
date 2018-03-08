@@ -1,80 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934950AbeCHQG2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 11:06:28 -0500
-Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:43534 "EHLO
-        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754580AbeCHQG1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 11:06:27 -0500
-Subject: Re: RFC: remove the "tile" architecture from glibc
-To: Arnd Bergmann <arnd@arndb.de>, Helmut Grohne <helmut@subdivi.de>,
-        GNU C Library <libc-alpha@sourceware.org>,
-        linux-arch <linux-arch@vger.kernel.org>, metcalf@alum.mit.edu,
-        Henrik Grindal Bakken <hgb@ifi.uio.no>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1a57be83-3349-5450-ee4f-d2a33569a728@mellanox.com>
- <d6c8e425-a6b6-6594-05e3-965536f06da3@physik.fu-berlin.de>
- <abce89d0-6798-069a-1a54-06e664665b78@mellanox.com>
- <dc3c52ce-f082-0da0-7828-0d4e6751e2a5@physik.fu-berlin.de>
- <CAK8P3a3itR8i2ayG7e4ku7kz+CQU7qHhptdmtmgTz+CzFGmCiw@mail.gmail.com>
- <20180307181407.GA24350@alf.mars>
- <CAK8P3a2VuYxzy6RmL_w_5f2qHepVRhfVR5P4x9nCUYav1s5n7g@mail.gmail.com>
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Message-ID: <9a60ac70-21e4-3f48-5cd7-ffd3aabc5c21@physik.fu-berlin.de>
-Date: Thu, 8 Mar 2018 17:06:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S935885AbeCHQIF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 11:08:05 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58290 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752059AbeCHQIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 11:08:04 -0500
+Date: Thu, 8 Mar 2018 11:03:24 -0500
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: Paul Moore <paul@paul-moore.com>, Jiri Kosina <jikos@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>, linux-audit@redhat.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Oleg Nesterov <oleg@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] audit: set TIF_AUDIT_SYSCALL only if audit filter has
+ been populated
+Message-ID: <20180308160324.xhjp22ieqq4a5fs3@madcap2.tricolour.ca>
+References: <nycvar.YFH.7.76.1803071120410.15778@cbobk.fhfr.pm>
+ <CALCETrWhZ5ermtpfMt6UdLAC0M9mv7L_TsTfErGStPxznz-AWg@mail.gmail.com>
+ <nycvar.YFH.7.76.1803071745180.15778@cbobk.fhfr.pm>
+ <CAHC9VhRnM0FKrHvSgf=Pm2BpQSVT2pLWWH8Z7YvG5ExBYb_Ekg@mail.gmail.com>
+ <CAHC9VhTipRUv+RB6JPTrHYkVW1vktg5yodD7iZCqgR9Z57Y+zg@mail.gmail.com>
+ <20180308091220.5hzxjztbiugkxpna@madcap2.tricolour.ca>
+ <5508C8FE-FEF0-4326-9210-C3C956EF96CE@amacapital.net>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a2VuYxzy6RmL_w_5f2qHepVRhfVR5P4x9nCUYav1s5n7g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: 160.45.32.140
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5508C8FE-FEF0-4326-9210-C3C956EF96CE@amacapital.net>
+User-Agent: NeoMutt/20171027
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/08/2018 04:55 PM, Arnd Bergmann wrote:
-> I originally helped get tile, blackfin, metag, unicore32 and score into
-> the kernel, and it's always sad to see them go away after all the work
-> that was put into making them work. Out of the above, tile was
-> probably the best supported, and the most ambitious architecture
-> design, but in the end it seems it is just as dead as the others, so
-> I'll now add a patch to remove it along with the others in linux-4.17.
+On 2018-03-08 06:30, Andy Lutomirski wrote:
+> 
+> 
+> > On Mar 8, 2018, at 1:12 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> > 
+> >> On 2018-03-07 18:43, Paul Moore wrote:
+> >>> On Wed, Mar 7, 2018 at 6:41 PM, Paul Moore <paul@paul-moore.com> wrote:
+> >>>> On Wed, Mar 7, 2018 at 11:48 AM, Jiri Kosina <jikos@kernel.org> wrote:
+> >>>>> On Wed, 7 Mar 2018, Andy Lutomirski wrote:
+> >>>>> Wow, this was a long time ago.
+> >>>> 
+> >>>> Oh yeah; but it now resurfaced on our side, as we are of course receiving
+> >>>> a lot of requests with respect to making syscall performance great again
+> >>>> :)
+> >>> 
+> >>> Ooof.  I'm not sure I can handle making more things "great again" ;)
+> >>> 
+> >>>>> From memory and a bit of email diving, there are two reasons.
+> >>>>> 
+> >>>>> 1. The probably was partially solved (by Oleg, IIRC) by making auditctl
+> >>>>>   -a task,never cause newly spawned tasks to not suck.  Yes, it's a
+> >>>>>   very partial solution.  After considerable nagging, I got Fedora to
+> >>>>>   default to -a task,never.
+> >>>> 
+> >>>> Hm, right; that's a bit inconvenient, because it takes each and every
+> >>>> vendor having to realize this option, and put it in. Making kernel do the
+> >>>> right thing automatically sounds like a better option to me.
+> >>> 
+> >>> This predates audit falling into my lap, but speaking generally I
+> >>> think it would be good if the kernel did The Right Thing, so long as
+> >>> it isn't too painful.
+> >>> 
+> >>>>> 2. This patch, as is, may be a bit problematic.  In particular, if one
+> >>>>>   task changes the audit rules while another task is in the middle of
+> >>>>>   the syscall, then it's too late to audit that syscall correctly.
+> >>>>>   This could be seen as a bug or it could be seen as being just fine.
+> >>>> 
+> >>>> I don't think this should be a problem, given the fact that the whole
+> >>>> timing/ordering is not predictable anyway due to scheduling.
+> >>>> 
+> >>>> Paul, what do you think?
+> >>> 
+> >>> I'm not overly concerned about the race condition between configuring
+> >>> the audit filters and syscalls that are currently in-flight; after all
+> >>> we have that now and "fixing" it would be pretty much impractical
+> >>> (impossible maybe?).  Most serious audit users configure it during
+> >>> boot and let it run, frequent runtime changes are not common as far as
+> >>> I can tell.
+> > 
+> > I'd agree the race condition here can't easily be fixed and isn't worth
+> > fixing for the reasons already stated (rules don't change often and may
+> > even be locked once in place relatively early, scheduling uncertainties).
+> > 
+> >>> I just looked quickly at the patch and decided it isn't something I'm
+> >>> going to be able to carefully review in the time I've got left today,
+> >>> so it's going to have to wait until tomorrow and Friday ... however,
+> >>> speaking on general principle I don't have an objection to the ideas
+> >>> put forth here.
+> > 
+> > The approach seems a bit draconian since it touches all tasks but only
+> > when adding the first rule or deleting the last.
+> > 
+> > What we lose is the ability to set or clear individual task auditing and
+> > have it stick to speed up non-audited tasks when there are rules
+> > present, though this isn't currently used, in favour of audit_context
+> > presence.
+> > 
+> >>> Andy, if you've got any Reviewed-by/Tested-by/NACK/etc. you want to
+> >>> add, that would be good to have.
+> >> 
+> >> ... and I just realized that linux-audit isn't on the To/CC line,
+> >> adding them now.
+> > 
+> > (and Andy's non-NACK missed too...)  The mailing list *is* in MAINTAINERS.
+> > 
+> 
+> The mailing list bounces my emails. 
 
-Out of curiosity: Is there any reason why the removal of tilegx is now
-being rushed? Did any of the policies regarding architectures in the
-kernel change? I had the impression that architectures could previously
-stay unmaintained for a while before being removed.
+They'll get approved.
 
-> - sh3/sh4 looked like they would get revived a few years ago
->    for the j-core project. The 2015 roadmap on
->    http://j-core.org/roadmap.html had ambitious plans for
->    an sh3 compatible core in 2017 and an sh4 compatible one
->    in 2018. However, not much has happened  at all since 2016,
->    and now the website is down as well. You might want to
->    contact the j-core developers for clarification.
->    I suspect this has also become a victim of the RISC-V
->    success.
+> >> Link to the patch is below.
+> >> 
+> >> * https://marc.info/?t=152041887600003&r=1&w=2
+> >> 
+> >> paul moore
+> > 
+> > - RGB
 
-Well, that's quite a bummer. I don't know what Rich Felker's and
-Rob Landley's plans now are. Rich told that he would be doing paid
-SH work again in the upcoming weeks. I even sent him and Rob SH4
-hardware to support their efforts.
+- RGB
 
-I have personally invested a lot of work into the SH port over the
-past three years in Debian and I was involved fixing many bugs
-and as a result, the port is quite usable. It would be really
-disappointing to see it being removed all of a sudden :(.
-
-I will get in touch with Rich and Rob to figure out what's going
-on.
-
-Adrian
-
--- 
-  .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer - glaubitz@debian.org
-`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
-   `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
