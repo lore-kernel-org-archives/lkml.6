@@ -1,29 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755459AbeCHJZL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 04:25:11 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:54201 "EHLO
+        id S1755540AbeCHJZf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 04:25:35 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:60101 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751374AbeCHJZH (ORCPT
+        with ESMTP id S1751612AbeCHJZc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 04:25:07 -0500
-Date: Thu, 8 Mar 2018 01:24:50 -0800
-From: tip-bot for Konrad Rzeszutek Wilk <tipbot@zytor.com>
-Message-ID: <tip-36268223c1e9981d6cfc33aff8520b3bde4b8114@git.kernel.org>
-Cc: tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
-        konrad.wilk@oracle.com, kernellwp@gmail.com, pbonzini@redhat.com,
-        rkrcmar@redhat.com, kvm@vger.kernel.org, bp@alien8.de,
-        linux-kernel@vger.kernel.org
-Reply-To: konrad.wilk@oracle.com, tglx@linutronix.de, mingo@kernel.org,
-        hpa@zytor.com, bp@alien8.de, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, rkrcmar@redhat.com, pbonzini@redhat.com,
-        kernellwp@gmail.com
-In-Reply-To: <20180226213019.GE9497@char.us.oracle.com>
-References: <20180226213019.GE9497@char.us.oracle.com>
+        Thu, 8 Mar 2018 04:25:32 -0500
+Date: Thu, 8 Mar 2018 01:25:19 -0800
+From: tip-bot for Borislav Petkov <tipbot@zytor.com>
+Message-ID: <tip-854857f5944c59a881ff607b37ed9ed41d031a3b@git.kernel.org>
+Cc: thomas.lendacky@amd.com, ashok.raj@intel.com,
+        arjan.van.de.ven@intel.com, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, tglx@linutronix.de, bp@suse.de, mingo@kernel.org
+Reply-To: thomas.lendacky@amd.com, arjan.van.de.ven@intel.com,
+        ashok.raj@intel.com, linux-kernel@vger.kernel.org, bp@suse.de,
+        hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org
+In-Reply-To: <20180228102846.13447-2-bp@alien8.de>
+References: <20180228102846.13447-2-bp@alien8.de>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/spectre_v2: Don't check microcode versions when
- running under hypervisors
-Git-Commit-ID: 36268223c1e9981d6cfc33aff8520b3bde4b8114
+Subject: [tip:x86/pti] x86/microcode: Get rid of struct apply_microcode_ctx
+Git-Commit-ID: 854857f5944c59a881ff607b37ed9ed41d031a3b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,58 +33,67 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  36268223c1e9981d6cfc33aff8520b3bde4b8114
-Gitweb:     https://git.kernel.org/tip/36268223c1e9981d6cfc33aff8520b3bde4b8114
-Author:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-AuthorDate: Mon, 26 Feb 2018 09:35:01 -0500
+Commit-ID:  854857f5944c59a881ff607b37ed9ed41d031a3b
+Gitweb:     https://git.kernel.org/tip/854857f5944c59a881ff607b37ed9ed41d031a3b
+Author:     Borislav Petkov <bp@suse.de>
+AuthorDate: Wed, 28 Feb 2018 11:28:40 +0100
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 8 Mar 2018 10:13:02 +0100
+CommitDate: Thu, 8 Mar 2018 10:19:25 +0100
 
-x86/spectre_v2: Don't check microcode versions when running under hypervisors
+x86/microcode: Get rid of struct apply_microcode_ctx
 
-As:
+It is a useless remnant from earlier times. Use the ucode_state enum
+directly.
 
- 1) It's known that hypervisors lie about the environment anyhow (host
-    mismatch)
- 
- 2) Even if the hypervisor (Xen, KVM, VMWare, etc) provided a valid
-    "correct" value, it all gets to be very murky when migration happens
-    (do you provide the "new" microcode of the machine?).
+No functional change.
 
-And in reality the cloud vendors are the ones that should make sure that
-the microcode that is running is correct and we should just sing lalalala
-and trust them.
-
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Wanpeng Li <kernellwp@gmail.com>
-Cc: kvm <kvm@vger.kernel.org>
-Cc: Krčmář <rkrcmar@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180226213019.GE9497@char.us.oracle.com
+Tested-by: Tom Lendacky <thomas.lendacky@amd.com>
+Tested-by: Ashok Raj <ashok.raj@intel.com>
+Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Link: https://lkml.kernel.org/r/20180228102846.13447-2-bp@alien8.de
 
 ---
- arch/x86/kernel/cpu/intel.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/x86/kernel/cpu/microcode/core.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index d19e903214b4..4aa9fd379390 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -144,6 +144,13 @@ static bool bad_spectre_microcode(struct cpuinfo_x86 *c)
- {
- 	int i;
+diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
+index aa1b9a422f2b..63370651e376 100644
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -373,26 +373,23 @@ static int collect_cpu_info(int cpu)
+ 	return ret;
+ }
  
-+	/*
-+	 * We know that the hypervisor lie to us on the microcode version so
-+	 * we may as well hope that it is running the correct version.
-+	 */
-+	if (cpu_has(c, X86_FEATURE_HYPERVISOR))
-+		return false;
-+
- 	for (i = 0; i < ARRAY_SIZE(spectre_bad_microcodes); i++) {
- 		if (c->x86_model == spectre_bad_microcodes[i].model &&
- 		    c->x86_stepping == spectre_bad_microcodes[i].stepping)
+-struct apply_microcode_ctx {
+-	enum ucode_state err;
+-};
+-
+ static void apply_microcode_local(void *arg)
+ {
+-	struct apply_microcode_ctx *ctx = arg;
++	enum ucode_state *err = arg;
+ 
+-	ctx->err = microcode_ops->apply_microcode(smp_processor_id());
++	*err = microcode_ops->apply_microcode(smp_processor_id());
+ }
+ 
+ static int apply_microcode_on_target(int cpu)
+ {
+-	struct apply_microcode_ctx ctx = { .err = 0 };
++	enum ucode_state err;
+ 	int ret;
+ 
+-	ret = smp_call_function_single(cpu, apply_microcode_local, &ctx, 1);
+-	if (!ret)
+-		ret = ctx.err;
+-
++	ret = smp_call_function_single(cpu, apply_microcode_local, &err, 1);
++	if (!ret) {
++		if (err == UCODE_ERROR)
++			ret = 1;
++	}
+ 	return ret;
+ }
+ 
