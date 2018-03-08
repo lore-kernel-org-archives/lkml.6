@@ -1,88 +1,204 @@
-Return-Path: <j.neuschaefer@gmx.net>
-X-Google-Smtp-Source: AG47ELsSkEXCYXzI6+VrDXCz+ZXXBf6Atw91nMpL/QXXzT/KAXksEblmDnIi087Mlh9du2MZR3Is
-ARC-Seal: i=1; a=rsa-sha256; t=1520552469; cv=none;
+Return-Path: <kernel-hardening-return-12282-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELvY01WdnqlVgfggBTG+saNTZLA8csEgV5euukPfUIxWGAoUNGAtjZ9h+gbO3+wVpRi0Ns78
+ARC-Seal: i=1; a=rsa-sha256; t=1520552298; cv=none;
         d=google.com; s=arc-20160816;
-        b=ICAwS/lHLH36U+CGyeCggyewa+j0mE+33No+H/kjo5+pCm7V/SYrjo/Q7Xi6cqqKa/
-         Qj14ty6h8RcU3RIkg5rzLO30X8THsgFUv3RfRtHM5MjnnY+kVs+vUJdgAjzqJUoml5HQ
-         VxZKwAptjDlBPJry0TAzZTXmpapWCImhyj6l3ew+PPs+2kVnVxHvIuV9sAfPe5c3IEol
-         bFX0LfZ0snX5Nu1PvbSF/JbApw37iyRgTJJm3XPG8aBZu/RmT29Sguo0Zt8787rivB+O
-         iBnR6rQSRSe5+UHJh/FVlCvGr69fbpTGjJpBa9+NM41iSrz7KQyWh3oAnXZOvi6pgUH+
-         aL0A==
+        b=iuTPZ+hs3blsylk2OSXph5jKNJn8om/NXqt881n/MgR5bvyTZaRbih7duC7T3b9u1J
+         5d2v76jif0qeeUVg28s0emb4dgN3w5y6L2S1Yt3ZAnMWEndleGwlDzovVz8sPXF3Vguj
+         BpdZHT7IK3j8U1lzJu/QFQToPcZ9N1q9GS10eErclSDKGXYD+tvHIhqUXxRrB+0aFmO8
+         fzo2st/D425i8sySp3BYISYeSH1K1SRi8lSO7N6tnXEsjRVuBEcIWFwse/BAPLWkgyb+
+         /KuXIr4ts/vGNhDLok/SI5UaAOcQ+/LF9YNYYJbZv3XLx9xXSjLwfi3VYH+B2u4+ajET
+         FFLg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=QkYjDia3Bzf8XnZ9JW0o1HhFU1uGYnDOW6lNVMhh3TE=;
-        b=VEvCSnMXRcXJ4W5fepxyv0mjLjwiswvKwFgVkPs90ExHg209jqUHq0yfFHFZrUDIqM
-         BqH81Ay9NaTCdaV3NHGFwr91oWOMmiup1qRFA0VHxFacOnrPzfep5kZBTaAJy4btmN6O
-         Cx1KsBS8Sq2Afwae/Q7CM67t9GieUG2sfFluUVOMmXs1xszniOV4Bayv8BF9y4JeUoil
-         uHCt2DpL8ZdpNhhENZuB9o6HV4lql2ulshJSmPQGhyURqE8nABIrubGEFRVQ81c/sHly
-         Bz5wyp1kvtaCM2lHXmTT4gB2QDNhD92eiJqTnB8gIwtpTnNR9OdTfizsWW/UhiB+8Cno
-         7P5g==
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=hrGlkJyZPUh6nBPbxwRy5IRDCpqnrDZvhfL4E0wh7IQ=;
+        b=nupqj8RnMa5eRKtQ52MFN1opi4bVET5KgwT7a50UwLssl0wpdIk3hyoRjojRTP+9+h
+         OaRsRdY0/mgSWLHyyRnodU/r+AIXWXpy9xbLp1dyFUXvtDZDxKC5h3Vd6bROZbVehvRn
+         +L78aRJiA3Apf9GUgOgo+0LLeYkH2th8eycsyt5EtpDJJOIEm+s+DFT4JRBlXgsXhlru
+         Sh7sBXC+2BNNI+hHAhHVvXJZ4ZncQelo3psZMjkIybZZlS3mf8yYjwIy347uc2gjl6vc
+         K4PZAIcK4dd8Y7Fbtth8LUUen6LvtJixPRwODdH4UGbY+I3mNI92DQnuJXuOvcsEDksb
+         aVqg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of j.neuschaefer@gmx.net designates 212.227.17.20 as permitted sender) smtp.mailfrom=j.neuschaefer@gmx.net
+       dkim=pass header.i=@chromium.org header.s=google header.b=ntcbi7D7;
+       spf=pass (google.com: domain of kernel-hardening-return-12282-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12282-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of j.neuschaefer@gmx.net designates 212.227.17.20 as permitted sender) smtp.mailfrom=j.neuschaefer@gmx.net
-From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+       dkim=pass header.i=@chromium.org header.s=google header.b=ntcbi7D7;
+       spf=pass (google.com: domain of kernel-hardening-return-12282-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12282-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+Date: Thu, 8 Mar 2018 15:37:58 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	"Tobin C. Harding" <me@tobin.cc>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Jonathan Corbet <corbet@lwn.net>, Chris Mason <clm@fb.com>,
+	Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>,
 	"David S. Miller" <davem@davemloft.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH 1/8] MAINTAINERS: GPIO: Add Documentation/driver-api/gpio/
-Date: Fri,  9 Mar 2018 00:40:17 +0100
-Message-Id: <20180308234024.24145-2-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180308234024.24145-1-j.neuschaefer@gmx.net>
-References: <20180308234024.24145-1-j.neuschaefer@gmx.net>
+	Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+	Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Borislav Petkov <bp@suse.de>, Randy Dunlap <rdunlap@infradead.org>,
+	Ian Abbott <abbotti@mev.co.uk>,
+	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+	Linux Btrfs <linux-btrfs@vger.kernel.org>,
+	Network Development <netdev@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Kernel Hardening <kernel-hardening@lists.openwall.com>
+Subject: [PATCH v2] kernel.h: Skip single-eval logic on literals in
+ min()/max()
+Message-ID: <20180308233758.GA22120@beast>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:Ogh2i7vV+Zkm1enYb+V5gERBV10RaCyzAq29AKm20O+quXsBD/P
- 7wa8LVxhMzlL+tO9jkzGOeBF+vFJDCFywP+GOAtnJt2DCmINntuGenUFbr7dxF8guuNsE7B
- I5SRwB04ydOQxABqHk9nePd4dIUIpcylTkUg05otcm7cUor3WUZVc8zrg8FBNujm5lBB1kG
- xzoBvZGvFnPlfR09raHkA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:2hSDu3wEgrY=:StJKNtAli/2KcQ5tIcHyYM
- MJ4cQsWt64aRlweYqOxa6YRtwM9BAdkMpvGu8gdowAGc79j1cWExxaOo5+hcEjP+mKZt8Aogk
- 4s3kjPCcirX4dsq/ewN8uzT+1g9nRgmlf08g0JeOcU5zC80t/Yu3htF/AibO20Rq0xuvJqbuQ
- mX3pIsSaMcZMWcMcf/h2842UCe1rc9GuvMp0x/X5pgo4xXJUh7HrhvER6tHKdF/6afcB/sukZ
- lBAZoy2yH2pYW8jZPMHSB91ujLeDBrBA3/ac0/nMgh5gRdhcaFPyhQaIfYPfcFnuofMU4pQa9
- zm9GUXAtoPZy/HbD9pn3nh5JWULOKa0iDjn+j+I2a1KmHKfcApKTp/byQXe3Ak3umKWf3lzT6
- HM/JKtoFmrd7h1QX4cMkQFM02Fgviy1BC9O2wtfu1YoYWrYIZ+VL9SnjEuFP5XI+pA169pcNf
- TfprYUtnMKrWiecnb52K1MdEBHj/CoWpUxiK6J635otAppPm7Nu7xMlpunByt9w3bZqbP6inY
- OsgeGCXcrKoFrLuI4PQAmjD8aKLRRTDTol1ZJx8Ht0uw6J9Xte4Dj1k5SPSXojJ0eQRgFq4mo
- XWxXmisUXlPK2z/YoKDonFpw6B/M5A4mDYGSe3QFk6mM2086J9+zzfTC3oiB1rzaxcf8/dh1A
- QHWYSxX+p5XiTl9YuibVEN3Z6QbSD5pr09TjBFnq/9wxBzRzNJbrKj0mxnkGPqU7RZNGaticT
- YWRG2VEBVPEH+gg4g4T7e2BE57tOV4SKwBgoZvU6j9gsmi14/NR4RCNc3BugC18JfJOL4mmYn
- /gbNoQtFmcc1RD+RyRgvXzh0G8mj/ABrJYkzULJEGahAvPUkVQ=
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594414826109908083?=
-X-GMAIL-MSGID: =?utf-8?q?1594414826109908083?=
+X-GMAIL-THRID: =?utf-8?q?1594407273404510633?=
+X-GMAIL-MSGID: =?utf-8?q?1594414647395026822?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Steer patches to Documentation/driver-api/gpio/ into the right
-direction.
+When max() is used in stack array size calculations from literal values
+(e.g. "char foo[max(sizeof(struct1), sizeof(struct2))]", the compiler
+thinks this is a dynamic calculation due to the single-eval logic, which
+is not needed in the literal case. This change removes several accidental
+stack VLAs from an x86 allmodconfig build:
 
-Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+$ diff -u before.txt after.txt | grep ^-
+-drivers/input/touchscreen/cyttsp4_core.c:871:2: warning: ISO C90 forbids variable length array ‘ids’ [-Wvla]
+-fs/btrfs/tree-checker.c:344:4: warning: ISO C90 forbids variable length array ‘namebuf’ [-Wvla]
+-lib/vsprintf.c:747:2: warning: ISO C90 forbids variable length array ‘sym’ [-Wvla]
+-net/ipv4/proc.c:403:2: warning: ISO C90 forbids variable length array ‘buff’ [-Wvla]
+-net/ipv6/proc.c:198:2: warning: ISO C90 forbids variable length array ‘buff’ [-Wvla]
+-net/ipv6/proc.c:218:2: warning: ISO C90 forbids variable length array ‘buff64’ [-Wvla]
+
+Based on an earlier patch from Josh Poimboeuf.
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+v2:
+- fix copy/paste-o max1_/max2_ (ijc)
+- clarify "compile-time" constant in comment (Rasmus)
+- clean up formatting on min_t()/max_t()
+---
+ include/linux/kernel.h | 50 ++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 32 insertions(+), 18 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d6a89d31e4a4..313c0907020c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6029,6 +6029,7 @@ L:	linux-gpio@vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
- S:	Maintained
- F:	Documentation/devicetree/bindings/gpio/
-+F:	Documentation/driver-api/gpio/
- F:	Documentation/gpio/
- F:	Documentation/ABI/testing/gpio-cdev
- F:	Documentation/ABI/obsolete/sysfs-gpio
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 3fd291503576..108cdf7bd484 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -787,37 +787,57 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
+  * strict type-checking.. See the
+  * "unnecessary" pointer comparison.
+  */
+-#define __min(t1, t2, min1, min2, x, y) ({		\
++#define __single_eval_min(t1, t2, min1, min2, x, y) ({	\
+ 	t1 min1 = (x);					\
+ 	t2 min2 = (y);					\
+ 	(void) (&min1 == &min2);			\
+ 	min1 < min2 ? min1 : min2; })
+ 
++/*
++ * In the case of compile-time constant values, there is no need to do
++ * the double-evaluation protection, so the raw comparison can be made.
++ * This allows min()/max() to be used in stack array allocations and
++ * avoid the compiler thinking it is a dynamic value leading to an
++ * accidental VLA.
++ */
++#define __min(t1, t2, x, y)						\
++	__builtin_choose_expr(__builtin_constant_p(x) &&		\
++			      __builtin_constant_p(y) &&		\
++			      __builtin_types_compatible_p(t1, t2),	\
++			      (t1)(x) < (t2)(y) ? (t1)(x) : (t2)(y),	\
++			      __single_eval_min(t1, t2,			\
++						__UNIQUE_ID(min1_),	\
++						__UNIQUE_ID(min2_),	\
++						x, y))
++
+ /**
+  * min - return minimum of two values of the same or compatible types
+  * @x: first value
+  * @y: second value
+  */
+-#define min(x, y)					\
+-	__min(typeof(x), typeof(y),			\
+-	      __UNIQUE_ID(min1_), __UNIQUE_ID(min2_),	\
+-	      x, y)
++#define min(x, y)	__min(typeof(x), typeof(y), x, y)
+ 
+-#define __max(t1, t2, max1, max2, x, y) ({		\
++#define __single_eval_max(t1, t2, max1, max2, x, y) ({	\
+ 	t1 max1 = (x);					\
+ 	t2 max2 = (y);					\
+ 	(void) (&max1 == &max2);			\
+ 	max1 > max2 ? max1 : max2; })
+ 
++#define __max(t1, t2, x, y)						\
++	__builtin_choose_expr(__builtin_constant_p(x) &&		\
++			      __builtin_constant_p(y) &&		\
++			      __builtin_types_compatible_p(t1, t2),	\
++			      (t1)(x) > (t2)(y) ? (t1)(x) : (t2)(y),	\
++			      __single_eval_max(t1, t2,			\
++						__UNIQUE_ID(max1_),	\
++						__UNIQUE_ID(max2_),	\
++						x, y))
+ /**
+  * max - return maximum of two values of the same or compatible types
+  * @x: first value
+  * @y: second value
+  */
+-#define max(x, y)					\
+-	__max(typeof(x), typeof(y),			\
+-	      __UNIQUE_ID(max1_), __UNIQUE_ID(max2_),	\
+-	      x, y)
++#define max(x, y)	__max(typeof(x), typeof(y), x, y)
+ 
+ /**
+  * min3 - return minimum of three values
+@@ -869,10 +889,7 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
+  * @x: first value
+  * @y: second value
+  */
+-#define min_t(type, x, y)				\
+-	__min(type, type,				\
+-	      __UNIQUE_ID(min1_), __UNIQUE_ID(min2_),	\
+-	      x, y)
++#define min_t(type, x, y)	 __min(type, type, x, y)
+ 
+ /**
+  * max_t - return maximum of two values, using the specified type
+@@ -880,10 +897,7 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
+  * @x: first value
+  * @y: second value
+  */
+-#define max_t(type, x, y)				\
+-	__max(type, type,				\
+-	      __UNIQUE_ID(min1_), __UNIQUE_ID(min2_),	\
+-	      x, y)
++#define max_t(type, x, y)	__max(type, type, x, y)
+ 
+ /**
+  * clamp_t - return a value clamped to a given range using a given type
 -- 
-2.16.1
+2.7.4
+
+
+-- 
+Kees Cook
+Pixel Security
