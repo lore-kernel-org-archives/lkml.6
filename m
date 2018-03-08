@@ -1,145 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934577AbeCHKQo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 05:16:44 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:54876 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755259AbeCHKQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 05:16:42 -0500
-Date: Thu, 8 Mar 2018 11:16:28 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>, X86 ML <x86@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/9] x86/dumpstack: Improve opcodes dumping in the Code:
- section
-Message-ID: <20180308101628.GA21166@pd.tnic>
-References: <20180306094920.16917-1-bp@alien8.de>
- <20180306094920.16917-6-bp@alien8.de>
- <CA+55aFxwdftN1KcA=Q26oN_GYWyeuyjmMPs-whxZcmz=-ARPFg@mail.gmail.com>
- <20180307101314.GC23662@pd.tnic>
- <20180307132535.g7c2jro5n7okavbh@treble>
- <CA+55aFwxPBNk+kh+rmNzLViOqu-GFoJD-FsRe0oahDiwMXy-xw@mail.gmail.com>
+        id S965329AbeCHKRq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 05:17:46 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36754 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S964954AbeCHKRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 05:17:40 -0500
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: Roman Kagan <rkagan@virtuozzo.com>, kvm@vger.kernel.org,
+        x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] x86/kvm: rename HV_X64_MSR_APIC_ASSIST_PAGE to HV_X64_MSR_VP_ASSIST_PAGE
+References: <20180226171121.18974-1-vkuznets@redhat.com>
+        <20180226171121.18974-2-vkuznets@redhat.com>
+        <20180307161944.GE12290@flask> <20180307164812.GA2366@rkaganb.sw.ru>
+        <20180307180442.GA16795@flask>
+Date: Thu, 08 Mar 2018 11:17:34 +0100
+In-Reply-To: <20180307180442.GA16795@flask> ("Radim \=\?utf-8\?B\?S3LEjW3DocWZ\?\=
+ \=\?utf-8\?B\?Iidz\?\= message of "Wed,
+        7 Mar 2018 19:04:43 +0100")
+Message-ID: <87lgf2yipt.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CA+55aFwxPBNk+kh+rmNzLViOqu-GFoJD-FsRe0oahDiwMXy-xw@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 01:08:32PM -0800, Linus Torvalds wrote:
-> On Wed, Mar 7, 2018 at 5:25 AM, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> >
-> > How about we just remove the 'code_bytes=' option?  (Or at the very
-> > least, reduce its possible range to a reasonable max?)
-> 
-> Ack. Just limit it to 64 bytes max sounds plenty.
+Radim Krčmář <rkrcmar@redhat.com> writes:
 
-Done, combined diff ontop. With a 64-byte on-stack opcodes buffer:
+> 2018-03-07 19:48+0300, Roman Kagan:
+>> On Wed, Mar 07, 2018 at 05:19:44PM +0100, Radim Krčmář wrote:
+>> > 2018-02-26 18:11+0100, Vitaly Kuznetsov:
+>> > > diff --git a/arch/x86/include/uapi/asm/hyperv.h b/arch/x86/include/uapi/asm/hyperv.h
+>> > > @@ -275,10 +275,10 @@ struct hv_tsc_emulation_status {
+>> > >  #define HVCALL_POST_MESSAGE			0x005c
+>> > >  #define HVCALL_SIGNAL_EVENT			0x005d
+>> > >  
+>> > > -#define HV_X64_MSR_APIC_ASSIST_PAGE_ENABLE		0x00000001
+>> > > -#define HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_SHIFT	12
+>> > > -#define HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_MASK	\
+>> > > -		(~((1ull << HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_SHIFT) - 1))
+>> > 
+>> > Removing definitions from userspace api isn't a good idea.
+>> > 
+>> > I have no idea why hyper.h is a userspace api, though -- Linux doesn't
+>> > define any of those, so we could copy the definitions to a private
+>> > header, rename, and never look at this file again.
+>> 
+>> That was a thinko when it was moved to uapi, and it has already been
+>> identified as a problem, so now QEMU has its own header with the
+>> definitions it needs, and I'm unaware of any other userspace project
+>> that depends on this stuff.  So I've been planning to remove it from
+>> uapi but still haven't got around to posting the patch :(
+>
+> Great, let's be bold here.
 
----
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index b37c1c30c16f..2c74c1694d9d 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -587,11 +587,6 @@
- 			Sets the size of memory pool for coherent, atomic dma
- 			allocations, by default set to 256K.
- 
--	code_bytes	[X86] How many bytes of object code to print
--			in an oops report.
--			Range: 0 - 8192
--			Default: 64
--
- 	com20020=	[HW,NET] ARCnet - COM20020 chipset
- 			Format:
- 			<io>[,<irq>[,<nodeID>[,<backplane>[,<ckp>[,<timeout>]]]]]
-diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index 409a5bd02a18..2fc009a1824e 100644
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -22,13 +22,9 @@
- #include <asm/stacktrace.h>
- #include <asm/unwind.h>
- 
--#define OPCODE_BUFSIZE 64
--
- int panic_on_unrecovered_nmi;
- int panic_on_io_nmi;
--static unsigned int code_bytes = OPCODE_BUFSIZE;
--static u8 __opc[OPCODE_BUFSIZE];
--static u8 *opcodes = __opc;
-+
- static int die_counter;
- 
- static struct pt_regs exec_summary_regs;
-@@ -77,19 +73,21 @@ static void printk_stack_address(unsigned long address, int reliable,
- 
- void show_opcodes(u8 *rip, const char *loglvl)
- {
--	unsigned int code_prologue = code_bytes * 43 / OPCODE_BUFSIZE;
-+#define OPCODE_BUFSIZE 64
-+	unsigned int code_prologue = OPCODE_BUFSIZE * 43 / OPCODE_BUFSIZE;
-+	u8 opcodes[OPCODE_BUFSIZE];
- 	u8 *ip;
- 	int i;
- 
- 	printk("%sCode: ", loglvl);
- 
- 	ip = (u8 *)rip - code_prologue;
--	if (probe_kernel_read(opcodes, ip, code_bytes)) {
-+	if (probe_kernel_read(opcodes, ip, OPCODE_BUFSIZE)) {
- 		pr_cont(" Bad RIP value.\n");
- 		return;
- 	}
- 
--	for (i = 0; i < code_bytes; i++, ip++) {
-+	for (i = 0; i < OPCODE_BUFSIZE; i++, ip++) {
- 		if (ip == (u8 *)rip)
- 			pr_cont("<%02x> ", opcodes[i]);
- 		else
-@@ -387,34 +385,6 @@ void die(const char *str, struct pt_regs *regs, long err)
- 	oops_end(flags, regs, sig);
- }
- 
--static int __init code_bytes_setup(char *s)
--{
--	unsigned long val;
--	ssize_t ret;
--
--	if (!s)
--		return -EINVAL;
--
--	ret = kstrtoul(s, 0, &val);
--	if (ret)
--		return ret;
--
--	code_bytes = val;
--	if (code_bytes > 8192)
--		code_bytes = 8192;
--
--	if (code_bytes > OPCODE_BUFSIZE) {
--		u8 *new_buf = kzalloc(code_bytes, GFP_KERNEL);
--		if (!new_buf)
--			return -ENOMEM;
--
--		opcodes = new_buf;
--	}
--
--	return 1;
--}
--__setup("code_bytes=", code_bytes_setup);
--
- void show_regs(struct pt_regs *regs)
- {
- 	bool all = true;
+asm/hyperv.h is not uapi.
+
+I would include a patch renaming arch/x86/include/uapi/asm/hyperv.h to
+arch/x86/include/asm/hyperv.h but we already have 'mshyperv.h' there and
+I don't quite understand the difference. We can either merge them or
+come up with a rule distinguishing them.
+
+K. Y., Michael, what do you think?
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+  Vitaly
