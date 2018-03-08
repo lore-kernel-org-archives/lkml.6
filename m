@@ -1,129 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754852AbeCHOa4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 09:30:56 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59365 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754039AbeCHOaz (ORCPT
+        id S1754925AbeCHObE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 09:31:04 -0500
+Received: from mail-pg0-f46.google.com ([74.125.83.46]:37192 "EHLO
+        mail-pg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754039AbeCHObA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 09:30:55 -0500
-Date: Thu, 8 Mar 2018 15:30:53 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: pali.rohar@gmail.com, sre@kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, khilman@kernel.org,
-        aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com,
-        patrikbachan@gmail.com, serge@hallyn.com, abcloriens@gmail.com,
-        clayton@craftyguy.net, martijn@brixit.nl, sakari.ailus@linux.intel.com,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>
-Subject: Nokia N900: refcount_t underflow, use after free
-Message-ID: <20180308143053.GA17267@amd>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Thu, 8 Mar 2018 09:31:00 -0500
+X-Google-Smtp-Source: AG47ELvsnEhxSS/Wvz+V/TAyiKQa2CO3D2vZCO1+PgBO8dqLZT0RwyARO2mFsq11Or+ojTGYRcRJKw==
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] audit: set TIF_AUDIT_SYSCALL only if audit filter has been populated
+From: Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15D60)
+In-Reply-To: <20180308091220.5hzxjztbiugkxpna@madcap2.tricolour.ca>
+Date: Thu, 8 Mar 2018 06:30:58 -0800
+Cc: Paul Moore <paul@paul-moore.com>, Jiri Kosina <jikos@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>, linux-audit@redhat.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Oleg Nesterov <oleg@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Message-Id: <5508C8FE-FEF0-4326-9210-C3C956EF96CE@amacapital.net>
+References: <nycvar.YFH.7.76.1803071120410.15778@cbobk.fhfr.pm> <CALCETrWhZ5ermtpfMt6UdLAC0M9mv7L_TsTfErGStPxznz-AWg@mail.gmail.com> <nycvar.YFH.7.76.1803071745180.15778@cbobk.fhfr.pm> <CAHC9VhRnM0FKrHvSgf=Pm2BpQSVT2pLWWH8Z7YvG5ExBYb_Ekg@mail.gmail.com> <CAHC9VhTipRUv+RB6JPTrHYkVW1vktg5yodD7iZCqgR9Z57Y+zg@mail.gmail.com> <20180308091220.5hzxjztbiugkxpna@madcap2.tricolour.ca>
+To: Richard Guy Briggs <rgb@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w28EVAan024768
 
 
---/04w6evG8XlLl3ft
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi!
+> On Mar 8, 2018, at 1:12 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> 
+>> On 2018-03-07 18:43, Paul Moore wrote:
+>>> On Wed, Mar 7, 2018 at 6:41 PM, Paul Moore <paul@paul-moore.com> wrote:
+>>>> On Wed, Mar 7, 2018 at 11:48 AM, Jiri Kosina <jikos@kernel.org> wrote:
+>>>>> On Wed, 7 Mar 2018, Andy Lutomirski wrote:
+>>>>> Wow, this was a long time ago.
+>>>> 
+>>>> Oh yeah; but it now resurfaced on our side, as we are of course receiving
+>>>> a lot of requests with respect to making syscall performance great again
+>>>> :)
+>>> 
+>>> Ooof.  I'm not sure I can handle making more things "great again" ;)
+>>> 
+>>>>> From memory and a bit of email diving, there are two reasons.
+>>>>> 
+>>>>> 1. The probably was partially solved (by Oleg, IIRC) by making auditctl
+>>>>>   -a task,never cause newly spawned tasks to not suck.  Yes, it's a
+>>>>>   very partial solution.  After considerable nagging, I got Fedora to
+>>>>>   default to -a task,never.
+>>>> 
+>>>> Hm, right; that's a bit inconvenient, because it takes each and every
+>>>> vendor having to realize this option, and put it in. Making kernel do the
+>>>> right thing automatically sounds like a better option to me.
+>>> 
+>>> This predates audit falling into my lap, but speaking generally I
+>>> think it would be good if the kernel did The Right Thing, so long as
+>>> it isn't too painful.
+>>> 
+>>>>> 2. This patch, as is, may be a bit problematic.  In particular, if one
+>>>>>   task changes the audit rules while another task is in the middle of
+>>>>>   the syscall, then it's too late to audit that syscall correctly.
+>>>>>   This could be seen as a bug or it could be seen as being just fine.
+>>>> 
+>>>> I don't think this should be a problem, given the fact that the whole
+>>>> timing/ordering is not predictable anyway due to scheduling.
+>>>> 
+>>>> Paul, what do you think?
+>>> 
+>>> I'm not overly concerned about the race condition between configuring
+>>> the audit filters and syscalls that are currently in-flight; after all
+>>> we have that now and "fixing" it would be pretty much impractical
+>>> (impossible maybe?).  Most serious audit users configure it during
+>>> boot and let it run, frequent runtime changes are not common as far as
+>>> I can tell.
+> 
+> I'd agree the race condition here can't easily be fixed and isn't worth
+> fixing for the reasons already stated (rules don't change often and may
+> even be locked once in place relatively early, scheduling uncertainties).
+> 
+>>> I just looked quickly at the patch and decided it isn't something I'm
+>>> going to be able to carefully review in the time I've got left today,
+>>> so it's going to have to wait until tomorrow and Friday ... however,
+>>> speaking on general principle I don't have an objection to the ideas
+>>> put forth here.
+> 
+> The approach seems a bit draconian since it touches all tasks but only
+> when adding the first rule or deleting the last.
+> 
+> What we lose is the ability to set or clear individual task auditing and
+> have it stick to speed up non-audited tasks when there are rules
+> present, though this isn't currently used, in favour of audit_context
+> presence.
+> 
+>>> Andy, if you've got any Reviewed-by/Tested-by/NACK/etc. you want to
+>>> add, that would be good to have.
+>> 
+>> ... and I just realized that linux-audit isn't on the To/CC line,
+>> adding them now.
+> 
+> (and Andy's non-NACK missed too...)  The mailing list *is* in MAINTAINERS.
+> 
 
-I'm getting this warning... Has anyone seen/debugged that before?
-Unfortunately the backtrace does not seem to be too useful :-(.
+The mailing list bounces my emails. 
 
-	      	  	    	     	     	    	   Pavel
-
-[    0.000000] Booting Linux on physical CPU 0x0
-[    0.000000] Linux version 4.16.0-rc3-next-20180302 (pavel@duo) (gcc
-version 4.7.2 (GC
-C)) #70 Fri Mar 2 10:16:00 CET 2018
-[    0.000000] CPU: ARMv7 Processor [411fc083] revision 3 (ARMv7),
-cr=3D10c5387d
-[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT
-nonaliasing instruction cac
-=2E..
-[    1.244140] omap3isp 480bc000.isp: 480bc000.isp supply vdd-csiphy2
-not found, using d
-ummy regulator
-[    1.254089] omap3isp 480bc000.isp: Revision 2.0 found
-[    1.260009] omap-iommu 480bd400.mmu: 480bd400.mmu: version 1.1
-[    1.266693] ------------[ cut here ]------------
-[    1.271606] WARNING: CPU: 0 PID: 1 at lib/refcount.c:187
-refcount_sub_and_test+0x94/0xa8
-[    1.280181] refcount_t: underflow; use-after-free.
-[    1.285247] Modules linked in:
-[    1.288482] CPU: 0 PID: 1 Comm: swapper Not tainted
-4.16.0-rc3-next-20180302 #70
-[    1.296295] Hardware name: Nokia RX-51 board
-[    1.300811] [<c010d6cc>] (unwind_backtrace) from [<c010b560>]
-(show_stack+0x10/0x14)
-[    1.309020] [<c010b560>] (show_stack) from [<c0127dec>]
-(__warn+0xe8/0x110)
-[    1.316375] [<c0127dec>] (__warn) from [<c0127edc>]
-(warn_slowpath_fmt+0x38/0x48)
-[    1.324310] [<c0127edc>] (warn_slowpath_fmt) from [<c034e630>]
-(refcount_sub_and_test+0x94/0xa8)
-[    1.333557] [<c034e630>] (refcount_sub_and_test) from [<c01109a8>]
-(arm_iommu_release_mapping+0x18/0x2c)
-[    1.343597] [<c01109a8>] (arm_iommu_release_mapping) from
-[<c041752c>] (driver_probe_device+0x24c/0x314)
-[    1.353637] [<c041752c>] (driver_probe_device) from [<c04176a0>]
-(__driver_attach+0xac/0xb0)
-[    1.362548] [<c04176a0>] (__driver_attach) from [<c0415b94>]
-(bus_for_each_dev+0x58/0x7c)
-[    1.371185] [<c0415b94>] (bus_for_each_dev) from [<c0416a14>]
-(bus_add_driver+0xe0/0x1f0)
-[    1.379852] [<c0416a14>] (bus_add_driver) from [<c0417f10>]
-(driver_register+0x78/0xf4)
-[    1.388305] [<c0417f10>] (driver_register) from [<c010257c>]
-(do_one_initcall+0x3c/0x16c)
-[    1.396972] [<c010257c>] (do_one_initcall) from [<c0b00d5c>]
-(kernel_init_freeable+0xf8/0x1c4)
-[    1.406066] [<c0b00d5c>] (kernel_init_freeable) from [<c071640c>]
-(kernel_init+0x8/0x108)
-[    1.414703] [<c071640c>] (kernel_init) from [<c01010e8>]
-(ret_from_fork+0x14/0x2c)
-[    1.422698] Exception stack(0xce049fb0 to 0xce049ff8)
-[    1.428039] 9fa0:                                     00000000
-00000000 00000000 00000000
-[    1.436676] 9fc0: 00000000 00000000 00000000 00000000 00000000
-00000000 00000000 00000000
-[    1.445312] 9fe0: 00000000 00000000 00000000 00000000 00000013
-00000000
-[    1.452270] ---[ end trace dcb3a72772bbfe7a ]---
-[    1.459045] ti-soc-thermal 48002524.bandgap: This OMAP thermal
-sensor is unreliable. You've been warned
-[    1.469055] ti-soc-thermal 48002524.bandgap: Non-trimmed BGAP, Temp
-not accurate
-[    1.476898] ti-soc-thermal 48002524.bandgap: thermal zone device is
-NULL
-[    1.485198] omap_wdt: OMAP Watchdog Timer Rev 0x31: initial timeout
-60 sec
-[    1.495208] omap_hsmmc 4809c000.mmc: GPIO lookup for consumer cd
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---/04w6evG8XlLl3ft
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlqhSR0ACgkQMOfwapXb+vKw1QCgudJXYYHe8FgbyDX7F5Ud23sF
-rccAoK14yJHqhHHLBpOe/dYi6o5JkeMU
-=3bM8
------END PGP SIGNATURE-----
-
---/04w6evG8XlLl3ft--
+>> Link to the patch is below.
+>> 
+>> * https://marc.info/?t=152041887600003&r=1&w=2
+>> 
+>> paul moore
+> 
+> - RGB
+> 
+> --
+> Richard Guy Briggs <rgb@redhat.com>
+> Sr. S/W Engineer, Kernel Security, Base Operating Systems
+> Remote, Ottawa, Red Hat Canada
+> IRC: rgb, SunRaycer
+> Voice: +1.647.777.2635, Internal: (81) 32635
