@@ -1,87 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932216AbeCHT5M convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 14:57:12 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53282 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750926AbeCHT5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 14:57:10 -0500
-Subject: Re: [PATCH v3 4/6] sysctl: Warn when a clamped sysctl parameter is
- set out of range
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>
-References: <1519926220-7453-1-git-send-email-longman@redhat.com>
- <1519926220-7453-5-git-send-email-longman@redhat.com>
- <20180308183140.GI4449@wotan.suse.de>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <deaeacc7-96a3-1c93-8565-cdce5ece6876@redhat.com>
-Date: Thu, 8 Mar 2018 14:57:09 -0500
+        id S1752341AbeCHT6F (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 14:58:05 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:43447 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932269AbeCHT6B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 14:58:01 -0500
+X-Google-Smtp-Source: AG47ELuyW01T+O7y7S4UBUxIylqVnnUzZhigXkmSkRN0qo7rcagM/Uz0pdsvxBJHEgoujeYOH42NXQ==
+Subject: Re: [PATCH] net: phy: Move interrupt check from phy_check to
+ phy_interrupt
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Brad Mouring <brad.mouring@ni.com>, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180307225042.2205-1-brad.mouring@ni.com>
+ <704e7f37-2b94-7e1f-c42f-374254bc791c@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <c9b61b5e-6cd6-dcf3-c7d9-c7fe9b163e80@cogentembedded.com>
+Date: Thu, 8 Mar 2018 22:57:57 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20180308183140.GI4449@wotan.suse.de>
+In-Reply-To: <704e7f37-2b94-7e1f-c42f-374254bc791c@cogentembedded.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/08/2018 01:31 PM, Luis R. Rodriguez wrote:
-> On Thu, Mar 01, 2018 at 12:43:38PM -0500, Waiman Long wrote:
->> Even with clamped sysctl parameters, it is still not that straight
->> forward to figure out the exact range of those parameters. One may
->> try to write extreme parameter values to see if they get clamped.
->> To make it easier, a warning with the expected range will now be
->> printed in the kernel ring buffer when a clamped sysctl parameter
->> receives an out of range value.
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
+On 03/08/2018 10:41 PM, Sergei Shtylyov wrote:
+
+>> If multiple phys share the same interrupt (e.g. a multi-phy chip),
+>> the first device registered is the only one checked as phy_interrupt
+>> will always return IRQ_HANDLED if the first phydev is not halted.
+>> Move the interrupt check into phy_interrupt and, if it was not this
+>> phydev, return IRQ_NONE to allow other devices on this irq a chance
+>> to check if it was their interrupt.
+> 
+>    Hm, looking at kernel/irq/handle.c, all registered IRQ handlers are always
+> called regardless of their results. Care to explain?
+> 
+>> Signed-off-by: Brad Mouring <brad.mouring@ni.com>
 >> ---
->>  include/linux/sysctl.h |  3 +++
->>  kernel/sysctl.c        | 52 ++++++++++++++++++++++++++++++++++++++++++--------
->>  2 files changed, 47 insertions(+), 8 deletions(-)
+>>  drivers/net/phy/phy.c | 16 ++++++----------
+>>  1 file changed, 6 insertions(+), 10 deletions(-)
 >>
->> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
->> index 448aa72..3db57af 100644
->> --- a/include/linux/sysctl.h
->> +++ b/include/linux/sysctl.h
->> @@ -130,11 +130,14 @@ struct ctl_table
->>   * @CTL_FLAGS_CLAMP_RANGE: Set to indicate that the entry should be
->>   *	flexibly clamped to min/max range in case the user provided
->>   *	an incorrect value.
->> + * @CTL_FLAGS_OOR_WARNED: Set to indicate that an out of range warning
->> + * 	had been issued for that entry.
->>   *
->>   * At most 16 different flags will be allowed.
->>   */
->>  enum ctl_table_flags {
->>  	CTL_FLAGS_CLAMP_RANGE		= BIT(0),
->> +	CTL_FLAGS_OOR_WARNED		= BIT(1),
->>  };
-> Ugh, no. Now I see why you had to set this flag later.
->
-> You are not using this flag to "warn" but rather for an internal
-> status checker if you have warned or not. Internal flags should
-> not be something the user sets. If we want a flag for warning
-> that's one thing. If we need a flag to keep tabs if we have
-> warned or not that needs to be kept separately and internally,
-> nothing the user has to do set or reset.
->
->   Luis
+>> diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+>> index e3e29c2b028b..ff1aa815568f 100644
+>> --- a/drivers/net/phy/phy.c
+>> +++ b/drivers/net/phy/phy.c
+>> @@ -632,6 +632,12 @@ static irqreturn_t phy_interrupt(int irq, void *phy_dat)
+>>  	if (PHY_HALTED == phydev->state)
+>>  		return IRQ_NONE;		/* It can't be ours.  */
+>>  
+>> +	if (phy_interrupt_is_valid(phydev)) {
+> 
+>   Always true in this context, no?
+> 
+>> +		if (phydev->drv->did_interrupt &&
+>> +			!phydev->drv->did_interrupt(phydev))
+> 
+>    I don't think we can do this in the interrupt context as this function *will*
+> read from MDIO... I think that was the reason why IRQ handling is done in the
+> thread context...
 
-What I want to do is a printk_once for each sysctl parameter. So the
-flag is used as a marker that a warning has been printed.
+   Ah, we're already in a thread context here! Forgot about it...
+ 
+> [...]
 
-I do understand that it gets somewhat ugly in the case of msgmni and
-shmmni because of the copying back of the flag. Another alternative that
-had been suggested by Kees is to use prink_ratelimited. That we don't
-need that flag at all.
-
-Cheers,
-Longman
+MBR, Sergei
