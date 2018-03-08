@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1084890-1520490674-2-11969398464601964618
+X-Cyrus-Session-Id: sloti22d1t05-1086562-1520490636-2-1784256007504938635
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520490673; b=wKePzsHKHvFsSNWyj+JTwtPEd8F1sP+M+cM1GW13p4zIqg/
-    IaWrsMiOOyZUD/XkgHyS+BbxEKnmVo8+lD5rDZWUHArpaSxiPPJiV0ydLoBdPioH
-    Y/1BDzQQLunLD9aNI4lRaM8TMLJhErrQaY+ZPfQypruKy9Tf1bed3nisTS2ds7/S
-    6zFK3J16Gwme8ruQqu2i/FBxp8dtxFu6VzHwE0qkWzeJDV6xMJtYqxcrBeqlaBEa
-    lyj5l9xkgx8liej2A6tB7/T/U4hn5amFhF1bQcWxvQnfdLnsyxWlq6LyRAU6lLt6
-    //4dAfze6rciIouLIu6aq0BDqcVe9jfX56occ3w==
+    t=1520490635; b=vKnDbDWcjjL0oOQukPKzrBFNnut7z+hiMEA9iZmYAGRIYns
+    X/NpbiIoB4jG/QPLFCnFwNWeCghHCjcWd7qn3wiecOPN2HfESqCx5JeTDN+eAo7h
+    f7AaN9xv4I8zqMYTKf4N/r6oBYz+cJJEVaIPKL33mEZis5ZSxwpV7MKK0Z/NDgeH
+    GV7gVBoQKjD3RB/GRxgR7zLvHBydiN4yNq6Y/8h0/kiBqwmU/N7CvjnskE5GQgtd
+    ZppBac3XxCC6ML559SN5B2oLR0UH9n5fElXQgHJXqBeIdRbzruHln6k1anRdC2N7
+    POpQ718SVvBanBgL57pzgFCImpCkmN3iwPE82LA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520490673; bh=wQRlhx
-    h65WDM0fKXCI/OhlnIp8BCAiLmploKKaKT/uA=; b=W4tRsoRcywA3ZY9Nfazu7v
-    MNtZ0Eq6qW72mEYNQnXeIhqjagKDtNN0rQg00pFzOpe9TsW88M21+4oTcwoq8+qh
-    2AkyubHe1KRAMqX4TiCAtA0/dc1Bz4sKSgEXnb5wKpnIAbdBiLVJeYk19liAEmg9
-    BidC5FXoUAyuLuOOpUnUIy8Zq7jVyKzX75pv2ZjoCBpXVo8299YwsW+aaO9O3bh/
-    bI29YXUiYYv0pdHTzUjE1CIIlno0A4QP4nZocMK+jaCyKKJmjVm/kibbIfmHyN5u
-    +pJ1kj6rdmazfeReYgAl/GkOh/Z9zZD8VXHWpttwJcayChR4Fyte7JiiY+SJlweQ
+    :mime-version:sender:list-id; s=arctest; t=1520490635; bh=6dqQ4o
+    MV6NjQ0YhUwRWagnxwiZLw8GnSENimy0C2a24=; b=NITxDuJbW48ZlmFC17PIrS
+    Ng4G+BfiHbczD87mAeZ7oRajNxpQ4KFTMjo5qyYv0BiR0WeLjpzIZIMYLG35bbYi
+    doZz+YKgDB7XfH2hlwZXYKNZfFsFEXnNSvumpGm4/vNQFnqkH3qHWET35k0vsRdu
+    e9L/d8O6JODc/2Xen45KytCNXfjTEktIGw8gz/SMnMuO0ZkfkS0l/DqlayrtLv5S
+    qELb0bLsCd7Y3Urm6OWYV1KedbRUcj2GPuyZKESiaNK5vuaF6mGV7yb6l72H9a/w
+    rcCwV5QWH1LL4eXzT/GFcOX/VqfrNxEYHy65gCVCu6XXeFwQgpVEksPSKK210vvA
     ==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=kW/tnzgS x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Whaj1txV x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -41,7 +41,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=kW/tnzgS x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Whaj1txV x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,26 +50,27 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751773AbeCHGab (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 01:30:31 -0500
-Received: from mail-bn3nam01on0102.outbound.protection.outlook.com ([104.47.33.102]:44208
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        id S1750904AbeCHGac (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 01:30:32 -0500
+Received: from mail-sn1nam01on0129.outbound.protection.outlook.com ([104.47.32.129]:47332
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750904AbeCHFAG (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S1750966AbeCHFAG (ORCPT <rfc822;stable@vger.kernel.org>);
         Thu, 8 Mar 2018 00:00:06 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Michael Scott <michael.scott@linaro.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
+CC: Hans de Goede <hdegoede@redhat.com>,
+        "rtc-linux@googlegroups.com" <rtc-linux@googlegroups.com>,
+        "alexandre.belloni@free-electrons.com"
+        <alexandre.belloni@free-electrons.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 018/190] Bluetooth: 6lowpan: fix delay work
- init in add_peer_chan()
-Thread-Topic: [PATCH AUTOSEL for 4.9 018/190] Bluetooth: 6lowpan: fix delay
- work init in add_peer_chan()
-Thread-Index: AQHTtpoqC0vMchKeTE6BX1bbgCr07A==
-Date: Thu, 8 Mar 2018 04:58:57 +0000
-Message-ID: <20180308045810.8041-18-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 029/190] x86: i8259: export legacy_pic symbol
+Thread-Topic: [PATCH AUTOSEL for 4.9 029/190] x86: i8259: export legacy_pic
+ symbol
+Thread-Index: AQHTtpotY2TsTj+OLkCrSYohtUT+LA==
+Date: Thu, 8 Mar 2018 04:59:03 +0000
+Message-ID: <20180308045810.8041-29-alexander.levin@microsoft.com>
 References: <20180308045810.8041-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045810.8041-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,120 +79,74 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0983;7:C9znK4iuYoKXS5in7pDlUlWjTvHS42TbCWbNj6wLTZNG1iNdPGcd1ETI5MJmQ0YTY8XL1TsfrPl8oKUuK7VgV6OmqZaYs7G5baoph0NTb05/gZgXxCiUZNutC7sc1h5naQrBcClu6TpDm8gzETJRQer1RLfJhsOVGPTwhi5CSQZJFNtZxMY+1o2nMzE48539TzcOaYHxxW4ogCwIfqEdrjid672Vx20ZEib3Bxm4+8grsy8A450wdQrTWwz4lhOd;20:kjYjAbpPKNakCG92iJ1y4N4itkuCO3JmXbBiMkg3E4e1ul6tgkMETMvrv3AUR2p6T5vwT8dfJGSZVLk4vkM1KE/5MuA/Kai/H9lObUqoNlqkas09eMCG+TJ/wQFgJoeyHjo+4jJ7C7VX00ut7ZDpXV5KoHid8iom6wnB5c+WSTo=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1112;20:oW50kBNIMvMdjctTjaLS0zyrOGQPLTjEUUb30NdldpL/F0owUQKMlgvuFEcfagILGFOUaCcagPruM/e6Y70BEyQx9Yl9s5ggkwM1xg7gcK2DKxwlIhkgoZAOz7Lqy7muigJvNVwMigWGaQqi7fDpEzEtjarXiumVpzwch9+luLI=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 15b43b50-8764-4934-0aa8-08d584b171b3
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0983;
-x-ms-traffictypediagnostic: DM5PR2101MB0983:
+x-ms-office365-filtering-correlation-id: 30414345-3538-4704-77af-08d584b174de
+x-microsoft-antispam: UriScan:(215639381216008);BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1112;
+x-ms-traffictypediagnostic: DM5PR2101MB1112:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0983AAD15DBBF8F57EAF7D6CFBDF0@DM5PR2101MB0983.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0983;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0983;
+x-microsoft-antispam-prvs: <DM5PR2101MB111242084173CFC3890636D4FBDF0@DM5PR2101MB1112.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(215639381216008)(89211679590171)(58145275503218);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB1112;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1112;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(39860400002)(39380400002)(376002)(366004)(189003)(199004)(6512007)(22452003)(54906003)(3280700002)(186003)(316002)(6436002)(110136005)(8936002)(2900100001)(10090500001)(5660300001)(99286004)(6486002)(106356001)(86362001)(97736004)(7736002)(107886003)(25786009)(305945005)(76176011)(36756003)(8676002)(6506007)(5250100002)(105586002)(10290500003)(102836004)(59450400001)(26005)(1076002)(53936002)(81156014)(2950100002)(14454004)(81166006)(2906002)(68736007)(478600001)(66066001)(3846002)(3660700001)(2501003)(4326008)(6116002)(86612001)(72206003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0983;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: AW+x4RdbkDd2TXCFUSNbS4wFkBgb5+TMrQqQo46REYukvjztgAdYQ3oiNjHvH6ONt+4HalfNiVrfLBrCXkAoiyr3h7DuWZNYlpbA6Qtu0wEgg2324BoosPoiHyqHqhh8pMzmf7utYRaAu4l1ZORnF+CInbqpiBPdMf0o/N59JwXRA8SVAkDp1f/GfOgBlUo1WixX6WE9cYxkik89kz/9sPzbcptzR4YTDRO9F0lw1KUWudpxOubysYHloz+25qXRRiWomZO7NtZn4gA/wgr0RmxCyNn5RFNy8llVkzUtfcotWtV+jkTgvErCvVbDY1G+DcxMA3k8svmbWJQpA1HvKw==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(376002)(39380400002)(366004)(396003)(189003)(199004)(54906003)(81156014)(7736002)(86612001)(25786009)(81166006)(6512007)(6486002)(4326008)(3846002)(1076002)(6436002)(36756003)(305945005)(6116002)(8936002)(2900100001)(97736004)(66066001)(2950100002)(105586002)(68736007)(14454004)(72206003)(3660700001)(478600001)(10290500003)(3280700002)(53936002)(106356001)(10090500001)(5660300001)(102836004)(107886003)(316002)(110136005)(22452003)(86362001)(2501003)(5250100002)(6506007)(76176011)(99286004)(2906002)(26005)(186003)(8676002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1112;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: GAq2CbkLs8f5iNwTpm39pzwcI2YYsHKVR9+kkC3f5AQEpixEihq2qQWPFs/iUWPwTb5ka6Sf3VeEpT55YTdFSmsyOfCCx6hymd9KXdUG9kC61kElKkSEBRWvJNhijfBIIFLUBgp9ePYFo5DM3Rv5bvvlFJDY6/kOHdDxkeX8AVWubKuVaoWVB7AlnJQ7foqbrDhUxDjborRmdhDLaKd1F0WdK0bx8O3Lz73EZ/7e/XKih5E/XuIBfC0F6BXs54X9lsdVtGJf4GO+QJuYgGuKjjgH1GRjvvOnzfyglfPrRuXMvAw3tu8ySjl1uZ+qG64VBc6iGw8yr5QE8cHBqQOwRQ==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15b43b50-8764-4934-0aa8-08d584b171b3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:58:57.9705
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30414345-3538-4704-77af-08d584b174de
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:59:03.1331
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0983
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1112
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Michael Scott <michael.scott@linaro.org>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit d2891c4d071d807f01cc911dc42a68f4568d65cf ]
+[ Upstream commit 7ee06cb2f840a96be46233181ed4557901a74385 ]
 
-When adding 6lowpan devices very rapidly we sometimes see a crash:
-[23122.306615] CPU: 2 PID: 0 Comm: swapper/2 Not tainted 4.9.0-43-arm64 #1 =
-Debian 4.9.9.linaro.43-1
-[23122.315400] Hardware name: HiKey Development Board (DT)
-[23122.320623] task: ffff800075443080 task.stack: ffff800075484000
-[23122.326551] PC is at expire_timers+0x70/0x150
-[23122.330907] LR is at run_timer_softirq+0xa0/0x1a0
-[23122.335616] pc : [<ffff000008142dd8>] lr : [<ffff000008142f58>] pstate: =
-600001c5
+The classic PC rtc-coms driver has a workaround for broken ACPI device
+nodes for it which lack an irq resource. This workaround used to
+unconditionally hardcode the irq to 8 in these cases.
 
-This was due to add_peer_chan() unconditionally initializing the
-lowpan_btle_dev->notify_peers delayed work structure, even if the
-lowpan_btle_dev passed into add_peer_chan() had previously been
-initialized.
+This was causing irq conflict problems on systems without a legacy-pic
+so a recent patch added an if (nr_legacy_irqs()) guard to the
+workaround to avoid this irq conflict.
 
-Normally, this would go unnoticed as the delayed work timer is set for
-100 msec, however when calling add_peer_chan() faster than 100 msec it
-clears out a previously queued delay work causing the crash above.
+nr_legacy_irqs() uses the legacy_pic symbol under the hood causing
+an undefined symbol error if the rtc-cmos code is build as a module.
 
-To fix this, let add_peer_chan() know when a new lowpan_btle_dev is passed
-in so that it only performs the delay work initialization when needed.
+This commit exports the legacy_pic symbol to fix this.
 
-Signed-off-by: Michael Scott <michael.scott@linaro.org>
-Acked-by: Jukka Rissanen <jukka.rissanen@linux.intel.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Cc: rtc-linux@googlegroups.com
+Cc: alexandre.belloni@free-electrons.com
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/bluetooth/6lowpan.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ arch/x86/kernel/i8259.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/bluetooth/6lowpan.c b/net/bluetooth/6lowpan.c
-index 1904a93f47d5..de7b82ece499 100644
---- a/net/bluetooth/6lowpan.c
-+++ b/net/bluetooth/6lowpan.c
-@@ -755,7 +755,8 @@ static void set_ip_addr_bits(u8 addr_type, u8 *addr)
- }
+diff --git a/arch/x86/kernel/i8259.c b/arch/x86/kernel/i8259.c
+index be22f5a2192e..4e3b8a587c88 100644
+--- a/arch/x86/kernel/i8259.c
++++ b/arch/x86/kernel/i8259.c
+@@ -418,6 +418,7 @@ struct legacy_pic default_legacy_pic =3D {
+ };
 =20
- static struct l2cap_chan *add_peer_chan(struct l2cap_chan *chan,
--					struct lowpan_btle_dev *dev)
-+					struct lowpan_btle_dev *dev,
-+					bool new_netdev)
+ struct legacy_pic *legacy_pic =3D &default_legacy_pic;
++EXPORT_SYMBOL(legacy_pic);
+=20
+ static int __init i8259A_init_ops(void)
  {
- 	struct lowpan_peer *peer;
-=20
-@@ -786,7 +787,8 @@ static struct l2cap_chan *add_peer_chan(struct l2cap_ch=
-an *chan,
- 	spin_unlock(&devices_lock);
-=20
- 	/* Notifying peers about us needs to be done without locks held */
--	INIT_DELAYED_WORK(&dev->notify_peers, do_notify_peers);
-+	if (new_netdev)
-+		INIT_DELAYED_WORK(&dev->notify_peers, do_notify_peers);
- 	schedule_delayed_work(&dev->notify_peers, msecs_to_jiffies(100));
-=20
- 	return peer->chan;
-@@ -843,6 +845,7 @@ static int setup_netdev(struct l2cap_chan *chan, struct=
- lowpan_btle_dev **dev)
- static inline void chan_ready_cb(struct l2cap_chan *chan)
- {
- 	struct lowpan_btle_dev *dev;
-+	bool new_netdev =3D false;
-=20
- 	dev =3D lookup_dev(chan->conn);
-=20
-@@ -853,12 +856,13 @@ static inline void chan_ready_cb(struct l2cap_chan *c=
-han)
- 			l2cap_chan_del(chan, -ENOENT);
- 			return;
- 		}
-+		new_netdev =3D true;
- 	}
-=20
- 	if (!try_module_get(THIS_MODULE))
- 		return;
-=20
--	add_peer_chan(chan, dev);
-+	add_peer_chan(chan, dev, new_netdev);
- 	ifup(dev->netdev);
- }
-=20
 --=20
 2.14.1
