@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1131037-1520491797-2-6570133474057480871
+X-Cyrus-Session-Id: sloti22d1t05-1131037-1520491789-2-17645024701806633127
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enda, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520491796; b=EpCoiWe5uxiQwwRa8cgW38hvHhQ448niWjXvPf6DProCViV
-    7MLphUIADrzod4iYuxrddlut8QEPqV5fclwb67sLnJfcNlOqhzz5UACzXVVZ8ce9
-    swEqTeg7fBUNO7GJuSoLHUhfBm9how0sFCersit9FvkMHintZjoE65iJGqVumxp6
-    bl0t0bEd9bvgmWFIn3Ffv7DtiG7NJMUeq59PhmTlzrcOlYq+bZBX1i8q04DQcUGY
-    zS+ByF48AsbI2mAA9hRynMpI4O+Pu+7APFkClRbAneOHioL/SCgT7yV2xUKqNDHm
-    xNB90L1oGeD9JWLoPoTjWfRPE5nr4iT8Nf0C81w==
+    t=1520491788; b=iquz5F0ZIeOBsuI3ot+qFk1bIqGUZKvOOewUm5HsxZ0oZR5
+    TZBIvXUo6o9tTisDo7xyaxkLHOMmf2FBMvr1vgC5SuLx9PNNaj1cz+76DMtPolzG
+    OCRYPb68f0WzmM41cw/TR1StmRlvKzx0j04zZr889MLClYKdVOsvp+Ms+Xa3LQVI
+    ebSAcP7YB9b+51wi/kMKpqPSRwTk4Qo0TxGtayG1GPSPZnbuMmSW0+Q8LOE4IeKq
+    XL+yxr79TgEGJY0vKTOLA8pwxrqpseZojSgRT47W1PkSMP/6UmPWM3slJyoRAcTe
+    zU7/Wdv6jnkXHCjlhABu65saixBYV7b6B33b8yg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520491796; bh=losky8
-    f6qbjt2Id6JpIcqhCSbrY1P5tbB96Juhhxb6k=; b=qNB6ubu9C5SNw0vAOWUaar
-    uJeOhOBQXyxju3YB+/X9vmOKaab2vdy30uExuBSY0VD05nKAjYPlbYp5wtJ3sUWZ
-    MBodET9BR+I5JbrrKp13sQDtDVmQBeYJS0WuOTq+P7al6Q+rXZ61SV3Ucc4ZNvD+
-    hdec8nt7YBXowAR9WeBKZ3UCMxtW6U6y8GOyn9+SEhDielMp0MB+5EUcob0OAIk9
-    eMEi12NCX88AOkb/en7aXQMQpl5nnOZq7kHqIAoRtN8AQqAR4eLEUNa40V1sr907
-    CpnxTHsYW58IA1l0gE+qyZlC+nWmMg30EhPkYO+MqNtMuhPWBUKr640avkCJXXTQ
+    :mime-version:sender:list-id; s=arctest; t=1520491788; bh=4XyhLI
+    Ry9Q7rwJkEU3/7sb3exSf9cM8mDZXNFdRpwD4=; b=b/5wFvfwBkOwY7HjEoRWPw
+    Vq3DSljjB5lJtR2gP8H+TNT3zmOAHcgGnfAANToSQIYsVPO0tnHmogiefyQvgpLG
+    WB3ZpOPUhHP3lry5cPbSLYH4IDJYra/j02h2GCYCmrfJsxfYUusS3EvCvDPNF6vA
+    h0ZTwvmlVQq8xMnCoZZJgG3tmbpQR2C9+7OFyUxkIDqf1FPwjfpG66xX9k1nuLLv
+    hp0TFsw8IqOQ6l6q331fnlgh3+Dmd+lBwkgkocHUtKW7SVvM70z4UzSqV9zaZBpm
+    YrkxTyz8qGPHDSDNoWicz7VhVjePKwTsnjUZpOriJkU8BZKdRs9Ryo3Obr1XYYFg
     ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=UXKQPaM6 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=B18d5SYz x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=UXKQPaM6 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=B18d5SYz x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,26 +50,32 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965070AbeCHE6P (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 23:58:15 -0500
-Received: from mail-sn1nam02on0119.outbound.protection.outlook.com ([104.47.36.119]:48736
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S965183AbeCHGtW (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 01:49:22 -0500
+Received: from mail-sn1nam01on0120.outbound.protection.outlook.com ([104.47.32.120]:33969
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935224AbeCHE6N (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 7 Mar 2018 23:58:13 -0500
+        id S965075AbeCHE6P (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 7 Mar 2018 23:58:15 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+CC: Tsang-Shian Lin <thlin@realtek.com>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Yan-Hsuan Chuang <yhchuang@realtek.com>,
+        Birming Chiu <birming@realtek.com>,
+        Shaofu <shaofu@realtek.com>,
+        Steven Ting <steventing@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 05/67] media: c8sectpfe: fix potential NULL
- pointer dereference in c8sectpfe_timer_interrupt
-Thread-Topic: [PATCH AUTOSEL for 4.14 05/67] media: c8sectpfe: fix potential
- NULL pointer dereference in c8sectpfe_timer_interrupt
-Thread-Index: AQHTtpn47cYujzlU5kye4G/3ssq2Dg==
-Date: Thu, 8 Mar 2018 04:57:33 +0000
-Message-ID: <20180308045641.7814-5-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 14/67] rtlwifi: rtl_pci: Fix the bug when
+ inactiveps is enabled.
+Thread-Topic: [PATCH AUTOSEL for 4.14 14/67] rtlwifi: rtl_pci: Fix the bug
+ when inactiveps is enabled.
+Thread-Index: AQHTtpn60EU5v5Tz8UWACyiHGylgeA==
+Date: Thu, 8 Mar 2018 04:57:37 +0000
+Message-ID: <20180308045641.7814-14-alexander.levin@microsoft.com>
 References: <20180308045641.7814-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045641.7814-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,82 +84,77 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0936;7:E5wenbtZ5++aX6b06fd3zAwMP0Ri3vMK7uOuMwEyPnHJi1GdBP+7Y+j9pQTwDISY+/huvlK8RjgVh4LxBZ4Quia2/a2AkanArUoSveGoaVHiHMzm2atZSPEq399OuJ1k8RJ2uqYu58HUpmRrUvPqL6xhYX6moDvJZkyxV3BgHJ1ZzjNRY8zCPNA5ljhdCbtM53z1N0VSJvctJZEnONVI+yHglyKm7vk75gOBrciJhHgp4JQ+fqx4OM2ZR3sqcB60;20:b0rBCgNn0emiYp+u2r73uyjJ20mKznkso9DXOHMt7Y02olPFGvDCYp//FrpQqcYFgTiqqLz1VD7ChnM4o6FjeXeI08LNFis3jmvESnz+Xa3kJ29zFtHo2gj/FU5PJiL8NQlD3caJrLNopo3XtCusquLxKcjlQZmVwRxz4tQ0f80=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0888;7:QsPppAPq2YnLP9wx6Wk3f58+mNqUwlPEVglbJwY+CBXwbaWQF/3GV1Y8m+Y46TtvEjeHkIxRULLV7vKjLbQR0siBTdOIKrjKbqaAPy0SB5XERFjKAPY12gcR8fPJCc1uRyT7dvZtQWivKsE0831Pkh3zvlvzDl6koL6M0MXkPrtFt+tXmF+5KsAzaojtZcW6bqN+31do0xejjvIjfHkmkiw+A++ej1lC5yHay7i7IUuNiXtJcsSrCbtharPLXvDp;20:SOMcA4/97K2YYC8vMXf4mBXfuUJwkRGNLe82vkjBgAzUJ6zR+Mt3WqoFXGezjFDunzGoDaexUNhvaCHqajpgO/MS6pdppq29bcN8LS8oo+h5As3YZK+Vo7FvfNgF6INRLUc31ND8rR3ZGY5Eo7tMkc6YyXkSmuTDdqsPg8z4JLs=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 81b0731f-9230-41b3-0ff2-08d584b12cef
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0936;
-x-ms-traffictypediagnostic: DM5PR2101MB0936:
+x-ms-office365-filtering-correlation-id: 4bf6461d-04ac-43d9-9b4e-08d584b130fe
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0888;
+x-ms-traffictypediagnostic: DM5PR2101MB0888:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0936414ED505A7EAC2E023BBFBDF0@DM5PR2101MB0936.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <DM5PR2101MB08884589226056E54B43793BFBDF0@DM5PR2101MB0888.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0936;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0936;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0888;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0888;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(39380400002)(346002)(376002)(199004)(189003)(478600001)(99286004)(575784001)(6506007)(59450400001)(3660700001)(36756003)(86362001)(54906003)(6116002)(110136005)(2950100002)(102836004)(1076002)(3846002)(6486002)(3280700002)(15760500003)(10090500001)(10290500003)(305945005)(72206003)(6436002)(6666003)(26005)(5250100002)(2906002)(186003)(2501003)(105586002)(76176011)(66066001)(7736002)(68736007)(25786009)(6512007)(106356001)(86612001)(8936002)(107886003)(81166006)(2900100001)(5660300001)(4326008)(81156014)(53936002)(14454004)(97736004)(316002)(22452003)(8676002)(22906009)(32563001)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0936;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: o9MF2/yMl//qAPQaQdWMj2dvX673f9ypPPxpk6veoTmgQUpNRbTv7n06TOb55EZ6tbNzW5xsdhm7cyDsmFMBTD0goI+KO+1iAWSvNUCN7i1KLqZQu4aT1hsCnjSTfYdrs4sarTrdgj/j8LgU10D/7DnMeWrGsWvDpEyCXuvZZqCCBLwITuS4sT4YQQVegfzkkLlQXYwsmKca53hDGnpAjofT0cjLPXQpk/GkbD5fCvhTbVwCz1rzkKFDF5XuzMbJHS2Je8UWWN3uyvME01bfBpJzRsFhVbF6FhBr8oifOlgnRxStF+ZkquHis4s98pVIJQSM//yD7uyOXLFOzpXhoQ==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(346002)(376002)(39380400002)(396003)(189003)(199004)(6116002)(99286004)(2950100002)(6512007)(6666003)(10290500003)(7416002)(36756003)(5660300001)(106356001)(1076002)(22452003)(3846002)(97736004)(316002)(53936002)(68736007)(105586002)(4326008)(25786009)(54906003)(478600001)(2501003)(186003)(66066001)(76176011)(3280700002)(86362001)(575784001)(14454004)(2900100001)(5250100002)(110136005)(305945005)(7736002)(72206003)(3660700001)(6436002)(2906002)(26005)(6486002)(10090500001)(8676002)(81156014)(107886003)(81166006)(86612001)(6506007)(59450400001)(8936002)(102836004)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0888;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: 68gBqouG02TocGiKdj3eEH8rDXiewW3QsYKbU7JNEP+sKf3WmAuVRD5TplpUYPcF8f5C+kR+eneya5Q8kY3RiukbUjJ0gTIFan6p7O+MmHgJ1lN1O+2/rAzJ3IL+43yxr9/yucQy+9REpTmMiykKL/eA44LBMbbY1mFIXau6ScX8NJF7CIvV/OaykGXqexuBBB4hEwyc0kt37u9i6YblquYpqwdUeJqyxecu0b7oa2GBCtJa618RRcsJ9grx6+U1EaKCFUpPzcoMDxtuNulYOnfMwn/X33F0IaeO8lM+C16YzUU4cRhLUs670ca0syHqeW0pGELbFVB8vaELTGzOAQ==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 81b0731f-9230-41b3-0ff2-08d584b12cef
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:57:33.5432
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4bf6461d-04ac-43d9-9b4e-08d584b130fe
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:57:37.6741
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0936
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0888
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+From: Tsang-Shian Lin <thlin@realtek.com>
 
-[ Upstream commit baed3c4bc4c13de93e0dba0a26d601411ebcb389 ]
+[ Upstream commit b7573a0a27bfa8270dea9b145448f6884b7cacc1 ]
 
-_channel_ is being dereferenced before it is null checked, hence there is a
-potential null pointer dereference. Fix this by moving the pointer derefere=
-nce
-after _channel_ has been null checked.
+Reset the driver current tx read/write index to zero when inactiveps
+nic out of sync with HW state. Wrong driver tx read/write index will
+cause Tx fail.
 
-This issue was detected with the help of Coccinelle.
-
-Fixes: c5f5d0f99794 ("[media] c8sectpfe: STiH407/10 Linux DVB demux support=
-")
-
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
-Acked-by: Patrice Chotard <patrice.chotard@st.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Tsang-Shian Lin <thlin@realtek.com>
+Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Yan-Hsuan Chuang <yhchuang@realtek.com>
+Cc: Birming Chiu <birming@realtek.com>
+Cc: Shaofu <shaofu@realtek.com>
+Cc: Steven Ting <steventing@realtek.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/wireless/realtek/rtlwifi/pci.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c b/driver=
-s/media/platform/sti/c8sectpfe/c8sectpfe-core.c
-index 59280ac31937..23d0cedf4d9d 100644
---- a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c
-+++ b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c
-@@ -83,7 +83,7 @@ static void c8sectpfe_timer_interrupt(unsigned long ac8se=
-ctpfei)
- static void channel_swdemux_tsklet(unsigned long data)
- {
- 	struct channel_info *channel =3D (struct channel_info *)data;
--	struct c8sectpfei *fei =3D channel->fei;
-+	struct c8sectpfei *fei;
- 	unsigned long wp, rp;
- 	int pos, num_packets, n, size;
- 	u8 *buf;
-@@ -91,6 +91,8 @@ static void channel_swdemux_tsklet(unsigned long data)
- 	if (unlikely(!channel || !channel->irec))
- 		return;
-=20
-+	fei =3D channel->fei;
+diff --git a/drivers/net/wireless/realtek/rtlwifi/pci.c b/drivers/net/wirel=
+ess/realtek/rtlwifi/pci.c
+index 08dc8919ef60..d7331225c5f3 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/pci.c
++++ b/drivers/net/wireless/realtek/rtlwifi/pci.c
+@@ -1568,7 +1568,14 @@ int rtl_pci_reset_trx_ring(struct ieee80211_hw *hw)
+ 				dev_kfree_skb_irq(skb);
+ 				ring->idx =3D (ring->idx + 1) % ring->entries;
+ 			}
 +
- 	wp =3D readl(channel->irec + DMA_PRDS_BUSWP_TP(0));
- 	rp =3D readl(channel->irec + DMA_PRDS_BUSRP_TP(0));
-=20
++			if (rtlpriv->use_new_trx_flow) {
++				rtlpci->tx_ring[i].cur_tx_rp =3D 0;
++				rtlpci->tx_ring[i].cur_tx_wp =3D 0;
++			}
++
+ 			ring->idx =3D 0;
++			ring->entries =3D rtlpci->txringcount[i];
+ 		}
+ 	}
+ 	spin_unlock_irqrestore(&rtlpriv->locks.irq_th_lock, flags);
 --=20
 2.14.1
