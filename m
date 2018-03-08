@@ -1,75 +1,46 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-966195-1520485474-2-7757784615627418624
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='iso-8859-1'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520485473; b=b1o2tQLCn0dIVbleIVQkg4sjhwfg1bMVyWLH9zAMDHh3umq
-    9fHAi8j1fU6yxWFZUCCEKqL+HN6+25VHMhJrHAYx7AK29/c4DAMPfYDd8Io1WQt1
-    pSStB862TbEvrPPjU9It0IZYFdNprs3VHluotSBe1HnDDlbyQg+lx7WpHF8dAEa7
-    l4Pg6lMpGViDEXCyCXfHPzv7yPiFQqetp+8xZs5v/CQAU3dQUJN2Bzshkd4ily0d
-    1V07is8LUK0m9aQmw2X5NvO4g2n6HNROpt56qJ4pIeo0G1+7G9wnsNGqLnr6hWQm
-    THbnsB6yNeNG44bHiIsiaav6PJtsfQiDJXSLDbQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520485473; bh=quLvSX
-    VN1mNnUNtLYGbdr7hXKxzwEqpXsRHQfQrryCc=; b=f6bpYvZa8a940g0Izl+Sdf
-    UTDNjRZdt6lhbRIJG/AVss8p42DBXyK85NevzjgPGy5WiW/e1pX4LxNY82I4NyTG
-    irqswdhDa0Nmava8c7179YMJfx4/laat8epwNu+pe+helwVaUOpEjt6HPUxY7QdA
-    Zy5ayR1h4SuCDo/o9+sDdFkPZhAaC0UiCst9EO8lDjjZ71XYLGmNU/SMLqQ/jOfo
-    PX0AeU3iaJnNy5/N4SKsLOzDFA/lRFjnSkCPDvtbIvasAGS2Ab6Qj3+xl62xX9uM
-    VawkMFL3OWTa3PjdCIG8wjnSS9b8EUrFAX7QKrxkJJEpHc6xf8fjz9I78yY47UAQ
-    ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=lKyvKAwW x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=lKyvKAwW x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935430AbeCHFEb (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 00:04:31 -0500
-Received: from mail-sn1nam01on0108.outbound.protection.outlook.com ([104.47.32.108]:34032
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935429AbeCHFEa (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 8 Mar 2018 00:04:30 -0500
+Return-Path: <Alexander.Levin@microsoft.com>
+X-Google-Smtp-Source: AG47ELuLXh/KHAO63b6IH8veYlqG2HOL2mRDe2vLjklJWe+4TtJRjTtM0lePK3s9qNAItfkPnAGv
+ARC-Seal: i=1; a=rsa-sha256; t=1520485468; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ZorR1o4kfHJ5yK+5kPUDjrzeu0d++Owh0X3BzJUceQeJA6JVGIxWPkxMAYzk3Mtmgu
+         rA4b24knydCR+xxR1osC1CRm0/UT1N/Jc+zoueQlH85yhoDQE2dfV0p3z7h04l0hnZYj
+         EF6luPiFWkA4HPYsywHtBL9SwDb9h/yRmuWUqildGbjigGcFUZV9dJRp6FXQmRsgJbhD
+         3jEJgqAYdqVcvpwUTtH7p/RAlf5RjAX3LxWs0ED/WH5pFS1w925v5HQi6ezsVW9jwYcf
+         oIT/4JolUJYrlEMayCP6+yOU68K4B1u8DXqOv5fWcVL15NodYEmc4DDYRLafhV/mVMn0
+         zl0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:cc:to
+         :from:dkim-signature:arc-authentication-results;
+        bh=I7atogOTg33G0Z4TNuWW8dYziPm86zMX7xm5cVE4cS4=;
+        b=oMsPDsdn6o4TNruGLgM9+FoVTqx/km5ofhjJ6AxLfZL4qeS95N4DPtAl9icIczitc+
+         tCYU+dYV/5IrxGEzjmBwrfrASDr4IAjqVdPa3vz7BoSIuSY62UGqP/r0FIltu1E4ht0B
+         TrdGOrKKbP5cMk8XTyGsFKEBu++ABmPhMFFk95HagB64ym1xgCexFIbxc5O4LuVk8Mse
+         o8c94dFe5cczxR4F8NmVPKjdX4hbqsqgeIzczGOEFeTaamsD3sznTtgXZmp72a3eu7t3
+         xFmZGO4lc6rB5BYndWAiwuWtVBbwgo4zj9JwXM61BTKVoEqLeR9X3jpLpUW4WwzNRyal
+         Aa6A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=GV/Mc00k;
+       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.40.137 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=GV/Mc00k;
+       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.40.137 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Florian Fainelli <f.fainelli@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 180/190] pinctrl: Really force states during
- suspend/resume
-Thread-Topic: [PATCH AUTOSEL for 4.9 180/190] pinctrl: Really force states
- during suspend/resume
-Thread-Index: AQHTtppWCJ/PgEe8kEWMd8vqGEW4Uw==
-Date: Thu, 8 Mar 2018 05:00:12 +0000
-Message-ID: <20180308045810.8041-180-alexander.levin@microsoft.com>
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: Robert Walker <robert.walker@arm.com>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 179/190] coresight: Fix disabling of CoreSight
+ TPIU
+Thread-Topic: [PATCH AUTOSEL for 4.9 179/190] coresight: Fix disabling of
+ CoreSight TPIU
+Thread-Index: AQHTtppWiTljdp25w0um3ODed6tzAA==
+Date: Thu, 8 Mar 2018 05:00:11 +0000
+Message-ID: <20180308045810.8041-179-alexander.levin@microsoft.com>
 References: <20180308045810.8041-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045810.8041-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,143 +49,93 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0872;7:4TEn/mvX1PFS6NyATIamODUVI+YPUuLGDnnprMfeMuqyCoU3OnVbMaG4FwLZK49n9Iz6Qeb0vimZxjFA/+ggdAfWp7S05F3x/WMXvx5RXHuMXXkF9dJH59l4u1/JOQv0hogZD5Q1URMmtmnyp6OojnN4hjydK8WZ1BZ2xjvlnvmIHYexz+uZ4neAhT+yUCIDU9R+KOz3YIVgldT4dKZlTPLGlHLPXJ/IJGRs0ZER5WFbbkd8puKSTusivZelYwLw;20:DZa8UOF+yfop49L+u8dsqA53f8jwzRDiuQukjUy6nSIKZjI3DSy30y4ggMJWQcuD0j4vPBMW31hT2sQGHiy0Ow2nIo6u42Yejz0zFxLXxiu2AxNAiyEYRVkG2L7Pio+KYA/w2YDDuObsEcfWAwsHODZ/RW2h/YSu71S0uPB6/WU=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0919;7:7NJR1HbYkshgMwKEa3z0H6outS0XqAglae6XcHia+eAf5bgtu6KDZ09bnyUi0DZGVCKI/d8w2aAYg7nDAlHjL2H9WC9UG+zBnw2A5fvQ+PvQzs2rbzVpWhibWmr8CwbLKsl/RPuKA7a85XT3YXEv9Dbi9Wq+T2PGDYKQDVvM22qBvW/wuVpd14iM13qoMiZ8quD9j7K2whABROU+6CT7IkqKnlElAhEebkAfZPUYLP3BqhzRohgzYrOzdA/xH45V;20:m4lPjAn4StrECsmmMqlhVkg1rCNK3lGOOzZQQLttOj3CZcQn9lU1cuAKOugiCGrDYgI1cWj3e095edZmKJqkx4nH/zQRmn9fFY8BLtjHBigGi6p35KMVS6+HMMx6N6Soqx7sxCTajXYB0PFKaPYY9lqLSMrVLrrhkB5xFp3nk7k=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: c59c39da-0933-4f9f-5bee-08d584b2118f
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0872;
-x-ms-traffictypediagnostic: DM5PR2101MB0872:
+x-ms-office365-filtering-correlation-id: 8b8c5982-c396-447e-c5ff-08d584b21143
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0919;
+x-ms-traffictypediagnostic: DM5PR2101MB0919:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB08726350FC9E7F9CBFDAFA8CFBDF0@DM5PR2101MB0872.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0872;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0872;
+x-microsoft-antispam-prvs: <DM5PR2101MB0919B0A0E34551C40D3AA643FBDF0@DM5PR2101MB0919.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(180628864354917)(89211679590171);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231220)(944501244)(52105095)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB0919;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0919;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(376002)(346002)(39860400002)(39380400002)(189003)(199004)(5660300001)(186003)(5250100002)(26005)(316002)(1076002)(4326008)(2501003)(2906002)(39060400002)(25786009)(76176011)(99286004)(6436002)(6486002)(6116002)(36756003)(3846002)(575784001)(22452003)(3280700002)(6666003)(2950100002)(86362001)(97736004)(8676002)(10090500001)(305945005)(2900100001)(66066001)(102836004)(68736007)(3660700001)(14454004)(15650500001)(7736002)(53936002)(6512007)(86612001)(110136005)(54906003)(6506007)(106356001)(59450400001)(478600001)(107886003)(105586002)(81156014)(81166006)(72206003)(8936002)(10290500003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0872;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: ccgYfj7cK0jTww0uSw8G6TksgekvKnqRc8Hf/lO70YIgrVBSWvgfjqXkHLDNLfU72qrnr9w4URyETGW7TK3HLvUNTMqHPKilDn892aInu2syPO+hbs4sF7JY7w0e6/pxMJwaXMYohgzLvy3V2kj0iB4L0/JlGFphxaPjQ6RSI1faRjTuQfWB2qfFb7FQcAz+E0XpkVFXwT1sgCpWDuiPR7hBnQUNMM8kF1Xmsu93a7iPTRcg4aX+h/lSlwQ3kou9ZVzbSa6L4Ito8rM/mls7fNxxBXTFNcqMI0f/1QwbRc3op76+3+bFeUYcoQY+hh+7ODWgDpz2QkHHC7YWhX5ovg==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(396003)(366004)(39380400002)(39860400002)(199004)(189003)(3846002)(305945005)(2501003)(26005)(6116002)(7736002)(186003)(2906002)(316002)(3660700001)(5250100002)(8936002)(4326008)(86362001)(575784001)(76176011)(107886003)(25786009)(5660300001)(10090500001)(66066001)(10290500003)(22452003)(3280700002)(36756003)(86612001)(1076002)(478600001)(68736007)(110136005)(14454004)(54906003)(99286004)(6666003)(2950100002)(106356001)(6512007)(2900100001)(59450400001)(6436002)(6506007)(97736004)(102836004)(53936002)(72206003)(81156014)(6486002)(81166006)(8676002)(105586002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0919;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: AYaItFzNpw8esm44jSKiT5O/SPX7C2mcY0jxZHJ4qLccWB7V9STl92c2+r5VI5AbFZthxcJ82oqXvoS7lftGH/xo+prdGuOKedBzLzh3dGF5GIat+LtfDvRLJllOYz3zCO3CxE/OhGtrs3GfsJat4KJwuFAeHgyR4+DJ0Z+cLWzdAZjNfxxs2OjQ5uqo8A7z1G126x0Z80d0pXeB4cS/ZcJC/8hlbrdCJls3PNEooqWet3WL802PBJjpvbupxnhmO46ng+R3zI6IHXj9PejKl3OaDjo+pYQxlNkqwO5fhHa/FFqemyMDiMZZGq3lF2Ynh87zIv8uAKjDNZxisr1tPA==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c59c39da-0933-4f9f-5bee-08d584b2118f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 05:00:12.2480
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b8c5982-c396-447e-c5ff-08d584b21143
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 05:00:11.8227
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0872
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0919
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594344116420518797?=
+X-GMAIL-MSGID: =?utf-8?q?1594344570519133866?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Robert Walker <robert.walker@arm.com>
 
-[ Upstream commit 981ed1bfbc6c4660b2ddaa8392893e20a6255048 ]
+[ Upstream commit 11595db8e17faaa05fadc25746c870e31276962f ]
 
-In case a platform only defaults a "default" set of pins, but not a
-"sleep" set of pins, and this particular platform suspends and resumes
-in a way that the pin states are not preserved by the hardware, when we
-resume, we would call pinctrl_single_resume() -> pinctrl_force_default()
--> pinctrl_select_state() and the first thing we do is check that the
-pins state is the same as before, and do nothing.
+The CoreSight TPIU should be disabled when tracing to other sinks to allow
+them to operate at full bandwidth.
 
-In order to fix this, decouple the actual state change from
-pinctrl_select_state() and move it pinctrl_commit_state(), while keeping
-the p->state =3D=3D state check in pinctrl_select_state() not to change the
-caller assumptions. pinctrl_force_sleep() and pinctrl_force_default()
-are updated to bypass the state check by calling pinctrl_commit_state().
+This patch fixes tpiu_disable_hw() to correctly disable the TPIU by
+configuring the TPIU to stop on flush, initiating a manual flush, waiting
+for the flush to complete and then waits for the TPIU to indicate it has
+stopped.
 
-[Linus Walleij]
-The forced pin control states are currently only used in some pin
-controller drivers that grab their own reference to their own pins.
-This is equal to the pin control hogs: pins taken by pin control
-devices since there are no corresponding device in the Linux device
-hierarchy, such as memory controller lines or unused GPIO lines,
-or GPIO lines that are used orthogonally from the GPIO subsystem
-but pincontrol-wise managed as hogs (non-strict mode, allowing
-simultaneous use by GPIO and pin control). For this case forcing
-the state from the drivers' suspend()/resume() callbacks makes
-sense and should semantically match the name of the function.
-
-Fixes: 6e5e959dde0d ("pinctrl: API changes to support multiple states per d=
-evice")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Robert Walker <robert.walker@arm.com>
+Tested-by: Mike Leach <mike.leach@linaro.org>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/pinctrl/core.c | 24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+ drivers/hwtracing/coresight/coresight-tpiu.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index fb38e208f32d..735d8f7f9d71 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -992,19 +992,16 @@ struct pinctrl_state *pinctrl_lookup_state(struct pin=
-ctrl *p,
- EXPORT_SYMBOL_GPL(pinctrl_lookup_state);
+diff --git a/drivers/hwtracing/coresight/coresight-tpiu.c b/drivers/hwtraci=
+ng/coresight/coresight-tpiu.c
+index 0673baf0f2f5..ff579a7c6d00 100644
+--- a/drivers/hwtracing/coresight/coresight-tpiu.c
++++ b/drivers/hwtracing/coresight/coresight-tpiu.c
+@@ -46,8 +46,11 @@
+ #define TPIU_ITATBCTR0		0xef8
+=20
+ /** register definition **/
++/* FFSR - 0x300 */
++#define FFSR_FT_STOPPED		BIT(1)
+ /* FFCR - 0x304 */
+ #define FFCR_FON_MAN		BIT(6)
++#define FFCR_STOP_FI		BIT(12)
 =20
  /**
-- * pinctrl_select_state() - select/activate/program a pinctrl state to HW
-+ * pinctrl_commit_state() - select/activate/program a pinctrl state to HW
-  * @p: the pinctrl handle for the device that requests configuration
-  * @state: the state handle to select/activate/program
-  */
--int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
-+static int pinctrl_commit_state(struct pinctrl *p, struct pinctrl_state *s=
-tate)
+  * @base:	memory mapped base address for this component.
+@@ -85,10 +88,14 @@ static void tpiu_disable_hw(struct tpiu_drvdata *drvdat=
+a)
  {
- 	struct pinctrl_setting *setting, *setting2;
- 	struct pinctrl_state *old_state =3D p->state;
- 	int ret;
+ 	CS_UNLOCK(drvdata->base);
 =20
--	if (p->state =3D=3D state)
--		return 0;
--
- 	if (p->state) {
- 		/*
- 		 * For each pinmux setting in the old state, forget SW's record
-@@ -1068,6 +1065,19 @@ int pinctrl_select_state(struct pinctrl *p, struct p=
-inctrl_state *state)
+-	/* Clear formatter controle reg. */
+-	writel_relaxed(0x0, drvdata->base + TPIU_FFCR);
++	/* Clear formatter and stop on flush */
++	writel_relaxed(FFCR_STOP_FI, drvdata->base + TPIU_FFCR);
+ 	/* Generate manual flush */
+-	writel_relaxed(FFCR_FON_MAN, drvdata->base + TPIU_FFCR);
++	writel_relaxed(FFCR_STOP_FI | FFCR_FON_MAN, drvdata->base + TPIU_FFCR);
++	/* Wait for flush to complete */
++	coresight_timeout(drvdata->base, TPIU_FFCR, FFCR_FON_MAN, 0);
++	/* Wait for formatter to stop */
++	coresight_timeout(drvdata->base, TPIU_FFSR, FFSR_FT_STOPPED, 1);
 =20
- 	return ret;
+ 	CS_LOCK(drvdata->base);
  }
-+
-+/**
-+ * pinctrl_select_state() - select/activate/program a pinctrl state to HW
-+ * @p: the pinctrl handle for the device that requests configuration
-+ * @state: the state handle to select/activate/program
-+ */
-+int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
-+{
-+	if (p->state =3D=3D state)
-+		return 0;
-+
-+	return pinctrl_commit_state(p, state);
-+}
- EXPORT_SYMBOL_GPL(pinctrl_select_state);
-=20
- static void devm_pinctrl_release(struct device *dev, void *res)
-@@ -1236,7 +1246,7 @@ void pinctrl_unregister_map(struct pinctrl_map const =
-*map)
- int pinctrl_force_sleep(struct pinctrl_dev *pctldev)
- {
- 	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_sleep))
--		return pinctrl_select_state(pctldev->p, pctldev->hog_sleep);
-+		return pinctrl_commit_state(pctldev->p, pctldev->hog_sleep);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
-@@ -1248,7 +1258,7 @@ EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
- int pinctrl_force_default(struct pinctrl_dev *pctldev)
- {
- 	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_default))
--		return pinctrl_select_state(pctldev->p, pctldev->hog_default);
-+		return pinctrl_commit_state(pctldev->p, pctldev->hog_default);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(pinctrl_force_default);
 --=20
 2.14.1
