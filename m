@@ -1,71 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966212AbeCHNMe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 08:12:34 -0500
-Received: from mail-qt0-f179.google.com ([209.85.216.179]:43109 "EHLO
-        mail-qt0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935769AbeCHNM3 (ORCPT
+        id S965212AbeCHNOr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 08:14:47 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:41643 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752126AbeCHNOo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 08:12:29 -0500
-X-Google-Smtp-Source: AG47ELvGddLXSVGVRmwE0nNvTMPIttUvir35gXNgMc8gATnYRKsFedAMF3x+5NXla7mKvra4fKxHUZidX6kDqr0WYgg=
+        Thu, 8 Mar 2018 08:14:44 -0500
+X-Google-Smtp-Source: AG47ELuVWtMvEORhfCqcquPR7Evnm8yt7BvIpCHl0c2cls1LSN9qA8KH0wydzfeIT6atJH4OlsWltQ==
+Date: Thu, 8 Mar 2018 14:14:40 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-spi@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: Re: [PATCH] spi: tegra20-slink: use true and false for boolean values
+Message-ID: <20180308131440.GC3529@ulmo>
+References: <20180305235339.GA646@embeddedgus>
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhSyxv=bm6tOF=_Qimiak6vf-ZF09pn=n9zwk_qdoZ7oJA@mail.gmail.com>
-References: <20180305124054.09966cb0@canb.auug.org.au> <20180308130703.7365f733@canb.auug.org.au>
- <CAHC9VhSyxv=bm6tOF=_Qimiak6vf-ZF09pn=n9zwk_qdoZ7oJA@mail.gmail.com>
-From: Xin Long <lucien.xin@gmail.com>
-Date: Thu, 8 Mar 2018 21:12:28 +0800
-Message-ID: <CADvbK_fpLHQEysz4XFAfkB3gnkXgDLitjPCQTYbAx3NMZhiXaw@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the selinux tree with the net-next tree
-To: Paul Moore <paul@paul-moore.com>
-Cc: David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Richard Haines <richard_c_haines@btinternet.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Qbvjkv9qwOGw/5Fx"
+Content-Disposition: inline
+In-Reply-To: <20180305235339.GA646@embeddedgus>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 8, 2018 at 9:00 PM, Paul Moore <paul@paul-moore.com> wrote:
-> On Wed, Mar 7, 2018 at 9:07 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi all,
->>
->> On Mon, 5 Mar 2018 12:40:54 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>
->>> Today's linux-next merge of the selinux tree got a conflict in:
->>>
->>>   net/sctp/socket.c
->>>
->>> between several refactoring commits from the net-next tree and commit:
->>>
->>>   2277c7cd75e3 ("sctp: Add LSM hooks")
->>>
->>> from the selinux tree.
->>>
->>> I fixed it up (I think - see below) and can carry the fix as
->>> necessary. This is now fixed as far as linux-next is concerned, but any
->>> non trivial conflicts should be mentioned to your upstream maintainer
->>> when your tree is submitted for merging.  You may also want to consider
->>> cooperating with the maintainer of the conflicting tree to minimise any
->>> particularly complex conflicts.
->>>
->>> --
->>> Cheers,
->>> Stephen Rothwell
->>
->> The resolution now looks like below (there were more changes to this
->> file in the net-next tree).  It will keep changing every time this file
->> is touched :-(
->
-> Xin Long, does this still look okay to you?
-Yes, it's good.
 
-I forgot "struct sctp_af *af;" would be there there when submitting:
+--Qbvjkv9qwOGw/5Fx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-   commit 2c0dbaa sctp: add support for SCTP_DSTADDRV4/6 Information for sendmsg
+On Mon, Mar 05, 2018 at 05:53:39PM -0600, Gustavo A. R. Silva wrote:
+> Assign true or false to boolean variables instead of an integer value.
+>=20
+> This issue was detected with the help of Coccinelle.
+>=20
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/spi/spi-tegra20-slink.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-and should have put some notes for David.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Thanks for your reminding.
+--Qbvjkv9qwOGw/5Fx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhNz0ACgkQ3SOs138+
+s6FpSA/+KQBYiHSNVnrRvJ6y7/N2jBi1X1tQlelO5L/E98voet8WK7BW+gvPItvJ
+ZEKsmDqAUtLioRQ2zoxTfl76GF7jVgOoRuj9nGx2GOYmQrbY9+rKJzSv9zWsGwBD
+2k0XAtQAyFayXUdkYHcTZ+2GS+0OWbjiBm3HPIeMaZ9nvzj9bTbNtILdfrPLjDYy
+dRJ75AgBuPybEI1ckYy63tYzYeHltsQ4324eGtFBcnN+YMrtij9RfvWuNBeKCkng
+mdzuMpmKkRwC9G3lMjKV01RUOGtMZhSh84P+Wfs/3xDjIQajETEKxZ7wD7Xj8AOH
+/ZBrNlj1TlH7gBQiKuQYB8hbQwc7ORdRBchGkXj40dw2eifNGZfOcdFPDB6qA8er
+qZxGrWumue/QG1qEHCHqDrriBfmUBwnTTaoabwwg0ms3otvgP9b9ofqfKgSWjFLI
+icfTlBo+nI64/sAEcnnuiVxWH4PXSd4CBVoVm+DxqlVvmgpLRXxIaCR20uFeyMMB
+uedJk8hlxwlg7vJSrmXedUqzHU3rRnQH329bI68VdSIybZa4VIe7AAxCYSY4at0O
+QPAHzvr7BMrBwAW/r34NiOWt8h+ODtT/FwBAL7ejYvJcHXz7KqacSH6ouG8qmNYG
+ITvdQbL2zt8DL9M+agF+wWLccoVL19fPrf1HpWItwlPn4DUaaJ8=
+=h8jU
+-----END PGP SIGNATURE-----
+
+--Qbvjkv9qwOGw/5Fx--
