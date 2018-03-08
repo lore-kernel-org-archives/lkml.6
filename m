@@ -1,69 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935743AbeCHKhB convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 05:37:01 -0500
-Received: from ozlabs.org ([103.22.144.67]:36437 "EHLO ozlabs.org"
+        id S965433AbeCHKhK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 05:37:10 -0500
+Received: from foss.arm.com ([217.140.101.70]:35698 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934059AbeCHKhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 05:37:00 -0500
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Mathieu Malaterre <malat@debian.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, Jiri Slaby <jslaby@suse.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 17/21] powerpc: Add missing prototype for sys_debug_setcontext
-In-Reply-To: <CA+7wUsyMQcvEOOAuthFg4Sc783x4KBqtjkgB81KzJqPxQnwdYA@mail.gmail.com>
-References: <20180225172236.29650-1-malat@debian.org> <20180225172236.29650-18-malat@debian.org> <87muzoglga.fsf@concordia.ellerman.id.au> <CA+7wUsyMQcvEOOAuthFg4Sc783x4KBqtjkgB81KzJqPxQnwdYA@mail.gmail.com>
-Date: Thu, 08 Mar 2018 21:36:57 +1100
-Message-ID: <878tb2etva.fsf@concordia.ellerman.id.au>
+        id S934059AbeCHKhI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 05:37:08 -0500
+Date: Thu, 8 Mar 2018 10:37:03 +0000
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
+        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH v5 4/4] sched/fair: update util_est only on util_avg
+ updates
+Message-ID: <20180308103703.GG2211@e110439-lin>
+References: <20180222170153.673-1-patrick.bellasi@arm.com>
+ <20180222170153.673-5-patrick.bellasi@arm.com>
+ <20180308094830.GK25201@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180308094830.GK25201@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mathieu Malaterre <malat@debian.org> writes:
+On 08-Mar 10:48, Peter Zijlstra wrote:
+> On Thu, Feb 22, 2018 at 05:01:53PM +0000, Patrick Bellasi wrote:
+> > +#define UTIL_EST_NEED_UPDATE_FLAG 0x1
+> 
+> > @@ -5321,12 +5345,19 @@ static inline void util_est_dequeue(struct cfs_rq *cfs_rq,
+> >  	if (!task_sleep)
+> >  		return;
+> >  
+> > +	/*
+> > +	 * Skip update of task's estimated utilization if the PELT signal has
+> > +	 * never been updated (at least once) since last enqueue time.
+> > +	 */
+> > +	ue = READ_ONCE(p->se.avg.util_est);
+> > +	if (ue.enqueued & UTIL_EST_NEED_UPDATE_FLAG)
+> > +		return;
+> 
+> The name and function seem inverted, if the flag is set, we do _NOT_
+> update util_est.
 
-> On Sun, Mar 4, 2018 at 11:54 AM, Michael Ellerman <mpe@ellerman.id.au> wrote:
->> Mathieu Malaterre <malat@debian.org> writes:
->>
->>> In commit 81e7009ea46c ("powerpc: merge ppc signal.c and ppc64 signal32.c")
->>> the function sys_debug_setcontext was added without a prototype.
->>>
->>> Fix compilation warning (treated as error in W=1):
->>>
->>>   CC      arch/powerpc/kernel/signal_32.o
->>> arch/powerpc/kernel/signal_32.c:1227:5: error: no previous prototype for ‘sys_debug_setcontext’ [-Werror=missing-prototypes]
->>>  int sys_debug_setcontext(struct ucontext __user *ctx,
->>>      ^~~~~~~~~~~~~~~~~~~~
->>> cc1: all warnings being treated as errors
->>
->> This one should actually be using the SYSCALL_DEFINE syntax, so that it
->> can be used with CONFIG_FTRACE_SYSCALLS.
->>
->> See eg. our mmap:
->>
->>   SYSCALL_DEFINE6(mmap, unsigned long, addr, size_t, len,
->>                 unsigned long, prot, unsigned long, flags,
->>                 unsigned long, fd, off_t, offset)
->>   {
->>         return do_mmap2(addr, len, prot, flags, fd, offset, PAGE_SHIFT);
->>   }
->>
->>
->> We probably still need this patch, but I'm not entirely sure because the
->> SYSCALL_DEFINE macro does all sorts of shenanigans.
->
-> I see. Could you please drop this patch then. The patch does not look
-> that trivial anymore. I'll need to dig a bit more on how to do the
-> syscall stuff with a 7 params function.
+My reading was along the line "when the flag is set we need an
+update of util_avg to collect a new util_est sample"...
 
-Ergh, yuck, seems we're the first suckers to need do that.
+... but I agree that's confusing... and unnecessary long.
 
-I think I'll take this patch for now, it's still good for now at least,
-and then the SYSCALL_DEFINE stuff can be an addition.
+> How about something like UTIL_EST_UNCHANGED ? That would give:
 
-cheers
+I would prefer UTIL_AVG_UNCHANGED, since the flags is reset when we
+have a change in util_avg, thus enabling util_est updates.
+
+> 	/*
+> 	 * If the PELT values haven't changed since enqueue time,
+> 	 * skip the util_est update.
+> 	 */
+> 	if (enqueue & UTIL_EST_UNCHANGED)
+> 		return;
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
