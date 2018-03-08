@@ -1,59 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965313AbeCHJFQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 04:05:16 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:41894 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755373AbeCHJFM (ORCPT
+        id S935417AbeCHJFo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 04:05:44 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:46583 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754877AbeCHJFh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 04:05:12 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC/RFT][PATCH v2 2/6] sched: idle: Do not stop the tick upfront in the idle loop
-Date: Thu, 08 Mar 2018 10:05:52 +0100
-Message-ID: <2273590.04PyvAHADg@aspire.rjw.lan>
-In-Reply-To: <20180307233911.GB9367@lerouge>
-References: <2067762.1uWBf5RSRc@aspire.rjw.lan> <3346281.BDGJiv2ZOp@aspire.rjw.lan> <20180307233911.GB9367@lerouge>
+        Thu, 8 Mar 2018 04:05:37 -0500
+Date: Thu, 8 Mar 2018 10:05:35 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: David Miller <davem@davemloft.net>
+Cc: niklas.cassel@axis.com, peppe.cavallaro@st.com,
+        alexandre.torgue@st.com, Jose.Abreu@synopsys.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/4] net: stmmac: use correct barrier between
+ coherent memory and MMIO
+Message-ID: <20180308090535.GD17761@amd>
+References: <20180302232853.GA11108@axis.com>
+ <20180307.103226.1538176953286317879.davem@davemloft.net>
+ <20180307172157.GA22658@axis.com>
+ <20180307.124249.619165601144161535.davem@davemloft.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="AbQceqfdZEv+FvjW"
+Content-Disposition: inline
+In-Reply-To: <20180307.124249.619165601144161535.davem@davemloft.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, March 8, 2018 12:39:12 AM CET Frederic Weisbecker wrote:
-> On Tue, Mar 06, 2018 at 10:02:15AM +0100, Rafael J. Wysocki wrote:
-> > Index: linux-pm/kernel/sched/idle.c
-> > ===================================================================
-> > --- linux-pm.orig/kernel/sched/idle.c
-> > +++ linux-pm/kernel/sched/idle.c
-> > @@ -220,13 +220,17 @@ static void do_idle(void)
-> >  	 */
-> >  
-> >  	__current_set_polling();
-> > -	tick_nohz_idle_enter();
-> > +	tick_nohz_idle_prepare();
-> 
-> Since we leave tick_nohz_idle_exit() unchanged, can we keep tick_nohz_idle_prepare()
-> under the name tick_nohz_idle_enter() so that we stay symetric? And then make xen call
-> the two functions:
-> 
->     tick_nohz_idle_enter();
->     tick_nohz_idle_go_idle();
 
-No problem with that.
+--AbQceqfdZEv+FvjW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Also can we rename tick_nohz_idle_go_idle() to tick_nohz_idle_stop_tick() ?
-> This will be more self-explanatory.
+On Wed 2018-03-07 12:42:49, David Miller wrote:
+> From: Niklas Cassel <niklas.cassel@axis.com>
+> Date: Wed, 7 Mar 2018 18:21:57 +0100
+>=20
+> > Considering this, you can drop/revert:
+> > 95eb930a40a0 ("net: stmmac: use correct barrier between coherent memory=
+ and MMIO")
+> > or perhaps you want me to send a revert?
+>=20
+> You must submit explicit patches to do a revert or any other change.
+>=20
+> > After reverting 95eb930a40a0, we will still have a dma_wmb() _after_ the
+> > last descriptor word write. You just explained that nothing else is nee=
+ded
+> > after the last descriptor word write, so I actually think that this last
+> > barrier is superfluous.
+>=20
+> You don't need one after the last descriptor write.
+>=20
+> Look, you're only concerned with ordering within the descriptor writes.
+>=20
+> So it's only about:
+>=20
+> 	desc->a =3D x;
+>=20
+> 	/* Write to 'a' must be visible to the hardware before 'b'. */
+> 	dma_wmb();
+> 	desc->b =3D y;
+>=20
+> 	writel();
+>=20
+> That's all that you need.
 
-But it doesn't always stop the tick which is why I chose the other name.
+We may need to fix the docs then, there's wmb() there in the docs:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Doc=
+umentation/memory-barriers.txt?h=3Dv4.16-rc1#n1913
+
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--AbQceqfdZEv+FvjW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqg/N8ACgkQMOfwapXb+vKVYgCcC9jgkgNNZdHJAIhNsCEX+cDK
+nIIAni/VG67i1B7SWYi0sP9CkIPZw09T
+=lWoN
+-----END PGP SIGNATURE-----
+
+--AbQceqfdZEv+FvjW--
