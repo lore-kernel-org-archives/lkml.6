@@ -1,83 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755986AbeCHSfC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 13:35:02 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:39672 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755625AbeCHSfA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 13:35:00 -0500
-X-Google-Smtp-Source: AG47ELvpI6PHjCJB/HiitfyTc+WdXXi75MBKK4+Y6U24uh+XyJ+U50L9pQhyCtdU5Sg1XoD0ljrhpVNcXflpYf6vS4U=
+        id S1756106AbeCHSiX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 13:38:23 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47561 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754695AbeCHSiW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 13:38:22 -0500
+Date: Thu, 8 Mar 2018 18:38:20 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Waiman Long <longman@redhat.com>, Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: Re: [PATCH v3 0/6] ipc: Clamp *mni to the real IPCMNI limit
+Message-ID: <20180308183820.GK4449@wotan.suse.de>
+References: <1519926220-7453-1-git-send-email-longman@redhat.com>
+ <20180308182335.GH4449@wotan.suse.de>
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu_=YSXTMR3eeCXKpz2WfmMJjT2oF6KoUzWB1HDXy5sQCg@mail.gmail.com>
-References: <1519414953-5478-1-git-send-email-tbaicar@codeaurora.org>
- <1519414953-5478-2-git-send-email-tbaicar@codeaurora.org> <20180224072054.GA3264@dhcp-128-65.nay.redhat.com>
- <f24bcd25-9d3d-12d6-a42c-ebe0c623dba6@codeaurora.org> <CAKv+Gu8U67_6Fpj+REUc5rgThuAXac=p0U_EOdU8_=K_xj1KSQ@mail.gmail.com>
- <CAKv+Gu_=YSXTMR3eeCXKpz2WfmMJjT2oF6KoUzWB1HDXy5sQCg@mail.gmail.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Thu, 8 Mar 2018 18:34:58 +0000
-Message-ID: <CAKv+Gu-KaMpyrbBiFYR0tZVSNSMV0awS9PTPXXWcjpi-1nmZ7w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] efi/esrt: fix unsupported version initialization failure
-To: Tyler Baicar <tbaicar@codeaurora.org>, Peter Jones <pjones@redhat.com>
-Cc: Dave Young <dyoung@redhat.com>, linux-efi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jeff Hugo <jhugo@codeaurora.org>, Sameer Goel <sgoel@codeaurora.org>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Timur Tabi <timur@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180308182335.GH4449@wotan.suse.de>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8 March 2018 at 18:15, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> On 8 March 2018 at 18:00, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->> On 8 March 2018 at 16:11, Tyler Baicar <tbaicar@codeaurora.org> wrote:
->>> On 2/24/2018 2:20 AM, Dave Young wrote:
->>>>
->>>> On 02/23/18 at 12:42pm, Tyler Baicar wrote:
->>>>>
->>>>> If ESRT initialization fails due to an unsupported version, the
->>>>> early_memremap allocation is never unmapped. This will cause an
->>>>> early ioremap leak. So, make sure to unmap the memory allocation
->>>>> before returning from efi_esrt_init().
->>>>>
->>>>> Signed-off-by: Tyler Baicar <tbaicar@codeaurora.org>
->>>>> ---
->>>>>   drivers/firmware/efi/esrt.c | 2 +-
->>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/firmware/efi/esrt.c b/drivers/firmware/efi/esrt.c
->>>>> index c47e0c6..504f3c3 100644
->>>>> --- a/drivers/firmware/efi/esrt.c
->>>>> +++ b/drivers/firmware/efi/esrt.c
->>>>> @@ -285,7 +285,7 @@ void __init efi_esrt_init(void)
->>>>>         } else {
->>>>>                 pr_err("Unsupported ESRT version %lld.\n",
->>>>>                        tmpesrt.fw_resource_version);
->>>>> -               return;
->>>>> +               goto err_memunmap;
->>>>>         }
->>>>>         if (tmpesrt.fw_resource_count > 0 && max - size < entry_size) {
->>>>> --
->>>>
->>>> Reviewed-by: Dave Young <dyoung@redhat.com>
->>>
->>> Thank you Dave for your review here and input on the other patch.
->>>
->>> Ard,
->>>
->>> Can this patch be picked up? I understand patch 2 is not acceptable, but
->>> this one should
->>> be good to go I think.
->>>
->>
->> Yeah you're right. I'll pick it up as a bugfix.
->
-> Actually, on second thought, could you respin this patch, and just
-> move the memunamp() to right after the memcpy()? That way, we can get
-> rid of all the 'goto err_memunmap's afaict
->
+On Thu, Mar 08, 2018 at 06:23:35PM +0000, Luis R. Rodriguez wrote:
+> On Thu, Mar 01, 2018 at 12:43:34PM -0500, Waiman Long wrote:
+> > v2->v3:
+> >  - Fix kdoc comment errors.
+> >  - Incorporate comments and suggestions from Luis R. Rodriguez.
+> >  - Add a patch to fix a typo error in fs/proc/proc_sysctl.c.
+> > 
+> > v1->v2:
+> >  - Add kdoc comments to the do_proc_do{u}intvec_minmax_conv_param
+> >    structures.
+> >  - Add a new flags field to the ctl_table structure for specifying
+> >    whether range clamping should be activated instead of adding new
+> >    sysctl parameter handlers.
+> >  - Clamp the semmni value embedded in the multi-values sem parameter.
+> > 
+> > v1 patch: https://lkml.org/lkml/2018/2/19/453
+> > v2 patch: https://lkml.org/lkml/2018/2/27/627
+> > 
+> > The sysctl parameters msgmni, shmmni and semmni have an inherent limit
+> > of IPC_MNI (32k). However, users may not be aware of that because they
+> > can write a value much higher than that without getting any error or
+> > notification. Reading the parameters back will show the newly written
+> > values which are not real.
+> > 
+> > Enforcing the limit by failing sysctl parameter write, however, can
+> > break existing user applications. To address this delemma, a new flags
+> > field is introduced into the ctl_table. The value CTL_FLAGS_CLAMP_RANGE
+> > can be added to any ctl_table entries to enable a looser range clamping
+> > without returning any error. For example,
+> > 
+> >   .flags = CTL_FLAGS_CLAMP_RANGE,
+> > 
+> > This flags value are now used for the range checking of shmmni,
+> > msgmni and semmni without breaking existing applications. If any out
+> > of range value is written to those sysctl parameters, the following
+> > warning will be printed instead.
+> > 
+> >   Kernel parameter "shmmni" was set out of range [0, 32768], clamped to 32768.
+> > 
+> > Reading the values back will show 32768 instead of some fake values.
+> 
+> I don't see any addition of respective tests cases, I thought I asked
+> for this. Please add respective tests cases for all the API you are
+> adding on lib/test_sysctl.c and respective tests on
+> tools/testing/selftests/sysctl/sysctl.sh
 
-OK, now I'm confused. Does anyone have a clue why in efi_esrt_init()
-the memremap() is done a second time? AFAICT it just reserves the
-region, it does not actually access the second mapping at all.
+Andrew,
+
+If its not too much trouble please only apply the first two patches of this
+series. The rest should be dropped. I think it would be a mistake for us to
+take start carrying the rest at this point in time.
+
+  Luis
