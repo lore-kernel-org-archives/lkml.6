@@ -1,63 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935839AbeCHQAD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 11:00:03 -0500
-Received: from mail-pf0-f179.google.com ([209.85.192.179]:41544 "EHLO
-        mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935254AbeCHQAB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 11:00:01 -0500
-X-Google-Smtp-Source: AG47ELtYEEA7OfpO5TbyiEWQE9mXfGpNEwoFsZyv5sblEWHfyej638yU6mLbI2mMIePN+kANPjI31Cfd1b7T+Tuf+R8=
+        id S965481AbeCHQC4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 11:02:56 -0500
+Received: from muru.com ([72.249.23.125]:60026 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933415AbeCHQCy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 11:02:54 -0500
+Date: Thu, 8 Mar 2018 08:02:49 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Philipp Zabel <philipp.zabel@gmail.com>,
+        Paul Parsons <lost.distance@yahoo.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
+        Dave Gerlach <d-gerlach@ti.com>, Mark Rutland <mark.rutland@arm.com>,
+        Nishant Menon <nm@ti.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
+Subject: Re: [PATCHv2] reset: ti-rstctrl: use the reset-simple driver
+Message-ID: <20180308160249.GI5799@atomide.com>
+References: <20180307182143.58383-1-tony@atomide.com>
+ <20180308024806.vombsjullqw5gpmz@rob-hp-laptop>
 MIME-Version: 1.0
-In-Reply-To: <20180308074543.250898af@xeon-e3>
-References: <CACT4Y+Z6SS2AzYnMjbx_cmrataCLUhdjAx8XyYAnTMdVzndH5w@mail.gmail.com>
- <20180308074543.250898af@xeon-e3>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 8 Mar 2018 16:59:39 +0100
-Message-ID: <CACT4Y+aDK5y0EoundSdKmWLT3uzG=kLj4cbdQsgsCAzsw-EzTw@mail.gmail.com>
-Subject: Re: KASAN poisoning for skb linear data
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: David Miller <davem@davemloft.net>,
-        Willem de Bruijn <willemb@google.com>,
-        Eric Dumazet <edumazet@google.com>, netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        andreyknvl <andreyknvl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180308024806.vombsjullqw5gpmz@rob-hp-laptop>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 8, 2018 at 4:45 PM, Stephen Hemminger
-<stephen@networkplumber.org> wrote:
-> On Mon, 15 Jan 2018 15:15:04 +0100
-> Dmitry Vyukov <dvyukov@google.com> wrote:
->
->> Hi,
->>
->> As far as I understand pskb_may_pull() plays important role in packet
->> parsing for all protocols. And we did custom fragmentation of packets
->> emitted via tun (IFF_NAPI_FRAGS). However, it seems that it does not
->> give any results (bugs found), and I think the reason for this is that
->> linear data is rounded up and is usually quite large. So if a parsing
->> function does pskb_may_pull(1), or does not do it at all, it can
->> usually access more and it will go unnoticed. KASAN has an ability to
->> do custom poisoning: it can poison/unpoison any memory range, and then
->> detect any reads/writes to that range. What do you think about adding
->> custom KASAN poisoning to pskb_may_pull() and switching it to
->> non-eager mode (pull only what was requested) under KASAN? Do you
->> think it has potential for finding important bugs? What amount of work
->> is this?
->>
->> Thanks
->
-> Also, kernel networking only deals with in-tree upstream code.
-> Any problems with infrastructure for custom code are your problem
-> to deal with, not our problem.
+Hi,
 
+* Rob Herring <robh@kernel.org> [180308 02:49]:
+> On Wed, Mar 07, 2018 at 10:21:43AM -0800, Tony Lindgren wrote:
+> > +TI RSTCTRL Reset Controller
+> > +
+> > +Required properties:
+> > +- compatible : "ti,rstctrl"
+> > +- reg : Should contain 1 register ranges(address and length)
+> > +- #reset-cells: 1
+> > +
+> > +Example:
+> > +	prm_gfx: prm@1100 {
+> > +		compatible = "simple-bus";
+> 
+> What's a PRM?
 
-This is 100% about upstream code. The issue for me, it is not in
-networking component.
-I've filed an issue because kernel mailing lists are used mostly for
-patches, everything else is immediately lost (e.g. like this one).
+PRM is power and reset manager. There is one instance per
+interconnect instance (clockdomain). PRM shows the status of
+the connected devices in the interconnect, such as device
+context lost and hardware wake-up dependencies. It also
+contains a single reset controller register for external
+accelerators such as DSP. The reset controller instance then
+has 1 - 3 bits for external accelerator sub device resets.
+Then there is a reset status register that shows the reset
+reason for the external accelerator.
+
+> > +		#address-cells = <1>;
+> > +		#size-cells = <1>;
+> > +		ranges = <0 0x1100 0x100>;
+> 
+> And what else is in this range?
+
+In PRM, there are also registers for each interconnect device
+context lost and wake-up dependencies. We don't have a driver
+for that yet, it's handled by the SoC init code currently.
+
+Unlike the binding for reset controller, the binding for
+wake-up dependencies and context lost should look similar
+binding to the clkctrl clock binding we have. That's because
+there are tons of those registers.
+
+> > +
+> > +		gfx_rstctrl: rstctrl@4 {
+> > +			compatible = "ti,rstctrl";
+> > +			reg = <0x4 0x4>;
+> 
+> Anytime I see a single register in DT I worry about scaling. How many of 
+> these in an SoC?
+
+There are not many instances of the reset controller. There
+is one register per interconnect instance for external
+accelerators, so about 3 - 10 reset controller registers
+per SoC.
+
+The reg offset above is wrong BTW, it should be 0x10 instead
+of 0x4. So I need to update this patch for that at least.
+
+Regards,
+
+Tony
