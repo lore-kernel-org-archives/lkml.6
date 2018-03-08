@@ -1,106 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935652AbeCHLaY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 06:30:24 -0500
-Received: from bmailout3.hostsharing.net ([176.9.242.62]:58407 "EHLO
-        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751355AbeCHLaW (ORCPT
+        id S935741AbeCHLeT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 06:34:19 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:46293 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751434AbeCHLeR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 06:30:22 -0500
-Date: Thu, 8 Mar 2018 12:30:20 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Kai Heng Feng <kai.heng.feng@canonical.com>
-Cc: mjg59@srcf.ucam.org, pali.rohar@gmail.com, dvhart@infradead.org,
-        andy@infradead.org, Mario Limonciello <mario.limonciello@dell.com>,
-        tiwai@suse.com, alsa-devel@alsa-project.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [alsa-devel] [PATCH v2 3/3] ALSA: hda: Disabled unused audio
- controller for Dell platforms with Switchable Graphics
-Message-ID: <20180308113020.GA23073@wunner.de>
-References: <20180308091023.9061-1-kai.heng.feng@canonical.com>
- <20180308091023.9061-3-kai.heng.feng@canonical.com>
- <20180308093848.GA24068@wunner.de>
- <1A1B9259-DC5B-4C1A-96BD-7FCACDBFFBB3@canonical.com>
+        Thu, 8 Mar 2018 06:34:17 -0500
+Date: Thu, 8 Mar 2018 03:33:54 -0800
+From: tip-bot for Jan Kiszka <tipbot@zytor.com>
+Message-ID: <tip-63338a38db955cb4e0352c11b78732157c78d30b@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com,
+        bhelgaas@google.com, mark.rutland@arm.com, jan.kiszka@siemens.com,
+        hpa@zytor.com, robh+dt@kernel.org, tglx@linutronix.de,
+        mingo@kernel.org, jgross@suse.com
+Reply-To: jgross@suse.com, tglx@linutronix.de, mingo@kernel.org,
+        robh+dt@kernel.org, linux-kernel@vger.kernel.org, bhelgaas@google.com,
+        andy.shevchenko@gmail.com, mark.rutland@arm.com,
+        jan.kiszka@siemens.com, hpa@zytor.com
+In-Reply-To: <dae9fe0c6e63141c28ca90492fa5712b4c33ffb5.1520408357.git.jan.kiszka@siemens.com>
+References: <dae9fe0c6e63141c28ca90492fa5712b4c33ffb5.1520408357.git.jan.kiszka@siemens.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/platform] jailhouse: Provide detection for non-x86 systems
+Git-Commit-ID: 63338a38db955cb4e0352c11b78732157c78d30b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <1A1B9259-DC5B-4C1A-96BD-7FCACDBFFBB3@canonical.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 08, 2018 at 06:38:45PM +0800, Kai Heng Feng wrote:
-> >On Mar 8, 2018, at 5:38 PM, Lukas Wunner <lukas@wunner.de> wrote:
-> >On Thu, Mar 08, 2018 at 05:10:23PM +0800, Kai-Heng Feng wrote:
-> >>Some Dell platforms (Preicsion 7510/7710/7520/7720) have a BIOS option
-> >>"Switchable Graphics" (SG).
-> >>
-> >>When SG is enabled, we have:
-> >>00:02.0 VGA compatible controller: Intel Corporation Device 591b (rev 04)
-> >>00:1f.3 Audio device: Intel Corporation CM238 HD Audio Controller (rev 31)
-> >>01:00.0 VGA compatible controller: Advanced Micro Devices, Inc.
-> >>[AMD/ATI] Ellesmere [Polaris10]
-> >>01:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Ellesmere
-> >>[Radeon RX 580]
-> >>
-> >>The Intel Audio outputs all the sound, including HDMI audio. The audio
-> >>controller comes with AMD graphics doesn't get used.
-> >>
-> >>When SG is disabled, we have:
-> >>00:1f.3 Audio device: Intel Corporation CM238 HD Audio Controller (rev 31)
-> >>01:00.0 VGA compatible controller: Advanced Micro Devices, Inc.
-> >>[AMD/ATI] Ellesmere [Polaris10]
-> >>01:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Ellesmere
-> >>[Radeon RX 580]
-> >>
-> >>Now it's a typical discrete-only system. HDMI audio comes from AMD audio
-> >>controller, others from Intel audio controller.
-> >>
-> >>When SG is enabled, the unused AMD audio controller still exposes its
-> >>sysfs, so userspace still opens the control file and stream. If
-> >>userspace tries to output sound through the stream, it hangs when
-> >>runtime suspend kicks in:
-> >>[ 12.796265] snd_hda_intel 0000:01:00.1: Disabling via vga_switcheroo
-> >>[ 12.796367] snd_hda_intel 0000:01:00.1: Cannot lock devices!
-> >
-> >This should be fixed by the following series:
-> >https://lists.freedesktop.org/archives/dri-devel/2018-March/168012.html
-> >
-> >Please verify that by testing the series on the machine in question.
-> >I'm hoping to get those patches in for 4.17.  I suspect that your
-> >patch may not be necessary then.
-> 
-> I no longer see the warning message with your patch. Thanks!
+Commit-ID:  63338a38db955cb4e0352c11b78732157c78d30b
+Gitweb:     https://git.kernel.org/tip/63338a38db955cb4e0352c11b78732157c78d30b
+Author:     Jan Kiszka <jan.kiszka@siemens.com>
+AuthorDate: Wed, 7 Mar 2018 08:39:12 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 8 Mar 2018 12:30:37 +0100
 
-Awesome, thanks for testing!
+jailhouse: Provide detection for non-x86 systems
 
+Implement jailhouse_paravirt() via device tree probing on architectures
+!= x86. Will be used by the PCI core.
 
-> >>Since the discrete audio controller isn't useful when SG enabled, we
-> >>should just disable the device.
-> >
-> >I don't quite follow, when SG is enabled but hda_intel doesn't bind
-> >to the AMD audio device, how are you going to stream audio to
-> >external displays?  Are external DP/HDMI ports muxed to the integrated
-> >GPU when SG is enabled?
-> 
-> Yes. It's a muxed port.
-> The can directly output via integrated Intel GPU when SG is enabled.
-> The discrete audio controller never gets used when SG is enabled.
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Cc: jailhouse-dev@googlegroups.com
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-pci@vger.kernel.org
+Cc: virtualization@lists.linux-foundation.org
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Link: https://lkml.kernel.org/r/dae9fe0c6e63141c28ca90492fa5712b4c33ffb5.1520408357.git.jan.kiszka@siemens.com
 
-Okay, that's a crucial piece of information which I think should be
-made more explicit in the commit message and probably also in a code
-comment so that someone reading through hda_intel.c doesn't have to
-look in the git history to understand what's going on.
+---
+ Documentation/devicetree/bindings/jailhouse.txt |  8 ++++++++
+ arch/x86/include/asm/jailhouse_para.h           |  2 +-
+ include/linux/hypervisor.h                      | 17 +++++++++++++++--
+ 3 files changed, 24 insertions(+), 3 deletions(-)
 
-I'd remove the portion of the commit message pertaining to runtime
-suspend and instead write something like:
-
-    If Switchable Graphics is enabled, external DP/HDMI ports are
-    muxed to the Intel GPU and HDA controller and therefore those
-    on the AMD HDA controller shouldn't be exposed to user space.
-
-Thanks,
-
-Lukas
+diff --git a/Documentation/devicetree/bindings/jailhouse.txt b/Documentation/devicetree/bindings/jailhouse.txt
+new file mode 100644
+index 000000000000..2901c25ff340
+--- /dev/null
++++ b/Documentation/devicetree/bindings/jailhouse.txt
+@@ -0,0 +1,8 @@
++Jailhouse non-root cell device tree bindings
++--------------------------------------------
++
++When running in a non-root Jailhouse cell (partition), the device tree of this
++platform shall have a top-level "hypervisor" node with the following
++properties:
++
++- compatible = "jailhouse,cell"
+diff --git a/arch/x86/include/asm/jailhouse_para.h b/arch/x86/include/asm/jailhouse_para.h
+index 875b54376689..b885a961a150 100644
+--- a/arch/x86/include/asm/jailhouse_para.h
++++ b/arch/x86/include/asm/jailhouse_para.h
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: GPL2.0 */
+ 
+ /*
+- * Jailhouse paravirt_ops implementation
++ * Jailhouse paravirt detection
+  *
+  * Copyright (c) Siemens AG, 2015-2017
+  *
+diff --git a/include/linux/hypervisor.h b/include/linux/hypervisor.h
+index b19563f9a8eb..fc08b433c856 100644
+--- a/include/linux/hypervisor.h
++++ b/include/linux/hypervisor.h
+@@ -8,15 +8,28 @@
+  */
+ 
+ #ifdef CONFIG_X86
++
++#include <asm/jailhouse_para.h>
+ #include <asm/x86_init.h>
++
+ static inline void hypervisor_pin_vcpu(int cpu)
+ {
+ 	x86_platform.hyper.pin_vcpu(cpu);
+ }
+-#else
++
++#else /* !CONFIG_X86 */
++
++#include <linux/of.h>
++
+ static inline void hypervisor_pin_vcpu(int cpu)
+ {
+ }
+-#endif
++
++static inline bool jailhouse_paravirt(void)
++{
++	return of_find_compatible_node(NULL, NULL, "jailhouse,cell");
++}
++
++#endif /* !CONFIG_X86 */
+ 
+ #endif /* __LINUX_HYPEVISOR_H */
