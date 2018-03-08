@@ -1,113 +1,120 @@
-Return-Path: <kkamagui@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520022621; cv=none;
+Return-Path: <tipbot@zytor.com>
+X-Google-Smtp-Source: AG47ELuF2lECh0SvIg+0XVHCLNRLLuLYtDCzUo26g7SMhKwg8oaDsko8aD8DskCw8cDUCVYNmmSX
+ARC-Seal: i=1; a=rsa-sha256; t=1520520028; cv=none;
         d=google.com; s=arc-20160816;
-        b=U3bYtL1KwJfC6LSVCkNffqefoyvxdGBQZ1x62q745g+m1bLq7cdt3t5DBVHjzuVSTO
-         cXHMEI3g2cWY1DT70KSQNXimuwdlXEeCsBpuqW3uVlyWgOQfy0fCP+v6tVtioWFuYbG3
-         c6GR6sHf4+cM8vRdicmPsRMkK0Ee37Thl+Cgqq61/yT9G/0BNHwgrdQzU+n6Nz5Cc0+T
-         BM/Ugsz93lVnGR0xyQXgNy5CG/WJhZzzZCBZ3TFRSItEilutGWxsgV6WeJR8ysrczcuM
-         5HTLzwEx2fKF/C5wunvU2Re0fLGOHfqSaIhI59UNqcQGeiFfXhGu4LyAZHgU6wKfZAT1
-         bb/A==
+        b=sCM0as2NnTzAwitJeJRHoOzMsGbhRJa1eBWW3FPjQ122oDS7uetO+3kSpm6RbNCTfS
+         XAZbkfNpx3ZPx5U1UaOiTxVH3ogC6VnGYHzLFndfxlfQjB73Qa7YyS9LG/pLC1Gr+D5O
+         V9ZQ8Bx8uqgKP/oGtD3A+TXXc73SMu0roj7glyDzPvmrnhhLIuTnbhMcgpnZeFgz/R0Y
+         ClelaG6PzSsyJv1t4g0wnTGwooP7rmtK+443mAgAtHOQWkGfBStw950/3dms9Xu70c8z
+         V5lnUkSv4db4yS22dXd/NrjYgvvDtugwTohMCcDLCU9Q//wzs+frVE+LOQDi1Imv3r4O
+         VEXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
+        h=precedence:content-disposition:content-transfer-encoding
+         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
+         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
          :arc-authentication-results;
-        bh=iQblxkFK1kkjRY4xHANKMjPuyPE1MmBgMJ80VqMY5+c=;
-        b=OLFnaJf/e8xapBz/K33aZ8UeRpp+76tEe9XxEZSH1EYLQ9979VnzQV6y7LEeIqiVKO
-         /QYE6fUDkn60q+tXW6zvmzMw8vSKQcc8cvq4PVviaSfvXWbNF5IbnnC5Rt9FDjxC9uKU
-         r8V+mlNI7tRKzolxykS7VfFm8WyxgkOFptuESVDs/+L5jsVv4fRIa8iWPffaD4CXlb28
-         y+mnnJO7k8c5M6+TUq/F6pC7MTCi1FCq4tCKBvXndRSdylEbMZB/yDUMSlGJIaKZcAxp
-         3X+LW9ivJK+j/FMOPKCt0pqoi+sz2O+oeRbFA00kbH9ibkvX+zPHl2UpjwwMdBrIKaM5
-         k0lw==
+        bh=H0nifbRMpGDAXWboFTB/0e238gyjpcDv6PKHLFMaIlc=;
+        b=xMyCDdBTFWB2sETYLuWZzDGQesFGFDrgFee165LK5x9+oStSt6ZNw/7NY8a/i+VgEP
+         z1hFH8G/OcOKjGctO+iLkvqM4yHoiWzTfXV5AiAFpLW2PBCahS4ALsITTYOCQVBvB/H2
+         F9AyIPymESSwwzzGjAsyZigW01+GQFgOCNSlKmf2pGsH72a8WnCKtzrO69VqbyoMeTVr
+         UXWmg3q34J/akiybBGZso2ldErQ/spfWgbqoDZJafcBbix5OxN7PTlB4HKBBZPVM4ZTZ
+         nfY/BLUTm3EJnbv0feXh4klypWyD/Bhc7x3EiSNWzRbypliPMuFgazrx/hJkxjhCwSc0
+         tN5A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=YgX0entC;
-       spf=pass (google.com: domain of kkamagui@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=kkamagui@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=YgX0entC;
-       spf=pass (google.com: domain of kkamagui@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=kkamagui@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELuW5SkanUcxjjzjSQVc9gM5ftWAZmbIAn8OzGRSD+gw5jV4XbzT6s4vxvSNM6vvs7cubB6YIQ==
-From: Seunghun Han <kkamagui@gmail.com>
-To: Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>
-Cc: linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Seunghun Han <kkamagui@gmail.com>
-Subject: [PATCH V3] x86: mce: fix kernel panic when check_interval is changed
-Date: Sat,  3 Mar 2018 05:27:06 +0900
-Message-Id: <20180302202706.9434-1-kkamagui@gmail.com>
-X-Mailer: git-send-email 2.16.2
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+Date: Thu, 8 Mar 2018 06:40:20 -0800
+Sender: tip tree robot <tipbot@zytor.com>
+From: tip-bot for Seunghun Han <tipbot@zytor.com>
+Message-ID: <tip-b3b7c4795ccab5be71f080774c45bbbcc75c2aaf@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, kkamagui@gmail.com, tony.luck@intel.com,
+        tglx@linutronix.de, bp@suse.de, hpa@zytor.com,
+        linux-edac@vger.kernel.org, mingo@kernel.org,
+        gregkh@linuxfoundation.org
+Reply-To: hpa@zytor.com, gregkh@linuxfoundation.org, mingo@kernel.org,
+        linux-edac@vger.kernel.org, tony.luck@intel.com, kkamagui@gmail.com,
+        linux-kernel@vger.kernel.org, bp@suse.de, tglx@linutronix.de
+In-Reply-To: <20180302202706.9434-1-kkamagui@gmail.com>
+References: <20180302202706.9434-1-kkamagui@gmail.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:ras/urgent] x86/MCE: Serialize sysfs changes
+Git-Commit-ID: b3b7c4795ccab5be71f080774c45bbbcc75c2aaf
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593186374882748310?=
-X-GMAIL-MSGID: =?utf-8?q?1593859239985076756?=
+X-GMAIL-THRID: =?utf-8?q?1594380809723141993?=
+X-GMAIL-MSGID: =?utf-8?q?1594380809723141993?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-I am Seunghun Han and a senior security researcher at National Security
-Research Institute of South Korea.
+Commit-ID:  b3b7c4795ccab5be71f080774c45bbbcc75c2aaf
+Gitweb:     https://git.kernel.org/tip/b3b7c4795ccab5be71f080774c45bbbcc75c2aaf
+Author:     Seunghun Han <kkamagui@gmail.com>
+AuthorDate: Tue, 6 Mar 2018 15:21:43 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 8 Mar 2018 15:36:27 +0100
 
-I found a security issue which can make kernel panic in userspace. After
-analyzing the issue carefully, I found that MCE driver in the kernel has a
-problem which can be occurred in SMP environment.
+x86/MCE: Serialize sysfs changes
 
 The check_interval file in
-/sys/devices/system/machinecheck/machinecheck<cpu number> directory is a
-global timer value for MCE polling. If it is changed by one CPU, MCE driver
-in kernel calls mce_restart() function in store_int_with_restart() function
-and broadcasts the event to other CPUs to delete and restart MCE polling
-timer.
 
-The __mcheck_cpu_init_timer() function which is called by mce_restart()
-function initializes the mce_timer variable, and the "lock" in mce_timer is
-also reinitialized. If more than one CPU write a specific value to
-check_interval file concurrently, one can initialize the "lock" in mce_timer
-while the others are handling "lock" in mce_timer. This problem causes some
-synchronization errors such as kernel panic and kernel hang. Other functions
-such as set_ignore_ce(), set_cmci_disabled(), and mce_enable_ce() also
-have synchronization problems.
+  /sys/devices/system/machinecheck/machinecheck<cpu number>
 
-It could be a security problem because the attacker could make kernel panic
-by writing a value to the check_interval file in userspace, and it could be
-used for Denial-of-Service (DoS) attack.
+directory is a global timer value for MCE polling. If it is changed by one
+CPU, mce_restart() broadcasts the event to other CPUs to delete and restart
+the MCE polling timer and __mcheck_cpu_init_timer() reinitializes the
+mce_timer variable.
 
-To fix this problem, I added a mce_sysfs_mutex to serialize requests for
-timer and sysfs functions.
+If more than one CPU writes a specific value to the check_interval file
+concurrently, mce_timer is not protected from such concurrent accesses and
+all kinds of explosions happen. Since only root can write to those sysfs
+variables, the issue is not a big deal security-wise.
+
+However, concurrent writes to these configuration variables is void of
+reason so the proper thing to do is to serialize the access with a mutex.
+
+Boris:
+
+ - Make store_int_with_restart() use device_store_ulong() to filter out
+   negative intervals
+ - Limit min interval to 1 second
+ - Correct locking
+ - Massage commit message
 
 Signed-off-by: Seunghun Han <kkamagui@gmail.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180302202706.9434-1-kkamagui@gmail.com
 ---
-Changes since v2: add a mutex to sysfs functions according to review
-result.
-Changes since v1: add mce_sysfs_mutex according to review result.
-
- arch/x86/kernel/cpu/mcheck/mce.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/mcheck/mce.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index 706584681a4c..243f46a40efb 100644
+index b3323cab9139..466f47301334 100644
 --- a/arch/x86/kernel/cpu/mcheck/mce.c
 +++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -55,6 +55,7 @@
- #include "mce-internal.h"
+@@ -56,6 +56,9 @@
  
  static DEFINE_MUTEX(mce_log_mutex);
-+static DEFINE_MUTEX(mce_sysfs_mutex);
  
++/* sysfs synchronization */
++static DEFINE_MUTEX(mce_sysfs_mutex);
++
  #define CREATE_TRACE_POINTS
  #include <trace/events/mce.h>
-@@ -2045,8 +2046,11 @@ static void mce_enable_ce(void *all)
- 		return;
- 	cmci_reenable();
- 	cmci_recheck();
--	if (all)
-+	if (all) {
-+		mutex_lock(&mce_sysfs_mutex);
- 		__mcheck_cpu_init_timer();
-+		mutex_unlock(&mce_sysfs_mutex);
-+	}
- }
  
- static struct bus_type mce_subsys = {
-@@ -2090,6 +2094,7 @@ static ssize_t set_ignore_ce(struct device *s,
+@@ -2088,6 +2091,7 @@ static ssize_t set_ignore_ce(struct device *s,
  	if (kstrtou64(buf, 0, &new) < 0)
  		return -EINVAL;
  
@@ -115,7 +122,7 @@ index 706584681a4c..243f46a40efb 100644
  	if (mca_cfg.ignore_ce ^ !!new) {
  		if (new) {
  			/* disable ce features */
-@@ -2102,6 +2107,8 @@ static ssize_t set_ignore_ce(struct device *s,
+@@ -2100,6 +2104,8 @@ static ssize_t set_ignore_ce(struct device *s,
  			on_each_cpu(mce_enable_ce, (void *)1, 1);
  		}
  	}
@@ -124,7 +131,7 @@ index 706584681a4c..243f46a40efb 100644
  	return size;
  }
  
-@@ -2114,6 +2121,7 @@ static ssize_t set_cmci_disabled(struct device *s,
+@@ -2112,6 +2118,7 @@ static ssize_t set_cmci_disabled(struct device *s,
  	if (kstrtou64(buf, 0, &new) < 0)
  		return -EINVAL;
  
@@ -132,7 +139,7 @@ index 706584681a4c..243f46a40efb 100644
  	if (mca_cfg.cmci_disabled ^ !!new) {
  		if (new) {
  			/* disable cmci */
-@@ -2125,6 +2133,8 @@ static ssize_t set_cmci_disabled(struct device *s,
+@@ -2123,6 +2130,8 @@ static ssize_t set_cmci_disabled(struct device *s,
  			on_each_cpu(mce_enable_ce, NULL, 1);
  		}
  	}
@@ -141,15 +148,19 @@ index 706584681a4c..243f46a40efb 100644
  	return size;
  }
  
-@@ -2132,8 +2142,16 @@ static ssize_t store_int_with_restart(struct device *s,
+@@ -2130,8 +2139,19 @@ static ssize_t store_int_with_restart(struct device *s,
  				      struct device_attribute *attr,
  				      const char *buf, size_t size)
  {
+-	ssize_t ret = device_store_int(s, attr, buf, size);
 +	unsigned long old_check_interval = check_interval;
- 	ssize_t ret = device_store_int(s, attr, buf, size);
++	ssize_t ret = device_store_ulong(s, attr, buf, size);
 +
 +	if (check_interval == old_check_interval)
 +		return ret;
++
++	if (check_interval < 1)
++		check_interval = 1;
 +
 +	mutex_lock(&mce_sysfs_mutex);
  	mce_restart();
@@ -158,5 +169,3 @@ index 706584681a4c..243f46a40efb 100644
  	return ret;
  }
  
--- 
-2.16.2
