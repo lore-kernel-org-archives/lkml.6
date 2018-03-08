@@ -1,86 +1,312 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965897AbeCHGUd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 01:20:33 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:47090 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935407AbeCHGUa (ORCPT
+        id S966054AbeCHGVE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 01:21:04 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:58060 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965614AbeCHGUd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 01:20:30 -0500
+        Thu, 8 Mar 2018 01:20:33 -0500
 From: Jianchao Wang <jianchao.w.wang@oracle.com>
 To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
 Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: PATCH V4 0/5 nvme-pci: fixes on nvme_timeout and nvme_dev_disable
-Date: Thu,  8 Mar 2018 14:19:26 +0800
-Message-Id: <1520489971-31174-1-git-send-email-jianchao.w.wang@oracle.com>
+Subject: [PATCH V4 3/5] nvme-pci: avoid nvme_dev_disable to be invoked in nvme_timeout
+Date: Thu,  8 Mar 2018 14:19:29 +0800
+Message-Id: <1520489971-31174-4-git-send-email-jianchao.w.wang@oracle.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520489971-31174-1-git-send-email-jianchao.w.wang@oracle.com>
+References: <1520489971-31174-1-git-send-email-jianchao.w.wang@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8825 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=795
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1803080079
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Firstly, really appreciate Keith and Sagi's precious advice on previous versions.
-And this is the version 4.
-
-Some patches of the previous patchset have been submitted and the left is this patchset
-which has been refactored. Please consider it for 4.17.
-
-The target of this patchset is to avoid nvme_dev_disable to be invoked by nvme_timeout.
-As we know, nvme_dev_disable will issue commands on adminq, if the controller no response,
-it has to depend on timeout path. However, nvme_timeout will also need to invoke
-nvme_dev_disable. This will introduce dangerous circular dependence. Moreover,
-nvme_dev_disable is under the shutdown_lock, even when it go to sleep, this makes things
+nvme_dev_disable will issue command on adminq to clear HMB and
+delete io cq/sqs, maybe more in the future. When adminq no response,
+it has to depends on timeout path. However, nvme_timeout has to
+invoke nvme_dev_disable before return, so that the DMA mappings
+could be released safely. This will introduce dangerous circular
+dependence. Moreover, the whole nvme_dev_disable is under
+shutdown_lock even waiting for the command, this makes things
 worse.
 
-The basic idea of this patchset is:
- - When need to schedule reset_work, hand over expired requests to nvme_dev_disable. They
-   will be completed after the controller is disabled/shtudown.
+To avoid this, this patch refactors the nvme_timeout. The basic
+principle is:
+ - When need to schedule reset_work, hand over expired requests
+   to nvme_dev_disable. They will be completed after the controller
+   is disabled/shtudown.
+ - When requests from nvme_dev_disable and nvme_reset_work expires,
+   disable the controller directly then the request could be completed
+   to wakeup the waiter. nvme_pci_disable_ctrl_directly is introduced
+   for this, it doesn't send commands on adminq and the shutdown_lock
+   is not needed here, because the nvme_abort_requests_sync in
+   nvme_dev_disable could synchronize with nvme_timeout.
 
- - When requests from nvme_dev_disable and nvme_reset_work expires, disable the controller
-   directly then the request could be completed to wakeup the waiter. 
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+---
+ drivers/nvme/host/pci.c | 199 ++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 134 insertions(+), 65 deletions(-)
 
-The 'disable the controller directly' here means that it doesn't send commands on adminq.
-A new interface is introduced for this, nvme_pci_disable_ctrl_directly. More details,
-please refer to the comment of the function.
-
-Then nvme_timeout doesn't depends on nvme_dev_disable any more.
-
-Because there is big difference from previous version, and some relatively independent patches
-have been submitted, so I just reserve the key part of previous version change log following.
-
-Change V3->V4
- - refactor the interfaces flushing in-flight requests and add them to nvme core.
- - refactor the nvme_timeout to make it more clearly
-
-Change V2->V3:
- - discard the patch which unfreeze the queue after nvme_dev_disable
-
-Changes V1->V2:
- - disable PCI controller bus master in nvme_pci_disable_ctrl_directly
-
-There are 5 patches:
-1st one is to change the operations on nvme_request->flags to atomic operations, then we could introduce
-another NVME_REQ_ABORTED next.
-2nd patch introduce two new interfaces to flush in-flight requests in nvme core.
-3rd patch is to avoid the nvme_dev_disable in nvme_timeout, it introduce new interface nvme_pci_disable_ctrl_directly
-and refactor the nvme_timeout
-4th~5th is to fix issues introduced after 3rd patch.
-
-Jianchao Wang (5)
-0001-nvme-do-atomically-bit-operations-on-nvme_request.fl.patch
-0002-nvme-add-helper-interface-to-flush-in-flight-request.patch
-0003-nvme-pci-avoid-nvme_dev_disable-to-be-invoked-in-nvm.patch
-0004-nvme-pci-discard-wait-timeout-when-delete-cq-sq.patch
-0005-nvme-pci-add-the-timeout-case-for-DELETEING-state.patch
-
-diff stat
- drivers/nvme/host/core.c |  96 +++++++++++++++++++++++++++++++++++++++++++++++
- drivers/nvme/host/nvme.h |   4 +-
- drivers/nvme/host/pci.c  | 224 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------------------
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index e186158..ce09057 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -70,6 +70,7 @@ struct nvme_queue;
  
- Thanks
- Jianchao
+ static void nvme_process_cq(struct nvme_queue *nvmeq);
+ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown);
++static void nvme_pci_disable_ctrl_directly(struct nvme_dev *dev);
+ 
+ /*
+  * Represents an NVM Express device.  Each nvme_dev is a PCI function.
+@@ -98,6 +99,7 @@ struct nvme_dev {
+ 	u32 cmbloc;
+ 	struct nvme_ctrl ctrl;
+ 	struct completion ioq_wait;
++	bool inflight_flushed;
+ 
+ 	/* shadow doorbell buffer support: */
+ 	u32 *dbbuf_dbs;
+@@ -1180,73 +1182,13 @@ static void nvme_warn_reset(struct nvme_dev *dev, u32 csts)
+ 			 csts, result);
+ }
+ 
+-static enum blk_eh_timer_return nvme_timeout(struct request *req, bool reserved)
++static enum blk_eh_timer_return nvme_pci_abort_io_req(struct request *req)
+ {
+ 	struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
+ 	struct nvme_queue *nvmeq = iod->nvmeq;
+ 	struct nvme_dev *dev = nvmeq->dev;
+-	struct request *abort_req;
+ 	struct nvme_command cmd;
+-	u32 csts = readl(dev->bar + NVME_REG_CSTS);
+-
+-	/*
+-	 * Reset immediately if the controller is failed
+-	 */
+-	if (nvme_should_reset(dev, csts)) {
+-		nvme_warn_reset(dev, csts);
+-		nvme_dev_disable(dev, false);
+-		nvme_reset_ctrl(&dev->ctrl);
+-		return BLK_EH_HANDLED;
+-	}
+-
+-	/*
+-	 * Did we miss an interrupt?
+-	 */
+-	if (__nvme_poll(nvmeq, req->tag)) {
+-		dev_warn(dev->ctrl.device,
+-			 "I/O %d QID %d timeout, completion polled\n",
+-			 req->tag, nvmeq->qid);
+-		return BLK_EH_HANDLED;
+-	}
+-
+-	/*
+-	 * Shutdown immediately if controller times out while starting. The
+-	 * reset work will see the pci device disabled when it gets the forced
+-	 * cancellation error. All outstanding requests are completed on
+-	 * shutdown, so we return BLK_EH_HANDLED.
+-	 */
+-	switch (dev->ctrl.state) {
+-	case NVME_CTRL_CONNECTING:
+-	case NVME_CTRL_RESETTING:
+-		dev_warn(dev->ctrl.device,
+-			 "I/O %d QID %d timeout, disable controller\n",
+-			 req->tag, nvmeq->qid);
+-		nvme_dev_disable(dev, false);
+-		set_bit(NVME_REQ_CANCELLED, &nvme_req(req)->flags);
+-		return BLK_EH_HANDLED;
+-	default:
+-		break;
+-	}
+-
+-	/*
+- 	 * Shutdown the controller immediately and schedule a reset if the
+- 	 * command was already aborted once before and still hasn't been
+- 	 * returned to the driver, or if this is the admin queue.
+-	 */
+-	if (!nvmeq->qid || iod->aborted) {
+-		dev_warn(dev->ctrl.device,
+-			 "I/O %d QID %d timeout, reset controller\n",
+-			 req->tag, nvmeq->qid);
+-		nvme_dev_disable(dev, false);
+-		nvme_reset_ctrl(&dev->ctrl);
+-
+-		/*
+-		 * Mark the request as handled, since the inline shutdown
+-		 * forces all outstanding requests to complete.
+-		 */
+-		set_bit(NVME_REQ_CANCELLED, &nvme_req(req)->flags);
+-		return BLK_EH_HANDLED;
+-	}
++	struct request *abort_req;
+ 
+ 	if (atomic_dec_return(&dev->ctrl.abort_limit) < 0) {
+ 		atomic_inc(&dev->ctrl.abort_limit);
+@@ -1282,6 +1224,105 @@ static enum blk_eh_timer_return nvme_timeout(struct request *req, bool reserved)
+ 	return BLK_EH_RESET_TIMER;
+ }
+ 
++static enum blk_eh_timer_return nvme_timeout(struct request *req, bool reserved)
++{
++	struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
++	struct nvme_queue *nvmeq = iod->nvmeq;
++	struct nvme_dev *dev = nvmeq->dev;
++	u32 csts = readl(dev->bar + NVME_REG_CSTS);
++	enum {ABORT, RESET, DISABLE} action;
++	enum blk_eh_timer_return ret;
++	/*
++	 * This is for nvme_abort_req. This request will be completed
++	 * by nvme_flush_aborted_requests after the controller is
++	 * disabled/shutdown
++	 */
++	if (test_bit(NVME_REQ_ABORTED, &nvme_req(req)->flags))
++		return BLK_EH_NOT_HANDLED;
++
++	/*
++	 * Reset immediately if the controller is failed.
++	 * Defer the completion to nvme_flush_aborted_requests.
++	 */
++	if (nvme_should_reset(dev, csts)) {
++		nvme_warn_reset(dev, csts);
++		nvme_reset_ctrl(&dev->ctrl);
++		return BLK_EH_RESET_TIMER;
++	}
++
++	/*
++	 * Did we miss an interrupt?
++	 */
++	if (__nvme_poll(nvmeq, req->tag)) {
++		dev_warn(dev->ctrl.device,
++			 "I/O %d QID %d timeout, completion polled\n",
++			 req->tag, nvmeq->qid);
++		return BLK_EH_HANDLED;
++	}
++
++	if (nvmeq->qid) {
++		if (dev->ctrl.state == NVME_CTRL_RESETTING ||
++				iod->aborted)
++			action = RESET;
++		else
++			action = ABORT;
++	} else {
++		/*
++		 * Disable immediately if controller times out while disabling/
++		 * shuting down/starting. The nvme_dev_disable/nvme_reset_work
++		 * will see the error.
++		 * Note: inflight_flushed is set in nvme_dev_disable when it
++		 * abort all the inflight requests. Introducing this flag is due
++		 * to there is no state to represent the shutdown procedure.
++		 */
++		if (dev->ctrl.state == NVME_CTRL_CONNECTING ||
++			dev->inflight_flushed)
++			action = DISABLE;
++		else
++			action = RESET;
++	}
++
++	switch (action) {
++	case ABORT:
++		ret = nvme_pci_abort_io_req(req);
++		break;
++	case RESET:
++		dev_warn(dev->ctrl.device,
++			 "I/O %d QID %d timeout, reset controller\n",
++			 req->tag, nvmeq->qid);
++		set_bit(NVME_REQ_CANCELLED, &nvme_req(req)->flags);
++		nvme_reset_ctrl(&dev->ctrl);
++		/*
++		 * The reset work will take over this request. nvme_abort_req
++		 * employs blk_abort_request to force the request to be timed
++		 * out. So we need to return BLK_EH_RESET_TIMER then the
++		 * RQF_MQ_TIMEOUT_EXPIRED could be cleared.
++		 */
++		ret = BLK_EH_RESET_TIMER;
++		break;
++	case DISABLE:
++		/*
++		 * We disable the controller directly here so that we could
++		 * complete the request safely to wake up the nvme_dev_disable/
++		 * nvme_reset_work who is waiting on adminq. We cannot return
++		 * BLK_EH_RESET_TIMER to depend on error recovery procedure
++		 * because it is waiting for timeout path.
++		 */
++		dev_warn(dev->ctrl.device,
++			 "I/O %d QID %d timeout, disable controller\n",
++			 req->tag, nvmeq->qid);
++		nvme_pci_disable_ctrl_directly(dev);
++		set_bit(NVME_REQ_CANCELLED, &nvme_req(req)->flags);
++		ret = BLK_EH_HANDLED;
++		break;
++	default:
++		WARN_ON(1);
++		break;
++	}
++
++	return ret;
++}
++
+ static void nvme_free_queue(struct nvme_queue *nvmeq)
+ {
+ 	dma_free_coherent(nvmeq->q_dmadev, CQ_SIZE(nvmeq->q_depth),
+@@ -2169,6 +2210,33 @@ static void nvme_pci_disable(struct nvme_dev *dev)
+ 	}
+ }
+ 
++/*
++ * This is only invoked by nvme_timeout. shutdown_lock is not needed
++ * here because nvme_abort_requests_sync in nvme_dev_disable will
++ * synchronize with the timeout path.
++ */
++static void nvme_pci_disable_ctrl_directly(struct nvme_dev *dev)
++{
++	int i;
++	struct pci_dev *pdev = to_pci_dev(dev->dev);
++	bool dead = true;
++
++	if (pci_is_enabled(pdev)) {
++		u32 csts = readl(dev->bar + NVME_REG_CSTS);
++
++		dead = !!((csts & NVME_CSTS_CFS) || !(csts & NVME_CSTS_RDY) ||
++			pdev->error_state  != pci_channel_io_normal);
++
++		if (!dead)
++			nvme_disable_ctrl(&dev->ctrl, dev->ctrl.cap);
++	}
++
++	for (i = dev->ctrl.queue_count - 1; i >= 0; i--)
++		nvme_suspend_queue(&dev->queues[i]);
++
++	nvme_pci_disable(dev);
++}
++
+ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
+ {
+ 	int i;
+@@ -2205,6 +2273,8 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
+ 
+ 	}
+ 	nvme_stop_queues(&dev->ctrl);
++	nvme_abort_requests_sync(&dev->ctrl);
++	dev->inflight_flushed = true;
+ 
+ 	if (!dead) {
+ 		nvme_disable_io_queues(dev);
+@@ -2215,9 +2285,8 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
+ 
+ 	nvme_pci_disable(dev);
+ 
+-	blk_mq_tagset_busy_iter(&dev->tagset, nvme_cancel_request, &dev->ctrl);
+-	blk_mq_tagset_busy_iter(&dev->admin_tagset, nvme_cancel_request, &dev->ctrl);
+-
++	nvme_flush_aborted_requests(&dev->ctrl);
++	dev->inflight_flushed = false;
+ 	/*
+ 	 * The driver will not be starting up queues again if shutting down so
+ 	 * must flush all entered requests to their failed completion to avoid
+-- 
+2.7.4
