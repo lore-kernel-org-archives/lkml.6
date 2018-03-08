@@ -1,130 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752208AbeCHUCH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 15:02:07 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37226 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750926AbeCHUCF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 15:02:05 -0500
-Subject: Re: [PATCH v3 6/6] ipc: Clamp semmni to the real IPCMNI limit
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>
-References: <1519926220-7453-1-git-send-email-longman@redhat.com>
- <1519926220-7453-7-git-send-email-longman@redhat.com>
- <20180308181529.GG4449@wotan.suse.de>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <a5167232-3450-d180-4f34-80993f307f4f@redhat.com>
-Date: Thu, 8 Mar 2018 15:02:04 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180308181529.GG4449@wotan.suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1752327AbeCHUCq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 15:02:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60324 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751968AbeCHTvw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 14:51:52 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08E3421795
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 25/54] perf mmap: Use the stored data in perf_mmap__read_event()
+Date: Thu,  8 Mar 2018 16:50:00 -0300
+Message-Id: <20180308195029.14991-26-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180308195029.14991-1-acme@kernel.org>
+References: <20180308195029.14991-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/08/2018 01:15 PM, Luis R. Rodriguez wrote:
-> On Thu, Mar 01, 2018 at 12:43:40PM -0500, Waiman Long wrote:
->> This patch clamps the semmni value (fourth element of sem_ctls[]
->> array) to within the [0, IPCMNI] range and prints a warning message
->> once when an out-of-range value is being written.
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
->> ---
->>  ipc/ipc_sysctl.c | 13 ++++++++++++-
->>  ipc/sem.c        | 28 ++++++++++++++++++++++++++++
->>  ipc/util.h       |  4 ++++
->>  3 files changed, 44 insertions(+), 1 deletion(-)
->>
->> diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
->> index 8eb7268..2c03f57 100644
->> --- a/ipc/ipc_sysctl.c
->> +++ b/ipc/ipc_sysctl.c
->> @@ -97,12 +97,22 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
->>  	return proc_dointvec_minmax(&ipc_table, write, buffer, lenp, ppos);
->>  }
->>  
->> +static int proc_ipc_sem_dointvec(struct ctl_table *table, int write,
->> +	void __user *buffer, size_t *lenp, loff_t *ppos)
->> +{
->> +	int ret = proc_ipc_dointvec(table, write, buffer, lenp, ppos);
->> +
->> +	sem_check_semmni(table, current->nsproxy->ipc_ns);
->> +	return ret;
->> +}
->> +
->>  #else
->>  #define proc_ipc_doulongvec_minmax NULL
->>  #define proc_ipc_dointvec	   NULL
->>  #define proc_ipc_dointvec_minmax   NULL
->>  #define proc_ipc_dointvec_minmax_orphans   NULL
->>  #define proc_ipc_auto_msgmni	   NULL
->> +#define proc_ipc_sem_dointvec	   NULL
->>  #endif
->>  
->>  static int zero;
->> @@ -186,7 +196,8 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
->>  		.data		= &init_ipc_ns.sem_ctls,
->>  		.maxlen		= 4*sizeof(int),
->>  		.mode		= 0644,
->> -		.proc_handler	= proc_ipc_dointvec,
->> +		.proc_handler	= proc_ipc_sem_dointvec,
->> +		.flags		= CTL_FLAGS_CLAMP_RANGE,
->>  	},
->>  #ifdef CONFIG_CHECKPOINT_RESTORE
->>  	{
->> diff --git a/ipc/sem.c b/ipc/sem.c
->> index a4af049..739dfca 100644
->> --- a/ipc/sem.c
->> +++ b/ipc/sem.c
->> @@ -2337,3 +2337,31 @@ static int sysvipc_sem_proc_show(struct seq_file *s, void *it)
->>  	return 0;
->>  }
->>  #endif
->> +
->> +#ifdef CONFIG_PROC_SYSCTL
->> +/*
->> + * Check to see if semmni is out of range and clamp it if necessary.
->> + */
->> +void sem_check_semmni(struct ctl_table *table, struct ipc_namespace *ns)
->> +{
->> +	bool clamped = false;
->> +
->> +	if (!(table->flags & CTL_FLAGS_CLAMP_RANGE))
->> +		return;
->> +
->> +	/*
->> +	 * Clamp semmni to the range [0, IPCMNI].
->> +	 */
->> +	if (ns->sc_semmni < 0) {
->> +		ns->sc_semmni = 0;
->> +		clamped = true;
->> +	}
->> +	if (ns->sc_semmni > IPCMNI) {
->> +		ns->sc_semmni = IPCMNI;
->> +		clamped = true;
->> +	}
->> +	if (clamped)
->> +		pr_warn_once("Kernel parameter \"sem[3]\" was set out of range [%d, %d], clamped to %d.\n",
->> +			     0, IPCMNI, ns->sc_semmni);
-> Why are the users issuing a warning, wouldn't the API do the warning
-> on its own, specially since we're adding a warn flag?
->
->   Luis
+From: Kan Liang <kan.liang@linux.intel.com>
 
-This is a special case as the semmni parameter is actually embedded in
-the sem sysctl paramter as the last argument of the 4. So the previous
-sysctl patches won't have any effect on this one. I did this patch to
-make all the IPC *mni parameters have the same behavior for consistency
-purpose.
+Using the 'start', 'end' and 'overwrite' which are stored in
+struct perf_mmap to replace the parameters of perf_mmap__read_event().
+The parameters will be discarded later.
 
-Cheers,
-Longman
+No functional change.
+
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Suggested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/r/1520350567-80082-4-git-send-email-kan.liang@linux.intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/mmap.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
+
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index 8c1d033638c2..2933942abfe2 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -76,8 +76,9 @@ static union perf_event *perf_mmap__read(struct perf_mmap *map,
+  * perf_mmap__read_done()
+  */
+ union perf_event *perf_mmap__read_event(struct perf_mmap *map,
+-					bool overwrite,
+-					u64 *startp, u64 end)
++					bool overwrite __maybe_unused,
++					u64 *startp __maybe_unused,
++					u64 end __maybe_unused)
+ {
+ 	union perf_event *event;
+ 
+@@ -87,17 +88,14 @@ union perf_event *perf_mmap__read_event(struct perf_mmap *map,
+ 	if (!refcount_read(&map->refcnt))
+ 		return NULL;
+ 
+-	if (startp == NULL)
+-		return NULL;
+-
+ 	/* non-overwirte doesn't pause the ringbuffer */
+-	if (!overwrite)
+-		end = perf_mmap__read_head(map);
++	if (!map->overwrite)
++		map->end = perf_mmap__read_head(map);
+ 
+-	event = perf_mmap__read(map, startp, end);
++	event = perf_mmap__read(map, &map->start, map->end);
+ 
+-	if (!overwrite)
+-		map->prev = *startp;
++	if (!map->overwrite)
++		map->prev = map->start;
+ 
+ 	return event;
+ }
+-- 
+2.14.3
