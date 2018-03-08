@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755774AbeCHJxo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 04:53:44 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:43619 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755188AbeCHJtK (ORCPT
+        id S1755803AbeCHJyJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 04:54:09 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:36435 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935358AbeCHJtA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 04:49:10 -0500
-X-Google-Smtp-Source: AG47ELs24JNnELvmEyyqQ6PIs42IUslWER5JIsUdOF5YKCIMRRNBtf9IlKIJWIWmAU/kjdjXNJ+Rjg==
+        Thu, 8 Mar 2018 04:49:00 -0500
+X-Google-Smtp-Source: AG47ELsf8owo0FvPBFR81QIT2T8vYYVCfS/qO/cTWA2XN0a1SFDUg4+FOE8/UngIYUUpFxEH8W+EAw==
 From: Jacob Chen <jacob-chen@iotwrt.com>
 To: linux-rockchip@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -17,12 +17,10 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         laurent.pinchart@ideasonboard.com, zyc@rock-chips.com,
         eddie.cai.linux@gmail.com, jeffy.chen@rock-chips.com,
         devicetree@vger.kernel.org, heiko@sntech.de,
-        Jacob Chen <jacob2.chen@rock-chips.com>,
-        Jacob Chen <cc@rock-chips.com>,
-        Allon Huang <allon.huang@rock-chips.com>
-Subject: [PATCH v6 06/17] media: rkisp1: add ISP1 statistics driver
-Date: Thu,  8 Mar 2018 17:47:56 +0800
-Message-Id: <20180308094807.9443-7-jacob-chen@iotwrt.com>
+        Jacob Chen <jacob2.chen@rock-chips.com>
+Subject: [PATCH v6 04/17] media: rkisp1: add Rockchip MIPI Synopsys DPHY driver
+Date: Thu,  8 Mar 2018 17:47:54 +0800
+Message-Id: <20180308094807.9443-5-jacob-chen@iotwrt.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180308094807.9443-1-jacob-chen@iotwrt.com>
 References: <20180308094807.9443-1-jacob-chen@iotwrt.com>
@@ -32,600 +30,912 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jacob Chen <jacob2.chen@rock-chips.com>
 
-Add the capture video driver for rockchip isp1 statistics block.
+This commit adds a subdev driver for Rockchip MIPI Synopsys DPHY driver
 
 Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
 Signed-off-by: Shunqian Zheng <zhengsq@rock-chips.com>
-Signed-off-by: Yichong Zhong <zyc@rock-chips.com>
-Signed-off-by: Jacob Chen <cc@rock-chips.com>
-Signed-off-by: Eddie Cai <eddie.cai.linux@gmail.com>
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-Signed-off-by: Allon Huang <allon.huang@rock-chips.com>
 Signed-off-by: Tomasz Figa <tfiga@chromium.org>
 ---
- drivers/media/platform/rockchip/isp1/isp_stats.c | 508 +++++++++++++++++++++++
- drivers/media/platform/rockchip/isp1/isp_stats.h |  58 +++
- 2 files changed, 566 insertions(+)
- create mode 100644 drivers/media/platform/rockchip/isp1/isp_stats.c
- create mode 100644 drivers/media/platform/rockchip/isp1/isp_stats.h
+ .../media/platform/rockchip/isp1/mipi_dphy_sy.c    | 868 +++++++++++++++++++++
+ .../media/platform/rockchip/isp1/mipi_dphy_sy.h    |  15 +
+ 2 files changed, 883 insertions(+)
+ create mode 100644 drivers/media/platform/rockchip/isp1/mipi_dphy_sy.c
+ create mode 100644 drivers/media/platform/rockchip/isp1/mipi_dphy_sy.h
 
-diff --git a/drivers/media/platform/rockchip/isp1/isp_stats.c b/drivers/media/platform/rockchip/isp1/isp_stats.c
+diff --git a/drivers/media/platform/rockchip/isp1/mipi_dphy_sy.c b/drivers/media/platform/rockchip/isp1/mipi_dphy_sy.c
 new file mode 100644
-index 000000000000..3ba86ccbc42d
+index 000000000000..32140960557a
 --- /dev/null
-+++ b/drivers/media/platform/rockchip/isp1/isp_stats.c
-@@ -0,0 +1,508 @@
++++ b/drivers/media/platform/rockchip/isp1/mipi_dphy_sy.c
+@@ -0,0 +1,868 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
-+ * Rockchip isp1 driver
++ * Rockchip MIPI Synopsys DPHY driver
 + *
-+ * Copyright (C) 2017 Rockchip Electronics Co., Ltd.
++ * Copyright (C) 2017 Fuzhou Rockchip Electronics Co., Ltd.
 + */
 +
-+#include <media/v4l2-common.h>
-+#include <media/v4l2-event.h>
-+#include <media/v4l2-ioctl.h>
-+#include <media/videobuf2-core.h>
-+#include <media/videobuf2-vmalloc.h>	/* for ISP statistics */
-+#include "dev.h"
-+#include "regs.h"
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/regmap.h>
++#include <linux/mfd/syscon.h>
++#include <media/media-entity.h>
++#include <media/v4l2-ctrls.h>
++#include <media/v4l2-fwnode.h>
++#include <media/v4l2-subdev.h>
 +
-+#define RKISP1_ISP_STATS_REQ_BUFS_MIN 2
-+#define RKISP1_ISP_STATS_REQ_BUFS_MAX 8
++#define RK3288_GRF_SOC_CON6	0x025c
++#define RK3288_GRF_SOC_CON8	0x0264
++#define RK3288_GRF_SOC_CON9	0x0268
++#define RK3288_GRF_SOC_CON10	0x026c
++#define RK3288_GRF_SOC_CON14	0x027c
++#define RK3288_GRF_SOC_STATUS21	0x02d4
++#define RK3288_GRF_IO_VSEL	0x0380
++#define RK3288_GRF_SOC_CON15	0x03a4
 +
-+static int rkisp1_stats_enum_fmt_meta_cap(struct file *file, void *priv,
-+					  struct v4l2_fmtdesc *f)
-+{
-+	struct video_device *video = video_devdata(file);
-+	struct rkisp1_isp_stats_vdev *stats_vdev = video_get_drvdata(video);
++#define RK3399_GRF_SOC_CON9	0x6224
++#define RK3399_GRF_SOC_CON21	0x6254
++#define RK3399_GRF_SOC_CON22	0x6258
++#define RK3399_GRF_SOC_CON23	0x625c
++#define RK3399_GRF_SOC_CON24	0x6260
++#define RK3399_GRF_SOC_CON25	0x6264
++#define RK3399_GRF_SOC_STATUS1	0xe2a4
 +
-+	if (f->index > 0 || f->type != video->queue->type)
-+		return -EINVAL;
++#define CLOCK_LANE_HS_RX_CONTROL		0x34
++#define LANE0_HS_RX_CONTROL			0x44
++#define LANE1_HS_RX_CONTROL			0x54
++#define LANE2_HS_RX_CONTROL			0x84
++#define LANE3_HS_RX_CONTROL			0x94
++#define HS_RX_DATA_LANES_THS_SETTLE_CONTROL	0x75
 +
-+	f->pixelformat = stats_vdev->vdev_fmt.fmt.meta.dataformat;
-+	return 0;
-+}
++/*
++ * CSI HOST
++ */
++#define CSIHOST_PHY_TEST_CTRL0		0x30
++#define CSIHOST_PHY_TEST_CTRL1		0x34
++#define CSIHOST_PHY_SHUTDOWNZ		0x08
++#define CSIHOST_DPHY_RSTZ		0x0c
 +
-+static int rkisp1_stats_g_fmt_meta_cap(struct file *file, void *priv,
-+				       struct v4l2_format *f)
-+{
-+	struct video_device *video = video_devdata(file);
-+	struct rkisp1_isp_stats_vdev *stats_vdev = video_get_drvdata(video);
-+	struct v4l2_meta_format *meta = &f->fmt.meta;
++#define PHY_TESTEN_ADDR			(0x1 << 16)
++#define PHY_TESTEN_DATA			(0x0 << 16)
++#define PHY_TESTCLK			(0x1 << 1)
++#define PHY_TESTCLR			(0x1 << 0)
++#define THS_SETTLE_COUNTER_THRESHOLD	0x04
 +
-+	if (f->type != video->queue->type)
-+		return -EINVAL;
++#define HIWORD_UPDATE(val, mask, shift) \
++	((val) << (shift) | (mask) << ((shift) + 16))
 +
-+	memset(meta, 0, sizeof(*meta));
-+	meta->dataformat = stats_vdev->vdev_fmt.fmt.meta.dataformat;
-+	meta->buffersize = stats_vdev->vdev_fmt.fmt.meta.buffersize;
-+
-+	return 0;
-+}
-+
-+static int rkisp1_stats_querycap(struct file *file,
-+				 void *priv, struct v4l2_capability *cap)
-+{
-+	struct video_device *vdev = video_devdata(file);
-+
-+	strlcpy(cap->driver, DRIVER_NAME, sizeof(cap->driver));
-+	strlcpy(cap->card, vdev->name, sizeof(cap->card));
-+	strlcpy(cap->bus_info, "platform: " DRIVER_NAME, sizeof(cap->bus_info));
-+
-+	return 0;
-+}
-+
-+/* ISP video device IOCTLs */
-+static const struct v4l2_ioctl_ops rkisp1_stats_ioctl = {
-+	.vidioc_reqbufs = vb2_ioctl_reqbufs,
-+	.vidioc_querybuf = vb2_ioctl_querybuf,
-+	.vidioc_create_bufs = vb2_ioctl_create_bufs,
-+	.vidioc_qbuf = vb2_ioctl_qbuf,
-+	.vidioc_dqbuf = vb2_ioctl_dqbuf,
-+	.vidioc_prepare_buf = vb2_ioctl_prepare_buf,
-+	.vidioc_expbuf = vb2_ioctl_expbuf,
-+	.vidioc_streamon = vb2_ioctl_streamon,
-+	.vidioc_streamoff = vb2_ioctl_streamoff,
-+	.vidioc_enum_fmt_meta_cap = rkisp1_stats_enum_fmt_meta_cap,
-+	.vidioc_g_fmt_meta_cap = rkisp1_stats_g_fmt_meta_cap,
-+	.vidioc_s_fmt_meta_cap = rkisp1_stats_g_fmt_meta_cap,
-+	.vidioc_try_fmt_meta_cap = rkisp1_stats_g_fmt_meta_cap,
-+	.vidioc_querycap = rkisp1_stats_querycap,
-+	.vidioc_subscribe_event = v4l2_ctrl_subscribe_event,
-+	.vidioc_unsubscribe_event = v4l2_event_unsubscribe,
++enum mipi_dphy_sy_pads {
++	MIPI_DPHY_SY_PAD_SINK = 0,
++	MIPI_DPHY_SY_PAD_SOURCE,
++	MIPI_DPHY_SY_PADS_NUM,
 +};
 +
-+struct v4l2_file_operations rkisp1_stats_fops = {
-+	.mmap = vb2_fop_mmap,
-+	.unlocked_ioctl = video_ioctl2,
-+	.poll = vb2_fop_poll,
-+	.open = v4l2_fh_open,
-+	.release = vb2_fop_release
++enum dphy_reg_id {
++	GRF_DPHY_RX0_TURNDISABLE = 0,
++	GRF_DPHY_RX0_FORCERXMODE,
++	GRF_DPHY_RX0_FORCETXSTOPMODE,
++	GRF_DPHY_RX0_ENABLE,
++	GRF_DPHY_RX0_TESTCLR,
++	GRF_DPHY_RX0_TESTCLK,
++	GRF_DPHY_RX0_TESTEN,
++	GRF_DPHY_RX0_TESTDIN,
++	GRF_DPHY_RX0_TURNREQUEST,
++	GRF_DPHY_RX0_TESTDOUT,
++	GRF_DPHY_TX0_TURNDISABLE,
++	GRF_DPHY_TX0_FORCERXMODE,
++	GRF_DPHY_TX0_FORCETXSTOPMODE,
++	GRF_DPHY_TX0_TURNREQUEST,
++	GRF_DPHY_TX1RX1_TURNDISABLE,
++	GRF_DPHY_TX1RX1_FORCERXMODE,
++	GRF_DPHY_TX1RX1_FORCETXSTOPMODE,
++	GRF_DPHY_TX1RX1_ENABLE,
++	GRF_DPHY_TX1RX1_MASTERSLAVEZ,
++	GRF_DPHY_TX1RX1_BASEDIR,
++	GRF_DPHY_TX1RX1_ENABLECLK,
++	GRF_DPHY_TX1RX1_TURNREQUEST,
++	GRF_DPHY_RX1_SRC_SEL,
++	/* rk3288 only */
++	GRF_CON_DISABLE_ISP,
++	GRF_CON_ISP_DPHY_SEL,
++	GRF_DSI_CSI_TESTBUS_SEL,
++	GRF_DVP_V18SEL,
++	/* below is for rk3399 only */
++	GRF_DPHY_RX0_CLK_INV_SEL,
++	GRF_DPHY_RX1_CLK_INV_SEL,
 +};
 +
-+static int rkisp1_stats_vb2_queue_setup(struct vb2_queue *vq,
-+					unsigned int *num_buffers,
-+					unsigned int *num_planes,
-+					unsigned int sizes[],
-+					struct device *alloc_devs[])
++struct dphy_reg {
++	u32 offset;
++	u32 mask;
++	u32 shift;
++};
++
++#define PHY_REG(_offset, _width, _shift) \
++	{ .offset = _offset, .mask = BIT(_width) - 1, .shift = _shift, }
++
++static const struct dphy_reg rk3399_grf_dphy_regs[] = {
++	[GRF_DPHY_RX0_TURNREQUEST] = PHY_REG(RK3399_GRF_SOC_CON9, 4, 0),
++	[GRF_DPHY_RX0_CLK_INV_SEL] = PHY_REG(RK3399_GRF_SOC_CON9, 1, 10),
++	[GRF_DPHY_RX1_CLK_INV_SEL] = PHY_REG(RK3399_GRF_SOC_CON9, 1, 11),
++	[GRF_DPHY_RX0_ENABLE] = PHY_REG(RK3399_GRF_SOC_CON21, 4, 0),
++	[GRF_DPHY_RX0_FORCERXMODE] = PHY_REG(RK3399_GRF_SOC_CON21, 4, 4),
++	[GRF_DPHY_RX0_FORCETXSTOPMODE] = PHY_REG(RK3399_GRF_SOC_CON21, 4, 8),
++	[GRF_DPHY_RX0_TURNDISABLE] = PHY_REG(RK3399_GRF_SOC_CON21, 4, 12),
++	[GRF_DPHY_TX0_FORCERXMODE] = PHY_REG(RK3399_GRF_SOC_CON22, 4, 0),
++	[GRF_DPHY_TX0_FORCETXSTOPMODE] = PHY_REG(RK3399_GRF_SOC_CON22, 4, 4),
++	[GRF_DPHY_TX0_TURNDISABLE] = PHY_REG(RK3399_GRF_SOC_CON22, 4, 8),
++	[GRF_DPHY_TX0_TURNREQUEST] = PHY_REG(RK3399_GRF_SOC_CON22, 4, 12),
++	[GRF_DPHY_TX1RX1_ENABLE] = PHY_REG(RK3399_GRF_SOC_CON23, 4, 0),
++	[GRF_DPHY_TX1RX1_FORCERXMODE] = PHY_REG(RK3399_GRF_SOC_CON23, 4, 4),
++	[GRF_DPHY_TX1RX1_FORCETXSTOPMODE] = PHY_REG(RK3399_GRF_SOC_CON23, 4, 8),
++	[GRF_DPHY_TX1RX1_TURNDISABLE] = PHY_REG(RK3399_GRF_SOC_CON23, 4, 12),
++	[GRF_DPHY_TX1RX1_TURNREQUEST] = PHY_REG(RK3399_GRF_SOC_CON24, 4, 0),
++	[GRF_DPHY_RX1_SRC_SEL] = PHY_REG(RK3399_GRF_SOC_CON24, 1, 4),
++	[GRF_DPHY_TX1RX1_BASEDIR] = PHY_REG(RK3399_GRF_SOC_CON24, 1, 5),
++	[GRF_DPHY_TX1RX1_ENABLECLK] = PHY_REG(RK3399_GRF_SOC_CON24, 1, 6),
++	[GRF_DPHY_TX1RX1_MASTERSLAVEZ] = PHY_REG(RK3399_GRF_SOC_CON24, 1, 7),
++	[GRF_DPHY_RX0_TESTDIN] = PHY_REG(RK3399_GRF_SOC_CON25, 8, 0),
++	[GRF_DPHY_RX0_TESTEN] = PHY_REG(RK3399_GRF_SOC_CON25, 1, 8),
++	[GRF_DPHY_RX0_TESTCLK] = PHY_REG(RK3399_GRF_SOC_CON25, 1, 9),
++	[GRF_DPHY_RX0_TESTCLR] = PHY_REG(RK3399_GRF_SOC_CON25, 1, 10),
++	[GRF_DPHY_RX0_TESTDOUT] = PHY_REG(RK3399_GRF_SOC_STATUS1, 8, 0),
++};
++
++static const struct dphy_reg rk3288_grf_dphy_regs[] = {
++	[GRF_CON_DISABLE_ISP] = PHY_REG(RK3288_GRF_SOC_CON6, 1, 0),
++	[GRF_CON_ISP_DPHY_SEL] = PHY_REG(RK3288_GRF_SOC_CON6, 1, 1),
++	[GRF_DSI_CSI_TESTBUS_SEL] = PHY_REG(RK3288_GRF_SOC_CON6, 1, 14),
++	[GRF_DPHY_TX0_TURNDISABLE] = PHY_REG(RK3288_GRF_SOC_CON8, 4, 0),
++	[GRF_DPHY_TX0_FORCERXMODE] = PHY_REG(RK3288_GRF_SOC_CON8, 4, 4),
++	[GRF_DPHY_TX0_FORCETXSTOPMODE] = PHY_REG(RK3288_GRF_SOC_CON8, 4, 8),
++	[GRF_DPHY_TX1RX1_TURNDISABLE] = PHY_REG(RK3288_GRF_SOC_CON9, 4, 0),
++	[GRF_DPHY_TX1RX1_FORCERXMODE] = PHY_REG(RK3288_GRF_SOC_CON9, 4, 4),
++	[GRF_DPHY_TX1RX1_FORCETXSTOPMODE] = PHY_REG(RK3288_GRF_SOC_CON9, 4, 8),
++	[GRF_DPHY_TX1RX1_ENABLE] = PHY_REG(RK3288_GRF_SOC_CON9, 4, 12),
++	[GRF_DPHY_RX0_TURNDISABLE] = PHY_REG(RK3288_GRF_SOC_CON10, 4, 0),
++	[GRF_DPHY_RX0_FORCERXMODE] = PHY_REG(RK3288_GRF_SOC_CON10, 4, 4),
++	[GRF_DPHY_RX0_FORCETXSTOPMODE] = PHY_REG(RK3288_GRF_SOC_CON10, 4, 8),
++	[GRF_DPHY_RX0_ENABLE] = PHY_REG(RK3288_GRF_SOC_CON10, 4, 12),
++	[GRF_DPHY_RX0_TESTCLR] = PHY_REG(RK3288_GRF_SOC_CON14, 1, 0),
++	[GRF_DPHY_RX0_TESTCLK] = PHY_REG(RK3288_GRF_SOC_CON14, 1, 1),
++	[GRF_DPHY_RX0_TESTEN] = PHY_REG(RK3288_GRF_SOC_CON14, 1, 2),
++	[GRF_DPHY_RX0_TESTDIN] = PHY_REG(RK3288_GRF_SOC_CON14, 8, 3),
++	[GRF_DPHY_TX1RX1_ENABLECLK] = PHY_REG(RK3288_GRF_SOC_CON14, 1, 12),
++	[GRF_DPHY_RX1_SRC_SEL] = PHY_REG(RK3288_GRF_SOC_CON14, 1, 13),
++	[GRF_DPHY_TX1RX1_MASTERSLAVEZ] = PHY_REG(RK3288_GRF_SOC_CON14, 1, 14),
++	[GRF_DPHY_TX1RX1_BASEDIR] = PHY_REG(RK3288_GRF_SOC_CON14, 1, 15),
++	[GRF_DPHY_RX0_TURNREQUEST] = PHY_REG(RK3288_GRF_SOC_CON15, 4, 0),
++	[GRF_DPHY_TX1RX1_TURNREQUEST] = PHY_REG(RK3288_GRF_SOC_CON15, 4, 4),
++	[GRF_DPHY_TX0_TURNREQUEST] = PHY_REG(RK3288_GRF_SOC_CON15, 3, 8),
++	[GRF_DVP_V18SEL] = PHY_REG(RK3288_GRF_IO_VSEL, 1, 1),
++	[GRF_DPHY_RX0_TESTDOUT] = PHY_REG(RK3288_GRF_SOC_STATUS21, 8, 0),
++};
++
++struct hsfreq_range {
++	u32 range_h;
++	u8 cfg_bit;
++};
++
++struct mipidphy_priv;
++
++struct dphy_drv_data {
++	const char * const *clks;
++	int num_clks;
++	const struct hsfreq_range *hsfreq_ranges;
++	int num_hsfreq_ranges;
++	const struct dphy_reg *regs;
++};
++
++struct sensor_async_subdev {
++	struct v4l2_async_subdev asd;
++	struct v4l2_mbus_config mbus;
++	int lanes;
++};
++
++#define MAX_DPHY_CLK		8
++#define MAX_DPHY_SENSORS	2
++
++struct mipidphy_sensor {
++	struct v4l2_subdev *sd;
++	struct v4l2_mbus_config mbus;
++	int lanes;
++};
++
++struct mipidphy_priv {
++	struct device *dev;
++	struct regmap *regmap_grf;
++	const struct dphy_reg *grf_regs;
++	struct clk *clks[MAX_DPHY_CLK];
++	const struct dphy_drv_data *drv_data;
++	u64 data_rate_mbps;
++	struct v4l2_async_notifier notifier;
++	struct v4l2_subdev sd;
++	struct media_pad pads[MIPI_DPHY_SY_PADS_NUM];
++	struct mipidphy_sensor sensors[MAX_DPHY_SENSORS];
++	int num_sensors;
++	bool is_streaming;
++	void __iomem *txrx_base_addr;
++	int (*stream_on)(struct mipidphy_priv *priv, struct v4l2_subdev *sd);
++};
++
++static inline struct mipidphy_priv *to_dphy_priv(struct v4l2_subdev *subdev)
 +{
-+	struct rkisp1_isp_stats_vdev *stats_vdev = vq->drv_priv;
-+
-+	*num_planes = 1;
-+
-+	*num_buffers = clamp_t(u32, *num_buffers, RKISP1_ISP_STATS_REQ_BUFS_MIN,
-+			       RKISP1_ISP_STATS_REQ_BUFS_MAX);
-+
-+	sizes[0] = sizeof(struct rkisp1_stat_buffer);
-+
-+	INIT_LIST_HEAD(&stats_vdev->stat);
-+
-+	return 0;
++	return container_of(subdev, struct mipidphy_priv, sd);
 +}
 +
-+static void rkisp1_stats_vb2_buf_queue(struct vb2_buffer *vb)
++static inline void write_grf_reg(struct mipidphy_priv *priv,
++				 int index, u8 value)
 +{
-+	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
-+	struct rkisp1_buffer *stats_buf = to_rkisp1_buffer(vbuf);
-+	struct vb2_queue *vq = vb->vb2_queue;
-+	struct rkisp1_isp_stats_vdev *stats_dev = vq->drv_priv;
-+	unsigned long flags;
++	const struct dphy_reg *reg = &priv->grf_regs[index];
++	unsigned int val = HIWORD_UPDATE(value, reg->mask, reg->shift);
 +
-+	stats_buf->vaddr[0] = vb2_plane_vaddr(vb, 0);
-+	spin_lock_irqsave(&stats_dev->irq_lock, flags);
-+	list_add_tail(&stats_buf->queue, &stats_dev->stat);
-+	spin_unlock_irqrestore(&stats_dev->irq_lock, flags);
++	WARN_ON(!reg->offset);
++	regmap_write(priv->regmap_grf, reg->offset, val);
 +}
 +
-+static int rkisp1_stats_vb2_buf_prepare(struct vb2_buffer *vb)
++static void mipidphy0_wr_reg(struct mipidphy_priv *priv,
++			     u8 test_code, u8 test_data)
 +{
-+        if (vb2_plane_size(vb, 0) < sizeof(struct rkisp1_stat_buffer))
-+                return -EINVAL;
-+
-+        vb2_set_plane_payload(vb, 0, sizeof(struct rkisp1_stat_buffer));
-+
-+	return 0;
++	/*
++	 * With the falling edge on TESTCLK, the TESTDIN[7:0] signal content
++	 * is latched internally as the current test code. Test data is
++	 * programmed internally by rising edge on TESTCLK.
++	 */
++	write_grf_reg(priv, GRF_DPHY_RX0_TESTCLK, 1);
++	write_grf_reg(priv, GRF_DPHY_RX0_TESTDIN, test_code);
++	write_grf_reg(priv, GRF_DPHY_RX0_TESTEN, 1);
++	write_grf_reg(priv, GRF_DPHY_RX0_TESTCLK, 0);
++	write_grf_reg(priv, GRF_DPHY_RX0_TESTEN, 0);
++	write_grf_reg(priv, GRF_DPHY_RX0_TESTDIN, test_data);
++	write_grf_reg(priv, GRF_DPHY_RX0_TESTCLK, 1);
 +}
 +
-+static void rkisp1_stats_vb2_stop_streaming(struct vb2_queue *vq)
++static void mipidphy1_wr_reg(struct mipidphy_priv *priv, unsigned char addr,
++			     unsigned char data)
 +{
-+	struct rkisp1_isp_stats_vdev *stats_vdev = vq->drv_priv;
-+	struct rkisp1_buffer *buf;
-+	unsigned long flags;
++	/*
++	 * TESTEN =1,TESTDIN=addr
++	 * TESTCLK=0
++	 * TESTEN =0,TESTDIN=data
++	 * TESTCLK=1
++	 */
++	writel((PHY_TESTEN_ADDR | addr),
++	       priv->txrx_base_addr + CSIHOST_PHY_TEST_CTRL1);
++	writel(0x00, priv->txrx_base_addr + CSIHOST_PHY_TEST_CTRL0);
++	writel((PHY_TESTEN_DATA | data),
++	       priv->txrx_base_addr + CSIHOST_PHY_TEST_CTRL1);
++	writel(PHY_TESTCLK, priv->txrx_base_addr + CSIHOST_PHY_TEST_CTRL0);
++}
++
++static struct v4l2_subdev *get_remote_sensor(struct v4l2_subdev *sd)
++{
++	struct media_pad *local, *remote;
++	struct media_entity *sensor_me;
++
++	local = &sd->entity.pads[MIPI_DPHY_SY_PAD_SINK];
++	remote = media_entity_remote_pad(local);
++	if (!remote) {
++		v4l2_warn(sd, "No link between dphy and sensor\n");
++		return NULL;
++	}
++
++	sensor_me = media_entity_remote_pad(local)->entity;
++	return media_entity_to_v4l2_subdev(sensor_me);
++}
++
++static struct mipidphy_sensor *sd_to_sensor(struct mipidphy_priv *priv,
++					    struct v4l2_subdev *sd)
++{
 +	int i;
 +
-+	/* stop stats received firstly */
-+	spin_lock_irqsave(&stats_vdev->irq_lock, flags);
-+	stats_vdev->streamon = false;
-+	spin_unlock_irqrestore(&stats_vdev->irq_lock, flags);
++	for (i = 0; i < priv->num_sensors; ++i)
++		if (priv->sensors[i].sd == sd)
++			return &priv->sensors[i];
 +
-+	drain_workqueue(stats_vdev->readout_wq);
-+
-+	for (i = 0; i < RKISP1_ISP_STATS_REQ_BUFS_MAX; i++) {
-+		spin_lock_irqsave(&stats_vdev->irq_lock, flags);
-+		if (!list_empty(&stats_vdev->stat)) {
-+			buf = list_first_entry(&stats_vdev->stat,
-+					       struct rkisp1_buffer, queue);
-+			list_del(&buf->queue);
-+			spin_unlock_irqrestore(&stats_vdev->irq_lock, flags);
-+		} else {
-+			spin_unlock_irqrestore(&stats_vdev->irq_lock, flags);
-+			break;
-+		}
-+
-+		if (buf)
-+			vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
-+		buf = NULL;
-+	}
++	return NULL;
 +}
 +
-+static int
-+rkisp1_stats_vb2_start_streaming(struct vb2_queue *queue,
-+				 unsigned int count)
++static int mipidphy_get_sensor_data_rate(struct v4l2_subdev *sd)
 +{
-+	struct rkisp1_isp_stats_vdev *stats_vdev = queue->drv_priv;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&stats_vdev->irq_lock, flags);
-+	stats_vdev->streamon = true;
-+	spin_unlock_irqrestore(&stats_vdev->irq_lock, flags);
-+
-+	return 0;
-+}
-+
-+static struct vb2_ops rkisp1_stats_vb2_ops = {
-+	.queue_setup = rkisp1_stats_vb2_queue_setup,
-+	.buf_queue = rkisp1_stats_vb2_buf_queue,
-+	.buf_prepare = rkisp1_stats_vb2_buf_prepare,
-+	.wait_prepare = vb2_ops_wait_prepare,
-+	.wait_finish = vb2_ops_wait_finish,
-+	.stop_streaming = rkisp1_stats_vb2_stop_streaming,
-+	.start_streaming = rkisp1_stats_vb2_start_streaming,
-+};
-+
-+static int rkisp1_stats_init_vb2_queue(struct vb2_queue *q,
-+				       struct rkisp1_isp_stats_vdev *stats_vdev)
-+{
-+	struct rkisp1_vdev_node *node;
-+
-+	node = queue_to_node(q);
-+
-+	q->type = V4L2_BUF_TYPE_META_CAPTURE;
-+	q->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
-+	q->drv_priv = stats_vdev;
-+	q->ops = &rkisp1_stats_vb2_ops;
-+	q->mem_ops = &vb2_vmalloc_memops;
-+	q->buf_struct_size = sizeof(struct rkisp1_buffer);
-+	q->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
-+	q->lock = &node->vlock;
-+
-+	return vb2_queue_init(q);
-+}
-+
-+static void rkisp1_stats_get_awb_meas(struct rkisp1_isp_stats_vdev *stats_vdev,
-+				      struct rkisp1_stat_buffer *pbuf)
-+{
-+	/* Protect against concurrent access from ISR? */
-+	u32 reg_val;
-+
-+	pbuf->meas_type |= CIFISP_STAT_AWB;
-+	reg_val = readl(stats_vdev->dev->base_addr + CIF_ISP_AWB_WHITE_CNT);
-+	pbuf->params.awb.awb_mean[0].cnt = CIF_ISP_AWB_GET_PIXEL_CNT(reg_val);
-+	reg_val = readl(stats_vdev->dev->base_addr + CIF_ISP_AWB_MEAN);
-+
-+	pbuf->params.awb.awb_mean[0].mean_cr_or_r =
-+		CIF_ISP_AWB_GET_MEAN_CR_R(reg_val);
-+	pbuf->params.awb.awb_mean[0].mean_cb_or_b =
-+		CIF_ISP_AWB_GET_MEAN_CB_B(reg_val);
-+	pbuf->params.awb.awb_mean[0].mean_y_or_g =
-+		CIF_ISP_AWB_GET_MEAN_Y_G(reg_val);
-+}
-+
-+static void rkisp1_stats_get_aec_meas(struct rkisp1_isp_stats_vdev *stats_vdev,
-+				      struct rkisp1_stat_buffer *pbuf)
-+{
-+	unsigned int i;
-+	void __iomem *addr = stats_vdev->dev->base_addr + CIF_ISP_EXP_MEAN_00;
-+
-+	pbuf->meas_type |= CIFISP_STAT_AUTOEXP;
-+	for (i = 0; i < CIFISP_AE_MEAN_MAX; i++)
-+		pbuf->params.ae.exp_mean[i] = (u8)readl(addr + i * 4);
-+}
-+
-+static void rkisp1_stats_get_afc_meas(struct rkisp1_isp_stats_vdev *stats_vdev,
-+				      struct rkisp1_stat_buffer *pbuf)
-+{
-+	void __iomem *base_addr;
-+	struct cifisp_af_stat *af;
-+
-+	pbuf->meas_type = CIFISP_STAT_AFM_FIN;
-+
-+	af = &pbuf->params.af;
-+	base_addr = stats_vdev->dev->base_addr;
-+	af->window[0].sum = readl(base_addr + CIF_ISP_AFM_SUM_A);
-+	af->window[0].lum = readl(base_addr + CIF_ISP_AFM_LUM_A);
-+	af->window[1].sum = readl(base_addr + CIF_ISP_AFM_SUM_B);
-+	af->window[1].lum = readl(base_addr + CIF_ISP_AFM_LUM_B);
-+	af->window[2].sum = readl(base_addr + CIF_ISP_AFM_SUM_C);
-+	af->window[2].lum = readl(base_addr + CIF_ISP_AFM_LUM_C);
-+}
-+
-+static void rkisp1_stats_get_hst_meas(struct rkisp1_isp_stats_vdev *stats_vdev,
-+				      struct rkisp1_stat_buffer *pbuf)
-+{
-+	int i;
-+	void __iomem *addr = stats_vdev->dev->base_addr + CIF_ISP_HIST_BIN_0;
-+
-+	pbuf->meas_type |= CIFISP_STAT_HIST;
-+	for (i = 0; i < CIFISP_HIST_BIN_N_MAX; i++)
-+		pbuf->params.hist.hist_bins[i] = readl(addr + (i * 4));
-+}
-+
-+static void rkisp1_stats_get_bls_meas(struct rkisp1_isp_stats_vdev *stats_vdev,
-+				      struct rkisp1_stat_buffer *pbuf)
-+{
-+	struct rkisp1_device *dev = stats_vdev->dev;
-+	const struct ispsd_in_fmt *in_fmt =
-+			rkisp1_get_ispsd_in_fmt(&dev->isp_sdev);
-+	void __iomem *base = stats_vdev->dev->base_addr;
-+	struct cifisp_bls_meas_val *bls_val;
-+
-+	bls_val = &pbuf->params.ae.bls_val;
-+	if (in_fmt->bayer_pat == RAW_BGGR) {
-+		bls_val->meas_b = readl(base + CIF_ISP_BLS_A_MEASURED);
-+		bls_val->meas_gb = readl(base + CIF_ISP_BLS_B_MEASURED);
-+		bls_val->meas_gr = readl(base + CIF_ISP_BLS_C_MEASURED);
-+		bls_val->meas_r = readl(base + CIF_ISP_BLS_D_MEASURED);
-+	} else if (in_fmt->bayer_pat == RAW_GBRG) {
-+		bls_val->meas_gb = readl(base + CIF_ISP_BLS_A_MEASURED);
-+		bls_val->meas_b = readl(base + CIF_ISP_BLS_B_MEASURED);
-+		bls_val->meas_r = readl(base + CIF_ISP_BLS_C_MEASURED);
-+		bls_val->meas_gr = readl(base + CIF_ISP_BLS_D_MEASURED);
-+	} else if (in_fmt->bayer_pat == RAW_GRBG) {
-+		bls_val->meas_gr = readl(base + CIF_ISP_BLS_A_MEASURED);
-+		bls_val->meas_r = readl(base + CIF_ISP_BLS_B_MEASURED);
-+		bls_val->meas_b = readl(base + CIF_ISP_BLS_C_MEASURED);
-+		bls_val->meas_gb = readl(base + CIF_ISP_BLS_D_MEASURED);
-+	} else if (in_fmt->bayer_pat == RAW_RGGB) {
-+		bls_val->meas_r = readl(base + CIF_ISP_BLS_A_MEASURED);
-+		bls_val->meas_gr = readl(base + CIF_ISP_BLS_B_MEASURED);
-+		bls_val->meas_gb = readl(base + CIF_ISP_BLS_C_MEASURED);
-+		bls_val->meas_b = readl(base + CIF_ISP_BLS_D_MEASURED);
-+	}
-+}
-+
-+static void
-+rkisp1_stats_send_measurement(struct rkisp1_isp_stats_vdev *stats_vdev,
-+			      struct rkisp1_isp_readout_work *meas_work)
-+{
-+	unsigned long lock_flags = 0;
-+	unsigned int cur_frame_id = -1;
-+	struct rkisp1_stat_buffer *cur_stat_buf;
-+	struct rkisp1_buffer *cur_buf = NULL;
-+
-+	spin_lock_irqsave(&stats_vdev->irq_lock, lock_flags);
-+	cur_frame_id = atomic_read(&stats_vdev->dev->isp_sdev.frm_sync_seq) - 1;
-+	if (cur_frame_id != meas_work->frame_id) {
-+		v4l2_warn(stats_vdev->vnode.vdev.v4l2_dev,
-+			  "Measurement late(%d, %d)\n",
-+			  cur_frame_id, meas_work->frame_id);
-+		cur_frame_id = meas_work->frame_id;
-+	}
-+	/* get one empty buffer */
-+	if (!list_empty(&stats_vdev->stat)) {
-+		cur_buf = list_first_entry(&stats_vdev->stat,
-+					   struct rkisp1_buffer, queue);
-+		list_del(&cur_buf->queue);
-+	}
-+	spin_unlock_irqrestore(&stats_vdev->irq_lock, lock_flags);
-+
-+	if (!cur_buf)
-+		return;
-+
-+	cur_stat_buf =
-+		(struct rkisp1_stat_buffer *)(cur_buf->vaddr[0]);
-+
-+	if (meas_work->isp_ris & CIF_ISP_AWB_DONE) {
-+		rkisp1_stats_get_awb_meas(stats_vdev, cur_stat_buf);
-+		cur_stat_buf->meas_type |= CIFISP_STAT_AWB;
-+	}
-+
-+	if (meas_work->isp_ris & CIF_ISP_AFM_FIN) {
-+		rkisp1_stats_get_afc_meas(stats_vdev, cur_stat_buf);
-+		cur_stat_buf->meas_type |= CIFISP_STAT_AFM_FIN;
-+	}
-+
-+	if (meas_work->isp_ris & CIF_ISP_EXP_END) {
-+		rkisp1_stats_get_aec_meas(stats_vdev, cur_stat_buf);
-+		rkisp1_stats_get_bls_meas(stats_vdev, cur_stat_buf);
-+		cur_stat_buf->meas_type |= CIFISP_STAT_AUTOEXP;
-+	}
-+
-+	if (meas_work->isp_ris & CIF_ISP_HIST_MEASURE_RDY) {
-+		rkisp1_stats_get_hst_meas(stats_vdev, cur_stat_buf);
-+		cur_stat_buf->meas_type |= CIFISP_STAT_HIST;
-+	}
-+
-+	vb2_set_plane_payload(&cur_buf->vb.vb2_buf, 0,
-+			      sizeof(struct rkisp1_stat_buffer));
-+	cur_buf->vb.sequence = cur_frame_id;
-+	cur_buf->vb.vb2_buf.timestamp = ktime_get_ns();
-+	vb2_buffer_done(&cur_buf->vb.vb2_buf, VB2_BUF_STATE_DONE);
-+}
-+
-+static void rkisp1_stats_readout_work(struct work_struct *work)
-+{
-+	struct rkisp1_isp_readout_work *readout_work = container_of(work,
-+						struct rkisp1_isp_readout_work,
-+						work);
-+	struct rkisp1_isp_stats_vdev *stats_vdev = readout_work->stats_vdev;
-+
-+	if (readout_work->readout == RKISP1_ISP_READOUT_MEAS)
-+		rkisp1_stats_send_measurement(stats_vdev, readout_work);
-+
-+	kfree(readout_work);
-+}
-+
-+int rkisp1_stats_isr(struct rkisp1_isp_stats_vdev *stats_vdev, u32 isp_ris)
-+{
-+	unsigned int isp_mis_tmp = 0;
-+	struct rkisp1_isp_readout_work *work;
-+	unsigned int cur_frame_id =
-+		atomic_read(&stats_vdev->dev->isp_sdev.frm_sync_seq) - 1;
-+#ifdef LOG_ISR_EXE_TIME
-+	ktime_t in_t = ktime_get();
-+#endif
-+
-+	writel((CIF_ISP_AWB_DONE | CIF_ISP_AFM_FIN | CIF_ISP_EXP_END |
-+		CIF_ISP_HIST_MEASURE_RDY),
-+		stats_vdev->dev->base_addr + CIF_ISP_ICR);
-+
-+	isp_mis_tmp = readl(stats_vdev->dev->base_addr + CIF_ISP_MIS);
-+	if (isp_mis_tmp &
-+		(CIF_ISP_AWB_DONE | CIF_ISP_AFM_FIN |
-+		 CIF_ISP_EXP_END | CIF_ISP_HIST_MEASURE_RDY))
-+		v4l2_err(stats_vdev->vnode.vdev.v4l2_dev,
-+			 "isp icr 3A info err: 0x%x\n",
-+			 isp_mis_tmp);
-+
-+	if (isp_ris & (CIF_ISP_AWB_DONE | CIF_ISP_AFM_FIN | CIF_ISP_EXP_END |
-+		CIF_ISP_HIST_MEASURE_RDY)) {
-+		work = (struct rkisp1_isp_readout_work *)
-+			kzalloc(sizeof(struct rkisp1_isp_readout_work),
-+				GFP_ATOMIC);
-+		if (work) {
-+			INIT_WORK(&work->work,
-+				  rkisp1_stats_readout_work);
-+			work->readout = RKISP1_ISP_READOUT_MEAS;
-+			work->stats_vdev = stats_vdev;
-+			work->frame_id = cur_frame_id;
-+			work->isp_ris = isp_ris;
-+			if (!queue_work(stats_vdev->readout_wq,
-+					&work->work))
-+				kfree(work);
-+		} else {
-+			v4l2_err(stats_vdev->vnode.vdev.v4l2_dev,
-+				 "Could not allocate work\n");
-+		}
-+	}
-+
-+#ifdef LOG_ISR_EXE_TIME
-+	if (isp_ris & (CIF_ISP_EXP_END | CIF_ISP_AWB_DONE |
-+		       CIF_ISP_FRAME | CIF_ISP_HIST_MEASURE_RDY)) {
-+		unsigned int diff_us =
-+		    ktime_to_us(ktime_sub(ktime_get(), in_t));
-+
-+		if (diff_us > g_longest_isr_time)
-+			g_longest_isr_time = diff_us;
-+
-+		v4l2_info(stats_vdev->vnode.vdev.v4l2_dev,
-+			  "isp_isr time %d %d\n", diff_us, g_longest_isr_time);
-+	}
-+#endif
-+
-+	return 0;
-+}
-+
-+static void rkisp1_init_stats_vdev(struct rkisp1_isp_stats_vdev *stats_vdev)
-+{
-+	stats_vdev->vdev_fmt.fmt.meta.dataformat =
-+		V4L2_META_FMT_RK_ISP1_STAT_3A;
-+	stats_vdev->vdev_fmt.fmt.meta.buffersize =
-+		sizeof(struct rkisp1_stat_buffer);
-+}
-+
-+int rkisp1_register_stats_vdev(struct rkisp1_isp_stats_vdev *stats_vdev,
-+			       struct v4l2_device *v4l2_dev,
-+			       struct rkisp1_device *dev)
-+{
++	struct mipidphy_priv *priv = to_dphy_priv(sd);
++	struct v4l2_subdev *sensor_sd = get_remote_sensor(sd);
++	struct v4l2_ctrl *link_freq;
++	struct v4l2_querymenu qm = { .id = V4L2_CID_LINK_FREQ, };
 +	int ret;
-+	struct rkisp1_vdev_node *node = &stats_vdev->vnode;
-+	struct video_device *vdev = &node->vdev;
 +
-+	stats_vdev->dev = dev;
-+	mutex_init(&node->vlock);
-+	INIT_LIST_HEAD(&stats_vdev->stat);
-+	spin_lock_init(&stats_vdev->irq_lock);
-+
-+	strlcpy(vdev->name, "rkisp1-statistics", sizeof(vdev->name));
-+
-+	video_set_drvdata(vdev, stats_vdev);
-+	vdev->ioctl_ops = &rkisp1_stats_ioctl;
-+	vdev->fops = &rkisp1_stats_fops;
-+	vdev->release = video_device_release_empty;
-+	vdev->lock = &node->vlock;
-+	vdev->v4l2_dev = v4l2_dev;
-+	vdev->queue = &node->buf_queue;
-+	vdev->device_caps = V4L2_CAP_META_CAPTURE | V4L2_CAP_STREAMING;
-+	vdev->vfl_dir =  VFL_DIR_RX;
-+	rkisp1_stats_init_vb2_queue(vdev->queue, stats_vdev);
-+	rkisp1_init_stats_vdev(stats_vdev);
-+	video_set_drvdata(vdev, stats_vdev);
-+
-+	node->pad.flags = MEDIA_PAD_FL_SINK;
-+	ret = media_entity_pads_init(&vdev->entity, 1, &node->pad);
-+	if (ret < 0)
-+		goto err_release_queue;
-+
-+	ret = video_register_device(vdev, VFL_TYPE_GRABBER, -1);
-+	if (ret < 0) {
-+		dev_err(&vdev->dev,
-+			"could not register Video for Linux device\n");
-+		goto err_cleanup_media_entity;
++	link_freq = v4l2_ctrl_find(sensor_sd->ctrl_handler, V4L2_CID_LINK_FREQ);
++	if (!link_freq) {
++		v4l2_warn(sd, "No pixel rate control in subdev\n");
++		return -EPIPE;
 +	}
 +
-+	stats_vdev->readout_wq =
-+	    alloc_workqueue("measurement_queue",
-+			    WQ_UNBOUND | WQ_MEM_RECLAIM, 1);
++	qm.index = v4l2_ctrl_g_ctrl(link_freq);
++	ret = v4l2_querymenu(sensor_sd->ctrl_handler, &qm);
++	if (ret < 0) {
++		v4l2_err(sd, "Failed to get menu item\n");
++		return ret;
++	}
 +
-+	if (!stats_vdev->readout_wq) {
-+		ret = -ENOMEM;
-+			goto err_unreg_vdev;
++	if (!qm.value) {
++		v4l2_err(sd, "Invalid link_freq\n");
++		return -EINVAL;
++	}
++	priv->data_rate_mbps = qm.value * 2;
++	do_div(priv->data_rate_mbps, 1000 * 1000);
++
++	return 0;
++}
++
++static int mipidphy_s_stream_start(struct v4l2_subdev *sd)
++{
++	struct mipidphy_priv *priv = to_dphy_priv(sd);
++	int  ret = 0;
++
++	if (priv->is_streaming)
++		return 0;
++
++	ret = mipidphy_get_sensor_data_rate(sd);
++	if (ret < 0)
++		return ret;
++
++	priv->stream_on(priv, sd);
++
++	priv->is_streaming = true;
++
++	return 0;
++}
++
++static int mipidphy_s_stream_stop(struct v4l2_subdev *sd)
++{
++	struct mipidphy_priv *priv = to_dphy_priv(sd);
++
++	priv->is_streaming = false;
++
++	return 0;
++}
++
++static int mipidphy_s_stream(struct v4l2_subdev *sd, int on)
++{
++	if (on)
++		return mipidphy_s_stream_start(sd);
++	else
++		return mipidphy_s_stream_stop(sd);
++}
++
++static int mipidphy_g_mbus_config(struct v4l2_subdev *sd,
++				  struct v4l2_mbus_config *config)
++{
++	struct mipidphy_priv *priv = to_dphy_priv(sd);
++	struct v4l2_subdev *sensor_sd = get_remote_sensor(sd);
++	struct mipidphy_sensor *sensor = sd_to_sensor(priv, sensor_sd);
++
++	*config = sensor->mbus;
++
++	return 0;
++}
++
++static int mipidphy_s_power(struct v4l2_subdev *sd, int on)
++{
++	struct mipidphy_priv *priv = to_dphy_priv(sd);
++
++	if (on)
++		return pm_runtime_get_sync(priv->dev);
++	else
++		return pm_runtime_put(priv->dev);
++}
++
++static int mipidphy_runtime_suspend(struct device *dev)
++{
++	struct media_entity *me = dev_get_drvdata(dev);
++	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(me);
++	struct mipidphy_priv *priv = to_dphy_priv(sd);
++	int i, num_clks;
++
++	num_clks = priv->drv_data->num_clks;
++	for (i = num_clks - 1; i >= 0; i--)
++		clk_disable_unprepare(priv->clks[i]);
++
++	return 0;
++}
++
++static int mipidphy_runtime_resume(struct device *dev)
++{
++	struct media_entity *me = dev_get_drvdata(dev);
++	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(me);
++	struct mipidphy_priv *priv = to_dphy_priv(sd);
++	int i, num_clks, ret;
++
++	num_clks = priv->drv_data->num_clks;
++	for (i = 0; i < num_clks; i++) {
++		ret = clk_prepare_enable(priv->clks[i]);
++		if (ret < 0)
++			goto err;
 +	}
 +
 +	return 0;
-+err_unreg_vdev:
-+	video_unregister_device(vdev);
-+err_cleanup_media_entity:
-+	media_entity_cleanup(&vdev->entity);
-+err_release_queue:
-+	vb2_queue_release(vdev->queue);
++err:
++	while (--i >= 0)
++		clk_disable_unprepare(priv->clks[i]);
 +	return ret;
 +}
 +
-+void rkisp1_unregister_stats_vdev(struct rkisp1_isp_stats_vdev *stats_vdev)
++/* dphy accepts all fmt/size from sensor */
++static int mipidphy_get_set_fmt(struct v4l2_subdev *sd,
++				struct v4l2_subdev_pad_config *cfg,
++				struct v4l2_subdev_format *fmt)
 +{
-+	struct rkisp1_vdev_node *node = &stats_vdev->vnode;
-+	struct video_device *vdev = &node->vdev;
++	struct v4l2_subdev *sensor = get_remote_sensor(sd);
 +
-+	destroy_workqueue(stats_vdev->readout_wq);
-+	video_unregister_device(vdev);
-+	media_entity_cleanup(&vdev->entity);
-+	vb2_queue_release(vdev->queue);
++	/*
++	 * Do not allow format changes and just relay whatever
++	 * set currently in the sensor.
++	 */
++	return v4l2_subdev_call(sensor, pad, get_fmt, NULL, fmt);
 +}
-diff --git a/drivers/media/platform/rockchip/isp1/isp_stats.h b/drivers/media/platform/rockchip/isp1/isp_stats.h
++
++static const struct v4l2_subdev_pad_ops mipidphy_subdev_pad_ops = {
++	.set_fmt = mipidphy_get_set_fmt,
++	.get_fmt = mipidphy_get_set_fmt,
++};
++
++static const struct v4l2_subdev_core_ops mipidphy_core_ops = {
++	.s_power = mipidphy_s_power,
++};
++
++static const struct v4l2_subdev_video_ops mipidphy_video_ops = {
++	.g_mbus_config = mipidphy_g_mbus_config,
++	.s_stream = mipidphy_s_stream,
++};
++
++static const struct v4l2_subdev_ops mipidphy_subdev_ops = {
++	.core = &mipidphy_core_ops,
++	.video = &mipidphy_video_ops,
++	.pad = &mipidphy_subdev_pad_ops,
++};
++
++/* These tables must be sorted by .range_h ascending. */
++static const struct hsfreq_range rk3288_mipidphy_hsfreq_ranges[] = {
++	{  89, 0x00}, {  99, 0x10}, { 109, 0x20}, { 129, 0x01},
++	{ 139, 0x11}, { 149, 0x21}, { 169, 0x02}, { 179, 0x12},
++	{ 199, 0x22}, { 219, 0x03}, { 239, 0x13}, { 249, 0x23},
++	{ 269, 0x04}, { 299, 0x14}, { 329, 0x05}, { 359, 0x15},
++	{ 399, 0x25}, { 449, 0x06}, { 499, 0x16}, { 549, 0x07},
++	{ 599, 0x17}, { 649, 0x08}, { 699, 0x18}, { 749, 0x09},
++	{ 799, 0x19}, { 849, 0x29}, { 899, 0x39}, { 949, 0x0a},
++	{ 999, 0x1a}
++};
++
++static const struct hsfreq_range rk3399_mipidphy_hsfreq_ranges[] = {
++	{  89, 0x00}, {  99, 0x10}, { 109, 0x20}, { 129, 0x01},
++	{ 139, 0x11}, { 149, 0x21}, { 169, 0x02}, { 179, 0x12},
++	{ 199, 0x22}, { 219, 0x03}, { 239, 0x13}, { 249, 0x23},
++	{ 269, 0x04}, { 299, 0x14}, { 329, 0x05}, { 359, 0x15},
++	{ 399, 0x25}, { 449, 0x06}, { 499, 0x16}, { 549, 0x07},
++	{ 599, 0x17}, { 649, 0x08}, { 699, 0x18}, { 749, 0x09},
++	{ 799, 0x19}, { 849, 0x29}, { 899, 0x39}, { 949, 0x0a},
++	{ 999, 0x1a}, {1049, 0x2a}, {1099, 0x3a}, {1149, 0x0b},
++	{1199, 0x1b}, {1249, 0x2b}, {1299, 0x3b}, {1349, 0x0c},
++	{1399, 0x1c}, {1449, 0x2c}, {1500, 0x3c}
++};
++
++static const char * const rk3399_mipidphy_clks[] = {
++	"dphy-ref",
++	"dphy-cfg",
++	"grf",
++};
++
++static const char * const rk3288_mipidphy_clks[] = {
++	"dphy-ref",
++	"pclk",
++};
++
++static int mipidphy_rx_stream_on(struct mipidphy_priv *priv,
++				 struct v4l2_subdev *sd)
++{
++	struct v4l2_subdev *sensor_sd = get_remote_sensor(sd);
++	struct mipidphy_sensor *sensor = sd_to_sensor(priv, sensor_sd);
++	const struct dphy_drv_data *drv_data = priv->drv_data;
++	const struct hsfreq_range *hsfreq_ranges = drv_data->hsfreq_ranges;
++	int num_hsfreq_ranges = drv_data->num_hsfreq_ranges;
++	int i, hsfreq = 0;
++
++	for (i = 0; i < num_hsfreq_ranges; i++) {
++		if (hsfreq_ranges[i].range_h >= priv->data_rate_mbps) {
++			hsfreq = hsfreq_ranges[i].cfg_bit;
++			break;
++		}
++	}
++	write_grf_reg(priv, GRF_CON_ISP_DPHY_SEL, 0);
++	write_grf_reg(priv, GRF_DPHY_RX0_FORCERXMODE, 0);
++	write_grf_reg(priv, GRF_DPHY_RX0_FORCETXSTOPMODE, 0);
++	/* Disable lan turn around, which is ignored in receive mode */
++	write_grf_reg(priv, GRF_DPHY_RX0_TURNREQUEST, 0);
++	write_grf_reg(priv, GRF_DPHY_RX0_TURNDISABLE, 0xf);
++
++	write_grf_reg(priv, GRF_DPHY_RX0_ENABLE, GENMASK(sensor->lanes - 1, 0));
++
++	/* dphy start */
++	write_grf_reg(priv, GRF_DPHY_RX0_TESTCLK, 1);
++	write_grf_reg(priv, GRF_DPHY_RX0_TESTCLR, 1);
++	usleep_range(100, 150);
++	write_grf_reg(priv, GRF_DPHY_RX0_TESTCLR, 0);
++	usleep_range(100, 150);
++
++	/* set clock lane */
++	/* HS hsfreq_range & lane 0  settle bypass */
++	mipidphy0_wr_reg(priv, CLOCK_LANE_HS_RX_CONTROL, 0);
++	/* HS RX Control of lane0 */
++	mipidphy0_wr_reg(priv, LANE0_HS_RX_CONTROL, hsfreq << 1);
++	/* HS RX Control of lane1 */
++	mipidphy0_wr_reg(priv, LANE1_HS_RX_CONTROL, 0);
++	/* HS RX Control of lane2 */
++	mipidphy0_wr_reg(priv, LANE2_HS_RX_CONTROL, 0);
++	/* HS RX Control of lane3 */
++	mipidphy0_wr_reg(priv, LANE3_HS_RX_CONTROL, 0);
++	/* HS RX Data Lanes Settle State Time Control */
++	mipidphy0_wr_reg(priv, HS_RX_DATA_LANES_THS_SETTLE_CONTROL,
++			 THS_SETTLE_COUNTER_THRESHOLD);
++
++	/* Normal operation */
++	mipidphy0_wr_reg(priv, 0x0, 0);
++
++	return 0;
++}
++
++static int mipidphy_txrx_stream_on(struct mipidphy_priv *priv,
++				   struct v4l2_subdev *sd)
++{
++	struct v4l2_subdev *sensor_sd = get_remote_sensor(sd);
++	struct mipidphy_sensor *sensor = sd_to_sensor(priv, sensor_sd);
++	const struct dphy_drv_data *drv_data = priv->drv_data;
++	const struct hsfreq_range *hsfreq_ranges = drv_data->hsfreq_ranges;
++	int num_hsfreq_ranges = drv_data->num_hsfreq_ranges;
++	int i, hsfreq = 0;
++
++	for (i = 0; i < num_hsfreq_ranges; i++) {
++		if (hsfreq_ranges[i].range_h >= priv->data_rate_mbps) {
++			hsfreq = hsfreq_ranges[i].cfg_bit;
++			break;
++		}
++	}
++	write_grf_reg(priv, GRF_CON_ISP_DPHY_SEL, 1);
++	write_grf_reg(priv, GRF_DSI_CSI_TESTBUS_SEL, 1);
++	write_grf_reg(priv, GRF_DPHY_RX1_SRC_SEL, 1);
++	write_grf_reg(priv, GRF_DPHY_TX1RX1_MASTERSLAVEZ, 0);
++	write_grf_reg(priv, GRF_DPHY_TX1RX1_BASEDIR, 1);
++	/* Disable lan turn around, which is ignored in receive mode */
++	write_grf_reg(priv, GRF_DPHY_TX1RX1_FORCERXMODE, 0);
++	write_grf_reg(priv, GRF_DPHY_TX1RX1_FORCETXSTOPMODE, 0);
++	write_grf_reg(priv, GRF_DPHY_TX1RX1_TURNREQUEST, 0);
++	write_grf_reg(priv, GRF_DPHY_TX1RX1_TURNDISABLE, 0xf);
++	write_grf_reg(priv, GRF_DPHY_TX1RX1_ENABLE,
++		      GENMASK(sensor->lanes - 1, 0));
++	/* dphy start */
++	writel(0, priv->txrx_base_addr + CSIHOST_PHY_SHUTDOWNZ);
++	writel(0, priv->txrx_base_addr + CSIHOST_DPHY_RSTZ);
++	writel(PHY_TESTCLK, priv->txrx_base_addr + CSIHOST_PHY_TEST_CTRL0);
++	writel(PHY_TESTCLR, priv->txrx_base_addr + CSIHOST_PHY_TEST_CTRL0);
++	usleep_range(100, 150);
++	writel(PHY_TESTCLK, priv->txrx_base_addr + CSIHOST_PHY_TEST_CTRL0);
++	usleep_range(100, 150);
++
++	/* set clock lane */
++	mipidphy1_wr_reg(priv, CLOCK_LANE_HS_RX_CONTROL, 0);
++	mipidphy1_wr_reg(priv, LANE0_HS_RX_CONTROL, hsfreq << 1);
++	mipidphy1_wr_reg(priv, LANE1_HS_RX_CONTROL, 0);
++	mipidphy1_wr_reg(priv, LANE2_HS_RX_CONTROL, 0);
++	mipidphy1_wr_reg(priv, LANE3_HS_RX_CONTROL, 0);
++	/* HS RX Data Lanes Settle State Time Control */
++	mipidphy1_wr_reg(priv, HS_RX_DATA_LANES_THS_SETTLE_CONTROL,
++			 THS_SETTLE_COUNTER_THRESHOLD);
++
++	/* Normal operation */
++	mipidphy1_wr_reg(priv, 0x0, 0);
++
++	return 0;
++}
++
++static const struct dphy_drv_data rk3288_mipidphy_drv_data = {
++	.clks = rk3288_mipidphy_clks,
++	.num_clks = ARRAY_SIZE(rk3288_mipidphy_clks),
++	.hsfreq_ranges = rk3288_mipidphy_hsfreq_ranges,
++	.num_hsfreq_ranges = ARRAY_SIZE(rk3288_mipidphy_hsfreq_ranges),
++	.regs = rk3288_grf_dphy_regs,
++};
++
++static const struct dphy_drv_data rk3399_mipidphy_drv_data = {
++	.clks = rk3399_mipidphy_clks,
++	.num_clks = ARRAY_SIZE(rk3399_mipidphy_clks),
++	.hsfreq_ranges = rk3399_mipidphy_hsfreq_ranges,
++	.num_hsfreq_ranges = ARRAY_SIZE(rk3399_mipidphy_hsfreq_ranges),
++	.regs = rk3399_grf_dphy_regs,
++};
++
++static const struct of_device_id rockchip_mipidphy_match_id[] = {
++	{
++		.compatible = "rockchip,rk3399-mipi-dphy",
++		.data = &rk3399_mipidphy_drv_data,
++	},
++	{
++		.compatible = "rockchip,rk3288-mipi-dphy",
++		.data = &rk3288_mipidphy_drv_data,
++	},
++	{}
++};
++MODULE_DEVICE_TABLE(of, rockchip_mipidphy_match_id);
++
++/* The .bound() notifier callback when a match is found */
++static int
++rockchip_mipidphy_notifier_bound(struct v4l2_async_notifier *notifier,
++				 struct v4l2_subdev *sd,
++				 struct v4l2_async_subdev *asd)
++{
++	struct mipidphy_priv *priv = container_of(notifier,
++						  struct mipidphy_priv,
++						  notifier);
++	struct sensor_async_subdev *s_asd = container_of(asd,
++					struct sensor_async_subdev, asd);
++	struct mipidphy_sensor *sensor;
++	unsigned int pad, ret;
++
++	if (priv->num_sensors == ARRAY_SIZE(priv->sensors))
++		return -EBUSY;
++
++	sensor = &priv->sensors[priv->num_sensors++];
++	sensor->lanes = s_asd->lanes;
++	sensor->mbus = s_asd->mbus;
++	sensor->sd = sd;
++
++	for (pad = 0; pad < sensor->sd->entity.num_pads; pad++)
++		if (sensor->sd->entity.pads[pad].flags
++					& MEDIA_PAD_FL_SOURCE)
++			break;
++
++	if (pad == sensor->sd->entity.num_pads) {
++		dev_err(priv->dev,
++			"failed to find src pad for %s\n",
++			sensor->sd->name);
++
++		return -ENXIO;
++	}
++
++	ret = media_create_pad_link(
++			&sensor->sd->entity, pad,
++			&priv->sd.entity, MIPI_DPHY_SY_PAD_SINK,
++			priv->num_sensors != 1 ? 0 : MEDIA_LNK_FL_ENABLED);
++	if (ret) {
++		dev_err(priv->dev,
++			"failed to create link for %s\n",
++			sensor->sd->name);
++		return ret;
++	}
++
++	return 0;
++}
++
++/* The .unbind callback */
++static void
++rockchip_mipidphy_notifier_unbind(struct v4l2_async_notifier *notifier,
++				  struct v4l2_subdev *sd,
++				  struct v4l2_async_subdev *asd)
++{
++	struct mipidphy_priv *priv = container_of(notifier,
++						  struct mipidphy_priv,
++						  notifier);
++	struct mipidphy_sensor *sensor = sd_to_sensor(priv, sd);
++
++	sensor->sd = NULL;
++}
++
++static const struct
++v4l2_async_notifier_operations rockchip_mipidphy_async_ops = {
++	.bound = rockchip_mipidphy_notifier_bound,
++	.unbind = rockchip_mipidphy_notifier_unbind,
++};
++
++static int rockchip_mipidphy_fwnode_parse(struct device *dev,
++					  struct v4l2_fwnode_endpoint *vep,
++					  struct v4l2_async_subdev *asd)
++{
++	struct sensor_async_subdev *s_asd =
++			container_of(asd, struct sensor_async_subdev, asd);
++	struct v4l2_mbus_config *config = &s_asd->mbus;
++
++	if (vep->bus_type != V4L2_MBUS_CSI2) {
++		dev_err(dev, "Only CSI2 bus type is currently supported\n");
++		return -EINVAL;
++	}
++
++	if (vep->base.port != 0) {
++		dev_err(dev, "The PHY has only port 0\n");
++		return -EINVAL;
++	}
++
++	config->type = V4L2_MBUS_CSI2;
++	config->flags = vep->bus.mipi_csi2.flags;
++	s_asd->lanes = vep->bus.mipi_csi2.num_data_lanes;
++
++	switch (vep->bus.mipi_csi2.num_data_lanes) {
++	case 1:
++		config->flags |= V4L2_MBUS_CSI2_1_LANE;
++		break;
++	case 2:
++		config->flags |= V4L2_MBUS_CSI2_2_LANE;
++		break;
++	case 3:
++		config->flags |= V4L2_MBUS_CSI2_3_LANE;
++		break;
++	case 4:
++		config->flags |= V4L2_MBUS_CSI2_4_LANE;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int rockchip_mipidphy_media_init(struct mipidphy_priv *priv)
++{
++	int ret;
++
++	priv->pads[MIPI_DPHY_SY_PAD_SOURCE].flags =
++		MEDIA_PAD_FL_SOURCE | MEDIA_PAD_FL_MUST_CONNECT;
++	priv->pads[MIPI_DPHY_SY_PAD_SINK].flags =
++		MEDIA_PAD_FL_SINK | MEDIA_PAD_FL_MUST_CONNECT;
++
++	ret = media_entity_pads_init(&priv->sd.entity,
++				MIPI_DPHY_SY_PADS_NUM, priv->pads);
++	if (ret < 0)
++		return ret;
++
++	ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
++		priv->dev, &priv->notifier,
++		sizeof(struct sensor_async_subdev), 0,
++		rockchip_mipidphy_fwnode_parse);
++	if (ret < 0)
++		return ret;
++
++	if (!priv->notifier.num_subdevs)
++		return -ENODEV;	/* no endpoint */
++
++	priv->sd.subdev_notifier = &priv->notifier;
++	priv->notifier.ops = &rockchip_mipidphy_async_ops;
++	ret = v4l2_async_subdev_notifier_register(&priv->sd, &priv->notifier);
++	if (ret) {
++		dev_err(priv->dev,
++			"failed to register async notifier : %d\n", ret);
++		v4l2_async_notifier_cleanup(&priv->notifier);
++		return ret;
++	}
++
++	return v4l2_async_register_subdev(&priv->sd);
++}
++
++static int rockchip_mipidphy_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct v4l2_subdev *sd;
++	struct mipidphy_priv *priv;
++	struct regmap *grf;
++	struct resource *res;
++	const struct of_device_id *of_id;
++	const struct dphy_drv_data *drv_data;
++	int i, ret;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++	priv->dev = dev;
++
++	of_id = of_match_device(rockchip_mipidphy_match_id, dev);
++	if (!of_id)
++		return -EINVAL;
++
++	grf = syscon_node_to_regmap(dev->parent->of_node);
++	if (IS_ERR(grf)) {
++		grf = syscon_regmap_lookup_by_phandle(dev->of_node,
++						      "rockchip,grf");
++		if (IS_ERR(grf)) {
++			dev_err(dev, "Can't find GRF syscon\n");
++			return -ENODEV;
++		}
++	}
++	priv->regmap_grf = grf;
++
++	drv_data = of_id->data;
++	for (i = 0; i < drv_data->num_clks; i++) {
++		priv->clks[i] = devm_clk_get(dev, drv_data->clks[i]);
++
++		if (IS_ERR(priv->clks[i])) {
++			dev_err(dev, "Failed to get %s\n", drv_data->clks[i]);
++			return PTR_ERR(priv->clks[i]);
++		}
++	}
++
++	priv->grf_regs = drv_data->regs;
++	priv->drv_data = drv_data;
++	priv->stream_on = mipidphy_txrx_stream_on;
++	priv->txrx_base_addr = NULL;
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	priv->txrx_base_addr = devm_ioremap_resource(dev, res);
++	if (IS_ERR(priv->txrx_base_addr))
++		priv->stream_on = mipidphy_rx_stream_on;
++
++	sd = &priv->sd;
++	v4l2_subdev_init(sd, &mipidphy_subdev_ops);
++	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
++	snprintf(sd->name, sizeof(sd->name), "rockchip-sy-mipi-dphy");
++	sd->dev = dev;
++
++	platform_set_drvdata(pdev, &sd->entity);
++
++	ret = rockchip_mipidphy_media_init(priv);
++	if (ret < 0)
++		return ret;
++
++	pm_runtime_enable(&pdev->dev);
++
++	return 0;
++}
++
++static int rockchip_mipidphy_remove(struct platform_device *pdev)
++{
++	struct media_entity *me = platform_get_drvdata(pdev);
++	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(me);
++
++	media_entity_cleanup(&sd->entity);
++
++	pm_runtime_disable(&pdev->dev);
++
++	return 0;
++}
++
++static const struct dev_pm_ops rockchip_mipidphy_pm_ops = {
++	SET_RUNTIME_PM_OPS(mipidphy_runtime_suspend,
++			   mipidphy_runtime_resume, NULL)
++};
++
++static struct platform_driver rockchip_isp_mipidphy_driver = {
++	.probe = rockchip_mipidphy_probe,
++	.remove = rockchip_mipidphy_remove,
++	.driver = {
++			.name = "rockchip-sy-mipi-dphy",
++			.pm = &rockchip_mipidphy_pm_ops,
++			.of_match_table = rockchip_mipidphy_match_id,
++	},
++};
++
++module_platform_driver(rockchip_isp_mipidphy_driver);
++MODULE_AUTHOR("Rockchip Camera/ISP team");
++MODULE_DESCRIPTION("Rockchip MIPI DPHY driver");
++MODULE_LICENSE("Dual BSD/GPL");
+diff --git a/drivers/media/platform/rockchip/isp1/mipi_dphy_sy.h b/drivers/media/platform/rockchip/isp1/mipi_dphy_sy.h
 new file mode 100644
-index 000000000000..75f832a3d968
+index 000000000000..c558791064a2
 --- /dev/null
-+++ b/drivers/media/platform/rockchip/isp1/isp_stats.h
-@@ -0,0 +1,58 @@
++++ b/drivers/media/platform/rockchip/isp1/mipi_dphy_sy.h
+@@ -0,0 +1,15 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
-+ * Rockchip isp1 driver
++ * Rockchip MIPI Synopsys DPHY driver
 + *
-+ * Copyright (C) 2017 Rockchip Electronics Co., Ltd.
++ * Copyright (C) 2017 Fuzhou Rockchip Electronics Co., Ltd.
 + */
 +
-+#ifndef _RKISP1_ISP_STATS_H
-+#define _RKISP1_ISP_STATS_H
++#ifndef __MIPI_DPHY_SY_H__
++#define __MIPI_DPHY_SY_H__
 +
-+#include <linux/rkisp1-config.h>
-+#include "common.h"
++#include <media/v4l2-subdev.h>
 +
-+struct rkisp1_isp_stats_vdev;
++void rkisp1_set_mipi_dphy_sy_lanes(struct v4l2_subdev *dphy, int lanes);
 +
-+enum rkisp1_isp_readout_cmd {
-+	RKISP1_ISP_READOUT_MEAS,
-+	RKISP1_ISP_READOUT_META,
-+};
-+
-+struct rkisp1_isp_readout_work {
-+	struct work_struct work;
-+	struct rkisp1_isp_stats_vdev *stats_vdev;
-+
-+	unsigned int frame_id;
-+	unsigned int isp_ris;
-+	enum rkisp1_isp_readout_cmd readout;
-+	struct vb2_buffer *vb;
-+};
-+
-+/*
-+ * struct rkisp1_isp_stats_vdev - ISP Statistics device
-+ *
-+ * @irq_lock: buffer queue lock
-+ * @stat: stats buffer list
-+ * @readout_wq: workqueue for statistics information read
-+ */
-+struct rkisp1_isp_stats_vdev {
-+	struct rkisp1_vdev_node vnode;
-+	struct rkisp1_device *dev;
-+
-+	spinlock_t irq_lock;
-+	struct list_head stat;
-+	struct v4l2_format vdev_fmt;
-+	bool streamon;
-+
-+	struct workqueue_struct *readout_wq;
-+};
-+
-+int rkisp1_stats_isr(struct rkisp1_isp_stats_vdev *stats_vdev, u32 isp_ris);
-+
-+int rkisp1_register_stats_vdev(struct rkisp1_isp_stats_vdev *stats_vdev,
-+			       struct v4l2_device *v4l2_dev,
-+			       struct rkisp1_device *dev);
-+
-+void rkisp1_unregister_stats_vdev(struct rkisp1_isp_stats_vdev *stats_vdev);
-+
-+#endif /* _RKISP1_ISP_STATS_H */
++#endif /* __RKISP1_MIPI_DPHY_SY_H__ */
 -- 
 2.16.1
