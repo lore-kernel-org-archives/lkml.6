@@ -1,101 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751130AbeCHWGa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 17:06:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59353 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750898AbeCHWG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 17:06:29 -0500
-Date: Thu, 8 Mar 2018 22:06:23 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v3 4/6] sysctl: Warn when a clamped sysctl parameter is
- set out of range
-Message-ID: <20180308220623.GN4449@wotan.suse.de>
-References: <1519926220-7453-1-git-send-email-longman@redhat.com>
- <1519926220-7453-5-git-send-email-longman@redhat.com>
- <20180308183140.GI4449@wotan.suse.de>
- <deaeacc7-96a3-1c93-8565-cdce5ece6876@redhat.com>
- <20180308204906.GM4449@wotan.suse.de>
- <6b10b07a-8d07-db42-eba1-a71eb124aa2f@redhat.com>
+        id S1751151AbeCHWHL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 17:07:11 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:36612 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750947AbeCHWHK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 17:07:10 -0500
+Date: Thu, 8 Mar 2018 14:07:08 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: "Kani, Toshi" <toshi.kani@hpe.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bp@suse.de" <bp@suse.de>, "tglx@linutronix.de" <tglx@linutronix.de>,
+        "guohanjun@huawei.com" <guohanjun@huawei.com>,
+        "wxf.wang@hisilicon.com" <wxf.wang@hisilicon.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "Hocko, Michal" <mhocko@suse.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/2] mm/vmalloc: Add interfaces to free unused page table
+Message-ID: <20180308220708.GA29073@bombadil.infradead.org>
+References: <20180307183227.17983-1-toshi.kani@hpe.com>
+ <20180307183227.17983-2-toshi.kani@hpe.com>
+ <20180308040016.GB9082@bombadil.infradead.org>
+ <1520527285.2693.56.camel@hpe.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6b10b07a-8d07-db42-eba1-a71eb124aa2f@redhat.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <1520527285.2693.56.camel@hpe.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 08, 2018 at 04:40:17PM -0500, Waiman Long wrote:
-> On 03/08/2018 03:49 PM, Luis R. Rodriguez wrote:
-> > On Thu, Mar 08, 2018 at 02:57:09PM -0500, Waiman Long wrote:
-> >> On 03/08/2018 01:31 PM, Luis R. Rodriguez wrote:
-> >>> On Thu, Mar 01, 2018 at 12:43:38PM -0500, Waiman Long wrote:
-> >>>> Even with clamped sysctl parameters, it is still not that straight
-> >>>> forward to figure out the exact range of those parameters. One may
-> >>>> try to write extreme parameter values to see if they get clamped.
-> >>>> To make it easier, a warning with the expected range will now be
-> >>>> printed in the kernel ring buffer when a clamped sysctl parameter
-> >>>> receives an out of range value.
-> >>>>
-> >>>> Signed-off-by: Waiman Long <longman@redhat.com>
-> >>>> ---
-> >>>>  include/linux/sysctl.h |  3 +++
-> >>>>  kernel/sysctl.c        | 52 ++++++++++++++++++++++++++++++++++++++++++--------
-> >>>>  2 files changed, 47 insertions(+), 8 deletions(-)
-> >>>>
-> >>>> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-> >>>> index 448aa72..3db57af 100644
-> >>>> --- a/include/linux/sysctl.h
-> >>>> +++ b/include/linux/sysctl.h
-> >>>> @@ -130,11 +130,14 @@ struct ctl_table
-> >>>>   * @CTL_FLAGS_CLAMP_RANGE: Set to indicate that the entry should be
-> >>>>   *	flexibly clamped to min/max range in case the user provided
-> >>>>   *	an incorrect value.
-> >>>> + * @CTL_FLAGS_OOR_WARNED: Set to indicate that an out of range warning
-> >>>> + * 	had been issued for that entry.
-> >>>>   *
-> >>>>   * At most 16 different flags will be allowed.
-> >>>>   */
-> >>>>  enum ctl_table_flags {
-> >>>>  	CTL_FLAGS_CLAMP_RANGE		= BIT(0),
-> >>>> +	CTL_FLAGS_OOR_WARNED		= BIT(1),
-> >>>>  };
-> >>> Ugh, no. Now I see why you had to set this flag later.
-> >>>
-> >>> You are not using this flag to "warn" but rather for an internal
-> >>> status checker if you have warned or not. Internal flags should
-> >>> not be something the user sets. If we want a flag for warning
-> >>> that's one thing. If we need a flag to keep tabs if we have
-> >>> warned or not that needs to be kept separately and internally,
-> >>> nothing the user has to do set or reset.
-> >>>
-> >>>   Luis
-> >> What I want to do is a printk_once for each sysctl parameter. So the
-> >> flag is used as a marker that a warning has been printed.
-> >>
-> >> I do understand that it gets somewhat ugly in the case of msgmni and
-> >> shmmni because of the copying back of the flag. Another alternative that
-> >> had been suggested by Kees is to use prink_ratelimited. That we don't
-> >> need that flag at all.
-> > However it is done, a user flag should not be used also for internal
-> > flag settings. That's just gross. Internal state machine stuff should
-> > remain far from what the user is able to modify.
-> >
-> > Also, why can't it just use pr_warn_once() and be done with it?
+On Thu, Mar 08, 2018 at 03:56:30PM +0000, Kani, Toshi wrote:
+> On Wed, 2018-03-07 at 20:00 -0800, Matthew Wilcox wrote:
+> > On Wed, Mar 07, 2018 at 11:32:26AM -0700, Toshi Kani wrote:
+> > > +/**
+> > > + * pud_free_pmd_page - clear pud entry and free pmd page
+> > > + *
+> > > + * Returns 1 on success and 0 on failure (pud not cleared).
+> > > + */
+> > > +int pud_free_pmd_page(pud_t *pud)
+> > > +{
+> > > +	return pud_none(*pud);
+> > > +}
+> > 
+> > Wouldn't it be clearer if you returned 'bool' instead of 'int' here?
 > 
-> Different sysctl parameters can use the same minmax proc_handler. Using
-> pr_warn_once() means mistake in one will prevent mistakes in other
-> parameters from showing up.
+> I thought about it and decided to use 'int' since all other pud/pmd/pte
+> interfaces, such as pud_none() above, use 'int'.
 
-OK then use a separate internal set of flags for internal book keeping.
-Its nothing the user should ever have to set.
-
-  Luis
+These interfaces were introduced before we had bool ... I suspect nobody's
+taken the time to go through and convert them all.
