@@ -1,94 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751054AbeCHWLs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 17:11:48 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:48972 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750824AbeCHWLq (ORCPT
+        id S1751144AbeCHWP7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 17:15:59 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:10727 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751073AbeCHWP4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 17:11:46 -0500
-From: Roman Gushchin <guro@fb.com>
-To: Tony Lindgren <tony@atomide.com>
-CC: Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Michal Hocko" <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
-Subject: Re: Build fails with SLOB in next
-Thread-Topic: Build fails with SLOB in next
-Thread-Index: AQHTtwMDvA0rzbnS7U+AY8n1bb5R0KPG5rTG
-Date: Thu, 8 Mar 2018 22:11:10 +0000
-Message-ID: <6555B7D0-95F4-45E3-AF34-E75412718F33@fb.com>
-References: <20180308172849.GO5799@atomide.com>
-In-Reply-To: <20180308172849.GO5799@atomide.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [195.91.235.193]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CO1PR15MB1000;20:lsc2F+p4AOgYmp7WFzF5Hsi2UiZIdkfC0RivC1jVulq20eRxCh4Gkb50lbIllNSB++i1soiNaiHVmtEo5DyvqZQYutXF5WHqa3C6Kps5UxzMrohdVfEsmZEvsFZZr0FaSw90nHtqJE5zx8lZ09IgBpMnSqCgOIgorPCUZmD+JkQ=
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-correlation-id: 68312459-8e1c-46dc-e8f0-08d585417fe3
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:CO1PR15MB1000;
-x-ms-traffictypediagnostic: CO1PR15MB1000:
-x-microsoft-antispam-prvs: <CO1PR15MB10008E7E7BD92E82471FE6AFBEDF0@CO1PR15MB1000.namprd15.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(11241501184)(944501244)(52105095)(3002001)(10201501046)(6041288)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:CO1PR15MB1000;BCL:0;PCL:0;RULEID:;SRVR:CO1PR15MB1000;
-x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(366004)(39860400002)(396003)(376002)(346002)(189003)(199004)(3280700002)(33656002)(5660300001)(66066001)(97736004)(5250100002)(68736007)(105586002)(7416002)(106356001)(9886003)(3846002)(3660700001)(6246003)(229853002)(81156014)(7736002)(25786009)(8676002)(53936002)(81166006)(6116002)(305945005)(6512007)(6486002)(6436002)(36756003)(316002)(8936002)(4326008)(2906002)(26005)(6506007)(99286004)(86362001)(53546011)(102836004)(186003)(83716003)(54906003)(5003630100001)(76176011)(59450400001)(82746002)(2900100001)(14454004)(478600001)(2950100002)(6916009)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:CO1PR15MB1000;H:CO1PR15MB1077.namprd15.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: jqJyBylXIKu+dj0cNQNFDpWbaobRtzeGrRFRv2vmaHXepUT8/zzwIX2/YrSEzGq2eKcUgTBnFRcnLI7KsRMjPdzayoRtU3YmYqOt1wseax63HNIt/mwQARtFCVafubDQBSrmNq4QhAWfq8IR+eKYOVTCoBJpd89mr97nsWslGJoZlFICW0bR8L1Uz223yYCgsnVPwP0thTtSXJeRIfaPTL2VDUuJxaF9URsK40tvU9Y9tnMtUpFkspal6/BP3AraAVDjEfdFmL2Sr1ExiFYNTKVQ69p65JMv05b/tQQPKPQ6nS7b/MW9hQyhcZZlDKr8IVfy0iMcEL7H9d4jvMl6+w==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        Thu, 8 Mar 2018 17:15:56 -0500
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 08 Mar 2018 14:15:55 -0800
+Subject: Re: [PATCH v3 03/11] clk: tegra: dfll registration for multiple SoCs
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-4-git-send-email-pdeschrijver@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <80ee8493-6741-43dd-691a-eade94ec924f@nvidia.com>
+Date: Thu, 8 Mar 2018 22:15:51 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 68312459-8e1c-46dc-e8f0-08d585417fe3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 22:11:10.6710
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR15MB1000
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-08_13:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <1517934852-23255-4-git-send-email-pdeschrijver@nvidia.com>
+X-Originating-IP: [10.26.11.23]
+X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To UKMAIL101.nvidia.com
+ (10.26.138.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w28MBsOf008455
 
-Hi Tony!
 
-As far as I know, it’s not fixed yet.
-I’ll send a fix on Monday.
-Sorry for the inconvenience.
+On 06/02/18 16:34, Peter De Schrijver wrote:
+> In a future patch, support for the DFLL in Tegra210 will be introduced.
+> This requires support for more than 1 set of CVB and CPU max frequency
+> tables.
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 37 ++++++++++++++++++++++++------
+>  1 file changed, 30 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> index e2dbb79..6486ad9 100644
+> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/err.h>
+>  #include <linux/kernel.h>
+>  #include <linux/init.h>
+> +#include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regulator/consumer.h>
+>  #include <soc/tegra/fuse.h>
+> @@ -29,8 +30,15 @@
+>  #include "clk-dfll.h"
+>  #include "cvb.h"
+>  
+> +struct dfll_fcpu_data {
+> +	const unsigned long *cpu_max_freq_table;
+> +	unsigned int cpu_max_freq_table_size;
+> +	const struct cvb_table *cpu_cvb_tables;
+> +	unsigned int cpu_cvb_tables_size;
+> +};
+> +
+>  /* Maximum CPU frequency, indexed by CPU speedo id */
+> -static const unsigned long cpu_max_freq_table[] = {
+> +static const unsigned long tegra124_cpu_max_freq_table[] = {
+>  	[0] = 2014500000UL,
+>  	[1] = 2320500000UL,
+>  	[2] = 2116500000UL,
+> @@ -80,6 +88,21 @@
+>  	},
+>  };
+>  
+> +static const struct dfll_fcpu_data tegra124_dfll_fcpu_data = {
+> +	.cpu_max_freq_table = tegra124_cpu_max_freq_table,
+> +	.cpu_max_freq_table_size = ARRAY_SIZE(tegra124_cpu_max_freq_table),
+> +	.cpu_cvb_tables = tegra124_cpu_cvb_tables,
+> +	.cpu_cvb_tables_size = ARRAY_SIZE(tegra124_cpu_cvb_tables)
+> +};
+> +
+> +static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
+> +	{
+> +		.compatible = "nvidia,tegra124-dfll",
+> +		.data = &tegra124_dfll_fcpu_data,
+> +	},
+> +	{ },
+> +};
+> +
+>  static int get_alignment_from_regulator(struct device *dev,
+>  					struct rail_alignment *align)
+>  {
+> @@ -112,12 +135,17 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+>  {
+>  	int process_id, speedo_id, speedo_value, err;
+>  	struct tegra_dfll_soc_data *soc;
+> +	const struct of_device_id *of_id;
+> +	const struct dfll_fcpu_data *fcpu_data;
+> +
+> +	of_id = of_match_device(tegra124_dfll_fcpu_of_match, &pdev->dev);
+> +	fcpu_data = of_id->data;
 
-Roman
+Nit-pick, we can use of_device_get_match_data() here.
 
-Sent from my iPhone
 
-> On 8 Mar 2018, at 20:29, Tony Lindgren <tony@atomide.com> wrote:
+>  	process_id = tegra_sku_info.cpu_process_id;
+>  	speedo_id = tegra_sku_info.cpu_speedo_id;
+>  	speedo_value = tegra_sku_info.cpu_speedo_value;
+>  
+> -	if (speedo_id >= ARRAY_SIZE(cpu_max_freq_table)) {
+> +	if (speedo_id >= fcpu_data->cpu_max_freq_table_size) {
+>  		dev_err(&pdev->dev, "unknown max CPU freq for speedo_id=%d\n",
+>  			speedo_id);
+>  		return -ENODEV;
+> @@ -172,11 +200,6 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> -static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
+> -	{ .compatible = "nvidia,tegra124-dfll", },
+> -	{ },
+> -};
+> -
+>  static const struct dev_pm_ops tegra124_dfll_pm_ops = {
+>  	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
+>  			   tegra_dfll_runtime_resume, NULL)
 > 
-> Hi,
-> 
-> Looks like commit 8b1747684ff8 ("dcache: account external names as
-> indirectly reclaimable memory") caused build fail if SLOB is selected:
-> 
-> fs/dcache.c: In function '__d_free_external':
-> fs/dcache.c:278:22: error: implicit declaration of function
-> 'kmalloc_index'; did you mean 'kmalloc_ node'?
-> [-Werror=implicit-function-declaration]
->        -kmalloc_size(kmalloc_index(bytes)));
->                          ^~~~~~~~~~~~~
-> 
-> Is this already fixed somewhere?
-> 
-> Regards,
-> 
-> Tony
+
+Otherwise ...
+
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+-- 
+nvpublic
