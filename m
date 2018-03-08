@@ -1,161 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751242AbeCHXWQ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 18:22:16 -0500
-Received: from mailoutvs4.siol.net ([213.250.19.137]:47230 "EHLO mail.siol.net"
+        id S1751356AbeCHXYe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 18:24:34 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43066 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750800AbeCHXWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 18:22:14 -0500
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: =?utf-8?B?T25kxZllag==?= Jirman <megi@xff.cz>
-Cc: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
-        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] [PATCH v3 06/16] drm/sun4i: Release exclusive clock lock when disabling TCON
-Date: Thu, 08 Mar 2018 23:57:40 +0100
-Message-ID: <3764594.86uYqsI6mN@jernej-laptop>
-In-Reply-To: <20180308224717.a6ieadihwh7u5rbu@core.my.home>
-References: <20180301213442.16677-1-jernej.skrabec@siol.net> <20180301213442.16677-7-jernej.skrabec@siol.net> <20180308224717.a6ieadihwh7u5rbu@core.my.home>
+        id S1751277AbeCHXYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 18:24:31 -0500
+From: Lyude Paul <lyude@redhat.com>
+To: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: Manasi Navare <manasi.d.navare@intel.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
+        <ville.syrjala@linux.intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 4/6] drm/dp_mst: Add drm_dp_mst_topology_mgr_lower_link_rate()
+Date: Thu,  8 Mar 2018 18:24:18 -0500
+Message-Id: <20180308232421.14049-5-lyude@redhat.com>
+In-Reply-To: <20180308232421.14049-1-lyude@redhat.com>
+References: <20180308232421.14049-1-lyude@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Unlike SST, MST can have far more then a single display hooked up on a
+single port. What this also means however, is that if the DisplayPort
+link to the top-level MST branch device becomes unstable then every
+single branch device also has an unstable link. Additionally, MST has a
+few more steps that must be taken in order to properly retrain the
+entire topology under a lower link rate. Since the VCID allocations for
+each mstb is determined based off the link rate for the top of the
+topology, we also have to recalculate all of the VCID allocations for
+the downstream ports as well to ensure that we still have enough link
+bandwidth to drive each mstb.
 
-Dne četrtek, 08. marec 2018 ob 23:47:17 CET je Ondřej Jirman napisal(a):
-> Hi,
-> 
-> On Thu, Mar 01, 2018 at 10:34:32PM +0100, Jernej Skrabec wrote:
-> > Currently exclusive TCON clock lock is never released, which, for
-> > example, prevents changing resolution on HDMI.
-> > 
-> > In order to fix that, release clock when disabling TCON. TCON is always
-> > disabled first before new mode is set.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 1d714c06ec9d..7f6c4125c89f
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > @@ -102,10 +102,12 @@ static void sun4i_tcon_channel_set_status(struct
-> > sun4i_tcon *tcon, int channel,> 
-> >  		return;
-> >  	
-> >  	}
-> > 
-> > -	if (enabled)
-> > +	if (enabled) {
-> > 
-> >  		clk_prepare_enable(clk);
-> > 
-> > -	else
-> > +	} else {
-> > +		clk_rate_exclusive_put(clk);
-> > 
-> >  		clk_disable_unprepare(clk);
-> > 
-> > +	}
-> > 
-> >  }
-> 
-> At least in the linux-next/master I can't see clk_rate_exclusive_get call:
-> 
+Additionally, since we have multiple downstream connectors per port,
+setting the link status of the parent mstb's port to bad isn't enough:
+all of the downstream mstb ports have to have their link status set to
+bad.
 
-It is in drm-misc/drm-misc-fixes:
-https://cgit.freedesktop.org/drm/drm-misc/commit/?h=drm-misc-fixes&id=79d103a565d16b1893d990b2ee5e0fe71767759f
+This basically follows the same paradigm that our DP link status logic
+in DRM does, in that we simply tell userspace that all of the mstb ports
+need retraining and additionally applying the new lower bandwidth
+constraints to all of the atomic commits on the topology that follow.
 
-My patch is also applied in same branch, so there should be no issues while 
-merging all those branches.
+Since the work of figuring out which connectors live downstream on an
+MST topology and updating their link status is something that any driver
+supporting MST is going to need to do in order to retrain MST links
+properly, we add the drm_dp_mst_topology_mgr_lower_link_rate() helper
+which simply recalculates the pbn_div for a given mst topology, then
+marks the link status of all connectors living in that topology as bad.
+We'll make use of it in i915 later in this series.
 
-linux-next doesn't have either patches currently: https://git.kernel.org/pub/
-scm/linux/kernel/git/next/linux-next.git/log/drivers/gpu/drm/sun4i
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: Manasi Navare <manasi.d.navare@intel.com>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+---
+ drivers/gpu/drm/drm_dp_mst_topology.c | 73 ++++++++++++++++++++++++++++++++++-
+ include/drm/drm_dp_mst_helper.h       |  3 ++
+ 2 files changed, 75 insertions(+), 1 deletion(-)
 
-This is issue only if you manually apply one patch without the other.
-
-Best regards,
-Jernej
-
-> $ git grep 'exclusive' linux-next/master -- drivers/gpu/drm/sun4i
-> 
-> linux-next/master:sun4i_hdmi.h:    * On sun5i the threshold is exclusive,
-> i.e. does not include, linux-next/master:sun4i_tcon.c:          
-> clk_rate_exclusive_put(clk); linux-next/master:sun4i_tcon.c:  
-> clk_set_rate_exclusive(tcon->dclk, mode->crtc_clock * 1000);
-> linux-next/master:sun4i_tcon.c:   clk_set_rate_exclusive(tcon->sclk1,
-> mode->crtc_clock * 1000);
-> 
-> and the kernel complains too:
-> 
-> [  841.915161] ------------[ cut here ]------------
-> [  841.915187] WARNING: CPU: 0 PID: 273 at
-> /workspace/megous.com/orangepi-pc/linux-4.16/drivers/clk/clk.c:608
-> clk_rate_exclusive_put+0x48/0x4c [  841.915194] CPU: 0 PID: 273 Comm: Xorg
-> Not tainted 4.16.0-rc4-00268-gbac2ecf73ed0 #13 [  841.915196] Hardware
-> name: Allwinner sun8i Family
-> [  841.915217] [<c0228440>] (unwind_backtrace) from [<c0225b90>]
-> (show_stack+0x10/0x14) [  841.915228] [<c0225b90>] (show_stack) from
-> [<c0b094bc>] (dump_stack+0x88/0x9c) [  841.915237] [<c0b094bc>]
-> (dump_stack) from [<c0240294>] (__warn+0xd4/0xf0) [  841.915244]
-> [<c0240294>] (__warn) from [<c0240380>] (warn_slowpath_null+0x40/0x48) [ 
-> 841.915250] [<c0240380>] (warn_slowpath_null) from [<c0619b6c>]
-> (clk_rate_exclusive_put+0x48/0x4c) [  841.915261] [<c0619b6c>]
-> (clk_rate_exclusive_put) from [<c0694624>]
-> (sun4i_tcon_set_status+0x178/0x2f0) [  841.915269] [<c0694624>]
-> (sun4i_tcon_set_status) from [<c06930c0>]
-> (sun4i_crtc_atomic_disable+0x7c/0xe4) [  841.915279] [<c06930c0>]
-> (sun4i_crtc_atomic_disable) from [<c06637fc>]
-> (drm_atomic_helper_commit_modeset_disables+0x390/0x46c) [  841.915288]
-> [<c06637fc>] (drm_atomic_helper_commit_modeset_disables) from [<c0664df4>]
-> (drm_atomic_helper_commit_tail_rpm+0x18/0x64) [  841.915295] [<c0664df4>]
-> (drm_atomic_helper_commit_tail_rpm) from [<c0664da8>]
-> (commit_tail+0x40/0x6c) [  841.915302] [<c0664da8>] (commit_tail) from
-> [<c06652b0>] (drm_atomic_helper_commit+0xbc/0x128) [  841.915311]
-> [<c06652b0>] (drm_atomic_helper_commit) from [<c0668d40>]
-> (restore_fbdev_mode_atomic+0x100/0x1fc) [  841.915319] [<c0668d40>]
-> (restore_fbdev_mode_atomic) from [<c0668f1c>]
-> (drm_fb_helper_dpms+0x50/0x130) [  841.915328] [<c0668f1c>]
-> (drm_fb_helper_dpms) from [<c0669e9c>] (drm_fb_helper_blank+0x54/0x90) [ 
-> 841.915337] [<c0669e9c>] (drm_fb_helper_blank) from [<c06088cc>]
-> (fb_blank+0x54/0xa8) [  841.915343] [<c06088cc>] (fb_blank) from
-> [<c0608c80>] (do_fb_ioctl+0x360/0x62c) [  841.915351] [<c0608c80>]
-> (do_fb_ioctl) from [<c0362648>] (do_vfs_ioctl+0x9c/0x774) [  841.915358]
-> [<c0362648>] (do_vfs_ioctl) from [<c0362d54>] (SyS_ioctl+0x34/0x58) [ 
-> 841.915364] [<c0362d54>] (SyS_ioctl) from [<c0201120>]
-> (ret_fast_syscall+0x0/0x4c) [  841.915368] Exception stack(0xe5fc5fa8 to
-> 0xe5fc5ff0)
-> [  841.915373] 5fa0:                   00674f10 00675460 0000000b 00004611
-> 00000001 00000000 [  841.915379] 5fc0: 00674f10 00675460 00000001 00000036
-> 00650474 00000000 006504a4 00675df8 [  841.915382] 5fe0: b61a502c be8acb2c
-> b6192c38 b6b152ec
-> [  841.915386] ---[ end trace fa81b956197707f8 ]---
-> 
-> It looks like clk_rate_exclusive_put inside sun4i_tcon_channel_set_status is
-> called without first calling some function that would call
-> clk_set_rate_exclusive, leading to unbalanced get/put calls.
-> 
-> regards,
->   o.
-> 
-> >  static void sun4i_tcon_lvds_set_status(struct sun4i_tcon *tcon,
-> > 
-> > --
-> > 2.16.2
-> > 
-> > --
-> > You received this message because you are subscribed to the Google Groups
-> > "linux-sunxi" group. To unsubscribe from this group and stop receiving
-> > emails from it, send an email to
-> > linux-sunxi+unsubscribe@googlegroups.com. For more options, visit
-> > https://groups.google.com/d/optout.
+diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
+index 6fac4129e6a2..0d6604500b29 100644
+--- a/drivers/gpu/drm/drm_dp_mst_topology.c
++++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+@@ -2076,7 +2076,7 @@ static bool drm_dp_get_vc_payload_bw(int dp_link_bw,
+ {
+ 	switch (dp_link_bw) {
+ 	default:
+-		DRM_DEBUG_KMS("invalid link bandwidth in DPCD: %x (link count: %d)\n",
++		DRM_DEBUG_KMS("invalid link bandwidth: %x (link count: %d)\n",
+ 			      dp_link_bw, dp_link_count);
+ 		return false;
+ 
+@@ -2096,6 +2096,77 @@ static bool drm_dp_get_vc_payload_bw(int dp_link_bw,
+ 	return true;
+ }
+ 
++static void drm_dp_set_mstb_link_status(struct drm_dp_mst_branch *mstb,
++					enum drm_link_status status)
++{
++	struct drm_dp_mst_branch *rmstb;
++	struct drm_dp_mst_port *port;
++
++	list_for_each_entry(port, &mstb->ports, next) {
++		rmstb = drm_dp_get_validated_mstb_ref(mstb->mgr, port->mstb);
++		if (rmstb) {
++			drm_dp_set_mstb_link_status(rmstb, status);
++			drm_dp_put_mst_branch_device(rmstb);
++		}
++
++		if (port->connector)
++			port->connector->state->link_status = status;
++	}
++}
++
++/**
++ * drm_dp_mst_topology_mgr_lower_link_rate() - Override the DP link bw/count
++ * for all connectors in a given MST topology
++ * @mgr: manager to set state for
++ * @dp_link_bw: The new DP link bandwidth
++ * @dp_link_count: The new DP link count
++ *
++ * This is called by the driver when it detects that the current DP link for
++ * the given topology manager is unstable, and needs to be retrained at a
++ * lower link rate.
++ *
++ * This takes care of updating the link status on all downstream connectors
++ * along with recalculating the VC payloads. The driver should send a hotplug
++ * event after calling this function to notify userspace of the link status
++ * change.
++ *
++ * RETURNS:
++ *
++ * True for success, or negative error code on failure.
++ */
++int drm_dp_mst_topology_mgr_lower_link_rate(struct drm_dp_mst_topology_mgr *mgr,
++					    int dp_link_bw, int dp_link_count)
++{
++	struct drm_device *dev = mgr->dev;
++	struct drm_dp_mst_branch *mst_primary;
++	int new_pbn_div;
++	int ret = 0;
++
++	drm_modeset_lock(&dev->mode_config.connection_mutex, NULL);
++
++	if (!drm_dp_get_vc_payload_bw(drm_dp_link_rate_to_bw_code(dp_link_bw),
++				      dp_link_count, &new_pbn_div)) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	mst_primary = drm_dp_get_validated_mstb_ref(mgr, mgr->mst_primary);
++	if (!mst_primary)
++		goto out;
++
++	DRM_DEBUG_KMS("MST link failed to retrain, lowering pbn_div to %d\n",
++		      new_pbn_div);
++	mgr->pbn_div = new_pbn_div;
++
++	drm_dp_set_mstb_link_status(mst_primary, DRM_MODE_LINK_STATUS_BAD);
++
++	drm_dp_put_mst_branch_device(mst_primary);
++out:
++	drm_modeset_unlock(&dev->mode_config.connection_mutex);
++	return ret;
++}
++EXPORT_SYMBOL(drm_dp_mst_topology_mgr_lower_link_rate);
++
+ /**
+  * drm_dp_mst_topology_mgr_set_mst() - Set the MST state for a topology manager
+  * @mgr: manager to set state for
+diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
+index 7f78d26a0766..6261ec43a2c0 100644
+--- a/include/drm/drm_dp_mst_helper.h
++++ b/include/drm/drm_dp_mst_helper.h
+@@ -634,4 +634,7 @@ int drm_dp_atomic_release_vcpi_slots(struct drm_atomic_state *state,
+ int drm_dp_send_power_updown_phy(struct drm_dp_mst_topology_mgr *mgr,
+ 				 struct drm_dp_mst_port *port, bool power_up);
+ 
++int drm_dp_mst_topology_mgr_lower_link_rate(struct drm_dp_mst_topology_mgr *mgr,
++					    int dp_link_bw, int dp_link_count);
++
+ #endif
+-- 
+2.14.3
