@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755826AbeCHNse (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 08:48:34 -0500
-Received: from mail-io0-f193.google.com ([209.85.223.193]:42796 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751434AbeCHNsc (ORCPT
+        id S1755295AbeCHNvC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 08:51:02 -0500
+Received: from mail-it0-f65.google.com ([209.85.214.65]:37528 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754491AbeCHNvA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 08:48:32 -0500
-X-Google-Smtp-Source: AG47ELs/S3O2BpFNDmJ1UqNfRkJQQydJH9eTMw4pDYOpbTjXSKBSc3glPoDcKIqVtH45wHWcEe7N7Q==
+        Thu, 8 Mar 2018 08:51:00 -0500
+X-Google-Smtp-Source: AG47ELs8kAJmZQ1TeKthxSfKTs9jLwaoYEvVZGNKXoTq/OsqVRfNV3EPjukF2GZIhUKRNkiHymH9iQ==
 MIME-Version: 1.0
-In-Reply-To: <1520440654.1092.15.camel@bootlin.com>
-References: <20180220044425.169493-20-acourbot@chromium.org> <1520440654.1092.15.camel@bootlin.com>
+In-Reply-To: <1520441424.1092.25.camel@bootlin.com>
+References: <20180220044425.169493-14-acourbot@chromium.org> <1520441424.1092.25.camel@bootlin.com>
 From: Alexandre Courbot <acourbot@chromium.org>
-Date: Thu, 8 Mar 2018 22:48:08 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MUeUaHZj9y1N7wJk9yS8QL+zTqWCGvujcKCY0YpdeiyWg@mail.gmail.com>
-Message-ID: <CAPBb6MUeUaHZj9y1N7wJk9yS8QL+zTqWCGvujcKCY0YpdeiyWg@mail.gmail.com>
-Subject: Re: [RFCv4,19/21] media: vim2m: add request support
+Date: Thu, 8 Mar 2018 22:50:36 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MWBezCNbApxvjkeuzrkWOd4Zq4_edsLokc=G+rKEWvmoQ@mail.gmail.com>
+Message-ID: <CAPBb6MWBezCNbApxvjkeuzrkWOd4Zq4_edsLokc=G+rKEWvmoQ@mail.gmail.com>
+Subject: Re: [RFCv4,13/21] media: videobuf2-v4l2: support for requests
 To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>,
@@ -33,166 +33,143 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul!
-
-Thanks a lot for taking the time to try this! I am also working on
-getting it to work with an actual driver, but you apparently found
-rough edges that I missed.
-
-On Thu, Mar 8, 2018 at 1:37 AM, Paul Kocialkowski
+On Thu, Mar 8, 2018 at 1:50 AM, Paul Kocialkowski
 <paul.kocialkowski@bootlin.com> wrote:
 > Hi,
 >
-> First off, I'd like to take the occasion to say thank-you for your work.
-> This is a major piece of plumbing that is required for me to add support
-> for the Allwinner CedarX VPU hardware in upstream Linux. Other drivers,
-> such as tegra-vde (that was recently merged in staging) are also badly
-> in need of this API.
->
-> I have a few comments based on my experience integrating this request
-> API with the Cedrus VPU driver (and the associated libva backend), that
-> also concern the vim2m driver.
->
 > On Tue, 2018-02-20 at 13:44 +0900, Alexandre Courbot wrote:
->> Set the necessary ops for supporting requests in vim2m.
+>> Add a new vb2_qbuf_request() (a request-aware version of vb2_qbuf())
+>> that request-aware drivers can call to queue a buffer into a request
+>> instead of directly into the vb2 queue if relevent.
 >>
+>> This function expects that drivers invoking it are using instances of
+>> v4l2_request_entity and v4l2_request_entity_data to describe their
+>> entity and entity data respectively.
+>>
+>> Also add the vb2_request_submit() helper function which drivers can
+>> invoke in order to queue all the buffers previously queued into a
+>> request into the regular vb2 queue.
+>
+> See a comment/proposal below about an issue I encountered when using
+> multi-planar formats.
+>
 >> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
 >> ---
->>  drivers/media/platform/Kconfig |  1 +
->>  drivers/media/platform/vim2m.c | 75
->> ++++++++++++++++++++++++++++++++++
->>  2 files changed, 76 insertions(+)
+>>  .../media/common/videobuf2/videobuf2-v4l2.c   | 129
+>> +++++++++++++++++-
+>>  include/media/videobuf2-v4l2.h                |  59 ++++++++
+>>  2 files changed, 187 insertions(+), 1 deletion(-)
 >>
->> diff --git a/drivers/media/platform/Kconfig
->> b/drivers/media/platform/Kconfig
->> index 614fbef08ddc..09be0b5f9afe 100644
->> --- a/drivers/media/platform/Kconfig
->> +++ b/drivers/media/platform/Kconfig
+>> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c
+>> b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+>> index 6d4d184aa68e..0627c3339572 100644
+>> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
+>> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
 >
 > [...]
 >
->> +static int vim2m_request_submit(struct media_request *req,
->> +                             struct media_request_entity_data
->> *_data)
+>> +#if IS_ENABLED(CONFIG_MEDIA_REQUEST_API)
+>> +int vb2_qbuf_request(struct vb2_queue *q, struct v4l2_buffer *b,
+>> +                  struct media_request_entity *entity)
 >> +{
 >> +     struct v4l2_request_entity_data *data;
+>> +     struct v4l2_vb2_request_buffer *qb;
+>> +     struct media_request *req;
+>> +     struct vb2_buffer *vb;
+>> +     int ret = 0;
 >> +
->> +     data = to_v4l2_entity_data(_data);
+>> +     if (b->request_fd <= 0)
+>> +             return vb2_qbuf(q, b);
+>> +
+>> +     if (!q->allow_requests)
+>> +             return -EINVAL;
+>> +
+>> +     req = media_request_get_from_fd(b->request_fd);
+>> +     if (!req)
+>> +             return -EINVAL;
+>> +
+>> +     data = to_v4l2_entity_data(media_request_get_entity_data(req,
+>> entity));
+>> +     if (IS_ERR(data)) {
+>> +             ret = PTR_ERR(data);
+>> +             goto out;
+>> +     }
+>> +
+>> +     mutex_lock(&req->lock);
+>> +
+>> +     if (req->state != MEDIA_REQUEST_STATE_IDLE) {
+>> +             ret = -EINVAL;
+>> +             goto out;
+>> +     }
+>> +
+>> +     ret = vb2_queue_or_prepare_buf(q, b, "qbuf");
+>> +     if (ret)
+>> +             goto out;
+>> +
+>> +     vb = q->bufs[b->index];
+>> +     switch (vb->state) {
+>> +     case VB2_BUF_STATE_DEQUEUED:
+>> +             break;
+>> +     case VB2_BUF_STATE_PREPARED:
+>> +             break;
+>> +     case VB2_BUF_STATE_PREPARING:
+>> +             dprintk(1, "buffer still being prepared\n");
+>> +             ret = -EINVAL;
+>> +             goto out;
+>> +     default:
+>> +             dprintk(1, "invalid buffer state %d\n", vb->state);
+>> +             ret = -EINVAL;
+>> +             goto out;
+>> +     }
+>> +
+>> +     /* do we already have a buffer for this request in the queue?
+>> */
+>> +     list_for_each_entry(qb, &data->queued_buffers, node) {
+>> +             if (qb->queue == q) {
+>> +                     ret = -EBUSY;
+>> +                     goto out;
+>> +             }
+>> +     }
+>> +
+>> +     qb = kzalloc(sizeof(*qb), GFP_KERNEL);
+>> +     if (!qb) {
+>> +             ret = -ENOMEM;
+>> +             goto out;
+>> +     }
+>> +
+>> +     /*
+>> +      * TODO should be prepare the buffer here if needed, to
+>> report errors
+>> +      * early?
+>> +      */
+>> +     qb->pre_req_state = vb->state;
+>> +     qb->queue = q;
+>> +     memcpy(&qb->v4l2_buf, b, sizeof(*b));
 >
-> We need to call v4l2_m2m_try_schedule here so that m2m scheduling can
-> happen when only 2 buffers were queued and no other action was taken
-> from usespace. In that scenario, m2m scheduling currently doesn't
-> happen.
-
-I don't think I understand the sequence of events that results in
-v4l2_m2m_try_schedule() not being called. Do you mean something like:
-
-*
-* QBUF on output queue with request set
-* QBUF on capture queue
-* SUBMIT_REQUEST
-
-?
-
-The call to vb2_request_submit() right after should trigger
-v4l2_m2m_try_schedule(), since the buffers associated to the request
-will enter the vb2 queue and be passed to the m2m framework, which
-will then call v4l2_m2m_try_schedule(). Or maybe you are thinking
-about a different sequence of events?
-
+> I am getting data corruption on qb->v4l2_buf.m.planes from this when
+> using planar buffers, only after exiting the ioctl handler (i.e. when
+> accessing this buffer later from the queue).
 >
-> However, this requires access to the m2m context, which is not easy to
-> get from req or _data. I'm not sure that some container_of magic would
-> even do the trick here.
-
-data_->entity will give you a pointer to the media_request_entity,
-which is part of vim2m_ctx. You can thus get the m2m context by doing
-container_of(data_->entity, struct vim2m_ctx, req_entity). See
-vim2m_entity_data_alloc() for an example.
-
+> I initially thought this was because the planes pointer was copied as-is
+> from userspace, but Maxime Ripard suggested that this would have
+> automatically triggered a visible fault in the kernel.
 >
->> +     return vb2_request_submit(data);
+> Thus, my best guess is that the data is properly copied from userspace
+> but freed when leaving the ioctl handler, which doesn't work our with
+> the request API.
 >
-> vb2_request_submit does not lock the associated request mutex although
-> it accesses the associated queued buffers list, which I believe this
-> mutex is supposed to protect.
+> A dirty fix that I came up with consists in re-allocating the planes
+> buffer here and copying its contents from "b", so that it can live
+> beyond the ioctl call.
+>
+> I am not too sure whether this should be fixed here or in the part of
+> the v4l2 common code that frees this data. What do you think?
 
-After a request is submitted, the data protected by the mutex can only
-be accessed by the driver when it processes the request. It cannot be
-modified concurrently, so I think we are safe here.
+Oh, nice catch. Copying plane information indeed requires more work
+than a dumb memcpy(). I suppose this should be handled here, but let
+me come back to this after a good night of sleep. :)
 
-I am also wondering whether the ioctl locking doesn't make the request
-locking redundant. Request information can only be modified and
-accessed through ioctls until it is submitted, and after that there
-are no concurrent accesses. I need to think a bit more about it
-though.
+Thanks! I will try to fix this tomorrow and push a temporary version
+somewhere so you can move forward.
 
-Cheers,
 Alex.
-
->
-> We could either wrap this call with media_request_lock(req) and
-> media_request_unlock(req) or have the lock in the function itself, which
-> would require passing it the req pointer.
->
-> The latter would probably be safer for future use of the function.
->
->> +}
->> +
->> +static const struct media_request_entity_ops vim2m_request_entity_ops
->> = {
->> +     .data_alloc     = vim2m_entity_data_alloc,
->> +     .data_free      = v4l2_request_entity_data_free,
->> +     .submit         = vim2m_request_submit,
->> +};
->> +
->>  /*
->>   * File operations
->>   */
->> @@ -900,6 +967,9 @@ static int vim2m_open(struct file *file)
->>       ctx->dev = dev;
->>       hdl = &ctx->hdl;
->>       v4l2_ctrl_handler_init(hdl, 4);
->> +     v4l2_request_entity_init(&ctx->req_entity,
->> &vim2m_request_entity_ops,
->> +                              &ctx->dev->vfd);
->> +     ctx->fh.entity = &ctx->req_entity.base;
->>       v4l2_ctrl_new_std(hdl, &vim2m_ctrl_ops, V4L2_CID_HFLIP, 0, 1,
->> 1, 0);
->>       v4l2_ctrl_new_std(hdl, &vim2m_ctrl_ops, V4L2_CID_VFLIP, 0, 1,
->> 1, 0);
->>       v4l2_ctrl_new_custom(hdl, &vim2m_ctrl_trans_time_msec, NULL);
->> @@ -999,6 +1069,9 @@ static int vim2m_probe(struct platform_device
->> *pdev)
->>       if (!dev)
->>               return -ENOMEM;
->>
->> +     v4l2_request_mgr_init(&dev->req_mgr, &dev->vfd,
->> +                           &v4l2_request_ops);
->> +
->>       spin_lock_init(&dev->irqlock);
->>
->>       ret = v4l2_device_register(&pdev->dev, &dev->v4l2_dev);
->> @@ -1012,6 +1085,7 @@ static int vim2m_probe(struct platform_device
->> *pdev)
->>       vfd = &dev->vfd;
->>       vfd->lock = &dev->dev_mutex;
->>       vfd->v4l2_dev = &dev->v4l2_dev;
->> +     vfd->req_mgr = &dev->req_mgr.base;
->>
->>       ret = video_register_device(vfd, VFL_TYPE_GRABBER, 0);
->>       if (ret) {
->> @@ -1054,6 +1128,7 @@ static int vim2m_remove(struct platform_device
->> *pdev)
->>       del_timer_sync(&dev->timer);
->>       video_unregister_device(&dev->vfd);
->>       v4l2_device_unregister(&dev->v4l2_dev);
->> +     v4l2_request_mgr_free(&dev->req_mgr);
->>
->>       return 0;
->>  }
->
-> --
-> Paul Kocialkowski, Bootlin (formerly Free Electrons)
-> Embedded Linux and kernel engineering
-> https://bootlin.com
