@@ -1,50 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935850AbeCHLkM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 06:40:12 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:46073 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935072AbeCHLkK (ORCPT
+        id S966125AbeCHLku (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 06:40:50 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52151 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933352AbeCHLks (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 06:40:10 -0500
-Message-ID: <1520509204.2514.7.camel@pengutronix.de>
-Subject: Re: [PATCH] reset: uniphier: add Pro4/Pro5/PXs2 audio systems reset
- control
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Thu, 08 Mar 2018 12:40:04 +0100
-In-Reply-To: <CAK7LNAQkq6t7zhaNRGUM7nU4NGBAT3FEQTg0xKXHPZOmBcc-OA@mail.gmail.com>
-References: <20180308080929.30982-1-suzuki.katsuhiro@socionext.com>
-         <CAK7LNAQkq6t7zhaNRGUM7nU4NGBAT3FEQTg0xKXHPZOmBcc-OA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Thu, 8 Mar 2018 06:40:48 -0500
+Date: Thu, 8 Mar 2018 12:40:47 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Thorsten Leemhuis <regressions@leemhuis.info>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org, Jonathan Corbet <corbet@lwn.net>
+Subject: Re: Linux 4.16: Reported regressions as of Monday, 2018-02-26 (Was:
+ Linux 4.16-rc3)
+Message-ID: <20180308114047.GA21514@amd>
+References: <CA+55aFxk5KBxL9DvRtBivP3hKT-aOAzvSA_B47L1+y0P2GLe_A@mail.gmail.com>
+ <2cf45d87-066c-7368-3fbd-20675f2d74ae@leemhuis.info>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="M9NhX3UHpAaciwkO"
+Content-Disposition: inline
+In-Reply-To: <2cf45d87-066c-7368-3fbd-20675f2d74ae@leemhuis.info>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-03-08 at 17:12 +0900, Masahiro Yamada wrote:
-> 2018-03-08 17:09 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
-> > Add reset lines for audio subsystem (AIO) on UniPhier
-> > Pro4/Pro5/PXs2 SoCs.
-> > 
-> > Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> > ---
-> 
-> 
-> Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Thank you, applied to reset/next.
+--M9NhX3UHpAaciwkO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-regards
-Philipp
+Hi!
+
+> On Nokia N900:/dev/input/event6 aka AV Jack support disappeared
+> Status: quite new
+> Reported: 2018-02-24
+> https://marc.info/?l=3Dlinux-omap&m=3D151950886524308&w=3D2
+> Cause: 14e3e295b2b9
+> Linux-Regression-ID: 4b650f
+
+This one is now solved in the mainline.
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--M9NhX3UHpAaciwkO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqhIT4ACgkQMOfwapXb+vIIEACghtvM/o5EyRWWP0QQcBR5P8Tw
+gUsAn12TknudoZMCR94RRuO8e9B7wSjI
+=hlBj
+-----END PGP SIGNATURE-----
+
+--M9NhX3UHpAaciwkO--
