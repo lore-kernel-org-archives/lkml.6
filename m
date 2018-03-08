@@ -1,107 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755665AbeCHK0T (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 05:26:19 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:50164 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754735AbeCHK0R (ORCPT
+        id S935177AbeCHK2C (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 05:28:02 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:57918 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754822AbeCHK2B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 05:26:17 -0500
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="37612044"
-Subject: Re: [PATCH 2/5] kbuild: define KBUILD_MODNAME even if multiple
- modules share objects
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-CC: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Govind Singh <govinds@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1520471103-10089-1-git-send-email-yamada.masahiro@socionext.com>
- <1520471103-10089-3-git-send-email-yamada.masahiro@socionext.com>
- <4022257e-9ab0-b038-df0e-b15b98cb999f@cn.fujitsu.com>
- <CAK7LNARhhs4o-cKKzW9exRjbCYpTntdBvUgsx6o-egsTc2pQ0g@mail.gmail.com>
-From: Cao jin <caoj.fnst@cn.fujitsu.com>
-Message-ID: <2bb55c11-bffb-4099-f1fc-d31fb058d422@cn.fujitsu.com>
-Date: Thu, 8 Mar 2018 18:25:27 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Thu, 8 Mar 2018 05:28:01 -0500
+Date: Thu, 8 Mar 2018 11:27:57 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCHv5 3/5] mfd: motorola-cpcap: Add audio-codec support
+Message-ID: <20180308102757.jyi7uo566n6nuct5@earth.universe>
+References: <20180223200254.25685-1-sebastian.reichel@collabora.co.uk>
+ <20180223200254.25685-4-sebastian.reichel@collabora.co.uk>
+ <20180307163211.rytfli5tb47yhtug@dell>
+ <20180308094652.qg4atjw5c3hayaz3@earth.universe>
+ <20180308095315.mpcmx2ob6yhsnrm6@dell>
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNARhhs4o-cKKzW9exRjbCYpTntdBvUgsx6o-egsTc2pQ0g@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.226.60]
-X-yoursite-MailScanner-ID: 8E39248AE761.A8F31
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="zsrhboitvomsevkd"
+Content-Disposition: inline
+In-Reply-To: <20180308095315.mpcmx2ob6yhsnrm6@dell>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Masahiro-san
 
-On 03/08/2018 06:21 PM, Masahiro Yamada wrote:
-> 2018-03-08 19:11 GMT+09:00 Cao jin <caoj.fnst@cn.fujitsu.com>:
->>
->>
->> On 03/08/2018 09:05 AM, Masahiro Yamada wrote:
->>> Currently, KBUILD_MODNAME is defined only when $(modname) contains
->>> just one word.  If an object is shared among multiple modules,
->>> undefined KBUILD_MODNAME could cause a build error.  For example,
->>> if CONFIG_DYNAMIC_DEBUG is enabled, any call of printk() populates
->>> .modname, then fails to build due to undefined KBUILD_MODNAME.
->>>
->>> Take the following code as an example:
->>>
->>>   obj-m += foo.o
->>>   obj-m += bar.o
->>>   foo-objs := foo-bar-common.o foo-main.o
->>>   bar-objs := foo-bar-common.o bar-main.o
->>>
->>> In this case, there is room for argument what to define for
->>> KBUILD_MODNAME when foo-bar-common.o is being compiled.
->>> "foo", "bar", or what else?
->>>
->>> One idea is to define colon-separated modules that share the object,
->>> in this case, "bar:foo" (modules are sorted alphabetically by
->>> $(sort ...).
->>>
->>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->>> ---
->>>
->>>  scripts/Makefile.lib | 9 +++++----
->>>  1 file changed, 5 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
->>> index a7e315f..a1fbd6a 100644
->>> --- a/scripts/Makefile.lib
->>> +++ b/scripts/Makefile.lib
->>> @@ -92,8 +92,7 @@ subdir-ym   := $(addprefix $(obj)/,$(subdir-ym))
->>>  #       differ in different configs.
->>>  name-fix = $(squote)$(quote)$(subst $(comma),_,$(subst -,_,$1))$(quote)$(squote)
->>>  basename_flags = -DKBUILD_BASENAME=$(call name-fix,$(basetarget))
->>> -modname_flags  = $(if $(filter 1,$(words $(modname))),\
->>> -                 -DKBUILD_MODNAME=$(call name-fix,$(modname)))
->>> +modname_flags  = -DKBUILD_MODNAME=$(call name-fix,$(modname))
->>>
->>
->> I guess there is comment also need to be modified above this code hunk:
->>
->> Note: Files that end up in two or more modules are compiled without the
->>       KBUILD_MODNAME definition. The reason is that any made-up name
->>       would differ in different configs.
-> 
-> 
-> Why do I have to add lying comments here?
-> 
-> The commit subject/log claims KBUILD_MODNAME should be _always_ defined.
-> 
+--zsrhboitvomsevkd
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I feel you misunderstand my intention, the comment I mentioned is
-already there, so they should be modified according to your patch.
+Hi,
 
--- 
-Sincerely,
-Cao jin
+On Thu, Mar 08, 2018 at 09:53:15AM +0000, Lee Jones wrote:
+> On Thu, 08 Mar 2018, Sebastian Reichel wrote:
+> > On Wed, Mar 07, 2018 at 04:32:11PM +0000, Lee Jones wrote:
+> > > On Fri, 23 Feb 2018, Sebastian Reichel wrote:
+> > > > +static const struct mfd_cell cpcap_mfd_devices[] =3D {
+> >=20
+> > [...]
+> >=20
+> > > > +	}, {
+> > > > +		.name          =3D "cpcap-led",
+> > > > +		.id            =3D 4,
+> > > > +		.of_compatible =3D "motorola,cpcap-led-cp",
+> > > > +	}, {
+> > > > +		.name          =3D "cpcap-codec",
+> > > > +	}
+> > > > +};
+> > >=20
+> > > With none of the entries containing platform_data /me wonders why you
+> > > can't still use devm_of_platform_populate()?
+> >=20
+> > Because devm_of_platform_populate works with compatible properties and
+> > cpcap-codec does not have one after I removed it for Mark.
+>=20
+> Sorry, I missed that conversation.  Why was it removed?
+
+I had it in PATCHv1-PATCHv4. It was removed, since Mark didn't want
+to have it in the DT ABI.
+
+-- Sebastian
+
+> > > >  static int cpcap_probe(struct spi_device *spi)
+> > > >  {
+> > > >  	const struct of_device_id *match;
+> > > > @@ -260,7 +308,8 @@ static int cpcap_probe(struct spi_device *spi)
+> > > >  	if (ret)
+> > > >  		return ret;
+> > > > =20
+> > > > -	return devm_of_platform_populate(&cpcap->spi->dev);
+> > > > +	return devm_mfd_add_devices(&spi->dev, 0, cpcap_mfd_devices,
+> > > > +				    ARRAY_SIZE(cpcap_mfd_devices), NULL, 0, NULL);
+> > > >  }
+> > > > =20
+> > > >  static struct spi_driver cpcap_driver =3D {
+> > >=20
+>=20
+>=20
+>=20
+> --=20
+> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+> Linaro Services Technical Lead
+> Linaro.org =E2=94=82 Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
+
+--zsrhboitvomsevkd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqhECkACgkQ2O7X88g7
++poVWw/+OSqG/ke08GEveyHvyECKhfxk6wW0ijT0H2UKBrs/8jO1ePyXLOrBlteV
+RyXSGWg5Z3IUKeepp67ON9UgPfYI23oT8RulwRtVxs/Zhxv0nlRMrED3SSa3rC3P
+i5ffXHxzyM8zMBqXJnLvDObUHORL+SRpEl3KmySr1oujiS6JS30eHJZSfIfneZ8O
+7xM25vSquYCBWI/36leOljBuffRJM+S+p8Wtihn3EEFQ9MB0kyZ+4l7WSak+lmBf
+AzLREilx+Y88vX6XSxvpHt2m+daK/VHhLI0I3biN4qfI6fUlh3PyiFEigdhmDmJL
+Ip8SsNGnHvIc2GlyJ3VX5QwurgTXI7pqLknhbfT9nNORczesr+w7sRunBIX8xcqh
+prHXvDtUBFY3jdIswcu49EFf5Bq5h3Aa3nCeHGYnC3Yx/y2szoOMZ4c/las4oTqZ
+/wUJs3WiUm+q8W09pvbK16tExZIHdGPXsDX27bKslLrF2Fcye8lCEJcAgaZfP78A
+hfAOD2IMF9a/v+bAQJz9o4HU46CWXEZ/kTD4ETJKXS5huT1oj1lAd6Mip5rMgWQt
+cTfd+YCd0C/2fdRcy/xPtRDc9KKz4HobhGqQQBNjVrKKE6/9jzVSnrajgbqXLLU0
+rpeVuih04pgjestGMcpDzDuQNKs5VzGCqY4D4JFEGeNa8O0EaJA=
+=gES4
+-----END PGP SIGNATURE-----
+
+--zsrhboitvomsevkd--
