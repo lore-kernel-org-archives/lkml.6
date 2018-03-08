@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934876AbeCHCDk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 21:03:40 -0500
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:46805 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934551AbeCHCDi (ORCPT
+        id S934819AbeCHCDR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 21:03:17 -0500
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:33734 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934698AbeCHCDP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 21:03:38 -0500
-X-Google-Smtp-Source: AG47ELv/sqR2Wxr81cWFy+sarBuahGyk0/6tgreysN4f8bd9bVt0yzz04PMxFUONY3JjA8Zpg2pEJw==
-Date: Wed, 7 Mar 2018 23:03:34 -0300
+        Wed, 7 Mar 2018 21:03:15 -0500
+X-Google-Smtp-Source: AG47ELvhN/yr0fFryjr9RSgdeUirSxGetqbs0koCvzoV/HavZ4XGcl2q25tsj/01tUD6iw1BFXYsxw==
+Date: Wed, 7 Mar 2018 23:03:12 -0300
 From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 To: David Airlie <airlied@linux.ie>
 Cc: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] drm/vgem: Remove '(' from the end of line
-Message-ID: <58bfa1f547c18bf8d145b1a8500f3a5f6df3704e.1520474055.git.rodrigosiqueiramelo@gmail.com>
+Subject: [PATCH 3/5] drm/vgem: Replace uint32_t for u32
+Message-ID: <386320c12f1414cdf13bdadabed0f4f3287a7538.1520474055.git.rodrigosiqueiramelo@gmail.com>
 References: <cover.1520474055.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -27,30 +27,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 This patch fixes the checkpatch.pl check:
 
-vgem_drv.c:91: CHECK: Lines should not end with a '('
+vgem_drv.c:229: CHECK: Prefer kernel type 'u32' over 'uint32_t'
 
 Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 ---
- drivers/gpu/drm/vgem/vgem_drv.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/vgem/vgem_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
-index 6e6084e3204a..4ddf3b8c3875 100644
+index 5767030d04a8..bf704ed51da4 100644
 --- a/drivers/gpu/drm/vgem/vgem_drv.c
 +++ b/drivers/gpu/drm/vgem/vgem_drv.c
-@@ -87,10 +87,10 @@ static int vgem_gem_fault(struct vm_fault *vmf)
- 	mutex_unlock(&obj->pages_lock);
- 	if (ret) {
- 		struct page *page;
-+		struct address_space *mapping;
+@@ -226,7 +226,7 @@ static int vgem_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
+ }
  
--		page = shmem_read_mapping_page(
--					file_inode(obj->base.filp)->i_mapping,
--					page_offset);
-+		mapping = file_inode(obj->base.filp)->i_mapping;
-+		page = shmem_read_mapping_page(mapping, page_offset);
- 		if (!IS_ERR(page)) {
- 			vmf->page = page;
- 			ret = 0;
+ static int vgem_gem_dumb_map(struct drm_file *file, struct drm_device *dev,
+-			     uint32_t handle, uint64_t *offset)
++			     u32 handle, uint64_t *offset)
+ {
+ 	struct drm_gem_object *obj;
+ 	int ret;
 -- 
 2.16.2
