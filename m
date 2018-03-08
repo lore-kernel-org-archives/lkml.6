@@ -1,67 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755863AbeCHNSN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 08:18:13 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52478 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751355AbeCHNSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 08:18:12 -0500
-Date: Thu, 8 Mar 2018 14:18:09 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH 08/19] perf tools: Add mem2node object
-Message-ID: <20180308131809.GA31776@krava>
-References: <20180307155020.32613-1-jolsa@kernel.org>
- <20180307155020.32613-9-jolsa@kernel.org>
- <20180307192736.GS3701@kernel.org>
- <20180308110306.GB13693@krava>
- <20180308125849.GA3701@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180308125849.GA3701@kernel.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S934961AbeCHNSi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 08:18:38 -0500
+Received: from mga04.intel.com ([192.55.52.120]:5725 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752041AbeCHNSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 08:18:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,441,1515484800";
+   d="scan'208";a="23527420"
+Message-ID: <1520515113.20980.31.camel@gmail.com>
+Subject: Re: [PATCH V3 0/4] genirq/affinity: irq vector spread among online
+ CPUs as far as possible
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Reply-To: dedekind1@gmail.com
+To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Cc: linux-block@vger.kernel.org, Laurence Oberman <loberman@redhat.com>
+Date: Thu, 08 Mar 2018 15:18:33 +0200
+In-Reply-To: <20180308105358.1506-1-ming.lei@redhat.com>
+References: <20180308105358.1506-1-ming.lei@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 08, 2018 at 09:58:49AM -0300, Arnaldo Carvalho de Melo wrote:
+On Thu, 2018-03-08 at 18:53 +0800, Ming Lei wrote:
+> Hi,
+> 
+> This patchset tries to spread among online CPUs as far as possible, so
+> that we can avoid to allocate too less irq vectors with online CPUs
+> mapped.
+> 
+> For example, in a 8cores system, 4 cpu cores(4~7) are offline/non present,
+> on a device with 4 queues:
+> 
+> 1) before this patchset
+> 	irq 39, cpu list 0-2
+> 	irq 40, cpu list 3-4,6
+> 	irq 41, cpu list 5
+> 	irq 42, cpu list 7
+> 
+> 2) after this patchset
+> 	irq 39, cpu list 0,4
+> 	irq 40, cpu list 1,6
+> 	irq 41, cpu list 2,5
+> 	irq 42, cpu list 3,7
+> 
+> Without this patchset, only two vectors(39, 40) can be active, but there
+> can be 4 active irq vectors after applying this patchset.
 
-SNIP
+Tested-by: Artem Bityutskiy <artem.bityutskiy@intel.com>
+Link: https://lkml.kernel.org/r/1519311270.2535.53.camel@intel.com
 
-> > I don't think we need nentries.. AFAIK realloc works ok over single variable
-> 
-> So:
-> 
-> 1) you alloc entries with a max number of entries
-> 
-> 2) you go on populating it
-> 
-> 3) there are some left, lets shrink it:
-> 
-> 	entries = realloc(entries, nr_entries * sizeof(entries[0]);
-> 
-> Here it will probably not fail, but you check it anyway, and that is
-> right, what happens if this returns NULL? entries gets set to NULL,
-> we lose the reference to the allocated memory and you return -ENOMEM,
-> right?
-> 
-> We end up leaking entries when what I'm suggesting you to do is to
-> not clobber entries with the return of realloc() (doing it this way most
-> of the time leads to bugs), but instead store it to a temp var
-> (nentries), and if it succeeds, then you know that you can
-> set nentries to entries and go ahead with your nicely shrunk block of
-> memory.
-> 
-> If it fails, then you continue with the original block of memory, that
-> continues to have what you just set up, etc.
+Ming,
 
-ah that ;-) ok, will fix
+this patchset fixes the v4.16-rcX regression that I reported few weeks
+ago. I applied it and verified that Dell R640 server that I mentioned
+in the bug report boots up and the disk works.
 
-thanks,
-jirka
+So this is not just an improvement, it also includes a bugfix. 
+
+Thanks!
