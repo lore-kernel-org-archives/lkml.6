@@ -1,204 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751292AbeCHXeY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 18:34:24 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:36713 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750783AbeCHXeW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 18:34:22 -0500
-X-Google-Smtp-Source: AG47ELtrnubJcdsCt/jWS3n6Jif1Qt+mGsT3RwzmEGD6HmHRv6o7u9IZdUDLr4JWHgWLTRqESTj2sw==
-Date: Thu, 8 Mar 2018 15:34:19 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Chris Healy <cphealy@gmail.com>, Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH v3 1/2] input: Add RAVE SP Powerbutton driver
-Message-ID: <20180308233419.GB198135@dtor-ws>
-References: <20180307020134.26293-1-andrew.smirnov@gmail.com>
+        id S1751067AbeCHXfs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 18:35:48 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33034 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750783AbeCHXfr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 18:35:47 -0500
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20180306085530.7b51aa29@vento.lan>
+References: <20180306085530.7b51aa29@vento.lan> <151559583569.13545.12649741692530472663.stgit@warthog.procyon.org.uk>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: dhowells@redhat.com, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH] dvb: Save port number and provide sysfs attributes to pass values to udev
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180307020134.26293-1-andrew.smirnov@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <536.1520552145.1@warthog.procyon.org.uk>
+Date: Thu, 08 Mar 2018 23:35:45 +0000
+Message-ID: <537.1520552145@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 06, 2018 at 06:01:33PM -0800, Andrey Smirnov wrote:
-> Add driver that properly handles input event emitted by RAVE SP
-> devices.
-> 
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: linux-input@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: devicetree@vger.kernel.org
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Mauro Carvalho Chehab <mchehab@kernel.org> wrote:
 
-Applied, thank you.
+> > +	dvb_class->dev_groups = dvb_class_groups,
+> >  	dvb_class->dev_uevent = dvb_uevent;
+> >  	dvb_class->devnode = dvb_devnode;
+> >  	return 0;
+> 
+> The patch itself looks good, but I'm not seeing any documentation.
 
-> ---
-> 
-> Changes since [v2]:
-> 
-> 	- Collected Reviewed-by from Lucas
-> 
-> Changes since [v1]:
-> 
-> 	- Removed redundant dev.parent assignment
-> 
-> 	- Various cosmetic changes
-> 
-> [v2] lkml.kernel.org/r/20180301165527.22274-1-andrew.smirnov@gmail.com
-> [v1] lkml.kernel.org/r/20180226154130.25774-1-andrew.smirnov@gmail.com
-> 
->  drivers/input/misc/Kconfig             |  9 ++++
->  drivers/input/misc/Makefile            |  1 +
->  drivers/input/misc/rave-sp-pwrbutton.c | 94 ++++++++++++++++++++++++++++++++++
->  3 files changed, 104 insertions(+)
->  create mode 100644 drivers/input/misc/rave-sp-pwrbutton.c
-> 
-> diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
-> index 62a1312a7387..6a3c753b093b 100644
-> --- a/drivers/input/misc/Kconfig
-> +++ b/drivers/input/misc/Kconfig
-> @@ -841,4 +841,13 @@ config INPUT_HISI_POWERKEY
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called hisi_powerkey.
->  
-> +config INPUT_RAVE_SP_PWRBUTTON
-> +	tristate "RAVE SP Power button Driver"
-> +	depends on RAVE_SP_CORE
-> +	help
-> +	  Say Y here if you want to enable power key reporting from RAVE SP
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called rave-sp-pwrbutton.
-> +
->  endif
-> diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
-> index a8f61af865aa..8cc58f362bb8 100644
-> --- a/drivers/input/misc/Makefile
-> +++ b/drivers/input/misc/Makefile
-> @@ -60,6 +60,7 @@ obj-$(CONFIG_INPUT_PMIC8XXX_PWRKEY)	+= pmic8xxx-pwrkey.o
->  obj-$(CONFIG_INPUT_POWERMATE)		+= powermate.o
->  obj-$(CONFIG_INPUT_PWM_BEEPER)		+= pwm-beeper.o
->  obj-$(CONFIG_INPUT_PWM_VIBRA)		+= pwm-vibra.o
-> +obj-$(CONFIG_INPUT_RAVE_SP_PWRBUTTON)	+= rave-sp-pwrbutton.o
->  obj-$(CONFIG_INPUT_RB532_BUTTON)	+= rb532_button.o
->  obj-$(CONFIG_INPUT_REGULATOR_HAPTIC)	+= regulator-haptic.o
->  obj-$(CONFIG_INPUT_RETU_PWRBUTTON)	+= retu-pwrbutton.o
-> diff --git a/drivers/input/misc/rave-sp-pwrbutton.c b/drivers/input/misc/rave-sp-pwrbutton.c
-> new file mode 100644
-> index 000000000000..bcab3cdb7ebd
-> --- /dev/null
-> +++ b/drivers/input/misc/rave-sp-pwrbutton.c
-> @@ -0,0 +1,94 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +//
-> +// Power Button driver for RAVE SP
-> +//
-> +// Copyright (C) 2017 Zodiac Inflight Innovations
-> +//
-> +//
-> +
-> +#include <linux/input.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/mfd/rave-sp.h>
-> +#include <linux/platform_device.h>
-> +
-> +#define RAVE_SP_EVNT_BUTTON_PRESS	(RAVE_SP_EVNT_BASE + 0x00)
-> +
-> +struct rave_sp_power_button {
-> +	struct input_dev *idev;
-> +	struct notifier_block nb;
-> +};
-> +
-> +static int rave_sp_power_button_event(struct notifier_block *nb,
-> +				      unsigned long action, void *data)
-> +{
-> +	struct rave_sp_power_button *pb =
-> +		container_of(nb, struct rave_sp_power_button, nb);
-> +	const u8 event = rave_sp_action_unpack_event(action);
-> +	const u8 value = rave_sp_action_unpack_value(action);
-> +	struct input_dev *idev = pb->idev;
-> +
-> +	if (event == RAVE_SP_EVNT_BUTTON_PRESS) {
-> +		input_report_key(idev, KEY_POWER, value);
-> +		input_sync(idev);
-> +
-> +		return NOTIFY_STOP;
-> +	}
-> +
-> +	return NOTIFY_DONE;
-> +}
-> +
-> +static int rave_sp_pwrbutton_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct rave_sp_power_button *pb;
-> +	struct input_dev *idev;
-> +	int error;
-> +
-> +	pb = devm_kzalloc(dev, sizeof(*pb), GFP_KERNEL);
-> +	if (!pb)
-> +		return -ENOMEM;
-> +
-> +	idev = devm_input_allocate_device(dev);
-> +	if (!idev)
-> +		return -ENOMEM;
-> +
-> +	idev->name = pdev->name;
-> +
-> +	input_set_capability(idev, EV_KEY, KEY_POWER);
-> +
-> +	error = input_register_device(idev);
-> +	if (error)
-> +		return error;
-> +
-> +	pb->idev = idev;
-> +	pb->nb.notifier_call = rave_sp_power_button_event;
-> +	pb->nb.priority = 128;
-> +
-> +	error = devm_rave_sp_register_event_notifier(dev, &pb->nb);
-> +	if (error)
-> +		return error;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id rave_sp_pwrbutton_of_match[] = {
-> +	{ .compatible = "zii,rave-sp-pwrbutton" },
-> +	{}
-> +};
-> +
-> +static struct platform_driver rave_sp_pwrbutton_driver = {
-> +	.probe = rave_sp_pwrbutton_probe,
-> +	.driver	= {
-> +		.name = KBUILD_MODNAME,
-> +		.of_match_table = rave_sp_pwrbutton_of_match,
-> +	},
-> +};
-> +module_platform_driver(rave_sp_pwrbutton_driver);
-> +
-> +MODULE_DEVICE_TABLE(of, rave_sp_pwrbutton_of_match);
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Andrey Vostrikov <andrey.vostrikov@cogentembedded.com>");
-> +MODULE_AUTHOR("Nikita Yushchenko <nikita.yoush@cogentembedded.com>");
-> +MODULE_AUTHOR("Andrey Smirnov <andrew.smirnov@gmail.com>");
-> +MODULE_DESCRIPTION("RAVE SP Power Button driver");
-> -- 
-> 2.14.3
-> 
+I should probably add something to Documentation/media/dvb-drivers/udev.rst
 
--- 
-Dmitry
+> You should likely add something to Documentation/ABI
+
+Any suggestions as to where to add stuff in there?  The README there leaves
+a lot to be desired as to how to name elements - for instance, DVB devices can
+be seen through /sys/class/ and /sys/devices/.
+
+I could put it in sys-class-dvb or sys-devices-dvb - or, arguably, both.
+
+> and to the DVB uAPI (Documentation/media/uapi/dvb).
+
+Likewise, any suggestion as to where in here?  As far as I can tell, the docs
+here don't currently mention sysfs at all.  I'm guessing I'll need to create a
+file specifically to talk about how to use this stuff with udev.
+
+> > +	port->frontends.adapter.port_num = port->nr;
+> > +
+> 
+> Doing it for each multi-adapter device is something that bothers
+> me. The better would be if we could move this to the DVB Kernel,
+> in order to not need to check/fix every driver.
+
+I'm not sure how achievable that is: *port in this case is a private
+cx23885-specific structure object.
+
+> If, otherwise, this is not possible, then we need a patch fixing port_num
+> for all drivers that support multiple adapters.
+> 
+> Also, the risk of forgetting it seems high. So, perhaps we should
+> add a new parameter to some function (like at dvb_register_device
+> or at dvb_register_frontend), in order to make the port number
+> a mandatory attribute.
+
+Hmmm...  The cx23885 driver doesn't call either of these functions as far as I
+can tell - at least, not directly.  Maybe by vb2_dvb_register_bus()?
+
+Note that these attribute files appear for the demux, dvr and net directories
+as well as for the frontend.
+
+Hmmm... further, the port number is no longer getting through and all adapters
+are showing port 0.  The MAC address works, though.  Maybe I should drop the
+port number.
+
+David
