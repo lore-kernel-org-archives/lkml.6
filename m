@@ -1,94 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754701AbeCHQqY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 11:46:24 -0500
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:46198 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752094AbeCHQqV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 11:46:21 -0500
-Date: Thu, 8 Mar 2018 10:46:14 -0600
-From: Brad Mouring <brad.mouring@ni.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Florian Fainelli <f.fainelli@gmail.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] net: phy: Move interrupt check from phy_check to
- phy_interrupt
-Message-ID: <20180308164613.GA7108@artie.amer.corp.natinst.com>
-References: <20180307225042.2205-1-brad.mouring@ni.com>
- <20180308162905.GE5144@lunn.ch>
+        id S933560AbeCHQq6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 11:46:58 -0500
+Received: from muru.com ([72.249.23.125]:60112 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932076AbeCHQq5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 11:46:57 -0500
+Date: Thu, 8 Mar 2018 08:46:52 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: pali.rohar@gmail.com, sre@kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, khilman@kernel.org, aaro.koskinen@iki.fi,
+        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
+        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
+        sakari.ailus@linux.intel.com,
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Dave Gerlach <d-gerlach@ti.com>
+Subject: Re: Nokia N900: insecure W+X mapping at 0xd0050000
+Message-ID: <20180308164652.GL5799@atomide.com>
+References: <20180308142818.GA9439@amd>
+ <20180308162446.GK5799@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180308162905.GE5144@lunn.ch>
+In-Reply-To: <20180308162446.GK5799@atomide.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-08_09:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 08, 2018 at 05:29:05PM +0100, Andrew Lunn wrote:
-> On Wed, Mar 07, 2018 at 04:50:42PM -0600, Brad Mouring wrote:
-> > If multiple phys share the same interrupt (e.g. a multi-phy chip),
-> > the first device registered is the only one checked as phy_interrupt
-> > will always return IRQ_HANDLED if the first phydev is not halted.
-> > Move the interrupt check into phy_interrupt and, if it was not this
-> > phydev, return IRQ_NONE to allow other devices on this irq a chance
-> > to check if it was their interrupt.
-> > 
-> > Signed-off-by: Brad Mouring <brad.mouring@ni.com>
-> > ---
-> >  drivers/net/phy/phy.c | 16 ++++++----------
-> >  1 file changed, 6 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
-> > index e3e29c2b028b..ff1aa815568f 100644
-> > --- a/drivers/net/phy/phy.c
-> > +++ b/drivers/net/phy/phy.c
-> > @@ -632,6 +632,12 @@ static irqreturn_t phy_interrupt(int irq, void *phy_dat)
-> >  	if (PHY_HALTED == phydev->state)
-> >  		return IRQ_NONE;		/* It can't be ours.  */
-> >  
-> > +	if (phy_interrupt_is_valid(phydev)) {
+* Tony Lindgren <tony@atomide.com> [180308 16:25]:
+> * Pavel Machek <pavel@ucw.cz> [180308 06:29]:
+> > Insecure W+X mappings, who cares about those? I have 7 pages...
 > 
-> Hi Brad
+> Is this with CONFIG_DEBUG_WX=y?
 > 
-> Is this check needed? Can phy_interrupt() be called for a PHY which
-> does not have an interrupt?
+> My guess is that it's for mapping the PM assembly to SRAM. This
+> is already fixed for am335x that is using drivers/misc/sram*.c.
+> I think omap2 - omap4 still need fixing if this is the culprit.
 
-Ah, fair point (and I guess a result of copy-pasting without
-thinking), to address this and the next point...
+Adding Dave to Cc, here's a quick fix for this one.
 
-> > +		if (phydev->drv->did_interrupt &&
-> > +			!phydev->drv->did_interrupt(phydev))
-> > +			return IRQ_NONE;
-> > +	}
-> > +
-> >  	phy_change(phydev);
-> >  
-> >  	return IRQ_HANDLED;
-> > @@ -725,16 +731,6 @@ EXPORT_SYMBOL(phy_stop_interrupts);
-> >   */
-> >  void phy_change(struct phy_device *phydev)
-> >  {
-> > -	if (phy_interrupt_is_valid(phydev)) {
-> > -		if (phydev->drv->did_interrupt &&
-> > -		    !phydev->drv->did_interrupt(phydev))
-> > -			return;
-> > -
-> > -		if (phydev->state == PHY_HALTED)
-> > -			if (phy_disable_interrupts(phydev))
-> > -				goto phy_err;
-> > -	}
-> > -
-> 
-> phy_change() can also be called via phy_mac_interrupt(). I wonder if
-> this change is going to break anything? Did you think about that?
+Regards,
 
-Thanks for pointing this out. I'll post a v2 that (hopefully) address
-both of these valid points.
+Tony
 
-Thanks,
-Brad
+8< -------------------
+>From tony Mon Sep 17 00:00:00 2001
+From: Tony Lindgren <tony@atomide.com>
+Date: Thu, 8 Mar 2018 08:41:16 -0800
+Subject: [PATCH] ARM: OMAP: Fix SRAM W+X mapping
+
+We are still using custom SRAM code for some SoCs and are not marking
+the PM code mapped to SRAM as read-only and executable after we're
+done. With CONFIG_DEBUG_WX=y, we will get "Found insecure W+X mapping
+at address" warning.
+
+Let's fix this issue the same way as commit 728bbe75c82f ("misc: sram:
+Introduce support code for protect-exec sram type") is doing for
+drivers/misc/sram-exec.c.
+
+Note that eventually we should be using sram-exec.c for all SoCs.
+
+Cc: Dave Gerlach <d-gerlach@ti.com>
+Reported-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ arch/arm/plat-omap/sram.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/arch/arm/plat-omap/sram.c b/arch/arm/plat-omap/sram.c
+--- a/arch/arm/plat-omap/sram.c
++++ b/arch/arm/plat-omap/sram.c
+@@ -23,6 +23,7 @@
+ #include <asm/fncpy.h>
+ #include <asm/tlb.h>
+ #include <asm/cacheflush.h>
++#include <asm/set_memory.h>
+ 
+ #include <asm/mach/map.h>
+ 
+@@ -96,3 +97,21 @@ void __init omap_map_sram(unsigned long start, unsigned long size,
+ 	memset_io(omap_sram_base + omap_sram_skip, 0,
+ 		  omap_sram_size - omap_sram_skip);
+ }
++
++static int __init omap_sram_lock(void)
++{
++	unsigned long base;
++	int pages;
++
++	if (!omap_sram_base || !omap_sram_size)
++		return 0;
++
++	base = (unsigned long)omap_sram_base;
++	pages = PAGE_ALIGN(omap_sram_size) / PAGE_SIZE;
++
++	set_memory_ro((unsigned long)base, pages);
++	set_memory_x((unsigned long)base, pages);
++
++	return 0;
++}
++late_initcall(omap_sram_lock);
+-- 
+2.16.2
