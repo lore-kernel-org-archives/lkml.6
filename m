@@ -1,199 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751178AbeCHVDN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 16:03:13 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33960 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750939AbeCHVDL (ORCPT
+        id S1751205AbeCHVGO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 16:06:14 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:44909 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750909AbeCHVGM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 16:03:11 -0500
-X-Google-Smtp-Source: AG47ELvLtTIUIdKWkhbk4WJ5Jgl+hkuAFWMMENY0Zv3CacClkHHNsfNdlwL20JvXxduG1SQ2bhaUMA==
-Date: Thu, 8 Mar 2018 22:03:03 +0100
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Palmer Dabbelt <palmer@sifive.com>
-Cc: albert@sifive.com, Daniel Lustig <dlustig@nvidia.com>,
-        stern@rowland.harvard.edu, Will Deacon <will.deacon@arm.com>,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-        paulmck@linux.vnet.ibm.com, akiyks@gmail.com, mingo@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/2] riscv/spinlock: Strengthen implementations with
- fences
-Message-ID: <20180308210303.GA2897@andrea>
-References: <20180307105242.GA6133@andrea>
- <mhng-45acdfe8-f932-4e48-aa78-b1fcd1f95344@palmer-si-x1c4>
+        Thu, 8 Mar 2018 16:06:12 -0500
+X-Google-Smtp-Source: AG47ELsKOMIL6mxB39L4WKUJrUNy4pvgp+lNfxIkvomn2ERNUVEzKz/ldIbnXaTTNgwD20VKnfBRMA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <mhng-45acdfe8-f932-4e48-aa78-b1fcd1f95344@palmer-si-x1c4>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+To: Lina Iyer <ilina@codeaurora.org>, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org
+From: Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20180302164317.10554-9-ilina@codeaurora.org>
+Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
+References: <20180302164317.10554-1-ilina@codeaurora.org>
+ <20180302164317.10554-9-ilina@codeaurora.org>
+Message-ID: <152054316996.219802.9903507378142636932@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 08/10] drivers: qcom: rpmh: allow requests to be sent
+ asynchronously
+Date: Thu, 08 Mar 2018 13:06:09 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w28L6KxG014401
 
-On Wed, Mar 07, 2018 at 10:33:49AM -0800, Palmer Dabbelt wrote:
+Quoting Lina Iyer (2018-03-02 08:43:15)
+> @@ -69,6 +71,7 @@ struct rpmh_request {
+>         atomic_t *wait_count;
+>         struct rpmh_client *rc;
+>         int err;
+> +       struct rpmh_request *free;
+>  };
+>  
+>  /**
+> @@ -114,6 +117,8 @@ void rpmh_tx_done(struct tcs_request *msg, int r)
+>                        "RPMH TX fail in msg addr 0x%x, err=%d\n",
+>                        rpm_msg->msg.payload[0].addr, r);
+>  
+> +       kfree(rpm_msg->free);
 
-[...]
+Is this potentially freeing something which is then used after this call
+later in this function? It looks like the compiler could be reloading
+from freed memory for the wc and compl variables after this kfree is
+called. At the least, please add some sort of comment or if we don't
+ever need to free a _different_ rpm_msg than the existing one, make it a
+flag so it becomes very obvious that we're freeing the same memory that
+we loaded from in this function.
 
-> I'm going to go produce a new set of spinlocks, I think it'll be a bit more
-> coherent then.
-> 
-> I'm keeping your other patch in my queue for now, it generally looks good
-> but I haven't looked closely yet.
+> +
+>         /* Signal the blocking thread we are done */
+>         if (wc && atomic_dec_and_test(wc) && compl)
+>                 complete(compl);
+> @@ -257,6 +262,53 @@ static int __rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
+>         return ret;
+>  }
+>  
+> +static struct rpmh_request *__get_rpmh_msg_async(struct rpmh_client *rc,
+> +                                               enum rpmh_state state,
+> +                                               struct tcs_cmd *cmd, int n)
+> +{
+> +       struct rpmh_request *req;
+> +
+> +       if (IS_ERR_OR_NULL(rc) || !cmd || n <= 0 || n > MAX_RPMH_PAYLOAD)
 
-Patches 1 and 2 address a same issue ("release-to-acquire"); this is also
-expressed, more or less explicitly, in the corresponding commit messages:
-it might make sense to "queue" them together, and to build the new locks
-on top of these (even if this meant "rewrite all of/a large portion of
-spinlock.h"...).
+unsigned n?
 
-  Andrea
+> +               return ERR_PTR(-EINVAL);
+> +
+> +       req = kcalloc(1, sizeof(*req), GFP_ATOMIC);
 
+kzalloc()?
 
-> 
-> Thanks!
-> 
-> >
-> >  Andrea
-> >
-> >
-> >>
-> >>   Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
-> >>
-> >>diff --git a/arch/riscv/include/asm/spinlock.h b/arch/riscv/include/asm/spinlock.h
-> >>index 2fd27e8ef1fd..9b166ea81fe5 100644
-> >>--- a/arch/riscv/include/asm/spinlock.h
-> >>+++ b/arch/riscv/include/asm/spinlock.h
-> >>@@ -15,128 +15,7 @@
-> >>#ifndef _ASM_RISCV_SPINLOCK_H
-> >>#define _ASM_RISCV_SPINLOCK_H
-> >>
-> >>-#include <linux/kernel.h>
-> >>-#include <asm/current.h>
-> >>-
-> >>-/*
-> >>- * Simple spin lock operations.  These provide no fairness guarantees.
-> >>- */
-> >>-
-> >>-/* FIXME: Replace this with a ticket lock, like MIPS. */
-> >>-
-> >>-#define arch_spin_is_locked(x)	(READ_ONCE((x)->lock) != 0)
-> >>-
-> >>-static inline void arch_spin_unlock(arch_spinlock_t *lock)
-> >>-{
-> >>-	__asm__ __volatile__ (
-> >>-		"amoswap.w.rl x0, x0, %0"
-> >>-		: "=A" (lock->lock)
-> >>-		:: "memory");
-> >>-}
-> >>-
-> >>-static inline int arch_spin_trylock(arch_spinlock_t *lock)
-> >>-{
-> >>-	int tmp = 1, busy;
-> >>-
-> >>-	__asm__ __volatile__ (
-> >>-		"amoswap.w.aq %0, %2, %1"
-> >>-		: "=r" (busy), "+A" (lock->lock)
-> >>-		: "r" (tmp)
-> >>-		: "memory");
-> >>-
-> >>-	return !busy;
-> >>-}
-> >>-
-> >>-static inline void arch_spin_lock(arch_spinlock_t *lock)
-> >>-{
-> >>-	while (1) {
-> >>-		if (arch_spin_is_locked(lock))
-> >>-			continue;
-> >>-
-> >>-		if (arch_spin_trylock(lock))
-> >>-			break;
-> >>-	}
-> >>-}
-> >>-
-> >>-/***********************************************************/
-> >>-
-> >>-static inline void arch_read_lock(arch_rwlock_t *lock)
-> >>-{
-> >>-	int tmp;
-> >>-
-> >>-	__asm__ __volatile__(
-> >>-		"1:	lr.w	%1, %0\n"
-> >>-		"	bltz	%1, 1b\n"
-> >>-		"	addi	%1, %1, 1\n"
-> >>-		"	sc.w.aq	%1, %1, %0\n"
-> >>-		"	bnez	%1, 1b\n"
-> >>-		: "+A" (lock->lock), "=&r" (tmp)
-> >>-		:: "memory");
-> >>-}
-> >>-
-> >>-static inline void arch_write_lock(arch_rwlock_t *lock)
-> >>-{
-> >>-	int tmp;
-> >>-
-> >>-	__asm__ __volatile__(
-> >>-		"1:	lr.w	%1, %0\n"
-> >>-		"	bnez	%1, 1b\n"
-> >>-		"	li	%1, -1\n"
-> >>-		"	sc.w.aq	%1, %1, %0\n"
-> >>-		"	bnez	%1, 1b\n"
-> >>-		: "+A" (lock->lock), "=&r" (tmp)
-> >>-		:: "memory");
-> >>-}
-> >>-
-> >>-static inline int arch_read_trylock(arch_rwlock_t *lock)
-> >>-{
-> >>-	int busy;
-> >>-
-> >>-	__asm__ __volatile__(
-> >>-		"1:	lr.w	%1, %0\n"
-> >>-		"	bltz	%1, 1f\n"
-> >>-		"	addi	%1, %1, 1\n"
-> >>-		"	sc.w.aq	%1, %1, %0\n"
-> >>-		"	bnez	%1, 1b\n"
-> >>-		"1:\n"
-> >>-		: "+A" (lock->lock), "=&r" (busy)
-> >>-		:: "memory");
-> >>-
-> >>-	return !busy;
-> >>-}
-> >>-
-> >>-static inline int arch_write_trylock(arch_rwlock_t *lock)
-> >>-{
-> >>-	int busy;
-> >>-
-> >>-	__asm__ __volatile__(
-> >>-		"1:	lr.w	%1, %0\n"
-> >>-		"	bnez	%1, 1f\n"
-> >>-		"	li	%1, -1\n"
-> >>-		"	sc.w.aq	%1, %1, %0\n"
-> >>-		"	bnez	%1, 1b\n"
-> >>-		"1:\n"
-> >>-		: "+A" (lock->lock), "=&r" (busy)
-> >>-		:: "memory");
-> >>-
-> >>-	return !busy;
-> >>-}
-> >>-
-> >>-static inline void arch_read_unlock(arch_rwlock_t *lock)
-> >>-{
-> >>-	__asm__ __volatile__(
-> >>-		"amoadd.w.rl x0, %1, %0"
-> >>-		: "+A" (lock->lock)
-> >>-		: "r" (-1)
-> >>-		: "memory");
-> >>-}
-> >>-
-> >>-static inline void arch_write_unlock(arch_rwlock_t *lock)
-> >>-{
-> >>-	__asm__ __volatile__ (
-> >>-		"amoswap.w.rl x0, x0, %0"
-> >>-		: "=A" (lock->lock)
-> >>-		:: "memory");
-> >>-}
-> >>+#include <asm-generic/qspinlock.h>
-> >>+#include <asm-generic/qrwlock.h>
-> >>
-> >>#endif /* _ASM_RISCV_SPINLOCK_H */
-> >>
+> +       if (!req)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       memcpy(req->cmd, cmd, n * sizeof(*cmd));
+> +
+> +       req->msg.state = state;
+> +       req->msg.payload = req->cmd;
+> +       req->msg.num_payload = n;
+> +       req->free = req;
+> +
+> +       return req;
+> +}
+> +
+> +/**
+> + * rpmh_write_async: Write a set of RPMH commands
+
+... and don't wait for a result?
+
+> + *
+> + * @rc: The RPMh handle got from rpmh_get_dev_channel
+> + * @state: Active/sleep set
+> + * @cmd: The payload data
+> + * @n: The number of elements in payload
+> + *
+> + * Write a set of RPMH commands, the order of commands is maintained
+> + * and will be sent as a single shot.
+> + */
+> +int rpmh_write_async(struct rpmh_client *rc, enum rpmh_state state,
+> +                   struct tcs_cmd *cmd, int n)
+> +{
+> +       struct rpmh_request *rpm_msg;
+> +
+> +       rpm_msg = __get_rpmh_msg_async(rc, state, cmd, n);
+> +       if (IS_ERR(rpm_msg))
+> +               return PTR_ERR(rpm_msg);
+> +
+> +       return __rpmh_write(rc, state, rpm_msg);
+> +}
+> +EXPORT_SYMBOL(rpmh_write_async);
+> +
+>  /**
+>   * rpmh_write: Write a set of RPMH commands and block until response
+>   *
