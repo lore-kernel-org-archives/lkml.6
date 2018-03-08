@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966549AbeCHTNQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 14:13:16 -0500
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:41732 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966445AbeCHTMw (ORCPT
+        id S966585AbeCHTNb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 14:13:31 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:46422 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966413AbeCHTMv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 14:12:52 -0500
-X-Google-Smtp-Source: AG47ELsiIkx+Hzekoh/zzuOIwcTkQtLUjH4G2xmfZvUjm/wiElPm9338YhFNvLt2ZmZ1KGelp1sG7w==
+        Thu, 8 Mar 2018 14:12:51 -0500
+X-Google-Smtp-Source: AG47ELuy5E8HTEpVrVzArjLzAbqfNdrEju+o4FsmDcZCYMPTMFxaVVSDmXg3y249EjE4IEb6iBCmMg==
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -18,9 +18,9 @@ Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
         linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 21/21] nvmem: bcm-ocotp: Do not use "&pdev->dev" explicitly
-Date: Thu,  8 Mar 2018 11:12:05 -0800
-Message-Id: <20180308191205.26943-22-andrew.smirnov@gmail.com>
+Subject: [PATCH v5 20/21] nvmem: imx-iim: Do not use "&pdev->dev" explicitly
+Date: Thu,  8 Mar 2018 11:12:04 -0800
+Message-Id: <20180308191205.26943-21-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180308191205.26943-1-andrew.smirnov@gmail.com>
 References: <20180308191205.26943-1-andrew.smirnov@gmail.com>
@@ -28,7 +28,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's "dev" variable for this already. Use it.
+There's already "dev" variable for that. Use it.
 
 Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Heiko Stuebner <heiko@sntech.de>
@@ -44,22 +44,21 @@ Cc: linux-amlogic@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/nvmem/bcm-ocotp.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/nvmem/imx-iim.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nvmem/bcm-ocotp.c b/drivers/nvmem/bcm-ocotp.c
-index 24c30fa475cc..4159b3f41d79 100644
---- a/drivers/nvmem/bcm-ocotp.c
-+++ b/drivers/nvmem/bcm-ocotp.c
-@@ -262,8 +262,7 @@ static int bcm_otpc_probe(struct platform_device *pdev)
- 	else if (of_device_is_compatible(dev->of_node, "brcm,ocotp-v2"))
- 		priv->map = &otp_map_v2;
- 	else {
--		dev_err(&pdev->dev,
--			"%s otpc config map not defined\n", __func__);
-+		dev_err(dev, "%s otpc config map not defined\n", __func__);
- 		return -EINVAL;
- 	}
+diff --git a/drivers/nvmem/imx-iim.c b/drivers/nvmem/imx-iim.c
+index b98d76ac7790..6651e4cdc002 100644
+--- a/drivers/nvmem/imx-iim.c
++++ b/drivers/nvmem/imx-iim.c
+@@ -125,7 +125,7 @@ static int imx_iim_probe(struct platform_device *pdev)
+ 
+ 	drvdata = of_id->data;
+ 
+-	iim->clk = devm_clk_get(&pdev->dev, NULL);
++	iim->clk = devm_clk_get(dev, NULL);
+ 	if (IS_ERR(iim->clk))
+ 		return PTR_ERR(iim->clk);
  
 -- 
 2.14.3
