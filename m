@@ -1,445 +1,157 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-955397-1520614137-2-12943112629116580306
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1086562-1520490958-2-2383716914470737231
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES rocask.us-ascii, BAYES_USED global,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520614136; b=NUXAbzi5ZQrLG4ylecv6OCswLwtSlbVVwMOefNFYtvj/OBt
-    t5ih6xx5VsJkhy38uCI+x65hJkZQVsnPyJglbh2JJqeirBfd3/B87NrSsi+VLYjS
-    seYDHLhlpJ4YKzR2EGOBBz94VRP6N98lVr9+rgGH+Sri8wqZdyfJKl5bSVRtWIRf
-    Rkq+nDvoSpzOp6N6Z3geSTtmpNwxmlDSYHKyK33nMwHUHcTGOU+cCxckA9E6F7va
-    iLuUTQSOwje6MHn++fKxcppFCv6yxfconB5ODjAFBnhOlbZS8teVPrmadnLSra7V
-    icPXyr+hgO7+bWpLvWLYMK+1fmWneTNqFPjhQaQ==
+    t=1520490958; b=NPUYnylsLFYbBT4vdJGuZzAiK7TLqtxI71BWzFDpaoFIOwg
+    a59rnWoPnuhQ78e8TvdDSR7y9D5etZP56bhbxDQJXDFzEevO49zXzHDdvsCnrYPv
+    PFK0BaRaFXf+y+yj5IdQT55GXWBP8J8RURhojYfOtF5rTucUtFtciAnnqWlVrBEp
+    hlSH5Gm3Ejhb0vAZYX173GobXkxV1t5K1XmZzuHig8QPjy8TmRF9PyKR8fXxeZp9
+    DHTPOGRlkUB7947nyyWFGmIjlxS9TANY6ZsEdNWzIpxggSRZpTngr011niwLPc9t
+    fUVsZ+mpK0ACAx1tmOSX/5+wgH7M58Puq4+trzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520614136; bh=T
-    649dPUceggzuqrq+T0VCeQPUGSCsYCv77eyHqajINs=; b=LV7WWWMsE1UG+LYLc
-    C1tafJ7RBuZmfPqP8z/c61nuWdVtWv01Hy3FmTBshBAgn9YB2YLyRhSOn0ocHJL8
-    Y9OhUL1Eofr2H/my9JcV0VnEkoDIxqR07a/pvlm/jCJxB580qDHmbq6RsACJGVNi
-    mLV0zCVkj0O8cibITJOWRiAe2ENcnqxtMDqAN8yIyt5O9ijvPDt4vhAw/9n1vTW0
-    uQSFMu9/jNLvisqWSvNwpsRbYRWeE+hwLEu+2Ud1JEDi5ZvHFiV1OwjfCWkZfE7A
-    H133oeZcLIXkuTXZjmyeU1wCpt3plyNLUy97YcQRrSam11dFY9IqQTlqTeWcxb8N
-    GTg8A==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=jat954iu x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :content-type:content-transfer-encoding:mime-version:sender
+    :list-id; s=arctest; t=1520490958; bh=lo5iH78F7Ew5m7Bs8Zdn+pu+p+
+    Bcq/xgqjt4GCK5sts=; b=sRd0EUwDU54oXwjy+chWnvj77T5e0Nn8Vfe1Cq3RiG
+    M1BcD3SLpA1pBPtqXTjp8aQbDA2KpnGOZ5n7S0XeG6Gce1pUpW9pWH4etHqtiFBS
+    oAPrzwmtrMIEN+xU1bdUglg4+wtjX/6yXW0a2NhQMO7iq+g057bVrDc/EDYoG7FM
+    vtMZZ9M+Az2vmyciGZe7+UjOGZZCUOIqtLi/PnEcncn5FqIYXInNXUP+Orc3/ohw
+    7hPIU7BdthTbxIDoQaEKn52HFtFhUhYP7LdKt8tkbvs425gwBNGVGy77E30gwitt
+    2e+2RIFYEJb4Dg6nBX0FPaQgb5qwzq9eCUTXh7/8KmVA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=WPmln8Pu x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=WW1BEF+K;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx3.messagingengine.com;
+    x-category=clean score=0 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=jat954iu x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=WPmln8Pu x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=WW1BEF+K;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELseQXAXiiD2cdzSmGmtHq/WSDALfI96u+e6WpFydGZksf35Nis42xHx9bZoSj3u0kCz/PHbVw==
-From: Ivan Safonov <insafonov@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH] staging:r8188eu: Use lib80211 to support TKIP
-Date: Fri,  9 Mar 2018 19:49:23 +0300
-Message-Id: <20180309164923.13929-1-insafonov@gmail.com>
-X-Mailer: git-send-email 2.16.1
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Hans de Goede <hdegoede@redhat.com>,
- Ivan Safonov <insafonov@gmail.com>, linux-kernel@vger.kernel.org,
- Santha Meena Ramamoorthy <santhameena13@gmail.com>
+    x-category=clean score=0 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1755319AbeCHGfi (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 01:35:38 -0500
+Received: from mail-bl2nam02on0092.outbound.protection.outlook.com ([104.47.38.92]:59552
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965486AbeCHE7z (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 7 Mar 2018 23:59:55 -0500
+From: Sasha Levin <Alexander.Levin@microsoft.com>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 001/190] powerpc/nohash: Fix use of
+ mmu_has_feature() in setup_initial_memory_limit()
+Thread-Topic: [PATCH AUTOSEL for 4.9 001/190] powerpc/nohash: Fix use of
+ mmu_has_feature() in setup_initial_memory_limit()
+Thread-Index: AQHTtpoj8bIFti/sx0yVCAWGaZUjuA==
+Date: Thu, 8 Mar 2018 04:58:46 +0000
+Message-ID: <20180308045810.8041-1-alexander.levin@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0920;7:B8i/qMgEkq65g0cta9CNj7R5J0TTGhn61oVQUHS/crwXMpkmRaaSDhxCa6AH7OfSzjgwjDUcxrPHcqZNyw9VKwnWSYOZ9PUQ10jU3LIUu8keQe0wsHwGkQTcRJ+fJngUcva+Ter6w7oGqAG364W1m1yoCO1QazBx510Z+R3oYovfYfPcV2GdJbpF/R55I2604mFkNOY92TTcFRFr7lbdJW9bCjw0Lm+tWMlEaY8Hg9bLOIXJYIa2u1lvadrAXgBK;20:OmrSSC5Mq0y8qf+yBx4PcCEbaMiLvTsabb+6NdEI31Td6zH015an0dGZ3wk7sc3LVLzZxrzsZ1XR+4pO7zv78k0UY3XsjUQ57/xRjMoSFVsiCnGvo4WxUAin/Q4jzmCvTmhwHnT9mmf1DEBV/70zEa92yEpAcsDc2RX9s+XRfTU=
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: a087fc38-5b60-4c8d-4e3d-08d584b16cbc
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0920;
+x-ms-traffictypediagnostic: DM5PR2101MB0920:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com;
+x-microsoft-antispam-prvs: <DM5PR2101MB0920FA6B920255D41ACBFC15FBDF0@DM5PR2101MB0920.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0920;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0920;
+x-forefront-prvs: 060503E79B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(39380400002)(346002)(366004)(376002)(189003)(199004)(81156014)(81166006)(5250100002)(8936002)(54906003)(2501003)(305945005)(8676002)(107886003)(110136005)(97736004)(99286004)(6436002)(36756003)(316002)(72206003)(14454004)(6486002)(7736002)(478600001)(10290500003)(186003)(22452003)(59450400001)(68736007)(105586002)(106356001)(102836004)(575784001)(26005)(6506007)(86362001)(3660700001)(5660300001)(2906002)(10090500001)(1076002)(25786009)(2900100001)(53936002)(4326008)(66066001)(6512007)(6666003)(6116002)(3280700002)(3846002)(86612001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0920;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: QWKck0c4zFmD33IBF8EonvisrZ6nc0skNprAsSWLy/RIo4j5R9VNJxYGB6v3r3r+VYwameKfX8x9s7+KhS4pzWSpVUkKblNOOtq60T78a5zU3n10uwQ0FIt++HYO1+y8AGqB9i0uFJHg3rw5Tc5SwytU/Kze/aCp3/0nuOWWDCrkXkhJmUAyYMRlDqjxjE7qUze9PrsbJoCpvNlJdQvVb2RBBdGZ1Xl0AUhNMTtd8IbO9yzxbWv/b6ND48/c22RzS4HXD19WJby29Fz8jpXnFwy05BELsjEBxlG6JOh+qNjzzjvjFWrky6b/IhwFk7tDBPd7DW7x//D8/iVxsvSluA==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a087fc38-5b60-4c8d-4e3d-08d584b16cbc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:58:46.5144
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0920
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Custom TKIP decryption replaced with lib80211 implementation.
-MIC check use lib80211 too.
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-Signed-off-by: Ivan Safonov <insafonov@gmail.com>
+[ Upstream commit 4868e3508d1934d28961f940ed6b9f1e347ab52c ]
+
+setup_initial_memory_limit() is called from early_init_devtree(), which
+runs prior to feature patching. If the kernel is built with CONFIG_JUMP_LAB=
+EL=3Dy
+and CONFIG_JUMP_LABEL_FEATURE_CHECKS=3Dy then we will potentially get the
+wrong value.
+
+If we also have CONFIG_JUMP_LABEL_FEATURE_CHECK_DEBUG=3Dy we get a warning
+and backtrace:
+
+  Warning! mmu_has_feature() used prior to jump label init!
+  CPU: 0 PID: 0 Comm: swapper Not tainted 4.11.0-rc4-gccN-next-20170331-g6a=
+f2434 #1
+  Call Trace:
+  [c000000000fc3d50] [c000000000a26c30] .dump_stack+0xa8/0xe8 (unreliable)
+  [c000000000fc3de0] [c00000000002e6b8] .setup_initial_memory_limit+0xa4/0x=
+104
+  [c000000000fc3e60] [c000000000d5c23c] .early_init_devtree+0xd0/0x2f8
+  [c000000000fc3f00] [c000000000d5d3b0] .early_setup+0x90/0x11c
+  [c000000000fc3f90] [c000000000000520] start_here_multiplatform+0x68/0x80
+
+Fix it by using early_mmu_has_feature().
+
+Fixes: c12e6f24d413 ("powerpc: Add option to use jump label for mmu_has_fea=
+ture()")
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/staging/rtl8188eu/Kconfig             |   1 +
- drivers/staging/rtl8188eu/core/rtw_recv.c     | 161 ++++++++------------------
- drivers/staging/rtl8188eu/core/rtw_security.c |  92 +++++++--------
- 3 files changed, 94 insertions(+), 160 deletions(-)
+ arch/powerpc/mm/tlb_nohash.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8188eu/Kconfig b/drivers/staging/rtl8188eu/Kconfig
-index ff7832798a77..673fdce25530 100644
---- a/drivers/staging/rtl8188eu/Kconfig
-+++ b/drivers/staging/rtl8188eu/Kconfig
-@@ -7,6 +7,7 @@ config R8188EU
- 	select LIB80211
- 	select LIB80211_CRYPT_WEP
- 	select LIB80211_CRYPT_CCMP
-+	select LIB80211_CRYPT_TKIP
- 	---help---
- 	This option adds the Realtek RTL8188EU USB device such as TP-Link TL-WN725N.
- 	If built as a module, it will be called r8188eu.
-diff --git a/drivers/staging/rtl8188eu/core/rtw_recv.c b/drivers/staging/rtl8188eu/core/rtw_recv.c
-index c6857a5be12a..05936a45eb93 100644
---- a/drivers/staging/rtl8188eu/core/rtw_recv.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_recv.c
-@@ -23,6 +23,7 @@
- #include <mon.h>
- #include <wifi.h>
- #include <linux/vmalloc.h>
-+#include <net/lib80211.h>
- 
- #define ETHERNET_HEADER_SIZE	14	/*  Ethernet Header Length */
- #define LLC_HEADER_SIZE			6	/*  LLC Header Length */
-@@ -220,31 +221,20 @@ u32 rtw_free_uc_swdec_pending_queue(struct adapter *adapter)
- static int recvframe_chkmic(struct adapter *adapter,
- 			    struct recv_frame *precvframe)
- {
--	int	i, res = _SUCCESS;
--	u32	datalen;
--	u8	miccode[8];
--	u8	bmic_err = false, brpt_micerror = true;
--	u8	*pframe, *payload, *pframemic;
--	u8	*mickey;
--	struct	sta_info		*stainfo;
--	struct	rx_pkt_attrib	*prxattrib = &precvframe->attrib;
--	struct	security_priv	*psecuritypriv = &adapter->securitypriv;
--
--	struct mlme_ext_priv	*pmlmeext = &adapter->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
--
--	stainfo = rtw_get_stainfo(&adapter->stapriv, &prxattrib->ta[0]);
-+	int res = _SUCCESS;
-+	struct rx_pkt_attrib *prxattrib = &precvframe->attrib;
-+	struct sta_info *stainfo = rtw_get_stainfo(&adapter->stapriv, prxattrib->ta);
- 
- 	if (prxattrib->encrypt == _TKIP_) {
--		RT_TRACE(_module_rtl871x_recv_c_, _drv_info_,
--			 ("\n %s: prxattrib->encrypt==_TKIP_\n", __func__));
--		RT_TRACE(_module_rtl871x_recv_c_, _drv_info_,
--			 ("\n %s: da=0x%02x:0x%02x:0x%02x:0x%02x:0x%02x:0x%02x\n",
--			  __func__, prxattrib->ra[0], prxattrib->ra[1], prxattrib->ra[2],
--			  prxattrib->ra[3], prxattrib->ra[4], prxattrib->ra[5]));
--
--		/* calculate mic code */
- 		if (stainfo) {
-+			int key_idx;
-+			const int iv_len = 8, icv_len = 4, key_length = 32;
-+			struct sk_buff *skb = precvframe->pkt;
-+			u8 key[32], iv[8], icv[4], *pframe = skb->data;
-+			void *crypto_private = NULL;
-+			struct lib80211_crypto_ops *crypto_ops = try_then_request_module(lib80211_get_crypto_ops("TKIP"), "lib80211_crypt_tkip");
-+			struct security_priv *psecuritypriv = &adapter->securitypriv;
-+
- 			if (IS_MCAST(prxattrib->ra)) {
- 				if (!psecuritypriv) {
- 					res = _FAIL;
-@@ -253,115 +243,58 @@ static int recvframe_chkmic(struct adapter *adapter,
- 					DBG_88E("\n %s: didn't install group key!!!!!!!!!!\n", __func__);
- 					goto exit;
- 				}
--				mickey = &psecuritypriv->dot118021XGrprxmickey[prxattrib->key_index].skey[0];
--
--				RT_TRACE(_module_rtl871x_recv_c_, _drv_info_,
--					 ("\n %s: bcmc key\n", __func__));
-+				key_idx = prxattrib->key_index;
-+				memcpy(key, psecuritypriv->dot118021XGrpKey[key_idx].skey, 16);
-+				memcpy(key + 16, psecuritypriv->dot118021XGrprxmickey[key_idx].skey, 16);
- 			} else {
--				mickey = &stainfo->dot11tkiprxmickey.skey[0];
--				RT_TRACE(_module_rtl871x_recv_c_, _drv_err_,
--					 ("\n %s: unicast key\n", __func__));
-+				key_idx = 0;
-+				memcpy(key, stainfo->dot118021x_UncstKey.skey, 16);
-+				memcpy(key + 16, stainfo->dot11tkiprxmickey.skey, 16);
- 			}
- 
--			/* icv_len included the mic code */
--			datalen = precvframe->pkt->len-prxattrib->hdrlen -
--				  prxattrib->iv_len-prxattrib->icv_len-8;
--			pframe = precvframe->pkt->data;
--			payload = pframe+prxattrib->hdrlen+prxattrib->iv_len;
--
--			RT_TRACE(_module_rtl871x_recv_c_, _drv_info_, ("\n prxattrib->iv_len=%d prxattrib->icv_len=%d\n", prxattrib->iv_len, prxattrib->icv_len));
--			rtw_seccalctkipmic(mickey, pframe, payload, datalen, &miccode[0],
--					   (unsigned char)prxattrib->priority); /* care the length of the data */
-+			if (!crypto_ops) {
-+				res = _FAIL;
-+				goto exit_lib80211_tkip;
-+			}
- 
--			pframemic = payload+datalen;
-+			memcpy(iv, pframe + prxattrib->hdrlen, iv_len);
-+			memcpy(icv, pframe + skb->len - icv_len, icv_len);
-+			memmove(pframe + iv_len, pframe, prxattrib->hdrlen);
- 
--			bmic_err = false;
-+			skb_pull(skb, iv_len);
-+			skb_trim(skb, skb->len - icv_len);
- 
--			for (i = 0; i < 8; i++) {
--				if (miccode[i] != *(pframemic+i)) {
--					RT_TRACE(_module_rtl871x_recv_c_, _drv_err_,
--						 ("%s: miccode[%d](%02x)!=*(pframemic+%d)(%02x) ",
--						  __func__, i, miccode[i], i, *(pframemic + i)));
--					bmic_err = true;
--				}
-+			crypto_private = crypto_ops->init(key_idx);
-+			if (!crypto_private) {
-+				res = _FAIL;
-+				goto exit_lib80211_tkip;
-+			}
-+			if (crypto_ops->set_key(key, key_length, NULL, crypto_private) < 0) {
-+				res = _FAIL;
-+				goto exit_lib80211_tkip;
-+			}
-+			if (crypto_ops->decrypt_msdu(skb, key_idx, prxattrib->hdrlen, crypto_private)) {
-+				res = _FAIL;
-+				goto exit_lib80211_tkip;
- 			}
- 
--			if (bmic_err) {
--				RT_TRACE(_module_rtl871x_recv_c_, _drv_err_,
--					 ("\n *(pframemic-8)-*(pframemic-1)=0x%02x:0x%02x:0x%02x:0x%02x:0x%02x:0x%02x:0x%02x:0x%02x\n",
--					 *(pframemic-8), *(pframemic-7), *(pframemic-6),
--					 *(pframemic-5), *(pframemic-4), *(pframemic-3),
--					 *(pframemic-2), *(pframemic-1)));
--				RT_TRACE(_module_rtl871x_recv_c_, _drv_err_,
--					 ("\n *(pframemic-16)-*(pframemic-9)=0x%02x:0x%02x:0x%02x:0x%02x:0x%02x:0x%02x:0x%02x:0x%02x\n",
--					 *(pframemic-16), *(pframemic-15), *(pframemic-14),
--					 *(pframemic-13), *(pframemic-12), *(pframemic-11),
--					 *(pframemic-10), *(pframemic-9)));
--				{
--					uint i;
-+			memmove(pframe, pframe + iv_len, prxattrib->hdrlen);
-+			skb_push(skb, iv_len);
-+			skb_put(skb, icv_len);
- 
--					RT_TRACE(_module_rtl871x_recv_c_, _drv_err_,
--						 ("\n ======demp packet (len=%d)======\n",
--						 precvframe->pkt->len));
--					for (i = 0; i < precvframe->pkt->len; i += 8) {
--						RT_TRACE(_module_rtl871x_recv_c_,
--							 _drv_err_,
--							 ("0x%02x:0x%02x:0x%02x:0x%02x:0x%02x:0x%02x:0x%02x:0x%02x",
--							 *(precvframe->pkt->data+i),
--							 *(precvframe->pkt->data+i+1),
--							 *(precvframe->pkt->data+i+2),
--							 *(precvframe->pkt->data+i+3),
--							 *(precvframe->pkt->data+i+4),
--							 *(precvframe->pkt->data+i+5),
--							 *(precvframe->pkt->data+i+6),
--							 *(precvframe->pkt->data+i+7)));
--					}
--					RT_TRACE(_module_rtl871x_recv_c_,
--						 _drv_err_,
--						 ("\n ====== demp packet end [len=%d]======\n",
--						 precvframe->pkt->len));
--					RT_TRACE(_module_rtl871x_recv_c_,
--						 _drv_err_,
--						 ("\n hrdlen=%d,\n",
--						 prxattrib->hdrlen));
--				}
-+			memcpy(pframe + prxattrib->hdrlen, iv, iv_len);
-+			memcpy(pframe + skb->len - icv_len, icv, icv_len);
- 
--				RT_TRACE(_module_rtl871x_recv_c_, _drv_err_,
--					 ("ra=0x%.2x 0x%.2x 0x%.2x 0x%.2x 0x%.2x 0x%.2x psecuritypriv->binstallGrpkey=%d ",
--					 prxattrib->ra[0], prxattrib->ra[1], prxattrib->ra[2],
--					 prxattrib->ra[3], prxattrib->ra[4], prxattrib->ra[5], psecuritypriv->binstallGrpkey));
--
--				/*  double check key_index for some timing issue , */
--				/*  cannot compare with psecuritypriv->dot118021XGrpKeyid also cause timing issue */
--				if ((IS_MCAST(prxattrib->ra) == true)  && (prxattrib->key_index != pmlmeinfo->key_index))
--					brpt_micerror = false;
--
--				if ((prxattrib->bdecrypted) && (brpt_micerror)) {
--					rtw_handle_tkip_mic_err(adapter, (u8)IS_MCAST(prxattrib->ra));
--					RT_TRACE(_module_rtl871x_recv_c_, _drv_err_, (" mic error :prxattrib->bdecrypted=%d ", prxattrib->bdecrypted));
--					DBG_88E(" mic error :prxattrib->bdecrypted=%d\n", prxattrib->bdecrypted);
--				} else {
--					RT_TRACE(_module_rtl871x_recv_c_, _drv_err_, (" mic error :prxattrib->bdecrypted=%d ", prxattrib->bdecrypted));
--					DBG_88E(" mic error :prxattrib->bdecrypted=%d\n", prxattrib->bdecrypted);
--				}
--				res = _FAIL;
--			} else {
--				/* mic checked ok */
--				if ((!psecuritypriv->bcheck_grpkey) && (IS_MCAST(prxattrib->ra))) {
--					psecuritypriv->bcheck_grpkey = true;
--					RT_TRACE(_module_rtl871x_recv_c_, _drv_err_, ("psecuritypriv->bcheck_grpkey = true"));
--				}
--			}
-+exit_lib80211_tkip:
-+			if (crypto_ops && crypto_private)
-+				crypto_ops->deinit(crypto_private);
- 		} else {
- 			RT_TRACE(_module_rtl871x_recv_c_, _drv_err_,
- 				 ("%s: rtw_get_stainfo==NULL!!!\n", __func__));
- 		}
--
--		skb_trim(precvframe->pkt, precvframe->pkt->len - 8);
- 	}
- 
- exit:
--
- 	return res;
- }
- 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_security.c b/drivers/staging/rtl8188eu/core/rtw_security.c
-index 67a2490f055e..bfe0b217e679 100644
---- a/drivers/staging/rtl8188eu/core/rtw_security.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_security.c
-@@ -650,71 +650,71 @@ u32	rtw_tkip_encrypt(struct adapter *padapter, u8 *pxmitframe)
- 	return res;
- }
- 
--/* The hlen isn't include the IV */
- u32 rtw_tkip_decrypt(struct adapter *padapter, u8 *precvframe)
--{																	/*  exclude ICV */
--	u16 pnl;
--	u32 pnh;
--	u8   rc4key[16];
--	u8   ttkey[16];
--	u8	crc[4];
--	struct arc4context mycontext;
--	int			length;
--
--	u8	*pframe, *payload, *iv, *prwskey;
--	union pn48 dot11txpn;
--	struct	sta_info		*stainfo;
--	struct	rx_pkt_attrib	 *prxattrib = &((struct recv_frame *)precvframe)->attrib;
--	struct	security_priv	*psecuritypriv = &padapter->securitypriv;
--	u32		res = _SUCCESS;
--
--
--	pframe = (unsigned char *)((struct recv_frame *)precvframe)->pkt->data;
-+{
-+	struct rx_pkt_attrib *prxattrib = &((struct recv_frame *)precvframe)->attrib;
-+	u32 res = _SUCCESS;
- 
- 	/* 4 start to decrypt recvframe */
- 	if (prxattrib->encrypt == _TKIP_) {
--		stainfo = rtw_get_stainfo(&padapter->stapriv, &prxattrib->ta[0]);
-+		struct sta_info *stainfo = rtw_get_stainfo(&padapter->stapriv, prxattrib->ta);
-+
- 		if (stainfo) {
-+			int key_idx;
-+			const int iv_len = 8, icv_len = 4, key_length = 32;
-+			void *crypto_private = NULL;
-+			struct sk_buff *skb = ((struct recv_frame *)precvframe)->pkt;
-+			u8 key[32], iv[8], icv[4], *pframe = skb->data;
-+			struct lib80211_crypto_ops *crypto_ops = try_then_request_module(lib80211_get_crypto_ops("TKIP"), "lib80211_crypt_tkip");
-+			struct security_priv *psecuritypriv = &padapter->securitypriv;
-+
- 			if (IS_MCAST(prxattrib->ra)) {
- 				if (!psecuritypriv->binstallGrpkey) {
- 					res = _FAIL;
- 					DBG_88E("%s:rx bc/mc packets, but didn't install group key!!!!!!!!!!\n", __func__);
- 					goto exit;
- 				}
--				prwskey = psecuritypriv->dot118021XGrpKey[prxattrib->key_index].skey;
-+				key_idx = prxattrib->key_index;
-+				memcpy(key, psecuritypriv->dot118021XGrpKey[key_idx].skey, 16);
-+				memcpy(key + 16, psecuritypriv->dot118021XGrprxmickey[key_idx].skey, 16);
- 			} else {
--				RT_TRACE(_module_rtl871x_security_c_, _drv_err_, ("%s: stainfo!= NULL!!!\n", __func__));
--				prwskey = &stainfo->dot118021x_UncstKey.skey[0];
-+				key_idx = 0;
-+				memcpy(key, stainfo->dot118021x_UncstKey.skey, 16);
-+				memcpy(key + 16, stainfo->dot11tkiprxmickey.skey, 16);
- 			}
- 
--			iv = pframe+prxattrib->hdrlen;
--			payload = pframe+prxattrib->iv_len+prxattrib->hdrlen;
--			length = ((struct recv_frame *)precvframe)->pkt->len-prxattrib->hdrlen-prxattrib->iv_len;
--
--			GET_TKIP_PN(iv, dot11txpn);
--
--			pnl = (u16)(dot11txpn.val);
--			pnh = (u32)(dot11txpn.val>>16);
-+			if (!crypto_ops) {
-+				res = _FAIL;
-+				goto exit_lib80211_tkip;
-+			}
- 
--			phase1((u16 *)&ttkey[0], prwskey, &prxattrib->ta[0], pnh);
--			phase2(&rc4key[0], prwskey, (unsigned short *)&ttkey[0], pnl);
-+			memcpy(iv, pframe + prxattrib->hdrlen, iv_len);
-+			memcpy(icv, pframe + skb->len - icv_len, icv_len);
- 
--			/* 4 decrypt payload include icv */
-+			crypto_private = crypto_ops->init(key_idx);
-+			if (!crypto_private) {
-+				res = _FAIL;
-+				goto exit_lib80211_tkip;
-+			}
-+			if (crypto_ops->set_key(key, key_length, NULL, crypto_private) < 0) {
-+				res = _FAIL;
-+				goto exit_lib80211_tkip;
-+			}
-+			if (crypto_ops->decrypt_mpdu(skb, prxattrib->hdrlen, crypto_private)) {
-+				res = _FAIL;
-+				goto exit_lib80211_tkip;
-+			}
- 
--			arcfour_init(&mycontext, rc4key, 16);
--			arcfour_encrypt(&mycontext, payload, payload, length);
-+			memmove(pframe, pframe + iv_len, prxattrib->hdrlen);
-+			skb_push(skb, iv_len);
-+			skb_put(skb, icv_len);
- 
--			*((__le32 *)crc) = getcrc32(payload, length-4);
-+			memcpy(pframe + prxattrib->hdrlen, iv, iv_len);
-+			memcpy(pframe + skb->len - icv_len, icv, icv_len);
- 
--			if (crc[3] != payload[length-1] ||
--			    crc[2] != payload[length-2] ||
--			    crc[1] != payload[length-3] ||
--			    crc[0] != payload[length-4]) {
--				RT_TRACE(_module_rtl871x_security_c_, _drv_err_,
--					 ("rtw_wep_decrypt:icv error crc (%4ph)!=payload (%4ph)\n",
--					 &crc, &payload[length-4]));
--				res = _FAIL;
--			}
-+exit_lib80211_tkip:
-+			if (crypto_ops && crypto_private)
-+				crypto_ops->deinit(crypto_private);
- 		} else {
- 			RT_TRACE(_module_rtl871x_security_c_, _drv_err_, ("rtw_tkip_decrypt: stainfo==NULL!!!\n"));
- 			res = _FAIL;
--- 
-2.16.1
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+diff --git a/arch/powerpc/mm/tlb_nohash.c b/arch/powerpc/mm/tlb_nohash.c
+index 050badc0ebd3..0b50019505a5 100644
+--- a/arch/powerpc/mm/tlb_nohash.c
++++ b/arch/powerpc/mm/tlb_nohash.c
+@@ -751,7 +751,7 @@ void setup_initial_memory_limit(phys_addr_t first_membl=
+ock_base,
+ 	 * avoid going over total available memory just in case...
+ 	 */
+ #ifdef CONFIG_PPC_FSL_BOOK3E
+-	if (mmu_has_feature(MMU_FTR_TYPE_FSL_E)) {
++	if (early_mmu_has_feature(MMU_FTR_TYPE_FSL_E)) {
+ 		unsigned long linear_sz;
+ 		unsigned int num_cams;
+=20
+--=20
+2.14.1
