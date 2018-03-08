@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934945AbeCHCfF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 21:35:05 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5743 "EHLO huawei.com"
+        id S964894AbeCHCfV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 21:35:21 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5750 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934612AbeCHCe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 21:34:58 -0500
+        id S934899AbeCHCfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 21:35:02 -0500
 From: Peng Li <lipeng321@huawei.com>
 To: <davem@davemloft.net>
 CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
         <lipeng321@huawei.com>
-Subject: [PATCH net-next 09/23] {topost} net: hns3: add support for querying pfc puase packets statistic
-Date: Thu, 8 Mar 2018 11:06:34 +0800
-Message-ID: <1520478408-116992-10-git-send-email-lipeng321@huawei.com>
+Subject: [PATCH net-next 16/23] {topost} net: hns3: fix for coalesce configuration lost during reset
+Date: Thu, 8 Mar 2018 11:06:41 +0800
+Message-ID: <1520478408-116992-17-git-send-email-lipeng321@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520478408-116992-1-git-send-email-lipeng321@huawei.com>
 References: <1520478408-116992-1-git-send-email-lipeng321@huawei.com>
@@ -25,145 +25,302 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add support for querying pfc puase packets statistic
-in hclge_ieee_getpfc, which is used to tell user how many pfc
-puase packets have been sent and received by this mac port.
+From: Yunsheng Lin <linyunsheng@huawei.com>
+
+Coalesce configuration will be set to default value by
+hns3_nic_init_vector_data during reset, which causes the
+coalesce configuration loss problem.
+
+This patch fixes it by setting the default value in
+hns3_nic_alloc_vector_data, which will not be called in the
+reset process.
 
 Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 ---
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c | 14 ++++++
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  | 53 ++++++++++++++++++++++
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  |  6 +++
- 3 files changed, 73 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 156 +++++++++++++++++-------
+ 1 file changed, 114 insertions(+), 42 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-index 5018d66..c5270b5 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-@@ -203,9 +203,11 @@ static int hclge_ieee_setets(struct hnae3_handle *h, struct ieee_ets *ets)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index fef65b9..453f509 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -211,19 +211,25 @@ static void hns3_vector_gl_rl_init(struct hns3_enet_tqp_vector *tqp_vector,
+ 	tqp_vector->tx_group.int_gl = HNS3_INT_GL_50K;
+ 	tqp_vector->rx_group.int_gl = HNS3_INT_GL_50K;
  
- static int hclge_ieee_getpfc(struct hnae3_handle *h, struct ieee_pfc *pfc)
+-	hns3_set_vector_coalesce_tx_gl(tqp_vector,
+-				       tqp_vector->tx_group.int_gl);
+-	hns3_set_vector_coalesce_rx_gl(tqp_vector,
+-				       tqp_vector->rx_group.int_gl);
+-
+ 	/* Default: disable RL */
+ 	h->kinfo.int_rl_setting = 0;
+-	hns3_set_vector_coalesce_rl(tqp_vector, h->kinfo.int_rl_setting);
+ 
+ 	tqp_vector->rx_group.flow_level = HNS3_FLOW_LOW;
+ 	tqp_vector->tx_group.flow_level = HNS3_FLOW_LOW;
+ }
+ 
++static void hns3_vector_gl_rl_init_hw(struct hns3_enet_tqp_vector *tqp_vector,
++				      struct hns3_nic_priv *priv)
++{
++	struct hnae3_handle *h = priv->ae_handle;
++
++	hns3_set_vector_coalesce_tx_gl(tqp_vector,
++				       tqp_vector->tx_group.int_gl);
++	hns3_set_vector_coalesce_rx_gl(tqp_vector,
++				       tqp_vector->rx_group.int_gl);
++	hns3_set_vector_coalesce_rl(tqp_vector, h->kinfo.int_rl_setting);
++}
++
+ static int hns3_nic_set_real_num_queue(struct net_device *netdev)
  {
-+	u64 requests[HNAE3_MAX_TC], indications[HNAE3_MAX_TC];
- 	struct hclge_vport *vport = hclge_get_vport(h);
- 	struct hclge_dev *hdev = vport->back;
- 	u8 i, j, pfc_map, *prio_tc;
-+	int ret;
+ 	struct hnae3_handle *h = hns3_get_handle(netdev);
+@@ -2613,32 +2619,18 @@ static int hns3_nic_init_vector_data(struct hns3_nic_priv *priv)
+ 	struct hnae3_ring_chain_node vector_ring_chain;
+ 	struct hnae3_handle *h = priv->ae_handle;
+ 	struct hns3_enet_tqp_vector *tqp_vector;
+-	struct hnae3_vector_info *vector;
+-	struct pci_dev *pdev = h->pdev;
+-	u16 tqp_num = h->kinfo.num_tqps;
+-	u16 vector_num;
+ 	int ret = 0;
+ 	u16 i;
  
- 	memset(pfc, 0, sizeof(*pfc));
- 	pfc->pfc_cap = hdev->pfc_max;
-@@ -220,6 +222,18 @@ static int hclge_ieee_getpfc(struct hnae3_handle *h, struct ieee_pfc *pfc)
- 		}
+-	/* RSS size, cpu online and vector_num should be the same */
+-	/* Should consider 2p/4p later */
+-	vector_num = min_t(u16, num_online_cpus(), tqp_num);
+-	vector = devm_kcalloc(&pdev->dev, vector_num, sizeof(*vector),
+-			      GFP_KERNEL);
+-	if (!vector)
+-		return -ENOMEM;
+-
+-	vector_num = h->ae_algo->ops->get_vector(h, vector_num, vector);
+-
+-	priv->vector_num = vector_num;
+-	priv->tqp_vector = (struct hns3_enet_tqp_vector *)
+-		devm_kcalloc(&pdev->dev, vector_num, sizeof(*priv->tqp_vector),
+-			     GFP_KERNEL);
+-	if (!priv->tqp_vector)
+-		return -ENOMEM;
++	for (i = 0; i < priv->vector_num; i++) {
++		tqp_vector = &priv->tqp_vector[i];
++		hns3_vector_gl_rl_init_hw(tqp_vector, priv);
++		tqp_vector->num_tqps = 0;
++	}
+ 
+-	for (i = 0; i < tqp_num; i++) {
+-		u16 vector_i = i % vector_num;
++	for (i = 0; i < h->kinfo.num_tqps; i++) {
++		u16 vector_i = i % priv->vector_num;
++		u16 tqp_num = h->kinfo.num_tqps;
+ 
+ 		tqp_vector = &priv->tqp_vector[vector_i];
+ 
+@@ -2648,52 +2640,94 @@ static int hns3_nic_init_vector_data(struct hns3_nic_priv *priv)
+ 		hns3_add_ring_to_group(&tqp_vector->rx_group,
+ 				       priv->ring_data[i + tqp_num].ring);
+ 
+-		tqp_vector->idx = vector_i;
+-		tqp_vector->mask_addr = vector[vector_i].io_addr;
+-		tqp_vector->vector_irq = vector[vector_i].vector;
+-		tqp_vector->num_tqps++;
+-
+ 		priv->ring_data[i].ring->tqp_vector = tqp_vector;
+ 		priv->ring_data[i + tqp_num].ring->tqp_vector = tqp_vector;
++		tqp_vector->num_tqps++;
  	}
  
-+	ret = hclge_pfc_tx_stats_get(hdev, requests);
-+	if (ret)
-+		return ret;
-+
-+	ret = hclge_pfc_rx_stats_get(hdev, indications);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < HCLGE_MAX_TC_NUM; i++) {
-+		pfc->requests[i] = requests[i];
-+		pfc->indications[i] = indications[i];
-+	}
- 	return 0;
- }
+-	for (i = 0; i < vector_num; i++) {
++	for (i = 0; i < priv->vector_num; i++) {
+ 		tqp_vector = &priv->tqp_vector[i];
  
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-index 4134a82..885f25c 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-@@ -23,6 +23,9 @@ enum hclge_shaper_level {
- 	HCLGE_SHAPER_LVL_PF	= 1,
- };
+ 		tqp_vector->rx_group.total_bytes = 0;
+ 		tqp_vector->rx_group.total_packets = 0;
+ 		tqp_vector->tx_group.total_bytes = 0;
+ 		tqp_vector->tx_group.total_packets = 0;
+-		hns3_vector_gl_rl_init(tqp_vector, priv);
+ 		tqp_vector->handle = h;
  
-+#define HCLGE_TM_PFC_PKT_GET_CMD_NUM	3
-+#define HCLGE_TM_PFC_NUM_GET_PER_CMD	3
-+
- #define HCLGE_SHAPER_BS_U_DEF	5
- #define HCLGE_SHAPER_BS_S_DEF	20
+ 		ret = hns3_get_vector_ring_chain(tqp_vector,
+ 						 &vector_ring_chain);
+ 		if (ret)
+-			goto out;
++			return ret;
  
-@@ -112,6 +115,56 @@ static int hclge_shaper_para_calc(u32 ir, u8 shaper_level,
- 	return 0;
- }
+ 		ret = h->ae_algo->ops->map_ring_to_vector(h,
+ 			tqp_vector->vector_irq, &vector_ring_chain);
+-		if (ret)
+-			goto out;
  
-+static int hclge_pfc_stats_get(struct hclge_dev *hdev,
-+			       enum hclge_opcode_type opcode, u64 *stats)
-+{
-+	struct hclge_desc desc[HCLGE_TM_PFC_PKT_GET_CMD_NUM];
-+	int ret, i, j;
+ 		hns3_free_vector_ring_chain(tqp_vector, &vector_ring_chain);
+ 
++		if (ret)
++			return ret;
 +
-+	if (!(opcode == HCLGE_OPC_QUERY_PFC_RX_PKT_CNT ||
-+	      opcode == HCLGE_OPC_QUERY_PFC_TX_PKT_CNT))
-+		return -EINVAL;
-+
-+	for (i = 0; i < HCLGE_TM_PFC_PKT_GET_CMD_NUM; i++) {
-+		hclge_cmd_setup_basic_desc(&desc[i], opcode, true);
-+		if (i != (HCLGE_TM_PFC_PKT_GET_CMD_NUM - 1))
-+			desc[i].flag |= cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
-+		else
-+			desc[i].flag &= ~cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
-+	}
-+
-+	ret = hclge_cmd_send(&hdev->hw, desc, HCLGE_TM_PFC_PKT_GET_CMD_NUM);
-+	if (ret) {
-+		dev_err(&hdev->pdev->dev,
-+			"Get pfc pause stats fail, ret = %d.\n", ret);
-+		return ret;
-+	}
-+
-+	for (i = 0; i < HCLGE_TM_PFC_PKT_GET_CMD_NUM; i++) {
-+		struct hclge_pfc_stats_cmd *pfc_stats =
-+				(struct hclge_pfc_stats_cmd *)desc[i].data;
-+
-+		for (j = 0; j < HCLGE_TM_PFC_NUM_GET_PER_CMD; j++) {
-+			u32 index = i * HCLGE_TM_PFC_PKT_GET_CMD_NUM + j;
-+
-+			if (index < HCLGE_MAX_TC_NUM)
-+				stats[index] =
-+					le64_to_cpu(pfc_stats->pkt_num[j]);
-+		}
-+	}
+ 		netif_napi_add(priv->netdev, &tqp_vector->napi,
+ 			       hns3_nic_common_poll, NAPI_POLL_WEIGHT);
+ 	}
+ 
 +	return 0;
 +}
 +
-+int hclge_pfc_rx_stats_get(struct hclge_dev *hdev, u64 *stats)
++static int hns3_nic_alloc_vector_data(struct hns3_nic_priv *priv)
 +{
-+	return hclge_pfc_stats_get(hdev, HCLGE_OPC_QUERY_PFC_RX_PKT_CNT, stats);
-+}
++	struct hnae3_handle *h = priv->ae_handle;
++	struct hns3_enet_tqp_vector *tqp_vector;
++	struct hnae3_vector_info *vector;
++	struct pci_dev *pdev = h->pdev;
++	u16 tqp_num = h->kinfo.num_tqps;
++	u16 vector_num;
++	int ret = 0;
++	u16 i;
 +
-+int hclge_pfc_tx_stats_get(struct hclge_dev *hdev, u64 *stats)
-+{
-+	return hclge_pfc_stats_get(hdev, HCLGE_OPC_QUERY_PFC_TX_PKT_CNT, stats);
-+}
++	/* RSS size, cpu online and vector_num should be the same */
++	/* Should consider 2p/4p later */
++	vector_num = min_t(u16, num_online_cpus(), tqp_num);
++	vector = devm_kcalloc(&pdev->dev, vector_num, sizeof(*vector),
++			      GFP_KERNEL);
++	if (!vector)
++		return -ENOMEM;
 +
- int hclge_mac_pause_en_cfg(struct hclge_dev *hdev, bool tx, bool rx)
- {
- 	struct hclge_desc desc;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-index c30c85b..2dbe177 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-@@ -109,6 +109,10 @@ struct hclge_cfg_pause_param_cmd {
- 	__le16 pause_trans_time;
- };
++	vector_num = h->ae_algo->ops->get_vector(h, vector_num, vector);
++
++	priv->vector_num = vector_num;
++	priv->tqp_vector = (struct hns3_enet_tqp_vector *)
++		devm_kcalloc(&pdev->dev, vector_num, sizeof(*priv->tqp_vector),
++			     GFP_KERNEL);
++	if (!priv->tqp_vector) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	for (i = 0; i < priv->vector_num; i++) {
++		tqp_vector = &priv->tqp_vector[i];
++		tqp_vector->idx = i;
++		tqp_vector->mask_addr = vector[i].io_addr;
++		tqp_vector->vector_irq = vector[i].vector;
++		hns3_vector_gl_rl_init(tqp_vector, priv);
++	}
++
+ out:
+ 	devm_kfree(&pdev->dev, vector);
+ 	return ret;
+ }
  
-+struct hclge_pfc_stats_cmd {
-+	__le64 pkt_num[3];
-+};
++static void hns3_clear_ring_group(struct hns3_enet_ring_group *group)
++{
++	group->ring = NULL;
++	group->count = 0;
++}
 +
- struct hclge_port_shapping_cmd {
- 	__le32 port_shapping_para;
- };
-@@ -130,4 +134,6 @@ int hclge_tm_map_cfg(struct hclge_dev *hdev);
- int hclge_tm_init_hw(struct hclge_dev *hdev);
- int hclge_mac_pause_en_cfg(struct hclge_dev *hdev, bool tx, bool rx);
- int hclge_pause_addr_cfg(struct hclge_dev *hdev, const u8 *mac_addr);
-+int hclge_pfc_rx_stats_get(struct hclge_dev *hdev, u64 *stats);
-+int hclge_pfc_tx_stats_get(struct hclge_dev *hdev, u64 *stats);
- #endif
+ static int hns3_nic_uninit_vector_data(struct hns3_nic_priv *priv)
+ {
+ 	struct hnae3_ring_chain_node vector_ring_chain;
+ 	struct hnae3_handle *h = priv->ae_handle;
+ 	struct hns3_enet_tqp_vector *tqp_vector;
+-	struct pci_dev *pdev = h->pdev;
+ 	int i, ret;
+ 
+ 	for (i = 0; i < priv->vector_num; i++) {
+@@ -2724,12 +2758,30 @@ static int hns3_nic_uninit_vector_data(struct hns3_nic_priv *priv)
+ 		}
+ 
+ 		priv->ring_data[i].ring->irq_init_flag = HNS3_VECTOR_NOT_INITED;
+-
++		hns3_clear_ring_group(&tqp_vector->rx_group);
++		hns3_clear_ring_group(&tqp_vector->tx_group);
+ 		netif_napi_del(&priv->tqp_vector[i].napi);
+ 	}
+ 
+-	devm_kfree(&pdev->dev, priv->tqp_vector);
++	return 0;
++}
++
++static int hns3_nic_dealloc_vector_data(struct hns3_nic_priv *priv)
++{
++	struct hnae3_handle *h = priv->ae_handle;
++	struct pci_dev *pdev = h->pdev;
++	int i, ret;
++
++	for (i = 0; i < priv->vector_num; i++) {
++		struct hns3_enet_tqp_vector *tqp_vector;
++
++		tqp_vector = &priv->tqp_vector[i];
++		ret = h->ae_algo->ops->put_vector(h, tqp_vector->vector_irq);
++		if (ret)
++			return ret;
++	}
+ 
++	devm_kfree(&pdev->dev, priv->tqp_vector);
+ 	return 0;
+ }
+ 
+@@ -3045,6 +3097,12 @@ static int hns3_client_init(struct hnae3_handle *handle)
+ 		goto out_get_ring_cfg;
+ 	}
+ 
++	ret = hns3_nic_alloc_vector_data(priv);
++	if (ret) {
++		ret = -ENOMEM;
++		goto out_alloc_vector_data;
++	}
++
+ 	ret = hns3_nic_init_vector_data(priv);
+ 	if (ret) {
+ 		ret = -ENOMEM;
+@@ -3073,8 +3131,10 @@ static int hns3_client_init(struct hnae3_handle *handle)
+ out_reg_netdev_fail:
+ out_init_ring_data:
+ 	(void)hns3_nic_uninit_vector_data(priv);
+-	priv->ring_data = NULL;
+ out_init_vector_data:
++	hns3_nic_dealloc_vector_data(priv);
++out_alloc_vector_data:
++	priv->ring_data = NULL;
+ out_get_ring_cfg:
+ 	priv->ae_handle = NULL;
+ 	free_netdev(netdev);
+@@ -3094,6 +3154,10 @@ static void hns3_client_uninit(struct hnae3_handle *handle, bool reset)
+ 	if (ret)
+ 		netdev_err(netdev, "uninit vector error\n");
+ 
++	ret = hns3_nic_dealloc_vector_data(priv);
++	if (ret)
++		netdev_err(netdev, "dealloc vector error\n");
++
+ 	ret = hns3_uninit_all_ring(priv);
+ 	if (ret)
+ 		netdev_err(netdev, "uninit ring error\n");
+@@ -3362,6 +3426,10 @@ static int hns3_modify_tqp_num(struct net_device *netdev, u16 new_tqp_num)
+ 	if (ret)
+ 		return ret;
+ 
++	ret = hns3_nic_alloc_vector_data(priv);
++	if (ret)
++		goto err_alloc_vector;
++
+ 	ret = hns3_nic_init_vector_data(priv);
+ 	if (ret)
+ 		goto err_uninit_vector;
+@@ -3376,6 +3444,8 @@ static int hns3_modify_tqp_num(struct net_device *netdev, u16 new_tqp_num)
+ 	hns3_put_ring_config(priv);
+ err_uninit_vector:
+ 	hns3_nic_uninit_vector_data(priv);
++err_alloc_vector:
++	hns3_nic_dealloc_vector_data(priv);
+ 	return ret;
+ }
+ 
+@@ -3423,6 +3493,8 @@ int hns3_set_channels(struct net_device *netdev,
+ 		goto open_netdev;
+ 	}
+ 
++	hns3_nic_dealloc_vector_data(priv);
++
+ 	hns3_uninit_all_ring(priv);
+ 	hns3_put_ring_config(priv);
+ 
 -- 
 2.9.3
