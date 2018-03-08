@@ -1,175 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755295AbeCHNvC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 08:51:02 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:37528 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754491AbeCHNvA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 08:51:00 -0500
-X-Google-Smtp-Source: AG47ELs8kAJmZQ1TeKthxSfKTs9jLwaoYEvVZGNKXoTq/OsqVRfNV3EPjukF2GZIhUKRNkiHymH9iQ==
+        id S1755913AbeCHNxT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 08:53:19 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38368 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755465AbeCHNxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 08:53:18 -0500
+Date: Thu, 8 Mar 2018 13:53:13 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc: mark.rutland@arm.com, ckadabi@codeaurora.org,
+        ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
+        robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 21/22] arm64: Delay enabling hardware DBM feature
+Message-ID: <20180308135312.GQ32331@e103592.cambridge.arm.com>
+References: <20180209175513.17100-1-suzuki.poulose@arm.com>
+ <20180209175513.17100-43-suzuki.poulose@arm.com>
+ <20180209185840.GJ5862@e103592.cambridge.arm.com>
+ <e8b40320-10d2-6117-ef7f-7bbb46823ffb@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <1520441424.1092.25.camel@bootlin.com>
-References: <20180220044425.169493-14-acourbot@chromium.org> <1520441424.1092.25.camel@bootlin.com>
-From: Alexandre Courbot <acourbot@chromium.org>
-Date: Thu, 8 Mar 2018 22:50:36 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MWBezCNbApxvjkeuzrkWOd4Zq4_edsLokc=G+rKEWvmoQ@mail.gmail.com>
-Message-ID: <CAPBb6MWBezCNbApxvjkeuzrkWOd4Zq4_edsLokc=G+rKEWvmoQ@mail.gmail.com>
-Subject: Re: [RFCv4,13/21] media: videobuf2-v4l2: support for requests
-To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e8b40320-10d2-6117-ef7f-7bbb46823ffb@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 8, 2018 at 1:50 AM, Paul Kocialkowski
-<paul.kocialkowski@bootlin.com> wrote:
-> Hi,
->
-> On Tue, 2018-02-20 at 13:44 +0900, Alexandre Courbot wrote:
->> Add a new vb2_qbuf_request() (a request-aware version of vb2_qbuf())
->> that request-aware drivers can call to queue a buffer into a request
->> instead of directly into the vb2 queue if relevent.
->>
->> This function expects that drivers invoking it are using instances of
->> v4l2_request_entity and v4l2_request_entity_data to describe their
->> entity and entity data respectively.
->>
->> Also add the vb2_request_submit() helper function which drivers can
->> invoke in order to queue all the buffers previously queued into a
->> request into the regular vb2 queue.
->
-> See a comment/proposal below about an issue I encountered when using
-> multi-planar formats.
->
->> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
->> ---
->>  .../media/common/videobuf2/videobuf2-v4l2.c   | 129
->> +++++++++++++++++-
->>  include/media/videobuf2-v4l2.h                |  59 ++++++++
->>  2 files changed, 187 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c
->> b/drivers/media/common/videobuf2/videobuf2-v4l2.c
->> index 6d4d184aa68e..0627c3339572 100644
->> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
->> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
->
-> [...]
->
->> +#if IS_ENABLED(CONFIG_MEDIA_REQUEST_API)
->> +int vb2_qbuf_request(struct vb2_queue *q, struct v4l2_buffer *b,
->> +                  struct media_request_entity *entity)
->> +{
->> +     struct v4l2_request_entity_data *data;
->> +     struct v4l2_vb2_request_buffer *qb;
->> +     struct media_request *req;
->> +     struct vb2_buffer *vb;
->> +     int ret = 0;
->> +
->> +     if (b->request_fd <= 0)
->> +             return vb2_qbuf(q, b);
->> +
->> +     if (!q->allow_requests)
->> +             return -EINVAL;
->> +
->> +     req = media_request_get_from_fd(b->request_fd);
->> +     if (!req)
->> +             return -EINVAL;
->> +
->> +     data = to_v4l2_entity_data(media_request_get_entity_data(req,
->> entity));
->> +     if (IS_ERR(data)) {
->> +             ret = PTR_ERR(data);
->> +             goto out;
->> +     }
->> +
->> +     mutex_lock(&req->lock);
->> +
->> +     if (req->state != MEDIA_REQUEST_STATE_IDLE) {
->> +             ret = -EINVAL;
->> +             goto out;
->> +     }
->> +
->> +     ret = vb2_queue_or_prepare_buf(q, b, "qbuf");
->> +     if (ret)
->> +             goto out;
->> +
->> +     vb = q->bufs[b->index];
->> +     switch (vb->state) {
->> +     case VB2_BUF_STATE_DEQUEUED:
->> +             break;
->> +     case VB2_BUF_STATE_PREPARED:
->> +             break;
->> +     case VB2_BUF_STATE_PREPARING:
->> +             dprintk(1, "buffer still being prepared\n");
->> +             ret = -EINVAL;
->> +             goto out;
->> +     default:
->> +             dprintk(1, "invalid buffer state %d\n", vb->state);
->> +             ret = -EINVAL;
->> +             goto out;
->> +     }
->> +
->> +     /* do we already have a buffer for this request in the queue?
->> */
->> +     list_for_each_entry(qb, &data->queued_buffers, node) {
->> +             if (qb->queue == q) {
->> +                     ret = -EBUSY;
->> +                     goto out;
->> +             }
->> +     }
->> +
->> +     qb = kzalloc(sizeof(*qb), GFP_KERNEL);
->> +     if (!qb) {
->> +             ret = -ENOMEM;
->> +             goto out;
->> +     }
->> +
->> +     /*
->> +      * TODO should be prepare the buffer here if needed, to
->> report errors
->> +      * early?
->> +      */
->> +     qb->pre_req_state = vb->state;
->> +     qb->queue = q;
->> +     memcpy(&qb->v4l2_buf, b, sizeof(*b));
->
-> I am getting data corruption on qb->v4l2_buf.m.planes from this when
-> using planar buffers, only after exiting the ioctl handler (i.e. when
-> accessing this buffer later from the queue).
->
-> I initially thought this was because the planes pointer was copied as-is
-> from userspace, but Maxime Ripard suggested that this would have
-> automatically triggered a visible fault in the kernel.
->
-> Thus, my best guess is that the data is properly copied from userspace
-> but freed when leaving the ioctl handler, which doesn't work our with
-> the request API.
->
-> A dirty fix that I came up with consists in re-allocating the planes
-> buffer here and copying its contents from "b", so that it can live
-> beyond the ioctl call.
->
-> I am not too sure whether this should be fixed here or in the part of
-> the v4l2 common code that frees this data. What do you think?
+On Wed, Mar 07, 2018 at 05:39:09PM +0000, Suzuki K Poulose wrote:
+> On 09/02/18 18:58, Dave Martin wrote:
+> >On Fri, Feb 09, 2018 at 05:55:12PM +0000, Suzuki K Poulose wrote:
+> >>We enable hardware DBM bit in a capable CPU, very early in the
+> >>boot via __cpu_setup. This doesn't give us a flexibility of
+> >>optionally disable the feature, as the clearing the bit
+> >>is a bit costly as the TLB can cache the settings. Instead,
+> >>we delay enabling the feature until the CPU is brought up
+> >>into the kernel. We use the feature capability mechanism
+> >>to handle it.
+> >>
+> >>The hardware DBM is a non-conflicting feature. i.e, the kernel
+> >>can safely run with a mix of CPUs with some using the feature
+> >>and the others don't. So, it is safe for a late CPU to have
+> >>this capability and enable it, even if the active CPUs don't.
+> >>
+> >>To get this handled properly by the infrastructure, we
+> >>unconditionally set the capability and only enable it
+> >>on CPUs which really have the feature. Also, we print the
+> >>feature detection from the "matches" call back to make sure
+> >>we don't mislead the user when none of the CPUs could use the
+> >>feature.
+> >>
+> >>Cc: Catalin Marinas <catalin.marinas@arm.com>
+> >>Cc: Dave Martin <dave.martin@arm.com>
+> >>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >>---
+> >>Changes since V2
+> >>  - Print the feature detection message only when at least one CPU
+> >>    is actually using it.
+> 
+> 
+> >>+static bool has_hw_dbm(const struct arm64_cpu_capabilities *cap,
+> >>+		       int __unused)
+> >>+{
+> >>+	static bool detected = false;
+> >>+	/*
+> >>+	 * DBM is a non-conflicting feature. i.e, the kernel can safely
+> >>+	 * run a mix of CPUs with and without the feature. So, we
+> >>+	 * unconditionally enable the capability to allow any late CPU
+> >>+	 * to use the feature. We only enable the control bits on the
+> >>+	 * CPU, if it actually supports.
+> >>+	 *
+> >>+	 * We have to make sure we print the "feature" detection only
+> >>+	 * when at least one CPU actually uses it. So check if this CPU
+> >>+	 * can actually use it and print the message exactly once.
+> >>+	 *
+> >>+	 * This is safe as all CPUs (including secondary CPUs - due to the
+> >>+	 * LOCAL_CPU scope - and the hotplugged CPUs - via verification)
+> >>+	 * goes through the "matches" check exactly once. Also if a CPU
+> >>+	 * matches the criteria, it is guaranteed that the CPU will turn
+> >>+	 * the DBM on, as the capability is unconditionally enabled.
+> >>+	 */
+> >>+	if (!detected && cpu_can_use_dbm(cap)) {
+> >>+		detected = true;
+> >>+		pr_info("detected feature: Hardware dirty bit management\n");
+> >>+	}
+> >
+> >Can we just do
+> >
+> >	if (cpu_can_use_dbm(cap))
+> >		pr_info_once(...);
+> >
+> >Then we can get rid of "detected".
+> 
+> The reason for open coding is the cost of cpu_can_use_dbm() with
+> addition of black listed CPUs in the next patch in the series.
 
-Oh, nice catch. Copying plane information indeed requires more work
-than a dumb memcpy(). I suppose this should be handled here, but let
-me come back to this after a good night of sleep. :)
+Oh, I see.  Yes, that makes sense.
 
-Thanks! I will try to fix this tomorrow and push a temporary version
-somewhere so you can move forward.
+There's obvious raciness here, but I guess pr_info_once() doesn't defend
+against that either.  In practice, we don't race booting of two CPUs
+against each other IIUC.
 
-Alex.
+If you really like you could make detected __read_mostly like
+printk_once() does, but that's no big deal if this is not on a hot path
+(and probably not even then).
+
+Cheers
+---Dave
