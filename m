@@ -1,513 +1,214 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966320AbeCHLBU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 06:01:20 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6182 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754981AbeCHK7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 05:59:46 -0500
-From: John Garry <john.garry@huawei.com>
-To: <jolsa@redhat.com>, <ak@linux.intel.com>, <peterz@infradead.org>,
-        <mingo@redhat.com>, <acme@kernel.org>,
-        <alexander.shishkin@linux.intel.com>, <namhyung@kernel.org>,
-        <wcohen@redhat.com>, <will.deacon@arm.com>,
-        <ganapatrao.kulkarni@cavium.com>
-CC: <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <zhangshaokun@hisilicon.com>,
-        "John Garry" <john.garry@huawei.com>
-Subject: [PATCH v3 06/11] perf vendor events arm64: Relocate Cortex A53 JSONs to arm subdirectory
-Date: Thu, 8 Mar 2018 18:58:31 +0800
-Message-ID: <1520506716-197429-7-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520506716-197429-1-git-send-email-john.garry@huawei.com>
-References: <1520506716-197429-1-git-send-email-john.garry@huawei.com>
+        id S966180AbeCHLB0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 06:01:26 -0500
+Received: from foss.arm.com ([217.140.101.70]:35930 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755105AbeCHLBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 06:01:23 -0500
+Subject: =?UTF-8?B?UmU6IFvmraTpgq7ku7blj6/og73lrZjlnKjpo47pmaldIFJlOiBbUkZD?=
+ =?UTF-8?Q?_PATCH]_KVM:_arm/arm64:_vgic:_change_condition_for_level_interrup?=
+ =?UTF-8?Q?t_resampling?=
+To: "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
+        "eric.auger@redhat.com" <eric.auger@redhat.com>,
+        "cdall@kernel.org" <cdall@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "david.daney@cavium.com" <david.daney@cavium.com>
+References: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
+ <9b3763f2-1dfa-5506-d7f2-93389647111c@redhat.com>
+ <1520501495.2583.19.camel@hxt-semitech.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <9fa18b3f-61c5-eb1c-5d9f-5e872d88a6e5@arm.com>
+Date: Thu, 8 Mar 2018 11:01:16 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+In-Reply-To: <1520501495.2583.19.camel@hxt-semitech.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since jevents now supports vendor subdirectory, relocate
-the Cortex-A53 JSONs to arm subdirectory.
+On 08/03/18 09:31, Yang, Shunyong wrote:
+> Hi, Eric,
+> 
+> First, please let me change Christoffer's email to cdall@kernel.org. I
+> add more information about my test below, please check.
+> 
+> On Thu, 2018-03-08 at 09:57 +0100, Auger Eric wrote:
+>> Hi,
+>>
+>> On 08/03/18 08:01, Shunyong Yang wrote:
+>>>
+>>> When resampling irqfds is enabled, level interrupt should be
+>>> de-asserted when resampling happens. On page 4-47 of GIC v3
+>>> specification IHI0069D, it said,
+>>> "When the PE acknowledges an SGI, a PPI, or an SPI at the CPU
+>>> interface, the IRI changes the status of the interrupt to active
+>>> and pending if:
+>>> • It is an edge-triggered interrupt, and another edge has been
+>>> detected since the interrupt was acknowledged.
+>>> • It is a level-sensitive interrupt, and the level has not been
+>>> deasserted since the interrupt was acknowledged."
+>>>
+>>> GIC v2 specification IHI0048B.b has similar description on page
+>>> 3-42 for state machine transition.
+>>>
+>>> When some VFIO device, like mtty(8250 VFIO mdev emulation driver
+>>> in samples/vfio-mdev) triggers a level interrupt, the status
+>>> transition in LR is pending-->active-->active and pending.
+>>> Then it will wait resampling to de-assert the interrupt.
+>>>
+>>> Current design of lr_signals_eoi_mi() will return false if state
+>>> in LR is not invalid(Inactive). It causes resampling will not
+>>> happen
+>>> in mtty case.
+>>>
+>>> This will cause interrupt fired continuously to guest even 8250 IIR
+>>> has no interrupt. When 8250's interrupt is configured in shared
+>>> mode,
+>>> it will pass interrupt to other drivers to handle. However, there
+>>> is no other driver involved. Then, a "nobody cared" kernel
+>>> complaint
+>>> occurs.
+>>>
+>>> / # cat /dev/ttyS0
+>>> [    4.826836] random: crng init done
+>>> [    6.373620] irq 41: nobody cared (try booting with the "irqpoll"
+>>> option)
+>>> [    6.376414] CPU: 0 PID: 1307 Comm: cat Not tainted 4.16.0-rc4 #4
+>>> [    6.378927] Hardware name: linux,dummy-virt (DT)
+>>> [    6.380876] Call trace:
+>>> [    6.381937]  dump_backtrace+0x0/0x180
+>>> [    6.383495]  show_stack+0x14/0x1c
+>>> [    6.384902]  dump_stack+0x90/0xb4
+>>> [    6.386312]  __report_bad_irq+0x38/0xe0
+>>> [    6.387944]  note_interrupt+0x1f4/0x2b8
+>>> [    6.389568]  handle_irq_event_percpu+0x54/0x7c
+>>> [    6.391433]  handle_irq_event+0x44/0x74
+>>> [    6.393056]  handle_fasteoi_irq+0x9c/0x154
+>>> [    6.394784]  generic_handle_irq+0x24/0x38
+>>> [    6.396483]  __handle_domain_irq+0x60/0xb4
+>>> [    6.398207]  gic_handle_irq+0x98/0x1b0
+>>> [    6.399796]  el1_irq+0xb0/0x128
+>>> [    6.401138]  _raw_spin_unlock_irqrestore+0x18/0x40
+>>> [    6.403149]  __setup_irq+0x41c/0x678
+>>> [    6.404669]  request_threaded_irq+0xe0/0x190
+>>> [    6.406474]  univ8250_setup_irq+0x208/0x234
+>>> [    6.408250]  serial8250_do_startup+0x1b4/0x754
+>>> [    6.410123]  serial8250_startup+0x20/0x28
+>>> [    6.411826]  uart_startup.part.21+0x78/0x144
+>>> [    6.413633]  uart_port_activate+0x50/0x68
+>>> [    6.415328]  tty_port_open+0x84/0xd4
+>>> [    6.416851]  uart_open+0x34/0x44
+>>> [    6.418229]  tty_open+0xec/0x3c8
+>>> [    6.419610]  chrdev_open+0xb0/0x198
+>>> [    6.421093]  do_dentry_open+0x200/0x310
+>>> [    6.422714]  vfs_open+0x54/0x84
+>>> [    6.424054]  path_openat+0x2dc/0xf04
+>>> [    6.425569]  do_filp_open+0x68/0xd8
+>>> [    6.427044]  do_sys_open+0x16c/0x224
+>>> [    6.428563]  SyS_openat+0x10/0x18
+>>> [    6.429972]  el0_svc_naked+0x30/0x34
+>>> [    6.431494] handlers:
+>>> [    6.432479] [<000000000e9fb4bb>] serial8250_interrupt
+>>> [    6.434597] Disabling IRQ #41
+>>>
+>>> This patch changes the lr state condition in lr_signals_eoi_mi()
+>>> from
+>>> invalid(Inactive) to active and pending to avoid this.
+>>>
+>>> I am not sure about the original design of the condition of
+>>> invalid(active). So, This RFC is sent out for comments.
+>>>
+>>> Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+>>> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+>>> ---
+>>>  virt/kvm/arm/vgic/vgic-v2.c | 4 ++--
+>>>  virt/kvm/arm/vgic/vgic-v3.c | 4 ++--
+>>>  2 files changed, 4 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/virt/kvm/arm/vgic/vgic-v2.c b/virt/kvm/arm/vgic/vgic-
+>>> v2.c
+>>> index e9d840a75e7b..740ee9a5f551 100644
+>>> --- a/virt/kvm/arm/vgic/vgic-v2.c
+>>> +++ b/virt/kvm/arm/vgic/vgic-v2.c
+>>> @@ -46,8 +46,8 @@ void vgic_v2_set_underflow(struct kvm_vcpu *vcpu)
+>>>  
+>>>  static bool lr_signals_eoi_mi(u32 lr_val)
+>>>  {
+>>> -	return !(lr_val & GICH_LR_STATE) && (lr_val & GICH_LR_EOI)
+>>> &&
+>>> -	       !(lr_val & GICH_LR_HW);
+>>> +	return !((lr_val & GICH_LR_STATE) ^ GICH_LR_STATE) &&
+>>> +	       (lr_val & GICH_LR_EOI) && !(lr_val & GICH_LR_HW);
+>>>  }
+>>>  
+>>>  /*
+>>> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-
+>>> v3.c
+>>> index 6b329414e57a..43111bba7af9 100644
+>>> --- a/virt/kvm/arm/vgic/vgic-v3.c
+>>> +++ b/virt/kvm/arm/vgic/vgic-v3.c
+>>> @@ -35,8 +35,8 @@ void vgic_v3_set_underflow(struct kvm_vcpu *vcpu)
+>>>  
+>>>  static bool lr_signals_eoi_mi(u64 lr_val)
+>>>  {
+>>> -	return !(lr_val & ICH_LR_STATE) && (lr_val & ICH_LR_EOI)
+>>> &&
+>>> -	       !(lr_val & ICH_LR_HW);
+>>> +	return !((lr_val & ICH_LR_STATE) ^ ICH_LR_STATE) &&
+>>> +	       (lr_val & ICH_LR_EOI) && !(lr_val & ICH_LR_HW);
+>>
+>> In general don't we have this state transition
+>>
+>> inactive -> pending -> pending + active (1) -> active -> inactive.
+>>
+>> In that case won't we lower the virt irq level when folding the LR on
+>> Pending + Active state, which is not was we want?
+>>
+>> Thanks
+>>
+>> Eric
+> 
+> In current code, in my test, when I output LR value of the mtty IRQ 41
+> (hwirq = 36) in vgic_v3_fold_lr_state(). The LR's transition starts
+> like following,
+> 
+> 0-->50a0020000000024-->90a0020000000024-->d0a0020000000024
+> 
+> That is inactive-->pending-->active-->pending + active.
+> Then it keep running cyclic pending-->active-->pending + active.
+> 
+> The level interrupt de-assert should happen in following code
+> /* Notify fds when the guest EOI'ed a level-triggered IRQ */
+> 	if (lr_signals_eoi_mi(val) && vgic_valid_spi(vcpu->kvm, intid))
+> 		kvm_notify_acked_irq(vcpu->kvm, 0,
+> 				     intid - VGIC_NR_PRIVATE_IRQS);
+> 
+> But as addressed in commit message, lr_signals_eoi_mi() will return
+> false if state in LR is not invalid(inactive), so it has no chance to
+> de-assert the level interrupt in my test. 
 
-Cc: William Cohen <wcohen@redhat.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- .../arch/arm64/arm/cortex-a53/branch.json          | 27 +++++++++++
- .../pmu-events/arch/arm64/arm/cortex-a53/bus.json  | 22 +++++++++
- .../arch/arm64/arm/cortex-a53/cache.json           | 27 +++++++++++
- .../arch/arm64/arm/cortex-a53/memory.json          | 22 +++++++++
- .../arch/arm64/arm/cortex-a53/other.json           | 32 +++++++++++++
- .../arch/arm64/arm/cortex-a53/pipeline.json        | 52 ++++++++++++++++++++++
- .../pmu-events/arch/arm64/cortex-a53/branch.json   | 27 -----------
- .../perf/pmu-events/arch/arm64/cortex-a53/bus.json | 22 ---------
- .../pmu-events/arch/arm64/cortex-a53/cache.json    | 27 -----------
- .../pmu-events/arch/arm64/cortex-a53/memory.json   | 22 ---------
- .../pmu-events/arch/arm64/cortex-a53/other.json    | 32 -------------
- .../pmu-events/arch/arm64/cortex-a53/pipeline.json | 52 ----------------------
- tools/perf/pmu-events/arch/arm64/mapfile.csv       |  2 +-
- 13 files changed, 183 insertions(+), 183 deletions(-)
- create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/branch.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/bus.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/cache.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/memory.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/other.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/arm/cortex-a53/pipeline.json
- delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
- delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
- delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
- delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
- delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
- delete mode 100644 tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
+The problem is that pending+active is not an indication that the guest
+has actually EOI'd anything. In only indicates that it has been activated.
 
-diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/branch.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/branch.json
-new file mode 100644
-index 0000000..3b62087
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/branch.json
-@@ -0,0 +1,27 @@
-+[
-+  {,
-+    "EventCode": "0x7A",
-+    "EventName": "BR_INDIRECT_SPEC",
-+    "BriefDescription": "Branch speculatively executed - Indirect branch"
-+  },
-+  {,
-+    "EventCode": "0xC9",
-+    "EventName": "BR_COND",
-+    "BriefDescription": "Conditional branch executed"
-+  },
-+  {,
-+    "EventCode": "0xCA",
-+    "EventName": "BR_INDIRECT_MISPRED",
-+    "BriefDescription": "Indirect branch mispredicted"
-+  },
-+  {,
-+    "EventCode": "0xCB",
-+    "EventName": "BR_INDIRECT_MISPRED_ADDR",
-+    "BriefDescription": "Indirect branch mispredicted because of address miscompare"
-+  },
-+  {,
-+    "EventCode": "0xCC",
-+    "EventName": "BR_COND_MISPRED",
-+    "BriefDescription": "Conditional branch mispredicted"
-+  }
-+]
-diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/bus.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/bus.json
-new file mode 100644
-index 0000000..480d9f7
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/bus.json
-@@ -0,0 +1,22 @@
-+[
-+  {,
-+    "EventCode": "0x60",
-+    "EventName": "BUS_ACCESS_LD",
-+    "BriefDescription": "Bus access - Read"
-+  },
-+  {,
-+    "EventCode": "0x61",
-+    "EventName": "BUS_ACCESS_ST",
-+    "BriefDescription": "Bus access - Write"
-+  },
-+  {,
-+    "EventCode": "0xC0",
-+    "EventName": "EXT_MEM_REQ",
-+    "BriefDescription": "External memory request"
-+  },
-+  {,
-+    "EventCode": "0xC1",
-+    "EventName": "EXT_MEM_REQ_NC",
-+    "BriefDescription": "Non-cacheable external memory request"
-+  }
-+]
-diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/cache.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/cache.json
-new file mode 100644
-index 0000000..11baad6
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/cache.json
-@@ -0,0 +1,27 @@
-+[
-+  {,
-+    "EventCode": "0xC2",
-+    "EventName": "PREFETCH_LINEFILL",
-+    "BriefDescription": "Linefill because of prefetch"
-+  },
-+  {,
-+    "EventCode": "0xC3",
-+    "EventName": "PREFETCH_LINEFILL_DROP",
-+    "BriefDescription": "Instruction Cache Throttle occurred"
-+  },
-+  {,
-+    "EventCode": "0xC4",
-+    "EventName": "READ_ALLOC_ENTER",
-+    "BriefDescription": "Entering read allocate mode"
-+  },
-+  {,
-+    "EventCode": "0xC5",
-+    "EventName": "READ_ALLOC",
-+    "BriefDescription": "Read allocate mode"
-+  },
-+  {,
-+    "EventCode": "0xC8",
-+    "EventName": "EXT_SNOOP",
-+    "BriefDescription": "SCU Snooped data from another CPU for this CPU"
-+  }
-+]
-diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/memory.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/memory.json
-new file mode 100644
-index 0000000..480d9f7
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/memory.json
-@@ -0,0 +1,22 @@
-+[
-+  {,
-+    "EventCode": "0x60",
-+    "EventName": "BUS_ACCESS_LD",
-+    "BriefDescription": "Bus access - Read"
-+  },
-+  {,
-+    "EventCode": "0x61",
-+    "EventName": "BUS_ACCESS_ST",
-+    "BriefDescription": "Bus access - Write"
-+  },
-+  {,
-+    "EventCode": "0xC0",
-+    "EventName": "EXT_MEM_REQ",
-+    "BriefDescription": "External memory request"
-+  },
-+  {,
-+    "EventCode": "0xC1",
-+    "EventName": "EXT_MEM_REQ_NC",
-+    "BriefDescription": "Non-cacheable external memory request"
-+  }
-+]
-diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/other.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/other.json
-new file mode 100644
-index 0000000..73a2240
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/other.json
-@@ -0,0 +1,32 @@
-+[
-+  {,
-+    "EventCode": "0x86",
-+    "EventName": "EXC_IRQ",
-+    "BriefDescription": "Exception taken, IRQ"
-+  },
-+  {,
-+    "EventCode": "0x87",
-+    "EventName": "EXC_FIQ",
-+    "BriefDescription": "Exception taken, FIQ"
-+  },
-+  {,
-+    "EventCode": "0xC6",
-+    "EventName": "PRE_DECODE_ERR",
-+    "BriefDescription": "Pre-decode error"
-+  },
-+  {,
-+    "EventCode": "0xD0",
-+    "EventName": "L1I_CACHE_ERR",
-+    "BriefDescription": "L1 Instruction Cache (data or tag) memory error"
-+  },
-+  {,
-+    "EventCode": "0xD1",
-+    "EventName": "L1D_CACHE_ERR",
-+    "BriefDescription": "L1 Data Cache (data, tag or dirty) memory error, correctable or non-correctable"
-+  },
-+  {,
-+    "EventCode": "0xD2",
-+    "EventName": "TLB_ERR",
-+    "BriefDescription": "TLB memory error"
-+  }
-+]
-diff --git a/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/pipeline.json b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/pipeline.json
-new file mode 100644
-index 0000000..3149fb9
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/arm64/arm/cortex-a53/pipeline.json
-@@ -0,0 +1,52 @@
-+[
-+  {,
-+    "EventCode": "0xC7",
-+    "EventName": "STALL_SB_FULL",
-+    "BriefDescription": "Data Write operation that stalls the pipeline because the store buffer is full"
-+  },
-+  {,
-+    "EventCode": "0xE0",
-+    "EventName": "OTHER_IQ_DEP_STALL",
-+    "BriefDescription": "Cycles that the DPU IQ is empty and that is not because of a recent micro-TLB miss, instruction cache miss or pre-decode error"
-+  },
-+  {,
-+    "EventCode": "0xE1",
-+    "EventName": "IC_DEP_STALL",
-+    "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction cache miss being processed"
-+  },
-+  {,
-+    "EventCode": "0xE2",
-+    "EventName": "IUTLB_DEP_STALL",
-+    "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction micro-TLB miss being processed"
-+  },
-+  {,
-+    "EventCode": "0xE3",
-+    "EventName": "DECODE_DEP_STALL",
-+    "BriefDescription": "Cycles the DPU IQ is empty and there is a pre-decode error being processed"
-+  },
-+  {,
-+    "EventCode": "0xE4",
-+    "EventName": "OTHER_INTERLOCK_STALL",
-+    "BriefDescription": "Cycles there is an interlock other than  Advanced SIMD/Floating-point instructions or load/store instruction"
-+  },
-+  {,
-+    "EventCode": "0xE5",
-+    "EventName": "AGU_DEP_STALL",
-+    "BriefDescription": "Cycles there is an interlock for a load/store instruction waiting for data to calculate the address in the AGU"
-+  },
-+  {,
-+    "EventCode": "0xE6",
-+    "EventName": "SIMD_DEP_STALL",
-+    "BriefDescription": "Cycles there is an interlock for an Advanced SIMD/Floating-point operation."
-+  },
-+  {,
-+    "EventCode": "0xE7",
-+    "EventName": "LD_DEP_STALL",
-+    "BriefDescription": "Cycles there is a stall in the Wr stage because of a load miss"
-+  },
-+  {,
-+    "EventCode": "0xE8",
-+    "EventName": "ST_DEP_STALL",
-+    "BriefDescription": "Cycles there is a stall in the Wr stage because of a store"
-+  }
-+]
-diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
-deleted file mode 100644
-index 3b62087..0000000
---- a/tools/perf/pmu-events/arch/arm64/cortex-a53/branch.json
-+++ /dev/null
-@@ -1,27 +0,0 @@
--[
--  {,
--    "EventCode": "0x7A",
--    "EventName": "BR_INDIRECT_SPEC",
--    "BriefDescription": "Branch speculatively executed - Indirect branch"
--  },
--  {,
--    "EventCode": "0xC9",
--    "EventName": "BR_COND",
--    "BriefDescription": "Conditional branch executed"
--  },
--  {,
--    "EventCode": "0xCA",
--    "EventName": "BR_INDIRECT_MISPRED",
--    "BriefDescription": "Indirect branch mispredicted"
--  },
--  {,
--    "EventCode": "0xCB",
--    "EventName": "BR_INDIRECT_MISPRED_ADDR",
--    "BriefDescription": "Indirect branch mispredicted because of address miscompare"
--  },
--  {,
--    "EventCode": "0xCC",
--    "EventName": "BR_COND_MISPRED",
--    "BriefDescription": "Conditional branch mispredicted"
--  }
--]
-diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
-deleted file mode 100644
-index 480d9f7..0000000
---- a/tools/perf/pmu-events/arch/arm64/cortex-a53/bus.json
-+++ /dev/null
-@@ -1,22 +0,0 @@
--[
--  {,
--    "EventCode": "0x60",
--    "EventName": "BUS_ACCESS_LD",
--    "BriefDescription": "Bus access - Read"
--  },
--  {,
--    "EventCode": "0x61",
--    "EventName": "BUS_ACCESS_ST",
--    "BriefDescription": "Bus access - Write"
--  },
--  {,
--    "EventCode": "0xC0",
--    "EventName": "EXT_MEM_REQ",
--    "BriefDescription": "External memory request"
--  },
--  {,
--    "EventCode": "0xC1",
--    "EventName": "EXT_MEM_REQ_NC",
--    "BriefDescription": "Non-cacheable external memory request"
--  }
--]
-diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
-deleted file mode 100644
-index 11baad6..0000000
---- a/tools/perf/pmu-events/arch/arm64/cortex-a53/cache.json
-+++ /dev/null
-@@ -1,27 +0,0 @@
--[
--  {,
--    "EventCode": "0xC2",
--    "EventName": "PREFETCH_LINEFILL",
--    "BriefDescription": "Linefill because of prefetch"
--  },
--  {,
--    "EventCode": "0xC3",
--    "EventName": "PREFETCH_LINEFILL_DROP",
--    "BriefDescription": "Instruction Cache Throttle occurred"
--  },
--  {,
--    "EventCode": "0xC4",
--    "EventName": "READ_ALLOC_ENTER",
--    "BriefDescription": "Entering read allocate mode"
--  },
--  {,
--    "EventCode": "0xC5",
--    "EventName": "READ_ALLOC",
--    "BriefDescription": "Read allocate mode"
--  },
--  {,
--    "EventCode": "0xC8",
--    "EventName": "EXT_SNOOP",
--    "BriefDescription": "SCU Snooped data from another CPU for this CPU"
--  }
--]
-diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
-deleted file mode 100644
-index 480d9f7..0000000
---- a/tools/perf/pmu-events/arch/arm64/cortex-a53/memory.json
-+++ /dev/null
-@@ -1,22 +0,0 @@
--[
--  {,
--    "EventCode": "0x60",
--    "EventName": "BUS_ACCESS_LD",
--    "BriefDescription": "Bus access - Read"
--  },
--  {,
--    "EventCode": "0x61",
--    "EventName": "BUS_ACCESS_ST",
--    "BriefDescription": "Bus access - Write"
--  },
--  {,
--    "EventCode": "0xC0",
--    "EventName": "EXT_MEM_REQ",
--    "BriefDescription": "External memory request"
--  },
--  {,
--    "EventCode": "0xC1",
--    "EventName": "EXT_MEM_REQ_NC",
--    "BriefDescription": "Non-cacheable external memory request"
--  }
--]
-diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/other.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
-deleted file mode 100644
-index 73a2240..0000000
---- a/tools/perf/pmu-events/arch/arm64/cortex-a53/other.json
-+++ /dev/null
-@@ -1,32 +0,0 @@
--[
--  {,
--    "EventCode": "0x86",
--    "EventName": "EXC_IRQ",
--    "BriefDescription": "Exception taken, IRQ"
--  },
--  {,
--    "EventCode": "0x87",
--    "EventName": "EXC_FIQ",
--    "BriefDescription": "Exception taken, FIQ"
--  },
--  {,
--    "EventCode": "0xC6",
--    "EventName": "PRE_DECODE_ERR",
--    "BriefDescription": "Pre-decode error"
--  },
--  {,
--    "EventCode": "0xD0",
--    "EventName": "L1I_CACHE_ERR",
--    "BriefDescription": "L1 Instruction Cache (data or tag) memory error"
--  },
--  {,
--    "EventCode": "0xD1",
--    "EventName": "L1D_CACHE_ERR",
--    "BriefDescription": "L1 Data Cache (data, tag or dirty) memory error, correctable or non-correctable"
--  },
--  {,
--    "EventCode": "0xD2",
--    "EventName": "TLB_ERR",
--    "BriefDescription": "TLB memory error"
--  }
--]
-diff --git a/tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json b/tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
-deleted file mode 100644
-index 3149fb9..0000000
---- a/tools/perf/pmu-events/arch/arm64/cortex-a53/pipeline.json
-+++ /dev/null
-@@ -1,52 +0,0 @@
--[
--  {,
--    "EventCode": "0xC7",
--    "EventName": "STALL_SB_FULL",
--    "BriefDescription": "Data Write operation that stalls the pipeline because the store buffer is full"
--  },
--  {,
--    "EventCode": "0xE0",
--    "EventName": "OTHER_IQ_DEP_STALL",
--    "BriefDescription": "Cycles that the DPU IQ is empty and that is not because of a recent micro-TLB miss, instruction cache miss or pre-decode error"
--  },
--  {,
--    "EventCode": "0xE1",
--    "EventName": "IC_DEP_STALL",
--    "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction cache miss being processed"
--  },
--  {,
--    "EventCode": "0xE2",
--    "EventName": "IUTLB_DEP_STALL",
--    "BriefDescription": "Cycles the DPU IQ is empty and there is an instruction micro-TLB miss being processed"
--  },
--  {,
--    "EventCode": "0xE3",
--    "EventName": "DECODE_DEP_STALL",
--    "BriefDescription": "Cycles the DPU IQ is empty and there is a pre-decode error being processed"
--  },
--  {,
--    "EventCode": "0xE4",
--    "EventName": "OTHER_INTERLOCK_STALL",
--    "BriefDescription": "Cycles there is an interlock other than  Advanced SIMD/Floating-point instructions or load/store instruction"
--  },
--  {,
--    "EventCode": "0xE5",
--    "EventName": "AGU_DEP_STALL",
--    "BriefDescription": "Cycles there is an interlock for a load/store instruction waiting for data to calculate the address in the AGU"
--  },
--  {,
--    "EventCode": "0xE6",
--    "EventName": "SIMD_DEP_STALL",
--    "BriefDescription": "Cycles there is an interlock for an Advanced SIMD/Floating-point operation."
--  },
--  {,
--    "EventCode": "0xE7",
--    "EventName": "LD_DEP_STALL",
--    "BriefDescription": "Cycles there is a stall in the Wr stage because of a load miss"
--  },
--  {,
--    "EventCode": "0xE8",
--    "EventName": "ST_DEP_STALL",
--    "BriefDescription": "Cycles there is a stall in the Wr stage because of a store"
--  }
--]
-diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-index 952a05c..cf14e23 100644
---- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
-+++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-@@ -12,5 +12,5 @@
- #
- #
- #Family-model,Version,Filename,EventType
-+0x00000000410fd03[[:xdigit:]],v1,arm/cortex-a53,core
- 0x00000000420f5160,v1,cavium/thunderx2,core
--0x00000000410fd03[[:xdigit:]],v1,cortex-a53,core
+Note that there is a bit of vocabulary discrepancy between KVM and the
+ARM architecture: KVM uses "acked" where ARM uses EOI. ARM uses "ACK" or
+"Activate" for something entirely different. Maybe the confusion stems
+from this difference.
+
+Thanks,
+
+	M.
 -- 
-1.9.1
+Jazz is not dead. It just smells funny...
