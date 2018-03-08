@@ -1,136 +1,106 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELsrJ4QhQdHQVlmVwQdLxJxgZqt8WWH6j93BbFeUchAtBU9mglbZxt10a8+GTTVdELl64VwU
-ARC-Seal: i=1; a=rsa-sha256; t=1520603314; cv=none;
-        d=google.com; s=arc-20160816;
-        b=0eP500H0yoHD7NEUw/8LVsIMxUWVpivKXpq1zLSzfL2wtOlhaAWJdoO6ZPreJu3wkj
-         LXdoXzUCAZS8x6NclOgj9YLFBOGpUKuX3TvPypBLyIMWuhMSJZGscKCjrAJqkGRYf7+u
-         kpqCnTnBbzPC9z3CMQZE0qeQk2PVevM/hly6W8PvTv3foKZi7ck5Kg/eTFnnwsLaF9cx
-         AhLD/TGZe0yYtSU0vocHJOOG+0bTuz/oDUJ5PX8JmouArDoO6FzScE13VUbaUMkm7JR4
-         iTy+27T2eRNHLWPOVajfn/7P9bu5JJCLxxHeyept49/y8k9UiSxJj5kTJIUCsEdhd2kS
-         D+ng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding:mime-version
-         :message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=oOOy5A2jyKv0uiA/I6R2BZ5aagjwDenCA9Lmt7eE198=;
-        b=DqGvlsdhyLzRCI0TgeExAvXLtkzFR1oCXGQjYOrAV4C/d8S/a1JMAitWNHxcB42dOG
-         ckRmskLtXN47HElCKa+KfNz2cvQvN3FgvLqaH4vBcmaa9A8kVKzbpvIEAGgNx/1Vftk9
-         NytwXaglk/KsBfUFBEOhAMPpWNEeSQNVXZWJppO5UGgdPCCX/EywOdE8EIpa6vKccaNn
-         1HLeq/enHDAL2S0E7RGr3553VnMqT/25BpH3EBVvFSlanf+1B/WokWFhhnihwkBbN8rX
-         AoFJ6ufaBwnqVAOaF/8w8xV15EUs+hujkaNBnnDuSE5JcfXG4S4CEWZUy1I1OE6lsdg+
-         rXGw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=EYrRupQL;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-Authentication-Results: mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=EYrRupQL;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2846663-1520541712-2-11648586713604949222
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520541712; b=MkKUhCZVpD5wMjROMjUW58YRBAS6x9XnvlSfIecLXBhk9OJ
+    4n4pOd37d8XHLjzS9rRjbQxCP11QpP+PbtE1VbEb6Ds5q80s7XLX0CYLSkj28Bw0
+    KLeFK1z2EXeOn1OiUroDUdHDUOPEaegcjQcZesGTbiHH31df2L+yUlA0+AmWzF6T
+    RXYp5psr/hZ8XTowOjSLmiP6B/Zyi04+TFOceWEmCd1qP4lbRJUKCISKtM64Edef
+    wgzbd0knGENLOwvPU4bkOS9f4QIV8STc1AG8uuxrx8gk7hLwDO+P08oMsBotEVm5
+    UdsBNHVvmfT6LT1wXgNXBx4k0HW6HNMplkxVKgQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1520541712; bh=CKnFdvwLXUdGFtZUH+AW2qplPO
+    ysgd1C6Pum1KfCs7Q=; b=oS1IHFOWgrgm6ViY6V1lbtYUeYxzHsFjNZiKapTXlA
+    VaRWGiQjpGfV1190LiXBPHH7bof3CKFUjToPpWzOHoRnFPzx5NvYZhFW63WzN7O5
+    hViTDjq/WB3xe+gRRrhuI0g+MZ3TSe10RZedqW1hL05IjJpfq5gHEtAKtTA/wZrU
+    LuK2C7G5WxNex3HHfNK6PzfqF4ODqyV/IcUR0qJoCHIMH592AI8gchY4M2DefFDh
+    YIVUqFTzi9Pq2NXhnBlda/8EKdS/9M3qw6MXaYLq+My5Mse30AiMaL34ufnQmmdE
+    KDS0nE4pHGcwCYsP2iANaeTIZL60nIhAknyRC4JhxzmQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=wizzup.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=wizzup.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=wizzup.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=wizzup.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932162AbeCINsL (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Fri, 9 Mar 2018 08:48:11 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:38577 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932130AbeCINsI (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Fri, 9 Mar 2018 08:48:08 -0500
-From: Anders Roxell <anders.roxell@linaro.org>
-To: shuah@kernel.org
-Cc: skinsbursky@parallels.com, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] selftests/ipc/msgque: Fix warning implicit declaration
-Date: Fri,  9 Mar 2018 14:47:55 +0100
-Message-Id: <20180309134755.11101-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.11.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+        id S1751229AbeCHUlX (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 15:41:23 -0500
+Received: from nala.villavu.com ([188.165.243.101]:50909 "EHLO
+        nala.villavu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751225AbeCHUlV (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Thu, 8 Mar 2018 15:41:21 -0500
+From: Merlijn Wajer <merlijn@wizzup.org>
+To: b-liu@ti.com
+Cc: merlijn@wizzup.org, ivo.g.dimitrov.75@gmail.com,
+        linux-omap@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: musb: Fix external abort in musb_remove
+Date: Thu,  8 Mar 2018 21:40:47 +0100
+Message-Id: <20180308204049.29474-1-merlijn@wizzup.org>
+X-Mailer: git-send-email 2.16.2
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594468141220190174?=
-X-GMAIL-MSGID: =?utf-8?q?1594468141220190174?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-gcc warns about implicit declaration.
+This fixes an oops on unbind / module unload.
 
-gcc -I../../../../usr/include/    msgque.c  -o msgque
-msgque.c: In function ‘restore_queue’:
-msgque.c:52:7: warning: implicit declaration of function ‘msgget’
- [-Wimplicit-function-declaration]
-  id = msgget(msgque->key, msgque->mode | IPC_CREAT | IPC_EXCL);
-       ^~~~~~
-msgque.c:66:7: warning: implicit declaration of function ‘msgsnd’
- [-Wimplicit-function-declaration]
-   if (msgsnd(msgque->msq_id, &msgque->messages[i].mtype,
-       ^~~~~~
-msgque.c:76:6: warning: implicit declaration of function ‘msgctl’
- [-Wimplicit-function-declaration]
-  if (msgctl(id, IPC_RMID, 0))
-      ^~~~~~
-msgque.c: In function ‘check_and_destroy_queue’:
-msgque.c:87:9: warning: implicit declaration of function ‘msgrcv’
- [-Wimplicit-function-declaration]
-   ret = msgrcv(msgque->msq_id, &message.mtype, MAX_MSG_SIZE,
-         ^~~~~~
-msgque.c: In function ‘main’:
-msgque.c:204:15: warning: implicit declaration of function ‘ftok’
- [-Wimplicit-function-declaration]
-  msgque.key = ftok(argv[0], 822155650);
-               ^~~~
+musb_remove function now calls musb_platform_exit before disabling
+runtime pm.
 
-In the current code, we include the headers that the functions want
-according to the man pages, and we define MSG_COPY if its not defined.
-We also use 'struct msqid_ds' instead of 'struct msqid64_ds'.
-
-I thought about another patch where I just forward declared these
-functions. However, I wasn't happy with that patch since it feels that
-it forces user space apps to do the same in order to get this to work.
-Another reason was that checkpatch.pl complained that I added forward
-declarations in the c file.
-
-Fixes: 3a665531a3b7 ("selftests: IPC message queue copy feature test")
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Merlijn Wajer <merlijn@wizzup.org>
 ---
- tools/testing/selftests/ipc/msgque.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/usb/musb/musb_core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/ipc/msgque.c b/tools/testing/selftests/ipc/msgque.c
-index ee9382bdfadc..3e32917cd7f4 100644
---- a/tools/testing/selftests/ipc/msgque.c
-+++ b/tools/testing/selftests/ipc/msgque.c
-@@ -3,11 +3,18 @@
- #include <stdio.h>
- #include <string.h>
- #include <errno.h>
--#include <linux/msg.h>
- #include <fcntl.h>
+diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
+index e2e95071328a..cf90d34f7199 100644
+--- a/drivers/usb/musb/musb_core.c
++++ b/drivers/usb/musb/musb_core.c
+@@ -2472,13 +2472,14 @@ static int musb_remove(struct platform_device *pdev)
+ 	musb_platform_disable(musb);
+ 	spin_lock_irqsave(&musb->lock, flags);
+ 	musb_disable_interrupts(musb);
+-	musb_writeb(musb->mregs, MUSB_DEVCTL, 0);
+ 	spin_unlock_irqrestore(&musb->lock, flags);
  
-+#include <sys/types.h>
-+#include <sys/ipc.h>
-+#include <sys/msg.h>
++	musb_writeb(musb->mregs, MUSB_DEVCTL, 0);
++	musb_platform_exit(musb);
 +
- #include "../kselftest.h"
- 
-+#ifndef MSG_COPY
-+#    define MSG_COPY        040000  /* copy (not remove) all queue messages */
-+#endif
-+
- #define MAX_MSG_SIZE		32
- 
- struct msg1 {
-@@ -129,7 +136,7 @@ int check_and_destroy_queue(struct msgque_data *msgque)
- 
- int dump_queue(struct msgque_data *msgque)
- {
--	struct msqid64_ds ds;
-+	struct msqid_ds ds;
- 	int kern_id;
- 	int i, ret;
- 
+ 	pm_runtime_dont_use_autosuspend(musb->controller);
+ 	pm_runtime_put_sync(musb->controller);
+ 	pm_runtime_disable(musb->controller);
+-	musb_platform_exit(musb);
+ 	musb_phy_callback = NULL;
+ 	if (musb->dma_controller)
+ 		musb_dma_controller_destroy(musb->dma_controller);
 -- 
-2.11.0
+2.16.2
 
