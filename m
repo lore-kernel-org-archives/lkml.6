@@ -1,78 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934828AbeCHE1j (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 23:27:39 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:58812 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933575AbeCHE1h (ORCPT
+        id S934880AbeCHE16 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 23:27:58 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:48606 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753901AbeCHE1J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 23:27:37 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w284RYAH026042
-X-Nifty-SrcIP: [209.85.213.49]
-X-Google-Smtp-Source: AG47ELv9bpXjBnbkJCnZ5qhZSu+1q2WYejEBykApqRiSxjvN9khB3g4AfyUbqCdYMX+Mr1xmg0hjjmVP1rwUBEyRlHI=
-MIME-Version: 1.0
-In-Reply-To: <b406d029-4a2b-5396-e48b-10bdc1bc2b96@infradead.org>
-References: <20180214174718.4445-1-mcroce@redhat.com> <CAGnkfhx-1AsoaJcZ9JYrSsQgMAWjznGTWGmSPs9fEjVe3+SOLQ@mail.gmail.com>
- <b406d029-4a2b-5396-e48b-10bdc1bc2b96@infradead.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 8 Mar 2018 13:26:53 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATxeTsnPb3p4JLbanOx4uwv=gz7zQJ6dMDkqyu4mx8vZQ@mail.gmail.com>
-Message-ID: <CAK7LNATxeTsnPb3p4JLbanOx4uwv=gz7zQJ6dMDkqyu4mx8vZQ@mail.gmail.com>
-Subject: Re: [PATCH] bloat-o-meter: fix typo in help
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Matteo Croce <mcroce@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matt Mackall <mpm@selenic.com>,
-        Maninder Singh <maninder1.s@samsung.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 7 Mar 2018 23:27:09 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R471e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0Sz3wC4Q_1520483226;
+From: Jia Zhang <zhang.jia@linux.alibaba.com>
+To: jeyu@kernel.org
+Cc: linux-kernel@vger.kernel.org, zhang.jia@linux.alibaba.com
+Subject: [PATCH 1/4] module: Do not access sig_enforce directly
+Date: Thu,  8 Mar 2018 12:27:00 +0800
+Message-Id: <1520483223-6596-2-git-send-email-zhang.jia@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1520483223-6596-1-git-send-email-zhang.jia@linux.alibaba.com>
+References: <1520483223-6596-1-git-send-email-zhang.jia@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-08 10:51 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
-> On 03/07/2018 03:39 PM, Matteo Croce wrote:
->> On Wed, Feb 14, 2018 at 6:47 PM, Matteo Croce <mcroce@redhat.com> wrote:
->>> the bloat-o-meter script has two typos in the help, fix both.
->>>
->>> Fixes: 192efb7a1f9b ("bloat-o-meter: provide 3 different arguments for data, function and All")
->>> Signed-off-by: Matteo Croce <mcroce@redhat.com>
->>> ---
->>>  scripts/bloat-o-meter | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/scripts/bloat-o-meter b/scripts/bloat-o-meter
->>> index 94b664817ad9..d84a5674e95e 100755
->>> --- a/scripts/bloat-o-meter
->>> +++ b/scripts/bloat-o-meter
->>> @@ -15,7 +15,7 @@ signal(SIGPIPE, SIG_DFL)
->>>  if len(sys.argv) < 3:
->>>      sys.stderr.write("usage: %s [option] file1 file2\n" % sys.argv[0])
->>>      sys.stderr.write("The options are:\n")
->>> -    sys.stderr.write("-c       cateogrize output based on symbole type\n")
->>> +    sys.stderr.write("-c       categorize output based on symbol type\n")
->>>      sys.stderr.write("-d       Show delta of Data Section\n")
->>>      sys.stderr.write("-t       Show delta of text Section\n")
->>>      sys.exit(-1)
->>> --
->>> 2.14.3
->>>
->>
->> Ping, anyone willing to review and eventually merge it?
->
-> Acked-by: Randy Dunlap <rdunlap@infradead.org>
->
->
-> Andrew or Masahiro?
->
-> thanks,
-> --
-> ~Randy
+Call is_module_sig_enforced() instead.
 
-I will pick up this shortly.  Thanks!
+Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+---
+ kernel/module.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-
+diff --git a/kernel/module.c b/kernel/module.c
+index ad2d420..003d0ab 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2789,7 +2789,7 @@ static int module_sig_check(struct load_info *info, int flags)
+ 	}
+ 
+ 	/* Not having a signature is only an error if we're strict. */
+-	if (err == -ENOKEY && !sig_enforce)
++	if (err == -ENOKEY && !is_module_sig_enforced())
+ 		err = 0;
+ 
+ 	return err;
 -- 
-Best Regards
-Masahiro Yamada
+1.8.3.1
