@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965736AbeCHLem (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 06:34:42 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:45289 "EHLO
+        id S1755641AbeCHLfX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 06:35:23 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:42241 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934653AbeCHLek (ORCPT
+        with ESMTP id S1755329AbeCHLfV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 06:34:40 -0500
-Date: Thu, 8 Mar 2018 03:34:26 -0800
-From: tip-bot for Jan Kiszka <tipbot@zytor.com>
-Message-ID: <tip-690f4304104f37e473bd5e43fc5247f5cd35b225@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com,
-        tglx@linutronix.de, hpa@zytor.com, b.spranger@linutronix.de,
-        jan.kiszka@siemens.com, bhelgaas@google.com, mingo@kernel.org
-Reply-To: andy.shevchenko@gmail.com, linux-kernel@vger.kernel.org,
-        bhelgaas@google.com, mingo@kernel.org, jan.kiszka@siemens.com,
-        b.spranger@linutronix.de, tglx@linutronix.de, hpa@zytor.com
-In-Reply-To: <06e279b2a3e06cf6689ab3975f8ab592bba02362.1520408357.git.jan.kiszka@siemens.com>
-References: <06e279b2a3e06cf6689ab3975f8ab592bba02362.1520408357.git.jan.kiszka@siemens.com>
+        Thu, 8 Mar 2018 06:35:21 -0500
+Date: Thu, 8 Mar 2018 03:35:01 -0800
+From: tip-bot for Otavio Pontes <tipbot@zytor.com>
+Message-ID: <tip-6fa4a94e150be25d02547d51f03b4bc34aaec32f@git.kernel.org>
+Cc: bhelgaas@google.com, andy.shevchenko@gmail.com, mingo@kernel.org,
+        hpa@zytor.com, otavio.pontes@intel.com, jan.kiszka@siemens.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de
+Reply-To: bhelgaas@google.com, andy.shevchenko@gmail.com, mingo@kernel.org,
+        hpa@zytor.com, otavio.pontes@intel.com, jan.kiszka@siemens.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de
+In-Reply-To: <2ee9e4401fa22377b3965893a558120f169be82b.1520408357.git.jan.kiszka@siemens.com>
+References: <2ee9e4401fa22377b3965893a558120f169be82b.1520408357.git.jan.kiszka@siemens.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/platform] PCI: Scan all functions when running over
- Jailhouse
-Git-Commit-ID: 690f4304104f37e473bd5e43fc5247f5cd35b225
+Subject: [tip:x86/platform] x86/jailhouse: Enable PCI mmconfig access in
+ inmates
+Git-Commit-ID: 6fa4a94e150be25d02547d51f03b4bc34aaec32f
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,118 +34,80 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  690f4304104f37e473bd5e43fc5247f5cd35b225
-Gitweb:     https://git.kernel.org/tip/690f4304104f37e473bd5e43fc5247f5cd35b225
-Author:     Jan Kiszka <jan.kiszka@siemens.com>
-AuthorDate: Wed, 7 Mar 2018 08:39:13 +0100
+Commit-ID:  6fa4a94e150be25d02547d51f03b4bc34aaec32f
+Gitweb:     https://git.kernel.org/tip/6fa4a94e150be25d02547d51f03b4bc34aaec32f
+Author:     Otavio Pontes <otavio.pontes@intel.com>
+AuthorDate: Wed, 7 Mar 2018 08:39:14 +0100
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 8 Mar 2018 12:30:37 +0100
+CommitDate: Thu, 8 Mar 2018 12:30:38 +0100
 
-PCI: Scan all functions when running over Jailhouse
+x86/jailhouse: Enable PCI mmconfig access in inmates
 
-Per PCIe r4.0, sec 7.5.1.1.9, multi-function devices are required to have a
-function 0.  Therefore, Linux scans for devices at function 0 (devfn
-0/8/16/...) and only scans for other functions if function 0 has its
-Multi-Function Device bit set or ARI or SR-IOV indicate there are more
-functions.
+Use the PCI mmconfig base address exported by jailhouse in boot parameters
+in order to access the memory mapped PCI configuration space.
 
-The Jailhouse hypervisor may pass individual functions of a multi-function
-device to a guest without passing function 0, which means a Linux guest
-won't find them.
+[Jan: rebased, fixed !CONFIG_PCI_MMCONFIG, used pcibios_last_bus]
 
-Change Linux PCI probing so it scans all function numbers when running as a
-guest over Jailhouse.
-
-This is technically prohibited by the spec, so it is possible that PCI
-devices without the Multi-Function Device bit set may have unexpected
-behavior in response to this probe.
-
-Originally-by: Benedikt Spranger <b.spranger@linutronix.de>
+Signed-off-by: Otavio Pontes <otavio.pontes@intel.com>
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 Cc: jailhouse-dev@googlegroups.com
-Cc: Benedikt Spranger <b.spranger@linutronix.de>
 Cc: linux-pci@vger.kernel.org
 Cc: virtualization@lists.linux-foundation.org
-Link: https://lkml.kernel.org/r/06e279b2a3e06cf6689ab3975f8ab592bba02362.1520408357.git.jan.kiszka@siemens.com
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Link: https://lkml.kernel.org/r/2ee9e4401fa22377b3965893a558120f169be82b.1520408357.git.jan.kiszka@siemens.com
 
 ---
- arch/x86/pci/legacy.c |  4 +++-
- drivers/pci/probe.c   | 22 +++++++++++++++++++---
- 2 files changed, 22 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/pci_x86.h | 2 ++
+ arch/x86/kernel/jailhouse.c    | 8 ++++++++
+ arch/x86/pci/mmconfig-shared.c | 4 ++--
+ 3 files changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/pci/legacy.c b/arch/x86/pci/legacy.c
-index 1cb01abcb1be..dfbe6ac38830 100644
---- a/arch/x86/pci/legacy.c
-+++ b/arch/x86/pci/legacy.c
-@@ -4,6 +4,7 @@
- #include <linux/init.h>
- #include <linux/export.h>
- #include <linux/pci.h>
-+#include <asm/jailhouse_para.h>
- #include <asm/pci_x86.h>
+diff --git a/arch/x86/include/asm/pci_x86.h b/arch/x86/include/asm/pci_x86.h
+index eb66fa9cd0fc..959d618dbb17 100644
+--- a/arch/x86/include/asm/pci_x86.h
++++ b/arch/x86/include/asm/pci_x86.h
+@@ -151,6 +151,8 @@ extern int pci_mmconfig_insert(struct device *dev, u16 seg, u8 start, u8 end,
+ 			       phys_addr_t addr);
+ extern int pci_mmconfig_delete(u16 seg, u8 start, u8 end);
+ extern struct pci_mmcfg_region *pci_mmconfig_lookup(int segment, int bus);
++extern struct pci_mmcfg_region *__init pci_mmconfig_add(int segment, int start,
++							int end, u64 addr);
  
- /*
-@@ -34,13 +35,14 @@ int __init pci_legacy_init(void)
+ extern struct list_head pci_mmcfg_list;
  
- void pcibios_scan_specific_bus(int busn)
- {
-+	int stride = jailhouse_paravirt() ? 1 : 8;
- 	int devfn;
- 	u32 l;
+diff --git a/arch/x86/kernel/jailhouse.c b/arch/x86/kernel/jailhouse.c
+index b68fd895235a..fa183a131edc 100644
+--- a/arch/x86/kernel/jailhouse.c
++++ b/arch/x86/kernel/jailhouse.c
+@@ -124,6 +124,14 @@ static int __init jailhouse_pci_arch_init(void)
+ 	if (pcibios_last_bus < 0)
+ 		pcibios_last_bus = 0xff;
  
- 	if (pci_find_bus(0, busn))
- 		return;
- 
--	for (devfn = 0; devfn < 256; devfn += 8) {
-+	for (devfn = 0; devfn < 256; devfn += stride) {
- 		if (!raw_pci_read(0, busn, devfn, PCI_VENDOR_ID, 2, &l) &&
- 		    l != 0x0000 && l != 0xffff) {
- 			DBG("Found device at %02x:%02x [%04x]\n", busn, devfn, l);
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index ef5377438a1e..3c365dc996e7 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -16,6 +16,7 @@
- #include <linux/pci-aspm.h>
- #include <linux/aer.h>
- #include <linux/acpi.h>
-+#include <linux/hypervisor.h>
- #include <linux/irqdomain.h>
- #include <linux/pm_runtime.h>
- #include "pci.h"
-@@ -2518,14 +2519,29 @@ static unsigned int pci_scan_child_bus_extend(struct pci_bus *bus,
- {
- 	unsigned int used_buses, normal_bridges = 0, hotplug_bridges = 0;
- 	unsigned int start = bus->busn_res.start;
--	unsigned int devfn, cmax, max = start;
-+	unsigned int devfn, fn, cmax, max = start;
- 	struct pci_dev *dev;
-+	int nr_devs;
- 
- 	dev_dbg(&bus->dev, "scanning bus\n");
- 
- 	/* Go find them, Rover! */
--	for (devfn = 0; devfn < 0x100; devfn += 8)
--		pci_scan_slot(bus, devfn);
-+	for (devfn = 0; devfn < 256; devfn += 8) {
-+		nr_devs = pci_scan_slot(bus, devfn);
-+
-+		/*
-+		 * The Jailhouse hypervisor may pass individual functions of a
-+		 * multi-function device to a guest without passing function 0.
-+		 * Look for them as well.
-+		 */
-+		if (jailhouse_paravirt() && nr_devs == 0) {
-+			for (fn = 1; fn < 8; fn++) {
-+				dev = pci_scan_single_device(bus, devfn + fn);
-+				if (dev)
-+					dev->multifunction = 1;
-+			}
-+		}
++#ifdef CONFIG_PCI_MMCONFIG
++	if (setup_data.pci_mmconfig_base) {
++		pci_mmconfig_add(0, 0, pcibios_last_bus,
++				 setup_data.pci_mmconfig_base);
++		pci_mmcfg_arch_init();
 +	}
++#endif
++
+ 	return 0;
+ }
  
- 	/* Reserve buses for SR-IOV capability */
- 	used_buses = pci_iov_bus_range(bus);
+diff --git a/arch/x86/pci/mmconfig-shared.c b/arch/x86/pci/mmconfig-shared.c
+index 0b40482578b8..7389db538c30 100644
+--- a/arch/x86/pci/mmconfig-shared.c
++++ b/arch/x86/pci/mmconfig-shared.c
+@@ -94,8 +94,8 @@ static struct pci_mmcfg_region *pci_mmconfig_alloc(int segment, int start,
+ 	return new;
+ }
+ 
+-static struct pci_mmcfg_region *__init pci_mmconfig_add(int segment, int start,
+-							int end, u64 addr)
++struct pci_mmcfg_region *__init pci_mmconfig_add(int segment, int start,
++						 int end, u64 addr)
+ {
+ 	struct pci_mmcfg_region *new;
+ 
