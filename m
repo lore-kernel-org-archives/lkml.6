@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935134AbeCHCkE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 21:40:04 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5751 "EHLO huawei.com"
+        id S964927AbeCHCkD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 21:40:03 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5753 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934793AbeCHCfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S934770AbeCHCfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Mar 2018 21:35:00 -0500
 From: Peng Li <lipeng321@huawei.com>
 To: <davem@davemloft.net>
 CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
         <lipeng321@huawei.com>
-Subject: [PATCH net-next 11/23] {topost} net: hns3: refactor the hclge_get/set_rss_tuple function
-Date: Thu, 8 Mar 2018 11:06:36 +0800
-Message-ID: <1520478408-116992-12-git-send-email-lipeng321@huawei.com>
+Subject: [PATCH net-next 14/23] {topost} net: hns3: fix for use-after-free when setting ring parameter
+Date: Thu, 8 Mar 2018 11:06:39 +0800
+Message-ID: <1520478408-116992-15-git-send-email-lipeng321@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520478408-116992-1-git-send-email-lipeng321@huawei.com>
 References: <1520478408-116992-1-git-send-email-lipeng321@huawei.com>
@@ -27,196 +27,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yunsheng Lin <linyunsheng@huawei.com>
 
-This patch refactors the hclge_get/set_rss_tuple function
-in order to fix the rss configuration loss problem during
-reset process.
+In hns3_set_ringparam, hns3_uninit_all_ring frees the
+memory pointed by priv->ring_data[i].ring, and
+hns3_change_all_ring_bd_num use that pointer without mallocing,
+which will cause a use-after-free problem.
+
+The patch fixes it by not freeing the memory in
+hns3_uninit_all_ring, and uses hns3_put_ring_config to free it
+when necessary.
 
 Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 ---
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 91 +++++++++++++---------
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    | 13 ++++
- 2 files changed, 67 insertions(+), 37 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 9ba012b..0271960 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -3091,14 +3091,16 @@ static int hclge_set_rss_input_tuple(struct hclge_dev *hdev)
- 	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_RSS_INPUT_TUPLE, false);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index f50245d..2bed73e 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -2955,13 +2955,8 @@ int hns3_uninit_all_ring(struct hns3_nic_priv *priv)
+ 			h->ae_algo->ops->reset_queue(h, i);
  
- 	req = (struct hclge_rss_input_tuple_cmd *)desc.data;
--	req->ipv4_tcp_en = HCLGE_RSS_INPUT_TUPLE_OTHER;
--	req->ipv4_udp_en = HCLGE_RSS_INPUT_TUPLE_OTHER;
--	req->ipv4_sctp_en = HCLGE_RSS_INPUT_TUPLE_SCTP;
--	req->ipv4_fragment_en = HCLGE_RSS_INPUT_TUPLE_OTHER;
--	req->ipv6_tcp_en = HCLGE_RSS_INPUT_TUPLE_OTHER;
--	req->ipv6_udp_en = HCLGE_RSS_INPUT_TUPLE_OTHER;
--	req->ipv6_sctp_en = HCLGE_RSS_INPUT_TUPLE_SCTP;
--	req->ipv6_fragment_en = HCLGE_RSS_INPUT_TUPLE_OTHER;
-+
-+	/* Get the tuple cfg from pf */
-+	req->ipv4_tcp_en = hdev->vport[0].rss_tuple_sets.ipv4_tcp_en;
-+	req->ipv4_udp_en = hdev->vport[0].rss_tuple_sets.ipv4_udp_en;
-+	req->ipv4_sctp_en = hdev->vport[0].rss_tuple_sets.ipv4_sctp_en;
-+	req->ipv4_fragment_en = hdev->vport[0].rss_tuple_sets.ipv4_fragment_en;
-+	req->ipv6_tcp_en = hdev->vport[0].rss_tuple_sets.ipv6_tcp_en;
-+	req->ipv6_udp_en = hdev->vport[0].rss_tuple_sets.ipv6_udp_en;
-+	req->ipv6_sctp_en = hdev->vport[0].rss_tuple_sets.ipv6_sctp_en;
-+	req->ipv6_fragment_en = hdev->vport[0].rss_tuple_sets.ipv6_fragment_en;
- 	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
- 	if (ret) {
- 		dev_err(&hdev->pdev->dev,
-@@ -3204,15 +3206,16 @@ static int hclge_set_rss_tuple(struct hnae3_handle *handle,
- 		return -EINVAL;
- 
- 	req = (struct hclge_rss_input_tuple_cmd *)desc.data;
--	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_RSS_INPUT_TUPLE, true);
--	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
--	if (ret) {
--		dev_err(&hdev->pdev->dev,
--			"Read rss tuple fail, status = %d\n", ret);
--		return ret;
--	}
-+	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_RSS_INPUT_TUPLE, false);
- 
--	hclge_cmd_reuse_desc(&desc, false);
-+	req->ipv4_tcp_en = vport->rss_tuple_sets.ipv4_tcp_en;
-+	req->ipv4_udp_en = vport->rss_tuple_sets.ipv4_udp_en;
-+	req->ipv4_sctp_en = vport->rss_tuple_sets.ipv4_sctp_en;
-+	req->ipv4_fragment_en = vport->rss_tuple_sets.ipv4_fragment_en;
-+	req->ipv6_tcp_en = vport->rss_tuple_sets.ipv6_tcp_en;
-+	req->ipv6_udp_en = vport->rss_tuple_sets.ipv6_udp_en;
-+	req->ipv6_sctp_en = vport->rss_tuple_sets.ipv6_sctp_en;
-+	req->ipv6_fragment_en = vport->rss_tuple_sets.ipv6_fragment_en;
- 
- 	tuple_sets = hclge_get_rss_hash_bits(nfc);
- 	switch (nfc->flow_type) {
-@@ -3249,52 +3252,49 @@ static int hclge_set_rss_tuple(struct hnae3_handle *handle,
+ 		hns3_fini_ring(priv->ring_data[i].ring);
+-		devm_kfree(priv->dev, priv->ring_data[i].ring);
+ 		hns3_fini_ring(priv->ring_data[i + h->kinfo.num_tqps].ring);
+-		devm_kfree(priv->dev,
+-			   priv->ring_data[i + h->kinfo.num_tqps].ring);
  	}
- 
- 	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
--	if (ret)
-+	if (ret) {
- 		dev_err(&hdev->pdev->dev,
- 			"Set rss tuple fail, status = %d\n", ret);
-+		return ret;
-+	}
- 
--	return ret;
-+	vport->rss_tuple_sets.ipv4_tcp_en = req->ipv4_tcp_en;
-+	vport->rss_tuple_sets.ipv4_udp_en = req->ipv4_udp_en;
-+	vport->rss_tuple_sets.ipv4_sctp_en = req->ipv4_sctp_en;
-+	vport->rss_tuple_sets.ipv4_fragment_en = req->ipv4_fragment_en;
-+	vport->rss_tuple_sets.ipv6_tcp_en = req->ipv6_tcp_en;
-+	vport->rss_tuple_sets.ipv6_udp_en = req->ipv6_udp_en;
-+	vport->rss_tuple_sets.ipv6_sctp_en = req->ipv6_sctp_en;
-+	vport->rss_tuple_sets.ipv6_fragment_en = req->ipv6_fragment_en;
-+	return 0;
+-	devm_kfree(priv->dev, priv->ring_data);
+-
+ 	return 0;
  }
  
- static int hclge_get_rss_tuple(struct hnae3_handle *handle,
- 			       struct ethtool_rxnfc *nfc)
- {
- 	struct hclge_vport *vport = hclge_get_vport(handle);
--	struct hclge_dev *hdev = vport->back;
--	struct hclge_rss_input_tuple_cmd *req;
--	struct hclge_desc desc;
- 	u8 tuple_sets;
--	int ret;
+@@ -3099,6 +3094,8 @@ static void hns3_client_uninit(struct hnae3_handle *handle, bool reset)
+ 	if (ret)
+ 		netdev_err(netdev, "uninit ring error\n");
  
- 	nfc->data = 0;
- 
--	req = (struct hclge_rss_input_tuple_cmd *)desc.data;
--	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_RSS_INPUT_TUPLE, true);
--	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
--	if (ret) {
--		dev_err(&hdev->pdev->dev,
--			"Read rss tuple fail, status = %d\n", ret);
--		return ret;
--	}
--
- 	switch (nfc->flow_type) {
- 	case TCP_V4_FLOW:
--		tuple_sets = req->ipv4_tcp_en;
-+		tuple_sets = vport->rss_tuple_sets.ipv4_tcp_en;
- 		break;
- 	case UDP_V4_FLOW:
--		tuple_sets = req->ipv4_udp_en;
-+		tuple_sets = vport->rss_tuple_sets.ipv4_udp_en;
- 		break;
- 	case TCP_V6_FLOW:
--		tuple_sets = req->ipv6_tcp_en;
-+		tuple_sets = vport->rss_tuple_sets.ipv6_tcp_en;
- 		break;
- 	case UDP_V6_FLOW:
--		tuple_sets = req->ipv6_udp_en;
-+		tuple_sets = vport->rss_tuple_sets.ipv6_udp_en;
- 		break;
- 	case SCTP_V4_FLOW:
--		tuple_sets = req->ipv4_sctp_en;
-+		tuple_sets = vport->rss_tuple_sets.ipv4_sctp_en;
- 		break;
- 	case SCTP_V6_FLOW:
--		tuple_sets = req->ipv6_sctp_en;
-+		tuple_sets = vport->rss_tuple_sets.ipv6_sctp_en;
- 		break;
- 	case IPV4_FLOW:
- 	case IPV6_FLOW:
-@@ -3349,6 +3349,23 @@ int hclge_rss_init_hw(struct hclge_dev *hdev)
- 
- 	/* Initialize RSS indirect table for each vport */
- 	for (j = 0; j < hdev->num_vmdq_vport + 1; j++) {
-+		vport[j].rss_tuple_sets.ipv4_tcp_en =
-+			HCLGE_RSS_INPUT_TUPLE_OTHER;
-+		vport[j].rss_tuple_sets.ipv4_udp_en =
-+			HCLGE_RSS_INPUT_TUPLE_OTHER;
-+		vport[j].rss_tuple_sets.ipv4_sctp_en =
-+			HCLGE_RSS_INPUT_TUPLE_SCTP;
-+		vport[j].rss_tuple_sets.ipv4_fragment_en =
-+			HCLGE_RSS_INPUT_TUPLE_OTHER;
-+		vport[j].rss_tuple_sets.ipv6_tcp_en =
-+			HCLGE_RSS_INPUT_TUPLE_OTHER;
-+		vport[j].rss_tuple_sets.ipv6_udp_en =
-+			HCLGE_RSS_INPUT_TUPLE_OTHER;
-+		vport[j].rss_tuple_sets.ipv6_sctp_en =
-+			HCLGE_RSS_INPUT_TUPLE_SCTP;
-+		vport[j].rss_tuple_sets.ipv6_fragment_en =
-+			HCLGE_RSS_INPUT_TUPLE_OTHER;
++	hns3_put_ring_config(priv);
 +
- 		for (i = 0; i < HCLGE_RSS_IND_TBL_SIZE; i++) {
- 			vport[j].rss_indirection_tbl[i] =
- 				i % vport[j].alloc_rss_size;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-index 7e762c4..13d3999 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-@@ -573,6 +573,17 @@ struct hclge_rx_vtag_cfg {
- 	bool vlan2_vlan_prionly;/* Outer VLAN Tag up to descriptor Enable */
- };
+ 	priv->ring_data = NULL;
  
-+struct hclge_rss_tuple_cfg {
-+	u8 ipv4_tcp_en;
-+	u8 ipv4_udp_en;
-+	u8 ipv4_sctp_en;
-+	u8 ipv4_fragment_en;
-+	u8 ipv6_tcp_en;
-+	u8 ipv6_udp_en;
-+	u8 ipv6_sctp_en;
-+	u8 ipv6_fragment_en;
-+};
+ 	free_netdev(netdev);
+@@ -3304,6 +3301,8 @@ static int hns3_reset_notify_uninit_enet(struct hnae3_handle *handle)
+ 	if (ret)
+ 		netdev_err(netdev, "uninit ring error\n");
+ 
++	hns3_put_ring_config(priv);
 +
- struct hclge_vport {
- 	u16 alloc_tqps;	/* Allocated Tx/Rx queues */
+ 	priv->ring_data = NULL;
  
-@@ -580,6 +591,8 @@ struct hclge_vport {
- 	/* User configured lookup table entries */
- 	u8  rss_indirection_tbl[HCLGE_RSS_IND_TBL_SIZE];
- 	int rss_algo;		/* User configured hash algorithm */
-+	/* User configured rss tuple sets */
-+	struct hclge_rss_tuple_cfg rss_tuple_sets;
+ 	return ret;
+@@ -3421,6 +3420,7 @@ int hns3_set_channels(struct net_device *netdev,
+ 	}
  
- 	u16 alloc_rss_size;
+ 	hns3_uninit_all_ring(priv);
++	hns3_put_ring_config(priv);
  
+ 	org_tqp_num = h->kinfo.num_tqps;
+ 	ret = hns3_modify_tqp_num(netdev, new_tqp_num);
 -- 
 2.9.3
