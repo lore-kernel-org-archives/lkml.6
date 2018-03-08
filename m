@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1171329-1520491628-3-14585293886978824211
+X-Cyrus-Session-Id: sloti22d1t05-1131037-1520491575-2-17510918945559960778
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520491628; b=VswTjFrzpbEhxXdKOcByPVrTMDSUzZogTaaRp1AemeXrCfR
-    2dztke7VOHPvdrChOmf/dVUdsQnsG/JHVmwp8nc59x7P/eV07IQlEurczPMZ3pbz
-    yGOFcIiFJi5dLO2EOxE1FgMISC6Bz4VfL6PPJbuFzLbbTKhpyQ2M1TQdSdCgFrKE
-    cpC66AsinLJnBMdPcq40LsR3K/Se+NFAh3/2zACdM+mapgNqbTs/sksvTSuxot7e
-    E6x0srKx+RLbsTRseKu+xfZ3/vSR7MmeSHugJJh6jKDE/BLlPKYnvLTabtTSrbdq
-    IljlSGoJGWcMLgMleKiyLSkfc6gIY6HgDqxZwQw==
+    t=1520491575; b=YJKvqMOXnyVcoede2Wo/LJbbF959qeyBUbONHpPutCOMDwg
+    eYJILa+dUvKN4uNTPU+JtRvGgJK8A9zmVUAbSOWYm92hxFaCG8UzalOZ2s6KqJw3
+    dxTbMU+MmOkag4zCAH8eZ0xJdFBpmntyA+7Y997j9fGUofpwO0ZJoEXTKYt9lBiT
+    vZrAejEYfs54hW3QcpVr+uljsIfJdmtQU7ypCSWr8lNgrsfmN7INWh/CB9OoQFtL
+    WBMwS8PE4NdtUC18fpGLXIA1AYuq0OD26NKaICIdLXmWYV+miu/EwQ5rEdExEn+K
+    41cjclt1ILJUNUMIRnNUa3mMjls7ssGmbPkssYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520491628; bh=2KxfKl
-    ZebUKZlqETGMyqlEjLWxucAFjWLTsPobu9dl8=; b=WOCedS52b2fNJUg/y3Pnyt
-    y+gQb1dM786Lk3Avw23+pS1XjsTa4U9NOkiLOuDPk0mvnOQz5l2XsQfH7TtdfoTI
-    DCjjFY1oxGJ94HnSE8BnTQmyNMB93OiND+qm0WLM0AKqVGVkEv8DJ42z6KwNkdO8
-    Q/twy/8/1/0boj0avlIDdmrmLu8jixt0O9H3OE0x4yfDkKKmERZCnduYB7S1NdQF
-    VqgP/JZihjYPDqfcRePE8rck1wr8JlEckCjvPoeKF3o9vi4dgQO/HQ6mYLyk2JeV
-    j+O4fcq+lvvbYMAp+FMQXZpJXyUnobJqg8EEsLCvEPZyFciFRVinaK1YVWBXyEDg
+    :mime-version:sender:list-id; s=arctest; t=1520491575; bh=CfDgM3
+    ffS9q7yBULnRbax/VLYMGu2rMpaIoCQ0XLERk=; b=wmAiD5AOUY1eVBxJxltMg7
+    HuV9lhxe+vnYu6CPJD/esZYy8u80utuYjx13lgVnDRdDJ3vRpm2xQpz+Z4d8EFkd
+    K0DHZ+d6YS7citJ6+q6rg2n59ek12ZMgIh5SK0jPbb6UIyc3+rI9MK33sRkyfuHb
+    UxeUtCPeJTyZyKbGY1G+VscxZfJofCI2nBI5AKGMw8Ltz4SfNiOzDRn8pDGgLrcc
+    50UglHXzfnIT38rmVV/V8Ah6Yr0Gue4ZCU8CyqtRxV0ekUqWnz+pKGwO7l2w+X+V
+    kt1+RfcsjERBinnhUyV3L8r5hOa6QuAXCEhD0qB7SOlP5GL5Z7IIIJS21DZkIPug
     ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=eUsW2qaz x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=BbjpEOKm x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=eUsW2qaz x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=BbjpEOKm x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,27 +50,26 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965188AbeCHGqg (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 01:46:36 -0500
-Received: from mail-by2nam03on0101.outbound.protection.outlook.com ([104.47.42.101]:17968
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        id S965137AbeCHE6Y (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Mar 2018 23:58:24 -0500
+Received: from mail-sn1nam02on0119.outbound.protection.outlook.com ([104.47.36.119]:48736
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965118AbeCHE6X (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 7 Mar 2018 23:58:23 -0500
+        id S965035AbeCHE6L (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 7 Mar 2018 23:58:11 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Shawn Nematbakhsh <shawnn@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
+CC: Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 25/67] platform/chrome: Use proper protocol
- transfer function
-Thread-Topic: [PATCH AUTOSEL for 4.14 25/67] platform/chrome: Use proper
- protocol transfer function
-Thread-Index: AQHTtpn9439yy/X5bECspoKYD4+EAw==
-Date: Thu, 8 Mar 2018 04:57:42 +0000
-Message-ID: <20180308045641.7814-25-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 03/67] cpufreq: longhaul: Revert
+ transition_delay_us to 200 ms
+Thread-Topic: [PATCH AUTOSEL for 4.14 03/67] cpufreq: longhaul: Revert
+ transition_delay_us to 200 ms
+Thread-Index: AQHTtpn3xwfsJ23HnECNJ1fyWoAn9g==
+Date: Thu, 8 Mar 2018 04:57:32 +0000
+Message-ID: <20180308045641.7814-3-alexander.levin@microsoft.com>
 References: <20180308045641.7814-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045641.7814-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -79,88 +78,81 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0808;20:qamQXtzwnBgMaJeGf8nv+2G1QxYsydHbu78GqoiC7OQgZAoDNzI7MhjpzY77gdmCVqxsV/yZp6jZ+roIkIkqd+p/4z+vsMtkGSbEKz0PPtqa+nvgEBiA8RNZ0LDw2+C1qR9NhC4bctssVbuwpMawOADuJBzzIjEwmVST752q6HE=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0936;7:N4PYFMpu9ITjk6/t1gnmGQc4xxbKSZDw5DuWVxyDSD+npIczUNZVHNcUo7P73B55iN4QP5tbsdFeBeadVwavjexWzgD/NyXOWSqIvv+7ur5pNg2LOsEsmCha7WAmjfoL3lckWL6BUxzmW+qGQ8DLmIfNbz6fmKy3H+uf2BqcaRa1WnlgFHlBU+tnuZeMN0dFwh74bhkKNfGfbOAteXgiINQ2Q4jR92n0B+MFLK4azz2fojBw/AIty/6toupAlpg0;20:+4+czdFM67MiSJP4knfm4H8IXM8RobjsAOmP5PC15TE4eqRmadP4YiMzs8yVwqSOviQgYCi3ViF7U47EVJJDnw4gw6ENViDmRY8CfrWiD/AWcy+QB1SHua+Tqbesya73GSAeAxmKUIoleNDe9nNaIirax+qvgisaPG0Ji0pxK+w=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: a50a3402-1ceb-4ce5-ff96-08d584b1340e
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0808;
-x-ms-traffictypediagnostic: DM5PR2101MB0808:
+x-ms-office365-filtering-correlation-id: 42561d2a-962c-46bd-fa82-08d584b12c56
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0936;
+x-ms-traffictypediagnostic: DM5PR2101MB0936:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0808A4C1CA6133BECC016E16FBDF0@DM5PR2101MB0808.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(7411616537696);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0808;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0808;
+x-microsoft-antispam-prvs: <DM5PR2101MB093669B04CAF4CBD7A1D1248FBDF0@DM5PR2101MB0936.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0936;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0936;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(39860400002)(366004)(376002)(346002)(199004)(189003)(22452003)(99286004)(76176011)(2906002)(105586002)(3846002)(86612001)(478600001)(72206003)(14454004)(2900100001)(8676002)(102836004)(68736007)(5660300001)(316002)(6116002)(54906003)(26005)(6506007)(575784001)(1076002)(86362001)(36756003)(186003)(10090500001)(110136005)(106356001)(4326008)(6512007)(6486002)(7736002)(5250100002)(3280700002)(3660700001)(2501003)(6666003)(81166006)(2950100002)(305945005)(53936002)(107886003)(8936002)(6436002)(81156014)(66066001)(25786009)(10290500003)(97736004)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0808;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: WyBFqcaFqZ5aenEHOuCx5FxT76IeLzhXj0KG/+7xSKmcmb5+7PRDhA3Rcr5kVuchNK++UHyRhz/YcQ7VutngHlVcQp/EwpdkATOco2Ief9t+TSazVtojVx3tqZBi7K8sKez8x9IybQH1jSBNXqDyu2PlTal27WvtZKQmH0boy1vg4oudlGngwbpt9OoEEzrHlMF4I4Vh5gd16jkeVo9vFjT1ElsBuFJFfDRSEAyIg58wdajIdIICfe3IaU4NA2bEIq8fjADXNIFp7PWarN7yUwEfz8XgM9bJaTr2R4zmfwssLNnwxfj2rxyQC/qw9u4mzLq1XyoRV+fdFY7lJz6SLw==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(39380400002)(346002)(376002)(199004)(189003)(478600001)(99286004)(575784001)(6506007)(59450400001)(3660700001)(36756003)(86362001)(54906003)(6116002)(110136005)(2950100002)(102836004)(1076002)(3846002)(6486002)(3280700002)(10090500001)(10290500003)(305945005)(72206003)(6436002)(6666003)(26005)(5250100002)(2906002)(186003)(2501003)(105586002)(76176011)(66066001)(7736002)(68736007)(25786009)(6512007)(106356001)(86612001)(8936002)(107886003)(81166006)(2900100001)(5660300001)(4326008)(81156014)(53936002)(14454004)(97736004)(316002)(22452003)(8676002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0936;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: Xj9vew7cdAxHvl1Ip2T5B17PJ7wvabevldEJcG6qctlvmRHdYUo27XMsq10FhU9r9oBk9/DJUnDOub+0wPUfBPejLzj/88UMK7PppcA1wIcj2os9MANbWp4qATlKSTSPxuWYJrxCBe6mriUa3EGepAvKvWL9x9FzOsFQr6M9KU8mIeVNAwJuJ4QWJsIuuXmVFyrP8iamyvj6/YDC51OSkKgEfUPHhyOt/ScLojLUENdNXBlQcEXnYiXTkDgrHCJU6kQCEGiPsMF0TldfeB+CzQP0buk7C4bJs4EzNvEsoEolDaZsxp4KB1WCawYDBbtprj0xGtsN/PX50NiTX+d5FQ==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a50a3402-1ceb-4ce5-ff96-08d584b1340e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:57:42.3984
+X-MS-Exchange-CrossTenant-Network-Message-Id: 42561d2a-962c-46bd-fa82-08d584b12c56
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:57:32.6726
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0808
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0936
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Shawn Nematbakhsh <shawnn@chromium.org>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-[ Upstream commit d48b8c58c57f6edbe2965f0a5f62c5cf9593ca96 ]
+[ Upstream commit 1d0d064307cbfd8546841f6e9d94d02c55e45e1e ]
 
-pkt_xfer should be used for protocol v3, and cmd_xfer otherwise. We had
-one instance of these functions correct, but not the second, fall-back
-case. We use the fall-back only when the first command returns an
-IN_PROGRESS status, which is only used on some EC firmwares where we
-don't want to constantly poll the bus, but instead back off and
-sleep/retry for a little while.
+The commit e948bc8fbee0 ("cpufreq: Cap the default transition delay
+value to 10 ms") caused a regression on EPIA-M min-ITX computer where
+shutdown or reboot hangs occasionally with a print message like:
 
-Fixes: 2c7589af3c4d ("mfd: cros_ec: add proto v3 skeleton")
-Signed-off-by: Shawn Nematbakhsh <shawnn@chromium.org>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Signed-off-by: Benson Leung <bleung@chromium.org>
+longhaul: Warning: Timeout while waiting for idle PCI bus
+cpufreq: __target_index: Failed to change cpu frequency: -16
+
+This probably happens because the cpufreq governor tries to change the
+frequency of the CPU faster than allowed by the hardware.
+
+Before the above commit, the default transition delay was set to 200 ms
+for a transition_latency of 200000 ns. Lets revert back to that
+transition delay value to fix it. Note that several other transition
+delay values were tested like 20 ms and 30 ms and none of them have
+resolved system hang issue completely.
+
+Fixes: e948bc8fbee0 (cpufreq: Cap the default transition delay value to 10 =
+ms)
+Reported-by: Meelis Roos <mroos@linux.ee>
+Suggested-by: Rafael J. Wysocki <rjw@rjwysocki.net>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/platform/chrome/cros_ec_proto.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/cpufreq/longhaul.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chr=
-ome/cros_ec_proto.c
-index 8dfa7fcb1248..e7bbdf947bbc 100644
---- a/drivers/platform/chrome/cros_ec_proto.c
-+++ b/drivers/platform/chrome/cros_ec_proto.c
-@@ -60,12 +60,14 @@ static int send_command(struct cros_ec_device *ec_dev,
- 			struct cros_ec_command *msg)
- {
- 	int ret;
-+	int (*xfer_fxn)(struct cros_ec_device *ec, struct cros_ec_command *msg);
+diff --git a/drivers/cpufreq/longhaul.c b/drivers/cpufreq/longhaul.c
+index d5e27bc7585a..859a62ea6120 100644
+--- a/drivers/cpufreq/longhaul.c
++++ b/drivers/cpufreq/longhaul.c
+@@ -894,7 +894,7 @@ static int longhaul_cpu_init(struct cpufreq_policy *pol=
+icy)
+ 	if ((longhaul_version !=3D TYPE_LONGHAUL_V1) && (scale_voltage !=3D 0))
+ 		longhaul_setup_voltagescaling();
 =20
- 	if (ec_dev->proto_version > 2)
--		ret =3D ec_dev->pkt_xfer(ec_dev, msg);
-+		xfer_fxn =3D ec_dev->pkt_xfer;
- 	else
--		ret =3D ec_dev->cmd_xfer(ec_dev, msg);
-+		xfer_fxn =3D ec_dev->cmd_xfer;
+-	policy->cpuinfo.transition_latency =3D 200000;	/* nsec */
++	policy->transition_delay_us =3D 200000;	/* usec */
 =20
-+	ret =3D (*xfer_fxn)(ec_dev, msg);
- 	if (msg->result =3D=3D EC_RES_IN_PROGRESS) {
- 		int i;
- 		struct cros_ec_command *status_msg;
-@@ -88,7 +90,7 @@ static int send_command(struct cros_ec_device *ec_dev,
- 		for (i =3D 0; i < EC_COMMAND_RETRIES; i++) {
- 			usleep_range(10000, 11000);
-=20
--			ret =3D ec_dev->cmd_xfer(ec_dev, status_msg);
-+			ret =3D (*xfer_fxn)(ec_dev, status_msg);
- 			if (ret < 0)
- 				break;
-=20
+ 	return cpufreq_table_validate_and_show(policy, longhaul_table);
+ }
 --=20
 2.14.1
