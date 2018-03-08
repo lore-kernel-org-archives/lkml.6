@@ -1,133 +1,234 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755499AbeCHJbB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 04:31:01 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:41321 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755101AbeCHJa7 (ORCPT
+        id S1755566AbeCHJbq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 04:31:46 -0500
+Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:47057
+        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755537AbeCHJbl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 04:30:59 -0500
-Date: Thu, 8 Mar 2018 01:30:47 -0800
-From: tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-c996f3802006a585a6c3f8eaa73e375330efc0e7@git.kernel.org>
-Cc: hpa@zytor.com, bp@suse.de, darren.kenny@oracle.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: bp@suse.de, hpa@zytor.com, mingo@kernel.org, darren.kenny@oracle.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-In-Reply-To: <20180301151336.12948-1-bp@alien8.de>
-References: <20180301151336.12948-1-bp@alien8.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cleanups] x86/MSR: Move native_* variants to msr.h
-Git-Commit-ID: c996f3802006a585a6c3f8eaa73e375330efc0e7
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 8 Mar 2018 04:31:41 -0500
+X-ASG-Debug-ID: 1520501497-093b7e4ca912b60001-xx1T2L
+X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
+From: "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
+To: "eric.auger@redhat.com" <eric.auger@redhat.com>,
+        "cdall@kernel.org" <cdall@kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "david.daney@cavium.com" <david.daney@cavium.com>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>
+Subject: =?utf-8?B?UmU6IFvmraTpgq7ku7blj6/og73lrZjlnKjpo47pmaldICBSZTogW1JGQyBQ?=
+ =?utf-8?B?QVRDSF0gS1ZNOiBhcm0vYXJtNjQ6IHZnaWM6IGNoYW5nZSBjb25kaXRpb24g?=
+ =?utf-8?Q?for_level_interrupt_resampling?=
+Thread-Topic: =?utf-8?B?W+atpOmCruS7tuWPr+iDveWtmOWcqOmjjumZqV0gIFJlOiBbUkZDIFBBVENI?=
+ =?utf-8?B?XSBLVk06IGFybS9hcm02NDogdmdpYzogY2hhbmdlIGNvbmRpdGlvbiBmb3Ig?=
+ =?utf-8?Q?level_interrupt_resampling?=
+X-ASG-Orig-Subj: =?utf-8?B?UmU6IFvmraTpgq7ku7blj6/og73lrZjlnKjpo47pmaldICBSZTogW1JGQyBQ?=
+ =?utf-8?B?QVRDSF0gS1ZNOiBhcm0vYXJtNjQ6IHZnaWM6IGNoYW5nZSBjb25kaXRpb24g?=
+ =?utf-8?Q?for_level_interrupt_resampling?=
+Thread-Index: AQHTtquoFGdOJ9stn0iMRL6AbYCzvaPFg4+AgAAJfYA=
+Date: Thu, 8 Mar 2018 09:31:36 +0000
+Message-ID: <1520501495.2583.19.camel@hxt-semitech.com>
+References: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
+         <9b3763f2-1dfa-5506-d7f2-93389647111c@redhat.com>
+In-Reply-To: <9b3763f2-1dfa-5506-d7f2-93389647111c@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.64.6.48]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C1D13CDF0C82D54E9A24F79F60D2A4EC@hxt-semitech.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+X-Barracuda-Connect: UNKNOWN[10.128.0.15]
+X-Barracuda-Start-Time: 1520501497
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.5104 1.0000 0.7500
+X-Barracuda-Spam-Score: 0.75
+X-Barracuda-Spam-Status: No, SCORE=0.75 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=BSF_SC0_MV0113c
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.48722
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
+        0.00 BSF_SC0_MV0113c        BSF_SC0_MV0113c
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w289Vpcx007750
 
-Commit-ID:  c996f3802006a585a6c3f8eaa73e375330efc0e7
-Gitweb:     https://git.kernel.org/tip/c996f3802006a585a6c3f8eaa73e375330efc0e7
-Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Thu, 1 Mar 2018 16:13:36 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 8 Mar 2018 10:22:57 +0100
+Hi, Eric,
 
-x86/MSR: Move native_* variants to msr.h
+First, please let me change Christoffer's email to cdall@kernel.org. I
+add more information about my test below, please check.
 
-... where they belong.
+On Thu, 2018-03-08 at 09:57 +0100, Auger Eric wrote:
+> Hi,
+> 
+> On 08/03/18 08:01, Shunyong Yang wrote:
+> > 
+> > When resampling irqfds is enabled, level interrupt should be
+> > de-asserted when resampling happens. On page 4-47 of GIC v3
+> > specification IHI0069D, it said,
+> > "When the PE acknowledges an SGI, a PPI, or an SPI at the CPU
+> > interface, the IRI changes the status of the interrupt to active
+> > and pending if:
+> > • It is an edge-triggered interrupt, and another edge has been
+> > detected since the interrupt was acknowledged.
+> > • It is a level-sensitive interrupt, and the level has not been
+> > deasserted since the interrupt was acknowledged."
+> > 
+> > GIC v2 specification IHI0048B.b has similar description on page
+> > 3-42 for state machine transition.
+> > 
+> > When some VFIO device, like mtty(8250 VFIO mdev emulation driver
+> > in samples/vfio-mdev) triggers a level interrupt, the status
+> > transition in LR is pending-->active-->active and pending.
+> > Then it will wait resampling to de-assert the interrupt.
+> > 
+> > Current design of lr_signals_eoi_mi() will return false if state
+> > in LR is not invalid(Inactive). It causes resampling will not
+> > happen
+> > in mtty case.
+> > 
+> > This will cause interrupt fired continuously to guest even 8250 IIR
+> > has no interrupt. When 8250's interrupt is configured in shared
+> > mode,
+> > it will pass interrupt to other drivers to handle. However, there
+> > is no other driver involved. Then, a "nobody cared" kernel
+> > complaint
+> > occurs.
+> > 
+> > / # cat /dev/ttyS0
+> > [    4.826836] random: crng init done
+> > [    6.373620] irq 41: nobody cared (try booting with the "irqpoll"
+> > option)
+> > [    6.376414] CPU: 0 PID: 1307 Comm: cat Not tainted 4.16.0-rc4 #4
+> > [    6.378927] Hardware name: linux,dummy-virt (DT)
+> > [    6.380876] Call trace:
+> > [    6.381937]  dump_backtrace+0x0/0x180
+> > [    6.383495]  show_stack+0x14/0x1c
+> > [    6.384902]  dump_stack+0x90/0xb4
+> > [    6.386312]  __report_bad_irq+0x38/0xe0
+> > [    6.387944]  note_interrupt+0x1f4/0x2b8
+> > [    6.389568]  handle_irq_event_percpu+0x54/0x7c
+> > [    6.391433]  handle_irq_event+0x44/0x74
+> > [    6.393056]  handle_fasteoi_irq+0x9c/0x154
+> > [    6.394784]  generic_handle_irq+0x24/0x38
+> > [    6.396483]  __handle_domain_irq+0x60/0xb4
+> > [    6.398207]  gic_handle_irq+0x98/0x1b0
+> > [    6.399796]  el1_irq+0xb0/0x128
+> > [    6.401138]  _raw_spin_unlock_irqrestore+0x18/0x40
+> > [    6.403149]  __setup_irq+0x41c/0x678
+> > [    6.404669]  request_threaded_irq+0xe0/0x190
+> > [    6.406474]  univ8250_setup_irq+0x208/0x234
+> > [    6.408250]  serial8250_do_startup+0x1b4/0x754
+> > [    6.410123]  serial8250_startup+0x20/0x28
+> > [    6.411826]  uart_startup.part.21+0x78/0x144
+> > [    6.413633]  uart_port_activate+0x50/0x68
+> > [    6.415328]  tty_port_open+0x84/0xd4
+> > [    6.416851]  uart_open+0x34/0x44
+> > [    6.418229]  tty_open+0xec/0x3c8
+> > [    6.419610]  chrdev_open+0xb0/0x198
+> > [    6.421093]  do_dentry_open+0x200/0x310
+> > [    6.422714]  vfs_open+0x54/0x84
+> > [    6.424054]  path_openat+0x2dc/0xf04
+> > [    6.425569]  do_filp_open+0x68/0xd8
+> > [    6.427044]  do_sys_open+0x16c/0x224
+> > [    6.428563]  SyS_openat+0x10/0x18
+> > [    6.429972]  el0_svc_naked+0x30/0x34
+> > [    6.431494] handlers:
+> > [    6.432479] [<000000000e9fb4bb>] serial8250_interrupt
+> > [    6.434597] Disabling IRQ #41
+> > 
+> > This patch changes the lr state condition in lr_signals_eoi_mi()
+> > from
+> > invalid(Inactive) to active and pending to avoid this.
+> > 
+> > I am not sure about the original design of the condition of
+> > invalid(active). So, This RFC is sent out for comments.
+> > 
+> > Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+> > Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+> > ---
+> >  virt/kvm/arm/vgic/vgic-v2.c | 4 ++--
+> >  virt/kvm/arm/vgic/vgic-v3.c | 4 ++--
+> >  2 files changed, 4 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/virt/kvm/arm/vgic/vgic-v2.c b/virt/kvm/arm/vgic/vgic-
+> > v2.c
+> > index e9d840a75e7b..740ee9a5f551 100644
+> > --- a/virt/kvm/arm/vgic/vgic-v2.c
+> > +++ b/virt/kvm/arm/vgic/vgic-v2.c
+> > @@ -46,8 +46,8 @@ void vgic_v2_set_underflow(struct kvm_vcpu *vcpu)
+> >  
+> >  static bool lr_signals_eoi_mi(u32 lr_val)
+> >  {
+> > -	return !(lr_val & GICH_LR_STATE) && (lr_val & GICH_LR_EOI)
+> > &&
+> > -	       !(lr_val & GICH_LR_HW);
+> > +	return !((lr_val & GICH_LR_STATE) ^ GICH_LR_STATE) &&
+> > +	       (lr_val & GICH_LR_EOI) && !(lr_val & GICH_LR_HW);
+> >  }
+> >  
+> >  /*
+> > diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-
+> > v3.c
+> > index 6b329414e57a..43111bba7af9 100644
+> > --- a/virt/kvm/arm/vgic/vgic-v3.c
+> > +++ b/virt/kvm/arm/vgic/vgic-v3.c
+> > @@ -35,8 +35,8 @@ void vgic_v3_set_underflow(struct kvm_vcpu *vcpu)
+> >  
+> >  static bool lr_signals_eoi_mi(u64 lr_val)
+> >  {
+> > -	return !(lr_val & ICH_LR_STATE) && (lr_val & ICH_LR_EOI)
+> > &&
+> > -	       !(lr_val & ICH_LR_HW);
+> > +	return !((lr_val & ICH_LR_STATE) ^ ICH_LR_STATE) &&
+> > +	       (lr_val & ICH_LR_EOI) && !(lr_val & ICH_LR_HW);
+> 
+> In general don't we have this state transition
+> 
+> inactive -> pending -> pending + active (1) -> active -> inactive.
+> 
+> In that case won't we lower the virt irq level when folding the LR on
+> Pending + Active state, which is not was we want?
+> 
+> Thanks
+> 
+> Eric
 
-No functional change.
+In current code, in my test, when I output LR value of the mtty IRQ 41
+(hwirq = 36) in vgic_v3_fold_lr_state(). The LR's transition starts
+like following,
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
-Cc: kvm@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180301151336.12948-1-bp@alien8.de
+0-->50a0020000000024-->90a0020000000024-->d0a0020000000024
 
----
- arch/x86/include/asm/microcode.h | 14 --------------
- arch/x86/include/asm/msr.h       | 14 ++++++++++++++
- arch/x86/kvm/svm.c               |  1 -
- arch/x86/kvm/vmx.c               |  1 -
- 4 files changed, 14 insertions(+), 16 deletions(-)
+That is inactive-->pending-->active-->pending + active.
+Then it keep running cyclic pending-->active-->pending + active.
 
-diff --git a/arch/x86/include/asm/microcode.h b/arch/x86/include/asm/microcode.h
-index 7fb1047d61c7..871714e2e4c6 100644
---- a/arch/x86/include/asm/microcode.h
-+++ b/arch/x86/include/asm/microcode.h
-@@ -6,20 +6,6 @@
- #include <linux/earlycpio.h>
- #include <linux/initrd.h>
- 
--#define native_rdmsr(msr, val1, val2)			\
--do {							\
--	u64 __val = __rdmsr((msr));			\
--	(void)((val1) = (u32)__val);			\
--	(void)((val2) = (u32)(__val >> 32));		\
--} while (0)
--
--#define native_wrmsr(msr, low, high)			\
--	__wrmsr(msr, low, high)
--
--#define native_wrmsrl(msr, val)				\
--	__wrmsr((msr), (u32)((u64)(val)),		\
--		       (u32)((u64)(val) >> 32))
--
- struct ucode_patch {
- 	struct list_head plist;
- 	void *data;		/* Intel uses only this one */
-diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
-index 30df295f6d94..77254c9c8f61 100644
---- a/arch/x86/include/asm/msr.h
-+++ b/arch/x86/include/asm/msr.h
-@@ -108,6 +108,20 @@ static inline void notrace __wrmsr(unsigned int msr, u32 low, u32 high)
- 		     : : "c" (msr), "a"(low), "d" (high) : "memory");
- }
- 
-+#define native_rdmsr(msr, val1, val2)			\
-+do {							\
-+	u64 __val = __rdmsr((msr));			\
-+	(void)((val1) = (u32)__val);			\
-+	(void)((val2) = (u32)(__val >> 32));		\
-+} while (0)
-+
-+#define native_wrmsr(msr, low, high)			\
-+	__wrmsr(msr, low, high)
-+
-+#define native_wrmsrl(msr, val)				\
-+	__wrmsr((msr), (u32)((u64)(val)),		\
-+		       (u32)((u64)(val) >> 32))
-+
- static inline unsigned long long native_read_msr(unsigned int msr)
- {
- 	unsigned long long val;
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index be9c839e2c89..9d2043f94e29 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -49,7 +49,6 @@
- #include <asm/debugreg.h>
- #include <asm/kvm_para.h>
- #include <asm/irq_remapping.h>
--#include <asm/microcode.h>
- #include <asm/nospec-branch.h>
- 
- #include <asm/virtext.h>
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 051dab74e4e9..ee5ed44bc284 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -51,7 +51,6 @@
- #include <asm/apic.h>
- #include <asm/irq_remapping.h>
- #include <asm/mmu_context.h>
--#include <asm/microcode.h>
- #include <asm/nospec-branch.h>
- 
- #include "trace.h"
+The level interrupt de-assert should happen in following code
+/* Notify fds when the guest EOI'ed a level-triggered IRQ */
+	if (lr_signals_eoi_mi(val) && vgic_valid_spi(vcpu->kvm, intid))
+		kvm_notify_acked_irq(vcpu->kvm, 0,
+				     intid - VGIC_NR_PRIVATE_IRQS);
+
+But as addressed in commit message, lr_signals_eoi_mi() will return
+false if state in LR is not invalid(inactive), so it has no chance to
+de-assert the level interrupt in my test. 
+
+Thanks.
+Shunyong.
+
+> 
+> > 
+> >  }
+> >  
+> >  void vgic_v3_fold_lr_state(struct kvm_vcpu *vcpu)
+> > 
