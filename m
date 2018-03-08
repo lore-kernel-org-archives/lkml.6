@@ -1,293 +1,218 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756082AbeCHPZs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 10:25:48 -0500
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:57629 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1756044AbeCHPZq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 10:25:46 -0500
-From: Tomer Maimon <tmaimon77@gmail.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com, daniel.lezcano@linaro.org,
-        tglx@linutronix.de, avifishman70@gmail.com, brendanhiggins@google.com,
-        venture@google.com, joel@jms.id.au
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        openbmc@lists.ozlabs.org, Tomer Maimon <tmaimon77@gmail.com>
-Subject: [PATCH v5 2/2] clocksource/drivers/npcm: Add NPCM7xx timer driver
-Date: Thu,  8 Mar 2018 17:24:58 +0200
-Message-Id: <1520522698-16153-3-git-send-email-tmaimon77@gmail.com>
-X-Mailer: git-send-email 1.8.3.4
-In-Reply-To: <1520522698-16153-1-git-send-email-tmaimon77@gmail.com>
-References: <1520522698-16153-1-git-send-email-tmaimon77@gmail.com>
+        id S1755559AbeCHP3a (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 10:29:30 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56958 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752060AbeCHP32 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 10:29:28 -0500
+Subject: =?UTF-8?B?UmU6IFvmraTpgq7ku7blj6/og73lrZjlnKjpo47pmaldIFJlOiBbUkZD?=
+ =?UTF-8?Q?_PATCH]_KVM:_arm/arm64:_vgic:_change_condition_for_level_interrup?=
+ =?UTF-8?Q?t_resampling?=
+To: "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
+        "cdall@kernel.org" <cdall@kernel.org>
+References: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
+ <9b3763f2-1dfa-5506-d7f2-93389647111c@redhat.com>
+ <1520501495.2583.19.camel@hxt-semitech.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "david.daney@cavium.com" <david.daney@cavium.com>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <8c27ce1a-908b-3be9-7e10-d2151c48a918@redhat.com>
+Date: Thu, 8 Mar 2018 16:29:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
+MIME-Version: 1.0
+In-Reply-To: <1520501495.2583.19.camel@hxt-semitech.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Nuvoton BMC NPCM7xx timer driver.
+Hi Shunyong,
+On 08/03/18 10:31, Yang, Shunyong wrote:
+> Hi, Eric,
+> 
+> First, please let me change Christoffer's email to cdall@kernel.org. I
+> add more information about my test below, please check.
+> 
+> On Thu, 2018-03-08 at 09:57 +0100, Auger Eric wrote:
+>> Hi,
+>>
+>> On 08/03/18 08:01, Shunyong Yang wrote:
+>>>
+>>> When resampling irqfds is enabled, level interrupt should be
+>>> de-asserted when resampling happens. On page 4-47 of GIC v3
+>>> specification IHI0069D, it said,
+>>> "When the PE acknowledges an SGI, a PPI, or an SPI at the CPU
+>>> interface, the IRI changes the status of the interrupt to active
+>>> and pending if:
+>>> • It is an edge-triggered interrupt, and another edge has been
+>>> detected since the interrupt was acknowledged.
+>>> • It is a level-sensitive interrupt, and the level has not been
+>>> deasserted since the interrupt was acknowledged."
+>>>
+>>> GIC v2 specification IHI0048B.b has similar description on page
+>>> 3-42 for state machine transition.
+>>>
+>>> When some VFIO device, like mtty(8250 VFIO mdev emulation driver
+>>> in samples/vfio-mdev) triggers a level interrupt, the status
+>>> transition in LR is pending-->active-->active and pending.
+>>> Then it will wait resampling to de-assert the interrupt.
+>>>
+>>> Current design of lr_signals_eoi_mi() will return false if state
+>>> in LR is not invalid(Inactive). It causes resampling will not
+>>> happen
+>>> in mtty case.
+>>>
+>>> This will cause interrupt fired continuously to guest even 8250 IIR
+>>> has no interrupt. When 8250's interrupt is configured in shared
+>>> mode,
+>>> it will pass interrupt to other drivers to handle. However, there
+>>> is no other driver involved. Then, a "nobody cared" kernel
+>>> complaint
+>>> occurs.
+>>>
+>>> / # cat /dev/ttyS0
+>>> [    4.826836] random: crng init done
+>>> [    6.373620] irq 41: nobody cared (try booting with the "irqpoll"
+>>> option)
+>>> [    6.376414] CPU: 0 PID: 1307 Comm: cat Not tainted 4.16.0-rc4 #4
+>>> [    6.378927] Hardware name: linux,dummy-virt (DT)
+>>> [    6.380876] Call trace:
+>>> [    6.381937]  dump_backtrace+0x0/0x180
+>>> [    6.383495]  show_stack+0x14/0x1c
+>>> [    6.384902]  dump_stack+0x90/0xb4
+>>> [    6.386312]  __report_bad_irq+0x38/0xe0
+>>> [    6.387944]  note_interrupt+0x1f4/0x2b8
+>>> [    6.389568]  handle_irq_event_percpu+0x54/0x7c
+>>> [    6.391433]  handle_irq_event+0x44/0x74
+>>> [    6.393056]  handle_fasteoi_irq+0x9c/0x154
+>>> [    6.394784]  generic_handle_irq+0x24/0x38
+>>> [    6.396483]  __handle_domain_irq+0x60/0xb4
+>>> [    6.398207]  gic_handle_irq+0x98/0x1b0
+>>> [    6.399796]  el1_irq+0xb0/0x128
+>>> [    6.401138]  _raw_spin_unlock_irqrestore+0x18/0x40
+>>> [    6.403149]  __setup_irq+0x41c/0x678
+>>> [    6.404669]  request_threaded_irq+0xe0/0x190
+>>> [    6.406474]  univ8250_setup_irq+0x208/0x234
+>>> [    6.408250]  serial8250_do_startup+0x1b4/0x754
+>>> [    6.410123]  serial8250_startup+0x20/0x28
+>>> [    6.411826]  uart_startup.part.21+0x78/0x144
+>>> [    6.413633]  uart_port_activate+0x50/0x68
+>>> [    6.415328]  tty_port_open+0x84/0xd4
+>>> [    6.416851]  uart_open+0x34/0x44
+>>> [    6.418229]  tty_open+0xec/0x3c8
+>>> [    6.419610]  chrdev_open+0xb0/0x198
+>>> [    6.421093]  do_dentry_open+0x200/0x310
+>>> [    6.422714]  vfs_open+0x54/0x84
+>>> [    6.424054]  path_openat+0x2dc/0xf04
+>>> [    6.425569]  do_filp_open+0x68/0xd8
+>>> [    6.427044]  do_sys_open+0x16c/0x224
+>>> [    6.428563]  SyS_openat+0x10/0x18
+>>> [    6.429972]  el0_svc_naked+0x30/0x34
+>>> [    6.431494] handlers:
+>>> [    6.432479] [<000000000e9fb4bb>] serial8250_interrupt
+>>> [    6.434597] Disabling IRQ #41
+>>>
+>>> This patch changes the lr state condition in lr_signals_eoi_mi()
+>>> from
+>>> invalid(Inactive) to active and pending to avoid this.
+>>>
+>>> I am not sure about the original design of the condition of
+>>> invalid(active). So, This RFC is sent out for comments.
+>>>
+>>> Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+>>> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+>>> ---
+>>>  virt/kvm/arm/vgic/vgic-v2.c | 4 ++--
+>>>  virt/kvm/arm/vgic/vgic-v3.c | 4 ++--
+>>>  2 files changed, 4 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/virt/kvm/arm/vgic/vgic-v2.c b/virt/kvm/arm/vgic/vgic-
+>>> v2.c
+>>> index e9d840a75e7b..740ee9a5f551 100644
+>>> --- a/virt/kvm/arm/vgic/vgic-v2.c
+>>> +++ b/virt/kvm/arm/vgic/vgic-v2.c
+>>> @@ -46,8 +46,8 @@ void vgic_v2_set_underflow(struct kvm_vcpu *vcpu)
+>>>  
+>>>  static bool lr_signals_eoi_mi(u32 lr_val)
+>>>  {
+>>> -	return !(lr_val & GICH_LR_STATE) && (lr_val & GICH_LR_EOI)
+>>> &&
+>>> -	       !(lr_val & GICH_LR_HW);
+>>> +	return !((lr_val & GICH_LR_STATE) ^ GICH_LR_STATE) &&
+>>> +	       (lr_val & GICH_LR_EOI) && !(lr_val & GICH_LR_HW);
+>>>  }
+>>>  
+>>>  /*
+>>> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-
+>>> v3.c
+>>> index 6b329414e57a..43111bba7af9 100644
+>>> --- a/virt/kvm/arm/vgic/vgic-v3.c
+>>> +++ b/virt/kvm/arm/vgic/vgic-v3.c
+>>> @@ -35,8 +35,8 @@ void vgic_v3_set_underflow(struct kvm_vcpu *vcpu)
+>>>  
+>>>  static bool lr_signals_eoi_mi(u64 lr_val)
+>>>  {
+>>> -	return !(lr_val & ICH_LR_STATE) && (lr_val & ICH_LR_EOI)
+>>> &&
+>>> -	       !(lr_val & ICH_LR_HW);
+>>> +	return !((lr_val & ICH_LR_STATE) ^ ICH_LR_STATE) &&
+>>> +	       (lr_val & ICH_LR_EOI) && !(lr_val & ICH_LR_HW);
+>>
+>> In general don't we have this state transition
+>>
+>> inactive -> pending -> pending + active (1) -> active -> inactive.
+>>
+>> In that case won't we lower the virt irq level when folding the LR on
+>> Pending + Active state, which is not was we want?
+>>
+>> Thanks
+>>
+>> Eric
+> 
+> In current code, in my test, when I output LR value of the mtty IRQ 41
+> (hwirq = 36) in vgic_v3_fold_lr_state(). The LR's transition starts
+> like following,
+> 
+> 0-->50a0020000000024-->90a0020000000024-->d0a0020000000024
+> 
+> That is inactive-->pending-->active-->pending + active.
+Yes sorry I did a big mixture of virt line level and LR pending state.
 
-The clocksource Enable 24-bit TIMER0 and TIMER1 counters,
-while TIMER0 serve as clockevent and TIMER1 serve as clocksource.
+I had below case in mind: P -> guest IAR -> A -> exit/entry -> P+A  -> exit
 
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-Reviewed-by: Brendan Higgins <brendanhiggins@xxxxxxxxxx>
----
- drivers/clocksource/Kconfig         |   8 ++
- drivers/clocksource/Makefile        |   1 +
- drivers/clocksource/timer-npcm7xx.c | 215 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 224 insertions(+)
- create mode 100644 drivers/clocksource/timer-npcm7xx.c
+in which case you shouldn't call the resampler.
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index b3b4ed9b6874..76194bc20bdf 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -130,6 +130,14 @@ config VT8500_TIMER
- 	help
- 	  Enables support for the VT8500 driver.
- 
-+config NPCM7XX_TIMER
-+	bool "NPCM7xx timer driver" if COMPILE_TEST
-+	depends on HAS_IOMEM
-+	select CLKSRC_MMIO
-+	help
-+	  Enable 24-bit TIMER0 and TIMER1 counters in the NPCM7xx architecture,
-+	  While TIMER0 serves as clockevent and TIMER1 serves as clocksource.
-+
- config CADENCE_TTC_TIMER
- 	bool "Cadence TTC timer driver" if COMPILE_TEST
- 	depends on COMMON_CLK
-diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-index d6dec4489d66..74387877f7cf 100644
---- a/drivers/clocksource/Makefile
-+++ b/drivers/clocksource/Makefile
-@@ -55,6 +55,7 @@ obj-$(CONFIG_CLKSRC_NPS)	+= timer-nps.o
- obj-$(CONFIG_OXNAS_RPS_TIMER)	+= timer-oxnas-rps.o
- obj-$(CONFIG_OWL_TIMER)		+= owl-timer.o
- obj-$(CONFIG_SPRD_TIMER)	+= timer-sprd.o
-+obj-$(CONFIG_NPCM7XX_TIMER)	+= timer-npcm7xx.o
- 
- obj-$(CONFIG_ARC_TIMERS)		+= arc_timer.o
- obj-$(CONFIG_ARM_ARCH_TIMER)		+= arm_arch_timer.o
-diff --git a/drivers/clocksource/timer-npcm7xx.c b/drivers/clocksource/timer-npcm7xx.c
-new file mode 100644
-index 000000000000..f98d912bd259
---- /dev/null
-+++ b/drivers/clocksource/timer-npcm7xx.c
-@@ -0,0 +1,215 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2014-2018 Nuvoton Technologies tomer.maimon@nuvoton.com
-+ * All rights reserved.
-+ *
-+ * Copyright 2017 Google, Inc.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/sched.h>
-+#include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/err.h>
-+#include <linux/clk.h>
-+#include <linux/io.h>
-+#include <linux/clockchips.h>
-+#include <linux/of_irq.h>
-+#include <linux/of_address.h>
-+#include "timer-of.h"
-+
-+/* Timers registers */
-+#define NPCM7XX_REG_TCSR0	0x0 /* Timer 0 Control and Status Register */
-+#define NPCM7XX_REG_TICR0	0x8 /* Timer 0 Initial Count Register */
-+#define NPCM7XX_REG_TCSR1	0x4 /* Timer 1 Control and Status Register */
-+#define NPCM7XX_REG_TICR1	0xc /* Timer 1 Initial Count Register */
-+#define NPCM7XX_REG_TDR1	0x14 /* Timer 1 Data Register */
-+#define NPCM7XX_REG_TISR	0x18 /* Timer Interrupt Status Register */
-+
-+/* Timers control */
-+#define NPCM7XX_Tx_RESETINT		0x1f
-+#define NPCM7XX_Tx_PERIOD		BIT(27)
-+#define NPCM7XX_Tx_INTEN		BIT(29)
-+#define NPCM7XX_Tx_COUNTEN		BIT(30)
-+#define NPCM7XX_Tx_ONESHOT		0x0
-+#define NPCM7XX_Tx_OPER			GENMASK(3, 27)
-+#define NPCM7XX_Tx_MIN_PRESCALE		0x1
-+#define NPCM7XX_Tx_TDR_MASK_BITS	24
-+#define NPCM7XX_Tx_MAX_CNT		0xFFFFFF
-+#define NPCM7XX_T0_CLR_INT		0x1
-+#define NPCM7XX_Tx_CLR_CSR		0x0
-+
-+/* Timers operating mode */
-+#define NPCM7XX_START_PERIODIC_Tx (NPCM7XX_Tx_PERIOD | NPCM7XX_Tx_COUNTEN | \
-+					NPCM7XX_Tx_INTEN | \
-+					NPCM7XX_Tx_MIN_PRESCALE)
-+
-+#define NPCM7XX_START_ONESHOT_Tx (NPCM7XX_Tx_ONESHOT | NPCM7XX_Tx_COUNTEN | \
-+					NPCM7XX_Tx_INTEN | \
-+					NPCM7XX_Tx_MIN_PRESCALE)
-+
-+#define NPCM7XX_START_Tx (NPCM7XX_Tx_COUNTEN | NPCM7XX_Tx_PERIOD | \
-+				NPCM7XX_Tx_MIN_PRESCALE)
-+
-+#define NPCM7XX_DEFAULT_CSR (NPCM7XX_Tx_CLR_CSR | NPCM7XX_Tx_MIN_PRESCALE)
-+
-+static int npcm7xx_timer_resume(struct clock_event_device *evt)
-+{
-+	struct timer_of *to = to_timer_of(evt);
-+	u32 val;
-+
-+	val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
-+	val |= NPCM7XX_Tx_COUNTEN;
-+	writel(val, timer_of_base(to) + NPCM7XX_REG_TCSR0);
-+
-+	return 0;
-+}
-+
-+static int npcm7xx_timer_shutdown(struct clock_event_device *evt)
-+{
-+	struct timer_of *to = to_timer_of(evt);
-+	u32 val;
-+
-+	val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
-+	val &= ~NPCM7XX_Tx_COUNTEN;
-+	writel(val, timer_of_base(to) + NPCM7XX_REG_TCSR0);
-+
-+	return 0;
-+}
-+
-+static int npcm7xx_timer_oneshot(struct clock_event_device *evt)
-+{
-+	struct timer_of *to = to_timer_of(evt);
-+	u32 val;
-+
-+	val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
-+	val &= ~NPCM7XX_Tx_OPER;
-+
-+	val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
-+	val |= NPCM7XX_START_ONESHOT_Tx;
-+	writel(val, timer_of_base(to) + NPCM7XX_REG_TCSR0);
-+
-+	return 0;
-+}
-+
-+static int npcm7xx_timer_periodic(struct clock_event_device *evt)
-+{
-+	struct timer_of *to = to_timer_of(evt);
-+	u32 val;
-+
-+	val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
-+	val &= ~NPCM7XX_Tx_OPER;
-+
-+	writel(timer_of_period(to), timer_of_base(to) + NPCM7XX_REG_TICR0);
-+	val |= NPCM7XX_START_PERIODIC_Tx;
-+
-+	writel(val, timer_of_base(to) + NPCM7XX_REG_TCSR0);
-+
-+	return 0;
-+}
-+
-+static int npcm7xx_clockevent_set_next_event(unsigned long evt,
-+		struct clock_event_device *clk)
-+{
-+	struct timer_of *to = to_timer_of(clk);
-+	u32 val;
-+
-+	writel(evt, timer_of_base(to) + NPCM7XX_REG_TICR0);
-+	val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
-+	val |= NPCM7XX_START_Tx;
-+	writel(val, timer_of_base(to) + NPCM7XX_REG_TCSR0);
-+
-+	return 0;
-+}
-+
-+static irqreturn_t npcm7xx_timer0_interrupt(int irq, void *dev_id)
-+{
-+	struct clock_event_device *evt = (struct clock_event_device *)dev_id;
-+	struct timer_of *to = to_timer_of(evt);
-+
-+	writel(NPCM7XX_T0_CLR_INT, timer_of_base(to) + NPCM7XX_REG_TISR);
-+
-+	evt->event_handler(evt);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static struct timer_of npcm7xx_to = {
-+	.flags = TIMER_OF_IRQ | TIMER_OF_BASE | TIMER_OF_CLOCK,
-+
-+	.clkevt = {
-+		.name		    = "npcm7xx-timer0",
-+		.features	    = CLOCK_EVT_FEAT_PERIODIC |
-+				      CLOCK_EVT_FEAT_ONESHOT,
-+		.set_next_event	    = npcm7xx_clockevent_set_next_event,
-+		.set_state_shutdown = npcm7xx_timer_shutdown,
-+		.set_state_periodic = npcm7xx_timer_periodic,
-+		.set_state_oneshot  = npcm7xx_timer_oneshot,
-+		.tick_resume	    = npcm7xx_timer_resume,
-+		.rating		    = 300,
-+	},
-+
-+	.of_irq = {
-+		.handler = npcm7xx_timer0_interrupt,
-+		.flags = IRQF_TIMER | IRQF_IRQPOLL,
-+	},
-+};
-+
-+static void __init npcm7xx_clockevents_init(void)
-+{
-+	writel(NPCM7XX_DEFAULT_CSR,
-+		timer_of_base(&npcm7xx_to) + NPCM7XX_REG_TCSR0);
-+
-+	writel(NPCM7XX_Tx_RESETINT,
-+		timer_of_base(&npcm7xx_to) + NPCM7XX_REG_TISR);
-+
-+	npcm7xx_to.clkevt.cpumask = cpumask_of(0);
-+	clockevents_config_and_register(&npcm7xx_to.clkevt,
-+					timer_of_rate(&npcm7xx_to),
-+					0x1, NPCM7XX_Tx_MAX_CNT);
-+}
-+
-+static void __init npcm7xx_clocksource_init(void)
-+{
-+	u32 val;
-+
-+	writel(NPCM7XX_DEFAULT_CSR,
-+		timer_of_base(&npcm7xx_to) + NPCM7XX_REG_TCSR1);
-+	writel(NPCM7XX_Tx_MAX_CNT,
-+		timer_of_base(&npcm7xx_to) + NPCM7XX_REG_TICR1);
-+
-+	val = readl(timer_of_base(&npcm7xx_to) + NPCM7XX_REG_TCSR1);
-+	val |= NPCM7XX_START_Tx;
-+	writel(val, timer_of_base(&npcm7xx_to) + NPCM7XX_REG_TCSR1);
-+
-+	clocksource_mmio_init(timer_of_base(&npcm7xx_to) +
-+				NPCM7XX_REG_TDR1,
-+				"npcm7xx-timer1", timer_of_rate(&npcm7xx_to),
-+				200, (unsigned int)NPCM7XX_Tx_TDR_MASK_BITS,
-+				clocksource_mmio_readl_down);
-+}
-+
-+static int __init npcm7xx_timer_init(struct device_node *np)
-+{
-+	int ret;
-+
-+	ret = timer_of_init(np, &npcm7xx_to);
-+	if (ret)
-+		return ret;
-+
-+	/* Clock input is divided by PRESCALE + 1 before it is fed */
-+	/* to the counter */
-+	npcm7xx_to.of_clk.rate = npcm7xx_to.of_clk.rate /
-+		(NPCM7XX_Tx_MIN_PRESCALE + 1);
-+
-+	npcm7xx_clocksource_init();
-+	npcm7xx_clockevents_init();
-+
-+	pr_info("Enabling NPCM7xx clocksource timer base: 0x%x, IRQ: %d ",
-+		(int)timer_of_base(&npcm7xx_to), timer_of_irq(&npcm7xx_to));
-+
-+	return 0;
-+}
-+
-+TIMER_OF_DECLARE(npcm7xx, "nuvoton,npcm750-timer", npcm7xx_timer_init);
-+
--- 
-2.14.1
+Thanks
+
+Eric
+> Then it keep running cyclic pending-->active-->pending + active.
+> 
+> The level interrupt de-assert should happen in following code
+> /* Notify fds when the guest EOI'ed a level-triggered IRQ */
+> 	if (lr_signals_eoi_mi(val) && vgic_valid_spi(vcpu->kvm, intid))
+> 		kvm_notify_acked_irq(vcpu->kvm, 0,
+> 				     intid - VGIC_NR_PRIVATE_IRQS);
+> 
+> But as addressed in commit message, lr_signals_eoi_mi() will return
+> false if state in LR is not invalid(inactive), so it has no chance to
+> de-assert the level interrupt in my test. 
+> 
+> Thanks.
+> Shunyong.
+> 
+>>
+>>>
+>>>  }
+>>>  
+>>>  void vgic_v3_fold_lr_state(struct kvm_vcpu *vcpu)
+>>>
