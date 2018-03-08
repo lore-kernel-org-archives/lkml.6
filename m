@@ -1,105 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935427AbeCHIBB convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 03:01:01 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:52819 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755077AbeCHIA7 (ORCPT
+        id S965057AbeCHIB6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 03:01:58 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36225 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935358AbeCHIBx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 03:00:59 -0500
-Date: Thu, 8 Mar 2018 09:00:39 +0100 (CET)
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: Matheus Castello <matheus@castello.eng.br>
-Cc: linus.walleij@linaro.org, eric@anholt.net, devicetree@vger.kernel.org,
+        Thu, 8 Mar 2018 03:01:53 -0500
+X-Google-Smtp-Source: AG47ELuN5CUA0BSbG+ujHwl8J7HvVeQJ+5iFqmepsBU9Y0G3huMxoSAxBRc9ghrQ8IDZr9HA1SV+/w==
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To: linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         linux-kernel@vger.kernel.org
-Message-ID: <188888639.307907.1520496039100@email.1und1.de>
-In-Reply-To: <047e47b4-daf7-2ba2-ea86-0060a59049b7@castello.eng.br>
-References: <431699005.307231.1520086916739@email.1und1.de>
- <1520216960-19880-1-git-send-email-matheus@castello.eng.br>
- <821312841.275581.1520423887935@email.1und1.de>
- <047e47b4-daf7-2ba2-ea86-0060a59049b7@castello.eng.br>
-Subject: Re: [PATCH v2 0/3] pinctrl: bcm2835: Add brcm,level property
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev22
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K0:/cnuFyQ46pFdOYkUR9eEC9epdczSvyIzre3vUTElj69nDvAd7eY
- VT6vHdHu4drWbSYKxEqNwCUgwC2VCbfJYfjI/J1zorbGWVSBgCF5dsHgrRoLvYF3dFw4FbL
- DpbHeqioGt/8uPjxbrrgRFZ0RqmVIBmEKOjNgpi6ww+IRABlFXR7RlUW5sihiCqL4e5HpKL
- KxxwsvOIw2mwUfCCN8s5A==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:x+1Pi7wWJWg=:UnOyHFRuE1HpgWmbgY+hln
- SVjvldlVzWbvBaPHFtCV7aGztjZ1zIQBJLCW25+MWwFmqCGb8Oc9g/9BfhFlU6CPnkSw+P39D
- KZBkMXb1ZXMc0Je27sRcv13zezW+CLMlyhY5muwBj/Zcu+OJe8vOQ4DPxPF/sAFtu4SxeIy8S
- 7rp3nVtGMCEegcXIY0AXxdNVskIggt3LSqnullnbJSAjUUz9y0mOeHTUWJ7VruIQAVpigc20J
- Otu9y/DcLvKcOUgy+hejLLvM+CrxkdI56baldz4XyZ6z45lFRh6lU1CquLC/ZEJOTxBN1gah3
- l00VUqPgWswFnyQdvuA0T0ryTIoWiVRAegEX3wgkGHf+0X+rAVS7RSY2P14tldkUWEWPNI5nP
- JYixbfdogYtjVAtcbZscC1cupaZ/D7krWaTSHAWk5fQJXaoUoORHpoT+4LjOIUMs0f9vrAI7J
- Z2alQJj4ge14Y/QcyIlhcN2EC0bXO2FZceSFRBYEorsT8feOu/Gxui6dSgv9MSDTqISRDQJCz
- ttQlbvwcto+9RVQQXuCXPdRLW6Fq0bA8BQN5AgWH5y++BmQSjwPPpDvDPrZN32eY+PDhg97RQ
- T8k58wgXNDjKcIa51GSC68BxzHosLz+v4/yJsnNXwM6g8Aakojo5ME3n+E11yA6Sy/9zAQV1k
- VoSsIct346bZzbAKs4fmZJQcy8h9lDuc+yWWbNSbrnJpLEnZ4r7fy5s/vARZI8QjOUhTv1W+7
- 1QyHokToBJmAK2dhzDbTkkS7tGKGkHb8RZeHuxWHu/x0vWXVpdu+xxidAIA=
+Subject: [PATCH 01/12] efi/arm*: Only register page tables when they exist
+Date: Thu,  8 Mar 2018 08:00:09 +0000
+Message-Id: <20180308080020.22828-2-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
+References: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matheus,
+From: Mark Rutland <mark.rutland@arm.com>
 
-> Matheus Castello <matheus@castello.eng.br> hat am 8. März 2018 um 01:12 geschrieben:
-> 
-> 
-> Hi Stefan,
-> 
-> On 03/07/2018 07:58 AM, Stefan Wahren wrote:
-> > Hi Matheus,
-> > 
-> >> Matheus Castello <matheus@castello.eng.br> hat am 5. März 2018 um 03:29 geschrieben:
-> >>
-> >>
-> >> Hi Linus and Stefan,
-> >>
-> >> thanks for the tips.
-> >>
-> >> This series adds support for generic binding for pinctrl bcm2835 driver,
-> >> and add the code for set output buffer of a pin using the output-low and
-> >> output-high generic properties.
-> >>
-> >> Tested on Raspberry Pi Zero W, based on bcm2835 SoC.
-> >>
-> >> Matheus Castello (3):
-> > 
-> > looks like you missed the changes to the dt binding. Please also add Rob Herring and Mark Rutland to CC. We need a ACK from them.
-> 
-> are you talking about the .dts files? I add an overlay file for my tests. 
-> I was thinking it would be better to start with this changes in the driver and then in another series to convert to the generic style in the .dts.
-> If you find it better already add the conversion also in this series let me know.
-> 
-> I understood that I should put the device tree maintainers in thread only if I were to introduce a new property. As I am using generic properties and not introducing new ones I did not add them.
-> Let me know if it is still necessary I stayed in this doubt.
+Currently the arm/arm64 runtime code registers the runtime servies
+pagetables with ptdump regardless of whether runtime services page
+tables have been created.
 
-no this is a misunderstanding. You are changing the DT interface because the driver supports new properties (from driver point of view). The DT users usually look at the binding document [1] not the source code. So you need to extend the binding document before changing the source code within a patch series. At the end we need a DT maintainer's ACK for the binding change. Using the generic properties doesn't allow us to skip this, but it increases the chance of an ACK.
+As efi_mm.pgd is NULL in these cases, attempting to dump the efi page
+tables results in a NULL pointer dereference in the ptdump code:
 
-Btw it's okay to keep the DTS files.
+/sys/kernel/debug# cat efi_page_tables
+[  479.522600] Unable to handle kernel NULL pointer dereference at virtual address 00000000
+[  479.522715] Mem abort info:
+[  479.522764]   ESR = 0x96000006
+[  479.522850]   Exception class = DABT (current EL), IL = 32 bits
+[  479.522899]   SET = 0, FnV = 0
+[  479.522937]   EA = 0, S1PTW = 0
+[  479.528200] Data abort info:
+[  479.528230]   ISV = 0, ISS = 0x00000006
+[  479.528317]   CM = 0, WnR = 0
+[  479.528317] user pgtable: 4k pages, 48-bit VAs, pgd = 0000000064ab0cb0
+[  479.528449] [0000000000000000] *pgd=00000000fbbe4003, *pud=00000000fb66e003, *pmd=0000000000000000
+[  479.528600] Internal error: Oops: 96000006 [#1] PREEMPT SMP
+[  479.528664] Modules linked in:
+[  479.528699] CPU: 0 PID: 2457 Comm: cat Not tainted 4.15.0-rc3-00065-g2ad2ee7ecb5c-dirty #7
+[  479.528799] Hardware name: FVP Base (DT)
+[  479.528899] pstate: 00400009 (nzcv daif +PAN -UAO)
+[  479.528941] pc : walk_pgd.isra.1+0x20/0x1d0
+[  479.529011] lr : ptdump_walk_pgd+0x30/0x50
+[  479.529105] sp : ffff00000bf4bc20
+[  479.529185] x29: ffff00000bf4bc20 x28: 0000ffff9d22e000
+[  479.529271] x27: 0000000000020000 x26: ffff80007b4c63c0
+[  479.529358] x25: 00000000014000c0 x24: ffff80007c098900
+[  479.529445] x23: ffff00000bf4beb8 x22: 0000000000000000
+[  479.529532] x21: ffff00000bf4bd70 x20: 0000000000000001
+[  479.529618] x19: ffff00000bf4bcb0 x18: 0000000000000000
+[  479.529760] x17: 000000000041a1c8 x16: ffff0000082139d8
+[  479.529800] x15: 0000ffff9d3c6030 x14: 0000ffff9d2527f4
+[  479.529924] x13: 00000000000003f3 x12: 0000000000000038
+[  479.530000] x11: 0000000000000003 x10: 0101010101010101
+[  479.530099] x9 : 0000000017e94050 x8 : 000000000000003f
+[  479.530226] x7 : 0000000000000000 x6 : 0000000000000000
+[  479.530313] x5 : 0000000000000001 x4 : 0000000000000000
+[  479.530416] x3 : ffff000009069fd8 x2 : 0000000000000000
+[  479.530500] x1 : 0000000000000000 x0 : 0000000000000000
+[  479.530599] Process cat (pid: 2457, stack limit = 0x000000005d1b0e6f)
+[  479.530660] Call trace:
+[  479.530746]  walk_pgd.isra.1+0x20/0x1d0
+[  479.530833]  ptdump_walk_pgd+0x30/0x50
+[  479.530907]  ptdump_show+0x10/0x20
+[  479.530920]  seq_read+0xc8/0x470
+[  479.531023]  full_proxy_read+0x60/0x90
+[  479.531100]  __vfs_read+0x18/0x100
+[  479.531180]  vfs_read+0x88/0x160
+[  479.531267]  SyS_read+0x48/0xb0
+[  479.531299]  el0_svc_naked+0x20/0x24
+[  479.531400] Code: 91400420 f90033a0 a90707a2 f9403fa0 (f9400000)
+[  479.531499] ---[ end trace bfe8e28d8acb2b67 ]---
+Segmentation fault
 
-Stefan
+Let's avoid this problem by only registering the tables after their
+successful creation, which is also less confusing when EFI runtime
+services are not in use.
 
-[1] - https://elixir.bootlin.com/linux/v4.16-rc4/source/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
+Reported-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
+ drivers/firmware/efi/arm-runtime.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> 
-> Best Regards
-> Matheus Castello
-> > 
-> >>   pinctrl: bcm2835: switch to GENERIC_PINCONF
-> >>   pinctrl: bcm2835: Add support for generic pinctrl binding
-> >>   pinctrl: bcm2835: Add support for output-low output-high properties
-> >>
-> >>  drivers/pinctrl/bcm/Kconfig           |  1 +
-> >>  drivers/pinctrl/bcm/pinctrl-bcm2835.c | 88 +++++++++++++++++++++++------------
-> >>  2 files changed, 60 insertions(+), 29 deletions(-)
-> >>
-> >> --
-> >> 2.7.4
-> >>
+diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
+index 1cc41c3d6315..86a1ad17a32e 100644
+--- a/drivers/firmware/efi/arm-runtime.c
++++ b/drivers/firmware/efi/arm-runtime.c
+@@ -54,6 +54,9 @@ static struct ptdump_info efi_ptdump_info = {
+ 
+ static int __init ptdump_init(void)
+ {
++	if (!efi_enabled(EFI_RUNTIME_SERVICES))
++		return 0;
++
+ 	return ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
+ }
+ device_initcall(ptdump_init);
+-- 
+2.15.1
