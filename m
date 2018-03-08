@@ -1,88 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935794AbeCHOS3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 09:18:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55653 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933418AbeCHOS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 09:18:27 -0500
-Date: Thu, 8 Mar 2018 15:18:24 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>
-Subject: Re: [PATCH] vsprintf: Make "null" pointer dereference more robust
-Message-ID: <20180308141824.bfk2pr6wmjh4ytdi@pathway.suse.cz>
-References: <1519752950.10722.231.camel@linux.intel.com>
- <20180228100437.o4juwxbzomkqjvjx@pathway.suse.cz>
- <1519814544.10722.266.camel@linux.intel.com>
- <20180302125118.bjd3tbuu72vgfczo@pathway.suse.cz>
- <20180302125359.szbin2kznxvoq7sc@pathway.suse.cz>
- <CAKwiHFgTbFof34oc59OU3M1=-PTzstv0uxSmoiRc8TJPJPMHVw@mail.gmail.com>
- <20180306092513.ibodfsnv4xrxdlub@pathway.suse.cz>
- <1520330185.10722.401.camel@linux.intel.com>
- <20180307155244.b45c3fb5vcxb4q2l@pathway.suse.cz>
- <CA+55aFxr5eg_fWjyhcYFU4CSOoVP_GeB79cYa=8mUk7J1cUG7A@mail.gmail.com>
+        id S935784AbeCHO0R (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 09:26:17 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:38888 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933489AbeCHO0Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 09:26:16 -0500
+Date: Thu, 8 Mar 2018 15:25:48 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Rajvi Jingar <rajvi.jingar@intel.com>
+cc: mingo@redhat.com, hpa@zytor.com, x86@kernel.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, christopher.s.hall@intel.com
+Subject: Re: [PATCH v2] x86/tsc: Convert ART in nanoseconds to TSC.
+In-Reply-To: <1520354849-32593-1-git-send-email-rajvi.jingar@intel.com>
+Message-ID: <alpine.DEB.2.21.1803081518020.8662@nanos.tec.linutronix.de>
+References: <1520354849-32593-1-git-send-email-rajvi.jingar@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFxr5eg_fWjyhcYFU4CSOoVP_GeB79cYa=8mUk7J1cUG7A@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: multipart/mixed; BOUNDARY="8323329-615922065-1520518841=:8662"
+Content-ID: <alpine.DEB.2.21.1803081521040.8662@nanos.tec.linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2018-03-07 10:34:17, Linus Torvalds wrote:
-> On Wed, Mar 7, 2018 at 7:52 AM, Petr Mladek <pmladek@suse.com> wrote:
-> > If we are changing things, let's do it properly. The range
-> > (-PAGE_SIZE,+PAGE_SIZE) is just a small subset of invalid pointers.
-> > Let's try to catch more of them by reading one byte using
-> > probe_kernel_read(). It would return -FAULT if we are not able
-> > to read the address but it would not crash.
-> >
-> > Then we clearly need a new message when dereferencing invalid
-> > poitners that are not pure NULL. I propose (efault).
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-615922065-1520518841=:8662
+Content-Type: text/plain; CHARSET=UTF-8
+Content-Transfer-Encoding: 8BIT
+Content-ID: <alpine.DEB.2.21.1803081521041.8662@nanos.tec.linutronix.de>
+
+On Tue, 6 Mar 2018, Rajvi Jingar wrote:
+> Device drivers use get_device_system_crosststamp() to produce precise
+> system/device cross-timestamps. The PHC clock and ALSA interfaces,
+> for example, make the cross-timestamps available to user applications.
+> On Intel platforms, get_device_system_crosststamp() requires a TSC
+> value derived from ART (Always Running Timer) to compute the monotonic
+>  raw and realtime system timestamps.
 > 
-> "probe_kernel_read()" is really complicated. It takes a *fault* for chrissake!
+> Starting with Intel Goldmont platforms, the PCIe root complex supports
+> the PTM time sync protocol. PTM requires all timestamps to be in units
+> of nanoseconds. The Intel root complex hardware propagates system time –
+> derived from ART - in units of nanoseconds performing the conversion
+> as follows:
 > 
-> Guess what happens now to any crash report if it uses %p and there is
-> anything wrong with the VM?
+> ART_NS = ART * 1e9 / <crystal frequency>
+> 
+> When user software requests a cross-timestamp, the system timestamps
+> (generally read from device registers) must be converted to TSC by
+> the driver software as follows:
+> 
+> TSC = ART_NS * TSC_KHZ / 1e6
+> 
+> This is valid when CPU feature flag X86_FEATURE_TSC_KNOWN_FREQ is set
+> indicating the tsc_khz is derived from CPUID[15H]. Drivers should
+> check that this flag is set before conversion to TSC is attempted.
 
-This patch does _not_ affect plain %p, %px, and %pK!
+Clear and coherent changelog. Well done!
 
-It affects %s and %p* modifiers that need to read data from the
-given address.
+> Changes from v1:
+> 
+> * use existing frequency hardcode for platforms where CPUID[15H].ECX == 0
+> (v1 added redundant hardcode just for the ART.ns conversion)
+> 
+> * use tsc_khz for TSC conversion, also requires driver to check
+> X86_FEATURE_TSC_KNOWN_FREQ (v1 used CPUID[15H].ECX value directly)
 
+Maintainer lazyness request: Can you please put the changes paragraph below
+the --- seperator so it is discarded when the patch is extracted from
+mail. It's not part of the changelog which goes into git.
 
-> Yes, yes, it disables page faults, but that only means that we won't
-> go all the way into the generic VM. We'll still take the fauly, still
-> do vmalloc fault filling, still do a *lot* of potentially really
-> complicated things.
+> +struct system_counterval_t convert_art_ns_to_tsc(u64 art_ns)
 
-But the faulty way would happen anyway when vsnprintf() tried to
-access the data at the given address.
+Can you please add kernel doc format function documentation which explains
+the calling conventions?
 
+> +{
+> +	u64 tmp, res, rem;
+> +
+> +	rem = do_div(art_ns, USEC_PER_SEC);
+> +
+> +	res = art_ns * tsc_khz;
+> +	tmp = rem * tsc_khz;
+> +
+> +	do_div(tmp, USEC_PER_SEC);
+> +	res += tmp;
+> +
+> +	return (struct system_counterval_t) {.cs = art_related_clocksource,
+> +			.cycles = res};
 
-> Guys, stop this idiocy. printk() needs to be *simple* and *reliable*, not fancy.
+Definitely way better than the previous one. Good job!
 
-This patch is primary about printk() reliability. We want a message
-instead of a silent crash.
+Thanks,
 
-I am open for better ideas how to get the fault-related messages out
-when logbug_lock is taken. At the moment we have them in printk_safe
-per-CPU buffer. The only chance to see them is crashdump or
-printk_safe_flush_on_panic() called in single CPU mode.
-
-
-> Plus, you just made %p be an excellent leak of some very sensitive
-> information, like "where is the kernel mapped" etc.
-
-We might call panic() after lockbuf_lock is released. This would help
-to see the message and prevent crash-free hunting for kernel location.
-
-Best Regards,
-Petr
+	tglx
+--8323329-615922065-1520518841=:8662--
