@@ -1,150 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936069AbeCHQ50 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 11:57:26 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:57405 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932131AbeCHQyr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 11:54:47 -0500
-From: <gabriel.fernandez@st.com>
-To: <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
-        Loic PALLARDY <loic.pallardy@st.com>,
-        benjamin GAIGNARD <benjamin.gaignard@st.com>
-Subject: [PATCH v2 04/12] clk: stm32mp1: add Source Clocks for PLLs
-Date: Thu, 8 Mar 2018 17:53:57 +0100
-Message-ID: <1520528045-18330-5-git-send-email-gabriel.fernandez@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
-References: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
+        id S936097AbeCHQ6A (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 11:58:00 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6184 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935930AbeCHQ5x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 11:57:53 -0500
+Subject: Re: [PATCH v8 3/5] arm64: dts: add ufs dts node
+To: Li Wei <liwei213@huawei.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, <vinholikatti@gmail.com>,
+        <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
+        <khilman@baylibre.com>, <arnd@arndb.de>,
+        <gregory.clement@free-electrons.com>,
+        <thomas.petazzoni@free-electrons.com>, <yamada.masahiro@socionext.com>,
+        <riku.voipio@linaro.org>, <treding@nvidia.com>, <krzk@kernel.org>,
+        <eric@anholt.net>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-scsi@vger.kernel.org>
+References: <20180213101412.5717-1-liwei213@huawei.com>
+ <20180213101412.5717-4-liwei213@huawei.com>
+CC: <zangleigang@hisilicon.com>, <gengjianfeng@hisilicon.com>,
+        <guodong.xu@linaro.org>, <zhangfei.gao@linaro.org>,
+        <fengbaopeng@hisilicon.com>
+From: Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5AA16B6F.2000702@hisilicon.com>
+Date: Thu, 8 Mar 2018 16:57:19 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG4NODE2.st.com
- (10.75.127.11)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-08_10:,,
- signatures=0
+In-Reply-To: <20180213101412.5717-4-liwei213@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.45]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Hi Li Wei,
 
-This patch adds source clocks for PLLs
-This patch also introduces MUX clock API.
+On 2018/2/13 10:14, Li Wei wrote:
+> arm64: dts: add ufs node for Hisilicon.
+> 
+> Signed-off-by: Li Wei <liwei213@huawei.com>
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/clk/clk-stm32mp1.c | 60 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+Fine to me. Thanks!
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 56b738e..47984f3 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -103,6 +103,18 @@
- 
- #define RCC_CLR	0x4
- 
-+static const char * const ref12_parents[] = {
-+	"ck_hsi", "ck_hse"
-+};
-+
-+static const char * const ref3_parents[] = {
-+	"ck_hsi", "ck_hse", "ck_csi"
-+};
-+
-+static const char * const ref4_parents[] = {
-+	"ck_hsi", "ck_hse", "ck_csi"
-+};
-+
- struct clock_config {
- 	u32 id;
- 	const char *name;
-@@ -140,6 +152,14 @@ struct div_cfg {
- 	const struct clk_div_table *table;
- };
- 
-+struct mux_cfg {
-+	u32 reg_off;
-+	u8 shift;
-+	u8 width;
-+	u8 mux_flags;
-+	u32 *table;
-+};
-+
- struct stm32_gate_cfg {
- 	struct gate_cfg		*gate;
- 	const struct clk_ops	*ops;
-@@ -196,6 +216,20 @@ struct stm32_gate_cfg {
- 					     lock);
- }
- 
-+static struct clk_hw *
-+_clk_hw_register_mux(struct device *dev,
-+		     struct clk_hw_onecell_data *clk_data,
-+		     void __iomem *base, spinlock_t *lock,
-+		     const struct clock_config *cfg)
-+{
-+	struct mux_cfg *mux_cfg = cfg->cfg;
-+
-+	return clk_hw_register_mux(dev, cfg->name, cfg->parent_names,
-+				   cfg->num_parents, cfg->flags,
-+				   mux_cfg->reg_off + base, mux_cfg->shift,
-+				   mux_cfg->width, mux_cfg->mux_flags, lock);
-+}
-+
- /* MP1 Gate clock with set & clear registers */
- 
- static int mp1_gate_clk_enable(struct clk_hw *hw)
-@@ -350,6 +384,22 @@ static void mp1_gate_clk_disable(struct clk_hw *hw)
- 	DIV_TABLE(_id, _name, _parent, _flags, _offset, _shift, _width,\
- 		  _div_flags, NULL)
- 
-+#define MUX(_id, _name, _parents, _flags, _offset, _shift, _width, _mux_flags)\
-+{\
-+	.id		= _id,\
-+	.name		= _name,\
-+	.parent_names	= _parents,\
-+	.num_parents	= ARRAY_SIZE(_parents),\
-+	.flags		= _flags,\
-+	.cfg		=  &(struct mux_cfg) {\
-+		.reg_off	= _offset,\
-+		.shift		= _shift,\
-+		.width		= _width,\
-+		.mux_flags	= _mux_flags,\
-+	},\
-+	.func		= _clk_hw_register_mux,\
-+}
-+
- /* STM32 GATE */
- #define STM32_GATE(_id, _name, _parent, _flags, _gate)\
- {\
-@@ -392,6 +442,16 @@ static void mp1_gate_clk_disable(struct clk_hw *hw)
- 	GATE(CK_LSE, "ck_lse", "clk-lse", 0, RCC_BDCR, 0, 0),
- 
- 	FIXED_FACTOR(CK_HSE_DIV2, "clk-hse-div2", "ck_hse", 0, 1, 2),
-+
-+	/* ref clock pll */
-+	MUX(NO_ID, "ref1", ref12_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK12SELR,
-+	    0, 2, CLK_MUX_READ_ONLY),
-+
-+	MUX(NO_ID, "ref3", ref3_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK3SELR,
-+	    0, 2, CLK_MUX_READ_ONLY),
-+
-+	MUX(NO_ID, "ref4", ref4_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK4SELR,
-+	    0, 2, CLK_MUX_READ_ONLY),
- };
- 
- struct stm32_clock_match_data {
--- 
-1.9.1
+Acked-by: Wei Xu <xuwei5@hisilicon.com>
+
+Best Regards,
+Wei
+
+> ---
+>  arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> index ab0b95ba5ae5..d0dfa97fdad1 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> @@ -904,6 +904,25 @@
+>  			reset-gpios = <&gpio11 1 0 >;
+>  		};
+>  
+> +		/* UFS */
+> +		ufs: ufs@ff3b0000 {
+> +			compatible = "hisilicon,hi3660-ufs", "jedec,ufs-1.1";
+> +			/* 0: HCI standard */
+> +			/* 1: UFS SYS CTRL */
+> +			reg = <0x0 0xff3b0000 0x0 0x1000>,
+> +				<0x0 0xff3b1000 0x0 0x1000>;
+> +			interrupt-parent = <&gic>;
+> +			interrupts = <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&crg_ctrl HI3660_CLK_GATE_UFSIO_REF>,
+> +				<&crg_ctrl HI3660_CLK_GATE_UFSPHY_CFG>;
+> +			clock-names = "ref_clk", "phy_clk";
+> +			/* offset: 0x84; bit: 12 */
+> +			/* offset: 0x84; bit: 7  */
+> +			resets = <&crg_rst 0x84 12>,
+> +				<&crg_rst 0x84 7>;
+> +			reset-names = "rst", "assert";
+> +		};
+> +
+>  		/* SD */
+>  		dwmmc1: dwmmc1@ff37f000 {
+>  			#address-cells = <1>;
+> 
