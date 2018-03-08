@@ -1,110 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755751AbeCHMyP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 07:54:15 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:59210 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751355AbeCHMyN (ORCPT
+        id S1755520AbeCHM50 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 07:57:26 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:38718 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754724AbeCHM5Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 07:54:13 -0500
-Date: Thu, 8 Mar 2018 13:54:08 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Tony Lindgren <tony@atomide.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCHv5 3/5] mfd: motorola-cpcap: Add audio-codec support
-Message-ID: <20180308125408.45jyq2poz7najqze@earth.universe>
-References: <20180223200254.25685-1-sebastian.reichel@collabora.co.uk>
- <20180223200254.25685-4-sebastian.reichel@collabora.co.uk>
- <20180307163211.rytfli5tb47yhtug@dell>
- <20180308094652.qg4atjw5c3hayaz3@earth.universe>
- <20180308095315.mpcmx2ob6yhsnrm6@dell>
- <20180308102757.jyi7uo566n6nuct5@earth.universe>
- <20180308104831.fflq2arj5dxgntia@dell>
+        Thu, 8 Mar 2018 07:57:24 -0500
+Date: Thu, 8 Mar 2018 13:57:21 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Jason Vas Dias <jason.vas.dias@gmail.com>
+cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+        andi <andi@firstfloor.org>
+Subject: Re: Fwd: [PATCH v4.15.7 1/1] on Intel, VDSO should handle
+ CLOCK_MONOTONIC_RAW and export 'tsc_calibration' pointer
+In-Reply-To: <CALyZvKxEEKyOT7wTC35et6E5NtuvQDOkQHYMnaojs2ae_s3Myw@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1803081251380.8662@nanos.tec.linutronix.de>
+References: <CALyZvKx=kOaUqTWFK5gZXNTcY9+jCaKRqaH6VAJAOXmp-JJ2Bg@mail.gmail.com> <alpine.DEB.2.21.1803060953230.1630@nanos.tec.linutronix.de> <CALyZvKxORRjBurwj7+YV5fwJfwjMVWif+zpjC9AVM3z3WTVDaA@mail.gmail.com>
+ <CALyZvKxEEKyOT7wTC35et6E5NtuvQDOkQHYMnaojs2ae_s3Myw@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="6dfljmtajcc6f3jx"
-Content-Disposition: inline
-In-Reply-To: <20180308104831.fflq2arj5dxgntia@dell>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 6 Mar 2018, Jason Vas Dias wrote:
+> I will prepare a new patch that meets submission + coding style guidelines and
+> does not expose pointers within the vsyscall_gtod_data region to
+> user-space code -
+> but I don't really understand why not, since only the gtod->mult value will
+> change as long as the clocksource remains TSC, and updates to it by the kernel
+> are atomic and partial values cannot be read .
+> 
+> The code in the patch reverts to old behavior for clocks which are not the
+> TSC and provides a way for users to determine if the  clock is still the TSC
+> by calling '__vdso_linux_tsc_calibration()', which would return NULL if
+> the clock is not the TSC .
+> 
+> I have never seen Linux on a modern intel box spontaneously decide to
+> switch from the TSC clocksource after calibration succeeds and
+> it has decided to use the TSC as the system / platform clock source -
+> what would make it do this ?
+> 
+> But for the highly controlled systems I am doing performance testing on,
+> I can guarantee that the clocksource does not change.
 
---6dfljmtajcc6f3jx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We are not writing code for a particular highly controlled system. We
+expose functionality which operates under all circumstances. There are
+various reasons why TSC can be disabled at runtime, crappy BIOS/SMI,
+sockets getting out of sync .....
 
-Hi,
+> There is no way user code can write those pointers or do anything other
+> than read them, so I see no harm in exposing them to user-space ; then
+> user-space programs can issue rdtscp and use the same calibration values
+> as the kernel, and use some cached 'previous timespec value' to avoid
+> doing the long division every time.
+> 
+> If the shift & mult are not accurate TSC calibration values, then the
+> kernel should put other more accurate calibration values in the gtod .
 
-On Thu, Mar 08, 2018 at 10:48:31AM +0000, Lee Jones wrote:
-> On Thu, 08 Mar 2018, Sebastian Reichel wrote:
-> > On Thu, Mar 08, 2018 at 09:53:15AM +0000, Lee Jones wrote:
-> > > On Thu, 08 Mar 2018, Sebastian Reichel wrote:
-> > > > On Wed, Mar 07, 2018 at 04:32:11PM +0000, Lee Jones wrote:
-> > > > > On Fri, 23 Feb 2018, Sebastian Reichel wrote:
-> > > > > > +static const struct mfd_cell cpcap_mfd_devices[] =3D {
-> > > >=20
-> > > > [...]
-> > > >=20
-> > > > > > +	}, {
-> > > > > > +		.name          =3D "cpcap-led",
-> > > > > > +		.id            =3D 4,
-> > > > > > +		.of_compatible =3D "motorola,cpcap-led-cp",
-> > > > > > +	}, {
-> > > > > > +		.name          =3D "cpcap-codec",
-> > > > > > +	}
-> > > > > > +};
-> > > > >=20
-> > > > > With none of the entries containing platform_data /me wonders why=
- you
-> > > > > can't still use devm_of_platform_populate()?
-> > > >=20
-> > > > Because devm_of_platform_populate works with compatible properties =
-and
-> > > > cpcap-codec does not have one after I removed it for Mark.
-> > >=20
-> > > Sorry, I missed that conversation.  Why was it removed?
-> >=20
-> > I had it in PATCHv1-PATCHv4. It was removed, since Mark didn't want
-> > to have it in the DT ABI.
->=20
-> Right, but why?  Is it not a hardware device?  I think converting from
-> devm_of_platform_populate() for one sub-device is a bit drastic.
+The raw calibration values are as accurate as the kernel can make them. But
+they can be rather far off from converting to real nanoseconds for various
+reasons. The NTP/PTP adjusted conversion is matching real units and is
+obviously more accurate.
 
-This must be answered by Mark. Personally I think it makes more sense
-to have the compatible, since all other cpcap sub-devices have them
-and it should be consistent IMHO. I changed it to avoid bikeshedding.
+> > Please look at the kernel side implementation of
+> > clock_gettime(CLOCK_MONOTONIC_RAW).
+> > The VDSO side can be implemented in the
+> > same way.
+> > All what is required is to expose the relevant information in the
+> > existing vsyscall_gtod_data data structure.
+> 
+> I agree - that is my point entirely , & what I was trying to do .
 
-The previous discussion was here: https://patchwork.kernel.org/patch/102200=
-35/
+Well, you did not expose the raw conversion data in vsyscall_gtod_data. You
+are using:
 
--- Sebastian
++         tsc    *= gtod->mult;
++         tsc   >>= gtod->shift;
 
---6dfljmtajcc6f3jx
-Content-Type: application/pgp-signature; name="signature.asc"
+That's is the adjusted mult/shift value which can change when NTP/PTP is
+enabled and you _cannot_ use it unprotected.
 
------BEGIN PGP SIGNATURE-----
+> void getrawmonotonic64(struct timespec64 *ts)
+> {
+> 	struct timekeeper *tk = &tk_core.timekeeper;
+> 	unsigned long seq;
+> 	u64 nsecs;
+> 
+> 	do {
+> 		seq = read_seqcount_begin(&tk_core.seq);
+> #                       ^-- I think this is the source of the locking
+> #                            and the very long latencies !
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqhMmwACgkQ2O7X88g7
-+prfYg/9FYwcfRW/eU9T8Df/aIaWZ58mBd2CIwpxUSksodKBaSKWJfWIr+p9/Mvp
-kra3a4NVF+DdE7rAn9IyVp5jgbwkf0vdhvzekakHVpT0jhxaZr+bWCa0q96B2FWR
-P3jGB7J1Ic0jnGP0Iwb2yZdub++oTVEBf6tDELzWLBzkVJctQJwGdrlReIMxHYsN
-Rw5LOLd9OiWuWWYNpL5Qu4r7SYWx7flkMC8oD5DlEQyUakvCc8Ls+eciNdrenwnw
-UQTYtkhmorYuWvd+C5sx3OaZmBdUAnuAMBKSjvo9u4pnz9NO+FMrm4MHyLiM3O0m
-MFlA6EdeKZcavff/46HCZvdAMYJqBFSqDRTTqYekPU4mN3G+wHRnn4i39DgIlFI9
-+eX7DH8yq/ZALV3QTcyXNADExyAuJqsuBvlCxLgDnVgP78+Ne/3/t3DS5156VJ0O
-/djJRUreDR9W2Bd9KvYB1/c5/aqgqlqnE95GNhZ7m1gYKSzzLvcpLDxX3bRVuPgh
-5OjzNvHY5Wh1f0IXZYJwX3G6eMmDED0v2iUUpqeCvr+CgLqpHwz35SoVRa1ZUl7L
-t4Th3NxxSuTTSJT4xH3wcJ1uFwZ9GRiOEGJ5uxa7YEuCBlZo2ZjTwXO+8zgu329x
-tSUmK/fdqg1YhJR5WHV0HG+Sujh5z/8q7+jRWODvT68jbCqcVTI=
-=Zpsm
------END PGP SIGNATURE-----
+This protects tk->raw_sec from changing which would result in random time
+stamps. Yes, it can cause slightly larger latencies when the timekeeper is
+updated on another CPU concurrently, but that's not the main reason why
+this is slower in general than the VDSO functions. The syscall overhead is
+there for every invocation and it's substantial.
 
---6dfljmtajcc6f3jx--
+> So in fact, when the clock source is TSC, the value recorded in 'ts'
+> by clock_gettime(CLOCK_MONOTONIC_RAW, &ts) is very similar to
+>       u64 tsc = rdtscp();
+>       tsc *= gtod->mult;
+>       tsc >>= gtod->shift;
+>       ts.tv_sec=tsc / NSEC_PER_SEC;
+>       ts.tv_nsec=tsc % NSEC_PER_SEC;
+> 
+> which is the algorithm I was using in the VDSO fast TSC reader,
+> do_monotonic_raw() .
+
+Except that you are using the adjusted conversion values and not the raw
+ones. So your VDSO implementation of monotonic raw access is just wrong and
+not matching the syscall based implementation in any way.
+
+> The problem with doing anything more in the VDSO is that there
+> is of course nowhere in the VDSO to store any data, as it has
+> no data section or writable pages . So some kind of writable
+> page would need to be added to the vdso , complicating its
+> vdso/vma.c, etc., which is not desirable.
+
+No, you don't need any writeable memory in the VDSO. Look at how the
+CLOCK_MONOTONIC and CLOCK_REALTIME functions are implemented in the VDSO.
+
+> But it is equally not desirable to have the clock_gettime
+> system call have a latency exceeding 300ns for CLOCK_MONOTONIC_RAW
+
+I said before and I do it once more: CLOCK_MONOTONIC_RAW can be implemented
+in the VDSO by adding the relevant data to vsyscall_gtod_data and by using
+the proper accessor functions which are there for a reason.
+
+> clocks, nor to measure all the adjustments & previous value dependencies
+> that the current implementation is prone to .
+
+I have no idea what you are talking about. If done right,
+CLOCK_MONOTONIC_RAW does not have any adjustments.
+
+> But there is no other communication of TSC calibration data currently
+> in the gtod
+> other than 'shift' and 'mult' ,which do actually give results which correlate
+> approximately to the pico_period division above.
+
+Even if I'm repeating myself. vsyscall_gtod_data does not have the raw
+information and it simply can be added.
+
+> Attempts to change the vsyscall_gtod_data structure in any way have resulted
+> in nasty core dumps of clock_gettime() using processes.
+> I'd much appreciate any tips on how to change its layout without breaking
+> everything.
+
+I have no idea what you have done, but vsyscall_gtod_data is a purely
+kernel internal data structure and can be changed as the kernel requires.
+
+> One currently needs to parse the system log messages to get the
+> 'Refined TSC clocksource calibration', or lookup its value in the
+> live kernel by looking up the 'tsc_khz' symbol at its
+> address given in System.map  with gdb / objdump ,
+> converting to offset into data region, and using
+> lseek() on /proc/kcore (as root).
+
+Groan.
+
+> The point is, user-space must rely on the kernel to perform
+> TSC calibration properly, and the only data in the gtod that
+> reflects the result of that calibration are the mult and shift values.
+> If linux wants to support user-space TSC readers, it needs to communicate
+> the TSC calibration somehow in the VDSO gtod area.
+
+I'm getting tired of this slowly. The kernel supports user space TSC access
+with CLOCK_MONOTONIC and CLOCK_REALTIME today in the VDSO.
+
+> And please consider SOME patch to the VDSO to implement user-space TSC
+> reading on the intel / AMD , to return a completely unadjusted value for
+> CLOCK_MONOTONIC_RAW, as documented, but not as Linux currently does.
+
+clock_gettime(CLOCK_MONOTONIC_RAW) returns the raw and unadjusted
+nanosecond time from any clocksource (TSC or whatever) today. It does so as
+documented.
+
+The only missing piece is a VDSO counterpart which avoids the syscall
+overhead.
+
+> BTW, it is not my 'editor's word-wrap corruping your patch', it is the
+> Gmail IMAP server, which believes all lines in plain-text messages
+> must be wrapped to 72 characters max, and  enforces this belief,
+> correct or not.  I think kernel.org needs to update its tools to parse
+> mime attachments or handle email server  line-wrapping, which I have
+> no control over - I wish I could move from the gmail server, but it would
+> be too much trouble.
+
+Sorry, a lot of people use gmail for kernel work and I think there is
+enough documentation out there how to do that.
+
+Thanks,
+
+	tglx
