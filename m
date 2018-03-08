@@ -1,121 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755009AbeCHTff (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 14:35:35 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36554 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752060AbeCHTfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 14:35:34 -0500
-Subject: Re: [PATCH v3 3/6] sysctl: Add flags to support min/max range
- clamping
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>
-References: <1519926220-7453-1-git-send-email-longman@redhat.com>
- <1519926220-7453-4-git-send-email-longman@redhat.com>
- <20180301133117.1d4b27e327f8e51275c82489@linux-foundation.org>
- <20180308175109.GA4449@wotan.suse.de> <20180308175747.GD4449@wotan.suse.de>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <2feea08e-7772-e0aa-af69-05cd7b281725@redhat.com>
-Date: Thu, 8 Mar 2018 14:35:32 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180308175747.GD4449@wotan.suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1755924AbeCHTfr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 14:35:47 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:45859 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755690AbeCHTfp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 14:35:45 -0500
+X-Google-Smtp-Source: AG47ELu5xMhger+UiUpazGCkOy2DICbtbbZy703Qgn8uzr06Mb8njNuEIxGEeMuLqe8s6oTlSyndpQ==
+Date: Thu, 08 Mar 2018 11:35:43 -0800 (PST)
+X-Google-Original-Date: Thu, 08 Mar 2018 11:35:27 PST (-0800)
+Subject: Re: [PATCH] riscv: Implement free_initrd_mem.
+In-Reply-To: <87efkuv0pf.fsf@xps13.shealevy.com>
+CC: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+From: Palmer Dabbelt <palmer@sifive.com>
+To: shea@shealevy.com
+Message-ID: <mhng-dd74e051-4ddc-4ca9-bfd6-d0c1ea5eb4f4@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/08/2018 12:57 PM, Luis R. Rodriguez wrote:
-> On Thu, Mar 08, 2018 at 05:51:09PM +0000, Luis R. Rodriguez wrote:
->> On Thu, Mar 01, 2018 at 01:31:17PM -0800, Andrew Morton wrote:
->>> On Thu,  1 Mar 2018 12:43:37 -0500 Waiman Long <longman@redhat.com> wrote:
+On Thu, 08 Mar 2018 11:14:52 PST (-0800), shea@shealevy.com wrote:
+> Hi Palmer,
+>
+> Palmer Dabbelt <palmer@sifive.com> writes:
+>
+>> On Tue, 20 Feb 2018 05:50:43 PST (-0800), shea@shealevy.com wrote:
+>>> Signed-off-by: Shea Levy <shea@shealevy.com>
+>>> ---
+>>>  arch/riscv/mm/init.c | 6 ++++++
+>>>  1 file changed, 6 insertions(+)
 >>>
->>>> When minimum/maximum values are specified for a sysctl parameter in
->>>> the ctl_table structure with proc_dointvec_minmax() handler, update
->>>> to that parameter will fail with error if the given value is outside
->>>> of the required range.
->>>>
->>>> There are use cases where it may be better to clamp the value of
->>>> the sysctl parameter to the given range without failing the update,
->>>> especially if the users are not aware of the actual range limits.
->>>> Reading the value back after the update will now be a good practice
->>>> to see if the provided value exceeds the range limits.
->>>>
->>>> To provide this less restrictive form of range checking, a new flags
->>>> field is added to the ctl_table structure. The new field is a 16-bit
->>>> value that just fits into the hole left by the 16-bit umode_t field
->>>> without increasing the size of the structure.
->>>>
->>>> When the CTL_FLAGS_CLAMP_RANGE flag is set in the ctl_table entry,
->>>> any update from the userspace will be clamped to the given range
->>>> without error.
->>>>
->>>> ...
->>>>
->>>> --- a/include/linux/sysctl.h
->>>> +++ b/include/linux/sysctl.h
->>>> @@ -116,6 +116,7 @@ struct ctl_table
->>>>  	void *data;
->>>>  	int maxlen;
->>>>  	umode_t mode;
->>>> +	uint16_t flags;
->>> It would be nice to make this have type `enum ctl_table_flags', but I
->>> guess there's then no reliable way of forcing it to be 16-bit.
->>>
->>> I guess this is the best we can do...
->>>
->> We can add this to the enum:
+>>> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+>>> index c77df8142be2..1c832b541e95 100644
+>>> --- a/arch/riscv/mm/init.c
+>>> +++ b/arch/riscv/mm/init.c
+>>> @@ -66,5 +66,11 @@ void free_initmem(void)
+>>>  #ifdef CONFIG_BLK_DEV_INITRD
+>>>  void free_initrd_mem(unsigned long start, unsigned long end)
+>>>  {
+>>> +	if (start == initrd_start)
+>>> +		start = round_down(start, PAGE_SIZE);
+>>> +	if (end == initrd_end)
+>>> +		end = round_up(end, PAGE_SIZE);
+>>> +
+>>> +	free_reserved_area((void *)start, (void *)end, -1, "initrd");
+>>>  }
+>>>  #endif /* CONFIG_BLK_DEV_INITRD */
 >>
->> enum ctl_table_flags {                                                                                                                                                                       
->>        CTL_FLAGS_CLAMP_RANGE           = BIT(0),                                                                                                                                             
->> +	__CTL_FLAGS_CLAMP_MAX          = BIT(16),
->> }; 
+>> It looks like everyone is doing something slightly different here:
 >>
+>> * arm64 doesn't round to a page size, and has keep_initrd.
+>> * arm calls poison_init_mem(), and has keep_initrd.
+>> * sparc64 doesn't round, and doesn't have a keep_initrd.
+>> * mips doesn't round, and doesn't have a keep_initrd.
+>> * x86 rounds end to a page size but not start, and doesn't have a keep_initrd.
 >>
->> Then also:
->>
->> #define CTL_TABLE_FLAGS_ALL	((BIT(__CTL_FLAGS_CLAMP_MAX + 1))-1)
->>
->> at the end of the definition, then a helper which can be used during
->> parsing:
->>
->> static int check_ctl_table_flags(u16 flags)
->> {
->> 	if (flags & ~(CTL_TABLE_FLAGS_ALL))
->> 		return -ERANGE;
->> 	return 0;
->> }
->>
->> Waiman please evaluate and add.
-> Also, I guess we have ... max bit used and max allowed (16) really, where one is the
-> max allowed bit field given current definitions, the other is the max flag possible
-> setting in the future. We might as well go with the smaller one, which is the current
-> max, so it can just be
+>> It feels like this should be something generic.  I'm adding linux-kernel to see 
+>> what people think.
 >
-> enum ctl_table_flags {
-> 	CTL_FLAGS_CLAMP_RANGE	 = BIT(0),
-> 	__CTL_FLAGS_CLAMP_MAX    = BIT(1),
-> };
->
->
-> #define CTL_TABLE_FLAGS_ALL	((BIT(__CTL_FLAGS_CLAMP_MAX))-1)
->
-> That way we just check against the actual max defined, now the max allowed on
-> the entire flag setting.
->
->   Luis
+> Should I try to whip up something generic?
 
-Yes, I can certainly add check to see if the flags are out of range.
-However, I would like to know your opinion of what to do when an invalid
-flag bit is set. Do we just print a warning in the ring buffer or fail
-the registration of the ctl table?
-
-Cheers,
-Longman
+I think that'd be best.  Nobody has said anything specific, but it's generally 
+been suggested to take bits that we copy into our port and make them generic.  
+If there's no clean way do to so then I'm OK taking this, though.
