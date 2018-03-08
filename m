@@ -1,248 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750857AbeCHTmM convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 14:42:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59092 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750713AbeCHTlg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 14:41:36 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 385DF205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
+        id S1750914AbeCHTpc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 14:45:32 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:40222 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750713AbeCHTpb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 14:45:31 -0500
+X-Google-Smtp-Source: AG47ELseUbsvjIHa+/uxEVBIKmstUClpguIHYGfzVG2HYIB5OPQ9+4DXGZs22eMn3l0i5OB0oIrnow==
+From: Kevin Hilman <khilman@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] amlogic: meson-gx-socinfo: Update soc ids
+Organization: BayLibre
+References: <1518620335-17716-1-git-send-email-narmstrong@baylibre.com>
+        <1518689694.2883.68.camel@baylibre.com> <7ho9jzgyr2.fsf@baylibre.com>
+        <37263741-e817-9a48-615e-13c5b1e2cec0@baylibre.com>
+Date: Thu, 08 Mar 2018 11:45:28 -0800
+In-Reply-To: <37263741-e817-9a48-615e-13c5b1e2cec0@baylibre.com> (Neil
+        Armstrong's message of "Thu, 8 Mar 2018 10:36:34 +0100")
+Message-ID: <7hina6fj1j.fsf@baylibre.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Lina Iyer <ilina@codeaurora.org>, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180302164317.10554-6-ilina@codeaurora.org>
-Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
-References: <20180302164317.10554-1-ilina@codeaurora.org>
- <20180302164317.10554-6-ilina@codeaurora.org>
-Message-ID: <152053809443.219802.15873554351627646762@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v3 05/10] drivers: qcom: rpmh-rsc: write sleep/wake requests to
- TCS
-Date: Thu, 08 Mar 2018 11:41:34 -0800
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lina Iyer (2018-03-02 08:43:12)
-> Sleep and wake requests are sent when the application processor
-> subsystem of the SoC is entering deep sleep states like in suspend.
-> These requests help lower the system power requirements when the
-> resources are not in use.
-> 
-> Sleep and wake requests are written to the TCS slots but are not
-> triggered at the time of writing. The TCS are triggered by the firmware
-> after the last of the CPUs has executed its WFI. Since these requests
-> may come in different batches of requests, it is job of this controller
+Neil Armstrong <narmstrong@baylibre.com> writes:
 
-it is the job?
+> Hi Kevin,
+>
+> On 08/03/2018 02:08, Kevin Hilman wrote:
+>> Jerome Brunet <jbrunet@baylibre.com> writes:
+>> 
+>>> On Wed, 2018-02-14 at 15:58 +0100, Neil Armstrong wrote:
+>>>> Updates the Amlogic Meson SoCs IDs for the Armv8 based SoCs.
+>>>> It includes the new families and packages.
+>>>>
+>>>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>>>> ---
+>>>>  drivers/soc/amlogic/meson-gx-socinfo.c | 8 ++++++++
+>>>>  1 file changed, 8 insertions(+)
+>>>>
+>>>> diff --git a/drivers/soc/amlogic/meson-gx-socinfo.c b/drivers/soc/amlogic/meson-gx-socinfo.c
+>>>> index f2d8c3c..a7efe30 100644
+>>>> --- a/drivers/soc/amlogic/meson-gx-socinfo.c
+>>>> +++ b/drivers/soc/amlogic/meson-gx-socinfo.c
+>>>> @@ -33,6 +33,10 @@ static const struct meson_gx_soc_id {
+>>>>  	{ "GXL", 0x21 },
+>>>>  	{ "GXM", 0x22 },
+>>>>  	{ "TXL", 0x23 },
+>>>> +	{ "TXLX", 0x24 },
+>>>> +	{ "AXG", 0x25 },
+>>>> +	{ "GXLX", 0x26 },
+>>>> +	{ "TXHD", 0x27 },
+>>>>  };
+>>>>  
+>>>>  static const struct meson_gx_package_id {
+>>>> @@ -47,6 +51,10 @@ static const struct meson_gx_package_id {
+>>>>  	{ "S905L", 0x21, 0xc0 },
+>>>>  	{ "S905M2", 0x21, 0xe0 },
+>>>>  	{ "S912", 0x22, 0 },
+>>>> +	{ "962X", 0x24, 0x10 },
+>>>> +	{ "962E", 0x24, 0x20 },
+>>>> +	{ "A113X", 0x25, 0x37 },
+>>>> +	{ "A113D", 0x25, 0xd0 },
+>>>>  };
+>>>>  
+>>>>  static inline unsigned int socinfo_to_major(u32 socinfo)
+>>>
+>>> Tested on my s400 board which, according to the marking, features an AXG A113D.
+>>> AXG is detected correctly but the package id read is 0x22 instead of 0xd0.
+>> 
+>> Neil, can you update accordingly?  Have you seen 0xd0 on other A11x
+>> chips?  or is this from the docs?
+>
+> I got it from the Amlogic lastest Linux and U-boot code.
+> I will set 0x22 and squash the "meson-gx-socinfo: Add package id for S905H" patch, is it ok ?
 
-> driver to find arrange the requests into the available TCSes.
+Sure, that's fine.
 
-find and arrange?
-
-> 
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> ---
->  drivers/soc/qcom/rpmh-internal.h |   7 +++
->  drivers/soc/qcom/rpmh-rsc.c      | 128 +++++++++++++++++++++++++++++++++++++++
->  2 files changed, 135 insertions(+)
-> 
-> diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
-> index 1442a64ac4c5..65dfe1716265 100644
-> --- a/drivers/soc/qcom/rpmh-internal.h
-> +++ b/drivers/soc/qcom/rpmh-internal.h
-> @@ -13,6 +13,7 @@
->  #define MAX_CMDS_PER_TCS               16
->  #define MAX_TCS_PER_TYPE               3
->  #define MAX_TCS_NR                     (MAX_TCS_PER_TYPE * TCS_TYPE_NR)
-> +#define MAX_TCS_SLOTS                  (MAX_CMDS_PER_TCS * MAX_TCS_PER_TYPE)
->  
->  struct rsc_drv;
->  
-> @@ -44,6 +45,8 @@ struct tcs_response {
->   * @ncpt: number of commands in each TCS
->   * @tcs_lock: lock for synchronizing this TCS writes
->   * @responses: response objects for requests sent from each TCS
-> + * @cmd_addr: flattened cache of cmds in sleep/wake TCS
-
-Maybe 'cmds' or 'cmd_cache'?
-
-> + * @slots: indicates which of @cmd_addr are occupied
->   */
->  struct tcs_group {
->         struct rsc_drv *drv;
-> @@ -54,6 +57,9 @@ struct tcs_group {
->         int ncpt;
->         spinlock_t tcs_lock;
->         struct tcs_response *responses[MAX_TCS_PER_TYPE];
-> +       u32 *cmd_addr;
-> +       DECLARE_BITMAP(slots, MAX_TCS_SLOTS);
-> +
-
-Drop the newline please.
-
->  };
->  
->  /**
-> @@ -450,6 +457,114 @@ int rpmh_rsc_send_data(struct rsc_drv *drv, struct tcs_request *msg)
->  }
->  EXPORT_SYMBOL(rpmh_rsc_send_data);
->  
-> +static int find_match(struct tcs_group *tcs, struct tcs_cmd *cmd, int len)
-
-const tcs and cmd?
-
-> +{
-> +       bool found = false;
-
-Drop.
-
-> +       int i = 0, j;
-> +
-> +       /* Check for already cached commands */
-> +       while ((i = find_next_bit(tcs->slots, MAX_TCS_SLOTS, i)) <
-
-for_each_set_bit(... ?
-
-> +             MAX_TCS_SLOTS) {
-> +               if (tcs->cmd_addr[i] != cmd[0].addr) {
-> +                       i++;
-> +                       continue;
-> +               }
-> +               /* sanity check to ensure the seq is same */
-> +               for (j = 1; j < len; j++) {
-> +                       WARN((tcs->cmd_addr[i + j] != cmd[j].addr),
-> +                           "Message does not match previous sequence.\n");
-> +                       return -EINVAL;
-> +               }
-
-Can you fold the if and for loop together? 
-
-		for (j = 0; j < len; j++) {
-			if (tcs->cmd_addr[i + j] != cmd[j].addr) {
-				if (j == 0)
-					break; /* Try another slot */
-				WARN("Message doesn't match previous sequence\n");
-				return -EINVAL;
-			} else if (j == len - 1) {
-				return i;
-			}
-		}
-	}
-
-	return -ENODATA;
-
-> +               found = true;
-> +               break;
-> +       }
-> +
-> +       return found ? i : -1;
-
-Is there space between slots? Just trying to understand how we
-differentiate two adjacent cmd buffers with the bitmap scheme if this
-loop is looking for free bits to find slots. Or maybe we need two
-bitmaps where one is the allocated region and the other is something
-indicating the start bit of a message
-
-> +}
-> +
-> +static int find_slots(struct tcs_group *tcs, struct tcs_request *msg,
-> +                    int *m, int *n)
-> +{
-> +       int slot, offset;
-> +       int i = 0;
-> +
-> +       /* Find if we already have the msg in our TCS */
-> +       slot = find_match(tcs, msg->payload, msg->num_payload);
-> +       if (slot >= 0)
-> +               goto copy_data;
-
-Shouldn't this goto skip setting the bits in tcs->slots?
-
-> +
-> +       /* Do over, until we can fit the full payload in a TCS */
-> +       do {
-> +               slot = bitmap_find_next_zero_area(tcs->slots, MAX_TCS_SLOTS,
-> +                                                i, msg->num_payload, 0);
-> +               if (slot == MAX_TCS_SLOTS)
-> +                       break;
-> +               i += tcs->ncpt;
-> +       } while (slot + msg->num_payload - 1 >= i);
-> +
-> +       if (slot == MAX_TCS_SLOTS)
-> +               return -ENOMEM;
-
-Would be nice to remove this duplicate condition somehow. Maybe a goto?
-
-> +
-> +copy_data:
-> +       bitmap_set(tcs->slots, slot, msg->num_payload);
-> +       /* Copy the addresses of the resources over to the slots */
-> +       if (tcs->cmd_addr) {
-
-find_match() above didn't check for tcs->cmd_addr. Does this ever happen
-to fail?
-
-> +               for (i = 0; i < msg->num_payload; i++)
-> +                       tcs->cmd_addr[slot + i] = msg->payload[i].addr;
-> +       }
-> +
-> +       offset = slot / tcs->ncpt;
-> +       *m = offset + tcs->tcs_offset;
-> +       *n = slot % tcs->ncpt;
-> +
-> +       return 0;
-> +}
-> +
-> +static int tcs_ctrl_write(struct rsc_drv *drv, struct tcs_request *msg)
-> +{
-> +       struct tcs_group *tcs;
-> +       int m = 0, n = 0;
-> +       unsigned long flags;
-> +       int ret = 0;
-
-Drop initial assignment please.
-
-> +
-> +       tcs = get_tcs_for_msg(drv, msg);
-> +       if (IS_ERR(tcs))
-> +               return PTR_ERR(tcs);
-> +
-> +       spin_lock_irqsave(&tcs->tcs_lock, flags);
-> +       /* find the m-th TCS and the n-th position in the TCS to write to */
-> +       ret = find_slots(tcs, msg, &m, &n);
-> +       if (!ret)
-> +               __tcs_buffer_write(drv, m, n, msg);
-> +       spin_unlock_irqrestore(&tcs->tcs_lock, flags);
-> +
-> +       return ret;
-> +}
-> +
-[...]
-> @@ -530,6 +645,19 @@ static int rpmh_probe_tcs_config(struct platform_device *pdev,
->                 tcs->tcs_mask = ((1 << tcs->num_tcs) - 1) << st;
->                 tcs->tcs_offset = st;
->                 st += tcs->num_tcs;
-> +
-> +               /*
-> +                * Allocate memory to cache sleep and wake requests to
-> +                * avoid reading TCS register memory.
-> +                */
-> +               if (tcs->type == ACTIVE_TCS)
-> +                       continue;
-> +
-> +               tcs->cmd_addr = devm_kzalloc(&pdev->dev,
-
-devm_kcalloc(&pdev->dev, tcs->num_tcs * ncpt, sizeof(u32) ?
-
-> +                                           sizeof(u32) * tcs->num_tcs * ncpt,
-> +                                           GFP_KERNEL);
-> +               if (!tcs->cmd_addr)
-> +                       return -ENOMEM;
+Kevin
