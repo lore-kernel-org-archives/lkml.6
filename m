@@ -1,117 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934314AbeCHPBz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 10:01:55 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58761 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756024AbeCHPBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 10:01:53 -0500
-Date: Thu, 8 Mar 2018 16:01:50 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>, Jason Baron <jbaron@akamai.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 00/10] livepatch: Atomic replace feature
-Message-ID: <20180308150150.guwwj2exrymugoeq@pathway.suse.cz>
-References: <20180307082039.10196-1-pmladek@suse.com>
- <45877626-2d41-4af8-a8ff-5897585122ad@redhat.com>
+        id S933575AbeCHPH3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 10:07:29 -0500
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:43715 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751991AbeCHPH1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 10:07:27 -0500
+X-Google-Smtp-Source: AG47ELu9vIWg9SU6ryQsW53POy33VM5Doh6u8GLDIAkkHJ+ZzNBloKO+iZ5Yg8sBcQhFSnGq5So3VA==
+Date: Thu, 8 Mar 2018 16:07:23 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/4] dt/bindings & ARM: dts: tegra: updates
+Message-ID: <20180308150723.GB13814@ulmo>
+References: <20180210013326.27771-1-marcel@ziswiler.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="0ntfKIWw70PvrIHh"
 Content-Disposition: inline
-In-Reply-To: <45877626-2d41-4af8-a8ff-5897585122ad@redhat.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180210013326.27771-1-marcel@ziswiler.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2018-03-07 16:55:53, Joe Lawrence wrote:
-> On 03/07/2018 03:20 AM, Petr Mladek wrote:
-> > The atomic replace allows to create cumulative patches. They
-> > are useful when you maintain many livepatches and want to remove
-> > one that is lower on the stack. In addition it is very useful when
-> > more patches touch the same function and there are dependencies
-> > between them.
-> > 
-> > 
-> > Changes against v9:
-> > 
-> >   + Fixed check of valid NOPs for already loaded objects,
-> >     regression introduced in v9 [Joe, Mirek]
-> >   + Allow to replace even disabled patches [Evgenii]
-> > 
-> > Changes against v8:
-> > 
-> >   + Fixed handling of statically defined struct klp_object
-> >     with empty array of functions [Joe, Mirek]
-> >   + Removed redundant func->new_func assignment for NOPs [Mirek]
-> >   + Improved some wording [Mirek]
-> >
-> > [ ... snip ... ]
-> 
-> Hi Petr,
-> 
-> I tried updating the test cases I was adding in "[PATCH v0 0/3]
-> additional cumulative livepatch doc/samples" and although one of the
-> cases is better than before, I'm running into a new issue:  an expected
-> pre-unpatch callback is not executed (its obj->patched is false).
-> 
-> Here's the updated test case:
-> 
-> Test 11
-> -------
-> 
-> - load livepatch
-> - load second livepatch (atomic replace)     <- callbacks ok
-> - disable second livepatch                   <- pre-unpatch skipped
-> - unload livepatch
-> - unload second livepatch
-> 
->   % insmod samples/livepatch/livepatch-callbacks-demo.ko
->   [ 2306.806046] livepatch: enabling patch 'livepatch_callbacks_demo'
->   [ 2306.806048] livepatch: 'livepatch_callbacks_demo': initializing patching transition
->   [ 2306.806083] livepatch_callbacks_demo: pre_patch_callback: vmlinux
->   [ 2306.806083] livepatch: 'livepatch_callbacks_demo': starting patching transition
->   [ 2307.743170] livepatch: 'livepatch_callbacks_demo': completing patching transition
->   [ 2307.743317] livepatch_callbacks_demo: post_patch_callback: vmlinux
->   [ 2307.743319] livepatch: 'livepatch_callbacks_demo': patching complet
-> 
->   % insmod samples/livepatch/livepatch-callbacks-demo2.ko replace=1
->   [ 2316.161804] livepatch: enabling patch 'livepatch_callbacks_demo2'
->   [ 2316.161807] livepatch: 'livepatch_callbacks_demo2': initializing patching transition
->   [ 2316.161842] livepatch_callbacks_demo2: pre_patch_callback: vmlinux
->   [ 2316.161843] livepatch: 'livepatch_callbacks_demo2': starting patching transition
->   [ 2317.727141] livepatch: 'livepatch_callbacks_demo2': completing patching transition
->   [ 2317.727254] livepatch_callbacks_demo2: post_patch_callback: vmlinux
->   [ 2317.727255] livepatch: 'livepatch_callbacks_demo2': patching complete
-> 
->   % echo 0 > /sys/kernel/livepatch/livepatch_callbacks_demo2/enabled
->   [ 2328.995854] livepatch: 'livepatch_callbacks_demo2': initializing unpatching transition
->   [ 2328.995898] livepatch: 'livepatch_callbacks_demo2': starting unpatching transition
->   [ 2330.719234] livepatch: 'livepatch_callbacks_demo2': completing unpatching transition
->   [ 2330.719597] livepatch_callbacks_demo2: post_unpatch_callback: vmlinux
->   [ 2330.719599] livepatch: 'livepatch_callbacks_demo2': unpatching complete
-> 
->   % rmmod samples/livepatch/livepatch-callbacks-demo2.ko
->   % rmmod samples/livepatch/livepatch-callbacks-demo.ko
-> 
-> Running against v10, callbacks seem to be good up until I disable an
-> atomic replace patch.  My understanding is that the original patch's
-> unpatch callbacks should be skipped (as they were).  I was surprised to
-> see that atomic replacement patch only ran it's post-unpatch callback.
 
-Great catch!
+--0ntfKIWw70PvrIHh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I guess that it is caused by the heuristic used in
-klp_unpatch_object() to decide whether the object is patched
-or not.
+On Sat, Feb 10, 2018 at 02:33:21AM +0100, Marcel Ziswiler wrote:
+>=20
+> This series fixes the Tegra GMI controller DT/bindings example, a few
+> IRQ type definitions, removes some invalid uses of rsvd1 pin muxes on
+> Beaver and removes a duplicate pcie-1 node on Venice2.
+>=20
+>=20
+> Marcel Ziswiler (4):
+>   dt/bindings: fix binding examples for tegra gmi controller
+>   ARM: dts: tegra: use proper irq type definitions
+>   ARM: dts: tegra: beaver: remove invalid uses of rsvd1
+>   ARM: dts: tegra: venice2: remove duplicate pcie-1 node
+>=20
+>  .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt |  6 ++--
+>  arch/arm/boot/dts/tegra114-dalmore.dts             |  2 +-
+>  arch/arm/boot/dts/tegra124-jetson-tk1.dts          |  2 +-
+>  arch/arm/boot/dts/tegra124-venice2.dts             |  9 ++----
+>  arch/arm/boot/dts/tegra30-apalis.dtsi              |  4 +--
+>  arch/arm/boot/dts/tegra30-beaver.dts               | 32 +++++++++++-----=
+------
+>  arch/arm/boot/dts/tegra30-colibri-eval-v3.dts      |  2 +-
+>  7 files changed, 25 insertions(+), 32 deletions(-)
 
-We need to change the state only when manipulating the
-statically defined functions.
+Applied, thanks.
 
-Thanks a lot for so extensive testing!!!
+Thierry
 
-Best Regards,
-Petr
+--0ntfKIWw70PvrIHh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhUasACgkQ3SOs138+
+s6H90g//SF56gv/VDQdTnhEJNU6E84br4xcCdQzeH3/nL+wZMv9PwIFsj3NjS8ta
+gKfsTyW9qsmIudsFjZN/R2KShotcqPAi22hb91fkgpmyQqUq/yU2bvlMUnXvl70j
+MV9NbGhP0fVtTqpFG3fufqhZLltw+U8NLZYTXVDS6ieGEMExs7x+AaCECg84sJfH
+tMl8m+yN5SrYyeGcK+KYmLgh4cwk3U9ey+HTmIyGN1glLwa469x4Ty12C0jYmixl
+PMpjF0UAAlYcK7z8IzE5Oa7D9ZzuJz4iJQVAWYhDf5IZtjb0WyEObZiUMDh1gSA1
+SDGhCmMb6vJjgm+8XaP4QeWa9oIQWT37NYQoJjg18DQaqeHz6xgDG8YPKK39KKGI
+o4pKK8Yg6u/xctwH58EoaiQl+7Ko3o0qV+z29wk2iDnferhONpGD2N4ixSaWmI0r
+5ihlk1t1DXituvuikkMrfasLLEUb2mPc2irixtBWoiYoGmSu2F0TJSyXgIrmcGbN
+Nus9+1UBDT20sWpWZpi4UIYtNMu6k8Q/CrpOrw6QU4oQPUvQA5/wjXyXDwufIXlb
+ZHzafhxAamB1fxZyPtkBcc+0zC81q9J4foufUvt4vwRcAOuJMEpbpOT5ca4HlWxm
+Ed78tVZWwpmsu7y/WZXpA8V5iLRNFNSNp/fgMPfXnr5LC4eGuWo=
+=ErrX
+-----END PGP SIGNATURE-----
+
+--0ntfKIWw70PvrIHh--
