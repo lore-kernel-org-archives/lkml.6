@@ -1,139 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965817AbeCHIDO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 03:03:14 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:50462 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965346AbeCHICN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 03:02:13 -0500
-X-Google-Smtp-Source: AG47ELvK0rFSk2cfMSzCORHfvSicA+XZOCpjnnuz6+pfelDetjv7qbsSrhaJtMK2j+X6WagBS3NG/w==
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To: linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: Sai Praneeth <sai.praneeth.prakhya@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-kernel@vger.kernel.org, "Lee, Chun-Yi" <jlee@suse.com>,
-        Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>
-Subject: [PATCH 08/12] x86/efi: Replace efi_pgd with efi_mm.pgd
-Date: Thu,  8 Mar 2018 08:00:16 +0000
-Message-Id: <20180308080020.22828-9-ard.biesheuvel@linaro.org>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
-References: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
+        id S1755325AbeCHIDY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 03:03:24 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34328 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755144AbeCHIDV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 03:03:21 -0500
+Date: Thu, 8 Mar 2018 09:03:19 +0100
+From: Johannes Thumshirn <jthumshirn@suse.de>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NV-DIMM Mailing List <linux-nvdimm@lists.01.org>
+Subject: Re: [PATCH] acpi, nfit: remove redundant __func__ in dev_dbg
+Message-ID: <20180308080319.ndkspvrrxxlfiigu@linux-x5ow.site>
+References: <20180302122049.13900-1-jthumshirn@suse.de>
+ <20180306040630.GA9905@linux.intel.com>
+ <CAPcyv4giwg1mStkA+7hXnABb8fV6VH2qQPstRfYU26-P56X4ug@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPcyv4giwg1mStkA+7hXnABb8fV6VH2qQPstRfYU26-P56X4ug@mail.gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+On Tue, Mar 06, 2018 at 08:52:21AM -0800, Dan Williams wrote:
+> > Oh, Johannes I noticed that here is one stray one still in
+> > drivers/acpi/nfit/mce.c.  Do you mind pulling it into your patch to keep the
+> > drivers/acpi/nfit/* changes together?
+> 
+> I'll fix this locally.
 
-Since the previous patch added support for efi_mm, let's handle efi_pgd
-through efi_mm and remove global variable efi_pgd.
+Sorry for the late response, I was some days off.
 
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: "Lee, Chun-Yi" <jlee@suse.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Ricardo Neri <ricardo.neri@intel.com>
-Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Tested-by: Bhupesh Sharma <bhsharma@redhat.com>
-Reviewed-by: Matt Fleming <matt@codeblueprint.co.uk>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- arch/x86/platform/efi/efi_64.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
-
-diff --git a/arch/x86/platform/efi/efi_64.c b/arch/x86/platform/efi/efi_64.c
-index 0045efe9947b..8881e601c32d 100644
---- a/arch/x86/platform/efi/efi_64.c
-+++ b/arch/x86/platform/efi/efi_64.c
-@@ -190,8 +190,6 @@ void __init efi_call_phys_epilog(pgd_t *save_pgd)
- 	early_code_mapping_set_exec(0);
- }
- 
--static pgd_t *efi_pgd;
--
- /*
-  * We need our own copy of the higher levels of the page tables
-  * because we want to avoid inserting EFI region mappings (EFI_VA_END
-@@ -203,7 +201,7 @@ static pgd_t *efi_pgd;
-  */
- int __init efi_alloc_page_tables(void)
- {
--	pgd_t *pgd;
-+	pgd_t *pgd, *efi_pgd;
- 	p4d_t *p4d;
- 	pud_t *pud;
- 	gfp_t gfp_mask;
-@@ -231,6 +229,7 @@ int __init efi_alloc_page_tables(void)
- 		return -ENOMEM;
- 	}
- 
-+	efi_mm.pgd = efi_pgd;
- 	mm_init_cpumask(&efi_mm);
- 	init_new_context(NULL, &efi_mm);
- 
-@@ -246,6 +245,7 @@ void efi_sync_low_kernel_mappings(void)
- 	pgd_t *pgd_k, *pgd_efi;
- 	p4d_t *p4d_k, *p4d_efi;
- 	pud_t *pud_k, *pud_efi;
-+	pgd_t *efi_pgd = efi_mm.pgd;
- 
- 	if (efi_enabled(EFI_OLD_MEMMAP))
- 		return;
-@@ -339,7 +339,7 @@ int __init efi_setup_page_tables(unsigned long pa_memmap, unsigned num_pages)
- 	unsigned long pfn, text, pf;
- 	struct page *page;
- 	unsigned npages;
--	pgd_t *pgd;
-+	pgd_t *pgd = efi_mm.pgd;
- 
- 	if (efi_enabled(EFI_OLD_MEMMAP))
- 		return 0;
-@@ -349,8 +349,7 @@ int __init efi_setup_page_tables(unsigned long pa_memmap, unsigned num_pages)
- 	 * this value is loaded into cr3 the PGD will be decrypted during
- 	 * the pagetable walk.
- 	 */
--	efi_scratch.efi_pgt = (pgd_t *)__sme_pa(efi_pgd);
--	pgd = efi_pgd;
-+	efi_scratch.efi_pgt = (pgd_t *)__sme_pa(pgd);
- 
- 	/*
- 	 * It can happen that the physical address of new_memmap lands in memory
-@@ -420,7 +419,7 @@ static void __init __map_region(efi_memory_desc_t *md, u64 va)
- {
- 	unsigned long flags = _PAGE_RW;
- 	unsigned long pfn;
--	pgd_t *pgd = efi_pgd;
-+	pgd_t *pgd = efi_mm.pgd;
- 
- 	if (!(md->attribute & EFI_MEMORY_WB))
- 		flags |= _PAGE_PCD;
-@@ -524,7 +523,7 @@ void __init parse_efi_setup(u64 phys_addr, u32 data_len)
- static int __init efi_update_mappings(efi_memory_desc_t *md, unsigned long pf)
- {
- 	unsigned long pfn;
--	pgd_t *pgd = efi_pgd;
-+	pgd_t *pgd = efi_mm.pgd;
- 	int err1, err2;
- 
- 	/* Update the 1:1 mapping */
-@@ -621,7 +620,7 @@ void __init efi_dump_pagetable(void)
- 	if (efi_enabled(EFI_OLD_MEMMAP))
- 		ptdump_walk_pgd_level(NULL, swapper_pg_dir);
- 	else
--		ptdump_walk_pgd_level(NULL, efi_pgd);
-+		ptdump_walk_pgd_level(NULL, efi_mm.pgd);
- #endif
- }
- 
+Thanks Dan,
+       Johannes
 -- 
-2.15.1
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
