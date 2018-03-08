@@ -1,51 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935233AbeCHIa5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 03:30:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48148 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755104AbeCHIa4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 03:30:56 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1E70206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
-Date: Thu, 8 Mar 2018 16:30:15 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Guenter Roeck <linux@roeck-us.net>, Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] ARM: dts: imx6: RDU2: Add RAVE SP device
-Message-ID: <20180308083014.GT3217@dragon>
-References: <20180301192007.29278-1-andrew.smirnov@gmail.com>
+        id S964793AbeCHIf4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 03:35:56 -0500
+Received: from esa5.dell-outbound.iphmx.com ([68.232.153.95]:56643 "EHLO
+        esa5.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755104AbeCHIfy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 03:35:54 -0500
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2GQAAAg9aBah8uZ6EReGQEBAQEBAQEBA?=
+ =?us-ascii?q?QEBAQcBAQEBAYQmfygKjWWNeYICgRaHHY0MghUKhSoCgwohNBgBAgEBAQEBAQI?=
+ =?us-ascii?q?BAhABAQEIDQkIKC6COCKCSgEBAQMBJxM/BQcEAgEIEQQBAQEeCQchJQkIAgQOB?=
+ =?us-ascii?q?QiEeQMNCK0+OoctDYEwgh2FMIIuhmmCaoI+MYUzBJoeMQmNMYMtjmuKMocVgSw?=
+ =?us-ascii?q?eggtwgxKCMRAMFoFldwGKY4EXAQEB?=
+X-IPAS-Result: =?us-ascii?q?A2GQAAAg9aBah8uZ6EReGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
+ =?us-ascii?q?mfygKjWWNeYICgRaHHY0MghUKhSoCgwohNBgBAgEBAQEBAQIBAhABAQEIDQkIK?=
+ =?us-ascii?q?C6COCKCSgEBAQMBJxM/BQcEAgEIEQQBAQEeCQchJQkIAgQOBQiEeQMNCK0+Ooc?=
+ =?us-ascii?q?tDYEwgh2FMIIuhmmCaoI+MYUzBJoeMQmNMYMtjmuKMocVgSweggtwgxKCMRAMF?=
+ =?us-ascii?q?oFldwGKY4EXAQEB?=
+From: <Mario.Limonciello@dell.com>
+X-LoopCount0: from 10.166.132.198
+X-IronPort-AV: E=Sophos;i="5.47,440,1515477600";
+   d="scan'208";a="146723738"
+X-DLP: DLP_GlobalPCIDSS
+To: <kai.heng.feng@canonical.com>
+CC: <mjg59@srcf.ucam.org>, <pali.rohar@gmail.com>, <dvhart@infradead.org>,
+        <andy@infradead.org>, <tiwai@suse.com>,
+        <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>
+Subject: RE: [PATCH 2/2] platform/x86: dell-*: Add interface for switchable
+ graphics status query
+Thread-Topic: [PATCH 2/2] platform/x86: dell-*: Add interface for switchable
+ graphics status query
+Thread-Index: AQHTtqzTgQ11StEpF0+wWfmSBZ5YQKPF8i2ggABxjgD//5+Q8A==
+Date: Thu, 8 Mar 2018 08:35:51 +0000
+Message-ID: <100c5561e93c4b4eaf399751823b2ec2@ausx13mpc124.AMER.DELL.COM>
+References: <20180308071207.19850-1-kai.heng.feng@canonical.com>
+ <20180308071207.19850-2-kai.heng.feng@canonical.com>
+ <d96477ef9ee24fb59d251f29dc0a3f81@ausx13mpc124.AMER.DELL.COM>
+ <3B4D9410-9CD4-410D-A1FB-7EB6CD2C058B@canonical.com>
+In-Reply-To: <3B4D9410-9CD4-410D-A1FB-7EB6CD2C058B@canonical.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180301192007.29278-1-andrew.smirnov@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w288a01U031026
 
-On Thu, Mar 01, 2018 at 11:20:06AM -0800, Andrey Smirnov wrote:
-> With MFD and watchdog drivers for RAVE SP device support added by
-> 538ee27290fa ("mfd: Add driver for RAVE Supervisory Processor") and
-> c3bb33345721 ("watchdog: Add RAVE SP watchdog driver") add
-> corresponding DT node for RDU2.
+> -----Original Message-----
+> From: Kai Heng Feng [mailto:kai.heng.feng@canonical.com]
+> Sent: Thursday, March 8, 2018 4:20 PM
+> To: Limonciello, Mario <Mario_Limonciello@Dell.com>
+> Cc: mjg59@srcf.ucam.org; pali.rohar@gmail.com; dvhart@infradead.org;
+> andy@infradead.org; tiwai@suse.com; platform-driver-x86@vger.kernel.org; linux-
+> kernel@vger.kernel.org; alsa-devel@alsa-project.org
+> Subject: Re: [PATCH 2/2] platform/x86: dell-*: Add interface for switchable graphics
+> status query
 > 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> 
+> 
+> > On Mar 8, 2018, at 3:34 PM, Mario.Limonciello@dell.com wrote:
+> >
+> >> -----Original Message-----
+> >> From: Kai-Heng Feng [mailto:kai.heng.feng@canonical.com]
+> >> Sent: Thursday, March 8, 2018 3:12 PM
+> >> To: mjg59@srcf.ucam.org; pali.rohar@gmail.com; dvhart@infradead.org;
+> >> andy@infradead.org; Limonciello, Mario <Mario_Limonciello@Dell.com>;
+> >> tiwai@suse.com
+> >> Cc: platform-driver-x86@vger.kernel.org; linux-kernel@vger.kernel.org;
+> >> alsa-
+> >> devel@alsa-project.org; Kai-Heng Feng <kai.heng.feng@canonical.com>
+> >> Subject: [PATCH 2/2] platform/x86: dell-*: Add interface for switchable
+> >> graphics
+> >> status query
+> >>
+> >> On some Dell platforms, there's a BIOS option "Enable Switchable
+> >> Graphics". This information is useful if we want to do different things
+> >> based on this value, e.g. disable unused audio controller that comes
+> >> with the discrete graphics.
+> >
+> > I was expecting the follow on patch that uses this interface too as part
+> > of the
+> > series. This patch itself however looks like.
+> 
+> I thought it should be easier to separate patch series for different
+> subsystems.
+> But of course I can make them the as one series.
+> 
+> I'll resend a v2 for this.
+> 
 
-Applied both, thanks.
+At least in other subsystem in the kernel I've heard comments from
+maintainer that it doesn't make sense to add code that no one uses.
+I don't know if that's how Darren and Andy feel to. 
+
+At worst case scenario patches 1 and 2 could be added while patch
+3 iterates too.
+
+> Kai-Heng
+> 
+> >
+> > Reviewed-by: Mario Limonciello <mario.limonciello@dell.com>
+> >> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> >> ---
+> >>  drivers/platform/x86/dell-laptop.c | 23 +++++++++++++++++++++++
+> >>  drivers/platform/x86/dell-smbios.c |  2 ++
+> >>  drivers/platform/x86/dell-smbios.h |  2 ++
+> >>  3 files changed, 27 insertions(+)
+> >>
+> >> diff --git a/drivers/platform/x86/dell-laptop.c
+> >> b/drivers/platform/x86/dell-laptop.c
+> >> index 8ba820e6c3d0..3f6fc07b8cf2 100644
+> >> --- a/drivers/platform/x86/dell-laptop.c
+> >> +++ b/drivers/platform/x86/dell-laptop.c
+> >> @@ -2116,6 +2116,29 @@ int dell_micmute_led_set(int state)
+> >>  }
+> >>  EXPORT_SYMBOL_GPL(dell_micmute_led_set);
+> >>
+> >> +int dell_switchable_gfx_enabled(bool *enabled)
+> >> +{
+> >> +	struct calling_interface_buffer buffer;
+> >> +	struct calling_interface_token *token;
+> >> +	int ret;
+> >> +
+> >> +	*enabled = false;
+> >> +
+> >> +	token = dell_smbios_find_token(SWITCHABLE_GRAPHICS_ENABLE);
+> >> +	if (!token)
+> >> +		return -ENODEV;
+> >> +
+> >> +	dell_fill_request(&buffer, token->location, 0, 0, 0);
+> >> +	ret = dell_send_request(&buffer, CLASS_TOKEN_READ,
+> >> SELECT_TOKEN_STD);
+> >> +	if (ret)
+> >> +		return ret;
+> >> +
+> >> +	*enabled = !!buffer.output[1];
+> >> +
+> >> +	return 0;
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(dell_switchable_gfx_enabled);
+> >> +
+> >>  static int __init dell_init(void)
+> >>  {
+> >>  	struct calling_interface_token *token;
+> >> diff --git a/drivers/platform/x86/dell-smbios.c
+> >> b/drivers/platform/x86/dell-smbios.c
+> >> index 8541cde4cb7d..ca38b9d9dcf4 100644
+> >> --- a/drivers/platform/x86/dell-smbios.c
+> >> +++ b/drivers/platform/x86/dell-smbios.c
+> >> @@ -86,6 +86,8 @@ struct token_range {
+> >>  static struct token_range token_whitelist[] = {
+> >>  	/* used by userspace: fwupdate */
+> >>  	{CAP_SYS_ADMIN,	CAPSULE_EN_TOKEN,	CAPSULE_DIS_TOKEN},
+> >> +	/* can indicate to userspace Switchable Graphics enable status */
+> >> +	{CAP_SYS_ADMIN,	SWITCHABLE_GRAPHICS_ENABLE,
+> >> 	SWITCHABLE_GRAPHICS_DISABLE},
+> >>  	/* can indicate to userspace that WMI is needed */
+> >>  	{0x0000,	WSMT_EN_TOKEN,		WSMT_DIS_TOKEN}
+> >>  };
+> >> diff --git a/drivers/platform/x86/dell-smbios.h
+> >> b/drivers/platform/x86/dell-smbios.h
+> >> index 138d478d9adc..b012d4abd239 100644
+> >> --- a/drivers/platform/x86/dell-smbios.h
+> >> +++ b/drivers/platform/x86/dell-smbios.h
+> >> @@ -37,6 +37,8 @@
+> >>  #define KBD_LED_AUTO_100_TOKEN	0x02F6
+> >>  #define GLOBAL_MIC_MUTE_ENABLE	0x0364
+> >>  #define GLOBAL_MIC_MUTE_DISABLE	0x0365
+> >> +#define SWITCHABLE_GRAPHICS_ENABLE	0x037A
+> >> +#define SWITCHABLE_GRAPHICS_DISABLE	0x037B
+> >>
+> >>  struct notifier_block;
+> >>
+> >> --
+> >> 2.15.1
