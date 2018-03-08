@@ -1,204 +1,229 @@
-Return-Path: <JOLLYS@xilinx.com>
-X-Google-Smtp-Source: AG47ELuPkAEPA0u8JllO8zvgv4fiGAQXYsr08ij38B9DtHirVy4siuwHsB3nBK2+U31K5AXIlHis
-ARC-Seal: i=1; a=rsa-sha256; t=1520383491; cv=none;
+Return-Path: <sudeep.holla@arm.com>
+X-Google-Smtp-Source: AG47ELtNkit0XiMN5R4xfh8mDmeo8VUH8VyfkUgCI1D4dMKmCM+IUVyprzXq16YvDWeYpRKYalr4
+ARC-Seal: i=1; a=rsa-sha256; t=1520511538; cv=none;
         d=google.com; s=arc-20160816;
-        b=ppeTt6dkp57qJc05SbqYNPPPmKqgAIySl/YUDJaVzX5B+DrOfW5eFqa83OpHQC96Ou
-         glaZRa27W4SUj4+Rhfsx4j+a95UrZs8KJhkdkyDUKESTDHihjGzti6ZTLS2p+DpW7w8I
-         66DlIe39f+B59MKUxlVW0xb6xOLM94sK+7rzDRMzH7I26sFqFxlFUwtqOZeAhXsFDc44
-         LsA/nTeeXUnQsy1MgbKi2zdlZSzEskJ4fgqZwDGv9GeyDmpHbFrgwdeMeyPg6djLf8tr
-         e2+mLgMpxgO/yGRZA+iK6H9wlEsVvY4hEMN3/y5a/NMfpnuaf5IeMwvpJorLH7BroV+/
-         x7jw==
+        b=XX9jXoXk6bdmCx2GpKIZr4MJXvTOYpJ1bpxuyZrD9jeMdSPl5K/oIBHhGVOL6glRGO
+         IbjDPhXruk4bfDmDmT9qfNSpbsWu4f5pTcJmHEMXcJN8tMgqAL15d5D+wYlqNA6uIAcC
+         ZdZN7bPsLAFsyexhqTfjfHpjB+ckrepGIB2kGJcE+hPulpiPfO+CjaBhpzcEU1WqDttI
+         /FaLvADaIdvs2CJv4QjgfCQN82kE4QyJya+Ukl/4jtz5Jav+x2Q+vqW1Cu6aI4lHH3Fy
+         zMhRo51B/lbOMnuilVTLC85wa0fCpI2AJqFe2GztG7xRNmPIzSCMV6PpX4I50oIc/KZ6
+         viPA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
-         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
-         :references:message-id:date:thread-index:thread-topic:subject:cc:to
-         :from:dkim-signature:arc-authentication-results;
-        bh=uJuypAY2uB7gvndNEnyGCM3M0/A0jJJvKlwsVGJeggE=;
-        b=Z9CBvBmigPn2lWwNowkDQvY0mOjo4IrBAovnG0Qrzh6b3AnTlHIWlVDi2iXwLMU9tv
-         86CS1SPoDApOI3mjeIQ19g5L+h6iYjVR2JO+9D6SFhF/ckWUeHm1sQpgRIU3/n51PIAJ
-         TZgUDxXczMah4aoYzb04W+z3CgqR12u2cBBEvLgsYVZUeTSjZGJ+FHqlrlgNIDRV8FLW
-         s3TBTWx99HFnDQENbUD9FO8RdO8C8wDlmBi2WcQtSvoW9nGphLZDJIgLjiN+QIQUWWS5
-         b3SCR8iVyvg2X2PXnkgr6KizJGEXaGTyZELjxHb4S+zjoQFxei7IXvAv9AIqsLy3eFOa
-         S60g==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:organization:from:references:to:subject
+         :cc:arc-authentication-results;
+        bh=qLynu/3oyx+c8tmZIR7AuTc0i02AkqtF0ZCLHOSSlVU=;
+        b=DT0f+dbmjqra7Lss0GlEg+oR7tHh7RfXNyNQ//xLzLkWQovTgSxKwTMnKVGopsQNFc
+         1pI2gLO1jW1dLT+RKnUQKPB2WtZH/iz94KctWNo8ZfRMzfs4VCq5CR5b6h+CrqDYBsGl
+         xugCDLf83H9uiA2UEeogZC8Y6B1l0/uu0GS/ZdSzDu42EE1c1YSWBCseO91In9+eIVg3
+         WSF45bZRfQSeBxpB9uJS45oaaH7nI9OeOGVDNhXwXugpalIrLNsD29uXr96/0r0wY2gU
+         OzX8+M/+Pn+z9PNYb1YO1mWs1AjCbN0X8qmJKdK79ssh2Fze0wcWdDo+iAAQEA9RsZ/l
+         gZkQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@xilinx.onmicrosoft.com header.s=selector1-xilinx-com header.b=hcbC1IlS;
-       spf=pass (google.com: domain of jollys@xilinx.com designates 104.47.41.69 as permitted sender) smtp.mailfrom=JOLLYS@xilinx.com
+       spf=pass (google.com: domain of sudeep.holla@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=sudeep.holla@arm.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@xilinx.onmicrosoft.com header.s=selector1-xilinx-com header.b=hcbC1IlS;
-       spf=pass (google.com: domain of jollys@xilinx.com designates 104.47.41.69 as permitted sender) smtp.mailfrom=JOLLYS@xilinx.com
-From: Jolly Shah <JOLLYS@xilinx.com>
-To: Sudeep Holla <sudeep.holla@arm.com>, "michal.simek@xilinx.com"
-	<michal.simek@xilinx.com>
-CC: "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-	"mingo@kernel.org" <mingo@kernel.org>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>, "matt@codeblueprint.co.uk"
-	<matt@codeblueprint.co.uk>, "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	"keescook@chromium.org" <keescook@chromium.org>, "dmitry.torokhov@gmail.com"
-	<dmitry.torokhov@gmail.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>, Rajan Vaja
-	<RAJANV@xilinx.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-Subject: RE: [PATCH v5 2/4] drivers: firmware: xilinx: Add ZynqMP firmware
+       spf=pass (google.com: domain of sudeep.holla@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=sudeep.holla@arm.com
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+ "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+ "mingo@kernel.org" <mingo@kernel.org>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
+ "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+ "keescook@chromium.org" <keescook@chromium.org>,
+ "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+ "robh+dt@kernel.org" <robh+dt@kernel.org>,
+ "mark.rutland@arm.com" <mark.rutland@arm.com>, Rajan Vaja
+ <RAJANV@xilinx.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v5 2/4] drivers: firmware: xilinx: Add ZynqMP firmware
  driver
-Thread-Topic: [PATCH v5 2/4] drivers: firmware: xilinx: Add ZynqMP firmware
- driver
-Thread-Index: AQHTqoAjZ4bTH6GbAkK1c5K+qT+P8aO7feAAgAiFjiA=
-Date: Wed, 7 Mar 2018 00:44:45 +0000
-Message-ID: <DM2PR0201MB076735E33069DC6F0C84EFDCB8D80@DM2PR0201MB0767.namprd02.prod.outlook.com>
+To: Jolly Shah <JOLLYS@xilinx.com>,
+ "michal.simek@xilinx.com" <michal.simek@xilinx.com>
 References: <1519154467-2896-1-git-send-email-jollys@xilinx.com>
  <1519154467-2896-3-git-send-email-jollys@xilinx.com>
  <dab419e8-3afe-5bfe-240e-e9ee4f2300f2@arm.com>
-In-Reply-To: <dab419e8-3afe-5bfe-240e-e9ee4f2300f2@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=JOLLYS@xilinx.com;
-x-originating-ip: [149.199.62.254]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM2PR0201MB0560;7:uX3AQxKr55bIHPMp4eGNHcN67+38GrW5CmGnhh8AyATeUfXcQC4dH/rAw/uQEzjMMaM8mvZC1CAMcpseYl5kw3j9HB8b4Benh1jR/1NT8LAAE1JEbI8eIpoXhmOp09CGPQCj5KSyLONaHkLe95z+LqRItl/eU5Cc0KNZl84UNnN2MSNBSEQDO3p9CpEczqRWw4JtIXSwqQsCYSml66n1FJEEk3MxT/5NTJ2rwwcOohiJGuVuYe/cZpHMJxsF6ewG
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(366004)(189003)(199004)(51914003)(13464003)(7736002)(2900100001)(3280700002)(2906002)(81156014)(305945005)(68736007)(81166006)(105586002)(110136005)(99286004)(3660700001)(3846002)(33656002)(6116002)(54906003)(59450400001)(26005)(8676002)(186003)(498600001)(6636002)(6436002)(2950100002)(72206003)(4326008)(2501003)(39060400002)(6246003)(102836004)(97736004)(14454004)(55016002)(53936002)(229853002)(9686003)(7416002)(53546011)(86362001)(5660300001)(6506007)(74316002)(8936002)(25786009)(7696005)(106356001)(76176011)(5250100002)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM2PR0201MB0560;H:DM2PR0201MB0767.namprd02.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-ms-office365-filtering-correlation-id: 716e9568-d50b-4f15-a899-08d583c49f7a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:DM2PR0201MB0560;
-x-ms-traffictypediagnostic: DM2PR0201MB0560:
-x-microsoft-antispam-prvs: <DM2PR0201MB056026F602FEA9500E8FFC42B8D80@DM2PR0201MB0560.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(85827821059158)(258649278758335)(192813158149592);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231220)(944501244)(52105095)(3002001)(10201501046)(6055026)(6041288)(201703131423095)(201703061421075)(201703161042150)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM2PR0201MB0560;BCL:0;PCL:0;RULEID:;SRVR:DM2PR0201MB0560;
-x-forefront-prvs: 0604AFA86B
-x-microsoft-antispam-message-info: wVunrgbYsXI5NZuq2KqV3ys8NaK0Xv6dtMR6ABEbhkzeigcFY9P22IxpfHO5UpU8FV4uLO97NpLR3BW2k/Ckxl61QPCQY/A9e+auIrSt1U+iSpAtdbhthcHZ/n7wCoDaw8tTkKCwDbtGobxRMGWRL1hhSUBF78E24DZOtdeIVWtPPeVNRqAoqnjhHXqh8JdM+qABInv81J0oQC3OGGpQIl0vzFjJ2g4oediOUSa/F51XbVYmlVEJEMiqka+AcNQWl8LJgRixfjU5SYakz2c+5uhWGfPrM+RTeoXzdIn7c1t+VX0GZSMoVPUl6l3Hmn4ev190NDGbsEHXFqsfQge1Qw==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ <DM2PR0201MB076735E33069DC6F0C84EFDCB8D80@DM2PR0201MB0767.namprd02.prod.outlook.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <2fb8ee8c-35ac-b7e6-e691-84464b0c8745@arm.com>
+Date: Thu, 8 Mar 2018 12:18:52 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 716e9568-d50b-4f15-a899-08d583c49f7a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2018 00:44:45.3831
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM2PR0201MB0560
+In-Reply-To: <DM2PR0201MB076735E33069DC6F0C84EFDCB8D80@DM2PR0201MB0767.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592948934312896009?=
-X-GMAIL-MSGID: =?utf-8?q?1594237639741829829?=
+X-GMAIL-MSGID: =?utf-8?q?1594371907728088901?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-SGkgU3VkZWVwLA0KDQpUaGFua3MgZm9yIHRoZSByZXZpZXcsDQoNCj4gLS0tLS1PcmlnaW5hbCBN
-ZXNzYWdlLS0tLS0NCj4gRnJvbTogU3VkZWVwIEhvbGxhIFttYWlsdG86c3VkZWVwLmhvbGxhQGFy
-bS5jb21dDQo+IFNlbnQ6IFRodXJzZGF5LCBNYXJjaCAwMSwgMjAxOCA2OjI4IEFNDQo+IFRvOiBK
-b2xseSBTaGFoIDxKT0xMWVNAeGlsaW54LmNvbT47IG1pY2hhbC5zaW1la0B4aWxpbnguY29tDQo+
-IENjOiBhcmQuYmllc2hldXZlbEBsaW5hcm8ub3JnOyBtaW5nb0BrZXJuZWwub3JnOw0KPiBncmVn
-a2hAbGludXhmb3VuZGF0aW9uLm9yZzsgbWF0dEBjb2RlYmx1ZXByaW50LmNvLnVrOw0KPiBoa2Fs
-bHdlaXQxQGdtYWlsLmNvbTsga2Vlc2Nvb2tAY2hyb21pdW0ub3JnOw0KPiBkbWl0cnkudG9yb2to
-b3ZAZ21haWwuY29tOyByb2JoK2R0QGtlcm5lbC5vcmc7IG1hcmsucnV0bGFuZEBhcm0uY29tOw0K
-PiBTdWRlZXAgSG9sbGEgPHN1ZGVlcC5ob2xsYUBhcm0uY29tPjsgUmFqYW4gVmFqYSA8UkFKQU5W
-QHhpbGlueC5jb20+Ow0KPiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IGxp
-bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3Jn
-OyBKb2xseSBTaGFoIDxKT0xMWVNAeGlsaW54LmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2
-NSAyLzRdIGRyaXZlcnM6IGZpcm13YXJlOiB4aWxpbng6IEFkZCBaeW5xTVAgZmlybXdhcmUNCj4g
-ZHJpdmVyDQo+IA0KPiANCj4gDQo+IE9uIDIwLzAyLzE4IDE5OjIxLCBKb2xseSBTaGFoIHdyb3Rl
-Og0KPiA+IFRoaXMgcGF0Y2ggaXMgYWRkaW5nIGNvbW11bmljYXRpb24gbGF5ZXIgd2l0aCBmaXJt
-d2FyZS4NCj4gPiBGaXJtd2FyZSBkcml2ZXIgcHJvdmlkZXMgYW4gaW50ZXJmYWNlIHRvIGZpcm13
-YXJlIEFQSXMuDQo+ID4gSW50ZXJmYWNlIEFQSXMgY2FuIGJlIHVzZWQgYnkgYW55IGRyaXZlciB0
-byBjb21tdW5pY2F0ZSB0bw0KPiA+IFBNVUZXKFBsYXRmb3JtIE1hbmFnZW1lbnQgVW5pdCkuIEFs
-bCByZXF1ZXN0cyBnbyB0aHJvdWdoIEFURi4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEpvbGx5
-IFNoYWggPGpvbGx5c0B4aWxpbnguY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFJhamFuIFZhamEg
-PHJhamFudkB4aWxpbnguY29tPg0KPiA+IC0tLQ0KPiA+ICBhcmNoL2FybTY0L0tjb25maWcucGxh
-dGZvcm1zICAgICAgICAgICAgICAgICAgICB8ICAgIDEgKw0KPiA+ICBkcml2ZXJzL2Zpcm13YXJl
-L0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICB8ICAgIDEgKw0KPiA+ICBkcml2ZXJzL2Zp
-cm13YXJlL01ha2VmaWxlICAgICAgICAgICAgICAgICAgICAgICB8ICAgIDEgKw0KPiA+ICBkcml2
-ZXJzL2Zpcm13YXJlL3hpbGlueC9LY29uZmlnICAgICAgICAgICAgICAgICB8ICAgIDQgKw0KPiA+
-ICBkcml2ZXJzL2Zpcm13YXJlL3hpbGlueC9NYWtlZmlsZSAgICAgICAgICAgICAgICB8ICAgIDQg
-Kw0KPiA+ICBkcml2ZXJzL2Zpcm13YXJlL3hpbGlueC96eW5xbXAvS2NvbmZpZyAgICAgICAgICB8
-ICAgMTYgKw0KPiA+ICBkcml2ZXJzL2Zpcm13YXJlL3hpbGlueC96eW5xbXAvTWFrZWZpbGUgICAg
-ICAgICB8ICAgIDQgKw0KPiA+ICBkcml2ZXJzL2Zpcm13YXJlL3hpbGlueC96eW5xbXAvZmlybXdh
-cmUuYyAgICAgICB8IDEwNTENCj4gKysrKysrKysrKysrKysrKysrKysrKysNCj4gPiAgaW5jbHVk
-ZS9saW51eC9maXJtd2FyZS94aWxpbngvenlucW1wL2Zpcm13YXJlLmggfCAgNTkwICsrKysrKysr
-KysrKysNCj4gPiAgOSBmaWxlcyBjaGFuZ2VkLCAxNjcyIGluc2VydGlvbnMoKykNCj4gPiAgY3Jl
-YXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZmlybXdhcmUveGlsaW54L0tjb25maWcgIGNyZWF0ZSBt
-b2RlDQo+ID4gMTAwNjQ0IGRyaXZlcnMvZmlybXdhcmUveGlsaW54L01ha2VmaWxlICBjcmVhdGUg
-bW9kZSAxMDA2NDQNCj4gPiBkcml2ZXJzL2Zpcm13YXJlL3hpbGlueC96eW5xbXAvS2NvbmZpZw0K
-PiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9maXJtd2FyZS94aWxpbngvenlucW1wL01h
-a2VmaWxlDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Zpcm13YXJlL3hpbGlueC96
-eW5xbXAvZmlybXdhcmUuYw0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9saW51eC9m
-aXJtd2FyZS94aWxpbngvenlucW1wL2Zpcm13YXJlLmgNCj4gPg0KPiA+ICsNCj4gPiArLyoqDQo+
-ID4gKyAqIHp5bnFtcF9wbV9mb3JjZV9wb3dlcmRvd24gLSBQTSBjYWxsIHRvIHJlcXVlc3QgZm9y
-IGFub3RoZXIgUFUgb3INCj4gc3Vic3lzdGVtIHRvDQo+ID4gKyAqCQkJCWJlIHBvd2VyZWQgZG93
-biBmb3JjZWZ1bGx5DQo+ID4gKyAqIEB0YXJnZXQ6CU5vZGUgSUQgb2YgdGhlIHRhcmdldGVkIFBV
-IG9yIHN1YnN5c3RlbQ0KPiA+ICsgKiBAYWNrOglGbGFnIHRvIHNwZWNpZnkgd2hldGhlciBhY2tu
-b3dsZWRnZSBpcyByZXF1ZXN0ZWQNCj4gPiArICoNCj4gPiArICogUmV0dXJuOglSZXR1cm5zIHN0
-YXR1cywgZWl0aGVyIHN1Y2Nlc3Mgb3IgZXJyb3IrcmVhc29uDQo+ID4gKyAqLw0KPiA+ICtzdGF0
-aWMgaW50IHp5bnFtcF9wbV9mb3JjZV9wb3dlcmRvd24oY29uc3QgdTMyIHRhcmdldCwNCj4gPiAr
-CQkJCSAgICAgY29uc3QgZW51bSB6eW5xbXBfcG1fcmVxdWVzdF9hY2sgYWNrKSB7DQo+ID4gKwly
-ZXR1cm4genlucW1wX3BtX2ludm9rZV9mbihQTV9GT1JDRV9QT1dFUkRPV04sIHRhcmdldCwgYWNr
-LA0KPiAwLCAwLA0KPiA+ICtOVUxMKTsgfQ0KPiA+ICsNCj4gDQo+IFsuLi5dDQo+IA0KPiA+ICsv
-KioNCj4gPiArICogenlucW1wX3BtX3N5c3RlbV9zaHV0ZG93biAtIFBNIGNhbGwgdG8gcmVxdWVz
-dCBhIHN5c3RlbSBzaHV0ZG93biBvcg0KPiByZXN0YXJ0DQo+ID4gKyAqIEB0eXBlOglTaHV0ZG93
-biBvciByZXN0YXJ0PyAwIGZvciBzaHV0ZG93biwgMSBmb3IgcmVzdGFydA0KPiA+ICsgKiBAc3Vi
-dHlwZToJU3BlY2lmaWVzIHdoaWNoIHN5c3RlbSBzaG91bGQgYmUgcmVzdGFydGVkIG9yIHNodXQg
-ZG93bg0KPiA+ICsgKg0KPiA+ICsgKiBSZXR1cm46CVJldHVybnMgc3RhdHVzLCBlaXRoZXIgc3Vj
-Y2VzcyBvciBlcnJvcityZWFzb24NCj4gPiArICovDQo+ID4gK3N0YXRpYyBpbnQgenlucW1wX3Bt
-X3N5c3RlbV9zaHV0ZG93bihjb25zdCB1MzIgdHlwZSwgY29uc3QgdTMyDQo+ID4gK3N1YnR5cGUp
-IHsNCj4gPiArCXJldHVybiB6eW5xbXBfcG1faW52b2tlX2ZuKFBNX1NZU1RFTV9TSFVURE9XTiwg
-dHlwZSwgc3VidHlwZSwNCj4gPiArCQkJCSAgIDAsIDAsIE5VTEwpOw0KPiA+ICt9DQo+ID4gKw0K
-PiANCj4gSSBjYW4ndCB1bmRlcnN0YW5kIHdoeSB5b3UgbmVlZCBhYm92ZSAyIEFQSXM6IFBNX0ZP
-UkNFX1BPV0VSRE9XTiBhbmQNCj4gUE1fU1lTVEVNX1NIVVRET1dOLiBZb3Ugc2hvdWxkIHVzZSBQ
-U0NJX1NZU1RFTV9PRkYgYW5kDQo+IFBTQ0lfU1lTVEVNX1JFU0VUIGFuZCBkcm9wIHRoZXNlIHR3
-by4NCj4gDQoNCkZPUkNFX1BPV0VSRE9XTiBhbGxvd3MgcmVtb3RlIG1hc3RlciB0byBmb3JjZSBw
-b3dlciBvZmYgb3RoZXIgbm9kZS9kb21haW4uDQpTWVNURU1fU0hVVERPV04gcHJvdmlkZXMgaW50
-ZXJmYWNlIHRvIHNodXRkb3duL3Jlc3RhcnQgdGhlIHN1YnN5c3RlbS4gSXQgc3VwcG9ydHMgc3lz
-dGVtL3N1YnN5c3RlbSByZXN0YXJ0IHdpdGggYXJndW1lbnQgdmFsdWUuIFBTQ0kgZG9lc27igJl0
-IHN1cHBvcnQgYXJndW1lbnQgdG8gaWRlbnRpZnkgYmV0d2VlbiByZXN0YXJ0IHR5cGVzLg0KDQo+
-IA0KPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IHp5bnFtcF9lZW1pX29wcyBlZW1pX29wcyA9IHsN
-Cj4gPiArCS5nZXRfYXBpX3ZlcnNpb24gPSB6eW5xbXBfcG1fZ2V0X2FwaV92ZXJzaW9uLA0KPiA+
-ICsJLmdldF9jaGlwaWQgPSB6eW5xbXBfcG1fZ2V0X2NoaXBpZCwNCj4gPiArCS5yZXNldF9hc3Nl
-cnQgPSB6eW5xbXBfcG1fcmVzZXRfYXNzZXJ0LA0KPiA+ICsJLnJlc2V0X2dldF9zdGF0dXMgPSB6
-eW5xbXBfcG1fcmVzZXRfZ2V0X3N0YXR1cywNCj4gPiArCS5mcGdhX2xvYWQgPSB6eW5xbXBfcG1f
-ZnBnYV9sb2FkLA0KPiA+ICsJLmZwZ2FfZ2V0X3N0YXR1cyA9IHp5bnFtcF9wbV9mcGdhX2dldF9z
-dGF0dXMsDQo+ID4gKwkuc2hhX2hhc2ggPSB6eW5xbXBfcG1fc2hhX2hhc2gsDQo+ID4gKwkucnNh
-ID0genlucW1wX3BtX3JzYSwNCj4gPiArCS5yZXF1ZXN0X3N1c3BlbmQgPSB6eW5xbXBfcG1fcmVx
-dWVzdF9zdXNwZW5kLA0KPiA+ICsJLmZvcmNlX3Bvd2VyZG93biA9IHp5bnFtcF9wbV9mb3JjZV9w
-b3dlcmRvd24sDQo+ID4gKwkucmVxdWVzdF93YWtldXAgPSB6eW5xbXBfcG1fcmVxdWVzdF93YWtl
-dXAsDQo+ID4gKwkuc2V0X3dha2V1cF9zb3VyY2UgPSB6eW5xbXBfcG1fc2V0X3dha2V1cF9zb3Vy
-Y2UsDQo+ID4gKwkuc3lzdGVtX3NodXRkb3duID0genlucW1wX3BtX3N5c3RlbV9zaHV0ZG93biwN
-Cj4gPiArCS5yZXF1ZXN0X25vZGUgPSB6eW5xbXBfcG1fcmVxdWVzdF9ub2RlLA0KPiA+ICsJLnJl
-bGVhc2Vfbm9kZSA9IHp5bnFtcF9wbV9yZWxlYXNlX25vZGUsDQo+ID4gKwkuc2V0X3JlcXVpcmVt
-ZW50ID0genlucW1wX3BtX3NldF9yZXF1aXJlbWVudCwNCj4gPiArCS5zZXRfbWF4X2xhdGVuY3kg
-PSB6eW5xbXBfcG1fc2V0X21heF9sYXRlbmN5LA0KPiA+ICsJLnNldF9jb25maWd1cmF0aW9uID0g
-enlucW1wX3BtX3NldF9jb25maWd1cmF0aW9uLA0KPiA+ICsJLmdldF9ub2RlX3N0YXR1cyA9IHp5
-bnFtcF9wbV9nZXRfbm9kZV9zdGF0dXMsDQo+ID4gKwkuZ2V0X29wZXJhdGluZ19jaGFyYWN0ZXJp
-c3RpYyA9DQo+IHp5bnFtcF9wbV9nZXRfb3BlcmF0aW5nX2NoYXJhY3RlcmlzdGljLA0KPiA+ICsJ
-LmluaXRfZmluYWxpemUgPSB6eW5xbXBfcG1faW5pdF9maW5hbGl6ZSwNCj4gPiArCS5zZXRfc3Vz
-cGVuZF9tb2RlID0genlucW1wX3BtX3NldF9zdXNwZW5kX21vZGUsDQo+ID4gKwkuaW9jdGwgPSB6
-eW5xbXBfcG1faW9jdGwsDQo+ID4gKwkucXVlcnlfZGF0YSA9IHp5bnFtcF9wbV9xdWVyeV9kYXRh
-LA0KPiA+ICsJLnBpbmN0cmxfcmVxdWVzdCA9IHp5bnFtcF9wbV9waW5jdHJsX3JlcXVlc3QsDQo+
-ID4gKwkucGluY3RybF9yZWxlYXNlID0genlucW1wX3BtX3BpbmN0cmxfcmVsZWFzZSwNCj4gPiAr
-CS5waW5jdHJsX2dldF9mdW5jdGlvbiA9IHp5bnFtcF9wbV9waW5jdHJsX2dldF9mdW5jdGlvbiwN
-Cj4gPiArCS5waW5jdHJsX3NldF9mdW5jdGlvbiA9IHp5bnFtcF9wbV9waW5jdHJsX3NldF9mdW5j
-dGlvbiwNCj4gPiArCS5waW5jdHJsX2dldF9jb25maWcgPSB6eW5xbXBfcG1fcGluY3RybF9nZXRf
-Y29uZmlnLA0KPiA+ICsJLnBpbmN0cmxfc2V0X2NvbmZpZyA9IHp5bnFtcF9wbV9waW5jdHJsX3Nl
-dF9jb25maWcsDQo+ID4gKwkuY2xvY2tfZW5hYmxlID0genlucW1wX3BtX2Nsb2NrX2VuYWJsZSwN
-Cj4gPiArCS5jbG9ja19kaXNhYmxlID0genlucW1wX3BtX2Nsb2NrX2Rpc2FibGUsDQo+ID4gKwku
-Y2xvY2tfZ2V0c3RhdGUgPSB6eW5xbXBfcG1fY2xvY2tfZ2V0c3RhdGUsDQo+ID4gKwkuY2xvY2tf
-c2V0ZGl2aWRlciA9IHp5bnFtcF9wbV9jbG9ja19zZXRkaXZpZGVyLA0KPiA+ICsJLmNsb2NrX2dl
-dGRpdmlkZXIgPSB6eW5xbXBfcG1fY2xvY2tfZ2V0ZGl2aWRlciwNCj4gPiArCS5jbG9ja19zZXRy
-YXRlID0genlucW1wX3BtX2Nsb2NrX3NldHJhdGUsDQo+ID4gKwkuY2xvY2tfZ2V0cmF0ZSA9IHp5
-bnFtcF9wbV9jbG9ja19nZXRyYXRlLA0KPiA+ICsJLmNsb2NrX3NldHBhcmVudCA9IHp5bnFtcF9w
-bV9jbG9ja19zZXRwYXJlbnQsDQo+ID4gKwkuY2xvY2tfZ2V0cGFyZW50ID0genlucW1wX3BtX2Ns
-b2NrX2dldHBhcmVudCwgfTsNCj4gPiArDQo+IEluc3RlYWQgb2YgaW50cm9kdWNpbmcgYWxsIHRo
-ZXNlIGluIG9uZXNob3QsIGFkZCB0aGVtIGFzIHlvdSBoYXZlIHVzZXJzIG9mIGl0Lg0KPiBJT1cs
-IHNob3cgdGhlIHVzZXJzIG9mIHRoZXNlIGZ1bmN0aW9ucyBpbiB0aGUgc2VyaWVzLiBBbHNvIEkg
-YXNrZWQgdG8gc3BsaXQgdGhpcw0KPiBpbnRvIGZ1bmN0aW9uYWwgY2hhbmdlcyBsaWtlIGNsb2Nr
-LCBwaW5jdHJsLCBwb3dlciwgZXRjLg0KDQpJdCBjYW4gYmUgc3BsaXQgaW50byBmdW5jdGlvbmFs
-IGNoYW5nZXMgaW4gc2FtZSBzZXJpZXMgYnV0IGl0IHdpbGwgYmUgZGlmZmljdWx0IHRvIHNwbGl0
-IGJldHdlZW4gdXNlcnMgYXMgdGhlcmUgYXJlIG1vcmUgdGhhbiAxMCBkcml2ZXIgdXNlcnMgZm9y
-IGRpZmZlcmVudCBFRU1JIEFQSXMgYW5kIGFsc28gbXVsdGlwbGUgZHJpdmVyIHVzZXJzIHVzaW5n
-IHNwZWNpZmMgRUVNSSBBUElzLiBUaGV5IGFsbCBjYW4ndCBiZSBzdWJtaXR0ZWQgYXMgc2luZ2xl
-IHNlcmllcy4gDQoNCj4gDQo+IC0tDQo+IFJlZ2FyZHMsDQo+IFN1ZGVlcA0K
+
+
+On 07/03/18 00:44, Jolly Shah wrote:
+> Hi Sudeep,
+> 
+> Thanks for the review,
+> 
+>> -----Original Message-----
+>> From: Sudeep Holla [mailto:sudeep.holla@arm.com]
+>> Sent: Thursday, March 01, 2018 6:28 AM
+>> To: Jolly Shah <JOLLYS@xilinx.com>; michal.simek@xilinx.com
+>> Cc: ard.biesheuvel@linaro.org; mingo@kernel.org;
+>> gregkh@linuxfoundation.org; matt@codeblueprint.co.uk;
+>> hkallweit1@gmail.com; keescook@chromium.org;
+>> dmitry.torokhov@gmail.com; robh+dt@kernel.org; mark.rutland@arm.com;
+>> Sudeep Holla <sudeep.holla@arm.com>; Rajan Vaja <RAJANV@xilinx.com>;
+>> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
+>> devicetree@vger.kernel.org; Jolly Shah <JOLLYS@xilinx.com>
+>> Subject: Re: [PATCH v5 2/4] drivers: firmware: xilinx: Add ZynqMP firmware
+>> driver
+>>
+>>
+>>
+>> On 20/02/18 19:21, Jolly Shah wrote:
+>>> This patch is adding communication layer with firmware.
+>>> Firmware driver provides an interface to firmware APIs.
+>>> Interface APIs can be used by any driver to communicate to
+>>> PMUFW(Platform Management Unit). All requests go through ATF.
+>>>
+>>> Signed-off-by: Jolly Shah <jollys@xilinx.com>
+>>> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+>>> ---
+>>>  arch/arm64/Kconfig.platforms                    |    1 +
+>>>  drivers/firmware/Kconfig                        |    1 +
+>>>  drivers/firmware/Makefile                       |    1 +
+>>>  drivers/firmware/xilinx/Kconfig                 |    4 +
+>>>  drivers/firmware/xilinx/Makefile                |    4 +
+>>>  drivers/firmware/xilinx/zynqmp/Kconfig          |   16 +
+>>>  drivers/firmware/xilinx/zynqmp/Makefile         |    4 +
+>>>  drivers/firmware/xilinx/zynqmp/firmware.c       | 1051
+>> +++++++++++++++++++++++
+>>>  include/linux/firmware/xilinx/zynqmp/firmware.h |  590 +++++++++++++
+>>>  9 files changed, 1672 insertions(+)
+>>>  create mode 100644 drivers/firmware/xilinx/Kconfig  create mode
+>>> 100644 drivers/firmware/xilinx/Makefile  create mode 100644
+>>> drivers/firmware/xilinx/zynqmp/Kconfig
+>>>  create mode 100644 drivers/firmware/xilinx/zynqmp/Makefile
+>>>  create mode 100644 drivers/firmware/xilinx/zynqmp/firmware.c
+>>>  create mode 100644 include/linux/firmware/xilinx/zynqmp/firmware.h
+>>>
+>>> +
+>>> +/**
+>>> + * zynqmp_pm_force_powerdown - PM call to request for another PU or
+>> subsystem to
+>>> + *				be powered down forcefully
+>>> + * @target:	Node ID of the targeted PU or subsystem
+>>> + * @ack:	Flag to specify whether acknowledge is requested
+>>> + *
+>>> + * Return:	Returns status, either success or error+reason
+>>> + */
+>>> +static int zynqmp_pm_force_powerdown(const u32 target,
+>>> +				     const enum zynqmp_pm_request_ack ack) {
+>>> +	return zynqmp_pm_invoke_fn(PM_FORCE_POWERDOWN, target, ack,
+>> 0, 0,
+>>> +NULL); }
+>>> +
+>>
+>> [...]
+>>
+>>> +/**
+>>> + * zynqmp_pm_system_shutdown - PM call to request a system shutdown or
+>> restart
+>>> + * @type:	Shutdown or restart? 0 for shutdown, 1 for restart
+>>> + * @subtype:	Specifies which system should be restarted or shut down
+>>> + *
+>>> + * Return:	Returns status, either success or error+reason
+>>> + */
+>>> +static int zynqmp_pm_system_shutdown(const u32 type, const u32
+>>> +subtype) {
+>>> +	return zynqmp_pm_invoke_fn(PM_SYSTEM_SHUTDOWN, type, subtype,
+>>> +				   0, 0, NULL);
+>>> +}
+>>> +
+>>
+>> I can't understand why you need above 2 APIs: PM_FORCE_POWERDOWN and
+>> PM_SYSTEM_SHUTDOWN. You should use PSCI_SYSTEM_OFF and
+>> PSCI_SYSTEM_RESET and drop these two.
+>>
+> 
+> FORCE_POWERDOWN allows remote master to force power off other
+> node/domain. SYSTEM_SHUTDOWN provides interface to shutdown/restart
+> the subsystem. It supports system/subsystem restart with argument value.> PSCI doesn’t
+support argument to identify between restart types.
+
+OK, what are the types you are referring here ? or why PSCI is not
+sufficient ? How do you plan to use these APIs in Linux ?
+
+>>
+>>> +static const struct zynqmp_eemi_ops eemi_ops = {
+>>> +	.get_api_version = zynqmp_pm_get_api_version,
+>>> +	.get_chipid = zynqmp_pm_get_chipid,
+>>> +	.reset_assert = zynqmp_pm_reset_assert,
+>>> +	.reset_get_status = zynqmp_pm_reset_get_status,
+>>> +	.fpga_load = zynqmp_pm_fpga_load,
+>>> +	.fpga_get_status = zynqmp_pm_fpga_get_status,
+>>> +	.sha_hash = zynqmp_pm_sha_hash,
+>>> +	.rsa = zynqmp_pm_rsa,
+>>> +	.request_suspend = zynqmp_pm_request_suspend,
+>>> +	.force_powerdown = zynqmp_pm_force_powerdown,
+>>> +	.request_wakeup = zynqmp_pm_request_wakeup,
+>>> +	.set_wakeup_source = zynqmp_pm_set_wakeup_source,
+>>> +	.system_shutdown = zynqmp_pm_system_shutdown,
+>>> +	.request_node = zynqmp_pm_request_node,
+>>> +	.release_node = zynqmp_pm_release_node,
+>>> +	.set_requirement = zynqmp_pm_set_requirement,
+>>> +	.set_max_latency = zynqmp_pm_set_max_latency,
+>>> +	.set_configuration = zynqmp_pm_set_configuration,
+>>> +	.get_node_status = zynqmp_pm_get_node_status,
+>>> +	.get_operating_characteristic =
+>> zynqmp_pm_get_operating_characteristic,
+>>> +	.init_finalize = zynqmp_pm_init_finalize,
+>>> +	.set_suspend_mode = zynqmp_pm_set_suspend_mode,
+>>> +	.ioctl = zynqmp_pm_ioctl,
+>>> +	.query_data = zynqmp_pm_query_data,
+>>> +	.pinctrl_request = zynqmp_pm_pinctrl_request,
+>>> +	.pinctrl_release = zynqmp_pm_pinctrl_release,
+>>> +	.pinctrl_get_function = zynqmp_pm_pinctrl_get_function,
+>>> +	.pinctrl_set_function = zynqmp_pm_pinctrl_set_function,
+>>> +	.pinctrl_get_config = zynqmp_pm_pinctrl_get_config,
+>>> +	.pinctrl_set_config = zynqmp_pm_pinctrl_set_config,
+>>> +	.clock_enable = zynqmp_pm_clock_enable,
+>>> +	.clock_disable = zynqmp_pm_clock_disable,
+>>> +	.clock_getstate = zynqmp_pm_clock_getstate,
+>>> +	.clock_setdivider = zynqmp_pm_clock_setdivider,
+>>> +	.clock_getdivider = zynqmp_pm_clock_getdivider,
+>>> +	.clock_setrate = zynqmp_pm_clock_setrate,
+>>> +	.clock_getrate = zynqmp_pm_clock_getrate,
+>>> +	.clock_setparent = zynqmp_pm_clock_setparent,
+>>> +	.clock_getparent = zynqmp_pm_clock_getparent, };
+>>> +
+>> Instead of introducing all these in oneshot, add them as you have users of it.
+>> IOW, show the users of these functions in the series. Also I asked to split this
+>> into functional changes like clock, pinctrl, power, etc.
+> 
+> It can be split into functional changes in same series but it will be
+> difficult to split between users as there are more than 10 driver
+> users for different EEMI APIs and also multiple driver users using
+> specifc EEMI APIs. They all can't be submitted as single series.
+> 
+
+Why ? Start with basic EEMI and one functionality with it's user/client
+driver in one series. Then you can top up with EEMI changes for other
+functionality with it's user. If you introduce API's without the users
+in a series it's hard to review and if there are more such unused APIs
+I will object it in future versions.
+
+To start with add only clock or power APIs and functionality in this
+series, add drivers using then. Drop other functionalities like pinctrl,
+fpga control and other functionalities. IOW start something basic and
+simple.
+
+-- 
+Regards,
+Sudeep
