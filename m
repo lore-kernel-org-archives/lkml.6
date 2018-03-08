@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1086562-1520489785-2-14945310724030800637
+X-Cyrus-Session-Id: sloti22d1t05-1086562-1520489783-2-18414287672836045658
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520489784; b=CgU2gIN0fdcUf27QFFWdvXR6S5Cx36j/ydNzmxStlfr6N9Q
-    JrjmM3hoPOX6o3lhDQyj7SG2bXhWj88X9hAls7EiPRlXvnGPzEzNFC87IhaKILzd
-    M7ofCqVx/urvWlnPTMyPbJL5PcsMkMB1meE/CSYZzK1EhEaey6BWSiquEpsuTRDP
-    idfaF2jgmo1e2Y3BKeYiLHJvjpfQT4jO6ECg5/klPCmPw6qukUqUKN9Yte0gShPW
-    ukJECU1dgjebuQYM31RkZtju6HmU4+Z2kbYN7DSsdb7IXhwtQPwa19NJKUhxkJw8
-    C/xsXePntVdMW9Am6viYgVXv3Gm+0mPUzMI3sqA==
+    t=1520489783; b=uKB42oOhp4vzskSZpfzxrXLiKiQihcKufRrMvPxGFax2VCf
+    vDE/nYUYRaRmQyRlEi/OZNs4AMFIq90l+hkRVjAACf3hl0sZGTWEW6f8RoqaxO6m
+    HQ+STnIxf1cs3r38FpCo2OubD88TZF7IPeQZVddYWRCJGwy6xFTe8BeBHsECNhIz
+    FoAa7f0+6OxLBijUgxWP/7tqN6GVNTIYYc9BKxU5Fyw33pCFub1+5JBR+TMQ/Qao
+    C9BdqgrdKQPz/36yvl4GCYgzKBGAXjEQ6o1fCWLQDn9CGnCbeSWO1hz2VBQ9j9+u
+    DfKtFFWT3wJfazkghuqqrbo7oqMZyDIpK2qbH1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520489784; bh=wSmDLK
-    Lc0HrOTuMSvWgGB7a+nThsSaCxOtQMg7yffUE=; b=EOTPp1QYCNC+ChZaHzMhMW
-    jN7zm/IUVsidZpfpj3KYdJcObJvc0uNS6thQ0e1basqATN43vstBEXrpyr9u7SwZ
-    TE2enf8mw+JB+YmXQv7sbQdCzwkzLRm2x0Pz7ntJ6jDgVXNOlCM2BE16V1Wc04VF
-    G3L3DhzmdIlJpMIraxD3JwAGDcpmxSMkp65sdncwwE30jt+uh7Kh8E/p3duB8NCW
-    e0F/BIbfywRtvvV/gD+gorTfUC82/mvqZuZFY9fVQaY2oDYx0NjigFk4WzwgfAkp
-    0hEDpQjlOQuwbK6PGoOvYSD4Lv4TojWJznvarXwAhZLmFPX2PIqT5CxPixxVWTyQ
+    :mime-version:sender:list-id; s=arctest; t=1520489783; bh=Ae52Ni
+    JTChRyhqTymWgW6CQpOYCTTcOC2xYsVk7aZ68=; b=QTdO9S3xUgyL/k0pNfhYoG
+    ZkOA2B6h/rRMqkYRKQMflp6HzbcNycxLeTdycKu6nbFAMsFbCB2CzltQ9B03+mFC
+    s92aifb/PjrXc3P0uNlayWZ6Zz3PACNspQp5ekDhPM2C6/oqBO1c0YR/n+xKEZsl
+    IrUu3do1dyozn206XszhE1oRHDQXwdoCGcgFNETyQ3XeLsjJZ5nE5CU5frkxUvmO
+    CXM8pAaFjzeWr3Hf1EIx0GgeWIE9jmWEXtYNIl6Krs85FiseMRjaQsKO/8QgNz4C
+    IRNb7DhomlBIAgKBMb80WM8HBmKcmbJykIUql8MkDtQuaXNdNx772S1M1juDH+4w
     ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=LIoTPMz3 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=javE81Yz x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -41,7 +41,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=LIoTPMz3 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=javE81Yz x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,28 +50,26 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965709AbeCHFBZ (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 00:01:25 -0500
+        id S1755337AbeCHFB1 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 00:01:27 -0500
 Received: from mail-by2nam01on0096.outbound.protection.outlook.com ([104.47.34.96]:14896
         "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965601AbeCHFBW (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 8 Mar 2018 00:01:22 -0500
+        id S1755329AbeCHFBX (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 8 Mar 2018 00:01:23 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Feras Daoud <ferasda@mellanox.com>,
-        Erez Shitrit <erezsh@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
+CC: Dan Carpenter <dan.carpenter@oracle.com>,
+        Sebastian Reichel <sre@kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 062/190] IB/ipoib: Update broadcast object if
- PKey value was changed in index 0
-Thread-Topic: [PATCH AUTOSEL for 4.9 062/190] IB/ipoib: Update broadcast
- object if PKey value was changed in index 0
-Thread-Index: AQHTtpo3hsBofq6DXkeLh0wAE6qWVA==
+Subject: [PATCH AUTOSEL for 4.9 063/190] HSI: ssi_protocol: double free in
+ ssip_pn_xmit()
+Thread-Topic: [PATCH AUTOSEL for 4.9 063/190] HSI: ssi_protocol: double free
+ in ssip_pn_xmit()
+Thread-Index: AQHTtpo3NQcG6gHUFk+ttyBhXyfRNg==
 Date: Thu, 8 Mar 2018 04:59:19 +0000
-Message-ID: <20180308045810.8041-62-alexander.levin@microsoft.com>
+Message-ID: <20180308045810.8041-63-alexander.levin@microsoft.com>
 References: <20180308045810.8041-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045810.8041-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -80,27 +78,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0999;7:yLGDeLOD61IEbrFV7xV/4GOijs3TYFPWXHXHQfJS4ee4wnobVmO433ZWehFNTwu7OwbH3CycH0KpkLPzh82UWT0cvt3AH4gprp3SeO5qgh23+cjKirgyqcIMKLacezF/F3J66+F09tCvxh2/q6AFwh3bl3BmRS2pglYZVIpQDW3howSLy/KdoKWBR2LHMTqbATohNRFfDDUXgkvtkjTvPMjchdL/iINkzW+j6jkd4WOGZw8nw46AzGkfmsEgVi7G;20:rRjaYNf+MG1uPu1SEY7EeI1GYRy1VDEkgDZvQAzijt7qbVy9KoxOojOEST5YHX8wnEhkfloRTNUef20rVtOLwPzKeBDjVAOKYcRuPhMjValOLkq2i6zma564c/QxlnlzgTkCMStwMpSr1cvaHwOsNu8ii3wPSQps4LyBDTn8mSs=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0999;7:XlcwtKkBgKAAiJBG1xczUFkIz/W8hj/CPTc173Z1VvqUq60LB9sMLp7jbUmbMqX4JCQU7LagAIJvjMp70BfrEy0bQVYc54AQMJ6H6XadSyTsBQth5aGCNwaKWi7AGOHI7tXLXg63vswf+duhq9msAoWH8BZadcrn24LL9+3B1Zjbq3f4O6Yd+P4l6n/xiIXbGnzWNdhpm9XriYjarRts7oKouSQzyGjXp88CWHdqS1EnlHoghfqDX+84FzIxVVIN;20:n4cODUnWE57XEbbPAMWsbFmc+MmRS4h+JuWeBNAvihEKRlV4UIoWsGU4QwkxXd1A06RzlF5tTASTa4uHiITzU+M6hIKENCNUVnGmpIGk23oaSktVzpT0/z4EInkwiJNnJkLrbMEz/CQmiZFSsIrear/F8LjSCCIrNV0paANF1uw=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 1840dcce-78f1-4c05-0c7d-08d584b1a1b9
+x-ms-office365-filtering-correlation-id: 023a62f7-5168-4b88-112c-08d584b1a1fe
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0999;
 x-ms-traffictypediagnostic: DM5PR2101MB0999:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0999F4F4FC7B381B886025AFFBDF0@DM5PR2101MB0999.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <DM5PR2101MB0999CF6B11C1C8F349EA20E4FBDF0@DM5PR2101MB0999.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0999;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0999;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(39380400002)(376002)(396003)(346002)(189003)(199004)(72206003)(15650500001)(3846002)(106356001)(8676002)(6116002)(1076002)(6512007)(14454004)(81156014)(66066001)(2906002)(3660700001)(478600001)(10290500003)(8936002)(6486002)(305945005)(7736002)(36756003)(2900100001)(81166006)(4326008)(25786009)(6436002)(5250100002)(105586002)(54906003)(22452003)(76176011)(5660300001)(10090500001)(110136005)(316002)(6506007)(86362001)(186003)(2950100002)(97736004)(3280700002)(102836004)(99286004)(107886003)(59450400001)(68736007)(86612001)(53936002)(26005)(2501003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0999;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: qkRWg0Gw8v5p/yvF83BcpF6E+j70zr9Sg9MAvtRMkadWr/yM8rBuJ0lWJXlDmGmQp7ek8ssdbuKJj/SynkUitq/jZ+8dGo80/v6B9lJw3W/7/fCl36j7fh9fhSWr1aikhny+lVWM0H4tXYUCz7P2uRQi/4ROHF2dIbVuB5XmZvHqbdIyAZJheN57q9Hz9SuzFOE4TnhTIpCW20iJBpNdfVdjQgoZ0ATUZqg5LnoVxBJQmhf1qJJIcXggB4QoJC9+TDDnOUkOyWN4mHipSCESM/wFL9iUh4HvfyWQ3XI6ibLHe9I+InjT9XPGkk+G7JHlVnEB1PrOMoXkDQD7JAwVsQ==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(39380400002)(376002)(396003)(346002)(189003)(199004)(72206003)(3846002)(106356001)(8676002)(6116002)(1076002)(6512007)(14454004)(81156014)(66066001)(2906002)(3660700001)(478600001)(10290500003)(8936002)(6486002)(305945005)(7736002)(36756003)(2900100001)(81166006)(4326008)(25786009)(6436002)(5250100002)(105586002)(54906003)(22452003)(76176011)(5660300001)(10090500001)(110136005)(316002)(6506007)(86362001)(186003)(2950100002)(97736004)(3280700002)(102836004)(99286004)(107886003)(68736007)(86612001)(53936002)(26005)(2501003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0999;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: zo6nzpJ9TzJOfCTAizBs0ULKIGGMKvKGYyczVSZxbDYdCgP0UExkpLBvu16qqiIYyrCJkAmIBBABblaBDM1iN9pLV5Yh93oj8AfStgpojloTREV0X5gfDlv5LBc6cAJfDbcnb0+eY5feeEQbHKeUG2KUjofogOwUlZY1F+jMFjBwOXJghRLmpGfb37ptIFa+avPAyz/X7SfwS0K35y+6lj834SIBVRuMrO5gWzHeyW7Xc2l5qJdbXV7kenEi33be9N8QqLhj9014LXIfF6jbBVE+F5aj7yB2yg+KEohD1g5Qry/45w2we/lfp776u/JjPkZ43NRMz/EKYP+6AbjPhg==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1840dcce-78f1-4c05-0c7d-08d584b1a1b9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:59:19.2765
+X-MS-Exchange-CrossTenant-Network-Message-Id: 023a62f7-5168-4b88-112c-08d584b1a1fe
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:59:19.6918
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -111,59 +109,47 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Feras Daoud <ferasda@mellanox.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 9a9b8112699d78e7f317019b37f377e90023f3ed ]
+[ Upstream commit 3026050179a3a9a6f5c892c414b5e36ecf092081 ]
 
-Update the broadcast address in the priv->broadcast object when the
-Pkey value changes in index 0, otherwise the multicast GID value will
-keep the previous value of the PKey, and will not be updated.
-This leads to interface state down because the interface will keep the
-old PKey value.
+If skb_pad() fails then it frees skb and we don't need to free it again
+at the end of the function.
 
-For example, in SR-IOV environment, if the PF changes the value of PKey
-index 0 for one of the VFs, then the VF receives PKey change event that
-triggers heavy flush. This flush calls update_parent_pkey that update the
-broadcast object and its relevant members. If in this case the multicast
-GID will not be updated, the interface state will be down.
-
-Fixes: c2904141696e ("IPoIB: Fix pkey change flow for virtualization enviro=
-nments")
-Signed-off-by: Feras Daoud <ferasda@mellanox.com>
-Signed-off-by: Erez Shitrit <erezsh@mellanox.com>
-Reviewed-by: Alex Vesker <valex@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Fixes: dc7bf5d7 ("HSI: Introduce driver for SSI Protocol")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Sebastian Reichel <sre@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/infiniband/ulp/ipoib/ipoib_ib.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/hsi/clients/ssi_protocol.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/ulp/ipoib/ipoib_ib.c b/drivers/infiniband/u=
-lp/ipoib/ipoib_ib.c
-index 335bd2c9e16e..34122c96522b 100644
---- a/drivers/infiniband/ulp/ipoib/ipoib_ib.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_ib.c
-@@ -974,6 +974,19 @@ static inline int update_parent_pkey(struct ipoib_dev_=
-priv *priv)
- 		 */
- 		priv->dev->broadcast[8] =3D priv->pkey >> 8;
- 		priv->dev->broadcast[9] =3D priv->pkey & 0xff;
-+
-+		/*
-+		 * Update the broadcast address in the priv->broadcast object,
-+		 * in case it already exists, otherwise no one will do that.
-+		 */
-+		if (priv->broadcast) {
-+			spin_lock_irq(&priv->lock);
-+			memcpy(priv->broadcast->mcmember.mgid.raw,
-+			       priv->dev->broadcast + 4,
-+			sizeof(union ib_gid));
-+			spin_unlock_irq(&priv->lock);
-+		}
-+
- 		return 0;
- 	}
+diff --git a/drivers/hsi/clients/ssi_protocol.c b/drivers/hsi/clients/ssi_p=
+rotocol.c
+index 6031cd146556..802afc98e8bd 100644
+--- a/drivers/hsi/clients/ssi_protocol.c
++++ b/drivers/hsi/clients/ssi_protocol.c
+@@ -989,7 +989,7 @@ static int ssip_pn_xmit(struct sk_buff *skb, struct net=
+_device *dev)
+ 		goto drop;
+ 	/* Pad to 32-bits - FIXME: Revisit*/
+ 	if ((skb->len & 3) && skb_pad(skb, 4 - (skb->len & 3)))
+-		goto drop;
++		goto inc_dropped;
 =20
+ 	/*
+ 	 * Modem sends Phonet messages over SSI with its own endianess...
+@@ -1041,8 +1041,9 @@ static int ssip_pn_xmit(struct sk_buff *skb, struct n=
+et_device *dev)
+ drop2:
+ 	hsi_free_msg(msg);
+ drop:
+-	dev->stats.tx_dropped++;
+ 	dev_kfree_skb(skb);
++inc_dropped:
++	dev->stats.tx_dropped++;
+=20
+ 	return 0;
+ }
 --=20
 2.14.1
