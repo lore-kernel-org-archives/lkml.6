@@ -1,97 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935914AbeCHQKa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 11:10:30 -0500
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:37679 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752093AbeCHQK1 (ORCPT
+        id S935919AbeCHQLX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 11:11:23 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:51886 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752059AbeCHQLV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 11:10:27 -0500
-X-Google-Smtp-Source: AG47ELs0U7edWvGe3/NssciqLnie9kLnM41CNSB+RGBlMNOAR4O5CABl2Of2qQixd/ET8FOtrFnthA==
-Date: Thu, 8 Mar 2018 08:10:21 -0800
-From: Christoffer Dall <cdall@kernel.org>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Shunyong Yang <shunyong.yang@hxt-semitech.com>,
-        ard.biesheuvel@linaro.org, will.deacon@arm.com, eric.auger@redhat.com,
-        david.daney@cavium.com, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
-        Joey Zheng <yu.zheng@hxt-semitech.com>
-Subject: Re: [RFC PATCH] KVM: arm/arm64: vgic: change condition for level
- interrupt resampling
-Message-ID: <20180308161021.GB1917@lvm>
-References: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
- <9ad47673-068e-f732-d2ca-9c76a8fbdfbc@arm.com>
+        Thu, 8 Mar 2018 11:11:21 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2FCE76024C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tbaicar@codeaurora.org
+Subject: Re: [PATCH 1/2] efi/esrt: fix unsupported version initialization
+ failure
+To: Dave Young <dyoung@redhat.com>
+Cc: ard.biesheuvel@linaro.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jhugo@codeaurora.org,
+        sgoel@codeaurora.org, takahiro.akashi@linaro.org, timur@codeaurora.org
+References: <1519414953-5478-1-git-send-email-tbaicar@codeaurora.org>
+ <1519414953-5478-2-git-send-email-tbaicar@codeaurora.org>
+ <20180224072054.GA3264@dhcp-128-65.nay.redhat.com>
+From: Tyler Baicar <tbaicar@codeaurora.org>
+Message-ID: <f24bcd25-9d3d-12d6-a42c-ebe0c623dba6@codeaurora.org>
+Date: Thu, 8 Mar 2018 11:11:18 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9ad47673-068e-f732-d2ca-9c76a8fbdfbc@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180224072054.GA3264@dhcp-128-65.nay.redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 08, 2018 at 09:49:43AM +0000, Marc Zyngier wrote:
-> [updated Christoffer's email address]
-> 
-> Hi Shunyong,
-> 
-> On 08/03/18 07:01, Shunyong Yang wrote:
-> > When resampling irqfds is enabled, level interrupt should be
-> > de-asserted when resampling happens. On page 4-47 of GIC v3
-> > specification IHI0069D, it said,
-> > "When the PE acknowledges an SGI, a PPI, or an SPI at the CPU
-> > interface, the IRI changes the status of the interrupt to active
-> > and pending if:
-> > • It is an edge-triggered interrupt, and another edge has been
-> > detected since the interrupt was acknowledged.
-> > • It is a level-sensitive interrupt, and the level has not been
-> > deasserted since the interrupt was acknowledged."
-> > 
-> > GIC v2 specification IHI0048B.b has similar description on page
-> > 3-42 for state machine transition.
-> > 
-> > When some VFIO device, like mtty(8250 VFIO mdev emulation driver
-> > in samples/vfio-mdev) triggers a level interrupt, the status
-> > transition in LR is pending-->active-->active and pending.
-> > Then it will wait resampling to de-assert the interrupt.
-> > 
-> > Current design of lr_signals_eoi_mi() will return false if state
-> > in LR is not invalid(Inactive). It causes resampling will not happen
-> > in mtty case.
-> 
-> Let me rephrase this, and tell me if I understood it correctly:
-> 
-> - A level interrupt is injected, activated by the guest (LR state=active)
-> - guest exits, re-enters, (LR state=pending+active)
-> - guest EOIs the interrupt (LR state=pending)
-> - maintenance interrupt
-> - we don't signal the resampling because we're not in an invalid state
-> 
-> Is that correct?
-> 
-> That's an interesting case, because it seems to invalidate some of the 
-> optimization that went in over a year ago.
-> 
-> 096f31c4360f KVM: arm/arm64: vgic: Get rid of MISR and EISR fields
-> b6095b084d87 KVM: arm/arm64: vgic: Get rid of unnecessary save_maint_int_state
-> af0614991ab6 KVM: arm/arm64: vgic: Get rid of unnecessary process_maintenance operation
-> 
-> We could compare the value of the LR before the guest entry with
-> the value at exit time, but we still could miss it if we have a
-> transition such as P+A -> P -> A and assume a long enough propagation
-> delay for the maintenance interrupt (which is very likely).
-> 
-> In essence, we have lost the benefit of EISR, which was to give us a
-> way to deal with asynchronous signalling.
-> 
+On 2/24/2018 2:20 AM, Dave Young wrote:
+> On 02/23/18 at 12:42pm, Tyler Baicar wrote:
+>> If ESRT initialization fails due to an unsupported version, the
+>> early_memremap allocation is never unmapped. This will cause an
+>> early ioremap leak. So, make sure to unmap the memory allocation
+>> before returning from efi_esrt_init().
+>>
+>> Signed-off-by: Tyler Baicar <tbaicar@codeaurora.org>
+>> ---
+>>   drivers/firmware/efi/esrt.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/firmware/efi/esrt.c b/drivers/firmware/efi/esrt.c
+>> index c47e0c6..504f3c3 100644
+>> --- a/drivers/firmware/efi/esrt.c
+>> +++ b/drivers/firmware/efi/esrt.c
+>> @@ -285,7 +285,7 @@ void __init efi_esrt_init(void)
+>>   	} else {
+>>   		pr_err("Unsupported ESRT version %lld.\n",
+>>   		       tmpesrt.fw_resource_version);
+>> -		return;
+>> +		goto err_memunmap;
+>>   	}
+>>   
+>>   	if (tmpesrt.fw_resource_count > 0 && max - size < entry_size) {
+>> -- 
+> Reviewed-by: Dave Young <dyoung@redhat.com>
+Thank you Dave for your review here and input on the other patch.
 
-I don't understand why EISR gives us anything beyond looking at the LR
-and evaluating if the state is 00.  My reading of the spec is that the
-EISR is merely a shortcut to knowing the state of the LRs but contains
-not record or information beyond what you can read from the LRs.
+Ard,
 
-What am I missing?
+Can this patch be picked up? I understand patch 2 is not acceptable, but this 
+one should
+be good to go I think.
 
 Thanks,
--Christoffer
+Tyler
+
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
