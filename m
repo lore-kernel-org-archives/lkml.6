@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1084890-1520489804-2-5751836016969713073
+X-Cyrus-Session-Id: sloti22d1t05-1086562-1520489785-2-14945310724030800637
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520489803; b=PFoGaML9udNpunICl8s9c/iFrsOLSF+HRZtgWOhyYHivmJw
-    TsFO4kpIv6IIhZdNV7PTMkF1aNwO/i4+iVIyvaXlQ6dQWrtX/7xs3754uaBMJjdy
-    +5Zi29QFoAjqrhPug6MSEWGpt5EFwpaiiwcISch1DPcvpRFUQgmbUFNZ+MegYP0z
-    FnaCG+LMzokm8rDI5HRdUn6fYwgIrv7hHVD/GJcE8xgl+xfDaxRFvQfH+pHx8MSK
-    TKX7VU/qT3lmx2Pta9EXdNFkytunyE/ZzTmwBuBeahEn/M72ltiN8cQQtvS2l6tN
-    OrIt55HhWnt0OuzazlR+P+PyXdWwPwZx7shht7g==
+    t=1520489784; b=CgU2gIN0fdcUf27QFFWdvXR6S5Cx36j/ydNzmxStlfr6N9Q
+    JrjmM3hoPOX6o3lhDQyj7SG2bXhWj88X9hAls7EiPRlXvnGPzEzNFC87IhaKILzd
+    M7ofCqVx/urvWlnPTMyPbJL5PcsMkMB1meE/CSYZzK1EhEaey6BWSiquEpsuTRDP
+    idfaF2jgmo1e2Y3BKeYiLHJvjpfQT4jO6ECg5/klPCmPw6qukUqUKN9Yte0gShPW
+    ukJECU1dgjebuQYM31RkZtju6HmU4+Z2kbYN7DSsdb7IXhwtQPwa19NJKUhxkJw8
+    C/xsXePntVdMW9Am6viYgVXv3Gm+0mPUzMI3sqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520489803; bh=4nrk63
-    8YsjmNmDp4w+8zT/LAhYYk5JnvlypzEVGzsUU=; b=pX7HVsUvYyBeyoyVs4kL3N
-    /S75wn/Bj9eQOR566Yqqy7K2hXhV6w/UCmFxLKsY9YKa+DLXL3jUolLPCyVHzO6+
-    3/oBf4E4tCVX+L+XM4Gvllcrt5bk6joNRlWFmdUidNoYrYWURg3xvuALtGfBHMU1
-    jUqxpvDfb/ZJh6a5aFNVj5EiZ9fcva8QZKpWRnax6hQiRPR+jDm62VzYlnDIIDCk
-    pyjgV6DvlH3Rws5O+VfKG5igEpSgJhw6Nax9psrFRvSU3MU7bNbDnsRlzBpbnvkc
-    CVLzpK/GJK5Qs2zegmaT6kqUSWhAf+mgRmfEPjGNkrnJSgjvFzRz9QewfytE+hyw
+    :mime-version:sender:list-id; s=arctest; t=1520489784; bh=wSmDLK
+    Lc0HrOTuMSvWgGB7a+nThsSaCxOtQMg7yffUE=; b=EOTPp1QYCNC+ChZaHzMhMW
+    jN7zm/IUVsidZpfpj3KYdJcObJvc0uNS6thQ0e1basqATN43vstBEXrpyr9u7SwZ
+    TE2enf8mw+JB+YmXQv7sbQdCzwkzLRm2x0Pz7ntJ6jDgVXNOlCM2BE16V1Wc04VF
+    G3L3DhzmdIlJpMIraxD3JwAGDcpmxSMkp65sdncwwE30jt+uh7Kh8E/p3duB8NCW
+    e0F/BIbfywRtvvV/gD+gorTfUC82/mvqZuZFY9fVQaY2oDYx0NjigFk4WzwgfAkp
+    0hEDpQjlOQuwbK6PGoOvYSD4Lv4TojWJznvarXwAhZLmFPX2PIqT5CxPixxVWTyQ
     ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Yn1Xg3bW x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=LIoTPMz3 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -41,7 +41,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Yn1Xg3bW x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=LIoTPMz3 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,26 +50,28 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965910AbeCHGQY (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 01:16:24 -0500
-Received: from mail-dm3nam03on0125.outbound.protection.outlook.com ([104.47.41.125]:20160
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755334AbeCHFBZ (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S965709AbeCHFBZ (ORCPT <rfc822;greg@kroah.com>);
         Thu, 8 Mar 2018 00:01:25 -0500
+Received: from mail-by2nam01on0096.outbound.protection.outlook.com ([104.47.34.96]:14896
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965601AbeCHFBW (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 8 Mar 2018 00:01:22 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Brian King <brking@linux.vnet.ibm.com>,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
+CC: Feras Daoud <ferasda@mellanox.com>,
+        Erez Shitrit <erezsh@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 070/190] ibmvnic: Disable irq prior to close
-Thread-Topic: [PATCH AUTOSEL for 4.9 070/190] ibmvnic: Disable irq prior to
- close
-Thread-Index: AQHTtpo5tXbfGaq6W0Ojibmqm7MQXg==
-Date: Thu, 8 Mar 2018 04:59:22 +0000
-Message-ID: <20180308045810.8041-70-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 062/190] IB/ipoib: Update broadcast object if
+ PKey value was changed in index 0
+Thread-Topic: [PATCH AUTOSEL for 4.9 062/190] IB/ipoib: Update broadcast
+ object if PKey value was changed in index 0
+Thread-Index: AQHTtpo3hsBofq6DXkeLh0wAE6qWVA==
+Date: Thu, 8 Mar 2018 04:59:19 +0000
+Message-ID: <20180308045810.8041-62-alexander.levin@microsoft.com>
 References: <20180308045810.8041-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308045810.8041-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -78,139 +80,90 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0901;20:zeHa6CWkYZoZducQYZ4IYnskiqCxwDsijcSYs3fiNMLKcn0VrWDnlE2GPCb8z4cAWbEv2TouOjZ5/kYbOFvAXsDBkbYgRLfUUFkn/bwyHAsYF4ZtKtILGQMmbP69SgyOkmsSNPNc3Vo19toxwPHsuxFhAGY4Zt2tI3366BJMFCs=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0999;7:yLGDeLOD61IEbrFV7xV/4GOijs3TYFPWXHXHQfJS4ee4wnobVmO433ZWehFNTwu7OwbH3CycH0KpkLPzh82UWT0cvt3AH4gprp3SeO5qgh23+cjKirgyqcIMKLacezF/F3J66+F09tCvxh2/q6AFwh3bl3BmRS2pglYZVIpQDW3howSLy/KdoKWBR2LHMTqbATohNRFfDDUXgkvtkjTvPMjchdL/iINkzW+j6jkd4WOGZw8nw46AzGkfmsEgVi7G;20:rRjaYNf+MG1uPu1SEY7EeI1GYRy1VDEkgDZvQAzijt7qbVy9KoxOojOEST5YHX8wnEhkfloRTNUef20rVtOLwPzKeBDjVAOKYcRuPhMjValOLkq2i6zma564c/QxlnlzgTkCMStwMpSr1cvaHwOsNu8ii3wPSQps4LyBDTn8mSs=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 7341383e-ed09-4ba4-aaf0-08d584b1a3fe
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0901;
-x-ms-traffictypediagnostic: DM5PR2101MB0901:
+x-ms-office365-filtering-correlation-id: 1840dcce-78f1-4c05-0c7d-08d584b1a1b9
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0999;
+x-ms-traffictypediagnostic: DM5PR2101MB0999:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB09015198D9F9D8D95CAAE2D8FBDF0@DM5PR2101MB0901.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(104084551191319);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(3231220)(944501244)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB0901;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0901;
+x-microsoft-antispam-prvs: <DM5PR2101MB0999F4F4FC7B381B886025AFFBDF0@DM5PR2101MB0999.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB0999;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0999;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(39380400002)(366004)(376002)(346002)(396003)(189003)(199004)(2501003)(5250100002)(99286004)(10290500003)(53936002)(14454004)(72206003)(76176011)(97736004)(6512007)(106356001)(86362001)(10090500001)(7736002)(575784001)(6436002)(8936002)(6486002)(36756003)(110136005)(305945005)(54906003)(81166006)(105586002)(59450400001)(2900100001)(66066001)(6116002)(22452003)(3846002)(1076002)(478600001)(3660700001)(102836004)(81156014)(6506007)(107886003)(8676002)(25786009)(68736007)(4326008)(3280700002)(2906002)(86612001)(2950100002)(26005)(316002)(5660300001)(186003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0901;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: /lS3EXSu7xfXhAv8Tw18XHay61xHb/YfAKwjr4EchQz+B8s0DJz6X3nuh/zeAuTXuH05UAqgVMXDaYW6puXavGRTSaWfYk5ADEW9Pc2HpfRt+dlRJ/Yq8dR943NfwDUd2cnMHGZsbNw6QeGaTO8s8w28FBn3ABFlHQIR/3Cu52L2p+tXQvpgz8paC5FnLjfDVpBacbfbiUqCtYjbeuZQfmZPloWKn283LLRLZGReD4wJKCQgDbzs6t1f7pJ/hMP/oyTp/6VyEA8SOMynhfAxnVVlx4FX9W/34wc4jfT1P0sBULsGoTBjxY1q4JXvkUMtnqbFR3stuxrbEK3XX7sf5A==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(39380400002)(376002)(396003)(346002)(189003)(199004)(72206003)(15650500001)(3846002)(106356001)(8676002)(6116002)(1076002)(6512007)(14454004)(81156014)(66066001)(2906002)(3660700001)(478600001)(10290500003)(8936002)(6486002)(305945005)(7736002)(36756003)(2900100001)(81166006)(4326008)(25786009)(6436002)(5250100002)(105586002)(54906003)(22452003)(76176011)(5660300001)(10090500001)(110136005)(316002)(6506007)(86362001)(186003)(2950100002)(97736004)(3280700002)(102836004)(99286004)(107886003)(59450400001)(68736007)(86612001)(53936002)(26005)(2501003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0999;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: qkRWg0Gw8v5p/yvF83BcpF6E+j70zr9Sg9MAvtRMkadWr/yM8rBuJ0lWJXlDmGmQp7ek8ssdbuKJj/SynkUitq/jZ+8dGo80/v6B9lJw3W/7/fCl36j7fh9fhSWr1aikhny+lVWM0H4tXYUCz7P2uRQi/4ROHF2dIbVuB5XmZvHqbdIyAZJheN57q9Hz9SuzFOE4TnhTIpCW20iJBpNdfVdjQgoZ0ATUZqg5LnoVxBJQmhf1qJJIcXggB4QoJC9+TDDnOUkOyWN4mHipSCESM/wFL9iUh4HvfyWQ3XI6ibLHe9I+InjT9XPGkk+G7JHlVnEB1PrOMoXkDQD7JAwVsQ==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7341383e-ed09-4ba4-aaf0-08d584b1a3fe
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:59:22.8040
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1840dcce-78f1-4c05-0c7d-08d584b1a1b9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 04:59:19.2765
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0901
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0999
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Brian King <brking@linux.vnet.ibm.com>
+From: Feras Daoud <ferasda@mellanox.com>
 
-[ Upstream commit dd9c20fa07ba5cfb5a0ab3181d68530506610605 ]
+[ Upstream commit 9a9b8112699d78e7f317019b37f377e90023f3ed ]
 
-    Add some code to call disable_irq on all the vnic interface's irqs.
-    This fixes a crash observed when closing an active interface, as
-    seen in the oops below when we try to access a buffer in the interrupt
-    handler which we've already freed.
+Update the broadcast address in the priv->broadcast object when the
+Pkey value changes in index 0, otherwise the multicast GID value will
+keep the previous value of the PKey, and will not be updated.
+This leads to interface state down because the interface will keep the
+old PKey value.
 
-    Unable to handle kernel paging request for data at address 0x00000001
-    Faulting instruction address: 0xd000000003886824
-    Oops: Kernel access of bad area, sig: 11 [#1]
-    SMP NR_CPUS=3D2048 NUMA pSeries
-    Modules linked in: ibmvnic(OEN) rpadlpar_io(X) rpaphp(X) tcp_diag udp_d=
-iag inet_diag unix_diag af_packet_diag netlink_diag rpcsec_
-    Supported: No, Unsupported modules are loaded
-    CPU: 8 PID: 0 Comm: swapper/8 Tainted: G           OE   NX 4.4.49-92.11=
--default #1
-    task: c00000007f990110 ti: c0000000fffa0000 task.ti: c00000007f9b8000
-    NIP: d000000003886824 LR: d000000003886824 CTR: c0000000007eff60
-    REGS: c0000000fffa3a70 TRAP: 0300   Tainted: G           OE   NX  (4.4.=
-49-92.11-default)
-    MSR: 8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 22008042  XER: 200000=
-08
-    CFAR: c000000000008468 DAR: 0000000000000001 DSISR: 40000000 SOFTE: 0
-    GPR00: d000000003886824 c0000000fffa3cf0 d000000003894118 0000000000000=
-000
-    GPR04: 0000000000000000 0000000000000000 c000000001249da0 0000000000000=
-000
-    GPR08: 000000000000000e 0000000000000000 c0000000ccb00000 d000000003889=
-180
-    GPR12: c0000000007eff60 c000000007af4c00 0000000000000001 c0000000010de=
-f30
-    GPR16: c00000007f9b8000 c000000000b98c30 c00000007f9b8080 c000000000bab=
-858
-    GPR20: 0000000000000005 0000000000000000 c0000000ff5d7e80 c0000000f809f=
-648
-    GPR24: c0000000ff5d7ec8 0000000000000000 0000000000000000 c0000000ccb00=
-1a0
-    GPR28: 000000000000000a c0000000f809f600 c0000000fd4cd900 c0000000f9cd5=
-b00
-    NIP [d000000003886824] ibmvnic_interrupt_tx+0x114/0x380 [ibmvnic]
-    LR [d000000003886824] ibmvnic_interrupt_tx+0x114/0x380 [ibmvnic]
-    Call Trace:
-    [c0000000fffa3cf0] [d000000003886824] ibmvnic_interrupt_tx+0x114/0x380 =
-[ibmvnic] (unreliable)
-    [c0000000fffa3dd0] [c000000000132940] __handle_irq_event_percpu+0x90/0x=
-2e0
-    [c0000000fffa3e90] [c000000000132bcc] handle_irq_event_percpu+0x3c/0x90
-    [c0000000fffa3ed0] [c000000000132c88] handle_irq_event+0x68/0xc0
-    [c0000000fffa3f00] [c000000000137edc] handle_fasteoi_irq+0xec/0x250
-    [c0000000fffa3f30] [c000000000131b04] generic_handle_irq+0x54/0x80
-    [c0000000fffa3f60] [c000000000011190] __do_irq+0x80/0x1d0
-    [c0000000fffa3f90] [c0000000000248d8] call_do_irq+0x14/0x24
-    [c00000007f9bb9e0] [c000000000011380] do_IRQ+0xa0/0x120
-    [c00000007f9bba40] [c000000000002594] hardware_interrupt_common+0x114/0=
-x180
+For example, in SR-IOV environment, if the PF changes the value of PKey
+index 0 for one of the VFs, then the VF receives PKey change event that
+triggers heavy flush. This flush calls update_parent_pkey that update the
+broadcast object and its relevant members. If in this case the multicast
+GID will not be updated, the interface state will be down.
 
-Signed-off-by: Brian King <brking@linux.vnet.ibm.com>
-Signed-off-by: Nathan Fontenot <nfont@linux.vnet.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: c2904141696e ("IPoIB: Fix pkey change flow for virtualization enviro=
+nments")
+Signed-off-by: Feras Daoud <ferasda@mellanox.com>
+Signed-off-by: Erez Shitrit <erezsh@mellanox.com>
+Reviewed-by: Alex Vesker <valex@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/ethernet/ibm/ibmvnic.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/infiniband/ulp/ipoib/ipoib_ib.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/=
-ibmvnic.c
-index 7c6c1468628b..49094c965697 100644
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -511,6 +511,23 @@ static int ibmvnic_open(struct net_device *netdev)
- 	return -ENOMEM;
- }
-=20
-+static void disable_sub_crqs(struct ibmvnic_adapter *adapter)
-+{
-+	int i;
+diff --git a/drivers/infiniband/ulp/ipoib/ipoib_ib.c b/drivers/infiniband/u=
+lp/ipoib/ipoib_ib.c
+index 335bd2c9e16e..34122c96522b 100644
+--- a/drivers/infiniband/ulp/ipoib/ipoib_ib.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_ib.c
+@@ -974,6 +974,19 @@ static inline int update_parent_pkey(struct ipoib_dev_=
+priv *priv)
+ 		 */
+ 		priv->dev->broadcast[8] =3D priv->pkey >> 8;
+ 		priv->dev->broadcast[9] =3D priv->pkey & 0xff;
 +
-+	if (adapter->tx_scrq) {
-+		for (i =3D 0; i < adapter->req_tx_queues; i++)
-+			if (adapter->tx_scrq[i])
-+				disable_irq(adapter->tx_scrq[i]->irq);
-+	}
++		/*
++		 * Update the broadcast address in the priv->broadcast object,
++		 * in case it already exists, otherwise no one will do that.
++		 */
++		if (priv->broadcast) {
++			spin_lock_irq(&priv->lock);
++			memcpy(priv->broadcast->mcmember.mgid.raw,
++			       priv->dev->broadcast + 4,
++			sizeof(union ib_gid));
++			spin_unlock_irq(&priv->lock);
++		}
 +
-+	if (adapter->rx_scrq) {
-+		for (i =3D 0; i < adapter->req_rx_queues; i++)
-+			if (adapter->rx_scrq[i])
-+				disable_irq(adapter->rx_scrq[i]->irq);
-+	}
-+}
-+
- static int ibmvnic_close(struct net_device *netdev)
- {
- 	struct ibmvnic_adapter *adapter =3D netdev_priv(netdev);
-@@ -519,6 +536,7 @@ static int ibmvnic_close(struct net_device *netdev)
- 	int i;
+ 		return 0;
+ 	}
 =20
- 	adapter->closing =3D true;
-+	disable_sub_crqs(adapter);
-=20
- 	for (i =3D 0; i < adapter->req_rx_queues; i++)
- 		napi_disable(&adapter->napi[i]);
 --=20
 2.14.1
