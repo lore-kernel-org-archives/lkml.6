@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-966195-1520486687-2-13496171868988373543
+X-Cyrus-Session-Id: sloti22d1t05-966195-1520486659-2-7360063322718158984
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES daen, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520486687; b=ttkQSRCU2AS0uopTDcyMeddnkD4XMYnyf3if9UmuumyHPpG
-    PngayASU3EvrwiWh3KaCxSGCe9fuz+hkb1pr5rI0z0yj+wkJqgJNqVI2k0IH6vSP
-    iXZA62OcItSAEoELnM+ZV0iVFAq9H1d7BTXV+kOYSf+fFWCURuiSjv1h0AZLYb6S
-    mwjhTsFJmivYzQKH1kL2Ch3P7KJw58UDV2n61/RjHaqd8IaSQwoW1CgukKYhchzD
-    v/EueBka1Kn2vH+z7k1NCqwiNx00MTFBSIdRvOTY5z3AWbooxcWFFZnlKGClYfmB
-    2m7gfm9LOYVRVqJf63O5eUspSMl4IJgP0cY48Vg==
+    t=1520486658; b=t6BkNWBbF/lA/Bi3NaRkkwQhxi60XmxGmZeAasQ0zR1bXap
+    PX+PDTlrWuqf/lg8SE9RuNNe//3wbqJsd852VLaNbhzhDSULBohNihc4EiulIKnI
+    sY94aiqgF8sAv2j/0T3nPZa1u/6iZXaLaKkvXvNsgEre7j/qPPDtV1hnoX5S+W2d
+    rijWIsmbSHdb0MQMJzGH01+9fwAS0TL5OAOXIx7gTCz/VexvkOKuU3rt/h6M2zCx
+    /SN/tTamniVd4Iybwz8muKd4RdLNtd45oOWXgxdN5X5TOxpt+KoUkwzUqwhv+VgM
+    W24NUzxcMzXFxJDcZyn5qwOuMhCcoBEp9o187+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520486687; bh=wc3tOS
-    WQTNOeHpWsnQ8tBU4K23xbDn2OgUrHqOuOTjk=; b=V9qzJkrmDKBIJs3N1DJ1EP
-    6KBpGO5fwjHof0Ptx6V94WQeECTfrzpEc6GhtHTsTRdMoOw+mezVD4RSLZgOuH9L
-    gFyrgqpk7923edKhKRCW60X01sG/+bQUyyg6ik3rW7MXGNmAFaQlGSZmRg9sv+El
-    mPdS7nR/iAJs73urlLhn+rOgRKgzlmHNnsR9dwIOd5jTJTaRJK8mjhgWHcW4zL81
-    eafJKYE9M978QLQNIHe4fPNw+yDkMGHHuHvss7Li+srNEEZh4iauM80rcTRheSY1
-    5goJsCV43ssg2V62/UMnLQIG+dsKa5LSx5/xiDgt36erhXA+Cjm3NOFhj48rNdMw
+    :mime-version:sender:list-id; s=arctest; t=1520486658; bh=hsTbWq
+    5CloYJpihY8DROqWezzRyk14J9gxxs+k9roMA=; b=EICk9vVg75Vj/YqnMxeUXk
+    tfzjUB0QgI/b1SEETUipwZdv5uqjLL71loj9pHq1GeK/m6i5zeuRMbK7vC+2EGsJ
+    utqcyyFBVYxoAPExAo5V0/Pp1IzxQfhGjb1q6cLFkYDl4nIQPkMz3zV9U3bI2Vev
+    lKtVM9ng7aYtZ2j95eQYs1INNgidFdWV0dcb+rw2YyizVkpauNAZb2aCJvzTuDwV
+    hxIOYYqpJoTE8KH/Fna6VEO5vk6IFcOAXtjTJPl2Qot9fmYaD12DIqXbJ460VRn/
+    M/WHJJS/gf/ah+sE65WbcFxp8asasYoAtqkHdtx834UOY9Cykul5/Hg1020JYngQ
     ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=AuLIwkO9 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=MWC8vJD0 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -41,7 +41,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=AuLIwkO9 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=MWC8vJD0 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,27 +50,27 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966276AbeCHFHu (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 00:07:50 -0500
-Received: from mail-bn3nam01on0110.outbound.protection.outlook.com ([104.47.33.110]:54752
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        id S966648AbeCHFYQ (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 00:24:16 -0500
+Received: from mail-bl2nam02on0124.outbound.protection.outlook.com ([104.47.38.124]:55497
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966608AbeCHFHX (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 8 Mar 2018 00:07:23 -0500
+        id S965533AbeCHFHu (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 8 Mar 2018 00:07:50 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Erez Shitrit <erezsh@mellanox.com>,
+CC: Artemy Kovalyov <artemyko@mellanox.com>,
         Leon Romanovsky <leon@kernel.org>,
         Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 088/101] IB/ipoib: Avoid memory leak if the SA
- returns a different DGID
-Thread-Topic: [PATCH AUTOSEL for 4.4 088/101] IB/ipoib: Avoid memory leak if
- the SA returns a different DGID
-Thread-Index: AQHTtpqek4FLvBHC80yIOxSZU5gw9g==
-Date: Thu, 8 Mar 2018 05:02:11 +0000
-Message-ID: <20180308050023.8548-88-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 090/101] IB/umem: Fix use of npages/nmap
+ fields
+Thread-Topic: [PATCH AUTOSEL for 4.4 090/101] IB/umem: Fix use of npages/nmap
+ fields
+Thread-Index: AQHTtpqeHRw9vpdWBkmYkhjC2kxTjQ==
+Date: Thu, 8 Mar 2018 05:02:12 +0000
+Message-ID: <20180308050023.8548-90-alexander.levin@microsoft.com>
 References: <20180308050023.8548-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180308050023.8548-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -79,96 +79,68 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1077;7:3o/jTpB5j5Zdus599OVNoe1ufZWj7ddx0nFIjlWXR7pA/QJwHxJ/ufUPy3KJ+6+0Tx1qv5aEZYZedLwSvdMKDDyruU0tp4O6jw6R2v+6aOntV71aNVTpjjL+ykI3kpbsJ8pEMHLZi94WUNT6pIOU9gZJM8JQiZBV8G2HW22jEEaHDBNHs1NFHVnI2+d0JZqLuYyDDJorzHGexTcZl83nYLEWPkuEZ9lwNqBm+WDyvVSpFlwiqI96gShqlOPV1b26;20:bElpNa0kJHHFF5v6U8vNwQhnSUettxtrjjZs5Rs+mbb/QyP5ieGZhmYIMF+CTPXCIII6BwhAMNMSe9/4HYSkLa0Qj/QTpBQo2gpQ0sSLccWa6Av9sPCldfT/6LFdIwZz6NMI7z+p8M0aotfvlW4fxb4gReA+L1CkyO9h5e5DCzs=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0727;20:O7mgSY2UDXcBxJY0zv2O0CPcSQ9ahg4r38U6FP9iXcVMxfO7PbgbRobcaW/ar5n4M2N3gUHekHn2ERdBYMnYMoGv4Vuv8lW9n/4yNY4X2I4x3WKv7z86hQp3OpS0HvpbrldoFF2wm3hTxmMTqj0X/V93G6xkS3VeaNZ3EXmT5G4=
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 2c3dd742-0e6f-4de0-a01b-08d584b27699
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1077;
-x-ms-traffictypediagnostic: DM5PR2101MB1077:
+x-ms-office365-filtering-correlation-id: 2d68bedb-bcf5-48ec-e6ec-08d584b28911
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0727;
+x-ms-traffictypediagnostic: DM5PR2101MB0727:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB10774253763C6854BE5FADD6FBDF0@DM5PR2101MB1077.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <DM5PR2101MB0727FD0816685015364E07BBFBDF0@DM5PR2101MB0727.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR2101MB1077;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1077;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231220)(944501244)(52105095)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB0727;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0727;
 x-forefront-prvs: 060503E79B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(346002)(39380400002)(396003)(39860400002)(199004)(189003)(86362001)(102836004)(6506007)(59450400001)(22452003)(2950100002)(186003)(68736007)(26005)(106356001)(105586002)(66066001)(6666003)(86612001)(3846002)(3280700002)(2900100001)(25786009)(53936002)(5660300001)(2906002)(3660700001)(10090500001)(6512007)(1076002)(4326008)(6116002)(305945005)(110136005)(107886003)(54906003)(2501003)(5250100002)(8676002)(8936002)(81156014)(81166006)(14454004)(76176011)(7736002)(72206003)(10290500003)(478600001)(6486002)(6436002)(99286004)(36756003)(97736004)(316002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1077;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: fH89EU3A+D6WDuWHlVaAwV5APstkY52Z0/pEFXgZ89E4wJQB89kuILnJxQgNtNzfdDBI6BzfmodilJyzpIPHkv6F1Zpiudu+LKVGNYxB1oIewMBYK1z67syMxM/tCdP4qN77jqDwtAxjv5tJcXioMokfOHgx/c2+iZ+6xNP/VCckJnm4fQgatMl0SRBsb6DWEKzProeT/Mc+BqY60NgWs/uQC1MCdlXjot4SH77BkOnUumDqwVmT6eSSJYWh6VavJTXhF4wyiUgxo7IQLYMS4BO5e4PVaxGIC4br5eoQoTkSUmxT6DGy5Yawur5RJXWADmx1iVB91PsbZTxfZINYAQ==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(39380400002)(396003)(366004)(376002)(346002)(199004)(189003)(81156014)(4326008)(97736004)(105586002)(2906002)(6666003)(8676002)(26005)(10290500003)(76176011)(186003)(110136005)(22452003)(7736002)(54906003)(25786009)(2950100002)(3280700002)(305945005)(81166006)(2900100001)(8936002)(59450400001)(102836004)(6506007)(68736007)(106356001)(10090500001)(1076002)(6512007)(86362001)(3846002)(2501003)(14454004)(478600001)(99286004)(72206003)(6116002)(3660700001)(5250100002)(53936002)(107886003)(6436002)(5660300001)(316002)(6486002)(36756003)(86612001)(66066001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0727;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: de110B2/AdHZBZlZAwN0UfgA+ieXWH+I/IfDGkuYcg/QDcQeJ6d7u7fVqRoIdRRcZqj3f6BwehhAqS9gndN66wsJ54Fila44WPzbDOP/5/pLC0H4UFKk9NvUEogUW0kmK5G2l7aDrOKUt2FpPlWnxdEkVXLdTFBueCJicil4pEaKe6aakZr7BL8/+0Fuo2gorFuEN9hKEUYGngHi3MWcDTg3BBGcOi9syPwgvhc+3msAPsS3MJmMXUwHJt0NptDsQADVpBz7vtjq566hhByYfPHdhj7PU/ORvyHVmuqx/BzWjMAB+iKfJeOj9ZINvzCIsvwVin3jMAHBmeirhzLurg==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c3dd742-0e6f-4de0-a01b-08d584b27699
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 05:02:11.8216
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d68bedb-bcf5-48ec-e6ec-08d584b28911
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2018 05:02:12.6932
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1077
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0727
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Erez Shitrit <erezsh@mellanox.com>
+From: Artemy Kovalyov <artemyko@mellanox.com>
 
-[ Upstream commit 439000892ee17a9c92f1e4297818790ef8bb4ced ]
+[ Upstream commit edf1a84fe37c51290e2c88154ecaf48dadff3d27 ]
 
-The ipoib path database is organized around DGIDs from the LLADDR, but the
-SA is free to return a different GID when asked for path. This causes a
-bug because the SA's modified DGID is copied into the database key, even
-though it is no longer the correct lookup key, causing a memory leak and
-other malfunctions.
+In ib_umem structure npages holds original number of sg entries, while
+nmap is number of DMA blocks returned by dma_map_sg.
 
-Ensure the database key does not change after the SA query completes.
-
-Demonstration of the bug is as  follows
-ipoib wants to send to GID fe80:0000:0000:0000:0002:c903:00ef:5ee2, it
-creates new record in the DB with that gid as a key, and issues a new
-request to the SM.
-Now, the SM from some reason returns path-record with other SGID (for
-example, 2001:0000:0000:0000:0002:c903:00ef:5ee2 that contains the local
-subnet prefix) now ipoib will overwrite the current entry with the new
-one, and if new request to the original GID arrives ipoib  will not find
-it in the DB (was overwritten) and will create new record that in its
-turn will also be overwritten by the response from the SM, and so on
-till the driver eats all the device memory.
-
-Signed-off-by: Erez Shitrit <erezsh@mellanox.com>
+Fixes: c5d76f130b28 ('IB/core: Add umem function to read data from user-spa=
+ce')
+Signed-off-by: Artemy Kovalyov <artemyko@mellanox.com>
 Signed-off-by: Leon Romanovsky <leon@kernel.org>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/infiniband/ulp/ipoib/ipoib_main.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/infiniband/core/umem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/ulp/ipoib/ipoib_main.c b/drivers/infiniband=
-/ulp/ipoib/ipoib_main.c
-index bad76eed06b3..f34aaef07fea 100644
---- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
-@@ -724,6 +724,22 @@ static void path_rec_completion(int status,
- 	spin_lock_irqsave(&priv->lock, flags);
+diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.=
+c
+index 0ae337bec4f2..6790ebb366dd 100644
+--- a/drivers/infiniband/core/umem.c
++++ b/drivers/infiniband/core/umem.c
+@@ -354,7 +354,7 @@ int ib_umem_copy_from(void *dst, struct ib_umem *umem, =
+size_t offset,
+ 		return -EINVAL;
+ 	}
 =20
- 	if (!IS_ERR_OR_NULL(ah)) {
-+		/*
-+		 * pathrec.dgid is used as the database key from the LLADDR,
-+		 * it must remain unchanged even if the SA returns a different
-+		 * GID to use in the AH.
-+		 */
-+		if (memcmp(pathrec->dgid.raw, path->pathrec.dgid.raw,
-+			   sizeof(union ib_gid))) {
-+			ipoib_dbg(
-+				priv,
-+				"%s got PathRec for gid %pI6 while asked for %pI6\n",
-+				dev->name, pathrec->dgid.raw,
-+				path->pathrec.dgid.raw);
-+			memcpy(pathrec->dgid.raw, path->pathrec.dgid.raw,
-+			       sizeof(union ib_gid));
-+		}
-+
- 		path->pathrec =3D *pathrec;
+-	ret =3D sg_pcopy_to_buffer(umem->sg_head.sgl, umem->nmap, dst, length,
++	ret =3D sg_pcopy_to_buffer(umem->sg_head.sgl, umem->npages, dst, length,
+ 				 offset + ib_umem_offset(umem));
 =20
- 		old_ah   =3D path->ah;
+ 	if (ret < 0)
 --=20
 2.14.1
