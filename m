@@ -1,75 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935840AbeCHLhI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 06:37:08 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:45671 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935810AbeCHLhH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 06:37:07 -0500
-Date: Thu, 8 Mar 2018 03:36:56 -0800
-From: tip-bot for Jan Kiszka <tipbot@zytor.com>
-Message-ID: <tip-e21c963c0fe3dc6d8a5c23474eb8f560b184132a@git.kernel.org>
-Cc: hpa@zytor.com, jan.kiszka@siemens.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, andy.shevchenko@gmail.com, bhelgaas@google.com,
-        tglx@linutronix.de
-Reply-To: andy.shevchenko@gmail.com, tglx@linutronix.de, bhelgaas@google.com,
-        hpa@zytor.com, jan.kiszka@siemens.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org
-In-Reply-To: <8be8af4084d862faa43d55c7bae94af7e0da1609.1520408357.git.jan.kiszka@siemens.com>
-References: <8be8af4084d862faa43d55c7bae94af7e0da1609.1520408357.git.jan.kiszka@siemens.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/platform] MAINTAINERS: Add entry for Jailhouse
-Git-Commit-ID: e21c963c0fe3dc6d8a5c23474eb8f560b184132a
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S965785AbeCHLiX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 06:38:23 -0500
+Received: from mga02.intel.com ([134.134.136.20]:7041 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935338AbeCHLiU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 06:38:20 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,440,1515484800";
+   d="scan'208";a="209878402"
+Date: Thu, 8 Mar 2018 19:37:30 +0800
+From: kbuild test robot <fengguang.wu@intel.com>
+To: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Cc: kbuild-all@01.org, Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH linux-next] rds: rds_info_from_znotifier() can be static
+Message-ID: <20180308113729.GA89557@cairo>
+References: <201803081946.adQaZcK5%fengguang.wu@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <201803081946.adQaZcK5%fengguang.wu@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e21c963c0fe3dc6d8a5c23474eb8f560b184132a
-Gitweb:     https://git.kernel.org/tip/e21c963c0fe3dc6d8a5c23474eb8f560b184132a
-Author:     Jan Kiszka <jan.kiszka@siemens.com>
-AuthorDate: Wed, 7 Mar 2018 08:39:18 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 8 Mar 2018 12:30:39 +0100
 
-MAINTAINERS: Add entry for Jailhouse
-
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: jailhouse-dev@googlegroups.com
-Cc: linux-pci@vger.kernel.org
-Cc: virtualization@lists.linux-foundation.org
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Link: https://lkml.kernel.org/r/8be8af4084d862faa43d55c7bae94af7e0da1609.1520408357.git.jan.kiszka@siemens.com
-
+Fixes: 9426bbc6de99 ("rds: use list structure to track information for zerocopy completion notification")
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 ---
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+ message.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9a7f76eadae9..272d8c98c0e1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7521,6 +7521,13 @@ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
- S:	Maintained
- F:	drivers/media/dvb-frontends/ix2505v*
+diff --git a/net/rds/message.c b/net/rds/message.c
+index 90dcdcf..f422b2f 100644
+--- a/net/rds/message.c
++++ b/net/rds/message.c
+@@ -67,7 +67,7 @@ static inline bool rds_zcookie_add(struct rds_msg_zcopy_info *info, u32 cookie)
+ 	return true;
+ }
  
-+JAILHOUSE HYPERVISOR INTERFACE
-+M:	Jan Kiszka <jan.kiszka@siemens.com>
-+L:	jailhouse-dev@googlegroups.com
-+S:	Maintained
-+F:	arch/x86/kernel/jailhouse.c
-+F:	arch/x86/include/asm/jailhouse_para.h
-+
- JC42.4 TEMPERATURE SENSOR DRIVER
- M:	Guenter Roeck <linux@roeck-us.net>
- L:	linux-hwmon@vger.kernel.org
+-struct rds_msg_zcopy_info *rds_info_from_znotifier(struct rds_znotifier *znotif)
++static struct rds_msg_zcopy_info *rds_info_from_znotifier(struct rds_znotifier *znotif)
+ {
+ 	return container_of(znotif, struct rds_msg_zcopy_info, znotif);
+ }
