@@ -1,101 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934617AbeCHBed (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 20:34:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60498 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933575AbeCHBec (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 20:34:32 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7F8F2177B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
-X-Google-Smtp-Source: AG47ELsjwLm4HBRpcdgGD48BD8DDnfiN49ALxFQ0aoph8EYwg3Id5qWJ+CEFyHUM7e7ZNkeXS+q4/giniT/H08wDxOc=
+        id S934648AbeCHBgJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 20:36:09 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6175 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933351AbeCHBgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 20:36:07 -0500
+Subject: Re: [PATCH] hugetlbfs: check for pgoff value overflow
+To: Mike Kravetz <mike.kravetz@oracle.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <bugzilla-daemon@bugzilla.kernel.org>
+References: <20180306133135.4dc344e478d98f0e29f47698@linux-foundation.org>
+ <20180307235923.12469-1-mike.kravetz@oracle.com>
+CC: Michal Hocko <mhocko@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Hillf Danton <hillf.zj@alibaba-inc.com>,
+        Nic Losby <blurbdust@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <8a0863a2-1890-11e0-1fc2-c96e1794e809@huawei.com>
+Date: Thu, 8 Mar 2018 09:35:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.0
 MIME-Version: 1.0
-In-Reply-To: <1520471460.55728.73.camel@intel.com>
-References: <cover.1520450752.git.ivan.gorinov@intel.com> <3a0359afad71abc0c0d682bfcd0dd66055f5d7e5.1520450752.git.ivan.gorinov@intel.com>
- <CAL_JsqJ=CPRxCMzTyxhPvSXiT2MNQdfc1tmzXD0utikqqCp+Bw@mail.gmail.com> <1520471460.55728.73.camel@intel.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Wed, 7 Mar 2018 19:34:09 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqK+raaenSBMWYE-Qzc+Y7xVpur0UZj5X47n+64ipwAWhg@mail.gmail.com>
-Message-ID: <CAL_JsqK+raaenSBMWYE-Qzc+Y7xVpur0UZj5X47n+64ipwAWhg@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] of: Documentation: Add x86 local APIC ID property
-To: Ivan Gorinov <ivan.gorinov@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180307235923.12469-1-mike.kravetz@oracle.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.40]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 7, 2018 at 7:11 PM, Ivan Gorinov <ivan.gorinov@intel.com> wrote:
-> On Wed, 2018-03-07 at 14:23 -0600, Rob Herring wrote:
->
->> > Add new "intel,apic-id" property to allow using CPU descriptions
->> > in Device Tree data provided by the U-Boot loader.
->> > Address specified in 'reg' to be used as default local APIC ID
->> > to avoid breaking existing systems with DTB provided by firmware.
->> Is there some reason to not always use reg? For when the numbering of
->> cpus and timers is different?
->
-> Yes, local APIC ID may differ from CPU number.
-> For example, in Atom E38xx (u-boot/arch/x86/dts/minnowmax.dts):
->
->         cpus {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
->                 cpu@0 {
->                         device_type = "cpu";
->                         compatible = "intel,baytrail-cpu";
->                         reg = <0>;
->                         intel,apic-id = <0>;
->                 };
->
->                 cpu@1 {
->                         device_type = "cpu";
->                         compatible = "intel,baytrail-cpu";
->                         reg = <1>;
->                         intel,apic-id = <4>;
->                 };
->         };
->
->> Of course, we do have the situation on ARM with the GIC that the GIC
->> CPU IDs may be
->> >
->> >
->> > Signed-off-by: Ivan Gorinov <ivan.gorinov@intel.com>
->> > ---
->> >  Documentation/devicetree/bindings/x86/ce4100.txt | 6 ++++++
->> >  1 file changed, 6 insertions(+)
->> >
->> > diff --git a/Documentation/devicetree/bindings/x86/ce4100.txt b/Documentation/devicetree/bindings/x86/ce4100.txt
->> > index b49ae59..d15de48 100644
->> > --- a/Documentation/devicetree/bindings/x86/ce4100.txt
->> > +++ b/Documentation/devicetree/bindings/x86/ce4100.txt
->> > @@ -14,11 +14,17 @@ The CPU node
->> >                 compatible = "intel,ce4100";
->> >                 reg = <0>;
->> >                 lapic = <&lapic0>;
->> Isn't this enough? I can't tell because whatever this points to has no
->> binding documentation.
->
-> Local APIC is a part of CPU, not an external device (except for 486 and early Pentium).
-> Every CPU has access to its own local APIC registers at the same base address (0xfee00000).
-> Therefore, one "lapic" device node can work for all processors in the system.
+Hi Mike,
 
-Do you need a lapic node then? If you typically don't have a node,
-then just having the id should be fine.
+On 2018/3/8 7:59, Mike Kravetz wrote:
+> A vma with vm_pgoff large enough to overflow a loff_t type when
+> converted to a byte offset can be passed via the remap_file_pages
+> system call.  The hugetlbfs mmap routine uses the byte offset to
+> calculate reservations and file size.
+> 
+> A sequence such as:
+>   mmap(0x20a00000, 0x600000, 0, 0x66033, -1, 0);
+>   remap_file_pages(0x20a00000, 0x600000, 0, 0x20000000000000, 0);
+> will result in the following when task exits/file closed,
+>   kernel BUG at mm/hugetlb.c:749!
+> Call Trace:
+>   hugetlbfs_evict_inode+0x2f/0x40
+>   evict+0xcb/0x190
+>   __dentry_kill+0xcb/0x150
+>   __fput+0x164/0x1e0
+>   task_work_run+0x84/0xa0
+>   exit_to_usermode_loop+0x7d/0x80
+>   do_syscall_64+0x18b/0x190
+>   entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+> 
+> The overflowed pgoff value causes hugetlbfs to try to set up a
+> mapping with a negative range (end < start) that leaves invalid
+> state which causes the BUG.
+> 
+> Reported-by: Nic Losby <blurbdust@gmail.com>
+> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+> ---
+>  fs/hugetlbfs/inode.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+> index 8fe1b0aa2896..cb288dec5564 100644
+> --- a/fs/hugetlbfs/inode.c
+> +++ b/fs/hugetlbfs/inode.c
+> @@ -127,12 +127,13 @@ static int hugetlbfs_file_mmap(struct file *file, struct vm_area_struct *vma)
+>  	vma->vm_ops = &hugetlb_vm_ops;
+>  
+>  	/*
+> -	 * Offset passed to mmap (before page shift) could have been
+> -	 * negative when represented as a (l)off_t.
+> +	 * page based offset in vm_pgoff could be sufficiently large to
+> +	 * overflow a (l)off_t when converted to byte offset.
+>  	 */
+> -	if (((loff_t)vma->vm_pgoff << PAGE_SHIFT) < 0)
+> +	if (vma->vm_pgoff && ((loff_t)vma->vm_pgoff << PAGE_SHIFT) <= 0)
+>  		return -EINVAL;
 
-> With more changes in the code, the local APIC description could be made optional
-> because every processor can always read its local APIC base address from MSR 0x1b.
-> And when x2APIC mode is enabled, the local APIC registers are accessed as model
-> specific registers instead of memory-mapped I/O.
->
->> You could perhaps extend it and add a cell with the id value.
->
-> This may require different DT data for Linux and U-Boot, or changes in the latter.
+This seems still no the right fix, taking the following case as an example:
+ mmap(0x20a00000, 0x600000, 0, 0x66033, -1, 0);
+ remap_file_pages(0x20a00000, 0x600000, 0, 0x0020001000000000, 0);
 
-The latter case. There's one upstream for DT binding reviews.
+You should just check the highest PAGE_SHIFT+1 bits of pgoff in you want check
+at this point, right?
 
-Rob
+However, region_chg makes me a litter puzzle that when its return value < 0, sometime
+adds_in_progress is added like this case, while sometime it is not. so why not just
+change at the beginning of region_chg ?
+	if (f > t)
+		return -EINVAL;
+
+Thanks
+Yisheng
+>  
+> +	/* must be huge page aligned */
+>  	if (vma->vm_pgoff & (~huge_page_mask(h) >> PAGE_SHIFT))
+>  		return -EINVAL;
+>  
+> 
