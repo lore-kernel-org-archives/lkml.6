@@ -1,56 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934607AbeCHMVn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 07:21:43 -0500
-Received: from a.mx.secunet.com ([62.96.220.36]:59176 "EHLO a.mx.secunet.com"
+        id S1755305AbeCHMYo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 07:24:44 -0500
+Received: from foss.arm.com ([217.140.101.70]:37130 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752126AbeCHMVm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 07:21:42 -0500
-From: Dennis Wassenberg <dennis.wassenberg@secunet.com>
-Organization: secunet Security Networks
-Subject: [PATCH] hda: realtek: Make dock sound work on ThinkPad L570
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Hui Wang <hui.wang@canonical.com>
-CC: <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-Message-ID: <46c65214-2a41-77ce-6484-979b08fc44c1@secunet.com>
-Date: Thu, 8 Mar 2018 13:17:54 +0100
+        id S1754822AbeCHMYn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 07:24:43 -0500
+Subject: Re: [PATCH v3 09/22] arm64: capabilities: Split the processing of
+ errata work arounds
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
+        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
+        robin.murphy@arm.com
+References: <20180209175513.17100-1-suzuki.poulose@arm.com>
+ <20180209175513.17100-19-suzuki.poulose@arm.com>
+ <20180209181834.GG5862@e103592.cambridge.arm.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <b5b90236-7734-2c05-65fd-57fcbe732b6c@arm.com>
+Date: Thu, 8 Mar 2018 12:24:40 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
-X-G-Data-MailSecurity-for-Exchange-State: 0
-X-G-Data-MailSecurity-for-Exchange-Error: 0
-X-G-Data-MailSecurity-for-Exchange-Sender: 23
-X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
-X-G-Data-MailSecurity-for-Exchange-Guid: F612EA08-D65A-4B67-A727-E51859CF2D46
+In-Reply-To: <20180209181834.GG5862@e103592.cambridge.arm.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One version of Lenovo Thinkpad T570 did not use ALC298
-(like other Kaby Lake devices). Instead it uses ALC292.
-In order to make the Lenovo dock working with that codec
-the dock quirk for ALC292 will be used.
+On 09/02/18 18:18, Dave Martin wrote:
+> On Fri, Feb 09, 2018 at 05:54:48PM +0000, Suzuki K Poulose wrote:
+>> Right now we run through the errata workarounds check on all boot
+>> active CPUs, with SCOPE_ALL. This doesn't help with detecting the
+>> errata's with a SYSTEM_SCOPE. While nobody uses it, let us clean
+>> this up in preparation for merging capability handling.
+> 
+> errata; and SCOPE_SYSTEM (if I'm being pedantic)
+> 
+> To make it clearer this this is adding support for new behaviour rather
+> than changing old behaviour, perhaps change "This doesn't help ...
+> While nobody uses it ..." to something like:
+> 
+> "This wouldn't help for detecting erratum workarounds with SCOPE_SYSTEM.
+> There are none yet, but we plan to introduce some: let us clean this up
+> so that such workarounds can be detected and enabled correctly."
 
-Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
----
- sound/pci/hda/patch_realtek.c | 1 +
- 1 file changed, 1 insertion(+)
+Fixed
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index b9c93fa..b5d0f8c 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -6508,6 +6508,7 @@ enum {
- 	SND_PCI_QUIRK(0x17aa, 0x2245, "Thinkpad T470", ALC298_FIXUP_TPT470_DOCK),
- 	SND_PCI_QUIRK(0x17aa, 0x2246, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
- 	SND_PCI_QUIRK(0x17aa, 0x2247, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
-+	SND_PCI_QUIRK(0x17aa, 0x2249, "Thinkpad", ALC292_FIXUP_TPT460),
- 	SND_PCI_QUIRK(0x17aa, 0x224b, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
- 	SND_PCI_QUIRK(0x17aa, 0x224c, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
- 	SND_PCI_QUIRK(0x17aa, 0x224d, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
--- 
-1.9.1
+>>
+>> So, we run the checks with SCOPE_LOCAL_CPU on all CPUs and SCOPE_SYSTEM
+>> checks are run only once after all the boot time CPUs are active.
+>>
+>> Cc: Dave Martin <dave.martin@arm.com>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> 
+> Otherwise,
+> 
+> Reviewed-by: Dave Martin <Dave.Martin@arm.com>
+
+Thanks
+Suzuki
