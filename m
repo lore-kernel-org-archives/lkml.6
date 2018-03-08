@@ -1,95 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934882AbeCHCsK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 21:48:10 -0500
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:45452 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934577AbeCHCsI (ORCPT
+        id S934901AbeCHCs7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 21:48:59 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:36612 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934577AbeCHCs5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 21:48:08 -0500
-X-Google-Smtp-Source: AG47ELvfzS5bRFcbYlO4diCr/LNIBOrFldRcWNm6rg3TVQV40t6RlsDYxydk4pdKxA3e8RKSaZSHEw==
-Date: Wed, 7 Mar 2018 20:48:06 -0600
-From: Rob Herring <robh@kernel.org>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Philipp Zabel <philipp.zabel@gmail.com>,
-        Paul Parsons <lost.distance@yahoo.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
-        Dave Gerlach <d-gerlach@ti.com>, Mark Rutland <mark.rutland@arm.com>,
-        Nishant Menon <nm@ti.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-        Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
-Subject: Re: [PATCHv2] reset: ti-rstctrl: use the reset-simple driver
-Message-ID: <20180308024806.vombsjullqw5gpmz@rob-hp-laptop>
-References: <20180307182143.58383-1-tony@atomide.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180307182143.58383-1-tony@atomide.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Wed, 7 Mar 2018 21:48:57 -0500
+X-Google-Smtp-Source: AG47ELu1+zi9/O+H1P7ieJZQx6LwmZm7Z7ojJ64Gw1Pht7SkxVf/637peJ7tS3UhU2BH2xc1rJIuEg==
+From: Shakeel Butt <shakeelb@google.com>
+To: Roman Gushchin <guro@fb.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>, Greg Thelen <gthelen@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org, Shakeel Butt <shakeelb@google.com>
+Subject: [PATCH] mm: memcg: expose mem_cgroup_put API
+Date: Wed,  7 Mar 2018 18:48:50 -0800
+Message-Id: <20180308024850.39737-1-shakeelb@google.com>
+X-Mailer: git-send-email 2.16.2.395.g2e18187dfd-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 10:21:43AM -0800, Tony Lindgren wrote:
-> We can support the RSTCTRL reset registers on many TI SoCs with
-> reset-simple.
-> 
-> Note that some devices will also need to check the RSTST bits
-> for reset reason. Support for these could be possibly added to
-> the reset controller framework later on.
-> 
-> Cc: Dave Gerlach <d-gerlach@ti.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Nishant Menon <nm@ti.com>
-> Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Suman Anna <s-anna@ti.com>
-> Cc: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
-> 
-> Changes since v1:
-> - Update patch description to mention the unhandled RSTST bits
-> - Rebase against Linux next
-> 
-> ---
->  .../devicetree/bindings/reset/ti-rstctrl.txt         | 20 ++++++++++++++++++++
->  drivers/reset/Kconfig                                |  3 ++-
->  drivers/reset/reset-simple.c                         |  1 +
->  3 files changed, 23 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/reset/ti-rstctrl.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/reset/ti-rstctrl.txt b/Documentation/devicetree/bindings/reset/ti-rstctrl.txt
-> new file mode 100644
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/reset/ti-rstctrl.txt
-> @@ -0,0 +1,20 @@
-> +TI RSTCTRL Reset Controller
-> +
-> +Required properties:
-> +- compatible : "ti,rstctrl"
-> +- reg : Should contain 1 register ranges(address and length)
-> +- #reset-cells: 1
-> +
-> +Example:
-> +	prm_gfx: prm@1100 {
-> +		compatible = "simple-bus";
+This patch exports mem_cgroup_put API to put the refcnt of the memory
+cgroup.
 
-What's a PRM?
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+---
+ include/linux/memcontrol.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0 0x1100 0x100>;
-
-And what else is in this range?
-
-> +
-> +		gfx_rstctrl: rstctrl@4 {
-> +			compatible = "ti,rstctrl";
-> +			reg = <0x4 0x4>;
-
-Anytime I see a single register in DT I worry about scaling. How many of 
-these in an SoC?
-
-> +			#reset-cells = <1>;
-> +		};
-> +	};
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index c46016bb25eb..0da79e116a07 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -344,6 +344,11 @@ struct mem_cgroup *mem_cgroup_from_css(struct cgroup_subsys_state *css){
+ 	return css ? container_of(css, struct mem_cgroup, css) : NULL;
+ }
+ 
++static inline void mem_cgroup_put(struct mem_cgroup *memcg)
++{
++	css_put(&memcg->css);
++}
++
+ #define mem_cgroup_from_counter(counter, member)	\
+ 	container_of(counter, struct mem_cgroup, member)
+ 
+@@ -789,6 +794,10 @@ static inline bool task_in_mem_cgroup(struct task_struct *task,
+ 	return true;
+ }
+ 
++static inline void mem_cgroup_put(struct mem_cgroup *memcg)
++{
++}
++
+ static inline struct mem_cgroup *
+ mem_cgroup_iter(struct mem_cgroup *root,
+ 		struct mem_cgroup *prev,
+-- 
+2.16.2.395.g2e18187dfd-goog
