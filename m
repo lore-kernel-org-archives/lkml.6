@@ -1,87 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936184AbeCHSGt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 13:06:49 -0500
-Received: from mga09.intel.com ([134.134.136.24]:45654 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932177AbeCHSGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 13:06:47 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,441,1515484800";
-   d="scan'208";a="22974177"
-From: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-CC: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        "Will Deacon" <will.deacon@arm.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        "Neri, Ricardo" <ricardo.neri@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        "Zijlstra, Peter" <peter.zijlstra@intel.com>,
-        "Williams, Dan J" <dan.j.williams@intel.com>
-Subject: RE: [PATCH V2 1/3] x86/efi: Call efi_delete_dummy_variable() during
- efi subsystem initialization
-Thread-Topic: [PATCH V2 1/3] x86/efi: Call efi_delete_dummy_variable()
- during efi subsystem initialization
-Thread-Index: AQHTtNnft9Mxi3CHBU2aHJMBOcVcFKPGfq2A//+IQGA=
-Date: Thu, 8 Mar 2018 18:06:45 +0000
-Message-ID: <FFF73D592F13FD46B8700F0A279B802F2E581AD0@ORSMSX114.amr.corp.intel.com>
-References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <1520292190-5027-2-git-send-email-sai.praneeth.prakhya@intel.com>
- <CAKv+Gu_ZYGwgORet4ruL8=GUy75LMAuLeYD987FA3UVYuw8GMg@mail.gmail.com>
-In-Reply-To: <CAKv+Gu_ZYGwgORet4ruL8=GUy75LMAuLeYD987FA3UVYuw8GMg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTk3OGEwYTUtMGJkNC00OGM4LWE4YWItNzMxMTFjOGMwZjJjIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJhK2tQd2Q2OHFUTXZ5QVNkMVlwenV5RzRMMUFpU2ZLSWt3eFJPaG1BWk1ZTDFKTEpSTzVSQ25RMTQ3a1RBc0dIIn0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="utf-8"
+        id S936048AbeCHSJw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 13:09:52 -0500
+Received: from resqmta-ch2-08v.sys.comcast.net ([69.252.207.40]:39334 "EHLO
+        resqmta-ch2-08v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933221AbeCHSJv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 13:09:51 -0500
+Date: Thu, 8 Mar 2018 12:09:49 -0600 (CST)
+From: Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To: Chintan Pandya <cpandya@codeaurora.org>
+cc: Matthew Wilcox <willy@infradead.org>, penberg@kernel.org,
+        rientjes@google.com, iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] slub: Fix misleading 'age' in verbose slub prints
+In-Reply-To: <da1be252-403f-6725-a1b8-223222f7f946@codeaurora.org>
+Message-ID: <alpine.DEB.2.20.1803081204230.14628@nuc-kabylake>
+References: <1520423266-28830-1-git-send-email-cpandya@codeaurora.org> <alpine.DEB.2.20.1803071212150.6373@nuc-kabylake> <20180307182212.GA23411@bombadil.infradead.org> <da1be252-403f-6725-a1b8-223222f7f946@codeaurora.org>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-CMAE-Envelope: MS4wfJVKUAmpm5Tr1XYPCWphAvU+gD4wFLCXiZOOJkSzuFFBqqfxK57Y+RoPbwBZwOAuRncnNTnsl2kqAL2dnu6FUfDQhonBG/sdtoTI744eTn4ctm77tgqX
+ VzgDYjkQi0Q/5r3hizZMUiQFua69IgLlnxp1AgOAIIm0mf24y0tW9xjllF+SwzQg3CamZ7fByHXqSwnWEOKBbNLeQl6p5cugR9AfCqLgqYgoD+nHaP8foZ6/
+ owjfwrWKis4MsondOq3j4xmXqtuTPU6HJTztXHmnZ8fPKXzeM2yRrc5iHGaXik18DjkQ7AiV2yyn/E4U7HcJbzPDodE33pRrAVBIm2ernc7asoYfIrgJXkwH
+ FdOk86d/NzHuPPjAH904uB7IlkfdbEjqPMh/sJgZHUpR/OSlBXA=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w28I6vW2032442
 
-> >  void __init efi_enter_virtual_mode(void) diff --git
-> > a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c index
-> > cd42f66a7c85..838b8efe639c 100644
-> > --- a/drivers/firmware/efi/efi.c
-> > +++ b/drivers/firmware/efi/efi.c
-> > @@ -328,6 +328,12 @@ static int __init efisubsys_init(void)
-> >         if (!efi_enabled(EFI_BOOT))
-> >                 return 0;
+On Thu, 8 Mar 2018, Chintan Pandya wrote:
+
+> > If you print the raw value, then you can do the subtraction yourself;
+> > if you've subtracted it from jiffies each time, you've at least introduced
+> > jitter, and possibly enough jitter to confuse and mislead.
 > >
-> > +       /*
-> > +        * Clean DUMMY object calls EFI Runtime Service, set_variable(), so
-> > +        * it should be invoked only after efi_rts_workqueue is ready.
-> > +        */
-> > +       efi_delete_dummy_variable();
-> > +
-> 
-> Is there any way to keep this local to arch/x86?
->
+> This is exactly what I was thinking. But looking up 'age' is easy compared to
+> 'when' and this seems required as from Christopher's
+> reply. So, will raise new patch cleaning commit message a bit.
 
-I think, we can definitely do that. I will retake a look at the possibilities
-and will update this thread.
+Well then you need to provide some sort of log text processor I think.
+Otherwise you need to get the object address from the log message, then
+scan back through the log to find the correct allocation entry, retrieve
+both jiffy values and subtract them. If the age is there then you can
+simply see how far in the past the object was allocated.
 
-> >         /* We register the efi directory at /sys/firmware/efi */
-> >         efi_kobj = kobject_create_and_add("efi", firmware_kobj);
-> >         if (!efi_kobj) {
-> > diff --git a/include/linux/efi.h b/include/linux/efi.h index
-> > f5083aa72eae..c4efb3ef0dfa 100644
-> > --- a/include/linux/efi.h
-> > +++ b/include/linux/efi.h
-> > @@ -992,6 +992,7 @@ extern efi_status_t efi_query_variable_store(u32
+One advantage in favor of jiffies would be the ability to correlate
+multiple events if each log line would have a jiffies like timestamps.
+
+But it does not. So I think outputting jiffies there is causing more
+problems that benefits.
