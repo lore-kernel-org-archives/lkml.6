@@ -1,153 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935701AbeCHJix (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 04:38:53 -0500
-Received: from bmailout1.hostsharing.net ([83.223.95.100]:47529 "EHLO
-        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755153AbeCHJiu (ORCPT
+        id S1755574AbeCHJnM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 04:43:12 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:36037 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755180AbeCHJnK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 04:38:50 -0500
-Date: Thu, 8 Mar 2018 10:38:48 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: mjg59@srcf.ucam.org, pali.rohar@gmail.com, dvhart@infradead.org,
-        andy@infradead.org, mario.limonciello@dell.com, tiwai@suse.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [alsa-devel] [PATCH v2 3/3] ALSA: hda: Disabled unused audio
- controller for Dell platforms with Switchable Graphics
-Message-ID: <20180308093848.GA24068@wunner.de>
-References: <20180308091023.9061-1-kai.heng.feng@canonical.com>
- <20180308091023.9061-3-kai.heng.feng@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180308091023.9061-3-kai.heng.feng@canonical.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Thu, 8 Mar 2018 04:43:10 -0500
+X-Google-Smtp-Source: AG47ELtBzSUtz8fw6m6z0edEiIQeUgu3OyLoVf+o/qI5ACilpFCugkpsg1Zb+j4M2ogAmkyO1C6vQQ==
+Message-ID: <1520502187.4264.5.camel@baylibre.com>
+Subject: Re: [PATCH] clk: fix phase reported being zero
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 08 Mar 2018 10:43:07 +0100
+In-Reply-To: <20180215101958.22676-1-jbrunet@baylibre.com>
+References: <20180215101958.22676-1-jbrunet@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 08, 2018 at 05:10:23PM +0800, Kai-Heng Feng wrote:
-> Some Dell platforms (Preicsion 7510/7710/7520/7720) have a BIOS option
-> "Switchable Graphics" (SG).
+On Thu, 2018-02-15 at 11:19 +0100, Jerome Brunet wrote:
+> While introducing clk_core_set_phase_nolock, assigning core->phase was
+> mistakenly removed. Fixing this now
 > 
-> When SG is enabled, we have:
-> 00:02.0 VGA compatible controller: Intel Corporation Device 591b (rev 04)
-> 00:1f.3 Audio device: Intel Corporation CM238 HD Audio Controller (rev 31)
-> 01:00.0 VGA compatible controller: Advanced Micro Devices, Inc.  [AMD/ATI] Ellesmere [Polaris10]
-> 01:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Ellesmere [Radeon RX 580]
-> 
-> The Intel Audio outputs all the sound, including HDMI audio. The audio
-> controller comes with AMD graphics doesn't get used.
-> 
-> When SG is disabled, we have:
-> 00:1f.3 Audio device: Intel Corporation CM238 HD Audio Controller (rev 31)
-> 01:00.0 VGA compatible controller: Advanced Micro Devices, Inc.  [AMD/ATI] Ellesmere [Polaris10]
-> 01:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Ellesmere [Radeon RX 580]
-> 
-> Now it's a typical discrete-only system. HDMI audio comes from AMD audio
-> controller, others from Intel audio controller.
-> 
-> When SG is enabled, the unused AMD audio controller still exposes its
-> sysfs, so userspace still opens the control file and stream. If
-> userspace tries to output sound through the stream, it hangs when
-> runtime suspend kicks in:
-> [ 12.796265] snd_hda_intel 0000:01:00.1: Disabling via vga_switcheroo
-> [ 12.796367] snd_hda_intel 0000:01:00.1: Cannot lock devices!
+> Fixes: 9e4d04adeb1a ("clk: add clk_core_set_phase_nolock function")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-This should be fixed by the following series:
-https://lists.freedesktop.org/archives/dri-devel/2018-March/168012.html
+Please drop this patch if favor of 
 
-Please verify that by testing the series on the machine in question.
-I'm hoping to get those patches in for 4.17.  I suspect that your
-patch may not be necessary then.
+https://lkml.kernel.org/r/1520491781-132529-1-git-send-email-shawn.lin@rock-chip
+s.com
 
+Thanks
+Jerome
 
-> Since the discrete audio controller isn't useful when SG enabled, we
-> should just disable the device.
-
-I don't quite follow, when SG is enabled but hda_intel doesn't bind
-to the AMD audio device, how are you going to stream audio to
-external displays?  Are external DP/HDMI ports muxed to the integrated
-GPU when SG is enabled?
-
-Thanks,
-
-Lukas
-
-> 
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 > ---
-> v2: Mario suggested to squash the HDA part into the same series.
+>  drivers/clk/clk.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
->  sound/pci/hda/hda_intel.c | 35 +++++++++++++++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
-> 
-> diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-> index 96143df19b21..8e3e8b88624a 100644
-> --- a/sound/pci/hda/hda_intel.c
-> +++ b/sound/pci/hda/hda_intel.c
-> @@ -49,6 +49,7 @@
->  #include <linux/clocksource.h>
->  #include <linux/time.h>
->  #include <linux/completion.h>
-> +#include <linux/dell-common.h>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 9d56be6ead39..b33d362239e7 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2314,6 +2314,9 @@ static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
+>  	if (core->ops->set_phase)
+>  		ret = core->ops->set_phase(core->hw, degrees);
 >  
->  #ifdef CONFIG_X86
->  /* for snoop control */
-> @@ -1620,6 +1621,35 @@ static void check_msi(struct azx *chip)
->  	}
->  }
+> +	if (!ret)
+> +		core->phase = degrees;
+> +
+>  	trace_clk_set_phase_complete(core, degrees);
 >  
-> +#if IS_ENABLED(CONFIG_DELL_LAPTOP)
-> +static bool check_dell_switchable_gfx(struct pci_dev *pdev)
-> +{
-> +	static int (*dell_switchable_gfx_enabled_func)(bool *);
-> +	bool enabled;
-> +	int err;
-> +
-> +	if (pdev->vendor != PCI_VENDOR_ID_ATI ||
-> +	    pdev->subsystem_vendor != PCI_VENDOR_ID_DELL)
-> +		return false;
-> +
-> +	dell_switchable_gfx_enabled_func =
-> +		symbol_request(dell_switchable_gfx_enabled);
-> +	if (!dell_switchable_gfx_enabled_func)
-> +		return false;
-> +
-> +	err = dell_switchable_gfx_enabled_func(&enabled);
-> +
-> +	symbol_put(dell_switchable_gfx_enabled);
-> +
-> +	return !err ? enabled : false;
-> +}
-> +#else
-> +static bool check_dell_switchable_gfx(struct pci_dev *pdev)
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
->  /* check the snoop mode availability */
->  static void azx_check_snoop_available(struct azx *chip)
->  {
-> @@ -1702,6 +1732,11 @@ static int azx_create(struct snd_card *card, struct pci_dev *pci,
->  	if (err < 0)
->  		return err;
->  
-> +	if (check_dell_switchable_gfx(pci)) {
-> +		pci_disable_device(pci);
-> +		return -ENODEV;
-> +	}
-> +
->  	hda = kzalloc(sizeof(*hda), GFP_KERNEL);
->  	if (!hda) {
->  		pci_disable_device(pci);
-> -- 
-> 2.15.1
-> 
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+>  	return ret;
