@@ -1,140 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934345AbeCHEWp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 23:22:45 -0500
-Received: from mga18.intel.com ([134.134.136.126]:14609 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933471AbeCHEWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 23:22:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,439,1515484800";
-   d="scan'208";a="35526283"
-From: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-CC: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Lee@vger.kernel.org" <Lee@vger.kernel.org>, Chun-Yi <jlee@suse.com>,
-        Borislav Petkov <bp@alien8.de>, "Luck, Tony" <tony.luck@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        "Neri, Ricardo" <ricardo.neri@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        "Zijlstra, Peter" <peter.zijlstra@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Williams, Dan J" <dan.j.williams@intel.com>
-Subject: RE: [PATCH V2 2/3] efi: Introduce efi_rts_workqueue and some
- infrastructure to invoke all efi_runtime_services()
-Thread-Topic: [PATCH V2 2/3] efi: Introduce efi_rts_workqueue and some
- infrastructure to invoke all efi_runtime_services()
-Thread-Index: AQHTtNngYFyf2e7B30yWdA6aWmV0oqPFMqUAgACLVvA=
-Date: Thu, 8 Mar 2018 04:22:40 +0000
-Message-ID: <FFF73D592F13FD46B8700F0A279B802F2E5817F2@ORSMSX114.amr.corp.intel.com>
-References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <1520292190-5027-3-git-send-email-sai.praneeth.prakhya@intel.com>
- <CANiq72m6_WCXSrBPesgvO1rsF1_AT5Jod_rY-y1f4JjO-SMCDg@mail.gmail.com>
-In-Reply-To: <CANiq72m6_WCXSrBPesgvO1rsF1_AT5Jod_rY-y1f4JjO-SMCDg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiY2Y3NGUzODctOWUzOS00ODE3LWFlYzUtYThiNmVlNDEyY2Y5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJpejJPWmJMUGM3UE81cUkzWTJpN3hMcndSTlQxUytBMWJnYStYN1BOZjk5YjRGcXQ3Z0R5M2dGcVZLWmR2ZktIIn0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="utf-8"
+        id S934462AbeCHEZc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 23:25:32 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:59580 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933471AbeCHEZb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 23:25:31 -0500
+Subject: Re: [PATCH] hugetlbfs: check for pgoff value overflow
+To: Yisheng Xie <xieyisheng1@huawei.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, bugzilla-daemon@bugzilla.kernel.org
+Cc: Michal Hocko <mhocko@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Hillf Danton <hillf.zj@alibaba-inc.com>,
+        Nic Losby <blurbdust@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20180306133135.4dc344e478d98f0e29f47698@linux-foundation.org>
+ <20180307235923.12469-1-mike.kravetz@oracle.com>
+ <8a0863a2-1890-11e0-1fc2-c96e1794e809@huawei.com>
+From: Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <c41368dd-1566-c69f-ee98-8e89fdc16eeb@oracle.com>
+Date: Wed, 7 Mar 2018 20:25:14 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
+In-Reply-To: <8a0863a2-1890-11e0-1fc2-c96e1794e809@huawei.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8825 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803080053
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w284MmDE028528
 
-> > +struct workqueue_struct *efi_rts_wq;
-> > +
-> >  static bool disable_runtime;
-> >  static int __init setup_noefi(char *arg)  { @@ -329,6 +331,19 @@
-> > static int __init efisubsys_init(void)
-> >                 return 0;
-> >
-> >         /*
-> > +        * Since we process only one efi_runtime_service() at a time, an
-> > +        * ordered workqueue (which creates only one execution context)
-> > +        * should suffice all our needs.
-> > +        */
-> > +       efi_rts_wq = alloc_ordered_workqueue("efi_rts_workqueue", 0);
+On 03/07/2018 05:35 PM, Yisheng Xie wrote:
+> Hi Mike,
 > 
-> efi_rts_wq or efi_rts_workqueue?
+> On 2018/3/8 7:59, Mike Kravetz wrote:
+>> A vma with vm_pgoff large enough to overflow a loff_t type when
+>> converted to a byte offset can be passed via the remap_file_pages
+>> system call.  The hugetlbfs mmap routine uses the byte offset to
+>> calculate reservations and file size.
+>>
+>> A sequence such as:
+>>   mmap(0x20a00000, 0x600000, 0, 0x66033, -1, 0);
+>>   remap_file_pages(0x20a00000, 0x600000, 0, 0x20000000000000, 0);
+>> will result in the following when task exits/file closed,
+>>   kernel BUG at mm/hugetlb.c:749!
+>> Call Trace:
+>>   hugetlbfs_evict_inode+0x2f/0x40
+>>   evict+0xcb/0x190
+>>   __dentry_kill+0xcb/0x150
+>>   __fput+0x164/0x1e0
+>>   task_work_run+0x84/0xa0
+>>   exit_to_usermode_loop+0x7d/0x80
+>>   do_syscall_64+0x18b/0x190
+>>   entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+>>
+>> The overflowed pgoff value causes hugetlbfs to try to set up a
+>> mapping with a negative range (end < start) that leaves invalid
+>> state which causes the BUG.
+>>
+>> Reported-by: Nic Losby <blurbdust@gmail.com>
+>> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+>> ---
+>>  fs/hugetlbfs/inode.c | 7 ++++---
+>>  1 file changed, 4 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+>> index 8fe1b0aa2896..cb288dec5564 100644
+>> --- a/fs/hugetlbfs/inode.c
+>> +++ b/fs/hugetlbfs/inode.c
+>> @@ -127,12 +127,13 @@ static int hugetlbfs_file_mmap(struct file *file, struct vm_area_struct *vma)
+>>  	vma->vm_ops = &hugetlb_vm_ops;
+>>  
+>>  	/*
+>> -	 * Offset passed to mmap (before page shift) could have been
+>> -	 * negative when represented as a (l)off_t.
+>> +	 * page based offset in vm_pgoff could be sufficiently large to
+>> +	 * overflow a (l)off_t when converted to byte offset.
+>>  	 */
+>> -	if (((loff_t)vma->vm_pgoff << PAGE_SHIFT) < 0)
+>> +	if (vma->vm_pgoff && ((loff_t)vma->vm_pgoff << PAGE_SHIFT) <= 0)
+>>  		return -EINVAL;
 > 
-> > +       if (!efi_rts_wq) {
-> > +               pr_err("Failed to create efi_rts_workqueue, EFI runtime services "
+> This seems still no the right fix, taking the following case as an example:
+>  mmap(0x20a00000, 0x600000, 0, 0x66033, -1, 0);
+>  remap_file_pages(0x20a00000, 0x600000, 0, 0x0020001000000000, 0);
 > 
-> Same here.
+> You should just check the highest PAGE_SHIFT+1 bits of pgoff in you want check
+> at this point, right?
 
-Sure! I will make it consistent with "efi_rts_wq". Just tried to be more verbose
-with names :)
+Yes, thank you!
+That would be the correct check and also much simpler.  Something like,
 
-[...]
+	unsigned long ovfl_mask;
 
-> > +#define efi_queue_work(_rts, _arg1, _arg2, _arg3, _arg4, _arg5)                \
-> > +({                                                                     \
-> > +       struct efi_runtime_work efi_rts_work;                           \
-> > +                                                                       \
-> > +       INIT_WORK_ONSTACK(&efi_rts_work.work, efi_call_rts);            \
-> > +       efi_rts_work.func = _rts;                                       \
-> > +       efi_rts_work.arg1 = _arg1;                                      \
-> > +       efi_rts_work.arg2 = _arg2;                                      \
-> > +       efi_rts_work.arg3 = _arg3;                                      \
-> > +       efi_rts_work.arg4 = _arg4;                                      \
-> > +       efi_rts_work.arg5 = _arg5;                                      \
-> > +       /*                                                              \
-> > +        * queue_work() returns 0 if work was already on queue,         \
-> > +        * _ideally_ this should never happen.                          \
-> > +        */                                                             \
-> > +       if (queue_work(efi_rts_wq, &efi_rts_work.work))                 \
-> > +               flush_work(&efi_rts_work.work);                         \
-> > +       else                                                            \
-> > +               BUG();                                                  \
-> 
-> Thanks for the change! One remark, I would just do:
+	ovfl_mask = (1UL << (PAGE_SHIFT + 1)) - 1;
+	ovfl_mask <<= ((sizeof(unsigned long) * BITS_PER_BYTE) -
+		      (PAGE_SHIFT + 1));
+	if (vma->vm_pgoff & ovfl_mask)
+		return -EINVAL;
 
-Sorry! but I am planning to remove BUG(). Looks like it could defeat the purpose
-of patch. Please see Boris comments on the other thread.
 
-[...]
 
-> > +/*
-> > + * efi_runtime_work:   Details of EFI Runtime Service work
-> > + * @func:              EFI Runtime Service function identifier
-> > + * @arg<1-5>:          EFI Runtime Service function arguments
-> > + * @status:            Status of executing EFI Runtime Service
-> > + */
-> > +struct efi_runtime_work {
-> > +       u8 func;
-> > +       void *arg1;
-> > +       void *arg2;
-> > +       void *arg3;
-> > +       void *arg4;
-> > +       void *arg5;
-> > +       efi_status_t status;
-> > +       struct work_struct work;
-> > +};
-> 
-> Why is efi_runtime_work in the .h at all?
-> 
+> However, region_chg makes me a litter puzzle that when its return value < 0, sometime
+> adds_in_progress is added like this case, while sometime it is not. so why not just
+> change at the beginning of region_chg ?
+> 	if (f > t)
+> 		return -EINVAL;
 
-Thanks for the catch. I will move it to runtime-wrappers.c file and will make it
-static too. It isn't being used in any other place.
+If region_chg returns a value < 0, this indicates an error and adds_in_progress
+should not be incremented.  In the case of this bug, region_chg was passed
+values where f > t.  Of course, this should never happen.  But, because it
+assumed f <= t, it returned a negative count needed huge page reservations.
+The calling code interpreted the negative value as an error and a subsequent
+region_add or region_abort.
 
-> Please CC me for the next version! :-)
+I am not opposed to adding the suggested "if (f > t)".  However, the
+region tracking routines are simple helpers only used by the hugetlbfs
+code and the assumption is that they are being called correctly.  As
+such, I would prefer to leave off the check.  But, this is the second
+time they have been called incorrectly due to insufficient argument
+checking.  If we do add this to region_chg, I would also add the check
+to all region_* routines for consistency.
 
-Sure! Sorry for that. I should have done in V2.
-
-Regards,
-Sai
+I will send out a V2 of this patch tomorrow with the corrected overflow
+checking and possibly checks added to the region_* routines.
+-- 
+Mike Kravetz
