@@ -1,129 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751070AbeCIMNC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 07:13:02 -0500
-Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:59618 "EHLO
-        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750937AbeCIMNB (ORCPT
+        id S1751187AbeCIMNP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 07:13:15 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:34809 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751122AbeCIMNN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 07:13:01 -0500
-Subject: Re: [PATCH v2] V4L2 SDR: Add Real U8 format (V4L2_SDR_FMT_RU8)
-To: Bertold Van den Bergh <vandenbergh@bertold.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1493044118.2446.40.camel@pengutronix.de>
- <1493056632-18516-1-git-send-email-vandenbergh@bertold.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <b78ad6c0-8fb2-fc4c-1df8-422bf30f8194@xs4all.nl>
-Date: Fri, 9 Mar 2018 13:12:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1493056632-18516-1-git-send-email-vandenbergh@bertold.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfHQQRFeDoTedffsPYfXwsKvq1LPVx2HjzGESYSN6FVpxIEhHLm8gCkA9en868Sc+Ct12GyWeJYvLeZ+mpLEPHaC375F2azxerQNa5n9ePD0rnqYil6rY
- KDVP8bcTTCK1e69q5a9RcvxfB/utjt1fPM25qcijAzyzjOj7SyeXJNqo4xLVfUICnYrp7BtCH33KA898APhx/9nGPpjJle6mTQ6F07GJ3z3ZSiHPmQ81WKRL
- kIZkOMJZLTT9rsIUC4++FOHT6E+tY3BEmM1QYHHNO3mQoAHZhbxaeeJlF/6m3QCp
+        Fri, 9 Mar 2018 07:13:13 -0500
+X-Google-Smtp-Source: AG47ELuxF8pfxWasdKwBtdMnZ+x24vhxS/wpSbr+CDcJuwLLB7WsXQAC3iBou8mPT1kn5+kGsiTnWw==
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>
+Cc: Daniel Lustig <dlustig@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Andrea Parri <parri.andrea@gmail.com>
+Subject: [PATCH v2 0/2] riscv/spinlock,atomic: Miscellaneous fixes
+Date: Fri,  9 Mar 2018 13:12:39 +0100
+Message-Id: <1520597559-16547-1-git-send-email-parri.andrea@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bertold,
+Hi,
 
-I'm going through old patches in my TODO list and found this one.
+The series is a follow-up on the discussion in [1], which led to the
+discovery of a few issues in the current implementations of RISC-V
+locking and atomic operations.
 
-It clearly fell through the cracks, for which I apologize.
+In summary, this series proposes the following modifications:
 
-The problem with this patch is that there is no kernel driver that supports
-this format. The general policy is that we don't add formats unless some
-driver actually uses it.
+  1. Use lightweigth fences for acquire/release (locking, atomics)
 
-That does not appear to be the case here. I assume you use it with some
-out-of-tree driver?
+  2. Use the combination of .rl and full fences for fully-ordered
+     atomics implemented with LR/SC pairs.
 
-Anyway, that's the reason I have to reject it.
+  3. A few style changes (80-chars lines, alignment).
 
-Regards,
+Applies on top of "next-smp_sl_ar".
 
-	Hans
+Cheers,
+  Andrea
 
-On 24/04/17 19:57, Bertold Van den Bergh wrote:
-> This patch adds support for the Real U8 format to the V4L2 SDR framework.
-> 
-> Signed-off-by: Bertold Van den Bergh <vandenbergh@bertold.org>
-> ---
-> Thanks for your comments. I was not aware of the V4L format documentation.
-> I don't think there is a clear natural ordering for these types of formats,
-> but I agree it looks more consistent in this way.
-> 
-> Changes in v2:
->   - Added documentation files
->   - Changed order of formats
-> 
->  Documentation/media/uapi/v4l/pixfmt-sdr-ru08.rst | 17 +++++++++++++++++
->  Documentation/media/uapi/v4l/sdr-formats.rst     |  1 +
->  drivers/media/v4l2-core/v4l2-ioctl.c             |  1 +
->  include/uapi/linux/videodev2.h                   |  1 +
->  4 files changed, 20 insertions(+)
->  create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-ru08.rst
-> 
-> diff --git a/Documentation/media/uapi/v4l/pixfmt-sdr-ru08.rst b/Documentation/media/uapi/v4l/pixfmt-sdr-ru08.rst
-> new file mode 100644
-> index 0000000..ddd56e1
-> --- /dev/null
-> +++ b/Documentation/media/uapi/v4l/pixfmt-sdr-ru08.rst
-> @@ -0,0 +1,17 @@
-> +.. -*- coding: utf-8; mode: rst -*-
-> +
-> +.. _V4L2-SDR-FMT-RU8:
-> +
-> +****************************
-> +V4L2_SDR_FMT_RU8 ('RU08')
-> +****************************
-> +
-> +
-> +Real unsigned 8-bit sample
-> +
-> +
-> +Description
-> +===========
-> +
-> +This format contains a sequence of real number samples. Each sample is
-> +represented as a 8 bit unsigned number.
-> diff --git a/Documentation/media/uapi/v4l/sdr-formats.rst b/Documentation/media/uapi/v4l/sdr-formats.rst
-> index f863c08..a08b5c2 100644
-> --- a/Documentation/media/uapi/v4l/sdr-formats.rst
-> +++ b/Documentation/media/uapi/v4l/sdr-formats.rst
-> @@ -16,4 +16,5 @@ These formats are used for :ref:`SDR <sdr>` interface only.
->      pixfmt-sdr-cu16le
->      pixfmt-sdr-cs08
->      pixfmt-sdr-cs14le
-> +    pixfmt-sdr-ru08
->      pixfmt-sdr-ru12le
-> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> index e5a2187..79140cc 100644
-> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> @@ -1228,6 +1228,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->  	case V4L2_SDR_FMT_CU16LE:	descr = "Complex U16LE"; break;
->  	case V4L2_SDR_FMT_CS8:		descr = "Complex S8"; break;
->  	case V4L2_SDR_FMT_CS14LE:	descr = "Complex S14LE"; break;
-> +	case V4L2_SDR_FMT_RU8:		descr = "Real U8"; break;
->  	case V4L2_SDR_FMT_RU12LE:	descr = "Real U12LE"; break;
->  	case V4L2_TCH_FMT_DELTA_TD16:	descr = "16-bit signed deltas"; break;
->  	case V4L2_TCH_FMT_DELTA_TD08:	descr = "8-bit signed deltas"; break;
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 2b8feb8..21e9ae3 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -668,6 +668,7 @@ struct v4l2_pix_format {
->  #define V4L2_SDR_FMT_CU16LE       v4l2_fourcc('C', 'U', '1', '6') /* IQ u16le */
->  #define V4L2_SDR_FMT_CS8          v4l2_fourcc('C', 'S', '0', '8') /* complex s8 */
->  #define V4L2_SDR_FMT_CS14LE       v4l2_fourcc('C', 'S', '1', '4') /* complex s14le */
-> +#define V4L2_SDR_FMT_RU8          v4l2_fourcc('R', 'U', '0', '8') /* real u8 */
->  #define V4L2_SDR_FMT_RU12LE       v4l2_fourcc('R', 'U', '1', '2') /* real u12le */
->  
->  /* Touch formats - used for Touch devices */
-> 
+Changes since v1 [2]:
+  - correct implementation of atomic_{xchg,cmpxchg}_release().
+
+[1] https://marc.info/?l=linux-kernel&m=151930201102853&w=2
+[2] https://marc.info/?l=linux-kernel&m=152027423529883&w=2
+
+Andrea Parri (2):
+  riscv/spinlock: Strengthen implementations with fences
+  riscv/atomic: Strengthen implementations with fences
+
+ arch/riscv/include/asm/atomic.h   | 417 ++++++++++++++++++++++++--------------
+ arch/riscv/include/asm/cmpxchg.h  | 391 ++++++++++++++++++++++++++++-------
+ arch/riscv/include/asm/fence.h    |  12 ++
+ arch/riscv/include/asm/spinlock.h |  29 +--
+ 4 files changed, 615 insertions(+), 234 deletions(-)
+ create mode 100644 arch/riscv/include/asm/fence.h
+
+-- 
+2.7.4
