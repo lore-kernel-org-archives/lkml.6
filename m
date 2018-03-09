@@ -1,51 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751621AbeCIKSy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:18:54 -0500
-Received: from mail.phycore.de ([217.6.246.34]:41235 "EHLO root.phytec.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751147AbeCIKSx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 05:18:53 -0500
-From: Daniel Schultz <d.schultz@phytec.de>
-To: linux@armlinux.org.uk, krzk@kernel.org
-Cc: arnd@arndb.de, davem@davemloft.net, kishon@ti.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ARM: multi_v7_defconfig: enable CONFIG_DP83867_PHY
-Date: Fri, 9 Mar 2018 11:18:51 +0100
-Message-Id: <1520590731-34556-1-git-send-email-d.schultz@phytec.de>
-X-Mailer: git-send-email 2.7.4
-X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 09.03.2018 11:18:51,
-        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 09.03.2018 11:18:51,
-        Serialize complete at 09.03.2018 11:18:51
-X-TNEFEvaluated: 1
+        id S1751226AbeCIKOt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:14:49 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48968 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751193AbeCIKOs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 05:14:48 -0500
+From: Jiri Olsa <jolsa@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: [PATCH 1/9] perf tools: Free memory nodes data
+Date: Fri,  9 Mar 2018 11:14:34 +0100
+Message-Id: <20180309101442.9224-2-jolsa@kernel.org>
+In-Reply-To: <20180309101442.9224-1-jolsa@kernel.org>
+References: <20180309101442.9224-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the driver for TI's DP83867 ethernet phy.
+Forgot to free env's memory nodes, adding
+needed code to perf_env__exit.
 
-Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
+Link: http://lkml.kernel.org/n/tip-ryyndcxqisxtfhbr6zp54jcy@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
-Changes:
-	v2: Re-submit with more recipients.
-	Sorry, I only added Russell and vger in v1.
+ tools/perf/util/env.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index da73876..62ad2c6 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -270,6 +270,7 @@ CONFIG_AT803X_PHY=y
- CONFIG_MARVELL_PHY=y
- CONFIG_SMSC_PHY=y
- CONFIG_BROADCOM_PHY=y
-+CONFIG_DP83867_PHY=y
- CONFIG_ICPLUS_PHY=y
- CONFIG_REALTEK_PHY=y
- CONFIG_MICREL_PHY=y
+diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
+index 6d311868d850..4c842762e3f2 100644
+--- a/tools/perf/util/env.c
++++ b/tools/perf/util/env.c
+@@ -32,6 +32,10 @@ void perf_env__exit(struct perf_env *env)
+ 	for (i = 0; i < env->caches_cnt; i++)
+ 		cpu_cache_level__free(&env->caches[i]);
+ 	zfree(&env->caches);
++
++	for (i = 0; i < env->nr_memory_nodes; i++)
++		free(env->memory_nodes[i].set);
++	zfree(&env->memory_nodes);
+ }
+ 
+ int perf_env__set_cmdline(struct perf_env *env, int argc, const char *argv[])
 -- 
-2.7.4
+2.13.6
