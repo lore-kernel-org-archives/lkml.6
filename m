@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751187AbeCIMhO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 07:37:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41090 "EHLO mail.kernel.org"
+        id S932153AbeCIMhn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 07:37:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932166AbeCIMhM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 07:37:12 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDDDF206B2
+        id S1751147AbeCIMhm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 07:37:42 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71B8421723
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
 From: Masami Hiramatsu <mhiramat@kernel.org>
@@ -19,9 +19,9 @@ Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
         Alexei Starovoitov <ast@kernel.org>
-Subject: [RFC PATCH -tip 3/9] kprobes: Remove jprobe data structure and interfaces
-Date: Fri,  9 Mar 2018 21:36:47 +0900
-Message-Id: <152059900768.4214.1382786082808054746.stgit@devbox>
+Subject: [RFC PATCH -tip 4/9] kprobes: Ignore break_handler
+Date: Fri,  9 Mar 2018 21:37:17 +0900
+Message-Id: <152059903731.4214.9268892607457902327.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <152059891712.4214.9539716544254881611.stgit@devbox>
 References: <152059891712.4214.9539716544254881611.stgit@devbox>
@@ -33,87 +33,123 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove all interfaces of jprobe since it is no more
-used.
+Ignore break_handler related code because it was only
+used by jprobe and jprobe is removed.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- include/linux/kprobes.h |   44 --------------------------------------------
- 1 file changed, 44 deletions(-)
+ Documentation/kprobes.txt |    2 +-
+ kernel/kprobes.c          |   39 +++++----------------------------------
+ 2 files changed, 6 insertions(+), 35 deletions(-)
 
-diff --git a/include/linux/kprobes.h b/include/linux/kprobes.h
-index b520baa65682..f7a6c398b4bf 100644
---- a/include/linux/kprobes.h
-+++ b/include/linux/kprobes.h
-@@ -155,24 +155,6 @@ static inline int kprobe_ftrace(struct kprobe *p)
- }
+diff --git a/Documentation/kprobes.txt b/Documentation/kprobes.txt
+index 22208bf2386d..94df43224c6c 100644
+--- a/Documentation/kprobes.txt
++++ b/Documentation/kprobes.txt
+@@ -262,7 +262,7 @@ is optimized, that modification is ignored.  Thus, if you want to
+ tweak the kernel's execution path, you need to suppress optimization,
+ using one of the following techniques:
  
- /*
-- * Special probe type that uses setjmp-longjmp type tricks to resume
-- * execution at a specified entry with a matching prototype corresponding
-- * to the probed function - a trick to enable arguments to become
-- * accessible seamlessly by probe handling logic.
-- * Note:
-- * Because of the way compilers allocate stack space for local variables
-- * etc upfront, regardless of sub-scopes within a function, this mirroring
-- * principle currently works only for probes placed on function entry points.
-- */
--struct jprobe {
--	struct kprobe kp;
--	void *entry;	/* probe handling code to jump to */
--};
+-- Specify an empty function for the kprobe's post_handler or break_handler.
++- Specify an empty function for the kprobe's post_handler.
+ 
+ or
+ 
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index 6d5a7c29cf99..889986ee3d06 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -627,8 +627,8 @@ static void optimize_kprobe(struct kprobe *p)
+ 	    (kprobe_disabled(p) || kprobes_all_disarmed))
+ 		return;
+ 
+-	/* Both of break_handler and post_handler are not supported. */
+-	if (p->break_handler || p->post_handler)
++	/* kprobes with post_handler can not be optimized */
++	if (p->post_handler)
+ 		return;
+ 
+ 	op = container_of(p, struct optimized_kprobe, kp);
+@@ -1116,20 +1116,6 @@ static int aggr_fault_handler(struct kprobe *p, struct pt_regs *regs,
+ }
+ NOKPROBE_SYMBOL(aggr_fault_handler);
+ 
+-static int aggr_break_handler(struct kprobe *p, struct pt_regs *regs)
+-{
+-	struct kprobe *cur = __this_cpu_read(kprobe_instance);
+-	int ret = 0;
 -
--/* For backward compatibility with old code using JPROBE_ENTRY() */
--#define JPROBE_ENTRY(handler)	(handler)
+-	if (cur && cur->break_handler) {
+-		if (cur->break_handler(cur, regs))
+-			ret = 1;
+-	}
+-	reset_kprobe_instance();
+-	return ret;
+-}
+-NOKPROBE_SYMBOL(aggr_break_handler);
 -
+ /* Walks the list and increments nmissed count for multiprobe case */
+ void kprobes_inc_nmissed_count(struct kprobe *p)
+ {
+@@ -1270,24 +1256,15 @@ static void cleanup_rp_inst(struct kretprobe *rp)
+ }
+ NOKPROBE_SYMBOL(cleanup_rp_inst);
+ 
 -/*
-  * Function-return probe -
-  * Note:
-  * User needs to provide a handler function, and initialize maxactive.
-@@ -436,9 +418,6 @@ static inline void unregister_kprobe(struct kprobe *p)
- static inline void unregister_kprobes(struct kprobe **kps, int num)
+-* Add the new probe to ap->list. Fail if this is the
+-* second break_handler at the address
+-*/
++/* Add the new probe to ap->list */
+ static int add_new_kprobe(struct kprobe *ap, struct kprobe *p)
  {
- }
--static inline void jprobe_return(void)
--{
--}
- static inline int register_kretprobe(struct kretprobe *rp)
- {
- 	return -ENOSYS;
-@@ -465,20 +444,6 @@ static inline int enable_kprobe(struct kprobe *kp)
- 	return -ENOSYS;
- }
- #endif /* CONFIG_KPROBES */
--static inline int register_jprobe(struct jprobe *p)
--{
--	return -ENOSYS;
--}
--static inline int register_jprobes(struct jprobe **jps, int num)
--{
--	return -ENOSYS;
--}
--static inline void unregister_jprobe(struct jprobe *p)
--{
--}
--static inline void unregister_jprobes(struct jprobe **jps, int num)
--{
--}
- static inline int disable_kretprobe(struct kretprobe *rp)
- {
- 	return disable_kprobe(&rp->kp);
-@@ -487,15 +452,6 @@ static inline int enable_kretprobe(struct kretprobe *rp)
- {
- 	return enable_kprobe(&rp->kp);
- }
--static inline int disable_jprobe(struct jprobe *jp)
--{
--	return -ENOSYS;
--}
--static inline int enable_jprobe(struct jprobe *jp)
--{
--	return -ENOSYS;
--}
--
- #ifndef CONFIG_KPROBES
- static inline bool is_kprobe_insn_slot(unsigned long addr)
- {
+ 	BUG_ON(kprobe_gone(ap) || kprobe_gone(p));
+ 
+-	if (p->break_handler || p->post_handler)
++	if (p->post_handler)
+ 		unoptimize_kprobe(ap, true);	/* Fall back to normal kprobe */
+ 
+-	if (p->break_handler) {
+-		if (ap->break_handler)
+-			return -EEXIST;
+-		list_add_tail_rcu(&p->list, &ap->list);
+-		ap->break_handler = aggr_break_handler;
+-	} else
+-		list_add_rcu(&p->list, &ap->list);
++	list_add_rcu(&p->list, &ap->list);
+ 	if (p->post_handler && !ap->post_handler)
+ 		ap->post_handler = aggr_post_handler;
+ 
+@@ -1310,8 +1287,6 @@ static void init_aggr_kprobe(struct kprobe *ap, struct kprobe *p)
+ 	/* We don't care the kprobe which has gone. */
+ 	if (p->post_handler && !kprobe_gone(p))
+ 		ap->post_handler = aggr_post_handler;
+-	if (p->break_handler && !kprobe_gone(p))
+-		ap->break_handler = aggr_break_handler;
+ 
+ 	INIT_LIST_HEAD(&ap->list);
+ 	INIT_HLIST_NODE(&ap->hlist);
+@@ -1706,8 +1681,6 @@ static int __unregister_kprobe_top(struct kprobe *p)
+ 		goto disarmed;
+ 	else {
+ 		/* If disabling probe has special handlers, update aggrprobe */
+-		if (p->break_handler && !kprobe_gone(p))
+-			ap->break_handler = NULL;
+ 		if (p->post_handler && !kprobe_gone(p)) {
+ 			list_for_each_entry_rcu(list_p, &ap->list, list) {
+ 				if ((list_p != p) && (list_p->post_handler))
+@@ -1911,7 +1884,6 @@ int register_kretprobe(struct kretprobe *rp)
+ 	rp->kp.pre_handler = pre_handler_kretprobe;
+ 	rp->kp.post_handler = NULL;
+ 	rp->kp.fault_handler = NULL;
+-	rp->kp.break_handler = NULL;
+ 
+ 	/* Pre-allocate memory for max kretprobe instances */
+ 	if (rp->maxactive <= 0) {
+@@ -2034,7 +2006,6 @@ static void kill_kprobe(struct kprobe *p)
+ 		list_for_each_entry_rcu(kp, &p->list, list)
+ 			kp->flags |= KPROBE_FLAG_GONE;
+ 		p->post_handler = NULL;
+-		p->break_handler = NULL;
+ 		kill_optimized_kprobe(p);
+ 	}
+ 	/*
