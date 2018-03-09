@@ -1,76 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932664AbeCIVf0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 16:35:26 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46518 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751278AbeCIVfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 16:35:25 -0500
-Date: Fri, 9 Mar 2018 22:34:43 +0100
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: [GIT PULL] KVM fixes for Linux 4.16-rc5
-Message-ID: <20180309213443.GB21100@flask>
+        id S932588AbeCIVgS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 16:36:18 -0500
+Received: from mail-vk0-f46.google.com ([209.85.213.46]:45680 "EHLO
+        mail-vk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932157AbeCIVgR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 16:36:17 -0500
+X-Google-Smtp-Source: AG47ELspnAO+zPbSXx+Mn4UJd6TG7vu5PcVXECU58DmPZLiZoHmYamcYmhMDcJTf0CVSeVCZE9hLXA==
+Date: Fri, 9 Mar 2018 13:36:12 -0800
+From: Christoffer Dall <cdall@kernel.org>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Shunyong Yang <shunyong.yang@hxt-semitech.com>,
+        ard.biesheuvel@linaro.org, will.deacon@arm.com, eric.auger@redhat.com,
+        david.daney@cavium.com, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
+        Joey Zheng <yu.zheng@hxt-semitech.com>
+Subject: Re: [RFC PATCH] KVM: arm/arm64: vgic: change condition for level
+ interrupt resampling
+Message-ID: <20180309213612.GD1917@lvm>
+References: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
+ <9ad47673-068e-f732-d2ca-9c76a8fbdfbc@arm.com>
+ <0a15633d-8944-cb9b-3e6b-b08ee5ec42b9@arm.com>
+ <20180308161900.GC1917@lvm>
+ <86r2oubho3.wl-marc.zyngier@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <86r2oubho3.wl-marc.zyngier@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Thu, Mar 08, 2018 at 05:28:44PM +0000, Marc Zyngier wrote:
+> On Thu, 08 Mar 2018 16:19:00 +0000,
+> Christoffer Dall wrote:
+> > 
+> > On Thu, Mar 08, 2018 at 11:54:27AM +0000, Marc Zyngier wrote:
+> > > On 08/03/18 09:49, Marc Zyngier wrote:
 
-The following changes since commit 661e50bc853209e41a5c14a290ca4decc43cbfd1:
+[...]
 
-  Linux 4.16-rc4 (2018-03-04 14:54:11 -0800)
+> > > The state is now pending, we've really EOI'd the interrupt, and
+> > > yet lr_signals_eoi_mi() returns false, since the state is not 0.
+> > > The result is that we won't signal anything on the corresponding
+> > > irqfd, which people complain about. Meh.
+> > 
+> > So the core of the problem is that when we've entered the guest with
+> > PENDING+ACTIVE and when we exit (for some reason) we don't signal the
+> > resamplefd, right?  The solution seems to me that we don't ever do
+> > PENDING+ACTIVE if you need to resample after each deactivate.  What
+> > would be the point of appending a pending state that you only know to be
+> > valid after a resample anyway?
+> 
+> The question is then to identify that a given source needs to be
+> signalled back to VFIO. Calling into the eventfd code on the hot path
+> is pretty horrid (I'm not sure if we can really call into this with
+> interrupts disabled, for example).
+> 
 
-are available in the Git repository at:
+This feels like a bad layering violation to me as well.
 
-  git://git.kernel.org/pub/scm/virt/kvm/kvm tags/for-linus
+> > 
+> > > 
+> > > Example 2:
+> > > P+A -> guest EOI -> P -> delayed MI -> guest IAR -> A -> MI fires
+> > 
+> > We could be more clever and do the following calculation on every exit:
+> > 
+> > If you enter with P, and exit with either A or 0, then signal.
+> > 
+> > If you enter with P+A, and you exit with either P, A, or 0, then signal.
+> > 
+> > Wouldn't that also solve it?  (Although I have a feeling you'd miss some
+> > exits in this case).
+> 
+> I'd be more confident if we did forbid P+A for such interrupts
+> altogether, as they really feel like another kind of HW interrupt.
 
-for you to fetch changes up to 45e3b4759d230b057832fa751af9a853495a17bd:
+How about a slightly bigger hammer:  Can we avoid doing P+A for level
+interrupts completely?  I don't think that really makes much sense, and
+I think we simply everything if we just come back out and resample the
+line.  For an edge, something like a network card, there's a potential
+performance win to appending a new pending state, but I doubt that this
+is the case for level interrupts.
 
-  Merge tag 'kvm-s390-master-4.16-3' of git://git.kernel.org/pub/scm/linux/kernel/git/kvms390/linux (2018-03-06 17:42:28 +0100)
+The timer would be unaffected, because it's a HW interrupt.
 
-----------------------------------------------------------------
-KVM fixes for v4.16-rc5
-
-PPC:
- - Fix guest time accounting in the host
- - Fix large-page backing for radix guests on POWER9
- - Fix HPT guests on POWER9 backed by 2M or 1G pages
- - Compile fixes for some configs and gcc versions
-
-s390:
- - Fix random memory corruption when running as guest2 (e.g. KVM in
-   LPAR) and starting guest3 (e.g. nested KVM) with many CPUs
- - Export forgotten io interrupt delivery statistics counter
-
-----------------------------------------------------------------
-Christian Borntraeger (1):
-      KVM: s390: provide io interrupt kvm_stat
-
-David Hildenbrand (1):
-      KVM: s390: fix memory overwrites when not using SCA entries
-
-Laurent Vivier (1):
-      KVM: PPC: Book3S HV: Fix guest time accounting with VIRT_CPU_ACCOUNTING_GEN
-
-Paul Mackerras (4):
-      KVM: PPC: Fix compile error that occurs when CONFIG_ALTIVEC=n
-      KVM: PPC: Book3S: Fix compile error that occurs with some gcc versions
-      KVM: PPC: Book3S HV: Fix handling of large pages in radix page fault handler
-      KVM: PPC: Book3S HV: Fix VRMA initialization with 2MB or 1GB memory backing
-
-Radim Krčmář (2):
-      Merge tag 'kvm-ppc-fixes-4.16-1' of git://git.kernel.org/.../paulus/powerpc
-      Merge tag 'kvm-s390-master-4.16-3' of git://git.kernel.org/.../kvms390/linux
-
- arch/powerpc/kvm/book3s_64_mmu_radix.c | 69 +++++++++++++++++++++-------------
- arch/powerpc/kvm/book3s_hv.c           | 17 +++++----
- arch/powerpc/kvm/powerpc.c             |  4 +-
- arch/s390/kvm/kvm-s390.c               |  2 +
- 4 files changed, 57 insertions(+), 35 deletions(-)
+Thanks,
+-Christoffer
