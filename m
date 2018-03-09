@@ -1,49 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752025AbeCIBLm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 20:11:42 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6185 "EHLO huawei.com"
+        id S932085AbeCIBZO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 20:25:14 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35278 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751431AbeCIBLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 20:11:41 -0500
-Subject: Re: [PATCH v3] f2fs: add nowait aio support
-To: Hyunchul Lee <hyc.lee@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <kernel-team@lge.com>,
-        Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Hyunchul Lee <cheol.lee@lge.com>
-References: <1520505278-24735-1-git-send-email-hyc.lee@gmail.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <0ca9e2b7-eb63-65f3-ee70-a8cf5b90debf@huawei.com>
-Date: Fri, 9 Mar 2018 09:11:48 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1750880AbeCIBZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 20:25:13 -0500
+Date: Fri, 9 Mar 2018 09:24:59 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Artem Bityutskiy <dedekind1@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, Laurence Oberman <loberman@redhat.com>
+Subject: Re: [PATCH V3 0/4] genirq/affinity: irq vector spread among online
+ CPUs as far as possible
+Message-ID: <20180309012458.GD5228@ming.t460p>
+References: <20180308105358.1506-1-ming.lei@redhat.com>
+ <1520515113.20980.31.camel@gmail.com>
+ <20180308133440.GA2713@ming.t460p>
+ <alpine.DEB.2.21.1803090011150.1454@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <1520505278-24735-1-git-send-email-hyc.lee@gmail.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1803090011150.1454@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/3/8 18:34, Hyunchul Lee wrote:
-> From: Hyunchul Lee <cheol.lee@lge.com>
-> 
-> This patch adds nowait aio support[1].
-> 
-> Return EAGAIN if any of the following checks fail for direct I/O:
->   - i_rwsem is not lockable
->   - Blocks are not allocated at the write location
-> 
-> And xfstests generic/471 is passed.
-> 
->  [1]: 6be96d "Introduce RWF_NOWAIT and FMODE_AIO_NOWAIT"
-> 
-> Signed-off-by: Hyunchul Lee <cheol.lee@lge.com>
+Hi Thomas,
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+On Fri, Mar 09, 2018 at 12:20:09AM +0100, Thomas Gleixner wrote:
+> On Thu, 8 Mar 2018, Ming Lei wrote:
+> > Actually, it isn't a real fix, the real one is in the following two:
+> > 
+> > 	0c20244d458e scsi: megaraid_sas: fix selection of reply queue
+> > 	ed6d043be8cd scsi: hpsa: fix selection of reply queue
+> 
+> Where are these commits? Neither Linus tree not -next know anything about
+> them....
+
+Both aren't merged yet, but they should land V4.16, IMO.
+
+> 
+> > This patchset can't guarantee that all IRQ vectors are assigned by one
+> > online CPU, for example, in a quad-socket system, if only one processor
+> > is present, then some of vectors are still assigned by all offline CPUs,
+> > and it is a valid case, but still may cause io hang if drivers(hpsa,
+> > megaraid_sas) select reply queue in current way.
+> 
+> So my understanding is that these irq patches are enhancements and not bug
+> fixes. I'll queue them for 4.17 then.
+
+Wrt. this IO hang issue, these patches shouldn't be bug fix, but they may
+fix performance regression[1] for some systems caused by 84676c1f21 ("genirq/affinity:
+assign vectors to all possible CPUs").
+
+[1] https://marc.info/?l=linux-block&m=152050347831149&w=2
 
 Thanks,
+Ming
