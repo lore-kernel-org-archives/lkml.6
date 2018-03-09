@@ -1,70 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751397AbeCIXxd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 18:53:33 -0500
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:54900 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751231AbeCIXxc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 18:53:32 -0500
-X-Google-Smtp-Source: AG47ELvviysAjL8h81SirVfOChMK3j6AoVjIm4pLSgmmo/VGLoTJCPoO+cr48cDu8Zy7E9pFaUmyfw==
-X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
-From: valdis.kletnieks@vt.edu
-To: Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: ip6tables - last base chain position %u doesn't match underflow %u (hook %u
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Date: Fri, 09 Mar 2018 18:53:23 -0500
-Message-ID: <10387.1520639603@turing-police.cc.vt.edu>
+        id S1751743AbeCIXyI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 18:54:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34924 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751439AbeCIXyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 18:54:06 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 696BA208FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Fri, 9 Mar 2018 18:54:02 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        x86@kernel.org, Yang Bo <yangbo@deepin.com>,
+        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: Re: [RFC PATCH -tip 0/9] kprobes: Cleanup jprobe implementation
+Message-ID: <20180309185402.301a97ae@gandalf.local.home>
+In-Reply-To: <152059891712.4214.9539716544254881611.stgit@devbox>
+References: <152059891712.4214.9539716544254881611.stgit@devbox>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am hitting an issue with this commit:
+On Fri,  9 Mar 2018 21:35:17 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-commit 0d7df906a0e78079a02108b06d32c3ef2238ad25
-Author: Florian Westphal <fw@strlen.de>
-Date:   Tue Feb 27 19:42:37 2018 +0100
+> Hello,
+> 
+> Since we decided to remove jprobe from kernel last year,
+> its APIs are disabled and we worked on moving in-kernel
+> jprobe users to kprobes or trace-events. And now no jprobe
+> users are here anymore.
+> 
+> I think it is good time to get rid of jprobe implementation
+> from the kernel. However, I need other arch developers help
+> to complete it, since jprobe is implemented multi arch wide.
+> I can remove those code, but can not test all of those.
+> 
+> Here is the series of patches to show how to do that.
+> I tried to remove it from x86 tree. Basically we need to
+> do 3 things;
+> 
+>  - Remove jprobe functions (register/unregister,
+>    setjump/longjump) from generic/arch-dependent code.
+>    [1/9][2/9][3/9]
+>  - Remove break_handler related code.
+>    [4/9][5/9][6/9]
+>  - Do not disable preemption on exception handler
+>    [7/9][8/9][9/9]
+> 
+> The [3/9] and [6/9] are destractive changes except for x86
+> (means causes build errors) since those arch still have some
+> references of those functions. So we need to write patches
+> similar to [2/9] and [5/9] for each arch before applying those.
+> In this series I sorted it as this order just for review,
+> [3/9] and [6/9] should be applied after all archs have
+> been fixed.
+> 
+> Also, [7/9] is a kind of destractive, which changes required
+> behavior for the pre_handlers which changes regs->ip.
+> So we also need a patch similar to [7/9] for each arch too.
+> Fortunately, current in-tree such user is very limited, both
+> works only on x86. So it is not hurry, but we need to change
+> arch dependent code.
+>
 
-    netfilter: x_tables: ensure last rule in base chain matches underflow/policy
-    
-This trips on my system:
+Hi Masami,
 
-[   64.402790] ip6_tables: last base chain position 1136 doesn't match underflow 1344 (hook 1)
+thanks for doing all this. I do want to review this and your other
+patch set. I've just been traveling a lot. I came home from California
+yesterday and will be leaving Sunday to Portland for ELC. Will you be
+there?
 
-More annoyingly, the return value means that ip6tables aren't initialized
-so there's no firewall protection.
-
-My iptables isn't syzkaller generated - it's mostly crufty vi-generated. ;)
-
-Messages generated as I tried to build smaller tables to narrow down the problem:
-(not sure where it gets the numbers from, as I reduced it from 50 lines down to 3
-and no real correlation to the tables I was trying to load - in particular the numbers
-went up once and remained unchanged once, even though between each try I was
-whacking out another 5-10 lines...)
-
-[   64.402790] ip6_tables: last base chain position 1136 doesn't match underflow 1344 (hook 1)
-[ 1897.914828] ip6_tables: last base chain position 928 doesn't match underflow 1136 (hook 1)
-[ 1954.032735] ip6_tables: last base chain position 720 doesn't match underflow 928 (hook 1)
-[ 2021.813719] ip6_tables: last base chain position 920 doesn't match underflow 1128 (hook 1)
-[ 2035.044103] ip6_tables: last base chain position 920 doesn't match underflow 1128 (hook 1)
-[ 2060.594412] ip6_tables: last base chain position 616 doesn't match underflow 824 (hook 1)
-
-I finally got /etc/sysconfig/ip6tables down to this:
-
-# Generated by ip6tables-save v1.6.2 on Thu Mar  8 08:20:04 2018
-*filter
-:INPUT ACCEPT [0:0]
-:FORWARD ACCEPT [0:0]
-:OUTPUT ACCEPT [208207395:46346275671]
-[120166037:34218429901] -A INPUT -i lo+ -j ACCEPT
-[129329499:129691207309] -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-[0:0] -A INPUT -j DROP
-COMMIT
-# Completed on Thu Mar  8 08:20:04 2018
-
-About as minimal as it can get. :)
-
-Any ideas?
+-- Steve
