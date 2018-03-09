@@ -1,43 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751996AbeCIJLo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 04:11:44 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:43588 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751371AbeCIJLk (ORCPT
+        id S1751950AbeCIJLn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 04:11:43 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:53905 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751321AbeCIJLj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:11:40 -0500
-X-Google-Smtp-Source: AG47ELucN3G6KHo46k7ets/Ile7u26h+lP80r4kebBHmwBrld86KadDEoGRMbj2Od3pLKuqPpXh7u6Ip0VAcbdUbCJY=
+        Fri, 9 Mar 2018 04:11:39 -0500
+Date: Fri, 9 Mar 2018 01:11:14 -0800
+From: tip-bot for Mark Rutland <tipbot@zytor.com>
+Message-ID: <tip-6b31a2fa1e8f7bc6c2a474b4a12dad7a145cf83d@git.kernel.org>
+Cc: torvalds@linux-foundation.org, mingo@kernel.org, mark.rutland@arm.com,
+        peterz@infradead.org, ard.biesheuvel@linaro.org, will.deacon@arm.com,
+        matt@codeblueprint.co.uk, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        tglx@linutronix.de
+Reply-To: torvalds@linux-foundation.org, mingo@kernel.org,
+        peterz@infradead.org, mark.rutland@arm.com, ard.biesheuvel@linaro.org,
+        will.deacon@arm.com, matt@codeblueprint.co.uk,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com
+In-Reply-To: <20180308080020.22828-2-ard.biesheuvel@linaro.org>
+References: <20180308080020.22828-2-ard.biesheuvel@linaro.org>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:efi/core] efi/arm*: Only register page tables when they exist
+Git-Commit-ID: 6b31a2fa1e8f7bc6c2a474b4a12dad7a145cf83d
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com> <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Fri, 9 Mar 2018 14:41:39 +0530
-X-Google-Sender-Auth: N4t7QKdN2jgK3OKk_wwRe3gw52I
-Message-ID: <CAOh2x=kczewDo1wTR+46+M7SussWLQzMPZW2MgUnz3bmQq1Wkg@mail.gmail.com>
-Subject: Re: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support Tegra210
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        DTML <devicetree@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 6, 2018 at 10:04 PM, Peter De Schrijver
-<pdeschrijver@nvidia.com> wrote:
-> Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
-> support in this driver. Also allow for the case where the CPU voltage is
-> controlled directly by the DFLL rather than by a separate regulator object.
->
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
+Commit-ID:  6b31a2fa1e8f7bc6c2a474b4a12dad7a145cf83d
+Gitweb:     https://git.kernel.org/tip/6b31a2fa1e8f7bc6c2a474b4a12dad7a145cf83d
+Author:     Mark Rutland <mark.rutland@arm.com>
+AuthorDate: Thu, 8 Mar 2018 08:00:09 +0000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Fri, 9 Mar 2018 08:58:21 +0100
 
-You forgot to Cc maintainers and pm-list from the cpufreq world :(
+efi/arm*: Only register page tables when they exist
+
+Currently the arm/arm64 runtime code registers the runtime servies
+pagetables with ptdump regardless of whether runtime services page
+tables have been created.
+
+As efi_mm.pgd is NULL in these cases, attempting to dump the efi page
+tables results in a NULL pointer dereference in the ptdump code:
+
+/sys/kernel/debug# cat efi_page_tables
+[  479.522600] Unable to handle kernel NULL pointer dereference at virtual address 00000000
+[  479.522715] Mem abort info:
+[  479.522764]   ESR = 0x96000006
+[  479.522850]   Exception class = DABT (current EL), IL = 32 bits
+[  479.522899]   SET = 0, FnV = 0
+[  479.522937]   EA = 0, S1PTW = 0
+[  479.528200] Data abort info:
+[  479.528230]   ISV = 0, ISS = 0x00000006
+[  479.528317]   CM = 0, WnR = 0
+[  479.528317] user pgtable: 4k pages, 48-bit VAs, pgd = 0000000064ab0cb0
+[  479.528449] [0000000000000000] *pgd=00000000fbbe4003, *pud=00000000fb66e003, *pmd=0000000000000000
+[  479.528600] Internal error: Oops: 96000006 [#1] PREEMPT SMP
+[  479.528664] Modules linked in:
+[  479.528699] CPU: 0 PID: 2457 Comm: cat Not tainted 4.15.0-rc3-00065-g2ad2ee7ecb5c-dirty #7
+[  479.528799] Hardware name: FVP Base (DT)
+[  479.528899] pstate: 00400009 (nzcv daif +PAN -UAO)
+[  479.528941] pc : walk_pgd.isra.1+0x20/0x1d0
+[  479.529011] lr : ptdump_walk_pgd+0x30/0x50
+[  479.529105] sp : ffff00000bf4bc20
+[  479.529185] x29: ffff00000bf4bc20 x28: 0000ffff9d22e000
+[  479.529271] x27: 0000000000020000 x26: ffff80007b4c63c0
+[  479.529358] x25: 00000000014000c0 x24: ffff80007c098900
+[  479.529445] x23: ffff00000bf4beb8 x22: 0000000000000000
+[  479.529532] x21: ffff00000bf4bd70 x20: 0000000000000001
+[  479.529618] x19: ffff00000bf4bcb0 x18: 0000000000000000
+[  479.529760] x17: 000000000041a1c8 x16: ffff0000082139d8
+[  479.529800] x15: 0000ffff9d3c6030 x14: 0000ffff9d2527f4
+[  479.529924] x13: 00000000000003f3 x12: 0000000000000038
+[  479.530000] x11: 0000000000000003 x10: 0101010101010101
+[  479.530099] x9 : 0000000017e94050 x8 : 000000000000003f
+[  479.530226] x7 : 0000000000000000 x6 : 0000000000000000
+[  479.530313] x5 : 0000000000000001 x4 : 0000000000000000
+[  479.530416] x3 : ffff000009069fd8 x2 : 0000000000000000
+[  479.530500] x1 : 0000000000000000 x0 : 0000000000000000
+[  479.530599] Process cat (pid: 2457, stack limit = 0x000000005d1b0e6f)
+[  479.530660] Call trace:
+[  479.530746]  walk_pgd.isra.1+0x20/0x1d0
+[  479.530833]  ptdump_walk_pgd+0x30/0x50
+[  479.530907]  ptdump_show+0x10/0x20
+[  479.530920]  seq_read+0xc8/0x470
+[  479.531023]  full_proxy_read+0x60/0x90
+[  479.531100]  __vfs_read+0x18/0x100
+[  479.531180]  vfs_read+0x88/0x160
+[  479.531267]  SyS_read+0x48/0xb0
+[  479.531299]  el0_svc_naked+0x20/0x24
+[  479.531400] Code: 91400420 f90033a0 a90707a2 f9403fa0 (f9400000)
+[  479.531499] ---[ end trace bfe8e28d8acb2b67 ]---
+Segmentation fault
+
+Let's avoid this problem by only registering the tables after their
+successful creation, which is also less confusing when EFI runtime
+services are not in use.
+
+Reported-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180308080020.22828-2-ard.biesheuvel@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ drivers/firmware/efi/arm-runtime.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
+index 1cc41c3d6315..86a1ad17a32e 100644
+--- a/drivers/firmware/efi/arm-runtime.c
++++ b/drivers/firmware/efi/arm-runtime.c
+@@ -54,6 +54,9 @@ static struct ptdump_info efi_ptdump_info = {
+ 
+ static int __init ptdump_init(void)
+ {
++	if (!efi_enabled(EFI_RUNTIME_SERVICES))
++		return 0;
++
+ 	return ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
+ }
+ device_initcall(ptdump_init);
