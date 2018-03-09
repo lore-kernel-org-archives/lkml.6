@@ -1,167 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751205AbeCIJeh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 04:34:37 -0500
-Received: from esa3.dell-outbound.iphmx.com ([68.232.153.94]:59587 "EHLO
-        esa3.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751167AbeCIJef (ORCPT
+        id S1751075AbeCIJhG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 04:37:06 -0500
+Received: from smtprelay0226.hostedemail.com ([216.40.44.226]:44600 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750883AbeCIJhF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:34:35 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FjAADUU6Jah8qZ6EReGQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQcBAQEBAYQmfygKg0aKHo13ggKBFocejQyCFQqFJQIagnUhNBgBAgEBAQE?=
- =?us-ascii?q?BAQIBAhABAQEIDQkIKC6COCKCSgEBAQEDIwQNOgsMBAIBCBEBAwEBAQICHwQDA?=
- =?us-ascii?q?gICHyUBAgEFCAIEAQ0FCIR5AxWsQYFsOocqDYEwghqBDoQogi6DPIMtgmqCJRk?=
- =?us-ascii?q?QIQKCT4JiBI1/jCUxCY0ygy2Oa4oyhxWBLB6CC3BPgkOCMRAMFoFldwGIQyqBB?=
- =?us-ascii?q?4EXAQEB?=
-X-IPAS-Result: =?us-ascii?q?A2FjAADUU6Jah8qZ6EReGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
- =?us-ascii?q?mfygKg0aKHo13ggKBFocejQyCFQqFJQIagnUhNBgBAgEBAQEBAQIBAhABAQEID?=
- =?us-ascii?q?QkIKC6COCKCSgEBAQEDIwQNOgsMBAIBCBEBAwEBAQICHwQDAgICHyUBAgEFCAI?=
- =?us-ascii?q?EAQ0FCIR5AxWsQYFsOocqDYEwghqBDoQogi6DPIMtgmqCJRkQIQKCT4JiBI1/j?=
- =?us-ascii?q?CUxCY0ygy2Oa4oyhxWBLB6CC3BPgkOCMRAMFoFldwGIQyqBB4EXAQEB?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.187
-X-IronPort-AV: E=Sophos;i="5.47,444,1515477600";
-   d="scan'208";a="147432509"
-X-DLP: DLP_GlobalPCIDSS
-To: <kai.heng.feng@canonical.com>, <pali.rohar@gmail.com>
-CC: <mjg59@srcf.ucam.org>, <dvhart@infradead.org>, <andy@infradead.org>,
-        <tiwai@suse.com>, <platform-driver-x86@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>
-Subject: RE: [PATCH v2 3/3] ALSA: hda: Disabled unused audio controller for
- Dell platforms with Switchable Graphics
-Thread-Topic: [PATCH v2 3/3] ALSA: hda: Disabled unused audio controller for
- Dell platforms with Switchable Graphics
-Thread-Index: AQHTtr1XC+3UjKIddE2I55hGuXPKiaPIAceAgAAHyYD//5ufkA==
-Date: Fri, 9 Mar 2018 09:34:01 +0000
-Message-ID: <014795f5a3014cd3bf55de26f76a5af8@ausx13mpc124.AMER.DELL.COM>
-References: <20180308091023.9061-1-kai.heng.feng@canonical.com>
- <20180308091023.9061-3-kai.heng.feng@canonical.com>
- <20180309090223.xb55ltac4pfesdrh@pali>
- <723DA929-C9FA-4F69-8D3A-03D8A75D09A6@canonical.com>
-In-Reply-To: <723DA929-C9FA-4F69-8D3A-03D8A75D09A6@canonical.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        Fri, 9 Mar 2018 04:37:05 -0500
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:541:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1431:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3354:3622:3865:3866:3870:3871:3872:3874:4321:4605:5007:6119:7576:7903:9121:10004:10400:10848:11026:11232:11657:11658:11914:12043:12296:12438:12555:12740:12760:12895:12986:13069:13311:13357:13439:14181:14659:14721:21080:21433:21451:21627:30012:30054:30060:30065:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: spoon03_206a9170b4c39
+X-Filterd-Recvd-Size: 3125
+Message-ID: <1520588221.11634.26.camel@perches.com>
+Subject: Re: [PATCH 12/12] efi: make const array 'apple' static
+From: Joe Perches <joe@perches.com>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Colin Ian King <colin.king@canonical.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date: Fri, 09 Mar 2018 01:37:01 -0800
+In-Reply-To: <CAKv+Gu-h9pZLxf6tp++UDy4LCjSu-3uUQDRFS3=HcTjnBdZ2Vg@mail.gmail.com>
+References: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
+         <20180308080020.22828-13-ard.biesheuvel@linaro.org>
+         <1520507105.11634.5.camel@perches.com>
+         <CAKv+Gu8iMvzvSP9-YPe+ms4qVMjcQqNQ25Wa16JW_tEG7P+jtQ@mail.gmail.com>
+         <CAKv+Gu-h9pZLxf6tp++UDy4LCjSu-3uUQDRFS3=HcTjnBdZ2Vg@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w299YjuV021474
 
-> -----Original Message-----
-> From: Kai Heng Feng [mailto:kai.heng.feng@canonical.com]
-> Sent: Friday, March 9, 2018 5:30 PM
-> To: Pali Rohár <pali.rohar@gmail.com>
-> Cc: mjg59@srcf.ucam.org; dvhart@infradead.org; andy@infradead.org;
-> Limonciello, Mario <Mario_Limonciello@Dell.com>; tiwai@suse.com; platform-
-> driver-x86@vger.kernel.org; Linux Kernel Mailing List <linux-
-> kernel@vger.kernel.org>; alsa-devel@alsa-project.org
-> Subject: Re: [PATCH v2 3/3] ALSA: hda: Disabled unused audio controller for Dell
-> platforms with Switchable Graphics
-> 
-> 
-> > On Mar 9, 2018, at 5:02 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
-> >
-> > On Thursday 08 March 2018 17:10:23 Kai-Heng Feng wrote:
-> >> Some Dell platforms (Preicsion 7510/7710/7520/7720) have a BIOS option
-> >> "Switchable Graphics" (SG).
-> >>
-> >> When SG is enabled, we have:
-> >> 00:02.0 VGA compatible controller: Intel Corporation Device 591b (rev 04)
-> >> 00:1f.3 Audio device: Intel Corporation CM238 HD Audio Controller (rev 31)
-> >> 01:00.0 VGA compatible controller: Advanced Micro Devices, Inc.
-> >> [AMD/ATI] Ellesmere [Polaris10]
-> >> 01:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Ellesmere
-> >> [Radeon RX 580]
-> >>
-> >> The Intel Audio outputs all the sound, including HDMI audio. The audio
-> >> controller comes with AMD graphics doesn't get used.
-> >>
-> >> When SG is disabled, we have:
-> >> 00:1f.3 Audio device: Intel Corporation CM238 HD Audio Controller (rev 31)
-> >> 01:00.0 VGA compatible controller: Advanced Micro Devices, Inc.
-> >> [AMD/ATI] Ellesmere [Polaris10]
-> >> 01:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Ellesmere
-> >> [Radeon RX 580]
-> >>
-> >> Now it's a typical discrete-only system. HDMI audio comes from AMD audio
-> >> controller, others from Intel audio controller.
-> >>
-> >> When SG is enabled, the unused AMD audio controller still exposes its
-> >> sysfs, so userspace still opens the control file and stream. If
-> >> userspace tries to output sound through the stream, it hangs when
-> >> runtime suspend kicks in:
-> >> [ 12.796265] snd_hda_intel 0000:01:00.1: Disabling via vga_switcheroo
-> >> [ 12.796367] snd_hda_intel 0000:01:00.1: Cannot lock devices!
-> >>
-> >> Since the discrete audio controller isn't useful when SG enabled, we
-> >> should just disable the device.
-> >>
-> >> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> >> ---
-> >> v2: Mario suggested to squash the HDA part into the same series.
-> >>
-> >>  sound/pci/hda/hda_intel.c | 35 +++++++++++++++++++++++++++++++++++
-> >>  1 file changed, 35 insertions(+)
-> >>
-> >> diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-> >> index 96143df19b21..8e3e8b88624a 100644
-> >> --- a/sound/pci/hda/hda_intel.c
-> >> +++ b/sound/pci/hda/hda_intel.c
-> >> @@ -49,6 +49,7 @@
-> >>  #include <linux/clocksource.h>
-> >>  #include <linux/time.h>
-> >>  #include <linux/completion.h>
-> >> +#include <linux/dell-common.h>
-> >>
-> >>  #ifdef CONFIG_X86
-> >>  /* for snoop control */
-> >> @@ -1620,6 +1621,35 @@ static void check_msi(struct azx *chip)
-> >>  	}
-> >>  }
-> >>
-> >> +#if IS_ENABLED(CONFIG_DELL_LAPTOP)
-> >> +static bool check_dell_switchable_gfx(struct pci_dev *pdev)
-> >> +{
-> >> +	static int (*dell_switchable_gfx_enabled_func)(bool *);
-> >> +	bool enabled;
-> >> +	int err;
-> >> +
-> >> +	if (pdev->vendor != PCI_VENDOR_ID_ATI ||
-> >> +	    pdev->subsystem_vendor != PCI_VENDOR_ID_DELL)
-> >> +		return false;
-> >
-> > Are you sure that you want to do this check unconditionally on all
-> > machines which have enabled CONFIG_DELL_LAPTOP?
-> >
-> > Subvendor ID_DELL for dell specific code is not suspicious, but ID_ATI
-> > is. What would happen if ATI vendor changes to NVIDIA or other which is
-> > not related to Dell?
-> 
-> We only check it when it's both ATI and DELL, otherwise just return false?
-> 
-> The platform does have a NVIDIA variant, but the discrete NVIDIA have a
-> audio controller, hence it doesn't have the issue.
-> The issue only happens to AMD/ATI configs with "Switchable Graphics" option.
-> 
+On Fri, 2018-03-09 at 07:44 +0000, Ard Biesheuvel wrote:
+> On 9 March 2018 at 07:43, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> > On 8 March 2018 at 11:05, Joe Perches <joe@perches.com> wrote:
+> > > On Thu, 2018-03-08 at 08:00 +0000, Ard Biesheuvel wrote:
+> > > > From: Colin Ian King <colin.king@canonical.com>
+> > > > 
+> > > > Don't populate the const read-only array 'buf' on the stack but instead
+> > > > make it static. Makes the object code smaller by 64 bytes:
+> > > > 
+> > > > Before:
+> > > >    text          data     bss     dec     hex filename
+> > > >    9264             1      16    9281    2441 arch/x86/boot/compressed/eboot.o
+> > > > 
+> > > > After:
+> > > >    text          data     bss     dec     hex filename
+> > > >    9200             1      16    9217    2401 arch/x86/boot/compressed/eboot.o
+> > > > 
+> > > > (gcc version 7.2.0 x86_64)
+> > > > 
+> > > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > > > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > > > ---
+> > > >  arch/x86/boot/compressed/eboot.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
+> > > > index 886a9115af62..f2251c1c9853 100644
+> > > > --- a/arch/x86/boot/compressed/eboot.c
+> > > > +++ b/arch/x86/boot/compressed/eboot.c
+> > > > @@ -423,7 +423,7 @@ static void retrieve_apple_device_properties(struct boot_params *boot_params)
+> > > > 
+> > > >  static void setup_quirks(struct boot_params *boot_params)
+> > > >  {
+> > > > -     efi_char16_t const apple[] = { 'A', 'p', 'p', 'l', 'e', 0 };
+> > > > +     static efi_char16_t const apple[] = { 'A', 'p', 'p', 'l', 'e', 0 };
+> > > 
+> > > Perhaps
+> > > 
+> > > static const efi_char16_t apple[] ...
+> > > 
+> > > is better.
+> > > 
+> > 
+> > Why would that be any better?
 
-Pali is your concern that this code for matching vendor/subsystem is running
-on non-Dell too?  The only other recommendation I think that can be to restrict
-to matching Dell OEM strings in SMBIOS table, but I don't think that's any better
-than the matching for VID/SSVID.
-
-> >
-> > Interesting question would be, how handle this situation Windows?
-> 
-> I don't know how this platform handles this on Windows, I guess we need
-> Mario to shed some lights here.
-
-Sorry I don't have this information to share.   I don't think it's too useful here
-anyway though because Windows driver architecture is much different in this
-area.
+It'd be more like the the style used
+in the rest of the kernel.
