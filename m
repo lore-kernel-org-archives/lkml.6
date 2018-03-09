@@ -1,130 +1,281 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751216AbeCINhI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 08:37:08 -0500
-Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:57908 "EHLO
-        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751106AbeCINhG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 08:37:06 -0500
-Subject: Re: [PATCH v6 02/17] media: doc: add document for rkisp1 meta buffer
- format
-To: Jacob Chen <jacob-chen@iotwrt.com>, linux-rockchip@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        mchehab@kernel.org, linux-media@vger.kernel.org,
-        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
-        tfiga@chromium.org, zhengsq@rock-chips.com,
-        laurent.pinchart@ideasonboard.com, zyc@rock-chips.com,
-        eddie.cai.linux@gmail.com, jeffy.chen@rock-chips.com,
-        devicetree@vger.kernel.org, heiko@sntech.de,
-        Jacob Chen <jacob2.chen@rock-chips.com>,
-        Jacob Chen <jacob-chen@rock-chips.com>
-References: <20180308094807.9443-1-jacob-chen@iotwrt.com>
- <20180308094807.9443-3-jacob-chen@iotwrt.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <036c8bbe-c17f-b6fa-8432-fd7419adeda9@xs4all.nl>
-Date: Fri, 9 Mar 2018 14:37:03 +0100
+        id S932135AbeCINhZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 08:37:25 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51794 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751106AbeCINhX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 08:37:23 -0500
+Subject: Re: [RFC PATCH] KVM: arm/arm64: vgic: change condition for level
+ interrupt resampling
+To: Auger Eric <eric.auger@redhat.com>,
+        "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
+        "cdall@kernel.org" <cdall@kernel.org>
+Cc: "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "david.daney@cavium.com" <david.daney@cavium.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+References: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
+ <9ad47673-068e-f732-d2ca-9c76a8fbdfbc@arm.com>
+ <0a15633d-8944-cb9b-3e6b-b08ee5ec42b9@arm.com> <20180308161900.GC1917@lvm>
+ <86r2oubho3.wl-marc.zyngier@arm.com>
+ <cf815673-e20e-c1e1-2d79-2f47261b2412@redhat.com>
+ <1520565257.2583.57.camel@hxt-semitech.com>
+ <959b6484-c683-65b2-a1e5-3e3784865682@arm.com>
+ <c2c51dab-3e41-5703-0f55-8469ea6bcd6c@redhat.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <ea2ef0cd-1710-f402-d829-cff5014c6dce@arm.com>
+Date: Fri, 9 Mar 2018 13:37:17 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180308094807.9443-3-jacob-chen@iotwrt.com>
+In-Reply-To: <c2c51dab-3e41-5703-0f55-8469ea6bcd6c@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfCFHearEPExDmuFtvs/FGJehmISD/fqH/7KHBE2ci7fA3R72MxUWEN2Sf04XY7BNqLSIHTSavFGQOlIcusPSg5DS9VdOlFprmXuRWaQu/SVv52fALxkS
- GaBbgEYpXhvhfI/buDBACi3XbHi4mAHQ8lJVJTYuh3m1iclvxAyGTbKMUTy5UWneEkdv6hwTADlWxLTmwDrcFr8EcofiUkZKaz7OhqMqPU5ANQEftOUA6F2c
- ILV7PjnQnXYLSA9MyUo1O86hz7bhImbzXr2wEehhONu6hZbxo8x3FSJpBYLdDWFL1tB7ZRGDC8v6GJeRpZ5MbtgdUvCZKyMAqF9YUatgr2EvMnRmIKTY5jFP
- 06JBWdQz5lounqwdQlQXQSFfx0kii0E6Job1SDK7yLXgX1omfrwQc0oBs/x7N8QvKTZUCMLqi77+b7/5tPEpQMn/BsotyQ+bcvpurkvcXgYQnOYeeYt2aE5j
- MOL7lUIdbzj4o6M1U3+YcUXZLFdO9cn3k001afakxDqCtDt0zKveGbIB94M6/qtNrXPs0J7T6xxRuKL+g+0ISmtAd9StWbnUl3lE7MN71jKN2Qo8U9vt7bSF
- dQFwg4EnGw5NVYhhfN0QobQt74H+ZGCqNgKz42ofwilXEjUXZE4jmnspvaV/oOmGztMgfCduriPWohiqOwVGYtNgfNg7XbJwdHKHhgK9iQ6c2AzzYs+renFA
- 7lsKHeyQVfqNRgio4ghZDwaZQjLv5etJ
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/03/18 10:47, Jacob Chen wrote:
-> From: Jacob Chen <jacob2.chen@rock-chips.com>
+On 09/03/18 13:10, Auger Eric wrote:
+> Hi Marc,
 > 
-> This commit add docuemnt for rkisp1 meta buffer format
-> 
-> Signed-off-by: Jacob Chen <jacob-chen@rock-chips.com>
-> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-> ---
->  Documentation/media/uapi/v4l/meta-formats.rst        |  2 ++
->  .../media/uapi/v4l/pixfmt-meta-rkisp1-params.rst     | 20 ++++++++++++++++++++
->  .../media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst       | 18 ++++++++++++++++++
->  3 files changed, 40 insertions(+)
->  create mode 100644 Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst
->  create mode 100644 Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst
-> 
-> diff --git a/Documentation/media/uapi/v4l/meta-formats.rst b/Documentation/media/uapi/v4l/meta-formats.rst
-> index 0c4e1ecf5879..44e7edbf1dae 100644
-> --- a/Documentation/media/uapi/v4l/meta-formats.rst
-> +++ b/Documentation/media/uapi/v4l/meta-formats.rst
-> @@ -15,3 +15,5 @@ These formats are used for the :ref:`metadata` interface only.
->      pixfmt-meta-uvc
->      pixfmt-meta-vsp1-hgo
->      pixfmt-meta-vsp1-hgt
-> +    pixfmt-meta-rkisp1-params
-> +    pixfmt-meta-rkisp1-stat
-> diff --git a/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst b/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst
-> new file mode 100644
-> index 000000000000..2ff4f4309795
-> --- /dev/null
-> +++ b/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst
-> @@ -0,0 +1,20 @@
-> +.. -*- coding: utf-8; mode: rst -*-
-> +
-> +.. _v4l2-meta-fmt-rkisp1-params:
-> +
-> +*******************************
-> +V4L2_META_FMT_RK_ISP1_PARAMS
-> +*******************************
-> +
-> +Rockchip ISP1 Parameters Data
-> +
-> +Description
-> +===========
-> +
-> +This format describes input parameters for the Rockchip ISP1.
-> +
-> +It uses c-struct :c:type:`rkisp1_isp_params_cfg`, which is defined in
-> +the ``linux/rkisp1-config.h`` header file, see it for details.
-> +
-> +The parameters consist of multiple modules.
-> +The module won't be updated if the correspond bit was not set in module_*_update.
+> On 09/03/18 10:40, Marc Zyngier wrote:
+>> On 09/03/18 03:14, Yang, Shunyong wrote:
+>>
+>> [trimming things a bit]
+>>
+>>>>>>>>>  static bool lr_signals_eoi_mi(u32 lr_val)
+>>>>>>>>>  {
+>>>>>>>>> -	return !(lr_val & GICH_LR_STATE) && (lr_val &
+>>>>>>>>> GICH_LR_EOI) &&
+>>>>>>>>> -	       !(lr_val & GICH_LR_HW);
+>>>>>>>>> +	return !((lr_val & GICH_LR_STATE) ^ GICH_LR_STATE)
+>>>>>>>>> &&
+>>>>>>>> That feels very wrong. You're now signalling the resampling
+>>>>>>>> in both
+>>>>>>>> invalid and pending+active, and the latter state doesn't mean
+>>>>>>>> you've
+>>>>>>>> EOIed anything. You're now over-signalling, and signalling
+>>>>>>>> the
+>>>>>>>> wrong event.
+>>>
+>>> I am using XOR GICH_LR_STATE(0b'11), so only 0b'11(P&A) will be
+>>> signaled. Other state will be false.
+>>
+>> And that's really wrong. P+A is a state where the interrupt is still
+>> being processed. The only case where we can reliably detect that an
+>> interrupt has been EOId is when state==0.
+>>
+>>> And I am curious why the EOI bit in LR indicate the end of interrupt
+>>> regardless of the state? Please bear with me as I am a newbie in this
+>>> part.
+>>
+>> The EOI bit indicates that we've requested a maintenance interrupt from
+>> the HW. It only triggers when state==0. If you have (like you describe
+>> further down) a sequence of
+>>
+>> P -> A -> (exit) -> P+A -> P -> A -> (exit) P+A ...
+>>
+>> we can never reliably detect that an interrupt has been EOId (because
+>> the HW never delivers a maintenance interrupt), other than by tracking
+>> the states before and after exit, and hoping that you've done an exit
+>> because you're touching the source of the interrupt.
+>>
+>>>>>>> Also, any guideline on how to reproduce this would be much
+>>>>>>> appreciated.
+>>>>>>> I never used this mdev/mtty thing, so please bear with me.
+>>>>>>>
+>>>>>>> Thanks,
+>>>>>>>
+>>>>>>> 	M.
+>>>
+>>> The mdev/mtty documentation is at Documentation/vfio-mediated-
+>>> device.txt. It docmented how to enable mtty device.
+>>> And support for "vfio-pci,sysfsdev" should be availabe in your qemu
+>>> version (I compiled the latest version).
+>>> Following is my commond to run qemu with mdev support,
+>>> "qemu-system-aarch64 -m 1024 -cpu host -M virt,gic_version=3 -nographic
+>>> \
+>>> -kernel /home/yangsy/up-kvm/arch/arm64/boot/Image.gz \
+>>> -initrd /home/yangsy/kvm/ramdisk/initrd.img \
+>>> -netdev user,id=eth0 -device virtio-net-device,netdev=eth0 -enable-kvm
+>>> \
+>>> -append "root=/dev/ram rdinit=/sbin/init" \
+>>> -device vfio-pci,sysfsdev=/sys/bus/mdev/devices/83b8f4f2-509f-382f-
+>>> 3c1e-e6bfe0fa1001
+>>> "
+>>> For just test this vgic case, type "cat /dev/ttyS0" in guest. But if
+>>> test read/write multiple bytes, please apply following patch also
+>>> https://patchwork.kernel.org/patch/10267039/
+>>
+>> Thanks. I'll have a look.
+>>
+>>>
+>>>>>>>
+>>>>>>> From 66a7c4cfc1029b0169dd771e196e2876ba3f17b1 Mon Sep 17
+>>>>>>> 00:00:00 2001
+>>>>>>> From: Marc Zyngier <marc.zyngier@arm.com>
+>>>>>>> Date: Thu, 8 Mar 2018 11:14:06 +0000
+>>>>>>> Subject: [PATCH] KVM: arm/arm64: Do not rely on LR state to
+>>>>>>> guess EOI MI
+>>>>>>>  status
+>>>>>>>
+>>>>>>> We so far rely on the LR state to decide whether the guest has
+>>>>>>> EOI'd a level interrupt or not. While this looks like a good
+>>>>>>> idea on the surface, it leads to a couple of annoying corner
+>>>>>>> cases:
+>>>>>>>
+>>>>>>> Example 1: (P = Pending, A = Active, MI = Maintenance
+>>>>>>> Interrupt)
+>>>>>>> P -> guest IAR -> A -> exit/entry -> P+A -> guest EOI -> P ->
+>>>>>>> MI
+>>>>>> Do we really get an EOI maintenance interrupt here?  Reading the
+>>>>>> MISR
+>>>>>> and EISR descriptions make me thing this is not the case...
+>>>> Hum yes in EISR it is said that ICH_LR.State = 0b00!
+>>>>>
+>>>>>
+>>>>> Yeah, it looks like I always want EISR to do what I want, and not
+>>>>> to
+>>>>> do what it does. Man, this thing is such a piece of crap.
+>>>>>
+>>>>> OK, scratch that. We need to do it without the help of the HW.
+>>>
+>>> If convenient, maybe we can get something from HW gus. :-)
+>>>
+>>> Hi, Marc,
+>>>
+>>> Do you need me to test the patch you posted for EISR? As it seems there
+>>> are some things need more discussion.
+>>
+>> Yeah, that approach doesn't work. I'll try and come up with another
+>> approach (basically banning P+A for interrupts that require a back
+>> notification).
+>>
+>> [...]
+>>
+>>> I have added some logs to compare level interrupt between pl011(hwirq =
+>>> 33) and mtty (hwirq = 36). In mtty case, vgic_queue_irq_unlock() is
+>>> called twice. But only called once in pl011.
+>>>
+>>> following is the log,
+>>> ===Without my patch===
+>>> ###PL011###
+>>>
+>>> <4>[  180.598266] kvm_vgic_inject_irq 453 irq:33 enabled:1 config:1
+>>> latch:0 level:1
+>>> <4>[  180.604460] ##vgic_queue_irq_unlock 388 irq->intid:33 enable:1
+>>> level:1
+>>> <4>[  180.604540] ==>90a0020000000021(active)
+>>> <4>[  180.614878] ==>d0a0020000000021(P&A)
+>>> <4>[  180.618415] kvm_vgic_inject_irq 453 irq:33 enabled:1 config:1
+>>> latch:0 level:0
+>>> <4>[  180.625508] ==>90a0020000000021(active)
+>>> <4>[  180.629343] ==>10a0020000000021(inactive)
+>>>
+>>> ###mtty-vfio###
+>>> <4>[  223.123329] kvm_vgic_inject_irq 453 irq:36 enabled:0 config:1
+>>> latch:0 level:1
+>>> <4>[  223.129736] ##vgic_queue_irq_unlock 388 irq->intid:36 enable:1
+>>> level:1
+>>> <4>[  223.136027] ==>50a0020000000024(pending)
+>>> <4>[  223.139954] ##vgic_queue_irq_unlock 388 irq->intid:36 enable:1
+>>> level:1
+>>> <4>[  223.146460] ==>90a0020000000024(active)
+>>> <4>[  223.150273] ==>d0a0020000000024(P&A)
+>>> <4>[  223.153827] ==>90a0020000000024(active)
+>>> <4>[  223.157668] ==>d0a0020000000024(P&A)
+>>
+>> So the line is never lowered. That's very odd.
+>>
+>>> ...........cyclic...
+>>>
+>>> I rembered in some tests the state change is cyclic P->A->P&A. But it
+>>> seems I cannot reproduce it. Is output LR state
+>>> in kvm_vgic_inject_irq() reliable?
+>>>
+>>> ===With my patch===
+>>> ###PL011###
+>>> <4>[  114.798528] kvm_vgic_inject_irq 453 irq:33 enabled:1 config:1
+>>> latch:0 level:1
+>>> <4>[  114.804743] ##vgic_queue_irq_unlock 388 irq->intid:33 enable:1
+>>> level:1
+>>> <4>[  114.804796] ==>90a0020000000021(active)
+>>> <4>[  114.815077] ==>d0a0020000000021(P&A)
+>>> <4>[  114.818628] kvm_vgic_inject_irq 453 irq:33 enabled:1 config:1
+>>> latch:0 level:0
+>>> <4>[  114.825726] ==>90a0020000000021(active)
+>>> <4>[  114.829560] ==>10a0020000000021(inactive)
+>>>
+>>> ###mtty-vfio###
+>>>
+>>> <4>[  161.579083] kvm_vgic_inject_irq 453 irq:36 enabled:0 config:1
+>>> latch:0 level:1
+>>> <4>[  161.585419] ##vgic_queue_irq_unlock 388 irq->intid:36 enable:1
+>>> level:1
+>>> <4>[  161.591780] ==>50a0020000000024(pending)
+>>> <4>[  161.595708] ##vgic_queue_irq_unlock 388 irq->intid:36 enable:1
+>>> level:1
+>>> <4>[  161.602204] ==>90a0020000000024(active)
+>>> <4>[  161.606023] ==>d0a0020000000024(P&A)
+>>> <4>[  161.609561] kvm_vgic_inject_irq 453 irq:36 enabled:1 config:1
+>>> latch:0 level:0
+>>> <4>[  161.616693] ==>10a0020000000024(inactive)
+>>> <4>[  161.620745] kvm_vgic_inject_irq 453 irq:36 enabled:1 config:1
+>>> latch:0 level:1
+>>> <4>[  161.627800] ##vgic_queue_irq_unlock 388 irq->intid:36 enable:1
+>>> level:1
+>>> <4>[  161.627849] ==>90a0020000000024(active)
+>>> <4>[  161.640076] ==>d0a0020000000024(P&A)
+>>> <4>[  161.642689] kvm_vgic_inject_irq 453 irq:36 enabled:1 config:1
+>>> latch:0 level:0
+>>> <4>[  161.649822] ==>10a0020000000024(inactive)
+>>
+>> Which is really bizarre. The device only lowers the line when it is
+>> being told that the interrupt has been processed. That really smells of
+>> a bug in the device emulation. It should be lowered when the guest
+>> clears the interrupt status at the device level, and not when notified
+>> that the interrupt has been completed at the interrupt controller level.
+> Not sure I get what you mean. To me the guest driver may have properly
+> acked the interrupt at HW level. But this cannot lower the virtual line
+> level. 
 
-correspond -> corresponding
+Why? How? If the guest has indeed talked to the device, where is the
+trap? How comes there is no lowering of the line?
 
-> diff --git a/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst b/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst
-> new file mode 100644
-> index 000000000000..dca8befe58f1
-> --- /dev/null
-> +++ b/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst
-> @@ -0,0 +1,18 @@
-> +.. -*- coding: utf-8; mode: rst -*-
-> +
-> +.. _v4l2-meta-fmt-rkisp1-stat:
-> +
-> +*******************************
-> +V4L2_META_FMT_RK_ISP1_STAT_3A
-> +*******************************
-> +
-> +Rockchip ISP1 Statistics Data
-> +
-> +Description
-> +===========
-> +
-> +This format describes image color statistics information generated by the Rockchip
-> +ISP1.
-> +
-> +It use c-struct :c:type:`rkisp1_stat_buffer`, which is defined in
+That's now how level interrupts are modelled, which is what we're
+supposed to deal with here.
 
-use -> uses
+> The virtual line level only is set when an interrupt hits and the
+> VFIO irq handler signals the irqfd. only the resamplefd can lower the
+> virtual line level. There is no communication between the VFIO driver
+> and KVM to lower the virtual line level. Note the resamplefd also is
+> used to unmask the interrupt on VFIO driver side.
 
-> +the ``linux/cifisp_stat.h`` header file, see it for details.
-> 
+Then this is not a level interrupt. This is some VFIO-specific mechanism
+that uses interrupts as a signalling mechanism, and breaks the
+reasonable expectations of the guest.
 
-Regards,
+For example:
 
-	Hans
+- Interrupt fires
+- guest acks the interrupt at the device level
+- guest reads the pending state on the GIC
+
+At that point, the guest will find that the irq is still pending, which
+is in total violation of the interrupt model. What we have here seems to
+be some bizarre "level with latch until EOIed", which doesn't exist in
+the architecture. Even worse, we're not able to describe it to the guest
+(neither DT or ACPI describe this model).
+
+Oh well...
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
