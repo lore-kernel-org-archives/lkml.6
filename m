@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752186AbeCIIiD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 03:38:03 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:49561 "EHLO
+        id S1752196AbeCIIiR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 03:38:17 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:40747 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751193AbeCIIiC (ORCPT
+        with ESMTP id S1751262AbeCIIiQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 03:38:02 -0500
-Date: Fri, 9 Mar 2018 00:37:40 -0800
-From: tip-bot for Changbin Du <tipbot@zytor.com>
-Message-ID: <tip-99a3c3a91382a7e5e841a98467a8409b47b540f0@git.kernel.org>
-Cc: namhyung@kernel.org, mingo@kernel.org, tglx@linutronix.de,
-        peterz@infradead.org, jolsa@kernel.org, acme@redhat.com, hpa@zytor.com,
-        changbin.du@intel.com, linux-kernel@vger.kernel.org
-Reply-To: tglx@linutronix.de, peterz@infradead.org, jolsa@kernel.org,
-        linux-kernel@vger.kernel.org, changbin.du@intel.com, hpa@zytor.com,
-        acme@redhat.com, namhyung@kernel.org, mingo@kernel.org
-In-Reply-To: <1520307457-23668-3-git-send-email-changbin.du@intel.com>
-References: <1520307457-23668-3-git-send-email-changbin.du@intel.com>
+        Fri, 9 Mar 2018 03:38:16 -0500
+Date: Fri, 9 Mar 2018 00:38:10 -0800
+From: tip-bot for Adrian Hunter <tipbot@zytor.com>
+Message-ID: <tip-4b5ea3bd674f707180b0e8c4f514d30e49f293b3@git.kernel.org>
+Cc: adrian.hunter@intel.com, acme@redhat.com, jolsa@redhat.com,
+        tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Reply-To: acme@redhat.com, mingo@kernel.org, jolsa@redhat.com,
+        tglx@linutronix.de, adrian.hunter@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <1520327598-1317-2-git-send-email-adrian.hunter@intel.com>
+References: <1520327598-1317-2-git-send-email-adrian.hunter@intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf sched map: Re-annotate shortname if thread
- comm changed
-Git-Commit-ID: 99a3c3a91382a7e5e841a98467a8409b47b540f0
+Subject: [tip:perf/core] perf record: Combine some auxtrace initialization
+ into a single function
+Git-Commit-ID: 4b5ea3bd674f707180b0e8c4f514d30e49f293b3
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,118 +34,91 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  99a3c3a91382a7e5e841a98467a8409b47b540f0
-Gitweb:     https://git.kernel.org/tip/99a3c3a91382a7e5e841a98467a8409b47b540f0
-Author:     Changbin Du <changbin.du@intel.com>
-AuthorDate: Tue, 6 Mar 2018 11:37:37 +0800
+Commit-ID:  4b5ea3bd674f707180b0e8c4f514d30e49f293b3
+Gitweb:     https://git.kernel.org/tip/4b5ea3bd674f707180b0e8c4f514d30e49f293b3
+Author:     Adrian Hunter <adrian.hunter@intel.com>
+AuthorDate: Tue, 6 Mar 2018 11:13:12 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Wed, 7 Mar 2018 10:22:26 -0300
 
-perf sched map: Re-annotate shortname if thread comm changed
+perf record: Combine some auxtrace initialization into a single function
 
-This is to show the real name of thread that created via fork-exec.  See
-below example for shortname *A0*.
+In preparation for adding AUX area sampling support, combine some
+auxtrace initialization into a single function.
 
-$ sudo ./perf sched map
-              *A0   80393.050639 secs A0 => perf:22368
-          *.   A0   80393.050748 secs .  => swapper:0
-           .  *.    80393.050887 secs
-      *B0  .   .    80393.052735 secs B0 => rcu_sched:8
-      *.   .   .    80393.052743 secs
-       .  *C0  .    80393.056264 secs C0 => kworker/2:1H:287
-       .  *A0  .    80393.056270 secs
-       .  *D0  .    80393.056769 secs D0 => ksoftirqd/2:22
--      .  *A0  .    80393.056804 secs
-+      .  *A0  .    80393.056804 secs A0 => pi:22368
-       .  *.   .    80393.056854 secs
-      *B0  .   .    80393.060727 secs
-      ...
-
-Signed-off-by: Changbin Du <changbin.du@intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1520307457-23668-3-git-send-email-changbin.du@intel.com
-[ Optimally pack struct thread_runtime when adding the new bool member ]
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/1520327598-1317-2-git-send-email-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-sched.c | 38 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 36 insertions(+), 2 deletions(-)
+ tools/perf/builtin-record.c | 36 ++++++++++++++++++++++++------------
+ 1 file changed, 24 insertions(+), 12 deletions(-)
 
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index 0a632a6b6228..4dfdee668b0c 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -256,6 +256,8 @@ struct thread_runtime {
- 	int last_state;
- 
- 	char shortname[3];
-+	bool comm_changed;
-+
- 	u64 migrations;
- };
- 
-@@ -1626,7 +1628,7 @@ static int map_switch_event(struct perf_sched *sched, struct perf_evsel *evsel,
- 
- 	timestamp__scnprintf_usec(timestamp, stimestamp, sizeof(stimestamp));
- 	color_fprintf(stdout, color, "  %12s secs ", stimestamp);
--	if (new_shortname || (verbose > 0 && sched_in->tid)) {
-+	if (new_shortname || tr->comm_changed || (verbose > 0 && sched_in->tid)) {
- 		const char *pid_color = color;
- 
- 		if (thread__has_color(sched_in))
-@@ -1634,6 +1636,7 @@ static int map_switch_event(struct perf_sched *sched, struct perf_evsel *evsel,
- 
- 		color_fprintf(stdout, pid_color, "%s => %s:%d",
- 		       tr->shortname, thread__comm_str(sched_in), sched_in->tid);
-+		tr->comm_changed = false;
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 12230ddb6506..14d82f0fe5cc 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -274,6 +274,24 @@ static void record__read_auxtrace_snapshot(struct record *rec)
  	}
- 
- 	if (sched->map.comp && new_cpu)
-@@ -1737,6 +1740,37 @@ static int perf_sched__process_tracepoint_sample(struct perf_tool *tool __maybe_
- 	return err;
  }
  
-+static int perf_sched__process_comm(struct perf_tool *tool __maybe_unused,
-+				    union perf_event *event,
-+				    struct perf_sample *sample,
-+				    struct machine *machine)
++static int record__auxtrace_init(struct record *rec)
 +{
-+	struct thread *thread;
-+	struct thread_runtime *tr;
 +	int err;
 +
-+	err = perf_event__process_comm(tool, event, sample, machine);
++	if (!rec->itr) {
++		rec->itr = auxtrace_record__init(rec->evlist, &err);
++		if (err)
++			return err;
++	}
++
++	err = auxtrace_parse_snapshot_options(rec->itr, &rec->opts,
++					      rec->opts.auxtrace_snapshot_opts);
 +	if (err)
 +		return err;
 +
-+	thread = machine__find_thread(machine, sample->pid, sample->tid);
-+	if (!thread) {
-+		pr_err("Internal error: can't find thread\n");
-+		return -1;
-+	}
++	return auxtrace_parse_filters(rec->evlist);
++}
 +
-+	tr = thread__get_runtime(thread);
-+	if (tr == NULL) {
-+		thread__put(thread);
-+		return -1;
-+	}
-+
-+	tr->comm_changed = true;
-+	thread__put(thread);
-+
+ #else
+ 
+ static inline
+@@ -294,6 +312,11 @@ int auxtrace_record__snapshot_start(struct auxtrace_record *itr __maybe_unused)
+ 	return 0;
+ }
+ 
++static int record__auxtrace_init(struct record *rec __maybe_unused)
++{
 +	return 0;
 +}
 +
- static int perf_sched__read_events(struct perf_sched *sched)
- {
- 	const struct perf_evsel_str_handler handlers[] = {
-@@ -3306,7 +3340,7 @@ int cmd_sched(int argc, const char **argv)
- 	struct perf_sched sched = {
- 		.tool = {
- 			.sample		 = perf_sched__process_tracepoint_sample,
--			.comm		 = perf_event__process_comm,
-+			.comm		 = perf_sched__process_comm,
- 			.namespaces	 = perf_event__process_namespaces,
- 			.lost		 = perf_event__process_lost,
- 			.fork		 = perf_sched__process_fork_event,
+ #endif
+ 
+ static int record__mmap_evlist(struct record *rec,
+@@ -1727,17 +1750,6 @@ int cmd_record(int argc, const char **argv)
+ 		alarm(rec->switch_output.time);
+ 	}
+ 
+-	if (!rec->itr) {
+-		rec->itr = auxtrace_record__init(rec->evlist, &err);
+-		if (err)
+-			goto out;
+-	}
+-
+-	err = auxtrace_parse_snapshot_options(rec->itr, &rec->opts,
+-					      rec->opts.auxtrace_snapshot_opts);
+-	if (err)
+-		goto out;
+-
+ 	/*
+ 	 * Allow aliases to facilitate the lookup of symbols for address
+ 	 * filters. Refer to auxtrace_parse_filters().
+@@ -1746,7 +1758,7 @@ int cmd_record(int argc, const char **argv)
+ 
+ 	symbol__init(NULL);
+ 
+-	err = auxtrace_parse_filters(rec->evlist);
++	err = record__auxtrace_init(rec);
+ 	if (err)
+ 		goto out;
+ 
