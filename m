@@ -1,110 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751184AbeCIKKq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:10:46 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:49646 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750920AbeCIKKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 05:10:41 -0500
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Cc: Icenowy Zheng <icenowy@aosc.xyz>, Florent Revest <revestflo@gmail.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Thomas van Kleef <thomas@vitsch.nl>,
-        "Signed-off-by : Bob Ham" <rah@settrans.net>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH 0/9] Sunxi-Cedrus driver for the Allwinner Video Engine, using the V4L2 request API
-Date: Fri,  9 Mar 2018 11:09:24 +0100
-Message-Id: <20180309100933.15922-1-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.16.2
+        id S1751215AbeCIKLZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:11:25 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:38009 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751008AbeCIKKm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 05:10:42 -0500
+Date: Fri, 9 Mar 2018 02:10:04 -0800
+From: tip-bot for Boqun Feng <tipbot@zytor.com>
+Message-ID: <tip-6b0ef92fee2a3189eba6d6b827b247cb4f6da7e9@git.kernel.org>
+Cc: jiangshanlai@gmail.com, peterz@infradead.org, mingo@kernel.org,
+        rostedt@goodmis.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, paulmck@linux.vnet.ibm.com,
+        mathieu.desnoyers@efficios.com, boqun.feng@gmail.com,
+        josh@joshtriplett.org
+Reply-To: paulmck@linux.vnet.ibm.com, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, boqun.feng@gmail.com, jiangshanlai@gmail.com,
+        peterz@infradead.org, mingo@kernel.org, rostedt@goodmis.org,
+        tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20180309065630.8283-1-boqun.feng@gmail.com>
+References: <20180309065630.8283-1-boqun.feng@gmail.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/urgent] rtmutex: Make rt_mutex_futex_unlock() safe for
+ irq-off callsites
+Git-Commit-ID: 6b0ef92fee2a3189eba6d6b827b247cb4f6da7e9
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This presents a newer version of the Sunxi-Cedrus driver, that supports
-the Video Engine found in most Allwinner SoCs, starting with the A10.
+Commit-ID:  6b0ef92fee2a3189eba6d6b827b247cb4f6da7e9
+Gitweb:     https://git.kernel.org/tip/6b0ef92fee2a3189eba6d6b827b247cb4f6da7e9
+Author:     Boqun Feng <boqun.feng@gmail.com>
+AuthorDate: Fri, 9 Mar 2018 14:56:28 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 9 Mar 2018 11:06:16 +0100
 
-The first version of this driver[0] was originally written and submitted
-by Florent Revest using a previous version of the request API, that is
-necessary to provide coherency between controls and the buffers they apply
-to. The driver was since adapted to use the latest version of the request
-API[1], as submitted by Alexandre Courbot. It is a hard requirement for
-this driver.
+rtmutex: Make rt_mutex_futex_unlock() safe for irq-off callsites
 
-This series also contains fixes for issues encountered with the current
-version of the request API. If accepted, these should eventually be
-squashed into the request API series.
+When running rcutorture with TREE03 config, CONFIG_PROVE_LOCKING=y, and
+kernel cmdline argument "rcutorture.gp_exp=1", lockdep reports a
+HARDIRQ-safe->HARDIRQ-unsafe deadlock:
 
-The driver itself currently only supports MPEG2 and more codecs will be
-added to the driver eventually. The output frames provided by the
-Video Engine are in a multi-planar 32x32-tiled YUV format, with a plane
-for luminance (Y) and a plane for chrominance (UV). A specific format is
-introduced in the V4L2 API to describe it.
+ ================================
+ WARNING: inconsistent lock state
+ 4.16.0-rc4+ #1 Not tainted
+ --------------------------------
+ inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.
+ takes:
+ __schedule+0xbe/0xaf0
+ {IN-HARDIRQ-W} state was registered at:
+   _raw_spin_lock+0x2a/0x40
+   scheduler_tick+0x47/0xf0
+...
+ other info that might help us debug this:
+  Possible unsafe locking scenario:
+        CPU0
+        ----
+   lock(&rq->lock);
+   <Interrupt>
+     lock(&rq->lock);
+  *** DEADLOCK ***
+ 1 lock held by rcu_torture_rea/724:
+ rcu_torture_read_lock+0x0/0x70
+ stack backtrace:
+ CPU: 2 PID: 724 Comm: rcu_torture_rea Not tainted 4.16.0-rc4+ #1
+ Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
+ Call Trace:
+  lock_acquire+0x90/0x200
+  ? __schedule+0xbe/0xaf0
+  _raw_spin_lock+0x2a/0x40
+  ? __schedule+0xbe/0xaf0
+  __schedule+0xbe/0xaf0
+  preempt_schedule_irq+0x2f/0x60
+  retint_kernel+0x1b/0x2d
+ RIP: 0010:rcu_read_unlock_special+0x0/0x680
+  ? rcu_torture_read_unlock+0x60/0x60
+  __rcu_read_unlock+0x64/0x70
+  rcu_torture_read_unlock+0x17/0x60
+  rcu_torture_reader+0x275/0x450
+  ? rcutorture_booster_init+0x110/0x110
+  ? rcu_torture_stall+0x230/0x230
+  ? kthread+0x10e/0x130
+  kthread+0x10e/0x130
+  ? kthread_create_worker_on_cpu+0x70/0x70
+  ? call_usermodehelper_exec_async+0x11a/0x150
+  ret_from_fork+0x3a/0x50
 
-This implementation is based on the significant work that was conducted
-by various members of the linux-sunxi community for understanding and
-documenting the Video Engine's innards.
+This happens with the following even sequence:
 
-[0]: https://lkml.org/lkml/2016/8/25/246
-[1]: https://lkml.org/lkml/2018/2/19/872
+	preempt_schedule_irq();
+	  local_irq_enable();
+	  __schedule():
+	    local_irq_disable(); // irq off
+	    ...
+	    rcu_note_context_switch():
+	      rcu_note_preempt_context_switch():
+	        rcu_read_unlock_special():
+	          local_irq_save(flags);
+	          ...
+		  raw_spin_unlock_irqrestore(...,flags); // irq remains off
+	          rt_mutex_futex_unlock():
+	            raw_spin_lock_irq();
+	            ...
+	            raw_spin_unlock_irq(); // accidentally set irq on
 
-Florent Revest (5):
-  v4l: Add sunxi Video Engine pixel format
-  v4l: Add MPEG2 low-level decoder API control
-  media: platform: Add Sunxi Cedrus decoder driver
-  sunxi-cedrus: Add device tree binding document
-  ARM: dts: sun5i: Use video-engine node
+	    <return to __schedule()>
+	    rq_lock():
+	      raw_spin_lock(); // acquiring rq->lock with irq on
 
-Icenowy Zheng (1):
-  ARM: dts: sun8i: add video engine support for A33
+which means rq->lock becomes a HARDIRQ-unsafe lock, which can cause
+deadlocks in scheduler code.
 
-Paul Kocialkowski (2):
-  media: vim2m: Try to schedule a m2m device run on request submission
-  media: videobuf2-v4l2: Copy planes when needed in request qbuf
+This problem was introduced by commit 02a7c234e540 ("rcu: Suppress
+lockdep false-positive ->boost_mtx complaints"). That brought the user
+of rt_mutex_futex_unlock() with irq off.
 
-Thomas van Kleef (1):
-  ARM: dts: sun7i: Add video engine support for the A20
+To fix this, replace the *lock_irq() in rt_mutex_futex_unlock() with
+*lock_irq{save,restore}() to make it safe to call rt_mutex_futex_unlock()
+with irq off.
 
- .../devicetree/bindings/media/sunxi-cedrus.txt     |  44 ++
- arch/arm/boot/dts/sun5i-a13.dtsi                   |  30 ++
- arch/arm/boot/dts/sun7i-a20.dtsi                   |  47 ++
- arch/arm/boot/dts/sun8i-a33.dtsi                   |  39 ++
- drivers/media/common/videobuf2/videobuf2-v4l2.c    |  19 +
- drivers/media/platform/Kconfig                     |  14 +
- drivers/media/platform/Makefile                    |   1 +
- drivers/media/platform/sunxi-cedrus/Makefile       |   4 +
- drivers/media/platform/sunxi-cedrus/sunxi_cedrus.c | 313 ++++++++++++
- .../platform/sunxi-cedrus/sunxi_cedrus_common.h    | 106 ++++
- .../media/platform/sunxi-cedrus/sunxi_cedrus_dec.c | 568 +++++++++++++++++++++
- .../media/platform/sunxi-cedrus/sunxi_cedrus_dec.h |  33 ++
- .../media/platform/sunxi-cedrus/sunxi_cedrus_hw.c  | 185 +++++++
- .../media/platform/sunxi-cedrus/sunxi_cedrus_hw.h  |  36 ++
- .../platform/sunxi-cedrus/sunxi_cedrus_mpeg2.c     | 152 ++++++
- .../platform/sunxi-cedrus/sunxi_cedrus_regs.h      | 170 ++++++
- drivers/media/platform/vim2m.c                     |  13 +-
- drivers/media/v4l2-core/v4l2-ctrls.c               |  15 +
- drivers/media/v4l2-core/v4l2-ioctl.c               |   1 +
- include/uapi/linux/v4l2-controls.h                 |  26 +
- include/uapi/linux/videodev2.h                     |   6 +
- 21 files changed, 1821 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/media/sunxi-cedrus.txt
- create mode 100644 drivers/media/platform/sunxi-cedrus/Makefile
- create mode 100644 drivers/media/platform/sunxi-cedrus/sunxi_cedrus.c
- create mode 100644 drivers/media/platform/sunxi-cedrus/sunxi_cedrus_common.h
- create mode 100644 drivers/media/platform/sunxi-cedrus/sunxi_cedrus_dec.c
- create mode 100644 drivers/media/platform/sunxi-cedrus/sunxi_cedrus_dec.h
- create mode 100644 drivers/media/platform/sunxi-cedrus/sunxi_cedrus_hw.c
- create mode 100644 drivers/media/platform/sunxi-cedrus/sunxi_cedrus_hw.h
- create mode 100644 drivers/media/platform/sunxi-cedrus/sunxi_cedrus_mpeg2.c
- create mode 100644 drivers/media/platform/sunxi-cedrus/sunxi_cedrus_regs.h
+Fixes: 02a7c234e540 ("rcu: Suppress lockdep false-positive ->boost_mtx complaints")
+Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Link: https://lkml.kernel.org/r/20180309065630.8283-1-boqun.feng@gmail.com
 
--- 
-2.16.2
+---
+ kernel/locking/rtmutex.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index 65cc0cb984e6..940633c63254 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -1616,11 +1616,12 @@ bool __sched __rt_mutex_futex_unlock(struct rt_mutex *lock,
+ void __sched rt_mutex_futex_unlock(struct rt_mutex *lock)
+ {
+ 	DEFINE_WAKE_Q(wake_q);
++	unsigned long flags;
+ 	bool postunlock;
+ 
+-	raw_spin_lock_irq(&lock->wait_lock);
++	raw_spin_lock_irqsave(&lock->wait_lock, flags);
+ 	postunlock = __rt_mutex_futex_unlock(lock, &wake_q);
+-	raw_spin_unlock_irq(&lock->wait_lock);
++	raw_spin_unlock_irqrestore(&lock->wait_lock, flags);
+ 
+ 	if (postunlock)
+ 		rt_mutex_postunlock(&wake_q);
