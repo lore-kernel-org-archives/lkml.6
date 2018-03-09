@@ -1,192 +1,262 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932191AbeCIPih (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 10:38:37 -0500
-Received: from twosheds.infradead.org ([90.155.92.209]:37562 "EHLO
-        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751147AbeCIPif (ORCPT
+        id S932250AbeCIPjc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 10:39:32 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55556 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932195AbeCIPj3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 10:38:35 -0500
-Message-ID: <1520609475.17937.42.camel@infradead.org>
-Subject: Re: [RFC PATCH v2] bridge: make it possible for packets to
- traverse the bridge without hitting netfilter
-From: David Woodhouse <dwmw2@infradead.org>
-To: Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: David Miller <davem@davemloft.net>, rga@amazon.de,
-        bridge@lists.linux-foundation.org, stephen@networkplumber.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        aliguori@amazon.com, nbd@openwrt.org
-In-Reply-To: <20150306163700.GC20382@breakpoint.cc>
-References: <1424705163-13428-1-git-send-email-imrep.amz@gmail.com>
-         <20150223160619.GF24297@breakpoint.cc> <54EEF32D.2010202@amazon.de>
-         <20150226.113431.238255529591339000.davem@davemloft.net>
-         <54F982B5.90108@gmail.com> <20150306142932.GA15926@salvia>
-         <20150306163700.GC20382@breakpoint.cc>
-Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-TD6NaEUBEOwgF7JTTZv9"
-Date: Fri, 09 Mar 2018 15:31:15 +0000
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+        Fri, 9 Mar 2018 10:39:29 -0500
+From: Nayna Jain <nayna@linux.vnet.ibm.com>
+To: dhowells@redhat.com
+Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Nayna Jain <nayna@linux.vnet.ibm.com>
+Subject: [PATCH v2 1/3] certs: define a trusted platform keyring
+Date: Fri,  9 Mar 2018 21:08:01 +0530
+X-Mailer: git-send-email 2.13.6
+X-TM-AS-GCONF: 00
+x-cbid: 18030915-0008-0000-0000-000004D9E3A4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030915-0009-0000-0000-00001E6D0885
+Message-Id: <20180309153803.25859-1-nayna@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-09_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803090194
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The kernel can be supplied in SEEPROM or lockable flash memory in embedded
+devices. Some devices may not support secure boot, but the kernel is
+trusted because the image is stored in protected memory. That kernel may
+need to kexec additional kernels, it may be used as a bootloader, for
+example, or it may need to kexec a crashdump kernel. In such cases, it may
+want to verify the signature of the next kernel.
 
---=-TD6NaEUBEOwgF7JTTZv9
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+The kernel, however, cannot directly verify platform keys, and an
+administrator may therefore not want to trust them for arbitrary usage.
+In order to differentiate platform keys from other keys and provide the
+necessary separation of trust, the kernel needs an additional keyring to
+store platform keys.
 
+This patch implements a built-in list of certificates that are loaded onto
+the trusted platform keyring named ".platform_keys" to facilitate signature
+verification during kexec. Because the platform keyring are builtin, it
+cannot be updated from userspace.
 
+This keyring can be enabled by setting CONFIG_PLATFORM_KEYRING. The
+platform certificate can be provided using CONFIG_PLATFORM_TRUSTED_KEYS.
 
-On Fri, 2015-03-06 at 17:37 +0100, Florian Westphal wrote:
->=20
-> > > I did performance measurements in the following way:
-> > >=C2=A0
-> > > Removed those pieces of the packet pipeline that I don't necessarily
-> > > need one-by-one.=C2=A0 Then measured their effect on small packet
-> > > performance.
-> > >=C2=A0
-> > > This was the only part that produced considerable effect.
-> > >=C2=A0
-> > > The pure speculation was about why the effect is more than 15%
-> > > increase in packet throughput, although the code path avoided
-> > > contains way less code than 15% of the packet pipeline.=C2=A0 It seem=
-s,
-> > > Felix Fietkau profiled similar changes, and found my guess well
-> > > founded.
-> > >=C2=A0
-> > > Now could anybody explain me what else is wrong with my patch?
-> >=C2=A0
-> > We have to come up with a more generic solution for this.
->=20
-> Jiri Benc suggested to allowing to attach netfilter hooks e.g. via tc
-> action, maybe that would be an option worth investigating.
->=20
-> Then you could for instance add filtering rules only to the bridge port
-> that needs it.
->=20
-> > These sysfs tweaks you're proposing look to me like an obscure way to
-> > tune this.
->=20
-> I agree, adding more tunables isn't all that helpful, in the past this
-> only helped to prolong the problem.
+Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+---
+Changelog:
 
-How feasible would it be to make it completely dynamic?
+v2:
 
-A given hook could automatically disable itself (for a given device) if
-the result of running it the first time was *tautologically* false for
-that device (i.e. regardless of the packet itself, or anything else).
+* Include David Howell's feedback:
+ * Fix the indentation
+* Fix the patch description per line length as suggested by Mimi
 
-The hook would need to be automatically re-enabled if the rule chain
-ever changes (and might subsequently disable itself again).
+ certs/Kconfig               | 17 ++++++++++++++
+ certs/Makefile              | 13 +++++++++++
+ certs/system_certificates.S | 20 +++++++++++++++++
+ certs/system_keyring.c      | 55 ++++++++++++++++++++++++++++++++++++++-------
+ 4 files changed, 97 insertions(+), 8 deletions(-)
 
-Is that something that's worth exploring for the general case?
-
-Eschewing a 15% speedup on the basis that "well, even though we've had
-three of these already for a decade, we're worried that adding a fourth
-might open the floodgates to further patches" does seem a little odd to
-me, FWIW.
-
-
---=-TD6NaEUBEOwgF7JTTZv9
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAzMDkxNTMxMTVaMC8GCSqG
-SIb3DQEJBDEiBCDX425F2k2414yFUXSnUbvVvaa3AF5Ooter6Rs37QfJsDCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAMMWy+p/EoeG
-TkTNrq50wy6bF66Q54tsWM4rnli3TEQiaSKWWHGiVScvzJvyaf9tYERJuf1pvtVq7GaEWgQUYTKv
-AxvYjIwjdElfmcprFXoCDkhTh63mm5qiV9RsQGmEqcHnkAzZGrrRjvhsNpPIHMAkFNy5Me8c8B4d
-XOF4TNDuYXozNcPRqly5p54TOG4NOuMLEAf2W5rc6kq2RmjQ2JWzM0kGVe26hFNOVaeUNXbTzpmK
-tpu36Qkmopm2Tvo4coPtUkNfoLIhzjQmHDF5aKPh/lZ1IG8V2/ccGF9EnTfRsZ6jTubOHBUxudMy
-1NZ0zKl9djdRFtUGQZKxe2VDyf0AAAAAAAA=
-
-
---=-TD6NaEUBEOwgF7JTTZv9--
+diff --git a/certs/Kconfig b/certs/Kconfig
+index 5f7663df6e8e..608a4358a25e 100644
+--- a/certs/Kconfig
++++ b/certs/Kconfig
+@@ -83,4 +83,21 @@ config SYSTEM_BLACKLIST_HASH_LIST
+ 	  wrapper to incorporate the list into the kernel.  Each <hash> should
+ 	  be a string of hex digits.
+ 
++config PLATFORM_KEYRING
++        bool "Provide keyring for platform trusted keys"
++        depends on KEYS
++        depends on ASYMMETRIC_KEY_TYPE
++        help
++	  Provide a separate, distinct keyring for platform trusted keys, which
++	  the kernel automatically populates during initialization from values
++	  embedded during build, used for verifying the kexec'ed kernel image
++	  and, possibly, the initramfs signature.
++
++config PLATFORM_TRUSTED_KEYS
++	string "Platform/Firmware trusted X.509 certs."
++	depends on PLATFORM_KEYRING
++	help
++	  Provide the filename of a PEM-formatted file containing the platform
++	  trusted X.509 certificates to be loaded in the platform keyring.
++
+ endmenu
+diff --git a/certs/Makefile b/certs/Makefile
+index 5d0999b9e21b..680903725031 100644
+--- a/certs/Makefile
++++ b/certs/Makefile
+@@ -104,3 +104,16 @@ targets += signing_key.x509
+ $(obj)/signing_key.x509: scripts/extract-cert $(X509_DEP) FORCE
+ 	$(call if_changed,extract_certs,$(MODULE_SIG_KEY_SRCPREFIX)$(CONFIG_MODULE_SIG_KEY))
+ endif # CONFIG_MODULE_SIG
++
++
++ifeq ($(CONFIG_PLATFORM_KEYRING),y)
++
++$(eval $(call config_filename,PLATFORM_TRUSTED_KEYS))
++
++# GCC doesn't include .incbin files in -MD generated dependencies (PR#66871)
++$(obj)/system_certificates.o: $(obj)/platform_certificate_list
++
++targets += platform_certificate_list
++$(obj)/platform_certificate_list: scripts/extract-cert $(PLATFORM_TRUSTED_KEYS_FILENAME) FORCE
++	$(call if_changed,extract_certs,$(CONFIG_PLATFORM_TRUSTED_KEYS))
++endif # CONFIG_PLATFORM_KEYRING
+diff --git a/certs/system_certificates.S b/certs/system_certificates.S
+index 3918ff7235ed..b0eb448ee617 100644
+--- a/certs/system_certificates.S
++++ b/certs/system_certificates.S
+@@ -14,6 +14,15 @@ __cert_list_start:
+ 	.incbin "certs/x509_certificate_list"
+ __cert_list_end:
+ 
++#ifdef CONFIG_PLATFORM_KEYRING
++	.align 8
++	.globl VMLINUX_SYMBOL(platform_certificate_list)
++VMLINUX_SYMBOL(platform_certificate_list):
++__platform_cert_list_start:
++	.incbin "certs/platform_certificate_list"
++__platform_cert_list_end:
++#endif /* CONFIG_PLATFORM_KEYRING */
++
+ #ifdef CONFIG_SYSTEM_EXTRA_CERTIFICATE
+ 	.globl VMLINUX_SYMBOL(system_extra_cert)
+ 	.size system_extra_cert, CONFIG_SYSTEM_EXTRA_CERTIFICATE_SIZE
+@@ -35,3 +44,14 @@ VMLINUX_SYMBOL(system_certificate_list_size):
+ #else
+ 	.long __cert_list_end - __cert_list_start
+ #endif
++
++#ifdef CONFIG_PLATFORM_KEYRING
++	.align 8
++	.globl VMLINUX_SYMBOL(platform_certificate_list_size)
++VMLINUX_SYMBOL(platform_certificate_list_size):
++#ifdef CONFIG_64BIT
++	.quad __platform_cert_list_end - __platform_cert_list_start
++#else
++	.long __platform_cert_list_end - __platform_cert_list_start
++#endif
++#endif /* CONFIG_PLATFORM_KEYRING */
+diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+index 6251d1b27f0c..594b4986a081 100644
+--- a/certs/system_keyring.c
++++ b/certs/system_keyring.c
+@@ -19,14 +19,22 @@
+ #include <keys/system_keyring.h>
+ #include <crypto/pkcs7.h>
+ 
++#define BUILTIN_TRUSTED_KEYRING	0
++#define PLATFORM_KEYRING	1
++
+ static struct key *builtin_trusted_keys;
+ #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+ static struct key *secondary_trusted_keys;
+ #endif
++#ifdef CONFIG_PLATFORM_KEYRING
++static struct key *platform_keys __ro_after_init;
++#endif
+ 
+ extern __initconst const u8 system_certificate_list[];
+ extern __initconst const unsigned long system_certificate_list_size;
+ 
++extern __initconst const u8 platform_certificate_list[];
++extern __initconst const unsigned long platform_certificate_list_size;
+ /**
+  * restrict_link_to_builtin_trusted - Restrict keyring addition by built in CA
+  *
+@@ -123,6 +131,18 @@ static __init int system_trusted_keyring_init(void)
+ 		panic("Can't link trusted keyrings\n");
+ #endif
+ 
++#ifdef CONFIG_PLATFORM_KEYRING
++	platform_keys =
++		keyring_alloc(".platform_keys",
++			      KUIDT_INIT(0), KGIDT_INIT(0), current_cred(),
++			      ((KEY_POS_ALL & ~KEY_POS_SETATTR) |
++			      KEY_USR_VIEW | KEY_USR_READ | KEY_USR_SEARCH),
++			      KEY_ALLOC_NOT_IN_QUOTA,
++			      NULL, NULL);
++	if (IS_ERR(platform_keys))
++		panic("Can't allocate platform keyring\n");
++#endif
++
+ 	return 0;
+ }
+ 
+@@ -132,18 +152,19 @@ static __init int system_trusted_keyring_init(void)
+ device_initcall(system_trusted_keyring_init);
+ 
+ /*
+- * Load the compiled-in list of X.509 certificates.
++ * Load the certificates to the keyring.
+  */
+-static __init int load_system_certificate_list(void)
++static __init int load_certificate_list(const u8 *p, unsigned long size,
++		struct key *keyring)
+ {
+ 	key_ref_t key;
+-	const u8 *p, *end;
++	const u8 *end;
+ 	size_t plen;
+ 
+-	pr_notice("Loading compiled-in X.509 certificates\n");
++	pr_notice("Loading compiled-in X.509 certificates to %s\n",
++			keyring->description);
+ 
+-	p = system_certificate_list;
+-	end = p + system_certificate_list_size;
++	end = p + size;
+ 	while (p < end) {
+ 		/* Each cert begins with an ASN.1 SEQUENCE tag and must be more
+ 		 * than 256 bytes in size.
+@@ -158,7 +179,7 @@ static __init int load_system_certificate_list(void)
+ 		if (plen > end - p)
+ 			goto dodgy_cert;
+ 
+-		key = key_create_or_update(make_key_ref(builtin_trusted_keys, 1),
++		key = key_create_or_update(make_key_ref(keyring, 1),
+ 					   "asymmetric",
+ 					   NULL,
+ 					   p,
+@@ -185,7 +206,25 @@ static __init int load_system_certificate_list(void)
+ 	pr_err("Problem parsing in-kernel X.509 certificate list\n");
+ 	return 0;
+ }
+-late_initcall(load_system_certificate_list);
++
++/*
++ * Load the compiled-in list of system and platform X.509 certificates.
++ */
++static __init int load_compiled_certificate_list(void)
++{
++	/* Loading certs in builtin keyring */
++	load_certificate_list(system_certificate_list,
++			system_certificate_list_size, builtin_trusted_keys);
++
++#ifdef CONFIG_PLATFORM_KEYRING
++	/* Loading certs in platform keyring */
++	load_certificate_list(platform_certificate_list,
++			platform_certificate_list_size, platform_keys);
++#endif
++
++	return 0;
++}
++late_initcall(load_compiled_certificate_list);
+ 
+ #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
+ 
+-- 
+2.13.6
