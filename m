@@ -1,82 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751997AbeCIIQJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 03:16:09 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55999 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751696AbeCIIQH (ORCPT
+        id S1751564AbeCIITx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 03:19:53 -0500
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:42625 "EHLO
+        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751193AbeCIITv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 03:16:07 -0500
-X-Google-Smtp-Source: AG47ELsIcnLCLlubW1a+FMUZlPgHmBGSPx1nFuhYNRA3EHiG6o599g8almf339l8vtJ6bW1kq8K3eQ==
-Date: Fri, 9 Mar 2018 08:16:03 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc: linux-kernel@vger.kernel.org, broonie@kernel.org,
-        alexandre.belloni@bootlin.com, linux-rtc@vger.kernel.org,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>,
-        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        Russell King <linux@armlinux.org.uk>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 0/4] Set name of regmap_config
-Message-ID: <20180309081603.4u5pgwwsfxernodm@dell>
-References: <20180309015146.8297-1-jeffy.chen@rock-chips.com>
+        Fri, 9 Mar 2018 03:19:51 -0500
+X-Google-Smtp-Source: AG47ELtrsKF6MYHj0EY9xL+ApNbztpJJRdv+gCumMD8edHaLjCMI6hscaLlnR3JmQSL1u7Xo6QHr1ez9RZo6AG9goj4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180309015146.8297-1-jeffy.chen@rock-chips.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAKv+Gu86v9-Cj3bxEPWXCMRnE7S76kGdu7to3cOoLMgTTcH_xg@mail.gmail.com>
+References: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
+ <20180308080020.22828-13-ard.biesheuvel@linaro.org> <20180309074719.y33xe4bjkjsjsaa3@gmail.com>
+ <CAKv+Gu-JmM3F0=XCDZFAkK+6pRgmp=7HK2dhY9La9tKbNYFBEg@mail.gmail.com>
+ <20180309080428.atur6wcbb6vtonhz@gmail.com> <CAKv+Gu86v9-Cj3bxEPWXCMRnE7S76kGdu7to3cOoLMgTTcH_xg@mail.gmail.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Fri, 9 Mar 2018 08:19:50 +0000
+Message-ID: <CAKv+Gu-AuY=qPddZeKpidMY6thnP4z4R=bN7M63kDL32NQUMBA@mail.gmail.com>
+Subject: Re: [PATCH 12/12] efi: make const array 'apple' static
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Colin Ian King <colin.king@canonical.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 09 Mar 2018, Jeffy Chen wrote:
+On 9 March 2018 at 08:07, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> On 9 March 2018 at 08:04, Ingo Molnar <mingo@kernel.org> wrote:
+>>
+>> * Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>>
+>>> > Also, would it make sense to rename it to something more descriptive like
+>>> > "apple_unicode_str[]" or so?
+>>> >
+>>> > Plus an unicode string literal initializer would be pretty descriptive as well,
+>>> > instead of the weird looking character array, i.e. something like:
+>>> >
+>>> >   static efi_char16_t const apple_unicode_str[] = u"Apple";
+>>> >
+>>> > ... or so?
+>>> >
+>>>
+>>> is u"xxx" the same as L"xxx"?
+>>
+>> So "L" literals map to wchar_t, which wide character type is implementation
+>> specific IIRC, could be 16-bit or 32-bit wide.
+>>
+>> u"" literals OTOH are specified by the C11 spec to be char16_t, i.e. 16-bit wide
+>> characters - which I assume is the EFI type as well?
+>>
+>>> In any case, this is for historical reasons: at some point (and I
+>>> don't remember the exact details) we had a conflict at link time with
+>>> objects using 4 byte wchar_t, so we started using this notation to be
+>>> independent of the size of wchar_t. That issue no longer exists so we
+>>> should be able to get rid of this.
+>>
+>> Yes, my guess is that those problems were due to L"xyz" mapping to wchar_t and
+>> having a different type in the kernel build and the host build side - but u"xyz"
+>> should solve that.
+>>
+>
+> Excellent!
+>
+> Do you mind taking this patch as is? I will follow up with a patch
+> that updates all occurrences of this pattern (we have a few of them),
+> i.e., use u"" notation and move them to file scope.
 
-> 
-> After 9b947a13e7f6 ("regmap: use debugfs even when no device"), we are
-> allowing regmap to create debugfs without a valid device. Some of them
-> would end up using "dummy*" as debugfs name.
-> 
-> This series try to set names in some regmap_config to avoid that.
-> 
-> 
-> Changes in v4:
-> Not to use rtc dev to init regmap, the gpbr is not directly related to
-> the rtc.
-> 
-> Changes in v3:
-> Modify commit message.
-> 
-> Jeffy Chen (4):
->   mfd: syscon: Set name of regmap_config
->   rtc: at91sam9: Set name of regmap_config
->   clk: lpc32xx: Set name of regmap_config
->   ARM: rockchip: Set name of regmap_config
-> 
->  arch/arm/mach-rockchip/platsmp.c | 1 +
->  drivers/clk/nxp/clk-lpc32xx.c    | 1 +
->  drivers/mfd/syscon.c             | 1 +
+OK, I misremembered: the other occurrences have already been moved to
+file scope a while ago.
 
-It's difficult to review, since we cannot see what's happening with
-the rest of the patch set.  Would you mind re-sending the whole set to
-all parties please?
-
->  drivers/rtc/rtc-at91sam9.c       | 1 +
->  4 files changed, 4 insertions(+)
-> 
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+I will follow up with a patch that switches to u"" notation, please
+let me know if I should respin this or not
