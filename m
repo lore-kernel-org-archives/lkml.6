@@ -1,102 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751229AbeCIPHi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 10:07:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44898 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751102AbeCIPHh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 10:07:37 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0E20205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Fri, 9 Mar 2018 15:07:27 +0000
-From: James Hogan <jhogan@kernel.org>
-To: Jim Quinlan <jim2101024@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Robin Murphy <robin.murphy@arm.com>, Christoph Hellwig <hch@lst.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Kevin Cernekee <cernekee@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [PATCH v4 1/8] SOC: brcmstb: add memory API
-Message-ID: <20180309150727.GH24558@saruman>
-References: <1516058925-46522-1-git-send-email-jim2101024@gmail.com>
- <1516058925-46522-2-git-send-email-jim2101024@gmail.com>
+        id S932126AbeCIPIY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 10:08:24 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:41528 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751102AbeCIPIW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 10:08:22 -0500
+Date: Fri, 9 Mar 2018 16:08:19 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Ming Lei <ming.lei@redhat.com>
+cc: Artem Bityutskiy <dedekind1@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, Laurence Oberman <loberman@redhat.com>
+Subject: Re: [PATCH V3 0/4] genirq/affinity: irq vector spread among online
+ CPUs as far as possible
+In-Reply-To: <20180309120833.GB30257@ming.t460p>
+Message-ID: <alpine.DEB.2.21.1803091531000.1364@nanos.tec.linutronix.de>
+References: <20180308105358.1506-1-ming.lei@redhat.com> <1520515113.20980.31.camel@gmail.com> <20180308133440.GA2713@ming.t460p> <alpine.DEB.2.21.1803090011150.1454@nanos.tec.linutronix.de> <20180309012458.GD5228@ming.t460p> <alpine.DEB.2.21.1803091107520.1364@nanos.tec.linutronix.de>
+ <20180309120833.GB30257@ming.t460p>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="PW0Eas8rCkcu1VkF"
-Content-Disposition: inline
-In-Reply-To: <1516058925-46522-2-git-send-email-jim2101024@gmail.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 9 Mar 2018, Ming Lei wrote:
+> On Fri, Mar 09, 2018 at 11:08:54AM +0100, Thomas Gleixner wrote:
+> > > > So my understanding is that these irq patches are enhancements and not bug
+> > > > fixes. I'll queue them for 4.17 then.
+> > > 
+> > > Wrt. this IO hang issue, these patches shouldn't be bug fix, but they may
+> > > fix performance regression[1] for some systems caused by 84676c1f21 ("genirq/affinity:
+> > > assign vectors to all possible CPUs").
+> > > 
+> > > [1] https://marc.info/?l=linux-block&m=152050347831149&w=2
+> > 
+> > Hmm. The patches are rather large for urgent and evtl. backporting. Is
+> > there a simpler way to address that performance issue?
+> 
+> Not thought of a simpler solution. The problem is that number of active msix vector
+> is decreased a lot by commit 84676c1f21.
 
---PW0Eas8rCkcu1VkF
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It's reduced in cases where the number of possible CPUs is way larger than
+the number of online CPUs.
 
-On Mon, Jan 15, 2018 at 06:28:38PM -0500, Jim Quinlan wrote:
-> From: Florian Fainelli <f.fainelli@gmail.com>
->=20
-> This commit adds a memory API suitable for ascertaining the sizes of
-> each of the N memory controllers in a Broadcom STB chip.  Its first
-> user will be the Broadcom STB PCIe root complex driver, which needs
-> to know these sizes to properly set up DMA mappings for inbound
-> regions.
->=20
-> We cannot use memblock here or anything like what Linux provides
-> because it collapses adjacent regions within a larger block, and here
-> we actually need per-memory controller addresses and sizes, which is
-> why we resort to manual DT parsing.
->=20
-> Signed-off-by: Jim Quinlan <jim2101024@gmail.com>
->=20
-> Conflicts:
-> 	drivers/soc/bcm/brcmstb/Makefile
+Now, if you look at the number of present CPUs on such systems it's
+probably the same as the number of online CPUs.
 
-That can go.
+It only differs on machines which support physical hotplug, but that's not
+the normal case. Those systems are more special and less wide spread.
 
-> +++ b/drivers/soc/bcm/brcmstb/memory.c
-=2E..
-> +/* Macro to help extract property data */
-> +#define DT_PROP_DATA_TO_U32(b, offs) (fdt32_to_cpu(*(u32*)(b + offs)))
+So the obvious simple fix for this regression issue is to spread out the
+vectors accross present CPUs and not accross possible CPUs.
 
-Checkpatch complains about missing whitespace after u32.
+I'm not sure if there is a clear indicator whether physcial hotplug is
+supported or not, but the ACPI folks (x86) and architecture maintainers
+should be able to answer that question. I have a machine which says:
 
-Cheers
-James
+   smpboot: Allowing 128 CPUs, 96 hotplug CPUs
 
---PW0Eas8rCkcu1VkF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+There is definitely no way to hotplug anything on that machine and sure the
+existing spread algorithm will waste vectors to no end.
 
------BEGIN PGP SIGNATURE-----
+Sure then there is virt, which can pretend to have a gazillion of possible
+hotpluggable CPUs, but virt is an insanity on its own. Though someone might
+come up with reasonable heuristics for that as well.
 
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqioy4ACgkQbAtpk944
-dnrGpQ/6A4EcwZ+zoSJZpxuuicPoZib7aq0pGu8F/Ld2nf+Tr48Slxw3kPhcCzc7
-HXPBL24yqKGrJ7jFbqrDnWCLkjTg7zsjokCbehiLzQI66LUsRolxGCLMYQz6XfvN
-noL4iAQ+mRx9qfhpRomyHXA3xcb3DS+TL0o6TxztDgiF5PGz+Iu9AlaYKQ4Zq0cd
-xuEIGfbJo3fivLDU20H/KyuSY3B3Bg1ayXqtBZSQmxgac1Hkyldjee5Spe8bG0j2
-aOUOZRfJY49FjYQ7wW2itTywSE1RpLTHBfqxpYrrQifSB69Ztwl9H0GqWD0PehjI
-uiKHInsJxqYMNQXMssZxMj4vuHq31v+QbD6jNoinnNrmoctjT8dPaSo6h6t051HE
-a0saFvpCEJrOqozZ6PQgJQPSg9Mz95+YUFMmNApBzKfYCw0TNuPHH5vupy9A9LWD
-D1uAyAatlj5Qb8dU0kBXKXCVPu1Ikq4Jbgq/WMkcUh2WTTD4+2T6uKdS+JSnd08X
-RjevevlDWxgSMJ4DzPoQgZbswKiq/A6Dewg/4hx9O8BnamQ/Sj4pbRThTcdWsNqj
-9xC/Gt6QPJQop/pdz0m+Q0ML1lQRNwe1YbUcwt0cMGlVuNzkN45lM7T3HGbz6nXW
-8kjCKcG+L9tMJ/4zywyXKUqb+EAjBMgp1OWJobxtG9r+wwLYHzs=
-=TGmj
------END PGP SIGNATURE-----
+Thoughts?
 
---PW0Eas8rCkcu1VkF--
+Thanks,
+
+	tglx
