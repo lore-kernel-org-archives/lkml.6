@@ -1,119 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751740AbeCIIJP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 03:09:15 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:42948 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750913AbeCIIJL (ORCPT
+        id S1751696AbeCIILA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 03:11:00 -0500
+Received: from mail-qk0-f179.google.com ([209.85.220.179]:42881 "EHLO
+        mail-qk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751028AbeCIIK6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 03:09:11 -0500
-Date: Fri, 9 Mar 2018 05:09:05 -0300
-From: Mauro Carvalho Chehab <mchehab@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH] dvb: Save port number and provide sysfs attributes to
- pass values to udev
-Message-ID: <20180309050905.3584cae3@vento.lan>
-In-Reply-To: <537.1520552145@warthog.procyon.org.uk>
-References: <20180306085530.7b51aa29@vento.lan>
-        <151559583569.13545.12649741692530472663.stgit@warthog.procyon.org.uk>
-        <537.1520552145@warthog.procyon.org.uk>
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Fri, 9 Mar 2018 03:10:58 -0500
+X-Google-Smtp-Source: AG47ELv8wliBEmKG7fPPsljhomeInQumTYvdUjWIhLBQ6Bj1ykQQ/DHTdKo+SWX05HMf650F30vGr1i6KQsgGLPSREw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1520522643-11756-2-git-send-email-jacopo+renesas@jmondi.org>
+References: <1520522643-11756-1-git-send-email-jacopo+renesas@jmondi.org> <1520522643-11756-2-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 9 Mar 2018 09:10:55 +0100
+X-Google-Sender-Auth: oSKTccSzg2iarOPLzdxcCW57Wso
+Message-ID: <CAMuHMdVQqp7YcoQ6eN5pSznZB4zn7ztv1WFfkcQOzP_3DhG_Vg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: display: bridge: Document THC63LVD1024
+ LVDS decoder
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>, Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, 08 Mar 2018 23:35:45 +0000
-David Howells <dhowells@redhat.com> escreveu:
+Hi Jacopo,
 
-> Mauro Carvalho Chehab <mchehab@kernel.org> wrote:
-> 
-> > > +	dvb_class->dev_groups = dvb_class_groups,
-> > >  	dvb_class->dev_uevent = dvb_uevent;
-> > >  	dvb_class->devnode = dvb_devnode;
-> > >  	return 0;  
-> > 
-> > The patch itself looks good, but I'm not seeing any documentation.  
-> 
-> I should probably add something to Documentation/media/dvb-drivers/udev.rst
-
-Makes sense.
-
-> > You should likely add something to Documentation/ABI  
-> 
-> Any suggestions as to where to add stuff in there?  The README there leaves
-> a lot to be desired as to how to name elements - for instance, DVB devices can
-> be seen through /sys/class/ and /sys/devices/.
+On Thu, Mar 8, 2018 at 4:24 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Document Thine THC63LVD1024 LVDS decoder.
 >
-> I could put it in sys-class-dvb or sys-devices-dvb - or, arguably, both.
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Good point. I don't have a strong opinion, but, as we're using /sys/class
-for remote controller's elements[1], I would place DVB stuff there also.
+Thanks for your patch!
 
-[1] Documentation/ABI/testing/sysfs-class-rc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> @@ -0,0 +1,59 @@
+> +THine Electronics THC63LVD1024 LVDS receiver
 
+Thine
 
-> > and to the DVB uAPI (Documentation/media/uapi/dvb).  
-> 
-> Likewise, any suggestion as to where in here?  As far as I can tell, the docs
-> here don't currently mention sysfs at all.  I'm guessing I'll need to create a
-> file specifically to talk about how to use this stuff with udev.
+> +--------------------------------------------
+> +
+> +The THC63LVD1024 is an LVDS receiver designed to convert multiple LVDS streams
+> +to digital CMOS/TTL parallel data.
+> +
+> +Required properties:
+> +- compatible: Shall be one of the following:
+> +  "thine,thc63lvd1024",
+> +  "lvds-decoder"
 
-Yes. The docs don't mention simply because, right now, there's nothing
-special on sysfs.
+What's the purpose of the second compatible value?
+When should it be used?
 
-> > > +	port->frontends.adapter.port_num = port->nr;
-> > > +  
-> > 
-> > Doing it for each multi-adapter device is something that bothers
-> > me. The better would be if we could move this to the DVB Kernel,
-> > in order to not need to check/fix every driver.  
-> 
-> I'm not sure how achievable that is: *port in this case is a private
-> cx23885-specific structure object.
+Gr{oetje,eeting}s,
 
-Yes, but other drivers that support multiple frontends store it
-somewhere. Yet, maybe we could keep this out of the first version.
+                        Geert
 
-> > If, otherwise, this is not possible, then we need a patch fixing port_num
-> > for all drivers that support multiple adapters.
-> > 
-> > Also, the risk of forgetting it seems high. So, perhaps we should
-> > add a new parameter to some function (like at dvb_register_device
-> > or at dvb_register_frontend), in order to make the port number
-> > a mandatory attribute.  
-> 
-> Hmmm...  The cx23885 driver doesn't call either of these functions as far as I
-> can tell - at least, not directly.  Maybe by vb2_dvb_register_bus()?
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Yeah, some hybrid drivers typically use a helper module to handle dvb
-registration, either at VB or VB2. As this has to be generic enough,
-if we add, we'll likely need to place the port number at
-dvb_register_device()/dvb_register_frontend() and then change
-vb2_dvb_register_bus() accordingly.
-
-Hmm... that's said, I guess we can get rid of the VB 1 version, as
-I'm not seeing any driver calling videobuf_dvb_register_bus() anymore.
-
-I'll double check and write a patch to get rid of it, if possible.
-
-> 
-> Note that these attribute files appear for the demux, dvr and net directories
-> as well as for the frontend.
-> 
-> Hmmm... further, the port number is no longer getting through and all adapters
-> are showing port 0.  
-
-Weird.
-
-> The MAC address works, though.  Maybe I should drop the
-> port number.
-
-Yeah, let's drop it for the first version. It can be added later if
-needed.
-
-Thanks,
-Mauro
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
