@@ -1,92 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751880AbeCIJLK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 04:11:10 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:43979 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751258AbeCIJLI (ORCPT
+        id S1751996AbeCIJLo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 04:11:44 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:43588 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751371AbeCIJLk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:11:08 -0500
-Date: Fri, 9 Mar 2018 01:10:46 -0800
-From: tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-1af22eba248efe2de25658041a80a3d40fb3e92e@git.kernel.org>
-Cc: jolsa@redhat.com, mingo@kernel.org, acme@redhat.com,
-        alexander.shishkin@linux.intel.com, hpa@zytor.com, eranian@google.com,
-        torvalds@linux-foundation.org, kan.liang@linux.intel.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org, peterz@infradead.org,
-        vincent.weaver@maine.edu
-Reply-To: kan.liang@linux.intel.com, vincent.weaver@maine.edu,
-        linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
-        torvalds@linux-foundation.org, eranian@google.com, acme@redhat.com,
-        hpa@zytor.com, alexander.shishkin@linux.intel.com, mingo@kernel.org,
-        jolsa@redhat.com
-In-Reply-To: <1518474035-21006-6-git-send-email-kan.liang@linux.intel.com>
-References: <1518474035-21006-6-git-send-email-kan.liang@linux.intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/x86/intel: Disable userspace RDPMC usage for
- large PEBS
-Git-Commit-ID: 1af22eba248efe2de25658041a80a3d40fb3e92e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 9 Mar 2018 04:11:40 -0500
+X-Google-Smtp-Source: AG47ELucN3G6KHo46k7ets/Ile7u26h+lP80r4kebBHmwBrld86KadDEoGRMbj2Od3pLKuqPpXh7u6Ip0VAcbdUbCJY=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com> <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Date: Fri, 9 Mar 2018 14:41:39 +0530
+X-Google-Sender-Auth: N4t7QKdN2jgK3OKk_wwRe3gw52I
+Message-ID: <CAOh2x=kczewDo1wTR+46+M7SussWLQzMPZW2MgUnz3bmQq1Wkg@mail.gmail.com>
+Subject: Re: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support Tegra210
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        DTML <devicetree@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1af22eba248efe2de25658041a80a3d40fb3e92e
-Gitweb:     https://git.kernel.org/tip/1af22eba248efe2de25658041a80a3d40fb3e92e
-Author:     Kan Liang <kan.liang@linux.intel.com>
-AuthorDate: Mon, 12 Feb 2018 14:20:35 -0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 9 Mar 2018 08:22:23 +0100
+On Tue, Feb 6, 2018 at 10:04 PM, Peter De Schrijver
+<pdeschrijver@nvidia.com> wrote:
+> Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
+> support in this driver. Also allow for the case where the CPU voltage is
+> controlled directly by the DFLL rather than by a separate regulator object.
+>
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
 
-perf/x86/intel: Disable userspace RDPMC usage for large PEBS
-
-Userspace RDPMC cannot possibly work for large PEBS, which was introduced in:
-
-  b8241d20699e ("perf/x86/intel: Implement batched PEBS interrupt handling (large PEBS interrupt threshold)")
-
-When the PEBS interrupt threshold is larger than one, there is no way
-to get exact auto-reload times and value for userspace RDPMC.  Disable
-the userspace RDPMC usage when large PEBS is enabled.
-
-The only exception is when the PEBS interrupt threshold is 1, in which
-case user-space RDPMC works well even with auto-reload events.
-
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: acme@kernel.org
-Fixes: b8241d20699e ("perf/x86/intel: Implement batched PEBS interrupt handling (large PEBS interrupt threshold)")
-Link: http://lkml.kernel.org/r/1518474035-21006-6-git-send-email-kan.liang@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/events/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 00a6251981d2..9c86e10f1196 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -2117,7 +2117,8 @@ static int x86_pmu_event_init(struct perf_event *event)
- 			event->destroy(event);
- 	}
- 
--	if (READ_ONCE(x86_pmu.attr_rdpmc))
-+	if (READ_ONCE(x86_pmu.attr_rdpmc) &&
-+	    !(event->hw.flags & PERF_X86_EVENT_FREERUNNING))
- 		event->hw.flags |= PERF_X86_EVENT_RDPMC_ALLOWED;
- 
- 	return err;
+You forgot to Cc maintainers and pm-list from the cpufreq world :(
