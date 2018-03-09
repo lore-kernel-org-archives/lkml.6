@@ -1,109 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752126AbeCIIgx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 03:36:53 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:49881 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751434AbeCIIgu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 03:36:50 -0500
-Date: Fri, 9 Mar 2018 00:36:40 -0800
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-jaalyl6bkvvji4r5u8wqw4n4@git.kernel.org>
-Cc: jolsa@kernel.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        acme@redhat.com, dsahern@gmail.com, adrian.hunter@intel.com,
-        wangnan0@huawei.com, hpa@zytor.com, tglx@linutronix.de,
-        eranian@google.com, namhyung@kernel.org
-Reply-To: adrian.hunter@intel.com, hpa@zytor.com, wangnan0@huawei.com,
-        eranian@google.com, tglx@linutronix.de, namhyung@kernel.org,
-        jolsa@kernel.org, acme@redhat.com, dsahern@gmail.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf cgroup: Introduce cgroup__new() out of open
- coded equivalent
-Git-Commit-ID: 923a0fb332f8ee49b063df07129b2686f78ec9c3
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1752140AbeCIIhE convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 03:37:04 -0500
+Received: from mga06.intel.com ([134.134.136.31]:21897 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751434AbeCIIhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 03:37:02 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,444,1515484800";
+   d="scan'208";a="33649772"
+From: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+To: Ingo Molnar <mingo@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+CC: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Lee, Chun-Yi" <jlee@suse.com>, "Borislav Petkov" <bp@alien8.de>,
+        "Luck, Tony" <tony.luck@intel.com>, Andy Lutomirski <luto@kernel.org>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        "Neri, Ricardo" <ricardo.neri@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>
+Subject: RE: [PATCH 07/12] efi: Use efi_mm in x86 as well as ARM
+Thread-Topic: [PATCH 07/12] efi: Use efi_mm in x86 as well as ARM
+Thread-Index: AQHTtrPK9lah9E/Y50aW5dd4kdO5vqPIDIUA//+I8OA=
+Date: Fri, 9 Mar 2018 08:37:00 +0000
+Message-ID: <FFF73D592F13FD46B8700F0A279B802F2E581F50@ORSMSX114.amr.corp.intel.com>
+References: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
+ <20180308080020.22828-8-ard.biesheuvel@linaro.org>
+ <20180309074034.put3ko6zxmaoizzr@gmail.com>
+In-Reply-To: <20180309074034.put3ko6zxmaoizzr@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOWUxMzczZjktOGJiYy00YzY1LWFjNDktN2U5YjA4OTNjNDVhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJrdmNuWHozaDJ6ekNHT3VWYzNPZGh3UmpKTlJ0NDlHT2oxN2l3RUNVV1VNaHdjT0RDcWFFWkRBTjVcL2YrWGk2dSJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  923a0fb332f8ee49b063df07129b2686f78ec9c3
-Gitweb:     https://git.kernel.org/tip/923a0fb332f8ee49b063df07129b2686f78ec9c3
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 6 Mar 2018 10:33:04 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 7 Mar 2018 10:22:25 -0300
+> > diff --git a/include/linux/efi.h b/include/linux/efi.h index
+> > f5083aa72eae..f1b7d68ac460 100644
+> > --- a/include/linux/efi.h
+> > +++ b/include/linux/efi.h
+> > @@ -966,6 +966,8 @@ extern struct efi {
+> >  	unsigned long flags;
+> >  } efi;
+> >
+> > +extern struct mm_struct efi_mm;
+> > +
+> >  static inline int
+> >  efi_guidcmp (efi_guid_t left, efi_guid_t right)  {
+> 
+> Ugh, I can see three problems with this patch:
+> 
+> 1)
+> 
+> Why is the low level asm/efi.h header polluted with two of the biggest header
+> files in existence, to add a type to _another_ header (efi.h)?
+> 
+> 2)
+> 
+> Why is <linux/sched/task.h> included if what is being relied on is mm_struct?
+> 
+> 3)
+> 
+> But even <linux/sched/mm.h> looks unnecessary in efi.h, a simple forward
+> declaration of mm_struct would do ...
+> 
+> The high level MM and sched headers should be added to the actual .c files that
+> make use of them.
 
-perf cgroup: Introduce cgroup__new() out of open coded equivalent
+Ok, makes sense.
+Sorry! for that. I will fix the issues.
 
-To follow the namespacing convention in tools/perf.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-jaalyl6bkvvji4r5u8wqw4n4@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/cgroup.c | 30 ++++++++++++++++++++----------
- 1 file changed, 20 insertions(+), 10 deletions(-)
-
-diff --git a/tools/perf/util/cgroup.c b/tools/perf/util/cgroup.c
-index 84dfc34a6d0f..26a837037797 100644
---- a/tools/perf/util/cgroup.c
-+++ b/tools/perf/util/cgroup.c
-@@ -109,6 +109,25 @@ static struct cgroup *evlist__find_cgroup(struct perf_evlist *evlist, char *str)
- 	return cgrp;
- }
- 
-+static struct cgroup *cgroup__new(char *name)
-+{
-+	struct cgroup *cgroup = zalloc(sizeof(*cgroup));
-+
-+	if (cgroup != NULL) {
-+		cgroup->name = name;
-+		refcount_set(&cgroup->refcnt, 1);
-+
-+		cgroup->fd = open_cgroup(name);
-+		if (cgroup->fd == -1)
-+			goto out_err;
-+	}
-+
-+	return cgroup;
-+out_err:
-+	free(cgroup);
-+	return NULL;
-+}
-+
- static int add_cgroup(struct perf_evlist *evlist, char *str)
- {
- 	struct perf_evsel *counter;
-@@ -116,18 +135,9 @@ static int add_cgroup(struct perf_evlist *evlist, char *str)
- 	int n;
- 
- 	if (!cgrp) {
--		cgrp = zalloc(sizeof(*cgrp));
-+		cgrp = cgroup__new(str);
- 		if (!cgrp)
- 			return -1;
--
--		cgrp->name = str;
--		refcount_set(&cgrp->refcnt, 1);
--
--		cgrp->fd = open_cgroup(str);
--		if (cgrp->fd == -1) {
--			free(cgrp);
--			return -1;
--		}
- 	}
- 
- 	/*
+Regards,
+Sai
