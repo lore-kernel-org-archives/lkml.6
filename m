@@ -1,81 +1,83 @@
-Return-Path: <gnomes@lxorguk.ukuu.org.uk>
-X-Google-Smtp-Source: AG47ELtdxNRROxP7fGo1HKvUAzjgS7ZztOYFWVAUaLB46hxU92fUol2JpEF0OSBcbsbqQJMK94VN
-ARC-Seal: i=1; a=rsa-sha256; t=1520628354; cv=none;
+Return-Path: <linus971@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520630132; cv=none;
         d=google.com; s=arc-20160816;
-        b=0i5w2pT6vLdWhS7xQvOpV7QvaB8wJtW+IpLUhBEfDSHZZaIfDzJt/IFbnBqjl+pwck
-         k55MwsgZSpKhm6zRPo73JHyqmKdgxV8UxIHDckKWq5SVQfEZKfT9iL82U9a4HtrmUb6f
-         iek6/WZzBib0TmmJe49682UhYM3hAvzP9p6otjqof5uql18VOOuqSBm1LM/8JX8gM/Rz
-         8xgYHvoyjJ79AJAJoIdPMmjPWks4FewHn3Y5Lb8/nMFgZGYChbvrtQVemypoqTztmN10
-         OP4dipsAX8mbfOCKPJWPJXP96dJY1ny+/7kotvb9GXneqDodeCCvo+bv3zX969W9959p
-         5Fhg==
+        b=RH+BPgY5gnHl6BQqGi/WeWzKqzmYVPG/qHN4tuOHExyIxch3yQ14jx7t0J43TZL2RE
+         ZqChwFcrPoZlSrT4VHK8B5eDnwfVovS4Ukm5j52b6antMuytWl2RDtm+CJigiLBJxCWg
+         LK0ldcXTTKYNRCH3EsDWpwwZZ1hQJn/yaYe3/OFn9x7V3U0M6EuH/LNE/mpTHRTWNl47
+         PLS+PIswzgfUKctrqx9LmkI+kpYCSDX53FgTtCcRh84CvS1uKDfk+m6ljaLbA7lajmMX
+         6YKtbTvKUAZSllGDjfvHVVeYetxsI/7ckqjVxKaitqdDI1c/V8fgXTgHJRIFRAA8H2sB
+         Xgqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=qCeAP+x4t+kan3ATeUAJVxBVW/JMlVP86QBzAAJOfPg=;
-        b=ueWSluLvmCfWTvCdtJe+yWlLHVSKxI7gM51O3GuFD9dUTC3urDDW/A5uR8kW+ZWjt8
-         oC8KY3UMo0e1PK/jyxzg7w9jIGFxsnNbyNkNNu8bU1b8M1WzdEzbRIeYFN4JjY3OnqZm
-         MbJLxk3ujlXxyNTbbNsbvJY2wI+pag6oFrjAqsOl9snLWZCQvRh8qCQn/dd+ga8dFgs6
-         jCzTD2mrPxrvAnSSO6MIK7eXohEhlruf7sS2EXju+AEPwq9pS5jKu819l/MBbmztHgRB
-         AOg4iYBjK+iBXI+87vD9jMVnrUBuNEpneNacS6wBux1FeE6pezyNeFvkq6QKhbgar4Pw
-         JcXA==
+        bh=4ZjmX0TK1ENqLidS6E/rBXdBjtyJFf2GLte8k5P5JJE=;
+        b=wH9nVfJZe4DuNhaW2VKkE4chRzb8jmHs7/ohdd3Gl4cfv6IfI2Z4T9D3EVgIvK3JaF
+         amyq+SUg43myhsG3ObFujsN/HQv5xASX1ySVzmFOp2La6+pJG1K9sT/bGdI9DaHbTETD
+         u/fJ3Ij+Wd1eM3FTxOHLCd2FWObkcMuCciwoX+prSkjnJhCCiLCdFFo/B5fzEtE6B+lY
+         XjENatzppy+oQ3J5jMApPkiw/XmW8nfLLIgLfFxeg2K4KzcudDifSOHtmJuGKKYUzm7/
+         lDL9VHN1cSpfsmT101IIOL2YPJ3pokzKTdvfMEnlKR0bbldrFrKbEssxoAVP8MBe8JBb
+         g7NA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of gnomes@lxorguk.ukuu.org.uk designates 82.70.14.225 as permitted sender) smtp.mailfrom=gnomes@lxorguk.ukuu.org.uk
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=MF3hvXOU;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=J069GZjP;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of gnomes@lxorguk.ukuu.org.uk designates 82.70.14.225 as permitted sender) smtp.mailfrom=gnomes@lxorguk.ukuu.org.uk
-Date: Fri, 9 Mar 2018 20:45:26 +0000
-From: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-To: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, dan.j.williams@intel.com, tglx@linutronix.de,
-        gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
-        aarcange@redhat.com, luto@kernel.org, keescook@google.com,
-        tim.c.chen@linux.intel.com, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org, linux-doc@vger.kernel.org, corbet@lwn.net,
-        mark.rutland@arm.com
-Subject: Re: [PATCH] [v2] docs: clarify security-bugs disclosure policy
-Message-ID: <20180309204526.56301f43@alans-desktop>
-In-Reply-To: <20180307214624.D4361772@viggo.jf.intel.com>
-References: <20180307214624.D4361772@viggo.jf.intel.com>
-Organization: Intel Corporation
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=MF3hvXOU;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=J069GZjP;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
+X-Google-Smtp-Source: AG47ELuHJ2AclS7MZZj6lAYb4elzN+xd0R2OahsnPqJW/e/7xd0626suIh8EXtGtpf/oTosGAkxOSGp/MxSMdJseo8g=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Sender: linus971@gmail.com
+In-Reply-To: <20180309204526.56301f43@alans-desktop>
+References: <20180307214624.D4361772@viggo.jf.intel.com> <20180309204526.56301f43@alans-desktop>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 9 Mar 2018 13:15:31 -0800
+X-Google-Sender-Auth: Nd8ovk0cP8IJpxiYL-sUbOo-_Gk
+Message-ID: <CA+55aFw5+KjVqKUpAMF+-BfE6NuXSNb8qdRtmAWDq6apK2v+sA@mail.gmail.com>
+Subject: Re: [PATCH] [v2] docs: clarify security-bugs disclosure policy
+To: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dan Williams <dan.j.williams@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrea Arcangeli <aarcange@redhat.com>, Andrew Lutomirski <luto@kernel.org>, Kees Cook <keescook@google.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>, Al Viro <viro@zeniv.linux.org.uk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594317071955827625?=
-X-GMAIL-MSGID: =?utf-8?q?1594494397029012995?=
+X-GMAIL-MSGID: =?utf-8?q?1594496261275103233?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 07 Mar 2018 13:46:24 -0800
-Dave Hansen <dave.hansen@linux.intel.com> wrote:
+On Fri, Mar 9, 2018 at 12:45 PM, Alan Cox <gnomes@lxorguk.ukuu.org.uk> wrote:
+>
+> If you want to be taken seriously then I think minimum you also need to
+> - Give a GPG key for messages to the list
 
-> From: Dave Hansen <dave.hansen@linux.intel.com>
-> 
-> I think we need to soften the language a bit.  It might scare folks
-> off, especially the:
-> 
-> 	 We prefer to fully disclose the bug as soon as possible.
-> 
-> which is not really the case.  Linus says:
-> 
-> 	It's not full disclosure, it's not coordinated disclosure,
-> 	and it's not "no disclosure".  It's more like just "timely
-> 	open fixes".
-> 
-> I changed a bit of the wording in here, but mostly to remove the word
-> "disclosure" since it seems to mean very specific things to people
-> that we do not mean here.
-> 
+Oh, I don't want to be taken seriously by people who use gpg encrypted email.
 
-If you want to be taken seriously then I think minimum you also need to
-- Give a GPG key for messages to the list
-- State what security is in place (encryption etc) to protect the list
-  itself
+It's garbage and should be shunned as such.
 
-There are probably a lot more things people would ask but given the
-policy now clear that it's basically just an 'early tip off'/'make sure
-Linus doesn't miss this' list for very short notification periods doesn't
-matter so much.
+I keep quoting this:
 
-Alan
+   https://motherboard.vice.com/en_us/article/vvbw9a/even-the-inventor-of-pgp-doesnt-use-pgp
+
+and anybody who thinks pgp encrypted email is fine is a clown.
+
+> - State what security is in place (encryption etc) to protect the list
+>   itself
+
+That could be stated, but it's worth noting the other rules.
+
+If you have some long corrupt vendor disclosure period and are worried
+about any good guys finding out (the bad guys probably already have
+it), we're not the list for you anyway.
+
+Keep your "we'll keep security problems under wraps so that they can
+be exploited for a long time" emails to yourself, or send them to
+/dev/null.
+
+                   Linus
