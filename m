@@ -1,384 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932219AbeCIOD1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 09:03:27 -0500
-Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:60545 "EHLO
-        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932101AbeCIODU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 09:03:20 -0500
-Subject: Re: [PATCH v6 07/17] media: rkisp1: add ISP1 params driver
-To: Jacob Chen <jacob-chen@iotwrt.com>, linux-rockchip@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        mchehab@kernel.org, linux-media@vger.kernel.org,
-        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
-        tfiga@chromium.org, zhengsq@rock-chips.com,
-        laurent.pinchart@ideasonboard.com, zyc@rock-chips.com,
-        eddie.cai.linux@gmail.com, jeffy.chen@rock-chips.com,
-        devicetree@vger.kernel.org, heiko@sntech.de,
-        Jacob Chen <jacob2.chen@rock-chips.com>,
-        Jacob Chen <cc@rock-chips.com>,
-        Allon Huang <allon.huang@rock-chips.com>
-References: <20180308094807.9443-1-jacob-chen@iotwrt.com>
- <20180308094807.9443-8-jacob-chen@iotwrt.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <bf0561d3-074f-534b-e0a0-afa180372452@xs4all.nl>
-Date: Fri, 9 Mar 2018 15:03:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932177AbeCIODH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 09:03:07 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54742 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932116AbeCIODF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 09:03:05 -0500
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: kvm@vger.kernel.org
+Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 6/7] x86/hyper-v: detect nested features
+Date: Fri,  9 Mar 2018 15:02:48 +0100
+Message-Id: <20180309140249.2840-7-vkuznets@redhat.com>
+In-Reply-To: <20180309140249.2840-1-vkuznets@redhat.com>
+References: <20180309140249.2840-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180308094807.9443-8-jacob-chen@iotwrt.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfAEowsyYkNsamDlU8BgmCFFB+eigf5CRqxQ89QOYQSmvLBoKNv6Ms5YNksX9XeoruE/7ZNjH4lYHWJ1bQM0phkZG1iSrlaDHtOKD7GE2FhUPEybfgkLB
- f/k7YzcUaI3hJBFJnJxn9f8kvQbgttdnWzz21T6OahycuU557ZWkpcHp1GbV+KtEtRZV52pwr8QaCrP51m29O49tsmqFgc25jrg1C7IjMSLYR09Rc71hk6Z2
- DPkX9m0wWFEfiDriuUnj+xIzkWyVdTdjmItRNJfj3sv/9Sl2NKqFm3cDo5p+ppC84ccQFTmDiv4IcRWrHHRj0xFnsxfyWYT5FuODcUthVHV4yOye5bLzj1cN
- O3FqjWw3IEcWSY9RlkcAOUfNLDX3+GYjyTODlfsyR6bJeXSNZnVLkJQzLts++YXkOjAN41DWtuECOvu5jL06bl5pONvcgHqDI/wubxXP1N+iC7Qw/shx7lQ2
- hhHwC9MaUipSUQk+eaUMqaShaKgbuxMHBsP5KUv/dGzSWGFMgce54rAYkO6aAissCpNq/I7xUz4PoIdJQgpSkRYfZxsUE0yWRa9AcvSh6wE37V5wtG9dpWWj
- rQd2MwyyjEvfL0zWxBtEJUz+LoLbjsQLbjfHEHOq+3IAhXNUulHhUPbQsL6xDeE4JasrmRze070PBXxTdZ2X3YSIbQ02IM5pjxDyNtBmnuYbHHq0BssqFACR
- 8t76zr34bE//PkTjtzIgE0YW6GDfFVAWZ0cFtgJgJmMzvkTEgg4FgrsoJEaMjlh6/7Njr8CExBE=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/03/18 10:47, Jacob Chen wrote:
-> From: Jacob Chen <jacob2.chen@rock-chips.com>
-> 
-> Add the output video driver that accept params from userspace.
-> 
-> Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
-> Signed-off-by: Shunqian Zheng <zhengsq@rock-chips.com>
-> Signed-off-by: Yichong Zhong <zyc@rock-chips.com>
-> Signed-off-by: Jacob Chen <cc@rock-chips.com>
-> Signed-off-by: Eddie Cai <eddie.cai.linux@gmail.com>
-> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-> Signed-off-by: Allon Huang <allon.huang@rock-chips.com>
-> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-> ---
->  drivers/media/platform/rockchip/isp1/isp_params.c | 1539 +++++++++++++++++++++
->  drivers/media/platform/rockchip/isp1/isp_params.h |   49 +
->  2 files changed, 1588 insertions(+)
->  create mode 100644 drivers/media/platform/rockchip/isp1/isp_params.c
->  create mode 100644 drivers/media/platform/rockchip/isp1/isp_params.h
-> 
-> diff --git a/drivers/media/platform/rockchip/isp1/isp_params.c b/drivers/media/platform/rockchip/isp1/isp_params.c
-> new file mode 100644
-> index 000000000000..747108e02836
-> --- /dev/null
-> +++ b/drivers/media/platform/rockchip/isp1/isp_params.c
+TLFS 5.0 says: "Support for an enlightened VMCS interface is reported with
+CPUID leaf 0x40000004. If an enlightened VMCS interface is supported,
+ additional nested enlightenments may be discovered by reading the CPUID
+leaf 0x4000000A (see 2.4.11)."
 
-<snip>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+Changes since v2:
+- define HV_X64_ENLIGHTENED_VMCS_VERSION [Radim Krčmář]
+---
+ arch/x86/include/asm/hyperv-tlfs.h | 4 ++++
+ arch/x86/include/asm/mshyperv.h    | 1 +
+ arch/x86/kernel/cpu/mshyperv.c     | 4 ++++
+ 3 files changed, 9 insertions(+)
 
-> +static int rkisp1_params_querycap(struct file *file,
-> +				  void *priv, struct v4l2_capability *cap)
-> +{
-> +	struct video_device *vdev = video_devdata(file);
-> +
-> +	strcpy(cap->driver, DRIVER_NAME);
-
-Use strlcpy!
-
-> +	strlcpy(cap->card, vdev->name, sizeof(cap->card));
-> +	strlcpy(cap->bus_info, "platform: " DRIVER_NAME, sizeof(cap->bus_info));
-> +
-> +	return 0;
-> +}
-> +
-> +/* ISP params video device IOCTLs */
-> +static const struct v4l2_ioctl_ops rkisp1_params_ioctl = {
-> +	.vidioc_reqbufs = vb2_ioctl_reqbufs,
-> +	.vidioc_querybuf = vb2_ioctl_querybuf,
-> +	.vidioc_create_bufs = vb2_ioctl_create_bufs,
-> +	.vidioc_qbuf = vb2_ioctl_qbuf,
-> +	.vidioc_dqbuf = vb2_ioctl_dqbuf,
-> +	.vidioc_prepare_buf = vb2_ioctl_prepare_buf,
-> +	.vidioc_expbuf = vb2_ioctl_expbuf,
-> +	.vidioc_streamon = vb2_ioctl_streamon,
-> +	.vidioc_streamoff = vb2_ioctl_streamoff,
-> +	.vidioc_enum_fmt_meta_out = rkisp1_params_enum_fmt_meta_out,
-> +	.vidioc_g_fmt_meta_out = rkisp1_params_g_fmt_meta_out,
-> +	.vidioc_s_fmt_meta_out = rkisp1_params_g_fmt_meta_out,
-> +	.vidioc_try_fmt_meta_out = rkisp1_params_g_fmt_meta_out,
-> +	.vidioc_querycap = rkisp1_params_querycap,
-> +	.vidioc_subscribe_event = v4l2_ctrl_subscribe_event,
-> +	.vidioc_unsubscribe_event = v4l2_event_unsubscribe,
-> +};
-> +
-> +static int rkisp1_params_vb2_queue_setup(struct vb2_queue *vq,
-> +					 unsigned int *num_buffers,
-> +					 unsigned int *num_planes,
-> +					 unsigned int sizes[],
-> +					 struct device *alloc_devs[])
-> +{
-> +	struct rkisp1_isp_params_vdev *params_vdev = vq->drv_priv;
-> +
-> +	*num_buffers = clamp_t(u32, *num_buffers,
-> +			       RKISP1_ISP_PARAMS_REQ_BUFS_MIN,
-> +			       RKISP1_ISP_PARAMS_REQ_BUFS_MAX);
-> +
-> +	*num_planes = 1;
-> +
-> +	sizes[0] = sizeof(struct rkisp1_isp_params_cfg);
-> +
-> +	INIT_LIST_HEAD(&params_vdev->params);
-> +	params_vdev->first_params = true;
-> +
-> +	return 0;
-> +}
-> +
-> +static void rkisp1_params_vb2_buf_queue(struct vb2_buffer *vb)
-> +{
-> +	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
-> +	struct rkisp1_buffer *params_buf = to_rkisp1_buffer(vbuf);
-> +	struct vb2_queue *vq = vb->vb2_queue;
-> +	struct rkisp1_isp_params_vdev *params_vdev = vq->drv_priv;
-> +	struct rkisp1_isp_params_cfg *new_params;
-> +	unsigned long flags;
-> +
-> +	unsigned int cur_frame_id = -1;
-> +	cur_frame_id = atomic_read(&params_vdev->dev->isp_sdev.frm_sync_seq) - 1;
-> +
-> +	if (params_vdev->first_params) {
-> +		new_params = (struct rkisp1_isp_params_cfg *)
-> +			(vb2_plane_vaddr(vb, 0));
-> +		vbuf->sequence = cur_frame_id;
-> +		vb2_buffer_done(&params_buf->vb.vb2_buf, VB2_BUF_STATE_DONE);
-> +		params_vdev->first_params = false;
-> +		params_vdev->cur_params = *new_params;
-> +		return;
-> +	}
-> +
-> +	params_buf->vaddr[0] = vb2_plane_vaddr(vb, 0);
-> +	spin_lock_irqsave(&params_vdev->config_lock, flags);
-> +	list_add_tail(&params_buf->queue, &params_vdev->params);
-> +	spin_unlock_irqrestore(&params_vdev->config_lock, flags);
-> +}
-> +
-> +static int rkisp1_params_vb2_buf_prepare(struct vb2_buffer *vb)
-> +{
-> +        if (vb2_plane_size(vb, 0) < sizeof(struct rkisp1_isp_params_cfg))
-> +                return -EINVAL;
-> +
-> +        vb2_set_plane_payload(vb, 0, sizeof(struct rkisp1_isp_params_cfg));
-> +
-> +	return 0;
-> +}
-> +
-> +static void rkisp1_params_vb2_stop_streaming(struct vb2_queue *vq)
-> +{
-> +	struct rkisp1_isp_params_vdev *params_vdev = vq->drv_priv;
-> +	struct rkisp1_buffer *buf;
-> +	unsigned long flags;
-> +	int i;
-> +
-> +	/* stop params input firstly */
-> +	spin_lock_irqsave(&params_vdev->config_lock, flags);
-> +	params_vdev->streamon = false;
-> +	spin_unlock_irqrestore(&params_vdev->config_lock, flags);
-> +
-> +	for (i = 0; i < RKISP1_ISP_PARAMS_REQ_BUFS_MAX; i++) {
-> +		spin_lock_irqsave(&params_vdev->config_lock, flags);
-> +		if (!list_empty(&params_vdev->params)) {
-> +			buf = list_first_entry(&params_vdev->params,
-> +					       struct rkisp1_buffer, queue);
-> +			list_del(&buf->queue);
-> +			spin_unlock_irqrestore(&params_vdev->config_lock,
-> +					       flags);
-> +		} else {
-> +			spin_unlock_irqrestore(&params_vdev->config_lock,
-> +					       flags);
-> +			break;
-> +		}
-> +
-> +		if (buf)
-> +			vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
-> +		buf = NULL;
-> +	}
-> +}
-> +
-> +static int
-> +rkisp1_params_vb2_start_streaming(struct vb2_queue *queue, unsigned int count)
-> +{
-> +	struct rkisp1_isp_params_vdev *params_vdev = queue->drv_priv;
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&params_vdev->config_lock, flags);
-> +	params_vdev->streamon = true;
-> +	spin_unlock_irqrestore(&params_vdev->config_lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct vb2_ops rkisp1_params_vb2_ops = {
-> +	.queue_setup = rkisp1_params_vb2_queue_setup,
-> +	.wait_prepare = vb2_ops_wait_prepare,
-> +	.wait_finish = vb2_ops_wait_finish,
-> +	.buf_queue = rkisp1_params_vb2_buf_queue,
-> +	.buf_prepare = rkisp1_params_vb2_buf_prepare,
-> +	.start_streaming = rkisp1_params_vb2_start_streaming,
-> +	.stop_streaming = rkisp1_params_vb2_stop_streaming,
-> +
-> +};
-> +
-> +struct v4l2_file_operations rkisp1_params_fops = {
-> +	.mmap = vb2_fop_mmap,
-> +	.unlocked_ioctl = video_ioctl2,
-> +	.poll = vb2_fop_poll,
-> +	.open = v4l2_fh_open,
-> +	.release = vb2_fop_release
-> +};
-> +
-> +static int
-> +rkisp1_params_init_vb2_queue(struct vb2_queue *q,
-> +			     struct rkisp1_isp_params_vdev *params_vdev)
-> +{
-> +	struct rkisp1_vdev_node *node;
-> +
-> +	node = queue_to_node(q);
-> +
-> +	q->type = V4L2_BUF_TYPE_META_OUTPUT;
-> +	q->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
-> +	q->drv_priv = params_vdev;
-> +	q->ops = &rkisp1_params_vb2_ops;
-> +	q->mem_ops = &vb2_vmalloc_memops;
-> +	q->buf_struct_size = sizeof(struct rkisp1_buffer);
-> +	q->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
-> +	q->lock = &node->vlock;
-> +
-> +	return vb2_queue_init(q);
-> +}
-> +
-> +static void rkisp1_init_params_vdev(struct rkisp1_isp_params_vdev *params_vdev)
-> +{
-> +	params_vdev->vdev_fmt.fmt.meta.dataformat =
-> +		V4L2_META_FMT_RK_ISP1_PARAMS;
-> +	params_vdev->vdev_fmt.fmt.meta.buffersize =
-> +		sizeof(struct rkisp1_isp_params_cfg);
-> +}
-> +
-> +int rkisp1_register_params_vdev(struct rkisp1_isp_params_vdev *params_vdev,
-> +				struct v4l2_device *v4l2_dev,
-> +				struct rkisp1_device *dev)
-> +{
-> +	int ret;
-> +	struct rkisp1_vdev_node *node = &params_vdev->vnode;
-> +	struct video_device *vdev = &node->vdev;
-> +
-> +	params_vdev->dev = dev;
-> +	mutex_init(&node->vlock);
-> +	spin_lock_init(&params_vdev->config_lock);
-> +
-> +	strlcpy(vdev->name, "rkisp1-input-params", sizeof(vdev->name));
-> +
-> +	video_set_drvdata(vdev, params_vdev);
-> +	vdev->ioctl_ops = &rkisp1_params_ioctl;
-> +	vdev->fops = &rkisp1_params_fops;
-> +	vdev->release = video_device_release_empty;
-> +	/*
-> +	 * Provide a mutex to v4l2 core. It will be used
-> +	 * to protect all fops and v4l2 ioctls.
-> +	 */
-> +	vdev->lock = &node->vlock;
-> +	vdev->v4l2_dev = v4l2_dev;
-> +	vdev->queue = &node->buf_queue;
-> +	vdev->device_caps = V4L2_CAP_STREAMING | V4L2_CAP_META_OUTPUT;
-
-As mentioned in my previous review: the patches adding Meta Output support
-haven't been merged yet. This driver is likely to be the first to need this.
-
-Please add Sakari's patches adding support for META_OUTPUT to this patch series
-since it is likely that they will be merged together with this driver.
-
-> +	vdev->vfl_dir = VFL_DIR_TX;
-> +	rkisp1_params_init_vb2_queue(vdev->queue, params_vdev);
-> +	rkisp1_init_params_vdev(params_vdev);
-> +	video_set_drvdata(vdev, params_vdev);
-> +
-> +	node->pad.flags = MEDIA_PAD_FL_SOURCE;
-> +	ret = media_entity_pads_init(&vdev->entity, 1, &node->pad);
-> +	if (ret < 0)
-> +		goto err_release_queue;
-> +	ret = video_register_device(vdev, VFL_TYPE_GRABBER, -1);
-> +	if (ret < 0) {
-> +		dev_err(&vdev->dev,
-> +			"could not register Video for Linux device\n");
-> +		goto err_cleanup_media_entity;
-> +	}
-> +	return 0;
-> +err_cleanup_media_entity:
-> +	media_entity_cleanup(&vdev->entity);
-> +err_release_queue:
-> +	vb2_queue_release(vdev->queue);
-> +	return ret;
-> +}
-> +
-> +void rkisp1_unregister_params_vdev(struct rkisp1_isp_params_vdev *params_vdev)
-> +{
-> +	struct rkisp1_vdev_node *node = &params_vdev->vnode;
-> +	struct video_device *vdev = &node->vdev;
-> +
-> +	video_unregister_device(vdev);
-> +	media_entity_cleanup(&vdev->entity);
-> +	vb2_queue_release(vdev->queue);
-> +}
-> diff --git a/drivers/media/platform/rockchip/isp1/isp_params.h b/drivers/media/platform/rockchip/isp1/isp_params.h
-> new file mode 100644
-> index 000000000000..24602e11014d
-> --- /dev/null
-> +++ b/drivers/media/platform/rockchip/isp1/isp_params.h
-> @@ -0,0 +1,49 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Rockchip isp1 driver
-> + *
-> + * Copyright (C) 2017 Rockchip Electronics Co., Ltd.
-> + */
-> +
-> +#ifndef _RKISP1_ISP_H
-> +#define _RKISP1_ISP_H
-> +
-> +#include <linux/rkisp1-config.h>
-> +#include "common.h"
-> +
-> +/*
-> + * struct rkisp1_isp_subdev - ISP input parameters device
-> + *
-> + * @cur_params: Current ISP parameters
-> + * @first_params: the first params should take effect immediately
-> + */
-> +struct rkisp1_isp_params_vdev {
-> +	struct rkisp1_vdev_node vnode;
-> +	struct rkisp1_device *dev;
-> +
-> +	spinlock_t config_lock;
-> +	struct list_head params;
-> +	struct rkisp1_isp_params_cfg cur_params;
-> +	struct v4l2_format vdev_fmt;
-> +	bool streamon;
-> +	bool first_params;
-> +
-> +	enum v4l2_quantization quantization;
-> +	enum rkisp1_fmt_raw_pat_type raw_type;
-> +};
-> +
-> +/* config params before ISP streaming */
-> +void rkisp1_params_configure_isp(struct rkisp1_isp_params_vdev *params_vdev,
-> +			  struct ispsd_in_fmt *in_fmt,
-> +			  enum v4l2_quantization quantization);
-> +void rkisp1_params_disable_isp(struct rkisp1_isp_params_vdev *params_vdev);
-> +
-> +int rkisp1_register_params_vdev(struct rkisp1_isp_params_vdev *params_vdev,
-> +				struct v4l2_device *v4l2_dev,
-> +				struct rkisp1_device *dev);
-> +
-> +void rkisp1_unregister_params_vdev(struct rkisp1_isp_params_vdev *params_vdev);
-> +
-> +void rkisp1_params_isr(struct rkisp1_isp_params_vdev *params_vdev, u32 isp_mis);
-> +
-> +#endif /* _RKISP1_ISP_H */
-> 
-
-Regards,
-
-	Hans
+diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+index 472dc38110fa..2e2f0a741e84 100644
+--- a/arch/x86/include/asm/hyperv-tlfs.h
++++ b/arch/x86/include/asm/hyperv-tlfs.h
+@@ -14,6 +14,7 @@
+ #define HYPERV_CPUID_FEATURES			0x40000003
+ #define HYPERV_CPUID_ENLIGHTMENT_INFO		0x40000004
+ #define HYPERV_CPUID_IMPLEMENT_LIMITS		0x40000005
++#define HYPERV_CPUID_NESTED_FEATURES		0x4000000A
+ 
+ #define HYPERV_HYPERVISOR_PRESENT_BIT		0x80000000
+ #define HYPERV_CPUID_MIN			0x40000005
+@@ -332,6 +333,9 @@ struct hv_tsc_emulation_status {
+ #define HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_MASK	\
+ 		(~((1ull << HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT) - 1))
+ 
++/* Hyper-V Enlightened VMCS version mask in nested features CPUID */
++#define HV_X64_ENLIGHTENED_VMCS_VERSION		0xff
++
+ #define HV_X64_MSR_TSC_REFERENCE_ENABLE		0x00000001
+ #define HV_X64_MSR_TSC_REFERENCE_ADDRESS_SHIFT	12
+ 
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index dcb40567b35e..cc784b1f6bf1 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -13,6 +13,7 @@ struct ms_hyperv_info {
+ 	u32 features;
+ 	u32 misc_features;
+ 	u32 hints;
++	u32 nested_features;
+ 	u32 max_vp_index;
+ 	u32 max_lp_index;
+ };
+diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+index 0dfc568c110c..8432bf215e30 100644
+--- a/arch/x86/kernel/cpu/mshyperv.c
++++ b/arch/x86/kernel/cpu/mshyperv.c
+@@ -208,6 +208,10 @@ static void __init ms_hyperv_init_platform(void)
+ 		x86_platform.calibrate_cpu = hv_get_tsc_khz;
+ 	}
+ 
++	if (ms_hyperv.hints & HV_X64_ENLIGHTENED_VMCS_RECOMMENDED)
++		ms_hyperv.nested_features =
++			cpuid_eax(HYPERV_CPUID_NESTED_FEATURES);
++
+ #ifdef CONFIG_X86_LOCAL_APIC
+ 	if (ms_hyperv.features & HV_X64_ACCESS_FREQUENCY_MSRS &&
+ 	    ms_hyperv.misc_features & HV_FEATURE_FREQUENCY_MSRS_AVAILABLE) {
+-- 
+2.14.3
