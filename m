@@ -1,31 +1,31 @@
 Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1520607046; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520607044; cv=none;
         d=google.com; s=arc-20160816;
-        b=WV4Hnmb2WFbbpX4evB94PlQdF68vPv+WTpNf/a813+5UrmcRS0mNUvxy28KmOoWjo8
-         8HjljpRxEPUf4uj6VHC36kxC2JLKzuS8xAaZiH+KI8z6tw53wnvx8ahbs+oX9ovVfbH7
-         6HshvKUXR8WlJVNRLgQ7cO0vs6UigHQlWH2xievDTsPnW7BkCIl0Cph2f+DgmiL+wwT6
-         c3ReulQN2IAsXP7AtbCZNxxa/jrfFrVz97KMGTw1zAtueM0TJIZmLFTuabfkNRXvdkhH
-         9mtbe01IPbHbFNPjZuGuuogl6tP3P+McmXDwXBUvkzd/Z2UHGF4Gmvu3BVka4Ha249fX
-         s0pA==
+        b=pYn7S9eAZszUWuihIKwpVkSGiuPE2xbT6o28QMfz6ra/YPtrz5hltL/COztKo3mXDl
+         ndJN42IniN6+3cP2YCqdE6F8kdbSK3AA+tq2B9Pwa/dQou+dSILf+2aJbsDj0/uzZd2N
+         l5BU1bgmuFVrRtGt59GJecHVkFauu25Tj2Uy3hRJA0Yyvx1vFRCMboP/GVTfSS4MmV06
+         D3kpJ7uwdP/yD89oelF9WnIb6wR+OXH7jhpmY41/ErN7l3K2Mb4P+XNjINB3KAktke7q
+         EqwcT8pNfv+6JfQtemnPgSN4IPQ/1FjbA5Mvy1UXpMI5qJgaWjQCxl4sZgQizB7NGFyz
+         nVoA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=AL3vSk4vvDm22SR1uW6+Qq0PXmzWtxma/3Yintv32TA=;
-        b=ncxexHZXo79ljfY3bpy5dlTlRAuPR/K4mMdbXsl/6XWG2NPQYA2yW/cCFC8JlAyz8A
-         44jeuXlGtrjh3mxUblI8msNCN2BQw6SOT3YOn6sA1a86r1zhHn6bXQcmuTrs0BQgzjBd
-         n5fumKZKuj6PV3uaHV3JiNHROAuAP/NgH5RN7SH0KhUouzIG0XnRaq+H1RRHLGP4Mi/2
-         C8+ZLzE1nY5rA7PvqfvgsILc2fIn5jHBdVgAUgCJpT3ViqsTqXepGtcdsygiA7l6nKVO
-         iJs/cg8U/m09QWehQIGHcJNh8u8dj0OBn2DbLAceD3k3AgYrHftTmbYAgvu2dpBZlHfs
-         uh5g==
+        bh=V1wYXU+KUDrx+qL3t9emawfRo3d+7vjAjrk7o5LYCD0=;
+        b=k4+HEf1ZOw44T4bC9Q45tgbCXWAwxxurlzhrMfwbUWro9tVTae1YRJii+IGai3Cnxr
+         jUVxJBIUdLHQy+G7uQZvdtdyE5m9/jjh7+6nUiFKVxw861vDmWGrNz6S/V/J73B+3W/z
+         zlEyVhCTP6sA7S/A2G5ZlMyBCCwCb8MkLGr2WE4OirY72AhxuciwwWHh54V7+37lt4mn
+         nOkUHBKs2+9Kvi/EQyLtY6eR4bIbW9CAN96wY4p4ui3Phf2tTIMnjPwgy+SzwVRhrFuS
+         dj11Rh+1dUSPD7zypyj9rcHWWD8mUg2yPg9Xxf7+8jm/rjYMprL2rqKO+x9qj1SzVC/p
+         LV4w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=YEPlV/Ju;
+       dkim=pass header.i=@linaro.org header.s=google header.b=HruqlRxn;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=YEPlV/Ju;
+       dkim=pass header.i=@linaro.org header.s=google header.b=HruqlRxn;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AG47ELt6RAdwft8KVMKEPHm6kuAdNQjDodlBfeAEQyUcCrkb7PKRFsUjU322S4/LUchvMbTPRGjXXQ==
+X-Google-Smtp-Source: AG47ELszfAYlVIwI8u26ZyCE49bmG6IhUULcm4S0L9ejjgjku1MAkOGsc5ZzD+a+giVucVTnsADxgg==
 From: srinivas.kandagatla@linaro.org
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
@@ -41,22 +41,22 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	linux-amlogic@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 17/25] nvmem: rockchip-efuse: Make use of of_device_get_match_data()
-Date: Fri,  9 Mar 2018 14:47:11 +0000
-Message-Id: <20180309144719.29904-18-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 16/25] nvmem: snvs_lpgpr: Convert commas to semicolons
+Date: Fri,  9 Mar 2018 14:47:10 +0000
+Message-Id: <20180309144719.29904-17-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180309144719.29904-1-srinivas.kandagatla@linaro.org>
 References: <20180309144719.29904-1-srinivas.kandagatla@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594472053809058123?=
-X-GMAIL-MSGID: =?utf-8?q?1594472053809058123?=
+X-GMAIL-THRID: =?utf-8?q?1594472052688700914?=
+X-GMAIL-MSGID: =?utf-8?q?1594472052688700914?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-Simplify code a bit by using of_device_get_match_data() instead of
-of_match_device().
+Looks like commas were accidentally used where semicolons were
+supposed to be. Fix that.
 
 Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Heiko Stuebner <heiko@sntech.de>
@@ -73,36 +73,31 @@ Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/rockchip-efuse.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/nvmem/snvs_lpgpr.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/nvmem/rockchip-efuse.c b/drivers/nvmem/rockchip-efuse.c
-index fec6e4c48b9a..ade8848adf82 100644
---- a/drivers/nvmem/rockchip-efuse.c
-+++ b/drivers/nvmem/rockchip-efuse.c
-@@ -259,11 +259,11 @@ static int rockchip_efuse_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	struct nvmem_device *nvmem;
- 	struct rockchip_efuse_chip *efuse;
--	const struct of_device_id *match;
-+	const void *data;
- 	struct device *dev = &pdev->dev;
+diff --git a/drivers/nvmem/snvs_lpgpr.c b/drivers/nvmem/snvs_lpgpr.c
+index cb471d5e8e86..92e1e41d128e 100644
+--- a/drivers/nvmem/snvs_lpgpr.c
++++ b/drivers/nvmem/snvs_lpgpr.c
+@@ -110,12 +110,12 @@ static int snvs_lpgpr_probe(struct platform_device *pdev)
+ 	cfg->priv = priv;
+ 	cfg->name = dev_name(dev);
+ 	cfg->dev = dev;
+-	cfg->stride = 4,
+-	cfg->word_size = 4,
+-	cfg->size = 4,
+-	cfg->owner = THIS_MODULE,
+-	cfg->reg_read  = snvs_lpgpr_read,
+-	cfg->reg_write = snvs_lpgpr_write,
++	cfg->stride = 4;
++	cfg->word_size = 4;
++	cfg->size = 4;
++	cfg->owner = THIS_MODULE;
++	cfg->reg_read  = snvs_lpgpr_read;
++	cfg->reg_write = snvs_lpgpr_write;
  
--	match = of_match_device(dev->driver->of_match_table, dev);
--	if (!match || !match->data) {
-+	data = of_device_get_match_data(dev);
-+	if (!data) {
- 		dev_err(dev, "failed to get match data\n");
- 		return -EINVAL;
- 	}
-@@ -286,7 +286,7 @@ static int rockchip_efuse_probe(struct platform_device *pdev)
- 	if (of_property_read_u32(dev->of_node, "rockchip,efuse-size",
- 				 &econfig.size))
- 		econfig.size = resource_size(res);
--	econfig.reg_read = match->data;
-+	econfig.reg_read = data;
- 	econfig.priv = efuse;
- 	econfig.dev = efuse->dev;
- 	nvmem = devm_nvmem_register(dev, &econfig);
+ 	nvmem = devm_nvmem_register(dev, cfg);
+ 
 -- 
 2.15.1
