@@ -1,26 +1,27 @@
 Return-Path: <jeffy.chen@rock-chips.com>
-X-Google-Smtp-Source: AG47ELtF1VbRky+XT7xxWdrOUZZYHHoiSh7Qm3Nz/ecUD9gYinXfLCC5gvyP4hUUAfj538deqZQo
-ARC-Seal: i=1; a=rsa-sha256; t=1520585109; cv=none;
+X-Google-Smtp-Source: AG47ELv1jklbZSqiL9Y/jTIhj5YK/Kg6ETMdfqeC18sfVA7I+s4afDCJisrBVLmevthXPyKd/tXo
+ARC-Seal: i=1; a=rsa-sha256; t=1520585144; cv=none;
         d=google.com; s=arc-20160816;
-        b=P7Cph1wC52HOZ9gdrZj8mPhBrbSB4p18YEww9u7OhxetQSaTER4QTEHrmNyyVHKRHq
-         HrWPPqMhjCeStbW4HMPI4MY7CjW77M/nXpkEZ0GM2/5yJsEXY35DHMBqWiMDxXx/2muY
-         cQjD3/tkRKujhQAkWC0p32Z1g//wABa4oxxLilRwWfel78oXUcxH5PgINUkmVEeO6HeB
-         nFBUyimxqaaMgEdixdsBKf7Cr2xoFPjfp00W00+VXHcJWw5ZS9oRs0chZu5ItKJEpr5A
-         BdT4/r7J+NixW02M0FQNHmfw0rNfYBIChT4a//lGegCVmcpseeRjOR4VeaYJE/+fWQ8k
-         q4zw==
+        b=pz8qlroHXf/cOftOHY0f900gxRLWzLwrKCAOn8jlSaKUpu4AmaSpZGSbF9SP/VXNyP
+         Z0ac153VNguFuB8Rbwnpd6tFcifvDLSo08ZQtAQ/PvHtSAGA8je+C7DsmHNIdxIPzY8P
+         pwxLusElnQ8sB7uMqP47kasOjb3ZkK3700KPLquxagyE4OUm3YbZOPaCCpW1enDNvsuE
+         jsl+a3ZHY9hycl1MUEUkNoiEKj0O8HIlMxRfEmQ3H6jfgXVJTcGzZJB+J4oWpWtuYbFM
+         brZ13+8u2y9c63qhApvb8XkoqzrMb5z2YTR3yPDVxOAT/7jOwJAQwBiAYw0aGPfkmrHK
+         kQxg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=ugN1saNeDXORmUf17Sd8cKGATwssbR4XGmJkAoMCGrE=;
-        b=NHZf2yrgxFlRzdNj0AUkIDzL4QZtqV502wSk+leAabOMt1kAmBgrmhKTmo3KAyOgri
-         kYs7GXNz6GoteWlEbK7I2JAXEs26LxuizeRQAKiYFz7kCQtk7z2OZtgYuV2obGVjAQm3
-         h+MoGbYBh01vqsdPRpH+Hnb7QqYfvViwYKZ8ILzMjmG4BXEDIkCOdSqAH3qw5iT5U+PZ
-         m+2QliDVfqY5ZmFRCYzKI8dVVatgAPM2gPRytVswt8jUBeag5qmNlLmb8TlhCrpwdhSg
-         Hyzjs5hecpVhX7Q3tbiALunVQVuwTkLagN04jvrhN8DyqdtD6SLaQX7gICPvRpOC8lGL
-         idFA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=XESAkslWyKFUYmATx2Wym9n1kl90w78/MpxOrWqdfh8=;
+        b=NuQQnQOf6J3YksnGbvqgu9N582tOVARcwhXA4102Qhi8k98JNowBWfWMHbs3tUQ1W8
+         DTlEIDMEHrcjeAa9sVbcyUTNaxbRC4GJwqSiAE7AxQK2prOoKc3FBVlFbxpWvWbT+3Nk
+         zW1CQS4/vWWFpKL+n+kRGkX5x923u9SkBL+KpsBJrLJ8dUhA7ffY7MX+xndvEcY7grfS
+         l1rLvKpbw/c/vq2qJauoVIF7EqBukeqq7gBnem1ZAN+DP45V+PBvN9qUOPMYzbvd2888
+         41HTH2/kUkL0au6d3XqNTVnpJVTAm+HLpcl0V1VT2mvczEG+jzLEIVOry+Sdp7lsRKhS
+         ZocA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.24 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
+       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.18 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.24 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
+       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.18 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -30,7 +31,7 @@ X-RL-SENDER: jeffy.chen@rock-chips.com
 X-FST-TO: linux-kernel@vger.kernel.org
 X-SENDER-IP: 103.29.142.67
 X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <9631457aed92c8818697badf8219d971>
+X-UNIQUE-TAG: <9899e2c94258fe984e5a5fe7dd9cd02e>
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From: Jeffy Chen <jeffy.chen@rock-chips.com>
@@ -60,55 +61,43 @@ Cc: Guenter Roeck <linux@roeck-us.net>,
 	linux-arm-kernel@lists.infradead.org,
 	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
 	Mark Rutland <mark.rutland@arm.com>,
-	linux-rtc@vger.kernel.org,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Gabriel Fernandez <gabriel.fernandez@st.com>,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Lee Jones <lee.jones@linaro.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Vladimir Zapolskiy <vz@mleia.com>
-Subject: [RESEND PATCH v4 0/4] Set name of regmap_config
-Date: Fri,  9 Mar 2018 16:43:47 +0800
-Message-Id: <20180309084351.32009-1-jeffy.chen@rock-chips.com>
+	Lee Jones <lee.jones@linaro.org>
+Subject: [RESEND PATCH v4 1/4] mfd: syscon: Set name of regmap_config
+Date: Fri,  9 Mar 2018 16:43:48 +0800
+Message-Id: <20180309084351.32009-2-jeffy.chen@rock-chips.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180309084351.32009-1-jeffy.chen@rock-chips.com>
+References: <20180309084351.32009-1-jeffy.chen@rock-chips.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594449051425323365?=
-X-GMAIL-MSGID: =?utf-8?q?1594449051425323365?=
+X-GMAIL-THRID: =?utf-8?q?1594449087814408748?=
+X-GMAIL-MSGID: =?utf-8?q?1594449087814408748?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+We are now allowing to register debugfs without a valid device, and not
+having a valid name will end up using "dummy*" to create debugfs dir.
 
-After 9b947a13e7f6 ("regmap: use debugfs even when no device"), we are
-allowing regmap to create debugfs without a valid device. Some of them
-would end up using "dummy*" as debugfs name.
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+---
 
-This series try to set names in some regmap_config to avoid that.
-
-
-Changes in v4:
-Not to use rtc dev to init regmap, the gpbr is not directly related to
-the rtc.
-
+Changes in v4: None
 Changes in v3:
 Modify commit message.
 
-Jeffy Chen (4):
-  mfd: syscon: Set name of regmap_config
-  rtc: at91sam9: Set name of regmap_config
-  clk: lpc32xx: Set name of regmap_config
-  ARM: rockchip: Set name of regmap_config
+ drivers/mfd/syscon.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- arch/arm/mach-rockchip/platsmp.c | 1 +
- drivers/clk/nxp/clk-lpc32xx.c    | 1 +
- drivers/mfd/syscon.c             | 1 +
- drivers/rtc/rtc-at91sam9.c       | 1 +
- 4 files changed, 4 insertions(+)
-
+diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+index fc9ba0ea4e44..b6d05cd934e6 100644
+--- a/drivers/mfd/syscon.c
++++ b/drivers/mfd/syscon.c
+@@ -110,6 +110,7 @@ static struct syscon *of_syscon_register(struct device_node *np)
+ 	syscon_config.reg_stride = reg_io_width;
+ 	syscon_config.val_bits = reg_io_width * 8;
+ 	syscon_config.max_register = resource_size(&res) - reg_io_width;
++	syscon_config.name = of_node_full_name(np);
+ 
+ 	regmap = regmap_init_mmio(NULL, base, &syscon_config);
+ 	if (IS_ERR(regmap)) {
 -- 
 2.11.0
