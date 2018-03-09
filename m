@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932805AbeCIXZ5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 18:25:57 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:53564 "EHLO
+        id S1751835AbeCIX1u (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 18:27:50 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:53746 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932706AbeCIXZx (ORCPT
+        with ESMTP id S932764AbeCIXZ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 18:25:53 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9DD4D6050D
+        Fri, 9 Mar 2018 18:25:56 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ACDFC60854
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
 From: Lina Iyer <ilina@codeaurora.org>
@@ -15,11 +15,10 @@ To: andy.gross@linaro.org, david.brown@linaro.org,
         linux-arm-msm@vger.kernel.org
 Cc: linux-soc@vger.kernel.org, rnayak@codeaurora.org,
         bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, Lina Iyer <ilina@codeaurora.org>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v4 02/10] dt-bindings: introduce RPMH RSC bindings for Qualcomm SoCs
-Date: Fri,  9 Mar 2018 16:25:35 -0700
-Message-Id: <20180309232543.24636-3-ilina@codeaurora.org>
+        sboyd@kernel.org, Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH v4 06/10] drivers: qcom: rpmh-rsc: allow invalidation of sleep/wake TCS
+Date: Fri,  9 Mar 2018 16:25:39 -0700
+Message-Id: <20180309232543.24636-7-ilina@codeaurora.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180309232543.24636-1-ilina@codeaurora.org>
 References: <20180309232543.24636-1-ilina@codeaurora.org>
@@ -27,168 +26,90 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device binding documentation for Qualcomm Technology Inc's RPMH RSC
-driver. The driver is used for communicating resource state requests for
-shared resources.
+Allow sleep and wake commands to be cleared from the respective TCSes,
+so that they can be re-populated.
 
-Cc: devicetree@vger.kernel.org
 Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 ---
 
-Changes in v3:
-	- Move to soc/qcom
-	- Amend text per Stephen's suggestions
-
-Changes in v2:
-	- Amend text to describe the registers in reg property
-	- Add reg-names for the registers
-	- Update examples to use GIC_SPI in interrupts instead of 0
-	- Rephrase incorrect description
-
-Changes in v3:
-	- Fix unwanted capitalization
-	- Remove clients from the examples, this doc does not describe
-	  them
-	- Rephrase introductory paragraph
-	- Remove hardware specifics from DT bindings
+Changes in v4:
+	- refactored the rphm_rsc_invalidate()
 ---
- .../devicetree/bindings/soc/qcom/rpmh-rsc.txt      | 127 +++++++++++++++++++++
- 1 file changed, 127 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+ drivers/soc/qcom/rpmh-internal.h |  1 +
+ drivers/soc/qcom/rpmh-rsc.c      | 48 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 49 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
-new file mode 100644
-index 000000000000..dcf71a5b302f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
-@@ -0,0 +1,127 @@
-+RPMH RSC:
-+------------
+diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
+index 638662721086..3fab86a01f14 100644
+--- a/drivers/soc/qcom/rpmh-internal.h
++++ b/drivers/soc/qcom/rpmh-internal.h
+@@ -92,6 +92,7 @@ struct rsc_drv {
+ int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg);
+ int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv,
+ 			     const struct tcs_request *msg);
++int rpmh_rsc_invalidate(struct rsc_drv *drv);
+ 
+ void rpmh_tx_done(const struct tcs_request *msg, int r);
+ 
+diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+index 58fc7254b6f3..1dbccc4d0605 100644
+--- a/drivers/soc/qcom/rpmh-rsc.c
++++ b/drivers/soc/qcom/rpmh-rsc.c
+@@ -162,6 +162,54 @@ static struct tcs_group *get_tcs_of_type(struct rsc_drv *drv, int type)
+ 	return tcs;
+ }
+ 
++static int __tcs_invalidate(struct rsc_drv *drv, int type)
++{
++	int m;
++	struct tcs_group *tcs;
 +
-+Resource Power Manager Hardened (RPMH) is the mechanism for communicating with
-+the hardened resource accelerators on Qualcomm SoCs. Requests to the resources
-+can be written to the Trigger Command Set (TCS)  registers and using a (addr,
-+val) pair and triggered. Messages in the TCS are then sent in sequence over an
-+internal bus.
++	tcs = get_tcs_of_type(drv, type);
++	if (IS_ERR(tcs))
++		return PTR_ERR(tcs);
 +
-+The hardware block (Direct Resource Voter or DRV) is a part of the h/w entity
-+(Resource State Coordinator a.k.a RSC) that can handle a multiple sleep and
-+active/wake resource requests. Multiple such DRVs can exist in a SoC and can
-+be written to from Linux. The structure of each DRV follows the same template
-+with a few variations that are captured by the properties here.
++	spin_lock(&tcs->lock);
++	if (bitmap_empty(tcs->slots, MAX_TCS_SLOTS)) {
++		spin_unlock(&tcs->lock);
++		return 0;
++	}
 +
-+A TCS may be triggered from Linux or triggered by the F/W after all the CPUs
-+have powered off to facilitate idle power saving. TCS could be classified as -
++	for (m = tcs->offset; m < tcs->offset + tcs->num_tcs; m++) {
++		if (!tcs_is_free(drv, m)) {
++			spin_unlock(&tcs->lock);
++			return -EAGAIN;
++		}
++		write_tcs_reg_sync(drv, RSC_DRV_CMD_ENABLE, m, 0, 0);
++		bitmap_zero(tcs->slots, MAX_TCS_SLOTS);
++	}
++	spin_unlock(&tcs->lock);
 +
-+	SLEEP,  /* Triggered by F/W */
-+	WAKE,   /* Triggered by F/W */
-+	ACTIVE, /* Triggered by Linux */
-+	CONTROL /* Triggered by F/W */
++	return 0;
++}
 +
-+The order in which they are described in the DT, should match the hardware
-+configuration.
++/**
++ * rpmh_rsc_invalidate - Invalidate sleep and wake TCSes
++ *
++ * @drv: the mailbox controller
++ */
++int rpmh_rsc_invalidate(struct rsc_drv *drv)
++{
++	unsigned long flags;
++	int ret;
 +
-+Requests can be made for the state of a resource, when the subsystem is active
-+or idle. When all subsystems like Modem, GPU, CPU are idle, the resource state
-+will be an aggregate of the sleep votes from each of those subsystems. Clients
-+may request a sleep value for their shared resources in addition to the active
-+mode requests.
++	spin_lock_irqsave(&drv->drv_lock, flags);
++	ret = __tcs_invalidate(drv, SLEEP_TCS);
++	if (!ret)
++		ret = __tcs_invalidate(drv, WAKE_TCS);
++	spin_unlock_irqrestore(&drv->drv_lock, flags);
 +
-+Properties:
++	return ret;
++}
++EXPORT_SYMBOL(rpmh_rsc_invalidate);
 +
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Should be "qcom,rpmh-rsc".
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: The first register specifies the base address of the DRV.
-+	            The second register specifies the start address of the
-+	            TCS.
-+
-+- reg-names:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Maps the register specified in the reg property. Must be
-+	            "drv" and "tcs".
-+
-+- interrupts:
-+	Usage: required
-+	Value type: <prop-encoded-interrupt>
-+	Definition: The interrupt that trips when a message complete/response
-+	           is received for this DRV from the accelerators.
-+
-+- qcom,drv-id:
-+	Usage: required
-+	Value type: <u32>
-+	Definition: the id of the DRV in the RSC block.
-+
-+- qcom,tcs-config:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: the tuple defining the configuration of TCS.
-+	            Must have 2 cells which describe each TCS type.
-+	            <type number_of_tcs>.
-+	            The order of the TCS must match the hardware
-+	            configuration.
-+	- Cell #1 (TCS Type): TCS types to be specified -
-+	            SLEEP_TCS
-+	            WAKE_TCS
-+	            ACTIVE_TCS
-+	            CONTROL_TCS
-+	- Cell #2 (Number of TCS): <u32>
-+
-+- label:
-+	Usage: optional
-+	Value type: <string>
-+	Definition: Name for the RSC. The name would be used in trace logs.
-+
-+Drivers that want to use the RSC to communicate with RPMH must specify their
-+bindings as child of the RSC controllers they wish to communicate with.
-+
-+Example 1:
-+
-+For a TCS whose RSC base address is is 0x179C0000 and is at a DRV id of 2, the
-+register offsets for DRV2 start at 0D00, the register calculations are like
-+this -
-+First tuple: 0x179C0000 + 0x10000 * 2 = 0x179E0000
-+Second tuple: 0x179E0000 + 0xD00 = 0x179E0D00
-+
-+	apps_rsc: rsc@179e000 {
-+		label = "apps_rsc";
-+		compatible = "qcom,rpmh-rsc";
-+		reg = <0x179e0000 0x10000>, <0x179e0d00 0x3000>;
-+		reg-names = "drv", "tcs";
-+		interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+		qcom,drv-id = <2>;
-+		qcom,tcs-config = <SLEEP_TCS   3>,
-+				  <WAKE_TCS    3>,
-+				  <ACTIVE_TCS  2>,
-+				  <CONTROL_TCS 1>;
-+	};
-+
-+Example 2:
-+
-+For a TCS whose RSC base address is 0xAF20000 and is at DRV id of 0, the
-+register offsets for DRV0 start at 01C00, the register calculations are like
-+this -
-+First tuple: 0xAF20000
-+Second tuple: 0xAF20000 + 0x1C00 = 0xAF21C00
-+
-+	disp_rsc: rsc@af20000 {
-+		label = "disp_rsc";
-+		compatible = "qcom,rpmh-rsc";
-+		reg = <0xaf20000 0x10000>, <0xaf21c00 0x3000>;
-+		reg-names = "drv", "tcs";
-+		interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>;
-+		qcom,drv-id = <0>;
-+		qcom,tcs-config = <SLEEP_TCS   1>,
-+				  <WAKE_TCS    1>,
-+				  <ACTIVE_TCS  0>,
-+				  <CONTROL_TCS 0>;
-+	};
+ static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
+ 					 const struct tcs_request *msg)
+ {
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
