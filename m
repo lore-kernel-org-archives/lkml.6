@@ -1,116 +1,119 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2629652-1520931021-2-18075631062905771825
+X-Cyrus-Session-Id: sloti22d1t05-1242004-1520624736-2-11491250673716239093
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  FromHeader='net', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520931021; b=js0y9pMyE059cMkTl3keqizI4S5PytwxZOVhLlfG6IBq/oq
-    +ro8KJFQ6wWL6pSYanOplaz+PWteC7OcA7hTJqTjLFxautrMNIeWOMxui186h6Lt
-    h6kFiZvhplxjQVbDS9IleCknQqV0ES3PA0Gk55yKGB07aWw0MsS3Wdq11JFCNCbl
-    B4JSNvFApo5bx28Z89Y0tmZn3LQB69E0IhKgJL7hZwbwKCaeqxmVX1Ud/75Bwq8V
-    m/S690rzwjCImeIs52zkfTsyNh9X9fXyaEMjOlaC61f81qG+viTp+FfX9JjiZO4K
-    x9ZyeWdAxYECqL24CEx3t26POCEUj+dHTKvq4Tw==
+    t=1520624736; b=ecVBxMSA+EG6EpGpCvnnz1hMx3qZQiuQnSCQkDOvJd4zZyE
+    x0fXZ65X5YenjyzNGQOzm/ZXd82idSZGCsgdx0GNkmvyuiPUU05VcTDNOD0r7aWq
+    stTBo9GDssLHtamT7nBLyJ3fU6G0OG6+dKxJ0dJNigfxL0UL5io0N7JrlNS/52gJ
+    uu49/YkgNPx2mCaQB+5fbfBEIyGTh90g1E2AbrmQNN+wdHebe2Yd1h11WCZmfuTw
+    4LzNKmFyi+h7x4KUYuoaCv4WCrEUCZDPEbkxOGkUQQV21EpK+Tln4dAqWAvfY55R
+    K0kUNPJg/VmLuIO5+Ct0eY2mNMNHQ11nEfceZjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1520931021; bh=3zcohNkOG0+1z6L+YviRHi3AhC
-    rWIGklMXIPJnvrkNs=; b=EIX+9jZhloU3OKmUY5CNohS7ZggR3Y9CN1NnuFb+D7
-    mua2VC+2z4qBjfmlj9CyvI/855SDeoOC5hhNXqgUccrd0LYf2dH7gQWxB8fbf0Nf
-    ZUDMqQy7jwijENZeFrQ8q/CTFErnFjEB8pXrVtLWS4VeGZ0Oaw1amG82FkzyupDi
-    A8VjKjpRLb+F/awIq3S7EgEfUE+k+pu9IYZMQMldsvfpe61nWI1VyoGRFcbhqRHY
-    WMK0pOWPv/yp/zUEzVSZq6mxOkDQ2TvN5Axl1tQflzGe/WftIBoL6LxhjTxV3xOV
-    TvQvARTimqlfRzzcSxaygzMleG0J1NztJ7harSsvfMYg==
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    arctest; t=1520624736; bh=oiO9/G+Ne4pKljjppvntEwQ15uMWvCg3RIi7VR
+    ZQZwI=; b=CFeef5rqSFeSs5KfYvlAvbGFhA+4ndGn7T1TAKOCUC9rdWs4vlY9dq
+    dUDa0/w1tDm6Bt+o9uzxMMXeXdBLAyODnKDcdx/D8pgUIlB8klVX/PPX06D0Ab2v
+    ycH6qIVeCYULGAPQFhtUPZnOKgZ5+PKACxLm9y/nf5axLV6XXsZqn0psF2ikR8EM
+    DEDoUJMwp5yZSnyMLDfhN0yJbOPGnZBW7xDun/EQ18MfM9WNXNUUb/sYqipb3nwS
+    Vn/4I8q75WYl3vfcGMK+KENW9vYZ69djUQ4I/nL9ze9oVCdGtnaTvj9bOw4Fh3qe
+    5a1f/5+uV6Wtvb6eAT1HxO7YAUh8/8jQ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b=PrS2bg04 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=amacapital.net;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ttSPmu97;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amacapital.net header.result=pass header_is_org_domain=yes
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b=PrS2bg04 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=amacapital.net;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ttSPmu97;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amacapital.net header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752232AbeCMIuS (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Mar 2018 04:50:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52614 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752471AbeCMIse (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Tue, 13 Mar 2018 04:48:34 -0400
-Date: Tue, 13 Mar 2018 09:48:35 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alexei Starovoitov <ast@fb.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Jessica Yu <jeyu@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        Andy Lutomirski <luto@amacapital.net>,
+        id S932304AbeCITpd (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Mar 2018 14:45:33 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:45669 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932233AbeCITpc (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Fri, 9 Mar 2018 14:45:32 -0500
+X-Google-Smtp-Source: AG47ELsCrPkqMICXYKCAXCiJLK0KY0ZJeQFCM4eTYAxauGaJcq9oC5E8Wm5ShQGu+/PgyaPaON8ykxeMiHGIaeI7388=
+MIME-Version: 1.0
+In-Reply-To: <CA+55aFx-kDp87_uv9TW5pYD2+nr8c65=ervvwcxhTBJVg7c_pQ@mail.gmail.com>
+References: <CA+55aFwfcXzD+pzjN=vTcvscpK97pSztUZ2JK7pABs+rMtM7BQ@mail.gmail.com>
+ <E459E6CC-F51B-4F2A-9D26-FFB7166E0A47@amacapital.net> <CA+55aFx7w1s7=5HzeczPkkksaU4oVsWQf+_c=aHS0O7i_9g+Kg@mail.gmail.com>
+ <20180309.135724.452219538059491199.davem@davemloft.net> <CA+55aFyN8JDh76bm1VinBvrgMH5jNL6RbuFAkrH8vuYU1s9GDQ@mail.gmail.com>
+ <CA+55aFx-kDp87_uv9TW5pYD2+nr8c65=ervvwcxhTBJVg7c_pQ@mail.gmail.com>
+From: Andy Lutomirski <luto@amacapital.net>
+Date: Fri, 9 Mar 2018 19:45:11 +0000
+Message-ID: <CALCETrUU-456u3R=D08fuJFEiiMLB3n=jdCTxvLqbSGA87r-9A@mail.gmail.com>
+Subject: Re: [PATCH net-next] modules: allow modprobe load regular elf binaries
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Miller <davem@davemloft.net>,
+        Alexei Starovoitov <ast@fb.com>,
         Kees Cook <keescook@chromium.org>,
         Alexei Starovoitov <ast@kernel.org>,
+        Djalal Harouni <tixxdz@gmail.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Daniel Borkmann <daniel@iogearbox.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
         Network Development <netdev@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         kernel-team <kernel-team@fb.com>,
         Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH net-next] modules: allow modprobe load regular elf
- binaries
-Message-ID: <20180313084835.GB8901@kroah.com>
-References: <E459E6CC-F51B-4F2A-9D26-FFB7166E0A47@amacapital.net>
- <CA+55aFx7w1s7=5HzeczPkkksaU4oVsWQf+_c=aHS0O7i_9g+Kg@mail.gmail.com>
- <20180309.135724.452219538059491199.davem@davemloft.net>
- <CA+55aFyN8JDh76bm1VinBvrgMH5jNL6RbuFAkrH8vuYU1s9GDQ@mail.gmail.com>
- <CA+55aFx-kDp87_uv9TW5pYD2+nr8c65=ervvwcxhTBJVg7c_pQ@mail.gmail.com>
- <81b7599d-aab7-6cb6-7843-64510c8f6260@fb.com>
- <20180310140843.GP4449@wotan.suse.de>
- <20180310151652.GV4449@wotan.suse.de>
- <20180310153431.GW4449@wotan.suse.de>
- <1f3e2c92-1e09-cc77-3b90-e33d7da35a2f@fb.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1f3e2c92-1e09-cc77-3b90-e33d7da35a2f@fb.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 12, 2018 at 10:22:00AM -0700, Alexei Starovoitov wrote:
-> On 3/10/18 7:34 AM, Luis R. Rodriguez wrote:
-> > Also,
-> > 
-> > Alexei you never answered my questions out aliases with the umh modules.
-> > Long term this important to consider.
-> 
-> aliases always felt like a crutch to me.
-> I can see an argument when they're used as 'alias pci:* foo'
-> but the way it's used in networking with ip_set_* and nf-* is
-> something I prefer not to ever do again.
-> Definitely no aliases for bpfilter umh.
+On Fri, Mar 9, 2018 at 7:38 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Fri, Mar 9, 2018 at 11:12 AM, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>>
+>> How are you going to handle five processes doing the same setup concurrently?
+>
+> Side note: it's not just serialization. It's also "is it actually up
+> and running".
+>
 
-I agree, let's not do that if at all possible for these types of
-binaries.
+I think the right way to solve this would be to take a hint from
+systemd's socket activation model.  The current patch had the module
+load process kick off an ELF binary that goes an registers itself to
+handle something.  We can turn that around.  Make the module init
+function create the socket (or pipe or whatever) receives request and
+pass it to the user program as stdin.  Then the kernel can start
+queueing requests into the socket immediately, and the user program
+will get to them whenever it finishes initializing.  Or it can write
+some message to the socket saying "hey, I'm ready".
 
-greg k-h
+This also completely avoids the issue where some clever user manually
+loads the "module" with exec() ("hey, I'm so clever, I can just run
+the damn thing instead if using init_module()!" or writes an
+out-of-tree program that uses whatever supposedly secret API the
+in-kernel binary is supposed to use to register itself (and I know
+people who would do exactly that!) and the kernel does
+request_module() at roughly the same time.
