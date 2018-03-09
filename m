@@ -1,54 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751277AbeCIP6G (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 10:58:06 -0500
-Received: from foss.arm.com ([217.140.101.70]:54246 "EHLO foss.arm.com"
+        id S932141AbeCIP6c convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 10:58:32 -0500
+Received: from muru.com ([72.249.23.125]:60310 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751173AbeCIP6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 10:58:04 -0500
-Date: Fri, 9 Mar 2018 15:58:09 +0000
-From: Will Deacon <will.deacon@arm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ganapatrao Kulkarni <gklkml16@gmail.com>,
-        William Cohen <wcohen@redhat.com>, mark.rutland@arm.com,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        John Garry <john.garry@huawei.com>, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Robert Richter <Robert.Richter@cavium.com>,
-        Ingo Molnar <mingo@redhat.com>, jnair@caviumnetworks.com,
-        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Jiri Olsa <jolsa@redhat.com>, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] perf vendor events arm64: Enable JSON events for
- ThunderX2 B0
-Message-ID: <20180309155808.GP15537@arm.com>
-References: <20180307110803.32418-1-ganapatrao.kulkarni@cavium.com>
- <3384d33f-c927-740a-97f1-b20775ef2c7b@redhat.com>
- <20180307143832.GJ3701@kernel.org>
- <CAKTKpr4zMcRLykw8xwWJKf2eiuCrf2RuJ7kexGRQNN7_OdJ=uQ@mail.gmail.com>
- <52328144-3a2a-af03-273b-3a2f3bdadda6@redhat.com>
- <CAKTKpr7HgsdZ90k0_evSq_aZW-uGSKwLndHOQ2Jahajj3Gkc0Q@mail.gmail.com>
- <CAKTKpr5=Doy2bQz8yYcoRNUGQ1HEgLcqk7U+4m-=1T_TZWa4HA@mail.gmail.com>
- <20180309143415.GB4194@kernel.org>
+        id S1751173AbeCIP6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 10:58:31 -0500
+Date: Fri, 9 Mar 2018 07:58:27 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Maciej Purski <m.purski@samsung.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v6 0/5] Add coupled regulators mechanism
+Message-ID: <20180309155827.GS5799@atomide.com>
+References: <CGME20180309122231eucas1p1b8e0a85a73b31aa07eac08f809face6e@eucas1p1.samsung.com>
+ <1520598128-11768-1-git-send-email-m.purski@samsung.com>
+ <20180309124234.GC5252@sirena.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180309143415.GB4194@kernel.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180309124234.GC5252@sirena.org.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 09, 2018 at 11:34:15AM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Fri, Mar 09, 2018 at 07:57:04PM +0530, Ganapatrao Kulkarni escreveu:
-> > Hi Arnaldo,
-> > 
-> > can you please pull-in this patch?
+* Mark Brown <broonie@kernel.org> [180309 12:43]:
+> On Fri, Mar 09, 2018 at 01:22:02PM +0100, Maciej Purski wrote:
 > 
-> So everybody is Ok with this? Can I have some Acked-by: from subject
-> matter experts?
+> > I would like to kindly ask Fabio Estevam and Tony Lindgren to test the patch
+> > series on their boards.
 
-The original patch looks fine to me:
+I gave it a quick try and this set still causes at least mmc0
+to fail for me.
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+Regards,
 
-Will
+Tony
