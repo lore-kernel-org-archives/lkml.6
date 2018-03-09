@@ -1,72 +1,181 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751065AbeCIK5v (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:57:51 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:51832 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750912AbeCIK5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 05:57:50 -0500
-Date: Fri, 9 Mar 2018 11:57:35 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Chun-Yi Lee <jlee@suse.com>, Will Deacon <will.deacon@arm.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        "Neri, Ricardo" <ricardo.neri@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        "Zijlstra, Peter" <peter.zijlstra@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Williams, Dan J" <dan.j.williams@intel.com>
-Subject: Re: [PATCH V2 2/3] efi: Introduce efi_rts_workqueue and some
- infrastructure to invoke all efi_runtime_services()
-Message-ID: <20180309105735.GB10753@pd.tnic>
-References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <1520292190-5027-3-git-send-email-sai.praneeth.prakhya@intel.com>
- <20180307121047.GG23662@pd.tnic>
- <FFF73D592F13FD46B8700F0A279B802F2E5818E4@ORSMSX114.amr.corp.intel.com>
- <20180308140830.GE21166@pd.tnic>
- <3908561D78D1C84285E8C5FCA982C28F7B392450@ORSMSX110.amr.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7B392450@ORSMSX110.amr.corp.intel.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S1751161AbeCIK6D (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:58:03 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:34154 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751092AbeCIK6C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 05:58:02 -0500
+X-Google-Smtp-Source: AG47ELuaHMGhf5rOzknnrXqjY8GCaLjRx2ja/H4dyT4UEOTH+txPZpZdedifWFWZKeBcPhO/XyZzqQ==
+From: Christian Brauner <christian.brauner@ubuntu.com>
+To: linux-kernel@vger.kernel.org, ebiederm@xmission.com,
+        torvalds@linux-foundation.org
+Cc: Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH v1] devpts: resolve devpts bind-mounts
+Date: Fri,  9 Mar 2018 11:57:52 +0100
+Message-Id: <20180309105752.24017-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 08, 2018 at 05:05:44PM +0000, Luck, Tony wrote:
-> > "Hence, pstore calls efi_runtime_services() without using efi_rts_wq" -
-> > that doesn't sound like optimal design to me. I would try to shove them
-> > all through the workqueue - not have exceptions.
-> 
-> But pstore is trying to save the last gasp dying words from a kernel that
-> has paniced. There isn't any guarantee that work queue will run. I think
-> it is reasonable to have some special case to make sure that we do save
-> the information.  But perhaps that special case should be to have pstore
-> call directly into the guts of the EFI code and not worry about all these
-> fancy switches of "mm" etc.
+Most libcs will still look at /dev/ptmx when opening the master fd of a pty
+device. When /dev/ptmx is a bind-mount of /dev/pts/ptmx and the TIOCGPTPEER
+ioctl() is used to safely retrieve a file descriptor for the slave side of
+the pty based on the master fd, the /proc/self/fd/{0,1,2} symlinks will
+point to /.
 
-I guess...
+When the kernel tries to look up the root mount of the dentry for the slave
+file descriptor it will detect that the dentry is escaping its bind-mount
+since the root mount of the dentry is /dev/pts where the devpts is mounted
+but the root mount of /dev/ptmx is /dev.
 
-> This is true for the machine check logging case too, but the mitigation is
-> that the details of the error persist in the machine check banks across the
-> reset ... so all is not lost if the work queue isn't run here.
+Having bind-mounts of /dev/pts/ptmx to /dev/ptmx not working correctly is a
+regression. In addition, it is also a fairly common scenario in containers
+employing user namespaces.
 
-Well, I'm still hoping to have this wonderful and reliable
-logging facility one day where we can dump bytes into a
-persistent-across-reboots buffer and analyze them later. And yap, in
-that case, I don't mind if the code simply bypasses all the dancing in
-the OS and writes those bytes. Even switching pagetables would be too
-much for that case - just fire'n'forget writing from ring 0.
+To handle bind-mounts of /dev/pts/ptmx to /dev/ptmx correctly we need to
+walk up the bind-mounts for /dev/ptmx in devpts_mntget(). This also means
+we need to remove the
+"if (path->mnt->mnt_sb->s_magic == DEVPTS_SUPER_MAGIC)" check from
+devpts_ptmx_path(). However, devpts_acquire() needs to perform that check.
+The reason is that while the devpts mounted at /dev/pts has devtmpfs
+mounted at /dev as its parent mount:
 
+21 -- -- / /dev
+-- 21 -- / /dev/pts
+
+they are on different devices
+
+-- -- 0:6  / /dev
+-- -- 0:20 / /dev/pts
+
+which has the consequence that the pathname of the directory which forms
+the root of the /dev/pts mount is /. So if we bind-mount /dev/pts/ptmx to
+/dev/ptmx we will end up on the same device as the devtmpfs mount on
+/dev/pts
+
+-- -- 0:20 /ptmx /dev/ptmx
+
+but given that / is the pathname of the directory which forms the root of
+the /dev/pts bind-mount, the resulting source will be /ptmx. So in
+devpts_acquire() we need to check if
+"(path->mnt->mnt_sb->s_magic == DEVPTS_SUPER_MAGIC)" and exit early before
+we try to call path_pts(). If we call path_pts() in the bind-mount case we
+will hit path_parent_directory() which will **not** yield /dev as parent
+directory but rather / and fail. We should still perform the path_pts()
+check in devpts_acquire() if we haven't found a suitable devpts filesystem
+at open time but we should always try to exit early in devpts_acquire() and
+defer the bind-mount resolution to devpts_mntget(). If we fail in
+devpts_mntget() we will end up with a wrong /proc/<pid>/fd/{0,1,2} symlink,
+if we fail in devpts_acquire() we will end up with a failed
+open("/dev/ptmx") which is more troublesome.
+
+Here's a little reproducer that presupposes a libc that uses TIOCGPTPEER in
+its openpty() implementation:
+
+unshare --mount
+mount --bind /dev/pts/ptmx /dev/ptmx
+chmod 666 /dev/ptmx
+script
+ls -al /proc/self/fd/0
+
+with output:
+
+lrwx------ 1 chb chb 64 Mar  7 16:41 /proc/self/fd/0 -> /
+
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+Suggested-by: Eric Biederman <ebiederm@xmission.com>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+---
+ChangeLog v0->v1:
+- remove
+        /* Has the devpts filesystem already been found? */
+        if (path->mnt->mnt_sb->s_magic == DEVPTS_SUPER_MAGIC)
+	                return 0
+  from devpts_ptmx_path()
+- check superblock after devpts_ptmx_path() returned
+---
+ fs/devpts/inode.c | 41 +++++++++++++++++++++++++++++++++--------
+ 1 file changed, 33 insertions(+), 8 deletions(-)
+
+diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
+index e31d6ed3ec32..89ee17733087 100644
+--- a/fs/devpts/inode.c
++++ b/fs/devpts/inode.c
+@@ -138,10 +138,6 @@ static int devpts_ptmx_path(struct path *path)
+ 	struct super_block *sb;
+ 	int err;
+ 
+-	/* Has the devpts filesystem already been found? */
+-	if (path->mnt->mnt_sb->s_magic == DEVPTS_SUPER_MAGIC)
+-		return 0;
+-
+ 	/* Is a devpts filesystem at "pts" in the same directory? */
+ 	err = path_pts(path);
+ 	if (err)
+@@ -163,6 +159,26 @@ struct vfsmount *devpts_mntget(struct file *filp, struct pts_fs_info *fsi)
+ 
+ 	path = filp->f_path;
+ 	path_get(&path);
++	if ((DEVPTS_SB(path.mnt->mnt_sb) == fsi) &&
++	    (path.mnt->mnt_root == fsi->ptmx_dentry)) {
++		/* Walk upward while the start point is a bind mount of a single
++		 * file.
++		 */
++		while (path.mnt->mnt_root == path.dentry)
++			if (follow_up(&path) == 0)
++				break;
++
++		/* Is this path a valid devpts filesystem? */
++		err = devpts_ptmx_path(&path);
++		dput(path.dentry);
++		if (err == 0)
++			goto check_devpts_sb;
++
++		path_put(&path);
++		path = filp->f_path;
++		path_get(&path);
++		goto check_devpts_sb;
++	}
+ 
+ 	err = devpts_ptmx_path(&path);
+ 	dput(path.dentry);
+@@ -170,10 +186,13 @@ struct vfsmount *devpts_mntget(struct file *filp, struct pts_fs_info *fsi)
+ 		mntput(path.mnt);
+ 		return ERR_PTR(err);
+ 	}
++
++check_devpts_sb:
+ 	if (DEVPTS_SB(path.mnt->mnt_sb) != fsi) {
+ 		mntput(path.mnt);
+ 		return ERR_PTR(-ENODEV);
+ 	}
++
+ 	return path.mnt;
+ }
+ 
+@@ -187,10 +206,16 @@ struct pts_fs_info *devpts_acquire(struct file *filp)
+ 	path = filp->f_path;
+ 	path_get(&path);
+ 
+-	err = devpts_ptmx_path(&path);
+-	if (err) {
+-		result = ERR_PTR(err);
+-		goto out;
++	/* Has the devpts filesystem already been found? */
++	if (path.mnt->mnt_sb->s_magic != DEVPTS_SUPER_MAGIC) {
++		/* Is there an appropriate devpts filesystem in the parent
++		 * directory?
++		 */
++		err = devpts_ptmx_path(&path);
++		if (err) {
++			result = ERR_PTR(err);
++			goto out;
++		}
+ 	}
+ 
+ 	/*
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+2.15.1
