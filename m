@@ -1,66 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751968AbeCIION (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 03:14:13 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:38390 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751679AbeCIIOL (ORCPT
+        id S1751988AbeCIIOp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 03:14:45 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:13584 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751434AbeCIIOn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 03:14:11 -0500
-X-Google-Smtp-Source: AG47ELtCeJFhne4PcnhSSgnO/b9htGbDz7a/tg3JU7arXLQkWAi3p3GfCVrAbj2QCBdl4SlTHgsSKA==
-Content-Type: text/plain;
-        charset=utf-8;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.15\))
-Subject: Re: [PATCH v2 2/3] platform/x86: dell-*: Add interface for switchable
- graphics status query
-From: Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <20180308163837.myfmnowz5ogto52w@pali>
-Date: Fri, 9 Mar 2018 16:14:03 +0800
-Cc: mjg59@srcf.ucam.org, dvhart@infradead.org, andy@infradead.org,
-        Mario Limonciello <mario.limonciello@dell.com>, tiwai@suse.com,
-        platform-driver-x86@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        alsa-devel@alsa-project.org
-Content-Transfer-Encoding: 8bit
-Message-Id: <DC881209-6C71-4B13-BF48-05F1F93E207A@canonical.com>
-References: <20180308091023.9061-1-kai.heng.feng@canonical.com>
- <20180308091023.9061-2-kai.heng.feng@canonical.com>
- <20180308163837.myfmnowz5ogto52w@pali>
-To: =?utf-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
-X-Mailer: Apple Mail (2.3445.6.15)
+        Fri, 9 Mar 2018 03:14:43 -0500
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 09 Mar 2018 00:14:42 -0800
+Date: Fri, 9 Mar 2018 10:14:38 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support
+ Tegra210
+Message-ID: <20180309081438.GO6190@tbergstrom-lnx.Nvidia.com>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
+ <b7a25613-44b4-5e63-e8c7-91ce2b7cb56e@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <b7a25613-44b4-5e63-e8c7-91ce2b7cb56e@nvidia.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.21.24.170]
+X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To UKMAIL101.nvidia.com
+ (10.26.138.13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 08, 2018 at 11:25:04PM +0000, Jon Hunter wrote:
+> 
+> On 06/02/18 16:34, Peter De Schrijver wrote:
+> > Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
+> > support in this driver. Also allow for the case where the CPU voltage is
+> > controlled directly by the DFLL rather than by a separate regulator object.
+> > 
+> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > ---
+> >  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
+> >  1 file changed, 8 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+> > index 4353025..f8e01a8 100644
+> > --- a/drivers/cpufreq/tegra124-cpufreq.c
+> > +++ b/drivers/cpufreq/tegra124-cpufreq.c
+> > @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
+> >  {
+> >  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+> >  	clk_disable_unprepare(priv->dfll_clk);
+> > -	regulator_sync_voltage(priv->vdd_cpu_reg);
+> > +	if (priv->vdd_cpu_reg)
+> > +		regulator_sync_voltage(priv->vdd_cpu_reg);
+> >  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
+> >  }
+> >  
+> > @@ -89,10 +90,10 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+> >  		return -ENODEV;
+> >  
+> >  	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
+> > -	if (IS_ERR(priv->vdd_cpu_reg)) {
+> > -		ret = PTR_ERR(priv->vdd_cpu_reg);
+> > -		goto out_put_np;
+> > -	}
+> > +	if (IS_ERR(priv->vdd_cpu_reg) != -EPROBE_DEFER)
+> > +		priv->vdd_cpu_reg = NULL;
+> > +	else
+> > +		return -EPROBE_DEFER;
+> 
+> I am still not sure that we should rely on the fact that the regulator
+> is not present in DT to imply that we do not need it. I think that we
+> should be checking if we are using I2C mode here.
+> 
 
+The cpufreq driver doesn't know this however. Also the current approach of
+setting the same voltage when switching to pll_x is incorrect. The CVB
+tables when using pll_x include more margin than when using the DFLL.
 
-> On Mar 9, 2018, at 12:38 AM, Pali Rohár <pali.rohar@gmail.com> wrote:
->
-> On Thursday 08 March 2018 17:10:22 Kai-Heng Feng wrote:
->> +int dell_switchable_gfx_enabled(bool *enabled);
->
-> What about following API?
->
-> bool dell_switchable_gfx_is_enabled(void);
->
-> Are you really interested in errors? Then what about?
-
-Not really. We can assume it's false when there's any error.
-
-I'll update the function in next version, thanks!
-
-Kai-Heng
-
->
-> int dell_switchable_gfx_is_enabled(void);
->
-> with e.g.
->   < 0 - error
->   = 0 - disabled
->> 0 - enabled
->
-> -- 
-> Pali Rohár
-> pali.rohar@gmail.com
+Peter.
