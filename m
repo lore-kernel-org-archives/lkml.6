@@ -1,74 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751058AbeCIFnn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 00:43:43 -0500
-Received: from gateway32.websitewelcome.com ([192.185.145.111]:41340 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750880AbeCIFnm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 00:43:42 -0500
-Date: Thu, 8 Mar 2018 23:43:40 -0600
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] pktgen: Remove VLA usage
-Message-ID: <20180309054340.GA14439@embeddedgus>
+        id S1751130AbeCIFyt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 00:54:49 -0500
+Received: from guitar.tcltek.co.il ([192.115.133.116]:56185 "EHLO
+        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750897AbeCIFys (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 00:54:48 -0500
+Date: Fri, 9 Mar 2018 07:54:43 +0200
+From: Baruch Siach <baruch@tkos.co.il>
+To: Jacob Chen <jacobchen110@gmail.com>
+Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Shunqian Zheng <zhengsq@rock-chips.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        =?utf-8?B?6ZKf5Lul5bSH?= <zyc@rock-chips.com>,
+        Eddie Cai <eddie.cai.linux@gmail.com>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>, devicetree@vger.kernel.org,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v6 00/17] Rockchip ISP1 Driver
+Message-ID: <20180309055443.edcj2uvbc2s6bcoy@tarshish>
+References: <20180308094807.9443-1-jacob-chen@iotwrt.com>
+ <20180308120200.wpcjnbglf4x32vrp@tarshish>
+ <CAFLEztTokSaXJuN8Ls0BpAEuFdTC+Viwn6PGxC=TC6vZAs+w3g@mail.gmail.com>
+ <20180309040903.hhkhylvs6q6lvqjy@tarshish>
+ <CAFLEztT4XJ9QnvLciv62dFCfj-y7Kynd2R8HpVxXeUXObvp3GQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.117.58
-X-Source-L: No
-X-Exim-ID: 1euAof-000f55-FB
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.175.117.58]:33626
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <CAFLEztT4XJ9QnvLciv62dFCfj-y7Kynd2R8HpVxXeUXObvp3GQ@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wvla, remove VLA usage and replace it
-with a fixed-length array instead.
+Hi Jacob,
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
-David,
+On Fri, Mar 09, 2018 at 01:05:28PM +0800, Jacob Chen wrote:
+> 2018-03-09 12:09 GMT+08:00 Baruch Siach <baruch@tkos.co.il>:
+> > On Fri, Mar 09, 2018 at 08:53:57AM +0800, Jacob Chen wrote:
+> >> 2018-03-08 20:02 GMT+08:00 Baruch Siach <baruch@tkos.co.il>:
+> >> > On Thu, Mar 08, 2018 at 05:47:50PM +0800, Jacob Chen wrote:
+> >> >> This patch series add a ISP(Camera) v4l2 driver for rockchip rk3288/rk3399
+> >> >> SoC.
+> >> >>
+> >> >> Wiki Pages:
+> >> >> http://opensource.rock-chips.com/wiki_Rockchip-isp1
+> >> >>
+> >> >> The deprecated g_mbus_config op is not dropped in  V6 because i am waiting
+> >> >> tomasz's patches.
+> >> >
+> >> > Which tree is this series based on? On top of v4.16-rc4 I get the build
+> >> > failure below. The V4L2_BUF_TYPE_META_OUTPUT macro, for example, is not even
+> >> > in media_tree.git.
+> >>
+> >> This series is based on v4.16-rc4 with below patch.
+> >> https://patchwork.kernel.org/patch/9792001/
+> >
+> > This patch does not apply on v4.16-rc4. I also tried v2 of this patch with the
+> > same result:
+> >
+> >   https://patchwork.linuxtv.org/patch/44682/
+> 
+> It need resolve merge conflict.
+> 
+> > Can you push your series to a public git repo branch?
+> 
+> Sure, I have push it to my github.
+> https://github.com/wzyy2/linux/tree/4.16-rc4
+> 
+> This commit might be a bit of a mess
+> https://github.com/wzyy2/linux/commit/ff68323c4804adc10f64836ea1be172c54a9d6c6
 
-I'm not sure how often this function is being called and,
-depending on the frequency it may be worth to use
-dynamic memory allocation instead?
+Thanks. This is very helpful.
 
-Thanks
---
-Gustavo
+I'm mostly interested in the tinkerboard, so the DT bits in your tree are also 
+useful.
 
- net/core/pktgen.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+baruch
 
-diff --git a/net/core/pktgen.c b/net/core/pktgen.c
-index d81bddd..e2d6ae3 100644
---- a/net/core/pktgen.c
-+++ b/net/core/pktgen.c
-@@ -907,7 +907,7 @@ static ssize_t pktgen_if_write(struct file *file,
- 
- 	if (debug) {
- 		size_t copy = min_t(size_t, count, 1023);
--		char tb[copy + 1];
-+		char tb[1024];
- 		if (copy_from_user(tb, user_buffer, copy))
- 			return -EFAULT;
- 		tb[copy] = 0;
 -- 
-2.7.4
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
