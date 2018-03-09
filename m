@@ -1,28 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751740AbeCIIvs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 03:51:48 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:50075 "EHLO
+        id S1751977AbeCIIwU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 03:52:20 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:34537 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750898AbeCIIvq (ORCPT
+        with ESMTP id S1750920AbeCIIwT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 03:51:46 -0500
-Date: Fri, 9 Mar 2018 00:51:30 -0800
-From: tip-bot for Thomas Richter <tipbot@zytor.com>
-Message-ID: <tip-0b58a77ca8792bd7798ef3a4d865c57694ec74fc@git.kernel.org>
-Cc: acme@redhat.com, tmricht@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
-        brueckner@linux.vnet.ibm.com, heiko.carstens@de.ibm.com, hpa@zytor.com,
-        schwidefsky@de.ibm.com
-Reply-To: linux-kernel@vger.kernel.org, tmricht@linux.vnet.ibm.com,
-        acme@redhat.com, mingo@kernel.org, tglx@linutronix.de,
-        brueckner@linux.vnet.ibm.com, hpa@zytor.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-In-Reply-To: <20180307134325.96106-1-tmricht@linux.vnet.ibm.com>
-References: <20180307134325.96106-1-tmricht@linux.vnet.ibm.com>
+        Fri, 9 Mar 2018 03:52:19 -0500
+Date: Fri, 9 Mar 2018 00:51:56 -0800
+From: tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-8ef278bb9305e1269f236013718801fe06a183d1@git.kernel.org>
+Cc: tglx@linutronix.de, peterz@infradead.org, jolsa@kernel.org,
+        alexander.shishkin@linux.intel.com, acme@redhat.com, mingo@kernel.org,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org, dsahern@gmail.com,
+        eranian@google.com, hpa@zytor.com
+Reply-To: eranian@google.com, hpa@zytor.com, namhyung@kernel.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, dsahern@gmail.com,
+        peterz@infradead.org, jolsa@kernel.org,
+        alexander.shishkin@linux.intel.com, acme@redhat.com,
+        tglx@linutronix.de
+In-Reply-To: <20180307155020.32613-2-jolsa@kernel.org>
+References: <20180307155020.32613-2-jolsa@kernel.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf annotate: Fix s390 target function disassembly
-Git-Commit-ID: 0b58a77ca8792bd7798ef3a4d865c57694ec74fc
+Subject: [tip:perf/core] perf report: Fix the output for stdio events list
+Git-Commit-ID: 8ef278bb9305e1269f236013718801fe06a183d1
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,128 +36,150 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0b58a77ca8792bd7798ef3a4d865c57694ec74fc
-Gitweb:     https://git.kernel.org/tip/0b58a77ca8792bd7798ef3a4d865c57694ec74fc
-Author:     Thomas Richter <tmricht@linux.vnet.ibm.com>
-AuthorDate: Wed, 7 Mar 2018 14:43:25 +0100
+Commit-ID:  8ef278bb9305e1269f236013718801fe06a183d1
+Gitweb:     https://git.kernel.org/tip/8ef278bb9305e1269f236013718801fe06a183d1
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Wed, 7 Mar 2018 16:50:02 +0100
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 8 Mar 2018 10:05:59 -0300
+CommitDate: Thu, 8 Mar 2018 11:30:36 -0300
 
-perf annotate: Fix s390 target function disassembly
+perf report: Fix the output for stdio events list
 
-'perf annotate' displays function call assembler instructions with a
-right arrow. Hitting enter on this line/instruction causes the browser
-to disassemble this target function and show it on the screen.  On s390
-this results in an error message 'The called function was not found.'
+Changing the output header for reporting forced groups via --groups
+option on non grouped events, like:
 
-The function call assembly line parsing does not handle the s390 bras
-and brasl instructions. Function call__parse expects the target as first
-operand:
+  $ perf record -e 'cycles,instructions'
+  $ perf report --stdio --group
 
-	callq	e9140 <__fxstat>
+Before:
 
-S390 has a register number as first operand:
+  # Samples: 24  of event 'anon group { cycles:u, instructions:u }'
 
-	brasl	%r14,41d60 <abort>
+After:
 
-Therefore the target addresses on s390 are always zero which is an
-invalid address.
+  # Samples: 24  of events 'cycles:u, instructions:u'
 
-Introduce a s390 specific call parsing function which skips the first
-operand on s390.
-
-Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Link: http://lkml.kernel.org/r/20180307134325.96106-1-tmricht@linux.vnet.ibm.com
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Fixes: ad52b8cb4886 ("perf report: Add support to display group output for non group events")
+Link: http://lkml.kernel.org/r/20180307155020.32613-2-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/arch/s390/annotate/instructions.c | 53 +++++++++++++++++++++++++++-
- tools/perf/util/annotate.c                   |  2 +-
- 2 files changed, 53 insertions(+), 2 deletions(-)
+ tools/perf/builtin-report.c    | 17 ++++++++++++++---
+ tools/perf/ui/browsers/hists.c |  5 +++--
+ tools/perf/util/evsel.c        | 20 ++++++++++++++++----
+ tools/perf/util/evsel.h        |  1 +
+ 4 files changed, 34 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/arch/s390/annotate/instructions.c b/tools/perf/arch/s390/annotate/instructions.c
-index 01df9d8303e1..e80589fc5b58 100644
---- a/tools/perf/arch/s390/annotate/instructions.c
-+++ b/tools/perf/arch/s390/annotate/instructions.c
-@@ -1,6 +1,57 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/compiler.h>
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 1eedb1815c4c..c3603d4c0c57 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -400,8 +400,10 @@ static size_t hists__fprintf_nr_sample_events(struct hists *hists, struct report
  
-+static int s390_call__parse(struct arch *arch, struct ins_operands *ops,
-+			    struct map *map)
-+{
-+	char *endptr, *tok, *name;
-+	struct addr_map_symbol target = {
-+		.map = map,
-+	};
-+
-+	tok = strchr(ops->raw, ',');
-+	if (!tok)
-+		return -1;
-+
-+	ops->target.addr = strtoull(tok + 1, &endptr, 16);
-+
-+	name = strchr(endptr, '<');
-+	if (name == NULL)
-+		return -1;
-+
-+	name++;
-+
-+	if (arch->objdump.skip_functions_char &&
-+	    strchr(name, arch->objdump.skip_functions_char))
-+		return -1;
-+
-+	tok = strchr(name, '>');
-+	if (tok == NULL)
-+		return -1;
-+
-+	*tok = '\0';
-+	ops->target.name = strdup(name);
-+	*tok = '>';
-+
-+	if (ops->target.name == NULL)
-+		return -1;
-+	target.addr = map__objdump_2mem(map, ops->target.addr);
-+
-+	if (map_groups__find_ams(&target) == 0 &&
-+	    map__rip_2objdump(target.map, map->map_ip(target.map, target.addr)) == ops->target.addr)
-+		ops->target.sym = target.sym;
-+
-+	return 0;
-+}
-+
-+static int call__scnprintf(struct ins *ins, char *bf, size_t size,
-+			   struct ins_operands *ops);
-+
-+static struct ins_ops s390_call_ops = {
-+	.parse	   = s390_call__parse,
-+	.scnprintf = call__scnprintf,
-+};
-+
- static struct ins_ops *s390__associate_ins_ops(struct arch *arch, const char *name)
- {
- 	struct ins_ops *ops = NULL;
-@@ -14,7 +65,7 @@ static struct ins_ops *s390__associate_ins_ops(struct arch *arch, const char *na
- 	if (!strcmp(name, "bras") ||
- 	    !strcmp(name, "brasl") ||
- 	    !strcmp(name, "basr"))
--		ops = &call_ops;
-+		ops = &s390_call_ops;
- 	if (!strcmp(name, "br"))
- 		ops = &ret_ops;
+ 	nr_samples = convert_unit(nr_samples, &unit);
+ 	ret = fprintf(fp, "# Samples: %lu%c", nr_samples, unit);
+-	if (evname != NULL)
+-		ret += fprintf(fp, " of event '%s'", evname);
++	if (evname != NULL) {
++		ret += fprintf(fp, " of event%s '%s'",
++			       evsel->nr_members > 1 ? "s" : "", evname);
++	}
  
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 49ff825f745c..bc3302da702b 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -248,7 +248,7 @@ static struct ins_ops call_ops = {
+ 	if (rep->time_str)
+ 		ret += fprintf(fp, " (time slices: %s)", rep->time_str);
+@@ -1175,8 +1177,17 @@ repeat:
+ 	has_br_stack = perf_header__has_feat(&session->header,
+ 					     HEADER_BRANCH_STACK);
  
- bool ins__is_call(const struct ins *ins)
- {
--	return ins->ops == &call_ops;
-+	return ins->ops == &call_ops || ins->ops == &s390_call_ops;
+-	if (group_set && !session->evlist->nr_groups)
++	/*
++	 * Events in data file are not collect in groups, but we still want
++	 * the group display. Set the artificial group and set the leader's
++	 * forced_leader flag to notify the display code.
++	 */
++	if (group_set && !session->evlist->nr_groups) {
++		struct perf_evsel *leader = perf_evlist__first(session->evlist);
++
+ 		perf_evlist__set_leader(session->evlist);
++		leader->forced_leader = true;
++	}
+ 
+ 	if (itrace_synth_opts.last_branch)
+ 		has_br_stack = true;
+diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
+index de2bde232cb3..8b4e82548f8e 100644
+--- a/tools/perf/ui/browsers/hists.c
++++ b/tools/perf/ui/browsers/hists.c
+@@ -2261,8 +2261,9 @@ static int perf_evsel_browser_title(struct hist_browser *browser,
+ 
+ 	nr_samples = convert_unit(nr_samples, &unit);
+ 	printed = scnprintf(bf, size,
+-			   "Samples: %lu%c of event '%s',%s%sEvent count (approx.): %" PRIu64,
+-			   nr_samples, unit, ev_name, sample_freq_str, enable_ref ? ref : " ", nr_events);
++			   "Samples: %lu%c of event%s '%s',%s%sEvent count (approx.): %" PRIu64,
++			   nr_samples, unit, evsel->nr_members > 1 ? "s" : "",
++			   ev_name, sample_freq_str, enable_ref ? ref : " ", nr_events);
+ 
+ 
+ 	if (hists->uid_filter_str)
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index e937894654b2..1ac8d9236efd 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -622,22 +622,34 @@ const char *perf_evsel__group_name(struct perf_evsel *evsel)
+ 	return evsel->group_name ?: "anon group";
  }
  
- static int jump__parse(struct arch *arch __maybe_unused, struct ins_operands *ops, struct map *map __maybe_unused)
++/*
++ * Returns the group details for the specified leader,
++ * with following rules.
++ *
++ *  For record -e '{cycles,instructions}'
++ *    'anon group { cycles:u, instructions:u }'
++ *
++ *  For record -e 'cycles,instructions' and report --group
++ *    'cycles:u, instructions:u'
++ */
+ int perf_evsel__group_desc(struct perf_evsel *evsel, char *buf, size_t size)
+ {
+-	int ret;
++	int ret = 0;
+ 	struct perf_evsel *pos;
+ 	const char *group_name = perf_evsel__group_name(evsel);
+ 
+-	ret = scnprintf(buf, size, "%s", group_name);
++	if (!evsel->forced_leader)
++		ret = scnprintf(buf, size, "%s { ", group_name);
+ 
+-	ret += scnprintf(buf + ret, size - ret, " { %s",
++	ret += scnprintf(buf + ret, size - ret, "%s",
+ 			 perf_evsel__name(evsel));
+ 
+ 	for_each_group_member(pos, evsel)
+ 		ret += scnprintf(buf + ret, size - ret, ", %s",
+ 				 perf_evsel__name(pos));
+ 
+-	ret += scnprintf(buf + ret, size - ret, " }");
++	if (!evsel->forced_leader)
++		ret += scnprintf(buf + ret, size - ret, " }");
+ 
+ 	return ret;
+ }
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index 55ae1cda7396..d3ee3af618ef 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -125,6 +125,7 @@ struct perf_evsel {
+ 	bool			per_pkg;
+ 	bool			precise_max;
+ 	bool			ignore_missing_thread;
++	bool			forced_leader;
+ 	/* parse modifier helper */
+ 	int			exclude_GH;
+ 	int			nr_members;
