@@ -1,49 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932167AbeCINsL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 08:48:11 -0500
-Received: from foss.arm.com ([217.140.101.70]:51968 "EHLO foss.arm.com"
+        id S1751159AbeCINum (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 08:50:42 -0500
+Received: from plaes.org ([188.166.43.21]:55780 "EHLO plaes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932135AbeCINsJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 08:48:09 -0500
-Date: Fri, 9 Mar 2018 13:48:13 +0000
-From: Will Deacon <will.deacon@arm.com>
-To: Shanker Donthineni <shankerd@codeaurora.org>
-Cc: Robin Murphy <robin.murphy@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        kvmarm <kvmarm@lists.cs.columbia.edu>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Vikram Sethi <vikrams@codeaurora.org>,
-        Philip Elcan <pelcan@codeaurora.org>
-Subject: Re: [PATCH v7] arm64: Add support for new control bits CTR_EL0.DIC
- and CTR_EL0.IDC
-Message-ID: <20180309134813.GD15537@arm.com>
-References: <1520434808-29703-1-git-send-email-shankerd@codeaurora.org>
+        id S1751056AbeCINuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 08:50:40 -0500
+Date: Fri, 9 Mar 2018 15:38:57 +0200
+From: Priit Laes <plaes@plaes.org>
+To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+        Florent Revest <revestflo@gmail.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Thomas van Kleef <thomas@vitsch.nl>,
+        "Signed-off-by : Bob Ham" <rah@settrans.net>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [linux-sunxi] [PATCH 6/9] sunxi-cedrus: Add device tree binding
+ document
+Message-ID: <20180309133857.GA20392@solar>
+References: <20180309100933.15922-3-paul.kocialkowski@bootlin.com>
+ <20180309101445.16190-4-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1520434808-29703-1-git-send-email-shankerd@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180309101445.16190-4-paul.kocialkowski@bootlin.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 09:00:08AM -0600, Shanker Donthineni wrote:
-> The DCache clean & ICache invalidation requirements for instructions
-> to be data coherence are discoverable through new fields in CTR_EL0.
-> The following two control bits DIC and IDC were defined for this
-> purpose. No need to perform point of unification cache maintenance
-> operations from software on systems where CPU caches are transparent.
+On Fri, Mar 09, 2018 at 11:14:42AM +0100, Paul Kocialkowski wrote:
+> From: Florent Revest <florent.revest@free-electrons.com>
 > 
-> This patch optimize the three functions __flush_cache_user_range(),
-> clean_dcache_area_pou() and invalidate_icache_range() if the hardware
-> reports CTR_EL0.IDC and/or CTR_EL0.IDC. Basically it skips the two
-> instructions 'DC CVAU' and 'IC IVAU', and the associated loop logic
-> in order to avoid the unnecessary overhead.
+> Device Tree bindings for the Allwinner's video engine
+> 
+> Signed-off-by: Florent Revest <florent.revest@free-electrons.com>
+> ---
+>  .../devicetree/bindings/media/sunxi-cedrus.txt     | 44 ++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/sunxi-cedrus.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/media/sunxi-cedrus.txt b/Documentation/devicetree/bindings/media/sunxi-cedrus.txt
+> new file mode 100644
+> index 000000000000..138581113c49
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/sunxi-cedrus.txt
+> @@ -0,0 +1,44 @@
+> +Device-Tree bindings for SUNXI video engine found in sunXi SoC family
+> +
+> +Required properties:
+> +- compatible	    : "allwinner,sun4i-a10-video-engine";
+> +- memory-region     : DMA pool for buffers allocation;
+> +- clocks	    : list of clock specifiers, corresponding to
+> +		      entries in clock-names property;
+> +- clock-names	    : should contain "ahb", "mod" and "ram" entries;
+> +- resets	    : phandle for reset;
+> +- interrupts	    : should contain VE interrupt number;
+> +- reg		    : should contain register base and length of VE.
+> +
+> +Example:
+> +
+> +reserved-memory {
+> +	#address-cells = <1>;
+> +	#size-cells = <1>;
+> +	ranges;
+> +
+> +	ve_reserved: cma {
+> +		compatible = "shared-dma-pool";
+> +		reg = <0x43d00000 0x9000000>;
+> +		no-map;
+> +		linux,cma-default;
+> +	};
+> +};
+> +
+> +video-engine {
+> +	compatible = "allwinner,sun4i-a10-video-engine";
+> +	memory-region = <&ve_reserved>;
+> +
+> +	clocks = <&ahb_gates 32>, <&ccu CLK_VE>,
+> +		 <&dram_gates 0>;
 
-Cheers, I've queued this for 4.17.
+This should be updated to sunxi-ng clocks:
 
-Will
+clocks = <&ccu CLK_BUS_VE>, <&ccu CLK_VE>, <&ccu CLK_DRAM_VE>;
+
+> +	clock-names = "ahb", "mod", "ram";
+> +
+> +	assigned-clocks = <&ccu CLK_VE>;
+> +	assigned-clock-rates = <320000000>;
+> +
+> +	resets = <&ccu RST_VE>;
+> +
+> +	interrupts = <53>;
+> +
+> +	reg = <0x01c0e000 4096>;
+> +};
+> -- 
+> 2.16.2
+> 
+> -- 
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
