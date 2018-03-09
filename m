@@ -1,114 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751322AbeCIQ0W (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 11:26:22 -0500
-Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:54790 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751170AbeCIQ0V (ORCPT
+        id S932127AbeCIQ0z (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 11:26:55 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:31663 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751122AbeCIQ0x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 11:26:21 -0500
-Date: Fri, 9 Mar 2018 17:26:08 +0100
-From: Florian Westphal <fw@strlen.de>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        David Miller <davem@davemloft.net>, rga@amazon.de,
-        bridge@lists.linux-foundation.org, stephen@networkplumber.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        aliguori@amazon.com, nbd@openwrt.org
-Subject: Re: [RFC PATCH v2] bridge: make it possible for packets to traverse
- the bridge without hitting netfilter
-Message-ID: <20180309162608.GC19924@breakpoint.cc>
-References: <1424705163-13428-1-git-send-email-imrep.amz@gmail.com>
- <20150223160619.GF24297@breakpoint.cc>
- <54EEF32D.2010202@amazon.de>
- <20150226.113431.238255529591339000.davem@davemloft.net>
- <54F982B5.90108@gmail.com>
- <20150306142932.GA15926@salvia>
- <20150306163700.GC20382@breakpoint.cc>
- <1520609475.17937.42.camel@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1520609475.17937.42.camel@infradead.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Fri, 9 Mar 2018 11:26:53 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180309162651epoutp01d82dcef087da71a3ae2f701c9d4913b6~aTUu8dt4N2087220872epoutp01Y
+X-AuditID: b6c32a35-891ff70000001031-c0-5aa2b5cb6bca
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] fbdev fix for v4.16-rc5
+Date: Fri, 09 Mar 2018 17:26:47 +0100
+Message-id: <5453854.qdYKEQ567K@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsWy7bCmge7prYuiDF4vk7O48vU9m8WJvg+s
+        Fpd3zWGzeNT3lt2BxePEjN8sHve7jzN5fN4kF8AcxWWTkpqTWZZapG+XwJXRsvAsW8Ff/ooP
+        TS9YGhin8XYxcnJICJhITN2ykb2LkYtDSGAHo8ShpS9YQBJCAt+BnMU2MEUnfjewQRTtZpR4
+        +OoZM4TzlVFi48UHjCBVbAJWEhPbV4HZIgJGEp9fXGEFsZkFEiS+3PzMDGILC2hL7Jn3Hsxm
+        EVCVON91HszmFdCUWDvtP1i9qICXxJZ97UwQcUGJH5PvsUDMkZfYt38q1EwdibPH1jGCHCEh
+        8JdV4vStW0CDOIAcF4k9e4shrhaWeHV8CztEWFri0lFbiPJmRolvO/YwQ9RMYJTYs14IwraW
+        OHz8ItR8Pol3X3tYIXp5JTraoEo8JK4unArV6ihx8dp5dkhgxUo82LqGcQKjzCwkV89CcvUs
+        JFcvYGRexSiWWlCcm55abFhgqFecmFtcmpeul5yfu4kRHNdapjsYp5zzOcQowMGoxMMrMGNR
+        lBBrYllxZe4hRgkOZiUR3vc1QCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8AQEuUUIC6Yklqdmp
+        qQWpRTBZJg5OqQbGcr6PE5faBbxL2ixTu1c2xvWJ83Hty2oTw34+9bt5f4vrxInnnn09oDlb
+        d5rrI9mFz41eGKksVDblWiPv0e34ipHnecfziIpU+df/X56bvGaSyHTROUw6Z4+ubPBeV37z
+        0dmoasbUjGf9nCv7pm36571f9fmVktwlYX+fSzzeVeL695tH3rrDDEosxRmJhlrMRcWJAKvN
+        cmbnAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMLMWRmVeSWpSXmKPExsVy+t9jAd1TWxdFGZzsNrO48vU9m8WJvg+s
+        Fpd3zWGzeNT3lt2BxePEjN8sHve7jzN5fN4kF8AcxWWTkpqTWZZapG+XwJXRsvAsW8Ff/ooP
+        TS9YGhin8XYxcnJICJhInPjdwNbFyMUhJLCTUeL0rWtQzldGicPP1zCBVLEJWElMbF/FCGKL
+        CBhJfH5xhRXEZhZIkNh0fyobiC0soC2xZ957ZhCbRUBV4nzXeTCbV0BTYu20/2D1ogJeElv2
+        tTNBxAUlfky+xwIxR15i3/6pUDO1JNbvPM40gZF3FpKyWUjKZiEpW8DIvIpRMrWgODc9t9io
+        wDAvtVyvODG3uDQvXS85P3cTIzDoth3W6tvBeH9J/CFGAQ5GJR5egRmLooRYE8uKK3MPMUpw
+        MCuJ8L6vAQrxpiRWVqUW5ccXleakFh9ilOZgURLnvZ13LFJIID2xJDU7NbUgtQgmy8TBKdXA
+        6GT78vJUhZ72qbmNC3YUnzox5THf7u6lF7cXHWRzzn5kZ+b/wNdH6aHC49fP2BclnwtW+DZn
+        /uRz173ndSzrOTjhkYzm2WOOu1MaE59P7Luz4N2ufa/uztm17KH24ifTz4h9Nv12vlKS54/g
+        Nf9chZa4fzKJXkLTWPNuCD1m51yoUvdqq7SDzBYlluKMREMt5qLiRAAQAWa2NgIAAA==
+X-CMS-MailID: 20180309162650epcas1p117f2feb3b030f08733884288a17cf933
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20180309162650epcas1p117f2feb3b030f08733884288a17cf933
+X-RootMTR: 20180309162650epcas1p117f2feb3b030f08733884288a17cf933
+References: <CGME20180309162650epcas1p117f2feb3b030f08733884288a17cf933@epcas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Woodhouse <dwmw2@infradead.org> wrote:
-> 
-> 
-> On Fri, 2015-03-06 at 17:37 +0100, Florian Westphal wrote:
-> > 
-> > > > I did performance measurements in the following way:
-> > > > 
-> > > > Removed those pieces of the packet pipeline that I don't necessarily
-> > > > need one-by-one.  Then measured their effect on small packet
-> > > > performance.
-> > > > 
-> > > > This was the only part that produced considerable effect.
-> > > > 
-> > > > The pure speculation was about why the effect is more than 15%
-> > > > increase in packet throughput, although the code path avoided
-> > > > contains way less code than 15% of the packet pipeline.  It seems,
-> > > > Felix Fietkau profiled similar changes, and found my guess well
-> > > > founded.
-> > > > 
-> > > > Now could anybody explain me what else is wrong with my patch?
-> > > 
-> > > We have to come up with a more generic solution for this.
-> > 
-> > Jiri Benc suggested to allowing to attach netfilter hooks e.g. via tc
-> > action, maybe that would be an option worth investigating.
-> > 
-> > Then you could for instance add filtering rules only to the bridge port
-> > that needs it.
-> > 
-> > > These sysfs tweaks you're proposing look to me like an obscure way to
-> > > tune this.
-> > 
-> > I agree, adding more tunables isn't all that helpful, in the past this
-> > only helped to prolong the problem.
-> 
-> How feasible would it be to make it completely dynamic?
-> 
-> A given hook could automatically disable itself (for a given device) if
-> the result of running it the first time was *tautologically* false for
-> that device (i.e. regardless of the packet itself, or anything else).
-> 
-> The hook would need to be automatically re-enabled if the rule chain
-> ever changes (and might subsequently disable itself again).
-> 
-> Is that something that's worth exploring for the general case?
 
-AF_BRIDGE hooks sit in the net namespace, so its enough for
-one bridge to request filtering to bring in the hook overhead for all
-bridges in the same netns.
+Hi Linus,
 
-Alternatives:
-- place the bridges that need filtering in different netns
-- use tc ingress for filtering
-- use nftables ingress hook for filtering (it sits in almost same
-  location as tc ingress hook) to attach the ruleset to those bridge
-  ports that need packet filtering.
+Please pull fbdev fix for v4.16-rc5 (just a single fix to close
+kernel data leak in FBIOGETCMAP_SPARC ioctl).
 
-(The original request came from user with tons of bridges where only
- one single bridge needed filtering).
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-One alternative I see is to place the bridge hooks into the
-bridge device (net_bridge struct, which is in netdev private area).
 
-But, as you already mentioned we would need to annotate the hooks
-to figure out which device(s) they are for.
+The following changes since commit 661e50bc853209e41a5c14a290ca4decc43cbfd1:
 
-This sounds rather fragile to me, so i would just use nft ingress:
+  Linux 4.16-rc4 (2018-03-04 14:54:11 -0800)
 
-#!/sbin/nft -f
+are available in the git repository at:
 
-table netdev ingress {
-  chain in_public { type filter hook ingress device eth0 priority 0;
-   ip saddr 192.168.0.1 counter
- }
-}
+  https://github.com/bzolnier/linux.git tags/fbdev-v4.16-rc5
+
+for you to fetch changes up to 250c6c49e3b68756b14983c076183568636e2bde:
+
+  fbdev: Fixing arbitrary kernel leak in case FBIOGETCMAP_SPARC in sbusfb_ioctl_helper(). (2018-03-07 14:00:34 +0100)
+
+----------------------------------------------------------------
+fbdev fix for v4.16-rc5:
+
+- fix kernel data leak in FBIOGETCMAP_SPARC ioctl (Peter Malone)
+
+----------------------------------------------------------------
+Bartlomiej Zolnierkiewicz (1):
+      Merge tag 'v4.16-rc4' of git://git.kernel.org/.../torvalds/linux into fbdev-for-next
+
+Peter Malone (1):
+      fbdev: Fixing arbitrary kernel leak in case FBIOGETCMAP_SPARC in sbusfb_ioctl_helper().
+
+ drivers/video/fbdev/sbuslib.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/video/fbdev/sbuslib.c b/drivers/video/fbdev/sbuslib.c
+index af6fc97..a436d44 100644
+--- a/drivers/video/fbdev/sbuslib.c
++++ b/drivers/video/fbdev/sbuslib.c
+@@ -122,7 +122,7 @@ int sbusfb_ioctl_helper(unsigned long cmd, unsigned long arg,
+ 		unsigned char __user *ured;
+ 		unsigned char __user *ugreen;
+ 		unsigned char __user *ublue;
+-		int index, count, i;
++		unsigned int index, count, i;
+ 
+ 		if (get_user(index, &c->index) ||
+ 		    __get_user(count, &c->count) ||
+@@ -161,7 +161,7 @@ int sbusfb_ioctl_helper(unsigned long cmd, unsigned long arg,
+ 		unsigned char __user *ugreen;
+ 		unsigned char __user *ublue;
+ 		struct fb_cmap *cmap = &info->cmap;
+-		int index, count, i;
++		unsigned int index, count, i;
+ 		u8 red, green, blue;
+ 
+ 		if (get_user(index, &c->index) ||
