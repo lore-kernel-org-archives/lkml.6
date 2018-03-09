@@ -1,103 +1,326 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932180AbeCINOG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 08:14:06 -0500
-Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:60583 "EHLO
-        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751086AbeCINOE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 08:14:04 -0500
-Subject: Re: [PATCH v5 03/16] media: rkisp1: Add user space ABI definitions
-To: Jacob Chen <jacobchen110@gmail.com>
-Cc: Shunqian Zheng <zhengsq@rock-chips.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?B?6ZKf5Lul5bSH?= <zyc@rock-chips.com>,
-        Eddie Cai <eddie.cai.linux@gmail.com>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Allon Huang <allon.huang@rock-chips.com>, devicetree@vger.kernel.org,
-        Heiko Stuebner <heiko@sntech.de>, robh+dt@kernel.org,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Luis Oliveira <Luis.Oliveira@synopsys.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>
-References: <1514533978-20408-1-git-send-email-zhengsq@rock-chips.com>
- <1514533978-20408-4-git-send-email-zhengsq@rock-chips.com>
- <d98ac356-a482-f26f-fd6b-6142281d99c3@xs4all.nl>
- <CAFLEztSsg+EW97AN93gd-rx7A1bNwfHK5e9MpLnem40ATnfsrw@mail.gmail.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <d1677c06-4e9f-58a9-817d-0a4b8d958285@xs4all.nl>
-Date: Fri, 9 Mar 2018 14:14:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932089AbeCINS5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 08:18:57 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58796 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751086AbeCINSz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 08:18:55 -0500
+Subject: Re: [RFC PATCH] KVM: arm/arm64: vgic: change condition for level
+ interrupt resampling
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <cdall@kernel.org>
+References: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
+ <9ad47673-068e-f732-d2ca-9c76a8fbdfbc@arm.com>
+ <0a15633d-8944-cb9b-3e6b-b08ee5ec42b9@arm.com> <20180308161900.GC1917@lvm>
+ <86r2oubho3.wl-marc.zyngier@arm.com>
+ <cf815673-e20e-c1e1-2d79-2f47261b2412@redhat.com>
+ <6e438ffc-4b80-4706-a767-7c84aa896348@arm.com>
+Cc: Shunyong Yang <shunyong.yang@hxt-semitech.com>,
+        ard.biesheuvel@linaro.org, will.deacon@arm.com, david.daney@cavium.com,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org, Joey Zheng <yu.zheng@hxt-semitech.com>
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <61f649fb-9a94-1d94-e982-0786452f5d06@redhat.com>
+Date: Fri, 9 Mar 2018 14:18:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-In-Reply-To: <CAFLEztSsg+EW97AN93gd-rx7A1bNwfHK5e9MpLnem40ATnfsrw@mail.gmail.com>
+In-Reply-To: <6e438ffc-4b80-4706-a767-7c84aa896348@arm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfO/SDW1QMy5n+cj6xNA6UqzpD4+f/syueuo5H95++xoKJ+LwkLWIqDJafP86IyvRCo1nAhLAfZRrM9AOlf3nSBMiVsyCoewLC4kSLRdEmHR5tVhtzGsd
- rzmpQujuFhUEIPYO3UWoModPymDsG7hUMyagkzWMus8r4Wf7EMl2imdhP2cOIacRL4AJrhl/7HLchUBFIOSL5Vy33wfISRkyvnCi6asl2W0CsQK+Xwor6/GE
- 8kGNVMNHB9C+PRT1gS1ZPJShPZKim2ddgKLgF9ErO+Fc0AmTOI2ovtpHFpmToU5IwQ4hf9k6hgEv7YV2gXJlGkSJ5VL1THopy/2Bl2zdsO4rXkHbtYeGSZmv
- /xN+CyIMexJYfSbbGvljrE8NYWWpg0hwrRLEobYEjvgqzKTS6E2v+kCanpCKEJuAPBFF4Zixfbq3fZQ4VHbglstYNSS28qwVPv9Vw0YInaNd69ji0vD87Pd8
- ATyRKD/st3g5T7YM0WhK/B92HpTtlxGKHmLr5Ne3lQPPIAdwRnGGhWVWTy5pFn1CQMrxYduPfzX5smIuYUatnv/m0LPJkr2ivXsUFJPs78QL8EdZLiv0Wk2w
- y/+fvAXqX81pGMG1GqhyHkk1iaOUOiWoRjXV/O/NIXGcedt28JbnMMYat1WBbrCmLjLxVz5XxjQTDxNbqmOzvhSJbOg2cDurBMujkq2Nlu6/Jg9utCPc6T1b
- U1vgvMo+zIAPcLrZAS0JJ3DiLJnv76sJ7sQG7UdrjekDll0jhjYIjdCZS6uFmQNDZFZX5hYmBHic3vqParjTcuEi/7IJCITV//GcpXMQcsJdq1PJ9Bz/Ttfo
- Id5s7/G5FQ97lRReZ5Tk+XcjpieeaXWZAhpPTM0C
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/03/18 11:00, Jacob Chen wrote:
-> Hi Hans,
-> 
-> 2018-02-07 20:00 GMT+08:00 Hans Verkuil <hverkuil@xs4all.nl>:
->> On 12/29/17 08:52, Shunqian Zheng wrote:
->>> From: Jeffy Chen <jeffy.chen@rock-chips.com>
+Hi Marc,
+
+On 09/03/18 10:12, Marc Zyngier wrote:
+> On 08/03/18 18:12, Auger Eric wrote:
+>> Hi Marc, Christoffer,
+>>
+>> On 08/03/18 18:28, Marc Zyngier wrote:
+>>> On Thu, 08 Mar 2018 16:19:00 +0000,
+>>> Christoffer Dall wrote:
+>>>>
+>>>> On Thu, Mar 08, 2018 at 11:54:27AM +0000, Marc Zyngier wrote:
+>>>>> On 08/03/18 09:49, Marc Zyngier wrote:
+>>>>>> [updated Christoffer's email address]
+>>>>>>
+>>>>>> Hi Shunyong,
+>>>>>>
+>>>>>> On 08/03/18 07:01, Shunyong Yang wrote:
+>>>>>>> When resampling irqfds is enabled, level interrupt should be
+>>>>>>> de-asserted when resampling happens. On page 4-47 of GIC v3
+>>>>>>> specification IHI0069D, it said,
+>>>>>>> "When the PE acknowledges an SGI, a PPI, or an SPI at the CPU
+>>>>>>> interface, the IRI changes the status of the interrupt to active
+>>>>>>> and pending if:
+>>>>>>> • It is an edge-triggered interrupt, and another edge has been
+>>>>>>> detected since the interrupt was acknowledged.
+>>>>>>> • It is a level-sensitive interrupt, and the level has not been
+>>>>>>> deasserted since the interrupt was acknowledged."
+>>>>>>>
+>>>>>>> GIC v2 specification IHI0048B.b has similar description on page
+>>>>>>> 3-42 for state machine transition.
+>>>>>>>
+>>>>>>> When some VFIO device, like mtty(8250 VFIO mdev emulation driver
+>>>>>>> in samples/vfio-mdev) triggers a level interrupt, the status
+>>>>>>> transition in LR is pending-->active-->active and pending.
+>>>>>>> Then it will wait resampling to de-assert the interrupt.
+>>>>>>>
+>>>>>>> Current design of lr_signals_eoi_mi() will return false if state
+>>>>>>> in LR is not invalid(Inactive). It causes resampling will not happen
+>>>>>>> in mtty case.
+>>>>>>
+>>>>>> Let me rephrase this, and tell me if I understood it correctly:
+>>>>>>
+>>>>>> - A level interrupt is injected, activated by the guest (LR state=active)
+>>>>>> - guest exits, re-enters, (LR state=pending+active)
+>>>>>> - guest EOIs the interrupt (LR state=pending)
+>>>>>> - maintenance interrupt
+>>>>>> - we don't signal the resampling because we're not in an invalid state
+>>>>>>
+>>>>>> Is that correct?
+>>>>>>
+>>>>>> That's an interesting case, because it seems to invalidate some of the 
+>>>>>> optimization that went in over a year ago.
+>>>>>>
+>>>>>> 096f31c4360f KVM: arm/arm64: vgic: Get rid of MISR and EISR fields
+>>>>>> b6095b084d87 KVM: arm/arm64: vgic: Get rid of unnecessary save_maint_int_state
+>>>>>> af0614991ab6 KVM: arm/arm64: vgic: Get rid of unnecessary process_maintenance operation
+>>>>>>
+>>>>>> We could compare the value of the LR before the guest entry with
+>>>>>> the value at exit time, but we still could miss it if we have a
+>>>>>> transition such as P+A -> P -> A and assume a long enough propagation
+>>>>>> delay for the maintenance interrupt (which is very likely).
+>>>>>>
+>>>>>> In essence, we have lost the benefit of EISR, which was to give us a
+>>>>>> way to deal with asynchronous signalling.
+>>>>>>
+>>>>>>>
+>>>>>>> This will cause interrupt fired continuously to guest even 8250 IIR
+>>>>>>> has no interrupt. When 8250's interrupt is configured in shared mode,
+>>>>>>> it will pass interrupt to other drivers to handle. However, there
+>>>>>>> is no other driver involved. Then, a "nobody cared" kernel complaint
+>>>>>>> occurs.
+>>>>>>>
+>>>>>>> / # cat /dev/ttyS0
+>>>>>>> [    4.826836] random: crng init done
+>>>>>>> [    6.373620] irq 41: nobody cared (try booting with the "irqpoll"
+>>>>>>> option)
+>>>>>>> [    6.376414] CPU: 0 PID: 1307 Comm: cat Not tainted 4.16.0-rc4 #4
+>>>>>>> [    6.378927] Hardware name: linux,dummy-virt (DT)
+>>>>>>> [    6.380876] Call trace:
+>>>>>>> [    6.381937]  dump_backtrace+0x0/0x180
+>>>>>>> [    6.383495]  show_stack+0x14/0x1c
+>>>>>>> [    6.384902]  dump_stack+0x90/0xb4
+>>>>>>> [    6.386312]  __report_bad_irq+0x38/0xe0
+>>>>>>> [    6.387944]  note_interrupt+0x1f4/0x2b8
+>>>>>>> [    6.389568]  handle_irq_event_percpu+0x54/0x7c
+>>>>>>> [    6.391433]  handle_irq_event+0x44/0x74
+>>>>>>> [    6.393056]  handle_fasteoi_irq+0x9c/0x154
+>>>>>>> [    6.394784]  generic_handle_irq+0x24/0x38
+>>>>>>> [    6.396483]  __handle_domain_irq+0x60/0xb4
+>>>>>>> [    6.398207]  gic_handle_irq+0x98/0x1b0
+>>>>>>> [    6.399796]  el1_irq+0xb0/0x128
+>>>>>>> [    6.401138]  _raw_spin_unlock_irqrestore+0x18/0x40
+>>>>>>> [    6.403149]  __setup_irq+0x41c/0x678
+>>>>>>> [    6.404669]  request_threaded_irq+0xe0/0x190
+>>>>>>> [    6.406474]  univ8250_setup_irq+0x208/0x234
+>>>>>>> [    6.408250]  serial8250_do_startup+0x1b4/0x754
+>>>>>>> [    6.410123]  serial8250_startup+0x20/0x28
+>>>>>>> [    6.411826]  uart_startup.part.21+0x78/0x144
+>>>>>>> [    6.413633]  uart_port_activate+0x50/0x68
+>>>>>>> [    6.415328]  tty_port_open+0x84/0xd4
+>>>>>>> [    6.416851]  uart_open+0x34/0x44
+>>>>>>> [    6.418229]  tty_open+0xec/0x3c8
+>>>>>>> [    6.419610]  chrdev_open+0xb0/0x198
+>>>>>>> [    6.421093]  do_dentry_open+0x200/0x310
+>>>>>>> [    6.422714]  vfs_open+0x54/0x84
+>>>>>>> [    6.424054]  path_openat+0x2dc/0xf04
+>>>>>>> [    6.425569]  do_filp_open+0x68/0xd8
+>>>>>>> [    6.427044]  do_sys_open+0x16c/0x224
+>>>>>>> [    6.428563]  SyS_openat+0x10/0x18
+>>>>>>> [    6.429972]  el0_svc_naked+0x30/0x34
+>>>>>>> [    6.431494] handlers:
+>>>>>>> [    6.432479] [<000000000e9fb4bb>] serial8250_interrupt
+>>>>>>> [    6.434597] Disabling IRQ #41
+>>>>>>>
+>>>>>>> This patch changes the lr state condition in lr_signals_eoi_mi() from
+>>>>>>> invalid(Inactive) to active and pending to avoid this.
+>>>>>>>
+>>>>>>> I am not sure about the original design of the condition of
+>>>>>>> invalid(active). So, This RFC is sent out for comments.
+>>>>>>>
+>>>>>>> Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+>>>>>>> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+>>>>>>> ---
+>>>>>>>  virt/kvm/arm/vgic/vgic-v2.c | 4 ++--
+>>>>>>>  virt/kvm/arm/vgic/vgic-v3.c | 4 ++--
+>>>>>>>  2 files changed, 4 insertions(+), 4 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/virt/kvm/arm/vgic/vgic-v2.c b/virt/kvm/arm/vgic/vgic-v2.c
+>>>>>>> index e9d840a75e7b..740ee9a5f551 100644
+>>>>>>> --- a/virt/kvm/arm/vgic/vgic-v2.c
+>>>>>>> +++ b/virt/kvm/arm/vgic/vgic-v2.c
+>>>>>>> @@ -46,8 +46,8 @@ void vgic_v2_set_underflow(struct kvm_vcpu *vcpu)
+>>>>>>>  
+>>>>>>>  static bool lr_signals_eoi_mi(u32 lr_val)
+>>>>>>>  {
+>>>>>>> -	return !(lr_val & GICH_LR_STATE) && (lr_val & GICH_LR_EOI) &&
+>>>>>>> -	       !(lr_val & GICH_LR_HW);
+>>>>>>> +	return !((lr_val & GICH_LR_STATE) ^ GICH_LR_STATE) &&
+>>>>>>
+>>>>>> That feels very wrong. You're now signalling the resampling in both
+>>>>>> invalid and pending+active, and the latter state doesn't mean you've
+>>>>>> EOIed anything. You're now over-signalling, and signalling the
+>>>>>> wrong event.
+>>>>>>
+>>>>>>> +	       (lr_val & GICH_LR_EOI) && !(lr_val & GICH_LR_HW);
+>>>>>>>  }
+>>>>>>>  
+>>>>>>>  /*
+>>>>>>> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+>>>>>>> index 6b329414e57a..43111bba7af9 100644
+>>>>>>> --- a/virt/kvm/arm/vgic/vgic-v3.c
+>>>>>>> +++ b/virt/kvm/arm/vgic/vgic-v3.c
+>>>>>>> @@ -35,8 +35,8 @@ void vgic_v3_set_underflow(struct kvm_vcpu *vcpu)
+>>>>>>>  
+>>>>>>>  static bool lr_signals_eoi_mi(u64 lr_val)
+>>>>>>>  {
+>>>>>>> -	return !(lr_val & ICH_LR_STATE) && (lr_val & ICH_LR_EOI) &&
+>>>>>>> -	       !(lr_val & ICH_LR_HW);
+>>>>>>> +	return !((lr_val & ICH_LR_STATE) ^ ICH_LR_STATE) &&
+>>>>>>> +	       (lr_val & ICH_LR_EOI) && !(lr_val & ICH_LR_HW);
+>>>>>>>  }
+>>>>>>>  
+>>>>>>>  void vgic_v3_fold_lr_state(struct kvm_vcpu *vcpu)
+>>>>>>>
+>>>>>>
+>>>>>> Assuming I understand the issue correctly, I cannot really see how
+>>>>>> to solve this without reintroducing EISR, which sucks majorly.
+>>>>>>
+>>>>>> I'll try to cook something shortly and we can all have a good
+>>>>>> fight about how crap this is.
+>>>>>
+>>>>> Here's what I came up with. I don't really like it, but that's
+>>>>> the least invasive this I could come up with. Please let me
+>>>>> know if that helps with your test case. Note that I have only
+>>>>> boot-tested this on a sample of 1 machine, so I don't expect this
+>>>>> to be perfect.
+>>>>>
+>>>>> Also, any guideline on how to reproduce this would be much appreciated.
+>>>>> I never used this mdev/mtty thing, so please bear with me.
+>>>>>
+>>>>> Thanks,
+>>>>>
+>>>>> 	M.
+>>>>>
+>>>>> From 66a7c4cfc1029b0169dd771e196e2876ba3f17b1 Mon Sep 17 00:00:00 2001
+>>>>> From: Marc Zyngier <marc.zyngier@arm.com>
+>>>>> Date: Thu, 8 Mar 2018 11:14:06 +0000
+>>>>> Subject: [PATCH] KVM: arm/arm64: Do not rely on LR state to guess EOI MI
+>>>>>  status
+>>>>>
+>>>>> We so far rely on the LR state to decide whether the guest has
+>>>>> EOI'd a level interrupt or not. While this looks like a good
+>>>>> idea on the surface, it leads to a couple of annoying corner
+>>>>> cases:
+>>>>>
+>>>>> Example 1: (P = Pending, A = Active, MI = Maintenance Interrupt)
+>>>>> P -> guest IAR -> A -> exit/entry -> P+A -> guest EOI -> P -> MI
+>>>>
+>>>> Do we really get an EOI maintenance interrupt here?  Reading the MISR
+>>>> and EISR descriptions make me thing this is not the case...
+>>
+>> Hum yes in EISR it is said that ICH_LR.State = 0b00!
 >>>
->>> Add the header for userspace
+>>> Yeah, it looks like I always want EISR to do what I want, and not to
+>>> do what it does. Man, this thing is such a piece of crap.
+>>>
+>>> OK, scratch that. We need to do it without the help of the HW.
+>>>
+>>>>> The state is now pending, we've really EOI'd the interrupt, and
+>>>>> yet lr_signals_eoi_mi() returns false, since the state is not 0.
+>>>>> The result is that we won't signal anything on the corresponding
+>>>>> irqfd, which people complain about. Meh.
+>>>>
+>>>> So the core of the problem is that when we've entered the guest with
+>>>> PENDING+ACTIVE and when we exit (for some reason) we don't signal the
+>>>> resamplefd, right?  The solution seems to me that we don't ever do
+>>>> PENDING+ACTIVE if you need to resample after each deactivate.  What
+>>>> would be the point of appending a pending state that you only know to be
+>>>> valid after a resample anyway?
+>>>
+>>> The question is then to identify that a given source needs to be
+>>> signalled back to VFIO. Calling into the eventfd code on the hot path
+>>> is pretty horrid (I'm not sure if we can really call into this with
+>>> interrupts disabled, for example).
+>>>
+>>>>
+>>>>>
+>>>>> Example 2:
+>>>>> P+A -> guest EOI -> P -> delayed MI -> guest IAR -> A -> MI fires
+>>>>
+>>>> We could be more clever and do the following calculation on every exit:
+>>>>
+>>>> If you enter with P, and exit with either A or 0, then signal.
+>>>>
+>>>> If you enter with P+A, and you exit with either P, A, or 0, then signal.
+>>>>
+>>>> Wouldn't that also solve it?  (Although I have a feeling you'd miss some
+>>>> exits in this case).
+>>>
+>>> I'd be more confident if we did forbid P+A for such interrupts
+>>> altogether, as they really feel like another kind of HW interrupt.
 >>
->> General note: I saw four cases where this documentation referred to the
->> datasheet. Three comments on that:
+>> the LR P+A looks strange to me too. all the more so it may cause the
+>> same IRQ to be acked twice?
+> 
+> If the pending bit isn't dropped by the time we get to EOI the first
+> one, probably. But that's pretty much expected with a level interrupt
+> isn't it?
+> 
+>> P -> A -> 0 (resample). Doesn't our issue come from the fact we reinject
+>> the P in LR until the line level is deasserted?
+> 
+> Which is consistent with the life cycle of a level interrupt. What
+> usually happens is (for a non HW interrupt):
+> 
+> P -> IAR -> A -> lower the line in the device -> 0
+> 
+> If you generate an exit at the right spot, and yet don't lower the line,
+> you end up with:
+> 
+> P -> IAR -> A -> exit/enter -> P+A
+> 
+> From there, if you lower the line, it is likely to cause an exit:
+> 
+> P+A -> MMIO trap lowering the line -> A
+> 
+>>>
+>>> Eric: Is there any way to get a callback from the eventfd code to flag
+>>> a given irq as requiring a notification on EOI?
 >>
->> 1) You don't say which datasheet.
->> 2) I assume the datasheet is under NDA?
-> 
-> This datasheet can't be got by customers, even under NDA.
-
-OK. This should be mentioned somewhere.
-
-> 
->> 3) You do need to give enough information so a reasonable default can be
->>    used. I mentioned in an earlier review that creating an initial params
->>    struct that can be used as a templete would be helpful (or even
->>    required), and that would be a good place to put such defaults.
+>> bool kvm_irq_has_notifier(struct kvm *kvm, unsigned irqchip, unsigned
+>> pin) was used in the past. I think it does what you want.
 >>
 > 
-> It don't need a default config
-> For applcation writers, they can just init it with zero data, and only
-> set value for the part they concerned.
+> Not exactly. I'm very reluctant to call this on the hot path (I'd need
+> the info on hw_flush), and I'd rather have a callback from the eventfd
+> subsystem to tell me when a pin is being associated with a notifier
+> (because this is likely to be very rare).
+> 
+> If that doesn't exit, never mind. We can see if that solves Shunyong
+> issue and optimize later.
+We don't have such callback mechanism AFAK. However we may call an arch
+specific function in kvm_irqfd_assign.
 
-This too should be clearly documented. This is very useful information for
-users of this API.
+Thanks
+
+Eric
 
 > 
-> As for ABI, i have checked there is no mismatches.
-> Those structures is 32 bit aligned both in 64bit/32bit env, since
-> there is no 64bit value.
-> "__attribute__ ((packed))" can avoid mismatches happen when we add a
-> 64bit value to those structures.
+> 	M.
 > 
-> As robin said, enums and bools are not guaranteed to be consistent
-> between different compiler, so it's a potential risk.
-> I have replace bools with unsigned char and enums with unsigned int.
-
-Excellent.
-
-Regards,
-
-	Hans
