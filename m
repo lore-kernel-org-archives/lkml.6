@@ -1,133 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932277AbeCIUQg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 15:16:36 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40456 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751211AbeCIUQf (ORCPT
+        id S932286AbeCIUT7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 15:19:59 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52043 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751192AbeCIUT6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 15:16:35 -0500
-Date: Fri, 9 Mar 2018 12:17:07 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: Re: [PATCH] rcu: exp: Fix "must hold exp_mutex" comments for QS
- reporting functions
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180307084944.10229-1-boqun.feng@gmail.com>
- <20180307154829.GE3918@linux.vnet.ibm.com>
- <20180308034627.n2xw32zzujnmy2gb@tardis>
- <20180308043017.GL3918@linux.vnet.ibm.com>
- <20180308045429.py66d76trikiuguf@tardis>
- <20180308083006.wsgvkiw2ejbcwhhu@tardis>
- <20180308154255.GM3918@linux.vnet.ibm.com>
- <20180309065700.qseccsy3z3m72pa7@tardis>
+        Fri, 9 Mar 2018 15:19:58 -0500
+Date: Fri, 9 Mar 2018 21:19:57 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Mark Brown <broonie@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: soc-core: Add missing NULL check
+Message-ID: <20180309201957.GA7069@amd>
+References: <20180308200653.GA47801@beast>
+ <20180309125050.GD5252@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="+HP7ph2BbKc20aGI"
 Content-Disposition: inline
-In-Reply-To: <20180309065700.qseccsy3z3m72pa7@tardis>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18030920-0052-0000-0000-000002C66C25
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008642; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.01000667; UDB=6.00509012; IPR=6.00779997;
- MB=3.00019944; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-09 20:16:33
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030920-0053-0000-0000-00005BF21880
-Message-Id: <20180309201707.GC3918@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-09_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803090240
+In-Reply-To: <20180309125050.GD5252@sirena.org.uk>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 09, 2018 at 02:57:00PM +0800, Boqun Feng wrote:
-> On Thu, Mar 08, 2018 at 07:42:55AM -0800, Paul E. McKenney wrote:
-> > On Thu, Mar 08, 2018 at 04:30:06PM +0800, Boqun Feng wrote:
-> > > On Thu, Mar 08, 2018 at 12:54:29PM +0800, Boqun Feng wrote:
-> > > > On Wed, Mar 07, 2018 at 08:30:17PM -0800, Paul E. McKenney wrote:
-> > > > [...]
-> > > > > >  
-> > > > > > +/*
-> > > > > > + * Like sync_rcu_preempt_exp_done(), but this function assumes the caller
-> > > > > > + * doesn't hold the rcu_node's ->lock, and will acquire and release the lock
-> > > > > > + * itself
-> > > > > > + */
-> > > > > > +static bool sync_rcu_preempt_exp_done_unlocked(struct rcu_node *rnp)
-> > > > > > +{
-> > > > > > +	unsigned long flags;
-> > > > > > +	bool ret;
-> > > > > > +
-> > > > > > +	raw_spin_lock_irqsave_rcu_node(rnp, flags);
-> > > > > > +	ret = sync_rcu_preempt_exp_done(rnp);
-> > > > > 
-> > > > > Let's see...  The sync_rcu_preempt_exp_done() function checks the
-> > > > > ->exp_tasks pointer and the ->expmask bitmask.  The number of bits in the
-> > > > > mask can only decrease, and the ->exp_tasks pointer can only transition
-> > > > > from NULL to non-NULL when there is at least one bit set.  However,
-> > > > > there is no ordering in sync_rcu_preempt_exp_done(), so it is possible
-> > > > > that it could be fooled without the lock:
-> > > > > 
-> > > > > o	CPU 0 in sync_rcu_preempt_exp_done() reads ->exp_tasks and
-> > > > > 	sees that it is NULL.
-> > > > > 
-> > > > > o	CPU 1 blocks within an RCU read-side critical section, so
-> > > > > 	it enqueues the task and points ->exp_tasks at it and
-> > > > > 	clears CPU 1's bit in ->expmask.
-> > > > > 
-> > > > > o	All other CPUs clear their bits in ->expmask.
-> > > > > 
-> > > > > o	CPU 0 reads ->expmask, sees that it is zero, so incorrectly
-> > > > > 	concludes that all quiescent states have completed, despite
-> > > > > 	the fact that ->exp_tasks is non-NULL.
-> > > > > 
-> > > > > So it seems to me that the lock is needed.  Good catch!!!  The problem
-> > > > > would occur only if the task running on CPU 0 received a spurious
-> > > > > wakeup, but that could potentially happen.
-> > > > 
-> > > > Thanks for the analysis ;-)
-> > 
-> > The other limitation is that it occurs only on systems small enough
-> > to have a single-node rcu_node tree.  But still...
-> > 
-> > > > > If lock contention becomes a problem, memory-ordering tricks could be
-> > > > > applied, but the lock is of course simpler.
-> > > > > 
-> > > > 
-> > > > Agreed.
-> > > > 
-> > > > > I am guessing that this is a prototype patch, and that you are planning
-> > > > 
-> > > > Yes, this is a prototype. And I'm preparing a proper patch to send
-> > > > later.
-> > 
-> > Very good, thank you!
-> > 
-> > > > > to add lockdep annotations in more places, but either way please let
-> > > > > me know.
-> > > > 
-> > > > Give it's a bug as per your analysis, I'd like to defer other lockdep
-> > > > annotations and send this first. However, I'm currently getting other
-> > > > lockdep splats after applying this, so I need to get that sorted first.
-> > > 
-> > > Hmm.. the other lockdep splat seems irrelevant with my patch, I could
-> > > observe it on mainline using rcutorture with CONFIG_PROVE_LOCKING=y. I'd
-> > > spend some more time on it, in the meanwhile, send a proper patch for
-> > > this sync_rcu_preempt_exp_done().
-> > 
-> > I am not seeing that one, but am very interested in getting it fixed!  ;-)
-> 
-> Found the root cause, and send out the patch ;-)
 
-Very good!  Still not sure why I don't see it, but as long as it is fixed!
+--+HP7ph2BbKc20aGI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-							Thanx, Paul
+On Fri 2018-03-09 12:50:50, Mark Brown wrote:
+> On Thu, Mar 08, 2018 at 12:06:53PM -0800, Kees Cook wrote:
+>=20
+> > If a codec is not attached to the sound soc, a NULL deref is possible a=
+s a
+> > regular user in /sys.
+>=20
+> I can't parse this, sorry.  What is the "sound soc"?
+>=20
+> > +++ b/sound/soc/soc-core.c
+> > @@ -137,6 +137,9 @@ static ssize_t soc_codec_reg_show(struct snd_soc_co=
+dec *codec, char *buf,
+> >  	size_t total =3D 0;
+> >  	loff_t p =3D 0;
+> > =20
+> > +	if (!codec || !codec->driver)
+> > +		return 0;
+> > +
+>=20
+> How are we managing to create a sysfs file for a CODEC which doesn't
+> have a CODEC struct associated with it?  That is obviously nonsensical
+> and suggests we've got some more serious problem going on here - if
+> there's no CODEC those sysfs attributes simply shouldn't be there.
+
+Look for "linux-next on n900: oops in codec_reg_show() when grepping
+sysfs" ... should be in your inbox.
+								Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--+HP7ph2BbKc20aGI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqi7G0ACgkQMOfwapXb+vJs0QCfTPIVnAuhoIqDB/fjWIuRtEwD
+OpMAniKHVGQxZHKELxmOfZ8VArHh06W4
+=0i7s
+-----END PGP SIGNATURE-----
+
+--+HP7ph2BbKc20aGI--
