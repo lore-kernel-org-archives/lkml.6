@@ -1,42 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932359AbeCITNx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 14:13:53 -0500
-Received: from mail-io0-f179.google.com ([209.85.223.179]:37312 "EHLO
-        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751205AbeCITNv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 14:13:51 -0500
-X-Google-Smtp-Source: AG47ELsujQSq8joYk6LXxT+7gdkjehCE2gwUjj65/Qypht+6TDBXGfWuoBqng32gjf7+qMlbGB1gfuEORJWjQNiTw0E=
-MIME-Version: 1.0
-In-Reply-To: <20180309190736.GA4657@beast>
-References: <20180309190736.GA4657@beast>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 9 Mar 2018 11:13:50 -0800
-X-Google-Sender-Auth: KbLSJp-hoZzFSuVyPEugdQcjNug
-Message-ID: <CA+55aFwsggrvj1Xbo8-uV-Vgj5Ekt5vDwhGtjEgk9EJNP1a3Tw@mail.gmail.com>
-Subject: Re: [PATCH] exec: Set file unwritable before LSM check
-To: Kees Cook <keescook@chromium.org>
-Cc: James Morris <jmorris@namei.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>, Stephen Smalley <sds@tycho.nsa.gov>
-Content-Type: text/plain; charset="UTF-8"
+        id S932501AbeCITPM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 14:15:12 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57488 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751192AbeCITPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 14:15:11 -0500
+Date: Fri, 9 Mar 2018 13:15:08 -0600
+From: Kim Phillips <kim.phillips@arm.com>
+To: Martin Vuille <jpmv27@aim.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        "Christian Hansen (chansen3)" <chansen3@cisco.com>,
+        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "Vuille, Martin (Martin)" <vmartin@avaya.com>
+Subject: Re: [PATCH] perf tools arm64: Add libdw DWARF post unwind support
+ for ARM64
+Message-Id: <20180309131508.54003466f8aedfafaee4e7a8@arm.com>
+In-Reply-To: <cde0e6f4-155f-3d7e-8d84-fd482f729976@aim.com>
+References: <A5E405FE-1BA3-46FC-9A43-CF19A4B369C5@cisco.com>
+        <20180226142726.cd413c792d0782f77b60a23e@arm.com>
+        <20180226174040.6998bd3c0a79b2f19c491e4d@arm.com>
+        <9B701F46-6AEA-48D8-9103-71D35C83776D@cisco.com>
+        <20180308211030.4ee4a0d6ff6dc5cda1b567d4@arm.com>
+        <20180309150627.GB8347@kernel.org>
+        <20180309120720.9358515dbff3b1d1fdf70cc8@arm.com>
+        <20180309182440.GA25111@kernel.org>
+        <cde0e6f4-155f-3d7e-8d84-fd482f729976@aim.com>
+Organization: Arm
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 9, 2018 at 11:07 AM, Kees Cook <keescook@chromium.org> wrote:
-> The LSM check should happen after the file has been confirmed to be
-> unchanging. Without this, we could have a ToCToU issue between the
-> LSM verification and the actual contents of the file later.
+On Fri, 9 Mar 2018 13:49:50 -0500
+Martin Vuille <jpmv27@aim.com> wrote:
 
-Can we please not add random crazy six-letter acronyms that nobody
-uses outside of a very small community?
+> For https://patchwork.kernel.org/patch/10211483/, I'm not sure how to go about doing a reply to all.
 
-The point of a commit message is to *explain*, not confuse.
+Hit reply-all from the copy in your Sent folder.
 
-            Linus
+Kim
