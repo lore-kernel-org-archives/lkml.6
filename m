@@ -1,31 +1,31 @@
 Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1520607035; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520607034; cv=none;
         d=google.com; s=arc-20160816;
-        b=ly3PEatswZKArtX4eTK5Ma2byBb5viW/jTqEwIeldBmKuzndFtrrCpTeS3FFDM6P6l
-         DSqJf0lETPOCItwKvQ4u82dW3F8dAFwSvb+8Qfmq5C4XQquEukJwurMuSVAb6axJBZeo
-         kJ1vX8QWc55+67LezDvh3jjqR1vOj04THtjTyB3uudtmQDFCgYGlJsmnHe+PQ1NcALPv
-         95JEMiEH+0wFtAas4IjpK0Qh99ALKh6b/m1H2wpwQWpMXOxyX59sG59iocmCbXuLVWqa
-         6gYV57M+X+Y7uJjhP9B+AcsBQNWIFQnZd1LOiH7pTpioumWmqYm8GdDkSzfkStC+S+F2
-         DoBQ==
+        b=FbWO4FVYNaZnc6uzQucQ42pVK8VPGTHNk/AORBGyKTdYQEA3vBHm05aRsvj89zmLzB
+         YLjQUeRTPgfcl8SnCQ5jdpDY97NjvkBZ9jHvcShALHjdTNNokQi1VwQUhDJxRxPkBI4f
+         FelB4btC6aSJTT+azeriikbAxjJXXiKkQ8adWoDwYFHLtj68p1Kriwo4j01t52mhw09q
+         FrPvndkQS8OYHb9BBe3g7latNM2uiAFaJ7EIry4qJPkGHGF2AQ2aSE8GdGoWvcp00cb+
+         cQ7YWHV5OTIKRMrtzrHwgZPays6UV6aZr66gi94hy3ZbMQLj67QNJEW303DCh+L13jXf
+         IxGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=gAUsHSbOIFU6E1G8a/YdYu7okTBUkxYiiz5tKmU42xU=;
-        b=q9iI5zxJdvmTfVpJV2k41f3mLAcuYjadVjXXgZYUZa7W/8Uw5qZ5sg8im/hzsCn8CJ
-         +PaiOmnU/64PlPy6SPlaQc8W8GfIxFmAgfPWsFeLFetAt/xZnn33vmScoOEsaj3qo3FC
-         2QHtuyTprGw7UIf7TAFE0Ge9j9m5xNJ+Vj5IN/ssRFhc5RSA0Ul4TfFEg/UEtbsibwK/
-         AXZj7Fqw/JPj2RX1Bzi/iLOveWo2ORIYEmTi6qT0mTAWD7s5zOIyCCWfyFzoTmyt1eeh
-         GNwe9+VGMNv55XoVUbUFw+dxoSLVLPNIakwoYjptxBZfTkpqgSbLR758JBsRBKIUnZx1
-         zwtg==
+        bh=iwbfmImi6BY1sK40ria0J88daj3+9B9MGMgTb34A6WE=;
+        b=JqNPKQEa6qcPD6IfrzYovgBwp1D6PZdyXkteEbhrvs+M/nRuupmS+o5nYuv6Mnvj8K
+         ln8jccZNczBKOqwtcFtTDt3lWnnK4H7bpAxxbFw3ynWgToWsG4nU5bZgdDDIjlmbALrP
+         mkG9mCkvKfSW2jjFhbmTRYLjT/kifChmtKh07zXqVYAWnpTJibiyC4YP7wRRz30NJidR
+         Ju489WalJbCb6MzQ6IId5uON6l52WJABBR3LHHfun+DfCJwFE0atrUG70X+CTK453DFg
+         fFrUhbXpB2pETL0fFDVagsmymaH+bZ7UZtYpqvUK4kr3sUvj86dpwC8+pJVFnt6OZSer
+         tEWg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=Lan+og5r;
+       dkim=pass header.i=@linaro.org header.s=google header.b=J344GYMH;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=Lan+og5r;
+       dkim=pass header.i=@linaro.org header.s=google header.b=J344GYMH;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AG47ELsuLYSvwU1MMOq4yDkueHxDNhUfHfdhMu5yiRSSnh5MAiTRdmXc93JRHdlztArrgJTEnjbG5g==
+X-Google-Smtp-Source: AG47ELvlbtk/szyqsVr9WP1vXWNclBPPWKh+hpCsnIioJiu8gfXw8jQ1mcPYnZnNbqtdAD4B4B1txQ==
 From: srinivas.kandagatla@linaro.org
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
@@ -41,15 +41,15 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	linux-amlogic@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 08/25] nvmem: rockchip-efuse: Convert to use devm_nvmem_register()
-Date: Fri,  9 Mar 2018 14:47:02 +0000
-Message-Id: <20180309144719.29904-9-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 07/25] nvmem: snvs_lgpr: Convert to use devm_nvmem_register()
+Date: Fri,  9 Mar 2018 14:47:01 +0000
+Message-Id: <20180309144719.29904-8-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180309144719.29904-1-srinivas.kandagatla@linaro.org>
 References: <20180309144719.29904-1-srinivas.kandagatla@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594472042763329463?=
-X-GMAIL-MSGID: =?utf-8?q?1594472042763329463?=
+X-GMAIL-THRID: =?utf-8?q?1594472041746932809?=
+X-GMAIL-MSGID: =?utf-8?q?1594472041746932809?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -73,28 +73,28 @@ Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/rockchip-efuse.c | 16 ++--------------
+ drivers/nvmem/snvs_lpgpr.c | 16 ++--------------
  1 file changed, 2 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/nvmem/rockchip-efuse.c b/drivers/nvmem/rockchip-efuse.c
-index f13a8335f364..fec6e4c48b9a 100644
---- a/drivers/nvmem/rockchip-efuse.c
-+++ b/drivers/nvmem/rockchip-efuse.c
-@@ -289,25 +289,13 @@ static int rockchip_efuse_probe(struct platform_device *pdev)
- 	econfig.reg_read = match->data;
- 	econfig.priv = efuse;
- 	econfig.dev = efuse->dev;
--	nvmem = nvmem_register(&econfig);
+diff --git a/drivers/nvmem/snvs_lpgpr.c b/drivers/nvmem/snvs_lpgpr.c
+index e5c2a4a17f03..cb471d5e8e86 100644
+--- a/drivers/nvmem/snvs_lpgpr.c
++++ b/drivers/nvmem/snvs_lpgpr.c
+@@ -117,20 +117,9 @@ static int snvs_lpgpr_probe(struct platform_device *pdev)
+ 	cfg->reg_read  = snvs_lpgpr_read,
+ 	cfg->reg_write = snvs_lpgpr_write,
+ 
+-	nvmem = nvmem_register(cfg);
 -	if (IS_ERR(nvmem))
 -		return PTR_ERR(nvmem);
-+	nvmem = devm_nvmem_register(dev, &econfig);
++	nvmem = devm_nvmem_register(dev, cfg);
  
 -	platform_set_drvdata(pdev, nvmem);
 -
 -	return 0;
 -}
 -
--static int rockchip_efuse_remove(struct platform_device *pdev)
+-static int snvs_lpgpr_remove(struct platform_device *pdev)
 -{
 -	struct nvmem_device *nvmem = platform_get_drvdata(pdev);
 -
@@ -102,11 +102,14 @@ index f13a8335f364..fec6e4c48b9a 100644
 +	return PTR_ERR_OR_ZERO(nvmem);
  }
  
- static struct platform_driver rockchip_efuse_driver = {
- 	.probe = rockchip_efuse_probe,
--	.remove = rockchip_efuse_remove,
+ static const struct of_device_id snvs_lpgpr_dt_ids[] = {
+@@ -143,7 +132,6 @@ MODULE_DEVICE_TABLE(of, snvs_lpgpr_dt_ids);
+ 
+ static struct platform_driver snvs_lpgpr_driver = {
+ 	.probe	= snvs_lpgpr_probe,
+-	.remove	= snvs_lpgpr_remove,
  	.driver = {
- 		.name = "rockchip-efuse",
- 		.of_match_table = rockchip_efuse_match,
+ 		.name	= "snvs_lpgpr",
+ 		.of_match_table = snvs_lpgpr_dt_ids,
 -- 
 2.15.1
