@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751957AbeCIAvT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 19:51:19 -0500
-Received: from mail-by2nam01on0049.outbound.protection.outlook.com ([104.47.34.49]:3475
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        id S1751984AbeCIAvc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 19:51:32 -0500
+Received: from mail-sn1nam01on0079.outbound.protection.outlook.com ([104.47.32.79]:43151
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751005AbeCIAvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 19:51:16 -0500
+        id S1751024AbeCIAv2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 19:51:28 -0500
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Gary.Hook@amd.com;
-Subject: [PATCH v2 3/5] iommu/amd - Add a README variable for the IOMMU
- debugfs
+Subject: [PATCH v2 4/5] iommu/amd - Expose the active IOMMU device table
+ entries
 From: Gary R Hook <gary.hook@amd.com>
 To: iommu@lists.linux-foundation.org
 Cc: joro@8bytes.org, linux-kernel@vger.kernel.org
-Date: Thu, 08 Mar 2018 18:51:09 -0600
-Message-ID: <152055666941.63229.15022736780979941514.stgit@sosxen2.amd.com>
+Date: Thu, 08 Mar 2018 18:51:19 -0600
+Message-ID: <152055667969.63229.11784633364919979184.stgit@sosxen2.amd.com>
 In-Reply-To: <152055660594.63229.5131049527614494130.stgit@sosxen2.amd.com>
 References: <152055660594.63229.5131049527614494130.stgit@sosxen2.amd.com>
 User-Agent: StGit/0.17.1-dirty
@@ -23,115 +23,155 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [165.204.78.1]
-X-ClientProxiedBy: BN6PR21CA0008.namprd21.prod.outlook.com (10.173.197.18) To
- BY2PR12MB0693.namprd12.prod.outlook.com (10.163.113.158)
+X-ClientProxiedBy: DM3PR12CA0071.namprd12.prod.outlook.com
+ (2603:10b6:0:57::15) To BLUPR12MB0692.namprd12.prod.outlook.com
+ (2a01:111:e400:5951::14)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 7e24fc12-6ad6-4beb-e1de-08d58557dc0a
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BY2PR12MB0693;
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR12MB0693;3:kYmdu8GrUF4lkt/2LvOXc5nfNpwEhYHsUiT0F5fn/alxS6pzTwqAtZhnj0XD9WMIWjGzsrVVo1ThZ7gBMefih0pynM0ZOwNYYEixp7yVRsnawvXbfW7DRb8c+e+V0ueBTx7xgJdyyaQT9XcJMAy5bDRlYoCqn+1HuPDDXrvM3IqFcwKGi7Uh/KPEbFDOaHGTtFOCJutfLYLz1huc7XPt76T39T12V2NEiKWweaXbocVA6Ht0aahm2JveEBydNQof;25:yHlA9IXirIPybIINrHMi7hvSBogPsaKBusayXZZBmjXCXotXQ11/2LV+TcQ9AA8dOHrYnOHbehYC72GETsk8XOTimQ5gxvR4w1Q/8IOSdDS3fWqSXjYnC4h4DWzsoDNUqjcsTmM6g53nSKOKBpoB0IMi3no+mGCMGFeGqZmUHpdzcnk+ZsfP5PbdX590mQ7jUMrAVhn2cLl15+3IFponJYaJ+kRX8LKhvt0VA43lJR3qw4YL8HeukGfUE92OTnpXYF+Od4JUCyw3eG9rfP7JYbJ8iP/Y0Wayf2VAxW3DbIdI1Mqq1CLBKTyqQRtCBJjZ/xaLWbdNTr+3ekvIpVGCVg==;31:X5+5SKepR7l9dS6ZgjabcEyZben5HndSh+km7iz6cGwP3+6f7CoN2i1Ap7hpmH79u3u56v3Tq/+xefIUo+2cSHBIfDFYQHJW3xILEzHQOokgqXP3OGyTUyuGUcaj2x2YX0s10uZvUpCQ4EvGbYCPK0L/+7fdT64Nqn3QIzOCjmUairsnK5jyjqo4hLo2oLWxIs905sVwSoldwgs87wyKbLlSgOM8y0TqbYYsvCT/qO8=
-X-MS-TrafficTypeDiagnostic: BY2PR12MB0693:
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR12MB0693;20:4heNpbvcfHPwhIJvOP0eQDZQViRKrQ1ZgCT0PPNDV/GUYoL0s8AV+xEs5N8hi4C1ZvFid+lXFxoxaiTClQeED/gP1g7tQBMWxPGfRpcX/sgXuZd1u5eKHtYgxlDMZetrE3U7b1AB0ycaQuy0CsKg98iwLUge+kjpS47WBQtD73ily3HYbpvjDdnU9XfiJY8V0u1WXqMw+oJ+ZjIq4Qtpf+g3nUvIKDrCPAFHb1qvLT6yn5Ry+WZhf0hdHH9jAejWXcYjlP7LxxmqAm3sfZmm4VQpV1jMUaOTBHm7xTP5j9N+9dMB6R+4ZqonPRNz9dJXPs0jtkeBO0a2sT1+CxwA4eUMxgNPK3/AEeYIwy2n0/htYo567VfBlfTkfP56t88A7pwRKJdw6M5t0kAdCcgvn+cwdrQzQQSW9FJx27xgDDuVPfUXyHO9kh6gwKYUDbR9XO3NV3dXo8+avuiYuVE+ekOOu2wYu4nWr1HcKb0bI2/23PlU3C0NA/5vOFSng+oa;4:6ne3bC4beOOvaF46OrkWOIwg8mWiu/LnnEFv22zFbdpl6f0+rZSyrS3Xc0xpjf/XKFVParELDwv9TXw2D+r+vPgBLnv09t2HHb26FX8orbRR0FFu7P+iINJOfnh+Sou5yr83B4qnLo1uR+lViNkW8DtxwFd1msgoFIrEJTQlsQ3swoY/4EE+DjeEZATBiXyRUg4SOh27b0fyfqnyR9SBNDhDM/n3pGs2HTMs7n6WY/tEkemxuS7SX/ulkb8heN4PAqf5lDTRGruVAnmGCGJr0R0UpoJ1ZIyTQqai9yxDKhQJy1S/tI0d+N8+GLZ/C+5B
-X-Microsoft-Antispam-PRVS: <BY2PR12MB069367CDC58A7EB3D3A5C6DCFDDE0@BY2PR12MB0693.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: ef92cd73-c42f-4760-6f72-08d58557e143
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BLUPR12MB0692;
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR12MB0692;3:vicxqEkVqlGyMzAq961tjryCGEPVQIhGhu15JPo7NNAtSyWx4Y3leArMC7WhdeWTdim1Shwdqs0ao1yKhOLc0cJGqxhXJ6Pg9lktNhwPFvMv2dCGiiPZKv8RJ9T5NFlXqqPzsZ8rFvyE1ZRLD8coj+eMFwiKkRaGwM9OuuVqXyYMTVXHT/Uk+5czqJxjGcw2hTufFjdx/UEg34AFf7dxAZcSIiebZoh2HUCQfuIUL4Dj9af292Jc2eY+2BKxInfV;25:AYmydO4Oxaeg5mlqiuwmk8GzQodbBk1a/SrRnTitrh1k//4WGXz2flFGjZHxtSBVNDhwcPT5a1lH+JnrodN+cczNUjRrUgz6ZDZV8lPSvYfZptl3ei3aM5/69NtiGewn3W67JG4c3Q8pKboc3/qByIV+ABL5Nuw19rhEwOx9SQ3l0HlEHtEUnSxMerXja8VCQJJsfoXOYfJBdjzFZJvP6SrcUkHQMJ2LYtP2ctrwwMb7l37fkrZ58L1AIEFORlvJtklpvyn6GUHM+G4VJquvK0v0Fst0hOtJ7sglmkHgt9Ki+6LOEh5UiFoLRT1j6MXsYrbaoMi9HPOrzVGjoKCH8Q==;31:+S5B/dv47f8uH1hGAxT7Ta2dsbYZD1iD597ssYiRnaBlVdilhoTHGqbNoqSGE5suVsHNF5Lw5fUZGX7FjQLk+OXnzdIIfI9kmqBiQA//DbzlqVxoGeYL4yv91Rq8K39mx1NiYvESFUvJJnTNgBycBc/Qy7DVHCAPVls+QyKUV8GNdA1NAxEPbinDwRrAFBpLYjw9w+fkj2hBLL+YVeLfEPmLnD0JNtLoJh/Y2tx9zaM=
+X-MS-TrafficTypeDiagnostic: BLUPR12MB0692:
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR12MB0692;20:od9hvCMSkJ6p+JqGT9F8j1euPZajT81PWqhfSfspCy2gZ5353UZ/NC3fZ4oIjrqxl856jyD+mx/eugBvS8HFQMlSN6NgtBqjWOjFo501no/g6Bd2jWpC/TDh9uBXPB+/ExlQxbtFwjtDGfzkKwhQTnKQri45jebZjEusEMNf0KR9Tc+O5ovz7H/qa+XD3J0DlGln+YwzxW08KDTz9cPjWU6nrzmQwoOXTD/g/vQ1S9Ia7eliEgMaN0QkKJNCAHX1W5MHhD2AKspvp1OV++zGzbeWIqyoZnkHYAqBYEQywzUumNnU2IW5yvoNWP84QCiUOYW6qjdUfsTo7SjKdBQMoaEaTZJV0W85uDiNFc2mzjoeahChd5/oGWyzgT3A1QVICrdUc7ofgbnKjFPHjKwheoH87OkcZ0CDl5wsqfIkUoX4+dPWU7kNvMx4sWahTBJg3LELAtjZaeaIHlkze/w2Yz3IN3lolu0NyEqCkNBtuFS+QqNk8Yif3xd1nBHHIhJO;4:SDlu351Y1doUH51WGcTCoPQA2h/+YUJod+WXKOmU53148ps+pXMthQeI98Q+JZucTJj+PpIoNc94Ok0lJvmc48qXYFk2/Sq7D12Nbm0Np4GrlpGAqR90q8IpZmrJMNkCOc1KdvVCQZsC+HpAvsA1DJgScIX1vITH8EwMQf8rnCNqGLk91JT+SYKs9CnKqd4/hjUydzXBJDbEA2PwQMQxcF7YTTNJHZi+8TazXMJ3nIG4e/t8t82yEEPuSRKcdHjph2YsgtRPS7edpwl7CoYZrgm3I9T+WVSEimOXKNSDOnO5PtsowsqQ0X/vnFojBA7Z
+X-Microsoft-Antispam-PRVS: <BLUPR12MB0692BEFF91B92D096928295AFDDE0@BLUPR12MB0692.namprd12.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231220)(944501244)(52105095)(3002001)(6055026)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:BY2PR12MB0693;BCL:0;PCL:0;RULEID:;SRVR:BY2PR12MB0693;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040521)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(6041309)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BLUPR12MB0692;BCL:0;PCL:0;RULEID:;SRVR:BLUPR12MB0692;
 X-Forefront-PRVS: 0606BBEB39
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(366004)(39380400002)(396003)(189003)(199004)(8936002)(230700001)(5660300001)(6916009)(97736004)(47776003)(478600001)(103116003)(66066001)(305945005)(7736002)(6666003)(105586002)(81166006)(50466002)(86362001)(81156014)(8676002)(53416004)(72206003)(58126008)(2950100002)(106356001)(2361001)(2351001)(7696005)(186003)(16526019)(68736007)(25786009)(26005)(6116002)(3846002)(76176011)(2486003)(23676004)(52116002)(55016002)(386003)(2906002)(316002)(4326008)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR12MB0693;H:sosxen2.amd.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCWTJQUjEyTUIwNjkzOzIzOmFnNlFsa0NvTFRDdXMzM2JqTUNLbEZyWkRl?=
- =?utf-8?B?RHNSQTZoazdJMGl4Vlp4clNmaisyRjM5TDlaRERwOG1WNEdGTVQxNE1yZlpT?=
- =?utf-8?B?RWhZY1FUa0FkaW5RL2t3cElzOTN5eitFT045RUdFRDBrVlVkR2IwYVRydkdB?=
- =?utf-8?B?bkRWYlR2dk1hakZ0T1FEQmVjRW16aEg3czZlYkx3US91dlY5SHRuUnZHMHlK?=
- =?utf-8?B?cW42dlpHclZ0S3o0ZUkwY1lKSmMzYjM3SllaMjNuYUVkNVg1aFZERVZsYjNl?=
- =?utf-8?B?QjE0Z0s3K0lISldEVEVQUGF0eEF1blNEN3l1VVI5Ly94emJSaFJqQytaMWRD?=
- =?utf-8?B?Wk1SNlVCd3Z3VWdOV3pzeE1rMWhPNGJMSVY2dElhMS9oOW5FUWZzWHpIb2Rw?=
- =?utf-8?B?enkyREN5SmJIQzdFcUNZSXhBV1A5NFpUMHZYM3dEOWUxbEVtTFpuSENCNjZB?=
- =?utf-8?B?azdpSGhVZjQzV2pOdTJwSXlCT1RJdkQ0cDh4aytkaFlFK0lEbktNSFA3Q2c3?=
- =?utf-8?B?VWNMWVk4Yzc3K3Mra0pYQUZhZjQrRjJpeG1UQzJoVmMzdzhaeCtRUzg0c1Yx?=
- =?utf-8?B?NHZHUlRSZUZrUTJTTUhmYk9sRjhwYTVGbnJuNVkvL3R1K2ZmRUpYQlErTEhW?=
- =?utf-8?B?cCt3UEdWSHFldWNGcUVMQkNSaFRhd1hKaVl5dGNwOUphZVJkeGNIeW96L3hj?=
- =?utf-8?B?YjJDbzBiM210V2V2clZOczZZUnlxMFFrNE1mMmNUTStTbk9HWDNQT3VySFVo?=
- =?utf-8?B?UUxPWHYzV3BKUHJ0Z1BER2RyTU9WeXM4MHBMWWEvTVQxQmk4YVNkTzY4ckV2?=
- =?utf-8?B?NDZkSjdUb2s0WVN1dHU3MWJmZlphN1B3RlNvVlZPQUFXcUg0VnRGZ0JvWnZU?=
- =?utf-8?B?UHRMa25zcWhsdTd2eFI2WlJ5cjJRUUdTdVQwalRySmtpa0w3TC9mNmV5Z1BD?=
- =?utf-8?B?QzVvcHhWTldtTWlUdVI0U1J1cWVwMXU2UW1LYTlZcU9kOVhLQVdxYThVd2ZN?=
- =?utf-8?B?L2swNE1iTmhmRGZ5MTJ6em5IUUtRb05pSHFRTC9lTmVBZ2JmZis4ZGw0c2Ez?=
- =?utf-8?B?YkpRNm5Nc1hFK2k1ck9KSXEwVG5HcGFxMWIvbHN2V3kyd2NrVHNlWTBGc3JS?=
- =?utf-8?B?RHV0c1FlaXJ0Z0c5UnMxejIyeTFSRVVJUEdERC9aRCtFME5SU09GcE9NQ09n?=
- =?utf-8?B?bVVVYXNEUmRBSkZONmZHRU5KaTYyNEIvVVZ6Q2NubmVVc3dwVmpwUFNFZXh5?=
- =?utf-8?B?RjAxWGhIdyszelkrcjZ5TFRjV3ltNTUwUjd0R0M2UHJHdUNOZFN1R0l6cXVF?=
- =?utf-8?B?WUFlSWdiV2lueWRadTV1b1FJdGF4dW5zaGZ6RUl0QmU3L1kxTzgwbjZuSk1w?=
- =?utf-8?B?NnNUTXNadUtnRXEyNTVtVHZydGJSMGlPcWdWOFk0SHFodlpjZnB2MWR6QTln?=
- =?utf-8?B?dVZGZy81aFd3V1RDMXVqNVorcmdWSTd3WHgrb0cwb2k4SEpIc2pXMzQ5WHpy?=
- =?utf-8?B?N3pLRGRhc2dyU205Qi9qZTNzNkc3WnBpQnNnbElVMGZOYVlpQjdNbnNqTE9L?=
- =?utf-8?B?N2tscHZXbjFEWnNxd21GcHYyUlFzd2c9PQ==?=
-X-Microsoft-Antispam-Message-Info: pGrzynig3XzLbd2qTXf182tU7ZFsukZ3Vo9lfTPNlv+sBxxqpgaOTcPy6V80dGFtvNOc9b+5vDxLXg+jXbeaVYn2sauUL1FJWrGQ56UM4m7lCiwuNMpc4qysdDmSszba0Nw+zfI//Gzd0WHNhcbpCWt4TlV9Sc3djjp1sKL2677vqj7NS+Y+eRAAi6uc/x0a
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR12MB0693;6:mrk6QCyxrNBbREwXcDwAOapGWWsZ08YurUgKQnsDctMkDybmU/Ct9xv6syHEfJbt7bcPhcfRt4NLAfX+VjXRhJK24NcLVFaDBR3a+V7kWg4zhmgq0FrVQE8ykgfksA6fhsZRfdIgk89vI+0DOi46bW/Lvw+FsA2eDNd76lrl8Wy8eVBN573wjTyhPiM9uxaPUFom73f7domRZLtOKfn9dMzqpYUgLU+6lrpgi1am8VeyYlfy9QGAJEndMOihKJrPFAvy6gGEvs7sKE9AtXAAvZhIu2A8W/t/zLxP5qNYj/17xJF9omaOO8jfkMmo1XGsc9fhqzmqxE941/blSBsrXqCEuTgXaEri1nYsszuD7Kc=;5:q3XhK7fME9Tjabr7yYyo8UGO4xH8QJZ1zRaEWORcCTYOiTlmJXkZDR9jVNT9Q5D6yDHixihYb4K66liGjAegN7fwN7TVw0Hf3C/NxicFZDtSoa7SivGUltIPvCZ7tuvqpdGDsSajyvpRQ0FNyZR8+Y6E8SV14qV+BdCgOuXaK5E=;24:8igc/5ePnmnzV//mK88p1LjRHwzoSBIjX4iYu1St0XUpnEc0qH6Nq7XuNXBUoyxF/+WAUrIeAii2Qj7c/LB40kkXgT0TGKFytIRoGsO9qdk=;7:gXhIgONyyyDQym42u+Po71M15+3kLx/fw2JGwfjeoRiGCXHf9haNgFJ4yMnb6CnorZMQI30Ym84KGmlqOKc9wVls1qA5KpX6gXxf31UL54ttEjD+zod2g7UMhxJ1ic/BNbOGT178PeoSHBrU8LxCCvQ+5vYRp5u3+JbNq99pYe3xOd7Ix2o1SUtpw4Puw9+Pf1nkBtt0HzcQaE+TNAF3qxTmQEA9ovkB+Mk0NYjiganNMBHtN7keF+K9sBNM506I
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(376002)(346002)(39850400004)(39380400002)(396003)(199004)(189003)(316002)(55016002)(58126008)(2361001)(76176011)(2351001)(2486003)(23676004)(7696005)(53936002)(26005)(47776003)(106356001)(230700001)(5660300001)(25786009)(103116003)(66066001)(52116002)(68736007)(105586002)(16526019)(6116002)(6666003)(2950100002)(6916009)(53416004)(97736004)(8676002)(4326008)(81166006)(81156014)(186003)(8936002)(386003)(50466002)(3846002)(86362001)(478600001)(7736002)(72206003)(305945005)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR12MB0692;H:sosxen2.amd.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCTFVQUjEyTUIwNjkyOzIzOklqeGFFYzRVRzVzdzh3WjJMOVBuVHNoUzRa?=
+ =?utf-8?B?OGtnRTJySXp1MHhsZHNBczZ3UjNSYWRLUklSVUFmM3IxTkIyci9MOVNQNzdJ?=
+ =?utf-8?B?dHR1QTFGK2Q2OU5oV0c5UGJTNTZNY3VvelNzNFdxdVdhNFljOGtwRjgxdEJr?=
+ =?utf-8?B?TEp1OUxCRTAxa3R5Zzg1WmRRVTBYZ0NMK3E0OGV1R2gzd2NWVWI1T1FMOFYy?=
+ =?utf-8?B?YitlMTFDeGRIK1VUc2IvWmRUNS9pR0YrR3BvSm5vRmp3SGwwb1ZHMXpRWW1R?=
+ =?utf-8?B?MDZQS3dKR0wxQ2ZiRTJXMGcyV0d0ZytMdk1HK1YyV0s4Q05KN0xFeEM4aU9j?=
+ =?utf-8?B?bDFZVElzTGE2ZDEyT2RYR2lwK0d5dWJKSDN6emwzb0Q3eElwdVpVaFRCQlBt?=
+ =?utf-8?B?VXFLTVE4WS9yUzNJeFdIVHNxTHg5VG0zcld0Sjhxdk5FSkJLb3dSYmtSTUtu?=
+ =?utf-8?B?RmtSWWJWQ2pOK2hONWJQNDMrYnUzOG1yb0l3N3NycGsvMEsyLzNrS3dPVCtL?=
+ =?utf-8?B?M05uWnM5OEE5b3RhQ1FmYUVGV1YxY2R3RmpqQnNvQmg2ZHFrU3pnYkcxUC8v?=
+ =?utf-8?B?Ym8vVDYwZXBDbEFlSmpjVFZiOFNrNnFwY0ZHR0pYdHdwakV5dUNrS2V0bXlm?=
+ =?utf-8?B?ZnkzK3pCMG5QbjJzZmxPb3Z6MDBqTnAvRTVUOWNlVGNlcnZlaWVvQzlreFIv?=
+ =?utf-8?B?c1NqYjVRSFR3aSsySUN5TVFCMkdBTjkzTSt3TEgzOUo2VGlsVjBnVHJ6RStG?=
+ =?utf-8?B?SW1MaUJnby9PY2wxRXhvQVZxVlBxZ05iK3ZVc2JzWGpjOEFwdmVyOGZUV3Z6?=
+ =?utf-8?B?QTVlM0N2K3VGaWFiTDMyMDJVZnZodmxLYTdLVmVhMzVRS2c1MHJOV29LQlA0?=
+ =?utf-8?B?elR3TnhhZ013cFdiWDd4Y2xoZVFUZjlMUmRaVHBHT3huZFJFN2N6d1IwUnpE?=
+ =?utf-8?B?ZUVZVVoxK2Rua25Xem9kVEpCTmxXazVtWC9YSE8wWk1XeXpkQ0FkYXBQVE5o?=
+ =?utf-8?B?ZCt4R3VVekRvMmNvTkkyNlFmL0VMeGJuSEtjejFWRTJYU2QxUVZxVE9kbUdG?=
+ =?utf-8?B?OEVnSzR6T0NqazhzUmhEOU9lMlg0eW10QnNnZ2VDTXc2eHRTVk5CNW1pUzhO?=
+ =?utf-8?B?Qk9oaGNLVzZwUjB4NWx1WUVpSTdCU0NtRW9vZDU1ckt2aDU3VENPajZtbnZw?=
+ =?utf-8?B?T3ZHSStReTBRYmd0RDFyYVZLaWp1aERQaGtnbmFjWjRSVGdFTkFVK2FldDY5?=
+ =?utf-8?B?OHdRQkpxaEZTQ2NRZUhnWGJGRlhmc3dyaGtGZStEWWxmZ0U4RVBHOFpzaUUr?=
+ =?utf-8?B?VEJEWGlUdkIxSkRNVnUxUHZob3BjdTAvZHJOZnlaanUwK0xLUVNNaGd1eVlo?=
+ =?utf-8?B?cnNueStxYXdOSllZanlmYlBTWThSV2xWTHoyd3ZjVk9UVUpoMzlXVDVhQjk1?=
+ =?utf-8?B?UW92Z2d3NFlBZU1yaDR4MEJoUDhHUFNkaE1vRjB3V2E3R2h4QjRiRmljWExr?=
+ =?utf-8?B?Z29OMlJjSTZLSUZJMGtGM3FVcTYvS1QydzYrRXFrNWxLRm1aQlpKbHUwV0Fy?=
+ =?utf-8?B?OGVmRUtCTThzbUZoamRPREcvQTJxS0E9PQ==?=
+X-Microsoft-Antispam-Message-Info: JldR6IHNISlaGTih6kFOVQt4JNMHr0Hs+OECl/x8OQ1BBBfqxV1tv/0a82D89E3LK/Wwy0i5EdUmPPhWfPom623q3LTL7povMXMz3iVqsQuqC617UVIX7PsZlqg4dr8eblDoa/uxhvLbyv9M1kq4tnw0QR2CHxBRN/06waxXNcJeDjIJuSVPA8eqv2Ytxwdd
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR12MB0692;6:QeDD332ax8nJulw3EY93aUB18Ouxc/g+aDIFavix61YYuDjjtk8ZUYzRs4TmYxwo8VVpIYqneELzJfvxUIjx4RlY9eoUmtfhKNMeJZRTa43rfhNQ6EZGfZWgc0poxkrK5e2oCjomaTwZ0JyYOwW7qlSJVxE0IW/p1Sm3XngSf4tY0oolGfOIgXg2qR7REy04Bk672xKNqZ6/1Sh3ow3eXdPgE/mF5ajkwycEn9qGE+Pa/lW5cuTpUuQRMiBZ3ZV7Vxgvh+luKXYgfh8QSs7ez7cK3bGb99ZcfAYks9/GxfIjtkXT90L9jpyGacv4wu7M+eT7O6bRFB8jy/DvBVPTzr2vvh/ljq4mnumaRRUxHjY=;5:+JwlyRpJyObe9smhW4VdeX/oFVhQ9mMfsVvVfnFb4NZGCHW/sgEF3av6/rlx7ardL0a0zGO3LpgM/Um/2hDJuRgMeKLa2zaCuTddR1YnfGp6nv92H6ussspMgofRCtj+zr9MLHYJYEeyXqJsLFDLxIsO3yNv3kx1w5grkd9UO2Q=;24:5nkgLxRx5KAePZjBs9hyg++RtcmIzjHIvfvZyQOae8pCJYvQ6YaDV78UAupt2Af55joAJRgQwu9ASAMqeHGMMXFkuAfQr/3igvBhNQsNwjw=;7:7Km5kAgWHy6jyOu4SLh9VsKYXwDm+VbsEH0Bbuo8DYeRHh3nRzLbf2EkQJQL0+3EvYeUuM4OGktUejVmQlX680xMKgJtWpPN2I36UlS00A/5sAmUqskbAUHgKshvSiRyNRJxXFaOvb1teon/1fAsxm6Y1UT71KTKjdjAWrPzHIGyFVfq3+VKHroUZqt/q338C99ssmRlVDxEknjtSzYZAvyfwXL1atPnaeZ08GiagVaS8dXv29GYBnUVYYoZEO9e
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR12MB0693;20:zxwX91H7Xe95MgcgxhZ/XpoFHcEAoXAL3fhaYZeO7G+xZCjT36mVTZErmHdX4WaPk+p/EqwW7XPkiCL5EUeW2cOl2uU5TRbX/v2dGKjkxJOl1wYTrS/Y2SD08tMJ5tFTUEHPz6OS0CkbS4p32NwIXlvB0m2zJpq/V/RXWRSxcUAzkUqLuItXqAPbraiC0kMUU2kGg6UwX/Jp2OA3XS57N4RU1aW0eoADIg2RIqQ6Dr4AJyTROg8I+DJfQ17qe0ob
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR12MB0692;20:Qjz5qpCZO34pIZx3+Et4KqmeTLWDYQM2XaD7gfQ0eP5vIBTg/b1Mbh1A16QkOv0Vjhlp7H1GBFHNeJcJDKPORZs8cUdsDGxj2a+n1hLZLvxd8pbn76t/ymjTfIDVrpysZzD8XudTRXTDPlsk5jeQow+cXAhRzhaZJW6WCe1kk0nc0X/QFeXM7ZBuEDGaVGkpN3n93EAJU6HUWTTLxvjn53WLQFkDgfYWAS7WGUSA6Vh1QgY3BzAsQRm/S94jvoUH
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2018 00:51:13.5330 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e24fc12-6ad6-4beb-e1de-08d58557dc0a
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2018 00:51:22.6985 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef92cd73-c42f-4760-6f72-08d58557e143
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR12MB0693
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR12MB0692
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide help text via a filesystem entry
+Add a debugfs entry to dump the active device table entries from
+the IOMMU's table. Active is determined by non-default values
+in the first and second long words of the DTE. Aside from IOMMU
+devices, this output should list every device reported by lspci.
 
 Signed-off-by: Gary R Hook <gary.hook@amd.com>
 ---
- drivers/iommu/amd_iommu_debugfs.c |   31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ drivers/iommu/amd_iommu_debugfs.c |   64 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
 diff --git a/drivers/iommu/amd_iommu_debugfs.c b/drivers/iommu/amd_iommu_debugfs.c
-index 481f4d86f8f8..79945ce1199d 100644
+index 79945ce1199d..c4e071f7a5b9 100644
 --- a/drivers/iommu/amd_iommu_debugfs.c
 +++ b/drivers/iommu/amd_iommu_debugfs.c
-@@ -81,6 +81,31 @@ static const struct file_operations amd_iommu_debugfs_dtecount_ops = {
+@@ -81,9 +81,66 @@ static const struct file_operations amd_iommu_debugfs_dtecount_ops = {
  	.write = NULL,
  };
  
-+static char readmetext[] =
-+"count                   Count of active devices\n"
-+"verbose                 Provide additional descriptive text\n"
-+"\n";
++#define	MAX_PCI_ID	0xFFFF
 +
-+static ssize_t amd_iommu_debugfs_readme_read(struct file *filp,
-+				      char __user *ubuf,
-+				      size_t count, loff_t *offp)
++#define	PRINTDTE(i)	OSCNPRINTF("%02x:%02x:%x - %016llx %016llx %016llx %016llx\n", \
++				   PCI_BUS_NUM(i), PCI_SLOT(i), PCI_FUNC(i), \
++				   amd_iommu_dev_table[i].data[0], \
++				   amd_iommu_dev_table[i].data[1], \
++				   amd_iommu_dev_table[i].data[2], \
++				   amd_iommu_dev_table[i].data[3]);
++
++static ssize_t amd_iommu_debugfs_dte_read(struct file *filp,
++					  char __user *ubuf,
++					  size_t count, loff_t *offp)
 +{
++	struct amd_iommu *iommu = filp->private_data;
++	unsigned int obuflen;
++	unsigned int oboff = 0;
++	unsigned int istart, iend;
 +	ssize_t ret;
++	u32 i, n;
++	char *obuf;
 +
-+	ret = simple_read_from_buffer(ubuf, count, offp,
-+				      readmetext, strlen(readmetext));
++	if (!iommu)
++		return 0;
++
++	/* Count the number of valid entries in the device table */
++	istart = 0;
++	iend = MAX_PCI_ID;
++	n = amd_iommu_count_valid_dtes(istart, iend);
++	obuflen = n * 80;
++
++	obuf = kmalloc(OBUFLEN, GFP_KERNEL);
++	if (!obuf)
++		return -ENOMEM;
++
++	for (i = istart ; i <= iend ; i++)
++		if ((amd_iommu_dev_table[i].data[0] ^ 0x3)
++		     || amd_iommu_dev_table[i].data[1])
++			oboff += PRINTDTE(i);
++
++	ret = simple_read_from_buffer(ubuf, count, offp, obuf, oboff);
++	kfree(obuf);
 +
 +	return ret;
 +}
 +
-+
-+static const struct file_operations amd_iommu_debugfs_readme_ops = {
++static const struct file_operations amd_iommu_debugfs_dte_ops = {
 +	.owner = THIS_MODULE,
 +	.open = simple_open,
-+	.read = amd_iommu_debugfs_readme_read,
++	.read = amd_iommu_debugfs_dte_read,
 +	.write = NULL,
 +};
 +
- void amd_iommu_debugfs_setup(struct amd_iommu *iommu)
- {
- 	char name[MAX_NAME_LEN + 1];
-@@ -115,6 +140,12 @@ void amd_iommu_debugfs_setup(struct amd_iommu *iommu)
- 	if (!d_dte)
+ static char readmetext[] =
++"devicetable             Print active entries in the device table\n"
+ "count                   Count of active devices\n"
+ "verbose                 Provide additional descriptive text\n"
++"\n"
++"                        Dumping the Device Table\n"
++"The device table is scanned for entries that appear to be active. The\n"
++"default range is from 0 to 0xFFFF, and only active entries will be reported\n"
+ "\n";
+ 
+ static ssize_t amd_iommu_debugfs_readme_read(struct file *filp,
+@@ -134,6 +191,13 @@ void amd_iommu_debugfs_setup(struct amd_iommu *iommu)
+ 	if (!d_verbose)
  		goto err;
  
-+	d_dte = debugfs_create_file("README", 0400,
++	/* Device Table Entries */
++	d_dte = debugfs_create_file("devicetable", 0400,
 +				    iommu->debugfs_instance, iommu,
-+				    &amd_iommu_debugfs_readme_ops);
++				    &amd_iommu_debugfs_dte_ops);
 +	if (!d_dte)
 +		goto err;
 +
- 	return;
- 
- err:
+ 	d_dte = debugfs_create_file("count", 0400,
+ 				    iommu->debugfs_instance, iommu,
+ 				    &amd_iommu_debugfs_dtecount_ops);
