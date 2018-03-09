@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932982AbeCIWYS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 17:24:18 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:42506 "EHLO
+        id S933111AbeCIWYl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 17:24:41 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:42786 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932959AbeCIWYP (ORCPT
+        with ESMTP id S933014AbeCIWYj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 17:24:15 -0500
+        Fri, 9 Mar 2018 17:24:39 -0500
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -23,80 +23,97 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
         Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
         hshi@chromium.org,
-        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v5 12/36] drm/bridge: analogix_dp: Set PD_INC_BG first when powering up edp phy
-Date: Fri,  9 Mar 2018 23:23:03 +0100
-Message-Id: <20180309222327.18689-13-enric.balletbo@collabora.com>
+Subject: [PATCH v5 22/36] drm/bridge: analogix_dp: Fix incorrect operations with register ANALOGIX_DP_FUNC_EN_1
+Date: Fri,  9 Mar 2018 23:23:13 +0100
+Message-Id: <20180309222327.18689-23-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180309222327.18689-1-enric.balletbo@collabora.com>
 References: <20180309222327.18689-1-enric.balletbo@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: zain wang <wzz@rock-chips.com>
 
-Following the correct power up sequence:
-dp_pd=ff => dp_pd=7f => wait 10us => dp_pd=00
+Register ANALOGIX_DP_FUNC_EN_1(offset 0x18), Rockchip is different to
+Exynos:
 
-Cc: Stéphane Marchesin <marcheu@chromium.org>
+on Exynos edp phy,
+BIT 7		MASTER_VID_FUNC_EN_N
+BIT 6		reserved
+BIT 5		SLAVE_VID_FUNC_EN_N
+
+on Rockchip edp phy,
+BIT 7		reserved
+BIT 6		RK_VID_CAP_FUNC_EN_N
+BIT 5		RK_VID_FIFO_FUNC_EN_N
+
+So, we should do some private operations to Rockchip.
+
+Cc: Tomasz Figa <tfiga@chromium.org>
 Signed-off-by: zain wang <wzz@rock-chips.com>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 10 ++++++++--
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h |  3 +++
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 19 ++++++++++++++-----
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h |  2 ++
+ 2 files changed, 16 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index b47c5af43560..bb72f8b0e603 100644
+index 02ab1aaa9993..4eae206ec31b 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -321,10 +321,16 @@ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
- 		break;
- 	case POWER_ALL:
- 		if (enable) {
--			reg = DP_PHY_PD | AUX_PD | CH3_PD | CH2_PD |
--				CH1_PD | CH0_PD;
-+			reg = DP_ALL_PD;
- 			writel(reg, dp->reg_base + phy_pd_addr);
- 		} else {
-+			reg = DP_ALL_PD;
-+			writel(reg, dp->reg_base + phy_pd_addr);
-+			usleep_range(10, 15);
-+			reg &= ~DP_INC_BG;
-+			writel(reg, dp->reg_base + phy_pd_addr);
-+			usleep_range(10, 15);
+@@ -126,9 +126,14 @@ void analogix_dp_reset(struct analogix_dp_device *dp)
+ 	analogix_dp_stop_video(dp);
+ 	analogix_dp_enable_video_mute(dp, 0);
+ 
+-	reg = MASTER_VID_FUNC_EN_N | SLAVE_VID_FUNC_EN_N |
+-		AUD_FIFO_FUNC_EN_N | AUD_FUNC_EN_N |
+-		HDCP_FUNC_EN_N | SW_FUNC_EN_N;
++	if (dp->plat_data && is_rockchip(dp->plat_data->dev_type))
++		reg = RK_VID_CAP_FUNC_EN_N | RK_VID_FIFO_FUNC_EN_N |
++			SW_FUNC_EN_N;
++	else
++		reg = MASTER_VID_FUNC_EN_N | SLAVE_VID_FUNC_EN_N |
++			AUD_FIFO_FUNC_EN_N | AUD_FUNC_EN_N |
++			HDCP_FUNC_EN_N | SW_FUNC_EN_N;
 +
- 			writel(0x00, dp->reg_base + phy_pd_addr);
- 		}
- 		break;
+ 	writel(reg, dp->reg_base + ANALOGIX_DP_FUNC_EN_1);
+ 
+ 	reg = SSC_FUNC_EN_N | AUX_FUNC_EN_N |
+@@ -971,8 +976,12 @@ void analogix_dp_config_video_slave_mode(struct analogix_dp_device *dp)
+ 	u32 reg;
+ 
+ 	reg = readl(dp->reg_base + ANALOGIX_DP_FUNC_EN_1);
+-	reg &= ~(MASTER_VID_FUNC_EN_N | SLAVE_VID_FUNC_EN_N);
+-	reg |= MASTER_VID_FUNC_EN_N;
++	if (dp->plat_data && is_rockchip(dp->plat_data->dev_type)) {
++		reg &= ~(RK_VID_CAP_FUNC_EN_N | RK_VID_FIFO_FUNC_EN_N);
++	} else {
++		reg &= ~(MASTER_VID_FUNC_EN_N | SLAVE_VID_FUNC_EN_N);
++		reg |= MASTER_VID_FUNC_EN_N;
++	}
+ 	writel(reg, dp->reg_base + ANALOGIX_DP_FUNC_EN_1);
+ 
+ 	reg = readl(dp->reg_base + ANALOGIX_DP_VIDEO_CTL_10);
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
-index 40200c652533..9602668669f4 100644
+index b633a4a5082a..0cf27c731727 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
-@@ -342,12 +342,15 @@
- #define DP_PLL_REF_BIT_1_2500V			(0x7 << 0)
+@@ -127,7 +127,9 @@
  
- /* ANALOGIX_DP_PHY_PD */
-+#define DP_INC_BG				(0x1 << 7)
-+#define DP_EXP_BG				(0x1 << 6)
- #define DP_PHY_PD				(0x1 << 5)
- #define AUX_PD					(0x1 << 4)
- #define CH3_PD					(0x1 << 3)
- #define CH2_PD					(0x1 << 2)
- #define CH1_PD					(0x1 << 1)
- #define CH0_PD					(0x1 << 0)
-+#define DP_ALL_PD				(0xff)
- 
- /* ANALOGIX_DP_PHY_TEST */
- #define MACRO_RST				(0x1 << 5)
+ /* ANALOGIX_DP_FUNC_EN_1 */
+ #define MASTER_VID_FUNC_EN_N			(0x1 << 7)
++#define RK_VID_CAP_FUNC_EN_N			(0x1 << 6)
+ #define SLAVE_VID_FUNC_EN_N			(0x1 << 5)
++#define RK_VID_FIFO_FUNC_EN_N			(0x1 << 5)
+ #define AUD_FIFO_FUNC_EN_N			(0x1 << 4)
+ #define AUD_FUNC_EN_N				(0x1 << 3)
+ #define HDCP_FUNC_EN_N				(0x1 << 2)
 -- 
 2.16.1
