@@ -1,132 +1,131 @@
-Return-Path: <kernel-hardening-return-12342-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELv5YB7+i0JP0sVo/3WyssTIA3sDBP6kixwQooR7ZLEjwbS3xLILKSTFQR5XKtikewXmkbLR
-ARC-Seal: i=1; a=rsa-sha256; t=1520634606; cv=none;
+Return-Path: <kernel-hardening-return-12344-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELt6wpwjAfoD88Uz5rjPD1kyLLOmKm4gs+v6PjjEiRvBGrBaaDXQdX6gv783iqxWoHuHY5Nf
+ARC-Seal: i=1; a=rsa-sha256; t=1520634855; cv=none;
         d=google.com; s=arc-20160816;
-        b=bY3XpBLAmwGlBTCulxSoh9ZwgF050N/rwGcT5Fmh2P6quMwuMNjqiapzpEmz+zXSN1
-         eSq5lOj2dWsj4x1FUG27GcTiY2azsJVHHsLBEn6qevEJ+lVkum+TtFaVHnWyFt1IAQHx
-         HSTeEaSfKydv9IQodlR7u4xIzIYa70dB0OrI6765qRYkpDvRkiaXLv9liSnUD8sH0cR0
-         fh0+wp9cKjY1Fs6XNpfxqhaQ1ukctQDF/g/IYvzG185AVdYSjTH2QzxOiLBUI4lSq/oX
-         Erf2QwMkwKMrB3zGjbkOUK2KSlXaQVETCq0X4g5d4gzhxHWe3kP1G6Plc/OHXSoMsNBQ
-         QbAA==
+        b=rpXJk+XqhMS6RxPkPulh7I28fIx/U54aHqjY31NCXzBIPgVpcmkIF3WKNWAW/oWKBC
+         nsoiCu4UZsEUPstJFpTEVeA3xWlqpMfGGHRLaD3SOKJvjTNiQogtBDRqtJcnMu6Rkx0+
+         g0xBzrJ8M/kn6GsEtnS3SukcZ+sw7/E88EaE3hR5p+LcMVpD+gVehijiYyIe7JutEdk/
+         ZLPTpBN3TRIdr3pWNKnIG7Zdk39AWu6AmVzeRviBRKU4RkmxaeDlJjcFkIiO9VQRlxv3
+         +hbAsk/a7b8Rwj+qgvDuWKg1QSuc7AzUyiSRZio8gAibJ8mf5woLkcLhbSst9ZIxyakC
+         R2Mg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:subject:cc:to:from:date:delivered-to
-         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
-         :precedence:mailing-list:arc-authentication-results;
-        bh=x13OgXZXXu0fqwqfSM+nGKmYXVStmO6fEbDqXIuRDlA=;
-        b=HphxPYXpxxUathqBAH9+5izA3pljjZLMeG2o5mhbDvlt/qprqG7fFi7xexPQYZQ9cC
-         ZkfE5Lm41kE//T9TxzI6I/KsxCDWURgL8QSSRXNty7+GFh3v62zo2XakxqqR+kZMjcNh
-         A8xDYB13m/APhbDn08Mlh5mSc/ZoEYGUnfTsPoThuHBkEAhq3jmQf8ZZhEGT7qe++AKO
-         Fzqqudj1en7dzFATabd1/ZZw/TM4oVe93kTIhiwYcX4u96HOz7w9+u88+0iRktJCLpR/
-         eeAQWTqF+8ZaJP3B2C8JdqZBN5zbwMzOSComiwPy2wnYM3787BNqTP6EVGfiMy3SmyYg
-         Q74Q==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=l6Sp2j82YKDbdBpdeR8DFzN4G5+CLK3hdH3aENbgfsA=;
+        b=j5scsW4tCyb8T5zalBLfnmVXtkqLYu05PBjgWPBY8E8lolxcVYvKHyaRBa/RMiqC05
+         PfNnhZs7TbaFiE+DeVqQ8fpeuUVVoo4YyadOy+yqP9mEVZC5Xr0KolVcoWnyrDdZrcAA
+         wZ08AWQWDHVnQV2uawxEGu+ZrDsWtllFdEg4LfBI4+qtgo23ddc+wI8Y1JNAk80pWAaB
+         noxuU/t3yY5WWv918zw98Dk22YY2dVdKNiLsPGBi7AJUhPJds09hI/PoXP1YjfMGMHXT
+         im5+VJEbmrNFvnLXHR73TEpzWMGtAsryZZul3XbhFpeqTY322aHwpFJQYFQDUsiJZfW3
+         njGg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12342-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12342-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12344-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12344-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12342-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12342-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12344-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12344-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Fri, 9 Mar 2018 23:29:33 +0100
 From: Stephen Kitt <steve@sk2.org>
-To: Jens Axboe <axboe@kernel.dk>, "James E.J. Bottomley"
- <jejb@linux.vnet.ibm.com>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, Hannes Reinecke <hare@suse.com>
-Cc: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, Kernel Hardening
- <kernel-hardening@lists.openwall.com>
-Subject: VLA removal, device_handler and COMMAND_SIZE
-Message-ID: <20180309232933.14e39858@heffalump.sk2.org>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- boundary="Sig_/ND1RoT20ph5rx/6uVsD0LuU"; protocol="application/pgp-signature"
-X-Ovh-Tracer-Id: 782500436982517069
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtfedrkeeigdduheelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
+To: hare@suse.com,
+	axboe@kernel.dk,
+	jejb@linux.vnet.ibm.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	Stephen Kitt <steve@sk2.org>
+Subject: [PATCH] scsi: resolve COMMAND_SIZE at compile time
+Date: Fri,  9 Mar 2018 23:33:55 +0100
+Message-Id: <20180309223355.21222-1-steve@sk2.org>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180309232933.14e39858@heffalump.sk2.org>
+References: <20180309232933.14e39858@heffalump.sk2.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594500952779467026?=
-X-GMAIL-MSGID: =?utf-8?q?1594500952779467026?=
+X-GMAIL-THRID: =?utf-8?q?1594501214170730131?=
+X-GMAIL-MSGID: =?utf-8?q?1594501214170730131?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---Sig_/ND1RoT20ph5rx/6uVsD0LuU
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+COMMAND_SIZE currently uses an array of values in block/scsi_ioctl.c.
+A number of device_handler functions use this to initialise arrays,
+and this is flagged by -Wvla.
 
-Hi,
+This patch replaces COMMAND_SIZE with a variant using a formula which
+can be resolved at compile time in cases where the opcode is fixed,
+resolving the array size and avoiding the VLA. The downside is that
+the code is less maintainable and that some call sites end up having
+more complex generated code.
 
-I=E2=80=99ve been looking into removing some VLAs from device_handler drive=
-rs,
-prompted by https://lkml.org/lkml/2018/3/7/621
+Since scsi_command_size_tbl is dropped, we can remove the dependency
+on BLK_SCSI_REQUEST from drivers/target/Kconfig.
 
-The uses in question here are quite straightforward, e.g. in
-drivers/scsi/device_handler/scsi_dh_alua.c:
+This was prompted by https://lkml.org/lkml/2018/3/7/621
 
-	u8 cdb[COMMAND_SIZE(MAINTENANCE_IN)];
+Signed-off-by: Stephen Kitt <steve@sk2.org>
+---
+ block/scsi_ioctl.c         |  8 --------
+ drivers/target/Kconfig     |  1 -
+ include/scsi/scsi_common.h | 13 +++++++++++--
+ 3 files changed, 11 insertions(+), 11 deletions(-)
 
-There=E2=80=99s no trivial way of keeping the compiler happy with -Wvla tho=
-ugh here,
-at least not while keeping the behaviour strictly identical. I=E2=80=99ve c=
-ome up
-with two approaches, and I=E2=80=99m curious whether they=E2=80=99re approp=
-riate or if
-there=E2=80=99s a better way...
-
-The first approach is to use MAX_COMMAND_SIZE instead; this wastes a few
-bytes on the stack here and there, and stays reasonably maintainable.
-
-The second approach might be symptomatic of a twisted mind, and involves
-replacing COMMAND_SIZE so that it can be calculated at compile time when the
-opcode is known:
-
-/*
- * SCSI command sizes are as follows, in bytes, for fixed size commands, per
- * group: 6, 10, 10, 12, 16, 12, 10, 10. The top three bits of an opcode
- * determine its group.
- * The size table is encoded into a 32-bit value by subtracting each value
- * from 16, resulting in a value of 1715488362
- * (6 << 28 + 6 << 24 + 4 << 20 + 0 << 16 + 4 << 12 + 6 << 8 + 6 << 4 + 10).
- * Command group 3 is reserved and should never be used.
- */
-#define COMMAND_SIZE(opcode) \
-       (16 - (15 & (1715488362 >> (4 * (((opcode) >> 5) & 7)))))
-
-
-This has the side-effect of making some of the call sites more complex, and
-the macro itself isn=E2=80=99t the most maintainer-friendly. It does mean w=
-e can drop
-BLK_SCSI_REQUEST from drivers/target/Kconfig so it=E2=80=99s not all bad...
-
-Both patches will follow in reply to this email, I=E2=80=99ll let more fami=
-liar
-developers judge which is appropriate (if any).
-
-Regards,
-
-Stephen
-
---Sig_/ND1RoT20ph5rx/6uVsD0LuU
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEnPVX/hPLkMoq7x0ggNMC9Yhtg5wFAlqjCs0ACgkQgNMC9Yht
-g5zk6A//RgjRyD4aFvyZl/eCAy/q6gNM2ocvJzRHBsHKaNPlTEx5vEkjAZYHntoV
-tnRf/nmiNrq5OLzfH7IDig0/P6IAh9WZBQKyO5RSL/NDqSKny6+M5grxTN8+hLl6
-D+ODmC8MOvQmtwIfu3zj/OGNCvZmEfqW//DAg/v6QgHKMQtwhxXRoh7BqOlMt/Qm
-f+27uE5BdPoOrXwJ7AcMBy4xHm7RvSpuUMUkOTpIEe4DvnqCMQK3wDjpvSLqJcv5
-m7toKh3D5neVqL6jLKykWb1+4L0EQUokd4i0LCcp69evzT21MqwAyvHpLyBSS+EN
-AW9mX017A1OY/nraKEhbV84jlWh0LggMe9rzHoBqNLOEtJ7F3/7RBasnEIYQs3vj
-s03GFz3qc82X0gX9MF1e6SgkvpRlSHEexvph2mMC2bGw9qRnoU2iwOhptM4LzB1t
-D+YZ+XG8vOQ97TlT0BEIpuKsZCOJFcWW3rdl1kc4/s2F04daCdBWTVCYbPJZi767
-uub1reBwy8U1LNr9ZhtS0LnghY+VGOzeeiZTMboIv0895ERgWbTR6M84xJcBoyOh
-Kb7mxjH1dG2kqdp0RJLrFY32rXZuswvO1Fwl+GfDKXy0Dx5XUxfLU1BY8zcaBly9
-BNtHLwOx/F9UkQqTp5CbQvBNQuvAjOi8k/IQkdckph9H/DKBsgE=
-=b4fl
------END PGP SIGNATURE-----
-
---Sig_/ND1RoT20ph5rx/6uVsD0LuU--
+diff --git a/block/scsi_ioctl.c b/block/scsi_ioctl.c
+index 60b471f8621b..b9e176e537be 100644
+--- a/block/scsi_ioctl.c
++++ b/block/scsi_ioctl.c
+@@ -41,14 +41,6 @@ struct blk_cmd_filter {
+ 
+ static struct blk_cmd_filter blk_default_cmd_filter;
+ 
+-/* Command group 3 is reserved and should never be used.  */
+-const unsigned char scsi_command_size_tbl[8] =
+-{
+-	6, 10, 10, 12,
+-	16, 12, 10, 10
+-};
+-EXPORT_SYMBOL(scsi_command_size_tbl);
+-
+ #include <scsi/sg.h>
+ 
+ static int sg_get_version(int __user *p)
+diff --git a/drivers/target/Kconfig b/drivers/target/Kconfig
+index 4c44d7bed01a..b5f05b60cf06 100644
+--- a/drivers/target/Kconfig
++++ b/drivers/target/Kconfig
+@@ -4,7 +4,6 @@ menuconfig TARGET_CORE
+ 	depends on SCSI && BLOCK
+ 	select CONFIGFS_FS
+ 	select CRC_T10DIF
+-	select BLK_SCSI_REQUEST # only for scsi_command_size_tbl..
+ 	select SGL_ALLOC
+ 	default n
+ 	help
+diff --git a/include/scsi/scsi_common.h b/include/scsi/scsi_common.h
+index 731ac09ed231..48d950666376 100644
+--- a/include/scsi/scsi_common.h
++++ b/include/scsi/scsi_common.h
+@@ -15,8 +15,17 @@ scsi_varlen_cdb_length(const void *hdr)
+ 	return ((struct scsi_varlen_cdb_hdr *)hdr)->additional_cdb_length + 8;
+ }
+ 
+-extern const unsigned char scsi_command_size_tbl[8];
+-#define COMMAND_SIZE(opcode) scsi_command_size_tbl[((opcode) >> 5) & 7]
++/*
++ * SCSI command sizes are as follows, in bytes, for fixed size commands, per
++ * group: 6, 10, 10, 12, 16, 12, 10, 10. The top three bits of an opcode
++ * determine its group.
++ * The size table is encoded into a 32-bit value by subtracting each value
++ * from 16, resulting in a value of 1715488362
++ * (6 << 28 + 6 << 24 + 4 << 20 + 0 << 16 + 4 << 12 + 6 << 8 + 6 << 4 + 10).
++ * Command group 3 is reserved and should never be used.
++ */
++#define COMMAND_SIZE(opcode) \
++	(16 - (15 & (1715488362 >> (4 * (((opcode) >> 5) & 7)))))
+ 
+ static inline unsigned
+ scsi_command_size(const unsigned char *cmnd)
+-- 
+2.11.0
