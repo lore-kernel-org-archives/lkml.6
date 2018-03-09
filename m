@@ -1,99 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751278AbeCIKt6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:49:58 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:38025 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750800AbeCIKtz (ORCPT
+        id S1751290AbeCIKu3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:50:29 -0500
+Received: from mail-ua0-f202.google.com ([209.85.217.202]:48544 "EHLO
+        mail-ua0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751070AbeCIKu0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 05:49:55 -0500
-Date: Fri, 9 Mar 2018 02:49:46 -0800
-From: tip-bot for Bartosz Golaszewski <tipbot@zytor.com>
-Message-ID: <tip-f09777fa891327ee0dd892e83619f156bf1c37e6@git.kernel.org>
-Cc: brgl@bgdev.pl, tglx@linutronix.de, mingo@kernel.org,
-        marc.zyngier@arm.com, hpa@zytor.com, linux-kernel@vger.kernel.org
-Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        brgl@bgdev.pl, mingo@kernel.org, marc.zyngier@arm.com
-In-Reply-To: <20180304121018.640-4-brgl@bgdev.pl>
-References: <20180304121018.640-4-brgl@bgdev.pl>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] genirq/irq_sim: Return the base of the irq range
- from irq_sim_init()
-Git-Commit-ID: f09777fa891327ee0dd892e83619f156bf1c37e6
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 9 Mar 2018 05:50:26 -0500
+X-Google-Smtp-Source: AG47ELtYbq623gCuzTwY3aHW6KQrju1ENt5KPBNPqc0y3wuRF6lrIal95bqTV7KUVUfI5XIkZl2hLtOQAw==
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Date: Fri,  9 Mar 2018 11:50:15 +0100
+Message-Id: <20180309105015.97429-1-tweek@google.com>
+X-Mailer: git-send-email 2.16.2.395.g2e18187dfd-goog
+Subject: Re: Regression from efi: call get_event_log before ExitBootServices
+From: Thiebaud Weksteen <tweek@google.com>
+To: Jeremy Cline <jeremy@jcline.org>
+Cc: Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, hdegoede@redhat.com,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Thiebaud Weksteen <tweek@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f09777fa891327ee0dd892e83619f156bf1c37e6
-Gitweb:     https://git.kernel.org/tip/f09777fa891327ee0dd892e83619f156bf1c37e6
-Author:     Bartosz Golaszewski <brgl@bgdev.pl>
-AuthorDate: Sun, 4 Mar 2018 13:10:18 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 9 Mar 2018 11:44:03 +0100
-
-genirq/irq_sim: Return the base of the irq range from irq_sim_init()
-
-Returning the base of the allocated interrupt range from irq_sim_init() and
-devm_irq_sim_init() allows users to handle the logic of associating irq
-numbers with any other driver-specific resources without having to use
-irq_sim_irqnum().
-
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Link: https://lkml.kernel.org/r/20180304121018.640-4-brgl@bgdev.pl
-
 ---
- kernel/irq/irq_sim.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/firmware/efi/libstub/tpm.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
-index 05f0d7c1698a..85690859a2a8 100644
---- a/kernel/irq/irq_sim.c
-+++ b/kernel/irq/irq_sim.c
-@@ -50,7 +50,8 @@ static void irq_sim_handle_irq(struct irq_work *work)
-  * @sim:        The interrupt simulator object to initialize.
-  * @num_irqs:   Number of interrupts to allocate
-  *
-- * Returns 0 on success and a negative error number on failure.
-+ * On success: return the base of the allocated interrupt range.
-+ * On failure: a negative errno.
-  */
- int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
- {
-@@ -79,7 +80,7 @@ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
- 	init_irq_work(&sim->work_ctx.work, irq_sim_handle_irq);
- 	sim->irq_count = num_irqs;
+diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
+index 773afcd6a37c..ee3fac109078 100644
+--- a/drivers/firmware/efi/libstub/tpm.c
++++ b/drivers/firmware/efi/libstub/tpm.c
+@@ -112,6 +112,22 @@ void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+ 		log_size = log_last_entry - log_location + last_entry_size;
+ 	}
  
--	return 0;
-+	return sim->irq_base;
- }
- EXPORT_SYMBOL_GPL(irq_sim_init);
++	if (log_size == 0) {
++		efi_printk(sys_table_arg, "log_size == 0\n");
++	}
++	else if (log_size < 1 * 1024 * 1024) {
++		efi_printk(sys_table_arg, "log_size < 1M\n");
++	}
++	else if (log_size < 500 * 1024 * 1024) {
++		efi_printk(sys_table_arg, "log_size < 500M\n");
++	}
++	else if (log_size < 1000 * 1024 * 1024) {
++		efi_printk(sys_table_arg, "log_size < 1G\n");
++	}
++	else {
++		efi_printk(sys_table_arg, "log_size > 1G\n");
++	}
++
+ 	efi_printk(sys_table_arg, "Allocating memory for storing the logs\n");
+ 	/* Allocate space for the logs and copy them. */
+ 	status = efi_call_early(allocate_pool, EFI_LOADER_DATA,
+@@ -124,6 +140,11 @@ void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+ 			   "Unable to allocate memory for event log\n");
+ 		return;
+ 	}
++	if (!log_tbl) {
++		efi_printk(sys_table_arg, "Pointer returned from allocation is NULL!\n");
++		return;
++	}
++
+ 	efi_printk(sys_table_arg, "Copying log to new location\n");
  
-@@ -111,7 +112,8 @@ static void devm_irq_sim_release(struct device *dev, void *res)
-  * @sim:        The interrupt simulator object to initialize.
-  * @num_irqs:   Number of interrupts to allocate
-  *
-- * Returns 0 on success and a negative error number on failure.
-+ * On success: return the base of the allocated interrupt range.
-+ * On failure: a negative errno.
-  */
- int devm_irq_sim_init(struct device *dev, struct irq_sim *sim,
- 		      unsigned int num_irqs)
-@@ -132,7 +134,7 @@ int devm_irq_sim_init(struct device *dev, struct irq_sim *sim,
- 	dr->sim = sim;
- 	devres_add(dev, dr);
- 
--	return 0;
-+	return rv;
- }
- EXPORT_SYMBOL_GPL(devm_irq_sim_init);
- 
+ 	memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
+-- 
+2.16.2.395.g2e18187dfd-goog
