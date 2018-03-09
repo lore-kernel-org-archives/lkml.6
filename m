@@ -1,361 +1,195 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751325AbeCIEvj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 23:51:39 -0500
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:46869 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751193AbeCIEvg (ORCPT
+        id S1751229AbeCIFAw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 00:00:52 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:35330 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750753AbeCIFAu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 23:51:36 -0500
-X-Google-Smtp-Source: AG47ELu071cqhXU2sOGyvP24iaUKBHbuIYPgQAuA/hmBQaRGa8WzC3Uv271mo5OzKQZlK0tY4As1BA==
-From: Joel Stanley <joel@jms.id.au>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tomer Maimon <tmaimon77@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Brendan Higgins <brendanhiggins@google.com>
-Subject: [PATCH v3 2/2] watchdog: Add Nuvoton NPCM watchdog driver
-Date: Fri,  9 Mar 2018 15:21:07 +1030
-Message-Id: <20180309045107.8515-3-joel@jms.id.au>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180309045107.8515-1-joel@jms.id.au>
-References: <20180309045107.8515-1-joel@jms.id.au>
+        Fri, 9 Mar 2018 00:00:50 -0500
+From: Harish Jenny K N <harish_kandiga@mentor.com>
+To: <ulf.hansson@linaro.org>, <linus.walleij@linaro.org>,
+        <adrian.hunter@intel.com>, <shawn.lin@rock-chips.com>,
+        <avri.altman@wdc.com>, <andriy.shevchenko@linux.intel.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <harish_kandiga@mentor.com>, <Vladimir_Zapolskiy@mentor.com>
+Subject: [PATCH v8] mmc: Export host capabilities to debugfs.
+Date: Fri, 9 Mar 2018 10:30:41 +0530
+Message-ID: <1520571641-5741-1-git-send-email-harish_kandiga@mentor.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Nuvoton NPCM750 has a watchdog implemented as a single register
-inside the timer peripheral.
+This patch exports the host capabilities to debugfs
 
-This driver exposes that watchdog as a standard watchdog device with
-coarse timeout intervals, limited by the combination of prescaler and
-counter that is provided by the hardware. The calculation is taken from
-the Nuvoton vendor tree.
+This idea of sharing host capabilities over debugfs
+came up from Abbas Raza <Abbas_Raza@mentor.com>
+Earlier discussions:
+https://lkml.org/lkml/2018/3/5/357
+https://www.spinics.net/lists/linux-mmc/msg48219.html
 
-The watchdog is left running if a bootloader had it going. The rate is
-the one specified in the device tree, or the default value (obtained
-from the datasheet).
-
-There is a pre-timeout IRQ that is wired up. This timeout always occurs
-1024 clocks before the timeout.
-
-Signed-off-by: Joel Stanley <joel@jms.id.au>
+Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
 ---
-v2:
- - Make MODULE_LICENCE gpl v2 to match SPDX
- - Remove unused struct device pointer
- - Remove unused setting of drvdata
- - Add linux/bitops.h
- - Sort includes
- - Remove unused fiq include
- - Update timeout with achieved value
-v3:
- - Calculate the time and register value seperately
- - Pass device tree value through set_timeout to ensure it can
-   be represented by hardware
----
- drivers/watchdog/Kconfig    |  11 ++
- drivers/watchdog/Makefile   |   1 +
- drivers/watchdog/npcm_wdt.c | 254 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 266 insertions(+)
- create mode 100644 drivers/watchdog/npcm_wdt.c
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index aff773bcebdb..0c1cc68894e6 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -513,6 +513,17 @@ config COH901327_WATCHDOG
- 	  This watchdog is used to reset the system and thus cannot be
- 	  compiled as a module.
- 
-+config NPCM750_WATCHDOG
-+	bool "NPCM750 watchdog"
-+	depends on ARCH_NPCM || COMPILE_TEST
-+	default y if ARCH_NPCM750
-+	select WATCHDOG_CORE
-+	help
-+	  Say Y here to include Watchdog timer support for the
-+	  watchdog embedded into the NPCM750.
-+	  This watchdog is used to reset the system and thus cannot be
-+	  compiled as a module.
-+
- config TWL4030_WATCHDOG
- 	tristate "TWL4030 Watchdog"
- 	depends on TWL4030_CORE
-diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-index 0474d38aa854..97a5afb5cad2 100644
---- a/drivers/watchdog/Makefile
-+++ b/drivers/watchdog/Makefile
-@@ -61,6 +61,7 @@ obj-$(CONFIG_ORION_WATCHDOG) += orion_wdt.o
- obj-$(CONFIG_SUNXI_WATCHDOG) += sunxi_wdt.o
- obj-$(CONFIG_RN5T618_WATCHDOG) += rn5t618_wdt.o
- obj-$(CONFIG_COH901327_WATCHDOG) += coh901327_wdt.o
-+obj-$(CONFIG_NPCM7XX_WATCHDOG) += npcm_wdt.o
- obj-$(CONFIG_STMP3XXX_RTC_WATCHDOG) += stmp3xxx_rtc_wdt.o
- obj-$(CONFIG_NUC900_WATCHDOG) += nuc900_wdt.o
- obj-$(CONFIG_TS4800_WATCHDOG) += ts4800_wdt.o
-diff --git a/drivers/watchdog/npcm_wdt.c b/drivers/watchdog/npcm_wdt.c
-new file mode 100644
-index 000000000000..723f80ebf100
---- /dev/null
-+++ b/drivers/watchdog/npcm_wdt.c
-@@ -0,0 +1,254 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018 Nuvoton Technology corporation.
-+// Copyright (c) 2018 IBM Corp.
-+
-+#include <linux/bitops.h>
-+#include <linux/delay.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_irq.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/watchdog.h>
-+
-+#define NPCM_WTCR	0x1C
-+
-+#define NPCM_WTCLK	(BIT(10) | BIT(11))	/* Clock divider */
-+#define NPCM_WTE	BIT(7)			/* Enable */
-+#define NPCM_WTIE	BIT(6)			/* Enable irq */
-+#define NPCM_WTIS	(BIT(4) | BIT(5))	/* Interval selection */
-+#define NPCM_WTIF	BIT(3)			/* Interrupt flag*/
-+#define NPCM_WTRF	BIT(2)			/* Reset flag */
-+#define NPCM_WTRE	BIT(1)			/* Reset enable */
-+#define NPCM_WTR	BIT(0)			/* Reset counter */
-+
-+/*
-+ * Watchdog timeouts
-+ *
-+ * 170     msec:    WTCLK=01 WTIS=00     VAL= 0x400
-+ * 670     msec:    WTCLK=01 WTIS=01     VAL= 0x410
-+ * 1360    msec:    WTCLK=10 WTIS=00     VAL= 0x800
-+ * 2700    msec:    WTCLK=01 WTIS=10     VAL= 0x420
-+ * 5360    msec:    WTCLK=10 WTIS=01     VAL= 0x810
-+ * 10700   msec:    WTCLK=01 WTIS=11     VAL= 0x430
-+ * 21600   msec:    WTCLK=10 WTIS=10     VAL= 0x820
-+ * 43000   msec:    WTCLK=11 WTIS=00     VAL= 0xC00
-+ * 85600   msec:    WTCLK=10 WTIS=11     VAL= 0x830
-+ * 172000  msec:    WTCLK=11 WTIS=01     VAL= 0xC10
-+ * 687000  msec:    WTCLK=11 WTIS=10     VAL= 0xC20
-+ * 2750000 msec:    WTCLK=11 WTIS=11     VAL= 0xC30
-+ */
-+
-+struct npcm_wdt {
-+	struct watchdog_device  wdd;
-+	void __iomem		*reg;
-+};
-+
-+static inline struct npcm_wdt *to_npcm_wdt(struct watchdog_device *wdd)
+Changes in v8
+- Changes to use for_each_set_bit as suggested by Andy Shevchenko.
+
+Changes in v7
+- Moved additional capabilities also to caps file as mentioned by Ulf Hansson
+- compacting the code with macros
+
+Changes in v6:
+- Used DEFINE_SHOW_ATTRIBUTE
+
+Changes in v5:
+- Added parser logic in kernel by using debugfs_create_file  for caps and caps2 instead of debugfs_create_x32
+- Changed Author
+
+Changes in v4:
+- Moved the creation of nodes to mmc_add_host_debugfs
+- Exported caps2
+- Renamed host_caps to caps
+
+Changes in v3:
+- Removed typecasting of &host->caps to (u32 *)
+
+Changes in v2:
+- Changed Author
+
+ drivers/mmc/core/debugfs.c | 111 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 111 insertions(+)
+
+diff --git a/drivers/mmc/core/debugfs.c b/drivers/mmc/core/debugfs.c
+index c51e0c0..a16846b 100644
+--- a/drivers/mmc/core/debugfs.c
++++ b/drivers/mmc/core/debugfs.c
+@@ -225,6 +225,114 @@ static int mmc_clock_opt_set(void *data, u64 val)
+ DEFINE_SIMPLE_ATTRIBUTE(mmc_clock_fops, mmc_clock_opt_get, mmc_clock_opt_set,
+ 	"%llu\n");
+
++static int mmc_caps_show(struct seq_file *s, void *unused)
 +{
-+	return container_of(wdd, struct npcm_wdt, wdd);
-+}
++	static const char * const mmc_host_capabilities[] = {
++		"4-bit transfers allowed",/* MMC_CAP_4_BIT_DATA (1 << 0) */
++		/* MMC_CAP_MMC_HIGHSPEED (1 << 1)*/
++		"Supports MMC high-speed timing",
++		/* MMC_CAP_SD_HIGHSPEED (1 << 2)*/
++		"Supports SD high-speed timing",
++		"Can signal pending SDIO IRQs",/* MMC_CAP_SDIO_IRQ (1 << 3) */
++		"Talks only SPI protocols",/* MMC_CAP_SPI (1 << 4) */
++		/* MMC_CAP_NEEDS_POLL (1 << 5)*/
++		"Needs polling for card-detection",
++		"8 bit transfers allowed",/* MMC_CAP_8_BIT_DATA (1 << 6) */
++		"Suspends (e)MMC/SD at idle",/*MMC_CAP_AGGRESSIVE_PM (1 << 7)*/
++		"Nonremovable",/* MMC_CAP_NONREMOVABLE (1 << 8) */
++		"Waits while card is busy",/*MMC_CAP_WAIT_WHILE_BUSY (1 << 9)*/
++		"Allows erase/trim commands",/* MMC_CAP_ERASE (1 << 10) */
++		"Supports DDR mode at 3.3V",/* MMC_CAP_3_3V_DDR	(1 << 11) */
++		"Supports DDR mode at 1.8V",/* MMC_CAP_1_8V_DDR (1 << 12) */
++		"Supports DDR mode at 1.2V",/* MMC_CAP_1_2V_DDR (1 << 13) */
++		"Can power off after boot",/*MMC_CAP_POWER_OFF_CARD (1 << 14)*/
++		"CMD14/CMD19 bus width ok",/*MMC_CAP_BUS_WIDTH_TEST (1 << 15)*/
++		"Supports UHS SDR12 mode",/* MMC_CAP_UHS_SDR12 (1 << 16) */
++		"Supports UHS SDR25 mode",/* MMC_CAP_UHS_SDR25 (1 << 17) */
++		"Supports UHS SDR50 mode",/* MMC_CAP_UHS_SDR50 (1 << 18) */
++		"Supports UHS SDR104 mode",/* MMC_CAP_UHS_SDR104 (1 << 19) */
++		"Supports UHS DDR50 mode",/* MMC_CAP_UHS_DDR50 (1 << 20) */
++		"",/* (1 << 21) is free for reuse*/
++		"",/* (1 << 22) */
++		"Supports Driver Type A",/* MMC_CAP_DRIVER_TYPE_A (1 << 23) */
++		"Supports Driver Type C",/* MMC_CAP_DRIVER_TYPE_C (1 << 24) */
++		"Supports Driver Type D",/* MMC_CAP_DRIVER_TYPE_D (1 << 25) */
++		"",/* (1 << 26) */
++		/* MMC_CAP_DONE_COMPLETE (1 << 27) */
++		"RW reqs can be completed within mmc_request_done()",
++		"Supports Enable card detect wake",/*MMC_CAP_CD_WAKE (1 << 28)*/
++		/* MMC_CAP_CMD_DURING_TFR (1 << 29) */
++		"Can send commands during data transfer",
++		"CMD23 supported",/* MMC_CAP_CMD23 (1 << 30) */
++		"Supports Hardware reset"/* MMC_CAP_HW_RESET	(1 << 31) */
++	};
 +
-+static int npcm_wdt_ping(struct watchdog_device *wdd)
-+{
-+	struct npcm_wdt *wdt = to_npcm_wdt(wdd);
-+	u32 val;
++	static const char * const mmc_host_capabilities2[] = {
++		/* MMC_CAP2_BOOTPART_NOACC (1 << 0) */
++		"No access to Boot partition",
++		"",/* (1 << 1) */
++		"Can do full power cycle",/* MMC_CAP2_FULL_PWR_CYCLE (1 << 2) */
++		"",/* (1 << 3) */
++		"",/* (1 << 4) */
++		"Supports HS200 1.8V SDR",/* MMC_CAP2_HS200_1_8V_SDR (1 << 5) */
++		"Supports HS200 1.2V SDR",/* MMC_CAP2_HS200_1_2V_SDR (1 << 6) */
++		"",/* (1 << 7) */
++		"",/* (1 << 8) */
++		"",/* (1 << 9) */
++		/* MMC_CAP2_CD_ACTIVE_HIGH (1 << 10) */
++		"Card-detect signal active high",
++		/* MMC_CAP2_RO_ACTIVE_HIGH (1 << 11) */
++		"Write-protect signal active high",
++		"",/* (1 << 12) */
++		"",/* (1 << 13) */
++		/* MMC_CAP2_NO_PRESCAN_POWERUP (1 << 14) */
++		"Can do complete power cycle of the card",
++		"Supports HS400 1.8V",/* MMC_CAP2_HS400_1_8V	(1 << 15) */
++		"Support HS400 1.2V",/* MMC_CAP2_HS400_1_2V	(1 << 16) */
++		"SDIO IRQ - Nothread",/* MMC_CAP2_SDIO_IRQ_NOTHREAD (1 << 17) */
++		/* MMC_CAP2_NO_WRITE_PROTECT (1 << 18) */
++		"No physical write protect pin, assume always read-write",
++		/* MMC_CAP2_NO_SDIO (1 << 19) */
++		"Do not send SDIO commands during initialization",
++		"Supports enhanced strobe",/* MMC_CAP2_HS400_ES (1 << 20) */
++		/* MMC_CAP2_NO_SD (1 << 21) */
++		"Do not send SD commands during initialization",
++		/* MMC_CAP2_NO_MMC (1 << 22) */
++		"Do not send (e)MMC commands during initialization",
++		"Has eMMC command queue engine",/* MMC_CAP2_CQE	 (1 << 23) */
++		"CQE can issue a direct command",/*MMC_CAP2_CQE_DCMD (1 << 24)*/
++		"",/* (1 << 25) */
++		"",/* (1 << 26) */
++		"",/* (1 << 27) */
++		"",/* (1 << 28) */
++		"",/* (1 << 29) */
++		"",/* (1 << 30) */
++		""/* (1 << 31) */
++	};
 +
-+	val = readl(wdt->reg);
-+	writel(val | NPCM_WTR, wdt->reg);
++	struct mmc_host *host = s->private;
++	u32 caps = host->caps;
++	u32 caps2 = host->caps2;
++	int bit;
++	int size = sizeof(u32) * BITS_PER_BYTE;
++
++	seq_puts(s, "MMC Host capabilities are:\n");
++	seq_puts(s, "=============================================\n");
++
++	for_each_set_bit(bit, (const unsigned long *)&caps, size)
++		seq_printf(s, "%s\n", mmc_host_capabilities[bit]);
++
++	seq_puts(s, "=============================================\n");
++	seq_puts(s, "MMC Host additional capabilities are:\n");
++	seq_puts(s, "=============================================\n");
++
++	for_each_set_bit(bit, (const unsigned long *)&caps2, size)
++		seq_printf(s, "%s\n", mmc_host_capabilities2[bit]);
 +
 +	return 0;
 +}
++DEFINE_SHOW_ATTRIBUTE(mmc_caps);
 +
-+static int npcm_wdt_start(struct watchdog_device *wdd)
-+{
-+	struct npcm_wdt *wdt = to_npcm_wdt(wdd);
-+	u32 val;
+ void mmc_add_host_debugfs(struct mmc_host *host)
+ {
+ 	struct dentry *root;
+@@ -243,6 +351,9 @@ void mmc_add_host_debugfs(struct mmc_host *host)
+ 	if (!debugfs_create_file("ios", S_IRUSR, root, host, &mmc_ios_fops))
+ 		goto err_node;
+
++	if (!debugfs_create_file("caps", S_IRUSR, root, host, &mmc_caps_fops))
++		goto err_node;
 +
-+	if (wdd->timeout < 2)
-+		val = 0x800;
-+	else if (wdd->timeout < 3)
-+		val = 0x420;
-+	else if (wdd->timeout < 6)
-+		val = 0x810;
-+	else if (wdd->timeout < 11)
-+		val = 0x430;
-+	else if (wdd->timeout < 22)
-+		val = 0x820;
-+	else if (wdd->timeout < 44)
-+		val = 0xC00;
-+	else if (wdd->timeout < 87)
-+		val = 0x830;
-+	else if (wdd->timeout < 173)
-+		val = 0xC10;
-+	else if (wdd->timeout < 688)
-+		val = 0xC20;
-+	else
-+		val = 0xC30;
-+
-+	val |= NPCM_WTRE | NPCM_WTE | NPCM_WTR | NPCM_WTIE;
-+
-+	writel(val, wdt->reg);
-+
-+	return 0;
-+}
-+
-+static int npcm_wdt_stop(struct watchdog_device *wdd)
-+{
-+	struct npcm_wdt *wdt = to_npcm_wdt(wdd);
-+
-+	writel(0, wdt->reg);
-+
-+	return 0;
-+}
-+
-+
-+static int npcm_wdt_set_timeout(struct watchdog_device *wdd,
-+				unsigned int timeout)
-+{
-+	if (timeout < 2)
-+		wdd->timeout = 1;
-+	else if (timeout < 3)
-+	      wdd->timeout = 2;
-+	else if (timeout < 6)
-+	      wdd->timeout = 5;
-+	else if (timeout < 11)
-+	      wdd->timeout = 10;
-+	else if (timeout < 22)
-+	      wdd->timeout = 21;
-+	else if (timeout < 44)
-+	      wdd->timeout = 43;
-+	else if (timeout < 87)
-+	      wdd->timeout = 86;
-+	else if (timeout < 173)
-+	      wdd->timeout = 172;
-+	else if (timeout < 688)
-+	      wdd->timeout = 687;
-+	else
-+	      wdd->timeout = 2750;
-+
-+	if (watchdog_active(wdd))
-+		npcm_wdt_start(wdd);
-+
-+	return 0;
-+}
-+
-+static irqreturn_t npcm_wdt_interrupt(int irq, void *data)
-+{
-+	struct npcm_wdt *wdt = data;
-+
-+	watchdog_notify_pretimeout(&wdt->wdd);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int npcm_wdt_restart(struct watchdog_device *wdd,
-+			    unsigned long action, void *data)
-+{
-+	struct npcm_wdt *wdt = to_npcm_wdt(wdd);
-+
-+	writel(NPCM_WTR | NPCM_WTRE | NPCM_WTE, wdt->reg);
-+	udelay(1000);
-+
-+	return 0;
-+}
-+
-+static bool npcm_is_running(struct watchdog_device *wdd)
-+{
-+	struct npcm_wdt *wdt = to_npcm_wdt(wdd);
-+
-+	return readl(wdt->reg) & NPCM_WTE;
-+}
-+
-+static const struct watchdog_info npcm_wdt_info = {
-+	.identity	= KBUILD_MODNAME,
-+	.options	= WDIOF_SETTIMEOUT
-+			| WDIOF_KEEPALIVEPING
-+			| WDIOF_MAGICCLOSE,
-+};
-+
-+static const struct watchdog_ops npcm_wdt_ops = {
-+	.owner = THIS_MODULE,
-+	.start = npcm_wdt_start,
-+	.stop = npcm_wdt_stop,
-+	.ping = npcm_wdt_ping,
-+	.set_timeout = npcm_wdt_set_timeout,
-+	.restart = npcm_wdt_restart,
-+};
-+
-+static int npcm_wdt_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct npcm_wdt *wdt;
-+	struct resource *res;
-+	int irq;
-+	int ret;
-+
-+	wdt = devm_kzalloc(&pdev->dev, sizeof(*wdt), GFP_KERNEL);
-+	if (!wdt)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	wdt->reg = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(wdt->reg))
-+		return PTR_ERR(wdt->reg);
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (!irq)
-+		return -EINVAL;
-+
-+	wdt->wdd.info = &npcm_wdt_info;
-+	wdt->wdd.ops = &npcm_wdt_ops;
-+	wdt->wdd.min_timeout = 1;
-+	wdt->wdd.max_timeout = 2750;
-+	wdt->wdd.parent = dev;
-+
-+	wdt->wdd.timeout = 86;
-+	watchdog_init_timeout(&wdt->wdd, 0, dev);
-+
-+	/* Ensure timeout is able to be represented by the hardware */
-+	npcm_wdt_set_timeout(&wdt->wdd, wdt->wdd.timeout);
-+
-+	if (npcm_is_running(&wdt->wdd)) {
-+		/* Restart with the default or device-tree specified timeout */
-+		npcm_wdt_start(&wdt->wdd);
-+		set_bit(WDOG_HW_RUNNING, &wdt->wdd.status);
-+	}
-+
-+	ret = devm_request_irq(dev, irq, npcm_wdt_interrupt, 0,
-+			"watchdog", wdt);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_watchdog_register_device(dev, &wdt->wdd);
-+	if (ret) {
-+		dev_err(dev, "failed to register watchdog\n");
-+		return ret;
-+	}
-+
-+	dev_info(dev, "NPCM watchdog driver enabled\n");
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id npcm_wdt_match[] = {
-+	{.compatible = "nuvoton,npcm750-wdt"},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, npcm_wdt_match);
-+#endif
-+
-+static struct platform_driver npcm_wdt_driver = {
-+	.probe		= npcm_wdt_probe,
-+	.driver		= {
-+		.name	= "npcm-wdt",
-+		.of_match_table = of_match_ptr(npcm_wdt_match),
-+	},
-+};
-+module_platform_driver(npcm_wdt_driver);
-+
-+MODULE_AUTHOR("Joel Stanley");
-+MODULE_DESCRIPTION("Watchdog driver for NPCM");
-+MODULE_LICENSE("GPL v2");
--- 
-2.15.1
+ 	if (!debugfs_create_file("clock", S_IRUSR | S_IWUSR, root, host,
+ 			&mmc_clock_fops))
+ 		goto err_node;
+--
+1.9.1
