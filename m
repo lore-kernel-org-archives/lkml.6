@@ -1,100 +1,225 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751877AbeCIB7r (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 20:59:47 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:58524 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751113AbeCIB7p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 20:59:45 -0500
-Subject: Re: [PATCH V4 2/5] nvme: add helper interface to flush in-flight
- requests
-To: Sagi Grimberg <sagi@grimberg.me>, keith.busch@intel.com, axboe@fb.com,
-        hch@lst.de
-Cc: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-References: <1520489971-31174-1-git-send-email-jianchao.w.wang@oracle.com>
- <1520489971-31174-3-git-send-email-jianchao.w.wang@oracle.com>
- <931a03f8-9c8b-fec4-0f89-04321a906710@grimberg.me>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <35c68f2a-8198-7db6-c381-420ac996802a@oracle.com>
-Date: Fri, 9 Mar 2018 09:59:28 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751483AbeCICFJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 21:05:09 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:38057 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750909AbeCICFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 21:05:02 -0500
+From: Peng Li <lipeng321@huawei.com>
+To: <davem@davemloft.net>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
+        <lipeng321@huawei.com>
+Subject: [PATCH net-next 3/9] net: hns3: fix for RSS configuration loss problem during reset
+Date: Fri, 9 Mar 2018 10:36:58 +0800
+Message-ID: <1520563024-94811-4-git-send-email-lipeng321@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1520563024-94811-1-git-send-email-lipeng321@huawei.com>
+References: <1520563024-94811-1-git-send-email-lipeng321@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <931a03f8-9c8b-fec4-0f89-04321a906710@grimberg.me>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8826 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803090023
+Content-Type: text/plain
+X-Originating-IP: [10.71.200.31]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sagi
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-Thanks for your precious time for review and comment.
+RSS configuration will be set to default value by hclge_rss_init_hw
+during reset, which causes the RSS configuration loss problem.
 
-On 03/09/2018 02:21 AM, Sagi Grimberg wrote:
+This patch fixes it by setting the default value in
+hclge_rss_init_cfg function, which will not be called in the reset
+process.
 
->> +EXPORT_SYMBOL_GPL(nvme_abort_requests_sync);
->> +
->> +static void nvme_comp_req(struct request *req, void *data, bool reserved)
-> 
-> Not a very good name...
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+---
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c |   2 +
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 107 ++++++++++-----------
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |   1 +
+ 3 files changed, 56 insertions(+), 54 deletions(-)
 
-Yes, indeed.
-
-> 
->> +{
->> +    struct nvme_ctrl *ctrl = (struct nvme_ctrl *)data;
->> +
->> +    if (!test_bit(NVME_REQ_ABORTED, &nvme_req(req)->flags))
->> +        return;
->> +
->> +    WARN_ON(!blk_mq_request_started(req));
->> +
->> +    if (ctrl->tagset && ctrl->tagset->ops->complete) {
-> 
-> What happens when this called on the admin tagset when the controller
-> does not have an io tagset?
-
-Yes, nvme_ctrl.admin_tagset should be used here for adminq request.
-
-
-> 
->> +        clear_bit(NVME_REQ_ABORTED, &nvme_req(req)->flags);
->> +        /*
->> +         * We set the status to NVME_SC_ABORT_REQ, then ioq request
->> +         * will be requeued and adminq one will be failed.
->> +         */
->> +        nvme_req(req)->status = NVME_SC_ABORT_REQ;
->> +        /*
->> +         * For ioq request, blk_mq_requeue_request should be better
->> +         * here. But the nvme code will still setup the cmd even if
->> +         * the RQF_DONTPREP is set. We have to use .complete to free
->> +         * the cmd and then requeue it.
-> 
-> IMO, its better to fix nvme to not setup the command if RQF_DONTPREP is on (other than the things it must setup).
-
-Yes, I used to consider change that.
-But I'm not sure whether there is special consideration there.
-If you and Keith think it is ok that not setup command when RQF_DONTPREP is set, we could do that.
-
-> 
->> +         *
->> +         * For adminq request, invoking .complete directly will miss
->> +         * blk_mq_sched_completed_request, but this is ok because we
->> +         * won't have io scheduler for adminq.
->> +         */
->> +        ctrl->tagset->ops->complete(req);
-> 
-> I don't think that directly calling .complete is a good idea...
-
-Yes, indeed.
-
-Thanks a lot 
-Jianchao
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
+index 5018d66..407cfab 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
+@@ -144,6 +144,8 @@ static int hclge_map_update(struct hnae3_handle *h)
+ 	if (ret)
+ 		return ret;
+ 
++	hclge_rss_indir_init_cfg(hdev);
++
+ 	return hclge_rss_init_hw(hdev);
+ }
+ 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 747cc8f..34a0905 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -3329,67 +3329,28 @@ static int hclge_get_tc_size(struct hnae3_handle *handle)
+ 
+ int hclge_rss_init_hw(struct hclge_dev *hdev)
+ {
+-	const  u8 hfunc = HCLGE_RSS_HASH_ALGO_TOEPLITZ;
+ 	struct hclge_vport *vport = hdev->vport;
++	u8 *rss_indir = vport[0].rss_indirection_tbl;
++	u16 rss_size = vport[0].alloc_rss_size;
++	u8 *key = vport[0].rss_hash_key;
++	u8 hfunc = vport[0].rss_algo;
+ 	u16 tc_offset[HCLGE_MAX_TC_NUM];
+-	u8 rss_key[HCLGE_RSS_KEY_SIZE];
+ 	u16 tc_valid[HCLGE_MAX_TC_NUM];
+ 	u16 tc_size[HCLGE_MAX_TC_NUM];
+-	u32 *rss_indir = NULL;
+-	u16 rss_size = 0, roundup_size;
+-	const u8 *key;
+-	int i, ret, j;
+-
+-	rss_indir = kcalloc(HCLGE_RSS_IND_TBL_SIZE, sizeof(u32), GFP_KERNEL);
+-	if (!rss_indir)
+-		return -ENOMEM;
+-
+-	/* Get default RSS key */
+-	netdev_rss_key_fill(rss_key, HCLGE_RSS_KEY_SIZE);
+-
+-	/* Initialize RSS indirect table for each vport */
+-	for (j = 0; j < hdev->num_vmdq_vport + 1; j++) {
+-		vport[j].rss_tuple_sets.ipv4_tcp_en =
+-			HCLGE_RSS_INPUT_TUPLE_OTHER;
+-		vport[j].rss_tuple_sets.ipv4_udp_en =
+-			HCLGE_RSS_INPUT_TUPLE_OTHER;
+-		vport[j].rss_tuple_sets.ipv4_sctp_en =
+-			HCLGE_RSS_INPUT_TUPLE_SCTP;
+-		vport[j].rss_tuple_sets.ipv4_fragment_en =
+-			HCLGE_RSS_INPUT_TUPLE_OTHER;
+-		vport[j].rss_tuple_sets.ipv6_tcp_en =
+-			HCLGE_RSS_INPUT_TUPLE_OTHER;
+-		vport[j].rss_tuple_sets.ipv6_udp_en =
+-			HCLGE_RSS_INPUT_TUPLE_OTHER;
+-		vport[j].rss_tuple_sets.ipv6_sctp_en =
+-			HCLGE_RSS_INPUT_TUPLE_SCTP;
+-		vport[j].rss_tuple_sets.ipv6_fragment_en =
+-			HCLGE_RSS_INPUT_TUPLE_OTHER;
+-
+-		for (i = 0; i < HCLGE_RSS_IND_TBL_SIZE; i++) {
+-			vport[j].rss_indirection_tbl[i] =
+-				i % vport[j].alloc_rss_size;
+-
+-			/* vport 0 is for PF */
+-			if (j != 0)
+-				continue;
++	u16 roundup_size;
++	int i, ret;
+ 
+-			rss_size = vport[j].alloc_rss_size;
+-			rss_indir[i] = vport[j].rss_indirection_tbl[i];
+-		}
+-	}
+ 	ret = hclge_set_rss_indir_table(hdev, rss_indir);
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+-	key = rss_key;
+ 	ret = hclge_set_rss_algo_key(hdev, hfunc, key);
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	ret = hclge_set_rss_input_tuple(hdev);
+ 	if (ret)
+-		goto err;
++		return ret;
+ 
+ 	/* Each TC have the same queue size, and tc_size set to hardware is
+ 	 * the log2 of roundup power of two of rss_size, the acutal queue
+@@ -3399,8 +3360,7 @@ int hclge_rss_init_hw(struct hclge_dev *hdev)
+ 		dev_err(&hdev->pdev->dev,
+ 			"Configure rss tc size failed, invalid TC_SIZE = %d\n",
+ 			rss_size);
+-		ret = -EINVAL;
+-		goto err;
++		return -EINVAL;
+ 	}
+ 
+ 	roundup_size = roundup_pow_of_two(rss_size);
+@@ -3417,12 +3377,50 @@ int hclge_rss_init_hw(struct hclge_dev *hdev)
+ 		tc_offset[i] = rss_size * i;
+ 	}
+ 
+-	ret = hclge_set_rss_tc_mode(hdev, tc_valid, tc_size, tc_offset);
++	return hclge_set_rss_tc_mode(hdev, tc_valid, tc_size, tc_offset);
++}
+ 
+-err:
+-	kfree(rss_indir);
++void hclge_rss_indir_init_cfg(struct hclge_dev *hdev)
++{
++	struct hclge_vport *vport = hdev->vport;
++	int i, j;
+ 
+-	return ret;
++	for (j = 0; j < hdev->num_vmdq_vport + 1; j++) {
++		for (i = 0; i < HCLGE_RSS_IND_TBL_SIZE; i++)
++			vport[j].rss_indirection_tbl[i] =
++				i % vport[j].alloc_rss_size;
++	}
++}
++
++static void hclge_rss_init_cfg(struct hclge_dev *hdev)
++{
++	struct hclge_vport *vport = hdev->vport;
++	int i;
++
++	netdev_rss_key_fill(vport->rss_hash_key, HCLGE_RSS_KEY_SIZE);
++
++	for (i = 0; i < hdev->num_vmdq_vport + 1; i++) {
++		vport[i].rss_tuple_sets.ipv4_tcp_en =
++			HCLGE_RSS_INPUT_TUPLE_OTHER;
++		vport[i].rss_tuple_sets.ipv4_udp_en =
++			HCLGE_RSS_INPUT_TUPLE_OTHER;
++		vport[i].rss_tuple_sets.ipv4_sctp_en =
++			HCLGE_RSS_INPUT_TUPLE_SCTP;
++		vport[i].rss_tuple_sets.ipv4_fragment_en =
++			HCLGE_RSS_INPUT_TUPLE_OTHER;
++		vport[i].rss_tuple_sets.ipv6_tcp_en =
++			HCLGE_RSS_INPUT_TUPLE_OTHER;
++		vport[i].rss_tuple_sets.ipv6_udp_en =
++			HCLGE_RSS_INPUT_TUPLE_OTHER;
++		vport[i].rss_tuple_sets.ipv6_sctp_en =
++			HCLGE_RSS_INPUT_TUPLE_SCTP;
++		vport[i].rss_tuple_sets.ipv6_fragment_en =
++			HCLGE_RSS_INPUT_TUPLE_OTHER;
++
++		vport[i].rss_algo = HCLGE_RSS_HASH_ALGO_TOEPLITZ;
++	}
++
++	hclge_rss_indir_init_cfg(hdev);
+ }
+ 
+ int hclge_bind_ring_with_vector(struct hclge_vport *vport,
+@@ -5390,6 +5388,7 @@ static int hclge_init_ae_dev(struct hnae3_ae_dev *ae_dev)
+ 		return ret;
+ 	}
+ 
++	hclge_rss_init_cfg(hdev);
+ 	ret = hclge_rss_init_hw(hdev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Rss init fail, ret =%d\n", ret);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+index 13d3999..7bff6ef 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -642,6 +642,7 @@ int hclge_set_vf_vlan_common(struct hclge_dev *vport, int vfid,
+ 
+ int hclge_buffer_alloc(struct hclge_dev *hdev);
+ int hclge_rss_init_hw(struct hclge_dev *hdev);
++void hclge_rss_indir_init_cfg(struct hclge_dev *hdev);
+ 
+ void hclge_mbx_handler(struct hclge_dev *hdev);
+ void hclge_reset_tqp(struct hnae3_handle *handle, u16 queue_id);
+-- 
+2.9.3
