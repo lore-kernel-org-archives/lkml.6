@@ -1,414 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932373AbeCIX2H (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 18:28:07 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:53746 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932746AbeCIXZz (ORCPT
+        id S932482AbeCIXca (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 18:32:30 -0500
+Received: from mail-pg0-f46.google.com ([74.125.83.46]:34885 "EHLO
+        mail-pg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751211AbeCIXc2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 18:25:55 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A677A6083C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-From: Lina Iyer <ilina@codeaurora.org>
-To: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org
-Cc: linux-soc@vger.kernel.org, rnayak@codeaurora.org,
-        bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH v4 04/10] drivers: qcom: rpmh: add RPMH helper functions
-Date: Fri,  9 Mar 2018 16:25:37 -0700
-Message-Id: <20180309232543.24636-5-ilina@codeaurora.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180309232543.24636-1-ilina@codeaurora.org>
-References: <20180309232543.24636-1-ilina@codeaurora.org>
+        Fri, 9 Mar 2018 18:32:28 -0500
+X-Google-Smtp-Source: AG47ELvXG9n+l14KgGRCqmskAnqcZ7hVXtryMJDc2pJcB4lN1tFVHWODB7ZZeWmBeR1XwGsd0WQ/zhaAC4LkxlxNcVI=
+MIME-Version: 1.0
+In-Reply-To: <5d89ba78-64b4-9c9b-c9f3-c67094343c3f@gmail.com>
+References: <001a113f2be668a1e9056701e617@google.com> <CAM_iQpV+PnGUXEKcSrF7u19NOeLLp0PhDW-DOkEfS+8pLnTgYw@mail.gmail.com>
+ <a559bbb6-0db4-2b71-b363-792d88d7eef7@gmail.com> <c4b2dca8-f2b9-c187-9ee5-e7c4816848f5@gmail.com>
+ <CAM_iQpXLQtaBRBPmcGzUTUhNHiomos4eAvXy7kyrY+uAzpNt3g@mail.gmail.com> <5d89ba78-64b4-9c9b-c9f3-c67094343c3f@gmail.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
+Date: Fri, 9 Mar 2018 15:32:07 -0800
+Message-ID: <CAM_iQpXPO_9=sj1DiMRfNmhZkUnCaoJtWw2O82g9AKSYjRFrZA@mail.gmail.com>
+Subject: Re: WARNING in __proc_create
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: coreteam@netfilter.org, David Miller <davem@davemloft.net>,
+        Florian Westphal <fw@strlen.de>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        netfilter-devel@vger.kernel.org,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sending RPMH requests and waiting for response from the controller
-through a callback is common functionality across all platform drivers.
-To simplify drivers, add a library functions to create RPMH client and
-send resource state requests.
+On Fri, Mar 9, 2018 at 3:21 PM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
+>
+>
+> On 03/09/2018 03:05 PM, Cong Wang wrote:
+>>
+>>
+>> BTW, the warning itself is all about empty names, so perhaps
+>> it's better to fix them separately.
+>
+>
+> Huh ? You want more syzbot reports ? I do not.
 
-rpmh_write() is a synchronous blocking call that can be used to send
-active state requests.
+I always prefer one patch to fix one problem, and, as I already said,
+checking "." and ".." is probably not as trivial as checking empty.
 
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
----
+This why I believe 2 (or more) patches here are better than 1 single
+patch.
 
-Changes in v4:
-	- use const struct tcs_cmd in API
-	- remove wait count from this patch
-	- changed -EFAULT to -EINVAL
----
- drivers/soc/qcom/Makefile        |   4 +-
- drivers/soc/qcom/rpmh-internal.h |   2 +
- drivers/soc/qcom/rpmh-rsc.c      |   7 ++
- drivers/soc/qcom/rpmh.c          | 253 +++++++++++++++++++++++++++++++++++++++
- include/soc/qcom/rpmh.h          |  34 ++++++
- 5 files changed, 299 insertions(+), 1 deletion(-)
- create mode 100644 drivers/soc/qcom/rpmh.c
- create mode 100644 include/soc/qcom/rpmh.h
+BTW, I don't have any patch, it is so trivial that I don't want to spend
+my time on it.
 
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index cb6300f6a8e9..bb395c3202ca 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -7,7 +7,9 @@ obj-$(CONFIG_QCOM_PM)	+=	spm.o
- obj-$(CONFIG_QCOM_QMI_HELPERS)	+= qmi_helpers.o
- qmi_helpers-y	+= qmi_encdec.o qmi_interface.o
- obj-$(CONFIG_QCOM_RMTFS_MEM)	+= rmtfs_mem.o
--obj-$(CONFIG_QCOM_RPMH)	+=	rpmh-rsc.o
-+obj-$(CONFIG_QCOM_RPMH)		+= qcom_rpmh.o
-+qcom_rpmh-y			+= rpmh-rsc.o
-+qcom_rpmh-y			+= rpmh.o
- obj-$(CONFIG_QCOM_SMD_RPM)	+= smd-rpm.o
- obj-$(CONFIG_QCOM_SMEM) +=	smem.o
- obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
-diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
-index aa73ec4b3e42..125f9faec536 100644
---- a/drivers/soc/qcom/rpmh-internal.h
-+++ b/drivers/soc/qcom/rpmh-internal.h
-@@ -86,4 +86,6 @@ struct rsc_drv {
- 
- int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg);
- 
-+void rpmh_tx_done(const struct tcs_request *msg, int r);
-+
- #endif /* __RPM_INTERNAL_H__ */
-diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index f604101a4fc2..c5cde917dba6 100644
---- a/drivers/soc/qcom/rpmh-rsc.c
-+++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -252,6 +252,8 @@ static void tcs_notify_tx_done(unsigned long data)
- 	struct rsc_drv *drv = (struct rsc_drv *)data;
- 	struct tcs_response *resp;
- 	unsigned long flags;
-+	const struct tcs_request *msg;
-+	int err;
- 
- 	for (;;) {
- 		spin_lock_irqsave(&drv->drv_lock, flags);
-@@ -264,7 +266,10 @@ static void tcs_notify_tx_done(unsigned long data)
- 		list_del(&resp->list);
- 		spin_unlock_irqrestore(&drv->drv_lock, flags);
- 		trace_rpmh_notify_tx_done(drv, resp);
-+		msg = resp->msg;
-+		err = resp->err;
- 		free_response(resp);
-+		rpmh_tx_done(msg, err);
- 	}
- }
- 
-@@ -554,6 +559,8 @@ static int rpmh_rsc_probe(struct platform_device *pdev)
- 	/* Enable the active TCS to send requests immediately */
- 	write_tcs_reg(drv, RSC_DRV_IRQ_ENABLE, 0, 0, drv->tcs[ACTIVE_TCS].mask);
- 
-+	dev_set_drvdata(&pdev->dev, drv);
-+
- 	return devm_of_platform_populate(&pdev->dev);
- }
- 
-diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
-new file mode 100644
-index 000000000000..e3c7491e7baf
---- /dev/null
-+++ b/drivers/soc/qcom/rpmh.c
-@@ -0,0 +1,253 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/atomic.h>
-+#include <linux/interrupt.h>
-+#include <linux/jiffies.h>
-+#include <linux/kernel.h>
-+#include <linux/mailbox_client.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/types.h>
-+#include <linux/wait.h>
-+
-+#include <soc/qcom/rpmh.h>
-+
-+#include "rpmh-internal.h"
-+
-+#define RPMH_MAX_MBOXES			2
-+#define RPMH_TIMEOUT_MS			10000
-+
-+#define DEFINE_RPMH_MSG_ONSTACK(rc, s, q, name)		\
-+	struct rpmh_request name = {			\
-+		.msg = {				\
-+			.state = s,			\
-+			.cmds = name.cmd,		\
-+			.num_cmds = 0,			\
-+			.wait_for_compl = true,		\
-+		},					\
-+		.cmd = { { 0 } },			\
-+		.completion = q,			\
-+		.rc = rc,				\
-+	}
-+
-+/**
-+ * struct rpmh_request: the message to be sent to rpmh-rsc
-+ *
-+ * @msg: the request
-+ * @cmd: the payload that will be part of the @msg
-+ * @completion: triggered when request is done
-+ * @err: err return from the controller
-+ */
-+struct rpmh_request {
-+	struct tcs_request msg;
-+	struct tcs_cmd cmd[MAX_RPMH_PAYLOAD];
-+	struct completion *completion;
-+	struct rpmh_client *rc;
-+	int err;
-+};
-+
-+/**
-+ * struct rpmh_ctrlr: our representation of the controller
-+ *
-+ * @drv: the controller instance
-+ */
-+struct rpmh_ctrlr {
-+	struct rsc_drv *drv;
-+};
-+
-+/**
-+ * struct rpmh_client: the client object
-+ *
-+ * @dev: the platform device that is the owner
-+ * @ctrlr: the controller associated with this client.
-+ */
-+struct rpmh_client {
-+	struct device *dev;
-+	struct rpmh_ctrlr *ctrlr;
-+};
-+
-+static struct rpmh_ctrlr rpmh_rsc[RPMH_MAX_MBOXES];
-+static DEFINE_MUTEX(rpmh_ctrlr_mutex);
-+
-+void rpmh_tx_done(const struct tcs_request *msg, int r)
-+{
-+	struct rpmh_request *rpm_msg = container_of(msg, struct rpmh_request,
-+						    msg);
-+	struct completion *compl = rpm_msg->completion;
-+
-+	rpm_msg->err = r;
-+
-+	if (r)
-+		dev_err(rpm_msg->rc->dev,
-+			"RPMH TX fail in msg addr=%#x, err=%d\n",
-+			rpm_msg->msg.cmds[0].addr, r);
-+
-+	/* Signal the blocking thread we are done */
-+	if (compl)
-+		complete(compl);
-+}
-+EXPORT_SYMBOL(rpmh_tx_done);
-+
-+/**
-+ * wait_for_tx_done: Wait until the response is received.
-+ *
-+ * @rc: The RPMH client
-+ * @compl: The completion object
-+ * @addr: An addr that we sent in that request
-+ * @data: The data for the address in that request
-+ */
-+static int wait_for_tx_done(struct rpmh_client *rc,
-+			    struct completion *compl, u32 addr, u32 data)
-+{
-+	int ret;
-+
-+	might_sleep();
-+
-+	ret = wait_for_completion_timeout(compl,
-+					  msecs_to_jiffies(RPMH_TIMEOUT_MS));
-+	if (ret)
-+		dev_dbg(rc->dev,
-+			"RPMH response received addr=%#x data=%#x\n",
-+			addr, data);
-+	else
-+		dev_err(rc->dev,
-+			"RPMH response timeout addr=%#x data=%#x\n",
-+			addr, data);
-+
-+	return (ret > 0) ? 0 : -ETIMEDOUT;
-+}
-+
-+/**
-+ * __rpmh_write: send the RPMH request
-+ *
-+ * @rc: The RPMH client
-+ * @state: Active/Sleep request type
-+ * @rpm_msg: The data that needs to be sent (cmds).
-+ */
-+static int __rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
-+			struct rpmh_request *rpm_msg)
-+{
-+	int ret = -EINVAL;
-+
-+	rpm_msg->msg.state = state;
-+
-+	if (state == RPMH_ACTIVE_ONLY_STATE) {
-+		WARN_ON(irqs_disabled());
-+		ret = rpmh_rsc_send_data(rc->ctrlr->drv, &rpm_msg->msg);
-+		if (!ret)
-+			dev_dbg(rc->dev,
-+				"RPMH request sent addr=%#x, data=%i#x\n",
-+				rpm_msg->msg.cmds[0].addr,
-+				rpm_msg->msg.cmds[0].data);
-+		else
-+			dev_warn(rc->dev,
-+				 "Error in RPMH request addr=%#x, data=%#x\n",
-+				 rpm_msg->msg.cmds[0].addr,
-+				 rpm_msg->msg.cmds[0].data);
-+	}
-+
-+	return ret;
-+}
-+
-+/**
-+ * rpmh_write: Write a set of RPMH commands and block until response
-+ *
-+ * @rc: The RPMh handle got from rpmh_get_client
-+ * @state: Active/sleep set
-+ * @cmd: The payload data
-+ * @n: The number of elements in @cmd
-+ *
-+ * May sleep. Do not call from atomic contexts.
-+ */
-+int rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
-+	       const struct tcs_cmd *cmd, u32 n)
-+{
-+	DECLARE_COMPLETION_ONSTACK(compl);
-+	DEFINE_RPMH_MSG_ONSTACK(rc, state, &compl, rpm_msg);
-+	int ret;
-+
-+	if (IS_ERR_OR_NULL(rc) || !cmd || !n || n > MAX_RPMH_PAYLOAD)
-+		return -EINVAL;
-+
-+	memcpy(rpm_msg.cmd, cmd, n * sizeof(*cmd));
-+	rpm_msg.msg.num_cmds = n;
-+
-+	ret = __rpmh_write(rc, state, &rpm_msg);
-+	if (ret)
-+		return ret;
-+
-+	return wait_for_tx_done(rc, &compl, cmd[0].addr, cmd[0].data);
-+}
-+EXPORT_SYMBOL(rpmh_write);
-+
-+static struct rpmh_ctrlr *get_rpmh_ctrlr(struct platform_device *pdev)
-+{
-+	int i;
-+	struct rsc_drv *drv = dev_get_drvdata(pdev->dev.parent);
-+	struct rpmh_ctrlr *ctrlr = ERR_PTR(-EINVAL);
-+
-+	if (!drv)
-+		return ctrlr;
-+
-+	mutex_lock(&rpmh_ctrlr_mutex);
-+	for (i = 0; i < RPMH_MAX_MBOXES; i++) {
-+		if (rpmh_rsc[i].drv == drv) {
-+			ctrlr = &rpmh_rsc[i];
-+			goto unlock;
-+		}
-+	}
-+
-+	for (i = 0; i < RPMH_MAX_MBOXES; i++) {
-+		if (rpmh_rsc[i].drv == NULL) {
-+			ctrlr = &rpmh_rsc[i];
-+			ctrlr->drv = drv;
-+			break;
-+		}
-+	}
-+	WARN_ON(i == RPMH_MAX_MBOXES);
-+unlock:
-+	mutex_unlock(&rpmh_ctrlr_mutex);
-+	return ctrlr;
-+}
-+
-+/**
-+ * rpmh_get_client: Get the RPMh handle
-+ *
-+ * @pdev: the platform device which needs to communicate with RPM
-+ * accelerators
-+ * May sleep.
-+ */
-+struct rpmh_client *rpmh_get_client(struct platform_device *pdev)
-+{
-+	struct rpmh_client *rc;
-+
-+	rc = kzalloc(sizeof(*rc), GFP_KERNEL);
-+	if (!rc)
-+		return ERR_PTR(-ENOMEM);
-+
-+	rc->dev = &pdev->dev;
-+	rc->ctrlr = get_rpmh_ctrlr(pdev);
-+	if (IS_ERR(rc->ctrlr)) {
-+		kfree(rc);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	return rc;
-+}
-+EXPORT_SYMBOL(rpmh_get_client);
-+
-+/**
-+ * rpmh_release: Release the RPMH client
-+ *
-+ * @rc: The RPMh handle to be freed.
-+ */
-+void rpmh_release(struct rpmh_client *rc)
-+{
-+	kfree(rc);
-+}
-+EXPORT_SYMBOL(rpmh_release);
-diff --git a/include/soc/qcom/rpmh.h b/include/soc/qcom/rpmh.h
-new file mode 100644
-index 000000000000..95334d4c1ede
---- /dev/null
-+++ b/include/soc/qcom/rpmh.h
-@@ -0,0 +1,34 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef __SOC_QCOM_RPMH_H__
-+#define __SOC_QCOM_RPMH_H__
-+
-+#include <soc/qcom/tcs.h>
-+#include <linux/platform_device.h>
-+
-+struct rpmh_client;
-+
-+#if IS_ENABLED(CONFIG_QCOM_RPMH)
-+int rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
-+	       const struct tcs_cmd *cmd, u32 n);
-+
-+struct rpmh_client *rpmh_get_client(struct platform_device *pdev);
-+
-+void rpmh_release(struct rpmh_client *rc);
-+
-+#else
-+
-+static inline int rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
-+			     const struct tcs_cmd *cmd, u32 n)
-+{ return -ENODEV; }
-+
-+static inline struct rpmh_client *rpmh_get_client(struct platform_device *pdev)
-+{ return ERR_PTR(-ENODEV); }
-+
-+static inline void rpmh_release(struct rpmh_client *rc) { }
-+#endif /* CONFIG_QCOM_RPMH */
-+
-+#endif /* __SOC_QCOM_RPMH_H__ */
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>
+> I unblocked this report today [1], you can be sure that as soon
+> as syzbot gets the correct tag (Reported-by: ...), it will find the other
+> problems, which are currently on hold to avoid spam.
+>
+> [1] It has been sitting for a while here at Google, since January 28th.
+>    At some point you have to ping Pablo/Florian again ;)
+
+Sure, it can always find more problems... why just complain about
+this one alone? ;)
