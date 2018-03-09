@@ -1,80 +1,215 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932084AbeCIOVd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 09:21:33 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52674 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751096AbeCIOVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 09:21:32 -0500
-Subject: Re: [PATCH] KVM:arm/arm64: dcache need be coherent unconditionally
-To: Peng Hao <peng.hao2@zte.com.cn>, christoffer.dall@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-kernel@vger.kernel.org
-References: <1520633703-15121-1-git-send-email-peng.hao2@zte.com.cn>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <90dba814-2aa3-e0e3-9021-4c349c9f9165@arm.com>
-Date: Fri, 9 Mar 2018 14:21:29 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751192AbeCIO0J (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 09:26:09 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38922 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751147AbeCIO0H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 09:26:07 -0500
+Date: Fri, 9 Mar 2018 15:25:56 +0100
+From: Philipp Rudo <prudo@linux.vnet.ibm.com>
+To: Dave Young <dyoung@redhat.com>
+Cc: linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, x86@kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vivek Goyal <vgoyal@redhat.com>
+Subject: Re: [PATCH 00/11] kexec_file: Clean up purgatory load
+In-Reply-To: <20180309051913.GA9358@dhcp-128-65.nay.redhat.com>
+References: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
+        <20180309051913.GA9358@dhcp-128-65.nay.redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1520633703-15121-1-git-send-email-peng.hao2@zte.com.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18030914-0040-0000-0000-0000043CDEE3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030914-0041-0000-0000-000020E0033A
+Message-Id: <20180309152556.0ccf3cb1@ThinkPad>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-09_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803090182
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/03/18 22:15, Peng Hao wrote:
-> For emulation devices just like vga, keeping coherent dcache between
-> guest and host timely is needed.
-> Now the display of vnc-viewer will not update continuously and the
-> patch can fix up.
+Hi Dave,
+
+On Fri, 9 Mar 2018 13:19:40 +0800
+Dave Young <dyoung@redhat.com> wrote:
+
+> Hi Philipp,
+> On 02/26/18 at 04:16pm, Philipp Rudo wrote:
+> > 
+> > Hi everybody
+> > 
+> > following the discussion with Dave and AKASHI, here are the common code
+> > patches extracted from my recent patch set (Add kexec_file_load support to
+> > s390) [1]. The patches were extracted to allow upstream integration together
+> > with AKASHI's common code patches before the arch code gets adjusted to the
+> > new base.
+> > 
+> > The reason for this series is to prepare common code for adding
+> > kexec_file_load to s390 as well as cleaning up the mis-use of the sh_offset
+> > field during purgatory load. In detail this series contains:
+> > 
+> > Patch #1&2: Minor cleanups/fixes.
+> > 
+> > Patch #3-9: Clean up the purgatory load/relocation code. Especially remove
+> > the mis-use of the purgatory_info->sechdrs->sh_offset field, currently
+> > holding a pointer into either kexec_purgatory (ro) or purgatory_buf (rw)
+> > depending on the section. With these patches the section address will be
+> > calculated verbosely and sh_offset will contain the offset of the section
+> > in the stripped purgatory binary (purgatory_buf).
+> > 
+> > Patch #10: Allows architectures to set the purgatory load address. This
+> > patch is important for s390 as the kernel and purgatory have to be loaded
+> > to fixed addresses. In current code this is impossible as the purgatory
+> > load is opaque to the architecture.
+> > 
+> > Patch #11: Moves x86 purgatories sha implementation to common lib/
+> > directory to allow reuse in other architectures.
+> > 
+> > The patches apply to v4.16-rc3. There are no changes compared to [1] (all
+> > requested changes only affected s390 code). Please note that I had to touch
+> > arch code for x86 and power a little. In theory this should not change the
+> > behavior but I don't have a way to test it. Cross-compiling with
+> > defconfig [2] works fine for both.
+> > 
+> > Thanks
+> > Philipp
+> > 
+> > [1] http://lists.infradead.org/pipermail/kexec/2018-February/019926.html
+> > [2] On x86 with the orc unwinder and stack validation turned off. objtool
+> >     SEGFAULTs on s390...
+> > 
+> > Philipp Rudo (11):
+> >   kexec_file: Silence compile warnings
+> >   kexec_file: Remove checks in kexec_purgatory_load
+> >   kexec_file: Make purgatory_info->ehdr const
+> >   kexec_file: Search symbols in read-only kexec_purgatory
+> >   kexec_file: Use read-only sections in arch_kexec_apply_relocations*
+> >   kexec_file: Split up __kexec_load_puragory
+> >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 1
+> >   kexec_file: Simplify kexec_purgatory_setup_sechdrs 2
+> >   kexec_file: Remove mis-use of sh_offset field
+> >   kexec_file: Allow archs to set purgatory load address
+> >   kexec_file: Move purgatories sha256 to common code
+> > 
+> >  arch/powerpc/kernel/kexec_elf_64.c             |   9 +-
+> >  arch/x86/kernel/kexec-bzimage64.c              |   8 +-
+> >  arch/x86/kernel/machine_kexec_64.c             |  66 ++---
+> >  arch/x86/purgatory/Makefile                    |   3 +
+> >  arch/x86/purgatory/purgatory.c                 |   2 +-
+> >  include/linux/kexec.h                          |  38 +--
+> >  {arch/x86/purgatory => include/linux}/sha256.h |  10 +-
+> >  kernel/kexec_file.c                            | 375 ++++++++++++-------------
+> >  {arch/x86/purgatory => lib}/sha256.c           |   4 +-
+> >  9 files changed, 244 insertions(+), 271 deletions(-)
+> >  rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
+> >  rename {arch/x86/purgatory => lib}/sha256.c (99%)
+> > 
+> > -- 
+> > 2.13.5
+> >   
 > 
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> ---
->  virt/kvm/arm/mmu.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+> I did a test on x86, but it failed:
+> [   15.636489] kexec: Undefined symbol: memcpy
+> [   15.636496] kexec-bzImage64: Loading purgatory failed
+> [   33.603356] kexec: Undefined symbol: memcpy
+> [   33.603362] kexec-bzImage64: Loading purgatory failed
 > 
-> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> index ec62d1c..4a28395e 100644
-> --- a/virt/kvm/arm/mmu.c
-> +++ b/virt/kvm/arm/mmu.c
-> @@ -1416,8 +1416,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  			kvm_set_pfn_dirty(pfn);
->  		}
->  
-> -		if (fault_status != FSC_PERM)
-> -			clean_dcache_guest_page(pfn, PMD_SIZE);
-> +		clean_dcache_guest_page(pfn, PMD_SIZE);
->  
->  		if (exec_fault) {
->  			new_pmd = kvm_s2pmd_mkexec(new_pmd);
-> @@ -1438,8 +1437,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  			mark_page_dirty(kvm, gfn);
->  		}
->  
-> -		if (fault_status != FSC_PERM)
-> -			clean_dcache_guest_page(pfn, PAGE_SIZE);
-> +		clean_dcache_guest_page(pfn, PAGE_SIZE);
->  
->  		if (exec_fault) {
->  			new_pte = kvm_s2pte_mkexec(new_pte);
-> 
+> I think this relates to the sha256 splitting patch.
 
-I'm sorry, but I have to NAK this.
+I looked into this a little closer and i think i understood what happens. 
 
-You're papering over the fundamental issue that you're accessing a
-cacheable alias of a non cacheable memory. The architecture is very
-clear about why this doesn't work, and KVM implements the architecture.
+There is no definition of memcpy in arch/x86/boot/string.c, instead it's defined
+in arch/x86/boot/string.h as __buildin_memcpy (same for memset). Thus by
+switching to linux/string.h there is no more definition for it. Leaving us with
 
-If you want this to work, map your VGA device as cacheable, add cache
-maintenance to QEMU, or use another frame-buffer emulation that doesn't
-require such a gack.
+$ readelf -s purgatory.ro
+[...]
+ 45: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT  UND memcpy
+[...]
 
-Thanks,
+To solve this problem I see two possibilities (example patches are at the end of
+the mail):
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+1) Have arch dependent includes in lib/sha256.c
+2) Add makefile magic so memcpy is defined
+
+With both solutions the resulting purgatory.ro looks good. However both
+solutions aren't perfect. For example in 2) i had too mix the linux/string.h
+header with arch/x86/boot/string.c, because lib/string.c has too many
+dependencies and does not compile in the purgatory. On the other hand having
+arch dependent includes isn't that nice either ...
+
+What's your opinion on this?
+
+Thanks
+Philipp
+
+-----
+Example solution 1
+
+--- a/lib/sha256.c
++++ b/lib/sha256.c
+@@ -17,9 +17,14 @@
+ 
+ #include <linux/bitops.h>
+ #include <linux/sha256.h>
+-#include <linux/string.h>
+ #include <asm/byteorder.h>
+ 
++#ifdef CONFIG_X86
++#include "../arch/x86/boot/string.h"
++#else
++#include <linux/string.h>
++#endif /* CONFIG_X86 */
++
+ static inline u32 Ch(u32 x, u32 y, u32 z)
+ {
+ 	return z ^ (x & (y ^ z));
+
+-----
+Example solution 2
+
+--- a/arch/x86/purgatory/Makefile
++++ b/arch/x86/purgatory/Makefile
+@@ -1,7 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0
+ OBJECT_FILES_NON_STANDARD := y
+ 
+-purgatory-y := purgatory.o stack.o setup-x86_$(BITS).o sha256.o entry64.o string.o
++purgatory-y := purgatory.o stack.o setup-x86_$(BITS).o sha256.o entry64.o \
++	string.o memcpy_$(BITS).o memset_$(BITS).o
+ 
+ targets += $(purgatory-y)
+ PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
+@@ -9,6 +10,15 @@ PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
+ $(obj)/sha256.o: $(srctree)/lib/sha256.c
+ 	$(call if_changed_rule,cc_o_c)
+ 
++$(obj)/string.o: $(srctree)/arch/x86/boot/string.c
++	$(call if_changed_rule,cc_o_c)
++
++$(obj)/memset_$(BITS).o: $(srctree)/arch/x86/lib/memset_$(BITS).S
++	$(call if_changed_rule,as_o_S)
++
++$(obj)/memcpy_$(BITS).o: $(srctree)/arch/x86/lib/memcpy_$(BITS).S
++	$(call if_changed_rule,as_o_S)
++
+ LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined -nostdlib -z nodefaultlib
+ targets += purgatory.ro
+ 
