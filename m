@@ -1,295 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751564AbeCIHzh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 02:55:37 -0500
-Received: from vps.xff.cz ([195.181.215.36]:58608 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750848AbeCIHze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 02:55:34 -0500
-Date: Fri, 9 Mar 2018 08:55:31 +0100
-From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
-To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
-        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] [PATCH v3 06/16] drm/sun4i: Release exclusive
- clock lock when disabling TCON
-Message-ID: <20180309075531.jvwo72j4o6k2h7rg@core.my.home>
-Mail-Followup-To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>,
-        maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
-        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-References: <20180301213442.16677-1-jernej.skrabec@siol.net>
- <20180309001314.bu3zcv5gyqsc52fx@core.my.home>
- <20180309004455.5s2ohse4jpwinre5@core.my.home>
- <2311763.nDsHW3lYFU@jernej-laptop>
+        id S1751729AbeCIHz4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 02:55:56 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52392 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751596AbeCIHzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 02:55:55 -0500
+Date: Fri, 9 Mar 2018 15:55:47 +0800
+From: Dave Young <dyoung@redhat.com>
+To: AKASHI Takahiro <takahiro.akashi@linaro.org>, vgoyal@redhat.com,
+        bhe@redhat.com, mpe@ellerman.id.au, bauerman@linux.vnet.ibm.com,
+        prudo@linux.vnet.ibm.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, akpm@linux-foundation.org
+Subject: Re: [PATCH v2 0/7] kexec_file, x86, powerpc: refactoring for other
+ architecutres
+Message-ID: <20180309075547.GA6718@dhcp-128-65.nay.redhat.com>
+References: <20180306102303.9063-1-takahiro.akashi@linaro.org>
+ <20180308010502.GA2600@dhcp-128-65.nay.redhat.com>
+ <20180309060254.GA9728@dhcp-128-65.nay.redhat.com>
+ <20180309064412.GA5327@dhcp-128-65.nay.redhat.com>
+ <20180309071813.GE25863@linaro.org>
+ <20180309074613.GA6331@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2311763.nDsHW3lYFU@jernej-laptop>
+In-Reply-To: <20180309074613.GA6331@dhcp-128-65.nay.redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Fri, Mar 09, 2018 at 07:19:33AM +0100, Jernej Škrabec wrote:
-> Hi,
+On 03/09/18 at 03:46pm, Dave Young wrote:
+> Hi AKASHI,
 > 
-> Dne petek, 09. marec 2018 ob 01:44:55 CET je Ondřej Jirman napisal(a):
-> > Hi,
+> On 03/09/18 at 04:18pm, AKASHI Takahiro wrote:
+> > Dave,
 > > 
-> > I've debugged this further and it seems that the code has incorrect
-> > assumptions. See docs for mode_set_nofb.
-> > 
-> > https://elixir.bootlin.com/linux/v4.16-rc4/source/include/drm/drm_modeset_he
-> > lper_vtables.h#L209
-> >
-> 
-> Does this happen with https://github.com/jernejsk/linux-1/tree/h3_hdmi_v3 ?
-
-Haven't tested, but it probably does, looking at the code. Try
-restarting the X server a bunch of times.
-
-> I also tested running X, but I don't remember having the issue.
->  
-> > I've added traces to a few functions that call clk_.*exclusive.*()
-> > functions, and I see this after a few restarts of Xorg server:
-> > 
-> > [    0.783842] *** sun4i_tcon1_mode_set()
-> > [    0.783886] *** sun4i_tcon_channel_set_status(..., 1, true)
-> > [    6.881690] *** sun4i_tcon_channel_set_status(..., 1, false)
-> > [    6.881758] *** sun4i_tcon_channel_set_status(..., 1, true)
-> > [   52.335085] *** sun4i_tcon_channel_set_status(..., 1, false)
-> > [   52.335343] *** sun4i_tcon_channel_set_status(..., 1, true)
-> > [   68.921079] *** sun4i_tcon_channel_set_status(..., 1, false)
-> > [   68.921337] *** sun4i_tcon_channel_set_status(..., 1, true)
-> > 
-> > mode_set_nofb is called just once, yet sun4i_tcon_channel_set_status(..., 1,
-> > false) is called multiple times, which leads to unbalanced calls to
-> > clk_set_rate_exclusive and clk_rate_exclusive_put.
-> > 
-> > I don't know how to fix this.
-> 
-> Since there is no function to check if clock is protected, flag can be 
-> introduced within TCON which is set when clock rate is protected and unset 
-> when it is unprotected. That way we could track if clk_rate_exclusive_put() 
-> needs to be called or not.
-
-I think that will not help. Protection is set in sun4i_tcon1_mode_set()
-and that's called only once, but sun4i_tcon_channel_set_status(..., 1, false)
-can be called multiple times, so the first call would disable protection
-and the clock would be unprotected from then on, even though the display
-would be active.
-
-Perhaps the protection needs to be enabled in sun4i_tcon_channel_set_status(...,
-true).
-
-regards,
-  o.
-
-> Best regards,
-> Jernej
-> 
-> > 
-> > regards,
-> >   o.
-> > 
-> > On Fri, Mar 09, 2018 at 01:13:14AM +0100, 'Ondřej Jirman' via linux-sunxi 
-> wrote:
-> > > Hi Jernej,
-> > > 
-> > > On Thu, Mar 08, 2018 at 11:57:40PM +0100, Jernej Škrabec wrote:
-> > > > Hi,
-> > > > 
-> > > > Dne četrtek, 08. marec 2018 ob 23:47:17 CET je Ondřej Jirman napisal(a):
-> > > > > Hi,
+> > On Fri, Mar 09, 2018 at 02:44:12PM +0800, Dave Young wrote:
+> > > On 03/09/18 at 02:02pm, Dave Young wrote:
+> > > > On 03/08/18 at 09:05am, Dave Young wrote:
+> > > > > [Cc Andrew]
 > > > > > 
-> > > > > On Thu, Mar 01, 2018 at 10:34:32PM +0100, Jernej Skrabec wrote:
-> > > > > > Currently exclusive TCON clock lock is never released, which, for
-> > > > > > example, prevents changing resolution on HDMI.
+> > > > > On 03/06/18 at 07:22pm, AKASHI Takahiro wrote:
+> > > > > > This is a preparatory patch set for adding kexec_file support on arm64.
 > > > > > > 
-> > > > > > In order to fix that, release clock when disabling TCON. TCON is
-> > > > > > always
-> > > > > > disabled first before new mode is set.
+> > > > > > It was originally included in a arm64 patch set[1], but Philipp is also
+> > > > > > working on their kexec_file support on s390[2] and some changes are now
+> > > > > > conflicting.
 > > > > > > 
-> > > > > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > > > > > ---
+> > > > > > So these common parts were extracted and put into a separate patch set for
+> > > > > > better integration. What's more, my original patch#4 was split into a few
+> > > > > > small chunks for easier review after Dave's comment.
 > > > > > > 
-> > > > > >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 6 ++++--
-> > > > > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > > > > > As such, the resulting code is basically identical with my original, and
+> > > > > > the only *visible* differences are:
+> > > > > >   * renamings of _kexec_kernel_image_probe() and
+> > > > > >     _kimage_file_post_load_cleanup()
+> > > > > >   * change one of types of arguments at prepare_elf64_headers()
+> > > > > > Those, unfortunately, require a couple of trivial changes on the rest
+> > > > > > (#1, #6 to #13) of my arm64 kexec_file patch set[1].
 > > > > > > 
-> > > > > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index
-> > > > > > 1d714c06ec9d..7f6c4125c89f
-> > > > > > 100644
-> > > > > > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > > @@ -102,10 +102,12 @@ static void
-> > > > > > sun4i_tcon_channel_set_status(struct
-> > > > > > sun4i_tcon *tcon, int channel,>
+> > > > > > Patch#1 allows making a use of purgatory optional, particularly useful
+> > > > > > for arm64.
+> > > > > > Patch#2 commonalizes arch_kexec_kernel_{image_probe, image_load,
+> > > > > > verify_sig}() and arch_kimage_file_post_load_cleanup() across architectures.
+> > > > > > Patch#3-#7 is also intended to generalize parse_elf64_headers(), along with
+> > > > > > exclude_mem_range(), to be made best re-use of.
 > > > > > > 
-> > > > > >  		return;
-> > > > > >  	
-> > > > > >  	}
+> > > > > > [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-February/561182.html
+> > > > > > [2] http://lkml.iu.edu//hypermail/linux/kernel/1802.1/02596.html
 > > > > > > 
-> > > > > > -	if (enabled)
-> > > > > > +	if (enabled) {
 > > > > > > 
-> > > > > >  		clk_prepare_enable(clk);
+> > > > > > Changes in v2 (Mar 6, 2018)
+> > > > > > * use IS_ENABLED() instead of #ifdef's in kexec_calculate_store_digests() 
+> > > > > > * rename _kexec_kernel_*() and make them static for now except for
+> > > > > >   kexec_image_probe_default() which is actually used by arch(powerpc) code
+> > > > > >   (Note: kexec_image_post_load_cleanup_default() will also be exported by
+> > > > > >   arm64 patches.)
+> > > > > > * change a type of kernel_map in prepare_elf64_headers() to "int"
+> > > > > > * check for a total number of system ram regions in full_up_crash_elf_data()
+> > > > > >   and use vzalloc() instead of vmalloc()
 > > > > > > 
-> > > > > > -	else
-> > > > > > +	} else {
-> > > > > > +		clk_rate_exclusive_put(clk);
+> > > > > > AKASHI Takahiro (7):
+> > > > > >   kexec_file: make an use of purgatory optional
+> > > > > >   kexec_file,x86,powerpc: factor out kexec_file_ops functions
+> > > > > >   x86: kexec_file: purge system-ram walking from prepare_elf64_headers()
+> > > > > >   x86: kexec_file: remove X86_64 dependency from prepare_elf64_headers()
+> > > > > >   x86: kexec_file: lift CRASH_MAX_RANGES limit on crash_mem buffer
+> > > > > >   x86: kexec_file: clean up prepare_elf64_headers()
+> > > > > >   kexec_file, x86: move re-factored code to generic side
 > > > > > > 
-> > > > > >  		clk_disable_unprepare(clk);
+> > > > > >  arch/powerpc/Kconfig                        |   3 +
+> > > > > >  arch/powerpc/include/asm/kexec.h            |   2 +-
+> > > > > >  arch/powerpc/kernel/kexec_elf_64.c          |   2 +-
+> > > > > >  arch/powerpc/kernel/machine_kexec_file_64.c |  39 +---
+> > > > > >  arch/x86/Kconfig                            |   3 +
+> > > > > >  arch/x86/include/asm/kexec-bzimage64.h      |   2 +-
+> > > > > >  arch/x86/kernel/crash.c                     | 334 ++++++----------------------
+> > > > > >  arch/x86/kernel/kexec-bzimage64.c           |   2 +-
+> > > > > >  arch/x86/kernel/machine_kexec_64.c          |  45 +---
+> > > > > >  include/linux/kexec.h                       |  32 ++-
+> > > > > >  kernel/kexec_file.c                         | 240 +++++++++++++++++++-
+> > > > > >  11 files changed, 338 insertions(+), 366 deletions(-)
 > > > > > > 
-> > > > > > +	}
-> > > > > > 
-> > > > > >  }
-> > > > > 
-> > > > > At least in the linux-next/master I can't see clk_rate_exclusive_get 
-> call:
-> > > > It is in drm-misc/drm-misc-fixes:
-> > > > https://cgit.freedesktop.org/drm/drm-misc/commit/?h=drm-misc-fixes&id=79
-> > > > d103a565d16b1893d990b2ee5e0fe71767759f
-> > > > 
-> > > > My patch is also applied in same branch, so there should be no issues
-> > > > while
-> > > > merging all those branches.
-> > > > 
-> > > > linux-next doesn't have either patches currently:
-> > > > https://git.kernel.org/pub/
-> > > > scm/linux/kernel/git/next/linux-next.git/log/drivers/gpu/drm/sun4i
-> > > > 
-> > > > This is issue only if you manually apply one patch without the other.
-> > > 
-> > > I have (and had) both patches applied. There's perhaps some code path,
-> > > where sun4i_tcon_channel_set_status(..., false) is called in unbalanced
-> > > way with regards to clk_set_rate_exclusive().
-> > > 
-> > > The issue occurs when starting Xorg. But Xorg works fine.
-> > > 
-> > > regards,
-> > > 
-> > >   o.
-> > >   
-> > > > Best regards,
-> > > > Jernej
-> > > > 
-> > > > > $ git grep 'exclusive' linux-next/master -- drivers/gpu/drm/sun4i
-> > > > > 
-> > > > > linux-next/master:sun4i_hdmi.h:    * On sun5i the threshold is
-> > > > > exclusive,
-> > > > > i.e. does not include, linux-next/master:sun4i_tcon.c:
-> > > > > clk_rate_exclusive_put(clk); linux-next/master:sun4i_tcon.c:
-> > > > > clk_set_rate_exclusive(tcon->dclk, mode->crtc_clock * 1000);
-> > > > > linux-next/master:sun4i_tcon.c:   clk_set_rate_exclusive(tcon->sclk1,
-> > > > > mode->crtc_clock * 1000);
-> > > > > 
-> > > > > and the kernel complains too:
-> > > > > 
-> > > > > [  841.915161] ------------[ cut here ]------------
-> > > > > [  841.915187] WARNING: CPU: 0 PID: 273 at
-> > > > > /workspace/megous.com/orangepi-pc/linux-4.16/drivers/clk/clk.c:608
-> > > > > clk_rate_exclusive_put+0x48/0x4c [  841.915194] CPU: 0 PID: 273 Comm:
-> > > > > Xorg
-> > > > > Not tainted 4.16.0-rc4-00268-gbac2ecf73ed0 #13 [  841.915196] Hardware
-> > > > > name: Allwinner sun8i Family
-> > > > > [  841.915217] [<c0228440>] (unwind_backtrace) from [<c0225b90>]
-> > > > > (show_stack+0x10/0x14) [  841.915228] [<c0225b90>] (show_stack) from
-> > > > > [<c0b094bc>] (dump_stack+0x88/0x9c) [  841.915237] [<c0b094bc>]
-> > > > > (dump_stack) from [<c0240294>] (__warn+0xd4/0xf0) [  841.915244]
-> > > > > [<c0240294>] (__warn) from [<c0240380>] (warn_slowpath_null+0x40/0x48)
-> > > > > [
-> > > > > 841.915250] [<c0240380>] (warn_slowpath_null) from [<c0619b6c>]
-> > > > > (clk_rate_exclusive_put+0x48/0x4c) [  841.915261] [<c0619b6c>]
-> > > > > (clk_rate_exclusive_put) from [<c0694624>]
-> > > > > (sun4i_tcon_set_status+0x178/0x2f0) [  841.915269] [<c0694624>]
-> > > > > (sun4i_tcon_set_status) from [<c06930c0>]
-> > > > > (sun4i_crtc_atomic_disable+0x7c/0xe4) [  841.915279] [<c06930c0>]
-> > > > > (sun4i_crtc_atomic_disable) from [<c06637fc>]
-> > > > > (drm_atomic_helper_commit_modeset_disables+0x390/0x46c) [  841.915288]
-> > > > > [<c06637fc>] (drm_atomic_helper_commit_modeset_disables) from
-> > > > > [<c0664df4>]
-> > > > > (drm_atomic_helper_commit_tail_rpm+0x18/0x64) [  841.915295]
-> > > > > [<c0664df4>]
-> > > > > (drm_atomic_helper_commit_tail_rpm) from [<c0664da8>]
-> > > > > (commit_tail+0x40/0x6c) [  841.915302] [<c0664da8>] (commit_tail) from
-> > > > > [<c06652b0>] (drm_atomic_helper_commit+0xbc/0x128) [  841.915311]
-> > > > > [<c06652b0>] (drm_atomic_helper_commit) from [<c0668d40>]
-> > > > > (restore_fbdev_mode_atomic+0x100/0x1fc) [  841.915319] [<c0668d40>]
-> > > > > (restore_fbdev_mode_atomic) from [<c0668f1c>]
-> > > > > (drm_fb_helper_dpms+0x50/0x130) [  841.915328] [<c0668f1c>]
-> > > > > (drm_fb_helper_dpms) from [<c0669e9c>] (drm_fb_helper_blank+0x54/0x90)
-> > > > > [
-> > > > > 841.915337] [<c0669e9c>] (drm_fb_helper_blank) from [<c06088cc>]
-> > > > > (fb_blank+0x54/0xa8) [  841.915343] [<c06088cc>] (fb_blank) from
-> > > > > [<c0608c80>] (do_fb_ioctl+0x360/0x62c) [  841.915351] [<c0608c80>]
-> > > > > (do_fb_ioctl) from [<c0362648>] (do_vfs_ioctl+0x9c/0x774) [ 
-> > > > > 841.915358]
-> > > > > [<c0362648>] (do_vfs_ioctl) from [<c0362d54>] (SyS_ioctl+0x34/0x58) [
-> > > > > 841.915364] [<c0362d54>] (SyS_ioctl) from [<c0201120>]
-> > > > > (ret_fast_syscall+0x0/0x4c) [  841.915368] Exception stack(0xe5fc5fa8
-> > > > > to
-> > > > > 0xe5fc5ff0)
-> > > > > [  841.915373] 5fa0:                   00674f10 00675460 0000000b
-> > > > > 00004611
-> > > > > 00000001 00000000 [  841.915379] 5fc0: 00674f10 00675460 00000001
-> > > > > 00000036
-> > > > > 00650474 00000000 006504a4 00675df8 [  841.915382] 5fe0: b61a502c
-> > > > > be8acb2c
-> > > > > b6192c38 b6b152ec
-> > > > > [  841.915386] ---[ end trace fa81b956197707f8 ]---
-> > > > > 
-> > > > > It looks like clk_rate_exclusive_put inside
-> > > > > sun4i_tcon_channel_set_status is called without first calling some
-> > > > > function that would call
-> > > > > clk_set_rate_exclusive, leading to unbalanced get/put calls.
-> > > > > 
-> > > > > regards,
-> > > > > 
-> > > > >   o.
-> > > > >   
-> > > > > >  static void sun4i_tcon_lvds_set_status(struct sun4i_tcon *tcon,
-> > > > > > 
-> > > > > > --
+> > > > > > -- 
 > > > > > > 2.16.2
 > > > > > > 
-> > > > > > --
-> > > > > > You received this message because you are subscribed to the Google
-> > > > > > Groups
-> > > > > > "linux-sunxi" group. To unsubscribe from this group and stop
-> > > > > > receiving
-> > > > > > emails from it, send an email to
-> > > > > > linux-sunxi+unsubscribe@googlegroups.com. For more options, visit
-> > > > > > https://groups.google.com/d/optout.
+> > > > > 
+> > > > > AKASHI, thanks for another update, looks good to me:
+> > > > > 
+> > > > > Acked-by: Dave Young <dyoung@redhat.com>
 > > > > 
-> > > > --
-> > > > You received this message because you are subscribed to the Google
-> > > > Groups "linux-sunxi" group. To unsubscribe from this group and stop
-> > > > receiving emails from it, send an email to
-> > > > linux-sunxi+unsubscribe@googlegroups.com. For more options, visit
-> > > > https://groups.google.com/d/optout.
+> > > > Hold on the ack, during today's tests kexec kernel can not boot, it
+> > > > hangs early.  Will see if it is caused by this series and come back
+> > > > later.
 > > > 
-> > > --
-> > > You received this message because you are subscribed to the Google Groups
-> > > "linux-sunxi" group. To unsubscribe from this group and stop receiving
-> > > emails from it, send an email to
-> > > linux-sunxi+unsubscribe@googlegroups.com. For more options, visit
-> > > https://groups.google.com/d/optout.
+> > > AKASHI, it seems the first patch causes the hang, can you take a look?
+> > 
+> > Sure, but can you first tell me specifics about what you have observed?
 > 
+> It is a kexec load test like below:
+> kexec -s -l /boot/vmlinuz-`uname -r` --reuse-cmdline
+> sync
+> sync
+> kexec -e
 > 
+> And it hangs after the message "Starting new kernel".   Now I'm not sure
+> how I tested the vmcore parsing before, maybe I forgot to add "-s"
+> option in kexec-tools..
+
+BTW kdump kernel also failed to boot.
+I use linus tree, the git HEAD is
+86f84779d8e9 (origin/master, origin/HEAD, master) Merge branch 'siginfo-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace
+
+It is a little odd for my testing, for kdump testing I did before, I do
+not need add "-s" explictly since Fedora will take it automatically in
+case Secure Boot and I always enabled Secure Boot.
+
 > 
+> Thanks
+> Dave
 > 
-> -- 
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+> > 
+> > Thanks,
+> > -Takahiro AKASHI
+> > 
+> > 
+> > > > 
+> > > > > 
+> > > > > Thanks
+> > > > > Dave
+> > > > 
+> > > > Thanks
+> > > > Dave
