@@ -1,209 +1,306 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932691AbeCIWEI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 17:04:08 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:34871 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932104AbeCIWEE (ORCPT
+        id S932864AbeCIWEY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 17:04:24 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:39422 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932804AbeCIWEW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 17:04:04 -0500
-X-Google-Smtp-Source: AG47ELvjJpqbIA5gDhjHqq6eFNRqbLDp4OLyAfGqdogJhcHkFaSE7MCrdmhgqVvdsif/L9fsfO4bRQ==
-Date: Fri, 9 Mar 2018 14:04:01 -0800
-From: Patrik Torstensson <totte@google.com>
-To: Milan Broz <gmazyland@gmail.com>
-Cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org, ebiggers@google.com,
-        samitolvanen@google.com, gkaiser@google.com, paulcrowley@google.com
-Subject: Re: [PATCH] Add an option to dm-verity to validate hashes at most
- once
-Message-ID: <20180309220359.GB21774@totte1.mtv.corp.google.com>
-References: <20180306231456.210504-1-totte@google.com>
- <c7e42498-8de2-2048-f53f-6de8557aadf4@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7e42498-8de2-2048-f53f-6de8557aadf4@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Fri, 9 Mar 2018 17:04:22 -0500
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 09/11] media: vsp1: Provide support for extended command pools
+Date: Fri,  9 Mar 2018 22:04:07 +0000
+Message-Id: <02dcefdd58c734623b9caf2513316380feb9f993.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Milan,
+VSPD and VSP-DL devices can provide extended display lists supporting
+extended command display list objects.
 
-Yes, that is correct that the attacks it protects against is when the underlying storage is offline. We have discussed if we should reset the bitmap at certain events but decided against it.
+These extended commands require their own dma memory areas for a header
+and body specific to the command type.
 
-Cheers,
- Patrik
+Implement a command pool to allocate all necessary memory in a single
+DMA allocation to reduce pressure on the TLB, and provide convenvient
+re-usable command objects for the entities to utilise.
 
-On Thu, Mar 08, 2018 at 01:35:05PM +0100, Milan Broz wrote:
-> On 03/07/2018 12:14 AM, Patrik Torstensson wrote:
-> > Add an option to dm-verity to validate hashes at most once
-> > to allow platforms that is CPU/memory contraint to be
-> > protected by dm-verity against offline attacks.
-> > 
-> > The option introduces a bitset that is used to check if
-> > a block has been validated before or not. A block can
-> > be validated more than once as there is no thread protection
-> > for the bitset.
-> 
-> Hi,
-> 
-> what happens, if a block is read, validated, marked in bitset and 
-> 
-> 1) something changes in the underlying device (data corruption, FTL hiccup,
-> intentional remapping to different device-mapper device through table change)
-> 
-> 2) user flushes all page caches
-> 
-> 3) the same block is read again.
-> 
-> Does it read and use unverified block from the corrupted device in this case?
-> 
-> (In general, just reading the whole device means de-facto verification deactivation.)
-> 
-> If so, your thread model assumes that you cannot attack underlying storage while
-> it is in operation, is it the correct assumption?
-> 
-> Milan
-> 
-> > 
-> > This patch has been developed and tested on entry-level
-> > Android Go devices.
-> > 
-> > Signed-off-by: Patrik Torstensson <totte@google.com>
-> > ---
-> >  drivers/md/dm-verity-target.c | 58 +++++++++++++++++++++++++++++++++--
-> >  drivers/md/dm-verity.h        |  1 +
-> >  2 files changed, 56 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
-> > index aedb8222836b..479d0af212bf 100644
-> > --- a/drivers/md/dm-verity-target.c
-> > +++ b/drivers/md/dm-verity-target.c
-> > @@ -32,6 +32,7 @@
-> >  #define DM_VERITY_OPT_LOGGING		"ignore_corruption"
-> >  #define DM_VERITY_OPT_RESTART		"restart_on_corruption"
-> >  #define DM_VERITY_OPT_IGN_ZEROES	"ignore_zero_blocks"
-> > +#define DM_VERITY_OPT_AT_MOST_ONCE	"check_at_most_once"
-> >  
-> >  #define DM_VERITY_OPTS_MAX		(2 + DM_VERITY_OPTS_FEC)
-> >  
-> > @@ -432,6 +433,19 @@ static int verity_bv_zero(struct dm_verity *v, struct dm_verity_io *io,
-> >  	return 0;
-> >  }
-> >  
-> > +/*
-> > + * Moves the bio iter one data block forward.
-> > + */
-> > +static inline void verity_bv_skip_block(struct dm_verity *v,
-> > +					struct dm_verity_io *io,
-> > +					struct bvec_iter *iter)
-> > +{
-> > +	struct bio *bio = dm_bio_from_per_bio_data(io,
-> > +						   v->ti->per_io_data_size);
-> > +
-> > +	bio_advance_iter(bio, iter, 1 << v->data_dev_block_bits);
-> > +}
-> > +
-> >  /*
-> >   * Verify one "dm_verity_io" structure.
-> >   */
-> > @@ -445,8 +459,15 @@ static int verity_verify_io(struct dm_verity_io *io)
-> >  
-> >  	for (b = 0; b < io->n_blocks; b++) {
-> >  		int r;
-> > +		sector_t cur_block = io->block + b;
-> >  		struct ahash_request *req = verity_io_hash_req(v, io);
-> >  
-> > +		if (v->validated_blocks &&
-> > +		    likely(test_bit(cur_block, v->validated_blocks))) {
-> > +			verity_bv_skip_block(v, io, &io->iter);
-> > +			continue;
-> > +		}
-> > +
-> >  		r = verity_hash_for_block(v, io, io->block + b,
-> >  					  verity_io_want_digest(v, io),
-> >  					  &is_zero);
-> > @@ -481,13 +502,17 @@ static int verity_verify_io(struct dm_verity_io *io)
-> >  			return r;
-> >  
-> >  		if (likely(memcmp(verity_io_real_digest(v, io),
-> > -				  verity_io_want_digest(v, io), v->digest_size) == 0))
-> > +				  verity_io_want_digest(v, io),
-> > +				  v->digest_size) == 0)) {
-> > +			if (v->validated_blocks)
-> > +				set_bit(cur_block, v->validated_blocks);
-> >  			continue;
-> > +		}
-> >  		else if (verity_fec_decode(v, io, DM_VERITY_BLOCK_TYPE_DATA,
-> > -					   io->block + b, NULL, &start) == 0)
-> > +					   cur_block, NULL, &start) == 0)
-> >  			continue;
-> >  		else if (verity_handle_err(v, DM_VERITY_BLOCK_TYPE_DATA,
-> > -					   io->block + b))
-> > +					   cur_block))
-> >  			return -EIO;
-> >  	}
-> >  
-> > @@ -740,6 +765,7 @@ static void verity_dtr(struct dm_target *ti)
-> >  	if (v->bufio)
-> >  		dm_bufio_client_destroy(v->bufio);
-> >  
-> > +	kvfree(v->validated_blocks);
-> >  	kfree(v->salt);
-> >  	kfree(v->root_digest);
-> >  	kfree(v->zero_digest);
-> > @@ -760,6 +786,26 @@ static void verity_dtr(struct dm_target *ti)
-> >  	kfree(v);
-> >  }
-> >  
-> > +static int verity_alloc_most_once(struct dm_verity *v)
-> > +{
-> > +	struct dm_target *ti = v->ti;
-> > +
-> > +	/* the bitset can only handle INT_MAX blocks */
-> > +	if (v->data_blocks > INT_MAX) {
-> > +		ti->error = "device too large to use check_at_most_once";
-> > +		return -E2BIG;
-> > +	}
-> > +
-> > +	v->validated_blocks = kvzalloc(BITS_TO_LONGS(v->data_blocks)
-> > +				     * sizeof(unsigned long), GFP_KERNEL);
-> > +	if (!v->validated_blocks) {
-> > +		ti->error = "failed to allocate bitset for check_at_most_once";
-> > +		return -ENOMEM;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static int verity_alloc_zero_digest(struct dm_verity *v)
-> >  {
-> >  	int r = -ENOMEM;
-> > @@ -829,6 +875,12 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
-> >  			}
-> >  			continue;
-> >  
-> > +		} else if (!strcasecmp(arg_name, DM_VERITY_OPT_AT_MOST_ONCE)) {
-> > +			r = verity_alloc_most_once(v);
-> > +			if (r)
-> > +				return r;
-> > +			continue;
-> > +
-> >  		} else if (verity_is_fec_opt_arg(arg_name)) {
-> >  			r = verity_fec_parse_opt_args(as, v, &argc, arg_name);
-> >  			if (r)
-> > diff --git a/drivers/md/dm-verity.h b/drivers/md/dm-verity.h
-> > index b675bc015512..ace5ec781b5f 100644
-> > --- a/drivers/md/dm-verity.h
-> > +++ b/drivers/md/dm-verity.h
-> > @@ -63,6 +63,7 @@ struct dm_verity {
-> >  	sector_t hash_level_block[DM_VERITY_MAX_LEVELS];
-> >  
-> >  	struct dm_verity_fec *fec;	/* forward error correction */
-> > +	unsigned long *validated_blocks; /* bitset blocks validated */
-> >  };
-> >  
-> >  struct dm_verity_io {
-> > 
-> 
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_dl.c | 189 +++++++++++++++++++++++++++-
+ drivers/media/platform/vsp1/vsp1_dl.h |   3 +-
+ 2 files changed, 192 insertions(+)
+
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 36440a2a2c8b..6d17b8bfa21c 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -121,6 +121,30 @@ struct vsp1_dl_body_pool {
+ };
+ 
+ /**
++ * struct vsp1_cmd_pool - display list body pool
++ * @dma: DMA address of the entries
++ * @size: size of the full DMA memory pool in bytes
++ * @mem: CPU memory pointer for the pool
++ * @bodies: Array of DLB structures for the pool
++ * @free: List of free DLB entries
++ * @lock: Protects the pool and free list
++ * @vsp1: the VSP1 device
++ */
++struct vsp1_dl_cmd_pool {
++	/* DMA allocation */
++	dma_addr_t dma;
++	size_t size;
++	void *mem;
++
++	struct vsp1_dl_ext_cmd *cmds;
++	struct list_head free;
++
++	spinlock_t lock;
++
++	struct vsp1_device *vsp1;
++};
++
++/**
+  * struct vsp1_dl_list - Display list
+  * @list: entry in the display list manager lists
+  * @dlm: the display list manager
+@@ -176,6 +200,7 @@ struct vsp1_dl_manager {
+ 	struct vsp1_dl_list *pending;
+ 
+ 	struct vsp1_dl_body_pool *pool;
++	struct vsp1_dl_cmd_pool *autfld_cmds;
+ };
+ 
+ /* -----------------------------------------------------------------------------
+@@ -339,6 +364,139 @@ void vsp1_dl_body_write(struct vsp1_dl_body *dlb, u32 reg, u32 data)
+ }
+ 
+ /* -----------------------------------------------------------------------------
++ * Display List Extended Command Management
++ */
++
++enum vsp1_extcmd_type {
++	VSP1_EXTCMD_AUTODISP,
++	VSP1_EXTCMD_AUTOFLD,
++};
++
++struct vsp1_extended_command_info {
++	u16 opcode;
++	size_t body_size;
++} vsp1_extended_commands[] = {
++	[VSP1_EXTCMD_AUTODISP] = { 0x02, 96 },
++	[VSP1_EXTCMD_AUTOFLD]  = { 0x03, 160 },
++};
++
++/**
++ * vsp1_dl_cmd_pool_create - Create a pool of commands from a single allocation
++ * @vsp1: The VSP1 device
++ * @type: The command pool type
++ * @num_commands: The quantity of commands to allocate
++ *
++ * Allocate a pool of commands each with enough memory to contain the private
++ * data of each command. The allocation sizes are dependent upon the command
++ * type.
++ *
++ * Return a pointer to a pool on success or NULL if memory can't be allocated.
++ */
++struct vsp1_dl_cmd_pool *
++vsp1_dl_cmd_pool_create(struct vsp1_device *vsp1, enum vsp1_extcmd_type type,
++			unsigned int num_cmds)
++{
++	struct vsp1_dl_cmd_pool *pool;
++	unsigned int i;
++	size_t cmd_size;
++
++	pool = kzalloc(sizeof(*pool), GFP_KERNEL);
++	if (!pool)
++		return NULL;
++
++	pool->cmds = kcalloc(num_cmds, sizeof(*pool->cmds), GFP_KERNEL);
++	if (!pool->cmds) {
++		kfree(pool);
++		return NULL;
++	}
++
++	cmd_size = sizeof(struct vsp1_dl_ext_cmd_header) +
++		   vsp1_extended_commands[type].body_size;
++	cmd_size = ALIGN(cmd_size, 16);
++
++	pool->size = cmd_size * num_cmds;
++	pool->mem = dma_alloc_wc(vsp1->bus_master, pool->size, &pool->dma,
++				 GFP_KERNEL);
++	if (!pool->mem) {
++		kfree(pool->cmds);
++		kfree(pool);
++		return NULL;
++	}
++
++	spin_lock_init(&pool->lock);
++	INIT_LIST_HEAD(&pool->free);
++
++	for (i = 0; i < num_cmds; ++i) {
++		struct vsp1_dl_ext_cmd *cmd = &pool->cmds[i];
++		size_t cmd_offset = i * cmd_size;
++		size_t data_offset = sizeof(struct vsp1_dl_ext_cmd_header) +
++				     cmd_offset;
++
++		cmd->pool = pool;
++		cmd->cmd_opcode = vsp1_extended_commands[type].opcode;
++
++		/* TODO: Auto-disp can utilise more than one command per cmd */
++		cmd->num_cmds = 1;
++		cmd->cmds = pool->mem + cmd_offset;
++		cmd->cmd_dma = pool->dma + cmd_offset;
++
++		cmd->data = pool->mem + data_offset;
++		cmd->data_dma = pool->dma + data_offset;
++		cmd->data_size = vsp1_extended_commands[type].body_size;
++
++		list_add_tail(&cmd->free, &pool->free);
++	}
++
++	return pool;
++}
++
++struct vsp1_dl_ext_cmd *vsp1_dl_ext_cmd_get(struct vsp1_dl_cmd_pool *pool)
++{
++	struct vsp1_dl_ext_cmd *cmd = NULL;
++	unsigned long flags;
++
++	spin_lock_irqsave(&pool->lock, flags);
++
++	if (!list_empty(&pool->free)) {
++		cmd = list_first_entry(&pool->free, struct vsp1_dl_ext_cmd,
++				       free);
++		list_del(&cmd->free);
++	}
++
++	spin_unlock_irqrestore(&pool->lock, flags);
++
++	return cmd;
++}
++
++void vsp1_dl_ext_cmd_put(struct vsp1_dl_ext_cmd *cmd)
++{
++	unsigned long flags;
++
++	if (!cmd)
++		return;
++
++	/* Reset flags, these mark data usage */
++	cmd->flags = 0;
++
++	spin_lock_irqsave(&cmd->pool->lock, flags);
++	list_add_tail(&cmd->free, &cmd->pool->free);
++	spin_unlock_irqrestore(&cmd->pool->lock, flags);
++}
++
++void vsp1_dl_ext_cmd_pool_destroy(struct vsp1_dl_cmd_pool *pool)
++{
++	if (!pool)
++		return;
++
++	if (pool->mem)
++		dma_free_wc(pool->vsp1->bus_master, pool->size, pool->mem,
++			    pool->dma);
++
++	kfree(pool->cmds);
++	kfree(pool);
++}
++
++/* ----------------------------------------------------------------------------
+  * Display List Transaction Management
+  */
+ 
+@@ -442,6 +600,12 @@ static void __vsp1_dl_list_put(struct vsp1_dl_list *dl)
+ 
+ 	vsp1_dl_list_bodies_put(dl);
+ 
++	vsp1_dl_ext_cmd_put(dl->pre_cmd);
++	vsp1_dl_ext_cmd_put(dl->post_cmd);
++
++	dl->pre_cmd = NULL;
++	dl->post_cmd = NULL;
++
+ 	/*
+ 	 * body0 is reused as as an optimisation as presently every display list
+ 	 * has at least one body, thus we reinitialise the entries list
+@@ -863,6 +1027,15 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
+ 		list_add_tail(&dl->list, &dlm->free);
+ 	}
+ 
++	if (vsp1_feature(vsp1, VSP1_HAS_EXT_DL)) {
++		dlm->autfld_cmds = vsp1_dl_cmd_pool_create(vsp1,
++					VSP1_EXTCMD_AUTOFLD, prealloc);
++		if (!dlm->autfld_cmds) {
++			vsp1_dlm_destroy(dlm);
++			return NULL;
++		}
++	}
++
+ 	return dlm;
+ }
+ 
+@@ -879,4 +1052,20 @@ void vsp1_dlm_destroy(struct vsp1_dl_manager *dlm)
+ 	}
+ 
+ 	vsp1_dl_body_pool_destroy(dlm->pool);
++	vsp1_dl_ext_cmd_pool_destroy(dlm->autfld_cmds);
++}
++
++struct vsp1_dl_ext_cmd *vsp1_dlm_get_autofld_cmd(struct vsp1_dl_list *dl)
++{
++	struct vsp1_dl_manager *dlm = dl->dlm;
++	struct vsp1_dl_ext_cmd *cmd;
++
++	if (dl->pre_cmd)
++		return dl->pre_cmd;
++
++	cmd = vsp1_dl_ext_cmd_get(dlm->autfld_cmds);
++	if (cmd)
++		dl->pre_cmd = cmd;
++
++	return cmd;
+ }
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.h b/drivers/media/platform/vsp1/vsp1_dl.h
+index 4898b21dc840..3009912ddefb 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.h
++++ b/drivers/media/platform/vsp1/vsp1_dl.h
+@@ -23,6 +23,7 @@ struct vsp1_dl_manager;
+ 
+ /**
+  * struct vsp1_dl_ext_cmd - Extended Display command
++ * @pool: pool to which this command belongs
+  * @free: entry in the pool of free commands list
+  * @cmd_opcode: command type opcode
+  * @flags: flags used by the command
+@@ -34,6 +35,7 @@ struct vsp1_dl_manager;
+  * @data_size: size of the @data_dma memory in bytes
+  */
+ struct vsp1_dl_ext_cmd {
++	struct vsp1_dl_cmd_pool *pool;
+ 	struct list_head free;
+ 
+ 	u8 cmd_opcode;
+@@ -56,6 +58,7 @@ struct vsp1_dl_manager *vsp1_dlm_create(struct vsp1_device *vsp1,
+ void vsp1_dlm_destroy(struct vsp1_dl_manager *dlm);
+ void vsp1_dlm_reset(struct vsp1_dl_manager *dlm);
+ bool vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm);
++struct vsp1_dl_ext_cmd *vsp1_dlm_get_autofld_cmd(struct vsp1_dl_list *dl);
+ 
+ struct vsp1_dl_list *vsp1_dl_list_get(struct vsp1_dl_manager *dlm);
+ void vsp1_dl_list_put(struct vsp1_dl_list *dl);
+-- 
+git-series 0.9.1
