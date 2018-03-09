@@ -1,145 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751198AbeCIKzY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:55:24 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:54831 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750937AbeCIKzX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 05:55:23 -0500
-Date: Fri, 9 Mar 2018 02:55:15 -0800
-From: tip-bot for Ingo Molnar <tipbot@zytor.com>
-Message-ID: <tip-82b691bedf05f258f1c86c96ee574b0d7795c0a1@git.kernel.org>
-Cc: mingo@kernel.org, linux-kernel@vger.kernel.org, juliac@eso.teric.us,
-        hpa@zytor.com, bigeasy@linutronix.de, tglx@linutronix.de,
-        rostedt@goodmis.org
-Reply-To: tglx@linutronix.de, bigeasy@linutronix.de, rostedt@goodmis.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, juliac@eso.teric.us,
-        mingo@kernel.org
-In-Reply-To: <20180227164808.10093-3-bigeasy@linutronix.de>
-References: <20180227164808.10093-3-bigeasy@linutronix.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] softirq: Consolidate common code in
- tasklet_[hi]_action()
-Git-Commit-ID: 82b691bedf05f258f1c86c96ee574b0d7795c0a1
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1751065AbeCIK5v (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:57:51 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:51832 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750912AbeCIK5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 05:57:50 -0500
+Date: Fri, 9 Mar 2018 11:57:35 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Chun-Yi Lee <jlee@suse.com>, Will Deacon <will.deacon@arm.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        "Neri, Ricardo" <ricardo.neri@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        "Zijlstra, Peter" <peter.zijlstra@intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Williams, Dan J" <dan.j.williams@intel.com>
+Subject: Re: [PATCH V2 2/3] efi: Introduce efi_rts_workqueue and some
+ infrastructure to invoke all efi_runtime_services()
+Message-ID: <20180309105735.GB10753@pd.tnic>
+References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com>
+ <1520292190-5027-3-git-send-email-sai.praneeth.prakhya@intel.com>
+ <20180307121047.GG23662@pd.tnic>
+ <FFF73D592F13FD46B8700F0A279B802F2E5818E4@ORSMSX114.amr.corp.intel.com>
+ <20180308140830.GE21166@pd.tnic>
+ <3908561D78D1C84285E8C5FCA982C28F7B392450@ORSMSX110.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7B392450@ORSMSX110.amr.corp.intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  82b691bedf05f258f1c86c96ee574b0d7795c0a1
-Gitweb:     https://git.kernel.org/tip/82b691bedf05f258f1c86c96ee574b0d7795c0a1
-Author:     Ingo Molnar <mingo@kernel.org>
-AuthorDate: Tue, 27 Feb 2018 17:48:08 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 9 Mar 2018 11:50:55 +0100
+On Thu, Mar 08, 2018 at 05:05:44PM +0000, Luck, Tony wrote:
+> > "Hence, pstore calls efi_runtime_services() without using efi_rts_wq" -
+> > that doesn't sound like optimal design to me. I would try to shove them
+> > all through the workqueue - not have exceptions.
+> 
+> But pstore is trying to save the last gasp dying words from a kernel that
+> has paniced. There isn't any guarantee that work queue will run. I think
+> it is reasonable to have some special case to make sure that we do save
+> the information.  But perhaps that special case should be to have pstore
+> call directly into the guts of the EFI code and not worry about all these
+> fancy switches of "mm" etc.
 
-softirq: Consolidate common code in tasklet_[hi]_action()
+I guess...
 
-tasklet_action() + tasklet_hi_action() are almost identical.  Move the
-common code from both function into __tasklet_action_common() and let
-both functions invoke it with different arguments.
+> This is true for the machine check logging case too, but the mitigation is
+> that the details of the error persist in the machine check banks across the
+> reset ... so all is not lost if the work queue isn't run here.
 
-[ bigeasy: Splitted out from RT's "tasklet: Prevent tasklets from going
-	   into infinite spin in RT" and added commit message]
+Well, I'm still hoping to have this wonderful and reliable
+logging facility one day where we can dump bytes into a
+persistent-across-reboots buffer and analyze them later. And yap, in
+that case, I don't mind if the code simply bypasses all the dancing in
+the OS and writes those bytes. Even switching pagetables would be too
+much for that case - just fire'n'forget writing from ring 0.
 
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Julia Cartwright <juliac@eso.teric.us>
-Link: https://lkml.kernel.org/r/20180227164808.10093-3-bigeasy@linutronix.de
+-- 
+Regards/Gruss,
+    Boris.
 
----
- kernel/softirq.c | 54 +++++++++++++++---------------------------------------
- 1 file changed, 15 insertions(+), 39 deletions(-)
-
-diff --git a/kernel/softirq.c b/kernel/softirq.c
-index 2394b009994f..177de3640c78 100644
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -490,14 +490,16 @@ void __tasklet_hi_schedule(struct tasklet_struct *t)
- }
- EXPORT_SYMBOL(__tasklet_hi_schedule);
- 
--static __latent_entropy void tasklet_action(struct softirq_action *a)
-+static void tasklet_action_common(struct softirq_action *a,
-+				  struct tasklet_head *tl_head,
-+				  unsigned int softirq_nr)
- {
- 	struct tasklet_struct *list;
- 
- 	local_irq_disable();
--	list = __this_cpu_read(tasklet_vec.head);
--	__this_cpu_write(tasklet_vec.head, NULL);
--	__this_cpu_write(tasklet_vec.tail, this_cpu_ptr(&tasklet_vec.head));
-+	list = tl_head->head;
-+	tl_head->head = NULL;
-+	tl_head->tail = &tl_head->head;
- 	local_irq_enable();
- 
- 	while (list) {
-@@ -519,47 +521,21 @@ static __latent_entropy void tasklet_action(struct softirq_action *a)
- 
- 		local_irq_disable();
- 		t->next = NULL;
--		*__this_cpu_read(tasklet_vec.tail) = t;
--		__this_cpu_write(tasklet_vec.tail, &(t->next));
--		__raise_softirq_irqoff(TASKLET_SOFTIRQ);
-+		*tl_head->tail = t;
-+		tl_head->tail = &t->next;
-+		__raise_softirq_irqoff(softirq_nr);
- 		local_irq_enable();
- 	}
- }
- 
--static __latent_entropy void tasklet_hi_action(struct softirq_action *a)
-+static __latent_entropy void tasklet_action(struct softirq_action *a)
- {
--	struct tasklet_struct *list;
--
--	local_irq_disable();
--	list = __this_cpu_read(tasklet_hi_vec.head);
--	__this_cpu_write(tasklet_hi_vec.head, NULL);
--	__this_cpu_write(tasklet_hi_vec.tail, this_cpu_ptr(&tasklet_hi_vec.head));
--	local_irq_enable();
--
--	while (list) {
--		struct tasklet_struct *t = list;
--
--		list = list->next;
--
--		if (tasklet_trylock(t)) {
--			if (!atomic_read(&t->count)) {
--				if (!test_and_clear_bit(TASKLET_STATE_SCHED,
--							&t->state))
--					BUG();
--				t->func(t->data);
--				tasklet_unlock(t);
--				continue;
--			}
--			tasklet_unlock(t);
--		}
-+	tasklet_action_common(a, this_cpu_ptr(&tasklet_vec), TASKLET_SOFTIRQ);
-+}
- 
--		local_irq_disable();
--		t->next = NULL;
--		*__this_cpu_read(tasklet_hi_vec.tail) = t;
--		__this_cpu_write(tasklet_hi_vec.tail, &(t->next));
--		__raise_softirq_irqoff(HI_SOFTIRQ);
--		local_irq_enable();
--	}
-+static __latent_entropy void tasklet_hi_action(struct softirq_action *a)
-+{
-+	tasklet_action_common(a, this_cpu_ptr(&tasklet_hi_vec), HI_SOFTIRQ);
- }
- 
- void tasklet_init(struct tasklet_struct *t,
+Good mailing practices for 400: avoid top-posting and trim the reply.
