@@ -1,94 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932325AbeCIUZ5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 15:25:57 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:42319 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751192AbeCIUZ4 (ORCPT
+        id S1751361AbeCIUmD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 15:42:03 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43624 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751211AbeCIUmC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 15:25:56 -0500
-Date: Fri, 9 Mar 2018 21:25:50 +0100
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Corey Minyard <cminyard@mvista.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>
-Subject: Re: Warning from swake_up_all in 4.14.15-rt13 non-RT
-Message-ID: <20180309202550.j66qphz3txupt55u@linutronix.de>
-References: <dd6ad0b5-569b-067d-257f-dbf15ffa7077@mvista.com>
- <20180306174604.nta5rcvfvrfdfftz@linutronix.de>
- <1704d817-8fb9-ce8f-1aa1-fe6e8b0c3919@mvista.com>
- <20180308174103.mduy5qq2ttlcvig3@linutronix.de>
- <a11f140e-c44f-f967-1cd4-d8a6f09d4d29@mvista.com>
- <20180309110418.lwtennjqwqcxh422@linutronix.de>
- <20180309174605.GC4064@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180309174605.GC4064@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180223
+        Fri, 9 Mar 2018 15:42:02 -0500
+From: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, mpe@ellerman.id.au, jeyu@kernel.org
+Cc: npiggin@gmail.com, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH] powerpc/64: Fix section mismatch warnings for early boot symbols
+Date: Fri,  9 Mar 2018 17:41:51 -0300
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18030920-0048-0000-0000-00000247A927
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008642; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01000675; UDB=6.00509017; IPR=6.00780006;
+ MB=3.00019944; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-09 20:41:58
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030920-0049-0000-0000-000044634352
+Message-Id: <1520628111-1361-1-git-send-email-mauricfo@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-09_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803090245
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-09 18:46:05 [+0100], Peter Zijlstra wrote:
-> On Fri, Mar 09, 2018 at 12:04:18PM +0100, Sebastian Andrzej Siewior wrote:
-> > +void swake_add_all_wq(struct swait_queue_head *q, struct wake_q_head *wq)
-> >  {
-> >  	struct swait_queue *curr;
-> >  
-> >  	while (!list_empty(&q->task_list)) {
-> >  
-> >  		curr = list_first_entry(&q->task_list, typeof(*curr),
-> >  					task_list);
-> >  		list_del_init(&curr->task_list);
-> > +		wake_q_add(wq, curr->task);
-> >  	}
-> >  }
-> > +EXPORT_SYMBOL(swake_add_all_wq);
-> >  
-> >  void swake_up(struct swait_queue_head *q)
-> >  {
-> > @@ -66,25 +62,14 @@ EXPORT_SYMBOL(swake_up);
-> >   */
-> >  void swake_up_all(struct swait_queue_head *q)
-> >  {
-> > +	unsigned long flags;
-> > +	DEFINE_WAKE_Q(wq);
-> >  
-> > +	raw_spin_lock_irqsave(&q->lock, flags);
-> > +	swake_add_all_wq(q, &wq);
-> > +	raw_spin_unlock_irqrestore(&q->lock, flags);
-> >  
-> > +	wake_up_q(&wq);
-> >  }
-> >  EXPORT_SYMBOL(swake_up_all);
-> 
-> This is fundamentally wrong. The whole point of wake_up_all() is that
-> _all_ is unbounded and should not ever land in a single critical
-> section, be it IRQ or PREEMPT disabled. The above does both.
+Some of the boot code located at the start of kernel text is "init"
+class, in that it only runs at boot time, however marking it as normal
+init code is problematic because that puts it into a different section
+located at the very end of kernel text.
 
-Is it just about the irqsave() usage or something else? I doubt it is
-the list walk. It is still unbound if not called from irq-off region.
-But it is now possible, I agree. The wake_q usage should be cheaper
-compared to IRQ off+on in each loop. And we wanted to do the wake ups
-with enabled interrupts - there is still the list_splice() from that
-attempt. Now it can be.
+e.g., in case the TOC is not set up, we may not be able to tolerate a
+branch trampoline to reach the init function.
 
-> Yes, wake_up_all() is crap, it is also fundamentally incompatible with
-> in-*irq usage. Nothing to be done about that.
-I still have (or need) completions which are swait based and do
-complete_all(). There are complete_all() caller which wake more than one
-waiter (that is PM and crypto from the reports I got once I added the
-WARN_ON())).
-The in-IRQ usage is !RT only and was there before.
+Credits: code and message are based on 2016 patch by Nicholas Piggin,
+and slightly modified so not to rename the powerpc code/symbol names.
 
-> So NAK on this.
-So I need completions to be swait based and do complete_all() from IRQ
-(on !RT, not RT). I have this one call which breaks the usage on !RT and
-has wake_up_all() in it in vanilla which needs an swait equivalent since
-it calls its callback from an rcu-sched section.
+    Subject: [PATCH] powerpc/64: quieten section mismatch warnings
+    From: Nicholas Piggin <npiggin at gmail.com>
+    Date: Fri Dec 23 00:14:19 AEDT 2016
 
-Sebastian
+Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+---
+ scripts/mod/modpost.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 9917f92..c65d5e2 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -1174,8 +1174,15 @@ static const struct sectioncheck *section_mismatch(
+  *   fromsec = text section
+  *   refsymname = *.constprop.*
+  *
++ * Pattern 6:
++ *   powerpc64 has boot functions that reference init, but must remain in text.
++ *   This pattern is identified by
++ *   tosec   = init section
++ *   fromsym = <function list>
++ *
+  **/
+-static int secref_whitelist(const struct sectioncheck *mismatch,
++static int secref_whitelist(const struct elf_info *elf,
++			    const struct sectioncheck *mismatch,
+ 			    const char *fromsec, const char *fromsym,
+ 			    const char *tosec, const char *tosym)
+ {
+@@ -1212,6 +1219,17 @@ static int secref_whitelist(const struct sectioncheck *mismatch,
+ 	    match(fromsym, optim_symbols))
+ 		return 0;
+ 
++	/* Check for pattern 6 */
++	if (elf->hdr->e_machine == EM_PPC64)
++		if (match(tosec, init_sections) &&
++		    (!strncmp(fromsym, "__boot_from_prom",
++				strlen("__boot_from_prom")) ||
++		     !strncmp(fromsym, "start_here_multiplatform",
++				strlen("start_here_multiplatform")) ||
++		     !strncmp(fromsym, "start_here_common",
++				strlen("start_here_common")))
++			return 0;
++
+ 	return 1;
+ }
+ 
+@@ -1552,7 +1570,7 @@ static void default_mismatch_handler(const char *modname, struct elf_info *elf,
+ 	tosym = sym_name(elf, to);
+ 
+ 	/* check whitelist - we may ignore it */
+-	if (secref_whitelist(mismatch,
++	if (secref_whitelist(elf, mismatch,
+ 			     fromsec, fromsym, tosec, tosym)) {
+ 		report_sec_mismatch(modname, mismatch,
+ 				    fromsec, r->r_offset, fromsym,
+-- 
+1.8.3.1
