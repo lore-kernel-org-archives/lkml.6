@@ -1,265 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932171AbeCINww (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 08:52:52 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38550 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751101AbeCINwu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 08:52:50 -0500
-Subject: Re: [RFC PATCH 1/5] ima: extend clone() with IMA namespace support
-To: "Serge E. Hallyn" <serge@hallyn.com>
-References: <20170720225033.21298-1-mkayaalp@linux.vnet.ibm.com>
- <20170720225033.21298-2-mkayaalp@linux.vnet.ibm.com>
- <20170725175317.GA727@mail.hallyn.com>
- <1501008554.3689.30.camel@HansenPartnership.com>
- <20170725190406.GA1883@mail.hallyn.com>
- <1501009739.3689.33.camel@HansenPartnership.com>
- <1501012082.27413.17.camel@linux.vnet.ibm.com>
- <645db815-7773-e351-5db7-89f38cd88c3d@linux.vnet.ibm.com>
- <20170725204622.GA4969@mail.hallyn.com>
- <97839865-b0ab-8e5d-114e-0603ef2edf6f@linux.vnet.ibm.com>
- <20180309025942.GA15295@mail.hallyn.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Mehmet Kayaalp <mkayaalp@cs.binghamton.edu>,
-        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>,
-        Yuqiong Sun <sunyuqiong1988@gmail.com>,
-        containers <containers@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        David Safford <david.safford@ge.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        ima-devel <linux-ima-devel@lists.sourceforge.net>,
-        Yuqiong Sun <suny@us.ibm.com>
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Date: Fri, 9 Mar 2018 08:52:42 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S1751159AbeCINzz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 08:55:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37982 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751056AbeCINzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 08:55:54 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D384120685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Fri, 9 Mar 2018 13:55:49 +0000
+From: James Hogan <jhogan@kernel.org>
+To: Matt Redfearn <matt.redfearn@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        Paul Burton <paul.burton@mips.com>,
+        Dengcheng Zhu <dengcheng.zhu@mips.com>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v3] MIPS: pm-cps: Block system suspend when a JTAG probe
+ is present
+Message-ID: <20180309135548.GF24558@saruman>
+References: <1519120696-30658-1-git-send-email-matt.redfearn@mips.com>
 MIME-Version: 1.0
-In-Reply-To: <20180309025942.GA15295@mail.hallyn.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18030913-0012-0000-0000-000015DEEA0F
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008641; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.01000539; UDB=6.00508935; IPR=6.00779869;
- MB=3.00019936; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-09 13:52:46
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030913-0013-0000-0000-000051CDED98
-Message-Id: <ec137677-34f8-df91-0d1c-6c6d6c951496@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-09_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803090176
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="NQTVMVnDVuULnIzU"
+Content-Disposition: inline
+In-Reply-To: <1519120696-30658-1-git-send-email-matt.redfearn@mips.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/08/2018 09:59 PM, Serge E. Hallyn wrote:
-> On Thu, Mar 08, 2018 at 09:04:52AM -0500, Stefan Berger wrote:
->> On 07/25/2017 04:46 PM, Serge E. Hallyn wrote:
->>> On Tue, Jul 25, 2017 at 04:11:29PM -0400, Stefan Berger wrote:
->>>> On 07/25/2017 03:48 PM, Mimi Zohar wrote:
->>>>> On Tue, 2017-07-25 at 12:08 -0700, James Bottomley wrote:
->>>>>> On Tue, 2017-07-25 at 14:04 -0500, Serge E. Hallyn wrote:
->>>>>>> On Tue, Jul 25, 2017 at 11:49:14AM -0700, James Bottomley wrote:
->>>>>>>> On Tue, 2017-07-25 at 12:53 -0500, Serge E. Hallyn wrote:
->>>>>>>>> On Thu, Jul 20, 2017 at 06:50:29PM -0400, Mehmet Kayaalp wrote:
->>>>>>>>>> From: Yuqiong Sun <suny@us.ibm.com>
->>>>>>>>>>
->>>>>>>>>> Add new CONFIG_IMA_NS config option.  Let clone() create a new
->>>>>>>>>> IMA namespace upon CLONE_NEWNS flag. Add ima_ns data structure
->>>>>>>>>> in nsproxy. ima_ns is allocated and freed upon IMA namespace
->>>>>>>>>> creation and exit. Currently, the ima_ns contains no useful IMA
->>>>>>>>>> data but only a dummy interface. This patch creates the
->>>>>>>>>> framework for namespacing the different aspects of IMA (eg.
->>>>>>>>>> IMA-audit, IMA-measurement, IMA-appraisal).
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Yuqiong Sun <suny@us.ibm.com>
->>>>>>>>>>
->>>>>>>>>> Changelog:
->>>>>>>>>> * Use CLONE_NEWNS instead of a new CLONE_NEWIMA flag
->>>>>>>>> Hi,
->>>>>>>>>
->>>>>>>>> So this means that every mount namespace clone will clone a new
->>>>>>>>> IMA namespace.  Is that really ok?
->>>>>>>> Based on what: space concerns (struct ima_ns is reasonably small)?
->>>>>>>> or whether tying it to the mount namespace is the correct thing to
->>>>>>>> do.  On
->>>>>>> Mostly the latter.  The other would be not so much space concerns as
->>>>>>> time concerns.  Many things use new mounts namespaces, and we
->>>>>>> wouldn't want multiple IMA calls on all file accesses by all of
->>>>>>> those.
->>>>>>>
->>>>>>>> the latter, it does seem that this should be a property of either
->>>>>>>> the mount or user ns rather than its own separate ns.  I could see
->>>>>>>> a use where even a container might want multiple ima keyrings
->>>>>>>> within the container (say containerised apache service with
->>>>>>>> multiple tenants), so instinct tells me that mount ns is the
->>>>>>>> correct granularity for this.
->>>>>>> I wonder whether we could use echo 1 > /sys/kernel/security/ima/newns
->>>>>>> as the trigger for requesting a new ima ns on the next
->>>>>>> clone(CLONE_NEWNS).
->>>>>> I could go with that, but what about the trigger being installing or
->>>>>> updating the keyring?  That's the only operation that needs namespace
->>>>>> separation, so on mount ns clone, you get a pointer to the old ima_ns
->>>>>> until you do something that requires a new key, which then triggers the
->>>>>> copy of the namespace and installing it?
->>>>> It isn't just the keyrings that need to be namespaced, but the
->>>>> measurement list and policy as well.
->>>>>
->>>>> IMA-measurement, IMA-appraisal and IMA-audit are all policy based.
->>>>>
->>>>> As soon as the namespace starts, measurements should be added to the
->>>>> namespace specific measurement list, not it's parent.
->>> Shouldn't it be both?
->>>
->>> If not, then it seems to me this must be tied to user namespace.
->>>
->>>> IMA is about measuring things, logging what was executed, and
->>>> finally someone looking at the measurement log and detecting
->>>> 'things'. So at least one attack that needs to be prevented is a
->>>> malicious person opening an IMA namespace, executing something
->>>> malicious, and not leaving any trace on the host because all the
->>>> logs went into the measurement list of the IMA namespace, which
->>>> disappeared. That said, I am wondering whether there has to be a
->>>> minimum set of  namespaces (PID, UTS) providing enough 'isolation'
->>>> that someone  may actually open an IMA namespace and run their code.
->>>> To avoid leaving no traces one could argue to implement recursive
->>>> logging, so something that is logged inside the namespace will be
->>>> detected in all parent containers up to the init_ima_ns (host)
->>>> because it's logged (and TPM extended) there as well. The challenge
->>>> with that is that logging costs memory and that can be abused as
->>>> well until the machine needs a reboot... I guess the solution could
->>>> be requesting an IMA namespace in one way or another but requiring
->>>> several other namespace flags in the clone() to actually 'get' it.
->>>> Jumping namespaces with setns() may have to be restricted as well
->>>> once there is an IMA namespace.
->>> Wait.  So if I create a new IMA namespace, the things I run in
->>> that namespace are not subject to the parent namespace policy?
->> We'll let an IMA namespace set its own policy and rules in that
->> policy will decide whether the child namespaces' measurements will
->> also be logged. This is to avoid a potentially huge log on the host.
->> However, the activities of root in namespaces may need to be logged
->> independently of what the policy rules say so that root's activities
->> in the TCB will always be tracked also if he operates in a temporary
->> mount/IMA namespace pair (and sharing the rest of the namespaces
->> with the host).
-> Thanks, Stefan.  Is there a particular paper where I can get a good
-> idea of what is and is not part of the goals and threat model here?
-Yuqiong is publishing a paper in this area. I believe the conference is 
-only later this year.
 
-Our goals are to enable IMA measurements, appraisal, and auditing inside 
-a container using namespaces. IMA measurements are about logging files 
-that were read or executables that were started on a machine, appraisal 
-is about locking down the machine and only allowing files to be accessed 
-that have been properly signed. We certainly want to prevent the abuse 
-of namespaces by users to do things that go undetected. A primary 
-concern are activities of root in the TCB.
+--NQTVMVnDVuULnIzU
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Support for IMA in namespaces should enable the following:
+On Tue, Feb 20, 2018 at 09:58:16AM +0000, Matt Redfearn wrote:
+> If a JTAG probe is connected to a MIPS cluster, then the CPC detects it
+> and latches the CPC.STAT_CONF.EJTAG_PROBE bit to 1. While set,
+> attempting to send a power-down command to a core will be blocked, and
+> the CPC will instead send the core to clock-off state. This can
+> interfere with systems fully entering a low power state where all
+> cores, CM, GIC, etc are powered down.
+>=20
+> Detect that a JTAG probe is / has been connected to the cluster and
+> block the suspend attempt.
+>=20
+> Attempting to suspend the system while a JTAG probe is connected now
+> yields:
+>  # echo mem > /sys/power/state
+>  [   11.654000] PM: Syncing filesystems ... done.
+>  [   11.658000] JTAG probe is connected - abort suspend
+>  -sh: echo: write error: Operation not permitted
+>  #
+>=20
+> To restore suspend, the JTAG probe should be disconnected or put into
+> quiescent state. Platform code can then clear the
+> CPC.STAT_CONF.EJTAG_PROBE bit.
+>=20
+> Reported-by: Ed Blake <ed.blake@sondrel.com>
+> Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
 
-- IMA policy for container (similar to the host):
-   - there should be an initial default policy for every IMA namespace 
-that measures activities inside the container
-   - the policy can be overwritten once with a user-defined policy that 
-may activate appraisal
+Thanks, applied for 4.17.
 
-- IMA policy extensions due to namespacing:
-   - an IMA policy should allow rules that define whether activities in 
-(all) child namespaces is to be measured (prevents huge logs on the host)
-   - to prevent root from spawning new IMA namespaces and doing things 
-undetected in the TCB, all activities of root are (recursively) measured 
-in all IMA namespaces independent of whether the policy enables logging 
-in child namespaces
+Cheers
+James
 
-- IMA appraisal and keys:
-   - each IMA namespace should have its own keyring so that each 
-container can have its files signed with different keys
-   - it should be possible to enforce that only certified keys are 
-loaded onto a keyring, similar to .ima on the host
+--NQTVMVnDVuULnIzU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-- IMA auditing:
-   - auditing should report activity in namespaces following the IMA 
-policy; root's activities in containers should be audited
+-----BEGIN PGP SIGNATURE-----
 
-- TPM and measurements:
-   - The IMA namespace that holds the logs should be configurable to 
-extend PCRs; since the single TPM of the host cannot be shared by 
-containers, each IMA namespace would have to be associated with its own 
-TPM instance (vTPM); measurement on the initial IMA namespace are 
-extended into the hardware TPM asdone today
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqikmQACgkQbAtpk944
+dnoj5w//b2/C5942IMlU/7MwmyAJO/OGYb1Tl1zaom2GiEfWU8LtKMtUJWY95B6C
+f0VWRrpSqB1yDi6Ipg89YtH0XuUG7P1VZ9OmWmwfnHI8NAF28l6Ypd6N2sDbHl/r
+8yikABtHHRPgwcpBTGDD9ottgIrcgy6UaNatUTVY8n4cldIDOrDTxUk3Jd9/BRRJ
+4b/SsLfewVMQb4oibuX134O5WxyWWLP/wfiLHs54dU61qOl4KvSmq8o42XKR3c2v
+ZEiXjxHVU6FBP/+uTjXwF2uVXS58RUAm9BZAJhcg3RAPqbkq9v4ycQ6WgOOHw9Re
+eutnwqjDoAEiLJX1vZ8v1MPyUZo4P59DBL9pSitqKUUpAS/ihNIIob7xXOT9I+4F
+yYr4P7NcQiSGp8cg/6nsJY8DGh91dSSmclvso0ov32XYfhMfvjV50NdaSjbxyN4o
+O6pkb05JeLGm3lLtcUAYBlfhql1TiO7lGnmjXNI4IU9+fTHZFA251qa84cXKU88U
+hO/aJpJVy2qyoOprphNXHBCRfwdA2IrCoI0vCAn2spi+s3BCOS08OUC8o1UaDHcR
+Q22RYCYaUVsABnvXGnGvs/g6lvFSMaLwH7bIv3t1OGR4hDhH4Tt4E78tFn36zceq
+KhI2Ka2aXPSJ0jiEgtRV+XQPT6zlWPfYGWkSDlH6x2ck5b/xl5Q=
+=bC1I
+-----END PGP SIGNATURE-----
 
-
-A concrete 'ab-use' case that we are trying to avoid is the following:
-- a user creating a privileged container that shares the host's mount 
-namespace: it would be unexpected if there is an IMA policy active on 
-the host that enforces file appraisal but in this case the IMA policy is 
-not enforced since a (hypothetical) IMA namespace of the host was not 
-joined since only the mount namespace of the host was joined. Now we 
-have two choices here: We tie the mount and IMA namespaces together via 
-sinlge clone flag, as proposed, and joining the mount namespace 
-automatically joins the associated IMA namespace (single setns()). Or we 
-make user space responsible for it and say if a mount namespace is 
-joined, find the associated IMA namespace (how to do that?), and join 
-both of them (2 setns() calls). Well, I think the former would preferred 
-over the latter.
-
-Let's assume we tie MNT and IMA together, then there are other scenarios 
-with switching through the other namespaces (UTS, PID, IPC, NET, USER, 
-CGROUP). I am not sure what is supposed to happen other than logging the 
-activity active in the current IMA namespace:
-
-What should happen with IMA logging, appraisal, and auditing if we 
-setns() through all available
-- PID namespaces and send signals: log, appraise, and audit file 
-activity following IMA policy
-- IPC namespaces and send messages via IPC: same as for PID
-- UTS namespaces and setting hostname:  same as for PID
-- NET namespaces and sending network traffic: same as for PID?
-- CGROUP namespaces and configuring cgroups: same as for PID?
-- USER: should now the keys of this USER namespace be active or the keys 
-of the original user namespace used during the clone()? other than that, 
-same as for PID?
-
-
->
-> My impression was that you are measuring things that are executed in an
-> effort to make sure that anything that can affect resource $x will
-> be at some point detectable.  But if you allow containers (not in
-> user namespace) to evade the ima measurements that seems to undermine
-> that, so that must not be your goal.  And even if you insist on a
-
-Yes, we want to prevent 'abuse', especially by root. See above.
-
-> user namespace, if some resource is owned by $uid, then $uid can create
-> a new namespace, evade the detection, and run malicious code to affect
-> the resource.
->
-> Unless you're counting on the container runtime to set a proper new
-> ima policy?  But if that's the case then you can't have every CLONE_NEWNS
-> start a new ima ns.
-
-The container runtime will be able to overwrite a default IMA policy 
-that is active upon spawning an IMA namespace. This policy has to be 
-useful in so far that it must enable a gapless measurement chain and for 
-example show keys that were loaded into keyrings or the IMA policy that 
-was loaded.
-
-    Stefan
-
->
-> So I think I need to start from scratch.
->
-> thanks,
-> -serge
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+--NQTVMVnDVuULnIzU--
