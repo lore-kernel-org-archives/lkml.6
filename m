@@ -1,62 +1,101 @@
-Return-Path: <kernel-hardening-return-12568-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELuIN5CJcyTlsRkIGNOcNbcJlYf95q8gj0039qbUjEje24YJsNUApAW8GLneO5u5/NVgz8N7
-ARC-Seal: i=1; a=rsa-sha256; t=1520990547; cv=none;
+Return-Path: <kernel-hardening-return-12318-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELvNfz+YW6ZA4XRSmY0o9VhlhajufR6o0Ii2gl/A802DitDuPu26U3qY6s4fke77DAK2lHvb
+ARC-Seal: i=1; a=rsa-sha256; t=1520600687; cv=none;
         d=google.com; s=arc-20160816;
-        b=kzvH/06mg/psl9YUm/DpUmX0w5jffsFS8teJUk1P4VQfC3x9ozAgl9zw9Whyr/kGS3
-         lem/Cpzp38cgB5IbN6LzJ337K6T219BzPsRpez90LUrPK8MPO4TxiW0yWKtM9l7ZUsit
-         IFVImGoGop6HSA2+smGHdjv4B8ZfOCPvIyVcKDo1fRT3dR4AqNmDwsKtjrkfiDZPx1r7
-         dtqhbrKMAmMKYsH0ePgW7HifNETZiU9zAl430gQeJxBTlbOn+bSnaAXOmrZyXkTqdmJ/
-         uIWRaaXRZ3+C3FYUO4tpKB703803Drt8fzD6DjSSoEgWg9M7y3RLVVs7AWRifzfu7M0n
-         kciw==
+        b=VOK3euQTUzn/8DN26VPOvusXEOspRvfAcWGUZjE3Kh3yEti3AT+CUkV+CkpXVMz3gi
+         myHyoZQqC3VQlaCzVHpH14qGCQcSYvs/7NaTPzV4kz2vuB1SWnGhe+O7M7TPd4cSZiId
+         p50SJTbv66/K67vOi79aW1nwhRETqFXq5b8PrUykgTTJgnMw9dJEVi1bN+sgS8BXY6+X
+         c5MyBwQ4ynSSUHUZWn81f27HkxjyT9mj6BGd1AVBBDWQR6zjTSEdc5acIjYx1mRadJu1
+         4cWkBjHesT2+CNtMjDPOIOiWYIlO0AWQX1iCaeH9fzE9t5DYrP3JlCewDuqN9NqHRpse
+         /+0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=CyxltPXvf2muZAlYOeAgnn0e4k6F004O4dohh444i1U=;
-        b=DcxYO92IwXaf+9itKVKG3PGEDScA2guyar9JROk0oXcPFEX1qxKdQQu+mcqsPTrxIT
-         NF9WSs0x6Y2ADP7qsF2kQcpDunhh9DrTQzU85aDW7HtGeBRdVs7MKZtu/Y+AAmNpPgQ7
-         M0sLnMxcA/f3JnFbD6yTup+DG362hF7q3skEGTzbNh2EwWrkrV4pacmH3heTBie9q9Io
-         MclDT+GFJJbwUUblEKZdfS3nLnL1ifhgA/BmNU8BaSyiEVRoOa9rx97alokdbeQdqfjg
-         Zwad6UnV+ow1KN4URuHKudSW8AeDb1dZzvvjWM5u1WvnzNQ/4btSD8YWeHNo2ndeeVUt
-         iKkQ==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature:delivered-to
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=4roMawmHVkWHMQkUhDc9pGvDbBjTTYou7GT5zEoKXqg=;
+        b=E+p8fcdMtLcd+mxYa+UbtvOFMTNgDXIyyouMoYFNyAEry2rDMn+AGeU/o4ZKJ8lBB7
+         nLeP5oDIuhZ+XKWHRXA+4gmDC8lDChgjR0LDI5lhuesPjJ0d+YZR/eENDyRsg8rkg/nW
+         E4VVYQgpVtAprSPSTZNQrkskvsO/YboTPKe8i3KGcuobPbQvRuuehEyrUHWWLewDddi5
+         M9BcyF0kE3S0rRyul3gSCoTuGJQ88Zqxn9m3I3FgmGhaoMNgNIrrMW5a6coFeScmW6yZ
+         4frHjGbNOez/guUjOXrB+hZTK76QQWxTwGlOSMm/hokCDrm3o2TVHKsYzqxkxxkiGsTX
+         MF/Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=poA3m1kG;
-       spf=pass (google.com: domain of kernel-hardening-return-12568-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12568-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hCz8htSr;
+       spf=pass (google.com: domain of kernel-hardening-return-12318-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12318-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=poA3m1kG;
-       spf=pass (google.com: domain of kernel-hardening-return-12568-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12568-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hCz8htSr;
+       spf=pass (google.com: domain of kernel-hardening-return-12318-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12318-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-MIME-Version: 1.0
-In-Reply-To: <CA+DvKQK9jRe5YOk_K4DzBYkh2VUys56XbaYZRGs0fn2WJNT+nQ@mail.gmail.com>
-References: <1520598613-3641-1-git-send-email-andreaschristofo@gmail.com>
- <5AA464DE.90100@broadcom.com> <CA+DvKQ+hbMoWJdOuQB5n+eVF4ePf=kVuRiMbdtTUZ8ars4Pz4A@mail.gmail.com>
- <423b529d48c54eba9f7ed51922814d46@AcuMS.aculab.com> <CA+DvKQK9jRe5YOk_K4DzBYkh2VUys56XbaYZRGs0fn2WJNT+nQ@mail.gmail.com>
-From: Daniel Micay <danielmicay@gmail.com>
-Date: Tue, 13 Mar 2018 21:22:08 -0400
-Message-ID: <CA+DvKQJYMYCVgxZPxqCnkZn2u-sunSUF6ZTTDJ0sauhX-1qEzw@mail.gmail.com>
+Date: Fri, 9 Mar 2018 18:21:24 +0530
+From: Himanshu Jha <morganfreeman6991@gmail.com>
+To: Andreas Christoforou <andreaschristofo@gmail.com>
+Cc: keescook@chromium.org, kernel-hardening@lists.openwall.com,
+	QCA ath9k Development <ath9k-devel@qca.qualcomm.com>,
+	Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] drivers: net: wireless: ath: ath9: dfs: remove VLA usage
-To: David Laight <David.Laight@aculab.com>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>,
-	Andreas Christoforou <andreaschristofo@gmail.com>, Kees Cook <keescook@chromium.org>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>,
-	QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, Kalle Valo <kvalo@codeaurora.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Netdev <netdev@vger.kernel.org>,
-	kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <20180309125124.GA17968@himanshu-Vostro-3559>
+References: <1520598613-3641-1-git-send-email-andreaschristofo@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520598613-3641-1-git-send-email-andreaschristofo@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594463764603415966?=
-X-GMAIL-MSGID: =?utf-8?q?1594874184107076602?=
+X-GMAIL-MSGID: =?utf-8?q?1594465387137769315?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-> I don't think the difference between C and C++ const pointer
-> conversions
+On Fri, Mar 09, 2018 at 02:30:12PM +0200, Andreas Christoforou wrote:
+> The kernel would like to have all stack VLA usage removed.
+> 
+> Signed-off-by: Andreas Christoforou <andreaschristofo@gmail.com>
+> ---
+>  drivers/net/wireless/ath/ath9k/dfs.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/ath/ath9k/dfs.c b/drivers/net/wireless/ath/ath9k/dfs.c
+> index 6fee9a4..cfb0f84 100644
+> --- a/drivers/net/wireless/ath/ath9k/dfs.c
+> +++ b/drivers/net/wireless/ath/ath9k/dfs.c
+> @@ -41,7 +41,6 @@ static const int BIN_DELTA_MAX		= 10;
+>  
+>  /* we need at least 3 deltas / 4 samples for a reliable chirp detection */
+>  #define NUM_DIFFS 3
+> -static const int FFT_NUM_SAMPLES	= (NUM_DIFFS + 1);
 
-I mean I don't think the difference between them was intended.
+Are you sure it is correct ?
+Look for other users of "FFT_NUM_SAMPLES".
+
+>  /* Threshold for difference of delta peaks */
+>  static const int MAX_DIFF		= 2;
+> @@ -101,7 +100,7 @@ static bool ath9k_check_chirping(struct ath_softc *sc, u8 *data,
+>  				 int datalen, bool is_ctl, bool is_ext)
+>  {
+>  	int i;
+> -	int max_bin[FFT_NUM_SAMPLES];
+> +	int max_bin[NUM_DIFFS + 1];
+>  	struct ath_hw *ah = sc->sc_ah;
+>  	struct ath_common *common = ath9k_hw_common(ah);
+>  	int prev_delta;
+
+Always compile test the driver before sending a patch.
+Also, patch title seems incorrect *ath9k*
+
+himanshu@himanshu-Vostro-3559:~/linux-next$ git log --oneline drivers/net/wireless/ath/ath9k/dfs.c
+626ab67 ath9k: dfs: use swap macro in ath9k_check_chirping
+50c8cd4 ath9k: remove cast to void pointer
+8fc2b61 ath9k: DFS - add pulse chirp detection for FCC
+....
+
+-- 
+Thanks
+Himanshu Jha
