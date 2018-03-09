@@ -1,154 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932100AbeCIOoc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 09:44:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42028 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751106AbeCIOo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 09:44:29 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A858B206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Fri, 9 Mar 2018 14:44:21 +0000
-From: James Hogan <jhogan@kernel.org>
-To: Jim Quinlan <jim2101024@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Robin Murphy <robin.murphy@arm.com>, Christoph Hellwig <hch@lst.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Kevin Cernekee <cernekee@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [PATCH v4 7/8] MIPS: BMIPS: Add PCI bindings for 7425, 7435
-Message-ID: <20180309144420.GG24558@saruman>
-References: <1516058925-46522-1-git-send-email-jim2101024@gmail.com>
- <1516058925-46522-8-git-send-email-jim2101024@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="t4apE7yKrX2dGgJC"
-Content-Disposition: inline
-In-Reply-To: <1516058925-46522-8-git-send-email-jim2101024@gmail.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+        id S932151AbeCIOtb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 09:49:31 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:42577 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751173AbeCIOt3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 09:49:29 -0500
+X-Google-Smtp-Source: AG47ELv7psoUH6J/ip63pPfEKPO+1CZXP6aR/oMlAgwNv+yEU08up/vA1itaAKSBeqHDAfoLAbdpJA==
+From: Shawn Guo <shawn.guo@linaro.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Jianguo Sun <sunjianguo1@huawei.com>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH v5 0/2] Add HiSilicon INNO USB2 PHY driver support
+Date: Fri,  9 Mar 2018 22:46:59 +0800
+Message-Id: <1520606821-22582-1-git-send-email-shawn.guo@linaro.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+It adds device tree bindings and driver support for HiSilicon INNO USB2
+PHY device, which can be found on HiSilicon STB SoC Hi3798CV200.
 
---t4apE7yKrX2dGgJC
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Changes for v5:
+ - Drop "syscon" from perictrl compatible in bindings example, as it's
+   not really required by inno-usb2-phy devices.
+ - Collect Rob's Reviewed-by tag on bindings.
 
-On Mon, Jan 15, 2018 at 06:28:44PM -0500, Jim Quinlan wrote:
-> diff --git a/arch/mips/boot/dts/brcm/bcm7425.dtsi b/arch/mips/boot/dts/brcm/bcm7425.dtsi
-> index e4fb9b6..02168d0 100644
-> --- a/arch/mips/boot/dts/brcm/bcm7425.dtsi
-> +++ b/arch/mips/boot/dts/brcm/bcm7425.dtsi
-> @@ -495,4 +495,30 @@
->  			status = "disabled";
->  		};
->  	};
-> +
-> +	pcie: pcie@10410000 {
-> +		reg = <0x10410000 0x830c>;
-> +		compatible = "brcm,bcm7425-pcie";
-> +		interrupts = <37>, <37>;
-> +		interrupt-names = "pcie", "msi";
-> +		interrupt-parent = <&periph_intc>;
-> +		#address-cells = <3>;
-> +		#size-cells = <2>;
-> +		linux,pci-domain = <0>;
-> +		brcm,enable-ssc;
-> +		bus-range = <0x00 0xff>;
-> +		msi-controller;
-> +		#interrupt-cells = <1>;
-> +		/* 4x128mb windows */
-> +		ranges = <0x2000000 0x0 0xd0000000 0xd0000000 0 0x08000000>,
-> +			 <0x2000000 0x0 0xd8000000 0xd8000000 0 0x08000000>,
-> +			 <0x2000000 0x0 0xe0000000 0xe0000000 0 0x08000000>,
-> +			 <0x2000000 0x0 0xe8000000 0xe8000000 0 0x08000000>;
-> +		interrupt-map-mask = <0 0 0 7>;
-> +		interrupt-map = <0 0 0 1 &periph_intc 33
-> +				 0 0 0 2 &periph_intc 34
-> +				 0 0 0 3 &periph_intc 35
-> +				 0 0 0 4 &periph_intc 36>;
+Changes for v4:
+ - Change device tree bindings to define each PHY port as a child node,
+   and therefore instead of adding a custom .of_xlate, we can use
+   of_phy_simple_xlate.  Also #phy-cells is 0 now, and consumers can
+   refer to the phy without any number cell in phandle.
 
-no status = "disabled" like the other dtsi?
+Changes for v3:
+ - Make combphy device be child of peripheral controller and use 'reg'
+   property for mapping combphy configuration register.
 
-> +	};
-> +
->  };
-> diff --git a/arch/mips/boot/dts/brcm/bcm7435.dtsi b/arch/mips/boot/dts/brcm/bcm7435.dtsi
-> index 1484e89..84881224 100644
-> --- a/arch/mips/boot/dts/brcm/bcm7435.dtsi
-> +++ b/arch/mips/boot/dts/brcm/bcm7435.dtsi
-> @@ -510,4 +510,31 @@
->  			status = "disabled";
->  		};
->  	};
-> +
-> +	pcie: pcie@10410000 {
-> +		reg = <0x10410000 0x930c>;
-> +		interrupts = <0x27>, <0x27>;
-> +		interrupt-names = "pcie", "msi";
-> +		interrupt-parent = <&periph_intc>;
-> +		compatible = "brcm,bcm7435-pcie";
+Changes for v2:
+ - Move DT bindings into a separate patch.
+ - Rename hisi_inno_phy_start() to hisi_inno_phy_init() for aligning
+   name with .init hook.
 
-Might be nice to be consistent in your property ordering between these
-two dtsi files. I for one would prefer compatible to be near the top
-too, if only for consistency with most other nodes in these files.
+Pengcheng Li (2):
+  dt-bindings: add bindings doc for HiSilicon INNO USB2 PHY
+  phy: add inno-usb2-phy driver for hi3798cv200 SoC
 
-> +		#address-cells = <3>;
-> +		#size-cells = <2>;
-> +		linux,pci-domain = <0>;
-> +		brcm,enable-ssc;
-> +		bus-range = <0x00 0xff>;
-> +		msi-controller;
-> +		#interrupt-cells = <1>;
-> +		/* 4x128mb windows */
-> +		ranges = <0x2000000 0x0 0xd0000000 0xd0000000 0 0x08000000>,
-> +			 <0x2000000 0x0 0xd8000000 0xd8000000 0 0x08000000>,
-> +			 <0x2000000 0x0 0xe0000000 0xe0000000 0 0x08000000>,
-> +			 <0x2000000 0x0 0xe8000000 0xe8000000 0 0x08000000>;
-> +		interrupt-map-mask = <0 0 0 7>;
-> +		interrupt-map = <0 0 0 1 &periph_intc 35
-> +				 0 0 0 2 &periph_intc 36
-> +				 0 0 0 3 &periph_intc 37
-> +				 0 0 0 4 &periph_intc 38>;
-> +		status = "disabled";
-> +	};
-> +
->  };
+ .../devicetree/bindings/phy/phy-hisi-inno-usb2.txt |  71 ++++++++
+ drivers/phy/hisilicon/Kconfig                      |  10 ++
+ drivers/phy/hisilicon/Makefile                     |   1 +
+ drivers/phy/hisilicon/phy-hisi-inno-usb2.c         | 197 +++++++++++++++++++++
+ 4 files changed, 279 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
+ create mode 100644 drivers/phy/hisilicon/phy-hisi-inno-usb2.c
 
-Cheers
-James
-
---t4apE7yKrX2dGgJC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqincQACgkQbAtpk944
-dnr2hA/+P6w7+sOSZ5SEM19861JqBmRkXLy5Hd/18PMHGTennR09vEOJv9skH3oS
-CojTysqBeNHvupX9gQ48lCeccH2GNv4fExM8QZyKreEwli/gmCxJRTXeZmmO3aqO
-RUFpkIauu/whA/e8fxoEhUuX79wyNw+wqT0DHxpafPc66Aq+SBXXz8LINE+DaM+/
-i4JGd0fY/1N48CieB1mFgOCkaTJ1F1ei7Jh+f6qeHKv6tNTx+LRnU0oKbGpybEJN
-kpY6BvodOgC/YL+tOiyyAASN90a7wS4vj0vxSkxbeKZp1fMF/3F5uA3J1FdJDd5X
-Ydqy3jFG3gggm7GhFUOeZPv1KogWt7PddWpoZnpu5GlIaE9Eb7ba0FMhb6+LPrx8
-bj/rms88LosucmT5u/QvuGrIArBNyhAQPTFVner+gTfjHDvpB5iAG/RcZCCrRX9d
-sOMSmDorbfGs8t0m/k3HScl9d2ZQJPzRjL/YOJSuBpJQPGG+Cz4p0+5lr+zar0qQ
-BeZcwGCvv3VjFUg60flzbOBuiQ3KTvKFo52ssk7l/Tuq2cIW/vgVBvcbgFPu+GfT
-zeE1no/C1jT8EtJDipihJa1GmsfMs7Czi17nb03dljylkh7eXmKcsuwn4h95wskZ
-WzW46Mgkb98ZDrN9b1iH4TUe7IuNhhMFxjnVtfeudkt05TKyplo=
-=Z5Mn
------END PGP SIGNATURE-----
-
---t4apE7yKrX2dGgJC--
+-- 
+1.9.1
