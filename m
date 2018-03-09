@@ -1,50 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932660AbeCIVhQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 16:37:16 -0500
-Received: from mail-vk0-f50.google.com ([209.85.213.50]:41484 "EHLO
-        mail-vk0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932299AbeCIVhN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 16:37:13 -0500
-X-Google-Smtp-Source: AG47ELvikui2gfshupfJOw2wOcWjPHdO9Yhr1jZxCOx779Jwpo4ocIPzAMutwBoDJSq635ZX9xgHsnJ2WzykjY6jxoA=
+        id S932335AbeCIV5I (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 16:57:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52314 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932104AbeCIV5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 16:57:07 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 737ED2133D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+Date: Fri, 9 Mar 2018 13:57:05 -0800
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH] f2fs: avoid selinux denial on CAP_SYS_RESOURCE
+Message-ID: <20180309215705.GB56123@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180309044900.39677-1-jaegeuk@kernel.org>
+ <5ec9338e-1522-2b6a-99c2-ffe70b7a06a9@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20180309213327.GA2806@codeaurora.org>
-References: <20180302164317.10554-1-ilina@codeaurora.org> <20180302164317.10554-2-ilina@codeaurora.org>
- <152036550693.218381.11708415467260101936@swboyd.mtv.corp.google.com> <20180309213327.GA2806@codeaurora.org>
-From: Stephen Boyd <swboyd@chromium.org>
-Date: Fri, 9 Mar 2018 13:37:12 -0800
-Message-ID: <CAE-0n53SY8MgNpvDXXC=52Ddo9gvYBV3PZuL1fHBx8BZHbfd0w@mail.gmail.com>
-Subject: Re: [PATCH v3 01/10] drivers: qcom: rpmh-rsc: add RPMH controller for
- QCOM SoCs
-To: Lina Iyer <ilina@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, rnayak@codeaurora.org,
-        bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5ec9338e-1522-2b6a-99c2-ffe70b7a06a9@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 9, 2018 at 1:33 PM, Lina Iyer <ilina@codeaurora.org> wrote:
-> Hi Stephen,
->
-> I will address all the comments in the next spin of the patch. Here are
-> some responses to the questions.
->
-> On Tue, Mar 06 2018 at 12:45 -0700, Stephen Boyd wrote:
->>
->> Quoting Lina Iyer (2018-03-02 08:43:08)
->
-> [...]
->>
->> +#include <linux/module.h>
->>
->> If the driver doesn't become tristate, this should become export.h
->> instead of module.h
->>
-> MODULE_DEVICE_TABLE seems to need this.
->
+On 03/09, Chao Yu wrote:
+> On 2018/3/9 12:49, Jaegeuk Kim wrote:
+> > This fixes CAP_SYS_RESOURCE denial of selinux when using resgid.
+> 
+> A little confusion, if capable(CAP_SYS_RESOURCE) is false, we still have chance
+> to return true for below resuid & resgid cases, right?
 
-If you don't have tristate then MODULE_DEVICE_TABLE isn't needed.
+I didn't dig it deeply tho, it seems selinux log came up when capable() is
+failed in the first place. We actually didn't need to show it up, since next
+resgid will give mostly true.
+
+> 
+> Thanks,
+> 
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/f2fs.h | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index f6dc70666ebb..3d12277fbe9e 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -1607,13 +1607,13 @@ static inline bool __allow_reserved_blocks(struct f2fs_sb_info *sbi,
+> >  		return false;
+> >  	if (IS_NOQUOTA(inode))
+> >  		return true;
+> > -	if (capable(CAP_SYS_RESOURCE))
+> > -		return true;
+> >  	if (uid_eq(sbi->s_resuid, current_fsuid()))
+> >  		return true;
+> >  	if (!gid_eq(sbi->s_resgid, GLOBAL_ROOT_GID) &&
+> >  					in_group_p(sbi->s_resgid))
+> >  		return true;
+> > +	if (capable(CAP_SYS_RESOURCE))
+> > +		return true;
+> >  	return false;
+> >  }
+> >  
+> > 
