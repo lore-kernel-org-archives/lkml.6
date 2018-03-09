@@ -1,199 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751212AbeCIQNj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 11:13:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50938 "EHLO mail.kernel.org"
+        id S932142AbeCIQNt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 11:13:49 -0500
+Received: from mout.web.de ([212.227.17.12]:59705 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751120AbeCIQNi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 11:13:38 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A33020685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
-Date: Fri, 9 Mar 2018 17:13:35 +0100
-From: Sebastian Reichel <sre@kernel.org>
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: broonie@kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4] power: reset: Add Spreadtrum SC27xx PMIC power off
- support
-Message-ID: <20180309161335.5bbcht4kryfnuelf@earth.universe>
-References: <e3284d38862fe26f2414850734c0985f07c4b970.1519611418.git.baolin.wang@linaro.org>
+        id S1751096AbeCIQNr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 11:13:47 -0500
+Subject: [PATCH v2 06/17 2/2] mfd: sm501: Adjust 12 checks for null pointers
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
+ <5271ab9f-3be1-035c-90c1-8faba2e119b8@users.sourceforge.net>
+Message-ID: <239db775-b9e6-57f9-23af-9a1a551255e8@users.sourceforge.net>
+Date: Fri, 9 Mar 2018 17:13:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gudylc6r46erilaj"
-Content-Disposition: inline
-In-Reply-To: <e3284d38862fe26f2414850734c0985f07c4b970.1519611418.git.baolin.wang@linaro.org>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <5271ab9f-3be1-035c-90c1-8faba2e119b8@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K0:ShfotqUDQBRIoCNs7C1VFHFqkadySoi9unTtM1D6MajLi2Nh8CT
+ kqIBysWyMNb4VJzcEXLHZvRljGJGJX01CONfT8f0DWMZjvKJH/lyU2TjEhKXVr9U/i8GiGm
+ A/tsKg0TU8soEeI12xJCVWz51sp1Re6IvoQHpbhHsmXcZ40z8k7LvVNMmGqwsClARM7PokG
+ os2dKEKLkhMr3j3v3Irsw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:gqIOxIms8vM=:pph4yRg8nRl21wwKJNPQ+Z
+ 6NKK8Cctg+xPhR5ro6uKyTZ7EdhisfjWNdm1CmGzGY4cxC/ubqu5Lh0fx/KEerYk1IaBh546u
+ lyObu/dldb1QHQOGLykgn4no5tX4eg8A4/1JwdR1mFqrS/xjk2D5dTGEef+zCWGYpKUkxYjTu
+ +ON+XSQ17eAd+zAOBC6AKO0E++LjP1ddNd4syw+F9zhfi5ARbGDhhIQ/QTExe3WplaakBkyZg
+ WbFz+2a0w6ycBz5VedjQreaOckLKqYEcjhqGn4//yuMrWV5DcfVRJomOgQdNyIXhFimQQItxy
+ QtsAdeQb0FgmhPza5Yc577WC3M6w4ZaN7EVp0dUaTT3+gyL6arRngxC1CKfLdY/4DjztbyFdD
+ vTF+nM/JENRDoSIQ/cWd37dy2q2hkHvQH7L4mWJGd+MStBcwGcR3XRlZzYy/tWBD6a+Nr8Cfa
+ 2wiyO9NwP8iLFXYu99hIU9ipVrNLul0vcGE9/VcjhXkXQSO32CTOJrWWUQyheuwGGFfsGJfj/
+ u2yJNzRXuJSPSE0zQhmELo9oBVFx7AXafFrTllZTlMmFhh2bU7o54pjmf3PRct5Q0bG97voqX
+ qD1z66M6GH3H/lVzO39VBUo01OiHQE80TRKy3gdUIwbsUogTN8tWadTysL3QW/IWmCuTTMFdy
+ j9UgObG2Gu7o3MifLNPND+2kpV+6b5JlA/97WurCFfAxoES/D1W7ODGPhARYv6E8NvEA11/Om
+ g3XMov/kUaFuSRtrevz+zr3WvAE/S1ZIP/AEpZuHagIOF1PZB0XTu3yPRlNJt1/NkenLhegKw
+ KBWMje0f8yUsrwspi3vV/hGAF84EqIh/uQzLoBYHDt6t56Ll6Q=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 8 Mar 2018 14:20:06 +0100
 
---gudylc6r46erilaj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The script “checkpatch.pl” pointed information out like the following.
 
-Hi,
+Comparison to NULL could be written …
 
-On Mon, Feb 26, 2018 at 10:23:14AM +0800, Baolin Wang wrote:
-> On Spreadtrum platform, we need power off system through external SC27xx
-> series PMICs including the SC2720, SC2721, SC2723, SC2730 and SC2731 chip=
-s.
-> Thus this patch adds SC27xx series PMICs power-off support.
->=20
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> ---
+Thus fix the affected source code places.
 
-Thanks, queued.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
 
--- Sebastian
+v2:
+Lee Jones requested a resend for this patch. The change was rebased
+on source files from Linux next-20180308.
 
-> Changes since v3:
->  - Add CONFIG_PM_SLEEP_SMP macro to avoid building error.
->=20
-> Changes since v2:
->  - Change to build-in this driver.
->=20
-> Changes since v1:
->  - Add remove interface.
->  - Add regmap checking when probing the driver.
->  - Add MODULE_ALIAS()
-> ---
->  drivers/power/reset/Kconfig           |    9 +++++
->  drivers/power/reset/Makefile          |    1 +
->  drivers/power/reset/sc27xx-poweroff.c |   66 +++++++++++++++++++++++++++=
-++++++
->  3 files changed, 76 insertions(+)
->  create mode 100644 drivers/power/reset/sc27xx-poweroff.c
->=20
-> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-> index ca0de1a..01543f5 100644
-> --- a/drivers/power/reset/Kconfig
-> +++ b/drivers/power/reset/Kconfig
-> @@ -227,5 +227,14 @@ config SYSCON_REBOOT_MODE
->  	  register, then the bootloader can read it to take different
->  	  action according to the mode.
-> =20
-> +config POWER_RESET_SC27XX
-> +	bool "Spreadtrum SC27xx PMIC power-off driver"
-> +	depends on MFD_SC27XX_PMIC || COMPILE_TEST
-> +	help
-> +	  This driver supports powering off a system through
-> +	  Spreadtrum SC27xx series PMICs. The SC27xx series
-> +	  PMICs includes the SC2720, SC2721, SC2723, SC2730
-> +	  and SC2731 chips.
-> +
->  endif
-> =20
-> diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
-> index aeb65ed..225d645 100644
-> --- a/drivers/power/reset/Makefile
-> +++ b/drivers/power/reset/Makefile
-> @@ -27,3 +27,4 @@ obj-$(CONFIG_POWER_RESET_RMOBILE) +=3D rmobile-reset.o
->  obj-$(CONFIG_POWER_RESET_ZX) +=3D zx-reboot.o
->  obj-$(CONFIG_REBOOT_MODE) +=3D reboot-mode.o
->  obj-$(CONFIG_SYSCON_REBOOT_MODE) +=3D syscon-reboot-mode.o
-> +obj-$(CONFIG_POWER_RESET_SC27XX) +=3D sc27xx-poweroff.o
-> diff --git a/drivers/power/reset/sc27xx-poweroff.c b/drivers/power/reset/=
-sc27xx-poweroff.c
-> new file mode 100644
-> index 0000000..65c477e
-> --- /dev/null
-> +++ b/drivers/power/reset/sc27xx-poweroff.c
-> @@ -0,0 +1,66 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2018 Spreadtrum Communications Inc.
-> + * Copyright (C) 2018 Linaro Ltd.
-> + */
-> +
-> +#include <linux/cpu.h>
-> +#include <linux/kernel.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm.h>
-> +#include <linux/regmap.h>
-> +#include <linux/syscore_ops.h>
-> +
-> +#define SC27XX_PWR_PD_HW	0xc2c
-> +#define SC27XX_PWR_OFF_EN	BIT(0)
-> +
-> +static struct regmap *regmap;
-> +
-> +/*
-> + * On Spreadtrum platform, we need power off system through external SC2=
-7xx
-> + * series PMICs, and it is one similar SPI bus mapped by regmap to acces=
-s PMIC,
-> + * which is not fast io access.
-> + *
-> + * So before stopping other cores, we need release other cores' resource=
- by
-> + * taking cpus down to avoid racing regmap or spi mutex lock when powero=
-ff
-> + * system through PMIC.
-> + */
-> +void sc27xx_poweroff_shutdown(void)
-> +{
-> +#ifdef CONFIG_PM_SLEEP_SMP
-> +	int cpu =3D smp_processor_id();
-> +
-> +	freeze_secondary_cpus(cpu);
-> +#endif
-> +}
-> +
-> +static struct syscore_ops poweroff_syscore_ops =3D {
-> +	.shutdown =3D sc27xx_poweroff_shutdown,
-> +};
-> +
-> +static void sc27xx_poweroff_do_poweroff(void)
-> +{
-> +	regmap_write(regmap, SC27XX_PWR_PD_HW, SC27XX_PWR_OFF_EN);
-> +}
-> +
-> +static int sc27xx_poweroff_probe(struct platform_device *pdev)
-> +{
-> +	if (regmap)
-> +		return -EINVAL;
-> +
-> +	regmap =3D dev_get_regmap(pdev->dev.parent, NULL);
-> +	if (!regmap)
-> +		return -ENODEV;
-> +
-> +	pm_power_off =3D sc27xx_poweroff_do_poweroff;
-> +	register_syscore_ops(&poweroff_syscore_ops);
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver sc27xx_poweroff_driver =3D {
-> +	.probe =3D sc27xx_poweroff_probe,
-> +	.driver =3D {
-> +		.name =3D "sc27xx-poweroff",
-> +	},
-> +};
-> +builtin_platform_driver(sc27xx_poweroff_driver);
-> --=20
-> 1.7.9.5
->=20
+ drivers/mfd/sm501.c | 26 +++++++++++---------------
+ 1 file changed, 11 insertions(+), 15 deletions(-)
 
---gudylc6r46erilaj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqisq4ACgkQ2O7X88g7
-+poP1Q//Ri6QL/gs9WYwMs9/uva9cyxEmpWL5JdofNVyRBVu0TIK2m0cY+FJhbqM
-OL3csv6ZIZLBljXbyM7nrW2wnjIvQ7H4PMZUATN09BWttY8rmNJC/g7+BNrR0vkc
-QJvSAnKK36OE6edf/jHO0FiY2nKSxa9Oeh2tpkCwwT+uURvIdIRGaEP53Xjuym6H
-VP7b6I7M3cAbeRIwgov4cXBLCQtbVaI4rKiChZKuYLxjZ8iRqBW2TAGpXVWkX9Hv
-Aw3E7SNKhp8hmlj5GHhUw82qdKOJlCgckoAyCQg0+xmwb/A9lJJh6APYoLm0FXeu
-V+PabeTt95uJRHVGJ0KrXaNTl2MnCMVV2eBSvdWbuRPFovNqKidl3oUZXrPDcAqG
-9AQH0UO9cVT/HNmlBZ+/2uWjIYx3pwDbGy5Do0tAAdWMZzNw3ki4Yk0ej+P/fKYZ
-OBnlbcAITnr4ZMvU1n9iavw4c8bDHciBMcbLfHREWKhYNCNvq1pQOIi/yCEmkYM8
-P9jy6qUpou0n38ltnLBvvQvfadyYR3lnAk7roPv9fWXdg13391U64q3FDQqjdCAB
-bUgRbVl5CGPblgFWQ/xXZjmK65XQJUr4oIJITW3yfU7vO+bv+IrEjPyqMa/2Z026
-sxOFRJkwf02SDM92YPG6qGknJzB5oPVFxgD3Hcrlxavo7kg0KJA=
-=lzCS
------END PGP SIGNATURE-----
-
---gudylc6r46erilaj--
+diff --git a/drivers/mfd/sm501.c b/drivers/mfd/sm501.c
+index 4f4957ea8fa3..55d19fd0994e 100644
+--- a/drivers/mfd/sm501.c
++++ b/drivers/mfd/sm501.c
+@@ -1050,13 +1050,13 @@ static int sm501_register_gpio(struct sm501_devdata *sm)
+ 	spin_lock_init(&gpio->lock);
+ 
+ 	gpio->regs_res = request_mem_region(iobase, 0x20, "sm501-gpio");
+-	if (gpio->regs_res == NULL) {
++	if (!gpio->regs_res) {
+ 		dev_err(sm->dev, "gpio: failed to request region\n");
+ 		return -ENXIO;
+ 	}
+ 
+ 	gpio->regs = ioremap(iobase, 0x20);
+-	if (gpio->regs == NULL) {
++	if (!gpio->regs) {
+ 		dev_err(sm->dev, "gpio: failed to remap registers\n");
+ 		ret = -ENXIO;
+ 		goto err_claimed;
+@@ -1358,7 +1358,7 @@ static int sm501_init_dev(struct sm501_devdata *sm)
+ 			sm501_register_gpio(sm);
+ 	}
+ 
+-	if (pdata && pdata->gpio_i2c != NULL && pdata->gpio_i2c_nr > 0) {
++	if (pdata && pdata->gpio_i2c && pdata->gpio_i2c_nr > 0) {
+ 		if (!sm501_gpio_isregistered(sm))
+ 			dev_err(sm->dev, "no gpio available for i2c gpio.\n");
+ 		else
+@@ -1384,7 +1384,7 @@ static int sm501_plat_probe(struct platform_device *dev)
+ 	int ret;
+ 
+ 	sm = kzalloc(sizeof(*sm), GFP_KERNEL);
+-	if (sm == NULL) {
++	if (!sm) {
+ 		ret = -ENOMEM;
+ 		goto err1;
+ 	}
+@@ -1402,8 +1402,7 @@ static int sm501_plat_probe(struct platform_device *dev)
+ 
+ 	sm->io_res = platform_get_resource(dev, IORESOURCE_MEM, 1);
+ 	sm->mem_res = platform_get_resource(dev, IORESOURCE_MEM, 0);
+-
+-	if (sm->io_res == NULL || sm->mem_res == NULL) {
++	if (!sm->io_res || !sm->mem_res) {
+ 		dev_err(&dev->dev, "failed to get IO resource\n");
+ 		ret = -ENOENT;
+ 		goto err_res;
+@@ -1411,8 +1410,7 @@ static int sm501_plat_probe(struct platform_device *dev)
+ 
+ 	sm->regs_claim = request_mem_region(sm->io_res->start,
+ 					    0x100, "sm501");
+-
+-	if (sm->regs_claim == NULL) {
++	if (!sm->regs_claim) {
+ 		dev_err(&dev->dev, "cannot claim registers\n");
+ 		ret = -EBUSY;
+ 		goto err_res;
+@@ -1421,8 +1419,7 @@ static int sm501_plat_probe(struct platform_device *dev)
+ 	platform_set_drvdata(dev, sm);
+ 
+ 	sm->regs = ioremap(sm->io_res->start, resource_size(sm->io_res));
+-
+-	if (sm->regs == NULL) {
++	if (!sm->regs) {
+ 		dev_err(&dev->dev, "cannot remap registers\n");
+ 		ret = -EIO;
+ 		goto err_claim;
+@@ -1448,7 +1445,7 @@ static void sm501_set_power(struct sm501_devdata *sm, int on)
+ {
+ 	struct sm501_platdata *pd = sm->platdata;
+ 
+-	if (pd == NULL)
++	if (!pd)
+ 		return;
+ 
+ 	if (pd->get_power) {
+@@ -1573,7 +1570,7 @@ static int sm501_pci_probe(struct pci_dev *dev,
+ 	int err;
+ 
+ 	sm = kzalloc(sizeof(*sm), GFP_KERNEL);
+-	if (sm == NULL) {
++	if (!sm) {
+ 		err = -ENOMEM;
+ 		goto err1;
+ 	}
+@@ -1624,15 +1621,14 @@ static int sm501_pci_probe(struct pci_dev *dev,
+ 
+ 	sm->regs_claim = request_mem_region(sm->io_res->start,
+ 					    0x100, "sm501");
+-	if (sm->regs_claim == NULL) {
++	if (!sm->regs_claim) {
+ 		dev_err(&dev->dev, "cannot claim registers\n");
+ 		err= -EBUSY;
+ 		goto err3;
+ 	}
+ 
+ 	sm->regs = pci_ioremap_bar(dev, 1);
+-
+-	if (sm->regs == NULL) {
++	if (!sm->regs) {
+ 		dev_err(&dev->dev, "cannot remap registers\n");
+ 		err = -EIO;
+ 		goto err4;
+-- 
+2.16.2
