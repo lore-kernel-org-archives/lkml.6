@@ -1,186 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751242AbeCIH30 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 02:29:26 -0500
-Received: from mga12.intel.com ([192.55.52.136]:28851 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750880AbeCIH3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 02:29:24 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,444,1515484800";
-   d="scan'208";a="210085341"
-Date: Thu, 8 Mar 2018 23:25:35 -0800
-From: Manasi Navare <manasi.d.navare@intel.com>
-To: Lyude Paul <lyude@redhat.com>
-Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?=
-        <ville.syrjala@linux.intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/6] drm/i915: Move DP modeset retry work into intel_dp
-Message-ID: <20180309072535.GB2374@intel.com>
-References: <20180308232421.14049-3-lyude@redhat.com>
- <20180308234122.16641-1-lyude@redhat.com>
+        id S1751434AbeCIH36 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 02:29:58 -0500
+Received: from mail-qt0-f173.google.com ([209.85.216.173]:44962 "EHLO
+        mail-qt0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751170AbeCIH34 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 02:29:56 -0500
+X-Google-Smtp-Source: AG47ELuM8TrGC3np964LQqAjKzWXoP2dpYhHDy+3SM/UgY9ZsmR8fhTrDD4fbCVb+V4Fb0XuRjArwMPIT/feAmrP9OE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180308234122.16641-1-lyude@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+From: Will Hawkins <whh8b@virginia.edu>
+Date: Fri, 9 Mar 2018 02:29:55 -0500
+Message-ID: <CAE+MWFsoX2wOEiYkXsZop-K7+ehNzf5eAG-rSy7+mbqf5k0vuQ@mail.gmail.com>
+Subject: x86 performance monitor counters save/restore on context switch
+To: Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 08, 2018 at 06:41:22PM -0500, Lyude Paul wrote:
-> While having the modeset_retry_work in intel_connector makes sense with
-> SST, this paradigm doesn't make a whole ton of sense when it comes to
-> MST since we have to deal with multiple connectors. In most cases, it's
-> more useful to just use the intel_dp struct since it indicates whether
-> or not we're dealing with an MST device, along with being able to easily
-> trace the intel_dp struct back to it's respective connector (if there is
-> any). So, move the modeset_retry_work function out of the
-> intel_connector struct and into intel_dp.
-> 
-> V2:
->  - Remove accidental duplicate modeset_retry_work in intel_connector
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Cc: Manasi Navare <manasi.d.navare@intel.com>
-> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> ---
->  drivers/gpu/drm/i915/intel_display.c          | 23 +++++++++++++++++++++--
->  drivers/gpu/drm/i915/intel_dp.c               | 10 ++++------
->  drivers/gpu/drm/i915/intel_dp_link_training.c |  2 +-
->  drivers/gpu/drm/i915/intel_drv.h              |  6 +++---
->  4 files changed, 29 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-> index f424fff477f6..85d5af4e4f5b 100644
-> --- a/drivers/gpu/drm/i915/intel_display.c
-> +++ b/drivers/gpu/drm/i915/intel_display.c
-> @@ -15394,16 +15394,35 @@ static void intel_hpd_poll_fini(struct drm_device *dev)
->  {
->  	struct intel_connector *connector;
->  	struct drm_connector_list_iter conn_iter;
-> +	struct work_struct *work;
->  
->  	/* Kill all the work that may have been queued by hpd. */
->  	drm_connector_list_iter_begin(dev, &conn_iter);
->  	for_each_intel_connector_iter(connector, &conn_iter) {
-> -		if (connector->modeset_retry_work.func)
-> -			cancel_work_sync(&connector->modeset_retry_work);
->  		if (connector->hdcp_shim) {
->  			cancel_delayed_work_sync(&connector->hdcp_check_work);
->  			cancel_work_sync(&connector->hdcp_prop_work);
->  		}
-> +
-> +		if (connector->base.connector_type !=
-> +		    DRM_MODE_CONNECTOR_DisplayPort)
+Mr. Rostedt and others interested reading on the LKML,
 
-I know we dont fallback on eDP now but since link training is a common code between
-eDP and DP, this modeset retry can also be called from eDP. So we should check against
-DRM_MODE_CONNECTOR_eDP type as well.
+I hope that this is the proper venue to ask this (longwinded)
+question. If it is not, I apologize for the SPAM and wasting
+everyone's time and bits. I am emailing to ask for clarification about
+the "policy" of saving and restoring x86 performance monitor counters
+(and other PMU-related registers) on context switch in the Kernel.
 
-Other than that, I agree that it is better for this work function to be part of intel_dp struct
-as opposed to intel_connector. 
+Having plumbed through the code for scheduling, I get the sense that
+code in the perf subsystem is the only code that would, if conditions
+are right, save/restore performance registers on a context switch.
 
-So after this change,
+In my investigation, I started from the top where
+prepare_task_switch() calls perf_event_task_sched_out() and where
+finish_task_switch() calls perf_event_task_sched_in(). Having traced
+the implementation of each of those functions to (what I think is)
+their lowest levels, the Kernel will only save and restore performance
+monitor counters if:
 
-Reviewed-by: Manasi Navare <manasi.d.navare@intel.com>
+1. The task, process of task's CPU is actively monitoring performance.
+That monitoring would have been initiated by a user by calling
+perf_event_open() (or using a high level library that eventually calls
+that function).
+2. The performance aspects being monitored are hardware counters/events.
 
-Manasi
+I am sure that there are other conditions, but those are the two that
+stuck out to me the most.
 
-> +			continue;
-> +
-> +		if (connector->mst_port) {
-> +			work = &connector->mst_port->modeset_retry_work;
-> +		} else {
-> +			struct intel_encoder *intel_encoder =
-> +				connector->encoder;
-> +			struct intel_dp *intel_dp;
-> +
-> +			if (!intel_encoder)
-> +				continue;
-> +
-> +			intel_dp = enc_to_intel_dp(&intel_encoder->base);
-> +			work = &intel_dp->modeset_retry_work;
-> +		}
-> +
-> +		cancel_work_sync(work);
->  	}
->  	drm_connector_list_iter_end(&conn_iter);
->  }
-> diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
-> index 4dd1b2287dd6..5abf0c95725a 100644
-> --- a/drivers/gpu/drm/i915/intel_dp.c
-> +++ b/drivers/gpu/drm/i915/intel_dp.c
-> @@ -6261,12 +6261,10 @@ static bool intel_edp_init_connector(struct intel_dp *intel_dp,
->  
->  static void intel_dp_modeset_retry_work_fn(struct work_struct *work)
->  {
-> -	struct intel_connector *intel_connector;
-> -	struct drm_connector *connector;
-> +	struct intel_dp *intel_dp = container_of(work, typeof(*intel_dp),
-> +						 modeset_retry_work);
-> +	struct drm_connector *connector = &intel_dp->attached_connector->base;
->  
-> -	intel_connector = container_of(work, typeof(*intel_connector),
-> -				       modeset_retry_work);
-> -	connector = &intel_connector->base;
->  	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n", connector->base.id,
->  		      connector->name);
->  
-> @@ -6295,7 +6293,7 @@ intel_dp_init_connector(struct intel_digital_port *intel_dig_port,
->  	int type;
->  
->  	/* Initialize the work for modeset in case of link train failure */
-> -	INIT_WORK(&intel_connector->modeset_retry_work,
-> +	INIT_WORK(&intel_dp->modeset_retry_work,
->  		  intel_dp_modeset_retry_work_fn);
->  
->  	if (WARN(intel_dig_port->max_lanes < 1,
-> diff --git a/drivers/gpu/drm/i915/intel_dp_link_training.c b/drivers/gpu/drm/i915/intel_dp_link_training.c
-> index f59b59bb0a21..2cfa58ce1f95 100644
-> --- a/drivers/gpu/drm/i915/intel_dp_link_training.c
-> +++ b/drivers/gpu/drm/i915/intel_dp_link_training.c
-> @@ -340,7 +340,7 @@ intel_dp_start_link_train(struct intel_dp *intel_dp)
->  							     intel_dp->link_rate,
->  							     intel_dp->lane_count))
->  			/* Schedule a Hotplug Uevent to userspace to start modeset */
-> -			schedule_work(&intel_connector->modeset_retry_work);
-> +			schedule_work(&intel_dp->modeset_retry_work);
->  	} else {
->  		DRM_ERROR("[CONNECTOR:%d:%s] Link Training failed at link rate = %d, lane count = %d",
->  			  intel_connector->base.base.id,
-> diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
-> index 83e5ca889d9c..3f19dc80997f 100644
-> --- a/drivers/gpu/drm/i915/intel_drv.h
-> +++ b/drivers/gpu/drm/i915/intel_drv.h
-> @@ -406,9 +406,6 @@ struct intel_connector {
->  
->  	struct intel_dp *mst_port;
->  
-> -	/* Work struct to schedule a uevent on link train failure */
-> -	struct work_struct modeset_retry_work;
-> -
->  	const struct intel_hdcp_shim *hdcp_shim;
->  	struct mutex hdcp_mutex;
->  	uint64_t hdcp_value; /* protected by hdcp_mutex */
-> @@ -1135,6 +1132,9 @@ struct intel_dp {
->  
->  	/* Displayport compliance testing */
->  	struct intel_dp_compliance compliance;
-> +
-> +	/* Work struct to schedule a uevent on link train failure */
-> +	struct work_struct modeset_retry_work;
->  };
->  
->  struct intel_lspcon {
-> -- 
-> 2.14.3
-> 
+All that is a long (perhaps incorrect) preface to a very simple question:
+
+Is it only the performance counting registers that are actively in use
+(again, as told to the perf subsystem by a call to perf_event_open())
+that are saved/restored on context switch?
+
+I ask because I have written code (mostly out of curiosity and not
+necessarily for production) that accesses those registers directly by
+writing/reading their values through the msr kernel module. If what I
+said above is correct, then I have to be wary of the fact that the
+values read from those counters reflect statistics from all the
+processes/threads running on the same CPU at the same time. At first
+blush, this was the way I expected the performance monitoring
+registers and counters to work, but I wanted to confirm and you seemed
+like the right person to ask.
+
+If I was wrong about asking for your help, I apologize and hope that I
+didn't waste your valuable time.
+
+Thanks for all the work that you do on the performance monitoring
+systems for Linux -- they are invaluable for debugging those
+hard-to-find bottlenecks that inevitably pop up when you really need
+something to "just work."
+
+Will
+
+
+
+.
