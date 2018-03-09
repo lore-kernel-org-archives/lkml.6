@@ -1,65 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751244AbeCIPxX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 10:53:23 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54170 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751187AbeCIPxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 10:53:21 -0500
-Date: Fri, 9 Mar 2018 15:53:16 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Andrey Konovalov <andreyknvl@google.com>
-Cc: Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
-        Dmitry Vyukov <dvyukov@google.com>, Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>, Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>
-Subject: Re: [RFC PATCH 3/6] mm, arm64: untag user addresses in memory
- syscalls
-Message-ID: <20180309155315.4x44sbp3darractt@armageddon.cambridge.arm.com>
-References: <cover.1520600533.git.andreyknvl@google.com>
- <beea8ac394bfae3c7c949645fb887ceacc3f3bb3.1520600533.git.andreyknvl@google.com>
+        id S932114AbeCIPyW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 10:54:22 -0500
+Received: from verein.lst.de ([213.95.11.211]:41341 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751246AbeCIPyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 10:54:21 -0500
+Date: Fri, 9 Mar 2018 16:54:12 +0100
+From: Torsten Duwe <duwe@lst.de>
+To: Balbir Singh <bsingharora@gmail.com>
+Cc: Miroslav Benes <mbenes@suse.cz>, Michael Ellerman <mpe@ellerman.id.au>,
+        Jiri Kosina <jkosina@suse.cz>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, live-patching@vger.kernel.org
+Subject: Re: [PATCH 2/2] ppc64le save_stack_trace_tsk_reliable (Was:
+ HAVE_RELIABLE_STACKTRACE)
+Message-ID: <20180309165412.78646b45@blackhole.lan>
+In-Reply-To: <20180309084333.23287074@gmail.com>
+References: <20171004152516.25803-1-kamalesh@linux.vnet.ibm.com>
+        <20171005124313.GA25100@lst.de>
+        <9f388c9a-8d74-865a-b113-f77322918b39@linux.vnet.ibm.com>
+        <20171017144733.GB2136@lst.de>
+        <95e6f942-88b7-0208-0eb0-2f5462aec410@linux.vnet.ibm.com>
+        <20171020120739.GA20306@lst.de>
+        <1508547548.5662.2.camel@gmail.com>
+        <39bb7180-1adf-4df6-c9ba-c6f92754767f@linux.vnet.ibm.com>
+        <20171212113912.GA1907@lst.de>
+        <alpine.LSU.2.21.1712121308440.21907@pobox.suse.cz>
+        <20180227160924.GA19111@lst.de>
+        <20180309084333.23287074@gmail.com>
+Organization: LST e.V.
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <beea8ac394bfae3c7c949645fb887ceacc3f3bb3.1520600533.git.andreyknvl@google.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 09, 2018 at 03:02:01PM +0100, Andrey Konovalov wrote:
-> Memory subsystem syscalls accept user addresses as arguments, but don't use
-> copy_from_user and other similar functions, so we need to handle this case
-> separately.
+On Fri, 9 Mar 2018 08:43:33 +1100
+Balbir Singh <bsingharora@gmail.com> wrote:
+
+> On Tue, 27 Feb 2018 17:09:24 +0100
+> Torsten Duwe <duwe@lst.de> wrote:
+
+> > +save_stack_trace_tsk_reliable(struct task_struct *tsk,
+> > +                              struct stack_trace *trace)  
 > 
-> Untag user pointers passed to madvise, mbind, get_mempolicy, mincore,
-> mlock, mlock2, brk, mmap_pgoff, old_mmap, munmap, remap_file_pages,
-> mprotect, pkey_mprotect, mremap and msync.
+> Just double checking this is called under the task_rq_lock, so its
+> safe to call task_stack_page() as opposed to try_get_task_stack()
+
+Yes. IIRC a comment at the call site mentioned it.
+
+[...]
+> > +	if (sp < stack_page + sizeof(struct thread_struct)
+> > +	    || sp > stack_page + THREAD_SIZE -
+> > STACK_FRAME_OVERHEAD)
+> > +		return 1;  
 > 
-> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> Some of this is already present in validate_sp(), it also validates
+> irq stacks, should we just reuse that?
 
-Please keep the cc list small (maybe linux-arch, linux-arm-kernel) as
-I'm sure some lists would consider this spam.
+This goes a bit along one of Josh's points; I'll answer there, OK?
 
->  mm/madvise.c   | 2 ++
->  mm/mempolicy.c | 6 ++++++
->  mm/mincore.c   | 2 ++
->  mm/mlock.c     | 5 +++++
->  mm/mmap.c      | 9 +++++++++
->  mm/mprotect.c  | 2 ++
->  mm/mremap.c    | 2 ++
->  mm/msync.c     | 3 +++
+[...]
 
-I'm not yet convinced these functions need to allow tagged pointers.
-They are not doing memory accesses but rather dealing with the memory
-range, hence an untagged pointer is better suited. There is probably a
-reason why the "start" argument is "unsigned long" vs "void __user *"
-(in the kernel, not the man page).
+> Looks good to me otherwise.
+> 
+> Acked-by: Balbir Singh <bsingharora@gmail.com>
+Thanks.
 
--- 
-Catalin
+	Torsten
