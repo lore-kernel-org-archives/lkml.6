@@ -1,119 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932109AbeCIO1I (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 09:27:08 -0500
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:37657 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751146AbeCIO1H (ORCPT
+        id S932082AbeCIO3H (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 09:29:07 -0500
+Received: from hwp1.icoremail.net ([139.162.50.94]:36894 "HELO
+        hwp1.icoremail.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1751068AbeCIO3F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 09:27:07 -0500
-X-Google-Smtp-Source: AG47ELvlJJg4p0w4JBKueL6gaRd1H61Fol27JDFalcMVRQx8Q1o1hsOpHxqx+Q1qOvAWMXq5O3O4/ZYzYRyzokDdo5Q=
+        Fri, 9 Mar 2018 09:29:05 -0500
+X-Originating-IP: [222.29.22.133]
+Date: Fri, 9 Mar 2018 22:18:37 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: "Guan Xuetao" <gxt@pku.edu.cn>
+To: "Arnd Bergmann" <arnd@arndb.de>
+Cc: linux-arch <linux-arch@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "Richard Kuo" <rkuo@codeaurora.org>,
+        linux-hexagon <linux-hexagon@vger.kernel.org>,
+        "Chen Liqin" <liqin.linux@gmail.com>,
+        "Lennox Wu" <lennox.wu@gmail.com>, "Guan Xuetao" <gxt@mprc.pku.edu.cn>,
+        "Guenter Roeck" <linux@roeck-us.net>,
+        "Al Viro" <viro@zeniv.linux.org.uk>, "James Hogan" <jhogan@kernel.org>,
+        linux-metag <linux-metag@vger.kernel.org>,
+        "Jonas Bonn" <jonas@southpole.se>,
+        "Stefan Kristiansson" <stefan.kristiansson@saunalahti.fi>,
+        "Stafford Horne" <shorne@gmail.com>,
+        "David Howells" <dhowells@redhat.com>, openrisc@lists.librecores.org
+Subject: Re: Removing architectures without upstream gcc support
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 5.0.4 dev build 20171117(fcd8b4ed)
+ Copyright (c) 2002-2018 www.mailtech.cn pku
+X-SendMailWithSms: false
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 MIME-Version: 1.0
-In-Reply-To: <CAKTKpr7HgsdZ90k0_evSq_aZW-uGSKwLndHOQ2Jahajj3Gkc0Q@mail.gmail.com>
-References: <20180307110803.32418-1-ganapatrao.kulkarni@cavium.com>
- <3384d33f-c927-740a-97f1-b20775ef2c7b@redhat.com> <20180307143832.GJ3701@kernel.org>
- <CAKTKpr4zMcRLykw8xwWJKf2eiuCrf2RuJ7kexGRQNN7_OdJ=uQ@mail.gmail.com>
- <52328144-3a2a-af03-273b-3a2f3bdadda6@redhat.com> <CAKTKpr7HgsdZ90k0_evSq_aZW-uGSKwLndHOQ2Jahajj3Gkc0Q@mail.gmail.com>
-From: Ganapatrao Kulkarni <gklkml16@gmail.com>
-Date: Fri, 9 Mar 2018 19:57:04 +0530
-Message-ID: <CAKTKpr5=Doy2bQz8yYcoRNUGQ1HEgLcqk7U+4m-=1T_TZWa4HA@mail.gmail.com>
-Subject: Re: [PATCH] perf vendor events arm64: Enable JSON events for
- ThunderX2 B0
-To: William Cohen <wcohen@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, mark.rutland@arm.com,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        John Garry <john.garry@huawei.com>, Will Deacon <Will.Deacon@arm.com>,
-        linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Robert Richter <Robert.Richter@cavium.com>,
-        Ingo Molnar <mingo@redhat.com>, jnair@caviumnetworks.com,
-        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Jiri Olsa <jolsa@redhat.com>, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <23bf54ca.a08c.1620b20bd53.Coremail.gxt@pku.edu.cn>
+X-Coremail-Locale: en_US
+X-CM-TRANSID: 8oFpogDHJ8i9l6JaBf0CBg--.25850W
+X-CM-SenderInfo: qqqqliixuslio6sn3hxhgxhubq/1tbiAQETB1Py72UrPAAJsh
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+        CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+        daVFxhVjvjDU=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w29ERENP003118
 
-Hi Arnaldo,
+Since mprc.pku.edu.cn is blocked, I use this email account to send the email again.
 
-can you please pull-in this patch?
-
-On Thu, Mar 8, 2018 at 9:44 AM, Ganapatrao Kulkarni <gklkml16@gmail.com> wrote:
-> On Thu, Mar 8, 2018 at 12:01 AM, William Cohen <wcohen@redhat.com> wrote:
->> On 03/07/2018 12:35 PM, Ganapatrao Kulkarni wrote:
->>> Hi Will Cohen,
->>>
->>> On Wed, Mar 7, 2018 at 8:08 PM, Arnaldo Carvalho de Melo
->>> <acme@kernel.org> wrote:
->>>> Em Wed, Mar 07, 2018 at 09:32:05AM -0500, William Cohen escreveu:
->>>>> On 03/07/2018 06:08 AM, Ganapatrao Kulkarni wrote:
->>>>>> There is MIDR change on ThunderX2 B0, adding an entry to mapfile
->>>>>> to enable JSON events for B0.
->>>>>>
->>>>>> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
->>>>
->>>> Ganapatrao, can you please take this in consideration and if agreeing
->>>> send a v2 patch?
->>>>
->>>> With that I can add an Acked-by: wcohen, Right?
->>>>
->>>> - Arnaldo
->>>>>> ---
->>>>>>  tools/perf/pmu-events/arch/arm64/mapfile.csv | 1 +
->>>>>>  1 file changed, 1 insertion(+)
->>>>>>
->>>>>> diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
->>>>>> index e61c9ca..93c5d14 100644
->>>>>> --- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
->>>>>> +++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
->>>>>> @@ -13,4 +13,5 @@
->>>>>>  #
->>>>>>  #Family-model,Version,Filename,EventType
->>>>>>  0x00000000420f5160,v1,cavium,core
->>>>>> +0x00000000430f0af0,v1,cavium,core
->>>>>>  0x00000000410fd03[[:xdigit:]],v1,cortex-a53,core
->>>>>>
->>>>>
->>>>> Hi,
->>>>> Like the cortex-a53 the last digit '0' of the match for the MIDR should be replaced with [[:xdigit:]] to allow for possible future revisions of chip:
->>>
->>> for arm64 implementation,  bits 3:0(Revision) and bits 23:20(Variant)
->>> are ignored/dont-care.
->>
->> Thanks for pointing that out.  See the code masking out those bits in linux/toos/perf/arch/util/header.c. For the ppc64 it just copies the equivalent of the MIDR including the revision bits. Thus, the need for regular expression matching to avoid having to create a new entry for each revision.
+> * unicore32 was a research project at Peking University with a SoC
+>   based on the Intel PXA design. No gcc source code has ever been
+>   published, the only toolchain available is a set of binaries that
+> include
+>   a gcc-4.4 compiler. The project page at
+>   http://mprc.pku.edu.cn/~guanxuetao/linux/ has a TODO list that has
+>   not been modified since 2011. The maintainer still Acks patches
+>   and has last sent a pull request in 2014 and last sent a patch of
+>   his own in 2012 when the project appears to have stalled.
+>   I would suggest removing this one.
 >
-> It is same for arm64 too, there is no need to add an entry for every
-> revision change,  need to add when part number changes.
-> This patch is not intended to add entry for revision change, the fact
-> of the matter is that, there  is complete MIDR change (vulcan to
-> thunderx2) in B0.
-> as per current arm64
-> implementation(.tools/perf/arch/arm64/util/header.c), it is not
-> required to have any dontcare marking in mapfile for revision/variant
-> bits.
->
-> thanks
-> Ganapat
->
->>
->> -Will
->>
->>>
->>>>>
->>>>> 0x00000000430f0af[[:xdigit:]],v1,cavium,core
->>>>>
->>>>>
->>>>> -Will Cohen
->>>>
->>>
->>> thanks
->>> Ganapat
->>>> _______________________________________________
->>>> linux-arm-kernel mailing list
->>>> linux-arm-kernel@lists.infradead.org
->>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>
+Hi, Arnd.
+I am really sorry to reply so late, since I seldom use this email account
+in recent years. I will add my new email account to related bits.
 
-thanks
-Ganapat
+Let me clarify the status of UniCore. It's a real cpu-core product,
+integrated into PKUnity SoC, and sold in a large amount of embedded boxes,
+such as cloud terminals and set top boxes. Surely, we still use the port
+internally and keep doing developments in other projects. So, I really
+appreciate having unicore32 port in the tree.
+
+As to gnu toolchain of UniCore, I have already discussed it in my group,
+and I'll do my best to propel it forward.
+
+Thanks,
+Guan Xuetao
