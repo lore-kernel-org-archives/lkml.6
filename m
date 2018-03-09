@@ -1,42 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751145AbeCIDXL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 22:23:11 -0500
-Received: from mail-io0-f182.google.com ([209.85.223.182]:43862 "EHLO
-        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750914AbeCIDXJ (ORCPT
+        id S1751235AbeCID0N (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 22:26:13 -0500
+Received: from mail.efficios.com ([167.114.142.138]:44782 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750932AbeCID0L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 22:23:09 -0500
-X-Google-Smtp-Source: AG47ELsHSVCsBgago1XBDVK3Vf43MmYUwyw0b3Hjq8Loo+gTbdBbum/Rf60JPp3ZKt2lxEpWIGSwY9b/DiMg45QrwJk=
-MIME-Version: 1.0
-In-Reply-To: <1520542640-9185-3-git-send-email-eajames@linux.vnet.ibm.com>
-References: <1520542640-9185-1-git-send-email-eajames@linux.vnet.ibm.com> <1520542640-9185-3-git-send-email-eajames@linux.vnet.ibm.com>
-From: Lei YU <mine260309@gmail.com>
-Date: Fri, 9 Mar 2018 11:23:08 +0800
-Message-ID: <CAARXrtnQn-rbUc_Ykdn5dpK9fO+jMYFR=ocmkQweBxKQY4L2rg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: aspeed: Prevent reset if clock is enabled
-To: Eddie James <eajames@linux.vnet.ibm.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        Ryan Chen <ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 8 Mar 2018 22:26:11 -0500
+From: Francis Deslauriers <francis.deslauriers@efficios.com>
+To: mhiramat@kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+        Francis Deslauriers <francis.deslauriers@efficios.com>
+Subject: [PATCH 1/1] x86/kprobes: Prohibit probing of .entry_trampoline code
+Date: Thu,  8 Mar 2018 22:18:12 -0500
+Message-Id: <1520565492-4637-2-git-send-email-francis.deslauriers@efficios.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520565492-4637-1-git-send-email-francis.deslauriers@efficios.com>
+References: <1520565492-4637-1-git-send-email-francis.deslauriers@efficios.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->  static int aspeed_clk_enable(struct clk_hw *hw)
->  {
->         struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
-> @@ -215,6 +227,11 @@ static int aspeed_clk_enable(struct clk_hw *hw)
->
->         spin_lock_irqsave(gate->lock, flags);
->
-> +       if (aspeed_clk_is_enabled(hw)) {
-> +               spin_unlock_irqrestore(gate->lock, flags);
-> +               return 0;
-> +       }
-> +
+.entry_trampoline is a code area that is used to ensure page table
+isolation between userspace and kernelspace.
 
-I think this piece of code can be run before spin_lock_irqsave(), so it is
-able to just return without spin_unlock_irqrestore()?
+At the beginning of the execution of the trampoline, we load the
+kernel's CR3 register. This has the effect of enabling the translation
+of the kernel virtual addresses to physical addresses. Before this
+happens most kernel addresses can not be translated because the running
+process' CR3 is still used.
+
+If a kprobe is placed on the trampoline code before that change of the
+CR3 register happens the kernel crashes because int3 handling pages are
+not accessible.
+
+To fix this, add the .entry_trampoline section to the kprobe blacklist
+to prohibit the probing of code before all the kernel pages are
+accessible.
+
+Signed-off-by: Francis Deslauriers <francis.deslauriers@efficios.com>
+---
+ arch/x86/include/asm/sections.h |  1 +
+ arch/x86/kernel/kprobes/core.c  | 10 +++++++++-
+ arch/x86/kernel/vmlinux.lds.S   |  2 ++
+ 3 files changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/sections.h b/arch/x86/include/asm/sections.h
+index d6baf23..5c019d2 100644
+--- a/arch/x86/include/asm/sections.h
++++ b/arch/x86/include/asm/sections.h
+@@ -10,6 +10,7 @@ extern struct exception_table_entry __stop___ex_table[];
+ 
+ #if defined(CONFIG_X86_64)
+ extern char __end_rodata_hpage_align[];
++extern char __entry_trampoline_start[], __entry_trampoline_end[];
+ #endif
+ 
+ #endif	/* _ASM_X86_SECTIONS_H */
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index bd36f3c..0715f82 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -1168,10 +1168,18 @@ NOKPROBE_SYMBOL(longjmp_break_handler);
+ 
+ bool arch_within_kprobe_blacklist(unsigned long addr)
+ {
++	bool is_in_entry_trampoline_section = false;
++
++#ifdef CONFIG_X86_64
++	is_in_entry_trampoline_section =
++		(addr >= (unsigned long)__entry_trampoline_start &&
++		 addr < (unsigned long)__entry_trampoline_end);
++#endif
+ 	return  (addr >= (unsigned long)__kprobes_text_start &&
+ 		 addr < (unsigned long)__kprobes_text_end) ||
+ 		(addr >= (unsigned long)__entry_text_start &&
+-		 addr < (unsigned long)__entry_text_end);
++		 addr < (unsigned long)__entry_text_end) ||
++		is_in_entry_trampoline_section;
+ }
+ 
+ int __init arch_init_kprobes(void)
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 9b138a0..b854ebf 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -118,9 +118,11 @@ SECTIONS
+ 
+ #ifdef CONFIG_X86_64
+ 		. = ALIGN(PAGE_SIZE);
++		VMLINUX_SYMBOL(__entry_trampoline_start) = .;
+ 		_entry_trampoline = .;
+ 		*(.entry_trampoline)
+ 		. = ALIGN(PAGE_SIZE);
++		VMLINUX_SYMBOL(__entry_trampoline_end) = .;
+ 		ASSERT(. - _entry_trampoline == PAGE_SIZE, "entry trampoline is too big");
+ #endif
+ 
+-- 
+2.7.4
