@@ -1,74 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751934AbeCIIeV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 03:34:21 -0500
-Received: from mail-wr0-f176.google.com ([209.85.128.176]:36901 "EHLO
-        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751616AbeCIIeR (ORCPT
+        id S1751981AbeCIIef (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 03:34:35 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:54701 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751333AbeCIIed (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 03:34:17 -0500
-X-Google-Smtp-Source: AG47ELuoeyW0Q9Rc13edPw/7W3YC6TjtIHBANgNO624j3TOUfR/8ZHpeMD09bXdalquzfxmPcKUEJA==
-Date: Fri, 9 Mar 2018 08:34:14 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Tony Lindgren <tony@atomide.com>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCHv5 3/5] mfd: motorola-cpcap: Add audio-codec support
-Message-ID: <20180309083414.s57eq3kw325magwz@dell>
-References: <20180223200254.25685-1-sebastian.reichel@collabora.co.uk>
- <20180223200254.25685-4-sebastian.reichel@collabora.co.uk>
- <20180307163211.rytfli5tb47yhtug@dell>
- <20180308094652.qg4atjw5c3hayaz3@earth.universe>
- <20180308095315.mpcmx2ob6yhsnrm6@dell>
- <20180308102757.jyi7uo566n6nuct5@earth.universe>
- <20180308104831.fflq2arj5dxgntia@dell>
- <20180308112528.GC6019@sirena.org.uk>
+        Fri, 9 Mar 2018 03:34:33 -0500
+Date: Fri, 9 Mar 2018 00:34:22 -0800
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-e51yphwgvepd1y4f5fjptmjq@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, jolsa@kernel.org, wangnan0@huawei.com,
+        hpa@zytor.com, mingo@kernel.org, acme@redhat.com,
+        adrian.hunter@intel.com, dsahern@gmail.com, eranian@google.com,
+        tglx@linutronix.de, namhyung@kernel.org
+Reply-To: namhyung@kernel.org, tglx@linutronix.de, adrian.hunter@intel.com,
+        dsahern@gmail.com, acme@redhat.com, eranian@google.com,
+        jolsa@kernel.org, hpa@zytor.com, wangnan0@huawei.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf cgroup: Rename 'struct cgroup_sel' to 'struct
+ cgroup'
+Git-Commit-ID: 3ca32f69592be4d667c701763335fa496a0ede1d
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180308112528.GC6019@sirena.org.uk>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 08 Mar 2018, Mark Brown wrote:
+Commit-ID:  3ca32f69592be4d667c701763335fa496a0ede1d
+Gitweb:     https://git.kernel.org/tip/3ca32f69592be4d667c701763335fa496a0ede1d
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 6 Mar 2018 09:51:48 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 7 Mar 2018 10:22:25 -0300
 
-> On Thu, Mar 08, 2018 at 10:48:31AM +0000, Lee Jones wrote:
-> > On Thu, 08 Mar 2018, Sebastian Reichel wrote:
-> 
-> > > I had it in PATCHv1-PATCHv4. It was removed, since Mark didn't want
-> > > to have it in the DT ABI.
-> 
-> > Right, but why?  Is it not a hardware device?  I think converting from
-> > devm_of_platform_populate() for one sub-device is a bit drastic.
-> 
-> It's not a separate physical device or IP and doesn't exist outside of
-> the MFD, it's just how Linux is currently choosing to divide up the chip
-> right now but that's totally open to change even in future versions of
-> Linux.  Clocks are a big issue with audio stuff, right now sections of
-> the clock tree get handled in the CODEC driver but we're going to want
-> to push them out to a clock driver so we're not reimplementing handling
-> for clocks.
+perf cgroup: Rename 'struct cgroup_sel' to 'struct cgroup'
 
-How is the CODEC controlled?  Does it have its own registers?  I guess
-by "it's not a separate device or IP" you mean that it doesn't.  But
-that begs the question, how does this then device differ from all the
-other devices (adc, battery, charger, regulator, rtc, pwrbutton,
-usb-phy and led)?
+That name isn't used, is shorter, lets switch to it.
 
-I'm asking, not to be awkward, but to avoid 50 lines of potentially
-unnecessary static code.  If this is a real (sub-)device, even if it's
-part of a larger, single device (MFD) then there is no reason why it
-can't be represented as a single, albeit empty node.
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-e51yphwgvepd1y4f5fjptmjq@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/cgroup.c | 6 +++---
+ tools/perf/util/cgroup.h | 5 +++--
+ tools/perf/util/evsel.h  | 4 ++--
+ 3 files changed, 8 insertions(+), 7 deletions(-)
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+diff --git a/tools/perf/util/cgroup.c b/tools/perf/util/cgroup.c
+index 2e2aa6c86107..6ce291f45f2d 100644
+--- a/tools/perf/util/cgroup.c
++++ b/tools/perf/util/cgroup.c
+@@ -93,7 +93,7 @@ static int open_cgroup(char *name)
+ static int add_cgroup(struct perf_evlist *evlist, char *str)
+ {
+ 	struct perf_evsel *counter;
+-	struct cgroup_sel *cgrp = NULL;
++	struct cgroup *cgrp = NULL;
+ 	int n;
+ 	/*
+ 	 * check if cgrp is already defined, if so we reuse it
+@@ -144,7 +144,7 @@ found:
+ 	return 0;
+ }
+ 
+-void close_cgroup(struct cgroup_sel *cgrp)
++void close_cgroup(struct cgroup *cgrp)
+ {
+ 	if (cgrp && refcount_dec_and_test(&cgrp->refcnt)) {
+ 		close(cgrp->fd);
+@@ -158,7 +158,7 @@ int parse_cgroups(const struct option *opt, const char *str,
+ {
+ 	struct perf_evlist *evlist = *(struct perf_evlist **)opt->value;
+ 	struct perf_evsel *counter;
+-	struct cgroup_sel *cgrp = NULL;
++	struct cgroup *cgrp = NULL;
+ 	const char *p, *e, *eos = str + strlen(str);
+ 	char *s;
+ 	int ret, i;
+diff --git a/tools/perf/util/cgroup.h b/tools/perf/util/cgroup.h
+index afafc87e9201..934daa8e4c19 100644
+--- a/tools/perf/util/cgroup.h
++++ b/tools/perf/util/cgroup.h
+@@ -6,7 +6,7 @@
+ 
+ struct option;
+ 
+-struct cgroup_sel {
++struct cgroup {
+ 	char *name;
+ 	int fd;
+ 	refcount_t refcnt;
+@@ -14,7 +14,8 @@ struct cgroup_sel {
+ 
+ 
+ extern int nr_cgroups; /* number of explicit cgroups defined */
+-void close_cgroup(struct cgroup_sel *cgrp);
++void close_cgroup(struct cgroup *cgrp);
++
+ int parse_cgroups(const struct option *opt, const char *str, int unset);
+ 
+ #endif /* __CGROUP_H__ */
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index a7487c6d1866..92ba001b627f 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -30,7 +30,7 @@ struct perf_sample_id {
+ 	u64			period;
+ };
+ 
+-struct cgroup_sel;
++struct cgroup;
+ 
+ /*
+  * The 'struct perf_evsel_config_term' is used to pass event
+@@ -107,7 +107,7 @@ struct perf_evsel {
+ 	struct perf_stat_evsel  *stats;
+ 	void			*priv;
+ 	u64			db_id;
+-	struct cgroup_sel	*cgrp;
++	struct cgroup		*cgrp;
+ 	void			*handler;
+ 	struct cpu_map		*cpus;
+ 	struct cpu_map		*own_cpus;
