@@ -1,190 +1,278 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751901AbeCIImm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 03:42:42 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:50135 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750913AbeCIImk (ORCPT
+        id S1752132AbeCIImy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 03:42:54 -0500
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:35463 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750926AbeCIImv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 03:42:40 -0500
-Date: Fri, 9 Mar 2018 00:42:18 -0800
-From: tip-bot for Agustin Vega-Frias <tipbot@zytor.com>
-Message-ID: <tip-b2b9d3a3f0211c5d08c7befdf9d4adad48cda315@git.kernel.org>
-Cc: alexander.shishkin@linux.intel.com, hpa@zytor.com, mingo@kernel.org,
-        jolsa@kernel.org, namhyung@kernel.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, timur@codeaurora.org, acme@redhat.com,
-        ak@linux.intel.com, tglx@linutronix.de, agustinv@codeaurora.org
-Reply-To: peterz@infradead.org, namhyung@kernel.org,
-        alexander.shishkin@linux.intel.com, hpa@zytor.com, jolsa@kernel.org,
-        mingo@kernel.org, ak@linux.intel.com, acme@redhat.com,
-        agustinv@codeaurora.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, timur@codeaurora.org
-In-Reply-To: <1520454947-16977-1-git-send-email-agustinv@codeaurora.org>
-References: <1520454947-16977-1-git-send-email-agustinv@codeaurora.org>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf pmu: Support wildcards on pmu name in dynamic
- pmu events
-Git-Commit-ID: b2b9d3a3f0211c5d08c7befdf9d4adad48cda315
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 9 Mar 2018 03:42:51 -0500
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: byungchul.park@lge.com
+X-Original-SENDERIP: 10.177.222.33
+X-Original-MAILFROM: byungchul.park@lge.com
+Date: Fri, 9 Mar 2018 17:41:54 +0900
+From: Byungchul Park <byungchul.park@lge.com>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, jiangshanlai@gmail.com,
+        josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+        kernel-team@lge.com
+Subject: Re: [RFC] rcu: Prevent expedite reporting within RCU read-side
+ section
+Message-ID: <20180309084154.GA24031@X58A-UD3R>
+References: <1520314318-30916-1-git-send-email-byungchul.park@lge.com>
+ <20180306134205.lwmn3cgisnwkngcf@tardis>
+ <908c33f9-c8ed-5d4e-91cb-a123de5dbbc7@lge.com>
+ <a2e0a9c5-4246-d3b9-2eb7-9bdd87aef636@lge.com>
+ <20180307150343.GD3918@linux.vnet.ibm.com>
+ <20180308100825.GA32165@X58A-UD3R>
+ <20180308180156.GQ3918@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180308180156.GQ3918@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b2b9d3a3f0211c5d08c7befdf9d4adad48cda315
-Gitweb:     https://git.kernel.org/tip/b2b9d3a3f0211c5d08c7befdf9d4adad48cda315
-Author:     Agustin Vega-Frias <agustinv@codeaurora.org>
-AuthorDate: Tue, 6 Mar 2018 09:04:42 -0500
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 8 Mar 2018 10:05:25 -0300
+On Thu, Mar 08, 2018 at 10:01:56AM -0800, Paul E. McKenney wrote:
+> On Thu, Mar 08, 2018 at 07:08:25PM +0900, Byungchul Park wrote:
 
-perf pmu: Support wildcards on pmu name in dynamic pmu events
+[...]
 
-Starting on v4.12 event parsing code for dynamic pmu events already
-supports prefix-based matching of multiple pmus when creating dynamic
-events. E.g., in a system with the following dynamic pmus:
+> >    2. Clear its bit of ->expmask *only* when it's out of RCU read
+> >       sections and keep others unchanged. So it will be cleared at the
+> >       end of the RCU read section in that case.
+> > 
+> >       This option would also work because we anyway check both
+> >       ->exp_tasks and ->expmask to finish the expedite-gp.
+> 
+> This could be made to work, but one shortcoming is that the grace
+> period would end up waiting on later read-side critical sections
+> that it does not really need to wait on.  Also, eventually all the
 
-    mypmu_0
-    mypmu_1
-    mypmu_2
-    mypmu_4
+I don't think it waits on any later ones since ->expmask would be
+cleared at the end of the previous RCU read section.
 
-passing mypmu/<config>/ as an event spec will result in the creation of
-the event in all of the pmus. This change expands this matching through
-the use of fnmatch so glob-like expressions can be used to create events
-in multiple pmus. E.g., in the system described above if a user only
-wants to create the event in mypmu_0 and mypmu_1, mypmu_[01]/<config>/
-can be passed.
+> bits would clear, and they might clear before the last preempted
+> task resumed, so the race would still exist.
 
-Signed-off-by: Agustin Vega-Frias <agustinv@codeaurora.org>
-Acked-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Timur Tabi <timur@codeaurora.org>
-Change-Id: Icb25653fc5d5239c20f3bffdfdf4ab4c9c9bb20b
-Link: http://lkml.kernel.org/r/1520454947-16977-1-git-send-email-agustinv@codeaurora.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/Documentation/perf-list.txt |  8 +++++++-
- tools/perf/Documentation/perf-stat.txt | 13 +++++++++++++
- tools/perf/util/parse-events.l         |  2 +-
- tools/perf/util/parse-events.y         | 14 ++++++++++++--
- 4 files changed, 33 insertions(+), 4 deletions(-)
+No problem since ->exp_tasks will prevent the expedite-gp from ending.
 
-diff --git a/tools/perf/Documentation/perf-list.txt b/tools/perf/Documentation/perf-list.txt
-index e2a897ae3596..2549c34a7895 100644
---- a/tools/perf/Documentation/perf-list.txt
-+++ b/tools/perf/Documentation/perf-list.txt
-@@ -141,7 +141,13 @@ on the first memory controller on socket 0 of a Intel Xeon system
+> > Current code chose the 1st option and try to report the quiescent state
+> > using rcu_report_exp_rdp() when it's out of RCU read sections or the
+> > task is preempted, while an expedite-gp is in progress.
+> > 
+> > However, when reporting it within a RCU read section, the reporting
+> > hardly goes further since sync_rcu_preempt_exp_done() of course returns
+> > false, furthermore, it might add *unnecessary* lock contention of
+> > rcu_node's spin lock within rcu_report_exp_cpu_mult(). I think those are
+> > unnecessary at all even though there's no logical problem.
+> 
+> It would be possible to use ordering and memory barriers to avoid at
+> least some lock acquisitions, but the resulting code would be more
+> complex and fragile.  So I would want to see a real problem before
+
+Yes, the simpler the better.
+
+> using a more aggressive design.
+
+I admit that I've done far more than I intended. I understand you and
+don't wanna change the design aggressively.
+
+> > @@ -716,28 +716,22 @@ static void sync_rcu_exp_handler(void *info)
+> >  	struct rcu_state *rsp = info;
+> >  	struct task_struct *t = current;
+> > 
+> > -	/*
+> > -	 * Within an RCU read-side critical section, request that the next
+> > -	 * rcu_read_unlock() report.  Unless this RCU read-side critical
+> > -	 * section has already blocked, in which case it is already set
+> > -	 * up for the expedited grace period to wait on it.
+> > -	 */
+> > -	if (t->rcu_read_lock_nesting > 0 &&
+> > -	    !t->rcu_read_unlock_special.b.blocked) {
+> > +	if (t->rcu_read_lock_nesting > 0) {
+> > +		/*
+> > +		 * Within an RCU read-side critical section, request that
+> > +		 * the next rcu_read_unlock() report.
+> > +		 */
+> >  		t->rcu_read_unlock_special.b.exp_need_qs = true;
+> > -		return;
+> > +	} else {
+> > +		/*
+> > +		 * We are either exiting an RCU read-side critical section
+> > +		 * (negative values of t->rcu_read_lock_nesting) or are not
+> > +		 * in one at all (zero value of t->rcu_read_lock_nesting).
+> > +		 * We can immediately report the quiescent state.
+> > +		 */
+> > +		rdp = this_cpu_ptr(rsp->rda);
+> > +		rcu_report_exp_rdp(rsp, rdp, true);
+> >  	}
+> > -
+> > -	/*
+> > -	 * We are either exiting an RCU read-side critical section (negative
+> > -	 * values of t->rcu_read_lock_nesting) or are not in one at all
+> > -	 * (zero value of t->rcu_read_lock_nesting).  Or we are in an RCU
+> > -	 * read-side critical section that blocked before this expedited
+> > -	 * grace period started.  Either way, we can immediately report
+> > -	 * the quiescent state.
+> > -	 */
+> > -	rdp = this_cpu_ptr(rsp->rda);
+> > -	rcu_report_exp_rdp(rsp, rdp, true);
+> 
+> This code is equivalent, correct?  All that happened is that a
+> "return" statement was replaced with an "else" clause.  Or am I
+> blind this morning?
+
+It's different. I made it do rcu_report_exp_rdp() only when it's out of
+RCU read sections, otherwise set the exp_need_qs flag. But I noticed
+that this part should be modified thanks to your explanation below.
+
+> > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> > index b0d7f9b..b303b63 100644
+> > --- a/kernel/rcu/tree_plugin.h
+> > +++ b/kernel/rcu/tree_plugin.h
+> > @@ -269,20 +269,6 @@ static void rcu_preempt_ctxt_queue(struct rcu_node *rnp, struct rcu_data *rdp)
+> >  	WARN_ON_ONCE(!(blkd_state & RCU_EXP_BLKD) !=
+> >  		     !(rnp->expmask & rdp->grpmask));
+> >  	raw_spin_unlock_rcu_node(rnp); /* interrupts remain disabled. */
+> > -
+> > -	/*
+> > -	 * Report the quiescent state for the expedited GP.  This expedited
+> > -	 * GP should not be able to end until we report, so there should be
+> > -	 * no need to check for a subsequent expedited GP.  (Though we are
+> > -	 * still in a quiescent state in any case.)
+> > -	 */
+> > -	if (blkd_state & RCU_EXP_BLKD &&
+> > -	    t->rcu_read_unlock_special.b.exp_need_qs) {
+> > -		t->rcu_read_unlock_special.b.exp_need_qs = false;
+> > -		rcu_report_exp_rdp(rdp->rsp, rdp, true);
+> > -	} else {
+> > -		WARN_ON_ONCE(t->rcu_read_unlock_special.b.exp_need_qs);
+> > -	}
+> 
+> Again, this does not eliminate the race, from what I can see.  And it
+
+There are races neither in the current code nor in my patch, I think.
+
+> can unnecessarily extend the expedited grace period.
+
+I don't know what you're pointing out here. Does the patch I'm attaching
+below still have the same problem? Do you remind that it's gonna be
+handled in rcu_read_unlock_special()?
+
+> > @@ -532,16 +498,18 @@ void rcu_read_unlock_special(struct task_struct *t)
+> >  		/* Unboost if we were boosted. */
+> >  		if (IS_ENABLED(CONFIG_RCU_BOOST) && drop_boost_mutex)
+> >  			rt_mutex_futex_unlock(&rnp->boost_mtx);
+> > -
+> > -		/*
+> > -		 * If this was the last task on the expedited lists,
+> > -		 * then we need to report up the rcu_node hierarchy.
+> > -		 */
+> > -		if (!empty_exp && empty_exp_now)
+> > -			rcu_report_exp_rnp(rcu_state_p, rnp, true);
+> >  	} else {
+> >  		local_irq_restore(flags);
+> >  	}
+> > +
+> > +	/*
+> > +	 * Respond to a request for an expedited grace period.
+> > +	 */
+> > +	if (special.b.exp_need_qs) {
+> > +		t->rcu_read_unlock_special.b.exp_need_qs = false;
+> > +		rdp = this_cpu_ptr(rcu_state_p->rda);
+> > +		rcu_report_exp_rdp(rcu_state_p, rdp, true);
+> > +	}
+> 
+> OK, so it looks like you are thinking in terms of combining the two
+> possible calls to rcu_report_exp_rdp().  But can't you lose reports
+> this way?  For example, suppose that this rcu_node structure has
+> two tasks queued behind ->exp_tasks?
+
+I certainly missed something here. I noticed it thanks to you.
+
+> The current code uses the non-empty-to-empty transition to make the
+> later report happen.  How does this code make that happen?
+
+Exactly. My code doesn't make it.
+
+What about the modified version which doesn't change the design but just
+eliminates the obvious unnecessary? And it might answer your question
+properly saying "which calls to this function (rcu_report_exp_cpu_mult())
+do you believe should be removed?".
+
+----->8-----
+diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+index 73e1d3d..33dfe6b 100644
+--- a/kernel/rcu/tree_exp.h
++++ b/kernel/rcu/tree_exp.h
+@@ -736,8 +736,10 @@ static void sync_rcu_exp_handler(void *info)
+ 	 * grace period started.  Either way, we can immediately report
+ 	 * the quiescent state.
+ 	 */
+-	rdp = this_cpu_ptr(rsp->rda);
+-	rcu_report_exp_rdp(rsp, rdp, true);
++	if (t->rcu_read_lock_nesting <= 0) {
++		rdp = this_cpu_ptr(rsp->rda);
++		rcu_report_exp_rdp(rsp, rdp, true);
++	}
+ }
  
- Each memory controller has its own PMU.  Measuring the complete system
- bandwidth would require specifying all imc PMUs (see perf list output),
--and adding the values together.
-+and adding the values together. To simplify creation of multiple events,
-+prefix and glob matching is supported in the PMU name, and the prefix
-+'uncore_' is also ignored when performing the match. So the command above
-+can be expanded to all memory controllers by using the syntaxes:
-+
-+  perf stat -C 0 -a imc/cas_count_read/,imc/cas_count_write/ -I 1000 ...
-+  perf stat -C 0 -a *imc*/cas_count_read/,*imc*/cas_count_write/ -I 1000 ...
+ /**
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index b0d7f9b..bb6b2dc 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -271,15 +271,12 @@ static void rcu_preempt_ctxt_queue(struct rcu_node *rnp, struct rcu_data *rdp)
+ 	raw_spin_unlock_rcu_node(rnp); /* interrupts remain disabled. */
  
- This example measures the combined core power every second
- 
-diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
-index 2b38e222016a..628026dbedc5 100644
---- a/tools/perf/Documentation/perf-stat.txt
-+++ b/tools/perf/Documentation/perf-stat.txt
-@@ -49,6 +49,13 @@ report::
- 	  parameters are defined by corresponding entries in
- 	  /sys/bus/event_source/devices/<pmu>/format/*
- 
-+	Note that the last two syntaxes support prefix and glob matching in
-+	the PMU name to simplify creation of events accross multiple instances
-+	of the same type of PMU in large systems (e.g. memory controller PMUs).
-+	Multiple PMU instances are typical for uncore PMUs, so the prefix
-+	'uncore_' is also ignored when performing this match.
-+
-+
- -i::
- --no-inherit::
-         child tasks do not inherit counters
-@@ -260,6 +267,12 @@ taskset.
- --no-merge::
- Do not merge results from same PMUs.
- 
-+When multiple events are created from a single event alias, stat will,
-+by default, aggregate the event counts and show the result in a single
-+row. This option disables that behavior and shows the individual events
-+and counts. Aliases are listed immediately after the Kernel PMU events
-+by perf list.
-+
- --smi-cost::
- Measure SMI cost if msr/aperf/ and msr/smi/ events are supported.
- 
-diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
-index 655ecff636a8..a1a01b1ac8b8 100644
---- a/tools/perf/util/parse-events.l
-+++ b/tools/perf/util/parse-events.l
-@@ -175,7 +175,7 @@ bpf_source	[^,{}]+\.c[a-zA-Z0-9._]*
- num_dec		[0-9]+
- num_hex		0x[a-fA-F0-9]+
- num_raw_hex	[a-fA-F0-9]+
--name		[a-zA-Z_*?][a-zA-Z0-9_*?.]*
-+name		[a-zA-Z_*?\[\]][a-zA-Z0-9_*?.\[\]]*
- name_minus	[a-zA-Z_*?][a-zA-Z0-9\-_*?.:]*
- drv_cfg_term	[a-zA-Z0-9_\.]+(=[a-zA-Z0-9_*?\.:]+)?
- /* If you add a modifier you need to update check_modifier() */
-diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
-index e81a20ea8d7d..dedf184b5bed 100644
---- a/tools/perf/util/parse-events.y
-+++ b/tools/perf/util/parse-events.y
-@@ -8,6 +8,7 @@
- 
- #define YYDEBUG 1
- 
-+#include <fnmatch.h>
- #include <linux/compiler.h>
- #include <linux/list.h>
- #include <linux/types.h>
-@@ -234,6 +235,10 @@ PE_NAME opt_event_config
- 	if (parse_events_add_pmu(_parse_state, list, $1, $2)) {
- 		struct perf_pmu *pmu = NULL;
- 		int ok = 0;
-+		char *pattern;
-+
-+		if (asprintf(&pattern, "%s*", $1) < 0)
-+			YYABORT;
- 
- 		while ((pmu = perf_pmu__scan(pmu)) != NULL) {
- 			char *name = pmu->name;
-@@ -241,14 +246,19 @@ PE_NAME opt_event_config
- 			if (!strncmp(name, "uncore_", 7) &&
- 			    strncmp($1, "uncore_", 7))
- 				name += 7;
--			if (!strncmp($1, name, strlen($1))) {
--				if (parse_events_copy_term_list(orig_terms, &terms))
-+			if (!fnmatch(pattern, name, 0)) {
-+				if (parse_events_copy_term_list(orig_terms, &terms)) {
-+					free(pattern);
- 					YYABORT;
-+				}
- 				if (!parse_events_add_pmu(_parse_state, list, pmu->name, terms))
- 					ok++;
- 				parse_events_terms__delete(terms);
- 			}
- 		}
-+
-+		free(pattern);
-+
- 		if (!ok)
- 			YYABORT;
+ 	/*
+-	 * Report the quiescent state for the expedited GP.  This expedited
+-	 * GP should not be able to end until we report, so there should be
+-	 * no need to check for a subsequent expedited GP.  (Though we are
+-	 * still in a quiescent state in any case.)
++	 * Reporting the quiescent state for the expedited GP will be
++	 * handled by special.b.blocked field in rcu_read_unlock_special().
+ 	 */
+ 	if (blkd_state & RCU_EXP_BLKD &&
+ 	    t->rcu_read_unlock_special.b.exp_need_qs) {
+ 		t->rcu_read_unlock_special.b.exp_need_qs = false;
+-		rcu_report_exp_rdp(rdp->rsp, rdp, true);
+ 	} else {
+ 		WARN_ON_ONCE(t->rcu_read_unlock_special.b.exp_need_qs);
+ 	}
+@@ -491,7 +488,7 @@ void rcu_read_unlock_special(struct task_struct *t)
+ 		WARN_ON_ONCE(rnp != t->rcu_blocked_node);
+ 		WARN_ON_ONCE(rnp->level != rcu_num_lvls - 1);
+ 		empty_norm = !rcu_preempt_blocked_readers_cgp(rnp);
+-		empty_exp = sync_rcu_preempt_exp_done(rnp);
++		empty_exp = rnp->exp_tasks == NULL;
+ 		smp_mb(); /* ensure expedited fastpath sees end of RCU c-s. */
+ 		np = rcu_next_node_entry(t, rnp);
+ 		list_del_init(&t->rcu_node_entry);
+@@ -515,7 +512,7 @@ void rcu_read_unlock_special(struct task_struct *t)
+ 		 * Note that rcu_report_unblock_qs_rnp() releases rnp->lock,
+ 		 * so we must take a snapshot of the expedited state.
+ 		 */
+-		empty_exp_now = sync_rcu_preempt_exp_done(rnp);
++		empty_exp_now = rnp->exp_tasks == NULL;
+ 		if (!empty_norm && !rcu_preempt_blocked_readers_cgp(rnp)) {
+ 			trace_rcu_quiescent_state_report(TPS("preempt_rcu"),
+ 							 rnp->gpnum,
+@@ -537,8 +534,10 @@ void rcu_read_unlock_special(struct task_struct *t)
+ 		 * If this was the last task on the expedited lists,
+ 		 * then we need to report up the rcu_node hierarchy.
+ 		 */
+-		if (!empty_exp && empty_exp_now)
+-			rcu_report_exp_rnp(rcu_state_p, rnp, true);
++		if (!empty_exp && empty_exp_now) {
++			rdp = this_cpu_ptr(rcu_state_p->rda);
++			rcu_report_exp_rdp(rcu_state_p, rdp, true);
++		}
+ 	} else {
+ 		local_irq_restore(flags);
  	}
