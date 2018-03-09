@@ -1,112 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751137AbeCIJ7n (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 04:59:43 -0500
-Received: from esa6.dell-outbound.iphmx.com ([68.232.149.229]:47573 "EHLO
-        esa6.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751072AbeCIJ7l (ORCPT
+        id S1751005AbeCIKCw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:02:52 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52860 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750800AbeCIKCu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:59:41 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FjAAC+WaJah2Oa6EReGQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQcBAQEBAYMjgQN/KAqDRooejXeCAoEWhx6NDIIVCoUlAhqCdSE0GAECAQE?=
- =?us-ascii?q?BAQEBAgECEAEBAQgNCQgoLoI4IoJKAQEBAQIBIxFFEAIBCBIIAh8HAgICHyYCA?=
- =?us-ascii?q?Q0CBA4FCBOEZgMNCKxAgiaHKg2BMIIagQ6EKIIugzyDLYJqgiFigj2CYgSIEZI?=
- =?us-ascii?q?TMQmNMoMtjmuKMocVgSweggtwgxKCMRAMFm4BCW13iXWBFwEBAQ?=
-X-IPAS-Result: =?us-ascii?q?A2FjAAC+WaJah2Oa6EReGQEBAQEBAQEBAQEBAQcBAQEBAYM?=
- =?us-ascii?q?jgQN/KAqDRooejXeCAoEWhx6NDIIVCoUlAhqCdSE0GAECAQEBAQEBAgECEAEBA?=
- =?us-ascii?q?QgNCQgoLoI4IoJKAQEBAQIBIxFFEAIBCBIIAh8HAgICHyYCAQ0CBA4FCBOEZgM?=
- =?us-ascii?q?NCKxAgiaHKg2BMIIagQ6EKIIugzyDLYJqgiFigj2CYgSIEZITMQmNMoMtjmuKM?=
- =?us-ascii?q?ocVgSweggtwgxKCMRAMFm4BCW13iXWBFwEBAQ?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.169
-X-IronPort-AV: E=Sophos;i="5.47,444,1515477600";
-   d="scan'208";a="147442077"
-X-DLP: DLP_GlobalPCIDSS
-To: <pali.rohar@gmail.com>
-CC: <kai.heng.feng@canonical.com>, <mjg59@srcf.ucam.org>,
-        <dvhart@infradead.org>, <andy@infradead.org>, <tiwai@suse.com>,
-        <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>
-Subject: RE: [PATCH v2 3/3] ALSA: hda: Disabled unused audio controller for
- Dell platforms with Switchable Graphics
-Thread-Topic: [PATCH v2 3/3] ALSA: hda: Disabled unused audio controller for
- Dell platforms with Switchable Graphics
-Thread-Index: AQHTtr1XC+3UjKIddE2I55hGuXPKiaPIAceAgAAHyYD//5ufkIAAaMcA//+dHPA=
-Date: Fri, 9 Mar 2018 09:59:39 +0000
-Message-ID: <09eadabb264f401a88b427744505adf8@ausx13mpc124.AMER.DELL.COM>
-References: <20180308091023.9061-1-kai.heng.feng@canonical.com>
- <20180308091023.9061-3-kai.heng.feng@canonical.com>
- <20180309090223.xb55ltac4pfesdrh@pali>
- <723DA929-C9FA-4F69-8D3A-03D8A75D09A6@canonical.com>
- <014795f5a3014cd3bf55de26f76a5af8@ausx13mpc124.AMER.DELL.COM>
- <20180309094600.m24d3zbzdsmls7aw@pali>
-In-Reply-To: <20180309094600.m24d3zbzdsmls7aw@pali>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="utf-8"
+        Fri, 9 Mar 2018 05:02:50 -0500
+Date: Fri, 9 Mar 2018 11:02:41 +0100
+From: Philipp Rudo <prudo@linux.vnet.ibm.com>
+To: Dave Young <dyoung@redhat.com>
+Cc: kexec@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
+        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: Re: [PATCH 09/11] kexec_file: Remove mis-use of sh_offset field
+In-Reply-To: <20180309031420.GA3246@dhcp-128-65.nay.redhat.com>
+References: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
+        <20180226151620.20970-10-prudo@linux.vnet.ibm.com>
+        <20180309031420.GA3246@dhcp-128-65.nay.redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18030910-0008-0000-0000-000004D9C471
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030910-0009-0000-0000-00001E6CE7F3
+Message-Id: <20180309110241.00b0d3f3@ThinkPad>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-09_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803090129
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w299xnh2027411
 
-> > Pali is your concern that this code for matching vendor/subsystem is running
-> > on non-Dell too?  The only other recommendation I think that can be to restrict
-> > to matching Dell OEM strings in SMBIOS table, but I don't think that's any better
-> > than the matching for VID/SSVID.
+Hi Dave,
+
+
+On Fri, 9 Mar 2018 11:14:20 +0800
+Dave Young <dyoung@redhat.com> wrote:
+
+> On 02/26/18 at 04:16pm, Philipp Rudo wrote:
+> > The current code uses the sh_offset field in purgatory_info->sechdrs to
+> > store a pointer to the current load address of the section. Depending
+> > whether the section will be loaded or not this is either a pointer into
+> > purgatory_info->purgatory_buf or kexec_purgatory. This is not only a
+> > violation of the ELF standard but also makes the code very hard to
+> > understand as you cannot tell if the memory you are using is read-only or
+> > not.
+> > 
+> > Remove this mis-use and store the offset of the section in
+> > pugaroty_info->purgatory_buf in sh_offset.
+> > 
+> > Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
+> > ---
+> >  arch/x86/kernel/machine_kexec_64.c | 10 ++++++----
+> >  kernel/kexec_file.c                | 33 +++------------------------------
+> >  2 files changed, 9 insertions(+), 34 deletions(-)
+> > 
+> > diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+> > index 51667c8b5c9b..41db74bdc88b 100644
+> > --- a/arch/x86/kernel/machine_kexec_64.c
+> > +++ b/arch/x86/kernel/machine_kexec_64.c
+> > @@ -457,13 +457,15 @@ int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
+> >  		 * rel[i].r_offset contains byte offset from beginning
+> >  		 * of section to the storage unit affected.
+> >  		 *
+> > -		 * This is location to update (->sh_offset). This is temporary
+> > -		 * buffer where section is currently loaded. This will finally
+> > -		 * be loaded to a different address later, pointed to by
+> > +		 * This is location to update. This is temporary buffer
+> > +		 * where section is currently loaded. This will finally be
+> > +		 * loaded to a different address later, pointed to by
+> >  		 * ->sh_addr. kexec takes care of moving it
+> >  		 *  (kexec_load_segment()).
+> >  		 */
+> > -		location = (void *)(section->sh_offset + rel[i].r_offset);
+> > +		location = pi->purgatory_buf;
+> > +		location += section->sh_offset;
+> > +		location += rel[i].r_offset;
+> >  
+> >  		/* Final address of the location */
+> >  		address = section->sh_addr + rel[i].r_offset;
+> > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> > index 746b91e46e34..25b44d1a664a 100644
+> > --- a/kernel/kexec_file.c
+> > +++ b/kernel/kexec_file.c
+> > @@ -736,28 +736,6 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
+> >  	       pi->ehdr->e_shnum * sizeof(Elf_Shdr));
+> >  	pi->sechdrs = sechdrs;
+> >  
+> > -	/*
+> > -	 * We seem to have multiple copies of sections. First copy is which
+> > -	 * is embedded in kernel in read only section. Some of these sections
+> > -	 * will be copied to a temporary buffer and relocated. And these
+> > -	 * sections will finally be copied to their final destination at
+> > -	 * segment load time.  
 > 
-> My concern is about adding a new machine specific code into generic
-> driver, which check is done just by PCI vendor and subvendor.
+> It would be good to keep above part comment somewhere..
+
+there is a comment in include/linux/kexec.h for the purgatory_info->sechdrs
+field saying 
+
+Temporary, modifiable buffer for sechdrs used for relocation.        
+This memory can be freed post image load
+
+When you think this is not enough i can add a comment here like
+
+The section headers in kexec_purgatory are read-only. In order to have them
+modifiable make a temporary copy.
+
+What do you think.
+
+Thanks
+Philipp
+
+> > -	 *
+> > -	 * Use ->sh_offset to reflect section address in memory. It will
+> > -	 * point to original read only copy if section is not allocatable.
+> > -	 * Otherwise it will point to temporary copy which will be relocated.
+> > -	 *
+> > -	 * Use ->sh_addr to contain final address of the section where it
+> > -	 * will go during execution time.
+> > -	 */
+> > -	for (i = 0; i < pi->ehdr->e_shnum; i++) {
+> > -		if (sechdrs[i].sh_type == SHT_NOBITS)
+> > -			continue;
+> > -
+> > -		sechdrs[i].sh_offset = (unsigned long)pi->ehdr +
+> > -						sechdrs[i].sh_offset;
+> > -	}
+> > -
+> >  	offset = 0;
+> >  	bss_addr = kbuf->mem + kbuf->bufsz;
+> >  	kbuf->image->start = pi->ehdr->e_entry;
+> > @@ -786,17 +764,12 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
+> >  			kbuf->image->start += kbuf->mem + offset;
+> >  		}
+> >  
+> > -		src = (void *)sechdrs[i].sh_offset;
+> > +		src = (void *)pi->ehdr + sechdrs[i].sh_offset;
+> >  		dst = pi->purgatory_buf + offset;
+> >  		memcpy(dst, src, sechdrs[i].sh_size);
+> >  
+> >  		sechdrs[i].sh_addr = kbuf->mem + offset;
+> > -
+> > -		/*
+> > -		 * This section got copied to temporary buffer. Update
+> > -		 * ->sh_offset accordingly.
+> > -		 */
+> > -		sechdrs[i].sh_offset = (unsigned long)dst;
+> > +		sechdrs[i].sh_offset = offset;
+> >  		offset += sechdrs[i].sh_size;
+> >  	}
+> >  
+> > @@ -1006,7 +979,7 @@ int kexec_purgatory_get_set_symbol(struct kimage *image, const char *name,
+> >  		return -EINVAL;
+> >  	}
+> >  
+> > -	sym_buf = (char *)sec->sh_offset + sym->st_value;
+> > +	sym_buf = (char *)pi->purgatory_buf + sec->sh_offset + sym->st_value;
+> >  
+> >  	if (get_value)
+> >  		memcpy((void *)buf, sym_buf, size);
+> > -- 
+> > 2.13.5
+> >   
 > 
-> In future there can be new models or other PCI devices which matches
-> above condition even they would not have any switchable graphics, nor
-> they would manufactured by Dell.
-
-Uh Dell subsystem ID means it's Dell no?
-
+> Thanks
+> Dave
 > 
-> Also I can imagine that in future (or maybe already now?) it is possible
-> to find PCI device which pass above checks and connect this PCI device
-> into desktop /server / any non-laptop device.
-> 
-> If this switchable graphics solution is specific to dell laptops, then
-> rather checking for PCI vendor/subvevendor main check, there should be
-> main check via DMI strings.
-
-Right now this is affected to both AIO desktop and laptops.
-
-IIRC you won't end up with switchable graphics in traditional desktop that you
-can remove PCI card.  If this code was run on a traditional desktop with a 
-AMD PCI card that BIOS query result should be invalid token (which will infer
-switchable off to this routine).
-
-> 
-> Hardware is changing relatively quickly and there is absolutely no
-> guarantee that e.g. NVIDIA would not start providing audio controller in
-> similar like AMD and it would be put in those Dell machines.
-
-Kai Heng can explain exactly why NVIDIA isn't affected.
-This is probably good information to include in the commit message too.
-
-> 
-> > > >
-> > > > Interesting question would be, how handle this situation Windows?
-> > >
-> > > I don't know how this platform handles this on Windows, I guess we need
-> > > Mario to shed some lights here.
-> >
-> > Sorry I don't have this information to share.   I don't think it's too useful here
-> > anyway though because Windows driver architecture is much different in this
-> > area.
-> >
-> >
-> 
-> --
-> Pali Rohár
-> pali.rohar@gmail.com
