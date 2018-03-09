@@ -1,77 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751059AbeCIKxU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:53:20 -0500
-Received: from foss.arm.com ([217.140.101.70]:50334 "EHLO foss.arm.com"
+        id S1751147AbeCIKyc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:54:32 -0500
+Received: from ozlabs.org ([103.22.144.67]:50249 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750912AbeCIKxT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 05:53:19 -0500
-Subject: Re: [PATCH v11 8/8] perf: ARM DynamIQ Shared Unit PMU support
-To: Saravana Kannan <skannan@codeaurora.org>
-Cc: will.deacon@arm.com, mark.rutland@arm.com, robh@kernel.org,
-        sudeep.holla@arm.com, mathieu.poirier@linaro.org, peterz@infradead.org,
-        jonathan.cameron@huawei.com, linux-kernel@vger.kernel.org,
-        marc.zyngier@arm.com, leo.yan@linaro.org, frowand.list@gmail.com,
-        linux-arm-kernel@lists.infradead.org, rananta@codeaurora.org,
-        avilaj@codeaurora.org, Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Charles Garcia-Tobin <Charles.Garcia-Tobin@arm.com>
-References: <20180102112533.13640-1-suzuki.poulose@arm.com>
- <20180102112533.13640-9-suzuki.poulose@arm.com>
- <5AA1CE48.5030203@codeaurora.org>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <a466d82b-2a0f-ffba-f9f7-c76c6c787bb5@arm.com>
-Date: Fri, 9 Mar 2018 10:53:14 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751056AbeCIKya (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 05:54:30 -0500
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: alastair@d-silva.org, andrew.donnellan@au1.ibm.com,
+        bharata@linux.vnet.ibm.com, fbarrat@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org, linux@roeck-us.net,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.16-5 tag
+Date: Fri, 09 Mar 2018 21:54:27 +1100
+Message-ID: <87fu59v7rw.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <5AA1CE48.5030203@codeaurora.org>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Cc: Lorenzo, Charles.
+--=-=-=
+Content-Type: text/plain
 
-On 08/03/18 23:59, Saravana Kannan wrote:
-> On 01/02/2018 03:25 AM, Suzuki K Poulose wrote:
->> Add support for the Cluster PMU part of the ARM DynamIQ Shared Unit (DSU).
->> The DSU integrates one or more cores with an L3 memory system, control
->> logic, and external interfaces to form a multicore cluster. The PMU
->> allows counting the various events related to L3, SCU etc, along with
->> providing a cycle counter.
->>
->> The PMU can be accessed via system registers, which are common
->> to the cores in the same cluster. The PMU registers follow the
->> semantics of the ARMv8 PMU, mostly, with the exception that
->> the counters record the cluster wide events.
->>
->> This driver is mostly based on the ARMv8 and CCI PMU drivers.
->> The driver only supports ARM64 at the moment. It can be extended
->> to support ARM32 by providing register accessors like we do in
->> arch/arm64/include/arm_dsu_pmu.h.
->>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->> Reviewed-by: Mark Rutland <mark.rutland@arm.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Hi Linus,
 
-[...]
+Please pull some more powerpc fixes for 4.16:
 
-> 
-> Looking at the code, I didn't see any specific handling of cluster power collapse. AFAIK, the HW counters do not retain config (what event they are counting) or value (the current count) across power collapse. Wouldn't you need to register for some kind of PM_ENTER/EXIT notifiers to handle that?
+The following changes since commit eb0a2d2620ae431c543963c8c7f08f597366fc60:
 
-Good point, yes *somebody* needs to save-restore the registers. But who ? As far
-as the kernel is concerned, it doesn't control the DSU states. Also, as of now
-there is no reliable way to get the "ENTER/EXIT" notifications for the DSU power
-domain state changes. All we do is use the PMU, assuming it is available. AFAIT,
-it should really be done at EL3, which manages the DSU, but may be I am wrong.
+  powerpc/powernv: Support firmware disable of RFI flush (2018-02-23 16:55:42 +1100)
 
-Sudeep, Lorenzo, Charles,
+are available in the git repository at:
 
-Please feel free to share your thoughts.
+  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.16-5
 
-Cheers
-Suzuki
+for you to fetch changes up to b0c41b8b6e43120d7c35e4709508a3d90a09646e:
+
+  powerpc/pseries: Fix vector5 in ibm architecture vector table (2018-03-06 23:05:38 +1100)
+
+----------------------------------------------------------------
+powerpc fixes for 4.16 #5
+
+One notable fix to properly advertise our support for a new firmware feature,
+caused by two series conflicting semantically but not textually.
+
+There's a new ioctl for the new ocxl driver, which is not a fix, but needed to
+complete the userspace API and good to have before the driver is in a released
+kernel.
+
+Finally three minor selftest fixes, and a fix for intermittent build failures
+for some obscure platforms, caused by a missing make dependency.
+
+Thanks to:
+  Alastair D'Silva, Bharata B Rao, Guenter Roeck.
+
+----------------------------------------------------------------
+Alastair D'Silva (2):
+      ocxl: Add get_metadata IOCTL to share OCXL information to userspace
+      ocxl: Document the OCXL_IOCTL_GET_METADATA IOCTL
+
+Bharata B Rao (1):
+      powerpc/pseries: Fix vector5 in ibm architecture vector table
+
+Guenter Roeck (1):
+      powerpc/boot: Fix random libfdt related build errors
+
+Michael Ellerman (3):
+      selftests/powerpc: Skip tm-trap if transactional memory is not enabled
+      selftests/powerpc: Fix missing clean of pmu/lib.o
+      selftests/powerpc: Skip the subpage_prot tests if the syscall is unavailable
+
+ Documentation/accelerators/ocxl.rst               |  5 +++++
+ arch/powerpc/boot/Makefile                        |  3 ++-
+ arch/powerpc/kernel/prom_init.c                   |  1 -
+ drivers/misc/ocxl/file.c                          | 27 +++++++++++++++++++++++
+ include/uapi/misc/ocxl.h                          | 17 ++++++++++++++
+ tools/testing/selftests/powerpc/mm/subpage_prot.c | 14 ++++++++++++
+ tools/testing/selftests/powerpc/tm/Makefile       |  2 +-
+ tools/testing/selftests/powerpc/tm/tm-trap.c      |  2 ++
+ 8 files changed, 68 insertions(+), 3 deletions(-)
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJaomfjAAoJEFHr6jzI4aWAu24P/08vQm/fOi9+IGFpzYHycE5F
+C6Xgc2/CBzIwSxOirCvnIYPQrbr/FlP9ms+LqVgyndhGDF1Offc46moXQGjOpoiC
+LdaZrbGfM8By2zDAPMFILuwdERALMl6EIbgyVmJatDMDnV95IzDgtapwYVNI29F+
+whuFayavuPA0FWfsPU3cx+Txjs5h4kKoFSN6QtbleEF827U+V6pa6OsMeIbjHvC1
+gPz2o1FwxXYpV88TMpPGV1YczozaNV9VGcGUwFIVbgPGwADVamMiCw4qu3bjhFoW
+9HrSrn6WhO6rXa7PvodPSBwn/UyaOZtzRlFmhuGJs3NqgTooNpY9SzJFmd0OlkXG
+bHz8bQ6Qr/00joVe0c9e/g/DCDc9qlI+tZ+Xx55M7nQDyDIcGG9O2IMzxJXjz96S
+I2J31VodW/31n5f/JZJp6AaJqiA2VypUrMb0NnVH6PUecOoSf78z/d/2oYzld0ZH
+etW7NdDiq5RYXeV3HcqQ73yXZsTEUrIhWSUH1kETLI+GoqgLHCz4dAhu+K6vSd9M
+fCJGKd5seWMvOSjLKauXFNyCB1YZfJI2nZTGV76NNl8eFEtgwgA44cVCr9W40Bms
+7RIREyuAfLUFyLEWrCJyJSt1OdXjso42TBShx2A8z4sMYVUF0pn1YtTXzopcMqfP
+jioeAXaBxgvspCbfv84u
+=2cgm
+-----END PGP SIGNATURE-----
+--=-=-=--
