@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751226AbeCIJtU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 04:49:20 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:43512 "EHLO
+        id S1751085AbeCIJsw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 04:48:52 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:46969 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751056AbeCIJsx (ORCPT
+        with ESMTP id S1750878AbeCIJst (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:48:53 -0500
+        Fri, 9 Mar 2018 04:48:49 -0500
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 To: Peter Zijlstra <peterz@infradead.org>,
         Linux PM <linux-pm@vger.kernel.org>,
@@ -18,9 +18,11 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
         Aubrey Li <aubrey.li@linux.intel.com>,
         Mike Galbraith <mgalbraith@suse.de>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [RFC/RFT][PATCH v3 0/6] sched/cpuidle: Idle loop rework
-Date: Fri, 09 Mar 2018 10:34:27 +0100
-Message-ID: <2450532.XN8DODrtDf@aspire.rjw.lan>
+Subject: [RFC/RFT][PATCH v3 6/6] cpuidle: menu: Refine idle state selection for running tick
+Date: Fri, 09 Mar 2018 10:49:11 +0100
+Message-ID: <2427176.MrJbnUnnmj@aspire.rjw.lan>
+In-Reply-To: <2450532.XN8DODrtDf@aspire.rjw.lan>
+References: <2450532.XN8DODrtDf@aspire.rjw.lan>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -28,74 +30,116 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Thanks a lot for the discussion and testing so far!
+If the tick isn't stopped, the target residency of the state selected
+by the menu governor may be greater than the actual time to the next
+tick and that means lost energy.
 
-This is a total respin of the whole series, so please look at it afresh.
-Patches 2 and 3 are the most similar to their previous versions, but
-still they are different enough.
+To avoid that, make tick_nohz_get_sleep_length() return the current
+time the the next event (before stopping the tick) in addition to
+the estimated one via an extra pointer argument and make
+menu_select() use that value to refine the state selection
+when necessary.
 
-The summary below still applies:
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpuidle/governors/menu.c |   21 ++++++++++++++++++---
+ include/linux/tick.h             |    2 +-
+ kernel/time/tick-sched.c         |    7 +++++--
+ 3 files changed, 24 insertions(+), 6 deletions(-)
 
-On Sunday, March 4, 2018 11:21:30 PM CET Rafael J. Wysocki wrote:
-> 
-> The problem is that if we stop the sched tick in
-> tick_nohz_idle_enter() and then the idle governor predicts short idle
-> duration, we lose regardless of whether or not it is right.
-> 
-> If it is right, we've lost already, because we stopped the tick
-> unnecessarily.  If it is not right, we'll lose going forward, because
-> the idle state selected by the governor is going to be too shallow and
-> we'll draw too much power (that has been reported recently to actually
-> happen often enough for people to care).
-> 
-> This patch series is an attempt to improve the situation and the idea
-> here is to make the decision whether or not to stop the tick deeper in
-> the idle loop and in particular after running the idle state selection
-> in the path where the idle governor is invoked.  This way the problem
-> can be avoided, because the idle duration predicted by the idle governor
-> can be used to decide whether or not to stop the tick so that the tick
-> is only stopped if that value is large enough (and, consequently, the
-> idle state selected by the governor is deep enough).
-> 
-> The series tires to avoid adding too much new code, rather reorder the
-> existing code and make it more fine-grained.
-
-Patch 1 prepares the tick-sched code for the subsequent modifications and it
-doesn't change the code's functionality (at least not intentionally).
+Index: linux-pm/include/linux/tick.h
+===================================================================
+--- linux-pm.orig/include/linux/tick.h
++++ linux-pm/include/linux/tick.h
+@@ -119,7 +119,7 @@ extern void tick_nohz_idle_retain_tick(v
+ extern void tick_nohz_idle_enter(void);
+ extern void tick_nohz_idle_exit(void);
+ extern void tick_nohz_irq_exit(void);
+-extern ktime_t tick_nohz_get_sleep_length(void);
++extern ktime_t tick_nohz_get_sleep_length(ktime_t *cur_ret);
+ extern unsigned long tick_nohz_get_idle_calls(void);
+ extern unsigned long tick_nohz_get_idle_calls_cpu(int cpu);
+ extern u64 get_cpu_idle_time_us(int cpu, u64 *last_update_time);
+Index: linux-pm/kernel/time/tick-sched.c
+===================================================================
+--- linux-pm.orig/kernel/time/tick-sched.c
++++ linux-pm/kernel/time/tick-sched.c
+@@ -1024,10 +1024,11 @@ void tick_nohz_irq_exit(void)
  
-Patch 2 starts pushing the tick stopping decision deeper into the idle
-loop, but it is limited to do_idle() and tick_nohz_irq_exit().
-
-Patch 3 makes cpuidle_idle_call() decide whether or not to stop the tick
-and sets the stage for the subsequent changes.
-
-Patch 4 adds a bool pointer argument to cpuidle_select() and the ->select
-governor callback allowing them to return a "nohz" hint on whether or not to
-stop the tick to the caller.  It also adds code to decide what value to
-return as "nohz" to the menu governor.
-
-Patch 5 reorders the idle state selection with respect to the stopping of the
-tick and causes the additional "nohz" hint from cpuidle_select() to be used
-for deciding whether or not to stop the tick.
-
-Patch 6 causes the menu governor to refine the state selection in case the
-tick is not going to be stopped and the already selected state may not fit
-before the next tick time.
-
-And the two paragraphs below still apply:
-
-> I have tested these patches on a couple of machines, including the very laptop
-> I'm sending them from, without any obvious issues, but please give them a go
-> if you can, especially if you have an easy way to reproduce the problem they
-> are targeting.
-> 
-> The above said, this is just RFC, so no pets close to the machines running it,
-> please.
-
-The patches are on top of 4.16-rc4 (if you need a git branch with them for
-easier testing, please let me know).
-
-Thanks,
-Rafael
+ /**
+  * tick_nohz_get_sleep_length - return the expected length of the current sleep
++ * @cur_ret: pointer for returning the current time to the next event
+  *
+  * Called from power state control code with interrupts disabled
+  */
+-ktime_t tick_nohz_get_sleep_length(void)
++ktime_t tick_nohz_get_sleep_length(ktime_t *cur_ret)
+ {
+ 	struct clock_event_device *dev = __this_cpu_read(tick_cpu_device.evtdev);
+ 	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
+@@ -1038,6 +1039,8 @@ ktime_t tick_nohz_get_sleep_length(void)
+ 	 */
+ 	ktime_t now = ts->idle_entrytime;
+ 
++	*cur_ret = ktime_sub(dev->next_event, now);
++
+ 	if (can_stop_idle_tick(cpu, ts)) {
+ 		ktime_t next_event = __tick_nohz_next_event(ts, cpu);
+ 
+@@ -1045,7 +1048,7 @@ ktime_t tick_nohz_get_sleep_length(void)
+ 			return ktime_sub(next_event, now);
+ 	}
+ 
+-	return ktime_sub(dev->next_event, now);
++	return *cur_ret;
+ }
+ 
+ /**
+Index: linux-pm/drivers/cpuidle/governors/menu.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/menu.c
++++ linux-pm/drivers/cpuidle/governors/menu.c
+@@ -296,6 +296,7 @@ static int menu_select(struct cpuidle_dr
+ 	unsigned int expected_interval;
+ 	unsigned long nr_iowaiters, cpu_load;
+ 	int resume_latency = dev_pm_qos_raw_read_value(device);
++	ktime_t tick_time;
+ 
+ 	if (data->needs_update) {
+ 		menu_update(drv, dev);
+@@ -313,7 +314,7 @@ static int menu_select(struct cpuidle_dr
+ 	}
+ 
+ 	/* determine the expected residency time, round up */
+-	data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length());
++	data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length(&tick_time));
+ 
+ 	get_iowait_load(&nr_iowaiters, &cpu_load);
+ 	data->bucket = which_bucket(data->next_timer_us, nr_iowaiters);
+@@ -400,8 +401,22 @@ static int menu_select(struct cpuidle_dr
+ 		 * within the tick period range that could be used if longer
+ 		 * idle duration was predicted.
+ 		 */
+-		*nohz_ret = !(first_idx > idx &&
+-			      drv->states[first_idx].target_residency < TICK_USEC_HZ);
++		if (first_idx > idx &&
++		    drv->states[first_idx].target_residency < TICK_USEC_HZ) {
++			unsigned int tick_us = ktime_to_us(tick_time);
++
++			/*
++			 * Find a state with target residency less than the
++			 * time to the next timer event including the tick.
++			 */
++			while (idx > 0 &&
++			    (drv->states[idx].target_residency > tick_us ||
++			     drv->states[idx].disabled ||
++			     dev->states_usage[idx].disable))
++				idx--;
++
++			*nohz_ret = false;
++		}
+ 	}
+ 
+ 	data->last_state_idx = idx;
