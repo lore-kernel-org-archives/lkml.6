@@ -1,62 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751243AbeCIOCc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 09:02:32 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:46288 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751232AbeCIOCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 09:02:24 -0500
-From: Peng Hao <peng.hao2@zte.com.cn>
-To: christoffer.dall@linaro.org, marc.zyngier@arm.com
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH] KVM:arm/arm64: dcache need be coherent unconditionally
-Date: Sat, 10 Mar 2018 06:15:03 +0800
-Message-Id: <1520633703-15121-1-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-03-09 22:02:23,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-03-09 22:01:57,
-        Serialize complete at 2018-03-09 22:01:57
-X-MAIL: mse01.zte.com.cn w29E2DAL042614
+        id S932075AbeCIOCy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 09:02:54 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34092 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751056AbeCIOCx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 09:02:53 -0500
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: kvm@vger.kernel.org
+Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/7] Enlightened VMCS support for KVM on Hyper-V
+Date: Fri,  9 Mar 2018 15:02:42 +0100
+Message-Id: <20180309140249.2840-1-vkuznets@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For emulation devices just like vga, keeping coherent dcache between
-guest and host timely is needed.
-Now the display of vnc-viewer will not update continuously and the
-patch can fix up.
+Changes since v2:
+- Move hyperv.h out of uapi [Radim Krčmář], PATCHes 1 and 2 added.
+- define KVM_EVMCS_VERSION, HV_X64_ENLIGHTENED_VMCS_VERSION [Radim Krčmář]
+- WARN_ONCE in get_evmcs_offset[,_cf] [Radim Krčmář]
+- add evmcs_sanitize_exec_ctrls() and use it in hardware_setup() and
+  dump_vmcs() [Radim Krčmář]
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
----
- virt/kvm/arm/mmu.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+When running nested KVM on Hyper-V it's possible to use so called
+'Enlightened VMCS' and do normal memory reads/writes instead of
+doing VMWRITE/VMREAD instructions. In addition, clean field mask
+provides a huge room for optimization on L0's side.
 
-diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index ec62d1c..4a28395e 100644
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -1416,8 +1416,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 			kvm_set_pfn_dirty(pfn);
- 		}
- 
--		if (fault_status != FSC_PERM)
--			clean_dcache_guest_page(pfn, PMD_SIZE);
-+		clean_dcache_guest_page(pfn, PMD_SIZE);
- 
- 		if (exec_fault) {
- 			new_pmd = kvm_s2pmd_mkexec(new_pmd);
-@@ -1438,8 +1437,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 			mark_page_dirty(kvm, gfn);
- 		}
- 
--		if (fault_status != FSC_PERM)
--			clean_dcache_guest_page(pfn, PAGE_SIZE);
-+		clean_dcache_guest_page(pfn, PAGE_SIZE);
- 
- 		if (exec_fault) {
- 			new_pte = kvm_s2pte_mkexec(new_pte);
+Tight CPUID loop test shows significant speedup (E5-2667 v4 @ 3.20GHz):
+  Before: 18890 cycles
+  After: 8304 cycles
+
+Ladi Prosek (1):
+  x86/kvm: rename HV_X64_MSR_APIC_ASSIST_PAGE to
+    HV_X64_MSR_VP_ASSIST_PAGE
+
+Vitaly Kuznetsov (6):
+  x86/hyper-v: move hyperv.h out of uapi
+  x86/hyper-v: move definitions from TLFS to hyperv-tlfs.h
+  x86/hyper-v: allocate and use Virtual Processor Assist Pages
+  x86/hyper-v: define struct hv_enlightened_vmcs and clean field bits
+  x86/hyper-v: detect nested features
+  x86/kvm: use Enlightened VMCS when running on Hyper-V
+
+ MAINTAINERS                          |   2 +-
+ arch/x86/hyperv/hv_init.c            |  35 +-
+ arch/x86/include/asm/hyperv-tlfs.h   | 695 +++++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/kvm_host.h      |   1 +
+ arch/x86/include/asm/mshyperv.h      |  91 +----
+ arch/x86/include/uapi/asm/hyperv.h   | 421 ---------------------
+ arch/x86/include/uapi/asm/kvm_para.h |   1 -
+ arch/x86/kernel/cpu/mshyperv.c       |  21 +-
+ arch/x86/kvm/hyperv.c                |   8 +-
+ arch/x86/kvm/lapic.h                 |   2 +-
+ arch/x86/kvm/vmx.c                   | 625 ++++++++++++++++++++++++++++++-
+ arch/x86/kvm/x86.c                   |   2 +-
+ drivers/hv/connection.c              |   1 -
+ drivers/hv/hv.c                      |   1 -
+ drivers/hv/hyperv_vmbus.h            |   1 +
+ drivers/hv/vmbus_drv.c               |   1 -
+ include/linux/hyperv.h               |   1 -
+ 17 files changed, 1379 insertions(+), 530 deletions(-)
+ create mode 100644 arch/x86/include/asm/hyperv-tlfs.h
+ delete mode 100644 arch/x86/include/uapi/asm/hyperv.h
+
 -- 
-1.8.3.1
+2.14.3
