@@ -1,73 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932386AbeCIRdJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 12:33:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57242 "EHLO mail.kernel.org"
+        id S932453AbeCIRdd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 12:33:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751166AbeCIRdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 12:33:08 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C6B7205F4
+        id S932195AbeCIRdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 12:33:19 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54287205F4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Fri, 9 Mar 2018 14:33:16 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Will Deacon <will.deacon@arm.com>
+Cc: Ganapatrao Kulkarni <gklkml16@gmail.com>,
+        William Cohen <wcohen@redhat.com>, mark.rutland@arm.com,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        John Garry <john.garry@huawei.com>, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Robert Richter <Robert.Richter@cavium.com>,
+        Ingo Molnar <mingo@redhat.com>, jnair@caviumnetworks.com,
+        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        Jiri Olsa <jolsa@redhat.com>, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] perf vendor events arm64: Enable JSON events for
+ ThunderX2 B0
+Message-ID: <20180309173316.GF8347@kernel.org>
+References: <20180307110803.32418-1-ganapatrao.kulkarni@cavium.com>
+ <3384d33f-c927-740a-97f1-b20775ef2c7b@redhat.com>
+ <20180307143832.GJ3701@kernel.org>
+ <CAKTKpr4zMcRLykw8xwWJKf2eiuCrf2RuJ7kexGRQNN7_OdJ=uQ@mail.gmail.com>
+ <52328144-3a2a-af03-273b-3a2f3bdadda6@redhat.com>
+ <CAKTKpr7HgsdZ90k0_evSq_aZW-uGSKwLndHOQ2Jahajj3Gkc0Q@mail.gmail.com>
+ <CAKTKpr5=Doy2bQz8yYcoRNUGQ1HEgLcqk7U+4m-=1T_TZWa4HA@mail.gmail.com>
+ <20180309143415.GB4194@kernel.org>
+ <20180309155808.GP15537@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Dmitry Osipenko <digetx@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180308144437.GJ3529@ulmo>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
- <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
- <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com> <20180308144437.GJ3529@ulmo>
-Message-ID: <152061678678.13890.15810434310624804730@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v3 1/3] clk: tegra: Mark HCLK, SCLK and EMC as critical
-Date: Fri, 09 Mar 2018 09:33:06 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180309155808.GP15537@arm.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Thierry Reding (2018-03-08 06:44:37)
-> On Thu, Mar 01, 2018 at 04:33:29PM +0300, Dmitry Osipenko wrote:
-> > On 15.01.2018 13:56, Dmitry Osipenko wrote:
-> > > On 10.01.2018 16:59, Dmitry Osipenko wrote:
-> > >> Machine dies if HCLK, SCLK or EMC is disabled. Hence mark these clocks
-> > >> as critical.
-> > >>
-> > >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > >> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > >> ---
-> > >>
-> > >> Change log:
-> > >> v2:     Fixed accidentally missed marking EMC as critical on Tegra30 and
-> > >>         Tegra124. Switched to a use of common EMC gate definition on Tegra20
-> > >>         and Tegra30.
-> > >>
-> > >> v3:     Dropped marking PLL_P outputs as critical, because seems they are
-> > >>         not so critical. Although, I still haven't got a definitive answer
-> > >>         about what exact HW functions are affected by the fixed-clocks.
-> > >>         Anyway it should be cleaner to correct the actual drivers.
+Em Fri, Mar 09, 2018 at 03:58:09PM +0000, Will Deacon escreveu:
+> On Fri, Mar 09, 2018 at 11:34:15AM -0300, Arnaldo Carvalho de Melo wrote:
+> > Em Fri, Mar 09, 2018 at 07:57:04PM +0530, Ganapatrao Kulkarni escreveu:
+> > > Hi Arnaldo,
 > > > 
-> > > Stephen / Michael, would it be possible to schedule these patches for 4.16? My
-> > > T20 and T30 devices aren't working without the 'critical clocks' patch. Things
-> > > happen to work with the opensource u-boot, but not with the proprietary
-> > > bootloader. It's probably not a big deal that out-of-tree devices are broken,
-> > > although would be nice to have one problem less.
+> > > can you please pull-in this patch?
 > > 
-> > Guys, is there anything I could do to get these patches in linux-next?
+> > So everybody is Ok with this? Can I have some Acked-by: from subject
+> > matter experts?
 > 
-> I've picked these up into the for-4.17/clk branch in the Tegra tree. I
-> already have that branch for the MBIST patches which are a dependency
-> for the for-4.17/soc branch.
+> The original patch looks fine to me:
 > 
-> Stephen, Mike, let me know if you have any objections to carrying these
-> in the Tegra tree.
-> 
+> Acked-by: Will Deacon <will.deacon@arm.com>
 
-Are you going to send us a PR at some point?
+Ok, so, as John mentioned in another message in his thread, this
+conflicts with a series he sent and that Ganapatrao acked and I already
+applied, I looked at it and think this patch should turn into the patch
+at the end of this message, which I'm applying with the commit log
+message in the original patch in this thread, Ack?
+
+- Arnaldo
+
+diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
+index 8f11aeb003a9..624e8cae6e86 100644
+--- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
++++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
+@@ -13,5 +13,5 @@
+ #
+ #Family-model,Version,Filename,EventType
+ 0x00000000410fd03[[:xdigit:]],v1,arm/cortex-a53,core
+-0x00000000420f5160,v1,cavium/thunderx2,core
++0x00000000430f0af0,v1,cavium/thunderx2,core
+ 0x00000000480fd010,v1,hisilicon/hip08,core
