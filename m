@@ -1,24 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932468AbeCITAP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 14:00:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40760 "EHLO mail.kernel.org"
+        id S932730AbeCITAV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 14:00:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932669AbeCITAL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 14:00:11 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 500212177C
+        id S932370AbeCITAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 14:00:17 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C75222178B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Subject: [PATCH v2 04/13] PCI/PM: Clear PCIe PME Status bit for Root Complex
- Event Collectors
+Subject: [PATCH v2 05/13] PCI/portdrv: Disable port driver in compat mode
 From: Bjorn Helgaas <helgaas@kernel.org>
 To: linux-pci@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         linux-pm@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
         Sinan Kaya <okaya@codeaurora.org>, Lukas Wunner <lukas@wunner.de>,
         Frederick Lawler <fred@fredlawl.com>
-Date: Fri, 09 Mar 2018 13:00:11 -0600
-Message-ID: <152062201091.77693.14620978392756642834.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Date: Fri, 09 Mar 2018 13:00:16 -0600
+Message-ID: <152062201647.77693.15910626089264824212.stgit@bhelgaas-glaptop.roam.corp.google.com>
 In-Reply-To: <152062141493.77693.9630397416694091342.stgit@bhelgaas-glaptop.roam.corp.google.com>
 References: <152062141493.77693.9630397416694091342.stgit@bhelgaas-glaptop.roam.corp.google.com>
 User-Agent: StGit/0.18
@@ -31,39 +30,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bjorn Helgaas <bhelgaas@google.com>
 
-Per PCIe r4.0, sec 6.1.6, Root Complex Event Collectors can generate PME
-interrupts on behalf of Root Complex Integrated Endpoints.
+The "pcie_ports=compat" kernel parameter sets pcie_ports_disabled, which is
+intended to disable the PCIe port driver.  But even when it was disabled,
+we registered pcie_portdriver so we could work around a BIOS PME issue (see
+fe31e69740ed ("PCI/PCIe: Clear Root PME Status bits early during system
+resume")).
 
-Linux does not currently enable PME interrupts from RC Event Collectors,
-but fe31e69740ed ("PCI/PCIe: Clear Root PME Status bits early during system
-resume") suggests PME interrupts may be enabled by the platform for ACPI-
-based runtime wakeup.
+Registering the driver meant that the pcie_portdrv_probe() path called
+pci_enable_device(), pci_save_state(), pm_runtime_set_autosuspend_delay(),
+pm_runtime_use_autosuspend(), etc., even when the driver was disabled.
 
-Clear the PCIe PME Status bit for Root Complex Event Collectors during
-resume, just like we already do for Root Ports.
+We've since moved the BIOS PME workaround from the port driver to the core,
+so stop registering the PCIe port driver in compat mode.
 
-If the BIOS enables PME interrupts for an event collector and neglects to
-clear the status bit on resume, this change should fix the same bug as
-fe31e69740ed (PMEs not working after waking from a sleep state), but for
-Root Complex Integrated Endpoints.
+This means "pcie_ports=compat" will now be basically the same as turning
+off CONFIG_PCIEPORTBUS completely.
 
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/pci/pci-driver.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pci/pcie/portdrv_core.c |    3 ---
+ drivers/pci/pcie/portdrv_pci.c  |    2 +-
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-index e561fa0f456c..204d2b54c2a4 100644
---- a/drivers/pci/pci-driver.c
-+++ b/drivers/pci/pci-driver.c
-@@ -533,7 +533,8 @@ static void pcie_pme_root_status_cleanup(struct pci_dev *pci_dev)
- 	 * Clear those bits now just in case (shouldn't hurt).
- 	 */
- 	if (pci_is_pcie(pci_dev) &&
--	    pci_pcie_type(pci_dev) == PCI_EXP_TYPE_ROOT_PORT)
-+	    (pci_pcie_type(pci_dev) == PCI_EXP_TYPE_ROOT_PORT ||
-+	     pci_pcie_type(pci_dev) == PCI_EXP_TYPE_RC_EC))
- 		pcie_clear_root_pme_status(pci_dev);
- }
+diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
+index 4268b2fc2c7a..9a41751db332 100644
+--- a/drivers/pci/pcie/portdrv_core.c
++++ b/drivers/pci/pcie/portdrv_core.c
+@@ -211,9 +211,6 @@ static int get_port_device_capability(struct pci_dev *dev)
+ 	int services = 0;
+ 	int cap_mask = 0;
+ 
+-	if (pcie_ports_disabled)
+-		return 0;
+-
+ 	cap_mask = PCIE_PORT_SERVICE_PME | PCIE_PORT_SERVICE_HP
+ 			| PCIE_PORT_SERVICE_VC;
+ 	if (pci_aer_available())
+diff --git a/drivers/pci/pcie/portdrv_pci.c b/drivers/pci/pcie/portdrv_pci.c
+index ec9e936c2a5b..5d9d5305ebef 100644
+--- a/drivers/pci/pcie/portdrv_pci.c
++++ b/drivers/pci/pcie/portdrv_pci.c
+@@ -261,7 +261,7 @@ static int __init pcie_portdrv_init(void)
+ 	int retval;
+ 
+ 	if (pcie_ports_disabled)
+-		return pci_register_driver(&pcie_portdriver);
++		return -EACCES;
+ 
+ 	dmi_check_system(pcie_portdrv_dmi_table);
  
