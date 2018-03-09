@@ -1,79 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932203AbeCINfm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 08:35:42 -0500
-Received: from foss.arm.com ([217.140.101.70]:51730 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751096AbeCINfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 08:35:41 -0500
-Date: Fri, 9 Mar 2018 13:35:32 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: Saravana Kannan <skannan@codeaurora.org>, will.deacon@arm.com,
-        robh@kernel.org, sudeep.holla@arm.com, mathieu.poirier@linaro.org,
-        peterz@infradead.org, jonathan.cameron@huawei.com,
-        linux-kernel@vger.kernel.org, marc.zyngier@arm.com, leo.yan@linaro.org,
-        frowand.list@gmail.com, linux-arm-kernel@lists.infradead.org,
-        rananta@codeaurora.org, avilaj@codeaurora.org,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Charles Garcia-Tobin <Charles.Garcia-Tobin@arm.com>
-Subject: Re: [PATCH v11 8/8] perf: ARM DynamIQ Shared Unit PMU support
-Message-ID: <20180309133531.fepm2suvdmvm4muv@lakrids.cambridge.arm.com>
-References: <20180102112533.13640-1-suzuki.poulose@arm.com>
- <20180102112533.13640-9-suzuki.poulose@arm.com>
- <5AA1CE48.5030203@codeaurora.org>
- <a466d82b-2a0f-ffba-f9f7-c76c6c787bb5@arm.com>
+        id S1751216AbeCINhI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 08:37:08 -0500
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:57908 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751106AbeCINhG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 08:37:06 -0500
+Subject: Re: [PATCH v6 02/17] media: doc: add document for rkisp1 meta buffer
+ format
+To: Jacob Chen <jacob-chen@iotwrt.com>, linux-rockchip@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mchehab@kernel.org, linux-media@vger.kernel.org,
+        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
+        tfiga@chromium.org, zhengsq@rock-chips.com,
+        laurent.pinchart@ideasonboard.com, zyc@rock-chips.com,
+        eddie.cai.linux@gmail.com, jeffy.chen@rock-chips.com,
+        devicetree@vger.kernel.org, heiko@sntech.de,
+        Jacob Chen <jacob2.chen@rock-chips.com>,
+        Jacob Chen <jacob-chen@rock-chips.com>
+References: <20180308094807.9443-1-jacob-chen@iotwrt.com>
+ <20180308094807.9443-3-jacob-chen@iotwrt.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <036c8bbe-c17f-b6fa-8432-fd7419adeda9@xs4all.nl>
+Date: Fri, 9 Mar 2018 14:37:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a466d82b-2a0f-ffba-f9f7-c76c6c787bb5@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180308094807.9443-3-jacob-chen@iotwrt.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfCFHearEPExDmuFtvs/FGJehmISD/fqH/7KHBE2ci7fA3R72MxUWEN2Sf04XY7BNqLSIHTSavFGQOlIcusPSg5DS9VdOlFprmXuRWaQu/SVv52fALxkS
+ GaBbgEYpXhvhfI/buDBACi3XbHi4mAHQ8lJVJTYuh3m1iclvxAyGTbKMUTy5UWneEkdv6hwTADlWxLTmwDrcFr8EcofiUkZKaz7OhqMqPU5ANQEftOUA6F2c
+ ILV7PjnQnXYLSA9MyUo1O86hz7bhImbzXr2wEehhONu6hZbxo8x3FSJpBYLdDWFL1tB7ZRGDC8v6GJeRpZ5MbtgdUvCZKyMAqF9YUatgr2EvMnRmIKTY5jFP
+ 06JBWdQz5lounqwdQlQXQSFfx0kii0E6Job1SDK7yLXgX1omfrwQc0oBs/x7N8QvKTZUCMLqi77+b7/5tPEpQMn/BsotyQ+bcvpurkvcXgYQnOYeeYt2aE5j
+ MOL7lUIdbzj4o6M1U3+YcUXZLFdO9cn3k001afakxDqCtDt0zKveGbIB94M6/qtNrXPs0J7T6xxRuKL+g+0ISmtAd9StWbnUl3lE7MN71jKN2Qo8U9vt7bSF
+ dQFwg4EnGw5NVYhhfN0QobQt74H+ZGCqNgKz42ofwilXEjUXZE4jmnspvaV/oOmGztMgfCduriPWohiqOwVGYtNgfNg7XbJwdHKHhgK9iQ6c2AzzYs+renFA
+ 7lsKHeyQVfqNRgio4ghZDwaZQjLv5etJ
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 09, 2018 at 10:53:14AM +0000, Suzuki K Poulose wrote:
-> + Cc: Lorenzo, Charles.
+On 08/03/18 10:47, Jacob Chen wrote:
+> From: Jacob Chen <jacob2.chen@rock-chips.com>
 > 
-> On 08/03/18 23:59, Saravana Kannan wrote:
-> > On 01/02/2018 03:25 AM, Suzuki K Poulose wrote:
-> > > Add support for the Cluster PMU part of the ARM DynamIQ Shared Unit (DSU).
-> > > The DSU integrates one or more cores with an L3 memory system, control
-> > > logic, and external interfaces to form a multicore cluster. The PMU
-> > > allows counting the various events related to L3, SCU etc, along with
-> > > providing a cycle counter.
-> > > 
-> > > The PMU can be accessed via system registers, which are common
-> > > to the cores in the same cluster. The PMU registers follow the
-> > > semantics of the ARMv8 PMU, mostly, with the exception that
-> > > the counters record the cluster wide events.
-> > > 
-> > > This driver is mostly based on the ARMv8 and CCI PMU drivers.
-> > > The driver only supports ARM64 at the moment. It can be extended
-> > > to support ARM32 by providing register accessors like we do in
-> > > arch/arm64/include/arm_dsu_pmu.h.
-> > > 
-> > > Cc: Mark Rutland <mark.rutland@arm.com>
-> > > Cc: Will Deacon <will.deacon@arm.com>
-> > > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > > Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-> > > Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> This commit add docuemnt for rkisp1 meta buffer format
 > 
-> [...]
+> Signed-off-by: Jacob Chen <jacob-chen@rock-chips.com>
+> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+> ---
+>  Documentation/media/uapi/v4l/meta-formats.rst        |  2 ++
+>  .../media/uapi/v4l/pixfmt-meta-rkisp1-params.rst     | 20 ++++++++++++++++++++
+>  .../media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst       | 18 ++++++++++++++++++
+>  3 files changed, 40 insertions(+)
+>  create mode 100644 Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst
+>  create mode 100644 Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst
 > 
-> > 
-> > Looking at the code, I didn't see any specific handling of cluster power collapse. AFAIK, the HW counters do not retain config (what event they are counting) or value (the current count) across power collapse. Wouldn't you need to register for some kind of PM_ENTER/EXIT notifiers to handle that?
-> 
-> Good point, yes *somebody* needs to save-restore the registers. But who ? As far
-> as the kernel is concerned, it doesn't control the DSU states. Also, as of now
-> there is no reliable way to get the "ENTER/EXIT" notifications for the DSU power
-> domain state changes. All we do is use the PMU, assuming it is available. AFAIT,
-> it should really be done at EL3, which manages the DSU, but may be I am wrong.
+> diff --git a/Documentation/media/uapi/v4l/meta-formats.rst b/Documentation/media/uapi/v4l/meta-formats.rst
+> index 0c4e1ecf5879..44e7edbf1dae 100644
+> --- a/Documentation/media/uapi/v4l/meta-formats.rst
+> +++ b/Documentation/media/uapi/v4l/meta-formats.rst
+> @@ -15,3 +15,5 @@ These formats are used for the :ref:`metadata` interface only.
+>      pixfmt-meta-uvc
+>      pixfmt-meta-vsp1-hgo
+>      pixfmt-meta-vsp1-hgt
+> +    pixfmt-meta-rkisp1-params
+> +    pixfmt-meta-rkisp1-stat
+> diff --git a/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst b/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst
+> new file mode 100644
+> index 000000000000..2ff4f4309795
+> --- /dev/null
+> +++ b/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst
+> @@ -0,0 +1,20 @@
+> +.. -*- coding: utf-8; mode: rst -*-
+> +
+> +.. _v4l2-meta-fmt-rkisp1-params:
+> +
+> +*******************************
+> +V4L2_META_FMT_RK_ISP1_PARAMS
+> +*******************************
+> +
+> +Rockchip ISP1 Parameters Data
+> +
+> +Description
+> +===========
+> +
+> +This format describes input parameters for the Rockchip ISP1.
+> +
+> +It uses c-struct :c:type:`rkisp1_isp_params_cfg`, which is defined in
+> +the ``linux/rkisp1-config.h`` header file, see it for details.
+> +
+> +The parameters consist of multiple modules.
+> +The module won't be updated if the correspond bit was not set in module_*_update.
 
-Given this can happen behind the back of the kernel, if FW doesn't
-save/restore this state, we'll have to inhibit cpuidle on a CPU
-associated with the DSU PMU whenever it has active events, which would
-keep the cluster online.
+correspond -> corresponding
 
-Thanks,
-Mark.
+> diff --git a/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst b/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst
+> new file mode 100644
+> index 000000000000..dca8befe58f1
+> --- /dev/null
+> +++ b/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst
+> @@ -0,0 +1,18 @@
+> +.. -*- coding: utf-8; mode: rst -*-
+> +
+> +.. _v4l2-meta-fmt-rkisp1-stat:
+> +
+> +*******************************
+> +V4L2_META_FMT_RK_ISP1_STAT_3A
+> +*******************************
+> +
+> +Rockchip ISP1 Statistics Data
+> +
+> +Description
+> +===========
+> +
+> +This format describes image color statistics information generated by the Rockchip
+> +ISP1.
+> +
+> +It use c-struct :c:type:`rkisp1_stat_buffer`, which is defined in
+
+use -> uses
+
+> +the ``linux/cifisp_stat.h`` header file, see it for details.
+> 
+
+Regards,
+
+	Hans
