@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933315AbeCIW0V (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 17:26:21 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:43052 "EHLO
+        id S933199AbeCIWY5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 17:24:57 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:43000 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933205AbeCIWZA (ORCPT
+        with ESMTP id S933180AbeCIWYz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 17:25:00 -0500
+        Fri, 9 Mar 2018 17:24:55 -0500
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -24,9 +24,9 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
         hshi@chromium.org,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v5 31/36] drm/rockchip: Cancel PSR enable work before changing the state
-Date: Fri,  9 Mar 2018 23:23:22 +0100
-Message-Id: <20180309222327.18689-32-enric.balletbo@collabora.com>
+Subject: [PATCH v5 29/36] drm/rockchip: analogix_dp: Do not call Analogix code before bind
+Date: Fri,  9 Mar 2018 23:23:20 +0100
+Message-Id: <20180309222327.18689-30-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180309222327.18689-1-enric.balletbo@collabora.com>
 References: <20180309222327.18689-1-enric.balletbo@collabora.com>
@@ -36,12 +36,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tomasz Figa <tfiga@chromium.org>
 
-If we change the state first and reschedule later, we might have the
-work executed according to previous scheduled time and end up with PSR
-re-enabled instantly. Let's cancel the work before changing the state.
-
-While at it, consolidate psr_disable_handler() to just call
-rockchip_drm_do_flush(), as they are both supposed to do the same.
+Driver callbacks, such as system suspend or resume can be called any
+time, specifically they can be called before the component bind
+callback. Let's use dp->adp pointer as a safeguard and skip calling
+Analogix entry points if it is an ERR_PTR().
 
 Signed-off-by: Tomasz Figa <tfiga@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
@@ -49,53 +47,49 @@ Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
 
- drivers/gpu/drm/rockchip/rockchip_drm_psr.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-index a107845ba97c..c8655e625ba2 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-@@ -138,18 +138,6 @@ static void psr_flush_handler(struct work_struct *work)
- 	mutex_unlock(&psr->lock);
+diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+index 23317a2269e1..6d45d62466b3 100644
+--- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -368,6 +368,8 @@ static void rockchip_dp_unbind(struct device *dev, struct device *master,
+ 	analogix_dp_unbind(dp->adp);
+ 	rockchip_drm_psr_unregister(&dp->encoder);
+ 	dp->encoder.funcs->destroy(&dp->encoder);
++
++	dp->adp = ERR_PTR(-ENODEV);
  }
  
--static void psr_disable_handler(struct work_struct *work)
--{
--	struct psr_drv *psr = container_of(work, struct psr_drv, disable_work);
--
--	/* If the state has changed since we initiated the flush, do nothing */
--	mutex_lock(&psr->lock);
--	if (psr->state == PSR_ENABLE)
--		psr_set_state_locked(psr, PSR_FLUSH);
--	mutex_unlock(&psr->lock);
--	mod_delayed_work(system_wq, &psr->flush_work, PSR_FLUSH_TIMEOUT_MS);
--}
--
- /**
-  * rockchip_drm_psr_activate - activate PSR on the given pipe
-  * @encoder: encoder to obtain the PSR encoder
-@@ -198,6 +186,7 @@ EXPORT_SYMBOL(rockchip_drm_psr_deactivate);
+ static const struct component_ops rockchip_dp_component_ops = {
+@@ -391,6 +393,7 @@ static int rockchip_dp_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
- static void rockchip_drm_do_flush(struct psr_drv *psr)
+ 	dp->dev = dev;
++	dp->adp = ERR_PTR(-ENODEV);
+ 	dp->plat_data.panel = panel;
+ 
+ 	ret = rockchip_dp_of_probe(dp);
+@@ -414,6 +417,9 @@ static int rockchip_dp_suspend(struct device *dev)
  {
-+	cancel_delayed_work_sync(&psr->flush_work);
- 	psr_set_state(psr, PSR_FLUSH);
- 	mod_delayed_work(system_wq, &psr->flush_work, PSR_FLUSH_TIMEOUT_MS);
- }
-@@ -244,6 +233,13 @@ void rockchip_drm_psr_flush_all(struct drm_device *dev)
- }
- EXPORT_SYMBOL(rockchip_drm_psr_flush_all);
+ 	struct rockchip_dp_device *dp = dev_get_drvdata(dev);
  
-+static void psr_disable_handler(struct work_struct *work)
-+{
-+	struct psr_drv *psr = container_of(work, struct psr_drv, disable_work);
++	if (IS_ERR(dp->adp))
++		return 0;
 +
-+	rockchip_drm_do_flush(psr);
-+}
+ 	return analogix_dp_suspend(dp->adp);
+ }
+ 
+@@ -421,6 +427,9 @@ static int rockchip_dp_resume(struct device *dev)
+ {
+ 	struct rockchip_dp_device *dp = dev_get_drvdata(dev);
+ 
++	if (IS_ERR(dp->adp))
++		return 0;
 +
- static void psr_input_event(struct input_handle *handle,
- 			    unsigned int type, unsigned int code,
- 			    int value)
+ 	return analogix_dp_resume(dp->adp);
+ }
+ #endif
 -- 
 2.16.1
