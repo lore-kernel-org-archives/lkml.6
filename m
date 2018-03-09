@@ -1,105 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751361AbeCIUmD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 15:42:03 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43624 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751211AbeCIUmC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 15:42:02 -0500
-From: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, mpe@ellerman.id.au, jeyu@kernel.org
-Cc: npiggin@gmail.com, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH] powerpc/64: Fix section mismatch warnings for early boot symbols
-Date: Fri,  9 Mar 2018 17:41:51 -0300
-X-Mailer: git-send-email 1.8.3.1
-X-TM-AS-GCONF: 00
-x-cbid: 18030920-0048-0000-0000-00000247A927
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008642; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.01000675; UDB=6.00509017; IPR=6.00780006;
- MB=3.00019944; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-09 20:41:58
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030920-0049-0000-0000-000044634352
-Message-Id: <1520628111-1361-1-git-send-email-mauricfo@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-09_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803090245
+        id S932275AbeCIUni convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 15:43:38 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44770 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751211AbeCIUng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 15:43:36 -0500
+Subject: Re: [PATCH v4] cpuset: Enable cpuset controller in default hierarchy
+To: Mike Galbraith <efault@gmx.de>, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>
+References: <1520609707-16582-1-git-send-email-longman@redhat.com>
+ <1520613285.12489.36.camel@gmx.de>
+ <1c3fe7b0-2600-c46d-1527-d3aaf024bb91@redhat.com>
+ <1520619426.27998.18.camel@gmx.de>
+ <55809fe4-98ba-5566-86ed-457acfef0e1c@redhat.com>
+ <1520624424.27998.76.camel@gmx.de>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <53de9683-01b7-bac4-8b70-dc1f93ede600@redhat.com>
+Date: Fri, 9 Mar 2018 15:43:34 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <1520624424.27998.76.camel@gmx.de>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some of the boot code located at the start of kernel text is "init"
-class, in that it only runs at boot time, however marking it as normal
-init code is problematic because that puts it into a different section
-located at the very end of kernel text.
+On 03/09/2018 02:40 PM, Mike Galbraith wrote:
+>>>
+>>> If v2 is to ever supersede v1, as is the normal way of things, core
+>>> functionality really should be on the v2 boat when it sails.  What you
+>>> left standing on the dock is critical core cpuset functionality.
+>>>
+>>> 	-Mike
+>> From your perspective, what are core functionality that should be
+>> included in cpuset v2 other than the ability to restrict cpus and memory
+>> nodes.
+> Exclusive sets are essential, no?  How else can you manage set wide
+> properties such as topology (and hopefully soonish nohz).  You clearly
+> can't have overlapping sets, one having scheduler topology, the other
+> having none.  Whatever the form, something as core as the capability to
+> dynamically partition and isolate should IMO be firmly aboard the v2
+> boat before it sails.
+>
+> 	-Mike
 
-e.g., in case the TOC is not set up, we may not be able to tolerate a
-branch trampoline to reach the init function.
+The isolcpus= parameter just reduce the cpus available to the rests of
+the system. The cpuset controller does look at that value and make
+adjustment accordingly, but it has no dependence on exclusive cpu/mem
+features of cpuset.
 
-Credits: code and message are based on 2016 patch by Nicholas Piggin,
-and slightly modified so not to rename the powerpc code/symbol names.
-
-    Subject: [PATCH] powerpc/64: quieten section mismatch warnings
-    From: Nicholas Piggin <npiggin at gmail.com>
-    Date: Fri Dec 23 00:14:19 AEDT 2016
-
-Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
----
- scripts/mod/modpost.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
-
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 9917f92..c65d5e2 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -1174,8 +1174,15 @@ static const struct sectioncheck *section_mismatch(
-  *   fromsec = text section
-  *   refsymname = *.constprop.*
-  *
-+ * Pattern 6:
-+ *   powerpc64 has boot functions that reference init, but must remain in text.
-+ *   This pattern is identified by
-+ *   tosec   = init section
-+ *   fromsym = <function list>
-+ *
-  **/
--static int secref_whitelist(const struct sectioncheck *mismatch,
-+static int secref_whitelist(const struct elf_info *elf,
-+			    const struct sectioncheck *mismatch,
- 			    const char *fromsec, const char *fromsym,
- 			    const char *tosec, const char *tosym)
- {
-@@ -1212,6 +1219,17 @@ static int secref_whitelist(const struct sectioncheck *mismatch,
- 	    match(fromsym, optim_symbols))
- 		return 0;
- 
-+	/* Check for pattern 6 */
-+	if (elf->hdr->e_machine == EM_PPC64)
-+		if (match(tosec, init_sections) &&
-+		    (!strncmp(fromsym, "__boot_from_prom",
-+				strlen("__boot_from_prom")) ||
-+		     !strncmp(fromsym, "start_here_multiplatform",
-+				strlen("start_here_multiplatform")) ||
-+		     !strncmp(fromsym, "start_here_common",
-+				strlen("start_here_common")))
-+			return 0;
-+
- 	return 1;
- }
- 
-@@ -1552,7 +1570,7 @@ static void default_mismatch_handler(const char *modname, struct elf_info *elf,
- 	tosym = sym_name(elf, to);
- 
- 	/* check whitelist - we may ignore it */
--	if (secref_whitelist(mismatch,
-+	if (secref_whitelist(elf, mismatch,
- 			     fromsec, fromsym, tosec, tosym)) {
- 		report_sec_mismatch(modname, mismatch,
- 				    fromsec, r->r_offset, fromsym,
--- 
-1.8.3.1
+-Longman
