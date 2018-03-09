@@ -1,67 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932652AbeCIXw2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 18:52:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34820 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932206AbeCIXw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 18:52:26 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3318F208FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 9 Mar 2018 18:52:23 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Lina Iyer <ilina@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org
-Subject: Re: [PATCH v4 03/10] drivers: qcom: rpmh-rsc: log RPMH requests in
- FTRACE
-Message-ID: <20180309185223.19aa6c84@gandalf.local.home>
-In-Reply-To: <20180309232543.24636-4-ilina@codeaurora.org>
-References: <20180309232543.24636-1-ilina@codeaurora.org>
-        <20180309232543.24636-4-ilina@codeaurora.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1751397AbeCIXxd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 18:53:33 -0500
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:54900 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751231AbeCIXxc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 18:53:32 -0500
+X-Google-Smtp-Source: AG47ELvviysAjL8h81SirVfOChMK3j6AoVjIm4pLSgmmo/VGLoTJCPoO+cr48cDu8Zy7E9pFaUmyfw==
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+From: valdis.kletnieks@vt.edu
+To: Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: ip6tables - last base chain position %u doesn't match underflow %u (hook %u
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Date: Fri, 09 Mar 2018 18:53:23 -0500
+Message-ID: <10387.1520639603@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  9 Mar 2018 16:25:36 -0700
-Lina Iyer <ilina@codeaurora.org> wrote:
+Am hitting an issue with this commit:
 
-> Log sent RPMH requests and interrupt responses in FTRACE.
-> 
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> ---
-> 
-> Changes in v4:
-> 	- fix compilation issues, use __assign_str
-> 	- use %#x instead of 0x%08x
+commit 0d7df906a0e78079a02108b06d32c3ef2238ad25
+Author: Florian Westphal <fw@strlen.de>
+Date:   Tue Feb 27 19:42:37 2018 +0100
 
-Hmm, I don't believe libtraceevent (used by trace-cmd and perf)
-supports "%#x". But that needs to be fixed in libtraceevent and you
-don't need to modify this patch.
+    netfilter: x_tables: ensure last rule in base chain matches underflow/policy
+    
+This trips on my system:
 
-+			 __field(bool, wait)
+[   64.402790] ip6_tables: last base chain position 1136 doesn't match underflow 1344 (hook 1)
 
-Usually I would recommend against 'bool' in structures, but it
-shouldn't affect the tracing code. Might want to look at how it
-converts it in the /sys/kernel/tracing/events/rpmh/rpmh_send_msg/format
-file. It probably makes no difference if it was an int.
+More annoyingly, the return value means that ip6tables aren't initialized
+so there's no firewall protection.
 
-Other than that... Looks good.
+My iptables isn't syzkaller generated - it's mostly crufty vi-generated. ;)
 
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Messages generated as I tried to build smaller tables to narrow down the problem:
+(not sure where it gets the numbers from, as I reduced it from 50 lines down to 3
+and no real correlation to the tables I was trying to load - in particular the numbers
+went up once and remained unchanged once, even though between each try I was
+whacking out another 5-10 lines...)
 
--- Steve
+[   64.402790] ip6_tables: last base chain position 1136 doesn't match underflow 1344 (hook 1)
+[ 1897.914828] ip6_tables: last base chain position 928 doesn't match underflow 1136 (hook 1)
+[ 1954.032735] ip6_tables: last base chain position 720 doesn't match underflow 928 (hook 1)
+[ 2021.813719] ip6_tables: last base chain position 920 doesn't match underflow 1128 (hook 1)
+[ 2035.044103] ip6_tables: last base chain position 920 doesn't match underflow 1128 (hook 1)
+[ 2060.594412] ip6_tables: last base chain position 616 doesn't match underflow 824 (hook 1)
 
+I finally got /etc/sysconfig/ip6tables down to this:
 
-> Changes in v3:
-> 	- Use __string() instead of char *
-> 	- fix TRACE_INCLUDE_PATH
-> ---
+# Generated by ip6tables-save v1.6.2 on Thu Mar  8 08:20:04 2018
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [208207395:46346275671]
+[120166037:34218429901] -A INPUT -i lo+ -j ACCEPT
+[129329499:129691207309] -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+[0:0] -A INPUT -j DROP
+COMMIT
+# Completed on Thu Mar  8 08:20:04 2018
+
+About as minimal as it can get. :)
+
+Any ideas?
