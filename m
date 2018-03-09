@@ -1,64 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932415AbeCIRpZ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 12:45:25 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38870 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932336AbeCIRpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 12:45:21 -0500
-Subject: Re: [PATCH v4] cpuset: Enable cpuset controller in default hierarchy
-To: Mike Galbraith <efault@gmx.de>, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>
-References: <1520609707-16582-1-git-send-email-longman@redhat.com>
- <1520613285.12489.36.camel@gmx.de>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <1c3fe7b0-2600-c46d-1527-d3aaf024bb91@redhat.com>
-Date: Fri, 9 Mar 2018 12:45:19 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S932444AbeCIRqN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 12:46:13 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:47594 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751246AbeCIRqM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 12:46:12 -0500
+Date: Fri, 9 Mar 2018 18:46:05 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Corey Minyard <cminyard@mvista.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>
+Subject: Re: Warning from swake_up_all in 4.14.15-rt13 non-RT
+Message-ID: <20180309174605.GC4064@hirez.programming.kicks-ass.net>
+References: <dd6ad0b5-569b-067d-257f-dbf15ffa7077@mvista.com>
+ <20180306174604.nta5rcvfvrfdfftz@linutronix.de>
+ <1704d817-8fb9-ce8f-1aa1-fe6e8b0c3919@mvista.com>
+ <20180308174103.mduy5qq2ttlcvig3@linutronix.de>
+ <a11f140e-c44f-f967-1cd4-d8a6f09d4d29@mvista.com>
+ <20180309110418.lwtennjqwqcxh422@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <1520613285.12489.36.camel@gmx.de>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180309110418.lwtennjqwqcxh422@linutronix.de>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09/2018 11:34 AM, Mike Galbraith wrote:
-> On Fri, 2018-03-09 at 10:35 -0500, Waiman Long wrote:
->> Given the fact that thread mode had been merged into 4.14, it is now
->> time to enable cpuset to be used in the default hierarchy (cgroup v2)
->> as it is clearly threaded.
->>
->> The cpuset controller had experienced feature creep since its
->> introduction more than a decade ago. Besides the core cpus and mems
->> control files to limit cpus and memory nodes, there are a bunch of
->> additional features that can be controlled from the userspace. Some of
->> the features are of doubtful usefulness and may not be actively used.
-> One rather important features is the ability to dynamically partition a
-> box and isolate critical loads.  How does one do that with v2?
->
-> In v1, you create two or more exclusive sets, one for generic
-> housekeeping, and one or more for critical load(s), RT in my case,
-> turning off load balancing in the critical set(s) for obvious reasons.
+On Fri, Mar 09, 2018 at 12:04:18PM +0100, Sebastian Andrzej Siewior wrote:
+> +void swake_add_all_wq(struct swait_queue_head *q, struct wake_q_head *wq)
+>  {
+>  	struct swait_queue *curr;
+>  
+>  	while (!list_empty(&q->task_list)) {
+>  
+>  		curr = list_first_entry(&q->task_list, typeof(*curr),
+>  					task_list);
+>  		list_del_init(&curr->task_list);
+> +		wake_q_add(wq, curr->task);
+>  	}
+>  }
+> +EXPORT_SYMBOL(swake_add_all_wq);
+>  
+>  void swake_up(struct swait_queue_head *q)
+>  {
+> @@ -66,25 +62,14 @@ EXPORT_SYMBOL(swake_up);
+>   */
+>  void swake_up_all(struct swait_queue_head *q)
+>  {
+> +	unsigned long flags;
+> +	DEFINE_WAKE_Q(wq);
+>  
+> +	raw_spin_lock_irqsave(&q->lock, flags);
+> +	swake_add_all_wq(q, &wq);
+> +	raw_spin_unlock_irqrestore(&q->lock, flags);
+>  
+> +	wake_up_q(&wq);
+>  }
+>  EXPORT_SYMBOL(swake_up_all);
 
-This patch just serves as a foundation for cpuset support in v2. I am
-not excluding the fact that more v1 features will be added in future
-patches. We want to start with a clean slate and add on it after careful
-consideration. There are some v1 cpuset features that are not used or
-rarely used. We certainly want to get rid of them, if possible.
+This is fundamentally wrong. The whole point of wake_up_all() is that
+_all_ is unbounded and should not ever land in a single critical
+section, be it IRQ or PREEMPT disabled. The above does both.
 
-Now for the exclusive cpuset, it is certainly something that can be done
-in userspace. If there is a valid use case that requires exclusive
-cpuset support in the kernel, we can certainly consider putting it into
-v2 as well.
+Yes, wake_up_all() is crap, it is also fundamentally incompatible with
+in-*irq usage. Nothing to be done about that.
 
-Cheers,
-Longman
+So NAK on this.
