@@ -1,62 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932085AbeCIBZO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 20:25:14 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35278 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750880AbeCIBZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 20:25:13 -0500
-Date: Fri, 9 Mar 2018 09:24:59 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Artem Bityutskiy <dedekind1@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, Laurence Oberman <loberman@redhat.com>
-Subject: Re: [PATCH V3 0/4] genirq/affinity: irq vector spread among online
- CPUs as far as possible
-Message-ID: <20180309012458.GD5228@ming.t460p>
-References: <20180308105358.1506-1-ming.lei@redhat.com>
- <1520515113.20980.31.camel@gmail.com>
- <20180308133440.GA2713@ming.t460p>
- <alpine.DEB.2.21.1803090011150.1454@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1803090011150.1454@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1751996AbeCIB3n (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 20:29:43 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:51577 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751852AbeCIB3m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 20:29:42 -0500
+X-Google-Smtp-Source: AG47ELu6G0IwbziABQDEBhohjtADJPjOD4GKDg63E1o4EOre5Se71cvmkd15c1gBVEvl2MqOmY2Ueg==
+X-ME-Sender: <xms:guOhWvm0v7DN_K2z7KxpL_n4buTU_FxcJ_PY0K6uzfybWHewcD27Gg>
+From: Boqun Feng <boqun.feng@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: [PATCH] rcu: Use the proper lockdep annotation in dump_blkd_tasks()
+Date: Fri,  9 Mar 2018 09:32:18 +0800
+Message-Id: <20180309013224.23890-1-boqun.feng@gmail.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+Sparse reported this:
 
-On Fri, Mar 09, 2018 at 12:20:09AM +0100, Thomas Gleixner wrote:
-> On Thu, 8 Mar 2018, Ming Lei wrote:
-> > Actually, it isn't a real fix, the real one is in the following two:
-> > 
-> > 	0c20244d458e scsi: megaraid_sas: fix selection of reply queue
-> > 	ed6d043be8cd scsi: hpsa: fix selection of reply queue
-> 
-> Where are these commits? Neither Linus tree not -next know anything about
-> them....
+| kernel/rcu/tree_plugin.h:814:9: warning: incorrect type in argument 1 (different modifiers)
+| kernel/rcu/tree_plugin.h:814:9:    expected struct lockdep_map const *lock
+| kernel/rcu/tree_plugin.h:814:9:    got struct lockdep_map [noderef] *<noident>
 
-Both aren't merged yet, but they should land V4.16, IMO.
+This is caused by using vanilla lockdep annotations on rcu_node::lock,
+and that requires accessing ->lock of rcu_node directly. However we need
+to keep rcu_node::lock __private to avoid breaking its extra ordering
+guarantee. And we have a dedicated lockdep annotation for
+rcu_node::lock, so use it.
 
-> 
-> > This patchset can't guarantee that all IRQ vectors are assigned by one
-> > online CPU, for example, in a quad-socket system, if only one processor
-> > is present, then some of vectors are still assigned by all offline CPUs,
-> > and it is a valid case, but still may cause io hang if drivers(hpsa,
-> > megaraid_sas) select reply queue in current way.
-> 
-> So my understanding is that these irq patches are enhancements and not bug
-> fixes. I'll queue them for 4.17 then.
+Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+---
+ kernel/rcu/tree_plugin.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Wrt. this IO hang issue, these patches shouldn't be bug fix, but they may
-fix performance regression[1] for some systems caused by 84676c1f21 ("genirq/affinity:
-assign vectors to all possible CPUs").
-
-[1] https://marc.info/?l=linux-block&m=152050347831149&w=2
-
-Thanks,
-Ming
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 9accacffd138..ea33f57abae5 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -811,7 +811,7 @@ static void dump_blkd_tasks(struct rcu_node *rnp, int ncheck)
+ 	int i;
+ 	struct list_head *lhp;
+ 
+-	lockdep_assert_held(&rnp->lock);
++	raw_lockdep_assert_held_rcu_node(rnp);
+ 	pr_info("%s: grp: %d-%d level: %d ->qamask %#lx ->gp_tasks %p ->boost_tasks %p ->exp_tasks %p &->blkd_tasks: %p offset: %u\n", __func__, rnp->grplo, rnp->grphi, rnp->level, rnp->qsmask, rnp->gp_tasks, rnp->boost_tasks, rnp->exp_tasks, &rnp->blkd_tasks, (unsigned int)offsetof(typeof(*rnp), blkd_tasks));
+ 	pr_cont("\t->blkd_tasks");
+ 	i = 0;
+-- 
+2.16.2
