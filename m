@@ -1,56 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932171AbeCIPqA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 10:46:00 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39010 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751096AbeCIPp7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 10:45:59 -0500
-Date: Fri, 9 Mar 2018 16:45:16 +0100
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Roman Kagan <rkagan@virtuozzo.com>, "Denis V . Lunev" <den@openvz.org>
-Subject: Re: [PATCH v2 2/3] x86/kvm/hyper-v: remove stale entries from
- vec_bitmap/auto_eoi_bitmap on vector change
-Message-ID: <20180309154516.GA21100@flask>
-References: <20180301141514.3482-1-vkuznets@redhat.com>
- <20180301141514.3482-3-vkuznets@redhat.com>
- <20180308210804.GN12290@flask>
- <87muzhe0ls.fsf@vitty.brq.redhat.com>
+        id S1751244AbeCIPxX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 10:53:23 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54170 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751187AbeCIPxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 10:53:21 -0500
+Date: Fri, 9 Mar 2018 15:53:16 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Andrey Konovalov <andreyknvl@google.com>
+Cc: Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
+        Dmitry Vyukov <dvyukov@google.com>, Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>, Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>
+Subject: Re: [RFC PATCH 3/6] mm, arm64: untag user addresses in memory
+ syscalls
+Message-ID: <20180309155315.4x44sbp3darractt@armageddon.cambridge.arm.com>
+References: <cover.1520600533.git.andreyknvl@google.com>
+ <beea8ac394bfae3c7c949645fb887ceacc3f3bb3.1520600533.git.andreyknvl@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87muzhe0ls.fsf@vitty.brq.redhat.com>
+In-Reply-To: <beea8ac394bfae3c7c949645fb887ceacc3f3bb3.1520600533.git.andreyknvl@google.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-09 16:21+0100, Vitaly Kuznetsov:
-> Radim Krčmář <rkrcmar@redhat.com> writes:
-> > This looks like it solves the problem when we get two SINTs with the
-> > same vector back-to-back , but shouldn't these bits really be cleared on
-> > EOI (either auto or manual)?
+On Fri, Mar 09, 2018 at 03:02:01PM +0100, Andrey Konovalov wrote:
+> Memory subsystem syscalls accept user addresses as arguments, but don't use
+> copy_from_user and other similar functions, so we need to handle this case
+> separately.
 > 
-> Hmm,
+> Untag user pointers passed to madvise, mbind, get_mempolicy, mincore,
+> mlock, mlock2, brk, mmap_pgoff, old_mmap, munmap, remap_file_pages,
+> mprotect, pkey_mprotect, mremap and msync.
 > 
-> I was trying to address the following issue: guest programs SynIC's
-> SINTx with some vector but later re-programs it with a different
-> one. Without the patch synic->vec_bitmap and synic->auto_eoi_bitmap keep
-> stale data. If there's no concurrent interrupt than we're safe, but what
-> happens if there is one...
-> 
-> kvm_hv_synic_send_eoi() already goes through all SINTx but we already
-> updated vector so it won't find any. We could've added something like
-> 'old_vector' but what if the request with this vector came _after_ we
-> re-programed SynIC (and, so, it wasn't meant to be serviced by SynIC?)?
+> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 
-I now read that TLFS puts the responsitiblity on guest OS when toggling
-auto-EOI, so let's assume that the OS is to blame for disabling/changing
-vectors with pending interrupts as well.
+Please keep the cc list small (maybe linux-arch, linux-arm-kernel) as
+I'm sure some lists would consider this spam.
 
-Applied all, thanks.
+>  mm/madvise.c   | 2 ++
+>  mm/mempolicy.c | 6 ++++++
+>  mm/mincore.c   | 2 ++
+>  mm/mlock.c     | 5 +++++
+>  mm/mmap.c      | 9 +++++++++
+>  mm/mprotect.c  | 2 ++
+>  mm/mremap.c    | 2 ++
+>  mm/msync.c     | 3 +++
+
+I'm not yet convinced these functions need to allow tagged pointers.
+They are not doing memory accesses but rather dealing with the memory
+range, hence an untagged pointer is better suited. There is probably a
+reason why the "start" argument is "unsigned long" vs "void __user *"
+(in the kernel, not the man page).
+
+-- 
+Catalin
