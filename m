@@ -1,31 +1,31 @@
 Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1520607048; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520607047; cv=none;
         d=google.com; s=arc-20160816;
-        b=LlBFou8Q7dcxfpYROFAvW7jGX/wseFN+IFQZbnUctvCo6l02n80FU0LmfsHa8gqe9K
-         D2cJ8C7PioKBvHtKzCTBN4mLy95tPO211+tlILoiEdq5/Qo/9/EueH8Eom9Ki22bEoUE
-         DVk7QmmrbbpTXq4ShDbo/g47AQKA/NngLOH2/+ln9KTDRrzdIhGf16MCYHM1OZOzjPV7
-         13BVZl3u/3h2c9s7uw3up/5/zX3QvF/ZxeRuEUcYvg/rpgXC8JMFBoV4nn+uRSJjgiSj
-         MUy5H/5btbC9KJfOVNG0XLSYqpQdaUdjk1fMsYa+R39IXD8kMOj/TMMOPdClv9t7JTPI
-         1Shg==
+        b=zquJi/r2nyKv8HpCpzuiQtpse7AJqFDDwZHHm2mgpE+baZsaHmwKNI71pLVreAhhbe
+         83SGSqYxAPC2Bm/aXkzSyc8K8T1qK9TtXGJmFKqFCTKP8Heh+/OVRdA+2EDyF5b3Fs2w
+         vh0uqTOLzRDELO27k8fojeL9Lod2dnp3H4pQMLTvEnZNoT9VzXNtgTU3uAY0Er43SiiQ
+         GqyH2sp3K2cmWYYe4a3ZxRpGN6iBeLsyAvb6QM47zWxS/Nbwr+785ZJZZqLVzWIte+W+
+         KiRLj2PlsB2MbELOJd/eT7AGndjX/cSx3PRBERTWY5RD1D1tQPb4/2jQrXvhIVzzgl70
+         Z4FQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=eAnGeza+RiSlIVu+0c9b5tCUTCvMOkR19d39VJCDXNg=;
-        b=JHKuI+FoOciq43rl9JX4b/oEQO/YgHYy0LiM1Wq8O5dYnMbHe66iuTA4IX6q/uxMJv
-         9ONhiop1ZQBuQdDq8UA+IhS+cyr8pkj9vJQf2ELmURdFiezE01JlZtQDKmVZbwcx3i0b
-         dP91PVGxiL9lnEuU4xe1HMkkfeG+JBj/LYuQV5xY6kt2YCNA+qsOwoFmhhCiIammOFbu
-         5kOZ3iaKP/OqR6NFt9d+0LV/5bf4zrJTotsmCTMWoIebEBs2vJ3ietxjXqPDbKHSA+M+
-         C029iZzwzhm2yQWe4BWD2qAmM8Cv7zFhViC9xyWZgR0/B2j/GatCkhql4SLGinp5DgPz
-         kK/w==
+        bh=GD6bLYBRCS/d7tbmXKvDegmT5vCtX9uh12GfjuFtTG4=;
+        b=jVTrnCC23T9F4YjESRLw4SIRwcrtUtBXlOg1Lz3j7Jn4bxCp+sF8H8BnIcAA3CHzv2
+         AFzP1FW3nSqyGdMcTl6ipPheQGPfxVOMip4qtF48pwaz/SJFuD5Ycbc2Nvy3Z7Jrsnzy
+         qHMqTlZVOPWei06EI9Z+FvZZfkOQGkd0oAT6l9n62d7MCEYQr5mzSVyyGziu9IQoPmO7
+         hRtv/JeyRDw2sBVHhqbrQnZD5Qs33YJJqmXGoZb/ik1VTWi2CwcLoP1wm/b6ePBQT3Ew
+         DKvX5G33zhoKI3DbiHv+Yb68gm+0chUcQ5sYbJ6P4YPzitrfFLtHytTeA+m72qNOiqqh
+         8xqQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=ANbYRZ/K;
+       dkim=pass header.i=@linaro.org header.s=google header.b=HBdnerQA;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=ANbYRZ/K;
+       dkim=pass header.i=@linaro.org header.s=google header.b=HBdnerQA;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AG47ELvm7txOEzzfQsVq8g7nCPGbT9UMnFZWqW/YAr/jSLKuUsv9eyS1ufeyD0e4yJpcpjeeNO6ucQ==
+X-Google-Smtp-Source: AG47ELusaKjfl5TzhvBuG8O6YMA7n6u64HPDbbckUoxmCRjTCQ20xZd+a6FJAIx4XR4mHz244zPYDw==
 From: srinivas.kandagatla@linaro.org
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
@@ -41,21 +41,21 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	linux-amlogic@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 19/25] nvmem: rockchip-efuse: Do not use "&pdev->dev" explicitly
-Date: Fri,  9 Mar 2018 14:47:13 +0000
-Message-Id: <20180309144719.29904-20-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 18/25] nvmem: vf610-ocotp: Do not use "&pdev->dev" explicitly
+Date: Fri,  9 Mar 2018 14:47:12 +0000
+Message-Id: <20180309144719.29904-19-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180309144719.29904-1-srinivas.kandagatla@linaro.org>
 References: <20180309144719.29904-1-srinivas.kandagatla@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594472056262197134?=
-X-GMAIL-MSGID: =?utf-8?q?1594472056262197134?=
+X-GMAIL-THRID: =?utf-8?q?1594472054723089803?=
+X-GMAIL-MSGID: =?utf-8?q?1594472054723089803?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-There's "dev" variable for this already. Use it.
+There already a "dev" variable for that. Use it.
 
 Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Heiko Stuebner <heiko@sntech.de>
@@ -72,38 +72,22 @@ Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/rockchip-efuse.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/nvmem/vf610-ocotp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/nvmem/rockchip-efuse.c b/drivers/nvmem/rockchip-efuse.c
-index ade8848adf82..b3b0b648be62 100644
---- a/drivers/nvmem/rockchip-efuse.c
-+++ b/drivers/nvmem/rockchip-efuse.c
-@@ -268,21 +268,21 @@ static int rockchip_efuse_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
+diff --git a/drivers/nvmem/vf610-ocotp.c b/drivers/nvmem/vf610-ocotp.c
+index 5a395ffb2ca8..4662309489db 100644
+--- a/drivers/nvmem/vf610-ocotp.c
++++ b/drivers/nvmem/vf610-ocotp.c
+@@ -223,8 +223,7 @@ static int vf610_ocotp_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	struct vf610_ocotp *ocotp_dev;
  
--	efuse = devm_kzalloc(&pdev->dev, sizeof(struct rockchip_efuse_chip),
-+	efuse = devm_kzalloc(dev, sizeof(struct rockchip_efuse_chip),
- 			     GFP_KERNEL);
- 	if (!efuse)
+-	ocotp_dev = devm_kzalloc(&pdev->dev,
+-			sizeof(struct vf610_ocotp), GFP_KERNEL);
++	ocotp_dev = devm_kzalloc(dev, sizeof(struct vf610_ocotp), GFP_KERNEL);
+ 	if (!ocotp_dev)
  		return -ENOMEM;
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	efuse->base = devm_ioremap_resource(&pdev->dev, res);
-+	efuse->base = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(efuse->base))
- 		return PTR_ERR(efuse->base);
- 
--	efuse->clk = devm_clk_get(&pdev->dev, "pclk_efuse");
-+	efuse->clk = devm_clk_get(dev, "pclk_efuse");
- 	if (IS_ERR(efuse->clk))
- 		return PTR_ERR(efuse->clk);
- 
--	efuse->dev = &pdev->dev;
-+	efuse->dev = dev;
- 	if (of_property_read_u32(dev->of_node, "rockchip,efuse-size",
- 				 &econfig.size))
- 		econfig.size = resource_size(res);
 -- 
 2.15.1
