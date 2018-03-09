@@ -1,24 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932572AbeCISnI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 13:43:08 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:33476 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932267AbeCISnC (ORCPT
+        id S932553AbeCISnF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 13:43:05 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:40667 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932165AbeCISnA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 13:43:02 -0500
-X-Google-Smtp-Source: AG47ELsNgzbtFual4/IrEahkk3fJIYb6BOXPEybs0PKnJyEVxZ+g673J0ejmRnLYus1IZrUcr6cSXQ==
+        Fri, 9 Mar 2018 13:43:00 -0500
+X-Google-Smtp-Source: AG47ELu9kPk5jXlIQGynHyshIWmoOVhEXSz7+F0WPAcC1kdqKsStXL8FfNUA36eauDuuCKd0Tk7WVw==
 From: John Stultz <john.stultz@linaro.org>
 To: lkml <linux-kernel@vger.kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Miroslav Lichvar <mlichvar@redhat.com>,
+Cc: Miroslav Lichvar <mlichvar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
         Richard Cochran <richardcochran@gmail.com>,
         Prarit Bhargava <prarit@redhat.com>,
         Stephen Boyd <stephen.boyd@linaro.org>,
         John Stultz <john.stultz@linaro.org>
-Subject: [PATCH 3/4] y2038: time: Introduce struct __kernel_old_timeval
-Date: Fri,  9 Mar 2018 10:42:49 -0800
-Message-Id: <1520620971-9567-4-git-send-email-john.stultz@linaro.org>
+Subject: [PATCH 2/4] timekeeping: Determine multiplier directly from NTP tick length
+Date: Fri,  9 Mar 2018 10:42:48 -0800
+Message-Id: <1520620971-9567-3-git-send-email-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520620971-9567-1-git-send-email-john.stultz@linaro.org>
 References: <1520620971-9567-1-git-send-email-john.stultz@linaro.org>
@@ -26,48 +26,22 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Miroslav Lichvar <mlichvar@redhat.com>
 
-Dealing with 'struct timeval' users in the y2038 series is a bit tricky:
+When the length of the NTP tick changes significantly, e.g. when an
+NTP/PTP application is correcting the initial offset of the clock, a
+large value may accumulate in the NTP error before the multiplier
+converges to the correct value. It may then take a very long time (hours
+or even days) before the error is corrected. This causes the clock to
+have an unstable frequency offset, which has a negative impact on the
+stability of synchronization with precise time sources (e.g. NTP/PTP
+using hardware timestamping or the PTP KVM clock).
 
-We have two definitions of timeval that are visible to user space,
-one comes from glibc (or some other C library), the other comes from
-linux/time.h. The kernel copy is what we want to be used for a number of
-structures defined by the kernel itself, e.g. elf_prstatus (used it core
-dumps), sysinfo and rusage (used in system calls).  These generally tend
-to be used for passing time intervals rather than absolute (epoch-based)
-times, so they do not suffer from the y2038 overflow. Some of them
-could be changed to use 64-bit timestamps by creating new system calls,
-others like the core files cannot easily be changed.
-
-An application using these interfaces likely also uses gettimeofday()
-or other interfaces that use absolute times, and pass 'struct timeval'
-pointers directly into kernel interfaces, so glibc must redefine their
-timeval based on a 64-bit time_t when they introduce their y2038-safe
-interfaces.
-
-The only reasonable way forward I see is to remove the 'timeval'
-definition from the kernel's uapi headers, and change the interfaces
-that we do not want to (or cannot) duplicate for 64-bit times to use a
-new __kernel_old_timeval definition instead. This type should be avoided
-for all new interfaces (those can use 64-bit nanoseconds, or the 64-bit
-version of timespec instead), and should be used with great care when
-converting existing interfaces from timeval, to be sure they don't suffer
-from the y2038 overflow, and only with consensus for the particular user
-that using __kernel_old_timeval is better than moving to a 64-bit based
-interface. The structure name is intentionally chosen to not conflict
-with user space types, and to be ugly enough to discourage its use.
-
-Note that ioctl based interfaces that pass a bare 'timeval' pointer
-cannot change to '__kernel_old_timeval' because the user space source
-code refers to 'timeval' instead, and we don't want to modify the user
-space sources if possible. However, any application that relies on a
-structure to contain an embedded 'timeval' (e.g. by passing a pointer
-to the member into a function call that expects a timeval pointer) is
-broken when that structure gets converted to __kernel_old_timeval. I
-don't see any way around that, and we have to rely on the compiler to
-produce a warning or compile failure that will alert users when they
-recompile their sources against a new libc.
+Use division to determine the correct multiplier directly from the NTP
+tick length and replace the iterative approach. This removes the last
+major source of the NTP error. The only remaining source is now limited
+resolution of the multiplier, which is corrected by adding 1 to the
+multiplier when the system clock is behind the NTP time.
 
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@kernel.org>
@@ -75,70 +49,224 @@ Cc: Miroslav Lichvar <mlichvar@redhat.com>
 Cc: Richard Cochran <richardcochran@gmail.com>
 Cc: Prarit Bhargava <prarit@redhat.com>
 Cc: Stephen Boyd <stephen.boyd@linaro.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Miroslav Lichvar <mlichvar@redhat.com>
 Signed-off-by: John Stultz <john.stultz@linaro.org>
 ---
- include/linux/time32.h    |  1 +
- include/uapi/linux/time.h | 12 ++++++++++++
- kernel/time/time.c        | 12 ++++++++++++
- 3 files changed, 25 insertions(+)
+ include/linux/timekeeper_internal.h |   2 +
+ kernel/time/timekeeping.c           | 138 ++++++++++++------------------------
+ 2 files changed, 49 insertions(+), 91 deletions(-)
 
-diff --git a/include/linux/time32.h b/include/linux/time32.h
-index 65b1de2..3febcaf 100644
---- a/include/linux/time32.h
-+++ b/include/linux/time32.h
-@@ -217,5 +217,6 @@ static inline s64 timeval_to_ns(const struct timeval *tv)
-  * Returns the timeval representation of the nsec parameter.
-  */
- extern struct timeval ns_to_timeval(const s64 nsec);
-+extern struct __kernel_old_timeval ns_to_kernel_old_timeval(const s64 nsec);
+diff --git a/include/linux/timekeeper_internal.h b/include/linux/timekeeper_internal.h
+index d315c3d..7acb953 100644
+--- a/include/linux/timekeeper_internal.h
++++ b/include/linux/timekeeper_internal.h
+@@ -117,6 +117,8 @@ struct timekeeper {
+ 	s64			ntp_error;
+ 	u32			ntp_error_shift;
+ 	u32			ntp_err_mult;
++	/* Flag used to avoid updating NTP twice with same second */
++	u32			skip_second_overflow;
+ #ifdef CONFIG_DEBUG_TIMEKEEPING
+ 	long			last_warning;
+ 	/*
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index c1a0ac1..e1176012 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -332,6 +332,7 @@ static void tk_setup_internals(struct timekeeper *tk, struct clocksource *clock)
+ 	tk->tkr_mono.mult = clock->mult;
+ 	tk->tkr_raw.mult = clock->mult;
+ 	tk->ntp_err_mult = 0;
++	tk->skip_second_overflow = 0;
+ }
  
- #endif
-diff --git a/include/uapi/linux/time.h b/include/uapi/linux/time.h
-index 53f8dd8..888da62 100644
---- a/include/uapi/linux/time.h
-+++ b/include/uapi/linux/time.h
-@@ -43,6 +43,18 @@ struct itimerval {
- };
+ /* Timekeeper helper functions. */
+@@ -1799,20 +1800,19 @@ device_initcall(timekeeping_init_ops);
+  */
+ static __always_inline void timekeeping_apply_adjustment(struct timekeeper *tk,
+ 							 s64 offset,
+-							 bool negative,
+-							 int adj_scale)
++							 s32 mult_adj)
+ {
+ 	s64 interval = tk->cycle_interval;
+-	s32 mult_adj = 1;
+ 
+-	if (negative) {
+-		mult_adj = -mult_adj;
++	if (mult_adj == 0) {
++		return;
++	} else if (mult_adj == -1) {
+ 		interval = -interval;
+-		offset  = -offset;
++		offset = -offset;
++	} else if (mult_adj != 1) {
++		interval *= mult_adj;
++		offset *= mult_adj;
+ 	}
+-	mult_adj <<= adj_scale;
+-	interval <<= adj_scale;
+-	offset <<= adj_scale;
+ 
+ 	/*
+ 	 * So the following can be confusing.
+@@ -1873,85 +1873,35 @@ static __always_inline void timekeeping_apply_adjustment(struct timekeeper *tk,
+ }
  
  /*
-+ * legacy timeval structure, only embedded in structures that
-+ * traditionally used 'timeval' to pass time intervals (not absolute
-+ * times). Do not add new users. If user space fails to compile
-+ * here, this is probably because it is not y2038 safe and needs to
-+ * be changed to use another interface.
-+ */
-+struct __kernel_old_timeval {
-+	__kernel_long_t tv_sec;			/* seconds */
-+	__kernel_long_t tv_usec;		/* seconds */
-+};
-+
-+/*
-  * The IDs of the various system clocks (for POSIX.1b interval timers):
+- * Calculate the multiplier adjustment needed to match the frequency
+- * specified by NTP
++ * Adjust the timekeeper's multiplier to the correct frequency
++ * and also to reduce the accumulated error value.
   */
- #define CLOCK_REALTIME			0
-diff --git a/kernel/time/time.c b/kernel/time/time.c
-index bd4e6c7..cbb3c71 100644
---- a/kernel/time/time.c
-+++ b/kernel/time/time.c
-@@ -488,6 +488,18 @@ struct timeval ns_to_timeval(const s64 nsec)
- }
- EXPORT_SYMBOL(ns_to_timeval);
+-static __always_inline void timekeeping_freqadjust(struct timekeeper *tk,
+-							s64 offset)
++static void timekeeping_adjust(struct timekeeper *tk, s64 offset)
+ {
+-	s64 interval = tk->cycle_interval;
+-	s64 xinterval = tk->xtime_interval;
+-	u32 base = tk->tkr_mono.clock->mult;
+-	u32 max = tk->tkr_mono.clock->maxadj;
+-	u32 cur_adj = tk->tkr_mono.mult;
+-	s64 tick_error;
+-	bool negative;
+-	u32 adj_scale;
+-
+-	/* Remove any current error adj from freq calculation */
+-	if (tk->ntp_err_mult)
+-		xinterval -= tk->cycle_interval;
+-
+-	tk->ntp_tick = ntp_tick_length();
+-
+-	/* Calculate current error per tick */
+-	tick_error = ntp_tick_length() >> tk->ntp_error_shift;
+-	tick_error -= (xinterval + tk->xtime_remainder);
+-
+-	/* Don't worry about correcting it if its small */
+-	if (likely((tick_error >= 0) && (tick_error <= interval)))
+-		return;
+-
+-	/* preserve the direction of correction */
+-	negative = (tick_error < 0);
++	u32 mult;
  
-+struct __kernel_old_timeval ns_to_kernel_old_timeval(const s64 nsec)
-+{
-+	struct timespec64 ts = ns_to_timespec64(nsec);
-+	struct __kernel_old_timeval tv;
+-	/* If any adjustment would pass the max, just return */
+-	if (negative && (cur_adj - 1) <= (base - max))
+-		return;
+-	if (!negative && (cur_adj + 1) >= (base + max))
+-		return;
+ 	/*
+-	 * Sort out the magnitude of the correction, but
+-	 * avoid making so large a correction that we go
+-	 * over the max adjustment.
++	 * Determine the multiplier from the current NTP tick length.
++	 * Avoid expensive division when the tick length doesn't change.
+ 	 */
+-	adj_scale = 0;
+-	tick_error = abs(tick_error);
+-	while (tick_error > interval) {
+-		u32 adj = 1 << (adj_scale + 1);
+-
+-		/* Check if adjustment gets us within 1 unit from the max */
+-		if (negative && (cur_adj - adj) <= (base - max))
+-			break;
+-		if (!negative && (cur_adj + adj) >= (base + max))
+-			break;
+-
+-		adj_scale++;
+-		tick_error >>= 1;
++	if (likely(tk->ntp_tick == ntp_tick_length())) {
++		mult = tk->tkr_mono.mult - tk->ntp_err_mult;
++	} else {
++		tk->ntp_tick = ntp_tick_length();
++		mult = div64_u64((tk->ntp_tick >> tk->ntp_error_shift) -
++				 tk->xtime_remainder, tk->cycle_interval);
+ 	}
+ 
+-	/* scale the corrections */
+-	timekeeping_apply_adjustment(tk, offset, negative, adj_scale);
+-}
++	/*
++	 * If the clock is behind the NTP time, increase the multiplier by 1
++	 * to catch up with it. If it's ahead and there was a remainder in the
++	 * tick division, the clock will slow down. Otherwise it will stay
++	 * ahead until the tick length changes to a non-divisible value.
++	 */
++	tk->ntp_err_mult = tk->ntp_error > 0 ? 1 : 0;
++	mult += tk->ntp_err_mult;
+ 
+-/*
+- * Adjust the timekeeper's multiplier to the correct frequency
+- * and also to reduce the accumulated error value.
+- */
+-static void timekeeping_adjust(struct timekeeper *tk, s64 offset)
+-{
+-	/* Correct for the current frequency error */
+-	timekeeping_freqadjust(tk, offset);
+-
+-	/* Next make a small adjustment to fix any cumulative error */
+-	if (!tk->ntp_err_mult && (tk->ntp_error > 0)) {
+-		tk->ntp_err_mult = 1;
+-		timekeeping_apply_adjustment(tk, offset, 0, 0);
+-	} else if (tk->ntp_err_mult && (tk->ntp_error <= 0)) {
+-		/* Undo any existing error adjustment */
+-		timekeeping_apply_adjustment(tk, offset, 1, 0);
+-		tk->ntp_err_mult = 0;
+-	}
++	timekeeping_apply_adjustment(tk, offset, mult - tk->tkr_mono.mult);
+ 
+ 	if (unlikely(tk->tkr_mono.clock->maxadj &&
+ 		(abs(tk->tkr_mono.mult - tk->tkr_mono.clock->mult)
+@@ -1968,18 +1918,15 @@ static void timekeeping_adjust(struct timekeeper *tk, s64 offset)
+ 	 * in the code above, its possible the required corrective factor to
+ 	 * xtime_nsec could cause it to underflow.
+ 	 *
+-	 * Now, since we already accumulated the second, cannot simply roll
+-	 * the accumulated second back, since the NTP subsystem has been
+-	 * notified via second_overflow. So instead we push xtime_nsec forward
+-	 * by the amount we underflowed, and add that amount into the error.
+-	 *
+-	 * We'll correct this error next time through this function, when
+-	 * xtime_nsec is not as small.
++	 * Now, since we have already accumulated the second and the NTP
++	 * subsystem has been notified via second_overflow(), we need to skip
++	 * the next update.
+ 	 */
+ 	if (unlikely((s64)tk->tkr_mono.xtime_nsec < 0)) {
+-		s64 neg = -(s64)tk->tkr_mono.xtime_nsec;
+-		tk->tkr_mono.xtime_nsec = 0;
+-		tk->ntp_error += neg << tk->ntp_error_shift;
++		tk->tkr_mono.xtime_nsec += (u64)NSEC_PER_SEC <<
++							tk->tkr_mono.shift;
++		tk->xtime_sec--;
++		tk->skip_second_overflow = 1;
+ 	}
+ }
+ 
+@@ -2002,6 +1949,15 @@ static inline unsigned int accumulate_nsecs_to_secs(struct timekeeper *tk)
+ 		tk->tkr_mono.xtime_nsec -= nsecps;
+ 		tk->xtime_sec++;
+ 
++		/*
++		 * Skip NTP update if this second was accumulated before,
++		 * i.e. xtime_nsec underflowed in timekeeping_adjust()
++		 */
++		if (unlikely(tk->skip_second_overflow)) {
++			tk->skip_second_overflow = 0;
++			continue;
++		}
 +
-+	tv.tv_sec = ts.tv_sec;
-+	tv.tv_usec = (suseconds_t) ts.tv_nsec / 1000;
-+
-+	return tv;
-+}
-+EXPORT_SYMBOL(ns_to_kernel_old_timeval);
-+
- /**
-  * set_normalized_timespec - set timespec sec and nsec parts and normalize
-  *
+ 		/* Figure out if its a leap sec and apply if needed */
+ 		leap = second_overflow(tk->xtime_sec);
+ 		if (unlikely(leap)) {
+@@ -2118,7 +2074,7 @@ void update_wall_time(void)
+ 			shift--;
+ 	}
+ 
+-	/* correct the clock when NTP error is too big */
++	/* Adjust the multiplier to correct NTP error */
+ 	timekeeping_adjust(tk, offset);
+ 
+ 	/*
 -- 
 2.7.4
