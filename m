@@ -1,64 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751137AbeCIKG6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:06:58 -0500
-Received: from mga06.intel.com ([134.134.136.31]:25803 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751088AbeCIKG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 05:06:56 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,444,1515484800";
-   d="scan'208";a="40535605"
-Date: Fri, 9 Mar 2018 12:06:51 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <yehezkel.bernat@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Mario.Limonciello@dell.com,
-        Radion Mirchevsky <radion.mirchevsky@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jeremy McNicoll <jmcnicol@redhat.com>,
-        Andrei Emeltchenko <andrei.emeltchenko@intel.com>
-Subject: Re: [PATCH v3 00/18] thunderbolt: Add support for Intel Titan Ridge
-Message-ID: <20180309100651.GB2703@lahna.fi.intel.com>
-References: <20180302123852.50463-1-mika.westerberg@linux.intel.com>
+        id S1751056AbeCIKJH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:09:07 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:40870 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750883AbeCIKJF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 05:09:05 -0500
+Date: Fri, 9 Mar 2018 11:08:54 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Ming Lei <ming.lei@redhat.com>
+cc: Artem Bityutskiy <dedekind1@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, Laurence Oberman <loberman@redhat.com>
+Subject: Re: [PATCH V3 0/4] genirq/affinity: irq vector spread among online
+ CPUs as far as possible
+In-Reply-To: <20180309012458.GD5228@ming.t460p>
+Message-ID: <alpine.DEB.2.21.1803091107520.1364@nanos.tec.linutronix.de>
+References: <20180308105358.1506-1-ming.lei@redhat.com> <1520515113.20980.31.camel@gmail.com> <20180308133440.GA2713@ming.t460p> <alpine.DEB.2.21.1803090011150.1454@nanos.tec.linutronix.de> <20180309012458.GD5228@ming.t460p>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180302123852.50463-1-mika.westerberg@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 02, 2018 at 03:38:34PM +0300, Mika Westerberg wrote:
-> Mika Westerberg (13):
->   thunderbolt: Resume control channel after hibernation image is created
->   thunderbolt: Serialize PCIe tunnel creation with PCI rescan
->   thunderbolt: Handle connecting device in place of host properly
->   thunderbolt: Do not overwrite error code when domain adding fails
->   thunderbolt: Wait a bit longer for root switch config space
->   thunderbolt: Wait a bit longer for ICM to authenticate the active NVM
->   thunderbolt: Handle rejected Thunderbolt devices
->   thunderbolt: Factor common ICM add and update operations out
->   thunderbolt: Add tb_switch_get()
->   thunderbolt: Add constant for approval timeout
->   thunderbolt: Move driver ready handling to struct icm
->   thunderbolt: Add support for preboot ACL
->   thunderbolt: Introduce USB only (SL4) security level
+On Fri, 9 Mar 2018, Ming Lei wrote:
+> On Fri, Mar 09, 2018 at 12:20:09AM +0100, Thomas Gleixner wrote:
+> > On Thu, 8 Mar 2018, Ming Lei wrote:
+> > > Actually, it isn't a real fix, the real one is in the following two:
+> > > 
+> > > 	0c20244d458e scsi: megaraid_sas: fix selection of reply queue
+> > > 	ed6d043be8cd scsi: hpsa: fix selection of reply queue
+> > 
+> > Where are these commits? Neither Linus tree not -next know anything about
+> > them....
 > 
-> Radion Mirchevsky (4):
->   thunderbolt: Correct function name in kernel-doc comment
->   thunderbolt: Add tb_switch_find_by_route()
->   thunderbolt: Add tb_xdomain_find_by_route()
->   thunderbolt: Add support for Intel Titan Ridge
+> Both aren't merged yet, but they should land V4.16, IMO.
 > 
-> Yehezkel Bernat (1):
->   thunderbolt: Add 'boot' attribute for devices
+> > 
+> > > This patchset can't guarantee that all IRQ vectors are assigned by one
+> > > online CPU, for example, in a quad-socket system, if only one processor
+> > > is present, then some of vectors are still assigned by all offline CPUs,
+> > > and it is a valid case, but still may cause io hang if drivers(hpsa,
+> > > megaraid_sas) select reply queue in current way.
+> > 
+> > So my understanding is that these irq patches are enhancements and not bug
+> > fixes. I'll queue them for 4.17 then.
+> 
+> Wrt. this IO hang issue, these patches shouldn't be bug fix, but they may
+> fix performance regression[1] for some systems caused by 84676c1f21 ("genirq/affinity:
+> assign vectors to all possible CPUs").
+> 
+> [1] https://marc.info/?l=linux-block&m=152050347831149&w=2
 
-Whole series applied to thunderbolt.git/next.
+Hmm. The patches are rather large for urgent and evtl. backporting. Is
+there a simpler way to address that performance issue?
+
+Thanks,
+
+	tglx
