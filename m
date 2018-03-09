@@ -1,58 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932733AbeCIXFc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 18:05:32 -0500
-Received: from mail-pg0-f54.google.com ([74.125.83.54]:33883 "EHLO
-        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932195AbeCIXFa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 18:05:30 -0500
-X-Google-Smtp-Source: AG47ELuRik5JrQk4n9LJh/rcVIUQE0iSTXkTgE/nQE1xsLpq8y/5kxmwffau1S883kBQA3yBGRMGxoz1QMNl5T/kNyU=
+        id S932789AbeCIXGd convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 18:06:33 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59458 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932195AbeCIXGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 18:06:32 -0500
+Subject: Re: [PATCH v4] cpuset: Enable cpuset controller in default hierarchy
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Mike Galbraith <efault@gmx.de>, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>
+References: <1520609707-16582-1-git-send-email-longman@redhat.com>
+ <1520613285.12489.36.camel@gmx.de>
+ <1c3fe7b0-2600-c46d-1527-d3aaf024bb91@redhat.com>
+ <1520619426.27998.18.camel@gmx.de>
+ <55809fe4-98ba-5566-86ed-457acfef0e1c@redhat.com>
+ <1520624424.27998.76.camel@gmx.de>
+ <53de9683-01b7-bac4-8b70-dc1f93ede600@redhat.com>
+ <20180309221736.GB5926@hirez.programming.kicks-ass.net>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <f0fca497-e4e7-3dbd-1e5c-a7f502c05dcb@redhat.com>
+Date: Fri, 9 Mar 2018 18:06:29 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <c4b2dca8-f2b9-c187-9ee5-e7c4816848f5@gmail.com>
-References: <001a113f2be668a1e9056701e617@google.com> <CAM_iQpV+PnGUXEKcSrF7u19NOeLLp0PhDW-DOkEfS+8pLnTgYw@mail.gmail.com>
- <a559bbb6-0db4-2b71-b363-792d88d7eef7@gmail.com> <c4b2dca8-f2b9-c187-9ee5-e7c4816848f5@gmail.com>
-From: Cong Wang <xiyou.wangcong@gmail.com>
-Date: Fri, 9 Mar 2018 15:05:09 -0800
-Message-ID: <CAM_iQpXLQtaBRBPmcGzUTUhNHiomos4eAvXy7kyrY+uAzpNt3g@mail.gmail.com>
-Subject: Re: WARNING in __proc_create
-To: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: syzbot <syzbot+0502b00edac2a0680b61@syzkaller.appspotmail.com>,
-        coreteam@netfilter.org, David Miller <davem@davemloft.net>,
-        Florian Westphal <fw@strlen.de>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        netfilter-devel@vger.kernel.org,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180309221736.GB5926@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 9, 2018 at 2:58 PM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
+On 03/09/2018 05:17 PM, Peter Zijlstra wrote:
+> On Fri, Mar 09, 2018 at 03:43:34PM -0500, Waiman Long wrote:
+>> The isolcpus= parameter just reduce the cpus available to the rests of
+>> the system. The cpuset controller does look at that value and make
+>> adjustment accordingly, but it has no dependence on exclusive cpu/mem
+>> features of cpuset.
+> The isolcpus= boot param is donkey shit and needs to die. cpuset _used_
+> to be able to fully replace it, but with the advent of cgroup 'feature'
+> this got lost.
 >
+> And instead of fixing it, you're making it _far_ worse. You completely
+> removed all the bits that allow repartitioning the scheduler domains.
 >
-> On 03/09/2018 02:56 PM, Eric Dumazet wrote:
->
->>
->> I sent a patch a while back, but Pablo/Florian wanted more than that
->> simple fix.
->>
->> We also need to filter special characters like '/'
+> Mike is completely right, full NAK on any such approach.
 
-proc_create_data() itself accepts '/', so it must be xt_hashlimit doesn't
-want it.
+So you are talking about sched_relax_domain_level and
+sched_load_balance. I have not removed any bits. I just haven't exposed
+them yet. It does seem like these 2 control knobs are useful from the
+scheduling perspective. Do we also need cpu_exclusive or just the two
+sched control knobs are enough?
 
->>
->> Or maybe I am mixing with something else.
->
->
-> Yes, Florian mentioned that we also had to reject "."  and ".."
->
-
-It could be, but looks like not as trivial as just strstr(".")?
-
-BTW, the warning itself is all about empty names, so perhaps
-it's better to fix them separately.
+Cheers,
+Longman
