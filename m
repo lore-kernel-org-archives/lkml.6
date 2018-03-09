@@ -1,202 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932125AbeCIPB5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 10:01:57 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33452 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751102AbeCIPB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 10:01:56 -0500
-Date: Fri, 9 Mar 2018 16:01:53 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>
-Subject: Re: [PATCH] vsprintf: Make "null" pointer dereference more robust
-Message-ID: <20180309150153.3sxbbpd6jdn2d5yy@pathway.suse.cz>
-References: <20180302125118.bjd3tbuu72vgfczo@pathway.suse.cz>
- <20180302125359.szbin2kznxvoq7sc@pathway.suse.cz>
- <CAKwiHFgTbFof34oc59OU3M1=-PTzstv0uxSmoiRc8TJPJPMHVw@mail.gmail.com>
- <20180306092513.ibodfsnv4xrxdlub@pathway.suse.cz>
- <1520330185.10722.401.camel@linux.intel.com>
- <20180307155244.b45c3fb5vcxb4q2l@pathway.suse.cz>
- <CA+55aFxr5eg_fWjyhcYFU4CSOoVP_GeB79cYa=8mUk7J1cUG7A@mail.gmail.com>
- <20180308141824.bfk2pr6wmjh4ytdi@pathway.suse.cz>
- <CA+55aFyDbr4JpiPoHXq=3wJu+WVCLZPpAVsmY=5HVStawmEiRw@mail.gmail.com>
- <CA+55aFwaNTC2HV9ERDFWCrmhvgZ58SKMM+ik9Ypr3i-ZUyU6Fw@mail.gmail.com>
+        id S932154AbeCIPDQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 10:03:16 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53354 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751102AbeCIPDP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 10:03:15 -0500
+Date: Fri, 9 Mar 2018 15:03:09 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Andrey Konovalov <andreyknvl@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Arnd Bergmann <arnd@arndb.de>,
+        linux-arch@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>, Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>
+Subject: Re: [RFC PATCH 2/6] arm64: untag user addresses in copy_from_user
+ and others
+Message-ID: <20180309150309.4sue2zj6teehx6e3@lakrids.cambridge.arm.com>
+References: <cover.1520600533.git.andreyknvl@google.com>
+ <d681c0dee907ee5cc55d313e2f843237c6087bf0.1520600533.git.andreyknvl@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+55aFwaNTC2HV9ERDFWCrmhvgZ58SKMM+ik9Ypr3i-ZUyU6Fw@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <d681c0dee907ee5cc55d313e2f843237c6087bf0.1520600533.git.andreyknvl@google.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-03-08 09:26:11, Linus Torvalds wrote:
-> On Thu, Mar 8, 2018 at 8:45 AM, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > Umm. Look again. It _does_ affect plain %p.
-> >
-> > You're correct that it doesn't affect %px and %pK, since those never
-> > printed out (null) in the first place.
-> >
-> > It not only affects %p, but it also affects %pS and friends (sSfFB),
+On Fri, Mar 09, 2018 at 03:02:00PM +0100, Andrey Konovalov wrote:
+> copy_from_user (and a few other similar functions) are used to copy data
+> from user memory into the kernel memory or vice versa. Since a user can
+> provided a tagged pointer to one of the syscalls that use copy_from_user,
+> we need to correctly handle such pointers.
+
+I don't think it makes sense to do this in the low-level uaccess
+primitives, given we're going to have to untag pointers before common
+code can use them, e.g. for comparisons against TASK_SIZE or
+user_addr_max().
+
+I think we'll end up with subtle bugs unless we consistently untag
+pointers before we get to uaccess primitives. If core code does untag
+pointers, then it's redundant to do so here.
+
+Thanks,
+Mark.
+
 > 
-> Looking around at the x86 panic thing, %p doesn't matter that much,
-> but %p[sSfFB] really do.
+> Do this by untagging user pointers in access_ok and in __uaccess_mask_ptr.
 > 
-> We use %pS/%pB to print out the instruction pointer. And a fault might
-> be due to the instruction pointer being bad.
+> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> ---
+>  arch/arm64/include/asm/uaccess.h | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> And then we very much need to see the value, which the current
-> %pS-and-friends falls back to.
+> diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
+> index 2d6451cbaa86..24a221678fe3 100644
+> --- a/arch/arm64/include/asm/uaccess.h
+> +++ b/arch/arm64/include/asm/uaccess.h
+> @@ -105,7 +105,8 @@ static inline unsigned long __range_ok(const void __user *addr, unsigned long si
+>  #define untagged_addr(addr)		\
+>  	((__typeof__(addr))sign_extend64((__u64)(addr), 55))
+>  
+> -#define access_ok(type, addr, size)	__range_ok(addr, size)
+> +#define access_ok(type, addr, size)	\
+> +	__range_ok(untagged_addr(addr), size)
+>  #define user_addr_max			get_fs
+>  
+>  #define _ASM_EXTABLE(from, to)						\
+> @@ -238,12 +239,15 @@ static inline void uaccess_enable_not_uao(void)
+>  /*
+>   * Sanitise a uaccess pointer such that it becomes NULL if above the
+>   * current addr_limit.
+> + * Also untag user pointers that have the top byte tag set.
+>   */
+>  #define uaccess_mask_ptr(ptr) (__typeof__(ptr))__uaccess_mask_ptr(ptr)
+>  static inline void __user *__uaccess_mask_ptr(const void __user *ptr)
+>  {
+>  	void __user *safe_ptr;
+>  
+> +	ptr = untagged_addr(ptr);
+> +
+>  	asm volatile(
+>  	"	bics	xzr, %1, %2\n"
+>  	"	csel	%0, %1, xzr, eq\n"
+> -- 
+> 2.16.2.395.g2e18187dfd-goog
 > 
-> So printing <efault> would actually be horrible, in addition to the
-> extra page fault being wrong. In fact, _only_ NULL itself needs to be
-> printed as (null), because we'd care if it's 0 or 8 or something.
-> 
-> The other ones? The ones that would actually fault (%pI and friends)
-> would not matter.
-
-This all makes perfect sense. And I actually intended to do it this
-way. Unfortunately, I sent the first RFC too fast without updating
-the check for %p* specifiers. I am sorry for the confusion.
-
-
-> The hex dumping one _might_ actually be useful if it got a buffer with
-> 'probe_kernel_read()' and stopped half-way on problems.   Maybe. The
-> others I can't imagine really care. efault or hex address.
-
-I will try to keep it simple and check only the 1st byte for now.
-It should prevent most of the possible silent crashes.
-
-Here is the 2nd attempt. It never calls probe_kernel_read() when
-the data need not be accessed:
-
-
->From 1c7123fbb8d098822b8f59c032e1ac79dbb6bf1a Mon Sep 17 00:00:00 2001
-From: Petr Mladek <pmladek@suse.com>
-Date: Wed, 7 Mar 2018 16:27:24 +0100
-Subject: [PATCH v2] vsprintf: Prevent crash when dereferencing invalid pointers
-
-We already prevent crash when dereferencing some obviously broken
-pointers. But the handling is not consistent. Sometimes we print "(null)"
-only for pure NULL pointer, sometimes for pointers in the first
-page and sometimes also for pointers in the last page (error codes).
-
-Note that printk() call this code under logbuf_lock. Any recursive
-printks are redirected to the printk_safe implementation and the messages
-are stored into per-CPU buffers. These buffers might be eventually flushed
-in printk_safe_flush_on_panic() but it is not guaranteed.
-
-In general, we want to get a message from printk() than a silent crash.
-This patch adds a check using probe_kernel_read().
-
-The check is used _only_ in situations where we would really crash. This is
-why this patch adds a white list of %p* specifiers that do the dereference.
-Note that "%p" might be followed by any character. Only few of them are
-valid specifiers and only few specifiers need to access the data.
-
-Also it makes the handling unified. We print:
-
-   + (null) when pure NULL pointer is dereferenced
-   + (efault) when an invalid address is dereferenced
-   + pointer address otherwise
-
-Note that we print (efault) from security reasons. In fact, the real
-address can be seen only by %px or eventually %pK.
-
-Signed-off-by: Petr Mladek <pmladek@suse.com>
----
- lib/vsprintf.c | 41 ++++++++++++++++++++++++++++++++---------
- 1 file changed, 32 insertions(+), 9 deletions(-)
-
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index d7a708f82559..36fa8a15c169 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -520,6 +520,19 @@ char *number(char *buf, char *end, unsigned long long num,
- 	return buf;
- }
- 
-+static const char *check_pointer_access(const void *ptr)
-+{
-+	unsigned char byte;
-+
-+	if (!ptr)
-+		return "(null)";
-+
-+	if (probe_kernel_read(&byte, ptr, 1))
-+		return "(efault)";
-+
-+	return 0;
-+}
-+
- static noinline_for_stack
- char *special_hex_number(char *buf, char *end, unsigned long long num, int size)
- {
-@@ -586,9 +599,11 @@ char *string(char *buf, char *end, const char *s, struct printf_spec spec)
- {
- 	int len = 0;
- 	size_t lim = spec.precision;
-+	const char *err_msg;
- 
--	if ((unsigned long)s < PAGE_SIZE)
--		s = "(null)";
-+	err_msg = check_pointer_access(s);
-+	if (err_msg)
-+		s = err_msg;
- 
- 	while (lim--) {
- 		char c = *s++;
-@@ -1847,16 +1862,22 @@ static noinline_for_stack
- char *pointer(const char *fmt, char *buf, char *end, void *ptr,
- 	      struct printf_spec spec)
- {
-+	static const char data_access_fmt[] = "RrhbMmIiEUVNadCDgGO";
- 	const int default_width = 2 * sizeof(void *);
-+	const char *err_msg = NULL;
-+
-+	/* Prevent silent crash when this is called under logbuf_lock. */
-+	if (strchr(data_access_fmt, *fmt) != NULL)
-+		err_msg = check_pointer_access(ptr);
- 
--	if (!ptr && *fmt != 'K' && *fmt != 'x') {
-+	if (err_msg) {
- 		/*
--		 * Print (null) with the same width as a pointer so it makes
--		 * tabular output look nice.
-+		 * Print the error message with the same width as a pointer
-+		 * so it makes tabular output look nice.
- 		 */
- 		if (spec.field_width == -1)
- 			spec.field_width = default_width;
--		return string(buf, end, "(null)", spec);
-+		return string(buf, end, err_msg, spec);
- 	}
- 
- 	switch (*fmt) {
-@@ -2571,11 +2592,13 @@ int vbin_printf(u32 *bin_buf, size_t size, const char *fmt, va_list args)
- 
- 		case FORMAT_TYPE_STR: {
- 			const char *save_str = va_arg(args, char *);
-+			const char *err_msg;
- 			size_t len;
- 
--			if ((unsigned long)save_str > (unsigned long)-PAGE_SIZE
--					|| (unsigned long)save_str < PAGE_SIZE)
--				save_str = "(null)";
-+			err_msg = check_pointer_access(save_str);
-+			if (err_msg)
-+				save_str = err_msg;
-+
- 			len = strlen(save_str) + 1;
- 			if (str + len < end)
- 				memcpy(str, save_str, len);
--- 
-2.13.6
