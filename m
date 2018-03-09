@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932099AbeCIMfo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 07:35:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40820 "EHLO mail.kernel.org"
+        id S932131AbeCIMgO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 07:36:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751070AbeCIMfn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 07:35:43 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19AB6206B2
+        id S1751082AbeCIMgN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 07:36:13 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 921CD206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
 From: Masami Hiramatsu <mhiramat@kernel.org>
@@ -19,10 +19,12 @@ Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
         Alexei Starovoitov <ast@kernel.org>
-Subject: [RFC PATCH -tip 0/9] kprobes: Cleanup jprobe implementation
-Date: Fri,  9 Mar 2018 21:35:17 +0900
-Message-Id: <152059891712.4214.9539716544254881611.stgit@devbox>
+Subject: [RFC PATCH -tip 1/9] kprobes: Remove jprobe API implementation
+Date: Fri,  9 Mar 2018 21:35:48 +0900
+Message-Id: <152059894840.4214.14661721454085579923.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <152059891712.4214.9539716544254881611.stgit@devbox>
+References: <152059891712.4214.9539716544254881611.stgit@devbox>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -31,72 +33,132 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Remove jprobe API implementations which is no more used.
 
-Since we decided to remove jprobe from kernel last year,
-its APIs are disabled and we worked on moving in-kernel
-jprobe users to kprobes or trace-events. And now no jprobe
-users are here anymore.
-
-I think it is good time to get rid of jprobe implementation
-from the kernel. However, I need other arch developers help
-to complete it, since jprobe is implemented multi arch wide.
-I can remove those code, but can not test all of those.
-
-Here is the series of patches to show how to do that.
-I tried to remove it from x86 tree. Basically we need to
-do 3 things;
-
- - Remove jprobe functions (register/unregister,
-   setjump/longjump) from generic/arch-dependent code.
-   [1/9][2/9][3/9]
- - Remove break_handler related code.
-   [4/9][5/9][6/9]
- - Do not disable preemption on exception handler
-   [7/9][8/9][9/9]
-
-The [3/9] and [6/9] are destractive changes except for x86
-(means causes build errors) since those arch still have some
-references of those functions. So we need to write patches
-similar to [2/9] and [5/9] for each arch before applying those.
-In this series I sorted it as this order just for review,
-[3/9] and [6/9] should be applied after all archs have
-been fixed.
-
-Also, [7/9] is a kind of destractive, which changes required
-behavior for the pre_handlers which changes regs->ip.
-So we also need a patch similar to [7/9] for each arch too.
-Fortunately, current in-tree such user is very limited, both
-works only on x86. So it is not hurry, but we need to change
-arch dependent code.
-
-Thank you,
-
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
+ include/linux/kprobes.h |    3 --
+ kernel/kprobes.c        |   78 +----------------------------------------------
+ 2 files changed, 1 insertion(+), 80 deletions(-)
 
-Masami Hiramatsu (9):
-      kprobes: Remove jprobe API implementation
-      x86: kprobes: Remove jprobe implementation
-      kprobes: Remove jprobe data structure and interfaces
-      kprobes: Ignore break_handler
-      x86: kprobes: Ignore break_handler
-      kprobes: Remove break_handler from struct kprobe
-      x86: kprobes: Do not disable preempt on int3 path
-      error-injection: Fix to not enabling preemption in pre_handler
-      tracing: kprobes: Fix to not enabling preemption
-
-
- Documentation/kprobes.txt        |   13 ++--
- arch/x86/include/asm/kprobes.h   |    3 -
- arch/x86/kernel/kprobes/common.h |   10 ---
- arch/x86/kernel/kprobes/core.c   |  114 ++------------------------------------
- arch/x86/kernel/kprobes/ftrace.c |   21 +------
- arch/x86/kernel/kprobes/opt.c    |    1 
- include/linux/kprobes.h          |   54 ------------------
- kernel/fail_function.c           |    1 
- kernel/kprobes.c                 |  115 ++------------------------------------
- kernel/trace/trace_kprobe.c      |    3 -
- 10 files changed, 20 insertions(+), 315 deletions(-)
-
---
-Masami Hiramatsu
+diff --git a/include/linux/kprobes.h b/include/linux/kprobes.h
+index 9440a2fc8893..b520baa65682 100644
+--- a/include/linux/kprobes.h
++++ b/include/linux/kprobes.h
+@@ -389,9 +389,6 @@ int register_kprobe(struct kprobe *p);
+ void unregister_kprobe(struct kprobe *p);
+ int register_kprobes(struct kprobe **kps, int num);
+ void unregister_kprobes(struct kprobe **kps, int num);
+-int setjmp_pre_handler(struct kprobe *, struct pt_regs *);
+-int longjmp_break_handler(struct kprobe *, struct pt_regs *);
+-void jprobe_return(void);
+ unsigned long arch_deref_entry_point(void *);
+ 
+ int register_kretprobe(struct kretprobe *rp);
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index 102160ff5c66..6d5a7c29cf99 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -1272,7 +1272,7 @@ NOKPROBE_SYMBOL(cleanup_rp_inst);
+ 
+ /*
+ * Add the new probe to ap->list. Fail if this is the
+-* second jprobe at the address - two jprobes can't coexist
++* second break_handler at the address
+ */
+ static int add_new_kprobe(struct kprobe *ap, struct kprobe *p)
+ {
+@@ -1812,77 +1812,6 @@ unsigned long __weak arch_deref_entry_point(void *entry)
+ 	return (unsigned long)entry;
+ }
+ 
+-#if 0
+-int register_jprobes(struct jprobe **jps, int num)
+-{
+-	int ret = 0, i;
+-
+-	if (num <= 0)
+-		return -EINVAL;
+-
+-	for (i = 0; i < num; i++) {
+-		ret = register_jprobe(jps[i]);
+-
+-		if (ret < 0) {
+-			if (i > 0)
+-				unregister_jprobes(jps, i);
+-			break;
+-		}
+-	}
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(register_jprobes);
+-
+-int register_jprobe(struct jprobe *jp)
+-{
+-	unsigned long addr, offset;
+-	struct kprobe *kp = &jp->kp;
+-
+-	/*
+-	 * Verify probepoint as well as the jprobe handler are
+-	 * valid function entry points.
+-	 */
+-	addr = arch_deref_entry_point(jp->entry);
+-
+-	if (kallsyms_lookup_size_offset(addr, NULL, &offset) && offset == 0 &&
+-	    kprobe_on_func_entry(kp->addr, kp->symbol_name, kp->offset)) {
+-		kp->pre_handler = setjmp_pre_handler;
+-		kp->break_handler = longjmp_break_handler;
+-		return register_kprobe(kp);
+-	}
+-
+-	return -EINVAL;
+-}
+-EXPORT_SYMBOL_GPL(register_jprobe);
+-
+-void unregister_jprobe(struct jprobe *jp)
+-{
+-	unregister_jprobes(&jp, 1);
+-}
+-EXPORT_SYMBOL_GPL(unregister_jprobe);
+-
+-void unregister_jprobes(struct jprobe **jps, int num)
+-{
+-	int i;
+-
+-	if (num <= 0)
+-		return;
+-	mutex_lock(&kprobe_mutex);
+-	for (i = 0; i < num; i++)
+-		if (__unregister_kprobe_top(&jps[i]->kp) < 0)
+-			jps[i]->kp.addr = NULL;
+-	mutex_unlock(&kprobe_mutex);
+-
+-	synchronize_sched();
+-	for (i = 0; i < num; i++) {
+-		if (jps[i]->kp.addr)
+-			__unregister_kprobe_bottom(&jps[i]->kp);
+-	}
+-}
+-EXPORT_SYMBOL_GPL(unregister_jprobes);
+-#endif
+-
+ #ifdef CONFIG_KRETPROBES
+ /*
+  * This kprobe pre_handler is registered with every kretprobe. When probe
+@@ -2329,8 +2258,6 @@ static void report_probe(struct seq_file *pi, struct kprobe *p,
+ 
+ 	if (p->pre_handler == pre_handler_kretprobe)
+ 		kprobe_type = "r";
+-	else if (p->pre_handler == setjmp_pre_handler)
+-		kprobe_type = "j";
+ 	else
+ 		kprobe_type = "k";
+ 
+@@ -2637,6 +2564,3 @@ late_initcall(debugfs_kprobe_init);
+ #endif /* CONFIG_DEBUG_FS */
+ 
+ module_init(init_kprobes);
+-
+-/* defined in arch/.../kernel/kprobes.c */
+-EXPORT_SYMBOL_GPL(jprobe_return);
