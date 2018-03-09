@@ -1,114 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751226AbeCIGBO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 01:01:14 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39283 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750848AbeCIGBL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 01:01:11 -0500
-X-Google-Smtp-Source: AG47ELuQ/+FbItSDoDTZ6sl/nMW1O/yn+QMGU+u+WAh0Qc1GyTYQYFMeGXHZbZaWIrMg52ikZJdj3w==
-Date: Fri, 9 Mar 2018 14:01:01 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf machine: Fix load kernel symbol with '-k' option
-Message-ID: <20180309060101.GA20696@leoy-ThinkPad-T440>
-References: <1519715872-31050-1-git-send-email-leo.yan@linaro.org>
- <CANLsYkxyBvhWBSR4A2meQVeefssrcfTVfBw6vG-ZKGNXwPDP9g@mail.gmail.com>
+        id S1751202AbeCIGDG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 01:03:06 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47446 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750898AbeCIGDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 01:03:04 -0500
+Date: Fri, 9 Mar 2018 14:02:54 +0800
+From: Dave Young <dyoung@redhat.com>
+To: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc: vgoyal@redhat.com, bhe@redhat.com, mpe@ellerman.id.au,
+        bauerman@linux.vnet.ibm.com, prudo@linux.vnet.ibm.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH v2 0/7] kexec_file, x86, powerpc: refactoring for other
+ architecutres
+Message-ID: <20180309060254.GA9728@dhcp-128-65.nay.redhat.com>
+References: <20180306102303.9063-1-takahiro.akashi@linaro.org>
+ <20180308010502.GA2600@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANLsYkxyBvhWBSR4A2meQVeefssrcfTVfBw6vG-ZKGNXwPDP9g@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180308010502.GA2600@dhcp-128-65.nay.redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mathieu,
-
-On Wed, Mar 07, 2018 at 02:09:24PM -0700, Mathieu Poirier wrote:
-> Hi Leo,
+On 03/08/18 at 09:05am, Dave Young wrote:
+> [Cc Andrew]
 > 
-> On 27 February 2018 at 00:17, Leo Yan <leo.yan@linaro.org> wrote:
-> > On Hikey arm64 octa A53 platform, when use command './perf report -v
-> > -k vmlinux --stdio' it outputs below error info, and it skips to load
-> > kernel symbol and doesn't print symbol for event:
-> > Failed to open [kernel.kallsyms]_text, continuing without symbols.
-> >
-> > The regression is introduced by commit ("8c7f1bb37b29 perf machine: Move
-> > kernel mmap name into struct machine"), which changes the logic for
-> > machine mmap_name by removing function machine__mmap_name() and always
-> > use 'machine->mmap_name'.  Comparing difference between
-> > machine__mmap_name() and 'machine->mmap_name', the later one includes
-> > the string for specified kernel vmlinux string with option '-k' in
-> > command, but the old function machine__mmap_name() ignores vmlinux
-> > path string.  As result, event's mmap file name doesn't match with
-> > machine mmap file name anymore and it skips to load kernel symbol from
-> > vmlinux file.
-> >
-> > To resolve this issue, this patch adds extra checking for
-> > 'machine->mmap_name', when its start char is not '[' then we can know
-> > it includes vmlinux path string specified for option '-k'. For this
-> > case it sets 'is_kernel_mmap = true' and run into flow to load kernel
-> > symbol from vmlinux.
-> >
-> > This patch has been verified with two commands: './perf report -v
-> > -k vmlinux --stdio' and './perf script -v -F cpu,event,ip,sym,symoff
-> > -k vmlinux'.
-> >
-> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > ---
-> >  tools/perf/util/machine.c | 15 ++++++++++++---
-> >  1 file changed, 12 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> > index 12b7427..ffd709d 100644
-> > --- a/tools/perf/util/machine.c
-> > +++ b/tools/perf/util/machine.c
-> > @@ -1299,9 +1299,18 @@ static int machine__process_kernel_mmap_event(struct machine *machine,
-> >         else
-> >                 kernel_type = DSO_TYPE_GUEST_KERNEL;
-> >
-> > -       is_kernel_mmap = memcmp(event->mmap.filename,
-> > -                               machine->mmap_name,
-> > -                               strlen(machine->mmap_name) - 1) == 0;
-> > +       /*
-> > +        * If machine mmap_name doesn't start with char '[', it includes
-> > +        * the specified kernel vmlinux name with option '-k'.  So set
-> > +        * is_kernel_mmap as true to create machine symbol map.
-> > +        */
-> > +       if (machine->mmap_name[0] != '[')
+> On 03/06/18 at 07:22pm, AKASHI Takahiro wrote:
+> > This is a preparatory patch set for adding kexec_file support on arm64.
+> > 
+> > It was originally included in a arm64 patch set[1], but Philipp is also
+> > working on their kexec_file support on s390[2] and some changes are now
+> > conflicting.
+> > 
+> > So these common parts were extracted and put into a separate patch set for
+> > better integration. What's more, my original patch#4 was split into a few
+> > small chunks for easier review after Dave's comment.
+> > 
+> > As such, the resulting code is basically identical with my original, and
+> > the only *visible* differences are:
+> >   * renamings of _kexec_kernel_image_probe() and
+> >     _kimage_file_post_load_cleanup()
+> >   * change one of types of arguments at prepare_elf64_headers()
+> > Those, unfortunately, require a couple of trivial changes on the rest
+> > (#1, #6 to #13) of my arm64 kexec_file patch set[1].
+> > 
+> > Patch#1 allows making a use of purgatory optional, particularly useful
+> > for arm64.
+> > Patch#2 commonalizes arch_kexec_kernel_{image_probe, image_load,
+> > verify_sig}() and arch_kimage_file_post_load_cleanup() across architectures.
+> > Patch#3-#7 is also intended to generalize parse_elf64_headers(), along with
+> > exclude_mem_range(), to be made best re-use of.
+> > 
+> > [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-February/561182.html
+> > [2] http://lkml.iu.edu//hypermail/linux/kernel/1802.1/02596.html
+> > 
+> > 
+> > Changes in v2 (Mar 6, 2018)
+> > * use IS_ENABLED() instead of #ifdef's in kexec_calculate_store_digests() 
+> > * rename _kexec_kernel_*() and make them static for now except for
+> >   kexec_image_probe_default() which is actually used by arch(powerpc) code
+> >   (Note: kexec_image_post_load_cleanup_default() will also be exported by
+> >   arm64 patches.)
+> > * change a type of kernel_map in prepare_elf64_headers() to "int"
+> > * check for a total number of system ram regions in full_up_crash_elf_data()
+> >   and use vzalloc() instead of vmalloc()
+> > 
+> > AKASHI Takahiro (7):
+> >   kexec_file: make an use of purgatory optional
+> >   kexec_file,x86,powerpc: factor out kexec_file_ops functions
+> >   x86: kexec_file: purge system-ram walking from prepare_elf64_headers()
+> >   x86: kexec_file: remove X86_64 dependency from prepare_elf64_headers()
+> >   x86: kexec_file: lift CRASH_MAX_RANGES limit on crash_mem buffer
+> >   x86: kexec_file: clean up prepare_elf64_headers()
+> >   kexec_file, x86: move re-factored code to generic side
+> > 
+> >  arch/powerpc/Kconfig                        |   3 +
+> >  arch/powerpc/include/asm/kexec.h            |   2 +-
+> >  arch/powerpc/kernel/kexec_elf_64.c          |   2 +-
+> >  arch/powerpc/kernel/machine_kexec_file_64.c |  39 +---
+> >  arch/x86/Kconfig                            |   3 +
+> >  arch/x86/include/asm/kexec-bzimage64.h      |   2 +-
+> >  arch/x86/kernel/crash.c                     | 334 ++++++----------------------
+> >  arch/x86/kernel/kexec-bzimage64.c           |   2 +-
+> >  arch/x86/kernel/machine_kexec_64.c          |  45 +---
+> >  include/linux/kexec.h                       |  32 ++-
+> >  kernel/kexec_file.c                         | 240 +++++++++++++++++++-
+> >  11 files changed, 338 insertions(+), 366 deletions(-)
+> > 
+> > -- 
+> > 2.16.2
+> > 
 > 
-> I have tested your patch and it indeed solves the problem but I
-> suggest to replace the above with:
+> AKASHI, thanks for another update, looks good to me:
 > 
->     if (symbol_conf.vmlinux_name)
+> Acked-by: Dave Young <dyoung@redhat.com>
+
+Hold on the ack, during today's tests kexec kernel can not boot, it
+hangs early.  Will see if it is caused by this series and come back
+later.
+
 > 
-> That is consistent with the test in function machine__set_mmap_name()
-> and doesn't rely on a user specified input to operate properly.
+> Thanks
+> Dave
 
-Thanks a lot for suggestion and testing.
-
-Your suggestion does make sense after I go back to read a bit for the
-code.  Will spin new patch and send out soon for reviewing.
-
-Thanks,
-Leo Yan
-
-> > +               is_kernel_mmap = true;
-> > +       else
-> > +               is_kernel_mmap = memcmp(event->mmap.filename,
-> > +                                       machine->mmap_name,
-> > +                                       strlen(machine->mmap_name) - 1) == 0;
-> > +
-> >         if (event->mmap.filename[0] == '/' ||
-> >             (!is_kernel_mmap && event->mmap.filename[0] == '[')) {
-> >                 map = machine__findnew_module_map(machine, event->mmap.start,
-> > --
-> > 2.7.4
-> >
+Thanks
+Dave
