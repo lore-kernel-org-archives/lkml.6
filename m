@@ -1,77 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751232AbeCIKth (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:49:37 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:31842 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751212AbeCIKtf (ORCPT
+        id S1751251AbeCIKtt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:49:49 -0500
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:42740 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751211AbeCIKtq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 05:49:35 -0500
-To: gkohli@codeaurora.org, rientjes@google.com
-Cc: akpm@linux-foundation.org, mhocko@suse.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] mm: oom: Fix race condition between oom_badness and do_exit of task
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <1520427454-22813-1-git-send-email-gkohli@codeaurora.org>
-        <alpine.DEB.2.20.1803071254410.165297@chino.kir.corp.google.com>
-        <22ebd655-ece4-37e5-5a98-e9750cb20665@codeaurora.org>
-        <d73682f9-f214-64c4-ce09-fd1ff3ffe252@I-love.SAKURA.ne.jp>
-        <14ba6c44-d444-bd0a-0bac-0c6851b19344@codeaurora.org>
-In-Reply-To: <14ba6c44-d444-bd0a-0bac-0c6851b19344@codeaurora.org>
-Message-Id: <201803091948.FBC21396.LHOMSFFOVFtQJO@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Fri, 9 Mar 2018 19:48:46 +0900
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Fri, 9 Mar 2018 05:49:46 -0500
+X-Google-Smtp-Source: AG47ELux6ZkoZsdJIwxNIPT7IJYtnvQbsJBc+KnxoQi+h221xQRJfcIJDrALCmlJclyidyK4h3/zW6nuGnsd5ncFTsc=
+MIME-Version: 1.0
+In-Reply-To: <4ebee1c2-57f6-bcb8-0e2d-1833d1ee0bb7@huawei.com>
+References: <CAG_fn=VW5tfzT6cHJd+jF=t3WO6XS3HqSF_TYnKdycX_M_48vw@mail.gmail.com>
+ <4ebee1c2-57f6-bcb8-0e2d-1833d1ee0bb7@huawei.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Fri, 9 Mar 2018 11:49:43 +0100
+Message-ID: <CAG_fn=XP6X5rqRVBameyU-F2UOc4hpbowUBNxZENf2ZHpMSmfQ@mail.gmail.com>
+Subject: Re: [PATCH] mm/mempolicy: Avoid use uninitialized preferred_node
+To: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Dmitriy Vyukov <dvyukov@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w29AnrMe003609
 
-Kohli, Gaurav wrote:
-> > t->alloc_lock is still held when leaving find_lock_task_mm(), which means
-> > that t->mm != NULL. But nothing prevents t from setting t->mm = NULL at
-> > exit_mm() from do_exit() and calling exit_creds() from __put_task_struct(t)
-> > after task_unlock(t) is called. Seems difficult to trigger race window. Maybe
-> > something has preempted because oom_badness() becomes outside of RCU grace
-> > period upon leaving find_lock_task_mm() when called from proc_oom_score().
-> 
-> Hi Tetsuo,
-> 
-> Yes it is not easy to reproduce seen twice till now and i agree with
-> your analysis. But David has already fixing this in different way,
-> So that also looks better to me:
-> 
-> https://patchwork.kernel.org/patch/10265641/
-> 
+On Fri, Mar 9, 2018 at 6:21 AM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
+> Alexander reported an use of uninitialized memory in __mpol_equal(),
+> which is caused by incorrect use of preferred_node.
+>
+> When mempolicy in mode MPOL_PREFERRED with flags MPOL_F_LOCAL, it use
+> numa_node_id() instead of preferred_node, however, __mpol_equeue() use
+> preferred_node without check whether it is MPOL_F_LOCAL or not.
+>
+> Reported-by: Alexander Potapenko <glider@google.com>
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+Tested-by: Alexander Potapenko <glider@google.com>
 
-Yes, I'm aware of that patch.
+I confirm that the patch fixes the problem. Thanks for the quick turnaround!
+Any idea which commit had introduced the bug in the first place?
+> ---
+>  mm/mempolicy.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index d879f1d..641545e 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -2124,6 +2124,9 @@ bool __mpol_equal(struct mempolicy *a, struct mempolicy *b)
+>         case MPOL_INTERLEAVE:
+>                 return !!nodes_equal(a->v.nodes, b->v.nodes);
+>         case MPOL_PREFERRED:
+> +               /* a's flags is the same as b's */
+> +               if (a->flags & MPOL_F_LOCAL)
+> +                       return true;
+>                 return a->v.preferred_node == b->v.preferred_node;
+>         default:
+>                 BUG();
+> --
+> 1.8.3.1
+>
 
-> But if need to keep that code, So we have to bump up the task
-> reference that's only i can think of now.
 
-I don't think so, for I think it is safe to call
-has_capability_noaudit(p) with p->alloc_lock held.
 
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index f2e7dfb..4efcfb8 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -222,7 +222,6 @@ unsigned long oom_badness(struct task_struct *p, struct mem_cgroup *memcg,
- 	 */
- 	points = get_mm_rss(p->mm) + get_mm_counter(p->mm, MM_SWAPENTS) +
- 		mm_pgtables_bytes(p->mm) / PAGE_SIZE;
--	task_unlock(p);
- 
- 	/*
- 	 * Root processes get 3% bonus, just like the __vm_enough_memory()
-@@ -230,6 +229,7 @@ unsigned long oom_badness(struct task_struct *p, struct mem_cgroup *memcg,
- 	 */
- 	if (has_capability_noaudit(p, CAP_SYS_ADMIN))
- 		points -= (points * 3) / 100;
-+	task_unlock(p);
- 
- 	/* Normalize to oom_score_adj units */
- 	adj *= totalpages / 1000;
+-- 
+Alexander Potapenko
+Software Engineer
+
+Google Germany GmbH
+Erika-Mann-Straße, 33
+80636 München
+
+Geschäftsführer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
