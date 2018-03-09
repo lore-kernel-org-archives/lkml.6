@@ -1,85 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750920AbeCICe7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 21:34:59 -0500
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:34904 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750800AbeCICe5 (ORCPT
+        id S1751082AbeCICfr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 21:35:47 -0500
+Received: from mail-pg0-f45.google.com ([74.125.83.45]:43493 "EHLO
+        mail-pg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750923AbeCICfp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 21:34:57 -0500
-X-Google-Smtp-Source: AG47ELsVlLsKx0SxkBMbVDCOFBqxIU6ukiQ2J8G8GDv3nZlm1d0YaFt377jnGFWAFKjyZ8qCZC3u9iyNjHgoNpTZC4Y=
+        Thu, 8 Mar 2018 21:35:45 -0500
+X-Google-Smtp-Source: AG47ELtSC71cm9KIu/+CmWEJOCXYWh5ZEyMtxadDpMUUIzy/ObbEtcs0GIME06AQr3hjziaNBsTVDA==
+Subject: Re: [PATCH] Documentation/cdrom: update cdrom-standard.tex for kernel
+ changes
+To: Randy Dunlap <rdunlap@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <9f8a150a-2942-6392-0d83-7dac40b82e92@infradead.org>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <50959db2-609c-bdd5-e80e-66736f10bfd8@kernel.dk>
+Date: Thu, 8 Mar 2018 19:35:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+ Thunderbird/59.0
 MIME-Version: 1.0
-In-Reply-To: <20180308203132.GJ12290@flask>
-References: <1519897782-8124-1-git-send-email-wanpengli@tencent.com> <20180308203132.GJ12290@flask>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Fri, 9 Mar 2018 10:34:56 +0800
-Message-ID: <CANRm+Cwj-s+AYrbLxYX+R076G_K0cTQPNDtmkf34vnKuRE03ig@mail.gmail.com>
-Subject: Re: [PATCH 1/3] KVM: X86: Provides userspace with a capability to not
- intercept MWAIT
-To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <9f8a150a-2942-6392-0d83-7dac40b82e92@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w292Z6I8020598
 
-2018-03-09 4:31 GMT+08:00 Radim Krčmář <rkrcmar@redhat.com>:
->>  To check if a capability can be enabled, the KVM_CHECK_EXTENSION ioctl should
->> -be used.
->> +be used. Blindly passing the KVM_CHECK_EXTENSION result to KVM_ENABLE_CAP is
->> +a valid thing to do when vCPUs are associated to dedicated physical CPUs.
->
-> This is not true even for x86 KVM_CAP_SPLIT_IRQCHIP and neither is is a
-> need to limit ourselves.  Just leave it be.
+On 1/26/18 8:58 PM, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Documentation updates for Documentation/cdrom/cdrom-standard.tex:
+> 
+> cdrom_device_ops:
+> - add check_events() and generic_packet()
+> 
+> cdrom_device_info:
+> - add one 'const' modifier
+> - correct some field descriptions
+> - add some missing fields
+> - drop 'kdev_t dev;' field
+> 
+> Also drop <n_discs> sentence from documentation because it is not
+> referenced anywhere in the kernel header or C files.
 
-https://www.spinics.net/lists/kvm/msg159524.html
+Applied, thanks.
 
->  So I think we should put in the
-> documentation that blindly passing the KVM_CHECK_EXTENSION result to
-> KVM_ENABLE_CAP is a valid thing to do when vCPUs are associated to
-> dedicated physical CPUs.
-
-Paolo ask this before, Paolo, what's your opinion?
-
->> +7.13 KVM_CAP_X86_DISABLE_EXITS
->> +
->> +Architectures: x86
->> +Parameters: args[0] defines which exits are disabled
->> +Returns: 0 on success, -EINVAL when args[0] contains invalid exits
->> +
->> +Valid exits in args[0] are
->> +
->> +#define KVM_X86_DISABLE_EXITS_MWAIT            (1 << 0)
->> +
->> +Enabling this capability on a VM provides userspace with a way to no
->> +longer intercepts some instructions for improved latency in some
->> +workloads. Not enable KVM_FEATURE_PV_UNHALT if you block HLT.
->
-> The last sentence belong to the patch that enables HLT.
-> KVM could in theory handle the case (although it makes no sense), so if
-
-> it doesn't currently work, please add a check to kvm_update_cpuid() that
-> forbids KVM_FEATURE_PV_UNHALT when halt exits are disabled.
-
-Agreed.
-
->
-> Also, it would be nicer to write that as
-> "Do not enable KVM_FEATURE_PV_UNHALT if you disable HLT exits."
->
->> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
->> @@ -2780,9 +2780,15 @@ static int msr_io(struct kvm_vcpu *vcpu, struct kvm_msrs __user *user_msrs,
->>       return r;
->>  }
->>
->> +static inline bool kvm_mwait_can_in_guest(void)
->
-> I think kvm_can_mwait_in_guest would be a better name.
-
-Agreed.
-
-Regards,
-Wanpeng Li
+-- 
+Jens Axboe
