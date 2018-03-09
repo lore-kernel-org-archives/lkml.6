@@ -1,173 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932507AbeCIVe1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 16:34:27 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36912 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932195AbeCIVdH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 16:33:07 -0500
-From: Lyude Paul <lyude@redhat.com>
-To: intel-gfx@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org,
-        Manasi Navare <manasi.d.navare@intel.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
-        <ville.syrjala@linux.intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/5] drm/dp_mst: Add drm_dp_mst_topology_mgr_lower_link_rate()
-Date: Fri,  9 Mar 2018 16:32:29 -0500
-Message-Id: <20180309213232.19855-3-lyude@redhat.com>
-In-Reply-To: <20180309213232.19855-1-lyude@redhat.com>
-References: <20180308232421.14049-1-lyude@redhat.com>
- <20180309213232.19855-1-lyude@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S932619AbeCIVfB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 16:35:01 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56054 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751211AbeCIVfA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 16:35:00 -0500
+From: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, mpe@ellerman.id.au, jeyu@kernel.org
+Cc: npiggin@gmail.com, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v2] powerpc/64: Fix section mismatch warnings for early boot symbols
+Date: Fri,  9 Mar 2018 18:34:50 -0300
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1520628111-1361-1-git-send-email-mauricfo@linux.vnet.ibm.com>
+References: <1520628111-1361-1-git-send-email-mauricfo@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18030921-0024-0000-0000-0000180EAB2B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008642; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01000693; UDB=6.00509028; IPR=6.00780023;
+ MB=3.00019945; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-09 21:34:57
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030921-0025-0000-0000-00004F0A3E3C
+Message-Id: <1520631290-5340-1-git-send-email-mauricfo@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-09_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803090255
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unlike SST, MST can have far more then a single display hooked up on a
-single port. What this also means however, is that if the DisplayPort
-link to the top-level MST branch device becomes unstable then every
-single branch device also has an unstable link. Additionally, MST has a
-few more steps that must be taken in order to properly retrain the
-entire topology under a lower link rate. Since the VCID allocations for
-each mstb is determined based off the link rate for the top of the
-topology, we also have to recalculate all of the VCID allocations for
-the downstream ports as well to ensure that we still have enough link
-bandwidth to drive each mstb.
+Some of the boot code located at the start of kernel text is "init"
+class, in that it only runs at boot time, however marking it as normal
+init code is problematic because that puts it into a different section
+located at the very end of kernel text.
 
-Additionally, since we have multiple downstream connectors per port,
-setting the link status of the parent mstb's port to bad isn't enough:
-all of the downstream mstb ports have to have their link status set to
-bad.
+e.g., in case the TOC is not set up, we may not be able to tolerate a
+branch trampoline to reach the init function.
 
-This basically follows the same paradigm that our DP link status logic
-in DRM does, in that we simply tell userspace that all of the mstb ports
-need retraining and additionally applying the new lower bandwidth
-constraints to all of the atomic commits on the topology that follow.
+Credits: code and message are based on 2016 patch by Nicholas Piggin,
+and slightly modified so not to rename the powerpc code/symbol names.
 
-Since the work of figuring out which connectors live downstream on an
-MST topology and updating their link status is something that any driver
-supporting MST is going to need to do in order to retrain MST links
-properly, we add the drm_dp_mst_topology_mgr_lower_link_rate() helper
-which simply recalculates the pbn_div for a given mst topology, then
-marks the link status of all connectors living in that topology as bad.
-We'll make use of it in i915 later in this series.
+    Subject: [PATCH] powerpc/64: quieten section mismatch warnings
+    From: Nicholas Piggin <npiggin at gmail.com>
+    Date: Fri Dec 23 00:14:19 AEDT 2016
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: Manasi Navare <manasi.d.navare@intel.com>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
 ---
- drivers/gpu/drm/drm_dp_mst_topology.c | 73 ++++++++++++++++++++++++++++++++++-
- include/drm/drm_dp_mst_helper.h       |  3 ++
- 2 files changed, 75 insertions(+), 1 deletion(-)
+v2: fix missing close parenthesis in conditional (wrong patch file, sorry)
 
-diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-index 6fac4129e6a2..0d6604500b29 100644
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -2076,7 +2076,7 @@ static bool drm_dp_get_vc_payload_bw(int dp_link_bw,
+ scripts/mod/modpost.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 9917f92..c65d5e2 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -1174,8 +1174,15 @@ static const struct sectioncheck *section_mismatch(
+  *   fromsec = text section
+  *   refsymname = *.constprop.*
+  *
++ * Pattern 6:
++ *   powerpc64 has boot functions that reference init, but must remain in text.
++ *   This pattern is identified by
++ *   tosec   = init section
++ *   fromsym = <function list>
++ *
+  **/
+-static int secref_whitelist(const struct sectioncheck *mismatch,
++static int secref_whitelist(const struct elf_info *elf,
++			    const struct sectioncheck *mismatch,
+ 			    const char *fromsec, const char *fromsym,
+ 			    const char *tosec, const char *tosym)
  {
- 	switch (dp_link_bw) {
- 	default:
--		DRM_DEBUG_KMS("invalid link bandwidth in DPCD: %x (link count: %d)\n",
-+		DRM_DEBUG_KMS("invalid link bandwidth: %x (link count: %d)\n",
- 			      dp_link_bw, dp_link_count);
- 		return false;
+@@ -1212,6 +1219,17 @@ static int secref_whitelist(const struct sectioncheck *mismatch,
+ 	    match(fromsym, optim_symbols))
+ 		return 0;
  
-@@ -2096,6 +2096,77 @@ static bool drm_dp_get_vc_payload_bw(int dp_link_bw,
- 	return true;
++	/* Check for pattern 6 */
++	if (elf->hdr->e_machine == EM_PPC64)
++		if (match(tosec, init_sections) &&
++		    (!strncmp(fromsym, "__boot_from_prom",
++				strlen("__boot_from_prom")) ||
++		     !strncmp(fromsym, "start_here_multiplatform",
++				strlen("start_here_multiplatform")) ||
++		     !strncmp(fromsym, "start_here_common",
++				strlen("start_here_common"))))
++			return 0;
++
+ 	return 1;
  }
  
-+static void drm_dp_set_mstb_link_status(struct drm_dp_mst_branch *mstb,
-+					enum drm_link_status status)
-+{
-+	struct drm_dp_mst_branch *rmstb;
-+	struct drm_dp_mst_port *port;
-+
-+	list_for_each_entry(port, &mstb->ports, next) {
-+		rmstb = drm_dp_get_validated_mstb_ref(mstb->mgr, port->mstb);
-+		if (rmstb) {
-+			drm_dp_set_mstb_link_status(rmstb, status);
-+			drm_dp_put_mst_branch_device(rmstb);
-+		}
-+
-+		if (port->connector)
-+			port->connector->state->link_status = status;
-+	}
-+}
-+
-+/**
-+ * drm_dp_mst_topology_mgr_lower_link_rate() - Override the DP link bw/count
-+ * for all connectors in a given MST topology
-+ * @mgr: manager to set state for
-+ * @dp_link_bw: The new DP link bandwidth
-+ * @dp_link_count: The new DP link count
-+ *
-+ * This is called by the driver when it detects that the current DP link for
-+ * the given topology manager is unstable, and needs to be retrained at a
-+ * lower link rate.
-+ *
-+ * This takes care of updating the link status on all downstream connectors
-+ * along with recalculating the VC payloads. The driver should send a hotplug
-+ * event after calling this function to notify userspace of the link status
-+ * change.
-+ *
-+ * RETURNS:
-+ *
-+ * True for success, or negative error code on failure.
-+ */
-+int drm_dp_mst_topology_mgr_lower_link_rate(struct drm_dp_mst_topology_mgr *mgr,
-+					    int dp_link_bw, int dp_link_count)
-+{
-+	struct drm_device *dev = mgr->dev;
-+	struct drm_dp_mst_branch *mst_primary;
-+	int new_pbn_div;
-+	int ret = 0;
-+
-+	drm_modeset_lock(&dev->mode_config.connection_mutex, NULL);
-+
-+	if (!drm_dp_get_vc_payload_bw(drm_dp_link_rate_to_bw_code(dp_link_bw),
-+				      dp_link_count, &new_pbn_div)) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	mst_primary = drm_dp_get_validated_mstb_ref(mgr, mgr->mst_primary);
-+	if (!mst_primary)
-+		goto out;
-+
-+	DRM_DEBUG_KMS("MST link failed to retrain, lowering pbn_div to %d\n",
-+		      new_pbn_div);
-+	mgr->pbn_div = new_pbn_div;
-+
-+	drm_dp_set_mstb_link_status(mst_primary, DRM_MODE_LINK_STATUS_BAD);
-+
-+	drm_dp_put_mst_branch_device(mst_primary);
-+out:
-+	drm_modeset_unlock(&dev->mode_config.connection_mutex);
-+	return ret;
-+}
-+EXPORT_SYMBOL(drm_dp_mst_topology_mgr_lower_link_rate);
-+
- /**
-  * drm_dp_mst_topology_mgr_set_mst() - Set the MST state for a topology manager
-  * @mgr: manager to set state for
-diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
-index 7f78d26a0766..6261ec43a2c0 100644
---- a/include/drm/drm_dp_mst_helper.h
-+++ b/include/drm/drm_dp_mst_helper.h
-@@ -634,4 +634,7 @@ int drm_dp_atomic_release_vcpi_slots(struct drm_atomic_state *state,
- int drm_dp_send_power_updown_phy(struct drm_dp_mst_topology_mgr *mgr,
- 				 struct drm_dp_mst_port *port, bool power_up);
+@@ -1552,7 +1570,7 @@ static void default_mismatch_handler(const char *modname, struct elf_info *elf,
+ 	tosym = sym_name(elf, to);
  
-+int drm_dp_mst_topology_mgr_lower_link_rate(struct drm_dp_mst_topology_mgr *mgr,
-+					    int dp_link_bw, int dp_link_count);
-+
- #endif
+ 	/* check whitelist - we may ignore it */
+-	if (secref_whitelist(mismatch,
++	if (secref_whitelist(elf, mismatch,
+ 			     fromsec, fromsym, tosec, tosym)) {
+ 		report_sec_mismatch(modname, mismatch,
+ 				    fromsec, r->r_offset, fromsym,
 -- 
-2.14.3
+1.8.3.1
