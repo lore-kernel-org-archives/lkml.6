@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751136AbeCIKKo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:10:44 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:49655 "EHLO mail.bootlin.com"
+        id S1751200AbeCIKKs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:10:48 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:49675 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750954AbeCIKKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1750966AbeCIKKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Mar 2018 05:10:41 -0500
 From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
@@ -21,9 +21,9 @@ Cc: Icenowy Zheng <icenowy@aosc.xyz>, Florent Revest <revestflo@gmail.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH 1/9] media: vim2m: Try to schedule a m2m device run on request submission
-Date: Fri,  9 Mar 2018 11:09:25 +0100
-Message-Id: <20180309100933.15922-2-paul.kocialkowski@bootlin.com>
+Subject: [PATCH 2/9] media: videobuf2-v4l2: Copy planes when needed in request qbuf
+Date: Fri,  9 Mar 2018 11:09:26 +0100
+Message-Id: <20180309100933.15922-3-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180309100933.15922-1-paul.kocialkowski@bootlin.com>
 References: <20180309100933.15922-1-paul.kocialkowski@bootlin.com>
@@ -31,43 +31,72 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the most basic use scenario, where only one output and one capture
-buffers are queued and the request is submitted, there is no provision
-to try to schedule a m2m device run.
+Multiplanar formats require an extra planes array in their buffers, that
+is copied from userspace by the video_usercopy function prior to
+dispatching the ioctl request. This wrapper also frees the allocated
+planes array after the ioctl handler has returned.
 
-This adds the appropriate call to the vim2m_request_submit so that it
-can start in that scenario.
+In the context of the V4L2 request API, we need to keep this planes
+array around so that it can be used when submitting the request later.
+
+Thus, allocate the array and copy its contents when adding the buffer to
+the request-specific queue.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- drivers/media/platform/vim2m.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/media/common/videobuf2/videobuf2-v4l2.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/drivers/media/platform/vim2m.c b/drivers/media/platform/vim2m.c
-index 02793dd9a330..578c9170083c 100644
---- a/drivers/media/platform/vim2m.c
-+++ b/drivers/media/platform/vim2m.c
-@@ -933,9 +933,20 @@ static int vim2m_request_submit(struct media_request *req,
- 				struct media_request_entity_data *_data)
+diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+index 0627c3339572..c14528d4a518 100644
+--- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
++++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+@@ -592,6 +592,7 @@ int vb2_qbuf_request(struct vb2_queue *q, struct v4l2_buffer *b,
+ 	struct media_request *req;
+ 	struct vb2_buffer *vb;
+ 	int ret = 0;
++	int i;
+ 
+ 	if (b->request_fd <= 0)
+ 		return vb2_qbuf(q, b);
+@@ -657,6 +658,17 @@ int vb2_qbuf_request(struct vb2_queue *q, struct v4l2_buffer *b,
+ 	qb->pre_req_state = vb->state;
+ 	qb->queue = q;
+ 	memcpy(&qb->v4l2_buf, b, sizeof(*b));
++
++	if (V4L2_TYPE_IS_MULTIPLANAR(b->type) && b->length > 0) {
++		qb->v4l2_buf.m.planes = kcalloc(b->length,
++						sizeof(struct v4l2_plane),
++						GFP_KERNEL);
++
++		for (i = 0; i < b->length; i++)
++			 memcpy(&qb->v4l2_buf.m.planes[i], &b->m.planes[i],
++				sizeof(struct v4l2_plane));
++	}
++
+ 	vb->request = req;
+ 	vb->state = VB2_BUF_STATE_QUEUED;
+ 	list_add_tail(&qb->node, &data->queued_buffers);
+@@ -672,6 +684,7 @@ EXPORT_SYMBOL_GPL(vb2_qbuf_request);
+ int vb2_request_submit(struct v4l2_request_entity_data *data)
  {
- 	struct v4l2_request_entity_data *data;
-+	struct vim2m_ctx *ctx;
-+	int rc;
+ 	struct v4l2_vb2_request_buffer *qb, *n;
++	int i;
  
- 	data = to_v4l2_entity_data(_data);
--	return vb2_request_submit(data);
+ 	/* v4l2 requests require at least one buffer to reach the device */
+ 	if (list_empty(&data->queued_buffers)) {
+@@ -686,6 +699,12 @@ int vb2_request_submit(struct v4l2_request_entity_data *data)
+ 		list_del(&qb->node);
+ 		vb->state = qb->pre_req_state;
+ 		ret = vb2_core_qbuf(q, vb->index, &qb->v4l2_buf);
 +
-+	ctx = container_of(_data->entity, struct vim2m_ctx, req_entity.base);
++		if (V4L2_TYPE_IS_MULTIPLANAR(qb->v4l2_buf.type) &&
++		    qb->v4l2_buf.length > 0)
++			for (i = 0; i < qb->v4l2_buf.length; i++)
++				kfree(&qb->v4l2_buf.m.planes[i]);
 +
-+	rc = vb2_request_submit(data);
-+	if (rc)
-+		return rc;
-+
-+	v4l2_m2m_try_schedule(ctx->fh.m2m_ctx);
-+
-+	return 0;
- }
- 
- static const struct media_request_entity_ops vim2m_request_entity_ops = {
+ 		kfree(qb);
+ 		if (ret)
+ 			return ret;
 -- 
 2.16.2
