@@ -1,75 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751092AbeCIJ4I (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 04:56:08 -0500
-Received: from mail-io0-f195.google.com ([209.85.223.195]:33737 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750912AbeCIJ4G (ORCPT
+        id S1751019AbeCIJ67 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 04:58:59 -0500
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:38013 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750800AbeCIJ65 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:56:06 -0500
-X-Google-Smtp-Source: AG47ELuRv+Xb5itE3S9z/FPYRyMJdNYV2I0NxohCgWaYRqC583EUWM63JLCTi+nO2px/K2IFJdtstrru4TesmcVmd90=
+        Fri, 9 Mar 2018 04:58:57 -0500
+X-Google-Smtp-Source: AG47ELsZo4Xw4Ksi08k9vZGYOGY7qh3RdLRRIvg2O2c6taEuquQvz8nLcecEuRdC07h0v9ow3n5p5LZYoPCszew51M4=
 MIME-Version: 1.0
-In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F2E581F50@ORSMSX114.amr.corp.intel.com>
-References: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
- <20180308080020.22828-8-ard.biesheuvel@linaro.org> <20180309074034.put3ko6zxmaoizzr@gmail.com>
- <FFF73D592F13FD46B8700F0A279B802F2E581F50@ORSMSX114.amr.corp.intel.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Fri, 9 Mar 2018 09:56:05 +0000
-Message-ID: <CAKv+Gu_Yk1KHbKp940WufNLWU_WnRnThn+=rOJ=Lo6C7j3gqPw@mail.gmail.com>
-Subject: Re: [PATCH 07/12] efi: Use efi_mm in x86 as well as ARM
-To: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+In-Reply-To: <1520516417.7807.88.camel@suse.de>
+References: <2067762.1uWBf5RSRc@aspire.rjw.lan> <1520505099.7807.60.camel@suse.de>
+ <CAJZ5v0gCi7bLL_r45qmoOKwh_dWF_RVs0U5UPe3qY45GbvtK9w@mail.gmail.com> <1520516417.7807.88.camel@suse.de>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 9 Mar 2018 10:58:56 +0100
+X-Google-Sender-Auth: FwWylSguX61OkxUHcb_fQ4Eirvw
+Message-ID: <CAJZ5v0hWDA7T=xaNZ1uTEDL_BjRj9zeFZY45AhsUAK5FtRovjw@mail.gmail.com>
+Subject: Re: [RFC/RFT][PATCH v2 0/6] sched/cpuidle: Idle loop rework
+To: Mike Galbraith <mgalbraith@suse.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
-        "Luck, Tony" <tony.luck@intel.com>, Andy Lutomirski <luto@kernel.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        "Neri, Ricardo" <ricardo.neri@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9 March 2018 at 08:37, Prakhya, Sai Praneeth
-<sai.praneeth.prakhya@intel.com> wrote:
->> > diff --git a/include/linux/efi.h b/include/linux/efi.h index
->> > f5083aa72eae..f1b7d68ac460 100644
->> > --- a/include/linux/efi.h
->> > +++ b/include/linux/efi.h
->> > @@ -966,6 +966,8 @@ extern struct efi {
->> >     unsigned long flags;
->> >  } efi;
+On Thu, Mar 8, 2018 at 2:40 PM, Mike Galbraith <mgalbraith@suse.de> wrote:
+> On Thu, 2018-03-08 at 12:10 +0100, Rafael J. Wysocki wrote:
+>> On Thu, Mar 8, 2018 at 11:31 AM, Mike Galbraith <mgalbraith@suse.de> wrote:
+>>                               1     2     3
+>> > 4.16.0.g1b88acc-master     6.95  7.03  6.91 (virgin)
+>> > 4.16.0.g1b88acc-master     7.20  7.25  7.26 (+v2)
+>> > 4.16.0.g1b88acc-master     6.90  7.06  6.95 (+local)
 >> >
->> > +extern struct mm_struct efi_mm;
->> > +
->> >  static inline int
->> >  efi_guidcmp (efi_guid_t left, efi_guid_t right)  {
+>> > Why would v2 charge the light firefox load a small but consistent fee?
 >>
->> Ugh, I can see three problems with this patch:
+>> Two effects may come into play here I think.
 >>
->> 1)
->>
->> Why is the low level asm/efi.h header polluted with two of the biggest header
->> files in existence, to add a type to _another_ header (efi.h)?
->>
->> 2)
->>
->> Why is <linux/sched/task.h> included if what is being relied on is mm_struct?
->>
->> 3)
->>
->> But even <linux/sched/mm.h> looks unnecessary in efi.h, a simple forward
->> declaration of mm_struct would do ...
->>
->> The high level MM and sched headers should be added to the actual .c files that
->> make use of them.
+>> One is that allowing the tick to run biases the menu governor's
+>> predictions towards the lower end, so we may use shallow states more
+>> as a result then (Peter was talking about that).
 >
-> Ok, makes sense.
-> Sorry! for that. I will fix the issues.
+> Hm, I'd expect that to show up in +local as well then, as it keeps the
+> tick running when avg_idle < sched_migration_cost (convenient magic
+> number), but the firefox load runs at the same wattage as virgin.  I'm
+> also doing this...
 >
+> --- a/drivers/cpuidle/governors/menu.c
+> +++ b/drivers/cpuidle/governors/menu.c
+> @@ -335,7 +335,7 @@ static int menu_select(struct cpuidle_dr
+>                  * C1's exit latency exceeds the user configured limit.
+>                  */
+>                 polling_threshold = max_t(unsigned int, 20, s->target_residency);
+> -               if (data->next_timer_us > polling_threshold &&
+> +               if (expected_interval > polling_threshold &&
+>                     latency_req > s->exit_latency && !s->disabled &&
+>                     !dev->states_usage[1].disable)
+>                         first_idx = 1;
+>
+> ...to help out high frequency cross core throughput, but the firefox
+> load apparently doesn't tickle that, as significant polling would
+> surely show in the wattage.
 
-I have some other fixups to do, so if this is as easy as it seems
-(remove the #includes and add the forward declaration), I can fix it
-up and resend it for you.
+OK, so the second reason sounds more likely to me.
+
+Anyway, please retest with the v3 I've just posted.  The previous
+iteration had a rather serious issue that might very well influence
+the results (it was using stale values sometimes).
