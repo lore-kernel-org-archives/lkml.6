@@ -1,148 +1,210 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932313AbeCIRFO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 12:05:14 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55312 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751192AbeCIRFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 12:05:13 -0500
-Subject: Re: [PATCH] arm64: kdump: fix interrupt handling done during
- machine_crash_shutdown
-To: Grzegorz Jaszczyk <jaz@semihalf.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, catalin.marinas@arm.com,
-        will.deacon@arm.com, james.morse@arm.com,
-        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
-        Hoeun Ryu <hoeun.ryu@gmail.com>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>,
-        Marcin Wojtas <mw@semihalf.com>
-References: <1519837260-30662-1-git-send-email-jaz@semihalf.com>
- <20180228171647.6t4dabntujcb5kon@lakrids.cambridge.arm.com>
- <ba0c6804-51a3-f36e-a67e-20ce84961451@arm.com>
- <CAH76GKO8oYVN+H4pvd6NTGc0u8AD7JMSJCYEJzNtdsAJm5L_9w@mail.gmail.com>
- <9a709b76-1b45-8250-9d8e-adbad59a43cc@arm.com>
- <CAH76GKPOX6J=mKV89pjp+f_K7=1aS_SaGfy_nCN5jLDNM4r9aA@mail.gmail.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <6805008a-b1cd-b8f7-66cc-1e61beef98a5@arm.com>
-Date: Fri, 9 Mar 2018 17:05:09 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAH76GKPOX6J=mKV89pjp+f_K7=1aS_SaGfy_nCN5jLDNM4r9aA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+        id S932200AbeCIRJ1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 12:09:27 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49978 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751182AbeCIRJZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 12:09:25 -0500
+Subject: Re: [PATCH v2 3/3] ima: support platform keyring for kernel
+ appraisal
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Nayna Jain <nayna@linux.vnet.ibm.com>, dhowells@redhat.com
+Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Date: Fri, 09 Mar 2018 12:09:18 -0500
+In-Reply-To: <20180309153803.25859-3-nayna@linux.vnet.ibm.com>
+References: <20180309153803.25859-1-nayna@linux.vnet.ibm.com>
+         <20180309153803.25859-3-nayna@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18030917-0008-0000-0000-000004D9EB73
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030917-0009-0000-0000-00001E6D10AA
+Message-Id: <1520615358.3911.1.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-09_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803090209
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/03/18 10:33, Grzegorz Jaszczyk wrote:
->> Not using EOImode==1 is definitely an oddity (at least on the host), but
->> that doesn't mean it shouldn't work.
->>
->> The reason the thing is hanging is that although we correctly deactivate
->> the interrupt, nothing performs the priority drop. Your write to EOI
->> helps in the sense that it guarantees that both priority drop and
->> deactivate are done with the same operation, but that's not something
->> we'd want to expose.
->>
->> My preferred approach would be to nuke the active priority registers at
->> boot time, as the CPUs come up. I'll try to write something this week.
+On Fri, 2018-03-09 at 21:08 +0530, Nayna Jain wrote:
+> Distros may sign the kernel images and, possibly, the initramfs with
+> platform trusted keys. On secure boot enabled systems or embedded devices,
+> these signatures are to be validated using keys on the platform keyring.
 > 
-> I've made a PoC which performs priority drop at boot time as you
-> suggested and it works with both GICv2 and GICv3 but I see some
-> problem:
-> It seems that the only way to drop the priority is to perform write to
-> EOI register (the GIC_RPR is RO). According to GIC documentation a
-> write to EOI register must correspond to the most recent valid read
-> from IAR. The problem is that the interrupt was already acked in the
-> 'original' kernel, so reading GICC_IAR in crashdump kernel returns
-> spurious interrupt and it seems that there is no way to figure out
-> appropriate irqnr for EOI write. Nevertheless I've observed that
-> choosing random irqnr for EOI write works fine (maybe because all
-> interrupts in Linux uses the same priority?).
+> This patch enables IMA-appraisal to access the platform keyring, based on a
+> new Kconfig option "IMA_USE_PLATFORM_KEYRING".
 > 
-> Here is the PoC (not ready for submission only for further
-> discussion): https://pastebin.com/gLYNuRiZ
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+
+Thanks, Nayna!
+
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+
+
+> ---
+> Changelog:
 > 
-> Looking forward to your feedback.
-
-Well, the feedback is that this patch is really horrible, and choosing a 
-random IRQ is at best hilarious. It also doesn't account for multiple 
-priorities being active... In short, this is just fundamentally broken.
-
-I gave you a clue about the active priority registers. Why didn't you 
-try that?
-
-Anyway, here's something that should fix it.
-
-	M.
-
->From 6ace9d56c96203c4d11a23cbec6a6c216164bb88 Mon Sep 17 00:00:00 2001
-From: Marc Zyngier <marc.zyngier@arm.com>
-Date: Fri, 9 Mar 2018 14:53:19 +0000
-Subject: [PATCH] irqchip/gic-v2: Reset APRn registers at boot time
-
-Booting a crash kernel while in an interrupt handler is likely
-to leave the Active Priority Registers with some state that
-is not relevant to the new kernel, and is likely to lead
-to erratic behaviours such as interrupts not firing as their
-priority is already active.
-
-As a sanity measure, wipe the APRs clean on startup.
-
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
----
- drivers/irqchip/irq-gic.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-index 121af5cf688f..79801c24800b 100644
---- a/drivers/irqchip/irq-gic.c
-+++ b/drivers/irqchip/irq-gic.c
-@@ -453,15 +453,26 @@ static u8 gic_get_cpumask(struct gic_chip_data *gic)
- 	return mask;
- }
- 
-+static bool gic_check_gicv2(void __iomem *base)
-+{
-+	u32 val = readl_relaxed(base + GIC_CPU_IDENT);
-+	return (val & 0xff0fff) == 0x02043B;
-+}
-+
- static void gic_cpu_if_up(struct gic_chip_data *gic)
- {
- 	void __iomem *cpu_base = gic_data_cpu_base(gic);
- 	u32 bypass = 0;
- 	u32 mode = 0;
-+	int i;
- 
- 	if (gic == &gic_data[0] && static_key_true(&supports_deactivate))
- 		mode = GIC_CPU_CTRL_EOImodeNS;
- 
-+	if (gic_check_gicv2(cpu_base))
-+		for (i = 0; i < 4; i++)
-+			writel_relaxed(0, cpu_base + GIC_CPU_ACTIVEPRIO + i * 4);
-+
- 	/*
- 	* Preserve bypass disable bits to be written back later
- 	*/
-@@ -1264,12 +1275,6 @@ static int __init gicv2_force_probe_cfg(char *buf)
- }
- early_param("irqchip.gicv2_force_probe", gicv2_force_probe_cfg);
- 
--static bool gic_check_gicv2(void __iomem *base)
--{
--	u32 val = readl_relaxed(base + GIC_CPU_IDENT);
--	return (val & 0xff0fff) == 0x02043B;
--}
--
- static bool gic_check_eoimode(struct device_node *node, void __iomem **base)
- {
- 	struct resource cpuif_res;
--- 
-2.14.2
-
-
--- 
-Jazz is not dead. It just smells funny...
+> v2:
+> * Rename integrity_load_keyring() to integrity_find_keyring()
+> * Fix the patch description per line length as suggested by Mimi
+> 
+>  security/integrity/digsig.c           | 15 +++++++++++++++
+>  security/integrity/ima/Kconfig        | 10 ++++++++++
+>  security/integrity/ima/ima_appraise.c | 22 +++++++++++++++++-----
+>  security/integrity/ima/ima_init.c     |  4 ++++
+>  security/integrity/integrity.h        | 17 ++++++++++++++++-
+>  5 files changed, 62 insertions(+), 6 deletions(-)
+> 
+> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+> index 6f9e4ce568cd..cfeb977bced9 100644
+> --- a/security/integrity/digsig.c
+> +++ b/security/integrity/digsig.c
+> @@ -34,6 +34,8 @@ static const char *keyring_name[INTEGRITY_KEYRING_MAX] = {
+>  	".ima",
+>  #endif
+>  	"_module",
+> +	".platform_keys",
+> +
+>  };
+> 
+>  #ifdef CONFIG_INTEGRITY_TRUSTED_KEYRING
+> @@ -78,6 +80,19 @@ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+>  	return -EOPNOTSUPP;
+>  }
+> 
+> +#ifdef CONFIG_IMA_USE_PLATFORM_KEYRING
+> +int __init integrity_find_keyring(const unsigned int id)
+> +{
+> +
+> +	keyring[id] = find_keyring_by_name(keyring_name[id], 0);
+> +	if (IS_ERR(keyring[id]))
+> +		if (PTR_ERR(keyring[id]) != -ENOKEY)
+> +			return PTR_ERR(keyring[id]);
+> +	return 0;
+> +
+> +}
+> +#endif
+> +
+>  int __init integrity_init_keyring(const unsigned int id)
+>  {
+>  	const struct cred *cred = current_cred();
+> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+> index 35ef69312811..2e89d4f8a364 100644
+> --- a/security/integrity/ima/Kconfig
+> +++ b/security/integrity/ima/Kconfig
+> @@ -227,3 +227,13 @@ config IMA_APPRAISE_SIGNED_INIT
+>  	default n
+>  	help
+>  	   This option requires user-space init to be signed.
+> +
+> +config IMA_USE_PLATFORM_KEYRING
+> +       bool "IMA uses keys from Platform Keyring for verification"
+> +       depends on PLATFORM_KEYRING
+> +       depends on IMA_APPRAISE
+> +       depends on INTEGRITY_ASYMMETRIC_KEYS
+> +       default n
+> +       help
+> +	  This option enables IMA appraisal to look for the platform
+> +	  trusted keys in .platform_keys keyring.
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> index f2803a40ff82..5fec29f40595 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -276,13 +276,25 @@ int ima_appraise_measurement(enum ima_hooks func,
+>  					     (const char *)xattr_value, rc,
+>  					     iint->ima_hash->digest,
+>  					     iint->ima_hash->length);
+> -		if (rc == -EOPNOTSUPP) {
+> -			status = INTEGRITY_UNKNOWN;
+> -		} else if (rc) {
+> +		if (rc) {
+> +			if (rc == -EOPNOTSUPP) {
+> +				status = INTEGRITY_UNKNOWN;
+> +				break;
+> +			}
+> +			if (func == KEXEC_KERNEL_CHECK) {
+> +				rc = integrity_digsig_verify(
+> +						INTEGRITY_KEYRING_PLATFORM,
+> +						(const char *)xattr_value,
+> +						xattr_len,
+> +						iint->ima_hash->digest,
+> +						iint->ima_hash->length);
+> +				if (!rc) {
+> +					status = INTEGRITY_PASS;
+> +					break;
+> +				}
+> +			}
+>  			cause = "invalid-signature";
+>  			status = INTEGRITY_FAIL;
+> -		} else {
+> -			status = INTEGRITY_PASS;
+>  		}
+>  		break;
+>  	default:
+> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+> index 29b72cd2502e..5778647c6bc4 100644
+> --- a/security/integrity/ima/ima_init.c
+> +++ b/security/integrity/ima/ima_init.c
+> @@ -122,6 +122,10 @@ int __init ima_init(void)
+>  	if (rc)
+>  		return rc;
+> 
+> +	rc = integrity_find_keyring(INTEGRITY_KEYRING_PLATFORM);
+> +	if (rc)
+> +		pr_info("Platform keyring is not found. (rc=%d)\n", rc);
+> +
+>  	rc = ima_init_crypto();
+>  	if (rc)
+>  		return rc;
+> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+> index 50a8e3365df7..3d3b7171ead2 100644
+> --- a/security/integrity/integrity.h
+> +++ b/security/integrity/integrity.h
+> @@ -136,13 +136,23 @@ int integrity_kernel_read(struct file *file, loff_t offset,
+>  #define INTEGRITY_KEYRING_EVM		0
+>  #define INTEGRITY_KEYRING_IMA		1
+>  #define INTEGRITY_KEYRING_MODULE	2
+> -#define INTEGRITY_KEYRING_MAX		3
+> +#define INTEGRITY_KEYRING_PLATFORM	3
+> +#define INTEGRITY_KEYRING_MAX		4
+> 
+>  #ifdef CONFIG_INTEGRITY_SIGNATURE
+> 
+>  int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+>  			    const char *digest, int digestlen);
+> 
+> +#ifdef CONFIG_IMA_USE_PLATFORM_KEYRING
+> +int __init integrity_find_keyring(const unsigned int id);
+> +#else
+> +static inline int __init integrity_find_keyring(const unsigned int id)
+> +{
+> +	return 0;
+> +}
+> +#endif
+> +
+>  int __init integrity_init_keyring(const unsigned int id);
+>  int __init integrity_load_x509(const unsigned int id, const char *path);
+>  #else
+> @@ -154,6 +164,11 @@ static inline int integrity_digsig_verify(const unsigned int id,
+>  	return -EOPNOTSUPP;
+>  }
+> 
+> +static inline int __init integrity_find_keyring(const unsigned int id)
+> +{
+> +	return 0;
+> +}
+> +
+>  static inline int integrity_init_keyring(const unsigned int id)
+>  {
+>  	return 0;
