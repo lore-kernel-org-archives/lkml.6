@@ -1,31 +1,31 @@
 Return-Path: <andreyknvl@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520604144; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520604142; cv=none;
         d=google.com; s=arc-20160816;
-        b=DrV2oVTb+qTJfYqY0nI+237VciSxntfwiWQK9Gbi1rLE7h/E1HC69WjwJ8exavFNth
-         Fq1VVKrN1Z1kZCcXuB+Hhw0QWbQmnZI0RBTLkvRH48f40bjTGnNFbQ/bjjd0/JXOcl/o
-         ncmzQ/eD/hwaeGiUa64pptIERufHCs4Ci6TV636v1mLgQ1mKruh+27XPMRqJZbQWxd5d
-         tzaV3D8D1u0TqeR9q0CspplldHOhveR0JP4v34G75Dwk1Gi7HjDf0bjJ84/kKmWYCBSK
-         ysK6jYvzQmT12+X437P6gN8+xlXzq8xmn+IKHyJKwZYHnUx6RX3ldMdAVXdZ/siUDCVn
-         NDjA==
+        b=KFzLCOfy3DzeGfc18WoEbaoz1Cj5YQQji7Un7DIyUAyr6D9uwocsFUToxv9Y7LkFIs
+         UydLc9CKhMXWO8R7xv5fDJNUceqGyCjyPyH5hEN1/1mye7304ZhOxWotNe7G5RLxyOw+
+         Luu84W5sW5vu04/lTmTRNHkoawRHEkHqA3urLKICl0ynjOECMtGyyzEMPurcvg2oC8z0
+         HWI0qlvn3IDPsPZRNOPLoA/krae0MlKJIgnBakV3DBUWVE4yvUepvHTm6kJCEmbEv8An
+         gkVVEWa7juFlGfAr4PrnxII78u+32Qup3cfGQvoi0Z8JiGzlFrp1I+gBiZB9RDaJjqMz
+         IdoQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=2cZZ6id+x0/wo2ATzm8/IeoYF4xqs5KCdHuahlIxLDo=;
-        b=brzNpQTVhr/MKaCLZJ+W+AZsZJnpnWiVK7fubb5bNkQS9ur8Ht+dFIzXekDPDR4qqx
-         vn1JDBiMRvULo9H9mbgc3/PwedY8c/fjy/uF9bH1dSzUhcJiCsvle7sBqY86udrPp5og
-         WLYLFcnKhcjNeIhsmksibNAkEQiPzf7P9h+iQM73k8pXYAOufwfoAPo4jhmET+aiYNav
-         Xg0k2+a7Q4T9TpTLD06Ze6jiGzDwjpIMbqOpx1HwDLD26XXAaw9lVUgXcfwO22q8FRk2
-         wcrtFCrTy6/rXdmImV3sn/XsYBSpASkyhP3dEJNYsDuwraoMz78w0H/jNiIDbdVLe6bm
-         5NUw==
+        bh=bFC+dOL1kofLW/Fz0q3F9Mambpm3ECJQAGpTBpsRBqY=;
+        b=Sn7zWiTD/4GisjeJleW8Nh6JqUE1AJTc2dPUZZdlQ7IJnGI4hIy7DvUtRqjm0WPMgY
+         AeNt6zKnR27KmvDBXOPRvM4g4HFZgBD2Dlf3c+pIQ+xiRojkLp1QKffsMdUj4W2LoMl5
+         jekgGGjbnZIr5hkUPWrlZQVaYdAlJGLd5HpUTkEuCxEXnFOCBpJParPVP3x4gb6gr2mL
+         DizFJKlm8KoLHIQyH4miXlfXlr5F9KErCKUciruROHoOPo3Pd0I/JzsGuEIv6DmGW1Ej
+         YTiwwBUjHSx8MFvbgrSIMwQvQzEkKZ8S60x8BZ1221KlfP0RHH73h6vj8RiC9SGHkh6+
+         D0zg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=n28I0cW2;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=KlhatkzH;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=n28I0cW2;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=KlhatkzH;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AG47ELvbn6srqv+rO92C9ogiihmsYkHDHVrSlz9idaCoHMrpLnomGUssQTnZ+zDlRwUeFPhJ0hlfTQ==
+X-Google-Smtp-Source: AG47ELur63iUzTcj/SxULK7/n9/IiOYomFoFueFSfoU9XvqGgqC5/NqRiMXXZBMSOAU5srV8yEvX2w==
 From: Andrey Konovalov <andreyknvl@google.com>
 To: Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will.deacon@arm.com>,
@@ -122,57 +122,89 @@ Cc: Dmitry Vyukov <dvyukov@google.com>,
 	Jacob Bramley <Jacob.Bramley@arm.com>,
 	Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
 	Andrey Konovalov <andreyknvl@google.com>
-Subject: [RFC PATCH 5/6] lib, arm64: untag addrs passed to strncpy_from_user and strnlen_user
-Date: Fri,  9 Mar 2018 15:02:03 +0100
-Message-Id: <c515f67a6d94b2cfcac156bca0b9471203389d79.1520600533.git.andreyknvl@google.com>
+Subject: [RFC PATCH 4/6] mm, arm64: untag user addresses in mm/gup.c
+Date: Fri,  9 Mar 2018 15:02:02 +0100
+Message-Id: <becebff594deda3a5881e64a21bf405f030991ad.1520600533.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.16.2.395.g2e18187dfd-goog
 In-Reply-To: <cover.1520600533.git.andreyknvl@google.com>
 References: <cover.1520600533.git.andreyknvl@google.com>
 In-Reply-To: <cover.1520600533.git.andreyknvl@google.com>
 References: <cover.1520600533.git.andreyknvl@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594469011516997845?=
-X-GMAIL-MSGID: =?utf-8?q?1594469011516997845?=
+X-GMAIL-THRID: =?utf-8?q?1594469008964660820?=
+X-GMAIL-MSGID: =?utf-8?q?1594469008964660820?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-strncpy_from_user and strnlen_user accept user addresses as arguments, and
-do not go through the same path as copy_from_user and others, so here we
-need to separately handle the case of tagged user addresses as well.
+mm/gup.c provides a kernel interface that accepts user addresses and
+manipulates user pages directly (for example get_user_pages, that is used
+by the futex syscall). Here we also need to handle the case of tagged user
+pointers.
 
-Untag user pointers passed to these functions.
+Untag addresses passed to this interface.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- lib/strncpy_from_user.c | 2 ++
- lib/strnlen_user.c      | 2 ++
- 2 files changed, 4 insertions(+)
+ mm/gup.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/lib/strncpy_from_user.c b/lib/strncpy_from_user.c
-index b53e1b5d80f4..97467cd2bc59 100644
---- a/lib/strncpy_from_user.c
-+++ b/lib/strncpy_from_user.c
-@@ -106,6 +106,8 @@ long strncpy_from_user(char *dst, const char __user *src, long count)
- 	if (unlikely(count <= 0))
+diff --git a/mm/gup.c b/mm/gup.c
+index 1b46e6e74881..4d820c4792d7 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -386,6 +386,8 @@ struct page *follow_page_mask(struct vm_area_struct *vma,
+ 	struct page *page;
+ 	struct mm_struct *mm = vma->vm_mm;
+ 
++	address = untagged_addr(address);
++
+ 	*page_mask = 0;
+ 
+ 	/* make this handle hugepd */
+@@ -647,6 +649,8 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 	if (!nr_pages)
  		return 0;
  
-+	src = untagged_addr(src);
++	start = untagged_addr(start);
 +
- 	max_addr = user_addr_max();
- 	src_addr = (unsigned long)src;
- 	if (likely(src_addr < max_addr)) {
-diff --git a/lib/strnlen_user.c b/lib/strnlen_user.c
-index 60d0bbda8f5e..8b5f56466e00 100644
---- a/lib/strnlen_user.c
-+++ b/lib/strnlen_user.c
-@@ -108,6 +108,8 @@ long strnlen_user(const char __user *str, long count)
- 	if (unlikely(count <= 0))
- 		return 0;
+ 	VM_BUG_ON(!!pages != !!(gup_flags & FOLL_GET));
  
-+	str = untagged_addr(str);
+ 	/*
+@@ -801,6 +805,8 @@ int fixup_user_fault(struct task_struct *tsk, struct mm_struct *mm,
+ 	struct vm_area_struct *vma;
+ 	int ret, major = 0;
+ 
++	address = untagged_addr(address);
 +
- 	max_addr = user_addr_max();
- 	src_addr = (unsigned long)str;
- 	if (likely(src_addr < max_addr)) {
+ 	if (unlocked)
+ 		fault_flags |= FAULT_FLAG_ALLOW_RETRY;
+ 
+@@ -854,6 +860,8 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
+ 	long ret, pages_done;
+ 	bool lock_dropped;
+ 
++	start = untagged_addr(start);
++
+ 	if (locked) {
+ 		/* if VM_FAULT_RETRY can be returned, vmas become invalid */
+ 		BUG_ON(vmas);
+@@ -1746,6 +1754,8 @@ int __get_user_pages_fast(unsigned long start, int nr_pages, int write,
+ 	unsigned long flags;
+ 	int nr = 0;
+ 
++	start = untagged_addr(start);
++
+ 	start &= PAGE_MASK;
+ 	addr = start;
+ 	len = (unsigned long) nr_pages << PAGE_SHIFT;
+@@ -1798,6 +1808,8 @@ int get_user_pages_fast(unsigned long start, int nr_pages, int write,
+ 	unsigned long addr, len, end;
+ 	int nr = 0, ret = 0;
+ 
++	start = untagged_addr(start);
++
+ 	start &= PAGE_MASK;
+ 	addr = start;
+ 	len = (unsigned long) nr_pages << PAGE_SHIFT;
 -- 
 2.16.2.395.g2e18187dfd-goog
