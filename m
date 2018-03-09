@@ -1,145 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751315AbeCIDOh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 22:14:37 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45322 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751078AbeCIDOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 22:14:32 -0500
-Date: Fri, 9 Mar 2018 11:14:20 +0800
-From: Dave Young <dyoung@redhat.com>
-To: Philipp Rudo <prudo@linux.vnet.ibm.com>
-Cc: kexec@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
-        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: Re: [PATCH 09/11] kexec_file: Remove mis-use of sh_offset field
-Message-ID: <20180309031420.GA3246@dhcp-128-65.nay.redhat.com>
-References: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
- <20180226151620.20970-10-prudo@linux.vnet.ibm.com>
+        id S1751281AbeCIDOf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 22:14:35 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:28346 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750898AbeCIDOb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 22:14:31 -0500
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="37653326"
+Subject: Re: [PATCH 5/5] kbuild: move modname and modname-multi close to
+ modname_flags
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        <linux-kbuild@vger.kernel.org>
+CC: Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Govind Singh <govinds@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>, <linux-kernel@vger.kernel.org>
+References: <1520471103-10089-1-git-send-email-yamada.masahiro@socionext.com>
+ <1520471103-10089-6-git-send-email-yamada.masahiro@socionext.com>
+From: Cao jin <caoj.fnst@cn.fujitsu.com>
+Message-ID: <f4660c10-5481-3308-1117-6a71666c1674@cn.fujitsu.com>
+Date: Fri, 9 Mar 2018 11:13:42 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180226151620.20970-10-prudo@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1520471103-10089-6-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.167.226.60]
+X-yoursite-MailScanner-ID: 452E548AE762.A5B86
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/26/18 at 04:16pm, Philipp Rudo wrote:
-> The current code uses the sh_offset field in purgatory_info->sechdrs to
-> store a pointer to the current load address of the section. Depending
-> whether the section will be loaded or not this is either a pointer into
-> purgatory_info->purgatory_buf or kexec_purgatory. This is not only a
-> violation of the ELF standard but also makes the code very hard to
-> understand as you cannot tell if the memory you are using is read-only or
-> not.
-> 
-> Remove this mis-use and store the offset of the section in
-> pugaroty_info->purgatory_buf in sh_offset.
-> 
-> Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
-> ---
->  arch/x86/kernel/machine_kexec_64.c | 10 ++++++----
->  kernel/kexec_file.c                | 33 +++------------------------------
->  2 files changed, 9 insertions(+), 34 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-> index 51667c8b5c9b..41db74bdc88b 100644
-> --- a/arch/x86/kernel/machine_kexec_64.c
-> +++ b/arch/x86/kernel/machine_kexec_64.c
-> @@ -457,13 +457,15 @@ int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
->  		 * rel[i].r_offset contains byte offset from beginning
->  		 * of section to the storage unit affected.
->  		 *
-> -		 * This is location to update (->sh_offset). This is temporary
-> -		 * buffer where section is currently loaded. This will finally
-> -		 * be loaded to a different address later, pointed to by
-> +		 * This is location to update. This is temporary buffer
-> +		 * where section is currently loaded. This will finally be
-> +		 * loaded to a different address later, pointed to by
->  		 * ->sh_addr. kexec takes care of moving it
->  		 *  (kexec_load_segment()).
->  		 */
-> -		location = (void *)(section->sh_offset + rel[i].r_offset);
-> +		location = pi->purgatory_buf;
-> +		location += section->sh_offset;
-> +		location += rel[i].r_offset;
->  
->  		/* Final address of the location */
->  		address = section->sh_addr + rel[i].r_offset;
-> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> index 746b91e46e34..25b44d1a664a 100644
-> --- a/kernel/kexec_file.c
-> +++ b/kernel/kexec_file.c
-> @@ -736,28 +736,6 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
->  	       pi->ehdr->e_shnum * sizeof(Elf_Shdr));
->  	pi->sechdrs = sechdrs;
->  
-> -	/*
-> -	 * We seem to have multiple copies of sections. First copy is which
-> -	 * is embedded in kernel in read only section. Some of these sections
-> -	 * will be copied to a temporary buffer and relocated. And these
-> -	 * sections will finally be copied to their final destination at
-> -	 * segment load time.
 
-It would be good to keep above part comment somewhere..
 
-> -	 *
-> -	 * Use ->sh_offset to reflect section address in memory. It will
-> -	 * point to original read only copy if section is not allocatable.
-> -	 * Otherwise it will point to temporary copy which will be relocated.
-> -	 *
-> -	 * Use ->sh_addr to contain final address of the section where it
-> -	 * will go during execution time.
-> -	 */
-> -	for (i = 0; i < pi->ehdr->e_shnum; i++) {
-> -		if (sechdrs[i].sh_type == SHT_NOBITS)
-> -			continue;
-> -
-> -		sechdrs[i].sh_offset = (unsigned long)pi->ehdr +
-> -						sechdrs[i].sh_offset;
-> -	}
-> -
->  	offset = 0;
->  	bss_addr = kbuf->mem + kbuf->bufsz;
->  	kbuf->image->start = pi->ehdr->e_entry;
-> @@ -786,17 +764,12 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
->  			kbuf->image->start += kbuf->mem + offset;
->  		}
->  
-> -		src = (void *)sechdrs[i].sh_offset;
-> +		src = (void *)pi->ehdr + sechdrs[i].sh_offset;
->  		dst = pi->purgatory_buf + offset;
->  		memcpy(dst, src, sechdrs[i].sh_size);
->  
->  		sechdrs[i].sh_addr = kbuf->mem + offset;
-> -
-> -		/*
-> -		 * This section got copied to temporary buffer. Update
-> -		 * ->sh_offset accordingly.
-> -		 */
-> -		sechdrs[i].sh_offset = (unsigned long)dst;
-> +		sechdrs[i].sh_offset = offset;
->  		offset += sechdrs[i].sh_size;
->  	}
->  
-> @@ -1006,7 +979,7 @@ int kexec_purgatory_get_set_symbol(struct kimage *image, const char *name,
->  		return -EINVAL;
->  	}
->  
-> -	sym_buf = (char *)sec->sh_offset + sym->st_value;
-> +	sym_buf = (char *)pi->purgatory_buf + sec->sh_offset + sym->st_value;
->  
->  	if (get_value)
->  		memcpy((void *)buf, sym_buf, size);
-> -- 
-> 2.13.5
+On 03/08/2018 09:05 AM, Masahiro Yamada wrote:
+> Just a cosmetic change to put related code close together.
 > 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Thanks
-Dave
+Reviewed-by: Cao jin <caoj.fnst@cn.fujitsu.com>
+
+-- 
+Sincerely,
+Cao jin
