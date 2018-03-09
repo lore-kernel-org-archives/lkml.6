@@ -1,102 +1,158 @@
-Return-Path: <kernel-hardening-return-12329-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELscmEopVBATx2ER5uTHsa2zEN1Ggwf8RxCjZAx5YbKuLsfLsZ/i4T0vm7FkBZVYfNWvGBrd
-ARC-Seal: i=1; a=rsa-sha256; t=1520610591; cv=none;
+Return-Path: <kernel-hardening-return-12338-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELsLNjIX/qVg2j3AgSMXA8NkvkTrbC6HrZMGreKzFjCGkGP1lqN/AHKaxXr7t1AnOMA01Pss
+ARC-Seal: i=1; a=rsa-sha256; t=1520629095; cv=none;
         d=google.com; s=arc-20160816;
-        b=DJDd/T9lNkG0sUU7U+g1+edhJe//GtfWewTpvZ1dmmb36EI2KrzcHoBnqik3kKsDOR
-         TXdsDq5/PSJ1arpLbBx9IiWAhOHK3BDB11K+orlrxs7rOBDFubaKbPDFUU3xxnYfJGDc
-         CzpUKhlK87OuykFR0tFkc5Jfh84NcwVSfUYLoneHYqARBkB5E0Yp2ue0k5HrC38Tdgbk
-         Kr1HKRRfaht9cima87mr9RfnJUwO2YNWipIMLPXMRCKxIapRy5Ui1JYgiQ4mlxHNFOM7
-         EfHvJDararyqDS3esN7efGXTjZNiDLRkxIXISRP++YlJvNKiuImreh/FjA/bD0aIR791
-         zNQg==
+        b=XVmH2JHUYNbAZ0CWsD3RHJg+X8OFiBDQ14Gu7IMpvOD1cksZGDapjhMr5rhLvPSoC3
+         74lH4T8LH8awQttZZOf26j53NEeRBdAG7cxZZQ+on98h4kRkPSbF1V4PxxHn0M8Y+4g9
+         RYsfH8FBB/mQE3+vRa+nk9ARHnH3IZ4LMK0f/Wfr6ibdE359mNEDhii+DMM4C82W1KoN
+         OQUQqgNKP28ZWPYU7HxpxVK0WurIa7r0QnT+CJWsVy0hwbWnc0EnZFBo3xXjoclPVemM
+         NAI/PrYLU4fHwxVIRsQBZ1D/eV7zyWOf3MJ356zSDHGWTsbztCMD+ms7nLt5VSD3R2ww
+         i1QA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=Wd9z+yhuLY4pR/H1sjTtRhp8NCdZaF1EgaZBi+DxM3E=;
-        b=lLZ9nSqiPG7xAfakRob+aKccEqErF5U5KtcS6RQeoy5+0DSIU8tU6E02Pmudt1xnI1
-         A0YLsH/3yi+k6VvtA6FuUQegRq48EJOfQiBSNNm3GBgqj0alxf35DexGNVb998/+ffWx
-         PFaWxwX4x3UJs0T4lUGdqzOcTk/eb76+rHn0D65TIqOtVTonuBwTjGVf9qXgpDoGI5fd
-         ztA5mwvVoARu7/rLs56ii9xqlDvNlBZtDeUKBd2ZnPaneA2Uo0pJCHKQFVEtnrMF/Lit
-         h7rTDeQkoN4QqswNQPRY2ZIlLEumogSWUjwd7EcCY80Cgfymx5z7glhb6Jd8IWPIw2IE
-         Z49w==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=LnpTFWXf7g4eaTcaAyd80cqJlOD6S7jX8ZOUEg4VRFs=;
+        b=sylIbRT86k9xqy1EsF4GVVTw5Tiqo5uwxHj/o6X4mSasQmpJ/uqG5s5FUbUJkUC5h6
+         rILIOhN0xkaLGopEBApdS7y+4ETBnNAJkCT/+LV09+GCEtDzFMTGMpgp490JBID/FMbC
+         a978sG/1PewaJP+bPVP/v6uAtejfTkwIv2NFqWG7FXSiiaLDg1s+yOU9UztYkukQKt6Q
+         UckEvQn4cfL0ZvX6dyvEkkNxf0MFjBGqEUcFsw5iEjj4nCO2Djr0y7Vb6viCAeJ9JuGr
+         YE5POiCvAZFRCwplRwLwY+C/km+hOXleXELcsV445An3txJHg/CWuverbWHwHln9r57f
+         mW0A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12329-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12329-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=H6Ns7lHd;
+       dkim=pass header.i=@chromium.org header.s=google header.b=ZA+QCtHa;
+       spf=pass (google.com: domain of kernel-hardening-return-12338-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12338-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12329-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12329-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=H6Ns7lHd;
+       dkim=pass header.i=@chromium.org header.s=google header.b=ZA+QCtHa;
+       spf=pass (google.com: domain of kernel-hardening-return-12338-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12338-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Fri, 9 Mar 2018 16:49:28 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Kees Cook <keescook@chromium.org>
-cc: linux-kernel@vger.kernel.org,
-    Segher Boessenkool <segher@kernel.crashing.org>,
-    kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH][RFC] rslib: Remove VLAs by setting upper bound on
- nroots
-In-Reply-To: <20180309144613.GA48965@beast>
-Message-ID: <alpine.DEB.2.21.1803091610120.1364@nanos.tec.linutronix.de>
-References: <20180309144613.GA48965@beast>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Sender: keescook@google.com
+In-Reply-To: <alpine.DEB.2.21.1803091610120.1364@nanos.tec.linutronix.de>
+References: <20180309144613.GA48965@beast> <alpine.DEB.2.21.1803091610120.1364@nanos.tec.linutronix.de>
+From: Kees Cook <keescook@chromium.org>
+Date: Fri, 9 Mar 2018 12:57:51 -0800
+X-Google-Sender-Auth: s1RR-6NoohVUDZkoBBriAwUg7S8
+Message-ID: <CAGXu5j+hySkn5dHpKeRAf8NBm6p+iWDG+eVqs_HGDmu2naTdTw@mail.gmail.com>
+Subject: Re: [PATCH][RFC] rslib: Remove VLAs by setting upper bound on nroots
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Segher Boessenkool <segher@kernel.crashing.org>,
+	Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594471791016821837?=
-X-GMAIL-MSGID: =?utf-8?q?1594475771478174937?=
+X-GMAIL-MSGID: =?utf-8?q?1594495174451420111?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 9 Mar 2018, Kees Cook wrote:
+On Fri, Mar 9, 2018 at 7:49 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> On Fri, 9 Mar 2018, Kees Cook wrote:
+>
+>> Avoid VLAs[1] by always allocating the upper bound of stack space
+>> needed. The existing users of rslib appear to max out at 32 roots,
+>> so use that as the upper bound.
+>
+> I think 32 is plenty. Do we have actually a user with 32?
 
-> Avoid VLAs[1] by always allocating the upper bound of stack space
-> needed. The existing users of rslib appear to max out at 32 roots,
-> so use that as the upper bound.
+I found 24 as the max, but thought maybe 32 would be better?
 
-I think 32 is plenty. Do we have actually a user with 32?
+drivers/md/dm-verity-fec.h:#define DM_VERITY_FEC_RSM            255
+drivers/md/dm-verity-fec.h:#define DM_VERITY_FEC_MAX_RSN                253
+drivers/md/dm-verity-fec.h:#define DM_VERITY_FEC_MIN_RSN
+ 231     /* ~10% space overhead */
+drivers/md/dm-verity-fec.c:
 
-> Alternative: make init_rs() a true caller-instance and pre-allocate
-> the workspaces. Will this need locking or are the callers already
-> single-threaded in their use of librs?
+                if (sscanf(arg_value, "%hhu%c", &num_c, &dummy) != 1
+|| !num_c ||
+                    num_c < (DM_VERITY_FEC_RSM - DM_VERITY_FEC_MAX_RSN) ||
+                    num_c > (DM_VERITY_FEC_RSM - DM_VERITY_FEC_MIN_RSN)) {
+                        ti->error = "Invalid " DM_VERITY_OPT_FEC_ROOTS;
+                        return -EINVAL;
+                }
+                v->fec->roots = num_c;
+...
+drivers/md/dm-verity-fec.c:     return init_rs(8, 0x11d, 0, 1, v->fec->roots);
 
-init_rs() is an init function which needs to be invoked _before_ the
-decoder/encoder can be used.
+So this can be as much as 24.
 
-The way it works today that it can share the rs_control between users to
-avoid duplicating the polynom arrays and the setup of them.
+drivers/mtd/nand/diskonchip.c:#define NROOTS 4
+drivers/mtd/nand/diskonchip.c:  rs_decoder = init_rs(10, 0x409, FCR, 1, NROOTS);
 
-So we might change how rs_control works and allocate rs_control for each
-invocation of init_rs(). That means we need two data structures:
+4.
 
-Rename rs_control to rs_poly and just use that internaly for sharing the
-polynom arrays.
+fs/pstore/ram.c:static int ramoops_ecc;
+fs/pstore/ram.c:module_param_named(ecc, ramoops_ecc, int, 0600);
+fs/pstore/ram.c:MODULE_PARM_DESC(ramoops_ecc,
+fs/pstore/ram.c:        dummy_data->ecc_info.ecc_size = ramoops_ecc ==
+1 ? 16 : ramoops_ecc;
+...
+fs/pstore/ram.c:        cxt->ecc_info = pdata->ecc_info;
+...
+fs/pstore/ram_core.c:   prz->rs_decoder =
+init_rs(prz->ecc_info.symsize, prz->ecc_info.poly,
+fs/pstore/ram_core.c-                             0, 1, prz->ecc_info.ecc_size);
 
-rs_control then becomes:
+The default "ecc enabled" mode for pstore is 16, but was made dynamic
+a while ago. However, I've only ever seen people use a smaller number
+of roots.
 
-struct rs_control {
-	struct rs_poly	*poly;
-	uint16_t	lamda[MAX_ROOTS + 1];
-	....
-	uint16_t	loc[MAX_ROOTS];
-};
+>> Alternative: make init_rs() a true caller-instance and pre-allocate
+>> the workspaces. Will this need locking or are the callers already
+>> single-threaded in their use of librs?
+>
+> init_rs() is an init function which needs to be invoked _before_ the
+> decoder/encoder can be used.
+>
+> The way it works today that it can share the rs_control between users to
+> avoid duplicating the polynom arrays and the setup of them.
+>
+> So we might change how rs_control works and allocate rs_control for each
+> invocation of init_rs(). That means we need two data structures:
+>
+> Rename rs_control to rs_poly and just use that internaly for sharing the
+> polynom arrays.
+>
+> rs_control then becomes:
+>
+> struct rs_control {
+>         struct rs_poly  *poly;
+>         uint16_t        lamda[MAX_ROOTS + 1];
+>         ....
+>         uint16_t        loc[MAX_ROOTS];
+> };
+>
+> But as you said that requires serialization or separation at the usage
+> sites.
 
-But as you said that requires serialization or separation at the usage
-sites.
+Right. Not my favorite idea. :P
 
-drivers/mtd/nand/* would either need a mutex or allocate one rs_control per
-instance. Simple enough to do.
+> drivers/mtd/nand/* would either need a mutex or allocate one rs_control per
+> instance. Simple enough to do.
+>
+> drivers/md/dm-verity-fec.c looks like it's allocating a dm control struct
+> for each worker thread, so that should just require allocating one
+> rs_control per worker then.
+>
+> pstore only has an issue in case of OOPS. A simple solution would be to
+> allocate two rs_control structs, one for regular usage and one for the OOPS
+> case. Not sure if that covers all possible problems, so that needs more
+> thoughts.
 
-drivers/md/dm-verity-fec.c looks like it's allocating a dm control struct
-for each worker thread, so that should just require allocating one
-rs_control per worker then.
+Maybe I should just go with 24 as the max, and if we have a case where
+we need more, address it then?
 
-pstore only has an issue in case of OOPS. A simple solution would be to
-allocate two rs_control structs, one for regular usage and one for the OOPS
-case. Not sure if that covers all possible problems, so that needs more
-thoughts.
+-Kees
 
-Thanks,
-
-	tglx
+-- 
+Kees Cook
+Pixel Security
