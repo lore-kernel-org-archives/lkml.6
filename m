@@ -1,51 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932769AbeCIW6q (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 17:58:46 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:41256 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932186AbeCIW6o (ORCPT
+        id S932576AbeCIXBH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 18:01:07 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:42564 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932186AbeCIXBG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 17:58:44 -0500
-X-Google-Smtp-Source: AG47ELtaL3rGa2y28fZcMgwDarLN7iJcB876c2H7uF/Lvqj/ATkBfxh4kwpaFOHetcS/QbJSDWYLUg==
-Subject: Re: WARNING in __proc_create
-From: Eric Dumazet <eric.dumazet@gmail.com>
-To: Cong Wang <xiyou.wangcong@gmail.com>,
-        syzbot <syzbot+0502b00edac2a0680b61@syzkaller.appspotmail.com>
-Cc: coreteam@netfilter.org, David Miller <davem@davemloft.net>,
-        Florian Westphal <fw@strlen.de>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        netfilter-devel@vger.kernel.org,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        syzkaller-bugs@googlegroups.com
-References: <001a113f2be668a1e9056701e617@google.com>
- <CAM_iQpV+PnGUXEKcSrF7u19NOeLLp0PhDW-DOkEfS+8pLnTgYw@mail.gmail.com>
- <a559bbb6-0db4-2b71-b363-792d88d7eef7@gmail.com>
-Message-ID: <c4b2dca8-f2b9-c187-9ee5-e7c4816848f5@gmail.com>
-Date: Fri, 9 Mar 2018 14:58:43 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 9 Mar 2018 18:01:06 -0500
+Date: Sat, 10 Mar 2018 00:00:56 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Palmer Dabbelt <palmer@sifive.com>
+cc: linux@armlinux.org.uk, catalin.marinas@arm.com,
+        Will Deacon <will.deacon@arm.com>, jonas@southpole.se,
+        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        openrisc@lists.librecores.org, linux-riscv@lists.infradead.org,
+        linux@arm.linux.org.uk
+Subject: Re: Make set_handle_irq and handle_arch_irq generic, v3
+In-Reply-To: <mhng-df44504d-acc2-4ef9-9660-9959298ae26c@palmer-si-x1c4>
+Message-ID: <alpine.DEB.2.21.1803092358120.1570@nanos.tec.linutronix.de>
+References: <mhng-df44504d-acc2-4ef9-9660-9959298ae26c@palmer-si-x1c4>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <a559bbb6-0db4-2b71-b363-792d88d7eef7@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 03/09/2018 02:56 PM, Eric Dumazet wrote:
-
+On Fri, 9 Mar 2018, Palmer Dabbelt wrote:
+> On Fri, 09 Mar 2018 02:20:12 PST (-0800), tglx@linutronix.de wrote:
+> > This looks sensible. We have two options for getting this merged:
+> > 
+> > 1)   I'll take the whole lot through tip/irq/core
+> > 
+> > 2)   I'll apply patch 1/N to a special branch in tip. That branch will
+> > contain
+> >      only this commit on top of 4.16-rc4 and can be pulled by the relevant
+> >      architecture maintainers, so they can apply their architecture specific
+> >      patches.
 > 
-> I sent a patch a while back, but Pablo/Florian wanted more than that 
-> simple fix.
-> 
-> We also need to filter special characters like '/'
-> 
-> Or maybe I am mixing with something else.
+> Option 1 seems like the lowest overhead, as that way we don't need to sequence
+> the patches between multiple trees.  If all the other arch maintianers are OK
+> with it then that works for me.
 
-Yes, Florian mentioned that we also had to reject "."  and ".."
+Ok, I wait for someone to yell NO until tuesday. If that doesn't happen I
+pick it up.
+
+> The 0-day robot found a new build warning on openrisc.  I was plannning
+> on submitting a v4 with this fix in it
+>
+>    diff --git a/arch/openrisc/include/asm/irq.h
+> b/arch/openrisc/include/asm/irq.h
+>    index d9eee0a2b7b4..eb612b1865d2 100644
+>    --- a/arch/openrisc/include/asm/irq.h
+>    +++ b/arch/openrisc/include/asm/irq.h
+>    @@ -24,6 +24,4 @@
+>        #define NO_IRQ         (-1)
+>       -extern void set_handle_irq(void (*handle_irq)(struct pt_regs *));
+>    -
+>     #endif /* __ASM_OPENRISC_IRQ_H__ */
+> 
+> I can submit a v4, or you can just grab it from
+
+Just reply on the v3 openrisc patch with a v4 and I grab it from there.
+
+Thanks,
+
+	tglx
