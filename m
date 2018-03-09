@@ -1,262 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751170AbeCIMIq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 07:08:46 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50878 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751101AbeCIMIo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 07:08:44 -0500
-Subject: Re: Nokia N900: refcount_t underflow, use after free
-To: Pavel Machek <pavel@ucw.cz>, Suman Anna <s-anna@ti.com>
-Cc: ivo.g.dimitrov.75@gmail.com, khilman@kernel.org,
-        Tony Lindgren <tony@atomide.com>, aaro.koskinen@iki.fi,
-        kernel list <linux-kernel@vger.kernel.org>, sre@kernel.org,
-        martijn@brixit.nl,
-        =?UTF-8?Q?Filip_Matijevi=c4=87?= <filip.matijevic.pz@gmail.com>,
-        abcloriens@gmail.com, sakari.ailus@linux.intel.com,
-        pali.rohar@gmail.com, clayton@craftyguy.net,
-        linux-omap@vger.kernel.org, patrikbachan@gmail.com,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        serge@hallyn.com
-References: <20180308143053.GA17267@amd> <20180308165903.GM5799@atomide.com>
- <57c9f17b-fc9d-8506-4b5d-70ac216c9248@ti.com> <20180308185046.GA22796@amd>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <1dfc05fe-1612-f5a5-b5f1-9038b3cecfe5@arm.com>
-Date: Fri, 9 Mar 2018 12:08:35 +0000
+        id S1751070AbeCIMNC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 07:13:02 -0500
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:59618 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750937AbeCIMNB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 07:13:01 -0500
+Subject: Re: [PATCH v2] V4L2 SDR: Add Real U8 format (V4L2_SDR_FMT_RU8)
+To: Bertold Van den Bergh <vandenbergh@bertold.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1493044118.2446.40.camel@pengutronix.de>
+ <1493056632-18516-1-git-send-email-vandenbergh@bertold.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <b78ad6c0-8fb2-fc4c-1df8-422bf30f8194@xs4all.nl>
+Date: Fri, 9 Mar 2018 13:12:58 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180308185046.GA22796@amd>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-GB
+In-Reply-To: <1493056632-18516-1-git-send-email-vandenbergh@bertold.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfHQQRFeDoTedffsPYfXwsKvq1LPVx2HjzGESYSN6FVpxIEhHLm8gCkA9en868Sc+Ct12GyWeJYvLeZ+mpLEPHaC375F2azxerQNa5n9ePD0rnqYil6rY
+ KDVP8bcTTCK1e69q5a9RcvxfB/utjt1fPM25qcijAzyzjOj7SyeXJNqo4xLVfUICnYrp7BtCH33KA898APhx/9nGPpjJle6mTQ6F07GJ3z3ZSiHPmQ81WKRL
+ kIZkOMJZLTT9rsIUC4++FOHT6E+tY3BEmM1QYHHNO3mQoAHZhbxaeeJlF/6m3QCp
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/03/18 18:50, Pavel Machek wrote:
-> Hi!
-> 
->>> * Pavel Machek <pavel@ucw.cz> [180308 14:31]:
->>>> Hi!
->>>>
->>>> I'm getting this warning... Has anyone seen/debugged that before?
->>>> Unfortunately the backtrace does not seem to be too useful :-(.
->>>
->>> Adding Suman to Cc, as it points to arm_iommu_release_mapping().
->>
->> Hmm, we need to find out if the failure paths in isp_probe() are
->> mismatched, or if this is coming from some mismatch between the OMAP
->> IOMMU driver and the DMA plumbing. AFAIK, the cleanup paths in this
-> 
-> Well, camera only started to work on N900 pretty recently. Let me add
-> some debug printks...
-> 
-> Camera does not work in 4.16.0-rc4-next-20180308-dirty.
-> 
-> I see this. It looks like problem in isp error paths, indeed:
+Hi Bertold,
 
-Well, there certainly seems to be an obvious bug wherein 
-isp_detach_iommu() just releases the mapping directly without calling 
-arm_iommu_detach_device() to balance the equivalent attach. That can't 
-be helping.
+I'm going through old patches in my TODO list and found this one.
 
-Robin.
+It clearly fell through the cracks, for which I apologize.
 
+The problem with this patch is that there is no kernel driver that supports
+this format. The general policy is that we don't add formats unless some
+driver actually uses it.
+
+That does not appear to be the case here. I assume you use it with some
+out-of-tree driver?
+
+Anyway, that's the reason I have to reject it.
+
+Regards,
+
+	Hans
+
+On 24/04/17 19:57, Bertold Van den Bergh wrote:
+> This patch adds support for the Real U8 format to the V4L2 SDR framework.
 > 
-> [    1.672210] bus: 'platform': driver_probe_device: matched device
-> 480bc000.isp with dr
-> iver omap3isp
-> [    1.681976] isp_probe: 1
-> [    1.684906] isp_probe: 2
-> [    1.687591] isp_probe: 3
-> [    1.690338] isp_probe: 4
-> [    1.693054] omap3isp 480bc000.isp: 480bc000.isp supply vdd-csiphy1
-> not found, using d
-> ummy regulator
-> [    1.702728] omap3isp 480bc000.isp: 480bc000.isp supply vdd-csiphy2
-> not found, using d
-> ummy regulator
-> [    1.712402] isp_probe: 5
-> [    1.715393] omap3isp 480bc000.isp: Revision 2.0 found
-> [    1.720794] isp_probe: 6
-> [    1.723815] isp_probe: 7
-> [    1.726715] omap-iommu 480bd400.mmu: 480bd400.mmu: version 1.1
-> [    1.732849] isp_probe: 8
-> [    1.735656] isp_probe: 9
-> [    1.738403] isp_probe: 10
-> [    1.741241] isp_probe: f3
-> [    1.744018] iommu_release_mapping... ce4d9500 ce4d949c
-> [    1.749450] iommu_release_mapping... ok
-> [    1.753479] isp_probe: f4
-> [    1.756286] clk_unregister: unregistering prepared clock: cam_xclka
-> [    1.762878] clk_unregister: unregistering prepared clock: cam_xclkb
-> [    1.769500] isp_probe: f5
-> [    1.772430] iommu_release_mapping... ce4d9500 ce4d949c
-> [    1.777862] ------------[ cut here ]------------
-> [    1.782745] WARNING: CPU: 0 PID: 1 at lib/refcount.c:187
-> refcount_sub_and_test+0x94/0
-> xa8
-> [    1.791290] refcount_t: underflow; use-after-free.
-> [    1.796356] Modules linked in:
-> [    1.799591] CPU: 0 PID: 1 Comm: swapper Not tainted
-> 4.16.0-rc4-next-20180308-dirty #7
-> 3
-> [    1.807922] Hardware name: Nokia RX-51 board
-> [    1.812469] [<c010d6cc>] (unwind_backtrace) from [<c010b568>]
-> (show_stack+0x10/0x14)
-> [    1.820648] [<c010b568>] (show_stack) from [<c0127df4>]
-> (__warn+0xe8/0x110)
-> ...
-> [    1.968688] iommu_release_mapping... ok
-> [    1.973754] bus: 'platform': driver_probe_device: matched device
-> n900-battery with driver rx51-battery
-> [    1.984436] bus: 'platform': driver_probe_device: matched device
-> 48002524.bandgap with driver ti-soc-thermal
+> Signed-off-by: Bertold Van den Bergh <vandenbergh@bertold.org>
+> ---
+> Thanks for your comments. I was not aware of the V4L format documentation.
+> I don't think there is a clear natural ordering for these types of formats,
+> but I agree it looks more consistent in this way.
 > 
-> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-> index 8c398fe..16f4c69 100644
-> --- a/arch/arm/mm/dma-mapping.c
-> +++ b/arch/arm/mm/dma-mapping.c
-> @@ -2251,8 +2251,11 @@ static int extend_iommu_mapping(struct dma_iommu_mapping *mapping)
->   
->   void arm_iommu_release_mapping(struct dma_iommu_mapping *mapping)
->   {
-> +	printk("iommu_release_mapping... %lx %lx\n", mapping, mapping->domain);
->   	if (mapping)
->   		kref_put(&mapping->kref, release_iommu_mapping);
-> +	printk("iommu_release_mapping... ok\n");
-> +	
->   }
->   EXPORT_SYMBOL_GPL(arm_iommu_release_mapping);
->   
-> diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
-> index 8eb000e..4d58683 100644
-> --- a/drivers/media/platform/omap3isp/isp.c
-> +++ b/drivers/media/platform/omap3isp/isp.c
-> @@ -2193,12 +2193,14 @@ static int isp_probe(struct platform_device *pdev)
->   	int ret;
->   	int i, m;
->   
-> +	printk("isp_probe: 1\n");
->   	isp = devm_kzalloc(&pdev->dev, sizeof(*isp), GFP_KERNEL);
->   	if (!isp) {
->   		dev_err(&pdev->dev, "could not allocate memory\n");
->   		return -ENOMEM;
->   	}
->   
-> +		printk("isp_probe: 2\n");
->   	ret = fwnode_property_read_u32(of_fwnode_handle(pdev->dev.of_node),
->   				       "ti,phy-type", &isp->phy_type);
->   	if (ret)
-> @@ -2219,6 +2221,8 @@ static int isp_probe(struct platform_device *pdev)
->   	mutex_init(&isp->isp_mutex);
->   	spin_lock_init(&isp->stat_lock);
->   
-> +			printk("isp_probe: 3\n");
+> Changes in v2:
+>   - Added documentation files
+>   - Changed order of formats
+> 
+>  Documentation/media/uapi/v4l/pixfmt-sdr-ru08.rst | 17 +++++++++++++++++
+>  Documentation/media/uapi/v4l/sdr-formats.rst     |  1 +
+>  drivers/media/v4l2-core/v4l2-ioctl.c             |  1 +
+>  include/uapi/linux/videodev2.h                   |  1 +
+>  4 files changed, 20 insertions(+)
+>  create mode 100644 Documentation/media/uapi/v4l/pixfmt-sdr-ru08.rst
+> 
+> diff --git a/Documentation/media/uapi/v4l/pixfmt-sdr-ru08.rst b/Documentation/media/uapi/v4l/pixfmt-sdr-ru08.rst
+> new file mode 100644
+> index 0000000..ddd56e1
+> --- /dev/null
+> +++ b/Documentation/media/uapi/v4l/pixfmt-sdr-ru08.rst
+> @@ -0,0 +1,17 @@
+> +.. -*- coding: utf-8; mode: rst -*-
 > +
->   	ret = v4l2_async_notifier_parse_fwnode_endpoints(
->   		&pdev->dev, &isp->notifier, sizeof(struct isp_async_subdev),
->   		isp_fwnode_parse);
-> @@ -2232,6 +2236,7 @@ static int isp_probe(struct platform_device *pdev)
->   	if (ret)
->   		goto error;
->   
-> +				printk("isp_probe: 4\n");
->   	platform_set_drvdata(pdev, isp);
->   
->   	/* Regulators */
-> @@ -2258,6 +2263,7 @@ static int isp_probe(struct platform_device *pdev)
->   			return PTR_ERR(isp->mmio_base[map_idx]);
->   	}
->   
-> +	printk("isp_probe: 5\n");
->   	ret = isp_get_clocks(isp);
->   	if (ret < 0)
->   		goto error;
-> @@ -2277,6 +2283,7 @@ static int isp_probe(struct platform_device *pdev)
->   		goto error;
->   	}
->   
-> +		printk("isp_probe: 6\n");
->   	ret = isp_reset(isp);
->   	if (ret < 0)
->   		goto error_isp;
-> @@ -2306,6 +2313,7 @@ static int isp_probe(struct platform_device *pdev)
->   			isp->mmio_base[OMAP3_ISP_IOMEM_CSI2A_REGS1]
->   			+ isp_res_maps[m].offset[i];
->   
-> +		printk("isp_probe: 7\n");
->   	isp->mmio_hist_base_phys =
->   		mem->start + isp_res_maps[m].offset[OMAP3_ISP_IOMEM_HIST];
->   
-> @@ -2316,6 +2324,8 @@ static int isp_probe(struct platform_device *pdev)
->   		goto error_isp;
->   	}
->   
-> +		printk("isp_probe: 8\n");
+> +.. _V4L2-SDR-FMT-RU8:
 > +
->   	/* Interrupt */
->   	ret = platform_get_irq(pdev, 0);
->   	if (ret <= 0) {
-> @@ -2325,6 +2335,7 @@ static int isp_probe(struct platform_device *pdev)
->   	}
->   	isp->irq_num = ret;
->   
-> +			printk("isp_probe: 9\n");
->   	if (devm_request_irq(isp->dev, isp->irq_num, isp_isr, IRQF_SHARED,
->   			     "OMAP3 ISP", isp)) {
->   		dev_err(isp->dev, "Unable to request IRQ\n");
-> @@ -2332,6 +2343,7 @@ static int isp_probe(struct platform_device *pdev)
->   		goto error_iommu;
->   	}
->   
-> +				printk("isp_probe: 10\n");
->   	/* Entities */
->   	ret = isp_initialize_modules(isp);
->   	if (ret < 0)
-> @@ -2345,27 +2357,35 @@ static int isp_probe(struct platform_device *pdev)
->   	if (ret < 0)
->   		goto error_register_entities;
->   
-> +					printk("isp_probe: 11\n");
->   	isp->notifier.ops = &isp_subdev_notifier_ops;
->   
->   	ret = v4l2_async_notifier_register(&isp->v4l2_dev, &isp->notifier);
->   	if (ret)
->   		goto error_register_entities;
->   
-> +					printk("isp_probe: 12\n");	
->   	isp_core_init(isp, 1);
-> +					printk("isp_probe: 13\n");		
->   	omap3isp_put(isp);
->   
->   	return 0;
->   
->   error_register_entities:
-> +					printk("isp_probe: f1\n");		
->   	isp_unregister_entities(isp);
->   error_modules:
-> +						printk("isp_probe: f2\n");		
->   	isp_cleanup_modules(isp);
->   error_iommu:
-> +							printk("isp_probe: f3\n");		
->   	isp_detach_iommu(isp);
->   error_isp:
-> +							printk("isp_probe: f4\n");		
->   	isp_xclk_cleanup(isp);
->   	__omap3isp_put(isp, false);
->   error:
-> +						printk("isp_probe: f5\n");			
->   	v4l2_async_notifier_cleanup(&isp->notifier);
->   	mutex_destroy(&isp->isp_mutex);
->   
-> 
-> 
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> +****************************
+> +V4L2_SDR_FMT_RU8 ('RU08')
+> +****************************
+> +
+> +
+> +Real unsigned 8-bit sample
+> +
+> +
+> +Description
+> +===========
+> +
+> +This format contains a sequence of real number samples. Each sample is
+> +represented as a 8 bit unsigned number.
+> diff --git a/Documentation/media/uapi/v4l/sdr-formats.rst b/Documentation/media/uapi/v4l/sdr-formats.rst
+> index f863c08..a08b5c2 100644
+> --- a/Documentation/media/uapi/v4l/sdr-formats.rst
+> +++ b/Documentation/media/uapi/v4l/sdr-formats.rst
+> @@ -16,4 +16,5 @@ These formats are used for :ref:`SDR <sdr>` interface only.
+>      pixfmt-sdr-cu16le
+>      pixfmt-sdr-cs08
+>      pixfmt-sdr-cs14le
+> +    pixfmt-sdr-ru08
+>      pixfmt-sdr-ru12le
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> index e5a2187..79140cc 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -1228,6 +1228,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+>  	case V4L2_SDR_FMT_CU16LE:	descr = "Complex U16LE"; break;
+>  	case V4L2_SDR_FMT_CS8:		descr = "Complex S8"; break;
+>  	case V4L2_SDR_FMT_CS14LE:	descr = "Complex S14LE"; break;
+> +	case V4L2_SDR_FMT_RU8:		descr = "Real U8"; break;
+>  	case V4L2_SDR_FMT_RU12LE:	descr = "Real U12LE"; break;
+>  	case V4L2_TCH_FMT_DELTA_TD16:	descr = "16-bit signed deltas"; break;
+>  	case V4L2_TCH_FMT_DELTA_TD08:	descr = "8-bit signed deltas"; break;
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index 2b8feb8..21e9ae3 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -668,6 +668,7 @@ struct v4l2_pix_format {
+>  #define V4L2_SDR_FMT_CU16LE       v4l2_fourcc('C', 'U', '1', '6') /* IQ u16le */
+>  #define V4L2_SDR_FMT_CS8          v4l2_fourcc('C', 'S', '0', '8') /* complex s8 */
+>  #define V4L2_SDR_FMT_CS14LE       v4l2_fourcc('C', 'S', '1', '4') /* complex s14le */
+> +#define V4L2_SDR_FMT_RU8          v4l2_fourcc('R', 'U', '0', '8') /* real u8 */
+>  #define V4L2_SDR_FMT_RU12LE       v4l2_fourcc('R', 'U', '1', '2') /* real u12le */
+>  
+>  /* Touch formats - used for Touch devices */
 > 
