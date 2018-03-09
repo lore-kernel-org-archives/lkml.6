@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751200AbeCIKKs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:10:48 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:49675 "EHLO mail.bootlin.com"
+        id S1751184AbeCIKKq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:10:46 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:49646 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750966AbeCIKKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1750920AbeCIKKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Mar 2018 05:10:41 -0500
 From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
@@ -21,82 +21,90 @@ Cc: Icenowy Zheng <icenowy@aosc.xyz>, Florent Revest <revestflo@gmail.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH 2/9] media: videobuf2-v4l2: Copy planes when needed in request qbuf
-Date: Fri,  9 Mar 2018 11:09:26 +0100
-Message-Id: <20180309100933.15922-3-paul.kocialkowski@bootlin.com>
+Subject: [PATCH 0/9] Sunxi-Cedrus driver for the Allwinner Video Engine, using the V4L2 request API
+Date: Fri,  9 Mar 2018 11:09:24 +0100
+Message-Id: <20180309100933.15922-1-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180309100933.15922-1-paul.kocialkowski@bootlin.com>
-References: <20180309100933.15922-1-paul.kocialkowski@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Multiplanar formats require an extra planes array in their buffers, that
-is copied from userspace by the video_usercopy function prior to
-dispatching the ioctl request. This wrapper also frees the allocated
-planes array after the ioctl handler has returned.
+This presents a newer version of the Sunxi-Cedrus driver, that supports
+the Video Engine found in most Allwinner SoCs, starting with the A10.
 
-In the context of the V4L2 request API, we need to keep this planes
-array around so that it can be used when submitting the request later.
+The first version of this driver[0] was originally written and submitted
+by Florent Revest using a previous version of the request API, that is
+necessary to provide coherency between controls and the buffers they apply
+to. The driver was since adapted to use the latest version of the request
+API[1], as submitted by Alexandre Courbot. It is a hard requirement for
+this driver.
 
-Thus, allocate the array and copy its contents when adding the buffer to
-the request-specific queue.
+This series also contains fixes for issues encountered with the current
+version of the request API. If accepted, these should eventually be
+squashed into the request API series.
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
----
- drivers/media/common/videobuf2/videobuf2-v4l2.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+The driver itself currently only supports MPEG2 and more codecs will be
+added to the driver eventually. The output frames provided by the
+Video Engine are in a multi-planar 32x32-tiled YUV format, with a plane
+for luminance (Y) and a plane for chrominance (UV). A specific format is
+introduced in the V4L2 API to describe it.
 
-diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-index 0627c3339572..c14528d4a518 100644
---- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
-+++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-@@ -592,6 +592,7 @@ int vb2_qbuf_request(struct vb2_queue *q, struct v4l2_buffer *b,
- 	struct media_request *req;
- 	struct vb2_buffer *vb;
- 	int ret = 0;
-+	int i;
- 
- 	if (b->request_fd <= 0)
- 		return vb2_qbuf(q, b);
-@@ -657,6 +658,17 @@ int vb2_qbuf_request(struct vb2_queue *q, struct v4l2_buffer *b,
- 	qb->pre_req_state = vb->state;
- 	qb->queue = q;
- 	memcpy(&qb->v4l2_buf, b, sizeof(*b));
-+
-+	if (V4L2_TYPE_IS_MULTIPLANAR(b->type) && b->length > 0) {
-+		qb->v4l2_buf.m.planes = kcalloc(b->length,
-+						sizeof(struct v4l2_plane),
-+						GFP_KERNEL);
-+
-+		for (i = 0; i < b->length; i++)
-+			 memcpy(&qb->v4l2_buf.m.planes[i], &b->m.planes[i],
-+				sizeof(struct v4l2_plane));
-+	}
-+
- 	vb->request = req;
- 	vb->state = VB2_BUF_STATE_QUEUED;
- 	list_add_tail(&qb->node, &data->queued_buffers);
-@@ -672,6 +684,7 @@ EXPORT_SYMBOL_GPL(vb2_qbuf_request);
- int vb2_request_submit(struct v4l2_request_entity_data *data)
- {
- 	struct v4l2_vb2_request_buffer *qb, *n;
-+	int i;
- 
- 	/* v4l2 requests require at least one buffer to reach the device */
- 	if (list_empty(&data->queued_buffers)) {
-@@ -686,6 +699,12 @@ int vb2_request_submit(struct v4l2_request_entity_data *data)
- 		list_del(&qb->node);
- 		vb->state = qb->pre_req_state;
- 		ret = vb2_core_qbuf(q, vb->index, &qb->v4l2_buf);
-+
-+		if (V4L2_TYPE_IS_MULTIPLANAR(qb->v4l2_buf.type) &&
-+		    qb->v4l2_buf.length > 0)
-+			for (i = 0; i < qb->v4l2_buf.length; i++)
-+				kfree(&qb->v4l2_buf.m.planes[i]);
-+
- 		kfree(qb);
- 		if (ret)
- 			return ret;
+This implementation is based on the significant work that was conducted
+by various members of the linux-sunxi community for understanding and
+documenting the Video Engine's innards.
+
+[0]: https://lkml.org/lkml/2016/8/25/246
+[1]: https://lkml.org/lkml/2018/2/19/872
+
+Florent Revest (5):
+  v4l: Add sunxi Video Engine pixel format
+  v4l: Add MPEG2 low-level decoder API control
+  media: platform: Add Sunxi Cedrus decoder driver
+  sunxi-cedrus: Add device tree binding document
+  ARM: dts: sun5i: Use video-engine node
+
+Icenowy Zheng (1):
+  ARM: dts: sun8i: add video engine support for A33
+
+Paul Kocialkowski (2):
+  media: vim2m: Try to schedule a m2m device run on request submission
+  media: videobuf2-v4l2: Copy planes when needed in request qbuf
+
+Thomas van Kleef (1):
+  ARM: dts: sun7i: Add video engine support for the A20
+
+ .../devicetree/bindings/media/sunxi-cedrus.txt     |  44 ++
+ arch/arm/boot/dts/sun5i-a13.dtsi                   |  30 ++
+ arch/arm/boot/dts/sun7i-a20.dtsi                   |  47 ++
+ arch/arm/boot/dts/sun8i-a33.dtsi                   |  39 ++
+ drivers/media/common/videobuf2/videobuf2-v4l2.c    |  19 +
+ drivers/media/platform/Kconfig                     |  14 +
+ drivers/media/platform/Makefile                    |   1 +
+ drivers/media/platform/sunxi-cedrus/Makefile       |   4 +
+ drivers/media/platform/sunxi-cedrus/sunxi_cedrus.c | 313 ++++++++++++
+ .../platform/sunxi-cedrus/sunxi_cedrus_common.h    | 106 ++++
+ .../media/platform/sunxi-cedrus/sunxi_cedrus_dec.c | 568 +++++++++++++++++++++
+ .../media/platform/sunxi-cedrus/sunxi_cedrus_dec.h |  33 ++
+ .../media/platform/sunxi-cedrus/sunxi_cedrus_hw.c  | 185 +++++++
+ .../media/platform/sunxi-cedrus/sunxi_cedrus_hw.h  |  36 ++
+ .../platform/sunxi-cedrus/sunxi_cedrus_mpeg2.c     | 152 ++++++
+ .../platform/sunxi-cedrus/sunxi_cedrus_regs.h      | 170 ++++++
+ drivers/media/platform/vim2m.c                     |  13 +-
+ drivers/media/v4l2-core/v4l2-ctrls.c               |  15 +
+ drivers/media/v4l2-core/v4l2-ioctl.c               |   1 +
+ include/uapi/linux/v4l2-controls.h                 |  26 +
+ include/uapi/linux/videodev2.h                     |   6 +
+ 21 files changed, 1821 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/media/sunxi-cedrus.txt
+ create mode 100644 drivers/media/platform/sunxi-cedrus/Makefile
+ create mode 100644 drivers/media/platform/sunxi-cedrus/sunxi_cedrus.c
+ create mode 100644 drivers/media/platform/sunxi-cedrus/sunxi_cedrus_common.h
+ create mode 100644 drivers/media/platform/sunxi-cedrus/sunxi_cedrus_dec.c
+ create mode 100644 drivers/media/platform/sunxi-cedrus/sunxi_cedrus_dec.h
+ create mode 100644 drivers/media/platform/sunxi-cedrus/sunxi_cedrus_hw.c
+ create mode 100644 drivers/media/platform/sunxi-cedrus/sunxi_cedrus_hw.h
+ create mode 100644 drivers/media/platform/sunxi-cedrus/sunxi_cedrus_mpeg2.c
+ create mode 100644 drivers/media/platform/sunxi-cedrus/sunxi_cedrus_regs.h
+
 -- 
 2.16.2
