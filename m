@@ -1,44 +1,214 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933081AbeCIW34 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 17:29:56 -0500
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:34446 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932810AbeCIW3w (ORCPT
+        id S933045AbeCIWYc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 17:24:32 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:42648 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933014AbeCIWY1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 17:29:52 -0500
-X-Google-Smtp-Source: AG47ELv2mZ4vST4LOn9fga0lPx8tehSl2FwTCYq1GIengKko552KF5lU394mYcNesFugqmLWC2Pl5Q==
-Date: Sat, 10 Mar 2018 01:29:48 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] proc: faster /proc/cmdline
-Message-ID: <20180309222948.GB3843@avx2>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.7.2 (2016-11-26)
+        Fri, 9 Mar 2018 17:24:27 -0500
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
+        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
+        tfiga@chromium.org, heiko@sntech.de
+Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
+        a.hajda@samsung.com, ykk@rock-chips.com, kernel@collabora.com,
+        m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org,
+        jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org,
+        linux-rockchip@lists.infradead.org, kgene@kernel.org,
+        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
+        jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org,
+        mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com,
+        jingoohan1@gmail.com, sw0312.kim@samsung.com,
+        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
+        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
+        hshi@chromium.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: [PATCH v5 17/36] drm/bridge: analogix_dp: Fix AUX_PD bit for Rockchip
+Date: Fri,  9 Mar 2018 23:23:08 +0100
+Message-Id: <20180309222327.18689-18-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180309222327.18689-1-enric.balletbo@collabora.com>
+References: <20180309222327.18689-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use seq_puts() and skip format string processing.
+From: zain wang <wzz@rock-chips.com>
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+There are some different bits between Rockchip and Exynos in register
+"AUX_PD". This patch fixes the incorrect operations about it.
+
+Cc: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: zain wang <wzz@rock-chips.com>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
 
- fs/proc/cmdline.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 117 ++++++++++++----------
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h |   2 +
+ 2 files changed, 65 insertions(+), 54 deletions(-)
 
---- a/fs/proc/cmdline.c
-+++ b/fs/proc/cmdline.c
-@@ -6,7 +6,8 @@
- 
- static int cmdline_proc_show(struct seq_file *m, void *v)
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+index bb72f8b0e603..dee1ba109b5f 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+@@ -248,76 +248,85 @@ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
  {
--	seq_printf(m, "%s\n", saved_command_line);
-+	seq_puts(m, saved_command_line);
-+	seq_putc(m, '\n');
- 	return 0;
- }
+ 	u32 reg;
+ 	u32 phy_pd_addr = ANALOGIX_DP_PHY_PD;
++	u32 mask;
  
+ 	if (dp->plat_data && is_rockchip(dp->plat_data->dev_type))
+ 		phy_pd_addr = ANALOGIX_DP_PD;
+ 
+ 	switch (block) {
+ 	case AUX_BLOCK:
+-		if (enable) {
+-			reg = readl(dp->reg_base + phy_pd_addr);
+-			reg |= AUX_PD;
+-			writel(reg, dp->reg_base + phy_pd_addr);
+-		} else {
+-			reg = readl(dp->reg_base + phy_pd_addr);
+-			reg &= ~AUX_PD;
+-			writel(reg, dp->reg_base + phy_pd_addr);
+-		}
++		if (dp->plat_data && is_rockchip(dp->plat_data->dev_type))
++			mask = RK_AUX_PD;
++		else
++			mask = AUX_PD;
++
++		reg = readl(dp->reg_base + phy_pd_addr);
++		if (enable)
++			reg |= mask;
++		else
++			reg &= ~mask;
++		writel(reg, dp->reg_base + phy_pd_addr);
+ 		break;
+ 	case CH0_BLOCK:
+-		if (enable) {
+-			reg = readl(dp->reg_base + phy_pd_addr);
+-			reg |= CH0_PD;
+-			writel(reg, dp->reg_base + phy_pd_addr);
+-		} else {
+-			reg = readl(dp->reg_base + phy_pd_addr);
+-			reg &= ~CH0_PD;
+-			writel(reg, dp->reg_base + phy_pd_addr);
+-		}
++		mask = CH0_PD;
++		reg = readl(dp->reg_base + phy_pd_addr);
++
++		if (enable)
++			reg |= mask;
++		else
++			reg &= ~mask;
++		writel(reg, dp->reg_base + phy_pd_addr);
+ 		break;
+ 	case CH1_BLOCK:
+-		if (enable) {
+-			reg = readl(dp->reg_base + phy_pd_addr);
+-			reg |= CH1_PD;
+-			writel(reg, dp->reg_base + phy_pd_addr);
+-		} else {
+-			reg = readl(dp->reg_base + phy_pd_addr);
+-			reg &= ~CH1_PD;
+-			writel(reg, dp->reg_base + phy_pd_addr);
+-		}
++		mask = CH1_PD;
++		reg = readl(dp->reg_base + phy_pd_addr);
++
++		if (enable)
++			reg |= mask;
++		else
++			reg &= ~mask;
++		writel(reg, dp->reg_base + phy_pd_addr);
+ 		break;
+ 	case CH2_BLOCK:
+-		if (enable) {
+-			reg = readl(dp->reg_base + phy_pd_addr);
+-			reg |= CH2_PD;
+-			writel(reg, dp->reg_base + phy_pd_addr);
+-		} else {
+-			reg = readl(dp->reg_base + phy_pd_addr);
+-			reg &= ~CH2_PD;
+-			writel(reg, dp->reg_base + phy_pd_addr);
+-		}
++		mask = CH2_PD;
++		reg = readl(dp->reg_base + phy_pd_addr);
++
++		if (enable)
++			reg |= mask;
++		else
++			reg &= ~mask;
++		writel(reg, dp->reg_base + phy_pd_addr);
+ 		break;
+ 	case CH3_BLOCK:
+-		if (enable) {
+-			reg = readl(dp->reg_base + phy_pd_addr);
+-			reg |= CH3_PD;
+-			writel(reg, dp->reg_base + phy_pd_addr);
+-		} else {
+-			reg = readl(dp->reg_base + phy_pd_addr);
+-			reg &= ~CH3_PD;
+-			writel(reg, dp->reg_base + phy_pd_addr);
+-		}
++		mask = CH3_PD;
++		reg = readl(dp->reg_base + phy_pd_addr);
++
++		if (enable)
++			reg |= mask;
++		else
++			reg &= ~mask;
++		writel(reg, dp->reg_base + phy_pd_addr);
+ 		break;
+ 	case ANALOG_TOTAL:
+-		if (enable) {
+-			reg = readl(dp->reg_base + phy_pd_addr);
+-			reg |= DP_PHY_PD;
+-			writel(reg, dp->reg_base + phy_pd_addr);
+-		} else {
+-			reg = readl(dp->reg_base + phy_pd_addr);
+-			reg &= ~DP_PHY_PD;
+-			writel(reg, dp->reg_base + phy_pd_addr);
+-		}
++		/*
++		 * There is no bit named DP_PHY_PD, so We used DP_INC_BG
++		 * to power off everything instead of DP_PHY_PD in
++		 * Rockchip
++		 */
++		if (dp->plat_data && is_rockchip(dp->plat_data->dev_type))
++			mask = DP_INC_BG;
++		else
++			mask = DP_PHY_PD;
++
++		reg = readl(dp->reg_base + phy_pd_addr);
++		if (enable)
++			reg |= mask;
++		else
++			reg &= ~mask;
++
++		writel(reg, dp->reg_base + phy_pd_addr);
++		if (dp->plat_data && is_rockchip(dp->plat_data->dev_type))
++			usleep_range(10, 15);
+ 		break;
+ 	case POWER_ALL:
+ 		if (enable) {
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+index 9602668669f4..b633a4a5082a 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+@@ -345,7 +345,9 @@
+ #define DP_INC_BG				(0x1 << 7)
+ #define DP_EXP_BG				(0x1 << 6)
+ #define DP_PHY_PD				(0x1 << 5)
++#define RK_AUX_PD				(0x1 << 5)
+ #define AUX_PD					(0x1 << 4)
++#define RK_PLL_PD				(0x1 << 4)
+ #define CH3_PD					(0x1 << 3)
+ #define CH2_PD					(0x1 << 2)
+ #define CH1_PD					(0x1 << 1)
+-- 
+2.16.1
