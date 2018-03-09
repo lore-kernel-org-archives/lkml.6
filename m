@@ -1,63 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932482AbeCIXca (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 18:32:30 -0500
-Received: from mail-pg0-f46.google.com ([74.125.83.46]:34885 "EHLO
-        mail-pg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751211AbeCIXc2 (ORCPT
+        id S932638AbeCIXcl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 18:32:41 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:46167 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751316AbeCIXcj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 18:32:28 -0500
-X-Google-Smtp-Source: AG47ELvXG9n+l14KgGRCqmskAnqcZ7hVXtryMJDc2pJcB4lN1tFVHWODB7ZZeWmBeR1XwGsd0WQ/zhaAC4LkxlxNcVI=
+        Fri, 9 Mar 2018 18:32:39 -0500
+X-Google-Smtp-Source: AG47ELtDEXiIq/sNxOItHWwyOOwSLJB/7t1xivBywD+MnOncEW2L606YX79cqf6J2QHtIIUlIPj/uQ==
+Date: Fri, 9 Mar 2018 15:32:35 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: stmpe-keypad - remove VLA usage
+Message-ID: <20180309233235.GC60941@dtor-ws>
+References: <20180309224208.GA7080@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <5d89ba78-64b4-9c9b-c9f3-c67094343c3f@gmail.com>
-References: <001a113f2be668a1e9056701e617@google.com> <CAM_iQpV+PnGUXEKcSrF7u19NOeLLp0PhDW-DOkEfS+8pLnTgYw@mail.gmail.com>
- <a559bbb6-0db4-2b71-b363-792d88d7eef7@gmail.com> <c4b2dca8-f2b9-c187-9ee5-e7c4816848f5@gmail.com>
- <CAM_iQpXLQtaBRBPmcGzUTUhNHiomos4eAvXy7kyrY+uAzpNt3g@mail.gmail.com> <5d89ba78-64b4-9c9b-c9f3-c67094343c3f@gmail.com>
-From: Cong Wang <xiyou.wangcong@gmail.com>
-Date: Fri, 9 Mar 2018 15:32:07 -0800
-Message-ID: <CAM_iQpXPO_9=sj1DiMRfNmhZkUnCaoJtWw2O82g9AKSYjRFrZA@mail.gmail.com>
-Subject: Re: WARNING in __proc_create
-To: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: coreteam@netfilter.org, David Miller <davem@davemloft.net>,
-        Florian Westphal <fw@strlen.de>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        netfilter-devel@vger.kernel.org,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180309224208.GA7080@embeddedor.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 9, 2018 at 3:21 PM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
->
->
-> On 03/09/2018 03:05 PM, Cong Wang wrote:
->>
->>
->> BTW, the warning itself is all about empty names, so perhaps
->> it's better to fix them separately.
->
->
-> Huh ? You want more syzbot reports ? I do not.
+On Fri, Mar 09, 2018 at 04:42:08PM -0600, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wvla, remove VLA and replace it
+> with a fixed-length array instead.
+> 
+> Fixed as part of the directive to remove all VLAs from
+> the kernel: https://lkml.org/lkml/2018/3/7/621
+> 
+> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+> ---
+>  drivers/input/keyboard/stmpe-keypad.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/input/keyboard/stmpe-keypad.c b/drivers/input/keyboard/stmpe-keypad.c
+> index 8c6c0b9..cfa1dbe 100644
+> --- a/drivers/input/keyboard/stmpe-keypad.c
+> +++ b/drivers/input/keyboard/stmpe-keypad.c
+> @@ -48,6 +48,8 @@
+>  #define STMPE_KEYPAD_KEYMAP_MAX_SIZE \
+>  	(STMPE_KEYPAD_MAX_ROWS * STMPE_KEYPAD_MAX_COLS)
+>  
+> +#define MAX_NUM_DATA			5
+> +
+>  /**
+>   * struct stmpe_keypad_variant - model-specific attributes
+>   * @auto_increment: whether the KPC_DATA_BYTE register address
+> @@ -74,7 +76,7 @@ struct stmpe_keypad_variant {
+>  static const struct stmpe_keypad_variant stmpe_keypad_variants[] = {
+>  	[STMPE1601] = {
+>  		.auto_increment		= true,
+> -		.num_data		= 5,
+> +		.num_data		= MAX_NUM_DATA,
+>  		.num_normal_data	= 3,
+>  		.max_cols		= 8,
+>  		.max_rows		= 8,
+> @@ -84,7 +86,7 @@ static const struct stmpe_keypad_variant stmpe_keypad_variants[] = {
+>  	[STMPE2401] = {
+>  		.auto_increment		= false,
+>  		.set_pullup		= true,
+> -		.num_data		= 3,
+> +		.num_data		= MAX_NUM_DATA - 2,
 
-I always prefer one patch to fix one problem, and, as I already said,
-checking "." and ".." is probably not as trivial as checking empty.
+Logically MAX_NUM_DATA - 2 does not mean anything, it is simply a way
+for you to get to 3, so I'd rather we did not do that.
 
-This why I believe 2 (or more) patches here are better than 1 single
-patch.
+Can we do
 
-BTW, I don't have any patch, it is so trivial that I don't want to spend
-my time on it.
+#define STMPE1601_NUM_DATA	5
+#define STMPE2401_NUM_DATA	3
+#define STMPE2403_NUM_DATA	5
+#define MAX_NUM_DATA		max3(STMPE1601_NUM_DATA, \
+				     STMPE2401_NUM_DATA, \
+				     STMPE2403_NUM_DATA)
 
->
-> I unblocked this report today [1], you can be sure that as soon
-> as syzbot gets the correct tag (Reported-by: ...), it will find the other
-> problems, which are currently on hold to avoid spam.
->
-> [1] It has been sitting for a while here at Google, since January 28th.
->    At some point you have to ping Pablo/Florian again ;)
 
-Sure, it can always find more problems... why just complain about
-this one alone? ;)
+or simply
+
+/* Make sure it covers all cases above */
+#define MAX_NUM_DATA		5
+
+>  		.num_normal_data	= 2,
+>  		.max_cols		= 8,
+>  		.max_rows		= 12,
+> @@ -94,7 +96,7 @@ static const struct stmpe_keypad_variant stmpe_keypad_variants[] = {
+>  	[STMPE2403] = {
+>  		.auto_increment		= true,
+>  		.set_pullup		= true,
+> -		.num_data		= 5,
+> +		.num_data		= MAX_NUM_DATA,
+>  		.num_normal_data	= 3,
+>  		.max_cols		= 8,
+>  		.max_rows		= 12,
+> @@ -156,7 +158,7 @@ static irqreturn_t stmpe_keypad_irq(int irq, void *dev)
+>  	struct stmpe_keypad *keypad = dev;
+>  	struct input_dev *input = keypad->input;
+>  	const struct stmpe_keypad_variant *variant = keypad->variant;
+> -	u8 fifo[variant->num_data];
+> +	u8 fifo[MAX_NUM_DATA];
+>  	int ret;
+>  	int i;
+>  
+> -- 
+> 2.7.4
+> 
+
+Thanks.
+
+-- 
+Dmitry
