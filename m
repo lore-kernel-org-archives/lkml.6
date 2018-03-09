@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933087AbeCIWYi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 17:24:38 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:42736 "EHLO
+        id S932874AbeCIW3b (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 17:29:31 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:42758 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933014AbeCIWYe (ORCPT
+        with ESMTP id S933070AbeCIWYg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 17:24:34 -0500
+        Fri, 9 Mar 2018 17:24:36 -0500
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -24,9 +24,9 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
         hshi@chromium.org,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v5 20/36] drm/bridge: analogix_dp: Don't use ANALOGIX_DP_PLL_CTL to control pll
-Date: Fri,  9 Mar 2018 23:23:11 +0100
-Message-Id: <20180309222327.18689-21-enric.balletbo@collabora.com>
+Subject: [PATCH v5 21/36] drm/bridge: analogix_dp: Fix timeout of video streamclk config
+Date: Fri,  9 Mar 2018 23:23:12 +0100
+Message-Id: <20180309222327.18689-22-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180309222327.18689-1-enric.balletbo@collabora.com>
 References: <20180309222327.18689-1-enric.balletbo@collabora.com>
@@ -36,9 +36,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: zain wang <wzz@rock-chips.com>
 
-There is no register named ANALOGIX_DP_PLL_CTL in Rockchip edp phy reg
-list.  We should use BIT_4 in ANALOGIX_DP_PD to control the pll power
-instead of ANALOGIX_DP_PLL_CTL.
+The STRM_VALID bit in register ANALOGIX_DP_SYS_CTL_3 may be unstable,
+so we may hit the error log "Timeout of video streamclk ok" since
+checked this unstable bit.
+In fact, we can go continue and the streamclk is ok if we wait enough time,
+it does no effect on display.
+Let's change this error to warn.
 
 Cc: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: zain wang <wzz@rock-chips.com>
@@ -49,41 +52,24 @@ Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index 7b7fd227e1f9..02ab1aaa9993 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -230,16 +230,20 @@ enum pll_status analogix_dp_get_pll_lock_status(struct analogix_dp_device *dp)
- void analogix_dp_set_pll_power_down(struct analogix_dp_device *dp, bool enable)
- {
- 	u32 reg;
-+	u32 mask = DP_PLL_PD;
-+	u32 pd_addr = ANALOGIX_DP_PLL_CTL;
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index 1f1cb624414d..d76e1652b1fd 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -921,8 +921,9 @@ static int analogix_dp_config_video(struct analogix_dp_device *dp)
+ 			done_count = 0;
+ 		}
+ 		if (timeout_loop > DP_TIMEOUT_LOOP_COUNT) {
+-			dev_err(dp->dev, "Timeout of video streamclk ok\n");
+-			return -ETIMEDOUT;
++			dev_warn(dp->dev,
++				 "Ignoring timeout of video streamclk ok\n");
++			break;
+ 		}
  
--	if (enable) {
--		reg = readl(dp->reg_base + ANALOGIX_DP_PLL_CTL);
--		reg |= DP_PLL_PD;
--		writel(reg, dp->reg_base + ANALOGIX_DP_PLL_CTL);
--	} else {
--		reg = readl(dp->reg_base + ANALOGIX_DP_PLL_CTL);
--		reg &= ~DP_PLL_PD;
--		writel(reg, dp->reg_base + ANALOGIX_DP_PLL_CTL);
-+	if (dp->plat_data && is_rockchip(dp->plat_data->dev_type)) {
-+		pd_addr = ANALOGIX_DP_PD;
-+		mask = RK_PLL_PD;
- 	}
-+
-+	reg = readl(dp->reg_base + pd_addr);
-+	if (enable)
-+		reg |= mask;
-+	else
-+		reg &= ~mask;
-+	writel(reg, dp->reg_base + pd_addr);
- }
- 
- void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
+ 		usleep_range(1000, 1001);
 -- 
 2.16.1
