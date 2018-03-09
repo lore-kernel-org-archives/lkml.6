@@ -1,67 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932555AbeCITfI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 14:35:08 -0500
-Received: from omr-m019e.mx.aol.com ([204.29.186.18]:52463 "EHLO
-        omr-m019e.mx.aol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932069AbeCITfG (ORCPT
+        id S932611AbeCITf0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 14:35:26 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50816 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932221AbeCITfZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 14:35:06 -0500
-Subject: Re: [PATCH] perf tools arm64: Add libdw DWARF post unwind support for
- ARM64
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Kim Phillips <kim.phillips@arm.com>, Jiri Olsa <jolsa@kernel.org>,
-        "Christian Hansen (chansen3)" <chansen3@cisco.com>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "Vuille, Martin (Martin)" <vmartin@avaya.com>
-References: <A5E405FE-1BA3-46FC-9A43-CF19A4B369C5@cisco.com>
- <20180226142726.cd413c792d0782f77b60a23e@arm.com>
- <20180226174040.6998bd3c0a79b2f19c491e4d@arm.com>
- <9B701F46-6AEA-48D8-9103-71D35C83776D@cisco.com>
- <20180308211030.4ee4a0d6ff6dc5cda1b567d4@arm.com>
- <20180309150627.GB8347@kernel.org>
- <20180309120720.9358515dbff3b1d1fdf70cc8@arm.com>
- <20180309182440.GA25111@kernel.org>
- <cde0e6f4-155f-3d7e-8d84-fd482f729976@aim.com>
- <20180309192919.GC25111@kernel.org>
-From: Martin Vuille <jpmv27@aim.com>
-Message-ID: <9a28d255-faa4-1e2f-4280-a4160d6efeb7@aim.com>
-Date: Fri, 9 Mar 2018 14:35:02 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Fri, 9 Mar 2018 14:35:25 -0500
+Date: Fri, 9 Mar 2018 20:35:23 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Kees Cook <keescook@chromium.org>
+Cc: Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+        moderated for non-subscribers <alsa-devel@alsa-project.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: soc-core: Add missing NULL check
+Message-ID: <20180309193523.GA2977@amd>
+References: <20180308200653.GA47801@beast>
+ <20180309125050.GD5252@sirena.org.uk>
+ <CAGXu5jJo2JVXKV+nieGwzH0XOPpzzo4DmYy0L05iZD6wwO1vGg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180309192919.GC25111@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-x-aol-global-disposition: G
-x-aol-sid: 3039ac1d1bcd5aa2e1e73232
-X-AOL-IP: 99.246.128.134
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="/9DWx/yDrRhgMJTb"
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jJo2JVXKV+nieGwzH0XOPpzzo4DmYy0L05iZD6wwO1vGg@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks.
 
-I replied to your message with additional information.
+--/9DWx/yDrRhgMJTb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I will update the commit message and resubmit the patch.
+On Fri 2018-03-09 10:45:16, Kees Cook wrote:
+> On Fri, Mar 9, 2018 at 4:50 AM, Mark Brown <broonie@kernel.org> wrote:
+> > On Thu, Mar 08, 2018 at 12:06:53PM -0800, Kees Cook wrote:
+> >
+> >> If a codec is not attached to the sound soc, a NULL deref is possible =
+as a
+> >> regular user in /sys.
+> >
+> > I can't parse this, sorry.  What is the "sound soc"?
+>=20
+> SoC's sound component? I'm not sure either. :) I was just sending the
+> patch that I mentioned from the thread where Pavel mentioned this
+> Oops.
+>=20
+> Pavel, can you isolate the specific file that is causing the oops?
+> (Maybe this patch should be a WARN() instead of silent return 0, since
+> we still don't want to crash, but it should be considered a bug...)
 
-MV
+Crash is reproducible on linux-next on Nokia N900. But I seen hang on
+Nokia N9, with different kernel, that may be related.
 
+And yes, WARN() would be nicer.
 
-On 03/09/18 14:29, Arnaldo Carvalho de Melo wrote:
-> Em Fri, Mar 09, 2018 at 01:49:50PM -0500, Martin Vuille escreveu:
->> Hi,
->>
->> I made two other submissions that may also have been overlooked:
->>
->> https://patchwork.kernel.org/patch/10211401/ -- This one has the S-o-B
-> Ok, replied to that one, I can't see where is it that the symfs is being
-> first appended, please clarify that in the patch commit log message.
->   
+> >> +++ b/sound/soc/soc-core.c
+> >> @@ -137,6 +137,9 @@ static ssize_t soc_codec_reg_show(struct snd_soc_c=
+odec *codec, char *buf,
+> >>       size_t total =3D 0;
+> >>       loff_t p =3D 0;
+> >>
+> >> +     if (!codec || !codec->driver)
+> >> +             return 0;
+> >> +
+> >
+> > How are we managing to create a sysfs file for a CODEC which doesn't
+> > have a CODEC struct associated with it?  That is obviously nonsensical
+> > and suggests we've got some more serious problem going on here - if
+> > there's no CODEC those sysfs attributes simply shouldn't be there.
+>=20
+> No idea! Hopefully Pavel has more details...
+
+Pavel probably can reproduce it...
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--/9DWx/yDrRhgMJTb
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqi4fsACgkQMOfwapXb+vLbIQCgnLjHPQpsXjX6HNyg7+Wcx3z6
+5fMAoIIqbOg+YWWcLv0MEgToQ8EJY188
+=d5yl
+-----END PGP SIGNATURE-----
+
+--/9DWx/yDrRhgMJTb--
