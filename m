@@ -1,169 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751229AbeCIHLv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 02:11:51 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:45744 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750913AbeCIHLt (ORCPT
+        id S1751262AbeCIHR4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 02:17:56 -0500
+Received: from mail-it0-f66.google.com ([209.85.214.66]:52748 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751113AbeCIHRy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 02:11:49 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5CF3360618
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-X-Google-Smtp-Source: AG47ELuj6ASc+jW7CiSOwKL5cY2+siGnXKBC9t4hD3aPfk6lQoT0agPKmcQJa4M9l/8NNMvgbXw4QwKlYyepVww9pmw=
+        Fri, 9 Mar 2018 02:17:54 -0500
+X-Google-Smtp-Source: AG47ELsm32etfZe4Ra3seGKv20XfzEdxbvWR/lxVUDfi7VscV03O+XceKj8NgpijF5K0AAzYkG/m5w==
+Date: Fri, 9 Mar 2018 16:18:14 +0900
+From: AKASHI Takahiro <takahiro.akashi@linaro.org>
+To: Dave Young <dyoung@redhat.com>
+Cc: vgoyal@redhat.com, bhe@redhat.com, mpe@ellerman.id.au,
+        bauerman@linux.vnet.ibm.com, prudo@linux.vnet.ibm.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH v2 0/7] kexec_file, x86, powerpc: refactoring for other
+ architecutres
+Message-ID: <20180309071813.GE25863@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Dave Young <dyoung@redhat.com>, vgoyal@redhat.com, bhe@redhat.com,
+        mpe@ellerman.id.au, bauerman@linux.vnet.ibm.com,
+        prudo@linux.vnet.ibm.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, akpm@linux-foundation.org
+References: <20180306102303.9063-1-takahiro.akashi@linaro.org>
+ <20180308010502.GA2600@dhcp-128-65.nay.redhat.com>
+ <20180309060254.GA9728@dhcp-128-65.nay.redhat.com>
+ <20180309064412.GA5327@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAFp+6iF1oM=fmRCqSG-SxcUVvvOLet_Y0p7pmGn+=B-LdMNiww@mail.gmail.com>
-References: <20180302101050.6191-1-vivek.gautam@codeaurora.org>
- <20180302101050.6191-5-vivek.gautam@codeaurora.org> <f3011ef1-7ffe-8c2b-b9d6-3fb094789656@arm.com>
- <CAFp+6iF1oM=fmRCqSG-SxcUVvvOLet_Y0p7pmGn+=B-LdMNiww@mail.gmail.com>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Date: Fri, 9 Mar 2018 12:41:46 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iFzGYWZMLkNrN1ZJJ2xH4CxQsiU6oYboHDzL0jDwm+4VQ@mail.gmail.com>
-Message-ID: <CAFp+6iFzGYWZMLkNrN1ZJJ2xH4CxQsiU6oYboHDzL0jDwm+4VQ@mail.gmail.com>
-Subject: Re: [PATCH v8 4/5] iommu/arm-smmu: Add the device_link between
- masters and smmu
-To: Robin Murphy <robin.murphy@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
-        "robh+dt" <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Rob Clark <robdclark@gmail.com>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        devicetree@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>, jcrouse@codeaurora.org,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180309064412.GA5327@dhcp-128-65.nay.redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 8, 2018 at 10:29 AM, Vivek Gautam
-<vivek.gautam@codeaurora.org> wrote:
-> On Wed, Mar 7, 2018 at 6:17 PM, Robin Murphy <robin.murphy@arm.com> wrote:
->> On 02/03/18 10:10, Vivek Gautam wrote:
->>>
->>> From: Sricharan R <sricharan@codeaurora.org>
->>>
->>> Finally add the device link between the master device and
->>> smmu, so that the smmu gets runtime enabled/disabled only when the
->>> master needs it. This is done from add_device callback which gets
->>> called once when the master is added to the smmu.
->>>
->>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->>> ---
->>>   drivers/iommu/arm-smmu.c | 21 +++++++++++++++++++++
->>>   1 file changed, 21 insertions(+)
->>>
->>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
->>> index 3d6a1875431f..bb1ea82c1003 100644
->>> --- a/drivers/iommu/arm-smmu.c
->>> +++ b/drivers/iommu/arm-smmu.c
->>> @@ -217,6 +217,9 @@ struct arm_smmu_device {
->>>         /* IOMMU core code handle */
->>>         struct iommu_device             iommu;
->>> +
->>> +       /* runtime PM link to master */
->>> +       struct device_link *link;
->>
->>
->> Just the one?
+Dave,
 
-we will either have to count all the devices that are present on the
-iommu bus, or
-maintain a list to which all the links can be added.
-But to add the list, we will have to initialize a LIST_HEAD in struct
-device_link
-as well.
+On Fri, Mar 09, 2018 at 02:44:12PM +0800, Dave Young wrote:
+> On 03/09/18 at 02:02pm, Dave Young wrote:
+> > On 03/08/18 at 09:05am, Dave Young wrote:
+> > > [Cc Andrew]
+> > > 
+> > > On 03/06/18 at 07:22pm, AKASHI Takahiro wrote:
+> > > > This is a preparatory patch set for adding kexec_file support on arm64.
+> > > > 
+> > > > It was originally included in a arm64 patch set[1], but Philipp is also
+> > > > working on their kexec_file support on s390[2] and some changes are now
+> > > > conflicting.
+> > > > 
+> > > > So these common parts were extracted and put into a separate patch set for
+> > > > better integration. What's more, my original patch#4 was split into a few
+> > > > small chunks for easier review after Dave's comment.
+> > > > 
+> > > > As such, the resulting code is basically identical with my original, and
+> > > > the only *visible* differences are:
+> > > >   * renamings of _kexec_kernel_image_probe() and
+> > > >     _kimage_file_post_load_cleanup()
+> > > >   * change one of types of arguments at prepare_elf64_headers()
+> > > > Those, unfortunately, require a couple of trivial changes on the rest
+> > > > (#1, #6 to #13) of my arm64 kexec_file patch set[1].
+> > > > 
+> > > > Patch#1 allows making a use of purgatory optional, particularly useful
+> > > > for arm64.
+> > > > Patch#2 commonalizes arch_kexec_kernel_{image_probe, image_load,
+> > > > verify_sig}() and arch_kimage_file_post_load_cleanup() across architectures.
+> > > > Patch#3-#7 is also intended to generalize parse_elf64_headers(), along with
+> > > > exclude_mem_range(), to be made best re-use of.
+> > > > 
+> > > > [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-February/561182.html
+> > > > [2] http://lkml.iu.edu//hypermail/linux/kernel/1802.1/02596.html
+> > > > 
+> > > > 
+> > > > Changes in v2 (Mar 6, 2018)
+> > > > * use IS_ENABLED() instead of #ifdef's in kexec_calculate_store_digests() 
+> > > > * rename _kexec_kernel_*() and make them static for now except for
+> > > >   kexec_image_probe_default() which is actually used by arch(powerpc) code
+> > > >   (Note: kexec_image_post_load_cleanup_default() will also be exported by
+> > > >   arm64 patches.)
+> > > > * change a type of kernel_map in prepare_elf64_headers() to "int"
+> > > > * check for a total number of system ram regions in full_up_crash_elf_data()
+> > > >   and use vzalloc() instead of vmalloc()
+> > > > 
+> > > > AKASHI Takahiro (7):
+> > > >   kexec_file: make an use of purgatory optional
+> > > >   kexec_file,x86,powerpc: factor out kexec_file_ops functions
+> > > >   x86: kexec_file: purge system-ram walking from prepare_elf64_headers()
+> > > >   x86: kexec_file: remove X86_64 dependency from prepare_elf64_headers()
+> > > >   x86: kexec_file: lift CRASH_MAX_RANGES limit on crash_mem buffer
+> > > >   x86: kexec_file: clean up prepare_elf64_headers()
+> > > >   kexec_file, x86: move re-factored code to generic side
+> > > > 
+> > > >  arch/powerpc/Kconfig                        |   3 +
+> > > >  arch/powerpc/include/asm/kexec.h            |   2 +-
+> > > >  arch/powerpc/kernel/kexec_elf_64.c          |   2 +-
+> > > >  arch/powerpc/kernel/machine_kexec_file_64.c |  39 +---
+> > > >  arch/x86/Kconfig                            |   3 +
+> > > >  arch/x86/include/asm/kexec-bzimage64.h      |   2 +-
+> > > >  arch/x86/kernel/crash.c                     | 334 ++++++----------------------
+> > > >  arch/x86/kernel/kexec-bzimage64.c           |   2 +-
+> > > >  arch/x86/kernel/machine_kexec_64.c          |  45 +---
+> > > >  include/linux/kexec.h                       |  32 ++-
+> > > >  kernel/kexec_file.c                         | 240 +++++++++++++++++++-
+> > > >  11 files changed, 338 insertions(+), 366 deletions(-)
+> > > > 
+> > > > -- 
+> > > > 2.16.2
+> > > > 
+> > > 
+> > > AKASHI, thanks for another update, looks good to me:
+> > > 
+> > > Acked-by: Dave Young <dyoung@redhat.com>
+> > 
+> > Hold on the ack, during today's tests kexec kernel can not boot, it
+> > hangs early.  Will see if it is caused by this series and come back
+> > later.
+> 
+> AKASHI, it seems the first patch causes the hang, can you take a look?
 
-Or, I think we don't even need to maintain a pointer to link with smmu.
-In arm_smmu_remove_device(), we can find out the correct link, and delete it.
+Sure, but can you first tell me specifics about what you have observed?
 
-        list_for_each_entry(link, &dev->links.suppliers, c_node)
-                if (link->supplier == smmu->dev);
-                           device_link_del(link);
-
-Should that be fine?
-
-Rafael, does the above snippet looks right to you? Context: smmu->dev
-is the supplier, and dev is the consumer. We want to find the link,
-and delete it.
-
-regards
-Vivek
-
->>
->>>   };
->>>     enum arm_smmu_context_fmt {
->>> @@ -1470,10 +1473,26 @@ static int arm_smmu_add_device(struct device *dev)
->>>         iommu_device_link(&smmu->iommu, dev);
->>>   +     /*
->>> +        * Establish the link between smmu and master, so that the
->>> +        * smmu gets runtime enabled/disabled as per the master's
->>> +        * needs.
->>> +        */
->>> +       smmu->link = device_link_add(dev, smmu->dev, DL_FLAG_PM_RUNTIME);
->>
->>
->> Maybe I've misunderstood how the API works, but AFAICS the second and
->> subsequent devices are all just going to overwrite (and leak) the link of
->> the previous one...
->
-> Sorry, my bad. Will take care of this.
->
-> regards
-> Vivek
->
->>
->>> +       if (!smmu->link) {
->>> +               dev_warn(smmu->dev, "Unable to create device link between
->>> %s and %s\n",
->>> +                        dev_name(smmu->dev), dev_name(dev));
->>> +               ret = -ENODEV;
->>> +               goto out_unlink;
->>> +       }
->>> +
->>>         arm_smmu_rpm_put(smmu);
->>>         return 0;
->>>   +out_unlink:
->>> +       iommu_device_unlink(&smmu->iommu, dev);
->>> +       arm_smmu_master_free_smes(fwspec);
->>>   out_rpm_put:
->>>         arm_smmu_rpm_put(smmu);
->>>   out_cfg_free:
->>> @@ -1496,6 +1515,8 @@ static void arm_smmu_remove_device(struct device
->>> *dev)
->>>         cfg  = fwspec->iommu_priv;
->>>         smmu = cfg->smmu;
->>>   +     device_link_del(smmu->link);
->>
->>
->> ...and equivalently you end up with a double-free (or more) here of a link
->> which may not have belonged to dev anyway.
->>
->> Robin.
->>
->>
->>> +
->>>         ret = arm_smmu_rpm_get(smmu);
->>>         if (ret < 0)
->>>                 return;
->>>
->>
->
->
->
-> --
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
+Thanks,
+-Takahiro AKASHI
 
 
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+> > 
+> > > 
+> > > Thanks
+> > > Dave
+> > 
+> > Thanks
+> > Dave
