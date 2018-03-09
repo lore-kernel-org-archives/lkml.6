@@ -1,71 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751323AbeCIHeC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 02:34:02 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:3650 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750909AbeCIHeA (ORCPT
+        id S1751284AbeCIHkl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 02:40:41 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:36837 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750909AbeCIHkj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 02:34:00 -0500
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="37661472"
-Subject: Re: [PATCH 0/5] kbuild: always define KBUILD_MODNAME, and
- clean-up/fix modname
-To: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        <linux-kbuild@vger.kernel.org>
-CC: Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Govind Singh <govinds@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>, <linux-kernel@vger.kernel.org>
-References: <1520471103-10089-1-git-send-email-yamada.masahiro@socionext.com>
-From: Cao jin <caoj.fnst@cn.fujitsu.com>
-Message-ID: <a5668320-a781-a22c-3206-fbd7fb1b30df@cn.fujitsu.com>
-Date: Fri, 9 Mar 2018 15:33:10 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Fri, 9 Mar 2018 02:40:39 -0500
+X-Google-Smtp-Source: AG47ELunOvo78PBdnNN9Va5HEA70pyz9QQMLZSPf0i4Ww5xzg5+HyulwBb8Lb+EwyWvvGCSoXdZcsQ==
+Date: Fri, 9 Mar 2018 08:40:34 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Sai Praneeth <sai.praneeth.prakhya@intel.com>,
+        linux-kernel@vger.kernel.org, "Lee, Chun-Yi" <jlee@suse.com>,
+        Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Ravi Shankar <ravi.v.shankar@intel.com>
+Subject: Re: [PATCH 07/12] efi: Use efi_mm in x86 as well as ARM
+Message-ID: <20180309074034.put3ko6zxmaoizzr@gmail.com>
+References: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
+ <20180308080020.22828-8-ard.biesheuvel@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1520471103-10089-1-git-send-email-yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.226.60]
-X-yoursite-MailScanner-ID: B1E3F4D0EFF4.A9E86
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180308080020.22828-8-ard.biesheuvel@linaro.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The series build successfully on upstream in my: make allyesconfig and
-allmodconfig, so,
 
-Tested-by: Cao jin <caoj.fnst@cn.fujitsu.com>
+* Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
 
--- 
-Sincerely,
-Cao jin
+> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+> 
+> Presently, only ARM uses mm_struct to manage efi page tables and efi
+> runtime region mappings. As this is the preferred approach, let's make
+> this data structure common across architectures. Specially, for x86,
+> using this data structure improves code maintainability and readability.
 
-On 03/08/2018 09:04 AM, Masahiro Yamada wrote:
-> 
-> 3/5 takes into account '-m' case for multi-used-m.
-> 
-> 2/5 is necessary beforehand because 3/5 would cause a build error for
-> drivers/net/ethernet/cavium/liquidio/lio_ethtool.c
-> 
-> 1, 4, 5 are just clean-ups.
-> 
-> 
-> 
-> Cao jin (1):
->   kbuild: fix modname for composite modules
-> 
-> Masahiro Yamada (4):
->   kbuild: remove unnecessary $(subst $(obj)/,,...) in modname-multi
->   kbuild: define KBUILD_MODNAME even if multiple modules share objects
->   kbuild: simplify modname calculation
->   kbuild: move modname and modname-multi close to modname_flags
-> 
->  scripts/Makefile.build | 12 ------------
->  scripts/Makefile.lib   | 22 +++++++++-------------
->  2 files changed, 9 insertions(+), 25 deletions(-)
-> 
+> diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
+> index 85f6ccb80b91..00f977ddd718 100644
+> --- a/arch/x86/include/asm/efi.h
+> +++ b/arch/x86/include/asm/efi.h
+> @@ -2,10 +2,14 @@
+>  #ifndef _ASM_X86_EFI_H
+>  #define _ASM_X86_EFI_H
+>  
+> +#include <linux/sched/mm.h>
+> +#include <linux/sched/task.h>
+> +
+>  #include <asm/fpu/api.h>
+>  #include <asm/pgtable.h>
+>  #include <asm/processor-flags.h>
+>  #include <asm/tlb.h>
+> +#include <asm/mmu_context.h>
+>  
+>  /*
+>   * We map the EFI regions needed for runtime services non-contiguously,
+
+> diff --git a/include/linux/efi.h b/include/linux/efi.h
+> index f5083aa72eae..f1b7d68ac460 100644
+> --- a/include/linux/efi.h
+> +++ b/include/linux/efi.h
+> @@ -966,6 +966,8 @@ extern struct efi {
+>  	unsigned long flags;
+>  } efi;
+>  
+> +extern struct mm_struct efi_mm;
+> +
+>  static inline int
+>  efi_guidcmp (efi_guid_t left, efi_guid_t right)
+>  {
+
+Ugh, I can see three problems with this patch:
+
+1)
+
+Why is the low level asm/efi.h header polluted with two of the biggest header 
+files in existence, to add a type to _another_ header (efi.h)?
+
+2)
+
+Why is <linux/sched/task.h> included if what is being relied on is mm_struct?
+
+3)
+
+But even <linux/sched/mm.h> looks unnecessary in efi.h, a simple forward 
+declaration of mm_struct would do ...
+
+The high level MM and sched headers should be added to the actual .c files that 
+make use of them.
+
+Thanks,
+
+	Ingo
