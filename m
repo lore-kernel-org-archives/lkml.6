@@ -1,229 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932593AbeCIXOi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 18:14:38 -0500
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:40496 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932276AbeCIXOg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 18:14:36 -0500
-X-Google-Smtp-Source: AG47ELu5v2Bjv4y2BHrG3IGkYoRuTl6genlBcT3ncDOW/2XUr4TSKvpZ22a3SI8zmpIvbh38pIC7pw==
-Date: Fri, 9 Mar 2018 17:14:33 -0600
-From: Rob Herring <robh@kernel.org>
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: mfd: Add Gateworks System Controller
- bindings
-Message-ID: <20180309231433.tmlfy6vwbkvopmwd@rob-hp-laptop>
-References: <1520287361-12569-1-git-send-email-tharvey@gateworks.com>
- <1520287361-12569-2-git-send-email-tharvey@gateworks.com>
+        id S932681AbeCIXQE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 18:16:04 -0500
+Received: from smtp.gentoo.org ([140.211.166.183]:47622 "EHLO smtp.gentoo.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932276AbeCIXQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 18:16:01 -0500
+From: Sergei Trofimovich <slyfox@gentoo.org>
+To: Tony Luck <tony.luck@intel.com>
+Cc: Sergei Trofimovich <slyfox@gentoo.org>,
+        Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2, simpler] ia64: fix ptrace(PTRACE_GETREGS) (unbreaks strace, gdb)
+Date: Fri,  9 Mar 2018 23:15:55 +0000
+Message-Id: <20180309231555.16925-1-slyfox@gentoo.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180211185134.76ccfd45@sf>
+References: <20180211185134.76ccfd45@sf>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520287361-12569-2-git-send-email-tharvey@gateworks.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 05, 2018 at 02:02:38PM -0800, Tim Harvey wrote:
-> This patch adds documentation of device-tree bindings for the
-> Gateworks System Controller (GSC).
-> 
-> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
-> ---
->  Documentation/devicetree/bindings/mfd/gsc.txt | 159 ++++++++++++++++++++++++++
->  1 file changed, 159 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/gsc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/gsc.txt b/Documentation/devicetree/bindings/mfd/gsc.txt
-> new file mode 100644
-> index 0000000..fe5d114
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/gsc.txt
-> @@ -0,0 +1,159 @@
-> +Gateworks System Controller multi-function device
-> +
-> +The GSC is a Multifunction I2C slave device with the following submodules:
-> +- WDT
-> +- GPIO
-> +- Pushbutton controller
-> +- HWMON
-> +
-> +Required properties:
-> +- compatible : Must be "gw,gsc_v1", "gw,gsc_v2", "gw,gsc_v3"
+The strace breakage looks like that:
+./strace: get_regs: get_regs_error: Input/output error
 
-s/_/-/
+It happens because ia64 needs to load unwind tables
+to read certain registers in 'PTRACE_GETREGS'. Unwind
+tables fail to load at kernel startup due to GCC quirk
+on the following code (logged as PR 84184):
 
-> +- reg: I2C address of the device
-> +- interrupts: interrupt triggered by GSC_IRQ# signal
-> +- interrupt-parent: Interrupt controller GSC is connected to
-> +- #interrupt-cells: should be <1>, index of the interrupt within the
-> +  controller, in accordance with the "one cell" variant of
-> +  <devicetree/bindings/interrupt-controller/interrupt.txt>
-> +
-> +Optional nodes:
-> +* watchdog:
-> +The GSC provides a Watchdog monitor which can power cycle the board's
-> +primary power supply on most board models when tripped.
-> +
-> +Required properties:
-> +- compatible: must be "gw,gsc-watchdog"
-> +
-> +* input:
-> +The GSC provides an input device capable of dispatching Linux Input events
+    extern char __end_unwind[];
+    const struct unw_table_entry *end = (struct unw_table_entry *)table_end;
+    table->end = segment_base + end[-1].end_offset;
 
-Linux details that are not relevant to the binding.
+GCC does not generate correct code for this single memory
+reference after constant propagation.
+Two triggers are required for bad code generation:
+- '__end_unwind' has alignment lower (char), than
+  'struct unw_table_entry' (8).
+- symbol offset is negative.
 
-> +for user pushbutton events, tamper switch events, etc.
-> +
-> +Required properties:
-> +- compatible: must be "gw,gsc-input"
-> +
-> +* hwmon:
-> +The GSC provides a set of Analog to Digitcal Converter (ADC) pins used for
-> +temperature and/or voltage monitoring.
-> +
-> +Required properties:
-> +- compatible: must be "gw,gsc-hwmon"
-> +
-> +Example:
-> +
-> +	gsc: gsc@20 {
-> +		compatible = "gw,gsc_v2";
-> +		reg = <0x20>;
-> +		interrupt-parent = <&gpio1>;
-> +		interrupts = <4 GPIO_ACTIVE_LOW>;
-> +		interrupt-controller;
-> +		#interrupt-cells = <1>;
-> +
-> +		gsc_input {
+This commit workarounds it by disabling inline on
+init_unwind_table(). This way we avoid const-propagation
+of '__end_unwind' and pass address via register.
 
-input {
+Tested in ski (emulator) and on rx2600, rx3600 (real hardware).
+In case of rx2600 it unbreaks booting.
 
-> +			compatible = "gw,gsc-input";
-> +		};
-> +
-> +		gsc_watchdog {
+This patch is a lighter version of patch
+https://lkml.org/lkml/2018/2/2/914
 
-watchdog {
+CC: Tony Luck <tony.luck@intel.com>
+CC: Fenghua Yu <fenghua.yu@intel.com>
+CC: linux-ia64@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+Bug: https://github.com/strace/strace/issues/33
+Bug: https://gcc.gnu.org/PR84184
+Reported-by: Émeric Maschino <emeric.maschino@gmail.com>
+Tested-by: stanton_arch@mail.com
+Signed-off-by: Sergei Trofimovich <slyfox@gentoo.org>
+---
+ arch/ia64/kernel/unwind.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-> +			compatible = "gw,gsc-watchdog";
-> +		};
-> +
-> +		gsc_hwmon {
-
-hwmon {
-
-> +			compatible = "gw,gsc-hwmon";
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			hwmon@0 { /* A0: Board Temperature */
-> +				type = <0>;
-
-Not documented.
-
-> +				reg = <0x00>;
-> +				label = "temp";
-> +			};
-> +
-> +			hwmon@1 { /* A1: Input Voltage */
-> +				type = <1>;
-> +				reg = <0x02>;
-> +				label = "Vin";
-> +			};
-> +
-> +			hwmon@2 { /* A2: 5P0 */
-> +				type = <1>;
-> +				reg = <0x0b>;
-> +				label = "5P0";
-> +			};
-> +
-> +			hwmon@4 { /* A4: 0-5V input */
-> +				type = <1>;
-> +				reg = <0x14>;
-> +				label = "ANL0";
-> +			};
-> +
-> +			hwmon@5 { /* A5: 2P5 PCIe/GigE */
-> +				type = <1>;
-> +				reg = <0x23>;
-> +				label = "2P5";
-> +			};
-> +
-> +			hwmon@6 { /* A6: 1P8 Aud/Vid */
-> +				type = <1>;
-> +				reg = <0x1d>;
-> +				label = "1P8";
-> +			};
-> +
-> +			hwmon@7 { /* A7: GPS */
-> +				type = <1>;
-> +				reg = <0x26>;
-> +				label = "GPS";
-> +			};
-> +
-> +			hwmon@12 { /* A12: VDD_CORE */
-> +				type = <1>;
-> +				reg = <0x3>;
-> +				label = "VDD_CORE";
-> +			};
-> +
-> +			hwmon@13 { /* A13: VDD_SOC */
-> +				type = <1>;
-> +				reg = <0x11>;
-> +				label = "VDD_SOC";
-> +			};
-> +
-> +			hwmon@14 { /* A14: 1P0 PCIe SW */
-> +				type = <1>;
-> +				reg = <0x20>;
-> +				label = "1P0";
-> +			};
-> +
-> +			hwmon@15 { /* fan0 */
-> +				type = <2>;
-> +				reg = <0x2c>;
-> +				label = "fan_50p";
-> +			};
-> +
-> +			hwmon@16 { /* fan1 */
-> +				type = <2>;
-> +				reg = <0x2e>;
-> +				label = "fan_60p";
-> +			};
-> +
-> +			hwmon@17 { /* fan2 */
-> +				type = <2>;
-> +				reg = <0x30>;
-> +				label = "fan_70p";
-> +			};
-> +
-> +			hwmon@18 { /* fan3 */
-> +				type = <2>;
-> +				reg = <0x32>;
-> +				label = "fan_80p";
-> +			};
-> +
-> +			hwmon@19 { /* fan4 */
-> +				type = <2>;
-> +				reg = <0x34>;
-> +				label = "fan_90p";
-> +			};
-> +
-> +			hwmon@20 { /* fan5 */
-> +				type = <2>;
-> +				reg = <0x36>;
-> +				label = "fan_100p";
-> +			};
-> +		};
-> +	};
-> -- 
-> 2.7.4
-> 
+diff --git a/arch/ia64/kernel/unwind.c b/arch/ia64/kernel/unwind.c
+index e04efa088902..a18190bc99a9 100644
+--- a/arch/ia64/kernel/unwind.c
++++ b/arch/ia64/kernel/unwind.c
+@@ -2078,7 +2078,14 @@ unw_init_from_blocked_task (struct unw_frame_info *info, struct task_struct *t)
+ }
+ EXPORT_SYMBOL(unw_init_from_blocked_task);
+ 
+-static void
++/*
++ * We use 'noinline' to evade GCC bug https://gcc.gnu.org/PR84184
++ * where gcc code generator emits incorrect code when '__end_unwind'
++ * is const-propagated to 'end[-1].end_offset' and gcc generates
++ * incorrect code. The prigger there is negative offset relative
++ * to externally-defined symbol.
++ */
++noinline static void
+ init_unwind_table (struct unw_table *table, const char *name, unsigned long segment_base,
+ 		   unsigned long gp, const void *table_start, const void *table_end)
+ {
+-- 
+2.16.2
