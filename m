@@ -1,111 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751564AbeCIKUB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:20:01 -0500
-Received: from ozlabs.org ([103.22.144.67]:58879 "EHLO ozlabs.org"
+        id S1751835AbeCIKUO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:20:14 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:50439 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750909AbeCIKT7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 05:19:59 -0500
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Ram Pai <linuxram@us.ibm.com>, mingo@redhat.com,
-        akpm@linux-foundation.org
-Cc: linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dave.hansen@intel.com, benh@kernel.crashing.org, paulus@samba.org,
-        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
-        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
-        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com,
-        linuxram@us.ibm.com, corbet@lwn.net, arnd@arndb.de, fweimer@redhat.com,
-        msuchanek@suse.com, Ulrich.Weigand@de.ibm.com
-Subject: Re: [PATCH] x86, powerpc : pkey-mprotect must allow pkey-0
-In-Reply-To: <1520583161-11741-1-git-send-email-linuxram@us.ibm.com>
-References: <1520583161-11741-1-git-send-email-linuxram@us.ibm.com>
-Date: Fri, 09 Mar 2018 21:19:53 +1100
-Message-ID: <87lgf1v9di.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1751205AbeCIKUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 05:20:11 -0500
+Message-ID: <1520590736.15946.1.camel@bootlin.com>
+Subject: Re: [PATCH 0/9] Sunxi-Cedrus driver for the Allwinner Video Engine,
+ using the V4L2 request API
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Cc: Icenowy Zheng <icenowy@aosc.xyz>, Florent Revest <revestflo@gmail.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Thomas van Kleef <thomas@vitsch.nl>,
+        "Signed-off-by : Bob Ham" <rah@settrans.net>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 09 Mar 2018 11:18:56 +0100
+In-Reply-To: <20180309100933.15922-1-paul.kocialkowski@bootlin.com>
+References: <20180309100933.15922-1-paul.kocialkowski@bootlin.com>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-HlJ2Wc3XAxVn/wzc1ex8"
+X-Mailer: Evolution 3.26.5 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ram Pai <linuxram@us.ibm.com> writes:
 
-> Once an address range is associated with an allocated pkey, it cannot be
-> reverted back to key-0. There is no valid reason for the above behavior.  On
-> the contrary applications need the ability to do so.
+--=-HlJ2Wc3XAxVn/wzc1ex8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Please explain this in much more detail. Is it an ABI change?
+On Fri, 2018-03-09 at 11:09 +0100, Paul Kocialkowski wrote:
+> This presents a newer version of the Sunxi-Cedrus driver, that
+> supports
+> the Video Engine found in most Allwinner SoCs, starting with the A10.
 
-And why did we just notice this?
+I had to send this series in two parts (and tried to keep them under the
+original thread) after the mail server rejected one of the emails mid-
+series, causing git-send-email to stop. Sorry for the mess.
 
-> The patch relaxes the restriction.
->
-> Tested on powerpc and x86_64.
+> The first version of this driver[0] was originally written and
+> submitted
+> by Florent Revest using a previous version of the request API, that is
+> necessary to provide coherency between controls and the buffers they
+> apply
+> to. The driver was since adapted to use the latest version of the
+> request
+> API[1], as submitted by Alexandre Courbot. It is a hard requirement
+> for
+> this driver.
+>=20
+> This series also contains fixes for issues encountered with the
+> current
+> version of the request API. If accepted, these should eventually be
+> squashed into the request API series.
+>=20
+> The driver itself currently only supports MPEG2 and more codecs will
+> be
+> added to the driver eventually. The output frames provided by the
+> Video Engine are in a multi-planar 32x32-tiled YUV format, with a
+> plane
+> for luminance (Y) and a plane for chrominance (UV). A specific format
+> is
+> introduced in the V4L2 API to describe it.
+>=20
+> This implementation is based on the significant work that was
+> conducted
+> by various members of the linux-sunxi community for understanding and
+> documenting the Video Engine's innards.
+>=20
+> [0]: https://lkml.org/lkml/2016/8/25/246
+> [1]: https://lkml.org/lkml/2018/2/19/872
+>=20
+> Florent Revest (5):
+>   v4l: Add sunxi Video Engine pixel format
+>   v4l: Add MPEG2 low-level decoder API control
+>   media: platform: Add Sunxi Cedrus decoder driver
+>   sunxi-cedrus: Add device tree binding document
+>   ARM: dts: sun5i: Use video-engine node
+>=20
+> Icenowy Zheng (1):
+>   ARM: dts: sun8i: add video engine support for A33
+>=20
+> Paul Kocialkowski (2):
+>   media: vim2m: Try to schedule a m2m device run on request submission
+>   media: videobuf2-v4l2: Copy planes when needed in request qbuf
+>=20
+> Thomas van Kleef (1):
+>   ARM: dts: sun7i: Add video engine support for the A20
+>=20
+>  .../devicetree/bindings/media/sunxi-cedrus.txt     |  44 ++
+>  arch/arm/boot/dts/sun5i-a13.dtsi                   |  30 ++
+>  arch/arm/boot/dts/sun7i-a20.dtsi                   |  47 ++
+>  arch/arm/boot/dts/sun8i-a33.dtsi                   |  39 ++
+>  drivers/media/common/videobuf2/videobuf2-v4l2.c    |  19 +
+>  drivers/media/platform/Kconfig                     |  14 +
+>  drivers/media/platform/Makefile                    |   1 +
+>  drivers/media/platform/sunxi-cedrus/Makefile       |   4 +
+>  drivers/media/platform/sunxi-cedrus/sunxi_cedrus.c | 313 ++++++++++++
+>  .../platform/sunxi-cedrus/sunxi_cedrus_common.h    | 106 ++++
+>  .../media/platform/sunxi-cedrus/sunxi_cedrus_dec.c | 568
+> +++++++++++++++++++++
+>  .../media/platform/sunxi-cedrus/sunxi_cedrus_dec.h |  33 ++
+>  .../media/platform/sunxi-cedrus/sunxi_cedrus_hw.c  | 185 +++++++
+>  .../media/platform/sunxi-cedrus/sunxi_cedrus_hw.h  |  36 ++
+>  .../platform/sunxi-cedrus/sunxi_cedrus_mpeg2.c     | 152 ++++++
+>  .../platform/sunxi-cedrus/sunxi_cedrus_regs.h      | 170 ++++++
+>  drivers/media/platform/vim2m.c                     |  13 +-
+>  drivers/media/v4l2-core/v4l2-ctrls.c               |  15 +
+>  drivers/media/v4l2-core/v4l2-ioctl.c               |   1 +
+>  include/uapi/linux/v4l2-controls.h                 |  26 +
+>  include/uapi/linux/videodev2.h                     |   6 +
+>  21 files changed, 1821 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/media/sunxi-
+> cedrus.txt
+>  create mode 100644 drivers/media/platform/sunxi-cedrus/Makefile
+>  create mode 100644 drivers/media/platform/sunxi-cedrus/sunxi_cedrus.c
+>  create mode 100644 drivers/media/platform/sunxi-
+> cedrus/sunxi_cedrus_common.h
+>  create mode 100644 drivers/media/platform/sunxi-
+> cedrus/sunxi_cedrus_dec.c
+>  create mode 100644 drivers/media/platform/sunxi-
+> cedrus/sunxi_cedrus_dec.h
+>  create mode 100644 drivers/media/platform/sunxi-
+> cedrus/sunxi_cedrus_hw.c
+>  create mode 100644 drivers/media/platform/sunxi-
+> cedrus/sunxi_cedrus_hw.h
+>  create mode 100644 drivers/media/platform/sunxi-
+> cedrus/sunxi_cedrus_mpeg2.c
+>  create mode 100644 drivers/media/platform/sunxi-
+> cedrus/sunxi_cedrus_regs.h
+>=20
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-HlJ2Wc3XAxVn/wzc1ex8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-Thanks, but please split the patch, one for each arch.
+-----BEGIN PGP SIGNATURE-----
 
-cheers
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlqiX5EACgkQ3cLmz3+f
+v9HHBAf9EI6TZ+OLHWQBSByQgV454Ur83C4+xkcYnjQ8ulQEKZyoTdXi7dOTudX8
+HGF/milN7+lRoVuvgCzwzxdSZsZ+QJdKXIBNFeeuIi4lDHMdMhJQwZA/VVWboNRw
+gHVVOfYiorWtzGaueevgPmwTowOYc6CSrHyEt33XCOdR9dEhFT9ByeIbB4yKAT6K
+k1eujOOLT0vDvTm+8lxJ1YQ3TJuwn1ep89MLnclUeB9+P4ugTRrmMdPgYyzU1v2G
+92gt2pwiXGRQX4tM8xVczHxv5gN1jSLv0tjiuyDFJ+1QdSBEKfegWcWsF2LFpklt
+YrYYYVidGr2n6Sn0t+Pc8IrviVKC9A==
+=JvGE
+-----END PGP SIGNATURE-----
 
-> diff --git a/arch/powerpc/include/asm/pkeys.h b/arch/powerpc/include/asm/pkeys.h
-> index 0409c80..3e8abe4 100644
-> --- a/arch/powerpc/include/asm/pkeys.h
-> +++ b/arch/powerpc/include/asm/pkeys.h
-> @@ -101,10 +101,18 @@ static inline u16 pte_to_pkey_bits(u64 pteflags)
->  
->  static inline bool mm_pkey_is_allocated(struct mm_struct *mm, int pkey)
->  {
-> -	/* A reserved key is never considered as 'explicitly allocated' */
-> -	return ((pkey < arch_max_pkey()) &&
-> -		!__mm_pkey_is_reserved(pkey) &&
-> -		__mm_pkey_is_allocated(mm, pkey));
-> +	/* pkey 0 is allocated by default. */
-> +	if (!pkey)
-> +	       return true;
-> +
-> +	if (pkey < 0 || pkey >= arch_max_pkey())
-> +	       return false;
-> +
-> +	/* reserved keys are never allocated. */
-> +	if (__mm_pkey_is_reserved(pkey))
-> +	       return false;
-> +
-> +	return(__mm_pkey_is_allocated(mm, pkey));
->  }
->  
->  extern void __arch_activate_pkey(int pkey);
-> @@ -150,7 +158,8 @@ static inline int mm_pkey_free(struct mm_struct *mm, int pkey)
->  	if (static_branch_likely(&pkey_disabled))
->  		return -1;
->  
-> -	if (!mm_pkey_is_allocated(mm, pkey))
-> +	/* pkey 0 cannot be freed */
-> +	if (!pkey || !mm_pkey_is_allocated(mm, pkey))
->  		return -EINVAL;
->  
->  	/*
-> diff --git a/arch/x86/include/asm/pkeys.h b/arch/x86/include/asm/pkeys.h
-> index a0ba1ff..6ea7486 100644
-> --- a/arch/x86/include/asm/pkeys.h
-> +++ b/arch/x86/include/asm/pkeys.h
-> @@ -52,7 +52,7 @@ bool mm_pkey_is_allocated(struct mm_struct *mm, int pkey)
->  	 * from pkey_alloc().  pkey 0 is special, and never
->  	 * returned from pkey_alloc().
->  	 */
-> -	if (pkey <= 0)
-> +	if (pkey < 0)
->  		return false;
->  	if (pkey >= arch_max_pkey())
->  		return false;
-> @@ -92,7 +92,8 @@ int mm_pkey_alloc(struct mm_struct *mm)
->  static inline
->  int mm_pkey_free(struct mm_struct *mm, int pkey)
->  {
-> -	if (!mm_pkey_is_allocated(mm, pkey))
-> +	/* pkey 0 is special and can never be freed */
-> +	if (!pkey || !mm_pkey_is_allocated(mm, pkey))
->  		return -EINVAL;
->  
->  	mm_set_pkey_free(mm, pkey);
-> -- 
-> 1.8.3.1
+--=-HlJ2Wc3XAxVn/wzc1ex8--
