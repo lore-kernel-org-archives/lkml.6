@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751595AbeCICGG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 21:06:06 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:38062 "EHLO huawei.com"
+        id S1751822AbeCICGY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 21:06:24 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:38064 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751026AbeCICFF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 21:05:05 -0500
+        id S1751045AbeCICFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 21:05:04 -0500
 From: Peng Li <lipeng321@huawei.com>
 To: <davem@davemloft.net>
 CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
         <lipeng321@huawei.com>
-Subject: [PATCH net-next 2/9] net: hns3: refactor the hclge_get/set_rss_tuple function
-Date: Fri, 9 Mar 2018 10:36:57 +0800
-Message-ID: <1520563024-94811-3-git-send-email-lipeng321@huawei.com>
+Subject: [PATCH net-next 7/9] net: hns3: fix for coalesce configuration lost during reset
+Date: Fri, 9 Mar 2018 10:37:02 +0800
+Message-ID: <1520563024-94811-8-git-send-email-lipeng321@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520563024-94811-1-git-send-email-lipeng321@huawei.com>
 References: <1520563024-94811-1-git-send-email-lipeng321@huawei.com>
@@ -27,196 +27,300 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yunsheng Lin <linyunsheng@huawei.com>
 
-This patch refactors the hclge_get/set_rss_tuple function
-in order to fix the rss configuration loss problem during
+Coalesce configuration will be set to default value by
+hns3_nic_init_vector_data during reset, which causes the
+coalesce configuration loss problem.
+
+This patch fixes it by setting the default value in
+hns3_nic_alloc_vector_data, which will not be called in the
 reset process.
 
 Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 ---
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 91 +++++++++++++---------
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    | 13 ++++
- 2 files changed, 67 insertions(+), 37 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 156 +++++++++++++++++-------
+ 1 file changed, 114 insertions(+), 42 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index cd5b040..747cc8f 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -3091,14 +3091,16 @@ static int hclge_set_rss_input_tuple(struct hclge_dev *hdev)
- 	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_RSS_INPUT_TUPLE, false);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index bbaa21f..07dbebb 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -211,19 +211,25 @@ static void hns3_vector_gl_rl_init(struct hns3_enet_tqp_vector *tqp_vector,
+ 	tqp_vector->tx_group.int_gl = HNS3_INT_GL_50K;
+ 	tqp_vector->rx_group.int_gl = HNS3_INT_GL_50K;
  
- 	req = (struct hclge_rss_input_tuple_cmd *)desc.data;
--	req->ipv4_tcp_en = HCLGE_RSS_INPUT_TUPLE_OTHER;
--	req->ipv4_udp_en = HCLGE_RSS_INPUT_TUPLE_OTHER;
--	req->ipv4_sctp_en = HCLGE_RSS_INPUT_TUPLE_SCTP;
--	req->ipv4_fragment_en = HCLGE_RSS_INPUT_TUPLE_OTHER;
--	req->ipv6_tcp_en = HCLGE_RSS_INPUT_TUPLE_OTHER;
--	req->ipv6_udp_en = HCLGE_RSS_INPUT_TUPLE_OTHER;
--	req->ipv6_sctp_en = HCLGE_RSS_INPUT_TUPLE_SCTP;
--	req->ipv6_fragment_en = HCLGE_RSS_INPUT_TUPLE_OTHER;
-+
-+	/* Get the tuple cfg from pf */
-+	req->ipv4_tcp_en = hdev->vport[0].rss_tuple_sets.ipv4_tcp_en;
-+	req->ipv4_udp_en = hdev->vport[0].rss_tuple_sets.ipv4_udp_en;
-+	req->ipv4_sctp_en = hdev->vport[0].rss_tuple_sets.ipv4_sctp_en;
-+	req->ipv4_fragment_en = hdev->vport[0].rss_tuple_sets.ipv4_fragment_en;
-+	req->ipv6_tcp_en = hdev->vport[0].rss_tuple_sets.ipv6_tcp_en;
-+	req->ipv6_udp_en = hdev->vport[0].rss_tuple_sets.ipv6_udp_en;
-+	req->ipv6_sctp_en = hdev->vport[0].rss_tuple_sets.ipv6_sctp_en;
-+	req->ipv6_fragment_en = hdev->vport[0].rss_tuple_sets.ipv6_fragment_en;
- 	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
- 	if (ret) {
- 		dev_err(&hdev->pdev->dev,
-@@ -3204,15 +3206,16 @@ static int hclge_set_rss_tuple(struct hnae3_handle *handle,
- 		return -EINVAL;
+-	hns3_set_vector_coalesce_tx_gl(tqp_vector,
+-				       tqp_vector->tx_group.int_gl);
+-	hns3_set_vector_coalesce_rx_gl(tqp_vector,
+-				       tqp_vector->rx_group.int_gl);
+-
+ 	/* Default: disable RL */
+ 	h->kinfo.int_rl_setting = 0;
+-	hns3_set_vector_coalesce_rl(tqp_vector, h->kinfo.int_rl_setting);
  
- 	req = (struct hclge_rss_input_tuple_cmd *)desc.data;
--	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_RSS_INPUT_TUPLE, true);
--	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
--	if (ret) {
--		dev_err(&hdev->pdev->dev,
--			"Read rss tuple fail, status = %d\n", ret);
--		return ret;
--	}
-+	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_RSS_INPUT_TUPLE, false);
- 
--	hclge_cmd_reuse_desc(&desc, false);
-+	req->ipv4_tcp_en = vport->rss_tuple_sets.ipv4_tcp_en;
-+	req->ipv4_udp_en = vport->rss_tuple_sets.ipv4_udp_en;
-+	req->ipv4_sctp_en = vport->rss_tuple_sets.ipv4_sctp_en;
-+	req->ipv4_fragment_en = vport->rss_tuple_sets.ipv4_fragment_en;
-+	req->ipv6_tcp_en = vport->rss_tuple_sets.ipv6_tcp_en;
-+	req->ipv6_udp_en = vport->rss_tuple_sets.ipv6_udp_en;
-+	req->ipv6_sctp_en = vport->rss_tuple_sets.ipv6_sctp_en;
-+	req->ipv6_fragment_en = vport->rss_tuple_sets.ipv6_fragment_en;
- 
- 	tuple_sets = hclge_get_rss_hash_bits(nfc);
- 	switch (nfc->flow_type) {
-@@ -3249,52 +3252,49 @@ static int hclge_set_rss_tuple(struct hnae3_handle *handle,
- 	}
- 
- 	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
--	if (ret)
-+	if (ret) {
- 		dev_err(&hdev->pdev->dev,
- 			"Set rss tuple fail, status = %d\n", ret);
-+		return ret;
-+	}
- 
--	return ret;
-+	vport->rss_tuple_sets.ipv4_tcp_en = req->ipv4_tcp_en;
-+	vport->rss_tuple_sets.ipv4_udp_en = req->ipv4_udp_en;
-+	vport->rss_tuple_sets.ipv4_sctp_en = req->ipv4_sctp_en;
-+	vport->rss_tuple_sets.ipv4_fragment_en = req->ipv4_fragment_en;
-+	vport->rss_tuple_sets.ipv6_tcp_en = req->ipv6_tcp_en;
-+	vport->rss_tuple_sets.ipv6_udp_en = req->ipv6_udp_en;
-+	vport->rss_tuple_sets.ipv6_sctp_en = req->ipv6_sctp_en;
-+	vport->rss_tuple_sets.ipv6_fragment_en = req->ipv6_fragment_en;
-+	return 0;
+ 	tqp_vector->rx_group.flow_level = HNS3_FLOW_LOW;
+ 	tqp_vector->tx_group.flow_level = HNS3_FLOW_LOW;
  }
  
- static int hclge_get_rss_tuple(struct hnae3_handle *handle,
- 			       struct ethtool_rxnfc *nfc)
++static void hns3_vector_gl_rl_init_hw(struct hns3_enet_tqp_vector *tqp_vector,
++				      struct hns3_nic_priv *priv)
++{
++	struct hnae3_handle *h = priv->ae_handle;
++
++	hns3_set_vector_coalesce_tx_gl(tqp_vector,
++				       tqp_vector->tx_group.int_gl);
++	hns3_set_vector_coalesce_rx_gl(tqp_vector,
++				       tqp_vector->rx_group.int_gl);
++	hns3_set_vector_coalesce_rl(tqp_vector, h->kinfo.int_rl_setting);
++}
++
+ static int hns3_nic_set_real_num_queue(struct net_device *netdev)
  {
- 	struct hclge_vport *vport = hclge_get_vport(handle);
--	struct hclge_dev *hdev = vport->back;
--	struct hclge_rss_input_tuple_cmd *req;
--	struct hclge_desc desc;
- 	u8 tuple_sets;
--	int ret;
+ 	struct hnae3_handle *h = hns3_get_handle(netdev);
+@@ -2625,32 +2631,18 @@ static int hns3_nic_init_vector_data(struct hns3_nic_priv *priv)
+ 	struct hnae3_ring_chain_node vector_ring_chain;
+ 	struct hnae3_handle *h = priv->ae_handle;
+ 	struct hns3_enet_tqp_vector *tqp_vector;
+-	struct hnae3_vector_info *vector;
+-	struct pci_dev *pdev = h->pdev;
+-	u16 tqp_num = h->kinfo.num_tqps;
+-	u16 vector_num;
+ 	int ret = 0;
+ 	u16 i;
  
- 	nfc->data = 0;
- 
--	req = (struct hclge_rss_input_tuple_cmd *)desc.data;
--	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_RSS_INPUT_TUPLE, true);
--	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
--	if (ret) {
--		dev_err(&hdev->pdev->dev,
--			"Read rss tuple fail, status = %d\n", ret);
--		return ret;
--	}
+-	/* RSS size, cpu online and vector_num should be the same */
+-	/* Should consider 2p/4p later */
+-	vector_num = min_t(u16, num_online_cpus(), tqp_num);
+-	vector = devm_kcalloc(&pdev->dev, vector_num, sizeof(*vector),
+-			      GFP_KERNEL);
+-	if (!vector)
+-		return -ENOMEM;
 -
- 	switch (nfc->flow_type) {
- 	case TCP_V4_FLOW:
--		tuple_sets = req->ipv4_tcp_en;
-+		tuple_sets = vport->rss_tuple_sets.ipv4_tcp_en;
- 		break;
- 	case UDP_V4_FLOW:
--		tuple_sets = req->ipv4_udp_en;
-+		tuple_sets = vport->rss_tuple_sets.ipv4_udp_en;
- 		break;
- 	case TCP_V6_FLOW:
--		tuple_sets = req->ipv6_tcp_en;
-+		tuple_sets = vport->rss_tuple_sets.ipv6_tcp_en;
- 		break;
- 	case UDP_V6_FLOW:
--		tuple_sets = req->ipv6_udp_en;
-+		tuple_sets = vport->rss_tuple_sets.ipv6_udp_en;
- 		break;
- 	case SCTP_V4_FLOW:
--		tuple_sets = req->ipv4_sctp_en;
-+		tuple_sets = vport->rss_tuple_sets.ipv4_sctp_en;
- 		break;
- 	case SCTP_V6_FLOW:
--		tuple_sets = req->ipv6_sctp_en;
-+		tuple_sets = vport->rss_tuple_sets.ipv6_sctp_en;
- 		break;
- 	case IPV4_FLOW:
- 	case IPV6_FLOW:
-@@ -3349,6 +3349,23 @@ int hclge_rss_init_hw(struct hclge_dev *hdev)
+-	vector_num = h->ae_algo->ops->get_vector(h, vector_num, vector);
+-
+-	priv->vector_num = vector_num;
+-	priv->tqp_vector = (struct hns3_enet_tqp_vector *)
+-		devm_kcalloc(&pdev->dev, vector_num, sizeof(*priv->tqp_vector),
+-			     GFP_KERNEL);
+-	if (!priv->tqp_vector)
+-		return -ENOMEM;
++	for (i = 0; i < priv->vector_num; i++) {
++		tqp_vector = &priv->tqp_vector[i];
++		hns3_vector_gl_rl_init_hw(tqp_vector, priv);
++		tqp_vector->num_tqps = 0;
++	}
  
- 	/* Initialize RSS indirect table for each vport */
- 	for (j = 0; j < hdev->num_vmdq_vport + 1; j++) {
-+		vport[j].rss_tuple_sets.ipv4_tcp_en =
-+			HCLGE_RSS_INPUT_TUPLE_OTHER;
-+		vport[j].rss_tuple_sets.ipv4_udp_en =
-+			HCLGE_RSS_INPUT_TUPLE_OTHER;
-+		vport[j].rss_tuple_sets.ipv4_sctp_en =
-+			HCLGE_RSS_INPUT_TUPLE_SCTP;
-+		vport[j].rss_tuple_sets.ipv4_fragment_en =
-+			HCLGE_RSS_INPUT_TUPLE_OTHER;
-+		vport[j].rss_tuple_sets.ipv6_tcp_en =
-+			HCLGE_RSS_INPUT_TUPLE_OTHER;
-+		vport[j].rss_tuple_sets.ipv6_udp_en =
-+			HCLGE_RSS_INPUT_TUPLE_OTHER;
-+		vport[j].rss_tuple_sets.ipv6_sctp_en =
-+			HCLGE_RSS_INPUT_TUPLE_SCTP;
-+		vport[j].rss_tuple_sets.ipv6_fragment_en =
-+			HCLGE_RSS_INPUT_TUPLE_OTHER;
+-	for (i = 0; i < tqp_num; i++) {
+-		u16 vector_i = i % vector_num;
++	for (i = 0; i < h->kinfo.num_tqps; i++) {
++		u16 vector_i = i % priv->vector_num;
++		u16 tqp_num = h->kinfo.num_tqps;
+ 
+ 		tqp_vector = &priv->tqp_vector[vector_i];
+ 
+@@ -2660,52 +2652,94 @@ static int hns3_nic_init_vector_data(struct hns3_nic_priv *priv)
+ 		hns3_add_ring_to_group(&tqp_vector->rx_group,
+ 				       priv->ring_data[i + tqp_num].ring);
+ 
+-		tqp_vector->idx = vector_i;
+-		tqp_vector->mask_addr = vector[vector_i].io_addr;
+-		tqp_vector->vector_irq = vector[vector_i].vector;
+-		tqp_vector->num_tqps++;
+-
+ 		priv->ring_data[i].ring->tqp_vector = tqp_vector;
+ 		priv->ring_data[i + tqp_num].ring->tqp_vector = tqp_vector;
++		tqp_vector->num_tqps++;
+ 	}
+ 
+-	for (i = 0; i < vector_num; i++) {
++	for (i = 0; i < priv->vector_num; i++) {
+ 		tqp_vector = &priv->tqp_vector[i];
+ 
+ 		tqp_vector->rx_group.total_bytes = 0;
+ 		tqp_vector->rx_group.total_packets = 0;
+ 		tqp_vector->tx_group.total_bytes = 0;
+ 		tqp_vector->tx_group.total_packets = 0;
+-		hns3_vector_gl_rl_init(tqp_vector, priv);
+ 		tqp_vector->handle = h;
+ 
+ 		ret = hns3_get_vector_ring_chain(tqp_vector,
+ 						 &vector_ring_chain);
+ 		if (ret)
+-			goto out;
++			return ret;
+ 
+ 		ret = h->ae_algo->ops->map_ring_to_vector(h,
+ 			tqp_vector->vector_irq, &vector_ring_chain);
+-		if (ret)
+-			goto out;
+ 
+ 		hns3_free_vector_ring_chain(tqp_vector, &vector_ring_chain);
+ 
++		if (ret)
++			return ret;
 +
- 		for (i = 0; i < HCLGE_RSS_IND_TBL_SIZE; i++) {
- 			vport[j].rss_indirection_tbl[i] =
- 				i % vport[j].alloc_rss_size;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-index 7e762c4..13d3999 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-@@ -573,6 +573,17 @@ struct hclge_rx_vtag_cfg {
- 	bool vlan2_vlan_prionly;/* Outer VLAN Tag up to descriptor Enable */
- };
+ 		netif_napi_add(priv->netdev, &tqp_vector->napi,
+ 			       hns3_nic_common_poll, NAPI_POLL_WEIGHT);
+ 	}
  
-+struct hclge_rss_tuple_cfg {
-+	u8 ipv4_tcp_en;
-+	u8 ipv4_udp_en;
-+	u8 ipv4_sctp_en;
-+	u8 ipv4_fragment_en;
-+	u8 ipv6_tcp_en;
-+	u8 ipv6_udp_en;
-+	u8 ipv6_sctp_en;
-+	u8 ipv6_fragment_en;
-+};
++	return 0;
++}
 +
- struct hclge_vport {
- 	u16 alloc_tqps;	/* Allocated Tx/Rx queues */
++static int hns3_nic_alloc_vector_data(struct hns3_nic_priv *priv)
++{
++	struct hnae3_handle *h = priv->ae_handle;
++	struct hns3_enet_tqp_vector *tqp_vector;
++	struct hnae3_vector_info *vector;
++	struct pci_dev *pdev = h->pdev;
++	u16 tqp_num = h->kinfo.num_tqps;
++	u16 vector_num;
++	int ret = 0;
++	u16 i;
++
++	/* RSS size, cpu online and vector_num should be the same */
++	/* Should consider 2p/4p later */
++	vector_num = min_t(u16, num_online_cpus(), tqp_num);
++	vector = devm_kcalloc(&pdev->dev, vector_num, sizeof(*vector),
++			      GFP_KERNEL);
++	if (!vector)
++		return -ENOMEM;
++
++	vector_num = h->ae_algo->ops->get_vector(h, vector_num, vector);
++
++	priv->vector_num = vector_num;
++	priv->tqp_vector = (struct hns3_enet_tqp_vector *)
++		devm_kcalloc(&pdev->dev, vector_num, sizeof(*priv->tqp_vector),
++			     GFP_KERNEL);
++	if (!priv->tqp_vector) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	for (i = 0; i < priv->vector_num; i++) {
++		tqp_vector = &priv->tqp_vector[i];
++		tqp_vector->idx = i;
++		tqp_vector->mask_addr = vector[i].io_addr;
++		tqp_vector->vector_irq = vector[i].vector;
++		hns3_vector_gl_rl_init(tqp_vector, priv);
++	}
++
+ out:
+ 	devm_kfree(&pdev->dev, vector);
+ 	return ret;
+ }
  
-@@ -580,6 +591,8 @@ struct hclge_vport {
- 	/* User configured lookup table entries */
- 	u8  rss_indirection_tbl[HCLGE_RSS_IND_TBL_SIZE];
- 	int rss_algo;		/* User configured hash algorithm */
-+	/* User configured rss tuple sets */
-+	struct hclge_rss_tuple_cfg rss_tuple_sets;
++static void hns3_clear_ring_group(struct hns3_enet_ring_group *group)
++{
++	group->ring = NULL;
++	group->count = 0;
++}
++
+ static int hns3_nic_uninit_vector_data(struct hns3_nic_priv *priv)
+ {
+ 	struct hnae3_ring_chain_node vector_ring_chain;
+ 	struct hnae3_handle *h = priv->ae_handle;
+ 	struct hns3_enet_tqp_vector *tqp_vector;
+-	struct pci_dev *pdev = h->pdev;
+ 	int i, ret;
  
- 	u16 alloc_rss_size;
+ 	for (i = 0; i < priv->vector_num; i++) {
+@@ -2736,12 +2770,30 @@ static int hns3_nic_uninit_vector_data(struct hns3_nic_priv *priv)
+ 		}
+ 
+ 		priv->ring_data[i].ring->irq_init_flag = HNS3_VECTOR_NOT_INITED;
+-
++		hns3_clear_ring_group(&tqp_vector->rx_group);
++		hns3_clear_ring_group(&tqp_vector->tx_group);
+ 		netif_napi_del(&priv->tqp_vector[i].napi);
+ 	}
+ 
+-	devm_kfree(&pdev->dev, priv->tqp_vector);
++	return 0;
++}
++
++static int hns3_nic_dealloc_vector_data(struct hns3_nic_priv *priv)
++{
++	struct hnae3_handle *h = priv->ae_handle;
++	struct pci_dev *pdev = h->pdev;
++	int i, ret;
++
++	for (i = 0; i < priv->vector_num; i++) {
++		struct hns3_enet_tqp_vector *tqp_vector;
++
++		tqp_vector = &priv->tqp_vector[i];
++		ret = h->ae_algo->ops->put_vector(h, tqp_vector->vector_irq);
++		if (ret)
++			return ret;
++	}
+ 
++	devm_kfree(&pdev->dev, priv->tqp_vector);
+ 	return 0;
+ }
+ 
+@@ -3057,6 +3109,12 @@ static int hns3_client_init(struct hnae3_handle *handle)
+ 		goto out_get_ring_cfg;
+ 	}
+ 
++	ret = hns3_nic_alloc_vector_data(priv);
++	if (ret) {
++		ret = -ENOMEM;
++		goto out_alloc_vector_data;
++	}
++
+ 	ret = hns3_nic_init_vector_data(priv);
+ 	if (ret) {
+ 		ret = -ENOMEM;
+@@ -3085,8 +3143,10 @@ static int hns3_client_init(struct hnae3_handle *handle)
+ out_reg_netdev_fail:
+ out_init_ring_data:
+ 	(void)hns3_nic_uninit_vector_data(priv);
+-	priv->ring_data = NULL;
+ out_init_vector_data:
++	hns3_nic_dealloc_vector_data(priv);
++out_alloc_vector_data:
++	priv->ring_data = NULL;
+ out_get_ring_cfg:
+ 	priv->ae_handle = NULL;
+ 	free_netdev(netdev);
+@@ -3106,6 +3166,10 @@ static void hns3_client_uninit(struct hnae3_handle *handle, bool reset)
+ 	if (ret)
+ 		netdev_err(netdev, "uninit vector error\n");
+ 
++	ret = hns3_nic_dealloc_vector_data(priv);
++	if (ret)
++		netdev_err(netdev, "dealloc vector error\n");
++
+ 	ret = hns3_uninit_all_ring(priv);
+ 	if (ret)
+ 		netdev_err(netdev, "uninit ring error\n");
+@@ -3363,6 +3427,10 @@ static int hns3_modify_tqp_num(struct net_device *netdev, u16 new_tqp_num)
+ 	if (ret)
+ 		return ret;
+ 
++	ret = hns3_nic_alloc_vector_data(priv);
++	if (ret)
++		goto err_alloc_vector;
++
+ 	ret = hns3_nic_init_vector_data(priv);
+ 	if (ret)
+ 		goto err_uninit_vector;
+@@ -3377,6 +3445,8 @@ static int hns3_modify_tqp_num(struct net_device *netdev, u16 new_tqp_num)
+ 	hns3_put_ring_config(priv);
+ err_uninit_vector:
+ 	hns3_nic_uninit_vector_data(priv);
++err_alloc_vector:
++	hns3_nic_dealloc_vector_data(priv);
+ 	return ret;
+ }
+ 
+@@ -3424,6 +3494,8 @@ int hns3_set_channels(struct net_device *netdev,
+ 		goto open_netdev;
+ 	}
+ 
++	hns3_nic_dealloc_vector_data(priv);
++
+ 	hns3_uninit_all_ring(priv);
+ 	hns3_put_ring_config(priv);
  
 -- 
 2.9.3
