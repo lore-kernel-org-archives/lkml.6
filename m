@@ -1,98 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751262AbeCIKRn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:17:43 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:49983 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751151AbeCIKPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 05:15:54 -0500
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Cc: Icenowy Zheng <icenowy@aosc.xyz>, Florent Revest <revestflo@gmail.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Thomas van Kleef <thomas@vitsch.nl>,
-        "Signed-off-by : Bob Ham" <rah@settrans.net>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH 7/9] ARM: dts: sun5i: Use video-engine node
-Date: Fri,  9 Mar 2018 11:14:43 +0100
-Message-Id: <20180309101445.16190-5-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180309100933.15922-3-paul.kocialkowski@bootlin.com>
-References: <20180309100933.15922-3-paul.kocialkowski@bootlin.com>
+        id S1751588AbeCIKS1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:18:27 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56400 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751258AbeCIKOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 05:14:54 -0500
+From: Jiri Olsa <jolsa@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: [PATCH 4/9] perf c2c record: Record physical addresses in samples
+Date: Fri,  9 Mar 2018 11:14:37 +0100
+Message-Id: <20180309101442.9224-5-jolsa@kernel.org>
+In-Reply-To: <20180309101442.9224-1-jolsa@kernel.org>
+References: <20180309101442.9224-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florent Revest <florent.revest@free-electrons.com>
+We are going to display NUMA node information in following
+patches. For this we need to have physical address data in
+the sample.
 
-Now that we have a driver matching "allwinner,sun4i-a10-video-engine" we
-can load it.
+Adding --phys-data as a default option for perf c2c record.
 
-The "video-engine" node depends on the new sunxi-ng's CCU clock and
-reset bindings. This patch also includes a ve_reserved DMA pool for
-videobuf2 buffer allocations in sunxi-cedrus.
-
-Signed-off-by: Florent Revest <florent.revest@free-electrons.com>
-[Icenowy: beautify the node name]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Link: http://lkml.kernel.org/n/tip-4d4lyozdbsknzqeny8kl1jg4@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- arch/arm/boot/dts/sun5i-a13.dtsi | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ tools/perf/Documentation/perf-c2c.txt | 2 +-
+ tools/perf/builtin-c2c.c              | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun5i-a13.dtsi b/arch/arm/boot/dts/sun5i-a13.dtsi
-index 4e830f5cb7f1..18bc8d739cd0 100644
---- a/arch/arm/boot/dts/sun5i-a13.dtsi
-+++ b/arch/arm/boot/dts/sun5i-a13.dtsi
-@@ -51,6 +51,19 @@
- / {
- 	interrupt-parent = <&intc>;
+diff --git a/tools/perf/Documentation/perf-c2c.txt b/tools/perf/Documentation/perf-c2c.txt
+index 822414235170..095aebdc5bb7 100644
+--- a/tools/perf/Documentation/perf-c2c.txt
++++ b/tools/perf/Documentation/perf-c2c.txt
+@@ -116,7 +116,7 @@ and calls standard perf record command.
+ Following perf record options are configured by default:
+ (check perf record man page for details)
  
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		ve_reserved: cma {
-+			compatible = "shared-dma-pool";
-+			reg = <0x43d00000 0x9000000>;
-+			no-map;
-+			linux,cma-default;
-+		};
-+	};
-+
- 	thermal-zones {
- 		cpu_thermal {
- 			/* milliseconds */
-@@ -97,6 +110,23 @@
- 			status = "disabled";
- 		};
+-  -W,-d,--sample-cpu
++  -W,-d,--phys-data,--sample-cpu
  
-+		ve: video-engine@01c0e000 {
-+			compatible = "allwinner,sun4i-a10-video-engine";
-+			memory-region = <&ve_reserved>;
-+
-+			clocks = <&ccu CLK_AHB_VE>, <&ccu CLK_VE>,
-+				 <&ccu CLK_DRAM_VE>;
-+			clock-names = "ahb", "mod", "ram";
-+
-+			assigned-clocks = <&ccu CLK_VE>;
-+			assigned-clock-rates = <320000000>;
-+
-+			resets = <&ccu RST_VE>;
-+
-+			interrupts = <53>;
-+
-+			reg = <0x01c0e000 0x1000>;
-+		};
- 	};
- };
+ Unless specified otherwise with '-e' option, following events are monitored by
+ default:
+diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+index 98d243fa0c06..95765a1db903 100644
+--- a/tools/perf/builtin-c2c.c
++++ b/tools/perf/builtin-c2c.c
+@@ -2704,7 +2704,7 @@ static int perf_c2c__record(int argc, const char **argv)
+ 	argc = parse_options(argc, argv, options, record_mem_usage,
+ 			     PARSE_OPT_KEEP_UNKNOWN);
  
+-	rec_argc = argc + 10; /* max number of arguments */
++	rec_argc = argc + 11; /* max number of arguments */
+ 	rec_argv = calloc(rec_argc + 1, sizeof(char *));
+ 	if (!rec_argv)
+ 		return -1;
+@@ -2720,6 +2720,7 @@ static int perf_c2c__record(int argc, const char **argv)
+ 		rec_argv[i++] = "-W";
+ 
+ 	rec_argv[i++] = "-d";
++	rec_argv[i++] = "--phys-data";
+ 	rec_argv[i++] = "--sample-cpu";
+ 
+ 	for (j = 0; j < PERF_MEM_EVENTS__MAX; j++) {
 -- 
-2.16.2
+2.13.6
