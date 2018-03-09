@@ -1,117 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751183AbeCIJWo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 04:22:44 -0500
-Received: from mail-qt0-f171.google.com ([209.85.216.171]:37835 "EHLO
-        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750883AbeCIJWl (ORCPT
+        id S1751120AbeCIJ1X (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 04:27:23 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:56379 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751078AbeCIJ1V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:22:41 -0500
-X-Google-Smtp-Source: AG47ELsyC4E0HLc/bjO0kMRKovn0vTmqb1pyiLR7PTqsucM/ftSo/XEOxMCe3UXphCAIwjsBmp9dPRErKepc5IvVsHA=
-MIME-Version: 1.0
-In-Reply-To: <20180309090422.GD14819@w540>
-References: <1520522643-11756-1-git-send-email-jacopo+renesas@jmondi.org>
- <1520522643-11756-2-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdVQqp7YcoQ6eN5pSznZB4zn7ztv1WFfkcQOzP_3DhG_Vg@mail.gmail.com> <20180309090422.GD14819@w540>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 9 Mar 2018 10:22:39 +0100
-X-Google-Sender-Auth: eYqsPq-jqUXPXS62qGJ6xzLGzn8
-Message-ID: <CAMuHMdUaOjJekCK5b1n3vYAt-ZkRvTcu=G9eADhC4+0AD7UD6Q@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: display: bridge: Document THC63LVD1024
- LVDS decoder
-To: jacopo mondi <jacopo@jmondi.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>, Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Fri, 9 Mar 2018 04:27:21 -0500
+Message-ID: <1520587632.19507.3.camel@pengutronix.de>
+Subject: Re: [PATCH] ARM: dts: i.MX25: define SSI FIFO depth
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Lothar =?ISO-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>,
+        Martin Kaiser <martin@kaiser.cx>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Date: Fri, 09 Mar 2018 10:27:12 +0100
+In-Reply-To: <20180309093738.7cd5fded@karo-electronics.de>
+References: <1520373499-13623-1-git-send-email-martin@kaiser.cx>
+         <20180308161135.1f3d3d18@karo-electronics.de>
+         <20180308153832.GA28454@botnar.kaiser.cx>
+         <20180309093738.7cd5fded@karo-electronics.de>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:fa0f:41ff:fe58:4010
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+Hi Lothar,
 
-On Fri, Mar 9, 2018 at 10:04 AM, jacopo mondi <jacopo@jmondi.org> wrote:
-> On Fri, Mar 09, 2018 at 09:10:55AM +0100, Geert Uytterhoeven wrote:
->> On Thu, Mar 8, 2018 at 4:24 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
->> > Document Thine THC63LVD1024 LVDS decoder.
->> >
->> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->>
->> Thanks for your patch!
->>
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
->> > @@ -0,0 +1,59 @@
->> > +THine Electronics THC63LVD1024 LVDS receiver
->>
->> Thine
->>
->> > +--------------------------------------------
->> > +
->> > +The THC63LVD1024 is an LVDS receiver designed to convert multiple LVDS streams
->> > +to digital CMOS/TTL parallel data.
->> > +
->> > +Required properties:
->> > +- compatible: Shall be one of the following:
->> > +  "thine,thc63lvd1024",
->> > +  "lvds-decoder"
->>
->> What's the purpose of the second compatible value?
->> When should it be used?
->
-> It is probably my bad having started with a generic LVDS decoder in
-> mind and having then added properties specific to THC63LVD1024 to the
-> driver and its bindings.
->
-> "lvds,decoder" can be used when the chip is completely transparent to
-> the SoC and none of the optional properties I have described in the
-> bindings are specified (a generic "power-gpios" apart, see Andrzej
-> comments on "pwdn-gpios" property).
->
-> Also, I should make the driver behavior depend on the matched compatible
-> string. When "lvds-decoder" is matched, it will just look for an
-> optional power down gpio, when "thc63lvd1024" is matched, all of its
-> Vcc supplies, pwdn gpio and oe gpios will be queried and, if present,
-> eventually used in enable/disable routines.
->
-> I'm just not sure how to describe that in bindings. Would something
-> like the following work?
->
-> Optional properties for "lvds,decoder"
+Am Freitag, den 09.03.2018, 09:37 +0100 schrieb Lothar Waßmann:
+> Hi,
+> 
+> On Thu, 8 Mar 2018 16:38:32 +0100 Martin Kaiser wrote:
+> > Hi Lothar,
+> > 
+> > > > Thus wrote Lothar Waßmann (LW@KARO-electronics.de):
+> > 
+> > > > diff --git a/arch/arm/boot/dts/imx25.dtsi b/arch/arm/boot/dts/imx25.dtsi
+> > > > index 9725705..cf70df2 100644
+> > > > --- a/arch/arm/boot/dts/imx25.dtsi
+> > > > +++ b/arch/arm/boot/dts/imx25.dtsi
+> > > > @@ -269,6 +269,7 @@
+> > > > > > > >  				dmas = <&sdma 24 1 0>,
+> > > > > > > >  				       <&sdma 25 1 0>;
+> > > > > > > >  				dma-names = "rx", "tx";
+> > > > > > > > +				fsl,fifo-depth = <15>;
+> > > > > > > >  				status = "disabled";
+> > > > > > > >  			};
+> > > > @@ -329,6 +330,7 @@
+> > > > > > > >  				dmas = <&sdma 28 1 0>,
+> > > > > > > >  				       <&sdma 29 1 0>;
+> > > > > > > >  				dma-names = "rx", "tx";
+> > > > > > > > +				fsl,fifo-depth = <15>;
+> > > > > > > >  				status = "disabled";
+> > > >  			};
+> > > You are changing the global .dtsi file. Did you test this change with
+> > > all devices that are affected by it?
+> > 
+> > I changed the hardware description of the imx25 SSI to match the
+> > reference manual.
+> > 
+> > I did test this change on an imx25 board with audio playback. This uses
+> > the SSI description I modified. I verified that the driver is actually
+> > taking the modified setting into account and that this causes no
+> > problems.
+> > 
+> > As of today, this setting is used by the fsl_ssi driver to set the fifo
+> > water level for dma requests.
+> > 
+> > Of course, I don't have access to the enitre range of supported imx25
+> > boards and I don't think this is required for submitting patches.
+> > 
+> > Do you have any indication why this patch should not be merged?
+> > 
+> 
+> Usually patches should not willy-nilly change the behaviour of existing
+> configurations unless they fix any real life bugs.
 
-"lvds-decoder"?
+With this logic we wouldn't be able to get most driver changes applied.
+If it is matching the reference manual and has been tested on the
+affected hardware it should be good to go.
 
-> - power-gpios: Power control GPIOs
->
-> Optional properties for "thine,thc63lvd1024"
-> - pwdn-gpios: ...
-> - oe-gpios: ...
-> - supply-vcc: ...
-> - supply-cvcc: ...
-> - supply-pvcc: ...
-> - supply-lvcc: ...
+If you know about any specific corner cases that might break with this
+change, please speak up now. Don't reject patches based on the
+overarching "it might break something" argument.
 
-Sounds like you need a (separate) generic lvds-decoder DT bindings document,
-which you can extend/refer to from the THC63LVD1024-specific bindings.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards,
+Lucas
