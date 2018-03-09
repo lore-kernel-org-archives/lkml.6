@@ -1,63 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932740AbeCIWsh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 17:48:37 -0500
-Received: from mail-pl0-f47.google.com ([209.85.160.47]:42353 "EHLO
-        mail-pl0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932195AbeCIWse (ORCPT
+        id S932754AbeCIWtF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 17:49:05 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:54924 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932195AbeCIWtD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 17:48:34 -0500
-X-Google-Smtp-Source: AG47ELuldPNYNC7mpQITWqBXLwGOiRVdgRXNgVsK1roUVOLIsu3tJUiR6+ItWzB6p8ADFNo9GJsC1gjPkSmfsniX0JI=
+        Fri, 9 Mar 2018 17:49:03 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5332F6043F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
+Message-ID: <5AA30F5C.2010402@codeaurora.org>
+Date: Fri, 09 Mar 2018 14:49:00 -0800
+From: Saravana Kannan <skannan@codeaurora.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130329 Thunderbird/17.0.5
 MIME-Version: 1.0
-In-Reply-To: <001a113f2be668a1e9056701e617@google.com>
-References: <001a113f2be668a1e9056701e617@google.com>
-From: Cong Wang <xiyou.wangcong@gmail.com>
-Date: Fri, 9 Mar 2018 14:48:13 -0800
-Message-ID: <CAM_iQpV+PnGUXEKcSrF7u19NOeLLp0PhDW-DOkEfS+8pLnTgYw@mail.gmail.com>
-Subject: Re: WARNING in __proc_create
-To: syzbot <syzbot+0502b00edac2a0680b61@syzkaller.appspotmail.com>
-Cc: coreteam@netfilter.org, David Miller <davem@davemloft.net>,
-        Florian Westphal <fw@strlen.de>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        netfilter-devel@vger.kernel.org,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+To: Mark Rutland <mark.rutland@arm.com>
+CC: Suzuki K Poulose <Suzuki.Poulose@arm.com>, will.deacon@arm.com,
+        robh@kernel.org, sudeep.holla@arm.com, mathieu.poirier@linaro.org,
+        peterz@infradead.org, jonathan.cameron@huawei.com,
+        linux-kernel@vger.kernel.org, marc.zyngier@arm.com, leo.yan@linaro.org,
+        frowand.list@gmail.com, linux-arm-kernel@lists.infradead.org,
+        rananta@codeaurora.org, avilaj@codeaurora.org,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Charles Garcia-Tobin <Charles.Garcia-Tobin@arm.com>
+Subject: Re: [PATCH v11 8/8] perf: ARM DynamIQ Shared Unit PMU support
+References: <20180102112533.13640-1-suzuki.poulose@arm.com> <20180102112533.13640-9-suzuki.poulose@arm.com> <5AA1CE48.5030203@codeaurora.org> <a466d82b-2a0f-ffba-f9f7-c76c6c787bb5@arm.com> <20180309133531.fepm2suvdmvm4muv@lakrids.cambridge.arm.com>
+In-Reply-To: <20180309133531.fepm2suvdmvm4muv@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 9, 2018 at 1:59 PM, syzbot
-<syzbot+0502b00edac2a0680b61@syzkaller.appspotmail.com> wrote:
-> Hello,
+On 03/09/2018 05:35 AM, Mark Rutland wrote:
+> On Fri, Mar 09, 2018 at 10:53:14AM +0000, Suzuki K Poulose wrote:
+>> + Cc: Lorenzo, Charles.
+>>
+>> On 08/03/18 23:59, Saravana Kannan wrote:
+>>> On 01/02/2018 03:25 AM, Suzuki K Poulose wrote:
+>>>> Add support for the Cluster PMU part of the ARM DynamIQ Shared Unit (DSU).
+>>>> The DSU integrates one or more cores with an L3 memory system, control
+>>>> logic, and external interfaces to form a multicore cluster. The PMU
+>>>> allows counting the various events related to L3, SCU etc, along with
+>>>> providing a cycle counter.
+>>>>
+>>>> The PMU can be accessed via system registers, which are common
+>>>> to the cores in the same cluster. The PMU registers follow the
+>>>> semantics of the ARMv8 PMU, mostly, with the exception that
+>>>> the counters record the cluster wide events.
+>>>>
+>>>> This driver is mostly based on the ARMv8 and CCI PMU drivers.
+>>>> The driver only supports ARM64 at the moment. It can be extended
+>>>> to support ARM32 by providing register accessors like we do in
+>>>> arch/arm64/include/arm_dsu_pmu.h.
+>>>>
+>>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>>> Cc: Will Deacon <will.deacon@arm.com>
+>>>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>>>> Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>
+>> [...]
+>>
+>>>
+>>> Looking at the code, I didn't see any specific handling of cluster power collapse. AFAIK, the HW counters do not retain config (what event they are counting) or value (the current count) across power collapse. Wouldn't you need to register for some kind of PM_ENTER/EXIT notifiers to handle that?
+>>
+>> Good point, yes *somebody* needs to save-restore the registers. But who ? As far
+>> as the kernel is concerned, it doesn't control the DSU states. Also, as of now
+>> there is no reliable way to get the "ENTER/EXIT" notifications for the DSU power
+>> domain state changes. All we do is use the PMU, assuming it is available. AFAIT,
+>> it should really be done at EL3, which manages the DSU, but may be I am wrong.
 >
-> syzbot hit the following crash on net-next commit
-> 617aebe6a97efa539cc4b8a52adccd89596e6be0 (Sun Feb 4 00:25:42 2018 +0000)
-> Merge tag 'usercopy-v4.16-rc1' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux
+> Given this can happen behind the back of the kernel, if FW doesn't
+> save/restore this state, we'll have to inhibit cpuidle on a CPU
+> associated with the DSU PMU whenever it has active events, which would
+> keep the cluster online.
 >
-> So far this crash happened 12 times on net-next, upstream.
-> C reproducer is attached.
-> syzkaller reproducer is attached.
-> Raw console output is attached.
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+0502b00edac2a0680b61@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
->
-> audit: type=1400 audit(1518223777.419:7): avc:  denied  { map } for
-> pid=4159 comm="syzkaller598581" path="/root/syzkaller598581546" dev="sda1"
-> ino=16481 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023
-> tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
-> ------------[ cut here ]------------
-> name len 0
-> WARNING: CPU: 0 PID: 4159 at fs/proc/generic.c:354 __proc_create+0x696/0x880
-> fs/proc/generic.c:354
 
-We need to reject empty names.
+Using PMUs should be designed to have the least impact on 
+power/performance. Otherwise, using them to profile and debug issues 
+becomes impossible. Disabling cpuidle would significantly affect power 
+and performance.
+
+Why not use CPU_CLUSTER_PM_ENTER similar to how arm-pmu.c uses 
+CPU_PM_ENTER for saving and restoring the counters? Technically a lot of 
+stuff could be pushed to FW. Doesn't mean we should. At worst, we'll 
+save and restore for a few cases where we didn't need to.
+
+Thanks,
+Saravana
+
+-- 
+Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
