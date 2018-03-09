@@ -1,69 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932118AbeCIBwp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 20:52:45 -0500
-Received: from regular1.263xmail.com ([211.150.99.137]:52084 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751723AbeCIBwn (ORCPT
+        id S1751877AbeCIB7r (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 20:59:47 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:58524 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751113AbeCIB7p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 20:52:43 -0500
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <a7886f9ded83ae5d5290e390825ec4cc>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org, broonie@kernel.org,
-        alexandre.belloni@bootlin.com
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH v4 3/4] clk: lpc32xx: Set name of regmap_config
-Date: Fri,  9 Mar 2018 09:51:45 +0800
-Message-Id: <20180309015146.8297-4-jeffy.chen@rock-chips.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180309015146.8297-1-jeffy.chen@rock-chips.com>
-References: <20180309015146.8297-1-jeffy.chen@rock-chips.com>
+        Thu, 8 Mar 2018 20:59:45 -0500
+Subject: Re: [PATCH V4 2/5] nvme: add helper interface to flush in-flight
+ requests
+To: Sagi Grimberg <sagi@grimberg.me>, keith.busch@intel.com, axboe@fb.com,
+        hch@lst.de
+Cc: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+References: <1520489971-31174-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1520489971-31174-3-git-send-email-jianchao.w.wang@oracle.com>
+ <931a03f8-9c8b-fec4-0f89-04321a906710@grimberg.me>
+From: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <35c68f2a-8198-7db6-c381-420ac996802a@oracle.com>
+Date: Fri, 9 Mar 2018 09:59:28 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <931a03f8-9c8b-fec4-0f89-04321a906710@grimberg.me>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8826 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803090023
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are now allowing to register debugfs without a valid device, and not
-having a valid name will end up using "dummy*" to create debugfs dir.
+Hi Sagi
 
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
----
+Thanks for your precious time for review and comment.
 
-Changes in v4: None
-Changes in v3: None
+On 03/09/2018 02:21 AM, Sagi Grimberg wrote:
 
- drivers/clk/nxp/clk-lpc32xx.c | 1 +
- 1 file changed, 1 insertion(+)
+>> +EXPORT_SYMBOL_GPL(nvme_abort_requests_sync);
+>> +
+>> +static void nvme_comp_req(struct request *req, void *data, bool reserved)
+> 
+> Not a very good name...
 
-diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-index f5d815f577e0..a2a0a7f3bc57 100644
---- a/drivers/clk/nxp/clk-lpc32xx.c
-+++ b/drivers/clk/nxp/clk-lpc32xx.c
-@@ -67,6 +67,7 @@
- #define LPC32XX_USB_CLK_STS		0xF8
- 
- static struct regmap_config lpc32xx_scb_regmap_config = {
-+	.name = "lpc32xx-scb",
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.reg_stride = 4,
--- 
-2.11.0
+Yes, indeed.
+
+> 
+>> +{
+>> +    struct nvme_ctrl *ctrl = (struct nvme_ctrl *)data;
+>> +
+>> +    if (!test_bit(NVME_REQ_ABORTED, &nvme_req(req)->flags))
+>> +        return;
+>> +
+>> +    WARN_ON(!blk_mq_request_started(req));
+>> +
+>> +    if (ctrl->tagset && ctrl->tagset->ops->complete) {
+> 
+> What happens when this called on the admin tagset when the controller
+> does not have an io tagset?
+
+Yes, nvme_ctrl.admin_tagset should be used here for adminq request.
+
+
+> 
+>> +        clear_bit(NVME_REQ_ABORTED, &nvme_req(req)->flags);
+>> +        /*
+>> +         * We set the status to NVME_SC_ABORT_REQ, then ioq request
+>> +         * will be requeued and adminq one will be failed.
+>> +         */
+>> +        nvme_req(req)->status = NVME_SC_ABORT_REQ;
+>> +        /*
+>> +         * For ioq request, blk_mq_requeue_request should be better
+>> +         * here. But the nvme code will still setup the cmd even if
+>> +         * the RQF_DONTPREP is set. We have to use .complete to free
+>> +         * the cmd and then requeue it.
+> 
+> IMO, its better to fix nvme to not setup the command if RQF_DONTPREP is on (other than the things it must setup).
+
+Yes, I used to consider change that.
+But I'm not sure whether there is special consideration there.
+If you and Keith think it is ok that not setup command when RQF_DONTPREP is set, we could do that.
+
+> 
+>> +         *
+>> +         * For adminq request, invoking .complete directly will miss
+>> +         * blk_mq_sched_completed_request, but this is ok because we
+>> +         * won't have io scheduler for adminq.
+>> +         */
+>> +        ctrl->tagset->ops->complete(req);
+> 
+> I don't think that directly calling .complete is a good idea...
+
+Yes, indeed.
+
+Thanks a lot 
+Jianchao
