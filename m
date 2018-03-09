@@ -1,82 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932235AbeCIQWk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 11:22:40 -0500
-Received: from mout.web.de ([217.72.192.78]:52451 "EHLO mout.web.de"
+        id S932150AbeCIQYl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 11:24:41 -0500
+Received: from mout.web.de ([212.227.17.11]:42567 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751147AbeCIQWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 11:22:39 -0500
-Subject: [PATCH v2 10/17] mfd: tps6586x: Delete an error message for a failed
- memory allocation in tps6586x_parse_dt()
+        id S1751147AbeCIQYj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 11:24:39 -0500
+Subject: [PATCH v2 0/4] mfd/tps65910: Adjustments for four function
+ implementations
 From: SF Markus Elfring <elfring@users.sourceforge.net>
 To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
 Cc: LKML <linux-kernel@vger.kernel.org>
 References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
-Message-ID: <a0adebd4-4efc-3f0e-a4c5-6adb9c3c263e@users.sourceforge.net>
-Date: Fri, 9 Mar 2018 17:22:31 +0100
+Message-ID: <a00bda19-c38c-6733-31e7-7e1c44eb6c6b@users.sourceforge.net>
+Date: Fri, 9 Mar 2018 17:24:36 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
 In-Reply-To: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:6yHrUo2x4cnuzx4TP9cGwZ40VLSPmY0ZZeLuQNZoMDAPSeEl13f
- IWHWGI0Z9rjYVbdctNaCcyxR3XR2vvAtDgil4bRRV+zwvhdaRgJc3/gx3sofX33/FNJy/HL
- OKUXBB3MukygJ4Am5iCpZrf5DJMm410i4aGN5k3nAdQvqbe7+vCOH3aEXQleh0z5y3iPjHU
- gLxWs0bOtxOR6Ddw8AxhA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:JnEc6Y6IEUA=:PPAshD8uNpF2bGVfGS0g7l
- 2LCuc0OGZYMbkLBxKXlhfdD6FDqA68z5poNvg/5l+9Yx5yBm59IAbrWC0VpUDrAntzwMK8nC4
- eLXDy+x3rj7qjRAuPnop7at6IN7D3IXIxEVSsXbbRIwkj3Zwh8dk0fxip4pG1QcRitJRdq8rE
- /cks8mCIAb/tZ8kPRGgkPyRgDD+LYGlETj83zUqsYfwDBHaKDZB5nJH+ctOXHxO4FdxRPMI1I
- l9XmWOxS2aKq4hnAsNoO4yMlPJAralRmPw482nN3Z+XZUhmi1kXZFTqHRQyWg8ZMua5G5YB/n
- CZbq85+kHCgrzmueUWwHDYAW+ncTx/OBJ43MBl3lOP8hKsZoL1snyF2lsT0pKapQvXmHdgIsi
- FppwzVrVTiTIRuxGhm4BEME/dpbD0hhOPH8e3qjJ6RKRhDiS6YaeYyYSv32KlocA6IqTFoaeD
- 2oH/M9JsHQaBqTBrO6dtUB1INHdWB8VhkyeiWfP8T6RfxYE62r9m0fJt3SwIorK4jx9Yfyzg4
- wqAo7H1Op4MBv2Ne04jkRBX6Ft1yYSrnYVyEWVoMtRnf7Wlk+UaRJj0/XbxBiuM6AjBByEpif
- GzzTXawYZ95m1AShSue514x0gACDiAgPWVfpLCgD0fzQz+FfbY8ofhMFtEAIlkGzGkOfLByqu
- qeJq+hYUQof4ZfGFxTTD6Wcb9WrAIDYq1Y/K4lp4jNSpmtQPcoTu7eJIkzKxNIvs0o1b/utUa
- 4OXur54YOdU0Rf5lS9w/3AUpky5H2T292Vard1fMokRcb8DIhL3+sIliY7CenSL+GS5OIMmE8
- 4MuGk712aixXh1ArDKrCA4YpPpYW3ECqYHW17H+9ss4wMifbUn50rDuxckbRrBVPnyiV7weRu
- P+1Jmr0mwDY0zljaoAVq5+ech0R6PKd/nb7VcVTi1FtHQhf6BF7Qf0V4xmwHOBWzYeU2DcgTi
- fmjWZ1oiQuVzTzmQsr7Rt8uCWqZ237t6HJONjWOA4x2AkutbFsoD6yZHr15V2c9vc6110t7B9
- ONBzG2hFEXtrp7O7HabzLEs=
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K0:Gmkf7pgfBOhcbDS9SUZHL3J7A5P4fXQEu2uHw+KIOllMRBZKg20
+ 9xvo/APqdBZNxlIQ0tWzq3zw1+IopOqrY+KrkrMUo6d+xOANKZjji8Qb9SIC5HaG9HKAyvI
+ 4W+98KFnvEI6y+G8pecj9KCoonYXGxuhE8a9yjfuOcAfwqNzqrL3LF9rmdgQepeftrTKs/I
+ W0z/Iu6H5SgRgzLhaWNyA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ASl9YKiVlgY=:yS4UqJKL8PSBGjCLcXf1fm
+ sG9bbMiG8I7vh5uz6Npobzew9wYWzdt3J2ddhYODs2tKab6Q0gwTtVDnzE+0xR9XNLQRnYKqa
+ v39Pynx1p4Yv5u3JWvDFumjDm+T5dKw1J8/HubvOte7rcBjms5j78E5ruewrIyX9ukT0JGwAI
+ CuXKMmzxcQcpgOQBZ1pa8bmvgVZtjbrf9ByVY/lqKts1paQTDJvFhuFHEzSwUoBzAQXE6+5sq
+ x+oN+yZqrmb9bqR0wFG4EDfd4OQTJxPSVuGe8MEqxNVIz/cbk+CqYbgsJWoC6Rbz7iUv5omcd
+ rd/Zdtnm/lsEDrrOu9RpNBjgw2/u8OepEAtsFo8tG5biYvatrsQnWHTuZ/99lUP60tDIwXjd/
+ Wcgqok/++Zywl58JhPfbsXQ48aihdCVmgm4ynVTc2upk+oWH1Om6VFSlyyNZtOL35J82dkLVm
+ y1YvBS2F+Uv2ZmFJ6AqkLTAgNDqipMUmoFylq7epV/xsiafN5RAeIP3qEib0rXHY1CEjcTY1l
+ rGZEyKbDKllyL2F7RmCDDC3YMeobi4TfFOknwXlWMqlSnbDTZWiAMmQIEVynz2leA5L5JM2mY
+ 0tW8eCuTqpmvCvNtWJL5h9btTDoPqnaALBIqCq8d2M3aqbpKnP+o9E8zBN4xzDdwTYZhCv0Cz
+ KGcLYNsdzxqxg9RqVZ822kDIMaUcTQ2NNQuFLhhuSXA8FwmBrFgacKr4hDrvg/0NTkgiPYLWs
+ oI+rQ5IeUOEBxq1sQOqmPZ8YxTnCnApLjARbvs5iqIYT0ODQ0yDOlckEJbVDjBi9y67evyy0n
+ aPjKcbhCl1qUqC6+djmnUuonOeEnSbpFtkq2oPx/JGhxnujnlI=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 8 Mar 2018 15:30:54 +0100
 
-Omit an extra message for a memory allocation failure in this function.
+A few update suggestions were taken into account
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Markus Elfring (4):
+  Delete an error message for a failed memory allocation in tps65910_parse_dt()
+  Delete an unnecessary variable initialisation in four functions
+  Delete an unnecessary variable initialisation in tps65910_sleepinit()
+  Move an assignment in tps65910_sleepinit()
 ---
 
 v2:
-Lee Jones requested a resend for this patch. The change was rebased
+Lee Jones requested a resend for these patches. The changes were rebased
 on source files from Linux next-20180308.
 
- drivers/mfd/tps6586x.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/mfd/tps65910.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
-index 5628a6b5b19b..b89379782741 100644
---- a/drivers/mfd/tps6586x.c
-+++ b/drivers/mfd/tps6586x.c
-@@ -423,10 +423,8 @@ static struct tps6586x_platform_data *tps6586x_parse_dt(struct i2c_client *clien
- 	struct tps6586x_platform_data *pdata;
- 
- 	pdata = devm_kzalloc(&client->dev, sizeof(*pdata), GFP_KERNEL);
--	if (!pdata) {
--		dev_err(&client->dev, "Memory allocation failed\n");
-+	if (!pdata)
- 		return NULL;
--	}
- 
- 	pdata->num_subdevs = 0;
- 	pdata->subdevs = NULL;
 -- 
-2.16.2
+2.15.1
