@@ -1,73 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751754AbeCICI6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 21:08:58 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:41585 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750787AbeCICI5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 21:08:57 -0500
-X-Google-Smtp-Source: AG47ELuHL6nZVewXtLdLwgeivJfAZosxCfY73xj3/hkh5+oRf4t2WaKirWPJqwxeAo5PIh5m6hMyzxsBAMN6c2arSjo=
-MIME-Version: 1.0
-References: <20180307162430.2664523-1-arnd@arndb.de>
-In-Reply-To: <20180307162430.2664523-1-arnd@arndb.de>
-From: Brendan Higgins <brendanhiggins@google.com>
-Date: Fri, 09 Mar 2018 02:08:45 +0000
-Message-ID: <CAFd5g45h3wAZtx-4oJb_uLbtDTzSsD6eLM5G0VF=3BBHNmW8YQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: npcm: add CONFIG_ARCH_MULTI_V7 dependency
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1750885AbeCICQl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 21:16:41 -0500
+Received: from mga11.intel.com ([192.55.52.93]:50390 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750792AbeCICQk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 21:16:40 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,443,1515484800";
+   d="scan'208";a="23704383"
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
+        linux-kernel@vger.kernel.org
+Cc: acme@kernel.org, alexander.shishkin@linux.intel.com,
+        vincent.weaver@maine.edu, jolsa@redhat.com, ak@linux.intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH 1/4] x86/perf/intel: Introduce PMU flag for Extended PEBS
+Date: Thu,  8 Mar 2018 18:15:39 -0800
+Message-Id: <20180309021542.11374-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 7, 2018 at 8:24 AM Arnd Bergmann <arnd@arndb.de> wrote:
+From: Kan Liang <kan.liang@linux.intel.com>
 
-> The top-level CONFIG_ARCH_NPCM symbol is not guarded with a
-> dependency, and can be selected for builds of traditional
-> (non-multiplatform) builds as well, where it causes a build
-> failure:
+The Extended PEBS feature, introduced in Goldmont Plus
+microarchitecture, supports all events as "Extended PEBS".
 
-> arch/arm/boot/Makefile:17: arch/arm/mach-npcm//Makefile.boot: No such
-file or directory
+Introduce flag PMU_FL_PEBS_ALL to indicate the platforms which support
+extended PEBS.
+To support all events, it needs to support all constraints for PEBS. To
+avoid duplicating all the constraints in the PEBS table, making the PEBS
+code search the normal constraints too.
 
-> This moves the dependency to avoid that particular condition.
+Based-on-code-from: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ arch/x86/events/intel/ds.c   | 7 +++++++
+ arch/x86/events/perf_event.h | 1 +
+ 2 files changed, 8 insertions(+)
 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   arch/arm/mach-npcm/Kconfig | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-
-> diff --git a/arch/arm/mach-npcm/Kconfig b/arch/arm/mach-npcm/Kconfig
-> index 6ff9df2636be..2bc6697c8d97 100644
-> --- a/arch/arm/mach-npcm/Kconfig
-> +++ b/arch/arm/mach-npcm/Kconfig
-> @@ -1,5 +1,5 @@
->   menuconfig ARCH_NPCM
-> -       bool "Nuvoton NPCM Architecture"
-> +       bool "Nuvoton NPCM Architecture" if ARCH_MULTI_V7
->          select ARCH_REQUIRE_GPIOLIB
->          select USE_OF
->          select PINCTRL
-> @@ -10,7 +10,7 @@ if ARCH_NPCM
->   comment "NPCM7XX CPU type"
-
->   config ARCH_NPCM750
-> -       depends on ARCH_NPCM && ARCH_MULTI_V7
-> +       depends on ARCH_NPCM
->          bool "Support for NPCM750 BMC CPU (Poleg)"
->          select CACHE_L2X0
->          select CPU_V7
-> --
-> 2.9.0
-
-
-Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
-
-Thanks!
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index 0366cd3159ca..4fa43f65835e 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -869,6 +869,13 @@ struct event_constraint *intel_pebs_constraints(struct perf_event *event)
+ 		}
+ 	}
+ 
++	/*
++	 * Extended PEBS support
++	 * Makes the PEBS code search the normal constraints.
++	 */
++	if (x86_pmu.flags & PMU_FL_PEBS_ALL)
++		return NULL;
++
+ 	return &emptyconstraint;
+ }
+ 
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index bb90184410ab..598892e001b5 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -668,6 +668,7 @@ do {									\
+ #define PMU_FL_HAS_RSP_1	0x2 /* has 2 equivalent offcore_rsp regs   */
+ #define PMU_FL_EXCL_CNTRS	0x4 /* has exclusive counter requirements  */
+ #define PMU_FL_EXCL_ENABLED	0x8 /* exclusive counter active */
++#define PMU_FL_PEBS_ALL		0x10 /* all events are valid PEBS events */
+ 
+ #define EVENT_VAR(_id)  event_attr_##_id
+ #define EVENT_PTR(_id) &event_attr_##_id.attr.attr
+-- 
+2.14.3
