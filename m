@@ -1,135 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751293AbeCIPVZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 10:21:25 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43874 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751102AbeCIPVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 10:21:23 -0500
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Roman Kagan <rkagan@virtuozzo.com>, "Denis V . Lunev" <den@openvz.org>
-Subject: Re: [PATCH v2 2/3] x86/kvm/hyper-v: remove stale entries from vec_bitmap/auto_eoi_bitmap on vector change
-References: <20180301141514.3482-1-vkuznets@redhat.com>
-        <20180301141514.3482-3-vkuznets@redhat.com>
-        <20180308210804.GN12290@flask>
-Date: Fri, 09 Mar 2018 16:21:19 +0100
-In-Reply-To: <20180308210804.GN12290@flask> ("Radim \=\?utf-8\?B\?S3LEjW3DocWZ\?\=
- \=\?utf-8\?B\?Iidz\?\= message of "Thu,
-        8 Mar 2018 22:08:04 +0100")
-Message-ID: <87muzhe0ls.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1751206AbeCIP30 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 10:29:26 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33854 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751106AbeCIP3Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 10:29:24 -0500
+Date: Fri, 9 Mar 2018 15:29:12 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Matt Porter <mporter@konsulko.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ASoC: add tda7419 audio processor driver
+Message-ID: <20180309152912.GF5252@sirena.org.uk>
+References: <20180227225128.17815-1-mporter@konsulko.com>
+ <20180227225128.17815-3-mporter@konsulko.com>
+ <20180228110038.GA6722@sirena.org.uk>
+ <20180309143548.xuajwfhiwuua7jg5@bacon.ohporter.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="FeAIMMcddNRN4P4/"
+Content-Disposition: inline
+In-Reply-To: <20180309143548.xuajwfhiwuua7jg5@bacon.ohporter.com>
+X-Cookie: Beam me up, Scotty!
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Radim Krčmář <rkrcmar@redhat.com> writes:
 
-> 2018-03-01 15:15+0100, Vitaly Kuznetsov:
->> When a new vector is written to SINx we update vec_bitmap/auto_eoi_bitmap
->> but we forget to remove old vector from these masks (in case it is not
->> present in some other SINTx).
->> 
->> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->> Reviewed-by: Roman Kagan <rkagan@virtuozzo.com>
->> ---
->>  arch/x86/include/uapi/asm/hyperv.h |  2 ++
->>  arch/x86/kvm/hyperv.c              | 32 ++++++++++++++++++++++----------
->>  2 files changed, 24 insertions(+), 10 deletions(-)
->> 
->> diff --git a/arch/x86/include/uapi/asm/hyperv.h b/arch/x86/include/uapi/asm/hyperv.h
->> index 197c2e6c7376..62c778a303a1 100644
->> --- a/arch/x86/include/uapi/asm/hyperv.h
->> +++ b/arch/x86/include/uapi/asm/hyperv.h
->> @@ -318,6 +318,8 @@ typedef struct _HV_REFERENCE_TSC_PAGE {
->>  #define HV_SYNIC_SINT_COUNT		(16)
->>  /* Define the expected SynIC version. */
->>  #define HV_SYNIC_VERSION_1		(0x1)
->> +/* Valid SynIC vectors are 16-255. */
->> +#define HV_SYNIC_FIRST_VALID_VECTOR	(16)
->>  
->>  #define HV_SYNIC_CONTROL_ENABLE		(1ULL << 0)
->>  #define HV_SYNIC_SIMP_ENABLE		(1ULL << 0)
->> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
->> index 05f414525538..6d14f808145d 100644
->> --- a/arch/x86/kvm/hyperv.c
->> +++ b/arch/x86/kvm/hyperv.c
->> @@ -74,13 +74,30 @@ static bool synic_has_vector_auto_eoi(struct kvm_vcpu_hv_synic *synic,
->>  	return false;
->>  }
->>  
->> +static void synic_update_vector(struct kvm_vcpu_hv_synic *synic,
->> +				int vector)
->> +{
->> +	if (vector < HV_SYNIC_FIRST_VALID_VECTOR)
->> +		return;
->> +
->> +	if (synic_has_vector_connected(synic, vector))
->> +		__set_bit(vector, synic->vec_bitmap);
->> +	else
->> +		__clear_bit(vector, synic->vec_bitmap);
->> +
->> +	if (synic_has_vector_auto_eoi(synic, vector))
->> +		__set_bit(vector, synic->auto_eoi_bitmap);
->> +	else
->> +		__clear_bit(vector, synic->auto_eoi_bitmap);
->> +}
->> +
->>  static int synic_set_sint(struct kvm_vcpu_hv_synic *synic, int sint,
->>  			  u64 data, bool host)
->>  {
->> -	int vector;
->> +	int vector, old_vector;
->>  
->>  	vector = data & HV_SYNIC_SINT_VECTOR_MASK;
->> -	if (vector < 16 && !host)
->> +	if (vector < HV_SYNIC_FIRST_VALID_VECTOR && !host)
->>  		return 1;
->>  	/*
->>  	 * Guest may configure multiple SINTs to use the same vector, so
->> @@ -88,18 +105,13 @@ static int synic_set_sint(struct kvm_vcpu_hv_synic *synic, int sint,
->>  	 * bitmap of vectors with auto-eoi behavior.  The bitmaps are
->>  	 * updated here, and atomically queried on fast paths.
->>  	 */
->> +	old_vector = synic_read_sint(synic, sint) & HV_SYNIC_SINT_VECTOR_MASK;
->>  
->>  	atomic64_set(&synic->sint[sint], data);
->>  
->> -	if (synic_has_vector_connected(synic, vector))
->> -		__set_bit(vector, synic->vec_bitmap);
->> -	else
->> -		__clear_bit(vector, synic->vec_bitmap);
->> +	synic_update_vector(synic, old_vector);
->> 
->> -	if (synic_has_vector_auto_eoi(synic, vector))
->> -		__set_bit(vector, synic->auto_eoi_bitmap);
->> -	else
->> -		__clear_bit(vector, synic->auto_eoi_bitmap);
->> +	synic_update_vector(synic, vector);
->
-> This looks like it solves the problem when we get two SINTs with the
-> same vector back-to-back , but shouldn't these bits really be cleared on
-> EOI (either auto or manual)?
+--FeAIMMcddNRN4P4/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hmm,
+On Fri, Mar 09, 2018 at 09:35:48AM -0500, Matt Porter wrote:
+> On Wed, Feb 28, 2018 at 11:00:38AM +0000, Mark Brown wrote:
+> > On Tue, Feb 27, 2018 at 05:51:28PM -0500, Matt Porter wrote:
 
-I was trying to address the following issue: guest programs SynIC's
-SINTx with some vector but later re-programs it with a different
-one. Without the patch synic->vec_bitmap and synic->auto_eoi_bitmap keep
-stale data. If there's no concurrent interrupt than we're safe, but what
-happens if there is one...
+> > > +static struct snd_kcontrol_new tda7419_controls[] = {
+> > > +SOC_ENUM("Main Source Select", soc_enum_main_src_sel),
 
-kvm_hv_synic_send_eoi() already goes through all SINTx but we already
-updated vector so it won't find any. We could've added something like
-'old_vector' but what if the request with this vector came _after_ we
-re-programed SynIC (and, so, it wasn't meant to be serviced by SynIC?)?
+> > Should this be a DAPM route?
 
--- 
-  Vitaly
+> Ultimately yes. I initially took the path of ignoring DAPM support in
+> interests of getting some clean done. Is it ok to merge DAPM support
+> later or do you prefer just having it in the intitial driver? For
+> routes, it'll include Main/Second source selects, the Rear Source
+> switch, and Mix enable at least.
+
+You definitely shouldn't be implementing things that should be in DAPM
+as non-DAPM controls.
+
+> > > +	regmap_write(tda7419->regmap, TDA7419_ATTENUATOR_SUB_REG, 0xe0);
+
+> > This looks like it's setting default volumes - just leave those at the
+> > chip defaults and let userspace handle setting them, what works for one
+> > board may be totally inappropriate on another board and using the chip
+> > default means we've got some fixed thing we don't need to discuss.
+
+> This is actually setting the default/cache to the first mute value due
+> to the assumption in my implementation of the tda7419-specific get/set
+> for these registers. It simplified the code a bit to have these
+> initialized like this. e.g. for the attenuator group of registers,
+> x11xxxxx are all mute values, so 0xe0 is setting these regs to that
+> first mute value to simplify things. I'll take another look at
+> eliminating this. As it is, it does not change the fact that the actual
+> reset value of 0xff is also mute from a user POV.
+
+If it is useful it definitely needs a comment explaining what's
+happening and that there's no practical change to the configuration.  It
+would be nicer to be robust against the device getting a wider range of
+values in the register but that seems plausible.
+
+--FeAIMMcddNRN4P4/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqiqEcACgkQJNaLcl1U
+h9DjSwf/QqqpF+vmYV6qsaB0YjTlO0Nh5EAkOzubnQ8tIVazX3xRgK40/kbW+jyI
+7beYEg+CO4znTEZGClm121f1oeWUDc+cZCnPsCBcIDzhUsbgPdJRMIq3Rp/3Cv6a
+6DYqlhjs49h0tHu6OEXvC9rWWdSaNSePF6OQu7S73QpTJ/IMv5KFe3d+3A/nUXLs
+5iyUraQBY1PkC7RdHbUSqHL3iTAzj3oGP9BmL9F50JmbE2ksjmgdIBj8g1Y+yjaP
+AG4n5ZBJdDURjO0GyGADSxqTVX7Crj9mClrj9ZEJ6gncLnETmEk5a74MjmRoOeNd
+/TBQW6/5doDKnhxI9abhGelsvZrG5g==
+=sf3B
+-----END PGP SIGNATURE-----
+
+--FeAIMMcddNRN4P4/--
