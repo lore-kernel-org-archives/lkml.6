@@ -1,254 +1,214 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751200AbeCIJtD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 04:49:03 -0500
-Received: from mail-it0-f53.google.com ([209.85.214.53]:53576 "EHLO
-        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751169AbeCIJs5 (ORCPT
+        id S1751248AbeCIJtV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 04:49:21 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:52477 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751019AbeCIJsw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:48:57 -0500
-X-Google-Smtp-Source: AG47ELtVU+V2U8oWjQAZVnlYCgLTCXyLHm5eHQS9jDeSvT7dNmzXewACeoBDtJ3/M/nTvhCnj+6BjP0FnATn7WjjQ/M=
-MIME-Version: 1.0
-In-Reply-To: <20180305161446.GQ3918@linux.vnet.ibm.com>
-References: <CAG48ez17vOL0oEWqoqdHCjqfGVX+aPhHBrtgCfn35z6jZ=8-Xg@mail.gmail.com>
- <CA+55aFzQPQw2UqQ2EEGN1Xe7=qDs-2VTvHVi7SSqGNwqNRg0cQ@mail.gmail.com>
- <CAOS58YPzLeiZnwEeN31wWMZhki0t9+3ozdRNv9DgxWKY7OKmGA@mail.gmail.com>
- <CA+55aFx48U4W5tUgqW9ioZOHibPhQoDCUDWF_d-7yNCbqFQ7zg@mail.gmail.com>
- <20180305001600.GO3918@linux.vnet.ibm.com> <CA+55aFyOi1XnSqHtg=VfcUiBL+egNL==NRX1Zaeihe8W5OJVgw@mail.gmail.com>
- <20180305030949.GP3918@linux.vnet.ibm.com> <20180305082441.4hao2z4dqn2n5on6@gmail.com>
- <87po4izj67.fsf_-_@xmission.com> <20180305161446.GQ3918@linux.vnet.ibm.com>
-From: Lai Jiangshan <jiangshanlai+lkml@gmail.com>
-Date: Fri, 9 Mar 2018 17:48:55 +0800
-X-Google-Sender-Auth: GpOk7HYcldMBag_bjsOgP3KgqfU
-Message-ID: <CAJhGHyD_N_duuZgPdidpsR9zVsAFzQi0oVwhd=qTiXa-hYiasg@mail.gmail.com>
-Subject: Re: Simplifying our RCU models
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>, Jann Horn <jannh@google.com>,
-        Benjamin LaHaise <bcrl@kvack.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Fri, 9 Mar 2018 04:48:52 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
         LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [RFC/RFT][PATCH v3 1/6] time: tick-sched: Reorganize idle tick management code
+Date: Fri, 09 Mar 2018 10:36:56 +0100
+Message-ID: <2697163.FknhNRV3Rg@aspire.rjw.lan>
+In-Reply-To: <2450532.XN8DODrtDf@aspire.rjw.lan>
+References: <2450532.XN8DODrtDf@aspire.rjw.lan>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 6, 2018 at 12:14 AM, Paul E. McKenney
-<paulmck@linux.vnet.ibm.com> wrote:
-> On Mon, Mar 05, 2018 at 08:33:20AM -0600, Eric W. Biederman wrote:
->>
->> Moving this discussion to a public list as discussing how to reduce the
->> number of rcu variants does not make sense in private.  We should have
->> an archive of such discussions.
->>
->> Ingo Molnar <mingo@kernel.org> writes:
->>
->> > * Paul E. McKenney <paulmck@linux.vnet.ibm.com> wrote:
->> >
->> >> > So if people really want that low-cost RCU, and some people really
->> >> > need the sleepable version, the only one that can _possibly_ be dumped
->> >> > is the preempt one.
->> >> >
->> >> > But I may - again - be confused and/or missing something.
->> >>
->> >> I am going to do something very stupid and say that I was instead thinking in
->> >> terms of getting rid of RCU-bh, thus reminding you of its existence.  ;-)
->> >>
->> >> The reason for believing that it is possible to get rid of RCU-bh is the work
->> >> that has gone into improving the forward progress of RCU grace periods under
->> >> heavy load and in corner-case workloads.
->> >>
->> >
->> > [...]
->> >
->> >> The other reason for RCU-sched is it has the side effect of waiting
->> >> for all in-flight hardware interrupt handlers, NMI handlers, and
->> >> preempt-disable regions of code to complete, and last I checked, this side
->> >> effect is relied on.  In contrast, RCU-preeempt is only guaranteed to wait
->> >> on regions of code protected by rcu_read_lock() and rcu_read_unlock().
->> >
->> > Instead of only trying to fix the documentation (which is never a bad idea but it
->> > is fighting the symptom in this case), I think the first step should be to
->> > simplify the RCU read side APIs of RCU from 4 APIs:
->> >
->> >     rcu_read_lock()
->> >     srcu_read_lock()
->> >     rcu_read_lock_sched()
->> >     rcu_read_lock_bh()
->> >
->> > ... which have ~8 further sub-model variations depending on CONFIG_PREEMPT,
->> > CONFIG_PREEMPT_RCU - which is really a crazy design!
->
-> If it is possible to set CONFIG_PREEMPT_RCU differently than CONFIG_PREEMPT,
-> then that is a bug that I need to fix.
->
->> > I think we could reduce this to just two APIs with no Kconfig dependencies:
->> >
->> >     rcu_read_lock()
->> >     rcu_read_lock_preempt_disable()
->> >
->> > Which would be much, much simpler.
->
-> No argument on the simpler part, at least from an API perspective.
->
->> > This is how we could do it I think:
->> >
->> > 1)
->> >
->> > Getting rid of the _bh() variant should be reasonably simple and involve a
->> > treewide replacement of:
->> >
->> >     rcu_read_lock_bh()   -> local_bh_disable()
->> >     rcu_read_unlock_bh() -> local_bh_enable()
->> >
->> > Correct?
->
-> Assuming that I have done enough forward-progress work on grace periods, yes.
->
->> > 2)
->> >
->> > Further reducing the variants is harder, due to this main asymmetry:
->> >
->> >                           !PREEMPT_RCU  PREEMPT_RCU=y
->> >   rcu_read_lock_sched():  atomic        atomic
->> >   rcu_read_lock():        atomic        preemptible
->> >
->> > ('atomic' here is meant in the scheduler, non-preemptible sense.)
->> >
->> > But if we look at the bigger API picture:
->> >
->> >                           !PREEMPT_RCU  PREEMPT_RCU=y
->> >   rcu_read_lock():        atomic        preemptiblep
->> >   rcu_read_lock_sched():  atomic        atomic
->> >   srcu_read_lock():       preemptible   preemptible
->> >
->> > Then we could maintain full read side API flexibility by making PREEMPT_RCU=y the
->> > only model, merging it with SRCU and using these main read side APIs:
->> >
->> >   rcu_read_lock_preempt_disable((): atomic
->> >   rcu_read_lock()                   preemptible
->
-> One issue with merging SRCU into rcu_read_lock() is the general blocking
-> within SRCU readers.  Once merged in, these guys block everyone.  We should
-> focus initially on the non-SRCU variants.
->
-> On the other hand, Linus's suggestion of merging rcu_read_lock_sched()
-> into rcu_read_lock() just might be feasible.  If that really does pan
-> out, we end up with the following:
->
->                                 !PREEMPT        PREEMPT=y
->         rcu_read_lock():        atomic          preemptible
->         srcu_read_lock():       preemptible     preemptible
->
-> In this model, rcu_read_lock_sched() maps to preempt_disable() and (as
-> you say above) rcu_read_lock_bh() maps to local_bh_disable().  The way
-> this works is that in PREEMPT=y kernels, synchronize_rcu() waits not
-> only for RCU read-side critical sections, but also for regions of code
-> with preemption disabled.  The main caveat seems to be that there be an
-> assumed point of preemptibility between each interrupt and each softirq
-> handler, which should be OK.
->
-> There will be some adjustments required for lockdep-RCU, but that should
-> be reasonably straightforward.
->
-> Seem reasonable?
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-It's good. I hope there is only one global(non-srcu) rcu variant.
+Prepare the scheduler tick code for reworking the idle loop to
+avoid stopping the tick in some cases.
 
-It does have the trade-off, the grace period will be extended a little
-in some cases,
-so will the call_rcu()/synchronze_rcu(). But it simplifies the coding a lot.
+Move away the tick_nohz_start_idle() invocation from
+__tick_nohz_idle_enter(), rename the latter to
+__tick_nohz_idle_stop_tick() and define tick_nohz_idle_stop_tick()
+as a wrapper around it for calling it from the outside.
 
->
->> > It's a _really_ simple and straightforward RCU model, with very obvious semantics
->> > all around:
->> >
->> > - Note how the 'atomic' (non-preempt) variant uses the well-known
->> >   preempt_disable() name as a postfix to signal its main property. (It's also a
->> >   bit of a mouthful, which should discourage over-use.)
->
-> My thought is to eliminate the atomic variant entirely.  If you want
-> to disable preemption, interrupts, or whatever, you simply do so.
-> It might turn out that there are documentation benefits to having a
-> separate rcu_read_lock_preempt_disable() that maps to preempt_disable()
-> with lockdep semantics, and if so, that can be provided trivially.
->
->> > - The read side APIs are really as straightforward as possible: there's no SRCU
->> >   distinction on the read side, no _bh() distinction and no _sched() distinction.
->> >   (On -rt all of these would turn into preemptible sections,
->> >   obviously.)
->
-> Agreed, and both models accomplish that.
->
->> And it looses the one advantage of srcu_read_lock.  That you don't have
->> to wait for the entire world.  If you actually allow sleeping that is an
->> important distinction to have.  Or are you proposing that we add the
->> equivalent of init_srcu_struct to all of the rcu users?
->
-> I am instead proposing folding rcu_read_lock_bh() and rcu_read_lock_sched()
-> into rcu_read_lock(), and leaving srcu_read_lock() separate.
->
->> That rcu_read_lock would need to take an argument about which rcu region
->> we are talking about.
->
-> From what I can see, it would be far better to leave SRCU separate.  As you
-> say, it really does have very different semantics.
->
->> > rcu_read_lock_preempt_disable() would essentially be all the current
->> > rcu_read_lock_sched() users (where the _sched() postfix was a confusing misnomer
->> > anyway).
->
-> I agree that rcu_read_lock_preempt_disable() is a better name.
-> We might not need it at all, though.  There are only about 20 uses of
-> rcu_read_lock_sched() in v4.15.  ;-)
->
->> > Wrt. merging SRCU and RCU: this can be done by making PREEMPT_RCU=y the one and
->> > only main RCU model and converting all SRCU users to main RCU. This is relatively
->> > straightforward to perform, as there are only ~170 SRCU critical sections, versus
->> > the 3000+ main RCU critical sections ...
->>
->> It really sounds like you are talking about adding a requirement that
->> everyone update their rcu_read_lock() calls with information about which
->> region you are talking about.  That seems like quite a bit of work.
->
-> Agreed, merging RCU, RCU-bh, and RCU-sched seems much more straightforward
-> to me from the viewpoint of both usage and implementation.
->
->> Doing something implicit when PREEMPT_RCU=y and converting
->> "rcu_read_lock()" to "srcu_read_lock(&kernel_srcu_region)" only in that
->> case I can see.
->>
->> Except in very specific circustances I don't think I ever want to run a
->> kernel with PREEMPT_RCU the default.  All of that real time stuff trades
->> off predictability with performance.  Having lost enough performance to
->> spectre and meltdown I don't think it makes sense for us all to start
->> runing predictable^H^H^H^H^H^H^H^H^H^H^H time kernels now.
->
-> Yes, in PREEMPT=n kernels RCU would act exactly as it does today.
->
->> > AFAICS this should be a possible read side design that keeps correctness, without
->> > considering grace period length patterns, i.e. without considering GC latency and
->> > scalability aspects.
->> >
->> > Before we get into ways to solve the latency and scalability aspects of such a
->> > simplified RCU model, do you agree with this analysis so far, or have I missed
->> > something important wrt. correctness?
->>
->> RCU region specification.  If we routinely allow preemption of rcu
->> critical sections for any length of time I can't imagine we will want to
->> wait for every possible preempted rcu critical section.
->>
->> Of course I could see the merge working the other way.  Adding the
->> debugging we need to find rcu critical secions that are held to long and
->> shrinking them so we don't need PREEMPT_RCU at all.
->
-> Again, from what I can see, merging rcu_read_lock(), rcu_read_lock_sched(),
-> and rcu_read_lock_bh() together should get us to a much better place.
->
-> Make sense, or am I missing something?
->
->                                                         Thanx, Paul
->
+Make tick_nohz_idle_enter() only call tick_nohz_start_idle() instead
+of calling the entire __tick_nohz_idle_enter(), add another wrapper
+disabling and enabling interrupts around tick_nohz_idle_stop_tick()
+and make the current callers of tick_nohz_idle_enter() call it too
+to retain their current functionality.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ arch/x86/xen/smp_pv.c    |    1 +
+ include/linux/tick.h     |    9 +++++++++
+ kernel/sched/idle.c      |    1 +
+ kernel/time/tick-sched.c |   46 +++++++++++++++++++++++++---------------------
+ 4 files changed, 36 insertions(+), 21 deletions(-)
+
+Index: linux-pm/include/linux/tick.h
+===================================================================
+--- linux-pm.orig/include/linux/tick.h
++++ linux-pm/include/linux/tick.h
+@@ -114,6 +114,7 @@ enum tick_dep_bits {
+ #ifdef CONFIG_NO_HZ_COMMON
+ extern bool tick_nohz_enabled;
+ extern int tick_nohz_tick_stopped(void);
++extern void tick_nohz_idle_stop_tick(void);
+ extern void tick_nohz_idle_enter(void);
+ extern void tick_nohz_idle_exit(void);
+ extern void tick_nohz_irq_exit(void);
+@@ -125,6 +126,7 @@ extern u64 get_cpu_iowait_time_us(int cp
+ #else /* !CONFIG_NO_HZ_COMMON */
+ #define tick_nohz_enabled (0)
+ static inline int tick_nohz_tick_stopped(void) { return 0; }
++static inline void tick_nohz_idle_stop_tick(void) { }
+ static inline void tick_nohz_idle_enter(void) { }
+ static inline void tick_nohz_idle_exit(void) { }
+ 
+@@ -136,6 +138,13 @@ static inline u64 get_cpu_idle_time_us(i
+ static inline u64 get_cpu_iowait_time_us(int cpu, u64 *unused) { return -1; }
+ #endif /* !CONFIG_NO_HZ_COMMON */
+ 
++static inline void tick_nohz_idle_stop_tick_protected(void)
++{
++	local_irq_disable();
++	tick_nohz_idle_stop_tick();
++	local_irq_enable();
++}
++
+ #ifdef CONFIG_NO_HZ_FULL
+ extern bool tick_nohz_full_running;
+ extern cpumask_var_t tick_nohz_full_mask;
+Index: linux-pm/kernel/time/tick-sched.c
+===================================================================
+--- linux-pm.orig/kernel/time/tick-sched.c
++++ linux-pm/kernel/time/tick-sched.c
+@@ -539,14 +539,11 @@ static void tick_nohz_stop_idle(struct t
+ 	sched_clock_idle_wakeup_event();
+ }
+ 
+-static ktime_t tick_nohz_start_idle(struct tick_sched *ts)
++static void tick_nohz_start_idle(struct tick_sched *ts)
+ {
+-	ktime_t now = ktime_get();
+-
+-	ts->idle_entrytime = now;
++	ts->idle_entrytime = ktime_get();
+ 	ts->idle_active = 1;
+ 	sched_clock_idle_sleep_event();
+-	return now;
+ }
+ 
+ /**
+@@ -911,19 +908,21 @@ static bool can_stop_idle_tick(int cpu,
+ 	return true;
+ }
+ 
+-static void __tick_nohz_idle_enter(struct tick_sched *ts)
++static void __tick_nohz_idle_stop_tick(struct tick_sched *ts)
+ {
+-	ktime_t now, expires;
++	ktime_t expires;
+ 	int cpu = smp_processor_id();
+ 
+-	now = tick_nohz_start_idle(ts);
+-
+ 	if (can_stop_idle_tick(cpu, ts)) {
+ 		int was_stopped = ts->tick_stopped;
+ 
+ 		ts->idle_calls++;
+ 
+-		expires = tick_nohz_stop_sched_tick(ts, now, cpu);
++		/*
++		 * The idle entry time should be a sufficient approximation of
++		 * the current time at this point.
++		 */
++		expires = tick_nohz_stop_sched_tick(ts, ts->idle_entrytime, cpu);
+ 		if (expires > 0LL) {
+ 			ts->idle_sleeps++;
+ 			ts->idle_expires = expires;
+@@ -937,16 +936,19 @@ static void __tick_nohz_idle_enter(struc
+ }
+ 
+ /**
+- * tick_nohz_idle_enter - stop the idle tick from the idle task
++ * tick_nohz_idle_stop_tick - stop the idle tick from the idle task
+  *
+  * When the next event is more than a tick into the future, stop the idle tick
+- * Called when we start the idle loop.
+- *
+- * The arch is responsible of calling:
++ */
++void tick_nohz_idle_stop_tick(void)
++{
++	__tick_nohz_idle_stop_tick(this_cpu_ptr(&tick_cpu_sched));
++}
++
++/**
++ * tick_nohz_idle_enter - prepare for entering idle on the current CPU
+  *
+- * - rcu_idle_enter() after its last use of RCU before the CPU is put
+- *  to sleep.
+- * - rcu_idle_exit() before the first use of RCU after the CPU is woken up.
++ * Called when we start the idle loop.
+  */
+ void tick_nohz_idle_enter(void)
+ {
+@@ -965,7 +967,7 @@ void tick_nohz_idle_enter(void)
+ 
+ 	ts = this_cpu_ptr(&tick_cpu_sched);
+ 	ts->inidle = 1;
+-	__tick_nohz_idle_enter(ts);
++	tick_nohz_start_idle(ts);
+ 
+ 	local_irq_enable();
+ }
+@@ -982,10 +984,12 @@ void tick_nohz_irq_exit(void)
+ {
+ 	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
+ 
+-	if (ts->inidle)
+-		__tick_nohz_idle_enter(ts);
+-	else
++	if (ts->inidle) {
++		tick_nohz_start_idle(ts);
++		__tick_nohz_idle_stop_tick(ts);
++	} else {
+ 		tick_nohz_full_update_tick(ts);
++	}
+ }
+ 
+ /**
+Index: linux-pm/arch/x86/xen/smp_pv.c
+===================================================================
+--- linux-pm.orig/arch/x86/xen/smp_pv.c
++++ linux-pm/arch/x86/xen/smp_pv.c
+@@ -425,6 +425,7 @@ static void xen_pv_play_dead(void) /* us
+ 	 * data back is to call:
+ 	 */
+ 	tick_nohz_idle_enter();
++	tick_nohz_idle_stop_tick_protected();
+ 
+ 	cpuhp_online_idle(CPUHP_AP_ONLINE_IDLE);
+ }
+Index: linux-pm/kernel/sched/idle.c
+===================================================================
+--- linux-pm.orig/kernel/sched/idle.c
++++ linux-pm/kernel/sched/idle.c
+@@ -221,6 +221,7 @@ static void do_idle(void)
+ 
+ 	__current_set_polling();
+ 	tick_nohz_idle_enter();
++	tick_nohz_idle_stop_tick_protected();
+ 
+ 	while (!need_resched()) {
+ 		check_pgt_cache();
