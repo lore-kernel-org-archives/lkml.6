@@ -1,69 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932335AbeCIV5I (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 16:57:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52314 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932104AbeCIV5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 16:57:07 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 737ED2133D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-Date: Fri, 9 Mar 2018 13:57:05 -0800
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH] f2fs: avoid selinux denial on CAP_SYS_RESOURCE
-Message-ID: <20180309215705.GB56123@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180309044900.39677-1-jaegeuk@kernel.org>
- <5ec9338e-1522-2b6a-99c2-ffe70b7a06a9@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5ec9338e-1522-2b6a-99c2-ffe70b7a06a9@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+        id S932541AbeCIV62 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 16:58:28 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34458 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932133AbeCIV61 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 16:58:27 -0500
+From: Eddie James <eajames@linux.vnet.ibm.com>
+To: linux-watchdog@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, joel@jms.id.au, wim@linux-watchdog.org,
+        linux@roeck-us.net, Eddie James <eajames@linux.vnet.ibm.com>
+Subject: [PATCH 0/2] aspeed: watchdog: fix system reset and read alt-boot option
+Date: Fri,  9 Mar 2018 15:58:18 -0600
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18030921-0008-0000-0000-000002E2C9B6
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008643; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01000701; UDB=6.00509032; IPR=6.00780031;
+ MB=3.00019945; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-09 21:58:24
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030921-0009-0000-0000-000038837DE4
+Message-Id: <1520632700-25800-1-git-send-email-eajames@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-09_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803090259
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09, Chao Yu wrote:
-> On 2018/3/9 12:49, Jaegeuk Kim wrote:
-> > This fixes CAP_SYS_RESOURCE denial of selinux when using resgid.
-> 
-> A little confusion, if capable(CAP_SYS_RESOURCE) is false, we still have chance
-> to return true for below resuid & resgid cases, right?
+This series provides a fix to correctly set the reset mode of the control
+register. Previously, configuring anything other than a full chip reset would
+not reset anything when the watchdog timer expires. The series also provides a
+patch to read in the existing aspeed,alt-boot boolean option from the
+device-tree and set the appropriate bit in the control register.
 
-I didn't dig it deeply tho, it seems selinux log came up when capable() is
-failed in the first place. We actually didn't need to show it up, since next
-resgid will give mostly true.
+Milton Miller (2):
+  watchdog: aspeed: Fix translation of reset mode to ctrl register
+  watchdog: aspeed: Allow configuring for alternate boot
 
-> 
-> Thanks,
-> 
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/f2fs.h | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index f6dc70666ebb..3d12277fbe9e 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -1607,13 +1607,13 @@ static inline bool __allow_reserved_blocks(struct f2fs_sb_info *sbi,
-> >  		return false;
-> >  	if (IS_NOQUOTA(inode))
-> >  		return true;
-> > -	if (capable(CAP_SYS_RESOURCE))
-> > -		return true;
-> >  	if (uid_eq(sbi->s_resuid, current_fsuid()))
-> >  		return true;
-> >  	if (!gid_eq(sbi->s_resgid, GLOBAL_ROOT_GID) &&
-> >  					in_group_p(sbi->s_resgid))
-> >  		return true;
-> > +	if (capable(CAP_SYS_RESOURCE))
-> > +		return true;
-> >  	return false;
-> >  }
-> >  
-> > 
+ drivers/watchdog/aspeed_wdt.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+-- 
+1.8.3.1
