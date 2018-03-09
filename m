@@ -1,24 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932641AbeCIVdK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 16:33:10 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56672 "EHLO mx1.redhat.com"
+        id S932568AbeCIVdJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 16:33:09 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50180 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932327AbeCIVdH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 16:33:07 -0500
+        id S932133AbeCIVdG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 16:33:06 -0500
 From: Lyude Paul <lyude@redhat.com>
 To: intel-gfx@lists.freedesktop.org
 Cc: dri-devel@lists.freedesktop.org,
         Manasi Navare <manasi.d.navare@intel.com>,
         =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
         <ville.syrjala@linux.intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/5] drm/dp_mst: Add drm_atomic_dp_mst_retrain_topology()
-Date: Fri,  9 Mar 2018 16:32:30 -0500
-Message-Id: <20180309213232.19855-4-lyude@redhat.com>
+Subject: [PATCH v3 2/5] drm/i915: Only use one link bw config for MST topologies
+Date: Fri,  9 Mar 2018 16:32:28 -0500
+Message-Id: <20180309213232.19855-2-lyude@redhat.com>
 In-Reply-To: <20180309213232.19855-1-lyude@redhat.com>
 References: <20180308232421.14049-1-lyude@redhat.com>
  <20180309213232.19855-1-lyude@redhat.com>
@@ -29,267 +29,131 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Retraining MST is rather difficult. In order to do it properly while
-guaranteeing that we'll never run into a spot where we commit a
-physically impossible configuration, we have to do a lot of checks on
-atomic commits which affect MST topologies. All of this work is going to
-need to be repeated for every driver at some point, so let's save
-ourselves some trouble and just implement these atomic checks as
-a single helper.
+When a DP MST link needs retraining, sometimes the hub will detect that
+the current link bw config is impossible and will update it's RX caps in
+the DPCD to reflect the new maximum link rate. Currently, we make the
+assumption that the RX caps in the dpcd will never change like this.
+This means if the sink changes it's RX caps after we've already set up
+an MST link and we attempt to add or remove another sink from the
+topology, we could put ourselves into an invalid state where we've tried
+to configure different sinks on the same MST topology with different
+link rates. We could also run into this situation if a sink reports a
+higher link rate after suspend, usually from us having trained it with a
+fallback bw configuration before suspending.
+
+So: "lock" the bw config by only using the max DP link rate/lane count
+on the first modeset for an MST topology. For every modeset following,
+we instead use the last configured link bw for this topology. We only
+unlock the bw config when we've detected a new MST sink.
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 Cc: Manasi Navare <manasi.d.navare@intel.com>
 Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
 ---
- drivers/gpu/drm/drm_dp_mst_topology.c | 223 ++++++++++++++++++++++++++++++++++
- include/drm/drm_dp_mst_helper.h       |   2 +
- 2 files changed, 225 insertions(+)
+ drivers/gpu/drm/i915/intel_dp.c     | 11 +++++++++--
+ drivers/gpu/drm/i915/intel_dp_mst.c | 22 +++++++++++++++-------
+ drivers/gpu/drm/i915/intel_drv.h    |  6 ++++++
+ 3 files changed, 30 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-index 0d6604500b29..c4a91b1ba61b 100644
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -2167,6 +2167,229 @@ int drm_dp_mst_topology_mgr_lower_link_rate(struct drm_dp_mst_topology_mgr *mgr,
- }
- EXPORT_SYMBOL(drm_dp_mst_topology_mgr_lower_link_rate);
+diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
+index 5abf0c95725a..5645a194de92 100644
+--- a/drivers/gpu/drm/i915/intel_dp.c
++++ b/drivers/gpu/drm/i915/intel_dp.c
+@@ -3871,18 +3871,25 @@ intel_dp_can_mst(struct intel_dp *intel_dp)
+ static void
+ intel_dp_configure_mst(struct intel_dp *intel_dp)
+ {
++	bool was_mst;
++
+ 	if (!i915_modparams.enable_dp_mst)
+ 		return;
  
-+static bool drm_atomic_dp_mst_state_only_disables_mstbs(struct drm_atomic_state *state,
-+							struct drm_dp_mst_topology_mgr *mgr,
-+							struct drm_dp_mst_branch *mstb)
-+{
-+	struct drm_dp_mst_branch *rmstb;
-+	struct drm_dp_mst_port *port;
-+	struct drm_connector *connector;
-+	struct drm_connector_state *conn_state;
-+	struct drm_crtc *crtc;
-+	struct drm_crtc_state *crtc_state;
-+	int ret;
+ 	if (!intel_dp->can_mst)
+ 		return;
+ 
++	was_mst = intel_dp->is_mst;
+ 	intel_dp->is_mst = intel_dp_can_mst(intel_dp);
+ 
+-	if (intel_dp->is_mst)
++	if (intel_dp->is_mst) {
+ 		DRM_DEBUG_KMS("Sink is MST capable\n");
+-	else
 +
-+	list_for_each_entry(port, &mstb->ports, next) {
-+		rmstb = drm_dp_get_validated_mstb_ref(mstb->mgr, port->mstb);
-+		if (rmstb) {
-+			ret = drm_atomic_dp_mst_state_only_disables_mstbs(
-+			    state, mgr, rmstb);
-+			drm_dp_put_mst_branch_device(rmstb);
-+			if (!ret)
-+				return false;
-+		}
-+
-+		connector = port->connector;
-+		if (!connector)
-+			continue;
-+
-+		conn_state = drm_atomic_get_new_connector_state(
-+		    state, connector);
-+		if (!conn_state)
-+			continue;
-+
-+		crtc = conn_state->crtc;
-+		if (!crtc)
-+			continue;
-+
-+		crtc_state = drm_atomic_get_new_crtc_state(state, crtc);
-+		if (!crtc_state)
-+			continue;
-+
-+		if (drm_atomic_crtc_needs_modeset(crtc_state))
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
-+static int drm_atomic_dp_mst_all_mstbs_disabled(struct drm_atomic_state *state,
-+						struct drm_dp_mst_topology_mgr *mgr,
-+						struct drm_dp_mst_branch *mstb)
-+{
-+	struct drm_dp_mst_branch *rmstb;
-+	struct drm_dp_mst_port *port;
-+	struct drm_connector *connector;
-+	struct drm_connector_state *conn_state;
-+	int ret;
-+
-+	list_for_each_entry(port, &mstb->ports, next) {
-+		rmstb = drm_dp_get_validated_mstb_ref(mstb->mgr, port->mstb);
-+		if (rmstb) {
-+			ret = drm_atomic_dp_mst_all_mstbs_disabled(
-+			    state, mgr, rmstb);
-+			drm_dp_put_mst_branch_device(rmstb);
-+			if (ret <= 0)
-+				return ret;
-+		}
-+
-+		connector = port->connector;
-+		if (!connector)
-+			continue;
-+
-+		conn_state = drm_atomic_get_connector_state(
-+		    state, connector);
-+		if (IS_ERR(conn_state))
-+			return PTR_ERR(conn_state);
-+
-+		if (conn_state->crtc)
-+			return false;
-+	}
-+
-+	/* No enabled CRTCs found */
-+	return true;
-+}
-+
-+static int drm_atomic_dp_mst_retrain_mstb(struct drm_atomic_state *state,
-+					  struct drm_dp_mst_topology_mgr *mgr,
-+					  struct drm_dp_mst_branch *mstb,
-+					  bool full_modeset)
-+{
-+	struct drm_dp_mst_branch *rmstb;
-+	struct drm_dp_mst_port *port;
-+	struct drm_connector *connector;
-+	struct drm_connector_state *conn_state;
-+	struct drm_crtc *crtc;
-+	struct drm_crtc_state *crtc_state;
-+	int ret;
-+
-+	list_for_each_entry(port, &mstb->ports, next) {
-+		rmstb = drm_dp_get_validated_mstb_ref(mstb->mgr, port->mstb);
-+		if (rmstb) {
-+			ret = drm_atomic_dp_mst_retrain_mstb(
-+			    state, mgr, rmstb, full_modeset);
-+			drm_dp_put_mst_branch_device(rmstb);
-+			if (ret)
-+				return ret;
-+		}
-+
-+		connector = port->connector;
-+		if (!connector)
-+			continue;
-+
-+		conn_state = drm_atomic_get_connector_state(state, connector);
-+		if (IS_ERR(conn_state))
-+			return PTR_ERR(conn_state);
-+
-+		if (conn_state->link_status != DRM_MODE_LINK_STATUS_GOOD) {
-+			DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] link status bad -> good\n",
-+					 connector->base.id, connector->name);
-+			conn_state->link_status = DRM_MODE_LINK_STATUS_GOOD;
-+		}
-+
-+		if (!full_modeset)
-+			continue;
-+
-+		crtc = conn_state->crtc;
-+		if (!crtc)
-+			continue;
-+
-+		crtc_state = drm_atomic_get_crtc_state(state, crtc);
-+		if (IS_ERR(crtc_state))
-+			return PTR_ERR(crtc_state);
-+
-+		if (!crtc_state->mode_changed) {
-+			DRM_DEBUG_ATOMIC("[CRTC:%d:%s] needs full modeset\n",
-+					 crtc->base.id, crtc->name);
-+			crtc_state->mode_changed = true;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * drm_atomic_dp_mst_retrain_topology() - prepare a modeset that will retrain
-+ * an MST topology
-+ * @state: The new state that would retrain the topology link
-+ * @mgr: The topology manager to use
-+ *
-+ * After userspace has been signaled that connectors are in need of
-+ * retraining, it's expected that a modeset will be performed for any CRTCs on
-+ * said connectors. Since all of the branch devices in an MST topology share a
-+ * single link, they also share the same link status, lane count, and link
-+ * rate.
-+ *
-+ * Since all of these characteristics are shared, there's only two valid
-+ * solutions when fallback link training parameters need to be applied. The
-+ * first is simply unassigning each mstb connector's CRTC. Since this action
-+ * can only free slots on the VCPI table and not allocate them, this can be
-+ * done without pulling in additional CRTCs on the MST topology. Additionally
-+ * if this action would result in there no longer being any CRTCs assigned to
-+ * mstb connectors, this would be enough to bring the topology back into a
-+ * trained state since there would be nothing left requiring VCPI
-+ * reallocations.
-+ *
-+ * The second solution is to commit new modes to all of the connectors on the
-+ * topology. Since this action would result in VCPI reallocations with a new
-+ * link rate and lane count, a modeset must also be performed on every other
-+ * CRTC driving a branch device on the given topology at the same time. This
-+ * is to ensure that all VCPI allocations are properly recalculated in
-+ * response to the new link rate and lane count, that the new modes will fit
-+ * into the recalculated VCPI table, and that the new atomic state could never
-+ * result in an otherwise physically impossible configuration (e.g. different
-+ * mstbs with CRTCs trained to different link rates/lane counts).
-+ *
-+ * Finally, any atomic commit which would result in going from an
-+ * unrecoverable link state to a properly trained link state must also take
-+ * care of appropriately updating the link status properties of all connectors
-+ * on the topology from bad to good. This function takes care of all of these
-+ * checks in @state for the topology manager @mgr including possibly pulling
-+ * in additional CRTCs into the modeset, and possibly updating the link status
-+ * of each mstb's DRM connector.
-+ *
-+ * This function should be called within the driver's atomic check callbacks
-+ * whenever a modeset happens on an MST connector with it's link status set to
-+ * DRM_MODE_LINK_STATUS_BAD.
-+ *
-+ * RETURNS:
-+ *
-+ * Returns 0 for success, or negative error code for failure.
-+ */
-+int drm_atomic_dp_mst_retrain_topology(struct drm_atomic_state *state,
-+				       struct drm_dp_mst_topology_mgr *mgr)
-+{
-+	struct drm_dp_mst_branch *mstb =
-+		drm_dp_get_validated_mstb_ref(mgr, mgr->mst_primary);
-+	int ret = 0;
-+	bool need_modeset = false;
-+
-+	if (!mstb)
-+		return 0;
-+
-+	if (drm_atomic_dp_mst_state_only_disables_mstbs(state, mgr, mstb)) {
-+		ret = drm_atomic_dp_mst_all_mstbs_disabled(state, mgr, mstb);
-+		if (ret < 0)
-+			goto out;
-+
-+		if (ret)
-+			DRM_DEBUG_ATOMIC("state %p disables all CRTCs on mst mgr %p\n",
-+					 state, mgr);
-+		else
-+			goto out; /* valid, but doesn't retrain link */
++		if (!was_mst)
++			intel_dp->mst_bw_locked = false;
 +	} else {
-+		DRM_DEBUG_ATOMIC("state %p requires full modeset for CRTCs on mst mgr %p\n",
-+				 state, mgr);
-+		need_modeset = true;
+ 		DRM_DEBUG_KMS("Sink is not MST capable\n");
 +	}
-+
-+	ret = drm_atomic_dp_mst_retrain_mstb(state, mgr, mstb, need_modeset);
-+out:
-+	drm_dp_put_mst_branch_device(mgr->mst_primary);
-+	return ret;
-+}
-+EXPORT_SYMBOL(drm_atomic_dp_mst_retrain_topology);
-+
- /**
-  * drm_dp_mst_topology_mgr_set_mst() - Set the MST state for a topology manager
-  * @mgr: manager to set state for
-diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
-index 6261ec43a2c0..24075eb2dd1b 100644
---- a/include/drm/drm_dp_mst_helper.h
-+++ b/include/drm/drm_dp_mst_helper.h
-@@ -636,5 +636,7 @@ int drm_dp_send_power_updown_phy(struct drm_dp_mst_topology_mgr *mgr,
  
- int drm_dp_mst_topology_mgr_lower_link_rate(struct drm_dp_mst_topology_mgr *mgr,
- 					    int dp_link_bw, int dp_link_count);
-+int drm_atomic_dp_mst_retrain_topology(struct drm_atomic_state *state,
-+				       struct drm_dp_mst_topology_mgr *mgr);
+ 	drm_dp_mst_topology_mgr_set_mst(&intel_dp->mst_mgr,
+ 					intel_dp->is_mst);
+diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c b/drivers/gpu/drm/i915/intel_dp_mst.c
+index c3de0918ee13..c0553456b18e 100644
+--- a/drivers/gpu/drm/i915/intel_dp_mst.c
++++ b/drivers/gpu/drm/i915/intel_dp_mst.c
+@@ -42,7 +42,7 @@ static bool intel_dp_mst_compute_config(struct intel_encoder *encoder,
+ 		to_intel_connector(conn_state->connector);
+ 	struct drm_atomic_state *state = pipe_config->base.state;
+ 	int bpp;
+-	int lane_count, slots;
++	int lane_count, link_rate, slots;
+ 	const struct drm_display_mode *adjusted_mode = &pipe_config->base.adjusted_mode;
+ 	int mst_pbn;
+ 	bool reduce_m_n = drm_dp_has_quirk(&intel_dp->desc,
+@@ -56,16 +56,22 @@ static bool intel_dp_mst_compute_config(struct intel_encoder *encoder,
+ 			      bpp);
+ 	}
+ 	/*
+-	 * for MST we always configure max link bw - the spec doesn't
+-	 * seem to suggest we should do otherwise.
++	 * for MST we always configure max link bw if we don't know better -
++	 * the spec doesn't seem to suggest we should do otherwise. But,
++	 * ensure it always stays consistent with the rest of this hub's
++	 * state.
+ 	 */
+-	lane_count = intel_dp_max_lane_count(intel_dp);
++	if (intel_dp->mst_bw_locked) {
++		lane_count = intel_dp->lane_count;
++		link_rate = intel_dp->link_rate;
++	} else {
++		lane_count = intel_dp_max_lane_count(intel_dp);
++		link_rate = intel_dp_max_link_rate(intel_dp);
++	}
  
- #endif
+ 	pipe_config->lane_count = lane_count;
+-
+ 	pipe_config->pipe_bpp = bpp;
+-
+-	pipe_config->port_clock = intel_dp_max_link_rate(intel_dp);
++	pipe_config->port_clock = link_rate;
+ 
+ 	if (drm_dp_mst_port_has_audio(&intel_dp->mst_mgr, connector->port))
+ 		pipe_config->has_audio = true;
+@@ -221,6 +227,8 @@ static void intel_mst_pre_enable_dp(struct intel_encoder *encoder,
+ 	connector->encoder = encoder;
+ 	intel_mst->connector = connector;
+ 
++	intel_dp->mst_bw_locked = true;
++
+ 	DRM_DEBUG_KMS("active links %d\n", intel_dp->active_mst_links);
+ 
+ 	drm_dp_send_power_updown_phy(&intel_dp->mst_mgr, connector->port, true);
+diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
+index 3f19dc80997f..fc338529e918 100644
+--- a/drivers/gpu/drm/i915/intel_drv.h
++++ b/drivers/gpu/drm/i915/intel_drv.h
+@@ -1107,6 +1107,12 @@ struct intel_dp {
+ 	bool can_mst; /* this port supports mst */
+ 	bool is_mst;
+ 	int active_mst_links;
++	/* Set when we've already decided on a link bw for mst, to prevent us
++	 * from setting different link bandwiths if the hub tries to confuse
++	 * us by changing it later
++	 */
++	bool mst_bw_locked;
++
+ 	/* connector directly attached - won't be use for modeset in mst world */
+ 	struct intel_connector *attached_connector;
+ 
 -- 
 2.14.3
