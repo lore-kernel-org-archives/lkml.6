@@ -1,23 +1,23 @@
 Return-Path: <anholt@anholt.net>
-X-Google-Smtp-Source: AG47ELuHWkVpy/IaYjvWRUrTr54r/COQpPhT9wqnNU6M2Hv3Gwc05s34jzulIgJcqAA7f2XaclIt
-ARC-Seal: i=1; a=rsa-sha256; t=1520621065; cv=none;
+X-Google-Smtp-Source: AG47ELvqJTwVJ1RKyd/SDFuXX/Liv3BK/dpjyg3Qasu2wtT3zPDSvdPjHxTBv2rU1uciiX10SrYy
+ARC-Seal: i=1; a=rsa-sha256; t=1520621063; cv=none;
         d=google.com; s=arc-20160816;
-        b=fgOhlt32J4AF7Oe2gpMyPrG6gIfsQ0c5sxkPqfwdbIr9wZSFJ1H3DSNGFHwsjXRvTf
-         Sf3DxPDFOpe7AL0AOJVjM0HpEUqIt2nndDRHJEJ+/FSdKbTjNhQGzVaz6TOGqWgjqplr
-         EX1Eq9tFwaLUwQuvxM6tCUT6ArVWiLwkkhIin640a086oKpCPedWzuhfA/odec1Gq0Tf
-         v8jtFpW1wk1LArcTdQijGpGklpXal37kz5FV11mYTh15hq2iU+uWmNYnFU14c+vHkS8h
-         XM0Z+z2diQD2/V7NvojfRvqBJqy0SR/wA2jiBHksjujUVV3UBoPiB6+unPd3amrTy8Zr
-         y2zA==
+        b=pXIRaHjD+gHKnn4fg2Yh20KKNFiQ4CXEXaKjO1U0EhLmejtu6feZS1w5QJRi17qOZ7
+         K+gFJaG653y9z2Ns3FaEqP7Lk7pyrdoddKMTw45iMiJmaVM7GrB1OW3Tj/zo3+ZYATXh
+         ZNYo0rNqWkKc6jCUmiCk9EHlnnFbOCZHrLHOtK+lMcfcXhRR9uN0F4iu+b23dNDmF8/w
+         zZedJJx+x9rFRkHFh2785OXP5S+4xoRE95MeRvVAZkpDB2g+ipKU3FiIpNM+QE0YkopX
+         jeZoH0GS+eHYC8RizH9ohwhl9CME1+n9fMHUzI3OuhfVcqIEJD+AERXuLvlIrjA6XCZf
+         aCWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=26fP4VgVcX6cEgW3teBx/xeK6mxqOyAaylDtqLPae6Q=;
-        b=DUdZXZXKpHv3ZOtIsBDc5zmJq3UNG63zuYOr93lFjNmfqMhqqr5Ot1WR8Yiyavad6R
-         n0Z8uor4cTGf++JkJez/6D27JXcNm6J3f/aKvaKYfrarbEuK5+7wsQJixrvW0XTUEaKn
-         S08CVZixrvOY96pRip9tLg0Ean24ylKwYNc3uRO1JhzqtCJOC3/HfwPt4tZCUf3CoVho
-         dXi89Ir/wkWQhLgDMUZboKHKe73X0WOK8Vpn8syl/k4eSYH6xe9/WZ2qnxXbMut7/ilm
-         1LrUFrAT8Drs09GbECu2Gy+55PCKSMWnu1HsAUp/ZxQDUYNErqkRKff3aes3vOIwCBdu
-         I19w==
+        bh=HcqySU9pkkmq0P6N3fqUdE2bu21o7l0jNR1matMCjXA=;
+        b=gt98x7IUrQzGndPHHpGFWLerXWXEBt0lWQOAihdzVZjTuWXI+wTkRsRfsvxaliYpb5
+         gsXu1Hhs19seyj9DfhDXtug1/qILtB9CuQlExyiU7kOc8SahiyTQLpoByfaYtIXR48/i
+         StihHPdZ7/9PzUsS/RHO7PZO56l2o9ahrXXxJAG1AZ4SKbhqhx++JJMnkWwyMDstc+PK
+         2C2nuVZcDNHX7YsB89MshmdyylcQlVN6oAbZ79U9qN98FcYFcZ2wP5MVofoSewUR1CxG
+         fD/0n60BSbd5seKDKAFGDHmj6jjp8XJrUMAlkfUR7jPlijDUJ75L276hTm9UNJ1cYupV
+         mheg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of anholt@anholt.net designates 50.246.234.109 as permitted sender) smtp.mailfrom=anholt@anholt.net
 Authentication-Results: mx.google.com;
@@ -35,80 +35,48 @@ Cc: linux-rpi-kernel@lists.infradead.org,
 	Stefan Wahren <stefan.wahren@i2se.com>,
 	bcm-kernel-feedback-list@broadcom.com,
 	Eric Anholt <eric@anholt.net>
-Subject: [PATCH v3 6/6] staging: vc04_services: Remove vchiq_queue_bulk_{transmit,receive}.
-Date: Fri,  9 Mar 2018 10:44:17 -0800
-Message-Id: <20180309184417.23368-6-eric@anholt.net>
+Subject: [PATCH v3 4/6] ARM: dts: bcm2835: Add VCHIQ node to the Raspberry Pi boards. (v3)
+Date: Fri,  9 Mar 2018 10:44:15 -0800
+Message-Id: <20180309184417.23368-4-eric@anholt.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180309184417.23368-1-eric@anholt.net>
 References: <20180309184417.23368-1-eric@anholt.net>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594486754141065715?=
-X-GMAIL-MSGID: =?utf-8?q?1594486754141065715?=
+X-GMAIL-THRID: =?utf-8?q?1594486752543735841?=
+X-GMAIL-MSGID: =?utf-8?q?1594486752543735841?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-These are dead code, including in the downstream Raspberry Pi tree.
+The VCHIQ firmware communication channel operates in parallel with our
+other mailbox-based channel.  This is the communication channel that
+exposes the firmware's media decode/encode and ISP interfaces.
 
 Signed-off-by: Eric Anholt <eric@anholt.net>
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com> (v2)
 ---
 
-v2-3: no changes
+v2: dropped firmware property, added cache-line-size.
+v3: dropped cache-line-size, s/vchi@/mailbox@/
 
- .../vc04_services/interface/vchiq_arm/vchiq_arm.c    | 20 --------------------
- .../vc04_services/interface/vchiq_arm/vchiq_if.h     | 10 ----------
- 2 files changed, 30 deletions(-)
+ arch/arm/boot/dts/bcm2835-rpi.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index 8068c0308b34..24d456b0a6f0 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -406,26 +406,6 @@ VCHIQ_STATUS_T vchiq_open_service(
- }
- EXPORT_SYMBOL(vchiq_open_service);
+diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+index e36c392a2b8f..593f58d4ac0f 100644
+--- a/arch/arm/boot/dts/bcm2835-rpi.dtsi
++++ b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+@@ -27,6 +27,12 @@
+ 			firmware = <&firmware>;
+ 			#power-domain-cells = <1>;
+ 		};
++
++		mailbox@7e00b840 {
++			compatible = "brcm,bcm2835-vchiq";
++			reg = <0x7e00b840 0xf>;
++			interrupts = <0 2>;
++		};
+ 	};
+ };
  
--VCHIQ_STATUS_T
--vchiq_queue_bulk_transmit(VCHIQ_SERVICE_HANDLE_T handle,
--	const void *data, unsigned int size, void *userdata)
--{
--	return vchiq_bulk_transfer(handle,
--		VCHI_MEM_HANDLE_INVALID, (void *)data, size, userdata,
--		VCHIQ_BULK_MODE_CALLBACK, VCHIQ_BULK_TRANSMIT);
--}
--EXPORT_SYMBOL(vchiq_queue_bulk_transmit);
--
--VCHIQ_STATUS_T
--vchiq_queue_bulk_receive(VCHIQ_SERVICE_HANDLE_T handle, void *data,
--	unsigned int size, void *userdata)
--{
--	return vchiq_bulk_transfer(handle,
--		VCHI_MEM_HANDLE_INVALID, data, size, userdata,
--		VCHIQ_BULK_MODE_CALLBACK, VCHIQ_BULK_RECEIVE);
--}
--EXPORT_SYMBOL(vchiq_queue_bulk_receive);
--
- VCHIQ_STATUS_T
- vchiq_bulk_transmit(VCHIQ_SERVICE_HANDLE_T handle, const void *data,
- 	unsigned int size, void *userdata, VCHIQ_BULK_MODE_T mode)
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_if.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_if.h
-index 0e270852900d..e4109a83e628 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_if.h
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_if.h
-@@ -149,16 +149,6 @@ vchiq_queue_message(VCHIQ_SERVICE_HANDLE_T handle,
- 		    size_t size);
- extern void           vchiq_release_message(VCHIQ_SERVICE_HANDLE_T service,
- 	VCHIQ_HEADER_T *header);
--extern VCHIQ_STATUS_T vchiq_queue_bulk_transmit(VCHIQ_SERVICE_HANDLE_T service,
--	const void *data, unsigned int size, void *userdata);
--extern VCHIQ_STATUS_T vchiq_queue_bulk_receive(VCHIQ_SERVICE_HANDLE_T service,
--	void *data, unsigned int size, void *userdata);
--extern VCHIQ_STATUS_T vchiq_queue_bulk_transmit_handle(
--	VCHIQ_SERVICE_HANDLE_T service, VCHI_MEM_HANDLE_T handle,
--	const void *offset, unsigned int size, void *userdata);
--extern VCHIQ_STATUS_T vchiq_queue_bulk_receive_handle(
--	VCHIQ_SERVICE_HANDLE_T service, VCHI_MEM_HANDLE_T handle,
--	void *offset, unsigned int size, void *userdata);
- extern VCHIQ_STATUS_T vchiq_bulk_transmit(VCHIQ_SERVICE_HANDLE_T service,
- 	const void *data, unsigned int size, void *userdata,
- 	VCHIQ_BULK_MODE_T mode);
 -- 
 2.16.2
