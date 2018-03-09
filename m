@@ -1,67 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932255AbeCIRan (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 12:30:43 -0500
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:42815 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751231AbeCIRak (ORCPT
+        id S932303AbeCIRbj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 12:31:39 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:42860 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751192AbeCIRbi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 12:30:40 -0500
-X-Google-Smtp-Source: AG47ELt8HSBisAZeyLo4ow3Xhh8gV3YQalVjoTDfOWkRjokwHNhtltAAUIWAdLzV7AMOdZ/gAJjMlg==
-Subject: Re: [PATCH v2 3/3] arm64: dts: renesas: Add LVDS decoder to R-Car V3M
- Eagle
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
-        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
-        airlied@linux.ie, horms@verge.net.au, magnus.damm@gmail.com,
-        geert@linux-m68k.org, niklas.soderlund@ragnatech.se,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1520603500-15218-1-git-send-email-jacopo+renesas@jmondi.org>
- <1520603500-15218-4-git-send-email-jacopo+renesas@jmondi.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <e0ff40be-f134-5a86-6d00-9506d9829364@cogentembedded.com>
-Date: Fri, 9 Mar 2018 20:30:36 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Fri, 9 Mar 2018 12:31:38 -0500
+X-Google-Smtp-Source: AG47ELuwDdr7sEtEnd+Q3kCJpQ6uSTSsuwTDhltpXloOcq4EKWeFeLcWmfR85XINemae//3H+lZgwxDr2COnPLQyJUk=
 MIME-Version: 1.0
-In-Reply-To: <1520603500-15218-4-git-send-email-jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180309155315.4x44sbp3darractt@armageddon.cambridge.arm.com>
+References: <cover.1520600533.git.andreyknvl@google.com> <beea8ac394bfae3c7c949645fb887ceacc3f3bb3.1520600533.git.andreyknvl@google.com>
+ <20180309155315.4x44sbp3darractt@armageddon.cambridge.arm.com>
+From: Andrey Konovalov <andreyknvl@google.com>
+Date: Fri, 9 Mar 2018 18:31:36 +0100
+Message-ID: <CAAeHK+xF0X-SQuPVmZF--VnmvYrbpDkznSwYTh_3LHq1H2V=9Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/6] mm, arm64: untag user addresses in memory syscalls
+To: Catalin Marinas <catalin.marinas@arm.com>,
+        Evgeniy Stepanov <eugenis@google.com>
+Cc: Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        linux-arch@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>, Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09/2018 04:51 PM, Jacopo Mondi wrote:
+On Fri, Mar 9, 2018 at 4:53 PM, Catalin Marinas <catalin.marinas@arm.com> wrote:
+> On Fri, Mar 09, 2018 at 03:02:01PM +0100, Andrey Konovalov wrote:
+>> Memory subsystem syscalls accept user addresses as arguments, but don't use
+>> copy_from_user and other similar functions, so we need to handle this case
+>> separately.
+>>
+>> Untag user pointers passed to madvise, mbind, get_mempolicy, mincore,
+>> mlock, mlock2, brk, mmap_pgoff, old_mmap, munmap, remap_file_pages,
+>> mprotect, pkey_mprotect, mremap and msync.
+>>
+>> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+>
+> Please keep the cc list small (maybe linux-arch, linux-arm-kernel) as
+> I'm sure some lists would consider this spam.
 
-> The R-Car V3M Eagle board includes a transparent LVDS decoder, connected
-> to the on-chip LVDS encoder output on one side and to HDMI encoder
-> ADV7511w on the other one.
-> 
-> As the decoder does not need any configuration it has been so-far
-> omitted from DTS. Now that a driver for transparent LVDS decoder is
-> available, describe it in DT as well.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 31 ++++++++++++++++++++++++--
->  1 file changed, 29 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> index c0fd144..0a95c20 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> @@ -42,6 +42,33 @@
->  			};
->  		};
->  	};
-> +
-> +	lvds,decoder {
+OK.
 
-   I said hyphen (-), not comma (,)! :-)
+>
+>>  mm/madvise.c   | 2 ++
+>>  mm/mempolicy.c | 6 ++++++
+>>  mm/mincore.c   | 2 ++
+>>  mm/mlock.c     | 5 +++++
+>>  mm/mmap.c      | 9 +++++++++
+>>  mm/mprotect.c  | 2 ++
+>>  mm/mremap.c    | 2 ++
+>>  mm/msync.c     | 3 +++
+>
+> I'm not yet convinced these functions need to allow tagged pointers.
+> They are not doing memory accesses but rather dealing with the memory
+> range, hence an untagged pointer is better suited. There is probably a
+> reason why the "start" argument is "unsigned long" vs "void __user *"
+> (in the kernel, not the man page).
 
-[...]
+So that would make the user to untag pointers before passing to these syscalls.
 
-MBR, Sergei
+Evgeniy, would that be possible to untag pointers in HWASan before
+using memory subsystem syscalls? Is there a reason for untagging them
+in the kernel?
+
+>
+> --
+> Catalin
