@@ -1,122 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752219AbeCIIiX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 03:38:23 -0500
-Received: from mail-wr0-f182.google.com ([209.85.128.182]:33940 "EHLO
-        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751262AbeCIIiS (ORCPT
+        id S1752242AbeCIIiu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 03:38:50 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:46135 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751984AbeCIIis (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 03:38:18 -0500
-X-Google-Smtp-Source: AG47ELvc0EggfLWUA9dZXwALXFyoIwTZprpZ5VGTwa8vp6cdIcz/Nyezcf6NNFP+eCMrJt4ODXo5FA==
-Date: Fri, 9 Mar 2018 09:38:14 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@infradead.org>,
-        Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf report: Show zero counters as well in 'perf report
- --stat'
-Message-ID: <20180309083814.d6dzbaqcsyfo3cza@gmail.com>
-References: <20180307152430.7e5h7e657b7bgd7q@gmail.com>
- <20180307154338.GM3701@kernel.org>
+        Fri, 9 Mar 2018 03:38:48 -0500
+Date: Fri, 9 Mar 2018 00:38:38 -0800
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-im1omevlihhyneiic4nl3g24@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, eranian@google.com,
+        adrian.hunter@intel.com, mingo@kernel.org, dsahern@gmail.com,
+        hpa@zytor.com, wangnan0@huawei.com, namhyung@kernel.org,
+        acme@redhat.com, jolsa@kernel.org
+Reply-To: mingo@kernel.org, hpa@zytor.com, wangnan0@huawei.com,
+        dsahern@gmail.com, eranian@google.com, adrian.hunter@intel.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, jolsa@kernel.org,
+        namhyung@kernel.org, acme@redhat.com
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf cgroup: Add evlist__findnew_cgroup()
+Git-Commit-ID: 69239ec81d596c57e0cf2d2f26cfe92e8cbd0929
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180307154338.GM3701@kernel.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  69239ec81d596c57e0cf2d2f26cfe92e8cbd0929
+Gitweb:     https://git.kernel.org/tip/69239ec81d596c57e0cf2d2f26cfe92e8cbd0929
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 6 Mar 2018 15:27:08 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 7 Mar 2018 10:22:26 -0300
 
-* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+perf cgroup: Add evlist__findnew_cgroup()
 
-> >             STAT events:          0
-> >       STAT_ROUND events:          0
-> >     EVENT_UPDATE events:          0
-> >        TIME_CONV events:          1
-> >          FEATURE events:          0
-> > 
-> > It's pretty clear at a glance that LOST_SAMPLES is present but zero.
-> 
-> Your wording confused me a bit, that "is present" part, because there
-> are some PERF_RECORD_ events that will only be "present" if we actually
-> explicitely ask them to be, by setting flags in perf_event_attr, like:
-> 
-> 				mmap           :  1, /* include mmap data     */
-> 				comm	       :  1, /* include comm data     */
-> 				task           :  1, /* trace fork/exit       */
-> 				mmap_data      :  1, /* non-exec mmap data    */
-> 				sample_id_all  :  1, /* sample_type all events */
-> 				mmap2          :  1, /* include mmap with inode data     */
-> 				comm_exec      :  1, /* flag comm events that are due to an exec */
-> 				context_switch :  1, /* context switch data */
-> 				namespaces     :  1, /* include namespaces data */
-> 
-> So, for PERF_RECORD_MMAP2 events, one can say that it is "present but
-> zero" if we have an event with perf_event_attr.mmap2 = 1 and no
-> PERF_RECORD_MMAP2 events recorded.
-> 
-> But for PERF_RECORD_LOST, that will always be present, if we lose
-> records.
+Similar to machine__findnew_thread(), etc, i.e. try to find, get a
+refcount if found and return it, otherwise return a new cgroup object.
 
-Yeah, the triple ambiguity between:
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-im1omevlihhyneiic4nl3g24@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/cgroup.c | 17 ++++++++++-------
+ tools/perf/util/cgroup.h |  4 ++++
+ 2 files changed, 14 insertions(+), 7 deletions(-)
 
-  -    did the event disappear due to 'we did not lose any records',
-  - or did it disappear because it's somehow a conditional stat field,
-  - or did it disappear because I'm blind and/or mis-remembering the field name.
-
-... is what was causing trouble to me personally, to the level that I had to go 
-and look into the tooling code to make sure I'm interpreting it correctly.
-
-> So perhaps to make all this clean we can add your patch, and on top of
-> it another that shows the perf_record_attr flag for the ones that are
-> not on all the time, something like:
-> 
->    fomalhaut:~> perf report --stat
->  
->    Aggregated stats:
->             TOTAL events:     495984
->              MMAP events:         85	attr.mmap: 1
->              LOST events:          0
->              COMM events:       3389	attr.comm: 1, attr.comm_exec: 0
->              EXIT events:       1605    attr.task: 1
->          THROTTLE events:          2
->        UNTHROTTLE events:          2
->              FORK events:       3377	attr.task: 1
->              READ events:          0
->            SAMPLE events:     472629
->             MMAP2 events:      14753	attr.mmap2: 1
->               AUX events:          0    have to look at what enables this, etc
->      ITRACE_START events:          0	ditto
->      LOST_SAMPLES events:          0
->            SWITCH events:          0	attr.context_switch: 0
->   SWITCH_CPU_WIDE events:          0	attr.context_switch: 0
->        NAMESPACES events:          0	attr.namespaces: 0
->              ATTR events:          0
->        EVENT_TYPE events:          0
->      TRACING_DATA events:          0
->          BUILD_ID events:          0	this implies disabling in 'perf record' command line
->    FINISHED_ROUND events:        139
->          ID_INDEX events:          0
->     AUXTRACE_INFO events:          0
->          AUXTRACE events:          0
->    AUXTRACE_ERROR events:          0
->        THREAD_MAP events:          1
->           CPU_MAP events:          1
->       STAT_CONFIG events:          0
->              STAT events:          0
->        STAT_ROUND events:          0
->      EVENT_UPDATE events:          0
->         TIME_CONV events:          1	have to check
->           FEATURE events:          0
-
-Yeah, I'm fine with this too if it's easy enough to implement - although I suspect 
-in most cases the knowledge that a stat field not present must be due to an 
-environment/setup dependency (and not a runtime/workload dependency) is enough.
-
-It's the uncertainty of 'stat line can disappear because it was zero' that was my 
-main beef :-)
-
-Thanks,
-
-	Ingo
+diff --git a/tools/perf/util/cgroup.c b/tools/perf/util/cgroup.c
+index 26a837037797..6fd33ffc2488 100644
+--- a/tools/perf/util/cgroup.c
++++ b/tools/perf/util/cgroup.c
+@@ -128,18 +128,21 @@ out_err:
+ 	return NULL;
+ }
+ 
++struct cgroup *evlist__findnew_cgroup(struct perf_evlist *evlist, char *name)
++{
++	struct cgroup *cgroup = evlist__find_cgroup(evlist, name);
++
++	return cgroup ?: cgroup__new(name);
++}
++
+ static int add_cgroup(struct perf_evlist *evlist, char *str)
+ {
+ 	struct perf_evsel *counter;
+-	struct cgroup *cgrp = evlist__find_cgroup(evlist, str);
++	struct cgroup *cgrp = evlist__findnew_cgroup(evlist, str);
+ 	int n;
+ 
+-	if (!cgrp) {
+-		cgrp = cgroup__new(str);
+-		if (!cgrp)
+-			return -1;
+-	}
+-
++	if (!cgrp)
++		return -1;
+ 	/*
+ 	 * find corresponding event
+ 	 * if add cgroup N, then need to find event N
+diff --git a/tools/perf/util/cgroup.h b/tools/perf/util/cgroup.h
+index 34a6c11543dc..0e377e6340dd 100644
+--- a/tools/perf/util/cgroup.h
++++ b/tools/perf/util/cgroup.h
+@@ -18,6 +18,10 @@ extern int nr_cgroups; /* number of explicit cgroups defined */
+ struct cgroup *cgroup__get(struct cgroup *cgroup);
+ void cgroup__put(struct cgroup *cgroup);
+ 
++struct perf_evlist;
++
++struct cgroup *evlist__findnew_cgroup(struct perf_evlist *evlist, char *name);
++
+ int parse_cgroups(const struct option *opt, const char *str, int unset);
+ 
+ #endif /* __CGROUP_H__ */
