@@ -1,111 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932190AbeCIP6i (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 10:58:38 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54276 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932152AbeCIP6e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 10:58:34 -0500
-Date: Fri, 9 Mar 2018 15:58:29 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Andrey Konovalov <andreyknvl@google.com>,
-        Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Arnd Bergmann <arnd@arndb.de>,
-        linux-arch@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>, Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>
-Subject: Re: [RFC PATCH 2/6] arm64: untag user addresses in copy_from_user
- and others
-Message-ID: <20180309155829.2fzgevhsxj3gnyly@armageddon.cambridge.arm.com>
-References: <cover.1520600533.git.andreyknvl@google.com>
- <d681c0dee907ee5cc55d313e2f843237c6087bf0.1520600533.git.andreyknvl@google.com>
- <20180309150309.4sue2zj6teehx6e3@lakrids.cambridge.arm.com>
+        id S932089AbeCIQAm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 11:00:42 -0500
+Received: from mout.web.de ([217.72.192.78]:55911 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751096AbeCIQAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 11:00:40 -0500
+Subject: [PATCH v2 0/3] mfd/abx500-core: Adjustments for eight function
+ implementations
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
+Message-ID: <6c8ff539-9e9d-635b-22a8-df8100ac8156@users.sourceforge.net>
+Date: Fri, 9 Mar 2018 17:00:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180309150309.4sue2zj6teehx6e3@lakrids.cambridge.arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:NGBKmL4BUjiNaO6kHDu03gCOIkXqx2I0igdasfxcS+q/byilJuQ
+ o3MXCH8wI/RMl/8xJFrFPUuMZ9WYDf4QOFUGymO0ksyRB3BfoZpPCLirmoXpp1I7OL2qbDD
+ 1McS+HJ7clzX3IGPS9p/+9VOsucksrXbvmSRujxBIpoePS6Sb+h5ej3GlfzIhVtzGmiSfiP
+ QvNfPtIfSiYvJ1qV8QNwA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:4FK06a/2FQg=:QmnDTH2N2JCBnKiTKNdUgD
+ 2DAx3n7sD4Ml7vn4Tc39AwrIv98ir+2Hx5ZKltkC00/33H090tIbE3UbEULcDzXWGpmqz+PhS
+ 7X6hkke145AO8qQ2yFKPzGppEchNemCeu+OLHbKEagFYyqfE8yUgkJNcmDH0E3sKojUC6bje4
+ lgis7nr+IreoPO3PZrwKFscfAshhBaz8q6P/pJa3SjCqZGOzVYs8cFn5X69xSDxkdSUJ86n3S
+ Nzn6UqUdRFmYEm8JXVazf5OII2AV9w0modJvzPB50ULcd2QoLNelC/UgEvaHREp7J2g0F+5Ag
+ P/373vVGD0ju94aQ2jakukZ9nPUpC940oA9KkoPJkJMCbhJ2RLNjgVJ2u6FlYNQDUaKwbweKh
+ 2RBg2LQA+m+rXfP3B6StFr9Z1NlR580f0mSDBu0yf6p4h0auHaHwO4NhQzAidt4jkuy3lCV87
+ /KOIz3JOAHyPskvXG43S0N0qA0u3bfF8jh825vf/mrLaQ2oxlg4J13bpVfBwIGaZQZ+Jc5WR6
+ PtUjw7CMkqs2QHdcMqtMwHXCxjZbmZJ1avODVXesEebr0yBWMKHCbEy7X38HdaV0MelCuxEny
+ W0nZToge9RvHXCZoGbrScKM8L4b+LRcxxAhCtbiFn4GURHYPv6FIIOm243ukDEBJOOUlDaNPj
+ BnmC8xf2pYMcJ7lYjrq3FUXwLWvaTiCoKV5za+1IGafQ4h4yrUNmRxYvyaja5cXyUkIZUZeQ+
+ qK4/o24JCX+p2Q3c6L5KNekmwq7Vb8t76dSMsDodiP332jceXm3BBQgM4b0gqPqvdrLPCoiK/
+ Ut0pyvCgpZe/AChuwk1g5r+hMWo9Z2imlsxU8WcAJgCbwytE7I=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 09, 2018 at 03:03:09PM +0000, Mark Rutland wrote:
-> On Fri, Mar 09, 2018 at 03:02:00PM +0100, Andrey Konovalov wrote:
-> > copy_from_user (and a few other similar functions) are used to copy data
-> > from user memory into the kernel memory or vice versa. Since a user can
-> > provided a tagged pointer to one of the syscalls that use copy_from_user,
-> > we need to correctly handle such pointers.
-> 
-> I don't think it makes sense to do this in the low-level uaccess
-> primitives, given we're going to have to untag pointers before common
-> code can use them, e.g. for comparisons against TASK_SIZE or
-> user_addr_max().
-> 
-> I think we'll end up with subtle bugs unless we consistently untag
-> pointers before we get to uaccess primitives. If core code does untag
-> pointers, then it's redundant to do so here.
+From: Markus Elfring <elfring@users.sourceforge.net>
 
-A quick "hack" below clears the tag on syscall entry (where the argument
-is a __user pointer). However, we still have cases in core code where
-the pointer is read from a structure or even passed as an unsigned long
-as part of a command + argument (like in ptrace).
+Three update suggestions were taken into account
+from static source code analysis.
 
-The "hack":
+Markus Elfring (3):
+  Delete an error message for a failed memory allocation
+    in abx500_register_ops()
+  Improve two size determinations in abx500_register_ops()
+  Adjust 14 checks for null pointers
 
----------------------------------8<--------------------------
->From 6df503651f73c923d91eb695e56f977ddcc52d43 Mon Sep 17 00:00:00 2001
-From: Catalin Marinas <catalin.marinas@arm.com>
-Date: Tue, 6 Feb 2018 17:54:05 +0000
-Subject: [PATCH] arm64: Allow user pointer tags to be passed into the kernel
-
-The current tagged pointer ABI disallows the top byte of a user pointer
-to be non-zero when invoking a syscall. This patch allows such pointer
-to be passed into the kernel and the kernel will mask them out
-automatically. Page-based syscall ABI (mmap, mprotect, madvise etc.)
-expect the pointer tag to be 0 (see include/linux/syscalls.h for the ABI
-functions taking __user pointers).
-
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm64/include/asm/unistd.h | 9 +++++++++
- include/linux/syscalls.h        | 2 ++
- 2 files changed, 11 insertions(+)
 
-diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-index a0baa9af5487..cd68ad969e3a 100644
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -53,3 +53,12 @@
- #endif
- 
- #define NR_syscalls (__NR_syscalls)
-+
-+/* copied from arch/s390/ */
-+#define __TYPE_IS_PTR(t) (!__builtin_types_compatible_p( \
-+				typeof(0?(__force t)0:0ULL), u64))
-+/* sign-extend bit 55 to mask out the pointer tag */
-+#define __SC_CAST(t, a)						\
-+	(__TYPE_IS_PTR(t)					\
-+		? (__force t)((__s64)((__u64)a << 8) >> 8)	\
-+		: (__force t)a)
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index a78186d826d7..279497207a31 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -105,7 +105,9 @@ union bpf_attr;
- #define __TYPE_IS_UL(t)	(__TYPE_AS(t, 0UL))
- #define __TYPE_IS_LL(t) (__TYPE_AS(t, 0LL) || __TYPE_AS(t, 0ULL))
- #define __SC_LONG(t, a) __typeof(__builtin_choose_expr(__TYPE_IS_LL(t), 0LL, 0L)) a
-+#ifndef __SC_CAST
- #define __SC_CAST(t, a)	(__force t) a
-+#endif
- #define __SC_ARGS(t, a)	a
- #define __SC_TEST(t, a) (void)BUILD_BUG_ON_ZERO(!__TYPE_IS_LL(t) && sizeof(t) > sizeof(long))
- 
+v2:
+Lee Jones requested a resend for these patches. The changes were rebased
+on source files from Linux next-20180308.
+
+ drivers/mfd/abx500-core.c | 25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
+
 -- 
-Catalin
+2.15.1
