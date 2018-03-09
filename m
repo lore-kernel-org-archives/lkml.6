@@ -1,137 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751088AbeCIEoF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 23:44:05 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45284 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750848AbeCIEoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 23:44:03 -0500
-Date: Fri, 9 Mar 2018 12:43:53 +0800
-From: Dave Young <dyoung@redhat.com>
-To: Philipp Rudo <prudo@linux.vnet.ibm.com>
-Cc: kexec@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
-        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: Re: [PATCH 11/11] kexec_file: Move purgatories sha256 to common code
-Message-ID: <20180309044353.GC3246@dhcp-128-65.nay.redhat.com>
-References: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
- <20180226151620.20970-12-prudo@linux.vnet.ibm.com>
+        id S1751209AbeCIEpA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 23:45:00 -0500
+Received: from ozlabs.org ([103.22.144.67]:43789 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750913AbeCIEo7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 23:44:59 -0500
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Fri, 9 Mar 2018 15:44:36 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: linux-next: Signed-off-by missing for commit in the drm tree
+Message-ID: <20180309154436.79df1526@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180226151620.20970-12-prudo@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/3DhefnmpCspuG5zmYqbj+3K"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/26/18 at 04:16pm, Philipp Rudo wrote:
-> The code to verify the new kernels sha digest are applicable for all
-> architectures. Move it to common code.
-> 
-> Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
-> ---
->  arch/x86/purgatory/Makefile                    |  3 +++
->  arch/x86/purgatory/purgatory.c                 |  2 +-
->  {arch/x86/purgatory => include/linux}/sha256.h | 10 +++++++++-
->  {arch/x86/purgatory => lib}/sha256.c           |  4 ++--
->  4 files changed, 15 insertions(+), 4 deletions(-)
->  rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
->  rename {arch/x86/purgatory => lib}/sha256.c (99%)
-> 
-> diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
-> index 2f15a2ac4209..414eed6b5065 100644
-> --- a/arch/x86/purgatory/Makefile
-> +++ b/arch/x86/purgatory/Makefile
-> @@ -6,6 +6,9 @@ purgatory-y := purgatory.o stack.o setup-x86_$(BITS).o sha256.o entry64.o string
->  targets += $(purgatory-y)
->  PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
->  
-> +$(obj)/sha256.o: $(srctree)/lib/sha256.c
-> +	$(call if_changed_rule,cc_o_c)
-> +
->  LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined -nostdlib -z nodefaultlib
->  targets += purgatory.ro
->  
-> diff --git a/arch/x86/purgatory/purgatory.c b/arch/x86/purgatory/purgatory.c
-> index 470edad96bb9..025c34ac0d84 100644
-> --- a/arch/x86/purgatory/purgatory.c
-> +++ b/arch/x86/purgatory/purgatory.c
-> @@ -11,9 +11,9 @@
->   */
->  
->  #include <linux/bug.h>
-> +#include <linux/sha256.h>
->  #include <asm/purgatory.h>
->  
-> -#include "sha256.h"
->  #include "../boot/string.h"
->  
->  unsigned long purgatory_backup_dest __section(.kexec-purgatory);
-> diff --git a/arch/x86/purgatory/sha256.h b/include/linux/sha256.h
-> similarity index 63%
-> rename from arch/x86/purgatory/sha256.h
-> rename to include/linux/sha256.h
-> index 2867d9825a57..43a20ac33688 100644
-> --- a/arch/x86/purgatory/sha256.h
-> +++ b/include/linux/sha256.h
-> @@ -13,9 +13,17 @@
->  #include <linux/types.h>
->  #include <crypto/sha.h>
->  
-> +/* Stand-alone implementation of the SHA256 algorithm. It is designed to
-> + * have as little dependencies as possible so it can be used in the
-> + * kexec_file purgatory. In other cases you should use the implementation in
-> + * crypto/.
-> + *
-> + * For details see lib/sha256.c
-> + */
+--Sig_/3DhefnmpCspuG5zmYqbj+3K
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-should move to use preferred comment format:
-/*
- * Stand-alone ...
- * ...
- */
+Hi all,
 
-> +
->  extern int sha256_init(struct sha256_state *sctx);
->  extern int sha256_update(struct sha256_state *sctx, const u8 *input,
-> -				unsigned int length);
-> +			 unsigned int length);
->  extern int sha256_final(struct sha256_state *sctx, u8 *hash);
->  
->  #endif /* SHA256_H */
-> diff --git a/arch/x86/purgatory/sha256.c b/lib/sha256.c
-> similarity index 99%
-> rename from arch/x86/purgatory/sha256.c
-> rename to lib/sha256.c
-> index 548ca675a14a..4400c832e2aa 100644
-> --- a/arch/x86/purgatory/sha256.c
-> +++ b/lib/sha256.c
-> @@ -16,9 +16,9 @@
->   */
->  
->  #include <linux/bitops.h>
-> +#include <linux/sha256.h>
-> +#include <linux/string.h>
->  #include <asm/byteorder.h>
-> -#include "sha256.h"
-> -#include "../boot/string.h"
+Commit
 
-Hmm, I'm not sure if moving to linux/string.h will have some side
-effects..
+  37a94791a097 ("drm/amd/pp: Add #ifdef checks for CONFIG_ACPI")
 
->  
->  static inline u32 Ch(u32 x, u32 y, u32 z)
->  {
-> -- 
-> 2.13.5
-> 
+is missing a Signed-off-by from its committer.
 
-Thanks
-Dave
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/3DhefnmpCspuG5zmYqbj+3K
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqiETQACgkQAVBC80lX
+0Gy7EggAnWChpO1LzmHDaVHm3NBfatk3jYrROuG013ElPnD/fstQHGi3dgwGbMNJ
+r+TBOHejMf+7APbEH97PsLvDeoQDBjpouG5tywxPjCqdj1qLtxFCPJOm4onAE6vo
+Y/q4lN6UwHVFNEJiQPHqfcbVJXgS5IvwZinpRZWQI1YctkOuXEZveJSf8HK7zJa4
+0CPNTN6eepWzELup1d033gfwdufP1fWMQDHtqTSlbiaMX+lQ3bPam62+a9ZHDgZy
+ZBdC6KXdWabzUzeLdD3u8/BB702oevMJUyv8cXYBigcpTzx+ONWyiMy2vL9WEdUH
+QhAuWbn85+ueWjdhhuGaQr5kG+PRqg==
+=fCqz
+-----END PGP SIGNATURE-----
+
+--Sig_/3DhefnmpCspuG5zmYqbj+3K--
