@@ -1,59 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751996AbeCIB3n (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 20:29:43 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:51577 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751852AbeCIB3m (ORCPT
+        id S1751943AbeCIBvl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 20:51:41 -0500
+Received: from regular1.263xmail.com ([211.150.99.132]:60130 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751113AbeCIBvk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 20:29:42 -0500
-X-Google-Smtp-Source: AG47ELu6G0IwbziABQDEBhohjtADJPjOD4GKDg63E1o4EOre5Se71cvmkd15c1gBVEvl2MqOmY2Ueg==
-X-ME-Sender: <xms:guOhWvm0v7DN_K2z7KxpL_n4buTU_FxcJ_PY0K6uzfybWHewcD27Gg>
-From: Boqun Feng <boqun.feng@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [PATCH] rcu: Use the proper lockdep annotation in dump_blkd_tasks()
-Date: Fri,  9 Mar 2018 09:32:18 +0800
-Message-Id: <20180309013224.23890-1-boqun.feng@gmail.com>
-X-Mailer: git-send-email 2.16.2
+        Thu, 8 Mar 2018 20:51:40 -0500
+X-263anti-spam: KSV:0;BIG:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ADDR-CHECKED4: 1
+X-ABS-CHECKED: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+X-RL-SENDER: jeffy.chen@rock-chips.com
+X-FST-TO: alexandre.belloni@bootlin.com
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: jeffy.chen@rock-chips.com
+X-UNIQUE-TAG: <8476abcfc93184479494c5a8d2569914>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Message-ID: <5AA1E89F.2020500@rock-chips.com>
+Date: Fri, 09 Mar 2018 09:51:27 +0800
+From: JeffyChen <jeffy.chen@rock-chips.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20130126 Thunderbird/19.0
+MIME-Version: 1.0
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC: linux-kernel@vger.kernel.org, broonie@kernel.org,
+        linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 2/4] rtc: at91sam9: Pass pdev->dev to regmap_init_mmio()
+References: <20180308102154.25686-1-jeffy.chen@rock-chips.com> <20180308102154.25686-3-jeffy.chen@rock-chips.com> <20180308204941.GK20370@piout.net>
+In-Reply-To: <20180308204941.GK20370@piout.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sparse reported this:
+Hi Alexandre,
 
-| kernel/rcu/tree_plugin.h:814:9: warning: incorrect type in argument 1 (different modifiers)
-| kernel/rcu/tree_plugin.h:814:9:    expected struct lockdep_map const *lock
-| kernel/rcu/tree_plugin.h:814:9:    got struct lockdep_map [noderef] *<noident>
-
-This is caused by using vanilla lockdep annotations on rcu_node::lock,
-and that requires accessing ->lock of rcu_node directly. However we need
-to keep rcu_node::lock __private to avoid breaking its extra ordering
-guarantee. And we have a dedicated lockdep annotation for
-rcu_node::lock, so use it.
-
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
----
- kernel/rcu/tree_plugin.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 9accacffd138..ea33f57abae5 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -811,7 +811,7 @@ static void dump_blkd_tasks(struct rcu_node *rnp, int ncheck)
- 	int i;
- 	struct list_head *lhp;
- 
--	lockdep_assert_held(&rnp->lock);
-+	raw_lockdep_assert_held_rcu_node(rnp);
- 	pr_info("%s: grp: %d-%d level: %d ->qamask %#lx ->gp_tasks %p ->boost_tasks %p ->exp_tasks %p &->blkd_tasks: %p offset: %u\n", __func__, rnp->grplo, rnp->grphi, rnp->level, rnp->qsmask, rnp->gp_tasks, rnp->boost_tasks, rnp->exp_tasks, &rnp->blkd_tasks, (unsigned int)offsetof(typeof(*rnp), blkd_tasks));
- 	pr_cont("\t->blkd_tasks");
- 	i = 0;
--- 
-2.16.2
+On 03/09/2018 04:49 AM, Alexandre Belloni wrote:
+> On 08/03/2018 at 18:21:52 +0800, Jeffy Chen wrote:
+>> Otherwise it would use "dummy*" to create regmap debugfs dir.
+>>
+>> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+>> ---
+>>
+>> Changes in v3: None
+>>
+>>   drivers/rtc/rtc-at91sam9.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/rtc/rtc-at91sam9.c b/drivers/rtc/rtc-at91sam9.c
+>> index 7418a763ce52..0d6a17a77841 100644
+>> --- a/drivers/rtc/rtc-at91sam9.c
+>> +++ b/drivers/rtc/rtc-at91sam9.c
+>> @@ -402,7 +402,7 @@ static int at91_rtc_probe(struct platform_device *pdev)
+>>   		if (IS_ERR(gpbr))
+>>   			return PTR_ERR(gpbr);
+>>
+>> -		rtc->gpbr = regmap_init_mmio(NULL, gpbr,
+>> +		rtc->gpbr = regmap_init_mmio(&pdev->dev, gpbr,
+>>   					     &gpbr_regmap_config);
+>
+> This would be misleading as the gpbr is not directly related to the rtc.
+ok, will fix that, thanks.
+>
