@@ -1,64 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933291AbeCIW1P (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 17:27:15 -0500
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:35928 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932327AbeCIW1N (ORCPT
+        id S933295AbeCIW1b (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 17:27:31 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:42964 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932515AbeCIWYx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 17:27:13 -0500
-X-Google-Smtp-Source: AG47ELvsCHU8o4HQWhAQ2YbaZnMR08go8tmFfJTyWxpma0crq+k44qPOPHKs9hLnUonG+tbkxLJqyQ==
-Date: Sat, 10 Mar 2018 01:27:09 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] proc: register filesystem last
-Message-ID: <20180309222709.GA3843@avx2>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.7.2 (2016-11-26)
+        Fri, 9 Mar 2018 17:24:53 -0500
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
+        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
+        tfiga@chromium.org, heiko@sntech.de
+Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
+        a.hajda@samsung.com, ykk@rock-chips.com, kernel@collabora.com,
+        m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org,
+        jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org,
+        linux-rockchip@lists.infradead.org, kgene@kernel.org,
+        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
+        jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org,
+        mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com,
+        jingoohan1@gmail.com, sw0312.kim@samsung.com,
+        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
+        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
+        hshi@chromium.org, "Kristian H . Kristensen" <hoegsberg@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: [PATCH v5 28/36] drm/bridge: analogix_dp: Split the platform-specific poweron in two parts
+Date: Fri,  9 Mar 2018 23:23:19 +0100
+Message-Id: <20180309222327.18689-29-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180309222327.18689-1-enric.balletbo@collabora.com>
+References: <20180309222327.18689-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As soon as register_filesystem() exits, filesystem can be mounted.
-It is better to present fully operational /proc.
+From: Douglas Anderson <dianders@chromium.org>
 
-Of course it doesn't matter because /proc is not modular
-but do it anyway.
+Some of the platform-specific stuff in rockchip_dp_poweron() needs to
+happen before the generic code.  Some needs to happen after.  Let's
+split the callback in two.
 
-Drop error check, it should be handled by panicking.
+Specifically we can't start doing PSR work until _after_ the whole
+controller is up, so don't set the enable until the end.
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Kristian H. Kristensen <hoegsberg@chromium.org>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+[seanpaul added exynos change]
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
 
- fs/proc/root.c |    8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |  7 +++++--
+ drivers/gpu/drm/exynos/exynos_dp.c                 |  2 +-
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 12 ++++++++++--
+ include/drm/bridge/analogix_dp.h                   |  3 ++-
+ 4 files changed, 18 insertions(+), 6 deletions(-)
 
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -123,14 +123,8 @@ static struct file_system_type proc_fs_type = {
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index eaf93cbd47a8..c527019daaa6 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1260,8 +1260,8 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
+ 		goto out_dp_clk_pre;
+ 	}
  
- void __init proc_root_init(void)
- {
--	int err;
--
- 	proc_init_kmemcache();
- 	set_proc_pid_nlink();
--	err = register_filesystem(&proc_fs_type);
--	if (err)
--		return;
--
- 	proc_self_init();
- 	proc_thread_self_init();
- 	proc_symlink("mounts", NULL, "self/mounts");
-@@ -146,6 +140,8 @@ void __init proc_root_init(void)
- 	proc_tty_init();
- 	proc_mkdir("bus", NULL);
- 	proc_sys_init();
+-	if (dp->plat_data->power_on)
+-		dp->plat_data->power_on(dp->plat_data);
++	if (dp->plat_data->power_on_start)
++		dp->plat_data->power_on_start(dp->plat_data);
+ 
+ 	phy_power_on(dp->phy);
+ 
+@@ -1286,6 +1286,9 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
+ 		goto out_dp_init;
+ 	}
+ 
++	if (dp->plat_data->power_on_end)
++		dp->plat_data->power_on_end(dp->plat_data);
 +
-+	register_filesystem(&proc_fs_type);
+ 	enable_irq(dp->irq);
+ 	return 0;
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
+index 964831dab102..86330f396784 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp.c
++++ b/drivers/gpu/drm/exynos/exynos_dp.c
+@@ -162,7 +162,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+ 	dp->drm_dev = drm_dev;
+ 
+ 	dp->plat_data.dev_type = EXYNOS_DP;
+-	dp->plat_data.power_on = exynos_dp_poweron;
++	dp->plat_data.power_on_start = exynos_dp_poweron;
+ 	dp->plat_data.power_off = exynos_dp_poweroff;
+ 	dp->plat_data.attach = exynos_dp_bridge_attach;
+ 	dp->plat_data.get_modes = exynos_dp_get_modes;
+diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+index b3f46ed24cdc..23317a2269e1 100644
+--- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -109,7 +109,7 @@ static int rockchip_dp_pre_init(struct rockchip_dp_device *dp)
+ 	return 0;
  }
  
- static int proc_root_getattr(const struct path *path, struct kstat *stat,
+-static int rockchip_dp_poweron(struct analogix_dp_plat_data *plat_data)
++static int rockchip_dp_poweron_start(struct analogix_dp_plat_data *plat_data)
+ {
+ 	struct rockchip_dp_device *dp = to_dp(plat_data);
+ 	int ret;
+@@ -127,6 +127,13 @@ static int rockchip_dp_poweron(struct analogix_dp_plat_data *plat_data)
+ 		return ret;
+ 	}
+ 
++	return ret;
++}
++
++static int rockchip_dp_poweron_end(struct analogix_dp_plat_data *plat_data)
++{
++	struct rockchip_dp_device *dp = to_dp(plat_data);
++
+ 	return rockchip_drm_psr_activate(&dp->encoder);
+ }
+ 
+@@ -330,7 +337,8 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
+ 	dp->plat_data.encoder = &dp->encoder;
+ 
+ 	dp->plat_data.dev_type = dp->data->chip_type;
+-	dp->plat_data.power_on = rockchip_dp_poweron;
++	dp->plat_data.power_on_start = rockchip_dp_poweron_start;
++	dp->plat_data.power_on_end = rockchip_dp_poweron_end;
+ 	dp->plat_data.power_off = rockchip_dp_powerdown;
+ 	dp->plat_data.get_modes = rockchip_dp_get_modes;
+ 
+diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
+index e9a1116d2f8e..475b706b49de 100644
+--- a/include/drm/bridge/analogix_dp.h
++++ b/include/drm/bridge/analogix_dp.h
+@@ -33,7 +33,8 @@ struct analogix_dp_plat_data {
+ 	struct drm_connector *connector;
+ 	bool skip_connector;
+ 
+-	int (*power_on)(struct analogix_dp_plat_data *);
++	int (*power_on_start)(struct analogix_dp_plat_data *);
++	int (*power_on_end)(struct analogix_dp_plat_data *);
+ 	int (*power_off)(struct analogix_dp_plat_data *);
+ 	int (*attach)(struct analogix_dp_plat_data *, struct drm_bridge *,
+ 		      struct drm_connector *);
+-- 
+2.16.1
