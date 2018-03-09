@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751930AbeCIKQx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:16:53 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:50003 "EHLO mail.bootlin.com"
+        id S1752018AbeCIKRp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:17:45 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:49929 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751068AbeCIKPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 05:15:55 -0500
+        id S1751019AbeCIKPx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 05:15:53 -0500
 From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -20,9 +20,9 @@ Cc: Icenowy Zheng <icenowy@aosc.xyz>, Florent Revest <revestflo@gmail.com>,
         "Signed-off-by : Bob Ham" <rah@settrans.net>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH 8/9] ARM: dts: sun8i: add video engine support for A33
-Date: Fri,  9 Mar 2018 11:14:44 +0100
-Message-Id: <20180309101445.16190-6-paul.kocialkowski@bootlin.com>
+Subject: [PATCH 3/9] v4l: Add sunxi Video Engine pixel format
+Date: Fri,  9 Mar 2018 11:14:39 +0100
+Message-Id: <20180309101445.16190-1-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180309100933.15922-3-paul.kocialkowski@bootlin.com>
 References: <20180309100933.15922-3-paul.kocialkowski@bootlin.com>
@@ -30,80 +30,30 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Icenowy Zheng <icenowy@aosc.xyz>
+From: Florent Revest <florent.revest@free-electrons.com>
 
-A33 has a video engine just like the one in A10.
+Add support for the allwinner's proprietary pixel format described in
+details here: http://linux-sunxi.org/File:Ve_tile_format_v1.pdf
 
-Add the support for it in the device tree.
+This format is similar to V4L2_PIX_FMT_NV12M but the planes are divided
+in tiles of 32x32px.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Signed-off-by: Florent Revest <florent.revest@free-electrons.com>
 ---
- arch/arm/boot/dts/sun8i-a33.dtsi | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ include/uapi/linux/videodev2.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
-index 50eb84fa246a..253a71851b77 100644
---- a/arch/arm/boot/dts/sun8i-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a33.dtsi
-@@ -181,6 +181,21 @@
- 		reg = <0x40000000 0x80000000>;
- 	};
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 35706204e81d..cee906681db7 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -669,6 +669,7 @@ struct v4l2_pix_format {
+ #define V4L2_PIX_FMT_Z16      v4l2_fourcc('Z', '1', '6', ' ') /* Depth data 16-bit */
+ #define V4L2_PIX_FMT_MT21C    v4l2_fourcc('M', 'T', '2', '1') /* Mediatek compressed block mode  */
+ #define V4L2_PIX_FMT_INZI     v4l2_fourcc('I', 'N', 'Z', 'I') /* Intel Planar Greyscale 10-bit and Depth 16-bit */
++#define V4L2_PIX_FMT_SUNXI    v4l2_fourcc('S', 'X', 'I', 'Y') /* Sunxi VE's 32x32 tiled NV12 */
  
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		ve_reserved: cma {
-+			compatible = "shared-dma-pool";
-+			no-map;
-+			size = <0x4000000>;
-+			alignment = <0x2000>;
-+			alloc-ranges = <0x40000000 0x10000000>;
-+			linux,cma-default;
-+		};
-+	};
-+
- 	sound: sound {
- 		compatible = "simple-audio-card";
- 		simple-audio-card,name = "sun8i-a33-audio";
-@@ -204,6 +219,11 @@
- 	};
- 
- 	soc@1c00000 {
-+		syscon: system-controller@01c00000 {
-+			compatible = "allwinner,sun8i-a33-syscon", "syscon";
-+			reg = <0x01c00000 0x1000>;
-+		};
-+
- 		tcon0: lcd-controller@1c0c000 {
- 			compatible = "allwinner,sun8i-a33-tcon";
- 			reg = <0x01c0c000 0x1000>;
-@@ -240,6 +260,25 @@
- 			};
- 		};
- 
-+		ve: video-engine@01c0e000 {
-+			compatible = "allwinner,sun4i-a10-video-engine";
-+			memory-region = <&ve_reserved>;
-+			syscon = <&syscon>;
-+
-+			clocks = <&ccu CLK_BUS_VE>, <&ccu CLK_VE>,
-+				 <&ccu CLK_DRAM_VE>;
-+			clock-names = "ahb", "mod", "ram";
-+
-+			assigned-clocks = <&ccu CLK_VE>;
-+			assigned-clock-rates = <320000000>;
-+
-+			resets = <&ccu RST_BUS_VE>;
-+
-+			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			reg = <0x01c0e000 0x1000>;
-+		};
-+
- 		crypto: crypto-engine@1c15000 {
- 			compatible = "allwinner,sun4i-a10-crypto";
- 			reg = <0x01c15000 0x1000>;
+ /* 10bit raw bayer packed, 32 bytes for every 25 pixels, last LSB 6 bits unused */
+ #define V4L2_PIX_FMT_IPU3_SBGGR10	v4l2_fourcc('i', 'p', '3', 'b') /* IPU3 packed 10-bit BGGR bayer */
 -- 
 2.16.2
