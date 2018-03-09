@@ -1,128 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751965AbeCIBL0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 20:11:26 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:53885 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751215AbeCIBLY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 20:11:24 -0500
-X-Google-Smtp-Source: AG47ELuybWarLmLj0nSjfNr7VkPkcMD3QAeyFFmi9icrYLYNJh9rG8o/bHkze777xBmTR1GvhPJmXg==
-X-ME-Sender: <xms:ON-hWpoR7bNpqAF04RMR_vrIkgi0JKknbDWoacjlBXUD1yaUypQr0A>
-From: Boqun Feng <boqun.feng@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [PATCH v3] rcu: exp: Protect all sync_rcu_preempt_exp_done() with rcu_node lock
-Date: Fri,  9 Mar 2018 09:14:51 +0800
-Message-Id: <20180309011457.15271-1-boqun.feng@gmail.com>
-X-Mailer: git-send-email 2.16.2
+        id S1752025AbeCIBLm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 20:11:42 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6185 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751431AbeCIBLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 20:11:41 -0500
+Subject: Re: [PATCH v3] f2fs: add nowait aio support
+To: Hyunchul Lee <hyc.lee@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <kernel-team@lge.com>,
+        Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Hyunchul Lee <cheol.lee@lge.com>
+References: <1520505278-24735-1-git-send-email-hyc.lee@gmail.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <0ca9e2b7-eb63-65f3-ee70-a8cf5b90debf@huawei.com>
+Date: Fri, 9 Mar 2018 09:11:48 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <1520505278-24735-1-git-send-email-hyc.lee@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently some callsites of sync_rcu_preempt_exp_done() are not called
-with the corresponding rcu_node's ->lock held, which could introduces
-bugs as per Paul:
+On 2018/3/8 18:34, Hyunchul Lee wrote:
+> From: Hyunchul Lee <cheol.lee@lge.com>
+> 
+> This patch adds nowait aio support[1].
+> 
+> Return EAGAIN if any of the following checks fail for direct I/O:
+>   - i_rwsem is not lockable
+>   - Blocks are not allocated at the write location
+> 
+> And xfstests generic/471 is passed.
+> 
+>  [1]: 6be96d "Introduce RWF_NOWAIT and FMODE_AIO_NOWAIT"
+> 
+> Signed-off-by: Hyunchul Lee <cheol.lee@lge.com>
 
-o	CPU 0 in sync_rcu_preempt_exp_done() reads ->exp_tasks and
-	sees that it is NULL.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-o	CPU 1 blocks within an RCU read-side critical section, so
-	it enqueues the task and points ->exp_tasks at it and
-	clears CPU 1's bit in ->expmask.
-
-o	All other CPUs clear their bits in ->expmask.
-
-o	CPU 0 reads ->expmask, sees that it is zero, so incorrectly
-	concludes that all quiescent states have completed, despite
-	the fact that ->exp_tasks is non-NULL.
-
-To fix this, sync_rcu_preempt_exp_unlocked() is introduced to replace
-lockless callsites of sync_rcu_preempt_exp_done().
-
-Further, a lockdep annotation is added into sync_rcu_preempt_exp_done()
-to prevent mis-use in the future.
-
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
----
-v2 --> v3:
-	Replace lockdep_assert_held() with raw_lockdep_assert_held_rcu_node(),
-	to make sparse happy
-v1 --> v2:
-	Kill unnecessary blank lines
-
- kernel/rcu/tree_exp.h | 28 +++++++++++++++++++++++++---
- 1 file changed, 25 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-index 2fd882b08b7c..d40708e8c5d6 100644
---- a/kernel/rcu/tree_exp.h
-+++ b/kernel/rcu/tree_exp.h
-@@ -20,6 +20,8 @@
-  * Authors: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-  */
- 
-+#include <linux/lockdep.h>
-+
- /*
-  * Record the start of an expedited grace period.
-  */
-@@ -158,10 +160,30 @@ static void __maybe_unused sync_exp_reset_tree(struct rcu_state *rsp)
-  */
- static bool sync_rcu_preempt_exp_done(struct rcu_node *rnp)
- {
-+	raw_lockdep_assert_held_rcu_node(rnp);
-+
- 	return rnp->exp_tasks == NULL &&
- 	       READ_ONCE(rnp->expmask) == 0;
- }
- 
-+/*
-+ * Like sync_rcu_preempt_exp_done(), but this function assumes the caller
-+ * doesn't hold the rcu_node's ->lock, and will acquire and release the lock
-+ * itself
-+ */
-+static bool sync_rcu_preempt_exp_done_unlocked(struct rcu_node *rnp)
-+{
-+	unsigned long flags;
-+	bool ret;
-+
-+	raw_spin_lock_irqsave_rcu_node(rnp, flags);
-+	ret = sync_rcu_preempt_exp_done(rnp);
-+	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
-+
-+	return ret;
-+}
-+
-+
- /*
-  * Report the exit from RCU read-side critical section for the last task
-  * that queued itself during or before the current expedited preemptible-RCU
-@@ -498,9 +520,9 @@ static void synchronize_sched_expedited_wait(struct rcu_state *rsp)
- 	for (;;) {
- 		ret = swait_event_timeout(
- 				rsp->expedited_wq,
--				sync_rcu_preempt_exp_done(rnp_root),
-+				sync_rcu_preempt_exp_done_unlocked(rnp_root),
- 				jiffies_stall);
--		if (ret > 0 || sync_rcu_preempt_exp_done(rnp_root))
-+		if (ret > 0 || sync_rcu_preempt_exp_done_unlocked(rnp_root))
- 			return;
- 		WARN_ON(ret < 0);  /* workqueues should not be signaled. */
- 		if (rcu_cpu_stall_suppress)
-@@ -533,7 +555,7 @@ static void synchronize_sched_expedited_wait(struct rcu_state *rsp)
- 			rcu_for_each_node_breadth_first(rsp, rnp) {
- 				if (rnp == rnp_root)
- 					continue; /* printed unconditionally */
--				if (sync_rcu_preempt_exp_done(rnp))
-+				if (sync_rcu_preempt_exp_done_unlocked(rnp))
- 					continue;
- 				pr_cont(" l=%u:%d-%d:%#lx/%c",
- 					rnp->level, rnp->grplo, rnp->grphi,
--- 
-2.16.2
+Thanks,
