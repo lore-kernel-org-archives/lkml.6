@@ -1,100 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751213AbeCIK0T (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:26:19 -0500
-Received: from smtprelay.synopsys.com ([198.182.47.9]:41472 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751008AbeCIK0R (ORCPT
+        id S1751120AbeCIKd6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:33:58 -0500
+Received: from mail-pg0-f54.google.com ([74.125.83.54]:37214 "EHLO
+        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750939AbeCIKd5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 05:26:17 -0500
-Subject: Re: [PATCH net-next] net: stmmac: remove superfluous wmb() memory
- barriers
-To: Niklas Cassel <niklas.cassel@axis.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-References: <20180308103006.1197-1-niklas.cassel@axis.com>
-CC: <Jose.Abreu@synopsys.com>, <pavel@ucw.cz>,
-        Niklas Cassel <niklass@axis.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Message-ID: <f245ba4f-9c08-3f04-b0db-97582cc06153@synopsys.com>
-Date: Fri, 9 Mar 2018 10:26:11 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        Fri, 9 Mar 2018 05:33:57 -0500
+X-Google-Smtp-Source: AG47ELuCTTfN16FETGQt3yXnVwH17YpYONcGeeCahMlc51UfI6pgXmcSlBPRNjgrzZyBB6N5sBwyUmwiEYb9T6cWkCA=
 MIME-Version: 1.0
-In-Reply-To: <20180308103006.1197-1-niklas.cassel@axis.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.107.19.87]
+In-Reply-To: <9a709b76-1b45-8250-9d8e-adbad59a43cc@arm.com>
+References: <1519837260-30662-1-git-send-email-jaz@semihalf.com>
+ <20180228171647.6t4dabntujcb5kon@lakrids.cambridge.arm.com>
+ <ba0c6804-51a3-f36e-a67e-20ce84961451@arm.com> <CAH76GKO8oYVN+H4pvd6NTGc0u8AD7JMSJCYEJzNtdsAJm5L_9w@mail.gmail.com>
+ <9a709b76-1b45-8250-9d8e-adbad59a43cc@arm.com>
+From: Grzegorz Jaszczyk <jaz@semihalf.com>
+Date: Fri, 9 Mar 2018 11:33:55 +0100
+Message-ID: <CAH76GKPOX6J=mKV89pjp+f_K7=1aS_SaGfy_nCN5jLDNM4r9aA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: kdump: fix interrupt handling done during machine_crash_shutdown
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, james.morse@arm.com,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
+        Hoeun Ryu <hoeun.ryu@gmail.com>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>,
+        Marcin Wojtas <mw@semihalf.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Niklas,
-
-On 08-03-2018 10:30, Niklas Cassel wrote:
-> These wmb() memory barriers are performed after the last descriptor write,
-> and they are followed by enable_dma_transmission()/set_tx_tail_ptr(),
-> i.e. a writel() to MMIO register space.
-> Since writel() itself performs the equivalent of a wmb() 
-
-Sorry but I know at least two architectures which don't do a
-wmb() upon an writel [1] [2]. This can be critical if if we are
-accessing the device through some slow or filled bus which will
-delay accesses to the device IO. Notice that writel and then
-readl to the same address will force CPU to wait for writel
-completion before readl, but in this case we are using DMA and
-then writel so I think a wmb() before the writel is a safe measure.
-
-Thanks and Best Regards,
-Jose Miguel Abreu
-
-[1]
-https://elixir.bootlin.com/linux/latest/source/arch/arc/include/asm/io.h#L147,
-with "CONFIG_ISA_ARCV2=n"
-[2]
-https://elixir.bootlin.com/linux/latest/source/arch/arm/include/asm/io.h#L314,
-with "CONFIG_ARM_DMA_MEM_BUFFERABLE=n"
-
-> before doing the
-> actual write, these barriers are superfluous, and removing them should
-> thus not change any existing behavior.
+> Not using EOImode==1 is definitely an oddity (at least on the host), but
+> that doesn't mean it shouldn't work.
 >
-> Ordering within the descriptor writes is already ensured with dma_wmb()
-> barriers inside prepare_tx_desc(first, ..)/prepare_tso_tx_desc(first, ..).
+> The reason the thing is hanging is that although we correctly deactivate
+> the interrupt, nothing performs the priority drop. Your write to EOI
+> helps in the sense that it guarantees that both priority drop and
+> deactivate are done with the same operation, but that's not something
+> we'd want to expose.
 >
-> Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 12 ------------
->  1 file changed, 12 deletions(-)
->
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> index a9856a8bf8ad..005fb45ace30 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -2998,12 +2998,6 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
->  		priv->hw->desc->set_tx_owner(mss_desc);
->  	}
->  
-> -	/* The own bit must be the latest setting done when prepare the
-> -	 * descriptor and then barrier is needed to make sure that
-> -	 * all is coherent before granting the DMA engine.
-> -	 */
-> -	wmb();
-> -
->  	if (netif_msg_pktdata(priv)) {
->  		pr_info("%s: curr=%d dirty=%d f=%d, e=%d, f_p=%p, nfrags %d\n",
->  			__func__, tx_q->cur_tx, tx_q->dirty_tx, first_entry,
-> @@ -3221,12 +3215,6 @@ static netdev_tx_t stmmac_xmit(struct sk_buff *skb, struct net_device *dev)
->  		priv->hw->desc->prepare_tx_desc(first, 1, nopaged_len,
->  						csum_insertion, priv->mode, 1,
->  						last_segment, skb->len);
-> -
-> -		/* The own bit must be the latest setting done when prepare the
-> -		 * descriptor and then barrier is needed to make sure that
-> -		 * all is coherent before granting the DMA engine.
-> -		 */
-> -		wmb();
->  	}
->  
->  	netdev_tx_sent_queue(netdev_get_tx_queue(dev, queue), skb->len);
+> My preferred approach would be to nuke the active priority registers at
+> boot time, as the CPUs come up. I'll try to write something this week.
+
+I've made a PoC which performs priority drop at boot time as you
+suggested and it works with both GICv2 and GICv3 but I see some
+problem:
+It seems that the only way to drop the priority is to perform write to
+EOI register (the GIC_RPR is RO). According to GIC documentation a
+write to EOI register must correspond to the most recent valid read
+from IAR. The problem is that the interrupt was already acked in the
+'original' kernel, so reading GICC_IAR in crashdump kernel returns
+spurious interrupt and it seems that there is no way to figure out
+appropriate irqnr for EOI write. Nevertheless I've observed that
+choosing random irqnr for EOI write works fine (maybe because all
+interrupts in Linux uses the same priority?).
+
+Here is the PoC (not ready for submission only for further
+discussion): https://pastebin.com/gLYNuRiZ
+
+Looking forward to your feedback.
+
+Thank you in advance,
+Grzegorz
