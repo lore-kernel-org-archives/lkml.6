@@ -1,96 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932177AbeCIODH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 09:03:07 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54742 "EHLO mx1.redhat.com"
+        id S932223AbeCIOEE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 09:04:04 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54786 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932116AbeCIODF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 09:03:05 -0500
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: kvm@vger.kernel.org
-Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/7] x86/hyper-v: detect nested features
-Date: Fri,  9 Mar 2018 15:02:48 +0100
-Message-Id: <20180309140249.2840-7-vkuznets@redhat.com>
-In-Reply-To: <20180309140249.2840-1-vkuznets@redhat.com>
-References: <20180309140249.2840-1-vkuznets@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1751120AbeCIOEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 09:04:01 -0500
+From: Hans de Goede <hdegoede@redhat.com>
+To: Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86: silead_dmi: Add entry for the Yours Y8W81 tablet
+Date: Fri,  9 Mar 2018 15:03:58 +0100
+Message-Id: <20180309140358.11432-1-hdegoede@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TLFS 5.0 says: "Support for an enlightened VMCS interface is reported with
-CPUID leaf 0x40000004. If an enlightened VMCS interface is supported,
- additional nested enlightenments may be discovered by reading the CPUID
-leaf 0x4000000A (see 2.4.11)."
+Add an entry with touchscreen info for the Yours Y8W81 8" tablet.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
-Changes since v2:
-- define HV_X64_ENLIGHTENED_VMCS_VERSION [Radim Krčmář]
----
- arch/x86/include/asm/hyperv-tlfs.h | 4 ++++
- arch/x86/include/asm/mshyperv.h    | 1 +
- arch/x86/kernel/cpu/mshyperv.c     | 4 ++++
- 3 files changed, 9 insertions(+)
+This tablet has the same case and mostly the same internals as the Chuwi
+Vi8. Both seem to be from an ODM called inet-tek. Both are labelled:
+"INET-I86M-REVxx" on the PCB, with the Chuwi Vi8 being REV03 (and having
+an ALC5640 audio codec) and the Yours Y8W81 being REV21 (and having an
+ALC5651 audio codec). The wifi, accelerometer and touchscreen are
+identical on both.
 
-diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
-index 472dc38110fa..2e2f0a741e84 100644
---- a/arch/x86/include/asm/hyperv-tlfs.h
-+++ b/arch/x86/include/asm/hyperv-tlfs.h
-@@ -14,6 +14,7 @@
- #define HYPERV_CPUID_FEATURES			0x40000003
- #define HYPERV_CPUID_ENLIGHTMENT_INFO		0x40000004
- #define HYPERV_CPUID_IMPLEMENT_LIMITS		0x40000005
-+#define HYPERV_CPUID_NESTED_FEATURES		0x4000000A
- 
- #define HYPERV_HYPERVISOR_PRESENT_BIT		0x80000000
- #define HYPERV_CPUID_MIN			0x40000005
-@@ -332,6 +333,9 @@ struct hv_tsc_emulation_status {
- #define HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_MASK	\
- 		(~((1ull << HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT) - 1))
- 
-+/* Hyper-V Enlightened VMCS version mask in nested features CPUID */
-+#define HV_X64_ENLIGHTENED_VMCS_VERSION		0xff
-+
- #define HV_X64_MSR_TSC_REFERENCE_ENABLE		0x00000001
- #define HV_X64_MSR_TSC_REFERENCE_ADDRESS_SHIFT	12
- 
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index dcb40567b35e..cc784b1f6bf1 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -13,6 +13,7 @@ struct ms_hyperv_info {
- 	u32 features;
- 	u32 misc_features;
- 	u32 hints;
-+	u32 nested_features;
- 	u32 max_vp_index;
- 	u32 max_lp_index;
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/platform/x86/silead_dmi.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/platform/x86/silead_dmi.c b/drivers/platform/x86/silead_dmi.c
+index 1091539fa230..452aacabaa8e 100644
+--- a/drivers/platform/x86/silead_dmi.c
++++ b/drivers/platform/x86/silead_dmi.c
+@@ -455,6 +455,14 @@ static const struct dmi_system_id silead_ts_dmi_table[] = {
+ 			DMI_MATCH(DMI_BIOS_VERSION, "itWORKS.G.WI71C.JGBMRB"),
+ 		},
+ 	},
++	{
++		/* Yours Y8W81, same case and touchscreen as Chuwi Vi8 */
++		.driver_data = (void *)&chuwi_vi8_data,
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "YOURS"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Y8W81"),
++		},
++	},
+ 	{ },
  };
-diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
-index 0dfc568c110c..8432bf215e30 100644
---- a/arch/x86/kernel/cpu/mshyperv.c
-+++ b/arch/x86/kernel/cpu/mshyperv.c
-@@ -208,6 +208,10 @@ static void __init ms_hyperv_init_platform(void)
- 		x86_platform.calibrate_cpu = hv_get_tsc_khz;
- 	}
  
-+	if (ms_hyperv.hints & HV_X64_ENLIGHTENED_VMCS_RECOMMENDED)
-+		ms_hyperv.nested_features =
-+			cpuid_eax(HYPERV_CPUID_NESTED_FEATURES);
-+
- #ifdef CONFIG_X86_LOCAL_APIC
- 	if (ms_hyperv.features & HV_X64_ACCESS_FREQUENCY_MSRS &&
- 	    ms_hyperv.misc_features & HV_FEATURE_FREQUENCY_MSRS_AVAILABLE) {
 -- 
 2.14.3
