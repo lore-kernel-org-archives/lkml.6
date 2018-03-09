@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751973AbeCIImQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 03:42:16 -0500
+        id S1751005AbeCIIn0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 03:43:26 -0500
 Received: from mail-eopbgr10123.outbound.protection.outlook.com ([40.107.1.123]:19872
         "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750926AbeCIImO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 03:42:14 -0500
+        id S1751193AbeCIImP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 03:42:15 -0500
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=alexander.sverdlin@nokia.com;
 From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
@@ -14,12 +14,10 @@ To: linux-arm-kernel@lists.infradead.org
 Cc: Alexander Sverdlin <alexander.sverdlin@nokia.com>,
         linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
         Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH v3 1/2] ARM: PLT: Move struct plt_entries definition to header
-Date: Fri,  9 Mar 2018 09:41:50 +0100
-Message-Id: <20180309084151.2379-2-alexander.sverdlin@nokia.com>
+Subject: [PATCH v3 0/2] ARM: Implement MODULE_PLT support in FTRACE
+Date: Fri,  9 Mar 2018 09:41:49 +0100
+Message-Id: <20180309084151.2379-1-alexander.sverdlin@nokia.com>
 X-Mailer: git-send-email 2.13.2
-In-Reply-To: <20180309084151.2379-1-alexander.sverdlin@nokia.com>
-References: <20180309084151.2379-1-alexander.sverdlin@nokia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [131.228.2.20]
@@ -27,44 +25,44 @@ X-ClientProxiedBy: HE1P192CA0018.EURP192.PROD.OUTLOOK.COM (2603:10a6:3:fe::28)
  To VI1PR07MB1328.eurprd07.prod.outlook.com (2a01:111:e400:5a03::14)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 8949ed4c-ce24-40ae-0908-08d58599a631
+X-MS-Office365-Filtering-Correlation-Id: 70e5ef52-dfe3-4342-1c5d-08d58599a5a0
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:VI1PR07MB1328;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB1328;3:TBUyWxZ34t65SZTN2ebiMismxN0TI8DfoE0Rlmmzr+2n5soYM4bW4Opm824AZDsPzGiuT0qiPjAhPNeSRkCA2qRIMrUe7vujtnpGJppNiY1rK7+pCMubpOB/ezsFuWHpi31whXdQ9fvEj0OP+epcm0Ft+Ng+pnAyUZExQuCXP0SMdWIJadPodV59s9xH6J9OF+A/W5QGmN5ZpmjRngmG/pkWF2tihHqEIhO0MYwoWD4W7vICCMUYexTpdg6PQI6J;25:fB4KxbTxXnGAosNHHgs2eMYQuwBxHEsvESDr6HjeS+HreKcsmzA2samxM2J/dKuMDcJfG6z+0ztuz0B9V469uj4rMNqd6pjsNsJ9uxKPS0cIxXAxNjcjbjtknFt1KbYIvO/zjrhpE82X5dDWDzJxPo8sctTiaK21y/HNmv09+2f1qqnDTMNnNJYI7Szc6AbNY2T+SlpAcLpXKZpo4BU88uhN16+iFQIDQ/pjvsi2uw/61xONho5lU2wiI6ydEYg4AD/lppuleXjZYHiOJA6a1pI/86zzsLEeTmWGZDAWt+JxXI/Qo77EnyMstJ2Zipz+6DfglU3eds/4ye4QNn3jgQ==;31:f+RobvAJINA3vyV1kM8BO+TgjPXEeN9yZqAnKOs7VZfZN2/C55CB6gIjPHj50YpWDS4SFh44xur7ibPKUNibNOENJ/wCvJaWynhov3JJ3QLH9C3Fx0eBxeLxjyfqD0+tH83A8iQdNagQrcjlmz8UEKcVfkHyrFfcTLaTu+wvf0PSZ0h6PRUHCZpN5YmW4PCxHLZVUJsK/yfDVsL3cSm1stTVjwlaxtww29FzYs4vNJM=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB1328;3:eqna2jwdfVltcR05Sn5LO0OBMgiLDQBxx8ibith6pCmxGCHERzYyL0A49vvMykJePxSofeHdboCa0zChFnz9Oaz9raBHYmOvUJBSBLU/O2PW+qF2P63nciEHBMAHkJNb5oI5w8YPX9SYg5kni1T+8bRJeWon1lj/DZH1Jiq4+/nfCoWv9i2Lask9tpsOPjDidUjsB55CR5/ZT0CyFps/r0VSDwmPzJ6RxRq3UxC1TCPy+ADaVhy0Tv1I99t3OIta;25:LVVDf3LE5o4CGtozP4OZDAxgS0eKRNbKfiEejeLWA9NKsYJQq4QpOqQoCVxXRf+eFNbr6+INyu/3FueyB/EO51/7u1oQjO4e4yF8KjgKzm1ANnyPqmjEspMi/YBC5ZXL0X11KC4F7wY02ViP214JLlM7UGwB1KYiS09yLYq+NHV84poS/w8ln8JirWh0WHN12s+184jTju7INzIp/3OX+/LOk8iBXGioaYpZlYr3RZ3IuGvGbvGUMhmXomhWtruYumgET3mOcz+V8u4z1W/+MSVzPgWwUcmWyDKjvGe12XrL6+SjPs8x31Dc/AdBDqtpo1QE8nKjg0kaQthH+v9OeQ==;31:ETo35kxOaqyLsOAMxDCytwSAslHhDWoYsLsz5lywLsJGQ2LQP7yeAiHOJbxCWGSVcW8HvEhkcssZEtg0bhtP9Lk4xDxdOw23d1pKdkmRGWZEIGfEEr4j8YwjF01A8Qe9XtPkzKumkMpLNyOKKiDEGv0j1VaiXd7Mqfwei8Pv3mOa4PVFmV1MlUv+h5AcnK6dFCC1I2iOfT392/M28XvH4NuGioFEVZaBWv5nZPIRn9s=
 X-MS-TrafficTypeDiagnostic: VI1PR07MB1328:
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB1328;20:PFyDVpQv1XlLopnKODV76abjgz6ghh94wOYII4Q64RKBByhSy2Yc6NITgfIeRAD/2XfNJYkLN0AdY8NWwYa2zlnkjn6az1wVF7SrEwjVxGCPvAKrgrZCkLbD9p2Ku4BiXzIcAgnYz1jPywpRqYXFQSth9Z6YLrekQ4C8yH16C8wEbfxRzALM6IgzuvhNyPAJyQOEs8tzBDO1xykKpHdrdljkXcALpZ/0PjECSUXvYTi5NTT7wCDhG2SCxiX6u5buqJXbnQvNA6+3Iknry7KEDiM0PpQhekmq/JgReS/FbvJcHq8w3tjzaanLYJc+GHS7TO4CzaVjqOMTOARGYGooJRt8pgNvhNNdrQ2UQWKfAg3w/JwOkm0nWqbLHDE63vXbMo3GMAGw7QX/lF7e1t+qjo1E96oJhECJrP3svtbTNt6SjW/KhM8efGBOrRbkTaB/vjWzxWW4saP8ZKScrr7w5NQLTKZJIquUbz7QAg2GePT/FENy1dQ5HcahckhomG6Jl13p9x1YNTWGawlKtQYV0JhMK1tsNrv4JzuDNqnLQWZnTZ07fhiB2MVpaa6AMPfrJn5d29DbmSwUgH7ggRPGgGWNvDbT+0f/5HmywJFB4LQ=;4:VDhLt/8WxQuf5+ctXV9ve/LcVy4o0wnUvSyKMJyjj2YBAgg/Aqrnh1ryb333qWlKWSD0QTNlWNCrzlB0RFogaROr7brgGKtKs6GUYPooXkbbaQlxaeuhO9dwp1reh/Hb3WsqR75pz/SDmcr19uD7s2dmmsHfJTrbLrPlRlKpJle4BGUdOow/CNJzymT3lw9X1NJyKujDoIcGwbPby8B/ZTobEBDMOO0Q8kHtLITc7/xeq+808YKO1hNn+fZh/TFxkyfVKX1rxu1u/+5o3wknD7eqjpLtDKwimtnJizSJvlLOyX9oS5ZtSttaeD7uciaI
-X-Microsoft-Antispam-PRVS: <VI1PR07MB13283E1863EFCB982507043E88DE0@VI1PR07MB1328.eurprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(82608151540597);
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB1328;20:HrfUL06eLgn0Bm73NvZ4NM61l8j58yDDu2hew5hSFL3cckT4SRl6AKxJr1rEc60qy4h7SxW9pgix5aJRGpRy3pg2U1iPL/iYP0H85UKoCFv2vrkESVQO04sWZu73CvUmgDqGAanS1GEBCREB8Wt0VDOysmgMPf4L6+4fasjadl5GEIlgGV+gFcaUkDFftnvdAh9LZSGlwCmEneS/PncOtvF/y8VI9dP9wQcpEVrLO6JYotwFVNqVcmZHxjG2t5SCkuT0SKu+jk8syRpfUvS5PeqlZCwPrKlu9/3frkb/wtkbFR76+WWs1Gc4t/E06xHxY8jvg40whUokAwHXX4JaY3/UL0crI+6HbyoBywuik7Zlggwth5IK6dndR/imn/ZwHIpDDHSO2V3MdZud0SUBeih8ogqgLUea0lzCmMsUJepSdZ1W4pVUNbHnt757pkZUoryfD5LwKxvbJ2bWatckz7sGeow/OJWLGSFevZmdLwYD6dwD2ybqFk4Nudi6Ls6lSYr9EgO5lPbWMQyRzXu0LajAZTh8Rgv+VbFXCUoeMGozqPtJTiaA5vWfu87zh+HR8v1ouZamgtEvzmOZJR3OQKQBBT3LSzUhT/aRcQ5CgeE=;4:rS8DbYDKKsbNef2vM98ykmN2UfEsdn51v63wv3KOu6pb2hMNp/w8vonTbhp468UlUTjJCUh71sWWnNKje9Fuod12wzs5D6BqTII0pDv+ui+7aB7/cHgDFPy4zzFcf0GOzI3ceJkJYRf46GWqt6r7cOuL2TaGfXLyhlyW7/zfWcYa6INOZv/pDTL+BM3JUYA5AIz7+5rShihuH2ih5wYpERHs38Sl/CD1d1r8sWh1z965O/ECj5I9QAGE1rg2IFm43zVA1BTEcDiQvJVSsm1Xtw==
+X-Microsoft-Antispam-PRVS: <VI1PR07MB1328E4CB5B197EF604583ADC88DE0@VI1PR07MB1328.eurprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231220)(11241501184)(806099)(944501244)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(6041310)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);SRVR:VI1PR07MB1328;BCL:0;PCL:0;RULEID:;SRVR:VI1PR07MB1328;
 X-Forefront-PRVS: 0606BBEB39
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(396003)(376002)(346002)(39380400002)(199004)(189003)(48376002)(4326008)(575784001)(36756003)(86362001)(106356001)(6486002)(25786009)(97736004)(105586002)(51416003)(16526019)(50466002)(50226002)(52116002)(386003)(26005)(76176011)(7736002)(305945005)(186003)(6506007)(8936002)(54906003)(3846002)(6116002)(6666003)(8676002)(16586007)(68736007)(316002)(66066001)(1076002)(2361001)(5660300001)(81166006)(6512007)(2351001)(478600001)(47776003)(2950100002)(81156014)(6916009)(2906002)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR07MB1328;H:ulegcpsvdell.emea.nsn-net.net;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR07MB1328;23:WUW2pIJpEVreFf/RhVon3Xd3DQWfK2bAb1TCTHQ1P?=
- =?us-ascii?Q?g/Cucva29FjgQFMp9Mh8oF2xKSPrn/8tQXcjWAEcP/Sh6Ph/WGjyLQQlaP+h?=
- =?us-ascii?Q?UV54ip5+pRIF1Zf19N3JSF7a9X6B6meMTXMcNBkhWAEUnG2QPYTtLhK+/47q?=
- =?us-ascii?Q?uB4ysgjYfrpESOi4TO6cTM6oWgdxu6t0WkH9cCE2D+Lt/Fv7mdjeeS4kv3sS?=
- =?us-ascii?Q?XiLLQE32JI+2uqvzpM/8HcceQflRmlhLAOEWexX3/x2VVlJsqiVNdPqsAKnl?=
- =?us-ascii?Q?eKQujZ5nip9wKCRqqkGCWWWiAKwTecV5xCo91jpPb/8mdui7yqeiodixPk7N?=
- =?us-ascii?Q?33csNoHXF8CyIaSMQXcsYGC1293MoUMpmOgJsJ/NLBLHevPuUm7F09XoX3cW?=
- =?us-ascii?Q?a/KCOepZxUlknwaHpGKPXLSFWCXjJeYBltLpyaKyWjsUos+i1KOny99lRtpu?=
- =?us-ascii?Q?TO+qqm4ZeVzm+UERkwrMyMVJkA0a2GNJAO8XSXBJfc6OlAHhOONRGNDe3Ttd?=
- =?us-ascii?Q?VnzKoz2gmG3LjKA5cq5CRRlnKKD8MbL8GR8r8Ga0fTmTQ3SviD9Yn82wQUiv?=
- =?us-ascii?Q?Py3DHmbdkMceTyuuu4474uQhCogyiUDum6bgcQtM+4Z77VDbMYZZlnestMXA?=
- =?us-ascii?Q?nsHG24jHl6u0DHvZjLWW+poM617mL0rc+U49iZnVV1L93LdmOHlgsL6jebRZ?=
- =?us-ascii?Q?jfVaUjGKDvmKjhWoM1pE9bnHMY9be+gwhr5X2rfHvwcJ4ht3ZZAp/djb3fiO?=
- =?us-ascii?Q?qGYhRKjci1wb/DrAHnZQeUXdkkxxofcOSOa6ZQ4GUTcVgpR056OJ/S9cr+J5?=
- =?us-ascii?Q?X90Lql0roK/UBB/NDZdVsyAnkacGWm27aEPPdAggh2a+xnV9FgGOh+t6Kma1?=
- =?us-ascii?Q?R6MLd1wIf9tOqK0HxD3JRC4zMOPSfuzFhnCLDAhAsE/oJypd4t+U8G9+i5y/?=
- =?us-ascii?Q?jJYMq4FHij2iQ/+djZxQYQR3EQBwLo6wrbEVzPc9OmK99Hpj8GJA7nUWPlQB?=
- =?us-ascii?Q?GvTLJfo04/TGgwcAcK/o+cWc3QETdzoHZorlztkt3D0rDJnbCXfsYJ+TXa9I?=
- =?us-ascii?Q?Td8m5amkuIuOAB01/aLoyfkXNr9oJc3FpzdiGwosc3cxyidVYickACfUAbSw?=
- =?us-ascii?Q?DGMeS6wSbTOsdkxoUhDANZ4ePUm7spMO2RoHWpYzkaBMmiBtQ7ePX1aAIoIO?=
- =?us-ascii?Q?EsVg3EKdu9h52bzFLe3rVm4IyseRxo6Y38Q?=
-X-Microsoft-Antispam-Message-Info: 0jTQdoUrDdQaBlTnb7eFimoRd/N8Nt1Dur0wYgQFznr8u4al6xmkxjD8w2KtBbWgBc2xTU5mJ+/BrcoRRTRQiWK3hxrP81vhZ7iCTYyATqD0gWlN7cIt1PZ+NFd+Z2oDCIK8NYVQ/N1RezUzg9w4s7IiO+s3v8figu5D4XdCgz7wXV7ebSF4UXOjZXurOQfKJR6c/CpsSV7B5IyyTqQ+POwTWIq7L0m1wv6FD22T9vc=
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB1328;6:vZ8mJmAh+Ops9wtuaxFAW8jQy1l5CaYHeqoM6eRuRlDvJvunPEL3L3Lnrw6qACQ1/OPbxvyZruvoJfKrjmc1Tj+cUAwASVvYbsK9vJM2VUgucwn9vDgEZ8DEMGpXXT1R7JPuYQHuP85B5L60nPF1Q9mRrxknG3UlVHk7807tmMlas0dMOXniVg+ZrzkVq8h+35OQhTAQfccN+U60cIyr/r34M97jlc61F5EewRK1ZBg6pX9xRh8tblgFkbRubJrjXg21wOKFcQLBaruWbywZnyjNvCMLrR6lHRAw1Tla6U99JPvTnLeoD/qUH7p4zCNzBMB6GbyRd2K4rxm7rqevWWEythI5BVkJGiT/yPbsjRo=;5:1acWoF8x3iVpxKLe4zv5oFTBSWa3fy3uxcK/nLqTKYPUCsPRNKjGDgSkNsuL1dJpUuG5xz26GBAfHEAzNQijjnsE/SA6e57/pxvTJ1Uc3vzHR0+XI3cXsAmOKyqPwk/tRWN8P8dzaZpmQhbgri22zE1CNB5KOMXfa690yuwEI3w=;24:b4JVz63Ay09eGICQBl0hbOD0vFamTHUwxVbQmLdOpcLWgo48OenvwU0uD34IlyxhgnQ1wsqwUvzoXP8nF9eBmyIBUd0M9iJGb1au0zB9lSI=;7:/M8miAuKqu6InC5xqA328bXwIUfzs1OlfxS9flukMG78GMXsghOOtP1gSkvKpPDAV5h067GhPcikeflsyaTBaVwPAm8FbbCQ0tZUgpash7ouMuUK1A5tneK6fWvs0ZNX7X1JxBg3uqRFONvG3jNsnWeGsGoFLs6taViRtceZ2BD0OTazsUP0mTLGxrrLb2Vd1wB4CcBhIffDASM6iGq9pQ3Ge9YTkdrZwtPNKHgwMn0qbVN+JuQhyeSYG0wi4MVR
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(396003)(376002)(346002)(39380400002)(54534003)(199004)(189003)(48376002)(4326008)(36756003)(86362001)(106356001)(6486002)(25786009)(97736004)(105586002)(51416003)(16526019)(50466002)(59450400001)(50226002)(52116002)(386003)(26005)(7736002)(305945005)(186003)(6506007)(8936002)(54906003)(3846002)(6116002)(6666003)(8676002)(16586007)(68736007)(316002)(66066001)(1076002)(2361001)(5660300001)(81166006)(6512007)(2351001)(478600001)(47776003)(81156014)(6916009)(2906002)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR07MB1328;H:ulegcpsvdell.emea.nsn-net.net;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR07MB1328;23:eboNiPDlXkIkTx+iJdG4Ha/PYr121XnwsV4KVse7+?=
+ =?us-ascii?Q?Mp9hz5PZDVW+8u/rCLVH1IN/lUU65iK9Nkr55f0EZ/SE6k7nMwitsJnqNtKC?=
+ =?us-ascii?Q?9w6NWCXjBL5BA5fFMzFxVnKtrCD8Sd/i6SysWwDIoxMFcEKUcjjN2eN+Z2lt?=
+ =?us-ascii?Q?EcePaI/7e62oUmZtmJVAqOwDmHul9qGFCQSOdWpJH9vW5F5VfSG/Ij8VM5sv?=
+ =?us-ascii?Q?oA1GdsUOnAc50PeEo0ptofeRsh/64qf9pLtTNFRXfZJwUZ50t8Z5HI9xAFQP?=
+ =?us-ascii?Q?K7rTcoUf+KUqM0kKsmIjXaIfxanBTPfm5Syh1sN2LR9kWVhPfZf6OevXQs1p?=
+ =?us-ascii?Q?9saYzU1AFT4BXXQrhEKQRAgrgLpC6eCl88UlHNz6dPTOrknZHmOizUI9dA4+?=
+ =?us-ascii?Q?RUq6ozFdd/giVnStEXPtT8meKLL0b8saBvY8NZfLR08aKUUtCZecPrug1zmw?=
+ =?us-ascii?Q?k+EIeeOOyRjrCK1YFJwF4QuB+DDMIvV0G2ZnMlAVa6oMslmRQuLwcqj1xKeq?=
+ =?us-ascii?Q?yxBME3UIWCpLUmwM2LDeZh2UzgQMHjAx9TgwOai9LCmgRpncS6BqWsCdYypp?=
+ =?us-ascii?Q?KeHxZrlXL2SYtS2Xcv2LBdxndBUgsIspMP45kiD42/b0nIfw0kNY3ZRXTwjD?=
+ =?us-ascii?Q?/5lZb3zClxB4c4LhafnUGovpFevYSx89JWy+wMkQ2Pfo8E7KPeTFgiUNMMtq?=
+ =?us-ascii?Q?Yu8THeHQTctpqu8226EF3/dGi2k+PT3U4PzEBzt57VgYGB1Kfz7lOy90txxw?=
+ =?us-ascii?Q?vB2NcFSYAfO4nXumUWca6L9fx1xJYINHlGimpMF4C4QAfZhyxA5V8g/45FM0?=
+ =?us-ascii?Q?A+pyj/BXZy0Mg2ofqCMrpwSMnX/E7ygOMtDZWtliKZInKaROyXNdxQz8Ko8m?=
+ =?us-ascii?Q?uiSXtc58JLSPC7AY9nYNR70xug4kqzK6AJT/+PvmZ6QIUvotPBqTaLX4OKx5?=
+ =?us-ascii?Q?lt0CIjOTbRAREGSu4tHM6pIyZPpKUGkj5mikiztFH+VMaZPEPqc5hgnhZK6D?=
+ =?us-ascii?Q?O4/2lCPaaSSctTv/fNeo9yG7FxzmZPqmNHUQbcjthMn9yzQMXFC30UpP5qOx?=
+ =?us-ascii?Q?1ZWDVji3MLpdVsBmTddmTTTFPlLEzPyThIbbbelT6STqLSKRCU1ze+llP1Gr?=
+ =?us-ascii?Q?mk8OMWvty+/GLd/vo3AN13MFAojNW35aM2F/+Xcy6ApjdOBWgEtatx0NlwDl?=
+ =?us-ascii?Q?o6xUpGiqVK2eb0=3D?=
+X-Microsoft-Antispam-Message-Info: JApUBS7BP6QHmcPMWF+rUZF+mAVWhLz/OYqF/Bh2UPfD7Tvi83DHVb4HvQFDCWDJr7Pye1EbHP7qMMYvaxoLuBGaH5hQRC+YMUzLTiFU8m0brjVApyG4ZAi/FNnC4yzZxKkKu5Mv0Lfe7C+w8U1+qPwICvVzF6vlk6+79a45KAGWjDVop/edpvqVlXSkeEy9w+JG3u814UW2oI6PaVxpiaFS/2S7SByVo1CdgMC6IjZk7gpk/od0grODrLjfoHjE
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB1328;6:epGvgtiAhK0f8C6tXzEzm0J4qBsCR1FE0qrMJp+QMW+XRWgEtesO8Mo3ysNcQc8lS9JAOoT54Dz2EBYGtzsfjnw5LRLAy+EU6iO9o1ZpDZtxUI+os39epIrKuCflw2TrdihiCh9fq3RsKGfBd5U0PToqICeqdcrgTDPjekQQEpBSpyEMfAwjzTVfhlLqUEz7hOBvISzhLLNu/HrTsOAb+QH1FyLdbRY5oMhmgSls+4xuasLqcyxGt7iZMUG+oUYsr8vk8Y7WMjdQFXCpXo6mO3zwj8hpKGQDbjQFHPB4y1kqhlS4g2prYiaw+MG3JmbgY2OC05lAA2wBBIhPBjFOTyXfC1NrBePpeNjssyzQE5o=;5:otiJn0BtXTVjErmyBLC1JShCeMR6mpecofPeySmX9/MdLxq45b/6anHCMvVYqvI082K+kCyCv6N6aTD6ndnZ4DgH+VEjpzWfqOHMqV0ybYkmcbP8yJ40WmP46BIf4ji3D/Azy8Gp8Ib8kxQUNitu1OYi36p8u5GrzoZ32SMpCNA=;24:kntfXMaBhBwrmvKdVF25MkpijB9mcoKJ0PSjbXNhKDCkRMqLGvbuswcDMqEqVzfn7rrWUziCX4ZqNTMyzC3/MRPnCCU+HIo0CE2heewmOSg=;7:7a9jEtVWXWtm1jnKF059FHGye2SetBwISyjC0qCm14nMl+1uQIHHZqW7g5dx6nm5vxv/ujNSANRRmzzDjJAN8EIFz6arhES/oN5VeBqNGHH6KpGKbK9sT95MjHtoMjBm4+pECDeuDQdGeyC+96tw80pr5vJB8alqJHTfGuSA4Jy7zpscwvJzBSS8piPmX2H/igcZy5tNqyqDvCCDGiUANALkb6qBNTM7tL4eKkwg16+DpLXQ5LqSuOqa2mFnLLjb
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2018 08:42:10.1640 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8949ed4c-ce24-40ae-0908-08d58599a631
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2018 08:42:09.2132 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70e5ef52-dfe3-4342-1c5d-08d58599a5a0
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR07MB1328
@@ -72,61 +70,41 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No functional change, later it will be re-used in several files.
+FTRACE's function tracer currently doesn't always work on ARM with
+MODULE_PLT option enabled. If the module is loaded too far, FTRACE's
+code modifier cannot cope with introduced veneers and turns the
+function tracer off globally.
 
-Change-Id: Icfa32669b3582d713b3ad680c25620d3d4844bdd
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
----
- arch/arm/include/asm/module.h | 9 +++++++++
- arch/arm/kernel/module-plts.c | 9 ---------
- 2 files changed, 9 insertions(+), 9 deletions(-)
+ARM64 already has a solution for the problem, refer to the following
+patches:
 
-diff --git a/arch/arm/include/asm/module.h b/arch/arm/include/asm/module.h
-index 89ad059..6996405 100644
---- a/arch/arm/include/asm/module.h
-+++ b/arch/arm/include/asm/module.h
-@@ -19,6 +19,15 @@ enum {
- };
- #endif
- 
-+#define PLT_ENT_STRIDE		L1_CACHE_BYTES
-+#define PLT_ENT_COUNT		(PLT_ENT_STRIDE / sizeof(u32))
-+#define PLT_ENT_SIZE		(sizeof(struct plt_entries) / PLT_ENT_COUNT)
-+
-+struct plt_entries {
-+	u32	ldr[PLT_ENT_COUNT];
-+	u32	lit[PLT_ENT_COUNT];
-+};
-+
- struct mod_plt_sec {
- 	struct elf32_shdr	*plt;
- 	int			plt_count;
-diff --git a/arch/arm/kernel/module-plts.c b/arch/arm/kernel/module-plts.c
-index 3d0c2e4..f272711 100644
---- a/arch/arm/kernel/module-plts.c
-+++ b/arch/arm/kernel/module-plts.c
-@@ -14,10 +14,6 @@
- #include <asm/cache.h>
- #include <asm/opcodes.h>
- 
--#define PLT_ENT_STRIDE		L1_CACHE_BYTES
--#define PLT_ENT_COUNT		(PLT_ENT_STRIDE / sizeof(u32))
--#define PLT_ENT_SIZE		(sizeof(struct plt_entries) / PLT_ENT_COUNT)
--
- #ifdef CONFIG_THUMB2_KERNEL
- #define PLT_ENT_LDR		__opcode_to_mem_thumb32(0xf8dff000 | \
- 							(PLT_ENT_STRIDE - 4))
-@@ -26,11 +22,6 @@
- 						    (PLT_ENT_STRIDE - 8))
- #endif
- 
--struct plt_entries {
--	u32	ldr[PLT_ENT_COUNT];
--	u32	lit[PLT_ENT_COUNT];
--};
--
- static bool in_init(const struct module *mod, unsigned long loc)
- {
- 	return loc - (u32)mod->init_layout.base < mod->init_layout.size;
+arm64: ftrace: emit ftrace-mod.o contents through code
+arm64: module-plts: factor out PLT generation code for ftrace
+arm64: ftrace: fix !CONFIG_ARM64_MODULE_PLTS kernels
+arm64: ftrace: fix building without CONFIG_MODULES
+arm64: ftrace: add support for far branches to dynamic ftrace
+arm64: ftrace: don't validate branch via PLT in ftrace_make_nop()
+
+But the presented ARM variant has just a half of the footprint in terms of
+the changed LoCs. It also retains the code validation-before-modification
+instead of switching it off.
+
+Changelog:
+v3:
+* Only extend struct dyn_arch_ftrace when ARM_MODULE_PLTS is enabled
+v2:
+* As suggested by Steven Rostedt, refrain from tree-wide API modification,
+  save module pointer in struct dyn_arch_ftrace instead (PowerPC way)
+
+Alexander Sverdlin (2):
+  ARM: PLT: Move struct plt_entries definition to header
+  ARM: ftrace: Add MODULE_PLTS support
+
+ arch/arm/include/asm/ftrace.h |  3 +++
+ arch/arm/include/asm/module.h | 10 +++++++
+ arch/arm/kernel/ftrace.c      | 62 ++++++++++++++++++++++++++++++++++++-------
+ arch/arm/kernel/module-plts.c | 58 ++++++++++++++++++++++++++--------------
+ 4 files changed, 104 insertions(+), 29 deletions(-)
+
 -- 
 2.4.6
