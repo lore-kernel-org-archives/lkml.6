@@ -1,31 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751242AbeCIJHx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 04:07:53 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:46397 "EHLO
+        id S1751279AbeCIJIO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 04:08:14 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:38413 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750883AbeCIJHu (ORCPT
+        with ESMTP id S1750883AbeCIJIM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:07:50 -0500
-Date: Fri, 9 Mar 2018 01:07:23 -0800
-From: tip-bot for Song Liu <tipbot@zytor.com>
-Message-ID: <tip-bd903afeb504db5655a45bb4cf86f38be5b1bf62@git.kernel.org>
-Cc: mingo@kernel.org, tglx@linutronix.de, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, ephiepark@fb.com,
-        vincent.weaver@maine.edu, songliubraving@fb.com,
-        alexander.shishkin@linux.intel.com, peterz@infradead.org,
-        kernel-team@fb.com, jolsa@redhat.com, acme@redhat.com,
+        Fri, 9 Mar 2018 04:08:12 -0500
+Date: Fri, 9 Mar 2018 01:07:50 -0800
+From: tip-bot for Kan Liang <tipbot@zytor.com>
+Message-ID: <tip-f605cfca8c39ffa2b98c06d2b9f30ba64f1e54e3@git.kernel.org>
+Cc: jolsa@redhat.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, acme@redhat.com, torvalds@linux-foundation.org,
+        vincent.weaver@maine.edu, mingo@kernel.org, peterz@infradead.org,
+        kan.liang@linux.intel.com, alexander.shishkin@linux.intel.com,
         eranian@google.com
-Reply-To: tglx@linutronix.de, torvalds@linux-foundation.org, mingo@kernel.org,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, vincent.weaver@maine.edu,
-        ephiepark@fb.com, alexander.shishkin@linux.intel.com,
-        songliubraving@fb.com, peterz@infradead.org, kernel-team@fb.com,
-        jolsa@redhat.com, acme@redhat.com, eranian@google.com
-In-Reply-To: <20180306055504.3283731-1-songliubraving@fb.com>
-References: <20180306055504.3283731-1-songliubraving@fb.com>
+Reply-To: hpa@zytor.com, jolsa@redhat.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, torvalds@linux-foundation.org, acme@redhat.com,
+        peterz@infradead.org, mingo@kernel.org, vincent.weaver@maine.edu,
+        kan.liang@linux.intel.com, alexander.shishkin@linux.intel.com,
+        eranian@google.com
+In-Reply-To: <1519926894-3520-1-git-send-email-kan.liang@linux.intel.com>
+References: <1519926894-3520-1-git-send-email-kan.liang@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf/core: Fix ctx_event_type in ctx_resched()
-Git-Commit-ID: bd903afeb504db5655a45bb4cf86f38be5b1bf62
+Subject: [tip:perf/core] perf/x86/intel: Fix large period handling on
+ Broadwell CPUs
+Git-Commit-ID: f605cfca8c39ffa2b98c06d2b9f30ba64f1e54e3
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -38,73 +38,79 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  bd903afeb504db5655a45bb4cf86f38be5b1bf62
-Gitweb:     https://git.kernel.org/tip/bd903afeb504db5655a45bb4cf86f38be5b1bf62
-Author:     Song Liu <songliubraving@fb.com>
-AuthorDate: Mon, 5 Mar 2018 21:55:04 -0800
+Commit-ID:  f605cfca8c39ffa2b98c06d2b9f30ba64f1e54e3
+Gitweb:     https://git.kernel.org/tip/f605cfca8c39ffa2b98c06d2b9f30ba64f1e54e3
+Author:     Kan Liang <kan.liang@linux.intel.com>
+AuthorDate: Thu, 1 Mar 2018 12:54:54 -0500
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 9 Mar 2018 08:03:02 +0100
+CommitDate: Fri, 9 Mar 2018 08:22:05 +0100
 
-perf/core: Fix ctx_event_type in ctx_resched()
+perf/x86/intel: Fix large period handling on Broadwell CPUs
 
-In ctx_resched(), EVENT_FLEXIBLE should be sched_out when EVENT_PINNED is
-added. However, ctx_resched() calculates ctx_event_type before checking
-this condition. As a result, pinned events will NOT get higher priority
-than flexible events.
+Large fixed period values could be truncated on Broadwell, for example:
 
-The following shows this issue on an Intel CPU (where ref-cycles can
-only use one hardware counter).
+  perf record -e cycles -c 10000000000
 
-  1. First start:
-       perf stat -C 0 -e ref-cycles  -I 1000
-  2. Then, in the second console, run:
-       perf stat -C 0 -e ref-cycles:D -I 1000
+Here the fixed period is 0x2540BE400, but the period which finally applied is
+0x540BE400 - which is wrong.
 
-The second perf uses pinned events, which is expected to have higher
-priority. However, because it failed in ctx_resched(). It is never
-run.
+The reason is that x86_pmu::limit_period() uses an u32 parameter, so the
+high 32 bits of 'period' get truncated.
 
-This patch fixes this by calculating ctx_event_type after re-evaluating
-event_type.
+This bug was introduced in:
 
-Reported-by: Ephraim Park <ephiepark@fb.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
+  commit 294fe0f52a44 ("perf/x86/intel: Add INST_RETIRED.ALL workarounds")
+
+It's safe to use u64 instead of u32:
+
+ - Although the 'left' is s64, the value of 'left' must be positive when
+   calling limit_period().
+
+ - bdw_limit_period() only modifies the lowest 6 bits, it doesn't touch
+   the higher 32 bits.
+
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: <jolsa@redhat.com>
-Cc: <kernel-team@fb.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: 487f05e18aa4 ("perf/core: Optimize event rescheduling on active contexts")
-Link: http://lkml.kernel.org/r/20180306055504.3283731-1-songliubraving@fb.com
+Fixes: 294fe0f52a44 ("perf/x86/intel: Add INST_RETIRED.ALL workarounds")
+Link: http://lkml.kernel.org/r/1519926894-3520-1-git-send-email-kan.liang@linux.intel.com
+[ Rewrote unacceptably bad changelog. ]
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/events/core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/x86/events/intel/core.c | 2 +-
+ arch/x86/events/perf_event.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 96db9ae5d5af..4b838470fac4 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -2246,7 +2246,7 @@ static void ctx_resched(struct perf_cpu_context *cpuctx,
- 			struct perf_event_context *task_ctx,
- 			enum event_type_t event_type)
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 56457cb73448..6b6c1717787d 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3188,7 +3188,7 @@ glp_get_event_constraints(struct cpu_hw_events *cpuc, int idx,
+  * Therefore the effective (average) period matches the requested period,
+  * despite coarser hardware granularity.
+  */
+-static unsigned bdw_limit_period(struct perf_event *event, unsigned left)
++static u64 bdw_limit_period(struct perf_event *event, u64 left)
  {
--	enum event_type_t ctx_event_type = event_type & EVENT_ALL;
-+	enum event_type_t ctx_event_type;
- 	bool cpu_event = !!(event_type & EVENT_CPU);
+ 	if ((event->hw.config & INTEL_ARCH_EVENT_MASK) ==
+ 			X86_CONFIG(.event=0xc0, .umask=0x01)) {
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index 78f91ec1056e..6495ffd57e3e 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -557,7 +557,7 @@ struct x86_pmu {
+ 	struct x86_pmu_quirk *quirks;
+ 	int		perfctr_second_write;
+ 	bool		late_ack;
+-	unsigned	(*limit_period)(struct perf_event *event, unsigned l);
++	u64		(*limit_period)(struct perf_event *event, u64 l);
  
  	/*
-@@ -2256,6 +2256,8 @@ static void ctx_resched(struct perf_cpu_context *cpuctx,
- 	if (event_type & EVENT_PINNED)
- 		event_type |= EVENT_FLEXIBLE;
- 
-+	ctx_event_type = event_type & EVENT_ALL;
-+
- 	perf_pmu_disable(cpuctx->ctx.pmu);
- 	if (task_ctx)
- 		task_ctx_sched_out(cpuctx, task_ctx, event_type);
+ 	 * sysfs attrs
