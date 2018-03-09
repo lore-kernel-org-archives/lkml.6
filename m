@@ -1,104 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751788AbeCIIdK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 03:33:10 -0500
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:40346 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750898AbeCIIdJ (ORCPT
+        id S1751486AbeCIIeL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 03:34:11 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:56231 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750898AbeCIIeK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 03:33:09 -0500
-X-Google-Smtp-Source: AG47ELuyINtYoUhVSzKKv3JSDl0AW9tfC/MoouH1+Ks7J181U9F2ClaDLaZXDFnoA1JsfgxMIhlxrOaQqlRJmlXlI+s=
+        Fri, 9 Mar 2018 03:34:10 -0500
+Date: Fri, 9 Mar 2018 00:33:53 -0800
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-4jo2puz0empkoou6bbq460tl@git.kernel.org>
+Cc: hpa@zytor.com, eranian@google.com, tglx@linutronix.de,
+        wangnan0@huawei.com, acme@redhat.com, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, jolsa@kernel.org, dsahern@gmail.com,
+        adrian.hunter@intel.com, namhyung@kernel.org
+Reply-To: tglx@linutronix.de, eranian@google.com, hpa@zytor.com,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com,
+        wangnan0@huawei.com, dsahern@gmail.com, jolsa@kernel.org,
+        namhyung@kernel.org, adrian.hunter@intel.com
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf cgroup: Remove misplaced __maybe_unused
+Git-Commit-ID: a6adc9bdf59c77ea4efb844c27f25361f0399586
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180309082932.GA13228@wunner.de>
-References: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
- <20180308080020.22828-13-ard.biesheuvel@linaro.org> <20180309074719.y33xe4bjkjsjsaa3@gmail.com>
- <20180309082932.GA13228@wunner.de>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Fri, 9 Mar 2018 08:33:08 +0000
-Message-ID: <CAKv+Gu9SNZmSFpZi1=JcTUNgoNbU+N71qZ4C2a2xmXct9DBjTQ@mail.gmail.com>
-Subject: Re: [PATCH 12/12] efi: make const array 'apple' static
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-efi@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Colin Ian King <colin.king@canonical.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lukas,
+Commit-ID:  a6adc9bdf59c77ea4efb844c27f25361f0399586
+Gitweb:     https://git.kernel.org/tip/a6adc9bdf59c77ea4efb844c27f25361f0399586
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 6 Mar 2018 09:31:53 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 7 Mar 2018 10:22:25 -0300
 
-On 9 March 2018 at 08:29, Lukas Wunner <lukas@wunner.de> wrote:
-> On Fri, Mar 09, 2018 at 08:47:19AM +0100, Ingo Molnar wrote:
->> * Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->> > From: Colin Ian King <colin.king@canonical.com>
->> >
->> > Don't populate the const read-only array 'buf' on the stack but instead
->> > make it static. Makes the object code smaller by 64 bytes:
->> >
->> > Before:
->> >    text        data     bss     dec     hex filename
->> >    9264           1      16    9281    2441 arch/x86/boot/compressed/eboot.o
->> >
->> > After:
->> >    text        data     bss     dec     hex filename
->> >    9200           1      16    9217    2401 arch/x86/boot/compressed/eboot.o
->> >
->> > (gcc version 7.2.0 x86_64)
->> >
->> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->> > ---
->> >  arch/x86/boot/compressed/eboot.c | 2 +-
->> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> >
->> > diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
->> > index 886a9115af62..f2251c1c9853 100644
->> > --- a/arch/x86/boot/compressed/eboot.c
->> > +++ b/arch/x86/boot/compressed/eboot.c
->> > @@ -423,7 +423,7 @@ static void retrieve_apple_device_properties(struct boot_params *boot_params)
->> >
->> >  static void setup_quirks(struct boot_params *boot_params)
->> >  {
->> > -   efi_char16_t const apple[] = { 'A', 'p', 'p', 'l', 'e', 0 };
->> > +   static efi_char16_t const apple[] = { 'A', 'p', 'p', 'l', 'e', 0 };
->> >     efi_char16_t *fw_vendor = (efi_char16_t *)(unsigned long)
->> >             efi_table_attr(efi_system_table, fw_vendor, sys_table);
->>
->> As a general policy, please don't put 'static' variables into the local
->> scope, use file scope instead - right before setup_quirks() would be fine.
->
-> Well, I believe the end result is the same and the closer the declaration
-> is to where it's used, the easier the code is to read and understand.
->
-> I object to patches like this because they paper over a missing
-> compiler optimization:
-> https://gcc.gnu.org/bugzilla/show_bug.cgi?id=68725
->
-> I have told Colin before that it would be more useful to look into
-> fixing the underlying compiler issue rather than polluting the kernel
-> with "static" keywords, but he keeps sending these patches so I've
-> given up responding:
-> https://lkml.org/lkml/2017/8/25/636
->
->
->> Plus an unicode string literal initializer would be pretty descriptive
->> as well,  instead of the weird looking character array, i.e. something
->> like:
->>
->>   static efi_char16_t const apple_unicode_str[] = u"Apple";
->>
->> ... or so?
->
-> Last time I checked this didn't work, I believe it's because it's C11
-> and the kernel is compiled with -std=gnu89.  And I'm also not sure if
-> the oldest gcc version that we support understands u"".
->
+perf cgroup: Remove misplaced __maybe_unused
 
-Indeed
+The 'opt' parameter in parse_cgroups() _is_ used. The original patch
+used '__used' that was even more confusing :-)
 
-arch/x86/platform/efi/quirks.c:78:46: error: 'u' undeclared here (not
-in a function); did you mean 'up'?
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Fixes: 023695d96ee0 ("perf tool: Add cgroup support")
+Link: https://lkml.kernel.org/n/tip-4jo2puz0empkoou6bbq460tl@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/cgroup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- static const efi_char16_t efi_dummy_name[] = u"DUMMY";
+diff --git a/tools/perf/util/cgroup.c b/tools/perf/util/cgroup.c
+index 5dd9b5ea314d..2e2aa6c86107 100644
+--- a/tools/perf/util/cgroup.c
++++ b/tools/perf/util/cgroup.c
+@@ -153,7 +153,7 @@ void close_cgroup(struct cgroup_sel *cgrp)
+ 	}
+ }
+ 
+-int parse_cgroups(const struct option *opt __maybe_unused, const char *str,
++int parse_cgroups(const struct option *opt, const char *str,
+ 		  int unset __maybe_unused)
+ {
+ 	struct perf_evlist *evlist = *(struct perf_evlist **)opt->value;
