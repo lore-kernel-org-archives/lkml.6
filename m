@@ -1,181 +1,210 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751161AbeCIK6D (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:58:03 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:34154 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751092AbeCIK6C (ORCPT
+        id S1751067AbeCILEZ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 06:04:25 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:41030 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750898AbeCILEX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 05:58:02 -0500
-X-Google-Smtp-Source: AG47ELuaHMGhf5rOzknnrXqjY8GCaLjRx2ja/H4dyT4UEOTH+txPZpZdedifWFWZKeBcPhO/XyZzqQ==
-From: Christian Brauner <christian.brauner@ubuntu.com>
-To: linux-kernel@vger.kernel.org, ebiederm@xmission.com,
-        torvalds@linux-foundation.org
-Cc: Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v1] devpts: resolve devpts bind-mounts
-Date: Fri,  9 Mar 2018 11:57:52 +0100
-Message-Id: <20180309105752.24017-1-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.15.1
+        Fri, 9 Mar 2018 06:04:23 -0500
+Date: Fri, 9 Mar 2018 12:04:18 +0100
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Corey Minyard <cminyard@mvista.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-rt-users <linux-rt-users@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>
+Subject: Re: Warning from swake_up_all in 4.14.15-rt13 non-RT
+Message-ID: <20180309110418.lwtennjqwqcxh422@linutronix.de>
+References: <dd6ad0b5-569b-067d-257f-dbf15ffa7077@mvista.com>
+ <20180306174604.nta5rcvfvrfdfftz@linutronix.de>
+ <1704d817-8fb9-ce8f-1aa1-fe6e8b0c3919@mvista.com>
+ <20180308174103.mduy5qq2ttlcvig3@linutronix.de>
+ <a11f140e-c44f-f967-1cd4-d8a6f09d4d29@mvista.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <a11f140e-c44f-f967-1cd4-d8a6f09d4d29@mvista.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most libcs will still look at /dev/ptmx when opening the master fd of a pty
-device. When /dev/ptmx is a bind-mount of /dev/pts/ptmx and the TIOCGPTPEER
-ioctl() is used to safely retrieve a file descriptor for the slave side of
-the pty based on the master fd, the /proc/self/fd/{0,1,2} symlinks will
-point to /.
+On 2018-03-08 13:54:17 [-0600], Corey Minyard wrote:
+> > It will work but I don't think pushing this into workqueue/tasklet is a
+> > good idea. You want to wakeup all waiters on waitqueue X (probably one
+> > waiter) and instead there is one one wakeup + ctx-switch which does the
+> > final wakeup.
+> 
+> True, but this is an uncommon and already fairly expensive operation being
+> done.  Adding a context switch doesn't seem that bad.
 
-When the kernel tries to look up the root mount of the dentry for the slave
-file descriptor it will detect that the dentry is escaping its bind-mount
-since the root mount of the dentry is /dev/pts where the devpts is mounted
-but the root mount of /dev/ptmx is /dev.
+still no need to make it more expensive if it can be avoided.
 
-Having bind-mounts of /dev/pts/ptmx to /dev/ptmx not working correctly is a
-regression. In addition, it is also a fairly common scenario in containers
-employing user namespaces.
+> > But now I had an idea: swake_up_all() could iterate over list and
+> > instead performing wakes it would just wake_q_add() the tasks. Drop the
+> > lock and then wake_up_q(). So in case there is wakeup pending and the
+> > task removed itself from the list then the task may observe a spurious
+> > wakeup.
+> 
+> That sounds promising, but where does wake_up_q() get called?  No matter
+> what
+> it's an expensive operation and I'm not sure where you would put it in this
+> case.
 
-To handle bind-mounts of /dev/pts/ptmx to /dev/ptmx correctly we need to
-walk up the bind-mounts for /dev/ptmx in devpts_mntget(). This also means
-we need to remove the
-"if (path->mnt->mnt_sb->s_magic == DEVPTS_SUPER_MAGIC)" check from
-devpts_ptmx_path(). However, devpts_acquire() needs to perform that check.
-The reason is that while the devpts mounted at /dev/pts has devtmpfs
-mounted at /dev as its parent mount:
+Look at this:
 
-21 -- -- / /dev
--- 21 -- / /dev/pts
+Subject: [RFC PATCH RT] sched/swait: use WAKE_Q for possible multiple wake ups
 
-they are on different devices
+Corey Minyard reported swake_up_all() invocation with disabled
+interrupts with the RT patch applied but disabled (low latency config).
+The reason why swake_up_all() avoids the irqsafe variant is because it
+shouldn't be called from IRQ-disabled section. The idea was to wake up
+one task after the other, enable interrupts (and drop the lock) during
+the wake ups so we can schedule away in case a task with a higher
+priority was just waken up.
+In RT we have swait based completions so I kind of needed a complete()
+which could wake multiple sleepers without dropping the lock and
+enabling interrupts.
+To work around this shortcoming I propose to use WAKE_Q. swake_up_all()
+will queue all to be woken up tasks on wake-queue with interrupts
+disabled which should be "quick". After dropping the lock (and enabling
+interrupts) it can wake the tasks one after the other.
 
--- -- 0:6  / /dev
--- -- 0:20 / /dev/pts
-
-which has the consequence that the pathname of the directory which forms
-the root of the /dev/pts mount is /. So if we bind-mount /dev/pts/ptmx to
-/dev/ptmx we will end up on the same device as the devtmpfs mount on
-/dev/pts
-
--- -- 0:20 /ptmx /dev/ptmx
-
-but given that / is the pathname of the directory which forms the root of
-the /dev/pts bind-mount, the resulting source will be /ptmx. So in
-devpts_acquire() we need to check if
-"(path->mnt->mnt_sb->s_magic == DEVPTS_SUPER_MAGIC)" and exit early before
-we try to call path_pts(). If we call path_pts() in the bind-mount case we
-will hit path_parent_directory() which will **not** yield /dev as parent
-directory but rather / and fail. We should still perform the path_pts()
-check in devpts_acquire() if we haven't found a suitable devpts filesystem
-at open time but we should always try to exit early in devpts_acquire() and
-defer the bind-mount resolution to devpts_mntget(). If we fail in
-devpts_mntget() we will end up with a wrong /proc/<pid>/fd/{0,1,2} symlink,
-if we fail in devpts_acquire() we will end up with a failed
-open("/dev/ptmx") which is more troublesome.
-
-Here's a little reproducer that presupposes a libc that uses TIOCGPTPEER in
-its openpty() implementation:
-
-unshare --mount
-mount --bind /dev/pts/ptmx /dev/ptmx
-chmod 666 /dev/ptmx
-script
-ls -al /proc/self/fd/0
-
-with output:
-
-lrwx------ 1 chb chb 64 Mar  7 16:41 /proc/self/fd/0 -> /
-
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-Suggested-by: Eric Biederman <ebiederm@xmission.com>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Corey Minyard <cminyard@mvista.com>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
-ChangeLog v0->v1:
-- remove
-        /* Has the devpts filesystem already been found? */
-        if (path->mnt->mnt_sb->s_magic == DEVPTS_SUPER_MAGIC)
-	                return 0
-  from devpts_ptmx_path()
-- check superblock after devpts_ptmx_path() returned
----
- fs/devpts/inode.c | 41 +++++++++++++++++++++++++++++++++--------
- 1 file changed, 33 insertions(+), 8 deletions(-)
+ include/linux/swait.h     |  4 +++-
+ kernel/sched/completion.c |  5 ++++-
+ kernel/sched/swait.c      | 35 ++++++++++-------------------------
+ 3 files changed, 17 insertions(+), 27 deletions(-)
 
-diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
-index e31d6ed3ec32..89ee17733087 100644
---- a/fs/devpts/inode.c
-+++ b/fs/devpts/inode.c
-@@ -138,10 +138,6 @@ static int devpts_ptmx_path(struct path *path)
- 	struct super_block *sb;
- 	int err;
+diff --git a/include/linux/swait.h b/include/linux/swait.h
+index 853f3e61a9f4..929721cffdb3 100644
+--- a/include/linux/swait.h
++++ b/include/linux/swait.h
+@@ -148,7 +148,9 @@ static inline bool swq_has_sleeper(struct swait_queue_head *wq)
+ extern void swake_up(struct swait_queue_head *q);
+ extern void swake_up_all(struct swait_queue_head *q);
+ extern void swake_up_locked(struct swait_queue_head *q);
+-extern void swake_up_all_locked(struct swait_queue_head *q);
++
++struct wake_q_head;
++extern void swake_add_all_wq(struct swait_queue_head *q, struct wake_q_head *wq);
  
--	/* Has the devpts filesystem already been found? */
--	if (path->mnt->mnt_sb->s_magic == DEVPTS_SUPER_MAGIC)
--		return 0;
--
- 	/* Is a devpts filesystem at "pts" in the same directory? */
- 	err = path_pts(path);
- 	if (err)
-@@ -163,6 +159,26 @@ struct vfsmount *devpts_mntget(struct file *filp, struct pts_fs_info *fsi)
+ extern void __prepare_to_swait(struct swait_queue_head *q, struct swait_queue *wait);
+ extern void prepare_to_swait(struct swait_queue_head *q, struct swait_queue *wait, int state);
+diff --git a/kernel/sched/completion.c b/kernel/sched/completion.c
+index 0fe2982e46a0..461d992e30f9 100644
+--- a/kernel/sched/completion.c
++++ b/kernel/sched/completion.c
+@@ -15,6 +15,7 @@
+ #include <linux/sched/signal.h>
+ #include <linux/sched/debug.h>
+ #include <linux/completion.h>
++#include <linux/sched/wake_q.h>
  
- 	path = filp->f_path;
- 	path_get(&path);
-+	if ((DEVPTS_SB(path.mnt->mnt_sb) == fsi) &&
-+	    (path.mnt->mnt_root == fsi->ptmx_dentry)) {
-+		/* Walk upward while the start point is a bind mount of a single
-+		 * file.
-+		 */
-+		while (path.mnt->mnt_root == path.dentry)
-+			if (follow_up(&path) == 0)
-+				break;
-+
-+		/* Is this path a valid devpts filesystem? */
-+		err = devpts_ptmx_path(&path);
-+		dput(path.dentry);
-+		if (err == 0)
-+			goto check_devpts_sb;
-+
-+		path_put(&path);
-+		path = filp->f_path;
-+		path_get(&path);
-+		goto check_devpts_sb;
-+	}
+ /**
+  * complete: - signals a single thread waiting on this completion
+@@ -65,11 +66,13 @@ EXPORT_SYMBOL(complete);
+ void complete_all(struct completion *x)
+ {
+ 	unsigned long flags;
++	DEFINE_WAKE_Q(wq);
  
- 	err = devpts_ptmx_path(&path);
- 	dput(path.dentry);
-@@ -170,10 +186,13 @@ struct vfsmount *devpts_mntget(struct file *filp, struct pts_fs_info *fsi)
- 		mntput(path.mnt);
- 		return ERR_PTR(err);
- 	}
-+
-+check_devpts_sb:
- 	if (DEVPTS_SB(path.mnt->mnt_sb) != fsi) {
- 		mntput(path.mnt);
- 		return ERR_PTR(-ENODEV);
- 	}
-+
- 	return path.mnt;
+ 	raw_spin_lock_irqsave(&x->wait.lock, flags);
+ 	x->done = UINT_MAX;
+-	swake_up_all_locked(&x->wait);
++	swake_add_all_wq(&x->wait, &wq);
+ 	raw_spin_unlock_irqrestore(&x->wait.lock, flags);
++	wake_up_q(&wq);
  }
+ EXPORT_SYMBOL(complete_all);
  
-@@ -187,10 +206,16 @@ struct pts_fs_info *devpts_acquire(struct file *filp)
- 	path = filp->f_path;
- 	path_get(&path);
+diff --git a/kernel/sched/swait.c b/kernel/sched/swait.c
+index b14638a05ec9..1a09cc425bd8 100644
+--- a/kernel/sched/swait.c
++++ b/kernel/sched/swait.c
+@@ -2,6 +2,7 @@
+ #include <linux/sched/signal.h>
+ #include <linux/swait.h>
+ #include <linux/suspend.h>
++#include <linux/sched/wake_q.h>
  
--	err = devpts_ptmx_path(&path);
--	if (err) {
--		result = ERR_PTR(err);
--		goto out;
-+	/* Has the devpts filesystem already been found? */
-+	if (path.mnt->mnt_sb->s_magic != DEVPTS_SUPER_MAGIC) {
-+		/* Is there an appropriate devpts filesystem in the parent
-+		 * directory?
-+		 */
-+		err = devpts_ptmx_path(&path);
-+		if (err) {
-+			result = ERR_PTR(err);
-+			goto out;
-+		}
+ void __init_swait_queue_head(struct swait_queue_head *q, const char *name,
+ 			     struct lock_class_key *key)
+@@ -31,24 +32,19 @@ void swake_up_locked(struct swait_queue_head *q)
+ }
+ EXPORT_SYMBOL(swake_up_locked);
+ 
+-void swake_up_all_locked(struct swait_queue_head *q)
++void swake_add_all_wq(struct swait_queue_head *q, struct wake_q_head *wq)
+ {
+ 	struct swait_queue *curr;
+-	int wakes = 0;
+ 
+ 	while (!list_empty(&q->task_list)) {
+ 
+ 		curr = list_first_entry(&q->task_list, typeof(*curr),
+ 					task_list);
+-		wake_up_process(curr->task);
+ 		list_del_init(&curr->task_list);
+-		wakes++;
++		wake_q_add(wq, curr->task);
  	}
+-	if (pm_in_action)
+-		return;
+-	WARN(wakes > 2, "complete_all() with %d waiters\n", wakes);
+ }
+-EXPORT_SYMBOL(swake_up_all_locked);
++EXPORT_SYMBOL(swake_add_all_wq);
  
- 	/*
--- 
-2.15.1
+ void swake_up(struct swait_queue_head *q)
+ {
+@@ -66,25 +62,14 @@ EXPORT_SYMBOL(swake_up);
+  */
+ void swake_up_all(struct swait_queue_head *q)
+ {
+-	struct swait_queue *curr;
+-	LIST_HEAD(tmp);
++	unsigned long flags;
++	DEFINE_WAKE_Q(wq);
+ 
+-	WARN_ON(irqs_disabled());
+-	raw_spin_lock_irq(&q->lock);
+-	list_splice_init(&q->task_list, &tmp);
+-	while (!list_empty(&tmp)) {
+-		curr = list_first_entry(&tmp, typeof(*curr), task_list);
++	raw_spin_lock_irqsave(&q->lock, flags);
++	swake_add_all_wq(q, &wq);
++	raw_spin_unlock_irqrestore(&q->lock, flags);
+ 
+-		wake_up_state(curr->task, TASK_NORMAL);
+-		list_del_init(&curr->task_list);
+-
+-		if (list_empty(&tmp))
+-			break;
+-
+-		raw_spin_unlock_irq(&q->lock);
+-		raw_spin_lock_irq(&q->lock);
+-	}
+-	raw_spin_unlock_irq(&q->lock);
++	wake_up_q(&wq);
+ }
+ EXPORT_SYMBOL(swake_up_all);
+ 
+
+> I had another idea.  This is only occurring if RT is not enabled, because
+> with
+> RT all the irq disable things go away and you are generally running in task
+> context.  So why not have a different version of swake_up_all() for non-RT
+> that does work from irqs-off context?
+
+With the patch above I have puzzle part which would allow to use swait
+based completions upstream. That ifdef would probably not help.
+
+> -corey
+
+Sebastian
