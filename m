@@ -1,79 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751243AbeCIQxJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 11:53:09 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:34395 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751159AbeCIQxH (ORCPT
+        id S932333AbeCIQyt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 11:54:49 -0500
+Received: from a8-200.smtp-out.amazonses.com ([54.240.8.200]:44496 "EHLO
+        a8-200.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932157AbeCIQyo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 11:53:07 -0500
-Date: Fri, 9 Mar 2018 16:53:02 +0000
-From: Joseph Myers <joseph@codesourcery.com>
-X-X-Sender: jsm28@digraph.polyomino.org.uk
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-CC: Arnd Bergmann <arnd@arndb.de>, Helmut Grohne <helmut@subdivi.de>,
-        GNU C Library <libc-alpha@sourceware.org>,
-        linux-arch <linux-arch@vger.kernel.org>, <metcalf@alum.mit.edu>,
-        Henrik Grindal Bakken <hgb@ifi.uio.no>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: RFC: remove the "tile" architecture from glibc
-In-Reply-To: <224c8996-bda1-5e75-bff3-9ed8abc4de87@physik.fu-berlin.de>
-Message-ID: <alpine.DEB.2.20.1803091645580.8457@digraph.polyomino.org.uk>
-References: <1a57be83-3349-5450-ee4f-d2a33569a728@mellanox.com> <d6c8e425-a6b6-6594-05e3-965536f06da3@physik.fu-berlin.de> <abce89d0-6798-069a-1a54-06e664665b78@mellanox.com> <dc3c52ce-f082-0da0-7828-0d4e6751e2a5@physik.fu-berlin.de>
- <CAK8P3a3itR8i2ayG7e4ku7kz+CQU7qHhptdmtmgTz+CzFGmCiw@mail.gmail.com> <20180307181407.GA24350@alf.mars> <CAK8P3a2VuYxzy6RmL_w_5f2qHepVRhfVR5P4x9nCUYav1s5n7g@mail.gmail.com> <9a60ac70-21e4-3f48-5cd7-ffd3aabc5c21@physik.fu-berlin.de>
- <alpine.DEB.2.20.1803091622420.8457@digraph.polyomino.org.uk> <224c8996-bda1-5e75-bff3-9ed8abc4de87@physik.fu-berlin.de>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Fri, 9 Mar 2018 11:54:44 -0500
+Date: Fri, 9 Mar 2018 16:54:42 +0000
+From: Jeremy Cline <jeremy@jcline.org>
+To: Thiebaud Weksteen <tweek@google.com>
+Cc: hdegoede@redhat.com, Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: Regression from efi: call get_event_log before ExitBootServices
+Message-ID: <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
+References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
+ <e7c2be5c-cf21-fc2d-efda-d9222d93ffad@redhat.com>
+ <b32f335c-0d77-1749-f7fe-65f512280255@redhat.com>
+ <ade378f6-c997-1d48-a30d-cceee6435fc8@redhat.com>
+ <a3b5f822-f8f4-e2f5-46da-e23e13174f28@redhat.com>
+ <cec36124-0950-6ad9-58a8-9bd69e63aa04@redhat.com>
+ <0100016206a68850-bd5c96b3-f275-46ea-98b1-1317e02a5d6e-000000@email.amazonses.com>
+ <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com>
+ <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-X-Originating-IP: [137.202.0.87]
-X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
+X-SES-Outgoing: 2018.03.09-54.240.8.200
+Feedback-ID: 1.us-east-1.z18Isoc/FaoPOvCyJyi1mnTt8STwoRuibXVNoUcvG6g=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 9 Mar 2018, John Paul Adrian Glaubitz wrote:
-
-> On 03/09/2018 05:31 PM, Joseph Myers wrote:
-> > Note that SH glibc test results need some work - there are a large number 
-> > of failures listed at <https://sourceware.org/glibc/wiki/Release/2.27#SH>.  
-> > Probably most could be addressed with the NaN fixes I outlined at 
-> > <https://sourceware.org/ml/libc-alpha/2018-02/msg00440.html> - but that 
-> > does of course need someone to do the work to implement that in GCC and 
-> > glibc.  (The stdlib/tst-tininess failure is stranger; SH manuals don't 
-> > seem very specific on this, but the existing setting was definitely 
-> > determined by testing on hardware.  SH experts with access to a range of 
-> > different hardware may be needed to advise on what different hardware does 
-> > or is supposed to do in this regard.)
+On Fri, Mar 09, 2018 at 10:43:50AM +0000, Thiebaud Weksteen wrote:
+> Thanks a lot for trying out the patch!
 > 
-> Ok, thanks for the explanation.
-> 
-> On a sidenote: Is there documentation somewhere which explains how to properly
-> run the glibc testsuite? I would then go ahead and run it on my Amiga 4000
-> for m68k.
+> Please don't modify your install at this stage, I think we are hitting a
+> firmware bug and that would be awesome if we can fix how we are handling it.
+> So, if we reach that stage in the function it could either be that:
+> * The allocation did not succeed, somehow, but the firmware still returned
+> EFI_SUCCEED.
+> * The size requested is incorrect (I'm thinking something like a 1G of
+> log). This would be due to either a miscalculation of log_size (possible)
+> or; the returned values of GetEventLog are not correct.
+> I'm sending a patch to add checks for these. Could you please apply and
+> retest?
+> Again, thanks for helping debugging this.
 
-"make check", or "make -k check" if you're concerned about some tests 
-failing to build (e.g. the compiler running out of memory on a few large 
-tests) - the testsuite should continue after execution failures, but not 
-after compilation failures.  (Having previously configured with 
---prefix=/usr for the build.  And if the compiler used doesn't have 
-libgcc_s and libstdc++ shared libraries in directories ld.so searches by 
-default, you should copy those libraries into the glibc build directory 
-before running tests.)  On a system that can handle it you'd use an 
-appropriate -jN option for parallelism, but probably not on m68k.
+No problem, thanks for the help :)
 
-For cross testing over SSH (when glibc is running on a system that is very 
-slow running the compiler or has too little memory to do so) you need a 
-shared filesystem at the same path on both the system where glibc is built 
-and the system where tests will execute (probably NFS-exported from the 
-build system, and it may be necessary to mount it on the test system with 
-acdirmax=0,acdirmin=0 to limit any caching).  Then you can pass 
-test-wrapper="/path/to/glibc/scripts/cross-test-ssh.sh <host>" to make 
-check.
+With the new patch:
 
-In both cases, for very slow test systems you may wish to export 
-TIMEOUTFACTOR (an integer by which all test timeouts are multiplied).
+Locating the TCG2Protocol
+Calling GetEventLog on TCG2Protocol
+Log returned
+log_location is not empty
+log_size != 0
+log_size < 1M
+Allocating memory for storing the logs
+Returned from memory allocation
+Copying log to new location
 
--- 
-Joseph S. Myers
-joseph@codesourcery.com
+And then it hangs. I added a couple more print statements:
+
+diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
+index ee3fac109078..1ab5638bc50e 100644
+--- a/drivers/firmware/efi/libstub/tpm.c
++++ b/drivers/firmware/efi/libstub/tpm.c
+@@ -148,8 +148,11 @@ void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+        efi_printk(sys_table_arg, "Copying log to new location\n");
+ 
+        memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
++       efi_printk(sys_table_arg, "Successfully memset log_tbl to 0\n");
+        log_tbl->size = log_size;
++       efi_printk(sys_table_arg, "Set log_tbl->size\n");
+        log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
++       efi_printk(sys_table_arg, "Set log_tbl-version\n");
+        memcpy(log_tbl->log, (void *) first_entry_addr, log_size);
+ 
+        efi_printk(sys_table_arg, "Installing the log into the configuration table\n");
+
+and it's hanging at "memset(log_tbl, 0, sizeof(*log_tbl) + log_size);"
+
+Regards,
+Jeremy
