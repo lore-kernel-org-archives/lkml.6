@@ -1,27 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932100AbeCIIkg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 03:40:36 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:44775 "EHLO
+        id S1751862AbeCIIlF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 03:41:05 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:35433 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751229AbeCIIkf (ORCPT
+        with ESMTP id S1751229AbeCIIlD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 03:40:35 -0500
-Date: Fri, 9 Mar 2018 00:40:28 -0800
+        Fri, 9 Mar 2018 03:41:03 -0500
+Date: Fri, 9 Mar 2018 00:40:56 -0800
 From: tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-b818ec613b42d679604215c188a12cf43164cab0@git.kernel.org>
-Cc: mingo@kernel.org, hpa@zytor.com, adrian.hunter@intel.com,
-        jolsa@redhat.com, linux-kernel@vger.kernel.org, acme@redhat.com,
-        tglx@linutronix.de
-Reply-To: jolsa@redhat.com, linux-kernel@vger.kernel.org, acme@redhat.com,
-        tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
-        adrian.hunter@intel.com
-In-Reply-To: <1520327598-1317-4-git-send-email-adrian.hunter@intel.com>
-References: <1520327598-1317-4-git-send-email-adrian.hunter@intel.com>
+Message-ID: <tip-a356a59799d376dd8e4839f29d32f4c6a5582e6d@git.kernel.org>
+Cc: jolsa@redhat.com, tglx@linutronix.de, acme@redhat.com,
+        adrian.hunter@intel.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com
+Reply-To: acme@redhat.com, jolsa@redhat.com, tglx@linutronix.de, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
+        mingo@kernel.org
+In-Reply-To: <1520327598-1317-5-git-send-email-adrian.hunter@intel.com>
+References: <1520327598-1317-5-git-send-email-adrian.hunter@intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf auxtrace: Add missing parameters from
- kernel-doc comments
-Git-Commit-ID: b818ec613b42d679604215c188a12cf43164cab0
+Subject: [tip:perf/core] perf auxtrace: Rename some buffer-queuing functions
+Git-Commit-ID: a356a59799d376dd8e4839f29d32f4c6a5582e6d
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,42 +33,82 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b818ec613b42d679604215c188a12cf43164cab0
-Gitweb:     https://git.kernel.org/tip/b818ec613b42d679604215c188a12cf43164cab0
+Commit-ID:  a356a59799d376dd8e4839f29d32f4c6a5582e6d
+Gitweb:     https://git.kernel.org/tip/a356a59799d376dd8e4839f29d32f4c6a5582e6d
 Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Tue, 6 Mar 2018 11:13:14 +0200
+AuthorDate: Tue, 6 Mar 2018 11:13:15 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 7 Mar 2018 10:22:26 -0300
+CommitDate: Wed, 7 Mar 2018 10:22:27 -0300
 
-perf auxtrace: Add missing parameters from kernel-doc comments
+perf auxtrace: Rename some buffer-queuing functions
 
-Add missing parameters from kernel-doc comments.
+Rename some buffer-queuing functions in preparation for supporting AUX area
+sampling buffers.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/1520327598-1317-4-git-send-email-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/1520327598-1317-5-git-send-email-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/auxtrace.h | 2 ++
- 1 file changed, 2 insertions(+)
+ tools/perf/util/auxtrace.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
-index 453c148d2158..e731f55da072 100644
---- a/tools/perf/util/auxtrace.h
-+++ b/tools/perf/util/auxtrace.h
-@@ -130,6 +130,7 @@ struct auxtrace_index {
- /**
-  * struct auxtrace - session callbacks to allow AUX area data decoding.
-  * @process_event: lets the decoder see all session events
-+ * @process_auxtrace_event: process a PERF_RECORD_AUXTRACE event
-  * @flush_events: process any remaining data
-  * @free_events: free resources associated with event processing
-  * @free: free resources associated with the session
-@@ -301,6 +302,7 @@ struct auxtrace_mmap_params {
-  * @parse_snapshot_options: parse snapshot options
-  * @reference: provide a 64-bit reference number for auxtrace_event
-  * @read_finish: called after reading from an auxtrace mmap
-+ * @alignment: alignment (if any) for AUX area data
-  */
- struct auxtrace_record {
- 	int (*recording_options)(struct auxtrace_record *itr,
+diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+index 6470ea2aa25e..6ea840ec5b7f 100644
+--- a/tools/perf/util/auxtrace.c
++++ b/tools/perf/util/auxtrace.c
+@@ -233,9 +233,9 @@ static void *auxtrace_copy_data(u64 size, struct perf_session *session)
+ 	return p;
+ }
+ 
+-static int auxtrace_queues__add_buffer(struct auxtrace_queues *queues,
+-				       unsigned int idx,
+-				       struct auxtrace_buffer *buffer)
++static int auxtrace_queues__queue_buffer(struct auxtrace_queues *queues,
++					 unsigned int idx,
++					 struct auxtrace_buffer *buffer)
+ {
+ 	struct auxtrace_queue *queue;
+ 	int err;
+@@ -286,7 +286,7 @@ static int auxtrace_queues__split_buffer(struct auxtrace_queues *queues,
+ 			return -ENOMEM;
+ 		b->size = BUFFER_LIMIT_FOR_32_BIT;
+ 		b->consecutive = consecutive;
+-		err = auxtrace_queues__add_buffer(queues, idx, b);
++		err = auxtrace_queues__queue_buffer(queues, idx, b);
+ 		if (err) {
+ 			auxtrace_buffer__free(b);
+ 			return err;
+@@ -302,10 +302,10 @@ static int auxtrace_queues__split_buffer(struct auxtrace_queues *queues,
+ 	return 0;
+ }
+ 
+-static int auxtrace_queues__add_event_buffer(struct auxtrace_queues *queues,
+-					     struct perf_session *session,
+-					     unsigned int idx,
+-					     struct auxtrace_buffer *buffer)
++static int auxtrace_queues__add_buffer(struct auxtrace_queues *queues,
++				       struct perf_session *session,
++				       unsigned int idx,
++				       struct auxtrace_buffer *buffer)
+ {
+ 	if (session->one_mmap) {
+ 		buffer->data = buffer->data_offset - session->one_mmap_offset +
+@@ -324,7 +324,7 @@ static int auxtrace_queues__add_event_buffer(struct auxtrace_queues *queues,
+ 			return err;
+ 	}
+ 
+-	return auxtrace_queues__add_buffer(queues, idx, buffer);
++	return auxtrace_queues__queue_buffer(queues, idx, buffer);
+ }
+ 
+ static bool filter_cpu(struct perf_session *session, int cpu)
+@@ -359,7 +359,7 @@ int auxtrace_queues__add_event(struct auxtrace_queues *queues,
+ 	buffer->size = event->auxtrace.size;
+ 	idx = event->auxtrace.idx;
+ 
+-	err = auxtrace_queues__add_event_buffer(queues, session, idx, buffer);
++	err = auxtrace_queues__add_buffer(queues, session, idx, buffer);
+ 	if (err)
+ 		goto out_err;
+ 
