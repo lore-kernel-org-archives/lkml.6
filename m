@@ -1,103 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932784AbeCIWSh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 17:18:37 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55196 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932104AbeCIWSg (ORCPT
+        id S932669AbeCIWXs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 17:23:48 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:42182 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932304AbeCIWXq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 17:18:36 -0500
-Date: Fri, 9 Mar 2018 23:18:34 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: Suman Anna <s-anna@ti.com>
-Cc: Robin Murphy <robin.murphy@arm.com>, ivo.g.dimitrov.75@gmail.com,
-        khilman@kernel.org, Tony Lindgren <tony@atomide.com>,
-        aaro.koskinen@iki.fi, kernel list <linux-kernel@vger.kernel.org>,
-        sre@kernel.org, martijn@brixit.nl,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        abcloriens@gmail.com, sakari.ailus@linux.intel.com,
-        pali.rohar@gmail.com, clayton@craftyguy.net,
-        linux-omap@vger.kernel.org, patrikbachan@gmail.com,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        serge@hallyn.com
-Subject: Re: Nokia N900: refcount_t underflow, use after free
-Message-ID: <20180309221834.GA15476@amd>
-References: <20180308143053.GA17267@amd>
- <20180308165903.GM5799@atomide.com>
- <57c9f17b-fc9d-8506-4b5d-70ac216c9248@ti.com>
- <20180308185046.GA22796@amd>
- <1dfc05fe-1612-f5a5-b5f1-9038b3cecfe5@arm.com>
- <1643b74a-62ba-bea6-71c2-a2dd02430463@ti.com>
+        Fri, 9 Mar 2018 17:23:46 -0500
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
+        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
+        tfiga@chromium.org, heiko@sntech.de
+Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
+        a.hajda@samsung.com, ykk@rock-chips.com, kernel@collabora.com,
+        m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org,
+        jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org,
+        linux-rockchip@lists.infradead.org, kgene@kernel.org,
+        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
+        jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org,
+        mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com,
+        jingoohan1@gmail.com, sw0312.kim@samsung.com,
+        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
+        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
+        hshi@chromium.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: [PATCH v5 00/36] DRM Rockchip rk3399 (Kevin)
+Date: Fri,  9 Mar 2018 23:22:51 +0100
+Message-Id: <20180309222327.18689-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.16.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="LZvS9be/3tNcYl/X"
-Content-Disposition: inline
-In-Reply-To: <1643b74a-62ba-bea6-71c2-a2dd02430463@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---LZvS9be/3tNcYl/X
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patchset includes cleanups, improvements, and bug fixes for
+Rockchip DRM driver and PSR support.
 
-On Fri 2018-03-09 16:13:36, Suman Anna wrote:
-> On 03/09/2018 06:08 AM, Robin Murphy wrote:
-> > On 08/03/18 18:50, Pavel Machek wrote:
-> >> Hi!
-> >>
-> >>>> * Pavel Machek <pavel@ucw.cz> [180308 14:31]:
-> >>>>> Hi!
-> >>>>>
-> >>>>> I'm getting this warning... Has anyone seen/debugged that before?
-> >>>>> Unfortunately the backtrace does not seem to be too useful :-(.
-> >>>>
-> >>>> Adding Suman to Cc, as it points to arm_iommu_release_mapping().
-> >>>
-> >>> Hmm, we need to find out if the failure paths in isp_probe() are
-> >>> mismatched, or if this is coming from some mismatch between the OMAP
-> >>> IOMMU driver and the DMA plumbing. AFAIK, the cleanup paths in this
-> >>
-> >> Well, camera only started to work on N900 pretty recently. Let me add
-> >> some debug printks...
-> >>
-> >> Camera does not work in 4.16.0-rc4-next-20180308-dirty.
-> >>
-> >> I see this. It looks like problem in isp error paths, indeed:
-> >=20
-> > Well, there certainly seems to be an obvious bug wherein
-> > isp_detach_iommu() just releases the mapping directly without calling
-> > arm_iommu_detach_device() to balance the equivalent attach. That can't
-> > be helping.
->=20
-> Indeed, I have been able to reproduce the same warning using a
-> standalone test module, and the missing arm_iommu_detach_device() is
-> causing the warning after probe (during failure path) or during
-> remove.
+This new version is the same as before removing some of the patches
+already applied and fixing the Exynos issue due patch '[v4 15/38]
+drm/bridge: analogix_dp: Ensure edp is disabled when shutting down
+the panel' reported by Marek.
 
-Ok do you have an idea how to fix the isp error paths? Untested patch
-would be fine... But it seems that you know what needs to be fixed and
-I don't.
+Regards,
+ Enric
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Changes in v5:
+- Removed the following patches as are already applied.
+  [PATCH v4 01/38] drm/bridge: analogix_dp: set psr activate/deactivate
+                   when enable/disable bridge
+  [PATCH v4 02/38] drm/rockchip: Don't use atomic constructs for psr
+- Add Mareks tested-tag and including the missing people.
+  - [PATCH v4 15/38] move analogix_dp_set_analog_power_down() before
+    phy_power_off() to fix Exynos issue.
 
---LZvS9be/3tNcYl/X
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Changes in v4:
+- Rebased all on top of drm-misc-next
+- Removed the following patches as are already applied.
+  [PATCH v3 01/43] drm/rockchip: Get rid of unnecessary struct fields
+  [PATCH v3 02/43] drm/rockchip: support prime import sg table
+  [PATCH v3 03/43] drm/rockchip: Respect page offset for PRIME mmap
+  calls
+- Removed the following patches as now are part of another patchset
+  [PATCH v3 05/43] drm/bridge: analogix_dp: Don't power bridge in
+  analogix_dp_bind
+  [PATCH v3 33/43] drm/panel: simple: Change mode for Sharp lq123p1jx31
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Changes in v3:
+- Addressed some of the comments from Sean on the v2
 
-iEYEARECAAYFAlqjCDoACgkQMOfwapXb+vLhhwCgi7hST8I9ddFqZSa/+CPLAjSQ
-T28AoIm71+U3AYWQkJSTu3CzhRO0Zbf3
-=XGNC
------END PGP SIGNATURE-----
+Changes in v2:
+- A few patches have been replaced by newer and cleaner versions from
+  the ChromeOS kernel gerrit, especially about disallowing PSR for the
+  whole atomic commit.
 
---LZvS9be/3tNcYl/X--
+
+Douglas Anderson (4):
+  drm/bridge: analogix_dp: Reorder plat_data->power_off to happen sooner
+  drm/bridge: analogix_dp: Properly log AUX CH errors
+  drm/bridge: analogix_dp: Properly disable aux chan retries on rockchip
+  drm/bridge: analogix_dp: Split the platform-specific poweron in two
+    parts
+
+Kristian H. Kristensen (1):
+  drm/rockchip: Disable PSR on input events
+
+Lin Huang (6):
+  drm/bridge: analogix_dp: Move enable video into config_video()
+  drm/bridge: analogix_dp: Check AUX_EN status when doing AUX transfer
+  drm/bridge: analogix_dp: Ensure edp is disabled when shutting down the
+    panel
+  drm/bridge: analogix_dp: Extend hpd check time to 100ms
+  drm/bridge: analogix_dp: Check dpcd write/read status
+  drm/bridge: analogix_dp: Reset aux channel if an error occurred
+
+Mark Yao (1):
+  drm/rockchip: pre dither down when output bpc is 8bit
+
+Sean Paul (1):
+  drm/rockchip: Remove analogix psr worker
+
+Tomasz Figa (7):
+  drm/rockchip: analogix_dp: Do not call Analogix code before bind
+  drm/rockchip: Cancel PSR enable work before changing the state
+  drm/rockchip: psr: Avoid redundant calls to .set() callback
+  drm/rockchip: psr: Sanitize semantics of allow/disallow API
+  drm/rockchip: Disable PSR from reboot notifier
+  drm/rockchip: Disallow PSR for the whole atomic commit
+  drm/rockchip: psr: Remove flush by CRTC
+
+Yakir Yang (1):
+  drm/bridge: analogix_dp: detect Sink PSR state after configuring the
+    PSR
+
+zain wang (15):
+  drm/bridge: analogix_dp: Don't change psr while bridge is disabled
+  drm/rockchip: add mutex vop lock
+  drm/bridge: analogix_dp: add fast link train for eDP
+  drm/rockchip: Only wait for panel ACK on PSR entry
+  drm/bridge: analogix_dp: Don't use fast link training when panel just
+    powered up
+  drm/bridge: analogix_dp: Retry bridge enable when it failed
+  drm/bridge: analogix_dp: Wait for HPD signal before configuring link
+  drm/bridge: analogix_dp: Set PD_INC_BG first when powering up edp phy
+  drm/bridge: analogix_dp: Fix incorrect usage of enhanced mode
+  drm/bridge: analogix_dp: Fix AUX_PD bit for Rockchip
+  drm/rockchip: Restore psr->state when enable/disable psr failed
+  drm/bridge: analogix_dp: Don't use ANALOGIX_DP_PLL_CTL to control pll
+  drm/bridge: analogix_dp: Fix timeout of video streamclk config
+  drm/bridge: analogix_dp: Fix incorrect operations with register
+    ANALOGIX_DP_FUNC_EN_1
+  drm/bridge: analogix_dp: Move fast link training detect to set_bridge
+
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 452 ++++++++++++++++-----
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  14 +-
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 274 ++++++++-----
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h  |   7 +
+ drivers/gpu/drm/exynos/exynos_dp.c                 |   2 +-
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |  70 ++--
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.h        |   1 +
+ drivers/gpu/drm/rockchip/rockchip_drm_fb.c         |  61 ++-
+ drivers/gpu/drm/rockchip/rockchip_drm_psr.c        | 309 +++++++++-----
+ drivers/gpu/drm/rockchip/rockchip_drm_psr.h        |   7 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |  43 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.h        |   1 +
+ drivers/gpu/drm/rockchip/rockchip_vop_reg.c        |   1 +
+ include/drm/bridge/analogix_dp.h                   |   5 +-
+ 14 files changed, 879 insertions(+), 368 deletions(-)
+
+-- 
+2.16.1
