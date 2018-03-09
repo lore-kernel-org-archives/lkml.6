@@ -1,326 +1,443 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932089AbeCINS5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 08:18:57 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58796 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751086AbeCINSz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 08:18:55 -0500
-Subject: Re: [RFC PATCH] KVM: arm/arm64: vgic: change condition for level
- interrupt resampling
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <cdall@kernel.org>
-References: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
- <9ad47673-068e-f732-d2ca-9c76a8fbdfbc@arm.com>
- <0a15633d-8944-cb9b-3e6b-b08ee5ec42b9@arm.com> <20180308161900.GC1917@lvm>
- <86r2oubho3.wl-marc.zyngier@arm.com>
- <cf815673-e20e-c1e1-2d79-2f47261b2412@redhat.com>
- <6e438ffc-4b80-4706-a767-7c84aa896348@arm.com>
-Cc: Shunyong Yang <shunyong.yang@hxt-semitech.com>,
-        ard.biesheuvel@linaro.org, will.deacon@arm.com, david.daney@cavium.com,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-kernel@vger.kernel.org, Joey Zheng <yu.zheng@hxt-semitech.com>
-From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <61f649fb-9a94-1d94-e982-0786452f5d06@redhat.com>
-Date: Fri, 9 Mar 2018 14:18:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
-MIME-Version: 1.0
-In-Reply-To: <6e438ffc-4b80-4706-a767-7c84aa896348@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+        id S932110AbeCINVV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 08:21:21 -0500
+Received: from mx.socionext.com ([202.248.49.38]:48648 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751086AbeCINVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 08:21:20 -0500
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+To: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
+Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH] ASoC: uniphier: add support for UniPhier PXs2 AIO
+Date: Fri,  9 Mar 2018 22:21:16 +0900
+Message-Id: <20180309132116.4307-1-suzuki.katsuhiro@socionext.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+This patch adds support for UniPhier AIO sound driver
+which is included in UniPhier PXs2 SoCs.
 
-On 09/03/18 10:12, Marc Zyngier wrote:
-> On 08/03/18 18:12, Auger Eric wrote:
->> Hi Marc, Christoffer,
->>
->> On 08/03/18 18:28, Marc Zyngier wrote:
->>> On Thu, 08 Mar 2018 16:19:00 +0000,
->>> Christoffer Dall wrote:
->>>>
->>>> On Thu, Mar 08, 2018 at 11:54:27AM +0000, Marc Zyngier wrote:
->>>>> On 08/03/18 09:49, Marc Zyngier wrote:
->>>>>> [updated Christoffer's email address]
->>>>>>
->>>>>> Hi Shunyong,
->>>>>>
->>>>>> On 08/03/18 07:01, Shunyong Yang wrote:
->>>>>>> When resampling irqfds is enabled, level interrupt should be
->>>>>>> de-asserted when resampling happens. On page 4-47 of GIC v3
->>>>>>> specification IHI0069D, it said,
->>>>>>> "When the PE acknowledges an SGI, a PPI, or an SPI at the CPU
->>>>>>> interface, the IRI changes the status of the interrupt to active
->>>>>>> and pending if:
->>>>>>> • It is an edge-triggered interrupt, and another edge has been
->>>>>>> detected since the interrupt was acknowledged.
->>>>>>> • It is a level-sensitive interrupt, and the level has not been
->>>>>>> deasserted since the interrupt was acknowledged."
->>>>>>>
->>>>>>> GIC v2 specification IHI0048B.b has similar description on page
->>>>>>> 3-42 for state machine transition.
->>>>>>>
->>>>>>> When some VFIO device, like mtty(8250 VFIO mdev emulation driver
->>>>>>> in samples/vfio-mdev) triggers a level interrupt, the status
->>>>>>> transition in LR is pending-->active-->active and pending.
->>>>>>> Then it will wait resampling to de-assert the interrupt.
->>>>>>>
->>>>>>> Current design of lr_signals_eoi_mi() will return false if state
->>>>>>> in LR is not invalid(Inactive). It causes resampling will not happen
->>>>>>> in mtty case.
->>>>>>
->>>>>> Let me rephrase this, and tell me if I understood it correctly:
->>>>>>
->>>>>> - A level interrupt is injected, activated by the guest (LR state=active)
->>>>>> - guest exits, re-enters, (LR state=pending+active)
->>>>>> - guest EOIs the interrupt (LR state=pending)
->>>>>> - maintenance interrupt
->>>>>> - we don't signal the resampling because we're not in an invalid state
->>>>>>
->>>>>> Is that correct?
->>>>>>
->>>>>> That's an interesting case, because it seems to invalidate some of the 
->>>>>> optimization that went in over a year ago.
->>>>>>
->>>>>> 096f31c4360f KVM: arm/arm64: vgic: Get rid of MISR and EISR fields
->>>>>> b6095b084d87 KVM: arm/arm64: vgic: Get rid of unnecessary save_maint_int_state
->>>>>> af0614991ab6 KVM: arm/arm64: vgic: Get rid of unnecessary process_maintenance operation
->>>>>>
->>>>>> We could compare the value of the LR before the guest entry with
->>>>>> the value at exit time, but we still could miss it if we have a
->>>>>> transition such as P+A -> P -> A and assume a long enough propagation
->>>>>> delay for the maintenance interrupt (which is very likely).
->>>>>>
->>>>>> In essence, we have lost the benefit of EISR, which was to give us a
->>>>>> way to deal with asynchronous signalling.
->>>>>>
->>>>>>>
->>>>>>> This will cause interrupt fired continuously to guest even 8250 IIR
->>>>>>> has no interrupt. When 8250's interrupt is configured in shared mode,
->>>>>>> it will pass interrupt to other drivers to handle. However, there
->>>>>>> is no other driver involved. Then, a "nobody cared" kernel complaint
->>>>>>> occurs.
->>>>>>>
->>>>>>> / # cat /dev/ttyS0
->>>>>>> [    4.826836] random: crng init done
->>>>>>> [    6.373620] irq 41: nobody cared (try booting with the "irqpoll"
->>>>>>> option)
->>>>>>> [    6.376414] CPU: 0 PID: 1307 Comm: cat Not tainted 4.16.0-rc4 #4
->>>>>>> [    6.378927] Hardware name: linux,dummy-virt (DT)
->>>>>>> [    6.380876] Call trace:
->>>>>>> [    6.381937]  dump_backtrace+0x0/0x180
->>>>>>> [    6.383495]  show_stack+0x14/0x1c
->>>>>>> [    6.384902]  dump_stack+0x90/0xb4
->>>>>>> [    6.386312]  __report_bad_irq+0x38/0xe0
->>>>>>> [    6.387944]  note_interrupt+0x1f4/0x2b8
->>>>>>> [    6.389568]  handle_irq_event_percpu+0x54/0x7c
->>>>>>> [    6.391433]  handle_irq_event+0x44/0x74
->>>>>>> [    6.393056]  handle_fasteoi_irq+0x9c/0x154
->>>>>>> [    6.394784]  generic_handle_irq+0x24/0x38
->>>>>>> [    6.396483]  __handle_domain_irq+0x60/0xb4
->>>>>>> [    6.398207]  gic_handle_irq+0x98/0x1b0
->>>>>>> [    6.399796]  el1_irq+0xb0/0x128
->>>>>>> [    6.401138]  _raw_spin_unlock_irqrestore+0x18/0x40
->>>>>>> [    6.403149]  __setup_irq+0x41c/0x678
->>>>>>> [    6.404669]  request_threaded_irq+0xe0/0x190
->>>>>>> [    6.406474]  univ8250_setup_irq+0x208/0x234
->>>>>>> [    6.408250]  serial8250_do_startup+0x1b4/0x754
->>>>>>> [    6.410123]  serial8250_startup+0x20/0x28
->>>>>>> [    6.411826]  uart_startup.part.21+0x78/0x144
->>>>>>> [    6.413633]  uart_port_activate+0x50/0x68
->>>>>>> [    6.415328]  tty_port_open+0x84/0xd4
->>>>>>> [    6.416851]  uart_open+0x34/0x44
->>>>>>> [    6.418229]  tty_open+0xec/0x3c8
->>>>>>> [    6.419610]  chrdev_open+0xb0/0x198
->>>>>>> [    6.421093]  do_dentry_open+0x200/0x310
->>>>>>> [    6.422714]  vfs_open+0x54/0x84
->>>>>>> [    6.424054]  path_openat+0x2dc/0xf04
->>>>>>> [    6.425569]  do_filp_open+0x68/0xd8
->>>>>>> [    6.427044]  do_sys_open+0x16c/0x224
->>>>>>> [    6.428563]  SyS_openat+0x10/0x18
->>>>>>> [    6.429972]  el0_svc_naked+0x30/0x34
->>>>>>> [    6.431494] handlers:
->>>>>>> [    6.432479] [<000000000e9fb4bb>] serial8250_interrupt
->>>>>>> [    6.434597] Disabling IRQ #41
->>>>>>>
->>>>>>> This patch changes the lr state condition in lr_signals_eoi_mi() from
->>>>>>> invalid(Inactive) to active and pending to avoid this.
->>>>>>>
->>>>>>> I am not sure about the original design of the condition of
->>>>>>> invalid(active). So, This RFC is sent out for comments.
->>>>>>>
->>>>>>> Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
->>>>>>> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
->>>>>>> ---
->>>>>>>  virt/kvm/arm/vgic/vgic-v2.c | 4 ++--
->>>>>>>  virt/kvm/arm/vgic/vgic-v3.c | 4 ++--
->>>>>>>  2 files changed, 4 insertions(+), 4 deletions(-)
->>>>>>>
->>>>>>> diff --git a/virt/kvm/arm/vgic/vgic-v2.c b/virt/kvm/arm/vgic/vgic-v2.c
->>>>>>> index e9d840a75e7b..740ee9a5f551 100644
->>>>>>> --- a/virt/kvm/arm/vgic/vgic-v2.c
->>>>>>> +++ b/virt/kvm/arm/vgic/vgic-v2.c
->>>>>>> @@ -46,8 +46,8 @@ void vgic_v2_set_underflow(struct kvm_vcpu *vcpu)
->>>>>>>  
->>>>>>>  static bool lr_signals_eoi_mi(u32 lr_val)
->>>>>>>  {
->>>>>>> -	return !(lr_val & GICH_LR_STATE) && (lr_val & GICH_LR_EOI) &&
->>>>>>> -	       !(lr_val & GICH_LR_HW);
->>>>>>> +	return !((lr_val & GICH_LR_STATE) ^ GICH_LR_STATE) &&
->>>>>>
->>>>>> That feels very wrong. You're now signalling the resampling in both
->>>>>> invalid and pending+active, and the latter state doesn't mean you've
->>>>>> EOIed anything. You're now over-signalling, and signalling the
->>>>>> wrong event.
->>>>>>
->>>>>>> +	       (lr_val & GICH_LR_EOI) && !(lr_val & GICH_LR_HW);
->>>>>>>  }
->>>>>>>  
->>>>>>>  /*
->>>>>>> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
->>>>>>> index 6b329414e57a..43111bba7af9 100644
->>>>>>> --- a/virt/kvm/arm/vgic/vgic-v3.c
->>>>>>> +++ b/virt/kvm/arm/vgic/vgic-v3.c
->>>>>>> @@ -35,8 +35,8 @@ void vgic_v3_set_underflow(struct kvm_vcpu *vcpu)
->>>>>>>  
->>>>>>>  static bool lr_signals_eoi_mi(u64 lr_val)
->>>>>>>  {
->>>>>>> -	return !(lr_val & ICH_LR_STATE) && (lr_val & ICH_LR_EOI) &&
->>>>>>> -	       !(lr_val & ICH_LR_HW);
->>>>>>> +	return !((lr_val & ICH_LR_STATE) ^ ICH_LR_STATE) &&
->>>>>>> +	       (lr_val & ICH_LR_EOI) && !(lr_val & ICH_LR_HW);
->>>>>>>  }
->>>>>>>  
->>>>>>>  void vgic_v3_fold_lr_state(struct kvm_vcpu *vcpu)
->>>>>>>
->>>>>>
->>>>>> Assuming I understand the issue correctly, I cannot really see how
->>>>>> to solve this without reintroducing EISR, which sucks majorly.
->>>>>>
->>>>>> I'll try to cook something shortly and we can all have a good
->>>>>> fight about how crap this is.
->>>>>
->>>>> Here's what I came up with. I don't really like it, but that's
->>>>> the least invasive this I could come up with. Please let me
->>>>> know if that helps with your test case. Note that I have only
->>>>> boot-tested this on a sample of 1 machine, so I don't expect this
->>>>> to be perfect.
->>>>>
->>>>> Also, any guideline on how to reproduce this would be much appreciated.
->>>>> I never used this mdev/mtty thing, so please bear with me.
->>>>>
->>>>> Thanks,
->>>>>
->>>>> 	M.
->>>>>
->>>>> From 66a7c4cfc1029b0169dd771e196e2876ba3f17b1 Mon Sep 17 00:00:00 2001
->>>>> From: Marc Zyngier <marc.zyngier@arm.com>
->>>>> Date: Thu, 8 Mar 2018 11:14:06 +0000
->>>>> Subject: [PATCH] KVM: arm/arm64: Do not rely on LR state to guess EOI MI
->>>>>  status
->>>>>
->>>>> We so far rely on the LR state to decide whether the guest has
->>>>> EOI'd a level interrupt or not. While this looks like a good
->>>>> idea on the surface, it leads to a couple of annoying corner
->>>>> cases:
->>>>>
->>>>> Example 1: (P = Pending, A = Active, MI = Maintenance Interrupt)
->>>>> P -> guest IAR -> A -> exit/entry -> P+A -> guest EOI -> P -> MI
->>>>
->>>> Do we really get an EOI maintenance interrupt here?  Reading the MISR
->>>> and EISR descriptions make me thing this is not the case...
->>
->> Hum yes in EISR it is said that ICH_LR.State = 0b00!
->>>
->>> Yeah, it looks like I always want EISR to do what I want, and not to
->>> do what it does. Man, this thing is such a piece of crap.
->>>
->>> OK, scratch that. We need to do it without the help of the HW.
->>>
->>>>> The state is now pending, we've really EOI'd the interrupt, and
->>>>> yet lr_signals_eoi_mi() returns false, since the state is not 0.
->>>>> The result is that we won't signal anything on the corresponding
->>>>> irqfd, which people complain about. Meh.
->>>>
->>>> So the core of the problem is that when we've entered the guest with
->>>> PENDING+ACTIVE and when we exit (for some reason) we don't signal the
->>>> resamplefd, right?  The solution seems to me that we don't ever do
->>>> PENDING+ACTIVE if you need to resample after each deactivate.  What
->>>> would be the point of appending a pending state that you only know to be
->>>> valid after a resample anyway?
->>>
->>> The question is then to identify that a given source needs to be
->>> signalled back to VFIO. Calling into the eventfd code on the hot path
->>> is pretty horrid (I'm not sure if we can really call into this with
->>> interrupts disabled, for example).
->>>
->>>>
->>>>>
->>>>> Example 2:
->>>>> P+A -> guest EOI -> P -> delayed MI -> guest IAR -> A -> MI fires
->>>>
->>>> We could be more clever and do the following calculation on every exit:
->>>>
->>>> If you enter with P, and exit with either A or 0, then signal.
->>>>
->>>> If you enter with P+A, and you exit with either P, A, or 0, then signal.
->>>>
->>>> Wouldn't that also solve it?  (Although I have a feeling you'd miss some
->>>> exits in this case).
->>>
->>> I'd be more confident if we did forbid P+A for such interrupts
->>> altogether, as they really feel like another kind of HW interrupt.
->>
->> the LR P+A looks strange to me too. all the more so it may cause the
->> same IRQ to be acked twice?
-> 
-> If the pending bit isn't dropped by the time we get to EOI the first
-> one, probably. But that's pretty much expected with a level interrupt
-> isn't it?
-> 
->> P -> A -> 0 (resample). Doesn't our issue come from the fact we reinject
->> the P in LR until the line level is deasserted?
-> 
-> Which is consistent with the life cycle of a level interrupt. What
-> usually happens is (for a non HW interrupt):
-> 
-> P -> IAR -> A -> lower the line in the device -> 0
-> 
-> If you generate an exit at the right spot, and yet don't lower the line,
-> you end up with:
-> 
-> P -> IAR -> A -> exit/enter -> P+A
-> 
-> From there, if you lower the line, it is likely to cause an exit:
-> 
-> P+A -> MMIO trap lowering the line -> A
-> 
->>>
->>> Eric: Is there any way to get a callback from the eventfd code to flag
->>> a given irq as requiring a notification on EOI?
->>
->> bool kvm_irq_has_notifier(struct kvm *kvm, unsigned irqchip, unsigned
->> pin) was used in the past. I think it does what you want.
->>
-> 
-> Not exactly. I'm very reluctant to call this on the hot path (I'd need
-> the info on hw_flush), and I'd rather have a callback from the eventfd
-> subsystem to tell me when a pin is being associated with a notifier
-> (because this is likely to be very rare).
-> 
-> If that doesn't exit, never mind. We can see if that solves Shunyong
-> issue and optimize later.
-We don't have such callback mechanism AFAK. However we may call an arch
-specific function in kvm_irqfd_assign.
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+---
+ .../devicetree/bindings/sound/uniphier,aio.txt     |   1 +
+ sound/soc/uniphier/Kconfig                         |  11 +
+ sound/soc/uniphier/Makefile                        |   2 +
+ sound/soc/uniphier/aio-ld11.c                      |   2 +-
+ sound/soc/uniphier/aio-pxs2.c                      | 320 +++++++++++++++++++++
+ sound/soc/uniphier/aio.h                           |   2 +
+ 6 files changed, 337 insertions(+), 1 deletion(-)
+ create mode 100644 sound/soc/uniphier/aio-pxs2.c
 
-Thanks
-
-Eric
-
-> 
-> 	M.
-> 
+diff --git a/Documentation/devicetree/bindings/sound/uniphier,aio.txt b/Documentation/devicetree/bindings/sound/uniphier,aio.txt
+index 73f6c27ae4f7..65d71cf6ef0f 100644
+--- a/Documentation/devicetree/bindings/sound/uniphier,aio.txt
++++ b/Documentation/devicetree/bindings/sound/uniphier,aio.txt
+@@ -7,6 +7,7 @@ Required properties:
+ - compatible      : should be one of the following:
+ 		    "socionext,uniphier-ld11-aio"
+ 		    "socionext,uniphier-ld20-aio"
++		    "socionext,uniphier-pxs2-aio"
+ - reg             : offset and length of the register set for the device.
+ - interrupts      : should contain I2S or S/PDIF interrupt.
+ - pinctrl-names   : should be "default".
+diff --git a/sound/soc/uniphier/Kconfig b/sound/soc/uniphier/Kconfig
+index 5da545b9bf2a..aa3592ee1358 100644
+--- a/sound/soc/uniphier/Kconfig
++++ b/sound/soc/uniphier/Kconfig
+@@ -30,6 +30,17 @@ config SND_SOC_UNIPHIER_LD11
+ 	  Select Y if you use such device.
+ 	  If unsure select "N".
+ 
++config SND_SOC_UNIPHIER_PXS2
++	tristate "UniPhier PXs2 Device Driver"
++	depends on SND_SOC_UNIPHIER
++	select SND_SOC_UNIPHIER_AIO
++	select SND_SOC_UNIPHIER_AIO_DMA
++	help
++	  This adds ASoC driver for Socionext UniPhier PXs2
++	  input and output that can be used with other codecs.
++	  Select Y if you use such device.
++	  If unsure select "N".
++
+ config SND_SOC_UNIPHIER_EVEA_CODEC
+ 	tristate "UniPhier SoC internal audio codec"
+ 	depends on SND_SOC_UNIPHIER
+diff --git a/sound/soc/uniphier/Makefile b/sound/soc/uniphier/Makefile
+index 587a89700950..88169395f68a 100644
+--- a/sound/soc/uniphier/Makefile
++++ b/sound/soc/uniphier/Makefile
+@@ -1,9 +1,11 @@
+ # SPDX-License-Identifier: GPL-2.0
+ snd-soc-uniphier-aio-cpu-objs := aio-core.o aio-dma.o aio-cpu.o aio-compress.o
+ snd-soc-uniphier-aio-ld11-objs := aio-ld11.o
++snd-soc-uniphier-aio-pxs2-objs := aio-pxs2.o
+ 
+ obj-$(CONFIG_SND_SOC_UNIPHIER_AIO) += snd-soc-uniphier-aio-cpu.o
+ obj-$(CONFIG_SND_SOC_UNIPHIER_LD11) += snd-soc-uniphier-aio-ld11.o
++obj-$(CONFIG_SND_SOC_UNIPHIER_PXS2) += snd-soc-uniphier-aio-pxs2.o
+ 
+ snd-soc-uniphier-evea-objs := evea.o
+ obj-$(CONFIG_SND_SOC_UNIPHIER_EVEA_CODEC) += snd-soc-uniphier-evea.o
+diff --git a/sound/soc/uniphier/aio-ld11.c b/sound/soc/uniphier/aio-ld11.c
+index 8e40e6c2e42f..4c4dd3dd4dee 100644
+--- a/sound/soc/uniphier/aio-ld11.c
++++ b/sound/soc/uniphier/aio-ld11.c
+@@ -418,7 +418,7 @@ MODULE_DEVICE_TABLE(of, uniphier_aio_of_match);
+ 
+ static struct platform_driver uniphier_aio_driver = {
+ 	.driver = {
+-		.name = "snd-uniphier-aio",
++		.name = "snd-uniphier-aio-ld11",
+ 		.of_match_table = of_match_ptr(uniphier_aio_of_match),
+ 	},
+ 	.probe    = uniphier_aio_probe,
+diff --git a/sound/soc/uniphier/aio-pxs2.c b/sound/soc/uniphier/aio-pxs2.c
+new file mode 100644
+index 000000000000..69cd5b0af948
+--- /dev/null
++++ b/sound/soc/uniphier/aio-pxs2.c
+@@ -0,0 +1,320 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Socionext UniPhier AIO ALSA driver for PXs2.
++//
++// Copyright (c) 2018 Socionext Inc.
++
++#include <linux/module.h>
++
++#include "aio.h"
++
++static const struct uniphier_aio_spec uniphier_aio_pxs2[] = {
++	/* for Line PCM In, Pin:AI1Dx */
++	{
++		.name = AUD_NAME_PCMIN1,
++		.gname = AUD_GNAME_LINE,
++		.swm = {
++			.type  = PORT_TYPE_I2S,
++			.dir   = PORT_DIR_INPUT,
++			.rb    = { 16, 11, },
++			.ch    = { 16, 11, },
++			.iif   = { 0, 0, },
++			.iport = { 0, AUD_HW_PCMIN1, },
++		},
++	},
++
++	/* for Speaker/Headphone/Mic PCM In, Pin:AI2Dx */
++	{
++		.name = AUD_NAME_PCMIN2,
++		.gname = AUD_GNAME_AUX,
++		.swm = {
++			.type  = PORT_TYPE_I2S,
++			.dir   = PORT_DIR_INPUT,
++			.rb    = { 17, 12, },
++			.ch    = { 17, 12, },
++			.iif   = { 1, 1, },
++			.iport = { 1, AUD_HW_PCMIN2, },
++		},
++	},
++
++	/* for HDMI PCM Out, Pin:AO1Dx (inner) */
++	{
++		.name = AUD_NAME_HPCMOUT1,
++		.gname = AUD_GNAME_HDMI,
++		.swm = {
++			.type  = PORT_TYPE_I2S,
++			.dir   = PORT_DIR_OUTPUT,
++			.rb    = { 0, 0, },
++			.ch    = { 0, 0, },
++			.oif   = { 0, 0, },
++			.oport = { 3, AUD_HW_HPCMOUT1, },
++		},
++	},
++
++	/* for Line PCM Out, Pin:AO2Dx */
++	{
++		.name = AUD_NAME_PCMOUT1,
++		.gname = AUD_GNAME_LINE,
++		.swm = {
++			.type  = PORT_TYPE_I2S,
++			.dir   = PORT_DIR_OUTPUT,
++			.rb    = { 1, 1, },
++			.ch    = { 1, 1, },
++			.oif   = { 1, 1, },
++			.oport = { 0, AUD_HW_PCMOUT1, },
++		},
++	},
++
++	/* for Speaker/Headphone/Mic PCM Out, Pin:AO3Dx */
++	{
++		.name = AUD_NAME_PCMOUT2,
++		.gname = AUD_GNAME_AUX,
++		.swm = {
++			.type  = PORT_TYPE_I2S,
++			.dir   = PORT_DIR_OUTPUT,
++			.rb    = { 2, 2, },
++			.ch    = { 2, 2, },
++			.oif   = { 2, 2, },
++			.oport = { 1, AUD_HW_PCMOUT2, },
++		},
++	},
++
++	/* for HDMI Out, Pin:AO1IEC */
++	{
++		.name = AUD_NAME_HIECOUT1,
++		.swm = {
++			.type  = PORT_TYPE_SPDIF,
++			.dir   = PORT_DIR_OUTPUT,
++			.rb    = { 6, 4, },
++			.ch    = { 6, 4, },
++			.oif   = { 6, 4, },
++			.oport = { 12, AUD_HW_HIECOUT1, },
++		},
++	},
++
++	/* for HDMI Out, Pin:AO1IEC, Compress */
++	{
++		.name = AUD_NAME_HIECCOMPOUT1,
++		.swm = {
++			.type  = PORT_TYPE_SPDIF,
++			.dir   = PORT_DIR_OUTPUT,
++			.rb    = { 6, 4, },
++			.ch    = { 6, 4, },
++			.oif   = { 6, 4, },
++			.oport = { 12, AUD_HW_HIECOUT1, },
++		},
++	},
++
++	/* for S/PDIF Out, Pin:AO2IEC */
++	{
++		.name = AUD_NAME_IECOUT1,
++		.swm = {
++			.type  = PORT_TYPE_SPDIF,
++			.dir   = PORT_DIR_OUTPUT,
++			.rb    = { 7, 5, },
++			.ch    = { 7, 5, },
++			.oif   = { 7, 5, },
++			.oport = { 13, AUD_HW_IECOUT1, },
++		},
++	},
++
++	/* for S/PDIF Out, Pin:AO2IEC */
++	{
++		.name = AUD_NAME_IECCOMPOUT1,
++		.swm = {
++			.type  = PORT_TYPE_SPDIF,
++			.dir   = PORT_DIR_OUTPUT,
++			.rb    = { 7, 5, },
++			.ch    = { 7, 5, },
++			.oif   = { 7, 5, },
++			.oport = { 13, AUD_HW_IECOUT1, },
++		},
++	},
++};
++
++static const struct uniphier_aio_pll uniphier_aio_pll_pxs2[] = {
++	[AUD_PLL_A1]   = { .enable = true, },
++	[AUD_PLL_F1]   = { .enable = true, },
++	[AUD_PLL_A2]   = { .enable = true, },
++	[AUD_PLL_F2]   = { .enable = true, },
++	[AUD_PLL_APLL] = { .enable = true, },
++	[AUD_PLL_HSC0] = { .enable = true, },
++};
++
++static int uniphier_aio_pxs2_probe(struct snd_soc_dai *dai)
++{
++	int ret;
++
++	ret = uniphier_aio_dai_probe(dai);
++	if (ret < 0)
++		return ret;
++
++	ret = snd_soc_dai_set_pll(dai, AUD_PLL_A1, 0, 0, 36864000);
++	if (ret < 0)
++		return ret;
++	ret = snd_soc_dai_set_pll(dai, AUD_PLL_F1, 0, 0, 36864000);
++	if (ret < 0)
++		return ret;
++
++	ret = snd_soc_dai_set_pll(dai, AUD_PLL_A2, 0, 0, 33868800);
++	if (ret < 0)
++		return ret;
++	ret = snd_soc_dai_set_pll(dai, AUD_PLL_F2, 0, 0, 33868800);
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
++static struct snd_soc_dai_driver uniphier_aio_dai_pxs2[] = {
++	{
++		.name    = AUD_GNAME_HDMI,
++		.probe   = uniphier_aio_pxs2_probe,
++		.remove  = uniphier_aio_dai_remove,
++		.suspend = uniphier_aio_dai_suspend,
++		.resume  = uniphier_aio_dai_resume,
++		.playback = {
++			.stream_name = AUD_NAME_HPCMOUT1,
++			.formats     = SNDRV_PCM_FMTBIT_S32_LE,
++			.rates       = SNDRV_PCM_RATE_48000,
++			.channels_min = 2,
++			.channels_max = 2,
++		},
++		.ops = &uniphier_aio_i2s_ops,
++	},
++	{
++		.name    = AUD_GNAME_LINE,
++		.probe   = uniphier_aio_pxs2_probe,
++		.remove  = uniphier_aio_dai_remove,
++		.suspend = uniphier_aio_dai_suspend,
++		.resume  = uniphier_aio_dai_resume,
++		.playback = {
++			.stream_name = AUD_NAME_PCMOUT1,
++			.formats     = SNDRV_PCM_FMTBIT_S32_LE,
++			.rates       = SNDRV_PCM_RATE_48000,
++			.channels_min = 2,
++			.channels_max = 2,
++		},
++		.capture = {
++			.stream_name = AUD_NAME_PCMIN1,
++			.formats     = SNDRV_PCM_FMTBIT_S32_LE,
++			.rates       = SNDRV_PCM_RATE_48000,
++			.channels_min = 2,
++			.channels_max = 2,
++		},
++		.ops = &uniphier_aio_i2s_ops,
++	},
++	{
++		.name    = AUD_GNAME_AUX,
++		.probe   = uniphier_aio_pxs2_probe,
++		.remove  = uniphier_aio_dai_remove,
++		.suspend = uniphier_aio_dai_suspend,
++		.resume  = uniphier_aio_dai_resume,
++		.playback = {
++			.stream_name = AUD_NAME_PCMOUT2,
++			.formats     = SNDRV_PCM_FMTBIT_S32_LE,
++			.rates       = SNDRV_PCM_RATE_48000,
++			.channels_min = 2,
++			.channels_max = 2,
++		},
++		.capture = {
++			.stream_name = AUD_NAME_PCMIN2,
++			.formats     = SNDRV_PCM_FMTBIT_S32_LE,
++			.rates       = SNDRV_PCM_RATE_48000,
++			.channels_min = 2,
++			.channels_max = 2,
++		},
++		.ops = &uniphier_aio_i2s_ops,
++	},
++	{
++		.name    = AUD_NAME_HIECOUT1,
++		.probe   = uniphier_aio_pxs2_probe,
++		.remove  = uniphier_aio_dai_remove,
++		.suspend = uniphier_aio_dai_suspend,
++		.resume  = uniphier_aio_dai_resume,
++		.playback = {
++			.stream_name = AUD_NAME_HIECOUT1,
++			.formats     = SNDRV_PCM_FMTBIT_S32_LE,
++			.rates       = SNDRV_PCM_RATE_48000,
++			.channels_min = 2,
++			.channels_max = 2,
++		},
++		.ops = &uniphier_aio_spdif_ops,
++	},
++	{
++		.name    = AUD_NAME_IECOUT1,
++		.probe   = uniphier_aio_pxs2_probe,
++		.remove  = uniphier_aio_dai_remove,
++		.suspend = uniphier_aio_dai_suspend,
++		.resume  = uniphier_aio_dai_resume,
++		.playback = {
++			.stream_name = AUD_NAME_IECOUT1,
++			.formats     = SNDRV_PCM_FMTBIT_S32_LE,
++			.rates       = SNDRV_PCM_RATE_48000,
++			.channels_min = 2,
++			.channels_max = 2,
++		},
++		.ops = &uniphier_aio_spdif_ops,
++	},
++	{
++		.name    = AUD_NAME_HIECCOMPOUT1,
++		.probe   = uniphier_aio_pxs2_probe,
++		.remove  = uniphier_aio_dai_remove,
++		.suspend = uniphier_aio_dai_suspend,
++		.resume  = uniphier_aio_dai_resume,
++		.compress_new = snd_soc_new_compress,
++		.playback = {
++			.stream_name = AUD_NAME_HIECCOMPOUT1,
++			.channels_min = 1,
++			.channels_max = 1,
++		},
++		.ops = &uniphier_aio_spdif_ops,
++	},
++	{
++		.name    = AUD_NAME_IECCOMPOUT1,
++		.probe   = uniphier_aio_pxs2_probe,
++		.remove  = uniphier_aio_dai_remove,
++		.suspend = uniphier_aio_dai_suspend,
++		.resume  = uniphier_aio_dai_resume,
++		.compress_new = snd_soc_new_compress,
++		.playback = {
++			.stream_name = AUD_NAME_IECCOMPOUT1,
++			.channels_min = 1,
++			.channels_max = 1,
++		},
++		.ops = &uniphier_aio_spdif_ops,
++	},
++};
++
++static const struct uniphier_aio_chip_spec uniphier_aio_pxs2_spec = {
++	.specs     = uniphier_aio_pxs2,
++	.num_specs = ARRAY_SIZE(uniphier_aio_pxs2),
++	.dais      = uniphier_aio_dai_pxs2,
++	.num_dais  = ARRAY_SIZE(uniphier_aio_dai_pxs2),
++	.plls      = uniphier_aio_pll_pxs2,
++	.num_plls  = ARRAY_SIZE(uniphier_aio_pll_pxs2),
++	.addr_ext  = 0,
++};
++
++static const struct of_device_id uniphier_aio_of_match[] = {
++	{
++		.compatible = "socionext,uniphier-pxs2-aio",
++		.data = &uniphier_aio_pxs2_spec,
++	},
++	{},
++};
++MODULE_DEVICE_TABLE(of, uniphier_aio_of_match);
++
++static struct platform_driver uniphier_aio_driver = {
++	.driver = {
++		.name = "snd-uniphier-aio-pxs2",
++		.of_match_table = of_match_ptr(uniphier_aio_of_match),
++	},
++	.probe    = uniphier_aio_probe,
++	.remove   = uniphier_aio_remove,
++};
++module_platform_driver(uniphier_aio_driver);
++
++MODULE_AUTHOR("Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>");
++MODULE_DESCRIPTION("UniPhier PXs2 AIO driver.");
++MODULE_LICENSE("GPL v2");
+diff --git a/sound/soc/uniphier/aio.h b/sound/soc/uniphier/aio.h
+index 2cd64273fb5b..793334675cb3 100644
+--- a/sound/soc/uniphier/aio.h
++++ b/sound/soc/uniphier/aio.h
+@@ -110,9 +110,11 @@ enum IEC61937_PC {
+ #define AUD_NAME_IECOUT1         "aio-iecout1"
+ #define AUD_NAME_CMASTER         "aio-cmaster"
+ #define AUD_NAME_HIECCOMPOUT1    "aio-hieccompout1"
++#define AUD_NAME_IECCOMPOUT1     "aio-ieccompout1"
+ 
+ #define AUD_GNAME_HDMI    "aio-hdmi"
+ #define AUD_GNAME_LINE    "aio-line"
++#define AUD_GNAME_AUX     "aio-aux"
+ #define AUD_GNAME_IEC     "aio-iec"
+ 
+ #define AUD_CLK_IO        0
+-- 
+2.16.1
