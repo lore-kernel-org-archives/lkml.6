@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932549AbeCIRtz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 12:49:55 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:44798 "EHLO
+        id S932510AbeCIRts (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 12:49:48 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:46055 "EHLO
         mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932337AbeCIRtw (ORCPT
+        with ESMTP id S932342AbeCIRtp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 12:49:52 -0500
-X-Google-Smtp-Source: AG47ELusDpCcYDOr6O8O31fGjflpObvCy577+QemAuPK7HHtmjLnwihSQOPbNfk24z6N/abwTGYqfQ==
+        Fri, 9 Mar 2018 12:49:45 -0500
+X-Google-Smtp-Source: AG47ELsqlUkGckamVrNhiPyZn+rCQA/vY4F6yfIvFg0cJyfHk5SZUOrZajNWX5LDRj61wUixxCOodQ==
 From: Gustavo Padovan <gustavo@padovan.org>
 To: linux-media@vger.kernel.org
 Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
@@ -17,9 +17,9 @@ Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
         Sakari Ailus <sakari.ailus@iki.fi>,
         Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
         Gustavo Padovan <gustavo.padovan@collabora.com>
-Subject: [PATCH v8 04/13] [media] vb2: add is_unordered callback for drivers
-Date: Fri,  9 Mar 2018 14:49:11 -0300
-Message-Id: <20180309174920.22373-5-gustavo@padovan.org>
+Subject: [PATCH v8 02/13] [media] hackrf: group device capabilities
+Date: Fri,  9 Mar 2018 14:49:09 -0300
+Message-Id: <20180309174920.22373-3-gustavo@padovan.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180309174920.22373-1-gustavo@padovan.org>
 References: <20180309174920.22373-1-gustavo@padovan.org>
@@ -29,90 +29,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gustavo Padovan <gustavo.padovan@collabora.com>
 
-Explicit synchronization benefits a lot from ordered queues, they fit
-better in a pipeline with DRM for example so create a opt-in way for
-drivers notify videobuf2 that the queue is unordered.
-
-Drivers don't need implement it if the queue is ordered.
-
-v2: 	- improve comments for is_unordered flag (Hans)
-
-v3: 	- make it bool (Hans)
-	- create vb2_ops_set_unordered() helper
+Instead of putting V4L2_CAP_STREAMING and V4L2_CAP_READWRITE
+everywhere, set device_caps earlier with these values.
 
 Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
 ---
- drivers/media/common/videobuf2/videobuf2-v4l2.c |  6 ++++++
- include/media/videobuf2-core.h                  |  6 ++++++
- include/media/videobuf2-v4l2.h                  | 10 ++++++++++
- 3 files changed, 22 insertions(+)
+ drivers/media/usb/hackrf/hackrf.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-index 886a2d8d5c6c..68291ba8632d 100644
---- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
-+++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-@@ -961,6 +961,12 @@ void vb2_ops_wait_finish(struct vb2_queue *vq)
- }
- EXPORT_SYMBOL_GPL(vb2_ops_wait_finish);
+diff --git a/drivers/media/usb/hackrf/hackrf.c b/drivers/media/usb/hackrf/hackrf.c
+index 7eb53517a82f..6d692fb3e8dd 100644
+--- a/drivers/media/usb/hackrf/hackrf.c
++++ b/drivers/media/usb/hackrf/hackrf.c
+@@ -909,18 +909,15 @@ static int hackrf_querycap(struct file *file, void *fh,
  
-+bool vb2_ops_set_unordered(struct vb2_queue *q)
-+{
-+	return true;
-+}
-+EXPORT_SYMBOL_GPL(vb2_ops_set_unordered);
-+
- MODULE_DESCRIPTION("Driver helper framework for Video for Linux 2");
- MODULE_AUTHOR("Pawel Osciak <pawel@osciak.com>, Marek Szyprowski");
- MODULE_LICENSE("GPL");
-diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
-index 5b6c541e4e1b..46a9e674f7e1 100644
---- a/include/media/videobuf2-core.h
-+++ b/include/media/videobuf2-core.h
-@@ -370,6 +370,10 @@ struct vb2_buffer {
-  *			callback by calling vb2_buffer_done() with either
-  *			%VB2_BUF_STATE_DONE or %VB2_BUF_STATE_ERROR; may use
-  *			vb2_wait_for_all_buffers() function
-+ * @is_unordered:	tell if the queue is unordered, i.e. buffers can be
-+ *			dequeued in a different order from how they were queued.
-+ *			The default is assumed to be ordered and this function
-+ *			only needs to be implemented for unordered queues.
-  * @buf_queue:		passes buffer vb to the driver; driver may start
-  *			hardware operation on this buffer; driver should give
-  *			the buffer back by calling vb2_buffer_done() function;
-@@ -393,6 +397,7 @@ struct vb2_ops {
+ 	dev_dbg(&intf->dev, "\n");
  
- 	int (*start_streaming)(struct vb2_queue *q, unsigned int count);
- 	void (*stop_streaming)(struct vb2_queue *q);
-+	bool (*is_unordered)(struct vb2_queue *q);
++	cap->device_caps = V4L2_CAP_STREAMING | V4L2_CAP_READWRITE;
+ 	if (vdev->vfl_dir == VFL_DIR_RX)
+-		cap->device_caps = V4L2_CAP_SDR_CAPTURE | V4L2_CAP_TUNER |
+-				   V4L2_CAP_STREAMING | V4L2_CAP_READWRITE;
+-
++		cap->device_caps |= V4L2_CAP_SDR_CAPTURE | V4L2_CAP_TUNER;
+ 	else
+-		cap->device_caps = V4L2_CAP_SDR_OUTPUT | V4L2_CAP_MODULATOR |
+-				   V4L2_CAP_STREAMING | V4L2_CAP_READWRITE;
++		cap->device_caps |= V4L2_CAP_SDR_OUTPUT | V4L2_CAP_MODULATOR;
  
- 	void (*buf_queue)(struct vb2_buffer *vb);
- };
-@@ -566,6 +571,7 @@ struct vb2_queue {
- 	u32				cnt_wait_finish;
- 	u32				cnt_start_streaming;
- 	u32				cnt_stop_streaming;
-+	u32				cnt_is_unordered;
- #endif
- };
- 
-diff --git a/include/media/videobuf2-v4l2.h b/include/media/videobuf2-v4l2.h
-index 3d5e2d739f05..9de3c887c875 100644
---- a/include/media/videobuf2-v4l2.h
-+++ b/include/media/videobuf2-v4l2.h
-@@ -291,4 +291,14 @@ void vb2_ops_wait_prepare(struct vb2_queue *vq);
-  */
- void vb2_ops_wait_finish(struct vb2_queue *vq);
- 
-+/**
-+ * vb2_ops_set_unordered - helper function to mark queue as unordered
-+ *
-+ * @vq: pointer to &struct vb2_queue
-+ *
-+ * This helper just return true to notify that the driver can't deal with
-+ * ordered queues.
-+ */
-+bool vb2_ops_set_unordered(struct vb2_queue *q);
-+
- #endif /* _MEDIA_VIDEOBUF2_V4L2_H */
+ 	cap->capabilities = V4L2_CAP_SDR_CAPTURE | V4L2_CAP_TUNER |
+ 			    V4L2_CAP_SDR_OUTPUT | V4L2_CAP_MODULATOR |
+-			    V4L2_CAP_STREAMING | V4L2_CAP_READWRITE |
+-			    V4L2_CAP_DEVICE_CAPS;
++			    V4L2_CAP_DEVICE_CAPS | cap->device_caps;
+ 	strlcpy(cap->driver, KBUILD_MODNAME, sizeof(cap->driver));
+ 	strlcpy(cap->card, dev->rx_vdev.name, sizeof(cap->card));
+ 	usb_make_path(dev->udev, cap->bus_info, sizeof(cap->bus_info));
 -- 
 2.14.3
