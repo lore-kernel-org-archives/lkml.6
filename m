@@ -1,66 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751219AbeCIKe2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:34:28 -0500
-Received: from relmlor4.renesas.com ([210.160.252.174]:36304 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751145AbeCIKe1 (ORCPT
+        id S1751188AbeCIKkW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:40:22 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56258 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751067AbeCIKkT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 05:34:27 -0500
-X-IronPort-AV: E=Sophos;i="5.47,444,1515423600";
-   d="scan'208";a="273330149"
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Hoan Tran <hotran@apm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Michel Pollet <michel.pollet@bp.renesas.com>
-Subject: [PATCH] gpio: dwapb: Add support for a bus clock
-Date: Fri,  9 Mar 2018 10:34:11 +0000
-Message-Id: <1520591651-4565-1-git-send-email-phil.edworthy@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 9 Mar 2018 05:40:19 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DA8896050D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+X-Google-Smtp-Source: AG47ELth9P7oCAa+VzmN0MsFyjT9lqr929hWrBm/nXkJWMkduBwnB7jahv78ZBd36h9sgiRqIFwc3ybLSRkbaLg08dw=
+MIME-Version: 1.0
+In-Reply-To: <f3011ef1-7ffe-8c2b-b9d6-3fb094789656@arm.com>
+References: <20180302101050.6191-1-vivek.gautam@codeaurora.org>
+ <20180302101050.6191-5-vivek.gautam@codeaurora.org> <f3011ef1-7ffe-8c2b-b9d6-3fb094789656@arm.com>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Date: Fri, 9 Mar 2018 16:10:15 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iEQo+WYDiDufmiEi012C=Vi3n+OZTuRyAs0t+hBiBbS8g@mail.gmail.com>
+Message-ID: <CAFp+6iEQo+WYDiDufmiEi012C=Vi3n+OZTuRyAs0t+hBiBbS8g@mail.gmail.com>
+Subject: Re: [PATCH v8 4/5] iommu/arm-smmu: Add the device_link between
+ masters and smmu
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
+        "robh+dt" <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Will Deacon <will.deacon@arm.com>, Rob Clark <robdclark@gmail.com>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        devicetree@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>, jcrouse@codeaurora.org,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michel Pollet <michel.pollet@bp.renesas.com>
+On Wed, Mar 7, 2018 at 6:17 PM, Robin Murphy <robin.murphy@arm.com> wrote:
+> On 02/03/18 10:10, Vivek Gautam wrote:
+>>
+>> From: Sricharan R <sricharan@codeaurora.org>
+>>
+>> Finally add the device link between the master device and
+>> smmu, so that the smmu gets runtime enabled/disabled only when the
+>> master needs it. This is done from add_device callback which gets
+>> called once when the master is added to the smmu.
+>>
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+>> ---
+>>   drivers/iommu/arm-smmu.c | 21 +++++++++++++++++++++
+>>   1 file changed, 21 insertions(+)
+>>
+>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+>> index 3d6a1875431f..bb1ea82c1003 100644
+>> --- a/drivers/iommu/arm-smmu.c
+>> +++ b/drivers/iommu/arm-smmu.c
+>> @@ -217,6 +217,9 @@ struct arm_smmu_device {
+>>         /* IOMMU core code handle */
+>>         struct iommu_device             iommu;
+>> +
+>> +       /* runtime PM link to master */
+>> +       struct device_link *link;
+>
+>
+> Just the one?
+>
+>>   };
+>>     enum arm_smmu_context_fmt {
+>> @@ -1470,10 +1473,26 @@ static int arm_smmu_add_device(struct device *dev)
+>>         iommu_device_link(&smmu->iommu, dev);
+>>   +     /*
+>> +        * Establish the link between smmu and master, so that the
+>> +        * smmu gets runtime enabled/disabled as per the master's
+>> +        * needs.
+>> +        */
+>> +       smmu->link = device_link_add(dev, smmu->dev, DL_FLAG_PM_RUNTIME);
+>
+>
+> Maybe I've misunderstood how the API works, but AFAICS the second and
+> subsequent devices are all just going to overwrite (and leak) the link of
+> the previous one...
 
-Enable specified clocks from DTS, if any.
+Also, noticed one more thing while testing on sdm845. When we are
+conditionally enabling the runtime pm, we should create the device
+link too conditionally, i.e. only in the case the smmu->dev has
+runtime pm_enabled we can create this device link between smmu and the
+master device.
+Otherwise when the master tries to do a pm_runtime_get() over itself,
+the device link will ensure that pm_runtime_get() for smmu is done
+first. But that will fail when we don't have pm runtime enabled over
+smmu, and so the master device's pm_runtime_get() will fail too.
+Will fix this in the next version.
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- drivers/gpio/gpio-dwapb.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Thanks
+Vivek
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index b0704a8..56c58b5 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -27,6 +27,7 @@
- #include <linux/spinlock.h>
- #include <linux/platform_data/gpio-dwapb.h>
- #include <linux/slab.h>
-+#include <linux/clk.h>
- 
- #include "gpiolib.h"
- 
-@@ -637,6 +638,7 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
- 	int err;
- 	struct device *dev = &pdev->dev;
- 	struct dwapb_platform_data *pdata = dev_get_platdata(dev);
-+	struct clk *clk;
- 
- 	if (!pdata) {
- 		pdata = dwapb_gpio_get_pdata(dev);
-@@ -670,6 +672,10 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
- 	if (IS_ERR(gpio->regs))
- 		return PTR_ERR(gpio->regs);
- 
-+	clk = devm_clk_get(&pdev->dev, NULL);
-+	if (!IS_ERR(clk) && clk_prepare_enable(clk))
-+		dev_info(&pdev->dev, "no clock source\n");
-+
- 	gpio->flags = 0;
- 	if (dev->of_node) {
- 		const struct of_device_id *of_devid;
+>
+>> +       if (!smmu->link) {
+>> +               dev_warn(smmu->dev, "Unable to create device link between
+>> %s and %s\n",
+>> +                        dev_name(smmu->dev), dev_name(dev));
+>> +               ret = -ENODEV;
+>> +               goto out_unlink;
+>> +       }
+>> +
+>>         arm_smmu_rpm_put(smmu);
+>>         return 0;
+>>   +out_unlink:
+>> +       iommu_device_unlink(&smmu->iommu, dev);
+>> +       arm_smmu_master_free_smes(fwspec);
+>>   out_rpm_put:
+>>         arm_smmu_rpm_put(smmu);
+>>   out_cfg_free:
+>> @@ -1496,6 +1515,8 @@ static void arm_smmu_remove_device(struct device
+>> *dev)
+>>         cfg  = fwspec->iommu_priv;
+>>         smmu = cfg->smmu;
+>>   +     device_link_del(smmu->link);
+>
+>
+> ...and equivalently you end up with a double-free (or more) here of a link
+> which may not have belonged to dev anyway.
+>
+> Robin.
+>
+>
+>> +
+>>         ret = arm_smmu_rpm_get(smmu);
+>>         if (ret < 0)
+>>                 return;
+>>
+>
+
+
+
 -- 
-2.7.4
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
