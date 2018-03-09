@@ -1,27 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752326AbeCIIrd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 03:47:33 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:41681 "EHLO
+        id S1752212AbeCIIqk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 03:46:40 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:55387 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752151AbeCIIra (ORCPT
+        with ESMTP id S1751086AbeCIIqh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 03:47:30 -0500
-Date: Fri, 9 Mar 2018 00:47:23 -0800
-From: tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-117db4b27bf08dba412faf3924ba55fe970c57b8@git.kernel.org>
-Cc: acme@redhat.com, jolsa@redhat.com, adrian.hunter@intel.com,
-        tglx@linutronix.de, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        hpa@zytor.com
-Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        mingo@kernel.org, adrian.hunter@intel.com, jolsa@redhat.com,
-        acme@redhat.com
-In-Reply-To: <1520431349-30689-2-git-send-email-adrian.hunter@intel.com>
-References: <1520431349-30689-2-git-send-email-adrian.hunter@intel.com>
+        Fri, 9 Mar 2018 03:46:37 -0500
+Date: Fri, 9 Mar 2018 00:46:28 -0800
+From: tip-bot for Kan Liang <tipbot@zytor.com>
+Message-ID: <tip-0019dc87b928380e2c85fcd8694e512079d7b580@git.kernel.org>
+Cc: acme@redhat.com, mingo@kernel.org, tglx@linutronix.de,
+        namhyung@kernel.org, jolsa@kernel.org, wangnan0@huawei.com,
+        linux-kernel@vger.kernel.org, kan.liang@linux.intel.com, hpa@zytor.com,
+        ak@linux.intel.com
+Reply-To: acme@redhat.com, mingo@kernel.org, tglx@linutronix.de,
+        jolsa@kernel.org, wangnan0@huawei.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, kan.liang@linux.intel.com,
+        ak@linux.intel.com, hpa@zytor.com
+In-Reply-To: <1520350567-80082-7-git-send-email-kan.liang@linux.intel.com>
+References: <1520350567-80082-7-git-send-email-kan.liang@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf intel-pt: Fix overlap detection to identify
- consecutive buffers correctly
-Git-Commit-ID: 117db4b27bf08dba412faf3924ba55fe970c57b8
+Subject: [tip:perf/core] perf mmap: Simplify perf_mmap__read_event()
+Git-Commit-ID: 0019dc87b928380e2c85fcd8694e512079d7b580
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,227 +35,269 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  117db4b27bf08dba412faf3924ba55fe970c57b8
-Gitweb:     https://git.kernel.org/tip/117db4b27bf08dba412faf3924ba55fe970c57b8
-Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Wed, 7 Mar 2018 16:02:21 +0200
+Commit-ID:  0019dc87b928380e2c85fcd8694e512079d7b580
+Gitweb:     https://git.kernel.org/tip/0019dc87b928380e2c85fcd8694e512079d7b580
+Author:     Kan Liang <kan.liang@linux.intel.com>
+AuthorDate: Tue, 6 Mar 2018 10:36:06 -0500
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 8 Mar 2018 10:05:54 -0300
+CommitDate: Thu, 8 Mar 2018 10:05:53 -0300
 
-perf intel-pt: Fix overlap detection to identify consecutive buffers correctly
+perf mmap: Simplify perf_mmap__read_event()
 
-Overlap detection was not not updating the buffer's 'consecutive' flag.
-Marking buffers consecutive has the advantage that decoding begins from
-the start of the buffer instead of the first PSB. Fix overlap detection
-to identify consecutive buffers correctly.
+It isn't necessary to pass the 'overwrite', 'start' and 'end' argument
+to perf_mmap__read_event().  Discard them.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1520431349-30689-2-git-send-email-adrian.hunter@intel.com
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Suggested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/r/1520350567-80082-7-git-send-email-kan.liang@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- .../perf/util/intel-pt-decoder/intel-pt-decoder.c  | 62 ++++++++++------------
- .../perf/util/intel-pt-decoder/intel-pt-decoder.h  |  2 +-
- tools/perf/util/intel-pt.c                         |  5 +-
- 3 files changed, 34 insertions(+), 35 deletions(-)
+ tools/perf/arch/x86/tests/perf-time-to-tsc.c | 2 +-
+ tools/perf/builtin-kvm.c                     | 2 +-
+ tools/perf/builtin-top.c                     | 2 +-
+ tools/perf/builtin-trace.c                   | 2 +-
+ tools/perf/tests/backward-ring-buffer.c      | 2 +-
+ tools/perf/tests/bpf.c                       | 2 +-
+ tools/perf/tests/code-reading.c              | 2 +-
+ tools/perf/tests/keep-tracking.c             | 2 +-
+ tools/perf/tests/mmap-basic.c                | 2 +-
+ tools/perf/tests/openat-syscall-tp-fields.c  | 2 +-
+ tools/perf/tests/perf-record.c               | 2 +-
+ tools/perf/tests/sw-clock.c                  | 2 +-
+ tools/perf/tests/switch-tracking.c           | 2 +-
+ tools/perf/tests/task-exit.c                 | 2 +-
+ tools/perf/util/mmap.c                       | 5 +----
+ tools/perf/util/mmap.h                       | 4 +---
+ tools/perf/util/python.c                     | 2 +-
+ 17 files changed, 17 insertions(+), 22 deletions(-)
 
-diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-index aa1593ce551d..00f25f4b5f48 100644
---- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-+++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-@@ -2390,14 +2390,6 @@ const struct intel_pt_state *intel_pt_decode(struct intel_pt_decoder *decoder)
- 	return &decoder->state;
- }
+diff --git a/tools/perf/arch/x86/tests/perf-time-to-tsc.c b/tools/perf/arch/x86/tests/perf-time-to-tsc.c
+index a9bc77df6a65..17cf7fc3c7d5 100644
+--- a/tools/perf/arch/x86/tests/perf-time-to-tsc.c
++++ b/tools/perf/arch/x86/tests/perf-time-to-tsc.c
+@@ -115,7 +115,7 @@ int test__perf_time_to_tsc(struct test *test __maybe_unused, int subtest __maybe
+ 		if (perf_mmap__read_init(md, false, &start, &end) < 0)
+ 			continue;
  
--static bool intel_pt_at_psb(unsigned char *buf, size_t len)
--{
--	if (len < INTEL_PT_PSB_LEN)
--		return false;
--	return memmem(buf, INTEL_PT_PSB_LEN, INTEL_PT_PSB_STR,
--		      INTEL_PT_PSB_LEN);
--}
--
- /**
-  * intel_pt_next_psb - move buffer pointer to the start of the next PSB packet.
-  * @buf: pointer to buffer pointer
-@@ -2486,6 +2478,7 @@ static unsigned char *intel_pt_last_psb(unsigned char *buf, size_t len)
-  * @buf: buffer
-  * @len: size of buffer
-  * @tsc: TSC value returned
-+ * @rem: returns remaining size when TSC is found
-  *
-  * Find a TSC packet in @buf and return the TSC value.  This function assumes
-  * that @buf starts at a PSB and that PSB+ will contain TSC and so stops if a
-@@ -2493,7 +2486,8 @@ static unsigned char *intel_pt_last_psb(unsigned char *buf, size_t len)
-  *
-  * Return: %true if TSC is found, false otherwise.
+-		while ((event = perf_mmap__read_event(md, false, &start, end)) != NULL) {
++		while ((event = perf_mmap__read_event(md)) != NULL) {
+ 			struct perf_sample sample;
+ 
+ 			if (event->header.type != PERF_RECORD_COMM ||
+diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
+index 165c044616b6..e9f69b8f8e25 100644
+--- a/tools/perf/builtin-kvm.c
++++ b/tools/perf/builtin-kvm.c
+@@ -757,7 +757,7 @@ static s64 perf_kvm__mmap_read_idx(struct perf_kvm_stat *kvm, int idx,
+ 	if (err < 0)
+ 		return (err == -EAGAIN) ? 0 : -1;
+ 
+-	while ((event = perf_mmap__read_event(md, false, &start, end)) != NULL) {
++	while ((event = perf_mmap__read_event(md)) != NULL) {
+ 		err = perf_evlist__parse_sample_timestamp(evlist, event, &timestamp);
+ 		if (err) {
+ 			perf_mmap__consume(md);
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 11b4a413039f..eb19cf92a388 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -824,7 +824,7 @@ static void perf_top__mmap_read_idx(struct perf_top *top, int idx)
+ 	if (perf_mmap__read_init(md, opts->overwrite, &start, &end) < 0)
+ 		return;
+ 
+-	while ((event = perf_mmap__read_event(md, opts->overwrite, &start, end)) != NULL) {
++	while ((event = perf_mmap__read_event(md)) != NULL) {
+ 		ret = perf_evlist__parse_sample(evlist, event, &sample);
+ 		if (ret) {
+ 			pr_err("Can't parse sample, err = %d\n", ret);
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 27eadf3018c6..29fda506ac75 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -2509,7 +2509,7 @@ again:
+ 		if (perf_mmap__read_init(md, false, &start, &end) < 0)
+ 			continue;
+ 
+-		while ((event = perf_mmap__read_event(md, false, &start, end)) != NULL) {
++		while ((event = perf_mmap__read_event(md)) != NULL) {
+ 			struct perf_sample sample;
+ 
+ 			++trace->nr_events;
+diff --git a/tools/perf/tests/backward-ring-buffer.c b/tools/perf/tests/backward-ring-buffer.c
+index e0b1b414d466..e0eae1053ddc 100644
+--- a/tools/perf/tests/backward-ring-buffer.c
++++ b/tools/perf/tests/backward-ring-buffer.c
+@@ -36,7 +36,7 @@ static int count_samples(struct perf_evlist *evlist, int *sample_count,
+ 		u64 start, end;
+ 
+ 		perf_mmap__read_init(map, true, &start, &end);
+-		while ((event = perf_mmap__read_event(map, true, &start, end)) != NULL) {
++		while ((event = perf_mmap__read_event(map)) != NULL) {
+ 			const u32 type = event->header.type;
+ 
+ 			switch (type) {
+diff --git a/tools/perf/tests/bpf.c b/tools/perf/tests/bpf.c
+index 09c9c9f9e827..384c20f4c902 100644
+--- a/tools/perf/tests/bpf.c
++++ b/tools/perf/tests/bpf.c
+@@ -183,7 +183,7 @@ static int do_test(struct bpf_object *obj, int (*func)(void),
+ 		if (perf_mmap__read_init(md, false, &start, &end) < 0)
+ 			continue;
+ 
+-		while ((event = perf_mmap__read_event(md, false, &start, end)) != NULL) {
++		while ((event = perf_mmap__read_event(md)) != NULL) {
+ 			const u32 type = event->header.type;
+ 
+ 			if (type == PERF_RECORD_SAMPLE)
+diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
+index f7c199acb7ac..f7919666bc2c 100644
+--- a/tools/perf/tests/code-reading.c
++++ b/tools/perf/tests/code-reading.c
+@@ -418,7 +418,7 @@ static int process_events(struct machine *machine, struct perf_evlist *evlist,
+ 		if (perf_mmap__read_init(md, false, &start, &end) < 0)
+ 			continue;
+ 
+-		while ((event = perf_mmap__read_event(md, false, &start, end)) != NULL) {
++		while ((event = perf_mmap__read_event(md)) != NULL) {
+ 			ret = process_event(machine, evlist, event, state);
+ 			perf_mmap__consume(md);
+ 			if (ret < 0)
+diff --git a/tools/perf/tests/keep-tracking.c b/tools/perf/tests/keep-tracking.c
+index 1f1db5965d05..ad477b7cf238 100644
+--- a/tools/perf/tests/keep-tracking.c
++++ b/tools/perf/tests/keep-tracking.c
+@@ -36,7 +36,7 @@ static int find_comm(struct perf_evlist *evlist, const char *comm)
+ 		md = &evlist->mmap[i];
+ 		if (perf_mmap__read_init(md, false, &start, &end) < 0)
+ 			continue;
+-		while ((event = perf_mmap__read_event(md, false, &start, end)) != NULL) {
++		while ((event = perf_mmap__read_event(md)) != NULL) {
+ 			if (event->header.type == PERF_RECORD_COMM &&
+ 			    (pid_t)event->comm.pid == getpid() &&
+ 			    (pid_t)event->comm.tid == getpid() &&
+diff --git a/tools/perf/tests/mmap-basic.c b/tools/perf/tests/mmap-basic.c
+index f473e106aeba..7790eb3303e6 100644
+--- a/tools/perf/tests/mmap-basic.c
++++ b/tools/perf/tests/mmap-basic.c
+@@ -112,7 +112,7 @@ int test__basic_mmap(struct test *test __maybe_unused, int subtest __maybe_unuse
+ 	if (perf_mmap__read_init(md, false, &start, &end) < 0)
+ 		goto out_init;
+ 
+-	while ((event = perf_mmap__read_event(md, false, &start, end)) != NULL) {
++	while ((event = perf_mmap__read_event(md)) != NULL) {
+ 		struct perf_sample sample;
+ 
+ 		if (event->header.type != PERF_RECORD_SAMPLE) {
+diff --git a/tools/perf/tests/openat-syscall-tp-fields.c b/tools/perf/tests/openat-syscall-tp-fields.c
+index 7837ae936679..b0be2da65da7 100644
+--- a/tools/perf/tests/openat-syscall-tp-fields.c
++++ b/tools/perf/tests/openat-syscall-tp-fields.c
+@@ -93,7 +93,7 @@ int test__syscall_openat_tp_fields(struct test *test __maybe_unused, int subtest
+ 			if (perf_mmap__read_init(md, false, &start, &end) < 0)
+ 				continue;
+ 
+-			while ((event = perf_mmap__read_event(md, false, &start, end)) != NULL) {
++			while ((event = perf_mmap__read_event(md)) != NULL) {
+ 				const u32 type = event->header.type;
+ 				int tp_flags;
+ 				struct perf_sample sample;
+diff --git a/tools/perf/tests/perf-record.c b/tools/perf/tests/perf-record.c
+index 6ff5f99b3e0e..59be0942b787 100644
+--- a/tools/perf/tests/perf-record.c
++++ b/tools/perf/tests/perf-record.c
+@@ -171,7 +171,7 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
+ 			if (perf_mmap__read_init(md, false, &start, &end) < 0)
+ 				continue;
+ 
+-			while ((event = perf_mmap__read_event(md, false, &start, end)) != NULL) {
++			while ((event = perf_mmap__read_event(md)) != NULL) {
+ 				const u32 type = event->header.type;
+ 				const char *name = perf_event__name(type);
+ 
+diff --git a/tools/perf/tests/sw-clock.c b/tools/perf/tests/sw-clock.c
+index b58297b9a83d..403f2d9cee96 100644
+--- a/tools/perf/tests/sw-clock.c
++++ b/tools/perf/tests/sw-clock.c
+@@ -99,7 +99,7 @@ static int __test__sw_clock_freq(enum perf_sw_ids clock_id)
+ 	if (perf_mmap__read_init(md, false, &start, &end) < 0)
+ 		goto out_init;
+ 
+-	while ((event = perf_mmap__read_event(md, false, &start, end)) != NULL) {
++	while ((event = perf_mmap__read_event(md)) != NULL) {
+ 		struct perf_sample sample;
+ 
+ 		if (event->header.type != PERF_RECORD_SAMPLE)
+diff --git a/tools/perf/tests/switch-tracking.c b/tools/perf/tests/switch-tracking.c
+index dbf9e20f7d56..99839de3caee 100644
+--- a/tools/perf/tests/switch-tracking.c
++++ b/tools/perf/tests/switch-tracking.c
+@@ -267,7 +267,7 @@ static int process_events(struct perf_evlist *evlist,
+ 		if (perf_mmap__read_init(md, false, &start, &end) < 0)
+ 			continue;
+ 
+-		while ((event = perf_mmap__read_event(md, false, &start, end)) != NULL) {
++		while ((event = perf_mmap__read_event(md)) != NULL) {
+ 			cnt += 1;
+ 			ret = add_event(evlist, &events, event);
+ 			 perf_mmap__consume(md);
+diff --git a/tools/perf/tests/task-exit.c b/tools/perf/tests/task-exit.c
+index 5aa2e68e9d05..2df0c0573e2c 100644
+--- a/tools/perf/tests/task-exit.c
++++ b/tools/perf/tests/task-exit.c
+@@ -116,7 +116,7 @@ retry:
+ 	if (perf_mmap__read_init(md, false, &start, &end) < 0)
+ 		goto out_init;
+ 
+-	while ((event = perf_mmap__read_event(md, false, &start, end)) != NULL) {
++	while ((event = perf_mmap__read_event(md)) != NULL) {
+ 		if (event->header.type == PERF_RECORD_EXIT)
+ 			nr_exit++;
+ 
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index 62312e06d75b..2fbe4c8a02d2 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -75,10 +75,7 @@ static union perf_event *perf_mmap__read(struct perf_mmap *map,
+  * }
+  * perf_mmap__read_done()
   */
--static bool intel_pt_next_tsc(unsigned char *buf, size_t len, uint64_t *tsc)
-+static bool intel_pt_next_tsc(unsigned char *buf, size_t len, uint64_t *tsc,
-+			      size_t *rem)
+-union perf_event *perf_mmap__read_event(struct perf_mmap *map,
+-					bool overwrite __maybe_unused,
+-					u64 *startp __maybe_unused,
+-					u64 end __maybe_unused)
++union perf_event *perf_mmap__read_event(struct perf_mmap *map)
  {
- 	struct intel_pt_pkt packet;
- 	int ret;
-@@ -2504,6 +2498,7 @@ static bool intel_pt_next_tsc(unsigned char *buf, size_t len, uint64_t *tsc)
- 			return false;
- 		if (packet.type == INTEL_PT_TSC) {
- 			*tsc = packet.payload;
-+			*rem = len;
- 			return true;
- 		}
- 		if (packet.type == INTEL_PT_PSBEND)
-@@ -2554,6 +2549,8 @@ static int intel_pt_tsc_cmp(uint64_t tsc1, uint64_t tsc2)
-  * @len_a: size of first buffer
-  * @buf_b: second buffer
-  * @len_b: size of second buffer
-+ * @consecutive: returns true if there is data in buf_b that is consecutive
-+ *               to buf_a
-  *
-  * If the trace contains TSC we can look at the last TSC of @buf_a and the
-  * first TSC of @buf_b in order to determine if the buffers overlap, and then
-@@ -2566,33 +2563,41 @@ static int intel_pt_tsc_cmp(uint64_t tsc1, uint64_t tsc2)
- static unsigned char *intel_pt_find_overlap_tsc(unsigned char *buf_a,
- 						size_t len_a,
- 						unsigned char *buf_b,
--						size_t len_b)
-+						size_t len_b, bool *consecutive)
- {
- 	uint64_t tsc_a, tsc_b;
- 	unsigned char *p;
--	size_t len;
-+	size_t len, rem_a, rem_b;
+ 	union perf_event *event;
  
- 	p = intel_pt_last_psb(buf_a, len_a);
- 	if (!p)
- 		return buf_b; /* No PSB in buf_a => no overlap */
+diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+index 043916a20de6..ae9499b80110 100644
+--- a/tools/perf/util/mmap.h
++++ b/tools/perf/util/mmap.h
+@@ -89,9 +89,7 @@ static inline void perf_mmap__write_tail(struct perf_mmap *md, u64 tail)
  
- 	len = len_a - (p - buf_a);
--	if (!intel_pt_next_tsc(p, len, &tsc_a)) {
-+	if (!intel_pt_next_tsc(p, len, &tsc_a, &rem_a)) {
- 		/* The last PSB+ in buf_a is incomplete, so go back one more */
- 		len_a -= len;
- 		p = intel_pt_last_psb(buf_a, len_a);
- 		if (!p)
- 			return buf_b; /* No full PSB+ => assume no overlap */
- 		len = len_a - (p - buf_a);
--		if (!intel_pt_next_tsc(p, len, &tsc_a))
-+		if (!intel_pt_next_tsc(p, len, &tsc_a, &rem_a))
- 			return buf_b; /* No TSC in buf_a => assume no overlap */
- 	}
+ union perf_event *perf_mmap__read_forward(struct perf_mmap *map);
  
- 	while (1) {
- 		/* Ignore PSB+ with no TSC */
--		if (intel_pt_next_tsc(buf_b, len_b, &tsc_b) &&
--		    intel_pt_tsc_cmp(tsc_a, tsc_b) < 0)
--			return buf_b; /* tsc_a < tsc_b => no overlap */
-+		if (intel_pt_next_tsc(buf_b, len_b, &tsc_b, &rem_b)) {
-+			int cmp = intel_pt_tsc_cmp(tsc_a, tsc_b);
-+
-+			/* Same TSC, so buffers are consecutive */
-+			if (!cmp && rem_b >= rem_a) {
-+				*consecutive = true;
-+				return buf_b + len_b - (rem_b - rem_a);
-+			}
-+			if (cmp < 0)
-+				return buf_b; /* tsc_a < tsc_b => no overlap */
-+		}
+-union perf_event *perf_mmap__read_event(struct perf_mmap *map,
+-					bool overwrite,
+-					u64 *startp, u64 end);
++union perf_event *perf_mmap__read_event(struct perf_mmap *map);
  
- 		if (!intel_pt_step_psb(&buf_b, &len_b))
- 			return buf_b + len_b; /* No PSB in buf_b => no data */
-@@ -2606,6 +2611,8 @@ static unsigned char *intel_pt_find_overlap_tsc(unsigned char *buf_a,
-  * @buf_b: second buffer
-  * @len_b: size of second buffer
-  * @have_tsc: can use TSC packets to detect overlap
-+ * @consecutive: returns true if there is data in buf_b that is consecutive
-+ *               to buf_a
-  *
-  * When trace samples or snapshots are recorded there is the possibility that
-  * the data overlaps.  Note that, for the purposes of decoding, data is only
-@@ -2616,7 +2623,7 @@ static unsigned char *intel_pt_find_overlap_tsc(unsigned char *buf_a,
-  */
- unsigned char *intel_pt_find_overlap(unsigned char *buf_a, size_t len_a,
- 				     unsigned char *buf_b, size_t len_b,
--				     bool have_tsc)
-+				     bool have_tsc, bool *consecutive)
- {
- 	unsigned char *found;
+ int perf_mmap__push(struct perf_mmap *md, void *to,
+ 		    int push(void *to, void *buf, size_t size));
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index ca077f8be1f0..4798db93e7ee 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -995,7 +995,7 @@ static PyObject *pyrf_evlist__read_on_cpu(struct pyrf_evlist *pevlist,
+ 	if (perf_mmap__read_init(md, false, &start, &end) < 0)
+ 		goto end;
  
-@@ -2628,7 +2635,8 @@ unsigned char *intel_pt_find_overlap(unsigned char *buf_a, size_t len_a,
- 		return buf_b; /* No overlap */
- 
- 	if (have_tsc) {
--		found = intel_pt_find_overlap_tsc(buf_a, len_a, buf_b, len_b);
-+		found = intel_pt_find_overlap_tsc(buf_a, len_a, buf_b, len_b,
-+						  consecutive);
- 		if (found)
- 			return found;
- 	}
-@@ -2643,28 +2651,16 @@ unsigned char *intel_pt_find_overlap(unsigned char *buf_a, size_t len_a,
- 	}
- 
- 	/* Now len_b >= len_a */
--	if (len_b > len_a) {
--		/* The leftover buffer 'b' must start at a PSB */
--		while (!intel_pt_at_psb(buf_b + len_a, len_b - len_a)) {
--			if (!intel_pt_step_psb(&buf_a, &len_a))
--				return buf_b; /* No overlap */
--		}
--	}
--
- 	while (1) {
- 		/* Potential overlap so check the bytes */
- 		found = memmem(buf_a, len_a, buf_b, len_a);
--		if (found)
-+		if (found) {
-+			*consecutive = true;
- 			return buf_b + len_a;
-+		}
- 
- 		/* Try again at next PSB in buffer 'a' */
- 		if (!intel_pt_step_psb(&buf_a, &len_a))
- 			return buf_b; /* No overlap */
--
--		/* The leftover buffer 'b' must start at a PSB */
--		while (!intel_pt_at_psb(buf_b + len_a, len_b - len_a)) {
--			if (!intel_pt_step_psb(&buf_a, &len_a))
--				return buf_b; /* No overlap */
--		}
- 	}
- }
-diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.h b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.h
-index 921b22e8ca0e..fc1752d50019 100644
---- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.h
-+++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.h
-@@ -117,7 +117,7 @@ const struct intel_pt_state *intel_pt_decode(struct intel_pt_decoder *decoder);
- 
- unsigned char *intel_pt_find_overlap(unsigned char *buf_a, size_t len_a,
- 				     unsigned char *buf_b, size_t len_b,
--				     bool have_tsc);
-+				     bool have_tsc, bool *consecutive);
- 
- int intel_pt__strerror(int code, char *buf, size_t buflen);
- 
-diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index 3773d9c54f45..4a7746249999 100644
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -207,14 +207,17 @@ static void intel_pt_dump_event(struct intel_pt *pt, unsigned char *buf,
- static int intel_pt_do_fix_overlap(struct intel_pt *pt, struct auxtrace_buffer *a,
- 				   struct auxtrace_buffer *b)
- {
-+	bool consecutive = false;
- 	void *start;
- 
- 	start = intel_pt_find_overlap(a->data, a->size, b->data, b->size,
--				      pt->have_tsc);
-+				      pt->have_tsc, &consecutive);
- 	if (!start)
- 		return -EINVAL;
- 	b->use_size = b->data + b->size - start;
- 	b->use_data = start;
-+	if (b->use_size && consecutive)
-+		b->consecutive = true;
- 	return 0;
- }
- 
+-	event = perf_mmap__read_event(md, false, &start, end);
++	event = perf_mmap__read_event(md);
+ 	if (event != NULL) {
+ 		PyObject *pyevent = pyrf_event__new(event);
+ 		struct pyrf_event *pevent = (struct pyrf_event *)pyevent;
