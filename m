@@ -1,31 +1,31 @@
 Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1520607040; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520607039; cv=none;
         d=google.com; s=arc-20160816;
-        b=PV9OrlSazKsiZdwFzGZqnU7a+17yZczMJ54yaJQjE+9mY5btzJ/BSo9V/qRmX/QVet
-         0BlIte6g8rcvACbJn+qfl3ntnNn0/NTztUl9CyrZIu/t8DxmcPrR/NcwMn/kjOgzBQMd
-         GuytRcB72+rWhPqJ7+76OCIPHQPnnRJ17/x6esswef6yl06d08WKmN8WUbC9PKjAfvpg
-         HCx9eD35104uycYs7XyLUFgwMbUpA8puouYdGY39JfCOew6HqLbKATQxfTqCenPZI7bz
-         jV2nqEk8nkZBnnfVduA2cbdkk1LCRuHyasNMa7pYWtMfSeoTHXUpNk71riuAc5lRNDry
-         Q4Dw==
+        b=eNDYe4DAEjJYbEOZOflKHZVmnOV2aS0QZj8TGF9Y27UaLnIobYLEkLuKG2hL4FDpqj
+         sdupS6LtOwFatmnRnC8njhjJ74DbLEfSyA47hHrzmYsRhCUqi2RAibUJPQDECxxCY9fO
+         5BE3+MRL3mcAeTFVj4TTlM+fTpb/5j1J3M8OJjtK9O6rD0fcix1dgVL3+zculWHQ+/fY
+         eTjYRXCtV/TaQebcUuptP+VuEBNnUwmATo/jdib7eUCi5lUQ6BF/Uhzd/O/okZyNRCgJ
+         AO8TUqS/bRn+m3qfPd+pU3M21Eqk5yZ+haTMCu+OvheoAr/lsXzbKWF6nOQXqGcJQoSA
+         cfiw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=RavD4BX1QznlPkzfSUZRMQAlKOGAL73sP/pXb7t41AQ=;
-        b=zxzWCfnu/RYrNdEu020HtkgbEZgQJmWxB6aup6etj/0MReplfIqh/JUKBCfgKDAcTp
-         uqXfQtRZxX4CFCJHP5eKP+9O0KkclxGnV53f+AqKR0LKgdLFjic6DcMRFvxbkuZOYQFs
-         Tqo2OhOZ3ZoLO8DTpwED4gFgjgnR70PUSy+I2loidKNEQkfOpjqQnuEaoSL/qpht66th
-         0IkwMhqVw1FoLABuQx7G51vX2z57BqBeNCnhM5fiaKj89plZw5JeWuyPIT4J7wcvvifW
-         WuMoTnomqZ2X5kIFMJQ3zKawfSm27fPESlUdwNTMPwe6tTRfO0Vota2eDkPtip/IvvrY
-         H14w==
+        bh=Kj3Wgn8PCDjUYLmW96ZzmQO1V0hWd6X4T456qfUITAw=;
+        b=mYgAIEWB1/QNkB4/VvJEeD6+cidQakK2IEZO51rtgBNdmpydMDMr9nZ7SVmLBJY2C1
+         +dUWuRSM6O5BClu4Ugv2iyvngUnbefq8fiEiCijXyzltE9JMYAPkwjuvrU+NAL2//7VR
+         WXrRgXV0Vs9OAQrXEQamKzjflFRqng36g/6eK82x8HpIzQEOl51gtPn+OJhkZLU+E3GR
+         8fBJefDJH36N4jNFqWn6jda8H0/ux6J7WomXZA3RampuVKAt05j8H8rQxWmKycbf5ov9
+         LckJs5Zl6b1h0yapGiqnoGvvVQbUBum2bylJJs3ilfUykzrivj1TodoRAveBHApAIvkS
+         GlSw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=HqxbwN1e;
+       dkim=pass header.i=@linaro.org header.s=google header.b=AUS1Fyl8;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=HqxbwN1e;
+       dkim=pass header.i=@linaro.org header.s=google header.b=AUS1Fyl8;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AG47ELt0PNis7hVsvlahS+F9Ba9ZLIiJ6IIR4w7NnF91ODUdnSr19YbfVaROXpRXDh6qQOSPgXcP6A==
+X-Google-Smtp-Source: AG47ELsX/CQJ99n0mP8eUDxONwGOzrg1ZFFwIhzOu6n7oSivO0G4hoRz47zp+5l44LGZiWkgijD75Q==
 From: srinivas.kandagatla@linaro.org
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
@@ -41,15 +41,15 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	linux-amlogic@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 12/25] nvmem: lpc18xx_otp: Convert to use devm_nvmem_register()
-Date: Fri,  9 Mar 2018 14:47:06 +0000
-Message-Id: <20180309144719.29904-13-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 11/25] nvmem: meson-efuse: Convert to use devm_nvmem_register()
+Date: Fri,  9 Mar 2018 14:47:05 +0000
+Message-Id: <20180309144719.29904-12-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180309144719.29904-1-srinivas.kandagatla@linaro.org>
 References: <20180309144719.29904-1-srinivas.kandagatla@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594472047860704662?=
-X-GMAIL-MSGID: =?utf-8?q?1594472047860704662?=
+X-GMAIL-THRID: =?utf-8?q?1594472046561313826?=
+X-GMAIL-MSGID: =?utf-8?q?1594472046561313826?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -73,28 +73,28 @@ Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/lpc18xx_otp.c | 16 ++--------------
+ drivers/nvmem/meson-efuse.c | 16 ++--------------
  1 file changed, 2 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/nvmem/lpc18xx_otp.c b/drivers/nvmem/lpc18xx_otp.c
-index 95268db155e9..549b5298ac4c 100644
---- a/drivers/nvmem/lpc18xx_otp.c
-+++ b/drivers/nvmem/lpc18xx_otp.c
-@@ -86,20 +86,9 @@ static int lpc18xx_otp_probe(struct platform_device *pdev)
- 	lpc18xx_otp_nvmem_config.dev = &pdev->dev;
- 	lpc18xx_otp_nvmem_config.priv = otp;
+diff --git a/drivers/nvmem/meson-efuse.c b/drivers/nvmem/meson-efuse.c
+index a43c68f90937..71823d1403c5 100644
+--- a/drivers/nvmem/meson-efuse.c
++++ b/drivers/nvmem/meson-efuse.c
+@@ -60,25 +60,13 @@ static int meson_efuse_probe(struct platform_device *pdev)
+ 	econfig.reg_read = meson_efuse_read;
+ 	econfig.size = size;
  
--	nvmem = nvmem_register(&lpc18xx_otp_nvmem_config);
+-	nvmem = nvmem_register(&econfig);
 -	if (IS_ERR(nvmem))
 -		return PTR_ERR(nvmem);
-+	nvmem = devm_nvmem_register(&pdev->dev, &lpc18xx_otp_nvmem_config);
++	nvmem = devm_nvmem_register(&pdev->dev, &econfig);
  
 -	platform_set_drvdata(pdev, nvmem);
 -
 -	return 0;
 -}
 -
--static int lpc18xx_otp_remove(struct platform_device *pdev)
+-static int meson_efuse_remove(struct platform_device *pdev)
 -{
 -	struct nvmem_device *nvmem = platform_get_drvdata(pdev);
 -
@@ -102,14 +102,11 @@ index 95268db155e9..549b5298ac4c 100644
 +	return PTR_ERR_OR_ZERO(nvmem);
  }
  
- static const struct of_device_id lpc18xx_otp_dt_ids[] = {
-@@ -110,7 +99,6 @@ MODULE_DEVICE_TABLE(of, lpc18xx_otp_dt_ids);
- 
- static struct platform_driver lpc18xx_otp_driver = {
- 	.probe	= lpc18xx_otp_probe,
--	.remove	= lpc18xx_otp_remove,
+ static struct platform_driver meson_efuse_driver = {
+ 	.probe = meson_efuse_probe,
+-	.remove = meson_efuse_remove,
  	.driver = {
- 		.name	= "lpc18xx_otp",
- 		.of_match_table = lpc18xx_otp_dt_ids,
+ 		.name = "meson-efuse",
+ 		.of_match_table = meson_efuse_match,
 -- 
 2.15.1
