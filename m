@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932767AbeCIWXw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 17:23:52 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:42216 "EHLO
+        id S932872AbeCIWYD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 17:24:03 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:42314 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932464AbeCIWXs (ORCPT
+        with ESMTP id S932795AbeCIWX7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 17:23:48 -0500
+        Fri, 9 Mar 2018 17:23:59 -0500
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -23,153 +23,273 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
         Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
         hshi@chromium.org,
-        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v5 01/36] drm/bridge: analogix_dp: detect Sink PSR state after configuring the PSR
-Date: Fri,  9 Mar 2018 23:22:52 +0100
-Message-Id: <20180309222327.18689-2-enric.balletbo@collabora.com>
+Subject: [PATCH v5 05/36] drm/bridge: analogix_dp: add fast link train for eDP
+Date: Fri,  9 Mar 2018 23:22:56 +0100
+Message-Id: <20180309222327.18689-6-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180309222327.18689-1-enric.balletbo@collabora.com>
 References: <20180309222327.18689-1-enric.balletbo@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yakir Yang <ykk@rock-chips.com>
+From: zain wang <wzz@rock-chips.com>
 
-Make sure the request PSR state takes effect in analogix_dp_send_psr_spd()
-function, or print the sink PSR error state if we failed to apply the
-requested PSR setting.
+We would meet a short black screen when exit PSR with the full link
+training, In this case, we should use fast link train instead of full
+link training.
 
-Cc: 征增 王 <wzz@rock-chips.com>
-Cc: Stéphane Marchesin <marcheu@chromium.org>
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-[seanpaul changed timeout loop to a readx poll]
+Signed-off-by: zain wang <wzz@rock-chips.com>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |  6 ++--
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  6 ++--
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 35 +++++++++++++++++++---
- 3 files changed, 37 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 142 ++++++++++++++++-----
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |   3 +
+ 2 files changed, 114 insertions(+), 31 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index a693ab3078f0..e738aa6de1af 100644
+index ee00d3d920e0..806c3878b3d6 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -122,8 +122,7 @@ int analogix_dp_enable_psr(struct analogix_dp_device *dp)
- 	psr_vsc.DB0 = 0;
- 	psr_vsc.DB1 = EDP_VSC_PSR_STATE_ACTIVE | EDP_VSC_PSR_CRC_VALUES_VALID;
+@@ -10,17 +10,18 @@
+ * option) any later version.
+ */
  
--	analogix_dp_send_psr_spd(dp, &psr_vsc);
--	return 0;
-+	return analogix_dp_send_psr_spd(dp, &psr_vsc);
+-#include <linux/module.h>
+-#include <linux/platform_device.h>
+-#include <linux/err.h>
+ #include <linux/clk.h>
+-#include <linux/io.h>
++#include <linux/component.h>
++#include <linux/err.h>
++#include <linux/gpio.h>
+ #include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_gpio.h>
+-#include <linux/gpio.h>
+-#include <linux/component.h>
+ #include <linux/phy/phy.h>
++#include <linux/platform_device.h>
+ 
+ #include <drm/drmP.h>
+ #include <drm/drm_atomic_helper.h>
+@@ -35,6 +36,8 @@
+ 
+ #define to_dp(nm)	container_of(nm, struct analogix_dp_device, nm)
+ 
++static const bool verify_fast_training;
++
+ struct bridge_init {
+ 	struct i2c_client *client;
+ 	struct device_node *node;
+@@ -528,7 +531,7 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
+ {
+ 	int lane, lane_count, retval;
+ 	u32 reg;
+-	u8 link_align, link_status[2], adjust_request[2];
++	u8 link_align, link_status[2], adjust_request[2], spread;
+ 
+ 	usleep_range(400, 401);
+ 
+@@ -571,6 +574,20 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
+ 		dev_dbg(dp->dev, "final lane count = %.2x\n",
+ 			dp->link_train.lane_count);
+ 
++		retval = drm_dp_dpcd_readb(&dp->aux, DP_MAX_DOWNSPREAD,
++					   &spread);
++		if (retval != 1) {
++			dev_err(dp->dev, "failed to read downspread %d\n",
++				retval);
++			dp->fast_train_support = false;
++		} else {
++			dp->fast_train_support =
++				(spread & DP_NO_AUX_HANDSHAKE_LINK_TRAINING) ?
++					true : false;
++		}
++		dev_dbg(dp->dev, "fast link training %s\n",
++			dp->fast_train_support ? "supported" : "unsupported");
++
+ 		/* set enhanced mode if available */
+ 		analogix_dp_set_enhanced_mode(dp);
+ 		dp->link_train.lt_state = FINISHED;
+@@ -627,10 +644,12 @@ static void analogix_dp_get_max_rx_lane_count(struct analogix_dp_device *dp,
+ 	*lane_count = DPCD_MAX_LANE_COUNT(data);
  }
- EXPORT_SYMBOL_GPL(analogix_dp_enable_psr);
  
-@@ -149,8 +148,7 @@ int analogix_dp_disable_psr(struct analogix_dp_device *dp)
- 	if (ret != 1)
- 		dev_err(dp->dev, "Failed to set DP Power0 %d\n", ret);
+-static void analogix_dp_init_training(struct analogix_dp_device *dp,
+-				      enum link_lane_count_type max_lane,
+-				      int max_rate)
++static int analogix_dp_full_link_train(struct analogix_dp_device *dp,
++				       u32 max_lanes, u32 max_rate)
+ {
++	int retval = 0;
++	bool training_finished = false;
++
+ 	/*
+ 	 * MACRO_RST must be applied after the PLL_LOCK to avoid
+ 	 * the DP inter pair skew issue for at least 10 us
+@@ -656,18 +675,13 @@ static void analogix_dp_init_training(struct analogix_dp_device *dp,
+ 	}
  
--	analogix_dp_send_psr_spd(dp, &psr_vsc);
--	return 0;
-+	return analogix_dp_send_psr_spd(dp, &psr_vsc);
+ 	/* Setup TX lane count & rate */
+-	if (dp->link_train.lane_count > max_lane)
+-		dp->link_train.lane_count = max_lane;
++	if (dp->link_train.lane_count > max_lanes)
++		dp->link_train.lane_count = max_lanes;
+ 	if (dp->link_train.link_rate > max_rate)
+ 		dp->link_train.link_rate = max_rate;
+ 
+ 	/* All DP analog module power up */
+ 	analogix_dp_set_analog_power_down(dp, POWER_ALL, 0);
+-}
+-
+-static int analogix_dp_sw_link_training(struct analogix_dp_device *dp)
+-{
+-	int retval = 0, training_finished = 0;
+ 
+ 	dp->link_train.lt_state = START;
+ 
+@@ -702,22 +716,88 @@ static int analogix_dp_sw_link_training(struct analogix_dp_device *dp)
+ 	return retval;
  }
- EXPORT_SYMBOL_GPL(analogix_dp_disable_psr);
+ 
+-static int analogix_dp_set_link_train(struct analogix_dp_device *dp,
+-				      u32 count, u32 bwtype)
++static int analogix_dp_fast_link_train(struct analogix_dp_device *dp)
+ {
+-	int i;
+-	int retval;
++	int i, ret;
++	u8 link_align, link_status[2];
++	enum pll_status status;
+ 
+-	for (i = 0; i < DP_TIMEOUT_LOOP_COUNT; i++) {
+-		analogix_dp_init_training(dp, count, bwtype);
+-		retval = analogix_dp_sw_link_training(dp);
+-		if (retval == 0)
+-			break;
++	analogix_dp_reset_macro(dp);
++
++	analogix_dp_set_link_bandwidth(dp, dp->link_train.link_rate);
++	analogix_dp_set_lane_count(dp, dp->link_train.lane_count);
+ 
+-		usleep_range(100, 110);
++	for (i = 0; i < dp->link_train.lane_count; i++) {
++		analogix_dp_set_lane_link_training(dp,
++			dp->link_train.training_lane[i], i);
+ 	}
+ 
+-	return retval;
++	ret = readx_poll_timeout(analogix_dp_get_pll_lock_status, dp, status,
++				 status != PLL_UNLOCKED, 120,
++				 120 * DP_TIMEOUT_LOOP_COUNT);
++	if (ret) {
++		DRM_DEV_ERROR(dp->dev, "Wait for pll lock failed %d\n", ret);
++		return ret;
++	}
++
++	/* source Set training pattern 1 */
++	analogix_dp_set_training_pattern(dp, TRAINING_PTN1);
++	/* From DP spec, pattern must be on-screen for a minimum 500us */
++	usleep_range(500, 600);
++
++	analogix_dp_set_training_pattern(dp, TRAINING_PTN2);
++	/* From DP spec, pattern must be on-screen for a minimum 500us */
++	usleep_range(500, 600);
++
++	/* TODO: enhanced_mode?*/
++	analogix_dp_set_training_pattern(dp, DP_NONE);
++
++	/*
++	 * Useful for debugging issues with fast link training, disable for more
++	 * speed
++	 */
++	if (verify_fast_training) {
++		ret = drm_dp_dpcd_readb(&dp->aux, DP_LANE_ALIGN_STATUS_UPDATED,
++					&link_align);
++		if (ret < 0) {
++			DRM_DEV_ERROR(dp->dev, "Read align status failed %d\n",
++				      ret);
++			return ret;
++		}
++
++		ret = drm_dp_dpcd_read(&dp->aux, DP_LANE0_1_STATUS, link_status,
++				       2);
++		if (ret < 0) {
++			DRM_DEV_ERROR(dp->dev, "Read link status failed %d\n",
++				      ret);
++			return ret;
++		}
++
++		if (analogix_dp_clock_recovery_ok(link_status,
++						  dp->link_train.lane_count)) {
++			DRM_DEV_ERROR(dp->dev, "Clock recovery failed\n");
++			analogix_dp_reduce_link_rate(dp);
++			return -EIO;
++		}
++
++		if (analogix_dp_channel_eq_ok(link_status, link_align,
++					      dp->link_train.lane_count)) {
++			DRM_DEV_ERROR(dp->dev, "Channel EQ failed\n");
++			analogix_dp_reduce_link_rate(dp);
++			return -EIO;
++		}
++	}
++
++	return 0;
++}
++
++static int analogix_dp_train_link(struct analogix_dp_device *dp)
++{
++	if (dp->fast_train_support)
++		return analogix_dp_fast_link_train(dp);
++
++	return analogix_dp_full_link_train(dp, dp->video_info.max_lane_count,
++					   dp->video_info.max_link_rate);
+ }
+ 
+ static int analogix_dp_config_video(struct analogix_dp_device *dp)
+@@ -846,10 +926,10 @@ static void analogix_dp_commit(struct analogix_dp_device *dp)
+ 			DRM_ERROR("failed to disable the panel\n");
+ 	}
+ 
+-	ret = analogix_dp_set_link_train(dp, dp->video_info.max_lane_count,
+-					 dp->video_info.max_link_rate);
++	ret = readx_poll_timeout(analogix_dp_train_link, dp, ret, !ret, 100,
++				 DP_TIMEOUT_TRAINING_US * 5);
+ 	if (ret) {
+-		dev_err(dp->dev, "unable to do link train\n");
++		dev_err(dp->dev, "unable to do link train, ret=%d\n", ret);
+ 		return;
+ 	}
  
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index 5c6a28806129..b039b28d8fcc 100644
+index e135a42cb19e..920607d7eb3e 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
 @@ -20,6 +20,8 @@
  #define MAX_CR_LOOP 5
  #define MAX_EQ_LOOP 5
  
-+#define DP_TIMEOUT_PSR_LOOP_MS			300
-+
++/* Training takes 22ms if AUX channel comm fails. Use this as retry interval */
++#define DP_TIMEOUT_TRAINING_US			22000
+ #define DP_TIMEOUT_PSR_LOOP_MS			300
+ 
  /* DP_MAX_LANE_COUNT */
- #define DPCD_ENHANCED_FRAME_CAP(x)		(((x) >> 7) & 0x1)
- #define DPCD_MAX_LANE_COUNT(x)			((x) & 0x1f)
-@@ -247,8 +249,8 @@ void analogix_dp_config_video_slave_mode(struct analogix_dp_device *dp);
- void analogix_dp_enable_scrambling(struct analogix_dp_device *dp);
- void analogix_dp_disable_scrambling(struct analogix_dp_device *dp);
- void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp);
--void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
--			      struct edp_vsc_psr *vsc);
-+int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
-+			     struct edp_vsc_psr *vsc);
- ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
- 			     struct drm_dp_aux_msg *msg);
+@@ -171,6 +173,7 @@ struct analogix_dp_device {
+ 	int			hpd_gpio;
+ 	bool                    force_hpd;
+ 	bool			psr_enable;
++	bool			fast_train_support;
  
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index 303083ad28e3..005a3f7005d2 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -10,10 +10,11 @@
-  * option) any later version.
-  */
- 
--#include <linux/device.h>
--#include <linux/io.h>
- #include <linux/delay.h>
-+#include <linux/device.h>
- #include <linux/gpio.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
- 
- #include <drm/bridge/analogix_dp.h>
- 
-@@ -992,10 +993,25 @@ void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp)
- 	writel(PSR_VID_CRC_ENABLE, dp->reg_base + ANALOGIX_DP_CRC_CON);
- }
- 
--void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
--			      struct edp_vsc_psr *vsc)
-+static ssize_t analogix_dp_get_psr_status(struct analogix_dp_device *dp)
-+{
-+	ssize_t val;
-+	u8 status;
-+
-+	val = drm_dp_dpcd_readb(&dp->aux, DP_PSR_STATUS, &status);
-+	if (val < 0) {
-+		dev_err(dp->dev, "PSR_STATUS read failed ret=%zd", val);
-+		return val;
-+	}
-+	return status;
-+}
-+
-+int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
-+			     struct edp_vsc_psr *vsc)
- {
- 	unsigned int val;
-+	int ret;
-+	ssize_t psr_status;
- 
- 	/* don't send info frame */
- 	val = readl(dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
-@@ -1036,6 +1052,17 @@ void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
- 	val = readl(dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
- 	val |= IF_EN;
- 	writel(val, dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
-+
-+	ret = readx_poll_timeout(analogix_dp_get_psr_status, dp, psr_status,
-+		psr_status >= 0 &&
-+		((vsc->DB1 && psr_status == DP_PSR_SINK_ACTIVE_RFB) ||
-+		(!vsc->DB1 && psr_status == DP_PSR_SINK_INACTIVE)), 1500,
-+		DP_TIMEOUT_PSR_LOOP_MS * 1000);
-+	if (ret) {
-+		dev_warn(dp->dev, "Failed to apply PSR %d\n", ret);
-+		return ret;
-+	}
-+	return 0;
- }
- 
- ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+ 	struct mutex		panel_lock;
+ 	bool			panel_is_modeset;
 -- 
 2.16.1
