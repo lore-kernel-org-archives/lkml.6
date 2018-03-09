@@ -1,51 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932317AbeCIPSL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 10:18:11 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:60910 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932068AbeCIPSJ (ORCPT
+        id S932347AbeCIPTl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 10:19:41 -0500
+Received: from shelob.surriel.com ([96.67.55.147]:55710 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932189AbeCIPTh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 10:18:09 -0500
-Date: Fri, 9 Mar 2018 23:17:52 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: "David S. Miller" <davem@davemloft.net>,
-        Horia Geanta <horia.geanta@nxp.com>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH  1/2] crypto: talitos - don't persistently map
- req_ctx->hw_context and req_ctx->buf
-Message-ID: <20180309151751.GC13567@gondor.apana.org.au>
-References: <7c934f0788d60bd82fb1cb51d712c9ab1ea7fcb4.1519660621.git.christophe.leroy@c-s.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7c934f0788d60bd82fb1cb51d712c9ab1ea7fcb4.1519660621.git.christophe.leroy@c-s.fr>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Fri, 9 Mar 2018 10:19:37 -0500
+Message-ID: <1520608760.4638.14.camel@surriel.com>
+Subject: Re: [RFC/RFT][PATCH v3 0/6] sched/cpuidle: Idle loop rework
+From: Rik van Riel <riel@surriel.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Date: Fri, 09 Mar 2018 10:19:20 -0500
+In-Reply-To: <2450532.XN8DODrtDf@aspire.rjw.lan>
+References: <2450532.XN8DODrtDf@aspire.rjw.lan>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-kivsYyhsThfbxsTVQyQ+"
+X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 05:40:04PM +0100, Christophe Leroy wrote:
-> Commit 49f9783b0cea ("crypto: talitos - do hw_context DMA mapping
-> outside the requests") introduced a persistent dma mapping of
-> req_ctx->hw_context
-> Commit 37b5e8897eb5 ("crypto: talitos - chain in buffered data for ahash
-> on SEC1") introduced a persistent dma mapping of req_ctx->buf
-> 
-> As there is no destructor for req_ctx (the request context), the
-> associated dma handlers where set in ctx (the tfm context). This is
-> wrong as several hash operations can run with the same ctx.
-> 
-> This patch removes this persistent mapping.
-> 
-> Reported-by: Horia Geanta <horia.geanta@nxp.com>
-> Fixes: 49f9783b0cea ("crypto: talitos - do hw_context DMA mapping outside the requests")
-> Fixes: 37b5e8897eb5 ("crypto: talitos - chain in buffered data for ahash on SEC1")
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+--=-kivsYyhsThfbxsTVQyQ+
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, 2018-03-09 at 10:34 +0100, Rafael J. Wysocki wrote:
+> Hi All,
+>=20
+> Thanks a lot for the discussion and testing so far!
+>=20
+> This is a total respin of the whole series, so please look at it
+> afresh.
+> Patches 2 and 3 are the most similar to their previous versions, but
+> still they are different enough.
+
+This series gives no RCU errors on startup,
+and no CPUs seem to be getting stuck any more.
+
+I will run some performance tests with these
+patches.
+
+--=20
+All Rights Reversed.
+--=-kivsYyhsThfbxsTVQyQ+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlqipfgACgkQznnekoTE
+3oPL3Qf9Ft0ww8bRf9/uOXj457aBHCKjX53DXAYmZRAAwyutPzaMUxHSadRoc5Db
+vJZJ5bu3pPYbgCu7b7+rJMxoF86A0M8cHrr4YTJsGwsmUDTXQzsm14VJGamELqOI
+aiOpc4zg/hEISdx/4bpSCvwBmXxwptnUnrnwcO1lJXfiBB/H+jIGaR69rBekARx7
+juIQa02Ahb6bTes2tR2jGUFofWDs+dle+9xa8HRs2t5fU4Z3nKmxu7L1G3gaEt5f
+3SCfDE81CdWrhtJG7DIW8P5Y94Xh34x/VV4dGN+mLoHs6Gc2Pi8oxKliZAjVc7WN
+n1Xh2e7WkBcbE1Z+phvZ2BBOY7pj8Q==
+=6ZIb
+-----END PGP SIGNATURE-----
+
+--=-kivsYyhsThfbxsTVQyQ+--
