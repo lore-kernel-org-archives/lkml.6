@@ -1,67 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751595AbeCIIHN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 03:07:13 -0500
-Received: from mail-io0-f173.google.com ([209.85.223.173]:36592 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750926AbeCIIHM (ORCPT
+        id S1751740AbeCIIJP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 03:09:15 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:42948 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750913AbeCIIJL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 03:07:12 -0500
-X-Google-Smtp-Source: AG47ELvavsn9nkEN2yfzQDvArXeHDLo0LvKxe9LF3BMrSzaK9TY9GsuOWH/4HpEd70QD4FROOHu3xY6n1MX+zPo5d7o=
+        Fri, 9 Mar 2018 03:09:11 -0500
+Date: Fri, 9 Mar 2018 05:09:05 -0300
+From: Mauro Carvalho Chehab <mchehab@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH] dvb: Save port number and provide sysfs attributes to
+ pass values to udev
+Message-ID: <20180309050905.3584cae3@vento.lan>
+In-Reply-To: <537.1520552145@warthog.procyon.org.uk>
+References: <20180306085530.7b51aa29@vento.lan>
+        <151559583569.13545.12649741692530472663.stgit@warthog.procyon.org.uk>
+        <537.1520552145@warthog.procyon.org.uk>
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180309080428.atur6wcbb6vtonhz@gmail.com>
-References: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
- <20180308080020.22828-13-ard.biesheuvel@linaro.org> <20180309074719.y33xe4bjkjsjsaa3@gmail.com>
- <CAKv+Gu-JmM3F0=XCDZFAkK+6pRgmp=7HK2dhY9La9tKbNYFBEg@mail.gmail.com> <20180309080428.atur6wcbb6vtonhz@gmail.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Fri, 9 Mar 2018 08:07:11 +0000
-Message-ID: <CAKv+Gu86v9-Cj3bxEPWXCMRnE7S76kGdu7to3cOoLMgTTcH_xg@mail.gmail.com>
-Subject: Re: [PATCH 12/12] efi: make const array 'apple' static
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Colin Ian King <colin.king@canonical.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9 March 2018 at 08:04, Ingo Molnar <mingo@kernel.org> wrote:
->
-> * Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->
->> > Also, would it make sense to rename it to something more descriptive like
->> > "apple_unicode_str[]" or so?
->> >
->> > Plus an unicode string literal initializer would be pretty descriptive as well,
->> > instead of the weird looking character array, i.e. something like:
->> >
->> >   static efi_char16_t const apple_unicode_str[] = u"Apple";
->> >
->> > ... or so?
->> >
->>
->> is u"xxx" the same as L"xxx"?
->
-> So "L" literals map to wchar_t, which wide character type is implementation
-> specific IIRC, could be 16-bit or 32-bit wide.
->
-> u"" literals OTOH are specified by the C11 spec to be char16_t, i.e. 16-bit wide
-> characters - which I assume is the EFI type as well?
->
->> In any case, this is for historical reasons: at some point (and I
->> don't remember the exact details) we had a conflict at link time with
->> objects using 4 byte wchar_t, so we started using this notation to be
->> independent of the size of wchar_t. That issue no longer exists so we
->> should be able to get rid of this.
->
-> Yes, my guess is that those problems were due to L"xyz" mapping to wchar_t and
-> having a different type in the kernel build and the host build side - but u"xyz"
-> should solve that.
->
+Em Thu, 08 Mar 2018 23:35:45 +0000
+David Howells <dhowells@redhat.com> escreveu:
 
-Excellent!
+> Mauro Carvalho Chehab <mchehab@kernel.org> wrote:
+> 
+> > > +	dvb_class->dev_groups = dvb_class_groups,
+> > >  	dvb_class->dev_uevent = dvb_uevent;
+> > >  	dvb_class->devnode = dvb_devnode;
+> > >  	return 0;  
+> > 
+> > The patch itself looks good, but I'm not seeing any documentation.  
+> 
+> I should probably add something to Documentation/media/dvb-drivers/udev.rst
 
-Do you mind taking this patch as is? I will follow up with a patch
-that updates all occurrences of this pattern (we have a few of them),
-i.e., use u"" notation and move them to file scope.
+Makes sense.
+
+> > You should likely add something to Documentation/ABI  
+> 
+> Any suggestions as to where to add stuff in there?  The README there leaves
+> a lot to be desired as to how to name elements - for instance, DVB devices can
+> be seen through /sys/class/ and /sys/devices/.
+>
+> I could put it in sys-class-dvb or sys-devices-dvb - or, arguably, both.
+
+Good point. I don't have a strong opinion, but, as we're using /sys/class
+for remote controller's elements[1], I would place DVB stuff there also.
+
+[1] Documentation/ABI/testing/sysfs-class-rc
+
+
+> > and to the DVB uAPI (Documentation/media/uapi/dvb).  
+> 
+> Likewise, any suggestion as to where in here?  As far as I can tell, the docs
+> here don't currently mention sysfs at all.  I'm guessing I'll need to create a
+> file specifically to talk about how to use this stuff with udev.
+
+Yes. The docs don't mention simply because, right now, there's nothing
+special on sysfs.
+
+> > > +	port->frontends.adapter.port_num = port->nr;
+> > > +  
+> > 
+> > Doing it for each multi-adapter device is something that bothers
+> > me. The better would be if we could move this to the DVB Kernel,
+> > in order to not need to check/fix every driver.  
+> 
+> I'm not sure how achievable that is: *port in this case is a private
+> cx23885-specific structure object.
+
+Yes, but other drivers that support multiple frontends store it
+somewhere. Yet, maybe we could keep this out of the first version.
+
+> > If, otherwise, this is not possible, then we need a patch fixing port_num
+> > for all drivers that support multiple adapters.
+> > 
+> > Also, the risk of forgetting it seems high. So, perhaps we should
+> > add a new parameter to some function (like at dvb_register_device
+> > or at dvb_register_frontend), in order to make the port number
+> > a mandatory attribute.  
+> 
+> Hmmm...  The cx23885 driver doesn't call either of these functions as far as I
+> can tell - at least, not directly.  Maybe by vb2_dvb_register_bus()?
+
+Yeah, some hybrid drivers typically use a helper module to handle dvb
+registration, either at VB or VB2. As this has to be generic enough,
+if we add, we'll likely need to place the port number at
+dvb_register_device()/dvb_register_frontend() and then change
+vb2_dvb_register_bus() accordingly.
+
+Hmm... that's said, I guess we can get rid of the VB 1 version, as
+I'm not seeing any driver calling videobuf_dvb_register_bus() anymore.
+
+I'll double check and write a patch to get rid of it, if possible.
+
+> 
+> Note that these attribute files appear for the demux, dvr and net directories
+> as well as for the frontend.
+> 
+> Hmmm... further, the port number is no longer getting through and all adapters
+> are showing port 0.  
+
+Weird.
+
+> The MAC address works, though.  Maybe I should drop the
+> port number.
+
+Yeah, let's drop it for the first version. It can be added later if
+needed.
+
+Thanks,
+Mauro
