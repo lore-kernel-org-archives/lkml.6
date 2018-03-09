@@ -1,51 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933083AbeCIWb1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 17:31:27 -0500
-Received: from mail-wr0-f180.google.com ([209.85.128.180]:33651 "EHLO
-        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932408AbeCIWbX (ORCPT
+        id S933057AbeCIWbo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 17:31:44 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:42552 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932795AbeCIWYS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 17:31:23 -0500
-X-Google-Smtp-Source: AG47ELszvsVnS3bo1gpPgUt7pc9lT5blrw/PzDHypb3YGuzdBzz6P0RY6gVU+i2VbEFCq9hg+E0QKw==
-Date: Sat, 10 Mar 2018 01:31:20 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] proc: do mmput ASAP for /proc/*/map_files
-Message-ID: <20180309223120.GC3843@avx2>
+        Fri, 9 Mar 2018 17:24:18 -0500
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
+        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
+        tfiga@chromium.org, heiko@sntech.de
+Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
+        a.hajda@samsung.com, ykk@rock-chips.com, kernel@collabora.com,
+        m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org,
+        jy0922.shim@samsung.com, rydberg@bitmath.org, krzk@kernel.org,
+        linux-rockchip@lists.infradead.org, kgene@kernel.org,
+        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
+        jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org,
+        mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com,
+        jingoohan1@gmail.com, sw0312.kim@samsung.com,
+        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
+        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
+        hshi@chromium.org,
+        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: [PATCH v5 13/36] drm/bridge: analogix_dp: Ensure edp is disabled when shutting down the panel
+Date: Fri,  9 Mar 2018 23:23:04 +0100
+Message-Id: <20180309222327.18689-14-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180309222327.18689-1-enric.balletbo@collabora.com>
+References: <20180309222327.18689-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.7.2 (2016-11-26)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mm_struct not needed while printing as all the data was already extracted.
+From: Lin Huang <hl@rock-chips.com>
 
+When panel is shut down, we should make sure edp can be disabled to avoid
+undefined behavior.
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Stéphane Marchesin <marcheu@chromium.org>
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+Signed-off-by: zain wang <wzz@rock-chips.com>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
 
- fs/proc/base.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -2214,6 +2214,7 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
- 		}
- 	}
- 	up_read(&mm->mmap_sem);
-+	mmput(mm);
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index 92fb9a072cb6..3a222e7e46ee 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1160,6 +1160,12 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
  
- 	for (i = 0; i < nr_files; i++) {
- 		char buf[4 * sizeof(long) + 2];	/* max: %lx-%lx\0 */
-@@ -2231,7 +2232,6 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
- 	}
- 	if (fa)
- 		flex_array_free(fa);
--	mmput(mm);
+ 	pm_runtime_get_sync(dp->dev);
  
- out_put_task:
- 	put_task_struct(task);
++	ret = clk_prepare_enable(dp->clock);
++	if (ret < 0) {
++		DRM_ERROR("Failed to prepare_enable the clock clk [%d]\n", ret);
++		goto out_dp_clk_pre;
++	}
++
+ 	if (dp->plat_data->power_on)
+ 		dp->plat_data->power_on(dp->plat_data);
+ 
+@@ -1191,6 +1197,8 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
+ 	phy_power_off(dp->phy);
+ 	if (dp->plat_data->power_off)
+ 		dp->plat_data->power_off(dp->plat_data);
++	clk_disable_unprepare(dp->clock);
++out_dp_clk_pre:
+ 	pm_runtime_put_sync(dp->dev);
+ 
+ 	return ret;
+@@ -1233,11 +1241,14 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
+ 	}
+ 
+ 	disable_irq(dp->irq);
++	analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
+ 	phy_power_off(dp->phy);
+ 
+ 	if (dp->plat_data->power_off)
+ 		dp->plat_data->power_off(dp->plat_data);
+ 
++	clk_disable_unprepare(dp->clock);
++
+ 	pm_runtime_put_sync(dp->dev);
+ 
+ 	ret = analogix_dp_prepare_panel(dp, false, true);
+-- 
+2.16.1
