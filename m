@@ -1,80 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932209AbeCIPPa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 10:15:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46354 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932178AbeCIPP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 10:15:26 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA26D20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Sat, 10 Mar 2018 00:15:22 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Francis Deslauriers <francis.deslauriers@efficios.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org,
-        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/1] x86/kprobes: Prohibit probing of .entry_trampoline
- code
-Message-Id: <20180310001522.5b81074c7c7ec24cfb5f0a06@kernel.org>
-In-Reply-To: <1520565492-4637-1-git-send-email-francis.deslauriers@efficios.com>
-References: <1520565492-4637-1-git-send-email-francis.deslauriers@efficios.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S932268AbeCIPRF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 10:17:05 -0500
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:36972 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932132AbeCIPRB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 10:17:01 -0500
+X-Google-Smtp-Source: AG47ELv0trB8voYRfT7UH2GN32kG/plVPhyU6zaZlV0Iy+RR6WFhM+EpOblmVH/r3q8mwzlXij1/1jaX/FQ4K1xd0fY=
+MIME-Version: 1.0
+In-Reply-To: <20180309145547.r25eis5ejy6d6xzu@lakrids.cambridge.arm.com>
+References: <cover.1520600533.git.andreyknvl@google.com> <20180309145547.r25eis5ejy6d6xzu@lakrids.cambridge.arm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 9 Mar 2018 16:16:58 +0100
+X-Google-Sender-Auth: hYM-Kk4p79z2zns8VGXnfP-lYbs
+Message-ID: <CAMuHMdWtdYAVOvR=gffVu0T1vzEcKM4pqxRc6zWr=k3PykgwiA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/6] arm64: untag user pointers passed to the kernel
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Andrey Konovalov <andreyknvl@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, Arnd Bergmann <arnd@arndb.de>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>, Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>, Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  8 Mar 2018 22:18:11 -0500
-Francis Deslauriers <francis.deslauriers@efficios.com> wrote:
+On Fri, Mar 9, 2018 at 3:55 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+> On Fri, Mar 09, 2018 at 03:01:58PM +0100, Andrey Konovalov wrote:
+>> arm64 has a feature called Top Byte Ignore, which allows to embed pointer
+>> tags into the top byte of each pointer. Userspace programs (such as
+>> HWASan, a memory debugging tool [1]) might use this feature and pass
+>> tagged user pointers to the kernel through syscalls or other interfaces.
+>>
+>> This patch makes a few of the kernel interfaces accept tagged user
+>> pointers. The kernel is already able to handle user faults with tagged
+>> pointers and has the untagged_addr macro, which this patchset reuses.
+>>
+>> We're not trying to cover all possible ways the kernel accepts user
+>> pointers in one patchset, so this one should be considered as a start.
+>> It would be nice to learn about the interfaces that I missed though.
+>
+> There are many ways that user pointers can be passed to the kernel, and
+> I'm not sure that it's feasible to catch them all, especially as user
+> pointers are often passed in data structures (e.g. iovecs) rather than
+> direct syscall arguments.
+>
+> If we *really* want the kernel to support taking tagged addresses, anything
+> with a __user annotation (or cast to something with a __user annotation)
+> requires tag removal somewhere in the kernel.
+>
+> It looks like there are plenty uapi structures and syscalls to look at:
+>
+> [mark@lakrids:~/src/linux]% git grep __user -- include/uapi | wc -l
+> 216
+> [mark@lakrids:~/src/linux]% git grep __user | grep SYSCALL_DEFINE | wc -l
+> 308
+>
+> ... in addition to special syscalls like ioctl which multiplex a number
+> of operations with different arguments, where the tag stripping would
+> have to occur elsewhere (e.g. in particular drivers).
 
-> Hi all,
-> 
-> While fuzzing the Perf kprobe interface, I found that adding a probe on
-> the 'entry_SYSCALL_64_trampoline' symbol will crash my 4.16-rc4
-> kernel(661e50bc853209e41a5c14a290ca4decc43cbfd1) on a x86_64 Qemu VM.
-> 
-> How to reproduce:
-> 	echo 'p:event1 entry_SYSCALL_64_trampoline' > ./kprobe_events
-> 	echo 1 >  events/kprobes/enable
-> Crash log:[1]
-> 
-> My understanding is that the userspace CR3 register has not yet been
-> replaced by the kernel's CR3, when the kprobe is triggered. This means
-> that the kernel addresses can not be translated, thus making the
-> handling of the kprobe impossible.
+Hence we definitely need good support from e.g. sparse to catch any errors
+from happening.
 
-Thanks for reporting!
-And yes, all entry code must be nokprobe.
+So doing assignments to the same pointer variable like
 
-> 
-> This can be fixed by blacklisting the .entry_trampoline section. See
-> patch[1/1].
-> 
-> Here is the config I am using[2].
-> 
-> Thanks,
-> 
-> Francis Deslauriers
-> EfficiOS inc.
-> 
-> 1:http://paste.ubuntu.com/p/djnpZCzQKv/
-> 2:http://paste.ubuntu.com/p/3jrFYt6XQB/
-> 
-> Francis Deslauriers (1):
->   x86/kprobes: Prohibit probing of .entry_trampoline code
-> 
->  arch/x86/include/asm/sections.h |  1 +
->  arch/x86/kernel/kprobes/core.c  | 10 +++++++++-
->  arch/x86/kernel/vmlinux.lds.S   |  2 ++
->  3 files changed, 12 insertions(+), 1 deletion(-)
-> 
-> -- 
-> 2.7.4
-> 
+     addr = untagged_addr(addr);
 
+defeats any checking.
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+> I also wonder if we ever write any of these pointers back to userspace
+> memory. If so, we have a nasty ABI problem, since we'll have to marshal
+> the original tag along with the pointer, to ensure userspace pointer
+> comparisons continue to work.
+
+Oh, another can of worms...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
