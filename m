@@ -1,25 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752343AbeCIIr7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 03:47:59 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:35867 "EHLO
+        id S1751930AbeCIIs3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 03:48:29 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:59905 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750965AbeCIIr5 (ORCPT
+        with ESMTP id S1750917AbeCIIs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 03:47:57 -0500
-Date: Fri, 9 Mar 2018 00:47:51 -0800
+        Fri, 9 Mar 2018 03:48:26 -0500
+Date: Fri, 9 Mar 2018 00:48:19 -0800
 From: tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-63d8e38f6ae6c36dd5b5ba0e8c112e8861532ea2@git.kernel.org>
-Cc: jolsa@redhat.com, mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, adrian.hunter@intel.com, acme@redhat.com
-Reply-To: linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
-        acme@redhat.com, tglx@linutronix.de, jolsa@redhat.com, hpa@zytor.com,
-        mingo@kernel.org
-In-Reply-To: <1520431349-30689-3-git-send-email-adrian.hunter@intel.com>
-References: <1520431349-30689-3-git-send-email-adrian.hunter@intel.com>
+Message-ID: <tip-1c196a6c771c47a2faa63d38d913e03284f73a16@git.kernel.org>
+Cc: tglx@linutronix.de, jolsa@redhat.com, acme@redhat.com,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        adrian.hunter@intel.com
+Reply-To: tglx@linutronix.de, jolsa@redhat.com, mingo@kernel.org,
+        acme@redhat.com, linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
+        hpa@zytor.com
+In-Reply-To: <1520431349-30689-4-git-send-email-adrian.hunter@intel.com>
+References: <1520431349-30689-4-git-send-email-adrian.hunter@intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf intel-pt: Fix sync_switch
-Git-Commit-ID: 63d8e38f6ae6c36dd5b5ba0e8c112e8861532ea2
+Subject: [tip:perf/core] perf intel-pt: Fix error recovery from missing TIP
+ packet
+Git-Commit-ID: 1c196a6c771c47a2faa63d38d913e03284f73a16
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -32,130 +34,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  63d8e38f6ae6c36dd5b5ba0e8c112e8861532ea2
-Gitweb:     https://git.kernel.org/tip/63d8e38f6ae6c36dd5b5ba0e8c112e8861532ea2
+Commit-ID:  1c196a6c771c47a2faa63d38d913e03284f73a16
+Gitweb:     https://git.kernel.org/tip/1c196a6c771c47a2faa63d38d913e03284f73a16
 Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Wed, 7 Mar 2018 16:02:22 +0200
+AuthorDate: Wed, 7 Mar 2018 16:02:23 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Thu, 8 Mar 2018 10:05:55 -0300
 
-perf intel-pt: Fix sync_switch
+perf intel-pt: Fix error recovery from missing TIP packet
 
-sync_switch is a facility to synchronize decoding more closely with the
-point in the kernel when the context actually switched.
-
-The flag when sync_switch is enabled was global to the decoding, whereas
-it is really specific to the CPU.
-
-The trace data for different CPUs is put on different queues, so add
-sync_switch to the intel_pt_queue structure and use that in preference
-to the global setting in the intel_pt structure.
-
-That fixes problems decoding one CPU's trace because sync_switch was
-disabled on a different CPU's queue.
+When a TIP packet is expected but there is a different packet, it is an
+error. However the unexpected packet might be something important like a
+TSC packet, so after the error, it is necessary to continue from there,
+rather than the next packet. That is achieved by setting pkt_step to
+zero.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1520431349-30689-3-git-send-email-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/1520431349-30689-4-git-send-email-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/intel-pt.c | 32 +++++++++++++++++++++++++-------
- 1 file changed, 25 insertions(+), 7 deletions(-)
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index 4a7746249999..0979a6e8b2b7 100644
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -143,6 +143,7 @@ struct intel_pt_queue {
- 	bool stop;
- 	bool step_through_buffers;
- 	bool use_buffer_pid_tid;
-+	bool sync_switch;
- 	pid_t pid, tid;
- 	int cpu;
- 	int switch_state;
-@@ -963,10 +964,12 @@ static int intel_pt_setup_queue(struct intel_pt *pt,
- 			if (pt->timeless_decoding || !pt->have_sched_switch)
- 				ptq->use_buffer_pid_tid = true;
- 		}
-+
-+		ptq->sync_switch = pt->sync_switch;
- 	}
+diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+index 00f25f4b5f48..5e4d0bbafc8b 100644
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -1616,6 +1616,7 @@ static int intel_pt_walk_fup_tip(struct intel_pt_decoder *decoder)
+ 		case INTEL_PT_PWRX:
+ 			intel_pt_log("ERROR: Missing TIP after FUP\n");
+ 			decoder->pkt_state = INTEL_PT_STATE_ERR3;
++			decoder->pkt_step = 0;
+ 			return -ENOENT;
  
- 	if (!ptq->on_heap &&
--	    (!pt->sync_switch ||
-+	    (!ptq->sync_switch ||
- 	     ptq->switch_state != INTEL_PT_SS_EXPECTING_SWITCH_EVENT)) {
- 		const struct intel_pt_state *state;
- 		int ret;
-@@ -1549,7 +1552,7 @@ static int intel_pt_sample(struct intel_pt_queue *ptq)
- 	if (pt->synth_opts.last_branch)
- 		intel_pt_update_last_branch_rb(ptq);
- 
--	if (!pt->sync_switch)
-+	if (!ptq->sync_switch)
- 		return 0;
- 
- 	if (intel_pt_is_switch_ip(ptq, state->to_ip)) {
-@@ -1630,6 +1633,21 @@ static u64 intel_pt_switch_ip(struct intel_pt *pt, u64 *ptss_ip)
- 	return switch_ip;
- }
- 
-+static void intel_pt_enable_sync_switch(struct intel_pt *pt)
-+{
-+	unsigned int i;
-+
-+	pt->sync_switch = true;
-+
-+	for (i = 0; i < pt->queues.nr_queues; i++) {
-+		struct auxtrace_queue *queue = &pt->queues.queue_array[i];
-+		struct intel_pt_queue *ptq = queue->priv;
-+
-+		if (ptq)
-+			ptq->sync_switch = true;
-+	}
-+}
-+
- static int intel_pt_run_decoder(struct intel_pt_queue *ptq, u64 *timestamp)
- {
- 	const struct intel_pt_state *state = ptq->state;
-@@ -1646,7 +1664,7 @@ static int intel_pt_run_decoder(struct intel_pt_queue *ptq, u64 *timestamp)
- 			if (pt->switch_ip) {
- 				intel_pt_log("switch_ip: %"PRIx64" ptss_ip: %"PRIx64"\n",
- 					     pt->switch_ip, pt->ptss_ip);
--				pt->sync_switch = true;
-+				intel_pt_enable_sync_switch(pt);
- 			}
- 		}
- 	}
-@@ -1662,9 +1680,9 @@ static int intel_pt_run_decoder(struct intel_pt_queue *ptq, u64 *timestamp)
- 		if (state->err) {
- 			if (state->err == INTEL_PT_ERR_NODATA)
- 				return 1;
--			if (pt->sync_switch &&
-+			if (ptq->sync_switch &&
- 			    state->from_ip >= pt->kernel_start) {
--				pt->sync_switch = false;
-+				ptq->sync_switch = false;
- 				intel_pt_next_tid(pt, ptq);
- 			}
- 			if (pt->synth_opts.errors) {
-@@ -1690,7 +1708,7 @@ static int intel_pt_run_decoder(struct intel_pt_queue *ptq, u64 *timestamp)
- 				     state->timestamp, state->est_timestamp);
- 			ptq->timestamp = state->est_timestamp;
- 		/* Use estimated TSC in unknown switch state */
--		} else if (pt->sync_switch &&
-+		} else if (ptq->sync_switch &&
- 			   ptq->switch_state == INTEL_PT_SS_UNKNOWN &&
- 			   intel_pt_is_switch_ip(ptq, state->to_ip) &&
- 			   ptq->next_tid == -1) {
-@@ -1837,7 +1855,7 @@ static int intel_pt_sync_switch(struct intel_pt *pt, int cpu, pid_t tid,
- 		return 1;
- 
- 	ptq = intel_pt_cpu_to_ptq(pt, cpu);
--	if (!ptq)
-+	if (!ptq || !ptq->sync_switch)
- 		return 1;
- 
- 	switch (ptq->switch_state) {
+ 		case INTEL_PT_OVF:
