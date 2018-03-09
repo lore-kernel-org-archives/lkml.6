@@ -1,73 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932522AbeCISH3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 13:07:29 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56206 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932497AbeCISHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 13:07:24 -0500
-Date: Fri, 9 Mar 2018 12:07:20 -0600
-From: Kim Phillips <kim.phillips@arm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: "Christian Hansen (chansen3)" <chansen3@cisco.com>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "Vuille, Martin (Martin)" <vmartin@avaya.com>,
-        Martin Vuille <jpmv27@aim.com>
-Subject: Re: [PATCH] perf tools arm64: Add libdw DWARF post unwind support
- for ARM64
-Message-Id: <20180309120720.9358515dbff3b1d1fdf70cc8@arm.com>
-In-Reply-To: <20180309150627.GB8347@kernel.org>
-References: <A5E405FE-1BA3-46FC-9A43-CF19A4B369C5@cisco.com>
-        <20180226142726.cd413c792d0782f77b60a23e@arm.com>
-        <20180226174040.6998bd3c0a79b2f19c491e4d@arm.com>
-        <9B701F46-6AEA-48D8-9103-71D35C83776D@cisco.com>
-        <20180308211030.4ee4a0d6ff6dc5cda1b567d4@arm.com>
-        <20180309150627.GB8347@kernel.org>
-Organization: Arm
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
+        id S932399AbeCISKj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 13:10:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34544 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751192AbeCISKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 13:10:38 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E0D12133D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Fri, 9 Mar 2018 13:10:35 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Will Hawkins <whh8b@virginia.edu>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: x86 performance monitor counters save/restore on context switch
+Message-ID: <20180309131035.550be653@vmware.local.home>
+In-Reply-To: <CAE+MWFsoX2wOEiYkXsZop-K7+ehNzf5eAG-rSy7+mbqf5k0vuQ@mail.gmail.com>
+References: <CAE+MWFsoX2wOEiYkXsZop-K7+ehNzf5eAG-rSy7+mbqf5k0vuQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 9 Mar 2018 12:06:27 -0300
-Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+On Fri, 9 Mar 2018 02:29:55 -0500
+Will Hawkins <whh8b@virginia.edu> wrote:
 
-Hi Arnaldo,
-
-> Em Thu, Mar 08, 2018 at 09:10:30PM -0600, Kim Phillips escreveu:
-> > Based on prior work:
-> > 
-> > https://lkml.org/lkml/2014/5/6/395
+> Mr. Rostedt and others interested reading on the LKML,
 > 
-> Thanks, looks good, applying.
+> I hope that this is the proper venue to ask this (longwinded)
+> question. If it is not, I apologize for the SPAM and wasting
+> everyone's time and bits. I am emailing to ask for clarification about
+> the "policy" of saving and restoring x86 performance monitor counters
+> (and other PMU-related registers) on context switch in the Kernel.
 > 
-> Jean, is everything ok with you on this?
+> Having plumbed through the code for scheduling, I get the sense that
+> code in the perf subsystem is the only code that would, if conditions
+> are right, save/restore performance registers on a context switch.
+> 
+> In my investigation, I started from the top where
+> prepare_task_switch() calls perf_event_task_sched_out() and where
+> finish_task_switch() calls perf_event_task_sched_in(). Having traced
+> the implementation of each of those functions to (what I think is)
+> their lowest levels, the Kernel will only save and restore performance
+> monitor counters if:
+> 
+> 1. The task, process of task's CPU is actively monitoring performance.
+> That monitoring would have been initiated by a user by calling
+> perf_event_open() (or using a high level library that eventually calls
+> that function).
+> 2. The performance aspects being monitored are hardware counters/events.
+> 
+> I am sure that there are other conditions, but those are the two that
+> stuck out to me the most.
+> 
+> All that is a long (perhaps incorrect) preface to a very simple question:
 
-By now your email to Jean should have bounced with "The email account
-that you tried to reach does not exist."  Removing Jean from Cc.
+You above explanation appears to be mostly correct.
 
-It seems like you're applying patches.  There are a couple that have
-slipped through the cracks: Can you please take a look at applying them?
+> 
+> Is it only the performance counting registers that are actively in use
+> (again, as told to the perf subsystem by a call to perf_event_open())
+> that are saved/restored on context switch?
+> 
+> I ask because I have written code (mostly out of curiosity and not
+> necessarily for production) that accesses those registers directly by
+> writing/reading their values through the msr kernel module. If what I
+> said above is correct, then I have to be wary of the fact that the
+> values read from those counters reflect statistics from all the
+> processes/threads running on the same CPU at the same time. At first
+> blush, this was the way I expected the performance monitoring
+> registers and counters to work, but I wanted to confirm and you seemed
+> like the right person to ask.
 
-- "perf tools: Fixing uninitialised variable"
-  https://patchwork.kernel.org/patch/10179381/
+Yes, basically the perf infrastructure "owns" the performance counters.
+Any other subsystem that wants to access them should go through the
+perf system. But what you are doing seems more for academic purposes
+(or simply self learning). But yes, perf may interfere with your code.
 
-- "perf unwind: Report error from dwfl_attach_state"
-  https://patchwork.kernel.org/patch/10211483/
-  [Martin, I guess it would help if you replied-all that patch and
-   added your signed-off-by.]
+> 
+> If I was wrong about asking for your help, I apologize and hope that I
+> didn't waste your valuable time.
 
-- "perf unwind: Unwind with libdw doesn't take symfs into account"
-  https://patchwork.kernel.org/patch/10211599/
+The actual person to ask is Peter Zijlstra (Cc'd). He's the maintainer
+of the perf infrastructure in the kernel. But he's even more busy than
+I am so I'm not sure how much he'll be able to respond.
 
-Thanks,
+> 
+> Thanks for all the work that you do on the performance monitoring
+> systems for Linux -- they are invaluable for debugging those
+> hard-to-find bottlenecks that inevitably pop up when you really need
+> something to "just work."
 
-Kim
+Your welcome, and I hope you continue your curiosity in the Linux
+kernel and enjoy learning about how the nuts and bolts all interact.
+
+-- Steve
