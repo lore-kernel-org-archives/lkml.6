@@ -1,254 +1,191 @@
-Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AG47ELsTZi2xDo+8ak7vaoCbaGdNGveixdmgaBEvSgOASZdb/Cpu+ORZUkDRlV0Iqoyn9mVgeKZv
-ARC-Seal: i=1; a=rsa-sha256; t=1519947227; cv=none;
+Return-Path: <andreas.dilger@intel.com>
+X-Google-Smtp-Source: AG47ELt303dVmofB42MSmtEQ69XmuOUIlTzwZZPYWOLT67EJmpAp123bmw6gPS/TkYbCHsX+eg0Y
+ARC-Seal: i=1; a=rsa-sha256; t=1520554334; cv=none;
         d=google.com; s=arc-20160816;
-        b=oTftECpWpJbOATS7OlEqltoFBPdo4G9qyUMiZO1zlI28g/1KvftLzyBQ50YThl/XSn
-         efWCWwRj5EcHFTq34eT4PNpFsKSraSG5gWUgyc87c6OGtPSQqUJJl9VlGzx+BFlaIaZf
-         /7dBiqF7bRwTL6XAIXMba5Femxh1IEPm0n+J3HYq2ikbgIS8zZkFRvc/LJz7mF+9aU2s
-         A4fcq98+1b/XV9D/tcb1IIrSoYSsjf6R5256mLF17QtNgX6QupWLWabb3vk0T7JzQ7ED
-         WJsnvQ5QAEEb2Ta2b4vjd0iFxUXYAj74SYGah9Vv/fMnyxfxFse0339Ei1ETVKht+zlY
-         KWpg==
+        b=JNYB5v0f8Fv6lLmJ/ewOOf2iDSlbvC5b2Ov3/CWSbT1Y/ak+lzH9eC9u4aspSj4gD9
+         dQJLhItprO1LPJD6XXHoxw7dIS/XQG7/5c+dvN61UhH4JLjS1V641DfOhOopi6KbP6tW
+         8/yMGRz/zLmAlY5ubHVbbaIHwnIGC+3ENr/dcwd03M7QdfolyI4NEAOe651Ikgehmmgy
+         qzz6CrB7U7rwgl51bX4PaLQgQYZ3ztPcVscDLeuPNZOWWfY1ej8dUScXC56lYE23oY5N
+         rX7Oesarx0v2wFDeTLeXol28d7Q+CwjRXsQfABi1MsNq5Q9Xj5TRHH0x+i40laW67NqD
+         OGZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:message-id:cc:subject:date:to:from
-         :arc-authentication-results;
-        bh=l4/cJAbrphNwYViqyUNNP5MOaIkeNFUmSHxcMxpYI30=;
-        b=h9OHDILtT3TkAWPFsQz2DaZ+SWpUPpwDQGJ5yNw/u6sezJSJR2GVm+bGHsgvqkLzb7
-         j2T61igTVWniOxfIXGghAjmGH5llkQvMFwM0OPBWJzZ6Zx/H3K/LakQcvg9n+GioNBLv
-         7jJPZvBXV9EnsreruxAGV00/rqOMJ932DhFtXV7MUGhGOBtHyMIx9kcMTxDDg9bzi1uI
-         z3oimGQRQAo4HhVag2EjVIUTWjK+jRIsWDxeFugroFEQ8vTVFBfKM90kdpcE5NDHsTxW
-         o3otOsDUIQpd7FWpcxDdkb1VL1tX3qtiYMpHl009fd78xCdcMlJ2zwh2t/LFSA3sA6Vq
-         2A/g==
+        h=mime-version:content-transfer-encoding:content-id:content-language
+         :accept-language:in-reply-to:references:message-id:date:thread-index
+         :thread-topic:subject:cc:to:from:arc-authentication-results;
+        bh=tFZ8bp5PrJp8iOR5gAGqZfuK06ZroFiu9ntzEGpElLc=;
+        b=SG2bX5a8DxraX6EtXzdQOBLDyo+0oF1HTCNqAODZKiwuk50R3AOYbQGVCiik79Ngxk
+         Yqb8u2W7IAHQYWc1u13GsHiSgjt2Ec4llX+2HbYu9OqGRJD8bkgX8n8FSSSjDFRs2Jqr
+         lm43b5T/TV9d3nx8d46dC+wEZqcEIHO2yayOgVW2xC2LGuX/TGZ9XiTCZmlPleHxtblw
+         ZewJiYlLPLZ6/a5uuv9oNJR82xP1E4ysIRw4awBFbgUW7D2QNRVv0lX7HcB6fngRCQfb
+         Jv8rNovUz3rN7EvwyBqRorbmhVVckqXOZzQ3423gKPxpxZaKQj3MOYWunBjvnIhcdPgh
+         pHJg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
+       spf=pass (google.com: domain of andreas.dilger@intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=andreas.dilger@intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
-From: NeilBrown <neilb@suse.com>
-To: Oleg Drokin <oleg.drokin@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- James Simmons <jsimmons@infradead.org>,
- Andreas Dilger <andreas.dilger@intel.com>
-Date: Fri, 02 Mar 2018 10:31:25 +1100
-Subject: [PATCH 13/17] staging: lustre: remove 'ptlrpc_thread usage' for
+       spf=pass (google.com: domain of andreas.dilger@intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=andreas.dilger@intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,443,1515484800";
+   d="scan'208";a="40420738"
+From: "Dilger, Andreas" <andreas.dilger@intel.com>
+To: NeilBrown <neilb@suse.com>
+CC: "Drokin, Oleg" <oleg.drokin@intel.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, James Simmons <jsimmons@infradead.org>, "Linux
+ Kernel Mailing List" <linux-kernel@vger.kernel.org>, Lustre Development List
+	<lustre-devel@lists.lustre.org>, "Yong, Fan" <fan.yong@intel.com>
+Subject: Re: [PATCH 13/17] staging: lustre: remove 'ptlrpc_thread usage' for
  sai_agl_thread
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Lustre Development List <lustre-devel@lists.lustre.org>
-Message-ID: <151994708549.7628.13268008928655143336.stgit@noble>
-In-Reply-To: <151994679573.7628.1024109499321778846.stgit@noble>
+Thread-Topic: [PATCH 13/17] staging: lustre: remove 'ptlrpc_thread usage'
+ for sai_agl_thread
+Thread-Index: AQHTsbXDyzh0gMmR60mYrILJYhE5yqPHmTqA
+Date: Fri, 9 Mar 2018 00:12:12 +0000
+Message-ID: <A1BB636C-AB1F-4000-82F5-FFC700BCA3C3@intel.com>
 References: <151994679573.7628.1024109499321778846.stgit@noble>
-User-Agent: StGit/0.17.1-dirty
+ <151994708549.7628.13268008928655143336.stgit@noble>
+In-Reply-To: <151994708549.7628.13268008928655143336.stgit@noble>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.254.37.249]
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <F4BE42AA8CD06341BD3419BC2BE4A561@intel.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593780184664448130?=
-X-GMAIL-MSGID: =?utf-8?q?1593780184664448130?=
+X-GMAIL-MSGID: =?utf-8?q?1594416782479001879?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Lustre has a 'struct ptlrpc_thread' which provides
-control functionality wrapped around kthreads.
-None of the functionality used in statahead.c requires
-ptlrcp_thread - it can all be done directly with kthreads.
+On Mar 1, 2018, at 16:31, NeilBrown <neilb@suse.com> wrote:
+>=20
+> Lustre has a 'struct ptlrpc_thread' which provides
+> control functionality wrapped around kthreads.
+> None of the functionality used in statahead.c requires
+> ptlrcp_thread - it can all be done directly with kthreads.
+>=20
+> So discard the ptlrpc_thread and just use a task_struct directly.
+>=20
+> One particular change worth noting is that in the current
+> code, the thread performs some start-up actions and then
+> signals that it is ready to go.  In the new code, the thread
+> is first created, then the startup actions are perform, then
+> the thread is woken up.  This means there is no need to wait
+> any more than kthread_create() already waits.
+>=20
+> Signed-off-by: NeilBrown <neilb@suse.com>
 
-So discard the ptlrpc_thread and just use a task_struct directly.
+Looks reasonable, but one minor comment inline below.  Not enough to
+make me think the patch is bad, just a minor inefficiency...
 
-One particular change worth noting is that in the current
-code, the thread performs some start-up actions and then
-signals that it is ready to go.  In the new code, the thread
-is first created, then the startup actions are perform, then
-the thread is woken up.  This means there is no need to wait
-any more than kthread_create() already waits.
+Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
 
-Signed-off-by: NeilBrown <neilb@suse.com>
----
- .../staging/lustre/lustre/llite/llite_internal.h   |    2 -
- drivers/staging/lustre/lustre/llite/statahead.c    |   78 +++++++-------------
- 2 files changed, 28 insertions(+), 52 deletions(-)
+I've also CC'd Fan Yong, who is the author of this code in case
+he has any comments.
 
-diff --git a/drivers/staging/lustre/lustre/llite/llite_internal.h b/drivers/staging/lustre/lustre/llite/llite_internal.h
-index f68c2e88f12b..0c2d717fd526 100644
---- a/drivers/staging/lustre/lustre/llite/llite_internal.h
-+++ b/drivers/staging/lustre/lustre/llite/llite_internal.h
-@@ -1071,7 +1071,7 @@ struct ll_statahead_info {
- 				sai_in_readpage:1;/* statahead in readdir() */
- 	wait_queue_head_t	sai_waitq;      /* stat-ahead wait queue */
- 	struct ptlrpc_thread    sai_thread;     /* stat-ahead thread */
--	struct ptlrpc_thread    sai_agl_thread; /* AGL thread */
-+	struct task_struct     *sai_agl_task;   /* AGL thread */
- 	struct list_head	sai_interim_entries; /* entries which got async
- 						      * stat reply, but not
- 						      * instantiated
-diff --git a/drivers/staging/lustre/lustre/llite/statahead.c b/drivers/staging/lustre/lustre/llite/statahead.c
-index ba00881a5745..39241b952bf4 100644
---- a/drivers/staging/lustre/lustre/llite/statahead.c
-+++ b/drivers/staging/lustre/lustre/llite/statahead.c
-@@ -383,7 +383,7 @@ static void ll_agl_add(struct ll_statahead_info *sai,
- 	}
- 
- 	if (added > 0)
--		wake_up(&sai->sai_agl_thread.t_ctl_waitq);
-+		wake_up_process(sai->sai_agl_task);
- }
- 
- /* allocate sai */
-@@ -404,7 +404,6 @@ static struct ll_statahead_info *ll_sai_alloc(struct dentry *dentry)
- 	sai->sai_index = 1;
- 	init_waitqueue_head(&sai->sai_waitq);
- 	init_waitqueue_head(&sai->sai_thread.t_ctl_waitq);
--	init_waitqueue_head(&sai->sai_agl_thread.t_ctl_waitq);
- 
- 	INIT_LIST_HEAD(&sai->sai_interim_entries);
- 	INIT_LIST_HEAD(&sai->sai_entries);
-@@ -467,7 +466,7 @@ static void ll_sai_put(struct ll_statahead_info *sai)
- 		spin_unlock(&lli->lli_sa_lock);
- 
- 		LASSERT(thread_is_stopped(&sai->sai_thread));
--		LASSERT(thread_is_stopped(&sai->sai_agl_thread));
-+		LASSERT(sai->sai_agl_task == NULL);
- 		LASSERT(sai->sai_sent == sai->sai_replied);
- 		LASSERT(!sa_has_callback(sai));
- 
-@@ -861,35 +860,13 @@ static int ll_agl_thread(void *arg)
- 	struct inode	     *dir    = d_inode(parent);
- 	struct ll_inode_info     *plli   = ll_i2info(dir);
- 	struct ll_inode_info     *clli;
--	struct ll_sb_info	*sbi    = ll_i2sbi(dir);
--	struct ll_statahead_info *sai;
--	struct ptlrpc_thread *thread;
-+	/* We already own this reference, so it is safe to take it without a lock. */
-+	struct ll_statahead_info *sai = plli->lli_sai;
- 
--	sai = ll_sai_get(dir);
--	thread = &sai->sai_agl_thread;
--	thread->t_pid = current_pid();
- 	CDEBUG(D_READA, "agl thread started: sai %p, parent %pd\n",
- 	       sai, parent);
- 
--	atomic_inc(&sbi->ll_agl_total);
--	spin_lock(&plli->lli_agl_lock);
--	sai->sai_agl_valid = 1;
--	if (thread_is_init(thread))
--		/* If someone else has changed the thread state
--		 * (e.g. already changed to SVC_STOPPING), we can't just
--		 * blindly overwrite that setting.
--		 */
--		thread_set_flags(thread, SVC_RUNNING);
--	spin_unlock(&plli->lli_agl_lock);
--	wake_up(&thread->t_ctl_waitq);
--
--	while (1) {
--		wait_event_idle(thread->t_ctl_waitq,
--				!list_empty(&sai->sai_agls) ||
--				!thread_is_running(thread));
--
--		if (!thread_is_running(thread))
--			break;
-+	while (!kthread_should_stop()) {
- 
- 		spin_lock(&plli->lli_agl_lock);
- 		/* The statahead thread maybe help to process AGL entries,
-@@ -904,6 +881,12 @@ static int ll_agl_thread(void *arg)
- 		} else {
- 			spin_unlock(&plli->lli_agl_lock);
- 		}
-+
-+		set_current_state(TASK_IDLE);
-+		if (list_empty(&sai->sai_agls) &&
-+		    !kthread_should_stop())
-+			schedule();
-+		__set_current_state(TASK_RUNNING);
- 	}
- 
- 	spin_lock(&plli->lli_agl_lock);
-@@ -917,19 +900,16 @@ static int ll_agl_thread(void *arg)
- 		iput(&clli->lli_vfs_inode);
- 		spin_lock(&plli->lli_agl_lock);
- 	}
--	thread_set_flags(thread, SVC_STOPPED);
- 	spin_unlock(&plli->lli_agl_lock);
--	wake_up(&thread->t_ctl_waitq);
--	ll_sai_put(sai);
- 	CDEBUG(D_READA, "agl thread stopped: sai %p, parent %pd\n",
- 	       sai, parent);
-+	ll_sai_put(sai);
- 	return 0;
- }
- 
- /* start agl thread */
- static void ll_start_agl(struct dentry *parent, struct ll_statahead_info *sai)
- {
--	struct ptlrpc_thread *thread = &sai->sai_agl_thread;
- 	struct ll_inode_info  *plli;
- 	struct task_struct *task;
- 
-@@ -937,16 +917,22 @@ static void ll_start_agl(struct dentry *parent, struct ll_statahead_info *sai)
- 	       sai, parent);
- 
- 	plli = ll_i2info(d_inode(parent));
--	task = kthread_run(ll_agl_thread, parent, "ll_agl_%u",
--			   plli->lli_opendir_pid);
-+	task = kthread_create(ll_agl_thread, parent, "ll_agl_%u",
-+			      plli->lli_opendir_pid);
- 	if (IS_ERR(task)) {
- 		CERROR("can't start ll_agl thread, rc: %ld\n", PTR_ERR(task));
--		thread_set_flags(thread, SVC_STOPPED);
- 		return;
- 	}
- 
--	wait_event_idle(thread->t_ctl_waitq,
--			thread_is_running(thread) || thread_is_stopped(thread));
-+	sai->sai_agl_task = task;
-+	atomic_inc(&ll_i2sbi(d_inode(parent))->ll_agl_total);
-+	spin_lock(&plli->lli_agl_lock);
-+	sai->sai_agl_valid = 1;
-+	spin_unlock(&plli->lli_agl_lock);
-+	/* Get an extra reference that the thread holds */
-+	ll_sai_get(d_inode(parent));
-+
-+	wake_up_process(task);
- }
- 
- /* statahead thread main function */
-@@ -958,7 +944,6 @@ static int ll_statahead_thread(void *arg)
- 	struct ll_sb_info	*sbi    = ll_i2sbi(dir);
- 	struct ll_statahead_info *sai;
- 	struct ptlrpc_thread *sa_thread;
--	struct ptlrpc_thread *agl_thread;
- 	struct page	      *page = NULL;
- 	__u64		     pos    = 0;
- 	int		       first  = 0;
-@@ -967,7 +952,6 @@ static int ll_statahead_thread(void *arg)
- 
- 	sai = ll_sai_get(dir);
- 	sa_thread = &sai->sai_thread;
--	agl_thread = &sai->sai_agl_thread;
- 	sa_thread->t_pid = current_pid();
- 	CDEBUG(D_READA, "statahead thread starting: sai %p, parent %pd\n",
- 	       sai, parent);
-@@ -1129,21 +1113,13 @@ static int ll_statahead_thread(void *arg)
- 		sa_handle_callback(sai);
- 	}
- out:
--	if (sai->sai_agl_valid) {
--		spin_lock(&lli->lli_agl_lock);
--		thread_set_flags(agl_thread, SVC_STOPPING);
--		spin_unlock(&lli->lli_agl_lock);
--		wake_up(&agl_thread->t_ctl_waitq);
-+	if (sai->sai_agl_task) {
-+		kthread_stop(sai->sai_agl_task);
- 
- 		CDEBUG(D_READA, "stop agl thread: sai %p pid %u\n",
--		       sai, (unsigned int)agl_thread->t_pid);
--		wait_event_idle(agl_thread->t_ctl_waitq,
--				thread_is_stopped(agl_thread));
--	} else {
--		/* Set agl_thread flags anyway. */
--		thread_set_flags(agl_thread, SVC_STOPPED);
-+		       sai, (unsigned int)sai->sai_agl_task->pid);
-+		sai->sai_agl_task = NULL;
- 	}
--
- 	/*
- 	 * wait for inflight statahead RPCs to finish, and then we can free sai
- 	 * safely because statahead RPC will access sai data
+> diff --git a/drivers/staging/lustre/lustre/llite/statahead.c b/drivers/st=
+aging/lustre/lustre/llite/statahead.c
+> index ba00881a5745..39241b952bf4 100644
+> --- a/drivers/staging/lustre/lustre/llite/statahead.c
+> +++ b/drivers/staging/lustre/lustre/llite/statahead.c
+> @@ -861,35 +860,13 @@ static int ll_agl_thread(void *arg)
+> 	struct inode	     *dir    =3D d_inode(parent);
+> 	struct ll_inode_info     *plli   =3D ll_i2info(dir);
+> 	struct ll_inode_info     *clli;
+> -	struct ll_sb_info	*sbi    =3D ll_i2sbi(dir);
+> -	struct ll_statahead_info *sai;
+> -	struct ptlrpc_thread *thread;
+> +	/* We already own this reference, so it is safe to take it without a lo=
+ck. */
+> +	struct ll_statahead_info *sai =3D plli->lli_sai;
+>=20
+> -	sai =3D ll_sai_get(dir);
+
+Here we used to grab a reference to "sai" from the directory, but you
+get it in the calling thread now...
+
+> @@ -937,16 +917,22 @@ static void ll_start_agl(struct dentry *parent, str=
+uct ll_statahead_info *sai)
+> 	       sai, parent);
+>=20
+> 	plli =3D ll_i2info(d_inode(parent));
+> +	task =3D kthread_create(ll_agl_thread, parent, "ll_agl_%u",
+> +			      plli->lli_opendir_pid);
+> 	if (IS_ERR(task)) {
+> 		CERROR("can't start ll_agl thread, rc: %ld\n", PTR_ERR(task));
+> 		return;
+> 	}
+>=20
+> +	sai->sai_agl_task =3D task;
+> +	atomic_inc(&ll_i2sbi(d_inode(parent))->ll_agl_total);
+> +	spin_lock(&plli->lli_agl_lock);
+> +	sai->sai_agl_valid =3D 1;
+> +	spin_unlock(&plli->lli_agl_lock);
+> +	/* Get an extra reference that the thread holds */
+> +	ll_sai_get(d_inode(parent));
+
+Here you get the extra reference, but we already have the pointer to
+"sai", do going through "parent->d_inode->lli->lli_sai" to get "sai"
+again seems convoluted.  One option is atomic_inc(&sai->sai_refcount),
+but given that this is done only once per "ls" call I don't think it
+is a huge deal, and not more work than was done before.
+
+Cheers, Andreas
+
+> +
+> +	wake_up_process(task);
+> }
+>=20
+> /* statahead thread main function */
+> @@ -958,7 +944,6 @@ static int ll_statahead_thread(void *arg)
+> 	struct ll_sb_info	*sbi    =3D ll_i2sbi(dir);
+> 	struct ll_statahead_info *sai;
+> 	struct ptlrpc_thread *sa_thread;
+> -	struct ptlrpc_thread *agl_thread;
+> 	struct page	      *page =3D NULL;
+> 	__u64		     pos    =3D 0;
+> 	int		       first  =3D 0;
+> @@ -967,7 +952,6 @@ static int ll_statahead_thread(void *arg)
+>=20
+> 	sai =3D ll_sai_get(dir);
+> 	sa_thread =3D &sai->sai_thread;
+> -	agl_thread =3D &sai->sai_agl_thread;
+> 	sa_thread->t_pid =3D current_pid();
+> 	CDEBUG(D_READA, "statahead thread starting: sai %p, parent %pd\n",
+> 	       sai, parent);
+> @@ -1129,21 +1113,13 @@ static int ll_statahead_thread(void *arg)
+> 		sa_handle_callback(sai);
+> 	}
+> out:
+> -	if (sai->sai_agl_valid) {
+> -		spin_lock(&lli->lli_agl_lock);
+> -		thread_set_flags(agl_thread, SVC_STOPPING);
+> -		spin_unlock(&lli->lli_agl_lock);
+> -		wake_up(&agl_thread->t_ctl_waitq);
+> +	if (sai->sai_agl_task) {
+> +		kthread_stop(sai->sai_agl_task);
+>=20
+> 		CDEBUG(D_READA, "stop agl thread: sai %p pid %u\n",
+> -		       sai, (unsigned int)agl_thread->t_pid);
+> -		wait_event_idle(agl_thread->t_ctl_waitq,
+> -				thread_is_stopped(agl_thread));
+> -	} else {
+> -		/* Set agl_thread flags anyway. */
+> -		thread_set_flags(agl_thread, SVC_STOPPED);
+> +		       sai, (unsigned int)sai->sai_agl_task->pid);
+> +		sai->sai_agl_task =3D NULL;
+> 	}
+> -
+> 	/*
+> 	 * wait for inflight statahead RPCs to finish, and then we can free sai
+> 	 * safely because statahead RPC will access sai data
+>=20
+>=20
+
+Cheers, Andreas
+--
+Andreas Dilger
+Lustre Principal Architect
+Intel Corporation
