@@ -1,137 +1,205 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751981AbeCIIef (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 03:34:35 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:54701 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751333AbeCIIed (ORCPT
+        id S1751999AbeCIIew (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 03:34:52 -0500
+Received: from alln-iport-3.cisco.com ([173.37.142.90]:48752 "EHLO
+        alln-iport-3.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751242AbeCIIeu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 03:34:33 -0500
-Date: Fri, 9 Mar 2018 00:34:22 -0800
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-e51yphwgvepd1y4f5fjptmjq@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, jolsa@kernel.org, wangnan0@huawei.com,
-        hpa@zytor.com, mingo@kernel.org, acme@redhat.com,
-        adrian.hunter@intel.com, dsahern@gmail.com, eranian@google.com,
-        tglx@linutronix.de, namhyung@kernel.org
-Reply-To: namhyung@kernel.org, tglx@linutronix.de, adrian.hunter@intel.com,
-        dsahern@gmail.com, acme@redhat.com, eranian@google.com,
-        jolsa@kernel.org, hpa@zytor.com, wangnan0@huawei.com, mingo@kernel.org,
+        Fri, 9 Mar 2018 03:34:50 -0500
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0AtAgD+RaJa/5xdJa1eGQEBAQEBAQEBA?=
+ =?us-ascii?q?QEBAQcBAQEBAYNQZm8om2WDGIcejyEKH4UGAoMPITcVAQIBAQEBAQECayeFJAY?=
+ =?us-ascii?q?nUhAZOCE2BgEShQEDCA0Prgw6hHGCOQ2BMIIVBRSFIoIugVaBZoYXRAGHXQSaJ?=
+ =?us-ascii?q?DEJhkmGaYM3Ao5eATCJSTmGbgIREwGBLDQigVJwFTqCQx+CEhyBe0A3iwwBAQE?=
+X-IronPort-AV: E=Sophos;i="5.47,444,1515456000";
+   d="scan'208";a="81642043"
+From: Taras Kondratiuk <takondra@cisco.com>
+To: Tejun Heo <tj@kernel.org>, Lin Ming <minggr@gmail.com>
+Cc: xe-linux-external@cisco.com, linux-ide@vger.kernel.org,
         linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf cgroup: Rename 'struct cgroup_sel' to 'struct
- cgroup'
-Git-Commit-ID: 3ca32f69592be4d667c701763335fa496a0ede1d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Subject: [PATCH] libata: add refcounting to ata_host
+Date: Fri,  9 Mar 2018 08:34:41 +0000
+Message-Id: <1520584481-9643-1-git-send-email-takondra@cisco.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <20171113201037.GL983427@devbig577.frc2.facebook.com>
+References: <20171113201037.GL983427@devbig577.frc2.facebook.com>
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Authenticated-User: takondra@cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3ca32f69592be4d667c701763335fa496a0ede1d
-Gitweb:     https://git.kernel.org/tip/3ca32f69592be4d667c701763335fa496a0ede1d
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 6 Mar 2018 09:51:48 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 7 Mar 2018 10:22:25 -0300
+After commit 9a6d6a2ddabb ("ata: make ata port as parent device of scsi
+host") manual driver unbind/remove causes use-after-free.
 
-perf cgroup: Rename 'struct cgroup_sel' to 'struct cgroup'
+Unbind unconditionally invokes devres_release_all() which calls
+ata_host_release() and frees ata_host/ata_port memory while it is still
+being referenced as a parent of SCSI host. When SCSI host is finally
+released scsi_host_dev_release() calls put_device(parent) and accesses
+freed ata_port memory.
 
-That name isn't used, is shorter, lets switch to it.
+Add reference counting to make sure that ata_host lives long enough.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-e51yphwgvepd1y4f5fjptmjq@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Bug report: https://lkml.org/lkml/2017/11/1/945
+Fixes: 9a6d6a2ddabb ("ata: make ata port as parent device of scsi host")
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Lin Ming <minggr@gmail.com>
+Cc: linux-ide@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
 ---
- tools/perf/util/cgroup.c | 6 +++---
- tools/perf/util/cgroup.h | 5 +++--
- tools/perf/util/evsel.h  | 4 ++--
- 3 files changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/util/cgroup.c b/tools/perf/util/cgroup.c
-index 2e2aa6c86107..6ce291f45f2d 100644
---- a/tools/perf/util/cgroup.c
-+++ b/tools/perf/util/cgroup.c
-@@ -93,7 +93,7 @@ static int open_cgroup(char *name)
- static int add_cgroup(struct perf_evlist *evlist, char *str)
- {
- 	struct perf_evsel *counter;
--	struct cgroup_sel *cgrp = NULL;
-+	struct cgroup *cgrp = NULL;
- 	int n;
- 	/*
- 	 * check if cgrp is already defined, if so we reuse it
-@@ -144,7 +144,7 @@ found:
- 	return 0;
+Based on v4.16-rc4.
+
+ drivers/ata/libata-core.c      | 44 ++++++++++++++++++++++++++++++++++--------
+ drivers/ata/libata-transport.c |  4 ++++
+ drivers/ata/libata.h           |  2 ++
+ include/linux/libata.h         |  1 +
+ 4 files changed, 43 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index 3c09122bf038..ee67f4b113c5 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -6006,7 +6006,7 @@ struct ata_port *ata_port_alloc(struct ata_host *host)
+ 	return ap;
  }
  
--void close_cgroup(struct cgroup_sel *cgrp)
-+void close_cgroup(struct cgroup *cgrp)
+-static void ata_host_release(struct device *gendev, void *res)
++static void ata_devres_release(struct device *gendev, void *res)
  {
- 	if (cgrp && refcount_dec_and_test(&cgrp->refcnt)) {
- 		close(cgrp->fd);
-@@ -158,7 +158,7 @@ int parse_cgroups(const struct option *opt, const char *str,
- {
- 	struct perf_evlist *evlist = *(struct perf_evlist **)opt->value;
- 	struct perf_evsel *counter;
--	struct cgroup_sel *cgrp = NULL;
-+	struct cgroup *cgrp = NULL;
- 	const char *p, *e, *eos = str + strlen(str);
- 	char *s;
- 	int ret, i;
-diff --git a/tools/perf/util/cgroup.h b/tools/perf/util/cgroup.h
-index afafc87e9201..934daa8e4c19 100644
---- a/tools/perf/util/cgroup.h
-+++ b/tools/perf/util/cgroup.h
-@@ -6,7 +6,7 @@
+ 	struct ata_host *host = dev_get_drvdata(gendev);
+ 	int i;
+@@ -6020,13 +6020,36 @@ static void ata_host_release(struct device *gendev, void *res)
+ 		if (ap->scsi_host)
+ 			scsi_host_put(ap->scsi_host);
  
- struct option;
- 
--struct cgroup_sel {
-+struct cgroup {
- 	char *name;
- 	int fd;
- 	refcount_t refcnt;
-@@ -14,7 +14,8 @@ struct cgroup_sel {
- 
- 
- extern int nr_cgroups; /* number of explicit cgroups defined */
--void close_cgroup(struct cgroup_sel *cgrp);
-+void close_cgroup(struct cgroup *cgrp);
++	}
 +
- int parse_cgroups(const struct option *opt, const char *str, int unset);
++	dev_set_drvdata(gendev, NULL);
++	ata_host_put(host);
++}
++
++static void ata_host_release(struct kref *kref)
++{
++	struct ata_host *host = container_of(kref, struct ata_host, kref);
++	int i;
++
++	for (i = 0; i < host->n_ports; i++) {
++		struct ata_port *ap = host->ports[i];
++
+ 		kfree(ap->pmp_link);
+ 		kfree(ap->slave_link);
+ 		kfree(ap);
+ 		host->ports[i] = NULL;
+ 	}
++	kfree(host);
++}
  
- #endif /* __CGROUP_H__ */
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index a7487c6d1866..92ba001b627f 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -30,7 +30,7 @@ struct perf_sample_id {
- 	u64			period;
- };
+-	dev_set_drvdata(gendev, NULL);
++void ata_host_get(struct ata_host *host)
++{
++	kref_get(&host->kref);
++}
++
++void ata_host_put(struct ata_host *host)
++{
++	kref_put(&host->kref, ata_host_release);
+ }
  
--struct cgroup_sel;
-+struct cgroup;
+ /**
+@@ -6054,26 +6077,31 @@ struct ata_host *ata_host_alloc(struct device *dev, int max_ports)
+ 	struct ata_host *host;
+ 	size_t sz;
+ 	int i;
++	void *dr;
  
- /*
-  * The 'struct perf_evsel_config_term' is used to pass event
-@@ -107,7 +107,7 @@ struct perf_evsel {
- 	struct perf_stat_evsel  *stats;
- 	void			*priv;
- 	u64			db_id;
--	struct cgroup_sel	*cgrp;
-+	struct cgroup		*cgrp;
- 	void			*handler;
- 	struct cpu_map		*cpus;
- 	struct cpu_map		*own_cpus;
+ 	DPRINTK("ENTER\n");
+ 
+-	if (!devres_open_group(dev, NULL, GFP_KERNEL))
+-		return NULL;
+-
+ 	/* alloc a container for our list of ATA ports (buses) */
+ 	sz = sizeof(struct ata_host) + (max_ports + 1) * sizeof(void *);
+-	/* alloc a container for our list of ATA ports (buses) */
+-	host = devres_alloc(ata_host_release, sz, GFP_KERNEL);
++	host = kzalloc(sz, GFP_KERNEL);
+ 	if (!host)
++		return NULL;
++
++	if (!devres_open_group(dev, NULL, GFP_KERNEL))
++		return NULL;
++
++	dr = devres_alloc(ata_devres_release, 0, GFP_KERNEL);
++	if (!dr)
+ 		goto err_out;
+ 
+-	devres_add(dev, host);
++	devres_add(dev, dr);
+ 	dev_set_drvdata(dev, host);
+ 
+ 	spin_lock_init(&host->lock);
+ 	mutex_init(&host->eh_mutex);
+ 	host->dev = dev;
+ 	host->n_ports = max_ports;
++	kref_init(&host->kref);
+ 
+ 	/* allocate ports bound to this host */
+ 	for (i = 0; i < max_ports; i++) {
+diff --git a/drivers/ata/libata-transport.c b/drivers/ata/libata-transport.c
+index 19e6e539a061..a0b0b4d986f2 100644
+--- a/drivers/ata/libata-transport.c
++++ b/drivers/ata/libata-transport.c
+@@ -224,6 +224,8 @@ static DECLARE_TRANSPORT_CLASS(ata_port_class,
+ 
+ static void ata_tport_release(struct device *dev)
+ {
++	struct ata_port *ap = tdev_to_port(dev);
++	ata_host_put(ap->host);
+ }
+ 
+ /**
+@@ -284,6 +286,7 @@ int ata_tport_add(struct device *parent,
+ 	dev->type = &ata_port_type;
+ 
+ 	dev->parent = parent;
++	ata_host_get(ap->host);
+ 	dev->release = ata_tport_release;
+ 	dev_set_name(dev, "ata%d", ap->print_id);
+ 	transport_setup_device(dev);
+@@ -314,6 +317,7 @@ int ata_tport_add(struct device *parent,
+  tport_err:
+ 	transport_destroy_device(dev);
+ 	put_device(dev);
++	ata_host_put(ap->host);
+ 	return error;
+ }
+ 
+diff --git a/drivers/ata/libata.h b/drivers/ata/libata.h
+index f953cb4bb1ba..9e21c49cf6be 100644
+--- a/drivers/ata/libata.h
++++ b/drivers/ata/libata.h
+@@ -100,6 +100,8 @@ extern int ata_port_probe(struct ata_port *ap);
+ extern void __ata_port_probe(struct ata_port *ap);
+ extern unsigned int ata_read_log_page(struct ata_device *dev, u8 log,
+ 				      u8 page, void *buf, unsigned int sectors);
++extern void ata_host_get(struct ata_host *host);
++extern void ata_host_put(struct ata_host *host);
+ 
+ #define to_ata_port(d) container_of(d, struct ata_port, tdev)
+ 
+diff --git a/include/linux/libata.h b/include/linux/libata.h
+index ed9826b21c5e..1795fecdea17 100644
+--- a/include/linux/libata.h
++++ b/include/linux/libata.h
+@@ -617,6 +617,7 @@ struct ata_host {
+ 	void			*private_data;
+ 	struct ata_port_operations *ops;
+ 	unsigned long		flags;
++	struct kref		kref;
+ 
+ 	struct mutex		eh_mutex;
+ 	struct task_struct	*eh_owner;
+-- 
+2.10.3.dirty
