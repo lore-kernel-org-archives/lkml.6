@@ -1,102 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932220AbeCIPkQ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 10:40:16 -0500
-Received: from smtprelay01.ispgateway.de ([80.67.31.39]:13266 "EHLO
-        smtprelay01.ispgateway.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751249AbeCIPkP (ORCPT
+        id S932121AbeCIPp2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 10:45:28 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:39210 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751096AbeCIPp0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 10:40:15 -0500
-Date: Fri, 9 Mar 2018 16:40:08 +0100
-From: Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@KARO-electronics.de>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Martin Kaiser <martin@kaiser.cx>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: dts: i.MX25: define SSI FIFO depth
-Message-ID: <20180309164008.52d41dd5@karo-electronics.de>
-In-Reply-To: <1520587632.19507.3.camel@pengutronix.de>
-References: <1520373499-13623-1-git-send-email-martin@kaiser.cx>
-        <20180308161135.1f3d3d18@karo-electronics.de>
-        <20180308153832.GA28454@botnar.kaiser.cx>
-        <20180309093738.7cd5fded@karo-electronics.de>
-        <1520587632.19507.3.camel@pengutronix.de>
-Organization: Ka-Ro electronics GmbH
+        Fri, 9 Mar 2018 10:45:26 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6FCF36050D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Fri, 9 Mar 2018 08:45:24 -0700
+From: Lina Iyer <ilina@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 05/10] drivers: qcom: rpmh-rsc: write sleep/wake
+ requests to TCS
+Message-ID: <20180309154524.GD3577@codeaurora.org>
+References: <20180302164317.10554-1-ilina@codeaurora.org>
+ <20180302164317.10554-6-ilina@codeaurora.org>
+ <152053809443.219802.15873554351627646762@swboyd.mtv.corp.google.com>
+ <20180308235830.GC3577@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Df-Sender: bHdAa2Fyby1lbGVjdHJvbmljcy5kZQ==
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20180308235830.GC3577@codeaurora.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Mar 08 2018 at 16:58 -0700, Lina Iyer wrote:
+>On Thu, Mar 08 2018 at 12:41 -0700, Stephen Boyd wrote:
+>>Quoting Lina Iyer (2018-03-02 08:43:12)
 
-On Fri, 09 Mar 2018 10:27:12 +0100 Lucas Stach wrote:
-> Hi Lothar,
-> 
-> Am Freitag, den 09.03.2018, 09:37 +0100 schrieb Lothar Waßmann:
-> > Hi,
-> > 
-> > On Thu, 8 Mar 2018 16:38:32 +0100 Martin Kaiser wrote:
-> > > Hi Lothar,
-> > > 
-> > > > > Thus wrote Lothar Waßmann (LW@KARO-electronics.de):
-> > > 
-> > > > > diff --git a/arch/arm/boot/dts/imx25.dtsi b/arch/arm/boot/dts/imx25.dtsi
-> > > > > index 9725705..cf70df2 100644
-> > > > > --- a/arch/arm/boot/dts/imx25.dtsi
-> > > > > +++ b/arch/arm/boot/dts/imx25.dtsi
-> > > > > @@ -269,6 +269,7 @@
-> > > > > > > > >  				dmas = <&sdma 24 1 0>,
-> > > > > > > > >  				       <&sdma 25 1 0>;
-> > > > > > > > >  				dma-names = "rx", "tx";
-> > > > > > > > > +				fsl,fifo-depth = <15>;
-> > > > > > > > >  				status = "disabled";
-> > > > > > > > >  			};
-> > > > > @@ -329,6 +330,7 @@
-> > > > > > > > >  				dmas = <&sdma 28 1 0>,
-> > > > > > > > >  				       <&sdma 29 1 0>;
-> > > > > > > > >  				dma-names = "rx", "tx";
-> > > > > > > > > +				fsl,fifo-depth = <15>;
-> > > > > > > > >  				status = "disabled";
-> > > > >  			};
-> > > > You are changing the global .dtsi file. Did you test this change with
-> > > > all devices that are affected by it?
-> > > 
-> > > I changed the hardware description of the imx25 SSI to match the
-> > > reference manual.
-> > > 
-> > > I did test this change on an imx25 board with audio playback. This uses
-> > > the SSI description I modified. I verified that the driver is actually
-> > > taking the modified setting into account and that this causes no
-> > > problems.
-> > > 
-> > > As of today, this setting is used by the fsl_ssi driver to set the fifo
-> > > water level for dma requests.
-> > > 
-> > > Of course, I don't have access to the enitre range of supported imx25
-> > > boards and I don't think this is required for submitting patches.
-> > > 
-> > > Do you have any indication why this patch should not be merged?
-> > > 
-> > 
-> > Usually patches should not willy-nilly change the behaviour of existing
-> > configurations unless they fix any real life bugs.
-> 
-> With this logic we wouldn't be able to get most driver changes applied.
-> If it is matching the reference manual and has been tested on the
-> affected hardware it should be good to go.
-> 
-> If you know about any specific corner cases that might break with this
-> change, please speak up now. Don't reject patches based on the
-> overarching "it might break something" argument.
-> 
-I didn't reject anything, I just wanted to make sure, that the
-implications of this patch were sufficiently considered.
+>>>+static int find_slots(struct tcs_group *tcs, struct tcs_request *msg,
+>>>+                    int *m, int *n)
+>>>+{
+>>>+       int slot, offset;
+>>>+       int i = 0;
+>>>+
+>>>+       /* Find if we already have the msg in our TCS */
+>>>+       slot = find_match(tcs, msg->payload, msg->num_payload);
+>>>+       if (slot >= 0)
+>>>+               goto copy_data;
+>>
+>>Shouldn't this goto skip setting the bits in tcs->slots?
+>>
+>No, we overwrite what we found with this new data.
+>>>+
+>>>+       /* Do over, until we can fit the full payload in a TCS */
+>>>+       do {
+>>>+               slot = bitmap_find_next_zero_area(tcs->slots, MAX_TCS_SLOTS,
+>>>+                                                i, msg->num_payload, 0);
+>>>+               if (slot == MAX_TCS_SLOTS)
+>>>+                       break;
+>>>+               i += tcs->ncpt;
+>>>+       } while (slot + msg->num_payload - 1 >= i);
+>>>+
+>>>+       if (slot == MAX_TCS_SLOTS)
+>>>+               return -ENOMEM;
+>>
+>>Would be nice to remove this duplicate condition somehow. Maybe a goto?
+>>
+>I would return instead of the break earlier instead of this here.
+>>>+
+>>>+copy_data:
+>>>+       bitmap_set(tcs->slots, slot, msg->num_payload);
+>>>+       /* Copy the addresses of the resources over to the slots */
+>>>+       if (tcs->cmd_addr) {
+>>
+>>find_match() above didn't check for tcs->cmd_addr. Does this ever happen
+>>to fail?
+>>
+>Not allocated for active TCSes. I should be checking for it there as
+>well. Not sure how I didnt see a failure.
+>
+Ah, this function is never called for active tcs which would have the
+tcs->cmd_addr to be NULL. I dont need this check.
 
-
-Lothar Waßmann
+-- Lina
