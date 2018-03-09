@@ -1,31 +1,31 @@
 Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1520607028; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520607027; cv=none;
         d=google.com; s=arc-20160816;
-        b=cMpAH152RNBlClQNaZSbOMAYtxuCeb+dqqg4bX21D4bvjlbx7udiTxzvhPUcjltwOg
-         h1cYUKj7cO7MWest+yYTqMueS47zzuagio042mBQddm0YS3U+mnjX+L7uBnC/bjdtu+K
-         R8RPq3mDeEp+ZzXe4EwoWGBixSE5dwi6QpHTZDqEQS4sbUisQnliH238pZtNRpK5a5lq
-         AM2xmchydxqdF79Cg+qmrdNKlZ7tc7C6fl4iMFxQkSC/eex06c8fRmyAfnjehx/mlk00
-         C/zPRRlA46fdwRjlomd7ATehKe/H9ULF2s1krBnF5djaEbbhVY+VXIScYXrMvIKB0sLm
-         H/pw==
+        b=LZo2Ls/mIbHuGbrehtLSoMdAm1UffKsWXwfLFhCm2PuogOjwaQ8pFibLhZ3Pj9oX+n
+         5U7hfFBZPMUf7YhCSaDhOyux/7HEOTfX/GzFoahjU3cyV8mLknczE7E/8TVXHN/iUS0q
+         Tmh80fUEy/+T7FDKVxpDMn0GnCS817n2D/ZapStRQE4J9JfxMOrD6uOiAzPSolb7F3GH
+         H35mG0Y7tytuI0ova1xbRgmvKsfKK3IcEwJ0O4JU89SgQR2VCHaDbtNFuM9hqWXBWhna
+         vGJ72+OjtasD+JdiqbI6UW3qh4rW20PFWjl5b8EBqcNp2WeAS3Ix4PQZPZ9R+U3y/ld+
+         A8kw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=mKP2TnGnWIK7Bi0xi2aUnSgI/KaYTC2r/mhx+bI51D4=;
-        b=rmdewaNWPjQHhXLsZyDrUvVkeosh7DPPVYEgKy0uUmICg+BHtH0XfntQ/ZpiK+qLvO
-         xToqKj2ZlAK2HQiywRdEoI0KLL9mmEQD1cKV86EvEtXpgGnxHpWGtPzB3KEXzY4UYN+3
-         yvpDHDXRvzXVUokfC59XbocV/f3qBijPXAbrCl1stZjKsvChZj8eN4wNVsfKwk84dW9t
-         1TbvEBgBInK2wISYXdi7c7/iGGVEa9i9HK7ksDdHp/jwRU+x0fTlv4jXBIEE16IeuOOt
-         GAmMeyKsSzTIsPRudyQVyAuSZWlx3v3wMnNRmJVWzBShOxWiGICGa1tRJNHrPALwrFqv
-         m2Tg==
+        bh=vQR5gljnwr4aCOvufpueUZU1itTLbeOEfIMn7X2e+lg=;
+        b=jlIviiNbY19G49lTxPvXcoscYfiqh8WZPYCK1JmbpQTlFUsek4OUpuryLafXRMT1BU
+         n0irrWfixmjuD1pmGIHWKUlVAV6sBDK9bc6pB0EYncsfnRq4gbRiLSx9MPO7jxEmsccP
+         rzkIWZjHDhIXaRuopnRSk7YanwGFrxDZ3DVe/Dc9Zh41Vg61R8mVK8lCaXSbAXP9qjPP
+         g+YKphmdmBuNx7aEBlEE7HrTIqwciffpvj1V+jUVLKO6QSKKogZN4svAWeNXfnOrpa6I
+         ofslQzjNUy15cAtKpaiyiSUPQ3kcFm3iMeUdE7iOzhwECj+fRBnz8D74ugh+ikhXcDjx
+         wSCQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=e8TBcfp0;
+       dkim=pass header.i=@linaro.org header.s=google header.b=XZDZVI/N;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=e8TBcfp0;
+       dkim=pass header.i=@linaro.org header.s=google header.b=XZDZVI/N;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AG47ELtba8Iayxc46r0Ggb6c3eLGZ8f8m57saq1hbR3NL0wIqgzXQpMoLdKEKrcYBKYmVDTgtFt7zQ==
+X-Google-Smtp-Source: AG47ELud03hBG+NqnQ83Hv7ry80UjUv7UvY838mn+LZhQ36zIrm5dCCQdzrvX/2Hyo2Xg/M+8ncfvA==
 From: srinivas.kandagatla@linaro.org
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
@@ -41,22 +41,21 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	linux-amlogic@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 02/25] nvmem: core: Allow specifying device name verbatim
-Date: Fri,  9 Mar 2018 14:46:56 +0000
-Message-Id: <20180309144719.29904-3-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 01/25] nvmem: Document struct nvmem_config
+Date: Fri,  9 Mar 2018 14:46:55 +0000
+Message-Id: <20180309144719.29904-2-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180309144719.29904-1-srinivas.kandagatla@linaro.org>
 References: <20180309144719.29904-1-srinivas.kandagatla@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594472035588887358?=
-X-GMAIL-MSGID: =?utf-8?q?1594472035588887358?=
+X-GMAIL-THRID: =?utf-8?q?1594472034648198957?=
+X-GMAIL-MSGID: =?utf-8?q?1594472034648198957?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-Add code to allow avoid having nvmem core append a numeric suffix to
-the end of the name by passing config->id of -1.
+Add a simple description of struct nvmem_config and its fields.
 
 Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Heiko Stuebner <heiko@sntech.de>
@@ -73,45 +72,41 @@ Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/core.c           | 11 ++++++++---
- include/linux/nvmem-provider.h |  3 +++
- 2 files changed, 11 insertions(+), 3 deletions(-)
+ include/linux/nvmem-provider.h | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 35a3dbeea324..99e04cfcc723 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -473,9 +473,14 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 	nvmem->reg_read = config->reg_read;
- 	nvmem->reg_write = config->reg_write;
- 	nvmem->dev.of_node = config->dev->of_node;
--	dev_set_name(&nvmem->dev, "%s%d",
--		     config->name ? : "nvmem",
--		     config->name ? config->id : nvmem->id);
-+
-+	if (config->id == -1 && config->name) {
-+		dev_set_name(&nvmem->dev, "%s", config->name);
-+	} else {
-+		dev_set_name(&nvmem->dev, "%s%d",
-+			     config->name ? : "nvmem",
-+			     config->name ? config->id : nvmem->id);
-+	}
- 
- 	nvmem->read_only = device_property_present(config->dev, "read-only") |
- 			   config->read_only;
 diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
-index a39f76ff2ccd..b00567a07496 100644
+index 497706f5adca..a39f76ff2ccd 100644
 --- a/include/linux/nvmem-provider.h
 +++ b/include/linux/nvmem-provider.h
-@@ -43,6 +43,9 @@ typedef int (*nvmem_reg_write_t)(void *priv, unsigned int offset,
-  * Note: A default "nvmem<id>" name will be assigned to the device if
-  * no name is specified in its configuration. In such case "<id>" is
-  * generated with ida_simple_get() and provided id field is ignored.
+@@ -22,6 +22,28 @@ typedef int (*nvmem_reg_read_t)(void *priv, unsigned int offset,
+ typedef int (*nvmem_reg_write_t)(void *priv, unsigned int offset,
+ 				 void *val, size_t bytes);
+ 
++/**
++ * struct nvmem_config - NVMEM device configuration
 + *
-+ * Note: Specifying name and setting id to -1 implies a unique device
-+ * whose name is provided as-is (kept unaltered).
-  */
++ * @dev:	Parent device.
++ * @name:	Optional name.
++ * @id:		Optional device ID used in full name. Ignored if name is NULL.
++ * @owner:	Pointer to exporter module. Used for refcounting.
++ * @cells:	Optional array of pre-defined NVMEM cells.
++ * @ncells:	Number of elements in cells.
++ * @read_only:	Device is read-only.
++ * @root_only:	Device is accessibly to root only.
++ * @reg_read:	Callback to read data.
++ * @reg_write:	Callback to write data.
++ * @size:	Device size.
++ * @word_size:	Minimum read/write access granularity.
++ * @stride:	Minimum read/write access stride.
++ * @priv:	User context passed to read/write callbacks.
++ *
++ * Note: A default "nvmem<id>" name will be assigned to the device if
++ * no name is specified in its configuration. In such case "<id>" is
++ * generated with ida_simple_get() and provided id field is ignored.
++ */
  struct nvmem_config {
  	struct device		*dev;
+ 	const char		*name;
 -- 
 2.15.1
