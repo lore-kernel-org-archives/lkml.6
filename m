@@ -1,225 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932751AbeCITA1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 14:00:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40842 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932370AbeCITAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 14:00:23 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4100F2178E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Subject: [PATCH v2 06/13] PCI/portdrv: Remove pcie_port_bus_type link order
- dependency
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-pm@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
-        Sinan Kaya <okaya@codeaurora.org>, Lukas Wunner <lukas@wunner.de>,
-        Frederick Lawler <fred@fredlawl.com>
-Date: Fri, 09 Mar 2018 13:00:22 -0600
-Message-ID: <152062202196.77693.13201322126291517429.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <152062141493.77693.9630397416694091342.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152062141493.77693.9630397416694091342.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
+        id S932370AbeCITFU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 14:05:20 -0500
+Received: from mail-it0-f49.google.com ([209.85.214.49]:53575 "EHLO
+        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932069AbeCITFS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 14:05:18 -0500
+X-Google-Smtp-Source: AG47ELua/jRm9xG809kkoqIICmTkPeZ87ZqmiLsHFAJRzUdE//LTKPzCeUX9joTJ+PBcOEONSvLXunAjcsgVKf6muck=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180309150153.3sxbbpd6jdn2d5yy@pathway.suse.cz>
+References: <20180302125118.bjd3tbuu72vgfczo@pathway.suse.cz>
+ <20180302125359.szbin2kznxvoq7sc@pathway.suse.cz> <CAKwiHFgTbFof34oc59OU3M1=-PTzstv0uxSmoiRc8TJPJPMHVw@mail.gmail.com>
+ <20180306092513.ibodfsnv4xrxdlub@pathway.suse.cz> <1520330185.10722.401.camel@linux.intel.com>
+ <20180307155244.b45c3fb5vcxb4q2l@pathway.suse.cz> <CA+55aFxr5eg_fWjyhcYFU4CSOoVP_GeB79cYa=8mUk7J1cUG7A@mail.gmail.com>
+ <20180308141824.bfk2pr6wmjh4ytdi@pathway.suse.cz> <CA+55aFyDbr4JpiPoHXq=3wJu+WVCLZPpAVsmY=5HVStawmEiRw@mail.gmail.com>
+ <CA+55aFwaNTC2HV9ERDFWCrmhvgZ58SKMM+ik9Ypr3i-ZUyU6Fw@mail.gmail.com> <20180309150153.3sxbbpd6jdn2d5yy@pathway.suse.cz>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 9 Mar 2018 11:05:17 -0800
+X-Google-Sender-Auth: hspr7qBn9GJHEtRDBiw-Hhmqats
+Message-ID: <CA+55aFwT-Vd+sVdAVemUjUvkNYFiLyVMHZxv9hF6KzRM7i4Yrg@mail.gmail.com>
+Subject: Re: [PATCH] vsprintf: Make "null" pointer dereference more robust
+To: Petr Mladek <pmladek@suse.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On Fri, Mar 9, 2018 at 7:01 AM, Petr Mladek <pmladek@suse.com> wrote:
+> Also it makes the handling unified. We print:
+>
+>    + (null) when pure NULL pointer is dereferenced
+>    + (efault) when an invalid address is dereferenced
+>    + pointer address otherwise
 
-The pcie_port_bus_type must be registered before drivers that depend on it
-can be registered.  Those drivers include:
+This is still fundamentally completely wrong.
 
-  pcied_init()                # PCIe native hotplug driver
-  aer_service_init()          # AER driver
-  dpc_service_init()          # DPC driver
-  pcie_pme_service_init()     # PME driver
+It never prints "pointer address", and if it were to do that, it would be wrong.
 
-Previously we registered pcie_port_bus_type from pcie_portdrv_init(), a
-device_initcall.  The callers of pcie_port_service_register() (above) are
-also device_initcalls.  This is fragile because the device_initcall
-ordering depends on link order, which is not explicit.
+It should never ever trigger for an address operation, only for the
+"we will get _data_ from the ponter".
 
-Register pcie_port_bus_type from pci_driver_init() along with pci_bus_type.
-This removes the link order dependency between portdrv and the pciehp, AER,
-DPC, and PCIe PME drivers.
+The strchr thing is also completely broken, and in a very subtle way.
+"strchr(string, 0)" is special, and the Open Group states
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/pci/pci-driver.c       |   44 +++++++++++++++++++++++++++++++-
- drivers/pci/pcie/Makefile      |    2 +
- drivers/pci/pcie/portdrv_bus.c |   55 ----------------------------------------
- drivers/pci/pcie/portdrv_pci.c |   13 +--------
- 4 files changed, 45 insertions(+), 69 deletions(-)
- delete mode 100644 drivers/pci/pcie/portdrv_bus.c
+  "The terminating null byte is considered to be part of the string"
 
-diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-index 204d2b54c2a4..02ecbdafe38b 100644
---- a/drivers/pci/pci-driver.c
-+++ b/drivers/pci/pci-driver.c
-@@ -19,6 +19,7 @@
- #include <linux/suspend.h>
- #include <linux/kexec.h>
- #include "pci.h"
-+#include "pcie/portdrv.h"
- 
- struct pci_dynid {
- 	struct list_head node;
-@@ -1553,8 +1554,49 @@ struct bus_type pci_bus_type = {
- };
- EXPORT_SYMBOL(pci_bus_type);
- 
-+#ifdef CONFIG_PCIEPORTBUS
-+static int pcie_port_bus_match(struct device *dev, struct device_driver *drv)
-+{
-+	struct pcie_device *pciedev;
-+	struct pcie_port_service_driver *driver;
-+
-+	if (drv->bus != &pcie_port_bus_type || dev->bus != &pcie_port_bus_type)
-+		return 0;
-+
-+	pciedev = to_pcie_device(dev);
-+	driver = to_service_driver(drv);
-+
-+	if (driver->service != pciedev->service)
-+		return 0;
-+
-+	if ((driver->port_type != PCIE_ANY_PORT) &&
-+	    (driver->port_type != pci_pcie_type(pciedev->port)))
-+		return 0;
-+
-+	return 1;
-+}
-+
-+struct bus_type pcie_port_bus_type = {
-+	.name		= "pci_express",
-+	.match		= pcie_port_bus_match,
-+};
-+EXPORT_SYMBOL_GPL(pcie_port_bus_type);
-+#endif
-+
- static int __init pci_driver_init(void)
- {
--	return bus_register(&pci_bus_type);
-+	int ret;
-+
-+	ret = bus_register(&pci_bus_type);
-+	if (ret)
-+		return ret;
-+
-+#ifdef CONFIG_PCIEPORTBUS
-+	ret = bus_register(&pcie_port_bus_type);
-+	if (ret)
-+		return ret;
-+#endif
-+
-+	return 0;
- }
- postcore_initcall(pci_driver_init);
-diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
-index 223e4c34c29a..e01c10c97b95 100644
---- a/drivers/pci/pcie/Makefile
-+++ b/drivers/pci/pcie/Makefile
-@@ -6,7 +6,7 @@
- # Build PCI Express ASPM if needed
- obj-$(CONFIG_PCIEASPM)		+= aspm.o
- 
--pcieportdrv-y			:= portdrv_core.o portdrv_pci.o portdrv_bus.o
-+pcieportdrv-y			:= portdrv_core.o portdrv_pci.o
- pcieportdrv-$(CONFIG_ACPI)	+= portdrv_acpi.o
- 
- obj-$(CONFIG_PCIEPORTBUS)	+= pcieportdrv.o
-diff --git a/drivers/pci/pcie/portdrv_bus.c b/drivers/pci/pcie/portdrv_bus.c
-deleted file mode 100644
-index 4969ccf6b214..000000000000
---- a/drivers/pci/pcie/portdrv_bus.c
-+++ /dev/null
-@@ -1,55 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * File:	portdrv_bus.c
-- * Purpose:	PCI Express Port Bus Driver's Bus Overloading Functions
-- *
-- * Copyright (C) 2004 Intel
-- * Copyright (C) Tom Long Nguyen (tom.l.nguyen@intel.com)
-- */
--
--#include <linux/module.h>
--#include <linux/pci.h>
--#include <linux/kernel.h>
--#include <linux/errno.h>
--#include <linux/pm.h>
--
--#include "portdrv.h"
--
--static int pcie_port_bus_match(struct device *dev, struct device_driver *drv);
--
--struct bus_type pcie_port_bus_type = {
--	.name		= "pci_express",
--	.match		= pcie_port_bus_match,
--};
--EXPORT_SYMBOL_GPL(pcie_port_bus_type);
--
--static int pcie_port_bus_match(struct device *dev, struct device_driver *drv)
--{
--	struct pcie_device *pciedev;
--	struct pcie_port_service_driver *driver;
--
--	if (drv->bus != &pcie_port_bus_type || dev->bus != &pcie_port_bus_type)
--		return 0;
--
--	pciedev = to_pcie_device(dev);
--	driver = to_service_driver(drv);
--
--	if (driver->service != pciedev->service)
--		return 0;
--
--	if ((driver->port_type != PCIE_ANY_PORT) &&
--	    (driver->port_type != pci_pcie_type(pciedev->port)))
--		return 0;
--
--	return 1;
--}
--
--int pcie_port_bus_register(void)
--{
--	return bus_register(&pcie_port_bus_type);
--}
--
--void pcie_port_bus_unregister(void)
--{
--	bus_unregister(&pcie_port_bus_type);
--}
-diff --git a/drivers/pci/pcie/portdrv_pci.c b/drivers/pci/pcie/portdrv_pci.c
-index 5d9d5305ebef..127321e17184 100644
---- a/drivers/pci/pcie/portdrv_pci.c
-+++ b/drivers/pci/pcie/portdrv_pci.c
-@@ -258,22 +258,11 @@ static const struct dmi_system_id pcie_portdrv_dmi_table[] __initconst = {
- 
- static int __init pcie_portdrv_init(void)
- {
--	int retval;
--
- 	if (pcie_ports_disabled)
- 		return -EACCES;
- 
- 	dmi_check_system(pcie_portdrv_dmi_table);
- 
--	retval = pcie_port_bus_register();
--	if (retval) {
--		printk(KERN_WARNING "PCIE: bus_register error: %d\n", retval);
--		goto out;
--	}
--	retval = pci_register_driver(&pcie_portdriver);
--	if (retval)
--		pcie_port_bus_unregister();
-- out:
--	return retval;
-+	return pci_register_driver(&pcie_portdriver);
- }
- device_initcall(pcie_portdrv_init);
+so a NUL character will *always* return success, which is actually
+completely wrong for this case, because now it does that whole crazy
+<efault> thing for %p that it shouldn't do.
+
+Not that I actually verified that our strchr() follows the actual
+rules anyway - I personally consider "strchr(string, 0)" to not really
+be "special", but be a bug. Either way, the comment is wrong, but the
+code is also wrong.
+
+                 Linus
