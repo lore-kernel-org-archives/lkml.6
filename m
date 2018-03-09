@@ -1,31 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751390AbeCIJJg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 04:09:36 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:38403 "EHLO
+        id S1751617AbeCIJKj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 04:10:39 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:49597 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751019AbeCIJJe (ORCPT
+        with ESMTP id S1751169AbeCIJKh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:09:34 -0500
-Date: Fri, 9 Mar 2018 01:09:12 -0800
+        Fri, 9 Mar 2018 04:10:37 -0500
+Date: Fri, 9 Mar 2018 01:10:14 -0800
 From: tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-bcfbe5c41d630ce6b74da45134cea484248b515a@git.kernel.org>
-Cc: torvalds@linux-foundation.org, mingo@kernel.org,
-        kan.liang@linux.intel.com, eranian@google.com, peterz@infradead.org,
-        alexander.shishkin@linux.intel.com, acme@redhat.com,
-        tglx@linutronix.de, hpa@zytor.com, jolsa@redhat.com,
-        linux-kernel@vger.kernel.org, vincent.weaver@maine.edu
-Reply-To: peterz@infradead.org, eranian@google.com, acme@redhat.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        tglx@linutronix.de, hpa@zytor.com, vincent.weaver@maine.edu,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        kan.liang@linux.intel.com, torvalds@linux-foundation.org
-In-Reply-To: <1518474035-21006-3-git-send-email-kan.liang@linux.intel.com>
-References: <1518474035-21006-3-git-send-email-kan.liang@linux.intel.com>
+Message-ID: <tip-ceb90d9e0248947839a0ff4bee98cf28695a6020@git.kernel.org>
+Cc: vincent.weaver@maine.edu, kan.liang@linux.intel.com,
+        alexander.shishkin@linux.intel.com, mingo@kernel.org,
+        eranian@google.com, acme@redhat.com, jolsa@redhat.com,
+        peterz@infradead.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de
+Reply-To: torvalds@linux-foundation.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        alexander.shishkin@linux.intel.com, vincent.weaver@maine.edu,
+        kan.liang@linux.intel.com, acme@redhat.com, eranian@google.com,
+        peterz@infradead.org, jolsa@redhat.com, mingo@kernel.org
+In-Reply-To: <1518474035-21006-5-git-send-email-kan.liang@linux.intel.com>
+References: <1518474035-21006-5-git-send-email-kan.liang@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/x86: Introduce a ->read() callback in 'struct
- x86_pmu'
-Git-Commit-ID: bcfbe5c41d630ce6b74da45134cea484248b515a
+Subject: [tip:perf/core] perf/x86/intel: Fix PMU read for auto-reload
+Git-Commit-ID: ceb90d9e0248947839a0ff4bee98cf28695a6020
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -38,16 +37,18 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  bcfbe5c41d630ce6b74da45134cea484248b515a
-Gitweb:     https://git.kernel.org/tip/bcfbe5c41d630ce6b74da45134cea484248b515a
+Commit-ID:  ceb90d9e0248947839a0ff4bee98cf28695a6020
+Gitweb:     https://git.kernel.org/tip/ceb90d9e0248947839a0ff4bee98cf28695a6020
 Author:     Kan Liang <kan.liang@linux.intel.com>
-AuthorDate: Mon, 12 Feb 2018 14:20:32 -0800
+AuthorDate: Mon, 12 Feb 2018 14:20:34 -0800
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 9 Mar 2018 08:22:20 +0100
+CommitDate: Fri, 9 Mar 2018 08:22:22 +0100
 
-perf/x86: Introduce a ->read() callback in 'struct x86_pmu'
+perf/x86/intel: Fix PMU read for auto-reload
 
-Auto-reload needs to be specially handled when reading event counts.
+Auto-reload events needs to be specially handled in event count read.
+
+Auto-reload is only available for intel_pmu.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -60,35 +61,37 @@ Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Vince Weaver <vincent.weaver@maine.edu>
 Cc: acme@kernel.org
-Link: http://lkml.kernel.org/r/1518474035-21006-3-git-send-email-kan.liang@linux.intel.com
+Fixes: b8241d20699e ("perf/x86/intel: Implement batched PEBS interrupt handling (large PEBS interrupt threshold)")
+Link: http://lkml.kernel.org/r/1518474035-21006-5-git-send-email-kan.liang@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/events/core.c       | 2 ++
- arch/x86/events/perf_event.h | 1 +
- 2 files changed, 3 insertions(+)
+ arch/x86/events/intel/core.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 5a3ccd1715e2..00a6251981d2 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -1881,6 +1881,8 @@ early_initcall(init_hw_perf_events);
- 
- static inline void x86_pmu_read(struct perf_event *event)
- {
-+	if (x86_pmu.read)
-+		return x86_pmu.read(event);
- 	x86_perf_event_update(event);
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 1ba7ca7b675d..41c68d337e84 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -2060,6 +2060,14 @@ static void intel_pmu_del_event(struct perf_event *event)
+ 		intel_pmu_pebs_del(event);
  }
  
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 6495ffd57e3e..d445f0026989 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -520,6 +520,7 @@ struct x86_pmu {
- 	void		(*disable)(struct perf_event *);
- 	void		(*add)(struct perf_event *);
- 	void		(*del)(struct perf_event *);
-+	void		(*read)(struct perf_event *event);
- 	int		(*hw_config)(struct perf_event *event);
- 	int		(*schedule_events)(struct cpu_hw_events *cpuc, int n, int *assign);
- 	unsigned	eventsel;
++static void intel_pmu_read_event(struct perf_event *event)
++{
++	if (event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD)
++		intel_pmu_auto_reload_read(event);
++	else
++		x86_perf_event_update(event);
++}
++
+ static void intel_pmu_enable_fixed(struct hw_perf_event *hwc)
+ {
+ 	int idx = hwc->idx - INTEL_PMC_IDX_FIXED;
+@@ -3503,6 +3511,7 @@ static __initconst const struct x86_pmu intel_pmu = {
+ 	.disable		= intel_pmu_disable_event,
+ 	.add			= intel_pmu_add_event,
+ 	.del			= intel_pmu_del_event,
++	.read			= intel_pmu_read_event,
+ 	.hw_config		= intel_pmu_hw_config,
+ 	.schedule_events	= x86_schedule_events,
+ 	.eventsel		= MSR_ARCH_PERFMON_EVENTSEL0,
