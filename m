@@ -1,28 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751257AbeCIInw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 03:43:52 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:48041 "EHLO
+        id S1751136AbeCIIni (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 03:43:38 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:36929 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751072AbeCIInu (ORCPT
+        with ESMTP id S1751059AbeCIIng (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 03:43:50 -0500
-Date: Fri, 9 Mar 2018 00:43:42 -0800
-From: tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-2c5f6d876b4edda8740f5a2826cf9b1a67fa76fb@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, jolsa@kernel.org, tglx@linutronix.de,
-        ak@linux.intel.com, wangnan0@huawei.com, acme@redhat.com,
-        namhyung@kernel.org, kan.liang@linux.intel.com, hpa@zytor.com,
-        mingo@kernel.org
-Reply-To: wangnan0@huawei.com, acme@redhat.com, namhyung@kernel.org,
-        ak@linux.intel.com, tglx@linutronix.de, mingo@kernel.org,
-        kan.liang@linux.intel.com, hpa@zytor.com, jolsa@kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <1520350567-80082-1-git-send-email-kan.liang@linux.intel.com>
-References: <1520350567-80082-1-git-send-email-kan.liang@linux.intel.com>
+        Fri, 9 Mar 2018 03:43:36 -0500
+Date: Fri, 9 Mar 2018 00:43:14 -0800
+From: tip-bot for Agustin Vega-Frias <tipbot@zytor.com>
+Message-ID: <tip-c199c11dce197b12ff884ac0cfcb527b1164788b@git.kernel.org>
+Cc: peterz@infradead.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+        jolsa@kernel.org, mingo@kernel.org, acme@redhat.com,
+        namhyung@kernel.org, agustinv@codeaurora.org, ak@linux.intel.com,
+        timur@codeaurora.org
+Reply-To: timur@codeaurora.org, ak@linux.intel.com, agustinv@codeaurora.org,
+        namhyung@kernel.org, acme@redhat.com, mingo@kernel.org,
+        jolsa@kernel.org, tglx@linutronix.de,
+        alexander.shishkin@linux.intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org
+In-Reply-To: <1520345084-42646-4-git-send-email-agustinv@codeaurora.org>
+References: <1520345084-42646-4-git-send-email-agustinv@codeaurora.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf evlist: Store 'overwrite' in struct perf_mmap
-Git-Commit-ID: 2c5f6d876b4edda8740f5a2826cf9b1a67fa76fb
+Subject: [tip:perf/core] perf pmu: Auto-merge PMU events created by prefix
+ or glob match
+Git-Commit-ID: c199c11dce197b12ff884ac0cfcb527b1164788b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,84 +38,175 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2c5f6d876b4edda8740f5a2826cf9b1a67fa76fb
-Gitweb:     https://git.kernel.org/tip/2c5f6d876b4edda8740f5a2826cf9b1a67fa76fb
-Author:     Kan Liang <kan.liang@linux.intel.com>
-AuthorDate: Tue, 6 Mar 2018 10:36:00 -0500
+Commit-ID:  c199c11dce197b12ff884ac0cfcb527b1164788b
+Gitweb:     https://git.kernel.org/tip/c199c11dce197b12ff884ac0cfcb527b1164788b
+Author:     Agustin Vega-Frias <agustinv@codeaurora.org>
+AuthorDate: Tue, 6 Mar 2018 09:04:44 -0500
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 8 Mar 2018 10:05:50 -0300
+CommitDate: Thu, 8 Mar 2018 10:05:49 -0300
 
-perf evlist: Store 'overwrite' in struct perf_mmap
+perf pmu: Auto-merge PMU events created by prefix or glob match
 
-It has been determined that the map is for overwrite mode
-(evlist->overwrite_mmap) or non-overwrite mode (evlist->mmap) when
-calling perf_evlist__alloc_mmap().
+Auto-merge for these events was disabled when auto-merging of non-alias
+events was disabled in commit 63ce844 (perf stat: Only auto-merge events
+that are PMU aliases).
 
-Store the information in struct perf_mmap, which will be used later to
-simplify the perf_mmap__read*() interfaces.
+Non-merging of legacy events is preserved:
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Suggested-by: Jiri Olsa <jolsa@kernel.org>
+    $ perf stat -ag -e cache-misses,cache-misses sleep 1
+
+     Performance counter stats for 'system wide':
+
+                86,323      cache-misses
+                86,323      cache-misses
+
+           1.002623307 seconds time elapsed
+
+But prefix or glob matching auto-merges the events created:
+
+    $ perf stat -a -e l3cache/read-miss/ sleep 1
+
+     Performance counter stats for 'system wide':
+
+                   328      l3cache/read-miss/
+
+           1.002627008 seconds time elapsed
+
+    $ perf stat -a -e l3cache_0_[01]/read-miss/ sleep 1
+
+     Performance counter stats for 'system wide':
+
+                   172      l3cache/read-miss/
+
+           1.002627008 seconds time elapsed
+
+As with events created with aliases, auto-merging can be suppressed with
+the --no-merge option:
+
+    $ perf stat -a -e l3cache/read-miss/ --no-merge sleep 1
+
+     Performance counter stats for 'system wide':
+
+                    67      l3cache/read-miss/
+                    67      l3cache/read-miss/
+                    63      l3cache/read-miss/
+                    60      l3cache/read-miss/
+
+           1.002622192 seconds time elapsed
+
+Signed-off-by: Agustin Vega-Frias <agustinv@codeaurora.org>
+Acked-by: Andi Kleen <ak@linux.intel.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/r/1520350567-80082-1-git-send-email-kan.liang@linux.intel.com
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Timur Tabi <timur@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Change-Id: I0a47eed54c05e1982ca964d743b37f50f60c508c
+Link: http://lkml.kernel.org/r/1520345084-42646-4-git-send-email-agustinv@codeaurora.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/evlist.c | 8 +++++---
- tools/perf/util/mmap.h   | 1 +
- 2 files changed, 6 insertions(+), 3 deletions(-)
+ tools/perf/Documentation/perf-stat.txt | 14 +++++++++-----
+ tools/perf/util/parse-events.c         | 13 +++----------
+ tools/perf/util/parse-events.h         |  2 +-
+ tools/perf/util/parse-events.y         |  4 ++--
+ 4 files changed, 15 insertions(+), 18 deletions(-)
 
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 41a4666f1519..a59281d64368 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -722,7 +722,8 @@ void perf_evlist__munmap(struct perf_evlist *evlist)
- 	zfree(&evlist->overwrite_mmap);
+diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
+index 628026dbedc5..f15b306be183 100644
+--- a/tools/perf/Documentation/perf-stat.txt
++++ b/tools/perf/Documentation/perf-stat.txt
+@@ -267,11 +267,15 @@ taskset.
+ --no-merge::
+ Do not merge results from same PMUs.
+ 
+-When multiple events are created from a single event alias, stat will,
+-by default, aggregate the event counts and show the result in a single
+-row. This option disables that behavior and shows the individual events
+-and counts. Aliases are listed immediately after the Kernel PMU events
+-by perf list.
++When multiple events are created from a single event specification,
++stat will, by default, aggregate the event counts and show the result
++in a single row. This option disables that behavior and shows
++the individual events and counts.
++
++Multiple events are created from a single event specification when:
++1. Prefix or glob matching is used for the PMU name.
++2. Aliases, which are listed immediately after the Kernel PMU events
++   by perf list, are used.
+ 
+ --smi-cost::
+ Measure SMI cost if msr/aperf/ and msr/smi/ events are supported.
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index bafc91edcb44..4e80ca320399 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -1217,7 +1217,7 @@ int parse_events_add_numeric(struct parse_events_state *parse_state,
+ 			 get_config_name(head_config), &config_terms);
  }
  
--static struct perf_mmap *perf_evlist__alloc_mmap(struct perf_evlist *evlist)
-+static struct perf_mmap *perf_evlist__alloc_mmap(struct perf_evlist *evlist,
-+						 bool overwrite)
+-static int __parse_events_add_pmu(struct parse_events_state *parse_state,
++int parse_events_add_pmu(struct parse_events_state *parse_state,
+ 			 struct list_head *list, char *name,
+ 			 struct list_head *head_config, bool auto_merge_stats)
  {
- 	int i;
- 	struct perf_mmap *map;
-@@ -736,6 +737,7 @@ static struct perf_mmap *perf_evlist__alloc_mmap(struct perf_evlist *evlist)
+@@ -1287,13 +1287,6 @@ static int __parse_events_add_pmu(struct parse_events_state *parse_state,
+ 	return evsel ? 0 : -ENOMEM;
+ }
  
- 	for (i = 0; i < evlist->nr_mmaps; i++) {
- 		map[i].fd = -1;
-+		map[i].overwrite = overwrite;
- 		/*
- 		 * When the perf_mmap() call is made we grab one refcount, plus
- 		 * one extra to let perf_mmap__consume() get the last
-@@ -779,7 +781,7 @@ static int perf_evlist__mmap_per_evsel(struct perf_evlist *evlist, int idx,
- 			maps = evlist->overwrite_mmap;
- 
- 			if (!maps) {
--				maps = perf_evlist__alloc_mmap(evlist);
-+				maps = perf_evlist__alloc_mmap(evlist, true);
- 				if (!maps)
+-int parse_events_add_pmu(struct parse_events_state *parse_state,
+-			 struct list_head *list, char *name,
+-			 struct list_head *head_config)
+-{
+-	return __parse_events_add_pmu(parse_state, list, name, head_config, false);
+-}
+-
+ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
+ 			       char *str, struct list_head **listp)
+ {
+@@ -1323,8 +1316,8 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
  					return -1;
- 				evlist->overwrite_mmap = maps;
-@@ -1029,7 +1031,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
- 	struct mmap_params mp;
+ 				list_add_tail(&term->list, head);
  
- 	if (!evlist->mmap)
--		evlist->mmap = perf_evlist__alloc_mmap(evlist);
-+		evlist->mmap = perf_evlist__alloc_mmap(evlist, false);
- 	if (!evlist->mmap)
- 		return -ENOMEM;
+-				if (!__parse_events_add_pmu(parse_state, list,
+-							    pmu->name, head, true)) {
++				if (!parse_events_add_pmu(parse_state, list,
++							  pmu->name, head, true)) {
+ 					pr_debug("%s -> %s/%s/\n", str,
+ 						 pmu->name, alias->str);
+ 					ok++;
+diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
+index 88108cd11b4c..5015cfd58277 100644
+--- a/tools/perf/util/parse-events.h
++++ b/tools/perf/util/parse-events.h
+@@ -167,7 +167,7 @@ int parse_events_add_breakpoint(struct list_head *list, int *idx,
+ 				void *ptr, char *type, u64 len);
+ int parse_events_add_pmu(struct parse_events_state *parse_state,
+ 			 struct list_head *list, char *name,
+-			 struct list_head *head_config);
++			 struct list_head *head_config, bool auto_merge_stats);
  
-diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index ec7d3a24e276..71137977af28 100644
---- a/tools/perf/util/mmap.h
-+++ b/tools/perf/util/mmap.h
-@@ -20,6 +20,7 @@ struct perf_mmap {
- 	int		 fd;
- 	refcount_t	 refcnt;
- 	u64		 prev;
-+	bool		 overwrite;
- 	struct auxtrace_mmap auxtrace_mmap;
- 	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
- };
+ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
+ 			       char *str,
+diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+index dedf184b5bed..7afeb80cc39e 100644
+--- a/tools/perf/util/parse-events.y
++++ b/tools/perf/util/parse-events.y
+@@ -232,7 +232,7 @@ PE_NAME opt_event_config
+ 		YYABORT;
+ 
+ 	ALLOC_LIST(list);
+-	if (parse_events_add_pmu(_parse_state, list, $1, $2)) {
++	if (parse_events_add_pmu(_parse_state, list, $1, $2, false)) {
+ 		struct perf_pmu *pmu = NULL;
+ 		int ok = 0;
+ 		char *pattern;
+@@ -251,7 +251,7 @@ PE_NAME opt_event_config
+ 					free(pattern);
+ 					YYABORT;
+ 				}
+-				if (!parse_events_add_pmu(_parse_state, list, pmu->name, terms))
++				if (!parse_events_add_pmu(_parse_state, list, pmu->name, terms, true))
+ 					ok++;
+ 				parse_events_terms__delete(terms);
+ 			}
