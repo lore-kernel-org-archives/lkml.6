@@ -1,136 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751262AbeCIHR4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 02:17:56 -0500
-Received: from mail-it0-f66.google.com ([209.85.214.66]:52748 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751113AbeCIHRy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 02:17:54 -0500
-X-Google-Smtp-Source: AG47ELsm32etfZe4Ra3seGKv20XfzEdxbvWR/lxVUDfi7VscV03O+XceKj8NgpijF5K0AAzYkG/m5w==
-Date: Fri, 9 Mar 2018 16:18:14 +0900
-From: AKASHI Takahiro <takahiro.akashi@linaro.org>
-To: Dave Young <dyoung@redhat.com>
-Cc: vgoyal@redhat.com, bhe@redhat.com, mpe@ellerman.id.au,
-        bauerman@linux.vnet.ibm.com, prudo@linux.vnet.ibm.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH v2 0/7] kexec_file, x86, powerpc: refactoring for other
- architecutres
-Message-ID: <20180309071813.GE25863@linaro.org>
-Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Dave Young <dyoung@redhat.com>, vgoyal@redhat.com, bhe@redhat.com,
-        mpe@ellerman.id.au, bauerman@linux.vnet.ibm.com,
-        prudo@linux.vnet.ibm.com, kexec@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, akpm@linux-foundation.org
-References: <20180306102303.9063-1-takahiro.akashi@linaro.org>
- <20180308010502.GA2600@dhcp-128-65.nay.redhat.com>
- <20180309060254.GA9728@dhcp-128-65.nay.redhat.com>
- <20180309064412.GA5327@dhcp-128-65.nay.redhat.com>
+        id S1751278AbeCIHYX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 02:24:23 -0500
+Received: from mail-pu1apc01on0093.outbound.protection.outlook.com ([104.47.126.93]:2512
+        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750913AbeCIHYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 02:24:20 -0500
+From: Tianyu Lan <Tianyu.Lan@microsoft.com>
+To: "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>
+CC: "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] KVM/X86: Check input sreg values before loading vcpu
+Thread-Topic: [PATCH] KVM/X86: Check input sreg values before loading vcpu
+Thread-Index: AQHTr5hN8NOqe9GuWkWmcSxT1Wc7aaPGkjEAgAD91QA=
+Date: Fri, 9 Mar 2018 07:24:13 +0000
+Message-ID: <72e27449-c8fd-c3e3-75c1-07853c49d974@microsoft.com>
+References: <1519714664-2649-1-git-send-email-Tianyu.Lan@microsoft.com>
+ <20180308161536.GH12290@flask>
+In-Reply-To: <20180308161536.GH12290@flask>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HK2P15301MB0067;7:JcPy7dC9fsBWQFxAr1eApytrLZBXm/77bB6QvAkkc+NjrDxDPNQ7REBf4QIx9ET1gW1joyOUwtEFfAIpMA0yu2RElg1K8g6aefbeiEEsfb5RPR1Xkg2325gdR1ZvYzl2YcEUGYh1eJjbPJ9E230Ds6vDR6bVZ0pgiKJUrdR2quyeOUm8J3NhydVagaFzdgOEVnWcw4AuTrYoKT1sE1Z9acjYz0eP7qr00iYeONjVgimneCdQGx1cU1jGfkfidkof;20:yQ9q8aaoLdh/2qH/FXh7CA+hqaCxK88IJP3msP2dmygbkFeKoJyOoruFSlmI7D2VFMVi0vwaWKjBJN8Uy7Z0ZYLaW9+IDlJXVDak1avV9+Lwe4Xlz9HG2TcHn43teCDv4wANMyxOEqZwcM3Rf+8cXSeL+8Yv1Zsmfs7SRjBqkYY=
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: e20f74b4-cb3d-48b8-75af-08d5858ec28d
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:HK2P15301MB0067;
+x-ms-traffictypediagnostic: HK2P15301MB0067:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Tianyu.Lan@microsoft.com;
+x-microsoft-antispam-prvs: <HK2P15301MB006784CA5990F6111980E7DE92DE0@HK2P15301MB0067.APCP153.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231220)(944501244)(52105095)(93006095)(93001095)(6055026)(61426038)(61427038)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(6072148)(201708071742011);SRVR:HK2P15301MB0067;BCL:0;PCL:0;RULEID:;SRVR:HK2P15301MB0067;
+x-forefront-prvs: 0606BBEB39
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39380400002)(396003)(366004)(39860400002)(346002)(51444003)(377424004)(189003)(199004)(10290500003)(10090500001)(4326008)(6246003)(72206003)(86362001)(25786009)(8676002)(53936002)(2900100001)(5250100002)(66066001)(1511001)(8936002)(81166006)(14454004)(6512007)(6436002)(106356001)(6486002)(2501003)(81156014)(305945005)(7736002)(5660300001)(99286004)(186003)(229853002)(36756003)(3660700001)(2906002)(86612001)(26005)(3280700002)(31696002)(6116002)(31686004)(102836004)(2950100002)(53546011)(6506007)(22452003)(478600001)(105586002)(59450400001)(54906003)(110136005)(3846002)(68736007)(76176011)(316002)(97736004)(22906009);DIR:OUT;SFP:1102;SCL:1;SRVR:HK2P15301MB0067;H:HK2P15301MB0065.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: rH6JweNQESsm3iRNBdXirV/eRlJ8z3I63TbsG+f/BCBMCEp573/9ixI8HDtxhm72xieBGKdD8c7CcyCnZi4nBA7TS7Y3pJtrfARvywQRvbZ7VyHIk8Qazgrp1OAQwumUKO3YJS9UeiEANwlqIUS3NJB30wKW1uJR+55YCVI6Bjq7dbHFxTWPFUlV9nBS5UZXAeWZxwXz3YshqE+zdPJzBoo2JAXDbL1f6wDCEy8VczwKAn+e9NWGoXxIaAO7gZmlP8zHAelOmdVdn6HLP4CRejkDdpDXcBf0XALhCkjilxd3zLinVXlp04Ipeohj+5NQEaqepWWk/HXnUN3s3nGyVA==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <15C17D9F4D676149AD6C554F1486B608@APCP153.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180309064412.GA5327@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e20f74b4-cb3d-48b8-75af-08d5858ec28d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Mar 2018 07:24:13.4162
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2P15301MB0067
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w297OTXC013960
 
-Dave,
+Hi Radim:
+	Thanks for your review.
 
-On Fri, Mar 09, 2018 at 02:44:12PM +0800, Dave Young wrote:
-> On 03/09/18 at 02:02pm, Dave Young wrote:
-> > On 03/08/18 at 09:05am, Dave Young wrote:
-> > > [Cc Andrew]
-> > > 
-> > > On 03/06/18 at 07:22pm, AKASHI Takahiro wrote:
-> > > > This is a preparatory patch set for adding kexec_file support on arm64.
-> > > > 
-> > > > It was originally included in a arm64 patch set[1], but Philipp is also
-> > > > working on their kexec_file support on s390[2] and some changes are now
-> > > > conflicting.
-> > > > 
-> > > > So these common parts were extracted and put into a separate patch set for
-> > > > better integration. What's more, my original patch#4 was split into a few
-> > > > small chunks for easier review after Dave's comment.
-> > > > 
-> > > > As such, the resulting code is basically identical with my original, and
-> > > > the only *visible* differences are:
-> > > >   * renamings of _kexec_kernel_image_probe() and
-> > > >     _kimage_file_post_load_cleanup()
-> > > >   * change one of types of arguments at prepare_elf64_headers()
-> > > > Those, unfortunately, require a couple of trivial changes on the rest
-> > > > (#1, #6 to #13) of my arm64 kexec_file patch set[1].
-> > > > 
-> > > > Patch#1 allows making a use of purgatory optional, particularly useful
-> > > > for arm64.
-> > > > Patch#2 commonalizes arch_kexec_kernel_{image_probe, image_load,
-> > > > verify_sig}() and arch_kimage_file_post_load_cleanup() across architectures.
-> > > > Patch#3-#7 is also intended to generalize parse_elf64_headers(), along with
-> > > > exclude_mem_range(), to be made best re-use of.
-> > > > 
-> > > > [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-February/561182.html
-> > > > [2] http://lkml.iu.edu//hypermail/linux/kernel/1802.1/02596.html
-> > > > 
-> > > > 
-> > > > Changes in v2 (Mar 6, 2018)
-> > > > * use IS_ENABLED() instead of #ifdef's in kexec_calculate_store_digests() 
-> > > > * rename _kexec_kernel_*() and make them static for now except for
-> > > >   kexec_image_probe_default() which is actually used by arch(powerpc) code
-> > > >   (Note: kexec_image_post_load_cleanup_default() will also be exported by
-> > > >   arm64 patches.)
-> > > > * change a type of kernel_map in prepare_elf64_headers() to "int"
-> > > > * check for a total number of system ram regions in full_up_crash_elf_data()
-> > > >   and use vzalloc() instead of vmalloc()
-> > > > 
-> > > > AKASHI Takahiro (7):
-> > > >   kexec_file: make an use of purgatory optional
-> > > >   kexec_file,x86,powerpc: factor out kexec_file_ops functions
-> > > >   x86: kexec_file: purge system-ram walking from prepare_elf64_headers()
-> > > >   x86: kexec_file: remove X86_64 dependency from prepare_elf64_headers()
-> > > >   x86: kexec_file: lift CRASH_MAX_RANGES limit on crash_mem buffer
-> > > >   x86: kexec_file: clean up prepare_elf64_headers()
-> > > >   kexec_file, x86: move re-factored code to generic side
-> > > > 
-> > > >  arch/powerpc/Kconfig                        |   3 +
-> > > >  arch/powerpc/include/asm/kexec.h            |   2 +-
-> > > >  arch/powerpc/kernel/kexec_elf_64.c          |   2 +-
-> > > >  arch/powerpc/kernel/machine_kexec_file_64.c |  39 +---
-> > > >  arch/x86/Kconfig                            |   3 +
-> > > >  arch/x86/include/asm/kexec-bzimage64.h      |   2 +-
-> > > >  arch/x86/kernel/crash.c                     | 334 ++++++----------------------
-> > > >  arch/x86/kernel/kexec-bzimage64.c           |   2 +-
-> > > >  arch/x86/kernel/machine_kexec_64.c          |  45 +---
-> > > >  include/linux/kexec.h                       |  32 ++-
-> > > >  kernel/kexec_file.c                         | 240 +++++++++++++++++++-
-> > > >  11 files changed, 338 insertions(+), 366 deletions(-)
-> > > > 
-> > > > -- 
-> > > > 2.16.2
-> > > > 
-> > > 
-> > > AKASHI, thanks for another update, looks good to me:
-> > > 
-> > > Acked-by: Dave Young <dyoung@redhat.com>
-> > 
-> > Hold on the ack, during today's tests kexec kernel can not boot, it
-> > hangs early.  Will see if it is caused by this series and come back
-> > later.
+On 3/9/2018 12:15 AM, rkrcmar@redhat.com wrote:
+> 2018-02-27 06:57+0000, Tianyu Lan:
+>> From: Lan Tianyu <Tianyu.Lan@microsoft.com>
+>>
+>> This patch is to check sreg value first and then load vcpu in order
+>> to avoid redundant loading/putting vcpu.
+>>
+>> Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
+>> ---
 > 
-> AKASHI, it seems the first patch causes the hang, can you take a look?
+> Patch "KVM: x86: KVM_CAP_SYNC_REGS" made significant changes to the
+> sregs setter, so the patch cannot be applied in current form.
+> 
+> I think that moving the X86_CR4_OSXSAVE check to guest_cpuid_has still
+> makes sense, but avoiding the vcpu_load/put would produce worse code
+> elsewhere and avoiding the load/put is not critical as any error is
+> probably going to be the end for this VM.
+> 
 
-Sure, but can you first tell me specifics about what you have observed?
-
-Thanks,
--Takahiro AKASHI
-
-
-> > 
-> > > 
-> > > Thanks
-> > > Dave
-> > 
-> > Thanks
-> > Dave
+OK. I will update patch.
