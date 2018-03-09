@@ -1,50 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932749AbeCIWRt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 17:17:49 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59862 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932104AbeCIWRs (ORCPT
+        id S932784AbeCIWSh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 17:18:37 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55196 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932104AbeCIWSg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 17:17:48 -0500
-Date: Fri, 9 Mar 2018 23:17:36 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Mike Galbraith <efault@gmx.de>, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>
-Subject: Re: [PATCH v4] cpuset: Enable cpuset controller in default hierarchy
-Message-ID: <20180309221736.GB5926@hirez.programming.kicks-ass.net>
-References: <1520609707-16582-1-git-send-email-longman@redhat.com>
- <1520613285.12489.36.camel@gmx.de>
- <1c3fe7b0-2600-c46d-1527-d3aaf024bb91@redhat.com>
- <1520619426.27998.18.camel@gmx.de>
- <55809fe4-98ba-5566-86ed-457acfef0e1c@redhat.com>
- <1520624424.27998.76.camel@gmx.de>
- <53de9683-01b7-bac4-8b70-dc1f93ede600@redhat.com>
+        Fri, 9 Mar 2018 17:18:36 -0500
+Date: Fri, 9 Mar 2018 23:18:34 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Suman Anna <s-anna@ti.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, ivo.g.dimitrov.75@gmail.com,
+        khilman@kernel.org, Tony Lindgren <tony@atomide.com>,
+        aaro.koskinen@iki.fi, kernel list <linux-kernel@vger.kernel.org>,
+        sre@kernel.org, martijn@brixit.nl,
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        abcloriens@gmail.com, sakari.ailus@linux.intel.com,
+        pali.rohar@gmail.com, clayton@craftyguy.net,
+        linux-omap@vger.kernel.org, patrikbachan@gmail.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        serge@hallyn.com
+Subject: Re: Nokia N900: refcount_t underflow, use after free
+Message-ID: <20180309221834.GA15476@amd>
+References: <20180308143053.GA17267@amd>
+ <20180308165903.GM5799@atomide.com>
+ <57c9f17b-fc9d-8506-4b5d-70ac216c9248@ti.com>
+ <20180308185046.GA22796@amd>
+ <1dfc05fe-1612-f5a5-b5f1-9038b3cecfe5@arm.com>
+ <1643b74a-62ba-bea6-71c2-a2dd02430463@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="LZvS9be/3tNcYl/X"
 Content-Disposition: inline
-In-Reply-To: <53de9683-01b7-bac4-8b70-dc1f93ede600@redhat.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1643b74a-62ba-bea6-71c2-a2dd02430463@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 09, 2018 at 03:43:34PM -0500, Waiman Long wrote:
-> The isolcpus= parameter just reduce the cpus available to the rests of
-> the system. The cpuset controller does look at that value and make
-> adjustment accordingly, but it has no dependence on exclusive cpu/mem
-> features of cpuset.
 
-The isolcpus= boot param is donkey shit and needs to die. cpuset _used_
-to be able to fully replace it, but with the advent of cgroup 'feature'
-this got lost.
+--LZvS9be/3tNcYl/X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-And instead of fixing it, you're making it _far_ worse. You completely
-removed all the bits that allow repartitioning the scheduler domains.
+On Fri 2018-03-09 16:13:36, Suman Anna wrote:
+> On 03/09/2018 06:08 AM, Robin Murphy wrote:
+> > On 08/03/18 18:50, Pavel Machek wrote:
+> >> Hi!
+> >>
+> >>>> * Pavel Machek <pavel@ucw.cz> [180308 14:31]:
+> >>>>> Hi!
+> >>>>>
+> >>>>> I'm getting this warning... Has anyone seen/debugged that before?
+> >>>>> Unfortunately the backtrace does not seem to be too useful :-(.
+> >>>>
+> >>>> Adding Suman to Cc, as it points to arm_iommu_release_mapping().
+> >>>
+> >>> Hmm, we need to find out if the failure paths in isp_probe() are
+> >>> mismatched, or if this is coming from some mismatch between the OMAP
+> >>> IOMMU driver and the DMA plumbing. AFAIK, the cleanup paths in this
+> >>
+> >> Well, camera only started to work on N900 pretty recently. Let me add
+> >> some debug printks...
+> >>
+> >> Camera does not work in 4.16.0-rc4-next-20180308-dirty.
+> >>
+> >> I see this. It looks like problem in isp error paths, indeed:
+> >=20
+> > Well, there certainly seems to be an obvious bug wherein
+> > isp_detach_iommu() just releases the mapping directly without calling
+> > arm_iommu_detach_device() to balance the equivalent attach. That can't
+> > be helping.
+>=20
+> Indeed, I have been able to reproduce the same warning using a
+> standalone test module, and the missing arm_iommu_detach_device() is
+> causing the warning after probe (during failure path) or during
+> remove.
 
-Mike is completely right, full NAK on any such approach.
+Ok do you have an idea how to fix the isp error paths? Untested patch
+would be fine... But it seems that you know what needs to be fixed and
+I don't.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--LZvS9be/3tNcYl/X
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqjCDoACgkQMOfwapXb+vLhhwCgi7hST8I9ddFqZSa/+CPLAjSQ
+T28AoIm71+U3AYWQkJSTu3CzhRO0Zbf3
+=XGNC
+-----END PGP SIGNATURE-----
+
+--LZvS9be/3tNcYl/X--
