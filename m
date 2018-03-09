@@ -1,78 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932441AbeCIOz6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 09:55:58 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53238 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932207AbeCIOzx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 09:55:53 -0500
-Date: Fri, 9 Mar 2018 14:55:47 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Andrey Konovalov <andreyknvl@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Arnd Bergmann <arnd@arndb.de>,
-        linux-arch@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>, Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>
-Subject: Re: [RFC PATCH 0/6] arm64: untag user pointers passed to the kernel
-Message-ID: <20180309145547.r25eis5ejy6d6xzu@lakrids.cambridge.arm.com>
-References: <cover.1520600533.git.andreyknvl@google.com>
+        id S932426AbeCIO4w (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 09:56:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44002 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932067AbeCIO4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 09:56:47 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E660206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Fri, 9 Mar 2018 11:56:43 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH 9/9] perf c2c report: Add cacheline address count column
+Message-ID: <20180309145643.GA8347@kernel.org>
+References: <20180309101442.9224-1-jolsa@kernel.org>
+ <20180309101442.9224-10-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1520600533.git.andreyknvl@google.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180309101442.9224-10-jolsa@kernel.org>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-[trimming Ccs]
-
-On Fri, Mar 09, 2018 at 03:01:58PM +0100, Andrey Konovalov wrote:
-> arm64 has a feature called Top Byte Ignore, which allows to embed pointer
-> tags into the top byte of each pointer. Userspace programs (such as
-> HWASan, a memory debugging tool [1]) might use this feature and pass
-> tagged user pointers to the kernel through syscalls or other interfaces.
+Em Fri, Mar 09, 2018 at 11:14:42AM +0100, Jiri Olsa escreveu:
+> Adding the 'PA cnt' column grouped under data cacheline address.
 > 
-> This patch makes a few of the kernel interfaces accept tagged user
-> pointers. The kernel is already able to handle user faults with tagged
-> pointers and has the untagged_addr macro, which this patchset reuses.
+> It shows how many times the physical addresses changed for the
+> hist entry. It does not show the number of different physical
+> addresses for entry, because we don't store those. We only track
+> the number of times we got different address than we currently
+> hold, which is not expensive and gives similar info.
 > 
-> We're not trying to cover all possible ways the kernel accepts user
-> pointers in one patchset, so this one should be considered as a start.
-> It would be nice to learn about the interfaces that I missed though.
+>   $ perf c2c report --stdio
+> 
+>   #        ----------- Cacheline ----------    Total      Tot  ----- LLC Load Hitm -----
+>   # Index             Address  Node  PA cnt  records     Hitm    Total      Lcl      Rmt
+>   # .....  ..................  ....  ......  .......  .......  .......  .......  .......
+>   #
 
-There are many ways that user pointers can be passed to the kernel, and
-I'm not sure that it's feasible to catch them all, especially as user
-pointers are often passed in data structures (e.g. iovecs) rather than
-direct syscall arguments.
 
-If we *really* want the kernel to support taking tagged addresses, anything
-with a __user annotation (or cast to something with a __user annotation)
-requires tag removal somewhere in the kernel.
+I'm adding this to the docs, ack?
 
-It looks like there are plenty uapi structures and syscalls to look at:
-
-[mark@lakrids:~/src/linux]% git grep __user -- include/uapi | wc -l
-216
-[mark@lakrids:~/src/linux]% git grep __user | grep SYSCALL_DEFINE | wc -l
-308
-
-... in addition to special syscalls like ioctl which multiplex a number
-of operations with different arguments, where the tag stripping would
-have to occur elsewhere (e.g. in particular drivers).
-
-I also wonder if we ever write any of these pointers back to userspace
-memory. If so, we have a nasty ABI problem, since we'll have to marshal
-the original tag along with the pointer, to ensure userspace pointer
-comparisons continue to work.
-
-Thanks,
-Mark.
+diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
+index cba16d8a970e..f4a280428e28 100644
+--- a/tools/perf/Documentation/perf-report.txt
++++ b/tools/perf/Documentation/perf-report.txt
+@@ -127,7 +127,7 @@ OPTIONS
+ 
+ 	If the --mem-mode option is used, the following sort keys are also available
+ 	(incompatible with --branch-stack):
+-	symbol_daddr, dso_daddr, locked, tlb, mem, snoop, dcacheline.
++	symbol_daddr, dso_daddr, locked, tlb, mem, snoop, dcacheline, dcacheline_count.
+ 
+ 	- symbol_daddr: name of data symbol being executed on at the time of sample
+ 	- dso_daddr: name of library or module containing the data being executed
+@@ -137,6 +137,7 @@ OPTIONS
+ 	- mem: type of memory access for the data at the time of the sample
+ 	- snoop: type of snoop (if any) for the data at the time of the sample
+ 	- dcacheline: the cacheline the data address is on at the time of the sample
++	- dcacheline_count: the number of physical addresses sampled for this dcacheline
+ 	- phys_daddr: physical address of data being executed on at the time of sample
+ 
+ 	And the default sort keys are changed to local_weight, mem, sym, dso,
