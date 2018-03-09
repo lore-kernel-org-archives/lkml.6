@@ -1,103 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751249AbeCIGVm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 01:21:42 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48226 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751167AbeCIGVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 01:21:39 -0500
-Subject: Re: [PATCH net] vhost_net: examine pointer types during un-producing
-To: mst@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        glider@google.com, dvyukov@google.com
-References: <1520565382-4915-1-git-send-email-jasowang@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <70ddd7d9-563b-435f-a8de-f00fc772c6d7@redhat.com>
-Date: Fri, 9 Mar 2018 14:21:30 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751113AbeCIGXG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 01:23:06 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:49600 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750753AbeCIGXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 01:23:05 -0500
+Subject: Re: [PATCH] f2fs: avoid selinux denial on CAP_SYS_RESOURCE
+To: Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20180309044900.39677-1-jaegeuk@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <5ec9338e-1522-2b6a-99c2-ffe70b7a06a9@huawei.com>
+Date: Fri, 9 Mar 2018 14:22:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <1520565382-4915-1-git-send-email-jasowang@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180309044900.39677-1-jaegeuk@kernel.org>
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018/3/9 12:49, Jaegeuk Kim wrote:
+> This fixes CAP_SYS_RESOURCE denial of selinux when using resgid.
 
+A little confusion, if capable(CAP_SYS_RESOURCE) is false, we still have chance
+to return true for below resuid & resgid cases, right?
 
-On 2018年03月09日 11:16, Jason Wang wrote:
-> After commit 761876c857cb ("tap: XDP support"), we can actually
-> queueing XDP pointers in the pointer ring, so we should examine the
-> pointer type before freeing the pointer.
->
-> Fixes: 761876c857cb ("tap: XDP support")
+Thanks,
 
-Oops, the commit is wrong, let me repost.
-
-Thanks
-
-> Reported-by: Michael S. Tsirkin <mst@redhat.com>
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > ---
->   drivers/net/tun.c      | 3 ++-
->   drivers/vhost/net.c    | 2 +-
->   include/linux/if_tun.h | 4 ++++
->   3 files changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> index 7433bb2..28cfa64 100644
-> --- a/drivers/net/tun.c
-> +++ b/drivers/net/tun.c
-> @@ -655,7 +655,7 @@ static struct tun_struct *tun_enable_queue(struct tun_file *tfile)
->   	return tun;
->   }
->   
-> -static void tun_ptr_free(void *ptr)
-> +void tun_ptr_free(void *ptr)
->   {
->   	if (!ptr)
->   		return;
-> @@ -667,6 +667,7 @@ static void tun_ptr_free(void *ptr)
->   		__skb_array_destroy_skb(ptr);
->   	}
->   }
-> +EXPORT_SYMBOL_GPL(tun_ptr_free);
->   
->   static void tun_queue_purge(struct tun_file *tfile)
->   {
-> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> index 610cba2..54a138f 100644
-> --- a/drivers/vhost/net.c
-> +++ b/drivers/vhost/net.c
-> @@ -170,7 +170,7 @@ static void vhost_net_buf_unproduce(struct vhost_net_virtqueue *nvq)
->   	if (nvq->rx_ring && !vhost_net_buf_is_empty(rxq)) {
->   		ptr_ring_unconsume(nvq->rx_ring, rxq->queue + rxq->head,
->   				   vhost_net_buf_get_size(rxq),
-> -				   __skb_array_destroy_skb);
-> +				   tun_ptr_free);
->   		rxq->head = rxq->tail = 0;
->   	}
->   }
-> diff --git a/include/linux/if_tun.h b/include/linux/if_tun.h
-> index c5b0a75..fd00170 100644
-> --- a/include/linux/if_tun.h
-> +++ b/include/linux/if_tun.h
-> @@ -25,6 +25,7 @@ struct ptr_ring *tun_get_tx_ring(struct file *file);
->   bool tun_is_xdp_buff(void *ptr);
->   void *tun_xdp_to_ptr(void *ptr);
->   void *tun_ptr_to_xdp(void *ptr);
-> +void tun_ptr_free(void *ptr);
->   #else
->   #include <linux/err.h>
->   #include <linux/errno.h>
-> @@ -50,5 +51,8 @@ static inline void *tun_ptr_to_xdp(void *ptr)
->   {
->   	return NULL;
->   }
-> +static inline void tun_ptr_free(void *ptr)
-> +{
-> +}
->   #endif /* CONFIG_TUN */
->   #endif /* __IF_TUN_H */
+>  fs/f2fs/f2fs.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index f6dc70666ebb..3d12277fbe9e 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1607,13 +1607,13 @@ static inline bool __allow_reserved_blocks(struct f2fs_sb_info *sbi,
+>  		return false;
+>  	if (IS_NOQUOTA(inode))
+>  		return true;
+> -	if (capable(CAP_SYS_RESOURCE))
+> -		return true;
+>  	if (uid_eq(sbi->s_resuid, current_fsuid()))
+>  		return true;
+>  	if (!gid_eq(sbi->s_resgid, GLOBAL_ROOT_GID) &&
+>  					in_group_p(sbi->s_resgid))
+>  		return true;
+> +	if (capable(CAP_SYS_RESOURCE))
+> +		return true;
+>  	return false;
+>  }
+>  
+> 
