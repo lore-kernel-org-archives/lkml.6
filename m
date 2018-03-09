@@ -1,62 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932789AbeCIXGd convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 18:06:33 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59458 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932195AbeCIXGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 18:06:32 -0500
-Subject: Re: [PATCH v4] cpuset: Enable cpuset controller in default hierarchy
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mike Galbraith <efault@gmx.de>, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>
-References: <1520609707-16582-1-git-send-email-longman@redhat.com>
- <1520613285.12489.36.camel@gmx.de>
- <1c3fe7b0-2600-c46d-1527-d3aaf024bb91@redhat.com>
- <1520619426.27998.18.camel@gmx.de>
- <55809fe4-98ba-5566-86ed-457acfef0e1c@redhat.com>
- <1520624424.27998.76.camel@gmx.de>
- <53de9683-01b7-bac4-8b70-dc1f93ede600@redhat.com>
- <20180309221736.GB5926@hirez.programming.kicks-ass.net>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <f0fca497-e4e7-3dbd-1e5c-a7f502c05dcb@redhat.com>
-Date: Fri, 9 Mar 2018 18:06:29 -0500
+        id S932732AbeCIXIG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 18:08:06 -0500
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:49822 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932327AbeCIXIE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 18:08:04 -0500
+Subject: Re: Nokia N900: refcount_t underflow, use after free
+To: Pavel Machek <pavel@ucw.cz>
+CC: Robin Murphy <robin.murphy@arm.com>, <ivo.g.dimitrov.75@gmail.com>,
+        <khilman@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        <aaro.koskinen@iki.fi>, kernel list <linux-kernel@vger.kernel.org>,
+        <sre@kernel.org>, <martijn@brixit.nl>,
+        =?UTF-8?Q?Filip_Matijevi=c4=87?= <filip.matijevic.pz@gmail.com>,
+        <abcloriens@gmail.com>, <sakari.ailus@linux.intel.com>,
+        <pali.rohar@gmail.com>, <clayton@craftyguy.net>,
+        <linux-omap@vger.kernel.org>, <patrikbachan@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        <serge@hallyn.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20180308143053.GA17267@amd> <20180308165903.GM5799@atomide.com>
+ <57c9f17b-fc9d-8506-4b5d-70ac216c9248@ti.com> <20180308185046.GA22796@amd>
+ <1dfc05fe-1612-f5a5-b5f1-9038b3cecfe5@arm.com>
+ <1643b74a-62ba-bea6-71c2-a2dd02430463@ti.com> <20180309221834.GA15476@amd>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <c8ee5692-bf71-a9d7-8607-50adc9f0e9f1@ti.com>
+Date: Fri, 9 Mar 2018 17:06:49 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180309221736.GB5926@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180309221834.GA15476@amd>
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09/2018 05:17 PM, Peter Zijlstra wrote:
-> On Fri, Mar 09, 2018 at 03:43:34PM -0500, Waiman Long wrote:
->> The isolcpus= parameter just reduce the cpus available to the rests of
->> the system. The cpuset controller does look at that value and make
->> adjustment accordingly, but it has no dependence on exclusive cpu/mem
->> features of cpuset.
-> The isolcpus= boot param is donkey shit and needs to die. cpuset _used_
-> to be able to fully replace it, but with the advent of cgroup 'feature'
-> this got lost.
->
-> And instead of fixing it, you're making it _far_ worse. You completely
-> removed all the bits that allow repartitioning the scheduler domains.
->
-> Mike is completely right, full NAK on any such approach.
+On 03/09/2018 04:18 PM, Pavel Machek wrote:
+> On Fri 2018-03-09 16:13:36, Suman Anna wrote:
+>> On 03/09/2018 06:08 AM, Robin Murphy wrote:
+>>> On 08/03/18 18:50, Pavel Machek wrote:
+>>>> Hi!
+>>>>
+>>>>>> * Pavel Machek <pavel@ucw.cz> [180308 14:31]:
+>>>>>>> Hi!
+>>>>>>>
+>>>>>>> I'm getting this warning... Has anyone seen/debugged that before?
+>>>>>>> Unfortunately the backtrace does not seem to be too useful :-(.
+>>>>>>
+>>>>>> Adding Suman to Cc, as it points to arm_iommu_release_mapping().
+>>>>>
+>>>>> Hmm, we need to find out if the failure paths in isp_probe() are
+>>>>> mismatched, or if this is coming from some mismatch between the OMAP
+>>>>> IOMMU driver and the DMA plumbing. AFAIK, the cleanup paths in this
+>>>>
+>>>> Well, camera only started to work on N900 pretty recently. Let me add
+>>>> some debug printks...
+>>>>
+>>>> Camera does not work in 4.16.0-rc4-next-20180308-dirty.
+>>>>
+>>>> I see this. It looks like problem in isp error paths, indeed:
+>>>
+>>> Well, there certainly seems to be an obvious bug wherein
+>>> isp_detach_iommu() just releases the mapping directly without calling
+>>> arm_iommu_detach_device() to balance the equivalent attach. That can't
+>>> be helping.
+>>
+>> Indeed, I have been able to reproduce the same warning using a
+>> standalone test module, and the missing arm_iommu_detach_device() is
+>> causing the warning after probe (during failure path) or during
+>> remove.
+> 
+> Ok do you have an idea how to fix the isp error paths? Untested patch
+> would be fine... But it seems that you know what needs to be fixed and
+> I don't.
+> 
 
-So you are talking about sched_relax_domain_level and
-sched_load_balance. I have not removed any bits. I just haven't exposed
-them yet. It does seem like these 2 control knobs are useful from the
-scheduling perspective. Do we also need cpu_exclusive or just the two
-sched control knobs are enough?
+OK, see if the following fixes the issue for you, only build tested.
 
-Cheers,
-Longman
+8< ---------------------
+>From bac9a48fb646dc51f2030d676a0dbe3298c3b134 Mon Sep 17 00:00:00 2001
+From: Suman Anna <s-anna@ti.com>
+Date: Fri, 9 Mar 2018 16:39:59 -0600
+Subject: [PATCH] media: omap3isp: fix unbalanced dma_iommu_mapping
+
+The OMAP3 ISP driver manages its MMU mappings through the IOMMU-aware
+ARM DMA backend. The current code creates a dma_iommu_mapping and
+attaches this to the ISP device, but never detaches the mapping in
+either the probe failure paths or the driver remove path resulting
+in an unbalanced mapping refcount and a memory leak. Fix this properly.
+
+Reported-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+---
+ drivers/media/platform/omap3isp/isp.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/platform/omap3isp/isp.c
+b/drivers/media/platform/omap3isp/isp.c
+index 8eb000e3d8fd..c7d667bfc2af 100644
+--- a/drivers/media/platform/omap3isp/isp.c
++++ b/drivers/media/platform/omap3isp/isp.c
+@@ -1945,6 +1945,7 @@ static int isp_initialize_modules(struct
+isp_device *isp)
+
+ static void isp_detach_iommu(struct isp_device *isp)
+ {
++       arm_iommu_detach_device(isp->dev);
+        arm_iommu_release_mapping(isp->mapping);
+        isp->mapping = NULL;
+ }
+@@ -1971,13 +1972,15 @@ static int isp_attach_iommu(struct isp_device *isp)
+        ret = arm_iommu_attach_device(isp->dev, mapping);
+        if (ret < 0) {
+                dev_err(isp->dev, "failed to attach device to VA
+mapping\n");
+-               goto error;
++               goto error_attach;
+        }
+
+        return 0;
+
++error_attach:
++       arm_iommu_release_mapping(isp->mapping);
++       isp->mapping = NULL;
+ error:
+-       isp_detach_iommu(isp);
+        return ret;
+ }
+
+-- 
+2.16.2
