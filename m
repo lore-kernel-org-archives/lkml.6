@@ -1,85 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751743AbeCIXyI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 18:54:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34924 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751439AbeCIXyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 18:54:06 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 696BA208FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 9 Mar 2018 18:54:02 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        x86@kernel.org, Yang Bo <yangbo@deepin.com>,
-        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: Re: [RFC PATCH -tip 0/9] kprobes: Cleanup jprobe implementation
-Message-ID: <20180309185402.301a97ae@gandalf.local.home>
-In-Reply-To: <152059891712.4214.9539716544254881611.stgit@devbox>
-References: <152059891712.4214.9539716544254881611.stgit@devbox>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751618AbeCIXyH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 18:54:07 -0500
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:37787 "EHLO
+        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751231AbeCIXyF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 18:54:05 -0500
+X-Google-Smtp-Source: AG47ELsoj1PUnf/MNDBgG7M+Uz8kElh91Pbv3b3A2P4abot1STDo7IsyLExJTNOvb4A0kIH9p28kzQ==
+Date: Fri, 9 Mar 2018 17:53:56 -0600
+From: Rob Herring <robh@kernel.org>
+To: gabriel.fernandez@st.com
+Cc: sboyd@kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, gabriel.fernandez.st@gmail.com,
+        olivier.bideau@st.com, Loic PALLARDY <loic.pallardy@st.com>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>
+Subject: Re: [PATCH v2 01/12] dt-bindings: Document STM32MP1 Reset Clock
+ Controller (RCC) bindings
+Message-ID: <20180309235356.qd2wx6teeuxkwwjz@rob-hp-laptop>
+References: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
+ <1520528045-18330-2-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520528045-18330-2-git-send-email-gabriel.fernandez@st.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  9 Mar 2018 21:35:17 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+On Thu, Mar 08, 2018 at 05:53:54PM +0100, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> The RCC block is responsible of the management of the clock and reset
+> generation for the complete circuit.
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> ---
+>  .../devicetree/bindings/clock/st,stm32mp1-rcc.txt  | 60 ++++++++++++++++++++++
+>  1 file changed, 60 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.txt
 
-> Hello,
-> 
-> Since we decided to remove jprobe from kernel last year,
-> its APIs are disabled and we worked on moving in-kernel
-> jprobe users to kprobes or trace-events. And now no jprobe
-> users are here anymore.
-> 
-> I think it is good time to get rid of jprobe implementation
-> from the kernel. However, I need other arch developers help
-> to complete it, since jprobe is implemented multi arch wide.
-> I can remove those code, but can not test all of those.
-> 
-> Here is the series of patches to show how to do that.
-> I tried to remove it from x86 tree. Basically we need to
-> do 3 things;
-> 
->  - Remove jprobe functions (register/unregister,
->    setjump/longjump) from generic/arch-dependent code.
->    [1/9][2/9][3/9]
->  - Remove break_handler related code.
->    [4/9][5/9][6/9]
->  - Do not disable preemption on exception handler
->    [7/9][8/9][9/9]
-> 
-> The [3/9] and [6/9] are destractive changes except for x86
-> (means causes build errors) since those arch still have some
-> references of those functions. So we need to write patches
-> similar to [2/9] and [5/9] for each arch before applying those.
-> In this series I sorted it as this order just for review,
-> [3/9] and [6/9] should be applied after all archs have
-> been fixed.
-> 
-> Also, [7/9] is a kind of destractive, which changes required
-> behavior for the pre_handlers which changes regs->ip.
-> So we also need a patch similar to [7/9] for each arch too.
-> Fortunately, current in-tree such user is very limited, both
-> works only on x86. So it is not hurry, but we need to change
-> arch dependent code.
->
-
-Hi Masami,
-
-thanks for doing all this. I do want to review this and your other
-patch set. I've just been traveling a lot. I came home from California
-yesterday and will be leaving Sunday to Portland for ELC. Will you be
-there?
-
--- Steve
+Reviewed-by: Rob Herring <robh@kernel.org>
