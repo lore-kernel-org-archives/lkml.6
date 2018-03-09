@@ -1,318 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932634AbeCITU2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 14:20:28 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41886 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932361AbeCITUF (ORCPT
+        id S932479AbeCITXs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 14:23:48 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:46930 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932230AbeCITXr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 14:20:05 -0500
-From: Eddie James <eajames@linux.vnet.ibm.com>
-To: linux-hwmon@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, jdelvare@suse.com, linux@roeck-us.net,
-        joel@jms.id.au, Christopher Bostic <cbostic@linux.vnet.ibm.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Eddie James <eajames@linux.vnet.ibm.com>
-Subject: [PATCH 1/2] hwmon: (ucd9000) Add gpio chip interface
-Date: Fri,  9 Mar 2018 13:19:55 -0600
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1520623196-9534-1-git-send-email-eajames@linux.vnet.ibm.com>
-References: <1520623196-9534-1-git-send-email-eajames@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18030919-0036-0000-0000-000002CDE28C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008642; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.01000648; UDB=6.00509000; IPR=6.00779978;
- MB=3.00019944; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-09 19:20:02
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030919-0037-0000-0000-000043978747
-Message-Id: <1520623196-9534-2-git-send-email-eajames@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-09_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803090232
+        Fri, 9 Mar 2018 14:23:47 -0500
+Date: Fri, 9 Mar 2018 11:23:44 -0800
+From: Darren Hart <dvhart@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Subject: [GIT PULL] platform-drivers-x86 for 4.16-6
+Message-ID: <20180309192344.GA25680@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christopher Bostic <cbostic@linux.vnet.ibm.com>
+Hi Linus,
 
-Add a struct gpio_chip and define some methods so that this device's
-I/O can be accessed via /sys/class/gpio.
+This race condition discovery and the resulting fix landed later than I
+would have liked in the RC cycle, but I judged it worth fixing now
+rather than waiting for stable. The Dell drivers have some legacy
+dependencies we've been slowly untangling. I think a more invasive
+change should happen in 4.17, but this minimal impact change fixes the
+race condition and keeps Kconfig happy.
 
-Signed-off-by: Christopher Bostic <cbostic@linux.vnet.ibm.com>
-Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
----
- drivers/hwmon/pmbus/ucd9000.c | 220 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 220 insertions(+)
+The following changes since commit 1cedc6385d5f7310af0a08831c6c4303486ba850:
 
-diff --git a/drivers/hwmon/pmbus/ucd9000.c b/drivers/hwmon/pmbus/ucd9000.c
-index b74dbec..e3a507f 100644
---- a/drivers/hwmon/pmbus/ucd9000.c
-+++ b/drivers/hwmon/pmbus/ucd9000.c
-@@ -27,6 +27,7 @@
- #include <linux/slab.h>
- #include <linux/i2c.h>
- #include <linux/pmbus.h>
-+#include <linux/gpio.h>
- #include "pmbus.h"
- 
- enum chips { ucd9000, ucd90120, ucd90124, ucd90160, ucd9090, ucd90910 };
-@@ -35,8 +36,18 @@
- #define UCD9000_NUM_PAGES		0xd6
- #define UCD9000_FAN_CONFIG_INDEX	0xe7
- #define UCD9000_FAN_CONFIG		0xe8
-+#define UCD9000_GPIO_SELECT		0xfa
-+#define UCD9000_GPIO_CONFIG		0xfb
- #define UCD9000_DEVICE_ID		0xfd
- 
-+/* GPIO CONFIG bits */
-+#define UCD9000_GPIO_CONFIG_ENABLE	BIT(0)
-+#define UCD9000_GPIO_CONFIG_OUT_ENABLE	BIT(1)
-+#define UCD9000_GPIO_CONFIG_OUT_VALUE	BIT(2)
-+#define UCD9000_GPIO_CONFIG_STATUS	BIT(3)
-+#define UCD9000_GPIO_INPUT		0
-+#define UCD9000_GPIO_OUTPUT		1
-+
- #define UCD9000_MON_TYPE(x)	(((x) >> 5) & 0x07)
- #define UCD9000_MON_PAGE(x)	((x) & 0x0f)
- 
-@@ -47,9 +58,15 @@
- 
- #define UCD9000_NUM_FAN		4
- 
-+#define UCD9000_GPIO_NAME_LEN	16
-+#define UCD9090_NUM_GPIOS	23
-+#define UCD901XX_NUM_GPIOS	26
-+#define UCD90910_NUM_GPIOS	26
-+
- struct ucd9000_data {
- 	u8 fan_data[UCD9000_NUM_FAN][I2C_SMBUS_BLOCK_MAX];
- 	struct pmbus_driver_info info;
-+	struct gpio_chip gpio;
- };
- #define to_ucd9000_data(_info) container_of(_info, struct ucd9000_data, info)
- 
-@@ -149,6 +166,168 @@ static int ucd9000_read_byte_data(struct i2c_client *client, int page, int reg)
- };
- MODULE_DEVICE_TABLE(of, ucd9000_of_match);
- 
-+static int ucd9000_gpio_read_config(struct i2c_client *client,
-+				    unsigned int offset)
-+{
-+	int ret;
-+
-+	/* No page set required */
-+	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_SELECT, offset);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "Failed to select GPIO %d: %d\n", offset,
-+			ret);
-+
-+		return ret;
-+	}
-+
-+	return i2c_smbus_read_byte_data(client, UCD9000_GPIO_CONFIG);
-+}
-+
-+static int ucd9000_gpio_get(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct i2c_client *client  = gpiochip_get_data(gc);
-+	int ret;
-+
-+	ret = ucd9000_gpio_read_config(client, offset);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "failed to read GPIO %d config: %d\n",
-+			offset, ret);
-+
-+		return ret;
-+	}
-+
-+	return !!(ret & UCD9000_GPIO_CONFIG_STATUS);
-+}
-+
-+static void ucd9000_gpio_set(struct gpio_chip *gc, unsigned int offset,
-+			     int value)
-+{
-+	struct i2c_client *client = gpiochip_get_data(gc);
-+	int ret;
-+
-+	ret = ucd9000_gpio_read_config(client, offset);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "failed to read GPIO %d config: %d\n",
-+			offset, ret);
-+
-+		return;
-+	}
-+
-+	if (value) {
-+		if (ret & UCD9000_GPIO_CONFIG_STATUS)
-+			return;
-+
-+		ret |= UCD9000_GPIO_CONFIG_STATUS;
-+	} else {
-+		if (!(ret & UCD9000_GPIO_CONFIG_STATUS))
-+			return;
-+
-+		ret &= ~UCD9000_GPIO_CONFIG_STATUS;
-+	}
-+
-+	ret |= UCD9000_GPIO_CONFIG_ENABLE;
-+
-+	/* Page set not required */
-+	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, ret);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "Failed to write GPIO %d config: %d\n",
-+			offset, ret);
-+
-+		return;
-+	}
-+
-+	ret &= ~UCD9000_GPIO_CONFIG_ENABLE;
-+
-+	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, ret);
-+	if (ret < 0)
-+		dev_err(&client->dev, "Failed to write GPIO %d config: %d\n",
-+			offset, ret);
-+}
-+
-+static int ucd9000_gpio_get_direction(struct gpio_chip *gc,
-+				      unsigned int offset)
-+{
-+	struct i2c_client *client = gpiochip_get_data(gc);
-+	int ret;
-+
-+	ret = ucd9000_gpio_read_config(client, offset);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "failed to read GPIO %d config: %d\n",
-+			offset, ret);
-+
-+		return ret;
-+	}
-+
-+	return !(ret & UCD9000_GPIO_CONFIG_OUT_ENABLE);
-+}
-+
-+static int ucd9000_gpio_set_direction(struct gpio_chip *gc,
-+				      unsigned int offset, bool direction_out,
-+				      int requested_out)
-+{
-+	struct i2c_client *client = gpiochip_get_data(gc);
-+	int ret, config, out_val;
-+
-+	ret = ucd9000_gpio_read_config(client, offset);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "failed to read GPIO %d config: %d\n",
-+			offset, ret);
-+
-+		return ret;
-+	}
-+
-+	if (direction_out) {
-+		out_val = requested_out ? UCD9000_GPIO_CONFIG_OUT_VALUE : 0;
-+
-+		if (ret & UCD9000_GPIO_CONFIG_OUT_ENABLE) {
-+			if ((ret & UCD9000_GPIO_CONFIG_OUT_VALUE) == out_val)
-+				return 0;
-+		} else {
-+			ret |= UCD9000_GPIO_CONFIG_OUT_ENABLE;
-+		}
-+
-+		if (out_val)
-+			ret |= UCD9000_GPIO_CONFIG_OUT_VALUE;
-+		else
-+			ret &= ~UCD9000_GPIO_CONFIG_OUT_VALUE;
-+
-+	} else {
-+		if (!(ret & UCD9000_GPIO_CONFIG_OUT_ENABLE))
-+			return 0;
-+
-+		ret &= ~UCD9000_GPIO_CONFIG_OUT_ENABLE;
-+	}
-+
-+	ret |= UCD9000_GPIO_CONFIG_ENABLE;
-+	config = ret;
-+
-+	/* Page set not required */
-+	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, config);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "Failed to write GPIO %d config: %d\n",
-+			offset, ret);
-+
-+		return ret;
-+	}
-+
-+	config &= ~UCD9000_GPIO_CONFIG_ENABLE;
-+
-+	return i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, config);
-+}
-+
-+static int ucd9000_gpio_direction_input(struct gpio_chip *gc,
-+					unsigned int offset)
-+{
-+	return ucd9000_gpio_set_direction(gc, offset, UCD9000_GPIO_INPUT, 0);
-+}
-+
-+static int ucd9000_gpio_direction_output(struct gpio_chip *gc,
-+					 unsigned int offset, int val)
-+{
-+	return ucd9000_gpio_set_direction(gc, offset, UCD9000_GPIO_OUTPUT,
-+					  val);
-+}
-+
- static int ucd9000_probe(struct i2c_client *client,
- 			 const struct i2c_device_id *id)
- {
-@@ -263,6 +442,47 @@ static int ucd9000_probe(struct i2c_client *client,
- 		  | PMBUS_HAVE_FAN34 | PMBUS_HAVE_STATUS_FAN34;
- 	}
- 
-+	/*
-+	 * Note:
-+	 *
-+	 * Pinmux support has not been added to the new gpio_chip.
-+	 * This support should be added when possible given the mux
-+	 * behavior of these IO devices.
-+	 */
-+	data->gpio.label = (const char *)&client->name;
-+	data->gpio.get_direction = ucd9000_gpio_get_direction;
-+	data->gpio.direction_input = ucd9000_gpio_direction_input;
-+	data->gpio.direction_output = ucd9000_gpio_direction_output;
-+	data->gpio.get = ucd9000_gpio_get;
-+	data->gpio.set = ucd9000_gpio_set;
-+	data->gpio.can_sleep = 1;
-+	data->gpio.base = -1;
-+
-+	/* No default case. No data available for ucd9000. */
-+	switch (mid->driver_data) {
-+	case ucd9090:
-+		data->gpio.ngpio = UCD9090_NUM_GPIOS;
-+		break;
-+	case ucd90120:
-+	case ucd90124:
-+	case ucd90160:
-+		data->gpio.ngpio = UCD901XX_NUM_GPIOS;
-+		break;
-+	case ucd90910:
-+		data->gpio.ngpio = UCD90910_NUM_GPIOS;
-+		break;
-+	}
-+
-+	data->gpio.parent = &client->dev;
-+	data->gpio.owner = THIS_MODULE;
-+
-+	ret = devm_gpiochip_add_data(&client->dev, &data->gpio, client);
-+	if (ret) {
-+		data->gpio.parent = NULL;
-+		dev_warn(&client->dev, "Could not add gpiochip: %d\n", ret);
-+		return ret;
-+	}
-+
- 	return pmbus_do_probe(client, mid, info);
- }
- 
+  platform/x86: wmi: Fix misuse of vsprintf extension %pULL (2018-03-01 10:01:39 -0800)
+
+are available in the git repository at:
+
+  git://git.infradead.org/linux-platform-drivers-x86.git tags/platform-drivers-x86-v4.16-6
+
+for you to fetch changes up to 32d7b19bad9695c4c9026b0ceb3a384561ddee70:
+
+  platform/x86: dell-smbios: Resolve dependency error on DCDBAS (2018-03-09 09:35:46 -0800)
+
+Thanks,
+
+Darren Hart
+VMware Open Source Technology Center
+
+----------------------------------------------------------------
+platform-drivers-x86 for v4.16-6
+
+Correct a module loading race condition between the DELL_SMBIOS backend
+modules and the first user by converting them to bool features of the
+DELL_SMBIOS driver. Fixup the resulting Kconfig dependency issue with
+DCDBAS.
+
+The following is an automated git shortlog grouped by driver:
+
+ -  Resolve dependency error on DCDBAS
+ -  Allow for SMBIOS backend defaults
+ -  Link all dell-smbios-* modules together
+ -  Rename dell-smbios source to dell-smbios-base
+ -  Correct some style warnings
+
+----------------------------------------------------------------
+Darren Hart (VMware) (2):
+      platform/x86: Allow for SMBIOS backend defaults
+      platform/x86: dell-smbios: Resolve dependency error on DCDBAS
+
+Mario Limonciello (3):
+      platform/x86: dell-smbios: Correct some style warnings
+      platform/x86: dell-smbios: Rename dell-smbios source to dell-smbios-base
+      platform/x86: dell-smbios: Link all dell-smbios-* modules together
+
+ drivers/platform/x86/Kconfig                       | 27 ++++++++++++++------
+ drivers/platform/x86/Makefile                      |  5 ++--
+ .../x86/{dell-smbios.c => dell-smbios-base.c}      | 29 +++++++++++++++++++---
+ drivers/platform/x86/dell-smbios-smm.c             | 18 +++-----------
+ drivers/platform/x86/dell-smbios-wmi.c             | 14 +++--------
+ drivers/platform/x86/dell-smbios.h                 | 27 +++++++++++++++++++-
+ 6 files changed, 82 insertions(+), 38 deletions(-)
+ rename drivers/platform/x86/{dell-smbios.c => dell-smbios-base.c} (96%)
+
 -- 
-1.8.3.1
+Darren Hart
+VMware Open Source Technology Center
