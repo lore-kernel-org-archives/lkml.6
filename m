@@ -1,133 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932201AbeCIQTb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 11:19:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51256 "EHLO mail.kernel.org"
+        id S932215AbeCIQU0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 11:20:26 -0500
+Received: from mout.web.de ([217.72.192.78]:34707 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751096AbeCIQTa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 11:19:30 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF54C20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
-Date: Fri, 9 Mar 2018 17:19:26 +0100
-From: Sebastian Reichel <sre@kernel.org>
-To: Moritz Fischer <mdf@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, robh+dt@kernel.org,
-        andy.shevchenko@gmail.com
-Subject: Re: [PATCH v3 2/2] power: reset: gpio-poweroff: Support for timeout
- from device property
-Message-ID: <20180309161926.hciaq3ok7st3fc7j@earth.universe>
-References: <20180222231714.11843-1-mdf@kernel.org>
- <20180222231714.11843-2-mdf@kernel.org>
+        id S1751143AbeCIQUY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 11:20:24 -0500
+Subject: [PATCH v2 09/17] mfd: tps65090: Delete an error message for a failed
+ memory allocation in tps65090_i2c_probe()
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
+Message-ID: <7d7253de-7bc9-93a5-9e6b-a0ebf66fb2d0@users.sourceforge.net>
+Date: Fri, 9 Mar 2018 17:20:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="osw746qlfqyb3xsn"
-Content-Disposition: inline
-In-Reply-To: <20180222231714.11843-2-mdf@kernel.org>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:VnB+oLHxFFdORdssW7YKIIpvH+tR88y/QknUqqp6ilm2WK37ezw
+ SVbFldhvEHoLNCQufOG0MpZd4bF6/YuOGjpAclMLvQBYAIG3LTjtIPhGkFJwUntZhHfN/9I
+ 1/MdGP6VFC7zuEUvqgDywNwIJcMgw+iRQylZ+Q3LGBdZsHFHLcpGagGIZ6dzwxnurRqJ5cR
+ LSQod6oIqkI9H23FHUq3w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:LDr8L1yPxrM=:nJ6ndCrhq/qNUB26PTX+Tl
+ 9NChBXHIzpFtc+dOzCP1QWlhNqNkcKOAduilmV1Iwdj3VPocuaWfns0SFmAUUJAZcVVRnX1bK
+ all9paj8wBPMSs1jPJNLyWsripp15gai4DIzn+Vfkfx8OI/8nF8tgvAPwVXK4Tajwd5NZtRq6
+ 4lH67rS4GLQ4YiK19gUbC6T92zwMIf/m9Q647Mel7D7i0DYgMPswwV65xvZThOB0fHTrsfAFT
+ rEBAfSRhMfvD437uhLSwQGQFkOKoThALPVtlP9gmI9amlNNQDO3WV62DfxhH24molRgVDLkzN
+ u5z4y4lGwz0QGomEIvGe5FCXinlctvHyhhiR2ZJn4mfinAUXNM6GfHm54TrlmfLSLBW3XZKfY
+ CXpoZEh1RhIYlw5rH3xTLUv8wklWajpT9tv6imR6Y+pfAaXtpqcKo5nSjdk9N1unm85tuFUV5
+ dkVxhMwcnD6AzFgWQiuR24kOkHhLzg1jgX2TEBJrp9j7BQkD8+2ZwQyGyXAuNKHFqIP5pJFQ3
+ O6w5zejatk7rGSNWnOz/lwDkzBsnSrMGlueP+70FNrBTxUY9/aszkko8Qq00ruS/ZSI/Al71R
+ 3H//3Tt+Wo4ETxGyOlxBdIiSP/AIvLk5oZ/jfIjy/KNN/bVJoziRbtAMJ2o8SQQWpSSuYLZtr
+ NRTIwXhyrayMwiPfb9xJiXvvIw/Tt0cS02Ua4n4j7YoUka4F6O8PApezxyjJrvIjLMbuP3tUt
+ GpO9AJ2nVjf1PbwOuwXrrnaonrjEV40HwG+YxLpHRJJdbu4g/lfusdeZS1OrPwcq0VwaxjAWS
+ Eb4XyV7yhIEf+0RUlkhWeogBffRcNRj4tdGJvpiA1fRhjLP+e8=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 8 Mar 2018 15:25:58 +0100
 
---osw746qlfqyb3xsn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Omit an extra message for a memory allocation failure in this function.
 
-Hi,
+This issue was detected by using the Coccinelle software.
 
-On Thu, Feb 22, 2018 at 03:17:14PM -0800, Moritz Fischer wrote:
-> Add support for reading a timeout value from device property.
-> Fall back to previous default of 3s if nothing is specified.
->=20
-> Signed-off-by: Moritz Fischer <mdf@kernel.org>
-> ---
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
 
-Thanks, both queued.
+v2:
+Lee Jones requested a resend for this patch. The change was rebased
+on source files from Linux next-20180308.
 
--- Sebastian
+ drivers/mfd/tps65090.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> Changes from v2:
-> - use device_property_read_{bool,u32} instead of of equivalent
->=20
-> Changes from v1:
-> - of_property_read_u32() overwrites the output only if it succeeds,
->   simplify error handling
-> ---
->=20
->  drivers/power/reset/gpio-poweroff.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/power/reset/gpio-poweroff.c b/drivers/power/reset/gp=
-io-poweroff.c
-> index be3d81ff51cc..6273ad3b411d 100644
-> --- a/drivers/power/reset/gpio-poweroff.c
-> +++ b/drivers/power/reset/gpio-poweroff.c
-> @@ -19,11 +19,13 @@
->  #include <linux/of_platform.h>
->  #include <linux/module.h>
-> =20
-> +#define DEFAULT_TIMEOUT_MS 3000
->  /*
->   * Hold configuration here, cannot be more than one instance of the driv=
-er
->   * since pm_power_off itself is global.
->   */
->  static struct gpio_desc *reset_gpio;
-> +static u32 timeout =3D DEFAULT_TIMEOUT_MS;
-> =20
->  static void gpio_poweroff_do_poweroff(void)
->  {
-> @@ -40,7 +42,7 @@ static void gpio_poweroff_do_poweroff(void)
->  	gpiod_set_value(reset_gpio, 1);
-> =20
->  	/* give it some time */
-> -	mdelay(3000);
-> +	mdelay(timeout);
-> =20
->  	WARN_ON(1);
->  }
-> @@ -58,12 +60,14 @@ static int gpio_poweroff_probe(struct platform_device=
- *pdev)
->  		return -EBUSY;
->  	}
-> =20
-> -	input =3D of_property_read_bool(pdev->dev.of_node, "input");
-> +	input =3D device_property_read_bool(&pdev->dev, "input");
->  	if (input)
->  		flags =3D GPIOD_IN;
->  	else
->  		flags =3D GPIOD_OUT_LOW;
-> =20
-> +	device_property_read_u32(&pdev->dev, "timeout-ms", &timeout);
-> +
->  	reset_gpio =3D devm_gpiod_get(&pdev->dev, NULL, flags);
->  	if (IS_ERR(reset_gpio))
->  		return PTR_ERR(reset_gpio);
-> --=20
-> 2.16.1
->=20
-
---osw746qlfqyb3xsn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqitA0ACgkQ2O7X88g7
-+ppp2Q//YA8TyfLpPaEgOkkQKccxE4UgfbpfLbW5DjwSv45dQGQ3jeiz5LSUQwk3
-JjeOOQTyTZgRbUFtis30DV8x5mqB3QevGexUygVzRDh4Y2QM2CmikCfmbTNqAkYa
-emdrLFXtBacZTeP4GNBizU0Edv5N/iWCzyUfp1MClRmvvoKLJRPg5+QEhOdEpnXE
-5XDwozK7E8qkCvsOMCdJUEIWNrOpDzxuxtz2GR7MlPPUtLUvs8g58AKanmquuzTX
-Sc+wzjLy3bDQSLRw6MGHnc2O5KACsaIkKvO0pzve8iZFo7jBsZQWfFA1icxaFA6c
-YZP3i5k8A2Ldr5LKizB+poSDduvCl0bxRxokitgLFd6+Da9uO2EPSsOJZdmstO+E
-N/EBRU0ntdjgVXZLShITBqlAB4K/PMVZgZ9XmTamZjRH9jmxcEBatl1zIhM2LKi5
-f/mznYvU3LuQOAdb6caw0z+uOYuJxpvuQFe97DJdlEkPwtJcSd5H7aZ8g6WjO37q
-uF6HrOOURYFjcnvDADeknR8QF7/fTrz2zm7fG6N0k2ilPFU0K5lsCHdyBATe9jGT
-QgGV/zOPM5os0XnWP1apyTBrOf6xjk2l8/utuyzSlG3CTU1PPmQXhHUjJ5022Ofn
-XtDDuO8W/f3syBwCOWKfESzXIV/1duTAE0X3n/mRALty1fNoR/o=
-=1IEW
------END PGP SIGNATURE-----
-
---osw746qlfqyb3xsn--
+diff --git a/drivers/mfd/tps65090.c b/drivers/mfd/tps65090.c
+index d7ec318c40c3..f13e4cd06e89 100644
+--- a/drivers/mfd/tps65090.c
++++ b/drivers/mfd/tps65090.c
+@@ -192,10 +192,8 @@ static int tps65090_i2c_probe(struct i2c_client *client,
+ 		irq_base = pdata->irq_base;
+ 
+ 	tps65090 = devm_kzalloc(&client->dev, sizeof(*tps65090), GFP_KERNEL);
+-	if (!tps65090) {
+-		dev_err(&client->dev, "mem alloc for tps65090 failed\n");
++	if (!tps65090)
+ 		return -ENOMEM;
+-	}
+ 
+ 	tps65090->dev = &client->dev;
+ 	i2c_set_clientdata(client, tps65090);
+-- 
+2.16.2
