@@ -1,82 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751145AbeCIEjv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 23:39:51 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.228]:11203 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750898AbeCIEju (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 23:39:50 -0500
-From: Matheus Castello <matheus@castello.eng.br>
-To: stefan.wahren@i2se.com, eric@anholt.net
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Matheus Castello <matheus@castello.eng.br>
-Subject: [PATCH v3 3/3] pinctrl: bcm2835: Update docs about generic pinctrl bindings support
-Date: Fri,  9 Mar 2018 00:16:14 -0400
-Message-Id: <1520568974-15547-4-git-send-email-matheus@castello.eng.br>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520568974-15547-1-git-send-email-matheus@castello.eng.br>
-References: <5b3419be-12ca-75d7-6f5e-d3338ddd7f14@castello.eng.br>
- <1520568974-15547-1-git-send-email-matheus@castello.eng.br>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - castello.eng.br
-X-BWhitelist: no
-X-Source-IP: 191.189.21.134
-X-Source-L: No
-X-Exim-ID: 1eu9Sj-003CXR-NE
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (localhost.localdomain) [191.189.21.134]:8442
-X-Source-Auth: matheus@castello.eng.br
-X-Email-Count: 26
-X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
-X-Local-Domain: yes
+        id S1751088AbeCIEoF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 23:44:05 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45284 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750848AbeCIEoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 23:44:03 -0500
+Date: Fri, 9 Mar 2018 12:43:53 +0800
+From: Dave Young <dyoung@redhat.com>
+To: Philipp Rudo <prudo@linux.vnet.ibm.com>
+Cc: kexec@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
+        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: Re: [PATCH 11/11] kexec_file: Move purgatories sha256 to common code
+Message-ID: <20180309044353.GC3246@dhcp-128-65.nay.redhat.com>
+References: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
+ <20180226151620.20970-12-prudo@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180226151620.20970-12-prudo@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now we have generic pin configuration and multiplexing support,
-ahd shoud be preferred than brcm legacy one.
+On 02/26/18 at 04:16pm, Philipp Rudo wrote:
+> The code to verify the new kernels sha digest are applicable for all
+> architectures. Move it to common code.
+> 
+> Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
+> ---
+>  arch/x86/purgatory/Makefile                    |  3 +++
+>  arch/x86/purgatory/purgatory.c                 |  2 +-
+>  {arch/x86/purgatory => include/linux}/sha256.h | 10 +++++++++-
+>  {arch/x86/purgatory => lib}/sha256.c           |  4 ++--
+>  4 files changed, 15 insertions(+), 4 deletions(-)
+>  rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
+>  rename {arch/x86/purgatory => lib}/sha256.c (99%)
+> 
+> diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
+> index 2f15a2ac4209..414eed6b5065 100644
+> --- a/arch/x86/purgatory/Makefile
+> +++ b/arch/x86/purgatory/Makefile
+> @@ -6,6 +6,9 @@ purgatory-y := purgatory.o stack.o setup-x86_$(BITS).o sha256.o entry64.o string
+>  targets += $(purgatory-y)
+>  PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
+>  
+> +$(obj)/sha256.o: $(srctree)/lib/sha256.c
+> +	$(call if_changed_rule,cc_o_c)
+> +
+>  LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined -nostdlib -z nodefaultlib
+>  targets += purgatory.ro
+>  
+> diff --git a/arch/x86/purgatory/purgatory.c b/arch/x86/purgatory/purgatory.c
+> index 470edad96bb9..025c34ac0d84 100644
+> --- a/arch/x86/purgatory/purgatory.c
+> +++ b/arch/x86/purgatory/purgatory.c
+> @@ -11,9 +11,9 @@
+>   */
+>  
+>  #include <linux/bug.h>
+> +#include <linux/sha256.h>
+>  #include <asm/purgatory.h>
+>  
+> -#include "sha256.h"
+>  #include "../boot/string.h"
+>  
+>  unsigned long purgatory_backup_dest __section(.kexec-purgatory);
+> diff --git a/arch/x86/purgatory/sha256.h b/include/linux/sha256.h
+> similarity index 63%
+> rename from arch/x86/purgatory/sha256.h
+> rename to include/linux/sha256.h
+> index 2867d9825a57..43a20ac33688 100644
+> --- a/arch/x86/purgatory/sha256.h
+> +++ b/include/linux/sha256.h
+> @@ -13,9 +13,17 @@
+>  #include <linux/types.h>
+>  #include <crypto/sha.h>
+>  
+> +/* Stand-alone implementation of the SHA256 algorithm. It is designed to
+> + * have as little dependencies as possible so it can be used in the
+> + * kexec_file purgatory. In other cases you should use the implementation in
+> + * crypto/.
+> + *
+> + * For details see lib/sha256.c
+> + */
 
-Signed-off-by: Matheus Castello <matheus@castello.eng.br>
----
- .../devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+should move to use preferred comment format:
+/*
+ * Stand-alone ...
+ * ...
+ */
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
-index 2569866..58b4720 100644
---- a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
-@@ -36,6 +36,25 @@ listed. In other words, a subnode that lists only a mux function implies no
- information about any pull configuration. Similarly, a subnode that lists only
- a pul parameter implies no information about the mux function.
- 
-+This driver supports the generic pin multiplexing and configuration
-+bindings. For details on each properties, you can refer to
-+./pinctrl-bindings.txt.
-+
-+Required sub-node properties:
-+  - pins
-+  - function
-+
-+Optional sub-node properties:
-+  - bias-disable
-+  - bias-pull-up
-+  - bias-pull-down
-+  - output-high
-+  - output-low
-+
-+Legacy pin configuration and multiplexing binding:
-+*** (Its use is deprecated, use generic multiplexing and configuration
-+bindings instead)
-+
- Required subnode-properties:
- - brcm,pins: An array of cells. Each cell contains the ID of a pin. Valid IDs
-   are the integer GPIO IDs; 0==GPIO0, 1==GPIO1, ... 53==GPIO53.
--- 
-2.7.4
+> +
+>  extern int sha256_init(struct sha256_state *sctx);
+>  extern int sha256_update(struct sha256_state *sctx, const u8 *input,
+> -				unsigned int length);
+> +			 unsigned int length);
+>  extern int sha256_final(struct sha256_state *sctx, u8 *hash);
+>  
+>  #endif /* SHA256_H */
+> diff --git a/arch/x86/purgatory/sha256.c b/lib/sha256.c
+> similarity index 99%
+> rename from arch/x86/purgatory/sha256.c
+> rename to lib/sha256.c
+> index 548ca675a14a..4400c832e2aa 100644
+> --- a/arch/x86/purgatory/sha256.c
+> +++ b/lib/sha256.c
+> @@ -16,9 +16,9 @@
+>   */
+>  
+>  #include <linux/bitops.h>
+> +#include <linux/sha256.h>
+> +#include <linux/string.h>
+>  #include <asm/byteorder.h>
+> -#include "sha256.h"
+> -#include "../boot/string.h"
+
+Hmm, I'm not sure if moving to linux/string.h will have some side
+effects..
+
+>  
+>  static inline u32 Ch(u32 x, u32 y, u32 z)
+>  {
+> -- 
+> 2.13.5
+> 
+
+Thanks
+Dave
