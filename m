@@ -1,67 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932240AbeCIQr1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 11:47:27 -0500
-Received: from verein.lst.de ([213.95.11.211]:41572 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932162AbeCIQrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 11:47:25 -0500
-Date: Fri, 9 Mar 2018 17:47:18 +0100
-From: Torsten Duwe <duwe@lst.de>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Jiri Kosina <jkosina@suse.cz>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Nicholas Piggin <npiggin@gmail.com>, live-patching@vger.kernel.org
-Subject: Re: [PATCH v2] On ppc64le we HAVE_RELIABLE_STACKTRACE
-Message-ID: <20180309174718.2700b29e@blackhole.lan>
-In-Reply-To: <20180308162616.yhbymodggnfzpskx@treble>
-References: <20180305164928.GA17953@lst.de>
-        <20180308162616.yhbymodggnfzpskx@treble>
-Organization: LST e.V.
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+        id S1751254AbeCIQsl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 11:48:41 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:40540 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751159AbeCIQsj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 11:48:39 -0500
+Date: Fri, 9 Mar 2018 17:48:35 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCHv5 3/5] mfd: motorola-cpcap: Add audio-codec support
+Message-ID: <20180309164835.m442tmulhrknzqe3@earth.universe>
+References: <20180223200254.25685-4-sebastian.reichel@collabora.co.uk>
+ <20180307163211.rytfli5tb47yhtug@dell>
+ <20180308094652.qg4atjw5c3hayaz3@earth.universe>
+ <20180308095315.mpcmx2ob6yhsnrm6@dell>
+ <20180308102757.jyi7uo566n6nuct5@earth.universe>
+ <20180308104831.fflq2arj5dxgntia@dell>
+ <20180308112528.GC6019@sirena.org.uk>
+ <20180309083414.s57eq3kw325magwz@dell>
+ <20180309124017.GB5252@sirena.org.uk>
+ <20180309151153.GR5799@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="3cab7dvhmsquaalf"
+Content-Disposition: inline
+In-Reply-To: <20180309151153.GR5799@atomide.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Mar 2018 10:26:16 -0600
-Josh Poimboeuf <jpoimboe@redhat.com> wrote:
 
-> This doesn't seem to address some of my previous concerns:
+--3cab7dvhmsquaalf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You're right. That discussion quickly headed towards objtool
-and I forgot about this one paragraph with the remarks.
+Hi,
 
-> - Bailing on interrupt/exception frames
+On Fri, Mar 09, 2018 at 07:11:53AM -0800, Tony Lindgren wrote:
+> * Mark Brown <broonie@kernel.org> [180309 12:41]:
+> > On Fri, Mar 09, 2018 at 08:34:14AM +0000, Lee Jones wrote:
+> > > On Thu, 08 Mar 2018, Mark Brown wrote:
+> >=20
+> > > > Linux.  Clocks are a big issue with audio stuff, right now sections=
+ of
+> > > > the clock tree get handled in the CODEC driver but we're going to w=
+ant
+> > > > to push them out to a clock driver so we're not reimplementing hand=
+ling
+> > > > for clocks.
+> >=20
+> > > How is the CODEC controlled?  Does it have its own registers?  I guess
+> > > by "it's not a separate device or IP" you mean that it doesn't.  But
+> > > that begs the question, how does this then device differ from all the
+> > > other devices (adc, battery, charger, regulator, rtc, pwrbutton,
+> > > usb-phy and led)?
+> >=20
+> > I'm not convinced that this is a particularly good idea for the other
+> > functions but anyway...  the big thing here is that in these devices the
+> > CODEC is generally not the level that the IP is created at, it's a
+> > collection of interlinked IPs which usually includes not only audio
+> > stuff but also some clocking stuff.  The repeatable blocks that could
+> > get reused independently are generally a level down from the CODEC
+> > level, for example if you look at something like wm8994 there's a couple
+> > of identical FLL IPs which could make sense to enumerate individually in
+> > the DT.  The top level generally doesn't get reused and is purely an
+> > encoding of what Linux is currently doing.
+>=20
+> It seems that most of the components in the PMICs are just standard
+> components packed into the PMIC with a control interface provided
+> over I2C or SPI.
+>=20
+> So using compatible for things like ADC, RTC and so on makes sense
+> if eventually figure out which ones are shared across various
+> drivers.
+>=20
+> Sounds like audio is a bit more fuzzy like Mark describes above.
+> And by not using a compatible for audio we can have things working
+> while not establishing and ABI for something that might change
+> in the future.
 
-That is a good question. My current code keeps unwinding as long
-as the trace looks sane. If the exception frame has a valid code
-pointer in the LR slot it will continue. Couldn't there be cases
-where this is desirable? Should this be configurable? Not that
-I have an idea how this situation could occur for a thread
-that is current or sleeping...
+I would agree, if there was no ABI now, but we still have the
+ABI. Instead of specifying the compatible property, we now need
+to specify what the node name should look like (see my binding
+update). That's just a different ABI.
 
-Michael, Balbir: is that possible? Any Idea how to reliably detect
-an exception frame? My approach would be to look at the next return
-address and compare it to the usual suspects (i.e. collect all 
-"b ret" addresses in the EXCEPTION_COMMON macro, for BookS).
+-- Sebastian
 
-> - Function graph tracing return address conversion
-> 
-> - kretprobes return address conversion
+--3cab7dvhmsquaalf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-You mean like in arch/x86/kernel/unwind_frame.c the call to
-ftrace_graph_ret_addr ?
+-----BEGIN PGP SIGNATURE-----
 
-Forgive me my directness but I don't see why these should be handled in
-arch-dependent code, other than maybe a hook, if inevitable, that calls
-back into the graph tracer / kretprobes in order to get the proper
-address, or simply call the trace unreliable in case it finds such a
-return address.
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqiut4ACgkQ2O7X88g7
++ppWPw/+PciwoCoSEod5sIunUAX6qvRTE2Dn0D4xbh9/gLRXOxmNJPMabj7tXaZe
+KFqEMkTCmqO42klBMcQijcBTc5AC3YzMcFLI61LjlQREXeKPchn3rJhIQTwQUqQJ
+jXHj1Af6+pzaZohie9awDqTBdSPhnj6OGx/eG48MWPdE3oPtV4n7MWlCcj1j8e6y
+gyEoQfr+St08vJHPVsIzIPmC+iBXSz2dvkTiwKDMtWghKfFxuN9oAdma/4+C+idl
+UNzhdSgHeiTIfCBp8gHbJ9tYCSmxOUFfyTI8q2xeTs580b2B/a5kskqG9NfQ7ltc
+Y1bFTDCWyOb6Gyh0d243ooEZYEvQRYHAjiwkrXQQCnyfwCCsBaE7NDH9/IhMOoZf
+971xNwxlz4+cDXmuRFkj2hAjQPepeyYRWCm1r+HKYaeLvIIZcQITPMczI8Tw/OyI
+wS7oReHF2g+H0CS8uJZKimS/kAB1vokUGm819TyfVZWY38VSu8dZ/1ZrQLf0/EUi
+ZJT/UqCMQ7FndZkVIqHjnKI0dKnW963QD7FpAvESrcRjl2tSeyuV1EEjMlnl/ePP
+R7zmp6jobKkh4JhJid6YEWzsohjh/y+ckHsKJaXhd94zwX7xNBO5OGyNDASRA/0r
+chjiOreAH5kNagFDs1LTmz358VoPBW3wdj6ujtGJCxqBXIFAlrU=
+=QYsg
+-----END PGP SIGNATURE-----
 
-I understand that x86 has a hard time with its multiple unwinders, but
-there should be a simpler, generic solution for all other architectures.
-
-	Torsten
+--3cab7dvhmsquaalf--
