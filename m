@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932882AbeCIWEg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 17:04:36 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:39422 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932833AbeCIWEX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S932842AbeCIWEX (ORCPT <rfc822;w@1wt.eu>);
         Fri, 9 Mar 2018 17:04:23 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:39420 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932735AbeCIWES (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 17:04:18 -0500
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
 Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR RENESAS),
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 11/11] drm: rcar-du: Support interlaced video output through vsp1
-Date: Fri,  9 Mar 2018 22:04:09 +0000
-Message-Id: <6f3952607748a5bc62dfa59a522ac1111b5d63e4.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 04/11] media: vsp1: Remove unused display list structure field
+Date: Fri,  9 Mar 2018 22:04:02 +0000
+Message-Id: <4413b8b4a7403e2b84389365a2e20faca1389784.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
 References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
@@ -26,40 +25,33 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the newly exposed VSP1 interface to enable interlaced frame support
-through the VSP1 lif pipelines.
+The vsp1 reference in the vsp1_dl_body structure is not used.
+Remove it.
 
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 1 +
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c  | 3 +++
- 2 files changed, 4 insertions(+)
+ drivers/media/platform/vsp1/vsp1_dl.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 5685d5af6998..9854d9deb944 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -248,6 +248,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 	/* Signal polarities */
- 	value = ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? DSMR_VSL : 0)
- 	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? DSMR_HSL : 0)
-+	      | ((mode->flags & DRM_MODE_FLAG_INTERLACE) ? DSMR_ODEV : 0)
- 	      | DSMR_DIPM_DISP | DSMR_CSPM;
- 	rcar_du_crtc_write(rcrtc, DSMR, value);
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index 057f0f093222..16a2d3c93655 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -48,7 +48,6 @@ struct vsp1_dl_entry {
+  * @list: entry in the display list list of bodies
+  * @free: entry in the pool free body list
+  * @pool: pool to which this body belongs
+- * @vsp1: the VSP1 device
+  * @entries: array of entries
+  * @dma: DMA address of the entries
+  * @size: size of the DMA memory in bytes
+@@ -62,7 +61,6 @@ struct vsp1_dl_body {
+ 	refcount_t refcnt;
  
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index 2c260c33840b..5e47daef8bd2 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -178,6 +178,9 @@ static void rcar_du_vsp_plane_setup(struct rcar_du_vsp_plane *plane)
- 	};
- 	unsigned int i;
+ 	struct vsp1_dl_body_pool *pool;
+-	struct vsp1_device *vsp1;
  
-+	cfg.interlaced = !!(plane->plane.state->crtc->mode.flags
-+			    & DRM_MODE_FLAG_INTERLACE);
-+
- 	cfg.src.left = state->state.src.x1 >> 16;
- 	cfg.src.top = state->state.src.y1 >> 16;
- 	cfg.src.width = drm_rect_width(&state->state.src) >> 16;
+ 	struct vsp1_dl_entry *entries;
+ 	dma_addr_t dma;
 -- 
 git-series 0.9.1
