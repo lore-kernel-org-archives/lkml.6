@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933295AbeCIW1b (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 17:27:31 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:42964 "EHLO
+        id S933242AbeCIW15 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 17:27:57 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:42912 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932515AbeCIWYx (ORCPT
+        with ESMTP id S933136AbeCIWYs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 17:24:53 -0500
+        Fri, 9 Mar 2018 17:24:48 -0500
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -22,131 +22,69 @@ Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
         jingoohan1@gmail.com, sw0312.kim@samsung.com,
         linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
         Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
-        hshi@chromium.org, "Kristian H . Kristensen" <hoegsberg@chromium.org>,
+        hshi@chromium.org,
+        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v5 28/36] drm/bridge: analogix_dp: Split the platform-specific poweron in two parts
-Date: Fri,  9 Mar 2018 23:23:19 +0100
-Message-Id: <20180309222327.18689-29-enric.balletbo@collabora.com>
+Subject: [PATCH v5 26/36] drm/bridge: analogix_dp: Properly disable aux chan retries on rockchip
+Date: Fri,  9 Mar 2018 23:23:17 +0100
+Message-Id: <20180309222327.18689-27-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180309222327.18689-1-enric.balletbo@collabora.com>
 References: <20180309222327.18689-1-enric.balletbo@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Douglas Anderson <dianders@chromium.org>
 
-Some of the platform-specific stuff in rockchip_dp_poweron() needs to
-happen before the generic code.  Some needs to happen after.  Let's
-split the callback in two.
+The comments in analogix_dp_init_aux() claim that we're disabling aux
+channel retries, but then right below it for Rockchip it sets them to
+3.  If we actually need 3 retries for Rockchip then we could adjust
+the comment, but it seems more likely that we want the same retry
+behavior across all platforms.
 
-Specifically we can't start doing PSR work until _after_ the whole
-controller is up, so don't set the enable until the end.
-
-Cc: Kristian H. Kristensen <hoegsberg@chromium.org>
+Cc: Stéphane Marchesin <marcheu@chromium.org>
+Cc: 征增 王 <wzz@rock-chips.com>
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
-[seanpaul added exynos change]
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |  7 +++++--
- drivers/gpu/drm/exynos/exynos_dp.c                 |  2 +-
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 12 ++++++++++--
- include/drm/bridge/analogix_dp.h                   |  3 ++-
- 4 files changed, 18 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index eaf93cbd47a8..c527019daaa6 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1260,8 +1260,8 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
- 		goto out_dp_clk_pre;
- 	}
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+index 58e8a28e99aa..a5f2763d72e4 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+@@ -481,15 +481,16 @@ void analogix_dp_init_aux(struct analogix_dp_device *dp)
  
--	if (dp->plat_data->power_on)
--		dp->plat_data->power_on(dp->plat_data);
-+	if (dp->plat_data->power_on_start)
-+		dp->plat_data->power_on_start(dp->plat_data);
+ 	analogix_dp_reset_aux(dp);
  
- 	phy_power_on(dp->phy);
- 
-@@ -1286,6 +1286,9 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
- 		goto out_dp_init;
- 	}
- 
-+	if (dp->plat_data->power_on_end)
-+		dp->plat_data->power_on_end(dp->plat_data);
+-	/* Disable AUX transaction H/W retry */
++	/* AUX_BIT_PERIOD_EXPECTED_DELAY doesn't apply to Rockchip IP */
+ 	if (dp->plat_data && is_rockchip(dp->plat_data->dev_type))
+-		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(0) |
+-		      AUX_HW_RETRY_COUNT_SEL(3) |
+-		      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
++		reg = 0;
+ 	else
+-		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(3) |
+-		      AUX_HW_RETRY_COUNT_SEL(0) |
+-		      AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
++		reg = AUX_BIT_PERIOD_EXPECTED_DELAY(3);
 +
- 	enable_irq(dp->irq);
- 	return 0;
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index 964831dab102..86330f396784 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -162,7 +162,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 	dp->drm_dev = drm_dev;
- 
- 	dp->plat_data.dev_type = EXYNOS_DP;
--	dp->plat_data.power_on = exynos_dp_poweron;
-+	dp->plat_data.power_on_start = exynos_dp_poweron;
- 	dp->plat_data.power_off = exynos_dp_poweroff;
- 	dp->plat_data.attach = exynos_dp_bridge_attach;
- 	dp->plat_data.get_modes = exynos_dp_get_modes;
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index b3f46ed24cdc..23317a2269e1 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -109,7 +109,7 @@ static int rockchip_dp_pre_init(struct rockchip_dp_device *dp)
- 	return 0;
- }
- 
--static int rockchip_dp_poweron(struct analogix_dp_plat_data *plat_data)
-+static int rockchip_dp_poweron_start(struct analogix_dp_plat_data *plat_data)
- {
- 	struct rockchip_dp_device *dp = to_dp(plat_data);
- 	int ret;
-@@ -127,6 +127,13 @@ static int rockchip_dp_poweron(struct analogix_dp_plat_data *plat_data)
- 		return ret;
- 	}
- 
-+	return ret;
-+}
++	/* Disable AUX transaction H/W retry */
++	reg |= AUX_HW_RETRY_COUNT_SEL(0) |
++	       AUX_HW_RETRY_INTERVAL_600_MICROSECONDS;
 +
-+static int rockchip_dp_poweron_end(struct analogix_dp_plat_data *plat_data)
-+{
-+	struct rockchip_dp_device *dp = to_dp(plat_data);
-+
- 	return rockchip_drm_psr_activate(&dp->encoder);
- }
+ 	writel(reg, dp->reg_base + ANALOGIX_DP_AUX_HW_RETRY_CTL);
  
-@@ -330,7 +337,8 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
- 	dp->plat_data.encoder = &dp->encoder;
- 
- 	dp->plat_data.dev_type = dp->data->chip_type;
--	dp->plat_data.power_on = rockchip_dp_poweron;
-+	dp->plat_data.power_on_start = rockchip_dp_poweron_start;
-+	dp->plat_data.power_on_end = rockchip_dp_poweron_end;
- 	dp->plat_data.power_off = rockchip_dp_powerdown;
- 	dp->plat_data.get_modes = rockchip_dp_get_modes;
- 
-diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-index e9a1116d2f8e..475b706b49de 100644
---- a/include/drm/bridge/analogix_dp.h
-+++ b/include/drm/bridge/analogix_dp.h
-@@ -33,7 +33,8 @@ struct analogix_dp_plat_data {
- 	struct drm_connector *connector;
- 	bool skip_connector;
- 
--	int (*power_on)(struct analogix_dp_plat_data *);
-+	int (*power_on_start)(struct analogix_dp_plat_data *);
-+	int (*power_on_end)(struct analogix_dp_plat_data *);
- 	int (*power_off)(struct analogix_dp_plat_data *);
- 	int (*attach)(struct analogix_dp_plat_data *, struct drm_bridge *,
- 		      struct drm_connector *);
+ 	/* Receive AUX Channel DEFER commands equal to DEFFER_COUNT*64 */
 -- 
 2.16.1
