@@ -1,160 +1,390 @@
-Return-Path: <jun.li@nxp.com>
-X-Cyrus-Session-Id: sloti22d1t05-3903807-1520838798-2-1028959122400354588
+Return-Path: <groeck7@gmail.com>
+X-Cyrus-Session-Id: sloti22d1t05-1013802-1520616183-2-7787424394078719512
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, RCVD_IN_DNSWL_NONE -0.0001, SPF_HELO_PASS -0.001,
-  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='40.107.0.51', Host='mail-eopbgr00051.outbound.protection.outlook.com',
-  Country='NL', FromHeader='com', MailFrom='com', XOriginatingCountry='SG'
-X-Spam-charsets: to='utf-8', plain='utf-8'
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_ENVFROM_END_DIGIT 0.25,
+  FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_NONE -0.0001,
+  RCVD_IN_MSPIKE_H3 -0.01, RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001,
+  LANGUAGES roenca, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='74.125.82.195', Host='mail-ot0-f195.google.com', Country='US',
+  FromHeader='net', MailFrom='com'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: jun.li@nxp.com
+X-Mail-from: groeck7@gmail.com
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520838797; b=KsRu9413McP6v3nwuyUB8CiZ1zMQUwysDhwck/CNfYJbWBp
-    Iw5++/uoeFvht5XipLZB+I/3+UVuOunRLZkUH8f3b5Wav7u8zzDWYZY1lEFNwSe8
-    0WS3Zhf22V5pmf67VlP6esdStQljobU87AxHD2YpuyRjIQvkkG1Q/wRrJdaFQ66T
-    kJ0wqVBX6o3L9pTK/Im6iDCXWQW/OVbBuZnKoCsg/G4sZ108GWpWkw3ZtQzc+BlP
-    1bmQ+jZW5Spfvc9PyITTL9EISFuKcauAMZHfNd8dVt7176AT8QEiXEeMrjrIAbOa
-    fsQpBk4Ky2flTOh528no+DKFHKGnEJb0rp8H2FQ==
+    t=1520616182; b=j+zbGw8F7wYLgtRztgyjwZ0rIv79gDxapXkIf812XUIj6Pg
+    Gupen8fc6BFrt0k4vjTlI8346IJV67Odz2xBAvR1OJHhGIwZNTkDMWYYNc+whJfo
+    I2aU5PTiwzc/BVN/7r7mP/uab8hnqOCm3yGnQQoBYLI58Ih1bhRvZSRNWUEt12nW
+    xjNXlwOvnSdegrJhAJQKqooyhYLqeH/m212xYp4E3uuGjBKkvb+gQ58/j90goNBj
+    1xaDX0sgGmY2NKXVuWJexTe027SDO8r1VkeSmOvQ8pFKS99rhk8AWIZYkwoUGc/M
+    VvpgKYhmeofFqgYPoXJVrbbWmTUCsvGaeBItSVg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version; s=arctest; t=1520838797; bh=J+VgfnAN9aSDftupcUvNA
-    utFtQI/25byRO3BrMh6faQ=; b=IkP67z+wHjYE00NN4wjMkqSkE7Kd2tAHg5Hxj
-    0arg4E4XcYwPKQdpSxxQ5Kzi1iwkBUEE6db3TAoqheN1nNxL72meWxfzKrKiR49J
-    mrj4S9WX0uoBCwmIHMDHX1xLPmzJc9wg6PuhwjcAOv8lqAaFlIlPbxw+hvp6cJDM
-    mXkXx0zG7iQrYus8LpQCy5lO/TG28djpS5beDBuwwCxP/PfoH8DxzNS3ExR2B9Rp
-    PnIIpQ+zZhNgPmu0BPgUPrQXxanVVOoP1SEjVXAAiNN5v9e2143CpUWjUzs46/wr
-    bcL0xehrzDkR8/6YrD5wn/DX1Fg08LlBWuhRQX6y2IJ1SD8GQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=qjt+VbDK x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=none,d=none) header.from=nxp.com;
-    iprev=pass policy.iprev=40.107.0.51 (mail-eopbgr00051.outbound.protection.outlook.com);
-    spf=pass smtp.mailfrom=jun.li@nxp.com smtp.helo=EUR02-AM5-obe.outbound.protection.outlook.com;
-    x-aligned-from=pass;
-    x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=EUR02-AM5-obe.outbound.protection.outlook.com x-ptr-lookup=mail-eopbgr00051.outbound.protection.outlook.com;
-    x-return-mx=pass smtp.domain=nxp.com smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA bits=128/128
-Authentication-Results: mx2.messagingengine.com;
+    messagingengine.com; h=sender:date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to; s=arctest; t=
+    1520616182; bh=tET9gl2yh1C8I6Szk7Y8Lz8wBSL++kFieq9jfChlPkE=; b=Z
+    1V8OSB63EB4W0tb3TphiUkSXxmmP/9ZMJGiPScWfVSZnYXXjm7z6YHhmYckYZVXM
+    TkrV3NgOaVMDTl9hiJmv530HULEZv0MNOgk9+z3bGU7EuxqWij4v7xe5PG1Q61a/
+    Y59c5Lusx6s2ZYv7qeCb4vdwxUS0RI0jwZe224rvcMNBUiurTuk0q/5dP8JT8N+k
+    wnbqTaPmZZ6plgSeL/3nuuMlW56vL6cwWM8Hi6HOgUtYsvhV0cWWY0/CMdenxqZj
+    fEwLX/1nbo4JKozDsGVdxFxHBpqZviErxfIpyZfXyNHp7xDnyFyEEQfQToeEcaPb
+    RM59vnC1q6LO9yjj/BvjQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=iFr8OvLb x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,d=none) header.from=roeck-us.net;
+    iprev=pass policy.iprev=74.125.82.195 (mail-ot0-f195.google.com);
+    spf=pass smtp.mailfrom=groeck7@gmail.com smtp.helo=mail-ot0-f195.google.com;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=AaAjKsH3;
+    x-ptr=pass x-ptr-helo=mail-ot0-f195.google.com x-ptr-lookup=mail-ot0-f195.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=roeck-us.net header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=qjt+VbDK x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=none,d=none) header.from=nxp.com;
-    iprev=pass policy.iprev=40.107.0.51 (mail-eopbgr00051.outbound.protection.outlook.com);
-    spf=pass smtp.mailfrom=jun.li@nxp.com smtp.helo=EUR02-AM5-obe.outbound.protection.outlook.com;
-    x-aligned-from=pass;
-    x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=EUR02-AM5-obe.outbound.protection.outlook.com x-ptr-lookup=mail-eopbgr00051.outbound.protection.outlook.com;
-    x-return-mx=pass smtp.domain=nxp.com smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA bits=128/128
-From: Jun Li <jun.li@nxp.com>
-To: =?utf-8?B?5p2O5pu45biG?= <leechu729@gmail.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
-	"linux@roeck-us.net" <linux@roeck-us.net>, "greg@kroah.com" <greg@kroah.com>,
-	"shufan_lee@richtek.com" <shufan_lee@richtek.com>, "cy_huang@richtek.com"
-	<cy_huang@richtek.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org"
-	<linux-usb@vger.kernel.org>
-Subject: RE: [PATCH v7] staging: typec: handle vendor defined part and modify
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=iFr8OvLb x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,d=none) header.from=roeck-us.net;
+    iprev=pass policy.iprev=74.125.82.195 (mail-ot0-f195.google.com);
+    spf=pass smtp.mailfrom=groeck7@gmail.com smtp.helo=mail-ot0-f195.google.com;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=AaAjKsH3;
+    x-ptr=pass x-ptr-helo=mail-ot0-f195.google.com x-ptr-lookup=mail-ot0-f195.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=roeck-us.net header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Google-Smtp-Source: AG47ELud5tsi11XwozLXY0h5sUz4nz4g+crdbpylMCuQMm2U0YwIMxsWjPgvHhRaLILSHlEGxRo/KQ==
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 9 Mar 2018 09:22:57 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: ShuFan Lee <leechu729@gmail.com>
+Cc: heikki.krogerus@linux.intel.com, greg@kroah.com, shufan_lee@richtek.com,
+	cy_huang@richtek.com, jun.li@nxp.com, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH v7] staging: typec: handle vendor defined part and modify
  drp toggling flow
-Thread-Topic: [PATCH v7] staging: typec: handle vendor defined part and modify
- drp toggling flow
-Thread-Index: AQHTtO2TvuhbiKnCtkaCXDhq065ky6PL/wvQgAAbPQCAAAZVIIAAFDsAgAABZiA=
-Date: Mon, 12 Mar 2018 07:13:12 +0000
-Message-ID: <VI1PR0402MB3917B8C71E99BCBDB2719EEB89D30@VI1PR0402MB3917.eurprd04.prod.outlook.com>
+Message-ID: <20180309172257.GA9949@roeck-us.net>
 References: <1520301032-10109-1-git-send-email-leechu729@gmail.com>
- <VI1PR0402MB39170322F313A03DC0018A8089D30@VI1PR0402MB3917.eurprd04.prod.outlook.com>
- <CAFaeLdQDHSdeoG9fPVrBheohBGMkG-KirFtF-ra48AXfMWhVNw@mail.gmail.com>
- <VI1PR0402MB391795EEE76FBDCFDBD541BB89D30@VI1PR0402MB3917.eurprd04.prod.outlook.com>
- <CAFaeLdSBJ_SD9gtGbQsCchxQ03PBi3=6D4bjCpYrnm-xoRdvCg@mail.gmail.com>
-In-Reply-To: <CAFaeLdSBJ_SD9gtGbQsCchxQ03PBi3=6D4bjCpYrnm-xoRdvCg@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [92.121.68.129]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0402MB2782;7:xChd4LDwFjLPSOEp0REG2Wz+uwXmfPulgih//dL/irS3h447eZL/a8n0AKZk1jK/q9YoEeRlZaPNEXwqS4ZMKKRHSZiLFrPDCnf8YizhKrH6C/BnxVX9mi0h0uQsL9jMmKCSwsOVq1u7QumguKxz+FXU7o9RgiyRdnjW407b8N/xwj3sqzqu9xasUzGzGjGlTT511qlvYtVNSdngMnZUf1UBdLbCe9DYbGq/tNi2f1cWMERHwjRzXWcKDQs5XBYB
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 00d28beb-5ae0-463c-1dc1-08d587e8b778
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB2782;
-x-ms-traffictypediagnostic: VI1PR0402MB2782:
-x-microsoft-antispam-prvs: <VI1PR0402MB2782FE4C4D3C6B3BF064A8C489D30@VI1PR0402MB2782.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(85827821059158)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231220)(944501244)(52105095)(6055026)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(6072148)(201708071742011);SRVR:VI1PR0402MB2782;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0402MB2782;
-x-forefront-prvs: 06098A2863
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39380400002)(396003)(376002)(366004)(39860400002)(346002)(377424004)(13464003)(199004)(189003)(6116002)(7736002)(305945005)(74316002)(93886005)(9686003)(55016002)(6436002)(5660300001)(6346003)(229853002)(26005)(2950100002)(6916009)(186003)(68736007)(33656002)(5250100002)(316002)(53546011)(6506007)(66066001)(106356001)(105586002)(102836004)(59450400001)(3846002)(1411001)(3660700001)(97736004)(478600001)(99286004)(76176011)(7696005)(4326008)(25786009)(2900100001)(39060400002)(8936002)(54906003)(6246003)(86362001)(3280700002)(2906002)(81166006)(8676002)(81156014)(14454004)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2782;H:VI1PR0402MB3917.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-authentication-results: spf=none (sender IP is ) smtp.mailfrom=jun.li@nxp.com; 
-x-microsoft-antispam-message-info: RkGwzMWvFzeKrmllO0vwrWHK/F7OoUB9AP0b34cX5TfsZ4wLfX8VcooVlkyDgf/S16Oj3/TdcJ92FpDIcWatj5jiGHZxFPYhxyVwlHpzW7eRTQfP2xuRpk3nGDKY/R3FGupeK8PgyGHsaoL166CG5gwewsteZcMeyrt16+PDuL8FFtIezGftTtHzyfK1OFu5kD2frUbw5tPxSqrGdrFbFO/+lLa+J1V9Lnhm6b9qi7k9Ee3yJRSPfAZ6t1vUytkZjXbjMm2K+UONiUIdsjiEofUqDvN0hBuJUOThC+JAcXH2gmbzPgLCm4VTUawn3wHM1pvisZkISCwQjBzh2Uh3Xg==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 00d28beb-5ae0-463c-1dc1-08d587e8b778
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Mar 2018 07:13:12.1808
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB2782
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520301032-10109-1-git-send-email-leechu729@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IOadjuabuOW4hiBbbWFpbHRv
-OmxlZWNodTcyOUBnbWFpbC5jb21dDQo+IFNlbnQ6IDIwMTjlubQz5pyIMTLml6UgMTQ6NTcNCj4g
-VG86IEp1biBMaSA8anVuLmxpQG54cC5jb20+DQo+IENjOiBHcmVnIEtyb2FoLUhhcnRtYW4gPGdy
-ZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPjsNCj4gaGVpa2tpLmtyb2dlcnVzQGxpbnV4LmludGVs
-LmNvbTsgbGludXhAcm9lY2stdXMubmV0OyBncmVnQGtyb2FoLmNvbTsNCj4gc2h1ZmFuX2xlZUBy
-aWNodGVrLmNvbTsgY3lfaHVhbmdAcmljaHRlay5jb207DQo+IGxpbnV4LWtlcm5lbEB2Z2VyLmtl
-cm5lbC5vcmc7IGxpbnV4LXVzYkB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRD
-SCB2N10gc3RhZ2luZzogdHlwZWM6IGhhbmRsZSB2ZW5kb3IgZGVmaW5lZCBwYXJ0IGFuZCBtb2Rp
-ZnkNCj4gZHJwIHRvZ2dsaW5nIGZsb3cNCj4gDQo+IEhpIEp1biwNCj4gDQo+IDIwMTgtMDMtMTIg
-MTM6NTggR01UKzA4OjAwIEp1biBMaSA8anVuLmxpQG54cC5jb20+Og0KPiA+IEhpDQo+ID4+IC0t
-LS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4+IEZyb206IOadjuabuOW4hiBbbWFpbHRvOmxl
-ZWNodTcyOUBnbWFpbC5jb21dDQo+ID4+IFNlbnQ6IDIwMTjlubQz5pyIMTLml6UgMTM6MjINCj4g
-Pj4gVG86IEp1biBMaSA8anVuLmxpQG54cC5jb20+DQo+ID4+IENjOiBHcmVnIEtyb2FoLUhhcnRt
-YW4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPjsNCj4gPj4gaGVpa2tpLmtyb2dlcnVzQGxp
-bnV4LmludGVsLmNvbTsgbGludXhAcm9lY2stdXMubmV0OyBncmVnQGtyb2FoLmNvbTsNCj4gPj4g
-c2h1ZmFuX2xlZUByaWNodGVrLmNvbTsgY3lfaHVhbmdAcmljaHRlay5jb207DQo+ID4+IGxpbnV4
-LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXVzYkB2Z2VyLmtlcm5lbC5vcmcNCj4gPj4g
-U3ViamVjdDogUmU6IFtQQVRDSCB2N10gc3RhZ2luZzogdHlwZWM6IGhhbmRsZSB2ZW5kb3IgZGVm
-aW5lZCBwYXJ0DQo+ID4+IGFuZCBtb2RpZnkgZHJwIHRvZ2dsaW5nIGZsb3cNCj4gPj4NCj4gPj4g
-SGkgSnVuLA0KPiA+Pg0KPiA+PiAgIFRoYW5rIHlvdS4NCj4gPj4NCj4gPj4gMjAxOC0wMy0xMiAx
-MjozMyBHTVQrMDg6MDAgSnVuIExpIDxqdW4ubGlAbnhwLmNvbT46DQo+ID4+ID4gSGksDQo+ID4+
-ID4NCj4gPj4gPj4gK3N0YXRpYyBpcnFyZXR1cm5fdCBfdGNwY2lfaXJxKGludCBpcnEsIHZvaWQg
-KmRldl9pZCkgew0KPiA+PiA+PiArICAgICBzdHJ1Y3QgdGNwY2kgKnRjcGNpID0gZGV2X2lkOw0K
-PiA+PiA+PiArDQo+ID4+ID4+ICsgICAgIHJldHVybiB0Y3BjaV9pcnEodGNwY2kpOw0KPiA+PiA+
-PiArfQ0KPiA+PiA+Pg0KPiA+PiA+IC4uLg0KPiA+PiA+DQo+ID4+ID4+ICsgICAgIGVyciA9IGRl
-dm1fcmVxdWVzdF90aHJlYWRlZF9pcnEoJmNsaWVudC0+ZGV2LCBjbGllbnQtPmlycSwgTlVMTCwN
-Cj4gPj4gPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBfdGNwY2lfaXJx
-LA0KPiA+PiA+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIElSUUZfT05F
-U0hPVCB8DQo+ID4+IElSUUZfVFJJR0dFUl9MT1csDQo+ID4+ID4+IC0gICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgZGV2X25hbWUodGNwY2ktPmRldiksDQo+IHRjcGNpKTsNCj4g
-Pj4gPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBkZXZfbmFtZSgmY2xp
-ZW50LT5kZXYpLA0KPiA+PiA+PiArIGNoaXApOw0KPiA+PiA+DQo+ID4+ID4gLSBkZXZfbmFtZSgm
-Y2xpZW50LT5kZXYpLCBjaGlwKTsNCj4gPj4gPiArIGRldl9uYW1lKCZjbGllbnQtPmRldiksIGNo
-aXAtPnRjcGNpKTsNCj4gPj4gPg0KPiA+PiA+IERpZCB5b3UgZXZlciB0ZXN0IHRoaXMgcGF0Y2g/
-DQo+ID4+IEkndmUgdGVzdGVkIHRoaXMgcGF0Y2ggd2l0aCB0Y3BjaV9ydDE3MTFoLmMgdGhhdCB3
-aWxsIGJlIHNlbnQgb3V0IGZvcg0KPiA+PiByZXZpZXdpbmcgaW4gdGhlIG5leHQgcGF0Y2ggYWZ0
-ZXIgdGNwY2kncyBtb2RpZmljYXRpb24gaXMgcGFzc2VkLg0KPiA+PiBCZWNhdXNlIGludGVycnVw
-dCBoYW5kbGVyIGlzIHJlZ2lzdGVyZWQgaW4gdGNwY2lfcnQxNzExaC5jLCBoZXJlIGlzDQo+ID4+
-IHRoZSBwbGFjZSBJIGRpZG4ndCBub3RpY2UuDQo+ID4NCj4gPiBVbmRlcnN0b29kLg0KPiA+DQo+
-ID4+IFRoZSBpbnRlcnJ1cHQgaGFuZGxlciBmb3IgdGNwY2kuYyBzaG91bGQgYmUgbW9kaWZpZWQg
-YXMgZm9sbG93aW5nOg0KPiA+PiAgc3RhdGljIGlycXJldHVybl90IF90Y3BjaV9pcnEoaW50IGly
-cSwgdm9pZCAqZGV2X2lkKSAgew0KPiA+PiAtICAgICAgIHN0cnVjdCB0Y3BjaSAqdGNwY2kgPSBk
-ZXZfaWQ7DQo+ID4+ICsgICAgICAgc3RydWN0IHRjcGNpX2NoaXAgKmNoaXAgPSBkZXZfaWQ7DQo+
-ID4+DQo+ID4+IC0gICAgICAgcmV0dXJuIHRjcGNpX2lycSh0Y3BjaSk7DQo+ID4+ICsgICAgICAg
-cmV0dXJuIHRjcGNpX2lycShjaGlwLT50Y3BjaSk7DQo+ID4+ICB9DQo+ID4+DQo+ID4NCj4gPiBF
-aXRoZXIgd2F5IGlzIE9LIHRvIGZpeCBpdC4NCj4gPiBZb3UgbWF5IHNlbmQgb3V0IHlvdXIgdjgg
-YW5kIG5vdGlmeSBHcmVnIHRvIGRyb3AgeW91ciB2NyB2ZXJzaW9uLg0KPiA+DQo+ID4gSnVuIExp
-DQo+IA0KPiBNYXkgSSBhZGQgeW91IGluIHRoZSBSZXBvcnRlZC1ieSBsaXN0Pw0KDQpJIGp1c3Qg
-Z2F2ZSBhIHJ1biB3aXRoIHlvdXIgcGF0Y2ggb24gbXkgSFcsIHNvIGZvciB5b3VyIG5ldyB2ZXJz
-aW9uLA0KeW91IGNhbiBkaXJlY3RseSBhZGQ6DQoNClJldmlld2VkLWJ5OiBMaSBKdW4gPGp1bi5s
-aUBueHAuY29tPg0KVGVzdGVkLWJ5OiBMaSBKdW4gPGp1bi5saUBueHAuY29tPg0KDQo+IA0KPiAt
-LQ0KPiBCZXN0IFJlZ2FyZHMsDQo+IOabuOW4hg0K
+On Tue, Mar 06, 2018 at 09:50:32AM +0800, ShuFan Lee wrote:
+> From: ShuFan Lee <shufan_lee@richtek.com>
+> 
+> Handle vendor defined behavior in tcpci_init, tcpci_set_vconn, tcpci_start_drp_toggling
+> and export tcpci_irq. More operations can be extended in tcpci_data if needed.
+> According to TCPCI specification, 4.4.5.2 ROLE_CONTROL,
+> TCPC shall not start DRP toggling until subsequently the TCPM
+> writes to the COMMAND register to start DRP toggling.
+> DRP toggling flow is changed as following:
+>   - Write DRP = 1, Rp level and RC.CCx to Rd/Rd or Rp/Rp
+>   - Set LOOK4CONNECTION command
+> 
+> Signed-off-by: ShuFan Lee <shufan_lee@richtek.com>
+
+I am fine with this version.
+
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+> ---
+>  drivers/staging/typec/tcpci.c | 127 +++++++++++++++++++++++++++++++++---------
+>  drivers/staging/typec/tcpci.h |  15 +++++
+>  2 files changed, 116 insertions(+), 26 deletions(-)
+> 
+>  patch changelogs between v1 & v2
+>  - Remove unnecessary i2c_client in the structure of tcpci.
+>  - Rename structure of tcpci_vendor_data to tcpci_data.
+>  - Not exporting tcpci read/write wrappers but register i2c regmap in glue driver.
+>  - Add set_vconn ops in tcpci_data.
+>    (It is necessary for RT1711H to enable/disable idle mode before disabling/enabling vconn)
+>  - Export tcpci_irq so that vendor can call it in their own IRQ handler.
+> 
+>  patch changelogs between v2 & v3
+>  - Change the return type of tcpci_irq from int to irqreturn_t.
+> 
+>  patch changelogs between v3 & v4
+>  - Directly return regmap_write at the end of drp_toggling function.
+>  - Because tcpci_irq is called in _tcpci_irq, move _tcpci_irq to the place after tcpci_irq.
+> 
+>  patch changelogs between v4 & v5
+>  - Add a space between my first & last name, from ShuFanLee to ShuFan Lee.
+> 
+>  patch changelogs between v5 & v6
+>  - Add start_drp_toggling in tcpci_data and call it at the beginning of tcpci_start_drp_toggling.
+>  - Modify the flow of tcpci_start_drp_toggling as following:
+>     - Set Rp level, RC.CCx to Rd/Rd or Rp/Rp and DRP = 1
+>     - Set LOOK4CONNECTION command
+> 
+>  patch changelogs between v6 & v7
+>  - Remove checking whether tcpci->data is NULL because it is guaranteed to be available.
+> 
+> diff --git a/drivers/staging/typec/tcpci.c b/drivers/staging/typec/tcpci.c
+> index 9bd4412..8043740 100644
+> --- a/drivers/staging/typec/tcpci.c
+> +++ b/drivers/staging/typec/tcpci.c
+> @@ -21,7 +21,6 @@
+>  
+>  struct tcpci {
+>  	struct device *dev;
+> -	struct i2c_client *client;
+>  
+>  	struct tcpm_port *port;
+>  
+> @@ -30,6 +29,12 @@ struct tcpci {
+>  	bool controls_vbus;
+>  
+>  	struct tcpc_dev tcpc;
+> +	struct tcpci_data *data;
+> +};
+> +
+> +struct tcpci_chip {
+> +	struct tcpci *tcpci;
+> +	struct tcpci_data data;
+>  };
+>  
+>  static inline struct tcpci *tcpc_to_tcpci(struct tcpc_dev *tcpc)
+> @@ -37,8 +42,7 @@ static inline struct tcpci *tcpc_to_tcpci(struct tcpc_dev *tcpc)
+>  	return container_of(tcpc, struct tcpci, tcpc);
+>  }
+>  
+> -static int tcpci_read16(struct tcpci *tcpci, unsigned int reg,
+> -			u16 *val)
+> +static int tcpci_read16(struct tcpci *tcpci, unsigned int reg, u16 *val)
+>  {
+>  	return regmap_raw_read(tcpci->regmap, reg, val, sizeof(u16));
+>  }
+> @@ -98,9 +102,17 @@ static int tcpci_set_cc(struct tcpc_dev *tcpc, enum typec_cc_status cc)
+>  static int tcpci_start_drp_toggling(struct tcpc_dev *tcpc,
+>  				    enum typec_cc_status cc)
+>  {
+> +	int ret;
+>  	struct tcpci *tcpci = tcpc_to_tcpci(tcpc);
+>  	unsigned int reg = TCPC_ROLE_CTRL_DRP;
+>  
+> +	/* Handle vendor drp toggling */
+> +	if (tcpci->data->start_drp_toggling) {
+> +		ret = tcpci->data->start_drp_toggling(tcpci, tcpci->data, cc);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+>  	switch (cc) {
+>  	default:
+>  	case TYPEC_CC_RP_DEF:
+> @@ -117,7 +129,17 @@ static int tcpci_start_drp_toggling(struct tcpc_dev *tcpc,
+>  		break;
+>  	}
+>  
+> -	return regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
+> +	if (cc == TYPEC_CC_RD)
+> +		reg |= (TCPC_ROLE_CTRL_CC_RD << TCPC_ROLE_CTRL_CC1_SHIFT) |
+> +			   (TCPC_ROLE_CTRL_CC_RD << TCPC_ROLE_CTRL_CC2_SHIFT);
+> +	else
+> +		reg |= (TCPC_ROLE_CTRL_CC_RP << TCPC_ROLE_CTRL_CC1_SHIFT) |
+> +			   (TCPC_ROLE_CTRL_CC_RP << TCPC_ROLE_CTRL_CC2_SHIFT);
+> +	ret = regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
+> +	if (ret < 0)
+> +		return ret;
+> +	return regmap_write(tcpci->regmap, TCPC_COMMAND,
+> +			    TCPC_CMD_LOOK4CONNECTION);
+>  }
+>  
+>  static enum typec_cc_status tcpci_to_typec_cc(unsigned int cc, bool sink)
+> @@ -178,6 +200,13 @@ static int tcpci_set_vconn(struct tcpc_dev *tcpc, bool enable)
+>  	struct tcpci *tcpci = tcpc_to_tcpci(tcpc);
+>  	int ret;
+>  
+> +	/* Handle vendor set vconn */
+> +	if (tcpci->data->set_vconn) {
+> +		ret = tcpci->data->set_vconn(tcpci, tcpci->data, enable);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+>  	ret = regmap_write(tcpci->regmap, TCPC_POWER_CTRL,
+>  			   enable ? TCPC_POWER_CTRL_VCONN_ENABLE : 0);
+>  	if (ret < 0)
+> @@ -323,6 +352,13 @@ static int tcpci_init(struct tcpc_dev *tcpc)
+>  	if (time_after(jiffies, timeout))
+>  		return -ETIMEDOUT;
+>  
+> +	/* Handle vendor init */
+> +	if (tcpci->data->init) {
+> +		ret = tcpci->data->init(tcpci, tcpci->data);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+>  	/* Clear all events */
+>  	ret = tcpci_write16(tcpci, TCPC_ALERT, 0xffff);
+>  	if (ret < 0)
+> @@ -344,9 +380,8 @@ static int tcpci_init(struct tcpc_dev *tcpc)
+>  	return tcpci_write16(tcpci, TCPC_ALERT_MASK, reg);
+>  }
+>  
+> -static irqreturn_t tcpci_irq(int irq, void *dev_id)
+> +irqreturn_t tcpci_irq(struct tcpci *tcpci)
+>  {
+> -	struct tcpci *tcpci = dev_id;
+>  	u16 status;
+>  
+>  	tcpci_read16(tcpci, TCPC_ALERT, &status);
+> @@ -412,6 +447,14 @@ static irqreturn_t tcpci_irq(int irq, void *dev_id)
+>  
+>  	return IRQ_HANDLED;
+>  }
+> +EXPORT_SYMBOL_GPL(tcpci_irq);
+> +
+> +static irqreturn_t _tcpci_irq(int irq, void *dev_id)
+> +{
+> +	struct tcpci *tcpci = dev_id;
+> +
+> +	return tcpci_irq(tcpci);
+> +}
+>  
+>  static const struct regmap_config tcpci_regmap_config = {
+>  	.reg_bits = 8,
+> @@ -435,22 +478,18 @@ static int tcpci_parse_config(struct tcpci *tcpci)
+>  	return 0;
+>  }
+>  
+> -static int tcpci_probe(struct i2c_client *client,
+> -		       const struct i2c_device_id *i2c_id)
+> +struct tcpci *tcpci_register_port(struct device *dev, struct tcpci_data *data)
+>  {
+>  	struct tcpci *tcpci;
+>  	int err;
+>  
+> -	tcpci = devm_kzalloc(&client->dev, sizeof(*tcpci), GFP_KERNEL);
+> +	tcpci = devm_kzalloc(dev, sizeof(*tcpci), GFP_KERNEL);
+>  	if (!tcpci)
+> -		return -ENOMEM;
+> +		return ERR_PTR(-ENOMEM);
+>  
+> -	tcpci->client = client;
+> -	tcpci->dev = &client->dev;
+> -	i2c_set_clientdata(client, tcpci);
+> -	tcpci->regmap = devm_regmap_init_i2c(client, &tcpci_regmap_config);
+> -	if (IS_ERR(tcpci->regmap))
+> -		return PTR_ERR(tcpci->regmap);
+> +	tcpci->dev = dev;
+> +	tcpci->data = data;
+> +	tcpci->regmap = data->regmap;
+>  
+>  	tcpci->tcpc.init = tcpci_init;
+>  	tcpci->tcpc.get_vbus = tcpci_get_vbus;
+> @@ -467,27 +506,63 @@ static int tcpci_probe(struct i2c_client *client,
+>  
+>  	err = tcpci_parse_config(tcpci);
+>  	if (err < 0)
+> -		return err;
+> +		return ERR_PTR(err);
+> +
+> +	tcpci->port = tcpm_register_port(tcpci->dev, &tcpci->tcpc);
+> +	if (PTR_ERR_OR_ZERO(tcpci->port))
+> +		return ERR_CAST(tcpci->port);
+> +
+> +	return tcpci;
+> +}
+> +EXPORT_SYMBOL_GPL(tcpci_register_port);
+> +
+> +void tcpci_unregister_port(struct tcpci *tcpci)
+> +{
+> +	tcpm_unregister_port(tcpci->port);
+> +}
+> +EXPORT_SYMBOL_GPL(tcpci_unregister_port);
+> +
+> +static int tcpci_probe(struct i2c_client *client,
+> +		       const struct i2c_device_id *i2c_id)
+> +{
+> +	struct tcpci_chip *chip;
+> +	int err;
+> +	u16 val = 0;
+>  
+> -	/* Disable chip interrupts */
+> -	tcpci_write16(tcpci, TCPC_ALERT_MASK, 0);
+> +	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
+> +	if (!chip)
+> +		return -ENOMEM;
+> +
+> +	chip->data.regmap = devm_regmap_init_i2c(client, &tcpci_regmap_config);
+> +	if (IS_ERR(chip->data.regmap))
+> +		return PTR_ERR(chip->data.regmap);
+>  
+> -	err = devm_request_threaded_irq(tcpci->dev, client->irq, NULL,
+> -					tcpci_irq,
+> +	/* Disable chip interrupts before requesting irq */
+> +	err = regmap_raw_write(chip->data.regmap, TCPC_ALERT_MASK, &val,
+> +			       sizeof(u16));
+> +	if (err < 0)
+> +		return err;
+> +
+> +	err = devm_request_threaded_irq(&client->dev, client->irq, NULL,
+> +					_tcpci_irq,
+>  					IRQF_ONESHOT | IRQF_TRIGGER_LOW,
+> -					dev_name(tcpci->dev), tcpci);
+> +					dev_name(&client->dev), chip);
+>  	if (err < 0)
+>  		return err;
+>  
+> -	tcpci->port = tcpm_register_port(tcpci->dev, &tcpci->tcpc);
+> -	return PTR_ERR_OR_ZERO(tcpci->port);
+> +	chip->tcpci = tcpci_register_port(&client->dev, &chip->data);
+> +	if (PTR_ERR_OR_ZERO(chip->tcpci))
+> +		return PTR_ERR(chip->tcpci);
+> +
+> +	i2c_set_clientdata(client, chip);
+> +	return 0;
+>  }
+>  
+>  static int tcpci_remove(struct i2c_client *client)
+>  {
+> -	struct tcpci *tcpci = i2c_get_clientdata(client);
+> +	struct tcpci_chip *chip = i2c_get_clientdata(client);
+>  
+> -	tcpm_unregister_port(tcpci->port);
+> +	tcpci_unregister_port(chip->tcpci);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/staging/typec/tcpci.h b/drivers/staging/typec/tcpci.h
+> index fdfb06c..a2c1754 100644
+> --- a/drivers/staging/typec/tcpci.h
+> +++ b/drivers/staging/typec/tcpci.h
+> @@ -59,6 +59,7 @@
+>  #define TCPC_POWER_CTRL_VCONN_ENABLE	BIT(0)
+>  
+>  #define TCPC_CC_STATUS			0x1d
+> +#define TCPC_CC_STATUS_DRPRST		BIT(5)
+>  #define TCPC_CC_STATUS_TERM		BIT(4)
+>  #define TCPC_CC_STATUS_CC2_SHIFT	2
+>  #define TCPC_CC_STATUS_CC2_MASK		0x3
+> @@ -121,4 +122,18 @@
+>  #define TCPC_VBUS_VOLTAGE_ALARM_HI_CFG		0x76
+>  #define TCPC_VBUS_VOLTAGE_ALARM_LO_CFG		0x78
+>  
+> +struct tcpci;
+> +struct tcpci_data {
+> +	struct regmap *regmap;
+> +	int (*init)(struct tcpci *tcpci, struct tcpci_data *data);
+> +	int (*set_vconn)(struct tcpci *tcpci, struct tcpci_data *data,
+> +			 bool enable);
+> +	int (*start_drp_toggling)(struct tcpci *tcpci, struct tcpci_data *data,
+> +				  enum typec_cc_status cc);
+> +};
+> +
+> +struct tcpci *tcpci_register_port(struct device *dev, struct tcpci_data *data);
+> +void tcpci_unregister_port(struct tcpci *tcpci);
+> +irqreturn_t tcpci_irq(struct tcpci *tcpci);
+> +
+>  #endif /* __LINUX_USB_TCPCI_H */
+> -- 
+> 1.9.1
+> 
