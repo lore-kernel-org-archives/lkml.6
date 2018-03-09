@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932933AbeCIX0t (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 18:26:49 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:53916 "EHLO
+        id S932805AbeCIXZ5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 18:25:57 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:53564 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932832AbeCIXZ7 (ORCPT
+        with ESMTP id S932706AbeCIXZx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 18:25:59 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A572460A24
+        Fri, 9 Mar 2018 18:25:53 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9DD4D6050D
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
 From: Lina Iyer <ilina@codeaurora.org>
@@ -15,10 +15,11 @@ To: andy.gross@linaro.org, david.brown@linaro.org,
         linux-arm-msm@vger.kernel.org
 Cc: linux-soc@vger.kernel.org, rnayak@codeaurora.org,
         bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH v4 07/10] drivers: qcom: rpmh: cache sleep/wake state requests
-Date: Fri,  9 Mar 2018 16:25:40 -0700
-Message-Id: <20180309232543.24636-8-ilina@codeaurora.org>
+        sboyd@kernel.org, Lina Iyer <ilina@codeaurora.org>,
+        devicetree@vger.kernel.org
+Subject: [PATCH v4 02/10] dt-bindings: introduce RPMH RSC bindings for Qualcomm SoCs
+Date: Fri,  9 Mar 2018 16:25:35 -0700
+Message-Id: <20180309232543.24636-3-ilina@codeaurora.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180309232543.24636-1-ilina@codeaurora.org>
 References: <20180309232543.24636-1-ilina@codeaurora.org>
@@ -26,334 +27,168 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Active state requests are sent immediately to the mailbox controller,
-while sleep and wake state requests are cached in this driver to avoid
-taxing the mailbox controller repeatedly. The cached values will be sent
-to the controller when the rpmh_flush() is called.
+Add device binding documentation for Qualcomm Technology Inc's RPMH RSC
+driver. The driver is used for communicating resource state requests for
+shared resources.
 
-Generally, flushing is a system PM activity and may be called from the
-system PM drivers when the system is entering suspend or deeper sleep
-modes during cpuidle.
-
-Also allow invalidating the cached requests, so they may be re-populated
-again.
-
+Cc: devicetree@vger.kernel.org
 Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 ---
 
-Changes in v4:
-	- remove locking for ->dirty in invalidate
-	- fix send_single
 Changes in v3:
-	- Remove locking for flush function
-	- Improve comments
----
- drivers/soc/qcom/rpmh.c | 203 +++++++++++++++++++++++++++++++++++++++++++++++-
- include/soc/qcom/rpmh.h |  10 +++
- 2 files changed, 212 insertions(+), 1 deletion(-)
+	- Move to soc/qcom
+	- Amend text per Stephen's suggestions
 
-diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
-index e3c7491e7baf..b5468ef082c1 100644
---- a/drivers/soc/qcom/rpmh.c
-+++ b/drivers/soc/qcom/rpmh.c
-@@ -7,11 +7,13 @@
- #include <linux/interrupt.h>
- #include <linux/jiffies.h>
- #include <linux/kernel.h>
-+#include <linux/list.h>
- #include <linux/mailbox_client.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-+#include <linux/spinlock.h>
- #include <linux/types.h>
- #include <linux/wait.h>
- 
-@@ -35,6 +37,21 @@
- 		.rc = rc,				\
- 	}
- 
-+/**
-+ * struct cache_req: the request object for caching
-+ *
-+ * @addr: the address of the resource
-+ * @sleep_val: the sleep vote
-+ * @wake_val: the wake vote
-+ * @list: linked list obj
-+ */
-+struct cache_req {
-+	u32 addr;
-+	u32 sleep_val;
-+	u32 wake_val;
-+	struct list_head list;
-+};
+Changes in v2:
+	- Amend text to describe the registers in reg property
+	- Add reg-names for the registers
+	- Update examples to use GIC_SPI in interrupts instead of 0
+	- Rephrase incorrect description
+
+Changes in v3:
+	- Fix unwanted capitalization
+	- Remove clients from the examples, this doc does not describe
+	  them
+	- Rephrase introductory paragraph
+	- Remove hardware specifics from DT bindings
+---
+ .../devicetree/bindings/soc/qcom/rpmh-rsc.txt      | 127 +++++++++++++++++++++
+ 1 file changed, 127 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+
+diff --git a/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+new file mode 100644
+index 000000000000..dcf71a5b302f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+@@ -0,0 +1,127 @@
++RPMH RSC:
++------------
 +
- /**
-  * struct rpmh_request: the message to be sent to rpmh-rsc
-  *
-@@ -55,9 +72,15 @@ struct rpmh_request {
-  * struct rpmh_ctrlr: our representation of the controller
-  *
-  * @drv: the controller instance
-+ * @cache: the list of cached requests
-+ * @lock: synchronize access to the controller data
-+ * @dirty: was the cache updated since flush
-  */
- struct rpmh_ctrlr {
- 	struct rsc_drv *drv;
-+	struct list_head cache;
-+	spinlock_t lock;
-+	bool dirty;
- };
- 
- /**
-@@ -122,17 +145,91 @@ static int wait_for_tx_done(struct rpmh_client *rc,
- 	return (ret > 0) ? 0 : -ETIMEDOUT;
- }
- 
-+static struct cache_req *__find_req(struct rpmh_client *rc, u32 addr)
-+{
-+	struct cache_req *p, *req = NULL;
++Resource Power Manager Hardened (RPMH) is the mechanism for communicating with
++the hardened resource accelerators on Qualcomm SoCs. Requests to the resources
++can be written to the Trigger Command Set (TCS)  registers and using a (addr,
++val) pair and triggered. Messages in the TCS are then sent in sequence over an
++internal bus.
 +
-+	list_for_each_entry(p, &rc->ctrlr->cache, list) {
-+		if (p->addr == addr) {
-+			req = p;
-+			break;
-+		}
-+	}
++The hardware block (Direct Resource Voter or DRV) is a part of the h/w entity
++(Resource State Coordinator a.k.a RSC) that can handle a multiple sleep and
++active/wake resource requests. Multiple such DRVs can exist in a SoC and can
++be written to from Linux. The structure of each DRV follows the same template
++with a few variations that are captured by the properties here.
 +
-+	return req;
-+}
++A TCS may be triggered from Linux or triggered by the F/W after all the CPUs
++have powered off to facilitate idle power saving. TCS could be classified as -
 +
-+static struct cache_req *cache_rpm_request(struct rpmh_client *rc,
-+					   enum rpmh_state state,
-+					   struct tcs_cmd *cmd)
-+{
-+	struct cache_req *req;
-+	struct rpmh_ctrlr *rpm = rc->ctrlr;
-+	unsigned long flags;
++	SLEEP,  /* Triggered by F/W */
++	WAKE,   /* Triggered by F/W */
++	ACTIVE, /* Triggered by Linux */
++	CONTROL /* Triggered by F/W */
 +
-+	spin_lock_irqsave(&rpm->lock, flags);
-+	req = __find_req(rc, cmd->addr);
-+	if (req)
-+		goto existing;
++The order in which they are described in the DT, should match the hardware
++configuration.
 +
-+	req = kzalloc(sizeof(*req), GFP_ATOMIC);
-+	if (!req) {
-+		req = ERR_PTR(-ENOMEM);
-+		goto unlock;
-+	}
++Requests can be made for the state of a resource, when the subsystem is active
++or idle. When all subsystems like Modem, GPU, CPU are idle, the resource state
++will be an aggregate of the sleep votes from each of those subsystems. Clients
++may request a sleep value for their shared resources in addition to the active
++mode requests.
 +
-+	req->addr = cmd->addr;
-+	req->sleep_val = req->wake_val = UINT_MAX;
-+	INIT_LIST_HEAD(&req->list);
-+	list_add_tail(&req->list, &rpm->cache);
++Properties:
 +
-+existing:
-+	switch (state) {
-+	case RPMH_ACTIVE_ONLY_STATE:
-+		if (req->sleep_val != UINT_MAX)
-+			req->wake_val = cmd->data;
-+		break;
-+	case RPMH_WAKE_ONLY_STATE:
-+		req->wake_val = cmd->data;
-+		break;
-+	case RPMH_SLEEP_STATE:
-+		req->sleep_val = cmd->data;
-+		break;
-+	default:
-+		break;
++- compatible:
++	Usage: required
++	Value type: <string>
++	Definition: Should be "qcom,rpmh-rsc".
++
++- reg:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: The first register specifies the base address of the DRV.
++	            The second register specifies the start address of the
++	            TCS.
++
++- reg-names:
++	Usage: required
++	Value type: <string>
++	Definition: Maps the register specified in the reg property. Must be
++	            "drv" and "tcs".
++
++- interrupts:
++	Usage: required
++	Value type: <prop-encoded-interrupt>
++	Definition: The interrupt that trips when a message complete/response
++	           is received for this DRV from the accelerators.
++
++- qcom,drv-id:
++	Usage: required
++	Value type: <u32>
++	Definition: the id of the DRV in the RSC block.
++
++- qcom,tcs-config:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: the tuple defining the configuration of TCS.
++	            Must have 2 cells which describe each TCS type.
++	            <type number_of_tcs>.
++	            The order of the TCS must match the hardware
++	            configuration.
++	- Cell #1 (TCS Type): TCS types to be specified -
++	            SLEEP_TCS
++	            WAKE_TCS
++	            ACTIVE_TCS
++	            CONTROL_TCS
++	- Cell #2 (Number of TCS): <u32>
++
++- label:
++	Usage: optional
++	Value type: <string>
++	Definition: Name for the RSC. The name would be used in trace logs.
++
++Drivers that want to use the RSC to communicate with RPMH must specify their
++bindings as child of the RSC controllers they wish to communicate with.
++
++Example 1:
++
++For a TCS whose RSC base address is is 0x179C0000 and is at a DRV id of 2, the
++register offsets for DRV2 start at 0D00, the register calculations are like
++this -
++First tuple: 0x179C0000 + 0x10000 * 2 = 0x179E0000
++Second tuple: 0x179E0000 + 0xD00 = 0x179E0D00
++
++	apps_rsc: rsc@179e000 {
++		label = "apps_rsc";
++		compatible = "qcom,rpmh-rsc";
++		reg = <0x179e0000 0x10000>, <0x179e0d00 0x3000>;
++		reg-names = "drv", "tcs";
++		interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
++		qcom,drv-id = <2>;
++		qcom,tcs-config = <SLEEP_TCS   3>,
++				  <WAKE_TCS    3>,
++				  <ACTIVE_TCS  2>,
++				  <CONTROL_TCS 1>;
 +	};
 +
-+	rpm->dirty = true;
-+unlock:
-+	spin_unlock_irqrestore(&rpm->lock, flags);
++Example 2:
 +
-+	return req;
-+}
++For a TCS whose RSC base address is 0xAF20000 and is at DRV id of 0, the
++register offsets for DRV0 start at 01C00, the register calculations are like
++this -
++First tuple: 0xAF20000
++Second tuple: 0xAF20000 + 0x1C00 = 0xAF21C00
 +
- /**
-- * __rpmh_write: send the RPMH request
-+ * __rpmh_write: Cache and send the RPMH request
-  *
-  * @rc: The RPMH client
-  * @state: Active/Sleep request type
-  * @rpm_msg: The data that needs to be sent (cmds).
-+ *
-+ * Cache the RPMH request and send if the state is ACTIVE_ONLY.
-+ * SLEEP/WAKE_ONLY requests are not sent to the controller at
-+ * this time. Use rpmh_flush() to send them to the controller.
-  */
- static int __rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
- 			struct rpmh_request *rpm_msg)
- {
- 	int ret = -EINVAL;
-+	struct cache_req *req;
-+	int i;
-+
-+	/* Cache the request in our store and link the payload */
-+	for (i = 0; i < rpm_msg->msg.num_cmds; i++) {
-+		req = cache_rpm_request(rc, state, &rpm_msg->msg.cmds[i]);
-+		if (IS_ERR(req))
-+			return PTR_ERR(req);
-+	}
- 
- 	rpm_msg->msg.state = state;
- 
-@@ -149,6 +246,10 @@ static int __rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
- 				 "Error in RPMH request addr=%#x, data=%#x\n",
- 				 rpm_msg->msg.cmds[0].addr,
- 				 rpm_msg->msg.cmds[0].data);
-+	} else {
-+		ret = rpmh_rsc_write_ctrl_data(rc->ctrlr->drv, &rpm_msg->msg);
-+		/* Clean up our call by spoofing tx_done */
-+		rpmh_tx_done(&rpm_msg->msg, ret);
- 	}
- 
- 	return ret;
-@@ -185,6 +286,104 @@ int rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
- }
- EXPORT_SYMBOL(rpmh_write);
- 
-+static int is_req_valid(struct cache_req *req)
-+{
-+	return (req->sleep_val != UINT_MAX &&
-+		req->wake_val != UINT_MAX &&
-+		req->sleep_val != req->wake_val);
-+}
-+
-+static int send_single(struct rpmh_client *rc, enum rpmh_state state,
-+		      u32 addr, u32 data)
-+{
-+	DEFINE_RPMH_MSG_ONSTACK(rc, state, NULL, rpm_msg);
-+
-+	/* Wake sets are always complete and sleep sets are not */
-+	rpm_msg.msg.wait_for_compl = (state == RPMH_WAKE_ONLY_STATE);
-+	rpm_msg.cmd[0].addr = addr;
-+	rpm_msg.cmd[0].data = data;
-+	rpm_msg.msg.num_cmds = 1;
-+
-+	return rpmh_rsc_write_ctrl_data(rc->ctrlr->drv, &rpm_msg.msg);
-+}
-+
-+/**
-+ * rpmh_flush: Flushes the buffered active and sleep sets to TCS
-+ *
-+ * @rc: The RPMh handle got from rpmh_get_client
-+ *
-+ * Return: -EBUSY if the controller is busy, probably waiting on a response
-+ * to a RPMH request sent earlier.
-+ *
-+ * This function is generally called from the sleep code from the last CPU
-+ * that is powering down the entire system. Since no other RPMH API would be
-+ * executing at this time, it is safe to run lockless.
-+ */
-+int rpmh_flush(struct rpmh_client *rc)
-+{
-+	struct cache_req *p;
-+	struct rpmh_ctrlr *rpm = rc->ctrlr;
-+	int ret;
-+
-+	if (IS_ERR_OR_NULL(rc))
-+		return -EINVAL;
-+
-+	if (!rpm->dirty) {
-+		pr_debug("Skipping flush, TCS has latest data.\n");
-+		return 0;
-+	}
-+
-+	/*
-+	 * Nobody else should be calling this function other than system PM,,
-+	 * hence we can run without locks.
-+	 */
-+	list_for_each_entry(p, &rc->ctrlr->cache, list) {
-+		if (!is_req_valid(p)) {
-+			pr_debug("%s: skipping RPMH req: a:%#x s:%#x w:%#x",
-+				 __func__, p->addr, p->sleep_val, p->wake_val);
-+			continue;
-+		}
-+		ret = send_single(rc, RPMH_SLEEP_STATE, p->addr, p->sleep_val);
-+		if (ret)
-+			return ret;
-+		ret = send_single(rc, RPMH_WAKE_ONLY_STATE,
-+				  p->addr, p->wake_val);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	rpm->dirty = false;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(rpmh_flush);
-+
-+/**
-+ * rpmh_invalidate: Invalidate all sleep and active sets
-+ * sets.
-+ *
-+ * @rc: The RPMh handle got from rpmh_get_client
-+ *
-+ * Invalidate the sleep and active values in the TCS blocks.
-+ */
-+int rpmh_invalidate(struct rpmh_client *rc)
-+{
-+	struct rpmh_ctrlr *rpm = rc->ctrlr;
-+	int ret;
-+
-+	if (IS_ERR_OR_NULL(rc))
-+		return -EINVAL;
-+
-+	rpm->dirty = true;
-+
-+	do {
-+		ret = rpmh_rsc_invalidate(rc->ctrlr->drv);
-+	} while (ret == -EAGAIN);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL(rpmh_invalidate);
-+
- static struct rpmh_ctrlr *get_rpmh_ctrlr(struct platform_device *pdev)
- {
- 	int i;
-@@ -206,6 +405,8 @@ static struct rpmh_ctrlr *get_rpmh_ctrlr(struct platform_device *pdev)
- 		if (rpmh_rsc[i].drv == NULL) {
- 			ctrlr = &rpmh_rsc[i];
- 			ctrlr->drv = drv;
-+			spin_lock_init(&ctrlr->lock);
-+			INIT_LIST_HEAD(&ctrlr->cache);
- 			break;
- 		}
- 	}
-diff --git a/include/soc/qcom/rpmh.h b/include/soc/qcom/rpmh.h
-index 95334d4c1ede..41a2518c46a5 100644
---- a/include/soc/qcom/rpmh.h
-+++ b/include/soc/qcom/rpmh.h
-@@ -17,6 +17,10 @@ int rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
- 
- struct rpmh_client *rpmh_get_client(struct platform_device *pdev);
- 
-+int rpmh_flush(struct rpmh_client *rc);
-+
-+int rpmh_invalidate(struct rpmh_client *rc);
-+
- void rpmh_release(struct rpmh_client *rc);
- 
- #else
-@@ -28,6 +32,12 @@ static inline int rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
- static inline struct rpmh_client *rpmh_get_client(struct platform_device *pdev)
- { return ERR_PTR(-ENODEV); }
- 
-+static inline int rpmh_flush(struct rpmh_client *rc)
-+{ return -ENODEV; }
-+
-+static inline int rpmh_invalidate(struct rpmh_client *rc)
-+{ return -ENODEV; }
-+
- static inline void rpmh_release(struct rpmh_client *rc) { }
- #endif /* CONFIG_QCOM_RPMH */
- 
++	disp_rsc: rsc@af20000 {
++		label = "disp_rsc";
++		compatible = "qcom,rpmh-rsc";
++		reg = <0xaf20000 0x10000>, <0xaf21c00 0x3000>;
++		reg-names = "drv", "tcs";
++		interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>;
++		qcom,drv-id = <0>;
++		qcom,tcs-config = <SLEEP_TCS   1>,
++				  <WAKE_TCS    1>,
++				  <ACTIVE_TCS  0>,
++				  <CONTROL_TCS 0>;
++	};
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
