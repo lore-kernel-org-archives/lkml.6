@@ -1,105 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932089AbeCIMet (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 07:34:49 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51140 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932067AbeCIMer (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 07:34:47 -0500
-Subject: Re: [PATCH v8 4/5] iommu/arm-smmu: Add the device_link between
- masters and smmu
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Vivek Gautam <vivek.gautam@codeaurora.org>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>, joro@8bytes.org,
-        robh+dt <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Rob Clark <robdclark@gmail.com>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
-        devicetree@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>, jcrouse@codeaurora.org,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-References: <20180302101050.6191-1-vivek.gautam@codeaurora.org>
- <20180302101050.6191-5-vivek.gautam@codeaurora.org>
- <f3011ef1-7ffe-8c2b-b9d6-3fb094789656@arm.com>
- <CAFp+6iF1oM=fmRCqSG-SxcUVvvOLet_Y0p7pmGn+=B-LdMNiww@mail.gmail.com>
- <CAFp+6iFzGYWZMLkNrN1ZJJ2xH4CxQsiU6oYboHDzL0jDwm+4VQ@mail.gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <f6822915-8921-c9cc-218a-f094ac5ed032@arm.com>
-Date: Fri, 9 Mar 2018 12:34:42 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932099AbeCIMfo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 07:35:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40820 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751070AbeCIMfn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 07:35:43 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19AB6206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
+Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Yang Bo <yangbo@deepin.com>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: [RFC PATCH -tip 0/9] kprobes: Cleanup jprobe implementation
+Date: Fri,  9 Mar 2018 21:35:17 +0900
+Message-Id: <152059891712.4214.9539716544254881611.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <CAFp+6iFzGYWZMLkNrN1ZJJ2xH4CxQsiU6oYboHDzL0jDwm+4VQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/03/18 07:11, Vivek Gautam wrote:
-> On Thu, Mar 8, 2018 at 10:29 AM, Vivek Gautam
-> <vivek.gautam@codeaurora.org> wrote:
->> On Wed, Mar 7, 2018 at 6:17 PM, Robin Murphy <robin.murphy@arm.com> wrote:
->>> On 02/03/18 10:10, Vivek Gautam wrote:
->>>>
->>>> From: Sricharan R <sricharan@codeaurora.org>
->>>>
->>>> Finally add the device link between the master device and
->>>> smmu, so that the smmu gets runtime enabled/disabled only when the
->>>> master needs it. This is done from add_device callback which gets
->>>> called once when the master is added to the smmu.
->>>>
->>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->>>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->>>> ---
->>>>    drivers/iommu/arm-smmu.c | 21 +++++++++++++++++++++
->>>>    1 file changed, 21 insertions(+)
->>>>
->>>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
->>>> index 3d6a1875431f..bb1ea82c1003 100644
->>>> --- a/drivers/iommu/arm-smmu.c
->>>> +++ b/drivers/iommu/arm-smmu.c
->>>> @@ -217,6 +217,9 @@ struct arm_smmu_device {
->>>>          /* IOMMU core code handle */
->>>>          struct iommu_device             iommu;
->>>> +
->>>> +       /* runtime PM link to master */
->>>> +       struct device_link *link;
->>>
->>>
->>> Just the one?
-> 
-> we will either have to count all the devices that are present on the
-> iommu bus, or
-> maintain a list to which all the links can be added.
-> But to add the list, we will have to initialize a LIST_HEAD in struct
-> device_link
-> as well.
-> 
-> Or, I think we don't even need to maintain a pointer to link with smmu.
-> In arm_smmu_remove_device(), we can find out the correct link, and delete it.
-> 
->          list_for_each_entry(link, &dev->links.suppliers, c_node)
->                  if (link->supplier == smmu->dev);
->                             device_link_del(link);
-> 
-> Should that be fine?
-> 
-> Rafael, does the above snippet looks right to you? Context: smmu->dev
-> is the supplier, and dev is the consumer. We want to find the link,
-> and delete it.
+Hello,
 
-Actually, looking at the existing code, it seems like device_link_add() 
-will in fact look up and return any existing link between a given 
-supplier and consumer - is that intentional API behaviour that users may 
-rely on to avoid keeping track of explicit link pointers? (or 
-conversely, might it be reasonable to factor out a device_link_find() 
-function?)
+Since we decided to remove jprobe from kernel last year,
+its APIs are disabled and we worked on moving in-kernel
+jprobe users to kprobes or trace-events. And now no jprobe
+users are here anymore.
 
-Robin.
+I think it is good time to get rid of jprobe implementation
+from the kernel. However, I need other arch developers help
+to complete it, since jprobe is implemented multi arch wide.
+I can remove those code, but can not test all of those.
+
+Here is the series of patches to show how to do that.
+I tried to remove it from x86 tree. Basically we need to
+do 3 things;
+
+ - Remove jprobe functions (register/unregister,
+   setjump/longjump) from generic/arch-dependent code.
+   [1/9][2/9][3/9]
+ - Remove break_handler related code.
+   [4/9][5/9][6/9]
+ - Do not disable preemption on exception handler
+   [7/9][8/9][9/9]
+
+The [3/9] and [6/9] are destractive changes except for x86
+(means causes build errors) since those arch still have some
+references of those functions. So we need to write patches
+similar to [2/9] and [5/9] for each arch before applying those.
+In this series I sorted it as this order just for review,
+[3/9] and [6/9] should be applied after all archs have
+been fixed.
+
+Also, [7/9] is a kind of destractive, which changes required
+behavior for the pre_handlers which changes regs->ip.
+So we also need a patch similar to [7/9] for each arch too.
+Fortunately, current in-tree such user is very limited, both
+works only on x86. So it is not hurry, but we need to change
+arch dependent code.
+
+Thank you,
+
+---
+
+Masami Hiramatsu (9):
+      kprobes: Remove jprobe API implementation
+      x86: kprobes: Remove jprobe implementation
+      kprobes: Remove jprobe data structure and interfaces
+      kprobes: Ignore break_handler
+      x86: kprobes: Ignore break_handler
+      kprobes: Remove break_handler from struct kprobe
+      x86: kprobes: Do not disable preempt on int3 path
+      error-injection: Fix to not enabling preemption in pre_handler
+      tracing: kprobes: Fix to not enabling preemption
+
+
+ Documentation/kprobes.txt        |   13 ++--
+ arch/x86/include/asm/kprobes.h   |    3 -
+ arch/x86/kernel/kprobes/common.h |   10 ---
+ arch/x86/kernel/kprobes/core.c   |  114 ++------------------------------------
+ arch/x86/kernel/kprobes/ftrace.c |   21 +------
+ arch/x86/kernel/kprobes/opt.c    |    1 
+ include/linux/kprobes.h          |   54 ------------------
+ kernel/fail_function.c           |    1 
+ kernel/kprobes.c                 |  115 ++------------------------------------
+ kernel/trace/trace_kprobe.c      |    3 -
+ 10 files changed, 20 insertions(+), 315 deletions(-)
+
+--
+Masami Hiramatsu
