@@ -1,87 +1,86 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2938067-1520544686-2-7825763210965879232
+X-Cyrus-Session-Id: sloti22d1t05-9267-1520584608-2-14594178316957011635
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, T_TVD_MIME_EPI 0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='utf-8'
+X-Attached: signature.asc
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520544685; b=HN4lE26tZSi8PaqFpNNpU7FE9ItSbXIxf12vYhzrKIL/ywe
-    KjRGBO7ZW0fuEs25rNKwipKvwSWJow784aejlEYCM3GmEs2lX5jR2WhGtz+nSSk8
-    A5y/u54s8ArE0/oWi6YN9AP8WUfUxgAE8FkwAkjGKvIAUyeZi5LWg67IbkfwbqZV
-    vWf5uBfyKnhKMyP/JAbM8MWeEiMeQCDETPYHZxOx3J8J4dJqxmFYwwSU1lSWf/EF
-    nWn/7D2ZUY7LgJpgxOeJ45HeG95l60cqFqQEe9ThXkO15EEIz+xhY0I9GA7ge89B
-    uwQTNSfG1FkIQ4simhOyk5Ja5fC5D0eRw/IzUSw==
+    t=1520584607; b=nnMmlHWcqOjjqo9rw7RlrbOl6JRXKFKtyfzOstfYEPZ70bl
+    WCErzg3e3JttKOLKcfJE2BDqbOXwTBZnnW+MchcRuDwEN+tSV8BYbpnMTk31VmjA
+    dyZLuxcEIb7uBVx4xgjMy+N6ujtDOWDlgpjq64Mo4wJgHxtszpc7R1tvfrrnfYt7
+    +bj2XbD/iAbyrDfXGoBP/Ws1FYyHP+7lHsemSYdFaF0j7THvGN3UNCP+PKhrfmuI
+    FmNddJ/a7A/XecqaI3WcO4ilsKtcuXhJBK3zu/R5pLFyLoqUFK5okvPASTWlls37
+    JOY1oD0alPvM7PuVoAHrm/NqVDlyvMk0GnZy5zQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1520544685; bh=C7jbdvqj3ZqnUYlUB+7OaPGtddt8jAjvgT8jBt/+USg=; b=v
-    xAONlZWiRqsWU7CJhJZJZ3cYh4cO8lIIXKV+OXLCQ3axIEmTkqnjHE9Ex4HZjf07
-    yxbDz+STC6Pu7TsSXm5PviZx01WT/av5d9JwTQx/v/3hndQZFyszPwApVst+5Sop
-    hUhIXJIJqDVUM69b/39+seOVZn/G8/5XVQO5sYR7mSL6YMw70/TrzYRidH63gOnF
-    2pOFLqLQyWzFgugRRROQ2nUhVXf33QYfItJMYc8q6+lYi6KVBK7AT2VENB17q9lC
-    e7wLw53MFDwnoUJWnMBr2Fjqe2Otm+rT4+odV3sbDUbyshdMvGzJWh0uhGaS6kRs
-    BelPfpk+EJjsWuG5lH8Bw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nvidia.com;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1520584607; bh=sELiIGvzGywJ2iTVrwYi4L6x7C
+    3f8VFPez1LbxDH6V8=; b=blNf1/yXyIM3/QZo56PL1wugY9uuT0/OKbPsUcVN/5
+    0g1TpSQX4yZtnewoJ7LvjpcwNYCckRQaa62y4spUzYf4CS7XcNKTHj6k4s6E48yJ
+    6Ne1aKsUH83nRVmlxL4JH4KP9paKV5QEjsSwh5sSXWjzTjJXNSYK7r1N8jrZIFtJ
+    h0jSVJZbdZJRWZz0DQs5EHGz0/P0ATNoiO3xfMsjkPpiFrgiGMSzEKi6P5r/4bzP
+    2ARI6mFvRcQSca3voQhLgQMnsBxC9aHBeB+xR+KVani5nCqwE0vSG4BGadXXQ/wy
+    +sg6WWp+ZnQFYlRQCF5CBCF/AYR3lTGETeU49osjeesw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HKG9rxDY x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=sZKy/ARH;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=nvidia.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nvidia.com;
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HKG9rxDY x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=sZKy/ARH;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=nvidia.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750926AbeCHVbN convert rfc822-to-8bit (ORCPT
-        <rfc822;greg@kroah.com>); Thu, 8 Mar 2018 16:31:13 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:8947 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750728AbeCHVbM (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Thu, 8 Mar 2018 16:31:12 -0500
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 08 Mar 2018 13:31:11 -0800
-Subject: Re: [PATCH 2/3] usb: xhci: tegra: Add runtime PM support
-To: Mathias Nyman <mathias.nyman@linux.intel.com>,
+        id S1752080AbeCIIgg (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Mar 2018 03:36:36 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:37596 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751229AbeCIIgd (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Fri, 9 Mar 2018 03:36:33 -0500
+X-Google-Smtp-Source: AG47ELsaSwoBClJhOOj3WJXLM7QTKuMK7x2ppz0gRZbLgCXi3O9fwMqqiV9/dsgVRxUSDl40dU6PZg==
+Date: Fri, 9 Mar 2018 09:36:29 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Mathias Nyman <mathias.nyman@linux.intel.com>,
         Mathias Nyman <mathias.nyman@intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC: <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
+        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] usb: xhci: tegra: Add runtime PM support
+Message-ID: <20180309083629.GA13877@ulmo>
 References: <1518626085-29102-1-git-send-email-jonathanh@nvidia.com>
  <1518626085-29102-2-git-send-email-jonathanh@nvidia.com>
  <54bd00b7-2835-a253-0399-370e8c8203b8@linux.intel.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <f1a1c300-a558-f31a-bcfa-c3eda697b0fd@nvidia.com>
-Date: Thu, 8 Mar 2018 21:31:07 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ <f1a1c300-a558-f31a-bcfa-c3eda697b0fd@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <54bd00b7-2835-a253-0399-370e8c8203b8@linux.intel.com>
-X-Originating-IP: [10.26.11.23]
-X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To UKMAIL101.nvidia.com
- (10.26.138.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gBBFr7Ir9EOA20Yy"
+Content-Disposition: inline
+In-Reply-To: <f1a1c300-a558-f31a-bcfa-c3eda697b0fd@nvidia.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
@@ -89,80 +88,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 
-On 01/03/18 14:18, Mathias Nyman wrote:
-> On 14.02.2018 18:34, Jon Hunter wrote:
->> Add runtime PM support to the Tegra XHCI driver and move the function
->> calls to enable/disable the clocks, regulators and PHY into the runtime
->> PM callbacks.
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->>   drivers/usb/host/xhci-tegra.c | 80
->> ++++++++++++++++++++++++++++++-------------
->>   1 file changed, 56 insertions(+), 24 deletions(-)
->>
->> diff --git a/drivers/usb/host/xhci-tegra.c
->> b/drivers/usb/host/xhci-tegra.c
->> index 02b0b24faa58..42aa67858b53 100644
->> --- a/drivers/usb/host/xhci-tegra.c
->> +++ b/drivers/usb/host/xhci-tegra.c
->> @@ -18,6 +18,7 @@
->>   #include <linux/phy/tegra/xusb.h>
->>   #include <linux/platform_device.h>
->>   #include <linux/pm.h>
->> +#include <linux/pm_runtime.h>
->>   #include <linux/regulator/consumer.h>
->>   #include <linux/reset.h>
->>   #include <linux/slab.h>
->> @@ -1067,22 +1068,12 @@ static int tegra_xusb_probe(struct
->> platform_device *pdev)
->>        */
->>       platform_set_drvdata(pdev, tegra);
->>   -    err = tegra_xusb_clk_enable(tegra);
->> -    if (err) {
->> -        dev_err(&pdev->dev, "failed to enable clocks: %d\n", err);
->> -        goto put_usb2;
->> -    }
->> -
->> -    err = regulator_bulk_enable(tegra->soc->num_supplies,
->> tegra->supplies);
->> -    if (err) {
->> -        dev_err(&pdev->dev, "failed to enable regulators: %d\n", err);
->> -        goto disable_clk;
->> -    }
->> +    pm_runtime_enable(&pdev->dev);
->>   -    err = tegra_xusb_phy_enable(tegra);
->> +    err = pm_runtime_get_sync(&pdev->dev);
->>       if (err < 0) {
-> 
-> Does this mean that if runtime PM is disabled then clocks and regulator
-> will never be enabled
-> for Tegra xhci?
-> 
-> How about keeping the clock and regualtor enabling in probe, and instead
-> add something like:
-> 
-> pm_runtime_set_active(&pdev->dev);
-> pm_runtime_enable(&pdev->dev);
-> pm_runtime_get_noresume(&pdev->dev);
+--gBBFr7Ir9EOA20Yy
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For 64-bit Tegra there is a dependency on CONFIG_PM, but for 32-bit
-AFAIK there is not and so yes we should handle the case when PM_RUNTIME
-is disabled.
+On Thu, Mar 08, 2018 at 09:31:07PM +0000, Jon Hunter wrote:
+>=20
+> On 01/03/18 14:18, Mathias Nyman wrote:
+> > On 14.02.2018 18:34, Jon Hunter wrote:
+> >> Add runtime PM support to the Tegra XHCI driver and move the function
+> >> calls to enable/disable the clocks, regulators and PHY into the runtime
+> >> PM callbacks.
+> >>
+> >> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> >> ---
+> >> =C2=A0 drivers/usb/host/xhci-tegra.c | 80
+> >> ++++++++++++++++++++++++++++++-------------
+> >> =C2=A0 1 file changed, 56 insertions(+), 24 deletions(-)
+> >>
+> >> diff --git a/drivers/usb/host/xhci-tegra.c
+> >> b/drivers/usb/host/xhci-tegra.c
+> >> index 02b0b24faa58..42aa67858b53 100644
+> >> --- a/drivers/usb/host/xhci-tegra.c
+> >> +++ b/drivers/usb/host/xhci-tegra.c
+> >> @@ -18,6 +18,7 @@
+> >> =C2=A0 #include <linux/phy/tegra/xusb.h>
+> >> =C2=A0 #include <linux/platform_device.h>
+> >> =C2=A0 #include <linux/pm.h>
+> >> +#include <linux/pm_runtime.h>
+> >> =C2=A0 #include <linux/regulator/consumer.h>
+> >> =C2=A0 #include <linux/reset.h>
+> >> =C2=A0 #include <linux/slab.h>
+> >> @@ -1067,22 +1068,12 @@ static int tegra_xusb_probe(struct
+> >> platform_device *pdev)
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 platform_set_drvdata(pdev, tegra);
+> >> =C2=A0 -=C2=A0=C2=A0=C2=A0 err =3D tegra_xusb_clk_enable(tegra);
+> >> -=C2=A0=C2=A0=C2=A0 if (err) {
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(&pdev->dev, "faile=
+d to enable clocks: %d\n", err);
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto put_usb2;
+> >> -=C2=A0=C2=A0=C2=A0 }
+> >> -
+> >> -=C2=A0=C2=A0=C2=A0 err =3D regulator_bulk_enable(tegra->soc->num_supp=
+lies,
+> >> tegra->supplies);
+> >> -=C2=A0=C2=A0=C2=A0 if (err) {
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(&pdev->dev, "faile=
+d to enable regulators: %d\n", err);
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto disable_clk;
+> >> -=C2=A0=C2=A0=C2=A0 }
+> >> +=C2=A0=C2=A0=C2=A0 pm_runtime_enable(&pdev->dev);
+> >> =C2=A0 -=C2=A0=C2=A0=C2=A0 err =3D tegra_xusb_phy_enable(tegra);
+> >> +=C2=A0=C2=A0=C2=A0 err =3D pm_runtime_get_sync(&pdev->dev);
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err < 0) {
+> >=20
+> > Does this mean that if runtime PM is disabled then clocks and regulator
+> > will never be enabled
+> > for Tegra xhci?
+> >=20
+> > How about keeping the clock and regualtor enabling in probe, and instead
+> > add something like:
+> >=20
+> > pm_runtime_set_active(&pdev->dev);
+> > pm_runtime_enable(&pdev->dev);
+> > pm_runtime_get_noresume(&pdev->dev);
+>=20
+> For 64-bit Tegra there is a dependency on CONFIG_PM, but for 32-bit
+> AFAIK there is not and so yes we should handle the case when PM_RUNTIME
+> is disabled.
+>=20
+> Typically we do something like ...
+>=20
+>     pm_runtime_enable(&pdev->dev);
+>     if (!pm_runtime_enabled(&pdev->dev))
+> 	ret =3D tegra_xusb_runtime_resume(&pdev->dev);
+>     else
+>         ret =3D pm_runtime_get_sync(&pdev->dev);
+>=20
+> That way we can keep the regulator and clock stuff in the handler. I
+> will update this series.
 
-Typically we do something like ...
+Is there any good reason why we don't depend on PM for 32-bit as well?
+I'm not aware of any differences in drivers that are 32-bit specific for
+Tegra, and I'm not even sure the !PM case gets any testing at all. And
+even if, do we really still want to support that?
 
-    pm_runtime_enable(&pdev->dev);
-    if (!pm_runtime_enabled(&pdev->dev))
-	ret = tegra_xusb_runtime_resume(&pdev->dev);
-    else
-        ret = pm_runtime_get_sync(&pdev->dev);
+I don't see any advantage these days for having it disabled.
 
-That way we can keep the regulator and clock stuff in the handler. I
-will update this series.
+Thierry
 
-Cheers
-Jon
+--gBBFr7Ir9EOA20Yy
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-nvpublic
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqiR4sACgkQ3SOs138+
+s6GNiA//X3I2OQDwVf2dkPjQ29rUYps6NVTfwWqSz8oNmK9UnoEnQ47vRbTPP7QW
+szuryupTCPIpXzZFXL2A4zxO0BFpKw/nENNYFepmOYj0s7+agpawbPor4x0Rtlnn
+etCLwjpZk5iJSHbMVH6Cb9w2tAex8BY1fyyYVz+TATDowsEVU+agIVqRgfYTAUZq
+jWw46thN5oiLW+wODbR44C+RNVd5+gICb486Z9bsxU+ZkzdpfWgJ3s4aHJEP2RxN
+A42FkxBbZ1klyvqo8KBcfAsNuVGQS3xnR0NmhLZVVNG7cGdFsW+EJFAecQF8oX9P
+999RQwfmwXQyWe9fuXL4BSZv/gnQk+Z+EjEWX1rgwtpfFXgKKGPsd+4eG9VkRqGT
+XQCOkDeFNyQBfi9aGFX5hgvg+dpTBooXqUhfubyf+Odsf6DTeV7hbwzlNkuVzuPS
+Abu7nQeulp1pXg089IqmDn1YxqNB9OTTnQDTCgC+3VlVabX/lS3ce4j/q37vf3DC
+UCqwZzdXHm4X1yqCWtlpOdrhU/lGTbxGKYNpUt8qz80+anSegKh78oQo4BKdAqS8
+sL6t/SUSNt3ts56z76v10lYZ6TsT/XboT3xiaUaCnakDU9RTIHIGqEyhjVxzoG5h
+3iff5vlmBpd/vXpfgY8ceR7pXRuUnenw5yzq3MNlpbIfM1q2pOk=
+=6DDv
+-----END PGP SIGNATURE-----
+
+--gBBFr7Ir9EOA20Yy--
