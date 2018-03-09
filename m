@@ -1,96 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932382AbeCIRbt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 12:31:49 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39628 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932327AbeCIRbs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 12:31:48 -0500
-X-Google-Smtp-Source: AG47ELu8YjdSjvKZWTQlaeGxd1Aome7iU9CwobS/P6XyHoJPQ/NaJz9KIpmkZtMzSxZk/P9Q3j/MLpUmUdBCINW6tlU=
+        id S932386AbeCIRdJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 12:33:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57242 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751166AbeCIRdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 12:33:08 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C6B7205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1520575523-3838-1-git-send-email-leo.yan@linaro.org>
-References: <1520575523-3838-1-git-send-email-leo.yan@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Fri, 9 Mar 2018 10:31:45 -0700
-Message-ID: <CANLsYky8tQp8owOq2YdkR6GC=gUdJDLa5G42y7xHbPdNXi7Sfw@mail.gmail.com>
-Subject: Re: [PATCH v2] perf machine: Fix load kernel symbol with '-k' option
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+To: Dmitry Osipenko <digetx@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180308144437.GJ3529@ulmo>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
+ <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
+ <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com> <20180308144437.GJ3529@ulmo>
+Message-ID: <152061678678.13890.15810434310624804730@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 1/3] clk: tegra: Mark HCLK, SCLK and EMC as critical
+Date: Fri, 09 Mar 2018 09:33:06 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8 March 2018 at 23:05, Leo Yan <leo.yan@linaro.org> wrote:
-> On Hikey arm64 octa A53 platform, when use command './perf report -v
-> -k vmlinux --stdio' it outputs below error info, and it skips to load
-> kernel symbol and doesn't print symbol for event:
-> Failed to open [kernel.kallsyms]_text, continuing without symbols.
->
-> The regression is introduced by commit ("8c7f1bb37b29 perf machine: Move
-> kernel mmap name into struct machine"), which changes the logic for
-> machine mmap_name by removing function machine__mmap_name() and always
-> use 'machine->mmap_name'.  Comparing difference between
-> machine__mmap_name() and 'machine->mmap_name', the later one includes
-> the string for specified kernel vmlinux string with option '-k' in
-> command, but the old function machine__mmap_name() ignores vmlinux
-> path string.  As result, event's mmap file name doesn't match with
-> machine mmap file name anymore and it skips to load kernel symbol from
-> vmlinux file.
->
-> To resolve this issue, this patch adds extra checking for
-> 'symbol_conf.vmlinux_name', when it has been set string so we can know
-> it includes vmlinux path string specified for option '-k'. For this
-> case it sets 'is_kernel_mmap' to true and run into flow to load kernel
-> symbol from vmlinux.
->
-> This patch has been verified with two commands: './perf report -v
-> -k vmlinux --stdio' and './perf script -v -F cpu,event,ip,sym,symoff
-> -k vmlinux'.
->
-> Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->  tools/perf/util/machine.c | 15 ++++++++++++---
->  1 file changed, 12 insertions(+), 3 deletions(-)
->
-> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> index 12b7427..3125871 100644
-> --- a/tools/perf/util/machine.c
-> +++ b/tools/perf/util/machine.c
-> @@ -1299,9 +1299,18 @@ static int machine__process_kernel_mmap_event(struct machine *machine,
->         else
->                 kernel_type = DSO_TYPE_GUEST_KERNEL;
->
-> -       is_kernel_mmap = memcmp(event->mmap.filename,
-> -                               machine->mmap_name,
-> -                               strlen(machine->mmap_name) - 1) == 0;
-> +       /*
-> +        * When symbol_conf.vmlinux_name is not NULL, it includes the specified
-> +        * kernel vmlinux path with option '-k'.  So set 'is_kernel_mmap' to
-> +        * true for creating machine symbol map.
-> +        */
-> +       if (symbol_conf.vmlinux_name)
-> +               is_kernel_mmap = true;
-> +       else
-> +               is_kernel_mmap = memcmp(event->mmap.filename,
-> +                                       machine->mmap_name,
-> +                                       strlen(machine->mmap_name) - 1) == 0;
-> +
+Quoting Thierry Reding (2018-03-08 06:44:37)
+> On Thu, Mar 01, 2018 at 04:33:29PM +0300, Dmitry Osipenko wrote:
+> > On 15.01.2018 13:56, Dmitry Osipenko wrote:
+> > > On 10.01.2018 16:59, Dmitry Osipenko wrote:
+> > >> Machine dies if HCLK, SCLK or EMC is disabled. Hence mark these clocks
+> > >> as critical.
+> > >>
+> > >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > >> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > >> ---
+> > >>
+> > >> Change log:
+> > >> v2:     Fixed accidentally missed marking EMC as critical on Tegra30 and
+> > >>         Tegra124. Switched to a use of common EMC gate definition on Tegra20
+> > >>         and Tegra30.
+> > >>
+> > >> v3:     Dropped marking PLL_P outputs as critical, because seems they are
+> > >>         not so critical. Although, I still haven't got a definitive answer
+> > >>         about what exact HW functions are affected by the fixed-clocks.
+> > >>         Anyway it should be cleaner to correct the actual drivers.
+> > > 
+> > > Stephen / Michael, would it be possible to schedule these patches for 4.16? My
+> > > T20 and T30 devices aren't working without the 'critical clocks' patch. Things
+> > > happen to work with the opensource u-boot, but not with the proprietary
+> > > bootloader. It's probably not a big deal that out-of-tree devices are broken,
+> > > although would be nice to have one problem less.
+> > 
+> > Guys, is there anything I could do to get these patches in linux-next?
+> 
+> I've picked these up into the for-4.17/clk branch in the Tegra tree. I
+> already have that branch for the MBIST patches which are a dependency
+> for the for-4.17/soc branch.
+> 
+> Stephen, Mike, let me know if you have any objections to carrying these
+> in the Tegra tree.
+> 
 
-I have tested this on my side and things work properly.
-
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
-
->         if (event->mmap.filename[0] == '/' ||
->             (!is_kernel_mmap && event->mmap.filename[0] == '[')) {
->                 map = machine__findnew_module_map(machine, event->mmap.start,
-> --
-> 2.7.4
->
+Are you going to send us a PR at some point?
