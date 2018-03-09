@@ -1,81 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932225AbeCIQ3B (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 11:29:01 -0500
-Received: from mout.web.de ([212.227.17.11]:45713 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751207AbeCIQ3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 11:29:00 -0500
-Subject: [PATCH v2 11/17] mfd: tps65910: Delete an error message for a failed
- memory allocation in tps65910_parse_dt()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>,
-        linux-omap@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
- <a00bda19-c38c-6733-31e7-7e1c44eb6c6b@users.sourceforge.net>
-Message-ID: <88eea608-0242-ebcc-5542-8ab9375242d2@users.sourceforge.net>
-Date: Fri, 9 Mar 2018 17:28:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932123AbeCIQbp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 11:31:45 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:64066 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751147AbeCIQbn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 11:31:43 -0500
+Date: Fri, 9 Mar 2018 16:31:36 +0000
+From: Joseph Myers <joseph@codesourcery.com>
+X-X-Sender: jsm28@digraph.polyomino.org.uk
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+CC: Arnd Bergmann <arnd@arndb.de>, Helmut Grohne <helmut@subdivi.de>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        linux-arch <linux-arch@vger.kernel.org>, <metcalf@alum.mit.edu>,
+        Henrik Grindal Bakken <hgb@ifi.uio.no>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: RFC: remove the "tile" architecture from glibc
+In-Reply-To: <9a60ac70-21e4-3f48-5cd7-ffd3aabc5c21@physik.fu-berlin.de>
+Message-ID: <alpine.DEB.2.20.1803091622420.8457@digraph.polyomino.org.uk>
+References: <1a57be83-3349-5450-ee4f-d2a33569a728@mellanox.com> <d6c8e425-a6b6-6594-05e3-965536f06da3@physik.fu-berlin.de> <abce89d0-6798-069a-1a54-06e664665b78@mellanox.com> <dc3c52ce-f082-0da0-7828-0d4e6751e2a5@physik.fu-berlin.de>
+ <CAK8P3a3itR8i2ayG7e4ku7kz+CQU7qHhptdmtmgTz+CzFGmCiw@mail.gmail.com> <20180307181407.GA24350@alf.mars> <CAK8P3a2VuYxzy6RmL_w_5f2qHepVRhfVR5P4x9nCUYav1s5n7g@mail.gmail.com> <9a60ac70-21e4-3f48-5cd7-ffd3aabc5c21@physik.fu-berlin.de>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <a00bda19-c38c-6733-31e7-7e1c44eb6c6b@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:AB8UyE0J0Km8pGEjFsdoZNL1bJPihWLmPZxjv/l39LqMq9248Kb
- ERZ0sbniFcp3V0hfw71CtY77vLK/LL0PXxnI7OIdMKlf9xtQFkfbMK6VM5R5Gd4AGjduF/1
- F/9m+v/DMSauUjQX4GK9luwQPk3LEZFDFuaXlGJ6zRigcaXIUnwFZTsIUtWQEJm3D6vpNQE
- 93ODptD1eEP0Z12F8TYfw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:z7XxsgucMaU=:nRYHkqkljlY8XCkMqhfvT2
- ta2jjIloaakCaLgCMzmipeP2haSS8y9vD4847QlQePIs7bXa3WImwAq1eDLtFjZlQ99fl7mBK
- V8e0fe0XrTzd3AIiER/wcweGPS2JxxdCRGloBDR4BNZZnJUrOMKPC8L/jvoQNjeNy1kjDAziz
- DEYhc2GnWxENI9FLpORBnL6udWDWqelkqIXSdrY2I3FW3xwoFNVrucsyFNS7g2XO3R6vZS6Xt
- pyzTyY6nJ5RcuGZJI/zLPKfyWknxTOY5pZla43U2G6vb2zBVh7pqZDEGOpkPAEXZAxyp1YTJj
- SW9XmPcHAOe1Z8zTPZaRza9gXEZeo1lNZrtOy6I3to9bgcjsH5Anvh5gwutQ61vzzjpIbpBQ5
- ELtT1Oq85ORdLdQY4VADF4MUpgcT7I5kpYXFmk/czxLIjBrdEFE40KUGCcyX/DzgeUhOroxcC
- CrwxmuncC+ZvHa2e8KLECW1Ht+3KUnjtsGNVmcXypgCOjzSQbLKRy+um9Kk5qRryUrFMfcoy4
- nNbvLWsyE9onaeobSnEWErbL3xeBmhYwMpJL/fgzEBV1RYuA+vXltXPJQcrQtW5cIVHTb8uy/
- ywijcAKHCbhyA0gcHrBPeOOULjAAwQZDBoBXLAbJEegcuHRGpUltC0WBFbTEWTu5SS0jQg16U
- VfZcyICTqk2fcTVdwzbQl/SmCe86KPjcMcRk9CI9pcf4eZA76PcykipxAYpY50YmA0S8b85qF
- +lQ/GLnyH0JdKTpAwLF7uazP0DiTagJhVtjvcCg73WVSCN5Teg89RTiyNp1jClIkp39PPo+ye
- YByka9HHJcE8lTyIP0cM7pYqwpAEISmBSVguSlkfHl4UMKd2Yc=
+Content-Type: text/plain; charset="US-ASCII"
+X-Originating-IP: [137.202.0.87]
+X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
+ svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 9 Mar 2018 09:00:59 +0100
+On Thu, 8 Mar 2018, John Paul Adrian Glaubitz wrote:
 
-Omit an extra message for a memory allocation failure in this function.
+> I have personally invested a lot of work into the SH port over the
+> past three years in Debian and I was involved fixing many bugs
+> and as a result, the port is quite usable. It would be really
+> disappointing to see it being removed all of a sudden :(.
 
-This issue was detected by using the Coccinelle software.
+Note that SH glibc test results need some work - there are a large number 
+of failures listed at <https://sourceware.org/glibc/wiki/Release/2.27#SH>.  
+Probably most could be addressed with the NaN fixes I outlined at 
+<https://sourceware.org/ml/libc-alpha/2018-02/msg00440.html> - but that 
+does of course need someone to do the work to implement that in GCC and 
+glibc.  (The stdlib/tst-tininess failure is stranger; SH manuals don't 
+seem very specific on this, but the existing setting was definitely 
+determined by testing on hardware.  SH experts with access to a range of 
+different hardware may be needed to advise on what different hardware does 
+or is supposed to do in this regard.)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
+The glibc port whose test results cause me the most concern that it's 
+effectively unmaintained and should be considered for obsoletion is 
+MicroBlaze - the results 
+<https://sourceware.org/glibc/wiki/Release/2.27#MicroBlaze> are clearly a 
+big mess (not something where one fix would probably resolve most failures 
+as on SH) and there's no sign of activity to sort them out (nor has there 
+been such activity for a long time).
 
-v2:
-Lee Jones requested a resend for this patch. The change was rebased
-on source files from Linux next-20180308.
-
- drivers/mfd/tps65910.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
-index 8263605f6d2f..555bd394efc3 100644
---- a/drivers/mfd/tps65910.c
-+++ b/drivers/mfd/tps65910.c
-@@ -395,10 +395,8 @@ static struct tps65910_board *tps65910_parse_dt(struct i2c_client *client,
- 
- 	board_info = devm_kzalloc(&client->dev, sizeof(*board_info),
- 			GFP_KERNEL);
--	if (!board_info) {
--		dev_err(&client->dev, "Failed to allocate pdata\n");
-+	if (!board_info)
- 		return NULL;
--	}
- 
- 	ret = of_property_read_u32(np, "ti,vmbch-threshold", &prop);
- 	if (!ret)
 -- 
-2.16.2
+Joseph S. Myers
+joseph@codesourcery.com
