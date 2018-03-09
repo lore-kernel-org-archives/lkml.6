@@ -1,31 +1,31 @@
 Return-Path: <andreyknvl@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520604142; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520604139; cv=none;
         d=google.com; s=arc-20160816;
-        b=KFzLCOfy3DzeGfc18WoEbaoz1Cj5YQQji7Un7DIyUAyr6D9uwocsFUToxv9Y7LkFIs
-         UydLc9CKhMXWO8R7xv5fDJNUceqGyCjyPyH5hEN1/1mye7304ZhOxWotNe7G5RLxyOw+
-         Luu84W5sW5vu04/lTmTRNHkoawRHEkHqA3urLKICl0ynjOECMtGyyzEMPurcvg2oC8z0
-         HWI0qlvn3IDPsPZRNOPLoA/krae0MlKJIgnBakV3DBUWVE4yvUepvHTm6kJCEmbEv8An
-         gkVVEWa7juFlGfAr4PrnxII78u+32Qup3cfGQvoi0Z8JiGzlFrp1I+gBiZB9RDaJjqMz
-         IdoQ==
+        b=tzWI2buU34mUr3e8jzTXBh/CU+oaW3V52lvy3e40gdbm4OKww1bAW/BV7hJenn4uoP
+         2bDc6MGrTrx+eCNj/I8md8x1iBL98AQbkINO1RqnTOTj4HidFcFHO5tNOkKxza2DdSl7
+         /d8KcmoxeG5d7VG+tA2kTqfzdDecpHG2C+o7FtTXjgMRfDMzyI2LWj9Oi0oHjyYCfuBj
+         sFgPKvA6YJMFMGNySyB5O3WHF9R4TTXCElhdtUICJ7b7K+pGoUIXaSmQhpRNt1LOs6jw
+         FxmDOfg8WsDF7MdYFQEUXnoe+Z773BmCGcUxx2KmqPo47yWM8Ut5IuGeago4rHOeSOLw
+         ZvZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=bFC+dOL1kofLW/Fz0q3F9Mambpm3ECJQAGpTBpsRBqY=;
-        b=Sn7zWiTD/4GisjeJleW8Nh6JqUE1AJTc2dPUZZdlQ7IJnGI4hIy7DvUtRqjm0WPMgY
-         AeNt6zKnR27KmvDBXOPRvM4g4HFZgBD2Dlf3c+pIQ+xiRojkLp1QKffsMdUj4W2LoMl5
-         jekgGGjbnZIr5hkUPWrlZQVaYdAlJGLd5HpUTkEuCxEXnFOCBpJParPVP3x4gb6gr2mL
-         DizFJKlm8KoLHIQyH4miXlfXlr5F9KErCKUciruROHoOPo3Pd0I/JzsGuEIv6DmGW1Ej
-         YTiwwBUjHSx8MFvbgrSIMwQvQzEkKZ8S60x8BZ1221KlfP0RHH73h6vj8RiC9SGHkh6+
-         D0zg==
+        bh=DpcZU3q2JkfB8kv1mdnR74RNzNyT/bkV2tCxTLB6/CU=;
+        b=PuO9O4OgKtIC+7KEcq6aFLPTH2/R3sf40rkAK/F9m55XCgvES+jaMX/s81ITRIj06F
+         1n/m6c4HvvbxJ0ij3y/R5u6cbwVOFw7AKvd4kJPNnz3LyTf+HTZfcf34AF5YMRyopZ36
+         3pj2/R5QZrwIAbM1dg662+ECnIESvzIM25+2gsb4BQexRtHvXUXNCWRCkereg4qW2kMk
+         gwfLLOS7HZ3sdnCFj0mFH4QlerUhw6EyKlqou9/7r6kvvjKRLYdSjO7iwxURcwxWsSU0
+         RJ5gjtueLQVInNwx6VbKjOPfIpsu9uJaVw27hMiIoRvWyp4sITg0zaSwihiy8evpfO+0
+         bkvg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=KlhatkzH;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=pFAdjRvP;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=KlhatkzH;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=pFAdjRvP;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AG47ELur63iUzTcj/SxULK7/n9/IiOYomFoFueFSfoU9XvqGgqC5/NqRiMXXZBMSOAU5srV8yEvX2w==
+X-Google-Smtp-Source: AG47ELvJ2FcNzTKSCjm9NC56BYzVrFyEdkyNrQUb5AlMVrQjfQKHWOwJOjS19Kc8SLi/cJMcXLWazQ==
 From: Andrey Konovalov <andreyknvl@google.com>
 To: Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will.deacon@arm.com>,
@@ -122,89 +122,227 @@ Cc: Dmitry Vyukov <dvyukov@google.com>,
 	Jacob Bramley <Jacob.Bramley@arm.com>,
 	Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
 	Andrey Konovalov <andreyknvl@google.com>
-Subject: [RFC PATCH 4/6] mm, arm64: untag user addresses in mm/gup.c
-Date: Fri,  9 Mar 2018 15:02:02 +0100
-Message-Id: <becebff594deda3a5881e64a21bf405f030991ad.1520600533.git.andreyknvl@google.com>
+Subject: [RFC PATCH 3/6] mm, arm64: untag user addresses in memory syscalls
+Date: Fri,  9 Mar 2018 15:02:01 +0100
+Message-Id: <beea8ac394bfae3c7c949645fb887ceacc3f3bb3.1520600533.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.16.2.395.g2e18187dfd-goog
 In-Reply-To: <cover.1520600533.git.andreyknvl@google.com>
 References: <cover.1520600533.git.andreyknvl@google.com>
 In-Reply-To: <cover.1520600533.git.andreyknvl@google.com>
 References: <cover.1520600533.git.andreyknvl@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594469008964660820?=
-X-GMAIL-MSGID: =?utf-8?q?1594469008964660820?=
+X-GMAIL-THRID: =?utf-8?q?1594469005704089459?=
+X-GMAIL-MSGID: =?utf-8?q?1594469005704089459?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-mm/gup.c provides a kernel interface that accepts user addresses and
-manipulates user pages directly (for example get_user_pages, that is used
-by the futex syscall). Here we also need to handle the case of tagged user
-pointers.
+Memory subsystem syscalls accept user addresses as arguments, but don't use
+copy_from_user and other similar functions, so we need to handle this case
+separately.
 
-Untag addresses passed to this interface.
+Untag user pointers passed to madvise, mbind, get_mempolicy, mincore,
+mlock, mlock2, brk, mmap_pgoff, old_mmap, munmap, remap_file_pages,
+mprotect, pkey_mprotect, mremap and msync.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- mm/gup.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ mm/madvise.c   | 2 ++
+ mm/mempolicy.c | 6 ++++++
+ mm/mincore.c   | 2 ++
+ mm/mlock.c     | 5 +++++
+ mm/mmap.c      | 9 +++++++++
+ mm/mprotect.c  | 2 ++
+ mm/mremap.c    | 2 ++
+ mm/msync.c     | 3 +++
+ 8 files changed, 31 insertions(+)
 
-diff --git a/mm/gup.c b/mm/gup.c
-index 1b46e6e74881..4d820c4792d7 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -386,6 +386,8 @@ struct page *follow_page_mask(struct vm_area_struct *vma,
- 	struct page *page;
- 	struct mm_struct *mm = vma->vm_mm;
- 
-+	address = untagged_addr(address);
-+
- 	*page_mask = 0;
- 
- 	/* make this handle hugepd */
-@@ -647,6 +649,8 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 	if (!nr_pages)
- 		return 0;
+diff --git a/mm/madvise.c b/mm/madvise.c
+index 4d3c922ea1a1..909d6ba09031 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -798,6 +798,8 @@ SYSCALL_DEFINE3(madvise, unsigned long, start, size_t, len_in, int, behavior)
+ 	size_t len;
+ 	struct blk_plug plug;
  
 +	start = untagged_addr(start);
 +
- 	VM_BUG_ON(!!pages != !!(gup_flags & FOLL_GET));
+ 	if (!madvise_behavior_valid(behavior))
+ 		return error;
  
- 	/*
-@@ -801,6 +805,8 @@ int fixup_user_fault(struct task_struct *tsk, struct mm_struct *mm,
- 	struct vm_area_struct *vma;
- 	int ret, major = 0;
- 
-+	address = untagged_addr(address);
-+
- 	if (unlocked)
- 		fault_flags |= FAULT_FLAG_ALLOW_RETRY;
- 
-@@ -854,6 +860,8 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
- 	long ret, pages_done;
- 	bool lock_dropped;
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index d879f1d8a44a..79d33a570c60 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -1344,6 +1344,8 @@ SYSCALL_DEFINE6(mbind, unsigned long, start, unsigned long, len,
+ 	int err;
+ 	unsigned short mode_flags;
  
 +	start = untagged_addr(start);
 +
- 	if (locked) {
- 		/* if VM_FAULT_RETRY can be returned, vmas become invalid */
- 		BUG_ON(vmas);
-@@ -1746,6 +1754,8 @@ int __get_user_pages_fast(unsigned long start, int nr_pages, int write,
- 	unsigned long flags;
- 	int nr = 0;
+ 	mode_flags = mode & MPOL_MODE_FLAGS;
+ 	mode &= ~MPOL_MODE_FLAGS;
+ 	if (mode >= MPOL_MAX)
+@@ -1479,6 +1481,8 @@ SYSCALL_DEFINE5(get_mempolicy, int __user *, policy,
+ 	int uninitialized_var(pval);
+ 	nodemask_t nodes;
+ 
++	addr = untagged_addr(addr);
++
+ 	if (nmask != NULL && maxnode < MAX_NUMNODES)
+ 		return -EINVAL;
+ 
+@@ -1557,6 +1561,8 @@ COMPAT_SYSCALL_DEFINE6(mbind, compat_ulong_t, start, compat_ulong_t, len,
+ 	unsigned long nr_bits, alloc_size;
+ 	nodemask_t bm;
  
 +	start = untagged_addr(start);
 +
+ 	nr_bits = min_t(unsigned long, maxnode-1, MAX_NUMNODES);
+ 	alloc_size = ALIGN(nr_bits, BITS_PER_LONG) / 8;
+ 
+diff --git a/mm/mincore.c b/mm/mincore.c
+index fc37afe226e6..b59cf8fa3050 100644
+--- a/mm/mincore.c
++++ b/mm/mincore.c
+@@ -228,6 +228,8 @@ SYSCALL_DEFINE3(mincore, unsigned long, start, size_t, len,
+ 	unsigned long pages;
+ 	unsigned char *tmp;
+ 
++	start = untagged_addr(start);
++
+ 	/* Check the start address: needs to be page-aligned.. */
+ 	if (start & ~PAGE_MASK)
+ 		return -EINVAL;
+diff --git a/mm/mlock.c b/mm/mlock.c
+index 74e5a6547c3d..2f456a458cac 100644
+--- a/mm/mlock.c
++++ b/mm/mlock.c
+@@ -714,6 +714,7 @@ static __must_check int do_mlock(unsigned long start, size_t len, vm_flags_t fla
+ 
+ SYSCALL_DEFINE2(mlock, unsigned long, start, size_t, len)
+ {
++	start = untagged_addr(start);
+ 	return do_mlock(start, len, VM_LOCKED);
+ }
+ 
+@@ -721,6 +722,8 @@ SYSCALL_DEFINE3(mlock2, unsigned long, start, size_t, len, int, flags)
+ {
+ 	vm_flags_t vm_flags = VM_LOCKED;
+ 
++	start = untagged_addr(start);
++
+ 	if (flags & ~MLOCK_ONFAULT)
+ 		return -EINVAL;
+ 
+@@ -734,6 +737,8 @@ SYSCALL_DEFINE2(munlock, unsigned long, start, size_t, len)
+ {
+ 	int ret;
+ 
++	start = untagged_addr(start);
++
+ 	len = PAGE_ALIGN(len + (offset_in_page(start)));
  	start &= PAGE_MASK;
- 	addr = start;
- 	len = (unsigned long) nr_pages << PAGE_SHIFT;
-@@ -1798,6 +1808,8 @@ int get_user_pages_fast(unsigned long start, int nr_pages, int write,
- 	unsigned long addr, len, end;
- 	int nr = 0, ret = 0;
+ 
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 9efdc021ad22..b63362c45cde 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -189,6 +189,8 @@ SYSCALL_DEFINE1(brk, unsigned long, brk)
+ 	bool populate;
+ 	LIST_HEAD(uf);
+ 
++	brk = untagged_addr(brk);
++
+ 	if (down_write_killable(&mm->mmap_sem))
+ 		return -EINTR;
+ 
+@@ -1495,6 +1497,8 @@ SYSCALL_DEFINE6(mmap_pgoff, unsigned long, addr, unsigned long, len,
+ 	struct file *file = NULL;
+ 	unsigned long retval;
+ 
++	addr = untagged_addr(addr);
++
+ 	if (!(flags & MAP_ANONYMOUS)) {
+ 		audit_mmap_fd(fd, flags);
+ 		file = fget(fd);
+@@ -1556,6 +1560,8 @@ SYSCALL_DEFINE1(old_mmap, struct mmap_arg_struct __user *, arg)
+ 	if (offset_in_page(a.offset))
+ 		return -EINVAL;
+ 
++	a.addr = untagged_addr(a.addr);
++
+ 	return sys_mmap_pgoff(a.addr, a.len, a.prot, a.flags, a.fd,
+ 			      a.offset >> PAGE_SHIFT);
+ }
+@@ -2751,6 +2757,7 @@ EXPORT_SYMBOL(vm_munmap);
+ 
+ SYSCALL_DEFINE2(munmap, unsigned long, addr, size_t, len)
+ {
++	addr = untagged_addr(addr);
+ 	profile_munmap(addr);
+ 	return vm_munmap(addr, len);
+ }
+@@ -2769,6 +2776,8 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+ 	unsigned long ret = -EINVAL;
+ 	struct file *file;
  
 +	start = untagged_addr(start);
 +
- 	start &= PAGE_MASK;
- 	addr = start;
- 	len = (unsigned long) nr_pages << PAGE_SHIFT;
+ 	pr_warn_once("%s (%d) uses deprecated remap_file_pages() syscall. See Documentation/vm/remap_file_pages.txt.\n",
+ 		     current->comm, current->pid);
+ 
+diff --git a/mm/mprotect.c b/mm/mprotect.c
+index e3309fcf586b..73d2a6befcf9 100644
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -519,6 +519,7 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
+ SYSCALL_DEFINE3(mprotect, unsigned long, start, size_t, len,
+ 		unsigned long, prot)
+ {
++	start = untagged_addr(start);
+ 	return do_mprotect_pkey(start, len, prot, -1);
+ }
+ 
+@@ -527,6 +528,7 @@ SYSCALL_DEFINE3(mprotect, unsigned long, start, size_t, len,
+ SYSCALL_DEFINE4(pkey_mprotect, unsigned long, start, size_t, len,
+ 		unsigned long, prot, int, pkey)
+ {
++	start = untagged_addr(start);
+ 	return do_mprotect_pkey(start, len, prot, pkey);
+ }
+ 
+diff --git a/mm/mremap.c b/mm/mremap.c
+index 049470aa1e3e..e42863a135de 100644
+--- a/mm/mremap.c
++++ b/mm/mremap.c
+@@ -533,6 +533,8 @@ SYSCALL_DEFINE5(mremap, unsigned long, addr, unsigned long, old_len,
+ 	LIST_HEAD(uf_unmap_early);
+ 	LIST_HEAD(uf_unmap);
+ 
++	addr = untagged_addr(addr);
++
+ 	if (flags & ~(MREMAP_FIXED | MREMAP_MAYMOVE))
+ 		return ret;
+ 
+diff --git a/mm/msync.c b/mm/msync.c
+index ef30a429623a..03a977558f9f 100644
+--- a/mm/msync.c
++++ b/mm/msync.c
+@@ -37,12 +37,15 @@ SYSCALL_DEFINE3(msync, unsigned long, start, size_t, len, int, flags)
+ 	int unmapped_error = 0;
+ 	int error = -EINVAL;
+ 
++	start = untagged_addr(start);
++
+ 	if (flags & ~(MS_ASYNC | MS_INVALIDATE | MS_SYNC))
+ 		goto out;
+ 	if (offset_in_page(start))
+ 		goto out;
+ 	if ((flags & MS_ASYNC) && (flags & MS_SYNC))
+ 		goto out;
++
+ 	error = -ENOMEM;
+ 	len = (len + ~PAGE_MASK) & PAGE_MASK;
+ 	end = start + len;
 -- 
 2.16.2.395.g2e18187dfd-goog
