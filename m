@@ -1,31 +1,31 @@
 Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1520607041; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520607040; cv=none;
         d=google.com; s=arc-20160816;
-        b=lSZXXrTfzrRoej4RbYkstoxfPbox+RKRhWrQbLrZDbEkg9H/X+TDEzv0WXPKcljo4C
-         aPRaALTiTpwOSgqDgHil4zh/bQSeXmrYwoXBfFPx/enG2iuKwr5SvQqkqtckiYGTAbtP
-         Ph6FgnPUXIgna7r8Fz4SCi0HMYwtWlvsP0NxZ3jLCIOsu/9OrE5TThogG21fHm3jG/hI
-         dXFKgzxNasdk9L4wxUfyY0D/04Ud/a9bJnvEH2YuY5PInm8bwAg8rFJsgz+zkttbHlgn
-         KS6P61Yg7drOmz2sUSA4VHloE37dOv1MbbsabrZqvFuEpYC1E8fy7ul5R0pUuBZJDHLg
-         aYcw==
+        b=PV9OrlSazKsiZdwFzGZqnU7a+17yZczMJ54yaJQjE+9mY5btzJ/BSo9V/qRmX/QVet
+         0BlIte6g8rcvACbJn+qfl3ntnNn0/NTztUl9CyrZIu/t8DxmcPrR/NcwMn/kjOgzBQMd
+         GuytRcB72+rWhPqJ7+76OCIPHQPnnRJ17/x6esswef6yl06d08WKmN8WUbC9PKjAfvpg
+         HCx9eD35104uycYs7XyLUFgwMbUpA8puouYdGY39JfCOew6HqLbKATQxfTqCenPZI7bz
+         jV2nqEk8nkZBnnfVduA2cbdkk1LCRuHyasNMa7pYWtMfSeoTHXUpNk71riuAc5lRNDry
+         Q4Dw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=/mYmlEklSxmgWb3ph/DuGZ98vAdv2XK271WMG5BcyN8=;
-        b=PURd6dgYvE1GOP4115fcfIDcILtTq2UBDW+L0mduIap0CSTuwiWLuMnzGmCUBIoBNF
-         tN/grOh5iteYFoCvlNkpkvUN8Z6ILGJPWVlAHhlLE3gRx7ynDhoRV1L3T5HIiG+PrmUC
-         sOJtBHjDCvHAtu7dMiaj2VS8/60+QtzPoz0tt2IHF2tutEagZaacs/4H0WfxSSswPWg9
-         z5aGUSPSzArmA22pBT5Do8TA9KNYevM3Fte7BfA9FVt2R/c9V9J2HC3PG/g3BdC5aXit
-         KDxRcx9z7G7iY9AcQEl/f6VX+4Ljn24fIlUNktkPDWrhPN5nLtENCaNfkUYF/p/lQqBu
-         ibkQ==
+        bh=RavD4BX1QznlPkzfSUZRMQAlKOGAL73sP/pXb7t41AQ=;
+        b=zxzWCfnu/RYrNdEu020HtkgbEZgQJmWxB6aup6etj/0MReplfIqh/JUKBCfgKDAcTp
+         uqXfQtRZxX4CFCJHP5eKP+9O0KkclxGnV53f+AqKR0LKgdLFjic6DcMRFvxbkuZOYQFs
+         Tqo2OhOZ3ZoLO8DTpwED4gFgjgnR70PUSy+I2loidKNEQkfOpjqQnuEaoSL/qpht66th
+         0IkwMhqVw1FoLABuQx7G51vX2z57BqBeNCnhM5fiaKj89plZw5JeWuyPIT4J7wcvvifW
+         WuMoTnomqZ2X5kIFMJQ3zKawfSm27fPESlUdwNTMPwe6tTRfO0Vota2eDkPtip/IvvrY
+         H14w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=Oc286PCp;
+       dkim=pass header.i=@linaro.org header.s=google header.b=HqxbwN1e;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=Oc286PCp;
+       dkim=pass header.i=@linaro.org header.s=google header.b=HqxbwN1e;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AG47ELtCVNRjMy7ThCecHPaVdNtm2cTA3STwkRoTP90VCRS/TCMBczIWbJfGUVudCYmAwakPMjtVqw==
+X-Google-Smtp-Source: AG47ELt0PNis7hVsvlahS+F9Ba9ZLIiJ6IIR4w7NnF91ODUdnSr19YbfVaROXpRXDh6qQOSPgXcP6A==
 From: srinivas.kandagatla@linaro.org
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
@@ -41,15 +41,15 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	linux-amlogic@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 13/25] nvmem: imx-iim: Convert to use devm_nvmem_register()
-Date: Fri,  9 Mar 2018 14:47:07 +0000
-Message-Id: <20180309144719.29904-14-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 12/25] nvmem: lpc18xx_otp: Convert to use devm_nvmem_register()
+Date: Fri,  9 Mar 2018 14:47:06 +0000
+Message-Id: <20180309144719.29904-13-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180309144719.29904-1-srinivas.kandagatla@linaro.org>
 References: <20180309144719.29904-1-srinivas.kandagatla@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594472048934734422?=
-X-GMAIL-MSGID: =?utf-8?q?1594472048934734422?=
+X-GMAIL-THRID: =?utf-8?q?1594472047860704662?=
+X-GMAIL-MSGID: =?utf-8?q?1594472047860704662?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -73,28 +73,28 @@ Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/imx-iim.c | 16 ++--------------
+ drivers/nvmem/lpc18xx_otp.c | 16 ++--------------
  1 file changed, 2 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/nvmem/imx-iim.c b/drivers/nvmem/imx-iim.c
-index 52cfe91d9762..b98d76ac7790 100644
---- a/drivers/nvmem/imx-iim.c
-+++ b/drivers/nvmem/imx-iim.c
-@@ -138,25 +138,13 @@ static int imx_iim_probe(struct platform_device *pdev)
- 	cfg.size = drvdata->nregs;
- 	cfg.priv = iim;
+diff --git a/drivers/nvmem/lpc18xx_otp.c b/drivers/nvmem/lpc18xx_otp.c
+index 95268db155e9..549b5298ac4c 100644
+--- a/drivers/nvmem/lpc18xx_otp.c
++++ b/drivers/nvmem/lpc18xx_otp.c
+@@ -86,20 +86,9 @@ static int lpc18xx_otp_probe(struct platform_device *pdev)
+ 	lpc18xx_otp_nvmem_config.dev = &pdev->dev;
+ 	lpc18xx_otp_nvmem_config.priv = otp;
  
--	nvmem = nvmem_register(&cfg);
+-	nvmem = nvmem_register(&lpc18xx_otp_nvmem_config);
 -	if (IS_ERR(nvmem))
 -		return PTR_ERR(nvmem);
-+	nvmem = devm_nvmem_register(dev, &cfg);
++	nvmem = devm_nvmem_register(&pdev->dev, &lpc18xx_otp_nvmem_config);
  
 -	platform_set_drvdata(pdev, nvmem);
 -
 -	return 0;
 -}
 -
--static int imx_iim_remove(struct platform_device *pdev)
+-static int lpc18xx_otp_remove(struct platform_device *pdev)
 -{
 -	struct nvmem_device *nvmem = platform_get_drvdata(pdev);
 -
@@ -102,11 +102,14 @@ index 52cfe91d9762..b98d76ac7790 100644
 +	return PTR_ERR_OR_ZERO(nvmem);
  }
  
- static struct platform_driver imx_iim_driver = {
- 	.probe	= imx_iim_probe,
--	.remove	= imx_iim_remove,
+ static const struct of_device_id lpc18xx_otp_dt_ids[] = {
+@@ -110,7 +99,6 @@ MODULE_DEVICE_TABLE(of, lpc18xx_otp_dt_ids);
+ 
+ static struct platform_driver lpc18xx_otp_driver = {
+ 	.probe	= lpc18xx_otp_probe,
+-	.remove	= lpc18xx_otp_remove,
  	.driver = {
- 		.name	= "imx-iim",
- 		.of_match_table = imx_iim_dt_ids,
+ 		.name	= "lpc18xx_otp",
+ 		.of_match_table = lpc18xx_otp_dt_ids,
 -- 
 2.15.1
