@@ -1,61 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932104AbeCIOfl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 09:35:41 -0500
-Received: from smtprelay0242.hostedemail.com ([216.40.44.242]:33975 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751102AbeCIOfk (ORCPT
+        id S1751225AbeCIOfx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 09:35:53 -0500
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:35875 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751102AbeCIOfu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 09:35:40 -0500
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::,RULES_HIT:41:355:379:541:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3868:3870:3871:3872:3874:4037:4321:5007:10004:10400:10848:11026:11232:11658:11914:12438:12740:12895:13069:13311:13357:13439:13894:14659:21080:21451:21627:30029:30054:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:22,LUA_SUMMARY:none
-X-HE-Tag: farm56_13f842341ac37
-X-Filterd-Recvd-Size: 1979
-Message-ID: <1520606135.26370.9.camel@perches.com>
-Subject: Re: [PATCH 3/4] crypto: bcm: Constify *hash_alg_name[]
-From: Joe Perches <joe@perches.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        =?ISO-8859-1?Q?Hern=E1n?= Gonzalez <hernan@vanguardiasur.com.ar>
-Cc: davem@davemloft.net, steven.lin1@broadcom.com,
-        arvind.yadav.cs@gmail.com, colin.king@canonical.com,
-        raveendra.padasalagi@broadcom.com, ray.jui@broadcom.com,
-        scott.branden@broadcom.com, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Fri, 09 Mar 2018 06:35:35 -0800
-In-Reply-To: <20180309142954.GA12852@gondor.apana.org.au>
-References: <1519768888-19866-1-git-send-email-hernan@vanguardiasur.com.ar>
-         <1519768888-19866-3-git-send-email-hernan@vanguardiasur.com.ar>
-         <20180309142954.GA12852@gondor.apana.org.au>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
+        Fri, 9 Mar 2018 09:35:50 -0500
+X-Google-Smtp-Source: AG47ELvZwUU2pUOYqDfjufcXs2NHqL3t8GelA5O3JNIoeBSbiBa3mJfXiPnwmc//vRzrWbWG80RAfA==
+Subject: Re: [PATCH v3 1/3] clk: tegra: Mark HCLK, SCLK and EMC as critical
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
+ <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
+ <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com> <20180308144437.GJ3529@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <92084f1b-848a-39e6-7d77-7ceaa6a6f1d3@gmail.com>
+Date: Fri, 9 Mar 2018 17:35:46 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180308144437.GJ3529@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-03-09 at 22:29 +0800, Herbert Xu wrote:
-> On Tue, Feb 27, 2018 at 07:01:27PM -0300, Hernán Gonzalez wrote:
-> > Note: This is compile only tested.
-> > No gain from this except some self-documenting.
-[]
-> > diff --git a/drivers/crypto/bcm/spu.c b/drivers/crypto/bcm/spu.c
-[]
-> > @@ -23,8 +23,9 @@
-> >  #include "cipher.h"
-> >  
-> >  /* This array is based on the hash algo type supported in spu.h */
-> > -char *hash_alg_name[] = { "None", "md5", "sha1", "sha224", "sha256", "aes",
-> > -	"sha384", "sha512", "sha3_224", "sha3_256", "sha3_384", "sha3_512" };
-> > +char const * const hash_alg_name[] = { "None", "md5", "sha1", "sha224",
+On 08.03.2018 17:44, Thierry Reding wrote:
+> On Thu, Mar 01, 2018 at 04:33:29PM +0300, Dmitry Osipenko wrote:
+>> On 15.01.2018 13:56, Dmitry Osipenko wrote:
+>>> On 10.01.2018 16:59, Dmitry Osipenko wrote:
+>>>> Machine dies if HCLK, SCLK or EMC is disabled. Hence mark these clocks
+>>>> as critical.
+>>>>
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>>> ---
+>>>>
+>>>> Change log:
+>>>> v2:     Fixed accidentally missed marking EMC as critical on Tegra30 and
+>>>>         Tegra124. Switched to a use of common EMC gate definition on Tegra20
+>>>>         and Tegra30.
+>>>>
+>>>> v3:     Dropped marking PLL_P outputs as critical, because seems they are
+>>>>         not so critical. Although, I still haven't got a definitive answer
+>>>>         about what exact HW functions are affected by the fixed-clocks.
+>>>>         Anyway it should be cleaner to correct the actual drivers.
+>>>
+>>> Stephen / Michael, would it be possible to schedule these patches for 4.16? My
+>>> T20 and T30 devices aren't working without the 'critical clocks' patch. Things
+>>> happen to work with the opensource u-boot, but not with the proprietary
+>>> bootloader. It's probably not a big deal that out-of-tree devices are broken,
+>>> although would be nice to have one problem less.
+>>
+>> Guys, is there anything I could do to get these patches in linux-next?
 > 
-> Please make that
-> 
-> 	const char *const
-> 
-> Ditto with patch 4.
-> 
-> Thanks,
+> I've picked these up into the for-4.17/clk branch in the Tegra tree. I
+> already have that branch for the MBIST patches which are a dependency
+> for the for-4.17/soc branch.
 
-and likely, as this is a global name, it should
-be something like crypto_hash_alg_name
+Thank you very much! Could you please add stable tag to this ("Mark HCLK, SCLK
+and EMC as critical") patch? It would be nice to have 4.16 unbroken eventually
+for those who (have to) use downstream android bootloader.
+
+Cc: <stable@vger.kernel.org> # v4.16
+
+> Stephen, Mike, let me know if you have any objections to carrying these
+> in the Tegra tree.
