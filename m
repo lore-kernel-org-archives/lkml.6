@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932949AbeCIWHA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 17:07:00 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:39422 "EHLO
+        id S932954AbeCIWHS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 17:07:18 -0500
+Received: from galahad.ideasonboard.com ([185.26.127.97]:39420 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932699AbeCIWER (ORCPT
+        with ESMTP id S932515AbeCIWEQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 17:04:17 -0500
+        Fri, 9 Mar 2018 17:04:16 -0500
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
 Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 03/11] media: vsp1: Rename dl_child to dl_next
-Date: Fri,  9 Mar 2018 22:04:01 +0000
-Message-Id: <1ea56c7da943673569811579d823b489d4ae291e.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 02/11] media: vsp1: use kernel __packed for structures
+Date: Fri,  9 Mar 2018 22:04:00 +0000
+Message-Id: <767c4c9f6aa4799a58f0979b318208f1d3e27860.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
 References: <cover.50cd35ac550b4477f13fb4f3fbd3ffb6bcccfc8a.1520632434.git-series.kieran.bingham+renesas@ideasonboard.com>
@@ -25,63 +25,42 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both vsp1_dl_list_commit() and __vsp1_dl_list_put() walk the display
-list chain referencing the nodes as children, when in reality they are
-siblings.
+The kernel provides a __packed definition to abstract away from the
+compiler specific attributes tag.
 
-Update the terminology to 'dl_next' to be consistent with the
-vsp1_video_pipeline_run() usage.
+Convert all packed structures in VSP1 to use it.
 
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/media/platform/vsp1/vsp1_dl.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/media/platform/vsp1/vsp1_dl.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 382e45c2054e..057f0f093222 100644
+index 37e2c984fbf3..382e45c2054e 100644
 --- a/drivers/media/platform/vsp1/vsp1_dl.c
 +++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -400,7 +400,7 @@ struct vsp1_dl_list *vsp1_dl_list_get(struct vsp1_dl_manager *dlm)
- /* This function must be called with the display list manager lock held.*/
- static void __vsp1_dl_list_put(struct vsp1_dl_list *dl)
- {
--	struct vsp1_dl_list *dl_child;
-+	struct vsp1_dl_list *dl_next;
+@@ -29,19 +29,19 @@
+ struct vsp1_dl_header_list {
+ 	u32 num_bytes;
+ 	u32 addr;
+-} __attribute__((__packed__));
++} __packed;
  
- 	if (!dl)
- 		return;
-@@ -410,8 +410,8 @@ static void __vsp1_dl_list_put(struct vsp1_dl_list *dl)
- 	 * hardware operation.
- 	 */
- 	if (dl->has_chain) {
--		list_for_each_entry(dl_child, &dl->chain, chain)
--			__vsp1_dl_list_put(dl_child);
-+		list_for_each_entry(dl_next, &dl->chain, chain)
-+			__vsp1_dl_list_put(dl_next);
- 	}
+ struct vsp1_dl_header {
+ 	u32 num_lists;
+ 	struct vsp1_dl_header_list lists[8];
+ 	u32 next_header;
+ 	u32 flags;
+-} __attribute__((__packed__));
++} __packed;
  
- 	dl->has_chain = false;
-@@ -667,17 +667,17 @@ static void vsp1_dl_list_commit_singleshot(struct vsp1_dl_list *dl)
- void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
- {
- 	struct vsp1_dl_manager *dlm = dl->dlm;
--	struct vsp1_dl_list *dl_child;
-+	struct vsp1_dl_list *dl_next;
- 	unsigned long flags;
+ struct vsp1_dl_entry {
+ 	u32 addr;
+ 	u32 data;
+-} __attribute__((__packed__));
++} __packed;
  
- 	if (dlm->mode == VSP1_DL_MODE_HEADER) {
- 		/* Fill the header for the head and chained display lists. */
- 		vsp1_dl_list_fill_header(dl, list_empty(&dl->chain));
- 
--		list_for_each_entry(dl_child, &dl->chain, chain) {
--			bool last = list_is_last(&dl_child->chain, &dl->chain);
-+		list_for_each_entry(dl_next, &dl->chain, chain) {
-+			bool last = list_is_last(&dl_next->chain, &dl->chain);
- 
--			vsp1_dl_list_fill_header(dl_child, last);
-+			vsp1_dl_list_fill_header(dl_next, last);
- 		}
- 	}
- 
+ /**
+  * struct vsp1_dl_body - Display list body
 -- 
 git-series 0.9.1
