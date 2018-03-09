@@ -1,46 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751183AbeCILFB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 06:05:01 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50192 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751077AbeCILE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 06:04:58 -0500
-Subject: Re: [PATCH] x86, powerpc : pkey-mprotect must allow pkey-0
-To: Ram Pai <linuxram@us.ibm.com>, mpe@ellerman.id.au, mingo@redhat.com,
-        akpm@linux-foundation.org
-Cc: linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dave.hansen@intel.com, benh@kernel.crashing.org, paulus@samba.org,
-        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
-        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
-        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com, corbet@lwn.net,
-        arnd@arndb.de, msuchanek@suse.com, Ulrich.Weigand@de.ibm.com
-References: <1520583161-11741-1-git-send-email-linuxram@us.ibm.com>
-From: Florian Weimer <fweimer@redhat.com>
-Message-ID: <ec90ed75-2810-bcc3-8439-8dc85a6b46ac@redhat.com>
-Date: Fri, 9 Mar 2018 12:04:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751192AbeCILFV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 06:05:21 -0500
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:44923 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751025AbeCILFT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 06:05:19 -0500
+X-Google-Smtp-Source: AG47ELvLpHs9K9QBcVEACvrBRCNydRKjZ9u5mr/tEJlsDRMs3lYqzVsazaNfdrpr90gwfY2HDpTmjA==
+Date: Fri, 9 Mar 2018 16:35:10 +0530
+From: Himanshu Jha <himanshujha199640@gmail.com>
+To: Kees Cook <keescook@chromium.org>
+Cc: jic23@kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: Re: [PATCH] iio: potentiometer: ds1803: Remove VLA usage
+Message-ID: <20180309110510.GB7786@himanshu-Vostro-3559>
+References: <1520534733-1743-1-git-send-email-himanshujha199640@gmail.com>
+ <CAGXu5jJzLczSzfJtWbhTUqAYXRG_-zKf2x8cz8jrAxu+XjkYdQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1520583161-11741-1-git-send-email-linuxram@us.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jJzLczSzfJtWbhTUqAYXRG_-zKf2x8cz8jrAxu+XjkYdQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09/2018 09:12 AM, Ram Pai wrote:
-> Once an address range is associated with an allocated pkey, it cannot be
-> reverted back to key-0. There is no valid reason for the above behavior.
+On Thu, Mar 08, 2018 at 11:39:15AM -0800, Kees Cook wrote:
+> On Thu, Mar 8, 2018 at 10:45 AM, Himanshu Jha
+> <himanshujha199640@gmail.com> wrote:
+> > In preparation to enabling -Wvla, remove VLA usage and replace it
+> > with fixed a fixed length array and therefore, prevent potential
+> > stack overflow attacks.
+> >
+> > Fixed as a part of the discussion to remove all VLAs from the kernel:
+> > https://lkml.org/lkml/2018/3/7/621
+> >
+> > Cc: keescook@chromium.org
+> > Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
+> > ---
+> >  drivers/iio/potentiometer/ds1803.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/iio/potentiometer/ds1803.c b/drivers/iio/potentiometer/ds1803.c
+> > index 9b0ff4a..6bf12c9 100644
+> > --- a/drivers/iio/potentiometer/ds1803.c
+> > +++ b/drivers/iio/potentiometer/ds1803.c
+> > @@ -64,7 +64,7 @@ static int ds1803_read_raw(struct iio_dev *indio_dev,
+> >         struct ds1803_data *data = iio_priv(indio_dev);
+> >         int pot = chan->channel;
+> >         int ret;
+> > -       u8 result[indio_dev->num_channels];
+> > +       u8 result[ARRAY_SIZE(ds1803_channels)];
+> 
+> It seems like num_channels is always ARRAY_SIZE(ds1803_channels).
+> Could the entire field be dropped?
 
-mprotect without a key does not necessarily use key 0, e.g. if 
-protection keys are used to emulate page protection flag combination 
-which is not directly supported by the hardware.
+If you're asking to remove num_channels then certainly it is not
+possible
+since it is a member of industrial I/O device struct and it is not just
+a member of regular struct local to this file.
 
-Therefore, it seems to me that filtering out non-allocated keys is the 
-right thing to do.
+We certainly know that there are only two channels BTW and it can be
+tranformed to simply:
 
-Thanks,
-Florian
+        u8 result[2];
+
+But then I might have to add an additional comment explaining the magic
+number 2.
+
+-- 
+Thanks
+Himanshu Jha
