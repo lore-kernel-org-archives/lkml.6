@@ -1,117 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751229AbeCIJEa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 04:04:30 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:43113 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751045AbeCIJE3 (ORCPT
+        id S1751306AbeCIJEh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 04:04:37 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:58544 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751045AbeCIJEc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:04:29 -0500
-Date: Fri, 9 Mar 2018 01:04:09 -0800
-From: tip-bot for Vincent Guittot <tipbot@zytor.com>
-Message-ID: <tip-1936c53ce8c8d4555e9ccad2dc8d98e0637b11f7@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, peterz@infradead.org,
-        torvalds@linux-foundation.org, mingo@kernel.org, hpa@zytor.com,
-        vincent.guittot@linaro.org
-Reply-To: torvalds@linux-foundation.org, peterz@infradead.org,
-        vincent.guittot@linaro.org, mingo@kernel.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-In-Reply-To: <1518517879-2280-3-git-send-email-vincent.guittot@linaro.org>
-References: <1518517879-2280-3-git-send-email-vincent.guittot@linaro.org>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/fair: Reduce the periodic update duration
-Git-Commit-ID: 1936c53ce8c8d4555e9ccad2dc8d98e0637b11f7
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 9 Mar 2018 04:04:32 -0500
+Date: Fri, 9 Mar 2018 10:04:22 +0100
+From: jacopo mondi <jacopo@jmondi.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>, Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: display: bridge: Document THC63LVD1024
+ LVDS decoder
+Message-ID: <20180309090422.GD14819@w540>
+References: <1520522643-11756-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1520522643-11756-2-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdVQqp7YcoQ6eN5pSznZB4zn7ztv1WFfkcQOzP_3DhG_Vg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <CAMuHMdVQqp7YcoQ6eN5pSznZB4zn7ztv1WFfkcQOzP_3DhG_Vg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1936c53ce8c8d4555e9ccad2dc8d98e0637b11f7
-Gitweb:     https://git.kernel.org/tip/1936c53ce8c8d4555e9ccad2dc8d98e0637b11f7
-Author:     Vincent Guittot <vincent.guittot@linaro.org>
-AuthorDate: Tue, 13 Feb 2018 11:31:18 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 9 Mar 2018 07:59:22 +0100
+Hi Geert,
+   thanks for review
 
-sched/fair: Reduce the periodic update duration
+On Fri, Mar 09, 2018 at 09:10:55AM +0100, Geert Uytterhoeven wrote:
+> Hi Jacopo,
+>
+> On Thu, Mar 8, 2018 at 4:24 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> > Document Thine THC63LVD1024 LVDS decoder.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>
+> Thanks for your patch!
+>
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> > @@ -0,0 +1,59 @@
+> > +THine Electronics THC63LVD1024 LVDS receiver
+>
+> Thine
+>
+> > +--------------------------------------------
+> > +
+> > +The THC63LVD1024 is an LVDS receiver designed to convert multiple LVDS streams
+> > +to digital CMOS/TTL parallel data.
+> > +
+> > +Required properties:
+> > +- compatible: Shall be one of the following:
+> > +  "thine,thc63lvd1024",
+> > +  "lvds-decoder"
+>
+> What's the purpose of the second compatible value?
+> When should it be used?
 
-Instead of using the cfs_rq_is_decayed() which monitors all *_avg
-and *_sum, we create a cfs_rq_has_blocked() which only takes care of
-util_avg and load_avg. We are only interested by these 2 values which are
-decaying faster than the *_sum so we can stop the periodic update earlier.
+It is probably my bad having started with a generic LVDS decoder in
+mind and having then added properties specific to THC63LVD1024 to the
+driver and its bindings.
 
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: brendan.jackman@arm.com
-Cc: dietmar.eggemann@arm.com
-Cc: morten.rasmussen@foss.arm.com
-Cc: valentin.schneider@arm.com
-Link: http://lkml.kernel.org/r/1518517879-2280-3-git-send-email-vincent.guittot@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/sched/fair.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
+"lvds,decoder" can be used when the chip is completely transparent to
+the SoC and none of the optional properties I have described in the
+bindings are specified (a generic "power-gpios" apart, see Andrzej
+comments on "pwdn-gpios" property).
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 78b06a0814d1..aad7c03dbad8 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7424,6 +7424,19 @@ static void attach_tasks(struct lb_env *env)
- 	rq_unlock(env->dst_rq, &rf);
- }
- 
-+static inline bool cfs_rq_has_blocked(struct cfs_rq *cfs_rq)
-+{
-+	if (cfs_rq->avg.load_avg)
-+		return true;
-+
-+	if (cfs_rq->avg.util_avg)
-+		return true;
-+
-+	return false;
-+}
-+
-+#ifdef CONFIG_FAIR_GROUP_SCHED
-+
- static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
- {
- 	if (cfs_rq->load.weight)
-@@ -7441,8 +7454,6 @@ static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
- 	return true;
- }
- 
--#ifdef CONFIG_FAIR_GROUP_SCHED
--
- static void update_blocked_averages(int cpu)
- {
- 	struct rq *rq = cpu_rq(cpu);
-@@ -7478,7 +7489,9 @@ static void update_blocked_averages(int cpu)
- 		 */
- 		if (cfs_rq_is_decayed(cfs_rq))
- 			list_del_leaf_cfs_rq(cfs_rq);
--		else
-+
-+		/* Don't need periodic decay once load/util_avg are null */
-+		if (cfs_rq_has_blocked(cfs_rq))
- 			done = false;
- 	}
- 
-@@ -7548,7 +7561,7 @@ static inline void update_blocked_averages(int cpu)
- 	update_cfs_rq_load_avg(cfs_rq_clock_task(cfs_rq), cfs_rq);
- #ifdef CONFIG_NO_HZ_COMMON
- 	rq->last_blocked_load_update_tick = jiffies;
--	if (cfs_rq_is_decayed(cfs_rq))
-+	if (!cfs_rq_has_blocked(cfs_rq))
- 		rq->has_blocked_load = 0;
- #endif
- 	rq_unlock_irqrestore(rq, &rf);
+Also, I should make the driver behavior depend on the matched compatible
+string. When "lvds-decoder" is matched, it will just look for an
+optional power down gpio, when "thc63lvd1024" is matched, all of its
+Vcc supplies, pwdn gpio and oe gpios will be queried and, if present,
+eventually used in enable/disable routines.
+
+I'm just not sure how to describe that in bindings. Would something
+like the following work?
+
+Optional properties for "lvds,decoder"
+- power-gpios: Power control GPIOs
+
+Optional properties for "thine,thc63lvd1024"
+- pwdn-gpios: ...
+- oe-gpios: ...
+- supply-vcc: ...
+- supply-cvcc: ...
+- supply-pvcc: ...
+- supply-lvcc: ...
+
+Thanks
+   j
+
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
