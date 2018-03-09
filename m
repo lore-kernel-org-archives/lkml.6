@@ -1,426 +1,254 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751147AbeCIJsy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 04:48:54 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:42502 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750883AbeCIJsu (ORCPT
+        id S1751200AbeCIJtD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 04:49:03 -0500
+Received: from mail-it0-f53.google.com ([209.85.214.53]:53576 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751169AbeCIJs5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:48:50 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [RFC/RFT][PATCH v3 5/6] sched: idle: Select idle state before stopping the tick
-Date: Fri, 09 Mar 2018 10:46:55 +0100
-Message-ID: <3333184.WFRNK4vEe0@aspire.rjw.lan>
-In-Reply-To: <2450532.XN8DODrtDf@aspire.rjw.lan>
-References: <2450532.XN8DODrtDf@aspire.rjw.lan>
+        Fri, 9 Mar 2018 04:48:57 -0500
+X-Google-Smtp-Source: AG47ELtVU+V2U8oWjQAZVnlYCgLTCXyLHm5eHQS9jDeSvT7dNmzXewACeoBDtJ3/M/nTvhCnj+6BjP0FnATn7WjjQ/M=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180305161446.GQ3918@linux.vnet.ibm.com>
+References: <CAG48ez17vOL0oEWqoqdHCjqfGVX+aPhHBrtgCfn35z6jZ=8-Xg@mail.gmail.com>
+ <CA+55aFzQPQw2UqQ2EEGN1Xe7=qDs-2VTvHVi7SSqGNwqNRg0cQ@mail.gmail.com>
+ <CAOS58YPzLeiZnwEeN31wWMZhki0t9+3ozdRNv9DgxWKY7OKmGA@mail.gmail.com>
+ <CA+55aFx48U4W5tUgqW9ioZOHibPhQoDCUDWF_d-7yNCbqFQ7zg@mail.gmail.com>
+ <20180305001600.GO3918@linux.vnet.ibm.com> <CA+55aFyOi1XnSqHtg=VfcUiBL+egNL==NRX1Zaeihe8W5OJVgw@mail.gmail.com>
+ <20180305030949.GP3918@linux.vnet.ibm.com> <20180305082441.4hao2z4dqn2n5on6@gmail.com>
+ <87po4izj67.fsf_-_@xmission.com> <20180305161446.GQ3918@linux.vnet.ibm.com>
+From: Lai Jiangshan <jiangshanlai+lkml@gmail.com>
+Date: Fri, 9 Mar 2018 17:48:55 +0800
+X-Google-Sender-Auth: GpOk7HYcldMBag_bjsOgP3KgqfU
+Message-ID: <CAJhGHyD_N_duuZgPdidpsR9zVsAFzQi0oVwhd=qTiXa-hYiasg@mail.gmail.com>
+Subject: Re: Simplifying our RCU models
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>, Jann Horn <jannh@google.com>,
+        Benjamin LaHaise <bcrl@kvack.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Tue, Mar 6, 2018 at 12:14 AM, Paul E. McKenney
+<paulmck@linux.vnet.ibm.com> wrote:
+> On Mon, Mar 05, 2018 at 08:33:20AM -0600, Eric W. Biederman wrote:
+>>
+>> Moving this discussion to a public list as discussing how to reduce the
+>> number of rcu variants does not make sense in private.  We should have
+>> an archive of such discussions.
+>>
+>> Ingo Molnar <mingo@kernel.org> writes:
+>>
+>> > * Paul E. McKenney <paulmck@linux.vnet.ibm.com> wrote:
+>> >
+>> >> > So if people really want that low-cost RCU, and some people really
+>> >> > need the sleepable version, the only one that can _possibly_ be dumped
+>> >> > is the preempt one.
+>> >> >
+>> >> > But I may - again - be confused and/or missing something.
+>> >>
+>> >> I am going to do something very stupid and say that I was instead thinking in
+>> >> terms of getting rid of RCU-bh, thus reminding you of its existence.  ;-)
+>> >>
+>> >> The reason for believing that it is possible to get rid of RCU-bh is the work
+>> >> that has gone into improving the forward progress of RCU grace periods under
+>> >> heavy load and in corner-case workloads.
+>> >>
+>> >
+>> > [...]
+>> >
+>> >> The other reason for RCU-sched is it has the side effect of waiting
+>> >> for all in-flight hardware interrupt handlers, NMI handlers, and
+>> >> preempt-disable regions of code to complete, and last I checked, this side
+>> >> effect is relied on.  In contrast, RCU-preeempt is only guaranteed to wait
+>> >> on regions of code protected by rcu_read_lock() and rcu_read_unlock().
+>> >
+>> > Instead of only trying to fix the documentation (which is never a bad idea but it
+>> > is fighting the symptom in this case), I think the first step should be to
+>> > simplify the RCU read side APIs of RCU from 4 APIs:
+>> >
+>> >     rcu_read_lock()
+>> >     srcu_read_lock()
+>> >     rcu_read_lock_sched()
+>> >     rcu_read_lock_bh()
+>> >
+>> > ... which have ~8 further sub-model variations depending on CONFIG_PREEMPT,
+>> > CONFIG_PREEMPT_RCU - which is really a crazy design!
+>
+> If it is possible to set CONFIG_PREEMPT_RCU differently than CONFIG_PREEMPT,
+> then that is a bug that I need to fix.
+>
+>> > I think we could reduce this to just two APIs with no Kconfig dependencies:
+>> >
+>> >     rcu_read_lock()
+>> >     rcu_read_lock_preempt_disable()
+>> >
+>> > Which would be much, much simpler.
+>
+> No argument on the simpler part, at least from an API perspective.
+>
+>> > This is how we could do it I think:
+>> >
+>> > 1)
+>> >
+>> > Getting rid of the _bh() variant should be reasonably simple and involve a
+>> > treewide replacement of:
+>> >
+>> >     rcu_read_lock_bh()   -> local_bh_disable()
+>> >     rcu_read_unlock_bh() -> local_bh_enable()
+>> >
+>> > Correct?
+>
+> Assuming that I have done enough forward-progress work on grace periods, yes.
+>
+>> > 2)
+>> >
+>> > Further reducing the variants is harder, due to this main asymmetry:
+>> >
+>> >                           !PREEMPT_RCU  PREEMPT_RCU=y
+>> >   rcu_read_lock_sched():  atomic        atomic
+>> >   rcu_read_lock():        atomic        preemptible
+>> >
+>> > ('atomic' here is meant in the scheduler, non-preemptible sense.)
+>> >
+>> > But if we look at the bigger API picture:
+>> >
+>> >                           !PREEMPT_RCU  PREEMPT_RCU=y
+>> >   rcu_read_lock():        atomic        preemptiblep
+>> >   rcu_read_lock_sched():  atomic        atomic
+>> >   srcu_read_lock():       preemptible   preemptible
+>> >
+>> > Then we could maintain full read side API flexibility by making PREEMPT_RCU=y the
+>> > only model, merging it with SRCU and using these main read side APIs:
+>> >
+>> >   rcu_read_lock_preempt_disable((): atomic
+>> >   rcu_read_lock()                   preemptible
+>
+> One issue with merging SRCU into rcu_read_lock() is the general blocking
+> within SRCU readers.  Once merged in, these guys block everyone.  We should
+> focus initially on the non-SRCU variants.
+>
+> On the other hand, Linus's suggestion of merging rcu_read_lock_sched()
+> into rcu_read_lock() just might be feasible.  If that really does pan
+> out, we end up with the following:
+>
+>                                 !PREEMPT        PREEMPT=y
+>         rcu_read_lock():        atomic          preemptible
+>         srcu_read_lock():       preemptible     preemptible
+>
+> In this model, rcu_read_lock_sched() maps to preempt_disable() and (as
+> you say above) rcu_read_lock_bh() maps to local_bh_disable().  The way
+> this works is that in PREEMPT=y kernels, synchronize_rcu() waits not
+> only for RCU read-side critical sections, but also for regions of code
+> with preemption disabled.  The main caveat seems to be that there be an
+> assumed point of preemptibility between each interrupt and each softirq
+> handler, which should be OK.
+>
+> There will be some adjustments required for lockdep-RCU, but that should
+> be reasonably straightforward.
+>
+> Seem reasonable?
 
-In order to address the issue with short idle duration predictions
-by the idle governor after the tick has been stopped, reorder the
-code in cpuidle_idle_call() so that the governor idle state selection
-runs before tick_nohz_idle_go_idle() and use the "nohz" hint returned
-by cpuidle_select() to decide whether or not to stop the tick.
+It's good. I hope there is only one global(non-srcu) rcu variant.
 
-This isn't straightforward, because menu_select() invokes
-tick_nohz_get_sleep_length() to get the time to the next timer
-event and the number returned by the latter comes from
-__tick_nohz_idle_enter().  Fortunately, however, it is possible
-to compute that number without actually stopping the tick and with
-the help of the existing code.
+It does have the trade-off, the grace period will be extended a little
+in some cases,
+so will the call_rcu()/synchronze_rcu(). But it simplifies the coding a lot.
 
-Namely, notice that tick_nohz_stop_sched_tick() already computes the
-next timer event time to reprogram the scheduler tick hrtimer and
-that time can be used as a proxy for the actual next timer event
-time in the idle duration predicition.  Moreover, it is possible
-to split tick_nohz_stop_sched_tick() into two separate routines,
-one computing the time to the next timer event and the other
-simply stopping the tick when the time to the next timer event
-is known.
-
-Accordingly, split tick_nohz_stop_sched_tick() into
-__tick_nohz_next_event() and __tick_nohz_stop_tick() and use the
-latter in tick_nohz_get_sleep_length().  Add two new extra fields,
-timer_expires and timer_expires_basemono, to struct tick_sched for
-passing data between these two functions and one more extra field,
-tick_may_stop, to indicate that __tick_nohz_next_event() has run
-and __tick_nohz_stop_tick() can be called now.  Also drop the now
-redundant sleep_length field from there.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- include/linux/tick.h     |    2 
- kernel/sched/idle.c      |   11 ++-
- kernel/time/tick-sched.c |  146 ++++++++++++++++++++++++++++++-----------------
- kernel/time/tick-sched.h |    6 +
- 4 files changed, 110 insertions(+), 55 deletions(-)
-
-Index: linux-pm/kernel/time/tick-sched.h
-===================================================================
---- linux-pm.orig/kernel/time/tick-sched.h
-+++ linux-pm/kernel/time/tick-sched.h
-@@ -30,6 +30,7 @@ enum tick_nohz_mode {
-  *			when the CPU returns from nohz sleep.
-  * @next_tick:		Next tick to be fired when in dynticks mode.
-  * @tick_stopped:	Indicator that the idle tick has been stopped
-+ * @tick_may_stop:	Indicator that the idle tick may be stopped shortly
-  * @idle_jiffies:	jiffies at the entry to idle for idle time accounting
-  * @idle_calls:		Total number of idle calls
-  * @idle_sleeps:	Number of idle calls, where the sched tick was stopped
-@@ -38,7 +39,6 @@ enum tick_nohz_mode {
-  * @idle_exittime:	Time when the idle state was left
-  * @idle_sleeptime:	Sum of the time slept in idle with sched tick stopped
-  * @iowait_sleeptime:	Sum of the time slept in idle with sched tick stopped, with IO outstanding
-- * @sleep_length:	Duration of the current idle sleep
-  * @do_timer_lst:	CPU was the last one doing do_timer before going idle
-  */
- struct tick_sched {
-@@ -49,6 +49,7 @@ struct tick_sched {
- 	ktime_t				next_tick;
- 	int				inidle;
- 	int				tick_stopped;
-+	int				tick_may_stop;
- 	unsigned long			idle_jiffies;
- 	unsigned long			idle_calls;
- 	unsigned long			idle_sleeps;
-@@ -58,8 +59,9 @@ struct tick_sched {
- 	ktime_t				idle_exittime;
- 	ktime_t				idle_sleeptime;
- 	ktime_t				iowait_sleeptime;
--	ktime_t				sleep_length;
- 	unsigned long			last_jiffies;
-+	u64				timer_expires;
-+	u64				timer_expires_basemono;
- 	u64				next_timer;
- 	ktime_t				idle_expires;
- 	int				do_timer_last;
-Index: linux-pm/kernel/sched/idle.c
-===================================================================
---- linux-pm.orig/kernel/sched/idle.c
-+++ linux-pm/kernel/sched/idle.c
-@@ -190,13 +190,18 @@ static void cpuidle_idle_call(void)
- 	} else {
- 		bool nohz = true;
- 
--		tick_nohz_idle_stop_tick();
--		rcu_idle_enter();
--
- 		/*
- 		 * Ask the cpuidle framework to choose a convenient idle state.
- 		 */
- 		next_state = cpuidle_select(drv, dev, &nohz);
-+
-+		if (nohz)
-+			tick_nohz_idle_stop_tick();
-+		else
-+			tick_nohz_idle_retain_tick();
-+
-+		rcu_idle_enter();
-+
- 		entered_state = call_cpuidle(drv, dev, next_state);
- 		/*
- 		 * Give the governor an opportunity to reflect on the outcome
-Index: linux-pm/kernel/time/tick-sched.c
-===================================================================
---- linux-pm.orig/kernel/time/tick-sched.c
-+++ linux-pm/kernel/time/tick-sched.c
-@@ -652,13 +652,10 @@ static inline bool local_timer_softirq_p
- 	return local_softirq_pending() & TIMER_SOFTIRQ;
- }
- 
--static ktime_t tick_nohz_stop_sched_tick(struct tick_sched *ts,
--					 ktime_t now, int cpu)
-+static ktime_t __tick_nohz_next_event(struct tick_sched *ts, int cpu)
- {
--	struct clock_event_device *dev = __this_cpu_read(tick_cpu_device.evtdev);
- 	u64 basemono, next_tick, next_tmr, next_rcu, delta, expires;
- 	unsigned long seq, basejiff;
--	ktime_t	tick;
- 
- 	/* Read jiffies and the time when jiffies were updated last */
- 	do {
-@@ -667,6 +664,7 @@ static ktime_t tick_nohz_stop_sched_tick
- 		basejiff = jiffies;
- 	} while (read_seqretry(&jiffies_lock, seq));
- 	ts->last_jiffies = basejiff;
-+	ts->timer_expires_basemono = basemono;
- 
- 	/*
- 	 * Keep the periodic tick, when RCU, architecture or irq_work
-@@ -711,31 +709,24 @@ static ktime_t tick_nohz_stop_sched_tick
- 		 * next period, so no point in stopping it either, bail.
- 		 */
- 		if (!ts->tick_stopped) {
--			tick = 0;
-+			ts->timer_expires = 0;
- 			goto out;
- 		}
- 	}
- 
- 	/*
--	 * If this CPU is the one which updates jiffies, then give up
--	 * the assignment and let it be taken by the CPU which runs
--	 * the tick timer next, which might be this CPU as well. If we
--	 * don't drop this here the jiffies might be stale and
--	 * do_timer() never invoked. Keep track of the fact that it
--	 * was the one which had the do_timer() duty last. If this CPU
--	 * is the one which had the do_timer() duty last, we limit the
--	 * sleep time to the timekeeping max_deferment value.
-+	 * If this CPU is the one which had the do_timer() duty last, we limit
-+	 * the sleep time to the timekeeping max_deferment value.
- 	 * Otherwise we can sleep as long as we want.
- 	 */
- 	delta = timekeeping_max_deferment();
--	if (cpu == tick_do_timer_cpu) {
--		tick_do_timer_cpu = TICK_DO_TIMER_NONE;
--		ts->do_timer_last = 1;
--	} else if (tick_do_timer_cpu != TICK_DO_TIMER_NONE) {
--		delta = KTIME_MAX;
--		ts->do_timer_last = 0;
--	} else if (!ts->do_timer_last) {
--		delta = KTIME_MAX;
-+	if (cpu != tick_do_timer_cpu) {
-+		if (tick_do_timer_cpu != TICK_DO_TIMER_NONE) {
-+			delta = KTIME_MAX;
-+			ts->do_timer_last = 0;
-+		} else if (!ts->do_timer_last) {
-+			delta = KTIME_MAX;
-+		}
- 	}
- 
- #ifdef CONFIG_NO_HZ_FULL
-@@ -750,14 +741,41 @@ static ktime_t tick_nohz_stop_sched_tick
- 	else
- 		expires = KTIME_MAX;
- 
--	expires = min_t(u64, expires, next_tick);
--	tick = expires;
-+	ts->timer_expires = min_t(u64, expires, next_tick);
-+
-+out:
-+	ts->tick_may_stop = 1;
-+	return ts->timer_expires;
-+}
-+
-+static void __tick_nohz_stop_tick(struct tick_sched *ts, int cpu)
-+{
-+	struct clock_event_device *dev = __this_cpu_read(tick_cpu_device.evtdev);
-+	u64 basemono = ts->timer_expires_basemono;
-+	u64 expires = ts->timer_expires;
-+	ktime_t tick = expires;
-+
-+	/* Make sure we won't be trying to stop it twice in a row. */
-+	ts->tick_may_stop = 0;
-+
-+	/*
-+	 * If this CPU is the one which updates jiffies, then give up
-+	 * the assignment and let it be taken by the CPU which runs
-+	 * the tick timer next, which might be this CPU as well. If we
-+	 * don't drop this here the jiffies might be stale and
-+	 * do_timer() never invoked. Keep track of the fact that it
-+	 * was the one which had the do_timer() duty last.
-+	 */
-+	if (cpu == tick_do_timer_cpu) {
-+		tick_do_timer_cpu = TICK_DO_TIMER_NONE;
-+		ts->do_timer_last = 1;
-+	}
- 
- 	/* Skip reprogram of event if its not changed */
- 	if (ts->tick_stopped && (expires == ts->next_tick)) {
- 		/* Sanity check: make sure clockevent is actually programmed */
- 		if (tick == KTIME_MAX || ts->next_tick == hrtimer_get_expires(&ts->sched_timer))
--			goto out;
-+			return;
- 
- 		WARN_ON_ONCE(1);
- 		printk_once("basemono: %llu ts->next_tick: %llu dev->next_event: %llu timer->active: %d timer->expires: %llu\n",
-@@ -791,7 +809,7 @@ static ktime_t tick_nohz_stop_sched_tick
- 	if (unlikely(expires == KTIME_MAX)) {
- 		if (ts->nohz_mode == NOHZ_MODE_HIGHRES)
- 			hrtimer_cancel(&ts->sched_timer);
--		goto out;
-+		return;
- 	}
- 
- 	hrtimer_set_expires(&ts->sched_timer, tick);
-@@ -800,15 +818,18 @@ static ktime_t tick_nohz_stop_sched_tick
- 		hrtimer_start_expires(&ts->sched_timer, HRTIMER_MODE_ABS_PINNED);
- 	else
- 		tick_program_event(tick, 1);
--out:
--	/*
--	 * Update the estimated sleep length until the next timer
--	 * (not only the tick).
--	 */
--	ts->sleep_length = ktime_sub(dev->next_event, now);
--	return tick;
- }
- 
-+#ifdef CONFIG_NO_HZ_FULL
-+static void tick_nohz_stop_sched_tick(struct tick_sched *ts, int cpu)
-+{
-+	if (__tick_nohz_next_event(ts, cpu))
-+		__tick_nohz_stop_tick(ts, cpu);
-+	else
-+		ts->tick_may_stop = 0;
-+}
-+#endif /* CONFIG_NO_HZ_FULL */
-+
- static void tick_nohz_restart_sched_tick(struct tick_sched *ts, ktime_t now)
- {
- 	/* Update jiffies first */
-@@ -844,7 +865,7 @@ static void tick_nohz_full_update_tick(s
- 		return;
- 
- 	if (can_stop_full_tick(cpu, ts))
--		tick_nohz_stop_sched_tick(ts, ktime_get(), cpu);
-+		tick_nohz_stop_sched_tick(ts, cpu);
- 	else if (ts->tick_stopped)
- 		tick_nohz_restart_sched_tick(ts, ktime_get());
- #endif
-@@ -870,10 +891,8 @@ static bool can_stop_idle_tick(int cpu,
- 		return false;
- 	}
- 
--	if (unlikely(ts->nohz_mode == NOHZ_MODE_INACTIVE)) {
--		ts->sleep_length = NSEC_PER_SEC / HZ;
-+	if (unlikely(ts->nohz_mode == NOHZ_MODE_INACTIVE))
- 		return false;
--	}
- 
- 	if (need_resched())
- 		return false;
-@@ -913,25 +932,33 @@ static void __tick_nohz_idle_stop_tick(s
- 	ktime_t expires;
- 	int cpu = smp_processor_id();
- 
--	if (can_stop_idle_tick(cpu, ts)) {
-+	/*
-+	 * If tick_nohz_get_sleep_length() ran __tick_nohz_next_event(), the
-+	 * tick timer expiration time is known already.
-+	 */
-+	if (ts->tick_may_stop)
-+		expires = ts->timer_expires;
-+	else if (can_stop_idle_tick(cpu, ts))
-+		expires = __tick_nohz_next_event(ts, cpu);
-+	else
-+		return;
-+
-+	ts->idle_calls++;
-+
-+	if (expires > 0LL) {
- 		int was_stopped = ts->tick_stopped;
- 
--		ts->idle_calls++;
-+		__tick_nohz_stop_tick(ts, cpu);
- 
--		/*
--		 * The idle entry time should be a sufficient approximation of
--		 * the current time at this point.
--		 */
--		expires = tick_nohz_stop_sched_tick(ts, ts->idle_entrytime, cpu);
--		if (expires > 0LL) {
--			ts->idle_sleeps++;
--			ts->idle_expires = expires;
--		}
-+		ts->idle_sleeps++;
-+		ts->idle_expires = expires;
- 
- 		if (!was_stopped && ts->tick_stopped) {
- 			ts->idle_jiffies = ts->last_jiffies;
- 			nohz_balance_enter_idle(cpu);
- 		}
-+	} else {
-+		ts->tick_may_stop = 0;
- 	}
- }
- 
-@@ -945,6 +972,11 @@ void tick_nohz_idle_stop_tick(void)
- 	__tick_nohz_idle_stop_tick(this_cpu_ptr(&tick_cpu_sched));
- }
- 
-+void tick_nohz_idle_retain_tick(void)
-+{
-+	__this_cpu_write(tick_cpu_sched.tick_may_stop, 0);
-+}
-+
- /**
-  * tick_nohz_idle_enter - prepare for entering idle on the current CPU
-  *
-@@ -957,7 +989,7 @@ void tick_nohz_idle_enter(void)
- 	lockdep_assert_irqs_enabled();
- 	/*
- 	 * Update the idle state in the scheduler domain hierarchy
--	 * when tick_nohz_stop_sched_tick() is called from the idle loop.
-+	 * when __tick_nohz_stop_tick() is called from the idle loop.
- 	 * State will be updated to busy during the first busy tick after
- 	 * exiting idle.
- 	 */
-@@ -991,15 +1023,29 @@ void tick_nohz_irq_exit(void)
- }
- 
- /**
-- * tick_nohz_get_sleep_length - return the length of the current sleep
-+ * tick_nohz_get_sleep_length - return the expected length of the current sleep
-  *
-  * Called from power state control code with interrupts disabled
-  */
- ktime_t tick_nohz_get_sleep_length(void)
- {
-+	struct clock_event_device *dev = __this_cpu_read(tick_cpu_device.evtdev);
- 	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
-+	int cpu = smp_processor_id();
-+	/*
-+	 * The idle entry time is expected to be a sufficient approximation of
-+	 * the current time at this point.
-+	 */
-+	ktime_t now = ts->idle_entrytime;
-+
-+	if (can_stop_idle_tick(cpu, ts)) {
-+		ktime_t next_event = __tick_nohz_next_event(ts, cpu);
-+
-+		if (next_event)
-+			return ktime_sub(next_event, now);
-+	}
- 
--	return ts->sleep_length;
-+	return ktime_sub(dev->next_event, now);
- }
- 
- /**
-Index: linux-pm/include/linux/tick.h
-===================================================================
---- linux-pm.orig/include/linux/tick.h
-+++ linux-pm/include/linux/tick.h
-@@ -115,6 +115,7 @@ enum tick_dep_bits {
- extern bool tick_nohz_enabled;
- extern int tick_nohz_tick_stopped(void);
- extern void tick_nohz_idle_stop_tick(void);
-+extern void tick_nohz_idle_retain_tick(void);
- extern void tick_nohz_idle_enter(void);
- extern void tick_nohz_idle_exit(void);
- extern void tick_nohz_irq_exit(void);
-@@ -127,6 +128,7 @@ extern u64 get_cpu_iowait_time_us(int cp
- #define tick_nohz_enabled (0)
- static inline int tick_nohz_tick_stopped(void) { return 0; }
- static inline void tick_nohz_idle_stop_tick(void) { }
-+static inline void tick_nohz_idle_retain_tick(void) { }
- static inline void tick_nohz_idle_enter(void) { }
- static inline void tick_nohz_idle_exit(void) { }
- 
+>
+>> > It's a _really_ simple and straightforward RCU model, with very obvious semantics
+>> > all around:
+>> >
+>> > - Note how the 'atomic' (non-preempt) variant uses the well-known
+>> >   preempt_disable() name as a postfix to signal its main property. (It's also a
+>> >   bit of a mouthful, which should discourage over-use.)
+>
+> My thought is to eliminate the atomic variant entirely.  If you want
+> to disable preemption, interrupts, or whatever, you simply do so.
+> It might turn out that there are documentation benefits to having a
+> separate rcu_read_lock_preempt_disable() that maps to preempt_disable()
+> with lockdep semantics, and if so, that can be provided trivially.
+>
+>> > - The read side APIs are really as straightforward as possible: there's no SRCU
+>> >   distinction on the read side, no _bh() distinction and no _sched() distinction.
+>> >   (On -rt all of these would turn into preemptible sections,
+>> >   obviously.)
+>
+> Agreed, and both models accomplish that.
+>
+>> And it looses the one advantage of srcu_read_lock.  That you don't have
+>> to wait for the entire world.  If you actually allow sleeping that is an
+>> important distinction to have.  Or are you proposing that we add the
+>> equivalent of init_srcu_struct to all of the rcu users?
+>
+> I am instead proposing folding rcu_read_lock_bh() and rcu_read_lock_sched()
+> into rcu_read_lock(), and leaving srcu_read_lock() separate.
+>
+>> That rcu_read_lock would need to take an argument about which rcu region
+>> we are talking about.
+>
+> From what I can see, it would be far better to leave SRCU separate.  As you
+> say, it really does have very different semantics.
+>
+>> > rcu_read_lock_preempt_disable() would essentially be all the current
+>> > rcu_read_lock_sched() users (where the _sched() postfix was a confusing misnomer
+>> > anyway).
+>
+> I agree that rcu_read_lock_preempt_disable() is a better name.
+> We might not need it at all, though.  There are only about 20 uses of
+> rcu_read_lock_sched() in v4.15.  ;-)
+>
+>> > Wrt. merging SRCU and RCU: this can be done by making PREEMPT_RCU=y the one and
+>> > only main RCU model and converting all SRCU users to main RCU. This is relatively
+>> > straightforward to perform, as there are only ~170 SRCU critical sections, versus
+>> > the 3000+ main RCU critical sections ...
+>>
+>> It really sounds like you are talking about adding a requirement that
+>> everyone update their rcu_read_lock() calls with information about which
+>> region you are talking about.  That seems like quite a bit of work.
+>
+> Agreed, merging RCU, RCU-bh, and RCU-sched seems much more straightforward
+> to me from the viewpoint of both usage and implementation.
+>
+>> Doing something implicit when PREEMPT_RCU=y and converting
+>> "rcu_read_lock()" to "srcu_read_lock(&kernel_srcu_region)" only in that
+>> case I can see.
+>>
+>> Except in very specific circustances I don't think I ever want to run a
+>> kernel with PREEMPT_RCU the default.  All of that real time stuff trades
+>> off predictability with performance.  Having lost enough performance to
+>> spectre and meltdown I don't think it makes sense for us all to start
+>> runing predictable^H^H^H^H^H^H^H^H^H^H^H time kernels now.
+>
+> Yes, in PREEMPT=n kernels RCU would act exactly as it does today.
+>
+>> > AFAICS this should be a possible read side design that keeps correctness, without
+>> > considering grace period length patterns, i.e. without considering GC latency and
+>> > scalability aspects.
+>> >
+>> > Before we get into ways to solve the latency and scalability aspects of such a
+>> > simplified RCU model, do you agree with this analysis so far, or have I missed
+>> > something important wrt. correctness?
+>>
+>> RCU region specification.  If we routinely allow preemption of rcu
+>> critical sections for any length of time I can't imagine we will want to
+>> wait for every possible preempted rcu critical section.
+>>
+>> Of course I could see the merge working the other way.  Adding the
+>> debugging we need to find rcu critical secions that are held to long and
+>> shrinking them so we don't need PREEMPT_RCU at all.
+>
+> Again, from what I can see, merging rcu_read_lock(), rcu_read_lock_sched(),
+> and rcu_read_lock_bh() together should get us to a much better place.
+>
+> Make sense, or am I missing something?
+>
+>                                                         Thanx, Paul
+>
