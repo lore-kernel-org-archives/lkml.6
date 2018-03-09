@@ -1,117 +1,241 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751306AbeCIJEh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 04:04:37 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:58544 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751045AbeCIJEc (ORCPT
+        id S1751114AbeCIJGt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 04:06:49 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:34707 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750909AbeCIJGr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:04:32 -0500
-Date: Fri, 9 Mar 2018 10:04:22 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>, Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: display: bridge: Document THC63LVD1024
- LVDS decoder
-Message-ID: <20180309090422.GD14819@w540>
-References: <1520522643-11756-1-git-send-email-jacopo+renesas@jmondi.org>
- <1520522643-11756-2-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdVQqp7YcoQ6eN5pSznZB4zn7ztv1WFfkcQOzP_3DhG_Vg@mail.gmail.com>
+        Fri, 9 Mar 2018 04:06:47 -0500
+Date: Fri, 9 Mar 2018 01:06:26 -0800
+From: tip-bot for Vincent Guittot <tipbot@zytor.com>
+Message-ID: <tip-31e77c93e432dec79c7d90b888bbfc3652592741@git.kernel.org>
+Cc: vincent.guittot@linaro.org, hpa@zytor.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        torvalds@linux-foundation.org, peterz@infradead.org
+Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
+        torvalds@linux-foundation.org, peterz@infradead.org, hpa@zytor.com,
+        vincent.guittot@linaro.org
+In-Reply-To: <1518622006-16089-4-git-send-email-vincent.guittot@linaro.org>
+References: <1518622006-16089-4-git-send-email-vincent.guittot@linaro.org>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/fair: Update blocked load when newly idle
+Git-Commit-ID: 31e77c93e432dec79c7d90b888bbfc3652592741
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdVQqp7YcoQ6eN5pSznZB4zn7ztv1WFfkcQOzP_3DhG_Vg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
-   thanks for review
+Commit-ID:  31e77c93e432dec79c7d90b888bbfc3652592741
+Gitweb:     https://git.kernel.org/tip/31e77c93e432dec79c7d90b888bbfc3652592741
+Author:     Vincent Guittot <vincent.guittot@linaro.org>
+AuthorDate: Wed, 14 Feb 2018 16:26:46 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Fri, 9 Mar 2018 07:59:28 +0100
 
-On Fri, Mar 09, 2018 at 09:10:55AM +0100, Geert Uytterhoeven wrote:
-> Hi Jacopo,
->
-> On Thu, Mar 8, 2018 at 4:24 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> > Document Thine THC63LVD1024 LVDS decoder.
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->
-> Thanks for your patch!
->
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-> > @@ -0,0 +1,59 @@
-> > +THine Electronics THC63LVD1024 LVDS receiver
->
-> Thine
->
-> > +--------------------------------------------
-> > +
-> > +The THC63LVD1024 is an LVDS receiver designed to convert multiple LVDS streams
-> > +to digital CMOS/TTL parallel data.
-> > +
-> > +Required properties:
-> > +- compatible: Shall be one of the following:
-> > +  "thine,thc63lvd1024",
-> > +  "lvds-decoder"
->
-> What's the purpose of the second compatible value?
-> When should it be used?
+sched/fair: Update blocked load when newly idle
 
-It is probably my bad having started with a generic LVDS decoder in
-mind and having then added properties specific to THC63LVD1024 to the
-driver and its bindings.
+When NEWLY_IDLE load balance is not triggered, we might need to update the
+blocked load anyway. We can kick an ilb so an idle CPU will take care of
+updating blocked load or we can try to update them locally before entering
+idle. In the latter case, we reuse part of the nohz_idle_balance.
 
-"lvds,decoder" can be used when the chip is completely transparent to
-the SoC and none of the optional properties I have described in the
-bindings are specified (a generic "power-gpios" apart, see Andrzej
-comments on "pwdn-gpios" property).
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: brendan.jackman@arm.com
+Cc: dietmar.eggemann@arm.com
+Cc: morten.rasmussen@foss.arm.com
+Cc: valentin.schneider@arm.com
+Link: http://lkml.kernel.org/r/1518622006-16089-4-git-send-email-vincent.guittot@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/fair.c | 105 +++++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 87 insertions(+), 18 deletions(-)
 
-Also, I should make the driver behavior depend on the matched compatible
-string. When "lvds-decoder" is matched, it will just look for an
-optional power down gpio, when "thc63lvd1024" is matched, all of its
-Vcc supplies, pwdn gpio and oe gpios will be queried and, if present,
-eventually used in enable/disable routines.
-
-I'm just not sure how to describe that in bindings. Would something
-like the following work?
-
-Optional properties for "lvds,decoder"
-- power-gpios: Power control GPIOs
-
-Optional properties for "thine,thc63lvd1024"
-- pwdn-gpios: ...
-- oe-gpios: ...
-- supply-vcc: ...
-- supply-cvcc: ...
-- supply-pvcc: ...
-- supply-lvcc: ...
-
-Thanks
-   j
-
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 058badcfa94b..3582117e1580 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9375,10 +9375,14 @@ out:
+ }
+ 
+ /*
+- * In CONFIG_NO_HZ_COMMON case, the idle balance kickee will do the
+- * rebalancing for all the CPUs for whom scheduler ticks are stopped.
++ * Internal function that runs load balance for all idle cpus. The load balance
++ * can be a simple update of blocked load or a complete load balance with
++ * tasks movement depending of flags.
++ * The function returns false if the loop has stopped before running
++ * through all idle CPUs.
+  */
+-static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
++static bool _nohz_idle_balance(struct rq *this_rq, unsigned int flags,
++			       enum cpu_idle_type idle)
+ {
+ 	/* Earliest time when we have to do rebalance again */
+ 	unsigned long now = jiffies;
+@@ -9386,20 +9390,10 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+ 	bool has_blocked_load = false;
+ 	int update_next_balance = 0;
+ 	int this_cpu = this_rq->cpu;
+-	unsigned int flags;
+ 	int balance_cpu;
++	int ret = false;
+ 	struct rq *rq;
+ 
+-	if (!(atomic_read(nohz_flags(this_cpu)) & NOHZ_KICK_MASK))
+-		return false;
+-
+-	if (idle != CPU_IDLE) {
+-		atomic_andnot(NOHZ_KICK_MASK, nohz_flags(this_cpu));
+-		return false;
+-	}
+-
+-	flags = atomic_fetch_andnot(NOHZ_KICK_MASK, nohz_flags(this_cpu));
+-
+ 	SCHED_WARN_ON((flags & NOHZ_KICK_MASK) == NOHZ_BALANCE_KICK);
+ 
+ 	/*
+@@ -9443,10 +9437,10 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+ 		if (time_after_eq(jiffies, rq->next_balance)) {
+ 			struct rq_flags rf;
+ 
+-			rq_lock_irq(rq, &rf);
++			rq_lock_irqsave(rq, &rf);
+ 			update_rq_clock(rq);
+ 			cpu_load_update_idle(rq);
+-			rq_unlock_irq(rq, &rf);
++			rq_unlock_irqrestore(rq, &rf);
+ 
+ 			if (flags & NOHZ_BALANCE_KICK)
+ 				rebalance_domains(rq, CPU_IDLE);
+@@ -9458,13 +9452,21 @@ static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+ 		}
+ 	}
+ 
+-	update_blocked_averages(this_cpu);
++	/* Newly idle CPU doesn't need an update */
++	if (idle != CPU_NEWLY_IDLE) {
++		update_blocked_averages(this_cpu);
++		has_blocked_load |= this_rq->has_blocked_load;
++	}
++
+ 	if (flags & NOHZ_BALANCE_KICK)
+ 		rebalance_domains(this_rq, CPU_IDLE);
+ 
+ 	WRITE_ONCE(nohz.next_blocked,
+ 		now + msecs_to_jiffies(LOAD_AVG_PERIOD));
+ 
++	/* The full idle balance loop has been done */
++	ret = true;
++
+ abort:
+ 	/* There is still blocked load, enable periodic update */
+ 	if (has_blocked_load)
+@@ -9478,15 +9480,79 @@ abort:
+ 	if (likely(update_next_balance))
+ 		nohz.next_balance = next_balance;
+ 
++	return ret;
++}
++
++/*
++ * In CONFIG_NO_HZ_COMMON case, the idle balance kickee will do the
++ * rebalancing for all the cpus for whom scheduler ticks are stopped.
++ */
++static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
++{
++	int this_cpu = this_rq->cpu;
++	unsigned int flags;
++
++	if (!(atomic_read(nohz_flags(this_cpu)) & NOHZ_KICK_MASK))
++		return false;
++
++	if (idle != CPU_IDLE) {
++		atomic_andnot(NOHZ_KICK_MASK, nohz_flags(this_cpu));
++		return false;
++	}
++
++	/*
++	 * barrier, pairs with nohz_balance_enter_idle(), ensures ...
++	 */
++	flags = atomic_fetch_andnot(NOHZ_KICK_MASK, nohz_flags(this_cpu));
++	if (!(flags & NOHZ_KICK_MASK))
++		return false;
++
++	_nohz_idle_balance(this_rq, flags, idle);
++
+ 	return true;
+ }
++
++static void nohz_newidle_balance(struct rq *this_rq)
++{
++	int this_cpu = this_rq->cpu;
++
++	/*
++	 * This CPU doesn't want to be disturbed by scheduler
++	 * housekeeping
++	 */
++	if (!housekeeping_cpu(this_cpu, HK_FLAG_SCHED))
++		return;
++
++	/* Will wake up very soon. No time for doing anything else*/
++	if (this_rq->avg_idle < sysctl_sched_migration_cost)
++		return;
++
++	/* Don't need to update blocked load of idle CPUs*/
++	if (!READ_ONCE(nohz.has_blocked) ||
++	    time_before(jiffies, READ_ONCE(nohz.next_blocked)))
++		return;
++
++	raw_spin_unlock(&this_rq->lock);
++	/*
++	 * This CPU is going to be idle and blocked load of idle CPUs
++	 * need to be updated. Run the ilb locally as it is a good
++	 * candidate for ilb instead of waking up another idle CPU.
++	 * Kick an normal ilb if we failed to do the update.
++	 */
++	if (!_nohz_idle_balance(this_rq, NOHZ_STATS_KICK, CPU_NEWLY_IDLE))
++		kick_ilb(NOHZ_STATS_KICK);
++	raw_spin_lock(&this_rq->lock);
++}
++
+ #else /* !CONFIG_NO_HZ_COMMON */
+ static inline void nohz_balancer_kick(struct rq *rq) { }
+ 
+-static bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
++static inline bool nohz_idle_balance(struct rq *this_rq, enum cpu_idle_type idle)
+ {
+ 	return false;
+ }
++
++static inline void nohz_newidle_balance(struct rq *this_rq) { }
+ #endif /* CONFIG_NO_HZ_COMMON */
+ 
+ /*
+@@ -9523,12 +9589,15 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
+ 
+ 	if (this_rq->avg_idle < sysctl_sched_migration_cost ||
+ 	    !this_rq->rd->overload) {
++
+ 		rcu_read_lock();
+ 		sd = rcu_dereference_check_sched_domain(this_rq->sd);
+ 		if (sd)
+ 			update_next_balance(sd, &next_balance);
+ 		rcu_read_unlock();
+ 
++		nohz_newidle_balance(this_rq);
++
+ 		goto out;
+ 	}
+ 
