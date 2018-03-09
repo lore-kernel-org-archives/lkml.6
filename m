@@ -1,76 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932303AbeCIRbj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 12:31:39 -0500
-Received: from mail-io0-f194.google.com ([209.85.223.194]:42860 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751192AbeCIRbi (ORCPT
+        id S932382AbeCIRbt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 12:31:49 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39628 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932327AbeCIRbs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 12:31:38 -0500
-X-Google-Smtp-Source: AG47ELuwDdr7sEtEnd+Q3kCJpQ6uSTSsuwTDhltpXloOcq4EKWeFeLcWmfR85XINemae//3H+lZgwxDr2COnPLQyJUk=
+        Fri, 9 Mar 2018 12:31:48 -0500
+X-Google-Smtp-Source: AG47ELu8YjdSjvKZWTQlaeGxd1Aome7iU9CwobS/P6XyHoJPQ/NaJz9KIpmkZtMzSxZk/P9Q3j/MLpUmUdBCINW6tlU=
 MIME-Version: 1.0
-In-Reply-To: <20180309155315.4x44sbp3darractt@armageddon.cambridge.arm.com>
-References: <cover.1520600533.git.andreyknvl@google.com> <beea8ac394bfae3c7c949645fb887ceacc3f3bb3.1520600533.git.andreyknvl@google.com>
- <20180309155315.4x44sbp3darractt@armageddon.cambridge.arm.com>
-From: Andrey Konovalov <andreyknvl@google.com>
-Date: Fri, 9 Mar 2018 18:31:36 +0100
-Message-ID: <CAAeHK+xF0X-SQuPVmZF--VnmvYrbpDkznSwYTh_3LHq1H2V=9Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/6] mm, arm64: untag user addresses in memory syscalls
-To: Catalin Marinas <catalin.marinas@arm.com>,
-        Evgeniy Stepanov <eugenis@google.com>
-Cc: Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        linux-arch@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>, Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>
+In-Reply-To: <1520575523-3838-1-git-send-email-leo.yan@linaro.org>
+References: <1520575523-3838-1-git-send-email-leo.yan@linaro.org>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Fri, 9 Mar 2018 10:31:45 -0700
+Message-ID: <CANLsYky8tQp8owOq2YdkR6GC=gUdJDLa5G42y7xHbPdNXi7Sfw@mail.gmail.com>
+Subject: Re: [PATCH v2] perf machine: Fix load kernel symbol with '-k' option
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 9, 2018 at 4:53 PM, Catalin Marinas <catalin.marinas@arm.com> wrote:
-> On Fri, Mar 09, 2018 at 03:02:01PM +0100, Andrey Konovalov wrote:
->> Memory subsystem syscalls accept user addresses as arguments, but don't use
->> copy_from_user and other similar functions, so we need to handle this case
->> separately.
->>
->> Untag user pointers passed to madvise, mbind, get_mempolicy, mincore,
->> mlock, mlock2, brk, mmap_pgoff, old_mmap, munmap, remap_file_pages,
->> mprotect, pkey_mprotect, mremap and msync.
->>
->> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+On 8 March 2018 at 23:05, Leo Yan <leo.yan@linaro.org> wrote:
+> On Hikey arm64 octa A53 platform, when use command './perf report -v
+> -k vmlinux --stdio' it outputs below error info, and it skips to load
+> kernel symbol and doesn't print symbol for event:
+> Failed to open [kernel.kallsyms]_text, continuing without symbols.
 >
-> Please keep the cc list small (maybe linux-arch, linux-arm-kernel) as
-> I'm sure some lists would consider this spam.
-
-OK.
-
+> The regression is introduced by commit ("8c7f1bb37b29 perf machine: Move
+> kernel mmap name into struct machine"), which changes the logic for
+> machine mmap_name by removing function machine__mmap_name() and always
+> use 'machine->mmap_name'.  Comparing difference between
+> machine__mmap_name() and 'machine->mmap_name', the later one includes
+> the string for specified kernel vmlinux string with option '-k' in
+> command, but the old function machine__mmap_name() ignores vmlinux
+> path string.  As result, event's mmap file name doesn't match with
+> machine mmap file name anymore and it skips to load kernel symbol from
+> vmlinux file.
 >
->>  mm/madvise.c   | 2 ++
->>  mm/mempolicy.c | 6 ++++++
->>  mm/mincore.c   | 2 ++
->>  mm/mlock.c     | 5 +++++
->>  mm/mmap.c      | 9 +++++++++
->>  mm/mprotect.c  | 2 ++
->>  mm/mremap.c    | 2 ++
->>  mm/msync.c     | 3 +++
+> To resolve this issue, this patch adds extra checking for
+> 'symbol_conf.vmlinux_name', when it has been set string so we can know
+> it includes vmlinux path string specified for option '-k'. For this
+> case it sets 'is_kernel_mmap' to true and run into flow to load kernel
+> symbol from vmlinux.
 >
-> I'm not yet convinced these functions need to allow tagged pointers.
-> They are not doing memory accesses but rather dealing with the memory
-> range, hence an untagged pointer is better suited. There is probably a
-> reason why the "start" argument is "unsigned long" vs "void __user *"
-> (in the kernel, not the man page).
-
-So that would make the user to untag pointers before passing to these syscalls.
-
-Evgeniy, would that be possible to untag pointers in HWASan before
-using memory subsystem syscalls? Is there a reason for untagging them
-in the kernel?
-
+> This patch has been verified with two commands: './perf report -v
+> -k vmlinux --stdio' and './perf script -v -F cpu,event,ip,sym,symoff
+> -k vmlinux'.
 >
+> Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
+>  tools/perf/util/machine.c | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+>
+> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+> index 12b7427..3125871 100644
+> --- a/tools/perf/util/machine.c
+> +++ b/tools/perf/util/machine.c
+> @@ -1299,9 +1299,18 @@ static int machine__process_kernel_mmap_event(struct machine *machine,
+>         else
+>                 kernel_type = DSO_TYPE_GUEST_KERNEL;
+>
+> -       is_kernel_mmap = memcmp(event->mmap.filename,
+> -                               machine->mmap_name,
+> -                               strlen(machine->mmap_name) - 1) == 0;
+> +       /*
+> +        * When symbol_conf.vmlinux_name is not NULL, it includes the specified
+> +        * kernel vmlinux path with option '-k'.  So set 'is_kernel_mmap' to
+> +        * true for creating machine symbol map.
+> +        */
+> +       if (symbol_conf.vmlinux_name)
+> +               is_kernel_mmap = true;
+> +       else
+> +               is_kernel_mmap = memcmp(event->mmap.filename,
+> +                                       machine->mmap_name,
+> +                                       strlen(machine->mmap_name) - 1) == 0;
+> +
+
+I have tested this on my side and things work properly.
+
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
+
+>         if (event->mmap.filename[0] == '/' ||
+>             (!is_kernel_mmap && event->mmap.filename[0] == '[')) {
+>                 map = machine__findnew_module_map(machine, event->mmap.start,
 > --
-> Catalin
+> 2.7.4
+>
