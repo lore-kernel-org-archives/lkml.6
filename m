@@ -1,48 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751431AbeCITyy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 14:54:54 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46682 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751227AbeCITyv (ORCPT
+        id S932433AbeCIUAm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 15:00:42 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44864 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932221AbeCIUAk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 14:54:51 -0500
-Date: Fri, 9 Mar 2018 11:54:35 -0800
+        Fri, 9 Mar 2018 15:00:40 -0500
+Date: Fri, 9 Mar 2018 12:00:17 -0800
 From: Ram Pai <linuxram@us.ibm.com>
-To: Balbir Singh <bsingharora@gmail.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Ingo Molnar <mingo@redhat.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
-        <linuxppc-dev@lists.ozlabs.org>,
-        linux-mm <linux-mm@kvack.org>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Aneesh Kumar KV <aneesh.kumar@linux.vnet.ibm.com>,
-        Haren Myneni/Beaverton/IBM <hbabu@us.ibm.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@arndb.de>,
-        fweimer@redhat.com, msuchanek@suse.com, Ulrich.Weigand@de.ibm.com
+To: Florian Weimer <fweimer@redhat.com>
+Cc: mpe@ellerman.id.au, mingo@redhat.com, akpm@linux-foundation.org,
+        linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dave.hansen@intel.com, benh@kernel.crashing.org, paulus@samba.org,
+        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
+        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
+        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com, corbet@lwn.net,
+        arnd@arndb.de, msuchanek@suse.com, Ulrich.Weigand@de.ibm.com
 Subject: Re: [PATCH] x86, powerpc : pkey-mprotect must allow pkey-0
 Reply-To: Ram Pai <linuxram@us.ibm.com>
 References: <1520583161-11741-1-git-send-email-linuxram@us.ibm.com>
- <CAKTCnz=QrNoG0wdTZRJqmYfFOZmq2czZ4x8v1e=ouNx2Y8D6wg@mail.gmail.com>
+ <ec90ed75-2810-bcc3-8439-8dc85a6b46ac@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKTCnz=QrNoG0wdTZRJqmYfFOZmq2czZ4x8v1e=ouNx2Y8D6wg@mail.gmail.com>
+In-Reply-To: <ec90ed75-2810-bcc3-8439-8dc85a6b46ac@redhat.com>
 User-Agent: Mutt/1.5.20 (2009-12-10)
 X-TM-AS-GCONF: 00
-x-cbid: 18030919-0012-0000-0000-000005BAF5E6
+x-cbid: 18030920-0040-0000-0000-0000041CFD8D
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030919-0013-0000-0000-000019371BC0
-Message-Id: <20180309195435.GQ1060@ram.oc3035372033.ibm.com>
+x-cbparentid: 18030920-0041-0000-0000-000026201D84
+Message-Id: <20180309200017.GR1060@ram.oc3035372033.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-09_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -54,43 +43,17 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 09, 2018 at 07:37:04PM +1100, Balbir Singh wrote:
-> On Fri, Mar 9, 2018 at 7:12 PM, Ram Pai <linuxram@us.ibm.com> wrote:
-> > Once an address range is associated with an allocated pkey, it cannot be
-> > reverted back to key-0. There is no valid reason for the above behavior.  On
-> > the contrary applications need the ability to do so.
-> >
-> > The patch relaxes the restriction.
+On Fri, Mar 09, 2018 at 12:04:49PM +0100, Florian Weimer wrote:
+> On 03/09/2018 09:12 AM, Ram Pai wrote:
+> >Once an address range is associated with an allocated pkey, it cannot be
+> >reverted back to key-0. There is no valid reason for the above behavior.
 > 
-> I looked at the code and my observation was going to be that we need
-> to change mm_pkey_is_allocated. I still fail to understand what
-> happens if pkey 0 is reserved? What is the default key is it the first
-> available key? Assuming 0 is the default key may work and seems to
-> work, but I am sure its mostly by accident. It would be nice, if we
-> could have  a notion of the default key. I don't like the special
-> meaning given to key 0 here. Remember on powerpc if 0 is reserved and
-> UAMOR/AMOR does not allow modification because it's reserved, setting
-> 0 will still fail
+> mprotect without a key does not necessarily use key 0, e.g. if
+> protection keys are used to emulate page protection flag combination
+> which is not directly supported by the hardware.
+> 
+> Therefore, it seems to me that filtering out non-allocated keys is
+> the right thing to do.
 
-The linux pkey API, assumes pkey-0 is the default key. If no key is
-explicitly associated with a page, the default key gets associated.
-When a default key gets associated with a page, the permissions on the
-page are not dictated by the permissions of the default key, but by the
-permission of other bits in the pte; i.e _PAGE_RWX.
-
-On powerpc, and AFAICT on x86, neither the hardware nor the hypervisor
-reserves key-0. Hence the OS is free to use the key value, the
-way it chooses. On Linux we choose to associate key-0 the special status
-called default-key.
-
-However I see your point. If some cpu architecture takes away key-0 from
-Linux, than implementing the special status for key-0 on that
-architecture can become challenging, though not impossible. That
-architecture implementation can internally map key-0 value to some other
-available key, and associate that key to the page. And offcourse make
-sure that the hardware/MMU uses the pte's RWX bits to enforce
-permissions, for that key.
-
-
--- 
-Ram Pai
+I am not sure, what you mean. Do you agree with the patch or otherwise?
+RP
