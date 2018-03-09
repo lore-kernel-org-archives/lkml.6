@@ -1,100 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751284AbeCIHkl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 02:40:41 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:36837 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750909AbeCIHkj (ORCPT
+        id S1751298AbeCIHnl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 02:43:41 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:44295 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750897AbeCIHnj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 02:40:39 -0500
-X-Google-Smtp-Source: AG47ELunOvo78PBdnNN9Va5HEA70pyz9QQMLZSPf0i4Ww5xzg5+HyulwBb8Lb+EwyWvvGCSoXdZcsQ==
-Date: Fri, 9 Mar 2018 08:40:34 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Sai Praneeth <sai.praneeth.prakhya@intel.com>,
-        linux-kernel@vger.kernel.org, "Lee, Chun-Yi" <jlee@suse.com>,
-        Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>
-Subject: Re: [PATCH 07/12] efi: Use efi_mm in x86 as well as ARM
-Message-ID: <20180309074034.put3ko6zxmaoizzr@gmail.com>
-References: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
- <20180308080020.22828-8-ard.biesheuvel@linaro.org>
+        Fri, 9 Mar 2018 02:43:39 -0500
+X-Google-Smtp-Source: AG47ELs8xec3bZ6ELBymI8r4rotfbqEaha8Ef4xZLFIv9UrRuqYEJvz5VCvHowVvPxG7FHlWmi2C5xUx3MPAdaotgEI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180308080020.22828-8-ard.biesheuvel@linaro.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1520507105.11634.5.camel@perches.com>
+References: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
+ <20180308080020.22828-13-ard.biesheuvel@linaro.org> <1520507105.11634.5.camel@perches.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Fri, 9 Mar 2018 07:43:37 +0000
+Message-ID: <CAKv+Gu8iMvzvSP9-YPe+ms4qVMjcQqNQ25Wa16JW_tEG7P+jtQ@mail.gmail.com>
+Subject: Re: [PATCH 12/12] efi: make const array 'apple' static
+To: Joe Perches <joe@perches.com>
+Cc: linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Colin Ian King <colin.king@canonical.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 8 March 2018 at 11:05, Joe Perches <joe@perches.com> wrote:
+> On Thu, 2018-03-08 at 08:00 +0000, Ard Biesheuvel wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> Don't populate the const read-only array 'buf' on the stack but instead
+>> make it static. Makes the object code smaller by 64 bytes:
+>>
+>> Before:
+>>    text          data     bss     dec     hex filename
+>>    9264             1      16    9281    2441 arch/x86/boot/compressed/eboot.o
+>>
+>> After:
+>>    text          data     bss     dec     hex filename
+>>    9200             1      16    9217    2401 arch/x86/boot/compressed/eboot.o
+>>
+>> (gcc version 7.2.0 x86_64)
+>>
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>> ---
+>>  arch/x86/boot/compressed/eboot.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
+>> index 886a9115af62..f2251c1c9853 100644
+>> --- a/arch/x86/boot/compressed/eboot.c
+>> +++ b/arch/x86/boot/compressed/eboot.c
+>> @@ -423,7 +423,7 @@ static void retrieve_apple_device_properties(struct boot_params *boot_params)
+>>
+>>  static void setup_quirks(struct boot_params *boot_params)
+>>  {
+>> -     efi_char16_t const apple[] = { 'A', 'p', 'p', 'l', 'e', 0 };
+>> +     static efi_char16_t const apple[] = { 'A', 'p', 'p', 'l', 'e', 0 };
+>
+> Perhaps
+>
+> static const efi_char16_t apple[] ...
+>
+> is better.
+>
 
-* Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+Why would that be any better? I have always found the 'const'
+placement after the type to be much clearer.
 
-> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
-> 
-> Presently, only ARM uses mm_struct to manage efi page tables and efi
-> runtime region mappings. As this is the preferred approach, let's make
-> this data structure common across architectures. Specially, for x86,
-> using this data structure improves code maintainability and readability.
+const void *
+void const *
+void * const
 
-> diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
-> index 85f6ccb80b91..00f977ddd718 100644
-> --- a/arch/x86/include/asm/efi.h
-> +++ b/arch/x86/include/asm/efi.h
-> @@ -2,10 +2,14 @@
->  #ifndef _ASM_X86_EFI_H
->  #define _ASM_X86_EFI_H
->  
-> +#include <linux/sched/mm.h>
-> +#include <linux/sched/task.h>
-> +
->  #include <asm/fpu/api.h>
->  #include <asm/pgtable.h>
->  #include <asm/processor-flags.h>
->  #include <asm/tlb.h>
-> +#include <asm/mmu_context.h>
->  
->  /*
->   * We map the EFI regions needed for runtime services non-contiguously,
+I.e., #2 and #3 are equivalent, and so 'const' associates to the left
+not to the right, unless it is at the beginning.
 
-> diff --git a/include/linux/efi.h b/include/linux/efi.h
-> index f5083aa72eae..f1b7d68ac460 100644
-> --- a/include/linux/efi.h
-> +++ b/include/linux/efi.h
-> @@ -966,6 +966,8 @@ extern struct efi {
->  	unsigned long flags;
->  } efi;
->  
-> +extern struct mm_struct efi_mm;
-> +
->  static inline int
->  efi_guidcmp (efi_guid_t left, efi_guid_t right)
->  {
-
-Ugh, I can see three problems with this patch:
-
-1)
-
-Why is the low level asm/efi.h header polluted with two of the biggest header 
-files in existence, to add a type to _another_ header (efi.h)?
-
-2)
-
-Why is <linux/sched/task.h> included if what is being relied on is mm_struct?
-
-3)
-
-But even <linux/sched/mm.h> looks unnecessary in efi.h, a simple forward 
-declaration of mm_struct would do ...
-
-The high level MM and sched headers should be added to the actual .c files that 
-make use of them.
-
-Thanks,
-
-	Ingo
+Personally, I don't mind either way, but saying it is 'better' is a stretch imo
