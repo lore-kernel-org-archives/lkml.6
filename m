@@ -1,181 +1,129 @@
-Return-Path: <kernel-hardening-return-12294-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELvp6G+8B2QBSlGM02HlhqnQOfEfyvhxuh7rJuSnCfMq59t47HMzebXsgv1M43L31GANP0/9
-ARC-Seal: i=1; a=rsa-sha256; t=1520574660; cv=none;
-        d=google.com; s=arc-20160816;
-        b=pheUoAO0WmdIUp61vFdmiNUwWm/KRgw1nEKzR+yCKk8yWAGh6IPmaFuJQ24+EdPkVF
-         3M5rpTrSyob0L5zapKrmgBcCQWzWaXFD/LvsKHXkkBV1zEh9GcD2RcNMMYqr5j8DNI2J
-         C/iCZvFGQ3UspgG3/ZJDtd3y4f/ZpYXmnMHSpISOpTh2MIxL8Hod18Tk9QY8a8xvpcOY
-         SZhpBfKeSuzMf3RFBwi0Y6m/QbcZ8iTUCJhx5r4udQt2kwucPyfupivZzNXxcG0U/+v9
-         qu4pANO90ycwYbTzTfuMSjiZESMSKe7ru4wArXT6sRHoGrdyQYnSUYnMOjAzok5uP5ud
-         wayA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature:dkim-signature
-         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=jjXiikWiTPAfLSf0Cmrf9T6nnRljn7S8bHMaAchETPM=;
-        b=SfnTv/ndV1ZMVQaGlaSrGVC1hJXzOhI4TfrmZSphu5zGPLvNISBqKrPuG75BcOD7vk
-         GlhW/HL9KrcutQtotMbs0gitgQFgO+tUgKqRZfhpE7C6wGU9qe3i+jQg5DY9PhqpwGTQ
-         XM+qsTWEIgiep9vbkJ/fRAfyiygy4xKdfuTCU2JjTyklhxdozUuROsD8ud4hsdFXOGyA
-         agLtbhE8i7hRoa/o+MhvrdSQxjJsSjK0LboW2lg7oZ5L4IjXZJxpt6JOMU9YskgT64VJ
-         12n6hHKuim9zv8ZVJMX38j/T4ngZ65bqziEgOTS2TqjuePHD1mxTuPjtGVgNsHqJhCre
-         UE1g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=D6WncTWJ;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=Jivmnu1G;
-       spf=pass (google.com: domain of kernel-hardening-return-12294-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12294-gregkh=linuxfoundation.org@lists.openwall.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=D6WncTWJ;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=Jivmnu1G;
-       spf=pass (google.com: domain of kernel-hardening-return-12294-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12294-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-X-ME-Sender: <xms:sCCiWiIethUVa9nin2jiH7UGt_HFlGLTUgXLtsualdUk0hQfQvnGxg>
-From: "Tobin C. Harding" <me@tobin.cc>
-To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: "Tobin C. Harding" <me@tobin.cc>,
-	kernel-hardening@lists.openwall.com,
-	linux-kernel@vger.kernel.org,
-	driverdev-devel@linuxdriverproject.org,
-	Tycho Andersen <tycho@tycho.ws>,
-	Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4/4] video: Remove stack VLA usage
-Date: Fri,  9 Mar 2018 16:50:25 +1100
-Message-Id: <1520574625-4225-1-git-send-email-me@tobin.cc>
-X-Mailer: git-send-email 2.7.4
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3835922-1520575280-2-8428431660190283699
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520575280; b=omRg5J2xAm893HTNh06DOE+jwvZ+r4hJJwhmnvdJEkkmYt0
+    AAx0LVH5xDnAmXj12wZAn7BVY27fN79beT2eoKrfjCiT0RuchtvsDdIgM2cBMaJ2
+    03CRORgZWlGWVuryXcGjl88gifkbITIofrUz3RMVY7NmiDvDzv+bnXB1c7VuFqLj
+    I6dS+yfZhXrg8+GkUbuNG7rv1LExqXQ60LOyJd/L5KXt8+rB7PF1CLuqPSDJoivh
+    2c8GQf2/BLZ1hI/BQsT85oVKueXKedlfOqv6r40FXMeHsMe8WWjdrh88O7jzadvQ
+    f3euzmLg51RURIALkKak9XruketQSeNOxo37h/A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=message-id:subject:from:to:date
+    :in-reply-to:references:mime-version:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520575280; bh=h
+    GimWukTwSKfzPwezN14t1igy/TLlfpKrvhcMkcmGNw=; b=qHPXWOdXcYubIIQqD
+    jDd+BbuYEmVCQVgeR5hI0kyYEnQkwTEC+q7cs28nwgtcmpGt55jb8a/QeGmFUKLe
+    AT4nFF/1Vrb0FEfByiwI6WPDIVDZ+u8X3p8HT85v+l3nuNMBW+OsWukyuTwGPYVF
+    lEPvq1eyvj3JBW1G8PJudJM+uqQsOGTxPbOSHfu53LntEVIF0xjoh3vN4moYsMqL
+    XUDYZIu0PePRhLgdoCFFUfT5NuxF1BfA2/s2uL+VItD0GR677cyqYMPe3tvapr91
+    4XSg5rGYHw9Ed67vg9dBwasE3p952PnyMOSHk74qutfyWVG94L5fzEZot8A4XNWW
+    p8DJQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=perches.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=perches.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=perches.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=perches.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Remote-Spam-Summary: 26, 1.8, 0, , d41d8cd98f00b204, joe@perches.com,
+ :::::::::::::::,
+ RULES_HIT:41:355:379:541:599:857:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2505:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3867:3868:3870:3871:3872:4250:4321:5007:6117:8879:8957:10004:10400:10848:11026:11232:11657:11658:11914:12043:12740:12760:12895:13069:13311:13357:13439:14659:14721:21063:21080:21627:30029:30054:30070:30080:30091,
+ 0,
+ RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,
+ CacheIP:none, Bayesian:0.5, 0.5, 0.5, Netcheck:none, DomainCache:0,
+ MSF:not bulk, SPF:fn, MSBL:0, DNSBL:neutral, Custom_rules:0:0:0, LFtime:24,
+ LUA_SUMMARY:none
+X-HE-Tag: net41_2723a85229624
+X-Filterd-Recvd-Size: 1935
+Message-ID: <1520575267.11634.25.camel@perches.com>
+Subject: Re: [PATCH 4/4] video: Remove stack VLA usage
+From: Joe Perches <joe@perches.com>
+To: "Tobin C. Harding" <me@tobin.cc>, Florian Tobias Schandinat
+ <FlorianSchandinat@gmx.de>, Bartlomiej Zolnierkiewicz
+ <b.zolnierkie@samsung.com>
+Date: Thu, 08 Mar 2018 22:01:07 -0800
+In-Reply-To: <1520574625-4225-1-git-send-email-me@tobin.cc>
+References: <1520574625-4225-1-git-send-email-me@tobin.cc>
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: Tycho Andersen <tycho@tycho.ws>, driverdev-devel@linuxdriverproject.org,
+ linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+ kernel-hardening@lists.openwall.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594438095221699065?=
-X-GMAIL-MSGID: =?utf-8?q?1594438095221699065?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The kernel would like to have all stack VLA usage removed[1].  The
-arrays are fixed here (declared with a const variable) but they appear
-like VLAs to the compiler.  We can use a pre-processor define to fix the
-warning.  
+On Fri, 2018-03-09 at 16:50 +1100, Tobin C. Harding wrote:
+> The kernel would like to have all stack VLA usage removed[1].  The
+> arrays are fixed here (declared with a const variable) but they appear
+> like VLAs to the compiler.  We can use a pre-processor define to fix the
+> warning.  
+[]
+> diff --git a/drivers/video/fbdev/via/via_aux_sii164.c b/drivers/video/fbdev/via/via_aux_sii164.c
+[]
+> @@ -27,6 +27,9 @@
+>  
+>  static const char *name = "SiI 164 PanelLink Transmitter";
+>  
+> +/* check vendor id and device id */
+> +const u8 id[] = {0x01, 0x00, 0x06, 0x00};
 
-[1]: https://lkml.org/lkml/2018/3/7/621
+It seems id is now global in multiple places.
+Perhaps these should be static.
 
-Signed-off-by: Tobin C. Harding <me@tobin.cc>
----
- drivers/video/fbdev/via/via_aux_sii164.c |  8 +++++---
- drivers/video/fbdev/via/via_aux_vt1631.c | 11 +++++++----
- drivers/video/fbdev/via/via_aux_vt1632.c | 11 +++++++----
- drivers/video/fbdev/via/via_aux_vt1636.c | 11 +++++++----
- 4 files changed, 26 insertions(+), 15 deletions(-)
+> diff --git a/drivers/video/fbdev/via/via_aux_vt1631.c b/drivers/video/fbdev/via/via_aux_vt1631.c
+[]
+> @@ -27,16 +27,19 @@
+>  
+>  static const char *name = "VT1631 LVDS Transmitter";
+>  
+> +/* check vendor id and device id */
+> +const u8 id[] = {0x06, 0x11, 0x91, 0x31}, len = ARRAY_SIZE(id);
 
-diff --git a/drivers/video/fbdev/via/via_aux_sii164.c b/drivers/video/fbdev/via/via_aux_sii164.c
-index ca1b35f033b1..f715ea4f466c 100644
---- a/drivers/video/fbdev/via/via_aux_sii164.c
-+++ b/drivers/video/fbdev/via/via_aux_sii164.c
-@@ -27,6 +27,9 @@
- 
- static const char *name = "SiI 164 PanelLink Transmitter";
- 
-+/* check vendor id and device id */
-+const u8 id[] = {0x01, 0x00, 0x06, 0x00};
-+#define VIA_SII164_LEN ARRAY_SIZE(id)
- 
- static void probe(struct via_aux_bus *bus, u8 addr)
- {
-@@ -34,9 +37,8 @@ static void probe(struct via_aux_bus *bus, u8 addr)
- 		.bus	=	bus,
- 		.addr	=	addr,
- 		.name	=	name};
--	/* check vendor id and device id */
--	const u8 id[] = {0x01, 0x00, 0x06, 0x00}, len = ARRAY_SIZE(id);
--	u8 tmp[len];
-+	u8 tmp[VIA_SII164_LEN];
-+	int len = VIA_SII164_LEN;
- 
- 	if (!via_aux_read(&drv, 0x00, tmp, len) || memcmp(id, tmp, len))
- 		return;
-diff --git a/drivers/video/fbdev/via/via_aux_vt1631.c b/drivers/video/fbdev/via/via_aux_vt1631.c
-index 06e742f1f723..5bfaa20ec5a8 100644
---- a/drivers/video/fbdev/via/via_aux_vt1631.c
-+++ b/drivers/video/fbdev/via/via_aux_vt1631.c
-@@ -27,16 +27,19 @@
- 
- static const char *name = "VT1631 LVDS Transmitter";
- 
-+/* check vendor id and device id */
-+const u8 id[] = {0x06, 0x11, 0x91, 0x31}, len = ARRAY_SIZE(id);
-+#define VIA_VT1631_LEN ARRAY_SIZE(id)
- 
- void via_aux_vt1631_probe(struct via_aux_bus *bus)
- {
- 	struct via_aux_drv drv = {
- 		.bus	=	bus,
- 		.addr	=	0x38,
--		.name	=	name};
--	/* check vendor id and device id */
--	const u8 id[] = {0x06, 0x11, 0x91, 0x31}, len = ARRAY_SIZE(id);
--	u8 tmp[len];
-+		.name	=	name
-+	};
-+	u8 tmp[VIA_VT1631_LEN];
-+	int len = VIA_VT1631_LEN;
- 
- 	if (!via_aux_read(&drv, 0x00, tmp, len) || memcmp(id, tmp, len))
- 		return;
-diff --git a/drivers/video/fbdev/via/via_aux_vt1632.c b/drivers/video/fbdev/via/via_aux_vt1632.c
-index d24f4cd97401..fcddd761d4a4 100644
---- a/drivers/video/fbdev/via/via_aux_vt1632.c
-+++ b/drivers/video/fbdev/via/via_aux_vt1632.c
-@@ -27,16 +27,19 @@
- 
- static const char *name = "VT1632 DVI Transmitter";
- 
-+/* check vendor id and device id */
-+const u8 id[] = {0x06, 0x11, 0x92, 0x31};
-+#define VIA_VT1632_LEN ARRAY_SIZE(id)
- 
- static void probe(struct via_aux_bus *bus, u8 addr)
- {
- 	struct via_aux_drv drv = {
- 		.bus	=	bus,
- 		.addr	=	addr,
--		.name	=	name};
--	/* check vendor id and device id */
--	const u8 id[] = {0x06, 0x11, 0x92, 0x31}, len = ARRAY_SIZE(id);
--	u8 tmp[len];
-+		.name	=	name
-+	};
-+	u8 tmp[VIA_VT1632_LEN];
-+	int len = VIA_VT1632_LEN;
- 
- 	if (!via_aux_read(&drv, 0x00, tmp, len) || memcmp(id, tmp, len))
- 		return;
-diff --git a/drivers/video/fbdev/via/via_aux_vt1636.c b/drivers/video/fbdev/via/via_aux_vt1636.c
-index 9e015c101d4d..49c9269c7f81 100644
---- a/drivers/video/fbdev/via/via_aux_vt1636.c
-+++ b/drivers/video/fbdev/via/via_aux_vt1636.c
-@@ -27,16 +27,19 @@
- 
- static const char *name = "VT1636 LVDS Transmitter";
- 
-+/* check vendor id and device id */
-+const u8 id[] = {0x06, 0x11, 0x45, 0x33};
-+#define VIA_VT1636_LEN ARRAY_SIZE(id)
- 
- void via_aux_vt1636_probe(struct via_aux_bus *bus)
- {
- 	struct via_aux_drv drv = {
- 		.bus	=	bus,
- 		.addr	=	0x40,
--		.name	=	name};
--	/* check vendor id and device id */
--	const u8 id[] = {0x06, 0x11, 0x45, 0x33}, len = ARRAY_SIZE(id);
--	u8 tmp[len];
-+		.name	=	name
-+	};
-+	u8 tmp[VIA_VT1636_LEN];
-+	int len = VIA_VT1636_LEN;
- 
- 	if (!via_aux_read(&drv, 0x00, tmp, len) || memcmp(id, tmp, len))
- 		return;
--- 
-2.7.4
+etc...
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
