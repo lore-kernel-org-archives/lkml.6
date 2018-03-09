@@ -1,62 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932219AbeCIR2X (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 12:28:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56882 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751192AbeCIR2W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 12:28:22 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54F5B205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Fri, 9 Mar 2018 14:28:18 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Will Deacon <will.deacon@arm.com>
-Cc: Ganapatrao Kulkarni <gklkml16@gmail.com>,
-        William Cohen <wcohen@redhat.com>, mark.rutland@arm.com,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        John Garry <john.garry@huawei.com>, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Robert Richter <Robert.Richter@cavium.com>,
-        Ingo Molnar <mingo@redhat.com>, jnair@caviumnetworks.com,
-        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Jiri Olsa <jolsa@redhat.com>, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] perf vendor events arm64: Enable JSON events for
- ThunderX2 B0
-Message-ID: <20180309172818.GE8347@kernel.org>
-References: <20180307110803.32418-1-ganapatrao.kulkarni@cavium.com>
- <3384d33f-c927-740a-97f1-b20775ef2c7b@redhat.com>
- <20180307143832.GJ3701@kernel.org>
- <CAKTKpr4zMcRLykw8xwWJKf2eiuCrf2RuJ7kexGRQNN7_OdJ=uQ@mail.gmail.com>
- <52328144-3a2a-af03-273b-3a2f3bdadda6@redhat.com>
- <CAKTKpr7HgsdZ90k0_evSq_aZW-uGSKwLndHOQ2Jahajj3Gkc0Q@mail.gmail.com>
- <CAKTKpr5=Doy2bQz8yYcoRNUGQ1HEgLcqk7U+4m-=1T_TZWa4HA@mail.gmail.com>
- <20180309143415.GB4194@kernel.org>
- <20180309155808.GP15537@arm.com>
+        id S932255AbeCIRan (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 12:30:43 -0500
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:42815 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751231AbeCIRak (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 12:30:40 -0500
+X-Google-Smtp-Source: AG47ELt8HSBisAZeyLo4ow3Xhh8gV3YQalVjoTDfOWkRjokwHNhtltAAUIWAdLzV7AMOdZ/gAJjMlg==
+Subject: Re: [PATCH v2 3/3] arm64: dts: renesas: Add LVDS decoder to R-Car V3M
+ Eagle
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
+        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
+        airlied@linux.ie, horms@verge.net.au, magnus.damm@gmail.com,
+        geert@linux-m68k.org, niklas.soderlund@ragnatech.se,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1520603500-15218-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1520603500-15218-4-git-send-email-jacopo+renesas@jmondi.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <e0ff40be-f134-5a86-6d00-9506d9829364@cogentembedded.com>
+Date: Fri, 9 Mar 2018 20:30:36 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180309155808.GP15537@arm.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1520603500-15218-4-git-send-email-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Mar 09, 2018 at 03:58:09PM +0000, Will Deacon escreveu:
-> On Fri, Mar 09, 2018 at 11:34:15AM -0300, Arnaldo Carvalho de Melo wrote:
-> > Em Fri, Mar 09, 2018 at 07:57:04PM +0530, Ganapatrao Kulkarni escreveu:
-> > > Hi Arnaldo,
-> > > 
-> > > can you please pull-in this patch?
-> > 
-> > So everybody is Ok with this? Can I have some Acked-by: from subject
-> > matter experts?
-> 
-> The original patch looks fine to me:
-> 
-> Acked-by: Will Deacon <will.deacon@arm.com>
+On 03/09/2018 04:51 PM, Jacopo Mondi wrote:
 
-Thanks, applying.
+> The R-Car V3M Eagle board includes a transparent LVDS decoder, connected
+> to the on-chip LVDS encoder output on one side and to HDMI encoder
+> ADV7511w on the other one.
+> 
+> As the decoder does not need any configuration it has been so-far
+> omitted from DTS. Now that a driver for transparent LVDS decoder is
+> available, describe it in DT as well.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 31 ++++++++++++++++++++++++--
+>  1 file changed, 29 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> index c0fd144..0a95c20 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> @@ -42,6 +42,33 @@
+>  			};
+>  		};
+>  	};
+> +
+> +	lvds,decoder {
 
-- Arnaldo
+   I said hyphen (-), not comma (,)! :-)
+
+[...]
+
+MBR, Sergei
