@@ -1,47 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932748AbeCIXBj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 18:01:39 -0500
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:46626 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932186AbeCIXBh (ORCPT
+        id S932808AbeCIXCV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 18:02:21 -0500
+Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:56570 "EHLO
+        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932186AbeCIXCT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 18:01:37 -0500
-X-Google-Smtp-Source: AG47ELsfpLpLNljKtyvDmTiz8oKSGqfWIxgkfdjNkKqlEVp92agZYYKmbGB4gmm/LnRRSgHeNsVFJg==
-Date: Fri, 9 Mar 2018 17:01:34 -0600
-From: Rob Herring <robh@kernel.org>
-To: Maciej Purski <m.purski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, Fabio Estevam <festevam@gmail.com>,
-        Tony Lindgren <tony@atomide.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v6 2/6] regulator: bindings: Add properties for coupled
- regulators
-Message-ID: <20180309230134.asabvtprijfav7ck@rob-hp-laptop>
-References: <1520598128-11768-1-git-send-email-m.purski@samsung.com>
- <CGME20180309122233eucas1p14d57674d3e9539db144c401593679c08@eucas1p1.samsung.com>
- <1520598128-11768-3-git-send-email-m.purski@samsung.com>
+        Fri, 9 Mar 2018 18:02:19 -0500
+Date: Sat, 10 Mar 2018 00:02:12 +0100
+From: Florian Westphal <fw@strlen.de>
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>,
+        syzbot <syzbot+0502b00edac2a0680b61@syzkaller.appspotmail.com>,
+        coreteam@netfilter.org, David Miller <davem@davemloft.net>,
+        Florian Westphal <fw@strlen.de>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        netfilter-devel@vger.kernel.org,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: WARNING in __proc_create
+Message-ID: <20180309230212.GD19924@breakpoint.cc>
+References: <001a113f2be668a1e9056701e617@google.com>
+ <CAM_iQpV+PnGUXEKcSrF7u19NOeLLp0PhDW-DOkEfS+8pLnTgYw@mail.gmail.com>
+ <a559bbb6-0db4-2b71-b363-792d88d7eef7@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1520598128-11768-3-git-send-email-m.purski@samsung.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <a559bbb6-0db4-2b71-b363-792d88d7eef7@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 09, 2018 at 01:22:04PM +0100, Maciej Purski wrote:
-> Some regulators require keeping their voltage spread below defined
-> max_spread.
+Eric Dumazet <eric.dumazet@gmail.com> wrote:
+> >>fs/proc/generic.c:354
+> >
+> >We need to reject empty names.
+> >
 > 
-> Add properties to provide information on regulators' coupling.
+> I sent a patch a while back, but Pablo/Florian wanted more than that simple
+> fix.
 > 
-> Signed-off-by: Maciej Purski <m.purski@samsung.com>
-> ---
->  Documentation/devicetree/bindings/regulator/regulator.txt | 5 +++++
->  1 file changed, 5 insertions(+)
+> We also need to filter special characters like '/'
+> 
+> Or maybe I am mixing with something else.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Argh, sorry, this fell off the truck it seems :(
+
+I'll work on this tomorrow unless someone else does it today ;)
