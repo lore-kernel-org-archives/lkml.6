@@ -1,172 +1,182 @@
 Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1520607054; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520607052; cv=none;
         d=google.com; s=arc-20160816;
-        b=fDet7WVtpDnWC6Fp0j9sm+cp70Rag4VfbmHxuQzkjJ5doMtOy4l3KT8Qq9nQTyOU5D
-         2IP7/jE1WNxXQaYd5U8283y0JiAK3HZ3J04kxkrFozli4XPHyDn/2NA87JysHkNPKUFG
-         uHDA+QlVqc2i36Gz1dCxXe++IffcZKon5bAFm3FPsWTf9kG9htbRDOoBTpE9/sUl4Qv8
-         ixNMjwXcjFOFFUmlYrKG3jNBvNrRCtoGXFzhPW/71BMsxEzPD5wJuNTyvPLjLcqOo1Hh
-         l0Fxiva80bn1ZJgETKMrCFGajNutSlZqnUj6PDKJbmhhrLRq2k9SLvM4SvQPtHQsFsYP
-         eZHQ==
+        b=Zv63wtg2pXV3Q1FZadhnbkLqayPxL2yv9Aob6Vg2iXbAyo7KUBw9A7nWSMsK1+GU8s
+         ChdWrqrwPKXyUqFGAIihrgXY/beGBGulMM1ThdJu0D0dDO2s5sbO8CKNNGlOz5JeMs8t
+         kTl+FPjcJ2k5eCxS2CZFVG9Van2eHAvOF0AeAQ7mmbPJyYAVdtGDQZzARJPQSnlxa+iz
+         GuSxAyKVSgwbmKfwRk4o5xeiYmhPNgGtOeaqZGPBU1Oja8Pim/CO0Zd0knFyTUIpDogT
+         m1JfsWUsn6wM9FAM01/BtMuoDuD8u077v8n4GaQmlZHf8bZHTiCULateVge9FN4VmbHx
+         4ulQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=Ufwf7qBywoUhGsTDixw/ddKEjV907Zte7g3Yg4PGjmw=;
-        b=BGXq01r6gi6HrqgHT0/KuwixNQ1+4lzhkXdj+157MaQ4BMVKDCxZTtWop+9Usb24X7
-         W7Z/v1hhHuJQt9jhq+Lwt2eqC3X9KvSb1KFUxSpKKL+VfDCvA+CEQ+yBVTExRwLHLP5j
-         li6SOuV1fFUXva9eZ35vv/JNDHLfYvar3YqdXzk9qHGckTbDpgcq6e4JcXtD8zP6KDFZ
-         y09OWF7fwK5MmwYF40mZ1fID7dpjf43xlTzceq6qMq9MjV+ncSK4pDb9SAVv5awKl6lp
-         XBouFhBn+O/wDOUuTkkhXUSmwVTRa1/XOA7ckHMr5M8JihXlXC9XzLds/Kz1M5gLOSWM
-         9G1w==
+        bh=lpctMtysOcxf6hdrVzb3i/6ck+RlkwUyeipEi1tXQa4=;
+        b=VOsk0P7ca8ooaG0rQgw2ZjqML2dSvUYsRO8PcpIrA3cQvKf38i63y7rGcFt64Fi+Vq
+         DH1Tj6mcwIWepOax6curdToht0UWYnPXPTSSXFfTQ48gQwhj5YDJL98LqU/TBaniqETf
+         DL8PAI/8lYF57AdVpz+bKuYaWL37XAYTCq95YA4r4jJKnpf1ckylFmBPTXLn8G5UBcOK
+         F9b2/Rg2EHTHE8Qy5KLe5EqWCShzbe70K6F4WXSFiNGLQCWLu//D8seCnQoJ2W55WP9q
+         GSYselrOGLPDwfBL31qZlaAZnV/vld/8+grii/vLZ3iwxSdGFMmrt146ztPPH3Du6as5
+         ZRNg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=HjvFaFKH;
+       dkim=pass header.i=@linaro.org header.s=google header.b=f9dlyP/U;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=HjvFaFKH;
+       dkim=pass header.i=@linaro.org header.s=google header.b=f9dlyP/U;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AG47ELvkSt0a+ekdCBRHX9Oko4MwOWN4Wlrz5ZGnUXupe0YB7J96eji8c1dax5U50USssWLfxRjjwg==
+X-Google-Smtp-Source: AG47ELtE2Tyg7hTqdQlsUGw2jN1qcqBE9BxgvfE/7eTf/Q2/25aHWx8rd9g1tvFZrKRVYsy7QxKDPQ==
 From: srinivas.kandagatla@linaro.org
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
 	srinivas.kandagatla@linaro.org,
-	Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 23/25] nvmem: sunxi-sid: fix H3 SID controller support
-Date: Fri,  9 Mar 2018 14:47:17 +0000
-Message-Id: <20180309144719.29904-24-srinivas.kandagatla@linaro.org>
+	Andrey Yurovsky <yurovsky@gmail.com>
+Subject: [PATCH 22/25] nvmem: add i.MX7 support to snvs-lpgpr
+Date: Fri,  9 Mar 2018 14:47:16 +0000
+Message-Id: <20180309144719.29904-23-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180309144719.29904-1-srinivas.kandagatla@linaro.org>
 References: <20180309144719.29904-1-srinivas.kandagatla@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594472062130495903?=
-X-GMAIL-MSGID: =?utf-8?q?1594472062130495903?=
+X-GMAIL-THRID: =?utf-8?q?1594472060850243084?=
+X-GMAIL-MSGID: =?utf-8?q?1594472060850243084?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: Andrey Yurovsky <yurovsky@gmail.com>
 
-It seems that doing some operation will make the value pre-read on H3
-SID controller wrong again, so all operation should be performed by
-register.
+The i.MX7 family has similar SNVS hardware so make the snvs-lpgpr
+support it along with the i.MX6 family. The register interface is the
+same except for the number and offset of the general purpose registers.
 
-Change the SID reading to use register only.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Andrey Yurovsky <yurovsky@gmail.com>
+Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/sunxi_sid.c | 71 +++++++++++++++++++++++++++++++++--------------
- 1 file changed, 50 insertions(+), 21 deletions(-)
+ .../devicetree/bindings/nvmem/snvs-lpgpr.txt       |  3 ++-
+ drivers/nvmem/Kconfig                              |  4 ++--
+ drivers/nvmem/snvs_lpgpr.c                         | 27 +++++++++++++++++-----
+ 3 files changed, 25 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/nvmem/sunxi_sid.c b/drivers/nvmem/sunxi_sid.c
-index 99bd54d85fcb..26bb637afe92 100644
---- a/drivers/nvmem/sunxi_sid.c
-+++ b/drivers/nvmem/sunxi_sid.c
-@@ -85,13 +85,14 @@ static int sunxi_sid_read(void *context, unsigned int offset,
- }
+diff --git a/Documentation/devicetree/bindings/nvmem/snvs-lpgpr.txt b/Documentation/devicetree/bindings/nvmem/snvs-lpgpr.txt
+index 20bc49b49799..3cb170896658 100644
+--- a/Documentation/devicetree/bindings/nvmem/snvs-lpgpr.txt
++++ b/Documentation/devicetree/bindings/nvmem/snvs-lpgpr.txt
+@@ -1,5 +1,5 @@
+ Device tree bindings for Low Power General Purpose Register found in i.MX6Q/D
+-Secure Non-Volatile Storage.
++and i.MX7 Secure Non-Volatile Storage.
  
- static int sun8i_sid_register_readout(const struct sunxi_sid *sid,
--				      const unsigned int word)
-+				      const unsigned int offset,
-+				      u32 *out)
- {
- 	u32 reg_val;
- 	int ret;
+ This DT node should be represented as a sub-node of a "syscon",
+ "simple-mfd" node.
+@@ -8,6 +8,7 @@ Required properties:
+ - compatible: should be one of the fallowing variants:
+ 	"fsl,imx6q-snvs-lpgpr" for Freescale i.MX6Q/D/DL/S
+ 	"fsl,imx6ul-snvs-lpgpr" for Freescale i.MX6UL
++	"fsl,imx7d-snvs-lpgpr" for Freescale i.MX7D/S
  
- 	/* Set word, lock access, and set read command */
--	reg_val = (word & SUN8I_SID_OFFSET_MASK)
-+	reg_val = (offset & SUN8I_SID_OFFSET_MASK)
- 		  << SUN8I_SID_OFFSET_SHIFT;
- 	reg_val |= SUN8I_SID_OP_LOCK | SUN8I_SID_READ;
- 	writel(reg_val, sid->base + SUN8I_SID_PRCTL);
-@@ -101,7 +102,49 @@ static int sun8i_sid_register_readout(const struct sunxi_sid *sid,
- 	if (ret)
+ Example:
+ snvs: snvs@020cc000 {
+diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
+index ff505af064ba..5f9bc787d634 100644
+--- a/drivers/nvmem/Kconfig
++++ b/drivers/nvmem/Kconfig
+@@ -167,10 +167,10 @@ config MESON_MX_EFUSE
+ 
+ config NVMEM_SNVS_LPGPR
+ 	tristate "Support for Low Power General Purpose Register"
+-	depends on SOC_IMX6 || COMPILE_TEST
++	depends on SOC_IMX6 || SOC_IMX7D || COMPILE_TEST
+ 	help
+ 	  This is a driver for Low Power General Purpose Register (LPGPR) available on
+-	  i.MX6 SoCs in Secure Non-Volatile Storage (SNVS) of this chip.
++	  i.MX6 and i.MX7 SoCs in Secure Non-Volatile Storage (SNVS) of this chip.
+ 
+ 	  This driver can also be built as a module. If so, the module
+ 	  will be called nvmem-snvs-lpgpr.
+diff --git a/drivers/nvmem/snvs_lpgpr.c b/drivers/nvmem/snvs_lpgpr.c
+index 92e1e41d128e..c050a23a9f2b 100644
+--- a/drivers/nvmem/snvs_lpgpr.c
++++ b/drivers/nvmem/snvs_lpgpr.c
+@@ -14,15 +14,21 @@
+ #include <linux/regmap.h>
+ 
+ #define IMX6Q_SNVS_HPLR		0x00
+-#define IMX6Q_GPR_SL		BIT(5)
+ #define IMX6Q_SNVS_LPLR		0x34
+-#define IMX6Q_GPR_HL		BIT(5)
+ #define IMX6Q_SNVS_LPGPR	0x68
+ 
++#define IMX7D_SNVS_HPLR		0x00
++#define IMX7D_SNVS_LPLR		0x34
++#define IMX7D_SNVS_LPGPR	0x90
++
++#define IMX_GPR_SL		BIT(5)
++#define IMX_GPR_HL		BIT(5)
++
+ struct snvs_lpgpr_cfg {
+ 	int offset;
+ 	int offset_hplr;
+ 	int offset_lplr;
++	int size;
+ };
+ 
+ struct snvs_lpgpr_priv {
+@@ -36,6 +42,14 @@ static const struct snvs_lpgpr_cfg snvs_lpgpr_cfg_imx6q = {
+ 	.offset		= IMX6Q_SNVS_LPGPR,
+ 	.offset_hplr	= IMX6Q_SNVS_HPLR,
+ 	.offset_lplr	= IMX6Q_SNVS_LPLR,
++	.size		= 4,
++};
++
++static const struct snvs_lpgpr_cfg snvs_lpgpr_cfg_imx7d = {
++	.offset		= IMX7D_SNVS_LPGPR,
++	.offset_hplr	= IMX7D_SNVS_HPLR,
++	.offset_lplr	= IMX7D_SNVS_LPLR,
++	.size		= 16,
+ };
+ 
+ static int snvs_lpgpr_write(void *context, unsigned int offset, void *val,
+@@ -50,14 +64,14 @@ static int snvs_lpgpr_write(void *context, unsigned int offset, void *val,
+ 	if (ret < 0)
  		return ret;
  
-+	if (out)
-+		*out = readl(sid->base + SUN8I_SID_RDKEY);
-+
- 	writel(0, sid->base + SUN8I_SID_PRCTL);
-+
-+	return 0;
-+}
-+
-+/*
-+ * On Allwinner H3, the value on the 0x200 offset of the SID controller seems
-+ * to be not reliable at all.
-+ * Read by the registers instead.
-+ */
-+static int sun8i_sid_read_byte_by_reg(const struct sunxi_sid *sid,
-+				      const unsigned int offset,
-+				      u8 *out)
-+{
-+	u32 word;
-+	int ret;
-+
-+	ret = sun8i_sid_register_readout(sid, offset & ~0x03, &word);
-+
-+	if (ret)
-+		return ret;
-+
-+	*out = (word >> ((offset & 0x3) * 8)) & 0xff;
-+
-+	return 0;
-+}
-+
-+static int sun8i_sid_read_by_reg(void *context, unsigned int offset,
-+				 void *val, size_t bytes)
-+{
-+	struct sunxi_sid *sid = context;
-+	u8 *buf = val;
-+	int ret;
-+
-+	while (bytes--) {
-+		ret = sun8i_sid_read_byte_by_reg(sid, offset++, buf++);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	return 0;
- }
+-	if (lock_reg & IMX6Q_GPR_SL)
++	if (lock_reg & IMX_GPR_SL)
+ 		return -EPERM;
  
-@@ -131,26 +174,12 @@ static int sunxi_sid_probe(struct platform_device *pdev)
+ 	ret = regmap_read(priv->regmap, dcfg->offset_lplr, &lock_reg);
+ 	if (ret < 0)
+ 		return ret;
  
- 	size = cfg->size;
+-	if (lock_reg & IMX6Q_GPR_HL)
++	if (lock_reg & IMX_GPR_HL)
+ 		return -EPERM;
  
--	if (cfg->need_register_readout) {
--		/*
--		 * H3's SID controller have a bug that the value at 0x200
--		 * offset is not the correct value when the hardware is reseted.
--		 * However, after doing a register-based read operation, the
--		 * value become right.
--		 * Do a full read operation here, but ignore its value
--		 * (as it's more fast to read by direct MMIO value than
--		 * with registers)
--		 */
--		for (i = 0; i < (size >> 2); i++) {
--			ret = sun8i_sid_register_readout(sid, i);
--			if (ret)
--				return ret;
--		}
--	}
--
- 	econfig.size = size;
- 	econfig.dev = dev;
--	econfig.reg_read = sunxi_sid_read;
-+	if (cfg->need_register_readout)
-+		econfig.reg_read = sun8i_sid_read_by_reg;
-+	else
-+		econfig.reg_read = sunxi_sid_read;
- 	econfig.priv = sid;
- 	nvmem = nvmem_register(&econfig);
- 	if (IS_ERR(nvmem))
-@@ -163,7 +192,7 @@ static int sunxi_sid_probe(struct platform_device *pdev)
- 	}
+ 	return regmap_bulk_write(priv->regmap, dcfg->offset + offset, val,
+@@ -112,7 +126,7 @@ static int snvs_lpgpr_probe(struct platform_device *pdev)
+ 	cfg->dev = dev;
+ 	cfg->stride = 4;
+ 	cfg->word_size = 4;
+-	cfg->size = 4;
++	cfg->size = dcfg->size,
+ 	cfg->owner = THIS_MODULE;
+ 	cfg->reg_read  = snvs_lpgpr_read;
+ 	cfg->reg_write = snvs_lpgpr_write;
+@@ -126,6 +140,7 @@ static const struct of_device_id snvs_lpgpr_dt_ids[] = {
+ 	{ .compatible = "fsl,imx6q-snvs-lpgpr", .data = &snvs_lpgpr_cfg_imx6q },
+ 	{ .compatible = "fsl,imx6ul-snvs-lpgpr",
+ 	  .data = &snvs_lpgpr_cfg_imx6q },
++	{ .compatible = "fsl,imx7d-snvs-lpgpr",	.data = &snvs_lpgpr_cfg_imx7d },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, snvs_lpgpr_dt_ids);
+@@ -140,5 +155,5 @@ static struct platform_driver snvs_lpgpr_driver = {
+ module_platform_driver(snvs_lpgpr_driver);
  
- 	for (i = 0; i < size; i++)
--		randomness[i] = sunxi_sid_read_byte(sid, i);
-+		econfig.reg_read(sid, i, &randomness[i], 1);
- 
- 	add_device_randomness(randomness, size);
- 	kfree(randomness);
+ MODULE_AUTHOR("Oleksij Rempel <o.rempel@pengutronix.de>");
+-MODULE_DESCRIPTION("Low Power General Purpose Register in i.MX6 Secure Non-Volatile Storage");
++MODULE_DESCRIPTION("Low Power General Purpose Register in i.MX6 and i.MX7 Secure Non-Volatile Storage");
+ MODULE_LICENSE("GPL v2");
 -- 
 2.15.1
