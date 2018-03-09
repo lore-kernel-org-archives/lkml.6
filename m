@@ -1,82 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932391AbeCIRmd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 12:42:33 -0500
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:39063 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932288AbeCIRmb (ORCPT
+        id S932427AbeCIRmj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 12:42:39 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:47518 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932288AbeCIRme (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 12:42:31 -0500
-X-Google-Smtp-Source: AG47ELv/iz166qZePB65co42vua+Lzloy6Y1DGz9QGF9YjM3gXI6JOBefCwxHL7RwrCu5hoZG8vugXKcY/dXBNsR0Zw=
+        Fri, 9 Mar 2018 12:42:34 -0500
+Date: Fri, 9 Mar 2018 18:42:18 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Vince Weaver <vincent.weaver@maine.edu>
+Cc: kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, torvalds@linux-foundation.org, eranian@google.com,
+        acme@redhat.com, hpa@zytor.com, alexander.shishkin@linux.intel.com,
+        mingo@kernel.org, jolsa@redhat.com, linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:perf/core] perf/x86/intel: Disable userspace RDPMC usage
+ for large PEBS
+Message-ID: <20180309174218.GB4064@hirez.programming.kicks-ass.net>
+References: <1518474035-21006-6-git-send-email-kan.liang@linux.intel.com>
+ <tip-1af22eba248efe2de25658041a80a3d40fb3e92e@git.kernel.org>
+ <alpine.DEB.2.21.1803090929380.4834@macbook-air>
 MIME-Version: 1.0
-In-Reply-To: <CAAeHK+xF0X-SQuPVmZF--VnmvYrbpDkznSwYTh_3LHq1H2V=9Q@mail.gmail.com>
-References: <cover.1520600533.git.andreyknvl@google.com> <beea8ac394bfae3c7c949645fb887ceacc3f3bb3.1520600533.git.andreyknvl@google.com>
- <20180309155315.4x44sbp3darractt@armageddon.cambridge.arm.com> <CAAeHK+xF0X-SQuPVmZF--VnmvYrbpDkznSwYTh_3LHq1H2V=9Q@mail.gmail.com>
-From: Evgenii Stepanov <eugenis@google.com>
-Date: Fri, 9 Mar 2018 09:42:29 -0800
-Message-ID: <CAFKCwrgPEhBEbXn95ugxVuxHw7UTiQWuo3+HJ_t7UBG69fbUcw@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/6] mm, arm64: untag user addresses in memory syscalls
-To: Andrey Konovalov <andreyknvl@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        linux-arch@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>, Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1803090929380.4834@macbook-air>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 9, 2018 at 9:31 AM, Andrey Konovalov <andreyknvl@google.com> wrote:
-> On Fri, Mar 9, 2018 at 4:53 PM, Catalin Marinas <catalin.marinas@arm.com> wrote:
->> On Fri, Mar 09, 2018 at 03:02:01PM +0100, Andrey Konovalov wrote:
->>> Memory subsystem syscalls accept user addresses as arguments, but don't use
->>> copy_from_user and other similar functions, so we need to handle this case
->>> separately.
->>>
->>> Untag user pointers passed to madvise, mbind, get_mempolicy, mincore,
->>> mlock, mlock2, brk, mmap_pgoff, old_mmap, munmap, remap_file_pages,
->>> mprotect, pkey_mprotect, mremap and msync.
->>>
->>> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
->>
->> Please keep the cc list small (maybe linux-arch, linux-arm-kernel) as
->> I'm sure some lists would consider this spam.
->
-> OK.
->
->>
->>>  mm/madvise.c   | 2 ++
->>>  mm/mempolicy.c | 6 ++++++
->>>  mm/mincore.c   | 2 ++
->>>  mm/mlock.c     | 5 +++++
->>>  mm/mmap.c      | 9 +++++++++
->>>  mm/mprotect.c  | 2 ++
->>>  mm/mremap.c    | 2 ++
->>>  mm/msync.c     | 3 +++
->>
->> I'm not yet convinced these functions need to allow tagged pointers.
->> They are not doing memory accesses but rather dealing with the memory
->> range, hence an untagged pointer is better suited. There is probably a
->> reason why the "start" argument is "unsigned long" vs "void __user *"
->> (in the kernel, not the man page).
->
-> So that would make the user to untag pointers before passing to these syscalls.
->
-> Evgeniy, would that be possible to untag pointers in HWASan before
-> using memory subsystem syscalls? Is there a reason for untagging them
-> in the kernel?
+On Fri, Mar 09, 2018 at 09:31:11AM -0500, Vince Weaver wrote:
+> On Fri, 9 Mar 2018, tip-bot for Kan Liang wrote:
+> 
+> > Commit-ID:  1af22eba248efe2de25658041a80a3d40fb3e92e
+> > Gitweb:     https://git.kernel.org/tip/1af22eba248efe2de25658041a80a3d40fb3e92e
+> > Author:     Kan Liang <kan.liang@linux.intel.com>
+> > AuthorDate: Mon, 12 Feb 2018 14:20:35 -0800
+> > Committer:  Ingo Molnar <mingo@kernel.org>
+> > CommitDate: Fri, 9 Mar 2018 08:22:23 +0100
+> > 
+> > perf/x86/intel: Disable userspace RDPMC usage for large PEBS
+> > 
+> 
+> 
+> So this whole commit log is about disabling RDPMC usage for "large PEBS"
+> but the actual change disables RDPMC if "PERF_X86_EVENT_FREERUNNING"
+> 
+> Either the commit log is really misleading, or else a poor name was chosen 
+> for this feature.
 
-Generally, no. It's possible to intercept a libc call using symbol
-interposition, but I don't know how to rewrite arguments of a raw
-system call other than through ptrace, and that creates more problems
-than it solves.
-
-AFAIU, it's valid for a program to pass an address obtained from
-malloc or, better, posix_memalign to an mm syscall like mprotect().
-These arguments are pointers from the userspace point of view.
+Its the same thing, and yes that might want renaming I suppose.
