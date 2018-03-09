@@ -1,80 +1,107 @@
 Return-Path: <andresx7@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520633582; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520633583; cv=none;
         d=google.com; s=arc-20160816;
-        b=Luozn24KJIlceOwitllV4i4SyBeve4et1wF3eDVkXEXkal3ZNGEvF968ukOXvBRjCn
-         rZlwX+yVR5xEMV2CdFedzpmsE/xmmXDYBg/hfgVHa6e6GQS4ccyZjb1A9fgS/KvR0yb2
-         RDUWWKFPd143bN598dL3B0DYxlVUjn8n09U8bTsizYMiRQUWy0vF0DY9HjxNbT2p0q54
-         rAOfNzht4LGc1JELbi+p8urkHz3DvV/e7NZeteuJWnC32M4MfqtCR2EN16R+8HQubufv
-         G+JhpjoCX0Vy0sJe99hAnTEqMi8o3kEe/UrAarv9iY3kQYkVhbOqEBY/tUOabqBFAl/m
-         EZSA==
+        b=TXpOjFnu7BgUeJLH0ZKkYhRKOLjdbhMmgJwKLA5ulCEA4brpykQzq4IvwAXE9/1KyV
+         nye1egtq6v6Ni705GBCuzgNmhkK9Qi9cqq2DpQHnd/A9zx+SOHq/KESJ13+PEw+hJJzM
+         s5DmbP1LE8qeEfTqxwVEgu7mThlJNscT5IF3lkCIVTRB4YtrBiEYcBefJHf1HW03W9In
+         n5S6uCWKTcilfY9//RtGoVs3TQ+1kuAB28xgLV7qdA9e4ncVQIWDURzMWvZvFPyV1TNv
+         GLZJATF49kwVDgRGxKPqdRcJsfpFSLWwEMLjMhMVnfOHEg/7kB+3EwlG97C60mGNH85y
+         ZibQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=4dxjdXNul0QkLH8K1xo3oETxMmZewlLZnXLngt/AQ9c=;
-        b=VHvB48pUgT3FZg3rNAahkOjvsySMnym3VRR4L+epN6spHMtE3wkwo5FHUXkAwSdqSQ
-         6vwxulUPBC67wxv0kklHIGPfWKxn+6cBB14Ar7OncZErcbg1619KB1WfearnylEtxHOW
-         gxkP6fH/4ey4dKX5oiD6b5mDGE1INSORyURqax7MKAL0umuOYpp1990/mPpB5jD5XYFQ
-         8Rj5cr6/3mVYfVNMPTvGNqU/hBw4p/GPk4Rb2BhzD/QL5dRex9X8Ebv702aM5TMWBvcP
-         OEeZeru1rTT5cK1XQh0K08T0tS8Jj5/ILvsJdg/tcXCeIHc91AA1oQjCGDo3yJcW07y2
-         YqDw==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=00Cn2GQb2Xo6AmIxhogP4Uk/bn6I/CJRENXAGoVeaW8=;
+        b=xiQMDanemgQY6BJOaFPX8oPX4Ap61Dylp+yQWXSATSx31YCvtdj9/7tWSKZSRPx5uT
+         S9AlUJ1jjz6e6zLM9wakTBMU+ByZOtby+7p4l0Ap9/zUOqT4U6H5iSeDEAz8um6z/5Yg
+         VkyxfQlfluJbcrDSlewLEE7U1ZmCc2dBGivOeadcdTuBwCn6QkEDimlrKDnhS5yfHuL+
+         9xzg4e2IhnQKs+RwgxR3Yp0qBDExNuFzvC9G5owJnNYQK/U+TrdpD7hTPaMlax2pyKbH
+         iG6+OU8aqhAgpwf6pw/DK8SrYBi8f9wJsj1UlBh75o/olpsR8lRGxd9XKRvjnpJNkXqn
+         JjwA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=rr6aYp73;
-       spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=gOVgA7wQ;
+       spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=rr6aYp73;
-       spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=gOVgA7wQ;
+       spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELuI5gSe+r7L3z+LQDTOspJ0W0NJP7+Wj3bMLtQX9OO1o8sCV1SFD3SqFRvFNDkdWIIAet0YlQ==
+X-Google-Smtp-Source: AG47ELs7+HreLh7aU4QeCgjPHI/FFzCtqBEhl3QVJYig5qoscL5tQSrGCLZyvDD0lFiJNbF1V8rriA==
 From: Andres Rodriguez <andresx7@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: andresx7@gmail.com,
 	gregkh@linuxfoundation.org,
 	mcgrof@kernel.org
-Subject: [RFC 0/1] Loading optional firmware
-Date: Fri,  9 Mar 2018 17:12:42 -0500
-Message-Id: <20180309221243.15489-1-andresx7@gmail.com>
+Subject: [PATCH 1/1] firmware: add a function to load optional firmware
+Date: Fri,  9 Mar 2018 17:12:43 -0500
+Message-Id: <20180309221243.15489-2-andresx7@gmail.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180309221243.15489-1-andresx7@gmail.com>
+References: <20180309221243.15489-1-andresx7@gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594499879677109400?=
-X-GMAIL-MSGID: =?utf-8?q?1594499879677109400?=
+X-GMAIL-THRID: =?utf-8?q?1594499880010887490?=
+X-GMAIL-MSGID: =?utf-8?q?1594499880010887490?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Everyone,
+Currently the firmware loader only exposes one silent path for querying
+optional firmware, and that is request_firmware_direct(). This function
+also disables the usermodehelper fallback which might not always be the
+desired behaviour.
 
-Wanted to inquire your opinions about the following matter.
+This patch introduces request_firmware_optional(), which will not
+produce error/warning messages if the firmware file is not found, but
+will still attempt to query the usermodehelper for the optional
+firmware. Effectively, FW_OPT_UEVENT | FW_OPT_FALLBACK | FW_OPT_NO_WARN.
 
-We are experiencing some end user confusion regarding the following messages
-being printed to dmesg:
-
-[    0.571324] amdgpu 0000:01:00.0: Direct firmware load for amdgpu/polaris10_pfp_2.bin failed with error -2
-[    0.571338] amdgpu 0000:01:00.0: Direct firmware load for amdgpu/polaris10_me_2.bin failed with error -2
-[    0.571348] amdgpu 0000:01:00.0: Direct firmware load for amdgpu/polaris10_ce_2.bin failed with error -2
-[    0.571366] amdgpu 0000:01:00.0: Direct firmware load for amdgpu/polaris10_mec_2.bin failed with error -2
-[    0.571404] amdgpu 0000:01:00.0: Direct firmware load for amdgpu/polaris10_mec2_2.bin failed with error -2
-
-These firmware blobs are optional. If they aren't available, the graphics card
-can still function normally. But having these messages causes the user to think
-their current problems are related to missing firmware.
-
-It would be great if we could have a mechanism that enabled us to load a
-firmware blob without any dmesg spew in case of file not found errors.Currently
-request_firmware_direct() implements this functionality, but as a drawback it
-forfeits the usermodehelper fallback path.
-
-As part of this series, there is a small patch to enable
-request_firmware_optional(), which has the same logging behaviour as
-request_firmware_direct(), but will maintain the usermodehelper fallback.
-
-Let me know if you find this change suitable, or if you would prefer a
-different strategy to tackle this issue.
-
-Andres Rodriguez (1):
-  firmware: add a function to load optional firmware
-
+Signed-off-by: Andres Rodriguez <andresx7@gmail.com>
+---
  drivers/base/firmware_class.c | 27 ++++++++++++++++++++++++++-
  1 file changed, 26 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_class.c
+index 7dd36ace6152..a5a4dfb90e2f 100644
+--- a/drivers/base/firmware_class.c
++++ b/drivers/base/firmware_class.c
+@@ -1181,7 +1181,7 @@ static int fw_sysfs_fallback(struct firmware *fw, const char *name,
+ 	if (!fw_run_sysfs_fallback(opt_flags))
+ 		return ret;
+ 
+-	dev_warn(device, "Falling back to user helper\n");
++	dev_warn(device, "Falling back to user helper for %s\n", name);
+ 	return fw_load_from_user_helper(fw, name, device, opt_flags);
+ }
+ #else /* CONFIG_FW_LOADER_USER_HELPER */
+@@ -1351,6 +1351,31 @@ request_firmware(const struct firmware **firmware_p, const char *name,
+ }
+ EXPORT_SYMBOL(request_firmware);
+ 
++/**
++ * request_firmware_optional: - request for an optional fw module
++ * @firmware_p: pointer to firmware image
++ * @name: name of firmware file
++ * @device: device for which firmware is being loaded
++ *
++ * This function is similar in behaviour to request_firmware(), except
++ * it doesn't produce warning messages when the file is not found.
++ **/
++int
++request_firmware_optional(const struct firmware **firmware_p, const char *name,
++			  struct device *device)
++{
++	int ret;
++
++	/* Need to pin this module until return */
++	__module_get(THIS_MODULE);
++	ret = _request_firmware(firmware_p, name, device, NULL, 0,
++				FW_OPT_UEVENT | FW_OPT_FALLBACK |
++				FW_OPT_NO_WARN);
++	module_put(THIS_MODULE);
++	return ret;
++}
++EXPORT_SYMBOL(request_firmware_optional);
++
+ /**
+  * request_firmware_direct: - load firmware directly without usermode helper
+  * @firmware_p: pointer to firmware image
 -- 
 2.14.1
