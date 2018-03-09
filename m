@@ -1,69 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932606AbeCITHp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 14:07:45 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:44145 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932570AbeCITHj (ORCPT
+        id S932497AbeCITKg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 14:10:36 -0500
+Received: from mail-it0-f67.google.com ([209.85.214.67]:34372 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932183AbeCITKe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 14:07:39 -0500
-X-Google-Smtp-Source: AG47ELvgSeBVv5edRUR3SpWEzG7unw0lDFu9+to6VXtWluEvGLFYEmBfa2BeijUlAHpDNIE9kkxckQ==
-Date: Fri, 9 Mar 2018 11:07:36 -0800
-From: Kees Cook <keescook@chromium.org>
-To: James Morris <jmorris@namei.org>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>, Stephen Smalley <sds@tycho.nsa.gov>
-Subject: [PATCH] exec: Set file unwritable before LSM check
-Message-ID: <20180309190736.GA4657@beast>
+        Fri, 9 Mar 2018 14:10:34 -0500
+X-Google-Smtp-Source: AG47ELs2phAuoOi227Tf5OB4L9e513bmLJAn0XqxeLhXnH+lYVYJb8VOWQUCP/nZp2s1/Rb+3WR75g==
+From: Vince Weaver <vincent.weaver@maine.edu>
+X-Google-Original-From: Vince Weaver <vince@maine.edu>
+Date: Fri, 9 Mar 2018 14:10:30 -0500 (EST)
+X-X-Sender: vince@macbook-air
+To: Peter Zijlstra <peterz@infradead.org>
+cc: Vince Weaver <vincent.weaver@maine.edu>, kan.liang@linux.intel.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        torvalds@linux-foundation.org, eranian@google.com, acme@redhat.com,
+        hpa@zytor.com, alexander.shishkin@linux.intel.com, mingo@kernel.org,
+        jolsa@redhat.com, linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:perf/core] perf/x86/intel: Disable userspace RDPMC usage
+ for large PEBS
+In-Reply-To: <20180309174218.GB4064@hirez.programming.kicks-ass.net>
+Message-ID: <alpine.DEB.2.21.1803091407080.4834@macbook-air>
+References: <1518474035-21006-6-git-send-email-kan.liang@linux.intel.com> <tip-1af22eba248efe2de25658041a80a3d40fb3e92e@git.kernel.org> <alpine.DEB.2.21.1803090929380.4834@macbook-air> <20180309174218.GB4064@hirez.programming.kicks-ass.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LSM check should happen after the file has been confirmed to be
-unchanging. Without this, we could have a ToCToU issue between the
-LSM verification and the actual contents of the file later.
+On Fri, 9 Mar 2018, Peter Zijlstra wrote:
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-Only loadpin and SELinux implement this hook. From what I can see, this
-won't change anything for either of them. IMA calls kernel_read_file(),
-but looking there it seems those callers won't be negatively impacted
-either. Can folks double-check this and send an Ack please?
----
- fs/exec.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> On Fri, Mar 09, 2018 at 09:31:11AM -0500, Vince Weaver wrote:
+> > On Fri, 9 Mar 2018, tip-bot for Kan Liang wrote:
+> > 
+> > > Commit-ID:  1af22eba248efe2de25658041a80a3d40fb3e92e
+> > > Gitweb:     https://git.kernel.org/tip/1af22eba248efe2de25658041a80a3d40fb3e92e
+> > > Author:     Kan Liang <kan.liang@linux.intel.com>
+> > > AuthorDate: Mon, 12 Feb 2018 14:20:35 -0800
+> > > Committer:  Ingo Molnar <mingo@kernel.org>
+> > > CommitDate: Fri, 9 Mar 2018 08:22:23 +0100
+> > > 
+> > > perf/x86/intel: Disable userspace RDPMC usage for large PEBS
+> > > 
+> > 
+> > 
+> > So this whole commit log is about disabling RDPMC usage for "large PEBS"
+> > but the actual change disables RDPMC if "PERF_X86_EVENT_FREERUNNING"
+> > 
+> > Either the commit log is really misleading, or else a poor name was chosen 
+> > for this feature.
+> 
+> Its the same thing, and yes that might want renaming I suppose.
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 7eb8d21bcab9..a919a827d181 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -895,13 +895,13 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
- 	if (!S_ISREG(file_inode(file)->i_mode) || max_size < 0)
- 		return -EINVAL;
- 
--	ret = security_kernel_read_file(file, id);
-+	ret = deny_write_access(file);
- 	if (ret)
- 		return ret;
- 
--	ret = deny_write_access(file);
-+	ret = security_kernel_read_file(file, id);
- 	if (ret)
--		return ret;
-+		goto out;
- 
- 	i_size = i_size_read(file_inode(file));
- 	if (max_size > 0 && i_size > max_size) {
--- 
-2.7.4
+I apologize for noticing these things so late in the game, but I haven't 
+had time to keep up with a full lkml feed recently so I only see these 
+things once I'm CC'd on them.
 
+So to summarize this: rdpmc is only disabled on a per-event basis, and 
+only if that event is doing multi-pebs sampling?
 
--- 
-Kees Cook
-Pixel Security
+If that's true, then I don't think I have an issue with this.
+
+We finally got rdpmc support in a released PAPI, and it is a massive
+improvement when self-monitoring (even moreso if KPTI is enabled) so I was 
+just trying to make sure this wouldn't suddenly disable rdpmc out from 
+under us.
+
+Vince
