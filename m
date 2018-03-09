@@ -1,78 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751019AbeCIJ67 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 04:58:59 -0500
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:38013 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750800AbeCIJ65 (ORCPT
+        id S1751137AbeCIJ7n (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 04:59:43 -0500
+Received: from esa6.dell-outbound.iphmx.com ([68.232.149.229]:47573 "EHLO
+        esa6.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751072AbeCIJ7l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:58:57 -0500
-X-Google-Smtp-Source: AG47ELsZo4Xw4Ksi08k9vZGYOGY7qh3RdLRRIvg2O2c6taEuquQvz8nLcecEuRdC07h0v9ow3n5p5LZYoPCszew51M4=
+        Fri, 9 Mar 2018 04:59:41 -0500
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FjAAC+WaJah2Oa6EReGQEBAQEBAQEBA?=
+ =?us-ascii?q?QEBAQcBAQEBAYMjgQN/KAqDRooejXeCAoEWhx6NDIIVCoUlAhqCdSE0GAECAQE?=
+ =?us-ascii?q?BAQEBAgECEAEBAQgNCQgoLoI4IoJKAQEBAQIBIxFFEAIBCBIIAh8HAgICHyYCA?=
+ =?us-ascii?q?Q0CBA4FCBOEZgMNCKxAgiaHKg2BMIIagQ6EKIIugzyDLYJqgiFigj2CYgSIEZI?=
+ =?us-ascii?q?TMQmNMoMtjmuKMocVgSweggtwgxKCMRAMFm4BCW13iXWBFwEBAQ?=
+X-IPAS-Result: =?us-ascii?q?A2FjAAC+WaJah2Oa6EReGQEBAQEBAQEBAQEBAQcBAQEBAYM?=
+ =?us-ascii?q?jgQN/KAqDRooejXeCAoEWhx6NDIIVCoUlAhqCdSE0GAECAQEBAQEBAgECEAEBA?=
+ =?us-ascii?q?QgNCQgoLoI4IoJKAQEBAQIBIxFFEAIBCBIIAh8HAgICHyYCAQ0CBA4FCBOEZgM?=
+ =?us-ascii?q?NCKxAgiaHKg2BMIIagQ6EKIIugzyDLYJqgiFigj2CYgSIEZITMQmNMoMtjmuKM?=
+ =?us-ascii?q?ocVgSweggtwgxKCMRAMFm4BCW13iXWBFwEBAQ?=
+From: <Mario.Limonciello@dell.com>
+X-LoopCount0: from 10.166.132.169
+X-IronPort-AV: E=Sophos;i="5.47,444,1515477600";
+   d="scan'208";a="147442077"
+X-DLP: DLP_GlobalPCIDSS
+To: <pali.rohar@gmail.com>
+CC: <kai.heng.feng@canonical.com>, <mjg59@srcf.ucam.org>,
+        <dvhart@infradead.org>, <andy@infradead.org>, <tiwai@suse.com>,
+        <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>
+Subject: RE: [PATCH v2 3/3] ALSA: hda: Disabled unused audio controller for
+ Dell platforms with Switchable Graphics
+Thread-Topic: [PATCH v2 3/3] ALSA: hda: Disabled unused audio controller for
+ Dell platforms with Switchable Graphics
+Thread-Index: AQHTtr1XC+3UjKIddE2I55hGuXPKiaPIAceAgAAHyYD//5ufkIAAaMcA//+dHPA=
+Date: Fri, 9 Mar 2018 09:59:39 +0000
+Message-ID: <09eadabb264f401a88b427744505adf8@ausx13mpc124.AMER.DELL.COM>
+References: <20180308091023.9061-1-kai.heng.feng@canonical.com>
+ <20180308091023.9061-3-kai.heng.feng@canonical.com>
+ <20180309090223.xb55ltac4pfesdrh@pali>
+ <723DA929-C9FA-4F69-8D3A-03D8A75D09A6@canonical.com>
+ <014795f5a3014cd3bf55de26f76a5af8@ausx13mpc124.AMER.DELL.COM>
+ <20180309094600.m24d3zbzdsmls7aw@pali>
+In-Reply-To: <20180309094600.m24d3zbzdsmls7aw@pali>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.242.75]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1520516417.7807.88.camel@suse.de>
-References: <2067762.1uWBf5RSRc@aspire.rjw.lan> <1520505099.7807.60.camel@suse.de>
- <CAJZ5v0gCi7bLL_r45qmoOKwh_dWF_RVs0U5UPe3qY45GbvtK9w@mail.gmail.com> <1520516417.7807.88.camel@suse.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 9 Mar 2018 10:58:56 +0100
-X-Google-Sender-Auth: FwWylSguX61OkxUHcb_fQ4Eirvw
-Message-ID: <CAJZ5v0hWDA7T=xaNZ1uTEDL_BjRj9zeFZY45AhsUAK5FtRovjw@mail.gmail.com>
-Subject: Re: [RFC/RFT][PATCH v2 0/6] sched/cpuidle: Idle loop rework
-To: Mike Galbraith <mgalbraith@suse.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w299xnh2027411
 
-On Thu, Mar 8, 2018 at 2:40 PM, Mike Galbraith <mgalbraith@suse.de> wrote:
-> On Thu, 2018-03-08 at 12:10 +0100, Rafael J. Wysocki wrote:
->> On Thu, Mar 8, 2018 at 11:31 AM, Mike Galbraith <mgalbraith@suse.de> wrote:
->>                               1     2     3
->> > 4.16.0.g1b88acc-master     6.95  7.03  6.91 (virgin)
->> > 4.16.0.g1b88acc-master     7.20  7.25  7.26 (+v2)
->> > 4.16.0.g1b88acc-master     6.90  7.06  6.95 (+local)
->> >
->> > Why would v2 charge the light firefox load a small but consistent fee?
->>
->> Two effects may come into play here I think.
->>
->> One is that allowing the tick to run biases the menu governor's
->> predictions towards the lower end, so we may use shallow states more
->> as a result then (Peter was talking about that).
->
-> Hm, I'd expect that to show up in +local as well then, as it keeps the
-> tick running when avg_idle < sched_migration_cost (convenient magic
-> number), but the firefox load runs at the same wattage as virgin.  I'm
-> also doing this...
->
-> --- a/drivers/cpuidle/governors/menu.c
-> +++ b/drivers/cpuidle/governors/menu.c
-> @@ -335,7 +335,7 @@ static int menu_select(struct cpuidle_dr
->                  * C1's exit latency exceeds the user configured limit.
->                  */
->                 polling_threshold = max_t(unsigned int, 20, s->target_residency);
-> -               if (data->next_timer_us > polling_threshold &&
-> +               if (expected_interval > polling_threshold &&
->                     latency_req > s->exit_latency && !s->disabled &&
->                     !dev->states_usage[1].disable)
->                         first_idx = 1;
->
-> ...to help out high frequency cross core throughput, but the firefox
-> load apparently doesn't tickle that, as significant polling would
-> surely show in the wattage.
+> > Pali is your concern that this code for matching vendor/subsystem is running
+> > on non-Dell too?  The only other recommendation I think that can be to restrict
+> > to matching Dell OEM strings in SMBIOS table, but I don't think that's any better
+> > than the matching for VID/SSVID.
+> 
+> My concern is about adding a new machine specific code into generic
+> driver, which check is done just by PCI vendor and subvendor.
+> 
+> In future there can be new models or other PCI devices which matches
+> above condition even they would not have any switchable graphics, nor
+> they would manufactured by Dell.
 
-OK, so the second reason sounds more likely to me.
+Uh Dell subsystem ID means it's Dell no?
 
-Anyway, please retest with the v3 I've just posted.  The previous
-iteration had a rather serious issue that might very well influence
-the results (it was using stale values sometimes).
+> 
+> Also I can imagine that in future (or maybe already now?) it is possible
+> to find PCI device which pass above checks and connect this PCI device
+> into desktop /server / any non-laptop device.
+> 
+> If this switchable graphics solution is specific to dell laptops, then
+> rather checking for PCI vendor/subvevendor main check, there should be
+> main check via DMI strings.
+
+Right now this is affected to both AIO desktop and laptops.
+
+IIRC you won't end up with switchable graphics in traditional desktop that you
+can remove PCI card.  If this code was run on a traditional desktop with a 
+AMD PCI card that BIOS query result should be invalid token (which will infer
+switchable off to this routine).
+
+> 
+> Hardware is changing relatively quickly and there is absolutely no
+> guarantee that e.g. NVIDIA would not start providing audio controller in
+> similar like AMD and it would be put in those Dell machines.
+
+Kai Heng can explain exactly why NVIDIA isn't affected.
+This is probably good information to include in the commit message too.
+
+> 
+> > > >
+> > > > Interesting question would be, how handle this situation Windows?
+> > >
+> > > I don't know how this platform handles this on Windows, I guess we need
+> > > Mario to shed some lights here.
+> >
+> > Sorry I don't have this information to share.   I don't think it's too useful here
+> > anyway though because Windows driver architecture is much different in this
+> > area.
+> >
+> >
+> 
+> --
+> Pali Rohár
+> pali.rohar@gmail.com
