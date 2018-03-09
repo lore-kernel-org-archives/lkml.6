@@ -1,57 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751209AbeCIEpA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 23:45:00 -0500
-Received: from ozlabs.org ([103.22.144.67]:43789 "EHLO ozlabs.org"
+        id S1751065AbeCIEtE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 23:49:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750913AbeCIEo7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 23:44:59 -0500
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Fri, 9 Mar 2018 15:44:36 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: linux-next: Signed-off-by missing for commit in the drm tree
-Message-ID: <20180309154436.79df1526@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3DhefnmpCspuG5zmYqbj+3K"; protocol="application/pgp-signature"
+        id S1750848AbeCIEtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 23:49:03 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8797E20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: avoid selinux denial on CAP_SYS_RESOURCE
+Date: Thu,  8 Mar 2018 20:49:00 -0800
+Message-Id: <20180309044900.39677-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.15.0.531.g2ccb3012c9-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/3DhefnmpCspuG5zmYqbj+3K
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This fixes CAP_SYS_RESOURCE denial of selinux when using resgid.
 
-Hi all,
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/f2fs.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Commit
-
-  37a94791a097 ("drm/amd/pp: Add #ifdef checks for CONFIG_ACPI")
-
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/3DhefnmpCspuG5zmYqbj+3K
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqiETQACgkQAVBC80lX
-0Gy7EggAnWChpO1LzmHDaVHm3NBfatk3jYrROuG013ElPnD/fstQHGi3dgwGbMNJ
-r+TBOHejMf+7APbEH97PsLvDeoQDBjpouG5tywxPjCqdj1qLtxFCPJOm4onAE6vo
-Y/q4lN6UwHVFNEJiQPHqfcbVJXgS5IvwZinpRZWQI1YctkOuXEZveJSf8HK7zJa4
-0CPNTN6eepWzELup1d033gfwdufP1fWMQDHtqTSlbiaMX+lQ3bPam62+a9ZHDgZy
-ZBdC6KXdWabzUzeLdD3u8/BB702oevMJUyv8cXYBigcpTzx+ONWyiMy2vL9WEdUH
-QhAuWbn85+ueWjdhhuGaQr5kG+PRqg==
-=fCqz
------END PGP SIGNATURE-----
-
---Sig_/3DhefnmpCspuG5zmYqbj+3K--
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f6dc70666ebb..3d12277fbe9e 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1607,13 +1607,13 @@ static inline bool __allow_reserved_blocks(struct f2fs_sb_info *sbi,
+ 		return false;
+ 	if (IS_NOQUOTA(inode))
+ 		return true;
+-	if (capable(CAP_SYS_RESOURCE))
+-		return true;
+ 	if (uid_eq(sbi->s_resuid, current_fsuid()))
+ 		return true;
+ 	if (!gid_eq(sbi->s_resgid, GLOBAL_ROOT_GID) &&
+ 					in_group_p(sbi->s_resgid))
+ 		return true;
++	if (capable(CAP_SYS_RESOURCE))
++		return true;
+ 	return false;
+ }
+ 
+-- 
+2.15.0.531.g2ccb3012c9-goog
