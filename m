@@ -1,50 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751170AbeCIHH7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 02:07:59 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:1261 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750880AbeCIHH6 (ORCPT
+        id S1751229AbeCIHLv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 02:11:51 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:45744 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750913AbeCIHLt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 02:07:58 -0500
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="37660501"
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Subject: irqdesc: Why the "__ref" is needed in __irq_alloc_descs() ?
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>, <re.emese@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-CC: <linux-kernel@vger.kernel.org>
-Message-ID: <9246951e-9cf5-6a3f-5cf4-2d3aaff03026@cn.fujitsu.com>
-Date: Fri, 9 Mar 2018 15:07:47 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Fri, 9 Mar 2018 02:11:49 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5CF3360618
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+X-Google-Smtp-Source: AG47ELuj6ASc+jW7CiSOwKL5cY2+siGnXKBC9t4hD3aPfk6lQoT0agPKmcQJa4M9l/8NNMvgbXw4QwKlYyepVww9pmw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: 4E4334D0EFF4.AA5DF
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+In-Reply-To: <CAFp+6iF1oM=fmRCqSG-SxcUVvvOLet_Y0p7pmGn+=B-LdMNiww@mail.gmail.com>
+References: <20180302101050.6191-1-vivek.gautam@codeaurora.org>
+ <20180302101050.6191-5-vivek.gautam@codeaurora.org> <f3011ef1-7ffe-8c2b-b9d6-3fb094789656@arm.com>
+ <CAFp+6iF1oM=fmRCqSG-SxcUVvvOLet_Y0p7pmGn+=B-LdMNiww@mail.gmail.com>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Date: Fri, 9 Mar 2018 12:41:46 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iFzGYWZMLkNrN1ZJJ2xH4CxQsiU6oYboHDzL0jDwm+4VQ@mail.gmail.com>
+Message-ID: <CAFp+6iFzGYWZMLkNrN1ZJJ2xH4CxQsiU6oYboHDzL0jDwm+4VQ@mail.gmail.com>
+Subject: Re: [PATCH v8 4/5] iommu/arm-smmu: Add the device_link between
+ masters and smmu
+To: Robin Murphy <robin.murphy@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
+        "robh+dt" <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Rob Clark <robdclark@gmail.com>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        devicetree@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>, jcrouse@codeaurora.org,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maintainers,
+On Thu, Mar 8, 2018 at 10:29 AM, Vivek Gautam
+<vivek.gautam@codeaurora.org> wrote:
+> On Wed, Mar 7, 2018 at 6:17 PM, Robin Murphy <robin.murphy@arm.com> wrote:
+>> On 02/03/18 10:10, Vivek Gautam wrote:
+>>>
+>>> From: Sricharan R <sricharan@codeaurora.org>
+>>>
+>>> Finally add the device link between the master device and
+>>> smmu, so that the smmu gets runtime enabled/disabled only when the
+>>> master needs it. This is done from add_device callback which gets
+>>> called once when the master is added to the smmu.
+>>>
+>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+>>> ---
+>>>   drivers/iommu/arm-smmu.c | 21 +++++++++++++++++++++
+>>>   1 file changed, 21 insertions(+)
+>>>
+>>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+>>> index 3d6a1875431f..bb1ea82c1003 100644
+>>> --- a/drivers/iommu/arm-smmu.c
+>>> +++ b/drivers/iommu/arm-smmu.c
+>>> @@ -217,6 +217,9 @@ struct arm_smmu_device {
+>>>         /* IOMMU core code handle */
+>>>         struct iommu_device             iommu;
+>>> +
+>>> +       /* runtime PM link to master */
+>>> +       struct device_link *link;
+>>
+>>
+>> Just the one?
 
-I have a question about "__ref" in Linux kernel.
+we will either have to count all the devices that are present on the
+iommu bus, or
+maintain a list to which all the links can be added.
+But to add the list, we will have to initialize a LIST_HEAD in struct
+device_link
+as well.
 
-When I looked into the __irq_alloc_descs(), I found it tagged a
-"__ref" mark, but I didn't find that it referenced code or data
-from init section.
+Or, I think we don't even need to maintain a pointer to link with smmu.
+In arm_smmu_remove_device(), we can find out the correct link, and delete it.
 
-So, I confuse why the "__ref"  is needed in __irq_alloc_descs()?
-any other reasons?
+        list_for_each_entry(link, &dev->links.suppliers, c_node)
+                if (link->supplier == smmu->dev);
+                           device_link_del(link);
 
-And after I tested, seems "__ref" just puts the code into a different
-section that is not checked by modpost. It does not affect the
-performance whether it is tagged or not. Is it right?
+Should that be fine?
 
-Thanks,
-	dou.
+Rafael, does the above snippet looks right to you? Context: smmu->dev
+is the supplier, and dev is the consumer. We want to find the link,
+and delete it.
+
+regards
+Vivek
+
+>>
+>>>   };
+>>>     enum arm_smmu_context_fmt {
+>>> @@ -1470,10 +1473,26 @@ static int arm_smmu_add_device(struct device *dev)
+>>>         iommu_device_link(&smmu->iommu, dev);
+>>>   +     /*
+>>> +        * Establish the link between smmu and master, so that the
+>>> +        * smmu gets runtime enabled/disabled as per the master's
+>>> +        * needs.
+>>> +        */
+>>> +       smmu->link = device_link_add(dev, smmu->dev, DL_FLAG_PM_RUNTIME);
+>>
+>>
+>> Maybe I've misunderstood how the API works, but AFAICS the second and
+>> subsequent devices are all just going to overwrite (and leak) the link of
+>> the previous one...
+>
+> Sorry, my bad. Will take care of this.
+>
+> regards
+> Vivek
+>
+>>
+>>> +       if (!smmu->link) {
+>>> +               dev_warn(smmu->dev, "Unable to create device link between
+>>> %s and %s\n",
+>>> +                        dev_name(smmu->dev), dev_name(dev));
+>>> +               ret = -ENODEV;
+>>> +               goto out_unlink;
+>>> +       }
+>>> +
+>>>         arm_smmu_rpm_put(smmu);
+>>>         return 0;
+>>>   +out_unlink:
+>>> +       iommu_device_unlink(&smmu->iommu, dev);
+>>> +       arm_smmu_master_free_smes(fwspec);
+>>>   out_rpm_put:
+>>>         arm_smmu_rpm_put(smmu);
+>>>   out_cfg_free:
+>>> @@ -1496,6 +1515,8 @@ static void arm_smmu_remove_device(struct device
+>>> *dev)
+>>>         cfg  = fwspec->iommu_priv;
+>>>         smmu = cfg->smmu;
+>>>   +     device_link_del(smmu->link);
+>>
+>>
+>> ...and equivalently you end up with a double-free (or more) here of a link
+>> which may not have belonged to dev anyway.
+>>
+>> Robin.
+>>
+>>
+>>> +
+>>>         ret = arm_smmu_rpm_get(smmu);
+>>>         if (ret < 0)
+>>>                 return;
+>>>
+>>
+>
+>
+>
+> --
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
+
+
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
