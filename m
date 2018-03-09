@@ -1,31 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751183AbeCIJIo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 04:08:44 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:37979 "EHLO
+        id S1751246AbeCIJJM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 04:09:12 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:34789 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750909AbeCIJIm (ORCPT
+        with ESMTP id S1750965AbeCIJJJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:08:42 -0500
-Date: Fri, 9 Mar 2018 01:08:18 -0800
+        Fri, 9 Mar 2018 04:09:09 -0500
+Date: Fri, 9 Mar 2018 01:08:45 -0800
 From: tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-82d71ed0277efc45360828af8c4e4d40e1b45352@git.kernel.org>
-Cc: kan.liang@linux.intel.com, peterz@infradead.org,
-        torvalds@linux-foundation.org, tglx@linutronix.de, acme@redhat.com,
-        jolsa@redhat.com, alexander.shishkin@linux.intel.com, hpa@zytor.com,
-        mingo@kernel.org, linux-kernel@vger.kernel.org,
-        vincent.weaver@maine.edu, fengguang.wu@intel.com, eranian@google.com
-Reply-To: fengguang.wu@intel.com, vincent.weaver@maine.edu, eranian@google.com,
-        mingo@kernel.org, hpa@zytor.com, jolsa@redhat.com,
-        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, acme@redhat.com, kan.liang@linux.intel.com,
-        peterz@infradead.org, torvalds@linux-foundation.org
-In-Reply-To: <6f44ee84-56f8-79f1-559b-08e371eaeb78@linux.intel.com>
-References: <6f44ee84-56f8-79f1-559b-08e371eaeb78@linux.intel.com>
+Message-ID: <tip-d31fc13fdcb20e1c317f9a7dd6273c18fbd58308@git.kernel.org>
+Cc: acme@redhat.com, torvalds@linux-foundation.org, peterz@infradead.org,
+        jolsa@redhat.com, vincent.weaver@maine.edu, mingo@kernel.org,
+        kan.liang@linux.intel.com, alexander.shishkin@linux.intel.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, eranian@google.com,
+        tglx@linutronix.de
+Reply-To: tglx@linutronix.de, eranian@google.com, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, alexander.shishkin@linux.intel.com,
+        kan.liang@linux.intel.com, mingo@kernel.org, vincent.weaver@maine.edu,
+        jolsa@redhat.com, peterz@infradead.org, torvalds@linux-foundation.org,
+        acme@redhat.com
+In-Reply-To: <1518474035-21006-2-git-send-email-kan.liang@linux.intel.com>
+References: <1518474035-21006-2-git-send-email-kan.liang@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/x86/intel: Properly save/restore the PMU state
- in the NMI handler
-Git-Commit-ID: 82d71ed0277efc45360828af8c4e4d40e1b45352
+Subject: [tip:perf/core] perf/x86/intel: Fix event update for auto-reload
+Git-Commit-ID: d31fc13fdcb20e1c317f9a7dd6273c18fbd58308
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -38,24 +37,72 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  82d71ed0277efc45360828af8c4e4d40e1b45352
-Gitweb:     https://git.kernel.org/tip/82d71ed0277efc45360828af8c4e4d40e1b45352
+Commit-ID:  d31fc13fdcb20e1c317f9a7dd6273c18fbd58308
+Gitweb:     https://git.kernel.org/tip/d31fc13fdcb20e1c317f9a7dd6273c18fbd58308
 Author:     Kan Liang <kan.liang@linux.intel.com>
-AuthorDate: Tue, 20 Feb 2018 02:11:50 -0800
+AuthorDate: Mon, 12 Feb 2018 14:20:31 -0800
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 9 Mar 2018 08:22:18 +0100
+CommitDate: Fri, 9 Mar 2018 08:22:19 +0100
 
-perf/x86/intel: Properly save/restore the PMU state in the NMI handler
+perf/x86/intel: Fix event update for auto-reload
 
-The PMU is disabled in intel_pmu_handle_irq(), but cpuc->enabled is not updated
-accordingly.
+There is a bug when reading event->count with large PEBS enabled.
 
-This is fine in current usage because no-one checks it - but fix it
-for future code: for example, the drain_pebs() will be modified to
-fix an auto-reload bug.
+Here is an example:
 
-Properly save/restore the old PMU state.
+  # ./read_count
+  0x71f0
+  0x122c0
+  0x1000000001c54
+  0x100000001257d
+  0x200000000bdc5
 
+In fixed period mode, the auto-reload mechanism could be enabled for
+PEBS events, but the calculation of event->count does not take the
+auto-reload values into account.
+
+Anyone who reads event->count will get the wrong result, e.g x86_pmu_read().
+
+This bug was introduced with the auto-reload mechanism enabled since
+commit:
+
+  851559e35fd5 ("perf/x86/intel: Use the PEBS auto reload mechanism when possible")
+
+Introduce intel_pmu_save_and_restart_reload() to calculate the
+event->count only for auto-reload.
+
+Since the counter increments a negative counter value and overflows on
+the sign switch, giving the interval:
+
+        [-period, 0]
+
+the difference between two consequtive reads is:
+
+ A) value2 - value1;
+    when no overflows have happened in between,
+ B) (0 - value1) + (value2 - (-period));
+    when one overflow happened in between,
+ C) (0 - value1) + (n - 1) * (period) + (value2 - (-period));
+    when @n overflows happened in between.
+
+Here A) is the obvious difference, B) is the extension to the discrete
+interval, where the first term is to the top of the interval and the
+second term is from the bottom of the next interval and C) the extension
+to multiple intervals, where the middle term is the whole intervals
+covered.
+
+The equation for all cases is:
+
+    value2 - value1 + n * period
+
+Previously the event->count is updated right before the sample output.
+But for case A, there is no PEBS record ready. It needs to be specially
+handled.
+
+Remove the auto-reload code from x86_perf_event_set_period() since
+we'll not longer call that function in this case.
+
+Based-on-code-from: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -67,48 +114,166 @@ Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Vince Weaver <vincent.weaver@maine.edu>
 Cc: acme@kernel.org
-Cc: kernel test robot <fengguang.wu@intel.com>
-Link: http://lkml.kernel.org/r/6f44ee84-56f8-79f1-559b-08e371eaeb78@linux.intel.com
+Fixes: 851559e35fd5 ("perf/x86/intel: Use the PEBS auto reload mechanism when possible")
+Link: http://lkml.kernel.org/r/1518474035-21006-2-git-send-email-kan.liang@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/events/intel/core.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ arch/x86/events/core.c     | 15 +++-----
+ arch/x86/events/intel/ds.c | 92 ++++++++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 94 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 6b6c1717787d..1ba7ca7b675d 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -2201,9 +2201,15 @@ static int intel_pmu_handle_irq(struct pt_regs *regs)
- 	int bit, loops;
- 	u64 status;
- 	int handled;
-+	int pmu_enabled;
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 140d33288e78..5a3ccd1715e2 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -1156,16 +1156,13 @@ int x86_perf_event_set_period(struct perf_event *event)
  
- 	cpuc = this_cpu_ptr(&cpu_hw_events);
+ 	per_cpu(pmc_prev_left[idx], smp_processor_id()) = left;
  
+-	if (!(hwc->flags & PERF_X86_EVENT_AUTO_RELOAD) ||
+-	    local64_read(&hwc->prev_count) != (u64)-left) {
+-		/*
+-		 * The hw event starts counting from this event offset,
+-		 * mark it to be able to extra future deltas:
+-		 */
+-		local64_set(&hwc->prev_count, (u64)-left);
 +	/*
-+	 * Save the PMU state.
-+	 * It needs to be restored when leaving the handler.
++	 * The hw event starts counting from this event offset,
++	 * mark it to be able to extra future deltas:
 +	 */
-+	pmu_enabled = cpuc->enabled;
++	local64_set(&hwc->prev_count, (u64)-left);
+ 
+-		wrmsrl(hwc->event_base, (u64)(-left) & x86_pmu.cntval_mask);
+-	}
++	wrmsrl(hwc->event_base, (u64)(-left) & x86_pmu.cntval_mask);
+ 
  	/*
- 	 * No known reason to not always do late ACK,
- 	 * but just in case do it opt-in.
-@@ -2211,6 +2217,7 @@ static int intel_pmu_handle_irq(struct pt_regs *regs)
- 	if (!x86_pmu.late_ack)
- 		apic_write(APIC_LVTPC, APIC_DM_NMI);
- 	intel_bts_disable_local();
-+	cpuc->enabled = 0;
- 	__intel_pmu_disable_all();
- 	handled = intel_pmu_drain_bts_buffer();
- 	handled += intel_bts_interrupt();
-@@ -2320,7 +2327,8 @@ again:
+ 	 * Due to erratum on certan cpu we need
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index 18c25ab28557..f39a4df3a7bd 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -1306,17 +1306,84 @@ get_next_pebs_record_by_bit(void *base, void *top, int bit)
+ 	return NULL;
+ }
  
- done:
- 	/* Only restore PMU state when it's active. See x86_pmu_disable(). */
--	if (cpuc->enabled)
-+	cpuc->enabled = pmu_enabled;
-+	if (pmu_enabled)
- 		__intel_pmu_enable_all(0, true);
- 	intel_bts_enable_local();
++/*
++ * Special variant of intel_pmu_save_and_restart() for auto-reload.
++ */
++static int
++intel_pmu_save_and_restart_reload(struct perf_event *event, int count)
++{
++	struct hw_perf_event *hwc = &event->hw;
++	int shift = 64 - x86_pmu.cntval_bits;
++	u64 period = hwc->sample_period;
++	u64 prev_raw_count, new_raw_count;
++	s64 new, old;
++
++	WARN_ON(!period);
++
++	/*
++	 * drain_pebs() only happens when the PMU is disabled.
++	 */
++	WARN_ON(this_cpu_read(cpu_hw_events.enabled));
++
++	prev_raw_count = local64_read(&hwc->prev_count);
++	rdpmcl(hwc->event_base_rdpmc, new_raw_count);
++	local64_set(&hwc->prev_count, new_raw_count);
++
++	/*
++	 * Since the counter increments a negative counter value and
++	 * overflows on the sign switch, giving the interval:
++	 *
++	 *   [-period, 0]
++	 *
++	 * the difference between two consequtive reads is:
++	 *
++	 *   A) value2 - value1;
++	 *      when no overflows have happened in between,
++	 *
++	 *   B) (0 - value1) + (value2 - (-period));
++	 *      when one overflow happened in between,
++	 *
++	 *   C) (0 - value1) + (n - 1) * (period) + (value2 - (-period));
++	 *      when @n overflows happened in between.
++	 *
++	 * Here A) is the obvious difference, B) is the extension to the
++	 * discrete interval, where the first term is to the top of the
++	 * interval and the second term is from the bottom of the next
++	 * interval and C) the extension to multiple intervals, where the
++	 * middle term is the whole intervals covered.
++	 *
++	 * An equivalent of C, by reduction, is:
++	 *
++	 *   value2 - value1 + n * period
++	 */
++	new = ((s64)(new_raw_count << shift) >> shift);
++	old = ((s64)(prev_raw_count << shift) >> shift);
++	local64_add(new - old + count * period, &event->count);
++
++	perf_event_update_userpage(event);
++
++	return 0;
++}
++
+ static void __intel_pmu_pebs_event(struct perf_event *event,
+ 				   struct pt_regs *iregs,
+ 				   void *base, void *top,
+ 				   int bit, int count)
+ {
++	struct hw_perf_event *hwc = &event->hw;
+ 	struct perf_sample_data data;
+ 	struct pt_regs regs;
+ 	void *at = get_next_pebs_record_by_bit(base, top, bit);
  
+-	if (!intel_pmu_save_and_restart(event) &&
+-	    !(event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD))
++	if (hwc->flags & PERF_X86_EVENT_AUTO_RELOAD) {
++		/*
++		 * Now, auto-reload is only enabled in fixed period mode.
++		 * The reload value is always hwc->sample_period.
++		 * May need to change it, if auto-reload is enabled in
++		 * freq mode later.
++		 */
++		intel_pmu_save_and_restart_reload(event, count);
++	} else if (!intel_pmu_save_and_restart(event))
+ 		return;
+ 
+ 	while (count > 1) {
+@@ -1368,8 +1435,11 @@ static void intel_pmu_drain_pebs_core(struct pt_regs *iregs)
+ 		return;
+ 
+ 	n = top - at;
+-	if (n <= 0)
++	if (n <= 0) {
++		if (event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD)
++			intel_pmu_save_and_restart_reload(event, 0);
+ 		return;
++	}
+ 
+ 	__intel_pmu_pebs_event(event, iregs, at, top, 0, n);
+ }
+@@ -1392,8 +1462,22 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs)
+ 
+ 	ds->pebs_index = ds->pebs_buffer_base;
+ 
+-	if (unlikely(base >= top))
++	if (unlikely(base >= top)) {
++		/*
++		 * The drain_pebs() could be called twice in a short period
++		 * for auto-reload event in pmu::read(). There are no
++		 * overflows have happened in between.
++		 * It needs to call intel_pmu_save_and_restart_reload() to
++		 * update the event->count for this case.
++		 */
++		for_each_set_bit(bit, (unsigned long *)&cpuc->pebs_enabled,
++				 x86_pmu.max_pebs_events) {
++			event = cpuc->events[bit];
++			if (event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD)
++				intel_pmu_save_and_restart_reload(event, 0);
++		}
+ 		return;
++	}
+ 
+ 	for (at = base; at < top; at += x86_pmu.pebs_record_size) {
+ 		struct pebs_record_nhm *p = at;
