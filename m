@@ -1,74 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751849AbeCIKQJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:16:09 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:43705 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751741AbeCIKQH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 05:16:07 -0500
-Date: Fri, 9 Mar 2018 02:15:55 -0800
-From: tip-bot for Masahiro Yamada <tipbot@zytor.com>
-Message-ID: <tip-bd2746f09e1d8e37164f53b846f5225f3d36ee2d@git.kernel.org>
-Cc: tglx@linutronix.de, mingo@kernel.org, daniel.lezcano@linaro.org,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, arnd@arndb.de,
-        yamada.masahiro@socionext.com
-Reply-To: tglx@linutronix.de, mingo@kernel.org, daniel.lezcano@linaro.org,
-        hpa@zytor.com, yamada.masahiro@socionext.com, arnd@arndb.de,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <1520335233-11277-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1520335233-11277-1-git-send-email-yamada.masahiro@socionext.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/urgent] clocksource/atmel-st: Add 'depends on
- HAS_IOMEM' to fix unmet dependency
-Git-Commit-ID: bd2746f09e1d8e37164f53b846f5225f3d36ee2d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        id S1751613AbeCIKP5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:15:57 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:49957 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751056AbeCIKPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 05:15:54 -0500
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Cc: Icenowy Zheng <icenowy@aosc.xyz>, Florent Revest <revestflo@gmail.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Thomas van Kleef <thomas@vitsch.nl>,
+        "Signed-off-by : Bob Ham" <rah@settrans.net>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH 6/9] sunxi-cedrus: Add device tree binding document
+Date: Fri,  9 Mar 2018 11:14:42 +0100
+Message-Id: <20180309101445.16190-4-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180309100933.15922-3-paul.kocialkowski@bootlin.com>
+References: <20180309100933.15922-3-paul.kocialkowski@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  bd2746f09e1d8e37164f53b846f5225f3d36ee2d
-Gitweb:     https://git.kernel.org/tip/bd2746f09e1d8e37164f53b846f5225f3d36ee2d
-Author:     Masahiro Yamada <yamada.masahiro@socionext.com>
-AuthorDate: Tue, 6 Mar 2018 20:20:33 +0900
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 9 Mar 2018 11:11:58 +0100
+From: Florent Revest <florent.revest@free-electrons.com>
 
-clocksource/atmel-st: Add 'depends on HAS_IOMEM' to fix unmet dependency
+Device Tree bindings for the Allwinner's video engine
 
-The ATMEL_ST config selects MFD_SYSCON, but does not depend on HAS_IOMEM.
-
-Compile testing on architecture without HAS_IOMEM causes "unmet direct
-dependencies" in Kconfig phase. Detected by "make ARCH=score allyesconfig".
-
-Add the proper dependency to the ATMEL_ST config.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Link: https://lkml.kernel.org/r/1520335233-11277-1-git-send-email-yamada.masahiro@socionext.com
-
+Signed-off-by: Florent Revest <florent.revest@free-electrons.com>
 ---
- drivers/clocksource/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/media/sunxi-cedrus.txt     | 44 ++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/sunxi-cedrus.txt
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index b3b4ed9b6874..d2e5382821a4 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -386,6 +386,7 @@ config ATMEL_PIT
- 
- config ATMEL_ST
- 	bool "Atmel ST timer support" if COMPILE_TEST
-+	depends on HAS_IOMEM
- 	select TIMER_OF
- 	select MFD_SYSCON
- 	help
+diff --git a/Documentation/devicetree/bindings/media/sunxi-cedrus.txt b/Documentation/devicetree/bindings/media/sunxi-cedrus.txt
+new file mode 100644
+index 000000000000..138581113c49
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/sunxi-cedrus.txt
+@@ -0,0 +1,44 @@
++Device-Tree bindings for SUNXI video engine found in sunXi SoC family
++
++Required properties:
++- compatible	    : "allwinner,sun4i-a10-video-engine";
++- memory-region     : DMA pool for buffers allocation;
++- clocks	    : list of clock specifiers, corresponding to
++		      entries in clock-names property;
++- clock-names	    : should contain "ahb", "mod" and "ram" entries;
++- resets	    : phandle for reset;
++- interrupts	    : should contain VE interrupt number;
++- reg		    : should contain register base and length of VE.
++
++Example:
++
++reserved-memory {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	ranges;
++
++	ve_reserved: cma {
++		compatible = "shared-dma-pool";
++		reg = <0x43d00000 0x9000000>;
++		no-map;
++		linux,cma-default;
++	};
++};
++
++video-engine {
++	compatible = "allwinner,sun4i-a10-video-engine";
++	memory-region = <&ve_reserved>;
++
++	clocks = <&ahb_gates 32>, <&ccu CLK_VE>,
++		 <&dram_gates 0>;
++	clock-names = "ahb", "mod", "ram";
++
++	assigned-clocks = <&ccu CLK_VE>;
++	assigned-clock-rates = <320000000>;
++
++	resets = <&ccu RST_VE>;
++
++	interrupts = <53>;
++
++	reg = <0x01c0e000 4096>;
++};
+-- 
+2.16.2
