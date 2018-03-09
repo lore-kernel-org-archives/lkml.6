@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932249AbeCIOFs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 09:05:48 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35198 "EHLO mx1.redhat.com"
+        id S932252AbeCIOGI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 09:06:08 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34106 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932092AbeCIOC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 09:02:59 -0500
+        id S1751151AbeCIOC5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 09:02:57 -0500
 From: Vitaly Kuznetsov <vkuznets@redhat.com>
 To: kvm@vger.kernel.org
 Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
@@ -16,117 +16,240 @@ Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
         "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
         Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
         Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/7] x86/kvm: rename HV_X64_MSR_APIC_ASSIST_PAGE to HV_X64_MSR_VP_ASSIST_PAGE
-Date: Fri,  9 Mar 2018 15:02:45 +0100
-Message-Id: <20180309140249.2840-4-vkuznets@redhat.com>
+Subject: [PATCH v3 2/7] x86/hyper-v: move definitions from TLFS to hyperv-tlfs.h
+Date: Fri,  9 Mar 2018 15:02:44 +0100
+Message-Id: <20180309140249.2840-3-vkuznets@redhat.com>
 In-Reply-To: <20180309140249.2840-1-vkuznets@redhat.com>
 References: <20180309140249.2840-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ladi Prosek <lprosek@redhat.com>
+mshyperv.h now only contains fucntions/variables we define in kernel, all
+definitions from TLFS should go to hyperv-tlfs.h.
 
-The assist page has been used only for the paravirtual EOI so far, hence
-the "APIC" in the MSR name. Renaming to match the Hyper-V TLFS where it's
-called "Virtual VP Assist MSR".
+'enum hv_cpuid_function' is removed as we already have this info in
+hyperv-tlfs.h, code in mshyperv.c is adjusted accordingly.
 
-Signed-off-by: Ladi Prosek <lprosek@redhat.com>
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
- arch/x86/include/asm/hyperv-tlfs.h | 10 +++++-----
- arch/x86/kvm/hyperv.c              |  8 ++++----
- arch/x86/kvm/lapic.h               |  2 +-
- arch/x86/kvm/x86.c                 |  2 +-
- 4 files changed, 11 insertions(+), 11 deletions(-)
+ arch/x86/include/asm/hyperv-tlfs.h | 57 ++++++++++++++++++++++++++++
+ arch/x86/include/asm/mshyperv.h    | 78 +-------------------------------------
+ arch/x86/kernel/cpu/mshyperv.c     | 15 ++++----
+ 3 files changed, 66 insertions(+), 84 deletions(-)
 
 diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
-index d1f1f9d9f807..5c0d8fab87a3 100644
+index e311a175014c..d1f1f9d9f807 100644
 --- a/arch/x86/include/asm/hyperv-tlfs.h
 +++ b/arch/x86/include/asm/hyperv-tlfs.h
-@@ -189,7 +189,7 @@
- #define HV_X64_MSR_EOI				0x40000070
- #define HV_X64_MSR_ICR				0x40000071
- #define HV_X64_MSR_TPR				0x40000072
--#define HV_X64_MSR_APIC_ASSIST_PAGE		0x40000073
-+#define HV_X64_MSR_VP_ASSIST_PAGE		0x40000073
+@@ -237,6 +237,55 @@
+ #define HV_X64_MSR_CRASH_PARAMS		\
+ 		(1 + (HV_X64_MSR_CRASH_P4 - HV_X64_MSR_CRASH_P0))
  
- /* Define synthetic interrupt controller model specific registers. */
- #define HV_X64_MSR_SCONTROL			0x40000080
-@@ -324,10 +324,10 @@ struct hv_tsc_emulation_status {
- #define HVCALL_POST_MESSAGE			0x005c
- #define HVCALL_SIGNAL_EVENT			0x005d
++/*
++ * Declare the MSR used to setup pages used to communicate with the hypervisor.
++ */
++union hv_x64_msr_hypercall_contents {
++	u64 as_uint64;
++	struct {
++		u64 enable:1;
++		u64 reserved:11;
++		u64 guest_physical_address:52;
++	};
++};
++
++/*
++ * TSC page layout.
++ */
++struct ms_hyperv_tsc_page {
++	volatile u32 tsc_sequence;
++	u32 reserved1;
++	volatile u64 tsc_scale;
++	volatile s64 tsc_offset;
++	u64 reserved2[509];
++};
++
++/*
++ * The guest OS needs to register the guest ID with the hypervisor.
++ * The guest ID is a 64 bit entity and the structure of this ID is
++ * specified in the Hyper-V specification:
++ *
++ * msdn.microsoft.com/en-us/library/windows/hardware/ff542653%28v=vs.85%29.aspx
++ *
++ * While the current guideline does not specify how Linux guest ID(s)
++ * need to be generated, our plan is to publish the guidelines for
++ * Linux and other guest operating systems that currently are hosted
++ * on Hyper-V. The implementation here conforms to this yet
++ * unpublished guidelines.
++ *
++ *
++ * Bit(s)
++ * 63 - Indicates if the OS is Open Source or not; 1 is Open Source
++ * 62:56 - Os Type; Linux is 0x100
++ * 55:48 - Distro specific identification
++ * 47:16 - Linux kernel version number
++ * 15:0  - Distro specific identification
++ *
++ *
++ */
++
++#define HV_LINUX_VENDOR_ID              0x8100
++
+ /* TSC emulation after migration */
+ #define HV_X64_MSR_REENLIGHTENMENT_CONTROL	0x40000106
  
--#define HV_X64_MSR_APIC_ASSIST_PAGE_ENABLE		0x00000001
--#define HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_SHIFT	12
--#define HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_MASK	\
--		(~((1ull << HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_SHIFT) - 1))
-+#define HV_X64_MSR_VP_ASSIST_PAGE_ENABLE	0x00000001
-+#define HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT	12
-+#define HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_MASK	\
-+		(~((1ull << HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT) - 1))
+@@ -298,6 +347,14 @@ enum HV_GENERIC_SET_FORMAT {
+ 	HV_GENERIC_SET_ALL,
+ };
  
- #define HV_X64_MSR_TSC_REFERENCE_ENABLE		0x00000001
- #define HV_X64_MSR_TSC_REFERENCE_ADDRESS_SHIFT	12
-diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index dc97f2544b6f..9fb0ed9b1670 100644
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@ -1009,17 +1009,17 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
- 			return 1;
- 		hv->vp_index = (u32)data;
- 		break;
--	case HV_X64_MSR_APIC_ASSIST_PAGE: {
-+	case HV_X64_MSR_VP_ASSIST_PAGE: {
- 		u64 gfn;
- 		unsigned long addr;
++#define HV_HYPERCALL_RESULT_MASK	GENMASK_ULL(15, 0)
++#define HV_HYPERCALL_FAST_BIT		BIT(16)
++#define HV_HYPERCALL_VARHEAD_OFFSET	17
++#define HV_HYPERCALL_REP_COMP_OFFSET	32
++#define HV_HYPERCALL_REP_COMP_MASK	GENMASK_ULL(43, 32)
++#define HV_HYPERCALL_REP_START_OFFSET	48
++#define HV_HYPERCALL_REP_START_MASK	GENMASK_ULL(59, 48)
++
+ /* hypercall status code */
+ #define HV_STATUS_SUCCESS			0
+ #define HV_STATUS_INVALID_HYPERCALL_CODE	2
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index 044323a59354..38cfbe9a5794 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -9,25 +9,6 @@
+ #include <asm/hyperv-tlfs.h>
+ #include <asm/nospec-branch.h>
  
--		if (!(data & HV_X64_MSR_APIC_ASSIST_PAGE_ENABLE)) {
-+		if (!(data & HV_X64_MSR_VP_ASSIST_PAGE_ENABLE)) {
- 			hv->hv_vapic = data;
- 			if (kvm_lapic_enable_pv_eoi(vcpu, 0))
- 				return 1;
- 			break;
- 		}
--		gfn = data >> HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_SHIFT;
-+		gfn = data >> HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT;
- 		addr = kvm_vcpu_gfn_to_hva(vcpu, gfn);
- 		if (kvm_is_error_hva(addr))
- 			return 1;
-@@ -1129,7 +1129,7 @@ static int kvm_hv_get_msr(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata)
- 		return kvm_hv_vapic_msr_read(vcpu, APIC_ICR, pdata);
- 	case HV_X64_MSR_TPR:
- 		return kvm_hv_vapic_msr_read(vcpu, APIC_TASKPRI, pdata);
--	case HV_X64_MSR_APIC_ASSIST_PAGE:
-+	case HV_X64_MSR_VP_ASSIST_PAGE:
- 		data = hv->hv_vapic;
- 		break;
- 	case HV_X64_MSR_VP_RUNTIME:
-diff --git a/arch/x86/kvm/lapic.h b/arch/x86/kvm/lapic.h
-index 56c36014f7b7..edce055e9fd7 100644
---- a/arch/x86/kvm/lapic.h
-+++ b/arch/x86/kvm/lapic.h
-@@ -109,7 +109,7 @@ int kvm_hv_vapic_msr_read(struct kvm_vcpu *vcpu, u32 msr, u64 *data);
+-/*
+- * The below CPUID leaves are present if VersionAndFeatures.HypervisorPresent
+- * is set by CPUID(HVCPUID_VERSION_FEATURES).
+- */
+-enum hv_cpuid_function {
+-	HVCPUID_VERSION_FEATURES		= 0x00000001,
+-	HVCPUID_VENDOR_MAXFUNCTION		= 0x40000000,
+-	HVCPUID_INTERFACE			= 0x40000001,
+-
+-	/*
+-	 * The remaining functions depend on the value of
+-	 * HVCPUID_INTERFACE
+-	 */
+-	HVCPUID_VERSION				= 0x40000002,
+-	HVCPUID_FEATURES			= 0x40000003,
+-	HVCPUID_ENLIGHTENMENT_INFO		= 0x40000004,
+-	HVCPUID_IMPLEMENTATION_LIMITS		= 0x40000005,
+-};
+-
+ struct ms_hyperv_info {
+ 	u32 features;
+ 	u32 misc_features;
+@@ -38,58 +19,9 @@ struct ms_hyperv_info {
  
- static inline bool kvm_hv_vapic_assist_page_enabled(struct kvm_vcpu *vcpu)
- {
--	return vcpu->arch.hyperv.hv_vapic & HV_X64_MSR_APIC_ASSIST_PAGE_ENABLE;
-+	return vcpu->arch.hyperv.hv_vapic & HV_X64_MSR_VP_ASSIST_PAGE_ENABLE;
+ extern struct ms_hyperv_info ms_hyperv;
+ 
+-/*
+- * Declare the MSR used to setup pages used to communicate with the hypervisor.
+- */
+-union hv_x64_msr_hypercall_contents {
+-	u64 as_uint64;
+-	struct {
+-		u64 enable:1;
+-		u64 reserved:11;
+-		u64 guest_physical_address:52;
+-	};
+-};
+-
+-/*
+- * TSC page layout.
+- */
+-
+-struct ms_hyperv_tsc_page {
+-	volatile u32 tsc_sequence;
+-	u32 reserved1;
+-	volatile u64 tsc_scale;
+-	volatile s64 tsc_offset;
+-	u64 reserved2[509];
+-};
+ 
+ /*
+- * The guest OS needs to register the guest ID with the hypervisor.
+- * The guest ID is a 64 bit entity and the structure of this ID is
+- * specified in the Hyper-V specification:
+- *
+- * msdn.microsoft.com/en-us/library/windows/hardware/ff542653%28v=vs.85%29.aspx
+- *
+- * While the current guideline does not specify how Linux guest ID(s)
+- * need to be generated, our plan is to publish the guidelines for
+- * Linux and other guest operating systems that currently are hosted
+- * on Hyper-V. The implementation here conforms to this yet
+- * unpublished guidelines.
+- *
+- *
+- * Bit(s)
+- * 63 - Indicates if the OS is Open Source or not; 1 is Open Source
+- * 62:56 - Os Type; Linux is 0x100
+- * 55:48 - Distro specific identification
+- * 47:16 - Linux kernel version number
+- * 15:0  - Distro specific identification
+- *
+- *
+- */
+-
+-#define HV_LINUX_VENDOR_ID              0x8100
+-
+-/*
+- * Generate the guest ID based on the guideline described above.
++ * Generate the guest ID.
+  */
+ 
+ static inline  __u64 generate_guest_id(__u64 d_info1, __u64 kernel_version,
+@@ -215,14 +147,6 @@ static inline u64 hv_do_hypercall(u64 control, void *input, void *output)
+ 	return hv_status;
  }
  
- int kvm_lapic_enable_pv_eoi(struct kvm_vcpu *vcpu, u64 data);
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 18b5ca7a3197..372db116e010 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1032,7 +1032,7 @@ static u32 emulated_msrs[] = {
- 	HV_X64_MSR_VP_RUNTIME,
- 	HV_X64_MSR_SCONTROL,
- 	HV_X64_MSR_STIMER0_CONFIG,
--	HV_X64_MSR_APIC_ASSIST_PAGE, MSR_KVM_ASYNC_PF_EN, MSR_KVM_STEAL_TIME,
-+	HV_X64_MSR_VP_ASSIST_PAGE, MSR_KVM_ASYNC_PF_EN, MSR_KVM_STEAL_TIME,
- 	MSR_KVM_PV_EOI_EN,
+-#define HV_HYPERCALL_RESULT_MASK	GENMASK_ULL(15, 0)
+-#define HV_HYPERCALL_FAST_BIT		BIT(16)
+-#define HV_HYPERCALL_VARHEAD_OFFSET	17
+-#define HV_HYPERCALL_REP_COMP_OFFSET	32
+-#define HV_HYPERCALL_REP_COMP_MASK	GENMASK_ULL(43, 32)
+-#define HV_HYPERCALL_REP_START_OFFSET	48
+-#define HV_HYPERCALL_REP_START_MASK	GENMASK_ULL(59, 48)
+-
+ /* Fast hypercall with 8 bytes of input and no output */
+ static inline u64 hv_do_fast_hypercall8(u16 code, u64 input1)
+ {
+diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+index 04f760432a17..0dfc568c110c 100644
+--- a/arch/x86/kernel/cpu/mshyperv.c
++++ b/arch/x86/kernel/cpu/mshyperv.c
+@@ -180,8 +180,8 @@ static void __init ms_hyperv_init_platform(void)
+ 	pr_info("Hyper-V: features 0x%x, hints 0x%x\n",
+ 		ms_hyperv.features, ms_hyperv.hints);
  
- 	MSR_IA32_TSC_ADJUST,
+-	ms_hyperv.max_vp_index = cpuid_eax(HVCPUID_IMPLEMENTATION_LIMITS);
+-	ms_hyperv.max_lp_index = cpuid_ebx(HVCPUID_IMPLEMENTATION_LIMITS);
++	ms_hyperv.max_vp_index = cpuid_eax(HYPERV_CPUID_IMPLEMENT_LIMITS);
++	ms_hyperv.max_lp_index = cpuid_ebx(HYPERV_CPUID_IMPLEMENT_LIMITS);
+ 
+ 	pr_debug("Hyper-V: max %u virtual processors, %u logical processors\n",
+ 		 ms_hyperv.max_vp_index, ms_hyperv.max_lp_index);
+@@ -189,11 +189,12 @@ static void __init ms_hyperv_init_platform(void)
+ 	/*
+ 	 * Extract host information.
+ 	 */
+-	if (cpuid_eax(HVCPUID_VENDOR_MAXFUNCTION) >= HVCPUID_VERSION) {
+-		hv_host_info_eax = cpuid_eax(HVCPUID_VERSION);
+-		hv_host_info_ebx = cpuid_ebx(HVCPUID_VERSION);
+-		hv_host_info_ecx = cpuid_ecx(HVCPUID_VERSION);
+-		hv_host_info_edx = cpuid_edx(HVCPUID_VERSION);
++	if (cpuid_eax(HYPERV_CPUID_VENDOR_AND_MAX_FUNCTIONS) >=
++	    HYPERV_CPUID_VERSION) {
++		hv_host_info_eax = cpuid_eax(HYPERV_CPUID_VERSION);
++		hv_host_info_ebx = cpuid_ebx(HYPERV_CPUID_VERSION);
++		hv_host_info_ecx = cpuid_ecx(HYPERV_CPUID_VERSION);
++		hv_host_info_edx = cpuid_edx(HYPERV_CPUID_VERSION);
+ 
+ 		pr_info("Hyper-V Host Build:%d-%d.%d-%d-%d.%d\n",
+ 			hv_host_info_eax, hv_host_info_ebx >> 16,
 -- 
 2.14.3
