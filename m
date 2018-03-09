@@ -1,27 +1,27 @@
 Return-Path: <jeffy.chen@rock-chips.com>
-X-Google-Smtp-Source: AG47ELu7mxUEOdPtz/uSHiYiJgZ8SCfwgO7CW3iyQcb7h0MHn9TUq2gxeJsSGVJDX/X/IyNKpMwI
-ARC-Seal: i=1; a=rsa-sha256; t=1520585165; cv=none;
+X-Google-Smtp-Source: AG47ELucyX6Tzm1BoLu0QtOsZJL7odCIPdJecHI0C+8EZSOJ5RKPkOqZJat3ke9yf520YpO/Y4Iw
+ARC-Seal: i=1; a=rsa-sha256; t=1520585149; cv=none;
         d=google.com; s=arc-20160816;
-        b=jeSOhW/oGqpqwZUFGOWH3XF6nOwdv/6w8Rlr3wynOO36YLY2MH3oRsCTaO/dv5xMCr
-         /k/L6bNye5sFUuYNEqKRhGTEg8mvvdyJQlw9y06mgpswIaDWuF2LaHbTr3Wza9d4p0uD
-         tpuKvnL8kaKHmqrFTrO19DDZ6HddwGA2eKdSLLv572KPh0EMIQEfIGegrCJPOawhIetz
-         gsRcIDjcfcBLbGQPBEgZ7zMQt9UwH0+UTQwHIrhuTkESDcTmFsJ290bUcJOgxlH45jkC
-         0lZZoYnYbdUglNdaHdLWHcslL8Br7fAp1rAhZy0mTqK7uOyqctsllLg6gRydkHWX3aaz
-         Yx5A==
+        b=Hco+BCSlnmEFln72+WsWcol3F7975ctIRogXQdZm7cSemeOg7ry3KuyOfCyOeFvbDR
+         6lD1ANVsoxiUpFXVAk3e6ef1C0lgDlrPD9iHsZzN2mZ+GsSWxcu48Ny5sWk6DPscTiBp
+         BhIXG/J55M/HP/xkNYPGLu4+wqyop2GkMJysaEuArZ828X1skAvOvDOoZIeAdCHlKFLg
+         6ylhoYpONLVJzRix6AqQQTl6TEkpb4oZQUIc5kZkR0FCxxXEYo7U8uWrOuzfLEBySbCK
+         oYmA/jMyckf1y2/TgY0zVI/j5MmWotOKGFpmvRauSw+D5ChSUdCmE9vsufyItos2I/0J
+         3Cyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=E3kv+mGR12tVt+SN1GF1RRZvuxcUl7vKFNvK1uECuBA=;
-        b=Cn6Ie2THHWbRQuPrePPPRvhZENm/t/0Q6ioQa1dert7XLzv/zaVa4SzZPEgn6bQY24
-         YeMJJjs4GlrXHzgS/M8TUVgrFrebLMWfd//fOytu4XutUprx5hoD1mIuPusmQGYe6+1N
-         6watb4U6m+2r0zrn/VtzHjmivV4HQH2zg4os8mAQKAcn+JJ+asLxT1Z2Rb+qhZKGk961
-         UuTzEfYEKlZiy5t58pt3pxwhK+rPVjoZudg46hIii7ehSPcRQJSc8IrqbzTb4VPe+6Jt
-         N2WtTZuFhi6NKFWKFqTTdnygDyH4ZAZT1dJzu0irx/Fa0DhDrrfUUNesdSi4rtGsJYd0
-         1apA==
+        bh=7Ip+hQEhapXMb4uV6ga7rXAGPTEnxXg8PptDLbkfBxM=;
+        b=CcjdXfesMnW+MGWfu71hUk4LkZlFaPDeMDyqbQds4XfgZ3u89QBYlkTaxJq1B4Dp6W
+         dRhEoFgmkNC1h63fRvCMGyV+XFbhcHTYQev7gbSKQjysrHZQR3XdDEb0BEA5jmGTrk24
+         DoP+abiinsM/m8SsJmKGudpSkrmlBHiKSCkU0D0aiVmrtbqip8lYe+3rT7jmcTFFsUQK
+         w7ucWOry5pToQiDAMXYKfrp/hwCD8sDRydUX4dKncfP1ITbCQWJE2NTSbYIYYh1/ebiw
+         PzvUR2kDRQUL+lnOF3J+NlyiE1RLNG0fLwxxb7NhdbSkpvyY+bnrrS6BIhR1eWQqg6vc
+         77zg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.21 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
+       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.18 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.21 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
+       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.18 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -31,7 +31,7 @@ X-RL-SENDER: jeffy.chen@rock-chips.com
 X-FST-TO: linux-kernel@vger.kernel.org
 X-SENDER-IP: 103.29.142.67
 X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <908b49015ed0b0c8654ba686b6ad74d6>
+X-UNIQUE-TAG: <e6f5af254cd7f3ace2c95cbc2d16da04>
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From: Jeffy Chen <jeffy.chen@rock-chips.com>
@@ -61,23 +61,18 @@ Cc: Guenter Roeck <linux@roeck-us.net>,
 	linux-arm-kernel@lists.infradead.org,
 	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Gabriel Fernandez <gabriel.fernandez@st.com>,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Vladimir Zapolskiy <vz@mleia.com>
-Subject: [RESEND PATCH v4 3/4] clk: lpc32xx: Set name of regmap_config
-Date: Fri,  9 Mar 2018 16:43:50 +0800
-Message-Id: <20180309084351.32009-4-jeffy.chen@rock-chips.com>
+	linux-rtc@vger.kernel.org,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>
+Subject: [RESEND PATCH v4 2/4] rtc: at91sam9: Set name of regmap_config
+Date: Fri,  9 Mar 2018 16:43:49 +0800
+Message-Id: <20180309084351.32009-3-jeffy.chen@rock-chips.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180309084351.32009-1-jeffy.chen@rock-chips.com>
 References: <20180309084351.32009-1-jeffy.chen@rock-chips.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594449109397082422?=
-X-GMAIL-MSGID: =?utf-8?q?1594449109397082422?=
+X-GMAIL-THRID: =?utf-8?q?1594449093751226765?=
+X-GMAIL-MSGID: =?utf-8?q?1594449093751226765?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -87,21 +82,24 @@ having a valid name will end up using "dummy*" to create debugfs dir.
 Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 ---
 
-Changes in v4: None
+Changes in v4:
+Not to use rtc dev to init regmap, the gpbr is not directly related to
+the rtc.
+
 Changes in v3: None
 
- drivers/clk/nxp/clk-lpc32xx.c | 1 +
+ drivers/rtc/rtc-at91sam9.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-index f5d815f577e0..a2a0a7f3bc57 100644
---- a/drivers/clk/nxp/clk-lpc32xx.c
-+++ b/drivers/clk/nxp/clk-lpc32xx.c
-@@ -67,6 +67,7 @@
- #define LPC32XX_USB_CLK_STS		0xF8
+diff --git a/drivers/rtc/rtc-at91sam9.c b/drivers/rtc/rtc-at91sam9.c
+index 7418a763ce52..ee71e647fd43 100644
+--- a/drivers/rtc/rtc-at91sam9.c
++++ b/drivers/rtc/rtc-at91sam9.c
+@@ -349,6 +349,7 @@ static const struct rtc_class_ops at91_rtc_ops = {
+ };
  
- static struct regmap_config lpc32xx_scb_regmap_config = {
-+	.name = "lpc32xx-scb",
+ static const struct regmap_config gpbr_regmap_config = {
++	.name = "gpbr",
  	.reg_bits = 32,
  	.val_bits = 32,
  	.reg_stride = 4,
