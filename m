@@ -1,33 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932527AbeCISEF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 13:04:05 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39508 "EHLO
+        id S932560AbeCISEv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 13:04:51 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40798 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932087AbeCISEE (ORCPT
+        with ESMTP id S932276AbeCISEs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 13:04:04 -0500
+        Fri, 9 Mar 2018 13:04:48 -0500
 From: Mark Brown <broonie@kernel.org>
-To: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: TSCS42xx: Add missing headers" to the asoc tree
-In-Reply-To: <20180309031332.GA27764@t7-ThinkPad-E560>
-Message-Id: <E1euMN8-00022l-Dx@debutante>
-Date: Fri, 09 Mar 2018 18:04:02 +0000
+To: Alexander Monakov <amonakov@ispras.ru>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Applied "regulator: 88pg86x: add DT bindings document" to the regulator tree
+In-Reply-To: <20180308225303.329-1-amonakov@ispras.ru>
+Message-Id: <E1euMNo-00028i-DH@debutante>
+Date: Fri, 09 Mar 2018 18:04:44 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: TSCS42xx: Add missing headers
+   regulator: 88pg86x: add DT bindings document
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -48,44 +48,49 @@ to this mail.
 Thanks,
 Mark
 
->From 641eea3f8b95a47d5e5db28dd92a0f586cd85390 Mon Sep 17 00:00:00 2001
-From: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
-Date: Thu, 8 Mar 2018 21:13:40 -0600
-Subject: [PATCH] ASoC: TSCS42xx: Add missing headers
+>From 2a254de29e995ea58d73f75b69016cf913a5447d Mon Sep 17 00:00:00 2001
+From: Alexander Monakov <amonakov@ispras.ru>
+Date: Fri, 9 Mar 2018 01:53:02 +0300
+Subject: [PATCH] regulator: 88pg86x: add DT bindings document
 
-Add missing headers
+The only device-specific node names are "buck1" and "buck2" for the two
+regulators present on the device. Sleep mode GPIO and per-regulator GPIO
+enable pins are not exposed (the driver does not support them either).
 
-Signed-off-by: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
+Signed-off-by: Alexander Monakov <amonakov@ispras.ru>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/tscs42xx.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/regulator/88pg86x.txt      | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/88pg86x.txt
 
-diff --git a/sound/soc/codecs/tscs42xx.c b/sound/soc/codecs/tscs42xx.c
-index e915261fa1cb..cfc71b5411ee 100644
---- a/sound/soc/codecs/tscs42xx.c
-+++ b/sound/soc/codecs/tscs42xx.c
-@@ -3,14 +3,19 @@
- // Copyright 2017 Tempo Semiconductor, Inc.
- // Author: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
- 
-+#include <linux/kernel.h>
-+#include <linux/device.h>
-+#include <linux/regmap.h>
- #include <linux/i2c.h>
-+#include <linux/err.h>
-+#include <linux/string.h>
- #include <linux/module.h>
-+#include <linux/delay.h>
- #include <linux/mutex.h>
--#include <linux/regmap.h>
-+#include <sound/tlv.h>
- #include <sound/pcm_params.h>
- #include <sound/soc.h>
- #include <sound/soc-dapm.h>
--#include <sound/tlv.h>
- 
- #include "tscs42xx.h"
- 
+diff --git a/Documentation/devicetree/bindings/regulator/88pg86x.txt b/Documentation/devicetree/bindings/regulator/88pg86x.txt
+new file mode 100644
+index 000000000000..13b7f49a2ea8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/88pg86x.txt
+@@ -0,0 +1,22 @@
++Marvell 88PG867/88PG868 voltage regulators
++
++Required properties:
++- compatible: one of "marvell,88pg867", "marvell,88pg868";
++- reg: I2C slave address.
++
++Optional subnodes for regulators: "buck1", "buck2", using common regulator
++bindings given in <Documentation/devicetree/bindings/regulator/regulator.txt>.
++
++Example:
++
++	pg868@19 {
++		compatible = "marvell,88pg868";
++		reg = <0x19>;
++
++		vcpu: buck1 {
++			regulator-boot-on;
++			regulator-always-on;
++			regulator-min-microvolt = <1000000>;
++			regulator-max-microvolt = <1350000>;
++		};
++	};
 -- 
 2.16.2
