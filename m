@@ -1,45 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932203AbeCIPUM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 10:20:12 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:60992 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751120AbeCIPUJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 10:20:09 -0500
-Date: Fri, 9 Mar 2018 23:19:53 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Kamil Konieczny <k.konieczny@partner.samsung.com>,
-        Tero Kristo <t-kristo@ti.com>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 1/4] crypto: omap-sham: Remove useless check for non-null
- request
-Message-ID: <20180309151952.GG13567@gondor.apana.org.au>
-References: <1519937413-24468-1-git-send-email-krzk@kernel.org>
+        id S1751293AbeCIPVZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 10:21:25 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43874 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751102AbeCIPVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 10:21:23 -0500
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
+        Roman Kagan <rkagan@virtuozzo.com>, "Denis V . Lunev" <den@openvz.org>
+Subject: Re: [PATCH v2 2/3] x86/kvm/hyper-v: remove stale entries from vec_bitmap/auto_eoi_bitmap on vector change
+References: <20180301141514.3482-1-vkuznets@redhat.com>
+        <20180301141514.3482-3-vkuznets@redhat.com>
+        <20180308210804.GN12290@flask>
+Date: Fri, 09 Mar 2018 16:21:19 +0100
+In-Reply-To: <20180308210804.GN12290@flask> ("Radim \=\?utf-8\?B\?S3LEjW3DocWZ\?\=
+ \=\?utf-8\?B\?Iidz\?\= message of "Thu,
+        8 Mar 2018 22:08:04 +0100")
+Message-ID: <87muzhe0ls.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519937413-24468-1-git-send-email-krzk@kernel.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 09:50:10PM +0100, Krzysztof Kozlowski wrote:
-> ahash_request 'req' argument passed by the caller
-> omap_sham_handle_queue() cannot be NULL here because it is obtained from
-> non-NULL pointer via container_of().
-> 
-> This fixes smatch warning:
->     drivers/crypto/omap-sham.c:812 omap_sham_prepare_request() warn: variable dereferenced before check 'req' (see line 805)
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Radim Krčmář <rkrcmar@redhat.com> writes:
 
-All applied.  Thanks.
+> 2018-03-01 15:15+0100, Vitaly Kuznetsov:
+>> When a new vector is written to SINx we update vec_bitmap/auto_eoi_bitmap
+>> but we forget to remove old vector from these masks (in case it is not
+>> present in some other SINTx).
+>> 
+>> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+>> Reviewed-by: Roman Kagan <rkagan@virtuozzo.com>
+>> ---
+>>  arch/x86/include/uapi/asm/hyperv.h |  2 ++
+>>  arch/x86/kvm/hyperv.c              | 32 ++++++++++++++++++++++----------
+>>  2 files changed, 24 insertions(+), 10 deletions(-)
+>> 
+>> diff --git a/arch/x86/include/uapi/asm/hyperv.h b/arch/x86/include/uapi/asm/hyperv.h
+>> index 197c2e6c7376..62c778a303a1 100644
+>> --- a/arch/x86/include/uapi/asm/hyperv.h
+>> +++ b/arch/x86/include/uapi/asm/hyperv.h
+>> @@ -318,6 +318,8 @@ typedef struct _HV_REFERENCE_TSC_PAGE {
+>>  #define HV_SYNIC_SINT_COUNT		(16)
+>>  /* Define the expected SynIC version. */
+>>  #define HV_SYNIC_VERSION_1		(0x1)
+>> +/* Valid SynIC vectors are 16-255. */
+>> +#define HV_SYNIC_FIRST_VALID_VECTOR	(16)
+>>  
+>>  #define HV_SYNIC_CONTROL_ENABLE		(1ULL << 0)
+>>  #define HV_SYNIC_SIMP_ENABLE		(1ULL << 0)
+>> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+>> index 05f414525538..6d14f808145d 100644
+>> --- a/arch/x86/kvm/hyperv.c
+>> +++ b/arch/x86/kvm/hyperv.c
+>> @@ -74,13 +74,30 @@ static bool synic_has_vector_auto_eoi(struct kvm_vcpu_hv_synic *synic,
+>>  	return false;
+>>  }
+>>  
+>> +static void synic_update_vector(struct kvm_vcpu_hv_synic *synic,
+>> +				int vector)
+>> +{
+>> +	if (vector < HV_SYNIC_FIRST_VALID_VECTOR)
+>> +		return;
+>> +
+>> +	if (synic_has_vector_connected(synic, vector))
+>> +		__set_bit(vector, synic->vec_bitmap);
+>> +	else
+>> +		__clear_bit(vector, synic->vec_bitmap);
+>> +
+>> +	if (synic_has_vector_auto_eoi(synic, vector))
+>> +		__set_bit(vector, synic->auto_eoi_bitmap);
+>> +	else
+>> +		__clear_bit(vector, synic->auto_eoi_bitmap);
+>> +}
+>> +
+>>  static int synic_set_sint(struct kvm_vcpu_hv_synic *synic, int sint,
+>>  			  u64 data, bool host)
+>>  {
+>> -	int vector;
+>> +	int vector, old_vector;
+>>  
+>>  	vector = data & HV_SYNIC_SINT_VECTOR_MASK;
+>> -	if (vector < 16 && !host)
+>> +	if (vector < HV_SYNIC_FIRST_VALID_VECTOR && !host)
+>>  		return 1;
+>>  	/*
+>>  	 * Guest may configure multiple SINTs to use the same vector, so
+>> @@ -88,18 +105,13 @@ static int synic_set_sint(struct kvm_vcpu_hv_synic *synic, int sint,
+>>  	 * bitmap of vectors with auto-eoi behavior.  The bitmaps are
+>>  	 * updated here, and atomically queried on fast paths.
+>>  	 */
+>> +	old_vector = synic_read_sint(synic, sint) & HV_SYNIC_SINT_VECTOR_MASK;
+>>  
+>>  	atomic64_set(&synic->sint[sint], data);
+>>  
+>> -	if (synic_has_vector_connected(synic, vector))
+>> -		__set_bit(vector, synic->vec_bitmap);
+>> -	else
+>> -		__clear_bit(vector, synic->vec_bitmap);
+>> +	synic_update_vector(synic, old_vector);
+>> 
+>> -	if (synic_has_vector_auto_eoi(synic, vector))
+>> -		__set_bit(vector, synic->auto_eoi_bitmap);
+>> -	else
+>> -		__clear_bit(vector, synic->auto_eoi_bitmap);
+>> +	synic_update_vector(synic, vector);
+>
+> This looks like it solves the problem when we get two SINTs with the
+> same vector back-to-back , but shouldn't these bits really be cleared on
+> EOI (either auto or manual)?
+
+Hmm,
+
+I was trying to address the following issue: guest programs SynIC's
+SINTx with some vector but later re-programs it with a different
+one. Without the patch synic->vec_bitmap and synic->auto_eoi_bitmap keep
+stale data. If there's no concurrent interrupt than we're safe, but what
+happens if there is one...
+
+kvm_hv_synic_send_eoi() already goes through all SINTx but we already
+updated vector so it won't find any. We could've added something like
+'old_vector' but what if the request with this vector came _after_ we
+re-programed SynIC (and, so, it wasn't meant to be serviced by SynIC?)?
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+  Vitaly
