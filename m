@@ -1,48 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751213AbeCIKo4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:44:56 -0500
-Received: from michel.telenet-ops.be ([195.130.137.88]:39460 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751048AbeCIKoy (ORCPT
+        id S1751075AbeCIKs7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:48:59 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36036 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750966AbeCIKs5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 05:44:54 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] of: Documentation: Fix forgotten reference to of_overlay_apply()
-Date: Fri,  9 Mar 2018 11:44:46 +0100
-Message-Id: <1520592288-7680-2-git-send-email-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520592288-7680-1-git-send-email-geert+renesas@glider.be>
-References: <1520592288-7680-1-git-send-email-geert+renesas@glider.be>
+        Fri, 9 Mar 2018 05:48:57 -0500
+Date: Fri, 9 Mar 2018 11:48:56 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Jose Abreu <Jose.Abreu@synopsys.com>
+Cc: Niklas Cassel <niklas.cassel@axis.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Niklas Cassel <niklass@axis.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: stmmac: remove superfluous wmb() memory
+ barriers
+Message-ID: <20180309104855.GA17998@amd>
+References: <20180308103006.1197-1-niklas.cassel@axis.com>
+ <f245ba4f-9c08-3f04-b0db-97582cc06153@synopsys.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="8t9RHnE3ZwKMSgU+"
+Content-Disposition: inline
+In-Reply-To: <f245ba4f-9c08-3f04-b0db-97582cc06153@synopsys.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes: 93a6039000b5acab ("of: Documentation: of_overlay_apply() replaced by of_overlay_fdt_apply()")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/overlay-notes.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/overlay-notes.txt b/Documentation/devicetree/overlay-notes.txt
-index 5175a24d387ec1a1..a4feb6dde8cd08e8 100644
---- a/Documentation/devicetree/overlay-notes.txt
-+++ b/Documentation/devicetree/overlay-notes.txt
-@@ -91,8 +91,8 @@ The API is quite easy to use.
- return value is an error or a cookie identifying this overlay.
- 
- 2. Call of_overlay_remove() to remove and cleanup the overlay changeset
--previously created via the call to of_overlay_apply(). Removal of an overlay
--changeset that is stacked by another will not be permitted.
-+previously created via the call to of_overlay_fdt_apply(). Removal of an
-+overlay changeset that is stacked by another will not be permitted.
- 
- Finally, if you need to remove all overlays in one-go, just call
- of_overlay_remove_all() which will remove every single one in the correct
--- 
-2.7.4
+--8t9RHnE3ZwKMSgU+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri 2018-03-09 10:26:11, Jose Abreu wrote:
+> Hi Niklas,
+>=20
+> On 08-03-2018 10:30, Niklas Cassel wrote:
+> > These wmb() memory barriers are performed after the last descriptor wri=
+te,
+> > and they are followed by enable_dma_transmission()/set_tx_tail_ptr(),
+> > i.e. a writel() to MMIO register space.
+> > Since writel() itself performs the equivalent of a wmb()=20
+>=20
+> Sorry but I know at least two architectures which don't do a
+> wmb() upon an writel [1] [2]. This can be critical if if we are
+> accessing the device through some slow or filled bus which will
+> delay accesses to the device IO. Notice that writel and then
+> readl to the same address will force CPU to wait for writel
+> completion before readl, but in this case we are using DMA and
+> then writel so I think a wmb() before the writel is a safe measure.
+
+This also matches documentation, as I tried to point out.
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--8t9RHnE3ZwKMSgU+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqiZpcACgkQMOfwapXb+vIxVQCgvqVPkPgewr9bMlyEKq+HBOSM
+FLAAoLfY63FHLQ/olztxWfoq/wM9oCiC
+=frPy
+-----END PGP SIGNATURE-----
+
+--8t9RHnE3ZwKMSgU+--
