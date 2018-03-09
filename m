@@ -1,5 +1,5 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-529228-1520473952-2-1597894162724641227
+X-Cyrus-Session-Id: sloti22d1t05-123275-1520587253-2-15053699359615229718
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -14,24 +14,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520473951; b=Xz/aM5y3Y2kkNOH6w7pSi7zOFVL7FHKaD0SwkwDlHJbZPC+
-    OWDqULYvnV+omaD9E/BQ2YJhx5ySnionnMgPeN569Fk/WlLurIwMRiqX4tsZ+zj6
-    TcpRUAKoqgwdGFbGdhISDe8zkPv7Lx/5wSD+Zen604Nx5/QVrVTXBm5Pz4x3sXOn
-    Rh2tbRYP2wSkfTjnKS5WY/QNGEhPayJ+Jq65UW1Z1dSPz0shUrgf2VHqjHvEZJ76
-    PiQwCp9xM5VkJk4beHwSelZP9v/LSRnzeD3BBy9B34mlWlSBt+28yf/rqlR/7A1V
-    ov3B8YcMd8lws4FmvV3AVeSrHvx94pT+JLbiwFw==
+    t=1520587252; b=OXXQB4SB3p/bMIRrKVja/j9jZriM/7PVRr04cBGR5zpMFyU
+    s7jxrUA6kpOCR3CJux+ATNzUf7Zs82HryY2taL3uAppC/efV5WZ8qnXyjSzmC0Jv
+    zW2p4c8HMEYw2ZJ6E6H8d7kLZivLpiIZuL6Je3B4CJJ7mFouMPwxLde9CZQP1Vn5
+    xh0Rjol1uBxNrfNfrILlPDF6flN9X0q9FgnUDs306WoudnWowAqNzFSNv6jZnN/2
+    fWKBW99d7+fuf4sFIL5Uph8Rf+khKWLFaazQBrJ/nUTX8KEd4qMlrbUKTLdm17Ff
+    4qAxvMTVxlO3icPfp5OmRCSFTn0yXzfqZhjZzYw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:content-transfer-encoding
-    :content-type:message-id:date:from:to:cc:subject:in-reply-to
-    :references:sender:list-id; s=arctest; t=1520473951; bh=8VX/CCD0
-    dQLEmFJnVPzwzX6G2Y29kKhBj6tuaWAkC3o=; b=Og0I1upj80Pus4mYdsCSLxxT
-    Dg1/QGHfLg2HuKLwGe2ysN1PgRiEVF0UvDjtDK96bxWnDZ989rM7e1szTha/4amk
-    9G92UDfO0RWAiFfnhTKmMgDe4yMwygYBlEYQTN1UDslsY4FVhwhvgNtS5rIyJw+p
-    VjQiSQUjnvDfSDKEStRaLmuzfnaM6gpUrmYydsa9ZV3RqcjoxZKdrd7k+lZhTcgp
-    5WIDGrGyq6lcJsIm83diqQ38/SFNnJypvC7eejCNaq9XtwSuHkFNtNOTD63FIq92
-    REiZhs1fyLEMRORhDcMV7ok7ecIXNx7tPApOStgiKceTIoeV+0jNb2zz9BkhzA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=h3IbsE1x x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
+    messagingengine.com; h=subject:to:cc:from:message-id:date
+    :mime-version:in-reply-to:content-transfer-encoding:content-type
+    :references:sender:list-id; s=arctest; t=1520587252; bh=/SbvqVl9
+    ca1J4m0NXgh20I5r1pv1ML3wMChRnbXQeIw=; b=aHoGqG4fVgEdahQogozdK54s
+    2YYvlCsUavAx7ghx12LC8X84m8Tl00I/WjCFaNi3ggojlV55/ow3IA+BiRjXa17B
+    fEpwjSv+0dLsKX9YatilP4H3VqJUWwW4bmLrH1cYEKYJ8VVpSVvX+mvJiDkkJf4M
+    aWJ2LT7exX3OCV0vxeKDKlJTLrUuUnHis319tGGelkxtdR2lLwUQSJH15G33jija
+    eHpxK/S025JZdTgznlKRvQ+7aq/cZ4f4Oy6rgwYg30LDHx0YaZNrr5hyhsI5x8G3
+    +UKyqknktSKpqyC+2FgiOpVrwnZlf3l4BJsTZG1vwPbW+TDGDzvq0+T3X+6a3Q==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=APLmcXHC x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=h3IbsE1x x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=APLmcXHC x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,24 +50,17 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934653AbeCHBw1 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 20:52:27 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:36610 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933351AbeCHBwY (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Wed, 7 Mar 2018 20:52:24 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180308015222epoutp03a647dd4da13048e49c06007dbdb5814e~Zzv68WRsR2795627956epoutp03Y
-X-AuditID: b6c32a39-467ff70000000fc5-1c-5aa09754c51b
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="utf-8"
-Message-id: <5AA09753.7060308@samsung.com>
-Date: Thu, 08 Mar 2018 10:52:19 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To: Andrzej Hajda <a.hajda@samsung.com>,
+        id S1751193AbeCIJUb (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Mar 2018 04:20:31 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:59336 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751189AbeCIJU1 (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Fri, 9 Mar 2018 04:20:27 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180309092025euoutp01fc42ffaeb1507fee5a24a2abe6868353~aNgZwQtjw3074930749euoutp01B
+X-AuditID: cbfec7f2-1c1ff70000011644-4e-5aa251d76fb8
+Subject: Re: [PATCH v5 0/6] dt-bindings: add bindings for USB physical
+ connector
+To: Chanwoo Choi <cw00.choi@samsung.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Archit Taneja <architt@codeaurora.org>
@@ -79,45 +72,53 @@ Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         Mark Rutland <mark.rutland@arm.com>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH v5 0/6] dt-bindings: add bindings for USB physical
- connector
-In-reply-to: <b64d77c1-c80f-1bd9-a599-3027424ec667@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMJsWRmVeSWpSXmKPExsWy7bCmrm7I9AVRBl0rFC1urTvHatHU8ZbV
-        YuOM9awW848AuVe+vmezmHR/AovF+fMb2C06Jy5ht9j0+BqrxeVdc9gsZpzfx2SxaFkrs8Xa
-        I3fZLZZev8hk0br3CLsDv8eaeWsYPS739TJ5zO6YyeqxaVUnm8f97uNMHpuX1Hv0bVnF6PF5
-        k1wAR1SqTUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7Q
-        8UoKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6VoQ0MjPUMDcz0jIyM9E+NYKyNToJKE1IzF
-        5y4zFhySqHhx/xlrA+M54S5GTg4JAROJKb1dLF2MXBxCAjsYJeZN62SFcL4zSjx+cYAdpurS
-        hAlQVbsZJfZduMsGkuAVEJT4MfkeUIKDg1lAXuLIpWyQMLOApsSLL5Og6u8ySix4fZIVol5L
-        YteSm2D1LAKqEj2nBEHCbEDh/S9ugI3kF1CUuPrjMSOILSoQIbFz/jd2kDkiAnMYJZ7u2M0E
-        4jALvGWWuDRvNthQYYEgiSVNh8Eu5RSwl2iasxhss4TAPHaJhjP3oV5wkbh35ggThC0s8er4
-        FnaQKyQEpCUuHbWFqG9nlGjfO48ZwpnCKHHu+j2oBmOJZwu7mCB+45N497WHFaKZV6KjTQii
-        xEPi8tarULscJTquPWCGeH8bk8SDf09ZJzDKzUIKsVmIEJuFFGILGJlXMYqlFhTnpqcWGxaY
-        6hUn5haX5qXrJefnbmIEJ1gtyx2Mx875HGIU4GBU4uE98HN+lBBrYllxZe4hRgkOZiUR3ni/
-        BVFCvCmJlVWpRfnxRaU5qcWHGE2BAT6RWUo0OR+Y/PNK4g1NLA1MzIyACczS0FBJnDcgwCVK
-        SCA9sSQ1OzW1ILUIpo+Jg1OqgXGSxoqJG/a/mfDu9alW2epS57QNG87ULo+Q2czbcOWJf9l6
-        w96Jogwv/q5cu9ek2bTHNYOZd9kt8Z2rPeXMP+pKOGZ6Pp64ZpnChK8+icUOb9as2943ietW
-        5Q4H73lhtVfy/E/INtbpzpTPPcWQsrlNdwP/vokscyu/Bc+J+6Lgc/3EzT1fNQ4osRRnJBpq
-        MRcVJwIA3tPwrMYDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsVy+t9jAd2Q6QuiDCbdY7W4te4cq0VTx1tW
-        i40z1rNazD8C5F75+p7NYtL9CSwW589vYLfonLiE3WLT42usFpd3zWGzmHF+H5PFomWtzBZr
-        j9xlt1h6/SKTReveI+wO/B5r5q1h9Ljc18vkMbtjJqvHplWdbB73u48zeWxeUu/Rt2UVo8fn
-        TXIBHFFcNimpOZllqUX6dglcGYvPXWYsOCRR8eL+M9YGxnPCXYycHBICJhKXJkxg6WLk4hAS
-        2Mko8enuFyaQBK+AoMSPyfeAEhwczALyEkcuZUOY6hJTpuRClN9nlDiy7BIbRLmWxK4lN8HK
-        WQRUJXpOCYKE2YDC+1/cACvhF1CUuPrjMSNIiahAhET3iUqQMSICsxgl5rc+YwNxmAXeMkt0
-        ftnLDtIgLBAg8eX/FCaIZTuYJGbdugM2iVPAXqJpzmKWCYxAvQinzkI4dRbCqQsYmVcxSqYW
-        FOem5xYbFRjmpZbrFSfmFpfmpesl5+duYgRG1bbDWn07GO8viT/EKMDBqMTDK/FnfpQQa2JZ
-        cWXuIUYJDmYlEd54vwVRQrwpiZVVqUX58UWlOanFhxilOViUxHlv5x2LFBJITyxJzU5NLUgt
-        gskycXBKNTCGfH5qF3fyz/Nph2RWLVjyVvHC2sknzN4bfvyquDIz45f4qZ/zfB7KXeG89LqL
-        rfHetkcbijzzC2T+H9c+qWywpSl4rvHWUPcja1ST5i/iPM7r2zXjXXrZ37VVIbe38G4/d/TZ
-        6cXZ9au1Ctk5xF4vOWdr47tl0ST70hMcP0SzFZ9lCljLz4o8pMRSnJFoqMVcVJwIALxCfmWm
-        AgAA
-X-CMS-MailID: 20180308015220epcas1p3d275ebcd98da2da14590798a798bd0f3
+        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Sean Paul <seanpaul@chromium.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <984d5c86-f647-5228-7494-63faf4dec3d3@samsung.com>
+Date: Fri, 9 Mar 2018 10:20:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <5AA09753.7060308@samsung.com>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUzMcRzH973fY8e1X1fWR6zWYfMwkTHfDanW7GfzB5qkP3D0U+jxfhVh
+        tKxUSA9DdUjtKrVwrgdpalynI0vl0MVatjzEHNYVi5Tufpr+e33e3/fn4b19WUI5SnmxB+OS
+        BE2cOkZFy8nG9rGu5b3byiNWPmqai9OzbBS+U3Sbwr0jHyk82ZhP4FLTMwq/GP1G44KBPBJ3
+        dekZnJ2vY7Bh8BWFLc1XaFzU1SrD5ZUZBL5p6mdwRW+PDGe0mBjcr+9EgW587bVaxGvTekje
+        kntexrf8uE7y2qxiijfUZNP8wFmzjK/TneJz62sQbzd4b5VHyNdHCjEHUwTNioC98uiq7mIm
+        4S4cfXStlUhDn9xzkAsL3GoY67vB5CA5q+RuIBivfyCTihEEP63ttMOl5OwIWhpCpzvSv1so
+        yVSFILsjUyaZbAhKJ/0d7M5tB116m3OsB3cVgbnxA+EoCK6OBHvbOedYmlsCf+r6nKzgAqD9
+        ZwfpYJJbCLaJq059DhcOZRffI8njBk+K3zk9Ltwy0F0aZhxMcD5wukFLSOwJr9+VOjMAV8bC
+        yMNaJN0dAoZhIy2xO3w21zMSz4fJe6UyiY9D31A6KTVnIRj4feZfwzpoM/dMhWanNiyB280r
+        JHkDaN+/pB0ycK5gtblJN7hCQeNlQpIVkJWplNy+MNDZQEjsCRXdo3QeWlAyI1nJjDQlM9KU
+        /N97HZE1yFNIFmOjBNE/TjjiJ6pjxeS4KL/98bEGNPUZn06Yh5vQ6PN9RsSxSDVb8TaoLEJJ
+        qVPE1FgjApZQeSg6qqckRaQ69Zigid+jSY4RRCOax5IqT8XuxScjlFyUOkk4LAgJgmb6Vca6
+        eKWhTTsK18yyVj884LslMXhs2VprkotWZ0wJditQ78l9dT8jxzoRMBi+UZzMsMij78612LVa
+        /eChE5vf+tfyiYv8+kM0vbbBnaGqb9U+tyYih47qb+UzhZWBY0HeYRc2/npsOvGmHJIIap29
+        mQyr3IUSFozvpYvJr/pfX5pmM6tS/VSkGK32X0poRPVfgEqNrIgDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupileLIzCtJLcpLzFFi42I5/e/4Pd2rgYuiDHqnWlg0dbxltdg4Yz2r
+        xfUvz1kt/m+byGwx/8g5VosrX9+zWUy6P4HF4vz5DewWnROXsFtsenyN1eLyrjlsFjPO72Oy
+        WLSsldli7ZG77BZLr19ksmjde4Td4u6Gs4wOgh5r5q1h9JjdcJHF43JfL5PH3m8LWDxmd8xk
+        9di0qpPN4373cSaPzUvqPfq2rGL0+LxJLoArSs+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLPyMRS
+        z9DYPNbKyFRJ384mJTUnsyy1SN8uQS9j+YWZ7AXbJSqOztvH3MD4UriLkZNDQsBEounDZdYu
+        Ri4OIYGljBLzX55mh0iIS+ye/5YZwhaW+HOtiw2i6DWjxK2zmxhBEsICQRJLmg6zgyREBGYz
+        SnyeexVsFLPAVhaJdye+QLVcZ5KYd7CdFaSFTUBT4u/mm2wgNq+AncSx76dYQGwWARWJt//m
+        gsVFBSIkOlfOZ4GoEZQ4OfMJmM0poC2xZNonsPuYBdQl/sy7xAxhy0s0b50NZYtL3Hoyn2kC
+        o9AsJO2zkLTMQtIyC0nLAkaWVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmbGIHpYNuxn1t2MHa9
+        Cz7EKMDBqMTD+8BxYZQQa2JZcWXuIUYJDmYlEd5TK4FCvCmJlVWpRfnxRaU5qcWHGE2BnpvI
+        LCWanA9MVXkl8YamhuYWlobmxubGZhZK4rznDSqjhATSE0tSs1NTC1KLYPqYODilGhjXhF9X
+        eSSt3rSG7eL9jtvbmt2NT8RVLL94JOPlQ9u6dts3NiXK3+X+1dSK/13S1RHBZbJks3TUlMdM
+        zN8080/5rFzP8749c0aewHHt6rt6FcKLvzi+1kkqXOJx42bs6di6kiXZb291LktZrlNTc9vy
+        7ELxibGP43/sZf/krvxj6p6ly+2ncq9QYinOSDTUYi4qTgQA+Q7nKR0DAAA=
+X-CMS-MailID: 20180309092022eucas1p2c6cb3c350a47a640278247f26d02263a
 X-Msg-Generator: CA
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+X-MTR: 20180309092022eucas1p2c6cb3c350a47a640278247f26d02263a
+X-EPHeader: CA
+CMS-TYPE: 201P
 X-CMS-RootMailID: 20180227071137eucas1p104aeeb0fd926fe985e250174d9d65b2e
 X-RootMTR: 20180227071137eucas1p104aeeb0fd926fe985e250174d9d65b2e
 References: <CGME20180227071137eucas1p104aeeb0fd926fe985e250174d9d65b2e@eucas1p1.samsung.com>
@@ -125,103 +126,93 @@ References: <CGME20180227071137eucas1p104aeeb0fd926fe985e250174d9d65b2e@eucas1p1
         <c4a773b6-a24e-4e72-3cc4-ebafeac232c1@samsung.com>
         <5A9F4A7D.9020409@samsung.com> <5A9F6F29.5020501@samsung.com>
         <b64d77c1-c80f-1bd9-a599-3027424ec667@samsung.com>
+        <5AA09753.7060308@samsung.com>
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Andrzej, Archit,
+Hi Chanwoo,
 
-On 2018년 03월 07일 20:13, Andrzej Hajda wrote:
-> Hi Chanwoo, Archit,
-> 
-> On 07.03.2018 05:48, Chanwoo Choi wrote:
->> On 2018년 03월 07일 11:12, Chanwoo Choi wrote:
->>> Hi Rob and Andrzej,
->>>
->>> On 2018년 03월 06일 21:53, Andrzej Hajda wrote:
->>>> Hi Rob, Chanwoo, Krzysztof,
->>>>
->>>>
->>>> On 27.02.2018 08:11, Andrzej Hajda wrote:
->>>>> Hi,
->>>>>
->>>>> Thanks for reviews of previous iterations.
->>>>>
->>>>> This patchset introduces USB physical connector bindings, together with
->>>>> working example.
->>>>> I have removed RFC prefix - the patchset seems to be heading
->>>>> to a happy end :)
->>>>>
->>>>> v5: fixed extra parenthesis in dts, renamed extcon function.
->>>>> v4: improved binding descriptions, added missing reg in dts.
->>>>> v3: Separate binding for Samsung 11-pin connector, added full-blown USB-C
->>>>>     example.
->>>>> v2: I have addressed comments by Rob and Laurent, thanks 
->>>>>
->>>>> Changes in datail are described in the patches.
->>>>>
->>>>> Regards
->>>>> Andrzej
->>>>>
->>>>>
->>>>> Andrzej Hajda (5):
->>>>>   dt-bindings: add bindings for USB physical connector
->>>>>   dt-bindings: add bindings for Samsung micro-USB 11-pin connector
->>>>>   arm64: dts: exynos: add micro-USB connector node to TM2 platforms
->>>>>   arm64: dts: exynos: add OF graph between MHL and USB connector
->>>>>   extcon: add possibility to get extcon device by OF node
->>>>>
->>>>> Maciej Purski (1):
->>>>>   drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL
->>>> It looks like all patches received R-B or acks (I forgot add Krzysztof's
->>>> acks for dts part).
->>>> Now I have a question how to merge them.
->>>> The only functional dependency is between bridge and extcon, and from
->>>> the formal PoV bindings should be merged 1st.
->>>> I can merge it:
->>>> 1. All patches via drm-misc tree.
->>>> 2. All patches except dts via drm-misc, and Krzysztof will merge dts via
->>>> samsung-soc tree.
->>>>
->>>> Is it OK, for all? Better ideas?
->>> Krzysztof picked the dts patches. I'll make the immutable branch based on v4.16-rc1
->>> and apply them except for dts patchs. And I'll send the immutable branch to Rob and Andrzej.
->>>
->>>
->> I made the immutable branch[1] as following: If you agree, I'll send pull request.
->> [1] https://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git/log/?h=ib-extcon-drm-dt-v4.17
+On 08.03.2018 02:52, Chanwoo Choi wrote:
+> Hi Andrzej, Archit,
+>
+> On 2018년 03월 07일 20:13, Andrzej Hajda wrote:
+>> Hi Chanwoo, Archit,
 >>
->> Or you can make the immutable branch and send pull request to Rob and me.
->>
-> 
-> It seems you took v5 instead of v6 version of extcon patch.
+>> On 07.03.2018 05:48, Chanwoo Choi wrote:
+>>> On 2018년 03월 07일 11:12, Chanwoo Choi wrote:
+>>>> Hi Rob and Andrzej,
+>>>>
+>>>> On 2018년 03월 06일 21:53, Andrzej Hajda wrote:
+>>>>> Hi Rob, Chanwoo, Krzysztof,
+>>>>>
+>>>>>
+>>>>> On 27.02.2018 08:11, Andrzej Hajda wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>> Thanks for reviews of previous iterations.
+>>>>>>
+>>>>>> This patchset introduces USB physical connector bindings, together with
+>>>>>> working example.
+>>>>>> I have removed RFC prefix - the patchset seems to be heading
+>>>>>> to a happy end :)
+>>>>>>
+>>>>>> v5: fixed extra parenthesis in dts, renamed extcon function.
+>>>>>> v4: improved binding descriptions, added missing reg in dts.
+>>>>>> v3: Separate binding for Samsung 11-pin connector, added full-blown USB-C
+>>>>>>     example.
+>>>>>> v2: I have addressed comments by Rob and Laurent, thanks 
+>>>>>>
+>>>>>> Changes in datail are described in the patches.
+>>>>>>
+>>>>>> Regards
+>>>>>> Andrzej
+>>>>>>
+>>>>>>
+>>>>>> Andrzej Hajda (5):
+>>>>>>   dt-bindings: add bindings for USB physical connector
+>>>>>>   dt-bindings: add bindings for Samsung micro-USB 11-pin connector
+>>>>>>   arm64: dts: exynos: add micro-USB connector node to TM2 platforms
+>>>>>>   arm64: dts: exynos: add OF graph between MHL and USB connector
+>>>>>>   extcon: add possibility to get extcon device by OF node
+>>>>>>
+>>>>>> Maciej Purski (1):
+>>>>>>   drm/bridge/sii8620: use micro-USB cable detection logic to detect MHL
+>>>>> It looks like all patches received R-B or acks (I forgot add Krzysztof's
+>>>>> acks for dts part).
+>>>>> Now I have a question how to merge them.
+>>>>> The only functional dependency is between bridge and extcon, and from
+>>>>> the formal PoV bindings should be merged 1st.
+>>>>> I can merge it:
+>>>>> 1. All patches via drm-misc tree.
+>>>>> 2. All patches except dts via drm-misc, and Krzysztof will merge dts via
+>>>>> samsung-soc tree.
+>>>>>
+>>>>> Is it OK, for all? Better ideas?
+>>>> Krzysztof picked the dts patches. I'll make the immutable branch based on v4.16-rc1
+>>>> and apply them except for dts patchs. And I'll send the immutable branch to Rob and Andrzej.
+>>>>
+>>>>
+>>> I made the immutable branch[1] as following: If you agree, I'll send pull request.
+>>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git/log/?h=ib-extcon-drm-dt-v4.17
+>>>
+>>> Or you can make the immutable branch and send pull request to Rob and me.
+>>>
+>> It seems you took v5 instead of v6 version of extcon patch.
+> My mistake. I picked v6 and made the new immutable branch.
+> After Archit confirm it, I'll send pull request.
+>
 
-My mistake. I picked v6 and made the new immutable branch.
-After Archit confirm it, I'll send pull request.
 
-> 
-> Beside it I am OK with your immutable branch, Archit is it OK to do it
-> this way in drm-misc?
-> 
-> 
-> Regards
-> 
-> Andrzej
-> 
-> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> 
+Lets just queue all patches (except dts) via extcon branch (thanks
+Daniel for advice), without making immutable branch.
+It seems to be a simplest acceptable approach.
 
+You can add my ack to sii8620 bridge patch (as bridge maintainer), to
+fulfill process requirements.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Regards
+Andrzej
+
