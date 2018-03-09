@@ -1,87 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751227AbeCIA0x (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 19:26:53 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:37962 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750859AbeCIA0w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 19:26:52 -0500
-X-Google-Smtp-Source: AG47ELvJYCqKrEa/GULl+ICS8lUjPWjaXKv/fw7pCnriLL+qbzUJU3U2Mv27zohsmwj7KojlDXKcFHVRzHqQiix7A+k=
-MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <f48d5d1f1e429e2dee817ae723f9a02a67ed1f3b.1518603831.git.rgb@redhat.com>
-References: <cover.1518603831.git.rgb@redhat.com> <f48d5d1f1e429e2dee817ae723f9a02a67ed1f3b.1518603831.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 8 Mar 2018 19:26:49 -0500
-Message-ID: <CAHC9VhTYqJ5v1MTqch624PS8d8YkgeEK4tEY5cUcgXgD8ofU1A@mail.gmail.com>
-Subject: Re: [RFC PATCH ghak21 2/4] audit: link denied should not directly
- generate PATH record
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>, Kees Cook <keescook@chromium.org>
+        id S1751572AbeCIAaD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 19:30:03 -0500
+Received: from mga11.intel.com ([192.55.52.93]:45340 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750922AbeCIAaC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 19:30:02 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,443,1515484800";
+   d="scan'208";a="23169113"
+Message-ID: <1520558683.37755.2.camel@intel.com>
+Subject: Re: [PATCH v2] x86/tsc: Convert ART in nanoseconds to TSC.
+From: Rajvi Jingar <rajvi.Jingar@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+CC: <mingo@redhat.com>, <hpa@zytor.com>, <x86@kernel.org>,
+        <peterz@infradead.org>, <linux-kernel@vger.kernel.org>,
+        <christopher.s.hall@intel.com>
+Date: Thu, 8 Mar 2018 17:24:43 -0800
+In-Reply-To: <alpine.DEB.2.21.1803081518020.8662@nanos.tec.linutronix.de>
+References: <1520354849-32593-1-git-send-email-rajvi.jingar@intel.com>
+         <alpine.DEB.2.21.1803081518020.8662@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.22.254.140]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 14, 2018 at 11:18 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Audit link denied events generate duplicate PATH records which disagree
-> in different ways from symlink and hardlink denials.
-> audit_log_link_denied() should not directly generate PATH records.
->
-> See: https://github.com/linux-audit/audit-kernel/issues/21
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  kernel/audit.c | 14 +-------------
->  1 file changed, 1 insertion(+), 13 deletions(-)
+Hi Thomas,
 
-Merged, thanks.
+Thank you for your comments.
 
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index 4c3fd24..683b249 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -2259,31 +2259,19 @@ void audit_log_task_info(struct audit_buffer *ab, struct task_struct *tsk)
->  void audit_log_link_denied(const char *operation, const struct path *link)
->  {
->         struct audit_buffer *ab;
-> -       struct audit_names *name;
->
->         if (!audit_enabled || audit_dummy_context())
->                 return;
->
-> -       name = kzalloc(sizeof(*name), GFP_NOFS);
-> -       if (!name)
-> -               return;
-> -
->         /* Generate AUDIT_ANOM_LINK with subject, operation, outcome. */
->         ab = audit_log_start(current->audit_context, GFP_KERNEL,
->                              AUDIT_ANOM_LINK);
->         if (!ab)
-> -               goto out;
-> +               return;
->         audit_log_format(ab, "op=%s", operation);
->         audit_log_task_info(ab, current);
->         audit_log_format(ab, " res=0");
->         audit_log_end(ab);
-> -
-> -       /* Generate AUDIT_PATH record with object. */
-> -       name->type = AUDIT_TYPE_NORMAL;
-> -       audit_copy_inode(name, link->dentry, d_backing_inode(link->dentry));
-> -       audit_log_name(current->audit_context, name, link, 0, NULL);
-> -out:
-> -       kfree(name);
->  }
->
->  /**
-> --
-> 1.8.3.1
->
+On Thu, 2018-03-08 at 15:25 +0100, Thomas Gleixner wrote:
+> On Tue, 6 Mar 2018, Rajvi Jingar wrote:
+> > Device drivers use get_device_system_crosststamp() to produce
+> > precise
+> > system/device cross-timestamps. The PHC clock and ALSA interfaces,
+> > for example, make the cross-timestamps available to user
+> > applications.
+> > On Intel platforms, get_device_system_crosststamp() requires a TSC
+> > value derived from ART (Always Running Timer) to compute the
+> > monotonic
+> >  raw and realtime system timestamps.
+> > 
+> > Starting with Intel Goldmont platforms, the PCIe root complex
+> > supports
+> > the PTM time sync protocol. PTM requires all timestamps to be in
+> > units
+> > of nanoseconds. The Intel root complex hardware propagates system
+> > time –
+> > derived from ART - in units of nanoseconds performing the
+> > conversion
+> > as follows:
+> > 
+> > ART_NS = ART * 1e9 / <crystal frequency>
+> > 
+> > When user software requests a cross-timestamp, the system
+> > timestamps
+> > (generally read from device registers) must be converted to TSC by
+> > the driver software as follows:
+> > 
+> > TSC = ART_NS * TSC_KHZ / 1e6
+> > 
+> > This is valid when CPU feature flag X86_FEATURE_TSC_KNOWN_FREQ is
+> > set
+> > indicating the tsc_khz is derived from CPUID[15H]. Drivers should
+> > check that this flag is set before conversion to TSC is attempted.
+> 
+> Clear and coherent changelog. Well done!
+> 
+> > Changes from v1:
+> > 
+> > * use existing frequency hardcode for platforms where
+> > CPUID[15H].ECX == 0
+> > (v1 added redundant hardcode just for the ART.ns conversion)
+> > 
+> > * use tsc_khz for TSC conversion, also requires driver to check
+> > X86_FEATURE_TSC_KNOWN_FREQ (v1 used CPUID[15H].ECX value directly)
+> 
+> Maintainer lazyness request: Can you please put the changes paragraph
+> below
+> the --- seperator so it is discarded when the patch is extracted from
+> mail. It's not part of the changelog which goes into git.
+> 
 
+Sure. It has been changed in v3.
 
+> > +struct system_counterval_t convert_art_ns_to_tsc(u64 art_ns)
+> 
+> Can you please add kernel doc format function documentation which
+> explains
+> the calling conventions?
+> 
 
--- 
-paul moore
-www.paul-moore.com
+kernel-do format documentation is added to v3.
+
+> > +{
+> > +	u64 tmp, res, rem;
+> > +
+> > +	rem = do_div(art_ns, USEC_PER_SEC);
+> > +
+> > +	res = art_ns * tsc_khz;
+> > +	tmp = rem * tsc_khz;
+> > +
+> > +	do_div(tmp, USEC_PER_SEC);
+> > +	res += tmp;
+> > +
+> > +	return (struct system_counterval_t) {.cs =
+> > art_related_clocksource,
+> > +			.cycles = res};
+> 
+> Definitely way better than the previous one. Good job!
+> 
+> Thanks,
+> 
+> 	tglx
+
+Thank you,
+Rajvi
