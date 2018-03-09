@@ -1,244 +1,208 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751001AbeCIERw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 23:17:52 -0500
-Received: from gateway24.websitewelcome.com ([192.185.51.110]:23394 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750848AbeCIERu (ORCPT
+        id S1751101AbeCIEXJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 23:23:09 -0500
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:13514 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750848AbeCIEXH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 23:17:50 -0500
-From: Matheus Castello <matheus@castello.eng.br>
-To: stefan.wahren@i2se.com, eric@anholt.net
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Matheus Castello <matheus@castello.eng.br>
-Subject: [PATCH v3 1/3] pinctrl: bcm2835: Add support for generic pinctrl binding
-Date: Fri,  9 Mar 2018 00:16:12 -0400
-Message-Id: <1520568974-15547-2-git-send-email-matheus@castello.eng.br>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520568974-15547-1-git-send-email-matheus@castello.eng.br>
-References: <5b3419be-12ca-75d7-6f5e-d3338ddd7f14@castello.eng.br>
- <1520568974-15547-1-git-send-email-matheus@castello.eng.br>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - castello.eng.br
-X-BWhitelist: no
-X-Source-IP: 191.189.21.134
-X-Source-L: No
-X-Exim-ID: 1eu9SZ-003CXR-Su
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (localhost.localdomain) [191.189.21.134]:8442
-X-Source-Auth: matheus@castello.eng.br
-X-Email-Count: 10
-X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
-X-Local-Domain: yes
+        Thu, 8 Mar 2018 23:23:07 -0500
+Subject: Re: [PATCH 2/3] PCI: dwc: pci-dra7xx: Improve MSI IRQ handling
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC: Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        KISHON VIJAY ABRAHAM <kishon@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Niklas Cassel <niklas.cassel@axis.com>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180209120415.17590-1-vigneshr@ti.com>
+ <20180209120415.17590-3-vigneshr@ti.com>
+ <20180212175801.GA29070@e107981-ln.cambridge.arm.com>
+ <7cfa73af-09fa-d298-aaab-3e74ee7e1dd5@ti.com>
+ <20180306151247.GA7378@red-moon>
+From: Vignesh R <vigneshr@ti.com>
+Message-ID: <1b1b3842-b3b1-e00f-9879-4f455b9ec647@ti.com>
+Date: Fri, 9 Mar 2018 09:53:24 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180306151247.GA7378@red-moon>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To keep driver up to date we add generic pinctrl binding support, which covers
-the features used in this driver and has additional node properties that this
-SoC has compatibility, so enabling future implementations of these properties
-without the need to create new node properties in the device trees.
 
-The logic of this change maintain the old brcm legacy binding support in order
-to keep the ABI stable.
 
-Signed-off-by: Matheus Castello <matheus@castello.eng.br>
----
+On Tuesday 06 March 2018 08:42 PM, Lorenzo Pieralisi wrote:
+> On Thu, Feb 15, 2018 at 09:59:21AM +0530, Vignesh R wrote:
+>> Hi,
+>>
+>> On Monday 12 February 2018 11:28 PM, Lorenzo Pieralisi wrote:
+>>> On Fri, Feb 09, 2018 at 05:34:14PM +0530, Vignesh R wrote:
+>>>> We need to ensure that there are no pending MSI IRQ vector set (i.e
+>>>> PCIE_MSI_INTR0_STATUS reads 0 at least once) before exiting
+>>>> dra7xx_pcie_msi_irq_handler(). Else, the dra7xx PCIe wrapper will not
+>>>> register new MSI IRQs even though PCIE_MSI_INTR0_STATUS shows IRQs are
+>>>> pending. Therefore, keep calling dra7xx_pcie_msi_irq_handler() until it
+>>>> returns IRQ_NONE, which suggests that PCIE_MSI_INTR0_STATUS is 0.
+>>>>
+>>>> This fixes a bug, where PCIe wifi cards with 4 DMA queues like Intel
+>>>> 8260 used to throw following error and stall during ping/iperf3 tests.
+>>>>
+>>>> [   97.776310] iwlwifi 0000:01:00.0: Queue 9 stuck for 2500 ms.
+>>>>
+>>>> Signed-off-by: Vignesh R <vigneshr@ti.com>
+>>>> ---
+>>>>   drivers/pci/dwc/pci-dra7xx.c | 21 ++++++++++++++++++---
+>>>>   1 file changed, 18 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
+>>>> index ed8558d638e5..3420cbf7b60a 100644
+>>>> --- a/drivers/pci/dwc/pci-dra7xx.c
+>>>> +++ b/drivers/pci/dwc/pci-dra7xx.c
+>>>> @@ -254,14 +254,31 @@ static irqreturn_t dra7xx_pcie_msi_irq_handler(int irq, void *arg)
+>>>>         struct dra7xx_pcie *dra7xx = arg;
+>>>>         struct dw_pcie *pci = dra7xx->pci;
+>>>>         struct pcie_port *pp = &pci->pp;
+>>>> +     int count = 0;
+>>>>         unsigned long reg;
+>>>>         u32 virq, bit;
+>>>>   
+>>>>         reg = dra7xx_pcie_readl(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI);
+>>>> +     dra7xx_pcie_writel(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI, reg);
+>>>>   
+>>>>         switch (reg) {
+>>>>         case MSI:
+>>>> -             dw_handle_msi_irq(pp);
+>>>> +             /*
+>>>> +              * Need to make sure no MSI IRQs are pending before
+>>>> +              * exiting handler, else the wrapper will not catch new
+>>>> +              * IRQs. So loop around till dw_handle_msi_irq() returns
+>>>> +              * IRQ_NONE
+>>>> +              */
+>>>> +             while (dw_handle_msi_irq(pp) != IRQ_NONE && count < 1000)
+>>>> +                     count++;
+>>>> +
+>>>> +             if (count == 1000) {
+>>>> +                     dev_err(pci->dev, "too much work in msi irq\n");
+>>>> +                     dra7xx_pcie_writel(dra7xx,
+>>>> +                                        PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI,
+>>>> +                                        reg);
+>>>> +                     return IRQ_HANDLED;
+>>>
+>>> I am not merging any code patching this IRQ handling routine anymore
+>>> unless you thoroughly explain to me how this CONF_IRQSTATUS_MSI register
+>>> works (and how it is related to DW registers) and why this specific host
+>>> controller needs handling that is not required by any other host
+>>> controller relying on dw_handle_msi_irq().
+>>
+>> Unlike other DW PCIe controllers, TI implementation has a wrapper on top
+>> of DW core. This wrapper latches the DW core level MSI and legacy
+>> interrupts and then propagates it to GIC.
+>> PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI register is present in this TI
+>> wrapper which aggregates all the MSI IRQs(PCIE_MSI_INTR0_STATUS) of DW
+>> level. They are mapped on the MSI interrupt line of PCIe controller,
+>> using a single status bit in the PCIECTRL_TI_CONF_IRQSTATUS_MSI register.
+>>
+>> So, the irq handler, dra7xx_pcie_msi_irq_handler(), first needs to look
+>> at PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI[4] to know that its MSI IRQ and
+>> then call dw_handle_msi_irq() to handle individual MSI vectors.
+>> Driver has to make sure there are no pending vectors in DW core MSI
+> 
+> How can it make *sure* ? And what makes the wrapper latch MSI IRQs
+> again ?
+> 
 
-A brief explanation of what I did:
+This is the sequence that I got from discussion with internal HW team:
+ 1. read CONF_IRQSTATUS_MSI in wrapper and check if MSI bit
+ 2. clear CONF_IRQSTATUS_MSI
+ 3. read, clear and handle PCIE_MSI_INTR0_STATUS vectors
+ 4. repeat step 3 until PCIE_MSI_INTR0_STATUS reads 0
 
-Add pinconf-generic header for use the defines and pinctrl-generic API.
+If read of PCIE_MSI_INTR0_STATUS returns 0 at least once, then its
+guaranteed that the next time any vector is set in PCIE_MSI_INTR0_STATUS
+register(due to MSI IRQ), wrapper will latch it and raise an IRQ to CPU.
 
-Add dt-bindings pinctrl bcm2835 header to use functions selections and
-pulls definitions, which functions definitions where duplicated in the
-enum bcm2835_fsel, I removed the duplicate defines from enum.
 
-In the bcm2835_pctl_dt_node_to_map_pull I used the generic macro for
-pack the legacy param and arguments, since it will be unpacked along with
-generic properties that is packed with this same macro.
+>> status register before exiting handler. Otherwise next MSI IRQ will not
+>> be latched by the wrapper.
+> 
+> I am sorry but I do not understand how this works - what is the
+> condition that makes wrapper latch IRQs again ? This is at least
+> racy, if not outright broken.
+> 
+> That count == 1000 is a symptom there is something broken on how this
+> driver handles IRQs and I have the impression that we are applying
+> plasters on top of plasters to make it less broken than it actually is.
+> 
 
-In bcm2835_pctl_dt_node_to_map I thougt it was better, and simpler, to use
-pinctrl-generic parse code instead of parsing it inside the driver, so code
-first check for generic binding parse, if something is parsed then it is
-assumed that are using the new generic style, and when nothing is found then
-parse continues to search for legacy properties.
+It is an upper bound on how many times driver looks at
+PCIE_MSI_INTR0_STATUS register, so that there is no infinite looping
+when there is an IRQ flood due to misbehaving EP. count == 1000
+condition should not happen and it means something is wrong in the
+system.  I haven't hit this situation in testing
+I can either remove this or put a WARN_ON to say this situation should
+not have happened, if that makes you more comfortable with the patch.
 
-In the bcm2835_pinconf_set was changed the unpack legacy by the generic, and
-was added a switch for the parameter tests, since pinctrl generic uses 3
-properties to define the states of the pull instead of one with arguments, that
-was the reason too that bcm2835_pull_config_set function was added, for reuse
-the code that set state of pull.
 
- drivers/pinctrl/bcm/Kconfig           |  1 +
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 87 ++++++++++++++++++++++-------------
- 2 files changed, 55 insertions(+), 33 deletions(-)
+>>> I suspect there is a code design flaw with the way this host handles
+>>> IRQs and we are going to find it and fix it the way it should, not with
+>>> any plaster like this patch.
+>>>
+>>
+>> I agree there has been some churn wrt this wrapper level IRQ handler.
+>> But, that was because hardware documentation/TRM did not match
+>> actual behavior and so it took some time to understand how the
+>> hardware is working.
+> 
+> How does HW work :) ? Please explain in detail how this works in HW
+> then we will get to the code.
+> 
 
-diff --git a/drivers/pinctrl/bcm/Kconfig b/drivers/pinctrl/bcm/Kconfig
-index e8c4e4f..0f38d51 100644
---- a/drivers/pinctrl/bcm/Kconfig
-+++ b/drivers/pinctrl/bcm/Kconfig
-@@ -20,6 +20,7 @@ config PINCTRL_BCM2835
- 	bool
- 	select PINMUX
- 	select PINCONF
-+	select GENERIC_PINCONF
- 	select GPIOLIB_IRQCHIP
- 
- config PINCTRL_IPROC_GPIO
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index 785c366..010c565 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -36,11 +36,13 @@
- #include <linux/pinctrl/pinconf.h>
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/pinctrl/pinmux.h>
-+#include <linux/pinctrl/pinconf-generic.h>
- #include <linux/platform_device.h>
- #include <linux/seq_file.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/types.h>
-+#include <dt-bindings/pinctrl/bcm2835.h>
- 
- #define MODULE_NAME "pinctrl-bcm2835"
- #define BCM2835_NUM_GPIOS 54
-@@ -75,10 +77,6 @@ enum bcm2835_pinconf_param {
- 	BCM2835_PINCONF_PARAM_PULL,
- };
- 
--#define BCM2835_PINCONF_PACK(_param_, _arg_) ((_param_) << 16 | (_arg_))
--#define BCM2835_PINCONF_UNPACK_PARAM(_conf_) ((_conf_) >> 16)
--#define BCM2835_PINCONF_UNPACK_ARG(_conf_) ((_conf_) & 0xffff)
--
- struct bcm2835_pinctrl {
- 	struct device *dev;
- 	void __iomem *base;
-@@ -213,14 +211,6 @@ static const char * const bcm2835_gpio_groups[] = {
- };
- 
- enum bcm2835_fsel {
--	BCM2835_FSEL_GPIO_IN = 0,
--	BCM2835_FSEL_GPIO_OUT = 1,
--	BCM2835_FSEL_ALT0 = 4,
--	BCM2835_FSEL_ALT1 = 5,
--	BCM2835_FSEL_ALT2 = 6,
--	BCM2835_FSEL_ALT3 = 7,
--	BCM2835_FSEL_ALT4 = 3,
--	BCM2835_FSEL_ALT5 = 2,
- 	BCM2835_FSEL_COUNT = 8,
- 	BCM2835_FSEL_MASK = 0x7,
- };
-@@ -714,7 +704,7 @@ static int bcm2835_pctl_dt_node_to_map_pull(struct bcm2835_pinctrl *pc,
- 	configs = kzalloc(sizeof(*configs), GFP_KERNEL);
- 	if (!configs)
- 		return -ENOMEM;
--	configs[0] = BCM2835_PINCONF_PACK(BCM2835_PINCONF_PARAM_PULL, pull);
-+	configs[0] = pinconf_to_config_packed(BCM2835_PINCONF_PARAM_PULL, pull);
- 
- 	map->type = PIN_MAP_TYPE_CONFIGS_PIN;
- 	map->data.configs.group_or_pin = bcm2835_gpio_pins[pin].name;
-@@ -736,6 +726,12 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	int i, err;
- 	u32 pin, func, pull;
- 
-+	/* Check for generic binding in this node */
-+	err = pinconf_generic_dt_node_to_map_all(pctldev, np, map, num_maps);
-+	if (err || *num_maps)
-+		return err;
-+
-+	/* Generic binding did not find anything continue with legacy parse */
- 	pins = of_find_property(np, "brcm,pins", NULL);
- 	if (!pins) {
- 		dev_err(pc->dev, "%pOF: missing brcm,pins property\n", np);
-@@ -917,37 +913,62 @@ static int bcm2835_pinconf_get(struct pinctrl_dev *pctldev,
- 	return -ENOTSUPP;
- }
- 
-+static void bcm2835_pull_config_set(struct bcm2835_pinctrl *pc,
-+		unsigned pin, unsigned arg)
-+{
-+	u32 off, bit;
-+
-+	off = GPIO_REG_OFFSET(pin);
-+	bit = GPIO_REG_SHIFT(pin);
-+
-+	bcm2835_gpio_wr(pc, GPPUD, arg & 3);
-+	/*
-+	* BCM2835 datasheet say to wait 150 cycles, but not of what.
-+	* But the VideoCore firmware delay for this operation
-+	* based nearly on the same amount of VPU cycles and this clock
-+	* runs at 250 MHz.
-+	*/
-+	udelay(1);
-+	bcm2835_gpio_wr(pc, GPPUDCLK0 + (off * 4), BIT(bit));
-+	udelay(1);
-+	bcm2835_gpio_wr(pc, GPPUDCLK0 + (off * 4), 0);
-+}
-+
- static int bcm2835_pinconf_set(struct pinctrl_dev *pctldev,
- 			unsigned pin, unsigned long *configs,
- 			unsigned num_configs)
- {
- 	struct bcm2835_pinctrl *pc = pinctrl_dev_get_drvdata(pctldev);
--	enum bcm2835_pinconf_param param;
--	u16 arg;
--	u32 off, bit;
-+	u32 param, arg;
- 	int i;
- 
- 	for (i = 0; i < num_configs; i++) {
--		param = BCM2835_PINCONF_UNPACK_PARAM(configs[i]);
--		arg = BCM2835_PINCONF_UNPACK_ARG(configs[i]);
-+		param = pinconf_to_config_param(configs[i]);
-+		arg = pinconf_to_config_argument(configs[i]);
- 
--		if (param != BCM2835_PINCONF_PARAM_PULL)
--			return -EINVAL;
-+		switch (param) {
-+		/* Set legacy brcm,pull */
-+		case BCM2835_PINCONF_PARAM_PULL:
-+			bcm2835_pull_config_set(pc, pin, arg);
-+			break;
- 
--		off = GPIO_REG_OFFSET(pin);
--		bit = GPIO_REG_SHIFT(pin);
-+		/* Set pull generic bindings */
-+		case PIN_CONFIG_BIAS_DISABLE:
-+			bcm2835_pull_config_set(pc, pin, BCM2835_PUD_OFF);
-+			break;
- 
--		bcm2835_gpio_wr(pc, GPPUD, arg & 3);
--		/*
--		 * BCM2835 datasheet say to wait 150 cycles, but not of what.
--		 * But the VideoCore firmware delay for this operation
--		 * based nearly on the same amount of VPU cycles and this clock
--		 * runs at 250 MHz.
--		 */
--		udelay(1);
--		bcm2835_gpio_wr(pc, GPPUDCLK0 + (off * 4), BIT(bit));
--		udelay(1);
--		bcm2835_gpio_wr(pc, GPPUDCLK0 + (off * 4), 0);
-+		case PIN_CONFIG_BIAS_PULL_DOWN:
-+			bcm2835_pull_config_set(pc, pin, BCM2835_PUD_DOWN);
-+			break;
-+
-+		case PIN_CONFIG_BIAS_PULL_UP:
-+			bcm2835_pull_config_set(pc, pin, BCM2835_PUD_UP);
-+			break;
-+
-+		default:
-+			return -EINVAL;
-+
-+		} /* switch param type */
- 	} /* for each config */
- 
- 	return 0;
--- 
-2.7.4
+Software needs to ensure that PCIE_MSI_INTR0_STATUS needs be 0 by
+reading it. Then, when the next MSI IRQ is raised  CONF_IRQSTATUS_MSI
+register in the wrapper will latch the next IRQ.
+
+This is my current knowledge, let me know if you need to know anything
+specifically, I will try to ask HW team.
+
+Regards
+Vignesh
+
+> Thanks,
+> Lorenzo
+> 
+>> I have extensively tested this series on multiple problematic PCIe USB
+>> cards and PCIe WiFi cards over week long stress tests. And also had
+>> some agreement with internal hardware designers.  Hardware
+>> documentations will also be updated.
+>>
+>>
+>>> Lorenzo
+>>>
+>>>> +             }
+>>>>                 break;
+>>>>         case INTA:
+>>>>         case INTB:
+>>>> @@ -275,8 +292,6 @@ static irqreturn_t dra7xx_pcie_msi_irq_handler(int irq, void *arg)
+>>>>                 break;
+>>>>         }
+>>>>   
+>>>> -     dra7xx_pcie_writel(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI, reg);
+>>>> -
+>>>>         return IRQ_HANDLED;
+>>>>   }
+>>>>   
+>>>> -- 
+>>>> 2.16.1
+>>>>
+>>
+>> -- 
+>> Regards
+>> Vignesh
