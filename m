@@ -1,161 +1,213 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2526322-1521454822-2-3816406868982830602
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521454821; b=P87zTNCPkmeR9F6Y3JtUTz4cHBvv79asHX+t3B/EDJDk/CZ
-    A5nHpCk2UcVZvJRB1WMHeWkXHGXblne2pq1cLbE66149kxyRhEOejhT1v5PRE/iu
-    ePSqcLz80HGsq37Ow2MX4nZoL5x2inJlJWQuPe0ExZhy4Ws9sl6fKSaAHSHlsw7F
-    xYq/k8rxaBTW4tnR3jXUP9cR5Fj+H3Rwl0YlGhhrDhAiAq7KZ5jv6f//CKDUMr2J
-    VBwjeu9v56tJMKIbz3+za4Zm9Z8OG2s3e7cu2Uot1m8aILlCn3oKtmcMDnN8wMtJ
-    WHRFRzfgCVxFfYmWFvV/vca+om2PiaE9gg2odmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=content-type:mime-version:subject:from
-    :in-reply-to:date:cc:content-transfer-encoding:message-id
-    :references:to:sender:list-id; s=arctest; t=1521454821; bh=0Xtuk
-    TAYsrzYL5V3+cLSOklV0bBMO6y/v0udq6FJRXQ=; b=wCgbO7QK9ixo4ur7dYn5F
-    mFVY8JKZWckaLTTnlcp4vKJdeK7KJPCOhoPANxNfrLjxjgTaCV8YAgPNbraUZVnj
-    ZQXW9YC4lc+KgFu4EFFpNb2PGQZaqrTlEun9WcAjhmkeYBAFHVXYOjxM9ufCpSXI
-    fNPa0i1jw1ilQXD56zALPJxJvQDujuAU5/oVtjqay/44klFx3D0k0GQ5Iv+XJURM
-    WGxZlm6Q1ONwiV/Dak5wXMBjoo3Y4f5KHjtSYnoaZz1xEbuAFpszI0wpKT1qdbXr
-    JYnZUmq8+FflY/CeYRAIyjtgXjUwU5qBYH02LzGB/8ozFqhBQWPSU8CaCY1mqbJA
-    A==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurheptggguffhjgffgffkfhfvofhsphejsehtjehmtdhhtddvnecuhfhrohhmpefmrghiucfjvghnghcuhfgvnhhguceokhgrihdrhhgvnhhgrdhfvghnghestggrnhhonhhitggrlhdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedpudejhedrgedurdegkedrjeejnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepheejfeegnecuvehluhhsthgvrhfuihiivgephe;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=UKcgEmrR;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=canonical.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0 spamcause=gggruggvucftvghtrhhoucdtuddrgedtgedrudefgdduudculddtuddrgedtfedrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurheptggguffhjgffgffkfhfvofhsphejsehtjehmtdhhtddvnecuhfhrohhmpefmrghiucfjvghnghcuhfgvnhhguceokhgrihdrhhgvnhhgrdhfvghnghestggrnhhonhhitggrlhdrtghomheqnecukfhppedvtdelrddufedvrddukedtrdeijedpudejhedrgedurdegkedrjeejnecurfgrrhgrmhepihhnvghtpedvtdelrddufedvrddukedtrdeijedphhgvlhhopehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhmrghilhhfrhhomhepoehsthgrsghlvgdqohifnhgvrhesvhhgvghrrdhkvghrnhgvlhdrohhrghequceuqfffjgepkeeukffvoffkoffgucfukfgkgfepheejfeegnecuvehluhhsthgvrhfuihiivgephe;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=UKcgEmrR;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=canonical.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751276AbeCSKT7 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 06:19:59 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56147 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755291AbeCSKTy (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 19 Mar 2018 06:19:54 -0400
-X-Google-Smtp-Source: AG47ELukyLqYYWdvOMox5ZPbEb2Lj/CASjxxyJDCss0pTyylAlVUrQH1W9rKOVaD6iTHsWDhvjw1Hg==
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.15\))
-Subject: Re: [PATCH] PCI / PM: Always check PME wakeup capability for runtime
- wakeup support
-From: Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <2242415.DLYj1vY8hi@aspire.rjw.lan>
-Date: Mon, 19 Mar 2018 18:19:45 +0800
-Cc: bhelgaas@google.com, rafael.j.wysocki@intel.com,
-        linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <48D2ECB8-4A95-4910-912C-67F17CA824EC@canonical.com>
-References: <20180318191215.10005-1-kai.heng.feng@canonical.com>
- <2242415.DLYj1vY8hi@aspire.rjw.lan>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-X-Mailer: Apple Mail (2.3445.6.15)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <georgi.djakov@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1520629801; cv=none;
+        d=google.com; s=arc-20160816;
+        b=bm6zmbUfpihOmmtYqTiuTuoyLypyF0TA+JxpFkrSGXrp4lD/q/Tt2A/fziCKbx/U+E
+         MYZaAobU9RXOGMU4Fj0xLfzyFBq137aStof28SsmbPcm/0sIIVGIPGnqnfRAPbx7lLt9
+         EAZA8cyzfwW2LDtc36NpjPHgnQe4NqfWCg6ts7EbLsacTtAD6cv9hSwB4rAHjdcu3giB
+         /UZc96H2coBMXZs3lx21TFH8VA+p8Mquje/ukqlnA2HU2Tp9kmr7ri8I5eSnvM98I2c6
+         3bhggRONpPxqlUgDwOU04+C42m8piMF3aWCI5PXld7PDuamGpsGr60WNjn2/mupqMyzI
+         fFEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=c2tTM+18yJuLazLFw8tp9zidIdNr8+QuQ2lRk4Q3kMw=;
+        b=zWBWU1zqDz/TTiWTgYDZfjWH5zK9HmwwRTZmp1yfwhCerqLdNIRmHtMgN3lSHUzeXD
+         jrbe6ySUgy4aROSIvaYUxCV4xGfhntOPIUQcsB7lNnFPbIg7fR7EBVkSSwMQl3FJyKsD
+         QWhh4la0Rrx6ytN2jmVzo6TKF61Q2DpT6PraQ8gn9gnarKEMMZLVHIN/WDnrBRZjh3v0
+         2Yx9Qe0YO8tXDQ0RXH4kZbSGRMPXGBNIajprYnRChXllGzGdW510MVFG5r4snG4Sz/Qp
+         ZJgOsh5/lYyS7oBMszc6uD/xunc+raq0w+OqpRdsxsLLXoLzXvhbPyBxyjlEoT4Epdhr
+         4PDw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=ItiOOHGY;
+       spf=pass (google.com: domain of georgi.djakov@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=georgi.djakov@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=ItiOOHGY;
+       spf=pass (google.com: domain of georgi.djakov@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=georgi.djakov@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AG47ELuxujfPsV3WAhMJeSg9MKi1EhoattHJGU2ldxuyhoEt8HlXYFa8MCu1+p8Yr124qtWyy43feA==
+From: Georgi Djakov <georgi.djakov@linaro.org>
+To: linux-pm@vger.kernel.org,
+	gregkh@linuxfoundation.org
+Cc: rjw@rjwysocki.net,
+	robh+dt@kernel.org,
+	mturquette@baylibre.com,
+	khilman@baylibre.com,
+	vincent.guittot@linaro.org,
+	skannan@codeaurora.org,
+	bjorn.andersson@linaro.org,
+	amit.kucheria@linaro.org,
+	seansw@qti.qualcomm.com,
+	davidai@quicinc.com,
+	mark.rutland@arm.com,
+	lorenzo.pieralisi@arm.com,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	georgi.djakov@linaro.org
+Subject: [PATCH v4 0/7] Introduce on-chip interconnect API
+Date: Fri,  9 Mar 2018 23:09:51 +0200
+Message-Id: <20180309210958.16672-1-georgi.djakov@linaro.org>
+X-Mailer: git-send-email 2.16.2
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594495914539180835?=
+X-GMAIL-MSGID: =?utf-8?q?1594495914539180835?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Modern SoCs have multiple processors and various dedicated cores (video, gpu,
+graphics, modem). These cores are talking to each other and can generate a lot
+of data flowing through the on-chip interconnects. These interconnect buses
+could form different topologies such as crossbar, point to point buses,
+hierarchical buses or use the network-on-chip concept.
 
+These buses have been sized usually to handle use cases with high data
+throughput but it is not necessary all the time and consume a lot of power.
+Furthermore, the priority between masters can vary depending on the running
+use case like video playback or cpu intensive tasks.
 
-> On Mar 19, 2018, at 6:00 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->
-> On Sunday, March 18, 2018 8:12:15 PM CET Kai-Heng Feng wrote:
->> USB controller ASM1042 stops working after commit de3ef1eb1cd0 ("PM /
->> core: Drop run_wake flag from struct dev_pm_info").
->>
->> The device in question is not power managed by platform firmware,
->> furthermore, it only supports PME# from D3cold:
->> Capabilities: [78] Power Management version 3
->>        Flags: PMEClk- DSI- D1- D2- AuxCurrent=55mA PME(D0-,D1-,D2-,D3hot-,D3cold+)
->>        Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
->
-> That's somewhat unusual, but OK.
->
->> Before the commit, the device never gets runtime suspended. After the
->> commit, the device gets runtime suspended, so it does not respond to any
->> PME#.
->>
->> usb_hcd_pci_probe() mandatorily calls device_wakeup_enable(), hence
->> device_can_wakeup() in pci_dev_run_wake() always returns true.
->>
->> So pci_dev_run_wake() needs to check PME wakeup capability as its first
->> condition.
->>
->> Fixes: de3ef1eb1cd0 ("PM / core: Drop run_wake flag from struct  
->> dev_pm_info")
->> Cc: stable@vger.kernel.org # 4.13+
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> ---
->>  drivers/pci/pci.c | 11 ++++-------
->>  1 file changed, 4 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
->> index f6a4dd10d9b0..e026d8f313ec 100644
->> --- a/drivers/pci/pci.c
->> +++ b/drivers/pci/pci.c
->> @@ -2125,16 +2125,13 @@ bool pci_dev_run_wake(struct pci_dev *dev)
->>  {
->>  	struct pci_bus *bus = dev->bus;
->>
->> -	if (device_can_wakeup(&dev->dev))
->> -		return true;
->> -
->> -	if (!dev->pme_support)
->> -		return false;
->
-> Why are you removing this check?
+Having an API to control the requirement of the system in term of bandwidth
+and QoS, so we can adapt the interconnect configuration to match those by
+scaling the frequencies, setting link priority and tuning QoS parameters.
+This configuration can be a static, one-time operation done at boot for some
+platforms or a dynamic set of operations that happen at run-time.
 
-Because this is implicitly checked by pci_pme_capable().
+This patchset introduce a new API to get the requirement and configure the
+interconnect buses across the entire chipset to fit with the current demand.
+The API is NOT for changing the performance of the endpoint devices, but only
+the interconnect path in between them.
 
-But I guess it's better to keep it explicit.
+The API is using a consumer/provider-based model, where the providers are
+the interconnect buses and the consumers could be various drivers.
+The consumers request interconnect resources (path) to an endpoint and set
+the desired constraints on this data flow path. The provider(s) receive
+requests from consumers and aggregate these requests for all master-slave
+pairs on that path. Then the providers configure each participating in the
+topology node according to the requested data flow path, physical links and
+constraints. The topology could be complicated and multi-tiered and is SoC
+specific.
 
-I'll send a v2 to address this.
+Below is a simplified diagram of a real-world SoC topology. The interconnect
+providers are the NoCs.
 
-Kai-Heng
+ +----------------+    +----------------+
+ | HW Accelerator |--->|      M NoC     |<---------------+
+ +----------------+    +----------------+                |
+                         |      |                    +------------+
+  +-----+  +-------------+      V       +------+     |            |
+  | DDR |  |                +--------+  | PCIe |     |            |
+  +-----+  |                | Slaves |  +------+     |            |
+    ^ ^    |                +--------+     |         |   C NoC    |
+    | |    V                               V         |            |
+ +------------------+   +------------------------+   |            |   +-----+
+ |                  |-->|                        |-->|            |-->| CPU |
+ |                  |-->|                        |<--|            |   +-----+
+ |     Mem NoC      |   |         S NoC          |   +------------+
+ |                  |<--|                        |---------+    |
+ |                  |<--|                        |<------+ |    |   +--------+
+ +------------------+   +------------------------+       | |    +-->| Slaves |
+   ^  ^    ^    ^          ^                             | |        +--------+
+   |  |    |    |          |                             | V
+ +------+  |  +-----+   +-----+  +---------+   +----------------+   +--------+
+ | CPUs |  |  | GPU |   | DSP |  | Masters |-->|       P NoC    |-->| Slaves |
+ +------+  |  +-----+   +-----+  +---------+   +----------------+   +--------+
+           |
+       +-------+
+       | Modem |
+       +-------+
 
->
->> -
->>  	/* PME-capable in principle, but not from the target power state */
->> -	if (!pci_pme_capable(dev, pci_target_state(dev, false)))
->> +	if (!pci_pme_capable(dev, pci_target_state(dev, true)))
->>  		return false;
->>
->> +	if (device_can_wakeup(&dev->dev))
->> +		return true;
->> +
->>  	while (bus->parent) {
->>  		struct pci_dev *bridge = bus->self;
->
-> Thanks,
-> Rafael
+TODO:
+ * Create icc_set_extended() to handle parameters such as latency and other QoS
+   values.
+ * Convert from using global node identifiers to local per provider identifiers.
+ * Cache the path between the nodes instead of walking the graph on each get().
+ * Sync interconnect requests with the idle state of the device.
+
+Changes since patchset v3 (https://lkml.org/lkml/2017/9/8/544)
+* Refactored the constraints aggregation.
+* Use the IDR API.
+* Split the provider and consumer bindings into separate patches and propose
+  new bindings for consumers, which allows to specify the local source port.
+* Adopted the icc_ prefix for API functions.
+* Introduced separate API functions for creating interconnect nodes and links.
+* Added DT lookup support in addition to platform data.
+* Dropped the event tracing patch for now.
+* Added a patch to provide summary via debugfs. 
+* Use macro for the list of topology definitions in the platform driver.
+* Various minor changes.
+
+Changes since patchset v2 (https://lkml.org/lkml/2017/7/20/825)
+* Split the aggregation into per node and per provider. Cache the
+  aggregated values.
+* Various small refactorings and cleanups in the framework.
+* Added a patch introducing basic tracepoint support for monitoring
+  the time required to update the interconnect nodes.
+
+Changes since patchset v1 (https://lkml.org/lkml/2017/6/27/890)
+* Updates in the documentation.
+* Changes in request aggregation, locking.
+* Dropped the aggregate() callback and use the default as it currently
+  sufficient for the single vendor driver. Will add it later when needed.
+* Dropped the dt-bindings draft patch for now.
+
+Changes since RFC v2 (https://lkml.org/lkml/2017/6/12/316)
+* Converted documentation to rst format.
+* Fixed an incorrect call to mutex_lock. Renamed max_bw to peak_bw.
+
+Changes since RFC v1 (https://lkml.org/lkml/2017/5/15/605)
+* Refactored code into shorter functions.
+* Added a new aggregate() API function.
+* Rearranged some structs to reduce padding bytes.
+
+Changes since RFC v0 (https://lkml.org/lkml/2017/3/1/599)
+* Removed DT support and added optional Patch 3 with new bindings proposal.
+* Converted the topology into internal driver data.
+* Made the framework modular.
+* interconnect_get() now takes (src and dst ports as arguments).
+* Removed public declarations of some structs.
+* Now passing prev/next nodes to the vendor driver.
+* Properly remove requests on _put().
+* Added refcounting.
+* Updated documentation.
+* Changed struct interconnect_path to use array instead of linked list.
+
+Georgi Djakov (7):
+  interconnect: Add generic on-chip interconnect API
+  dt-bindings: Introduce interconnect provider bindings
+  interconnect: Add debugfs support
+  interconnect: qcom: Add RPM communication
+  interconnect: qcom: Add msm8916 interconnect provider driver
+  dt-bindings: Introduce interconnect consumers bindings
+  interconnect: Allow endpoints translation via DT
+
+ .../bindings/interconnect/interconnect.txt         |  70 +++
+ .../devicetree/bindings/interconnect/qcom-smd.txt  |  31 ++
+ Documentation/interconnect/interconnect.rst        |  96 ++++
+ drivers/Kconfig                                    |   2 +
+ drivers/Makefile                                   |   1 +
+ drivers/interconnect/Kconfig                       |  15 +
+ drivers/interconnect/Makefile                      |   2 +
+ drivers/interconnect/core.c                        | 597 +++++++++++++++++++++
+ drivers/interconnect/qcom/Kconfig                  |  11 +
+ drivers/interconnect/qcom/Makefile                 |   3 +
+ drivers/interconnect/qcom/msm8916.c                | 482 +++++++++++++++++
+ drivers/interconnect/qcom/smd-rpm.c                |  90 ++++
+ drivers/interconnect/qcom/smd-rpm.h                |  15 +
+ include/linux/interconnect-provider.h              | 109 ++++
+ include/linux/interconnect.h                       |  46 ++
+ include/linux/interconnect/qcom.h                  | 350 ++++++++++++
+ 16 files changed, 1920 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interconnect/interconnect.txt
+ create mode 100644 Documentation/devicetree/bindings/interconnect/qcom-smd.txt
+ create mode 100644 Documentation/interconnect/interconnect.rst
+ create mode 100644 drivers/interconnect/Kconfig
+ create mode 100644 drivers/interconnect/Makefile
+ create mode 100644 drivers/interconnect/core.c
+ create mode 100644 drivers/interconnect/qcom/Kconfig
+ create mode 100644 drivers/interconnect/qcom/Makefile
+ create mode 100644 drivers/interconnect/qcom/msm8916.c
+ create mode 100644 drivers/interconnect/qcom/smd-rpm.c
+ create mode 100644 drivers/interconnect/qcom/smd-rpm.h
+ create mode 100644 include/linux/interconnect-provider.h
+ create mode 100644 include/linux/interconnect.h
+ create mode 100644 include/linux/interconnect/qcom.h
