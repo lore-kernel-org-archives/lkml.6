@@ -1,72 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751207AbeCIKt3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:49:29 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:43751 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751173AbeCIKt2 (ORCPT
+        id S1751232AbeCIKth (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:49:37 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:31842 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751212AbeCIKtf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 05:49:28 -0500
-Date: Fri, 9 Mar 2018 02:49:19 -0800
-From: tip-bot for Bartosz Golaszewski <tipbot@zytor.com>
-Message-ID: <tip-28b6afa7d4456e759031bf83706b4be3689fba94@git.kernel.org>
-Cc: tglx@linutronix.de, marc.zyngier@arm.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, hpa@zytor.com, brgl@bgdev.pl
-Reply-To: brgl@bgdev.pl, hpa@zytor.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, marc.zyngier@arm.com, tglx@linutronix.de
-In-Reply-To: <20180304121018.640-3-brgl@bgdev.pl>
-References: <20180304121018.640-3-brgl@bgdev.pl>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] genirq/irq_sim: Check the return value of
- irq_sim_init() for error codes
-Git-Commit-ID: 28b6afa7d4456e759031bf83706b4be3689fba94
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Fri, 9 Mar 2018 05:49:35 -0500
+To: gkohli@codeaurora.org, rientjes@google.com
+Cc: akpm@linux-foundation.org, mhocko@suse.com,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] mm: oom: Fix race condition between oom_badness and do_exit of task
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <1520427454-22813-1-git-send-email-gkohli@codeaurora.org>
+        <alpine.DEB.2.20.1803071254410.165297@chino.kir.corp.google.com>
+        <22ebd655-ece4-37e5-5a98-e9750cb20665@codeaurora.org>
+        <d73682f9-f214-64c4-ce09-fd1ff3ffe252@I-love.SAKURA.ne.jp>
+        <14ba6c44-d444-bd0a-0bac-0c6851b19344@codeaurora.org>
+In-Reply-To: <14ba6c44-d444-bd0a-0bac-0c6851b19344@codeaurora.org>
+Message-Id: <201803091948.FBC21396.LHOMSFFOVFtQJO@I-love.SAKURA.ne.jp>
+X-Mailer: Winbiff [Version 2.51 PL2]
+X-Accept-Language: ja,en,zh
+Date: Fri, 9 Mar 2018 19:48:46 +0900
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  28b6afa7d4456e759031bf83706b4be3689fba94
-Gitweb:     https://git.kernel.org/tip/28b6afa7d4456e759031bf83706b4be3689fba94
-Author:     Bartosz Golaszewski <brgl@bgdev.pl>
-AuthorDate: Sun, 4 Mar 2018 13:10:17 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 9 Mar 2018 11:44:03 +0100
+Kohli, Gaurav wrote:
+> > t->alloc_lock is still held when leaving find_lock_task_mm(), which means
+> > that t->mm != NULL. But nothing prevents t from setting t->mm = NULL at
+> > exit_mm() from do_exit() and calling exit_creds() from __put_task_struct(t)
+> > after task_unlock(t) is called. Seems difficult to trigger race window. Maybe
+> > something has preempted because oom_badness() becomes outside of RCU grace
+> > period upon leaving find_lock_task_mm() when called from proc_oom_score().
+> 
+> Hi Tetsuo,
+> 
+> Yes it is not easy to reproduce seen twice till now and i agree with
+> your analysis. But David has already fixing this in different way,
+> So that also looks better to me:
+> 
+> https://patchwork.kernel.org/patch/10265641/
+> 
 
-genirq/irq_sim: Check the return value of irq_sim_init() for error codes
+Yes, I'm aware of that patch.
 
-As discussed with Marc Zyngier: irq_sim_init() and its devres variant
-should return the base of the allocated interrupt range on success rather
-than 0.
+> But if need to keep that code, So we have to bump up the task
+> reference that's only i can think of now.
 
-Make devm_irq_sim_init() check for an error code. This is a preparatory
-change for modifying irq_sim_init() itself.
+I don't think so, for I think it is safe to call
+has_capability_noaudit(p) with p->alloc_lock held.
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Link: https://lkml.kernel.org/r/20180304121018.640-3-brgl@bgdev.pl
-
----
- kernel/irq/irq_sim.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
-index bd7dc1db6a80..05f0d7c1698a 100644
---- a/kernel/irq/irq_sim.c
-+++ b/kernel/irq/irq_sim.c
-@@ -124,7 +124,7 @@ int devm_irq_sim_init(struct device *dev, struct irq_sim *sim,
- 		return -ENOMEM;
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index f2e7dfb..4efcfb8 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -222,7 +222,6 @@ unsigned long oom_badness(struct task_struct *p, struct mem_cgroup *memcg,
+ 	 */
+ 	points = get_mm_rss(p->mm) + get_mm_counter(p->mm, MM_SWAPENTS) +
+ 		mm_pgtables_bytes(p->mm) / PAGE_SIZE;
+-	task_unlock(p);
  
- 	rv = irq_sim_init(sim, num_irqs);
--	if (rv) {
-+	if (rv < 0) {
- 		devres_free(dr);
- 		return rv;
- 	}
+ 	/*
+ 	 * Root processes get 3% bonus, just like the __vm_enough_memory()
+@@ -230,6 +229,7 @@ unsigned long oom_badness(struct task_struct *p, struct mem_cgroup *memcg,
+ 	 */
+ 	if (has_capability_noaudit(p, CAP_SYS_ADMIN))
+ 		points -= (points * 3) / 100;
++	task_unlock(p);
+ 
+ 	/* Normalize to oom_score_adj units */
+ 	adj *= totalpages / 1000;
