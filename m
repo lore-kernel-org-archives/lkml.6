@@ -1,114 +1,181 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2782356-1520539242-5-11880272943423723187
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520539242; b=Yqw5o8N8Zq7p3mZAE9Lc7hOD7zEm8e4ciHqH+yKujy0KeUE
-    9zAqEVuaegdVAiwh2uU3XUMadH/buvtx6fcoq3nKGCAlY79GiQUMCO6gSIvJcyKR
-    W2Vh/fFs4+ma9y+Bp3t8SbqBhm13Qi0Yrqlm4huksQp7uqLnNZB5n4nrbUfGWUVH
-    WE961GQuDrXQMWGUoFyfxRmgxy1jk5SUu6l9+eUhqzho7zz5pNW/gEtlKrP0Ygmi
-    zTuoP5H5hTKYbTrlnUIIUDJTsHOWzPkfksQXy5gFHbVW6Ff8Q0EN4EC3qEpO0WCd
-    dB89i9cuRy6SVTez1Zn4Gqz9urED7ZFsr0CnSNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1520539242;
-    bh=RGg8wESLv17NVUlDBQ5iQVVKi2EOLqPjFz9L3EAXW9c=; b=B3Jc6n8bgMLF
-    +waanqAbBJpg0X9UeWICYB2RnfrlAgw62T33orXwkxkaGeGdfhU0XZq7SBMx8GsN
-    2wqSGOnX5565BFBPBeg+m4duRqXd20hXs2z3sS++m6+9S60MUShA9rvimrN3s+qp
-    1tghBeXWaiACHO3Apbx7cB0i49+9bT4dyoUBut6F0WDGsnXcwbwpbk4PcRk0AC41
-    Rn8pA4+z/+9T1x9JJwAD88cWSpvH8frJLJiYPlX/Fzx6HlbylyQtDBjSIHzntXvU
-    ofpScJk64xYhjD9GBqjcySORIoZArqX7JOtejDaN27eL1OBL53igA3K9dRYbL6bg
-    9YWI29pw9w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751136AbeCHUAk (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 15:00:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60542 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752169AbeCHTwN (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 8 Mar 2018 14:52:13 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C83292177C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, stable@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 33/54] perf intel-pt: Fix timestamp following overflow
-Date: Thu,  8 Mar 2018 16:50:08 -0300
-Message-Id: <20180308195029.14991-34-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180308195029.14991-1-acme@kernel.org>
-References: <20180308195029.14991-1-acme@kernel.org>
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <kernel-hardening-return-12294-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELvp6G+8B2QBSlGM02HlhqnQOfEfyvhxuh7rJuSnCfMq59t47HMzebXsgv1M43L31GANP0/9
+ARC-Seal: i=1; a=rsa-sha256; t=1520574660; cv=none;
+        d=google.com; s=arc-20160816;
+        b=pheUoAO0WmdIUp61vFdmiNUwWm/KRgw1nEKzR+yCKk8yWAGh6IPmaFuJQ24+EdPkVF
+         3M5rpTrSyob0L5zapKrmgBcCQWzWaXFD/LvsKHXkkBV1zEh9GcD2RcNMMYqr5j8DNI2J
+         C/iCZvFGQ3UspgG3/ZJDtd3y4f/ZpYXmnMHSpISOpTh2MIxL8Hod18Tk9QY8a8xvpcOY
+         SZhpBfKeSuzMf3RFBwi0Y6m/QbcZ8iTUCJhx5r4udQt2kwucPyfupivZzNXxcG0U/+v9
+         qu4pANO90ycwYbTzTfuMSjiZESMSKe7ru4wArXT6sRHoGrdyQYnSUYnMOjAzok5uP5ud
+         wayA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature:dkim-signature
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=jjXiikWiTPAfLSf0Cmrf9T6nnRljn7S8bHMaAchETPM=;
+        b=SfnTv/ndV1ZMVQaGlaSrGVC1hJXzOhI4TfrmZSphu5zGPLvNISBqKrPuG75BcOD7vk
+         GlhW/HL9KrcutQtotMbs0gitgQFgO+tUgKqRZfhpE7C6wGU9qe3i+jQg5DY9PhqpwGTQ
+         XM+qsTWEIgiep9vbkJ/fRAfyiygy4xKdfuTCU2JjTyklhxdozUuROsD8ud4hsdFXOGyA
+         agLtbhE8i7hRoa/o+MhvrdSQxjJsSjK0LboW2lg7oZ5L4IjXZJxpt6JOMU9YskgT64VJ
+         12n6hHKuim9zv8ZVJMX38j/T4ngZ65bqziEgOTS2TqjuePHD1mxTuPjtGVgNsHqJhCre
+         UE1g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=D6WncTWJ;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=Jivmnu1G;
+       spf=pass (google.com: domain of kernel-hardening-return-12294-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12294-gregkh=linuxfoundation.org@lists.openwall.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=D6WncTWJ;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=Jivmnu1G;
+       spf=pass (google.com: domain of kernel-hardening-return-12294-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12294-gregkh=linuxfoundation.org@lists.openwall.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+X-ME-Sender: <xms:sCCiWiIethUVa9nin2jiH7UGt_HFlGLTUgXLtsualdUk0hQfQvnGxg>
+From: "Tobin C. Harding" <me@tobin.cc>
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: "Tobin C. Harding" <me@tobin.cc>,
+	kernel-hardening@lists.openwall.com,
+	linux-kernel@vger.kernel.org,
+	driverdev-devel@linuxdriverproject.org,
+	Tycho Andersen <tycho@tycho.ws>,
+	Kees Cook <keescook@chromium.org>
+Subject: [PATCH 4/4] video: Remove stack VLA usage
+Date: Fri,  9 Mar 2018 16:50:25 +1100
+Message-Id: <1520574625-4225-1-git-send-email-me@tobin.cc>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594438095221699065?=
+X-GMAIL-MSGID: =?utf-8?q?1594438095221699065?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+The kernel would like to have all stack VLA usage removed[1].  The
+arrays are fixed here (declared with a const variable) but they appear
+like VLAs to the compiler.  We can use a pre-processor define to fix the
+warning.  
 
-timestamp_insn_cnt is used to estimate the timestamp based on the number of
-instructions since the last known timestamp.
+[1]: https://lkml.org/lkml/2018/3/7/621
 
-If the estimate is not accurate enough decoding might not be correctly
-synchronized with side-band events causing more trace errors.
-
-However there are always timestamps following an overflow, so the
-estimate is not needed and can indeed result in more errors.
-
-Suppress the estimate by setting timestamp_insn_cnt to zero.
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1520431349-30689-5-git-send-email-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Tobin C. Harding <me@tobin.cc>
 ---
- tools/perf/util/intel-pt-decoder/intel-pt-decoder.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/video/fbdev/via/via_aux_sii164.c |  8 +++++---
+ drivers/video/fbdev/via/via_aux_vt1631.c | 11 +++++++----
+ drivers/video/fbdev/via/via_aux_vt1632.c | 11 +++++++----
+ drivers/video/fbdev/via/via_aux_vt1636.c | 11 +++++++----
+ 4 files changed, 26 insertions(+), 15 deletions(-)
 
-diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-index 5e4d0bbafc8b..f9157aed1289 100644
---- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-+++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-@@ -1378,6 +1378,7 @@ static int intel_pt_overflow(struct intel_pt_decoder *decoder)
- 	intel_pt_clear_tx_flags(decoder);
- 	decoder->have_tma = false;
- 	decoder->cbr = 0;
-+	decoder->timestamp_insn_cnt = 0;
- 	decoder->pkt_state = INTEL_PT_STATE_ERR_RESYNC;
- 	decoder->overflow = true;
- 	return -EOVERFLOW;
+diff --git a/drivers/video/fbdev/via/via_aux_sii164.c b/drivers/video/fbdev/via/via_aux_sii164.c
+index ca1b35f033b1..f715ea4f466c 100644
+--- a/drivers/video/fbdev/via/via_aux_sii164.c
++++ b/drivers/video/fbdev/via/via_aux_sii164.c
+@@ -27,6 +27,9 @@
+ 
+ static const char *name = "SiI 164 PanelLink Transmitter";
+ 
++/* check vendor id and device id */
++const u8 id[] = {0x01, 0x00, 0x06, 0x00};
++#define VIA_SII164_LEN ARRAY_SIZE(id)
+ 
+ static void probe(struct via_aux_bus *bus, u8 addr)
+ {
+@@ -34,9 +37,8 @@ static void probe(struct via_aux_bus *bus, u8 addr)
+ 		.bus	=	bus,
+ 		.addr	=	addr,
+ 		.name	=	name};
+-	/* check vendor id and device id */
+-	const u8 id[] = {0x01, 0x00, 0x06, 0x00}, len = ARRAY_SIZE(id);
+-	u8 tmp[len];
++	u8 tmp[VIA_SII164_LEN];
++	int len = VIA_SII164_LEN;
+ 
+ 	if (!via_aux_read(&drv, 0x00, tmp, len) || memcmp(id, tmp, len))
+ 		return;
+diff --git a/drivers/video/fbdev/via/via_aux_vt1631.c b/drivers/video/fbdev/via/via_aux_vt1631.c
+index 06e742f1f723..5bfaa20ec5a8 100644
+--- a/drivers/video/fbdev/via/via_aux_vt1631.c
++++ b/drivers/video/fbdev/via/via_aux_vt1631.c
+@@ -27,16 +27,19 @@
+ 
+ static const char *name = "VT1631 LVDS Transmitter";
+ 
++/* check vendor id and device id */
++const u8 id[] = {0x06, 0x11, 0x91, 0x31}, len = ARRAY_SIZE(id);
++#define VIA_VT1631_LEN ARRAY_SIZE(id)
+ 
+ void via_aux_vt1631_probe(struct via_aux_bus *bus)
+ {
+ 	struct via_aux_drv drv = {
+ 		.bus	=	bus,
+ 		.addr	=	0x38,
+-		.name	=	name};
+-	/* check vendor id and device id */
+-	const u8 id[] = {0x06, 0x11, 0x91, 0x31}, len = ARRAY_SIZE(id);
+-	u8 tmp[len];
++		.name	=	name
++	};
++	u8 tmp[VIA_VT1631_LEN];
++	int len = VIA_VT1631_LEN;
+ 
+ 	if (!via_aux_read(&drv, 0x00, tmp, len) || memcmp(id, tmp, len))
+ 		return;
+diff --git a/drivers/video/fbdev/via/via_aux_vt1632.c b/drivers/video/fbdev/via/via_aux_vt1632.c
+index d24f4cd97401..fcddd761d4a4 100644
+--- a/drivers/video/fbdev/via/via_aux_vt1632.c
++++ b/drivers/video/fbdev/via/via_aux_vt1632.c
+@@ -27,16 +27,19 @@
+ 
+ static const char *name = "VT1632 DVI Transmitter";
+ 
++/* check vendor id and device id */
++const u8 id[] = {0x06, 0x11, 0x92, 0x31};
++#define VIA_VT1632_LEN ARRAY_SIZE(id)
+ 
+ static void probe(struct via_aux_bus *bus, u8 addr)
+ {
+ 	struct via_aux_drv drv = {
+ 		.bus	=	bus,
+ 		.addr	=	addr,
+-		.name	=	name};
+-	/* check vendor id and device id */
+-	const u8 id[] = {0x06, 0x11, 0x92, 0x31}, len = ARRAY_SIZE(id);
+-	u8 tmp[len];
++		.name	=	name
++	};
++	u8 tmp[VIA_VT1632_LEN];
++	int len = VIA_VT1632_LEN;
+ 
+ 	if (!via_aux_read(&drv, 0x00, tmp, len) || memcmp(id, tmp, len))
+ 		return;
+diff --git a/drivers/video/fbdev/via/via_aux_vt1636.c b/drivers/video/fbdev/via/via_aux_vt1636.c
+index 9e015c101d4d..49c9269c7f81 100644
+--- a/drivers/video/fbdev/via/via_aux_vt1636.c
++++ b/drivers/video/fbdev/via/via_aux_vt1636.c
+@@ -27,16 +27,19 @@
+ 
+ static const char *name = "VT1636 LVDS Transmitter";
+ 
++/* check vendor id and device id */
++const u8 id[] = {0x06, 0x11, 0x45, 0x33};
++#define VIA_VT1636_LEN ARRAY_SIZE(id)
+ 
+ void via_aux_vt1636_probe(struct via_aux_bus *bus)
+ {
+ 	struct via_aux_drv drv = {
+ 		.bus	=	bus,
+ 		.addr	=	0x40,
+-		.name	=	name};
+-	/* check vendor id and device id */
+-	const u8 id[] = {0x06, 0x11, 0x45, 0x33}, len = ARRAY_SIZE(id);
+-	u8 tmp[len];
++		.name	=	name
++	};
++	u8 tmp[VIA_VT1636_LEN];
++	int len = VIA_VT1636_LEN;
+ 
+ 	if (!via_aux_read(&drv, 0x00, tmp, len) || memcmp(id, tmp, len))
+ 		return;
 -- 
-2.14.3
+2.7.4
