@@ -1,81 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932118AbeCIQu5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 11:50:57 -0500
-Received: from mout.web.de ([212.227.17.12]:43103 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751159AbeCIQu4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 11:50:56 -0500
-Subject: [PATCH v2 17/17] mfd: viperboard: Delete an error message for a
- failed memory allocation in vprbrd_probe()
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-To: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Lars_P=c3=b6schel?= <poeschel@lemonage.de>,
-        Samuel Ortiz <sameo@linux.intel.com>
-References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
-Message-ID: <1ebf63da-0b54-73a2-2256-9b932ed2ab0a@users.sourceforge.net>
-Date: Fri, 9 Mar 2018 17:50:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751243AbeCIQxJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 11:53:09 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:34395 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751159AbeCIQxH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 11:53:07 -0500
+Date: Fri, 9 Mar 2018 16:53:02 +0000
+From: Joseph Myers <joseph@codesourcery.com>
+X-X-Sender: jsm28@digraph.polyomino.org.uk
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+CC: Arnd Bergmann <arnd@arndb.de>, Helmut Grohne <helmut@subdivi.de>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        linux-arch <linux-arch@vger.kernel.org>, <metcalf@alum.mit.edu>,
+        Henrik Grindal Bakken <hgb@ifi.uio.no>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: RFC: remove the "tile" architecture from glibc
+In-Reply-To: <224c8996-bda1-5e75-bff3-9ed8abc4de87@physik.fu-berlin.de>
+Message-ID: <alpine.DEB.2.20.1803091645580.8457@digraph.polyomino.org.uk>
+References: <1a57be83-3349-5450-ee4f-d2a33569a728@mellanox.com> <d6c8e425-a6b6-6594-05e3-965536f06da3@physik.fu-berlin.de> <abce89d0-6798-069a-1a54-06e664665b78@mellanox.com> <dc3c52ce-f082-0da0-7828-0d4e6751e2a5@physik.fu-berlin.de>
+ <CAK8P3a3itR8i2ayG7e4ku7kz+CQU7qHhptdmtmgTz+CzFGmCiw@mail.gmail.com> <20180307181407.GA24350@alf.mars> <CAK8P3a2VuYxzy6RmL_w_5f2qHepVRhfVR5P4x9nCUYav1s5n7g@mail.gmail.com> <9a60ac70-21e4-3f48-5cd7-ffd3aabc5c21@physik.fu-berlin.de>
+ <alpine.DEB.2.20.1803091622420.8457@digraph.polyomino.org.uk> <224c8996-bda1-5e75-bff3-9ed8abc4de87@physik.fu-berlin.de>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:WmwDksRkFXFDV9rOYLCiPmW0svb+hvA1JkfXghC/EwnNtlcfh2Q
- cn/c/fvunvA6btj4JXn66qMAaKx/C2K/KiHe5ciwK8gaSh5coJ26OEQG3lR4pxPvB/hSekk
- CjVhgeWu/Yw3h8miK+upCNdr/932MXm7h7I/P5Ul+KmmgPBoJ/8ncc/zWY7RvvurkOHwyJs
- A+AQVSQ4q2BQHdCgJO1GA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:mEmlF01SQrE=:B6fQ+b9TgNyk8dMXE1N4t7
- mo9EbEp2BsL2eje+mIXy2fXkxUImmfHBWppj05ngt0pD7v0IJdJQgWn1w+690n0ddpiDTzm1N
- zSHOv5bV/RRn5ZGJcpTBUwPd6ieKriZURVb9NfovVebrEcEGD0+ZcbWV/gYl6Mv8P4T6oUnc5
- K/gM4jKp7ui5A7+mYL+o+yPQnXc+vPgiQmbUr7YF5ex+iYWR7ftZ9/bfHt5FQ75eC8qzkQUAn
- d7RuHbrDcdK94T3HJDwVLqxME3DL/WU4Vl4sB6vR0uwaPmjMpo37MURZl9aCGdcV7bEPtXdMp
- 7nUtthi0UewPi66XRZmJ3PQSqMRbteIVr22ELt8UAdU0fEqeFSGTZHOEy4Mw3xOfOSgsbvLGj
- gYl0yfX+Fp/+LmLDYCHI+3PBhX9j84zAvf7g1Wh3OVRCeyzzNtxQFBRA3p3DuNjd1ef80J9v7
- y7hhX61JGITqyHS5UXXa5fT0k2pDAiebOvnXy17kTQvHqnrVUNHgqv/w9+lXXbOib2lR/OVxf
- CtT1V+i7O4efnSmo+mKamTtWDNS6Ls3trt3q6msHHRRilk6Z1v7SCZ3A3dTk1a+eMvByF5wSd
- oF1RZOiiemWK9azkh/lWPL7//Wm6DlGmcgtQznvlWSWj0cP5u1vAWgUeRvhd9d8N0E1u52nLm
- nkG13xo4Oga+toReOQbSK+ATKCPgMkwUTDRqeW5xdIGPPd+bau+ProsjjFEMy4y9zx6+fQ8OW
- ly3qbZBv5DKb8FL7bxFdfZTzA6vNa0/r/afR/6t3+KyylHg4696kEIW6FUv6YikHPPm3mncHB
- v1jjJLZmOOD7E5YGzVYjsUapLe5uKkDg64+vFMejQ8Mqpg/Fy0=
+Content-Type: text/plain; charset="US-ASCII"
+X-Originating-IP: [137.202.0.87]
+X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
+ svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 9 Mar 2018 09:56:31 +0100
+On Fri, 9 Mar 2018, John Paul Adrian Glaubitz wrote:
 
-Omit an extra message for a memory allocation failure in this function.
+> On 03/09/2018 05:31 PM, Joseph Myers wrote:
+> > Note that SH glibc test results need some work - there are a large number 
+> > of failures listed at <https://sourceware.org/glibc/wiki/Release/2.27#SH>.  
+> > Probably most could be addressed with the NaN fixes I outlined at 
+> > <https://sourceware.org/ml/libc-alpha/2018-02/msg00440.html> - but that 
+> > does of course need someone to do the work to implement that in GCC and 
+> > glibc.  (The stdlib/tst-tininess failure is stranger; SH manuals don't 
+> > seem very specific on this, but the existing setting was definitely 
+> > determined by testing on hardware.  SH experts with access to a range of 
+> > different hardware may be needed to advise on what different hardware does 
+> > or is supposed to do in this regard.)
+> 
+> Ok, thanks for the explanation.
+> 
+> On a sidenote: Is there documentation somewhere which explains how to properly
+> run the glibc testsuite? I would then go ahead and run it on my Amiga 4000
+> for m68k.
 
-This issue was detected by using the Coccinelle software.
+"make check", or "make -k check" if you're concerned about some tests 
+failing to build (e.g. the compiler running out of memory on a few large 
+tests) - the testsuite should continue after execution failures, but not 
+after compilation failures.  (Having previously configured with 
+--prefix=/usr for the build.  And if the compiler used doesn't have 
+libgcc_s and libstdc++ shared libraries in directories ld.so searches by 
+default, you should copy those libraries into the glibc build directory 
+before running tests.)  On a system that can handle it you'd use an 
+appropriate -jN option for parallelism, but probably not on m68k.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
+For cross testing over SSH (when glibc is running on a system that is very 
+slow running the compiler or has too little memory to do so) you need a 
+shared filesystem at the same path on both the system where glibc is built 
+and the system where tests will execute (probably NFS-exported from the 
+build system, and it may be necessary to mount it on the test system with 
+acdirmax=0,acdirmin=0 to limit any caching).  Then you can pass 
+test-wrapper="/path/to/glibc/scripts/cross-test-ssh.sh <host>" to make 
+check.
 
-v2:
-Lee Jones requested a resend for this patch. The change was rebased
-on source files from Linux next-20180308.
+In both cases, for very slow test systems you may wish to export 
+TIMEOUTFACTOR (an integer by which all test timeouts are multiplied).
 
- drivers/mfd/viperboard.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/mfd/viperboard.c b/drivers/mfd/viperboard.c
-index e6b3c70aeb22..e9f61262d583 100644
---- a/drivers/mfd/viperboard.c
-+++ b/drivers/mfd/viperboard.c
-@@ -59,10 +59,8 @@ static int vprbrd_probe(struct usb_interface *interface,
- 
- 	/* allocate memory for our device state and initialize it */
- 	vb = kzalloc(sizeof(*vb), GFP_KERNEL);
--	if (vb == NULL) {
--		dev_err(&interface->dev, "Out of memory\n");
-+	if (!vb)
- 		return -ENOMEM;
--	}
- 
- 	mutex_init(&vb->lock);
- 
 -- 
-2.16.2
+Joseph S. Myers
+joseph@codesourcery.com
