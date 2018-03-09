@@ -1,73 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932138AbeCIMu7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 07:50:59 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50104 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751060AbeCIMu6 (ORCPT
+        id S932113AbeCIMww (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 07:52:52 -0500
+Received: from mail-vk0-f47.google.com ([209.85.213.47]:34799 "EHLO
+        mail-vk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751059AbeCIMwt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 07:50:58 -0500
-Date: Fri, 9 Mar 2018 12:50:50 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Takashi Iwai <tiwai@suse.com>, Pavel Machek <pavel@ucw.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: soc-core: Add missing NULL check
-Message-ID: <20180309125050.GD5252@sirena.org.uk>
-References: <20180308200653.GA47801@beast>
+        Fri, 9 Mar 2018 07:52:49 -0500
+X-Google-Smtp-Source: AG47ELseTlUsdMg/BPxHe4B+V3OPtBCbFw4NKRtBb0sMEpbjmoraRpmOJHjOsxx+sQ2gOcjdX10OFQ==
+Date: Fri, 9 Mar 2018 09:52:45 -0300
+From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paul Moore <paul@paul-moore.com>, David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Richard Haines <richard_c_haines@btinternet.com>,
+        Xin Long <lucien.xin@gmail.com>
+Subject: Re: linux-next: manual merge of the selinux tree with the net-next
+ tree
+Message-ID: <20180309125244.GA5105@localhost.localdomain>
+References: <20180305124054.09966cb0@canb.auug.org.au>
+ <20180308130703.7365f733@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="T7mxYSe680VjQnyC"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180308200653.GA47801@beast>
-X-Cookie: Beam me up, Scotty!
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180308130703.7365f733@canb.auug.org.au>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 08, 2018 at 01:07:03PM +1100, Stephen Rothwell wrote:
+> The resolution now looks like below (there were more changes to this
+> file in the net-next tree).  It will keep changing every time this file
+> is touched :-(
 
---T7mxYSe680VjQnyC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ugh, sorry for that, Stephen.
 
-On Thu, Mar 08, 2018 at 12:06:53PM -0800, Kees Cook wrote:
+Considering how much of a hassle this already is, I'll hold off the
+mtu refactoring I have and only post it when all this reaches Linus'
+tree.  This refactoring is touching nearly every single line that the
+SELinux patches touched too (where it added accounting for the IP
+options) and the fixup would be a complete nightmare.
 
-> If a codec is not attached to the sound soc, a NULL deref is possible as a
-> regular user in /sys.
+Probably I won't be able to post the sctp_outq_flush refactoring too,
+but I have to check that more carefully.
 
-I can't parse this, sorry.  What is the "sound soc"?
-
-> +++ b/sound/soc/soc-core.c
-> @@ -137,6 +137,9 @@ static ssize_t soc_codec_reg_show(struct snd_soc_code=
-c *codec, char *buf,
->  	size_t total =3D 0;
->  	loff_t p =3D 0;
-> =20
-> +	if (!codec || !codec->driver)
-> +		return 0;
-> +
-
-How are we managing to create a sysfs file for a CODEC which doesn't
-have a CODEC struct associated with it?  That is obviously nonsensical
-and suggests we've got some more serious problem going on here - if
-there's no CODEC those sysfs attributes simply shouldn't be there.
-
---T7mxYSe680VjQnyC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqigyoACgkQJNaLcl1U
-h9DiVQf/X7ZSftcm7/aW6N5+2aqS/gdxfYU4v8jETHcyr6Lqq/DR+/B7qv149I7i
-k5fjo/RSG7lb7nKZZc8Bqa6NnO+6YyTVWGMQrW5pwYHKbFCTY/13yDZhUQiYuQuX
-wBQfoA1wXCtHU2Q+JimDZXcR3FoFv5C68i9AhL0Rvd53oWeqSFPgFYJL4fkapYtY
-DAih4xg3Ho+1ZUKJpzpGJ2fUQNy6EYyDr3lYEMxIC9TeV7V7WORgzX65o65Bb6wS
-WeSAZx9izRZhdX7xYo+VRtjcslmMY5ZabegSrrR+wOwVqx5JIBok9ISymi85lz5J
-hwqQMOh9/kZZwxA4lknhFXXVtganEA==
-=/0cK
------END PGP SIGNATURE-----
-
---T7mxYSe680VjQnyC--
+  Marcelo
