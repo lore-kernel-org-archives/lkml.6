@@ -1,37 +1,37 @@
-Return-Path: <kernel-hardening-return-12513-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELutctlntSUBcCXVm3uZDBEXWzTM/K88Y+h5XxVcasTrr1n5NRq5KxqiU7liC6H+bGepXFIx
-ARC-Seal: i=1; a=rsa-sha256; t=1520966166; cv=none;
+Return-Path: <kernel-hardening-return-12296-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELulnoJ+oWOLmJrcxDyalKERHsgpifZaV9l83+n15E8Sb4BubOWzvL6b1+pTc8BpnBjJJ0DH
+ARC-Seal: i=1; a=rsa-sha256; t=1520575201; cv=none;
         d=google.com; s=arc-20160816;
-        b=L2igzAbBc5E1GpHlaRWhKWd/37nNcbkEAvhIbkDiyxmQZ8pIGCuD5Ee9AGn28Z91ae
-         gYd7CUKJwe8PQDa5HNm+J+reLBMU/7AjxfYqmmeajZyjg2bXSJehY8QZJsSPy5TxaiXg
-         6/ByGuBUlZ1XNQS55qHlEW+2WuyZAWu1wSUsFGvnovcPU49WXmjZXloEIWsw6XvjZuuA
-         cRzLuso+UpklaUklZ3da+qZ3WbnjMZu8MTfC0aUPyjDAvc0iHoBFbPOMEa/78prq9FJK
-         QTVa1VuzAJRRg3NxNiaCKgsxp2Fm3tYxrxP2e6CMWrGrZdia1SwJvM0w6dhCcm1KKg1C
-         YHLQ==
+        b=dqrQ/bRNlsUqUCFRgTw6n95W2I9EC2euIM3+6cszmkuwanJo3OFsSlaAYWBserklmJ
+         XJYoBe6GP47qGswRGn8C3HsNBm7tHFvAQp29zCRXnHm2XtOiBF17IkjarweXxHln/cH7
+         rmsu+FkWve+ZlWmSkpCUid1sMuCmlZrEqmtz8BXHEasD666hFUnQqJPrDChCJYUjvazA
+         0cO/AI7MS0qMAreZtR2dDchlzECPMb/IDQ+Ec2zPGj2m80AGmWqwl+y3Ygb3PxqWKDAa
+         q7uQ8jkAj6Oaxf34HOTCogKOa9OpAqXqVoHTcMnyKZwdRrKyOtZNzsYauHkTmnhuVK71
+         3icw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:message-id:in-reply-to:subject
          :cc:to:from:date:delivered-to:list-id:list-subscribe
          :list-unsubscribe:list-help:list-post:precedence:mailing-list
          :arc-authentication-results;
-        bh=DWWMlZYO5QLmnXX+gDp56seHKi28oyjj1YBM3lD1/7M=;
-        b=ifXXWJ71tyRpIjvB4qET+7PhpUKBxAYFoNUFKzEUwvzfTvt6lq/SLc6uye8vQaY7ZI
-         /0EoYx/ZlG4iqq/vLRoK0HOAlzy3iTQoOQHvAViht4THcVUY+38jp7bLHorZkW/5DLqX
-         7D+C2Zpf+NLcRqChAO7IVa+vgiFWoDrUTwoyz0bAf0TvaIrx6NIX5TV6tP61maQzdsrd
-         c43OP2t4Uc7jw3mdN/CnfCO0o/o1F81uMzbBKr0+3zpRQWVFKryBhzWnH7ox1650cGdO
-         JS5j5HiRQ5yrl1CV74PowDvxnsR8Ykcozl/zq/So7V2Ot6eJ3QyspTxL2BDPI4dxR5++
-         d4IQ==
+        bh=Z9wC4DtB3ydCxa4u/X0ZOMazTsEsAl6Jt/aRjzR4l1o=;
+        b=kDtJ+kly3Z1K4EeYZrtYs7GcNRv+vk+I6xjvF+uJW/2RzsQi+XriNg52QuKrZlWMKv
+         aMThEbye1zbLq9WHQnzTBnpyLTOdzrjU2SchR++7FBNwMC8RjCRAoR2nIGhnlYMCN1KI
+         H8/tW18bL21rjxvhKI4qGhNM/9putjPX39uWyMYKc+jRi8sJAQYUrN7tEBk+ZfJtkhXp
+         33DmJmNtlrID4MSl7D+WhdPAClfB9xQ4b0XxZC0GOsgyG248oRLyijpR+ScyanEBloz1
+         fvkxC/+ek90GtL+GBEOeKmszQpUIQ8HNMTTYAEe1qJGhz2NBGaCRuLL0pYZMCnNU+cAB
+         pX+g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12513-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12513-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12296-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12296-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12513-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12513-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12296-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12296-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-X-IronPort-AV: E=Sophos;i="5.47,466,1515452400";
-   d="scan'208";a="258186036"
-Date: Tue, 13 Mar 2018 19:35:44 +0100 (CET)
+X-IronPort-AV: E=Sophos;i="5.47,444,1515452400";
+   d="scan'208";a="317141657"
+Date: Fri, 9 Mar 2018 06:59:43 +0100 (CET)
 From: Julia Lawall <julia.lawall@lip6.fr>
 X-X-Sender: jll@hadrien
 To: Matthew Wilcox <willy@infradead.org>
@@ -42,38 +42,78 @@ cc: Kees Cook <keescook@chromium.org>,
     Kernel Hardening <kernel-hardening@lists.openwall.com>,
     cocci@systeme.lip6.fr, Himanshu Jha <himanshujha199640@gmail.com>
 Subject: Re: [PATCH 2/2] mm: Add kvmalloc_ab_c and kvzalloc_struct
-In-Reply-To: <20180313183220.GA21538@bombadil.infradead.org>
-Message-ID: <alpine.DEB.2.20.1803131935160.3117@hadrien>
+In-Reply-To: <20180308230512.GD29073@bombadil.infradead.org>
+Message-ID: <alpine.DEB.2.20.1803090654480.2321@hadrien>
 References: <20180214182618.14627-1-willy@infradead.org> <20180214182618.14627-3-willy@infradead.org> <CAGXu5jL9hqQGe672CmvFwqNbtTr=qu7WRwHuS4Vy7o5sX_UTgg@mail.gmail.com> <alpine.DEB.2.20.1803072212160.2814@hadrien> <20180308025812.GA9082@bombadil.infradead.org>
- <alpine.DEB.2.20.1803080722300.3754@hadrien> <20180308230512.GD29073@bombadil.infradead.org> <alpine.DEB.2.20.1803131818550.3117@hadrien> <20180313183220.GA21538@bombadil.infradead.org>
+ <alpine.DEB.2.20.1803080722300.3754@hadrien> <20180308230512.GD29073@bombadil.infradead.org>
 User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592401933337716102?=
-X-GMAIL-MSGID: =?utf-8?q?1594848619172478138?=
+X-GMAIL-MSGID: =?utf-8?q?1594438662530146007?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 
 
-On Tue, 13 Mar 2018, Matthew Wilcox wrote:
+On Thu, 8 Mar 2018, Matthew Wilcox wrote:
 
-> On Tue, Mar 13, 2018 at 06:19:51PM +0100, Julia Lawall wrote:
-> > On Thu, 8 Mar 2018, Matthew Wilcox wrote:
-> > > On Thu, Mar 08, 2018 at 07:24:47AM +0100, Julia Lawall wrote:
-> > > > Thanks.  So it's OK to replace kmalloc and kzalloc, even though they
-> > > > didn't previously consider vmalloc and even though kmalloc doesn't zero?
+> On Thu, Mar 08, 2018 at 07:24:47AM +0100, Julia Lawall wrote:
+> > On Wed, 7 Mar 2018, Matthew Wilcox wrote:
+> > > On Wed, Mar 07, 2018 at 10:18:21PM +0100, Julia Lawall wrote:
+> > > > > Otherwise, yes, please. We could build a coccinelle rule for
+> > > > > additional replacements...
+> > > >
+> > > > A potential semantic patch and the changes it generates are attached
+> > > > below.  Himanshu Jha helped with its development.  Working on this
+> > > > uncovered one bug, where the allocated array is too large, because the
+> > > > size provided for it was a structure size, but actually only pointers to
+> > > > that structure were to be stored in it.
 > > >
-> > > We'll also need to replace the corresponding places where those structs
-> > > are freed with kvfree().  Can coccinelle handle that too?
+> > > This is cool!  Thanks for doing the coccinelle patch!  Diffstat:
+> > >
+> > >  50 files changed, 81 insertions(+), 124 deletions(-)
+> > >
+> > > I find that pretty compelling.  I'll repost the kvmalloc_struct patch
+> > > imminently.
 > >
-> > Is the use of vmalloc a necessary part of the design?  Or could there be a
-> > non vmalloc versions for call sites that are already ok with that?
+> > Thanks.  So it's OK to replace kmalloc and kzalloc, even though they
+> > didn't previously consider vmalloc and even though kmalloc doesn't zero?
 >
-> We can also add kmalloc_struct() along with kmalloc_ab_c that won't fall
-> back to vmalloc but just return NULL.
+> We'll also need to replace the corresponding places where those structs
+> are freed with kvfree().  Can coccinelle handle that too?
 
-It could be safer than being sure to find all of the relevant kfrees.
+This would be harder to do 100% reliably.  Coccinelle would have to rely
+on the structure name or the structure type, if the free is in a different
+function.  But I guess that the type should be mostly reliable, since all
+instances of allocations of the same type should be transformed in the
+same way.
+
+>
+> > There are a few other cases that use GFP_NOFS and GFP_NOWAIT, but I didn't
+> > transform those because the comment says that the flags should be
+> > GFP_KERNEL based.  Should those be transformed too?
+>
+> The problem with non-GFP_KERNEL allocations is that vmalloc may have to
+> allocate page tables, which is always done with an implicit GFP_KERNEL
+> allocation.  There's an intent to get rid of GFP_NOFS, but that's not
+> been realised yet (and I'm not sure of our strategy to eliminate it ...
+> I'll send a separate email about that).  I'm not sure why anything's
+> trying to allocate with GFP_NOWAIT; can you send a list of those places?
+
+drivers/dma/fsl-edma.c:
+
+fsl_desc = kzalloc(sizeof(*fsl_desc) + sizeof(struct fsl_edma_sw_tcd) * sg_len, GFP_NOWAIT);
+
+drivers/dma/st_fdma.c:
+
+fdesc = kzalloc(sizeof(*fdesc) + sizeof(struct st_fdma_sw_node) * sg_len,
+GFP_NOWAIT);
+
+drivers/dma/pxa_dma.c:
+
+sw_desc = kzalloc(sizeof(*sw_desc) + nb_hw_desc * sizeof(struct
+pxad_desc_hw *), GFP_NOWAIT);
 
 julia
