@@ -1,164 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751215AbeCIKLZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:11:25 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:38009 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751008AbeCIKKm (ORCPT
+        id S1751246AbeCIKLp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:11:45 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37676 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751226AbeCIKLo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 05:10:42 -0500
-Date: Fri, 9 Mar 2018 02:10:04 -0800
-From: tip-bot for Boqun Feng <tipbot@zytor.com>
-Message-ID: <tip-6b0ef92fee2a3189eba6d6b827b247cb4f6da7e9@git.kernel.org>
-Cc: jiangshanlai@gmail.com, peterz@infradead.org, mingo@kernel.org,
-        rostedt@goodmis.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, paulmck@linux.vnet.ibm.com,
-        mathieu.desnoyers@efficios.com, boqun.feng@gmail.com,
-        josh@joshtriplett.org
-Reply-To: paulmck@linux.vnet.ibm.com, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, boqun.feng@gmail.com, jiangshanlai@gmail.com,
-        peterz@infradead.org, mingo@kernel.org, rostedt@goodmis.org,
-        tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org
-In-Reply-To: <20180309065630.8283-1-boqun.feng@gmail.com>
-References: <20180309065630.8283-1-boqun.feng@gmail.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/urgent] rtmutex: Make rt_mutex_futex_unlock() safe for
- irq-off callsites
-Git-Commit-ID: 6b0ef92fee2a3189eba6d6b827b247cb4f6da7e9
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 9 Mar 2018 05:11:44 -0500
+Date: Fri, 9 Mar 2018 11:11:34 +0100
+From: Philipp Rudo <prudo@linux.vnet.ibm.com>
+To: Dave Young <dyoung@redhat.com>
+Cc: kexec@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
+        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: Re: [PATCH 11/11] kexec_file: Move purgatories sha256 to common
+ code
+In-Reply-To: <20180309044353.GC3246@dhcp-128-65.nay.redhat.com>
+References: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
+        <20180226151620.20970-12-prudo@linux.vnet.ibm.com>
+        <20180309044353.GC3246@dhcp-128-65.nay.redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18030910-0020-0000-0000-00000400B032
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030910-0021-0000-0000-00004294F8A8
+Message-Id: <20180309111134.6854a2a5@ThinkPad>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-09_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803090131
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6b0ef92fee2a3189eba6d6b827b247cb4f6da7e9
-Gitweb:     https://git.kernel.org/tip/6b0ef92fee2a3189eba6d6b827b247cb4f6da7e9
-Author:     Boqun Feng <boqun.feng@gmail.com>
-AuthorDate: Fri, 9 Mar 2018 14:56:28 +0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 9 Mar 2018 11:06:16 +0100
+Hi Dave,
 
-rtmutex: Make rt_mutex_futex_unlock() safe for irq-off callsites
 
-When running rcutorture with TREE03 config, CONFIG_PROVE_LOCKING=y, and
-kernel cmdline argument "rcutorture.gp_exp=1", lockdep reports a
-HARDIRQ-safe->HARDIRQ-unsafe deadlock:
+On Fri, 9 Mar 2018 12:43:53 +0800
+Dave Young <dyoung@redhat.com> wrote:
 
- ================================
- WARNING: inconsistent lock state
- 4.16.0-rc4+ #1 Not tainted
- --------------------------------
- inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.
- takes:
- __schedule+0xbe/0xaf0
- {IN-HARDIRQ-W} state was registered at:
-   _raw_spin_lock+0x2a/0x40
-   scheduler_tick+0x47/0xf0
-...
- other info that might help us debug this:
-  Possible unsafe locking scenario:
-        CPU0
-        ----
-   lock(&rq->lock);
-   <Interrupt>
-     lock(&rq->lock);
-  *** DEADLOCK ***
- 1 lock held by rcu_torture_rea/724:
- rcu_torture_read_lock+0x0/0x70
- stack backtrace:
- CPU: 2 PID: 724 Comm: rcu_torture_rea Not tainted 4.16.0-rc4+ #1
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
- Call Trace:
-  lock_acquire+0x90/0x200
-  ? __schedule+0xbe/0xaf0
-  _raw_spin_lock+0x2a/0x40
-  ? __schedule+0xbe/0xaf0
-  __schedule+0xbe/0xaf0
-  preempt_schedule_irq+0x2f/0x60
-  retint_kernel+0x1b/0x2d
- RIP: 0010:rcu_read_unlock_special+0x0/0x680
-  ? rcu_torture_read_unlock+0x60/0x60
-  __rcu_read_unlock+0x64/0x70
-  rcu_torture_read_unlock+0x17/0x60
-  rcu_torture_reader+0x275/0x450
-  ? rcutorture_booster_init+0x110/0x110
-  ? rcu_torture_stall+0x230/0x230
-  ? kthread+0x10e/0x130
-  kthread+0x10e/0x130
-  ? kthread_create_worker_on_cpu+0x70/0x70
-  ? call_usermodehelper_exec_async+0x11a/0x150
-  ret_from_fork+0x3a/0x50
+> On 02/26/18 at 04:16pm, Philipp Rudo wrote:
+> > The code to verify the new kernels sha digest are applicable for all
+> > architectures. Move it to common code.
+> > 
+> > Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
+> > ---
+> >  arch/x86/purgatory/Makefile                    |  3 +++
+> >  arch/x86/purgatory/purgatory.c                 |  2 +-
+> >  {arch/x86/purgatory => include/linux}/sha256.h | 10 +++++++++-
+> >  {arch/x86/purgatory => lib}/sha256.c           |  4 ++--
+> >  4 files changed, 15 insertions(+), 4 deletions(-)
+> >  rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
+> >  rename {arch/x86/purgatory => lib}/sha256.c (99%)
+> > 
+> > diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
+> > index 2f15a2ac4209..414eed6b5065 100644
+> > --- a/arch/x86/purgatory/Makefile
+> > +++ b/arch/x86/purgatory/Makefile
+> > @@ -6,6 +6,9 @@ purgatory-y := purgatory.o stack.o setup-x86_$(BITS).o sha256.o entry64.o string
+> >  targets += $(purgatory-y)
+> >  PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
+> >  
+> > +$(obj)/sha256.o: $(srctree)/lib/sha256.c
+> > +	$(call if_changed_rule,cc_o_c)
+> > +
+> >  LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined -nostdlib -z nodefaultlib
+> >  targets += purgatory.ro
+> >  
+> > diff --git a/arch/x86/purgatory/purgatory.c b/arch/x86/purgatory/purgatory.c
+> > index 470edad96bb9..025c34ac0d84 100644
+> > --- a/arch/x86/purgatory/purgatory.c
+> > +++ b/arch/x86/purgatory/purgatory.c
+> > @@ -11,9 +11,9 @@
+> >   */
+> >  
+> >  #include <linux/bug.h>
+> > +#include <linux/sha256.h>
+> >  #include <asm/purgatory.h>
+> >  
+> > -#include "sha256.h"
+> >  #include "../boot/string.h"
+> >  
+> >  unsigned long purgatory_backup_dest __section(.kexec-purgatory);
+> > diff --git a/arch/x86/purgatory/sha256.h b/include/linux/sha256.h
+> > similarity index 63%
+> > rename from arch/x86/purgatory/sha256.h
+> > rename to include/linux/sha256.h
+> > index 2867d9825a57..43a20ac33688 100644
+> > --- a/arch/x86/purgatory/sha256.h
+> > +++ b/include/linux/sha256.h
+> > @@ -13,9 +13,17 @@
+> >  #include <linux/types.h>
+> >  #include <crypto/sha.h>
+> >  
+> > +/* Stand-alone implementation of the SHA256 algorithm. It is designed to
+> > + * have as little dependencies as possible so it can be used in the
+> > + * kexec_file purgatory. In other cases you should use the implementation in
+> > + * crypto/.
+> > + *
+> > + * For details see lib/sha256.c
+> > + */  
+> 
+> should move to use preferred comment format:
+> /*
+>  * Stand-alone ...
+>  * ...
+>  */
 
-This happens with the following even sequence:
-
-	preempt_schedule_irq();
-	  local_irq_enable();
-	  __schedule():
-	    local_irq_disable(); // irq off
-	    ...
-	    rcu_note_context_switch():
-	      rcu_note_preempt_context_switch():
-	        rcu_read_unlock_special():
-	          local_irq_save(flags);
-	          ...
-		  raw_spin_unlock_irqrestore(...,flags); // irq remains off
-	          rt_mutex_futex_unlock():
-	            raw_spin_lock_irq();
-	            ...
-	            raw_spin_unlock_irq(); // accidentally set irq on
-
-	    <return to __schedule()>
-	    rq_lock():
-	      raw_spin_lock(); // acquiring rq->lock with irq on
-
-which means rq->lock becomes a HARDIRQ-unsafe lock, which can cause
-deadlocks in scheduler code.
-
-This problem was introduced by commit 02a7c234e540 ("rcu: Suppress
-lockdep false-positive ->boost_mtx complaints"). That brought the user
-of rt_mutex_futex_unlock() with irq off.
-
-To fix this, replace the *lock_irq() in rt_mutex_futex_unlock() with
-*lock_irq{save,restore}() to make it safe to call rt_mutex_futex_unlock()
-with irq off.
-
-Fixes: 02a7c234e540 ("rcu: Suppress lockdep false-positive ->boost_mtx complaints")
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Josh Triplett <josh@joshtriplett.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
-Link: https://lkml.kernel.org/r/20180309065630.8283-1-boqun.feng@gmail.com
-
----
- kernel/locking/rtmutex.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-index 65cc0cb984e6..940633c63254 100644
---- a/kernel/locking/rtmutex.c
-+++ b/kernel/locking/rtmutex.c
-@@ -1616,11 +1616,12 @@ bool __sched __rt_mutex_futex_unlock(struct rt_mutex *lock,
- void __sched rt_mutex_futex_unlock(struct rt_mutex *lock)
- {
- 	DEFINE_WAKE_Q(wake_q);
-+	unsigned long flags;
- 	bool postunlock;
+Fixed it.
  
--	raw_spin_lock_irq(&lock->wait_lock);
-+	raw_spin_lock_irqsave(&lock->wait_lock, flags);
- 	postunlock = __rt_mutex_futex_unlock(lock, &wake_q);
--	raw_spin_unlock_irq(&lock->wait_lock);
-+	raw_spin_unlock_irqrestore(&lock->wait_lock, flags);
+> > +
+> >  extern int sha256_init(struct sha256_state *sctx);
+> >  extern int sha256_update(struct sha256_state *sctx, const u8 *input,
+> > -				unsigned int length);
+> > +			 unsigned int length);
+> >  extern int sha256_final(struct sha256_state *sctx, u8 *hash);
+> >  
+> >  #endif /* SHA256_H */
+> > diff --git a/arch/x86/purgatory/sha256.c b/lib/sha256.c
+> > similarity index 99%
+> > rename from arch/x86/purgatory/sha256.c
+> > rename to lib/sha256.c
+> > index 548ca675a14a..4400c832e2aa 100644
+> > --- a/arch/x86/purgatory/sha256.c
+> > +++ b/lib/sha256.c
+> > @@ -16,9 +16,9 @@
+> >   */
+> >  
+> >  #include <linux/bitops.h>
+> > +#include <linux/sha256.h>
+> > +#include <linux/string.h>
+> >  #include <asm/byteorder.h>
+> > -#include "sha256.h"
+> > -#include "../boot/string.h"  
+> 
+> Hmm, I'm not sure if moving to linux/string.h will have some side
+> effects..
+
+Hmm, according to your other mail you are right. I'll have a closer look at it.
+
+Thanks
+Philipp
  
- 	if (postunlock)
- 		rt_mutex_postunlock(&wake_q);
+> >  
+> >  static inline u32 Ch(u32 x, u32 y, u32 z)
+> >  {
+> > -- 
+> > 2.13.5
+> >   
+> 
+> Thanks
+> Dave
+> 
