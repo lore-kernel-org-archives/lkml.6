@@ -1,88 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932462AbeCIRfq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 12:35:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57656 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932189AbeCIRfp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 12:35:45 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BD4A205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Fri, 9 Mar 2018 14:34:41 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH 9/9] perf c2c report: Add cacheline address count column
-Message-ID: <20180309173441.GG8347@kernel.org>
-References: <20180309101442.9224-1-jolsa@kernel.org>
- <20180309101442.9224-10-jolsa@kernel.org>
- <20180309145643.GA8347@kernel.org>
- <20180309162828.GA16890@krava>
+        id S932396AbeCIRgi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 12:36:38 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55714 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751166AbeCIRgg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 12:36:36 -0500
+Subject: Re: [PATCH v8 3/5] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To: Tomasz Figa <tfiga@chromium.org>
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Will Deacon <will.deacon@arm.com>, Rob Clark <robdclark@gmail.com>,
+        "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jcrouse@codeaurora.org, Stephen Boyd <sboyd@codeaurora.org>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+References: <20180302101050.6191-1-vivek.gautam@codeaurora.org>
+ <20180302101050.6191-4-vivek.gautam@codeaurora.org>
+ <d0f2b3ed-136d-7704-2aef-1173a342a89c@arm.com>
+ <CAAFQd5BTdF176x5ycatCmCHrMyVX2OZqdXd-JGq06RyDUb0N3g@mail.gmail.com>
+ <30a2fa5e-3d8e-acb6-ab31-bec652f1be99@arm.com>
+ <CAAFQd5BKkKc2binDe-MCDeP42b6O26Hu9nYjvYRE160EMvi1fA@mail.gmail.com>
+ <6fe36177-a8a5-5f17-bf65-1a53538221a4@arm.com>
+ <CAAFQd5BU+hU8aPyq6Rcaiwzu1sf7vcRNwnzt5LZZ+L01DnjqhA@mail.gmail.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <ae34ca46-8699-bdc7-7d5c-c402e75be97d@arm.com>
+Date: Fri, 9 Mar 2018 17:36:31 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180309162828.GA16890@krava>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CAAFQd5BU+hU8aPyq6Rcaiwzu1sf7vcRNwnzt5LZZ+L01DnjqhA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Mar 09, 2018 at 05:28:28PM +0100, Jiri Olsa escreveu:
-> On Fri, Mar 09, 2018 at 11:56:43AM -0300, Arnaldo Carvalho de Melo wrote:
-> > Em Fri, Mar 09, 2018 at 11:14:42AM +0100, Jiri Olsa escreveu:
-> > > Adding the 'PA cnt' column grouped under data cacheline address.
-> > > 
-> > > It shows how many times the physical addresses changed for the
-> > > hist entry. It does not show the number of different physical
-> > > addresses for entry, because we don't store those. We only track
-> > > the number of times we got different address than we currently
-> > > hold, which is not expensive and gives similar info.
-> > > 
-> > >   $ perf c2c report --stdio
-> > > 
-> > >   #        ----------- Cacheline ----------    Total      Tot  ----- LLC Load Hitm -----
-> > >   # Index             Address  Node  PA cnt  records     Hitm    Total      Lcl      Rmt
-> > >   # .....  ..................  ....  ......  .......  .......  .......  .......  .......
-> > >   #
-> > 
-> > 
-> > I'm adding this to the docs, ack?
-> 
-> nope.. those fields are c2c report only.. hardcoded
-> 
-> I'm preparing a change to share c2c fields with the
-> general report.. should come with other perf mem
-> changes later
+[ +Lorenzo ]
 
-Ok, dropping that then
- 
-> jirka
+On 09/03/18 04:50, Tomasz Figa wrote:
+[...]
+>>> Now we need a way to do the check. Perhaps for the time being it would
+>>> be enough to just check for the power-domains property in DT?
+>>
+>>
+>> AFAICS, it might be as simple as arm_smmu_probe() doing this:
+>>
+>>          /*
+>>           * We want to avoid touching dev->power.lock in fastpaths unless
+>>           * it's really going to do something useful - pm_runtime_enabled()
+>>           * can serve as an ideal proxy for that decision.
+>>           */
+>>          if (dev->pm_domain)
+>>                  pm_runtime_enable(dev);
+>>
+>> or maybe even just gate all the calls with "if (smmu->dev.pm_domain)"
+>> directly (like pcie-mediatek does), but I'm not sure which would be
+>> conceptually cleaner.
 > 
-> > 
-> > diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
-> > index cba16d8a970e..f4a280428e28 100644
-> > --- a/tools/perf/Documentation/perf-report.txt
-> > +++ b/tools/perf/Documentation/perf-report.txt
-> > @@ -127,7 +127,7 @@ OPTIONS
-> >  
-> >  	If the --mem-mode option is used, the following sort keys are also available
-> >  	(incompatible with --branch-stack):
-> > -	symbol_daddr, dso_daddr, locked, tlb, mem, snoop, dcacheline.
-> > +	symbol_daddr, dso_daddr, locked, tlb, mem, snoop, dcacheline, dcacheline_count.
-> >  
-> >  	- symbol_daddr: name of data symbol being executed on at the time of sample
-> >  	- dso_daddr: name of library or module containing the data being executed
-> > @@ -137,6 +137,7 @@ OPTIONS
-> >  	- mem: type of memory access for the data at the time of the sample
-> >  	- snoop: type of snoop (if any) for the data at the time of the sample
-> >  	- dcacheline: the cacheline the data address is on at the time of the sample
-> > +	- dcacheline_count: the number of physical addresses sampled for this dcacheline
-> >  	- phys_daddr: physical address of data being executed on at the time of sample
-> >  
-> >  	And the default sort keys are changed to local_weight, mem, sym, dso,
+> Okay, that was easier than I expected. Thanks. :)
+> 
+> Actually, there is one more thing that might need rechecking. Are you
+> sure that dev->pm_domain is NULL for the devices, for which we don't
+> want runtime PM to be enabled? I think ACPI was mentioned and ACPI
+> includes the concept of PM domains.
+
+Thanks for pointing that out - thankfully, I've confirmed that the SMMUs 
+on my Juno don't have dev->pm_domain set when booting with ACPI, and 
+double-checking the ACPI code I think we're OK here. Since the SMMUs are 
+only described in the static IORT table and not in the ACPI namespace, 
+they won't have the ACPI companion device that acpi_dev_pm_attach() 
+looks for, and thus should always be ignored. Lorenzo, do I have that right?
+
+Robin.
