@@ -1,67 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932252AbeCIRlX convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 12:41:23 -0500
-Received: from ms.lwn.net ([45.79.88.28]:50118 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751255AbeCIRlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 12:41:21 -0500
-Date: Fri, 9 Mar 2018 10:41:20 -0700
-From: Jonathan Corbet <corbet@lwn.net>
-To: Jonathan =?UTF-8?B?TmV1c2Now6RmZXI=?= <j.neuschaefer@gmx.net>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/8] Move most GPIO documentation to driver-api/gpio/
- and ReST
-Message-ID: <20180309104120.40244f8a@lwn.net>
-In-Reply-To: <20180308234024.24145-1-j.neuschaefer@gmx.net>
-References: <20180308234024.24145-1-j.neuschaefer@gmx.net>
-Organization: LWN.net
+        id S932391AbeCIRmd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 12:42:33 -0500
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:39063 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932288AbeCIRmb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 12:42:31 -0500
+X-Google-Smtp-Source: AG47ELv/iz166qZePB65co42vua+Lzloy6Y1DGz9QGF9YjM3gXI6JOBefCwxHL7RwrCu5hoZG8vugXKcY/dXBNsR0Zw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CAAeHK+xF0X-SQuPVmZF--VnmvYrbpDkznSwYTh_3LHq1H2V=9Q@mail.gmail.com>
+References: <cover.1520600533.git.andreyknvl@google.com> <beea8ac394bfae3c7c949645fb887ceacc3f3bb3.1520600533.git.andreyknvl@google.com>
+ <20180309155315.4x44sbp3darractt@armageddon.cambridge.arm.com> <CAAeHK+xF0X-SQuPVmZF--VnmvYrbpDkznSwYTh_3LHq1H2V=9Q@mail.gmail.com>
+From: Evgenii Stepanov <eugenis@google.com>
+Date: Fri, 9 Mar 2018 09:42:29 -0800
+Message-ID: <CAFKCwrgPEhBEbXn95ugxVuxHw7UTiQWuo3+HJ_t7UBG69fbUcw@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/6] mm, arm64: untag user addresses in memory syscalls
+To: Andrey Konovalov <andreyknvl@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        linux-arch@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>, Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  9 Mar 2018 00:40:16 +0100
-Jonathan Neuschäfer <j.neuschaefer@gmx.net> wrote:
+On Fri, Mar 9, 2018 at 9:31 AM, Andrey Konovalov <andreyknvl@google.com> wrote:
+> On Fri, Mar 9, 2018 at 4:53 PM, Catalin Marinas <catalin.marinas@arm.com> wrote:
+>> On Fri, Mar 09, 2018 at 03:02:01PM +0100, Andrey Konovalov wrote:
+>>> Memory subsystem syscalls accept user addresses as arguments, but don't use
+>>> copy_from_user and other similar functions, so we need to handle this case
+>>> separately.
+>>>
+>>> Untag user pointers passed to madvise, mbind, get_mempolicy, mincore,
+>>> mlock, mlock2, brk, mmap_pgoff, old_mmap, munmap, remap_file_pages,
+>>> mprotect, pkey_mprotect, mremap and msync.
+>>>
+>>> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+>>
+>> Please keep the cc list small (maybe linux-arch, linux-arm-kernel) as
+>> I'm sure some lists would consider this spam.
+>
+> OK.
+>
+>>
+>>>  mm/madvise.c   | 2 ++
+>>>  mm/mempolicy.c | 6 ++++++
+>>>  mm/mincore.c   | 2 ++
+>>>  mm/mlock.c     | 5 +++++
+>>>  mm/mmap.c      | 9 +++++++++
+>>>  mm/mprotect.c  | 2 ++
+>>>  mm/mremap.c    | 2 ++
+>>>  mm/msync.c     | 3 +++
+>>
+>> I'm not yet convinced these functions need to allow tagged pointers.
+>> They are not doing memory accesses but rather dealing with the memory
+>> range, hence an untagged pointer is better suited. There is probably a
+>> reason why the "start" argument is "unsigned long" vs "void __user *"
+>> (in the kernel, not the man page).
+>
+> So that would make the user to untag pointers before passing to these syscalls.
+>
+> Evgeniy, would that be possible to untag pointers in HWASan before
+> using memory subsystem syscalls? Is there a reason for untagging them
+> in the kernel?
 
-> The aim of this patchset is to move the GPIO subsystem's documentation
-> under Documentation/driver-api/gpio/ such that it is picked up by Sphinx
-> and compiled into HTML. I moved everything except for sysfs.txt, because
-> this file describes the legacy sysfs ABI, and doesn't seem to serve much
-> (non-historical) purpose anymore.
-> 
-> There are still some rough edges:
-> 
-> * I think the API documentation (kernel-doc) should be moved out of
->   index.rst into more appropriate files.
-> * The headings are arguably wrong, because driver.rst, consumer.rst,
->   etc. use the "document title" style, even though they are part of the
->   GPIO chapter. But the resulting TOC tree is consistent, and I did not
->   want to change almost all headings.
-> * Some of the files could use more :c:func:`...` references and general
->   ReST polish.
-> 
-> But I don't want to make this patchset too large.
+Generally, no. It's possible to intercept a libc call using symbol
+interposition, but I don't know how to rewrite arguments of a raw
+system call other than through ptrace, and that creates more problems
+than it solves.
 
-[For future reference, if you're going to CC me on most of a patch series,
-I'd really rather get the whole thing so I don't have to go looking for
-it.]
-
->From a quick look, it seems like a reasonable RST conversion to me.  I do
-wonder if sysfs.txt should just be removed, since it documents something
-we don't want people to use at this point?  Historical purposes are well
-served by the repository history.
-
-I'd say changing the headings is worthwhile if it produces a better
-result.  OTOH I'd be wary of adding too much "polish"; we really want to
-retain the readability of the plain-text files.
-
-Anyway, I'm happy to take these through the docs tree or see them go via
-GPIO; Linus, what's your preference?
-
-Thanks,
-
-jon
+AFAIU, it's valid for a program to pass an address obtained from
+malloc or, better, posix_memalign to an mm syscall like mprotect().
+These arguments are pointers from the userspace point of view.
