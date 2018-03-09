@@ -1,26 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752093AbeCIIup (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 03:50:45 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:37819 "EHLO
+        id S1751957AbeCIIvK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 03:51:10 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:40425 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751297AbeCIIum (ORCPT
+        with ESMTP id S1751020AbeCIIvJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 03:50:42 -0500
-Date: Fri, 9 Mar 2018 00:50:35 -0800
+        Fri, 9 Mar 2018 03:51:09 -0500
+Date: Fri, 9 Mar 2018 00:51:03 -0800
 From: tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-13f89dbafe73e56fd317c078bb1d3a45fd94ab7b@git.kernel.org>
-Cc: hpa@zytor.com, tglx@linutronix.de, acme@redhat.com, jolsa@redhat.com,
-        adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org
-Reply-To: jolsa@redhat.com, adrian.hunter@intel.com, acme@redhat.com,
-        hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <1520431349-30689-9-git-send-email-adrian.hunter@intel.com>
-References: <1520431349-30689-9-git-send-email-adrian.hunter@intel.com>
+Message-ID: <tip-599a5beb78ad95181677e7919f54dbd64b404cf7@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, jolsa@redhat.com,
+        adrian.hunter@intel.com, hpa@zytor.com, mingo@kernel.org,
+        acme@redhat.com, tglx@linutronix.de
+Reply-To: acme@redhat.com, tglx@linutronix.de, mingo@kernel.org,
+        adrian.hunter@intel.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        jolsa@redhat.com
+In-Reply-To: <1520431349-30689-10-git-send-email-adrian.hunter@intel.com>
+References: <1520431349-30689-10-git-send-email-adrian.hunter@intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf intel-pt: Remove a check for sampling mode
-Git-Commit-ID: 13f89dbafe73e56fd317c078bb1d3a45fd94ab7b
+Subject: [tip:perf/core] perf intel-pt: Adjust overlap-checking to support
+ sampling mode
+Git-Commit-ID: 599a5beb78ad95181677e7919f54dbd64b404cf7
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -33,44 +34,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  13f89dbafe73e56fd317c078bb1d3a45fd94ab7b
-Gitweb:     https://git.kernel.org/tip/13f89dbafe73e56fd317c078bb1d3a45fd94ab7b
+Commit-ID:  599a5beb78ad95181677e7919f54dbd64b404cf7
+Gitweb:     https://git.kernel.org/tip/599a5beb78ad95181677e7919f54dbd64b404cf7
 Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Wed, 7 Mar 2018 16:02:28 +0200
+AuthorDate: Wed, 7 Mar 2018 16:02:29 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Thu, 8 Mar 2018 10:05:58 -0300
 
-perf intel-pt: Remove a check for sampling mode
+perf intel-pt: Adjust overlap-checking to support sampling mode
 
-Intel PT code already has some preparation for AUX area sampling mode.
-
-However the implementation has changed from the first proposal and one
-of the side-effects is that it will not be impossible to support snapshot
-mode and sampling mode at the same time.
-
-Although there are no plans to support it, let validation (not yet
-implemented) control whether it is allowed rather than low-level
-functions.
+Adjust overlap-checking to support sampling mode.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/1520431349-30689-9-git-send-email-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/1520431349-30689-10-git-send-email-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/intel-pt.c | 3 ---
- 1 file changed, 3 deletions(-)
+ tools/perf/util/intel-pt.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index 9a4f9cdb752f..5c5c155fba78 100644
+index 5c5c155fba78..0effaff57020 100644
 --- a/tools/perf/util/intel-pt.c
 +++ b/tools/perf/util/intel-pt.c
-@@ -2061,9 +2061,6 @@ static int intel_pt_process_auxtrace_event(struct perf_session *session,
- 	struct intel_pt *pt = container_of(session->auxtrace, struct intel_pt,
- 					   auxtrace);
+@@ -230,6 +230,7 @@ static int intel_pt_get_trace(struct intel_pt_buffer *b, void *data)
+ 	struct auxtrace_buffer *buffer = ptq->buffer;
+ 	struct auxtrace_buffer *old_buffer = ptq->old_buffer;
+ 	struct auxtrace_queue *queue;
++	bool might_overlap;
  
--	if (pt->sampling_mode)
--		return 0;
--
- 	if (!pt->data_queued) {
- 		struct auxtrace_buffer *buffer;
- 		off_t data_offset;
+ 	if (ptq->stop) {
+ 		b->len = 0;
+@@ -256,7 +257,8 @@ static int intel_pt_get_trace(struct intel_pt_buffer *b, void *data)
+ 			return -ENOMEM;
+ 	}
+ 
+-	if (ptq->pt->snapshot_mode && !buffer->consecutive && old_buffer &&
++	might_overlap = ptq->pt->snapshot_mode || ptq->pt->sampling_mode;
++	if (might_overlap && !buffer->consecutive && old_buffer &&
+ 	    intel_pt_do_fix_overlap(ptq->pt, old_buffer, buffer))
+ 		return -ENOMEM;
+ 
+@@ -269,8 +271,7 @@ static int intel_pt_get_trace(struct intel_pt_buffer *b, void *data)
+ 	}
+ 	b->ref_timestamp = buffer->reference;
+ 
+-	if (!old_buffer || ptq->pt->sampling_mode || (ptq->pt->snapshot_mode &&
+-						      !buffer->consecutive)) {
++	if (!old_buffer || (might_overlap && !buffer->consecutive)) {
+ 		b->consecutive = false;
+ 		b->trace_nr = buffer->buffer_nr + 1;
+ 	} else {
