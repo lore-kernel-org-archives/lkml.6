@@ -1,59 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751108AbeCICFD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 21:05:03 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:38056 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750904AbeCICFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 21:05:02 -0500
-From: Peng Li <lipeng321@huawei.com>
-To: <davem@davemloft.net>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
-        <lipeng321@huawei.com>
-Subject: [PATCH net-next 4/9] net: hns3: fix for pause configuration lost during reset
-Date: Fri, 9 Mar 2018 10:36:59 +0800
-Message-ID: <1520563024-94811-5-git-send-email-lipeng321@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520563024-94811-1-git-send-email-lipeng321@huawei.com>
-References: <1520563024-94811-1-git-send-email-lipeng321@huawei.com>
+        id S1752003AbeCICIB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 21:08:01 -0500
+Received: from mga14.intel.com ([192.55.52.115]:39788 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751101AbeCICH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 21:07:58 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,443,1515484800";
+   d="scan'208";a="36678949"
+From: "Zhang, Ning A" <ning.a.zhang@intel.com>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Roberts, William C" <william.c.roberts@intel.com>
+Subject: Re: maybe a bug in SELinux: security_context_to_sid_core
+Thread-Topic: maybe a bug in SELinux: security_context_to_sid_core
+Thread-Index: AQHTsF/zXv0WT/3/k0CHbnK7eA84DaPGsAOA
+Date: Fri, 9 Mar 2018 02:07:56 +0000
+Message-ID: <1520561275.1367.10.camel@intel.com>
+References: <1519800427.32465.22.camel@intel.com>
+In-Reply-To: <1519800427.32465.22.camel@intel.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.239.16.113]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <95D553A5ACFA024791368E22E4262E34@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.71.200.31]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2928AJt017891
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+Hi, Bill
 
-Pause configuration will be set to default value by hclge_tm_schd_init
-during reset, which causes the RSS configuration loss problem.
+For below SELinux behavior, do you know why.
 
-This patch fixes it by calling hclge_tm_init_hw during reset process
-, which will set the pause configuration to default value.
+BR.
+Ning.
 
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 34a0905..109155d 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -5493,9 +5493,9 @@ static int hclge_reset_ae_dev(struct hnae3_ae_dev *ae_dev)
- 		return ret;
- 	}
- 
--	ret = hclge_tm_schd_init(hdev);
-+	ret = hclge_tm_init_hw(hdev);
- 	if (ret) {
--		dev_err(&pdev->dev, "tm schd init fail, ret =%d\n", ret);
-+		dev_err(&pdev->dev, "tm init hw fail, ret =%d\n", ret);
- 		return ret;
- 	}
- 
--- 
-2.9.3
+在 2018-02-28三的 14:47 +0800，Zhang Ning写道：
+> Hi,
+> 
+> Before SELinux is initialized, get scontext by secid by using:
+> 
+> security_secctx_to_secid() may return wrong numbe
+> 
+> eg:
+> security_secctx_to_secid("devnull", strlen("devnull"), &sid);
+> 
+> sid here will be 1
+> 
+> because:
+> 
+> in security_context_to_sid_core:
+> 
+> ...
+> 	if (!ss_initialized) {
+> 		int i;
+> 
+> 		for (i = 1; i < SECINITSID_NUM; i++) {
+> 			if (!strcmp(initial_sid_to_string[i],
+> scontext)) {
+> 				*sid = i;
+> 				return 0;
+> 			}
+> 		}
+> 		*sid = SECINITSID_KERNEL;
+> 		return 0;
+> 	}
+> ...
+> 
+> and SECINITSID_DEVNULL equals to SECINITSID_NUM, and it will never get
+> right secid for "devnull".
+> 
+> is this by design or bug?
+> 
+> BR.
+> Ning.
