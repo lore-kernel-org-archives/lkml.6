@@ -1,31 +1,31 @@
 Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1520607036; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520607035; cv=none;
         d=google.com; s=arc-20160816;
-        b=yt3SOfTDf/ID53Ld0eKh9/4rXsY3LQleqhKOm/rWPqo/k5V5Kfbl7geQR3pciLQPeu
-         eywWjzq/cbhdgUPTpp9IYUyXLLWTDlnxWzjB6kpTIPfzektIDeypTLFGBEMZkay7ylD8
-         5T4wCdPHSdLeSTjM5j9utqwcZLTlGAlHzDvkbanBEk96mCa/7Bt2Pr8CT9lLhld4BKWM
-         POw22kt1MSN+8IKObxQb1JXs6ox8JdQom9hLdyxgjyC5wTyMBBDSxGn+y4GGx9R+DNTf
-         VDVD0Dy1em2IvHLgCPyPnXJRaZO7sicBUFZT/jJ5hoPGtLwtazZAUoppMfcMYNoSlJoG
-         4E1Q==
+        b=ly3PEatswZKArtX4eTK5Ma2byBb5viW/jTqEwIeldBmKuzndFtrrCpTeS3FFDM6P6l
+         DSqJf0lETPOCItwKvQ4u82dW3F8dAFwSvb+8Qfmq5C4XQquEukJwurMuSVAb6axJBZeo
+         kJ1vX8QWc55+67LezDvh3jjqR1vOj04THtjTyB3uudtmQDFCgYGlJsmnHe+PQ1NcALPv
+         95JEMiEH+0wFtAas4IjpK0Qh99ALKh6b/m1H2wpwQWpMXOxyX59sG59iocmCbXuLVWqa
+         6gYV57M+X+Y7uJjhP9B+AcsBQNWIFQnZd1LOiH7pTpioumWmqYm8GdDkSzfkStC+S+F2
+         DoBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=KumflxtmCK4yZqAwSsdyJfWj2rBtjIqqQwGZdvKlUXk=;
-        b=r0AURa5upZMliKrWmj0x/c+sA+xFd9KDzXdqhXXQOa/HYi16RnoE4RCSWMUSzbUp2a
-         nkxzEEyTbTudg8ja+UvZRE4NHlOQT8Su62DoVgQ0sLumEDR0VzJuZs21Gna2j2GQaWNM
-         viCcKNvJS17DsMDPAUjeWw4flkSUbz44GZ9vRmgzpvvr3G71AIIZ59x/zpkf7HvBufaz
-         a82Vmyldb/P2Jk/DCBb4kOQL7B/2pSnqhFUxxRgtQycQ8QrET2OzzoK1s53+Mzyc0gWN
-         Vzx5qV1CM/52t67l3GTVlf3yr4v1u9RIuwvlkSAwCfdn/OyatMJ7VAI+eG4D87DDTGUw
-         lnEQ==
+        bh=gAUsHSbOIFU6E1G8a/YdYu7okTBUkxYiiz5tKmU42xU=;
+        b=q9iI5zxJdvmTfVpJV2k41f3mLAcuYjadVjXXgZYUZa7W/8Uw5qZ5sg8im/hzsCn8CJ
+         +PaiOmnU/64PlPy6SPlaQc8W8GfIxFmAgfPWsFeLFetAt/xZnn33vmScoOEsaj3qo3FC
+         2QHtuyTprGw7UIf7TAFE0Ge9j9m5xNJ+Vj5IN/ssRFhc5RSA0Ul4TfFEg/UEtbsibwK/
+         AXZj7Fqw/JPj2RX1Bzi/iLOveWo2ORIYEmTi6qT0mTAWD7s5zOIyCCWfyFzoTmyt1eeh
+         GNwe9+VGMNv55XoVUbUFw+dxoSLVLPNIakwoYjptxBZfTkpqgSbLR758JBsRBKIUnZx1
+         zwtg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=fPtidxFT;
+       dkim=pass header.i=@linaro.org header.s=google header.b=Lan+og5r;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=fPtidxFT;
+       dkim=pass header.i=@linaro.org header.s=google header.b=Lan+og5r;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AG47ELvTFeHpkVzyLdhiI22hedR3N1DGp4IC6lZ5hd/QSV5a4rM9aGBo6REOg/YJRkrhQCDVSVwWqA==
+X-Google-Smtp-Source: AG47ELsuLYSvwU1MMOq4yDkueHxDNhUfHfdhMu5yiRSSnh5MAiTRdmXc93JRHdlztArrgJTEnjbG5g==
 From: srinivas.kandagatla@linaro.org
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
@@ -41,15 +41,15 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	linux-amlogic@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 09/25] nvmem: mtk-efuse: Convert to use devm_nvmem_register()
-Date: Fri,  9 Mar 2018 14:47:03 +0000
-Message-Id: <20180309144719.29904-10-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 08/25] nvmem: rockchip-efuse: Convert to use devm_nvmem_register()
+Date: Fri,  9 Mar 2018 14:47:02 +0000
+Message-Id: <20180309144719.29904-9-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180309144719.29904-1-srinivas.kandagatla@linaro.org>
 References: <20180309144719.29904-1-srinivas.kandagatla@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594472044429943387?=
-X-GMAIL-MSGID: =?utf-8?q?1594472044429943387?=
+X-GMAIL-THRID: =?utf-8?q?1594472042763329463?=
+X-GMAIL-MSGID: =?utf-8?q?1594472042763329463?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -73,17 +73,17 @@ Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/mtk-efuse.c | 16 ++--------------
+ drivers/nvmem/rockchip-efuse.c | 16 ++--------------
  1 file changed, 2 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/nvmem/mtk-efuse.c b/drivers/nvmem/mtk-efuse.c
-index 9ee3479cfc7b..e66adf17a747 100644
---- a/drivers/nvmem/mtk-efuse.c
-+++ b/drivers/nvmem/mtk-efuse.c
-@@ -72,20 +72,9 @@ static int mtk_efuse_probe(struct platform_device *pdev)
- 	econfig.size = resource_size(res);
- 	econfig.priv = priv;
- 	econfig.dev = dev;
+diff --git a/drivers/nvmem/rockchip-efuse.c b/drivers/nvmem/rockchip-efuse.c
+index f13a8335f364..fec6e4c48b9a 100644
+--- a/drivers/nvmem/rockchip-efuse.c
++++ b/drivers/nvmem/rockchip-efuse.c
+@@ -289,25 +289,13 @@ static int rockchip_efuse_probe(struct platform_device *pdev)
+ 	econfig.reg_read = match->data;
+ 	econfig.priv = efuse;
+ 	econfig.dev = efuse->dev;
 -	nvmem = nvmem_register(&econfig);
 -	if (IS_ERR(nvmem))
 -		return PTR_ERR(nvmem);
@@ -94,7 +94,7 @@ index 9ee3479cfc7b..e66adf17a747 100644
 -	return 0;
 -}
 -
--static int mtk_efuse_remove(struct platform_device *pdev)
+-static int rockchip_efuse_remove(struct platform_device *pdev)
 -{
 -	struct nvmem_device *nvmem = platform_get_drvdata(pdev);
 -
@@ -102,14 +102,11 @@ index 9ee3479cfc7b..e66adf17a747 100644
 +	return PTR_ERR_OR_ZERO(nvmem);
  }
  
- static const struct of_device_id mtk_efuse_of_match[] = {
-@@ -97,7 +86,6 @@ MODULE_DEVICE_TABLE(of, mtk_efuse_of_match);
- 
- static struct platform_driver mtk_efuse_driver = {
- 	.probe = mtk_efuse_probe,
--	.remove = mtk_efuse_remove,
+ static struct platform_driver rockchip_efuse_driver = {
+ 	.probe = rockchip_efuse_probe,
+-	.remove = rockchip_efuse_remove,
  	.driver = {
- 		.name = "mediatek,efuse",
- 		.of_match_table = mtk_efuse_of_match,
+ 		.name = "rockchip-efuse",
+ 		.of_match_table = rockchip_efuse_match,
 -- 
 2.15.1
