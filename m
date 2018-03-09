@@ -1,99 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751209AbeCIDyi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 22:54:38 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54264 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751101AbeCIDyh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 22:54:37 -0500
-Date: Fri, 9 Mar 2018 05:54:30 +0200
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        glider@google.com, dvyukov@google.com
-Subject: Re: [PATCH net] vhost_net: examine pointer types during un-producing
-Message-ID: <20180309055424-mutt-send-email-mst@kernel.org>
-References: <1520565382-4915-1-git-send-email-jasowang@redhat.com>
+        id S1751028AbeCIEJL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 23:09:11 -0500
+Received: from guitar.tcltek.co.il ([192.115.133.116]:56162 "EHLO
+        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750848AbeCIEJJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 23:09:09 -0500
+Date: Fri, 9 Mar 2018 06:09:03 +0200
+From: Baruch Siach <baruch@tkos.co.il>
+To: Jacob Chen <jacobchen110@gmail.com>
+Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Shunqian Zheng <zhengsq@rock-chips.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        =?utf-8?B?6ZKf5Lul5bSH?= <zyc@rock-chips.com>,
+        Eddie Cai <eddie.cai.linux@gmail.com>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>, devicetree@vger.kernel.org,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v6 00/17] Rockchip ISP1 Driver
+Message-ID: <20180309040903.hhkhylvs6q6lvqjy@tarshish>
+References: <20180308094807.9443-1-jacob-chen@iotwrt.com>
+ <20180308120200.wpcjnbglf4x32vrp@tarshish>
+ <CAFLEztTokSaXJuN8Ls0BpAEuFdTC+Viwn6PGxC=TC6vZAs+w3g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1520565382-4915-1-git-send-email-jasowang@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFLEztTokSaXJuN8Ls0BpAEuFdTC+Viwn6PGxC=TC6vZAs+w3g@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 09, 2018 at 11:16:22AM +0800, Jason Wang wrote:
-> After commit 761876c857cb ("tap: XDP support"), we can actually
-> queueing XDP pointers in the pointer ring, so we should examine the
-> pointer type before freeing the pointer.
-> 
-> Fixes: 761876c857cb ("tap: XDP support")
-> Reported-by: Michael S. Tsirkin <mst@redhat.com>
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+Hi Jacob,
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-
-> ---
->  drivers/net/tun.c      | 3 ++-
->  drivers/vhost/net.c    | 2 +-
->  include/linux/if_tun.h | 4 ++++
->  3 files changed, 7 insertions(+), 2 deletions(-)
+On Fri, Mar 09, 2018 at 08:53:57AM +0800, Jacob Chen wrote:
+> 2018-03-08 20:02 GMT+08:00 Baruch Siach <baruch@tkos.co.il>:
+> > On Thu, Mar 08, 2018 at 05:47:50PM +0800, Jacob Chen wrote:
+> >> This patch series add a ISP(Camera) v4l2 driver for rockchip rk3288/rk3399
+> >> SoC.
+> >>
+> >> Wiki Pages:
+> >> http://opensource.rock-chips.com/wiki_Rockchip-isp1
+> >>
+> >> The deprecated g_mbus_config op is not dropped in  V6 because i am waiting
+> >> tomasz's patches.
+> >
+> > Which tree is this series based on? On top of v4.16-rc4 I get the build
+> > failure below. The V4L2_BUF_TYPE_META_OUTPUT macro, for example, is not even
+> > in media_tree.git.
 > 
-> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> index 7433bb2..28cfa64 100644
-> --- a/drivers/net/tun.c
-> +++ b/drivers/net/tun.c
-> @@ -655,7 +655,7 @@ static struct tun_struct *tun_enable_queue(struct tun_file *tfile)
->  	return tun;
->  }
->  
-> -static void tun_ptr_free(void *ptr)
-> +void tun_ptr_free(void *ptr)
->  {
->  	if (!ptr)
->  		return;
-> @@ -667,6 +667,7 @@ static void tun_ptr_free(void *ptr)
->  		__skb_array_destroy_skb(ptr);
->  	}
->  }
-> +EXPORT_SYMBOL_GPL(tun_ptr_free);
->  
->  static void tun_queue_purge(struct tun_file *tfile)
->  {
-> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> index 610cba2..54a138f 100644
-> --- a/drivers/vhost/net.c
-> +++ b/drivers/vhost/net.c
-> @@ -170,7 +170,7 @@ static void vhost_net_buf_unproduce(struct vhost_net_virtqueue *nvq)
->  	if (nvq->rx_ring && !vhost_net_buf_is_empty(rxq)) {
->  		ptr_ring_unconsume(nvq->rx_ring, rxq->queue + rxq->head,
->  				   vhost_net_buf_get_size(rxq),
-> -				   __skb_array_destroy_skb);
-> +				   tun_ptr_free);
->  		rxq->head = rxq->tail = 0;
->  	}
->  }
-> diff --git a/include/linux/if_tun.h b/include/linux/if_tun.h
-> index c5b0a75..fd00170 100644
-> --- a/include/linux/if_tun.h
-> +++ b/include/linux/if_tun.h
-> @@ -25,6 +25,7 @@ struct ptr_ring *tun_get_tx_ring(struct file *file);
->  bool tun_is_xdp_buff(void *ptr);
->  void *tun_xdp_to_ptr(void *ptr);
->  void *tun_ptr_to_xdp(void *ptr);
-> +void tun_ptr_free(void *ptr);
->  #else
->  #include <linux/err.h>
->  #include <linux/errno.h>
-> @@ -50,5 +51,8 @@ static inline void *tun_ptr_to_xdp(void *ptr)
->  {
->  	return NULL;
->  }
-> +static inline void tun_ptr_free(void *ptr)
-> +{
-> +}
->  #endif /* CONFIG_TUN */
->  #endif /* __IF_TUN_H */
-> -- 
-> 2.7.4
+> This series is based on v4.16-rc4 with below patch.
+> https://patchwork.kernel.org/patch/9792001/
+
+This patch does not apply on v4.16-rc4. I also tried v2 of this patch with the 
+same result:
+
+  https://patchwork.linuxtv.org/patch/44682/
+
+Can you push your series to a public git repo branch?
+
+Thanks,
+baruch
+
+> > drivers/media/platform/rockchip/isp1/isp_params.c:1321:3: error: ‘const struct v4l2_ioctl_ops’ has no member named ‘vidioc_enum_fmt_meta_out’; did you mean ‘vidioc_enum_fmt_meta_cap’?
+> >   .vidioc_enum_fmt_meta_out = rkisp1_params_enum_fmt_meta_out,
+> >    ^~~~~~~~~~~~~~~~~~~~~~~~
+> >    vidioc_enum_fmt_meta_cap
+> > drivers/media/platform/rockchip/isp1/isp_params.c:1321:30: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+> >   .vidioc_enum_fmt_meta_out = rkisp1_params_enum_fmt_meta_out,
+> >                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/media/platform/rockchip/isp1/isp_params.c:1321:30: note: (near initialization for ‘rkisp1_params_ioctl.vidioc_g_std’)
+> > drivers/media/platform/rockchip/isp1/isp_params.c:1322:3: error: ‘const struct v4l2_ioctl_ops’ has no member named ‘vidioc_g_fmt_meta_out’; did you mean ‘vidioc_g_fmt_meta_cap’?
+> >   .vidioc_g_fmt_meta_out = rkisp1_params_g_fmt_meta_out,
+> >    ^~~~~~~~~~~~~~~~~~~~~
+> >    vidioc_g_fmt_meta_cap
+> > drivers/media/platform/rockchip/isp1/isp_params.c:1322:27: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+> >   .vidioc_g_fmt_meta_out = rkisp1_params_g_fmt_meta_out,
+> >                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/media/platform/rockchip/isp1/isp_params.c:1322:27: note: (near initialization for ‘rkisp1_params_ioctl.vidioc_s_std’)
+> > drivers/media/platform/rockchip/isp1/isp_params.c:1323:3: error: ‘const struct v4l2_ioctl_ops’ has no member named ‘vidioc_s_fmt_meta_out’; did you mean ‘vidioc_s_fmt_meta_cap’?
+> >   .vidioc_s_fmt_meta_out = rkisp1_params_g_fmt_meta_out,
+> >    ^~~~~~~~~~~~~~~~~~~~~
+> >    vidioc_s_fmt_meta_cap
+> > drivers/media/platform/rockchip/isp1/isp_params.c:1323:27: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+> >   .vidioc_s_fmt_meta_out = rkisp1_params_g_fmt_meta_out,
+> >                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/media/platform/rockchip/isp1/isp_params.c:1323:27: note: (near initialization for ‘rkisp1_params_ioctl.vidioc_querystd’)
+> > drivers/media/platform/rockchip/isp1/isp_params.c:1324:3: error: ‘const struct v4l2_ioctl_ops’ has no member named ‘vidioc_try_fmt_meta_out’; did you mean ‘vidioc_try_fmt_meta_cap’?
+> >   .vidioc_try_fmt_meta_out = rkisp1_params_g_fmt_meta_out,
+> >    ^~~~~~~~~~~~~~~~~~~~~~~
+> >    vidioc_try_fmt_meta_cap
+> > drivers/media/platform/rockchip/isp1/isp_params.c:1324:29: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+> >   .vidioc_try_fmt_meta_out = rkisp1_params_g_fmt_meta_out,
+> >                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/media/platform/rockchip/isp1/isp_params.c:1324:29: note: (near initialization for ‘rkisp1_params_ioctl.vidioc_enum_input’)
+> > drivers/media/platform/rockchip/isp1/isp_params.c: In function ‘rkisp1_params_init_vb2_queue’:
+> > drivers/media/platform/rockchip/isp1/isp_params.c:1462:12: error: ‘V4L2_BUF_TYPE_META_OUTPUT’ undeclared (first use in this function); did you mean ‘V4L2_BUF_TYPE_SDR_OUTPUT’?
+> >   q->type = V4L2_BUF_TYPE_META_OUTPUT;
+> >             ^~~~~~~~~~~~~~~~~~~~~~~~~
+> >             V4L2_BUF_TYPE_SDR_OUTPUT
+> > drivers/media/platform/rockchip/isp1/isp_params.c:1462:12: note: each undeclared identifier is reported only once for each function it appears in
+> >   CC      drivers/media/platform/rockchip/isp1/mipi_dphy_sy.o
+> > drivers/media/platform/rockchip/isp1/isp_params.c: In function ‘rkisp1_register_params_vdev’:
+> > drivers/media/platform/rockchip/isp1/isp_params.c:1507:43: error: ‘V4L2_CAP_META_OUTPUT’ undeclared (first use in this function); did you mean ‘V4L2_CAP_VBI_OUTPUT’?
+> >   vdev->device_caps = V4L2_CAP_STREAMING | V4L2_CAP_META_OUTPUT;
+> >                                            ^~~~~~~~~~~~~~~~~~~~
+> >                                            V4L2_CAP_VBI_OUTPUT
+> >
+> > Thanks,
+> > baruch
+> >
+> >> Jacob Chen (12):
+> >>   media: doc: add document for rkisp1 meta buffer format
+> >>   media: rkisp1: add Rockchip MIPI Synopsys DPHY driver
+> >>   media: rkisp1: add Rockchip ISP1 subdev driver
+> >>   media: rkisp1: add ISP1 statistics driver
+> >>   media: rkisp1: add ISP1 params driver
+> >>   media: rkisp1: add capture device driver
+> >>   media: rkisp1: add rockchip isp1 core driver
+> >>   dt-bindings: Document the Rockchip ISP1 bindings
+> >>   dt-bindings: Document the Rockchip MIPI RX D-PHY bindings
+> >>   ARM: dts: rockchip: add isp node for rk3288
+> >>   ARM: dts: rockchip: add rx0 mipi-phy for rk3288
+> >>   MAINTAINERS: add entry for Rockchip ISP1 driver
+> >>
+> >> Jeffy Chen (1):
+> >>   media: rkisp1: Add user space ABI definitions
+> >>
+> >> Shunqian Zheng (3):
+> >>   media: videodev2.h, v4l2-ioctl: add rkisp1 meta buffer format
+> >>   arm64: dts: rockchip: add isp0 node for rk3399
+> >>   arm64: dts: rockchip: add rx0 mipi-phy for rk3399
+> >>
+> >> Wen Nuan (1):
+> >>   ARM: dts: rockchip: Add dts mipi-dphy TXRX1 node for rk3288
+> >>
+> >>  .../devicetree/bindings/media/rockchip-isp1.txt    |   69 +
+> >>  .../bindings/media/rockchip-mipi-dphy.txt          |   90 +
+> >>  Documentation/media/uapi/v4l/meta-formats.rst      |    2 +
+> >>  .../media/uapi/v4l/pixfmt-meta-rkisp1-params.rst   |   20 +
+> >>  .../media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst     |   18 +
+> >>  MAINTAINERS                                        |   10 +
+> >>  arch/arm/boot/dts/rk3288.dtsi                      |   33 +
+> >>  arch/arm64/boot/dts/rockchip/rk3399.dtsi           |   25 +
+> >>  drivers/media/platform/Kconfig                     |   10 +
+> >>  drivers/media/platform/Makefile                    |    1 +
+> >>  drivers/media/platform/rockchip/isp1/Makefile      |    8 +
+> >>  drivers/media/platform/rockchip/isp1/capture.c     | 1751 ++++++++++++++++++++
+> >>  drivers/media/platform/rockchip/isp1/capture.h     |  167 ++
+> >>  drivers/media/platform/rockchip/isp1/common.h      |  110 ++
+> >>  drivers/media/platform/rockchip/isp1/dev.c         |  626 +++++++
+> >>  drivers/media/platform/rockchip/isp1/dev.h         |   93 ++
+> >>  drivers/media/platform/rockchip/isp1/isp_params.c  | 1539 +++++++++++++++++
+> >>  drivers/media/platform/rockchip/isp1/isp_params.h  |   49 +
+> >>  drivers/media/platform/rockchip/isp1/isp_stats.c   |  508 ++++++
+> >>  drivers/media/platform/rockchip/isp1/isp_stats.h   |   58 +
+> >>  .../media/platform/rockchip/isp1/mipi_dphy_sy.c    |  868 ++++++++++
+> >>  .../media/platform/rockchip/isp1/mipi_dphy_sy.h    |   15 +
+> >>  drivers/media/platform/rockchip/isp1/regs.c        |  239 +++
+> >>  drivers/media/platform/rockchip/isp1/regs.h        | 1550 +++++++++++++++++
+> >>  drivers/media/platform/rockchip/isp1/rkisp1.c      | 1177 +++++++++++++
+> >>  drivers/media/platform/rockchip/isp1/rkisp1.h      |  105 ++
+> >>  drivers/media/v4l2-core/v4l2-ioctl.c               |    2 +
+> >>  include/uapi/linux/rkisp1-config.h                 |  798 +++++++++
+> >>  include/uapi/linux/videodev2.h                     |    4 +
+> >>  29 files changed, 9945 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/media/rockchip-isp1.txt
+> >>  create mode 100644 Documentation/devicetree/bindings/media/rockchip-mipi-dphy.txt
+> >>  create mode 100644 Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst
+> >>  create mode 100644 Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst
+> >>  create mode 100644 drivers/media/platform/rockchip/isp1/Makefile
+> >>  create mode 100644 drivers/media/platform/rockchip/isp1/capture.c
+> >>  create mode 100644 drivers/media/platform/rockchip/isp1/capture.h
+> >>  create mode 100644 drivers/media/platform/rockchip/isp1/common.h
+> >>  create mode 100644 drivers/media/platform/rockchip/isp1/dev.c
+> >>  create mode 100644 drivers/media/platform/rockchip/isp1/dev.h
+> >>  create mode 100644 drivers/media/platform/rockchip/isp1/isp_params.c
+> >>  create mode 100644 drivers/media/platform/rockchip/isp1/isp_params.h
+> >>  create mode 100644 drivers/media/platform/rockchip/isp1/isp_stats.c
+> >>  create mode 100644 drivers/media/platform/rockchip/isp1/isp_stats.h
+> >>  create mode 100644 drivers/media/platform/rockchip/isp1/mipi_dphy_sy.c
+> >>  create mode 100644 drivers/media/platform/rockchip/isp1/mipi_dphy_sy.h
+> >>  create mode 100644 drivers/media/platform/rockchip/isp1/regs.c
+> >>  create mode 100644 drivers/media/platform/rockchip/isp1/regs.h
+> >>  create mode 100644 drivers/media/platform/rockchip/isp1/rkisp1.c
+> >>  create mode 100644 drivers/media/platform/rockchip/isp1/rkisp1.h
+> >>  create mode 100644 include/uapi/linux/rkisp1-config.h
+
+-- 
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
