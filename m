@@ -1,162 +1,82 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3835922-1520576499-2-17092797893133287760
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='cc', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520576498; b=UAwZnwmQqQQuBjfJmiq7kDH2YXahdTmepNI3lZBRMXByft/
-    7QqAbtHJmfHq8eFkWiEr7vUY8uCKfBD8x2965h7bky8PgisZM5lUDrDkGwihrIyr
-    ewxoKnjhbOx+SWM89EK/Fmye62K8n3EdjRVAaGB1sYyLalanO59LUuce9aCqqZA9
-    /FjpcEfa2jjpK3m+D4xEFZxxaQPIyOBHYk3ZXfKNhgROkG4JPFqOv0qlGPGzCRFJ
-    wJMoT4aRW0nqmEzmbnwDqKsOoumNIsiAeXdQKEnSgDbSzqYEAqZikFtbF02cHGWv
-    gFLO6BSyP5mrJkaaO9i1IW1y6bWoHD7nmqkLMUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520576498; bh=1
-    B1Fs5fBdlsZVJumOd3wqWYO+qwVowi911x9XcBhvJQ=; b=QfrDVXjOsPUSLFV48
-    wW+bsm7Ij+WuXNAhOaTFIex97r2aqHFLUA/jdOs5MNiWebC3n/jLC4ZnshItLJy/
-    H5zfXwz8e2uHCeR1QE9/zJ52bPNj2DpCHtvIhM9dyQg2hUZi5kPl3Y+i5+JduIcI
-    ldkDMJImgR+fb08sbeSbTef+AoKE/AYckqxyHc3hpWBfxL55lNItrPCB3J42Tj30
-    TY6pPtOjrlO/1jq1Bp5cojTjdsMNe2fT7NZhYKuXb6uqFS3VNYlS0aM9aAK2PLPI
-    fYpbWLuhtKlTon8mSLmbWmicps0RvyMbSDt9qn60bvLb8pIxOaadYwWcTI1TUgcB
-    CWiGw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=messagingengine.com header.i=@messagingengine.com header.b=GnKpbick x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=tobin.cc header.i=@tobin.cc header.b=XA1o/XXj x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tobin.cc;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-85 state=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tobin.cc header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=messagingengine.com header.i=@messagingengine.com header.b=GnKpbick x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=tobin.cc header.i=@tobin.cc header.b=XA1o/XXj x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tobin.cc;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-85 state=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tobin.cc header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-ME-Sender: <xms:6yeiWpBOpze9JZTtv3vj5ALx8JAOgxyH081BVMxhNIsZSIixYXudTw>
-From: "Tobin C. Harding" <me@tobin.cc>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH] staging: vchiq_arm: Clear VLA warning
-Date: Fri,  9 Mar 2018 17:21:10 +1100
-Message-Id: <1520576470-20628-1-git-send-email-me@tobin.cc>
-X-Mailer: git-send-email 2.7.4
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
- kernel-hardening@lists.openwall.com, driverdev-devel@linuxdriverproject.org,
- linux-kernel@vger.kernel.org
+Return-Path: <eric@anholt.net>
+X-Google-Smtp-Source: AG47ELtq2yl41+znmtVGgvfSkOpGbIfcCSeIsSQkRJdJMe/TYhKS6DuT+XvzjS7qYOHOJdSnHIKv
+ARC-Seal: i=1; a=rsa-sha256; t=1520619110; cv=none;
+        d=google.com; s=arc-20160816;
+        b=rvpH/JrnYgz1dZ87nrg1z+H4NFZBDrvgIYuZOlmYanZ8iQ6vxl1Mj8veReNTr8WTyO
+         Wh5xaadcKwWztl01TONk4Z2GoB+vr+y1HIfEsa8o+4s3zBJ8i0XlbYAdVYEdQY9BqtDq
+         wd9XO0mmuoMtJrbx6HcZ970OfZjrqaUAcWQhp/LeJKdwVsh2J0CNvwjMeERpPkr2YALU
+         ofFnEtolS7wfFVd3o7AyKNO94pFa/SUV9loJ9+9w4m2AqEkRLq/LU8+1xxDRelz2iC7X
+         OXmaKWk9dQ+Jb50zWQl38/gAvaJs56wjFL2FuZZOAonwptmyN5DbbTLIa0stwEQIgWXV
+         s2Mg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:arc-authentication-results;
+        bh=fX4X+VJzZeeiCKyRfh9g4HodN1kQ2D6/jgn3qfoLhLY=;
+        b=sN8gEEV7Le9FGwPHfnVoA2JZm3g1vWYfMAtcsz90XXqbvk2ZOeKhy3swrZ+Delxpyo
+         A1n7gVPSsnJvoqo9PodLK8b8ky1LVFzb7I9Xcy7Tqt3aA8DZ1o+eflE//xEKB52aFL27
+         jncJdainXxsi6GFFKpNOfRC3ClujPnV5mPQGgHOMdUW2cBVAVimzm7ue4ryobyKLIfZt
+         zNEVkl9osk94fIOmcyen/zxlKF9GR8YvdfAViyGeFEJRmuh6axJuxK+svnB5iFNcKgZ6
+         YvVKpBgbqvq8QJA0drhXGhHrMUEh8+gClK7CUnX9cN1Eq/EL0HWtBCCVK2cgPwq1yXhM
+         3+Vg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of eric@anholt.net designates 50.246.234.109 as permitted sender) smtp.mailfrom=eric@anholt.net
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of eric@anholt.net designates 50.246.234.109 as permitted sender) smtp.mailfrom=eric@anholt.net
+From: Eric Anholt <eric@anholt.net>
+To: "Tobin C. Harding" <me@tobin.cc>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stefan Wahren <stefan.wahren@i2se.com>
+Cc: "Tobin C. Harding" <me@tobin.cc>, kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org, driverdev-devel@linuxdriverproject.org, Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] staging: vchiq_arm: Clear VLA warning
+In-Reply-To: <1520576470-20628-1-git-send-email-me@tobin.cc>
+References: <1520576470-20628-1-git-send-email-me@tobin.cc>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date: Fri, 09 Mar 2018 10:11:47 -0800
+Message-ID: <877eqli0f0.fsf@anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594440016675851024?=
+X-GMAIL-MSGID: =?utf-8?q?1594484704466249627?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The kernel would like to have all stack VLA usage removed[1].  The
-array here is fixed (declared with a const variable) but it appears
-like VLA to the compiler.  We can use a pre-processor define to quiet
-the compiler.
+--=-=-=
+Content-Type: text/plain
 
-[1]: https://lkml.org/lkml/2018/3/7/621
+"Tobin C. Harding" <me@tobin.cc> writes:
 
-Signed-off-by: Tobin C. Harding <me@tobin.cc>
----
+> The kernel would like to have all stack VLA usage removed[1].  The
+> array here is fixed (declared with a const variable) but it appears
+> like VLA to the compiler.  We can use a pre-processor define to quiet
+> the compiler.
+>
+> [1]: https://lkml.org/lkml/2018/3/7/621
+>
+> Signed-off-by: Tobin C. Harding <me@tobin.cc>
+> ---
+>
+> The name of this constant may need changing, there is already a
+> pre-processor constant VCHIQ_MAX_SERVICES
 
-The name of this constant may need changing, there is already a
-pre-processor constant VCHIQ_MAX_SERVICES
+Maybe just use ARRAY_SIZE(local_max_services) and not have the #define?
 
- .../staging/vc04_services/interface/vchiq_arm/vchiq_arm.c  | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index f5cefda49b22..c972869a0333 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -3434,13 +3434,15 @@ vchiq_release_service(VCHIQ_SERVICE_HANDLE_T handle)
- 	return ret;
- }
- 
-+/* Only dump 64 services */
-+#define VCHIQ_LOCAL_MAX_SERVICES 64
-+
- void
- vchiq_dump_service_use_state(VCHIQ_STATE_T *state)
- {
- 	VCHIQ_ARM_STATE_T *arm_state = vchiq_platform_get_arm_state(state);
- 	int i, j = 0;
--	/* Only dump 64 services */
--	static const int local_max_services = 64;
-+
- 	/* If there's more than 64 services, only dump ones with
- 	 * non-zero counts */
- 	int only_nonzero = 0;
-@@ -3455,7 +3457,7 @@ vchiq_dump_service_use_state(VCHIQ_STATE_T *state)
- 		int fourcc;
- 		int clientid;
- 		int use_count;
--	} service_data[local_max_services];
-+	} service_data[VCHIQ_LOCAL_MAX_SERVICES];
- 
- 	if (!arm_state)
- 		return;
-@@ -3466,10 +3468,10 @@ vchiq_dump_service_use_state(VCHIQ_STATE_T *state)
- 	peer_count = arm_state->peer_use_count;
- 	vc_use_count = arm_state->videocore_use_count;
- 	active_services = state->unused_service;
--	if (active_services > local_max_services)
-+	if (active_services > VCHIQ_LOCAL_MAX_SERVICES)
- 		only_nonzero = 1;
- 
--	for (i = 0; (i < active_services) && (j < local_max_services); i++) {
-+	for (i = 0; (i < active_services) && (j < VCHIQ_LOCAL_MAX_SERVICES); i++) {
- 		VCHIQ_SERVICE_T *service_ptr = state->services[i];
- 
- 		if (!service_ptr)
-@@ -3499,7 +3501,7 @@ vchiq_dump_service_use_state(VCHIQ_STATE_T *state)
- 		vchiq_log_warning(vchiq_susp_log_level, "Too many active "
- 			"services (%d).  Only dumping up to first %d services "
- 			"with non-zero use-count", active_services,
--			local_max_services);
-+			VCHIQ_LOCAL_MAX_SERVICES);
- 
- 	for (i = 0; i < j; i++) {
- 		vchiq_log_warning(vchiq_susp_log_level,
--- 
-2.7.4
+-----BEGIN PGP SIGNATURE-----
 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlqizmQACgkQtdYpNtH8
+nuip/g//fOzcTK1Mgomn3nfvXcxq5Rzl5d1e9ZX5CeOd1ecNomwGhAuMWxYWf4rP
+g7j+Kah7c13lGQ0EcJTlC59T1Ml2WAtfEU5RiY0396+W30eRABALO3Afa/bsghHZ
+HfgruKUTGA6MipeguFadfLSh/WPDy/AEW+pcCe005MZ+R9PYau+KK+d2BZfntMoI
+4TncmLyCSChsYmWW/HFZreaNncV3C53tMv0R2uLoH/a7MmQhHWqwcuFPLp9BJ8Vq
+UzfXx7Kbhd7zs6knQOv0wHULUAcoh61MR+wNYpZZycJ6gM2hmJNKRTnLE5ZfPRS7
+4Zt9dhdIYODmlRZ5oItFHOxYakWGfDTKTjLWfbl0dBdHnPbZwVvdnafhfKMLcBIw
+5dHbxJvdJPM4HEqjq95Ky9aXuCxq36OQK8qpi7W/9xsJCh1AqPw6li4611uULF/w
+6X6NN7Xv+bOXFhndA0AKEn52+/zu80vpCPhK/MG7NUy9djLIX0ELM/dJQmDH8yPC
+6cHK8fZpOBFaCqvTm5nwuduKRYGYfY1pdgQ1g6D9s/sMcwTESxBITIovTdtIKjq4
+d5WvFvIXKzP/DgiPrHyOhfNcRgyQN4RDwdm4tCxQLHFGOwS9nUwSaottCMOVQCYM
+GZTIiWGky7/1vOa5ynJVkItUTopwqiBKtsnOIxCGCaryEunp0dQ=
+=1Rra
+-----END PGP SIGNATURE-----
+--=-=-=--
