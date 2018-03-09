@@ -1,50 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932113AbeCIMww (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 07:52:52 -0500
-Received: from mail-vk0-f47.google.com ([209.85.213.47]:34799 "EHLO
-        mail-vk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751059AbeCIMwt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 07:52:49 -0500
-X-Google-Smtp-Source: AG47ELseTlUsdMg/BPxHe4B+V3OPtBCbFw4NKRtBb0sMEpbjmoraRpmOJHjOsxx+sQ2gOcjdX10OFQ==
-Date: Fri, 9 Mar 2018 09:52:45 -0300
-From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Moore <paul@paul-moore.com>, David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Richard Haines <richard_c_haines@btinternet.com>,
-        Xin Long <lucien.xin@gmail.com>
-Subject: Re: linux-next: manual merge of the selinux tree with the net-next
- tree
-Message-ID: <20180309125244.GA5105@localhost.localdomain>
-References: <20180305124054.09966cb0@canb.auug.org.au>
- <20180308130703.7365f733@canb.auug.org.au>
+        id S1751209AbeCIMyb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 07:54:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44476 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751059AbeCIMy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 07:54:29 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CF7621771
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+X-Google-Smtp-Source: AG47ELuBqcbeed8Z3BJATyPYRW9DXU96Xa5mRIySPLSQTQMxgcLrZaMiibjc64mQe5vWhyk5++nXQQjaXzDd7wwVAhg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180308130703.7365f733@canb.auug.org.au>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180307172711.15697-1-s.nawrocki@samsung.com>
+References: <CGME20180307172723epcas1p1b8879bb555737cab7406a172b7d13a56@epcas1p1.samsung.com>
+ <20180307172711.15697-1-s.nawrocki@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Fri, 9 Mar 2018 13:54:26 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPdgsNwcVQ0FZLDR_q8Dz1AkSEBaG-1Mij7TKSLpSRJLpw@mail.gmail.com>
+Message-ID: <CAJKOXPdgsNwcVQ0FZLDR_q8Dz1AkSEBaG-1Mij7TKSLpSRJLpw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] ARM: dts: exynos5250: Add #sound-dai-cells property
+ to hdmi device node
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: kgene@kernel.org, devicetree@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?=
+        <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 08, 2018 at 01:07:03PM +1100, Stephen Rothwell wrote:
-> The resolution now looks like below (there were more changes to this
-> file in the net-next tree).  It will keep changing every time this file
-> is touched :-(
+On Wed, Mar 7, 2018 at 6:27 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> This property is required for specifying link between the HDMI IP block
+> and the SoC's audio subsystem.
+>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5250.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
 
-Ugh, sorry for that, Stephen.
+Subject prefix:
+ARM: dts: exynos: Add..... to Exynos5250
 
-Considering how much of a hassle this already is, I'll hold off the
-mtu refactoring I have and only post it when all this reaches Linus'
-tree.  This refactoring is touching nearly every single line that the
-SELinux patches touched too (where it added accounting for the IP
-options) and the fixup would be a complete nightmare.
+Please fix it here and in other places. For arm64 prefix is slightly
+different (arm64: dts: exynos:). I did not notice that in your last
+patches and applied them but please take care about this in future.
 
-Probably I won't be able to post the sctp_outq_flush refactoring too,
-but I have to check that more carefully.
+In case you forget how the prefix should look like - run "git log
+--oneline -- arch/arm/boot/dts/exynos*" or "git log --oneline --
+arch/arm64/boot/dts/exynos/".
 
-  Marcelo
+BR,
+Krzysztof
