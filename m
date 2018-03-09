@@ -1,100 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751048AbeCIL3U (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 06:29:20 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:38906 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750883AbeCIL3T (ORCPT
+        id S1751045AbeCILdz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 06:33:55 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:40390 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750898AbeCILdx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 06:29:19 -0500
-Date: Fri, 9 Mar 2018 12:29:15 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCHv5 3/5] mfd: motorola-cpcap: Add audio-codec support
-Message-ID: <20180309112915.bjnqi7tddgucdqjl@earth.universe>
-References: <20180223200254.25685-1-sebastian.reichel@collabora.co.uk>
- <20180223200254.25685-4-sebastian.reichel@collabora.co.uk>
- <20180307163211.rytfli5tb47yhtug@dell>
- <20180308094652.qg4atjw5c3hayaz3@earth.universe>
- <20180308170736.GN5799@atomide.com>
+        Fri, 9 Mar 2018 06:33:53 -0500
+X-Google-Smtp-Source: AG47ELsZ81XHL4SNgkk8eFOwWJMu7n2OAICbScoXtD6a46xR+GkUBAm8VHcNEjMGGzi5lpj8wKtwiw==
+Date: Fri, 9 Mar 2018 12:33:48 +0100
+From: Miklos Szeredi <miklos@szeredi.hu>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Subject: [GIT PULL] overlayfs fixes for 4.16-rc5
+Message-ID: <20180309113348.GC19579@veci.piliscsaba.redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="c2zqi7fl2es4yu3a"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180308170736.GN5799@atomide.com>
-User-Agent: NeoMutt/20171215
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
---c2zqi7fl2es4yu3a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please pull from:
 
-Hi,
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git overlayfs-linus
 
-On Thu, Mar 08, 2018 at 09:07:36AM -0800, Tony Lindgren wrote:
-> * Sebastian Reichel <sebastian.reichel@collabora.co.uk> [180308 09:47]:
-> > Hi Lee,
-> >=20
-> > On Wed, Mar 07, 2018 at 04:32:11PM +0000, Lee Jones wrote:
-> > > On Fri, 23 Feb 2018, Sebastian Reichel wrote:
-> > > > +static const struct mfd_cell cpcap_mfd_devices[] =3D {
-> >=20
-> > [...]
-> >=20
-> > > > +	}, {
-> > > > +		.name          =3D "cpcap-led",
-> > > > +		.id            =3D 4,
-> > > > +		.of_compatible =3D "motorola,cpcap-led-cp",
-> > > > +	}, {
-> > > > +		.name          =3D "cpcap-codec",
-> > > > +	}
-> > > > +};
-> > >=20
-> > > With none of the entries containing platform_data /me wonders why you
-> > > can't still use devm_of_platform_populate()?
-> >=20
-> > Because devm_of_platform_populate works with compatible properties and
-> > cpcap-codec does not have one after I removed it for Mark.
->=20
-> How about keep devm_of_platform_populate() for the ones that
-> already have compatible. Then add a table entry for cpcap-codec
-> only and call devm_mfd_add_devices()?
+This fixes a corner case for NFS exporting (introduced in this cycle) as well as
+fixing miscellaneous bugs.
 
-This should work. I think it makes sense to wait for Rob Herring's
-feedback on the binding. My understanding is, that he has the last
-word on binding questions and I would like to avoid changing this
-back and forth.
+Thanks,
+Miklos
 
--- Sebastian
+---
+Amir Goldstein (3):
+      ovl: hash non-dir by lower inode for fsnotify
+      ovl: check lower ancestry on encode of lower dir file handle
+      ovl: check ERR_PTR() return value from ovl_lookup_real()
 
---c2zqi7fl2es4yu3a
-Content-Type: application/pgp-signature; name="signature.asc"
+Fengguang Wu (1):
+      ovl: fix ptr_ret.cocci warnings
 
------BEGIN PGP SIGNATURE-----
+Miklos Szeredi (1):
+      ovl: update Kconfig texts
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqicAoACgkQ2O7X88g7
-+poeTBAAmJpoKAwVZfFaTdUvmxWsxwgdhZ7cKE74QycrYPYb/V8kQoCRb8kwXMLw
-XH+HFo3OAUYkJ9zaU3vnhrDRbcwD2/fI96Ao70HPyqUQa3/lH/6RMrJ6lnmzECtp
-Ag/9rW4/b6Y+PU526PkdIKOWV1mjQTIQ0EnWFB0z5fMUuqQ18Zis4wGeXm1ZOdfi
-RB7sjBD9p1M/HjK1aTWhuYp+YapkbUBTbZI3dD4Hf4JnCjMnvnsXwy/LOvSpzpWk
-a5BHdUBVEwjWNRBCgueBr9xFk6B0tJn5YiPuLD1Ii4u1MBti321b8ggrRkrU3d/O
-7LOyXt31ROb9rGHhRBLC5RKChuK8nFUFKqwmlaQRxDMpvsPNOixWxtEIlZAmr0ir
-lUA3XqvNoneyV/dVLfnF5yU80liV/R4j5XWfmIXFBCkYe+tAbMxwvokz3FEdZQ76
-sfjA9uXk+jHy9VFkWPdCyIUFxqGbo3PmsO1s4xOIlMfbkU2Cy0mLatqT8Uu3JfYk
-pca6iDWkKvhNOwJF0g+lC7NnFZIpuWE69K+oVX2hQgIpf3/wV1wyAynUrnMNt0Kt
-y8yLYiePy7QiSqDoY57yQtXyVDWZufhjC0HESAhMQDPUoFbgrTb0ZmIn0ORP3/ez
-QDEFAaYgmza52QpH0jeirG5B2jrgkTnk2SY8uN0hwVl6Mn8q4E0=
-=+Ir8
------END PGP SIGNATURE-----
+Vivek Goyal (1):
+      ovl: redirect_dir=nofollow should not follow redirect for opaque lower
 
---c2zqi7fl2es4yu3a--
+---
+ fs/overlayfs/Kconfig     |  14 +++
+ fs/overlayfs/export.c    | 216 ++++++++++++++++++++++++++++++++++++-----------
+ fs/overlayfs/inode.c     |  58 +++++++++----
+ fs/overlayfs/namei.c     |   6 +-
+ fs/overlayfs/overlayfs.h |   1 +
+ fs/overlayfs/super.c     |   1 +
+ 6 files changed, 228 insertions(+), 68 deletions(-)
