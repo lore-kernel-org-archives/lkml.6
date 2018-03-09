@@ -1,67 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751060AbeCIMIg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 07:08:36 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:39061 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750898AbeCIMIe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 07:08:34 -0500
-X-Google-Smtp-Source: AG47ELu2+FHwLLAm88xvCFbqnihy3hpjbNqG3Rt9RPnnc8C2uklpVhA87FHCn7Xxb/8j2jKS1XhdTA==
-Date: Fri, 9 Mar 2018 13:08:31 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] arm64: defconfig: Enable CONFIG_ARM_TEGRA186_CPUFREQ
-Message-ID: <20180309120831.GA18609@ulmo>
-References: <20171116114652.25321-1-mperttunen@nvidia.com>
+        id S1750939AbeCIMIx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 07:08:53 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49192 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751183AbeCIMIu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 07:08:50 -0500
+Date: Fri, 9 Mar 2018 20:08:34 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Artem Bityutskiy <dedekind1@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, Laurence Oberman <loberman@redhat.com>
+Subject: Re: [PATCH V3 0/4] genirq/affinity: irq vector spread among online
+ CPUs as far as possible
+Message-ID: <20180309120833.GB30257@ming.t460p>
+References: <20180308105358.1506-1-ming.lei@redhat.com>
+ <1520515113.20980.31.camel@gmail.com>
+ <20180308133440.GA2713@ming.t460p>
+ <alpine.DEB.2.21.1803090011150.1454@nanos.tec.linutronix.de>
+ <20180309012458.GD5228@ming.t460p>
+ <alpine.DEB.2.21.1803091107520.1364@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="82I3+IH0IqGh5yIs"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20171116114652.25321-1-mperttunen@nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <alpine.DEB.2.21.1803091107520.1364@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Mar 09, 2018 at 11:08:54AM +0100, Thomas Gleixner wrote:
+> On Fri, 9 Mar 2018, Ming Lei wrote:
+> > On Fri, Mar 09, 2018 at 12:20:09AM +0100, Thomas Gleixner wrote:
+> > > On Thu, 8 Mar 2018, Ming Lei wrote:
+> > > > Actually, it isn't a real fix, the real one is in the following two:
+> > > > 
+> > > > 	0c20244d458e scsi: megaraid_sas: fix selection of reply queue
+> > > > 	ed6d043be8cd scsi: hpsa: fix selection of reply queue
+> > > 
+> > > Where are these commits? Neither Linus tree not -next know anything about
+> > > them....
+> > 
+> > Both aren't merged yet, but they should land V4.16, IMO.
+> > 
+> > > 
+> > > > This patchset can't guarantee that all IRQ vectors are assigned by one
+> > > > online CPU, for example, in a quad-socket system, if only one processor
+> > > > is present, then some of vectors are still assigned by all offline CPUs,
+> > > > and it is a valid case, but still may cause io hang if drivers(hpsa,
+> > > > megaraid_sas) select reply queue in current way.
+> > > 
+> > > So my understanding is that these irq patches are enhancements and not bug
+> > > fixes. I'll queue them for 4.17 then.
+> > 
+> > Wrt. this IO hang issue, these patches shouldn't be bug fix, but they may
+> > fix performance regression[1] for some systems caused by 84676c1f21 ("genirq/affinity:
+> > assign vectors to all possible CPUs").
+> > 
+> > [1] https://marc.info/?l=linux-block&m=152050347831149&w=2
+> 
+> Hmm. The patches are rather large for urgent and evtl. backporting. Is
+> there a simpler way to address that performance issue?
 
---82I3+IH0IqGh5yIs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Not thought of a simpler solution. The problem is that number of active msix vector
+is decreased a lot by commit 84676c1f21.
 
-On Thu, Nov 16, 2017 at 01:46:51PM +0200, Mikko Perttunen wrote:
-> Enable Tegra186 CPU frequency scaling support by default.
->=20
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
+However, if someone wants to backport, this patchset can be applied cleanly, no
+any conflict.
 
-Both patches applied, thanks.
-
-Thierry
-
---82I3+IH0IqGh5yIs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqieTsACgkQ3SOs138+
-s6EzNQ//e2kMZUjzvdKlIsIr8hXj6sYBoxAvn3A01BVeurVUjSozlPDzTDDlUQMa
-JHvzqHXd5loZPFB06ZUvNdJ8nK+7HYSvqD7Sh57UTgOrX2+qavmXHOySLHPWGr3i
-OaL0WhWzXaVsgn9Gp5nbgrRE3WS4N6vyJpY4C2XSxwrmcFi4D3Vwe306xF3p2YoW
-9/UFxQiAcyIImmxaRuHb4xJTEmqcGBERd3fRRVn2MAn5tpAV6ngCaJeE5kMy8fQX
-UsibGkXfSSUAHrij5IOTD65FmkrbSg68E0Qd0NLa9rELqGJT9UgQbAD/cxM89Q4Q
-HRvURGkX2XNsa80hiAXc/l3ks5zMUWSluHPSikI9h2MAg11Utz3cYzFBmHUC3EHX
-iGyPtjIYHzTcdBGvt+X4cJn0mj6naKO5l4THUyzjsCWCYcByh7fc306qtTgm3Qms
-1iaYY0PvbQjO2VqbDI5fOVgIlFz59zpBAtzJS2D1SmE1jK8E2xdbG6gW1jm68ZjV
-X3Kzik8Q7fkNFDblpzTog6osLvSbOgMa+wBYi7bsTZ2mvUUOFZqP7CfdVhsdSvqV
-kY5r/HDhgaIPGATn2hniT7XTl5hNMG5wpuJrxztothd/1uTw97eDDEmX/RpyAch9
-Njfs4NmdCDKvp0oSONw728dAVDRVeCWwYaThG3F1Rwh/L1RlyKE=
-=J/zq
------END PGP SIGNATURE-----
-
---82I3+IH0IqGh5yIs--
+Thanks,
+Ming
