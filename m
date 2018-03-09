@@ -1,90 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751187AbeCIDQd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 22:16:33 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42672 "EHLO mx1.redhat.com"
+        id S1751253AbeCIDSS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 22:18:18 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37964 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750913AbeCIDQc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 22:16:32 -0500
-From: Jason Wang <jasowang@redhat.com>
-To: mst@redhat.com, jasowang@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        glider@google.com, dvyukov@google.com
-Subject: [PATCH net] vhost_net: examine pointer types during un-producing
-Date: Fri,  9 Mar 2018 11:16:22 +0800
-Message-Id: <1520565382-4915-1-git-send-email-jasowang@redhat.com>
+        id S1750918AbeCIDSR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 22:18:17 -0500
+Date: Fri, 9 Mar 2018 11:18:05 +0800
+From: Dave Young <dyoung@redhat.com>
+To: Philipp Rudo <prudo@linux.vnet.ibm.com>
+Cc: kexec@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
+        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: Re: [PATCH 08/11] kexec_file: Simplify kexec_purgatory_setup_sechdrs
+ 2
+Message-ID: <20180309031805.GB3246@dhcp-128-65.nay.redhat.com>
+References: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
+ <20180226151620.20970-9-prudo@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180226151620.20970-9-prudo@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After commit 761876c857cb ("tap: XDP support"), we can actually
-queueing XDP pointers in the pointer ring, so we should examine the
-pointer type before freeing the pointer.
+Hi,
 
-Fixes: 761876c857cb ("tap: XDP support")
-Reported-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/net/tun.c      | 3 ++-
- drivers/vhost/net.c    | 2 +-
- include/linux/if_tun.h | 4 ++++
- 3 files changed, 7 insertions(+), 2 deletions(-)
+On 02/26/18 at 04:16pm, Philipp Rudo wrote:
+> The main loop currently uses quite a lot of variables to update the section
+> headers. Some of them are unnecessary. So clean them up a little.
+> 
 
-diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index 7433bb2..28cfa64 100644
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -655,7 +655,7 @@ static struct tun_struct *tun_enable_queue(struct tun_file *tfile)
- 	return tun;
- }
- 
--static void tun_ptr_free(void *ptr)
-+void tun_ptr_free(void *ptr)
- {
- 	if (!ptr)
- 		return;
-@@ -667,6 +667,7 @@ static void tun_ptr_free(void *ptr)
- 		__skb_array_destroy_skb(ptr);
- 	}
- }
-+EXPORT_SYMBOL_GPL(tun_ptr_free);
- 
- static void tun_queue_purge(struct tun_file *tfile)
- {
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 610cba2..54a138f 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -170,7 +170,7 @@ static void vhost_net_buf_unproduce(struct vhost_net_virtqueue *nvq)
- 	if (nvq->rx_ring && !vhost_net_buf_is_empty(rxq)) {
- 		ptr_ring_unconsume(nvq->rx_ring, rxq->queue + rxq->head,
- 				   vhost_net_buf_get_size(rxq),
--				   __skb_array_destroy_skb);
-+				   tun_ptr_free);
- 		rxq->head = rxq->tail = 0;
- 	}
- }
-diff --git a/include/linux/if_tun.h b/include/linux/if_tun.h
-index c5b0a75..fd00170 100644
---- a/include/linux/if_tun.h
-+++ b/include/linux/if_tun.h
-@@ -25,6 +25,7 @@ struct ptr_ring *tun_get_tx_ring(struct file *file);
- bool tun_is_xdp_buff(void *ptr);
- void *tun_xdp_to_ptr(void *ptr);
- void *tun_ptr_to_xdp(void *ptr);
-+void tun_ptr_free(void *ptr);
- #else
- #include <linux/err.h>
- #include <linux/errno.h>
-@@ -50,5 +51,8 @@ static inline void *tun_ptr_to_xdp(void *ptr)
- {
- 	return NULL;
- }
-+static inline void tun_ptr_free(void *ptr)
-+{
-+}
- #endif /* CONFIG_TUN */
- #endif /* __IF_TUN_H */
--- 
-2.7.4
+It looks better to use some patch subject eg below:
+"Remove unnecessary variables in kexec_purgatory_setup_sechdrs"
+
+> Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
+> ---
+>  kernel/kexec_file.c | 34 ++++++++++++----------------------
+>  1 file changed, 12 insertions(+), 22 deletions(-)
+> 
+> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> index bb31a3b627c2..746b91e46e34 100644
+> --- a/kernel/kexec_file.c
+> +++ b/kernel/kexec_file.c
+> @@ -724,12 +724,8 @@ static int kexec_purgatory_setup_kbuf(struct purgatory_info *pi,
+>  static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
+>  					 struct kexec_buf *kbuf)
+>  {
+> -	unsigned long curr_load_addr;
+> -	unsigned long load_addr;
+>  	unsigned long bss_addr;
+>  	unsigned long offset;
+> -	unsigned char *buf_addr;
+> -	unsigned char *src;
+>  	Elf_Shdr *sechdrs;
+>  	int i;
+>  
+> @@ -762,20 +758,18 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
+>  						sechdrs[i].sh_offset;
+>  	}
+>  
+> -	/* Load SHF_ALLOC sections */
+> -	buf_addr = kbuf->buffer;
+> -	load_addr = curr_load_addr = kbuf->mem;
+> -	bss_addr = load_addr + kbuf->bufsz;
+> +	offset = 0;
+> +	bss_addr = kbuf->mem + kbuf->bufsz;
+>  	kbuf->image->start = pi->ehdr->e_entry;
+>  
+>  	for (i = 0; i < pi->ehdr->e_shnum; i++) {
+>  		unsigned long align;
+> +		void *src, *dst;
+>  
+>  		if (!(sechdrs[i].sh_flags & SHF_ALLOC))
+>  			continue;
+>  
+>  		align = sechdrs[i].sh_addralign;
+> -
+>  		if (sechdrs[i].sh_type == SHT_NOBITS) {
+>  			bss_addr = ALIGN(bss_addr, align);
+>  			sechdrs[i].sh_addr = bss_addr;
+> @@ -783,31 +777,27 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
+>  			continue;
+>  		}
+>  
+> -		curr_load_addr = ALIGN(curr_load_addr, align);
+> -		offset = curr_load_addr - load_addr;
+> -		/* We already modifed ->sh_offset to keep src addr */
+> -		src = (char *)sechdrs[i].sh_offset;
+> -		memcpy(buf_addr + offset, src, sechdrs[i].sh_size);
+> -
+> +		offset = ALIGN(offset, align);
+>  		if (sechdrs[i].sh_flags & SHF_EXECINSTR &&
+>  		    pi->ehdr->e_entry >= sechdrs[i].sh_addr &&
+>  		    pi->ehdr->e_entry < (sechdrs[i].sh_addr
+>  					 + sechdrs[i].sh_size)) {
+>  			kbuf->image->start -= sechdrs[i].sh_addr;
+> -			kbuf->image->start += curr_load_addr
+> +			kbuf->image->start += kbuf->mem + offset;
+>  		}
+>  
+> -		/* Store load address and source address of section */
+> -		sechdrs[i].sh_addr = curr_load_addr;
+> +		src = (void *)sechdrs[i].sh_offset;
+> +		dst = pi->purgatory_buf + offset;
+> +		memcpy(dst, src, sechdrs[i].sh_size);
+> +
+> +		sechdrs[i].sh_addr = kbuf->mem + offset;
+>  
+>  		/*
+>  		 * This section got copied to temporary buffer. Update
+>  		 * ->sh_offset accordingly.
+>  		 */
+> -		sechdrs[i].sh_offset = (unsigned long)(buf_addr + offset);
+> -
+> -		/* Advance to the next address */
+> -		curr_load_addr += sechdrs[i].sh_size;
+> +		sechdrs[i].sh_offset = (unsigned long)dst;
+> +		offset += sechdrs[i].sh_size;
+>  	}
+>  
+>  	return 0;
+> -- 
+> 2.13.5
+> 
+
+Thanks
+Dave
