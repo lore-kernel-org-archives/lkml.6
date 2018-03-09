@@ -1,110 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932807AbeCIWI5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 17:08:57 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:37476 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932157AbeCIWIy (ORCPT
+        id S932861AbeCIWJK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 17:09:10 -0500
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:37200 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932772AbeCIWJH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 17:08:54 -0500
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        pasha.tatashin@oracle.com, m.mizuma@jp.fujitsu.com,
-        akpm@linux-foundation.org, mhocko@suse.com, catalin.marinas@arm.com,
-        takahiro.akashi@linaro.org, gi-oh.kim@profitbricks.com,
-        heiko.carstens@de.ibm.com, baiyaowei@cmss.chinamobile.com,
-        richard.weiyang@gmail.com, paul.burton@mips.com,
-        miles.chen@mediatek.com, vbabka@suse.cz, mgorman@suse.de,
-        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [v5 0/2] initialize pages on demand during boot
-Date: Fri,  9 Mar 2018 17:08:05 -0500
-Message-Id: <20180309220807.24961-1-pasha.tatashin@oracle.com>
-X-Mailer: git-send-email 2.16.2
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8827 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803090261
+        Fri, 9 Mar 2018 17:09:07 -0500
+Date: Fri, 9 Mar 2018 17:08:23 -0500
+From: Neil Horman <nhorman@tuxdriver.com>
+To: syzbot <syzbot+a4e4112c3aff00c8cfd8@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
+Subject: Re: KASAN: use-after-free Read in sctp_association_free (2)
+Message-ID: <20180309220823.GA24848@neilslaptop.think-freely.org>
+References: <00000000000017dfe905670110cf@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000017dfe905670110cf@google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Spam-Score: 2.3 (++)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change log:
-	v4 - v5
-	- Fix issue reported by Vlasimil Babka:
-	  > I've noticed that this function first disables the
-	  > on-demand initialization, and then runs the kthreads.
-	  > Doesn't that leave a window where allocations can fail? The
-	  > chances are probably small, but I think it would be better
-	  > to avoid it completely, rare failures suck.
-	  >
-	  > Fixing that probably means rethinking the whole
-	  > synchronization more dramatically though :/
-	- Introduced a new patch that uses node resize lock to synchronize
-	  on-demand deferred page initialization, and regular deferred page
-	  initialization.
+On Fri, Mar 09, 2018 at 12:59:06PM -0800, syzbot wrote:
+> Hello,
+> 
+> syzbot hit the following crash on net-next commit
+> fd372a7a9e5e9d8011a0222d10edd3523abcd3b1 (Thu Mar 8 19:43:48 2018 +0000)
+> Merge tag 'mlx5-updates-2018-02-28-2' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux
+> 
+> So far this crash happened 2 times on net-next.
+> C reproducer is attached.
+> syzkaller reproducer is attached.
+> Raw console output is attached.
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached.
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+a4e4112c3aff00c8cfd8@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for
+> details.
+> If you forward the report, please keep this part and the footer.
+> 
+> IPVS: ftp: loaded support on port[0] = 21
+> IPVS: ftp: loaded support on port[0] = 21
+> IPVS: ftp: loaded support on port[0] = 21
+> IPVS: ftp: loaded support on port[0] = 21
+> ==================================================================
+> BUG: KASAN: use-after-free in sctp_association_free+0x7b7/0x930
+> net/sctp/associola.c:332
+> Read of size 8 at addr ffff8801d8006ae0 by task syzkaller914861/4202
+> 
+> CPU: 1 PID: 4202 Comm: syzkaller914861 Not tainted 4.16.0-rc4+ #258
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0x194/0x24d lib/dump_stack.c:53
+>  print_address_description+0x73/0x250 mm/kasan/report.c:256
+>  kasan_report_error mm/kasan/report.c:354 [inline]
+>  kasan_report+0x23c/0x360 mm/kasan/report.c:412
+>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+>  sctp_association_free+0x7b7/0x930 net/sctp/associola.c:332
+>  sctp_sendmsg+0xc67/0x1a80 net/sctp/socket.c:2075
+>  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:763
+>  sock_sendmsg_nosec net/socket.c:629 [inline]
+>  sock_sendmsg+0xca/0x110 net/socket.c:639
+>  SYSC_sendto+0x361/0x5c0 net/socket.c:1748
+>  SyS_sendto+0x40/0x50 net/socket.c:1716
+>  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+> RIP: 0033:0x446d09
+> RSP: 002b:00007f5dbac21da8 EFLAGS: 00000216 ORIG_RAX: 000000000000002c
+> RAX: ffffffffffffffda RBX: 00000000006e29fc RCX: 0000000000446d09
+> RDX: 0000000000000001 RSI: 0000000020000340 RDI: 0000000000000003
+> RBP: 00000000006e29f8 R08: 00000000204d9000 R09: 000000000000001c
+> R10: 0000000000000000 R11: 0000000000000216 R12: 0000000000000000
+> R13: 00007fff7b26fb1f R14: 00007f5dbac229c0 R15: 00000000006e2b60
+> 
+I think we have a corner case with a0ff660058b88d12625a783ce9e5c1371c87951f
+here.  If a peeloff event happens during a wait for sendbuf space, EPIPE will be
+returned, and the code path appears to call sctp_association_put twice, leading
+to the use after free situation.  I'll write a patch this weekend
 
-	v3 - v4
-	- Fix !CONFIG_NUMA issue.
-	v2 - v3
-	Andrew Morton's comments:
-	- Moved read of pgdat->first_deferred_pfn into
-	  deferred_zone_grow_lock, thus got rid of READ_ONCE()/WRITE_ONCE()
-	- Replaced spin_lock() with spin_lock_irqsave() in
-	  deferred_grow_zone
-	- Updated comments for deferred_zone_grow_lock
-	- Updated comment before deferred_grow_zone() explaining return
-	  value, and also noinline specifier.
-	- Fixed comment before _deferred_grow_zone().
-
-	v1 - v2
-	Added Tested-by: Masayoshi Mizuma
-
-This change helps for three reasons:
-
-1. Insufficient amount of reserved memory due to arguments provided by
-user. User may request some buffers, increased hash tables sizes etc.
-Currently, machine panics during boot if it can't allocate memory due
-to insufficient amount of reserved memory. With this change, it will
-be able to grow zone before deferred pages are initialized.
-
-One observed example is described in the linked discussion [1] Mel
-Gorman writes:
-
-"
-Yasuaki Ishimatsu reported a premature OOM when trace_buf_size=100m was
-specified on a machine with many CPUs. The kernel tried to allocate 38.4GB
-but only 16GB was available due to deferred memory initialisation.
-"
-
-The allocations in the above scenario happen per-cpu in smp_init(),
-and before deferred pages are initialized. So, there is no way to
-predict how much memory we should put aside to boot successfully with
-deferred page initialization feature compiled in.
-
-2. The second reason is future proof. The kernel memory requirements
-may change, and we do not want to constantly update
-reset_deferred_meminit() to satisfy the new requirements. In addition,
-this function is currently in common code, but potentially would need
-to be split into arch specific variants, as more arches will start
-taking advantage of deferred page initialization feature.
-
-3. On demand initialization of reserved pages guarantees that we will
-initialize only as many pages early in boot using only one thread as
-needed, the rest are going to be efficiently initialized in parallel.
-
-[1] https://www.spinics.net/lists/linux-mm/msg139087.html
-
-Pavel Tatashin (2):
-  mm: disable interrupts while initializing deferred pages
-  mm: initialize pages on demand during boot
-
- include/linux/memblock.h       |  10 --
- include/linux/memory_hotplug.h |  73 ++++++++++-----
- include/linux/mmzone.h         |   5 +-
- mm/memblock.c                  |  23 -----
- mm/page_alloc.c                | 205 +++++++++++++++++++++++++++++++----------
- 5 files changed, 206 insertions(+), 110 deletions(-)
-
--- 
-2.16.2
+Neil
