@@ -1,214 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751373AbeCIJxj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 04:53:39 -0500
-Received: from foss.arm.com ([217.140.101.70]:49344 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751242AbeCIJxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:53:02 -0500
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
-        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
-Subject: [PATCH v6 2/4] sched/fair: use util_est in LB and WU paths
-Date: Fri,  9 Mar 2018 09:52:43 +0000
-Message-Id: <20180309095245.11071-3-patrick.bellasi@arm.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180309095245.11071-1-patrick.bellasi@arm.com>
-References: <20180309095245.11071-1-patrick.bellasi@arm.com>
+        id S1751390AbeCIJyO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 04:54:14 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56580 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751189AbeCIJyL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 04:54:11 -0500
+Date: Fri, 9 Mar 2018 10:54:03 +0100
+From: Philipp Rudo <prudo@linux.vnet.ibm.com>
+To: Dave Young <dyoung@redhat.com>
+Cc: kexec@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
+        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: Re: [PATCH 08/11] kexec_file: Simplify
+ kexec_purgatory_setup_sechdrs 2
+In-Reply-To: <20180309031805.GB3246@dhcp-128-65.nay.redhat.com>
+References: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
+        <20180226151620.20970-9-prudo@linux.vnet.ibm.com>
+        <20180309031805.GB3246@dhcp-128-65.nay.redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18030909-0040-0000-0000-0000041CCA45
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030909-0041-0000-0000-0000261FE861
+Message-Id: <20180309105403.6db66d7c@ThinkPad>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-09_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803090128
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the scheduler looks at the CPU utilization, the current PELT value
-for a CPU is returned straight away. In certain scenarios this can have
-undesired side effects on task placement.
+Hi Dave,
 
-For example, since the task utilization is decayed at wakeup time, when
-a long sleeping big task is enqueued it does not add immediately a
-significant contribution to the target CPU.
-As a result we generate a race condition where other tasks can be placed
-on the same CPU while it is still considered relatively empty.
+On Fri, 9 Mar 2018 11:18:05 +0800
+Dave Young <dyoung@redhat.com> wrote:
 
-In order to reduce this kind of race conditions, this patch introduces the
-required support to integrate the usage of the CPU's estimated utilization
-in the wakeup path, via cpu_util_wake(), as well as in the load-balance
-path, via cpu_util() which is used by update_sg_lb_stats().
+> Hi,
+> 
+> On 02/26/18 at 04:16pm, Philipp Rudo wrote:
+> > The main loop currently uses quite a lot of variables to update the section
+> > headers. Some of them are unnecessary. So clean them up a little.
+> >   
+> 
+> It looks better to use some patch subject eg below:
+> "Remove unnecessary variables in kexec_purgatory_setup_sechdrs"
 
-The estimated utilization of a CPU is defined to be the maximum between
-its PELT's utilization and the sum of the estimated utilization (at
-previous dequeue time) of all the tasks currently RUNNABLE on that CPU.
-This allows to properly represent the spare capacity of a CPU which, for
-example, has just got a big task running since a long sleep period.
+ok, done. I also renamed the patch before and after. The subjects now
+are
 
-Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Paul Turner <pjt@google.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Morten Rasmussen <morten.rasmussen@arm.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
+kexec_file: Remove mis-use of sh_offset field during purgatory load
+kexec_file: Remove unneeded variables in kexec_purgatory_setup_sechdrs 
+kexec_file: Remove unneeded for-loop in kexec_purgatory_setup_sechdrs
 
----
-Changes in v6:
- - folded cpu_util_est code into cpu_util
- - updated cpu_util documentation
- - slightly cleaned up cpu_util_wake code
- - update changelog to better match code concepts
+Thanks
+Philipp
 
-Changes in v5:
- - always use int instead of long whenever possible (Peter)
- - add missing READ_ONCE barriers (Peter)
-
-Changes in v4:
- - rebased on today's tip/sched/core (commit 460e8c3340a2)
- - ensure cpu_util_wake() is cpu_capacity_orig()'s clamped (Pavan)
-
-Changes in v3:
- - rebased on today's tip/sched/core (commit 07881166a892)
-
-Changes in v2:
- - rebase on top of v4.15-rc2
- - tested that overhauled PELT code does not affect the util_est
----
- kernel/sched/fair.c | 84 ++++++++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 70 insertions(+), 14 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index c54560829a52..5cf4aa39a6ca 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6431,11 +6431,13 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 	return target;
- }
  
--/*
-- * cpu_util returns the amount of capacity of a CPU that is used by CFS
-- * tasks. The unit of the return value must be the one of capacity so we can
-- * compare the utilization with the capacity of the CPU that is available for
-- * CFS task (ie cpu_capacity).
-+/**
-+ * Amount of capacity of a CPU that is (estimated to be) used by CFS tasks
-+ * @cpu: the CPU to get the utilization of
-+ *
-+ * The unit of the return value must be the one of capacity so we can compare
-+ * the utilization with the capacity of the CPU that is available for CFS task
-+ * (ie cpu_capacity).
-  *
-  * cfs_rq.avg.util_avg is the sum of running time of runnable tasks plus the
-  * recent utilization of currently non-runnable tasks on a CPU. It represents
-@@ -6446,6 +6448,14 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
-  * current capacity (capacity_curr <= capacity_orig) of the CPU because it is
-  * the running time on this CPU scaled by capacity_curr.
-  *
-+ * The estimated utilization of a CPU is defined to be the maximum between its
-+ * cfs_rq.avg.util_avg and the sum of the estimated utilization of the tasks
-+ * currently RUNNABLE on that CPU.
-+ * This allows to properly represent the expected utilization of a CPU which
-+ * has just got a big task running since a long sleep period. At the same time
-+ * however it preserves the benefits of the "blocked utilization" in
-+ * describing the potential for other tasks waking up on the same CPU.
-+ *
-  * Nevertheless, cfs_rq.avg.util_avg can be higher than capacity_curr or even
-  * higher than capacity_orig because of unfortunate rounding in
-  * cfs.avg.util_avg or just after migrating tasks and new task wakeups until
-@@ -6456,13 +6466,21 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
-  * available capacity. We allow utilization to overshoot capacity_curr (but not
-  * capacity_orig) as it useful for predicting the capacity required after task
-  * migrations (scheduler-driven DVFS).
-+ *
-+ * Return: the (estimated) utilization for the specified CPU
-  */
--static unsigned long cpu_util(int cpu)
-+static inline unsigned long cpu_util(int cpu)
- {
--	unsigned long util = cpu_rq(cpu)->cfs.avg.util_avg;
--	unsigned long capacity = capacity_orig_of(cpu);
-+	struct cfs_rq *cfs_rq;
-+	unsigned int util;
-+
-+	cfs_rq = &cpu_rq(cpu)->cfs;
-+	util = READ_ONCE(cfs_rq->avg.util_avg);
-+
-+	if (sched_feat(UTIL_EST))
-+		util = max(util, READ_ONCE(cfs_rq->avg.util_est.enqueued));
- 
--	return (util >= capacity) ? capacity : util;
-+	return min_t(unsigned long, util, capacity_orig_of(cpu));
- }
- 
- /*
-@@ -6471,16 +6489,54 @@ static unsigned long cpu_util(int cpu)
-  */
- static unsigned long cpu_util_wake(int cpu, struct task_struct *p)
- {
--	unsigned long util, capacity;
-+	struct cfs_rq *cfs_rq;
-+	unsigned int util;
- 
- 	/* Task has no contribution or is new */
--	if (cpu != task_cpu(p) || !p->se.avg.last_update_time)
-+	if (cpu != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
- 		return cpu_util(cpu);
- 
--	capacity = capacity_orig_of(cpu);
--	util = max_t(long, cpu_rq(cpu)->cfs.avg.util_avg - task_util(p), 0);
-+	cfs_rq = &cpu_rq(cpu)->cfs;
-+	util = READ_ONCE(cfs_rq->avg.util_avg);
-+
-+	/* Discount task's blocked util from CPU's util */
-+	util -= min_t(unsigned int, util, task_util(p));
- 
--	return (util >= capacity) ? capacity : util;
-+	/*
-+	 * Covered cases:
-+	 *
-+	 * a) if *p is the only task sleeping on this CPU, then:
-+	 *      cpu_util (== task_util) > util_est (== 0)
-+	 *    and thus we return:
-+	 *      cpu_util_wake = (cpu_util - task_util) = 0
-+	 *
-+	 * b) if other tasks are SLEEPING on this CPU, which is now exiting
-+	 *    IDLE, then:
-+	 *      cpu_util >= task_util
-+	 *      cpu_util > util_est (== 0)
-+	 *    and thus we discount *p's blocked utilization to return:
-+	 *      cpu_util_wake = (cpu_util - task_util) >= 0
-+	 *
-+	 * c) if other tasks are RUNNABLE on that CPU and
-+	 *      util_est > cpu_util
-+	 *    then we use util_est since it returns a more restrictive
-+	 *    estimation of the spare capacity on that CPU, by just
-+	 *    considering the expected utilization of tasks already
-+	 *    runnable on that CPU.
-+	 *
-+	 * Cases a) and b) are covered by the above code, while case c) is
-+	 * covered by the following code when estimated utilization is
-+	 * enabled.
-+	 */
-+	if (sched_feat(UTIL_EST))
-+		util = max(util, READ_ONCE(cfs_rq->avg.util_est.enqueued));
-+
-+	/*
-+	 * Utilization (estimated) can exceed the CPU capacity, thus let's
-+	 * clamp to the maximum CPU capacity to ensure consistency with
-+	 * the cpu_util call.
-+	 */
-+	return min_t(unsigned long, util, capacity_orig_of(cpu));
- }
- 
- /*
--- 
-2.15.1
+> > Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
+> > ---
+> >  kernel/kexec_file.c | 34 ++++++++++++----------------------
+> >  1 file changed, 12 insertions(+), 22 deletions(-)
+> > 
+> > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> > index bb31a3b627c2..746b91e46e34 100644
+> > --- a/kernel/kexec_file.c
+> > +++ b/kernel/kexec_file.c
+> > @@ -724,12 +724,8 @@ static int kexec_purgatory_setup_kbuf(struct purgatory_info *pi,
+> >  static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
+> >  					 struct kexec_buf *kbuf)
+> >  {
+> > -	unsigned long curr_load_addr;
+> > -	unsigned long load_addr;
+> >  	unsigned long bss_addr;
+> >  	unsigned long offset;
+> > -	unsigned char *buf_addr;
+> > -	unsigned char *src;
+> >  	Elf_Shdr *sechdrs;
+> >  	int i;
+> >  
+> > @@ -762,20 +758,18 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
+> >  						sechdrs[i].sh_offset;
+> >  	}
+> >  
+> > -	/* Load SHF_ALLOC sections */
+> > -	buf_addr = kbuf->buffer;
+> > -	load_addr = curr_load_addr = kbuf->mem;
+> > -	bss_addr = load_addr + kbuf->bufsz;
+> > +	offset = 0;
+> > +	bss_addr = kbuf->mem + kbuf->bufsz;
+> >  	kbuf->image->start = pi->ehdr->e_entry;
+> >  
+> >  	for (i = 0; i < pi->ehdr->e_shnum; i++) {
+> >  		unsigned long align;
+> > +		void *src, *dst;
+> >  
+> >  		if (!(sechdrs[i].sh_flags & SHF_ALLOC))
+> >  			continue;
+> >  
+> >  		align = sechdrs[i].sh_addralign;
+> > -
+> >  		if (sechdrs[i].sh_type == SHT_NOBITS) {
+> >  			bss_addr = ALIGN(bss_addr, align);
+> >  			sechdrs[i].sh_addr = bss_addr;
+> > @@ -783,31 +777,27 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
+> >  			continue;
+> >  		}
+> >  
+> > -		curr_load_addr = ALIGN(curr_load_addr, align);
+> > -		offset = curr_load_addr - load_addr;
+> > -		/* We already modifed ->sh_offset to keep src addr */
+> > -		src = (char *)sechdrs[i].sh_offset;
+> > -		memcpy(buf_addr + offset, src, sechdrs[i].sh_size);
+> > -
+> > +		offset = ALIGN(offset, align);
+> >  		if (sechdrs[i].sh_flags & SHF_EXECINSTR &&
+> >  		    pi->ehdr->e_entry >= sechdrs[i].sh_addr &&
+> >  		    pi->ehdr->e_entry < (sechdrs[i].sh_addr
+> >  					 + sechdrs[i].sh_size)) {
+> >  			kbuf->image->start -= sechdrs[i].sh_addr;
+> > -			kbuf->image->start += curr_load_addr
+> > +			kbuf->image->start += kbuf->mem + offset;
+> >  		}
+> >  
+> > -		/* Store load address and source address of section */
+> > -		sechdrs[i].sh_addr = curr_load_addr;
+> > +		src = (void *)sechdrs[i].sh_offset;
+> > +		dst = pi->purgatory_buf + offset;
+> > +		memcpy(dst, src, sechdrs[i].sh_size);
+> > +
+> > +		sechdrs[i].sh_addr = kbuf->mem + offset;
+> >  
+> >  		/*
+> >  		 * This section got copied to temporary buffer. Update
+> >  		 * ->sh_offset accordingly.
+> >  		 */
+> > -		sechdrs[i].sh_offset = (unsigned long)(buf_addr + offset);
+> > -
+> > -		/* Advance to the next address */
+> > -		curr_load_addr += sechdrs[i].sh_size;
+> > +		sechdrs[i].sh_offset = (unsigned long)dst;
+> > +		offset += sechdrs[i].sh_size;
+> >  	}
+> >  
+> >  	return 0;
+> > -- 
+> > 2.13.5
+> >   
+> 
+> Thanks
+> Dave
+> 
