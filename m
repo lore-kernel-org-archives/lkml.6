@@ -1,102 +1,237 @@
-Return-Path: <kernel-hardening-return-12404-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELuXrIJyg9uTlrRaDKIXerMeiy/Z7PM8wUMbMAWBDxdGO21TadaI9Ms7471aPC4BmV9AZ/pg
-ARC-Seal: i=1; a=rsa-sha256; t=1520808398; cv=none;
+Return-Path: <kernel-hardening-return-12340-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELucR4bsVJ25aDr++pf0d2mOD2JXBsMA7BtGu0JBzMFryvu/1tWGQMI/7HN0M5NPInFQRoZu
+ARC-Seal: i=1; a=rsa-sha256; t=1520632046; cv=none;
         d=google.com; s=arc-20160816;
-        b=AMq/B3npvyRO7a6FwU8prbj61mpIKdCA0/UhyYNRzE6Zm2LXkdw0OQXJzVtRVoQbMs
-         imFMIZB+7Yu7c+hU2mEeqoGryjl0MeP0f21vduyZ9oQZ7bOgCbC9LbqOkC7iYkOb0VYj
-         3Fsomul/8fixevfjuxgLB2zZrd/Kg5zkx2LfQAu4Z5lQWqXzkBFKYfiIkGIqKof61OQq
-         Y/MDcDAl1/glvhiW40zatlqHAbgTV+R95u00n0tDrrG0kdIkUS2/AQF5XXbX80QE1Zib
-         QulaajnAQOeLRlIW1Cl97NK0DsDyz/q7GWOJKev+lXNIyeHVyFR4aGBF2uru0GH5Y+rp
-         5wzw==
+        b=NNoRLHlYNRXwp4LOhSW10wfFYHhpoqNk2sHrAnBseXoHHJ2nkBX0fDWgi2xqReKx+M
+         fS/P427raETk+R6nsa/Ut9Hw9zCJp26tMWth1X2Ld4CUjLCTmxb0337FJhq5gmyQiubI
+         Sf6LgfwPSyWv9Wk9BbxEXD/AIcom+lREr5ZFKFouOwyysskytY/RStP46TXXB1niZPlW
+         1IL8NRTEtoPE4XFhGzMMo/ZfUXPrp9Mr0C7p4T6PhWcHBqUMDTutUozf6k9ScNXimFz+
+         E5UE2M+rfLjQp5DBYKTWceXEi+zjKdyY02Tp9C7i9zumRaAhJluQ9ZmtgFHqwmACt+ht
+         l7PA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature:dkim-signature
-         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=CsK3umsdGeebcfBIS3kZcUSdXuzaZDg45BxJrDWUPmY=;
-        b=ZCLjLeBenul8d+AsSk3LJyQue124nuRAJ3dQXW1QZLOuDDuR/BX4W4kFWwOXSdQVJf
-         nH7rIqiPVF0t9gf3GvWlztPtCZQKgSpEZURMr8BlbJ+8W70yoo1oAmaVkmPG5RBMK5hO
-         l1kAXfj9zucbb/rC+WJ3wLNg1u3BKwyYIOLDL6Skdg4ATqm/oDnsQSaMx0dAJvHLqWe8
-         F9ZsKUXbIX6kChMEJKN8L41S+8WX9/OS3dgd0uxORk1IB8DXhYNuh3Fy2FVUON4tuhC6
-         6Y/YLItuLmF0qz7cJz4+i5fJuDbe8p61QAZh22k7Ne5e05b4E8h7s/MlEUhpJNqG9a6w
-         mE0A==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=x1ruubJnOp0WKjzCuvnfVEm+6jYrdMiKRDXnguEw/T0=;
+        b=mcewT+YRccItpyG4h8P+06/fcYo5Ms3OYCasr9EaILQL+0kX3mvZq7oKKQ741j/h3e
+         AukhNsmaaC7JU0v+ixmhHnGiJhF3zezTPkXKE5dd0OaPq08/MWg/S9Y2z5v/1MECeOzR
+         2ZOBG57NbSEjwBj/CJBd0EiJQliejYOw4XysL2tevnvWGnBVz0gKxLVrlF2lsmAN/s2t
+         0/TXMnokpPr3fFSCUMfCZHF0x3TxI7p/ZfcMF+65mhsK3e6h1/Wziz55cWjfBU8d4Nxv
+         WfJJnV11PsHsaiFGoQfVSVD+Qw16I/LC0U9uzmc5LJ1ZpF7p/Z5c4QVAn/x/nrjs+a2U
+         eUtg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=U4re2OHl;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=lH9YHl0z;
-       spf=pass (google.com: domain of kernel-hardening-return-12404-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12404-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=jZe18ea/;
+       dkim=pass header.i=@chromium.org header.s=google header.b=ndPVnTvk;
+       spf=pass (google.com: domain of kernel-hardening-return-12340-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12340-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=U4re2OHl;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=lH9YHl0z;
-       spf=pass (google.com: domain of kernel-hardening-return-12404-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12404-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=jZe18ea/;
+       dkim=pass header.i=@chromium.org header.s=google header.b=ndPVnTvk;
+       spf=pass (google.com: domain of kernel-hardening-return-12340-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12340-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-X-ME-Sender: <xms:vLGlWteIOyi8ucB8Nm6Lvh_-IxsV1yHUflEAiMjl-TUK6rFNJlRGkg>
-Date: Mon, 12 Mar 2018 09:46:16 +1100
-From: "Tobin C. Harding" <me@tobin.cc>
+MIME-Version: 1.0
+Sender: keescook@google.com
+In-Reply-To: <CA+55aFy82Drgu2xm1GWaDz2Jyj5QBx3dW4AatXzmCx-b1YET5Q@mail.gmail.com>
+References: <20180309200536.GA5670@beast> <CA+55aFy82Drgu2xm1GWaDz2Jyj5QBx3dW4AatXzmCx-b1YET5Q@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Fri, 9 Mar 2018 13:47:06 -0800
+X-Google-Sender-Auth: 8o461K2sDdCSl3S5k9e6PWem0wo
+Message-ID: <CAGXu5jLbfvKYbtnzbrgtmh5qQV8KzPUh0-rV5Xtz+nUH-rCGyw@mail.gmail.com>
+Subject: Re: [PATCH v3] kernel.h: Skip single-eval logic on literals in min()/max()
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <keescook@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	Steven Rostedt <rostedt@goodmis.org>,	Jonathan Corbet <corbet@lwn.net>,
- Chris Mason <clm@fb.com>,	Josef Bacik <jbacik@fb.com>,
- David Sterba <dsterba@suse.com>,	"David S. Miller" <davem@davemloft.net>,
-	Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-	Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-	Ingo Molnar <mingo@kernel.org>,	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Borislav Petkov <bp@suse.de>, Randy Dunlap <rdunlap@infradead.org>,
-	Ian Abbott <abbotti@mev.co.uk>,
-	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-	Petr Mladek <pmladek@suse.com>,
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	"Tobin C. Harding" <me@tobin.cc>, Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>,
+	Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>,
+	"David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+	Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>, Borislav Petkov <bp@suse.de>,
+	Randy Dunlap <rdunlap@infradead.org>, Ian Abbott <abbotti@mev.co.uk>,
+	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Petr Mladek <pmladek@suse.com>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-	Linux Btrfs <linux-btrfs@vger.kernel.org>,
+	Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Linux Btrfs <linux-btrfs@vger.kernel.org>,
 	Network Development <netdev@vger.kernel.org>,
 	Kernel Hardening <kernel-hardening@lists.openwall.com>
-Subject: Re: [PATCH v3] kernel.h: Skip single-eval logic on literals in
- min()/max()
-Message-ID: <20180311224616.GJ16734@eros>
-References: <20180309200536.GA5670@beast>
- <CA+55aFy82Drgu2xm1GWaDz2Jyj5QBx3dW4AatXzmCx-b1YET5Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFy82Drgu2xm1GWaDz2Jyj5QBx3dW4AatXzmCx-b1YET5Q@mail.gmail.com>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594491887701841138?=
-X-GMAIL-MSGID: =?utf-8?q?1594683187579073934?=
+X-GMAIL-MSGID: =?utf-8?q?1594498268754481442?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 09, 2018 at 01:10:30PM -0800, Linus Torvalds wrote:
+On Fri, Mar 9, 2018 at 1:10 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 > On Fri, Mar 9, 2018 at 12:05 PM, Kees Cook <keescook@chromium.org> wrote:
-> > When max() is used in stack array size calculations from literal values
-> > (e.g. "char foo[max(sizeof(struct1), sizeof(struct2))]", the compiler
-> > thinks this is a dynamic calculation due to the single-eval logic, which
-> > is not needed in the literal case. This change removes several accidental
-> > stack VLAs from an x86 allmodconfig build:
-> 
+>> When max() is used in stack array size calculations from literal values
+>> (e.g. "char foo[max(sizeof(struct1), sizeof(struct2))]", the compiler
+>> thinks this is a dynamic calculation due to the single-eval logic, which
+>> is not needed in the literal case. This change removes several accidental
+>> stack VLAs from an x86 allmodconfig build:
+>
 > Ok, looks good.
-> 
+>
 > I just have a couple of questions about applying it.
-> 
+>
 > In particular, if this will help people working on getting rid of
-> VLA's in the short term, I can apply it directly. But if people who
-> are looking at it (anybody else than Kees?) don't much care, then this
+> VLA's in the short term, I can apply it directly.
+
+AFAIK, all the VLAs effected by max() are fixed with this patch. i.e.
+no other VLA work I'm aware of depends on this (famous last words).
+
+> But if people who are looking at it (anybody else than Kees?)
+
+FWIW, I've seen at least 6 other people helping out now with VLA clean
+up patches. Whee. :)
+
+> don't much care, then this
 > might be a 4.17 thing or at least "random -mm queue"?
 
-It's easy enough to work on the other VLA removals without basing on
-this, no rush.
+Andrew has this (v2) queued in -mm for 4.17. I didn't view VLA clean
+up (or this macro change) as urgent by any means.
 
+> #define __single_eval_max(max1, max2, x, y) ({  \
+>         typeof (x) max1 = (x);                  \
+>         typeof (y) max2 = (y);                  \
+>         max1 > max2 ? max1 : max2; })
+>
+> actually looks more natural to me than passing the two types in as
+> arguments to the macro.
 
-thanks,
-Tobin.
+I (obviously) didn't design this macro originally, but my take on this
+was that it's safer to keep the type check together with the
+comparison so that it is never possible for someone to run off and use
+__single_eval_max() directly and accidentally bypass the type check.
+While it does look silly from the max_t()/min_t() perspective, it just
+seems more defensive.
+
+> (That form also is amenable to things like "__auto_type" etc simplifications).
+
+Agreed, I think that's the biggest reason to lift the types. However,
+since we're still not actually doing anything with the types (i.e.
+this change doesn't weaken the type checking), I would think it would
+be orthogonal. While it would be nice to resolve differing types
+sanely, there doesn't appear to be a driving reason to make this
+change. The example case of max(5, sizeof(thing)) doesn't currently
+exist in the code and I don't see how making min()/max() _less_ strict
+would be generically useful (in fact, it has proven useful to have
+strict type checking).
+
+> Side note: do we *really* need the unique variable names? That's what
+> makes those things _really_ illegible. I thgink it's done just for a
+> sparse warning that we should probably ignore. It's off by default
+> anyway exactly because it doesn't work that well due to nested macro
+> expansions like this.
+
+That I'm not sure about. I'd be fine to remove them; I left them in
+place because it seemed quite intentional. :)
+
+> There is very real value to keeping our odd macros legible, I feel.
+> Even when they are complicated by issues like this, it would be good
+> to keep them as simple as possible.
+>
+> Comments?
+
+I'm open to whatever! I'm just glad this gets to kill a handful of
+"accidental" stack VLAs. :)
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security<div class="gmail_extra"><br><div class="gmail_quote">On
+Fri, Mar 9, 2018 at 1:10 PM, Linus Torvalds <span dir="ltr">&lt;<a
+href="mailto:torvalds@linux-foundation.org"
+target="_blank">torvalds@linux-foundation.org</a>&gt;</span>
+wrote:<br><blockquote class="gmail_quote" style="margin:0 0 0
+.8ex;border-left:1px #ccc solid;padding-left:1ex"><span class="">On
+Fri, Mar 9, 2018 at 12:05 PM, Kees Cook &lt;<a
+href="mailto:keescook@chromium.org">keescook@chromium.org</a>&gt;
+wrote:<br>
+&gt; When max() is used in stack array size calculations from literal values<br>
+&gt; (e.g. "char foo[max(sizeof(struct1), sizeof(struct2))]", the compiler<br>
+&gt; thinks this is a dynamic calculation due to the single-eval
+logic, which<br>
+&gt; is not needed in the literal case. This change removes several
+accidental<br>
+&gt; stack VLAs from an x86 allmodconfig build:<br>
+<br>
+</span>Ok, looks good.<br>
+<br>
+I just have a couple of questions about applying it.<br>
+<br>
+In particular, if this will help people working on getting rid of<br>
+VLA's in the short term, I can apply it directly. But if people who<br>
+are looking at it (anybody else than Kees?) don't much care, then this<br>
+might be a 4.17 thing or at least "random -mm queue"?<br>
+<br>
+The other unrelated reaction I had to this was that "we're passing<br>
+those types down very deep, even though nobody _cares_ about them all<br>
+that much at that deep level".<br>
+<br>
+Honestly, the only case that really cares is the very top level, and<br>
+the rest could just take the properly cast versions.<br>
+<br>
+For example, "max_t/min_t" really don't care at all, since they - by<br>
+definition - just take the single specified type.<br>
+<br>
+So I'm wondering if we should just drop the types from __max/__min<br>
+(and everything they call) entirely, and instead do<br>
+<br>
+&nbsp; &nbsp; #define __check_type(x,y)
+((void)((typeof(x)*)1==(<wbr>typeof(y)*)1))<br>
+&nbsp; &nbsp; #define min(x,y)&nbsp; &nbsp;(__check_type(x,y),__min(x,y))<br>
+&nbsp; &nbsp; #define max(x,y)&nbsp; &nbsp;(__check_type(x,y),__max(x,y))<br>
+<br>
+&nbsp; &nbsp; #define min_t(t,x,y) __min((t)(x),(t)(y))<br>
+&nbsp; &nbsp; #define max_t(t,x,y) __max((t)(x),(t)(y))<br>
+<br>
+and then __min/__max and friends are much simpler (and can just assume<br>
+that the type is already fine, and the casting has been done).<br>
+<br>
+This is technically entirely independent of this VLA cleanup thing,<br>
+but the "passing the types around unnecessarily" just becomes more<br>
+obvious when there's now another level of macros, _and_ it's a more<br>
+complex expression too.<br>
+<br>
+Yes, yes, the __single_eval_xyz() functions still end up wanting the<br>
+types for the declaration of the new single-evaluation variables, but<br>
+the 'typeof' pattern is the standard pattern, so<br>
+<br>
+#define __single_eval_max(max1, max2, x, y) ({&nbsp; \<br>
+&nbsp; &nbsp; &nbsp; &nbsp; typeof (x) max1 = (x);&nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \<br>
+&nbsp; &nbsp; &nbsp; &nbsp; typeof (y) max2 = (y);&nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \<br>
+<span class="">&nbsp; &nbsp; &nbsp; &nbsp; max1 &gt; max2 ? max1 : max2; })<br>
+<br>
+</span>actually looks more natural to me than passing the two types in as<br>
+arguments to the macro.<br>
+<br>
+(That form also is amenable to things like "__auto_type" etc
+simplifications).<br>
+<br>
+Side note: do we *really* need the unique variable names? That's what<br>
+makes those things _really_ illegible. I thgink it's done just for a<br>
+sparse warning that we should probably ignore. It's off by default<br>
+anyway exactly because it doesn't work that well due to nested macro<br>
+expansions like this.<br>
+<br>
+There is very real value to keeping our odd macros legible, I feel.<br>
+Even when they are complicated by issues like this, it would be good<br>
+to keep them as simple as possible.<br>
+<br>
+Comments?<br>
+<span class="HOEnZb"><font color="#888888"><br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Linus<br>
+</font></span></blockquote></div><br><br clear="all"><div><br></div>--
+<br><div class="gmail_signature" data-smartmail="gmail_signature">Kees
+Cook<br>Pixel Security</div>
+</div>
