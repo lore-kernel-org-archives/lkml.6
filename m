@@ -1,9 +1,9 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1486815-1522349630-2-9428340915386288645
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3488798-1520563109-2-4760016079986136407
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
   RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
@@ -11,174 +11,742 @@ X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
 X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522349630; b=NfCKC6n+2oQnicGykhR5+OP8huto6yxN9oZgEJNof6f96AQDiT
-    AT2Ne9i35r0QswfFZ8GAJqGOkxHshwPy1SwQqE3B+sbY4AXvGDDgS5sBdwDRvm2M
-    Am0Xbfc5ZpuGGw0qEOXrQzJeFBtCyEpklGLrNDFG8SMpznzCKmX3UxX82bBS1t5u
-    jf+cBWCpW4cJuPF2vopP3uTRfUWBNfF70UBkxrPCy4eqfEUGkHDHv58+vJ3+W/Hj
-    45SXNBYyNxh0twYv1cQd4K5tEunOcnkpj3+qkcc5s44BzZq/bY7S+o7uWVrCZn9w
-    XBuEfpBxAu24y/qg4MwB72b75hgYmhrIzdKA==
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520563108; b=Sjpi6xxYwNDJy8O3/DEVMHdZNVZv3yjzdxkyBYCT6P+qtEp
+    aedeGwba3Hd21oHZKW8daVOhZZ6Reaa5qT0hd1Cg/LsLs8l2LyaO8BI+G3hQNKtd
+    7q7XXsF2dCpb09ST2a3096dfNGxNm0BSyo1VDMzzev4tXcJFsZJ6nW7zHK10GXqV
+    86bcvJ/+YvjWFCa5Fy9kis8eKNUNdWQyO71yEIre8RlphyVBZPcWNl0p1h68rpMt
+    jSq6r3piIr/GnRm5DsltWP7oc6epuArbdmyGpidWLxuJC9V3lHivShAweXEj2jBg
+    phJ5IL+djGl+OTcMqNQk2NtwbKS8UUHJMGYmUBg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:references:date:in-reply-to
-    :message-id:mime-version:content-type:subject:sender:list-id; s=
-    fm2; t=1522349630; bh=aUja8SMkHeRcGMnAoPupWJFT1trBm+8xRF95d4kI+A
-    4=; b=PzuDytbwWQ/yQ0yARkAff6hNGJI5IpmIjddeBDOpKLNUM1nIQBiJMcouqe
-    8GrA2lMfcRgEmfNOBXJm91+5Y6bL+2uHtPCS4+EyDzX7rF71Z6eQxHMtSHnVtoL1
-    11wxaeYN23OuBsRYVGWjT0wdS3ZbniuErtU5kEjt+NEgDTbsY+hyWfOYdpRZaTH8
-    njg3Z0GfP1RHxOSZv+vhLFIE1kCd+SxVUjq6Hyykv2gvSbxzG+X8/KC9zEDuwZcY
-    6XNOrAGbpuJrt79kcaNZDQA9TZo1dya8cYpHeY+lUicOybXzD+1Zk9yi3D0u+gJe
-    YKQcePm9atI1BPUKraYSmVO8zLbg==
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1520563108; bh=JRDsw9h9Mt2Ep9AkIxtCPF6tFR
+    RT05NgkHd4sQl0bYs=; b=QRO/PNa+7JjtlT+dj9/nTAPCW4rxfqOE4mfFeQDpYg
+    6G3ZTtcKmZWWALQrK1hXN6E0gSwVNxvLlGmfFx4l09NxNMLufT4o8UwCungU5aCe
+    1cjilllRsvZ90PdtmPSkBe4L1x+/UYTqDPp1koMtZYXpBD1jbS+HjD3cDiuSNY3t
+    sYv5NunV5wR0Kz54yLhZT3zTSw8Yva54VxW4QjZlVbpkvx9jaRhk1z7sJr3DJNil
+    fFh5doDkUhCLMW0hZmVp5o560/a+8p4LfNfV4IcJ4bFVBuAut5dPpuedSRDaP3RM
+    OsjqpMFwv/UbbDJbSbda/UzdwHUTVtBCzmNdkhkX8+AQ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xmission.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=atomide.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
+    x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=xmission.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=atomide.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xmission.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=atomide.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
+    x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=xmission.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHbLTEwEHCZIUz3mL8UyFP2eOcZ9WPLq2mTP+lGGLlxtyOEQutSpn3KXSWrcFNZd0zXm0DxPt1IT37wDoj6/1nOA5wlDW4vsuD2FizgqT9VuvdVynFxu
-    w4P3mOFkKMjYTOeNURXh/AOyb9gJQr1e8f5OVBNbDIXQJPbord6TBDtfb98UNZzy3BQZ5M6WMYEbQJcUVNuHIoMqIfFglAfnp80jMdDoQyeactf2RWi5dj4J
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=MqK6kde1AAAA:8
-    a=VwQbUJbxAAAA:8 a=P8VWwBNfptmOyr09_WsA:9 a=2hrgJWteX5doMNov:21
-    a=Yu6BGZb2FEVabcau:21 a=x8gzFH9gYPwA:10 a=9aqP8kKXEzZd0rnup5AB:22
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=atomide.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751249AbeC2Sxd (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 29 Mar 2018 14:53:33 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:42501 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751193AbeC2Sxa (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 29 Mar 2018 14:53:30 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Manfred Spraul <manfred@colorfullife.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Waiman Long <longman@redhat.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Stanislav Kinsbursky <skinsbursky@parallels.com>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-api@vger.kernel.org
-References: <87woyfyh57.fsf@xmission.com>
-        <5d4a858a-3136-5ef4-76fe-a61e7f2aed56@redhat.com>
-        <87o9jru3bf.fsf@xmission.com>
-        <935a7c50-50cc-2dc0-33bb-92c000d039bc@redhat.com>
-        <87woyego2u.fsf_-_@xmission.com>
-        <047c6ed6-6581-b543-ba3d-cadc543d3d25@redhat.com>
-        <87h8ph6u67.fsf@xmission.com>
-        <7d3a1f93-f8e5-5325-f9a7-0079f7777b6f@redhat.com>
-        <20180329021409.gcjjrmviw2lckbfk@linux-n805>
-        <3e201de2-bed2-6f7d-0783-700d095142e0@colorfullife.com>
-        <20180329105601.GA597@bombadil.infradead.org>
-        <05772f83-d680-aea1-b222-cef2430dcc83@colorfullife.com>
-Date: Thu, 29 Mar 2018 13:52:25 -0500
-In-Reply-To: <05772f83-d680-aea1-b222-cef2430dcc83@colorfullife.com> (Manfred
-        Spraul's message of "Thu, 29 Mar 2018 20:07:44 +0200")
-Message-ID: <87lgea7lzq.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1f1cfw-0007S9-7G;;;mid=<87lgea7lzq.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.145.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/nhjXEhtPM8/7tS7f5/3jXtV3Kr7+5Pok=
-X-SA-Exim-Connect-IP: 67.3.145.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Remote-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on sa06.xmission.com
-X-Remote-Spam-Level: *
-X-Remote-Spam-Status: No, score=1.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,TR_Symld_Words,TVD_RCVD_IP,T_TM2_M_HEADER_IN_MSG,
-        T_XMDrugObfuBody_14 autolearn=disabled version=3.4.1
-X-Remote-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  1.5 TR_Symld_Words too many words that have symbols inside
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4999]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.2 T_XMDrugObfuBody_14 obfuscated drug references
-X-Remote-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Remote-Spam-Combo: *;Manfred Spraul <manfred@colorfullife.com>
-X-Remote-Spam-Relay-Country: 
-X-Remote-Spam-Timing: total 1226 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 2.7 (0.2%), b_tie_ro: 1.78 (0.1%), parse: 0.78 (0.1%),
-        extract_message_metadata: 10 (0.8%), get_uri_detail_list: 1.25 (0.1%),
-        tests_pri_-1000: 5 (0.4%), tests_pri_-950: 1.17 (0.1%), tests_pri_-900: 0.99
-        (0.1%), tests_pri_-400: 22 (1.8%), check_bayes: 21 (1.7%), b_tokenize: 7
-        (0.6%), b_tok_get_all: 8 (0.6%), b_comp_prob: 2.2 (0.2%), b_tok_touch_all:
-        2.6 (0.2%), b_finish: 0.55 (0.0%), tests_pri_0: 1176 (96.0%),
-        check_dkim_signature: 0.49 (0.0%), check_dkim_adsp: 2.8 (0.2%),
-        tests_pri_500: 4.2 (0.3%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC][PATCH] ipc: Remove IPCMNI
-X-Remote-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+        id S1750885AbeCICiA (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 8 Mar 2018 21:38:00 -0500
+Received: from muru.com ([72.249.23.125]:60214 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750836AbeCICh7 (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Thu, 8 Mar 2018 21:37:59 -0500
+From: Tony Lindgren <tony@atomide.com>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marcel Partap <mpartap@gmx.net>,
+        Michael Scott <michael.scott@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: [PATCHv4] phy: mapphone-mdm6600: Add USB PHY driver for MDM6600 on Droid 4
+Date: Thu,  8 Mar 2018 18:37:50 -0800
+Message-Id: <20180309023750.108942-1-tony@atomide.com>
+X-Mailer: git-send-email 2.16.2
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Manfred Spraul <manfred@colorfullife.com> writes:
+Let's add support for the GPIO controlled USB PHY on the MDM6600 modem.
+It is used on some Motorola Mapphone series of phones and tablets such
+as Droid 4.
 
-> Hello Mathew,
->
-> On 03/29/2018 12:56 PM, Matthew Wilcox wrote:
->> On Thu, Mar 29, 2018 at 10:47:45AM +0200, Manfred Spraul wrote:
->>>>>>>> This can be implemented trivially with the current code
->>>>>>>> using idr_alloc_cyclic.
->>> Is there a performance impact?
->>> Right now, the idr tree is only large if there are lots of objects.
->>> What happens if we have only 1 object, with id=INT_MAX-1?
->> The radix tree uses a branching factor of 64 entries (6 bits) per level.
->> The maximum ID is 31 bits (positive signed 32-bit integer).  So the
->> worst case for a single object is 6 pointer dereferences to find the
->> object anywhere in the range (INT_MAX/2 - INT_MAX].  That will read 12
->> cachelines.  If we were to constrain ourselves to a maximum of INT_MAX/2
->> (30 bits), we'd reduce that to 5 pointer dereferences and 10 cachelines.
-> I'm concerned about the up to 6 branches.
-> But this is just guessing, we need a test with a realistic workload.
+The MDM6600 is hardwired to the first OHCI port in the Droid 4 case, and
+is controlled by several GPIOs. The USB PHY is integrated into the MDM6600
+device it seems. We know this as we get L3 errors from omap-usb-host if
+trying to use the PHY before MDM6600 is configured.
 
-Yes.
+The GPIOs controlling MDM6600 are used to power device on and off, to
+configure the USB start-up mode (normal mode versus USB flashing), and
+they also tell the state of the MDM6600 device.
 
-My primary purpose with the patch was to show that the issues with the
-current limits could be resolved in a straght forward manner.  I really
-don't know if idrs are the appropriate data structure.  It is possible
-rbtrees are a better fit.
+The two start-up mode GPIOs are dual-purposed and used for out of band
+(OOB) wake-up for USB and TS 27.010 serial mux. But we need to configure
+the USB start-up mode first to get MDM6600 booted in the right mode to
+be usable in the first place.
 
+Note that the Motorola Mapphone Linux kernel tree has a "radio-ctrl"
+driver for modems. But it really does not control the radio at all, it
+just controls the modem power and start-up mode for USB. So I came to
+the conclusion that we're better off having this done in the USB PHY
+driver. For adding support for USB flashing mode, we can later on add
+a kernel module option for flash_mode=1 or something similar.
 
-I think my algorithm I proposed for generating identifiers is as likely
-as any to be a good one.  It does need testing on a wide variety of
-applications to see what applications actually care about and for that I
-think my proposed patch is more than sufficient.
+Also note that currently there is no PM runtime support for the OHCI
+on omap variant SoCs. So for low(er) power idle states, currenty both
+ohci-platform and phy-mapphone-mdm6600 must be unloaded or unbound.
 
-By not keeping a generation counters in the slots themselves linux
-already differs substantially from traditional implementations.
+For reference here is what I measured for total power consumption on
+an idle Droid 4 with and without USB related MDM6600 modules:
 
-Doing something to free us from using a fixed number of bits for the
-counter and a fixed number of bits to encode the slot we can support
-much larger use of this API.
+idle lcd off	phy-mapphone-mdm6600	ohci-platform
+153mW		284mW			344mW
 
-Eric
+So it seems that MDM6600 is currently not yet idling even with it's
+radio turned off, but that's something that is beyond the control of
+this USB PHY driver. This patch does get us to the point where modem
+data and GPS are usable with libqmi and ModemManager for example.
+Voice calls need more audio driver work.
 
+Cc: devicetree@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Marcel Partap <mpartap@gmx.net>
+Cc: Michael Scott <michael.scott@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+
+Changes since v3:
+- Dropped unneeded usb_phy related parts as suggested by Kishon
+
+Changes since v2:
+- Dropped OTG as suggested by Kishon
+- Added Rob's Reviewed-by
+
+Changes since v1:
+- Fixed up issues noticed by Rob and Sebastian
+- Implemented wake irq handler (for debug use only for now)
+- Improved error handling based on more testing
+
+---
+ .../bindings/phy/phy-mapphone-mdm6600.txt          |  30 ++
+ drivers/phy/motorola/Kconfig                       |   8 +
+ drivers/phy/motorola/Makefile                      |   1 +
+ drivers/phy/motorola/phy-mapphone-mdm6600.c        | 542 +++++++++++++++++++++
+ 4 files changed, 581 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/phy-mapphone-mdm6600.txt
+ create mode 100644 drivers/phy/motorola/phy-mapphone-mdm6600.c
+
+diff --git a/Documentation/devicetree/bindings/phy/phy-mapphone-mdm6600.txt b/Documentation/devicetree/bindings/phy/phy-mapphone-mdm6600.txt
+new file mode 100644
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/phy-mapphone-mdm6600.txt
+@@ -0,0 +1,30 @@
++Device tree binding documentation for Motorola Mapphone MDM6600 USB PHY
++
++Required properties:
++- compatible		Must be "motorola,mapphone-mdm6600"
++- enable-gpios		GPIO to enable the USB PHY
++- power-gpios		GPIO to power on the device
++- reset-gpios		GPIO to reset the device
++- motorola,mode-gpios	Two GPIOs to configure MDM6600 USB start-up mode for
++			normal mode versus USB flashing mode
++- motorola,cmd-gpios	Three GPIOs to control the power state of the MDM6600
++- motorola,status-gpios	Three GPIOs to read the power state of the MDM6600
++
++Example:
++
++usb-phy {
++	compatible = "motorola,mapphone-mdm6600";
++	enable-gpios = <&gpio3 31 GPIO_ACTIVE_LOW>;
++	power-gpios = <&gpio2 22 GPIO_ACTIVE_HIGH>;
++	reset-gpios = <&gpio2 17 GPIO_ACTIVE_HIGH>;
++	motorola,mode-gpios = <&gpio5 20 GPIO_ACTIVE_HIGH>,
++			      <&gpio5 21 GPIO_ACTIVE_HIGH>;
++	motorola,cmd-gpios = <&gpio4 7 GPIO_ACTIVE_HIGH>,
++			     <&gpio4 8 GPIO_ACTIVE_HIGH>,
++			     <&gpio5 14 GPIO_ACTIVE_HIGH>;
++	motorola,status-gpios = <&gpio2 20 GPIO_ACTIVE_HIGH>,
++				<&gpio2 21 GPIO_ACTIVE_HIGH>,
++				<&gpio2 23 GPIO_ACTIVE_HIGH>;
++	#phy-cells = <0>;
++};
++
+diff --git a/drivers/phy/motorola/Kconfig b/drivers/phy/motorola/Kconfig
+--- a/drivers/phy/motorola/Kconfig
++++ b/drivers/phy/motorola/Kconfig
+@@ -10,3 +10,11 @@ config PHY_CPCAP_USB
+ 	help
+ 	  Enable this for USB to work on Motorola phones and tablets
+ 	  such as Droid 4.
++
++config PHY_MAPPHONE_MDM6600
++	tristate "Motorola Mapphone MDM6600 modem USB PHY driver"
++	depends on OF && USB_SUPPORT
++	select GENERIC_PHY
++	help
++	  Enable this for MDM6600 USB modem to work on Motorola phones
++	  and tablets such as Droid 4.
+diff --git a/drivers/phy/motorola/Makefile b/drivers/phy/motorola/Makefile
+--- a/drivers/phy/motorola/Makefile
++++ b/drivers/phy/motorola/Makefile
+@@ -3,3 +3,4 @@
+ #
+ 
+ obj-$(CONFIG_PHY_CPCAP_USB)		+= phy-cpcap-usb.o
++obj-$(CONFIG_PHY_MAPPHONE_MDM6600)	+= phy-mapphone-mdm6600.o
+diff --git a/drivers/phy/motorola/phy-mapphone-mdm6600.c b/drivers/phy/motorola/phy-mapphone-mdm6600.c
+new file mode 100644
+--- /dev/null
++++ b/drivers/phy/motorola/phy-mapphone-mdm6600.c
+@@ -0,0 +1,542 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Motorola Mapphone MDM6600 modem GPIO controlled USB PHY driver
++ * Copyright (C) 2018 Tony Lindgren <tony@atomide.com>
++ */
++
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/interrupt.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++
++#include <linux/gpio/consumer.h>
++#include <linux/of_platform.h>
++#include <linux/phy/phy.h>
++
++#define PHY_MDM6600_PHY_DELAY_MS	4000	/* PHY enable 2.2s to 3.5s */
++#define PHY_MDM6600_ENABLED_DELAY_MS	8000	/* 8s more total for MDM6600 */
++
++enum phy_mdm6600_ctrl_lines {
++	PHY_MDM6600_ENABLE,			/* USB PHY enable */
++	PHY_MDM6600_POWER,			/* Device power */
++	PHY_MDM6600_RESET,			/* Device reset */
++	PHY_MDM6600_NR_CTRL_LINES,
++};
++
++enum phy_mdm6600_bootmode_lines {
++	PHY_MDM6600_MODE0,			/* out USB mode0 and OOB wake */
++	PHY_MDM6600_MODE1,			/* out USB mode1, in OOB wake */
++	PHY_MDM6600_NR_MODE_LINES,
++};
++
++enum phy_mdm6600_cmd_lines {
++	PHY_MDM6600_CMD0,
++	PHY_MDM6600_CMD1,
++	PHY_MDM6600_CMD2,
++	PHY_MDM6600_NR_CMD_LINES,
++};
++
++enum phy_mdm6600_status_lines {
++	PHY_MDM6600_STATUS0,
++	PHY_MDM6600_STATUS1,
++	PHY_MDM6600_STATUS2,
++	PHY_MDM6600_NR_STATUS_LINES,
++};
++
++/*
++ * MDM6600 command codes. These are based on Motorola Mapphone Linux
++ * kernel tree.
++ */
++enum phy_mdm6600_cmd {
++	PHY_MDM6600_CMD_BP_PANIC_ACK,
++	PHY_MDM6600_CMD_DATA_ONLY_BYPASS,	/* Reroute USB to CPCAP PHY */
++	PHY_MDM6600_CMD_FULL_BYPASS,		/* Reroute USB to CPCAP PHY */
++	PHY_MDM6600_CMD_NO_BYPASS,		/* Request normal USB mode */
++	PHY_MDM6600_CMD_BP_SHUTDOWN_REQ,	/* Request device power off */
++	PHY_MDM6600_CMD_BP_UNKNOWN_5,
++	PHY_MDM6600_CMD_BP_UNKNOWN_6,
++	PHY_MDM6600_CMD_UNDEFINED,
++};
++
++/*
++ * MDM6600 status codes. These are based on Motorola Mapphone Linux
++ * kernel tree.
++ */
++enum phy_mdm6600_status {
++	PHY_MDM6600_STATUS_PANIC,		/* Seems to be really off */
++	PHY_MDM6600_STATUS_PANIC_BUSY_WAIT,
++	PHY_MDM6600_STATUS_QC_DLOAD,
++	PHY_MDM6600_STATUS_RAM_DOWNLOADER,	/* MDM6600 USB flashing mode */
++	PHY_MDM6600_STATUS_PHONE_CODE_AWAKE,	/* MDM6600 normal USB mode */
++	PHY_MDM6600_STATUS_PHONE_CODE_ASLEEP,
++	PHY_MDM6600_STATUS_SHUTDOWN_ACK,
++	PHY_MDM6600_STATUS_UNDEFINED,
++};
++
++static const char * const
++phy_mdm6600_status_name[] = {
++	"off", "busy", "qc_dl", "ram_dl", "awake",
++	"asleep", "shutdown", "undefined",
++};
++
++struct phy_mdm6600 {
++	struct device *dev;
++	struct phy *generic_phy;
++	struct phy_provider *phy_provider;
++	struct gpio_desc *ctrl_gpios[PHY_MDM6600_NR_CTRL_LINES];
++	struct gpio_descs *mode_gpios;
++	struct gpio_descs *status_gpios;
++	struct gpio_descs *cmd_gpios;
++	struct delayed_work bootup_work;
++	struct delayed_work status_work;
++	struct completion ack;
++	bool enabled;				/* mdm6600 phy enabled */
++	bool running;				/* mdm6600 boot done */
++	int status;
++};
++
++static int phy_mdm6600_init(struct phy *x)
++{
++	struct phy_mdm6600 *ddata = phy_get_drvdata(x);
++	struct gpio_desc *enable_gpio = ddata->ctrl_gpios[PHY_MDM6600_ENABLE];
++
++	if (!ddata->enabled)
++		return -EPROBE_DEFER;
++
++	gpiod_set_value_cansleep(enable_gpio, 0);
++
++	return 0;
++}
++
++static int phy_mdm6600_power_on(struct phy *x)
++{
++	struct phy_mdm6600 *ddata = phy_get_drvdata(x);
++	struct gpio_desc *enable_gpio = ddata->ctrl_gpios[PHY_MDM6600_ENABLE];
++
++	if (!ddata->enabled)
++		return -ENODEV;
++
++	gpiod_set_value_cansleep(enable_gpio, 1);
++
++	return 0;
++}
++
++static int phy_mdm6600_power_off(struct phy *x)
++{
++	struct phy_mdm6600 *ddata = phy_get_drvdata(x);
++	struct gpio_desc *enable_gpio = ddata->ctrl_gpios[PHY_MDM6600_ENABLE];
++
++	if (!ddata->enabled)
++		return -ENODEV;
++
++	gpiod_set_value_cansleep(enable_gpio, 0);
++
++	return 0;
++}
++
++static const struct phy_ops gpio_usb_ops = {
++	.init = phy_mdm6600_init,
++	.power_on = phy_mdm6600_power_on,
++	.power_off = phy_mdm6600_power_off,
++	.owner = THIS_MODULE,
++};
++
++/**
++ * phy_mdm6600_cmd() - send a command request to mdm6600
++ * @ddata: device driver data
++ *
++ * Configures the three command request GPIOs to the specified value.
++ */
++static void phy_mdm6600_cmd(struct phy_mdm6600 *ddata, int val)
++{
++	int values[PHY_MDM6600_NR_CMD_LINES];
++	int i;
++
++	val &= (1 << PHY_MDM6600_NR_CMD_LINES) - 1;
++	for (i = 0; i < PHY_MDM6600_NR_CMD_LINES; i++)
++		values[i] = (val & BIT(i)) >> i;
++
++	gpiod_set_array_value_cansleep(PHY_MDM6600_NR_CMD_LINES,
++				       ddata->cmd_gpios->desc, values);
++}
++
++/**
++ * phy_mdm6600_status() - read mdm6600 status lines
++ * @ddata: device driver data
++ */
++static void phy_mdm6600_status(struct work_struct *work)
++{
++	struct phy_mdm6600 *ddata;
++	struct device *dev;
++	int values[PHY_MDM6600_NR_STATUS_LINES];
++	int error, i, val = 0;
++
++	ddata = container_of(work, struct phy_mdm6600, status_work.work);
++	dev = ddata->dev;
++
++	error = gpiod_get_array_value_cansleep(PHY_MDM6600_NR_CMD_LINES,
++					       ddata->status_gpios->desc,
++					       values);
++	if (error)
++		return;
++
++	for (i = 0; i < PHY_MDM6600_NR_CMD_LINES; i++) {
++		val |= values[i] << i;
++		dev_dbg(ddata->dev, "XXX %s: i: %i values[i]: %i val: %i\n",
++			__func__, i, values[i], val);
++	}
++	ddata->status = val;
++
++	dev_info(dev, "modem status: %i %s\n",
++		 ddata->status,
++		 phy_mdm6600_status_name[ddata->status & 7]);
++	complete(&ddata->ack);
++}
++
++static irqreturn_t phy_mdm6600_irq_thread(int irq, void *data)
++{
++	struct phy_mdm6600 *ddata = data;
++
++	schedule_delayed_work(&ddata->status_work, msecs_to_jiffies(10));
++
++	return IRQ_HANDLED;
++}
++
++/**
++ * phy_mdm6600_wakeirq_thread - handle mode1 line OOB wake after booting
++ * @irq: interrupt
++ * @data: interrupt handler data
++ *
++ * GPIO mode1 is used initially as output to configure the USB boot
++ * mode for mdm6600. After booting it is used as input for OOB wake
++ * signal from mdm6600 to the SoC. Just use it for debug info only
++ * for now.
++ */
++static irqreturn_t phy_mdm6600_wakeirq_thread(int irq, void *data)
++{
++	struct phy_mdm6600 *ddata = data;
++	struct gpio_desc *mode_gpio1;
++
++	mode_gpio1 = ddata->mode_gpios->desc[PHY_MDM6600_MODE1];
++	dev_dbg(ddata->dev, "OOB wake on mode_gpio1: %i\n",
++		gpiod_get_value(mode_gpio1));
++
++	return IRQ_HANDLED;
++}
++
++/**
++ * phy_mdm6600_init_irq() - initialize mdm6600 status IRQ lines
++ * @ddata: device driver data
++ */
++static void phy_mdm6600_init_irq(struct phy_mdm6600 *ddata)
++{
++	struct device *dev = ddata->dev;
++	int i, error, irq;
++
++	for (i = PHY_MDM6600_STATUS0;
++	     i <= PHY_MDM6600_STATUS2; i++) {
++		struct gpio_desc *gpio = ddata->status_gpios->desc[i];
++
++		irq = gpiod_to_irq(gpio);
++		if (irq <= 0)
++			continue;
++
++		error = devm_request_threaded_irq(dev, irq, NULL,
++					phy_mdm6600_irq_thread,
++					IRQF_TRIGGER_RISING |
++					IRQF_TRIGGER_FALLING |
++					IRQF_ONESHOT,
++					"mdm6600",
++					ddata);
++		if (error)
++			dev_warn(dev, "no modem status irq%i: %i\n",
++				 irq, error);
++	}
++}
++
++struct phy_mdm6600_map {
++	const char *name;
++	int direction;
++};
++
++static const struct phy_mdm6600_map
++phy_mdm6600_ctrl_gpio_map[PHY_MDM6600_NR_CTRL_LINES] = {
++	{ "enable", GPIOD_OUT_LOW, },		/* low = phy disabled */
++	{ "power", GPIOD_OUT_LOW, },		/* low = off */
++	{ "reset", GPIOD_OUT_HIGH, },		/* high = reset */
++};
++
++/**
++ * phy_mdm6600_init_lines() - initialize mdm6600 GPIO lines
++ * @ddata: device driver data
++ */
++static int phy_mdm6600_init_lines(struct phy_mdm6600 *ddata)
++{
++	struct device *dev = ddata->dev;
++	int i;
++
++	/* MDM6600 control lines */
++	for (i = 0; i < ARRAY_SIZE(phy_mdm6600_ctrl_gpio_map); i++) {
++		const struct phy_mdm6600_map *map =
++			&phy_mdm6600_ctrl_gpio_map[i];
++		struct gpio_desc **gpio = &ddata->ctrl_gpios[i];
++
++		*gpio = devm_gpiod_get(dev, map->name, map->direction);
++		if (IS_ERR(*gpio)) {
++			dev_info(dev, "gpio %s error %li\n",
++				 map->name, PTR_ERR(*gpio));
++			return PTR_ERR(*gpio);
++		}
++	}
++
++	/* MDM6600 USB start-up mode output lines */
++	ddata->mode_gpios = devm_gpiod_get_array(dev, "motorola,mode",
++						 GPIOD_OUT_LOW);
++	if (IS_ERR(ddata->mode_gpios))
++		return PTR_ERR(ddata->mode_gpios);
++
++	if (ddata->mode_gpios->ndescs != PHY_MDM6600_NR_MODE_LINES)
++		return -EINVAL;
++
++	/* MDM6600 status input lines */
++	ddata->status_gpios = devm_gpiod_get_array(dev, "motorola,status",
++						   GPIOD_IN);
++	if (IS_ERR(ddata->status_gpios))
++		return PTR_ERR(ddata->status_gpios);
++
++	if (ddata->status_gpios->ndescs != PHY_MDM6600_NR_STATUS_LINES)
++		return -EINVAL;
++
++	/* MDM6600 cmd output lines */
++	ddata->cmd_gpios = devm_gpiod_get_array(dev, "motorola,cmd",
++						GPIOD_OUT_LOW);
++	if (IS_ERR(ddata->cmd_gpios))
++		return PTR_ERR(ddata->cmd_gpios);
++
++	if (ddata->cmd_gpios->ndescs != PHY_MDM6600_NR_CMD_LINES)
++		return -EINVAL;
++
++	return 0;
++}
++
++/**
++ * phy_mdm6600_device_power_on() - power on mdm6600 device
++ * @ddata: device driver data
++ *
++ * To get the integrated USB phy in MDM6600 takes some hoops. We must ensure
++ * the shared USB bootmode GPIOs are configured, then request modem start-up,
++ * reset and power-up.. And then we need to recycle the shared USB bootmode
++ * GPIOs as they are also used for Out of Band (OOB) wake for the USB and
++ * TS 27.010 serial mux.
++ */
++static int phy_mdm6600_device_power_on(struct phy_mdm6600 *ddata)
++{
++	struct gpio_desc *mode_gpio0, *mode_gpio1, *reset_gpio, *power_gpio;
++	int error = 0, wakeirq;
++
++	mode_gpio0 = ddata->mode_gpios->desc[PHY_MDM6600_MODE0];
++	mode_gpio1 = ddata->mode_gpios->desc[PHY_MDM6600_MODE1];
++	reset_gpio = ddata->ctrl_gpios[PHY_MDM6600_RESET];
++	power_gpio = ddata->ctrl_gpios[PHY_MDM6600_POWER];
++
++	/*
++	 * Shared GPIOs must be low for normal USB mode. After booting
++	 * they are used for OOB wake signaling. These can be also used
++	 * to configure USB flashing mode later on based on a module
++	 * parameter.
++	 */
++	gpiod_set_value_cansleep(mode_gpio0, 0);
++	gpiod_set_value_cansleep(mode_gpio1, 0);
++
++	/* Request start-up mode */
++	phy_mdm6600_cmd(ddata, PHY_MDM6600_CMD_NO_BYPASS);
++
++	/* Request a reset first */
++	gpiod_set_value_cansleep(reset_gpio, 0);
++	msleep(100);
++
++	/* Toggle power GPIO to request mdm6600 to start */
++	gpiod_set_value_cansleep(power_gpio, 1);
++	msleep(100);
++	gpiod_set_value_cansleep(power_gpio, 0);
++
++	/*
++	 * Looks like the USB PHY needs between 2.2 to 4 seconds.
++	 * If we try to use it before that, we will get L3 errors
++	 * from omap-usb-host trying to access the PHY. See also
++	 * phy_mdm6600_init() for -EPROBE_DEFER.
++	 */
++	msleep(PHY_MDM6600_PHY_DELAY_MS);
++	ddata->enabled = true;
++
++	/* Booting up the rest of MDM6600 will take total about 8 seconds */
++	dev_info(ddata->dev, "Waiting for power up request to complete..\n");
++	if (wait_for_completion_timeout(&ddata->ack,
++			msecs_to_jiffies(PHY_MDM6600_ENABLED_DELAY_MS))) {
++		if (ddata->status > PHY_MDM6600_STATUS_PANIC &&
++		    ddata->status < PHY_MDM6600_STATUS_SHUTDOWN_ACK)
++			dev_info(ddata->dev, "Powered up OK\n");
++	} else {
++		ddata->enabled = false;
++		error = -ETIMEDOUT;
++		dev_err(ddata->dev, "Timed out powering up\n");
++	}
++
++	/* Reconfigure mode1 GPIO as input for OOB wake */
++	gpiod_direction_input(mode_gpio1);
++
++	wakeirq = gpiod_to_irq(mode_gpio1);
++	if (wakeirq <= 0)
++		return wakeirq;
++
++	error = devm_request_threaded_irq(ddata->dev, wakeirq, NULL,
++					  phy_mdm6600_wakeirq_thread,
++					  IRQF_TRIGGER_RISING |
++					  IRQF_TRIGGER_FALLING |
++					  IRQF_ONESHOT,
++					  "mdm6600-wake",
++					  ddata);
++	if (error)
++		dev_warn(ddata->dev, "no modem wakeirq irq%i: %i\n",
++			 wakeirq, error);
++
++	ddata->running = true;
++
++	return error;
++}
++
++/**
++ * phy_mdm6600_device_power_off() - power off mdm6600 device
++ * @ddata: device driver data
++ */
++static void phy_mdm6600_device_power_off(struct phy_mdm6600 *ddata)
++{
++	struct gpio_desc *reset_gpio =
++		ddata->ctrl_gpios[PHY_MDM6600_RESET];
++
++	ddata->enabled = false;
++	phy_mdm6600_cmd(ddata, PHY_MDM6600_CMD_BP_SHUTDOWN_REQ);
++	msleep(100);
++
++	gpiod_set_value_cansleep(reset_gpio, 1);
++
++	dev_info(ddata->dev, "Waiting for power down request to complete.. ");
++	if (wait_for_completion_timeout(&ddata->ack,
++					msecs_to_jiffies(5000))) {
++		if (ddata->status == PHY_MDM6600_STATUS_PANIC)
++			dev_info(ddata->dev, "Powered down OK\n");
++	} else {
++		dev_err(ddata->dev, "Timed out powering down\n");
++	}
++}
++
++static void phy_mdm6600_deferred_power_on(struct work_struct *work)
++{
++	struct phy_mdm6600 *ddata;
++	int error;
++
++	ddata = container_of(work, struct phy_mdm6600, bootup_work.work);
++
++	error = phy_mdm6600_device_power_on(ddata);
++	if (error)
++		dev_err(ddata->dev, "Device not functional\n");
++}
++
++static const struct of_device_id phy_mdm6600_id_table[] = {
++	{ .compatible = "motorola,mapphone-mdm6600", },
++	{},
++};
++MODULE_DEVICE_TABLE(of, phy_mdm6600_id_table);
++
++static int phy_mdm6600_probe(struct platform_device *pdev)
++{
++	struct phy_mdm6600 *ddata;
++	int error;
++
++	ddata = devm_kzalloc(&pdev->dev, sizeof(*ddata), GFP_KERNEL);
++	if (!ddata)
++		return -ENOMEM;
++
++	INIT_DELAYED_WORK(&ddata->bootup_work,
++			  phy_mdm6600_deferred_power_on);
++	INIT_DELAYED_WORK(&ddata->status_work, phy_mdm6600_status);
++	init_completion(&ddata->ack);
++
++	ddata->dev = &pdev->dev;
++	platform_set_drvdata(pdev, ddata);
++
++	error = phy_mdm6600_init_lines(ddata);
++	if (error)
++		return error;
++
++	phy_mdm6600_init_irq(ddata);
++
++	ddata->generic_phy = devm_phy_create(ddata->dev, NULL, &gpio_usb_ops);
++	if (IS_ERR(ddata->generic_phy)) {
++		error = PTR_ERR(ddata->generic_phy);
++		goto cleanup;
++	}
++
++	phy_set_drvdata(ddata->generic_phy, ddata);
++
++	ddata->phy_provider =
++		devm_of_phy_provider_register(ddata->dev,
++					      of_phy_simple_xlate);
++	if (IS_ERR(ddata->phy_provider)) {
++		error = PTR_ERR(ddata->phy_provider);
++		goto cleanup;
++	}
++
++	schedule_delayed_work(&ddata->bootup_work, 0);
++
++	/*
++	 * See phy_mdm6600_device_power_on(). We should be able
++	 * to remove this eventually when ohci-platform can deal
++	 * with -EPROBE_DEFER.
++	 */
++	msleep(PHY_MDM6600_PHY_DELAY_MS + 500);
++
++	return 0;
++
++cleanup:
++	phy_mdm6600_device_power_off(ddata);
++	return error;
++}
++
++static int phy_mdm6600_remove(struct platform_device *pdev)
++{
++	struct phy_mdm6600 *ddata = platform_get_drvdata(pdev);
++	struct gpio_desc *reset_gpio = ddata->ctrl_gpios[PHY_MDM6600_RESET];
++
++	if (!ddata->running)
++		wait_for_completion_timeout(&ddata->ack,
++			msecs_to_jiffies(PHY_MDM6600_ENABLED_DELAY_MS));
++
++	gpiod_set_value_cansleep(reset_gpio, 1);
++	phy_mdm6600_device_power_off(ddata);
++
++	cancel_delayed_work_sync(&ddata->bootup_work);
++	cancel_delayed_work_sync(&ddata->status_work);
++
++	return 0;
++}
++
++static struct platform_driver phy_mdm6600_driver = {
++	.probe = phy_mdm6600_probe,
++	.remove = phy_mdm6600_remove,
++	.driver = {
++		.name = "phy-mapphone-mdm6600",
++		.of_match_table = of_match_ptr(phy_mdm6600_id_table),
++	},
++};
++
++module_platform_driver(phy_mdm6600_driver);
++
++MODULE_ALIAS("platform:gpio_usb");
++MODULE_AUTHOR("Tony Lindgren <tony@atomide.com>");
++MODULE_DESCRIPTION("mdm6600 gpio usb phy driver");
++MODULE_LICENSE("GPL v2");
+-- 
+2.16.2
