@@ -1,255 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932252AbeCIOGI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 09:06:08 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34106 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751151AbeCIOC5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 09:02:57 -0500
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: kvm@vger.kernel.org
-Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/7] x86/hyper-v: move definitions from TLFS to hyperv-tlfs.h
-Date: Fri,  9 Mar 2018 15:02:44 +0100
-Message-Id: <20180309140249.2840-3-vkuznets@redhat.com>
-In-Reply-To: <20180309140249.2840-1-vkuznets@redhat.com>
-References: <20180309140249.2840-1-vkuznets@redhat.com>
+        id S932107AbeCIOID (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 09:08:03 -0500
+Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:38836 "EHLO
+        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751120AbeCIOIB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 09:08:01 -0500
+Subject: Re: [PATCH v6 08/17] media: rkisp1: add capture device driver
+To: Jacob Chen <jacob-chen@iotwrt.com>, linux-rockchip@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mchehab@kernel.org, linux-media@vger.kernel.org,
+        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
+        tfiga@chromium.org, zhengsq@rock-chips.com,
+        laurent.pinchart@ideasonboard.com, zyc@rock-chips.com,
+        eddie.cai.linux@gmail.com, jeffy.chen@rock-chips.com,
+        devicetree@vger.kernel.org, heiko@sntech.de,
+        Jacob Chen <jacob2.chen@rock-chips.com>,
+        Jacob Chen <cc@rock-chips.com>,
+        Allon Huang <allon.huang@rock-chips.com>
+References: <20180308094807.9443-1-jacob-chen@iotwrt.com>
+ <20180308094807.9443-9-jacob-chen@iotwrt.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <d08cd724-8edf-b934-78c7-1abde41d3290@xs4all.nl>
+Date: Fri, 9 Mar 2018 15:07:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180308094807.9443-9-jacob-chen@iotwrt.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfFs27tZrBzgM2/SXdyZlARxi20l/ds6fyon/1k0dEA/9ApSObquaCC2ZDFcfU6AfitORz5t/QDRtmA+wWo406HkiEjcpIavnxzReymsOAxive/SN+CwV
+ YyZn+HoePF70JawdHuC6E3avHhr3PNdUUMTyD45sRU6i6bxSxbStcn8QVE3F8mN9mAPZlFV9xA2ulBGi4WIeCu3jMOZKS7nCeLmEwmxGJ9I8tkshzgdHy8ct
+ 6p0po4lTevpnM7I4OuvIgU9YvsuTXCQiMcSjz0N5F3LoR40C/BkhfbPXghFYReyS9XfEauMrSPlTGccKdFUyK3YtpoxFpfd5ti1WpZZDYrHIp78yWU3G7z+0
+ tLIlTkGL2WQduPFfE8omgMrD32UwiJ1Gd2Cei0CzHpuH8DUMBr+slOxYX5NlAX3BmjYkeTPgQ/NzA5uMfrzjDXXawWXufajiFFnWoXbrI8qP46LXJHzcyYtx
+ GWln+SZoCt2pfx9mXeyuE5zk/3YPsHrVktnwVKlxBFbSLv1kxo4sYwdQ7qfgaie3r3BK8+brrGJkIrWlR2RZwxzsi+to14XH8X0jaPbnNDv2b/MmHxdbLVi3
+ c9fAjiRaiKVVrHTViRPW2A6XMVzZcSBxwCEyS5X+ahCAQm7rcq5vlMb/ASdIl5Xz7a4EeEgJdkaeUT9B6oMvq9p5a3DC5i017tkF1X7DLqHESkmi8lW5xMkF
+ CJx+m556YTECLIqD9FRYmWVO8/tLzmZAjQE1FP5o67J/YJbRugAeu+3ANkmpGh5Yl3DccJn/3f4=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mshyperv.h now only contains fucntions/variables we define in kernel, all
-definitions from TLFS should go to hyperv-tlfs.h.
+On 08/03/18 10:47, Jacob Chen wrote:
+> From: Jacob Chen <jacob2.chen@rock-chips.com>
+> 
+> This is the capture device interface driver that provides the v4l2
+> user interface. Frames can be received from ISP1.
+> 
+> Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
+> Signed-off-by: Shunqian Zheng <zhengsq@rock-chips.com>
+> Signed-off-by: Yichong Zhong <zyc@rock-chips.com>
+> Signed-off-by: Jacob Chen <cc@rock-chips.com>
+> Signed-off-by: Eddie Cai <eddie.cai.linux@gmail.com>
+> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+> Signed-off-by: Allon Huang <allon.huang@rock-chips.com>
+> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
 
-'enum hv_cpuid_function' is removed as we already have this info in
-hyperv-tlfs.h, code in mshyperv.c is adjusted accordingly.
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- arch/x86/include/asm/hyperv-tlfs.h | 57 ++++++++++++++++++++++++++++
- arch/x86/include/asm/mshyperv.h    | 78 +-------------------------------------
- arch/x86/kernel/cpu/mshyperv.c     | 15 ++++----
- 3 files changed, 66 insertions(+), 84 deletions(-)
+Regards,
 
-diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
-index e311a175014c..d1f1f9d9f807 100644
---- a/arch/x86/include/asm/hyperv-tlfs.h
-+++ b/arch/x86/include/asm/hyperv-tlfs.h
-@@ -237,6 +237,55 @@
- #define HV_X64_MSR_CRASH_PARAMS		\
- 		(1 + (HV_X64_MSR_CRASH_P4 - HV_X64_MSR_CRASH_P0))
- 
-+/*
-+ * Declare the MSR used to setup pages used to communicate with the hypervisor.
-+ */
-+union hv_x64_msr_hypercall_contents {
-+	u64 as_uint64;
-+	struct {
-+		u64 enable:1;
-+		u64 reserved:11;
-+		u64 guest_physical_address:52;
-+	};
-+};
-+
-+/*
-+ * TSC page layout.
-+ */
-+struct ms_hyperv_tsc_page {
-+	volatile u32 tsc_sequence;
-+	u32 reserved1;
-+	volatile u64 tsc_scale;
-+	volatile s64 tsc_offset;
-+	u64 reserved2[509];
-+};
-+
-+/*
-+ * The guest OS needs to register the guest ID with the hypervisor.
-+ * The guest ID is a 64 bit entity and the structure of this ID is
-+ * specified in the Hyper-V specification:
-+ *
-+ * msdn.microsoft.com/en-us/library/windows/hardware/ff542653%28v=vs.85%29.aspx
-+ *
-+ * While the current guideline does not specify how Linux guest ID(s)
-+ * need to be generated, our plan is to publish the guidelines for
-+ * Linux and other guest operating systems that currently are hosted
-+ * on Hyper-V. The implementation here conforms to this yet
-+ * unpublished guidelines.
-+ *
-+ *
-+ * Bit(s)
-+ * 63 - Indicates if the OS is Open Source or not; 1 is Open Source
-+ * 62:56 - Os Type; Linux is 0x100
-+ * 55:48 - Distro specific identification
-+ * 47:16 - Linux kernel version number
-+ * 15:0  - Distro specific identification
-+ *
-+ *
-+ */
-+
-+#define HV_LINUX_VENDOR_ID              0x8100
-+
- /* TSC emulation after migration */
- #define HV_X64_MSR_REENLIGHTENMENT_CONTROL	0x40000106
- 
-@@ -298,6 +347,14 @@ enum HV_GENERIC_SET_FORMAT {
- 	HV_GENERIC_SET_ALL,
- };
- 
-+#define HV_HYPERCALL_RESULT_MASK	GENMASK_ULL(15, 0)
-+#define HV_HYPERCALL_FAST_BIT		BIT(16)
-+#define HV_HYPERCALL_VARHEAD_OFFSET	17
-+#define HV_HYPERCALL_REP_COMP_OFFSET	32
-+#define HV_HYPERCALL_REP_COMP_MASK	GENMASK_ULL(43, 32)
-+#define HV_HYPERCALL_REP_START_OFFSET	48
-+#define HV_HYPERCALL_REP_START_MASK	GENMASK_ULL(59, 48)
-+
- /* hypercall status code */
- #define HV_STATUS_SUCCESS			0
- #define HV_STATUS_INVALID_HYPERCALL_CODE	2
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index 044323a59354..38cfbe9a5794 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -9,25 +9,6 @@
- #include <asm/hyperv-tlfs.h>
- #include <asm/nospec-branch.h>
- 
--/*
-- * The below CPUID leaves are present if VersionAndFeatures.HypervisorPresent
-- * is set by CPUID(HVCPUID_VERSION_FEATURES).
-- */
--enum hv_cpuid_function {
--	HVCPUID_VERSION_FEATURES		= 0x00000001,
--	HVCPUID_VENDOR_MAXFUNCTION		= 0x40000000,
--	HVCPUID_INTERFACE			= 0x40000001,
--
--	/*
--	 * The remaining functions depend on the value of
--	 * HVCPUID_INTERFACE
--	 */
--	HVCPUID_VERSION				= 0x40000002,
--	HVCPUID_FEATURES			= 0x40000003,
--	HVCPUID_ENLIGHTENMENT_INFO		= 0x40000004,
--	HVCPUID_IMPLEMENTATION_LIMITS		= 0x40000005,
--};
--
- struct ms_hyperv_info {
- 	u32 features;
- 	u32 misc_features;
-@@ -38,58 +19,9 @@ struct ms_hyperv_info {
- 
- extern struct ms_hyperv_info ms_hyperv;
- 
--/*
-- * Declare the MSR used to setup pages used to communicate with the hypervisor.
-- */
--union hv_x64_msr_hypercall_contents {
--	u64 as_uint64;
--	struct {
--		u64 enable:1;
--		u64 reserved:11;
--		u64 guest_physical_address:52;
--	};
--};
--
--/*
-- * TSC page layout.
-- */
--
--struct ms_hyperv_tsc_page {
--	volatile u32 tsc_sequence;
--	u32 reserved1;
--	volatile u64 tsc_scale;
--	volatile s64 tsc_offset;
--	u64 reserved2[509];
--};
- 
- /*
-- * The guest OS needs to register the guest ID with the hypervisor.
-- * The guest ID is a 64 bit entity and the structure of this ID is
-- * specified in the Hyper-V specification:
-- *
-- * msdn.microsoft.com/en-us/library/windows/hardware/ff542653%28v=vs.85%29.aspx
-- *
-- * While the current guideline does not specify how Linux guest ID(s)
-- * need to be generated, our plan is to publish the guidelines for
-- * Linux and other guest operating systems that currently are hosted
-- * on Hyper-V. The implementation here conforms to this yet
-- * unpublished guidelines.
-- *
-- *
-- * Bit(s)
-- * 63 - Indicates if the OS is Open Source or not; 1 is Open Source
-- * 62:56 - Os Type; Linux is 0x100
-- * 55:48 - Distro specific identification
-- * 47:16 - Linux kernel version number
-- * 15:0  - Distro specific identification
-- *
-- *
-- */
--
--#define HV_LINUX_VENDOR_ID              0x8100
--
--/*
-- * Generate the guest ID based on the guideline described above.
-+ * Generate the guest ID.
-  */
- 
- static inline  __u64 generate_guest_id(__u64 d_info1, __u64 kernel_version,
-@@ -215,14 +147,6 @@ static inline u64 hv_do_hypercall(u64 control, void *input, void *output)
- 	return hv_status;
- }
- 
--#define HV_HYPERCALL_RESULT_MASK	GENMASK_ULL(15, 0)
--#define HV_HYPERCALL_FAST_BIT		BIT(16)
--#define HV_HYPERCALL_VARHEAD_OFFSET	17
--#define HV_HYPERCALL_REP_COMP_OFFSET	32
--#define HV_HYPERCALL_REP_COMP_MASK	GENMASK_ULL(43, 32)
--#define HV_HYPERCALL_REP_START_OFFSET	48
--#define HV_HYPERCALL_REP_START_MASK	GENMASK_ULL(59, 48)
--
- /* Fast hypercall with 8 bytes of input and no output */
- static inline u64 hv_do_fast_hypercall8(u16 code, u64 input1)
- {
-diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
-index 04f760432a17..0dfc568c110c 100644
---- a/arch/x86/kernel/cpu/mshyperv.c
-+++ b/arch/x86/kernel/cpu/mshyperv.c
-@@ -180,8 +180,8 @@ static void __init ms_hyperv_init_platform(void)
- 	pr_info("Hyper-V: features 0x%x, hints 0x%x\n",
- 		ms_hyperv.features, ms_hyperv.hints);
- 
--	ms_hyperv.max_vp_index = cpuid_eax(HVCPUID_IMPLEMENTATION_LIMITS);
--	ms_hyperv.max_lp_index = cpuid_ebx(HVCPUID_IMPLEMENTATION_LIMITS);
-+	ms_hyperv.max_vp_index = cpuid_eax(HYPERV_CPUID_IMPLEMENT_LIMITS);
-+	ms_hyperv.max_lp_index = cpuid_ebx(HYPERV_CPUID_IMPLEMENT_LIMITS);
- 
- 	pr_debug("Hyper-V: max %u virtual processors, %u logical processors\n",
- 		 ms_hyperv.max_vp_index, ms_hyperv.max_lp_index);
-@@ -189,11 +189,12 @@ static void __init ms_hyperv_init_platform(void)
- 	/*
- 	 * Extract host information.
- 	 */
--	if (cpuid_eax(HVCPUID_VENDOR_MAXFUNCTION) >= HVCPUID_VERSION) {
--		hv_host_info_eax = cpuid_eax(HVCPUID_VERSION);
--		hv_host_info_ebx = cpuid_ebx(HVCPUID_VERSION);
--		hv_host_info_ecx = cpuid_ecx(HVCPUID_VERSION);
--		hv_host_info_edx = cpuid_edx(HVCPUID_VERSION);
-+	if (cpuid_eax(HYPERV_CPUID_VENDOR_AND_MAX_FUNCTIONS) >=
-+	    HYPERV_CPUID_VERSION) {
-+		hv_host_info_eax = cpuid_eax(HYPERV_CPUID_VERSION);
-+		hv_host_info_ebx = cpuid_ebx(HYPERV_CPUID_VERSION);
-+		hv_host_info_ecx = cpuid_ecx(HYPERV_CPUID_VERSION);
-+		hv_host_info_edx = cpuid_edx(HYPERV_CPUID_VERSION);
- 
- 		pr_info("Hyper-V Host Build:%d-%d.%d-%d-%d.%d\n",
- 			hv_host_info_eax, hv_host_info_ebx >> 16,
--- 
-2.14.3
+	Hans
