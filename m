@@ -1,33 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932495AbeCISDd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 13:03:33 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38542 "EHLO
+        id S932514AbeCISDp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 13:03:45 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38898 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932206AbeCISDb (ORCPT
+        with ESMTP id S932206AbeCISDn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 13:03:31 -0500
+        Fri, 9 Mar 2018 13:03:43 -0500
 From: Mark Brown <broonie@kernel.org>
-To: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org,
-        Support Opensource <support.opensource@diasemi.com>,
-        linux-kernel@vger.kernel.org, Akshu Agrawal <akshu.agrawal@amd.com>,
-        Daniel Kurtz <djkurtz@google.com>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: da7219: Add common clock usage for providing DAI clks" to the asoc tree
-In-Reply-To: <20180309162544.783133FB14@swsrvapps-01.diasemi.com>
-Message-Id: <E1euMMO-0001y5-67@debutante>
-Date: Fri, 09 Mar 2018 18:03:16 +0000
+        alsa-devel@alsa-project.org, Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: uniphier: add support for UniPhier PXs2 AIO" to the asoc tree
+In-Reply-To: <20180309132116.4307-1-suzuki.katsuhiro@socionext.com>
+Message-Id: <E1euMMh-0001zb-6a@debutante>
+Date: Fri, 09 Mar 2018 18:03:35 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: da7219: Add common clock usage for providing DAI clks
+   ASoC: uniphier: add support for UniPhier PXs2 AIO
 
 has been applied to the asoc tree at
 
@@ -52,282 +49,430 @@ to this mail.
 Thanks,
 Mark
 
->From fc8f7ea2d6c074baaad202c9187962bfa493ef13 Mon Sep 17 00:00:00 2001
-From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Date: Fri, 9 Mar 2018 16:25:43 +0000
-Subject: [PATCH] ASoC: da7219: Add common clock usage for providing DAI clks
+>From 8413b9e00aa33604aa661d7271c3c02c86beb994 Mon Sep 17 00:00:00 2001
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Date: Fri, 9 Mar 2018 22:21:16 +0900
+Subject: [PATCH] ASoC: uniphier: add support for UniPhier PXs2 AIO
 
-There is a need to use DA7219 as DAI clock master for other codecs
-within a system, which means that the DAI clocks are required to
-remain, regardless of whether the codec is actually running
-playback/capture. To be able to expose control of the DAI clocking
-the common clock framework has been employed.
+This patch adds support for UniPhier AIO sound driver
+which is included in UniPhier PXs2 SoCs.
 
-The current implementation adds a simple clock gate for enabling
-and disabling the DAI clocks, with no rate control supported
-(this is still handled through standard hw_params() functions as
-before). If DT is enabled then the clock is added to the OF
-providers list, otherwise a clkdev lookup is used.
-
-Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- Documentation/devicetree/bindings/sound/da7219.txt |   6 +
- include/sound/da7219.h                             |   2 +
- sound/soc/codecs/da7219.c                          | 129 +++++++++++++++++++--
- sound/soc/codecs/da7219.h                          |   9 ++
- 4 files changed, 138 insertions(+), 8 deletions(-)
+ .../devicetree/bindings/sound/uniphier,aio.txt     |   1 +
+ sound/soc/uniphier/Kconfig                         |  11 +
+ sound/soc/uniphier/Makefile                        |   2 +
+ sound/soc/uniphier/aio-ld11.c                      |   2 +-
+ sound/soc/uniphier/aio-pxs2.c                      | 320 +++++++++++++++++++++
+ sound/soc/uniphier/aio.h                           |   2 +
+ 6 files changed, 337 insertions(+), 1 deletion(-)
+ create mode 100644 sound/soc/uniphier/aio-pxs2.c
 
-diff --git a/Documentation/devicetree/bindings/sound/da7219.txt b/Documentation/devicetree/bindings/sound/da7219.txt
-index 5b54d2d045c3..c3df92d31c4b 100644
---- a/Documentation/devicetree/bindings/sound/da7219.txt
-+++ b/Documentation/devicetree/bindings/sound/da7219.txt
-@@ -25,6 +25,9 @@ Optional properties:
-   interrupt is to be used to wake system, otherwise "irq" should be used.
- - wakeup-source: Flag to indicate this device can wake system (suspend/resume).
+diff --git a/Documentation/devicetree/bindings/sound/uniphier,aio.txt b/Documentation/devicetree/bindings/sound/uniphier,aio.txt
+index 73f6c27ae4f7..65d71cf6ef0f 100644
+--- a/Documentation/devicetree/bindings/sound/uniphier,aio.txt
++++ b/Documentation/devicetree/bindings/sound/uniphier,aio.txt
+@@ -7,6 +7,7 @@ Required properties:
+ - compatible      : should be one of the following:
+ 		    "socionext,uniphier-ld11-aio"
+ 		    "socionext,uniphier-ld20-aio"
++		    "socionext,uniphier-pxs2-aio"
+ - reg             : offset and length of the register set for the device.
+ - interrupts      : should contain I2S or S/PDIF interrupt.
+ - pinctrl-names   : should be "default".
+diff --git a/sound/soc/uniphier/Kconfig b/sound/soc/uniphier/Kconfig
+index 5da545b9bf2a..aa3592ee1358 100644
+--- a/sound/soc/uniphier/Kconfig
++++ b/sound/soc/uniphier/Kconfig
+@@ -30,6 +30,17 @@ config SND_SOC_UNIPHIER_LD11
+ 	  Select Y if you use such device.
+ 	  If unsure select "N".
  
-+- #clock-cells :  Should be set to '<0>', only one clock source provided;
-+- clock-output-names : Name given for DAI clocks output;
++config SND_SOC_UNIPHIER_PXS2
++	tristate "UniPhier PXs2 Device Driver"
++	depends on SND_SOC_UNIPHIER
++	select SND_SOC_UNIPHIER_AIO
++	select SND_SOC_UNIPHIER_AIO_DMA
++	help
++	  This adds ASoC driver for Socionext UniPhier PXs2
++	  input and output that can be used with other codecs.
++	  Select Y if you use such device.
++	  If unsure select "N".
 +
- - clocks : phandle and clock specifier for codec MCLK.
- - clock-names : Clock name string for 'clocks' attribute, should be "mclk".
+ config SND_SOC_UNIPHIER_EVEA_CODEC
+ 	tristate "UniPhier SoC internal audio codec"
+ 	depends on SND_SOC_UNIPHIER
+diff --git a/sound/soc/uniphier/Makefile b/sound/soc/uniphier/Makefile
+index 587a89700950..88169395f68a 100644
+--- a/sound/soc/uniphier/Makefile
++++ b/sound/soc/uniphier/Makefile
+@@ -1,9 +1,11 @@
+ # SPDX-License-Identifier: GPL-2.0
+ snd-soc-uniphier-aio-cpu-objs := aio-core.o aio-dma.o aio-cpu.o aio-compress.o
+ snd-soc-uniphier-aio-ld11-objs := aio-ld11.o
++snd-soc-uniphier-aio-pxs2-objs := aio-pxs2.o
  
-@@ -83,6 +86,9 @@ Example:
- 		VDDMIC-supply = <&reg_audio>;
- 		VDDIO-supply = <&reg_audio>;
+ obj-$(CONFIG_SND_SOC_UNIPHIER_AIO) += snd-soc-uniphier-aio-cpu.o
+ obj-$(CONFIG_SND_SOC_UNIPHIER_LD11) += snd-soc-uniphier-aio-ld11.o
++obj-$(CONFIG_SND_SOC_UNIPHIER_PXS2) += snd-soc-uniphier-aio-pxs2.o
  
-+		#clock-cells = <0>;
-+		clock-output-names = "dai-clks";
+ snd-soc-uniphier-evea-objs := evea.o
+ obj-$(CONFIG_SND_SOC_UNIPHIER_EVEA_CODEC) += snd-soc-uniphier-evea.o
+diff --git a/sound/soc/uniphier/aio-ld11.c b/sound/soc/uniphier/aio-ld11.c
+index 8e40e6c2e42f..4c4dd3dd4dee 100644
+--- a/sound/soc/uniphier/aio-ld11.c
++++ b/sound/soc/uniphier/aio-ld11.c
+@@ -418,7 +418,7 @@ MODULE_DEVICE_TABLE(of, uniphier_aio_of_match);
+ 
+ static struct platform_driver uniphier_aio_driver = {
+ 	.driver = {
+-		.name = "snd-uniphier-aio",
++		.name = "snd-uniphier-aio-ld11",
+ 		.of_match_table = of_match_ptr(uniphier_aio_of_match),
+ 	},
+ 	.probe    = uniphier_aio_probe,
+diff --git a/sound/soc/uniphier/aio-pxs2.c b/sound/soc/uniphier/aio-pxs2.c
+new file mode 100644
+index 000000000000..69cd5b0af948
+--- /dev/null
++++ b/sound/soc/uniphier/aio-pxs2.c
+@@ -0,0 +1,320 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Socionext UniPhier AIO ALSA driver for PXs2.
++//
++// Copyright (c) 2018 Socionext Inc.
 +
- 		clocks = <&clks 201>;
- 		clock-names = "mclk";
- 
-diff --git a/include/sound/da7219.h b/include/sound/da7219.h
-index 409ef1397fd3..1bfcb16f2d10 100644
---- a/include/sound/da7219.h
-+++ b/include/sound/da7219.h
-@@ -36,6 +36,8 @@ struct da7219_aad_pdata;
- struct da7219_pdata {
- 	bool wakeup_source;
- 
-+	const char *dai_clks_name;
++#include <linux/module.h>
 +
- 	/* Mic */
- 	enum da7219_micbias_voltage micbias_lvl;
- 	enum da7219_mic_amp_in_sel mic_amp_in_sel;
-diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
-index 5e043d082f4b..441215997273 100644
---- a/sound/soc/codecs/da7219.c
-+++ b/sound/soc/codecs/da7219.c
-@@ -13,6 +13,8 @@
- 
- #include <linux/acpi.h>
- #include <linux/clk.h>
-+#include <linux/clkdev.h>
-+#include <linux/clk-provider.h>
- #include <linux/i2c.h>
- #include <linux/of_device.h>
- #include <linux/property.h>
-@@ -772,16 +774,27 @@ static int da7219_dai_event(struct snd_soc_dapm_widget *w,
- 	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
- 	struct da7219_priv *da7219 = snd_soc_component_get_drvdata(component);
- 	u8 pll_ctrl, pll_status;
--	int i = 0;
-+	int i = 0, ret;
- 	bool srm_lock = false;
- 
- 	switch (event) {
- 	case SND_SOC_DAPM_PRE_PMU:
--		if (da7219->master)
-+		if (da7219->master) {
- 			/* Enable DAI clks for master mode */
--			snd_soc_component_update_bits(component, DA7219_DAI_CLK_MODE,
--					    DA7219_DAI_CLK_EN_MASK,
--					    DA7219_DAI_CLK_EN_MASK);
-+			if (da7219->dai_clks) {
-+				ret = clk_prepare_enable(da7219->dai_clks);
-+				if (ret) {
-+					dev_err(component->dev,
-+						"Failed to enable dai_clks\n");
-+					return ret;
-+				}
-+			} else {
-+				snd_soc_component_update_bits(component,
-+							      DA7219_DAI_CLK_MODE,
-+							      DA7219_DAI_CLK_EN_MASK,
-+							      DA7219_DAI_CLK_EN_MASK);
-+			}
-+		}
- 
- 		/* PC synchronised to DAI */
- 		snd_soc_component_update_bits(component, DA7219_PC_COUNT,
-@@ -814,9 +827,16 @@ static int da7219_dai_event(struct snd_soc_dapm_widget *w,
- 				    DA7219_PC_FREERUN_MASK);
- 
- 		/* Disable DAI clks if in master mode */
--		if (da7219->master)
--			snd_soc_component_update_bits(component, DA7219_DAI_CLK_MODE,
--					    DA7219_DAI_CLK_EN_MASK, 0);
-+		if (da7219->master) {
-+			if (da7219->dai_clks)
-+				clk_disable_unprepare(da7219->dai_clks);
-+			else
-+				snd_soc_component_update_bits(component,
-+							      DA7219_DAI_CLK_MODE,
-+							      DA7219_DAI_CLK_EN_MASK,
-+							      0);
-+		}
++#include "aio.h"
 +
- 		return 0;
- 	default:
- 		return -EINVAL;
-@@ -1598,6 +1618,12 @@ static struct da7219_pdata *da7219_fw_to_pdata(struct snd_soc_component *compone
- 
- 	pdata->wakeup_source = device_property_read_bool(dev, "wakeup-source");
- 
-+	pdata->dai_clks_name = "da7219-dai-clks";
-+	if (device_property_read_string(dev, "clock-output-names",
-+					&pdata->dai_clks_name))
-+		dev_warn(dev, "Using default clk name: %s\n",
-+			 pdata->dai_clks_name);
++static const struct uniphier_aio_spec uniphier_aio_pxs2[] = {
++	/* for Line PCM In, Pin:AI1Dx */
++	{
++		.name = AUD_NAME_PCMIN1,
++		.gname = AUD_GNAME_LINE,
++		.swm = {
++			.type  = PORT_TYPE_I2S,
++			.dir   = PORT_DIR_INPUT,
++			.rb    = { 16, 11, },
++			.ch    = { 16, 11, },
++			.iif   = { 0, 0, },
++			.iport = { 0, AUD_HW_PCMIN1, },
++		},
++	},
 +
- 	if (device_property_read_u32(dev, "dlg,micbias-lvl", &of_val32) >= 0)
- 		pdata->micbias_lvl = da7219_fw_micbias_lvl(dev, of_val32);
- 	else
-@@ -1712,6 +1738,88 @@ static int da7219_handle_supplies(struct snd_soc_component *component)
- 	return 0;
- }
- 
-+#ifdef CONFIG_COMMON_CLK
-+static int da7219_dai_clks_prepare(struct clk_hw *hw)
++	/* for Speaker/Headphone/Mic PCM In, Pin:AI2Dx */
++	{
++		.name = AUD_NAME_PCMIN2,
++		.gname = AUD_GNAME_AUX,
++		.swm = {
++			.type  = PORT_TYPE_I2S,
++			.dir   = PORT_DIR_INPUT,
++			.rb    = { 17, 12, },
++			.ch    = { 17, 12, },
++			.iif   = { 1, 1, },
++			.iport = { 1, AUD_HW_PCMIN2, },
++		},
++	},
++
++	/* for HDMI PCM Out, Pin:AO1Dx (inner) */
++	{
++		.name = AUD_NAME_HPCMOUT1,
++		.gname = AUD_GNAME_HDMI,
++		.swm = {
++			.type  = PORT_TYPE_I2S,
++			.dir   = PORT_DIR_OUTPUT,
++			.rb    = { 0, 0, },
++			.ch    = { 0, 0, },
++			.oif   = { 0, 0, },
++			.oport = { 3, AUD_HW_HPCMOUT1, },
++		},
++	},
++
++	/* for Line PCM Out, Pin:AO2Dx */
++	{
++		.name = AUD_NAME_PCMOUT1,
++		.gname = AUD_GNAME_LINE,
++		.swm = {
++			.type  = PORT_TYPE_I2S,
++			.dir   = PORT_DIR_OUTPUT,
++			.rb    = { 1, 1, },
++			.ch    = { 1, 1, },
++			.oif   = { 1, 1, },
++			.oport = { 0, AUD_HW_PCMOUT1, },
++		},
++	},
++
++	/* for Speaker/Headphone/Mic PCM Out, Pin:AO3Dx */
++	{
++		.name = AUD_NAME_PCMOUT2,
++		.gname = AUD_GNAME_AUX,
++		.swm = {
++			.type  = PORT_TYPE_I2S,
++			.dir   = PORT_DIR_OUTPUT,
++			.rb    = { 2, 2, },
++			.ch    = { 2, 2, },
++			.oif   = { 2, 2, },
++			.oport = { 1, AUD_HW_PCMOUT2, },
++		},
++	},
++
++	/* for HDMI Out, Pin:AO1IEC */
++	{
++		.name = AUD_NAME_HIECOUT1,
++		.swm = {
++			.type  = PORT_TYPE_SPDIF,
++			.dir   = PORT_DIR_OUTPUT,
++			.rb    = { 6, 4, },
++			.ch    = { 6, 4, },
++			.oif   = { 6, 4, },
++			.oport = { 12, AUD_HW_HIECOUT1, },
++		},
++	},
++
++	/* for HDMI Out, Pin:AO1IEC, Compress */
++	{
++		.name = AUD_NAME_HIECCOMPOUT1,
++		.swm = {
++			.type  = PORT_TYPE_SPDIF,
++			.dir   = PORT_DIR_OUTPUT,
++			.rb    = { 6, 4, },
++			.ch    = { 6, 4, },
++			.oif   = { 6, 4, },
++			.oport = { 12, AUD_HW_HIECOUT1, },
++		},
++	},
++
++	/* for S/PDIF Out, Pin:AO2IEC */
++	{
++		.name = AUD_NAME_IECOUT1,
++		.swm = {
++			.type  = PORT_TYPE_SPDIF,
++			.dir   = PORT_DIR_OUTPUT,
++			.rb    = { 7, 5, },
++			.ch    = { 7, 5, },
++			.oif   = { 7, 5, },
++			.oport = { 13, AUD_HW_IECOUT1, },
++		},
++	},
++
++	/* for S/PDIF Out, Pin:AO2IEC */
++	{
++		.name = AUD_NAME_IECCOMPOUT1,
++		.swm = {
++			.type  = PORT_TYPE_SPDIF,
++			.dir   = PORT_DIR_OUTPUT,
++			.rb    = { 7, 5, },
++			.ch    = { 7, 5, },
++			.oif   = { 7, 5, },
++			.oport = { 13, AUD_HW_IECOUT1, },
++		},
++	},
++};
++
++static const struct uniphier_aio_pll uniphier_aio_pll_pxs2[] = {
++	[AUD_PLL_A1]   = { .enable = true, },
++	[AUD_PLL_F1]   = { .enable = true, },
++	[AUD_PLL_A2]   = { .enable = true, },
++	[AUD_PLL_F2]   = { .enable = true, },
++	[AUD_PLL_APLL] = { .enable = true, },
++	[AUD_PLL_HSC0] = { .enable = true, },
++};
++
++static int uniphier_aio_pxs2_probe(struct snd_soc_dai *dai)
 +{
-+	struct da7219_priv *da7219 =
-+		container_of(hw, struct da7219_priv, dai_clks_hw);
-+	struct snd_soc_component *component = da7219->aad->component;
++	int ret;
 +
-+	snd_soc_component_update_bits(component, DA7219_DAI_CLK_MODE,
-+				      DA7219_DAI_CLK_EN_MASK,
-+				      DA7219_DAI_CLK_EN_MASK);
++	ret = uniphier_aio_dai_probe(dai);
++	if (ret < 0)
++		return ret;
++
++	ret = snd_soc_dai_set_pll(dai, AUD_PLL_A1, 0, 0, 36864000);
++	if (ret < 0)
++		return ret;
++	ret = snd_soc_dai_set_pll(dai, AUD_PLL_F1, 0, 0, 36864000);
++	if (ret < 0)
++		return ret;
++
++	ret = snd_soc_dai_set_pll(dai, AUD_PLL_A2, 0, 0, 33868800);
++	if (ret < 0)
++		return ret;
++	ret = snd_soc_dai_set_pll(dai, AUD_PLL_F2, 0, 0, 33868800);
++	if (ret < 0)
++		return ret;
 +
 +	return 0;
 +}
 +
-+static void da7219_dai_clks_unprepare(struct clk_hw *hw)
-+{
-+	struct da7219_priv *da7219 =
-+		container_of(hw, struct da7219_priv, dai_clks_hw);
-+	struct snd_soc_component *component = da7219->aad->component;
-+
-+	snd_soc_component_update_bits(component, DA7219_DAI_CLK_MODE,
-+				      DA7219_DAI_CLK_EN_MASK, 0);
-+}
-+
-+static int da7219_dai_clks_is_prepared(struct clk_hw *hw)
-+{
-+	struct da7219_priv *da7219 =
-+		container_of(hw, struct da7219_priv, dai_clks_hw);
-+	struct snd_soc_component *component = da7219->aad->component;
-+	u8 clk_reg;
-+
-+	clk_reg = snd_soc_component_read32(component, DA7219_DAI_CLK_MODE);
-+
-+	return !!(clk_reg & DA7219_DAI_CLK_EN_MASK);
-+}
-+
-+const struct clk_ops da7219_dai_clks_ops = {
-+	.prepare = da7219_dai_clks_prepare,
-+	.unprepare = da7219_dai_clks_unprepare,
-+	.is_prepared = da7219_dai_clks_is_prepared,
++static struct snd_soc_dai_driver uniphier_aio_dai_pxs2[] = {
++	{
++		.name    = AUD_GNAME_HDMI,
++		.probe   = uniphier_aio_pxs2_probe,
++		.remove  = uniphier_aio_dai_remove,
++		.suspend = uniphier_aio_dai_suspend,
++		.resume  = uniphier_aio_dai_resume,
++		.playback = {
++			.stream_name = AUD_NAME_HPCMOUT1,
++			.formats     = SNDRV_PCM_FMTBIT_S32_LE,
++			.rates       = SNDRV_PCM_RATE_48000,
++			.channels_min = 2,
++			.channels_max = 2,
++		},
++		.ops = &uniphier_aio_i2s_ops,
++	},
++	{
++		.name    = AUD_GNAME_LINE,
++		.probe   = uniphier_aio_pxs2_probe,
++		.remove  = uniphier_aio_dai_remove,
++		.suspend = uniphier_aio_dai_suspend,
++		.resume  = uniphier_aio_dai_resume,
++		.playback = {
++			.stream_name = AUD_NAME_PCMOUT1,
++			.formats     = SNDRV_PCM_FMTBIT_S32_LE,
++			.rates       = SNDRV_PCM_RATE_48000,
++			.channels_min = 2,
++			.channels_max = 2,
++		},
++		.capture = {
++			.stream_name = AUD_NAME_PCMIN1,
++			.formats     = SNDRV_PCM_FMTBIT_S32_LE,
++			.rates       = SNDRV_PCM_RATE_48000,
++			.channels_min = 2,
++			.channels_max = 2,
++		},
++		.ops = &uniphier_aio_i2s_ops,
++	},
++	{
++		.name    = AUD_GNAME_AUX,
++		.probe   = uniphier_aio_pxs2_probe,
++		.remove  = uniphier_aio_dai_remove,
++		.suspend = uniphier_aio_dai_suspend,
++		.resume  = uniphier_aio_dai_resume,
++		.playback = {
++			.stream_name = AUD_NAME_PCMOUT2,
++			.formats     = SNDRV_PCM_FMTBIT_S32_LE,
++			.rates       = SNDRV_PCM_RATE_48000,
++			.channels_min = 2,
++			.channels_max = 2,
++		},
++		.capture = {
++			.stream_name = AUD_NAME_PCMIN2,
++			.formats     = SNDRV_PCM_FMTBIT_S32_LE,
++			.rates       = SNDRV_PCM_RATE_48000,
++			.channels_min = 2,
++			.channels_max = 2,
++		},
++		.ops = &uniphier_aio_i2s_ops,
++	},
++	{
++		.name    = AUD_NAME_HIECOUT1,
++		.probe   = uniphier_aio_pxs2_probe,
++		.remove  = uniphier_aio_dai_remove,
++		.suspend = uniphier_aio_dai_suspend,
++		.resume  = uniphier_aio_dai_resume,
++		.playback = {
++			.stream_name = AUD_NAME_HIECOUT1,
++			.formats     = SNDRV_PCM_FMTBIT_S32_LE,
++			.rates       = SNDRV_PCM_RATE_48000,
++			.channels_min = 2,
++			.channels_max = 2,
++		},
++		.ops = &uniphier_aio_spdif_ops,
++	},
++	{
++		.name    = AUD_NAME_IECOUT1,
++		.probe   = uniphier_aio_pxs2_probe,
++		.remove  = uniphier_aio_dai_remove,
++		.suspend = uniphier_aio_dai_suspend,
++		.resume  = uniphier_aio_dai_resume,
++		.playback = {
++			.stream_name = AUD_NAME_IECOUT1,
++			.formats     = SNDRV_PCM_FMTBIT_S32_LE,
++			.rates       = SNDRV_PCM_RATE_48000,
++			.channels_min = 2,
++			.channels_max = 2,
++		},
++		.ops = &uniphier_aio_spdif_ops,
++	},
++	{
++		.name    = AUD_NAME_HIECCOMPOUT1,
++		.probe   = uniphier_aio_pxs2_probe,
++		.remove  = uniphier_aio_dai_remove,
++		.suspend = uniphier_aio_dai_suspend,
++		.resume  = uniphier_aio_dai_resume,
++		.compress_new = snd_soc_new_compress,
++		.playback = {
++			.stream_name = AUD_NAME_HIECCOMPOUT1,
++			.channels_min = 1,
++			.channels_max = 1,
++		},
++		.ops = &uniphier_aio_spdif_ops,
++	},
++	{
++		.name    = AUD_NAME_IECCOMPOUT1,
++		.probe   = uniphier_aio_pxs2_probe,
++		.remove  = uniphier_aio_dai_remove,
++		.suspend = uniphier_aio_dai_suspend,
++		.resume  = uniphier_aio_dai_resume,
++		.compress_new = snd_soc_new_compress,
++		.playback = {
++			.stream_name = AUD_NAME_IECCOMPOUT1,
++			.channels_min = 1,
++			.channels_max = 1,
++		},
++		.ops = &uniphier_aio_spdif_ops,
++	},
 +};
 +
-+static void da7219_register_dai_clks(struct snd_soc_component *component)
-+{
-+	struct device *dev = component->dev;
-+	struct da7219_priv *da7219 = snd_soc_component_get_drvdata(component);
-+	struct da7219_pdata *pdata = da7219->pdata;
-+	struct clk_init_data init = {};
-+	struct clk *dai_clks;
-+	struct clk_lookup *dai_clks_lookup;
++static const struct uniphier_aio_chip_spec uniphier_aio_pxs2_spec = {
++	.specs     = uniphier_aio_pxs2,
++	.num_specs = ARRAY_SIZE(uniphier_aio_pxs2),
++	.dais      = uniphier_aio_dai_pxs2,
++	.num_dais  = ARRAY_SIZE(uniphier_aio_dai_pxs2),
++	.plls      = uniphier_aio_pll_pxs2,
++	.num_plls  = ARRAY_SIZE(uniphier_aio_pll_pxs2),
++	.addr_ext  = 0,
++};
 +
-+	init.parent_names = NULL;
-+	init.num_parents = 0;
-+	init.name = pdata->dai_clks_name;
-+	init.ops = &da7219_dai_clks_ops;
-+	da7219->dai_clks_hw.init = &init;
++static const struct of_device_id uniphier_aio_of_match[] = {
++	{
++		.compatible = "socionext,uniphier-pxs2-aio",
++		.data = &uniphier_aio_pxs2_spec,
++	},
++	{},
++};
++MODULE_DEVICE_TABLE(of, uniphier_aio_of_match);
 +
-+	dai_clks = devm_clk_register(dev, &da7219->dai_clks_hw);
-+	if (IS_ERR(dai_clks)) {
-+		dev_warn(dev, "Failed to register DAI clocks: %ld\n",
-+			 PTR_ERR(dai_clks));
-+		return;
-+	}
-+	da7219->dai_clks = dai_clks;
++static struct platform_driver uniphier_aio_driver = {
++	.driver = {
++		.name = "snd-uniphier-aio-pxs2",
++		.of_match_table = of_match_ptr(uniphier_aio_of_match),
++	},
++	.probe    = uniphier_aio_probe,
++	.remove   = uniphier_aio_remove,
++};
++module_platform_driver(uniphier_aio_driver);
 +
-+	/* If we're using DT, then register as provider accordingly */
-+	if (dev->of_node) {
-+		devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-+					    &da7219->dai_clks_hw);
-+	} else {
-+		dai_clks_lookup = clkdev_create(dai_clks, pdata->dai_clks_name,
-+						"%s", dev_name(dev));
-+		if (!dai_clks_lookup)
-+			dev_warn(dev, "Failed to create DAI clkdev");
-+		else
-+			da7219->dai_clks_lookup = dai_clks_lookup;
-+	}
-+}
-+#else
-+static inline void da7219_register_dai_clks(struct snd_soc_component *component) {}
-+#endif /* CONFIG_COMMON_CLK */
-+
- static void da7219_handle_pdata(struct snd_soc_component *component)
- {
- 	struct da7219_priv *da7219 = snd_soc_component_get_drvdata(component);
-@@ -1722,6 +1830,8 @@ static void da7219_handle_pdata(struct snd_soc_component *component)
++MODULE_AUTHOR("Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>");
++MODULE_DESCRIPTION("UniPhier PXs2 AIO driver.");
++MODULE_LICENSE("GPL v2");
+diff --git a/sound/soc/uniphier/aio.h b/sound/soc/uniphier/aio.h
+index 2cd64273fb5b..793334675cb3 100644
+--- a/sound/soc/uniphier/aio.h
++++ b/sound/soc/uniphier/aio.h
+@@ -110,9 +110,11 @@ enum IEC61937_PC {
+ #define AUD_NAME_IECOUT1         "aio-iecout1"
+ #define AUD_NAME_CMASTER         "aio-cmaster"
+ #define AUD_NAME_HIECCOMPOUT1    "aio-hieccompout1"
++#define AUD_NAME_IECCOMPOUT1     "aio-ieccompout1"
  
- 		da7219->wakeup_source = pdata->wakeup_source;
+ #define AUD_GNAME_HDMI    "aio-hdmi"
+ #define AUD_GNAME_LINE    "aio-line"
++#define AUD_GNAME_AUX     "aio-aux"
+ #define AUD_GNAME_IEC     "aio-iec"
  
-+		da7219_register_dai_clks(component);
-+
- 		/* Mic Bias voltages */
- 		switch (pdata->micbias_lvl) {
- 		case DA7219_MICBIAS_1_6V:
-@@ -1856,6 +1966,9 @@ static void da7219_remove(struct snd_soc_component *component)
- 
- 	da7219_aad_exit(component);
- 
-+	if (da7219->dai_clks_lookup)
-+		clkdev_drop(da7219->dai_clks_lookup);
-+
- 	/* Supplies */
- 	regulator_bulk_disable(DA7219_NUM_SUPPLIES, da7219->supplies);
- }
-diff --git a/sound/soc/codecs/da7219.h b/sound/soc/codecs/da7219.h
-index 1acb34cd12ad..1b00023e33cd 100644
---- a/sound/soc/codecs/da7219.h
-+++ b/sound/soc/codecs/da7219.h
-@@ -14,6 +14,9 @@
- #ifndef __DA7219_H
- #define __DA7219_H
- 
-+#include <linux/clk.h>
-+#include <linux/clkdev.h>
-+#include <linux/clk-provider.h>
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
- #include <sound/da7219.h>
-@@ -813,6 +816,12 @@ struct da7219_priv {
- 	struct mutex ctrl_lock;
- 	struct mutex pll_lock;
- 
-+#ifdef CONFIG_COMMON_CLK
-+	struct clk_hw dai_clks_hw;
-+#endif
-+	struct clk_lookup *dai_clks_lookup;
-+	struct clk *dai_clks;
-+
- 	struct clk *mclk;
- 	unsigned int mclk_rate;
- 	int clk_src;
+ #define AUD_CLK_IO        0
 -- 
 2.16.2
