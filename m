@@ -1,90 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751303AbeCIPkG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 10:40:06 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56552 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932224AbeCIPjb (ORCPT
+        id S932220AbeCIPkQ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 10:40:16 -0500
+Received: from smtprelay01.ispgateway.de ([80.67.31.39]:13266 "EHLO
+        smtprelay01.ispgateway.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751249AbeCIPkP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 10:39:31 -0500
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
-To: dhowells@redhat.com
-Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Nayna Jain <nayna@linux.vnet.ibm.com>
-Subject: [PATCH v2 2/3] keys: export find_keyring_by_name()
-Date: Fri,  9 Mar 2018 21:08:02 +0530
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180309153803.25859-1-nayna@linux.vnet.ibm.com>
-References: <20180309153803.25859-1-nayna@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18030915-0020-0000-0000-00000400CE2D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030915-0021-0000-0000-0000429517C8
-Message-Id: <20180309153803.25859-2-nayna@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-09_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803090194
+        Fri, 9 Mar 2018 10:40:15 -0500
+Date: Fri, 9 Mar 2018 16:40:08 +0100
+From: Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@KARO-electronics.de>
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Martin Kaiser <martin@kaiser.cx>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: dts: i.MX25: define SSI FIFO depth
+Message-ID: <20180309164008.52d41dd5@karo-electronics.de>
+In-Reply-To: <1520587632.19507.3.camel@pengutronix.de>
+References: <1520373499-13623-1-git-send-email-martin@kaiser.cx>
+        <20180308161135.1f3d3d18@karo-electronics.de>
+        <20180308153832.GA28454@botnar.kaiser.cx>
+        <20180309093738.7cd5fded@karo-electronics.de>
+        <1520587632.19507.3.camel@pengutronix.de>
+Organization: Ka-Ro electronics GmbH
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Df-Sender: bHdAa2Fyby1lbGVjdHJvbmljcy5kZQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch exports the function find_keyring_by_name() to be used by
-other subsystems.
+Hi,
 
-Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
----
-Changelog:
+On Fri, 09 Mar 2018 10:27:12 +0100 Lucas Stach wrote:
+> Hi Lothar,
+> 
+> Am Freitag, den 09.03.2018, 09:37 +0100 schrieb Lothar Waßmann:
+> > Hi,
+> > 
+> > On Thu, 8 Mar 2018 16:38:32 +0100 Martin Kaiser wrote:
+> > > Hi Lothar,
+> > > 
+> > > > > Thus wrote Lothar Waßmann (LW@KARO-electronics.de):
+> > > 
+> > > > > diff --git a/arch/arm/boot/dts/imx25.dtsi b/arch/arm/boot/dts/imx25.dtsi
+> > > > > index 9725705..cf70df2 100644
+> > > > > --- a/arch/arm/boot/dts/imx25.dtsi
+> > > > > +++ b/arch/arm/boot/dts/imx25.dtsi
+> > > > > @@ -269,6 +269,7 @@
+> > > > > > > > >  				dmas = <&sdma 24 1 0>,
+> > > > > > > > >  				       <&sdma 25 1 0>;
+> > > > > > > > >  				dma-names = "rx", "tx";
+> > > > > > > > > +				fsl,fifo-depth = <15>;
+> > > > > > > > >  				status = "disabled";
+> > > > > > > > >  			};
+> > > > > @@ -329,6 +330,7 @@
+> > > > > > > > >  				dmas = <&sdma 28 1 0>,
+> > > > > > > > >  				       <&sdma 29 1 0>;
+> > > > > > > > >  				dma-names = "rx", "tx";
+> > > > > > > > > +				fsl,fifo-depth = <15>;
+> > > > > > > > >  				status = "disabled";
+> > > > >  			};
+> > > > You are changing the global .dtsi file. Did you test this change with
+> > > > all devices that are affected by it?
+> > > 
+> > > I changed the hardware description of the imx25 SSI to match the
+> > > reference manual.
+> > > 
+> > > I did test this change on an imx25 board with audio playback. This uses
+> > > the SSI description I modified. I verified that the driver is actually
+> > > taking the modified setting into account and that this causes no
+> > > problems.
+> > > 
+> > > As of today, this setting is used by the fsl_ssi driver to set the fifo
+> > > water level for dma requests.
+> > > 
+> > > Of course, I don't have access to the enitre range of supported imx25
+> > > boards and I don't think this is required for submitting patches.
+> > > 
+> > > Do you have any indication why this patch should not be merged?
+> > > 
+> > 
+> > Usually patches should not willy-nilly change the behaviour of existing
+> > configurations unless they fix any real life bugs.
+> 
+> With this logic we wouldn't be able to get most driver changes applied.
+> If it is matching the reference manual and has been tested on the
+> affected hardware it should be good to go.
+> 
+> If you know about any specific corner cases that might break with this
+> change, please speak up now. Don't reject patches based on the
+> overarching "it might break something" argument.
+> 
+I didn't reject anything, I just wanted to make sure, that the
+implications of this patch were sufficiently considered.
 
-v2:
-* Fix the patch description per line length as suggested by Mimi
 
- include/linux/key.h      | 2 ++
- security/keys/internal.h | 2 --
- security/keys/keyring.c  | 1 +
- 3 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/key.h b/include/linux/key.h
-index e58ee10f6e58..c8d332d4103c 100644
---- a/include/linux/key.h
-+++ b/include/linux/key.h
-@@ -346,6 +346,8 @@ static inline key_serial_t key_serial(const struct key *key)
- 
- extern void key_set_timeout(struct key *, unsigned);
- 
-+extern struct key *find_keyring_by_name(const char *name, bool uid_keyring);
-+
- /*
-  * The permissions required on a key that we're looking up.
-  */
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index 9f8208dc0e55..8aa8d347a1ab 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -141,8 +141,6 @@ extern key_ref_t keyring_search_aux(key_ref_t keyring_ref,
- extern key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx);
- extern key_ref_t search_process_keyrings(struct keyring_search_context *ctx);
- 
--extern struct key *find_keyring_by_name(const char *name, bool uid_keyring);
--
- extern int install_user_keyrings(void);
- extern int install_thread_keyring_to_cred(struct cred *);
- extern int install_process_keyring_to_cred(struct cred *);
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index 41bcf57e96f2..4b9c3f1166d1 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -1152,6 +1152,7 @@ struct key *find_keyring_by_name(const char *name, bool uid_keyring)
- 	read_unlock(&keyring_name_lock);
- 	return keyring;
- }
-+EXPORT_SYMBOL(find_keyring_by_name);
- 
- static int keyring_detect_cycle_iterator(const void *object,
- 					 void *iterator_data)
--- 
-2.13.6
+Lothar Waßmann
