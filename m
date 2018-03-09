@@ -1,72 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932458AbeCITuE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 14:50:04 -0500
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.221]:33159 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932183AbeCITuC (ORCPT
+        id S932435AbeCITyJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 14:54:09 -0500
+Received: from mail-vk0-f54.google.com ([209.85.213.54]:40057 "EHLO
+        mail-vk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751192AbeCITyG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 14:50:02 -0500
-X-RZG-AUTH: :P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9zW4DNhHoQE+naq7Ui9modlL72u2rWmxB4UvW2wbAhHRadtl88E4P/A==
-X-RZG-CLASS-ID: mo00
-From: Stephan Mueller <smueller@chronox.de>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org,
-        marek.wyborski@emwesoft.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] input: bcm5974 - Add driver for Apple Magic Trackpad 2
-Date: Fri, 09 Mar 2018 20:49:57 +0100
-Message-ID: <2373130.0OS7LSYeBT@tauon.chronox.de>
-In-Reply-To: <1566223.3I8hjEaRec@tauon.chronox.de>
-References: <40764439.8xGR6LbaWR@positron.chronox.de> <2305311.UGlXl2onVb@positron.chronox.de> <1566223.3I8hjEaRec@tauon.chronox.de>
+        Fri, 9 Mar 2018 14:54:06 -0500
+X-Google-Smtp-Source: AG47ELssFWK7e56dPKN3nQoVGb3mQWhWodBFZB737vfqYJKbQ+GsBIz5Gww5turpWG1jGncJ0/8+45yV2v/JVYOsObk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <CA+55aFyp4Lvz8QVckBr+zp4OfB1VaFNb2J1s0-xEMA9h44c0UA@mail.gmail.com>
+References: <20180309193020.GA5149@beast> <CA+55aFyp4Lvz8QVckBr+zp4OfB1VaFNb2J1s0-xEMA9h44c0UA@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Fri, 9 Mar 2018 11:54:04 -0800
+X-Google-Sender-Auth: Z5ZBqJB_1Zrf3fnCrJScWnTezgc
+Message-ID: <CAGXu5j++Ju0Jg0O3gXPGD7Nzy8uE3NZo_dCF-L0hontG_P+5yw@mail.gmail.com>
+Subject: Re: [PATCH v2] exec: Set file unwritable before LSM check
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: James Morris <jmorris@namei.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>, Stephen Smalley <sds@tycho.nsa.gov>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w29JoF4H020034
 
-Am Dienstag, 27. Februar 2018, 17:37:45 CET schrieb Stephan Mueller:
+On Fri, Mar 9, 2018 at 11:47 AM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Fri, Mar 9, 2018 at 11:30 AM, Kees Cook <keescook@chromium.org> wrote:
+>> The LSM check should happen after the file has been confirmed to be
+>> unchanging. Without this, we could have a race between the Time of Check
+>> (the call to security_kernel_read_file() which could read the file and
+>> make access policy decisions) and the Time of Use (starting with
+>> kernel_read_file()'s reading of the file contents). In theory, file
+>> contents could change between the two.
+>
+> I'm going to assume I get this for 4.17 from the security tree.
+>
+> Because I'm guessing there are actually no existing users that care?
+> selinux seems to just look at file state, not actually at contents or
+> anything that write access denial would care about.
+>
+> And the only other security module that even registers this is
+> loadpin, and again it just seems to check things like "on the right
+> filesystem" that aren't actually impacted by write access (in fact,
+> the documented reason is to check that it's a read-only filesystem so
+> that write access is simply _irrelevant_).
+>
+> So this issue seems to be mainly a cleanliness thing, not an actual bug.
 
-Hi Jiri, Dimity, Henrik,
+That is my assumption too (I left off the Cc: stable as a result). I'm
+much less familiar with IMA, though, but it's a caller of
+kernel_read_file(), not hooking it, etc.
 
-> Am Sonntag, 21. Januar 2018, 23:06:55 CET schrieb Stephan Müller:
-> 
-> Hi Jiri, Dimity, Henrik,
-> 
-> > Hi,
-> > 
-> > Changes v3:
-> > * port to 4.15-rc8
-> > * small code cleanups (isolation of type casts to functions pertaining
-> > 
-> >   to the Apple Magic Trackpad 2
-> > 
-> > * clean up all checkpatch.pl errors and warnings (except those
-> > 
-> >   where the patch uses the structure of existing code fragments)
-> > 
-> > * updated horizontal and vertical limits to capture start of movements
-> > 
-> >   in the outer areas of the pad
-> > 
-> > ---8<---
-> > 
-> > Add support for Apple Magic Trackpad 2 in bcm5974 (MacBook Tochpad)
-> > driver.
-> > The Magic Trackpad 2 needs to be switched into the finger-reporting-mode,
-> > just like the other macbook touchpads as well. But the format is different
-> > to the ones before. The Header is 12 Bytes long and each reported finger
-> > is additional 9 Bytes. The data order reported by the hardware is
-> > different as well.
-> 
-> May I ask whether there is an issue in the patch? I have not received any
-> feedback and would like to inquire about the status of the patch.
-> 
-> I would like to have Touchpad 2 properly supported.
+-Kees
 
-<nudge>
-
-Ciao
-Stephan
+-- 
+Kees Cook
+Pixel Security
