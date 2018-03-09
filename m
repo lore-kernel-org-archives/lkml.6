@@ -1,65 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932649AbeCISyj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 13:54:39 -0500
-Received: from smtp2.it.da.ut.ee ([193.40.5.67]:60284 "EHLO smtp2.it.da.ut.ee"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932551AbeCISyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 13:54:35 -0500
-Date: Fri, 9 Mar 2018 20:54:29 +0200 (EET)
-From: Meelis Roos <mroos@linux.ee>
-To: Linux Kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: 4.15-rc9 new insecure W+X mapping warning
-In-Reply-To: <alpine.LRH.2.21.1801242127140.27627@math.ut.ee>
-Message-ID: <alpine.LRH.2.21.1803091732210.7679@math.ut.ee>
-References: <alpine.LRH.2.21.1801242127140.27627@math.ut.ee>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S932544AbeCIS4L (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 13:56:11 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:50325 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932165AbeCIS4K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 13:56:10 -0500
+X-Google-Smtp-Source: AG47ELvnaJ3MSwz/fWomUO9mASedGSELBngnC+li5r8I3iISHCwArqds1BEhp73Sm+wzGO2XikVg2/zl3g26IOE9W7c=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180309143315.354ad0be@endymion>
+References: <1519800494-32107-1-git-send-email-alex.hung@canonical.com> <20180309143315.354ad0be@endymion>
+From: Alex Hung <alex.hung@canonical.com>
+Date: Fri, 9 Mar 2018 10:56:07 -0800
+Message-ID: <CAJ=jqubM2P8=pJQ8cofD3C67hiTOEoB4J99suAdS3YY30eZy-g@mail.gmail.com>
+Subject: Re: [PATCH][V2] firmware: dmi_scan: add DMI_OEM_STRING support to dmi_matches
+To: Jean Delvare <jdelvare@suse.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> This is Intel SE7520JR22S mainboard with 2 64-bit P4 xeons. Earlier 
-> kernels up to 4.14 have had W+X checking on but found nothing. Now I 
-> tried 4.15.0-rc9-00023-g1f07476ec143 and it gives a new W+X warning. 
+On Fri, Mar 9, 2018 at 5:33 AM, Jean Delvare <jdelvare@suse.de> wrote:
+> Hi Alex,
+>
+> On Tue, 27 Feb 2018 22:48:14 -0800, Alex Hung wrote:
+>> OEM strings are defined by each OEM and they contain customized and
+>> useful OEM information. Supporting it provides more flexible uses of
+>> the dmi_matches function.
+>>
+>> Signed-off-by: Alex Hung <alex.hung@canonical.com>
+>> ---
+>>  drivers/firmware/dmi_scan.c     | 11 +++++++++--
+>>  include/linux/mod_devicetable.h |  1 +
+>>  2 files changed, 10 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/firmware/dmi_scan.c b/drivers/firmware/dmi_scan.c
+>> index e763e14..c712e66 100644
+>> --- a/drivers/firmware/dmi_scan.c
+>> +++ b/drivers/firmware/dmi_scan.c
+>> @@ -775,7 +775,15 @@ static bool dmi_matches(const struct dmi_system_id *dmi)
+>>               int s = dmi->matches[i].slot;
+>>               if (s == DMI_NONE)
+>>                       break;
+>> -             if (dmi_ident[s]) {
+>> +             if (s == DMI_OEM_STRING) {
+>> +                     /* DMI_OEM_STRING must be exact match */
+>> +                     const struct dmi_device *valid;
+>> +
+>> +                     valid = dmi_find_device(DMI_DEV_TYPE_OEM_STRING,
+>> +                                             dmi->matches[i].substr, NULL);
+>> +                     if (valid)
+>> +                             continue;
+>> +             } else if (dmi_ident[s]) {
+>>                       if (dmi->matches[i].exact_match) {
+>>                               if (!strcmp(dmi_ident[s],
+>>                                           dmi->matches[i].substr))
+>> @@ -786,7 +794,6 @@ static bool dmi_matches(const struct dmi_system_id *dmi)
+>>                                       continue;
+>>                       }
+>>               }
+>> -
+>>               /* No match */
+>>               return false;
+>>       }
+>
+> Please avoid gratuitous blank line changes.
+>
+>> diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
+>> index 48fb2b4..7d361be 100644
+>> --- a/include/linux/mod_devicetable.h
+>> +++ b/include/linux/mod_devicetable.h
+>> @@ -502,6 +502,7 @@ enum dmi_field {
+>>       DMI_CHASSIS_SERIAL,
+>>       DMI_CHASSIS_ASSET_TAG,
+>>       DMI_STRING_MAX,
+>> +     DMI_OEM_STRING, /* special case - will not be in dmi_ident */
+>>  };
+>>
+>>  struct dmi_strmatch {
+>
+> Other than this, I'm happy with this version, so with the blank line
+> restored:
+>
+> Reviewed-by: Jean Delvare <jdelvare@suse.de>
 
-Actually, I was wrong about earlier kernels - I just did not have 
-CONFIG_DEBUG_WX turned on before and eralier kernels did not check it.
+Thank you very much.
 
-Recompiled 4.14 with CONFIG_DEBUG_WX=y and the problem is there. So this 
-is not a Linux regression but a peculiarity with the SE7520JR22S, it 
-seems.
+>
+> However it doesn't make sense to commit this change unless there will
+> be at least one user of it. What is the status of the piece of code
+> which was supposed to use this new feature?
 
-Is there anything that Linux might be doing wrong?
+The original use of DMI on _OSI is no needed anymore - the OEM _OSI
+string will always enabled; however, this patch is still needed
+because DMI_OEM_STRING are more suitable for many DMI quirks,
+especially for Dell systems, and many, if not all, DMI quirks for Dell
+systems with DMI_PRODUCT_NAME can be (and should be) replaced by
+DMI_OEM_STRING because 1) OEM string contains system id, 2) multiple
+product names can be used for the same system id and 3) the number DMI
+quirks can be reduced.
 
-> [   10.880663] ------------[ cut here ]------------
-> [   10.880755] x86/mm: Found insecure W+X mapping at address 00000000d051fb08/0xffff880000000000
-> [   10.880900] WARNING: CPU: 2 PID: 1 at arch/x86/mm/dump_pagetables.c:266 note_page+0x718/0xb89
-> [   10.881035] Modules linked in:
-> [   10.881128] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc9-00023-g1f07476ec143 #104
-> [   10.881264] Hardware name: Intel                                  /SE7520JR22S, BIOS SE7520JR22.86B.P.10.00.0087.120820051348 12/08/2005
-> [   10.881405] RIP: 0010:note_page+0x718/0xb89
-> [   10.881491] RSP: 0000:ffffc90000013e48 EFLAGS: 00010296
-> [   10.881578] RAX: 0000000000000051 RBX: ffffc90000013ec8 RCX: ffffffff8164f938
-> [   10.881666] RDX: 0000000000000001 RSI: 0000000000000092 RDI: ffffffff82b468cc
-> [   10.881756] RBP: 0000000000000061 R08: 0000000000000177 R09: 00000000000001d7
-> [   10.881844] R10: 0720072007200720 R11: 0720072007200720 R12: 0000000000000000
-> [   10.881932] R13: 0000000000000000 R14: 0000000000000001 R15: 8800000990000000
-> [   10.882022] FS:  0000000000000000(0000) GS:ffff88003fc80000(0000) knlGS:0000000000000000
-> [   10.882156] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   10.882243] CR2: 0000000000000000 CR3: 000000000200a000 CR4: 00000000000006e0
-> [   10.882331] Call Trace:
-> [   10.882423]  ptdump_walk_pgd_level_core+0x367/0x3a5
-> [   10.882511]  ptdump_walk_pgd_level_checkwx+0x10/0x3e
-> [   10.882602]  kernel_init+0x2e/0x10f
-> [   10.882688]  ? rest_init+0xb9/0xb9
-> [   10.882775]  ret_from_fork+0x35/0x40
-> [   10.882861] Code: fb ff ff 41 f7 c7 00 10 00 00 0f 85 e2 fe ff ff e9 36 fd ff ff c6 05 7d 45 6f 01 01 48 89 f2 48 c7 c7 08 5b ee 81 e8 4b d6 00 00 <0f> ff 48 8b 73 10 e9 bc f9 ff ff 4d 85 ed 0f 84 b9 01 00 00 41 
-> [   10.883103] ---[ end trace bc3e2cf1a1adfa39 ]---
-> [   10.896336] x86/mm: Checked W+X mappings: FAILED, 266243 W+X pages found.
-> [   10.896430] x86/mm: Checking user space page tables
-> [   10.909522] x86/mm: Checked W+X mappings: FAILED, 56 W+X pages found.
+For example, the DMI_MATCH(DMI_PRODUCT_NAME, "OptiPlex 9020M") in
+commit 1f59ab2783aed04f131 can be replaced by
+DMI_MATCH_EXACT(DMI_OEM_STRING, "1[0669]")
 
--- 
-Meelis Roos (mroos@linux.ee)
+I will start sending DMI quirks with DMI_OEM_STRING myself and perhaps
+sending a clean up patch to replace DMI_PRODUCT_NAME by DMI_OEM_STRING
+for the Dell systems I have access to. With this patch in place first,
+I am able to convince others to use DMI_OEM_STRING because there will
+fewer risks to spend time in vain.
+
+Cheers,
+Alex Hung
+
+>
+> --
+> Jean Delvare
+> SUSE L3 Support
