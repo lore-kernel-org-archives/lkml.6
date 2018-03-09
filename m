@@ -1,81 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932096AbeCIPL7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 10:11:59 -0500
-Received: from muru.com ([72.249.23.125]:60264 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751102AbeCIPL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 10:11:57 -0500
-Date: Fri, 9 Mar 2018 07:11:53 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCHv5 3/5] mfd: motorola-cpcap: Add audio-codec support
-Message-ID: <20180309151153.GR5799@atomide.com>
-References: <20180223200254.25685-1-sebastian.reichel@collabora.co.uk>
- <20180223200254.25685-4-sebastian.reichel@collabora.co.uk>
- <20180307163211.rytfli5tb47yhtug@dell>
- <20180308094652.qg4atjw5c3hayaz3@earth.universe>
- <20180308095315.mpcmx2ob6yhsnrm6@dell>
- <20180308102757.jyi7uo566n6nuct5@earth.universe>
- <20180308104831.fflq2arj5dxgntia@dell>
- <20180308112528.GC6019@sirena.org.uk>
- <20180309083414.s57eq3kw325magwz@dell>
- <20180309124017.GB5252@sirena.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180309124017.GB5252@sirena.org.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S932173AbeCIPPZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 10:15:25 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:52428 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751096AbeCIPPY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 10:15:24 -0500
+Date: Fri, 09 Mar 2018 10:15:20 -0500 (EST)
+Message-Id: <20180309.101520.1551234308448290917.davem@davemloft.net>
+To: Jose.Abreu@synopsys.com
+Cc: niklas.cassel@axis.com, peppe.cavallaro@st.com,
+        alexandre.torgue@st.com, pavel@ucw.cz, niklass@axis.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: stmmac: remove superfluous wmb() memory
+ barriers
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <f245ba4f-9c08-3f04-b0db-97582cc06153@synopsys.com>
+References: <20180308103006.1197-1-niklas.cassel@axis.com>
+        <f245ba4f-9c08-3f04-b0db-97582cc06153@synopsys.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Mark Brown <broonie@kernel.org> [180309 12:41]:
-> On Fri, Mar 09, 2018 at 08:34:14AM +0000, Lee Jones wrote:
-> > On Thu, 08 Mar 2018, Mark Brown wrote:
-> 
-> > > Linux.  Clocks are a big issue with audio stuff, right now sections of
-> > > the clock tree get handled in the CODEC driver but we're going to want
-> > > to push them out to a clock driver so we're not reimplementing handling
-> > > for clocks.
-> 
-> > How is the CODEC controlled?  Does it have its own registers?  I guess
-> > by "it's not a separate device or IP" you mean that it doesn't.  But
-> > that begs the question, how does this then device differ from all the
-> > other devices (adc, battery, charger, regulator, rtc, pwrbutton,
-> > usb-phy and led)?
-> 
-> I'm not convinced that this is a particularly good idea for the other
-> functions but anyway...  the big thing here is that in these devices the
-> CODEC is generally not the level that the IP is created at, it's a
-> collection of interlinked IPs which usually includes not only audio
-> stuff but also some clocking stuff.  The repeatable blocks that could
-> get reused independently are generally a level down from the CODEC
-> level, for example if you look at something like wm8994 there's a couple
-> of identical FLL IPs which could make sense to enumerate individually in
-> the DT.  The top level generally doesn't get reused and is purely an
-> encoding of what Linux is currently doing.
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Date: Fri, 9 Mar 2018 10:26:11 +0000
 
-It seems that most of the components in the PMICs are just standard
-components packed into the PMIC with a control interface provided
-over I2C or SPI.
+> Sorry but I know at least two architectures which don't do a
+> wmb() upon an writel [1] [2]. This can be critical if if we are
+> accessing the device through some slow or filled bus which will
+> delay accesses to the device IO. Notice that writel and then
+> readl to the same address will force CPU to wait for writel
+> completion before readl, but in this case we are using DMA and
+> then writel so I think a wmb() before the writel is a safe measure.
 
-So using compatible for things like ADC, RTC and so on makes sense
-if eventually figure out which ones are shared across various
-drivers.
+Wait a second.
 
-Sounds like audio is a bit more fuzzy like Mark describes above.
-And by not using a compatible for audio we can have things working
-while not establishing and ABI for something that might change
-in the future.
+This is not about whether there is an explicit memory barrier
+instruction placed in the writel() implementation.
 
-Regards,
+Are you saying that the cpu(s) in question will reorder stores in
+their store buffers, even if they are to real memory vs. IOMEM?
 
-Tony
+That's really dangerous.
