@@ -1,95 +1,318 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932067AbeCIJML (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 04:12:11 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:33123 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751045AbeCIJMH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:12:07 -0500
-Date: Fri, 9 Mar 2018 01:11:45 -0800
-From: tip-bot for Andy Shevchenko <tipbot@zytor.com>
-Message-ID: <tip-6e98503dba64e721ba839e75dca036266ec0140f@git.kernel.org>
-Cc: peterz@infradead.org, ard.biesheuvel@linaro.org, hpa@zytor.com,
-        tglx@linutronix.de, lukas@wunner.de, torvalds@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, matt@codeblueprint.co.uk,
-        mingo@kernel.org, linux-kernel@vger.kernel.org
-Reply-To: torvalds@linux-foundation.org, tglx@linutronix.de, lukas@wunner.de,
-        peterz@infradead.org, hpa@zytor.com, ard.biesheuvel@linaro.org,
-        linux-kernel@vger.kernel.org, matt@codeblueprint.co.uk,
-        mingo@kernel.org, andriy.shevchenko@linux.intel.com
-In-Reply-To: <20180308080020.22828-3-ard.biesheuvel@linaro.org>
-References: <20180308080020.22828-3-ard.biesheuvel@linaro.org>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:efi/core] efi/apple-properties: Remove redundant attribute
- initialization from unmarshal_key_value_pairs()
-Git-Commit-ID: 6e98503dba64e721ba839e75dca036266ec0140f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1751615AbeCIJMd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 04:12:33 -0500
+Received: from foss.arm.com ([217.140.101.70]:48490 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751173AbeCIJMI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 04:12:08 -0500
+Subject: Re: [RFC PATCH] KVM: arm/arm64: vgic: change condition for level
+ interrupt resampling
+To: Auger Eric <eric.auger@redhat.com>,
+        Christoffer Dall <cdall@kernel.org>
+Cc: Shunyong Yang <shunyong.yang@hxt-semitech.com>,
+        ard.biesheuvel@linaro.org, will.deacon@arm.com, david.daney@cavium.com,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org, Joey Zheng <yu.zheng@hxt-semitech.com>
+References: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
+ <9ad47673-068e-f732-d2ca-9c76a8fbdfbc@arm.com>
+ <0a15633d-8944-cb9b-3e6b-b08ee5ec42b9@arm.com> <20180308161900.GC1917@lvm>
+ <86r2oubho3.wl-marc.zyngier@arm.com>
+ <cf815673-e20e-c1e1-2d79-2f47261b2412@redhat.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <6e438ffc-4b80-4706-a767-7c84aa896348@arm.com>
+Date: Fri, 9 Mar 2018 09:12:01 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <cf815673-e20e-c1e1-2d79-2f47261b2412@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6e98503dba64e721ba839e75dca036266ec0140f
-Gitweb:     https://git.kernel.org/tip/6e98503dba64e721ba839e75dca036266ec0140f
-Author:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-AuthorDate: Thu, 8 Mar 2018 08:00:10 +0000
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 9 Mar 2018 08:58:21 +0100
+On 08/03/18 18:12, Auger Eric wrote:
+> Hi Marc, Christoffer,
+> 
+> On 08/03/18 18:28, Marc Zyngier wrote:
+>> On Thu, 08 Mar 2018 16:19:00 +0000,
+>> Christoffer Dall wrote:
+>>>
+>>> On Thu, Mar 08, 2018 at 11:54:27AM +0000, Marc Zyngier wrote:
+>>>> On 08/03/18 09:49, Marc Zyngier wrote:
+>>>>> [updated Christoffer's email address]
+>>>>>
+>>>>> Hi Shunyong,
+>>>>>
+>>>>> On 08/03/18 07:01, Shunyong Yang wrote:
+>>>>>> When resampling irqfds is enabled, level interrupt should be
+>>>>>> de-asserted when resampling happens. On page 4-47 of GIC v3
+>>>>>> specification IHI0069D, it said,
+>>>>>> "When the PE acknowledges an SGI, a PPI, or an SPI at the CPU
+>>>>>> interface, the IRI changes the status of the interrupt to active
+>>>>>> and pending if:
+>>>>>> • It is an edge-triggered interrupt, and another edge has been
+>>>>>> detected since the interrupt was acknowledged.
+>>>>>> • It is a level-sensitive interrupt, and the level has not been
+>>>>>> deasserted since the interrupt was acknowledged."
+>>>>>>
+>>>>>> GIC v2 specification IHI0048B.b has similar description on page
+>>>>>> 3-42 for state machine transition.
+>>>>>>
+>>>>>> When some VFIO device, like mtty(8250 VFIO mdev emulation driver
+>>>>>> in samples/vfio-mdev) triggers a level interrupt, the status
+>>>>>> transition in LR is pending-->active-->active and pending.
+>>>>>> Then it will wait resampling to de-assert the interrupt.
+>>>>>>
+>>>>>> Current design of lr_signals_eoi_mi() will return false if state
+>>>>>> in LR is not invalid(Inactive). It causes resampling will not happen
+>>>>>> in mtty case.
+>>>>>
+>>>>> Let me rephrase this, and tell me if I understood it correctly:
+>>>>>
+>>>>> - A level interrupt is injected, activated by the guest (LR state=active)
+>>>>> - guest exits, re-enters, (LR state=pending+active)
+>>>>> - guest EOIs the interrupt (LR state=pending)
+>>>>> - maintenance interrupt
+>>>>> - we don't signal the resampling because we're not in an invalid state
+>>>>>
+>>>>> Is that correct?
+>>>>>
+>>>>> That's an interesting case, because it seems to invalidate some of the 
+>>>>> optimization that went in over a year ago.
+>>>>>
+>>>>> 096f31c4360f KVM: arm/arm64: vgic: Get rid of MISR and EISR fields
+>>>>> b6095b084d87 KVM: arm/arm64: vgic: Get rid of unnecessary save_maint_int_state
+>>>>> af0614991ab6 KVM: arm/arm64: vgic: Get rid of unnecessary process_maintenance operation
+>>>>>
+>>>>> We could compare the value of the LR before the guest entry with
+>>>>> the value at exit time, but we still could miss it if we have a
+>>>>> transition such as P+A -> P -> A and assume a long enough propagation
+>>>>> delay for the maintenance interrupt (which is very likely).
+>>>>>
+>>>>> In essence, we have lost the benefit of EISR, which was to give us a
+>>>>> way to deal with asynchronous signalling.
+>>>>>
+>>>>>>
+>>>>>> This will cause interrupt fired continuously to guest even 8250 IIR
+>>>>>> has no interrupt. When 8250's interrupt is configured in shared mode,
+>>>>>> it will pass interrupt to other drivers to handle. However, there
+>>>>>> is no other driver involved. Then, a "nobody cared" kernel complaint
+>>>>>> occurs.
+>>>>>>
+>>>>>> / # cat /dev/ttyS0
+>>>>>> [    4.826836] random: crng init done
+>>>>>> [    6.373620] irq 41: nobody cared (try booting with the "irqpoll"
+>>>>>> option)
+>>>>>> [    6.376414] CPU: 0 PID: 1307 Comm: cat Not tainted 4.16.0-rc4 #4
+>>>>>> [    6.378927] Hardware name: linux,dummy-virt (DT)
+>>>>>> [    6.380876] Call trace:
+>>>>>> [    6.381937]  dump_backtrace+0x0/0x180
+>>>>>> [    6.383495]  show_stack+0x14/0x1c
+>>>>>> [    6.384902]  dump_stack+0x90/0xb4
+>>>>>> [    6.386312]  __report_bad_irq+0x38/0xe0
+>>>>>> [    6.387944]  note_interrupt+0x1f4/0x2b8
+>>>>>> [    6.389568]  handle_irq_event_percpu+0x54/0x7c
+>>>>>> [    6.391433]  handle_irq_event+0x44/0x74
+>>>>>> [    6.393056]  handle_fasteoi_irq+0x9c/0x154
+>>>>>> [    6.394784]  generic_handle_irq+0x24/0x38
+>>>>>> [    6.396483]  __handle_domain_irq+0x60/0xb4
+>>>>>> [    6.398207]  gic_handle_irq+0x98/0x1b0
+>>>>>> [    6.399796]  el1_irq+0xb0/0x128
+>>>>>> [    6.401138]  _raw_spin_unlock_irqrestore+0x18/0x40
+>>>>>> [    6.403149]  __setup_irq+0x41c/0x678
+>>>>>> [    6.404669]  request_threaded_irq+0xe0/0x190
+>>>>>> [    6.406474]  univ8250_setup_irq+0x208/0x234
+>>>>>> [    6.408250]  serial8250_do_startup+0x1b4/0x754
+>>>>>> [    6.410123]  serial8250_startup+0x20/0x28
+>>>>>> [    6.411826]  uart_startup.part.21+0x78/0x144
+>>>>>> [    6.413633]  uart_port_activate+0x50/0x68
+>>>>>> [    6.415328]  tty_port_open+0x84/0xd4
+>>>>>> [    6.416851]  uart_open+0x34/0x44
+>>>>>> [    6.418229]  tty_open+0xec/0x3c8
+>>>>>> [    6.419610]  chrdev_open+0xb0/0x198
+>>>>>> [    6.421093]  do_dentry_open+0x200/0x310
+>>>>>> [    6.422714]  vfs_open+0x54/0x84
+>>>>>> [    6.424054]  path_openat+0x2dc/0xf04
+>>>>>> [    6.425569]  do_filp_open+0x68/0xd8
+>>>>>> [    6.427044]  do_sys_open+0x16c/0x224
+>>>>>> [    6.428563]  SyS_openat+0x10/0x18
+>>>>>> [    6.429972]  el0_svc_naked+0x30/0x34
+>>>>>> [    6.431494] handlers:
+>>>>>> [    6.432479] [<000000000e9fb4bb>] serial8250_interrupt
+>>>>>> [    6.434597] Disabling IRQ #41
+>>>>>>
+>>>>>> This patch changes the lr state condition in lr_signals_eoi_mi() from
+>>>>>> invalid(Inactive) to active and pending to avoid this.
+>>>>>>
+>>>>>> I am not sure about the original design of the condition of
+>>>>>> invalid(active). So, This RFC is sent out for comments.
+>>>>>>
+>>>>>> Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+>>>>>> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+>>>>>> ---
+>>>>>>  virt/kvm/arm/vgic/vgic-v2.c | 4 ++--
+>>>>>>  virt/kvm/arm/vgic/vgic-v3.c | 4 ++--
+>>>>>>  2 files changed, 4 insertions(+), 4 deletions(-)
+>>>>>>
+>>>>>> diff --git a/virt/kvm/arm/vgic/vgic-v2.c b/virt/kvm/arm/vgic/vgic-v2.c
+>>>>>> index e9d840a75e7b..740ee9a5f551 100644
+>>>>>> --- a/virt/kvm/arm/vgic/vgic-v2.c
+>>>>>> +++ b/virt/kvm/arm/vgic/vgic-v2.c
+>>>>>> @@ -46,8 +46,8 @@ void vgic_v2_set_underflow(struct kvm_vcpu *vcpu)
+>>>>>>  
+>>>>>>  static bool lr_signals_eoi_mi(u32 lr_val)
+>>>>>>  {
+>>>>>> -	return !(lr_val & GICH_LR_STATE) && (lr_val & GICH_LR_EOI) &&
+>>>>>> -	       !(lr_val & GICH_LR_HW);
+>>>>>> +	return !((lr_val & GICH_LR_STATE) ^ GICH_LR_STATE) &&
+>>>>>
+>>>>> That feels very wrong. You're now signalling the resampling in both
+>>>>> invalid and pending+active, and the latter state doesn't mean you've
+>>>>> EOIed anything. You're now over-signalling, and signalling the
+>>>>> wrong event.
+>>>>>
+>>>>>> +	       (lr_val & GICH_LR_EOI) && !(lr_val & GICH_LR_HW);
+>>>>>>  }
+>>>>>>  
+>>>>>>  /*
+>>>>>> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+>>>>>> index 6b329414e57a..43111bba7af9 100644
+>>>>>> --- a/virt/kvm/arm/vgic/vgic-v3.c
+>>>>>> +++ b/virt/kvm/arm/vgic/vgic-v3.c
+>>>>>> @@ -35,8 +35,8 @@ void vgic_v3_set_underflow(struct kvm_vcpu *vcpu)
+>>>>>>  
+>>>>>>  static bool lr_signals_eoi_mi(u64 lr_val)
+>>>>>>  {
+>>>>>> -	return !(lr_val & ICH_LR_STATE) && (lr_val & ICH_LR_EOI) &&
+>>>>>> -	       !(lr_val & ICH_LR_HW);
+>>>>>> +	return !((lr_val & ICH_LR_STATE) ^ ICH_LR_STATE) &&
+>>>>>> +	       (lr_val & ICH_LR_EOI) && !(lr_val & ICH_LR_HW);
+>>>>>>  }
+>>>>>>  
+>>>>>>  void vgic_v3_fold_lr_state(struct kvm_vcpu *vcpu)
+>>>>>>
+>>>>>
+>>>>> Assuming I understand the issue correctly, I cannot really see how
+>>>>> to solve this without reintroducing EISR, which sucks majorly.
+>>>>>
+>>>>> I'll try to cook something shortly and we can all have a good
+>>>>> fight about how crap this is.
+>>>>
+>>>> Here's what I came up with. I don't really like it, but that's
+>>>> the least invasive this I could come up with. Please let me
+>>>> know if that helps with your test case. Note that I have only
+>>>> boot-tested this on a sample of 1 machine, so I don't expect this
+>>>> to be perfect.
+>>>>
+>>>> Also, any guideline on how to reproduce this would be much appreciated.
+>>>> I never used this mdev/mtty thing, so please bear with me.
+>>>>
+>>>> Thanks,
+>>>>
+>>>> 	M.
+>>>>
+>>>> From 66a7c4cfc1029b0169dd771e196e2876ba3f17b1 Mon Sep 17 00:00:00 2001
+>>>> From: Marc Zyngier <marc.zyngier@arm.com>
+>>>> Date: Thu, 8 Mar 2018 11:14:06 +0000
+>>>> Subject: [PATCH] KVM: arm/arm64: Do not rely on LR state to guess EOI MI
+>>>>  status
+>>>>
+>>>> We so far rely on the LR state to decide whether the guest has
+>>>> EOI'd a level interrupt or not. While this looks like a good
+>>>> idea on the surface, it leads to a couple of annoying corner
+>>>> cases:
+>>>>
+>>>> Example 1: (P = Pending, A = Active, MI = Maintenance Interrupt)
+>>>> P -> guest IAR -> A -> exit/entry -> P+A -> guest EOI -> P -> MI
+>>>
+>>> Do we really get an EOI maintenance interrupt here?  Reading the MISR
+>>> and EISR descriptions make me thing this is not the case...
+> 
+> Hum yes in EISR it is said that ICH_LR.State = 0b00!
+>>
+>> Yeah, it looks like I always want EISR to do what I want, and not to
+>> do what it does. Man, this thing is such a piece of crap.
+>>
+>> OK, scratch that. We need to do it without the help of the HW.
+>>
+>>>> The state is now pending, we've really EOI'd the interrupt, and
+>>>> yet lr_signals_eoi_mi() returns false, since the state is not 0.
+>>>> The result is that we won't signal anything on the corresponding
+>>>> irqfd, which people complain about. Meh.
+>>>
+>>> So the core of the problem is that when we've entered the guest with
+>>> PENDING+ACTIVE and when we exit (for some reason) we don't signal the
+>>> resamplefd, right?  The solution seems to me that we don't ever do
+>>> PENDING+ACTIVE if you need to resample after each deactivate.  What
+>>> would be the point of appending a pending state that you only know to be
+>>> valid after a resample anyway?
+>>
+>> The question is then to identify that a given source needs to be
+>> signalled back to VFIO. Calling into the eventfd code on the hot path
+>> is pretty horrid (I'm not sure if we can really call into this with
+>> interrupts disabled, for example).
+>>
+>>>
+>>>>
+>>>> Example 2:
+>>>> P+A -> guest EOI -> P -> delayed MI -> guest IAR -> A -> MI fires
+>>>
+>>> We could be more clever and do the following calculation on every exit:
+>>>
+>>> If you enter with P, and exit with either A or 0, then signal.
+>>>
+>>> If you enter with P+A, and you exit with either P, A, or 0, then signal.
+>>>
+>>> Wouldn't that also solve it?  (Although I have a feeling you'd miss some
+>>> exits in this case).
+>>
+>> I'd be more confident if we did forbid P+A for such interrupts
+>> altogether, as they really feel like another kind of HW interrupt.
+> 
+> the LR P+A looks strange to me too. all the more so it may cause the
+> same IRQ to be acked twice?
 
-efi/apple-properties: Remove redundant attribute initialization from unmarshal_key_value_pairs()
+If the pending bit isn't dropped by the time we get to EOI the first
+one, probably. But that's pretty much expected with a level interrupt
+isn't it?
 
-There is no need to artificially supply a property length and fake data
-if property has type of boolean.
+> P -> A -> 0 (resample). Doesn't our issue come from the fact we reinject
+> the P in LR until the line level is deasserted?
 
-Remove redundant piece of data and code.
+Which is consistent with the life cycle of a level interrupt. What
+usually happens is (for a non HW interrupt):
 
-Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180308080020.22828-3-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- drivers/firmware/efi/apple-properties.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+P -> IAR -> A -> lower the line in the device -> 0
 
-diff --git a/drivers/firmware/efi/apple-properties.c b/drivers/firmware/efi/apple-properties.c
-index 9f6bcf173b0e..b9602e0d7b50 100644
---- a/drivers/firmware/efi/apple-properties.c
-+++ b/drivers/firmware/efi/apple-properties.c
-@@ -52,8 +52,6 @@ struct properties_header {
- 	struct dev_header dev_header[0];
- };
- 
--static u8 one __initdata = 1;
--
- static void __init unmarshal_key_value_pairs(struct dev_header *dev_header,
- 					     struct device *dev, void *ptr,
- 					     struct property_entry entry[])
-@@ -95,14 +93,9 @@ static void __init unmarshal_key_value_pairs(struct dev_header *dev_header,
- 			     key_len - sizeof(key_len));
- 
- 		entry[i].name = key;
--		entry[i].is_array = true;
- 		entry[i].length = val_len - sizeof(val_len);
-+		entry[i].is_array = !!entry[i].length;
- 		entry[i].pointer.raw_data = ptr + key_len + sizeof(val_len);
--		if (!entry[i].length) {
--			/* driver core doesn't accept empty properties */
--			entry[i].length = 1;
--			entry[i].pointer.raw_data = &one;
--		}
- 
- 		if (dump_properties) {
- 			dev_info(dev, "property: %s\n", entry[i].name);
+If you generate an exit at the right spot, and yet don't lower the line,
+you end up with:
+
+P -> IAR -> A -> exit/enter -> P+A
+
+>From there, if you lower the line, it is likely to cause an exit:
+
+P+A -> MMIO trap lowering the line -> A
+
+>>
+>> Eric: Is there any way to get a callback from the eventfd code to flag
+>> a given irq as requiring a notification on EOI?
+> 
+> bool kvm_irq_has_notifier(struct kvm *kvm, unsigned irqchip, unsigned
+> pin) was used in the past. I think it does what you want.
+>
+
+Not exactly. I'm very reluctant to call this on the hot path (I'd need
+the info on hw_flush), and I'd rather have a callback from the eventfd
+subsystem to tell me when a pin is being associated with a notifier
+(because this is likely to be very rare).
+
+If that doesn't exit, never mind. We can see if that solves Shunyong
+issue and optimize later.
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
