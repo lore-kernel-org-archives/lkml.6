@@ -1,97 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932268AbeCIPRF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 10:17:05 -0500
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:36972 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932132AbeCIPRB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 10:17:01 -0500
-X-Google-Smtp-Source: AG47ELv0trB8voYRfT7UH2GN32kG/plVPhyU6zaZlV0Iy+RR6WFhM+EpOblmVH/r3q8mwzlXij1/1jaX/FQ4K1xd0fY=
-MIME-Version: 1.0
-In-Reply-To: <20180309145547.r25eis5ejy6d6xzu@lakrids.cambridge.arm.com>
-References: <cover.1520600533.git.andreyknvl@google.com> <20180309145547.r25eis5ejy6d6xzu@lakrids.cambridge.arm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 9 Mar 2018 16:16:58 +0100
-X-Google-Sender-Auth: hYM-Kk4p79z2zns8VGXnfP-lYbs
-Message-ID: <CAMuHMdWtdYAVOvR=gffVu0T1vzEcKM4pqxRc6zWr=k3PykgwiA@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/6] arm64: untag user pointers passed to the kernel
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Andrey Konovalov <andreyknvl@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, Arnd Bergmann <arnd@arndb.de>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>, Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>, Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S932273AbeCIPR1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 10:17:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46902 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751207AbeCIPRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 10:17:25 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AF8320685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+Date: Sat, 10 Mar 2018 00:17:22 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Francis Deslauriers <francis.deslauriers@efficios.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] x86/kprobes: Prohibit probing of .entry_trampoline
+ code
+Message-Id: <20180310001722.e33a64196771d17d9f0d9b4c@kernel.org>
+In-Reply-To: <1520565492-4637-2-git-send-email-francis.deslauriers@efficios.com>
+References: <1520565492-4637-1-git-send-email-francis.deslauriers@efficios.com>
+        <1520565492-4637-2-git-send-email-francis.deslauriers@efficios.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 9, 2018 at 3:55 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> On Fri, Mar 09, 2018 at 03:01:58PM +0100, Andrey Konovalov wrote:
->> arm64 has a feature called Top Byte Ignore, which allows to embed pointer
->> tags into the top byte of each pointer. Userspace programs (such as
->> HWASan, a memory debugging tool [1]) might use this feature and pass
->> tagged user pointers to the kernel through syscalls or other interfaces.
->>
->> This patch makes a few of the kernel interfaces accept tagged user
->> pointers. The kernel is already able to handle user faults with tagged
->> pointers and has the untagged_addr macro, which this patchset reuses.
->>
->> We're not trying to cover all possible ways the kernel accepts user
->> pointers in one patchset, so this one should be considered as a start.
->> It would be nice to learn about the interfaces that I missed though.
->
-> There are many ways that user pointers can be passed to the kernel, and
-> I'm not sure that it's feasible to catch them all, especially as user
-> pointers are often passed in data structures (e.g. iovecs) rather than
-> direct syscall arguments.
->
-> If we *really* want the kernel to support taking tagged addresses, anything
-> with a __user annotation (or cast to something with a __user annotation)
-> requires tag removal somewhere in the kernel.
->
-> It looks like there are plenty uapi structures and syscalls to look at:
->
-> [mark@lakrids:~/src/linux]% git grep __user -- include/uapi | wc -l
-> 216
-> [mark@lakrids:~/src/linux]% git grep __user | grep SYSCALL_DEFINE | wc -l
-> 308
->
-> ... in addition to special syscalls like ioctl which multiplex a number
-> of operations with different arguments, where the tag stripping would
-> have to occur elsewhere (e.g. in particular drivers).
+On Thu,  8 Mar 2018 22:18:12 -0500
+Francis Deslauriers <francis.deslauriers@efficios.com> wrote:
 
-Hence we definitely need good support from e.g. sparse to catch any errors
-from happening.
+> .entry_trampoline is a code area that is used to ensure page table
+> isolation between userspace and kernelspace.
+> 
+> At the beginning of the execution of the trampoline, we load the
+> kernel's CR3 register. This has the effect of enabling the translation
+> of the kernel virtual addresses to physical addresses. Before this
+> happens most kernel addresses can not be translated because the running
+> process' CR3 is still used.
+> 
+> If a kprobe is placed on the trampoline code before that change of the
+> CR3 register happens the kernel crashes because int3 handling pages are
+> not accessible.
+> 
+> To fix this, add the .entry_trampoline section to the kprobe blacklist
+> to prohibit the probing of code before all the kernel pages are
+> accessible.
 
-So doing assignments to the same pointer variable like
+OK, looks good to me.
 
-     addr = untagged_addr(addr);
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 
-defeats any checking.
+Ingo, could you pick it as an urgent fix?
 
-> I also wonder if we ever write any of these pointers back to userspace
-> memory. If so, we have a nasty ABI problem, since we'll have to marshal
-> the original tag along with the pointer, to ensure userspace pointer
-> comparisons continue to work.
+Thanks!
 
-Oh, another can of worms...
+> 
+> Signed-off-by: Francis Deslauriers <francis.deslauriers@efficios.com>
+> ---
+>  arch/x86/include/asm/sections.h |  1 +
+>  arch/x86/kernel/kprobes/core.c  | 10 +++++++++-
+>  arch/x86/kernel/vmlinux.lds.S   |  2 ++
+>  3 files changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/asm/sections.h b/arch/x86/include/asm/sections.h
+> index d6baf23..5c019d2 100644
+> --- a/arch/x86/include/asm/sections.h
+> +++ b/arch/x86/include/asm/sections.h
+> @@ -10,6 +10,7 @@ extern struct exception_table_entry __stop___ex_table[];
+>  
+>  #if defined(CONFIG_X86_64)
+>  extern char __end_rodata_hpage_align[];
+> +extern char __entry_trampoline_start[], __entry_trampoline_end[];
+>  #endif
+>  
+>  #endif	/* _ASM_X86_SECTIONS_H */
+> diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+> index bd36f3c..0715f82 100644
+> --- a/arch/x86/kernel/kprobes/core.c
+> +++ b/arch/x86/kernel/kprobes/core.c
+> @@ -1168,10 +1168,18 @@ NOKPROBE_SYMBOL(longjmp_break_handler);
+>  
+>  bool arch_within_kprobe_blacklist(unsigned long addr)
+>  {
+> +	bool is_in_entry_trampoline_section = false;
+> +
+> +#ifdef CONFIG_X86_64
+> +	is_in_entry_trampoline_section =
+> +		(addr >= (unsigned long)__entry_trampoline_start &&
+> +		 addr < (unsigned long)__entry_trampoline_end);
+> +#endif
+>  	return  (addr >= (unsigned long)__kprobes_text_start &&
+>  		 addr < (unsigned long)__kprobes_text_end) ||
+>  		(addr >= (unsigned long)__entry_text_start &&
+> -		 addr < (unsigned long)__entry_text_end);
+> +		 addr < (unsigned long)__entry_text_end) ||
+> +		is_in_entry_trampoline_section;
+>  }
+>  
+>  int __init arch_init_kprobes(void)
+> diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+> index 9b138a0..b854ebf 100644
+> --- a/arch/x86/kernel/vmlinux.lds.S
+> +++ b/arch/x86/kernel/vmlinux.lds.S
+> @@ -118,9 +118,11 @@ SECTIONS
+>  
+>  #ifdef CONFIG_X86_64
+>  		. = ALIGN(PAGE_SIZE);
+> +		VMLINUX_SYMBOL(__entry_trampoline_start) = .;
+>  		_entry_trampoline = .;
+>  		*(.entry_trampoline)
+>  		. = ALIGN(PAGE_SIZE);
+> +		VMLINUX_SYMBOL(__entry_trampoline_end) = .;
+>  		ASSERT(. - _entry_trampoline == PAGE_SIZE, "entry trampoline is too big");
+>  #endif
+>  
+> -- 
+> 2.7.4
+> 
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
