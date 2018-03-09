@@ -1,128 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751107AbeCICiI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 8 Mar 2018 21:38:08 -0500
-Received: from mga09.intel.com ([134.134.136.24]:8135 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750996AbeCICiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Mar 2018 21:38:02 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,443,1515484800";
-   d="scan'208";a="23072150"
-From: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-To: Borislav Petkov <bp@alien8.de>
-CC: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Chun-Yi Lee <jlee@suse.com>, "Luck, Tony" <tony.luck@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        "Neri, Ricardo" <ricardo.neri@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        "Zijlstra, Peter" <peter.zijlstra@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Williams, Dan J" <dan.j.williams@intel.com>
-Subject: RE: [PATCH V2 2/3] efi: Introduce efi_rts_workqueue and some
- infrastructure to invoke all efi_runtime_services()
-Thread-Topic: [PATCH V2 2/3] efi: Introduce efi_rts_workqueue and some
- infrastructure to invoke all efi_runtime_services()
-Thread-Index: AQHTtNngYFyf2e7B30yWdA6aWmV0oqPFNzYAgACKE+CAASj/gIAAOHqg
-Date: Fri, 9 Mar 2018 02:37:59 +0000
-Message-ID: <FFF73D592F13FD46B8700F0A279B802F2E581D28@ORSMSX114.amr.corp.intel.com>
-References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <1520292190-5027-3-git-send-email-sai.praneeth.prakhya@intel.com>
- <20180307121047.GG23662@pd.tnic>
- <FFF73D592F13FD46B8700F0A279B802F2E5818E4@ORSMSX114.amr.corp.intel.com>
- <20180308140830.GE21166@pd.tnic>
-In-Reply-To: <20180308140830.GE21166@pd.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTg0YjNmZDQtZjlmYi00MmVlLTg4MDctODA5ZTA4OGJiOGM0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJcL3o4dGh5ZUtmXC9qMXE0YjlXRDF3UE1zajVkS0FMQzhzSlJmYmNvU2ZnZjJITmFQXC9ZdlpaRTVJaDhIdWNPU3JLIn0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        id S1751075AbeCICkd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 8 Mar 2018 21:40:33 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:42215 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750878AbeCICka (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Mar 2018 21:40:30 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180309024028epoutp043883183f1ada87c907844e60fdba6e01~aIDMbTw_e0062000620epoutp04b
+X-AuditID: b6c32a35-891ff70000001031-cf-5aa1f41b3fdd
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="utf-8"
+Message-id: <5AA1F41B.5080104@samsung.com>
+Date: Fri, 09 Mar 2018 11:40:27 +0900
+From: Inki Dae <inki.dae@samsung.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, krzk@kernel.org
+Cc: kgene@kernel.org, devicetree@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+Subject: Re: [PATCH 1/4] ARM: dts: exynos5250: Add #sound-dai-cells property
+ to hdmi device node
+In-reply-to: <20180307172711.15697-1-s.nawrocki@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTURzHO7v3zjtpcZuPDkalN/wjy7k7X1fTMBq1SGMQhCxCb9thE92j
+        3S3SnkTplPBNikRmjh5CVNPCmVhNwyza6B1o9qIYFmVlWUjR3W5R/33P73x+53x/X34kppgh
+        EsgyqxM5rFwFLY3GrwyvUKYununSq4JPVrGX2i8QbOdIgGAbXr/D2GDwYhTrff2YYB8MHJey
+        7cEhCXt+5FkUO/y+hiiQab09tVJtr+eAtr6vB2i/eJfqcD3KMyPOiByJyGqwGcuspnx605aS
+        dSWZWSomlclhs+lEK2dB+bSmUJe6vqxCsEIn7uIqXEJJx/E8nbYmz2FzOVGi2cY78+ltDKNW
+        MqpspVqtVmakb89VZwpIKTJ3N4dw+0dyty8QwA+C1qg6ICMhlQFD7hpBR5MKqh/Ar7OnCfEw
+        C2DPLx/2lzpy6jMmXlwFMNTuA+ELObUQfm+ZxOsASWLUMjhyvzxcxqgVMDTTjIv8JIDumqdE
+        mJFTKXDyYXyYwalkeLn5hSSspYJuOvtcGtZxVDH0dX6LuIulCuDoz9rIOxh1D8DA+NOIoRhq
+        B5x+1RnRMioPdk20RSBI3ZLC6kE3LrrWwEPX+ghRx8Cp0b6osAlILYb3b+aLfA2AA3efSMXD
+        UQDPdJ/6E0w6fNtVJxHHWQA/fD1KiM1y6K5WiIgW1t+48+evtbBx/JNEnLgBwPG79XgjWNLx
+        X0gd/0Lq+C+kkwDrAfHIzltMiGfsjJLnLLzLalIabBYviGxcSmY/aA0U+gFFAnq+nNV06RUE
+        t4uvtPgBJDE6Vn77nFCSG7nKKuSwlThcFYj3g0wh5CYsIc5gE/bX6ixhMnJUGVlqYadyGIZe
+        JNfpNHoFZeKcqBwhO3L87ZOQsoSDYIvHn1V7+Fh9Q65+7s1bQ+tcXvVQUtyE8fqeyv1FJ8b3
+        Fg+OuV/tbKnaPDyvIDf2hjnF55pSWZZ/QJ+3rj45k7Qhzj7teWQcC2pNyT+KmtpaQpy/9Etz
+        74Crkd/oNbzvzJ3d53EvOrz+R9XzubSVhQMe1Vj/S//kgQ2yfa6ifs02GufNHJOCOXjuN+SW
+        WvqHAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsVy+t9jAV3pLwujDH5/krXYOGM9q8X8I+dY
+        Lfofv2a2OH9+A7vFpsfXWC0u75rDZjHj/D4mi7VH7rJbHH7TzurA6bFpVSebx+Yl9R59W1Yx
+        enzeJBfAEsVlk5Kak1mWWqRvl8CVsXjSC5aC9xwVO8+dY2lgnMLexcjJISFgItG66BNzFyMX
+        h5DATkaJf2uvsIEkeAUEJX5MvsfSxcjBwSwgL3HkUjaEqS4xZUouRPkDRomd7ZuZQOK8AloS
+        966IgXSyCKhKbJ30gAnEZgOyJ664zwZSIioQIdF9ohIkLCLgIHH8bycLyBhmgYuMEl8vt4Od
+        IyyQJNH7agobxPyJjBKNB2+wgCQ4BWwkFt6ZzjKBkX8WkutmIVw3C+G6BYzMqxglUwuKc9Nz
+        i40KDPNSy/WKE3OLS/PS9ZLzczcxAsN622Gtvh2M95fEH2IU4GBU4uG1cFkYJcSaWFZcmXuI
+        UYKDWUmE99RKoBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHe23nHIoUE0hNLUrNTUwtSi2CyTByc
+        Ug2MGjunNGnd8Pn+eB3z++Yg3puBHaUfZGv1fRMLsiVjF2Wf7d8n9ygzKbHs5szCK5uzzLZ+
+        KnXx/y0l8zG2foNrWvO0PY497O2ptjG2va8W3tkgsOb0sue1PYr3b7YdP7NTaHLbL56FKp6H
+        T/bIL9NwWr/oj3fQNJPkT7Pc0m8/WMBhVrHGuVhciaU4I9FQi7moOBEABAINE2cCAAA=
+X-CMS-MailID: 20180309024027epcas1p1f2ded854d7a0119913fdb64172f3c451
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180307172723epcas1p1b8879bb555737cab7406a172b7d13a56
+X-RootMTR: 20180307172723epcas1p1b8879bb555737cab7406a172b7d13a56
+References: <CGME20180307172723epcas1p1b8879bb555737cab7406a172b7d13a56@epcas1p1.samsung.com>
+        <20180307172711.15697-1-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w292cEku020960
 
-> > Another warning by checkpatch is "use of in_atomic() in drivers code"
+Hi Sylwester,
+
+2018년 03월 08일 02:27에 Sylwester Nawrocki 이(가) 쓴 글:
+> This property is required for specifying link between the HDMI IP block
+> and the SoC's audio subsystem.
 > 
-> I'm assuming it warns because you're touching files in drivers/ but the efi fun is
-> not really a driver...
-
-True! That makes sense :)
-
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5250.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> But looking at patch 3, that thing looks like a real mess. Some of the things -
-> pstore, it seems - do stuff in atomic context and yet you want to do efi stuff in a
-> workqueue which doesn't stomach atomic context to begin with.
-> 
-> So if you wanna do workqueue, you should make sure all efi stuff gets delayed
-> to process context and queued properly. For example, we log MCEs from atomic
-> context by putting them on a lockless buffer and then kicking irq_work to queue
-> the work when we return to process context.
-> Can you do something like that?
-> 
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index 56626d1a4235..71d2ede118e3 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -700,6 +700,7 @@
+>  					"sclk_hdmiphy", "mout_hdmi";
+>  			samsung,syscon-phandle = <&pmu_system_controller>;
+>  			phy = <&hdmiphy>;
+> +			#sound-dai-cells = <0>;
 
-I think we can do this, it's is a good idea. I looked at this approach and saw that
-in oops_end() function, part of arch/x86/kernel/dumpstack, between oops_exit()
-and panic() (here we are not in atomic context, so, I think we can use work queues)
-we could have something like efi_flush_buffer() which will flush the buffer and
-queue the work to efi_rts_wq.
+This patch adds this property to hdmi device node which is bound by HDMI driver of Exynos DRM. As we talked about this at other email thread, seems this property is required mandatorily for Odroid XU3/4 board which uses Exynos5422.
+There may be something I'm missing so could you let me know how this property is required?
 
-But, I guess, we have some downsides with this design:
-1. We are doing this to have "no exceptions to use efi_rts_wq", but we will be making
-the common case complicated. i.e. When a user requests to write some efi variable,
-we will first write it to a buffer and then flush the buffer using efi_rts_wq. Instead, we
-could have written the variable directly.
-Maybe, you meant, we should use this buffer only while pstore and not during normal
-case (which sounds reasonably OK).
-2. It doesn't look rational that, when we are already going down, we schedule (because
-we will be invoking efi_runtime_services() through work queue) to log some stuff.
-Not, sure if that's happening in other parts of kernel or if it's OK to do that.
+Thanks,
+Inki Dae
 
-I will try the suggested approach and will keep this thread posted.
-
-> "Hence, pstore calls efi_runtime_services() without using efi_rts_wq" - that
-> doesn't sound like optimal design to me. I would try to shove them all through
-> the workqueue - not have exceptions.
+>  			status = "disabled";
+>  		};
+>  
 > 
-
-Alternatively, instead of playing around with in_atomic(), we could have wrapper
-functions like efi_write_var_non_wq() which will only be used by pstore. This function
-will not use efi_rts_wq and directly invoke efi_runtime_service. Just an attempt to
-make the code not look messy.
-
-> Then this:
-> 
-> > A potential issue could be, for instance, an NMI interrupt (like perf)
-> > trying to profile some user data while in efi_pgd.
-> 
-> I can't understand.
-> 
-> How did we handle this until now and why is it a problem all of a sudden?
-> 
-> Because I don't recall being unable to run perf while efi runtime services are
-> happening.
-> 
-
-That's true! AFAIK, we don't have any issues handling NMI while in efi_pgd.
-We might have issues only when, we are already in efi_pgd, NMI comes along
-and NMI handler tries to touch the regions that are not mapped in efi_pgd
-(Eg: User space part of process address space) and using kthread inherently
-means that we will not have any user space.
-
-Regards,
-Sai
