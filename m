@@ -1,94 +1,74 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1163969-1520621849-2-7926977055245679918
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520621848; b=YRwWmTqOQTipnvWE+iaFSz1opJQSSsBRq5zC8Om3MCsTyj/
-    s/C3MwesD9Xy8MJom9WYYAQGOIFH/ZugpoWBp0A1v26GUyKd0eg0qzVahiDVW8bY
-    jcRCnvxiwRcDt22D6sw8nnZmstywGmjigwy+W5dFCE7gEpLm3mxJCn+rtKU6g+9k
-    XC3X3IqrXMagj/xuup5s9fgTJAYgwGRctmjUNvrweKyMzaESIpDh8V2fdwr/saDJ
-    72rXMvcZVtoASS5iEjjvKbQrHC5GZfgskYfX5uStLXARiZwJ6Y0p7QQ7k/cne8O9
-    QLZOJSpxOazQ71m+/NKc/5YxXZRxkJDoCH8JX8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:message-id:to:cc:subject:from
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1520621848; bh=k5WjyfcmcUVY/thJTgPPlJ+oc8j3M2rep2RMWfnZ3f0=; b=E
-    aUtYtJBAlFSdY0r5b6dxU/CPOco36Tnc12sC+UwtvOZWYiAbBRv0Xi1sDfK4lT6M
-    ol45PRtA5FNra4zB73aSqA2PmEBEect4HyExQHWemOvOQB/YWjESVM33CA4GlB+g
-    QuckOibTJiOrLpyzHNV4lmANxajNDBAexKwvs7UxhpUmxzEwz9jfE6l8/kP46VQ/
-    DOKF8XUjP6mM1wlPM7dsnXFQSKUuZ5+5kdwuqWTu1Ur2HiWmDmocT//6WAoMqh0f
-    UVjHsb8rCi7cwmXiA/3UOCjQ2WdZ7kOfjzNjWJDyl/4W1zR1AtGRzCbTQqMZM//L
-    cwNNXZ2EmJdgmcGUZCtzg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=davemloft.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=davemloft.net header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=davemloft.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=davemloft.net header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932267AbeCIS51 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Mar 2018 13:57:27 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:55254 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932074AbeCIS50 (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Fri, 9 Mar 2018 13:57:26 -0500
-Date: Fri, 09 Mar 2018 13:57:24 -0500 (EST)
-Message-Id: <20180309.135724.452219538059491199.davem@davemloft.net>
-To: torvalds@linux-foundation.org
-Cc: luto@amacapital.net, ast@fb.com, keescook@chromium.org,
-        ast@kernel.org, tixxdz@gmail.com, viro@zeniv.linux.org.uk,
-        daniel@iogearbox.net, gregkh@linuxfoundation.org,
-        mcgrof@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH net-next] modules: allow modprobe load regular elf
- binaries
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <CA+55aFx7w1s7=5HzeczPkkksaU4oVsWQf+_c=aHS0O7i_9g+Kg@mail.gmail.com>
+Return-Path: <linus971@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520622738; cv=none;
+        d=google.com; s=arc-20160816;
+        b=yDhHMpOsaHpxSdCu848p62GuTceqRPgt7ye/8Ri2ImeAtXOar7VBPmqVXBRxa9jqVz
+         5kmapIAuROcKb4jaW+pahjT8sgrMyrWkNUqdpZZlT6aLUvyQkSjNnjbR3oHrXJEyBY/+
+         aTozDX/mmMGsrxVXELdX1Em5wBop+wPWYoOLBGC2w4bWTqTVY2qB5RZMLvjS8pkWbRvV
+         uEpmCMzjlAIRWPmLZwfavL9dEtKKormXUiIU/wiQ5XY37XiN+lgcYq2VFChPNsxfkAza
+         jWnrigEHFE3hjxXMNdr9bQrcIjBCBOzgapxbuEUzl7e01G/f6viZdCKQbX8niDKHcsRs
+         apIg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=emR2rNpi3UgkskimCuyu/h02sF7w5c2T/vQveuW+z3I=;
+        b=gXqGcHXEZRew25U3XyZBYlj/Prji5uUyQbVKU5UlMVSuo6a/VE64Au3rVox3EyJE/s
+         u8qRZ24XrvrrlqPUqTVT4cjBehdJ5mlL/Pja5JdSKvDZ9h6Bdio7pc4URn8GFjzj9k9j
+         ofHRL+SV+bvefW/CO2NhbOA+XRQ+orshDkjw0fi3IAfuxvX8y6gG4/OWESHbjGJN5uR6
+         RfG7qYqpWa/A02WdlR6E39LpKhjpfrgbK9P8qMuHHFPoNBNBzS0gKcW9eVJvOR1Z7pmz
+         GOeJgQ1+ZRn+JjCoETBKSk1khZK3s3C6ZoWwll8CXVndbFNXRiK2GLMyrKYdKrily/ZY
+         sn8g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=B86fh9A0;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=YmBVCeql;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=B86fh9A0;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=YmBVCeql;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
+X-Google-Smtp-Source: AG47ELtZMV0BPNm5nMd6mx/qoZi7pDBHA1lyVEXyLSydfrUSpYw8AhFy5iJEhYCiC+25/LB0Fkm+gZPJWQFHl+AFaXs=
+MIME-Version: 1.0
+Sender: linus971@gmail.com
+In-Reply-To: <20180309.135724.452219538059491199.davem@davemloft.net>
 References: <CA+55aFwfcXzD+pzjN=vTcvscpK97pSztUZ2JK7pABs+rMtM7BQ@mail.gmail.com>
-        <E459E6CC-F51B-4F2A-9D26-FFB7166E0A47@amacapital.net>
-        <CA+55aFx7w1s7=5HzeczPkkksaU4oVsWQf+_c=aHS0O7i_9g+Kg@mail.gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+ <E459E6CC-F51B-4F2A-9D26-FFB7166E0A47@amacapital.net> <CA+55aFx7w1s7=5HzeczPkkksaU4oVsWQf+_c=aHS0O7i_9g+Kg@mail.gmail.com>
+ <20180309.135724.452219538059491199.davem@davemloft.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 9 Mar 2018 11:12:17 -0800
+X-Google-Sender-Auth: x6oqJ8uIvDxP4weB1pqSi0OCM3s
+Message-ID: <CA+55aFyN8JDh76bm1VinBvrgMH5jNL6RbuFAkrH8vuYU1s9GDQ@mail.gmail.com>
+Subject: Re: [PATCH net-next] modules: allow modprobe load regular elf binaries
+To: David Miller <davem@davemloft.net>
+Cc: Andy Lutomirski <luto@amacapital.net>, Alexei Starovoitov <ast@fb.com>, Kees Cook <keescook@chromium.org>,
+	Alexei Starovoitov <ast@kernel.org>, Djalal Harouni <tixxdz@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
+	Daniel Borkmann <daniel@iogearbox.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>, Network Development <netdev@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
+	Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594150201283124044?=
+X-GMAIL-MSGID: =?utf-8?q?1594488508830249090?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 9 Mar 2018 10:53:45 -0800
+On Fri, Mar 9, 2018 at 10:57 AM, David Miller <davem@davemloft.net> wrote:
+>
+> Once the helper UMH is invoked, it runs asynchronously taking eBPF
+> translation requests.
 
-> Anyway, see my other suggestion that makes this all irrelevant. Just
-> wait synchronously (until the exit), and just use deny_write_access().
+How?
 
-What exit?
+Really. See my comment about mutual exclusion. The current patch is
+*broken* because it doesn't handle it. Really.
 
-Once the helper UMH is invoked, it runs asynchronously taking eBPF
-translation requests.
+Think of it this way - you may have now started *five* of those things
+concurrently by mistake.
+
+The actual module loading case never does that, because the actual
+module loading case has per-module serialization that got
+short-circuited.
+
+How are you going to handle five processes doing the same setup concurrently?
+
+                  Linus
