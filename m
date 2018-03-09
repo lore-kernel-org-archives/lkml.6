@@ -1,83 +1,244 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751075AbeCIJhG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 04:37:06 -0500
-Received: from smtprelay0226.hostedemail.com ([216.40.44.226]:44600 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750883AbeCIJhF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:37:05 -0500
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:541:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1431:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3354:3622:3865:3866:3870:3871:3872:3874:4321:4605:5007:6119:7576:7903:9121:10004:10400:10848:11026:11232:11657:11658:11914:12043:12296:12438:12555:12740:12760:12895:12986:13069:13311:13357:13439:14181:14659:14721:21080:21433:21451:21627:30012:30054:30060:30065:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: spoon03_206a9170b4c39
-X-Filterd-Recvd-Size: 3125
-Message-ID: <1520588221.11634.26.camel@perches.com>
-Subject: Re: [PATCH 12/12] efi: make const array 'apple' static
-From: Joe Perches <joe@perches.com>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Colin Ian King <colin.king@canonical.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Fri, 09 Mar 2018 01:37:01 -0800
-In-Reply-To: <CAKv+Gu-h9pZLxf6tp++UDy4LCjSu-3uUQDRFS3=HcTjnBdZ2Vg@mail.gmail.com>
-References: <20180308080020.22828-1-ard.biesheuvel@linaro.org>
-         <20180308080020.22828-13-ard.biesheuvel@linaro.org>
-         <1520507105.11634.5.camel@perches.com>
-         <CAKv+Gu8iMvzvSP9-YPe+ms4qVMjcQqNQ25Wa16JW_tEG7P+jtQ@mail.gmail.com>
-         <CAKv+Gu-h9pZLxf6tp++UDy4LCjSu-3uUQDRFS3=HcTjnBdZ2Vg@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1751048AbeCIJkH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 04:40:07 -0500
+Received: from foss.arm.com ([217.140.101.70]:49124 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750800AbeCIJkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 04:40:06 -0500
+Subject: Re: [RFC PATCH] KVM: arm/arm64: vgic: change condition for level
+ interrupt resampling
+To: "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
+        "eric.auger@redhat.com" <eric.auger@redhat.com>,
+        "cdall@kernel.org" <cdall@kernel.org>
+Cc: "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "david.daney@cavium.com" <david.daney@cavium.com>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>
+References: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
+ <9ad47673-068e-f732-d2ca-9c76a8fbdfbc@arm.com>
+ <0a15633d-8944-cb9b-3e6b-b08ee5ec42b9@arm.com> <20180308161900.GC1917@lvm>
+ <86r2oubho3.wl-marc.zyngier@arm.com>
+ <cf815673-e20e-c1e1-2d79-2f47261b2412@redhat.com>
+ <1520565257.2583.57.camel@hxt-semitech.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <959b6484-c683-65b2-a1e5-3e3784865682@arm.com>
+Date: Fri, 9 Mar 2018 09:40:01 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1520565257.2583.57.camel@hxt-semitech.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-03-09 at 07:44 +0000, Ard Biesheuvel wrote:
-> On 9 March 2018 at 07:43, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> > On 8 March 2018 at 11:05, Joe Perches <joe@perches.com> wrote:
-> > > On Thu, 2018-03-08 at 08:00 +0000, Ard Biesheuvel wrote:
-> > > > From: Colin Ian King <colin.king@canonical.com>
-> > > > 
-> > > > Don't populate the const read-only array 'buf' on the stack but instead
-> > > > make it static. Makes the object code smaller by 64 bytes:
-> > > > 
-> > > > Before:
-> > > >    text          data     bss     dec     hex filename
-> > > >    9264             1      16    9281    2441 arch/x86/boot/compressed/eboot.o
-> > > > 
-> > > > After:
-> > > >    text          data     bss     dec     hex filename
-> > > >    9200             1      16    9217    2401 arch/x86/boot/compressed/eboot.o
-> > > > 
-> > > > (gcc version 7.2.0 x86_64)
-> > > > 
-> > > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > > > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > > > ---
-> > > >  arch/x86/boot/compressed/eboot.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
-> > > > index 886a9115af62..f2251c1c9853 100644
-> > > > --- a/arch/x86/boot/compressed/eboot.c
-> > > > +++ b/arch/x86/boot/compressed/eboot.c
-> > > > @@ -423,7 +423,7 @@ static void retrieve_apple_device_properties(struct boot_params *boot_params)
-> > > > 
-> > > >  static void setup_quirks(struct boot_params *boot_params)
-> > > >  {
-> > > > -     efi_char16_t const apple[] = { 'A', 'p', 'p', 'l', 'e', 0 };
-> > > > +     static efi_char16_t const apple[] = { 'A', 'p', 'p', 'l', 'e', 0 };
-> > > 
-> > > Perhaps
-> > > 
-> > > static const efi_char16_t apple[] ...
-> > > 
-> > > is better.
-> > > 
-> > 
-> > Why would that be any better?
+On 09/03/18 03:14, Yang, Shunyong wrote:
 
-It'd be more like the the style used
-in the rest of the kernel.
+[trimming things a bit]
+
+>>>>>>>  static bool lr_signals_eoi_mi(u32 lr_val)
+>>>>>>>  {
+>>>>>>> -	return !(lr_val & GICH_LR_STATE) && (lr_val &
+>>>>>>> GICH_LR_EOI) &&
+>>>>>>> -	       !(lr_val & GICH_LR_HW);
+>>>>>>> +	return !((lr_val & GICH_LR_STATE) ^ GICH_LR_STATE)
+>>>>>>> &&
+>>>>>> That feels very wrong. You're now signalling the resampling
+>>>>>> in both
+>>>>>> invalid and pending+active, and the latter state doesn't mean
+>>>>>> you've
+>>>>>> EOIed anything. You're now over-signalling, and signalling
+>>>>>> the
+>>>>>> wrong event.
+> 
+> I am using XOR GICH_LR_STATE(0b'11), so only 0b'11(P&A) will be
+> signaled. Other state will be false.
+
+And that's really wrong. P+A is a state where the interrupt is still
+being processed. The only case where we can reliably detect that an
+interrupt has been EOId is when state==0.
+
+> And I am curious why the EOI bit in LR indicate the end of interrupt
+> regardless of the state? Please bear with me as I am a newbie in this
+> part.
+
+The EOI bit indicates that we've requested a maintenance interrupt from
+the HW. It only triggers when state==0. If you have (like you describe
+further down) a sequence of
+
+P -> A -> (exit) -> P+A -> P -> A -> (exit) P+A ...
+
+we can never reliably detect that an interrupt has been EOId (because
+the HW never delivers a maintenance interrupt), other than by tracking
+the states before and after exit, and hoping that you've done an exit
+because you're touching the source of the interrupt.
+
+>>>>> Also, any guideline on how to reproduce this would be much
+>>>>> appreciated.
+>>>>> I never used this mdev/mtty thing, so please bear with me.
+>>>>>
+>>>>> Thanks,
+>>>>>
+>>>>> 	M.
+> 
+> The mdev/mtty documentation is at Documentation/vfio-mediated-
+> device.txt. It docmented how to enable mtty device.
+> And support for "vfio-pci,sysfsdev" should be availabe in your qemu
+> version (I compiled the latest version).
+> Following is my commond to run qemu with mdev support,
+> "qemu-system-aarch64 -m 1024 -cpu host -M virt,gic_version=3 -nographic
+> \
+> -kernel /home/yangsy/up-kvm/arch/arm64/boot/Image.gz \
+> -initrd /home/yangsy/kvm/ramdisk/initrd.img \
+> -netdev user,id=eth0 -device virtio-net-device,netdev=eth0 -enable-kvm
+> \
+> -append "root=/dev/ram rdinit=/sbin/init" \
+> -device vfio-pci,sysfsdev=/sys/bus/mdev/devices/83b8f4f2-509f-382f-
+> 3c1e-e6bfe0fa1001
+> "
+> For just test this vgic case, type "cat /dev/ttyS0" in guest. But if
+> test read/write multiple bytes, please apply following patch also
+> https://patchwork.kernel.org/patch/10267039/
+
+Thanks. I'll have a look.
+
+> 
+>>>>>
+>>>>> From 66a7c4cfc1029b0169dd771e196e2876ba3f17b1 Mon Sep 17
+>>>>> 00:00:00 2001
+>>>>> From: Marc Zyngier <marc.zyngier@arm.com>
+>>>>> Date: Thu, 8 Mar 2018 11:14:06 +0000
+>>>>> Subject: [PATCH] KVM: arm/arm64: Do not rely on LR state to
+>>>>> guess EOI MI
+>>>>>  status
+>>>>>
+>>>>> We so far rely on the LR state to decide whether the guest has
+>>>>> EOI'd a level interrupt or not. While this looks like a good
+>>>>> idea on the surface, it leads to a couple of annoying corner
+>>>>> cases:
+>>>>>
+>>>>> Example 1: (P = Pending, A = Active, MI = Maintenance
+>>>>> Interrupt)
+>>>>> P -> guest IAR -> A -> exit/entry -> P+A -> guest EOI -> P ->
+>>>>> MI
+>>>> Do we really get an EOI maintenance interrupt here?  Reading the
+>>>> MISR
+>>>> and EISR descriptions make me thing this is not the case...
+>> Hum yes in EISR it is said that ICH_LR.State = 0b00!
+>>>
+>>>
+>>> Yeah, it looks like I always want EISR to do what I want, and not
+>>> to
+>>> do what it does. Man, this thing is such a piece of crap.
+>>>
+>>> OK, scratch that. We need to do it without the help of the HW.
+> 
+> If convenient, maybe we can get something from HW gus. :-)
+> 
+> Hi, Marc,
+> 
+> Do you need me to test the patch you posted for EISR? As it seems there
+> are some things need more discussion.
+
+Yeah, that approach doesn't work. I'll try and come up with another
+approach (basically banning P+A for interrupts that require a back
+notification).
+
+[...]
+
+> I have added some logs to compare level interrupt between pl011(hwirq =
+> 33) and mtty (hwirq = 36). In mtty case, vgic_queue_irq_unlock() is
+> called twice. But only called once in pl011.
+> 
+> following is the log,
+> ===Without my patch===
+> ###PL011###
+> 
+> <4>[  180.598266] kvm_vgic_inject_irq 453 irq:33 enabled:1 config:1
+> latch:0 level:1
+> <4>[  180.604460] ##vgic_queue_irq_unlock 388 irq->intid:33 enable:1
+> level:1
+> <4>[  180.604540] ==>90a0020000000021(active)
+> <4>[  180.614878] ==>d0a0020000000021(P&A)
+> <4>[  180.618415] kvm_vgic_inject_irq 453 irq:33 enabled:1 config:1
+> latch:0 level:0
+> <4>[  180.625508] ==>90a0020000000021(active)
+> <4>[  180.629343] ==>10a0020000000021(inactive)
+> 
+> ###mtty-vfio###
+> <4>[  223.123329] kvm_vgic_inject_irq 453 irq:36 enabled:0 config:1
+> latch:0 level:1
+> <4>[  223.129736] ##vgic_queue_irq_unlock 388 irq->intid:36 enable:1
+> level:1
+> <4>[  223.136027] ==>50a0020000000024(pending)
+> <4>[  223.139954] ##vgic_queue_irq_unlock 388 irq->intid:36 enable:1
+> level:1
+> <4>[  223.146460] ==>90a0020000000024(active)
+> <4>[  223.150273] ==>d0a0020000000024(P&A)
+> <4>[  223.153827] ==>90a0020000000024(active)
+> <4>[  223.157668] ==>d0a0020000000024(P&A)
+
+So the line is never lowered. That's very odd.
+
+> ...........cyclic...
+> 
+> I rembered in some tests the state change is cyclic P->A->P&A. But it
+> seems I cannot reproduce it. Is output LR state
+> in kvm_vgic_inject_irq() reliable?
+> 
+> ===With my patch===
+> ###PL011###
+> <4>[  114.798528] kvm_vgic_inject_irq 453 irq:33 enabled:1 config:1
+> latch:0 level:1
+> <4>[  114.804743] ##vgic_queue_irq_unlock 388 irq->intid:33 enable:1
+> level:1
+> <4>[  114.804796] ==>90a0020000000021(active)
+> <4>[  114.815077] ==>d0a0020000000021(P&A)
+> <4>[  114.818628] kvm_vgic_inject_irq 453 irq:33 enabled:1 config:1
+> latch:0 level:0
+> <4>[  114.825726] ==>90a0020000000021(active)
+> <4>[  114.829560] ==>10a0020000000021(inactive)
+> 
+> ###mtty-vfio###
+> 
+> <4>[  161.579083] kvm_vgic_inject_irq 453 irq:36 enabled:0 config:1
+> latch:0 level:1
+> <4>[  161.585419] ##vgic_queue_irq_unlock 388 irq->intid:36 enable:1
+> level:1
+> <4>[  161.591780] ==>50a0020000000024(pending)
+> <4>[  161.595708] ##vgic_queue_irq_unlock 388 irq->intid:36 enable:1
+> level:1
+> <4>[  161.602204] ==>90a0020000000024(active)
+> <4>[  161.606023] ==>d0a0020000000024(P&A)
+> <4>[  161.609561] kvm_vgic_inject_irq 453 irq:36 enabled:1 config:1
+> latch:0 level:0
+> <4>[  161.616693] ==>10a0020000000024(inactive)
+> <4>[  161.620745] kvm_vgic_inject_irq 453 irq:36 enabled:1 config:1
+> latch:0 level:1
+> <4>[  161.627800] ##vgic_queue_irq_unlock 388 irq->intid:36 enable:1
+> level:1
+> <4>[  161.627849] ==>90a0020000000024(active)
+> <4>[  161.640076] ==>d0a0020000000024(P&A)
+> <4>[  161.642689] kvm_vgic_inject_irq 453 irq:36 enabled:1 config:1
+> latch:0 level:0
+> <4>[  161.649822] ==>10a0020000000024(inactive)
+
+Which is really bizarre. The device only lowers the line when it is
+being told that the interrupt has been processed. That really smells of
+a bug in the device emulation. It should be lowered when the guest
+clears the interrupt status at the device level, and not when notified
+that the interrupt has been completed at the interrupt controller level.
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
