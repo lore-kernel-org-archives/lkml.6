@@ -1,166 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751246AbeCIKLp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 05:11:45 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37676 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751226AbeCIKLo (ORCPT
+        id S1751262AbeCIKLy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 05:11:54 -0500
+Received: from mailapp01.imgtec.com ([195.59.15.196]:41644 "EHLO
+        mailapp01.imgtec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750948AbeCIKLw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 05:11:44 -0500
-Date: Fri, 9 Mar 2018 11:11:34 +0100
-From: Philipp Rudo <prudo@linux.vnet.ibm.com>
-To: Dave Young <dyoung@redhat.com>
-Cc: kexec@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
-        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: Re: [PATCH 11/11] kexec_file: Move purgatories sha256 to common
- code
-In-Reply-To: <20180309044353.GC3246@dhcp-128-65.nay.redhat.com>
-References: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
-        <20180226151620.20970-12-prudo@linux.vnet.ibm.com>
-        <20180309044353.GC3246@dhcp-128-65.nay.redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Fri, 9 Mar 2018 05:11:52 -0500
+Date: Fri, 9 Mar 2018 10:11:49 +0000
+From: Eric Engestrom <eric.engestrom@imgtec.com>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+CC: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        <linux-fbdev@vger.kernel.org>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH] video: fbdev: via_aux_vt1636: remove VLA usage
+Message-ID: <20180309101149.46ew4havwqa4mupu@imgtec.com>
+References: <20180307194703.GA3862@embeddedgus>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18030910-0020-0000-0000-00000400B032
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030910-0021-0000-0000-00004294F8A8
-Message-Id: <20180309111134.6854a2a5@ThinkPad>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-09_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803090131
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <20180307194703.GA3862@embeddedgus>
+User-Agent: NeoMutt/20171215
+X-Originating-IP: [10.60.4.28]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dave,
-
-
-On Fri, 9 Mar 2018 12:43:53 +0800
-Dave Young <dyoung@redhat.com> wrote:
-
-> On 02/26/18 at 04:16pm, Philipp Rudo wrote:
-> > The code to verify the new kernels sha digest are applicable for all
-> > architectures. Move it to common code.
-> > 
-> > Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
-> > ---
-> >  arch/x86/purgatory/Makefile                    |  3 +++
-> >  arch/x86/purgatory/purgatory.c                 |  2 +-
-> >  {arch/x86/purgatory => include/linux}/sha256.h | 10 +++++++++-
-> >  {arch/x86/purgatory => lib}/sha256.c           |  4 ++--
-> >  4 files changed, 15 insertions(+), 4 deletions(-)
-> >  rename {arch/x86/purgatory => include/linux}/sha256.h (63%)
-> >  rename {arch/x86/purgatory => lib}/sha256.c (99%)
-> > 
-> > diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
-> > index 2f15a2ac4209..414eed6b5065 100644
-> > --- a/arch/x86/purgatory/Makefile
-> > +++ b/arch/x86/purgatory/Makefile
-> > @@ -6,6 +6,9 @@ purgatory-y := purgatory.o stack.o setup-x86_$(BITS).o sha256.o entry64.o string
-> >  targets += $(purgatory-y)
-> >  PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
-> >  
-> > +$(obj)/sha256.o: $(srctree)/lib/sha256.c
-> > +	$(call if_changed_rule,cc_o_c)
-> > +
-> >  LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined -nostdlib -z nodefaultlib
-> >  targets += purgatory.ro
-> >  
-> > diff --git a/arch/x86/purgatory/purgatory.c b/arch/x86/purgatory/purgatory.c
-> > index 470edad96bb9..025c34ac0d84 100644
-> > --- a/arch/x86/purgatory/purgatory.c
-> > +++ b/arch/x86/purgatory/purgatory.c
-> > @@ -11,9 +11,9 @@
-> >   */
-> >  
-> >  #include <linux/bug.h>
-> > +#include <linux/sha256.h>
-> >  #include <asm/purgatory.h>
-> >  
-> > -#include "sha256.h"
-> >  #include "../boot/string.h"
-> >  
-> >  unsigned long purgatory_backup_dest __section(.kexec-purgatory);
-> > diff --git a/arch/x86/purgatory/sha256.h b/include/linux/sha256.h
-> > similarity index 63%
-> > rename from arch/x86/purgatory/sha256.h
-> > rename to include/linux/sha256.h
-> > index 2867d9825a57..43a20ac33688 100644
-> > --- a/arch/x86/purgatory/sha256.h
-> > +++ b/include/linux/sha256.h
-> > @@ -13,9 +13,17 @@
-> >  #include <linux/types.h>
-> >  #include <crypto/sha.h>
-> >  
-> > +/* Stand-alone implementation of the SHA256 algorithm. It is designed to
-> > + * have as little dependencies as possible so it can be used in the
-> > + * kexec_file purgatory. In other cases you should use the implementation in
-> > + * crypto/.
-> > + *
-> > + * For details see lib/sha256.c
-> > + */  
+On Wednesday, 2018-03-07 13:47:03 -0600, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wvla, remove VLA and replace it
+> with a fixed-length array instead. Also, remove variable 'len'.
 > 
-> should move to use preferred comment format:
-> /*
->  * Stand-alone ...
->  * ...
->  */
+> Notice that no new IDs have been added in seven years.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/video/fbdev/via/via_aux_vt1636.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/video/fbdev/via/via_aux_vt1636.c b/drivers/video/fbdev/via/via_aux_vt1636.c
+> index 9e015c1..d6273a4 100644
+> --- a/drivers/video/fbdev/via/via_aux_vt1636.c
+> +++ b/drivers/video/fbdev/via/via_aux_vt1636.c
+> @@ -35,10 +35,10 @@ void via_aux_vt1636_probe(struct via_aux_bus *bus)
+>  		.addr	=	0x40,
+>  		.name	=	name};
+>  	/* check vendor id and device id */
+> -	const u8 id[] = {0x06, 0x11, 0x45, 0x33}, len = ARRAY_SIZE(id);
+> -	u8 tmp[len];
+> +	const u8 id[4] = {0x06, 0x11, 0x45, 0x33};
+> +	u8 tmp[4];
+>  
+> -	if (!via_aux_read(&drv, 0x00, tmp, len) || memcmp(id, tmp, len))
+> +	if (!via_aux_read(&drv, 0x00, tmp, 4) || memcmp(id, tmp, 4))
 
-Fixed it.
+I would recommend keeping ARRAY_SIZE(); even if nothing's been added in
+a while, it's still clearer in the code if we can see where these `4`
+come from.
+
+Something like this instead?
+----8<----
+@@ -35,10 +35,10 @@ void via_aux_vt1636_probe(struct via_aux_bus *bus)
+ 		.addr	=	0x40,
+ 		.name	=	name};
+ 	/* check vendor id and device id */
+-	const u8 id[] = {0x06, 0x11, 0x45, 0x33}, len = ARRAY_SIZE(id);
+-	u8 tmp[len];
++	const u8 id[] = {0x06, 0x11, 0x45, 0x33};
++	u8 tmp[ARRAY_SIZE(id)];
  
-> > +
-> >  extern int sha256_init(struct sha256_state *sctx);
-> >  extern int sha256_update(struct sha256_state *sctx, const u8 *input,
-> > -				unsigned int length);
-> > +			 unsigned int length);
-> >  extern int sha256_final(struct sha256_state *sctx, u8 *hash);
-> >  
-> >  #endif /* SHA256_H */
-> > diff --git a/arch/x86/purgatory/sha256.c b/lib/sha256.c
-> > similarity index 99%
-> > rename from arch/x86/purgatory/sha256.c
-> > rename to lib/sha256.c
-> > index 548ca675a14a..4400c832e2aa 100644
-> > --- a/arch/x86/purgatory/sha256.c
-> > +++ b/lib/sha256.c
-> > @@ -16,9 +16,9 @@
-> >   */
-> >  
-> >  #include <linux/bitops.h>
-> > +#include <linux/sha256.h>
-> > +#include <linux/string.h>
-> >  #include <asm/byteorder.h>
-> > -#include "sha256.h"
-> > -#include "../boot/string.h"  
-> 
-> Hmm, I'm not sure if moving to linux/string.h will have some side
-> effects..
-
-Hmm, according to your other mail you are right. I'll have a closer look at it.
-
-Thanks
-Philipp
+-	if (!via_aux_read(&drv, 0x00, tmp, len) || memcmp(id, tmp, len))
++	if (!via_aux_read(&drv, 0x00, tmp, ARRAY_SIZE(id)) || memcmp(id, tmp, ARRAY_SIZE(id)))
+ 		return;
  
-> >  
-> >  static inline u32 Ch(u32 x, u32 y, u32 z)
-> >  {
-> > -- 
-> > 2.13.5
-> >   
+ 	printk(KERN_INFO "viafb: Found %s\n", name);
+---->8----
+
+Note that sizeof is evaluated a compile time, so `u8 tmp[ARRAY_SIZE(id)]`
+is *not* a VLA. All that's needed was to remove `len` :)
+
+>  		return;
+>  
+>  	printk(KERN_INFO "viafb: Found %s\n", name);
+> -- 
+> 2.7.4
 > 
-> Thanks
-> Dave
-> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
