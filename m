@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932637AbeCISnk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 13:43:40 -0500
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:37646 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932195AbeCISni (ORCPT
+        id S932663AbeCISnw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 13:43:52 -0500
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:38008 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932195AbeCISnu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 13:43:38 -0500
-X-Google-Smtp-Source: AG47ELueE4t8sZ7nTVBr/gSoyyQ0rICkFiG04glPNsEbhy8JYvuCtmYc6RzRrSgCT+9s1cq8sD1KIw==
+        Fri, 9 Mar 2018 13:43:50 -0500
+X-Google-Smtp-Source: AG47ELv+W0RRsjqu0aXRYpNrGI1Tk1XebML0TETZAX8NivgUDZp/WYR/8vRCsMDYgcFJBPaqY4HxcQ==
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
 To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net
 Cc: benjamin.gaignard@st.com, linux-iio@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v5 6/8] dt-bindings: counter: Document stm32 quadrature encoder
-Date: Fri,  9 Mar 2018 13:43:32 -0500
-Message-Id: <7f160c33e6e37c13974054f3dcfea4a02f1250fb.1520614431.git.vilhelm.gray@gmail.com>
+Subject: [PATCH v5 7/8] counter: stm32-timer-cnt: Add sysfs documentation
+Date: Fri,  9 Mar 2018 13:43:44 -0500
+Message-Id: <d85788df126b716b05fe1d56fca292933fee1db2.1520614431.git.vilhelm.gray@gmail.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <cover.1520614431.git.vilhelm.gray@gmail.com>
 References: <cover.1520614431.git.vilhelm.gray@gmail.com>
@@ -25,72 +25,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Benjamin Gaignard <benjamin.gaignard@st.com>
 
-Add bindings for STM32 Timer quadrature encoder.
-It is a sub-node of STM32 Timer which implement the
-counter part of the hardware.
+In addition of the generic sysfs-bus-counter ABI stm32-timer-cnt
+offerts three functionality:
+- enable the counter
+- set preset value
+- allow to read counter direction
 
 Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- .../bindings/counter/stm32-timer-cnt.txt           | 26 ++++++++++++++++++++++
- .../devicetree/bindings/mfd/stm32-timers.txt       |  7 ++++++
- 2 files changed, 33 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
+ .../ABI/testing/sysfs-bus-counter-stm32-timer-cnt   | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-counter-stm32-timer-cnt
 
-diff --git a/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt b/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
+diff --git a/Documentation/ABI/testing/sysfs-bus-counter-stm32-timer-cnt b/Documentation/ABI/testing/sysfs-bus-counter-stm32-timer-cnt
 new file mode 100644
-index 000000000000..377728128bef
+index 000000000000..73328e8e6d7e
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
-@@ -0,0 +1,26 @@
-+STMicroelectronics STM32 Timer quadrature encoder
++++ b/Documentation/ABI/testing/sysfs-bus-counter-stm32-timer-cnt
+@@ -0,0 +1,21 @@
++What:		/sys/bus/counter/devices/counterX/countY_direction
++KernelVersion:	4.17
++Contact:	linux-iio@vger.kernel.org
++Description:
++		Read-only attribute that indicates the count direction of
++		Count Y. Two count directions are available: Forward and
++		Backward.
 +
-+STM32 Timer provides quadrature encoder counter mode to detect
-+angular position and direction of rotary elements,
-+from IN1 and IN2 input signals.
++What:		/sys/bus/counter/devices/counterX/countY_enable
++KernelVersion:	4.17
++Contact:	linux-iio@vger.kernel.org
++Description:
++		Whether channel Y inputs A and B are enabled. Valid attribute
++		values are boolean.
 +
-+Must be a sub-node of an STM32 Timer device tree node.
-+See ../mfd/stm32-timers.txt for details about the parent node.
-+
-+Required properties:
-+- compatible:		Must be "st,stm32-timer-counter".
-+- pinctrl-names: 	Set to "default".
-+- pinctrl-0: 		List of phandles pointing to pin configuration nodes,
-+			to set IN1/IN2 pins in mode of operation for Low-Power
-+			Timer input on external pin.
-+
-+Example:
-+	timers@40010000  {
-+		compatible = "st,stm32-timers";
-+		...
-+		counter {
-+			compatible = "st,stm32-timer-counter";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&tim1_in_pins>;
-+		};
-+	};
-diff --git a/Documentation/devicetree/bindings/mfd/stm32-timers.txt b/Documentation/devicetree/bindings/mfd/stm32-timers.txt
-index 1db6e0057a63..ff9c14ada30b 100644
---- a/Documentation/devicetree/bindings/mfd/stm32-timers.txt
-+++ b/Documentation/devicetree/bindings/mfd/stm32-timers.txt
-@@ -23,6 +23,7 @@ Optional parameters:
- Optional subnodes:
- - pwm:			See ../pwm/pwm-stm32.txt
- - timer:		See ../iio/timer/stm32-timer-trigger.txt
-+- counter:		See ../counter/stm32-timer-cnt.txt
- 
- Example:
- 	timers@40010000 {
-@@ -43,4 +44,10 @@ Example:
- 			compatible = "st,stm32-timer-trigger";
- 			reg = <0>;
- 		};
-+
-+		counter {
-+			compatible = "st,stm32-timer-counter";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&tim1_in_pins>;
-+		};
- 	};
++What:		/sys/bus/counter/devices/counterX/countY_preset
++KernelVersion:	4.17
++Contact:	linux-iio@vger.kernel.org
++Description:
++		If the counter device supports preset registers, the preset
++		count for channel Y is provided by this attribute.
 -- 
 2.16.2
