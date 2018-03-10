@@ -1,73 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932179AbeCJPBR (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 10:01:17 -0500
-Received: from mail-it0-f67.google.com ([209.85.214.67]:40455 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750704AbeCJPBP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 10:01:15 -0500
-X-Google-Smtp-Source: AG47ELugZdtvvro5/vmZ/yHaLMkCV4m2/BSiAT5ibuhvU1FsiIV5X+UbnprZIXPyg+yKgVr4U10Sq9oE453W5OHrIms=
+        id S932240AbeCJPEQ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 10:04:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56328 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750704AbeCJPEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 10:04:14 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92A60208FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
+Date: Sat, 10 Mar 2018 15:04:09 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Himanshu Jha <himanshujha199640@gmail.com>
+Cc: Kees Cook <keescook@chromium.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: Re: [PATCH] iio: potentiometer: ds1803: Remove VLA usage
+Message-ID: <20180310150409.1060ab04@archlinux>
+In-Reply-To: <20180309110510.GB7786@himanshu-Vostro-3559>
+References: <1520534733-1743-1-git-send-email-himanshujha199640@gmail.com>
+        <CAGXu5jJzLczSzfJtWbhTUqAYXRG_-zKf2x8cz8jrAxu+XjkYdQ@mail.gmail.com>
+        <20180309110510.GB7786@himanshu-Vostro-3559>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180302083123.7259-1-ard.biesheuvel@linaro.org>
-References: <20180302083123.7259-1-ard.biesheuvel@linaro.org>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Sat, 10 Mar 2018 15:01:14 +0000
-Message-ID: <CAKv+Gu_hRsJGT-inrzXmAmabaZiUTL7BowdUrxwSWHJecjeVsg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/2] add support for Socionext SynQuacer I2C controller
-To: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Devicetree List <devicetree@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2 March 2018 at 08:31, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> Add a binding and a driver for the I2C IP found in the Socionext SynQuacer
-> SoC, which is essentially a rebranded version of the Fujitsu F_I2C controller.
->
-> I think this is good to go now. Wolfram?
->
+On Fri, 9 Mar 2018 16:35:10 +0530
+Himanshu Jha <himanshujha199640@gmail.com> wrote:
 
-Ping?
+> On Thu, Mar 08, 2018 at 11:39:15AM -0800, Kees Cook wrote:
+> > On Thu, Mar 8, 2018 at 10:45 AM, Himanshu Jha
+> > <himanshujha199640@gmail.com> wrote:  
+> > > In preparation to enabling -Wvla, remove VLA usage and replace it
+> > > with fixed a fixed length array and therefore, prevent potential
+> > > stack overflow attacks.
+> > >
+> > > Fixed as a part of the discussion to remove all VLAs from the kernel:
+> > > https://lkml.org/lkml/2018/3/7/621
+> > >
+> > > Cc: keescook@chromium.org
+> > > Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
+> > > ---
+> > >  drivers/iio/potentiometer/ds1803.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/iio/potentiometer/ds1803.c b/drivers/iio/potentiometer/ds1803.c
+> > > index 9b0ff4a..6bf12c9 100644
+> > > --- a/drivers/iio/potentiometer/ds1803.c
+> > > +++ b/drivers/iio/potentiometer/ds1803.c
+> > > @@ -64,7 +64,7 @@ static int ds1803_read_raw(struct iio_dev *indio_dev,
+> > >         struct ds1803_data *data = iio_priv(indio_dev);
+> > >         int pot = chan->channel;
+> > >         int ret;
+> > > -       u8 result[indio_dev->num_channels];
+> > > +       u8 result[ARRAY_SIZE(ds1803_channels)];  
+> > 
+> > It seems like num_channels is always ARRAY_SIZE(ds1803_channels).
+> > Could the entire field be dropped?  
+> 
+> If you're asking to remove num_channels then certainly it is not
+> possible
+> since it is a member of industrial I/O device struct and it is not just
+> a member of regular struct local to this file.
+> 
+> We certainly know that there are only two channels BTW and it can be
+> tranformed to simply:
+> 
+>         u8 result[2];
+> 
+> But then I might have to add an additional comment explaining the magic
+> number 2.
+I'm happy with the exact version you proposed.
+num_channels isn't there for the driver use (as it can obviously know
+this) but for the core which uses this to know how big the channel array
+is when creating the sysfs interfaces etc.
 
-> v5:
-> - add Rob's ack to #1
-> - drop unnecessary 'platform_set_drvdata(pdev, NULL)' in remove path (#2)
->
-> v4:
-> - clarify binding that only a single interrupt specifier is expected (#1)
-> - check return value of clk_prepare_enable() on probe path (#2)
-> - add Andy's R-b to patch #2
->
-> v3:
-> - incorporate more of Andy's review comments (#2), especially regarding the
->   bus speed and clock source handling for ACPI
-> - patch #1 unchanged.
->
-> v2:
-> - incorporate Andy's review comments (#2)
-> - patch #1 unchanged.
->
-> Ard Biesheuvel (2):
->   dt-bindings: i2c: add binding for Socionext SynQuacer I2C
->   i2c: add support for Socionext SynQuacer I2C controller
->
->  Documentation/devicetree/bindings/i2c/i2c-synquacer.txt |  29 +
->  drivers/i2c/busses/Kconfig                              |  10 +
->  drivers/i2c/busses/Makefile                             |   1 +
->  drivers/i2c/busses/i2c-synquacer.c                      | 791 ++++++++++++++++++++
->  4 files changed, 831 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-synquacer.txt
->  create mode 100644 drivers/i2c/busses/i2c-synquacer.c
->
-> --
-> 2.11.0
->
+Applied to the togreg branch of iio.git and pushed out as testing.
+
+Thanks,
+
+Jonathan
+
+> 
