@@ -1,145 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752164AbeCJHG0 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 02:06:26 -0500
-Received: from mga07.intel.com ([134.134.136.100]:33995 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751588AbeCJHEQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 02:04:16 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,449,1515484800";
-   d="scan'208";a="210419695"
-Subject: [PATCH v5 04/11] ext2, dax: introduce ext2_dax_aops
-From: Dan Williams <dan.j.williams@intel.com>
-To: linux-nvdimm@lists.01.org
-Cc: Jan Kara <jack@suse.com>, david@fromorbit.com, hch@lst.de,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-        ross.zwisler@linux.intel.com, hch@lst.de, linux-kernel@vger.kernel.org
-Date: Fri, 09 Mar 2018 22:55:10 -0800
-Message-ID: <152066491013.40260.6636252082600988714.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1751989AbeCJHHy (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 02:07:54 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:60703 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750820AbeCJHHw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 02:07:52 -0500
+Date: Fri, 9 Mar 2018 23:07:15 -0800
+From: tip-bot for Francis Deslauriers <tipbot@zytor.com>
+Message-ID: <tip-c07a8f8b08ba683ea24f3ac9159f37ae94daf47f@git.kernel.org>
+Cc: dvlasenk@redhat.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, peterz@infradead.org,
+        jpoimboe@redhat.com, bp@alien8.de, mingo@kernel.org, brgerst@gmail.com,
+        luto@kernel.org, francis.deslauriers@efficios.com, tglx@linutronix.de
+Reply-To: jpoimboe@redhat.com, bp@alien8.de, mingo@kernel.org,
+        peterz@infradead.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, dvlasenk@redhat.com,
+        francis.deslauriers@efficios.com, tglx@linutronix.de,
+        brgerst@gmail.com, luto@kernel.org
+In-Reply-To: <1520565492-4637-2-git-send-email-francis.deslauriers@efficios.com>
+References: <1520565492-4637-2-git-send-email-francis.deslauriers@efficios.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/kprobes: Fix kernel crash when probing
+ .entry_trampoline code
+Git-Commit-ID: c07a8f8b08ba683ea24f3ac9159f37ae94daf47f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for the dax implementation to start associating dax pages
-to inodes via page->mapping, we need to provide a 'struct
-address_space_operations' instance for dax. Otherwise, direct-I/O
-triggers incorrect page cache assumptions and warnings.
+Commit-ID:  c07a8f8b08ba683ea24f3ac9159f37ae94daf47f
+Gitweb:     https://git.kernel.org/tip/c07a8f8b08ba683ea24f3ac9159f37ae94daf47f
+Author:     Francis Deslauriers <francis.deslauriers@efficios.com>
+AuthorDate: Thu, 8 Mar 2018 22:18:12 -0500
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Fri, 9 Mar 2018 09:58:36 +0100
 
-Cc: Jan Kara <jack@suse.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+x86/kprobes: Fix kernel crash when probing .entry_trampoline code
+
+Disable the kprobe probing of the entry trampoline:
+
+.entry_trampoline is a code area that is used to ensure page table
+isolation between userspace and kernelspace.
+
+At the beginning of the execution of the trampoline, we load the
+kernel's CR3 register. This has the effect of enabling the translation
+of the kernel virtual addresses to physical addresses. Before this
+happens most kernel addresses can not be translated because the running
+process' CR3 is still used.
+
+If a kprobe is placed on the trampoline code before that change of the
+CR3 register happens the kernel crashes because int3 handling pages are
+not accessible.
+
+To fix this, add the .entry_trampoline section to the kprobe blacklist
+to prohibit the probing of code before all the kernel pages are
+accessible.
+
+Signed-off-by: Francis Deslauriers <francis.deslauriers@efficios.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: mathieu.desnoyers@efficios.com
+Cc: mhiramat@kernel.org
+Link: http://lkml.kernel.org/r/1520565492-4637-2-git-send-email-francis.deslauriers@efficios.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- fs/ext2/ext2.h  |    1 +
- fs/ext2/inode.c |   28 ++++++++++++++++++++--------
- fs/ext2/namei.c |   18 ++----------------
- 3 files changed, 23 insertions(+), 24 deletions(-)
+ arch/x86/include/asm/sections.h |  1 +
+ arch/x86/kernel/kprobes/core.c  | 10 +++++++++-
+ arch/x86/kernel/vmlinux.lds.S   |  2 ++
+ 3 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
-index 032295e1d386..cc40802ddfa8 100644
---- a/fs/ext2/ext2.h
-+++ b/fs/ext2/ext2.h
-@@ -814,6 +814,7 @@ extern const struct inode_operations ext2_file_inode_operations;
- extern const struct file_operations ext2_file_operations;
+diff --git a/arch/x86/include/asm/sections.h b/arch/x86/include/asm/sections.h
+index d6baf23782bc..5c019d23d06b 100644
+--- a/arch/x86/include/asm/sections.h
++++ b/arch/x86/include/asm/sections.h
+@@ -10,6 +10,7 @@ extern struct exception_table_entry __stop___ex_table[];
  
- /* inode.c */
-+extern void ext2_set_file_ops(struct inode *inode);
- extern const struct address_space_operations ext2_aops;
- extern const struct address_space_operations ext2_nobh_aops;
- extern const struct iomap_ops ext2_iomap_ops;
-diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-index 9b2ac55ac34f..09608f7e9e39 100644
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -990,6 +990,13 @@ const struct address_space_operations ext2_nobh_aops = {
- 	.error_remove_page	= generic_error_remove_page,
- };
+ #if defined(CONFIG_X86_64)
+ extern char __end_rodata_hpage_align[];
++extern char __entry_trampoline_start[], __entry_trampoline_end[];
+ #endif
  
-+const struct address_space_operations ext2_dax_aops = {
-+	.writepages		= ext2_writepages,
-+	.direct_IO		= ext2_direct_IO,
-+	.set_page_dirty		= dax_set_page_dirty,
-+	.invalidatepage		= dax_invalidatepage,
-+};
-+
- /*
-  * Probably it should be a library function... search for first non-zero word
-  * or memcmp with zero_page, whatever is better for particular architecture.
-@@ -1388,6 +1395,18 @@ void ext2_set_inode_flags(struct inode *inode)
- 		inode->i_flags |= S_DAX;
- }
+ #endif	/* _ASM_X86_SECTIONS_H */
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index bd36f3c33cd0..0715f827607c 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -1168,10 +1168,18 @@ NOKPROBE_SYMBOL(longjmp_break_handler);
  
-+void ext2_set_file_ops(struct inode *inode)
-+{
-+	inode->i_op = &ext2_file_inode_operations;
-+	inode->i_fop = &ext2_file_operations;
-+	if (IS_DAX(inode))
-+		inode->i_mapping->a_ops = &ext2_dax_aops;
-+	else if (test_opt(inode->i_sb, NOBH))
-+		inode->i_mapping->a_ops = &ext2_nobh_aops;
-+	else
-+		inode->i_mapping->a_ops = &ext2_aops;
-+}
-+
- struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
+ bool arch_within_kprobe_blacklist(unsigned long addr)
  {
- 	struct ext2_inode_info *ei;
-@@ -1480,14 +1499,7 @@ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
- 		ei->i_data[n] = raw_inode->i_block[n];
- 
- 	if (S_ISREG(inode->i_mode)) {
--		inode->i_op = &ext2_file_inode_operations;
--		if (test_opt(inode->i_sb, NOBH)) {
--			inode->i_mapping->a_ops = &ext2_nobh_aops;
--			inode->i_fop = &ext2_file_operations;
--		} else {
--			inode->i_mapping->a_ops = &ext2_aops;
--			inode->i_fop = &ext2_file_operations;
--		}
-+		ext2_set_file_ops(inode);
- 	} else if (S_ISDIR(inode->i_mode)) {
- 		inode->i_op = &ext2_dir_inode_operations;
- 		inode->i_fop = &ext2_dir_operations;
-diff --git a/fs/ext2/namei.c b/fs/ext2/namei.c
-index e078075dc66f..55f7caadb093 100644
---- a/fs/ext2/namei.c
-+++ b/fs/ext2/namei.c
-@@ -107,14 +107,7 @@ static int ext2_create (struct inode * dir, struct dentry * dentry, umode_t mode
- 	if (IS_ERR(inode))
- 		return PTR_ERR(inode);
- 
--	inode->i_op = &ext2_file_inode_operations;
--	if (test_opt(inode->i_sb, NOBH)) {
--		inode->i_mapping->a_ops = &ext2_nobh_aops;
--		inode->i_fop = &ext2_file_operations;
--	} else {
--		inode->i_mapping->a_ops = &ext2_aops;
--		inode->i_fop = &ext2_file_operations;
--	}
-+	ext2_set_file_ops(inode);
- 	mark_inode_dirty(inode);
- 	return ext2_add_nondir(dentry, inode);
++	bool is_in_entry_trampoline_section = false;
++
++#ifdef CONFIG_X86_64
++	is_in_entry_trampoline_section =
++		(addr >= (unsigned long)__entry_trampoline_start &&
++		 addr < (unsigned long)__entry_trampoline_end);
++#endif
+ 	return  (addr >= (unsigned long)__kprobes_text_start &&
+ 		 addr < (unsigned long)__kprobes_text_end) ||
+ 		(addr >= (unsigned long)__entry_text_start &&
+-		 addr < (unsigned long)__entry_text_end);
++		 addr < (unsigned long)__entry_text_end) ||
++		is_in_entry_trampoline_section;
  }
-@@ -125,14 +118,7 @@ static int ext2_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	if (IS_ERR(inode))
- 		return PTR_ERR(inode);
  
--	inode->i_op = &ext2_file_inode_operations;
--	if (test_opt(inode->i_sb, NOBH)) {
--		inode->i_mapping->a_ops = &ext2_nobh_aops;
--		inode->i_fop = &ext2_file_operations;
--	} else {
--		inode->i_mapping->a_ops = &ext2_aops;
--		inode->i_fop = &ext2_file_operations;
--	}
-+	ext2_set_file_ops(inode);
- 	mark_inode_dirty(inode);
- 	d_tmpfile(dentry, inode);
- 	unlock_new_inode(inode);
+ int __init arch_init_kprobes(void)
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 9b138a06c1a4..b854ebf5851b 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -118,9 +118,11 @@ SECTIONS
+ 
+ #ifdef CONFIG_X86_64
+ 		. = ALIGN(PAGE_SIZE);
++		VMLINUX_SYMBOL(__entry_trampoline_start) = .;
+ 		_entry_trampoline = .;
+ 		*(.entry_trampoline)
+ 		. = ALIGN(PAGE_SIZE);
++		VMLINUX_SYMBOL(__entry_trampoline_end) = .;
+ 		ASSERT(. - _entry_trampoline == PAGE_SIZE, "entry trampoline is too big");
+ #endif
+ 
