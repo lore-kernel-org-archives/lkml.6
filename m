@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1720711-1520641514-2-14673403343833029006
+X-Cyrus-Session-Id: sloti22d1t05-1715849-1520641510-2-11225763635172278295
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520641513; b=D+0DCTr9M0rOp2aF1unZn2awYEAFrGMuFMVaJqiQrwSoq2c
-    X8PXA5r1uMl6FajJW7uiSxstezh54asO0qRefGKtDQIm2/CNw6r8b/tvsMxaXdiJ
-    n7Jyq0WL6JijEAiVHrpB/3X+p6y/f4fVkDsItBiM/IHUrqOzafvXMTxBW6W5lFHZ
-    gSRO5N1SDfU6VQNSE3kIklqQcb5Dt9XFPnIJCSYJ/+flXuvo6zNwldREtoYYZUW9
-    efNwAr4XjsK8PwPJv2S2kfJ0oC3w4lgexZVD1Kh7Lnu4ZxCYKO6DLHslOsbdgapA
-    AV6tOOEqbM46mX4b6NxjTEr9OFPKjlD5dddkUEQ==
+    t=1520641510; b=vLc2X5HUfVhYugZvA8DYk+PW5sA2IqD3bCgoDto9mc6L6i2
+    vDrZT5RnLddtWk4Pwz1rcR70Y3bNgHKqU1GuqaUqmPdriA0x0dnQElwNrxN9yFUB
+    oKrCXOs+ZRDKBP1JXhlsDp1jYnTpXuiH2+IHNFWUnF4UI41xQnFy23FOR//W82AZ
+    sQ3HOMVXqiGCQvYiuXvK+JEfwOLbHpWDJOeXsNbwcnEH2nhzEMoitYzEgHSQpePO
+    p94UlhDQQxf+BMqipmGXd8ZRnlpOWqAqNUM3fzt1L4AOS5yJArsQENJwQFDM2AVT
+    UdtSieyEAp5/SFY8HUT4QLtC/ieC7QrTPAaJ46g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520641513; bh=n4v8z0awNbWxOxeXKzYVqWpM4H
-    BlNcaHr5kWJTgcWs0=; b=S5peXCr/WZRDeRP7MKG2KfXB9BRX9zeavNgFdgjfQ0
-    1gL3jGGKwPobraj/S9lHnD7XYV2MrSJKkVceLhzU7ji7x+3HFjCJxNGrEZMotV1s
-    ilnYWP9A+yBsZqWMtFEsSH8sPnsnyou6qv8hSW732/rS2RbyhFwT/mVbTtbLLd11
-    CnSteeyo9OmpxQGaSFW4dtZ4SDlmjzDUSc9KDN8zgptxqMVo28FME1vci+aihyx/
-    K+JKf43jErtw69JjB8fU3i/Uod1RqnoeBXuiJ8kzC5LVQ21SiXUs6FLNjdnw97FE
-    +jb2GrNYkvHu9PP/8NOT9LIeYq5l34qDSEZBLkq6BBbw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1520641510; bh=JG8dZfJUNDrFQlRUqY0OOAuYLT
+    8SpC6oKtrHSEjLaaQ=; b=kGn5mExd5KulXsUHPf9lgehIKvomIbfrsVbjFsSXzg
+    45D/CzYxdt/CLRgSWJ+Fj6pKM5YICpufVamKl+nhRwiLIyjj2ji8hMRO6fUbh8NX
+    frZoHB/+ArfrV/3SW2E9whh3hXvkFd2XhYvnCd3E7kPOalntWNIVSkLNX240rtBS
+    9fxjQs4rxS8oGytmGyOp3IOWXLLScOsiJ/IgmK1H8yWfbJ8XyYNvrJUvRL2Berd2
+    vkXi3uHHm8qwsJi3sN0zC223sYRvZKPR1NlNoioYNFqQQ2Fvn1s8fd7zFvVpRxF+
+    OP7sGP9C4wn0KlHlJSpAnBffgJ6pOTLXk0f4S83DXfqw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,20 +49,21 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933088AbeCJAXt (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Mar 2018 19:23:49 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41190 "EHLO
+        id S932953AbeCJAYg (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Mar 2018 19:24:36 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41250 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934173AbeCJAXs (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:23:48 -0500
+        with ESMTP id S933593AbeCJAXy (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:23:54 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
         Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH 4.15 05/11] bpf, arm64: fix out of bounds access in tail call
-Date: Fri,  9 Mar 2018 16:19:19 -0800
-Message-Id: <20180310001834.833522586@linuxfoundation.org>
+Subject: [PATCH 4.15 08/11] bpf, ppc64: fix out of bounds access in tail call
+Date: Fri,  9 Mar 2018 16:19:22 -0800
+Message-Id: <20180310001835.001671203@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001834.560857664@linuxfoundation.org>
 References: <20180310001834.560857664@linuxfoundation.org>
@@ -82,151 +83,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Daniel Borkmann <daniel@iogearbox.net>
 
-[ upstream commit 16338a9b3ac30740d49f5dfed81bac0ffa53b9c7 ]
+[ upstream commit d269176e766c71c998cb75b4ea8cbc321cc0019d ]
 
-I recently noticed a crash on arm64 when feeding a bogus index
-into BPF tail call helper. The crash would not occur when the
-interpreter is used, but only in case of JIT. Output looks as
-follows:
+While working on 16338a9b3ac3 ("bpf, arm64: fix out of bounds access in
+tail call") I noticed that ppc64 JIT is partially affected as well. While
+the bound checking is correctly performed as unsigned comparison, the
+register with the index value however, is never truncated into 32 bit
+space, so e.g. a index value of 0x100000000ULL with a map of 1 element
+would pass with PPC_CMPLW() whereas we later on continue with the full
+64 bit register value. Therefore, as we do in interpreter and other JITs
+truncate the value to 32 bit initially in order to fix access.
 
-  [  347.007486] Unable to handle kernel paging request at virtual address fffb850e96492510
-  [...]
-  [  347.043065] [fffb850e96492510] address between user and kernel address ranges
-  [  347.050205] Internal error: Oops: 96000004 [#1] SMP
-  [...]
-  [  347.190829] x13: 0000000000000000 x12: 0000000000000000
-  [  347.196128] x11: fffc047ebe782800 x10: ffff808fd7d0fd10
-  [  347.201427] x9 : 0000000000000000 x8 : 0000000000000000
-  [  347.206726] x7 : 0000000000000000 x6 : 001c991738000000
-  [  347.212025] x5 : 0000000000000018 x4 : 000000000000ba5a
-  [  347.217325] x3 : 00000000000329c4 x2 : ffff808fd7cf0500
-  [  347.222625] x1 : ffff808fd7d0fc00 x0 : ffff808fd7cf0500
-  [  347.227926] Process test_verifier (pid: 4548, stack limit = 0x000000007467fa61)
-  [  347.235221] Call trace:
-  [  347.237656]  0xffff000002f3a4fc
-  [  347.240784]  bpf_test_run+0x78/0xf8
-  [  347.244260]  bpf_prog_test_run_skb+0x148/0x230
-  [  347.248694]  SyS_bpf+0x77c/0x1110
-  [  347.251999]  el0_svc_naked+0x30/0x34
-  [  347.255564] Code: 9100075a d280220a 8b0a002a d37df04b (f86b694b)
-  [...]
-
-In this case the index used in BPF r3 is the same as in r1
-at the time of the call, meaning we fed a pointer as index;
-here, it had the value 0xffff808fd7cf0500 which sits in x2.
-
-While I found tail calls to be working in general (also for
-hitting the error cases), I noticed the following in the code
-emission:
-
-  # bpftool p d j i 988
-  [...]
-  38:   ldr     w10, [x1,x10]
-  3c:   cmp     w2, w10
-  40:   b.ge    0x000000000000007c              <-- signed cmp
-  44:   mov     x10, #0x20                      // #32
-  48:   cmp     x26, x10
-  4c:   b.gt    0x000000000000007c
-  50:   add     x26, x26, #0x1
-  54:   mov     x10, #0x110                     // #272
-  58:   add     x10, x1, x10
-  5c:   lsl     x11, x2, #3
-  60:   ldr     x11, [x10,x11]                  <-- faulting insn (f86b694b)
-  64:   cbz     x11, 0x000000000000007c
-  [...]
-
-Meaning, the tests passed because commit ddb55992b04d ("arm64:
-bpf: implement bpf_tail_call() helper") was using signed compares
-instead of unsigned which as a result had the test wrongly passing.
-
-Change this but also the tail call count test both into unsigned
-and cap the index as u32. Latter we did as well in 90caccdd8cc0
-("bpf: fix bpf_tail_call() x64 JIT") and is needed in addition here,
-too. Tested on HiSilicon Hi1616.
-
-Result after patch:
-
-  # bpftool p d j i 268
-  [...]
-  38:	ldr	w10, [x1,x10]
-  3c:	add	w2, w2, #0x0
-  40:	cmp	w2, w10
-  44:	b.cs	0x0000000000000080
-  48:	mov	x10, #0x20                  	// #32
-  4c:	cmp	x26, x10
-  50:	b.hi	0x0000000000000080
-  54:	add	x26, x26, #0x1
-  58:	mov	x10, #0x110                 	// #272
-  5c:	add	x10, x1, x10
-  60:	lsl	x11, x2, #3
-  64:	ldr	x11, [x10,x11]
-  68:	cbz	x11, 0x0000000000000080
-  [...]
-
-Fixes: ddb55992b04d ("arm64: bpf: implement bpf_tail_call() helper")
+Fixes: ce0761419fae ("powerpc/bpf: Implement support for tail calls")
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Reviewed-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Tested-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
 Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/net/bpf_jit_comp.c               |    5 +++--
- tools/testing/selftests/bpf/test_verifier.c |   26 ++++++++++++++++++++++++++
- 2 files changed, 29 insertions(+), 2 deletions(-)
+ arch/powerpc/net/bpf_jit_comp64.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm64/net/bpf_jit_comp.c
-+++ b/arch/arm64/net/bpf_jit_comp.c
-@@ -238,8 +238,9 @@ static int emit_bpf_tail_call(struct jit
- 	off = offsetof(struct bpf_array, map.max_entries);
- 	emit_a64_mov_i64(tmp, off, ctx);
- 	emit(A64_LDR32(tmp, r2, tmp), ctx);
-+	emit(A64_MOV(0, r3, r3), ctx);
- 	emit(A64_CMP(0, r3, tmp), ctx);
--	emit(A64_B_(A64_COND_GE, jmp_offset), ctx);
-+	emit(A64_B_(A64_COND_CS, jmp_offset), ctx);
- 
- 	/* if (tail_call_cnt > MAX_TAIL_CALL_CNT)
- 	 *     goto out;
-@@ -247,7 +248,7 @@ static int emit_bpf_tail_call(struct jit
+--- a/arch/powerpc/net/bpf_jit_comp64.c
++++ b/arch/powerpc/net/bpf_jit_comp64.c
+@@ -242,6 +242,7 @@ static void bpf_jit_emit_tail_call(u32 *
+ 	 *   goto out;
  	 */
- 	emit_a64_mov_i64(tmp, MAX_TAIL_CALL_CNT, ctx);
- 	emit(A64_CMP(1, tcc, tmp), ctx);
--	emit(A64_B_(A64_COND_GT, jmp_offset), ctx);
-+	emit(A64_B_(A64_COND_HI, jmp_offset), ctx);
- 	emit(A64_ADD_I(1, tcc, tcc, 1), ctx);
+ 	PPC_LWZ(b2p[TMP_REG_1], b2p_bpf_array, offsetof(struct bpf_array, map.max_entries));
++	PPC_RLWINM(b2p_index, b2p_index, 0, 0, 31);
+ 	PPC_CMPLW(b2p_index, b2p[TMP_REG_1]);
+ 	PPC_BCC(COND_GE, out);
  
- 	/* prog = array->ptrs[index];
---- a/tools/testing/selftests/bpf/test_verifier.c
-+++ b/tools/testing/selftests/bpf/test_verifier.c
-@@ -2255,6 +2255,32 @@ static struct bpf_test tests[] = {
- 		.result = ACCEPT,
- 	},
- 	{
-+		"runtime/jit: pass negative index to tail_call",
-+		.insns = {
-+			BPF_MOV64_IMM(BPF_REG_3, -1),
-+			BPF_LD_MAP_FD(BPF_REG_2, 0),
-+			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
-+				     BPF_FUNC_tail_call),
-+			BPF_MOV64_IMM(BPF_REG_0, 0),
-+			BPF_EXIT_INSN(),
-+		},
-+		.fixup_prog = { 1 },
-+		.result = ACCEPT,
-+	},
-+	{
-+		"runtime/jit: pass > 32bit index to tail_call",
-+		.insns = {
-+			BPF_LD_IMM64(BPF_REG_3, 0x100000000ULL),
-+			BPF_LD_MAP_FD(BPF_REG_2, 0),
-+			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
-+				     BPF_FUNC_tail_call),
-+			BPF_MOV64_IMM(BPF_REG_0, 0),
-+			BPF_EXIT_INSN(),
-+		},
-+		.fixup_prog = { 2 },
-+		.result = ACCEPT,
-+	},
-+	{
- 		"stack pointer arithmetic",
- 		.insns = {
- 			BPF_MOV64_IMM(BPF_REG_1, 4),
