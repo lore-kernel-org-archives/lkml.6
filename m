@@ -1,28 +1,28 @@
 Return-Path: <mcgrof@kernel.org>
-X-Google-Smtp-Source: AG47ELufSuuVnRdPy6Ljgkj8WwajkTXdiageEAfKBb24BqDpJC4Y2ulJfNyqIWyxxGuqhd+Pkkjs
-ARC-Seal: i=1; a=rsa-sha256; t=1520691318; cv=none;
+X-Google-Smtp-Source: AG47ELtQkwsApxDZhl1ELpanVOLIuTReDMvVqL7dZiN62CStknLDA7tUujEIyLpX/LNoaNXqxSrA
+ARC-Seal: i=1; a=rsa-sha256; t=1520691317; cv=none;
         d=google.com; s=arc-20160816;
-        b=XFJlFf87dJkWwHtIZe9S43ge0QSiXz9GAeRigwtq+FNk6eK4UvAflr2StIrXUgggfm
-         M4Ih+pu9BFQG1yIKPwneIKXEPYbgIKx+owhZ+W11CfuCHoL5D1h83HtJRt7AjBD3EtEh
-         LBkwrJ56TBE8dxwlFZkFI3v3nOch8xT++ht+ql/buXqgl0oDZ7z7sUHifQ/FuWYqH4bM
-         K9+y6zf0V/0Q4lNxrfiTlfdGLfBsq4bV0ysuxekiLANeu3ZqVFTbxQLX6v42t4pvl83I
-         5a11YdI59PLOaSTPfi0wJZESMKaq5SIDkhQKMwWk7yNuzKu+C0HSTgfJtIUGWFg8dAM1
-         xuJA==
+        b=rzq7C48dl4jon3n+EHyHqmqg1qO/CJMTIgcelyO5vbnxE/c+JfOeG9Tj1Hid92dfte
+         Z3ADs0/hKC685HkZpXc7tox6U+U51aVHSUHhnqRtqoDKfpCKtyAK0D7TD3PqQPSUpyjy
+         t51ru8WDtDG1cNjCwrOgdd6PnNqYgXRTUJ9PXK1Kbzz6bNoW4X0MUXta0BJf/5Zk3wIf
+         0QDXGa9GagB8VO5khtmEB/KjtikMFpv/UH4jZD73YylmvbumMPWeK9IFO5MuR0uNciWy
+         jCX7hIA7m3i8VifO85jC6+U7zqkbKeUyZrf05oE/b1bzc800GkLsSRon1qpQQ/+F1/WB
+         sfkw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dmarc-filter:arc-authentication-results;
-        bh=B6/oJg/hA0NPXRqP9gnM4Ltvx76C4Zm7as8g1lDSodY=;
-        b=JwWZ95P8t04ZpoMdiz6TNy8TcG7vEO3Og2UBifn2Qrmo15gmy+GV+m7EZl94/zkZG5
-         s89CfBavB+OjzjPFTLwAwKL8L2BoArtdDJPiIWWP8Dh+Z+Tw2Ps6rA5KN7D5DPSkgwMP
-         EGIPUG95m6p6D5btnjxLDattV9m5NVx6XtNipEh8qePhak3eiNWvvd7RRtVvC4hi4mQg
-         a5xtoLHEDzs39bMuSW1oHL4eynUk52xiC6GZydwM4M+byreedob/OnMqR0HAOo7k4vGp
-         PfwwJ2skfbU0fZM1/2aUY+hhPPoCMr88u2kdkCoubQGTC8crheUX9K6yxwFNpWbomCv2
-         /SNw==
+        bh=oOp7CzoREa59Ut9xWTKfQkuKta3EGJuZ/qS1oBar9xc=;
+        b=rTUwNVCjMHkXS+dyMgqaI8FGvD4F6y3+LrJ50k4isW4HLBfGEiNUhHXRBMNz5acw9W
+         FgPzgySHgR+IX+kzC6+QZC4QJWAHk/hLix0O5PdGMDCGPEsNQNvcyfwreItq0vCiraV3
+         0iUbrDiSQZ9OtEUsAYRnNmMPq2cxwH9XVoXBhWkKptnLbHoXa8xgw8xkuoL9tf3JOdeO
+         nftc/il+e7BhNdd9KUcvCyQSSw8xb0oB18OTyWEZOXXhno5Aq9sz1V6BKHD/r5Qdw8Cc
+         Av6AH9hnkkhewRkgJnBbI7vd9HydvYnAuOQjFq+OIKfJKe8Zc53agm90FxxaOpArtXwq
+         kKNQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9306A217A7
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A1F1217A0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
@@ -55,60 +55,43 @@ Cc: akpm@linux-foundation.org,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	"Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH v3 04/20] firmware: enable to split firmware_class into separate target files
-Date: Sat, 10 Mar 2018 06:14:45 -0800
-Message-Id: <20180310141501.2214-5-mcgrof@kernel.org>
+Subject: [PATCH v3 03/20] test_firmware: replace syfs fallback check with kconfig_has helper
+Date: Sat, 10 Mar 2018 06:14:44 -0800
+Message-Id: <20180310141501.2214-4-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.13.2
 In-Reply-To: <20180310141501.2214-1-mcgrof@kernel.org>
 References: <20180310141501.2214-1-mcgrof@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594560420523608987?=
-X-GMAIL-MSGID: =?utf-8?q?1594560420523608987?=
+X-GMAIL-THRID: =?utf-8?q?1594560418691377473?=
+X-GMAIL-MSGID: =?utf-8?q?1594560418691377473?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The firmware loader code has grown quite a bit over the years.
-The practice of stuffing everything we need into one file makes
-the code hard to follow.
+Now that we have a kconfig checker just use that instead of relying
+on testing a sysfs directory being present, since our requirements
+are spelled out.
 
-In order to split the firmware loader code into different components
-we must pick a module name and a first object target file. We must
-keep the firmware_class name to remain compatible with scripts which
-have been relying on the sysfs loader path for years, so the old module
-name stays. We can however rename the C file without affecting the
-module name.
-
-The firmware_class used to represent the idea that the code was a simple
-sysfs firmware loader, provided by the struct class firmware_class.
-The sysfs firmware loader used to be the default, today its only the
-fallback mechanism.
-
-This only renames the target code then to make emphasis of what the code
-does these days. With this change new features can also use a new object
-files.
-
+Acked-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 ---
- drivers/base/Makefile                                | 1 +
- drivers/base/{firmware_class.c => firmware_loader.c} | 0
- 2 files changed, 1 insertion(+)
- rename drivers/base/{firmware_class.c => firmware_loader.c} (100%)
+ tools/testing/selftests/firmware/fw_fallback.sh | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/base/Makefile b/drivers/base/Makefile
-index e32a52490051..f261143fafbf 100644
---- a/drivers/base/Makefile
-+++ b/drivers/base/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_HAS_DMA)	+= dma-mapping.o
- obj-$(CONFIG_HAVE_GENERIC_DMA_COHERENT) += dma-coherent.o
- obj-$(CONFIG_ISA_BUS_API)	+= isa.o
- obj-$(CONFIG_FW_LOADER)	+= firmware_class.o
-+firmware_class-objs := firmware_loader.o
- obj-$(CONFIG_NUMA)	+= node.o
- obj-$(CONFIG_MEMORY_HOTPLUG_SPARSE) += memory.o
- ifeq ($(CONFIG_SYSFS),y)
-diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_loader.c
-similarity index 100%
-rename from drivers/base/firmware_class.c
-rename to drivers/base/firmware_loader.c
+diff --git a/tools/testing/selftests/firmware/fw_fallback.sh b/tools/testing/selftests/firmware/fw_fallback.sh
+index bf850050e5e9..323c921a2469 100755
+--- a/tools/testing/selftests/firmware/fw_fallback.sh
++++ b/tools/testing/selftests/firmware/fw_fallback.sh
+@@ -11,10 +11,7 @@ source $TEST_DIR/fw_lib.sh
+ 
+ check_mods
+ 
+-# CONFIG_FW_LOADER_USER_HELPER has a sysfs class under /sys/class/firmware/
+-# These days no one enables CONFIG_FW_LOADER_USER_HELPER so check for that
+-# as an indicator for CONFIG_FW_LOADER_USER_HELPER.
+-HAS_FW_LOADER_USER_HELPER=$(if [ -d /sys/class/firmware/ ]; then echo yes; else echo no; fi)
++HAS_FW_LOADER_USER_HELPER=$(kconfig_has CONFIG_FW_LOADER_USER_HELPER=y)
+ HAS_FW_LOADER_USER_HELPER_FALLBACK=$(kconfig_has CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y)
+ 
+ if [ "$HAS_FW_LOADER_USER_HELPER" = "yes" ]; then
 -- 
 2.16.2
