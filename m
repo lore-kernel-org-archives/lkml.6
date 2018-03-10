@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuSVaWOy82ztOBEmYHFeJTZ5Lc/iTqI2xzstVvrULiysDmJSv4k0O0Nv6KXM6Ml0mk70/o4
-ARC-Seal: i=1; a=rsa-sha256; t=1520641292; cv=none;
+X-Google-Smtp-Source: AG47ELsSkZWlJo4LE3x9UvcY/pCt0jEWgiTwsoKfz2Mv+9qlXQRWNw58sssPSvce+yj2y9kOpSrc
+ARC-Seal: i=1; a=rsa-sha256; t=1520641290; cv=none;
         d=google.com; s=arc-20160816;
-        b=u8yNhnc6hHJ6e5PJ3P6Cs4Mmla7TmDz76XQzrbTixgz/UmlJLiwB3CvFc5mIj1U2k5
-         hPMgLD+y5/ALX957djnMhba1DI7/LD7a1+lN4lESIjuFhFZURw+oiDEj30ri2CaYmQix
-         0QKLLQM6Li1DqSkHjon32WpDA+dKaqpHVIi9TMt8FypcW/uywa1mLAMRNbNEuJoV+fS7
-         y/y4RdpWkxiRBT3taSU/wuaXDajF+n8nEXtfJW9+lBVWfhjg0xfj4zvQRedF3KVRTTKV
-         XBTZniK5HCDEHzZOMSe93Kr9lMlgn3irWrKVlIEeCT0jXDEkws1a3UfuAeMI+s7GVfO6
-         WZTg==
+        b=L2F2hkvV2Q7bE2AXaTTUKy0jCjDcpjSS2a5KaIaB5WPJ3sWFK9zQabH/PDuR5dWVlV
+         GPE2y1ejVXUFZCzRkoN7M4eACkXtGHAZZNM9A/8a4h7M/aSYSNn2vLyTdAcZ2c6I2mez
+         4chVDTl5Rag8ttdMQGDVre+QUkVo5TeLQYIFYGN2Ah+05MMrHQ16PGzGB+FC5xzhE32B
+         uu4BzEZoU0eTOCrOFn+kG4TkI+Gg5SV6O/70Diq65Oyjvn3P++DC+iwVfpfMC2D8Npo6
+         aH275C1QOd8Gxj2mVLeMfyX/kIlb8jO385ddfXKCyCGjphXKn0Lta5UGF4UmIycINZDI
+         xCZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=cRLxSbcUtSkd0wdFYjOoylCIkqb1nOShaTD9k27DY8A=;
-        b=vmfrek/qUvTS4fiBElZi1Az0sHnOJSBU7An7bFjk3Pug2N4ziFDFE01IY9ty0D+ieM
-         SCQbVJOsEpVS1zjxfgJ85gAn9vk3bx6MfZYU995Jkx6fKYpubBzUeZwG1s9j/tmRB9Kt
-         FpR3BuRhVLzzjlupolgy6mUa2XKrmlIb8h1grHImK/IsjxDoHguTd59ncNQ7B8oIXoRW
-         vJ3b/FKB/cZ1SLO5xgQgR/Hsy4hBF5uY1IYkMl2PDUlGLSgeCkWa7sqyiG9t0qUKN8GW
-         m6ubN/45yrqD6NtVrCQYRAR1pXmj8/nsvuNXbZi0+lVFE1DSmJx/VSxiJKzn6E/8t6NT
-         Nfkg==
+        bh=Q+Z2vL2u/NaAW7kobK2oeLXFawnJWU2iBXWyjQPQUt8=;
+        b=PjW8i/EvHmwu0tWU6iEOdn28bny/wZA7P7vWIiDcoPk/LBXUXyk3uiYR8jG3xLEhdQ
+         PAZ3AIqfiIUOffqfamC8FdfNYZVn/x57CUs8EPhCPp1Z+j2PREHkhZ+j9x1RiNVXJPi1
+         e5BYHVk+1p1K1yztleqYXL1R078qdlWs/uOD/6tjgfXtXC3iQ61DNhcRJjcb/ose5ND1
+         Tf+89gEGEajiLYr/xEMZV2X1z8OVzeavxeHuGnSq+slKItbDt0KID8nsq2DR0OXMSLtc
+         DsYspO7fsvP31wCMBnBeqMpEIbsbJUKmYZ+tKJbdizUKx3SCaeFL2R86KLvr44mrNKIr
+         Dh7w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 4.9 05/65] tpm: constify transmit data pointers
-Date: Fri,  9 Mar 2018 16:18:05 -0800
-Message-Id: <20180310001825.339131351@linuxfoundation.org>
+	Jeremy Boone <jeremy.boone@nccgroup.trust>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	James Morris <james.morris@microsoft.com>
+Subject: [PATCH 4.9 04/65] tpm_tis: fix potential buffer overruns caused by bit glitches on the bus
+Date: Fri,  9 Mar 2018 16:18:04 -0800
+Message-Id: <20180310001825.268027029@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
 References: <20180310001824.927996722@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507964074964706?=
-X-GMAIL-MSGID: =?utf-8?q?1594507964074964706?=
+X-GMAIL-THRID: =?utf-8?q?1594507961790979150?=
+X-GMAIL-MSGID: =?utf-8?q?1594507961790979150?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,154 +51,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Jeremy Boone <jeremy.boone@nccgroup.trust>
 
-commit c37fbc09bd4977736f6bc4050c6f099c587052a7 upstream.
+commit 6bb320ca4a4a7b5b3db8c8d7250cc40002046878 upstream.
 
-Making cmd_getticks 'const' introduced a couple of harmless warnings:
+Discrete TPMs are often connected over slow serial buses which, on
+some platforms, can have glitches causing bit flips.  In all the
+driver _recv() functions, we need to use a u32 to unmarshal the
+response size, otherwise a bit flip of the 31st bit would cause the
+expected variable to go negative, which would then try to read a huge
+amount of data.  Also sanity check that the expected amount of data is
+large enough for the TPM header.
 
-drivers/char/tpm/tpm_tis_core.c: In function 'probe_itpm':
-drivers/char/tpm/tpm_tis_core.c:469:31: error: passing argument 2 of 'tpm_tis_send_data' discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
-  rc = tpm_tis_send_data(chip, cmd_getticks, len);
-drivers/char/tpm/tpm_tis_core.c:477:31: error: passing argument 2 of 'tpm_tis_send_data' discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
-  rc = tpm_tis_send_data(chip, cmd_getticks, len);
-drivers/char/tpm/tpm_tis_core.c:255:12: note: expected 'u8 * {aka unsigned char *}' but argument is of type 'const u8 * {aka const unsigned char *}'
- static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
-
-This changes the related functions to all take 'const' pointers
-so that gcc can see this as being correct. I had to slightly
-modify the logic around tpm_tis_spi_transfer() for this to work
-without introducing ugly casts.
-
+Signed-off-by: Jeremy Boone <jeremy.boone@nccgroup.trust>
 Cc: stable@vger.kernel.org
-Fixes: 5e35bd8e06b9 ("tpm_tis: make array cmd_getticks static const to shink object code size")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm_tis.c      |    2 +-
- drivers/char/tpm/tpm_tis_core.c |    4 ++--
- drivers/char/tpm/tpm_tis_core.h |    4 ++--
- drivers/char/tpm/tpm_tis_spi.c  |   25 +++++++++++--------------
- 4 files changed, 16 insertions(+), 19 deletions(-)
+ drivers/char/tpm/tpm_tis_core.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -98,7 +98,7 @@ static int tpm_tcg_read_bytes(struct tpm
- }
- 
- static int tpm_tcg_write_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
--			       u8 *value)
-+			       const u8 *value)
- {
- 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
- 
 --- a/drivers/char/tpm/tpm_tis_core.c
 +++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -257,7 +257,7 @@ out:
-  * tpm.c can skip polling for the data to be available as the interrupt is
-  * waited for here
-  */
--static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
-+static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
+@@ -208,7 +208,8 @@ static int tpm_tis_recv(struct tpm_chip
  {
  	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 	int rc, status, burstcnt;
-@@ -346,7 +346,7 @@ static void disable_interrupts(struct tp
-  * tpm.c can skip polling for the data to be available as the interrupt is
-  * waited for here
-  */
--static int tpm_tis_send_main(struct tpm_chip *chip, u8 *buf, size_t len)
-+static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 	int rc;
---- a/drivers/char/tpm/tpm_tis_core.h
-+++ b/drivers/char/tpm/tpm_tis_core.h
-@@ -98,7 +98,7 @@ struct tpm_tis_phy_ops {
- 	int (*read_bytes)(struct tpm_tis_data *data, u32 addr, u16 len,
- 			  u8 *result);
- 	int (*write_bytes)(struct tpm_tis_data *data, u32 addr, u16 len,
--			   u8 *value);
-+			   const u8 *value);
- 	int (*read16)(struct tpm_tis_data *data, u32 addr, u16 *result);
- 	int (*read32)(struct tpm_tis_data *data, u32 addr, u32 *result);
- 	int (*write32)(struct tpm_tis_data *data, u32 addr, u32 src);
-@@ -128,7 +128,7 @@ static inline int tpm_tis_read32(struct
- }
+ 	int size = 0;
+-	int expected, status;
++	int status;
++	u32 expected;
  
- static inline int tpm_tis_write_bytes(struct tpm_tis_data *data, u32 addr,
--				      u16 len, u8 *value)
-+				      u16 len, const u8 *value)
- {
- 	return data->phy_ops->write_bytes(data, addr, len, value);
- }
---- a/drivers/char/tpm/tpm_tis_spi.c
-+++ b/drivers/char/tpm/tpm_tis_spi.c
-@@ -58,7 +58,7 @@ static inline struct tpm_tis_spi_phy *to
- }
- 
- static int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
--				u8 *buffer, u8 direction)
-+				u8 *in, const u8 *out)
- {
- 	struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
- 	int ret = 0;
-@@ -72,7 +72,7 @@ static int tpm_tis_spi_transfer(struct t
- 	while (len) {
- 		transfer_len = min_t(u16, len, MAX_SPI_FRAMESIZE);
- 
--		phy->tx_buf[0] = direction | (transfer_len - 1);
-+		phy->tx_buf[0] = (in ? 0x80 : 0) | (transfer_len - 1);
- 		phy->tx_buf[1] = 0xd4;
- 		phy->tx_buf[2] = addr >> 8;
- 		phy->tx_buf[3] = addr;
-@@ -113,14 +113,8 @@ static int tpm_tis_spi_transfer(struct t
- 		spi_xfer.cs_change = 0;
- 		spi_xfer.len = transfer_len;
- 		spi_xfer.delay_usecs = 5;
--
--		if (direction) {
--			spi_xfer.tx_buf = NULL;
--			spi_xfer.rx_buf = buffer;
--		} else {
--			spi_xfer.tx_buf = buffer;
--			spi_xfer.rx_buf = NULL;
--		}
-+		spi_xfer.tx_buf = out;
-+		spi_xfer.rx_buf = in;
- 
- 		spi_message_init(&m);
- 		spi_message_add_tail(&spi_xfer, &m);
-@@ -129,7 +123,10 @@ static int tpm_tis_spi_transfer(struct t
- 			goto exit;
- 
- 		len -= transfer_len;
--		buffer += transfer_len;
-+		if (in)
-+			in += transfer_len;
-+		if (out)
-+			out += transfer_len;
+ 	if (count < TPM_HEADER_SIZE) {
+ 		size = -EIO;
+@@ -223,7 +224,7 @@ static int tpm_tis_recv(struct tpm_chip
  	}
  
- exit:
-@@ -140,13 +137,13 @@ exit:
- static int tpm_tis_spi_read_bytes(struct tpm_tis_data *data, u32 addr,
- 				  u16 len, u8 *result)
- {
--	return tpm_tis_spi_transfer(data, addr, len, result, 0x80);
-+	return tpm_tis_spi_transfer(data, addr, len, result, NULL);
- }
- 
- static int tpm_tis_spi_write_bytes(struct tpm_tis_data *data, u32 addr,
--				   u16 len, u8 *value)
-+				   u16 len, const u8 *value)
- {
--	return tpm_tis_spi_transfer(data, addr, len, value, 0);
-+	return tpm_tis_spi_transfer(data, addr, len, NULL, value);
- }
- 
- static int tpm_tis_spi_read16(struct tpm_tis_data *data, u32 addr, u16 *result)
+ 	expected = be32_to_cpu(*(__be32 *) (buf + 2));
+-	if (expected > count) {
++	if (expected > count || expected < TPM_HEADER_SIZE) {
+ 		size = -EIO;
+ 		goto out;
+ 	}
