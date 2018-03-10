@@ -1,69 +1,39 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1720711-1520641344-2-4648374699244544733
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520641344; b=mwzGS9rEAemeR81b/QNydUsZCOnKy1aHvWQcPJnRzyWjNBl
-    MgwPnhlj9tWJDbAo0r9AcGynFopqw+BckAWAsRqMC7RYFimadhY88G+S6YAoAXaR
-    y/45/3RGyIM/QdDcmjapVlCRObX+hLXoR3aXWGBBAMpXLdUtR0dWKuWyESWsiNEM
-    7r1GTciNtvicz0KsnpPuQMTCjHTDOcLibJ73+SPP2uPTHBwBfKIQVQVfM0PYcpUK
-    QSnSeBMIx5TKuLaUBlk8J21BgVBhXf97fiq6/r+CZCsCDmy5rgdBJOE2413mocPD
-    pXFYmT+V6FA4JlRroFblErfOGr2IuEKbH+BsghQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520641344; bh=QDzTNO4wsF3IIOXbXDcoT1BB0M
-    An/aQ5LnQsvJQXjds=; b=G4zBxIOG169KUz4SujuLVNq5oWlCBPziLURpzkjm0l
-    uWKkRMQ/OmpSTOSevMltMQVY+c1ciANfCFLRuCV2nEs9NuS+v6of7+1udzQaiUsN
-    sten7oksc5eX/BqqNnAJF1RsX4WjKhJ+yjnE9XMI12g88hv9o0otG/RWv2rCAyJw
-    itudMt9YycWUjG9fcmGZBxx5SFAL9znmZYt8mFbqJIYfkhaPEX9HPs2EriKRn/Ex
-    Ioa/TlSpyGrH2k+1qElL2JaPiLQaLAI62HWj2o7UaBD0MwP2C/tPWlscdZgHcQ4O
-    /XAnPfBMypzuoy8HwQMqWjOUl8hP2k7tPMV7jA0j9R1g==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751849AbeCJAWT (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Mar 2018 19:22:19 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39958 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933852AbeCJAWR (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:22:17 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELvmJFddNQOyqI9FtZW7IXbwtlRbRkCEKsUd+M4a7pUyszTOd/Lc9FNuPpBRXeLMCF7SsF/U
+ARC-Seal: i=1; a=rsa-sha256; t=1520641340; cv=none;
+        d=google.com; s=arc-20160816;
+        b=cfoeO266fYA8d4dsQNxmKoMPz7VrvIPoIOBjeMgO2sAb//Z68HkfPt6zGKnI+F/iZp
+         +Zts9OKqAilPJOJSbn0pWBAv1FujbZjPePfZtAtI9TvvfJJc8rnACG9yREL/Va7JuPle
+         ZZaC0Yo1ucckDULv/rq8mHw8PdIvHduPtjZXdWZr1M3uWY5Vt1aAOhBGvl0q5TM47oeJ
+         8oC0mfWqTSdBEqQfWOF0LrC2gV1Wy0arjgV6iHN353N0iGeQtEYcJlJtkjSZHn9scZQB
+         IRl5lOToUZ5er8CEK9b1P+wHQvSeUzFwjn7rbXBtyUuvaXjuWaeRGROJSPnOUupRb+7p
+         gtLw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=9vm0x5yKpzD24xBvO5Bg2m5bu54LhUKDplGAUc+2Bfg=;
+        b=FYEubNgPINQElTbvWI8ODQgNKzQMcn8OH7cqMmyGaxtV2mIOvmd9xn0rPLAVSm4g+O
+         6Jzi0lvq9ActMkDK3t6JxQyJpNpxlvD6on8U5nWoEsbF3Q73yVUIV68YlyOyDhjQ0Qvx
+         fkMFAvVEi99351ftG0jvTZ8UuoH8I9EPT3zfYc9ELTjI7fkRgDak/ii8rLSM5MRYHAQR
+         A7KenYNv8vUrbPx2JO5FCt9IUkB/gy4GNtFer3DbXeH7udZyKmMxE0LmqsYXC3nCrmeb
+         EFTe6MGIISLQowWN/SAAiPCSHfNUzPwA3S+WWWAL+g5nsN0DSZSQ3/ranv85iB6Hzbi3
+         7ueA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
-        David Howells <dhowells@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 46/65] rxrpc: Fix send in rxrpc_send_data_packet()
-Date: Fri,  9 Mar 2018 16:18:46 -0800
-Message-Id: <20180310001828.632814746@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	Oleksandr Natalenko <oleksandr@natalenko.name>,
+	Neal Cardwell <ncardwell@google.com>,
+	Soheil Hassas Yeganeh <soheil@google.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 47/65] tcp_bbr: better deal with suboptimal GSO
+Date: Fri,  9 Mar 2018 16:18:47 -0800
+Message-Id: <20180310001828.730500365@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
 References: <20180310001824.927996722@linuxfoundation.org>
@@ -71,9 +41,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594508014208492431?=
+X-GMAIL-MSGID: =?utf-8?q?1594508014208492431?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -81,35 +52,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Howells <dhowells@redhat.com>
+From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit 93c62c45ed5fad1b87e3a45835b251cd68de9c46 ]
+[ Upstream commit 350c9f484bde93ef229682eedd98cd5f74350f7f ]
 
-All the kernel_sendmsg() calls in rxrpc_send_data_packet() need to send
-both parts of the iov[] buffer, but one of them does not.  Fix it so that
-it does.
+BBR uses tcp_tso_autosize() in an attempt to probe what would be the
+burst sizes and to adjust cwnd in bbr_target_cwnd() with following
+gold formula :
 
-Without this, short IPv6 rxrpc DATA packets may be seen that have the rxrpc
-header included, but no payload.
+/* Allow enough full-sized skbs in flight to utilize end systems. */
+cwnd += 3 * bbr->tso_segs_goal;
 
-Fixes: 5a924b8951f8 ("rxrpc: Don't store the rxrpc header in the Tx queue sk_buffs")
-Reported-by: Marc Dionne <marc.dionne@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
+But GSO can be lacking or be constrained to very small
+units (ip link set dev ... gso_max_segs 2)
+
+What we really want is to have enough packets in flight so that both
+GSO and GRO are efficient.
+
+So in the case GSO is off or downgraded, we still want to have the same
+number of packets in flight as if GSO/TSO was fully operational, so
+that GRO can hopefully be working efficiently.
+
+To fix this issue, we make tcp_tso_autosize() unaware of
+sk->sk_gso_max_segs
+
+Only tcp_tso_segs() has to enforce the gso_max_segs limit.
+
+Tested:
+
+ethtool -K eth0 tso off gso off
+tc qd replace dev eth0 root pfifo_fast
+
+Before patch:
+for f in {1..5}; do ./super_netperf 1 -H lpaa24 -- -K bbr; done
+    691  (ss -temoi shows cwnd is stuck around 6 )
+    667
+    651
+    631
+    517
+
+After patch :
+# for f in {1..5}; do ./super_netperf 1 -H lpaa24 -- -K bbr; done
+   1733 (ss -temoi shows cwnd is around 386 )
+   1778
+   1746
+   1781
+   1718
+
+Fixes: 0f8782ea1497 ("tcp_bbr: add BBR congestion control")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/rxrpc/output.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/tcp_output.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/net/rxrpc/output.c
-+++ b/net/rxrpc/output.c
-@@ -391,7 +391,7 @@ send_fragmentable:
- 					(char *)&opt, sizeof(opt));
- 		if (ret == 0) {
- 			ret = kernel_sendmsg(conn->params.local->socket, &msg,
--					     iov, 1, iov[0].iov_len);
-+					     iov, 2, len);
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -1580,7 +1580,7 @@ u32 tcp_tso_autosize(const struct sock *
+ 	 */
+ 	segs = max_t(u32, bytes / mss_now, min_tso_segs);
  
- 			opt = IPV6_PMTUDISC_DO;
- 			kernel_setsockopt(conn->params.local->socket,
+-	return min_t(u32, segs, sk->sk_gso_max_segs);
++	return segs;
+ }
+ EXPORT_SYMBOL(tcp_tso_autosize);
+ 
+@@ -1592,8 +1592,10 @@ static u32 tcp_tso_segs(struct sock *sk,
+ 	const struct tcp_congestion_ops *ca_ops = inet_csk(sk)->icsk_ca_ops;
+ 	u32 tso_segs = ca_ops->tso_segs_goal ? ca_ops->tso_segs_goal(sk) : 0;
+ 
+-	return tso_segs ? :
+-		tcp_tso_autosize(sk, mss_now, sysctl_tcp_min_tso_segs);
++	if (!tso_segs)
++		tso_segs = tcp_tso_autosize(sk, mss_now,
++					    sysctl_tcp_min_tso_segs);
++	return min_t(u32, tso_segs, sk->sk_gso_max_segs);
+ }
+ 
+ /* Returns the portion of skb which can be sent right away */
