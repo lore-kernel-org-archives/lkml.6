@@ -1,97 +1,236 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752207AbeCJSoJ (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:44:09 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:41585 "EHLO
+        id S1752254AbeCJSou (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:44:50 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:46747 "EHLO
         mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932241AbeCJSU0 (ORCPT
+        with ESMTP id S932107AbeCJSUX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:20:26 -0500
-X-Google-Smtp-Source: AG47ELtONnCt1jyvpjpCjLWz+fNxa5ReyT4L3cIMsBDP0WDQKB+9deYhZblTNYt+HbmU5y5Ruf39Wg==
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: ivtv: use arch_phys_wc_add() and require PAT disabled
-From: Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15D100)
-In-Reply-To: <MWHPR03MB30402C0F8B8F457F5F760412D3DD0@MWHPR03MB3040.namprd03.prod.outlook.com>
-Date: Sat, 10 Mar 2018 10:20:23 -0800
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "hans.verkuil@cisco.com" <hans.verkuil@cisco.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
-Message-Id: <67E7293F-6045-4EA1-8AEF-E4B92E046581@amacapital.net>
-References: <DM5PR03MB3035EE1AFCEE298AFB15AC46D3C60@DM5PR03MB3035.namprd03.prod.outlook.com> <20180301171936.GU14069@wotan.suse.de> <DM5PR03MB303587F12D7E56B951730A76D3D90@DM5PR03MB3035.namprd03.prod.outlook.com> <20180307190205.GA14069@wotan.suse.de> <DM5PR03MB30352350D588A81D2D02BE93D3DF0@DM5PR03MB3035.namprd03.prod.outlook.com> <20180308040601.GQ14069@wotan.suse.de> <20180308041411.GR14069@wotan.suse.de> <DM5PR03MB3035CCBF9718D7E42B35357FD3DF0@DM5PR03MB3035.namprd03.prod.outlook.com> <MWHPR03MB30402C0F8B8F457F5F760412D3DD0@MWHPR03MB3040.namprd03.prod.outlook.com>
-To: "French, Nicholas A." <naf@ou.edu>
+        Sat, 10 Mar 2018 13:20:23 -0500
+X-Google-Smtp-Source: AG47ELvUmZWf0Jz4YA0eH3I/MRdvbGOSIJyA12429pzvou1cgZNQrWHIvrYOWFA2BBfAxxuhhoUnQw==
+From: Andiry Xu <jix024@eng.ucsd.edu>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org
+Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
+        swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
+        swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
+        Andiry Xu <jix024@cs.ucsd.edu>
+Subject: [RFC v2 06/83] Add inode get/read methods.
+Date: Sat, 10 Mar 2018 10:17:47 -0800
+Message-Id: <1520705944-6723-7-git-send-email-jix024@eng.ucsd.edu>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
+References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2AIiUnB018920
 
+From: Andiry Xu <jix024@cs.ucsd.edu>
 
+These routines are incomplete and currently only support reserved inodes,
+whose addresses are fixed. This is necessary for fill_super to work.
+File/dir operations are left NULL.
 
+Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
+---
+ fs/nova/inode.c | 176 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/nova/inode.h |   3 +
+ 2 files changed, 179 insertions(+)
+ create mode 100644 fs/nova/inode.c
 
-> On Mar 10, 2018, at 8:57 AM, French, Nicholas A. <naf@ou.edu> wrote:
-> 
->> On Wed, Mar 07, 2018 at 11:23:09PM -0600, French, Nicholas A. wrote:
->>> On Thu, Mar 08, 2018 at 04:14:11AM +0000, Luis R. Rodriguez wrote:
->>>> On Thu, Mar 08, 2018 at 04:06:01AM +0000, Luis R. Rodriguez wrote:
->>>>> On Thu, Mar 08, 2018 at 03:16:29AM +0000, French, Nicholas A. wrote:
->>>>> 
->>>>> Ah, I see. So my proposed ioremap_wc call was only "working" by aliasing the
->>>>> ioremap_nocache()'d mem area and not actually using write combining at all.
->>>> 
->>>> There are some debugging PAT toys out there I think but I haven't played with
->>>> them yet or I forgot how to to confirm or deny this sort of effort, but
->>>> likeley.
->>> 
->>> In fact come to think of it I believe some neurons are telling me that if
->>> two type does not match we'd get an error?
-> 
-> I can confirm that my original suggested patch just aliases to ivtv-driver's nocache mapping:
-> $ sudo modprobe ivtvfb
-> $ sudo dmesg
-> ...
-> x86/PAT: Overlap at 0xd5000000-0xd5800000
-> x86/PAT: reserve_memtype added [mem 0xd5510000-0xd56b0fff], track uncached-minus, req write-combining, ret uncached-minus
-> ivtvfb0: Framebuffer at 0xd5510000, mapped to 0x00000000c6a7ed52, size 1665k
-> ...
-> $ sudo cat /sys/kernel/debug/x86/pat_memtype_list | grep 0xd5
-> uncached-minus @ 0xd5000000-0xd5800000
-> uncached-minus @ 0xd5510000-0xd56b1000
-> 
-> So nix that.
-> 
->>> No what if the framebuffer driver is just requested as a secondary step
->>> after firmware loading?
->> 
->> Its a possibility. The decoder firmware gets loaded at the beginning of the decoder
->> memory range and we know its length, so its possible to ioremap_nocache enough
->> room for the firmware only on init and then ioremap the remaining non-firmware
->> decoder memory areas appropriately after the firmware load succeeds...
-> 
-> I looked in more detail, and this would be "hard" due to the way the rest of the
-> decoder offsets are determined by either making firmware calls or scanning the
-> decoder memory range for magic bytes and other mess.
-> 
-> I think some smart guy named mcgrof apparently came to the same conclusion 
-> in a really old email chain I found [https://lists.gt.net/linux/kernel/2387536]:
-> "The ivtv case is the *worst* example we can expect where the firmware
-> hides from us the exact ranges for write-combining, that we should somehow
-> just hope no one will ever do again."
-> :-)
-> 
->> Perhaps the easy answer is to change the fatal is-pat-enabled check to just a
->> warning like "you have PAT enabled, so wc is disabled for the framebuffer.
->> if you want wc, use the nopat parameter"?
-> 
-> I like this idea more and more. I haven't experience any problems running
-> with PAT-enabled and no write-combining on the framebuffer. Any objections?
-> 
-> 
-
-None from me. 
-
-However, since you have the hardware, you could see if you can use the change_page_attr machinery to change the memory type on the framebuffer once you figure out where it is.
+diff --git a/fs/nova/inode.c b/fs/nova/inode.c
+new file mode 100644
+index 0000000..bfdc5dc
+--- /dev/null
++++ b/fs/nova/inode.c
+@@ -0,0 +1,176 @@
++/*
++ * BRIEF DESCRIPTION
++ *
++ * Inode methods (allocate/free/read/write).
++ *
++ * Copyright 2015-2016 Regents of the University of California,
++ * UCSD Non-Volatile Systems Lab, Andiry Xu <jix024@cs.ucsd.edu>
++ * Copyright 2012-2013 Intel Corporation
++ * Copyright 2009-2011 Marco Stornelli <marco.stornelli@gmail.com>
++ * Copyright 2003 Sony Corporation
++ * Copyright 2003 Matsushita Electric Industrial Co., Ltd.
++ * 2003-2004 (c) MontaVista Software, Inc. , Steve Longerbeam
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2. This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#include <linux/fs.h>
++#include <linux/aio.h>
++#include <linux/highuid.h>
++#include <linux/module.h>
++#include <linux/mpage.h>
++#include <linux/backing-dev.h>
++#include <linux/types.h>
++#include <linux/ratelimit.h>
++#include "nova.h"
++#include "inode.h"
++
++unsigned int blk_type_to_shift[NOVA_BLOCK_TYPE_MAX] = {12, 21, 30};
++uint32_t blk_type_to_size[NOVA_BLOCK_TYPE_MAX] = {0x1000, 0x200000, 0x40000000};
++
++void nova_set_inode_flags(struct inode *inode, struct nova_inode *pi,
++	unsigned int flags)
++{
++	inode->i_flags &=
++		~(S_SYNC | S_APPEND | S_IMMUTABLE | S_NOATIME | S_DIRSYNC);
++	if (flags & FS_SYNC_FL)
++		inode->i_flags |= S_SYNC;
++	if (flags & FS_APPEND_FL)
++		inode->i_flags |= S_APPEND;
++	if (flags & FS_IMMUTABLE_FL)
++		inode->i_flags |= S_IMMUTABLE;
++	if (flags & FS_NOATIME_FL)
++		inode->i_flags |= S_NOATIME;
++	if (flags & FS_DIRSYNC_FL)
++		inode->i_flags |= S_DIRSYNC;
++	if (!pi->i_xattr)
++		inode_has_no_xattr(inode);
++	inode->i_flags |= S_DAX;
++}
++
++/* copy persistent state to struct inode */
++static int nova_read_inode(struct super_block *sb, struct inode *inode,
++	u64 pi_addr)
++{
++	struct nova_inode_info *si = NOVA_I(inode);
++	struct nova_inode *pi, fake_pi;
++	struct nova_inode_info_header *sih = &si->header;
++	int ret = -EIO;
++	unsigned long ino;
++
++	ret = nova_get_reference(sb, pi_addr, &fake_pi,
++			(void **)&pi, sizeof(struct nova_inode));
++	if (ret) {
++		nova_dbg("%s: read pi @ 0x%llx failed\n",
++				__func__, pi_addr);
++		goto bad_inode;
++	}
++
++	inode->i_mode = sih->i_mode;
++	i_uid_write(inode, le32_to_cpu(pi->i_uid));
++	i_gid_write(inode, le32_to_cpu(pi->i_gid));
++//	set_nlink(inode, le16_to_cpu(pi->i_links_count));
++	inode->i_generation = le32_to_cpu(pi->i_generation);
++	nova_set_inode_flags(inode, pi, le32_to_cpu(pi->i_flags));
++	ino = inode->i_ino;
++
++	/* check if the inode is active. */
++	if (inode->i_mode == 0 || pi->deleted == 1) {
++		/* this inode is deleted */
++		ret = -ESTALE;
++		goto bad_inode;
++	}
++
++	inode->i_blocks = sih->i_blocks;
++
++	switch (inode->i_mode & S_IFMT) {
++	case S_IFREG:
++		break;
++	case S_IFDIR:
++		break;
++	case S_IFLNK:
++		break;
++	default:
++		init_special_inode(inode, inode->i_mode,
++				   le32_to_cpu(pi->dev.rdev));
++		break;
++	}
++
++	/* Update size and time after rebuild the tree */
++	inode->i_size = le64_to_cpu(sih->i_size);
++	inode->i_atime.tv_sec = (__s32)le32_to_cpu(pi->i_atime);
++	inode->i_ctime.tv_sec = (__s32)le32_to_cpu(pi->i_ctime);
++	inode->i_mtime.tv_sec = (__s32)le32_to_cpu(pi->i_mtime);
++	inode->i_atime.tv_nsec = inode->i_mtime.tv_nsec =
++					 inode->i_ctime.tv_nsec = 0;
++	set_nlink(inode, le16_to_cpu(pi->i_links_count));
++	return 0;
++
++bad_inode:
++	make_bad_inode(inode);
++	return ret;
++}
++
++/* Get the address in PMEM of an inode by inode number.  Allocate additional
++ * block to store additional inodes if necessary.
++ */
++int nova_get_inode_address(struct super_block *sb, u64 ino,
++	u64 *pi_addr, int extendable)
++{
++	if (ino < NOVA_NORMAL_INODE_START) {
++		*pi_addr = nova_get_reserved_inode_addr(sb, ino);
++		return 0;
++	}
++
++	*pi_addr = 0;
++	return 0;
++}
++
++struct inode *nova_iget(struct super_block *sb, unsigned long ino)
++{
++	struct nova_inode_info *si;
++	struct inode *inode;
++	u64 pi_addr;
++	int err;
++
++	inode = iget_locked(sb, ino);
++	if (unlikely(!inode))
++		return ERR_PTR(-ENOMEM);
++	if (!(inode->i_state & I_NEW))
++		return inode;
++
++	si = NOVA_I(inode);
++
++	nova_dbgv("%s: inode %lu\n", __func__, ino);
++
++	err = nova_get_inode_address(sb, ino, &pi_addr, 0);
++	if (err) {
++		nova_dbg("%s: get inode %lu address failed %d\n",
++			 __func__, ino, err);
++		goto fail;
++	}
++
++	if (pi_addr == 0) {
++		nova_dbg("%s: failed to get pi_addr for inode %lu\n",
++			 __func__, ino);
++		err = -EACCES;
++		goto fail;
++	}
++
++	err = nova_read_inode(sb, inode, pi_addr);
++	if (unlikely(err)) {
++		nova_dbg("%s: failed to read inode %lu\n", __func__, ino);
++		goto fail;
++
++	}
++
++	inode->i_ino = ino;
++
++	unlock_new_inode(inode);
++	return inode;
++fail:
++	iget_failed(inode);
++	return ERR_PTR(err);
++}
++
+diff --git a/fs/nova/inode.h b/fs/nova/inode.h
+index f9187e3..dbd5256 100644
+--- a/fs/nova/inode.h
++++ b/fs/nova/inode.h
+@@ -184,4 +184,7 @@ static inline int nova_persist_inode(struct nova_inode *pi)
+ 	return 0;
+ }
+ 
++int nova_get_inode_address(struct super_block *sb, u64 ino,
++	u64 *pi_addr, int extendable);
++struct inode *nova_iget(struct super_block *sb, unsigned long ino);
+ #endif
+-- 
+2.7.4
