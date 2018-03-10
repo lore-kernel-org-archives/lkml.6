@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvb8OGHfeiz5yM/DS50YfWqevA0Xn1EHapPHadhFnfJK0WUiYLnvCUf3TW0a3oDfUJyQRHZ
-ARC-Seal: i=1; a=rsa-sha256; t=1520641326; cv=none;
+X-Google-Smtp-Source: AG47ELvkvv1IOwO+0MS+fMrqRICM2QSgr7TK94QUOcJWMUm2kFf6AkrZSMKN/aV4z9RrzUX+iTL8
+ARC-Seal: i=1; a=rsa-sha256; t=1520641324; cv=none;
         d=google.com; s=arc-20160816;
-        b=rEcuTwdL15E1uwZOnMTbnK1HOILe3u5hvBsIPQ5TVmqpOstKa8Dg+k1+9Q+D6c7Exn
-         ukeY7zGtYVU3nywIebVbIDDkDdYKXdrzVuhQhWqkoUx7BGoG67jniMRnTGhxFg4EgdPv
-         wV7/3h7dIpuILWBYxY2TigyPi4EqPhHYQYIcNeZv/oaDlN3jvYjHGSLo41Qo2ol4hB2d
-         Dxxg4ZKokYCE7JnyPlcCS7pH+Z03YvXc+YTHQqoYjHQChTa2pMEjrZDhDbiJBO/s7/pW
-         I9/c2cnOj6SfvBOaOtU0HiAHsoKdA42G49s0B3Hqkx2TwtvgFPh1ftBGIHBGEkkjzKHU
-         ip3g==
+        b=uto2EJFYgdfzOJpBwe4mUvx/4WtAFNys7V21CjaUQb7zlfmGKDIkt7xwMZtP6bEfCf
+         za2aBWCI1GPuNOsGRHxiSVZvBNugVK9GgOtapZcH1UYSoL0Z+zcQxuhSF9G0dRdXB0/a
+         6O2Jz5laZJqaIwgFZyQKof2Nyd8wEjT+GB4yf8d9mlbgEuSm8RlXzNtiZP3j856QoI70
+         zKxU8WTUUQjg8lyzJDox63cPDdYuc4w+TouSMBonfOsDmJf9MaNN0uyy5MNJpQT01G2W
+         TYlucP6LxbTfA6upeb+lmCndblfTX9hzuh0D76QGNOX6YseqdSTcFT2ieRBh3CzPRW1x
+         eQQA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4GtJyuHoh2E73h/B6sKwRNHvZcOjoNhCUhHXVuUr+rg=;
-        b=02EIJrmUkcdM2svAp5I8Smr+bd3PrdZAdC28JiJRl8vHLD/7SoieNq3BRXzt75Yhm6
-         DF00FBbou2bqGVd5n1YPv9a6N17N1BzrHQHYwwfs7N8kQkrc7ENKpeH5VtYcaBQnNWbs
-         LfHlkwFqplKzUMCLQzRVSr4jiAF4ZmtCJQGAtokIQshsELoixIp4+whIlpqfsCK0fYhy
-         xgDpInhN+/6bXJ17MfmRR9ccH8XFPdm/HOBxKn6VV5jydTxvboaTAXbQJAeWKPMs0MkG
-         x1e04V2sOXc0KM9x6UZJiuxu3LZfFEg3GaaSEdqPNABgoragNz8hU2Jluuzq9eBCdZZk
-         /DzQ==
+        bh=SGzH0W28TEH7Uc0dNkvzptp+25JvZJBtZift+pOWSAk=;
+        b=AMQpJZbZuotNPKApvHYhiE5JCdsts9zQTaNc4eIkrTkGGat/a3/JqutxabbjwqyVSp
+         zG9WJx8ZvIBIOB2K5Sr5koGD15feH35OmPW8yVCZiUy2wKWXgTOC270YwFE6rzWePFil
+         VcYE4Qf2OOv3NSDaIMBAF2w8WenFKD+OWHQjeTc2kd8PhmxunFS4/LfptesyMEeF2Hor
+         r/nZ0D7GTrs5UuamQENyJNONaUU/K2APAXq6jK8VthtA6azXMrGnHpV6p7lJz3acoIJ8
+         HF2l0qx5zQK4WNow92mjTz/qUj6gAuXVBrm4GefId4rAccNJWfkRS+35/Gd2Bne/93TQ
+         yjkw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alexey Kodanev <alexey.kodanev@oracle.com>,
+	Guillaume Nault <g.nault@alphalink.fr>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 41/65] udplite: fix partial checksum initialization
-Date: Fri,  9 Mar 2018 16:18:41 -0800
-Message-Id: <20180310001828.311663703@linuxfoundation.org>
+Subject: [PATCH 4.9 40/65] ppp: prevent unregistered channels from connecting to PPP units
+Date: Fri,  9 Mar 2018 16:18:40 -0800
+Message-Id: <20180310001828.239056622@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
 References: <20180310001824.927996722@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507822208256184?=
-X-GMAIL-MSGID: =?utf-8?q?1594507999368302961?=
+X-GMAIL-THRID: =?utf-8?q?1594507820152251435?=
+X-GMAIL-MSGID: =?utf-8?q?1594507997291838429?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,74 +49,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexey Kodanev <alexey.kodanev@oracle.com>
+From: Guillaume Nault <g.nault@alphalink.fr>
 
 
-[ Upstream commit 15f35d49c93f4fa9875235e7bf3e3783d2dd7a1b ]
+[ Upstream commit 77f840e3e5f09c6d7d727e85e6e08276dd813d11 ]
 
-Since UDP-Lite is always using checksum, the following path is
-triggered when calculating pseudo header for it:
+PPP units don't hold any reference on the channels connected to it.
+It is the channel's responsibility to ensure that it disconnects from
+its unit before being destroyed.
+In practice, this is ensured by ppp_unregister_channel() disconnecting
+the channel from the unit before dropping a reference on the channel.
 
-  udp4_csum_init() or udp6_csum_init()
-    skb_checksum_init_zero_check()
-      __skb_checksum_validate_complete()
+However, it is possible for an unregistered channel to connect to a PPP
+unit: register a channel with ppp_register_net_channel(), attach a
+/dev/ppp file to it with ioctl(PPPIOCATTCHAN), unregister the channel
+with ppp_unregister_channel() and finally connect the /dev/ppp file to
+a PPP unit with ioctl(PPPIOCCONNECT).
 
-The problem can appear if skb->len is less than CHECKSUM_BREAK. In
-this particular case __skb_checksum_validate_complete() also invokes
-__skb_checksum_complete(skb). If UDP-Lite is using partial checksum
-that covers only part of a packet, the function will return bad
-checksum and the packet will be dropped.
+Once in this situation, the channel is only held by the /dev/ppp file,
+which can be released at anytime and free the channel without letting
+the parent PPP unit know. Then the ppp structure ends up with dangling
+pointers in its ->channels list.
 
-It can be fixed if we skip skb_checksum_init_zero_check() and only
-set the required pseudo header checksum for UDP-Lite with partial
-checksum before udp4_csum_init()/udp6_csum_init() functions return.
+Prevent this scenario by forbidding unregistered channels from
+connecting to PPP units. This maintains the code logic by keeping
+ppp_unregister_channel() responsible from disconnecting the channel if
+necessary and avoids modification on the reference counting mechanism.
 
-Fixes: ed70fcfcee95 ("net: Call skb_checksum_init in IPv4")
-Fixes: e4f45b7f40bd ("net: Call skb_checksum_init in IPv6")
-Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+This issue seems to predate git history (successfully reproduced on
+Linux 2.6.26 and earlier PPP commits are unrelated).
+
+Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/udplite.h   |    1 +
- net/ipv4/udp.c          |    5 +++++
- net/ipv6/ip6_checksum.c |    5 +++++
- 3 files changed, 11 insertions(+)
+ drivers/net/ppp/ppp_generic.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/include/net/udplite.h
-+++ b/include/net/udplite.h
-@@ -62,6 +62,7 @@ static inline int udplite_checksum_init(
- 		UDP_SKB_CB(skb)->cscov = cscov;
- 		if (skb->ip_summed == CHECKSUM_COMPLETE)
- 			skb->ip_summed = CHECKSUM_NONE;
-+		skb->csum_valid = 0;
-         }
+--- a/drivers/net/ppp/ppp_generic.c
++++ b/drivers/net/ppp/ppp_generic.c
+@@ -3157,6 +3157,15 @@ ppp_connect_channel(struct channel *pch,
+ 		goto outl;
  
- 	return 0;
---- a/net/ipv4/udp.c
-+++ b/net/ipv4/udp.c
-@@ -1713,6 +1713,11 @@ static inline int udp4_csum_init(struct
- 		err = udplite_checksum_init(skb, uh);
- 		if (err)
- 			return err;
-+
-+		if (UDP_SKB_CB(skb)->partial_cov) {
-+			skb->csum = inet_compute_pseudo(skb, proto);
-+			return 0;
-+		}
- 	}
- 
- 	/* Note, we are only interested in != 0 or == 0, thus the
---- a/net/ipv6/ip6_checksum.c
-+++ b/net/ipv6/ip6_checksum.c
-@@ -72,6 +72,11 @@ int udp6_csum_init(struct sk_buff *skb,
- 		err = udplite_checksum_init(skb, uh);
- 		if (err)
- 			return err;
-+
-+		if (UDP_SKB_CB(skb)->partial_cov) {
-+			skb->csum = ip6_compute_pseudo(skb, proto);
-+			return 0;
-+		}
- 	}
- 
- 	/* To support RFC 6936 (allow zero checksum in UDP/IPV6 for tunnels)
+ 	ppp_lock(ppp);
++	spin_lock_bh(&pch->downl);
++	if (!pch->chan) {
++		/* Don't connect unregistered channels */
++		spin_unlock_bh(&pch->downl);
++		ppp_unlock(ppp);
++		ret = -ENOTCONN;
++		goto outl;
++	}
++	spin_unlock_bh(&pch->downl);
+ 	if (pch->file.hdrlen > ppp->file.hdrlen)
+ 		ppp->file.hdrlen = pch->file.hdrlen;
+ 	hdrlen = pch->file.hdrlen + 2;	/* for protocol bytes */
