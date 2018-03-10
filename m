@@ -1,164 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751290AbeCJTFT (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 14:05:19 -0500
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:44804 "EHLO
-        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751043AbeCJTFR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 14:05:17 -0500
-Date: Sat, 10 Mar 2018 14:04:27 -0500
-From: Neil Horman <nhorman@tuxdriver.com>
-To: Xin Long <lucien.xin@gmail.com>
-Cc: syzbot <syzbot+a4e4112c3aff00c8cfd8@syzkaller.appspotmail.com>,
-        davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-sctp@vger.kernel.org, network dev <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com, Vlad Yasevich <vyasevich@gmail.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Subject: Re: KASAN: use-after-free Read in sctp_association_free (2)
-Message-ID: <20180310190427.GA2484@neilslaptop.think-freely.org>
-References: <00000000000017dfe905670110cf@google.com>
- <20180309220823.GA24848@neilslaptop.think-freely.org>
- <CADvbK_fGkhJeirYwiu9ORmmPPBpqamgO2+vi9Osyd92cUWJBVA@mail.gmail.com>
- <20180310131355.GA8798@hmswarspite.think-freely.org>
- <CADvbK_cFjeC-eGdKzYnJxySBY6emVVC8KXQtzLDUZLJzBLb-UA@mail.gmail.com>
+        id S932128AbeCJTFz (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 14:05:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47744 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750971AbeCJTFx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 14:05:53 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A94572178B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
+X-Google-Smtp-Source: AG47ELt3bj9Ri8IDTF9G0PGxFcZ52YbJyV3eEJyTr50bvWmURSKE7s9skUhkAt+VcWOg8gfzFJmqrjbowrsavnsmg34=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADvbK_cFjeC-eGdKzYnJxySBY6emVVC8KXQtzLDUZLJzBLb-UA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-Spam-Score: -2.9 (--)
+In-Reply-To: <CAB=NE6VvDNbe=XsfG0tYeFcxcXzsRkHnZxVHM79-V+1t6foU5g@mail.gmail.com>
+References: <DM5PR03MB3035EE1AFCEE298AFB15AC46D3C60@DM5PR03MB3035.namprd03.prod.outlook.com>
+ <20180301171936.GU14069@wotan.suse.de> <DM5PR03MB303587F12D7E56B951730A76D3D90@DM5PR03MB3035.namprd03.prod.outlook.com>
+ <20180307190205.GA14069@wotan.suse.de> <DM5PR03MB30352350D588A81D2D02BE93D3DF0@DM5PR03MB3035.namprd03.prod.outlook.com>
+ <20180308040601.GQ14069@wotan.suse.de> <20180308041411.GR14069@wotan.suse.de>
+ <DM5PR03MB3035CCBF9718D7E42B35357FD3DF0@DM5PR03MB3035.namprd03.prod.outlook.com>
+ <MWHPR03MB30402C0F8B8F457F5F760412D3DD0@MWHPR03MB3040.namprd03.prod.outlook.com>
+ <CAB=NE6VvDNbe=XsfG0tYeFcxcXzsRkHnZxVHM79-V+1t6foU5g@mail.gmail.com>
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Date: Sat, 10 Mar 2018 11:05:31 -0800
+X-Gmail-Original-Message-ID: <CAB=NE6U5zedFXhTn_ozFHMm03D15m=-WwaaeQP7jtfPkugbL5Q@mail.gmail.com>
+Message-ID: <CAB=NE6U5zedFXhTn_ozFHMm03D15m=-WwaaeQP7jtfPkugbL5Q@mail.gmail.com>
+Subject: Re: ivtv: use arch_phys_wc_add() and require PAT disabled
+To: "French, Nicholas A." <naf@ou.edu>, Dave Airlie <airlied@linux.ie>
+Cc: Andy Lutomirski <luto@kernel.org>,
+        "hans.verkuil@cisco.com" <hans.verkuil@cisco.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 11, 2018 at 12:22:32AM +0800, Xin Long wrote:
-> On Sat, Mar 10, 2018 at 9:13 PM, Neil Horman <nhorman@tuxdriver.com> wrote:
-> > On Sat, Mar 10, 2018 at 03:58:04PM +0800, Xin Long wrote:
-> >> On Sat, Mar 10, 2018 at 6:08 AM, Neil Horman <nhorman@tuxdriver.com> wrote:
-> >> > On Fri, Mar 09, 2018 at 12:59:06PM -0800, syzbot wrote:
-> >> >> Hello,
-> >> >>
-> >> >> syzbot hit the following crash on net-next commit
-> >> >> fd372a7a9e5e9d8011a0222d10edd3523abcd3b1 (Thu Mar 8 19:43:48 2018 +0000)
-> >> >> Merge tag 'mlx5-updates-2018-02-28-2' of
-> >> >> git://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux
-> >> >>
-> >> >> So far this crash happened 2 times on net-next.
-> >> >> C reproducer is attached.
-> >> >> syzkaller reproducer is attached.
-> >> >> Raw console output is attached.
-> >> >> compiler: gcc (GCC) 7.1.1 20170620
-> >> >> .config is attached.
-> >> >>
-> >> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> >> >> Reported-by: syzbot+a4e4112c3aff00c8cfd8@syzkaller.appspotmail.com
-> >> >> It will help syzbot understand when the bug is fixed. See footer for
-> >> >> details.
-> >> >> If you forward the report, please keep this part and the footer.
-> >> >>
-> >> >> IPVS: ftp: loaded support on port[0] = 21
-> >> >> IPVS: ftp: loaded support on port[0] = 21
-> >> >> IPVS: ftp: loaded support on port[0] = 21
-> >> >> IPVS: ftp: loaded support on port[0] = 21
-> >> >> ==================================================================
-> >> >> BUG: KASAN: use-after-free in sctp_association_free+0x7b7/0x930
-> >> >> net/sctp/associola.c:332
-> >> >> Read of size 8 at addr ffff8801d8006ae0 by task syzkaller914861/4202
-> >> >>
-> >> >> CPU: 1 PID: 4202 Comm: syzkaller914861 Not tainted 4.16.0-rc4+ #258
-> >> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> >> >> Google 01/01/2011
-> >> >> Call Trace:
-> >> >>  __dump_stack lib/dump_stack.c:17 [inline]
-> >> >>  dump_stack+0x194/0x24d lib/dump_stack.c:53
-> >> >>  print_address_description+0x73/0x250 mm/kasan/report.c:256
-> >> >>  kasan_report_error mm/kasan/report.c:354 [inline]
-> >> >>  kasan_report+0x23c/0x360 mm/kasan/report.c:412
-> >> >>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-> >> >>  sctp_association_free+0x7b7/0x930 net/sctp/associola.c:332
-> >> >>  sctp_sendmsg+0xc67/0x1a80 net/sctp/socket.c:2075
-> >> >>  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:763
-> >> >>  sock_sendmsg_nosec net/socket.c:629 [inline]
-> >> >>  sock_sendmsg+0xca/0x110 net/socket.c:639
-> >> >>  SYSC_sendto+0x361/0x5c0 net/socket.c:1748
-> >> >>  SyS_sendto+0x40/0x50 net/socket.c:1716
-> >> >>  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-> >> >>  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> >> >> RIP: 0033:0x446d09
-> >> >> RSP: 002b:00007f5dbac21da8 EFLAGS: 00000216 ORIG_RAX: 000000000000002c
-> >> >> RAX: ffffffffffffffda RBX: 00000000006e29fc RCX: 0000000000446d09
-> >> >> RDX: 0000000000000001 RSI: 0000000020000340 RDI: 0000000000000003
-> >> >> RBP: 00000000006e29f8 R08: 00000000204d9000 R09: 000000000000001c
-> >> >> R10: 0000000000000000 R11: 0000000000000216 R12: 0000000000000000
-> >> >> R13: 00007fff7b26fb1f R14: 00007f5dbac229c0 R15: 00000000006e2b60
-> >> >>
-> >> > I think we have a corner case with a0ff660058b88d12625a783ce9e5c1371c87951f
-> >> > here.  If a peeloff event happens during a wait for sendbuf space, EPIPE will be
-> >> > returned, and the code path appears to call sctp_association_put twice, leading
-> >> > to the use after free situation.  I'll write a patch this weekend
-> >> Hi, Neil, you're right.
-> >>
-> >> I didn't expect peeloff can be done on a NEW asoc, as peeloff needs
-> >> assoc_id, which can only be set when connecting has started.
-> >>
-> >> But I realized that:
-> >> f84af33 sctp: factor out sctp_sendmsg_to_asoc from sctp_sendmsg
-> >>
-> >> moved sctp_primitive_ASSOCIATE(connecting) before sctp_wait_for_sndbuf
-> >> (snd buffer waiting). It means peeloff can be done on a NEW asoc.
-> >> So you may want to move it back.
-> >>
-> > I agree with the root cause, but I'm not sure I agree with just moving the
-> > wait_for_sndbuf call back above the call to associate.  I'm not sure I like
-> > relying on placing a call in a spcific order solely to avoid an error condition
-> > that might legitimately occur.  I think would rather check the return code at
-> > the call site for the complete set of conditions for which we should not free
-> > the association.  Something like this:
-> >
-> > diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-> > index 7d3476a4860d..a68846d2b0ef 100644
-> > --- a/net/sctp/socket.c
-> > +++ b/net/sctp/socket.c
-> > @@ -2071,8 +2071,9 @@ static int sctp_sendmsg(struct sock *sk, struct msghdr *msg, size_t msg_len)
-> >
-> >         /* Send msg to the asoc */
-> >         err = sctp_sendmsg_to_asoc(asoc, msg, msg_len, transport, sinfo);
-> > -       if (err < 0 && err != -ESRCH && new)
-> > -               sctp_association_free(asoc);
-> > +       if ((err != -ESRCH) && (err != -EPIPE))
-> > +               if (err < 0 && new)
-> > +                       sctp_association_free(asoc);
-> >
-> >  out_unlock:
-> >         release_sock(sk);
-> >
-> > Which I think also avoids the noted conflict.
-> >
-> > Thoughts?
-> If sctp_association_free is called for general asoc, yes, I agree with you.
-> But it's actually only for NEW asoc, a special case, not worth a extra check.
-> 'err != -ESRCH' is already kind of ugly there (I couldn't find a nicer way :D),
-> I don't hope there will be more like that.
-> 
-I agree with you on the uglyness aspect of the return code check, but I really
-don't like the idea of placing the call to wait_for_sndbuf to guarantee a given
-error code isn't returned, It just feels rickety to me.
+On Sat, Mar 10, 2018 at 11:03 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
+> On Sat, Mar 10, 2018 at 8:57 AM, French, Nicholas A. <naf@ou.edu> wrote:
+>> On Wed, Mar 07, 2018 at 11:23:09PM -0600, French, Nicholas A. wrote:
+>>> On Thu, Mar 08, 2018 at 04:14:11AM +0000, Luis R. Rodriguez wrote:
+>>> > On Thu, Mar 08, 2018 at 04:06:01AM +0000, Luis R. Rodriguez wrote:
+>>> > > On Thu, Mar 08, 2018 at 03:16:29AM +0000, French, Nicholas A. wrote:
+>>> > > >
+>>> > > > Ah, I see. So my proposed ioremap_wc call was only "working" by aliasing the
+>>> > > > ioremap_nocache()'d mem area and not actually using write combining at all.
+>>> > >
+>>> > > There are some debugging PAT toys out there I think but I haven't played with
+>>> > > them yet or I forgot how to to confirm or deny this sort of effort, but
+>>> > > likeley.
+>>> >
+>>> >  In fact come to think of it I believe some neurons are telling me that if
+>>> >  two type does not match we'd get an error?
+>>
+>> I can confirm that my original suggested patch just aliases to ivtv-driver's nocache mapping:
+>> $ sudo modprobe ivtvfb
+>> $ sudo dmesg
+>> ...
+>> x86/PAT: Overlap at 0xd5000000-0xd5800000
+>> x86/PAT: reserve_memtype added [mem 0xd5510000-0xd56b0fff], track uncached-minus, req write-combining, ret uncached-minus
+>> ivtvfb0: Framebuffer at 0xd5510000, mapped to 0x00000000c6a7ed52, size 1665k
+>> ...
+>> $ sudo cat /sys/kernel/debug/x86/pat_memtype_list | grep 0xd5
+>> uncached-minus @ 0xd5000000-0xd5800000
+>> uncached-minus @ 0xd5510000-0xd56b1000
+>>
+>> So nix that.
+>>
+>>> > No what if the framebuffer driver is just requested as a secondary step
+>>> > after firmware loading?
+>>>
+>>> Its a possibility. The decoder firmware gets loaded at the beginning of the decoder
+>>> memory range and we know its length, so its possible to ioremap_nocache enough
+>>> room for the firmware only on init and then ioremap the remaining non-firmware
+>>> decoder memory areas appropriately after the firmware load succeeds...
+>>
+>> I looked in more detail, and this would be "hard" due to the way the rest of the
+>> decoder offsets are determined by either making firmware calls or scanning the
+>> decoder memory range for magic bytes and other mess.
+>>
+>> I think some smart guy named mcgrof apparently came to the same conclusion
+>> in a really old email chain I found [https://lists.gt.net/linux/kernel/2387536]:
+>> "The ivtv case is the *worst* example we can expect where the firmware
+>> hides from us the exact ranges for write-combining, that we should somehow
+>> just hope no one will ever do again."
+>> :-)
+>
+> This is tribal knowledge worth formalizing a bit more for the long run
+> for this ivtv driver.
+>
+>>> Perhaps the easy answer is to change the fatal is-pat-enabled check to just a
+>>> warning like "you have PAT enabled, so wc is disabled for the framebuffer.
+>>> if you want wc, use the nopat parameter"?
+>>
+>> I like this idea more and more. I haven't experience any problems running
+>> with PAT-enabled and no write-combining on the framebuffer. Any objections?
+>
+> I think its worth it, and perhaps best folded under a new kernel
+> parameter option which also documents the limitation noted above,
+> thereby knocking two birds with one stone. This way also users who
+> *want* to opt-in to PAT do so willing-fully and knowing of the
+> limitation. The kconfig option can just enable a module parameter to a
+> default value, which if the kconfig is disabled would otherwise be
+> unset.
+>
+> static bool ivtv_force_pat = IS_ENABLED(CONFIG_IVTV_WHATEVER);
+> module_param_named(force_pat, ivtv_force_pat, bool, S_IRUGO | S_IWUSR);
 
-> And also, I think I moved sctp_primitive_ASSOCIATE before
-> sctp_wait_for_sndbuf by accident in that patch(Sorry), which may
-> already change some behavior. We have to move it back.
-> 
-It seemed to me you did that specifically to enable the check for peeloff
-events.  That is to say, if you check the socket write space first on a new
-association, and then  get a peeloff event, the write space might have changed
-(though I suppose in fairness, we will always be operating the old socket, so
-the write space will only grow larger).  Either way there should be nothing
-really wrong with checking write space after we preform the association.
+And  I wonder if its better to have a generic kconfig option so that
+in case other drivers have similar issue they can make use of it as
+well. For now that's a non-issue, but worth pointing out if we're
+going to do this for more than one driver later.
 
-But I suppose that moving it back is the safer approach.  It would be nice to
-eliminate that odd error check as well if we can, but I'll start with just
-returning the positioning to the way it was, and look to improve it later.  I'll
-post the patch once I confirm the build works
-
-Neil
+ Luis
