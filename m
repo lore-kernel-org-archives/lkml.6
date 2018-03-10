@@ -1,137 +1,115 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2795102-1520937340-2-1597905503530569180
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3746915-1520706232-2-7608728872680338236
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='uk', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='net', MailFrom='org'
+X-Spam-charsets: to='UTF-8', plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520937339; b=L8FJ4NN5mu1uy2D1oF44rJomMdYnYqOQemQymzpSaDWhysX
-    tjT9gByk9dqhNn5UAyNjs9DOZ6AHLSJfXi+YBKhG6z5IFA9El5hCcNENHjLEZ4NR
-    7dOL7HdnpNI3ljrCrtn80ObsLX+3x0dtBNPdboXR7rC+y1H3rm7WiU7sw/ovm9Fw
-    LGaRBLv4xC2O3xUjnjnuNrafwmh1fGsa+nUx+hbC/pYh3ILc3cyoyTr6ir1vTde0
-    /SiB1+y8yu5PLUwksJSzoocJ+m9vGOMkMwp8NxJKsnOq0M56vY3wsCJnlFcYO9jW
-    rkl4gd6sY+w88AMzhJ0RW7pj5t2ah20cgh0hEjw==
+    t=1520706231; b=eqScBf016LLkeRr17zI/zORBWi+Txu/EL+FlFXtMJtscGw4
+    cibP3daIAGuKnCwLTO0gNfCygK1D70nPHQkE4IZeWONjIj9vgJw22ZKrsSObdwUP
+    U/hJmXzmVqFGu5udct9lW6xZqthgGVHf452uo/mJEoEWC8mRJKsh3TMHw4iTn9EM
+    J1p8rJiHiX+fI3IoH3B5w++lknV7/2b2lH7C7SJDPsgnYJ/HdFe2Y4gvidqRJQQ1
+    0y596A/44BkvGX+4PwejnMFqAwk//nV69TvGFeka+LWZNpyriUy1cSE+BoJ0mzql
+    RcyJaZbdL9T+dRZstbJHBrQLprHrJLdmqlYSdyA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:references:from:message-id
-    :date:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc
-    :content-transfer-encoding:content-type:sender; s=arctest; t=
-    1520937339; bh=j5AnKWXsR6eHJq7K428EJi9ylyNjiPXvo5kXgcoAE+k=; b=t
-    UALv8UHwmWndvjFgdz9+l0nB6r8Ms22KCVH+aJ2b+BStlrwzREjaiZvO5+VYMJjW
-    K93N2qvqGUdhi4ippcYAX89jgCfFj2IsqHZ/M7Wec8Qvn1pEpFO6x0Rx+1a7juUs
-    DKB3+SDXXdWsEn3srN8706T8PEYxbhNxjoPNGsbqUqKg847ilkBu0D8gHbH082lW
-    sVZLExyNO+r7UtgSwgWzZTKm9v96S4rNtO0KFTEHD7EL6NQ1rGr9mrwIJet41vOO
-    2hIK5WAGnfA7ZATyLmO8YNMuTVjF7diBThS+fhhg7lXouBnOubHisjkqaYY5f9vm
-    2yz6jZyGS4l5l6sDFwZBg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=to:cc:from:subject:message-id:date
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=arctest; t=1520706231; bh=bt2n4zD2vfqWohSooZm+eYO4/m
+    75M6iOWx8w7E1H6rg=; b=vGEalRVFnJDEI+EAszvQyGNr4PyDQtr16nQN+WuO4e
+    IxJ9vwtz8MCQJboO+caPfQ4z5ut0rAsuBxG8aHZHaBLCOiYqw3KUYBg7EXR0N+9t
+    yQZd/z5kK+pBlorQ/TGTukKkAvqcI/7ggZwVGvsc12+uoAz2/39Fa/CVIZpVPjrI
+    HRSW4FecedV4zrrQL+39XD4rfprquFAUFOX+/ef4yURUgsSj89pACOEyEVpB9Sbw
+    pUc4oarmFNb8XRurJZPcqE82dZ0jdt45tK9msf68/hrJ0Iyn9ntgjY05sfCwaYQy
+    0lFNfJF9b2C2yMG3VQjAYKwlvBRNtRr1sf8EH3jQDBgw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mev.co.uk;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=none) header.from=users.sourceforge.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=mev.co.uk header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx3.messagingengine.com;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=users.sourceforge.net header.result=pass header_org.domain=sourceforge.net header_org.result=pass header_is_org_domain=no
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mev.co.uk;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=none) header.from=users.sourceforge.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=mev.co.uk header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Auth-ID: siepeng@mev.co.uk
-X-Sender-Id: siepeng@mev.co.uk
-Subject: Re: [PATCH] staging: comedi: adl_pci6208: remove redundant
- initialization of 'val'
-To: Colin King <colin.king@canonical.com>,
- H Hartley Sweeten <hsweeten@visionengravers.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
-References: <20180312233605.8643-1-colin.king@canonical.com>
-From: Ian Abbott <abbotti@mev.co.uk>
-Message-ID: <f3155983-cf67-2f78-f0f5-7a3acb041ab2@mev.co.uk>
-Date: Tue, 13 Mar 2018 10:35:29 +0000
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=users.sourceforge.net header.result=pass header_org.domain=sourceforge.net header_org.result=pass header_is_org_domain=no
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933036AbeCJSX0 (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 10 Mar 2018 13:23:26 -0500
+Received: from mout.web.de ([212.227.15.4]:52567 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932844AbeCJSXX (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Sat, 10 Mar 2018 13:23:23 -0500
+To: linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+        "Andrew F. Davis" <afd@ti.com>,
+        =?UTF-8?Q?Bj=c3=b8rn_Mork?= <bjorn@mork.no>,
+        "David S. Miller" <davem@davemloft.net>,
+        Philippe Reynes <tremyfr@gmail.com>,
+        Yuval Shaia <yuval.shaia@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/2] net/usb/ax88179_178a: Adjustments for ax88179_chk_eee()
+Message-ID: <b92bebdb-c1dc-a9d3-2e3a-845d8dc4998f@users.sourceforge.net>
+Date: Sat, 10 Mar 2018 19:22:55 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180312233605.8643-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-Provags-ID: V03:K0:CoM+/lB2z7p+4ZniU88cu3aj0GkFHjc9WllkH1j2U/nobN2/ZrN
+ A58qFiiFS6hQkkhW5UBwicarSMCGcBBG+bWfcMGv6THTPpNWsDfZC1+D/tN2TQYOxdMfzFF
+ 12DfT5ZLYsj94it4FEHrGPPD0BioBhdUHtJ0f0Xbo+LziQg3cTyLQ65H1OB0YW6FrII+W39
+ 1cYdIr3G+X55dBu5lCfIw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:3gbuS/zldG0=:RIo7dUAZJTIEpX6sHoSLq8
+ yxIHAIHxO0UnEZRWC4cCbMEdx5xfN/ZR0UZbDJ+9O6coG8axQCJNNXkvfTaSxkUmPxlBuNIjW
+ 0/0eWnQAw2KHZAgOPnuXR6P31suX84gCliZBTKoFzHxpLVbiWEDYzLjoW6y9bsRcyXsPyXtmH
+ lQIwgWvrSKNsR4JLSjXMfrsbE4pmC+Anh4creiQk6TxSWulmJD/FaKtRp7PYi+DXdHZBZANJ4
+ eLKvhoIeMV/J5kTq9OIO8FlM+JLr6ELjcCi7qWnQDh1qQO0REs6uuyp3CFktJ8duX9Qt2eQie
+ 3DkX8nbeCQ7/p8fKq3LOST2BRjytBvswkG7dzUNJnpqQWS2q9epM4hCU93oGrgKlfe3SL491m
+ 3foMTi6ZFmwGAG7VyCmm1P/LmISU/A/xTkYdtF+I6pKRV2xu4TMa+z5K0G4siHscPljkRsldK
+ zCg+RPYzefsgI6fSsFeOn8dfxtNoRKwpVsrivHqZM8Yb/qaZr0nlcnhm2D+4FkV4Tj2Q/qnxh
+ sxphkU9YNp1dhOn0LvPEt54xTmk0d58PmwLluwxMzqECK91sKx3gGPS/v3omWWNAR4R7ELnsY
+ sZxH06RXOy3/R8PNEaz/MnHZRIdkWUszRzQOCa+wYU+p9Z0czXG3RzL7oHJygwptDoAB7Hun5
+ 558eQbggJooUD2KfYis3vvP6Ll5o/3Xd7KLiaO9xbISRAM/z7lnjkQlSqK4QJkadk4Y7yS50z
+ oABxn+A42lMA2Ktq/tRWKs2ZxALOdS62F56pXrz1tuh6jFefihhjZX3DAd9yM7p968IzOwHTr
+ xhDA7rUoKaDn8vo41vJQY8zIRcUcbS3AqInmU+sbWyBmpvaijI=
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 12/03/18 23:36, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable 'val' is initialized with a value that is never read, it is
-> updated with a new value again after intitialization. Remove the
-> redundant initialization and move the declaration and assignment into
-> the scope of the for-loop.
-> 
-> Cleans up clang warning:
-> drivers/staging/comedi/drivers/adl_pci6208.c:61:15: warning: Value
-> stored to 'val' during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/staging/comedi/drivers/adl_pci6208.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/comedi/drivers/adl_pci6208.c b/drivers/staging/comedi/drivers/adl_pci6208.c
-> index d39b4eabce8d..e21840e9002d 100644
-> --- a/drivers/staging/comedi/drivers/adl_pci6208.c
-> +++ b/drivers/staging/comedi/drivers/adl_pci6208.c
-> @@ -58,12 +58,11 @@ static int pci6208_ao_insn_write(struct comedi_device *dev,
->   				 unsigned int *data)
->   {
->   	unsigned int chan = CR_CHAN(insn->chanspec);
-> -	unsigned int val = s->readback[chan];
->   	int ret;
->   	int i;
->   
->   	for (i = 0; i < insn->n; i++) {
-> -		val = data[i];
-> +		unsigned int val = data[i];
->   
->   		/* D/A transfer rate is 2.2us */
->   		ret = comedi_timeout(dev, s, insn, pci6208_ao_eoc, 0);
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 10 Mar 2018 19:05:45 +0100
 
-Looks good, thanks!
+Two update suggestions were taken into account
+from static source code analysis.
 
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+Markus Elfring (2):
+  Use common code
+  Delete three unnecessary variables
+
+ drivers/net/usb/ax88179_178a.c | 45 +++++++++++++++---------------------------
+ 1 file changed, 16 insertions(+), 29 deletions(-)
 
 -- 
--=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk> )=-
--=(                          Web: http://www.mev.co.uk/  )=-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+2.16.2
+
