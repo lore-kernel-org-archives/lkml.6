@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtoFlEbWKqwLTyssCmhirWVvepLUe6Hq1VvwlfYQl/tvRxD5+Lpr+HiaM/w+gHh6bXEb+zI
-ARC-Seal: i=1; a=rsa-sha256; t=1520641286; cv=none;
+X-Google-Smtp-Source: AG47ELu0mX9Ug02FHI7fN2GzceEn9mr9hSrzx53OyTvocFOW+BjJNBFizyceSt9+LCCXiePtj8SG
+ARC-Seal: i=1; a=rsa-sha256; t=1520641284; cv=none;
         d=google.com; s=arc-20160816;
-        b=qpKfbCOyLTBFORdImK4uRf0UZ++PMO5eblVedZTlWqAE1tw+NAHnaCZgHAJnqYNE5w
-         ZCLeHZ/NFXYrpzX+CO7ZhWhYnV0MEWO5dNAm/6QMjyD3vL0dF1Xd1NeCXpBlQ/KL6edA
-         fCPkZVGlaZiKVB7/x2BNZpknjtXUzS/Yr/JAJm5kUOAx3GI01b6Dee0uUjzVY6nUbSe2
-         kSxV7Gc7zwAabjMvuJlJ2T+ec1F+WtSROtjGzIhfmsaSSqW3Uhg/pJwAQtI62kwPVn5S
-         XXjQNXqqC/9qAyyYeJMwaxprBvOzbdLmwE3QzwJmIkQQLaSGRWFXnF9NGim0XOq/3ZzY
-         dzCQ==
+        b=bsP2sS3JYOK3R+2/qg7kACTNog1rEuXMF5T3P5fVd1vSbQK7Ite9+FGek10ZAPCbHO
+         FzeC36f2agAVDqIXfI9thcLENIbidnW4GJlvaPZijkbD3n7yC8XCad2bjq+OOKVgG/Ln
+         S2JU3qDSbw9UCDZ2fQpIOFSWeubApJXMibiDB4vTOTao0SW0dF6OaqYWUfpPTz5/mlsx
+         E1FfKUeeFkC4sDOOkEcMBvliG4GFhAaG8EYS15nwyd/bjDbjHyztkGY6Rr6xTaOxjVUo
+         ge90VuIJWHKeKawArsuJ1E1EoRPLUUvG0oKD0rNUNRkKTAWWvDKR9VckWM9QQ9yWpnyW
+         0PZg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Y1BaT9juZM0fr23+lwOFS/Dx8ULYnTPV2u9fLxQKqcU=;
-        b=ZEwAxemFV9S/0NpsgMowwUyUiZtCDgT+J4ATNOgFtARCAH+sbTwm+TB40q/GIVeUZZ
-         J8LVUE6o+W20cgtaeOz5OC3KUovaDo+TWKYorP+WDM8aUu/tKNzCix8BeuRfiOuofCAh
-         usmIt9RwOy6z99qw19mLQl7mAhQPQL12nARvA3Kzs5Mw0ggxXg488BPp976dUmQ46JFV
-         guYmGLHnXAXn89qxbIYsDvSFX4SSLB/x8i5UY8//rSwBk2y0mnb7KRLRqXumvOyzp8hp
-         THufoHiM/es4lFaKCxdYMmMae/MM63gIlUrPwGyNDKsHBddRKyT/9pRL2ktiXsjWThNw
-         LHeQ==
+        bh=oqTS2s6PCDk8FpeqKIm7WjVx5ndpnupPjxqY8nRo7Fk=;
+        b=qYjHn4BPqTUoXq5lGN00ocLM8QuommK7tXXS1w/n1Yt2szcPaiR6pmdPLYvybIOYpX
+         5fcF7lriwkUGul3CLv1Z+lkRcye+Tdu0YjwZp5yjuVYavE30p+6X9snZ+/Q5l2I9xY8S
+         2RyVRX02yDdKK8ZmpEBXdRRGIOxiKzjgtjnu3T+MtEhMNBNEbIa8JwkMgAigyUzyqjnI
+         8uTioBAK/tUyVHUCvfxxuVxZ3lVuqf63+L/a12p3OKdWqPuWcc57JveRbS1oLQbWkvZW
+         yhUVxu8hyOweCZtheQ8dcobDU0E3sFao+A6lh02rH/5u336QCgV9qHh5qiCyyEdNZtgX
+         kOvQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	Eric Biggers <ebiggers3@gmail.com>,
-	Wanpeng Li <wanpeng.li@hotmail.com>
-Subject: [PATCH 4.9 21/65] KVM: mmu: Fix overlap between public and private memslots
-Date: Fri,  9 Mar 2018 16:18:21 -0800
-Message-Id: <20180310001826.622986326@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Christoffer Dall <christoffer.dall@linaro.org>
+Subject: [PATCH 4.9 20/65] ARM: kvm: fix building with gcc-8
+Date: Fri,  9 Mar 2018 16:18:20 -0800
+Message-Id: <20180310001826.586782429@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
 References: <20180310001824.927996722@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507846754131769?=
-X-GMAIL-MSGID: =?utf-8?q?1594507957683652832?=
+X-GMAIL-THRID: =?utf-8?q?1594507955197198315?=
+X-GMAIL-MSGID: =?utf-8?q?1594507955197198315?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,108 +49,77 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Wanpeng Li <wanpeng.li@hotmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit b28676bb8ae4569cced423dc2a88f7cb319d5379 upstream.
+commit 67870eb1204223598ea6d8a4467b482e9f5875b5 upstream.
 
-Reported by syzkaller:
+In banked-sr.c, we use a top-level '__asm__(".arch_extension virt")'
+statement to allow compilation of a multi-CPU kernel for ARMv6
+and older ARMv7-A that don't normally support access to the banked
+registers.
 
-    pte_list_remove: ffff9714eb1f8078 0->BUG
-    ------------[ cut here ]------------
-    kernel BUG at arch/x86/kvm/mmu.c:1157!
-    invalid opcode: 0000 [#1] SMP
-    RIP: 0010:pte_list_remove+0x11b/0x120 [kvm]
-    Call Trace:
-     drop_spte+0x83/0xb0 [kvm]
-     mmu_page_zap_pte+0xcc/0xe0 [kvm]
-     kvm_mmu_prepare_zap_page+0x81/0x4a0 [kvm]
-     kvm_mmu_invalidate_zap_all_pages+0x159/0x220 [kvm]
-     kvm_arch_flush_shadow_all+0xe/0x10 [kvm]
-     kvm_mmu_notifier_release+0x6c/0xa0 [kvm]
-     ? kvm_mmu_notifier_release+0x5/0xa0 [kvm]
-     __mmu_notifier_release+0x79/0x110
-     ? __mmu_notifier_release+0x5/0x110
-     exit_mmap+0x15a/0x170
-     ? do_exit+0x281/0xcb0
-     mmput+0x66/0x160
-     do_exit+0x2c9/0xcb0
-     ? __context_tracking_exit.part.5+0x4a/0x150
-     do_group_exit+0x50/0xd0
-     SyS_exit_group+0x14/0x20
-     do_syscall_64+0x73/0x1f0
-     entry_SYSCALL64_slow_path+0x25/0x25
+This is considered to be a programming error by the gcc developers
+and will no longer work in gcc-8, where we now get a build error:
 
-The reason is that when creates new memslot, there is no guarantee for new
-memslot not overlap with private memslots. This can be triggered by the
-following program:
+/tmp/cc4Qy7GR.s:34: Error: Banked registers are not available with this architecture. -- `mrs r3,SP_usr'
+/tmp/cc4Qy7GR.s:41: Error: Banked registers are not available with this architecture. -- `mrs r3,ELR_hyp'
+/tmp/cc4Qy7GR.s:55: Error: Banked registers are not available with this architecture. -- `mrs r3,SP_svc'
+/tmp/cc4Qy7GR.s:62: Error: Banked registers are not available with this architecture. -- `mrs r3,LR_svc'
+/tmp/cc4Qy7GR.s:69: Error: Banked registers are not available with this architecture. -- `mrs r3,SPSR_svc'
+/tmp/cc4Qy7GR.s:76: Error: Banked registers are not available with this architecture. -- `mrs r3,SP_abt'
 
-   #include <fcntl.h>
-   #include <pthread.h>
-   #include <setjmp.h>
-   #include <signal.h>
-   #include <stddef.h>
-   #include <stdint.h>
-   #include <stdio.h>
-   #include <stdlib.h>
-   #include <string.h>
-   #include <sys/ioctl.h>
-   #include <sys/stat.h>
-   #include <sys/syscall.h>
-   #include <sys/types.h>
-   #include <unistd.h>
-   #include <linux/kvm.h>
+Passign the '-march-armv7ve' flag to gcc works, and is ok here, because
+we know the functions won't ever be called on pre-ARMv7VE machines.
+Unfortunately, older compiler versions (4.8 and earlier) do not understand
+that flag, so we still need to keep the asm around.
 
-   long r[16];
+Backporting to stable kernels (4.6+) is needed to allow those to be built
+with future compilers as well.
 
-   int main()
-   {
-	void *p = valloc(0x4000);
-
-	r[2] = open("/dev/kvm", 0);
-	r[3] = ioctl(r[2], KVM_CREATE_VM, 0x0ul);
-
-	uint64_t addr = 0xf000;
-	ioctl(r[3], KVM_SET_IDENTITY_MAP_ADDR, &addr);
-	r[6] = ioctl(r[3], KVM_CREATE_VCPU, 0x0ul);
-	ioctl(r[3], KVM_SET_TSS_ADDR, 0x0ul);
-	ioctl(r[6], KVM_RUN, 0);
-	ioctl(r[6], KVM_RUN, 0);
-
-	struct kvm_userspace_memory_region mr = {
-		.slot = 0,
-		.flags = KVM_MEM_LOG_DIRTY_PAGES,
-		.guest_phys_addr = 0xf000,
-		.memory_size = 0x4000,
-		.userspace_addr = (uintptr_t) p
-	};
-	ioctl(r[3], KVM_SET_USER_MEMORY_REGION, &mr);
-	return 0;
-   }
-
-This patch fixes the bug by not adding a new memslot even if it
-overlaps with private memslots.
-
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Eric Biggers <ebiggers3@gmail.com>
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84129
+Fixes: 33280b4cd1dc ("ARM: KVM: Add banked registers save/restore")
 Cc: stable@vger.kernel.org
-Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
----
- virt/kvm/kvm_main.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Christoffer Dall <christoffer.dall@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -976,8 +976,7 @@ int __kvm_set_memory_region(struct kvm *
- 		/* Check for overlaps */
- 		r = -EEXIST;
- 		kvm_for_each_memslot(slot, __kvm_memslots(kvm, as_id)) {
--			if ((slot->id >= KVM_USER_MEM_SLOTS) ||
--			    (slot->id == id))
-+			if (slot->id == id)
- 				continue;
- 			if (!((base_gfn + npages <= slot->base_gfn) ||
- 			      (base_gfn >= slot->base_gfn + slot->npages)))
+---
+ arch/arm/kvm/hyp/Makefile    |    5 +++++
+ arch/arm/kvm/hyp/banked-sr.c |    4 ++++
+ 2 files changed, 9 insertions(+)
+
+--- a/arch/arm/kvm/hyp/Makefile
++++ b/arch/arm/kvm/hyp/Makefile
+@@ -6,6 +6,8 @@ ccflags-y += -fno-stack-protector -DDISA
+ 
+ KVM=../../../../virt/kvm
+ 
++CFLAGS_ARMV7VE		   :=$(call cc-option, -march=armv7ve)
++
+ obj-$(CONFIG_KVM_ARM_HOST) += $(KVM)/arm/hyp/vgic-v2-sr.o
+ obj-$(CONFIG_KVM_ARM_HOST) += $(KVM)/arm/hyp/vgic-v3-sr.o
+ obj-$(CONFIG_KVM_ARM_HOST) += $(KVM)/arm/hyp/timer-sr.o
+@@ -14,7 +16,10 @@ obj-$(CONFIG_KVM_ARM_HOST) += tlb.o
+ obj-$(CONFIG_KVM_ARM_HOST) += cp15-sr.o
+ obj-$(CONFIG_KVM_ARM_HOST) += vfp.o
+ obj-$(CONFIG_KVM_ARM_HOST) += banked-sr.o
++CFLAGS_banked-sr.o	   += $(CFLAGS_ARMV7VE)
++
+ obj-$(CONFIG_KVM_ARM_HOST) += entry.o
+ obj-$(CONFIG_KVM_ARM_HOST) += hyp-entry.o
+ obj-$(CONFIG_KVM_ARM_HOST) += switch.o
++CFLAGS_switch.o		   += $(CFLAGS_ARMV7VE)
+ obj-$(CONFIG_KVM_ARM_HOST) += s2-setup.o
+--- a/arch/arm/kvm/hyp/banked-sr.c
++++ b/arch/arm/kvm/hyp/banked-sr.c
+@@ -20,6 +20,10 @@
+ 
+ #include <asm/kvm_hyp.h>
+ 
++/*
++ * gcc before 4.9 doesn't understand -march=armv7ve, so we have to
++ * trick the assembler.
++ */
+ __asm__(".arch_extension     virt");
+ 
+ void __hyp_text __banked_save_state(struct kvm_cpu_context *ctxt)
