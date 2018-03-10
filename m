@@ -1,79 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752059AbeCJKki (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 05:40:38 -0500
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:50709 "EHLO
-        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751906AbeCJKkg (ORCPT
+        id S1752074AbeCJKpe (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 05:45:34 -0500
+Received: from mail-io0-f193.google.com ([209.85.223.193]:46083 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751985AbeCJKpc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 05:40:36 -0500
-X-Google-Smtp-Source: AG47ELtohmehSFJ/t/G634jqnEI6zOx/5tgLzIIvFSdWP/Jciny8FNmwgih0KuNG0UvZSkcH6lvYLQ==
-Date: Sat, 10 Mar 2018 11:40:33 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Kai Heng Feng <kai.heng.feng@canonical.com>, mjg59@srcf.ucam.org,
-        dvhart@infradead.org, andy@infradead.org,
-        Mario Limonciello <mario.limonciello@dell.com>, tiwai@suse.com,
-        platform-driver-x86@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH v2 3/3] ALSA: hda: Disabled unused audio controller for
- Dell platforms with Switchable Graphics
-Message-ID: <20180310104033.ndmlwt4evbs6xg5u@pali>
-References: <20180308091023.9061-1-kai.heng.feng@canonical.com>
- <20180308091023.9061-3-kai.heng.feng@canonical.com>
- <20180309090223.xb55ltac4pfesdrh@pali>
- <723DA929-C9FA-4F69-8D3A-03D8A75D09A6@canonical.com>
- <20180310065039.GA6633@wunner.de>
+        Sat, 10 Mar 2018 05:45:32 -0500
+X-Google-Smtp-Source: AG47ELv2thWHRslnMcUbpZ9SCdBWyIvJ27UHz92Egdq1n6V+q+s1mYKat2Nub5KSwbnf/lOMDCCYzgkMj+OB+wjCBdI=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="7lb3d2knnhwyrstn"
-Content-Disposition: inline
-In-Reply-To: <20180310065039.GA6633@wunner.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
+ <e7c2be5c-cf21-fc2d-efda-d9222d93ffad@redhat.com> <b32f335c-0d77-1749-f7fe-65f512280255@redhat.com>
+ <ade378f6-c997-1d48-a30d-cceee6435fc8@redhat.com> <a3b5f822-f8f4-e2f5-46da-e23e13174f28@redhat.com>
+ <cec36124-0950-6ad9-58a8-9bd69e63aa04@redhat.com> <0100016206a68850-bd5c96b3-f275-46ea-98b1-1317e02a5d6e-000000@email.amazonses.com>
+ <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com> <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
+ <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
+In-Reply-To: <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
+From: Thiebaud Weksteen <tweek@google.com>
+Date: Sat, 10 Mar 2018 10:45:20 +0000
+Message-ID: <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
+Subject: Re: Regression from efi: call get_event_log before ExitBootServices
+To: Jeremy Cline <jeremy@jcline.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: hdegoede@redhat.com, Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Mar 9, 2018 at 5:54 PM Jeremy Cline <jeremy@jcline.org> wrote:
 
---7lb3d2knnhwyrstn
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Fri, Mar 09, 2018 at 10:43:50AM +0000, Thiebaud Weksteen wrote:
+> > Thanks a lot for trying out the patch!
+> >
+> > Please don't modify your install at this stage, I think we are hitting a
+> > firmware bug and that would be awesome if we can fix how we are
+handling it.
+> > So, if we reach that stage in the function it could either be that:
+> > * The allocation did not succeed, somehow, but the firmware still
+returned
+> > EFI_SUCCEED.
+> > * The size requested is incorrect (I'm thinking something like a 1G of
+> > log). This would be due to either a miscalculation of log_size
+(possible)
+> > or; the returned values of GetEventLog are not correct.
+> > I'm sending a patch to add checks for these. Could you please apply and
+> > retest?
+> > Again, thanks for helping debugging this.
 
-On Saturday 10 March 2018 07:50:39 Lukas Wunner wrote:
-> Pretty much all modern Nvidia GPUs do have an integrated HDA
-> controller, however it's possible to hide it by clearing a bit
-> at offset 0x488 in the GPU's config space.  Some BIOSes hide
-> the HDA if no external display is attached.
->=20
-> I could imagine that the BIOS of the Dell machines in question
-> hides the HDA if Switchable Graphics is enabled.  If that is the
-> case, be aware that there's an ongoing discussion to always expose
-> the HDA controller because the behavior of some BIOSes to only
-> expose the HDA when a display is attached causes massive problems
-> with Linux' HDA driver:
-> https://bugs.freedesktop.org/show_bug.cgi?id=3D75985
->=20
-> If we decide to always expose the HDA controller on Nvidia cards,
-> you may need to also match for the Nvidia vendor ID here.
+> No problem, thanks for the help :)
 
-This is probably the example of reason why current solution based on
-vendor id is fragile and could be broken in future... if such changes to
-unhide devices are going to be implemented.
+> With the new patch:
 
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
+> Locating the TCG2Protocol
+> Calling GetEventLog on TCG2Protocol
+> Log returned
+> log_location is not empty
+> log_size != 0
+> log_size < 1M
+> Allocating memory for storing the logs
+> Returned from memory allocation
+> Copying log to new location
 
---7lb3d2knnhwyrstn
-Content-Type: application/pgp-signature; name="signature.asc"
+> And then it hangs. I added a couple more print statements:
 
------BEGIN PGP SIGNATURE-----
+> diff --git a/drivers/firmware/efi/libstub/tpm.c
+b/drivers/firmware/efi/libstub/tpm.c
+> index ee3fac109078..1ab5638bc50e 100644
+> --- a/drivers/firmware/efi/libstub/tpm.c
+> +++ b/drivers/firmware/efi/libstub/tpm.c
+> @@ -148,8 +148,11 @@ void
+efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+>          efi_printk(sys_table_arg, "Copying log to new location\n");
 
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCWqO2HQAKCRCL8Mk9A+RD
-UnA+AKCMayrsTj+qiYSGDWAb1DTH+TudoQCeOYtBDhTFqf8RbCuyprC4YVm/RVg=
-=CueD
------END PGP SIGNATURE-----
+>          memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
+> +       efi_printk(sys_table_arg, "Successfully memset log_tbl to 0\n");
+>          log_tbl->size = log_size;
+> +       efi_printk(sys_table_arg, "Set log_tbl->size\n");
+>          log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
+> +       efi_printk(sys_table_arg, "Set log_tbl-version\n");
+>          memcpy(log_tbl->log, (void *) first_entry_addr, log_size);
 
---7lb3d2knnhwyrstn--
+>          efi_printk(sys_table_arg, "Installing the log into the
+configuration table\n");
+
+> and it's hanging at "memset(log_tbl, 0, sizeof(*log_tbl) + log_size);"
+
+Thanks. Well, it looks like the memory that is supposedly allocated is not
+usable. I'm thinking this is a firmware bug.
+Ard, would you agree on this assumption? Thoughts on how to proceed?
+
+Thanks
+
+
+> Regards,
+> Jeremy
