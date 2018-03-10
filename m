@@ -1,688 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932277AbeCJSoL (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:44:11 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:42565 "EHLO
+        id S1752207AbeCJSoJ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:44:09 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:41585 "EHLO
         mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932168AbeCJSU0 (ORCPT
+        with ESMTP id S932241AbeCJSU0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 10 Mar 2018 13:20:26 -0500
-X-Google-Smtp-Source: AG47ELurIUWnumlQ1J+XUNQ/o55rEU1q2NVtrIfhTG0KLsKhK0UU7iVVxzz5G/61dD5peDeiIFqR9Q==
-From: Andiry Xu <jix024@eng.ucsd.edu>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org
-Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
-        swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
-        swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
-        Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 08/83] NOVA superblock operations.
-Date: Sat, 10 Mar 2018 10:17:49 -0800
-Message-Id: <1520705944-6723-9-git-send-email-jix024@eng.ucsd.edu>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
-References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
+X-Google-Smtp-Source: AG47ELtONnCt1jyvpjpCjLWz+fNxa5ReyT4L3cIMsBDP0WDQKB+9deYhZblTNYt+HbmU5y5Ruf39Wg==
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (1.0)
+Subject: Re: ivtv: use arch_phys_wc_add() and require PAT disabled
+From: Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15D100)
+In-Reply-To: <MWHPR03MB30402C0F8B8F457F5F760412D3DD0@MWHPR03MB3040.namprd03.prod.outlook.com>
+Date: Sat, 10 Mar 2018 10:20:23 -0800
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "hans.verkuil@cisco.com" <hans.verkuil@cisco.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Message-Id: <67E7293F-6045-4EA1-8AEF-E4B92E046581@amacapital.net>
+References: <DM5PR03MB3035EE1AFCEE298AFB15AC46D3C60@DM5PR03MB3035.namprd03.prod.outlook.com> <20180301171936.GU14069@wotan.suse.de> <DM5PR03MB303587F12D7E56B951730A76D3D90@DM5PR03MB3035.namprd03.prod.outlook.com> <20180307190205.GA14069@wotan.suse.de> <DM5PR03MB30352350D588A81D2D02BE93D3DF0@DM5PR03MB3035.namprd03.prod.outlook.com> <20180308040601.GQ14069@wotan.suse.de> <20180308041411.GR14069@wotan.suse.de> <DM5PR03MB3035CCBF9718D7E42B35357FD3DF0@DM5PR03MB3035.namprd03.prod.outlook.com> <MWHPR03MB30402C0F8B8F457F5F760412D3DD0@MWHPR03MB3040.namprd03.prod.outlook.com>
+To: "French, Nicholas A." <naf@ou.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2AIiUnB018920
 
-From: Andiry Xu <jix024@cs.ucsd.edu>
 
-This is the entry point for NOVA filesystem mount and umount.
-NOVA works on DAX devices. During initialization it gets the
-device information, such as physical/virtual addresses and device size.
-It does not access the DAX device during runtime.
 
-During initialization NOVA also initializes the root inode.
-The root inode is a reserved inode and resides on the fixed location.
 
-The way to mount and initialize a NOVA instance is:
+> On Mar 10, 2018, at 8:57 AM, French, Nicholas A. <naf@ou.edu> wrote:
+> 
+>> On Wed, Mar 07, 2018 at 11:23:09PM -0600, French, Nicholas A. wrote:
+>>> On Thu, Mar 08, 2018 at 04:14:11AM +0000, Luis R. Rodriguez wrote:
+>>>> On Thu, Mar 08, 2018 at 04:06:01AM +0000, Luis R. Rodriguez wrote:
+>>>>> On Thu, Mar 08, 2018 at 03:16:29AM +0000, French, Nicholas A. wrote:
+>>>>> 
+>>>>> Ah, I see. So my proposed ioremap_wc call was only "working" by aliasing the
+>>>>> ioremap_nocache()'d mem area and not actually using write combining at all.
+>>>> 
+>>>> There are some debugging PAT toys out there I think but I haven't played with
+>>>> them yet or I forgot how to to confirm or deny this sort of effort, but
+>>>> likeley.
+>>> 
+>>> In fact come to think of it I believe some neurons are telling me that if
+>>> two type does not match we'd get an error?
+> 
+> I can confirm that my original suggested patch just aliases to ivtv-driver's nocache mapping:
+> $ sudo modprobe ivtvfb
+> $ sudo dmesg
+> ...
+> x86/PAT: Overlap at 0xd5000000-0xd5800000
+> x86/PAT: reserve_memtype added [mem 0xd5510000-0xd56b0fff], track uncached-minus, req write-combining, ret uncached-minus
+> ivtvfb0: Framebuffer at 0xd5510000, mapped to 0x00000000c6a7ed52, size 1665k
+> ...
+> $ sudo cat /sys/kernel/debug/x86/pat_memtype_list | grep 0xd5
+> uncached-minus @ 0xd5000000-0xd5800000
+> uncached-minus @ 0xd5510000-0xd56b1000
+> 
+> So nix that.
+> 
+>>> No what if the framebuffer driver is just requested as a secondary step
+>>> after firmware loading?
+>> 
+>> Its a possibility. The decoder firmware gets loaded at the beginning of the decoder
+>> memory range and we know its length, so its possible to ioremap_nocache enough
+>> room for the firmware only on init and then ioremap the remaining non-firmware
+>> decoder memory areas appropriately after the firmware load succeeds...
+> 
+> I looked in more detail, and this would be "hard" due to the way the rest of the
+> decoder offsets are determined by either making firmware calls or scanning the
+> decoder memory range for magic bytes and other mess.
+> 
+> I think some smart guy named mcgrof apparently came to the same conclusion 
+> in a really old email chain I found [https://lists.gt.net/linux/kernel/2387536]:
+> "The ivtv case is the *worst* example we can expect where the firmware
+> hides from us the exact ranges for write-combining, that we should somehow
+> just hope no one will ever do again."
+> :-)
+> 
+>> Perhaps the easy answer is to change the fatal is-pat-enabled check to just a
+>> warning like "you have PAT enabled, so wc is disabled for the framebuffer.
+>> if you want wc, use the nopat parameter"?
+> 
+> I like this idea more and more. I haven't experience any problems running
+> with PAT-enabled and no write-combining on the framebuffer. Any objections?
+> 
+> 
 
-mount -t NOVA -o init /dev/pmem0 /mnt/NOVA
+None from me. 
 
-This creates a NOVA instance on /dev/pmem0 and mount on /mnt/NOVA.
-Currently it cannot do anything except mount and umount.
-
-Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
----
- fs/nova/super.c | 630 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 630 insertions(+)
- create mode 100644 fs/nova/super.c
-
-diff --git a/fs/nova/super.c b/fs/nova/super.c
-new file mode 100644
-index 0000000..552fe5d
---- /dev/null
-+++ b/fs/nova/super.c
-@@ -0,0 +1,630 @@
-+/*
-+ * BRIEF DESCRIPTION
-+ *
-+ * Super block operations.
-+ *
-+ * Copyright 2015-2016 Regents of the University of California,
-+ * UCSD Non-Volatile Systems Lab, Andiry Xu <jix024@cs.ucsd.edu>
-+ * Copyright 2012-2013 Intel Corporation
-+ * Copyright 2009-2011 Marco Stornelli <marco.stornelli@gmail.com>
-+ * Copyright 2003 Sony Corporation
-+ * Copyright 2003 Matsushita Electric Industrial Co., Ltd.
-+ * 2003-2004 (c) MontaVista Software, Inc. , Steve Longerbeam
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2. This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/string.h>
-+#include <linux/slab.h>
-+#include <linux/init.h>
-+#include <linux/parser.h>
-+#include <linux/vfs.h>
-+#include <linux/uaccess.h>
-+#include <linux/io.h>
-+#include <linux/seq_file.h>
-+#include <linux/mount.h>
-+#include <linux/mm.h>
-+#include <linux/ctype.h>
-+#include <linux/bitops.h>
-+#include <linux/magic.h>
-+#include <linux/exportfs.h>
-+#include <linux/random.h>
-+#include <linux/cred.h>
-+#include <linux/list.h>
-+#include <linux/dax.h>
-+#include "nova.h"
-+#include "super.h"
-+
-+int support_clwb;
-+
-+module_param(nova_dbgmask, int, 0444);
-+MODULE_PARM_DESC(nova_dbgmask, "Control debugging output");
-+
-+static struct super_operations nova_sops;
-+
-+static struct kmem_cache *nova_inode_cachep;
-+
-+
-+/* FIXME: should the following variable be one per NOVA instance? */
-+unsigned int nova_dbgmask;
-+
-+void nova_error_mng(struct super_block *sb, const char *fmt, ...)
-+{
-+	va_list args;
-+
-+	printk(KERN_CRIT "nova error: ");
-+	va_start(args, fmt);
-+	vprintk(fmt, args);
-+	va_end(args);
-+
-+	if (test_opt(sb, ERRORS_PANIC))
-+		panic("nova: panic from previous error\n");
-+	if (test_opt(sb, ERRORS_RO)) {
-+		printk(KERN_CRIT "nova err: remounting filesystem read-only");
-+		sb->s_flags |= MS_RDONLY;
-+	}
-+}
-+
-+static void nova_set_blocksize(struct super_block *sb, unsigned long size)
-+{
-+	int bits;
-+
-+	/*
-+	 * We've already validated the user input and the value here must be
-+	 * between NOVA_MAX_BLOCK_SIZE and NOVA_MIN_BLOCK_SIZE
-+	 * and it must be a power of 2.
-+	 */
-+	bits = fls(size) - 1;
-+	sb->s_blocksize_bits = bits;
-+	sb->s_blocksize = (1 << bits);
-+}
-+
-+static int nova_get_nvmm_info(struct super_block *sb,
-+	struct nova_sb_info *sbi)
-+{
-+	void *virt_addr = NULL;
-+	pfn_t __pfn_t;
-+	long size;
-+	struct dax_device *dax_dev;
-+	int ret;
-+
-+	ret = bdev_dax_supported(sb, PAGE_SIZE);
-+	nova_dbg_verbose("%s: dax_supported = %d; bdev->super=0x%p",
-+			 __func__, ret, sb->s_bdev->bd_super);
-+	if (ret) {
-+		nova_err(sb, "device does not support DAX\n");
-+		return ret;
-+	}
-+
-+	sbi->s_bdev = sb->s_bdev;
-+
-+	dax_dev = fs_dax_get_by_host(sb->s_bdev->bd_disk->disk_name);
-+	if (!dax_dev) {
-+		nova_err(sb, "Couldn't retrieve DAX device.\n");
-+		return -EINVAL;
-+	}
-+	sbi->s_dax_dev = dax_dev;
-+
-+	size = dax_direct_access(sbi->s_dax_dev, 0, LONG_MAX/PAGE_SIZE,
-+				 &virt_addr, &__pfn_t) * PAGE_SIZE;
-+	if (size <= 0) {
-+		nova_err(sb, "direct_access failed\n");
-+		return -EINVAL;
-+	}
-+
-+	sbi->virt_addr = virt_addr;
-+
-+	if (!sbi->virt_addr) {
-+		nova_err(sb, "ioremap of the nova image failed(1)\n");
-+		return -EINVAL;
-+	}
-+
-+	sbi->phys_addr = pfn_t_to_pfn(__pfn_t) << PAGE_SHIFT;
-+	sbi->initsize = size;
-+	sbi->replica_reserved_inodes_addr = virt_addr + size -
-+			(sbi->tail_reserved_blocks << PAGE_SHIFT);
-+	sbi->replica_sb_addr = virt_addr + size - PAGE_SIZE;
-+
-+	nova_dbg("%s: dev %s, phys_addr 0x%llx, virt_addr %p, size %ld\n",
-+		__func__, sbi->s_bdev->bd_disk->disk_name,
-+		sbi->phys_addr, sbi->virt_addr, sbi->initsize);
-+
-+	return 0;
-+}
-+
-+static loff_t nova_max_size(int bits)
-+{
-+	loff_t res;
-+
-+	res = (1ULL << 63) - 1;
-+
-+	if (res > MAX_LFS_FILESIZE)
-+		res = MAX_LFS_FILESIZE;
-+
-+	nova_dbg_verbose("max file size %llu bytes\n", res);
-+	return res;
-+}
-+
-+enum {
-+	Opt_bpi, Opt_init, Opt_mode, Opt_uid,
-+	Opt_gid, Opt_dax,
-+	Opt_err_cont, Opt_err_panic, Opt_err_ro,
-+	Opt_dbgmask, Opt_err
-+};
-+
-+static const match_table_t tokens = {
-+	{ Opt_bpi,	     "bpi=%u"		  },
-+	{ Opt_init,	     "init"		  },
-+	{ Opt_mode,	     "mode=%o"		  },
-+	{ Opt_uid,	     "uid=%u"		  },
-+	{ Opt_gid,	     "gid=%u"		  },
-+	{ Opt_dax,	     "dax"		  },
-+	{ Opt_err_cont,	     "errors=continue"	  },
-+	{ Opt_err_panic,     "errors=panic"	  },
-+	{ Opt_err_ro,	     "errors=remount-ro"  },
-+	{ Opt_dbgmask,	     "dbgmask=%u"	  },
-+	{ Opt_err,	     NULL		  },
-+};
-+
-+static int nova_parse_options(char *options, struct nova_sb_info *sbi,
-+			       bool remount)
-+{
-+	char *p;
-+	substring_t args[MAX_OPT_ARGS];
-+	int option;
-+	kuid_t uid;
-+
-+	if (!options)
-+		return 0;
-+
-+	while ((p = strsep(&options, ",")) != NULL) {
-+		int token;
-+
-+		if (!*p)
-+			continue;
-+
-+		token = match_token(p, tokens, args);
-+		switch (token) {
-+		case Opt_bpi:
-+			if (match_int(&args[0], &option))
-+				goto bad_val;
-+			if (remount && sbi->bpi)
-+				goto bad_opt;
-+			sbi->bpi = option;
-+			break;
-+		case Opt_uid:
-+			if (match_int(&args[0], &option))
-+				goto bad_val;
-+			uid = make_kuid(current_user_ns(), option);
-+			if (remount && !uid_eq(sbi->uid, uid))
-+				goto bad_opt;
-+			sbi->uid = uid;
-+			break;
-+		case Opt_gid:
-+			if (match_int(&args[0], &option))
-+				goto bad_val;
-+			sbi->gid = make_kgid(current_user_ns(), option);
-+			break;
-+		case Opt_mode:
-+			if (match_octal(&args[0], &option))
-+				goto bad_val;
-+			sbi->mode = option & 01777U;
-+			break;
-+		case Opt_init:
-+			if (remount)
-+				goto bad_opt;
-+			set_opt(sbi->s_mount_opt, FORMAT);
-+			break;
-+		case Opt_err_panic:
-+			clear_opt(sbi->s_mount_opt, ERRORS_CONT);
-+			clear_opt(sbi->s_mount_opt, ERRORS_RO);
-+			set_opt(sbi->s_mount_opt, ERRORS_PANIC);
-+			break;
-+		case Opt_err_ro:
-+			clear_opt(sbi->s_mount_opt, ERRORS_CONT);
-+			clear_opt(sbi->s_mount_opt, ERRORS_PANIC);
-+			set_opt(sbi->s_mount_opt, ERRORS_RO);
-+			break;
-+		case Opt_err_cont:
-+			clear_opt(sbi->s_mount_opt, ERRORS_RO);
-+			clear_opt(sbi->s_mount_opt, ERRORS_PANIC);
-+			set_opt(sbi->s_mount_opt, ERRORS_CONT);
-+			break;
-+		case Opt_dax:
-+			set_opt(sbi->s_mount_opt, DAX);
-+			break;
-+		case Opt_dbgmask:
-+			if (match_int(&args[0], &option))
-+				goto bad_val;
-+			nova_dbgmask = option;
-+			break;
-+		default: {
-+			goto bad_opt;
-+		}
-+		}
-+	}
-+
-+	return 0;
-+
-+bad_val:
-+	nova_info("Bad value '%s' for mount option '%s'\n", args[0].from,
-+	       p);
-+	return -EINVAL;
-+bad_opt:
-+	nova_info("Bad mount option: \"%s\"\n", p);
-+	return -EINVAL;
-+}
-+
-+
-+/* Make sure we have enough space */
-+static bool nova_check_size(struct super_block *sb, unsigned long size)
-+{
-+	unsigned long minimum_size;
-+
-+	/* space required for super block and root directory.*/
-+	minimum_size = (HEAD_RESERVED_BLOCKS + TAIL_RESERVED_BLOCKS + 1)
-+			  << sb->s_blocksize_bits;
-+
-+	if (size < minimum_size)
-+		return false;
-+
-+	return true;
-+}
-+
-+static inline void nova_sync_super(struct super_block *sb)
-+{
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
-+	struct nova_super_block *super = nova_get_super(sb);
-+	struct nova_super_block *super_redund;
-+
-+	super_redund = nova_get_redund_super(sb);
-+
-+	memcpy_to_pmem_nocache((void *)super, (void *)sbi->nova_sb,
-+		sizeof(struct nova_super_block));
-+	PERSISTENT_BARRIER();
-+
-+	memcpy_to_pmem_nocache((void *)super_redund, (void *)sbi->nova_sb,
-+		sizeof(struct nova_super_block));
-+	PERSISTENT_BARRIER();
-+}
-+
-+static struct nova_inode *nova_init(struct super_block *sb,
-+				      unsigned long size)
-+{
-+	unsigned long blocksize;
-+	struct nova_inode *root_i, *pi;
-+	struct nova_super_block *super;
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
-+
-+	nova_info("creating an empty nova of size %lu\n", size);
-+	sbi->num_blocks = ((unsigned long)(size) >> PAGE_SHIFT);
-+
-+	nova_dbgv("nova: Default block size set to 4K\n");
-+	sbi->blocksize = blocksize = NOVA_DEF_BLOCK_SIZE_4K;
-+	nova_set_blocksize(sb, sbi->blocksize);
-+
-+	if (!nova_check_size(sb, size)) {
-+		nova_warn("Specified NOVA size too small 0x%lx.\n", size);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	nova_dbgv("max file name len %d\n", (unsigned int)NOVA_NAME_LEN);
-+
-+	super = nova_get_super(sb);
-+
-+	/* clear out super-block and inode table */
-+	memset_nt(super, 0, sbi->head_reserved_blocks * sbi->blocksize);
-+
-+	pi = nova_get_inode_by_ino(sb, NOVA_BLOCKNODE_INO);
-+	pi->nova_ino = NOVA_BLOCKNODE_INO;
-+	nova_flush_buffer(pi, CACHELINE_SIZE, 1);
-+
-+	sbi->nova_sb->s_size = cpu_to_le64(size);
-+	sbi->nova_sb->s_blocksize = cpu_to_le32(blocksize);
-+	sbi->nova_sb->s_magic = cpu_to_le32(NOVA_SUPER_MAGIC);
-+	sbi->nova_sb->s_epoch_id = 0;
-+
-+	nova_sync_super(sb);
-+
-+	root_i = nova_get_inode_by_ino(sb, NOVA_ROOT_INO);
-+	nova_dbgv("%s: Allocate root inode @ 0x%p\n", __func__, root_i);
-+
-+	root_i->i_mode = cpu_to_le16(sbi->mode | S_IFDIR);
-+	root_i->i_uid = cpu_to_le32(from_kuid(&init_user_ns, sbi->uid));
-+	root_i->i_gid = cpu_to_le32(from_kgid(&init_user_ns, sbi->gid));
-+	root_i->i_links_count = cpu_to_le16(2);
-+	root_i->i_blk_type = NOVA_BLOCK_TYPE_4K;
-+	root_i->i_flags = 0;
-+	root_i->i_size = cpu_to_le64(sb->s_blocksize);
-+	root_i->i_atime = root_i->i_mtime = root_i->i_ctime =
-+		cpu_to_le32(get_seconds());
-+	root_i->nova_ino = cpu_to_le64(NOVA_ROOT_INO);
-+	root_i->valid = 1;
-+
-+	nova_flush_buffer(root_i, sizeof(*root_i), false);
-+
-+	PERSISTENT_MARK();
-+	PERSISTENT_BARRIER();
-+	nova_info("NOVA initialization finish\n");
-+	return root_i;
-+}
-+
-+static inline void set_default_opts(struct nova_sb_info *sbi)
-+{
-+	set_opt(sbi->s_mount_opt, HUGEIOREMAP);
-+	set_opt(sbi->s_mount_opt, ERRORS_CONT);
-+	sbi->head_reserved_blocks = HEAD_RESERVED_BLOCKS;
-+	sbi->tail_reserved_blocks = TAIL_RESERVED_BLOCKS;
-+	sbi->cpus = num_online_cpus();
-+}
-+
-+static void nova_root_check(struct super_block *sb, struct nova_inode *root_pi)
-+{
-+	if (!S_ISDIR(le16_to_cpu(root_pi->i_mode)))
-+		nova_warn("root is not a directory!\n");
-+}
-+
-+static int nova_fill_super(struct super_block *sb, void *data, int silent)
-+{
-+	struct nova_sb_info *sbi = NULL;
-+	struct nova_inode *root_pi;
-+	struct inode *root_i = NULL;
-+	unsigned long blocksize;
-+	u32 random = 0;
-+	int retval = -EINVAL;
-+
-+	BUILD_BUG_ON(sizeof(struct nova_super_block) > NOVA_SB_SIZE);
-+
-+	sbi = kzalloc(sizeof(struct nova_sb_info), GFP_KERNEL);
-+	if (!sbi)
-+		return -ENOMEM;
-+	sbi->nova_sb = kzalloc(sizeof(struct nova_super_block), GFP_KERNEL);
-+	if (!sbi->nova_sb) {
-+		kfree(sbi);
-+		return -ENOMEM;
-+	}
-+
-+	sb->s_fs_info = sbi;
-+	sbi->sb = sb;
-+
-+	set_default_opts(sbi);
-+
-+	/* Currently the log page supports 64 journal pointer pairs */
-+	if (sbi->cpus > MAX_CPUS) {
-+		nova_err(sb, "NOVA needs more log pointer pages to support more than "
-+			  __stringify(MAX_CPUS) " cpus.\n");
-+		goto out;
-+	}
-+
-+	retval = nova_get_nvmm_info(sb, sbi);
-+	if (retval) {
-+		nova_err(sb, "%s: Failed to get nvmm info.",
-+			 __func__);
-+		goto out;
-+	}
-+
-+	get_random_bytes(&random, sizeof(u32));
-+	atomic_set(&sbi->next_generation, random);
-+
-+	/* Init with default values */
-+	sbi->mode = (0755);
-+	sbi->uid = current_fsuid();
-+	sbi->gid = current_fsgid();
-+	set_opt(sbi->s_mount_opt, HUGEIOREMAP);
-+
-+	mutex_init(&sbi->s_lock);
-+
-+	sbi->zeroed_page = kzalloc(PAGE_SIZE, GFP_KERNEL);
-+	if (!sbi->zeroed_page) {
-+		retval = -ENOMEM;
-+		nova_dbg("%s: sbi->zeroed_page failed.",
-+			 __func__);
-+		goto out;
-+	}
-+
-+	retval = nova_parse_options(data, sbi, 0);
-+	if (retval) {
-+		nova_err(sb, "%s: Failed to parse nova command line options.",
-+			 __func__);
-+		goto out;
-+	}
-+
-+	/* Init a new nova instance */
-+	if (sbi->s_mount_opt & NOVA_MOUNT_FORMAT) {
-+		root_pi = nova_init(sb, sbi->initsize);
-+		if (IS_ERR(root_pi)) {
-+			nova_err(sb, "%s: root_pi error.",
-+				 __func__);
-+
-+			goto out;
-+		}
-+		goto setup_sb;
-+	}
-+
-+	blocksize = le32_to_cpu(sbi->nova_sb->s_blocksize);
-+	nova_set_blocksize(sb, blocksize);
-+
-+	nova_dbg_verbose("blocksize %lu\n", blocksize);
-+
-+	/* Read the root inode */
-+	root_pi = nova_get_inode_by_ino(sb, NOVA_ROOT_INO);
-+
-+	/* Check that the root inode is in a sane state */
-+	nova_root_check(sb, root_pi);
-+
-+	/* Set it all up.. */
-+setup_sb:
-+	sb->s_magic = le32_to_cpu(sbi->nova_sb->s_magic);
-+	sb->s_op = &nova_sops;
-+	sb->s_maxbytes = nova_max_size(sb->s_blocksize_bits);
-+	sb->s_time_gran = 1000000000; // 1 second.
-+	sb->s_xattr = NULL;
-+	sb->s_flags |= MS_NOSEC;
-+
-+	root_i = nova_iget(sb, NOVA_ROOT_INO);
-+	if (IS_ERR(root_i)) {
-+		retval = PTR_ERR(root_i);
-+		nova_err(sb, "%s: failed to get root inode",
-+			 __func__);
-+
-+		goto out;
-+	}
-+
-+	sb->s_root = d_make_root(root_i);
-+	if (!sb->s_root) {
-+		nova_err(sb, "get nova root inode failed\n");
-+		retval = -ENOMEM;
-+		goto out;
-+	}
-+
-+	retval = 0;
-+	return retval;
-+
-+out:
-+	kfree(sbi->zeroed_page);
-+	sbi->zeroed_page = NULL;
-+
-+	kfree(sbi->nova_sb);
-+	kfree(sbi);
-+	nova_dbg("%s failed: return %d\n", __func__, retval);
-+	return retval;
-+}
-+
-+static void nova_put_super(struct super_block *sb)
-+{
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
-+
-+	if (sbi->virt_addr) {
-+		sbi->virt_addr = NULL;
-+	}
-+
-+	kfree(sbi->zeroed_page);
-+	nova_dbgmask = 0;
-+
-+	kfree(sbi->nova_sb);
-+	kfree(sbi);
-+	sb->s_fs_info = NULL;
-+}
-+
-+static struct inode *nova_alloc_inode(struct super_block *sb)
-+{
-+	struct nova_inode_info *vi;
-+
-+	vi = kmem_cache_alloc(nova_inode_cachep, GFP_NOFS);
-+	if (!vi)
-+		return NULL;
-+
-+	return &vi->vfs_inode;
-+}
-+
-+static void nova_i_callback(struct rcu_head *head)
-+{
-+	struct inode *inode = container_of(head, struct inode, i_rcu);
-+	struct nova_inode_info *vi = NOVA_I(inode);
-+
-+	nova_dbg_verbose("%s: ino %lu\n", __func__, inode->i_ino);
-+	kmem_cache_free(nova_inode_cachep, vi);
-+}
-+
-+static void nova_destroy_inode(struct inode *inode)
-+{
-+	nova_dbgv("%s: %lu\n", __func__, inode->i_ino);
-+	call_rcu(&inode->i_rcu, nova_i_callback);
-+}
-+
-+static void init_once(void *foo)
-+{
-+	struct nova_inode_info *vi = foo;
-+
-+	inode_init_once(&vi->vfs_inode);
-+}
-+
-+static int __init init_inodecache(void)
-+{
-+	nova_inode_cachep = kmem_cache_create("nova_inode_cache",
-+					       sizeof(struct nova_inode_info),
-+					       0, (SLAB_RECLAIM_ACCOUNT |
-+						   SLAB_MEM_SPREAD), init_once);
-+	if (nova_inode_cachep == NULL)
-+		return -ENOMEM;
-+	return 0;
-+}
-+
-+static void destroy_inodecache(void)
-+{
-+	/*
-+	 * Make sure all delayed rcu free inodes are flushed before
-+	 * we destroy cache.
-+	 */
-+	rcu_barrier();
-+	kmem_cache_destroy(nova_inode_cachep);
-+}
-+
-+
-+/*
-+ * the super block writes are all done "on the fly", so the
-+ * super block is never in a "dirty" state, so there's no need
-+ * for write_super.
-+ */
-+static struct super_operations nova_sops = {
-+	.alloc_inode	= nova_alloc_inode,
-+	.destroy_inode	= nova_destroy_inode,
-+	.put_super	= nova_put_super,
-+};
-+
-+static struct dentry *nova_mount(struct file_system_type *fs_type,
-+				  int flags, const char *dev_name, void *data)
-+{
-+	return mount_bdev(fs_type, flags, dev_name, data, nova_fill_super);
-+}
-+
-+static struct file_system_type nova_fs_type = {
-+	.owner		= THIS_MODULE,
-+	.name		= "NOVA",
-+	.mount		= nova_mount,
-+	.kill_sb	= kill_block_super,
-+};
-+
-+static int __init init_nova_fs(void)
-+{
-+	int rc = 0;
-+
-+	nova_dbg("%s: %d cpus online\n", __func__, num_online_cpus());
-+	if (arch_has_clwb())
-+		support_clwb = 1;
-+
-+	nova_info("Arch new instructions support: CLWB %s\n",
-+			support_clwb ? "YES" : "NO");
-+
-+	rc = init_inodecache();
-+	if (rc)
-+		return rc;
-+
-+	rc = register_filesystem(&nova_fs_type);
-+	if (rc)
-+		goto out1;
-+
-+	return rc;
-+
-+out1:
-+	destroy_inodecache();
-+	return rc;
-+}
-+
-+static void __exit exit_nova_fs(void)
-+{
-+	unregister_filesystem(&nova_fs_type);
-+	destroy_inodecache();
-+}
-+
-+MODULE_AUTHOR("Andiry Xu <jix024@cs.ucsd.edu>");
-+MODULE_DESCRIPTION("NOVA: NOn-Volatile memory Accelerated File System");
-+MODULE_LICENSE("GPL");
-+
-+module_init(init_nova_fs)
-+module_exit(exit_nova_fs)
--- 
-2.7.4
+However, since you have the hardware, you could see if you can use the change_page_attr machinery to change the memory type on the framebuffer once you figure out where it is.
