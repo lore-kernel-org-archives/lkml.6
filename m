@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvEVreWxIVwyxK1FqB7M5XA2TCkO8jg3pSYgAOWasoXOyfv0K8sR/3EFxPleFktMv0m8mvc
-ARC-Seal: i=1; a=rsa-sha256; t=1520641347; cv=none;
+X-Google-Smtp-Source: AG47ELtoSF/sezcFqFtORJ4n4vTtwQTDdznrE3T5ta9lxnZOEOjCzBvd4TMYkKqju7C0mwbp7yFT
+ARC-Seal: i=1; a=rsa-sha256; t=1520641345; cv=none;
         d=google.com; s=arc-20160816;
-        b=WmPg6rieFZ1sIdupF8RgEvC7XE3xxX2qGdO/2BaPXQzdjSzxcv4dZwR8yXjVWyhpcP
-         oJo18fdIskbXQ3QNH8qOJFb2ljHQpEfJTdwR0hxCr5PrLY9vhx63oWKm31woY+I1PSdz
-         ChudSPl6j3A6WezRoYEB9+s9r5K1x5rcRclcdBYaMDk/KBJxUrXaUsDs/jKPLHBjctcj
-         S7Ya1Age1Ry3n34US7wWgLRF/qdg20Ba/FXvhae0HBQh/ijme/g+VoRGjitzNeKsHwkf
-         /6XtjfuNtMVDeq+3XlaHIydXg9/ps5q9CDhTqZqHgA90/z4TN5cVNtxArSawyy8pXSAu
-         JUSQ==
+        b=Mo9VRSk0xS53jyGo6rZ2UZ5BkDdusiaI+yf1j3FYlG19i7p2cJ/4twL9027xh7HPrR
+         Xfw43gj/DyUKlJIzXRZqyPTLFdokbL5sxQNJuy022+7tBWlUVu8/8wU8rWU5Fg2+lRHr
+         hMW4r0SJkWHhJz8uiN6Fr+nVXQ8/4O0JelzkHa6i9bI5yji8iiOp0x4aMpro0UMSY/df
+         ufe33j+CRBlqC00UJr/t/BoToHgMKfnLTgN3YfCQ0GBfjEG0OW6IYxwkSzZok2gTZT6G
+         wAyt6enSVjOeCDUcbwuB1d98O45dzW5+UyT1SU0y2c2N2MTVT7eW39nd78SJR76lcn5o
+         IgnA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gCyHQuhHSSjsz43QCDvnNyxLgVmdXuInY7DQp1D6mv8=;
-        b=LWk+H6jO2lnAJXlqPe+li2/ci/s+LOZNdHnghN9WbiukdpTu0e727EwCD/1vhGnjkM
-         tN/98/hu7VhJx8kdJgFo2nNK0bOY8ybsy1q7aAW3VXQ+0qB0tB+QFm/LUj4PfCWc2Rdm
-         9JUQ1MbRZMiYVPWZ85NmSGBZ1jcOp4b2RxFTDAvV8nArSluOlpjOc3GGf+OwILtGJ/d2
-         k2gBRZYqk9YlunukPcOPTZuGPft7E6F+zn05Qa1lGVNnNpipzlTOZXsnnLZq4mcih4nJ
-         lYrYjTIHxC7/itbzlmgUuCot+tOl+TyiZTTfGZM23LDs7WSaT5+wQBjxLQkTns5B6lx0
-         DDxQ==
+        bh=2XUXyGXYFlXujtH0RE/lWs5RHKsv1biPl/tYP0iScfo=;
+        b=AwUweWeLCXzhDKB0tg3vWVMlIDjqtiw0NEKv0jOU/LD4XdX/UkR4LWCt5ylMLqL7GT
+         ig19D5Te8iY/9JNLJOUsRrrtQwOrwWFaO6mfIskmOzCVsmLFIzopLSnRgfLIllPVskMu
+         NGmqMlyMJeKIl8GMlNhoflxt/14vi6Ix5ZeEGa87Bz3iD6eoiYZXqdWOLHPpWgyHEEj9
+         ipb3ggmcQc/o3iU1AfRTA+RrGC0vYPV7oOIb2GwMc6MfD+Xj9b5APDDj07GdYwpREj8o
+         Ivc2SmZDMqhgkucnpQZKYOxC89DCDCkfrLauOIncW+OKIqsv5viE163pJUL3pqn37i9c
+         MRBg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Ursula Braun <ubraun@linux.vnet.ibm.com>,
 	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 50/65] s390/qeth: fix SETIP command handling
-Date: Fri,  9 Mar 2018 16:18:50 -0800
-Message-Id: <20180310001828.976045612@linuxfoundation.org>
+Subject: [PATCH 4.9 49/65] s390/qeth: fix underestimated count of buffer elements
+Date: Fri,  9 Mar 2018 16:18:49 -0800
+Message-Id: <20180310001828.887685873@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
 References: <20180310001824.927996722@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507826559003537?=
-X-GMAIL-MSGID: =?utf-8?q?1594508021449908015?=
+X-GMAIL-THRID: =?utf-8?q?1594508019181671675?=
+X-GMAIL-MSGID: =?utf-8?q?1594508019181671675?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,74 +50,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+From: Ursula Braun <ubraun@linux.vnet.ibm.com>
 
 
-[ Upstream commit 1c5b2216fbb973a9410e0b06389740b5c1289171 ]
+[ Upstream commit 89271c65edd599207dd982007900506283c90ae3 ]
 
-send_control_data() applies some special handling to SETIP v4 IPA
-commands. But current code parses *all* command types for the SETIP
-command code. Limit the command code check to IPA commands.
+For a memory range/skb where the last byte falls onto a page boundary
+(ie. 'end' is of the form xxx...xxx001), the PFN_UP() part of the
+calculation currently doesn't round up to the next PFN due to an
+off-by-one error.
+Thus qeth believes that the skb occupies one page less than it
+actually does, and may select a IO buffer that doesn't have enough spare
+buffer elements to fit all of the skb's data.
+HW detects this as a malformed buffer descriptor, and raises an
+exception which then triggers device recovery.
 
-Fixes: 5b54e16f1a54 ("qeth: do not spin for SETIP ip assist command")
+Fixes: 2863c61334aa ("qeth: refactor calculation of SBALE count")
+Signed-off-by: Ursula Braun <ubraun@linux.vnet.ibm.com>
 Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_core.h      |    5 +++++
- drivers/s390/net/qeth_core_main.c |   14 ++++++++------
- 2 files changed, 13 insertions(+), 6 deletions(-)
+ drivers/s390/net/qeth_core.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/drivers/s390/net/qeth_core.h
 +++ b/drivers/s390/net/qeth_core.h
-@@ -592,6 +592,11 @@ struct qeth_cmd_buffer {
- 	void (*callback) (struct qeth_channel *, struct qeth_cmd_buffer *);
- };
- 
-+static inline struct qeth_ipa_cmd *__ipa_cmd(struct qeth_cmd_buffer *iob)
-+{
-+	return (struct qeth_ipa_cmd *)(iob->data + IPA_PDU_HEADER_SIZE);
-+}
-+
- /**
-  * definition of a qeth channel, used for read and write
+@@ -849,7 +849,7 @@ struct qeth_trap_id {
   */
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -2050,7 +2050,7 @@ int qeth_send_control_data(struct qeth_c
- 	unsigned long flags;
- 	struct qeth_reply *reply = NULL;
- 	unsigned long timeout, event_timeout;
--	struct qeth_ipa_cmd *cmd;
-+	struct qeth_ipa_cmd *cmd = NULL;
+ static inline int qeth_get_elements_for_range(addr_t start, addr_t end)
+ {
+-	return PFN_UP(end - 1) - PFN_DOWN(start);
++	return PFN_UP(end) - PFN_DOWN(start);
+ }
  
- 	QETH_CARD_TEXT(card, 2, "sendctl");
- 
-@@ -2077,10 +2077,13 @@ int qeth_send_control_data(struct qeth_c
- 	while (atomic_cmpxchg(&card->write.irq_pending, 0, 1)) ;
- 	qeth_prepare_control_data(card, len, iob);
- 
--	if (IS_IPA(iob->data))
-+	if (IS_IPA(iob->data)) {
-+		cmd = __ipa_cmd(iob);
- 		event_timeout = QETH_IPA_TIMEOUT;
--	else
-+	} else {
- 		event_timeout = QETH_TIMEOUT;
-+	}
-+
- 	timeout = jiffies + event_timeout;
- 
- 	QETH_CARD_TEXT(card, 6, "noirqpnd");
-@@ -2105,9 +2108,8 @@ int qeth_send_control_data(struct qeth_c
- 
- 	/* we have only one long running ipassist, since we can ensure
- 	   process context of this command we can sleep */
--	cmd = (struct qeth_ipa_cmd *)(iob->data+IPA_PDU_HEADER_SIZE);
--	if ((cmd->hdr.command == IPA_CMD_SETIP) &&
--	    (cmd->hdr.prot_version == QETH_PROT_IPV4)) {
-+	if (cmd && cmd->hdr.command == IPA_CMD_SETIP &&
-+	    cmd->hdr.prot_version == QETH_PROT_IPV4) {
- 		if (!wait_event_timeout(reply->wait_q,
- 		    atomic_read(&reply->received), event_timeout))
- 			goto time_err;
+ static inline int qeth_get_micros(void)
