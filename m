@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1715849-1520641525-2-9032916060842120042
+X-Cyrus-Session-Id: sloti22d1t05-1720711-1520641514-2-14673403343833029006
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520641524; b=DFGnvHuR5E5cknm7TqL5cybCZP554O84EaWQqfWTk1M3gUU
-    6ozgHl39L7I4pAUH5erKxRrJC+M4WNXXrrAyfupP8ytdCZqJSs9wAWDc+jZqwHgV
-    8jhSOq/oESlnt7t8LrXBgXxvXsi+REOGpKKiu+ABS0QNNsnzXrF6ZED6p0DOQNd2
-    bxNX+SX25u4CsLcb1mu6VkdGcYtckx6cSo4CBX9VmPaYM2+NimtFlQ44Cxly2CH7
-    qit5RSuhqpBKJ+oGogse6U7Ltubx7Z1nWMH4to6tB6SHMP31en3S7S2qxBtmryCi
-    GF68IBW+JuymqSLagJ+tCb2B6DIIdqxdcxc8LLw==
+    t=1520641513; b=D+0DCTr9M0rOp2aF1unZn2awYEAFrGMuFMVaJqiQrwSoq2c
+    X8PXA5r1uMl6FajJW7uiSxstezh54asO0qRefGKtDQIm2/CNw6r8b/tvsMxaXdiJ
+    n7Jyq0WL6JijEAiVHrpB/3X+p6y/f4fVkDsItBiM/IHUrqOzafvXMTxBW6W5lFHZ
+    gSRO5N1SDfU6VQNSE3kIklqQcb5Dt9XFPnIJCSYJ/+flXuvo6zNwldREtoYYZUW9
+    efNwAr4XjsK8PwPJv2S2kfJ0oC3w4lgexZVD1Kh7Lnu4ZxCYKO6DLHslOsbdgapA
+    AV6tOOEqbM46mX4b6NxjTEr9OFPKjlD5dddkUEQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520641524; bh=mccJlMSIYqFNcJBRN6jIda7iBf
-    XKZfWa49g5wlnIKfI=; b=lPC6t1gd+BygNH1+dA1vpm6d8QIgtyt9TnqZrxRpvn
-    Ysk6cooxTlDIT1WjVFvEgb07pkKPM6tixUDT82lo0WPp0W96L/yu6p7/W1LamzKP
-    a3u8I4L993oqner4klHwMhCITw3Y+Kdm0moFf05g/OJ+/DeRT3CRl08AkQMeddGn
-    Yc9R+SkhZF90yL09Q2bxOkAyp/2GpHww6iM2PHqXp9w2bg7FutzB6Q148EgJisXK
-    /gn6/8mTukFdM8cA6RNSHFG0GQYn7HQ8QjA4WqXVNoUDUTpmBdrZbaPWcvFuBNfT
-    swuRYmWPa9S8F95eQDPW/tLvPo9JcWZkpVSRQi4qD1xg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1520641513; bh=n4v8z0awNbWxOxeXKzYVqWpM4H
+    BlNcaHr5kWJTgcWs0=; b=S5peXCr/WZRDeRP7MKG2KfXB9BRX9zeavNgFdgjfQ0
+    1gL3jGGKwPobraj/S9lHnD7XYV2MrSJKkVceLhzU7ji7x+3HFjCJxNGrEZMotV1s
+    ilnYWP9A+yBsZqWMtFEsSH8sPnsnyou6qv8hSW732/rS2RbyhFwT/mVbTtbLLd11
+    CnSteeyo9OmpxQGaSFW4dtZ4SDlmjzDUSc9KDN8zgptxqMVo28FME1vci+aihyx/
+    K+JKf43jErtw69JjB8fU3i/Uod1RqnoeBXuiJ8kzC5LVQ21SiXUs6FLNjdnw97FE
+    +jb2GrNYkvHu9PP/8NOT9LIeYq5l34qDSEZBLkq6BBbw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,20 +49,20 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934160AbeCJAXr (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Mar 2018 19:23:47 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41164 "EHLO
+        id S933088AbeCJAXt (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Mar 2018 19:23:49 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41190 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933088AbeCJAXq (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:23:46 -0500
+        with ESMTP id S934173AbeCJAXs (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:23:48 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
         Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH 4.15 04/11] bpf, x64: implement retpoline for tail call
-Date: Fri,  9 Mar 2018 16:19:18 -0800
-Message-Id: <20180310001834.776719451@linuxfoundation.org>
+Subject: [PATCH 4.15 05/11] bpf, arm64: fix out of bounds access in tail call
+Date: Fri,  9 Mar 2018 16:19:19 -0800
+Message-Id: <20180310001834.833522586@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001834.560857664@linuxfoundation.org>
 References: <20180310001834.560857664@linuxfoundation.org>
@@ -82,174 +82,151 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Daniel Borkmann <daniel@iogearbox.net>
 
-[ upstream commit a493a87f38cfa48caaa95c9347be2d914c6fdf29 ]
+[ upstream commit 16338a9b3ac30740d49f5dfed81bac0ffa53b9c7 ]
 
-Implement a retpoline [0] for the BPF tail call JIT'ing that converts
-the indirect jump via jmp %rax that is used to make the long jump into
-another JITed BPF image. Since this is subject to speculative execution,
-we need to control the transient instruction sequence here as well
-when CONFIG_RETPOLINE is set, and direct it into a pause + lfence loop.
-The latter aligns also with what gcc / clang emits (e.g. [1]).
+I recently noticed a crash on arm64 when feeding a bogus index
+into BPF tail call helper. The crash would not occur when the
+interpreter is used, but only in case of JIT. Output looks as
+follows:
 
-JIT dump after patch:
-
-  # bpftool p d x i 1
-   0: (18) r2 = map[id:1]
-   2: (b7) r3 = 0
-   3: (85) call bpf_tail_call#12
-   4: (b7) r0 = 2
-   5: (95) exit
-
-With CONFIG_RETPOLINE:
-
-  # bpftool p d j i 1
+  [  347.007486] Unable to handle kernel paging request at virtual address fffb850e96492510
   [...]
-  33:	cmp    %edx,0x24(%rsi)
-  36:	jbe    0x0000000000000072  |*
-  38:	mov    0x24(%rbp),%eax
-  3e:	cmp    $0x20,%eax
-  41:	ja     0x0000000000000072  |
-  43:	add    $0x1,%eax
-  46:	mov    %eax,0x24(%rbp)
-  4c:	mov    0x90(%rsi,%rdx,8),%rax
-  54:	test   %rax,%rax
-  57:	je     0x0000000000000072  |
-  59:	mov    0x28(%rax),%rax
-  5d:	add    $0x25,%rax
-  61:	callq  0x000000000000006d  |+
-  66:	pause                      |
-  68:	lfence                     |
-  6b:	jmp    0x0000000000000066  |
-  6d:	mov    %rax,(%rsp)         |
-  71:	retq                       |
-  72:	mov    $0x2,%eax
+  [  347.043065] [fffb850e96492510] address between user and kernel address ranges
+  [  347.050205] Internal error: Oops: 96000004 [#1] SMP
+  [...]
+  [  347.190829] x13: 0000000000000000 x12: 0000000000000000
+  [  347.196128] x11: fffc047ebe782800 x10: ffff808fd7d0fd10
+  [  347.201427] x9 : 0000000000000000 x8 : 0000000000000000
+  [  347.206726] x7 : 0000000000000000 x6 : 001c991738000000
+  [  347.212025] x5 : 0000000000000018 x4 : 000000000000ba5a
+  [  347.217325] x3 : 00000000000329c4 x2 : ffff808fd7cf0500
+  [  347.222625] x1 : ffff808fd7d0fc00 x0 : ffff808fd7cf0500
+  [  347.227926] Process test_verifier (pid: 4548, stack limit = 0x000000007467fa61)
+  [  347.235221] Call trace:
+  [  347.237656]  0xffff000002f3a4fc
+  [  347.240784]  bpf_test_run+0x78/0xf8
+  [  347.244260]  bpf_prog_test_run_skb+0x148/0x230
+  [  347.248694]  SyS_bpf+0x77c/0x1110
+  [  347.251999]  el0_svc_naked+0x30/0x34
+  [  347.255564] Code: 9100075a d280220a 8b0a002a d37df04b (f86b694b)
   [...]
 
-  * relative fall-through jumps in error case
-  + retpoline for indirect jump
+In this case the index used in BPF r3 is the same as in r1
+at the time of the call, meaning we fed a pointer as index;
+here, it had the value 0xffff808fd7cf0500 which sits in x2.
 
-Without CONFIG_RETPOLINE:
+While I found tail calls to be working in general (also for
+hitting the error cases), I noticed the following in the code
+emission:
 
-  # bpftool p d j i 1
+  # bpftool p d j i 988
   [...]
-  33:	cmp    %edx,0x24(%rsi)
-  36:	jbe    0x0000000000000063  |*
-  38:	mov    0x24(%rbp),%eax
-  3e:	cmp    $0x20,%eax
-  41:	ja     0x0000000000000063  |
-  43:	add    $0x1,%eax
-  46:	mov    %eax,0x24(%rbp)
-  4c:	mov    0x90(%rsi,%rdx,8),%rax
-  54:	test   %rax,%rax
-  57:	je     0x0000000000000063  |
-  59:	mov    0x28(%rax),%rax
-  5d:	add    $0x25,%rax
-  61:	jmpq   *%rax               |-
-  63:	mov    $0x2,%eax
+  38:   ldr     w10, [x1,x10]
+  3c:   cmp     w2, w10
+  40:   b.ge    0x000000000000007c              <-- signed cmp
+  44:   mov     x10, #0x20                      // #32
+  48:   cmp     x26, x10
+  4c:   b.gt    0x000000000000007c
+  50:   add     x26, x26, #0x1
+  54:   mov     x10, #0x110                     // #272
+  58:   add     x10, x1, x10
+  5c:   lsl     x11, x2, #3
+  60:   ldr     x11, [x10,x11]                  <-- faulting insn (f86b694b)
+  64:   cbz     x11, 0x000000000000007c
   [...]
 
-  * relative fall-through jumps in error case
-  - plain indirect jump as before
+Meaning, the tests passed because commit ddb55992b04d ("arm64:
+bpf: implement bpf_tail_call() helper") was using signed compares
+instead of unsigned which as a result had the test wrongly passing.
 
-  [0] https://support.google.com/faqs/answer/7625886
-  [1] https://github.com/gcc-mirror/gcc/commit/a31e654fa107be968b802786d747e962c2fcdb2b
+Change this but also the tail call count test both into unsigned
+and cap the index as u32. Latter we did as well in 90caccdd8cc0
+("bpf: fix bpf_tail_call() x64 JIT") and is needed in addition here,
+too. Tested on HiSilicon Hi1616.
 
+Result after patch:
+
+  # bpftool p d j i 268
+  [...]
+  38:	ldr	w10, [x1,x10]
+  3c:	add	w2, w2, #0x0
+  40:	cmp	w2, w10
+  44:	b.cs	0x0000000000000080
+  48:	mov	x10, #0x20                  	// #32
+  4c:	cmp	x26, x10
+  50:	b.hi	0x0000000000000080
+  54:	add	x26, x26, #0x1
+  58:	mov	x10, #0x110                 	// #272
+  5c:	add	x10, x1, x10
+  60:	lsl	x11, x2, #3
+  64:	ldr	x11, [x10,x11]
+  68:	cbz	x11, 0x0000000000000080
+  [...]
+
+Fixes: ddb55992b04d ("arm64: bpf: implement bpf_tail_call() helper")
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/nospec-branch.h |   37 +++++++++++++++++++++++++++++++++++
- arch/x86/net/bpf_jit_comp.c          |    9 ++++----
- 2 files changed, 42 insertions(+), 4 deletions(-)
+ arch/arm64/net/bpf_jit_comp.c               |    5 +++--
+ tools/testing/selftests/bpf/test_verifier.c |   26 ++++++++++++++++++++++++++
+ 2 files changed, 29 insertions(+), 2 deletions(-)
 
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -177,4 +177,41 @@ static inline void indirect_branch_predi
- }
+--- a/arch/arm64/net/bpf_jit_comp.c
++++ b/arch/arm64/net/bpf_jit_comp.c
+@@ -238,8 +238,9 @@ static int emit_bpf_tail_call(struct jit
+ 	off = offsetof(struct bpf_array, map.max_entries);
+ 	emit_a64_mov_i64(tmp, off, ctx);
+ 	emit(A64_LDR32(tmp, r2, tmp), ctx);
++	emit(A64_MOV(0, r3, r3), ctx);
+ 	emit(A64_CMP(0, r3, tmp), ctx);
+-	emit(A64_B_(A64_COND_GE, jmp_offset), ctx);
++	emit(A64_B_(A64_COND_CS, jmp_offset), ctx);
  
- #endif /* __ASSEMBLY__ */
-+
-+/*
-+ * Below is used in the eBPF JIT compiler and emits the byte sequence
-+ * for the following assembly:
-+ *
-+ * With retpolines configured:
-+ *
-+ *    callq do_rop
-+ *  spec_trap:
-+ *    pause
-+ *    lfence
-+ *    jmp spec_trap
-+ *  do_rop:
-+ *    mov %rax,(%rsp)
-+ *    retq
-+ *
-+ * Without retpolines configured:
-+ *
-+ *    jmp *%rax
-+ */
-+#ifdef CONFIG_RETPOLINE
-+# define RETPOLINE_RAX_BPF_JIT_SIZE	17
-+# define RETPOLINE_RAX_BPF_JIT()				\
-+	EMIT1_off32(0xE8, 7);	 /* callq do_rop */		\
-+	/* spec_trap: */					\
-+	EMIT2(0xF3, 0x90);       /* pause */			\
-+	EMIT3(0x0F, 0xAE, 0xE8); /* lfence */			\
-+	EMIT2(0xEB, 0xF9);       /* jmp spec_trap */		\
-+	/* do_rop: */						\
-+	EMIT4(0x48, 0x89, 0x04, 0x24); /* mov %rax,(%rsp) */	\
-+	EMIT1(0xC3);             /* retq */
-+#else
-+# define RETPOLINE_RAX_BPF_JIT_SIZE	2
-+# define RETPOLINE_RAX_BPF_JIT()				\
-+	EMIT2(0xFF, 0xE0);	 /* jmp *%rax */
-+#endif
-+
- #endif /* _ASM_X86_NOSPEC_BRANCH_H_ */
---- a/arch/x86/net/bpf_jit_comp.c
-+++ b/arch/x86/net/bpf_jit_comp.c
-@@ -13,6 +13,7 @@
- #include <linux/if_vlan.h>
- #include <asm/cacheflush.h>
- #include <asm/set_memory.h>
-+#include <asm/nospec-branch.h>
- #include <linux/bpf.h>
- 
- int bpf_jit_enable __read_mostly;
-@@ -287,7 +288,7 @@ static void emit_bpf_tail_call(u8 **ppro
- 	EMIT2(0x89, 0xD2);                        /* mov edx, edx */
- 	EMIT3(0x39, 0x56,                         /* cmp dword ptr [rsi + 16], edx */
- 	      offsetof(struct bpf_array, map.max_entries));
--#define OFFSET1 43 /* number of bytes to jump */
-+#define OFFSET1 (41 + RETPOLINE_RAX_BPF_JIT_SIZE) /* number of bytes to jump */
- 	EMIT2(X86_JBE, OFFSET1);                  /* jbe out */
- 	label1 = cnt;
- 
-@@ -296,7 +297,7 @@ static void emit_bpf_tail_call(u8 **ppro
+ 	/* if (tail_call_cnt > MAX_TAIL_CALL_CNT)
+ 	 *     goto out;
+@@ -247,7 +248,7 @@ static int emit_bpf_tail_call(struct jit
  	 */
- 	EMIT2_off32(0x8B, 0x85, 36);              /* mov eax, dword ptr [rbp + 36] */
- 	EMIT3(0x83, 0xF8, MAX_TAIL_CALL_CNT);     /* cmp eax, MAX_TAIL_CALL_CNT */
--#define OFFSET2 32
-+#define OFFSET2 (30 + RETPOLINE_RAX_BPF_JIT_SIZE)
- 	EMIT2(X86_JA, OFFSET2);                   /* ja out */
- 	label2 = cnt;
- 	EMIT3(0x83, 0xC0, 0x01);                  /* add eax, 1 */
-@@ -310,7 +311,7 @@ static void emit_bpf_tail_call(u8 **ppro
- 	 *   goto out;
- 	 */
- 	EMIT3(0x48, 0x85, 0xC0);		  /* test rax,rax */
--#define OFFSET3 10
-+#define OFFSET3 (8 + RETPOLINE_RAX_BPF_JIT_SIZE)
- 	EMIT2(X86_JE, OFFSET3);                   /* je out */
- 	label3 = cnt;
+ 	emit_a64_mov_i64(tmp, MAX_TAIL_CALL_CNT, ctx);
+ 	emit(A64_CMP(1, tcc, tmp), ctx);
+-	emit(A64_B_(A64_COND_GT, jmp_offset), ctx);
++	emit(A64_B_(A64_COND_HI, jmp_offset), ctx);
+ 	emit(A64_ADD_I(1, tcc, tcc, 1), ctx);
  
-@@ -323,7 +324,7 @@ static void emit_bpf_tail_call(u8 **ppro
- 	 * rdi == ctx (1st arg)
- 	 * rax == prog->bpf_func + prologue_size
- 	 */
--	EMIT2(0xFF, 0xE0);                        /* jmp rax */
-+	RETPOLINE_RAX_BPF_JIT();
- 
- 	/* out: */
- 	BUILD_BUG_ON(cnt - label1 != OFFSET1);
+ 	/* prog = array->ptrs[index];
+--- a/tools/testing/selftests/bpf/test_verifier.c
++++ b/tools/testing/selftests/bpf/test_verifier.c
+@@ -2255,6 +2255,32 @@ static struct bpf_test tests[] = {
+ 		.result = ACCEPT,
+ 	},
+ 	{
++		"runtime/jit: pass negative index to tail_call",
++		.insns = {
++			BPF_MOV64_IMM(BPF_REG_3, -1),
++			BPF_LD_MAP_FD(BPF_REG_2, 0),
++			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
++				     BPF_FUNC_tail_call),
++			BPF_MOV64_IMM(BPF_REG_0, 0),
++			BPF_EXIT_INSN(),
++		},
++		.fixup_prog = { 1 },
++		.result = ACCEPT,
++	},
++	{
++		"runtime/jit: pass > 32bit index to tail_call",
++		.insns = {
++			BPF_LD_IMM64(BPF_REG_3, 0x100000000ULL),
++			BPF_LD_MAP_FD(BPF_REG_2, 0),
++			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
++				     BPF_FUNC_tail_call),
++			BPF_MOV64_IMM(BPF_REG_0, 0),
++			BPF_EXIT_INSN(),
++		},
++		.fixup_prog = { 2 },
++		.result = ACCEPT,
++	},
++	{
+ 		"stack pointer arithmetic",
+ 		.insns = {
+ 			BPF_MOV64_IMM(BPF_REG_1, 4),
