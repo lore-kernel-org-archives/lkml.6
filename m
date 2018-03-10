@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELudKSkedB+mfwt/d/wIQZBcaYqsHi/Lipo/ZxxsJxvA8UFRlY2S7Mvj40mKm9MKaquLtDhL
-ARC-Seal: i=1; a=rsa-sha256; t=1520641392; cv=none;
+X-Google-Smtp-Source: AG47ELsKZEqPcBgwQSiuTb3FVuwB/z31xDx4vmUmXm9tDK/Uyqoyt+94fZMaEkKi3M5XYjwhtGBA
+ARC-Seal: i=1; a=rsa-sha256; t=1520641388; cv=none;
         d=google.com; s=arc-20160816;
-        b=M6h8TcNW4ovP1l7q7ggRknuwK7SEgPqUR5abuCg6BxBKvP/9T6qBftZYW6WKG62Ll4
-         Siz+wRNlfFHioVWawLpafzGIpCC1fH4XFBRLXMgXtvvIDdP2JQYA4YUWYtGtU2BqnSPo
-         QlPrHoMc0HH61Mid2GwklYTDkk6jtqEmT0UQO5L5OH5OrabXWYAVwv36+2uRQUQx+SL3
-         0P88SCvDEvstQHu0sOavpj+9HmPlX8qB1/qwfp5GANOT+nyFuDD3AIh4JwRpYseUgW4+
-         droNLc842dxzgpE9vyip2NEhKg8QPTRe1Srsk6va3t9Wo21TAaV4wt7LE9TtlXOVWMCF
-         MkyA==
+        b=kAqAjEtyjqhGNKCD5iC4l+hEYdidTpnY/HpzBPqgev5rEF7S04j1VHjIoo0fAiYvt1
+         nnXP++W++6EimOmCLpPm/OujmKLwDR7d0/IyS1OJKtFOcsI7kKwm7e34tujL1OkcqNpm
+         d/p4+JBLaDHL/KwMOjU9qLEXbs4pEEEw0FcFP2LnyoERbcD9OWOSGAWO7l3xu7iiiHPI
+         UZrsJyzbzJHCFuNWwF3fumj4TgkDUohRjFM2WVZYRvmVtYTqlqBKptp8GoiihrW4M0z8
+         uU+vmbCGtHpMQSalNzk2WO3tHZt9m/0F4q4QkfvX1pz4ZUouwWBJV58J7nD5RPQFdi/y
+         +CuQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=FiwcVfIStPb7XxifCE134k4agdBoPm7dx8Ru2NStuMk=;
-        b=F2M6KFsvKG0Irs2zUrvRBB9cgvFR5Pc/Vu64FhjICevUqLpgHqrDaPYEFIQuQ0GjEG
-         vZbjgw0Y8M0bHkZs1dUSmckRCmr8sJC8C05fWqJQH2SGQdKDFoDM+a/oQqwgZ+5xsHmL
-         WzmyAKHNQuzvGW/FG2YUnWg2muVcLNpvzz3MBOHo8DnljgjDnvONB324s9x7R+Klunay
-         A6mzefd8+h9grscYrC9Lom9CQJQe/zjCnr345Cogzv3c30VrR6il8coNCrhy46vyGRm7
-         Eqjkr0lpx+QwAhOi2JDlstErOXFo3og8Qer12s9ZREPwE02+Pq7sG4wObJnqvZIUYyVC
-         MyTw==
+        bh=9kRH7/ErWT5DJn23ZrTrsX2LUVqvfFfwYWAgDAN1RBE=;
+        b=a6kOWTI0+AYFBcTyPwIPGqCUQFb5ClwJoQe805sXBqvOgO+MTQvKPqKIgFNBeH5Szt
+         YxQATpPhYKcOnVEKsil7t6g3oyMtsG0ISd/3cE9Md5PhyUeBF20TFHoq/q6S7WlUO3OI
+         Jo0PXnscman3gB2vH0aT7uahq49Uf5Lig6jBW7yvkCol8TqWF87uWhK3irfsWP73+zwN
+         ZS3JgV8BuCOOUL5kNCUFzdec6lzLw8N0yLqqDXJPcATCwXAvpukSB0JwjB8PgXcVjCwf
+         Y4nRNCyINzSM+QmNKyeiwIMn0QawHkpFwAQhe23gSJMhgwsvpysUfPAjKakTjF7Cl92j
+         qsCw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" <ernesto.mnd.fernandez@gmail.com>,
-	David Sterba <dsterba@suse.com>,
-	Nikolay Borisov <nborisov@suse.com>
-Subject: [PATCH 4.9 65/65] btrfs: preserve i_mode if __btrfs_set_acl() fails
-Date: Fri,  9 Mar 2018 16:19:05 -0800
-Message-Id: <20180310001830.508801057@linuxfoundation.org>
+	"ast@kernel.org, daniel@iogearbox.net, stable@vger.kernel.org, Eric Dumazet" <edumazet@google.com>,
+	syzbot <syzkaller@googlegroups.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Eric Dumazet <edumazet@google.com>
+Subject: [PATCH 4.9 63/65] bpf: add schedule points in percpu arrays management
+Date: Fri,  9 Mar 2018 16:19:03 -0800
+Message-Id: <20180310001830.358238552@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
 References: <20180310001824.927996722@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507905443929738?=
-X-GMAIL-MSGID: =?utf-8?q?1594508068616128294?=
+X-GMAIL-THRID: =?utf-8?q?1594508064309935439?=
+X-GMAIL-MSGID: =?utf-8?q?1594508064309935439?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,50 +51,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit d7d824966530acfe32b94d1ed672e6fe1638cd68 upstream.
+[ upstream commit 32fff239de37ef226d5b66329dd133f64d63b22d ]
 
-When changing a file's acl mask, btrfs_set_acl() will first set the
-group bits of i_mode to the value of the mask, and only then set the
-actual extended attribute representing the new acl.
+syszbot managed to trigger RCU detected stalls in
+bpf_array_free_percpu()
 
-If the second part fails (due to lack of space, for example) and the
-file had no acl attribute to begin with, the system will from now on
-assume that the mask permission bits are actual group permission bits,
-potentially granting access to the wrong users.
+It takes time to allocate a huge percpu map, but even more time to free
+it.
 
-Prevent this by restoring the original mode bits if __btrfs_set_acl
-fails.
+Since we run in process context, use cond_resched() to yield cpu if
+needed.
 
-Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Fixes: a10423b87a7e ("bpf: introduce BPF_MAP_TYPE_PERCPU_ARRAY map")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/btrfs/acl.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ kernel/bpf/arraymap.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/acl.c
-+++ b/fs/btrfs/acl.c
-@@ -114,13 +114,17 @@ out:
- int btrfs_set_acl(struct inode *inode, struct posix_acl *acl, int type)
+--- a/kernel/bpf/arraymap.c
++++ b/kernel/bpf/arraymap.c
+@@ -20,8 +20,10 @@ static void bpf_array_free_percpu(struct
  {
- 	int ret;
-+	umode_t old_mode = inode->i_mode;
+ 	int i;
  
- 	if (type == ACL_TYPE_ACCESS && acl) {
- 		ret = posix_acl_update_mode(inode, &inode->i_mode, &acl);
- 		if (ret)
- 			return ret;
- 	}
--	return __btrfs_set_acl(NULL, inode, acl, type);
-+	ret = __btrfs_set_acl(NULL, inode, acl, type);
-+	if (ret)
-+		inode->i_mode = old_mode;
-+	return ret;
+-	for (i = 0; i < array->map.max_entries; i++)
++	for (i = 0; i < array->map.max_entries; i++) {
+ 		free_percpu(array->pptrs[i]);
++		cond_resched();
++	}
  }
  
- /*
+ static int bpf_array_alloc_percpu(struct bpf_array *array)
+@@ -37,6 +39,7 @@ static int bpf_array_alloc_percpu(struct
+ 			return -ENOMEM;
+ 		}
+ 		array->pptrs[i] = ptr;
++		cond_resched();
+ 	}
+ 
+ 	return 0;
