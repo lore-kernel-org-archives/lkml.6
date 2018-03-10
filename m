@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvYaLwk1VP6YheOItMykFfD3a8fwRTWGg0ZKr3PJzllhQ6IkUkQ2IbUnyn+mduJlCCc9LID
-ARC-Seal: i=1; a=rsa-sha256; t=1520641247; cv=none;
+X-Google-Smtp-Source: AG47ELvhCwXmbhFWEQZxlGK8ASEKSzW0Di6ay47CU3fKEJN2vOECWQssI+ql0kAK91iRy2TnKz/9
+ARC-Seal: i=1; a=rsa-sha256; t=1520641245; cv=none;
         d=google.com; s=arc-20160816;
-        b=y1rTq8lF685AZtnsJYZ/RUYKz0nzVpI+GUwXLGlKW4sWLnxwrB1TVV/h4KKgSP31yi
-         qN89RJWpigLycCqsNtRB26NHo+ktuM7Ad+ce8IVKu8if0GVd9J1oaNc4LyBWgWqY1XqP
-         +iuP3sNKsV6Q0wk84bHHfq9oqQJ9dokHDfQ61HHuh23+y0PjvSPAkdsyGM47E7o7Jg4k
-         mjIbJIyIZmNunp3z7hBFmXYqU5VSW22BwGhwLRL0acI9Uo5m0g+TURqfX1UG02Z/9xYp
-         tdmrPLgvD3MZrNpUMgDwa+tjcuUD1gFuewbx2KPYxxo/uNChvwcHU1w1hY4AXziWGVV3
-         lxrQ==
+        b=tcJCHvWYscfY8p8hUt82+VHNo7G3bhy+p2R2QAqFuFGgvJZD9WKMu1smOpmdz2o4EZ
+         JykyQ6v3nBUH0ffycrmAoclLrYiAHt/uxURCWo8xu/Prqr7bK9cVCCmaiIDJldyIlh6d
+         ItnglC5xO5AnfOFa3SuARcptj72Ot/4IdOqH1U+JHmvcdZ8i5ZqWSmRxBatwPjeogxEg
+         qRq7vZcIq9maFijhLBkm373FUZaTXhudPByb1iRC/Ny50bmOWYLg5qgQw8Ku2tJ3f498
+         R+suJYp83dNRtK14gc7nEgMkd0Wg16+xSTAOSp2XJjRJ2zMV0XyYji24YzBXjcxxZEZO
+         Ntnw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=F+7O1A1GlvroiHRhqYsB4fmEtXjh6fNDOrdrqYhTUNM=;
-        b=FXvZnyblagmoJClRE6eMPVleMVM18GQgPvWPVEjkAPD0CXZs5DXfaML3UrEcka86Di
-         S9JJ+sK2F8vQQEIubTidjUH7JZoUR/SUA4fX7bTKHOtTzngrcAeM2KRnzaQn++QIkGRh
-         UGHzFp5ib1AKF4qFkwNeZIBWjZEbgergaqK+UqxVqphQ2TqilUvZdMlptJJSb2keqsMR
-         37rUJinWgbl7HHhN5pIpUDgMQzF6IkGWh9SdIOydp6AxS8y5bR0A4VHbsL1x72BquBy3
-         LopW6sayvcFSKwvtGWziYzrIiexCuIVCdEpWNogkxK4FddXbEQr8o32RDxTstGCed97L
-         dnOw==
+        bh=XgTUyqdSLVPir9YBkYnqB3kXpeaQ2cTfaEOHnVHCdq4=;
+        b=OqvAutGH2b4vej6MQsuZwrXrQh9wGPz8O02/PmEr0xj2UnswF7y+3QqsqUpVCggFOH
+         PlJyOIvaa8aysY4FQ8uuc7mF0SC3yP29QSamehtwKcfgNZE4++A4IXjwmu0eYWSRPbSh
+         HHJ8rp9n3U3HooL+Dnr0voITNx+H0MweKQxkY0p/ZKhIwhP1PT5x/saP00/qql4hJ6DE
+         Wxy/PE4QBkTAfFy5Y5NrYCVLH4qbUpp8b3ifdh8hi1piJlFW+bZuTskD1yXki+z2uski
+         D1uRORU9qm96r4dL3aibRN+SPhcPLRa0ESFRMnJGQA3yJ0onL8zY6MA+qHlXEcQ66iWc
+         ak2Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,9 +28,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 30/36] s390/qeth: fix IPA command submission race
-Date: Fri,  9 Mar 2018 16:18:46 -0800
-Message-Id: <20180310001809.024181221@linuxfoundation.org>
+Subject: [PATCH 4.4 29/36] s390/qeth: fix SETIP command handling
+Date: Fri,  9 Mar 2018 16:18:45 -0800
+Message-Id: <20180310001808.973365521@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001807.213987241@linuxfoundation.org>
 References: <20180310001807.213987241@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507828423441186?=
-X-GMAIL-MSGID: =?utf-8?q?1594507916847136958?=
+X-GMAIL-THRID: =?utf-8?q?1594507826559003537?=
+X-GMAIL-MSGID: =?utf-8?q?1594507914337428725?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,79 +52,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 
 
-[ Upstream commit d22ffb5a712f9211ffd104c38fc17cbfb1b5e2b0 ]
+[ Upstream commit 1c5b2216fbb973a9410e0b06389740b5c1289171 ]
 
-If multiple IPA commands are build & sent out concurrently,
-fill_ipacmd_header() may assign a seqno value to a command that's
-different from what send_control_data() later assigns to this command's
-reply.
-This is due to other commands passing through send_control_data(),
-and incrementing card->seqno.ipa along the way.
+send_control_data() applies some special handling to SETIP v4 IPA
+commands. But current code parses *all* command types for the SETIP
+command code. Limit the command code check to IPA commands.
 
-So one IPA command has no reply that's waiting for its seqno, while some
-other IPA command has multiple reply objects waiting for it.
-Only one of those waiting replies wins, and the other(s) times out and
-triggers a recovery via send_ipa_cmd().
-
-Fix this by making sure that the same seqno value is assigned to
-a command and its reply object.
-Do so immediately before submitting the command & while holding the
-irq_pending "lock", to produce nicely ascending seqnos.
-
-As a side effect, *all* IPA commands now use a reply object that's
-waiting for its actual seqno. Previously, early IPA commands that were
-submitted while the card was still DOWN used the "catch-all" IDX seqno.
-
+Fixes: 5b54e16f1a54 ("qeth: do not spin for SETIP ip assist command")
 Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_core_main.c |   19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ drivers/s390/net/qeth_core.h      |    5 +++++
+ drivers/s390/net/qeth_core_main.c |   14 ++++++++------
+ 2 files changed, 13 insertions(+), 6 deletions(-)
 
+--- a/drivers/s390/net/qeth_core.h
++++ b/drivers/s390/net/qeth_core.h
+@@ -591,6 +591,11 @@ struct qeth_cmd_buffer {
+ 	void (*callback) (struct qeth_channel *, struct qeth_cmd_buffer *);
+ };
+ 
++static inline struct qeth_ipa_cmd *__ipa_cmd(struct qeth_cmd_buffer *iob)
++{
++	return (struct qeth_ipa_cmd *)(iob->data + IPA_PDU_HEADER_SIZE);
++}
++
+ /**
+  * definition of a qeth channel, used for read and write
+  */
 --- a/drivers/s390/net/qeth_core_main.c
 +++ b/drivers/s390/net/qeth_core_main.c
-@@ -2068,25 +2068,26 @@ int qeth_send_control_data(struct qeth_c
- 	}
- 	reply->callback = reply_cb;
- 	reply->param = reply_param;
--	if (card->state == CARD_STATE_DOWN)
--		reply->seqno = QETH_IDX_COMMAND_SEQNO;
--	else
--		reply->seqno = card->seqno.ipa++;
-+
- 	init_waitqueue_head(&reply->wait_q);
--	spin_lock_irqsave(&card->lock, flags);
--	list_add_tail(&reply->list, &card->cmd_waiter_list);
--	spin_unlock_irqrestore(&card->lock, flags);
- 	QETH_DBF_HEX(CTRL, 2, iob->data, QETH_DBF_CTRL_LEN);
+@@ -2054,7 +2054,7 @@ int qeth_send_control_data(struct qeth_c
+ 	unsigned long flags;
+ 	struct qeth_reply *reply = NULL;
+ 	unsigned long timeout, event_timeout;
+-	struct qeth_ipa_cmd *cmd;
++	struct qeth_ipa_cmd *cmd = NULL;
  
+ 	QETH_CARD_TEXT(card, 2, "sendctl");
+ 
+@@ -2081,10 +2081,13 @@ int qeth_send_control_data(struct qeth_c
  	while (atomic_cmpxchg(&card->write.irq_pending, 0, 1)) ;
--	qeth_prepare_control_data(card, len, iob);
+ 	qeth_prepare_control_data(card, len, iob);
  
- 	if (IS_IPA(iob->data)) {
- 		cmd = __ipa_cmd(iob);
-+		cmd->hdr.seqno = card->seqno.ipa++;
-+		reply->seqno = cmd->hdr.seqno;
+-	if (IS_IPA(iob->data))
++	if (IS_IPA(iob->data)) {
++		cmd = __ipa_cmd(iob);
  		event_timeout = QETH_IPA_TIMEOUT;
- 	} else {
-+		reply->seqno = QETH_IDX_COMMAND_SEQNO;
+-	else
++	} else {
  		event_timeout = QETH_TIMEOUT;
- 	}
-+	qeth_prepare_control_data(card, len, iob);
++	}
 +
-+	spin_lock_irqsave(&card->lock, flags);
-+	list_add_tail(&reply->list, &card->cmd_waiter_list);
-+	spin_unlock_irqrestore(&card->lock, flags);
- 
  	timeout = jiffies + event_timeout;
  
-@@ -2879,7 +2880,7 @@ static void qeth_fill_ipacmd_header(stru
- 	memset(cmd, 0, sizeof(struct qeth_ipa_cmd));
- 	cmd->hdr.command = command;
- 	cmd->hdr.initiator = IPA_CMD_INITIATOR_HOST;
--	cmd->hdr.seqno = card->seqno.ipa;
-+	/* cmd->hdr.seqno is set by qeth_send_control_data() */
- 	cmd->hdr.adapter_type = qeth_get_ipa_adp_type(card->info.link_type);
- 	cmd->hdr.rel_adapter_no = (__u8) card->info.portno;
- 	if (card->options.layer2)
+ 	QETH_CARD_TEXT(card, 6, "noirqpnd");
+@@ -2109,9 +2112,8 @@ int qeth_send_control_data(struct qeth_c
+ 
+ 	/* we have only one long running ipassist, since we can ensure
+ 	   process context of this command we can sleep */
+-	cmd = (struct qeth_ipa_cmd *)(iob->data+IPA_PDU_HEADER_SIZE);
+-	if ((cmd->hdr.command == IPA_CMD_SETIP) &&
+-	    (cmd->hdr.prot_version == QETH_PROT_IPV4)) {
++	if (cmd && cmd->hdr.command == IPA_CMD_SETIP &&
++	    cmd->hdr.prot_version == QETH_PROT_IPV4) {
+ 		if (!wait_event_timeout(reply->wait_q,
+ 		    atomic_read(&reply->received), event_timeout))
+ 			goto time_err;
