@@ -1,67 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751266AbeCJUoH (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 15:44:07 -0500
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:44510 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750704AbeCJUoF (ORCPT
+        id S1751224AbeCJVPP (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 16:15:15 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:37945 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751135AbeCJVPN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 15:44:05 -0500
-X-Google-Smtp-Source: AG47ELsvB4cMzUWbR5iJxroFZ4YxrQNGSsm2xRaPwZ4RGDYXqHaH5rU/9Ex6L6k/u0wfT3UwRuds2w==
-From: =?UTF-8?q?Micha=C5=82=20K=C4=99pie=C5=84?= <kernel@kempniu.pl>
-To: Jonathan Woithe <jwoithe@just42.net>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/x86: fujitsu-laptop: Revert UNSUPPORTED_CMD back to an int
-Date: Sat, 10 Mar 2018 21:43:53 +0100
-Message-Id: <20180310204353.9584-1-kernel@kempniu.pl>
-X-Mailer: git-send-email 2.16.2
+        Sat, 10 Mar 2018 16:15:13 -0500
+X-Google-Smtp-Source: AG47ELt/hQd/59QI7bVu0VWYJ/KXyFjlbF0fKysWh3kQ6UxEh73anWCdemh2EErifzgnZV892ztVog==
+Subject: Re: [PATCH] leds: fix wrong dmi_match on PC Engines APU LEDs
+To: Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+        Alan Mizrahi <alan@mizrahi.com.ve>, Richard Purdie <rpurdie@rpsys.net>,
+        Pavel Machek <pavel@ucw.cz>
+References: <20180305170910.8905-1-ulli.kroll@googlemail.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "platform-driver-x86@vger.kernel.org"
+        <platform-driver-x86@vger.kernel.org>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+X-Enigmail-Draft-Status: N1110
+Message-ID: <b51f1f41-e06e-25e6-30f8-a2b9f7e8ffb8@gmail.com>
+Date: Sat, 10 Mar 2018 22:13:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180305170910.8905-1-ulli.kroll@googlemail.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UNSUPPORTED_CMD was previously 0x80000000 (int), but commit 819cddae7cfa
-("platform/x86: fujitsu-laptop: Clean up constants") changed it into an
-unsigned long due to BIT() being used to define it.  As call_fext_func()
-returns an int, 0x80000000 would get type promoted when compared to an
-unsigned long, which on a 64-bit system would cause it to become
-0xffffffff80000000 due to sign extension.  This causes one logical
-condition in fujitsu-laptop to always be true and another one to always
-be false on 64-bit systems.  Fix this by reverting UNSUPPORTED_CMD back
-to an int.
+Hi Hans,
 
-This patch fixes the following smatch warnings:
+Thank you for the patch.
 
-drivers/platform/x86/fujitsu-laptop.c:763 acpi_fujitsu_laptop_leds_register() warn: always true condition '(call_fext_func(device, ((1 << (12)) | (1 << (0))), 2, (1 << (16)), 0) != (1 << (31))) => (s32min-s32max != 2147483648)'
-drivers/platform/x86/fujitsu-laptop.c:816 acpi_fujitsu_laptop_add() warn: impossible condition '(priv->flags_supported == (1 << (31))) => (0-2147483647,18446744071562067968-u64max == 2147483648)'
+On 03/05/2018 06:09 PM, Hans Ulli Kroll wrote:
+> APU has compared to APU2 no DMI_BOARD_NAME.
+> Use DMI_PRODUCT_NAME instead.
 
-Fixes: 819cddae7cfa ("platform/x86: fujitsu-laptop: Clean up constants")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Michał Kępień <kernel@kempniu.pl>
----
-This fixes a bug introduced by a commit queued for 4.17, so it needs to
-be applied on top of for-next.
+Could we have the commit message more expressive?
 
- drivers/platform/x86/fujitsu-laptop.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Is it that now this driver doesn't work for APU board?
 
-diff --git a/drivers/platform/x86/fujitsu-laptop.c b/drivers/platform/x86/fujitsu-laptop.c
-index 13bcdfea5349..6f4a55a53ced 100644
---- a/drivers/platform/x86/fujitsu-laptop.c
-+++ b/drivers/platform/x86/fujitsu-laptop.c
-@@ -85,7 +85,7 @@
- #define FUNC_BACKLIGHT			(BIT(12) | BIT(2))
- 
- /* FUNC interface - responses */
--#define UNSUPPORTED_CMD			BIT(31)
-+#define UNSUPPORTED_CMD			0x80000000
- 
- /* FUNC interface - status flags */
- #define FLAG_RFKILL			BIT(5)
+> Signed-off-by: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+> ---
+>  drivers/leds/leds-apu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/leds/leds-apu.c b/drivers/leds/leds-apu.c
+> index 74820aab9497..5bbf5c31413e 100644
+> --- a/drivers/leds/leds-apu.c
+> +++ b/drivers/leds/leds-apu.c
+> @@ -206,7 +206,7 @@ static int __init apu_led_probe(struct platform_device *pdev)
+>  
+>  	apu_led->pdev = pdev;
+>  
+> -	if (dmi_match(DMI_BOARD_NAME, "APU")) {
+> +	if (dmi_match(DMI_PRODUCT_NAME, "APU")) {
+>  		apu_led->profile = apu1_led_profile;
+>  		apu_led->platform = APU1_LED_PLATFORM;
+>  		apu_led->num_led_instances = ARRAY_SIZE(apu1_led_profile);
+> 
+
+If it fails here, then how it is possible that it succeeds
+in the apu_led_init() ?
+
 -- 
-2.16.2
+Best regards,
+Jacek Anaszewski
