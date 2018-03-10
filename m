@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvrY+qhvv0HE9I4yseHHAspGUDyIhXDXj4EIZASWF/a3q7RGTFxJFmWtZOaKKUtnm0HUg3W
-ARC-Seal: i=1; a=rsa-sha256; t=1520641241; cv=none;
+X-Google-Smtp-Source: AG47ELufIMFqa8tIvOjoAFK4qy/5NhOXj3kTzaffE4abKhHoQJUEdGdHkdrfXJ6nysRyLjeatn1N
+ARC-Seal: i=1; a=rsa-sha256; t=1520641239; cv=none;
         d=google.com; s=arc-20160816;
-        b=jRkjA4avdPWnT4ttFoLh5sRG0zMDYj3K8nEXYEVqt+4fwO7dvq82tA76EvPQxVH2Yg
-         nUE1OAAdlIvxWB/HYdJDHjadWFYNTDCzjrnFumw5b1J9EbSLO9ofNR0G6zY/VQRGDqWP
-         oOrdd+0GqyBWe+GlKlQ14wSP5ddheBzyxivpfJ9urUrU00j1r5TZq/vwEV4Zwl6+arNH
-         fNC9mA94abvegxEp4Fqfgzhy2JQcFuWz5gFEF+/CeivjJ3mmZlvcok7mqwofu+sJ+jDx
-         vw+Xbk3oIfTQQGmF7BxzD8J9q2wunATqWwc6UgEJ5YLBXxlY3j30d0cLc7oqgbm0Wty4
-         bV/w==
+        b=wy4RFgtcnhgwNk3qYbKoW0Thd4zcPMs4L+cwsY1qw4dpLgZVF3AJ7DiE2LqvW1p1ml
+         OZ17kLjw9NZXn5fJh1BXoNarguCyZQFkaE+4rFBvHMwwDfMeMVWBXEhs2E9UVLuBsg7G
+         HatnjWMZf6my29oMox5H/Inm3KSnFICzcWfXLRHLcTSaKMrpCQL24+s16fkD+ATLMrLS
+         s70USfFdsp+SRxN6cCKBSA/Kzv68YkDxmZdcl/QncIJkWhTjBDqGQwMF4yiAD3AG+yWB
+         K1Fdwb+Q19pzTmfO54UD5ef7s7/r/hHp/SPFlSCQVYWCGsTK1XFRGpXRmDmjBpkFD2MR
+         x1lg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5DoQitcmezpp+dQ9fa9Bzd+k8zDELxoCUPiZ+/0RNw8=;
-        b=WbU19Wyac5shzE7nWf/Y7Xojkfp4SYu421hISfLobv2+vqm9SzKo4i5lgDVBFf7FsS
-         ELhMHBl26XmzmOwDKHusEDHNmMEDsVH6SFfgyXzlKuBNhfVv7C4oBGpY6dexSFHDKMfK
-         EgCM42S7oL0e1h9BTxG3WTzGDB44Ievi1AfTl8mX+Go8nLtLmYX5KHXyPucLHP2JSgdV
-         dROMrm4+hD2jO+VvKak0kJZzAou1Yvq0h/NxzGBgWtipuKE1kP7kR4XdN9zRjw0efBzK
-         AFtAmXpwsq0DHbhEZ7ixxojzdCUurq6Lw3Tt4Tq2n24+Ueftp4wv1oH+LsFZN+448JlL
-         ntbA==
+        bh=1yPXVAMJYGM0ljkIAy3P2iD7ZyG8ZPz3eCOq7KQJMY0=;
+        b=hCTHrDvif6HB0xcMN5naH0E1xix/3cCBdUM2aO2IPJhx0uM7d5REfMaa/hgKiOqmqs
+         FpPNNnyRku8rYJ5vvhttRUFebXAEvoq0XqndPkT/WmYbkZmbGhrb6ozkTTWoblWwHjfw
+         sMVg52fAI+Gce1NXF9+fcPgfXsrQGMAtjaTpDEOBl9vVl74Uob4FOFOaT0wVdu3nngYX
+         TSzUh1124RUNNgpDovVXmMWbiAuHBfga8Yg0NW/s6R5Wyjt3qghFU2NM9Mr0GnvDnw45
+         2a/MhlFOmH3yaPqyecffI8mlkOpv7fx0QJ11nSjPAXFDflU1EkTzzf65ew2o5R2ISDAH
+         Medg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tommi Rantala <tommi.t.rantala@nokia.com>,
-	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-	Neil Horman <nhorman@tuxdriver.com>,
+	Alexey Kodanev <alexey.kodanev@oracle.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 27/36] sctp: fix dst refcnt leak in sctp_v4_get_dst
-Date: Fri,  9 Mar 2018 16:18:43 -0800
-Message-Id: <20180310001808.854479450@linuxfoundation.org>
+Subject: [PATCH 4.4 26/36] udplite: fix partial checksum initialization
+Date: Fri,  9 Mar 2018 16:18:42 -0800
+Message-Id: <20180310001808.796588951@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001807.213987241@linuxfoundation.org>
 References: <20180310001807.213987241@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507910260968462?=
-X-GMAIL-MSGID: =?utf-8?q?1594507910260968462?=
+X-GMAIL-THRID: =?utf-8?q?1594507822208256184?=
+X-GMAIL-MSGID: =?utf-8?q?1594507908261792641?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,84 +49,74 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tommi Rantala <tommi.t.rantala@nokia.com>
+From: Alexey Kodanev <alexey.kodanev@oracle.com>
 
 
-[ Upstream commit 4a31a6b19f9ddf498c81f5c9b089742b7472a6f8 ]
+[ Upstream commit 15f35d49c93f4fa9875235e7bf3e3783d2dd7a1b ]
 
-Fix dst reference count leak in sctp_v4_get_dst() introduced in commit
-410f03831 ("sctp: add routing output fallback"):
+Since UDP-Lite is always using checksum, the following path is
+triggered when calculating pseudo header for it:
 
-When walking the address_list, successive ip_route_output_key() calls
-may return the same rt->dst with the reference incremented on each call.
+  udp4_csum_init() or udp6_csum_init()
+    skb_checksum_init_zero_check()
+      __skb_checksum_validate_complete()
 
-The code would not decrement the dst refcount when the dst pointer was
-identical from the previous iteration, causing the dst refcnt leak.
+The problem can appear if skb->len is less than CHECKSUM_BREAK. In
+this particular case __skb_checksum_validate_complete() also invokes
+__skb_checksum_complete(skb). If UDP-Lite is using partial checksum
+that covers only part of a packet, the function will return bad
+checksum and the packet will be dropped.
 
-Testcase:
-  ip netns add TEST
-  ip netns exec TEST ip link set lo up
-  ip link add dummy0 type dummy
-  ip link add dummy1 type dummy
-  ip link add dummy2 type dummy
-  ip link set dev dummy0 netns TEST
-  ip link set dev dummy1 netns TEST
-  ip link set dev dummy2 netns TEST
-  ip netns exec TEST ip addr add 192.168.1.1/24 dev dummy0
-  ip netns exec TEST ip link set dummy0 up
-  ip netns exec TEST ip addr add 192.168.1.2/24 dev dummy1
-  ip netns exec TEST ip link set dummy1 up
-  ip netns exec TEST ip addr add 192.168.1.3/24 dev dummy2
-  ip netns exec TEST ip link set dummy2 up
-  ip netns exec TEST sctp_test -H 192.168.1.2 -P 20002 -h 192.168.1.1 -p 20000 -s -B 192.168.1.3
-  ip netns del TEST
+It can be fixed if we skip skb_checksum_init_zero_check() and only
+set the required pseudo header checksum for UDP-Lite with partial
+checksum before udp4_csum_init()/udp6_csum_init() functions return.
 
-In 4.4 and 4.9 kernels this results to:
-  [  354.179591] unregister_netdevice: waiting for lo to become free. Usage count = 1
-  [  364.419674] unregister_netdevice: waiting for lo to become free. Usage count = 1
-  [  374.663664] unregister_netdevice: waiting for lo to become free. Usage count = 1
-  [  384.903717] unregister_netdevice: waiting for lo to become free. Usage count = 1
-  [  395.143724] unregister_netdevice: waiting for lo to become free. Usage count = 1
-  [  405.383645] unregister_netdevice: waiting for lo to become free. Usage count = 1
-  ...
-
-Fixes: 410f03831 ("sctp: add routing output fallback")
-Fixes: 0ca50d12f ("sctp: fix src address selection if using secondary addresses")
-Signed-off-by: Tommi Rantala <tommi.t.rantala@nokia.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Fixes: ed70fcfcee95 ("net: Call skb_checksum_init in IPv4")
+Fixes: e4f45b7f40bd ("net: Call skb_checksum_init in IPv6")
+Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/protocol.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ include/net/udplite.h   |    1 +
+ net/ipv4/udp.c          |    5 +++++
+ net/ipv6/ip6_checksum.c |    5 +++++
+ 3 files changed, 11 insertions(+)
 
---- a/net/sctp/protocol.c
-+++ b/net/sctp/protocol.c
-@@ -508,22 +508,20 @@ static void sctp_v4_get_dst(struct sctp_
- 		if (IS_ERR(rt))
- 			continue;
+--- a/include/net/udplite.h
++++ b/include/net/udplite.h
+@@ -62,6 +62,7 @@ static inline int udplite_checksum_init(
+ 		UDP_SKB_CB(skb)->cscov = cscov;
+ 		if (skb->ip_summed == CHECKSUM_COMPLETE)
+ 			skb->ip_summed = CHECKSUM_NONE;
++		skb->csum_valid = 0;
+         }
  
--		if (!dst)
--			dst = &rt->dst;
--
- 		/* Ensure the src address belongs to the output
- 		 * interface.
- 		 */
- 		odev = __ip_dev_find(sock_net(sk), laddr->a.v4.sin_addr.s_addr,
- 				     false);
- 		if (!odev || odev->ifindex != fl4->flowi4_oif) {
--			if (&rt->dst != dst)
-+			if (!dst)
-+				dst = &rt->dst;
-+			else
- 				dst_release(&rt->dst);
- 			continue;
- 		}
- 
--		if (dst != &rt->dst)
--			dst_release(dst);
-+		dst_release(dst);
- 		dst = &rt->dst;
- 		break;
+ 	return 0;
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -1744,6 +1744,11 @@ static inline int udp4_csum_init(struct
+ 		err = udplite_checksum_init(skb, uh);
+ 		if (err)
+ 			return err;
++
++		if (UDP_SKB_CB(skb)->partial_cov) {
++			skb->csum = inet_compute_pseudo(skb, proto);
++			return 0;
++		}
  	}
+ 
+ 	return skb_checksum_init_zero_check(skb, proto, uh->check,
+--- a/net/ipv6/ip6_checksum.c
++++ b/net/ipv6/ip6_checksum.c
+@@ -73,6 +73,11 @@ int udp6_csum_init(struct sk_buff *skb,
+ 		err = udplite_checksum_init(skb, uh);
+ 		if (err)
+ 			return err;
++
++		if (UDP_SKB_CB(skb)->partial_cov) {
++			skb->csum = ip6_compute_pseudo(skb, proto);
++			return 0;
++		}
+ 	}
+ 
+ 	/* To support RFC 6936 (allow zero checksum in UDP/IPV6 for tunnels)
