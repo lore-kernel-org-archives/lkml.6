@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751740AbeCJSbA (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:31:00 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:38912 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932693AbeCJSV0 (ORCPT
+        id S1751397AbeCJSa5 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:30:57 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:45839 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932699AbeCJSV0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 10 Mar 2018 13:21:26 -0500
-X-Google-Smtp-Source: AG47ELuzVn4ONLxWGJZ2UJ9Ci+Klkz5ea9RRYeEaaJAKfO6ZCllnEmM0GCfcFxSDFkG2QiF9zpPQAg==
+X-Google-Smtp-Source: AG47ELt03mVCgdRiQw+qj+LDx/ecPDwKNAygB9YT6PQZa1oASXxxykRKhAIj/p/ERm4UAeaLTcqT2w==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 57/83] Namei: rmdir
-Date: Sat, 10 Mar 2018 10:18:38 -0800
-Message-Id: <1520705944-6723-58-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 58/83] Namei: rename
+Date: Sat, 10 Mar 2018 10:18:39 -0800
+Message-Id: <1520705944-6723-59-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -27,134 +27,226 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andiry Xu <jix024@cs.ucsd.edu>
 
-Similar to unlink.
+Rename is the most cpmplex namei operation. The target dir may be
+different from the source dir, and the target inode may exist.
+Rename involves up to four inodes, and NOVA uses rename transation
+to atomically update all the affected inodes.
 
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/namei.c | 105 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 105 insertions(+)
+ fs/nova/namei.c | 195 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 195 insertions(+)
 
 diff --git a/fs/nova/namei.c b/fs/nova/namei.c
-index 360d716..4bf6396 100644
+index 4bf6396..bb50c0a 100644
 --- a/fs/nova/namei.c
 +++ b/fs/nova/namei.c
-@@ -437,6 +437,110 @@ static int nova_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	goto out;
+@@ -541,6 +541,200 @@ static int nova_rmdir(struct inode *dir, struct dentry *dentry)
+ 	return err;
  }
  
-+/*
-+ * routine to check that the specified directory is empty (for rmdir)
-+ */
-+static int nova_empty_dir(struct inode *inode)
++static int nova_rename(struct inode *old_dir,
++			struct dentry *old_dentry,
++			struct inode *new_dir, struct dentry *new_dentry,
++			unsigned int flags)
 +{
-+	struct super_block *sb;
-+	struct nova_inode_info *si = NOVA_I(inode);
-+	struct nova_inode_info_header *sih = &si->header;
-+	struct nova_dentry *entry;
-+	unsigned long pos = 0;
-+	struct nova_dentry *entries[4];
-+	int nr_entries;
-+	int i;
-+
-+	sb = inode->i_sb;
-+	nr_entries = radix_tree_gang_lookup(&sih->tree,
-+					(void **)entries, pos, 4);
-+	if (nr_entries > 2)
-+		return 0;
-+
-+	for (i = 0; i < nr_entries; i++) {
-+		entry = entries[i];
-+
-+		if (!is_dir_init_entry(sb, entry))
-+			return 0;
-+	}
-+
-+	return 1;
-+}
-+
-+static int nova_rmdir(struct inode *dir, struct dentry *dentry)
-+{
-+	struct inode *inode = dentry->d_inode;
-+	struct nova_dentry *de;
-+	struct super_block *sb = inode->i_sb;
-+	struct nova_inode *pi = nova_get_inode(sb, inode), *pidir;
-+	struct nova_inode_update update_dir;
-+	struct nova_inode_update update;
-+	u64 old_linkc = 0;
-+	struct nova_inode_info *si = NOVA_I(inode);
-+	struct nova_inode_info_header *sih = &si->header;
-+	int err = -ENOTEMPTY;
++	struct inode *old_inode = old_dentry->d_inode;
++	struct inode *new_inode = new_dentry->d_inode;
++	struct super_block *sb = old_inode->i_sb;
++	struct nova_sb_info *sbi = NOVA_SB(sb);
++	struct nova_inode *old_pi = NULL, *new_pi = NULL;
++	struct nova_inode *new_pidir = NULL, *old_pidir = NULL;
++	struct nova_dentry *father_entry = NULL;
++	char *head_addr = NULL;
++	int invalidate_new_inode = 0;
++	struct nova_inode_update update_dir_new;
++	struct nova_inode_update update_dir_old;
++	struct nova_inode_update update_new;
++	struct nova_inode_update update_old;
++	u64 old_linkc1 = 0, old_linkc2 = 0;
++	int err = -ENOENT;
++	int inc_link = 0, dec_link = 0;
++	int cpu;
++	int change_parent = 0;
++	u64 journal_tail;
 +	u64 epoch_id;
-+	timing_t rmdir_time;
++	timing_t rename_time;
 +
-+	NOVA_START_TIMING(rmdir_t, rmdir_time);
-+	if (!inode)
-+		return -ENOENT;
++	nova_dbgv("%s: rename %s to %s,\n", __func__,
++			old_dentry->d_name.name, new_dentry->d_name.name);
++	nova_dbgv("%s: %s inode %lu, old dir %lu, new dir %lu, new inode %lu\n",
++			__func__, S_ISDIR(old_inode->i_mode) ? "dir" : "normal",
++			old_inode->i_ino, old_dir->i_ino, new_dir->i_ino,
++			new_inode ? new_inode->i_ino : 0);
 +
-+	nova_dbgv("%s: name %s\n", __func__, dentry->d_name.name);
-+	pidir = nova_get_inode(sb, dir);
-+	if (!pidir)
++	if (flags & ~RENAME_NOREPLACE)
 +		return -EINVAL;
 +
-+	if (nova_inode_by_name(dir, &dentry->d_name, &de) == 0)
-+		return -ENOENT;
++	NOVA_START_TIMING(rename_t, rename_time);
 +
-+	if (!nova_empty_dir(inode))
-+		return err;
++	if (new_inode) {
++		err = -ENOTEMPTY;
++		if (S_ISDIR(old_inode->i_mode) && !nova_empty_dir(new_inode))
++			goto out;
++	} else {
++		if (S_ISDIR(old_inode->i_mode)) {
++			err = -EMLINK;
++			if (new_dir->i_nlink >= NOVA_LINK_MAX)
++				goto out;
++		}
++	}
 +
-+	nova_dbgv("%s: inode %lu, dir %lu, link %d\n", __func__,
-+				inode->i_ino, dir->i_ino, dir->i_nlink);
-+
-+	if (inode->i_nlink != 2)
-+		nova_dbg("empty directory %lu has nlink!=2 (%d), dir %lu",
-+				inode->i_ino, inode->i_nlink, dir->i_ino);
++	if (S_ISDIR(old_inode->i_mode)) {
++		dec_link = -1;
++		if (!new_inode)
++			inc_link = 1;
++		/*
++		 * Tricky for in-place update:
++		 * New dentry is always after renamed dentry, so we have to
++		 * make sure new dentry has the correct links count
++		 * to workaround the rebuild nlink issue.
++		 */
++		if (old_dir == new_dir) {
++			inc_link--;
++			if (inc_link == 0)
++				dec_link = 0;
++		}
++	}
 +
 +	epoch_id = nova_get_epoch_id(sb);
++	new_pidir = nova_get_inode(sb, new_dir);
++	old_pidir = nova_get_inode(sb, old_dir);
 +
-+	update_dir.tail = 0;
-+	err = nova_remove_dentry(dentry, -1, &update_dir, epoch_id);
++	old_pi = nova_get_inode(sb, old_inode);
++	old_inode->i_ctime = current_time(old_inode);
++	update_old.tail = 0;
++	err = nova_append_link_change_entry(sb, old_pi, old_inode,
++					&update_old, &old_linkc1, epoch_id);
 +	if (err)
-+		goto end_rmdir;
++		goto out;
 +
-+	/*inode->i_version++; */
-+	clear_nlink(inode);
-+	inode->i_ctime = dir->i_ctime;
++	if (S_ISDIR(old_inode->i_mode) && old_dir != new_dir) {
++		/* My father is changed. Update .. entry */
++		/* For simplicity, we use in-place update and journal it */
++		change_parent = 1;
++		head_addr = (char *)nova_get_block(sb, old_pi->log_head);
++		father_entry = (struct nova_dentry *)(head_addr +
++					NOVA_DIR_LOG_REC_LEN(1));
 +
-+	if (dir->i_nlink)
-+		drop_nlink(dir);
++		if (le64_to_cpu(father_entry->ino) != old_dir->i_ino)
++			nova_err(sb, "%s: dir %lu parent should be %lu, but actually %lu\n",
++				__func__,
++				old_inode->i_ino, old_dir->i_ino,
++				le64_to_cpu(father_entry->ino));
++	}
 +
-+	nova_delete_dir_tree(sb, sih);
++	update_dir_new.tail = 0;
++	if (new_inode) {
++		/* First remove the old entry in the new directory */
++		err = nova_remove_dentry(new_dentry, 0, &update_dir_new,
++					epoch_id);
++		if (err)
++			goto out;
++	}
 +
-+	update.tail = 0;
-+	err = nova_append_link_change_entry(sb, pi, inode, &update,
-+						&old_linkc, epoch_id);
++	/* link into the new directory. */
++	err = nova_add_dentry(new_dentry, old_inode->i_ino,
++				inc_link, &update_dir_new, epoch_id);
 +	if (err)
-+		goto end_rmdir;
++		goto out;
 +
-+	nova_lite_transaction_for_time_and_link(sb, pi, pidir, inode, dir,
-+					&update, &update_dir, 1, epoch_id);
++	if (inc_link > 0)
++		inc_nlink(new_dir);
 +
-+	nova_invalidate_link_change_entry(sb, old_linkc);
-+	nova_invalidate_dentries(sb, &update_dir);
++	update_dir_old.tail = 0;
++	if (old_dir == new_dir) {
++		update_dir_old.tail = update_dir_new.tail;
++	}
 +
-+	NOVA_END_TIMING(rmdir_t, rmdir_time);
-+	return err;
++	err = nova_remove_dentry(old_dentry, dec_link, &update_dir_old,
++					epoch_id);
++	if (err)
++		goto out;
 +
-+end_rmdir:
++	if (dec_link < 0)
++		drop_nlink(old_dir);
++
++	if (new_inode) {
++		new_pi = nova_get_inode(sb, new_inode);
++		new_inode->i_ctime = current_time(new_inode);
++
++		if (S_ISDIR(old_inode->i_mode)) {
++			if (new_inode->i_nlink)
++				drop_nlink(new_inode);
++		}
++		if (new_inode->i_nlink)
++			drop_nlink(new_inode);
++
++		update_new.tail = 0;
++		err = nova_append_link_change_entry(sb, new_pi, new_inode,
++						&update_new, &old_linkc2,
++						epoch_id);
++		if (err)
++			goto out;
++	}
++
++	cpu = smp_processor_id();
++	spin_lock(&sbi->journal_locks[cpu]);
++	if (new_inode && new_inode->i_nlink == 0)
++		invalidate_new_inode = 1;
++	journal_tail = nova_create_rename_transaction(sb, old_inode, old_dir,
++				new_inode,
++				old_dir != new_dir ? new_dir : NULL,
++				father_entry,
++				invalidate_new_inode,
++				cpu);
++
++	nova_update_inode(sb, old_inode, old_pi, &update_old);
++	nova_update_inode(sb, old_dir, old_pidir, &update_dir_old);
++
++	if (old_pidir != new_pidir)
++		nova_update_inode(sb, new_dir, new_pidir, &update_dir_new);
++
++	if (change_parent && father_entry) {
++		father_entry->ino = cpu_to_le64(new_dir->i_ino);
++		nova_persist_entry(father_entry);
++	}
++
++	if (new_inode) {
++		if (invalidate_new_inode) {
++			new_pi->valid = 0;
++			new_pi->delete_epoch_id = epoch_id;
++		}
++		nova_update_inode(sb, new_inode, new_pi, &update_new);
++	}
++
++	PERSISTENT_BARRIER();
++
++	nova_commit_lite_transaction(sb, journal_tail, cpu);
++	spin_unlock(&sbi->journal_locks[cpu]);
++
++	nova_invalidate_link_change_entry(sb, old_linkc1);
++	nova_invalidate_link_change_entry(sb, old_linkc2);
++	if (new_inode)
++		nova_invalidate_dentries(sb, &update_dir_new);
++	nova_invalidate_dentries(sb, &update_dir_old);
++
++	NOVA_END_TIMING(rename_t, rename_time);
++	return 0;
++out:
 +	nova_err(sb, "%s return %d\n", __func__, err);
-+	NOVA_END_TIMING(rmdir_t, rmdir_time);
++	NOVA_END_TIMING(rename_t, rename_time);
 +	return err;
 +}
 +
  struct dentry *nova_get_parent(struct dentry *child)
  {
  	struct inode *inode;
-@@ -467,5 +571,6 @@ const struct inode_operations nova_dir_inode_operations = {
- 	.link		= nova_link,
- 	.unlink		= nova_unlink,
+@@ -573,4 +767,5 @@ const struct inode_operations nova_dir_inode_operations = {
  	.mkdir		= nova_mkdir,
-+	.rmdir		= nova_rmdir,
+ 	.rmdir		= nova_rmdir,
  	.mknod		= nova_mknod,
++	.rename		= nova_rename,
  };
 -- 
 2.7.4
