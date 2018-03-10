@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933012AbeCJSW0 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:22:26 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:42634 "EHLO
+        id S933023AbeCJSWo (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:22:44 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:45333 "EHLO
         mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932968AbeCJSV5 (ORCPT
+        with ESMTP id S932852AbeCJSV4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:21:57 -0500
-X-Google-Smtp-Source: AG47ELtvX3PA8H+CN+XJfEogJBY636t/xGIdkaSXx2kM4SCzMwxdAICEDOk8OTBeh/20xvydkBVf5Q==
+        Sat, 10 Mar 2018 13:21:56 -0500
+X-Google-Smtp-Source: AG47ELumuCFv7u97MB0BdrZT/h05/0xwgIL00gNf2ebeoc99X6HaGgtC60RX1TePoqs3aPRTAZL2PA==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 83/83] Sysfs support.
-Date: Sat, 10 Mar 2018 10:19:04 -0800
-Message-Id: <1520705944-6723-84-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 82/83] Failure recovery: Per-CPU recovery.
+Date: Sat, 10 Mar 2018 10:19:03 -0800
+Message-Id: <1520705944-6723-83-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -27,511 +27,443 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andiry Xu <jix024@cs.ucsd.edu>
 
-Sysfs support allows user to get/post information of running NOVA instance.
-After mount, NOVA creates four entries under proc directory
-/proc/fs/nova/pmem#/:
-
-timing_stats	IO_stats	allocator	gc
-
-Show NOVA file operation timing statistics:
-cat /proc/fs/NOVA/pmem#/timing_stats
-
-Clear timing statistics:
-echo 1 > /proc/fs/NOVA/pmem#/timing_stats
-
-Show NOVA I/O statistics:
-cat /proc/fs/NOVA/pmem#/IO_stats
-
-Clear I/O statistics:
-echo 1 > /proc/fs/NOVA/pmem#/IO_stats
-
-Show NOVA allocator information:
-cat /proc/fs/NOVA/pmem#/allocator
-
-Manual garbage collection:
-echo #inode_number > /proc/fs/NOVA/pmem#/gc
+NOVA starts a recovery thread on each CPU, and scans all the inodes
+in a parallel way. It recovers the inode inuse list during the
+scan as well.
 
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/Makefile |   2 +-
- fs/nova/nova.h   |   6 +
- fs/nova/super.c  |   9 ++
- fs/nova/super.h  |   1 +
- fs/nova/sysfs.c  | 379 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 396 insertions(+), 1 deletion(-)
- create mode 100644 fs/nova/sysfs.c
+ fs/nova/bbuild.c | 396 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 396 insertions(+)
 
-diff --git a/fs/nova/Makefile b/fs/nova/Makefile
-index 7a5fb6d..6e1c29d 100644
---- a/fs/nova/Makefile
-+++ b/fs/nova/Makefile
-@@ -5,4 +5,4 @@
- obj-$(CONFIG_NOVA_FS) += nova.o
+diff --git a/fs/nova/bbuild.c b/fs/nova/bbuild.c
+index 75dfcba..3271166 100644
+--- a/fs/nova/bbuild.c
++++ b/fs/nova/bbuild.c
+@@ -677,6 +677,11 @@ struct task_ring {
+ 	u64 *nvmm_array;
+ };
  
- nova-y := balloc.o bbuild.o dax.o dir.o file.o gc.o inode.o ioctl.o journal.o\
--	  log.o namei.o rebuild.o stats.o super.o symlink.o
-+	  log.o namei.o rebuild.o stats.o super.o symlink.o sysfs.o
-diff --git a/fs/nova/nova.h b/fs/nova/nova.h
-index 32b7b2f..0814676 100644
---- a/fs/nova/nova.h
-+++ b/fs/nova/nova.h
-@@ -546,6 +546,12 @@ int nova_block_symlink(struct super_block *sb, struct nova_inode *pi,
- 	struct inode *inode, const char *symname, int len, u64 epoch_id);
- extern const struct inode_operations nova_symlink_inode_operations;
- 
-+/* sysfs.c */
-+extern const char *proc_dirname;
-+extern struct proc_dir_entry *nova_proc_root;
-+void nova_sysfs_init(struct super_block *sb);
-+void nova_sysfs_exit(struct super_block *sb);
++static struct task_ring *task_rings;
++static struct task_struct **threads;
++wait_queue_head_t finish_wq;
++int *finished;
 +
- /* stats.c */
- void nova_get_timing_stats(void);
- void nova_get_IO_stats(void);
-diff --git a/fs/nova/super.c b/fs/nova/super.c
-index 14b4af6..039c003 100644
---- a/fs/nova/super.c
-+++ b/fs/nova/super.c
-@@ -596,6 +596,8 @@ static int nova_fill_super(struct super_block *sb, void *data, int silent)
- 		goto out;
- 	}
- 
-+	nova_sysfs_init(sb);
-+
- 	/* Init a new nova instance */
- 	if (sbi->s_mount_opt & NOVA_MOUNT_FORMAT) {
- 		root_pi = nova_init(sb, sbi->initsize);
-@@ -680,6 +682,8 @@ static int nova_fill_super(struct super_block *sb, void *data, int silent)
- 	kfree(sbi->inode_maps);
- 	sbi->inode_maps = NULL;
- 
-+	nova_sysfs_exit(sb);
-+
- 	kfree(sbi->nova_sb);
- 	kfree(sbi);
- 	nova_dbg("%s failed: return %d\n", __func__, retval);
-@@ -783,6 +787,8 @@ static void nova_put_super(struct super_block *sb)
- 			i, inode_map->allocated, inode_map->freed);
- 	}
- 
-+	nova_sysfs_exit(sb);
-+
- 	kfree(sbi->inode_maps);
- 	kfree(sbi->nova_sb);
- 	kfree(sbi);
-@@ -1007,6 +1013,8 @@ static int __init init_nova_fs(void)
- 	nova_info("Arch new instructions support: CLWB %s\n",
- 			support_clwb ? "YES" : "NO");
- 
-+	nova_proc_root = proc_mkdir(proc_dirname, NULL);
-+
- 	rc = init_rangenode_cache();
- 	if (rc)
- 		goto out;
-@@ -1041,6 +1049,7 @@ static int __init init_nova_fs(void)
- static void __exit exit_nova_fs(void)
+ static int nova_traverse_inode_log(struct super_block *sb,
+ 	struct nova_inode *pi, struct scan_bitmap *bm, u64 head)
  {
- 	unregister_filesystem(&nova_fs_type);
-+	remove_proc_entry(proc_dirname, NULL);
- 	destroy_file_write_item_cache();
- 	destroy_inodecache();
- 	destroy_rangenode_cache();
-diff --git a/fs/nova/super.h b/fs/nova/super.h
-index bcf9548..bcbe862 100644
---- a/fs/nova/super.h
-+++ b/fs/nova/super.h
-@@ -112,6 +112,7 @@ struct nova_sb_info {
- 	struct mutex	s_lock;	/* protects the SB's buffer-head */
+@@ -973,6 +978,378 @@ static int nova_recover_inode_pages(struct super_block *sb,
+ }
  
- 	int cpus;
-+	struct proc_dir_entry *s_proc;
  
- 	/* Current epoch. volatile guarantees visibility */
- 	volatile u64 s_epoch_id;
-diff --git a/fs/nova/sysfs.c b/fs/nova/sysfs.c
-new file mode 100644
-index 0000000..0a73ef4
---- /dev/null
-+++ b/fs/nova/sysfs.c
-@@ -0,0 +1,379 @@
-+/*
-+ * BRIEF DESCRIPTION
-+ *
-+ * Proc fs operations
-+ *
-+ * Copyright 2015-2016 Regents of the University of California,
-+ * UCSD Non-Volatile Systems Lab, Andiry Xu <jix024@cs.ucsd.edu>
-+ * Copyright 2012-2013 Intel Corporation
-+ * Copyright 2009-2011 Marco Stornelli <marco.stornelli@gmail.com>
-+ * Copyright 2003 Sony Corporation
-+ * Copyright 2003 Matsushita Electric Industrial Co., Ltd.
-+ * 2003-2004 (c) MontaVista Software, Inc. , Steve Longerbeam
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2. This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
-+ */
-+
-+#include "nova.h"
-+#include "inode.h"
-+
-+const char *proc_dirname = "fs/NOVA";
-+struct proc_dir_entry *nova_proc_root;
-+
-+/* ====================== Statistics ======================== */
-+static int nova_seq_timing_show(struct seq_file *seq, void *v)
++static void free_resources(struct super_block *sb)
 +{
-+	int i;
-+
-+	nova_get_timing_stats();
-+
-+	seq_puts(seq, "=========== NOVA kernel timing stats ===========\n");
-+	for (i = 0; i < TIMING_NUM; i++) {
-+		/* Title */
-+		if (Timingstring[i][0] == '=') {
-+			seq_printf(seq, "\n%s\n\n", Timingstring[i]);
-+			continue;
-+		}
-+
-+		if (measure_timing || Timingstats[i]) {
-+			seq_printf(seq, "%s: count %llu, timing %llu, average %llu\n",
-+				Timingstring[i],
-+				Countstats[i],
-+				Timingstats[i],
-+				Countstats[i] ?
-+				Timingstats[i] / Countstats[i] : 0);
-+		} else {
-+			seq_printf(seq, "%s: count %llu\n",
-+				Timingstring[i],
-+				Countstats[i]);
-+		}
-+	}
-+
-+	seq_puts(seq, "\n");
-+	return 0;
-+}
-+
-+static int nova_seq_timing_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, nova_seq_timing_show, PDE_DATA(inode));
-+}
-+
-+ssize_t nova_seq_clear_stats(struct file *filp, const char __user *buf,
-+	size_t len, loff_t *ppos)
-+{
-+	struct address_space *mapping = filp->f_mapping;
-+	struct inode *inode = mapping->host;
-+	struct super_block *sb = PDE_DATA(inode);
-+
-+	nova_clear_stats(sb);
-+	return len;
-+}
-+
-+static const struct file_operations nova_seq_timing_fops = {
-+	.owner		= THIS_MODULE,
-+	.open		= nova_seq_timing_open,
-+	.read		= seq_read,
-+	.write		= nova_seq_clear_stats,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+
-+static int nova_seq_IO_show(struct seq_file *seq, void *v)
-+{
-+	struct super_block *sb = seq->private;
 +	struct nova_sb_info *sbi = NOVA_SB(sb);
-+	struct free_list *free_list;
-+	unsigned long alloc_log_count = 0;
-+	unsigned long alloc_log_pages = 0;
-+	unsigned long alloc_data_count = 0;
-+	unsigned long alloc_data_pages = 0;
-+	unsigned long free_log_count = 0;
-+	unsigned long freed_log_pages = 0;
-+	unsigned long free_data_count = 0;
-+	unsigned long freed_data_pages = 0;
++	struct task_ring *ring;
 +	int i;
 +
-+	nova_get_timing_stats();
-+	nova_get_IO_stats();
-+
-+	seq_puts(seq, "============ NOVA allocation stats ============\n\n");
-+
-+	for (i = 0; i < sbi->cpus; i++) {
-+		free_list = nova_get_free_list(sb, i);
-+
-+		alloc_log_count += free_list->alloc_log_count;
-+		alloc_log_pages += free_list->alloc_log_pages;
-+		alloc_data_count += free_list->alloc_data_count;
-+		alloc_data_pages += free_list->alloc_data_pages;
-+		free_log_count += free_list->free_log_count;
-+		freed_log_pages += free_list->freed_log_pages;
-+		free_data_count += free_list->free_data_count;
-+		freed_data_pages += free_list->freed_data_pages;
++	if (task_rings) {
++		for (i = 0; i < sbi->cpus; i++) {
++			ring = &task_rings[i];
++			vfree(ring->entry_array);
++			vfree(ring->nvmm_array);
++			ring->entry_array = NULL;
++			ring->nvmm_array = NULL;
++		}
 +	}
 +
-+	seq_printf(seq, "alloc log count %lu, allocated log pages %lu\n"
-+		"alloc data count %lu, allocated data pages %lu\n"
-+		"free log count %lu, freed log pages %lu\n"
-+		"free data count %lu, freed data pages %lu\n",
-+		alloc_log_count, alloc_log_pages,
-+		alloc_data_count, alloc_data_pages,
-+		free_log_count, freed_log_pages,
-+		free_data_count, freed_data_pages);
++	kfree(task_rings);
++	kfree(threads);
++	kfree(finished);
++}
 +
-+	seq_printf(seq, "Fast GC %llu, check pages %llu, free pages %llu, average %llu\n",
-+		Countstats[fast_gc_t], IOstats[fast_checked_pages],
-+		IOstats[fast_gc_pages], Countstats[fast_gc_t] ?
-+			IOstats[fast_gc_pages] / Countstats[fast_gc_t] : 0);
-+	seq_printf(seq, "Thorough GC %llu, checked pages %llu, free pages %llu, average %llu\n",
-+		Countstats[thorough_gc_t],
-+		IOstats[thorough_checked_pages], IOstats[thorough_gc_pages],
-+		Countstats[thorough_gc_t] ?
-+			IOstats[thorough_gc_pages] / Countstats[thorough_gc_t]
-+			: 0);
++static int failure_thread_func(void *data);
 +
-+	seq_puts(seq, "\n");
++static int allocate_resources(struct super_block *sb, int cpus)
++{
++	struct task_ring *ring;
++	int i;
 +
-+	seq_puts(seq, "================ NOVA I/O stats ================\n\n");
-+	seq_printf(seq, "Read %llu, bytes %llu, average %llu\n",
-+		Countstats[dax_read_t], IOstats[read_bytes],
-+		Countstats[dax_read_t] ?
-+			IOstats[read_bytes] / Countstats[dax_read_t] : 0);
-+	seq_printf(seq, "COW write %llu, bytes %llu, average %llu, write breaks %llu, average %llu\n",
-+		Countstats[cow_write_t], IOstats[cow_write_bytes],
-+		Countstats[cow_write_t] ?
-+			IOstats[cow_write_bytes] / Countstats[cow_write_t] : 0,
-+		IOstats[cow_write_breaks], Countstats[cow_write_t] ?
-+			IOstats[cow_write_breaks] / Countstats[cow_write_t]
-+			: 0);
-+	seq_printf(seq, "Inplace write %llu, bytes %llu, average %llu, write breaks %llu, average %llu\n",
-+		Countstats[inplace_write_t], IOstats[inplace_write_bytes],
-+		Countstats[inplace_write_t] ?
-+			IOstats[inplace_write_bytes] /
-+			Countstats[inplace_write_t] : 0,
-+		IOstats[inplace_write_breaks], Countstats[inplace_write_t] ?
-+			IOstats[inplace_write_breaks] /
-+			Countstats[inplace_write_t] : 0);
-+	seq_printf(seq, "Inplace write %llu, allocate new blocks %llu\n",
-+			Countstats[inplace_write_t],
-+			IOstats[inplace_new_blocks]);
-+	seq_printf(seq, "DAX get blocks %llu, allocate new blocks %llu\n",
-+			Countstats[dax_get_block_t], IOstats[dax_new_blocks]);
-+	seq_printf(seq, "Page fault %llu\n", Countstats[mmap_fault_t]);
-+	seq_printf(seq, "fsync %llu, fdatasync %llu\n",
-+			Countstats[fsync_t], IOstats[fdatasync]);
++	task_rings = kcalloc(cpus, sizeof(struct task_ring), GFP_KERNEL);
++	if (!task_rings)
++		goto fail;
 +
-+	seq_puts(seq, "\n");
++	for (i = 0; i < cpus; i++) {
++		ring = &task_rings[i];
++
++		ring->nvmm_array = vzalloc(sizeof(u64) * MAX_PGOFF);
++		if (!ring->nvmm_array)
++			goto fail;
++
++		ring->entry_array = vmalloc(sizeof(u64) * MAX_PGOFF);
++		if (!ring->entry_array)
++			goto fail;
++	}
++
++	threads = kcalloc(cpus, sizeof(struct task_struct *), GFP_KERNEL);
++	if (!threads)
++		goto fail;
++
++	finished = kcalloc(cpus, sizeof(int), GFP_KERNEL);
++	if (!finished)
++		goto fail;
++
++	init_waitqueue_head(&finish_wq);
++
++	for (i = 0; i < cpus; i++) {
++		threads[i] = kthread_create(failure_thread_func,
++						sb, "recovery thread");
++		kthread_bind(threads[i], i);
++	}
 +
 +	return 0;
++
++fail:
++	free_resources(sb);
++	return -ENOMEM;
 +}
 +
-+static int nova_seq_IO_open(struct inode *inode, struct file *file)
++static void wait_to_finish(int cpus)
 +{
-+	return single_open(file, nova_seq_IO_show, PDE_DATA(inode));
++	int i;
++
++	for (i = 0; i < cpus; i++) {
++		while (finished[i] == 0) {
++			wait_event_interruptible_timeout(finish_wq, false,
++							msecs_to_jiffies(1));
++		}
++	}
 +}
 +
-+static const struct file_operations nova_seq_IO_fops = {
-+	.owner		= THIS_MODULE,
-+	.open		= nova_seq_IO_open,
-+	.read		= seq_read,
-+	.write		= nova_seq_clear_stats,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
++/*********************** Failure recovery *************************/
 +
-+static int nova_seq_show_allocator(struct seq_file *seq, void *v)
++static int nova_failure_insert_inodetree(struct super_block *sb,
++	unsigned long ino_low, unsigned long ino_high)
 +{
-+	struct super_block *sb = seq->private;
 +	struct nova_sb_info *sbi = NOVA_SB(sb);
-+	struct free_list *free_list;
-+	int i;
-+	unsigned long log_pages = 0;
-+	unsigned long data_pages = 0;
-+
-+	seq_puts(seq, "======== NOVA per-CPU allocator stats ========\n");
-+	for (i = 0; i < sbi->cpus; i++) {
-+		free_list = nova_get_free_list(sb, i);
-+		seq_printf(seq, "Free list %d: block start %lu, block end %lu, num_blocks %lu, num_free_blocks %lu, blocknode %lu\n",
-+			i, free_list->block_start, free_list->block_end,
-+			free_list->block_end - free_list->block_start + 1,
-+			free_list->num_free_blocks, free_list->num_blocknode);
-+
-+		if (free_list->first_node) {
-+			seq_printf(seq, "First node %lu - %lu\n",
-+					free_list->first_node->range_low,
-+					free_list->first_node->range_high);
-+		}
-+
-+		if (free_list->last_node) {
-+			seq_printf(seq, "Last node %lu - %lu\n",
-+					free_list->last_node->range_low,
-+					free_list->last_node->range_high);
-+		}
-+
-+		seq_printf(seq, "Free list %d: alloc log count %lu, allocated log pages %lu, alloc data count %lu, allocated data pages %lu, free log count %lu, freed log pages %lu, free data count %lu, freed data pages %lu\n",
-+			   i,
-+			   free_list->alloc_log_count,
-+			   free_list->alloc_log_pages,
-+			   free_list->alloc_data_count,
-+			   free_list->alloc_data_pages,
-+			   free_list->free_log_count,
-+			   free_list->freed_log_pages,
-+			   free_list->free_data_count,
-+			   free_list->freed_data_pages);
-+
-+		log_pages += free_list->alloc_log_pages;
-+		log_pages -= free_list->freed_log_pages;
-+
-+		data_pages += free_list->alloc_data_pages;
-+		data_pages -= free_list->freed_data_pages;
-+	}
-+
-+	seq_printf(seq, "\nCurrently used pmem pages: log %lu, data %lu\n",
-+			log_pages, data_pages);
-+
-+	return 0;
-+}
-+
-+static int nova_seq_allocator_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, nova_seq_show_allocator,
-+				PDE_DATA(inode));
-+}
-+
-+static const struct file_operations nova_seq_allocator_fops = {
-+	.owner		= THIS_MODULE,
-+	.open		= nova_seq_allocator_open,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+
-+
-+/* ====================== GC ======================== */
-+
-+
-+static int nova_seq_gc_show(struct seq_file *seq, void *v)
-+{
-+	seq_printf(seq, "Echo inode number to trigger garbage collection\n"
-+		   "    example: echo 34 > /proc/fs/NOVA/pmem0/gc\n");
-+	return 0;
-+}
-+
-+static int nova_seq_gc_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, nova_seq_gc_show, PDE_DATA(inode));
-+}
-+
-+ssize_t nova_seq_gc(struct file *filp, const char __user *buf,
-+	size_t len, loff_t *ppos)
-+{
-+	u64 target_inode_number;
-+	struct address_space *mapping = filp->f_mapping;
-+	struct inode *inode = mapping->host;
-+	struct super_block *sb = PDE_DATA(inode);
-+	struct inode *target_inode;
-+	struct nova_inode *target_pi;
-+	struct nova_inode_info *target_sih;
-+
++	struct inode_map *inode_map;
++	struct nova_range_node *prev = NULL, *next = NULL;
++	struct nova_range_node *new_node;
++	unsigned long internal_low, internal_high;
++	int cpu;
++	struct rb_root *tree;
 +	int ret;
-+	char *_buf;
-+	int retval = len;
 +
-+	_buf = kmalloc(len, GFP_KERNEL);
-+	if (_buf == NULL)  {
-+		retval = -ENOMEM;
-+		nova_dbg("%s: kmalloc failed\n", __func__);
-+		goto out;
++	if (ino_low > ino_high) {
++		nova_err(sb, "%s: ino low %lu, ino high %lu\n",
++				__func__, ino_low, ino_high);
++		return -EINVAL;
 +	}
 +
-+	if (copy_from_user(_buf, buf, len)) {
-+		retval = -EFAULT;
-+		goto out;
++	cpu = ino_low % sbi->cpus;
++	if (ino_high % sbi->cpus != cpu) {
++		nova_err(sb, "%s: ino low %lu, ino high %lu\n",
++				__func__, ino_low, ino_high);
++		return -EINVAL;
 +	}
 +
-+	_buf[len] = 0;
-+	ret = kstrtoull(_buf, 0, &target_inode_number);
++	internal_low = ino_low / sbi->cpus;
++	internal_high = ino_high / sbi->cpus;
++	inode_map = &sbi->inode_maps[cpu];
++	tree = &inode_map->inode_inuse_tree;
++	mutex_lock(&inode_map->inode_table_mutex);
++
++	ret = nova_find_free_slot(sbi, tree, internal_low, internal_high,
++					&prev, &next);
 +	if (ret) {
-+		nova_info("%s: Could not parse ino '%s'\n", __func__, _buf);
++		nova_dbg("%s: ino %lu - %lu already exists!: %d\n",
++					__func__, ino_low, ino_high, ret);
++		mutex_unlock(&inode_map->inode_table_mutex);
 +		return ret;
 +	}
-+	nova_info("%s: target_inode_number=%llu.", __func__,
-+		  target_inode_number);
 +
-+	target_inode = nova_iget(sb, target_inode_number);
-+	if (target_inode == NULL) {
-+		nova_info("%s: inode %llu does not exist.", __func__,
-+			  target_inode_number);
-+		retval = -ENOENT;
-+		goto out;
++	if (prev && next && (internal_low == prev->range_high + 1) &&
++			(internal_high + 1 == next->range_low)) {
++		/* fits the hole */
++		rb_erase(&next->node, tree);
++		inode_map->num_range_node_inode--;
++		prev->range_high = next->range_high;
++		nova_free_inode_node(sb, next);
++		goto finish;
++	}
++	if (prev && (internal_low == prev->range_high + 1)) {
++		/* Aligns left */
++		prev->range_high += internal_high - internal_low + 1;
++		goto finish;
++	}
++	if (next && (internal_high + 1 == next->range_low)) {
++		/* Aligns right */
++		next->range_low -= internal_high - internal_low + 1;
++		goto finish;
 +	}
 +
-+	target_pi = nova_get_inode(sb, target_inode);
-+	if (target_pi == NULL) {
-+		nova_info("%s: couldn't get nova inode %llu.", __func__,
-+			  target_inode_number);
-+		retval = -ENOENT;
-+		goto out;
++	/* Aligns somewhere in the middle */
++	new_node = nova_alloc_inode_node(sb);
++	NOVA_ASSERT(new_node);
++	new_node->range_low = internal_low;
++	new_node->range_high = internal_high;
++	ret = nova_insert_inodetree(sbi, new_node, cpu);
++	if (ret) {
++		nova_err(sb, "%s failed\n", __func__);
++		nova_free_inode_node(sb, new_node);
++		goto finish;
++	}
++	inode_map->num_range_node_inode++;
++
++finish:
++	mutex_unlock(&inode_map->inode_table_mutex);
++	return ret;
++}
++
++static inline int nova_failure_update_inodetree(struct super_block *sb,
++	struct nova_inode *pi, unsigned long *ino_low, unsigned long *ino_high)
++{
++	struct nova_sb_info *sbi = NOVA_SB(sb);
++
++	if (*ino_low == 0) {
++		*ino_low = *ino_high = pi->nova_ino;
++	} else {
++		if (pi->nova_ino == *ino_high + sbi->cpus) {
++			*ino_high = pi->nova_ino;
++		} else {
++			/* A new start */
++			nova_failure_insert_inodetree(sb, *ino_low, *ino_high);
++			*ino_low = *ino_high = pi->nova_ino;
++		}
 +	}
 +
-+	target_sih = NOVA_I(target_inode);
++	return 0;
++}
 +
-+	nova_info("%s: got inode %llu @ 0x%p; pi=0x%p\n", __func__,
-+		  target_inode_number, target_inode, target_pi);
++static int failure_thread_func(void *data)
++{
++	struct super_block *sb = data;
++	struct nova_inode_info_header sih;
++	struct task_ring *ring;
++	struct nova_inode *pi, fake_pi;
++	unsigned long num_inodes_per_page;
++	unsigned long ino_low, ino_high;
++	unsigned long last_blocknr;
++	unsigned int data_bits;
++	u64 curr;
++	int cpuid = smp_processor_id();
++	unsigned long i;
++	unsigned long max_size = 0;
++	u64 pi_addr = 0;
++	int ret = 0;
++	int count;
 +
-+	nova_inode_log_fast_gc(sb, target_pi, &target_sih->header,
-+			       0, 0, 0, 1);
-+	iput(target_inode);
++	pi = nova_get_inode_by_ino(sb, NOVA_INODETABLE_INO);
++	data_bits = blk_type_to_shift[pi->i_blk_type];
++	num_inodes_per_page = 1 << (data_bits - NOVA_INODE_BITS);
++
++	ring = &task_rings[cpuid];
++	nova_init_header(sb, &sih, 0);
++
++	for (count = 0; count < ring->num; count++) {
++		curr = ring->addr0[count];
++		ino_low = ino_high = 0;
++
++		/*
++		 * Note: The inode log page is allocated in 2MB
++		 * granularity, but not aligned on 2MB boundary.
++		 */
++		for (i = 0; i < 512; i++)
++			set_bm((curr >> PAGE_SHIFT) + i,
++					global_bm[cpuid], BM_4K);
++
++		for (i = 0; i < num_inodes_per_page; i++) {
++			pi_addr = curr + i * NOVA_INODE_SIZE;
++			ret = nova_get_reference(sb, pi_addr, &fake_pi,
++				(void **)&pi, sizeof(struct nova_inode));
++			if (ret) {
++				nova_dbg("Recover pi @ 0x%llx failed\n",
++						pi_addr);
++				continue;
++			}
++			/* FIXME: Check inode checksum */
++			if (fake_pi.i_mode && fake_pi.deleted == 0) {
++				if (fake_pi.valid == 0) {
++					/* Deleteable */
++					pi->deleted = 1;
++					fake_pi.deleted = 1;
++					continue;
++				}
++
++				nova_recover_inode_pages(sb, &sih, ring,
++						&fake_pi, global_bm[cpuid]);
++				nova_failure_update_inodetree(sb, pi,
++						&ino_low, &ino_high);
++				if (sih.i_size > max_size)
++					max_size = sih.i_size;
++			}
++		}
++
++		if (ino_low && ino_high)
++			nova_failure_insert_inodetree(sb, ino_low, ino_high);
++	}
++
++	/* Free radix tree */
++	if (max_size) {
++		last_blocknr = (max_size - 1) >> PAGE_SHIFT;
++		nova_delete_file_tree(sb, &sih, 0, last_blocknr,
++						false, false, 0);
++	}
++
++	finished[cpuid] = 1;
++	wake_up_interruptible(&finish_wq);
++	do_exit(ret);
++	return ret;
++}
++
++static int nova_failure_recovery_crawl(struct super_block *sb)
++{
++	struct nova_sb_info *sbi = NOVA_SB(sb);
++	struct nova_inode_info_header sih;
++	struct inode_table *inode_table;
++	struct task_ring *ring;
++	struct nova_inode *pi, fake_pi;
++	unsigned long curr_addr;
++	u64 root_addr;
++	u64 curr;
++	int ret = 0;
++	int count;
++	int cpuid;
++
++	root_addr = nova_get_reserved_inode_addr(sb, NOVA_ROOT_INO);
++
++	for (cpuid = 0; cpuid < sbi->cpus; cpuid++) {
++		ring = &task_rings[cpuid];
++		inode_table = nova_get_inode_table(sb, cpuid);
++		if (!inode_table)
++			return -EINVAL;
++
++		count = 0;
++		curr = inode_table->log_head;
++		while (curr) {
++			if (ring->num >= 512) {
++				nova_err(sb, "%s: ring size too small\n",
++					 __func__);
++				return -EINVAL;
++			}
++
++			ring->addr0[count] = curr;
++
++			count++;
++
++			curr_addr = (unsigned long)nova_get_block(sb,
++							curr);
++			/* Next page resides at the last 8 bytes */
++			curr_addr += 2097152 - 8;
++			curr = *(u64 *)(curr_addr);
++		}
++
++		if (count > ring->num)
++			ring->num = count;
++	}
++
++	for (cpuid = 0; cpuid < sbi->cpus; cpuid++)
++		wake_up_process(threads[cpuid]);
++
++	nova_init_header(sb, &sih, 0);
++	/* Recover the root iode */
++	ret = nova_get_reference(sb, root_addr, &fake_pi,
++			(void **)&pi, sizeof(struct nova_inode));
++	if (ret) {
++		nova_dbg("Recover root pi failed\n");
++		return ret;
++	}
++
++	nova_recover_inode_pages(sb, &sih, &task_rings[0],
++					&fake_pi, global_bm[1]);
++
++	return ret;
++}
++
++int nova_failure_recovery(struct super_block *sb)
++{
++	struct nova_sb_info *sbi = NOVA_SB(sb);
++	struct task_ring *ring;
++	struct nova_inode *pi;
++	struct journal_ptr_pair *pair;
++	int ret;
++	int i;
++
++	sbi->s_inodes_used_count = 0;
++
++	/* Initialize inuse inode list */
++	if (nova_init_inode_inuse_list(sb) < 0)
++		return -EINVAL;
++
++	/* Handle special inodes */
++	pi = nova_get_inode_by_ino(sb, NOVA_BLOCKNODE_INO);
++	pi->log_head = pi->log_tail = 0;
++	nova_flush_buffer(&pi->log_head, CACHELINE_SIZE, 0);
++
++	for (i = 0; i < sbi->cpus; i++) {
++		pair = nova_get_journal_pointers(sb, i);
++
++		set_bm(pair->journal_head >> PAGE_SHIFT, global_bm[i], BM_4K);
++	}
++
++	PERSISTENT_BARRIER();
++
++	ret = allocate_resources(sb, sbi->cpus);
++	if (ret)
++		return ret;
++
++	ret = nova_failure_recovery_crawl(sb);
++
++	wait_to_finish(sbi->cpus);
++
++	for (i = 0; i < sbi->cpus; i++) {
++		ring = &task_rings[i];
++		sbi->s_inodes_used_count += ring->inodes_used_count;
++	}
++
++	free_resources(sb);
++
++	nova_dbg("Failure recovery total recovered %lu\n",
++			sbi->s_inodes_used_count - NOVA_NORMAL_INODE_START);
++	return ret;
++}
++
+ /*********************** Recovery entrance *************************/
+ 
+ /* Return TRUE if we can do a normal unmount recovery */
+@@ -1027,7 +1404,23 @@ int nova_recovery(struct super_block *sb)
+ 	nova_init_blockmap(sb, 1);
+ 
+ 	value = nova_try_normal_recovery(sb);
++	if (value) {
++		nova_dbg("NOVA: Normal shutdown\n");
++	} else {
++		nova_dbg("NOVA: Failure recovery\n");
++		ret = alloc_bm(sb, initsize);
++		if (ret)
++			goto out;
++
++		sbi->s_inodes_used_count = 0;
++		ret = nova_failure_recovery(sb);
++		if (ret)
++			goto out;
+ 
++		ret = nova_build_blocknode_map(sb, initsize);
++	}
 +
 +out:
-+	kfree(_buf);
-+	return retval;
-+}
+ 	NOVA_END_TIMING(recovery_t, start);
+ 	if (measure_timing == 0) {
+ 		getrawmonotonic(&end);
+@@ -1036,6 +1429,9 @@ int nova_recovery(struct super_block *sb)
+ 			(end.tv_nsec - start.tv_nsec);
+ 	}
+ 
++	if (!value)
++		free_bm(sb);
 +
-+static const struct file_operations nova_seq_gc_fops = {
-+	.owner		= THIS_MODULE,
-+	.open		= nova_seq_gc_open,
-+	.read		= seq_read,
-+	.write		= nova_seq_gc,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+
-+/* ====================== Setup/teardown======================== */
-+void nova_sysfs_init(struct super_block *sb)
-+{
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
-+
-+	if (nova_proc_root)
-+		sbi->s_proc = proc_mkdir(sbi->s_bdev->bd_disk->disk_name,
-+					 nova_proc_root);
-+
-+	if (sbi->s_proc) {
-+		proc_create_data("timing_stats", 0444, sbi->s_proc,
-+				 &nova_seq_timing_fops, sb);
-+		proc_create_data("IO_stats", 0444, sbi->s_proc,
-+				 &nova_seq_IO_fops, sb);
-+		proc_create_data("allocator", 0444, sbi->s_proc,
-+				 &nova_seq_allocator_fops, sb);
-+		proc_create_data("gc", 0444, sbi->s_proc,
-+				 &nova_seq_gc_fops, sb);
-+	}
-+}
-+
-+void nova_sysfs_exit(struct super_block *sb)
-+{
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
-+
-+	if (sbi->s_proc) {
-+		remove_proc_entry("timing_stats", sbi->s_proc);
-+		remove_proc_entry("IO_stats", sbi->s_proc);
-+		remove_proc_entry("allocator", sbi->s_proc);
-+		remove_proc_entry("gc", sbi->s_proc);
-+		remove_proc_entry(sbi->s_bdev->bd_disk->disk_name,
-+					nova_proc_root);
-+	}
-+}
+ 	sbi->s_epoch_id = le64_to_cpu(super->s_epoch_id);
+ 	return ret;
+ }
 -- 
 2.7.4
