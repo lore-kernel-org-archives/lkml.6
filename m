@@ -1,86 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932764AbeCJEPP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 23:15:15 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:43915 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932133AbeCJEPO (ORCPT
+        id S932979AbeCJErh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 23:47:37 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:48226 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932343AbeCJErf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 23:15:14 -0500
-X-Google-Smtp-Source: AG47ELvrkgAQdT+JkuSnpJS4zwdf29rrYxanqyJBfOb8hvSfa8xmIJkWcyag9I0p8NuSFT+CAH8Rdg==
-Date: Fri, 9 Mar 2018 20:15:05 -0800
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+bacbe5d8791f30c9cee5@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        James Morse <james.morse@arm.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
-        Ingo Molnar <mingo@kernel.org>, syzkaller-bugs@googlegroups.com
-Subject: Re: possible deadlock in get_user_pages_unlocked
-Message-ID: <20180310041505.GA598@zzz.localdomain>
-References: <001a113f6344393d89056430347d@google.com>
- <20180202045020.GF30522@ZenIV.linux.org.uk>
- <20180202053502.GB949@zzz.localdomain>
- <20180202054626.GG30522@ZenIV.linux.org.uk>
- <20180202062037.GH30522@ZenIV.linux.org.uk>
- <CACT4Y+bDU00aQpJOUK8eB+Kv4HycNwKA=kShUe9kSd0FUqO+FQ@mail.gmail.com>
- <20180210013640.GN30522@ZenIV.linux.org.uk>
- <20180210031925.GA1041@zzz.localdomain>
+        Fri, 9 Mar 2018 23:47:35 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 64DFD602A0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Fri, 9 Mar 2018 21:47:32 -0700
+From: Lina Iyer <ilina@codeaurora.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org
+Subject: Re: [PATCH v4 03/10] drivers: qcom: rpmh-rsc: log RPMH requests in
+ FTRACE
+Message-ID: <20180310044732.GB2806@codeaurora.org>
+References: <20180309232543.24636-1-ilina@codeaurora.org>
+ <20180309232543.24636-4-ilina@codeaurora.org>
+ <20180309185223.19aa6c84@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20180210031925.GA1041@zzz.localdomain>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180309185223.19aa6c84@gandalf.local.home>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 09, 2018 at 07:19:25PM -0800, Eric Biggers wrote:
-> Hi Al,
-> 
-> On Sat, Feb 10, 2018 at 01:36:40AM +0000, Al Viro wrote:
-> > On Fri, Feb 02, 2018 at 09:57:27AM +0100, Dmitry Vyukov wrote:
-> > 
-> > > syzbot tests for up to 5 minutes. However, if there is a race involved
-> > > then you may need more time because the crash is probabilistic.
-> > > But from what I see most of the time, if one can't reproduce it
-> > > easily, it's usually due to some differences in setup that just don't
-> > > allow the crash to happen at all.
-> > > FWIW syzbot re-runs each reproducer on a freshly booted dedicated VM
-> > > and what it provided is the kernel output it got during run of the
-> > > provided program. So we have reasonably high assurance that this
-> > > reproducer worked in at least one setup.
-> > 
-> > Could you guys check if the following fixes the reproducer?
-> > 
-> > diff --git a/mm/gup.c b/mm/gup.c
-> > index 61015793f952..058a9a8e4e2e 100644
-> > --- a/mm/gup.c
-> > +++ b/mm/gup.c
-> > @@ -861,6 +861,9 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
-> >  		BUG_ON(*locked != 1);
-> >  	}
-> >  
-> > +	if (flags & FOLL_NOWAIT)
-> > +		locked = NULL;
-> > +
-> >  	if (pages)
-> >  		flags |= FOLL_GET;
-> >  
-> 
-> Yes that fixes the reproducer for me.
-> 
+On Fri, Mar 09 2018 at 16:52 -0700, Steven Rostedt wrote:
+>On Fri,  9 Mar 2018 16:25:36 -0700
+>Lina Iyer <ilina@codeaurora.org> wrote:
+>
+>> Log sent RPMH requests and interrupt responses in FTRACE.
+>>
+>> Cc: Steven Rostedt <rostedt@goodmis.org>
+>> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>> ---
+>>
+>> Changes in v4:
+>> 	- fix compilation issues, use __assign_str
+>> 	- use %#x instead of 0x%08x
+>
+>Hmm, I don't believe libtraceevent (used by trace-cmd and perf)
+>supports "%#x". But that needs to be fixed in libtraceevent and you
+>don't need to modify this patch.
+>
+>+			 __field(bool, wait)
+>
+>Usually I would recommend against 'bool' in structures, but it
+>shouldn't affect the tracing code. Might want to look at how it
+>converts it in the /sys/kernel/tracing/events/rpmh/rpmh_send_msg/format
+>file. It probably makes no difference if it was an int.
+>
+>Other than that... Looks good.
 
-Just to follow up on this: it seems that Al's suggested fix didn't go anywhere,
-but someone else eventually ran into this bug (which was a real deadlock) and a
-slightly different fix was merged, commit 96312e61282ae.  It fixes the
-reproducer for me too.  Telling syzbot so that it can close the bug:
+field:bool wait;        offset:32;      size:1; signed:0;
 
-#syz fix: mm/gup.c: teach get_user_pages_unlocked to handle FOLL_NOWAIT
-
-- Eric
+-- Lina
+>
+>Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+>
+>-- Steve
+>
+>
+>> Changes in v3:
+>> 	- Use __string() instead of char *
+>> 	- fix TRACE_INCLUDE_PATH
+>> ---
