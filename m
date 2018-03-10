@@ -1,38 +1,70 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvW5WaFIcDwjornrz19n7ZZC0BlY1oz2olaSbpktwNm4mtE0dOYcZw2Bi0V4NV+QXwLK/Eb
-ARC-Seal: i=1; a=rsa-sha256; t=1520641288; cv=none;
-        d=google.com; s=arc-20160816;
-        b=0jno9g9MEbGvzNbkGeQ2Qn2kskNXKgkd7dUx1ZMbq2fJBBJYKQTjVHSNjfEVakflbw
-         0XQrRTZWPi0qvHCq1Gxa+34zbMwFIath951rzE40qlcz6Uth3A49drtd+ZHBrnlT3TI4
-         hA2TtpQ+ZlfGXwvr0AOTokYODutaonprYpOQW1YZG3q7DoOzC05RbZ2qdcSrWI89+PMK
-         3TeabsWqWI4nhVZ80Ho8jlMNm24T/5KDUxhkU4FGbI4h7FNTj8/Bimc94FFo/WPO6UiY
-         d5AyaAZvixH3VtNMqW5EgDDcJ2PaxB/AH+nIW+rTvt4VQw2yoYZfcjUkQw8BpDaYK0qq
-         TpUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=5w/JdI/kzCWrIM7VRAyXmyr0nYxhf5bZ0YIirbQ16iI=;
-        b=NLB05WQywEjiNKqg1OrCU8VNdOpPZbGEinEfoHU2twvQsg5ZxnCOCEJC4UyYu2bCNM
-         50asnnguMjcf0UnxbjdfhdTFpkqPn+KmpAeelqeo2Np9lF/KcA4yBBjlPuUio61KHUun
-         FFGDL1Ip6HXEQY2tPlsRcJYAQ9umE4a2AjHu5azzhnO16qgSyXayQ8sW7736HZX1v/UD
-         b7/j4qiwIrvSSbK1826BtRaEX/EFHqzMrIOmw2srNwp1ifgEzBYu0p1WAIAxTKi4mj/e
-         2abEMZxJEqOEZB0M68eh+hyrpcpSOHdhRGuZbC3bsETAO6TjvT30D6O023XrjFr7w3OY
-         swIg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1720711-1520641288-2-15018155245477057908
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520641288; b=pcVn3dL01oXktotraJBSEotREOY64q0ymxIBUkWtwfcBamH
+    W6ddsvq5+6t00Bm28HAjOgyd2zpynmMRkr1lo278neBfUZvLVCtYGtRt6o+qIc9A
+    rEa5ZD0Ph4C3HNfb7YB0ys00hYYAwf7QZ4XLYNsY4W1+GhnbDMQfyjNhSwa6b/K6
+    thCwQ8TK/JFAgvy1hHK/u0ajHy04UKOn8GaoE8dfd8nyXcFJ9x+ErJe4DJimJBmG
+    LnWUAuab02ws0lcQRHlWuGDJLvxkvyjLUdpSna+5V63g9HtE20UmR8E396zEGdgz
+    QeLM41t1oqXHUs11XYhhLv+J0JD+ssjVxgIufbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520641288; bh=UbgE/iWsXrmMMBk+Ns9kbWJ+p6
+    LHSz0oHw54n16wCyQ=; b=e8HFbHwzDBdExhVV7D2TKmpVg4Tt/7t/g407k08UTI
+    /HPpH20bQ3iJvssiWs6Ge/cK5AA1AE8kwwLgS9yBLg1lmUnfCshoFxHvsYAQ87F+
+    1pD1UdzHdx5KhptDocj/6HpOqpV7ghMP0/Ad47QAsuxMup7v+TsI2WczihRpsaMp
+    ya7Znn8Hz+fYsvOdoEZJDT2kgb1GR/QxeOcwboK4shA++MuD1tcrUju5HWS2RSWM
+    w4tQcx3rvaOyBkaN0Esl8FCrwlJWQXf1gO0o3dCB2+AKjJ6UnKokzspFHqZYe8bm
+    qaz3vieibVhQT37W53sPC0jmBJG79xqbwGu6bD6id3Ng==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933657AbeCJAVX (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Mar 2018 19:21:23 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39504 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933652AbeCJAVV (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:21:21 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Jeremy Boone <jeremy.boone@nccgroup.trust>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	James Morris <james.morris@microsoft.com>
-Subject: [PATCH 4.9 03/65] tpm_i2c_nuvoton: fix potential buffer overruns caused by bit glitches on the bus
-Date: Fri,  9 Mar 2018 16:18:03 -0800
-Message-Id: <20180310001825.182967821@linuxfoundation.org>
+        stable@vger.kernel.org, Jeremy Boone <jeremy.boone@nccgroup.trust>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <james.morris@microsoft.com>
+Subject: [PATCH 4.9 02/65] tpm_i2c_infineon: fix potential buffer overruns caused by bit glitches on the bus
+Date: Fri,  9 Mar 2018 16:18:02 -0800
+Message-Id: <20180310001825.134829486@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
 References: <20180310001824.927996722@linuxfoundation.org>
@@ -40,10 +72,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507802508927264?=
-X-GMAIL-MSGID: =?utf-8?q?1594507959838657561?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,7 +84,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Jeremy Boone <jeremy.boone@nccgroup.trust>
 
-commit f9d4d9b5a5ef2f017bc344fb65a58a902517173b upstream.
+commit 9b8cb28d7c62568a5916bdd7ea1c9176d7f8f2ed upstream.
 
 Discrete TPMs are often connected over slow serial buses which, on
 some platforms, can have glitches causing bit flips.  In all the
@@ -72,30 +103,27 @@ Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm_i2c_nuvoton.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/char/tpm/tpm_i2c_infineon.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/char/tpm/tpm_i2c_nuvoton.c
-+++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
-@@ -281,7 +281,11 @@ static int i2c_nuvoton_recv(struct tpm_c
- 	struct device *dev = chip->dev.parent;
- 	struct i2c_client *client = to_i2c_client(dev);
- 	s32 rc;
--	int expected, status, burst_count, retries, size = 0;
+--- a/drivers/char/tpm/tpm_i2c_infineon.c
++++ b/drivers/char/tpm/tpm_i2c_infineon.c
+@@ -437,7 +437,8 @@ static int recv_data(struct tpm_chip *ch
+ static int tpm_tis_i2c_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+ {
+ 	int size = 0;
+-	int expected, status;
 +	int status;
-+	int burst_count;
-+	int retries;
-+	int size = 0;
 +	u32 expected;
  
  	if (count < TPM_HEADER_SIZE) {
- 		i2c_nuvoton_ready(chip);    /* return to idle */
-@@ -323,7 +327,7 @@ static int i2c_nuvoton_recv(struct tpm_c
- 		 * to machine native
- 		 */
- 		expected = be32_to_cpu(*(__be32 *) (buf + 2));
--		if (expected > count) {
-+		if (expected > count || expected < size) {
- 			dev_err(dev, "%s() expected > count\n", __func__);
- 			size = -EIO;
- 			continue;
+ 		size = -EIO;
+@@ -452,7 +453,7 @@ static int tpm_tis_i2c_recv(struct tpm_c
+ 	}
+ 
+ 	expected = be32_to_cpu(*(__be32 *)(buf + 2));
+-	if ((size_t) expected > count) {
++	if (((size_t) expected > count) || (expected < TPM_HEADER_SIZE)) {
+ 		size = -EIO;
+ 		goto out;
+ 	}
