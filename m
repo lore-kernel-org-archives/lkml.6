@@ -1,111 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932814AbeCJDqV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 22:46:21 -0500
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:32907 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751392AbeCJDqS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 22:46:18 -0500
-X-Google-Smtp-Source: AG47ELvChLtnZuXTuuhSz8iNrjBCf+kr9pmD6EoS6xyKogYNqfiE9NlY9WbxoCdZsQ8lOTBnzmez/g==
-From: Brian Norris <briannorris@chromium.org>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc: <linux-kernel@vger.kernel.org>, linux-watchdog@vger.kernel.org,
-        Doug Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        <linux-rockchip@lists.infradead.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: [PATCH v2 1/2] watchdog: dw: RMW the control register
-Date: Fri,  9 Mar 2018 19:46:06 -0800
-Message-Id: <20180310034607.254884-1-briannorris@chromium.org>
-X-Mailer: git-send-email 2.16.2.660.g709887971b-goog
+        id S932835AbeCJDsM convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 22:48:12 -0500
+Received: from mout.gmx.net ([212.227.17.22]:52905 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751371AbeCJDsJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 22:48:09 -0500
+Message-ID: <1520653648.12749.20.camel@gmx.de>
+Subject: Re: [PATCH v4] cpuset: Enable cpuset controller in default hierarchy
+From: Mike Galbraith <efault@gmx.de>
+To: Waiman Long <longman@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>
+Date: Sat, 10 Mar 2018 04:47:28 +0100
+In-Reply-To: <f0fca497-e4e7-3dbd-1e5c-a7f502c05dcb@redhat.com>
+References: <1520609707-16582-1-git-send-email-longman@redhat.com>
+         <1520613285.12489.36.camel@gmx.de>
+         <1c3fe7b0-2600-c46d-1527-d3aaf024bb91@redhat.com>
+         <1520619426.27998.18.camel@gmx.de>
+         <55809fe4-98ba-5566-86ed-457acfef0e1c@redhat.com>
+         <1520624424.27998.76.camel@gmx.de>
+         <53de9683-01b7-bac4-8b70-dc1f93ede600@redhat.com>
+         <20180309221736.GB5926@hirez.programming.kicks-ass.net>
+         <f0fca497-e4e7-3dbd-1e5c-a7f502c05dcb@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+X-Provags-ID: V03:K0:GaPPl8AnbKDUGY3S2kJsNrzwCOQXsW81uOLavpYeJZKC+mcD7oy
+ JH3qJken3VA7+OeSNhcYdxiifm94S6Ft9n0IYpUcORsMoZSGBW23gIydwZHzxdDUurabeOJ
+ 61pOIG7Nut9J+TgXz+UHk0Yo09Mirg1w5JRSZ8/8NbhvjNLl/ISr72CQolxfpwEW6f+/jRP
+ /kDkb+xy3gtdqf7rgtbsg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:dvy4FYzrnRU=:pmfHFQhesZ0zZ4LYiVJOmk
+ 9mUyReGYyd61CuPM7qiRA8uO7FqhgIujJ0vjWN++3+1LOCS71xpIdPr8OHi8US0g8btsQMw+i
+ uiz3DKndVIvr8D3NE/SIe5CMRasqY8evGjQcm9XIzVqyjh9EAPGItBzQDJqVVTHFMossfBiLR
+ w9J12k5xMMA9GIJh2ilManNAhaoC15oK3TRrF9sa8rlqoCpRP8buM7W+fyQC4gngm4/ayzHYt
+ BUeudOyjnoMNkfDIVnUl1bFJPkLw/rK69ChLtxJGDuIlSEcb6kJ11ZsKhgHc9oDt3dcYJauVf
+ GqwYknxfSfhe/szVOiK4siz7yu+ag5DJjHveB75P/P5SY1O1WUmEA/fozf/yjwd8KGRb+j3mi
+ iS55Pz50KaDJ9j4ki68ERjx0uSsM5TuSnopaF9td2hd+dAZjK8QxvIzw6yhvH1L+sxJ+AT+eo
+ sbvbK6Fyp+vPQev69PSQEovC2N021Oo6eIONi5Y90jViVYSaXr1Wre83h3Gp3fGHpf7I9LLSt
+ JIJE2QBesmPCnaR++U6FvD3rSanaguuqaozdkBdH9KZBH61j9RJvrOzylqL9xhLY/mvc03Mlg
+ VosB83mPXCJkA3ShP1swi5g8LvyXc+E8wcHqBFP2WWjpiRZPMXUKpgw060RQQzgjkdNXkF5EU
+ 0uTIhyrxBHrx11sFCTmb5TmjBIkxmuq8IL778i2684FCTqPlhUX0t6FYR6g/CqbG3id+sz1lS
+ kMPlL9amwvYF4+Xw7/m3GXQaHVIXwLUqbvbXJR2W20zgFi6P800nYJGNe33CcaCh4ksBEzf2X
+ IpLvGSK6MBam//L9wdCL0k7Jxqwo/PTrmG5XXumN9ddJLbM/0g=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RK3399 has rst_pulse_length in CONTROL_REG[4:2], determining the length
-of pulse to issue for system reset. We shouldn't clobber this value,
-because that might make the system reset ineffective. On RK3399, we're
-seeing that a value of 000b (meaning 2 cycles) yields an unreliable
-(partial?) reset, and so we only fully reset after the watchdog fires a
-second time. If we retain the system default (010b, or 8 clock cycles),
-then the watchdog reset is much more reliable.
+On Fri, 2018-03-09 at 18:06 -0500, Waiman Long wrote:
+> On 03/09/2018 05:17 PM, Peter Zijlstra wrote:
+> > On Fri, Mar 09, 2018 at 03:43:34PM -0500, Waiman Long wrote:
+> >> The isolcpus= parameter just reduce the cpus available to the rests of
+> >> the system. The cpuset controller does look at that value and make
+> >> adjustment accordingly, but it has no dependence on exclusive cpu/mem
+> >> features of cpuset.
+> > The isolcpus= boot param is donkey shit and needs to die. cpuset _used_
+> > to be able to fully replace it, but with the advent of cgroup 'feature'
+> > this got lost.
+> >
+> > And instead of fixing it, you're making it _far_ worse. You completely
+> > removed all the bits that allow repartitioning the scheduler domains.
+> >
+> > Mike is completely right, full NAK on any such approach.
+> 
+> So you are talking about sched_relax_domain_level and
+> sched_load_balance. I have not removed any bits. I just haven't exposed
+> them yet. It does seem like these 2 control knobs are useful from the
+> scheduling perspective. Do we also need cpu_exclusive or just the two
+> sched control knobs are enough?
 
-Read-modify-write retains the system value and improves reset
-reliability.
+Some form of cpu_exclusive (preferably exactly that, but something else
+could replace it) is needed to define sets that must not overlap any
+other set at creation time or any time thereafter.  A set with property
+'exclusive' is the enabler for fundamentally exclusive (but dynamic!)
+set properties such as 'isolated' (etc etc).
 
-It seems we were intentionally clobbering the response mode previously,
-to ensure we performed a system reset (we don't support an interrupt
-notification), so retain that explicitly.
-
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
-v2:
- * factor out helper
- * handle both start() and restart() cases
- * note the RESP_MODE handling in commit message
----
- drivers/watchdog/dw_wdt.c | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/watchdog/dw_wdt.c b/drivers/watchdog/dw_wdt.c
-index c2f4ff516230..918357bccf5e 100644
---- a/drivers/watchdog/dw_wdt.c
-+++ b/drivers/watchdog/dw_wdt.c
-@@ -34,6 +34,7 @@
- 
- #define WDOG_CONTROL_REG_OFFSET		    0x00
- #define WDOG_CONTROL_REG_WDT_EN_MASK	    0x01
-+#define WDOG_CONTROL_REG_RESP_MODE_MASK	    0x02
- #define WDOG_TIMEOUT_RANGE_REG_OFFSET	    0x04
- #define WDOG_TIMEOUT_RANGE_TOPINIT_SHIFT    4
- #define WDOG_CURRENT_COUNT_REG_OFFSET	    0x08
-@@ -121,14 +122,23 @@ static int dw_wdt_set_timeout(struct watchdog_device *wdd, unsigned int top_s)
- 	return 0;
- }
- 
-+static void dw_wdt_arm_system_reset(struct dw_wdt *dw_wdt)
-+{
-+	u32 val = readl(dw_wdt->regs + WDOG_CONTROL_REG_OFFSET);
-+
-+	/* Disable interrupt mode; always perform system reset. */
-+	val &= ~WDOG_CONTROL_REG_RESP_MODE_MASK;
-+	/* Enable watchdog. */
-+	val |= WDOG_CONTROL_REG_WDT_EN_MASK;
-+	writel(val, dw_wdt->regs + WDOG_CONTROL_REG_OFFSET);
-+}
-+
- static int dw_wdt_start(struct watchdog_device *wdd)
- {
- 	struct dw_wdt *dw_wdt = to_dw_wdt(wdd);
- 
- 	dw_wdt_set_timeout(wdd, wdd->timeout);
--
--	writel(WDOG_CONTROL_REG_WDT_EN_MASK,
--	       dw_wdt->regs + WDOG_CONTROL_REG_OFFSET);
-+	dw_wdt_arm_system_reset(dw_wdt);
- 
- 	return 0;
- }
-@@ -152,16 +162,13 @@ static int dw_wdt_restart(struct watchdog_device *wdd,
- 			  unsigned long action, void *data)
- {
- 	struct dw_wdt *dw_wdt = to_dw_wdt(wdd);
--	u32 val;
- 
- 	writel(0, dw_wdt->regs + WDOG_TIMEOUT_RANGE_REG_OFFSET);
--	val = readl(dw_wdt->regs + WDOG_CONTROL_REG_OFFSET);
--	if (val & WDOG_CONTROL_REG_WDT_EN_MASK)
-+	if (dw_wdt_is_enabled(dw_wdt))
- 		writel(WDOG_COUNTER_RESTART_KICK_VALUE,
- 		       dw_wdt->regs + WDOG_COUNTER_RESTART_REG_OFFSET);
- 	else
--		writel(WDOG_CONTROL_REG_WDT_EN_MASK,
--		       dw_wdt->regs + WDOG_CONTROL_REG_OFFSET);
-+		dw_wdt_arm_system_reset(dw_wdt);
- 
- 	/* wait for reset to assert... */
- 	mdelay(500);
--- 
-2.16.2.660.g709887971b-goog
+	-Mike
