@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtnWGJfKj1UeNqo2/hfvh5PPr58YP9ehWRLfz205WwPkk2pUS6Ih+ZK5Tp9910cWLP0EzzT
-ARC-Seal: i=1; a=rsa-sha256; t=1520641224; cv=none;
+X-Google-Smtp-Source: AG47ELt+JQsOg0P7+HgHNGv3N636jjNvnMPKkTqBYoZykgEiNTetnMUXhyt7MdTyM/rRSxWAPIDx
+ARC-Seal: i=1; a=rsa-sha256; t=1520641222; cv=none;
         d=google.com; s=arc-20160816;
-        b=LyXzLzeUiJJj/aaYP/cTeLREx4qC3ujnvfIgDN9rtM61R+03zhupwKHLjethEKXzWW
-         zE12fHLl//ysbF0JVyvQw5RTdUGEssu3GlxDu3XxvUtzGkTJ6SeItOq4/mlCPiFrsfuM
-         93YxOK3ZbvaHxpWHLiG44RTsd9H82z4lxWAzc9o6czM9Eay38+UhhKU2wAReNAaV8N3x
-         QbCT9YjuQmvAVGz1jiE6jzDDp7+LwNpTM0A7Kvr3jUBSuBTY2qI9CG3fS90xg4n4hr+b
-         9h+/qOvUDNuVPS12oLzDDwfqOBd9XMIZ2XBAtLUgyDxPEsEpWGRmUE0AtSoSYCll9zzm
-         aigA==
+        b=G1uH4JVuE9YU13wZIw7F80C2iOaqE3JQat75ljASbaMUvGwJvWE7sVVJX24tJQiEgI
+         FjeB6Dw7/ctlpy+NwK+015f5VsYqtrBj5zUlszv14YP2wZdmMEGhsUvdcdCpTqinfwkD
+         FbqBXQ8XjykMXzKYSlOoi87yN70T3JHL9WPp6+6mUUCJIxBcH/BJSicwlqHLIxXTwp7n
+         P7vA9Z4Sg3f6bKhz2jxKYqhEWzPqzg9tKHoQAgNB3igHQXARcaWPnLDXdssqxohQrOBF
+         jJ2ahdztItr2BcgVKnoTaJBiqTavh6C61+4/elX5HMZfE5mba/8EgvbmLkFiT8nxRlhI
+         iKAg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=KNxcT0N7kQ57V8T3rbLNwTAhQYh72xw8Od9Ia5n7f7U=;
-        b=JsoywzlOqiDFNGaSOwg01FiEXXzovqAt0vt9BHm1vDkQRVIOVt5NNhzNr3Lzm3HwYt
-         Ny23DXE+yv9/qCL7bQi/8SLWd1vhnIileF+gZvk847p6dEbKfebL16R8EKcMSd+BHNlX
-         tAwnPm3UgeejDwx4KjyLlMSI4T2o2Bh8GVIyYbXGcD1bXtZqAU7urfO0Keg9NvDSm41w
-         2QNHpLgbQC2A4KqmZRLvSSs7uN96iG8cyI2nBLoHUnEoRx6F1GXBttv5yGf0L0DFv/QY
-         pDzrgvjNz2+WYeNvmPoKiUT+AL0CzEsxln9R31/jM/oSo+AYk2zZG5zgeM+zHXyAfwzb
-         Fycg==
+        bh=DNx3txsEYnHR+//OerChGP8ZGm4e/YU9dqeiNyiK4UU=;
+        b=IjyZAqSpCmp/vwiP6ZlSuWNZLirQT7AP2zwDU3m5U05sK3V+hKrUMCQXsegxq0I6O9
+         vFNdHyX4tbBFUIi8dG4cpA+OK+JoHycFVoiS70IkO+y64PPiFeM46Xxv/Es7hXBnqJfQ
+         1U3bT5rPzd78yDC/hANCOjA82wFhPAEvHf+Rli09STJ8TKP2tJPtbH3Krhifco26Sft3
+         avW43o/gbw208yRChLTtE2z7Zk6ka7SxUvODviCs3pjwjiVH6oD24mMVawsv8feNVBSz
+         cQLwRMKJ/3+JLNKvIJGK1YO8s6ymUhJch2DlXaie9oHfLLS55lg9rZgOaOF0XZlr7gEd
+         10Qw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,23 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Arjan van de Ven <arjan@linux.intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Will Deacon <will.deacon@arm.com>,
-	linux-arch@vger.kernel.org,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 08/36] nospec: Allow index argument to have const-qualified type
-Date: Fri,  9 Mar 2018 16:18:24 -0800
-Message-Id: <20180310001807.674544545@linuxfoundation.org>
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.4 07/36] media: m88ds3103: dont call a non-initalized function
+Date: Fri,  9 Mar 2018 16:18:23 -0800
+Message-Id: <20180310001807.601357481@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001807.213987241@linuxfoundation.org>
 References: <20180310001807.213987241@linuxfoundation.org>
@@ -52,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507892706683015?=
-X-GMAIL-MSGID: =?utf-8?q?1594507892706683015?=
+X-GMAIL-THRID: =?utf-8?q?1594507890417919553?=
+X-GMAIL-MSGID: =?utf-8?q?1594507890417919553?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -61,63 +48,121 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-commit b98c6a160a057d5686a8c54c79cc6c8c94a7d0c8 upstream.
+commit b9c97c67fd19262c002d94ced2bfb513083e161e upstream.
 
-The last expression in a statement expression need not be a bare
-variable, quoting gcc docs
+If m88d3103 chip ID is not recognized, the device is not initialized.
 
-  The last thing in the compound statement should be an expression
-  followed by a semicolon; the value of this subexpression serves as the
-  value of the entire construct.
+However, it returns from probe without any error, causing this OOPS:
 
-and we already use that in e.g. the min/max macros which end with a
-ternary expression.
+[    7.689289] Unable to handle kernel NULL pointer dereference at virtual address 00000000
+[    7.689297] pgd = 7b0bd7a7
+[    7.689302] [00000000] *pgd=00000000
+[    7.689318] Internal error: Oops: 80000005 [#1] SMP ARM
+[    7.689322] Modules linked in: dvb_usb_dvbsky(+) m88ds3103 dvb_usb_v2 dvb_core videobuf2_vmalloc videobuf2_memops videobuf2_core crc32_arm_ce videodev media
+[    7.689358] CPU: 3 PID: 197 Comm: systemd-udevd Not tainted 4.15.0-mcc+ #23
+[    7.689361] Hardware name: BCM2835
+[    7.689367] PC is at 0x0
+[    7.689382] LR is at m88ds3103_attach+0x194/0x1d0 [m88ds3103]
+[    7.689386] pc : [<00000000>]    lr : [<bf0ae1ec>]    psr: 60000013
+[    7.689391] sp : ed8e5c20  ip : ed8c1e00  fp : ed8945c0
+[    7.689395] r10: ed894000  r9 : ed894378  r8 : eda736c0
+[    7.689400] r7 : ed894070  r6 : ed8e5c44  r5 : bf0bb040  r4 : eda77600
+[    7.689405] r3 : 00000000  r2 : 00000000  r1 : 00000000  r0 : eda77600
+[    7.689412] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+[    7.689417] Control: 10c5383d  Table: 2d8e806a  DAC: 00000051
+[    7.689423] Process systemd-udevd (pid: 197, stack limit = 0xe9dbfb63)
+[    7.689428] Stack: (0xed8e5c20 to 0xed8e6000)
+[    7.689439] 5c20: ed853a80 eda73640 ed894000 ed8942c0 ed853a80 bf0b9e98 ed894070 bf0b9f10
+[    7.689449] 5c40: 00000000 00000000 bf08c17c c08dfc50 00000000 00000000 00000000 00000000
+[    7.689459] 5c60: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    7.689468] 5c80: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    7.689479] 5ca0: 00000000 00000000 ed8945c0 ed8942c0 ed894000 ed894830 bf0b9e98 00000000
+[    7.689490] 5cc0: ed894378 bf0a3cb4 bf0bc3b0 0000533b ed920540 00000000 00000034 bf0a6434
+[    7.689500] 5ce0: ee952070 ed826600 bf0a7038 bf0a2dd8 00000001 bf0a6768 bf0a2f90 ed8943c0
+[    7.689511] 5d00: 00000000 c08eca68 ed826620 ed826620 00000000 ee952070 bf0bc034 ee952000
+[    7.689521] 5d20: ed826600 bf0bb080 ffffffed c0aa9e9c c0aa9dac ed826620 c16edf6c c168c2c8
+[    7.689531] 5d40: c16edf70 00000000 bf0bc034 0000000d 00000000 c08e268c bf0bb080 ed826600
+[    7.689541] 5d60: bf0bc034 ed826654 ed826620 bf0bc034 c164c8bc 00000000 00000001 00000000
+[    7.689553] 5d80: 00000028 c08e2948 00000000 bf0bc034 c08e2848 c08e0778 ee9f0a58 ed88bab4
+[    7.689563] 5da0: bf0bc034 ed90ba80 c168c1f0 c08e1934 bf0bb3bc c17045ac bf0bc034 c164c8bc
+[    7.689574] 5dc0: bf0bc034 bf0bb3bc ed91f564 c08e34ec bf0bc000 c164c8bc bf0bc034 c0aa8dc4
+[    7.689584] 5de0: ffffe000 00000000 bf0bf000 ed91f600 ed91f564 c03021e4 00000001 00000000
+[    7.689595] 5e00: c166e040 8040003f ed853a80 bf0bc448 00000000 c1678174 ed853a80 f0f22000
+[    7.689605] 5e20: f0f21fff 8040003f 014000c0 ed91e700 ed91e700 c16d8e68 00000001 ed91e6c0
+[    7.689615] 5e40: bf0bc400 00000001 bf0bc400 ed91f564 00000001 00000000 00000028 c03c9a24
+[    7.689625] 5e60: 00000001 c03c8c94 ed8e5f50 ed8e5f50 00000001 bf0bc400 ed91f540 c03c8cb0
+[    7.689637] 5e80: bf0bc40c 00007fff bf0bc400 c03c60b0 00000000 bf0bc448 00000028 c0e09684
+[    7.689647] 5ea0: 00000002 bf0bc530 c1234bf8 bf0bc5dc bf0bc514 c10ebbe8 ffffe000 bf000000
+[    7.689657] 5ec0: 00011538 00000000 ed8e5f48 00000000 00000000 00000000 00000000 00000000
+[    7.689666] 5ee0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    7.689676] 5f00: 00000000 00000000 7fffffff 00000000 00000013 b6e55a18 0000017b c0309104
+[    7.689686] 5f20: ed8e4000 00000000 00510af0 c03c9430 7fffffff 00000000 00000003 00000000
+[    7.689697] 5f40: 00000000 f0f0f000 00011538 00000000 f0f107b0 f0f0f000 00011538 f0f1fdb8
+[    7.689707] 5f60: f0f1fbe8 f0f1b974 00004000 000041e0 bf0bc3d0 00000001 00000000 000024c4
+[    7.689717] 5f80: 0000002d 0000002e 00000019 00000000 00000010 00000000 16894000 00000000
+[    7.689727] 5fa0: 00000000 c0308f20 16894000 00000000 00000013 b6e55a18 00000000 b6e5652c
+[    7.689737] 5fc0: 16894000 00000000 00000000 0000017b 00020000 00508110 00000000 00510af0
+[    7.689748] 5fe0: bef68948 bef68938 b6e4d3d0 b6d32590 60000010 00000013 00000000 00000000
+[    7.689790] [<bf0ae1ec>] (m88ds3103_attach [m88ds3103]) from [<bf0b9f10>] (dvbsky_s960c_attach+0x78/0x280 [dvb_usb_dvbsky])
+[    7.689821] [<bf0b9f10>] (dvbsky_s960c_attach [dvb_usb_dvbsky]) from [<bf0a3cb4>] (dvb_usbv2_probe+0xa3c/0x1024 [dvb_usb_v2])
+[    7.689849] [<bf0a3cb4>] (dvb_usbv2_probe [dvb_usb_v2]) from [<c0aa9e9c>] (usb_probe_interface+0xf0/0x2a8)
+[    7.689869] [<c0aa9e9c>] (usb_probe_interface) from [<c08e268c>] (driver_probe_device+0x2f8/0x4b4)
+[    7.689881] [<c08e268c>] (driver_probe_device) from [<c08e2948>] (__driver_attach+0x100/0x11c)
+[    7.689895] [<c08e2948>] (__driver_attach) from [<c08e0778>] (bus_for_each_dev+0x4c/0x9c)
+[    7.689909] [<c08e0778>] (bus_for_each_dev) from [<c08e1934>] (bus_add_driver+0x1c0/0x264)
+[    7.689919] [<c08e1934>] (bus_add_driver) from [<c08e34ec>] (driver_register+0x78/0xf4)
+[    7.689931] [<c08e34ec>] (driver_register) from [<c0aa8dc4>] (usb_register_driver+0x70/0x134)
+[    7.689946] [<c0aa8dc4>] (usb_register_driver) from [<c03021e4>] (do_one_initcall+0x44/0x168)
+[    7.689963] [<c03021e4>] (do_one_initcall) from [<c03c9a24>] (do_init_module+0x64/0x1f4)
+[    7.689979] [<c03c9a24>] (do_init_module) from [<c03c8cb0>] (load_module+0x20a0/0x25c8)
+[    7.689993] [<c03c8cb0>] (load_module) from [<c03c9430>] (SyS_finit_module+0xb4/0xec)
+[    7.690007] [<c03c9430>] (SyS_finit_module) from [<c0308f20>] (ret_fast_syscall+0x0/0x54)
+[    7.690018] Code: bad PC value
 
-This way, we can allow index to have const-qualified type, which will in
-some cases avoid the need for introducing a local copy of index of
-non-const qualified type. That, in turn, can prevent readers not
-familiar with the internals of array_index_nospec from wondering about
-the seemingly redundant extra variable, and I think that's worthwhile
-considering how confusing the whole _nospec business is.
+This may happen on normal circumstances, if, for some reason, the demod
+hangs and start returning an invalid chip ID:
 
-The expression _i&_mask has type unsigned long (since that is the type
-of _mask, and the BUILD_BUG_ONs guarantee that _i will get promoted to
-that), so in order not to change the type of the whole expression, add
-a cast back to typeof(_i).
+[   10.394395] m88ds3103 3-0068: Unknown device. Chip_id=00
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: linux-arch@vger.kernel.org
+So, change the logic to cause probe to fail with -ENODEV, preventing
+the OOPS.
+
+Detected while testing DVB MMAP patches on Raspberry Pi 3 with
+DVBSky S960CI.
+
 Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/151881604837.17395.10812767547837568328.stgit@dwillia2-desk3.amr.corp.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/nospec.h |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/dvb-frontends/m88ds3103.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/include/linux/nospec.h
-+++ b/include/linux/nospec.h
-@@ -66,7 +66,6 @@ static inline unsigned long array_index_
- 	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
- 	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
- 									\
--	_i &= _mask;							\
--	_i;								\
-+	(typeof(_i)) (_i & _mask);					\
- })
- #endif /* _LINUX_NOSPEC_H */
+--- a/drivers/media/dvb-frontends/m88ds3103.c
++++ b/drivers/media/dvb-frontends/m88ds3103.c
+@@ -1281,11 +1281,12 @@ static int m88ds3103_select(struct i2c_a
+  * New users must use I2C client binding directly!
+  */
+ struct dvb_frontend *m88ds3103_attach(const struct m88ds3103_config *cfg,
+-		struct i2c_adapter *i2c, struct i2c_adapter **tuner_i2c_adapter)
++				      struct i2c_adapter *i2c,
++				      struct i2c_adapter **tuner_i2c_adapter)
+ {
+ 	struct i2c_client *client;
+ 	struct i2c_board_info board_info;
+-	struct m88ds3103_platform_data pdata;
++	struct m88ds3103_platform_data pdata = {};
+ 
+ 	pdata.clk = cfg->clock;
+ 	pdata.i2c_wr_max = cfg->i2c_wr_max;
+@@ -1428,6 +1429,8 @@ static int m88ds3103_probe(struct i2c_cl
+ 	case M88DS3103_CHIP_ID:
+ 		break;
+ 	default:
++		ret = -ENODEV;
++		dev_err(&client->dev, "Unknown device. Chip_id=%02x\n", dev->chip_id);
+ 		goto err_kfree;
+ 	}
+ 
