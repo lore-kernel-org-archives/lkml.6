@@ -1,36 +1,68 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELslcYhZyLDE4lWZfRra2YlH4E3/NMwKzE3NiorISYTEI88jN/T+lyunkxrBxYCHK30m/VMD
-ARC-Seal: i=1; a=rsa-sha256; t=1520641209; cv=none;
-        d=google.com; s=arc-20160816;
-        b=LKKbDv1mWD1Lz+if6s/EtZd93ccKQvH3MTvI0pNUaWwmwRLO5odPDr3/ykpoHbIhgk
-         8sflHnoo5p4k0KjPKeJLIzV/34I22EoafD1ciYQZ+bqOpGabKjm4MC90uq6udQXsiC48
-         Qt2Fs0k3+GkE34XPE7ea+A+FZupm8gMuuvTqmAbuS09yHz6PNyVh+d7K0dS0EFZYmc1h
-         mPriqigscKCExrVXXaH6BKKzJtzgdX8x9RW2KgN4vEMfaBu2c5gQLO9u9E9MACOsORTT
-         n59uzpiMcqlZiscYkaQYejAOEHujAMKONL7ZzvaRmqE+fXOCi2EsE8tAqSzPBjFnJoC/
-         stoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=Oo9ctgVeMRZBr9hgxeI51d20fo4SR4FvDcwZG4Mu9eY=;
-        b=GIM3C4PK6PuU5tHNQPD4ZcTZBggRoMmXAb5AJX4etXzghOEstfR7w4i8JMBjNO57G/
-         Ur7spnSVJxiqKkAchcUQkCwvPe4Y+Eg4wLkiG/11yuGQS2CGIyaOr+AWYDoQu5lMacB4
-         HFZbUPbjSTfm/NpFmt7PX21zBcaApZlJWl/Lxl7v/KQIG41qsAakQwob3/02V2Ov/Ay1
-         ynV0KOV6x4pbMSgiupZesteqMOvzhqL3LDzwpEr4VHNSjaIAGa5uPVzE8HKIX48aebw1
-         Q3avyUbpvZKsuH7gRd+/29mhdrRMFaGn/xDzTJzwjoyPNZ4JOU1qZjlKERJfPjgKSVU+
-         8Jmg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1720711-1520641208-2-12413228521417004026
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520641208; b=jeLqa9pxSXeJK5RTFNUs+e6KQ1/m1HGpgZZA7uhOsoPx2Ij
+    U5K8xFmopNGV8rumLy6RA+ZatN5I7fmr3X0hBRGxHSiOABRm48Iu63yMytPQJk41
+    6pFUywRClaiIwHWX60jEZgSjoWvaDNKOzjpTm8y/Gk8681VyLyoQ3LSf5QaL0CHR
+    1w1vOxz2bbtyJQmi0tcmLyCPzpsdU3vLaBZdenZZnIvFQXooQSvNFYuf9Rl2qWT1
+    TPmW5nB2ak0bJqRsdXaecPG0ehmuiE1xElkPHSQ3nSNi+8Hm+BcHBQSq83/507bn
+    q/1lpJHXAO5QPHOZ5U90uhpCeT0zoqB87tsvoVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520641208; bh=XrWhxIZiP4uwxPpIhwsE2Xy4P6
+    bgir0LU83zboo3GqY=; b=nN+Zg3r4JVitICZ/90jFRiq1aDbVzQEd/AxD95VPWN
+    GZj0NPvQbytr26dAF3SSq3uWi9ooftJ0xDEs7S214ahFyiHNc03ky3sQ6VYz5SX/
+    BPyPVFeqYsfHz/4yLBJ3dVdMSJNM13O15oUR24xb3U83aMFQod1encjFtSf6wNEG
+    55AJF7XCudENfbg15UNejXMmMrN/eQaHIntaHjGJQxdcOR8d6uUg+Z0gOVBPZX/C
+    s9lqXO+IJxpUG1XhGtZLtBnRftIzJjiiam51ZDbYP1kxEoIwXKfD9FdZq/mCZyu+
+    JiFNSbbfo1l011wHVzhZUKT1a3/X3L7SYS7BZhC4/2Zw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933265AbeCJAUF (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Mar 2018 19:20:05 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38972 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933237AbeCJAUE (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:20:04 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Jakub Kicinski <jakub.kicinski@netronome.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 22/36] net: fix race on decreasing number of TX queues
-Date: Fri,  9 Mar 2018 16:18:38 -0800
-Message-Id: <20180310001808.579152274@linuxfoundation.org>
+        stable@vger.kernel.org, Denis Du <dudenis2000@yahoo.ca>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 20/36] hdlc_ppp: carrier detect ok, dont turn off negotiation
+Date: Fri,  9 Mar 2018 16:18:36 -0800
+Message-Id: <20180310001808.462928150@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001807.213987241@linuxfoundation.org>
 References: <20180310001807.213987241@linuxfoundation.org>
@@ -38,10 +70,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507800170011350?=
-X-GMAIL-MSGID: =?utf-8?q?1594507877276017589?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,66 +80,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Denis Du <dudenis2000@yahoo.ca>
 
 
-[ Upstream commit ac5b70198adc25c73fba28de4f78adcee8f6be0b ]
+[ Upstream commit b6c3bad1ba83af1062a7ff6986d9edc4f3d7fc8e ]
 
-netif_set_real_num_tx_queues() can be called when netdev is up.
-That usually happens when user requests change of number of
-channels/rings with ethtool -L.  The procedure for changing
-the number of queues involves resetting the qdiscs and setting
-dev->num_tx_queues to the new value.  When the new value is
-lower than the old one, extra care has to be taken to ensure
-ordering of accesses to the number of queues vs qdisc reset.
+Sometimes when physical lines have a just good noise to make the protocol
+handshaking fail, but the carrier detect still good. Then after remove of
+the noise, nobody will trigger this protocol to be start again to cause
+the link to never come back. The fix is when the carrier is still on, not
+terminate the protocol handshaking.
 
-Currently the queues are reset before new dev->num_tx_queues
-is assigned, leaving a window of time where packets can be
-enqueued onto the queues going down, leading to a likely
-crash in the drivers, since most drivers don't check if TX
-skbs are assigned to an active queue.
-
-Fixes: e6484930d7c7 ("net: allocate tx queues in register_netdevice")
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: Denis Du <dudenis2000@yahoo.ca>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/dev.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/net/wan/hdlc_ppp.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -2183,8 +2183,11 @@ EXPORT_SYMBOL(netif_set_xps_queue);
-  */
- int netif_set_real_num_tx_queues(struct net_device *dev, unsigned int txq)
- {
-+	bool disabling;
- 	int rc;
- 
-+	disabling = txq < dev->real_num_tx_queues;
-+
- 	if (txq < 1 || txq > dev->num_tx_queues)
- 		return -EINVAL;
- 
-@@ -2200,15 +2203,19 @@ int netif_set_real_num_tx_queues(struct
- 		if (dev->num_tc)
- 			netif_setup_tc(dev, txq);
- 
--		if (txq < dev->real_num_tx_queues) {
-+		dev->real_num_tx_queues = txq;
-+
-+		if (disabling) {
-+			synchronize_net();
- 			qdisc_reset_all_tx_gt(dev, txq);
- #ifdef CONFIG_XPS
- 			netif_reset_xps_queues_gt(dev, txq);
- #endif
- 		}
-+	} else {
-+		dev->real_num_tx_queues = txq;
- 	}
- 
--	dev->real_num_tx_queues = txq;
- 	return 0;
- }
- EXPORT_SYMBOL(netif_set_real_num_tx_queues);
+--- a/drivers/net/wan/hdlc_ppp.c
++++ b/drivers/net/wan/hdlc_ppp.c
+@@ -574,7 +574,10 @@ static void ppp_timer(unsigned long arg)
+ 			ppp_cp_event(proto->dev, proto->pid, TO_GOOD, 0, 0,
+ 				     0, NULL);
+ 			proto->restart_counter--;
+-		} else
++		} else if (netif_carrier_ok(proto->dev))
++			ppp_cp_event(proto->dev, proto->pid, TO_GOOD, 0, 0,
++				     0, NULL);
++		else
+ 			ppp_cp_event(proto->dev, proto->pid, TO_BAD, 0, 0,
+ 				     0, NULL);
+ 		break;
