@@ -1,91 +1,135 @@
-Return-Path: <kernel-hardening-return-12360-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELvGnFKafubz1CLFGMD3VJARMc3GLbigRzd+HtFmIiuklXi8lbCSMNjKUTwy6Amj9ozJZO4+
-ARC-Seal: i=1; a=rsa-sha256; t=1520649488; cv=none;
+Return-Path: <kernel-hardening-return-12361-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELtzIlhnCXX3rdGUVkR5miV6YFTprMcpKp2bcofeFGn1scmuHmk0gSC9YFL+YnDuJVj0q51v
+ARC-Seal: i=1; a=rsa-sha256; t=1520651557; cv=none;
         d=google.com; s=arc-20160816;
-        b=qEtMSS324pQCHXFLhs+D/odk1eio2rYh2jDUYFj/tVClh8STDJPi7BH6pgWjRA0rqq
-         Og+Acv0PTFpjhNIVXWL1tK7Q8O4YP7JZNtudISd9e+9xTIGqp8nZT3gh5E8V64Amw+rH
-         LytjjwN4tJQUfVrHUxUgkOIod/NkSR42JASDhOgA7TIicwmFYjlm0ZNQh3O9k4+ceklw
-         x2G4A744PnK/WD0Azfk5IEZSWwknTucKjIcSuniNnKF9uHr9p5JtuhgQ0idMTw2hFW04
-         sjO6DSV8ejx+bnmdHd0kVa+Pg9A7LxtyT5goyW+sZUIZCMi443ezf27CmzNB5PE751Fq
-         lSkw==
+        b=ptOleHsjwlNI9TIy3h/NFdKXRQgudWfdx0fyzAHd4IsN2w2W6ue0F4OOvyPhCogQV0
+         C5m1g0K7Tn4OZQpdJSozpKWoCmdn5f1IhoNFsEhWujMMhINJ6vbOdsK3E6h5/Y7sMzRf
+         KGTrwHciwfbIwGfqyy7V2/mQIjtphkj9yLbe3rmm33fNV+oM7aMLZ6gs1pKP3QhFHxx2
+         GbkBbhmENTjlUGY9dnd7SMrPqjGGlfWFbVyyLz4yKoo4ckmoJfskOVlYCZT9ddVtRu/Q
+         Rj4xwEGlW2EEreFG/fmoAmMh+XumlCt5pnKsSfe7jObSP//n3z46m1hsnfv3Bizxwq80
+         Vu+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=HG+i0L+KBW3svfcURKDhhtUwO6jWOLpHdHIACTUPj+4=;
-        b=ZLGQDiYPO/vn4dsRtj1ICRBB98ff/iNun/LCzMbVIUc4Xcly6gi1lRpYbcXevl5lXx
-         j5IX9WMyuRiXRZCxzxyxU18D7LGxgdH052lz3x+ndDuaA/+zkA5pjWIBm/8hPNuSAYaB
-         nHynrIek7NH0B2rMT9jGiOTgLiVUfOgc5QD+nWU1UdMUG4voq2+TooZucAo08ze8z4Ax
-         8GbeyF6tnmv0Tw5b0rOOZooKni1qAE7t8wPnXlkgBPRHRgRgZQhWB1UXUNCLzMNK4iTU
-         RzYKWweGx6/SGbYVYjNTFZ/WayjQhl/dOQziWRsoHbKghQYL1xKf+S5loVpTx/pv7EbA
-         kGOg==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
+         :list-help:list-post:precedence:mailing-list
+         :arc-authentication-results;
+        bh=lMVbaL0cJS7WOhbrqp21sc8aRXBBYd1pulwWcnSnLgg=;
+        b=FXojCi5f+NNkxaRtd76qK9bUil3i/yzFhWGDTdC+jUWMDWVBHJfclhodQWR0dnOsbQ
+         KDLu6ck7bRcOrN3RiMNLIbMluV4J0EfQk0cYNwmLLB7sHdkwCy91gtvLEBOfBU+Wor0s
+         tFj72zISsARVGRVpIt2nsVrmCshP7KYoDupM/OqzdWVJN/wT2eHCPEGDTl1BfpFT8zed
+         8ZH5+NqVM/DmE5NHKV9OreuZQ4m+4iIIuhnwexj1efcfj8v7EjrvjhCNWUORsNZT2eph
+         L08veeC157pwJJrYIL67bOEMgRmfZN/FKTQR+CwAngGsSRPTQrWKY0b2xzqSgOfHiJZ/
+         0aqA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=J4Vr6s4r;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=GmtuY202;
-       spf=pass (google.com: domain of kernel-hardening-return-12360-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12360-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=fail header.i=@infradead.org header.s=merlin.20170209 header.b=2npUthO6;
+       spf=pass (google.com: domain of kernel-hardening-return-12361-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12361-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=J4Vr6s4r;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=GmtuY202;
-       spf=pass (google.com: domain of kernel-hardening-return-12360-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12360-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=fail header.i=@infradead.org header.s=merlin.20170209 header.b=2npUthO6;
+       spf=pass (google.com: domain of kernel-hardening-return-12361-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12361-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+Subject: Re: [PATCH v3] kernel.h: Skip single-eval logic on literals in
+ min()/max()
+To: Andrew Morton <akpm@linux-foundation.org>,
+ Kees Cook <keescook@chromium.org>
+Cc: linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+ "Tobin C. Harding" <me@tobin.cc>, Steven Rostedt <rostedt@goodmis.org>,
+ Jonathan Corbet <corbet@lwn.net>, Chris Mason <clm@fb.com>,
+ Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+ Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Masahiro Yamada <yamada.masahiro@socionext.com>, Borislav Petkov
+ <bp@suse.de>, Ian Abbott <abbotti@mev.co.uk>,
+ Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+ Petr Mladek <pmladek@suse.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+ Linux Btrfs <linux-btrfs@vger.kernel.org>,
+ Network Development <netdev@vger.kernel.org>,
+ Kernel Hardening <kernel-hardening@lists.openwall.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+References: <20180309200536.GA5670@beast>
+ <20180309160719.154a3158e2d8ee56e43a918f@linux-foundation.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <e8874944-f0b7-7a1f-26f3-446d7d7fcc38@infradead.org>
+Date: Fri, 9 Mar 2018 19:11:54 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Sender: linus971@gmail.com
-In-Reply-To: <CAGXu5j+4_2vZF9uPy_agcGymbHbVqohSqApKZZxwcTz4OC_Skg@mail.gmail.com>
-References: <20180309200536.GA5670@beast> <20180309160719.154a3158e2d8ee56e43a918f@linux-foundation.org>
- <CA+55aFw9hWz1-YFVoHEiXDjqb9q7dz=rQVXr7YLkMuVLvbwaOg@mail.gmail.com>
- <20180309163241.a421e216999bd0b1f43a64c2@linux-foundation.org>
- <CA+55aFwbO2vUsjWzAwB6SZ65RM4r3P0+2JvyMHn=ry0CgWCBgA@mail.gmail.com>
- <CAGXu5j+D=zs8AMb969dhH05GmKPuBxKPcAs89KfKzVf47faL1g@mail.gmail.com> <CAGXu5j+4_2vZF9uPy_agcGymbHbVqohSqApKZZxwcTz4OC_Skg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 9 Mar 2018 18:37:48 -0800
-X-Google-Sender-Auth: aoAfBMO4kSL_JuZe1R69EeGCu3k
-Message-ID: <CA+55aFyzPJQ41hq4nC24xwwOW6ZiQ=AMEDA1fZzDH5XbcGGzpg@mail.gmail.com>
-Subject: Re: [PATCH v3] kernel.h: Skip single-eval logic on literals in min()/max()
-To: Kees Cook <keescook@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	"Tobin C. Harding" <me@tobin.cc>, Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>,
-	Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>,
-	"David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-	Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>, Borislav Petkov <bp@suse.de>,
-	Randy Dunlap <rdunlap@infradead.org>, Ian Abbott <abbotti@mev.co.uk>,
-	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Petr Mladek <pmladek@suse.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Linux Btrfs <linux-btrfs@vger.kernel.org>,
-	Network Development <netdev@vger.kernel.org>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180309160719.154a3158e2d8ee56e43a918f@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594491887701841138?=
-X-GMAIL-MSGID: =?utf-8?q?1594516558214112247?=
+X-GMAIL-MSGID: =?utf-8?q?1594518726992330023?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 9, 2018 at 5:31 PM, Kees Cook <keescook@chromium.org> wrote:
->
-> WTF, gmail just blasted HTML into my explicitly plain-text email?! Apologies...
+On 03/09/2018 04:07 PM, Andrew Morton wrote:
+> On Fri, 9 Mar 2018 12:05:36 -0800 Kees Cook <keescook@chromium.org> wrote:
+> 
+>> When max() is used in stack array size calculations from literal values
+>> (e.g. "char foo[max(sizeof(struct1), sizeof(struct2))]", the compiler
+>> thinks this is a dynamic calculation due to the single-eval logic, which
+>> is not needed in the literal case. This change removes several accidental
+>> stack VLAs from an x86 allmodconfig build:
+>>
+>> $ diff -u before.txt after.txt | grep ^-
+>> -drivers/input/touchscreen/cyttsp4_core.c:871:2: warning: ISO C90 forbids variable length array ‘ids’ [-Wvla]
+>> -fs/btrfs/tree-checker.c:344:4: warning: ISO C90 forbids variable length array ‘namebuf’ [-Wvla]
+>> -lib/vsprintf.c:747:2: warning: ISO C90 forbids variable length array ‘sym’ [-Wvla]
+>> -net/ipv4/proc.c:403:2: warning: ISO C90 forbids variable length array ‘buff’ [-Wvla]
+>> -net/ipv6/proc.c:198:2: warning: ISO C90 forbids variable length array ‘buff’ [-Wvla]
+>> -net/ipv6/proc.c:218:2: warning: ISO C90 forbids variable length array ‘buff64’ [-Wvla]
+>>
+>> Based on an earlier patch from Josh Poimboeuf.
+> 
+> v1, v2 and v3 of this patch all fail with gcc-4.4.4:
+> 
+> ./include/linux/jiffies.h: In function 'jiffies_delta_to_clock_t':
+> ./include/linux/jiffies.h:444: error: first argument to '__builtin_choose_expr' not a constant
 
-There's more now in your email, I think maybe it's triggered by your
-signature file and some gmail web interface bug. Or it just tries to
-force quote using html.
 
-There's some html email disease inside google, where some parts of the
-company seems to think that html email is _good_.
+I'm seeing that problem with
+> gcc --version
+gcc (SUSE Linux) 4.8.5
 
-The official gmail Android app is a big pain, int hat it doesn't
-*have* a plain-text mode, even though it knows how to format the
-plain-text part of the email.
+in mmotm.
 
-You might want to be on the lookout for some bad drugs at the office.
-Because the world would thank you if you took them away from the gmail
-app people.
+> That's with
+> 
+> #define __max(t1, t2, x, y)						\
+> 	__builtin_choose_expr(__builtin_constant_p(x) &&		\
+> 			      __builtin_constant_p(y) &&		\
+> 			      __builtin_types_compatible_p(t1, t2),	\
+> 			      (t1)(x) > (t2)(y) ? (t1)(x) : (t2)(y),	\
+> 			      __single_eval_max(t1, t2,			\
+> 						__UNIQUE_ID(max1_),	\
+> 						__UNIQUE_ID(max2_),	\
+> 						x, y))
+> /**
+>  * max - return maximum of two values of the same or compatible types
+>  * @x: first value
+>  * @y: second value
+>  */
+> #define max(x, y)	__max(typeof(x), typeof(y), x, y)
+> 
+> 
+> A brief poke failed to reveal a workaround - gcc-4.4.4 doesn't appear
+> to know that __builtin_constant_p(x) is a constant.  Or something.
+> 
+> Sigh.  Wasn't there some talk about modernizing our toolchain
+> requirements?
 
-             Linus
+
+-- 
+~Randy
