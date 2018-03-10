@@ -1,90 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932240AbeCJPEQ (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 10:04:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56328 "EHLO mail.kernel.org"
+        id S932256AbeCJPTL (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 10:19:11 -0500
+Received: from mga09.intel.com ([134.134.136.24]:5783 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750704AbeCJPEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 10:04:14 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92A60208FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sat, 10 Mar 2018 15:04:09 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Himanshu Jha <himanshujha199640@gmail.com>
-Cc: Kees Cook <keescook@chromium.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: Re: [PATCH] iio: potentiometer: ds1803: Remove VLA usage
-Message-ID: <20180310150409.1060ab04@archlinux>
-In-Reply-To: <20180309110510.GB7786@himanshu-Vostro-3559>
-References: <1520534733-1743-1-git-send-email-himanshujha199640@gmail.com>
-        <CAGXu5jJzLczSzfJtWbhTUqAYXRG_-zKf2x8cz8jrAxu+XjkYdQ@mail.gmail.com>
-        <20180309110510.GB7786@himanshu-Vostro-3559>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S932110AbeCJPTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 10:19:09 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,451,1515484800";
+   d="scan'208";a="37626938"
+From: Tomas Winkler <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH 3/5 V3] tpm2: add longer timeouts for creation commands.
+Date: Sat, 10 Mar 2018 17:15:45 +0200
+Message-Id: <20180310151545.22237-1-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 9 Mar 2018 16:35:10 +0530
-Himanshu Jha <himanshujha199640@gmail.com> wrote:
+TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve generation
+of crypto keys which can be a computationally intensive task.
+The timeout is set to 3min.
+Rather than increasing default timeout a new constant is
+added, to not stall for too long on regular commands failures.
 
-> On Thu, Mar 08, 2018 at 11:39:15AM -0800, Kees Cook wrote:
-> > On Thu, Mar 8, 2018 at 10:45 AM, Himanshu Jha
-> > <himanshujha199640@gmail.com> wrote:  
-> > > In preparation to enabling -Wvla, remove VLA usage and replace it
-> > > with fixed a fixed length array and therefore, prevent potential
-> > > stack overflow attacks.
-> > >
-> > > Fixed as a part of the discussion to remove all VLAs from the kernel:
-> > > https://lkml.org/lkml/2018/3/7/621
-> > >
-> > > Cc: keescook@chromium.org
-> > > Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
-> > > ---
-> > >  drivers/iio/potentiometer/ds1803.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/iio/potentiometer/ds1803.c b/drivers/iio/potentiometer/ds1803.c
-> > > index 9b0ff4a..6bf12c9 100644
-> > > --- a/drivers/iio/potentiometer/ds1803.c
-> > > +++ b/drivers/iio/potentiometer/ds1803.c
-> > > @@ -64,7 +64,7 @@ static int ds1803_read_raw(struct iio_dev *indio_dev,
-> > >         struct ds1803_data *data = iio_priv(indio_dev);
-> > >         int pot = chan->channel;
-> > >         int ret;
-> > > -       u8 result[indio_dev->num_channels];
-> > > +       u8 result[ARRAY_SIZE(ds1803_channels)];  
-> > 
-> > It seems like num_channels is always ARRAY_SIZE(ds1803_channels).
-> > Could the entire field be dropped?  
-> 
-> If you're asking to remove num_channels then certainly it is not
-> possible
-> since it is a member of industrial I/O device struct and it is not just
-> a member of regular struct local to this file.
-> 
-> We certainly know that there are only two channels BTW and it can be
-> tranformed to simply:
-> 
->         u8 result[2];
-> 
-> But then I might have to add an additional comment explaining the magic
-> number 2.
-I'm happy with the exact version you proposed.
-num_channels isn't there for the driver use (as it can obviously know
-this) but for the core which uses this to know how big the channel array
-is when creating the sysfs interfaces etc.
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+V2: Add more explanation to the commit message.
+V3: Rename TPM_DURATION_MAX to TPM_NUM_DURATIONS.
+ drivers/char/tpm/tpm-interface.c |  3 +++
+ drivers/char/tpm/tpm.h           | 28 ++++++++++++++++++----------
+ drivers/char/tpm/tpm2-cmd.c      |  8 +++++---
+ 3 files changed, 26 insertions(+), 13 deletions(-)
 
-Applied to the togreg branch of iio.git and pushed out as testing.
-
-Thanks,
-
-Jonathan
-
-> 
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 402e54252b22..40d1770f6b38 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -421,6 +421,8 @@ int tpm_get_timeouts(struct tpm_chip *chip)
+ 		    msecs_to_jiffies(TPM2_DURATION_MEDIUM);
+ 		chip->duration[TPM_LONG] =
+ 		    msecs_to_jiffies(TPM2_DURATION_LONG);
++		chip->duration[TPM_LONG_LONG] =
++		    msecs_to_jiffies(TPM2_DURATION_LONG_LONG);
+ 
+ 		chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
+ 		return 0;
+@@ -509,6 +511,7 @@ int tpm_get_timeouts(struct tpm_chip *chip)
+ 		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_medium));
+ 	chip->duration[TPM_LONG] =
+ 		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_long));
++	chip->duration[TPM_LONG_LONG] = 0; /* not used under 1.2 */
+ 
+ 	/* The Broadcom BCM0102 chipset in a Dell Latitude D820 gets the above
+ 	 * value wrong and apparently reports msecs rather than usecs. So we
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 38197a30ad7b..6ab426916800 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -67,7 +67,9 @@ enum tpm_duration {
+ 	TPM_SHORT = 0,
+ 	TPM_MEDIUM = 1,
+ 	TPM_LONG = 2,
++	TPM_LONG_LONG = 3,
+ 	TPM_UNDEFINED,
++	TPM_NUM_DURATIONS = TPM_UNDEFINED,
+ };
+ 
+ #define TPM_WARN_RETRY          0x800
+@@ -79,15 +81,20 @@ enum tpm_duration {
+ #define TPM_HEADER_SIZE		10
+ 
+ enum tpm2_const {
+-	TPM2_PLATFORM_PCR	= 24,
+-	TPM2_PCR_SELECT_MIN	= ((TPM2_PLATFORM_PCR + 7) / 8),
+-	TPM2_TIMEOUT_A		= 750,
+-	TPM2_TIMEOUT_B		= 2000,
+-	TPM2_TIMEOUT_C		= 200,
+-	TPM2_TIMEOUT_D		= 30,
+-	TPM2_DURATION_SHORT	= 20,
+-	TPM2_DURATION_MEDIUM	= 750,
+-	TPM2_DURATION_LONG	= 2000,
++	TPM2_PLATFORM_PCR       =     24,
++	TPM2_PCR_SELECT_MIN     = ((TPM2_PLATFORM_PCR + 7) / 8),
++};
++
++enum tpm2_timeouts {
++	TPM2_TIMEOUT_A          =    750,
++	TPM2_TIMEOUT_B          =   2000,
++	TPM2_TIMEOUT_C          =    200,
++	TPM2_TIMEOUT_D          =     30,
++	TPM2_DURATION_SHORT     =     20,
++	TPM2_DURATION_MEDIUM    =    750,
++	TPM2_DURATION_LONG      =   2000,
++	TPM2_DURATION_LONG_LONG = 300000,
++	TPM2_DURATION_DEFAULT   = 120000,
+ };
+ 
+ enum tpm2_structures {
+@@ -123,6 +130,7 @@ enum tpm2_algorithms {
+ 
+ enum tpm2_command_codes {
+ 	TPM2_CC_FIRST		= 0x011F,
++	TPM2_CC_CREATE_PRIMARY  = 0x0131,
+ 	TPM2_CC_SELF_TEST	= 0x0143,
+ 	TPM2_CC_STARTUP		= 0x0144,
+ 	TPM2_CC_SHUTDOWN	= 0x0145,
+@@ -227,7 +235,7 @@ struct tpm_chip {
+ 	unsigned long timeout_c; /* jiffies */
+ 	unsigned long timeout_d; /* jiffies */
+ 	bool timeout_adjusted;
+-	unsigned long duration[3]; /* jiffies */
++	unsigned long duration[TPM_NUM_DURATIONS]; /* jiffies */
+ 	bool duration_adjusted;
+ 
+ 	struct dentry *bios_dir[TPM_NUM_EVENT_LOG_FILES];
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index a700f8f9ead7..c1ddbbba406e 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -90,6 +90,8 @@ static struct tpm2_hash tpm2_hash_map[] = {
+  * of time the chip could take to return the result. The values
+  * of the SHORT, MEDIUM, and LONG durations are taken from the
+  * PC Client Profile (PTP) specification.
++ * LONG_LONG is for commands that generates keys which empirically
++ * takes longer time on some systems.
+  */
+ static const u8 tpm2_ordinal_duration[TPM2_CC_LAST - TPM2_CC_FIRST + 1] = {
+ 	TPM_UNDEFINED,		/* 11F */
+@@ -110,7 +112,7 @@ static const u8 tpm2_ordinal_duration[TPM2_CC_LAST - TPM2_CC_FIRST + 1] = {
+ 	TPM_UNDEFINED,		/* 12e */
+ 	TPM_UNDEFINED,		/* 12f */
+ 	TPM_UNDEFINED,		/* 130 */
+-	TPM_UNDEFINED,		/* 131 */
++	TPM_LONG_LONG,		/* 131 */
+ 	TPM_UNDEFINED,		/* 132 */
+ 	TPM_UNDEFINED,		/* 133 */
+ 	TPM_UNDEFINED,		/* 134 */
+@@ -144,7 +146,7 @@ static const u8 tpm2_ordinal_duration[TPM2_CC_LAST - TPM2_CC_FIRST + 1] = {
+ 	TPM_UNDEFINED,		/* 150 */
+ 	TPM_UNDEFINED,		/* 151 */
+ 	TPM_UNDEFINED,		/* 152 */
+-	TPM_UNDEFINED,		/* 153 */
++	TPM_LONG_LONG,		/* 153 */
+ 	TPM_UNDEFINED,		/* 154 */
+ 	TPM_UNDEFINED,		/* 155 */
+ 	TPM_UNDEFINED,		/* 156 */
+@@ -821,7 +823,7 @@ unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+ 		duration = chip->duration[index];
+ 
+ 	if (duration <= 0)
+-		duration = 2 * 60 * HZ;
++		duration = msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+ 
+ 	return duration;
+ }
+-- 
+2.14.3
