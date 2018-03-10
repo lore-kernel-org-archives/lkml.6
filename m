@@ -1,30 +1,30 @@
 Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AG47ELtD7rT9bUJrpnQ+XdJrTovtl6NA9Rz6vEOERFfhcxzj6Oc3Xp1Xh6XEASiGwl8SKwrmV1wZ
-ARC-Seal: i=1; a=rsa-sha256; t=1520687959; cv=none;
+X-Google-Smtp-Source: AG47ELuBsmQcz7k5d0WJ7L3gEpwGCisc7e5C1G5pTHCK8SG0N229FmAUTB7UmcXN5iZEin9aHBHH
+ARC-Seal: i=1; a=rsa-sha256; t=1520687943; cv=none;
         d=google.com; s=arc-20160816;
-        b=C9/yLL6LX7pNCqnLs+k1PQo64yx0b3dZIp2VyHIgxYYjgph5hshlPBjhG+h76qWSRL
-         pu9gCZfaMTe6g/UTehNbA5GKDdV3qVPL9kfEEuSNQQppK/oup944/nStz7Y0Ug42M86G
-         pTdJYcaBRTZCntmG43Z7HYXixTUdKm0Z8U9adiK6Ebpa+juxlV1Yb/NIxaeqNaVfs14B
-         RtI1MSywWlXZyx9zwq75askgyrjyQKLN09eytGGWY9QpIZk+EZH4e0DHwBbs97349yAw
-         s75klwsB/TD/Y5b02dWAaRsyNr73ppNoD9lcIS3NX6PIqCMrNwSNgr6YQ1FTgIGcVSeS
-         z6Zw==
+        b=cJtPJoCqd6BX66CGe4TjA2re3789v0oDeZJR6DjgTV5IGNeBWpCJhObzMUdYFgu6ff
+         ZM24TzGERGbC4dHyX/wB7GqvMlwI1FrYDtRvVbpyXiCHjRcPLGgea6uxi2+HYc/f8KLS
+         iOZ85ow7HVZ+Kzv7IqCYG2W9QCikNUDc8K50feEPrc15/SDNjHoZsgOOl689cZNcO9nb
+         l9oIrQV2ztk9EizKYtTw5FOl4ehj+zWu5kInprI4FrSeXgs360B3Lx1QD4WXQ4JeBovU
+         dfAfiAMVgGe5CBbouKCprYHyxGjxtYZHEyKKVTtWL2nuduQuwcSrYcN+H589RQBqdl6E
+         VNDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=message-id:date:subject:cc:to:from:dkim-signature:dkim-filter
          :arc-authentication-results;
-        bh=aTLxjWCIKLM+Nfj8y1TAkPQw3r03471mz4NiLq9eqLc=;
-        b=rJGHlgCyRW9cb2DTAbrtsfpWM9IT3OOZITr2DVU5UfqGOpGtLxt2C8ItY4eeIlQANo
-         XG+nnMWn3lhCHYym3t5xEltzc2SWv+ykx7mBMEJ0JmnTY8S47lCIBTJppB8fNp862aif
-         IVy4LxhDnLb+2xiRLu6Ok7juzNL7OSJSQh81VBZZWm9zOUarHsMHwD4evUMOMnmOHi55
-         eMMa6ds9uiZ3NLZdfBiiiQpo+qn1M2oaUZK/ZCyWTblGwo/tTAeh06M1DxjBWoRiulKV
-         brugi6FDi6wUZdBYHxA9Qnj1q51n/IIC27sNfo4mD/73wrDJo5fN3USNMUDmZ6pxutkP
-         wcnQ==
+        bh=pGmV9cTVuHJMW/62rfCRxqlARoTSA+CIUe5nLjdhDbw=;
+        b=UFauR6yfR/V8lPMNQicx+5efwETUXvdM2Z0aCT9kEcV42j/uC9FQuKOv6nLf8d3byi
+         0TyN7VEuGVQObOyJzRFF89dSfMtMrqVZMKLcZYfUpxdoluyoYAdjFq0UlxN9cWgQ1Lgr
+         oIyyK5LTPR0GFTwLvZMEYFs46EIDNit0rh1szzKJINU10svU0hWS6JuBsrnYxQAcutmJ
+         sXKytWXpttVJ+uSVnOEyA9bCKW1FgZJO8wVi7c0pr2YX/jbwrQKkHRqZYRdcnZ3hmZ86
+         2p+Hwn+CuJ6IbDAwP0Qe470onMddyWoRo7wLJ7zJQM0CfcP57E2kZZCAbKPraTKWAueE
+         bfpQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=XChiQCuH;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.76 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=oOr5AZIj;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=XChiQCuH;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.76 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w2ADImIX013778
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=oOr5AZIj;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.74 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w2ADIRTK006498
 X-Nifty-SrcIP: [125.199.20.195]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-arm-kernel@lists.infradead.org
@@ -34,15 +34,15 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
         Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH] arm64: dts: uniphier: use proper SPDX-License-Identifier style
-Date: Sat, 10 Mar 2018 22:18:41 +0900
-Message-Id: <1520687921-31521-1-git-send-email-yamada.masahiro@socionext.com>
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>
+Subject: [PATCH] ARM: dts: uniphier: use proper SPDX-License-Identifier style
+Date: Sat, 10 Mar 2018 22:18:01 +0900
+Message-Id: <1520687881-31399-1-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594556897915384389?=
-X-GMAIL-MSGID: =?utf-8?q?1594556897915384389?=
+X-GMAIL-THRID: =?utf-8?q?1594556880760719962?=
+X-GMAIL-MSGID: =?utf-8?q?1594556880760719962?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,115 +57,164 @@ follow the examples in that document.
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts | 16 +++++++---------
- arch/arm64/boot/dts/socionext/uniphier-ld11-ref.dts    | 14 ++++++--------
- arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi       | 14 ++++++--------
- arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts | 16 +++++++---------
- arch/arm64/boot/dts/socionext/uniphier-ld20-ref.dts    | 14 ++++++--------
- arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi       | 14 ++++++--------
- arch/arm64/boot/dts/socionext/uniphier-pxs3-ref.dts    | 14 ++++++--------
- arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi       | 14 ++++++--------
- 8 files changed, 50 insertions(+), 66 deletions(-)
+ arch/arm/boot/dts/uniphier-ld4-ref.dts       | 14 ++++++--------
+ arch/arm/boot/dts/uniphier-ld4.dtsi          | 14 ++++++--------
+ arch/arm/boot/dts/uniphier-ld6b-ref.dts      | 14 ++++++--------
+ arch/arm/boot/dts/uniphier-ld6b.dtsi         | 14 ++++++--------
+ arch/arm/boot/dts/uniphier-pinctrl.dtsi      | 14 ++++++--------
+ arch/arm/boot/dts/uniphier-pro4-ace.dts      | 14 ++++++--------
+ arch/arm/boot/dts/uniphier-pro4-ref.dts      | 14 ++++++--------
+ arch/arm/boot/dts/uniphier-pro4-sanji.dts    | 14 ++++++--------
+ arch/arm/boot/dts/uniphier-pro4.dtsi         | 14 ++++++--------
+ arch/arm/boot/dts/uniphier-pro5.dtsi         | 14 ++++++--------
+ arch/arm/boot/dts/uniphier-pxs2-gentil.dts   | 14 ++++++--------
+ arch/arm/boot/dts/uniphier-pxs2-vodka.dts    | 14 ++++++--------
+ arch/arm/boot/dts/uniphier-pxs2.dtsi         | 14 ++++++--------
+ arch/arm/boot/dts/uniphier-ref-daughter.dtsi | 14 ++++++--------
+ arch/arm/boot/dts/uniphier-sld8-ref.dts      | 14 ++++++--------
+ arch/arm/boot/dts/uniphier-sld8.dtsi         | 14 ++++++--------
+ arch/arm/boot/dts/uniphier-support-card.dtsi | 14 ++++++--------
+ 17 files changed, 102 insertions(+), 136 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts b/arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts
-index 0feec41..9b4dc41 100644
---- a/arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts
-+++ b/arch/arm64/boot/dts/socionext/uniphier-ld11-global.dts
-@@ -1,12 +1,10 @@
--/*
-- * Device Tree Source for UniPhier LD11 Global Board
-- *
-- * Copyright (C) 2016-2017 Socionext Inc.
-- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-- *           Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-- *
-- * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-- */
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+//
-+// Device Tree Source for UniPhier LD11 Global Board
-+//
-+// Copyright (C) 2016-2017 Socionext Inc.
-+//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+//           Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
- 
- /dts-v1/;
- #include <dt-bindings/gpio/uniphier-gpio.h>
-diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld11-ref.dts b/arch/arm64/boot/dts/socionext/uniphier-ld11-ref.dts
-index dacdea5..b8f6273 100644
---- a/arch/arm64/boot/dts/socionext/uniphier-ld11-ref.dts
-+++ b/arch/arm64/boot/dts/socionext/uniphier-ld11-ref.dts
+diff --git a/arch/arm/boot/dts/uniphier-ld4-ref.dts b/arch/arm/boot/dts/uniphier-ld4-ref.dts
+index a3afd0c..21407e1 100644
+--- a/arch/arm/boot/dts/uniphier-ld4-ref.dts
++++ b/arch/arm/boot/dts/uniphier-ld4-ref.dts
 @@ -1,11 +1,9 @@
 -/*
-- * Device Tree Source for UniPhier LD11 Reference Board
+- * Device Tree Source for UniPhier LD4 Reference Board
 - *
-- * Copyright (C) 2016 Socionext Inc.
+- * Copyright (C) 2015-2016 Socionext Inc.
 - *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
 - *
 - * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 - */
 +// SPDX-License-Identifier: GPL-2.0+ OR MIT
 +//
-+// Device Tree Source for UniPhier LD11 Reference Board
++// Device Tree Source for UniPhier LD4 Reference Board
 +//
-+// Copyright (C) 2016 Socionext Inc.
++// Copyright (C) 2015-2016 Socionext Inc.
 +//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
  
  /dts-v1/;
- #include "uniphier-ld11.dtsi"
-diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi b/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi
-index f9014c8..5f2da73 100644
---- a/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi
-+++ b/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi
+ #include "uniphier-ld4.dtsi"
+diff --git a/arch/arm/boot/dts/uniphier-ld4.dtsi b/arch/arm/boot/dts/uniphier-ld4.dtsi
+index 0459e84..37950ad 100644
+--- a/arch/arm/boot/dts/uniphier-ld4.dtsi
++++ b/arch/arm/boot/dts/uniphier-ld4.dtsi
 @@ -1,11 +1,9 @@
 -/*
-- * Device Tree Source for UniPhier LD11 SoC
+- * Device Tree Source for UniPhier LD4 SoC
 - *
-- * Copyright (C) 2016 Socionext Inc.
+- * Copyright (C) 2015-2016 Socionext Inc.
 - *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
 - *
 - * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 - */
 +// SPDX-License-Identifier: GPL-2.0+ OR MIT
 +//
-+// Device Tree Source for UniPhier LD11 SoC
++// Device Tree Source for UniPhier LD4 SoC
 +//
-+// Copyright (C) 2016 Socionext Inc.
++// Copyright (C) 2015-2016 Socionext Inc.
 +//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
  
- #include <dt-bindings/gpio/gpio.h>
  #include <dt-bindings/gpio/uniphier-gpio.h>
-diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts b/arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts
-index 6bee22e..fe6608e 100644
---- a/arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts
-+++ b/arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts
-@@ -1,12 +1,10 @@
+ 
+diff --git a/arch/arm/boot/dts/uniphier-ld6b-ref.dts b/arch/arm/boot/dts/uniphier-ld6b-ref.dts
+index 9327f6b..a0a44a4 100644
+--- a/arch/arm/boot/dts/uniphier-ld6b-ref.dts
++++ b/arch/arm/boot/dts/uniphier-ld6b-ref.dts
+@@ -1,11 +1,9 @@
 -/*
-- * Device Tree Source for UniPhier LD20 Global Board
+- * Device Tree Source for UniPhier LD6b Reference Board
+- *
+- * Copyright (C) 2015-2016 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+- */
++// SPDX-License-Identifier: GPL-2.0+ OR MIT
++//
++// Device Tree Source for UniPhier LD6b Reference Board
++//
++// Copyright (C) 2015-2016 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ /dts-v1/;
+ #include "uniphier-ld6b.dtsi"
+diff --git a/arch/arm/boot/dts/uniphier-ld6b.dtsi b/arch/arm/boot/dts/uniphier-ld6b.dtsi
+index 9a7b25c..4d07a94 100644
+--- a/arch/arm/boot/dts/uniphier-ld6b.dtsi
++++ b/arch/arm/boot/dts/uniphier-ld6b.dtsi
+@@ -1,11 +1,9 @@
+-/*
+- * Device Tree Source for UniPhier LD6b SoC
+- *
+- * Copyright (C) 2015-2016 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+- */
++// SPDX-License-Identifier: GPL-2.0+ OR MIT
++//
++// Device Tree Source for UniPhier LD6b SoC
++//
++// Copyright (C) 2015-2016 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ /*
+  * LD6b consists of two silicon dies: D-chip and A-chip.
+diff --git a/arch/arm/boot/dts/uniphier-pinctrl.dtsi b/arch/arm/boot/dts/uniphier-pinctrl.dtsi
+index de481c3..0468d9a 100644
+--- a/arch/arm/boot/dts/uniphier-pinctrl.dtsi
++++ b/arch/arm/boot/dts/uniphier-pinctrl.dtsi
+@@ -1,11 +1,9 @@
+-/*
+- * Device Tree Source for UniPhier SoCs default pinctrl settings
 - *
 - * Copyright (C) 2015-2017 Socionext Inc.
 - *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-- *           Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 - *
 - * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 - */
 +// SPDX-License-Identifier: GPL-2.0+ OR MIT
 +//
-+// Device Tree Source for UniPhier LD20 Global Board
++// Device Tree Source for UniPhier SoCs default pinctrl settings
 +//
 +// Copyright (C) 2015-2017 Socionext Inc.
 +//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-+//           Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
  
- /dts-v1/;
- #include <dt-bindings/gpio/uniphier-gpio.h>
-diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld20-ref.dts b/arch/arm64/boot/dts/socionext/uniphier-ld20-ref.dts
-index 092574d..2c1a92f 100644
---- a/arch/arm64/boot/dts/socionext/uniphier-ld20-ref.dts
-+++ b/arch/arm64/boot/dts/socionext/uniphier-ld20-ref.dts
+ &pinctrl {
+ 	pinctrl_aout: aout {
+diff --git a/arch/arm/boot/dts/uniphier-pro4-ace.dts b/arch/arm/boot/dts/uniphier-pro4-ace.dts
+index 92b5cbb..db1b089 100644
+--- a/arch/arm/boot/dts/uniphier-pro4-ace.dts
++++ b/arch/arm/boot/dts/uniphier-pro4-ace.dts
 @@ -1,11 +1,9 @@
 -/*
-- * Device Tree Source for UniPhier LD20 Reference Board
+- * Device Tree Source for UniPhier Pro4 Ace Board
+- *
+- * Copyright (C) 2016 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+- */
++// SPDX-License-Identifier: GPL-2.0+ OR MIT
++//
++// Device Tree Source for UniPhier Pro4 Ace Board
++//
++// Copyright (C) 2016 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ /dts-v1/;
+ #include "uniphier-pro4.dtsi"
+diff --git a/arch/arm/boot/dts/uniphier-pro4-ref.dts b/arch/arm/boot/dts/uniphier-pro4-ref.dts
+index 629bc14..efb0849 100644
+--- a/arch/arm/boot/dts/uniphier-pro4-ref.dts
++++ b/arch/arm/boot/dts/uniphier-pro4-ref.dts
+@@ -1,11 +1,9 @@
+-/*
+- * Device Tree Source for UniPhier Pro4 Reference Board
 - *
 - * Copyright (C) 2015-2016 Socionext Inc.
 - *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
@@ -174,20 +223,42 @@ index 092574d..2c1a92f 100644
 - */
 +// SPDX-License-Identifier: GPL-2.0+ OR MIT
 +//
-+// Device Tree Source for UniPhier LD20 Reference Board
++// Device Tree Source for UniPhier Pro4 Reference Board
 +//
 +// Copyright (C) 2015-2016 Socionext Inc.
 +//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
  
  /dts-v1/;
- #include "uniphier-ld20.dtsi"
-diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi b/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
-index 3d5ca4b..458b5b8 100644
---- a/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
-+++ b/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
+ #include "uniphier-pro4.dtsi"
+diff --git a/arch/arm/boot/dts/uniphier-pro4-sanji.dts b/arch/arm/boot/dts/uniphier-pro4-sanji.dts
+index 7c4326a..dac4d66 100644
+--- a/arch/arm/boot/dts/uniphier-pro4-sanji.dts
++++ b/arch/arm/boot/dts/uniphier-pro4-sanji.dts
 @@ -1,11 +1,9 @@
 -/*
-- * Device Tree Source for UniPhier LD20 SoC
+- * Device Tree Source for UniPhier Pro4 Sanji Board
+- *
+- * Copyright (C) 2016 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+- */
++// SPDX-License-Identifier: GPL-2.0+ OR MIT
++//
++// Device Tree Source for UniPhier Pro4 Sanji Board
++//
++// Copyright (C) 2016 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ /dts-v1/;
+ #include "uniphier-pro4.dtsi"
+diff --git a/arch/arm/boot/dts/uniphier-pro4.dtsi b/arch/arm/boot/dts/uniphier-pro4.dtsi
+index f77d739..844124b 100644
+--- a/arch/arm/boot/dts/uniphier-pro4.dtsi
++++ b/arch/arm/boot/dts/uniphier-pro4.dtsi
+@@ -1,11 +1,9 @@
+-/*
+- * Device Tree Source for UniPhier Pro4 SoC
 - *
 - * Copyright (C) 2015-2016 Socionext Inc.
 - *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
@@ -196,56 +267,188 @@ index 3d5ca4b..458b5b8 100644
 - */
 +// SPDX-License-Identifier: GPL-2.0+ OR MIT
 +//
-+// Device Tree Source for UniPhier LD20 SoC
++// Device Tree Source for UniPhier Pro4 SoC
 +//
 +// Copyright (C) 2015-2016 Socionext Inc.
 +//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
  
- #include <dt-bindings/gpio/gpio.h>
  #include <dt-bindings/gpio/uniphier-gpio.h>
-diff --git a/arch/arm64/boot/dts/socionext/uniphier-pxs3-ref.dts b/arch/arm64/boot/dts/socionext/uniphier-pxs3-ref.dts
-index 3c71087..e62d068 100644
---- a/arch/arm64/boot/dts/socionext/uniphier-pxs3-ref.dts
-+++ b/arch/arm64/boot/dts/socionext/uniphier-pxs3-ref.dts
+ 
+diff --git a/arch/arm/boot/dts/uniphier-pro5.dtsi b/arch/arm/boot/dts/uniphier-pro5.dtsi
+index f291dd6..06c2cef 100644
+--- a/arch/arm/boot/dts/uniphier-pro5.dtsi
++++ b/arch/arm/boot/dts/uniphier-pro5.dtsi
 @@ -1,11 +1,9 @@
 -/*
-- * Device Tree Source for UniPhier PXs3 Reference Board
+- * Device Tree Source for UniPhier Pro5 SoC
 - *
-- * Copyright (C) 2017 Socionext Inc.
+- * Copyright (C) 2015-2016 Socionext Inc.
 - *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
 - *
 - * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 - */
 +// SPDX-License-Identifier: GPL-2.0+ OR MIT
 +//
-+// Device Tree Source for UniPhier PXs3 Reference Board
++// Device Tree Source for UniPhier Pro5 SoC
 +//
-+// Copyright (C) 2017 Socionext Inc.
++// Copyright (C) 2015-2016 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ / {
+ 	compatible = "socionext,uniphier-pro5";
+diff --git a/arch/arm/boot/dts/uniphier-pxs2-gentil.dts b/arch/arm/boot/dts/uniphier-pxs2-gentil.dts
+index d09acb8..59608de 100644
+--- a/arch/arm/boot/dts/uniphier-pxs2-gentil.dts
++++ b/arch/arm/boot/dts/uniphier-pxs2-gentil.dts
+@@ -1,11 +1,9 @@
+-/*
+- * Device Tree Source for UniPhier PXs2 Gentil Board
+- *
+- * Copyright (C) 2015-2016 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+- */
++// SPDX-License-Identifier: GPL-2.0+ OR MIT
++//
++// Device Tree Source for UniPhier PXs2 Gentil Board
++//
++// Copyright (C) 2015-2016 Socionext Inc.
 +//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
  
  /dts-v1/;
- #include "uniphier-pxs3.dtsi"
-diff --git a/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi b/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi
-index 234fc58..b537a3c 100644
---- a/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi
-+++ b/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi
+ #include "uniphier-pxs2.dtsi"
+diff --git a/arch/arm/boot/dts/uniphier-pxs2-vodka.dts b/arch/arm/boot/dts/uniphier-pxs2-vodka.dts
+index 6f13a25..4170676 100644
+--- a/arch/arm/boot/dts/uniphier-pxs2-vodka.dts
++++ b/arch/arm/boot/dts/uniphier-pxs2-vodka.dts
 @@ -1,11 +1,9 @@
 -/*
-- * Device Tree Source for UniPhier PXs3 SoC
+- * Device Tree Source for UniPhier PXs2 Vodka Board
 - *
-- * Copyright (C) 2017 Socionext Inc.
+- * Copyright (C) 2015-2016 Socionext Inc.
 - *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
 - *
 - * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 - */
 +// SPDX-License-Identifier: GPL-2.0+ OR MIT
 +//
-+// Device Tree Source for UniPhier PXs3 SoC
++// Device Tree Source for UniPhier PXs2 Vodka Board
 +//
-+// Copyright (C) 2017 Socionext Inc.
++// Copyright (C) 2015-2016 Socionext Inc.
 +//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
  
- #include <dt-bindings/gpio/gpio.h>
+ /dts-v1/;
+ #include "uniphier-pxs2.dtsi"
+diff --git a/arch/arm/boot/dts/uniphier-pxs2.dtsi b/arch/arm/boot/dts/uniphier-pxs2.dtsi
+index 18f336e..c0a8207 100644
+--- a/arch/arm/boot/dts/uniphier-pxs2.dtsi
++++ b/arch/arm/boot/dts/uniphier-pxs2.dtsi
+@@ -1,11 +1,9 @@
+-/*
+- * Device Tree Source for UniPhier PXs2 SoC
+- *
+- * Copyright (C) 2015-2016 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+- */
++// SPDX-License-Identifier: GPL-2.0+ OR MIT
++//
++// Device Tree Source for UniPhier PXs2 SoC
++//
++// Copyright (C) 2015-2016 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
  #include <dt-bindings/gpio/uniphier-gpio.h>
+ #include <dt-bindings/thermal/thermal.h>
+diff --git a/arch/arm/boot/dts/uniphier-ref-daughter.dtsi b/arch/arm/boot/dts/uniphier-ref-daughter.dtsi
+index 7a1c29b..04e60c2 100644
+--- a/arch/arm/boot/dts/uniphier-ref-daughter.dtsi
++++ b/arch/arm/boot/dts/uniphier-ref-daughter.dtsi
+@@ -1,11 +1,9 @@
+-/*
+- * Device Tree Source for UniPhier Reference Daughter Board
+- *
+- * Copyright (C) 2015-2017 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+- */
++// SPDX-License-Identifier: GPL-2.0+ OR MIT
++//
++// Device Tree Source for UniPhier Reference Daughter Board
++//
++// Copyright (C) 2015-2017 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ &i2c0 {
+ 	eeprom@50 {
+diff --git a/arch/arm/boot/dts/uniphier-sld8-ref.dts b/arch/arm/boot/dts/uniphier-sld8-ref.dts
+index e052ea3..fe386fa 100644
+--- a/arch/arm/boot/dts/uniphier-sld8-ref.dts
++++ b/arch/arm/boot/dts/uniphier-sld8-ref.dts
+@@ -1,11 +1,9 @@
+-/*
+- * Device Tree Source for UniPhier sLD8 Reference Board
+- *
+- * Copyright (C) 2015-2016 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+- */
++// SPDX-License-Identifier: GPL-2.0+ OR MIT
++//
++// Device Tree Source for UniPhier sLD8 Reference Board
++//
++// Copyright (C) 2015-2016 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ /dts-v1/;
+ #include "uniphier-sld8.dtsi"
+diff --git a/arch/arm/boot/dts/uniphier-sld8.dtsi b/arch/arm/boot/dts/uniphier-sld8.dtsi
+index bc8c240..e9b9b4f 100644
+--- a/arch/arm/boot/dts/uniphier-sld8.dtsi
++++ b/arch/arm/boot/dts/uniphier-sld8.dtsi
+@@ -1,11 +1,9 @@
+-/*
+- * Device Tree Source for UniPhier sLD8 SoC
+- *
+- * Copyright (C) 2015-2016 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+- */
++// SPDX-License-Identifier: GPL-2.0+ OR MIT
++//
++// Device Tree Source for UniPhier sLD8 SoC
++//
++// Copyright (C) 2015-2016 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ #include <dt-bindings/gpio/uniphier-gpio.h>
+ 
+diff --git a/arch/arm/boot/dts/uniphier-support-card.dtsi b/arch/arm/boot/dts/uniphier-support-card.dtsi
+index e4e7e1b..bf441c2 100644
+--- a/arch/arm/boot/dts/uniphier-support-card.dtsi
++++ b/arch/arm/boot/dts/uniphier-support-card.dtsi
+@@ -1,11 +1,9 @@
+-/*
+- * Device Tree Source for UniPhier Support Card (Expansion Board)
+- *
+- * Copyright (C) 2015-2017 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+- */
++// SPDX-License-Identifier: GPL-2.0+ OR MIT
++//
++// Device Tree Source for UniPhier Support Card (Expansion Board)
++//
++// Copyright (C) 2015-2017 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ &system_bus {
+ 	status = "okay";
 -- 
 2.7.4
