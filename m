@@ -1,28 +1,28 @@
 Return-Path: <mcgrof@kernel.org>
-X-Google-Smtp-Source: AG47ELvFRgKdEZ4ppfSiaHDyTjHU6OVrVNKlwiggvlJZrNBX5gNBLnT2+OZMicRzlop4y17Afqww
-ARC-Seal: i=1; a=rsa-sha256; t=1520691328; cv=none;
+X-Google-Smtp-Source: AG47ELsiZ/RJPZ6gHImVYUqpezlweDWOHY9hDmq2/TsH3Mbf/1v8GtOu9No8Rd9bvDDXe+woK+VZ
+ARC-Seal: i=1; a=rsa-sha256; t=1520691325; cv=none;
         d=google.com; s=arc-20160816;
-        b=dfyD89NianPe3OV3jedAvpBPa9WpOkzWjhmH168DqWN+AqHHNeSJSZKlWqymvNsjzs
-         BWi5PB/7lEbIXpgiYCnUt8VEZll1JiFNTK9Y/xENQ3c5e618cSlTa/dRhdg8KMn0T0iq
-         Lzi/0QT8DgoYRMv60WlRrBeZrfAS+2Em9cm9LWNg2BSvoF+cxONbYaODO8Mryx40zfe1
-         JnfhTui4DyM99+uT4ptf+q+uSO6ewnXXslOZqor4ilCIn8isEwm4DGeop3BbV453zt1E
-         zQ9m/3KFZoSJ08uBc6fEMgE3blGx+6tTkdBMbq+9jtBEdcrzF/DgbUbGz8Ft+IAfl7Lp
-         NaEw==
+        b=AdXoHkPOn1KR7qKyZXUlzyNPLAxiq5A5QihWydjX804RtRjABpKsrODjQSUbn/Mx8j
+         CW62UtKYvtiVWKB83zB+J2ynn0rgwm+EEcbSZtbQm/YI7Lr1TtmlM+PFLtolJW4ntrGy
+         D5BA8hiIox7RLxUoESiwNnorgWmtU2xMaCN3svFZcOddUTz9RP/+ZLpOwfly2OefsQf3
+         GrLHUozGX4yvL/hIiABpjjgxXf+W/fkJU8PwQnDqqmm/FzJsUAnyfC4b3EMJ77tMckaX
+         Mmx82QruvMy/kKIIwG/37hXCkTK/kGerirqbKnBdTjh7GvvNOzQKLi/4pbDCm0PXVC3L
+         ebMQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dmarc-filter:arc-authentication-results;
-        bh=We//rTKa1MHKcyC4BqfBQHdlZDxSWb4CeIfKRk24Tjs=;
-        b=fqSCGFZNWbD18M8VFdZdTZspyU2BA3nQQeQwrX819x8Xa/5MvvCGGtgU5arUkzbcYw
-         vCqGT2xR6wwBvlL9IePTvqedgTbOyxoCCAnavu4DdfHTgzHhImm+L5oVoT9Ae0IOMUxC
-         myc1UlWnBlkUoyUpdgxNw81yxUqFpbZec6uHCEw31BuoRf1SHIvE0yBugBmOSE7uO1RT
-         hc+2z68oeMCsQQkJMVH3iOm0urxlT4SghGiPHZyG/pvuHqQz9TNuhxZ/kDLHKVeZfaAd
-         MCII3JcrWBILWjKtj2Nq9U8vDdL65qLxoa+OnvZystbcitRUzT8wG1a9kWMVZGbkHpSw
-         SBZw==
+        bh=hqYKOKg+3y1T20u2oZiPjmMCpggwQKCz8TBhoRR/ItE=;
+        b=rsctOK33GTRVF1loy97r00+CGsg1UkVcoyv/ioy3J6WPUchorwrktmdXkmzseNaRjU
+         TaUik9uNUpDUo3srgUBil0yoq8I4qLBttxpGGhm75Wp2cJjkcdpVzR8w0TrnC5Z+bVXB
+         1q6UomRIDlNIdnGvuPIhPB2vAzfwm05N5w/hMvD/yRnawC4VXzhJbCbmUybrVlmT8MUx
+         RlzSyaTHCsXV6ZTRuZ5zs0FcwvxWFZxXeO8AcK8KojQ2twqcYXYfPzXZ+UMM5b3q+Swe
+         ma4NJnE0kkfIXFbi+psOlkkd/H4k/YKWhZ2We1oxy1HhaLxrwnXP2VZWfJxqOZ7zq8y3
+         zTsQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16CEF217CB
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5BA4217C1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
@@ -55,207 +55,144 @@ Cc: akpm@linux-foundation.org,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	"Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH v3 12/20] test_firmware: expand on library with shared helpers
-Date: Sat, 10 Mar 2018 06:14:53 -0800
-Message-Id: <20180310141501.2214-13-mcgrof@kernel.org>
+Subject: [PATCH v3 10/20] firmware: enable run time change of forcing fallback loader
+Date: Sat, 10 Mar 2018 06:14:51 -0800
+Message-Id: <20180310141501.2214-11-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.13.2
 In-Reply-To: <20180310141501.2214-1-mcgrof@kernel.org>
 References: <20180310141501.2214-1-mcgrof@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594560430199836576?=
-X-GMAIL-MSGID: =?utf-8?q?1594560430199836576?=
+X-GMAIL-THRID: =?utf-8?q?1594560428261925704?=
+X-GMAIL-MSGID: =?utf-8?q?1594560428261925704?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This expands our library with as many things we could find which
-both scripts we use share.
+Currently one requires to test four kernel configurations to test the
+firmware API completely:
 
+0)
+  CONFIG_FW_LOADER=y
+
+1)
+  o CONFIG_FW_LOADER=y
+  o CONFIG_FW_LOADER_USER_HELPER=y
+
+2)
+  o CONFIG_FW_LOADER=y
+  o CONFIG_FW_LOADER_USER_HELPER=y
+  o CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
+
+3) When CONFIG_FW_LOADER=m the built-in stuff is disabled, we have
+   no current tests for this.
+
+We can reduce the requirements to three kernel configurations by making
+fw_config.force_sysfs_fallback a proc knob we flip on off. For kernels that
+disable CONFIG_IKCONFIG_PROC this can also enable one to inspect if
+CONFIG_FW_LOADER_USER_HELPER_FALLBACK was enabled at build time by checking
+the proc value at boot time.
+
+Acked-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 ---
- tools/testing/selftests/firmware/fw_fallback.sh   | 31 +++-----------
- tools/testing/selftests/firmware/fw_filesystem.sh | 41 +++---------------
- tools/testing/selftests/firmware/fw_lib.sh        | 52 +++++++++++++++++++++++
- 3 files changed, 63 insertions(+), 61 deletions(-)
+ drivers/base/firmware_loader/fallback.c       |  1 +
+ drivers/base/firmware_loader/fallback.h       |  4 +++-
+ drivers/base/firmware_loader/fallback_table.c | 17 +++++++++++++++++
+ kernel/sysctl.c                               | 11 +++++++++++
+ 4 files changed, 32 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/firmware/fw_fallback.sh b/tools/testing/selftests/firmware/fw_fallback.sh
-index 323c921a2469..9337a0328627 100755
---- a/tools/testing/selftests/firmware/fw_fallback.sh
-+++ b/tools/testing/selftests/firmware/fw_fallback.sh
-@@ -6,30 +6,17 @@
- # won't find so that we can do the load ourself manually.
- set -e
+diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
+index 9b65837256d6..45cc40933a47 100644
+--- a/drivers/base/firmware_loader/fallback.c
++++ b/drivers/base/firmware_loader/fallback.c
+@@ -7,6 +7,7 @@
+ #include <linux/security.h>
+ #include <linux/highmem.h>
+ #include <linux/umh.h>
++#include <linux/sysctl.h>
  
-+TEST_REQS_FW_SYSFS_FALLBACK="yes"
-+TEST_REQS_FW_SET_CUSTOM_PATH="no"
- TEST_DIR=$(dirname $0)
- source $TEST_DIR/fw_lib.sh
+ #include "fallback.h"
+ #include "firmware.h"
+diff --git a/drivers/base/firmware_loader/fallback.h b/drivers/base/firmware_loader/fallback.h
+index 550498c7fa4c..ca7e69a8417b 100644
+--- a/drivers/base/firmware_loader/fallback.h
++++ b/drivers/base/firmware_loader/fallback.h
+@@ -12,12 +12,14 @@
+  *
+  * @force_sysfs_fallback: force the sysfs fallback mechanism to be used
+  * 	as if one had enabled CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y.
++ * 	Useful to help debug a CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
++ * 	functionality on a kernel where that config entry has been disabled.
+  * @old_timeout: for internal use
+  * @loading_timeout: the timeout to wait for the fallback mechanism before
+  * 	giving up, in seconds.
+  */
+ struct firmware_fallback_config {
+-	const bool force_sysfs_fallback;
++	unsigned int force_sysfs_fallback;
+ 	int old_timeout;
+ 	int loading_timeout;
+ };
+diff --git a/drivers/base/firmware_loader/fallback_table.c b/drivers/base/firmware_loader/fallback_table.c
+index 981419044c7e..92365e053e30 100644
+--- a/drivers/base/firmware_loader/fallback_table.c
++++ b/drivers/base/firmware_loader/fallback_table.c
+@@ -19,6 +19,9 @@
+ /* Module or buit-in */
+ #ifdef CONFIG_FW_LOADER_USER_HELPER
  
- check_mods
-+check_setup
-+verify_reqs
-+setup_tmp_file
- 
--HAS_FW_LOADER_USER_HELPER=$(kconfig_has CONFIG_FW_LOADER_USER_HELPER=y)
--HAS_FW_LOADER_USER_HELPER_FALLBACK=$(kconfig_has CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y)
--
--if [ "$HAS_FW_LOADER_USER_HELPER" = "yes" ]; then
--       OLD_TIMEOUT=$(cat /sys/class/firmware/timeout)
--else
--	echo "usermode helper disabled so ignoring test"
--	exit 0
--fi
--
--FWPATH=$(mktemp -d)
--FW="$FWPATH/test-firmware.bin"
--
--test_finish()
--{
--	echo "$OLD_TIMEOUT" >/sys/class/firmware/timeout
--	rm -f "$FW"
--	rmdir "$FWPATH"
--}
-+trap "test_finish" EXIT
- 
- load_fw()
- {
-@@ -168,12 +155,6 @@ load_fw_fallback_with_child()
- 	return $RET
- }
- 
--trap "test_finish" EXIT
--
--# This is an unlikely real-world firmware content. :)
--echo "ABCD0123" >"$FW"
--NAME=$(basename "$FW")
--
- test_syfs_timeout()
- {
- 	DEVPATH="$DIR"/"nope-$NAME"/loading
-diff --git a/tools/testing/selftests/firmware/fw_filesystem.sh b/tools/testing/selftests/firmware/fw_filesystem.sh
-index 748f2f5737e9..7f47877fa7fa 100755
---- a/tools/testing/selftests/firmware/fw_filesystem.sh
-+++ b/tools/testing/selftests/firmware/fw_filesystem.sh
-@@ -6,38 +6,15 @@
- # know so we can be sure we're not accidentally testing the user helper.
- set -e
- 
-+TEST_REQS_FW_SYSFS_FALLBACK="no"
-+TEST_REQS_FW_SET_CUSTOM_PATH="yes"
- TEST_DIR=$(dirname $0)
- source $TEST_DIR/fw_lib.sh
- 
- check_mods
--
--# CONFIG_FW_LOADER_USER_HELPER has a sysfs class under /sys/class/firmware/
--# These days most distros enable CONFIG_FW_LOADER_USER_HELPER but disable
--# CONFIG_FW_LOADER_USER_HELPER_FALLBACK. We use /sys/class/firmware/ as an
--# indicator for CONFIG_FW_LOADER_USER_HELPER.
--HAS_FW_LOADER_USER_HELPER=$(if [ -d /sys/class/firmware/ ]; then echo yes; else echo no; fi)
--
--if [ "$HAS_FW_LOADER_USER_HELPER" = "yes" ]; then
--	OLD_TIMEOUT=$(cat /sys/class/firmware/timeout)
--fi
--
--OLD_FWPATH=$(cat /sys/module/firmware_class/parameters/path)
--
--FWPATH=$(mktemp -d)
--FW="$FWPATH/test-firmware.bin"
--
--test_finish()
--{
--	if [ "$HAS_FW_LOADER_USER_HELPER" = "yes" ]; then
--		echo "$OLD_TIMEOUT" >/sys/class/firmware/timeout
--	fi
--	if [ "$OLD_FWPATH" = "" ]; then
--		OLD_FWPATH=" "
--	fi
--	echo -n "$OLD_FWPATH" >/sys/module/firmware_class/parameters/path
--	rm -f "$FW"
--	rmdir "$FWPATH"
--}
-+check_setup
-+verify_reqs
-+setup_tmp_file
- 
- trap "test_finish" EXIT
- 
-@@ -46,14 +23,6 @@ if [ "$HAS_FW_LOADER_USER_HELPER" = "yes" ]; then
- 	echo 1 >/sys/class/firmware/timeout
- fi
- 
--# Set the kernel search path.
--echo -n "$FWPATH" >/sys/module/firmware_class/parameters/path
--
--# This is an unlikely real-world firmware content. :)
--echo "ABCD0123" >"$FW"
--
--NAME=$(basename "$FW")
--
- if printf '\000' >"$DIR"/trigger_request 2> /dev/null; then
- 	echo "$0: empty filename should not succeed" >&2
- 	exit 1
-diff --git a/tools/testing/selftests/firmware/fw_lib.sh b/tools/testing/selftests/firmware/fw_lib.sh
-index 467567c758b9..e3cc4483fdba 100755
---- a/tools/testing/selftests/firmware/fw_lib.sh
-+++ b/tools/testing/selftests/firmware/fw_lib.sh
-@@ -43,6 +43,58 @@ check_mods()
- 	fi
- }
- 
-+check_setup()
-+{
-+	HAS_FW_LOADER_USER_HELPER="$(kconfig_has CONFIG_FW_LOADER_USER_HELPER=y)"
-+	HAS_FW_LOADER_USER_HELPER_FALLBACK="$(kconfig_has CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y)"
++static unsigned int zero;
++static unsigned int one = 1;
 +
-+	if [ "$HAS_FW_LOADER_USER_HELPER" = "yes" ]; then
-+	       OLD_TIMEOUT="$(cat /sys/class/firmware/timeout)"
-+	fi
+ struct firmware_fallback_config fw_fallback_config = {
+ 	.force_sysfs_fallback = IS_ENABLED(CONFIG_FW_LOADER_USER_HELPER_FALLBACK),
+ 	.loading_timeout = 60,
+@@ -26,4 +29,18 @@ struct firmware_fallback_config fw_fallback_config = {
+ };
+ EXPORT_SYMBOL_GPL(fw_fallback_config);
+ 
++struct ctl_table firmware_config_table[] = {
++	{
++		.procname	= "force_sysfs_fallback",
++		.data		= &fw_fallback_config.force_sysfs_fallback,
++		.maxlen         = sizeof(unsigned int),
++		.mode           = 0644,
++		.proc_handler   = proc_douintvec_minmax,
++		.extra1		= &zero,
++		.extra2		= &one,
++	},
++	{ }
++};
++EXPORT_SYMBOL_GPL(firmware_config_table);
 +
-+	OLD_FWPATH="$(cat /sys/module/firmware_class/parameters/path)"
-+}
+ #endif
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 6c68e771e11d..7a8aa6866764 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -253,6 +253,10 @@ extern struct ctl_table random_table[];
+ extern struct ctl_table epoll_table[];
+ #endif
+ 
++#ifdef CONFIG_FW_LOADER_USER_HELPER
++extern struct ctl_table firmware_config_table[];
++#endif
 +
-+verify_reqs()
-+{
-+	if [ "$TEST_REQS_FW_SYSFS_FALLBACK" = "yes" ]; then
-+		if [ ! "$HAS_FW_LOADER_USER_HELPER" = "yes" ]; then
-+			echo "usermode helper disabled so ignoring test"
-+			exit 0
-+		fi
-+	fi
-+}
-+
-+setup_tmp_file()
-+{
-+	FWPATH=$(mktemp -d)
-+	FW="$FWPATH/test-firmware.bin"
-+	echo "ABCD0123" >"$FW"
-+	NAME=$(basename "$FW")
-+	if [ "$TEST_REQS_FW_SET_CUSTOM_PATH" = "yes" ]; then
-+		echo -n "$FWPATH" >/sys/module/firmware_class/parameters/path
-+	fi
-+}
-+
-+test_finish()
-+{
-+	if [ "$HAS_FW_LOADER_USER_HELPER" = "yes" ]; then
-+		echo "$OLD_TIMEOUT" >/sys/class/firmware/timeout
-+	fi
-+	if [ "$OLD_FWPATH" = "" ]; then
-+		OLD_FWPATH=" "
-+	fi
-+	if [ "$TEST_REQS_FW_SET_CUSTOM_PATH" = "yes" ]; then
-+		echo -n "$OLD_FWPATH" >/sys/module/firmware_class/parameters/path
-+	fi
-+	if [ -f $FW ]; then
-+		rm -f "$FW"
-+	fi
-+	if [ -d $FWPATH ]; then
-+		rm -rf "$FWPATH"
-+	fi
-+}
-+
- kconfig_has()
- {
- 	if [ -f $PROC_CONFIG ]; then
+ #ifdef HAVE_ARCH_PICK_MMAP_LAYOUT
+ int sysctl_legacy_va_layout;
+ #endif
+@@ -748,6 +752,13 @@ static struct ctl_table kern_table[] = {
+ 		.mode		= 0555,
+ 		.child		= usermodehelper_table,
+ 	},
++#ifdef CONFIG_FW_LOADER_USER_HELPER
++	{
++		.procname	= "firmware_config",
++		.mode		= 0555,
++		.child		= firmware_config_table,
++	},
++#endif
+ 	{
+ 		.procname	= "overflowuid",
+ 		.data		= &overflowuid,
 -- 
 2.16.2
