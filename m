@@ -1,71 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932865AbeCJCox (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 21:44:53 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:46923 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932792AbeCJCou (ORCPT
+        id S932627AbeCJCrw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 21:47:52 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36353 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751275AbeCJCrv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 21:44:50 -0500
-X-Google-Smtp-Source: AG47ELsQDxQ46+vo6fQc/bDE/wavRcWDecKaqvI4vgZ6xbpMAQY+R2MarCTngQRlYi1K7x9JztMh+A==
-From: Brian Norris <briannorris@chromium.org>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc: <linux-kernel@vger.kernel.org>, linux-watchdog@vger.kernel.org,
-        Doug Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 2/2] watchdog: dw: save/restore control and timeout across suspend/resume
-Date: Fri,  9 Mar 2018 18:44:31 -0800
-Message-Id: <20180310024431.160195-2-briannorris@chromium.org>
-X-Mailer: git-send-email 2.16.2.660.g709887971b-goog
+        Fri, 9 Mar 2018 21:47:51 -0500
+X-Google-Smtp-Source: AG47ELvIuhfFhObc2ikWTMRkxJrcKxHOQYWXdV6uw02K6PICkWN6o3njRsu+W66pE+ujwnwsOHRMAA==
+MIME-Version: 1.0
 In-Reply-To: <20180310024431.160195-1-briannorris@chromium.org>
 References: <20180310024431.160195-1-briannorris@chromium.org>
+From: Brian Norris <briannorris@chromium.org>
+Date: Fri, 9 Mar 2018 18:47:47 -0800
+X-Gmail-Original-Message-ID: <CA+ASDXPmh7Ng8x1dnezs5a9zSdvVVTa4W+KQYVLDWWoKW0S=-w@mail.gmail.com>
+Message-ID: <CA+ASDXPmh7Ng8x1dnezs5a9zSdvVVTa4W+KQYVLDWWoKW0S=-w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] watchdog: dw: RMW the control register
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org, Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some platforms lose this state in suspend. It should be safe to do this
-unconditionally.
++ linux-rockchip (probably should have included in the first place)
 
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
- drivers/watchdog/dw_wdt.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/watchdog/dw_wdt.c b/drivers/watchdog/dw_wdt.c
-index 6925d3e6c6b3..094986047194 100644
---- a/drivers/watchdog/dw_wdt.c
-+++ b/drivers/watchdog/dw_wdt.c
-@@ -57,6 +57,9 @@ struct dw_wdt {
- 	unsigned long		rate;
- 	struct watchdog_device	wdd;
- 	struct reset_control	*rst;
-+	/* Save/restore */
-+	u32			control;
-+	u32			timeout;
- };
- 
- #define to_dw_wdt(wdd)	container_of(wdd, struct dw_wdt, wdd)
-@@ -204,6 +207,9 @@ static int dw_wdt_suspend(struct device *dev)
- {
- 	struct dw_wdt *dw_wdt = dev_get_drvdata(dev);
- 
-+	dw_wdt->control = readl(dw_wdt->regs + WDOG_CONTROL_REG_OFFSET);
-+	dw_wdt->timeout = readl(dw_wdt->regs + WDOG_TIMEOUT_RANGE_REG_OFFSET);
-+
- 	clk_disable_unprepare(dw_wdt->clk);
- 
- 	return 0;
-@@ -217,6 +223,9 @@ static int dw_wdt_resume(struct device *dev)
- 	if (err)
- 		return err;
- 
-+	writel(dw_wdt->timeout, dw_wdt->regs + WDOG_TIMEOUT_RANGE_REG_OFFSET);
-+	writel(dw_wdt->control, dw_wdt->regs + WDOG_CONTROL_REG_OFFSET);
-+
- 	dw_wdt_ping(&dw_wdt->wdd);
- 
- 	return 0;
--- 
-2.16.2.660.g709887971b-goog
+On Fri, Mar 9, 2018 at 6:44 PM, Brian Norris <briannorris@chromium.org> wrote:
+> RK3399 has rst_pulse_length in CONTROL_REG[4:2], determining the length
+> of pulse to issue for system reset. We shouldn't clobber this value,
+> because that might make the system reset ineffective. On RK3399, we're
+> seeing that a value of 000b (meaning 2 cycles) yields an unreliable
+> (partial?) reset, and so we only fully reset after the watchdog fires a
+> second time. If we retain the system default (010b, or 8 clock cycles),
+> then the watchdog reset is much more reliable.
+>
+> Read-modify-write retains the system value and improves reset
+> reliability.
+>
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> ---
+>  drivers/watchdog/dw_wdt.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/watchdog/dw_wdt.c b/drivers/watchdog/dw_wdt.c
+> index c2f4ff516230..6925d3e6c6b3 100644
+> --- a/drivers/watchdog/dw_wdt.c
+> +++ b/drivers/watchdog/dw_wdt.c
+> @@ -34,6 +34,7 @@
+>
+>  #define WDOG_CONTROL_REG_OFFSET                    0x00
+>  #define WDOG_CONTROL_REG_WDT_EN_MASK       0x01
+> +#define WDOG_CONTROL_REG_RESP_MODE_MASK            0x02
+>  #define WDOG_TIMEOUT_RANGE_REG_OFFSET      0x04
+>  #define WDOG_TIMEOUT_RANGE_TOPINIT_SHIFT    4
+>  #define WDOG_CURRENT_COUNT_REG_OFFSET      0x08
+> @@ -124,11 +125,16 @@ static int dw_wdt_set_timeout(struct watchdog_device *wdd, unsigned int top_s)
+>  static int dw_wdt_start(struct watchdog_device *wdd)
+>  {
+>         struct dw_wdt *dw_wdt = to_dw_wdt(wdd);
+> +       u32 val;
+>
+>         dw_wdt_set_timeout(wdd, wdd->timeout);
+>
+> -       writel(WDOG_CONTROL_REG_WDT_EN_MASK,
+> -              dw_wdt->regs + WDOG_CONTROL_REG_OFFSET);
+> +       val = readl(dw_wdt->regs + WDOG_CONTROL_REG_OFFSET);
+> +       /* Disable interrupt mode; always perform system reset. */
+> +       val &= ~WDOG_CONTROL_REG_RESP_MODE_MASK;
+> +       /* Enable watchdog. */
+> +       val |= WDOG_CONTROL_REG_WDT_EN_MASK;
+> +       writel(val, dw_wdt->regs + WDOG_CONTROL_REG_OFFSET);
+>
+>         return 0;
+>  }
+> --
+> 2.16.2.660.g709887971b-goog
+>
