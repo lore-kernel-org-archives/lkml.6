@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932688AbeCJSeS (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:34:18 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:40638 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932498AbeCJSVI (ORCPT
+        id S932572AbeCJSVG (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:21:06 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:39701 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932504AbeCJSVB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:21:08 -0500
-X-Google-Smtp-Source: AG47ELtcH8mMf5a0krSJSyq7KUVYYLwFu7Fxa5FoPsbpbrB6j71YYPP+7HeCGwFvabSKPYkJxoCzuw==
+        Sat, 10 Mar 2018 13:21:01 -0500
+X-Google-Smtp-Source: AG47ELvgcWhw4QD7GyJXHGV/qELJorEQ4dakVQhJ8d+wBr4dVMJ7xHZ2vHOIbMKOsZ0MTttrKBxt4g==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 43/83] Log operation: in-place update log entry
-Date: Sat, 10 Mar 2018 10:18:24 -0800
-Message-Id: <1520705944-6723-44-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 37/83] Journal: Lite journal create and commit.
+Date: Sat, 10 Mar 2018 10:18:18 -0800
+Message-Id: <1520705944-6723-38-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -27,293 +27,225 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andiry Xu <jix024@cs.ucsd.edu>
 
-To in-place update a log entry, NOVA starts a lite transaction
-to journal the log entry, then performs update and commits the transaction.
+NOVA uses lite journal to perform light weight transaction.
+Instead of journaling metadata/data changes directly,
+NOVA first append updates to each inode's log, and then
+journal the log tail pointers to make sure all the logs
+are updated atomically. For inode creation and deletion,
+NOVA journals the inode's valid field.
 
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/inode.h |  12 ++++
- fs/nova/log.c   | 183 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/nova/log.h   |   9 +++
- 3 files changed, 204 insertions(+)
+ fs/nova/journal.c | 179 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/nova/journal.h |  11 ++++
+ 2 files changed, 190 insertions(+)
 
-diff --git a/fs/nova/inode.h b/fs/nova/inode.h
-index 943f77f..6970872 100644
---- a/fs/nova/inode.h
-+++ b/fs/nova/inode.h
-@@ -5,6 +5,7 @@ struct nova_inode_info_header;
- struct nova_inode;
+diff --git a/fs/nova/journal.c b/fs/nova/journal.c
+index f31de97..0e203fa 100644
+--- a/fs/nova/journal.c
++++ b/fs/nova/journal.c
+@@ -161,3 +161,182 @@ static int nova_recover_lite_journal(struct super_block *sb,
  
- #include "super.h"
-+#include "log.h"
- 
- enum nova_new_inode_type {
- 	TYPE_CREATE = 0,
-@@ -143,6 +144,17 @@ static inline void nova_update_tail(struct nova_inode *pi, u64 new_tail)
- 	NOVA_END_TIMING(update_tail_t, update_time);
- }
- 
-+static inline void nova_update_inode(struct super_block *sb,
-+	struct inode *inode, struct nova_inode *pi,
-+	struct nova_inode_update *update)
-+{
-+	struct nova_inode_info *si = NOVA_I(inode);
-+	struct nova_inode_info_header *sih = &si->header;
-+
-+	sih->log_tail = update->tail;
-+	nova_update_tail(pi, update->tail);
-+}
-+
- static inline
- struct inode_table *nova_get_inode_table(struct super_block *sb, int cpu)
- {
-diff --git a/fs/nova/log.c b/fs/nova/log.c
-index 4638ccf..c8b7d2e 100644
---- a/fs/nova/log.c
-+++ b/fs/nova/log.c
-@@ -218,6 +218,35 @@ static int nova_append_log_entry(struct super_block *sb,
  	return 0;
  }
- 
-+/* Perform lite transaction to atomically in-place update log entry */
-+static int nova_inplace_update_log_entry(struct super_block *sb,
-+	struct inode *inode, void *entry,
-+	struct nova_log_entry_info *entry_info)
-+{
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
-+	enum nova_entry_type type = entry_info->type;
-+	u64 journal_tail;
-+	size_t size;
-+	int cpu;
-+	timing_t update_time;
 +
-+	NOVA_START_TIMING(update_entry_t, update_time);
++/**************************** Create/commit ******************************/
++
++/* Create and append an undo entry for a small update to PMEM. */
++static u64 nova_append_entry_journal(struct super_block *sb,
++	u64 curr_p, void *field)
++{
++	struct nova_lite_journal_entry *entry;
++	struct nova_sb_info *sbi = NOVA_SB(sb);
++	u64 *aligned_field;
++	u64 addr;
++
++	entry = (struct nova_lite_journal_entry *)nova_get_block(sb,
++							curr_p);
++	entry->type = cpu_to_le64(JOURNAL_ENTRY);
++	entry->padding = 0;
++	/* Align to 8 bytes */
++	aligned_field = (u64 *)((unsigned long)field & ~7UL);
++	/* Store the offset from the start of Nova instead of the pointer */
++	addr = (u64)nova_get_addr_off(sbi, aligned_field);
++	entry->data1 = cpu_to_le64(addr);
++	entry->data2 = cpu_to_le64(*aligned_field);
++	nova_update_journal_entry_csum(sb, entry);
++
++	curr_p = next_lite_journal(curr_p);
++	return curr_p;
++}
++
++static u64 nova_journal_inode_tail(struct super_block *sb,
++	u64 curr_p, struct nova_inode *pi)
++{
++	curr_p = nova_append_entry_journal(sb, curr_p, &pi->log_tail);
++
++	return curr_p;
++}
++
++/* Create and append undo log entries for creating a new file or directory. */
++static u64 nova_append_inode_journal(struct super_block *sb,
++	u64 curr_p, struct inode *inode, int new_inode,
++	int invalidate, int is_dir)
++{
++	struct nova_inode *pi = nova_get_inode(sb, inode);
++
++	if (!pi) {
++		nova_err(sb, "%s: get inode failed\n", __func__);
++		return curr_p;
++	}
++
++	if (is_dir)
++		return nova_journal_inode_tail(sb, curr_p, pi);
++
++	if (new_inode) {
++		curr_p = nova_append_entry_journal(sb, curr_p,
++						&pi->valid);
++	} else {
++		curr_p = nova_journal_inode_tail(sb, curr_p, pi);
++		if (invalidate) {
++			curr_p = nova_append_entry_journal(sb, curr_p,
++						&pi->valid);
++			curr_p = nova_append_entry_journal(sb, curr_p,
++						&pi->delete_epoch_id);
++		}
++	}
++
++	return curr_p;
++}
++
++static u64 nova_append_dentry_journal(struct super_block *sb,
++	u64 curr_p, struct nova_dentry *dentry)
++{
++	curr_p = nova_append_entry_journal(sb, curr_p, &dentry->ino);
++	curr_p = nova_append_entry_journal(sb, curr_p, &dentry->csum);
++	return curr_p;
++}
++
++/* Journaled transactions for inode creation */
++u64 nova_create_inode_transaction(struct super_block *sb,
++	struct inode *inode, struct inode *dir, int cpu,
++	int new_inode, int invalidate)
++{
++	struct journal_ptr_pair *pair;
++	u64 temp;
++
++	pair = nova_get_journal_pointers(sb, cpu);
++
++	temp = pair->journal_head;
++
++	temp = nova_append_inode_journal(sb, temp, inode,
++					new_inode, invalidate, 0);
++
++	temp = nova_append_inode_journal(sb, temp, dir,
++					new_inode, invalidate, 1);
++
++	pair->journal_tail = temp;
++	nova_flush_buffer(&pair->journal_head, CACHELINE_SIZE, 1);
++
++	nova_dbgv("%s: head 0x%llx, tail 0x%llx\n",
++			__func__, pair->journal_head, pair->journal_tail);
++	return temp;
++}
++
++/* Journaled transactions for rename operations */
++u64 nova_create_rename_transaction(struct super_block *sb,
++	struct inode *old_inode, struct inode *old_dir, struct inode *new_inode,
++	struct inode *new_dir, struct nova_dentry *father_entry,
++	int invalidate_new_inode, int cpu)
++{
++	struct journal_ptr_pair *pair;
++	u64 temp;
++
++	pair = nova_get_journal_pointers(sb, cpu);
++
++	temp = pair->journal_head;
++
++	/* Journal tails for old inode */
++	temp = nova_append_inode_journal(sb, temp, old_inode, 0, 0, 0);
++
++	/* Journal tails for old dir */
++	temp = nova_append_inode_journal(sb, temp, old_dir, 0, 0, 1);
++
++	if (new_inode) {
++		/* New inode may be unlinked */
++		temp = nova_append_inode_journal(sb, temp, new_inode, 0,
++					invalidate_new_inode, 0);
++	}
++
++	if (new_dir)
++		temp = nova_append_inode_journal(sb, temp, new_dir, 0, 0, 1);
++
++	if (father_entry)
++		temp = nova_append_dentry_journal(sb, temp, father_entry);
++
++	pair->journal_tail = temp;
++	nova_flush_buffer(&pair->journal_head, CACHELINE_SIZE, 1);
++
++	nova_dbgv("%s: head 0x%llx, tail 0x%llx\n",
++			__func__, pair->journal_head, pair->journal_tail);
++	return temp;
++}
++
++/* For log entry inplace update */
++u64 nova_create_logentry_transaction(struct super_block *sb,
++	void *entry, enum nova_entry_type type, int cpu)
++{
++	struct journal_ptr_pair *pair;
++	size_t size = 0;
++	int i, count;
++	u64 temp;
++
++	pair = nova_get_journal_pointers(sb, cpu);
++
 +	size = nova_get_log_entry_size(sb, type);
 +
-+	cpu = smp_processor_id();
-+	spin_lock(&sbi->journal_locks[cpu]);
-+	journal_tail = nova_create_logentry_transaction(sb, entry, type, cpu);
-+	nova_update_log_entry(sb, inode, entry, entry_info);
++	temp = pair->journal_head;
 +
-+	PERSISTENT_BARRIER();
-+
-+	nova_commit_lite_transaction(sb, journal_tail, cpu);
-+	spin_unlock(&sbi->journal_locks[cpu]);
-+
-+	NOVA_END_TIMING(update_entry_t, update_time);
-+	return 0;
-+}
-+
- /* Returns new tail after append */
- static int nova_append_setattr_entry(struct super_block *sb,
- 	struct nova_inode *pi, struct inode *inode, struct iattr *attr,
-@@ -250,6 +279,125 @@ static int nova_append_setattr_entry(struct super_block *sb,
- 	return ret;
- }
- 
-+static int nova_can_inplace_update_setattr(struct super_block *sb,
-+	struct nova_inode_info_header *sih, u64 epoch_id)
-+{
-+	u64 last_log = 0;
-+	struct nova_setattr_logentry *entry = NULL;
-+
-+	last_log = sih->last_setattr;
-+	if (last_log) {
-+		entry = (struct nova_setattr_logentry *)nova_get_block(sb,
-+								last_log);
-+		/* Do not overwrite setsize entry */
-+		if (entry->attr & ATTR_SIZE)
-+			return 0;
-+		if (entry->epoch_id == epoch_id)
-+			return 1;
++	count = size / 8;
++	for (i = 0; i < count; i++) {
++		temp = nova_append_entry_journal(sb, temp,
++						(char *)entry + i * 8);
 +	}
 +
-+	return 0;
++	pair->journal_tail = temp;
++	nova_flush_buffer(&pair->journal_head, CACHELINE_SIZE, 1);
++
++	nova_dbgv("%s: head 0x%llx, tail 0x%llx\n",
++			__func__, pair->journal_head, pair->journal_tail);
++	return temp;
 +}
 +
-+static int nova_inplace_update_setattr_entry(struct super_block *sb,
-+	struct inode *inode, struct nova_inode_info_header *sih,
-+	struct iattr *attr, u64 epoch_id)
++/* Commit the transactions by dropping the journal entries */
++void nova_commit_lite_transaction(struct super_block *sb, u64 tail, int cpu)
 +{
-+	struct nova_setattr_logentry *entry = NULL;
-+	struct nova_log_entry_info entry_info;
-+	u64 last_log = 0;
++	struct journal_ptr_pair *pair;
 +
-+	nova_dbgv("%s : Modifying last log entry for inode %lu\n",
-+				__func__, inode->i_ino);
-+	last_log = sih->last_setattr;
-+	entry = (struct nova_setattr_logentry *)nova_get_block(sb,
-+							last_log);
++	pair = nova_get_journal_pointers(sb, cpu);
 +
-+	entry_info.type = SET_ATTR;
-+	entry_info.attr = attr;
-+	entry_info.epoch_id = epoch_id;
-+	entry_info.trans_id = sih->trans_id;
-+
-+	return nova_inplace_update_log_entry(sb, inode, entry,
-+					&entry_info);
++	pair->journal_head = tail;
++	nova_flush_buffer(&pair->journal_head, CACHELINE_SIZE, 1);
 +}
-+
-+int nova_handle_setattr_operation(struct super_block *sb, struct inode *inode,
-+	struct nova_inode *pi, unsigned int ia_valid, struct iattr *attr,
-+	u64 epoch_id)
-+{
-+	struct nova_inode_info *si = NOVA_I(inode);
-+	struct nova_inode_info_header *sih = &si->header;
-+	struct nova_inode_update update;
-+	u64 last_setattr = 0;
-+	int ret;
-+
-+	if (ia_valid & ATTR_MODE)
-+		sih->i_mode = inode->i_mode;
-+
-+	/*
-+	 * Let's try to do inplace update.
-+	 */
-+	if (!(ia_valid & ATTR_SIZE) &&
-+			nova_can_inplace_update_setattr(sb, sih, epoch_id)) {
-+		nova_inplace_update_setattr_entry(sb, inode, sih,
-+						attr, epoch_id);
-+	} else {
-+		/* We are holding inode lock so OK to append the log */
-+		nova_dbgv("%s : Appending last log entry for inode ino = %lu\n",
-+				__func__, inode->i_ino);
-+		update.tail = 0;
-+		ret = nova_append_setattr_entry(sb, pi, inode, attr, &update,
-+						&last_setattr, epoch_id);
-+		if (ret) {
-+			nova_dbg("%s: append setattr entry failure\n",
-+								__func__);
-+			return ret;
-+		}
-+
-+		nova_update_inode(sb, inode, pi, &update);
-+	}
-+
-+	return 0;
-+}
-+
-+static int nova_can_inplace_update_lcentry(struct super_block *sb,
-+	struct nova_inode_info_header *sih, u64 epoch_id)
-+{
-+	u64 last_log = 0;
-+	struct nova_link_change_entry *entry = NULL;
-+
-+	last_log = sih->last_link_change;
-+	if (last_log) {
-+		entry = (struct nova_link_change_entry *)nova_get_block(sb,
-+								last_log);
-+		if (entry->epoch_id == epoch_id)
-+			return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+static int nova_inplace_update_lcentry(struct super_block *sb,
-+	struct inode *inode, struct nova_inode_info_header *sih,
-+	u64 epoch_id)
-+{
-+	struct nova_link_change_entry *entry = NULL;
-+	struct nova_log_entry_info entry_info;
-+	u64 last_log = 0;
-+
-+	last_log = sih->last_link_change;
-+	entry = (struct nova_link_change_entry *)nova_get_block(sb,
-+							last_log);
-+
-+	entry_info.type = LINK_CHANGE;
-+	entry_info.epoch_id = epoch_id;
-+	entry_info.trans_id = sih->trans_id;
-+
-+	return nova_inplace_update_log_entry(sb, inode, entry,
-+					&entry_info);
-+}
-+
- /* Returns new tail after append */
- int nova_append_link_change_entry(struct super_block *sb,
- 	struct nova_inode *pi, struct inode *inode,
-@@ -263,6 +411,15 @@ int nova_append_link_change_entry(struct super_block *sb,
- 
- 	NOVA_START_TIMING(append_link_change_t, append_time);
- 
-+	if (nova_can_inplace_update_lcentry(sb, sih, epoch_id)) {
-+		nova_inplace_update_lcentry(sb, inode, sih, epoch_id);
-+		update->tail = sih->log_tail;
-+
-+		*old_linkc = 0;
-+		sih->trans_id++;
-+		goto out;
-+	}
-+
- 	entry_info.type = LINK_CHANGE;
- 	entry_info.update = update;
- 	entry_info.epoch_id = epoch_id;
-@@ -282,6 +439,14 @@ int nova_append_link_change_entry(struct super_block *sb,
- 	return ret;
- }
- 
-+int nova_inplace_update_write_entry(struct super_block *sb,
-+	struct inode *inode, struct nova_file_write_entry *entry,
-+	struct nova_log_entry_info *entry_info)
-+{
-+	return nova_inplace_update_log_entry(sb, inode, entry,
-+					entry_info);
-+}
-+
- /*
-  * Append a nova_file_write_entry to the current nova_inode_log_page.
-  * blocknr and start_blk are pgoff.
-@@ -316,6 +481,24 @@ int nova_append_file_write_entry(struct super_block *sb, struct nova_inode *pi,
- 	return ret;
- }
- 
-+int nova_inplace_update_dentry(struct super_block *sb,
-+	struct inode *dir, struct nova_dentry *dentry, int link_change,
-+	u64 epoch_id)
-+{
-+	struct nova_inode_info *si = NOVA_I(dir);
-+	struct nova_inode_info_header *sih = &si->header;
-+	struct nova_log_entry_info entry_info;
-+
-+	entry_info.type = DIR_LOG;
-+	entry_info.link_change = link_change;
-+	entry_info.epoch_id = epoch_id;
-+	entry_info.trans_id = sih->trans_id;
-+	entry_info.inplace = 1;
-+
-+	return nova_inplace_update_log_entry(sb, dir, dentry,
-+					&entry_info);
-+}
-+
- int nova_append_dentry(struct super_block *sb, struct nova_inode *pi,
- 	struct inode *dir, struct dentry *dentry, u64 ino,
- 	unsigned short de_len, struct nova_inode_update *update,
-diff --git a/fs/nova/log.h b/fs/nova/log.h
-index f36f4a3..74891b3 100644
---- a/fs/nova/log.h
-+++ b/fs/nova/log.h
-@@ -364,12 +364,21 @@ static inline int is_dir_init_entry(struct super_block *sb,
+diff --git a/fs/nova/journal.h b/fs/nova/journal.h
+index d1d0ffb..2259880 100644
+--- a/fs/nova/journal.h
++++ b/fs/nova/journal.h
+@@ -40,4 +40,15 @@ struct journal_ptr_pair *nova_get_journal_pointers(struct super_block *sb,
  }
  
  
-+int nova_handle_setattr_operation(struct super_block *sb, struct inode *inode,
-+	struct nova_inode *pi, unsigned int ia_valid, struct iattr *attr,
-+	u64 epoch_id);
- int nova_append_link_change_entry(struct super_block *sb,
- 	struct nova_inode *pi, struct inode *inode,
- 	struct nova_inode_update *update, u64 *old_linkc, u64 epoch_id);
-+int nova_inplace_update_write_entry(struct super_block *sb,
-+	struct inode *inode, struct nova_file_write_entry *entry,
-+	struct nova_log_entry_info *entry_info);
- int nova_append_file_write_entry(struct super_block *sb, struct nova_inode *pi,
- 	struct inode *inode, struct nova_file_write_item *item,
- 	struct nova_inode_update *update);
-+int nova_inplace_update_dentry(struct super_block *sb,
-+	struct inode *dir, struct nova_dentry *dentry, int link_change,
-+	u64 epoch_id);
- int nova_append_dentry(struct super_block *sb, struct nova_inode *pi,
- 	struct inode *dir, struct dentry *dentry, u64 ino,
- 	unsigned short de_len, struct nova_inode_update *update,
++u64 nova_create_inode_transaction(struct super_block *sb,
++	struct inode *inode, struct inode *dir, int cpu,
++	int new_inode, int invalidate);
++u64 nova_create_rename_transaction(struct super_block *sb,
++	struct inode *old_inode, struct inode *old_dir, struct inode *new_inode,
++	struct inode *new_dir, struct nova_dentry *father_entry,
++	int invalidate_new_inode, int cpu);
++u64 nova_create_logentry_transaction(struct super_block *sb,
++	void *entry, enum nova_entry_type type, int cpu);
++void nova_commit_lite_transaction(struct super_block *sb, u64 tail, int cpu);
++
+ #endif
 -- 
 2.7.4
