@@ -1,192 +1,233 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3223528-1520949150-2-9494360316348066174
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAD_ENC_HEADER 0.001, BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520949149; b=mR8RNsS62zz+vYbZcs6HeGPgJ1QGQpM1WtCWpJJTBxIkqky
-    2mDRSls26jG+27ZYRd471jOS1GLqQAQBrZhgQuwouzBPuBWmdklZnDajfT49GAML
-    qNIYNpCOpCGa+zLewG3u2X5LRm58FPS/nL/gW57M/agR3/SMl9ncIp+oeZSimi0N
-    TOEJDn2DFe4TvLgciC0Vjm/V0ITfHMWIoaFuawA+GQfwr/YRKtrf1HT+FUjmw9Tf
-    PZzn2VaCloSALU8vPsVZkDcss3RbxcrIboZG+NkG9HXRQAc7AMgRE9Qqi/8Aw0se
-    rhQAWV6ZXJImQMFPGHIhwZ7vM5dt/jk6GwH1//Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520949149; bh=G
-    J2Z7MTliPvraJqzqGs9tZtYUuOmC3l3zUA+SSVyHEg=; b=FL2y1jE9BjFvMGdAI
-    eCXDgReZ6dnyodfx3evDO4SBnASmfDTaXt3n/elE/0E6aOC4TC48GCw3nkbEr/Zm
-    l8GyMEGdn3kbvTahMIq2j6j1y0sGAb0soMcj0NHfK0zLYfVFyjgXwzrIpjvZy3cL
-    W9VH/qQHtOjkMPLOW1icygBSFe3cnewj1mEzxPqZmxBAYM+Mwy4Rx4xzUEKqQBzI
-    rrcieT0eBFv7AIhTi+SBHljv9QaS9zTaDxkWZ/ZMs3G4pXz5Y8N98rnLyOzEf/dP
-    M/t/YCrKB7twlFShmTDUW/QdisSopKm/4CSyhD3f5S/5z3PjT4VjI21EyhpsIKKJ
-    eV9ng==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=m9CXfpL1 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=m9CXfpL1 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=razvan.stefanescu@nxp.com;
-From: Razvan Stefanescu <razvan.stefanescu@nxp.com>
-To: gregkh@linuxfoundation.org
-Subject: [PATCH v5 4/6] staging: fsl-dpaa2/ethsw: Add maintainer for Ethernet
- Switch driver
-Date: Tue, 13 Mar 2018 08:51:54 -0500
-Message-Id: <20180313135156.3322-5-razvan.stefanescu@nxp.com>
-X-Mailer: git-send-email 2.8.3
-In-Reply-To: <20180313135156.3322-1-razvan.stefanescu@nxp.com>
-References: <20180313135156.3322-1-razvan.stefanescu@nxp.com>
-MIME-Version: 1.0
-X-Originating-IP: [192.88.168.1]
-X-ClientProxiedBy: DM3PR12CA0069.namprd12.prod.outlook.com
- (2603:10b6:0:57::13) To DB3PR04MB0747.eurprd04.prod.outlook.com
- (2a01:111:e400:9440::15)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: b3483b2d-c516-493e-bf90-08d588e9a37f
-X-Microsoft-Antispam: UriScan:; BCL:0; PCL:0;
- RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);
- SRVR:DB3PR04MB0747;
-X-Microsoft-Exchange-Diagnostics: 1; DB3PR04MB0747;
- 3:cX4AWBleOoK+ybeZ7hcbES9WAMgBPEjEM8CJ6ZjBIFMgsIC2uqHsfbFXf5nAjVH+GMGnW+2U0VOPSl73PLoYUTboe6NPZiqa58swEbpgAPLopxI8wHgMSracol6tVHHZ9J4UGUHtwk4bc94GP3yUE41smifma1kYCBdNgy4WCc+7ulVy6w+KirmKjr6G7N77Jsopn2TbPTbPFvKZie3QO3jK5lrHyTRvrLkgn4k/+X5q1OnVj/sbc/297d3+7MIB;
- 25:0tpk0qrzy3ftbEG6zq4xjzpw5gd1P0LwSxxbrf1t4qAvYIqc/hIEBpSRZkXvTj5dBhLZBZW4VKBEe0Wr7dE8/88deHtWO+C9er+0/We9nYq4CEqNqPkhoLQcQQobjigpEX/TqSM++xpnTTkdSpUhmmp7qZB4CHxYfkIRvWHLHqoiU0LCtqtBAf9rCeDglreQqs/3rrFJrvvpaYqEEadpY4H0Zrcb6dCIrLYhSw8cuvowe44sV/5vCy2CLZSHJmbUftlRz0lisEnC7xHpv1EkRABMGBvh5+EvcGJzVBS/1VplToWfWgpo0NIwAKM09ohDlP49Q27A3hxxYta98c+fvA==;
- 31:vT0PYGTX6IexzovNRfR2pzhTJf1lbcpyYUqT49bnMY0DGV9TORt0BoQycg1aTkYkdq1J3JBLmUYwfZMv5vJLowync3uurgm5sl5jEcjEqW5itNWMTXmvR+QJ6PvdezXlzj3MST5B6QNeTP45+7ohRDFWSJGZMHh7t//C1V0jAIw7at1r+sILOEn2pPZYvYh7DIKbmUflx5CUgKq5RJDiMqBzlpndYpHsbYu7sUajJ6c=
-X-MS-TrafficTypeDiagnostic: DB3PR04MB0747:
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-Microsoft-Exchange-Diagnostics: 1; DB3PR04MB0747;
- 20:5KizSNovSrvKXpYY1wOGV0KlkKY4Njm76TRj2a1+HEeYCsGlmrJCRou67AbLZFYoQxrVr2fWYIjZUJxNFpzsPj459jfy3Msbelf3Mmq5ZDYO4QkF2edr8BbC59HSGIBSXJs2Akt2FpPFW2Vrj4Aljv7joWKjhDmEQpZWKJ4oPDLoe3bJsH/xlG0JfflaAriWQ/O4d9Oidymf7rO446Vi++0gZH2/KqQt3ghFM42i/nDUIj50mg/TxCQf9JIGjFLB/h5fVEk8OMyM78+NC09ANXQkTMsWFgMhmu9gOQCJA7DQGmKkAvL8y7efUGI0r7Wkp636JUeBnyVVous6//Q26WAcCXysIzwzn+7d++sjA9KSDXV9VCMITkkz1+Nmdt/gFqoj5YNPuWKf4+DMz3fB8snwzn6AUgu3qugCgxpkNAwZFtJP5Sx4cgtis1RY+8klkDpZWFt2Qi+jmgGoFHmUrrgNQzfj2hVml9dtoorT1hlAYGgg6BPSLJE1rT/pJ3Vy;
- 4:1982e+lRJJLQ1pCaS6Ql5U6M8msevxyhnX/xtYmoEmcRM1odkLW1khwy7Q4zjMlZSIvJCKTcl8U9sxjGNli3WL20x9FIObdpejDSZmWOwX+H5D0Hyn0P7/AcAbDgz9OPjC2JNzcgZoVm/HEJLUYrjcyVGHkf/IcBgyvkOo5JHDhlo3lbHLNdCs+7Oc1tCTWufCnIq8m4O9GxMTw2s9nzyu6kBeJvj+wkQvEaOq4vh5ibTUW+iIJjXN1JKXW9dwCgASLz7q+DoRBehJ5gtmavY3aEzcTyQkwy/dCzljuYag/qUs/6keeMnQYQEOtErJ8jV+6bEtVQS6rSWnlO16aOUw6YFPZcC6IQVMCkPXPM+wY=
-X-Microsoft-Antispam-PRVS: <DB3PR04MB0747511D5EBA4207B479D4ACE6D20@DB3PR04MB0747.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(9452136761055)(185117386973197);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0; PCL:0;
- RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231221)(944501244)(52105095)(3002001)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);
- SRVR:DB3PR04MB0747; BCL:0; PCL:0; RULEID:; SRVR:DB3PR04MB0747;
-X-Forefront-PRVS: 0610D16BBE
-X-Forefront-Antispam-Report: SFV:NSPM;
- SFS:(10009020)(376002)(39380400002)(366004)(39860400002)(346002)(396003)(54534003)(189003)(199004)(1076002)(16526019)(186003)(6916009)(5660300001)(478600001)(50466002)(48376002)(3846002)(6116002)(8676002)(47776003)(6666003)(26005)(2906002)(7736002)(81156014)(2950100002)(66066001)(81166006)(6506007)(305945005)(76176011)(386003)(25786009)(50226002)(52116002)(86362001)(8936002)(316002)(16586007)(39060400002)(36756003)(51416003)(106356001)(68736007)(6486002)(53936002)(2351001)(2361001)(4326008)(6512007)(97736004)(105586002);
- DIR:OUT; SFP:1101; SCL:1; SRVR:DB3PR04MB0747; H:rhuath.am.freescale.net; FPR:;
- SPF:None; PTR:InfoNoRecords; MX:1; A:1; LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1; DB3PR04MB0747;
- 23:n/2PTwBjSVZsmcS2hoCagmS52IIxDoWJTRfM1bTi6?=
- =?us-ascii?Q?xBjvcpbhgAqX6nzYcRg60xKdvi/k0ko/bGi/2SCQR/xrLmPDKSdJUR7miGRK?=
- =?us-ascii?Q?WWI0YB9o+zY1wqw9O6PjQ/ej8F/fTAnQGZ57iWeLH1eLiViPgeJM6t0V4NE2?=
- =?us-ascii?Q?YqUWs3Xi9k2CJGyUqjfw3Lxhuq6T3w7qqV34Db4fxaYKPO6lSXINrU83Ify4?=
- =?us-ascii?Q?zCe4/oLH2hEqNJaldTvLT2pZH8uMywokmE3zDocOjVnV0flh6n5POJ1ZY3NM?=
- =?us-ascii?Q?m0yfHQ7VIXeOrnMv6oexrAVcHalyU8P6l2KnrsNeGx8IDpT/ChjssOIllqhY?=
- =?us-ascii?Q?BQWunVS1SONwwztELRJf/u+hstVPDywwd3x8SZRmvnb/3DlVVyU2MFqZm44L?=
- =?us-ascii?Q?aXBGqvvPz2jNEL3aG3DnZvOXMTReCbyk0cz//bllui5hc3V6tJcow3bLpS6L?=
- =?us-ascii?Q?VTqqAFHIoW5IVDozmFikzS0wu1FZscwSQM1qD0CRPdYg2O2lJfIHLhv273Q6?=
- =?us-ascii?Q?0nTf4txNUtbzIeW4X9vdbSapsz+EozMrZQxY0tFe0MjKYknEFIuYy2CT/agS?=
- =?us-ascii?Q?2O1LYU3MLhkl5ZNii4qI87mYyTPYDsV6fYuwX47NgMSpP4Zd/7NEs0IQdq+Z?=
- =?us-ascii?Q?kC68RHiC/jH08668rBI5lQEMMjUUTnSjey9A+CbqoHv94IkGvCdOCHyh/c/A?=
- =?us-ascii?Q?Hj2HH778Jp3hnB972n255pxJ/OA9X4Zb7QaQhWQU0zHttPLp8rZBH8uqecJL?=
- =?us-ascii?Q?cAaES3Mq/sRV7S0lzz5tQQysm6cSEk4znfN+PcQ761aYWXJup39VpiuXbBl2?=
- =?us-ascii?Q?xuclibBm3bEcAVQviBP6qC0GYZO2ctTwJTZCsnQ9NryCqWUTZMp2HNJiiFRv?=
- =?us-ascii?Q?0fHxUiHDnZZDW0TyEzpcnvYmVyp/GR2u0+D/wVYrCnxv+LL4Nd8nN/wFMLnq?=
- =?us-ascii?Q?QpkZySoDHLElXZOq3BmWa+Oh78mh5YWOW6fn8Bb03b1qOvdYL3ttknHd5+BK?=
- =?us-ascii?Q?UUbsLdrYUwCeGp0n3WylEObqOPCpO1dkJyCZyjaNp7dD9ryadyIgRBMBlJ59?=
- =?us-ascii?Q?VbzUxNedhKbGrVSTzlv/xXh43cN6J3wbeRxInkOl+2JkmAQXlsv0EC0qdOCV?=
- =?us-ascii?Q?QL0qYPlZ0W9imY+4MuAhTUknDKX1pkPPt+jhHkbCFrsMNJ8WCBGCtg+wXi1q?=
- =?us-ascii?Q?LTOb1JYNBs1H5Jkcyt7MQOtfATo5Ggv4jPT?=
-X-Microsoft-Antispam-Message-Info: dVas/wJyJV3rUgjljCjgTchefvmzLCbNU1uDNXpDuGrFeuduwYBzOvifhmLhovBONg605F0C7a7Pe/Su7+A0Dkjb8iXzOa49QAkGhrIThxTXEbzWJw0YJcxKXV5rT+laUFRaTPDJsafq61KMA442tNgActAaK4XJswlku7onlpoHuUwRU7RnAWDRigHFMNnm
-X-Microsoft-Exchange-Diagnostics: 1; DB3PR04MB0747;
- 6:6k4xBGxLJEmF06CeVGAAgd4eBJnM4eTGFbL9kMQKphMWX3lEWl/9HARSY3DKIVUBKI0XgCbqo+zeYA39rry0hcs+/mfNG604NrliSJ7mzFG7Sze7QPiQIpmXcwRQdy5fLpc8VFNGOidFRnSg0G8fc20FV94z2E0315NQKqECXV9jMmDikG5MOA3CtXGZDVFpVaQocB0xHBQ/BKL7z2/G8p0PsNUi+obRCV7I3JHIfLkvLToyt6+K1s1F2Gc0joKfmBVbWmuDLax25KEgh/TuLyDmW4mOmC2L/GzCyv37zqeVDObosK/G47dQ4q5jzCnjjRfbMsoUzumwc0pEuqZj4TT0otzxfWvKQaUjZuLDjVo=;
- 5:+NFxRGM6gpViwb3B9vUiLAkYQ2VzcjbtCTMPAOoBwJQuIUcpxyJzz2t8y1zbGkWsNMr5Frru1CdlObK36Nk/oNALGwYurZYjoF7fcSpikR8yrPYtUNVF9stGICPnTx5UTRXquakBBJMBE7/iNvnWWcIt2uGdXTBmTrJHZxbHRr8=;
- 24:pi3tltCtK0mO2A1w/CFrPqo9ZBhhK2fu0v8k5LcDnjSMRhrYBulkf4lL2jqsQYRIzkSwxK7RgSzzRDlLhOeCeZct8+YfHRU4uuJYllpLDf0=;
- 7:XBdYER4D0oOWc+x/1Z2N/ODyo1jPzzhWIkJ5BC8URIAL/cU80FZrVuyuTsyV9T2lAY9/arFQDhwXH8peCJ2T9+J28niqDgsYvqMi40rf6h5+VS2RsrSEk6gkTJujkNyyqJ3S9wfzE0PfFQ37ruZn4h6EloVQemiqRxIPz2v9NhJnFtrxfByGzM6agHNkRXCDzhIb25N662EKwWMaPnIYc/O41ccYmJmCHizcshskLv0OVXlgzR4BclDep2FhjTpw
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2018 13:52:17.4764 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b3483b2d-c516-493e-bf90-08d588e9a37f
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR04MB0747
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, arnd@arndb.de, netdev@vger.kernel.org,
- alexandru.marginean@nxp.com, linux-kernel@vger.kernel.org, agraf@suse.de,
- stuyoder@gmail.com, ioana.ciornei@nxp.com, laurentiu.tudor@nxp.com
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Return-Path: <srinivas.kandagatla@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1520648862; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Wq97VzcDU6zEsNg9klgky8Hx7g8RevQI3UB5/QRjSRX5vNp/aS3etMbJxoyG7smuhm
+         ++7oSqHADkUAutY8iEoDOjxxnflhtpsnzSgYjtJ2pWlPvya7xsqHhZUYrzEicuVPJgIY
+         1qFfEH4GidFQNagrPcoI/CCNQ4OLD65ELrvK/strGQe/TmdsFlARpTyhF6lJod5VuZhb
+         Z5SBM5HqPTAk/7Ictcpb2iKjF/qUG8EEcGaUPyPhqDa6MBha/bkhNNtdOJdEmsYe5sOy
+         LsL4AvpiyvkKQW76SgAm0ML9XKms/6e5ti0L4pA2ihpFkqO5ws2r3diCb3QrT3SILpcY
+         7TxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=FmOk4ag6ygCIh3kRQvSOEpIrbzyL/lG42jdfNF0lpJk=;
+        b=ULUTM9OlhR1OaS2+zvk5W+FPS/sFEgmCTAhMqWqfA1/UMv9FFO1bfuq0KIjvSfkW6t
+         4dg4EV1GTnpidnU13dawJdGvQVhKxxmLUicVP/yDwy4rFEFxA9Q9lEqU2A07fwH1ORS5
+         g2mFzU78u+N17OaUME9DCjqvDUyYnhtkhBKhqbGWWItDcEQ6zw9L3/tqgqVgGrKLjYW3
+         CC51VaK3EySHtDKVvT5ZEoobWZW5oq0lHkr72HNpkWNln7uVgbNQGrmskyvxK1eEOwe4
+         NX80fsz3eWN7dVlBk9UiIuPUMHHRDM4sR11KBZ0k02R8TXwurEk7E/iDUELyslKAv+Mb
+         PEgQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=T97RTaBv;
+       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=T97RTaBv;
+       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AG47ELtC+REBEDd9mSbUQaJR7IcFmI3DtxDkbuPeFPrYDfS46BKJEh8i7QaihVkF+vPYwlzuZK3SMg==
+From: srinivas.kandagatla@linaro.org
+To: andy.gross@linaro.org,
+	broonie@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	robh+dt@kernel.org
+Cc: gregkh@linuxfoundation.org,
+	david.brown@linaro.org,
+	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	plai@codeaurora.org,
+	bgoswami@codeaurora.org,
+	tiwai@suse.com,
+	perex@perex.cz,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rohkumar@qti.qualcomm.com,
+	spatakok@qti.qualcomm.com,
+	srinivas.kandagatla@linaro.org
+Subject: [PATCH v4 00/24] ASoC: qcom: Add support to QDSP based Audio
+Date: Sat, 10 Mar 2018 02:24:32 +0000
+Message-Id: <20180310022456.26739-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.15.1
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594515902123048091?=
+X-GMAIL-MSGID: =?utf-8?q?1594515902123048091?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Signed-off-by: Razvan Stefanescu <razvan.stefanescu@nxp.com>
----
-Changelog:
- v2:
-    - no changes
- v3:
-    - no changes
- v4:
-    - no changes
- v55555:
-    - no changes
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+Thankyou everyone for providing feedback on v3 patchset.
+This patchset aims to provide a basic version of QCOM DSP based
+audio support which is available in downstream andriod kernels.
+This patchset support audio playback on HDMI-RX, MI2S, SLIMBus and
+will add support to other features as we move on.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c3c2b75..20d7bf2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4410,6 +4410,12 @@ L:	linux-kernel@vger.kernel.org
- S:	Maintained
- F:	drivers/staging/fsl-dpaa2/ethernet
- 
-+DPAA2 ETHERNET SWITCH DRIVER
-+M:	Razvan Stefanescu <razvan.stefanescu@nxp.com>
-+L:	linux-kernel@vger.kernel.org
-+S:	Maintained
-+F:	drivers/staging/fsl-dpaa2/ethsw
-+
- DPT_I2O SCSI RAID DRIVER
- M:	Adaptec OEM Raid Solutions <aacraid@adaptec.com>
- L:	linux-scsi@vger.kernel.org
+QDSP has both static and dynamic modules. static modules like AFE
+(Audio FrontEnd), ADM (Audio Device Manager), ASM(Audio Stream Manager)
+and CORE to provide this audio services.
+All these services use APR (Asynchronous Packet Router) protocol
+via smd/glink transport to communicate with Application processor.
+More details on each module is availble in there respective patch.
+
+This patchset is tested on DB820c, with HDMI audio playback, MI2S on
+DB410c on top of mainline, Also tested SLIMBus analog audio using
+wcd9355 with an additional patches. Previous version of these
+patches are also tested on SDM845 by Rohit.
+
+Here is my test branch incase someone want to try these patches
+https://git.linaro.org/people/srinivas.kandagatla/linux.git/log/?h=v4.16-qdsp6-v4
+
+Here is block diagram to give a quick overview of the components
+
+
+  +---------+          +---------+         +---------+   
+  |  q6asm  |          |q6routing|         | q6afe   | 
+  |   dais  | <------> |  mixers | <-----> |  dais   |  
+  +---------+          +---------+         +---------+   
+      ^                     ^                   ^
+      |                     |                   |
+      |  +------------------+----------------+  |       
+      |  |                  |                |  |       
+      v  v                  v                v  v       
+  +---------+          +---------+         +---------+ 
+  |   q6ASM |          |  q6ADM  |         |   q6AFE |  
+  +---------+          +---------+         +---------+  
+      ^                     ^                   ^          ^
+      |                     |                   | CPU Side |
+------+---------------------+-------------------+--------
+      |                     |                   |
+      |                     |APR(smd/glink)     | 
+      |                     |                   |
+      |  +------------------+----------------+  |
+      |  |                  |                |  |
++-----+--+-----------------------------------+--+-------
+      |  |                  |                |  | QDSP Side |
+      v  v                  v                v  v           v
+ +---------+          +---------+         +---------+
+ |   ASM   | <------> |   ADM   | <-----> |   AFE   |
+ +---------+          +---------+         +---------+
+                                               ^
+                                               | 
+                           +-------------------+
+                           |
+---------------------------+--------------------------
+                           |            Audio I/O |
+                           v                      v
+    +--------------------------------------------------+
+    |                Audio devices                     |
+    | CODEC | HDMI-TX | PCM  | SLIMBUS | I2S |MI2S |...|
+    |                                                  |
+    +--------------------------------------------------+
+
+
+Changes since v3 (https://lkml.org/lkml/2018/2/13/719)
+
+- Cleaned up apr and other dt bindings from comments
+	 from various reviewers.
+- Updated sndcard and dsp components to use component framework
+- Fixed various locking issues spotted by Mark B.
+- Removed Error to string lookup functions which can be done later.
+- cleaned up the subject headers suggested by Mark B
+- cleaned up Kconfig as suggested in review.
+- Fixed SPDX licence commenting style, suggested by Mark.
+- Made adsp command and response in sync
+- moved sound node out of apr bus.
+- Added more info into dsp versioning support
+- Fixed issues with MI2S SD-line selection, spotted by Rohit.
+- Added my self as co-maintainer for qcom audio stuff.
+- Fixed q6routing issue spotted by flto and rohit.
+
+Srinivas Kandagatla (24):
+  soc: qcom dt-bindings: Add APR bus bindings
+  soc: qcom: Add APR bus driver
+  ASoC: qdsp6: q6common: Add qdsp6 helper functions
+  ASoC: qdsp6: dt-bindings: Add q6afe dt bindings
+  ASoC: qdsp6: dt-bindings: Add q6adm dt bindings
+  ASoC: qdsp6: dt-bindings: Add q6asm dt bindings
+  ASoC: qdsp6: q6afe: Add q6afe driver
+  ASoC: qdsp6: qdafe: Add SLIMBus port Support
+  ASoC: qdsp6: q6afe: Add support to MI2S ports
+  ASoC: qdsp6: q6afe: Add support to MI2S sysclks
+  ASoC: qdsp6: q6adm: Add q6adm driver
+  ASoC: qdsp6: q6asm: Add q6asm driver
+  ASoC: qdsp6: q6asm: Add support to memory map and unmap
+  ASoC: qdsp6: q6asm: Add support to audio stream apis
+  ASoC: qdsp6: q6core: Add q6core driver
+  ASoC: qdsp6: q6routing: Add q6routing driver
+  ASoC: qdsp6: q6routing: Add support to all SLIMBus Mixers
+  ASoC: qdsp6: q6routing: Add support to MI2S Mixers
+  ASoC: qdsp6: q6afe: Add q6afe dai driver
+  ASoC: qdsp6: q6asm: Add q6asm dai driver
+  ASoC: qdsp6: dt-bindings: Add apq8096 machine bindings
+  ASoC: qcom: apq8096: Add db820c machine driver
+  arm64: dts: db820c: add sound card dt entry
+  MAINTAINERS: Add myself as co-maintainer of qcom audio
+
+ .../devicetree/bindings/soc/qcom/qcom,apr.txt      |   85 ++
+ .../devicetree/bindings/sound/qcom,apq8096.txt     |   80 ++
+ .../devicetree/bindings/sound/qcom,q6adm.txt       |   34 +
+ .../devicetree/bindings/sound/qcom,q6afe.txt       |  107 ++
+ .../devicetree/bindings/sound/qcom,q6asm.txt       |   34 +
+ MAINTAINERS                                        |    1 +
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi       |   34 +
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              |   75 +-
+ drivers/soc/qcom/Kconfig                           |    9 +
+ drivers/soc/qcom/Makefile                          |    1 +
+ drivers/soc/qcom/apr.c                             |  379 ++++++
+ include/dt-bindings/soc/qcom,apr.h                 |   27 +
+ include/dt-bindings/sound/qcom,q6afe.h             |   31 +
+ include/dt-bindings/sound/qcom,q6asm.h             |   22 +
+ include/linux/mod_devicetable.h                    |   11 +
+ include/linux/soc/qcom/apr.h                       |  131 ++
+ sound/soc/qcom/Kconfig                             |   50 +
+ sound/soc/qcom/Makefile                            |    5 +
+ sound/soc/qcom/apq8096.c                           |  235 ++++
+ sound/soc/qcom/qdsp6/Makefile                      |    8 +
+ sound/soc/qcom/qdsp6/q6adm.c                       |  664 ++++++++++
+ sound/soc/qcom/qdsp6/q6adm.h                       |   25 +
+ sound/soc/qcom/qdsp6/q6afe-dai.c                   |  746 +++++++++++
+ sound/soc/qcom/qdsp6/q6afe.c                       | 1067 ++++++++++++++++
+ sound/soc/qcom/qdsp6/q6afe.h                       |  193 +++
+ sound/soc/qcom/qdsp6/q6asm-dai.c                   |  632 ++++++++++
+ sound/soc/qcom/qdsp6/q6asm.c                       | 1310 ++++++++++++++++++++
+ sound/soc/qcom/qdsp6/q6asm.h                       |   69 ++
+ sound/soc/qcom/qdsp6/q6core.c                      |  381 ++++++
+ sound/soc/qcom/qdsp6/q6core.h                      |   15 +
+ sound/soc/qcom/qdsp6/q6dsp-common.c                |   66 +
+ sound/soc/qcom/qdsp6/q6dsp-common.h                |   24 +
+ sound/soc/qcom/qdsp6/q6dsp-errno.h                 |   51 +
+ sound/soc/qcom/qdsp6/q6routing.c                   |  982 +++++++++++++++
+ sound/soc/qcom/qdsp6/q6routing.h                   |    9 +
+ 35 files changed, 7592 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,apq8096.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,q6adm.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,q6afe.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,q6asm.txt
+ create mode 100644 drivers/soc/qcom/apr.c
+ create mode 100644 include/dt-bindings/soc/qcom,apr.h
+ create mode 100644 include/dt-bindings/sound/qcom,q6afe.h
+ create mode 100644 include/dt-bindings/sound/qcom,q6asm.h
+ create mode 100644 include/linux/soc/qcom/apr.h
+ create mode 100644 sound/soc/qcom/apq8096.c
+ create mode 100644 sound/soc/qcom/qdsp6/Makefile
+ create mode 100644 sound/soc/qcom/qdsp6/q6adm.c
+ create mode 100644 sound/soc/qcom/qdsp6/q6adm.h
+ create mode 100644 sound/soc/qcom/qdsp6/q6afe-dai.c
+ create mode 100644 sound/soc/qcom/qdsp6/q6afe.c
+ create mode 100644 sound/soc/qcom/qdsp6/q6afe.h
+ create mode 100644 sound/soc/qcom/qdsp6/q6asm-dai.c
+ create mode 100644 sound/soc/qcom/qdsp6/q6asm.c
+ create mode 100644 sound/soc/qcom/qdsp6/q6asm.h
+ create mode 100644 sound/soc/qcom/qdsp6/q6core.c
+ create mode 100644 sound/soc/qcom/qdsp6/q6core.h
+ create mode 100644 sound/soc/qcom/qdsp6/q6dsp-common.c
+ create mode 100644 sound/soc/qcom/qdsp6/q6dsp-common.h
+ create mode 100644 sound/soc/qcom/qdsp6/q6dsp-errno.h
+ create mode 100644 sound/soc/qcom/qdsp6/q6routing.c
+ create mode 100644 sound/soc/qcom/qdsp6/q6routing.h
+
 -- 
-1.9.1
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+2.15.1
