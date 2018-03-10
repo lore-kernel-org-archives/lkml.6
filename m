@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1720711-1520641669-2-14338933620093138050
+X-Cyrus-Session-Id: sloti22d1t05-1720711-1520641655-3-6223268237441073153
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520641668; b=kR6xSM80gGvakDv4ad4m1IKvvwptsoRogvOEURolvXvNzyk
-    OITfpNP/K6MLNgIUfVEgfP51yCbQYs8Ys6C8RjmUO7tYw93S/8GKEQG3+nhcoy07
-    siF4AKXAr/M5qEIK0ATECrJAQQ0H11V+e8t07s5qqvUnGn8P6MwNs6FN6LbgAJ6D
-    zepvicf2S7VdfHjZbnZZlg7DccW7+xZHa7sp2c+ssD7MrPv3AEaWoVLdb97Os5Wn
-    kmuWqesqiZr2MRZwNveCPdA9EKYtTpNNyNA2i+2RzUg2mKtothnJPc/7NtNm9yf5
-    mRN6acpWQJcqGvhixkhNwSyOihtbdniTcVuJ0jg==
+    t=1520641654; b=pZikO0h+ywUxT0423Iy+3m8NrY84QW1rg85fLR35kmMToG3
+    9zSupVhJ7A965WDif7fXeDsHa+5/3Fip3IB2VYANtzTy/lZ1izRWg30Wlf2jBtg2
+    USxW72fGBsZgCbjWMns0q8lCBarR/7zg+Iw26+UpOt+ehaczvdDumFst+mbD+ZKH
+    KecRxczW2mNt6osgZmkEujGcovXTXlsBFeGtOvbFveDLR1NMbx8hxonNAd08H9T7
+    XofLN8+Rjp+7Wkv85ZBE061Zrkk4M60qDPR3Qe+47UBv4VrFHiglAeOs6XZSEjKZ
+    4K4AgxVBLubCsKaUttv20hgiJGxJ0h2KwaxXAIw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520641668; bh=MEpSbEklJ18y+aTrQ+KmxJ1E+q
-    /BEm+PlAHEhtN10Cg=; b=ifl/jPPXtPkxqWFznaDHUciMTxJgvELMdv5tt41Hbk
-    aUT6ReiwulbvSKqj1za1dsb90vtb5kVcLOO3SgRzUEG9UFO1Qy0PJbTJW41L4vU+
-    grOuWMFoDlwBmyal4QU/bX246j3pLJoYWKbxQGj816nvKO/FJ1A79HcVA7GjalRB
-    x+YKEcyPBlIo8Ay+inhRNa0QNgzocRxutASOA8b3vo9RkMj6pnJjMzJKQVyNwbR0
-    z8vP6pr3zxDAkVer4k1YAVbuU2FJ24Kv0+PNlgPKd7elSs1C5C3zpUFGBD2wkdNm
-    ouWZebUzEp7MRxLOXcAMb15RPO7xFJnXiGu0bLtRJCkQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1520641654; bh=+p0MPH4ahO3zy/Nlx1vrPzW1Bp
+    DZvTQVBC9aoDM5in0=; b=qrni2i+xyQZ1IsTNrE3wCLLggvVsPnCKhr63fYrg3V
+    Wp0wy1GWAnqVGefgmBaHdG9fwaKNRAOnr0SG9vES1nqLhMy4KNL05tlYg+hfMF1n
+    6F6Cr6s+INiQGa7M355f8+1htTZPow62wmSKzksttd8TR4tNwK07Kz1Rfjyss29y
+    Hz2p67xEsGPAquod6Adzhs7Ho2jqERnN4aeKoSmJUCG+tK97B/IkA7b+nV6C8tUN
+    ddbX8vhPCdPrE1qcTDMg5r98+k65q7XKeTDuctq3THqVE/eTImJ+iRXiNiubJzQG
+    WmVyUv222eYKw/OVTx7EvKYY/7NS9o4b/CqkH8mOAL2g==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,24 +49,24 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934051AbeCJA1c (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Mar 2018 19:27:32 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40406 "EHLO
+        id S932701AbeCJAXV (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Mar 2018 19:23:21 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40426 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934064AbeCJAXR (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:23:17 -0500
+        with ESMTP id S933088AbeCJAXT (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:23:19 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         "ast@kernel.org, daniel@iogearbox.net, stable@vger.kernel.org, Yonghong
-        Song" <yhs@fb.com>, Mathieu Malaterre <malat@debian.org>,
-        Alexei Starovoitov <ast@kernel.org>,
+        Song" <yhs@fb.com>, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Yonghong Song <yhs@fb.com>
-Subject: [PATCH 4.14 2/9] bpf: fix memory leak in lpm_trie map_free callback function
-Date: Fri,  9 Mar 2018 16:19:07 -0800
-Message-Id: <20180310001828.656537139@linuxfoundation.org>
+Subject: [PATCH 4.14 3/9] bpf: fix rcu lockdep warning for lpm_trie map_free callback
+Date: Fri,  9 Mar 2018 16:19:08 -0800
+Message-Id: <20180310001828.719440361@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001828.476933393@linuxfoundation.org>
 References: <20180310001828.476933393@linuxfoundation.org>
@@ -86,60 +86,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Yonghong Song <yhs@fb.com>
 
-[ upstream commit 9a3efb6b661f71d5675369ace9257833f0e78ef3 ]
+[ upstream commit 6c5f61023c5b0edb0c8a64c902fe97c6453b1852 ]
 
-There is a memory leak happening in lpm_trie map_free callback
-function trie_free. The trie structure itself does not get freed.
+Commit 9a3efb6b661f ("bpf: fix memory leak in lpm_trie map_free callback function")
+fixed a memory leak and removed unnecessary locks in map_free callback function.
+Unfortrunately, it introduced a lockdep warning. When lockdep checking is turned on,
+running tools/testing/selftests/bpf/test_lpm_map will have:
 
-Also, trie_free function did not do synchronize_rcu before freeing
-various data structures. This is incorrect as some rcu_read_lock
-region(s) for lookup, update, delete or get_next_key may not complete yet.
-The fix is to add synchronize_rcu in the beginning of trie_free.
-The useless spin_lock is removed from this function as well.
+  [   98.294321] =============================
+  [   98.294807] WARNING: suspicious RCU usage
+  [   98.295359] 4.16.0-rc2+ #193 Not tainted
+  [   98.295907] -----------------------------
+  [   98.296486] /home/yhs/work/bpf/kernel/bpf/lpm_trie.c:572 suspicious rcu_dereference_check() usage!
+  [   98.297657]
+  [   98.297657] other info that might help us debug this:
+  [   98.297657]
+  [   98.298663]
+  [   98.298663] rcu_scheduler_active = 2, debug_locks = 1
+  [   98.299536] 2 locks held by kworker/2:1/54:
+  [   98.300152]  #0:  ((wq_completion)"events"){+.+.}, at: [<00000000196bc1f0>] process_one_work+0x157/0x5c0
+  [   98.301381]  #1:  ((work_completion)(&map->work)){+.+.}, at: [<00000000196bc1f0>] process_one_work+0x157/0x5c0
 
-Fixes: b95a5c4db09b ("bpf: add a longest prefix match trie map implementation")
-Reported-by: Mathieu Malaterre <malat@debian.org>
-Reported-by: Alexei Starovoitov <ast@kernel.org>
-Tested-by: Mathieu Malaterre <malat@debian.org>
+Since actual trie tree removal happens only after no other
+accesses to the tree are possible, replacing
+  rcu_dereference_protected(*slot, lockdep_is_held(&trie->lock))
+with
+  rcu_dereference_protected(*slot, 1)
+fixed the issue.
+
+Fixes: 9a3efb6b661f ("bpf: fix memory leak in lpm_trie map_free callback function")
+Reported-by: Eric Dumazet <edumazet@google.com>
+Suggested-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Acked-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/bpf/lpm_trie.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ kernel/bpf/lpm_trie.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 --- a/kernel/bpf/lpm_trie.c
 +++ b/kernel/bpf/lpm_trie.c
-@@ -470,7 +470,10 @@ static void trie_free(struct bpf_map *ma
- 	struct lpm_trie_node __rcu **slot;
- 	struct lpm_trie_node *node;
+@@ -484,8 +484,7 @@ static void trie_free(struct bpf_map *ma
+ 		slot = &trie->root;
  
--	raw_spin_lock(&trie->lock);
-+	/* Wait for outstanding programs to complete
-+	 * update/lookup/delete/get_next_key and free the trie.
-+	 */
-+	synchronize_rcu();
- 
- 	/* Always start at the root and walk down to a node that has no
- 	 * children. Then free that node, nullify its reference in the parent
-@@ -484,7 +487,7 @@ static void trie_free(struct bpf_map *ma
- 			node = rcu_dereference_protected(*slot,
- 					lockdep_is_held(&trie->lock));
+ 		for (;;) {
+-			node = rcu_dereference_protected(*slot,
+-					lockdep_is_held(&trie->lock));
++			node = rcu_dereference_protected(*slot, 1);
  			if (!node)
--				goto unlock;
-+				goto out;
+ 				goto out;
  
- 			if (rcu_access_pointer(node->child[0])) {
- 				slot = &node->child[0];
-@@ -502,8 +505,8 @@ static void trie_free(struct bpf_map *ma
- 		}
- 	}
- 
--unlock:
--	raw_spin_unlock(&trie->lock);
-+out:
-+	kfree(trie);
- }
- 
- static int trie_get_next_key(struct bpf_map *map, void *key, void *next_key)
