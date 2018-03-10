@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932337AbeCJI2P (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 03:28:15 -0500
+        id S932999AbeCJI2T (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 03:28:19 -0500
 Received: from mga12.intel.com ([192.55.52.136]:63004 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751871AbeCJI2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 03:28:13 -0500
+        id S1751974AbeCJI2P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 03:28:15 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,450,1515484800";
-   d="scan'208";a="24039456"
+   d="scan'208";a="24039468"
 From: Tomas Winkler <tomas.winkler@intel.com>
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
 Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
         linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v2 6/8] tpm: factor out tpm_startup function
-Date: Sat, 10 Mar 2018 10:24:26 +0200
-Message-Id: <20180310082428.31519-7-tomas.winkler@intel.com>
+Subject: [PATCH v2 7/8] tpm: Move pcr extend to tpm2-cmd.c
+Date: Sat, 10 Mar 2018 10:24:27 +0200
+Message-Id: <20180310082428.31519-8-tomas.winkler@intel.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180310082428.31519-1-tomas.winkler@intel.com>
 References: <20180310082428.31519-1-tomas.winkler@intel.com>
@@ -27,200 +27,115 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tpm manual startup is used only from within tpm1 or tpm2
-code, hence remove tpm_startup function from tpm-interface.c
-and add two static functions implementations tpm1_startup
-and tpm2_startup into to tpm1-cmd.c and tpm2-cmd.c respectively.
+Add tpm2_pcr_extend function to tpm2-cmd.c with signature required
+by tpm-interface.c. It wraps the original open code
+implementation. The original original tpm2_pcr_extend function
+is renamed and made static, called only from new tpm2_pcr_extend.
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 ---
- drivers/char/tpm/tpm-interface.c | 41 ----------------------------------------
- drivers/char/tpm/tpm.h           |  1 -
- drivers/char/tpm/tpm1-cmd.c      | 37 +++++++++++++++++++++++++++++++++++-
- drivers/char/tpm/tpm2-cmd.c      | 34 +++++++++++++++++++++++++++++++--
- 4 files changed, 68 insertions(+), 45 deletions(-)
+ drivers/char/tpm/tpm-interface.c | 25 +++++--------------------
+ drivers/char/tpm/tpm.h           |  3 +--
+ drivers/char/tpm/tpm2-cmd.c      | 25 +++++++++++++++++++++++--
+ 3 files changed, 29 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 11899ef32457..90e14462500a 100644
+index 90e14462500a..d347ad8325c6 100644
 --- a/drivers/char/tpm/tpm-interface.c
 +++ b/drivers/char/tpm/tpm-interface.c
-@@ -313,47 +313,6 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
- }
- EXPORT_SYMBOL_GPL(tpm_transmit_cmd);
- 
--#define TPM_ORD_STARTUP 153
--#define TPM_ST_CLEAR 1
--
--/**
-- * tpm_startup - turn on the TPM
-- * @chip: TPM chip to use
-- *
-- * Normally the firmware should start the TPM. This function is provided as a
-- * workaround if this does not happen. A legal case for this could be for
-- * example when a TPM emulator is used.
-- *
-- * Return: same as tpm_transmit_cmd()
-- */
--int tpm_startup(struct tpm_chip *chip)
--{
--	struct tpm_buf buf;
--	int rc;
--
--	dev_info(&chip->dev, "starting up the TPM manually\n");
--
--	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_STARTUP);
--		if (rc < 0)
--			return rc;
--
--		tpm_buf_append_u16(&buf, TPM2_SU_CLEAR);
--	} else {
--		rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_STARTUP);
--		if (rc < 0)
--			return rc;
--
--		tpm_buf_append_u16(&buf, TPM_ST_CLEAR);
--	}
--
--	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
--			      "attempting to start the TPM");
--
--	tpm_buf_destroy(&buf);
--	return rc;
--}
--
- int tpm_get_timeouts(struct tpm_chip *chip)
- {
- 	if (chip->flags & TPM_CHIP_FLAG_HAVE_TIMEOUTS)
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 1bed9b5441c5..434f11c23e3e 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -526,7 +526,6 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
- 			 void *buf, size_t bufsiz,
- 			 size_t min_rsp_body_length, unsigned int flags,
- 			 const char *desc);
--int tpm_startup(struct tpm_chip *chip);
- int tpm_get_timeouts(struct tpm_chip *);
- 
- int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr);
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index e2c9f609fe64..85dd0fcbd4cc 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -307,6 +307,40 @@ unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- }
- EXPORT_SYMBOL_GPL(tpm1_calc_ordinal_duration);
- 
-+#define TPM_ORD_STARTUP 153
-+#define TPM_ST_CLEAR 1
-+
-+/**
-+ * tpm_startup - turn on the TPM
-+ * @chip: TPM chip to use
-+ *
-+ * Normally the firmware should start the TPM. This function is provided as a
-+ * workaround if this does not happen. A legal case for this could be for
-+ * example when a TPM emulator is used.
-+ *
-+ * Return: same as tpm_transmit_cmd()
-+ */
-+static int tpm1_startup(struct tpm_chip *chip)
-+{
-+	struct tpm_buf buf;
-+	int rc;
-+
-+	dev_info(&chip->dev, "starting up the TPM manually\n");
-+
-+	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_STARTUP);
-+	if (rc < 0)
-+		return rc;
-+
-+	tpm_buf_append_u16(&buf, TPM_ST_CLEAR);
-+
-+	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
-+			      "attempting to start the TPM");
-+
-+	tpm_buf_destroy(&buf);
-+
-+	return rc;
-+}
-+
- int tpm1_get_timeouts(struct tpm_chip *chip)
- {
- 	cap_t cap;
-@@ -316,7 +350,7 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
- 	rc = tpm1_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, NULL,
- 			 sizeof(cap.timeout));
- 	if (rc == TPM_ERR_INVALID_POSTINIT) {
--		if (tpm_startup(chip))
-+		if (tpm1_startup(chip))
- 			return rc;
- 
- 		rc = tpm1_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap,
-@@ -719,3 +753,4 @@ int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
- 
- 	return rc;
- }
-+
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 8114fd59e2c5..07636aa6f1a9 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -1006,6 +1006,36 @@ static int tpm2_get_cc_attrs_tbl(struct tpm_chip *chip)
- 	return rc;
- }
- 
-+/**
-+ * tpm2_startup - turn on the TPM
-+ * @chip: TPM chip to use
-+ *
-+ * Normally the firmware should start the TPM. This function is provided as a
-+ * workaround if this does not happen. A legal case for this could be for
-+ * example when a TPM emulator is used.
-+ *
-+ * Return: same as tpm_transmit_cmd()
-+ */
-+
-+static int tpm2_startup(struct tpm_chip *chip)
-+{
-+	struct tpm_buf buf;
-+	int rc;
-+
-+	dev_info(&chip->dev, "starting up the TPM manually\n");
-+
-+	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_STARTUP);
-+	if (rc < 0)
-+		return rc;
-+
-+	tpm_buf_append_u16(&buf, TPM2_SU_CLEAR);
-+	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
-+			      "attempting to start the TPM");
-+	tpm_buf_destroy(&buf);
-+
-+	return rc;
-+}
-+
- /**
-  * tpm2_auto_startup - Perform the standard automatic TPM initialization
-  *                     sequence
-@@ -1017,7 +1047,7 @@ int tpm2_auto_startup(struct tpm_chip *chip)
+@@ -391,31 +391,16 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
+ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
  {
  	int rc;
+-	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
+-	u32 count = 0;
+-	int i;
  
--	rc = tpm_get_timeouts(chip);
-+	rc = tpm2_get_timeouts(chip);
- 	if (rc)
- 		goto out;
+ 	chip = tpm_chip_find_get(chip);
+ 	if (!chip)
+ 		return -ENODEV;
  
-@@ -1028,7 +1058,7 @@ int tpm2_auto_startup(struct tpm_chip *chip)
- 	}
+-	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+-		memset(digest_list, 0, sizeof(digest_list));
+-
+-		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
+-			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
+-			digest_list[i].alg_id = chip->active_banks[i];
+-			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
+-			count++;
+-		}
+-
+-		rc = tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
+-		tpm_put_ops(chip);
+-		return rc;
+-	}
+-
+-	rc = tpm1_pcr_extend(chip, pcr_idx, hash,
+-			     "attempting extend a PCR value");
++	if (chip->flags & TPM_CHIP_FLAG_TPM2)
++		rc = tpm2_pcr_extend(chip, pcr_idx, hash);
++	else
++		rc = tpm1_pcr_extend(chip, pcr_idx, hash,
++				     "attempting extend a PCR value");
+ 	tpm_put_ops(chip);
+ 	return rc;
+ }
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 434f11c23e3e..2b88aadc4743 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -578,8 +578,7 @@ static inline u32 tpm2_rc_value(u32 rc)
  
- 	if (rc == TPM2_RC_INITIALIZE) {
--		rc = tpm_startup(chip);
-+		rc = tpm2_startup(chip);
- 		if (rc)
- 			goto out;
+ int tpm2_get_timeouts(struct tpm_chip *chip);
+ int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
+-int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+-		    struct tpm2_digest *digests);
++int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash);
+ int tpm2_get_random(struct tpm_chip *chip, u8 *out, size_t max);
+ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
+ 			    unsigned int flags);
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 07636aa6f1a9..80eb4bb5feef 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -223,8 +223,8 @@ struct tpm2_null_auth_area {
+  *
+  * Return: Same as with tpm_transmit_cmd.
+  */
+-int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+-		    struct tpm2_digest *digests)
++static int __tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
++			     struct tpm2_digest *digests)
+ {
+ 	struct tpm_buf buf;
+ 	struct tpm2_null_auth_area auth_area;
+@@ -270,6 +270,27 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+ 	return rc;
+ }
  
++int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
++{
++	int rc;
++	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
++	u32 count = 0;
++	int i;
++
++	memset(digest_list, 0, sizeof(digest_list));
++
++	for (i = 0; i < ARRAY_SIZE(chip->active_banks); i++) {
++		if (chip->active_banks[i] == TPM2_ALG_ERROR)
++			break;
++		digest_list[i].alg_id = chip->active_banks[i];
++		memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
++		count++;
++	}
++
++	rc = __tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
++	return rc;
++}
++
+ 
+ #define TPM2_GETRANDOM_IN_SIZE \
+ 	(sizeof(struct tpm_input_header) + \
 -- 
 2.14.3
