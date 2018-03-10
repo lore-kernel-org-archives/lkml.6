@@ -1,126 +1,231 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752143AbeCJSjM (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:39:12 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:44427 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932407AbeCJSUs (ORCPT
+        id S1752156AbeCJSjg (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:39:36 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:36137 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932379AbeCJSUo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:20:48 -0500
-Date: Sat, 10 Mar 2018 19:20:42 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, sakari.ailus@iki.fi,
-        mchehab@kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] Renesas CEU: SH7724 ECOVEC + Aptina mt9t112
-Message-ID: <20180310182042.GK4023@w540>
-References: <1520008541-3961-1-git-send-email-jacopo+renesas@jmondi.org>
- <f783d586-3f6b-0dad-a130-c2c52ce42634@xs4all.nl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f783d586-3f6b-0dad-a130-c2c52ce42634@xs4all.nl>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Sat, 10 Mar 2018 13:20:44 -0500
+X-Google-Smtp-Source: AG47ELt7ZidyNqyBMPjqfwb/71CJ31fcJ0NcRtTL1jtXKuE/k8Pw6ulfOtPTrAq/4Rhgvu43n1i/6g==
+From: Andiry Xu <jix024@eng.ucsd.edu>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org
+Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
+        swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
+        swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
+        Andiry Xu <jix024@cs.ucsd.edu>
+Subject: [RFC v2 23/83] Save allocator to pmem in put_super.
+Date: Sat, 10 Mar 2018 10:18:04 -0800
+Message-Id: <1520705944-6723-24-git-send-email-jix024@eng.ucsd.edu>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
+References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans,
+From: Andiry Xu <jix024@cs.ucsd.edu>
 
-On Sat, Mar 10, 2018 at 06:57:17PM +0100, Hans Verkuil wrote:
-> Hi Jacopo,
->
-> On 02/03/18 17:35, Jacopo Mondi wrote:
-> > Hello,
-> >    now that CEU has been picked up for inclusion in v4.17, we can start moving
-> > users of old sh_mobile_ceu_camera driver to use the newly introduced one.
-> >
-> > Migo-R has been first, now it's SH7724 ECOVEC board turn.
-> >
-> > ECOVEC has a camera board with two MT9T112 image sensor and one TW9910 video
-> > decoder input. This series moves the mt9t112 driver away from soc_camera
-> > framework and remove dependencies on it in mach-ecovec board code.
-> >
-> > As per Migo-R, memory for CEU is reserved using memblocks APIs and declared
-> > as DMA-capable in board code, power up/down routines have been removed from
-> > board code, and GPIOs lookup table registered for sensor drivers.
-> >
-> > As in the previous series, still no code has been removed or changed in
-> > drivers/media/i2c/soc_camera/ until we do not remove all dependencies on it
-> > in all board files.
-> >
-> > Hans, since you asked me to add frame rate interval support for ov772x I expect
-> > to receive the same request for mt9t112. Unfortunately I do not have access to
-> > register level documentation, nor can perform any testing as I don't have the
-> > camera modules. For the same reason I cannot run any v4l2-compliance test on
-> > that driver, but just make sure the ECOVEC boots cleanly with the new board
-> > file. I'm in favour of moving the driver to staging if you think that's the case.
-> >
-> > Series based on media-tree master, and as per Migo-R I would ask SH arch/
-> > changes to go through media tree as SH maintainers are un-responsive.
->
-> When compiling this series I get this error:
->
-> drivers/media/i2c/soc_camera/mt9t112.c: In function ‘mt9t112_init_pll’:
-> drivers/media/i2c/soc_camera/mt9t112.c:426:16: error: dereferencing pointer to incomplete type ‘struct mt9t112_camera_info’
->       priv->info->divider.m,
->                 ^~
->
-> Can you take a look?
+We allocate log pages and append free range node to the log of the reserved blocknode inode.
+We can recover the allocator status by reading the log upon normal recovery.
 
-Ups, changing the driver interface ofc breaks the soc_camera version
-of the driver (I didn't notice as I've compiled soc_camera out in my
-tests).
+Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
+---
+ fs/nova/bbuild.c | 114 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/nova/bbuild.h |   1 +
+ fs/nova/inode.h  |  13 +++++++
+ fs/nova/nova.h   |   7 ++++
+ fs/nova/super.c  |   2 +
+ 5 files changed, 137 insertions(+)
 
-As the old driver is the only user of that interface this series
-doesn't touch[1] I'll rename the old 'struct mt9t112_camera_info' to
-the newly introduced 'struct mt9t112_platform_data' (and I've made
-sure nobody uses the flag definitions I have removed).
-
-I'll pile another patch on top of the one just sent to add the TODO
-note at driver's beginning.
-
-Sorry about that
-   j
-
-[1]
-$git grep "media/i2c/mt9t112.h" .
-MAINTAINERS:F:  include/media/i2c/mt9t112.h
-arch/sh/boards/mach-ecovec24/setup.c:#include <media/i2c/mt9t112.h>
-drivers/media/i2c/mt9t112.c:#include <media/i2c/mt9t112.h>
-drivers/media/i2c/soc_camera/mt9t112.c:#include <media/i2c/mt9t112.h>
-
->
-> Regards,
->
-> 	Hans
->
-> >
-> > Thanks
-> >   j
-> >
-> > Jacopo Mondi (5):
-> >   media: i2c: Copy mt9t112 soc_camera sensor driver
-> >   media: i2c: mt9t112: Remove soc_camera dependencies
-> >   media: i2c: mt9t112: Fix code style issues
-> >   arch: sh: ecovec: Use new renesas-ceu camera driver
-> >   media: MAINTAINERS: Add entry for Aptina MT9T112
-> >
-> >  MAINTAINERS                            |    7 +
-> >  arch/sh/boards/mach-ecovec24/setup.c   |  338 +++++-----
-> >  arch/sh/kernel/cpu/sh4a/clock-sh7724.c |    4 +-
-> >  drivers/media/i2c/Kconfig              |   11 +
-> >  drivers/media/i2c/Makefile             |    1 +
-> >  drivers/media/i2c/mt9t112.c            | 1136 ++++++++++++++++++++++++++++++++
-> >  include/media/i2c/mt9t112.h            |   17 +-
-> >  7 files changed, 1333 insertions(+), 181 deletions(-)
-> >  create mode 100644 drivers/media/i2c/mt9t112.c
-> >
-> > --
-> > 2.7.4
-> >
->
+diff --git a/fs/nova/bbuild.c b/fs/nova/bbuild.c
+index 8bc0545..12a2f11 100644
+--- a/fs/nova/bbuild.c
++++ b/fs/nova/bbuild.c
+@@ -51,3 +51,117 @@ void nova_init_header(struct super_block *sb,
+ 	init_rwsem(&sih->i_sem);
+ }
+ 
++static u64 nova_append_range_node_entry(struct super_block *sb,
++	struct nova_range_node *curr, u64 tail, unsigned long cpuid)
++{
++	u64 curr_p;
++	size_t size = sizeof(struct nova_range_node_lowhigh);
++	struct nova_range_node_lowhigh *entry;
++
++	curr_p = tail;
++
++	if (curr_p == 0 || (is_last_entry(curr_p, size) &&
++				next_log_page(sb, curr_p) == 0)) {
++		nova_dbg("%s: inode log reaches end?\n", __func__);
++		goto out;
++	}
++
++	if (is_last_entry(curr_p, size))
++		curr_p = next_log_page(sb, curr_p);
++
++	entry = (struct nova_range_node_lowhigh *)nova_get_block(sb, curr_p);
++	entry->range_low = cpu_to_le64(curr->range_low);
++	if (cpuid)
++		entry->range_low |= cpu_to_le64(cpuid << 56);
++	entry->range_high = cpu_to_le64(curr->range_high);
++	nova_dbgv("append entry block low 0x%lx, high 0x%lx\n",
++			curr->range_low, curr->range_high);
++
++	nova_flush_buffer(entry, sizeof(struct nova_range_node_lowhigh), 0);
++out:
++	return curr_p;
++}
++
++static u64 nova_save_range_nodes_to_log(struct super_block *sb,
++	struct rb_root *tree, u64 temp_tail, unsigned long cpuid)
++{
++	struct nova_range_node *curr;
++	struct rb_node *temp;
++	size_t size = sizeof(struct nova_range_node_lowhigh);
++	u64 curr_entry = 0;
++
++	/* Save in increasing order */
++	temp = rb_first(tree);
++	while (temp) {
++		curr = container_of(temp, struct nova_range_node, node);
++		curr_entry = nova_append_range_node_entry(sb, curr,
++						temp_tail, cpuid);
++		temp_tail = curr_entry + size;
++		temp = rb_next(temp);
++		rb_erase(&curr->node, tree);
++		nova_free_range_node(curr);
++	}
++
++	return temp_tail;
++}
++
++static u64 nova_save_free_list_blocknodes(struct super_block *sb, int cpu,
++	u64 temp_tail)
++{
++	struct free_list *free_list;
++
++	free_list = nova_get_free_list(sb, cpu);
++	temp_tail = nova_save_range_nodes_to_log(sb,
++				&free_list->block_free_tree, temp_tail, 0);
++	return temp_tail;
++}
++
++void nova_save_blocknode_mappings_to_log(struct super_block *sb)
++{
++	struct nova_inode *pi = nova_get_inode_by_ino(sb, NOVA_BLOCKNODE_INO);
++	struct nova_inode_info_header sih;
++	struct nova_sb_info *sbi = NOVA_SB(sb);
++	struct free_list *free_list;
++	unsigned long num_blocknode = 0;
++	unsigned long num_pages;
++	int allocated;
++	u64 new_block = 0;
++	u64 temp_tail;
++	int i;
++
++	sih.ino = NOVA_BLOCKNODE_INO;
++	sih.i_blk_type = NOVA_DEFAULT_BLOCK_TYPE;
++
++	/* Allocate log pages before save blocknode mappings */
++	for (i = 0; i < sbi->cpus; i++) {
++		free_list = nova_get_free_list(sb, i);
++		num_blocknode += free_list->num_blocknode;
++		nova_dbgv("%s: free list %d: %lu nodes\n", __func__,
++				i, free_list->num_blocknode);
++	}
++
++	num_pages = num_blocknode / RANGENODE_PER_PAGE;
++	if (num_blocknode % RANGENODE_PER_PAGE)
++		num_pages++;
++
++	allocated = nova_allocate_inode_log_pages(sb, &sih, num_pages,
++						&new_block, ANY_CPU, 0);
++	if (allocated != num_pages) {
++		nova_dbg("Error saving blocknode mappings: %d\n", allocated);
++		return;
++	}
++
++	temp_tail = new_block;
++	for (i = 0; i < sbi->cpus; i++)
++		temp_tail = nova_save_free_list_blocknodes(sb, i, temp_tail);
++
++	/* Finally update log head and tail */
++	pi->log_head = new_block;
++	nova_update_tail(pi, temp_tail);
++	nova_flush_buffer(&pi->log_head, CACHELINE_SIZE, 0);
++
++	nova_dbg("%s: %lu blocknodes, %lu log pages, pi head 0x%llx, tail 0x%llx\n",
++		  __func__, num_blocknode, num_pages,
++		  pi->log_head, pi->log_tail);
++}
++
+diff --git a/fs/nova/bbuild.h b/fs/nova/bbuild.h
+index 162a832..59cc379 100644
+--- a/fs/nova/bbuild.h
++++ b/fs/nova/bbuild.h
+@@ -3,5 +3,6 @@
+ 
+ void nova_init_header(struct super_block *sb,
+ 	struct nova_inode_info_header *sih, u16 i_mode);
++void nova_save_blocknode_mappings_to_log(struct super_block *sb);
+ 
+ #endif
+diff --git a/fs/nova/inode.h b/fs/nova/inode.h
+index dbd5256..0594ef3 100644
+--- a/fs/nova/inode.h
++++ b/fs/nova/inode.h
+@@ -123,6 +123,19 @@ static inline void sih_unlock_shared(struct nova_inode_info_header *header)
+ 	up_read(&header->i_sem);
+ }
+ 
++static inline void nova_update_tail(struct nova_inode *pi, u64 new_tail)
++{
++	timing_t update_time;
++
++	NOVA_START_TIMING(update_tail_t, update_time);
++
++	PERSISTENT_BARRIER();
++	pi->log_tail = new_tail;
++	nova_flush_buffer(&pi->log_tail, CACHELINE_SIZE, 1);
++
++	NOVA_END_TIMING(update_tail_t, update_time);
++}
++
+ static inline unsigned int
+ nova_inode_blk_shift(struct nova_inode_info_header *sih)
+ {
+diff --git a/fs/nova/nova.h b/fs/nova/nova.h
+index f5b4ec8..aa88d9f 100644
+--- a/fs/nova/nova.h
++++ b/fs/nova/nova.h
+@@ -303,6 +303,13 @@ static inline u64 nova_get_epoch_id(struct super_block *sb)
+ #include "inode.h"
+ #include "log.h"
+ 
++struct nova_range_node_lowhigh {
++	__le64 range_low;
++	__le64 range_high;
++};
++
++#define	RANGENODE_PER_PAGE	254
++
+ /* A node in the RB tree representing a range of pages */
+ struct nova_range_node {
+ 	struct rb_node node;
+diff --git a/fs/nova/super.c b/fs/nova/super.c
+index 3500d19..7ee3f66 100644
+--- a/fs/nova/super.c
++++ b/fs/nova/super.c
+@@ -705,6 +705,8 @@ static void nova_put_super(struct super_block *sb)
+ 	struct nova_sb_info *sbi = NOVA_SB(sb);
+ 
+ 	if (sbi->virt_addr) {
++		/* Save everything before blocknode mapping! */
++		nova_save_blocknode_mappings_to_log(sb);
+ 		sbi->virt_addr = NULL;
+ 	}
+ 
+-- 
+2.7.4
