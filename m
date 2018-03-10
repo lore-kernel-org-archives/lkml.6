@@ -1,113 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932128AbeCJTFz (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 14:05:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47744 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750971AbeCJTFx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 14:05:53 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A94572178B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
-X-Google-Smtp-Source: AG47ELt3bj9Ri8IDTF9G0PGxFcZ52YbJyV3eEJyTr50bvWmURSKE7s9skUhkAt+VcWOg8gfzFJmqrjbowrsavnsmg34=
-MIME-Version: 1.0
-In-Reply-To: <CAB=NE6VvDNbe=XsfG0tYeFcxcXzsRkHnZxVHM79-V+1t6foU5g@mail.gmail.com>
-References: <DM5PR03MB3035EE1AFCEE298AFB15AC46D3C60@DM5PR03MB3035.namprd03.prod.outlook.com>
- <20180301171936.GU14069@wotan.suse.de> <DM5PR03MB303587F12D7E56B951730A76D3D90@DM5PR03MB3035.namprd03.prod.outlook.com>
- <20180307190205.GA14069@wotan.suse.de> <DM5PR03MB30352350D588A81D2D02BE93D3DF0@DM5PR03MB3035.namprd03.prod.outlook.com>
- <20180308040601.GQ14069@wotan.suse.de> <20180308041411.GR14069@wotan.suse.de>
- <DM5PR03MB3035CCBF9718D7E42B35357FD3DF0@DM5PR03MB3035.namprd03.prod.outlook.com>
- <MWHPR03MB30402C0F8B8F457F5F760412D3DD0@MWHPR03MB3040.namprd03.prod.outlook.com>
- <CAB=NE6VvDNbe=XsfG0tYeFcxcXzsRkHnZxVHM79-V+1t6foU5g@mail.gmail.com>
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Date: Sat, 10 Mar 2018 11:05:31 -0800
-X-Gmail-Original-Message-ID: <CAB=NE6U5zedFXhTn_ozFHMm03D15m=-WwaaeQP7jtfPkugbL5Q@mail.gmail.com>
-Message-ID: <CAB=NE6U5zedFXhTn_ozFHMm03D15m=-WwaaeQP7jtfPkugbL5Q@mail.gmail.com>
-Subject: Re: ivtv: use arch_phys_wc_add() and require PAT disabled
-To: "French, Nicholas A." <naf@ou.edu>, Dave Airlie <airlied@linux.ie>
-Cc: Andy Lutomirski <luto@kernel.org>,
-        "hans.verkuil@cisco.com" <hans.verkuil@cisco.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+        id S1751043AbeCJTM5 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 14:12:57 -0500
+Received: from forward103o.mail.yandex.net ([37.140.190.177]:51559 "EHLO
+        forward103o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750703AbeCJTMy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 14:12:54 -0500
+Authentication-Results: smtp1p.mail.yandex.net; dkim=pass header.i=@flygoat.com
+Message-ID: <1520708711.24016.27.camel@flygoat.com>
+Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+To: Mathieu Malaterre <malat@debian.org>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Cc: James Hogan <jhogan@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Dominik Peklo <dom.peklo@gmail.com>
+Date: Sun, 11 Mar 2018 03:05:11 +0800
+In-Reply-To: <CA+7wUsyTrHZ=yk7EObc4ZaeXFcdgxVZL=9v2Mtz9=1_5dBz6Hg@mail.gmail.com>
+References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
+         <20170927151527.25570-4-prasannatsmkumar@gmail.com>
+         <20180306000832.GL4197@saruman>
+         <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
+         <20180307143541.GN4197@saruman>
+         <CANc+2y5wsvGWszu3pePYhs2wb1_AgPdjG+ugfOCzbZVfVHDMvw@mail.gmail.com>
+         <1520437971.3731.22.camel@flygoat.com>
+         <CANc+2y42BAF=bZo9WxujMBR-x6y=rKDagA3R68phuAsi1P8BLw@mail.gmail.com>
+         <CA+7wUsyTrHZ=yk7EObc4ZaeXFcdgxVZL=9v2Mtz9=1_5dBz6Hg@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 10, 2018 at 11:03 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> On Sat, Mar 10, 2018 at 8:57 AM, French, Nicholas A. <naf@ou.edu> wrote:
->> On Wed, Mar 07, 2018 at 11:23:09PM -0600, French, Nicholas A. wrote:
->>> On Thu, Mar 08, 2018 at 04:14:11AM +0000, Luis R. Rodriguez wrote:
->>> > On Thu, Mar 08, 2018 at 04:06:01AM +0000, Luis R. Rodriguez wrote:
->>> > > On Thu, Mar 08, 2018 at 03:16:29AM +0000, French, Nicholas A. wrote:
->>> > > >
->>> > > > Ah, I see. So my proposed ioremap_wc call was only "working" by aliasing the
->>> > > > ioremap_nocache()'d mem area and not actually using write combining at all.
->>> > >
->>> > > There are some debugging PAT toys out there I think but I haven't played with
->>> > > them yet or I forgot how to to confirm or deny this sort of effort, but
->>> > > likeley.
->>> >
->>> >  In fact come to think of it I believe some neurons are telling me that if
->>> >  two type does not match we'd get an error?
->>
->> I can confirm that my original suggested patch just aliases to ivtv-driver's nocache mapping:
->> $ sudo modprobe ivtvfb
->> $ sudo dmesg
->> ...
->> x86/PAT: Overlap at 0xd5000000-0xd5800000
->> x86/PAT: reserve_memtype added [mem 0xd5510000-0xd56b0fff], track uncached-minus, req write-combining, ret uncached-minus
->> ivtvfb0: Framebuffer at 0xd5510000, mapped to 0x00000000c6a7ed52, size 1665k
->> ...
->> $ sudo cat /sys/kernel/debug/x86/pat_memtype_list | grep 0xd5
->> uncached-minus @ 0xd5000000-0xd5800000
->> uncached-minus @ 0xd5510000-0xd56b1000
->>
->> So nix that.
->>
->>> > No what if the framebuffer driver is just requested as a secondary step
->>> > after firmware loading?
->>>
->>> Its a possibility. The decoder firmware gets loaded at the beginning of the decoder
->>> memory range and we know its length, so its possible to ioremap_nocache enough
->>> room for the firmware only on init and then ioremap the remaining non-firmware
->>> decoder memory areas appropriately after the firmware load succeeds...
->>
->> I looked in more detail, and this would be "hard" due to the way the rest of the
->> decoder offsets are determined by either making firmware calls or scanning the
->> decoder memory range for magic bytes and other mess.
->>
->> I think some smart guy named mcgrof apparently came to the same conclusion
->> in a really old email chain I found [https://lists.gt.net/linux/kernel/2387536]:
->> "The ivtv case is the *worst* example we can expect where the firmware
->> hides from us the exact ranges for write-combining, that we should somehow
->> just hope no one will ever do again."
->> :-)
->
-> This is tribal knowledge worth formalizing a bit more for the long run
-> for this ivtv driver.
->
->>> Perhaps the easy answer is to change the fatal is-pat-enabled check to just a
->>> warning like "you have PAT enabled, so wc is disabled for the framebuffer.
->>> if you want wc, use the nopat parameter"?
->>
->> I like this idea more and more. I haven't experience any problems running
->> with PAT-enabled and no write-combining on the framebuffer. Any objections?
->
-> I think its worth it, and perhaps best folded under a new kernel
-> parameter option which also documents the limitation noted above,
-> thereby knocking two birds with one stone. This way also users who
-> *want* to opt-in to PAT do so willing-fully and knowing of the
-> limitation. The kconfig option can just enable a module parameter to a
-> default value, which if the kconfig is disabled would otherwise be
-> unset.
->
-> static bool ivtv_force_pat = IS_ENABLED(CONFIG_IVTV_WHATEVER);
-> module_param_named(force_pat, ivtv_force_pat, bool, S_IRUGO | S_IWUSR);
+在 2018-03-07三的 19:13 +0100，Mathieu Malaterre写道：
+> > > [1] https://pan.baidu.com/s/1o8MeYts (Well you can download from
+> > > this
+> > > Chinese website, ingenic have a gerrit but I don't have access to
+> > > it.
+> > > As my experience, it's hard to develop on Chinese-made chips
+> > > wihout
+> > > reading Chinese documents.)
+> > 
+> > Can you take a diff and upload it somewhere else? Download speed is
+> > a
+> > couple of bytes per second. Can you put the diff in github or
+> > similar
+> > other service?
+> > I would like to see if the port uses DT.
+> 
+> Technically this was documented here:
+Well that's only Technically for the English world. Most Ingeinc
+costumers are Chinese so they're providing detailed support for Chinese
+world.
+According Ingenic's announcement, the ftp have been deprecated for a
+long time and it's only exsiting for archive reason.
 
-And  I wonder if its better to have a generic kconfig option so that
-in case other drivers have similar issue they can make use of it as
-well. For now that's a non-issue, but worth pointing out if we're
-going to do this for more than one driver later.
+> 
+> ftp://ftp.ingenic.cn/DevSupport/Linux/Linux-3.0.8/JZ4780/JZ4780_linux
+> _development_guide_EN.pdf
+> 
+> Go to §2.1 Download Source Code:
+> 
+> 1) Download repo a) $ mkdir b) $ cd c) $ wget
+> http://git.ingenic.cn:8082/bj/repo d) $ chmod +x repo
+> 
+Repo is a sourcecode managing system used by Android. The gerrit is
+still here but need extra premission to reach. Now ingenic release
+there soucecode by "Baidu Netdisk". It's hard to access by foreign
+users. So we put the shourcecode here: https://github.com/Ingenic-commu
+nity/linux-xburst-bsp
 
- Luis
+Thanks
+-- 
+Jiaxun Yang <jiaxun.yang@flygoat.com>
