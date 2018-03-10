@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuMM9vTIGHqj6FeqTS3NEkriI6Snts3dcJ5XjIyzVlTE9x2tAi9aydLzpqx6lH6Nfpc5tQb
-ARC-Seal: i=1; a=rsa-sha256; t=1520641146; cv=none;
+X-Google-Smtp-Source: AG47ELsLBcjNoehQwy1w09bg6BfeZQko5xudzca2CjkfaUHP27yXtEtLbX2+ALUSHAhD0FeQZAT8
+ARC-Seal: i=1; a=rsa-sha256; t=1520641144; cv=none;
         d=google.com; s=arc-20160816;
-        b=w3ZrL0I+DGRqEekyI8REgZub2J3Cmx8xatO400p422aUpr1vqJDbRfzEKzqEL7WhtF
-         7xhpK8LHNYVrF5uhlqstJgbZyAF26y8JmF7mz5AGiJduUvnDhhC3H4j8wskZLNEh6ZDg
-         +CBvz3iQieEaFC3iDcHa76uCI5TnfAI21/3u/Tu3Ppw80ZX4/Snh5GagStVwNDABL+py
-         gPCWOLhyMG/vfHyuOOiP5NHF6GdDTI+MfgCDdlBqTWDtVm5MjAYoY8jrAt+HJriVJJDT
-         E5T4y5Bm9tlhhOi0gCXaX7As3iBKEB40CdpSlPTnb624viG56/2P4BOWQtew7on9Z1Ir
-         S1zA==
+        b=IX1jpPio4eBIkY/aQnmSCFba1lY8WWPnzffsTcaggSp5YhTz8SNlUJyeYkIoaWab4S
+         yfYBufW2Eq+nQECovsmd7Js41O32FdSvNoWrL59EHg9jS3dbWFXCznzp9OdXi9k6oiTz
+         W99g4yxVYchrfdHR9tkC0qhLSQylj0v5/IxI1ZlF8S8c13d2fu8Kk8MmDhZrrSGvSbcI
+         rkDFHOcI1YughklkCOa4XsUNGuZIkW6fTI7DxkDIPxK+UjPEcodRpvOPwqovOmPu+TwX
+         2D/K/tGHBclaXABQpu2+pZD2ku1tw8NhGnAdElTF4PRVho6iPBpkrTi+/7cPUQR33hOB
+         HPJQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yWH+ISqSKUYkN0oFJtXJ00MjCq0h2S4tpc08X/qNxHc=;
-        b=Ec2IVYHZk7aQF4tJTow403HAZfmNWAW2DncGbTzRz+eywuNIcJikKNxQ5nLsfux+PA
-         KKlYUZyzJ/ITQ40JP1yZnigc5v3KhXMtMrBu8CsuRl6n7vBlBxP+zmyV7j37hMLklimf
-         nCuN30Zb+qm3I8NZk+IKFNsYyyHlxmOCa0CFvEVoFxiLZBEnqXCSQQOcEsoZrRUg1OA3
-         46GOycef+kumAIERRw/SrZQXqU8aGo8VwWUbdcgBQRFr+Zy+utQIJmYrl7w+5Gn6leSu
-         c/jDqyAyb1fbOxvic8oZigIeyO/OTZKg27A9MCpV0gjsHbBuk6wCHG8gk11lb7KQswd9
-         E4DA==
+        bh=24LJ6GZeRb3Qc1aj3ss7AzvP4yb0t35p5uk7iTHNYGU=;
+        b=QkEZVP8mJrnReQcNZ1QlHFzUpBGRZ+6INw0dRl06Jzf2Z4Ye3THofsOtqd07RJghUj
+         NpUJMND/mjk9P4S/tWyADaf/50v+iELfiy1gzRstty79Yn/0Lpoc/REy0mE1e6ey9ard
+         8XgPVL67bqptUFmS7jmNS3bQWWz4Ak+VgRU9r41s+OyCvhdKpWq83OOp2OrHjq5xAmCI
+         iF95jUpkiG1Kuhyq5mdC2w2lJ25Ol316Tw6bbdoXZXCikwxH2apDnYihlcYbmhyGdmpK
+         Wujq/6m5zl9DQX+QC+cSRkEpGOka6kdFqGhLeNccKuCoGs80J6EKQcNqW5lSrX3r2rdT
+         kXZg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Fugang Duan <B38611@freescale.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 3.18 06/21] net: fec: introduce fec_ptp_stop and use in probe fail path
-Date: Fri,  9 Mar 2018 16:18:28 -0800
-Message-Id: <20180310001801.425145519@linuxfoundation.org>
+	Ulf Magnusson <ulfalizer@gmail.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>
+Subject: [PATCH 3.18 05/21] ARM: mvebu: Fix broken PL310_ERRATA_753970 selects
+Date: Fri,  9 Mar 2018 16:18:27 -0800
+Message-Id: <20180310001801.364995678@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001801.045114869@linuxfoundation.org>
 References: <20180310001801.045114869@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507810742302524?=
-X-GMAIL-MSGID: =?utf-8?q?1594507810742302524?=
+X-GMAIL-THRID: =?utf-8?q?1594507808977901535?=
+X-GMAIL-MSGID: =?utf-8?q?1594507808977901535?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,81 +49,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lucas Stach <l.stach@pengutronix.de>
+From: Ulf Magnusson <ulfalizer@gmail.com>
 
-commit 32cba57ba74be58589aeb4cb6496183e46a5e3e5 upstream.
+commit 8aa36a8dcde3183d84db7b0d622ffddcebb61077 upstream.
 
-This function frees resources and cancels delayed work item that
-have been initialized in fec_ptp_init().
+The MACH_ARMADA_375 and MACH_ARMADA_38X boards select ARM_ERRATA_753970,
+but it was renamed to PL310_ERRATA_753970 by commit fa0ce4035d48 ("ARM:
+7162/1: errata: tidy up Kconfig options for PL310 errata workarounds").
 
-Use this to do proper error handling if something goes wrong in
-probe function after fec_ptp_init has been called.
+Fix the selects to use the new name.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Acked-by: Fugang Duan <B38611@freescale.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[groeck: backport: context changes in .../fec_main.c]
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Discovered with the
+https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
+script.
+Fixes: fa0ce4035d48 ("ARM: 7162/1: errata: tidy up Kconfig options for
+PL310 errata workarounds"
+cc: stable@vger.kernel.org
+Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/freescale/fec.h      |    1 +
- drivers/net/ethernet/freescale/fec_main.c |    5 ++---
- drivers/net/ethernet/freescale/fec_ptp.c  |   10 ++++++++++
- 3 files changed, 13 insertions(+), 3 deletions(-)
+ arch/arm/mach-mvebu/Kconfig |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/freescale/fec.h
-+++ b/drivers/net/ethernet/freescale/fec.h
-@@ -546,6 +546,7 @@ struct fec_enet_private {
- };
- 
- void fec_ptp_init(struct platform_device *pdev);
-+void fec_ptp_stop(struct platform_device *pdev);
- void fec_ptp_start_cyclecounter(struct net_device *ndev);
- int fec_ptp_set(struct net_device *ndev, struct ifreq *ifr);
- int fec_ptp_get(struct net_device *ndev, struct ifreq *ifr);
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -3312,6 +3312,7 @@ failed_register:
- failed_mii_init:
- failed_irq:
- failed_init:
-+	fec_ptp_stop(pdev);
- 	if (fep->reg_phy)
- 		regulator_disable(fep->reg_phy);
- failed_regulator:
-@@ -3331,14 +3332,12 @@ fec_drv_remove(struct platform_device *p
- 	struct net_device *ndev = platform_get_drvdata(pdev);
- 	struct fec_enet_private *fep = netdev_priv(ndev);
- 
--	cancel_delayed_work_sync(&fep->time_keep);
- 	cancel_work_sync(&fep->tx_timeout_work);
-+	fec_ptp_stop(pdev);
- 	unregister_netdev(ndev);
- 	fec_enet_mii_remove(fep);
- 	if (fep->reg_phy)
- 		regulator_disable(fep->reg_phy);
--	if (fep->ptp_clock)
--		ptp_clock_unregister(fep->ptp_clock);
- 	fec_enet_clk_enable(ndev, false);
- 	of_node_put(fep->phy_node);
- 	free_netdev(ndev);
---- a/drivers/net/ethernet/freescale/fec_ptp.c
-+++ b/drivers/net/ethernet/freescale/fec_ptp.c
-@@ -620,6 +620,16 @@ void fec_ptp_init(struct platform_device
- 	schedule_delayed_work(&fep->time_keep, HZ);
- }
- 
-+void fec_ptp_stop(struct platform_device *pdev)
-+{
-+	struct net_device *ndev = platform_get_drvdata(pdev);
-+	struct fec_enet_private *fep = netdev_priv(ndev);
-+
-+	cancel_delayed_work_sync(&fep->time_keep);
-+	if (fep->ptp_clock)
-+		ptp_clock_unregister(fep->ptp_clock);
-+}
-+
- /**
-  * fec_ptp_check_pps_event
-  * @fep: the fec_enet_private structure handle
+--- a/arch/arm/mach-mvebu/Kconfig
++++ b/arch/arm/mach-mvebu/Kconfig
+@@ -37,7 +37,7 @@ config MACH_ARMADA_370
+ config MACH_ARMADA_375
+ 	bool "Marvell Armada 375 boards" if ARCH_MULTI_V7
+ 	select ARM_ERRATA_720789
+-	select ARM_ERRATA_753970
++	select PL310_ERRATA_753970
+ 	select ARM_GIC
+ 	select ARMADA_375_CLK
+ 	select HAVE_ARM_SCU
+@@ -52,7 +52,7 @@ config MACH_ARMADA_375
+ config MACH_ARMADA_38X
+ 	bool "Marvell Armada 380/385 boards" if ARCH_MULTI_V7
+ 	select ARM_ERRATA_720789
+-	select ARM_ERRATA_753970
++	select PL310_ERRATA_753970
+ 	select ARM_GIC
+ 	select ARMADA_38X_CLK
+ 	select HAVE_ARM_SCU
