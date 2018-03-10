@@ -1,89 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750866AbeCJFBg (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 00:01:36 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51598 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750703AbeCJFBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 00:01:34 -0500
-Message-ID: <1520658091.15339.4.camel@suse.de>
-Subject: Re: [RFC/RFT][PATCH v3 0/6] sched/cpuidle: Idle loop rework
-From: Mike Galbraith <mgalbraith@suse.de>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Date: Sat, 10 Mar 2018 06:01:31 +0100
-In-Reply-To: <2450532.XN8DODrtDf@aspire.rjw.lan>
-References: <2450532.XN8DODrtDf@aspire.rjw.lan>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.20.5 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1751057AbeCJFEi (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 00:04:38 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:52937 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750732AbeCJFEg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 00:04:36 -0500
+X-Google-Smtp-Source: AG47ELsQCn0Y4io1ERv+XNIYTJx3zeFhWzfdbdGIWkxrFdAJAJJfGFWx8WkTkA2XhklztNl4P0s7bQ==
+MIME-Version: 1.0
+In-Reply-To: <e5e1ce47-bf53-70ef-35d3-bab0996fb66d@roeck-us.net>
+References: <20180310024431.160195-1-briannorris@chromium.org>
+ <03a9d600-af54-ee43-1141-082278ebf672@roeck-us.net> <20180310032846.GA180802@rodete-desktop-imager.corp.google.com>
+ <e5e1ce47-bf53-70ef-35d3-bab0996fb66d@roeck-us.net>
+From: Brian Norris <briannorris@chromium.org>
+Date: Fri, 9 Mar 2018 21:04:32 -0800
+X-Gmail-Original-Message-ID: <CA+ASDXPkwVDmArP2GGe8P0eOxohRwHUVPRxE9GNoxvrMrinbTA@mail.gmail.com>
+Message-ID: <CA+ASDXPkwVDmArP2GGe8P0eOxohRwHUVPRxE9GNoxvrMrinbTA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] watchdog: dw: RMW the control register
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org, Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-03-09 at 10:34 +0100, Rafael J. Wysocki wrote:
-> Hi All,
-> 
-> Thanks a lot for the discussion and testing so far!
-> 
-> This is a total respin of the whole series, so please look at it afresh.
-> Patches 2 and 3 are the most similar to their previous versions, but
-> still they are different enough.
+On Fri, Mar 9, 2018 at 8:02 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+> On 03/09/2018 07:28 PM, Brian Norris wrote:
+>> I guess I could mention it. I was assuming that was an intended behavior
+>> of the existing driver: that we set resp_mode=0 (via clobber), so we
+>> always get a system reset (we don't try to handle any interrupt in this
+>> driver).
+>>
+> I don't think it was intended behavior. We don't even know for sure (or at
+> least
+> I don't know) if all implementations of this IP have the same configuration
+> bit
+> layout. All we can do is hope for the best.
 
-Respin of testdrive...
+Huh, OK. I did try to look for any sort of generic DesignWare register
+documentation, and I couldn't find one easily (even with a proper
+Synopsys account -- maybe I wasn't looking in the right place). But
+besides the Rockchip TRMs, I did find some openly accessible Altera
+SoCFPGA docs [1] which also use this, and they have a few things to
+add:
+(1) they have the same 'reset pulse length' field, except it's labeled RO
+(2) they have the same 'response mode' field
+(3) the docs for the entire register say:
 
-i4790 booted nopti nospectre_v2
+"The value of a reserved bit must be maintained in software. When you
+modify registers containing reserved bit fields, you must use a
+read-modify-write operation to preserve state and prevent
+indeterminate system behavior."
 
-30 sec tbench
-4.16.0.g1b88acc-master (virgin)
-Throughput 559.279 MB/sec  1 clients  1 procs  max_latency=0.046 ms
-Throughput 997.119 MB/sec  2 clients  2 procs  max_latency=0.246 ms
-Throughput 1693.04 MB/sec  4 clients  4 procs  max_latency=4.309 ms
-Throughput 3597.2 MB/sec  8 clients  8 procs  max_latency=6.760 ms
-Throughput 3474.55 MB/sec  16 clients  16 procs  max_latency=6.743 ms
+So, that pretty well corroborates my patch. Nice.
 
-4.16.0.g1b88acc-master (+ v2)
-Throughput 588.929 MB/sec  1 clients  1 procs  max_latency=0.291 ms
-Throughput 1080.93 MB/sec  2 clients  2 procs  max_latency=0.639 ms
-Throughput 1826.3 MB/sec  4 clients  4 procs  max_latency=0.647 ms
-Throughput 3561.01 MB/sec  8 clients  8 procs  max_latency=1.279 ms
-Throughput 3382.98 MB/sec  16 clients  16 procs  max_latency=4.817 ms
+> Still, clobbering just 1 bit is better than clobbering 30 bit.
 
-4.16.0.g1b88acc-master (+ v3)
-Throughput 588.711 MB/sec  1 clients  1 procs  max_latency=0.067 ms
-Throughput 1077.71 MB/sec  2 clients  2 procs  max_latency=0.298 ms
-Throughput 1803.47 MB/sec  4 clients  4 procs  max_latency=0.667 ms
-Throughput 3591.4 MB/sec  8 clients  8 procs  max_latency=4.999 ms
-Throughput 3444.74 MB/sec  16 clients  16 procs  max_latency=1.995 ms
+Yeah, that's the idea. Well, as long as it's only the 1 bit I want to clobber ;)
 
-4.16.0.g1b88acc-master (+ my local patches)
-Throughput 722.559 MB/sec  1 clients  1 procs  max_latency=0.087 ms
-Throughput 1208.59 MB/sec  2 clients  2 procs  max_latency=0.289 ms
-Throughput 2071.94 MB/sec  4 clients  4 procs  max_latency=0.654 ms
-Throughput 3784.91 MB/sec  8 clients  8 procs  max_latency=0.974 ms
-Throughput 3644.4 MB/sec  16 clients  16 procs  max_latency=5.620 ms
+I guess if we really find that any of this becomes more problematic
+(and varies enough from IP to IP), then we'll need chip-specific
+compatible properties.
 
-turbostat -q -- firefox /root/tmp/video/BigBuckBunny-DivXPlusHD.mkv & sleep 300;killall firefox
+Brian
 
-                        PkgWatt
-                              1     2     3
-4.16.0.g1b88acc-master     6.95  7.03  6.91 (virgin)
-4.16.0.g1b88acc-master     7.20  7.25  7.26 (+v2)
-4.16.0.g1b88acc-master     7.04  6.97  7.07 (+v3)
-4.16.0.g1b88acc-master     6.90  7.06  6.95 (+my patches)
-
-No change wrt nohz high frequency cross core scheduling overhead, but
-the light load power consumption oddity did go away.
-
-(btw, don't read anything into max_latency numbers, that's GUI noise)
-
-	-Mike
+[1] e.g. https://www.altera.com/content/dam/altera-www/global/en_US/pdfs/literature/hb/arria-10/a10_5v4.pdf
