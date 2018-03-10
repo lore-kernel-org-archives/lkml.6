@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932995AbeCJSWA (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:22:00 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:35398 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932071AbeCJSVu (ORCPT
+        id S932979AbeCJSV6 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:21:58 -0500
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:41656 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932940AbeCJSVv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:21:50 -0500
-X-Google-Smtp-Source: AG47ELvrjf7y9MX6Z2iOsENK8KWJjBDClmYArCXQ/8UIwjTFaC8Ll8ARmmqijhn8tBkmeKsHVMFMvw==
+        Sat, 10 Mar 2018 13:21:51 -0500
+X-Google-Smtp-Source: AG47ELux+HQwk/F+esCc/hZBDcfTTYD0U6Zkw1TBU2qyPPy1KlOAPdE5cx1Nu+qVA90bE6+ewjfnNA==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 77/83] GC: Fast garbage collection.
-Date: Sat, 10 Mar 2018 10:18:58 -0800
-Message-Id: <1520705944-6723-78-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 78/83] GC: Thorough garbage collection.
+Date: Sat, 10 Mar 2018 10:18:59 -0800
+Message-Id: <1520705944-6723-79-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -27,265 +27,334 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andiry Xu <jix024@cs.ucsd.edu>
 
-NOVA cleans and compacts the log when the log is full.
-The log is a linked list of 4KB pmem pages, and NOVA performs
-fast garbage collection by deleting dead log pages (all the entries are invalid)
-from the linked list.
+After fast gc, if the valid log entries still account for less
+than the half of the log size, NOVA starts thorough garbage collection,
+allocates a new log, copies the live log entries to it, and switches
+to the new log atomically. The radix tree needs to be updated to point
+to the new log.
 
 Example:
 I = Invalid, V = Valid
 
 VIIV -> IIII -> VVII
 
-	||
-	||  fast gc
-	\/
+     ||
+     ||  fast gc
+     \/
 
 VIIV -> VVII
 
+     ||
+     ||  thorough gc
+     \/
+
+    VVVV
+
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/Makefile |   2 +-
- fs/nova/gc.c     | 186 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/nova/log.c    |   3 +
- fs/nova/nova.h   |   7 +++
- 4 files changed, 197 insertions(+), 1 deletion(-)
- create mode 100644 fs/nova/gc.c
+ fs/nova/gc.c | 273 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 273 insertions(+)
 
-diff --git a/fs/nova/Makefile b/fs/nova/Makefile
-index 87e56c6..7a5fb6d 100644
---- a/fs/nova/Makefile
-+++ b/fs/nova/Makefile
-@@ -4,5 +4,5 @@
- 
- obj-$(CONFIG_NOVA_FS) += nova.o
- 
--nova-y := balloc.o bbuild.o dax.o dir.o file.o inode.o ioctl.o journal.o\
-+nova-y := balloc.o bbuild.o dax.o dir.o file.o gc.o inode.o ioctl.o journal.o\
- 	  log.o namei.o rebuild.o stats.o super.o symlink.o
 diff --git a/fs/nova/gc.c b/fs/nova/gc.c
-new file mode 100644
-index 0000000..1634c04
---- /dev/null
+index 1634c04..d74286e 100644
+--- a/fs/nova/gc.c
 +++ b/fs/nova/gc.c
-@@ -0,0 +1,186 @@
-+/*
-+ * BRIEF DESCRIPTION
-+ *
-+ * Garbage collection methods
-+ *
-+ * Copyright 2015-2016 Regents of the University of California,
-+ * UCSD Non-Volatile Systems Lab, Andiry Xu <jix024@cs.ucsd.edu>
-+ * Copyright 2012-2013 Intel Corporation
-+ * Copyright 2009-2011 Marco Stornelli <marco.stornelli@gmail.com>
-+ * Copyright 2003 Sony Corporation
-+ * Copyright 2003 Matsushita Electric Industrial Co., Ltd.
-+ * 2003-2004 (c) MontaVista Software, Inc. , Steve Longerbeam
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2. This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
-+ */
-+
-+#include "nova.h"
-+#include "inode.h"
-+
-+
-+static bool curr_page_invalid(struct super_block *sb,
+@@ -18,6 +18,62 @@
+ #include "nova.h"
+ #include "inode.h"
+ 
++static bool curr_log_entry_invalid(struct super_block *sb,
 +	struct nova_inode *pi, struct nova_inode_info_header *sih,
-+	u64 page_head)
++	u64 curr_p, size_t *length)
 +{
-+	struct nova_inode_log_page *curr_page;
-+	struct nova_inode_page_tail page_tail;
-+	unsigned int num_entries;
-+	unsigned int invalid_entries;
-+	bool ret;
-+	timing_t check_time;
-+	int rc;
++	struct nova_file_write_entry *entry;
++	struct nova_dentry *dentry;
++	struct nova_setattr_logentry *setattr_entry;
++	struct nova_link_change_entry *linkc_entry;
++	void *entryc;
++	u8 type;
++	bool ret = true;
 +
-+	NOVA_START_TIMING(check_invalid_t, check_time);
++	entryc = (void *)nova_get_block(sb, curr_p);
++	type = nova_get_entry_type(entryc);
 +
-+	curr_page = (struct nova_inode_log_page *)
-+					nova_get_block(sb, page_head);
-+	rc = memcpy_mcsafe(&page_tail, &curr_page->page_tail,
-+					sizeof(struct nova_inode_page_tail));
-+	if (rc) {
-+		nova_err(sb, "check page failed\n");
-+		return false;
++	switch (type) {
++	case SET_ATTR:
++		setattr_entry = (struct nova_setattr_logentry *) entryc;
++		if (setattr_entry->invalid == 0)
++			ret = false;
++		*length = sizeof(struct nova_setattr_logentry);
++		break;
++	case LINK_CHANGE:
++		linkc_entry = (struct nova_link_change_entry *) entryc;
++		if (linkc_entry->invalid == 0)
++			ret = false;
++		*length = sizeof(struct nova_link_change_entry);
++		break;
++	case FILE_WRITE:
++		entry = (struct nova_file_write_entry *) entryc;
++		if (entry->num_pages != entry->invalid_pages)
++			ret = false;
++		*length = sizeof(struct nova_file_write_entry);
++		break;
++	case DIR_LOG:
++		dentry = (struct nova_dentry *) entryc;
++		if (dentry->invalid == 0)
++			ret = false;
++		if (sih->last_dentry == curr_p)
++			ret = false;
++		*length = le16_to_cpu(dentry->de_len);
++		break;
++	case NEXT_PAGE:
++		/* No more entries in this page */
++		*length = PAGE_SIZE - ENTRY_LOC(curr_p);
++		break;
++	default:
++		nova_dbg("%s: unknown type %d, 0x%llx\n",
++					__func__, type, curr_p);
++		NOVA_ASSERT(0);
++		*length = PAGE_SIZE - ENTRY_LOC(curr_p);
++		break;
 +	}
 +
-+	num_entries = le32_to_cpu(page_tail.num_entries);
-+	invalid_entries = le32_to_cpu(page_tail.invalid_entries);
++	return ret;
++}
+ 
+ static bool curr_page_invalid(struct super_block *sb,
+ 	struct nova_inode *pi, struct nova_inode_info_header *sih,
+@@ -68,6 +124,210 @@ static void free_curr_page(struct super_block *sb,
+ 			nova_get_blocknr(sb, curr_head, btype), 1);
+ }
+ 
++static int nova_gc_assign_file_entry(struct super_block *sb,
++	struct nova_inode_info_header *sih,
++	struct nova_file_write_entry *old_entry,
++	struct nova_file_write_entry *new_entry)
++{
++	struct nova_file_write_entry *temp;
++	void **pentry;
++	unsigned long start_pgoff = old_entry->pgoff;
++	unsigned int num = old_entry->num_pages;
++	unsigned long curr_pgoff;
++	int i;
++	int ret = 0;
 +
-+	ret = (invalid_entries == num_entries);
-+	if (!ret) {
-+		sih->num_entries += num_entries;
-+		sih->valid_entries += num_entries - invalid_entries;
++	for (i = 0; i < num; i++) {
++		curr_pgoff = start_pgoff + i;
++
++		pentry = radix_tree_lookup_slot(&sih->tree, curr_pgoff);
++		if (pentry) {
++			temp = radix_tree_deref_slot(pentry);
++			if (temp == old_entry)
++				radix_tree_replace_slot(&sih->tree, pentry,
++							new_entry);
++		}
 +	}
 +
-+	NOVA_END_TIMING(check_invalid_t, check_time);
 +	return ret;
 +}
 +
-+static void free_curr_page(struct super_block *sb,
-+	struct nova_inode_info_header *sih,
-+	struct nova_inode_log_page *curr_page,
-+	struct nova_inode_log_page *last_page, u64 curr_head)
++static int nova_gc_assign_dentry(struct super_block *sb,
++	struct nova_inode_info_header *sih, struct nova_dentry *old_dentry,
++	struct nova_dentry *new_dentry)
 +{
-+	u8 btype = sih->i_blk_type;
++	struct nova_dentry *temp;
++	void **pentry;
++	unsigned long hash;
++	int ret = 0;
 +
-+	nova_set_next_page_address(sb, last_page,
-+			curr_page->page_tail.next_page, 1);
-+	nova_free_log_blocks(sb, sih,
-+			nova_get_blocknr(sb, curr_head, btype), 1);
++	hash = BKDRHash(old_dentry->name, old_dentry->name_len);
++	nova_dbgv("%s: assign %s hash %lu\n", __func__,
++			old_dentry->name, hash);
++
++	/* FIXME: hash collision ignored here */
++	pentry = radix_tree_lookup_slot(&sih->tree, hash);
++	if (pentry) {
++		temp = radix_tree_deref_slot(pentry);
++		if (temp == old_dentry)
++			radix_tree_replace_slot(&sih->tree, pentry, new_dentry);
++	}
++
++	return ret;
 +}
 +
-+
-+/*
-+ * Scan pages in the log and remove those with no valid log entries.
-+ */
-+int nova_inode_log_fast_gc(struct super_block *sb,
++static int nova_gc_assign_new_entry(struct super_block *sb,
 +	struct nova_inode *pi, struct nova_inode_info_header *sih,
-+	u64 curr_tail, u64 new_block,
-+	int num_pages, int force_thorough)
++	u64 curr_p, u64 new_curr)
 +{
-+	u64 curr, next, possible_head = 0;
-+	int found_head = 0;
-+	struct nova_inode_log_page *last_page = NULL;
++	struct nova_file_write_entry *old_entry, *new_entry;
++	struct nova_dentry *old_dentry, *new_dentry;
++	void *addr, *new_addr;
++	u8 type;
++	int ret = 0;
++
++	addr = (void *)nova_get_block(sb, curr_p);
++	type = nova_get_entry_type(addr);
++	switch (type) {
++	case SET_ATTR:
++		sih->last_setattr = new_curr;
++		break;
++	case LINK_CHANGE:
++		sih->last_link_change = new_curr;
++		break;
++	case FILE_WRITE:
++		new_addr = (void *)nova_get_block(sb, new_curr);
++		old_entry = (struct nova_file_write_entry *)addr;
++		new_entry = (struct nova_file_write_entry *)new_addr;
++		ret = nova_gc_assign_file_entry(sb, sih, old_entry, new_entry);
++		break;
++	case DIR_LOG:
++		new_addr = (void *)nova_get_block(sb, new_curr);
++		old_dentry = (struct nova_dentry *)addr;
++		new_dentry = (struct nova_dentry *)new_addr;
++		if (sih->last_dentry == curr_p)
++			sih->last_dentry = new_curr;
++		ret = nova_gc_assign_dentry(sb, sih, old_dentry, new_dentry);
++		break;
++	default:
++		nova_dbg("%s: unknown type %d, 0x%llx\n",
++					__func__, type, curr_p);
++		NOVA_ASSERT(0);
++		break;
++	}
++
++	return ret;
++}
++
++/* Copy live log entries to the new log and atomically replace the old log */
++static unsigned long nova_inode_log_thorough_gc(struct super_block *sb,
++	struct nova_inode *pi, struct nova_inode_info_header *sih,
++	unsigned long blocks, unsigned long checked_pages)
++{
 +	struct nova_inode_log_page *curr_page = NULL;
-+	int first_need_free = 0;
-+	int num_logs;
-+	u8 btype = sih->i_blk_type;
-+	unsigned long blocks;
-+	unsigned long checked_pages = 0;
-+	int freed_pages = 0;
++	size_t length;
++	u64 curr_p, new_curr;
++	u64 old_curr_p;
++	u64 tail_block;
++	u64 old_head;
++	u64 new_head = 0;
++	u64 next;
++	int allocated;
++	int extended = 0;
++	int ret;
 +	timing_t gc_time;
 +
-+	NOVA_START_TIMING(fast_gc_t, gc_time);
-+	curr = sih->log_head;
-+	sih->valid_entries = 0;
-+	sih->num_entries = 0;
++	NOVA_START_TIMING(thorough_gc_t, gc_time);
 +
-+	num_logs = 1;
++	curr_p = sih->log_head;
++	old_curr_p = curr_p;
++	old_head = sih->log_head;
++	nova_dbg_verbose("Log head 0x%llx, tail 0x%llx\n",
++				curr_p, sih->log_tail);
++	if (curr_p == 0 && sih->log_tail == 0)
++		goto out;
 +
-+	nova_dbgv("%s: log head 0x%llx, tail 0x%llx\n",
-+				__func__, curr, curr_tail);
-+	while (1) {
-+		if (curr >> PAGE_SHIFT == sih->log_tail >> PAGE_SHIFT) {
++	if (curr_p >> PAGE_SHIFT == sih->log_tail >> PAGE_SHIFT)
++		goto out;
++
++	allocated = nova_allocate_inode_log_pages(sb, sih, blocks,
++					&new_head, ANY_CPU, 0);
++	if (allocated != blocks) {
++		nova_err(sb, "%s: ERROR: no inode log page available\n",
++					__func__);
++		goto out;
++	}
++
++	new_curr = new_head;
++	while (curr_p != sih->log_tail) {
++		old_curr_p = curr_p;
++		if (goto_next_page(sb, curr_p))
++			curr_p = next_log_page(sb, curr_p);
++
++		if (curr_p >> PAGE_SHIFT == sih->log_tail >> PAGE_SHIFT) {
 +			/* Don't recycle tail page */
-+			if (found_head == 0) {
-+				possible_head = cpu_to_le64(curr);
-+			}
 +			break;
 +		}
 +
-+		curr_page = (struct nova_inode_log_page *)
-+					nova_get_block(sb, curr);
-+		next = next_log_page(sb, curr);
-+		if (next < 0)
-+			break;
-+
-+		nova_dbg_verbose("curr 0x%llx, next 0x%llx\n", curr, next);
-+		if (curr_page_invalid(sb, pi, sih, curr)) {
-+			nova_dbg_verbose("curr page %p invalid\n", curr_page);
-+			if (curr == sih->log_head) {
-+				/* Free first page later */
-+				first_need_free = 1;
-+				last_page = curr_page;
-+			} else {
-+				nova_dbg_verbose("Free log block 0x%llx\n",
-+						curr >> PAGE_SHIFT);
-+				free_curr_page(sb, sih, curr_page, last_page,
-+						curr);
-+			}
-+			NOVA_STATS_ADD(fast_gc_pages, 1);
-+			freed_pages++;
-+		} else {
-+			if (found_head == 0) {
-+				possible_head = cpu_to_le64(curr);
-+				found_head = 1;
-+			}
-+			last_page = curr_page;
++		length = 0;
++		ret = curr_log_entry_invalid(sb, pi, sih, curr_p, &length);
++		if (!ret) {
++			extended = 0;
++			new_curr = nova_get_append_head(sb, pi, sih,
++						new_curr, length, MAIN_LOG,
++						1, &extended);
++			if (extended)
++				blocks++;
++			/* Copy entry to the new log */
++			memcpy_to_pmem_nocache(nova_get_block(sb, new_curr),
++				nova_get_block(sb, curr_p), length);
++			nova_inc_page_num_entries(sb, new_curr);
++			nova_gc_assign_new_entry(sb, pi, sih, curr_p, new_curr);
++			new_curr += length;
 +		}
 +
-+		curr = next;
-+		checked_pages++;
-+		if (curr == 0)
-+			break;
++		curr_p += length;
 +	}
 +
-+	NOVA_STATS_ADD(fast_checked_pages, checked_pages);
-+	nova_dbgv("checked pages %lu, freed %d\n", checked_pages, freed_pages);
-+	checked_pages -= freed_pages;
++	/* Step 1: Link new log to the tail block */
++	tail_block = BLOCK_OFF(sih->log_tail);
++	curr_page = (struct nova_inode_log_page *)nova_get_block(sb,
++							BLOCK_OFF(new_curr));
++	next = next_log_page(sb, new_curr);
++	if (next > 0)
++		nova_free_contiguous_log_blocks(sb, sih, next);
 +
-+	// TODO:  I think this belongs in nova_extend_inode_log.
-+	if (num_pages > 0) {
-+		curr = BLOCK_OFF(curr_tail);
-+		curr_page = (struct nova_inode_log_page *)
-+						  nova_get_block(sb, curr);
++	nova_set_next_page_flag(sb, new_curr);
++	nova_set_next_page_address(sb, curr_page, tail_block, 0);
 +
-+		nova_set_next_page_address(sb, curr_page, new_block, 1);
-+	}
-+
-+	curr = sih->log_head;
-+
-+	pi->log_head = possible_head;
++	/* Step 2: Atomically switch to the new log */
++	pi->log_head = new_head;
 +	nova_persist_inode(pi);
-+	sih->log_head = possible_head;
-+	nova_dbgv("%s: %d new head 0x%llx\n", __func__,
-+					found_head, possible_head);
-+	sih->log_pages += (num_pages - freed_pages) * num_logs;
-+	/* Don't update log tail pointer here */
-+	nova_flush_buffer(&pi->log_head, CACHELINE_SIZE, 1);
++	nova_flush_buffer(pi, sizeof(struct nova_inode), 1);
++	sih->log_head = new_head;
 +
-+	if (first_need_free) {
-+		nova_dbg_verbose("Free log head block 0x%llx\n",
-+					curr >> PAGE_SHIFT);
-+		nova_free_log_blocks(sb, sih,
-+				nova_get_blocknr(sb, curr, btype), 1);
++	/* Step 3: Unlink the old log */
++	curr_page = (struct nova_inode_log_page *)nova_get_block(sb,
++							BLOCK_OFF(old_curr_p));
++	next = next_log_page(sb, old_curr_p);
++	if (next != tail_block)
++		nova_err(sb, "Old log error: old curr_p 0x%lx, next 0x%lx ",
++			"curr_p 0x%lx, tail block 0x%lx\n", old_curr_p,
++			next, curr_p, tail_block);
++
++	nova_set_next_page_address(sb, curr_page, 0, 1);
++
++	/* Step 4: Free the old log */
++	nova_free_contiguous_log_blocks(sb, sih, old_head);
++
++	sih->log_pages = sih->log_pages + blocks - checked_pages;
++	NOVA_STATS_ADD(thorough_gc_pages, checked_pages - blocks);
++	NOVA_STATS_ADD(thorough_checked_pages, checked_pages);
++out:
++	NOVA_END_TIMING(thorough_gc_t, gc_time);
++	return blocks;
++}
++
+ 
+ /*
+  * Scan pages in the log and remove those with no valid log entries.
+@@ -178,9 +438,22 @@ int nova_inode_log_fast_gc(struct super_block *sb,
+ 	if (sih->num_entries == 0)
+ 		return 0;
+ 
++	/* Estimate how many pages worth of valid entries the log contains.
++	 *
++	 * If it is less than half the number pages that remain in the log,
++	 * compress them with thorough gc.
++	 */
+ 	blocks = (sih->valid_entries * checked_pages) / sih->num_entries;
+ 	if ((sih->valid_entries * checked_pages) % sih->num_entries)
+ 		blocks++;
+ 
++	if (force_thorough || (blocks && blocks * 2 < checked_pages)) {
++		nova_dbgv("Thorough GC for inode %lu: checked pages %lu, valid pages %lu\n",
++				sih->ino,
++				checked_pages, blocks);
++		blocks = nova_inode_log_thorough_gc(sb, pi, sih,
++							blocks, checked_pages);
 +	}
 +
-+	NOVA_END_TIMING(fast_gc_t, gc_time);
-+
-+	if (sih->num_entries == 0)
-+		return 0;
-+
-+	blocks = (sih->valid_entries * checked_pages) / sih->num_entries;
-+	if ((sih->valid_entries * checked_pages) % sih->num_entries)
-+		blocks++;
-+
-+	return 0;
-+}
-diff --git a/fs/nova/log.c b/fs/nova/log.c
-index 451be27..66bf98e 100644
---- a/fs/nova/log.c
-+++ b/fs/nova/log.c
-@@ -964,6 +964,9 @@ static u64 nova_extend_inode_log(struct super_block *sb, struct nova_inode *pi,
- 	}
- 
- 	/* Perform GC */
-+	nova_inode_log_fast_gc(sb, pi, sih, curr_p,
-+			       new_block, allocated, 0);
-+
- 	return new_block;
+ 	return 0;
  }
- 
-diff --git a/fs/nova/nova.h b/fs/nova/nova.h
-index ab9153e..32b7b2f 100644
---- a/fs/nova/nova.h
-+++ b/fs/nova/nova.h
-@@ -515,6 +515,13 @@ int nova_remove_dentry(struct dentry *dentry, int dec_link,
- extern const struct file_operations nova_dax_file_operations;
- extern const struct inode_operations nova_file_inode_operations;
- 
-+
-+/* gc.c */
-+int nova_inode_log_fast_gc(struct super_block *sb,
-+	struct nova_inode *pi, struct nova_inode_info_header *sih,
-+	u64 curr_tail, u64 new_block, int num_pages,
-+	int force_thorough);
-+
- /* ioctl.c */
- extern long nova_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
- #ifdef CONFIG_COMPAT
 -- 
 2.7.4
