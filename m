@@ -1,181 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751969AbeCJJvN (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 04:51:13 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37715 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751012AbeCJJvL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 04:51:11 -0500
-X-Google-Smtp-Source: AG47ELug+iXAS6IARS+QUiCdBlbrRzQHhZxSkUs+buKcBm2pQO71a3YJ7YZf3L0i3b0pKW9zSg7kQg==
-Date: Sat, 10 Mar 2018 17:50:56 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, linux-kernel@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH v2] perf machine: Fix load kernel symbol with '-k' option
-Message-ID: <20180310095056.GA10251@leoy-ThinkPad-X240s>
-References: <1520575523-3838-1-git-send-email-leo.yan@linaro.org>
- <20180309205600.GB16890@krava>
+        id S1752045AbeCJJvr (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 04:51:47 -0500
+Received: from verein.lst.de ([213.95.11.211]:44742 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751981AbeCJJvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 04:51:45 -0500
+Date: Sat, 10 Mar 2018 10:51:44 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-nvdimm@lists.01.org, "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 10/11] xfs: prepare xfs_break_layouts() for another
+        layout type
+Message-ID: <20180310095144.GB31604@lst.de>
+References: <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com> <152066494277.40260.7360641938196726871.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180309205600.GB16890@krava>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <152066494277.40260.7360641938196726871.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jiri,
-
-On Fri, Mar 09, 2018 at 09:56:00PM +0100, Jiri Olsa wrote:
-> On Fri, Mar 09, 2018 at 02:05:23PM +0800, Leo Yan wrote:
-> > On Hikey arm64 octa A53 platform, when use command './perf report -v
-> > -k vmlinux --stdio' it outputs below error info, and it skips to load
-> > kernel symbol and doesn't print symbol for event:
-> > Failed to open [kernel.kallsyms]_text, continuing without symbols.
-> > 
-> > The regression is introduced by commit ("8c7f1bb37b29 perf machine: Move
-> > kernel mmap name into struct machine"), which changes the logic for
-> > machine mmap_name by removing function machine__mmap_name() and always
-> > use 'machine->mmap_name'.  Comparing difference between
-> > machine__mmap_name() and 'machine->mmap_name', the later one includes
-> > the string for specified kernel vmlinux string with option '-k' in
-> > command, but the old function machine__mmap_name() ignores vmlinux
-> > path string.  As result, event's mmap file name doesn't match with
-> > machine mmap file name anymore and it skips to load kernel symbol from
-> > vmlinux file.
-> > 
-> > To resolve this issue, this patch adds extra checking for
-> > 'symbol_conf.vmlinux_name', when it has been set string so we can know
-> > it includes vmlinux path string specified for option '-k'. For this
-> > case it sets 'is_kernel_mmap' to true and run into flow to load kernel
-> > symbol from vmlinux.
-> > 
-> > This patch has been verified with two commands: './perf report -v
-> > -k vmlinux --stdio' and './perf script -v -F cpu,event,ip,sym,symoff
-> > -k vmlinux'.
-> > 
-> > Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > ---
-> >  tools/perf/util/machine.c | 15 ++++++++++++---
-> >  1 file changed, 12 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> > index 12b7427..3125871 100644
-> > --- a/tools/perf/util/machine.c
-> > +++ b/tools/perf/util/machine.c
-> > @@ -1299,9 +1299,18 @@ static int machine__process_kernel_mmap_event(struct machine *machine,
-> >  	else
-> >  		kernel_type = DSO_TYPE_GUEST_KERNEL;
-> >  
-> > -	is_kernel_mmap = memcmp(event->mmap.filename,
-> > -				machine->mmap_name,
-> > -				strlen(machine->mmap_name) - 1) == 0;
-> > +	/*
-> > +	 * When symbol_conf.vmlinux_name is not NULL, it includes the specified
-> > +	 * kernel vmlinux path with option '-k'.  So set 'is_kernel_mmap' to
-> > +	 * true for creating machine symbol map.
-> > +	 */
-> > +	if (symbol_conf.vmlinux_name)
-> > +		is_kernel_mmap = true;
-> > +	else
-> > +		is_kernel_mmap = memcmp(event->mmap.filename,
-> > +					machine->mmap_name,
-> > +					strlen(machine->mmap_name) - 1) == 0;
-> > +
-> >  	if (event->mmap.filename[0] == '/' ||
-> >  	    (!is_kernel_mmap && event->mmap.filename[0] == '[')) {
-> >  		map = machine__findnew_module_map(machine, event->mmap.start,
-> 
-> right, the mmap gets confused with the vmlinux path, but I wonder
-> the fix should be not to include symbol_conf.vmlinux_name in the
-> mmap_name like below.. untested
-
-I tested below fixing at my side, and confirm your fixing also can
-resolve this issue.  After reviewing the change, it's more neat than my
-own change .  So you could add my test tag :)
-
-Tested-by: Leo Yan <leo.yan@linaro.org>
-
-BTW, I have a minor comment for code refactoring, it's up to you if
-need or not and if need use a new patch for refactoring, please see below
-inline comment.
-
-Thanks,
-Leo Yan
-
-> ---
-> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> index 43fbbee409ec..f0cb72022177 100644
-> --- a/tools/perf/util/machine.c
-> +++ b/tools/perf/util/machine.c
-> @@ -51,15 +51,9 @@ static void machine__threads_init(struct machine *machine)
->  static int machine__set_mmap_name(struct machine *machine)
->  {
->  	if (machine__is_host(machine)) {
-> -		if (symbol_conf.vmlinux_name)
-> -			machine->mmap_name = strdup(symbol_conf.vmlinux_name);
-> -		else
-> -			machine->mmap_name = strdup("[kernel.kallsyms]");
-> +		machine->mmap_name = strdup("[kernel.kallsyms]");
->  	} else if (machine__is_default_guest(machine)) {
-> -		if (symbol_conf.default_guest_vmlinux_name)
-> -			machine->mmap_name = strdup(symbol_conf.default_guest_vmlinux_name);
-> -		else
-> -			machine->mmap_name = strdup("[guest.kernel.kallsyms]");
-> +		machine->mmap_name = strdup("[guest.kernel.kallsyms]");
->  	} else {
->  		if (asprintf(&machine->mmap_name, "[guest.kernel.kallsyms.%d]",
->  			 machine->pid) < 0)
-
-Do you think below format is better or not?
-
- static int machine__set_mmap_name(struct machine *machine)
- {
--       if (machine__is_host(machine)) {
--               if (symbol_conf.vmlinux_name)
--                       machine->mmap_name = strdup(symbol_conf.vmlinux_name);
--               else
--                       machine->mmap_name = strdup("[kernel.kallsyms]");
--       } else if (machine__is_default_guest(machine)) {
--               if (symbol_conf.default_guest_vmlinux_name)
--                       machine->mmap_name = strdup(symbol_conf.default_guest_vmlinux_name);
--               else
--                       machine->mmap_name = strdup("[guest.kernel.kallsyms]");
--       } else {
--               if (asprintf(&machine->mmap_name, "[guest.kernel.kallsyms.%d]",
--                        machine->pid) < 0)
--                       machine->mmap_name = NULL;
--       }
-+       if (machine__is_host(machine))
-+               machine->mmap_name = strdup("[kernel.kallsyms]");
-+       else if (machine__is_default_guest(machine))
-+               machine->mmap_name = strdup("[guest.kernel.kallsyms]");
-+       else if (asprintf(&machine->mmap_name, "[guest.kernel.kallsyms.%d]",
-+                machine->pid) < 0)
-+               machine->mmap_name = NULL;
- 
-        return machine->mmap_name ? 0 : -ENOMEM;
- }
-
-> @@ -794,9 +788,15 @@ static struct dso *machine__get_kernel(struct machine *machine)
->  	struct dso *kernel;
 >  
->  	if (machine__is_host(machine)) {
-> +		if (symbol_conf.vmlinux_name)
-> +			vmlinux_name = symbol_conf.vmlinux_name;
+> +int
+> +xfs_break_layouts(
+> +	struct inode		*inode,
+> +	uint			*iolock,
+> +	unsigned long		flags)
+> +{
+> +	struct xfs_inode	*ip = XFS_I(inode);
+> +	uint			iolock_assert = 0;
+> +	int			ret = 0;
 > +
->  		kernel = machine__findnew_kernel(machine, vmlinux_name,
->  						 "[kernel]", DSO_TYPE_KERNEL);
->  	} else {
-> +		if (symbol_conf.default_guest_vmlinux_name)
-> +			vmlinux_name = symbol_conf.default_guest_vmlinux_name;
+> +	if (flags & XFS_BREAK_REMOTE)
+> +		iolock_assert |= XFS_IOLOCK_SHARED|XFS_IOLOCK_EXCL;
+> +	if (flags & XFS_BREAK_MAPS)
+> +		iolock_assert |= XFS_MMAPLOCK_EXCL;
 > +
->  		kernel = machine__findnew_kernel(machine, vmlinux_name,
->  						 "[guest.kernel]",
->  						 DSO_TYPE_GUEST_KERNEL);
+> +	ASSERT(xfs_isilocked(ip, iolock_assert));
+> +
+> +	if (flags & XFS_BREAK_REMOTE)
+> +		ret = xfs_break_leased_layouts(inode, iolock);
+> +	return ret;
+
+This just looks weird as hell.  We already pass in what to drop/reacquire
+in the iolock argument.  I don't think we need another argument controlled
+by the same callers to assert it.
+
+> @@ -768,7 +790,7 @@ xfs_file_fallocate(
+>  	struct xfs_inode	*ip = XFS_I(inode);
+>  	long			error;
+>  	enum xfs_prealloc_flags	flags = 0;
+> -	uint			iolock = XFS_IOLOCK_EXCL;
+> +	uint			iolock = XFS_IOLOCK_EXCL|XFS_MMAPLOCK_EXCL;
+
+This is a behavior change that should not be in a patch titled
+"prepare xfs_break_layouts() for another layout type" but in one
+explicitly changing this and documenting why.
+
+In summary:  I think this should be replaced with a patch that
+allows xfs_break_layouts to be called with the mmap lock held, and
+change the callers that want the mmap lock to pass it with a good
+explanation, and we should get rid of the XFS_BREAK_* flags here.
+(need to check the next patch if there is any other good reason for
+them to be added later, though).
