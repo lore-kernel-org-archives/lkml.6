@@ -1,65 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751172AbeCJFUM (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 00:20:12 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:51510 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750714AbeCJFUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 00:20:11 -0500
-Date: Sat, 10 Mar 2018 06:20:07 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        arm@kernel.org
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] ARM: at91: SoC for 4.17
-Message-ID: <20180310052007.GA5536@piout.net>
+        id S1751392AbeCJFVy (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 00:21:54 -0500
+Received: from p3plsmtpa07-03.prod.phx3.secureserver.net ([173.201.192.232]:49357
+        "EHLO p3plsmtpa07-03.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750733AbeCJFVw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 00:21:52 -0500
+To: idryomov@gmail.com
+Cc: sage@redhat.com, elder@kernel.org, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, keescook@chromium.org
+From: Kyle Spiers <kyle@spiers.me>
+Subject: [PATCH] rbd: Remove VLA usage
+Message-ID: <744974f1-d9b3-9fc1-621d-f4b5d3e806b6@spiers.me>
+Date: Fri, 9 Mar 2018 21:14:31 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CMAE-Envelope: MS4wfPiNHpsDP6Xo8FJlkzzkLE1K6W0gNjZaH5DNlqAocNN9YtkZJm5jykvv+mPThl7HBHNIWcOytrsQ2onANSALMjC7vOMTqQ8GxzzUzrUrgOk3wNpgAZY1
+ o9G8kRq/TbwhfgL09Xurss4FRiY/kXzGXqs+13K5E1RRKGWoDE8pDeP6MfFNjtY6T5dYuueOyROPsF2rIS5WYDrUhNw2uIQ1quZi0tkQSL+GShKky/0lawba
+ cV18B32HWr9hzuVSM9FjkUGjLSd7D3xIPJrLDeEIKy6qjmAwGgMBqAXi3laa+4Jx+zLPL1wOirELAOJBhUuOOw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd, Olof,
+>From 4198ebe2e8058ff676d8e2f993d8806d6ca29c11 Mon Sep 17 00:00:00 2001
+From: Kyle Spiers <kyle@spiers.me>
+Date: Fri, 9 Mar 2018 12:34:15 -0800
+Subject: [PATCH] rbd: Remove VLA usage
 
-It has been two years that Atmel merge with Microchip, rename where
-relevant.
+As part of the effort to remove VLAs from the kernel[1], this moves
+the literal values into the stack array calculation instead of using a
+variable for the sizing. The resulting size can be found from
+sizeof(buf).
 
-This is based on my fixes PR which is already in next/soc. Tell me if
-this is not right.
+[1] https://lkml.org/lkml/2018/3/7/621
 
-The following changes since commit c8d5dcf122b194e897d2a6311903eae0c1023325:
+Signed-off-by: Kyle Spiers <kyle@spiers.me>
 
-  MAINTAINERS: ARM: at91: update my email address (2018-02-22 16:22:15 +0100)
+---
+ drivers/block/rbd.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git tags/at91-ab-4.17-soc
-
-for you to fetch changes up to ed08b63c8b3e23dfc8a32f0b450a23a35a3d91b4:
-
-  ARM: at91: Kconfig: Update company to Microchip (2018-02-28 16:21:51 +0100)
-
-----------------------------------------------------------------
-AT91 SoC for 4.17:
-
- - Rename Atmel to Microhip in MAINTAINERS, Documentation and Kconfig
-
-----------------------------------------------------------------
-Nicolas Ferre (3):
-      MAINTAINERS: ARM: at91: update entry for ARM/Microchip
-      Documentation: at91: Update Microchip SoC documentation
-      ARM: at91: Kconfig: Update company to Microchip
-
- Documentation/arm/{Atmel => Microchip}/README | 52 +++++++++++++--------------
- MAINTAINERS                                   | 42 +++++++++++-----------
- arch/arm/mach-at91/Kconfig                    | 14 ++++----
- 3 files changed, 53 insertions(+), 55 deletions(-)
- rename Documentation/arm/{Atmel => Microchip}/README (64%)
-
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 8e40da0..0e94e1f 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -3100,8 +3100,8 @@ static int __rbd_notify_op_lock(struct rbd_device
+*rbd_dev,
+ {
+     struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
+     struct rbd_client_id cid = rbd_get_cid(rbd_dev);
+-    int buf_size = 4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN;
+-    char buf[buf_size];
++    char buf[4 + 4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN];
++    int buf_size = sizeof(buf);
+     void *p = buf;
+ 
+     dout("%s rbd_dev %p notify_op %d\n", __func__, rbd_dev, notify_op);
+@@ -3619,8 +3619,8 @@ static void __rbd_acknowledge_notify(struct
+rbd_device *rbd_dev,
+                      u64 notify_id, u64 cookie, s32 *result)
+ {
+     struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
+-    int buf_size = 4 + CEPH_ENCODING_START_BLK_LEN;
+-    char buf[buf_size];
++    char buf[4 + CEPH_ENCODING_START_BLK_LEN];
++    int buf_size = sizeof(buf);
+     int ret;
+ 
+     if (result) {
+-- 2.7.4
