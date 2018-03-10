@@ -1,107 +1,117 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2238391-1520658865-2-3929700666575024083
+X-Cyrus-Session-Id: sloti22d1t05-1720711-1520641396-2-17787949049248799256
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
   RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520658865; b=Rt6rDbG3IXzwkDG60VbOtoLEc3UIoT9GyN369TY0GaWEsvT
-    lzRww/LNEIiP5F8jY7uy3J6p08Sm8LEi1KqffsyHWe4EGwHtE/A8XFgCWfJXDaqP
-    zjahS7SmYr0HJR4IFCII5Vb4yYDJiY5epVKtOLGEnqYtY1FTDHtmOoPH2Chyq3jh
-    POORn60/tjgYOnbO9Sc3s+ISDJJruiA6wi5yqOVvEAaUf+nxeT13D2K5bwXKpcrF
-    NF99QGwoO+K+Ma07LtKUzJ7jHXmOn9libAByttDoNpvq64OlKS3ULHV3MkxH0HWS
-    OeGWoKRy9g+XBW3f3+N47G6Dt6FtyDoTidaTvdw==
+    t=1520641396; b=iFWS7eDXBykzPrvobToX2eRREh1SzT7aEyrqZ88WS0nxS6K
+    YJ0wFKtvOflFDHwByjvBbqeGK2mUzHz2J0cIJ5ZByurzCUlmwsw74tEzDxHlrGxa
+    6gcNcoREP4dlS4gdTCVi89mtqxZQ9qpVEI2hyn5PQO08dnoA2FZCx2j93gMDVGVL
+    qVN4XQA4JEaY64wDay6HwSTfGbZwYe95tRCJD1+ny6xAu1WPqhFujpc+SZIQ8yvD
+    WMD+08AC2yhKAABCNexkrG36YHjthJWZuhtka+/Wy2KPu8m9ziKNYtH7Bclgos1/
+    aVAVQV9tdgZa2B8IogO9+a7SpMWczlzLU6Ycqkw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1520658865; bh=m27Zkqaq7ijivSsLVJOp9jMck5Qfyk8d7Kh9YyKT7k0=; b=H
-    c4u/NDOa3mbSbtMIIRPCLCXcYC6LNQRAcvofguk92TPcd3bav74A/gS3Iq1ejUeP
-    oSm7+3plyAw4KGqAbSwUUXsuqm+Z1SJ48JU8jvivgp0KDkLEPUB7mPqxo0axUcHD
-    RPCWLkVUT3sELc6pw8txk7cSD41WDaJiqpiGQGb6GXQSqdFTTeDcpCsV2uwajLoz
-    si36QA6yu6sa6xAA58qLm2sZQUqG8Rs6bQKAkulw2pLqyA3t9PbbWjfShc3lXSEJ
-    smbRPmPVjI+NLlpst22zwlj4Vgg+w2Gcagc+yQ7c1/VGipKg2aT+xwBqO1VQpkIW
-    otAwQxbmX0nwXSOJE71Zg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520641396; bh=UkuV9QDuAZ4L4FyhbzW1UQ+CLE
+    lPaShCzPt/K1oOWcA=; b=g9V2N17T0XXLDYpzR4rBK89VdT0IQUFUnJNUHuvsgz
+    J7d2RkFe2zCq4izwfsAY8Bgtb44Lzt6iUdiXnYNPGYJ74iNY3E5DFGscffd9VRJ3
+    oAi/833ShqFSVvcDdDW2dgOtryN7YY3O92XIZ5oNyELuRJHHpXTP/DaSDCsTuqHD
+    kHMuU3tWF815qOr4H2Ty/8rUHMnsVS0IQMPST1V6SN/gOauvl0Sg4McQzgsXtT1b
+    Gkfd9y8rC1VeWx8KnlbTKtW25l59eUuRIEsfMdiLOcUhwZ3kJKCx43aPdVID1yYV
+    Lc+2FuKFxZm5ksOUWOmJy2AJWotYZ+DaimkMYpVapsOA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no
-Authentication-Results: mx1.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750735AbeCJFOX (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 10 Mar 2018 00:14:23 -0500
-Received: from osg.samsung.com ([64.30.133.232]:63465 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750714AbeCJFOX (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 10 Mar 2018 00:14:23 -0500
-Subject: Re: [PATCH 4.9 00/65] 4.9.87-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
-References: <20180310001824.927996722@linuxfoundation.org>
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Message-ID: <a1ed56fb-06be-92e7-761d-694fecf68a36@osg.samsung.com>
-Date: Fri, 9 Mar 2018 22:14:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
+        id S1751934AbeCJAXK (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Mar 2018 19:23:10 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40344 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933647AbeCJAXJ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:23:09 -0500
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: [PATCH 4.9 64/65] bpf, ppc64: fix out of bounds access in tail call
+Date: Fri,  9 Mar 2018 16:19:04 -0800
+Message-Id: <20180310001830.431379926@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180310001824.927996722@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/09/2018 05:18 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.87 release.
-> There are 65 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Mon Mar 12 00:18:06 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.87-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Compiled and booted on my test system. No dmesg regressions.
+------------------
 
-thanks,
--- Shuah
+From: Daniel Borkmann <daniel@iogearbox.net>
+
+[ upstream commit d269176e766c71c998cb75b4ea8cbc321cc0019d ]
+
+While working on 16338a9b3ac3 ("bpf, arm64: fix out of bounds access in
+tail call") I noticed that ppc64 JIT is partially affected as well. While
+the bound checking is correctly performed as unsigned comparison, the
+register with the index value however, is never truncated into 32 bit
+space, so e.g. a index value of 0x100000000ULL with a map of 1 element
+would pass with PPC_CMPLW() whereas we later on continue with the full
+64 bit register value. Therefore, as we do in interpreter and other JITs
+truncate the value to 32 bit initially in order to fix access.
+
+Fixes: ce0761419fae ("powerpc/bpf: Implement support for tail calls")
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Reviewed-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Tested-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/powerpc/net/bpf_jit_comp64.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/arch/powerpc/net/bpf_jit_comp64.c
++++ b/arch/powerpc/net/bpf_jit_comp64.c
+@@ -245,6 +245,7 @@ static void bpf_jit_emit_tail_call(u32 *
+ 	 *   goto out;
+ 	 */
+ 	PPC_LWZ(b2p[TMP_REG_1], b2p_bpf_array, offsetof(struct bpf_array, map.max_entries));
++	PPC_RLWINM(b2p_index, b2p_index, 0, 0, 31);
+ 	PPC_CMPLW(b2p_index, b2p[TMP_REG_1]);
+ 	PPC_BCC(COND_GE, out);
+ 
