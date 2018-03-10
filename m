@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751758AbeCJS3Y (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:29:24 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:45867 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932673AbeCJSVb (ORCPT
+        id S1751880AbeCJS3o (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:29:44 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:34790 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932741AbeCJSVa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:21:31 -0500
-X-Google-Smtp-Source: AG47ELu66f/RJkX7OhCdmTodyb4rySIHJ2agiJUUE9dRrN6xhHTQsc/yUOddviqWNV+OO5c/Bra0GQ==
+        Sat, 10 Mar 2018 13:21:30 -0500
+X-Google-Smtp-Source: AG47ELtwkMKN3MjkCwqH0yskJRR+NyRC1uUlgMZgPQFBIIfgR+/gw3Q6FbrE5Fgs+70JJ68m0ScLlg==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 62/83] File: getattr and file inode operations
-Date: Sat, 10 Mar 2018 10:18:43 -0800
-Message-Id: <1520705944-6723-63-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 61/83] Super: Add nova_export_ops.
+Date: Sat, 10 Mar 2018 10:18:42 -0800
+Message-Id: <1520705944-6723-62-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -29,138 +29,81 @@ From: Andiry Xu <jix024@cs.ucsd.edu>
 
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/Makefile |  2 +-
- fs/nova/file.c   | 31 +++++++++++++++++++++++++++++++
- fs/nova/inode.c  | 25 +++++++++++++++++++++++++
- fs/nova/inode.h  |  2 ++
- fs/nova/nova.h   |  3 +++
- 5 files changed, 62 insertions(+), 1 deletion(-)
- create mode 100644 fs/nova/file.c
+ fs/nova/super.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-diff --git a/fs/nova/Makefile b/fs/nova/Makefile
-index eb97e46..468ed6f 100644
---- a/fs/nova/Makefile
-+++ b/fs/nova/Makefile
-@@ -4,5 +4,5 @@
+diff --git a/fs/nova/super.c b/fs/nova/super.c
+index daf3270..0847e57 100644
+--- a/fs/nova/super.c
++++ b/fs/nova/super.c
+@@ -51,6 +51,7 @@ module_param(nova_dbgmask, int, 0444);
+ MODULE_PARM_DESC(nova_dbgmask, "Control debugging output");
  
- obj-$(CONFIG_NOVA_FS) += nova.o
+ static struct super_operations nova_sops;
++static const struct export_operations nova_export_ops;
  
--nova-y := balloc.o bbuild.o dir.o inode.o journal.o log.o namei.o\
-+nova-y := balloc.o bbuild.o dir.o file.o inode.o journal.o log.o namei.o\
- 	  rebuild.o stats.o super.o
-diff --git a/fs/nova/file.c b/fs/nova/file.c
-new file mode 100644
-index 0000000..b46d4bd
---- /dev/null
-+++ b/fs/nova/file.c
-@@ -0,0 +1,31 @@
-+/*
-+ * BRIEF DESCRIPTION
-+ *
-+ * File operations for files.
-+ *
-+ * Copyright 2015-2016 Regents of the University of California,
-+ * UCSD Non-Volatile Systems Lab, Andiry Xu <jix024@cs.ucsd.edu>
-+ * Copyright 2012-2013 Intel Corporation
-+ * Copyright 2009-2011 Marco Stornelli <marco.stornelli@gmail.com>
-+ * Copyright 2003 Sony Corporation
-+ * Copyright 2003 Matsushita Electric Industrial Co., Ltd.
-+ * 2003-2004 (c) MontaVista Software, Inc. , Steve Longerbeam
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2. This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
-+ */
-+
-+#include <linux/slab.h>
-+#include <linux/uio.h>
-+#include <linux/uaccess.h>
-+#include <linux/falloc.h>
-+#include <asm/mman.h>
-+#include "nova.h"
-+#include "inode.h"
-+
-+
-+const struct inode_operations nova_file_inode_operations = {
-+	.setattr	= nova_notify_change,
-+	.getattr	= nova_getattr,
-+	.get_acl	= NULL,
-+};
-diff --git a/fs/nova/inode.c b/fs/nova/inode.c
-index 0e9ab4b..6fcc5e7 100644
---- a/fs/nova/inode.c
-+++ b/fs/nova/inode.c
-@@ -231,6 +231,7 @@ static int nova_read_inode(struct super_block *sb, struct inode *inode,
+ static struct kmem_cache *nova_inode_cachep;
+ static struct kmem_cache *nova_range_node_cachep;
+@@ -631,6 +632,7 @@ static int nova_fill_super(struct super_block *sb, void *data, int silent)
+ 	sb->s_op = &nova_sops;
+ 	sb->s_maxbytes = nova_max_size(sb->s_blocksize_bits);
+ 	sb->s_time_gran = 1000000000; // 1 second.
++	sb->s_export_op = &nova_export_ops;
+ 	sb->s_xattr = NULL;
+ 	sb->s_flags |= MS_NOSEC;
  
- 	switch (inode->i_mode & S_IFMT) {
- 	case S_IFREG:
-+		inode->i_op = &nova_file_inode_operations;
- 		break;
- 	case S_IFDIR:
- 		inode->i_op = &nova_dir_inode_operations;
-@@ -926,6 +927,7 @@ struct inode *nova_new_vfs_inode(enum nova_new_inode_type type,
+@@ -904,6 +906,52 @@ static struct file_system_type nova_fs_type = {
+ 	.kill_sb	= kill_block_super,
+ };
  
- 	switch (type) {
- 	case TYPE_CREATE:
-+		inode->i_op = &nova_file_inode_operations;
- 		inode->i_mapping->a_ops = &nova_aops_dax;
- 		break;
- 	case TYPE_MKNOD:
-@@ -1089,6 +1091,29 @@ static void nova_setsize(struct inode *inode, loff_t oldsize, loff_t newsize,
- 	NOVA_END_TIMING(setsize_t, setsize_time);
- }
- 
-+int nova_getattr(const struct path *path, struct kstat *stat,
-+		 u32 request_mask, unsigned int query_flags)
++static struct inode *nova_nfs_get_inode(struct super_block *sb,
++					 u64 ino, u32 generation)
 +{
-+	struct inode *inode = d_inode(path->dentry);
-+	struct nova_inode_info *si = NOVA_I(inode);
-+	struct nova_inode_info_header *sih = &si->header;
-+	unsigned int flags = sih->i_flags;
++	struct inode *inode;
 +
-+	if (flags & FS_APPEND_FL)
-+		stat->attributes |= STATX_ATTR_APPEND;
-+	if (flags & FS_COMPR_FL)
-+		stat->attributes |= STATX_ATTR_COMPRESSED;
-+	if (flags & FS_IMMUTABLE_FL)
-+		stat->attributes |= STATX_ATTR_IMMUTABLE;
-+	if (flags & FS_NODUMP_FL)
-+		stat->attributes |= STATX_ATTR_NODUMP;
++	if (ino < NOVA_ROOT_INO)
++		return ERR_PTR(-ESTALE);
 +
-+	generic_fillattr(inode, stat);
-+	/* stat->blocks should be the number of 512B blocks */
-+	stat->blocks = (inode->i_blocks << inode->i_sb->s_blocksize_bits) >> 9;
-+	return 0;
++	if (ino > LONG_MAX)
++		return ERR_PTR(-ESTALE);
++
++	inode = nova_iget(sb, ino);
++	if (IS_ERR(inode))
++		return ERR_CAST(inode);
++
++	if (generation && inode->i_generation != generation) {
++		/* we didn't find the right inode.. */
++		iput(inode);
++		return ERR_PTR(-ESTALE);
++	}
++
++	return inode;
 +}
 +
- int nova_notify_change(struct dentry *dentry, struct iattr *attr)
- {
- 	struct inode *inode = dentry->d_inode;
-diff --git a/fs/nova/inode.h b/fs/nova/inode.h
-index 4ddf8c2..48403cf 100644
---- a/fs/nova/inode.h
-+++ b/fs/nova/inode.h
-@@ -267,6 +267,8 @@ int nova_delete_file_tree(struct super_block *sb,
- extern void nova_evict_inode(struct inode *inode);
- extern int nova_write_inode(struct inode *inode, struct writeback_control *wbc);
- extern void nova_dirty_inode(struct inode *inode, int flags);
-+extern int nova_getattr(const struct path *path, struct kstat *stat,
-+		 u32 request_mask, unsigned int query_flags);
- extern int nova_notify_change(struct dentry *dentry, struct iattr *attr);
- 
- #endif
-diff --git a/fs/nova/nova.h b/fs/nova/nova.h
-index 85292d3..601e082 100644
---- a/fs/nova/nova.h
-+++ b/fs/nova/nova.h
-@@ -484,6 +484,9 @@ int nova_add_dentry(struct dentry *dentry, u64 ino, int inc_link,
- int nova_remove_dentry(struct dentry *dentry, int dec_link,
- 	struct nova_inode_update *update, u64 epoch_id);
- 
-+/* file.c */
-+extern const struct inode_operations nova_file_inode_operations;
++static struct dentry *nova_fh_to_dentry(struct super_block *sb,
++					 struct fid *fid, int fh_len,
++					 int fh_type)
++{
++	return generic_fh_to_dentry(sb, fid, fh_len, fh_type,
++				    nova_nfs_get_inode);
++}
 +
- /* namei.c */
- extern const struct inode_operations nova_dir_inode_operations;
- extern const struct inode_operations nova_special_inode_operations;
++static struct dentry *nova_fh_to_parent(struct super_block *sb,
++					 struct fid *fid, int fh_len,
++					 int fh_type)
++{
++	return generic_fh_to_parent(sb, fid, fh_len, fh_type,
++				    nova_nfs_get_inode);
++}
++
++static const struct export_operations nova_export_ops = {
++	.fh_to_dentry	= nova_fh_to_dentry,
++	.fh_to_parent	= nova_fh_to_parent,
++	.get_parent	= nova_get_parent,
++};
++
+ static int __init init_nova_fs(void)
+ {
+ 	int rc = 0;
 -- 
 2.7.4
