@@ -1,37 +1,69 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtoSF/sezcFqFtORJ4n4vTtwQTDdznrE3T5ta9lxnZOEOjCzBvd4TMYkKqju7C0mwbp7yFT
-ARC-Seal: i=1; a=rsa-sha256; t=1520641345; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Mo9VRSk0xS53jyGo6rZ2UZ5BkDdusiaI+yf1j3FYlG19i7p2cJ/4twL9027xh7HPrR
-         Xfw43gj/DyUKlJIzXRZqyPTLFdokbL5sxQNJuy022+7tBWlUVu8/8wU8rWU5Fg2+lRHr
-         hMW4r0SJkWHhJz8uiN6Fr+nVXQ8/4O0JelzkHa6i9bI5yji8iiOp0x4aMpro0UMSY/df
-         ufe33j+CRBlqC00UJr/t/BoToHgMKfnLTgN3YfCQ0GBfjEG0OW6IYxwkSzZok2gTZT6G
-         wAyt6enSVjOeCDUcbwuB1d98O45dzW5+UyT1SU0y2c2N2MTVT7eW39nd78SJR76lcn5o
-         IgnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=2XUXyGXYFlXujtH0RE/lWs5RHKsv1biPl/tYP0iScfo=;
-        b=AwUweWeLCXzhDKB0tg3vWVMlIDjqtiw0NEKv0jOU/LD4XdX/UkR4LWCt5ylMLqL7GT
-         ig19D5Te8iY/9JNLJOUsRrrtQwOrwWFaO6mfIskmOzCVsmLFIzopLSnRgfLIllPVskMu
-         NGmqMlyMJeKIl8GMlNhoflxt/14vi6Ix5ZeEGa87Bz3iD6eoiYZXqdWOLHPpWgyHEEj9
-         ipb3ggmcQc/o3iU1AfRTA+RrGC0vYPV7oOIb2GwMc6MfD+Xj9b5APDDj07GdYwpREj8o
-         Ivc2SmZDMqhgkucnpQZKYOxC89DCDCkfrLauOIncW+OKIqsv5viE163pJUL3pqn37i9c
-         MRBg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1720711-1520641344-2-4648374699244544733
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520641344; b=mwzGS9rEAemeR81b/QNydUsZCOnKy1aHvWQcPJnRzyWjNBl
+    MgwPnhlj9tWJDbAo0r9AcGynFopqw+BckAWAsRqMC7RYFimadhY88G+S6YAoAXaR
+    y/45/3RGyIM/QdDcmjapVlCRObX+hLXoR3aXWGBBAMpXLdUtR0dWKuWyESWsiNEM
+    7r1GTciNtvicz0KsnpPuQMTCjHTDOcLibJ73+SPP2uPTHBwBfKIQVQVfM0PYcpUK
+    QSnSeBMIx5TKuLaUBlk8J21BgVBhXf97fiq6/r+CZCsCDmy5rgdBJOE2413mocPD
+    pXFYmT+V6FA4JlRroFblErfOGr2IuEKbH+BsghQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520641344; bh=QDzTNO4wsF3IIOXbXDcoT1BB0M
+    An/aQ5LnQsvJQXjds=; b=G4zBxIOG169KUz4SujuLVNq5oWlCBPziLURpzkjm0l
+    uWKkRMQ/OmpSTOSevMltMQVY+c1ciANfCFLRuCV2nEs9NuS+v6of7+1udzQaiUsN
+    sten7oksc5eX/BqqNnAJF1RsX4WjKhJ+yjnE9XMI12g88hv9o0otG/RWv2rCAyJw
+    itudMt9YycWUjG9fcmGZBxx5SFAL9znmZYt8mFbqJIYfkhaPEX9HPs2EriKRn/Ex
+    Ioa/TlSpyGrH2k+1qElL2JaPiLQaLAI62HWj2o7UaBD0MwP2C/tPWlscdZgHcQ4O
+    /XAnPfBMypzuoy8HwQMqWjOUl8hP2k7tPMV7jA0j9R1g==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751849AbeCJAWT (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Mar 2018 19:22:19 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39958 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933852AbeCJAWR (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:22:17 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Ursula Braun <ubraun@linux.vnet.ibm.com>,
-	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 49/65] s390/qeth: fix underestimated count of buffer elements
-Date: Fri,  9 Mar 2018 16:18:49 -0800
-Message-Id: <20180310001828.887685873@linuxfoundation.org>
+        stable@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
+        David Howells <dhowells@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 46/65] rxrpc: Fix send in rxrpc_send_data_packet()
+Date: Fri,  9 Mar 2018 16:18:46 -0800
+Message-Id: <20180310001828.632814746@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
 References: <20180310001824.927996722@linuxfoundation.org>
@@ -39,10 +71,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594508019181671675?=
-X-GMAIL-MSGID: =?utf-8?q?1594508019181671675?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,38 +81,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ursula Braun <ubraun@linux.vnet.ibm.com>
+From: David Howells <dhowells@redhat.com>
 
 
-[ Upstream commit 89271c65edd599207dd982007900506283c90ae3 ]
+[ Upstream commit 93c62c45ed5fad1b87e3a45835b251cd68de9c46 ]
 
-For a memory range/skb where the last byte falls onto a page boundary
-(ie. 'end' is of the form xxx...xxx001), the PFN_UP() part of the
-calculation currently doesn't round up to the next PFN due to an
-off-by-one error.
-Thus qeth believes that the skb occupies one page less than it
-actually does, and may select a IO buffer that doesn't have enough spare
-buffer elements to fit all of the skb's data.
-HW detects this as a malformed buffer descriptor, and raises an
-exception which then triggers device recovery.
+All the kernel_sendmsg() calls in rxrpc_send_data_packet() need to send
+both parts of the iov[] buffer, but one of them does not.  Fix it so that
+it does.
 
-Fixes: 2863c61334aa ("qeth: refactor calculation of SBALE count")
-Signed-off-by: Ursula Braun <ubraun@linux.vnet.ibm.com>
-Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+Without this, short IPv6 rxrpc DATA packets may be seen that have the rxrpc
+header included, but no payload.
+
+Fixes: 5a924b8951f8 ("rxrpc: Don't store the rxrpc header in the Tx queue sk_buffs")
+Reported-by: Marc Dionne <marc.dionne@auristor.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_core.h |    2 +-
+ net/rxrpc/output.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/s390/net/qeth_core.h
-+++ b/drivers/s390/net/qeth_core.h
-@@ -849,7 +849,7 @@ struct qeth_trap_id {
-  */
- static inline int qeth_get_elements_for_range(addr_t start, addr_t end)
- {
--	return PFN_UP(end - 1) - PFN_DOWN(start);
-+	return PFN_UP(end) - PFN_DOWN(start);
- }
+--- a/net/rxrpc/output.c
++++ b/net/rxrpc/output.c
+@@ -391,7 +391,7 @@ send_fragmentable:
+ 					(char *)&opt, sizeof(opt));
+ 		if (ret == 0) {
+ 			ret = kernel_sendmsg(conn->params.local->socket, &msg,
+-					     iov, 1, iov[0].iov_len);
++					     iov, 2, len);
  
- static inline int qeth_get_micros(void)
+ 			opt = IPV6_PMTUDISC_DO;
+ 			kernel_setsockopt(conn->params.local->socket,
