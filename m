@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932993AbeCJSX5 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:23:57 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:37805 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932943AbeCJSVx (ORCPT
+        id S933071AbeCJSYP (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:24:15 -0500
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:34961 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932925AbeCJSVs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:21:53 -0500
-X-Google-Smtp-Source: AG47ELvPjld8CYl7tLkfXZvZtMA1Bu2MlhsHYfmRk/SBQ64CpCvX9QzWOS0akN/cT6Jg+7FPgDwwSA==
+        Sat, 10 Mar 2018 13:21:48 -0500
+X-Google-Smtp-Source: AG47ELvnRxhRLakMrDKlTPiYzoenCyFU3bRSSBQ+B4WIa3eCXIjbJmvCScswx8w3pYXtBlyEWT0dgw==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 80/83] Failure recovery: bitmap operations.
-Date: Sat, 10 Mar 2018 10:19:01 -0800
-Message-Id: <1520705944-6723-81-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 76/83] Ioctl support.
+Date: Sat, 10 Mar 2018 10:18:57 -0800
+Message-Id: <1520705944-6723-77-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -27,308 +27,281 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andiry Xu <jix024@cs.ucsd.edu>
 
-Upon system failure, NOVA needs to scan all the inode logs
-to rebuild the allocator. During the scanning, NOVA stores allocated
-log/data pages in a bitmap, and uses the bitmap to rebuild the allocator
-once scan finishes.
+NOVA appends link change entry to the inode log to implement
+SETFLAGS and SETVERSION.
 
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/bbuild.c | 252 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/nova/bbuild.h |  18 ++++
- 2 files changed, 270 insertions(+)
+ fs/nova/Makefile |   4 +-
+ fs/nova/dir.c    |   4 ++
+ fs/nova/file.c   |   4 ++
+ fs/nova/inode.h  |   2 +
+ fs/nova/ioctl.c  | 184 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/nova/nova.h   |   7 +++
+ 6 files changed, 203 insertions(+), 2 deletions(-)
+ create mode 100644 fs/nova/ioctl.c
 
-diff --git a/fs/nova/bbuild.c b/fs/nova/bbuild.c
-index ca51dca..35c661a 100644
---- a/fs/nova/bbuild.c
-+++ b/fs/nova/bbuild.c
-@@ -414,6 +414,258 @@ void nova_save_blocknode_mappings_to_log(struct super_block *sb)
- 		  pi->log_head, pi->log_tail);
- }
+diff --git a/fs/nova/Makefile b/fs/nova/Makefile
+index 7bf6403..87e56c6 100644
+--- a/fs/nova/Makefile
++++ b/fs/nova/Makefile
+@@ -4,5 +4,5 @@
  
-+/************************** Bitmap operations ****************************/
+ obj-$(CONFIG_NOVA_FS) += nova.o
+ 
+-nova-y := balloc.o bbuild.o dax.o dir.o file.o inode.o journal.o log.o namei.o\
+-	  rebuild.o stats.o super.o symlink.o
++nova-y := balloc.o bbuild.o dax.o dir.o file.o inode.o ioctl.o journal.o\
++	  log.o namei.o rebuild.o stats.o super.o symlink.o
+diff --git a/fs/nova/dir.c b/fs/nova/dir.c
+index 47ee9ad..3694d9d 100644
+--- a/fs/nova/dir.c
++++ b/fs/nova/dir.c
+@@ -513,4 +513,8 @@ const struct file_operations nova_dir_operations = {
+ 	.read		= generic_read_dir,
+ 	.iterate	= nova_readdir,
+ 	.fsync		= noop_fsync,
++	.unlocked_ioctl = nova_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl	= nova_compat_ioctl,
++#endif
+ };
+diff --git a/fs/nova/file.c b/fs/nova/file.c
+index 7e90415..2b70b9d 100644
+--- a/fs/nova/file.c
++++ b/fs/nova/file.c
+@@ -714,7 +714,11 @@ const struct file_operations nova_dax_file_operations = {
+ 	.open		= nova_open,
+ 	.fsync		= nova_fsync,
+ 	.flush		= nova_flush,
++	.unlocked_ioctl	= nova_ioctl,
+ 	.fallocate	= nova_fallocate,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl	= nova_compat_ioctl,
++#endif
+ };
+ 
+ const struct inode_operations nova_file_inode_operations = {
+diff --git a/fs/nova/inode.h b/fs/nova/inode.h
+index 693aa90..086a7cb 100644
+--- a/fs/nova/inode.h
++++ b/fs/nova/inode.h
+@@ -264,6 +264,8 @@ int nova_delete_file_tree(struct super_block *sb,
+ 	struct nova_inode_info_header *sih, unsigned long start_blocknr,
+ 	unsigned long last_blocknr, bool delete_nvmm, bool delete_dead,
+ 	u64 epoch_id);
++extern void nova_set_inode_flags(struct inode *inode, struct nova_inode *pi,
++	unsigned int flags);
+ unsigned long nova_find_region(struct inode *inode, loff_t *offset, int hole);
+ extern void nova_evict_inode(struct inode *inode);
+ extern int nova_write_inode(struct inode *inode, struct writeback_control *wbc);
+diff --git a/fs/nova/ioctl.c b/fs/nova/ioctl.c
+new file mode 100644
+index 0000000..2509371
+--- /dev/null
++++ b/fs/nova/ioctl.c
+@@ -0,0 +1,184 @@
++/*
++ * BRIEF DESCRIPTION
++ *
++ * Ioctl operations.
++ *
++ * Copyright 2015-2016 Regents of the University of California,
++ * UCSD Non-Volatile Systems Lab, Andiry Xu <jix024@cs.ucsd.edu>
++ * Copyright 2012-2013 Intel Corporation
++ * Copyright 2010-2011 Marco Stornelli <marco.stornelli@gmail.com>
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2. This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
 +
-+static inline void set_scan_bm(unsigned long bit,
-+	struct single_scan_bm *scan_bm)
++#include <linux/capability.h>
++#include <linux/time.h>
++#include <linux/sched.h>
++#include <linux/compat.h>
++#include <linux/mount.h>
++#include "nova.h"
++#include "inode.h"
++
++long nova_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 +{
-+	set_bit(bit, scan_bm->bitmap);
++	struct address_space *mapping = filp->f_mapping;
++	struct inode    *inode = mapping->host;
++	struct nova_inode_info *si = NOVA_I(inode);
++	struct nova_inode_info_header *sih = &si->header;
++	struct nova_inode *pi;
++	struct super_block *sb = inode->i_sb;
++	struct nova_inode_update update;
++	unsigned int flags;
++	int ret;
++
++	pi = nova_get_inode(sb, inode);
++	if (!pi)
++		return -EACCES;
++
++	switch (cmd) {
++	case FS_IOC_GETFLAGS:
++		flags = (sih->i_flags) & NOVA_FL_USER_VISIBLE;
++		return put_user(flags, (int __user *)arg);
++	case FS_IOC_SETFLAGS: {
++		unsigned int oldflags;
++		u64 old_linkc = 0;
++		u64 epoch_id;
++
++		ret = mnt_want_write_file(filp);
++		if (ret)
++			return ret;
++
++		if (!inode_owner_or_capable(inode)) {
++			ret = -EPERM;
++			goto flags_out;
++		}
++
++		if (get_user(flags, (int __user *)arg)) {
++			ret = -EFAULT;
++			goto flags_out;
++		}
++
++		inode_lock(inode);
++		sih_lock(sih);
++		oldflags = le32_to_cpu(pi->i_flags);
++
++		if ((flags ^ oldflags) &
++		    (FS_APPEND_FL | FS_IMMUTABLE_FL)) {
++			if (!capable(CAP_LINUX_IMMUTABLE)) {
++				inode_unlock(inode);
++				ret = -EPERM;
++				goto flags_out_unlock;
++			}
++		}
++
++		if (!S_ISDIR(inode->i_mode))
++			flags &= ~FS_DIRSYNC_FL;
++
++		epoch_id = nova_get_epoch_id(sb);
++		flags = flags & FS_FL_USER_MODIFIABLE;
++		flags |= oldflags & ~FS_FL_USER_MODIFIABLE;
++		inode->i_ctime = current_time(inode);
++		nova_set_inode_flags(inode, pi, flags);
++		sih->i_flags = flags;
++
++		update.tail = 0;
++		ret = nova_append_link_change_entry(sb, pi, inode,
++					&update, &old_linkc, epoch_id);
++		if (!ret) {
++			nova_update_inode(sb, inode, pi, &update);
++			nova_invalidate_link_change_entry(sb, old_linkc);
++		}
++		sih->trans_id++;
++flags_out_unlock:
++		sih_unlock(sih);
++		inode_unlock(inode);
++flags_out:
++		mnt_drop_write_file(filp);
++		return ret;
++	}
++	case FS_IOC_GETVERSION:
++		return put_user(inode->i_generation, (int __user *)arg);
++	case FS_IOC_SETVERSION: {
++		u64 old_linkc = 0;
++		u64 epoch_id;
++		__u32 generation;
++
++		if (!inode_owner_or_capable(inode))
++			return -EPERM;
++		ret = mnt_want_write_file(filp);
++		if (ret)
++			return ret;
++		if (get_user(generation, (int __user *)arg)) {
++			ret = -EFAULT;
++			goto setversion_out;
++		}
++
++		epoch_id = nova_get_epoch_id(sb);
++		inode_lock(inode);
++		sih_lock(sih);
++		inode->i_ctime = current_time(inode);
++		inode->i_generation = generation;
++
++		update.tail = 0;
++		ret = nova_append_link_change_entry(sb, pi, inode,
++					&update, &old_linkc, epoch_id);
++		if (!ret) {
++			nova_update_inode(sb, inode, pi, &update);
++			nova_invalidate_link_change_entry(sb, old_linkc);
++		}
++		sih->trans_id++;
++		sih_unlock(sih);
++		inode_unlock(inode);
++setversion_out:
++		mnt_drop_write_file(filp);
++		return ret;
++	}
++	case NOVA_PRINT_TIMING: {
++		nova_print_timing_stats(sb);
++		return 0;
++	}
++	case NOVA_CLEAR_STATS: {
++		nova_clear_stats(sb);
++		return 0;
++	}
++	case NOVA_PRINT_LOG: {
++		nova_print_inode_log(sb, inode);
++		return 0;
++	}
++	case NOVA_PRINT_LOG_PAGES: {
++		nova_print_inode_log_pages(sb, inode);
++		return 0;
++	}
++	case NOVA_PRINT_FREE_LISTS: {
++		nova_print_free_lists(sb);
++		return 0;
++	}
++	default:
++		return -ENOTTY;
++	}
 +}
 +
-+inline void set_bm(unsigned long bit, struct scan_bitmap *bm,
-+	enum bm_type type)
++#ifdef CONFIG_COMPAT
++long nova_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 +{
-+	switch (type) {
-+	case BM_4K:
-+		set_scan_bm(bit, &bm->scan_bm_4K);
++	switch (cmd) {
++	case FS_IOC32_GETFLAGS:
++		cmd = FS_IOC_GETFLAGS;
 +		break;
-+	case BM_2M:
-+		set_scan_bm(bit, &bm->scan_bm_2M);
++	case FS_IOC32_SETFLAGS:
++		cmd = FS_IOC_SETFLAGS;
 +		break;
-+	case BM_1G:
-+		set_scan_bm(bit, &bm->scan_bm_1G);
++	case FS_IOC32_GETVERSION:
++		cmd = FS_IOC_GETVERSION;
++		break;
++	case FS_IOC32_SETVERSION:
++		cmd = FS_IOC_SETVERSION;
 +		break;
 +	default:
-+		break;
++		return -ENOIOCTLCMD;
 +	}
++	return nova_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
 +}
-+
-+static int nova_insert_blocknode_map(struct super_block *sb,
-+	int cpuid, unsigned long low, unsigned long high)
-+{
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
-+	struct free_list *free_list;
-+	struct rb_root *tree;
-+	struct nova_range_node *blknode = NULL;
-+	unsigned long num_blocks = 0;
-+	int ret;
-+
-+	num_blocks = high - low + 1;
-+	nova_dbgv("%s: cpu %d, low %lu, high %lu, num %lu\n",
-+		__func__, cpuid, low, high, num_blocks);
-+	free_list = nova_get_free_list(sb, cpuid);
-+	tree = &(free_list->block_free_tree);
-+
-+	blknode = nova_alloc_blocknode(sb);
-+	if (blknode == NULL)
-+		return -ENOMEM;
-+	blknode->range_low = low;
-+	blknode->range_high = high;
-+	ret = nova_insert_blocktree(sbi, tree, blknode);
-+	if (ret) {
-+		nova_err(sb, "%s failed\n", __func__);
-+		nova_free_blocknode(sb, blknode);
-+		goto out;
-+	}
-+	if (!free_list->first_node)
-+		free_list->first_node = blknode;
-+	free_list->last_node = blknode;
-+	free_list->num_blocknode++;
-+	free_list->num_free_blocks += num_blocks;
-+out:
-+	return ret;
-+}
-+
-+static int __nova_build_blocknode_map(struct super_block *sb,
-+	unsigned long *bitmap, unsigned long bsize, unsigned long scale)
-+{
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
-+	struct free_list *free_list;
-+	unsigned long next = 0;
-+	unsigned long low = 0;
-+	unsigned long start, end;
-+	int cpuid = 0;
-+
-+	free_list = nova_get_free_list(sb, cpuid);
-+	start = free_list->block_start;
-+	end = free_list->block_end + 1;
-+	while (1) {
-+		next = find_next_zero_bit(bitmap, end, start);
-+		if (next == bsize)
-+			break;
-+		if (next == end) {
-+			if (cpuid == sbi->cpus - 1)
-+				break;
-+
-+			cpuid++;
-+			free_list = nova_get_free_list(sb, cpuid);
-+			start = free_list->block_start;
-+			end = free_list->block_end + 1;
-+			continue;
-+		}
-+
-+		low = next;
-+		next = find_next_bit(bitmap, end, next);
-+		if (nova_insert_blocknode_map(sb, cpuid,
-+				low << scale, (next << scale) - 1)) {
-+			nova_dbg("Error: could not insert %lu - %lu\n",
-+				low << scale, ((next << scale) - 1));
-+		}
-+		start = next;
-+		if (next == bsize)
-+			break;
-+		if (next == end) {
-+			if (cpuid == sbi->cpus - 1)
-+				break;
-+
-+			cpuid++;
-+			free_list = nova_get_free_list(sb, cpuid);
-+			start = free_list->block_start;
-+			end = free_list->block_end + 1;
-+		}
-+	}
-+	return 0;
-+}
-+
-+static void nova_update_4K_map(struct super_block *sb,
-+	struct scan_bitmap *bm,	unsigned long *bitmap,
-+	unsigned long bsize, unsigned long scale)
-+{
-+	unsigned long next = 0;
-+	unsigned long low = 0;
-+	int i;
-+
-+	while (1) {
-+		next = find_next_bit(bitmap, bsize, next);
-+		if (next == bsize)
-+			break;
-+		low = next;
-+		next = find_next_zero_bit(bitmap, bsize, next);
-+		for (i = (low << scale); i < (next << scale); i++)
-+			set_bm(i, bm, BM_4K);
-+		if (next == bsize)
-+			break;
-+	}
-+}
-+
-+struct scan_bitmap *global_bm[MAX_CPUS];
-+
-+static int nova_build_blocknode_map(struct super_block *sb,
-+	unsigned long initsize)
-+{
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
-+	struct scan_bitmap *bm;
-+	struct scan_bitmap *final_bm;
-+	unsigned long *src, *dst;
-+	int i, j;
-+	int num;
-+	int ret;
-+
-+	final_bm = kzalloc(sizeof(struct scan_bitmap), GFP_KERNEL);
-+	if (!final_bm)
-+		return -ENOMEM;
-+
-+	final_bm->scan_bm_4K.bitmap_size =
-+				(initsize >> (PAGE_SHIFT + 0x3));
-+
-+	/* Alloc memory to hold the block alloc bitmap */
-+	final_bm->scan_bm_4K.bitmap = kzalloc(final_bm->scan_bm_4K.bitmap_size,
-+							GFP_KERNEL);
-+
-+	if (!final_bm->scan_bm_4K.bitmap) {
-+		kfree(final_bm);
-+		return -ENOMEM;
-+	}
-+
-+	/*
-+	 * We are using free lists. Set 2M and 1G blocks in 4K map,
-+	 * and use 4K map to rebuild block map.
-+	 */
-+	for (i = 0; i < sbi->cpus; i++) {
-+		bm = global_bm[i];
-+		nova_update_4K_map(sb, bm, bm->scan_bm_2M.bitmap,
-+			bm->scan_bm_2M.bitmap_size * 8, PAGE_SHIFT_2M - 12);
-+		nova_update_4K_map(sb, bm, bm->scan_bm_1G.bitmap,
-+			bm->scan_bm_1G.bitmap_size * 8, PAGE_SHIFT_1G - 12);
-+	}
-+
-+	/* Merge per-CPU bms to the final single bm */
-+	num = final_bm->scan_bm_4K.bitmap_size / sizeof(unsigned long);
-+	if (final_bm->scan_bm_4K.bitmap_size % sizeof(unsigned long))
-+		num++;
-+
-+	for (i = 0; i < sbi->cpus; i++) {
-+		bm = global_bm[i];
-+		src = (unsigned long *)bm->scan_bm_4K.bitmap;
-+		dst = (unsigned long *)final_bm->scan_bm_4K.bitmap;
-+
-+		for (j = 0; j < num; j++)
-+			dst[j] |= src[j];
-+	}
-+
-+	ret = __nova_build_blocknode_map(sb, final_bm->scan_bm_4K.bitmap,
-+			final_bm->scan_bm_4K.bitmap_size * 8, PAGE_SHIFT - 12);
-+
-+	kfree(final_bm->scan_bm_4K.bitmap);
-+	kfree(final_bm);
-+
-+	return ret;
-+}
-+
-+static void free_bm(struct super_block *sb)
-+{
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
-+	struct scan_bitmap *bm;
-+	int i;
-+
-+	for (i = 0; i < sbi->cpus; i++) {
-+		bm = global_bm[i];
-+		if (bm) {
-+			kfree(bm->scan_bm_4K.bitmap);
-+			kfree(bm->scan_bm_2M.bitmap);
-+			kfree(bm->scan_bm_1G.bitmap);
-+			kfree(bm);
-+		}
-+	}
-+}
-+
-+static int alloc_bm(struct super_block *sb, unsigned long initsize)
-+{
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
-+	struct scan_bitmap *bm;
-+	int i;
-+
-+	for (i = 0; i < sbi->cpus; i++) {
-+		bm = kzalloc(sizeof(struct scan_bitmap), GFP_KERNEL);
-+		if (!bm)
-+			return -ENOMEM;
-+
-+		global_bm[i] = bm;
-+
-+		bm->scan_bm_4K.bitmap_size =
-+				(initsize >> (PAGE_SHIFT + 0x3));
-+		bm->scan_bm_2M.bitmap_size =
-+				(initsize >> (PAGE_SHIFT_2M + 0x3));
-+		bm->scan_bm_1G.bitmap_size =
-+				(initsize >> (PAGE_SHIFT_1G + 0x3));
-+
-+		/* Alloc memory to hold the block alloc bitmap */
-+		bm->scan_bm_4K.bitmap = kzalloc(bm->scan_bm_4K.bitmap_size,
-+							GFP_KERNEL);
-+		bm->scan_bm_2M.bitmap = kzalloc(bm->scan_bm_2M.bitmap_size,
-+							GFP_KERNEL);
-+		bm->scan_bm_1G.bitmap = kzalloc(bm->scan_bm_1G.bitmap_size,
-+							GFP_KERNEL);
-+
-+		if (!bm->scan_bm_4K.bitmap || !bm->scan_bm_2M.bitmap ||
-+				!bm->scan_bm_1G.bitmap)
-+			return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+
- /*********************** Recovery entrance *************************/
++#endif
+diff --git a/fs/nova/nova.h b/fs/nova/nova.h
+index d209cfc..ab9153e 100644
+--- a/fs/nova/nova.h
++++ b/fs/nova/nova.h
+@@ -515,6 +515,13 @@ int nova_remove_dentry(struct dentry *dentry, int dec_link,
+ extern const struct file_operations nova_dax_file_operations;
+ extern const struct inode_operations nova_file_inode_operations;
  
- /* Return TRUE if we can do a normal unmount recovery */
-diff --git a/fs/nova/bbuild.h b/fs/nova/bbuild.h
-index 2c3deb0..b093e05 100644
---- a/fs/nova/bbuild.h
-+++ b/fs/nova/bbuild.h
-@@ -1,6 +1,24 @@
- #ifndef __BBUILD_H
- #define __BBUILD_H
- 
-+enum bm_type {
-+	BM_4K = 0,
-+	BM_2M,
-+	BM_1G,
-+};
++/* ioctl.c */
++extern long nova_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
++#ifdef CONFIG_COMPAT
++extern long nova_compat_ioctl(struct file *file, unsigned int cmd,
++	unsigned long arg);
++#endif
 +
-+struct single_scan_bm {
-+	unsigned long bitmap_size;
-+	unsigned long *bitmap;
-+};
-+
-+struct scan_bitmap {
-+	struct single_scan_bm scan_bm_4K;
-+	struct single_scan_bm scan_bm_2M;
-+	struct single_scan_bm scan_bm_1G;
-+};
-+
-+
- void nova_init_header(struct super_block *sb,
- 	struct nova_inode_info_header *sih, u16 i_mode);
- void nova_save_inode_list_to_log(struct super_block *sb);
+ /* namei.c */
+ extern const struct inode_operations nova_dir_inode_operations;
+ extern const struct inode_operations nova_special_inode_operations;
 -- 
 2.7.4
