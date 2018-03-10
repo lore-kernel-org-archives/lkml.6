@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932661AbeCJCjN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 21:39:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49040 "EHLO mail.kernel.org"
+        id S1751748AbeCJCjL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 21:39:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751349AbeCJCjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751373AbeCJCjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Mar 2018 21:39:09 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 910432177C
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9102221771
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180310023907.528923886@goodmis.org>
+Message-Id: <20180310023442.791997138@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Fri, 09 Mar 2018 21:34:43 -0500
+Date: Fri, 09 Mar 2018 21:34:42 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
@@ -20,175 +20,94 @@ Cc: Ingo Molnar <mingo@kernel.org>,
         Tom Zanussi <tom.zanussi@linux.intel.com>,
         Namhyung Kim <namhyung@kernel.org>,
         Masami Hiramatsu <mhiramat@kernel.org>, Jiri Olsa <jolsa@kernel.org>
-Subject: [PATCH 1/3] tracing: Combine enum and arrays into single macro in filter code
-References: <20180310023442.791997138@goodmis.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=0001-tracing-Combine-enum-and-arrays-into-single-macro-in.patch
+Subject: [PATCH 0/3] tracing: Rewrite the function filter code
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Instead of having a separate enum that is the index into another array, like
-a string array, make a single macro that combines them into a single list,
-and then the two can not get out of sync. This makes it easier to add and
-remove items.
+Al Viro reviewed the ftrace event filter logic and was horrified. He wrote
+Tom and I a lengthy private email with a formal proof on how to do it
+simpler as well as more efficient.
 
-The macro trick is:
+Currently the filter logic creates a binary search tree (with some
+optimizations), and walks it to get a result.
 
- #define DOGS				\
-  C( JACK,     "Jack Russell")		\
-  C( ITALIAN,  "Italian Greyhound")	\
-  C( GERMAN,   "German Shepherd")
+Say we had the following filter: a && !(!b || c) || d && !e
+Where each letter is a predicate. A tree would be made to look something
+like:
 
- #undef C
- #define C(a, b) a
+             ||
+            /  \
+          &&    &&
+         /  |   | \
+        a  !||  d  !e
+           /  \
+          !b   c
 
- enum { DOGS };
+If a == 1, b == 1, c == 1, d == 1, e == 0, then all nodes would be walked.
 
- #undef C
- #define C(a, b) b
+ || -> && -> a -> && -> !|| -> !b -> !|| -> c -> !|| -> && -> || -> && ->
+ d -> && -> !e -> && -> || -> return TRUE!
 
- static char dogs[] = { DOGS };
+That's 16 steps across vertices.
 
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace_events_filter.c | 112 ++++++++++++++++---------------------
- 1 file changed, 48 insertions(+), 64 deletions(-)
+Al's method would create a program using an array that denotes the predicate
+function, when to branch, and a target to branch to if the value is the same
+as when to branch. Storing the array as:
 
-diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
-index c3c6eee1e4df..a2ef393b3bb2 100644
---- a/kernel/trace/trace_events_filter.c
-+++ b/kernel/trace/trace_events_filter.c
-@@ -33,22 +33,26 @@
- 	"# Only events with the given fields will be affected.\n"	\
- 	"# If no events are modified, an error message will be displayed here"
- 
--enum filter_op_ids
--{
--	OP_OR,
--	OP_AND,
--	OP_GLOB,
--	OP_NE,
--	OP_EQ,
--	OP_LT,
--	OP_LE,
--	OP_GT,
--	OP_GE,
--	OP_BAND,
--	OP_NOT,
--	OP_NONE,
--	OP_OPEN_PAREN,
--};
-+#define OPS					\
-+	C( OP_OR,	"||",		1 ),	\
-+	C( OP_AND,	"&&",		2 ),	\
-+	C( OP_GLOB,	"~",		4 ),	\
-+	C( OP_NE,	"!=",		4 ),	\
-+	C( OP_EQ,	"==",		4 ),	\
-+	C( OP_LT,	"<",		5 ),	\
-+	C( OP_LE,	"<=",		5 ),	\
-+	C( OP_GT,	">",		5 ),	\
-+	C( OP_GE,	">=",		5 ),	\
-+	C( OP_BAND,	"&",		6 ),	\
-+	C( OP_NOT,	"!",		6 ),	\
-+	C( OP_NONE,	"OP_NONE",	0 ),	\
-+	C( OP_OPEN_PAREN, "(",		0 ),	\
-+	C( OP_MAX,	NULL,		0 )
-+
-+#undef C
-+#define C(a, b, c)	a
-+
-+enum filter_op_ids { OPS };
- 
- struct filter_op {
- 	int id;
-@@ -56,56 +60,36 @@ struct filter_op {
- 	int precedence;
- };
- 
--/* Order must be the same as enum filter_op_ids above */
--static struct filter_op filter_ops[] = {
--	{ OP_OR,	"||",		1 },
--	{ OP_AND,	"&&",		2 },
--	{ OP_GLOB,	"~",		4 },
--	{ OP_NE,	"!=",		4 },
--	{ OP_EQ,	"==",		4 },
--	{ OP_LT,	"<",		5 },
--	{ OP_LE,	"<=",		5 },
--	{ OP_GT,	">",		5 },
--	{ OP_GE,	">=",		5 },
--	{ OP_BAND,	"&",		6 },
--	{ OP_NOT,	"!",		6 },
--	{ OP_NONE,	"OP_NONE",	0 },
--	{ OP_OPEN_PAREN, "(",		0 },
--};
-+#undef C
-+#define C(a, b, c)	{ a, b, c }
- 
--enum {
--	FILT_ERR_NONE,
--	FILT_ERR_INVALID_OP,
--	FILT_ERR_UNBALANCED_PAREN,
--	FILT_ERR_TOO_MANY_OPERANDS,
--	FILT_ERR_OPERAND_TOO_LONG,
--	FILT_ERR_FIELD_NOT_FOUND,
--	FILT_ERR_ILLEGAL_FIELD_OP,
--	FILT_ERR_ILLEGAL_INTVAL,
--	FILT_ERR_BAD_SUBSYS_FILTER,
--	FILT_ERR_TOO_MANY_PREDS,
--	FILT_ERR_MISSING_FIELD,
--	FILT_ERR_INVALID_FILTER,
--	FILT_ERR_IP_FIELD_ONLY,
--	FILT_ERR_ILLEGAL_NOT_OP,
--};
-+static struct filter_op filter_ops[] = { OPS };
- 
--static char *err_text[] = {
--	"No error",
--	"Invalid operator",
--	"Unbalanced parens",
--	"Too many operands",
--	"Operand too long",
--	"Field not found",
--	"Illegal operation for field type",
--	"Illegal integer value",
--	"Couldn't find or set field in one of a subsystem's events",
--	"Too many terms in predicate expression",
--	"Missing field name and/or value",
--	"Meaningless filter expression",
--	"Only 'ip' field is supported for function trace",
--	"Illegal use of '!'",
--};
-+#define ERRORS								\
-+	C( NONE,	 	"No error"),				\
-+	C( INVALID_OP,		"Invalid operator"),			\
-+	C( UNBALANCED_PAREN,	"Unbalanced parens"),			\
-+	C( TOO_MANY_OPERANDS,	"Too many operands"),			\
-+	C( OPERAND_TOO_LONG,	"Operand too long"),			\
-+	C( FIELD_NOT_FOUND,	"Field not found"),			\
-+	C( ILLEGAL_FIELD_OP,	"Illegal operation for field type"),	\
-+	C( ILLEGAL_INTVAL,	"Illegal integer value"),		\
-+	C( BAD_SUBSYS_FILTER,	"Couldn't find or set field in one of a subsystem's events"), \
-+	C( TOO_MANY_PREDS,	"Too many terms in predicate expression"), \
-+	C( MISSING_FIELD,	"Missing field name and/or value"),	\
-+	C( INVALID_FILTER,	"Meaningless filter expression"),	\
-+	C( IP_FIELD_ONLY,	"Only 'ip' field is supported for function trace"), \
-+	C( ILLEGAL_NOT_OP,	"Illegal use of '!'"),
-+
-+#undef C
-+#define C(a, b)		FILT_ERR_##a
-+
-+enum { ERRORS };
-+
-+#undef C
-+#define C(a, b)		b
-+
-+static char *err_text[] = { ERRORS };
- 
- struct opstack_op {
- 	enum filter_op_ids op;
--- 
-2.15.1
+ prog[0] = { a, 0, 2}; // predicate, when_to_branch, target
+ prog[1] = { b, 0, 2};
+ prog[2] = { c, 0, 4};
+ prog[3] = { d, 0, 5};
+ prog[4] = { e, 1, 5};
+ prog[5] = { NULL, 0, 1}; // TRUE
+ prog[6] = { NULL, 0, 0}; // FALSE
+
+Where the code to execute the above looks like:
+
+	for (i = 0; prog[i].pred; i++) {
+		struct filter_pred *pred = prog[i].pred;
+		int match = pred->fn(pred, rec);
+		if (match == prog[i].when_to_branch)
+			i = prog[i].target;
+	}
+	return prog[i].target;
+
+Which translates the above program array into:
+
+ n0: if (!a) goto n3;
+ n1: if (!b) goto n3;
+ n2: if (!c) goto T;
+ n3: if (!d) goto F;
+ n4: if (e) goto F;
+ T: return TRUE;
+ F: return FALSE;
+
+And the above example only takes 6 steps to return TRUE.
+
+Special thanks goes out to Al for his patience and his time that he spent in
+educating us in a proper logical parser.
+
+Two patches were added to do some initial clean up. The last patch
+implements Al's suggestions. I wrote up a very lengthy comment describing
+what Al taught us in my own words (hopefully I got it right), and the
+implementation is similar to what Al showed with a few changes (again,
+hopefully I got that right too). I tested this with lots of different
+filters and it looks to be holding up.
+
+
+ Jiri,
+
+This affects perf as well. I ran some tests and I believe I got
+it woking as it does today.
+
+Steven Rostedt (VMware) (3):
+      tracing: Combine enum and arrays into single macro in filter code
+      tracing: Clean up and document pred_funcs_##type creation and use
+      tracing: Rewrite filter logic to be simpler and faster
+
+----
+ kernel/trace/trace.h               |   15 +-
+ kernel/trace/trace_events_filter.c | 2372 ++++++++++++++++--------------------
+ 2 files changed, 1083 insertions(+), 1304 deletions(-)
