@@ -1,112 +1,318 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933896AbeCJAdk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 19:33:40 -0500
-Received: from mga05.intel.com ([192.55.52.43]:27284 "EHLO mga05.intel.com"
+        id S933878AbeCJAev (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 19:34:51 -0500
+Received: from vps-vb.mhejs.net ([37.28.154.113]:58622 "EHLO vps-vb.mhejs.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751788AbeCJAdh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 19:33:37 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,448,1515484800";
-   d="scan'208";a="181460767"
-From: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+        id S932257AbeCJAet (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 19:34:49 -0500
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Subject: [PATCH] x86/microcode/AMD: check microcode file sanity before loading
+ it
 To: Borislav Petkov <bp@alien8.de>
-CC: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Chun-Yi Lee <jlee@suse.com>, "Luck, Tony" <tony.luck@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        "Neri, Ricardo" <ricardo.neri@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        "Zijlstra, Peter" <peter.zijlstra@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Williams, Dan J" <dan.j.williams@intel.com>
-Subject: RE: [PATCH V2 2/3] efi: Introduce efi_rts_workqueue and some
- infrastructure to invoke all efi_runtime_services()
-Thread-Topic: [PATCH V2 2/3] efi: Introduce efi_rts_workqueue and some
- infrastructure to invoke all efi_runtime_services()
-Thread-Index: AQHTtNngYFyf2e7B30yWdA6aWmV0oqPFNzYAgACKE+CAASj/gIAAOHqggAEohoCAAEk+AA==
-Date: Sat, 10 Mar 2018 00:33:35 +0000
-Message-ID: <FFF73D592F13FD46B8700F0A279B802F2E5821F9@ORSMSX114.amr.corp.intel.com>
-References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <1520292190-5027-3-git-send-email-sai.praneeth.prakhya@intel.com>
- <20180307121047.GG23662@pd.tnic>
- <FFF73D592F13FD46B8700F0A279B802F2E5818E4@ORSMSX114.amr.corp.intel.com>
- <20180308140830.GE21166@pd.tnic>
- <FFF73D592F13FD46B8700F0A279B802F2E581D28@ORSMSX114.amr.corp.intel.com>
- <20180309111157.GC10753@pd.tnic>
-In-Reply-To: <20180309111157.GC10753@pd.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzliN2JlYjAtZWQ1NC00Y2IxLWEwZDktZmE5ZWQxNzc3MmJjIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJQdGNIQ05JNjRib1ZMOFMySjNsYmxnOVd0bHl4cURTRkRrXC9BNmVxNmxvdVhGVlJVVFppKzBUYjhWcEwraURnRCJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="utf-8"
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Message-ID: <34e9d679-2eca-90cf-9a95-3864f0be060e@maciej.szmigiero.name>
+Date: Sat, 10 Mar 2018 01:34:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Language: en-US
+Content-Transfer-Encoding: 7BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2A0XjmK007848
 
-> > That's true! AFAIK, we don't have any issues handling NMI while in efi_pgd.
-> > We might have issues only when, we are already in efi_pgd, NMI comes
-> > along
-> 
-> Can you trigger this? Or is it something hypothetical?
-> 
+Currently, it is very easy to make the AMD microcode update driver crash
+or spin on a malformed microcode file since it does very little
+consistency checking on data loaded from such file.
 
-AFAIK, it's hypothetical. I did try to trigger the issue, but failed [1].
-Maybe, I need to have some more constraints [2].
+This commit introduces various checks, mostly on length-type fields, so
+all corrupted microcode files are (hopefully) correctly rejected instead.
 
-[1] https://lkml.org/lkml/2017/8/23/715
-[2] https://lkml.org/lkml/2017/8/25/469
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+---
+Test files are at https://pastebin.com/XkKUSmMp
+One has to enable KASAN in the kernel config and rename a particular
+test file to name appropriate to the running CPU family to test its
+loading.
 
-> > and NMI handler tries to touch the regions that are not mapped in
-> > efi_pgd
-> 
-> If it is not hypothetical, the NMI handler should learn to look at CR3 first and
-> return if CR3 has the efi pgd.
+ arch/x86/include/asm/microcode_amd.h |   6 ++
+ arch/x86/kernel/cpu/microcode/amd.c  | 111 ++++++++++++++++++++++++++---------
+ 2 files changed, 89 insertions(+), 28 deletions(-)
 
-This solution and it's variants were discussed here [1], [2] and for varied reasons 
-the community had decided to go with "Everything EFI as kthread" approach [3] [4].
-
-Although the discussions were off my understanding, the present issue I see is, 
-(and also the motivation for me to do the patch is)
-when a thread tries to execute any  efi_runtime_service() we switch to efi_pgd 
-(which doesn't have user space mappings) and all other subsystems in kernel 
-aren't aware of this switch. This looks like a perfect case for kthread.
-
-Kthread by definition doesn’t have user space mappings and if we run efi_runtime_services()
-in a kthread context and if any other subsystem tries to access user space mappings 
-while in efi_kthread, it's terminally broken [5].
-
-There were several issues Andy, Peter and Mark raised.
-One such (hypothetical) case is accessing user space from the back of an interrupt (NMI).
-Others include
-1. Issue specific to ARM because it runs efi_runtime_services() with interrupts enabled [6]
-2. Interrupt taken while mmap_sem() is held for write that tries to access user memory [7]
-3. If EFI were to have IO memory mapped at a "user" address, perf could end up reading it [8]
-
-[1] https://lkml.org/lkml/2017/8/15/757
-[2] https://lkml.org/lkml/2017/8/16/487
-[3] https://lkml.org/lkml/2017/8/21/573
-[4] https://lkml.org/lkml/2017/8/16/540
-
-[5] https://lkml.org/lkml/2017/8/17/667
-[6] https://lkml.org/lkml/2017/8/16/176
-[7] https://lkml.org/lkml/2017/8/17/667
-[8] https://lkml.org/lkml/2017/8/21/427
-
-Regards,
-Sai
+diff --git a/arch/x86/include/asm/microcode_amd.h b/arch/x86/include/asm/microcode_amd.h
+index 209492849566..e797d5d939d7 100644
+--- a/arch/x86/include/asm/microcode_amd.h
++++ b/arch/x86/include/asm/microcode_amd.h
+@@ -19,6 +19,9 @@ struct equiv_cpu_entry {
+ 	u16	res;
+ } __attribute__((packed));
+ 
++/* 4k */
++#define UCODE_EQUIV_CPU_TABLE_MAX_SIZE (256 * sizeof(struct equiv_cpu_entry))
++
+ struct microcode_header_amd {
+ 	u32	data_code;
+ 	u32	patch_id;
+@@ -41,6 +44,9 @@ struct microcode_amd {
+ 	unsigned int			mpb[0];
+ };
+ 
++/* if a patch is larger than this the microcode file is surely corrupted */
++#define PATCH_MAX_SIZE_ABSOLUTE (16 * 1024 * 1024)
++
+ #define PATCH_MAX_SIZE PAGE_SIZE
+ 
+ #ifdef CONFIG_MICROCODE_AMD
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+index a998e1a7d46f..f798bd4004aa 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -39,6 +39,7 @@
+ #include <asm/msr.h>
+ 
+ static struct equiv_cpu_entry *equiv_cpu_table;
++static unsigned int equiv_cpu_table_size;
+ 
+ /*
+  * This points to the current valid container of microcode patches which we will
+@@ -63,12 +64,17 @@ static u8 amd_ucode_patch[PATCH_MAX_SIZE];
+ static const char
+ ucode_path[] __maybe_unused = "kernel/x86/microcode/AuthenticAMD.bin";
+ 
+-static u16 find_equiv_id(struct equiv_cpu_entry *equiv_table, u32 sig)
++static u16 find_equiv_id(const struct equiv_cpu_entry *equiv_table,
++			 unsigned int equiv_table_size, u32 sig)
+ {
+-	for (; equiv_table && equiv_table->installed_cpu; equiv_table++) {
+-		if (sig == equiv_table->installed_cpu)
+-			return equiv_table->equiv_cpu;
+-	}
++	unsigned int i;
++
++	if (!equiv_table)
++		return 0;
++
++	for (i = 0; i < equiv_table_size && equiv_table[i].installed_cpu; i++)
++		if (sig == equiv_table[i].installed_cpu)
++			return equiv_table[i].equiv_cpu;
+ 
+ 	return 0;
+ }
+@@ -80,29 +86,41 @@ static u16 find_equiv_id(struct equiv_cpu_entry *equiv_table, u32 sig)
+  * Returns the amount of bytes consumed while scanning. @desc contains all the
+  * data we're going to use in later stages of the application.
+  */
+-static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
++static size_t parse_container(u8 *ucode, size_t size, struct cont_desc *desc)
+ {
+ 	struct equiv_cpu_entry *eq;
+-	ssize_t orig_size = size;
++	size_t orig_size = size;
+ 	u32 *hdr = (u32 *)ucode;
++	u32 eqsize;
+ 	u16 eq_id;
+ 	u8 *buf;
+ 
++	if (size < CONTAINER_HDR_SZ)
++		return 0;
++
+ 	/* Am I looking at an equivalence table header? */
+ 	if (hdr[0] != UCODE_MAGIC ||
+ 	    hdr[1] != UCODE_EQUIV_CPU_TABLE_TYPE ||
+ 	    hdr[2] == 0)
+ 		return CONTAINER_HDR_SZ;
+ 
++	eqsize = hdr[2];
++	if (eqsize < sizeof(*eq) ||
++	    eqsize > UCODE_EQUIV_CPU_TABLE_MAX_SIZE)
++		return 0;
++
++	if (size < CONTAINER_HDR_SZ + eqsize)
++		return 0;
++
+ 	buf = ucode;
+ 
+ 	eq = (struct equiv_cpu_entry *)(buf + CONTAINER_HDR_SZ);
+ 
+ 	/* Find the equivalence ID of our CPU in this table: */
+-	eq_id = find_equiv_id(eq, desc->cpuid_1_eax);
++	eq_id = find_equiv_id(eq, eqsize / sizeof(*eq), desc->cpuid_1_eax);
+ 
+-	buf  += hdr[2] + CONTAINER_HDR_SZ;
+-	size -= hdr[2] + CONTAINER_HDR_SZ;
++	buf  += eqsize + CONTAINER_HDR_SZ;
++	size -= eqsize + CONTAINER_HDR_SZ;
+ 
+ 	/*
+ 	 * Scan through the rest of the container to find where it ends. We do
+@@ -112,6 +130,9 @@ static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
+ 		struct microcode_amd *mc;
+ 		u32 patch_size;
+ 
++		if (size < SECTION_HDR_SIZE)
++			break;
++
+ 		hdr = (u32 *)buf;
+ 
+ 		if (hdr[0] != UCODE_UCODE_TYPE)
+@@ -126,6 +147,10 @@ static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
+ 		buf  += SECTION_HDR_SIZE;
+ 		size -= SECTION_HDR_SIZE;
+ 
++		if (size < sizeof(*mc) ||
++		    size < patch_size)
++			break;
++
+ 		mc = (struct microcode_amd *)buf;
+ 		if (eq_id == mc->hdr.processor_rev_id) {
+ 			desc->psize = patch_size;
+@@ -159,15 +184,13 @@ static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
+  */
+ static void scan_containers(u8 *ucode, size_t size, struct cont_desc *desc)
+ {
+-	ssize_t rem = size;
+-
+-	while (rem >= 0) {
+-		ssize_t s = parse_container(ucode, rem, desc);
++	while (size > 0) {
++		size_t s = parse_container(ucode, size, desc);
+ 		if (!s)
+ 			return;
+ 
+ 		ucode += s;
+-		rem   -= s;
++		size  -= s;
+ 	}
+ }
+ 
+@@ -364,20 +387,21 @@ void reload_ucode_amd(void)
+ static u16 __find_equiv_id(unsigned int cpu)
+ {
+ 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
+-	return find_equiv_id(equiv_cpu_table, uci->cpu_sig.sig);
++	return find_equiv_id(equiv_cpu_table, equiv_cpu_table_size,
++			     uci->cpu_sig.sig);
+ }
+ 
+ static u32 find_cpu_family_by_equiv_cpu(u16 equiv_cpu)
+ {
+-	int i = 0;
++	unsigned int i;
+ 
+ 	BUG_ON(!equiv_cpu_table);
+ 
+-	while (equiv_cpu_table[i].equiv_cpu != 0) {
++	for (i = 0; i < equiv_cpu_table_size &&
++		     equiv_cpu_table[i].equiv_cpu != 0; i++)
+ 		if (equiv_cpu == equiv_cpu_table[i].equiv_cpu)
+ 			return equiv_cpu_table[i].installed_cpu;
+-		i++;
+-	}
++
+ 	return 0;
+ }
+ 
+@@ -540,15 +564,31 @@ static enum ucode_state apply_microcode_amd(int cpu)
+ 	return UCODE_UPDATED;
+ }
+ 
+-static int install_equiv_cpu_table(const u8 *buf)
++static int install_equiv_cpu_table(const u8 *buf, size_t bufsize)
+ {
+ 	unsigned int *ibuf = (unsigned int *)buf;
+-	unsigned int type = ibuf[1];
+-	unsigned int size = ibuf[2];
++	unsigned int type, size;
+ 
+-	if (type != UCODE_EQUIV_CPU_TABLE_TYPE || !size) {
+-		pr_err("empty section/"
+-		       "invalid type field in container file section header\n");
++	if (bufsize < CONTAINER_HDR_SZ) {
++		pr_err("no container header\n");
++		return -EINVAL;
++	}
++
++	type = ibuf[1];
++	if (type != UCODE_EQUIV_CPU_TABLE_TYPE) {
++		pr_err("invalid type field in container file section header\n");
++		return -EINVAL;
++	}
++
++	size = ibuf[2];
++	if (size < sizeof(struct equiv_cpu_entry) ||
++	    size > UCODE_EQUIV_CPU_TABLE_MAX_SIZE) {
++		pr_err("equivalent CPU table size invalid\n");
++		return -EINVAL;
++	}
++
++	if (bufsize < CONTAINER_HDR_SZ + size) {
++		pr_err("equivalent CPU table truncated\n");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -559,6 +599,7 @@ static int install_equiv_cpu_table(const u8 *buf)
+ 	}
+ 
+ 	memcpy(equiv_cpu_table, buf + CONTAINER_HDR_SZ, size);
++	equiv_cpu_table_size = size / sizeof(struct equiv_cpu_entry);
+ 
+ 	/* add header length */
+ 	return size + CONTAINER_HDR_SZ;
+@@ -568,6 +609,7 @@ static void free_equiv_cpu_table(void)
+ {
+ 	vfree(equiv_cpu_table);
+ 	equiv_cpu_table = NULL;
++	equiv_cpu_table_size = 0;
+ }
+ 
+ static void cleanup(void)
+@@ -591,7 +633,15 @@ static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
+ 	u32 proc_fam;
+ 	u16 proc_id;
+ 
++	if (leftover < SECTION_HDR_SIZE + sizeof(*mc_hdr))
++		return leftover;
++
+ 	patch_size  = *(u32 *)(fw + 4);
++	if (patch_size > PATCH_MAX_SIZE_ABSOLUTE) {
++		pr_err("mammoth patch size %u\n", patch_size);
++		return -EINVAL;
++	}
++
+ 	crnt_size   = patch_size + SECTION_HDR_SIZE;
+ 	mc_hdr	    = (struct microcode_header_amd *)(fw + SECTION_HDR_SIZE);
+ 	proc_id	    = mc_hdr->processor_rev_id;
+@@ -613,7 +663,8 @@ static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
+ 		return crnt_size;
+ 	}
+ 
+-	ret = verify_patch_size(family, patch_size, leftover);
++	ret = verify_patch_size(family, patch_size,
++				leftover - SECTION_HDR_SIZE);
+ 	if (!ret) {
+ 		pr_err("Patch-ID 0x%08x: size mismatch.\n", mc_hdr->patch_id);
+ 		return crnt_size;
+@@ -654,7 +705,7 @@ static enum ucode_state __load_microcode_amd(u8 family, const u8 *data,
+ 	int crnt_size = 0;
+ 	int offset;
+ 
+-	offset = install_equiv_cpu_table(data);
++	offset = install_equiv_cpu_table(data, size);
+ 	if (offset < 0) {
+ 		pr_err("failed to create equivalent cpu table\n");
+ 		return ret;
+@@ -745,6 +796,10 @@ static enum ucode_state request_microcode_amd(int cpu, struct device *device,
+ 	}
+ 
+ 	ret = UCODE_ERROR;
++	if (fw->size < sizeof(u32)) {
++		pr_err("microcode far too short\n");
++		goto fw_release;
++	}
+ 	if (*(u32 *)fw->data != UCODE_MAGIC) {
+ 		pr_err("invalid magic value (0x%08x)\n", *(u32 *)fw->data);
+ 		goto fw_release;
