@@ -1,73 +1,166 @@
-Return-Path: <hariprasath.elango@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521023044; cv=none;
-        d=google.com; s=arc-20160816;
-        b=v83DG+kavGmp8/CviwQYLEPvF2om3gaBS9LbEcZ/shF0KB8920p6Re7u9MlTMvXHvb
-         49YVzUXSvElV1UMlywOaGWs2fcXtU1RyGe9UTv5zpD+6Qi0Id6yJ8bZYAUHukTbGYbqr
-         tEwxHatAvIuIK9LDkHTXEW/Jlz5cUjYcAZY2KzLGkLfLVy87s4qTq8G1NaG4o4xCioYN
-         xqlIGGGcE9RQ4g6QG2TAusodBvmLknOrYS6UiCr00IaXfknD0yVL7OPpboNZfwfA78gg
-         s9bFa8ZsQhg499b7bi7AmKAw80jfH00Wzb/PlGbpeAn0ESW9Y0IFByfr/xahnln2e+a8
-         v1pQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=3f1DubGsmL+9Td1G2PJydN5vyAoNChL1lmAwmM/TbQk=;
-        b=Q6GscuGsbrKcWuB/40kZVtg1+CTviZlz3XfHirfHI1kXAw+utqMGCF9+fmqN59S3mT
-         cUaBRbSFKVbHACVPp+k6cIIEkaKtLqaysfbDgHhwjhSigT5Wp2Eobr0N7pUg51drSZMj
-         /5TMPxpWwx7JfaovOZJhGzxrMIN1KNlKu1l8AfetI/B+64pNapGVAGo+YaYJqZlBb+oY
-         +pTEMPAHYEXgAAM495kdx100K9yNLMWxahP1aSm5BZkKL0v/m/o/82w6Pr60wZZ0mWkn
-         f910+VosEIceVU5JqamcDk3fD2keym/0HFvt/+3AExeOqJJHDT5r5m1HX9XNcbK63tZZ
-         326Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=p5jgH8Mn;
-       spf=pass (google.com: domain of hariprasath.elango@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hariprasath.elango@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=p5jgH8Mn;
-       spf=pass (google.com: domain of hariprasath.elango@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hariprasath.elango@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELuyZnlv/QxjFHTTQs08YQCriPt5fybhtVn1kh7KDHXd1jV8uis7avc6q3nZ/1FSjy/cXChGUg==
-From: hariprasath.elango@gmail.com
-To: linux@wolf-entwicklungen.de,
-	gregkh@linuxfoundation.org
-Cc: hariprasath.elango@gmail.com,
-	Valentin Vidic <Valentin.Vidic@CARNet.hr>,
-	=?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>,
-	Nguyen Phan Quang Minh <minhnpq16@gmail.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Srishti Sharma <srishtishar@gmail.com>,
-	devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: pi433: Remove comments inside code
-Date: Wed, 14 Mar 2018 15:53:31 +0530
-Message-Id: <20180314102336.8594-1-hariprasath.elango@gmail.com>
-X-Mailer: git-send-email 2.10.0.GIT
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3941007-1520715359-2-15826496647275315561
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES daen, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
+  MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520715358; b=rKq9j+zhMeLYOvxmSWuoonOSuYQ1Zb8zlTy6YvUr9YEKJbz
+    xoekLJoMqIaDCT5AKmFyb079P4xgOheTqDyBBa47YipiM3HhuTDoyI86BTLlEGAo
+    Qd6kUqVrE/Rew8cwwu/kaek7F/ErnAlvKypynFeJlOT5lYaIbgB0CXdyQ18mFf5J
+    tXv5iNMatRXoWRHeETz46f+cK7Z4SOcWM8KqZNs1/jAwu4OpnYyWEZqBVkHMFo+8
+    JU+DR1BiSJhHSbbA8b/RlNzbjrLXSZ9em9w4UVbVpcISVbgqxeRD5cbGFnq4lyuB
+    6HBr1OUTa5wPP/94VX0u3ER7g8Im6uh8QaDJGoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :content-type:content-id:mime-version:content-transfer-encoding
+    :sender:list-id; s=arctest; t=1520715358; bh=CC7rmtpmSC7YB18WcPs
+    8RicTttI2/P6uoX5b/6c8SK0=; b=dPhf1eGWZ9PQ2Axn+lggkhDwL44GjQYdmc6
+    21CnE2PhTNbtLYh7zF31c/CpGR+wJ+bZYQZFrT0BqWCKMej9lfGMpd7VRQxJ4z/H
+    CJE5DyMSTGsetOvox0EbiJzcDyDWTQJHrAYWrpc0TCRXc+lTHOamEBiMnJRfjfyq
+    wnQeqdwXDruzfIe3TJvzRQAU2mZF3e+pP19sBNXzSg8VF6hCRV/3QcDZMn/cz/uj
+    3yw76jRBmQ3A0qhPrjSGwobPm+wMNVsRaKeGaKDqIKTaix/1/iQJqDomc5NKhhlr
+    G21v74tID7m0LuQ0G2enJEt7Ivbg4UpNnVKo0kGfDwsQ6AtKaSQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim-adsp=discard (ADSP policy from amazon.co.uk);
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=SlzQszhd x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=amazon.co.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amazon.co.uk header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim-adsp=discard (ADSP policy from amazon.co.uk);
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=SlzQszhd x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=amazon201209;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=amazon.co.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=amazon.co.uk header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1750946AbeCJUzy (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 10 Mar 2018 15:55:54 -0500
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:42080 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750732AbeCJUzx (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Sat, 10 Mar 2018 15:55:53 -0500
+X-IronPort-AV: E=Sophos;i="5.47,452,1515456000";
+   d="scan'208";a="670141726"
+From: "Tautschnig, Michael" <tautschn@amazon.co.uk>
+To: "x86@kernel.org" <x86@kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Jaswinder Singh <jaswinder@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: [PATCH] x86: always use SYSCALL_DEFINE*
+Thread-Topic: [PATCH] x86: always use SYSCALL_DEFINE*
+Thread-Index: AQHTuLIp4kJZlR4voUmoYns5SdXQ2A==
+Date: Sat, 10 Mar 2018 20:55:46 +0000
+Message-ID: <14A5C8D0-3F9D-486F-A20C-55849D70FC80@amazon.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.165.246]
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <91976A686E6EEE4DB3F549E4F8BBBB3C@amazon.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594908260538557704?=
-X-GMAIL-MSGID: =?utf-8?q?1594908260538557704?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: HariPrasath Elango <hariprasath.elango@gmail.com>
+All syscall arguments are passed in as types of the same byte size as
+unsigned long (width of full registers). Using a smaller type without a
+cast may result in losing bits of information. SYSCALL_DEFINE* introduce
+adequate type casts. All definitions of syscalls in x86 except for those
+patched here have already been using the appropriate SYSCALL_DEFINE*.
 
-Remove comments inbetween code as in this case.
-
-Signed-off-by: HariPrasath Elango <hariprasath.elango@gmail.com>
+Signed-off-by: Michael Tautschnig <tautschn@amazon.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Jaswinder Singh <jaswinder@infradead.org>
+Cc: Andi Kleen <ak@linux.intel.com>
 ---
- drivers/staging/pi433/pi433_if.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/ioport.c | 3 ++-
+ arch/x86/kernel/signal.c | 5 +++--
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
-index 88da91d..5c6a722 100644
---- a/drivers/staging/pi433/pi433_if.c
-+++ b/drivers/staging/pi433/pi433_if.c
-@@ -1331,7 +1331,7 @@ static int __init pi433_init(void)
- 	 * that will key udev/mdev to add/remove /dev nodes.  Last, register
- 	 * Last, register the driver which manages those device numbers.
- 	 */
--	status = alloc_chrdev_region(&pi433_dev, 0 /*firstminor*/, N_PI433_MINORS /*count*/, "pi433" /*name*/);
-+	status = alloc_chrdev_region(&pi433_dev, 0, N_PI433_MINORS, "pi433");
- 	if (status < 0)
- 		return status;
- 
--- 
-2.10.0.GIT
+diff --git a/arch/x86/kernel/ioport.c b/arch/x86/kernel/ioport.c
+index 2f72330..d98b2a3 100644
+--- a/arch/x86/kernel/ioport.c
++++ b/arch/x86/kernel/ioport.c
+@@ -23,7 +23,8 @@
+ /*
+  * this changes the io permissions bitmap in the current task.
+  */
+-asmlinkage long sys_ioperm(unsigned long from, unsigned long num, int turn=
+_on)
++SYSCALL_DEFINE3(sys_ioperm, unsigned long, from, unsigned long, num, int,
++		turn_on)
+ {
+ 	struct thread_struct *t =3D &current->thread;
+ 	struct tss_struct *tss;
+diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
+index b9e00e8..40ba242 100644
+--- a/arch/x86/kernel/signal.c
++++ b/arch/x86/kernel/signal.c
+@@ -25,6 +25,7 @@
+ #include <linux/user-return-notifier.h>
+ #include <linux/uprobes.h>
+ #include <linux/context_tracking.h>
++#include <linux/syscalls.h>
+
+ #include <asm/processor.h>
+ #include <asm/ucontext.h>
+@@ -601,7 +602,7 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
+  * Do a signal return; undo the signal stack.
+  */
+ #ifdef CONFIG_X86_32
+-asmlinkage unsigned long sys_sigreturn(void)
++SYSCALL_DEFINE0(sigreturn)
+ {
+ 	struct pt_regs *regs =3D current_pt_regs();
+ 	struct sigframe __user *frame;
+@@ -633,7 +634,7 @@ asmlinkage unsigned long sys_sigreturn(void)
+ }
+ #endif /* CONFIG_X86_32 */
+
+-asmlinkage long sys_rt_sigreturn(void)
++SYSCALL_DEFINE0(rt_sigreturn)
+ {
+ 	struct pt_regs *regs =3D current_pt_regs();
+ 	struct rt_sigframe __user *frame;
+--
+2.7.3.AMZN
+
+
+
+Amazon Web Services UK Limited. Registered in England and Wales with regist=
+ration number 08650665 with its registered office at 1 Principal Place, Wor=
+ship Street, London, EC2A 2FA, United Kingdom.
+
+
+
