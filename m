@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELun/W9lP/tVVW7Zbl7hXYr1ui4GMYjoztNn9FJ89zNfibVYm13IjdVmW1iDvOG98sXCSrCA
-ARC-Seal: i=1; a=rsa-sha256; t=1520641319; cv=none;
+X-Google-Smtp-Source: AG47ELs26kcp0QAn7U4xyl3sKheECsQlkYOi/mx7/9ofDsLd6+2NYqA3x7joyWBkSDM5ZLTEpf9n
+ARC-Seal: i=1; a=rsa-sha256; t=1520641317; cv=none;
         d=google.com; s=arc-20160816;
-        b=mp3HgPzcic+j/Gq4zvoPsRHN9ntKQYyXUHLeP8WLSWtvVy+kgVjG5LoQ+eFxDWZZDo
-         yknx8e7dCykAjTzKYfKSDKDc3B5BxAxegsQFkjeqKNMiTVQemPsojSukZnYjFYynwiCl
-         He4h4yiYCLTzC5cj78IgqN8SlNNXNuc615jYjNLI8WqT4tDQGgAHMNRBK+OpfrWC6xgH
-         DE+ZWWfns8wg9R6fXS5MJd8OFydFK7wKOwtc1COMnq2AMZpynZjlG++6UCdeZf4A8Kw8
-         vr2GLxpDri26FPdPA2q5eC2bhF/AzUYVLRbdA4ZY522eDRwDnyxLPHAqcE48c0GAGZyK
-         4vPw==
+        b=x0p9Rm+g64K06IWIpABXab4JYhi4r0Bo/GD1Cb1Ng+u3m90ymlpV+ssDom9MNiOPuH
+         LftZ9qfpt2T0JnmyMkzMvJZqNi5xY+/BYL7GZTc/buPnxgHeOPltgA1/5H6O3CkTsTl+
+         5YYimlbpQMF9ZZ6PV7aerNK0m41EVWwF8SSNDdsNPhMu9sIy3oJwcSwv8UOyJASDSq25
+         MwfkU1jhwzg1pfmt4mxbobwptNTJzPcHFXwiT0qD9D/Ubf6uNgRq9si8ub5L9EAK8TGd
+         0PZrQFb4EjI73HDOSlgFhAHmrhW61R2dpUhaq5dTWQ2OVLDPLL5XCzkwKbK+PtWyaCuf
+         7lQA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=WXqHqCOWTSQ5rQrZJqb6HOqguu0NGEgY3EWaOL5AMQw=;
-        b=Q+eZqjogaRQWHfh0d1JgWSBN05w7tdRH8DjK+zdYzbGjhni82g0/0HUMCkNl8NSzBW
-         SHtcB4MI+h+6Nnv/x72C2G/NsRChA1iySW2ZF/8I/OtfslIaTTvNVOw75R5KKdFU3iwS
-         q8L1HHL/jAxCO7Jv32vDkW0GrK7G8ibFbwuXN97cgC4KYPkhvU0G55g4T01kxuDp0JIm
-         BvzfO4pMCL+Se7BIV7FYSsfv0MR+29NenwgniCEBq0RRyE6IgSFANb4S/t2qKeWk5vDm
-         FTi9IMIMuwQEAbxsOU4wSj7LHyKS66WrWQS4ihiOX6+W3hvdncMZyYalkrUDI+NY3lIT
-         veUA==
+        bh=ow0Eb5UcJakGeERhLBnP+q99RDAAxfN3fzm4ZU05jdg=;
+        b=RaFk4AkXyLHtER1LXTr6m/Lk4lcD5POc3TzAS5f6FNqHPZPPvncCnP4B3AdbKDnwfY
+         M+rvybK34wj7kWoYb6Vbf5nwwUv0i7ah8zYR8cB9h1n2nBsbbxuPPEDR9FeQx/6sy713
+         UAzTyl7WYg3tDsZBMssiLrVT5wsfiNzZerBbdM3O0tGst2I6enaSMmZRJ8D9e0sUlpcV
+         COWowEif9qwHn7cDNJLsXYgBroqqz7X4aM4jadN4ExfX7MpxgChCuf1O1k51ZiKC38iN
+         jmN27ZtfuG0B/+PFMkJSB/SGUuPR3mDa53Hyl+xnaWtaoN9Gmf9hyNKw1w1CDRuOJy+V
+         sAwQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jianlin Shi <jishi@redhat.com>,
-	Sabrina Dubroca <sd@queasysnail.net>,
-	Stefano Brivio <sbrivio@redhat.com>,
+	Jakub Kicinski <jakub.kicinski@netronome.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 38/65] net: ipv4: dont allow setting net.ipv4.route.min_pmtu below 68
-Date: Fri,  9 Mar 2018 16:18:38 -0800
-Message-Id: <20180310001828.061558481@linuxfoundation.org>
+Subject: [PATCH 4.9 37/65] net: fix race on decreasing number of TX queues
+Date: Fri,  9 Mar 2018 16:18:37 -0800
+Message-Id: <20180310001827.922330526@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
 References: <20180310001824.927996722@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507833206218413?=
-X-GMAIL-MSGID: =?utf-8?q?1594507992535281451?=
+X-GMAIL-THRID: =?utf-8?q?1594507800170011350?=
+X-GMAIL-MSGID: =?utf-8?q?1594507990374827746?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,62 +49,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
 
-[ Upstream commit c7272c2f1229125f74f22dcdd59de9bbd804f1c8 ]
+[ Upstream commit ac5b70198adc25c73fba28de4f78adcee8f6be0b ]
 
-According to RFC 1191 sections 3 and 4, ICMP frag-needed messages
-indicating an MTU below 68 should be rejected:
+netif_set_real_num_tx_queues() can be called when netdev is up.
+That usually happens when user requests change of number of
+channels/rings with ethtool -L.  The procedure for changing
+the number of queues involves resetting the qdiscs and setting
+dev->num_tx_queues to the new value.  When the new value is
+lower than the old one, extra care has to be taken to ensure
+ordering of accesses to the number of queues vs qdisc reset.
 
-    A host MUST never reduce its estimate of the Path MTU below 68
-    octets.
+Currently the queues are reset before new dev->num_tx_queues
+is assigned, leaving a window of time where packets can be
+enqueued onto the queues going down, leading to a likely
+crash in the drivers, since most drivers don't check if TX
+skbs are assigned to an active queue.
 
-and (talking about ICMP frag-needed's Next-Hop MTU field):
-
-    This field will never contain a value less than 68, since every
-    router "must be able to forward a datagram of 68 octets without
-    fragmentation".
-
-Furthermore, by letting net.ipv4.route.min_pmtu be set to negative
-values, we can end up with a very large PMTU when (-1) is cast into u32.
-
-Let's also make ip_rt_min_pmtu a u32, since it's only ever compared to
-unsigned ints.
-
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
+Fixes: e6484930d7c7 ("net: allocate tx queues in register_netdevice")
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/route.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ net/core/dev.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -126,10 +126,13 @@ static int ip_rt_redirect_silence __read
- static int ip_rt_error_cost __read_mostly	= HZ;
- static int ip_rt_error_burst __read_mostly	= 5 * HZ;
- static int ip_rt_mtu_expires __read_mostly	= 10 * 60 * HZ;
--static int ip_rt_min_pmtu __read_mostly		= 512 + 20 + 20;
-+static u32 ip_rt_min_pmtu __read_mostly		= 512 + 20 + 20;
- static int ip_rt_min_advmss __read_mostly	= 256;
- 
- static int ip_rt_gc_timeout __read_mostly	= RT_GC_TIMEOUT;
-+
-+static int ip_min_valid_pmtu __read_mostly	= IPV4_MIN_MTU;
-+
- /*
-  *	Interface to generic destination cache.
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -2199,8 +2199,11 @@ EXPORT_SYMBOL(netif_set_xps_queue);
   */
-@@ -2772,7 +2775,8 @@ static struct ctl_table ipv4_route_table
- 		.data		= &ip_rt_min_pmtu,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= &ip_min_valid_pmtu,
- 	},
- 	{
- 		.procname	= "min_adv_mss",
+ int netif_set_real_num_tx_queues(struct net_device *dev, unsigned int txq)
+ {
++	bool disabling;
+ 	int rc;
+ 
++	disabling = txq < dev->real_num_tx_queues;
++
+ 	if (txq < 1 || txq > dev->num_tx_queues)
+ 		return -EINVAL;
+ 
+@@ -2216,15 +2219,19 @@ int netif_set_real_num_tx_queues(struct
+ 		if (dev->num_tc)
+ 			netif_setup_tc(dev, txq);
+ 
+-		if (txq < dev->real_num_tx_queues) {
++		dev->real_num_tx_queues = txq;
++
++		if (disabling) {
++			synchronize_net();
+ 			qdisc_reset_all_tx_gt(dev, txq);
+ #ifdef CONFIG_XPS
+ 			netif_reset_xps_queues_gt(dev, txq);
+ #endif
+ 		}
++	} else {
++		dev->real_num_tx_queues = txq;
+ 	}
+ 
+-	dev->real_num_tx_queues = txq;
+ 	return 0;
+ }
+ EXPORT_SYMBOL(netif_set_real_num_tx_queues);
