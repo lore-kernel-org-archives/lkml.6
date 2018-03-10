@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932915AbeCJSVq (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:21:46 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:41911 "EHLO
+        id S932995AbeCJSWA (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:22:00 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:35398 "EHLO
         mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932892AbeCJSVo (ORCPT
+        with ESMTP id S932071AbeCJSVu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:21:44 -0500
-X-Google-Smtp-Source: AG47ELsBzexsaRxgZLjintVXIGm6K5ye/pFVkkF8TU/CZWgUJ/0A3eqgSZD/RYuE/fXa6keLrQN/JQ==
+        Sat, 10 Mar 2018 13:21:50 -0500
+X-Google-Smtp-Source: AG47ELvrjf7y9MX6Z2iOsENK8KWJjBDClmYArCXQ/8UIwjTFaC8Ll8ARmmqijhn8tBkmeKsHVMFMvw==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 72/83] File operation: fallocate.
-Date: Sat, 10 Mar 2018 10:18:53 -0800
-Message-Id: <1520705944-6723-73-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 77/83] GC: Fast garbage collection.
+Date: Sat, 10 Mar 2018 10:18:58 -0800
+Message-Id: <1520705944-6723-78-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -27,196 +27,265 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andiry Xu <jix024@cs.ucsd.edu>
 
-Fallocate works similar as writes, allocating zeroed blocked
-for the holes in the request region.
+NOVA cleans and compacts the log when the log is full.
+The log is a linked list of 4KB pmem pages, and NOVA performs
+fast garbage collection by deleting dead log pages (all the entries are invalid)
+from the linked list.
+
+Example:
+I = Invalid, V = Valid
+
+VIIV -> IIII -> VVII
+
+	||
+	||  fast gc
+	\/
+
+VIIV -> VVII
 
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/file.c | 148 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/nova/nova.h |   5 ++
- 2 files changed, 153 insertions(+)
+ fs/nova/Makefile |   2 +-
+ fs/nova/gc.c     | 186 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/nova/log.c    |   3 +
+ fs/nova/nova.h   |   7 +++
+ 4 files changed, 197 insertions(+), 1 deletion(-)
+ create mode 100644 fs/nova/gc.c
 
-diff --git a/fs/nova/file.c b/fs/nova/file.c
-index b94a9a3..a6b5bd3 100644
---- a/fs/nova/file.c
-+++ b/fs/nova/file.c
-@@ -113,6 +113,153 @@ static int nova_open(struct inode *inode, struct file *filp)
- 	return generic_file_open(inode, filp);
- }
+diff --git a/fs/nova/Makefile b/fs/nova/Makefile
+index 87e56c6..7a5fb6d 100644
+--- a/fs/nova/Makefile
++++ b/fs/nova/Makefile
+@@ -4,5 +4,5 @@
  
-+static long nova_fallocate(struct file *file, int mode, loff_t offset,
-+	loff_t len)
+ obj-$(CONFIG_NOVA_FS) += nova.o
+ 
+-nova-y := balloc.o bbuild.o dax.o dir.o file.o inode.o ioctl.o journal.o\
++nova-y := balloc.o bbuild.o dax.o dir.o file.o gc.o inode.o ioctl.o journal.o\
+ 	  log.o namei.o rebuild.o stats.o super.o symlink.o
+diff --git a/fs/nova/gc.c b/fs/nova/gc.c
+new file mode 100644
+index 0000000..1634c04
+--- /dev/null
++++ b/fs/nova/gc.c
+@@ -0,0 +1,186 @@
++/*
++ * BRIEF DESCRIPTION
++ *
++ * Garbage collection methods
++ *
++ * Copyright 2015-2016 Regents of the University of California,
++ * UCSD Non-Volatile Systems Lab, Andiry Xu <jix024@cs.ucsd.edu>
++ * Copyright 2012-2013 Intel Corporation
++ * Copyright 2009-2011 Marco Stornelli <marco.stornelli@gmail.com>
++ * Copyright 2003 Sony Corporation
++ * Copyright 2003 Matsushita Electric Industrial Co., Ltd.
++ * 2003-2004 (c) MontaVista Software, Inc. , Steve Longerbeam
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2. This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#include "nova.h"
++#include "inode.h"
++
++
++static bool curr_page_invalid(struct super_block *sb,
++	struct nova_inode *pi, struct nova_inode_info_header *sih,
++	u64 page_head)
 +{
-+	struct inode *inode = file->f_path.dentry->d_inode;
-+	struct super_block *sb = inode->i_sb;
-+	struct nova_inode_info *si = NOVA_I(inode);
-+	struct nova_inode_info_header *sih = &si->header;
-+	struct nova_inode *pi;
-+	struct nova_file_write_entry *entry;
-+	struct nova_file_write_item *entry_item;
-+	struct list_head item_head;
-+	struct nova_inode_update update;
-+	unsigned long start_blk, num_blocks, ent_blks = 0;
-+	unsigned long total_blocks = 0;
-+	unsigned long blocknr = 0;
-+	unsigned long blockoff;
-+	loff_t new_size;
-+	long ret = 0;
-+	int inplace = 0;
-+	int blocksize_mask;
-+	int allocated = 0;
-+	timing_t fallocate_time;
-+	u64 epoch_id;
-+	u32 time;
++	struct nova_inode_log_page *curr_page;
++	struct nova_inode_page_tail page_tail;
++	unsigned int num_entries;
++	unsigned int invalid_entries;
++	bool ret;
++	timing_t check_time;
++	int rc;
 +
-+	/*
-+	 * Fallocate does not make much sence for CoW,
-+	 * but we still support it for DAX-mmap purpose.
-+	 */
++	NOVA_START_TIMING(check_invalid_t, check_time);
 +
-+	/* We only support the FALLOC_FL_KEEP_SIZE mode */
-+	if (mode & ~FALLOC_FL_KEEP_SIZE)
-+		return -EOPNOTSUPP;
-+
-+	if (S_ISDIR(inode->i_mode))
-+		return -ENODEV;
-+
-+	INIT_LIST_HEAD(&item_head);
-+	new_size = len + offset;
-+	if (!(mode & FALLOC_FL_KEEP_SIZE) && new_size > inode->i_size) {
-+		ret = inode_newsize_ok(inode, new_size);
-+		if (ret)
-+			return ret;
-+	} else {
-+		new_size = inode->i_size;
++	curr_page = (struct nova_inode_log_page *)
++					nova_get_block(sb, page_head);
++	rc = memcpy_mcsafe(&page_tail, &curr_page->page_tail,
++					sizeof(struct nova_inode_page_tail));
++	if (rc) {
++		nova_err(sb, "check page failed\n");
++		return false;
 +	}
 +
-+	nova_dbgv("%s: inode %lu, offset %lld, count %lld, mode 0x%x\n",
-+			__func__, inode->i_ino,	offset, len, mode);
++	num_entries = le32_to_cpu(page_tail.num_entries);
++	invalid_entries = le32_to_cpu(page_tail.invalid_entries);
 +
-+	NOVA_START_TIMING(fallocate_t, fallocate_time);
-+	inode_lock(inode);
-+	sih_lock(sih);
-+
-+	pi = nova_get_inode(sb, inode);
-+	if (!pi) {
-+		ret = -EACCES;
-+		goto out;
++	ret = (invalid_entries == num_entries);
++	if (!ret) {
++		sih->num_entries += num_entries;
++		sih->valid_entries += num_entries - invalid_entries;
 +	}
 +
-+	inode->i_mtime = inode->i_ctime = current_time(inode);
-+	time = current_time(inode).tv_sec;
-+
-+	blocksize_mask = sb->s_blocksize - 1;
-+	start_blk = offset >> sb->s_blocksize_bits;
-+	blockoff = offset & blocksize_mask;
-+	num_blocks = (blockoff + len + blocksize_mask) >> sb->s_blocksize_bits;
-+
-+	epoch_id = nova_get_epoch_id(sb);
-+	update.tail = sih->log_tail;
-+	while (num_blocks > 0) {
-+		ent_blks = nova_check_existing_entry(sb, inode, num_blocks,
-+						start_blk, &entry,
-+						1, epoch_id, &inplace);
-+
-+		if (entry && inplace) {
-+			if (entry->size < new_size) {
-+				/* Update existing entry */
-+				entry->size = new_size;
-+				nova_persist_entry(entry);
-+			}
-+			allocated = ent_blks;
-+			goto next;
-+		}
-+
-+		/* Allocate zeroed blocks to fill hole */
-+		allocated = nova_new_data_blocks(sb, sih, &blocknr, start_blk,
-+				 ent_blks, ALLOC_INIT_ZERO, ANY_CPU,
-+				 ALLOC_FROM_HEAD);
-+		nova_dbgv("%s: alloc %d blocks @ %lu\n", __func__,
-+						allocated, blocknr);
-+
-+		if (allocated <= 0) {
-+			nova_dbg("%s alloc %lu blocks failed!, %d\n",
-+						__func__, ent_blks, allocated);
-+			ret = allocated;
-+			goto out;
-+		}
-+
-+		entry_item = nova_alloc_file_write_item(sb);
-+		if (!entry_item) {
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+
-+		/* Handle hole fill write */
-+		nova_init_file_write_item(sb, sih, entry_item, epoch_id,
-+					start_blk, allocated, blocknr,
-+					time, new_size);
-+
-+		list_add_tail(&entry_item->list, &item_head);
-+
-+		total_blocks += allocated;
-+next:
-+		num_blocks -= allocated;
-+		start_blk += allocated;
-+	}
-+
-+	ret = nova_commit_writes_to_log(sb, pi, inode,
-+					&item_head, total_blocks, 1);
-+	if (ret < 0) {
-+		nova_err(sb, "commit to log failed\n");
-+		goto out;
-+	}
-+
-+	if (ret || (mode & FALLOC_FL_KEEP_SIZE)) {
-+		pi->i_flags |= cpu_to_le32(NOVA_EOFBLOCKS_FL);
-+		sih->i_flags |= cpu_to_le32(NOVA_EOFBLOCKS_FL);
-+	}
-+
-+	if (!(mode & FALLOC_FL_KEEP_SIZE) && new_size > inode->i_size) {
-+		inode->i_size = new_size;
-+		sih->i_size = new_size;
-+	}
-+
-+	nova_persist_inode(pi);
-+
-+out:
-+	if (ret < 0)
-+		nova_cleanup_incomplete_write(sb, sih, &item_head, 1);
-+
-+	sih_unlock(sih);
-+	inode_unlock(inode);
-+	NOVA_END_TIMING(fallocate_t, fallocate_time);
++	NOVA_END_TIMING(check_invalid_t, check_time);
 +	return ret;
 +}
 +
- static ssize_t
- do_dax_mapping_read(struct file *filp, char __user *buf,
- 	size_t len, loff_t *ppos)
-@@ -477,6 +624,7 @@ const struct file_operations nova_dax_file_operations = {
- 	.open		= nova_open,
- 	.fsync		= nova_fsync,
- 	.flush		= nova_flush,
-+	.fallocate	= nova_fallocate,
- };
++static void free_curr_page(struct super_block *sb,
++	struct nova_inode_info_header *sih,
++	struct nova_inode_log_page *curr_page,
++	struct nova_inode_log_page *last_page, u64 curr_head)
++{
++	u8 btype = sih->i_blk_type;
++
++	nova_set_next_page_address(sb, last_page,
++			curr_page->page_tail.next_page, 1);
++	nova_free_log_blocks(sb, sih,
++			nova_get_blocknr(sb, curr_head, btype), 1);
++}
++
++
++/*
++ * Scan pages in the log and remove those with no valid log entries.
++ */
++int nova_inode_log_fast_gc(struct super_block *sb,
++	struct nova_inode *pi, struct nova_inode_info_header *sih,
++	u64 curr_tail, u64 new_block,
++	int num_pages, int force_thorough)
++{
++	u64 curr, next, possible_head = 0;
++	int found_head = 0;
++	struct nova_inode_log_page *last_page = NULL;
++	struct nova_inode_log_page *curr_page = NULL;
++	int first_need_free = 0;
++	int num_logs;
++	u8 btype = sih->i_blk_type;
++	unsigned long blocks;
++	unsigned long checked_pages = 0;
++	int freed_pages = 0;
++	timing_t gc_time;
++
++	NOVA_START_TIMING(fast_gc_t, gc_time);
++	curr = sih->log_head;
++	sih->valid_entries = 0;
++	sih->num_entries = 0;
++
++	num_logs = 1;
++
++	nova_dbgv("%s: log head 0x%llx, tail 0x%llx\n",
++				__func__, curr, curr_tail);
++	while (1) {
++		if (curr >> PAGE_SHIFT == sih->log_tail >> PAGE_SHIFT) {
++			/* Don't recycle tail page */
++			if (found_head == 0) {
++				possible_head = cpu_to_le64(curr);
++			}
++			break;
++		}
++
++		curr_page = (struct nova_inode_log_page *)
++					nova_get_block(sb, curr);
++		next = next_log_page(sb, curr);
++		if (next < 0)
++			break;
++
++		nova_dbg_verbose("curr 0x%llx, next 0x%llx\n", curr, next);
++		if (curr_page_invalid(sb, pi, sih, curr)) {
++			nova_dbg_verbose("curr page %p invalid\n", curr_page);
++			if (curr == sih->log_head) {
++				/* Free first page later */
++				first_need_free = 1;
++				last_page = curr_page;
++			} else {
++				nova_dbg_verbose("Free log block 0x%llx\n",
++						curr >> PAGE_SHIFT);
++				free_curr_page(sb, sih, curr_page, last_page,
++						curr);
++			}
++			NOVA_STATS_ADD(fast_gc_pages, 1);
++			freed_pages++;
++		} else {
++			if (found_head == 0) {
++				possible_head = cpu_to_le64(curr);
++				found_head = 1;
++			}
++			last_page = curr_page;
++		}
++
++		curr = next;
++		checked_pages++;
++		if (curr == 0)
++			break;
++	}
++
++	NOVA_STATS_ADD(fast_checked_pages, checked_pages);
++	nova_dbgv("checked pages %lu, freed %d\n", checked_pages, freed_pages);
++	checked_pages -= freed_pages;
++
++	// TODO:  I think this belongs in nova_extend_inode_log.
++	if (num_pages > 0) {
++		curr = BLOCK_OFF(curr_tail);
++		curr_page = (struct nova_inode_log_page *)
++						  nova_get_block(sb, curr);
++
++		nova_set_next_page_address(sb, curr_page, new_block, 1);
++	}
++
++	curr = sih->log_head;
++
++	pi->log_head = possible_head;
++	nova_persist_inode(pi);
++	sih->log_head = possible_head;
++	nova_dbgv("%s: %d new head 0x%llx\n", __func__,
++					found_head, possible_head);
++	sih->log_pages += (num_pages - freed_pages) * num_logs;
++	/* Don't update log tail pointer here */
++	nova_flush_buffer(&pi->log_head, CACHELINE_SIZE, 1);
++
++	if (first_need_free) {
++		nova_dbg_verbose("Free log head block 0x%llx\n",
++					curr >> PAGE_SHIFT);
++		nova_free_log_blocks(sb, sih,
++				nova_get_blocknr(sb, curr, btype), 1);
++	}
++
++	NOVA_END_TIMING(fast_gc_t, gc_time);
++
++	if (sih->num_entries == 0)
++		return 0;
++
++	blocks = (sih->valid_entries * checked_pages) / sih->num_entries;
++	if ((sih->valid_entries * checked_pages) % sih->num_entries)
++		blocks++;
++
++	return 0;
++}
+diff --git a/fs/nova/log.c b/fs/nova/log.c
+index 451be27..66bf98e 100644
+--- a/fs/nova/log.c
++++ b/fs/nova/log.c
+@@ -964,6 +964,9 @@ static u64 nova_extend_inode_log(struct super_block *sb, struct nova_inode *pi,
+ 	}
  
- const struct inode_operations nova_file_inode_operations = {
+ 	/* Perform GC */
++	nova_inode_log_fast_gc(sb, pi, sih, curr_p,
++			       new_block, allocated, 0);
++
+ 	return new_block;
+ }
+ 
 diff --git a/fs/nova/nova.h b/fs/nova/nova.h
-index 6392bb3..ab9e8f3 100644
+index ab9153e..32b7b2f 100644
 --- a/fs/nova/nova.h
 +++ b/fs/nova/nova.h
-@@ -477,6 +477,11 @@ void nova_init_file_write_item(struct super_block *sb,
- 	struct nova_inode_info_header *sih, struct nova_file_write_item *item,
- 	u64 epoch_id, u64 pgoff, int num_pages, u64 blocknr, u32 time,
- 	u64 file_size);
-+unsigned long nova_check_existing_entry(struct super_block *sb,
-+	struct inode *inode, unsigned long num_blocks, unsigned long start_blk,
-+	struct nova_file_write_entry **ret_entry,
-+	int check_next, u64 epoch_id,
-+	int *inplace);
- ssize_t nova_inplace_file_write(struct file *filp, const char __user *buf,
- 	size_t len, loff_t *ppos);
- ssize_t do_nova_inplace_file_write(struct file *filp, const char __user *buf,
+@@ -515,6 +515,13 @@ int nova_remove_dentry(struct dentry *dentry, int dec_link,
+ extern const struct file_operations nova_dax_file_operations;
+ extern const struct inode_operations nova_file_inode_operations;
+ 
++
++/* gc.c */
++int nova_inode_log_fast_gc(struct super_block *sb,
++	struct nova_inode *pi, struct nova_inode_info_header *sih,
++	u64 curr_tail, u64 new_block, int num_pages,
++	int force_thorough);
++
+ /* ioctl.c */
+ extern long nova_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
+ #ifdef CONFIG_COMPAT
 -- 
 2.7.4
