@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932367AbeCJSlt (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:41:49 -0500
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:35332 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932324AbeCJSUg (ORCPT
+        id S932494AbeCJSmb (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:42:31 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:39883 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932269AbeCJSUd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:20:36 -0500
-X-Google-Smtp-Source: AG47ELuI0rrtqekL3RRSj4vgfHfQ44IU7NC9jIkl7So4M1OORVFmaD3bs+1y2KO0umr5VmhfnFJx9Q==
+        Sat, 10 Mar 2018 13:20:33 -0500
+X-Google-Smtp-Source: AG47ELsx5P1VO16Fj5Sny1ZkiHnPZQeFqNDbaHJWUAmCyGaOfKQjyb8hDlMXMf0ISjwgQlnVWGKKTQ==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 16/83] Initialize block map and free lists in nova_init().
-Date: Sat, 10 Mar 2018 10:17:57 -0800
-Message-Id: <1520705944-6723-17-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 14/83] Add range node kmem cache.
+Date: Sat, 10 Mar 2018 10:17:55 -0800
+Message-Id: <1520705944-6723-15-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -27,220 +27,148 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andiry Xu <jix024@cs.ucsd.edu>
 
-NOVA divides the pmem range equally among per-CPU free lists,
-and format the red-black trees by inserting the initial free range.
+Range node specifies a range of [start, end]. and is managed by a red-black tree.
+NOVA uses range node to manage NVM allocator and inodes being used.
 
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/balloc.c | 161 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/nova/balloc.h |  13 ++++-
- fs/nova/super.c  |   2 +
- 3 files changed, 175 insertions(+), 1 deletion(-)
+ fs/nova/nova.h  |  8 ++++++++
+ fs/nova/super.c | 45 ++++++++++++++++++++++++++++++++++++++++++---
+ fs/nova/super.h |  2 ++
+ 3 files changed, 52 insertions(+), 3 deletions(-)
 
-diff --git a/fs/nova/balloc.c b/fs/nova/balloc.c
-index 450c942..cb627db 100644
---- a/fs/nova/balloc.c
-+++ b/fs/nova/balloc.c
-@@ -55,4 +55,165 @@ void nova_delete_free_lists(struct super_block *sb)
- 	sbi->free_lists = NULL;
+diff --git a/fs/nova/nova.h b/fs/nova/nova.h
+index ba7ffca..e0e85fb 100644
+--- a/fs/nova/nova.h
++++ b/fs/nova/nova.h
+@@ -301,6 +301,14 @@ static inline u64 nova_get_epoch_id(struct super_block *sb)
  }
  
-+// Initialize a free list.  Each CPU gets an equal share of the block space to
-+// manage.
-+static void nova_init_free_list(struct super_block *sb,
-+	struct free_list *free_list, int index)
-+{
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
-+	unsigned long per_list_blocks;
+ #include "inode.h"
 +
-+	per_list_blocks = sbi->num_blocks / sbi->cpus;
++/* A node in the RB tree representing a range of pages */
++struct nova_range_node {
++	struct rb_node node;
++	unsigned long range_low;
++	unsigned long range_high;
++};
 +
-+	free_list->block_start = per_list_blocks * index;
-+	free_list->block_end = free_list->block_start +
-+					per_list_blocks - 1;
-+	if (index == 0)
-+		free_list->block_start += sbi->head_reserved_blocks;
-+	if (index == sbi->cpus - 1)
-+		free_list->block_end -= sbi->tail_reserved_blocks;
-+}
-+
-+inline struct nova_range_node *nova_alloc_blocknode(struct super_block *sb)
-+{
-+	return nova_alloc_range_node(sb);
-+}
-+
-+inline void nova_free_blocknode(struct super_block *sb,
-+	struct nova_range_node *node)
-+{
-+	nova_free_range_node(node);
-+}
-+
-+void nova_init_blockmap(struct super_block *sb, int recovery)
-+{
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
-+	struct rb_root *tree;
-+	struct nova_range_node *blknode;
-+	struct free_list *free_list;
-+	int i;
-+	int ret;
-+
-+	/* Divide the block range among per-CPU free lists */
-+	sbi->per_list_blocks = sbi->num_blocks / sbi->cpus;
-+	for (i = 0; i < sbi->cpus; i++) {
-+		free_list = nova_get_free_list(sb, i);
-+		tree = &(free_list->block_free_tree);
-+		nova_init_free_list(sb, free_list, i);
-+
-+		/* For recovery, update these fields later */
-+		if (recovery == 0) {
-+			free_list->num_free_blocks = free_list->block_end -
-+						free_list->block_start + 1;
-+
-+			blknode = nova_alloc_blocknode(sb);
-+			if (blknode == NULL)
-+				return;
-+			blknode->range_low = free_list->block_start;
-+			blknode->range_high = free_list->block_end;
-+			ret = nova_insert_blocktree(sbi, tree, blknode);
-+			if (ret) {
-+				nova_err(sb, "%s failed\n", __func__);
-+				nova_free_blocknode(sb, blknode);
-+				return;
-+			}
-+			free_list->first_node = blknode;
-+			free_list->last_node = blknode;
-+			free_list->num_blocknode = 1;
-+		}
-+
-+		nova_dbgv("%s: free list %d: block start %lu, end %lu, %lu free blocks\n",
-+			  __func__, i,
-+			  free_list->block_start,
-+			  free_list->block_end,
-+			  free_list->num_free_blocks);
-+	}
-+}
-+
-+static inline int nova_rbtree_compare_rangenode(struct nova_range_node *curr,
-+	unsigned long range_low)
-+{
-+	if (range_low < curr->range_low)
-+		return -1;
-+	if (range_low > curr->range_high)
-+		return 1;
+ #include "bbuild.h"
  
-+	return 0;
-+}
-+
-+int nova_find_range_node(struct nova_sb_info *sbi,
-+	struct rb_root *tree, unsigned long range_low,
-+	struct nova_range_node **ret_node)
-+{
-+	struct nova_range_node *curr = NULL;
-+	struct rb_node *temp;
-+	int compVal;
-+	int ret = 0;
-+
-+	temp = tree->rb_node;
-+
-+	while (temp) {
-+		curr = container_of(temp, struct nova_range_node, node);
-+		compVal = nova_rbtree_compare_rangenode(curr, range_low);
-+
-+		if (compVal == -1) {
-+			temp = temp->rb_left;
-+		} else if (compVal == 1) {
-+			temp = temp->rb_right;
-+		} else {
-+			ret = 1;
-+			break;
-+		}
-+	}
-+
-+	*ret_node = curr;
-+	return ret;
-+}
-+
-+
-+int nova_insert_range_node(struct rb_root *tree,
-+	struct nova_range_node *new_node)
-+{
-+	struct nova_range_node *curr;
-+	struct rb_node **temp, *parent;
-+	int compVal;
-+
-+	temp = &(tree->rb_node);
-+	parent = NULL;
-+
-+	while (*temp) {
-+		curr = container_of(*temp, struct nova_range_node, node);
-+		compVal = nova_rbtree_compare_rangenode(curr,
-+					new_node->range_low);
-+		parent = *temp;
-+
-+		if (compVal == -1) {
-+			temp = &((*temp)->rb_left);
-+		} else if (compVal == 1) {
-+			temp = &((*temp)->rb_right);
-+		} else {
-+			nova_dbg("%s: entry %lu - %lu already exists: %lu - %lu\n",
-+				 __func__, new_node->range_low,
-+				new_node->range_high, curr->range_low,
-+				curr->range_high);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	rb_link_node(&new_node->node, parent, temp);
-+	rb_insert_color(&new_node->node, tree);
-+
-+	return 0;
-+}
-+
-+inline int nova_insert_blocktree(struct nova_sb_info *sbi,
-+	struct rb_root *tree, struct nova_range_node *new_node)
-+{
-+	int ret;
-+
-+	ret = nova_insert_range_node(tree, new_node);
-+	if (ret)
-+		nova_dbg("ERROR: %s failed %d\n", __func__, ret);
-+
-+	return ret;
-+}
-diff --git a/fs/nova/balloc.h b/fs/nova/balloc.h
-index e7c7a1d..57a93e4 100644
---- a/fs/nova/balloc.h
-+++ b/fs/nova/balloc.h
-@@ -62,5 +62,16 @@ enum alloc_type {
- 
- int nova_alloc_block_free_lists(struct super_block *sb);
- void nova_delete_free_lists(struct super_block *sb);
--
-+inline struct nova_range_node *nova_alloc_blocknode(struct super_block *sb);
-+inline void nova_free_blocknode(struct super_block *sb,
-+	struct nova_range_node *bnode);
-+extern void nova_init_blockmap(struct super_block *sb, int recovery);
-+inline int nova_insert_blocktree(struct nova_sb_info *sbi,
-+	struct rb_root *tree, struct nova_range_node *new_node);
-+
-+extern int nova_insert_range_node(struct rb_root *tree,
-+				  struct nova_range_node *new_node);
-+extern int nova_find_range_node(struct nova_sb_info *sbi,
-+				struct rb_root *tree, unsigned long range_low,
-+				struct nova_range_node **ret_node);
- #endif
+ /* ====================================================== */
 diff --git a/fs/nova/super.c b/fs/nova/super.c
-index 43b24a7..9762f26 100644
+index f41cc04..aec1cd3 100644
 --- a/fs/nova/super.c
 +++ b/fs/nova/super.c
-@@ -376,6 +376,8 @@ static struct nova_inode *nova_init(struct super_block *sb,
- 	pi->nova_ino = NOVA_BLOCKNODE_INO;
- 	nova_flush_buffer(pi, CACHELINE_SIZE, 1);
+@@ -52,6 +52,7 @@ MODULE_PARM_DESC(nova_dbgmask, "Control debugging output");
+ static struct super_operations nova_sops;
  
-+	nova_init_blockmap(sb, 0);
+ static struct kmem_cache *nova_inode_cachep;
++static struct kmem_cache *nova_range_node_cachep;
+ 
+ 
+ /* FIXME: should the following variable be one per NOVA instance? */
+@@ -686,6 +687,20 @@ static void nova_put_super(struct super_block *sb)
+ 	sb->s_fs_info = NULL;
+ }
+ 
++inline void nova_free_range_node(struct nova_range_node *node)
++{
++	kmem_cache_free(nova_range_node_cachep, node);
++}
 +
- 	sbi->nova_sb->s_size = cpu_to_le64(size);
- 	sbi->nova_sb->s_blocksize = cpu_to_le32(blocksize);
- 	sbi->nova_sb->s_magic = cpu_to_le32(NOVA_SUPER_MAGIC);
++inline struct nova_range_node *nova_alloc_range_node(struct super_block *sb)
++{
++	struct nova_range_node *p;
++
++	p = (struct nova_range_node *)
++		kmem_cache_zalloc(nova_range_node_cachep, GFP_NOFS);
++	return p;
++}
++
+ static struct inode *nova_alloc_inode(struct super_block *sb)
+ {
+ 	struct nova_inode_info *vi;
+@@ -719,6 +734,17 @@ static void init_once(void *foo)
+ 	inode_init_once(&vi->vfs_inode);
+ }
+ 
++static int __init init_rangenode_cache(void)
++{
++	nova_range_node_cachep = kmem_cache_create("nova_range_node_cache",
++					sizeof(struct nova_range_node),
++					0, (SLAB_RECLAIM_ACCOUNT |
++					SLAB_MEM_SPREAD), NULL);
++	if (nova_range_node_cachep == NULL)
++		return -ENOMEM;
++	return 0;
++}
++
+ static int __init init_inodecache(void)
+ {
+ 	nova_inode_cachep = kmem_cache_create("nova_inode_cache",
+@@ -740,6 +766,11 @@ static void destroy_inodecache(void)
+ 	kmem_cache_destroy(nova_inode_cachep);
+ }
+ 
++static void destroy_rangenode_cache(void)
++{
++	kmem_cache_destroy(nova_range_node_cachep);
++}
++
+ 
+ /*
+  * the super block writes are all done "on the fly", so the
+@@ -781,20 +812,27 @@ static int __init init_nova_fs(void)
+ 	nova_info("Arch new instructions support: CLWB %s\n",
+ 			support_clwb ? "YES" : "NO");
+ 
+-	rc = init_inodecache();
++	rc = init_rangenode_cache();
+ 	if (rc)
+ 		goto out;
+ 
+-	rc = register_filesystem(&nova_fs_type);
++	rc = init_inodecache();
+ 	if (rc)
+ 		goto out1;
+ 
++	rc = register_filesystem(&nova_fs_type);
++	if (rc)
++		goto out2;
++
+ out:
+ 	NOVA_END_TIMING(init_t, init_time);
+ 	return rc;
+ 
+-out1:
++out2:
+ 	destroy_inodecache();
++
++out1:
++	destroy_rangenode_cache();
+ 	goto out;
+ }
+ 
+@@ -802,6 +840,7 @@ static void __exit exit_nova_fs(void)
+ {
+ 	unregister_filesystem(&nova_fs_type);
+ 	destroy_inodecache();
++	destroy_rangenode_cache();
+ }
+ 
+ MODULE_AUTHOR("Andiry Xu <jix024@cs.ucsd.edu>");
+diff --git a/fs/nova/super.h b/fs/nova/super.h
+index cb53908..b478080 100644
+--- a/fs/nova/super.h
++++ b/fs/nova/super.h
+@@ -145,5 +145,7 @@ static inline struct nova_super_block *nova_get_super(struct super_block *sb)
+ }
+ 
+ extern void nova_error_mng(struct super_block *sb, const char *fmt, ...);
++extern struct nova_range_node *nova_alloc_range_node(struct super_block *sb);
++extern void nova_free_range_node(struct nova_range_node *node);
+ 
+ #endif
 -- 
 2.7.4
