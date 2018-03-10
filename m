@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvSqhHx8B33Z09R8PPBbOVnx13MEOYmGAestqk61wpslcozgOe9hjbFrbzq7K+ML4vqak3K
-ARC-Seal: i=1; a=rsa-sha256; t=1520641334; cv=none;
+X-Google-Smtp-Source: AG47ELtJrA6yaz6uEBDIIm0sM/IV3bLfLvVB+2UiGM3Qo3+rsnHPnVSjv3iaXokLg0Xcrbc1nbB1
+ARC-Seal: i=1; a=rsa-sha256; t=1520641332; cv=none;
         d=google.com; s=arc-20160816;
-        b=IXrfErufwX5ZnlXovHtRA0oJkHW6b6ATsR/nK/mNKZV+9dHAFdUzaqS7DgPXmr0nlb
-         /Bade4/Gcp2LHAJOMv4nlBKkQUCEWdCAhxHCT6W/GYpoOnurIRz9bC1Zu6sOOYTQaJ7x
-         R4R34FjGjUCoXInbCZM5kLSUXJD3sTetFYP8rNpTfuOC9nMibiSgAIlZS/omys1/WICK
-         SGbPaAlPNqfK/MZDZQwnj/MRaLC5/+58P2Oo66/1wNbkb7Juwgd3tt9s2htz8rMeTTDr
-         V/HEj0PdWbX5vkI5fRobOw+pFkE6ml5qtDe1wGucC/5ueEjNsnF1DQkYPFHztARwzzdG
-         MFEw==
+        b=cfOtdbQBaGfPUYoyPeTcY/kEdJVfKnTrUIvC6VqrVR5m+iITBLbEFqDI5UKpStZ+zb
+         RkB8eH8fdEcxndXv1GHKfVhibPLt3DQVEt8LJpO0MGEGq0mP6OsO10dPeNEXx4k6fpxb
+         sDYXT2q8A0y5nohblw9JcgpD5MVmSoFeKnhdKKPcM5gmRnjGcPkOxPenTwWK18e8+VAH
+         2IBCkPTin9+SQRdMRLDY+uuwzHHYYa0F2rRmBx9nRDF38ATkuNUg7t6Pua80G4PwcIdC
+         WnuKvEJDbB6hrBiNsRULVYmT38J6MC/s0OWBMjtnLI94KAcrc6BWI2LQJ4BaGavSLuqr
+         tjJA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Ylq1TC1Pra7mr41Zw0au2ETy4obUcQDK/9IYgx/S8kk=;
-        b=aRhRHtmrW4vrqGqhyfWIISJ/StR0wcb5+XAhgIaBiA6PuMSwNlYpg316lX7I16C8EG
-         DW09IaHqH253XjYP4BIbgDKpVotf9jUglZyNYAOeZSL3YRR0MbvLolX0hXAJF3eZAJmR
-         uSm3Xx99gVAnsv/0kwE/C7BtwvnqNc0Bmapx0x7eWl+WVQ6zF9UgPyO1qqj8H3B4TfxH
-         TdD1gwPV/xLTjHakpgXVM4f70ELSnIFTjeny0mzwe29n/QhIQjbURSmsUvMJuE9/03OU
-         sRCdBQYkFLrOgJEh2unD2OS1I+MVx6j+uXRVkKevRaSMLNZyqS7jWludCaH95LDIEIKw
-         d81A==
+        bh=QsdH0osN6P3her8eBFZpnEPbBSRydW+1Bc93d/1n+XE=;
+        b=sRPw8NiaeHy1MXHM6l+kkHlk46Zr5VjsEp6Q1/wJGOrf6jwhU4k4y+AjU3gAUFwe6I
+         m0mdKWo4ILT/ruw35ahIXrljBXRlIcBFDLWSQqpxQhR6U0Io7JFLJwFliu7od+BhjyOq
+         Zb16lOLpuRN2rzJNg5JpikmXoQISTTw5fuDxX22zOhyVXt/KPTBlYoexXX4Klj1IkwJc
+         lsgvaC/cT9bhWfqiLamMSRG2d673p8CePjXx7jkaNRrTU3/blEVaVMrhzs3aXjg3qEkA
+         IMSAluv152CP+cXQTRawr+zULs9K0tiEnow5JFbkpjNrdgtwRi2ouLmz5F+izqmaZQUi
+         cIIg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
+	Ido Schimmel <idosch@mellanox.com>,
+	Shalom Toledo <shalomt@mellanox.com>,
+	Jiri Pirko <jiri@mellanox.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 44/65] net: phy: fix phy_start to consider PHY_IGNORE_INTERRUPT
-Date: Fri,  9 Mar 2018 16:18:44 -0800
-Message-Id: <20180310001828.494433324@linuxfoundation.org>
+Subject: [PATCH 4.9 43/65] mlxsw: spectrum_switchdev: Check success of FDB add operation
+Date: Fri,  9 Mar 2018 16:18:43 -0800
+Message-Id: <20180310001828.431646614@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
 References: <20180310001824.927996722@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594508007761556448?=
-X-GMAIL-MSGID: =?utf-8?q?1594508007761556448?=
+X-GMAIL-THRID: =?utf-8?q?1594508006571093736?=
+X-GMAIL-MSGID: =?utf-8?q?1594508006571093736?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,32 +51,102 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Heiner Kallweit <hkallweit1@gmail.com>
+From: Shalom Toledo <shalomt@mellanox.com>
 
 
-[ Upstream commit 08f5138512180a479ce6b9d23b825c9f4cd3be77 ]
+[ Upstream commit 0a8a1bf17e3af34f1f8d2368916a6327f8b3bfd5 ]
 
-This condition wasn't adjusted when PHY_IGNORE_INTERRUPT (-2) was added
-long ago. In case of PHY_IGNORE_INTERRUPT the MAC interrupt indicates
-also PHY state changes and we should do what the symbol says.
+Until now, we assumed that in case of error when adding FDB entries, the
+write operation will fail, but this is not the case. Instead, we need to
+check that the number of entries reported in the response is equal to
+the number of entries specified in the request.
 
-Fixes: 84a527a41f38 ("net: phylib: fix interrupts re-enablement in phy_start")
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Fixes: 56ade8fe3fe1 ("mlxsw: spectrum: Add initial support for Spectrum ASIC")
+Reported-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: Shalom Toledo <shalomt@mellanox.com>
+Reviewed-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/phy.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c |   29 +++++++++++++--
+ 1 file changed, 27 insertions(+), 2 deletions(-)
 
---- a/drivers/net/phy/phy.c
-+++ b/drivers/net/phy/phy.c
-@@ -925,7 +925,7 @@ void phy_start(struct phy_device *phydev
- 		break;
- 	case PHY_HALTED:
- 		/* make sure interrupts are re-enabled for the PHY */
--		if (phydev->irq != PHY_POLL) {
-+		if (phy_interrupt_is_valid(phydev)) {
- 			err = phy_enable_interrupts(phydev);
- 			if (err < 0)
- 				break;
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+@@ -809,6 +809,7 @@ static int __mlxsw_sp_port_fdb_uc_op(str
+ 				     bool dynamic)
+ {
+ 	char *sfd_pl;
++	u8 num_rec;
+ 	int err;
+ 
+ 	sfd_pl = kmalloc(MLXSW_REG_SFD_LEN, GFP_KERNEL);
+@@ -818,9 +819,16 @@ static int __mlxsw_sp_port_fdb_uc_op(str
+ 	mlxsw_reg_sfd_pack(sfd_pl, mlxsw_sp_sfd_op(adding), 0);
+ 	mlxsw_reg_sfd_uc_pack(sfd_pl, 0, mlxsw_sp_sfd_rec_policy(dynamic),
+ 			      mac, fid, action, local_port);
++	num_rec = mlxsw_reg_sfd_num_rec_get(sfd_pl);
+ 	err = mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(sfd), sfd_pl);
+-	kfree(sfd_pl);
++	if (err)
++		goto out;
++
++	if (num_rec != mlxsw_reg_sfd_num_rec_get(sfd_pl))
++		err = -EBUSY;
+ 
++out:
++	kfree(sfd_pl);
+ 	return err;
+ }
+ 
+@@ -845,6 +853,7 @@ static int mlxsw_sp_port_fdb_uc_lag_op(s
+ 				       bool adding, bool dynamic)
+ {
+ 	char *sfd_pl;
++	u8 num_rec;
+ 	int err;
+ 
+ 	sfd_pl = kmalloc(MLXSW_REG_SFD_LEN, GFP_KERNEL);
+@@ -855,9 +864,16 @@ static int mlxsw_sp_port_fdb_uc_lag_op(s
+ 	mlxsw_reg_sfd_uc_lag_pack(sfd_pl, 0, mlxsw_sp_sfd_rec_policy(dynamic),
+ 				  mac, fid, MLXSW_REG_SFD_REC_ACTION_NOP,
+ 				  lag_vid, lag_id);
++	num_rec = mlxsw_reg_sfd_num_rec_get(sfd_pl);
+ 	err = mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(sfd), sfd_pl);
+-	kfree(sfd_pl);
++	if (err)
++		goto out;
+ 
++	if (num_rec != mlxsw_reg_sfd_num_rec_get(sfd_pl))
++		err = -EBUSY;
++
++out:
++	kfree(sfd_pl);
+ 	return err;
+ }
+ 
+@@ -891,6 +907,7 @@ static int mlxsw_sp_port_mdb_op(struct m
+ 				u16 fid, u16 mid, bool adding)
+ {
+ 	char *sfd_pl;
++	u8 num_rec;
+ 	int err;
+ 
+ 	sfd_pl = kmalloc(MLXSW_REG_SFD_LEN, GFP_KERNEL);
+@@ -900,7 +917,15 @@ static int mlxsw_sp_port_mdb_op(struct m
+ 	mlxsw_reg_sfd_pack(sfd_pl, mlxsw_sp_sfd_op(adding), 0);
+ 	mlxsw_reg_sfd_mc_pack(sfd_pl, 0, addr, fid,
+ 			      MLXSW_REG_SFD_REC_ACTION_NOP, mid);
++	num_rec = mlxsw_reg_sfd_num_rec_get(sfd_pl);
+ 	err = mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(sfd), sfd_pl);
++	if (err)
++		goto out;
++
++	if (num_rec != mlxsw_reg_sfd_num_rec_get(sfd_pl))
++		err = -EBUSY;
++
++out:
+ 	kfree(sfd_pl);
+ 	return err;
+ }
