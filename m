@@ -1,119 +1,141 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1867236-1520644038-2-7150312202726770502
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520644037; b=OgWCsd0EwmrQNFJi2Fct4fBl8Jqsu+qYqo/XeeYHfaaBLK8
-    C+ilpgEsPLgToQQnv79TbJkyP4W80t5dmtteHZyTf+p87zWqGK6x58hmDqjm1UgU
-    9d32vk3WTTjmPUW7EvNBv1+wz9QqCEUq7wtfSLqW+CH1xQlj3bfMpjoHx3Ij+enq
-    Zq2PddqTBauUbtV2bpiWJTNvXKM8rn30r6MRn/a0mpNzoEPpqV+tYB6l18nqjqEK
-    Zy34iri8goO4j4eEGXVbjGGwf/GrqLX3hxvH772wo1ZNvDPG7RBKz1My7j3CpFUp
-    dre3E6x5PH3Bwa+Eo8aN2Z0etCjuQIBFfbVgUWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1520644037; bh=R/vaVD0tNiwu7OL12HLZEJFqun
-    lfAR02Sij6BNoiZAA=; b=nypaLe8CT7UFbpLjCUhrElJJzdOkPLrPBfWe3+AfbA
-    52t/OSSZzrJIrqY0GG9rKc/fJC7lYlfOs3KUiQAIjbDAVAv/NN37GJzSgok9RvUM
-    n4Fybd4nY7Vz2i7vrGZY5hFw2AvDPV4Q0HnDho+BSKdCYHkdaQ/zLF0guNI/gcJu
-    YigUqMU2eaYvWSm4f53aJYK4jx9vVjvR929UDiCOrvtlSD0IB2LwNIJAF2rVgFtz
-    2G1ANQPBWrQRM7OOK01nwgjX1vruO18351PWFqtE7BgFXaTxRdEgr5SssgV5+Qfb
-    0iDDbBwsWIR6AHwEsRul0JR5c9VMEXjoJPYNT9FE05+Q==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=BEVxUDl2 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=FXlTUYXv;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=BEVxUDl2 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=FXlTUYXv;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932666AbeCJBHQ (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Mar 2018 20:07:16 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39468 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932223AbeCJBHQ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 20:07:16 -0500
-X-Google-Smtp-Source: AG47ELvJfWCtsZ1MffxyhYRWD0duMyCs/TGSHBgGKhrQOEGx3CdPwuEDw91yvDkbPISFO+bNyUpIhg==
-Date: Fri, 9 Mar 2018 18:07:12 -0700
-From: Nathan Chancellor <natechancellor@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net,
-        shuahkh@osg.samsung.com, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/36] 4.4.121-stable review
-Message-ID: <20180310010712.GA21961@flashbox>
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELul+etB6jeSq0XENrDm5VxU4rdjKJUhSE3Yj/nfDBiNbsJqXICfeL72mwZbZA+8avm0vJLy
+ARC-Seal: i=1; a=rsa-sha256; t=1520641253; cv=none;
+        d=google.com; s=arc-20160816;
+        b=rTjMHp+zJL85Yml1reDDRPSB8LOWOq7JDXehzSRP5QDIOeBTOobQvCegZhw87T3NYJ
+         KGKfyl/Roun85dkjB6RokR/qF95FlwtSbJ9BGKVMhjsoRY5x+gui345L7jX3aUvirir+
+         GmnMr3n8wtKiNxGd5TtsOg/4WEKQKkUQhjR39P8gGOfCSSmmi4mdMR2glrsIaGe2OdAt
+         BShWqOJzHuDUdMAJSlxLAbgT7w7+zBp8mYJ0dmfoK7YAXNvxeE3mGCFZsJ/MhHSA0ZZl
+         wn7jFiglwGkOmpZIvCU1rkiUyMatwAl1k/OB1mx6tn2FCybCO8w8jCa57Nj0p/jUPZBJ
+         /WYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=eU2qyRh8JiLw+69zsQ2cnj1xB7kFXRXxfV2Kh8MJZug=;
+        b=pJVa1GEbesLVbNYZFPxXM0lxBenxWKyGGJR6Nq815JCXhtR8NWHIB4Zv//DJKUj7Ls
+         Z6XA+TvH2BpnjtpKynzWi6enHAknWxSArXbUBOBVnF9UpygxDVhKuGF0s0NcZvKfPMRp
+         dwVHdgyReXndn8y4+AiWp+UH/PLWNBp7/Sjlt2y0icBCUA3nAyLGwsDDjfWDYE3dEEV4
+         o9XCx4e7qhrMGQ1fGFgjFpG8ak6bm3TLikCLPOXAanMzqftsNLEWXFyNwCs5L9abURV4
+         WdgCjV82Q+z+IAnfKJxWMowICZdyqpTaw5YHIA7VtmYmMi/UNydjjaPNJi2EjOl2iBjG
+         GSnQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 33/36] mpls, nospec: Sanitize array index in mpls_label_ok()
+Date: Fri,  9 Mar 2018 16:18:49 -0800
+Message-Id: <20180310001809.184616649@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180310001807.213987241@linuxfoundation.org>
 References: <20180310001807.213987241@linuxfoundation.org>
- <20180310005035.GA21196@flashbox>
- <20180310010312.GA26120@kroah.com>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180310010312.GA26120@kroah.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594507923154596222?=
+X-GMAIL-MSGID: =?utf-8?q?1594507923154596222?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 09, 2018 at 05:03:12PM -0800, Greg Kroah-Hartman wrote:
-> On Fri, Mar 09, 2018 at 05:50:35PM -0700, Nathan Chancellor wrote:
-> > On Fri, Mar 09, 2018 at 04:18:16PM -0800, Greg Kroah-Hartman wrote:
-> > > This is the start of the stable review cycle for the 4.4.121 release.
-> > > There are 36 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > > 
-> > > Responses should be made by Mon Mar 12 00:17:54 UTC 2018.
-> > > Anything received after that time might be too late.
-> > > 
-> > > The whole patch series can be found in one patch at:
-> > > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.121-rc1.gz
-> > > or in the git tree and branch at:
-> > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> > > and the diffstat can be found below.
-> > > 
-> > > thanks,
-> > > 
-> > > greg k-h
-> > >
-> > 
-> > Merged, compiled, and flashed onto my Pixel 2 XL and OnePlus 5.
-> > 
-> > No merge conflicts and no visible issues in dmesg or general usage.
-> 
-> That was fast, thanks!
-> 
-> greg k-h
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-I happened to run the stable queue since there was no RC when I decided
-to build so the timing worked out!
+------------------
 
-Nathan
+From: Dan Williams <dan.j.williams@intel.com>
+
+commit 3968523f855050b8195134da951b87c20bd66130 upstream.
+
+mpls_label_ok() validates that the 'platform_label' array index from a
+userspace netlink message payload is valid. Under speculation the
+mpls_label_ok() result may not resolve in the CPU pipeline until after
+the index is used to access an array element. Sanitize the index to zero
+to prevent userspace-controlled arbitrary out-of-bounds speculation, a
+precursor for a speculative execution side channel vulnerability.
+
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 4.4:
+ - mpls_label_ok() doesn't take an extack parameter
+ - Drop change in mpls_getroute()]
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/mpls/af_mpls.c |   22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
+
+--- a/net/mpls/af_mpls.c
++++ b/net/mpls/af_mpls.c
+@@ -7,6 +7,7 @@
+ #include <linux/if_arp.h>
+ #include <linux/ipv6.h>
+ #include <linux/mpls.h>
++#include <linux/nospec.h>
+ #include <linux/vmalloc.h>
+ #include <net/ip.h>
+ #include <net/dst.h>
+@@ -714,17 +715,20 @@ errout:
+ 	return err;
+ }
+ 
+-static bool mpls_label_ok(struct net *net, unsigned int index)
++static bool mpls_label_ok(struct net *net, unsigned int *index)
+ {
++	bool is_ok = true;
++
+ 	/* Reserved labels may not be set */
+-	if (index < MPLS_LABEL_FIRST_UNRESERVED)
+-		return false;
++	if (*index < MPLS_LABEL_FIRST_UNRESERVED)
++		is_ok = false;
+ 
+ 	/* The full 20 bit range may not be supported. */
+-	if (index >= net->mpls.platform_labels)
+-		return false;
++	if (is_ok && *index >= net->mpls.platform_labels)
++		is_ok = false;
+ 
+-	return true;
++	*index = array_index_nospec(*index, net->mpls.platform_labels);
++	return is_ok;
+ }
+ 
+ static int mpls_route_add(struct mpls_route_config *cfg)
+@@ -745,7 +749,7 @@ static int mpls_route_add(struct mpls_ro
+ 		index = find_free_label(net);
+ 	}
+ 
+-	if (!mpls_label_ok(net, index))
++	if (!mpls_label_ok(net, &index))
+ 		goto errout;
+ 
+ 	/* Append makes no sense with mpls */
+@@ -806,7 +810,7 @@ static int mpls_route_del(struct mpls_ro
+ 
+ 	index = cfg->rc_label;
+ 
+-	if (!mpls_label_ok(net, index))
++	if (!mpls_label_ok(net, &index))
+ 		goto errout;
+ 
+ 	mpls_route_update(net, index, NULL, &cfg->rc_nlinfo);
+@@ -1166,7 +1170,7 @@ static int rtm_to_route_config(struct sk
+ 				goto errout;
+ 
+ 			if (!mpls_label_ok(cfg->rc_nlinfo.nl_net,
+-					   cfg->rc_label))
++					   &cfg->rc_label))
+ 				goto errout;
+ 			break;
+ 		}
