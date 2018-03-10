@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932543AbeCJSVF (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:21:05 -0500
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:44079 "EHLO
+        id S932625AbeCJSfg (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:35:36 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:37768 "EHLO
         mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932374AbeCJSU7 (ORCPT
+        with ESMTP id S932499AbeCJSVE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:20:59 -0500
-X-Google-Smtp-Source: AG47ELvr6b5rRM+2Pn96KS8PoiMy9Lfyqpo9wQfF3/LGt7tMnAGlwfysw6tG5nhIm0hpXfF7oaQM4g==
+        Sat, 10 Mar 2018 13:21:04 -0500
+X-Google-Smtp-Source: AG47ELuWpUlBGY4tAjWecu5oxHK4i4Q+qMeB87WoH42wXKqK2qTASCCskfmjNgIfY4X96elL6k92Gw==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 35/83] Journal: Lite journal helper routines.
-Date: Sat, 10 Mar 2018 10:18:16 -0800
-Message-Id: <1520705944-6723-36-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 39/83] Log operation: dentry append.
+Date: Sat, 10 Mar 2018 10:18:20 -0800
+Message-Id: <1520705944-6723-40-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -27,136 +27,202 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andiry Xu <jix024@cs.ucsd.edu>
 
+NOVA performs atomic log appending by first appending the entry
+to the tail of the log, and then atomically update the log tail pointer.
+
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/Makefile  |   2 +-
- fs/nova/journal.c | 108 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 109 insertions(+), 1 deletion(-)
- create mode 100644 fs/nova/journal.c
+ fs/nova/log.c | 162 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/nova/log.h |   4 ++
+ 2 files changed, 166 insertions(+)
 
-diff --git a/fs/nova/Makefile b/fs/nova/Makefile
-index b3638a4..4aeadea 100644
---- a/fs/nova/Makefile
-+++ b/fs/nova/Makefile
-@@ -4,4 +4,4 @@
+diff --git a/fs/nova/log.c b/fs/nova/log.c
+index f01b7c8..13f9597 100644
+--- a/fs/nova/log.c
++++ b/fs/nova/log.c
+@@ -20,6 +20,168 @@
+ #include "inode.h"
+ #include "log.h"
  
- obj-$(CONFIG_NOVA_FS) += nova.o
- 
--nova-y := balloc.o bbuild.o inode.o log.o rebuild.o stats.o super.o
-+nova-y := balloc.o bbuild.o inode.o journal.o log.o rebuild.o stats.o super.o
-diff --git a/fs/nova/journal.c b/fs/nova/journal.c
-new file mode 100644
-index 0000000..75d590f
---- /dev/null
-+++ b/fs/nova/journal.c
-@@ -0,0 +1,108 @@
-+/*
-+ * NOVA journaling facility.
-+ *
-+ * This file contains journaling code to guarantee the atomicity of directory
-+ * operations that span multiple inodes (unlink, rename, etc).
-+ *
-+ * Copyright 2015-2016 Regents of the University of California,
-+ * UCSD Non-Volatile Systems Lab, Andiry Xu <jix024@cs.ucsd.edu>
-+ * Copyright 2012-2013 Intel Corporation
-+ * Copyright 2009-2011 Marco Stornelli <marco.stornelli@gmail.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/string.h>
-+#include <linux/init.h>
-+#include <linux/vfs.h>
-+#include <linux/uaccess.h>
-+#include <linux/mm.h>
-+#include <linux/mutex.h>
-+#include <linux/sched.h>
-+#include "nova.h"
-+#include "journal.h"
-+
-+/**************************** Lite journal ******************************/
-+
-+static inline void
-+nova_print_lite_transaction(struct nova_lite_journal_entry *entry)
++static int nova_update_old_dentry(struct super_block *sb,
++	struct inode *dir, struct nova_dentry *dentry,
++	struct nova_log_entry_info *entry_info)
 +{
-+	nova_dbg("Entry %p: Type %llu, data1 0x%llx, data2 0x%llx\n, checksum %u\n",
-+			entry, entry->type,
-+			entry->data1, entry->data2, entry->csum);
-+}
++	unsigned short links_count;
++	int link_change = entry_info->link_change;
++	u64 addr;
 +
-+static inline int nova_update_journal_entry_csum(struct super_block *sb,
-+	struct nova_lite_journal_entry *entry)
-+{
-+	u32 crc = 0;
++	dentry->epoch_id = entry_info->epoch_id;
++	dentry->trans_id = entry_info->trans_id;
++	/* Remove_dentry */
++	dentry->ino = cpu_to_le64(0);
++	dentry->invalid = 1;
++	dentry->mtime = cpu_to_le32(dir->i_mtime.tv_sec);
 +
-+	crc = nova_crc32c(~0, (__u8 *)entry,
-+			(sizeof(struct nova_lite_journal_entry)
-+			 - sizeof(__le32)));
++	links_count = cpu_to_le16(dir->i_nlink);
++	if (links_count == 0 && link_change == -1)
++		links_count = 0;
++	else
++		links_count += link_change;
++	dentry->links_count = cpu_to_le16(links_count);
 +
-+	entry->csum = cpu_to_le32(crc);
-+	nova_flush_buffer(entry, sizeof(struct nova_lite_journal_entry), 0);
++	addr = nova_get_addr_off(NOVA_SB(sb), dentry);
++	nova_inc_page_invalid_entries(sb, addr);
++
++	nova_persist_entry(dentry);
++
 +	return 0;
 +}
 +
-+static inline int nova_check_entry_integrity(struct super_block *sb,
-+	struct nova_lite_journal_entry *entry)
++static int nova_update_new_dentry(struct super_block *sb,
++	struct inode *dir, struct nova_dentry *entry,
++	struct nova_log_entry_info *entry_info)
 +{
-+	u32 crc = 0;
++	struct dentry *dentry = entry_info->data;
++	unsigned short links_count;
++	int link_change = entry_info->link_change;
 +
-+	crc = nova_crc32c(~0, (__u8 *)entry,
-+			(sizeof(struct nova_lite_journal_entry)
-+			 - sizeof(__le32)));
++	entry->entry_type = DIR_LOG;
++	entry->epoch_id = entry_info->epoch_id;
++	entry->trans_id = entry_info->trans_id;
++	entry->ino = entry_info->ino;
++	entry->name_len = dentry->d_name.len;
++	memcpy_to_pmem_nocache(entry->name, dentry->d_name.name,
++				dentry->d_name.len);
++	entry->name[dentry->d_name.len] = '\0';
++	entry->mtime = cpu_to_le32(dir->i_mtime.tv_sec);
++	//entry->size = cpu_to_le64(dir->i_size);
 +
-+	if (entry->csum == cpu_to_le32(crc))
-+		return 0;
++	links_count = cpu_to_le16(dir->i_nlink);
++	if (links_count == 0 && link_change == -1)
++		links_count = 0;
 +	else
-+		return 1;
++		links_count += link_change;
++	entry->links_count = cpu_to_le16(links_count);
++
++	/* Update actual de_len */
++	entry->de_len = cpu_to_le16(entry_info->file_size);
++
++	nova_persist_entry(entry);
++
++	return 0;
 +}
 +
-+// Get the next journal entry.  Journal entries are stored in a circular
-+// buffer.  They live a 1-page circular buffer.
-+//
-+// TODO: Add check to ensure that the journal doesn't grow too large.
-+static inline u64 next_lite_journal(u64 curr_p)
++static int nova_update_log_entry(struct super_block *sb, struct inode *inode,
++	void *entry, struct nova_log_entry_info *entry_info)
 +{
-+	size_t size = sizeof(struct nova_lite_journal_entry);
++	enum nova_entry_type type = entry_info->type;
 +
-+	if ((curr_p & (PAGE_SIZE - 1)) + size >= PAGE_SIZE)
-+		return (curr_p & PAGE_MASK);
-+
-+	return curr_p + size;
-+}
-+
-+// Walk the journal for one CPU, and verify the checksum on each entry.
-+static int nova_check_journal_entries(struct super_block *sb,
-+	struct journal_ptr_pair *pair)
-+{
-+	struct nova_lite_journal_entry *entry;
-+	u64 temp;
-+	int ret;
-+
-+	temp = pair->journal_head;
-+	while (temp != pair->journal_tail) {
-+		entry = (struct nova_lite_journal_entry *)nova_get_block(sb,
-+									temp);
-+		ret = nova_check_entry_integrity(sb, entry);
-+		if (ret) {
-+			nova_dbg("Entry %p checksum failure\n", entry);
-+			nova_print_lite_transaction(entry);
-+			return ret;
-+		}
-+		temp = next_lite_journal(temp);
++	switch (type) {
++	case FILE_WRITE:
++		break;
++	case DIR_LOG:
++		if (entry_info->inplace)
++			nova_update_old_dentry(sb, inode, entry, entry_info);
++		else
++			nova_update_new_dentry(sb, inode, entry, entry_info);
++		break;
++	case SET_ATTR:
++		break;
++	case LINK_CHANGE:
++		break;
++	default:
++		break;
 +	}
 +
 +	return 0;
 +}
++
++static int nova_append_log_entry(struct super_block *sb,
++	struct nova_inode *pi, struct inode *inode,
++	struct nova_inode_info_header *sih,
++	struct nova_log_entry_info *entry_info)
++{
++	void *entry;
++	enum nova_entry_type type = entry_info->type;
++	struct nova_inode_update *update = entry_info->update;
++	u64 tail;
++	u64 curr_p;
++	size_t size;
++	int extended = 0;
++
++	if (type == DIR_LOG)
++		size = entry_info->file_size;
++	else
++		size = nova_get_log_entry_size(sb, type);
++
++	tail = update->tail;
++
++	curr_p = nova_get_append_head(sb, pi, sih, tail, size,
++						MAIN_LOG, 0, &extended);
++	if (curr_p == 0)
++		return -ENOSPC;
++
++	nova_dbg_verbose("%s: inode %lu attr change entry @ 0x%llx\n",
++				__func__, sih->ino, curr_p);
++
++	entry = nova_get_block(sb, curr_p);
++	/* inode is already updated with attr */
++	memset(entry, 0, size);
++	nova_update_log_entry(sb, inode, entry, entry_info);
++	nova_inc_page_num_entries(sb, curr_p);
++	update->curr_entry = curr_p;
++	update->tail = curr_p + size;
++
++	entry_info->curr_p = curr_p;
++	return 0;
++}
++
++int nova_append_dentry(struct super_block *sb, struct nova_inode *pi,
++	struct inode *dir, struct dentry *dentry, u64 ino,
++	unsigned short de_len, struct nova_inode_update *update,
++	int link_change, u64 epoch_id)
++{
++	struct nova_inode_info *si = NOVA_I(dir);
++	struct nova_inode_info_header *sih = &si->header;
++	struct nova_log_entry_info entry_info;
++	timing_t append_time;
++	int ret;
++
++	NOVA_START_TIMING(append_dir_entry_t, append_time);
++
++	entry_info.type = DIR_LOG;
++	entry_info.update = update;
++	entry_info.data = dentry;
++	entry_info.ino = ino;
++	entry_info.link_change = link_change;
++	entry_info.file_size = de_len;
++	entry_info.epoch_id = epoch_id;
++	entry_info.trans_id = sih->trans_id;
++	entry_info.inplace = 0;
++
++	ret = nova_append_log_entry(sb, pi, dir, sih, &entry_info);
++	if (ret)
++		nova_err(sb, "%s failed\n", __func__);
++
++	dir->i_blocks = sih->i_blocks;
++
++	NOVA_END_TIMING(append_dir_entry_t, append_time);
++	return ret;
++}
++
+ /* Coalesce log pages to a singly linked list */
+ static int nova_coalesce_log_pages(struct super_block *sb,
+ 	unsigned long prev_blocknr, unsigned long first_blocknr,
+diff --git a/fs/nova/log.h b/fs/nova/log.h
+index 6b4a085..305e69b 100644
+--- a/fs/nova/log.h
++++ b/fs/nova/log.h
+@@ -364,6 +364,10 @@ static inline int is_dir_init_entry(struct super_block *sb,
+ }
+ 
+ 
++int nova_append_dentry(struct super_block *sb, struct nova_inode *pi,
++	struct inode *dir, struct dentry *dentry, u64 ino,
++	unsigned short de_len, struct nova_inode_update *update,
++	int link_change, u64 epoch_id);
+ int nova_allocate_inode_log_pages(struct super_block *sb,
+ 	struct nova_inode_info_header *sih, unsigned long num_pages,
+ 	u64 *new_block, int cpuid, enum nova_alloc_direction from_tail);
 -- 
 2.7.4
