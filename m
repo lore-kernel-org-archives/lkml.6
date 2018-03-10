@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvisndpFrojrdet0tv7qMp1yFg1es0WuHhQdF9XeD9c970a4S/q0wE92QZjHclNf5YIs2wx
-ARC-Seal: i=1; a=rsa-sha256; t=1520641226; cv=none;
+X-Google-Smtp-Source: AG47ELtnWGJfKj1UeNqo2/hfvh5PPr58YP9ehWRLfz205WwPkk2pUS6Ih+ZK5Tp9910cWLP0EzzT
+ARC-Seal: i=1; a=rsa-sha256; t=1520641224; cv=none;
         d=google.com; s=arc-20160816;
-        b=IA0r+JPynOUtClOiFVSojpuKO1ImQxmACkLK79ElImVpAMPbeQnALtjMe9f56lWke0
-         11Lz95D+/ITPiFIv73/DmgTP2FCTeHakJwDWf5o5Ws8P/zuDSCgyJU+k/ICr9smORevl
-         XfxWrQKkexJPzxIVSVM2QJAPICUtH9YUpZIN9JxJBTC0eVoeDuUfRbKXNEETAJFzbqPf
-         l658M1eV4+udQcb1LgApr/m72TXbDN3oW4vk4NoTg5kkz6HGcUJm76g2qeoZl9QF0LH2
-         rXvgk2GjRKIFSEDJkD0yN+QiOb8dfZigCGOkCa5wvPbzLy3tD6sKzfz9ImpuDJWWnix6
-         Qq0w==
+        b=LyXzLzeUiJJj/aaYP/cTeLREx4qC3ujnvfIgDN9rtM61R+03zhupwKHLjethEKXzWW
+         zE12fHLl//ysbF0JVyvQw5RTdUGEssu3GlxDu3XxvUtzGkTJ6SeItOq4/mlCPiFrsfuM
+         93YxOK3ZbvaHxpWHLiG44RTsd9H82z4lxWAzc9o6czM9Eay38+UhhKU2wAReNAaV8N3x
+         QbCT9YjuQmvAVGz1jiE6jzDDp7+LwNpTM0A7Kvr3jUBSuBTY2qI9CG3fS90xg4n4hr+b
+         9h+/qOvUDNuVPS12oLzDDwfqOBd9XMIZ2XBAtLUgyDxPEsEpWGRmUE0AtSoSYCll9zzm
+         aigA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ENZp48t8Ifbg3fBZ1oHIpx9ochiXUyoHYpJrcSrdaHc=;
-        b=a8HCqT60Tqbw8qxat75LXKZl7/M7arhdy3cS0bD5k2WQSNM3OD1NtzlGaNC3eJuVt/
-         rAQsBNMFj52ZOyNTsNCaE2den327VETm3hT58RmLtt5bM3xrrYbHCVeEH0qf60u2nEiP
-         grkO89uv/PzPnV9Yq3dRgNCo+IujGihbr6Dra2GS3YpcGsmlu/WwQ9d0040o9hoaogMf
-         0W4Pto7/XTZYESllzpI83WzXgIfZVPp55nWNtauFzS5xALJzEdG7+37H+DsC0/R/Kyuy
-         yJUOu2Nt7Zz5pBNZq/ZwFEvNaundMoTDQ+avMW8kJCrUdKyNADHSCzXs2khqXbmXaRsk
-         T1qw==
+        bh=KNxcT0N7kQ57V8T3rbLNwTAhQYh72xw8Od9Ia5n7f7U=;
+        b=JsoywzlOqiDFNGaSOwg01FiEXXzovqAt0vt9BHm1vDkQRVIOVt5NNhzNr3Lzm3HwYt
+         Ny23DXE+yv9/qCL7bQi/8SLWd1vhnIileF+gZvk847p6dEbKfebL16R8EKcMSd+BHNlX
+         tAwnPm3UgeejDwx4KjyLlMSI4T2o2Bh8GVIyYbXGcD1bXtZqAU7urfO0Keg9NvDSm41w
+         2QNHpLgbQC2A4KqmZRLvSSs7uN96iG8cyI2nBLoHUnEoRx6F1GXBttv5yGf0L0DFv/QY
+         pDzrgvjNz2+WYeNvmPoKiUT+AL0CzEsxln9R31/jM/oSo+AYk2zZG5zgeM+zHXyAfwzb
+         Fycg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,23 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ulf Magnusson <ulfalizer@gmail.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>
-Subject: [PATCH 4.4 09/36] ARM: mvebu: Fix broken PL310_ERRATA_753970 selects
-Date: Fri,  9 Mar 2018 16:18:25 -0800
-Message-Id: <20180310001807.718853915@linuxfoundation.org>
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Arjan van de Ven <arjan@linux.intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Will Deacon <will.deacon@arm.com>,
+	linux-arch@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.4 08/36] nospec: Allow index argument to have const-qualified type
+Date: Fri,  9 Mar 2018 16:18:24 -0800
+Message-Id: <20180310001807.674544545@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001807.213987241@linuxfoundation.org>
 References: <20180310001807.213987241@linuxfoundation.org>
@@ -40,8 +52,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507808977901535?=
-X-GMAIL-MSGID: =?utf-8?q?1594507894813068413?=
+X-GMAIL-THRID: =?utf-8?q?1594507892706683015?=
+X-GMAIL-MSGID: =?utf-8?q?1594507892706683015?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,47 +61,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ulf Magnusson <ulfalizer@gmail.com>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-commit 8aa36a8dcde3183d84db7b0d622ffddcebb61077 upstream.
+commit b98c6a160a057d5686a8c54c79cc6c8c94a7d0c8 upstream.
 
-The MACH_ARMADA_375 and MACH_ARMADA_38X boards select ARM_ERRATA_753970,
-but it was renamed to PL310_ERRATA_753970 by commit fa0ce4035d48 ("ARM:
-7162/1: errata: tidy up Kconfig options for PL310 errata workarounds").
+The last expression in a statement expression need not be a bare
+variable, quoting gcc docs
 
-Fix the selects to use the new name.
+  The last thing in the compound statement should be an expression
+  followed by a semicolon; the value of this subexpression serves as the
+  value of the entire construct.
 
-Discovered with the
-https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
-script.
-Fixes: fa0ce4035d48 ("ARM: 7162/1: errata: tidy up Kconfig options for
-PL310 errata workarounds"
-cc: stable@vger.kernel.org
-Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+and we already use that in e.g. the min/max macros which end with a
+ternary expression.
+
+This way, we can allow index to have const-qualified type, which will in
+some cases avoid the need for introducing a local copy of index of
+non-const qualified type. That, in turn, can prevent readers not
+familiar with the internals of array_index_nospec from wondering about
+the seemingly redundant extra variable, and I think that's worthwhile
+considering how confusing the whole _nospec business is.
+
+The expression _i&_mask has type unsigned long (since that is the type
+of _mask, and the BUILD_BUG_ONs guarantee that _i will get promoted to
+that), so in order not to change the type of the whole expression, add
+a cast back to typeof(_i).
+
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arch@vger.kernel.org
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/151881604837.17395.10812767547837568328.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/mach-mvebu/Kconfig |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/nospec.h |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/arch/arm/mach-mvebu/Kconfig
-+++ b/arch/arm/mach-mvebu/Kconfig
-@@ -37,7 +37,7 @@ config MACH_ARMADA_370
- config MACH_ARMADA_375
- 	bool "Marvell Armada 375 boards" if ARCH_MULTI_V7
- 	select ARM_ERRATA_720789
--	select ARM_ERRATA_753970
-+	select PL310_ERRATA_753970
- 	select ARM_GIC
- 	select ARMADA_375_CLK
- 	select HAVE_ARM_SCU
-@@ -52,7 +52,7 @@ config MACH_ARMADA_375
- config MACH_ARMADA_38X
- 	bool "Marvell Armada 380/385 boards" if ARCH_MULTI_V7
- 	select ARM_ERRATA_720789
--	select ARM_ERRATA_753970
-+	select PL310_ERRATA_753970
- 	select ARM_GIC
- 	select ARMADA_38X_CLK
- 	select HAVE_ARM_SCU
+--- a/include/linux/nospec.h
++++ b/include/linux/nospec.h
+@@ -66,7 +66,6 @@ static inline unsigned long array_index_
+ 	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
+ 	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
+ 									\
+-	_i &= _mask;							\
+-	_i;								\
++	(typeof(_i)) (_i & _mask);					\
+ })
+ #endif /* _LINUX_NOSPEC_H */
