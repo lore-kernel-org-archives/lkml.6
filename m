@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932471AbeCJSma (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:42:30 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:38376 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932321AbeCJSUe (ORCPT
+        id S1752034AbeCJSnQ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:43:16 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:42956 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932217AbeCJSU3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:20:34 -0500
-X-Google-Smtp-Source: AG47ELsHKARTsOqjC45iw+PMfz86bTiY/fEUw7sHInSitefoqvHt9VVHIiUrrQMpscAipdctZWqPOg==
+        Sat, 10 Mar 2018 13:20:29 -0500
+X-Google-Smtp-Source: AG47ELt/M/QVlxT5RlofidKcWYtJLd71z91chZip/Yzi/fSEoR3eWjm/p+lB8JCZWB1QJfnG7vTHUA==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 15/83] Add free list data structure.
-Date: Sat, 10 Mar 2018 10:17:56 -0800
-Message-Id: <1520705944-6723-16-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 11/83] Add timing and I/O statistics for performance analysis and profiling.
+Date: Sat, 10 Mar 2018 10:17:52 -0800
+Message-Id: <1520705944-6723-12-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -27,48 +27,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andiry Xu <jix024@cs.ucsd.edu>
 
-Free list is the data structure that NOVA uses to manage free pmem blocks.
-Each CPU has its own free list to avoid contention.
-Free list manages free pmem blocks (represented in range node) with red-black tree.
-
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/Makefile |  2 +-
- fs/nova/balloc.c | 58 +++++++++++++++++++++++++++++++++++++++++++++++++
- fs/nova/balloc.h | 66 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/nova/nova.h   |  1 +
- fs/nova/super.c  | 11 ++++++++++
- fs/nova/super.h  |  4 ++++
- 6 files changed, 141 insertions(+), 1 deletion(-)
- create mode 100644 fs/nova/balloc.c
- create mode 100644 fs/nova/balloc.h
+ fs/nova/Makefile |   2 +-
+ fs/nova/nova.h   |  12 +++
+ fs/nova/stats.c  | 263 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/nova/stats.h  | 178 +++++++++++++++++++++++++++++++++++++
+ fs/nova/super.c  |   6 ++
+ 5 files changed, 460 insertions(+), 1 deletion(-)
+ create mode 100644 fs/nova/stats.c
+ create mode 100644 fs/nova/stats.h
 
 diff --git a/fs/nova/Makefile b/fs/nova/Makefile
-index 886356a..e2f7b07 100644
+index eb19646..886356a 100644
 --- a/fs/nova/Makefile
 +++ b/fs/nova/Makefile
 @@ -4,4 +4,4 @@
  
  obj-$(CONFIG_NOVA_FS) += nova.o
  
--nova-y := bbuild.o inode.o rebuild.o stats.o super.o
-+nova-y := balloc.o bbuild.o inode.o rebuild.o stats.o super.o
-diff --git a/fs/nova/balloc.c b/fs/nova/balloc.c
+-nova-y := bbuild.o inode.o rebuild.o super.o
++nova-y := bbuild.o inode.o rebuild.o stats.o super.o
+diff --git a/fs/nova/nova.h b/fs/nova/nova.h
+index ded9fe8..ba7ffca 100644
+--- a/fs/nova/nova.h
++++ b/fs/nova/nova.h
+@@ -48,6 +48,7 @@
+ #include <linux/pagevec.h>
+ 
+ #include "nova_def.h"
++#include "stats.h"
+ 
+ #define PAGE_SHIFT_2M 21
+ #define PAGE_SHIFT_1G 30
+@@ -135,6 +136,10 @@ extern unsigned int nova_dbgmask;
+ #define	ANY_CPU				(65536)
+ #define	FREE_BATCH			(16)
+ 
++
++extern int measure_timing;
++
++
+ extern unsigned int blk_type_to_shift[NOVA_BLOCK_TYPE_MAX];
+ extern unsigned int blk_type_to_size[NOVA_BLOCK_TYPE_MAX];
+ 
+@@ -306,4 +311,11 @@ static inline u64 nova_get_epoch_id(struct super_block *sb)
+ int nova_rebuild_inode(struct super_block *sb, struct nova_inode_info *si,
+ 	u64 ino, u64 pi_addr, int rebuild_dir);
+ 
++/* stats.c */
++void nova_get_timing_stats(void);
++void nova_get_IO_stats(void);
++void nova_print_timing_stats(struct super_block *sb);
++void nova_clear_stats(struct super_block *sb);
++void nova_print_inode(struct nova_inode *pi);
++
+ #endif /* __NOVA_H */
+diff --git a/fs/nova/stats.c b/fs/nova/stats.c
 new file mode 100644
-index 0000000..450c942
+index 0000000..4b7c317
 --- /dev/null
-+++ b/fs/nova/balloc.c
-@@ -0,0 +1,58 @@
++++ b/fs/nova/stats.c
+@@ -0,0 +1,263 @@
 +/*
-+ * NOVA persistent memory management
++ * NOVA File System statistics
 + *
 + * Copyright 2015-2016 Regents of the University of California,
 + * UCSD Non-Volatile Systems Lab, Andiry Xu <jix024@cs.ucsd.edu>
-+ * Copyright 2012-2013 Intel Corporation
-+ * Copyright 2009-2011 Marco Stornelli <marco.stornelli@gmail.com>
-+ * Copyright 2003 Sony Corporation
-+ * Copyright 2003 Matsushita Electric Industrial Co., Ltd.
-+ * 2003-2004 (c) MontaVista Software, Inc. , Steve Longerbeam
 + *
 + * This program is free software; you can redistribute it and/or modify it
 + * under the terms and conditions of the GNU General Public License,
@@ -80,177 +105,462 @@ index 0000000..450c942
 + * more details.
 + */
 +
-+#include <linux/fs.h>
-+#include <linux/bitops.h>
 +#include "nova.h"
-+#include "inode.h"
 +
-+int nova_alloc_block_free_lists(struct super_block *sb)
++const char *Timingstring[TIMING_NUM] = {
++	/* Init */
++	"================ Initialization ================",
++	"init",
++	"mount",
++	"ioremap",
++	"new_init",
++	"recovery",
++
++	/* Namei operations */
++	"============= Directory operations =============",
++	"create",
++	"lookup",
++	"link",
++	"unlink",
++	"symlink",
++	"mkdir",
++	"rmdir",
++	"mknod",
++	"rename",
++	"readdir",
++	"add_dentry",
++	"remove_dentry",
++	"setattr",
++	"setsize",
++
++	/* I/O operations */
++	"================ I/O operations ================",
++	"dax_read",
++	"cow_write",
++	"inplace_write",
++	"copy_to_nvmm",
++	"dax_get_block",
++	"read_iter",
++	"write_iter",
++
++	/* Memory operations */
++	"============== Memory operations ===============",
++	"memcpy_read_nvmm",
++	"memcpy_write_nvmm",
++	"memcpy_write_back_to_nvmm",
++	"handle_partial_block",
++
++	/* Memory management */
++	"============== Memory management ===============",
++	"alloc_blocks",
++	"new_data_blocks",
++	"new_log_blocks",
++	"free_blocks",
++	"free_data_blocks",
++	"free_log_blocks",
++
++	/* Transaction */
++	"================= Transaction ==================",
++	"transaction_new_inode",
++	"transaction_link_change",
++	"update_tail",
++
++	/* Logging */
++	"============= Logging operations ===============",
++	"append_dir_entry",
++	"append_file_entry",
++	"append_link_change",
++	"append_setattr",
++	"inplace_update_entry",
++
++	/* Tree */
++	"=============== Tree operations ================",
++	"checking_entry",
++	"assign_blocks",
++
++	/* GC */
++	"============= Garbage collection ===============",
++	"log_fast_gc",
++	"log_thorough_gc",
++	"check_invalid_log",
++
++	/* Others */
++	"================ Miscellaneous =================",
++	"find_cache_page",
++	"fsync",
++	"write_pages",
++	"fallocate",
++	"direct_IO",
++	"free_old_entry",
++	"delete_file_tree",
++	"delete_dir_tree",
++	"new_vfs_inode",
++	"new_nova_inode",
++	"free_inode",
++	"free_inode_log",
++	"evict_inode",
++
++	/* Mmap */
++	"=============== MMap operations ================",
++	"mmap_page_fault",
++	"mmap_pmd_fault",
++	"mmap_pfn_mkwrite",
++
++	/* Rebuild */
++	"=================== Rebuild ====================",
++	"rebuild_dir",
++	"rebuild_file",
++};
++
++u64 Timingstats[TIMING_NUM];
++DEFINE_PER_CPU(u64[TIMING_NUM], Timingstats_percpu);
++u64 Countstats[TIMING_NUM];
++DEFINE_PER_CPU(u64[TIMING_NUM], Countstats_percpu);
++u64 IOstats[STATS_NUM];
++DEFINE_PER_CPU(u64[STATS_NUM], IOstats_percpu);
++
++static void nova_print_IO_stats(struct super_block *sb)
 +{
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
-+	struct free_list *free_list;
++	nova_info("=========== NOVA I/O stats ===========\n");
++	nova_info("Read %llu, bytes %llu, average %llu\n",
++		Countstats[dax_read_t], IOstats[read_bytes],
++		Countstats[dax_read_t] ?
++			IOstats[read_bytes] / Countstats[dax_read_t] : 0);
++	nova_info("COW write %llu, bytes %llu, average %llu, write breaks %llu, average %llu\n",
++		Countstats[cow_write_t], IOstats[cow_write_bytes],
++		Countstats[cow_write_t] ?
++			IOstats[cow_write_bytes] / Countstats[cow_write_t] : 0,
++		IOstats[cow_write_breaks], Countstats[cow_write_t] ?
++			IOstats[cow_write_breaks] / Countstats[cow_write_t]
++			: 0);
++	nova_info("Inplace write %llu, bytes %llu, average %llu, write breaks %llu, average %llu\n",
++		Countstats[inplace_write_t], IOstats[inplace_write_bytes],
++		Countstats[inplace_write_t] ?
++			IOstats[inplace_write_bytes] /
++			Countstats[inplace_write_t] : 0,
++		IOstats[inplace_write_breaks], Countstats[inplace_write_t] ?
++			IOstats[inplace_write_breaks] /
++			Countstats[inplace_write_t] : 0);
++}
++
++void nova_get_timing_stats(void)
++{
++	int i;
++	int cpu;
++
++	for (i = 0; i < TIMING_NUM; i++) {
++		Timingstats[i] = 0;
++		Countstats[i] = 0;
++		for_each_possible_cpu(cpu) {
++			Timingstats[i] += per_cpu(Timingstats_percpu[i], cpu);
++			Countstats[i] += per_cpu(Countstats_percpu[i], cpu);
++		}
++	}
++}
++
++void nova_get_IO_stats(void)
++{
++	int i;
++	int cpu;
++
++	for (i = 0; i < STATS_NUM; i++) {
++		IOstats[i] = 0;
++		for_each_possible_cpu(cpu)
++			IOstats[i] += per_cpu(IOstats_percpu[i], cpu);
++	}
++}
++
++void nova_print_timing_stats(struct super_block *sb)
++{
 +	int i;
 +
-+	sbi->free_lists = kcalloc(sbi->cpus, sizeof(struct free_list),
-+				  GFP_KERNEL);
++	nova_get_timing_stats();
++	nova_get_IO_stats();
 +
-+	if (!sbi->free_lists)
-+		return -ENOMEM;
++	nova_info("=========== NOVA kernel timing stats ============\n");
++	for (i = 0; i < TIMING_NUM; i++) {
++		/* Title */
++		if (Timingstring[i][0] == '=') {
++			nova_info("\n%s\n\n", Timingstring[i]);
++			continue;
++		}
 +
-+	for (i = 0; i < sbi->cpus; i++) {
-+		free_list = nova_get_free_list(sb, i);
-+		free_list->block_free_tree = RB_ROOT;
-+		spin_lock_init(&free_list->s_lock);
-+		free_list->index = i;
++		if (measure_timing || Timingstats[i]) {
++			nova_info("%s: count %llu, timing %llu, average %llu\n",
++				Timingstring[i],
++				Countstats[i],
++				Timingstats[i],
++				Countstats[i] ?
++				Timingstats[i] / Countstats[i] : 0);
++		} else {
++			nova_info("%s: count %llu\n",
++				Timingstring[i],
++				Countstats[i]);
++		}
 +	}
 +
-+	return 0;
++	nova_info("\n");
++	nova_print_IO_stats(sb);
 +}
 +
-+void nova_delete_free_lists(struct super_block *sb)
++static void nova_clear_timing_stats(void)
 +{
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
++	int i;
++	int cpu;
 +
-+	/* Each tree is freed in save_blocknode_mappings */
-+	kfree(sbi->free_lists);
-+	sbi->free_lists = NULL;
++	for (i = 0; i < TIMING_NUM; i++) {
++		Countstats[i] = 0;
++		Timingstats[i] = 0;
++		for_each_possible_cpu(cpu) {
++			per_cpu(Timingstats_percpu[i], cpu) = 0;
++			per_cpu(Countstats_percpu[i], cpu) = 0;
++		}
++	}
 +}
 +
++static void nova_clear_IO_stats(struct super_block *sb)
++{
++	int i;
++	int cpu;
 +
-diff --git a/fs/nova/balloc.h b/fs/nova/balloc.h
++	for (i = 0; i < STATS_NUM; i++) {
++		IOstats[i] = 0;
++		for_each_possible_cpu(cpu)
++			per_cpu(IOstats_percpu[i], cpu) = 0;
++	}
++}
++
++void nova_clear_stats(struct super_block *sb)
++{
++	nova_clear_timing_stats();
++	nova_clear_IO_stats(sb);
++}
++
++void nova_print_inode(struct nova_inode *pi)
++{
++	nova_dbg("%s: NOVA inode %llu\n", __func__, pi->nova_ino);
++	nova_dbg("valid %u, deleted %u, blk type %u, flags %u\n",
++		pi->valid, pi->deleted, pi->i_blk_type, pi->i_flags);
++	nova_dbg("size %llu, ctime %u, mtime %u, atime %u\n",
++		pi->i_size, pi->i_ctime, pi->i_mtime, pi->i_atime);
++	nova_dbg("mode %u, links %u, xattr 0x%llx\n",
++		pi->i_mode, pi->i_links_count, pi->i_xattr);
++	nova_dbg("uid %u, gid %u, gen %u, create time %u\n",
++		pi->i_uid, pi->i_gid, pi->i_generation, pi->i_create_time);
++	nova_dbg("head 0x%llx, tail 0x%llx\n",
++		pi->log_head, pi->log_tail);
++	nova_dbg("create epoch id %llu, delete epoch id %llu\n",
++		pi->create_epoch_id, pi->delete_epoch_id);
++}
+diff --git a/fs/nova/stats.h b/fs/nova/stats.h
 new file mode 100644
-index 0000000..e7c7a1d
+index 0000000..8dbd02d
 --- /dev/null
-+++ b/fs/nova/balloc.h
-@@ -0,0 +1,66 @@
-+#ifndef __BALLOC_H
-+#define __BALLOC_H
++++ b/fs/nova/stats.h
+@@ -0,0 +1,178 @@
++/*
++ * NOVA File System statistics
++ *
++ * Copyright 2015-2016 Regents of the University of California,
++ * UCSD Non-Volatile Systems Lab, Andiry Xu <jix024@cs.ucsd.edu>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ */
 +
-+#include "inode.h"
++#ifndef __STATS_H
++#define __STATS_H
 +
-+/* DRAM structure to hold a list of free PMEM blocks */
-+struct free_list {
-+	spinlock_t s_lock;
-+	struct rb_root	block_free_tree;
-+	struct nova_range_node *first_node; // lowest address free range
-+	struct nova_range_node *last_node; // highest address free range
 +
-+	int		index; // Which CPU do I belong to?
++/* ======================= Timing ========================= */
++enum timing_category {
++	/* Init */
++	init_title_t,
++	init_t,
++	mount_t,
++	ioremap_t,
++	new_init_t,
++	recovery_t,
 +
-+	/*
-+	 * Start and end of allocatable range, inclusive.
-+	 */
-+	unsigned long	block_start;
-+	unsigned long	block_end;
++	/* Namei operations */
++	namei_title_t,
++	create_t,
++	lookup_t,
++	link_t,
++	unlink_t,
++	symlink_t,
++	mkdir_t,
++	rmdir_t,
++	mknod_t,
++	rename_t,
++	readdir_t,
++	add_dentry_t,
++	remove_dentry_t,
++	setattr_t,
++	setsize_t,
 +
-+	unsigned long	num_free_blocks;
++	/* I/O operations */
++	io_title_t,
++	dax_read_t,
++	cow_write_t,
++	inplace_write_t,
++	copy_to_nvmm_t,
++	dax_get_block_t,
++	read_iter_t,
++	write_iter_t,
 +
-+	/* How many nodes in the rb tree? */
-+	unsigned long	num_blocknode;
++	/* Memory operations */
++	memory_title_t,
++	memcpy_r_nvmm_t,
++	memcpy_w_nvmm_t,
++	memcpy_w_wb_t,
++	partial_block_t,
 +
-+	u32		csum;		/* Protect integrity */
++	/* Memory management */
++	mm_title_t,
++	new_blocks_t,
++	new_data_blocks_t,
++	new_log_blocks_t,
++	free_blocks_t,
++	free_data_t,
++	free_log_t,
 +
-+	/* Statistics */
-+	unsigned long	alloc_log_count;
-+	unsigned long	alloc_data_count;
-+	unsigned long	free_log_count;
-+	unsigned long	free_data_count;
-+	unsigned long	alloc_log_pages;
-+	unsigned long	alloc_data_pages;
-+	unsigned long	freed_log_pages;
-+	unsigned long	freed_data_pages;
++	/* Transaction */
++	trans_title_t,
++	create_trans_t,
++	link_trans_t,
++	update_tail_t,
 +
-+	u64		padding[8];	/* Cache line break */
++	/* Logging */
++	logging_title_t,
++	append_dir_entry_t,
++	append_file_entry_t,
++	append_link_change_t,
++	append_setattr_t,
++	update_entry_t,
++
++	/* Tree */
++	tree_title_t,
++	check_entry_t,
++	assign_t,
++
++	/* GC */
++	gc_title_t,
++	fast_gc_t,
++	thorough_gc_t,
++	check_invalid_t,
++
++	/* Others */
++	others_title_t,
++	find_cache_t,
++	fsync_t,
++	write_pages_t,
++	fallocate_t,
++	direct_IO_t,
++	free_old_t,
++	delete_file_tree_t,
++	delete_dir_tree_t,
++	new_vfs_inode_t,
++	new_nova_inode_t,
++	free_inode_t,
++	free_inode_log_t,
++	evict_inode_t,
++
++	/* Mmap */
++	mmap_title_t,
++	mmap_fault_t,
++	pmd_fault_t,
++	pfn_mkwrite_t,
++
++	/* Rebuild */
++	rebuild_title_t,
++	rebuild_dir_t,
++	rebuild_file_t,
++
++	/* Sentinel */
++	TIMING_NUM,
 +};
 +
-+static inline
-+struct free_list *nova_get_free_list(struct super_block *sb, int cpu)
-+{
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
++enum stats_category {
++	alloc_steps,
++	cow_write_breaks,
++	inplace_write_breaks,
++	read_bytes,
++	cow_write_bytes,
++	inplace_write_bytes,
++	fast_checked_pages,
++	thorough_checked_pages,
++	fast_gc_pages,
++	thorough_gc_pages,
++	dax_new_blocks,
++	inplace_new_blocks,
++	fdatasync,
 +
-+	return &sbi->free_lists[cpu];
-+}
-+
-+enum nova_alloc_direction {ALLOC_FROM_HEAD = 0,
-+			   ALLOC_FROM_TAIL = 1};
-+
-+enum nova_alloc_init {ALLOC_NO_INIT = 0,
-+		      ALLOC_INIT_ZERO = 1};
-+
-+enum alloc_type {
-+	LOG = 1,
-+	DATA,
++	/* Sentinel */
++	STATS_NUM,
 +};
 +
++extern const char *Timingstring[TIMING_NUM];
++extern u64 Timingstats[TIMING_NUM];
++DECLARE_PER_CPU(u64[TIMING_NUM], Timingstats_percpu);
++extern u64 Countstats[TIMING_NUM];
++DECLARE_PER_CPU(u64[TIMING_NUM], Countstats_percpu);
++extern u64 IOstats[STATS_NUM];
++DECLARE_PER_CPU(u64[STATS_NUM], IOstats_percpu);
++
++typedef struct timespec timing_t;
++
++#define NOVA_START_TIMING(name, start) \
++	{if (measure_timing) getrawmonotonic(&start); }
++
++#define NOVA_END_TIMING(name, start) \
++	{if (measure_timing) { \
++		timing_t end; \
++		getrawmonotonic(&end); \
++		__this_cpu_add(Timingstats_percpu[name], \
++			(end.tv_sec - start.tv_sec) * 1000000000 + \
++			(end.tv_nsec - start.tv_nsec)); \
++	} \
++	__this_cpu_add(Countstats_percpu[name], 1); \
++	}
++
++#define NOVA_STATS_ADD(name, value) \
++	{__this_cpu_add(IOstats_percpu[name], value); }
 +
 +
-+
-+int nova_alloc_block_free_lists(struct super_block *sb);
-+void nova_delete_free_lists(struct super_block *sb);
 +
 +#endif
-diff --git a/fs/nova/nova.h b/fs/nova/nova.h
-index e0e85fb..c4abdd8 100644
---- a/fs/nova/nova.h
-+++ b/fs/nova/nova.h
-@@ -310,6 +310,7 @@ struct nova_range_node {
- };
- 
- #include "bbuild.h"
-+#include "balloc.h"
- 
- /* ====================================================== */
- /* ==============  Function prototypes  ================= */
 diff --git a/fs/nova/super.c b/fs/nova/super.c
-index aec1cd3..43b24a7 100644
+index e0e38ab..9295d23 100644
 --- a/fs/nova/super.c
 +++ b/fs/nova/super.c
-@@ -545,6 +545,13 @@ static int nova_fill_super(struct super_block *sb, void *data, int silent)
+@@ -40,8 +40,12 @@
+ #include "nova.h"
+ #include "super.h"
+ 
++int measure_timing;
+ int support_clwb;
+ 
++module_param(measure_timing, int, 0444);
++MODULE_PARM_DESC(measure_timing, "Timing measurement");
++
+ module_param(nova_dbgmask, int, 0444);
+ MODULE_PARM_DESC(nova_dbgmask, "Control debugging output");
+ 
+@@ -500,6 +504,8 @@ static int nova_fill_super(struct super_block *sb, void *data, int silent)
  		goto out;
  	}
  
-+	if (nova_alloc_block_free_lists(sb)) {
-+		retval = -ENOMEM;
-+		nova_err(sb, "%s: Failed to allocate block free lists.",
-+			 __func__);
-+		goto out;
-+	}
++	nova_dbg("measure timing %d\n", measure_timing);
 +
- 	/* Init a new nova instance */
- 	if (sbi->s_mount_opt & NOVA_MOUNT_FORMAT) {
- 		root_pi = nova_init(sb, sbi->initsize);
-@@ -611,6 +618,8 @@ static int nova_fill_super(struct super_block *sb, void *data, int silent)
- 	kfree(sbi->zeroed_page);
- 	sbi->zeroed_page = NULL;
+ 	get_random_bytes(&random, sizeof(u32));
+ 	atomic_set(&sbi->next_generation, random);
  
-+	nova_delete_free_lists(sb);
-+
- 	kfree(sbi->nova_sb);
- 	kfree(sbi);
- 	nova_dbg("%s failed: return %d\n", __func__, retval);
-@@ -679,6 +688,8 @@ static void nova_put_super(struct super_block *sb)
- 		sbi->virt_addr = NULL;
- 	}
- 
-+	nova_delete_free_lists(sb);
-+
- 	kfree(sbi->zeroed_page);
- 	nova_dbgmask = 0;
- 
-diff --git a/fs/nova/super.h b/fs/nova/super.h
-index b478080..dcafbd8 100644
---- a/fs/nova/super.h
-+++ b/fs/nova/super.h
-@@ -118,6 +118,10 @@ struct nova_sb_info {
- 
- 	/* ZEROED page for cache page initialized */
- 	void *zeroed_page;
-+
-+	/* Per-CPU free block list */
-+	struct free_list *free_lists;
-+	unsigned long per_list_blocks;
- };
- 
- static inline struct nova_sb_info *NOVA_SB(struct super_block *sb)
 -- 
 2.7.4
