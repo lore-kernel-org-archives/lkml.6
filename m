@@ -1,122 +1,233 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3120443-1520553224-2-8170138431595313893
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='US-ASCII'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520553223; b=JJf9uqaNil7/LoD4o1m728nlxy2tPh8DXqYvejbRnyeX4ff
-    9oZNv2LF3g+3pG471Wxp2v9gynNTfT8LH128IwwU6CkpQyFeZUPcwK9yTOIUlee+
-    CDKNYdCpd/+AJPk30h0wo9TEEVfcqEbWoYnqjF8o6qUhcIuJFhDlr3DvgKlwjacJ
-    F60nOp9RRKKqA6FzTh3yjl4Ud5DB5bC+PEGNrxVMbOoi3bE5ykmtMYkVVEbe8dh8
-    TGdpUuvYUNdDL3d+Qo+RKkSHI3o6DGUhXSPML6C0oASgQvlxgMRzwbuAvX4+kcuc
-    V+fLmJVPMxtw3N4tsJ3Tp4ZlrXHpESgIYFyG6Pg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1520553223; bh=Ln7wsyfqGHHBB/HoMvEmCa1olYgfXsGUjQdnpRQVbRg=; b=N
-    F+gCG3ukEE7JDnoOXD45iSCdiHejPas3L9cds7MtVSikzVciceosXyyuGjeazzKm
-    xMUvSsJVhq3VhD1BXwVXhBba1ov64HPMdXbcxXtNVhXg5HaYiDiQGh96gf7+Bd5i
-    yEjal4h1vb8n4SMDgU71Qrn8emkS3iU+iVPrvhmQxdtloJ0N2AVgC17k+hMhvIHu
-    av36rjQvn3XI1qnUXnlcdVwFvVSynLT4kEidckE7RxxBfCiNVY2JQJmYJLamgkWU
-    OpRJfdne3rQ/BRknfdZscHaBd+98/o9zuGGdmiHLO9NovE0rR4hWW+GPBOmUSCAV
-    Q2I3/aW99TRyKMaAM4ofA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-foundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-foundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-foundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-foundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751237AbeCHXxm (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 8 Mar 2018 18:53:42 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50328 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751235AbeCHXxl (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 8 Mar 2018 18:53:41 -0500
-Date: Thu, 8 Mar 2018 15:53:39 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        bugzilla-daemon@bugzilla.kernel.org,
-        Michal Hocko <mhocko@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Nic Losby <blurbdust@gmail.com>,
-        Yisheng Xie <xieyisheng1@huawei.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v2] hugetlbfs: check for pgoff value overflow
-Message-Id: <20180308155339.de99d2ddde514e3980e3ef96@linux-foundation.org>
-In-Reply-To: <a5e3c0c4-d41e-6ffd-935d-63cce2527d0f@oracle.com>
-References: <20180306133135.4dc344e478d98f0e29f47698@linux-foundation.org>
-        <20180308210502.15952-1-mike.kravetz@oracle.com>
-        <20180308141533.d16e43f5f559215089e522ae@linux-foundation.org>
-        <a5e3c0c4-d41e-6ffd-935d-63cce2527d0f@oracle.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELvUFpJlrxt3QqxJvGSa9ya1vZ4QnquDtdq6rZi7DlOQrobKzgvRzrCpaQ5q83CsFXYiQhyG
+ARC-Seal: i=1; a=rsa-sha256; t=1520641228; cv=none;
+        d=google.com; s=arc-20160816;
+        b=SEpW71fMWo/ti1xo1Izk+p7pnnELS0lfdJdEES+53I7xXFL+IZxifpQ/cSWBa0qE/a
+         TVlFarz8Gfz9GxoIXLhkCe2aHruQqZqs+j8fGPmyKyvcTzXbfd25CqVYXmeJoJ9xqrYD
+         wk2mzQFEob+t7gueGs0M+efr/Mkm/3f2mWhg/myIOS3dJRP/dFwmmcH4CGWugK5HMEEU
+         pRAAujI4rPrjxyzPXhL3Z+22j8OD9efq3OG4yhud3/CplfghqPmL4VYyXQKxqJ1UwNze
+         JaV9AkEC2wcAPAU3dmclaodS+BV7WIVRY9nOprnf660pHtSA0ZlMnSRAXOgmStKadHtJ
+         Sz2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:user-agent:mime-version:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=JVryOrPXjOtlWQzBkGA5x+V3aU0IVy6K6sYl4AIX2u4=;
+        b=VfK3dRSsYxYKJBC0ytegDC97QyL9twt1aWYx3dAcm4LfJ3iYCS+C3vsmPN7E7bXEQ+
+         l8VLiyIsXuliuFYGh3K2HTFaWNxIulIvN3UUl1fdBVR6jQbyNASrhd7bXDuRn+2pOVEX
+         ylEdQPkux4suJ9CZBu0uDL1imC4gOJ+N5MnJWY/fz0zHxliyO2W2bLa0kU5Z9cM7rWGr
+         aI3H4H3ErsNKVPCsTrgpBgANQrKXHGvGU9OxerHu3CBG1ul35z+wXv4RwpOSqbFQcw2d
+         i5USpvzFl6RYYIOJ7JqKaSMJfPqaGvkO32owvRweVs/H0cHa58QRzhmJT4Rek9WtSQID
+         KSaA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuahkh@osg.samsung.com,
+	patches@kernelci.org,
+	ben.hutchings@codethink.co.uk,
+	lkft-triage@lists.linaro.org,
+	stable@vger.kernel.org
+Subject: [PATCH 4.4 00/36] 4.4.121-stable review
+Date: Fri,  9 Mar 2018 16:18:16 -0800
+Message-Id: <20180310001807.213987241@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
+MIME-Version: 1.0
+User-Agent: quilt/0.65
+X-stable: review
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.121-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.4.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.4.121-rc1
+X-KernelTest-Deadline: 2018-03-12T00:18+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594507896678991964?=
+X-GMAIL-MSGID: =?utf-8?q?1594507896678991964?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, 8 Mar 2018 15:37:57 -0800 Mike Kravetz <mike.kravetz@oracle.com> wrote:
+This is the start of the stable review cycle for the 4.4.121 release.
+There are 36 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-> Here are a couple options for computing the mask.  I changed the name
-> you suggested to make it more obvious that the mask is being used to
-> check for loff_t overflow.
-> 
-> If we want to explicitly comptue the mask as in code above.
-> #define PGOFF_LOFFT_MAX \
-> 	(((1UL << (PAGE_SHIFT + 1)) - 1) <<  (BITS_PER_LONG - (PAGE_SHIFT + 1)))
-> 
-> Or, we use PAGE_MASK
-> #define PGOFF_LOFFT_MAX (PAGE_MASK << (BITS_PER_LONG - (2 * PAGE_SHIFT) - 1))
+Responses should be made by Mon Mar 12 00:17:54 UTC 2018.
+Anything received after that time might be too late.
 
-Sounds good.
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.121-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+and the diffstat can be found below.
 
-> In either case, we need a big comment explaining the mask and
-> how we have that extra bit +/- 1 because the offset will be converted
-> to a signed value.
+thanks,
 
-Yup.
+greg k-h
 
-> > Also, we later to
-> > 
-> > 	len = vma_len + ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
-> > 	/* check for overflow */
-> > 	if (len < vma_len)
-> > 		return -EINVAL;
-> > 
-> > which is ungainly: even if we passed the PGOFF_T_MAX test, there can
-> > still be an overflow which we still must check for.  Is that avoidable?
-> > Probably not...
-> 
-> Yes, it is required.  That check takes into account the length argument
-> which is added to page offset.  So, yes you can pass the first check and
-> fail this one.
+-------------
+Pseudo-Shortlog of commits:
 
-Well I was sort of wondering if both checks could be done in a single
-operation, but I guess not.
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.4.121-rc1
+
+Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+    btrfs: preserve i_mode if __btrfs_set_acl() fails
+
+Daniel Borkmann <daniel@iogearbox.net>
+    bpf, x64: implement retpoline for tail call
+
+Mike Snitzer <snitzer@redhat.com>
+    dm io: fix duplicate bio completion due to missing ref count
+
+Dan Williams <dan.j.williams@intel.com>
+    mpls, nospec: Sanitize array index in mpls_label_ok()
+
+David Ahern <dsahern@gmail.com>
+    net: mpls: Pull common label check into helper
+
+Alexey Kodanev <alexey.kodanev@oracle.com>
+    sctp: verify size of a new chunk in _sctp_make_chunk()
+
+Julian Wiedmann <jwi@linux.vnet.ibm.com>
+    s390/qeth: fix IPA command submission race
+
+Julian Wiedmann <jwi@linux.vnet.ibm.com>
+    s390/qeth: fix SETIP command handling
+
+Alexey Kodanev <alexey.kodanev@oracle.com>
+    sctp: fix dst refcnt leak in sctp_v6_get_dst()
+
+Tommi Rantala <tommi.t.rantala@nokia.com>
+    sctp: fix dst refcnt leak in sctp_v4_get_dst
+
+Alexey Kodanev <alexey.kodanev@oracle.com>
+    udplite: fix partial checksum initialization
+
+Guillaume Nault <g.nault@alphalink.fr>
+    ppp: prevent unregistered channels from connecting to PPP units
+
+Nicolas Dichtel <nicolas.dichtel@6wind.com>
+    netlink: ensure to loop over all netns in genlmsg_multicast_allns()
+
+Sabrina Dubroca <sd@queasysnail.net>
+    net: ipv4: don't allow setting net.ipv4.route.min_pmtu below 68
+
+Jakub Kicinski <jakub.kicinski@netronome.com>
+    net: fix race on decreasing number of TX queues
+
+Arnd Bergmann <arnd@arndb.de>
+    ipv6 sit: work around bogus gcc-8 -Wrestrict warning
+
+Denis Du <dudenis2000@yahoo.ca>
+    hdlc_ppp: carrier detect ok, don't turn off negotiation
+
+Stefano Brivio <sbrivio@redhat.com>
+    fib_semantics: Don't match route with mismatching tclassid
+
+Xin Long <lucien.xin@gmail.com>
+    bridge: check brport attr show in brport_show
+
+Ben Hutchings <ben.hutchings@codethink.co.uk>
+    Revert "led: core: Fix brightness setting when setting delay_off=0"
+
+Dan Carpenter <dan.carpenter@oracle.com>
+    x86/spectre: Fix an error message
+
+Nathan Sullivan <nathan.sullivan@ni.com>
+    leds: do not overflow sysfs buffer in led_trigger_show
+
+Thomas Gleixner <tglx@linutronix.de>
+    x86/apic/vector: Handle legacy irq data correctly
+
+Adam Ford <aford173@gmail.com>
+    ARM: dts: LogicPD Torpedo: Fix I2C1 pinmux
+
+Jan Kara <jack@suse.cz>
+    btrfs: Don't clear SGID when inheriting ACLs
+
+Jiri Slaby <jslaby@suse.cz>
+    x86/syscall: Sanitize syscall table de-references under speculation fix
+
+Wanpeng Li <wanpeng.li@hotmail.com>
+    KVM: mmu: Fix overlap between public and private memslots
+
+Ulf Magnusson <ulfalizer@gmail.com>
+    ARM: mvebu: Fix broken PL310_ERRATA_753970 selects
+
+Rasmus Villemoes <linux@rasmusvillemoes.dk>
+    nospec: Allow index argument to have const-qualified type
+
+Mauro Carvalho Chehab <mchehab@s-opensource.com>
+    media: m88ds3103: don't call a non-initalized function
+
+Viresh Kumar <viresh.kumar@linaro.org>
+    cpufreq: s3c24xx: Fix broken s3c_cpufreq_init()
+
+Hans de Goede <hdegoede@redhat.com>
+    ALSA: hda: Add a power_save blacklist
+
+Erik Veijola <erik.veijola@gmail.com>
+    ALSA: usb-audio: Add a quirck for B&W PX headphones
+
+Jeremy Boone <jeremy.boone@nccgroup.trust>
+    tpm_i2c_nuvoton: fix potential buffer overruns caused by bit glitches on the bus
+
+Jeremy Boone <jeremy.boone@nccgroup.trust>
+    tpm_i2c_infineon: fix potential buffer overruns caused by bit glitches on the bus
+
+Jeremy Boone <jeremy.boone@nccgroup.trust>
+    tpm: st33zp24: fix potential buffer overruns caused by bit glitches on the bus
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                   |  4 +--
+ arch/arm/boot/dts/logicpd-torpedo-som.dtsi |  8 +++++
+ arch/arm/mach-mvebu/Kconfig                |  4 +--
+ arch/x86/entry/entry_64.S                  | 16 ++++++----
+ arch/x86/include/asm/nospec-branch.h       | 37 +++++++++++++++++++++++
+ arch/x86/kernel/apic/vector.c              | 14 ++++-----
+ arch/x86/kernel/cpu/bugs.c                 |  3 +-
+ arch/x86/net/bpf_jit_comp.c                |  9 +++---
+ drivers/char/tpm/st33zp24/st33zp24.c       |  4 +--
+ drivers/char/tpm/tpm_i2c_infineon.c        |  5 ++--
+ drivers/char/tpm/tpm_i2c_nuvoton.c         |  8 +++--
+ drivers/cpufreq/s3c24xx-cpufreq.c          |  8 ++++-
+ drivers/leds/led-core.c                    |  2 +-
+ drivers/leds/led-triggers.c                | 12 ++++----
+ drivers/md/dm-io.c                         |  1 +
+ drivers/media/dvb-frontends/m88ds3103.c    |  7 +++--
+ drivers/net/ppp/ppp_generic.c              |  9 ++++++
+ drivers/net/wan/hdlc_ppp.c                 |  5 +++-
+ drivers/s390/net/qeth_core.h               |  5 ++++
+ drivers/s390/net/qeth_core_main.c          | 33 +++++++++++----------
+ fs/btrfs/acl.c                             | 19 +++++++-----
+ include/linux/nospec.h                     |  3 +-
+ include/net/udplite.h                      |  1 +
+ net/bridge/br_sysfs_if.c                   |  3 ++
+ net/core/dev.c                             | 11 +++++--
+ net/ipv4/fib_semantics.c                   |  5 ++++
+ net/ipv4/route.c                           |  8 +++--
+ net/ipv4/udp.c                             |  5 ++++
+ net/ipv6/ip6_checksum.c                    |  5 ++++
+ net/ipv6/sit.c                             |  2 +-
+ net/mpls/af_mpls.c                         | 36 +++++++++++++----------
+ net/netlink/genetlink.c                    | 12 ++++++--
+ net/sctp/ipv6.c                            | 10 +++++--
+ net/sctp/protocol.c                        | 10 +++----
+ net/sctp/sm_make_chunk.c                   |  8 +++--
+ sound/pci/hda/hda_intel.c                  | 38 ++++++++++++++++++++++--
+ sound/usb/quirks-table.h                   | 47 ++++++++++++++++++++++++++++++
+ virt/kvm/kvm_main.c                        |  3 +-
+ 38 files changed, 320 insertions(+), 100 deletions(-)
