@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752156AbeCJSjg (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:39:36 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:36137 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932379AbeCJSUo (ORCPT
+        id S1752177AbeCJSj4 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:39:56 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:35337 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932070AbeCJSUn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:20:44 -0500
-X-Google-Smtp-Source: AG47ELt7ZidyNqyBMPjqfwb/71CJ31fcJ0NcRtTL1jtXKuE/k8Pw6ulfOtPTrAq/4Rhgvu43n1i/6g==
+        Sat, 10 Mar 2018 13:20:43 -0500
+X-Google-Smtp-Source: AG47ELs56ZEqNQ+jI9+edPidBSfsrLmKK33OdBB3S/avKPW1EfvnTa8jKVMehiCcaCziDtoBeU1QTA==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 23/83] Save allocator to pmem in put_super.
-Date: Sat, 10 Mar 2018 10:18:04 -0800
-Message-Id: <1520705944-6723-24-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 22/83] Inode log pages allocation and reclaimation.
+Date: Sat, 10 Mar 2018 10:18:03 -0800
+Message-Id: <1520705944-6723-23-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -27,205 +27,388 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andiry Xu <jix024@cs.ucsd.edu>
 
-We allocate log pages and append free range node to the log of the reserved blocknode inode.
-We can recover the allocator status by reading the log upon normal recovery.
+NOVA allocates one log page for each new inode. When the log is full,
+NOVA allocates new log pages, extends the log by either doubling the log size
+or increasing by fixed length, depends on log size.
 
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/bbuild.c | 114 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/nova/bbuild.h |   1 +
- fs/nova/inode.h  |  13 +++++++
- fs/nova/nova.h   |   7 ++++
- fs/nova/super.c  |   2 +
- 5 files changed, 137 insertions(+)
+ fs/nova/Makefile |   2 +-
+ fs/nova/log.c    | 327 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/nova/log.h    |  11 ++
+ 3 files changed, 339 insertions(+), 1 deletion(-)
+ create mode 100644 fs/nova/log.c
 
-diff --git a/fs/nova/bbuild.c b/fs/nova/bbuild.c
-index 8bc0545..12a2f11 100644
---- a/fs/nova/bbuild.c
-+++ b/fs/nova/bbuild.c
-@@ -51,3 +51,117 @@ void nova_init_header(struct super_block *sb,
- 	init_rwsem(&sih->i_sem);
- }
+diff --git a/fs/nova/Makefile b/fs/nova/Makefile
+index e2f7b07..b3638a4 100644
+--- a/fs/nova/Makefile
++++ b/fs/nova/Makefile
+@@ -4,4 +4,4 @@
  
-+static u64 nova_append_range_node_entry(struct super_block *sb,
-+	struct nova_range_node *curr, u64 tail, unsigned long cpuid)
+ obj-$(CONFIG_NOVA_FS) += nova.o
+ 
+-nova-y := balloc.o bbuild.o inode.o rebuild.o stats.o super.o
++nova-y := balloc.o bbuild.o inode.o log.o rebuild.o stats.o super.o
+diff --git a/fs/nova/log.c b/fs/nova/log.c
+new file mode 100644
+index 0000000..bdd133e
+--- /dev/null
++++ b/fs/nova/log.c
+@@ -0,0 +1,327 @@
++/*
++ * BRIEF DESCRIPTION
++ *
++ * Log methods
++ *
++ * Copyright 2015-2016 Regents of the University of California,
++ * UCSD Non-Volatile Systems Lab, Andiry Xu <jix024@cs.ucsd.edu>
++ * Copyright 2012-2013 Intel Corporation
++ * Copyright 2009-2011 Marco Stornelli <marco.stornelli@gmail.com>
++ * Copyright 2003 Sony Corporation
++ * Copyright 2003 Matsushita Electric Industrial Co., Ltd.
++ * 2003-2004 (c) MontaVista Software, Inc. , Steve Longerbeam
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2. This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#include "nova.h"
++#include "inode.h"
++#include "log.h"
++
++/* Coalesce log pages to a singly linked list */
++static int nova_coalesce_log_pages(struct super_block *sb,
++	unsigned long prev_blocknr, unsigned long first_blocknr,
++	unsigned long num_pages)
 +{
-+	u64 curr_p;
-+	size_t size = sizeof(struct nova_range_node_lowhigh);
-+	struct nova_range_node_lowhigh *entry;
++	unsigned long next_blocknr;
++	u64 curr_block, next_page;
++	struct nova_inode_log_page *curr_page;
++	int i;
 +
-+	curr_p = tail;
-+
-+	if (curr_p == 0 || (is_last_entry(curr_p, size) &&
-+				next_log_page(sb, curr_p) == 0)) {
-+		nova_dbg("%s: inode log reaches end?\n", __func__);
-+		goto out;
++	if (prev_blocknr) {
++		/* Link prev block and newly allocated head block */
++		curr_block = nova_get_block_off(sb, prev_blocknr,
++						NOVA_BLOCK_TYPE_4K);
++		curr_page = (struct nova_inode_log_page *)
++				nova_get_block(sb, curr_block);
++		next_page = nova_get_block_off(sb, first_blocknr,
++				NOVA_BLOCK_TYPE_4K);
++		nova_set_next_page_address(sb, curr_page, next_page, 0);
 +	}
 +
-+	if (is_last_entry(curr_p, size))
-+		curr_p = next_log_page(sb, curr_p);
++	next_blocknr = first_blocknr + 1;
++	curr_block = nova_get_block_off(sb, first_blocknr,
++						NOVA_BLOCK_TYPE_4K);
++	curr_page = (struct nova_inode_log_page *)
++				nova_get_block(sb, curr_block);
++	for (i = 0; i < num_pages - 1; i++) {
++		next_page = nova_get_block_off(sb, next_blocknr,
++				NOVA_BLOCK_TYPE_4K);
++		nova_set_page_num_entries(sb, curr_page, 0, 0);
++		nova_set_page_invalid_entries(sb, curr_page, 0, 0);
++		nova_set_next_page_address(sb, curr_page, next_page, 0);
++		curr_page++;
++		next_blocknr++;
++	}
 +
-+	entry = (struct nova_range_node_lowhigh *)nova_get_block(sb, curr_p);
-+	entry->range_low = cpu_to_le64(curr->range_low);
-+	if (cpuid)
-+		entry->range_low |= cpu_to_le64(cpuid << 56);
-+	entry->range_high = cpu_to_le64(curr->range_high);
-+	nova_dbgv("append entry block low 0x%lx, high 0x%lx\n",
-+			curr->range_low, curr->range_high);
++	/* Last page */
++	nova_set_page_num_entries(sb, curr_page, 0, 0);
++	nova_set_page_invalid_entries(sb, curr_page, 0, 0);
++	nova_set_next_page_address(sb, curr_page, 0, 1);
++	return 0;
++}
 +
-+	nova_flush_buffer(entry, sizeof(struct nova_range_node_lowhigh), 0);
-+out:
++/* Log block resides in NVMM */
++int nova_allocate_inode_log_pages(struct super_block *sb,
++	struct nova_inode_info_header *sih, unsigned long num_pages,
++	u64 *new_block, int cpuid, enum nova_alloc_direction from_tail)
++{
++	unsigned long new_inode_blocknr;
++	unsigned long first_blocknr;
++	unsigned long prev_blocknr;
++	int allocated;
++	int ret_pages = 0;
++
++	allocated = nova_new_log_blocks(sb, sih, &new_inode_blocknr,
++			num_pages, ALLOC_NO_INIT, cpuid, from_tail);
++
++	if (allocated <= 0) {
++		nova_err(sb, "ERROR: no inode log page available: %d %d\n",
++			num_pages, allocated);
++		return allocated;
++	}
++	ret_pages += allocated;
++	num_pages -= allocated;
++	nova_dbg_verbose("Pi %lu: Alloc %d log blocks @ 0x%lx\n",
++			sih->ino, allocated, new_inode_blocknr);
++
++	/* Coalesce the pages */
++	nova_coalesce_log_pages(sb, 0, new_inode_blocknr, allocated);
++	first_blocknr = new_inode_blocknr;
++	prev_blocknr = new_inode_blocknr + allocated - 1;
++
++	/* Allocate remaining pages */
++	while (num_pages) {
++		allocated = nova_new_log_blocks(sb, sih,
++					&new_inode_blocknr, num_pages,
++					ALLOC_NO_INIT, cpuid, from_tail);
++
++		nova_dbg_verbose("Alloc %d log blocks @ 0x%lx\n",
++					allocated, new_inode_blocknr);
++		if (allocated <= 0) {
++			nova_dbg("%s: no inode log page available: %lu %d\n",
++				__func__, num_pages, allocated);
++			/* Return whatever we have */
++			break;
++		}
++		ret_pages += allocated;
++		num_pages -= allocated;
++		nova_coalesce_log_pages(sb, prev_blocknr, new_inode_blocknr,
++						allocated);
++		prev_blocknr = new_inode_blocknr + allocated - 1;
++	}
++
++	*new_block = nova_get_block_off(sb, first_blocknr,
++						NOVA_BLOCK_TYPE_4K);
++
++	return ret_pages;
++}
++
++static int nova_initialize_inode_log(struct super_block *sb,
++	struct nova_inode *pi, struct nova_inode_info_header *sih,
++	int log_id)
++{
++	u64 new_block;
++	int allocated;
++
++	allocated = nova_allocate_inode_log_pages(sb, sih,
++					1, &new_block, ANY_CPU,
++					log_id == MAIN_LOG ? 0 : 1);
++	if (allocated != 1) {
++		nova_err(sb, "%s ERROR: no inode log page available\n",
++					__func__);
++		return -ENOSPC;
++	}
++
++	pi->log_tail = new_block;
++	nova_flush_buffer(&pi->log_tail, CACHELINE_SIZE, 0);
++	pi->log_head = new_block;
++	sih->log_head = sih->log_tail = new_block;
++	sih->log_pages = 1;
++	nova_flush_buffer(&pi->log_head, CACHELINE_SIZE, 1);
++
++	return 0;
++}
++
++/*
++ * Extend the log.  If the log is less than EXTEND_THRESHOLD pages, double its
++ * allocated size.  Otherwise, increase by EXTEND_THRESHOLD. Then, do GC.
++ */
++static u64 nova_extend_inode_log(struct super_block *sb, struct nova_inode *pi,
++	struct nova_inode_info_header *sih, u64 curr_p)
++{
++	u64 new_block = 0;
++	int allocated;
++	unsigned long num_pages;
++	int ret;
++
++	nova_dbgv("%s: inode %lu, curr 0x%llx\n", __func__, sih->ino, curr_p);
++
++	if (curr_p == 0) {
++		ret = nova_initialize_inode_log(sb, pi, sih, MAIN_LOG);
++		if (ret)
++			return 0;
++
++		return sih->log_head;
++	}
++
++	num_pages = sih->log_pages >= EXTEND_THRESHOLD ?
++				EXTEND_THRESHOLD : sih->log_pages;
++
++	allocated = nova_allocate_inode_log_pages(sb, sih,
++					num_pages, &new_block, ANY_CPU, 0);
++	nova_dbg_verbose("Link block %llu to block %llu\n",
++					curr_p >> PAGE_SHIFT,
++					new_block >> PAGE_SHIFT);
++	if (allocated <= 0) {
++		nova_err(sb, "%s ERROR: no inode log page available\n",
++					__func__);
++		nova_dbg("curr_p 0x%llx, %lu pages\n", curr_p,
++					sih->log_pages);
++		return 0;
++	}
++
++	/* Perform GC */
++	return new_block;
++}
++
++/* For thorough GC, simply append one more page */
++static u64 nova_append_one_log_page(struct super_block *sb,
++	struct nova_inode_info_header *sih, u64 curr_p)
++{
++	struct nova_inode_log_page *curr_page;
++	u64 new_block;
++	u64 curr_block;
++	int allocated;
++
++	allocated = nova_allocate_inode_log_pages(sb, sih, 1, &new_block,
++							ANY_CPU, 0);
++	if (allocated != 1) {
++		nova_err(sb, "%s: ERROR: no inode log page available\n",
++				__func__);
++		return 0;
++	}
++
++	if (curr_p == 0) {
++		curr_p = new_block;
++	} else {
++		/* Link prev block and newly allocated head block */
++		curr_block = BLOCK_OFF(curr_p);
++		curr_page = (struct nova_inode_log_page *)
++				nova_get_block(sb, curr_block);
++		nova_set_next_page_address(sb, curr_page, new_block, 1);
++	}
++
 +	return curr_p;
 +}
 +
-+static u64 nova_save_range_nodes_to_log(struct super_block *sb,
-+	struct rb_root *tree, u64 temp_tail, unsigned long cpuid)
++/* Get the append location. Extent the log if needed. */
++u64 nova_get_append_head(struct super_block *sb, struct nova_inode *pi,
++	struct nova_inode_info_header *sih, u64 tail, size_t size, int log_id,
++	int thorough_gc, int *extended)
 +{
-+	struct nova_range_node *curr;
-+	struct rb_node *temp;
-+	size_t size = sizeof(struct nova_range_node_lowhigh);
-+	u64 curr_entry = 0;
++	u64 curr_p;
 +
-+	/* Save in increasing order */
-+	temp = rb_first(tree);
-+	while (temp) {
-+		curr = container_of(temp, struct nova_range_node, node);
-+		curr_entry = nova_append_range_node_entry(sb, curr,
-+						temp_tail, cpuid);
-+		temp_tail = curr_entry + size;
-+		temp = rb_next(temp);
-+		rb_erase(&curr->node, tree);
-+		nova_free_range_node(curr);
++	if (tail)
++		curr_p = tail;
++	else
++		curr_p = sih->log_tail;
++
++	if (curr_p == 0 || (is_last_entry(curr_p, size) &&
++				next_log_page(sb, curr_p) == 0)) {
++		if (is_last_entry(curr_p, size)) {
++			nova_set_next_page_flag(sb, curr_p);
++		}
++
++		/* Alternate log should not go here */
++		if (log_id != MAIN_LOG)
++			return 0;
++
++		if (thorough_gc == 0) {
++			curr_p = nova_extend_inode_log(sb, pi, sih, curr_p);
++		} else {
++			curr_p = nova_append_one_log_page(sb, sih, curr_p);
++			/* For thorough GC */
++			*extended = 1;
++		}
++
++		if (curr_p == 0)
++			return 0;
 +	}
 +
-+	return temp_tail;
-+}
-+
-+static u64 nova_save_free_list_blocknodes(struct super_block *sb, int cpu,
-+	u64 temp_tail)
-+{
-+	struct free_list *free_list;
-+
-+	free_list = nova_get_free_list(sb, cpu);
-+	temp_tail = nova_save_range_nodes_to_log(sb,
-+				&free_list->block_free_tree, temp_tail, 0);
-+	return temp_tail;
-+}
-+
-+void nova_save_blocknode_mappings_to_log(struct super_block *sb)
-+{
-+	struct nova_inode *pi = nova_get_inode_by_ino(sb, NOVA_BLOCKNODE_INO);
-+	struct nova_inode_info_header sih;
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
-+	struct free_list *free_list;
-+	unsigned long num_blocknode = 0;
-+	unsigned long num_pages;
-+	int allocated;
-+	u64 new_block = 0;
-+	u64 temp_tail;
-+	int i;
-+
-+	sih.ino = NOVA_BLOCKNODE_INO;
-+	sih.i_blk_type = NOVA_DEFAULT_BLOCK_TYPE;
-+
-+	/* Allocate log pages before save blocknode mappings */
-+	for (i = 0; i < sbi->cpus; i++) {
-+		free_list = nova_get_free_list(sb, i);
-+		num_blocknode += free_list->num_blocknode;
-+		nova_dbgv("%s: free list %d: %lu nodes\n", __func__,
-+				i, free_list->num_blocknode);
++	if (is_last_entry(curr_p, size)) {
++		nova_set_next_page_flag(sb, curr_p);
++		curr_p = next_log_page(sb, curr_p);
 +	}
 +
-+	num_pages = num_blocknode / RANGENODE_PER_PAGE;
-+	if (num_blocknode % RANGENODE_PER_PAGE)
-+		num_pages++;
-+
-+	allocated = nova_allocate_inode_log_pages(sb, &sih, num_pages,
-+						&new_block, ANY_CPU, 0);
-+	if (allocated != num_pages) {
-+		nova_dbg("Error saving blocknode mappings: %d\n", allocated);
-+		return;
-+	}
-+
-+	temp_tail = new_block;
-+	for (i = 0; i < sbi->cpus; i++)
-+		temp_tail = nova_save_free_list_blocknodes(sb, i, temp_tail);
-+
-+	/* Finally update log head and tail */
-+	pi->log_head = new_block;
-+	nova_update_tail(pi, temp_tail);
-+	nova_flush_buffer(&pi->log_head, CACHELINE_SIZE, 0);
-+
-+	nova_dbg("%s: %lu blocknodes, %lu log pages, pi head 0x%llx, tail 0x%llx\n",
-+		  __func__, num_blocknode, num_pages,
-+		  pi->log_head, pi->log_tail);
++	return curr_p;
 +}
 +
-diff --git a/fs/nova/bbuild.h b/fs/nova/bbuild.h
-index 162a832..59cc379 100644
---- a/fs/nova/bbuild.h
-+++ b/fs/nova/bbuild.h
-@@ -3,5 +3,6 @@
++int nova_free_contiguous_log_blocks(struct super_block *sb,
++	struct nova_inode_info_header *sih, u64 head)
++{
++	unsigned long blocknr, start_blocknr = 0;
++	u64 curr_block = head;
++	u8 btype = sih->i_blk_type;
++	int num_free = 0;
++	int freed = 0;
++
++	while (curr_block > 0) {
++		if (ENTRY_LOC(curr_block)) {
++			nova_dbg("%s: ERROR: invalid block %llu\n",
++					__func__, curr_block);
++			break;
++		}
++
++		blocknr = nova_get_blocknr(sb, le64_to_cpu(curr_block),
++				    btype);
++		nova_dbg_verbose("%s: free page %llu\n", __func__, curr_block);
++		curr_block = next_log_page(sb, curr_block);
++
++		if (start_blocknr == 0) {
++			start_blocknr = blocknr;
++			num_free = 1;
++		} else {
++			if (blocknr == start_blocknr + num_free) {
++				num_free++;
++			} else {
++				/* A new start */
++				nova_free_log_blocks(sb, sih, start_blocknr,
++							num_free);
++				freed += num_free;
++				start_blocknr = blocknr;
++				num_free = 1;
++			}
++		}
++	}
++	if (start_blocknr) {
++		nova_free_log_blocks(sb, sih, start_blocknr, num_free);
++		freed += num_free;
++	}
++
++	return freed;
++}
++
++int nova_free_inode_log(struct super_block *sb, struct nova_inode *pi,
++	struct nova_inode_info_header *sih)
++{
++	int freed = 0;
++	timing_t free_time;
++
++	if (sih->log_head == 0 || sih->log_tail == 0)
++		return 0;
++
++	NOVA_START_TIMING(free_inode_log_t, free_time);
++
++	/* The inode is invalid now, no need to fence */
++	if (pi) {
++		pi->log_head = pi->log_tail = 0;
++		nova_flush_buffer(&pi->log_head, CACHELINE_SIZE, 0);
++	}
++
++	freed = nova_free_contiguous_log_blocks(sb, sih, sih->log_head);
++
++	NOVA_END_TIMING(free_inode_log_t, free_time);
++	return 0;
++}
+diff --git a/fs/nova/log.h b/fs/nova/log.h
+index 61586a3..2bc131f 100644
+--- a/fs/nova/log.h
++++ b/fs/nova/log.h
+@@ -35,6 +35,7 @@ struct	nova_inode_log_page {
+ 	struct nova_inode_page_tail page_tail;
+ } __attribute((__packed__));
  
- void nova_init_header(struct super_block *sb,
- 	struct nova_inode_info_header *sih, u16 i_mode);
-+void nova_save_blocknode_mappings_to_log(struct super_block *sb);
++#define	EXTEND_THRESHOLD	256
  
- #endif
-diff --git a/fs/nova/inode.h b/fs/nova/inode.h
-index dbd5256..0594ef3 100644
---- a/fs/nova/inode.h
-+++ b/fs/nova/inode.h
-@@ -123,6 +123,19 @@ static inline void sih_unlock_shared(struct nova_inode_info_header *header)
- 	up_read(&header->i_sem);
+ enum nova_entry_type {
+ 	FILE_WRITE = 1,
+@@ -183,5 +184,15 @@ static inline bool goto_next_page(struct super_block *sb, u64 curr_p)
  }
  
-+static inline void nova_update_tail(struct nova_inode *pi, u64 new_tail)
-+{
-+	timing_t update_time;
-+
-+	NOVA_START_TIMING(update_tail_t, update_time);
-+
-+	PERSISTENT_BARRIER();
-+	pi->log_tail = new_tail;
-+	nova_flush_buffer(&pi->log_tail, CACHELINE_SIZE, 1);
-+
-+	NOVA_END_TIMING(update_tail_t, update_time);
-+}
-+
- static inline unsigned int
- nova_inode_blk_shift(struct nova_inode_info_header *sih)
- {
-diff --git a/fs/nova/nova.h b/fs/nova/nova.h
-index f5b4ec8..aa88d9f 100644
---- a/fs/nova/nova.h
-+++ b/fs/nova/nova.h
-@@ -303,6 +303,13 @@ static inline u64 nova_get_epoch_id(struct super_block *sb)
- #include "inode.h"
- #include "log.h"
  
-+struct nova_range_node_lowhigh {
-+	__le64 range_low;
-+	__le64 range_high;
-+};
-+
-+#define	RANGENODE_PER_PAGE	254
-+
- /* A node in the RB tree representing a range of pages */
- struct nova_range_node {
- 	struct rb_node node;
-diff --git a/fs/nova/super.c b/fs/nova/super.c
-index 3500d19..7ee3f66 100644
---- a/fs/nova/super.c
-+++ b/fs/nova/super.c
-@@ -705,6 +705,8 @@ static void nova_put_super(struct super_block *sb)
- 	struct nova_sb_info *sbi = NOVA_SB(sb);
++int nova_allocate_inode_log_pages(struct super_block *sb,
++	struct nova_inode_info_header *sih, unsigned long num_pages,
++	u64 *new_block, int cpuid, enum nova_alloc_direction from_tail);
++u64 nova_get_append_head(struct super_block *sb, struct nova_inode *pi,
++	struct nova_inode_info_header *sih, u64 tail, size_t size, int log_id,
++	int thorough_gc, int *extended);
++int nova_free_contiguous_log_blocks(struct super_block *sb,
++	struct nova_inode_info_header *sih, u64 head);
++int nova_free_inode_log(struct super_block *sb, struct nova_inode *pi,
++	struct nova_inode_info_header *sih);
  
- 	if (sbi->virt_addr) {
-+		/* Save everything before blocknode mapping! */
-+		nova_save_blocknode_mappings_to_log(sb);
- 		sbi->virt_addr = NULL;
- 	}
- 
+ #endif
 -- 
 2.7.4
