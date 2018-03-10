@@ -1,80 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932742AbeCJChg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 21:37:36 -0500
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:35922 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751349AbeCJChe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 21:37:34 -0500
-X-Google-Smtp-Source: AG47ELvII9L9UxAsAS0ss0txNr3sTHZ2zB9reKBtBlKhVwsMi8Pbf8GR+x7oYwqmDlJ3flkARw7d0Zm4kIYYYJg27L8=
+        id S932866AbeCJCjO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 21:39:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49046 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751392AbeCJCjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 21:39:09 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1E9E2178B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Message-Id: <20180310023907.664302683@goodmis.org>
+User-Agent: quilt/0.63-1
+Date: Fri, 09 Mar 2018 21:34:44 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>, Jiri Olsa <jolsa@kernel.org>
+Subject: [PATCH 2/3] tracing: Clean up and document pred_funcs_##type creation and use
+References: <20180310023442.791997138@goodmis.org>
 MIME-Version: 1.0
-In-Reply-To: <20180308164654.GA31199@botnar.kaiser.cx>
-References: <1520373735-13699-1-git-send-email-martin@kaiser.cx>
- <CAOMZO5A7W4rbPbZB8ERs518obrg+6F6mDeojkwJaGComFAJB0A@mail.gmail.com>
- <20180308140851.GA25601@botnar.kaiser.cx> <CAOMZO5BdBWExt9FvPrfUG74Y62e4EUs6cqFyfVs5JuUtym00hQ@mail.gmail.com>
- <20180308164654.GA31199@botnar.kaiser.cx>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Fri, 9 Mar 2018 23:37:33 -0300
-Message-ID: <CAOMZO5Czv7Rj-wA9L42S9GJhufjw3br0d+iLcf070NWH4SjCbA@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx25: set correct parents for ssi ipg clocks
-To: Martin Kaiser <martin@kaiser.cx>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline; filename=0002-tracing-Clean-up-and-document-pred_funcs_-type-creat.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Martin,
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-On Thu, Mar 8, 2018 at 1:46 PM, Martin Kaiser <martin@kaiser.cx> wrote:
+The pred_funcs_##type arrays consist of five functions that are assigned
+based on the ops. The array must be in the same order of the ops each
+function represents. The PRED_FUNC_START macro denotes the op enum that
+starts the op that maps to the pred_funcs_##type arrays. This is all very
+subtle and prone to bugs if the code is changed.
 
->> I can get audio to work fine without your patch on a mx25pdk.
->
-> this is surprising. How come the ssi1_ipg_per clock is not turned off by
-> clk_disable_unused()? Where is it used? Do you have
->
-> <&clks 55>
->
-> anywhere in your DT?
+Add comments describing how PRED_FUNC_START and pred_funcs_##type array is
+used, and also a PRED_FUNC_MAX that is the maximum number of functions in
+the arrays.
 
-No, I don't. imx25-pdk board operates SSI in slave mode.
+Clean up select_comparison_fn() that assigns the predicates to the
+pred_funcs_##type array function as well as add protection in case an op is
+passed in that does not map correctly to the array.
 
-> (My codec chip does not use a dedicated clock line. It takes the bit clock that
-> is the output of SSI. Are you maybe using ssi1_ipg_per for your codec and
-> enable it there?)
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/trace/trace_events_filter.c | 46 ++++++++++++++++++++++++++------------
+ 1 file changed, 32 insertions(+), 14 deletions(-)
 
-The difference between our boards is that you use SSI in master mode
-and mx25pdk in slave mode.
-
-> In my first mail, I was wondering about imx25 uart1, where we also have
-> uart1_ipg and uart_ipg_per and the clock seeting is
->
->    clk[uart1_ipg] = imx_clk_gate("uart1_ipg", "ipg", ccm(CCM_CGCR2), 14);
->
-> In this case, both uart1 and uart_ipg_per are listed in the device tree
->
->          uart1: serial@43f90000 {
-> ...
->             clocks = <&clks 120>, <&clks 57>;
->             clock-names = "ipg", "per";
->          };
->
-> Documentation/devicetree/bindings/clock/imx25-clock.txt
->    uart_ipg_per      57
->    uart1_ipg      120
->
-> and the driver enables both clocks explicitly. So they are not unused.
->
->
-> Doing something like this is not an option for ssi, this will not work with
-> imx31, 35 etc.
-
-The solution to this is passing the "baud" clock as Lothar pointed out.
+diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+index a2ef393b3bb2..9d383f4383dc 100644
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -65,6 +65,13 @@ struct filter_op {
+ 
+ static struct filter_op filter_ops[] = { OPS };
+ 
++/*
++ * pred functions are OP_LT, OP_LE, OP_GT, OP_GE, and OP_BAND
++ * pred_funcs_##type below must match the order of them above.
++ */
++#define PRED_FUNC_START			OP_LT
++#define PRED_FUNC_MAX			(OP_BAND - PRED_FUNC_START)
++
+ #define ERRORS								\
+ 	C( NONE,	 	"No error"),				\
+ 	C( INVALID_OP,		"Invalid operator"),			\
+@@ -172,8 +179,6 @@ static const filter_pred_fn_t pred_funcs_##type[] = {			\
+ 	filter_pred_BAND_##type,					\
+ };
+ 
+-#define PRED_FUNC_START			OP_LT
+-
+ #define DEFINE_EQUALITY_PRED(size)					\
+ static int filter_pred_##size(struct filter_pred *pred, void *event)	\
+ {									\
+@@ -946,39 +951,52 @@ static filter_pred_fn_t select_comparison_fn(enum filter_op_ids op,
+ 					    int field_size, int field_is_signed)
+ {
+ 	filter_pred_fn_t fn = NULL;
++	int pred_func_index = -1;
++
++	switch (op) {
++	case OP_EQ:
++	case OP_NE:
++		break;
++	default:
++		if (WARN_ON_ONCE(op < PRED_FUNC_START))
++			return NULL;
++		pred_func_index = op - PRED_FUNC_START;
++		if (WARN_ON_ONCE(pred_func_index > PRED_FUNC_MAX))
++			return NULL;
++	}
+ 
+ 	switch (field_size) {
+ 	case 8:
+-		if (op == OP_EQ || op == OP_NE)
++		if (pred_func_index < 0)
+ 			fn = filter_pred_64;
+ 		else if (field_is_signed)
+-			fn = pred_funcs_s64[op - PRED_FUNC_START];
++			fn = pred_funcs_s64[pred_func_index];
+ 		else
+-			fn = pred_funcs_u64[op - PRED_FUNC_START];
++			fn = pred_funcs_u64[pred_func_index];
+ 		break;
+ 	case 4:
+-		if (op == OP_EQ || op == OP_NE)
++		if (pred_func_index < 0)
+ 			fn = filter_pred_32;
+ 		else if (field_is_signed)
+-			fn = pred_funcs_s32[op - PRED_FUNC_START];
++			fn = pred_funcs_s32[pred_func_index];
+ 		else
+-			fn = pred_funcs_u32[op - PRED_FUNC_START];
++			fn = pred_funcs_u32[pred_func_index];
+ 		break;
+ 	case 2:
+-		if (op == OP_EQ || op == OP_NE)
++		if (pred_func_index < 0)
+ 			fn = filter_pred_16;
+ 		else if (field_is_signed)
+-			fn = pred_funcs_s16[op - PRED_FUNC_START];
++			fn = pred_funcs_s16[pred_func_index];
+ 		else
+-			fn = pred_funcs_u16[op - PRED_FUNC_START];
++			fn = pred_funcs_u16[pred_func_index];
+ 		break;
+ 	case 1:
+-		if (op == OP_EQ || op == OP_NE)
++		if (pred_func_index < 0)
+ 			fn = filter_pred_8;
+ 		else if (field_is_signed)
+-			fn = pred_funcs_s8[op - PRED_FUNC_START];
++			fn = pred_funcs_s8[pred_func_index];
+ 		else
+-			fn = pred_funcs_u8[op - PRED_FUNC_START];
++			fn = pred_funcs_u8[pred_func_index];
+ 		break;
+ 	}
+ 
+-- 
+2.15.1
