@@ -1,28 +1,28 @@
 Return-Path: <mcgrof@kernel.org>
-X-Google-Smtp-Source: AG47ELsiZ/RJPZ6gHImVYUqpezlweDWOHY9hDmq2/TsH3Mbf/1v8GtOu9No8Rd9bvDDXe+woK+VZ
-ARC-Seal: i=1; a=rsa-sha256; t=1520691325; cv=none;
+X-Google-Smtp-Source: AG47ELsLoGMjyxMA8GyW4UxvOdVDbtZJP1e96HDrGHJu8AKuAVYChsEGHYU1T3BTc0xvaRYYQWNu
+ARC-Seal: i=1; a=rsa-sha256; t=1520691324; cv=none;
         d=google.com; s=arc-20160816;
-        b=AdXoHkPOn1KR7qKyZXUlzyNPLAxiq5A5QihWydjX804RtRjABpKsrODjQSUbn/Mx8j
-         CW62UtKYvtiVWKB83zB+J2ynn0rgwm+EEcbSZtbQm/YI7Lr1TtmlM+PFLtolJW4ntrGy
-         D5BA8hiIox7RLxUoESiwNnorgWmtU2xMaCN3svFZcOddUTz9RP/+ZLpOwfly2OefsQf3
-         GrLHUozGX4yvL/hIiABpjjgxXf+W/fkJU8PwQnDqqmm/FzJsUAnyfC4b3EMJ77tMckaX
-         Mmx82QruvMy/kKIIwG/37hXCkTK/kGerirqbKnBdTjh7GvvNOzQKLi/4pbDCm0PXVC3L
-         ebMQ==
+        b=LpKWo5C1BuTJhXhGjlFqv5RBLnuPgi7ibUo/J6OitjuS6544nsOQETOFqH2/j25UFa
+         pLquuPiXDMV7uz5yU0RcvOicKpeczPrT99kt2vOr05jCxbL0ZI9gvjFEHKrBsI4DFCeQ
+         /qGd7S+1iRaaXUqsdTwRRGLYwsNwQH+L+jQUFQeIENbsyympqB2Z8kx2tGEhk7wx6zWv
+         tbFnScXXkThj+aeO8Tqb9QLAxsFQHK9PjYxhPN/Z1iY06/828ni+P4YnyiIALNcQZbvz
+         QHOmktaug595W5OYYFT9/Oi5QB7HygDUmKKRj/lyiTvSa/n5ymhU9uIggxsqjatpN83v
+         SJpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dmarc-filter:arc-authentication-results;
-        bh=hqYKOKg+3y1T20u2oZiPjmMCpggwQKCz8TBhoRR/ItE=;
-        b=rsctOK33GTRVF1loy97r00+CGsg1UkVcoyv/ioy3J6WPUchorwrktmdXkmzseNaRjU
-         TaUik9uNUpDUo3srgUBil0yoq8I4qLBttxpGGhm75Wp2cJjkcdpVzR8w0TrnC5Z+bVXB
-         1q6UomRIDlNIdnGvuPIhPB2vAzfwm05N5w/hMvD/yRnawC4VXzhJbCbmUybrVlmT8MUx
-         RlzSyaTHCsXV6ZTRuZ5zs0FcwvxWFZxXeO8AcK8KojQ2twqcYXYfPzXZ+UMM5b3q+Swe
-         ma4NJnE0kkfIXFbi+psOlkkd/H4k/YKWhZ2We1oxy1HhaLxrwnXP2VZWfJxqOZ7zq8y3
-         zTsQ==
+        bh=OoptXVOcp8vXmH4uUVzlQhSKsTMB+eAB36E+ytRpAvY=;
+        b=CJwdEGhmAMQb4cDTggOagYo5PgVHnotJMMOYlY6drsCVphtTPzDD9dUqwuQcPuKwly
+         Uu2ImIUE7Ouhn/h2GZOWrMyrrI8Wf9+KMxgTallC5/nGDAfBoH9IBEVng2d9X5WrXnOg
+         ctD+DKnsNuFkBFGAkscjmuwZgnFAWKOHCGBVTwS8z24ss23MO87fhAB0WiE3BJzIcFQx
+         0pSdH35dUJviAa3UpBh7pmnW9C2p7Oif0/ylPy+B14ggk0UHYiiD2qY9MhqQ9/noaeyT
+         5HHeUov5SJWv+WGwOAR73iCuqCysXkJTZp/UQuR8yaM51+G34AzY6ldxPtqFKATuGWca
+         OXyw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5BA4217C1
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C811217BE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
@@ -55,144 +55,162 @@ Cc: akpm@linux-foundation.org,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	"Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH v3 10/20] firmware: enable run time change of forcing fallback loader
-Date: Sat, 10 Mar 2018 06:14:51 -0800
-Message-Id: <20180310141501.2214-11-mcgrof@kernel.org>
+Subject: [PATCH v3 09/20] firmware: move firmware loader into its own directory
+Date: Sat, 10 Mar 2018 06:14:50 -0800
+Message-Id: <20180310141501.2214-10-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.13.2
 In-Reply-To: <20180310141501.2214-1-mcgrof@kernel.org>
 References: <20180310141501.2214-1-mcgrof@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594560428261925704?=
-X-GMAIL-MSGID: =?utf-8?q?1594560428261925704?=
+X-GMAIL-THRID: =?utf-8?q?1594560426194993552?=
+X-GMAIL-MSGID: =?utf-8?q?1594560426194993552?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Currently one requires to test four kernel configurations to test the
-firmware API completely:
+This will make it much easier to manage as we manage to
+keep trimming componnents down into their own files to more
+easily manage and maintain this codebase.
 
-0)
-  CONFIG_FW_LOADER=y
-
-1)
-  o CONFIG_FW_LOADER=y
-  o CONFIG_FW_LOADER_USER_HELPER=y
-
-2)
-  o CONFIG_FW_LOADER=y
-  o CONFIG_FW_LOADER_USER_HELPER=y
-  o CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
-
-3) When CONFIG_FW_LOADER=m the built-in stuff is disabled, we have
-   no current tests for this.
-
-We can reduce the requirements to three kernel configurations by making
-fw_config.force_sysfs_fallback a proc knob we flip on off. For kernels that
-disable CONFIG_IKCONFIG_PROC this can also enable one to inspect if
-CONFIG_FW_LOADER_USER_HELPER_FALLBACK was enabled at build time by checking
-the proc value at boot time.
-
-Acked-by: Kees Cook <keescook@chromium.org>
+Suggested-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 ---
- drivers/base/firmware_loader/fallback.c       |  1 +
- drivers/base/firmware_loader/fallback.h       |  4 +++-
- drivers/base/firmware_loader/fallback_table.c | 17 +++++++++++++++++
- kernel/sysctl.c                               | 11 +++++++++++
- 4 files changed, 32 insertions(+), 1 deletion(-)
+ MAINTAINERS                                                       | 2 +-
+ drivers/base/Makefile                                             | 7 ++-----
+ drivers/base/firmware_loader/Makefile                             | 7 +++++++
+ drivers/base/{firmware_fallback.c => firmware_loader/fallback.c}  | 4 ++--
+ drivers/base/{firmware_fallback.h => firmware_loader/fallback.h}  | 0
+ .../fallback_table.c}                                             | 4 ++--
+ drivers/base/{firmware_loader.h => firmware_loader/firmware.h}    | 0
+ drivers/base/{firmware_loader.c => firmware_loader/main.c}        | 8 ++++----
+ 8 files changed, 18 insertions(+), 14 deletions(-)
+ create mode 100644 drivers/base/firmware_loader/Makefile
+ rename drivers/base/{firmware_fallback.c => firmware_loader/fallback.c} (99%)
+ rename drivers/base/{firmware_fallback.h => firmware_loader/fallback.h} (100%)
+ rename drivers/base/{firmware_fallback_table.c => firmware_loader/fallback_table.c} (90%)
+ rename drivers/base/{firmware_loader.h => firmware_loader/firmware.h} (100%)
+ rename drivers/base/{firmware_loader.c => firmware_loader/main.c} (99%)
 
-diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
-index 9b65837256d6..45cc40933a47 100644
---- a/drivers/base/firmware_loader/fallback.c
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e03a130902cd..6ddd6f4aaffa 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5589,7 +5589,7 @@ M:	Luis R. Rodriguez <mcgrof@kernel.org>
+ L:	linux-kernel@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/firmware_class/
+-F:	drivers/base/firmware*.c
++F:	drivers/base/firmware_loader/
+ F:	include/linux/firmware.h
+ 
+ FLASH ADAPTER DRIVER (IBM Flash Adapter 900GB Full Height PCI Flash Card)
+diff --git a/drivers/base/Makefile b/drivers/base/Makefile
+index b946a408256d..b9539abec675 100644
+--- a/drivers/base/Makefile
++++ b/drivers/base/Makefile
+@@ -5,17 +5,14 @@ obj-y			:= component.o core.o bus.o dd.o syscore.o \
+ 			   driver.o class.o platform.o \
+ 			   cpu.o firmware.o init.o map.o devres.o \
+ 			   attribute_container.o transport_class.o \
+-			   topology.o container.o property.o cacheinfo.o \
+-			   firmware_fallback_table.o
++			   topology.o container.o property.o cacheinfo.o
+ obj-$(CONFIG_DEVTMPFS)	+= devtmpfs.o
+ obj-$(CONFIG_DMA_CMA) += dma-contiguous.o
+ obj-y			+= power/
+ obj-$(CONFIG_HAS_DMA)	+= dma-mapping.o
+ obj-$(CONFIG_HAVE_GENERIC_DMA_COHERENT) += dma-coherent.o
+ obj-$(CONFIG_ISA_BUS_API)	+= isa.o
+-obj-$(CONFIG_FW_LOADER)	+= firmware_class.o
+-firmware_class-objs := firmware_loader.o
+-firmware_class-$(CONFIG_FW_LOADER_USER_HELPER) += firmware_fallback.o
++obj-y				+= firmware_loader/
+ obj-$(CONFIG_NUMA)	+= node.o
+ obj-$(CONFIG_MEMORY_HOTPLUG_SPARSE) += memory.o
+ ifeq ($(CONFIG_SYSFS),y)
+diff --git a/drivers/base/firmware_loader/Makefile b/drivers/base/firmware_loader/Makefile
+new file mode 100644
+index 000000000000..a97eeb0be1d8
+--- /dev/null
++++ b/drivers/base/firmware_loader/Makefile
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0
++# Makefile for the Linux firmware loader
++
++obj-y			:= fallback_table.o
++obj-$(CONFIG_FW_LOADER)	+= firmware_class.o
++firmware_class-objs := main.o
++firmware_class-$(CONFIG_FW_LOADER_USER_HELPER) += fallback.o
+diff --git a/drivers/base/firmware_fallback.c b/drivers/base/firmware_loader/fallback.c
+similarity index 99%
+rename from drivers/base/firmware_fallback.c
+rename to drivers/base/firmware_loader/fallback.c
+index 47690207e0ee..9b65837256d6 100644
+--- a/drivers/base/firmware_fallback.c
 +++ b/drivers/base/firmware_loader/fallback.c
-@@ -7,6 +7,7 @@
- #include <linux/security.h>
+@@ -8,8 +8,8 @@
  #include <linux/highmem.h>
  #include <linux/umh.h>
-+#include <linux/sysctl.h>
  
- #include "fallback.h"
- #include "firmware.h"
-diff --git a/drivers/base/firmware_loader/fallback.h b/drivers/base/firmware_loader/fallback.h
-index 550498c7fa4c..ca7e69a8417b 100644
---- a/drivers/base/firmware_loader/fallback.h
-+++ b/drivers/base/firmware_loader/fallback.h
-@@ -12,12 +12,14 @@
-  *
-  * @force_sysfs_fallback: force the sysfs fallback mechanism to be used
-  * 	as if one had enabled CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y.
-+ * 	Useful to help debug a CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
-+ * 	functionality on a kernel where that config entry has been disabled.
-  * @old_timeout: for internal use
-  * @loading_timeout: the timeout to wait for the fallback mechanism before
-  * 	giving up, in seconds.
-  */
- struct firmware_fallback_config {
--	const bool force_sysfs_fallback;
-+	unsigned int force_sysfs_fallback;
- 	int old_timeout;
- 	int loading_timeout;
- };
-diff --git a/drivers/base/firmware_loader/fallback_table.c b/drivers/base/firmware_loader/fallback_table.c
-index 981419044c7e..92365e053e30 100644
---- a/drivers/base/firmware_loader/fallback_table.c
+-#include "firmware_fallback.h"
+-#include "firmware_loader.h"
++#include "fallback.h"
++#include "firmware.h"
+ 
+ /*
+  * firmware fallback mechanism
+diff --git a/drivers/base/firmware_fallback.h b/drivers/base/firmware_loader/fallback.h
+similarity index 100%
+rename from drivers/base/firmware_fallback.h
+rename to drivers/base/firmware_loader/fallback.h
+diff --git a/drivers/base/firmware_fallback_table.c b/drivers/base/firmware_loader/fallback_table.c
+similarity index 90%
+rename from drivers/base/firmware_fallback_table.c
+rename to drivers/base/firmware_loader/fallback_table.c
+index 53cc4e492520..981419044c7e 100644
+--- a/drivers/base/firmware_fallback_table.c
 +++ b/drivers/base/firmware_loader/fallback_table.c
-@@ -19,6 +19,9 @@
- /* Module or buit-in */
- #ifdef CONFIG_FW_LOADER_USER_HELPER
+@@ -9,8 +9,8 @@
+ #include <linux/umh.h>
+ #include <linux/sysctl.h>
  
-+static unsigned int zero;
-+static unsigned int one = 1;
-+
- struct firmware_fallback_config fw_fallback_config = {
- 	.force_sysfs_fallback = IS_ENABLED(CONFIG_FW_LOADER_USER_HELPER_FALLBACK),
- 	.loading_timeout = 60,
-@@ -26,4 +29,18 @@ struct firmware_fallback_config fw_fallback_config = {
- };
- EXPORT_SYMBOL_GPL(fw_fallback_config);
+-#include "firmware_fallback.h"
+-#include "firmware_loader.h"
++#include "fallback.h"
++#include "firmware.h"
  
-+struct ctl_table firmware_config_table[] = {
-+	{
-+		.procname	= "force_sysfs_fallback",
-+		.data		= &fw_fallback_config.force_sysfs_fallback,
-+		.maxlen         = sizeof(unsigned int),
-+		.mode           = 0644,
-+		.proc_handler   = proc_douintvec_minmax,
-+		.extra1		= &zero,
-+		.extra2		= &one,
-+	},
-+	{ }
-+};
-+EXPORT_SYMBOL_GPL(firmware_config_table);
-+
- #endif
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 6c68e771e11d..7a8aa6866764 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -253,6 +253,10 @@ extern struct ctl_table random_table[];
- extern struct ctl_table epoll_table[];
- #endif
+ /*
+  * firmware fallback configuration table
+diff --git a/drivers/base/firmware_loader.h b/drivers/base/firmware_loader/firmware.h
+similarity index 100%
+rename from drivers/base/firmware_loader.h
+rename to drivers/base/firmware_loader/firmware.h
+diff --git a/drivers/base/firmware_loader.c b/drivers/base/firmware_loader/main.c
+similarity index 99%
+rename from drivers/base/firmware_loader.c
+rename to drivers/base/firmware_loader/main.c
+index 21dd31ef08ae..c8966c84bd44 100644
+--- a/drivers/base/firmware_loader.c
++++ b/drivers/base/firmware_loader/main.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * firmware_class.c - Multi purpose firmware loading support
++ * main.c - Multi purpose firmware loading support
+  *
+  * Copyright (c) 2003 Manuel Estrada Sainz
+  *
+@@ -36,9 +36,9 @@
  
-+#ifdef CONFIG_FW_LOADER_USER_HELPER
-+extern struct ctl_table firmware_config_table[];
-+#endif
-+
- #ifdef HAVE_ARCH_PICK_MMAP_LAYOUT
- int sysctl_legacy_va_layout;
- #endif
-@@ -748,6 +752,13 @@ static struct ctl_table kern_table[] = {
- 		.mode		= 0555,
- 		.child		= usermodehelper_table,
- 	},
-+#ifdef CONFIG_FW_LOADER_USER_HELPER
-+	{
-+		.procname	= "firmware_config",
-+		.mode		= 0555,
-+		.child		= firmware_config_table,
-+	},
-+#endif
- 	{
- 		.procname	= "overflowuid",
- 		.data		= &overflowuid,
+ #include <generated/utsrelease.h>
+ 
+-#include "base.h"
+-#include "firmware_loader.h"
+-#include "firmware_fallback.h"
++#include "../base.h"
++#include "firmware.h"
++#include "fallback.h"
+ 
+ MODULE_AUTHOR("Manuel Estrada Sainz");
+ MODULE_DESCRIPTION("Multi purpose firmware loading support");
 -- 
 2.16.2
