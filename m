@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932494AbeCJSmb (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:42:31 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:39883 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932269AbeCJSUd (ORCPT
+        id S932471AbeCJSma (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:42:30 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:38376 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932321AbeCJSUe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:20:33 -0500
-X-Google-Smtp-Source: AG47ELsx5P1VO16Fj5Sny1ZkiHnPZQeFqNDbaHJWUAmCyGaOfKQjyb8hDlMXMf0ISjwgQlnVWGKKTQ==
+        Sat, 10 Mar 2018 13:20:34 -0500
+X-Google-Smtp-Source: AG47ELsHKARTsOqjC45iw+PMfz86bTiY/fEUw7sHInSitefoqvHt9VVHIiUrrQMpscAipdctZWqPOg==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 14/83] Add range node kmem cache.
-Date: Sat, 10 Mar 2018 10:17:55 -0800
-Message-Id: <1520705944-6723-15-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 15/83] Add free list data structure.
+Date: Sat, 10 Mar 2018 10:17:56 -0800
+Message-Id: <1520705944-6723-16-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -27,148 +27,230 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andiry Xu <jix024@cs.ucsd.edu>
 
-Range node specifies a range of [start, end]. and is managed by a red-black tree.
-NOVA uses range node to manage NVM allocator and inodes being used.
+Free list is the data structure that NOVA uses to manage free pmem blocks.
+Each CPU has its own free list to avoid contention.
+Free list manages free pmem blocks (represented in range node) with red-black tree.
 
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/nova.h  |  8 ++++++++
- fs/nova/super.c | 45 ++++++++++++++++++++++++++++++++++++++++++---
- fs/nova/super.h |  2 ++
- 3 files changed, 52 insertions(+), 3 deletions(-)
+ fs/nova/Makefile |  2 +-
+ fs/nova/balloc.c | 58 +++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/nova/balloc.h | 66 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/nova/nova.h   |  1 +
+ fs/nova/super.c  | 11 ++++++++++
+ fs/nova/super.h  |  4 ++++
+ 6 files changed, 141 insertions(+), 1 deletion(-)
+ create mode 100644 fs/nova/balloc.c
+ create mode 100644 fs/nova/balloc.h
 
-diff --git a/fs/nova/nova.h b/fs/nova/nova.h
-index ba7ffca..e0e85fb 100644
---- a/fs/nova/nova.h
-+++ b/fs/nova/nova.h
-@@ -301,6 +301,14 @@ static inline u64 nova_get_epoch_id(struct super_block *sb)
- }
+diff --git a/fs/nova/Makefile b/fs/nova/Makefile
+index 886356a..e2f7b07 100644
+--- a/fs/nova/Makefile
++++ b/fs/nova/Makefile
+@@ -4,4 +4,4 @@
  
- #include "inode.h"
+ obj-$(CONFIG_NOVA_FS) += nova.o
+ 
+-nova-y := bbuild.o inode.o rebuild.o stats.o super.o
++nova-y := balloc.o bbuild.o inode.o rebuild.o stats.o super.o
+diff --git a/fs/nova/balloc.c b/fs/nova/balloc.c
+new file mode 100644
+index 0000000..450c942
+--- /dev/null
++++ b/fs/nova/balloc.c
+@@ -0,0 +1,58 @@
++/*
++ * NOVA persistent memory management
++ *
++ * Copyright 2015-2016 Regents of the University of California,
++ * UCSD Non-Volatile Systems Lab, Andiry Xu <jix024@cs.ucsd.edu>
++ * Copyright 2012-2013 Intel Corporation
++ * Copyright 2009-2011 Marco Stornelli <marco.stornelli@gmail.com>
++ * Copyright 2003 Sony Corporation
++ * Copyright 2003 Matsushita Electric Industrial Co., Ltd.
++ * 2003-2004 (c) MontaVista Software, Inc. , Steve Longerbeam
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ */
 +
-+/* A node in the RB tree representing a range of pages */
-+struct nova_range_node {
-+	struct rb_node node;
-+	unsigned long range_low;
-+	unsigned long range_high;
-+};
++#include <linux/fs.h>
++#include <linux/bitops.h>
++#include "nova.h"
++#include "inode.h"
 +
- #include "bbuild.h"
- 
- /* ====================================================== */
-diff --git a/fs/nova/super.c b/fs/nova/super.c
-index f41cc04..aec1cd3 100644
---- a/fs/nova/super.c
-+++ b/fs/nova/super.c
-@@ -52,6 +52,7 @@ MODULE_PARM_DESC(nova_dbgmask, "Control debugging output");
- static struct super_operations nova_sops;
- 
- static struct kmem_cache *nova_inode_cachep;
-+static struct kmem_cache *nova_range_node_cachep;
- 
- 
- /* FIXME: should the following variable be one per NOVA instance? */
-@@ -686,6 +687,20 @@ static void nova_put_super(struct super_block *sb)
- 	sb->s_fs_info = NULL;
- }
- 
-+inline void nova_free_range_node(struct nova_range_node *node)
++int nova_alloc_block_free_lists(struct super_block *sb)
 +{
-+	kmem_cache_free(nova_range_node_cachep, node);
-+}
++	struct nova_sb_info *sbi = NOVA_SB(sb);
++	struct free_list *free_list;
++	int i;
 +
-+inline struct nova_range_node *nova_alloc_range_node(struct super_block *sb)
-+{
-+	struct nova_range_node *p;
++	sbi->free_lists = kcalloc(sbi->cpus, sizeof(struct free_list),
++				  GFP_KERNEL);
 +
-+	p = (struct nova_range_node *)
-+		kmem_cache_zalloc(nova_range_node_cachep, GFP_NOFS);
-+	return p;
-+}
-+
- static struct inode *nova_alloc_inode(struct super_block *sb)
- {
- 	struct nova_inode_info *vi;
-@@ -719,6 +734,17 @@ static void init_once(void *foo)
- 	inode_init_once(&vi->vfs_inode);
- }
- 
-+static int __init init_rangenode_cache(void)
-+{
-+	nova_range_node_cachep = kmem_cache_create("nova_range_node_cache",
-+					sizeof(struct nova_range_node),
-+					0, (SLAB_RECLAIM_ACCOUNT |
-+					SLAB_MEM_SPREAD), NULL);
-+	if (nova_range_node_cachep == NULL)
++	if (!sbi->free_lists)
 +		return -ENOMEM;
++
++	for (i = 0; i < sbi->cpus; i++) {
++		free_list = nova_get_free_list(sb, i);
++		free_list->block_free_tree = RB_ROOT;
++		spin_lock_init(&free_list->s_lock);
++		free_list->index = i;
++	}
++
 +	return 0;
 +}
 +
- static int __init init_inodecache(void)
- {
- 	nova_inode_cachep = kmem_cache_create("nova_inode_cache",
-@@ -740,6 +766,11 @@ static void destroy_inodecache(void)
- 	kmem_cache_destroy(nova_inode_cachep);
- }
- 
-+static void destroy_rangenode_cache(void)
++void nova_delete_free_lists(struct super_block *sb)
 +{
-+	kmem_cache_destroy(nova_range_node_cachep);
++	struct nova_sb_info *sbi = NOVA_SB(sb);
++
++	/* Each tree is freed in save_blocknode_mappings */
++	kfree(sbi->free_lists);
++	sbi->free_lists = NULL;
 +}
 +
++
+diff --git a/fs/nova/balloc.h b/fs/nova/balloc.h
+new file mode 100644
+index 0000000..e7c7a1d
+--- /dev/null
++++ b/fs/nova/balloc.h
+@@ -0,0 +1,66 @@
++#ifndef __BALLOC_H
++#define __BALLOC_H
++
++#include "inode.h"
++
++/* DRAM structure to hold a list of free PMEM blocks */
++struct free_list {
++	spinlock_t s_lock;
++	struct rb_root	block_free_tree;
++	struct nova_range_node *first_node; // lowest address free range
++	struct nova_range_node *last_node; // highest address free range
++
++	int		index; // Which CPU do I belong to?
++
++	/*
++	 * Start and end of allocatable range, inclusive.
++	 */
++	unsigned long	block_start;
++	unsigned long	block_end;
++
++	unsigned long	num_free_blocks;
++
++	/* How many nodes in the rb tree? */
++	unsigned long	num_blocknode;
++
++	u32		csum;		/* Protect integrity */
++
++	/* Statistics */
++	unsigned long	alloc_log_count;
++	unsigned long	alloc_data_count;
++	unsigned long	free_log_count;
++	unsigned long	free_data_count;
++	unsigned long	alloc_log_pages;
++	unsigned long	alloc_data_pages;
++	unsigned long	freed_log_pages;
++	unsigned long	freed_data_pages;
++
++	u64		padding[8];	/* Cache line break */
++};
++
++static inline
++struct free_list *nova_get_free_list(struct super_block *sb, int cpu)
++{
++	struct nova_sb_info *sbi = NOVA_SB(sb);
++
++	return &sbi->free_lists[cpu];
++}
++
++enum nova_alloc_direction {ALLOC_FROM_HEAD = 0,
++			   ALLOC_FROM_TAIL = 1};
++
++enum nova_alloc_init {ALLOC_NO_INIT = 0,
++		      ALLOC_INIT_ZERO = 1};
++
++enum alloc_type {
++	LOG = 1,
++	DATA,
++};
++
++
++
++
++int nova_alloc_block_free_lists(struct super_block *sb);
++void nova_delete_free_lists(struct super_block *sb);
++
++#endif
+diff --git a/fs/nova/nova.h b/fs/nova/nova.h
+index e0e85fb..c4abdd8 100644
+--- a/fs/nova/nova.h
++++ b/fs/nova/nova.h
+@@ -310,6 +310,7 @@ struct nova_range_node {
+ };
  
- /*
-  * the super block writes are all done "on the fly", so the
-@@ -781,20 +812,27 @@ static int __init init_nova_fs(void)
- 	nova_info("Arch new instructions support: CLWB %s\n",
- 			support_clwb ? "YES" : "NO");
+ #include "bbuild.h"
++#include "balloc.h"
  
--	rc = init_inodecache();
-+	rc = init_rangenode_cache();
- 	if (rc)
+ /* ====================================================== */
+ /* ==============  Function prototypes  ================= */
+diff --git a/fs/nova/super.c b/fs/nova/super.c
+index aec1cd3..43b24a7 100644
+--- a/fs/nova/super.c
++++ b/fs/nova/super.c
+@@ -545,6 +545,13 @@ static int nova_fill_super(struct super_block *sb, void *data, int silent)
  		goto out;
+ 	}
  
--	rc = register_filesystem(&nova_fs_type);
-+	rc = init_inodecache();
- 	if (rc)
- 		goto out1;
- 
-+	rc = register_filesystem(&nova_fs_type);
-+	if (rc)
-+		goto out2;
++	if (nova_alloc_block_free_lists(sb)) {
++		retval = -ENOMEM;
++		nova_err(sb, "%s: Failed to allocate block free lists.",
++			 __func__);
++		goto out;
++	}
 +
- out:
- 	NOVA_END_TIMING(init_t, init_time);
- 	return rc;
+ 	/* Init a new nova instance */
+ 	if (sbi->s_mount_opt & NOVA_MOUNT_FORMAT) {
+ 		root_pi = nova_init(sb, sbi->initsize);
+@@ -611,6 +618,8 @@ static int nova_fill_super(struct super_block *sb, void *data, int silent)
+ 	kfree(sbi->zeroed_page);
+ 	sbi->zeroed_page = NULL;
  
--out1:
-+out2:
- 	destroy_inodecache();
++	nova_delete_free_lists(sb);
 +
-+out1:
-+	destroy_rangenode_cache();
- 	goto out;
- }
+ 	kfree(sbi->nova_sb);
+ 	kfree(sbi);
+ 	nova_dbg("%s failed: return %d\n", __func__, retval);
+@@ -679,6 +688,8 @@ static void nova_put_super(struct super_block *sb)
+ 		sbi->virt_addr = NULL;
+ 	}
  
-@@ -802,6 +840,7 @@ static void __exit exit_nova_fs(void)
- {
- 	unregister_filesystem(&nova_fs_type);
- 	destroy_inodecache();
-+	destroy_rangenode_cache();
- }
++	nova_delete_free_lists(sb);
++
+ 	kfree(sbi->zeroed_page);
+ 	nova_dbgmask = 0;
  
- MODULE_AUTHOR("Andiry Xu <jix024@cs.ucsd.edu>");
 diff --git a/fs/nova/super.h b/fs/nova/super.h
-index cb53908..b478080 100644
+index b478080..dcafbd8 100644
 --- a/fs/nova/super.h
 +++ b/fs/nova/super.h
-@@ -145,5 +145,7 @@ static inline struct nova_super_block *nova_get_super(struct super_block *sb)
- }
+@@ -118,6 +118,10 @@ struct nova_sb_info {
  
- extern void nova_error_mng(struct super_block *sb, const char *fmt, ...);
-+extern struct nova_range_node *nova_alloc_range_node(struct super_block *sb);
-+extern void nova_free_range_node(struct nova_range_node *node);
+ 	/* ZEROED page for cache page initialized */
+ 	void *zeroed_page;
++
++	/* Per-CPU free block list */
++	struct free_list *free_lists;
++	unsigned long per_list_blocks;
+ };
  
- #endif
+ static inline struct nova_sb_info *NOVA_SB(struct super_block *sb)
 -- 
 2.7.4
