@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuIrXYbpHfTSL7CxtHvLh7dNSPp9j36zIIAHV/NqSQybk91aAOmhqNIWNMBTsI3FpwfkGUj
-ARC-Seal: i=1; a=rsa-sha256; t=1520641355; cv=none;
+X-Google-Smtp-Source: AG47ELscZL8dJx+sjR0mQOyk5b6RX244WYAJ7v/Eqph0e2dP76YrTjnlW7RK0Kd8QBsPdoTceKk2
+ARC-Seal: i=1; a=rsa-sha256; t=1520641353; cv=none;
         d=google.com; s=arc-20160816;
-        b=A5SxVxo7tb5oXW4xNYwbLOLltveHrdYCIGVwRpAAHbm6PMpL8vm1y7pXwvaAP6gTtl
-         EnOHSojal7KIUSRJJrAa/RCoPS/yFSWmPl7uHDQYngMsEe9b4dEvPB5IGhHSH/FojEFx
-         /ztKJDGO1ewToM2OmpOwrH4AECvbU5blHhLfH+3tOwL3z8eZi8joRAKA+DqLn+dO+Lks
-         ABy3MbY21K6sO8b7hTWTA4NdJgggIrWHZ41ZakxiReSoVa45iMdW5g1JUby4S6zx5QOA
-         UqF2f9oOeKXC+zUCZojJgkdmoXrrGBGrVWnls2HxI6aqrcxo+9NbEGuposfo88jAfzpq
-         xa8w==
+        b=0Q0bP6AkyWOAeThHzH4T87ykuFPmcj9RT7bPei6W806702mE+/ty0Cj0qXOpL8rMjo
+         RvVFxduV6NV3Q08cbB8iVzdj+16qrzhFySRb6PXyMxxzHtg56NUlMwXhWQxWSFb5JAie
+         NrDulQTTt1ScHiJNJk9aYcPOHTM3pwI7b934K7Dhf9tA/GBDNsGLNOac9/ahALiiuGA3
+         ni1+kmpUcE4rdlPeAjBqPOPoQsAHwyMLV1SfbFlZShuezhSK4ICGgz8B8mp3RQx88bRG
+         6N7ksLtGqthq5CvqZ+fKoyZGLHumHUNbaw5AUaSPKJSdxYpsbMS4cn/v6jxLyq/qBoUQ
+         aIiQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=iLbLU9T/oZHglQ+cXqGBKoA+oZDvfHNT2rdZK7rbPH0=;
-        b=sgHfzQHQeimL2vUPiH5mHM3tIcCBk38bcscy0Sfm7iD6I3/1+Z8hAWHyhetelva7UY
-         a9QpJqaDD3+bbZbvoFD/nfvtk5mCZowA8yA1064Z2Xli/9eOxweotVsIZP0k7haF2DeP
-         0GhSTf+qy+SMOwZbP4iNZ+k7yom9TMedOxq91VKXqkuVbaMMHiXDvUitu5rpJwqSyjt9
-         OSntv5oj7tFVZ8SCuo4rkov+KDcjA7lvB69IPNT888HJHDyj2umqulWWBYJ8RVjI1wC7
-         +Uoc+gPd57DXT0yS+Kn1aCcI/2DMxIUag2h33+KZst1RcfMMs7B5R1FmDfPsMz5gwlbr
-         8lBw==
+        bh=+wuq2cVsHvefFZsmL9Z9UVB71+vYnoVilHBeE6O3URA=;
+        b=Iia2Jo0puNFpWM95mAxmBErQMYRdkNrKDjzNP5tfR4r25wbSKU3ldwkhtfTJ41lCWu
+         3qPpaNILgQ/Z46PBbz+GZi4OvHExIUlgXA6Bx0cjM77qJfJdp/74ml2J8pyy1Iy+duAd
+         wvVzlwtgCejth7P9zIc+xgjnh1HG7HJhrExoZoTlNErdZDfsYeKj7FusTCvRz8aMZcfB
+         0mpy+DNOvQ4Ind+DLkaoDdcdxe2zePnnMSXyayrC/bdl5/nffGzjleWE41We9Vzn2Fr/
+         rrKX4F4aGw0KDUdoxm6ZdjYyk9Vy95pui+iNmXcXMLT4ArTqxBc08+mr2B/i8eAO9EHS
+         5egg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,9 +28,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 53/65] s390/qeth: fix double-free on IP add/remove race
-Date: Fri,  9 Mar 2018 16:18:53 -0800
-Message-Id: <20180310001829.247586802@linuxfoundation.org>
+Subject: [PATCH 4.9 52/65] s390/qeth: fix IP removal on offline cards
+Date: Fri,  9 Mar 2018 16:18:52 -0800
+Message-Id: <20180310001829.153472986@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
 References: <20180310001824.927996722@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594508029983156066?=
-X-GMAIL-MSGID: =?utf-8?q?1594508029983156066?=
+X-GMAIL-THRID: =?utf-8?q?1594508027769894268?=
+X-GMAIL-MSGID: =?utf-8?q?1594508027769894268?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,42 +52,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 
 
-[ Upstream commit 14d066c3531a87f727968cacd85bd95c75f59843 ]
+[ Upstream commit 98d823ab1fbdcb13abc25b420f9bb71bade42056 ]
 
-Registering an IPv4 address with the HW takes quite a while, so we
-temporarily drop the ip_htable lock. Any concurrent add/remove of the
-same IP adjusts the IP's use count, and (on remove) is then blocked by
-addr->in_progress.
-After the register call has completed, we check the use count for
-concurrently attempted add/remove calls - and possibly straight-away
-deregister the IP again. This happens via l3_delete_ip(), which
-1) looks up the queried IP in the htable (getting a reference to the
-   *same* queried object),
-2) deregisters the IP from the HW, and
-3) frees the IP object.
+If the HW is not reachable, then none of the IPs in qeth's internal
+table has been registered with the HW yet. So when deleting such an IP,
+there's no need to stage it for deregistration - just drop it from
+the table.
 
-The caller in l3_add_ip() then does a second free on the same object.
-
-For this case, skip all the extra checks and lookups in l3_delete_ip()
-and just deregister & free the IP object ourselves.
+This fixes the "add-delete-add" scenario on an offline card, where the
+the second "add" merely increments the IP's use count. But as the IP is
+still set to DISP_ADDR_DELETE from the previous "delete" step,
+l3_recover_ip() won't register it with the HW when the card goes online.
 
 Fixes: 5f78e29ceebf ("qeth: optimize IP handling in rx_mode callback")
 Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_l3_main.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/s390/net/qeth_l3_main.c |   14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
 --- a/drivers/s390/net/qeth_l3_main.c
 +++ b/drivers/s390/net/qeth_l3_main.c
-@@ -323,7 +323,8 @@ int qeth_l3_add_ip(struct qeth_card *car
- 				(rc == IPA_RC_LAN_OFFLINE)) {
- 			addr->disp_flag = QETH_DISP_ADDR_DO_NOTHING;
- 			if (addr->ref_counter < 1) {
--				qeth_l3_delete_ip(card, addr);
-+				qeth_l3_deregister_addr_entry(card, addr);
-+				hash_del(&addr->hnode);
- 				kfree(addr);
- 			}
- 		} else {
+@@ -259,12 +259,8 @@ int qeth_l3_delete_ip(struct qeth_card *
+ 	if (addr->in_progress)
+ 		return -EINPROGRESS;
+ 
+-	if (!qeth_card_hw_is_reachable(card)) {
+-		addr->disp_flag = QETH_DISP_ADDR_DELETE;
+-		return 0;
+-	}
+-
+-	rc = qeth_l3_deregister_addr_entry(card, addr);
++	if (qeth_card_hw_is_reachable(card))
++		rc = qeth_l3_deregister_addr_entry(card, addr);
+ 
+ 	hash_del(&addr->hnode);
+ 	kfree(addr);
+@@ -406,11 +402,7 @@ static void qeth_l3_recover_ip(struct qe
+ 	spin_lock_bh(&card->ip_lock);
+ 
+ 	hash_for_each_safe(card->ip_htable, i, tmp, addr, hnode) {
+-		if (addr->disp_flag == QETH_DISP_ADDR_DELETE) {
+-			qeth_l3_deregister_addr_entry(card, addr);
+-			hash_del(&addr->hnode);
+-			kfree(addr);
+-		} else if (addr->disp_flag == QETH_DISP_ADDR_ADD) {
++		if (addr->disp_flag == QETH_DISP_ADDR_ADD) {
+ 			if (addr->proto == QETH_PROT_IPV4) {
+ 				addr->in_progress = 1;
+ 				spin_unlock_bh(&card->ip_lock);
