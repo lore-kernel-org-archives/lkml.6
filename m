@@ -1,115 +1,152 @@
-Return-Path: <kernel-hardening-return-12320-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELufZ39bBi0KnUFDeMraQ1qJ93y1q7ToBe4WfbDIxMztlTFjEB/Wn3NdozEhuDq5eA1RAHop
-ARC-Seal: i=1; a=rsa-sha256; t=1520600782; cv=none;
+Return-Path: <kernel-hardening-return-12362-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELs297Zb3QrDg43YUnMZ5TeC82xpkrNyNqZkeOXa7LLzXNoafgTrJ8NTGRWoCE2K8HF5VcDP
+ARC-Seal: i=1; a=rsa-sha256; t=1520656518; cv=none;
         d=google.com; s=arc-20160816;
-        b=BWszMOuAAN4P2mL7gD//mv0IAV99spKtAzrBtXlhXxkM54JK8T0TUk4P3iRRMeqsm0
-         6TlSEGy8jXNV4ifPmbAcjmFeb6NXLQPq2ymsGpxT3lkn1kWYeaSyDbiCe5ccerQVOc/M
-         TA6eS38enjUVyBpix1azr+xzoENQ5i9MCVpv+L8N0ZyuhpwIIYjACV6fe86vyDAJElam
-         OdO62E8MrpHkQaFJ5KGqNcnP4GtTPd4un7lrclPXbUN52OQUf1ya4tptJ4SmKoJJMg1a
-         n1c5NLd00xYIAQzVxkYrjTXd6Hhb5LxT0cEjopWJ6n6Q8EtfMU546/Hy8Q12qi1nVFJ6
-         9r5A==
+        b=1KUsS3TSL5rqXM7RhHFTeNFbRKOzeQ/s8IRhOjh6hFPU6E40jGsU89JYQGtY66P9bl
+         zPaXpXK2/3WU9PBm7kUodRQoKEL+Hi29Xmq8F92147NxlOYE6YxN6G08tZUJH9VtALON
+         ehd6ikSQCackaPXhQhFBYGZ8kFZosoHBFLgbzt6ajM/ge/2sJ2QV/4d1aA/AQowJc+ZO
+         DumbH8e1HLZ/U3DbEunAV51ZDkB9XgiOQds5O0zipJdfNQvVIxOjETFHyRdjQraFdBXY
+         BcGBzMqhsJSS6MoT/jEIMR97h6J+QyomLNcOOhYmdFCrOTs4hirdrdH/VwSfSKtsz3Kv
+         oMXw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dmarc-filter:delivered-to:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=cSFBn+HL4BEv+nlhFND57pQ6g+7otxwLy+JvJAQy6pw=;
-        b=FG7UEjIPIwOCHy6qkF0xu61GMOgIIA+bRsCuK9GuYWBE0j9BrOVOrfnCfXzOHay79u
-         epjWE9v+wjNzPoLrpXYy1zVLEJj8FMVhyGByqd8vXNrca/bLjyl/UFe4C2buy/hqhfkw
-         jTulBQv1JsVGy2UZ+0U47XhVURBhttsUv1JTy3MwSV5E9OG9iUFINNxaoFIcmjB8niD/
-         TCpqMYsDYnze2O3l+yat34w/Xn+/Df9+mM/+RfY1NeUZ8YhRUjn/tSx8PiQbYSrwce67
-         4dp1kxnXjrZ5Cx5+C0IcoJqdxYApUmep9mDBt1bM9naliJ3gEee7cyKWyIE2KeAY7n7x
-         2Otg==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=UdNzmENpHvT1r2mQTN6zK+yc//7GsIZFDARKlPydqmY=;
+        b=kZD1lzk+eoyVVNdSeFj/DjJ6DWuSMCBnm+Fpg7XEUs92t4M3a4s5yOLRLAJaD1+4AP
+         pRCls5UxE1N3mECK/ZYJg1N2Y2gJI8mwmEcWJHQpYvV0qBKtyyaVTJZJn1sVxiYi5XDe
+         a9T89jPPpbXpiMS08cYPeZo8rsi9EpqkEgezKRFM4AfCLl+1Z1JlVFF8T0kdv8mnLEXy
+         bVCvvK/VTEbXt0W/L6B4JSNFFqSrRH33VeQ2MAIXVXogcL75a4hW8MqFRDtrH3caFP6O
+         +eCsBXPdXlhVooBnpa0j3zq87algkVwCv1mIWyxu1bglaG1HagoR1MuUtAfcQGdDDhsv
+         4kEA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12320-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12320-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12362-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12362-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12320-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12320-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12362-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12362-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5144220685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
-MIME-Version: 1.0
-In-Reply-To: <23757731-bfa5-cb4c-ddc0-04103f9a72e0@embeddedor.com>
-References: <20180308172031.GA14541@embeddedgus> <CAGXu5jLjKcYOPxQOV6GO1oaLj1M_K=cFu-kHLLEzP=ZOXaAtfA@mail.gmail.com>
- <23757731-bfa5-cb4c-ddc0-04103f9a72e0@embeddedor.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Fri, 9 Mar 2018 14:04:44 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPf+4tF4oq5ePsgcpUAQS_M2Vi6b1+J-8D9CVemO-6ve5g@mail.gmail.com>
-Message-ID: <CAJKOXPf+4tF4oq5ePsgcpUAQS_M2Vi6b1+J-8D9CVemO-6ve5g@mail.gmail.com>
 Subject: Re: [PATCH] rtc: s5m: Remove VLA usage
-To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Cc: Kees Cook <keescook@chromium.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	Sangbeom Kim <sbkim73@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	LKML <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org,
-	linux-rtc@vger.kernel.org,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>,
+ "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+ Sangbeom Kim <sbkim73@samsung.com>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Alessandro Zummo <a.zummo@towertech.it>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ LKML <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org,
+ linux-rtc@vger.kernel.org,
+ Kernel Hardening <kernel-hardening@lists.openwall.com>
+References: <20180308172031.GA14541@embeddedgus>
+ <CAGXu5jLjKcYOPxQOV6GO1oaLj1M_K=cFu-kHLLEzP=ZOXaAtfA@mail.gmail.com>
+ <23757731-bfa5-cb4c-ddc0-04103f9a72e0@embeddedor.com>
+ <CAJKOXPf+4tF4oq5ePsgcpUAQS_M2Vi6b1+J-8D9CVemO-6ve5g@mail.gmail.com>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Message-ID: <4f25592d-e805-b81e-b518-4b60867ef32a@embeddedor.com>
+Date: Fri, 9 Mar 2018 22:34:55 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAJKOXPf+4tF4oq5ePsgcpUAQS_M2Vi6b1+J-8D9CVemO-6ve5g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - lists.openwall.com
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.117.58
+X-Source-L: No
+X-Exim-ID: 1euWDi-0047V5-1a
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.66]) [189.175.117.58]:35318
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594390903982064564?=
-X-GMAIL-MSGID: =?utf-8?q?1594465485958748985?=
+X-GMAIL-MSGID: =?utf-8?q?1594523929281388886?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 8, 2018 at 7:03 PM, Gustavo A. R. Silva
-<garsilva@embeddedor.com> wrote:
->
->
-> On 03/08/2018 11:58 AM, Kees Cook wrote:
->>
->> On Thu, Mar 8, 2018 at 9:20 AM, Gustavo A. R. Silva
->> <gustavo@embeddedor.com> wrote:
->>>
->>> In preparation to enabling -Wvla, remove VLAs and replace them
->>> with fixed-length arrays instead.
->>>
->>>  From a security viewpoint, the use of Variable Length Arrays can be
->>> a vector for stack overflow attacks. Also, in general, as the code
->>> evolves it is easy to lose track of how big a VLA can get. Thus, we
->>> can end up having segfaults that are hard to debug.
->>>
->>> Also, fixed as part of the directive to remove all VLAs from
->>> the kernel: https://lkml.org/lkml/2018/3/7/621
->>>
->>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>> ---
->>>   drivers/rtc/rtc-s5m.c | 15 +++++++++------
->>>   1 file changed, 9 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
->>> index 6deae10..2b5f4f7 100644
->>> --- a/drivers/rtc/rtc-s5m.c
->>> +++ b/drivers/rtc/rtc-s5m.c
->>> @@ -38,6 +38,9 @@
->>>    */
->>>   #define UDR_READ_RETRY_CNT     5
->>>
->>> +/* Maximum number of registers for setting time/alarm0/alarm1 */
->>> +#define MAX_NUM_TIME_REGS      8
->>
->>
->> I would adjust the various const struct s5m_rtc_reg_config's
->> .regs_count to be represented by this new define, so the stack and the
->> structures stay in sync. Something like:
->>
->> static const struct s5m_rtc_reg_config s2mps13_rtc_regs = {
->>          .regs_count             = MAX_NUM_TIME_REGS - 1,
->>
->> ?
->>
->
-> Yep. I thought about that and decided to wait for some feedback first. But
-> yeah, I think is that'd be a good change.
 
-Define and these assignments should be somehow connected with enum
-defining the offsets for data[] (from
-include/linux/mfd/samsung/rtc.h). Otherwise we define the same in two
-places. The enum could be itself (in separate patch) moved to the
-driver because it is meaningless for others.
+Hi Krzysztof,
 
-Best regards,
-Krzysztof
+On 03/09/2018 07:04 AM, Krzysztof Kozlowski wrote:
+> On Thu, Mar 8, 2018 at 7:03 PM, Gustavo A. R. Silva
+> <garsilva@embeddedor.com> wrote:
+>>
+>>
+>> On 03/08/2018 11:58 AM, Kees Cook wrote:
+>>>
+>>> On Thu, Mar 8, 2018 at 9:20 AM, Gustavo A. R. Silva
+>>> <gustavo@embeddedor.com> wrote:
+>>>>
+>>>> In preparation to enabling -Wvla, remove VLAs and replace them
+>>>> with fixed-length arrays instead.
+>>>>
+>>>>   From a security viewpoint, the use of Variable Length Arrays can be
+>>>> a vector for stack overflow attacks. Also, in general, as the code
+>>>> evolves it is easy to lose track of how big a VLA can get. Thus, we
+>>>> can end up having segfaults that are hard to debug.
+>>>>
+>>>> Also, fixed as part of the directive to remove all VLAs from
+>>>> the kernel: https://lkml.org/lkml/2018/3/7/621
+>>>>
+>>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>>>> ---
+>>>>    drivers/rtc/rtc-s5m.c | 15 +++++++++------
+>>>>    1 file changed, 9 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+>>>> index 6deae10..2b5f4f7 100644
+>>>> --- a/drivers/rtc/rtc-s5m.c
+>>>> +++ b/drivers/rtc/rtc-s5m.c
+>>>> @@ -38,6 +38,9 @@
+>>>>     */
+>>>>    #define UDR_READ_RETRY_CNT     5
+>>>>
+>>>> +/* Maximum number of registers for setting time/alarm0/alarm1 */
+>>>> +#define MAX_NUM_TIME_REGS      8
+>>>
+>>>
+>>> I would adjust the various const struct s5m_rtc_reg_config's
+>>> .regs_count to be represented by this new define, so the stack and the
+>>> structures stay in sync. Something like:
+>>>
+>>> static const struct s5m_rtc_reg_config s2mps13_rtc_regs = {
+>>>           .regs_count             = MAX_NUM_TIME_REGS - 1,
+>>>
+>>> ?
+>>>
+>>
+>> Yep. I thought about that and decided to wait for some feedback first. But
+>> yeah, I think is that'd be a good change.
+> 
+> Define and these assignments should be somehow connected with enum
+> defining the offsets for data[] (from
+> include/linux/mfd/samsung/rtc.h). Otherwise we define the same in two
+> places. The enum could be itself (in separate patch) moved to the
+> driver because it is meaningless for others.
+>
+
+I got it.
+
+I'll move the enum to rtc-s5m.c and add RTC_MAX_NUM_TIME_REGS at the end 
+of it. I'll send a patch series for this.
+
+Thanks for the feedback.
+--
+Gustavo
+
+> Best regards,
+> Krzysztof
+> 
