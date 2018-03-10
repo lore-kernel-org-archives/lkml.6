@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs3BkHvkJ355yD6Ho8QSu65OK50CrY9ocg6EFw83Sti9wtDHt9QTQ+VbKtUEAZS0Y2uyA+o
-ARC-Seal: i=1; a=rsa-sha256; t=1520641296; cv=none;
+X-Google-Smtp-Source: AG47ELuOD/ltf4Pt2Ij9DzlVASnvkeO75a3/zLzkHMSqth4jJmJ8G9Upnc7/XJRjJio9lRD5qDT2
+ARC-Seal: i=1; a=rsa-sha256; t=1520641294; cv=none;
         d=google.com; s=arc-20160816;
-        b=jMDWrzfPyyGknI8hqtLCwNaoKHcB3jNxAgFQxz4+QrmprK3VugUq8T4KqTX3oMyZks
-         TA/HDpcB8ki0BROC2pLSdOm+pRZJiL1WqN34LETW+UEur0gX02U42ADyWCkjlKk8JN02
-         HNe/nYxmYLMDoAC7WZf30IHjkz5iaUKWYJwkKGJptZTvbOl0yFbyDf+JbkCi36dPBBQa
-         XAcd1EkBBt08xStG5EYkwwDAZlLCZRuPpl2GougRz3pvpi1LNkE10/6dNJnLWTSzNYV3
-         SwysiEecOCvPHrBn2gWGsW4V9dgt5BZHYWiGRQBwH/KUtAcAZvrIYP0sjI//cgM+wVlQ
-         QNjg==
+        b=qnW6PMsUBQflf278IO4AVUINSn42mH7ToxmG/VAOkP8Z4mobF3vrEy3PJDPqhZKjQl
+         XMV84bAu4PbLIYhCJ9NZpJmjJoS3BMj2Wu4Tp8/lesOcCQU6LDZlZzXzDNxGTchAd1Lj
+         Oq6Vhvqu590mAh3N3+vWCUvaCJylmSFGE3Pelz2T09TMj1+W/c8KiqqRfJHdn2vz4s6/
+         gfz1ht9NMioWO7nksIz/VkIG97eIcR1eNit1NsCgreUur50qfc8v85Wh8aTLBwoo7Yvk
+         Bn75yCUO+k4WikNw+mm1YQin1dFJsB4MMwyE9m1YrmwFkfdP50FH/9Cb5Jgc2N1uVLWe
+         eu3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=oz6sJnKmA/7mGe+CQlh3vcm3l0R8Ir9SMofsE1E13/4=;
-        b=VP+6RKKqqd/c+jECpV40Dj16Jh6TSPpO1ngdLToqIgIbu8TC6Rz4x/Cif3CNU9MVBO
-         Z8TCQQFQn9o1vjJJKhGL/uiGcV/svL4JtCGu0Jie1AeshTrp7hgf20jbN2qoanptIV2b
-         ZERJjX2kQot4/iRp/ZZ+TyDQouytdROMqdHeNlXBx8g4jY9PVusJY5uTtLiBn23wsA9X
-         pecKEXTTj7ypSrqVupvRwxH074F4ho/Z3rN9cAd+1iZmOl+g92Vx/MB3nXzGyY9lKXkg
-         lFZBx2RtzhqYhg323yhNx84AHCgRC54kLBqImh6iFWi/5Q5e9MGok7P4i5DzNU2h5AeI
-         ob7Q==
+        bh=Y8dvhkHF0JjPTZ911vmBPmvHAZKfD3hJSVVtubd24C0=;
+        b=KlfhWYEVMvMBfzty96iebUUXnX6B5S/82bKMJEdaoNJNL4YNbktUy1sl0yLwihw/rT
+         OkownswVX1U8ke4tDCLCPHrWlrv204uYQJVv/u7SN1J2t2IVfw14V0OzUd8HfbTjZP58
+         hkNt2HaHoqjAubH+VKl2WO+uJuPgGGZg85lsxB+U11yQJGwU82rLXnMixDvzt6Knw7po
+         CJd3Z4A0mcIa3ihgROE62/8qE/2ndU4yF5mhU6v1i2VKK17vuggP5Mz6KT8DpN95/SYg
+         HHjFTuZI6U57yDWldTxWOkZgHmdq+FD+gGn5jrLqRgWd1CVF9riaBNqgXrDfZyp4k0qt
+         wlLg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alexander Steffen <Alexander.Steffen@infineon.com>,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 4.9 07/65] tpm-dev-common: Reject too short writes
-Date: Fri,  9 Mar 2018 16:18:07 -0800
-Message-Id: <20180310001825.521367469@linuxfoundation.org>
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	Alexander Steffen <Alexander.Steffen@infineon.com>
+Subject: [PATCH 4.9 06/65] tpm_tis_spi: Use DMA-safe memory for SPI transfers
+Date: Fri,  9 Mar 2018 16:18:06 -0800
+Message-Id: <20180310001825.441937872@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
 References: <20180310001824.927996722@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507968467819795?=
-X-GMAIL-MSGID: =?utf-8?q?1594507968467819795?=
+X-GMAIL-THRID: =?utf-8?q?1594507966072032310?=
+X-GMAIL-MSGID: =?utf-8?q?1594507966072032310?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,41 +51,125 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Alexander Steffen <Alexander.Steffen@infineon.com>
 
-commit ee70bc1e7b63ac8023c9ff9475d8741e397316e7 upstream.
+commit 6b3a13173f23e798e1ba213dd4a2c065a3b8d751 upstream.
 
-tpm_transmit() does not offer an explicit interface to indicate the number
-of valid bytes in the communication buffer. Instead, it relies on the
-commandSize field in the TPM header that is encoded within the buffer.
-Therefore, ensure that a) enough data has been written to the buffer, so
-that the commandSize field is present and b) the commandSize field does not
-announce more data than has been written to the buffer.
+The buffers used as tx_buf/rx_buf in a SPI transfer need to be DMA-safe.
+This cannot be guaranteed for the buffers passed to tpm_tis_spi_read_bytes
+and tpm_tis_spi_write_bytes. Therefore, we need to use our own DMA-safe
+buffer and copy the data to/from it.
 
-This should have been fixed with CVE-2011-1161 long ago, but apparently
-a correct version of that patch never made it into the kernel.
+The buffer needs to be allocated separately, to ensure that it is
+cacheline-aligned and not shared with other data, so that DMA can work
+correctly.
 
+Fixes: 0edbfea537d1 ("tpm/tpm_tis_spi: Add support for spi phy")
 Cc: stable@vger.kernel.org
-Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm-dev.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/char/tpm/tpm_tis_spi.c |   45 ++++++++++++++++++++++++-----------------
+ 1 file changed, 27 insertions(+), 18 deletions(-)
 
---- a/drivers/char/tpm/tpm-dev.c
-+++ b/drivers/char/tpm/tpm-dev.c
-@@ -136,6 +136,12 @@ static ssize_t tpm_write(struct file *fi
- 		return -EFAULT;
+--- a/drivers/char/tpm/tpm_tis_spi.c
++++ b/drivers/char/tpm/tpm_tis_spi.c
+@@ -47,9 +47,7 @@
+ struct tpm_tis_spi_phy {
+ 	struct tpm_tis_data priv;
+ 	struct spi_device *spi_device;
+-
+-	u8 tx_buf[4];
+-	u8 rx_buf[4];
++	u8 *iobuf;
+ };
+ 
+ static inline struct tpm_tis_spi_phy *to_tpm_tis_spi_phy(struct tpm_tis_data *data)
+@@ -72,14 +70,14 @@ static int tpm_tis_spi_transfer(struct t
+ 	while (len) {
+ 		transfer_len = min_t(u16, len, MAX_SPI_FRAMESIZE);
+ 
+-		phy->tx_buf[0] = (in ? 0x80 : 0) | (transfer_len - 1);
+-		phy->tx_buf[1] = 0xd4;
+-		phy->tx_buf[2] = addr >> 8;
+-		phy->tx_buf[3] = addr;
++		phy->iobuf[0] = (in ? 0x80 : 0) | (transfer_len - 1);
++		phy->iobuf[1] = 0xd4;
++		phy->iobuf[2] = addr >> 8;
++		phy->iobuf[3] = addr;
+ 
+ 		memset(&spi_xfer, 0, sizeof(spi_xfer));
+-		spi_xfer.tx_buf = phy->tx_buf;
+-		spi_xfer.rx_buf = phy->rx_buf;
++		spi_xfer.tx_buf = phy->iobuf;
++		spi_xfer.rx_buf = phy->iobuf;
+ 		spi_xfer.len = 4;
+ 		spi_xfer.cs_change = 1;
+ 
+@@ -89,9 +87,9 @@ static int tpm_tis_spi_transfer(struct t
+ 		if (ret < 0)
+ 			goto exit;
+ 
+-		if ((phy->rx_buf[3] & 0x01) == 0) {
++		if ((phy->iobuf[3] & 0x01) == 0) {
+ 			// handle SPI wait states
+-			phy->tx_buf[0] = 0;
++			phy->iobuf[0] = 0;
+ 
+ 			for (i = 0; i < TPM_RETRY; i++) {
+ 				spi_xfer.len = 1;
+@@ -100,7 +98,7 @@ static int tpm_tis_spi_transfer(struct t
+ 				ret = spi_sync_locked(phy->spi_device, &m);
+ 				if (ret < 0)
+ 					goto exit;
+-				if (phy->rx_buf[0] & 0x01)
++				if (phy->iobuf[0] & 0x01)
+ 					break;
+ 			}
+ 
+@@ -113,8 +111,14 @@ static int tpm_tis_spi_transfer(struct t
+ 		spi_xfer.cs_change = 0;
+ 		spi_xfer.len = transfer_len;
+ 		spi_xfer.delay_usecs = 5;
+-		spi_xfer.tx_buf = out;
+-		spi_xfer.rx_buf = in;
++
++		if (in) {
++			spi_xfer.tx_buf = NULL;
++		} else if (out) {
++			spi_xfer.rx_buf = NULL;
++			memcpy(phy->iobuf, out, transfer_len);
++			out += transfer_len;
++		}
+ 
+ 		spi_message_init(&m);
+ 		spi_message_add_tail(&spi_xfer, &m);
+@@ -122,11 +126,12 @@ static int tpm_tis_spi_transfer(struct t
+ 		if (ret < 0)
+ 			goto exit;
+ 
+-		len -= transfer_len;
+-		if (in)
++		if (in) {
++			memcpy(in, phy->iobuf, transfer_len);
+ 			in += transfer_len;
+-		if (out)
+-			out += transfer_len;
++		}
++
++		len -= transfer_len;
  	}
  
-+	if (in_size < 6 ||
-+	    in_size < be32_to_cpu(*((__be32 *) (priv->data_buffer + 2)))) {
-+		mutex_unlock(&priv->buffer_mutex);
-+		return -EINVAL;
-+	}
+ exit:
+@@ -192,6 +197,10 @@ static int tpm_tis_spi_probe(struct spi_
+ 
+ 	phy->spi_device = dev;
+ 
++	phy->iobuf = devm_kmalloc(&dev->dev, MAX_SPI_FRAMESIZE, GFP_KERNEL);
++	if (!phy->iobuf)
++		return -ENOMEM;
 +
- 	/* atomic tpm command send and result receive. We only hold the ops
- 	 * lock during this period so that the tpm can be unregistered even if
- 	 * the char dev is held open.
+ 	return tpm_tis_core_init(&dev->dev, &phy->priv, -1, &tpm_spi_phy_ops,
+ 				 NULL);
+ }
