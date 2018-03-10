@@ -1,82 +1,121 @@
-Return-Path: <byungchul.park@lge.com>
-X-Google-Smtp-Source: AG47ELsOl1khHx+QlSIhkDvDCPFI//oPVnsKRAurnxOtaWMfR7Li5o0quAVJ6eQuPpwprvVvelKP
-ARC-Seal: i=1; a=rsa-sha256; t=1521156399; cv=none;
+Return-Path: <kernel-hardening-return-12387-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELsQYdL2c5vMeD0pAH1CAfyq6okV2xzVM2wfXNBhuSUsR99KwbP4wPk6tPEMk7syC9QeObqg
+ARC-Seal: i=1; a=rsa-sha256; t=1520721312; cv=none;
         d=google.com; s=arc-20160816;
-        b=Bmn17Vnv0+oUoRvz/fjNUjeS4CufVCzd//Hpg5xBUxTsIkee3X0OXuGK1AHeyIDj5R
-         usdC0CQl74Ycmbqn1JVD0Nf6GNNAM7mB3XSNS8UBMADiK2sDMGsEH/fMgMjEwckBJFxa
-         d99AAgjOdCUU7HoTwW4T/jdNGEQUF2dP0f8I1RRNsaJrihvoYlpawH/AkD/4EeTdEfE0
-         UUPI5nQiVBz1yBSympmyMvLwuFAE7WTmI4J58KyZLxgkK2Fj6gvH2jXYaZWJhvZrpXJy
-         DvzcO6lqknjZ+JvKTa2KiCxCOK5cXeWlW6CQfsLVI1H96GIHHXXNzeJovVqfxovfM+xB
-         ujAg==
+        b=yFyCFm4Edy7/Kmd10emKx9oeatMMlxK8eBHz3XfFwBjzAhAACFSrfuM0j6Hk61SQcR
+         VcqEVs544wWq7PokBYB+W9aoP6egUVEOZH4VgppmO+477vDsItuj5sWbHfnX9NGAGZme
+         hCJMVdRY+u3CSlFO/ftd/WMdLMKOiHTCMa+cNYmpoxdG2I0vceUifU7OCm7TeAVrPTaP
+         bnhwQsEyxCX3RB6R9HqFZnehsF1r0oOZp4krsBcSPABgByAFqx5XerIFdAMeFFFiBYe0
+         p+ufeHCUQhHe+hbUnCB4ahaHZ2Y6OMOTdr3S3ePXDW9vyMsoM/HTAfYtCiUOYip9PMcB
+         P86A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
+         :list-help:list-post:precedence:mailing-list
          :arc-authentication-results;
-        bh=n6baGMxMsqxoZs4Y1WcaoUIHBVJH9a005pSbmS7+zs4=;
-        b=GPBrUeDUtxeSPVdUNPIn5pwHSvahetJHsnMUf5+fugty9ABOtr9MyVbqzvZ4SkfXWt
-         tZFkV66jV8ICRQ91pt29wcAbR1Oi04+mpkguwlykpWwgH2rUEHBitb5rfkmFoPgd2FDQ
-         5nvvEUqhp3NY0cA3BAHw0fgFtD/Od1L/a38vHfawr245+kEfLFSdGLCPzs/XMPM1h195
-         21rvlLxnR3xI4NLQ0jkn6NlaGazp/DB34NePHwx1N5eWpHfF1yZPeUPANT+BUcX+qJUV
-         ZthjGNpgqibPNyxYBUBPDbACspR8+LibEMNHH12D03oNe/A0sWk2AczF7YH56YDE8RB+
-         Pgeg==
+        bh=40IQ87i52YMrRz2MXO41JiyxTPIlOU8hf8BDbTvBIjc=;
+        b=HBgYpg4qY73DcFgioiCqCriNLJdsjtZjg7xPx9EsDnWhOER7uJZY0l+d8x2XRXVm2v
+         9bUj3KwWrcMLuRBF8pzSy+V3ueo/4UnfeaDyKbrqOixL687CNLF7vQzUo2pCmj29k/i1
+         JabaA59Ax2y4wr2qD85ViUXvIOhVKibzilHtGM1qYbTLgHEu61vRsN5vi/WH/nTs0pGB
+         gTin9lnyoIYH2T3GTDS7Pg5RN/xuOOxc/Da1rCDNgVhrTKX3iQoBcZAfGZcOm7qeSSrD
+         CFysPeAHkh0cSn/d/EQoACMsq3+8m1nnysQp+LdqrdmLtn0hlGokPiZu5BC0n5PBEc+O
+         5HTA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of byungchul.park@lge.com designates 156.147.23.51 as permitted sender) smtp.mailfrom=byungchul.park@lge.com
+       dkim=pass header.i=@chromium.org header.s=google header.b=BfeIM1TT;
+       spf=pass (google.com: domain of kernel-hardening-return-12387-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12387-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of byungchul.park@lge.com designates 156.147.23.51 as permitted sender) smtp.mailfrom=byungchul.park@lge.com
-X-Original-SENDERIP: 156.147.1.151
-X-Original-MAILFROM: byungchul.park@lge.com
-X-Original-SENDERIP: 10.177.222.184
-X-Original-MAILFROM: byungchul.park@lge.com
-Subject: Re: [PATCH] kthread: finer-grained lockdep/cross-release completion
-To: Peter Zijlstra <peterz@infradead.org>, Daniel Vetter <daniel@ffwll.ch>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- LKML <linux-kernel@vger.kernel.org>,
- DRI Development <dri-devel@lists.freedesktop.org>,
- Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
- Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
- Marta Lofstedt <marta.lofstedt@intel.com>, Ingo Molnar <mingo@kernel.org>,
- Tejun Heo <tj@kernel.org>, Kees Cook <keescook@chromium.org>,
- Thomas Gleixner <tglx@linutronix.de>, Shaohua Li <shli@fb.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jonathan Corbet <corbet@lwn.net>, Oleg Nesterov <oleg@redhat.com>,
- Daniel Vetter <daniel.vetter@intel.com>, kernel-team@lge.com,
- Amir Goldstein <amir73il@gmail.com>, Theodore Ts'o <tytso@mit.edu>
-References: <20171207100849.407-1-daniel.vetter@ffwll.ch>
- <20171208105419.jdzene5wrsriwm2n@hirez.programming.kicks-ass.net>
- <20171211091928.cpw3srz2rddmruxj@phenom.ffwll.local>
- <20171218071159.GW26573@phenom.ffwll.local>
- <CA+55aFwD+0hhehWHmh8PW9eDCVtEBTi9KCmCrJXZRUFj77r82Q@mail.gmail.com>
- <20171219095925.GY26573@phenom.ffwll.local>
- <aae95b90-a0c8-4825-17fb-b31eb1aecf80@lge.com>
- <CAKMK7uHdk1CT9YP00fb0mpBQdg_Di6CKv+z5ZXSS9Q4tbOcwAg@mail.gmail.com>
- <20180315124130.GY4064@hirez.programming.kicks-ass.net>
-From: Byungchul Park <byungchul.park@lge.com>
-Message-ID: <30162a1d-74d4-3bce-f901-12a29f38632e@lge.com>
-Date: Fri, 16 Mar 2018 08:26:33 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+       dkim=pass header.i=@chromium.org header.s=google header.b=BfeIM1TT;
+       spf=pass (google.com: domain of kernel-hardening-return-12387-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12387-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+Date: Sat, 10 Mar 2018 14:34:50 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	Segher Boessenkool <segher@kernel.crashing.org>,
+	kernel-hardening@lists.openwall.com
+Subject: [PATCH] rslib: Remove VLAs by setting upper bound on nroots
+Message-ID: <20180310223450.GA37999@beast>
 MIME-Version: 1.0
-In-Reply-To: <20180315124130.GY4064@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1586119401963161178?=
-X-GMAIL-MSGID: =?utf-8?q?1595048092465726007?=
+X-GMAIL-THRID: =?utf-8?q?1594591871028316043?=
+X-GMAIL-MSGID: =?utf-8?q?1594591871028316043?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 3/15/2018 9:41 PM, Peter Zijlstra wrote:
-> On Thu, Mar 15, 2018 at 11:31:57AM +0100, Daniel Vetter wrote:
->> Is there any progress on getting cross-release enabled again?
-> 
-> Not yet, I'm still fighting the meltdown/spectre induced backlog.
-> 
-> We'll get to it eventually.
+Avoid stack VLAs[1] by always allocating the upper bound of stack space
+needed. The existing users of rslib appear to max out at 24 roots[2],
+so use that as the upper bound until we have a reason to change it.
 
-Please let me know when you get available so that I can start.
+Alternative considered: make init_rs() a true caller-instance and
+pre-allocate the workspaces. This would possibly need locking and
+a refactoring of the returned structure.
+
+Using kmalloc in this path doesn't look great, especially since at
+least one caller (pstore) is sensitive to allocations during rslib
+usage (it expects to run it during an Oops, for example).
+
+[1] https://lkml.org/lkml/2018/3/7/621
+[2] https://lkml.org/lkml/2018/3/9/838
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ lib/reed_solomon/decode_rs.c    | 7 ++++---
+ lib/reed_solomon/reed_solomon.c | 5 ++++-
+ 2 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/lib/reed_solomon/decode_rs.c b/lib/reed_solomon/decode_rs.c
+index 0ec3f257ffdf..3e3becb836a6 100644
+--- a/lib/reed_solomon/decode_rs.c
++++ b/lib/reed_solomon/decode_rs.c
+@@ -31,9 +31,10 @@
+ 	 * of nroots is 8. So the necessary stack size will be about
+ 	 * 220 bytes max.
+ 	 */
+-	uint16_t lambda[nroots + 1], syn[nroots];
+-	uint16_t b[nroots + 1], t[nroots + 1], omega[nroots + 1];
+-	uint16_t root[nroots], reg[nroots + 1], loc[nroots];
++	uint16_t lambda[RS_MAX_ROOTS + 1], syn[RS_MAX_ROOTS];
++	uint16_t b[RS_MAX_ROOTS + 1], t[RS_MAX_ROOTS + 1];
++	uint16_t omega[RS_MAX_ROOTS + 1], root[RS_MAX_ROOTS];
++	uint16_t reg[RS_MAX_ROOTS + 1], loc[RS_MAX_ROOTS];
+ 	int count = 0;
+ 	uint16_t msk = (uint16_t) rs->nn;
+ 
+diff --git a/lib/reed_solomon/reed_solomon.c b/lib/reed_solomon/reed_solomon.c
+index 06d04cfa9339..3e218e70ac2e 100644
+--- a/lib/reed_solomon/reed_solomon.c
++++ b/lib/reed_solomon/reed_solomon.c
+@@ -51,6 +51,9 @@ static LIST_HEAD (rslist);
+ /* Protection for the list */
+ static DEFINE_MUTEX(rslistlock);
+ 
++/* Ultimately controls the upper bounds of the on-stack buffers. */
++#define RS_MAX_ROOTS	24
++
+ /**
+  * rs_init - Initialize a Reed-Solomon codec
+  * @symsize:	symbol size, bits (1-8)
+@@ -210,7 +213,7 @@ static struct rs_control *init_rs_internal(int symsize, int gfpoly,
+     		return NULL;
+ 	if (prim <= 0 || prim >= (1<<symsize))
+     		return NULL;
+-	if (nroots < 0 || nroots >= (1<<symsize))
++	if (nroots < 0 || nroots >= (1<<symsize) || nroots > RS_MAX_ROOTS)
+ 		return NULL;
+ 
+ 	mutex_lock(&rslistlock);
+-- 
+2.7.4
+
 
 -- 
-Thanks,
-Byungchul
+Kees Cook
+Pixel Security
