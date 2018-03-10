@@ -1,36 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932768AbeCJHD5 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 02:03:57 -0500
-Received: from mga03.intel.com ([134.134.136.65]:41589 "EHLO mga03.intel.com"
+        id S933021AbeCJHEZ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 02:04:25 -0500
+Received: from mga02.intel.com ([134.134.136.20]:19755 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750735AbeCJHDz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 02:03:55 -0500
+        id S932918AbeCJHEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 02:04:22 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,449,1515484800";
-   d="scan'208";a="24029433"
-Subject: [PATCH v5 00/11] dax: fix dma vs truncate/hole-punch
+   d="scan'208";a="36139402"
+Subject: [PATCH v5 05/11] fs,
+ dax: use page->mapping to warn if truncate collides with a busy page
 From: Dan Williams <dan.j.williams@intel.com>
 To: linux-nvdimm@lists.01.org
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Jeff Moyer <jmoyer@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.cz>,
-        Jan Kara <jack@suse.com>, Michal Hocko <mhocko@suse.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
+Cc: Jeff Moyer <jmoyer@redhat.com>,
         Matthew Wilcox <mawilcox@microsoft.com>,
-        Ingo Molnar <mingo@redhat.com>, Dave Chinner <david@fromorbit.com>,
-        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, jack@suse.cz,
+        Ross Zwisler <ross.zwisler@linux.intel.com>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>, david@fromorbit.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
         ross.zwisler@linux.intel.com, hch@lst.de, linux-kernel@vger.kernel.org
-Date: Fri, 09 Mar 2018 22:54:49 -0800
-Message-ID: <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date: Fri, 09 Mar 2018 22:55:15 -0800
+Message-ID: <152066491575.40260.4558985474642451800.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -39,122 +33,132 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes since v4 [1]:
-* Kill the DEFINE_FSDAX_AOPS macro and just open code new
-  address_space_operations instances for each fs (Matthew, Jan, Dave,
-  Christoph)
+Catch cases where extent unmap operations encounter pages that are
+pinned / busy. Typically this is pinned pages that are under active dma.
+This warning is a canary for potential data corruption as truncated
+blocks could be allocated to a new file while the device is still
+performing i/o.
 
-* Rename routines that had a 'dma_' prefix with 'dax_layout_' and merge
-  the dax-layout-break into xfs_break_layouts() (Dave, Christoph)
+Here is an example of a collision that this implementation catches:
 
-* Rework the implementation to have the fsdax core find the pages, but
-  leave the responsibility of waiting on those pages to the filesystem
-  (Dave).
+ WARNING: CPU: 2 PID: 1286 at fs/dax.c:343 dax_disassociate_entry+0x55/0x80
+ [..]
+ Call Trace:
+  __dax_invalidate_mapping_entry+0x6c/0xf0
+  dax_delete_mapping_entry+0xf/0x20
+  truncate_exceptional_pvec_entries.part.12+0x1af/0x200
+  truncate_inode_pages_range+0x268/0x970
+  ? tlb_gather_mmu+0x10/0x20
+  ? up_write+0x1c/0x40
+  ? unmap_mapping_range+0x73/0x140
+  xfs_free_file_space+0x1b6/0x5b0 [xfs]
+  ? xfs_file_fallocate+0x7f/0x320 [xfs]
+  ? down_write_nested+0x40/0x70
+  ? xfs_ilock+0x21d/0x2f0 [xfs]
+  xfs_file_fallocate+0x162/0x320 [xfs]
+  ? rcu_read_lock_sched_held+0x3f/0x70
+  ? rcu_sync_lockdep_assert+0x2a/0x50
+  ? __sb_start_write+0xd0/0x1b0
+  ? vfs_fallocate+0x20c/0x270
+  vfs_fallocate+0x154/0x270
+  SyS_fallocate+0x43/0x80
+  entry_SYSCALL_64_fastpath+0x1f/0x96
 
-* Drop the nfit_test infrastructure for testing this mechanism, I plan
-  to investigate better mechanisms for injecting arbitrary put_page()
-  delays for dax pages relative to an extent unmap operation. The
-  dm_delay target does not do what I want since it operates at whole
-  device level. A better test interface would be a mechanism to delay
-  I/O completion based on whether a bio referenced a given LBA.
-
-Not changed since v4:
-* This implementation still relies on RCU for synchronizing
-  get_user_pages() and get_user_pages_fast() against
-  dax_layout_busy_page(). We could perform the operation with just
-  barriers if we knew at get_user_pages() time that the pages were flagged
-  for truncation.  However, dax_layout_busy_page() does not have the
-  information to flag that a page is actually going to be truncated, only
-  that it *might* be truncated.
-
-[1]: https://lists.01.org/pipermail/linux-nvdimm/2017-December/013704.html
-
-----
-
-Background:
-
-get_user_pages() in the filesystem pins file backed memory pages for
-access by devices performing dma. However, it only pins the memory pages
-not the page-to-file offset association. If a file is truncated the
-pages are mapped out of the file and dma may continue indefinitely into
-a page that is owned by a device driver. This breaks coherency of the
-file vs dma, but the assumption is that if userspace wants the
-file-space truncated it does not matter what data is inbound from the
-device, it is not relevant anymore. The only expectation is that dma can
-safely continue while the filesystem reallocates the block(s).
-
-Problem:
-
-This expectation that dma can safely continue while the filesystem
-changes the block map is broken by dax. With dax the target dma page
-*is* the filesystem block. The model of leaving the page pinned for dma,
-but truncating the file block out of the file, means that the filesytem
-is free to reallocate a block under active dma to another file and now
-the expected data-incoherency situation has turned into active
-data-corruption.
-
-Solution:
-
-Defer all filesystem operations (fallocate(), truncate()) on a dax mode
-file while any page/block in the file is under active dma. This solution
-assumes that dma is transient. Cases where dma operations are known to
-not be transient, like RDMA, have been explicitly disabled via
-commits like 5f1d43de5416 "IB/core: disable memory registration of
-filesystem-dax vmas".
-
-The dax_layout_busy_page() routine is called by filesystems with a lock
-held against mm faults (i_mmap_lock) to find pinned / busy dax pages.
-The process of looking up a busy page invalidates all mappings
-to trigger any subsequent get_user_pages() to block on i_mmap_lock.
-The filesystem continues to call dax_layout_busy_page() until it finally
-returns no more active pages. This approach assumes that the page
-pinning is transient, if that assumption is violated the system would
-have likely hung from the uncompleted I/O.
-
-
+Cc: Jeff Moyer <jmoyer@redhat.com>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
+ fs/dax.c |   56 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
-Dan Williams (11):
-      dax: store pfns in the radix
-      xfs, dax: introduce xfs_dax_aops
-      ext4, dax: introduce ext4_dax_aops
-      ext2, dax: introduce ext2_dax_aops
-      fs, dax: use page->mapping to warn if truncate collides with a busy page
-      mm, dax: enable filesystems to trigger dev_pagemap ->page_free callbacks
-      mm, dev_pagemap: introduce CONFIG_DEV_PAGEMAP_OPS
-      wait_bit: introduce {wait_on,wake_up}_atomic_one
-      mm, fs, dax: handle layout changes to pinned dax mappings
-      xfs: prepare xfs_break_layouts() for another layout type
-      xfs, dax: introduce xfs_break_dax_layouts()
-
-
- drivers/dax/super.c      |   96 +++++++++++++++--
- drivers/nvdimm/pmem.c    |    3 -
- fs/Kconfig               |    1 
- fs/dax.c                 |  259 +++++++++++++++++++++++++++++++++++++---------
- fs/ext2/ext2.h           |    1 
- fs/ext2/inode.c          |   28 ++++-
- fs/ext2/namei.c          |   18 ---
- fs/ext2/super.c          |    6 +
- fs/ext4/inode.c          |   11 ++
- fs/ext4/super.c          |    6 +
- fs/xfs/xfs_aops.c        |    7 +
- fs/xfs/xfs_aops.h        |    1 
- fs/xfs/xfs_file.c        |   94 ++++++++++++++++-
- fs/xfs/xfs_inode.h       |    9 ++
- fs/xfs/xfs_ioctl.c       |    9 +-
- fs/xfs/xfs_iops.c        |   17 ++-
- fs/xfs/xfs_pnfs.c        |    8 +
- fs/xfs/xfs_pnfs.h        |    4 -
- fs/xfs/xfs_super.c       |   20 ++--
- include/linux/dax.h      |   45 +++++++-
- include/linux/memremap.h |   28 ++---
- include/linux/mm.h       |   61 ++++++++---
- include/linux/wait_bit.h |   13 ++
- kernel/memremap.c        |   30 +++++
- kernel/sched/wait_bit.c  |   59 +++++++++-
- mm/Kconfig               |    5 +
- mm/gup.c                 |    5 +
- mm/hmm.c                 |   13 --
- mm/swap.c                |    3 -
- 29 files changed, 663 insertions(+), 197 deletions(-)
+diff --git a/fs/dax.c b/fs/dax.c
+index ba02772fccbc..fecf463a1468 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -325,6 +325,56 @@ static void put_unlocked_mapping_entry(struct address_space *mapping,
+ 	dax_wake_mapping_entry_waiter(mapping, index, entry, false);
+ }
+ 
++static unsigned long dax_entry_size(void *entry)
++{
++	if (dax_is_zero_entry(entry))
++		return 0;
++	else if (dax_is_empty_entry(entry))
++		return 0;
++	else if (dax_is_pmd_entry(entry))
++		return HPAGE_SIZE;
++	else
++		return PAGE_SIZE;
++}
++
++#define for_each_entry_pfn(entry, pfn, end_pfn) \
++	for (pfn = dax_radix_pfn(entry), \
++			end_pfn = pfn + dax_entry_size(entry) / PAGE_SIZE; \
++			pfn < end_pfn; \
++			pfn++)
++
++static void dax_associate_entry(void *entry, struct address_space *mapping)
++{
++	unsigned long pfn, end_pfn;
++
++	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
++		return;
++
++	for_each_entry_pfn(entry, pfn, end_pfn) {
++		struct page *page = pfn_to_page(pfn);
++
++		WARN_ON_ONCE(page->mapping);
++		page->mapping = mapping;
++	}
++}
++
++static void dax_disassociate_entry(void *entry, struct address_space *mapping,
++		bool trunc)
++{
++	unsigned long pfn, end_pfn;
++
++	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
++		return;
++
++	for_each_entry_pfn(entry, pfn, end_pfn) {
++		struct page *page = pfn_to_page(pfn);
++
++		WARN_ON_ONCE(trunc && page_ref_count(page) > 1);
++		WARN_ON_ONCE(page->mapping && page->mapping != mapping);
++		page->mapping = NULL;
++	}
++}
++
+ /*
+  * Find radix tree entry at given index. If it points to an exceptional entry,
+  * return it with the radix tree entry locked. If the radix tree doesn't
+@@ -431,6 +481,7 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
+ 		}
+ 
+ 		if (pmd_downgrade) {
++			dax_disassociate_entry(entry, mapping, false);
+ 			radix_tree_delete(&mapping->page_tree, index);
+ 			mapping->nrexceptional--;
+ 			dax_wake_mapping_entry_waiter(mapping, index, entry,
+@@ -480,6 +531,7 @@ static int __dax_invalidate_mapping_entry(struct address_space *mapping,
+ 	    (radix_tree_tag_get(page_tree, index, PAGECACHE_TAG_DIRTY) ||
+ 	     radix_tree_tag_get(page_tree, index, PAGECACHE_TAG_TOWRITE)))
+ 		goto out;
++	dax_disassociate_entry(entry, mapping, trunc);
+ 	radix_tree_delete(page_tree, index);
+ 	mapping->nrexceptional--;
+ 	ret = 1;
+@@ -574,6 +626,10 @@ static void *dax_insert_mapping_entry(struct address_space *mapping,
+ 
+ 	spin_lock_irq(&mapping->tree_lock);
+ 	new_entry = dax_radix_locked_entry(pfn, flags);
++	if (dax_entry_size(entry) != dax_entry_size(new_entry)) {
++		dax_disassociate_entry(entry, mapping, false);
++		dax_associate_entry(new_entry, mapping);
++	}
+ 
+ 	if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
+ 		/*
