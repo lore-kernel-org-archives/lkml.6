@@ -1,244 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932352AbeCJSpz (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:45:55 -0500
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:41835 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932171AbeCJSUU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:20:20 -0500
-X-Google-Smtp-Source: AG47ELsiLHxpLybAKtPMAuI/8uQ6f1LpJ8J0MSJt96LEo6TshyZKLrbt3LWM4SIgue0UFusuUmcn6w==
-From: Andiry Xu <jix024@eng.ucsd.edu>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org
-Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
-        swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
-        swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
-        Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 04/83] NOVA inode definition.
-Date: Sat, 10 Mar 2018 10:17:45 -0800
-Message-Id: <1520705944-6723-5-git-send-email-jix024@eng.ucsd.edu>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
-References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
+        id S1751232AbeCJTEJ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 14:04:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47476 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750795AbeCJTEI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 14:04:08 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76CDA2178C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
+X-Google-Smtp-Source: AG47ELttJRdQbYy/NkBqCwXH2Pz3iF4GKzIVWR9J74Pn2bJe3ujpMszFKaWr8W5NtSanMNotjgE7QA6zjDLqDIhKrkk=
+MIME-Version: 1.0
+In-Reply-To: <MWHPR03MB30402C0F8B8F457F5F760412D3DD0@MWHPR03MB3040.namprd03.prod.outlook.com>
+References: <DM5PR03MB3035EE1AFCEE298AFB15AC46D3C60@DM5PR03MB3035.namprd03.prod.outlook.com>
+ <20180301171936.GU14069@wotan.suse.de> <DM5PR03MB303587F12D7E56B951730A76D3D90@DM5PR03MB3035.namprd03.prod.outlook.com>
+ <20180307190205.GA14069@wotan.suse.de> <DM5PR03MB30352350D588A81D2D02BE93D3DF0@DM5PR03MB3035.namprd03.prod.outlook.com>
+ <20180308040601.GQ14069@wotan.suse.de> <20180308041411.GR14069@wotan.suse.de>
+ <DM5PR03MB3035CCBF9718D7E42B35357FD3DF0@DM5PR03MB3035.namprd03.prod.outlook.com>
+ <MWHPR03MB30402C0F8B8F457F5F760412D3DD0@MWHPR03MB3040.namprd03.prod.outlook.com>
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Date: Sat, 10 Mar 2018 11:03:45 -0800
+X-Gmail-Original-Message-ID: <CAB=NE6VvDNbe=XsfG0tYeFcxcXzsRkHnZxVHM79-V+1t6foU5g@mail.gmail.com>
+Message-ID: <CAB=NE6VvDNbe=XsfG0tYeFcxcXzsRkHnZxVHM79-V+1t6foU5g@mail.gmail.com>
+Subject: Re: ivtv: use arch_phys_wc_add() and require PAT disabled
+To: "French, Nicholas A." <naf@ou.edu>
+Cc: Andy Lutomirski <luto@kernel.org>,
+        "hans.verkuil@cisco.com" <hans.verkuil@cisco.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andiry Xu <jix024@cs.ucsd.edu>
+On Sat, Mar 10, 2018 at 8:57 AM, French, Nicholas A. <naf@ou.edu> wrote:
+> On Wed, Mar 07, 2018 at 11:23:09PM -0600, French, Nicholas A. wrote:
+>> On Thu, Mar 08, 2018 at 04:14:11AM +0000, Luis R. Rodriguez wrote:
+>> > On Thu, Mar 08, 2018 at 04:06:01AM +0000, Luis R. Rodriguez wrote:
+>> > > On Thu, Mar 08, 2018 at 03:16:29AM +0000, French, Nicholas A. wrote:
+>> > > >
+>> > > > Ah, I see. So my proposed ioremap_wc call was only "working" by aliasing the
+>> > > > ioremap_nocache()'d mem area and not actually using write combining at all.
+>> > >
+>> > > There are some debugging PAT toys out there I think but I haven't played with
+>> > > them yet or I forgot how to to confirm or deny this sort of effort, but
+>> > > likeley.
+>> >
+>> >  In fact come to think of it I believe some neurons are telling me that if
+>> >  two type does not match we'd get an error?
+>
+> I can confirm that my original suggested patch just aliases to ivtv-driver's nocache mapping:
+> $ sudo modprobe ivtvfb
+> $ sudo dmesg
+> ...
+> x86/PAT: Overlap at 0xd5000000-0xd5800000
+> x86/PAT: reserve_memtype added [mem 0xd5510000-0xd56b0fff], track uncached-minus, req write-combining, ret uncached-minus
+> ivtvfb0: Framebuffer at 0xd5510000, mapped to 0x00000000c6a7ed52, size 1665k
+> ...
+> $ sudo cat /sys/kernel/debug/x86/pat_memtype_list | grep 0xd5
+> uncached-minus @ 0xd5000000-0xd5800000
+> uncached-minus @ 0xd5510000-0xd56b1000
+>
+> So nix that.
+>
+>> > No what if the framebuffer driver is just requested as a secondary step
+>> > after firmware loading?
+>>
+>> Its a possibility. The decoder firmware gets loaded at the beginning of the decoder
+>> memory range and we know its length, so its possible to ioremap_nocache enough
+>> room for the firmware only on init and then ioremap the remaining non-firmware
+>> decoder memory areas appropriately after the firmware load succeeds...
+>
+> I looked in more detail, and this would be "hard" due to the way the rest of the
+> decoder offsets are determined by either making firmware calls or scanning the
+> decoder memory range for magic bytes and other mess.
+>
+> I think some smart guy named mcgrof apparently came to the same conclusion
+> in a really old email chain I found [https://lists.gt.net/linux/kernel/2387536]:
+> "The ivtv case is the *worst* example we can expect where the firmware
+> hides from us the exact ranges for write-combining, that we should somehow
+> just hope no one will ever do again."
+> :-)
 
-inode.h defines the non-volatile and volatile NOVA inode data structures.
+This is tribal knowledge worth formalizing a bit more for the long run
+for this ivtv driver.
 
-The non-volatile NOVA inode (nova_inode) is aligned to 128 bytes and contains
-file/directory metadata information. The most important fields
-are log_head and log_tail. log_head points to the start of
-the log, and log_tail points to the end of the latest committed
-log entry. NOVA make updates to the inode by appending
-to the log tail and update the log_tail pointer atomically.
+>> Perhaps the easy answer is to change the fatal is-pat-enabled check to just a
+>> warning like "you have PAT enabled, so wc is disabled for the framebuffer.
+>> if you want wc, use the nopat parameter"?
+>
+> I like this idea more and more. I haven't experience any problems running
+> with PAT-enabled and no write-combining on the framebuffer. Any objections?
 
-The volatile NOVA inode (nova_inode_info) contains necessary
-information to limit access to the non-volatile NOVA inode during runtime.
-It has a radix tree to map file offset or filenames to the corresponding
-log entries.
+I think its worth it, and perhaps best folded under a new kernel
+parameter option which also documents the limitation noted above,
+thereby knocking two birds with one stone. This way also users who
+*want* to opt-in to PAT do so willing-fully and knowing of the
+limitation. The kconfig option can just enable a module parameter to a
+default value, which if the kconfig is disabled would otherwise be
+unset.
 
-Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
----
- fs/nova/inode.h | 187 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 187 insertions(+)
- create mode 100644 fs/nova/inode.h
+static bool ivtv_force_pat = IS_ENABLED(CONFIG_IVTV_WHATEVER);
+module_param_named(force_pat, ivtv_force_pat, bool, S_IRUGO | S_IWUSR);
 
-diff --git a/fs/nova/inode.h b/fs/nova/inode.h
-new file mode 100644
-index 0000000..f9187e3
---- /dev/null
-+++ b/fs/nova/inode.h
-@@ -0,0 +1,187 @@
-+#ifndef __INODE_H
-+#define __INODE_H
-+
-+struct nova_inode_info_header;
-+struct nova_inode;
-+
-+#include "super.h"
-+
-+enum nova_new_inode_type {
-+	TYPE_CREATE = 0,
-+	TYPE_MKNOD,
-+	TYPE_SYMLINK,
-+	TYPE_MKDIR
-+};
-+
-+
-+/*
-+ * Structure of an inode in PMEM
-+ * Keep the inode size to within 120 bytes: We use the last eight bytes
-+ * as inode table tail pointer.
-+ */
-+struct nova_inode {
-+
-+	/* first 40 bytes */
-+	u8	i_rsvd;		 /* reserved. used to be checksum */
-+	u8	valid;		 /* Is this inode valid? */
-+	u8	deleted;	 /* Is this inode deleted? */
-+	u8	i_blk_type;	 /* data block size this inode uses */
-+	__le32	i_flags;	 /* Inode flags */
-+	__le64	i_size;		 /* Size of data in bytes */
-+	__le32	i_ctime;	 /* Inode modification time */
-+	__le32	i_mtime;	 /* Inode b-tree Modification time */
-+	__le32	i_atime;	 /* Access time */
-+	__le16	i_mode;		 /* File mode */
-+	__le16	i_links_count;	 /* Links count */
-+
-+	__le64	i_xattr;	 /* Extended attribute block */
-+
-+	/* second 40 bytes */
-+	__le32	i_uid;		 /* Owner Uid */
-+	__le32	i_gid;		 /* Group Id */
-+	__le32	i_generation;	 /* File version (for NFS) */
-+	__le32	i_create_time;	 /* Create time */
-+	__le64	nova_ino;	 /* nova inode number */
-+
-+	__le64	log_head;	 /* Log head pointer */
-+	__le64	log_tail;	 /* Log tail pointer */
-+
-+	/* last 40 bytes */
-+	__le64	create_epoch_id; /* Transaction ID when create */
-+	__le64	delete_epoch_id; /* Transaction ID when deleted */
-+
-+	struct {
-+		__le32 rdev;	 /* major/minor # */
-+	} dev;			 /* device inode */
-+
-+	__le32	csum;            /* CRC32 checksum */
-+
-+	/* Leave 8 bytes for inode table tail pointer */
-+} __attribute((__packed__));
-+
-+/*
-+ * NOVA-specific inode state kept in DRAM
-+ */
-+struct nova_inode_info_header {
-+	/* For files, tree holds a map from file offsets to
-+	 * write log entries.
-+	 *
-+	 * For directories, tree holds a map from a hash of the file name to
-+	 * dentry log entry.
-+	 */
-+	struct radix_tree_root tree;
-+	struct rw_semaphore i_sem;	/* Protect log and tree */
-+	unsigned short i_mode;		/* Dir or file? */
-+	unsigned int i_flags;
-+	unsigned long log_pages;	/* Num of log pages */
-+	unsigned long i_size;
-+	unsigned long i_blocks;
-+	unsigned long ino;
-+	unsigned long pi_addr;
-+	unsigned long valid_entries;	/* For thorough GC */
-+	unsigned long num_entries;	/* For thorough GC */
-+	u64 last_setattr;		/* Last setattr entry */
-+	u64 last_link_change;		/* Last link change entry */
-+	u64 last_dentry;		/* Last updated dentry */
-+	u64 trans_id;			/* Transaction ID */
-+	u64 log_head;			/* Log head pointer */
-+	u64 log_tail;			/* Log tail pointer */
-+	u8  i_blk_type;
-+};
-+
-+/*
-+ * DRAM state for inodes
-+ */
-+struct nova_inode_info {
-+	struct nova_inode_info_header header;
-+	struct inode vfs_inode;
-+};
-+
-+
-+static inline struct nova_inode_info *NOVA_I(struct inode *inode)
-+{
-+	return container_of(inode, struct nova_inode_info, vfs_inode);
-+}
-+
-+static inline void sih_lock(struct nova_inode_info_header *header)
-+{
-+	down_write(&header->i_sem);
-+}
-+
-+static inline void sih_unlock(struct nova_inode_info_header *header)
-+{
-+	up_write(&header->i_sem);
-+}
-+
-+static inline void sih_lock_shared(struct nova_inode_info_header *header)
-+{
-+	down_read(&header->i_sem);
-+}
-+
-+static inline void sih_unlock_shared(struct nova_inode_info_header *header)
-+{
-+	up_read(&header->i_sem);
-+}
-+
-+static inline unsigned int
-+nova_inode_blk_shift(struct nova_inode_info_header *sih)
-+{
-+	return blk_type_to_shift[sih->i_blk_type];
-+}
-+
-+static inline uint32_t nova_inode_blk_size(struct nova_inode_info_header *sih)
-+{
-+	return blk_type_to_size[sih->i_blk_type];
-+}
-+
-+static inline u64 nova_get_reserved_inode_addr(struct super_block *sb,
-+	u64 inode_number)
-+{
-+	return (NOVA_DEF_BLOCK_SIZE_4K * RESERVE_INODE_START) +
-+			inode_number * NOVA_INODE_SIZE;
-+}
-+
-+static inline struct nova_inode *nova_get_reserved_inode(struct super_block *sb,
-+	u64 inode_number)
-+{
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
-+	u64 addr;
-+
-+	addr = nova_get_reserved_inode_addr(sb, inode_number);
-+
-+	return (struct nova_inode *)(sbi->virt_addr + addr);
-+}
-+
-+static inline struct nova_inode *nova_get_inode_by_ino(struct super_block *sb,
-+						  u64 ino)
-+{
-+	if (ino == 0 || ino >= NOVA_NORMAL_INODE_START)
-+		return NULL;
-+
-+	return nova_get_reserved_inode(sb, ino);
-+}
-+
-+static inline struct nova_inode *nova_get_inode(struct super_block *sb,
-+	struct inode *inode)
-+{
-+	struct nova_inode_info *si = NOVA_I(inode);
-+	struct nova_inode_info_header *sih = &si->header;
-+	struct nova_inode fake_pi;
-+	void *addr;
-+	int rc;
-+
-+	addr = nova_get_block(sb, sih->pi_addr);
-+	rc = memcpy_mcsafe(&fake_pi, addr, sizeof(struct nova_inode));
-+	if (rc)
-+		return NULL;
-+
-+	return (struct nova_inode *)addr;
-+}
-+
-+static inline int nova_persist_inode(struct nova_inode *pi)
-+{
-+	nova_flush_buffer(pi, sizeof(struct nova_inode), 1);
-+	return 0;
-+}
-+
-+#endif
--- 
-2.7.4
+  Luis
