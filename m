@@ -1,83 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932114AbeCJRkG (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 12:40:06 -0500
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:33666 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751039AbeCJRkE (ORCPT
+        id S1751226AbeCJRrA (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 12:47:00 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:40586 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750866AbeCJRq7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 12:40:04 -0500
-X-Google-Smtp-Source: AG47ELsfIy+sROfNLRCZUGfn5VHJEIzBfUi3fcTskP5xSKcLMXRpEUd4Few4yqInOC2sOSU5kIkDN/7RIMAT3AlVkc8=
-MIME-Version: 1.0
-In-Reply-To: <20180310094633.GA31604@lst.de>
-References: <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152066489984.40260.2215636951958334858.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180310094633.GA31604@lst.de>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Sat, 10 Mar 2018 09:40:03 -0800
-Message-ID: <CAPcyv4iZFW9Lk=KdEy=0iYzM9GmQ4ccoN2imYNDq6XwXDgXsDw@mail.gmail.com>
-Subject: Re: [PATCH v5 02/11] xfs, dax: introduce xfs_dax_aops
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>, Jan Kara <jack@suse.cz>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 10 Mar 2018 12:46:59 -0500
+X-Google-Smtp-Source: AG47ELtvUEHzfrBrURMXSqmcD0bCu9GQoFkC5AAfAp0z3DKE9/06NjyAyO31FhPh5Xw3MxuL+NMe1Q==
+From: Moritz Fischer <mdf@kernel.org>
+To: linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, wsa@the-dreams.de,
+        Moritz Fischer <mdf@kernel.org>
+Subject: [PATCH] i2c: xiic: Make suspend function names consistent
+Date: Sat, 10 Mar 2018 09:40:56 -0800
+Message-Id: <20180310174056.16572-1-mdf@kernel.org>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 10, 2018 at 1:46 AM, Christoph Hellwig <hch@lst.de> wrote:
->> +int dax_set_page_dirty(struct page *page)
->> +{
->> +     /*
->> +      * Unlike __set_page_dirty_no_writeback that handles dirty page
->> +      * tracking in the page object, dax does all dirty tracking in
->> +      * the inode address_space in response to mkwrite faults. In the
->> +      * dax case we only need to worry about potentially dirty CPU
->> +      * caches, not dirty page cache pages to write back.
->> +      *
->> +      * This callback is defined to prevent fallback to
->> +      * __set_page_dirty_buffers() in set_page_dirty().
->> +      */
->> +     return 0;
->> +}
->
-> Make this a generic noop_set_page_dirty maybe?
->
->> +EXPORT_SYMBOL(dax_set_page_dirty);
->> +
->> +void dax_invalidatepage(struct page *page, unsigned int offset,
->> +             unsigned int length)
->> +{
->> +     /*
->> +      * There is no page cache to invalidate in the dax case, however
->> +      * we need this callback defined to prevent falling back to
->> +      * block_invalidatepage() in do_invalidatepage().
->> +      */
->> +}
->
-> Same here.
+Suspend functions seem to have been copied from i2c-cadence driver.
+Rename the functions to match the rest of the driver.
 
-I guess I'm not sure what you mean. These nops are specific to dax I
-don't think they make sense in another context besides dax.
+Signed-off-by: Moritz Fischer <mdf@kernel.org>
+---
+ drivers/i2c/busses/i2c-xiic.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
->
->> +EXPORT_SYMBOL(dax_invalidatepage);
->
-> And EXPORT_SYMBOL_GPL for anything dax-related, please.
->
->> +const struct address_space_operations xfs_dax_aops = {
->> +     .writepages             = xfs_vm_writepages,
->
-> Please split out the DAX case from xfs_vm_writepages.
-
-Will do.
-
-> This patch should probably also split into VFS and XFS parts.
-
-Ok.
+diff --git a/drivers/i2c/busses/i2c-xiic.c b/drivers/i2c/busses/i2c-xiic.c
+index ae6ed254e01d..c80527816ad0 100644
+--- a/drivers/i2c/busses/i2c-xiic.c
++++ b/drivers/i2c/busses/i2c-xiic.c
+@@ -851,7 +851,7 @@ static const struct of_device_id xiic_of_match[] = {
+ MODULE_DEVICE_TABLE(of, xiic_of_match);
+ #endif
+ 
+-static int __maybe_unused cdns_i2c_runtime_suspend(struct device *dev)
++static int __maybe_unused xiic_i2c_runtime_suspend(struct device *dev)
+ {
+ 	struct xiic_i2c *i2c = dev_get_drvdata(dev);
+ 
+@@ -860,7 +860,7 @@ static int __maybe_unused cdns_i2c_runtime_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int __maybe_unused cdns_i2c_runtime_resume(struct device *dev)
++static int __maybe_unused xiic_i2c_runtime_resume(struct device *dev)
+ {
+ 	struct xiic_i2c *i2c = dev_get_drvdata(dev);
+ 	int ret;
+@@ -875,8 +875,8 @@ static int __maybe_unused cdns_i2c_runtime_resume(struct device *dev)
+ }
+ 
+ static const struct dev_pm_ops xiic_dev_pm_ops = {
+-	SET_RUNTIME_PM_OPS(cdns_i2c_runtime_suspend,
+-			   cdns_i2c_runtime_resume, NULL)
++	SET_RUNTIME_PM_OPS(xiic_i2c_runtime_suspend,
++			   xiic_i2c_runtime_resume, NULL)
+ };
+ static struct platform_driver xiic_i2c_driver = {
+ 	.probe   = xiic_i2c_probe,
+-- 
+2.16.2
