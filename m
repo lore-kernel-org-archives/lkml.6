@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuLZ6i+5fKriFqaW3kiC7aL30UH+Vc/gukQWJoyD23clafmVigv1rP37iEMf4Z/aFQ8O9cV
-ARC-Seal: i=1; a=rsa-sha256; t=1520641195; cv=none;
+X-Google-Smtp-Source: AG47ELs7HFErsIs4OrLsOS5foOvy4x6zT8WgKXAK4zlYkI2dJX9nLe7RWE1RiYOhyCppWw0zGYxd
+ARC-Seal: i=1; a=rsa-sha256; t=1520641193; cv=none;
         d=google.com; s=arc-20160816;
-        b=yPkNC+aiuypr0jtm5m+0pJf4hymg7cbrPHYOkrLMlz0v1K9YORsCdngKixmTqyWOFV
-         Ayz01AdVNqJ6quibFHvnKRGyu2Hb5CgJmIvOPJLJOeTMxY078KBiXicldZKws9pj0v8R
-         zW4RaKx1Lrb4brstZaZ2yo4MP9PVZHykJEnySw4oqB8KJO6t/6h6rO2RueKzegOdJqku
-         Fic/ALOnS0d369POWiFIjocvlhXEESzq8xbcsRx9hKKaJG8NOhJrIiYn9miBKzkvM940
-         XWY1Tjj3bVHq0DUh9tml6lllyQtp6P6HsQhi8CJxNzr9ULPolj5yJ9VSJ9BcquiW8Lwz
-         m4Lw==
+        b=dCfSmqsdGsvD7FZnCjp93lhvMZrrRx1BNzNS987fNeH0uaT8grlW9tcmjZUqtVnnZP
+         cPFVjw6n1VKUUru/hFDP0W9OOwXptgCF5OQB2o5gew4NI/PNovfT7RZO/82tfzgLD1/a
+         6twe5p5yuwpvL95d6EPLoOywTkZXOqR4QwebAdW7hTVMvYY94wI2j5bw5/zZQGsHF4JM
+         598a4ofgdTLFDcTmmPVE/K5Hns+kKc9p1hn7QTZeYQ2qL9NDRbq1LrgbSeZHg8/RI8XD
+         TnZGRbtf669em1PXZ7xz+weGomRn1zZyMXUiIA4Y7ZCitfspWwWXaKsAb5Goidh4cR8i
+         COpQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yAOcxD2Jakc+DbzZe3Eb5q8RQ0fNPFjZfxn+F91XD8o=;
-        b=ZR1QSpNAptMj6j48Rmhvuh7PbY0G1YzGHYAXNINE9XD+TTIlITR6IZ0YJuVnly0qxi
-         oqRdQGvQ+Smm8FDDzaOg10DTFhu+xP8cmGlJTDnxt1VhUYvyZd+V5CD9SinFek+7HN0n
-         p8rbJwoU3bMEgr2S+YdUpGSU21rkVikpVy3iqFirCKLo/WIR25TYp9V27LOoj4DBSClb
-         g426GKVlYat3tkiHR0G5ivQmgA5RUYPtvn9lAmgoblMTV8MpKhd4BXo3OXueos5QYQvr
-         ri/XoxUWH2AqTlq5fDAy54P8m0058Jrfu9mNkoi5rpwwPwL2h77I7Jq3mP28/skPsZd1
-         gPGw==
+        bh=gxSnFuPvqWbtWXTiSmt+Jg3GImSMHSkMFaX5wwcf2hI=;
+        b=IP1AxYaRqGduw53nezD3m+CkYFlrg9GEjziaJAx3P8JPqGpSDkAxlYtBl1oDU0znWG
+         hjVtGLoqxMWuK9Wz3VY6V/vxk9DzBNRyy+jUrUxoEvGIFRmraSnO4YpRMBXz/mNRASrL
+         pA6Ehww7n35aCdoCRZe7fZavRjPz0E9Xj86lPmRgwc2mquO/wwPTrFulYAosmny+Qc0o
+         91h38NgqnfuWrzj/CV0tb29F9cZgVbOpzk5TFwy4PNbItNhNbJNo+4eL+1d0LE8a8mXF
+         ovFFJzmo0mAZtYrp2MjzRSMDzO2vuMooyqTAT3myPJ655CJjApmFB5HRI6ft4WcO9cl+
+         HzaA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,20 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Matthieu CASTET <matthieu.castet@parrot.com>,
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Borislav Petkov <bp@suse.de>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	KarimAllah Ahmed <karahmed@amazon.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	kernel-janitors@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>,
 	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 17/36] Revert "led: core: Fix brightness setting when setting delay_off=0"
-Date: Fri,  9 Mar 2018 16:18:33 -0800
-Message-Id: <20180310001808.277179453@linuxfoundation.org>
+Subject: [PATCH 4.4 16/36] x86/spectre: Fix an error message
+Date: Fri,  9 Mar 2018 16:18:32 -0800
+Message-Id: <20180310001808.223312534@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001807.213987241@linuxfoundation.org>
 References: <20180310001807.213987241@linuxfoundation.org>
@@ -41,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507862180420640?=
-X-GMAIL-MSGID: =?utf-8?q?1594507862180420640?=
+X-GMAIL-THRID: =?utf-8?q?1594507859737766837?=
+X-GMAIL-MSGID: =?utf-8?q?1594507859737766837?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,29 +58,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-This reverts commit 20ac8f72514b3af8b62c520d55656ded865eff00, which
-was commit 2b83ff96f51d0b039c4561b9f95c824d7bddb85c upstream.
-The bug that it should fix was only introduced in Linux 4.7, and
-in 4.4 it causes a regression.
+commit 9de29eac8d2189424d81c0d840cd0469aa3d41c8 upstream.
 
-Reported-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Matthieu CASTET <matthieu.castet@parrot.com>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+If i == ARRAY_SIZE(mitigation_options) then we accidentally print
+garbage from one space beyond the end of the mitigation_options[] array.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org
+Fixes: 9005c6834c0f ("x86/spectre: Simplify spectre_v2 command line parsing")
+Link: http://lkml.kernel.org/r/20180214071416.GA26677@mwanda
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/leds/led-core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -149,7 +149,7 @@ void led_blink_set(struct led_classdev *
- 		   unsigned long *delay_on,
- 		   unsigned long *delay_off)
- {
--	led_stop_software_blink(led_cdev);
-+	del_timer_sync(&led_cdev->blink_timer);
+---
+ arch/x86/kernel/cpu/bugs.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -175,8 +175,7 @@ static enum spectre_v2_mitigation_cmd __
+ 		}
  
- 	led_cdev->flags &= ~LED_BLINK_ONESHOT;
- 	led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
+ 		if (i >= ARRAY_SIZE(mitigation_options)) {
+-			pr_err("unknown option (%s). Switching to AUTO select\n",
+-			       mitigation_options[i].option);
++			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
+ 			return SPECTRE_V2_CMD_AUTO;
+ 		}
+ 	}
