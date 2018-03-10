@@ -1,284 +1,195 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932489AbeCJQFo (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 11:05:44 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:32814 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932368AbeCJQFn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 11:05:43 -0500
-Date: Sat, 10 Mar 2018 08:06:14 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Lai Jiangshan <jiangshanlai+lkml@gmail.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>, Jann Horn <jannh@google.com>,
-        Benjamin LaHaise <bcrl@kvack.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Simplifying our RCU models
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <CA+55aFzQPQw2UqQ2EEGN1Xe7=qDs-2VTvHVi7SSqGNwqNRg0cQ@mail.gmail.com>
- <CAOS58YPzLeiZnwEeN31wWMZhki0t9+3ozdRNv9DgxWKY7OKmGA@mail.gmail.com>
- <CA+55aFx48U4W5tUgqW9ioZOHibPhQoDCUDWF_d-7yNCbqFQ7zg@mail.gmail.com>
- <20180305001600.GO3918@linux.vnet.ibm.com>
- <CA+55aFyOi1XnSqHtg=VfcUiBL+egNL==NRX1Zaeihe8W5OJVgw@mail.gmail.com>
- <20180305030949.GP3918@linux.vnet.ibm.com>
- <20180305082441.4hao2z4dqn2n5on6@gmail.com>
- <87po4izj67.fsf_-_@xmission.com>
- <20180305161446.GQ3918@linux.vnet.ibm.com>
- <CAJhGHyD_N_duuZgPdidpsR9zVsAFzQi0oVwhd=qTiXa-hYiasg@mail.gmail.com>
+        id S932446AbeCJQHp (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 11:07:45 -0500
+Received: from cmta19.telus.net ([209.171.16.92]:38605 "EHLO cmta19.telus.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932329AbeCJQHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 11:07:44 -0500
+X-Authority-Analysis: v=2.2 cv=TI+qcxta c=1 sm=1 tr=0
+ a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
+ a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=kj9zAlcOel0A:10 a=FGbulvE0AAAA:8
+ a=SMlCtqHl8cuezqKOnRcA:9 a=rHzEqscNGhXt8Ysn:21 a=Vvrgx22Z1NXd2xuj:21
+ a=CjuIK1q_8ugA:10 a=svzTaB3SJmTkU8mK-ULk:22
+From: "Doug Smythies" <dsmythies@telus.net>
+To: "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
+Cc: "'Rik van Riel'" <riel@surriel.com>,
+        "'Mike Galbraith'" <mgalbraith@suse.de>,
+        "'Thomas Gleixner'" <tglx@linutronix.de>,
+        "'Paul McKenney'" <paulmck@linux.vnet.ibm.com>,
+        "'Thomas Ilsche'" <thomas.ilsche@tu-dresden.de>,
+        "'Frederic Weisbecker'" <fweisbec@gmail.com>,
+        "'Linux PM'" <linux-pm@vger.kernel.org>,
+        "'Aubrey Li'" <aubrey.li@linux.intel.com>,
+        "'LKML'" <linux-kernel@vger.kernel.org>,
+        "'Peter Zijlstra'" <peterz@infradead.org>,
+        "Doug Smythies" <dsmythies@telus.net>
+References: <2450532.XN8DODrtDf@aspire.rjw.lan> <007c01d3b843$3d825e70$b8871b50$@net> uaLheCDiLpApsuaLmer66C
+In-Reply-To: uaLheCDiLpApsuaLmer66C
+Subject: RE: [RFC/RFT][PATCH v3 0/6] sched/cpuidle: Idle loop rework
+Date: Sat, 10 Mar 2018 08:07:36 -0800
+Message-ID: <000701d3b889$eadd5340$c097f9c0$@net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJhGHyD_N_duuZgPdidpsR9zVsAFzQi0oVwhd=qTiXa-hYiasg@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18031016-0040-0000-0000-0000040561A2
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008647; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.01001063; UDB=6.00509249; IPR=6.00780393;
- MB=3.00019958; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-10 16:05:40
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031016-0041-0000-0000-000008066992
-Message-Id: <20180310160614.GG3918@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-10_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803100194
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Office Outlook 12.0
+Thread-Index: AdO4Th5ZahZlIECWSn2GzoCuQh+aDgAMoeCA
+Content-Language: en-ca
+X-CMAE-Envelope: MS4wfD6BOZEhe2dVmHqetlVbTCdaoxVvsPVXDJYymDQ5YVVvjW54Ad/uOxk2zopT7jx2aabtmFkwSxLUJ2LPuQ6mjY5E5nkF6ByN2/lxeWlgFNwsmri94FQd
+ IzpYEud+GvKFTVoAFHlwtvoNTSgDrbxQFsErV0b6pln24m+2SqwNEe6ydNkjK4VhLig72QMTK66IlC3epdjzZaed21OeZI5+bIpBWXvVJ9UOfjvBF1tDpGdm
+ zXSgfumDnT6Y2GS7UhOcti6as+3+sH0ANOQUNQe+GS8sUyRbg6kttKcdA2yFsqCy5g+k7pn+kjWlkONPREDanXfMfmfPgRX0O7wBC3RxLu25OVNaO66bPXaF
+ +LY8cdnu5Vab6+eW31JQpXXiAVSY7nG1+uZZxBOdP1xyiPlRN/0OYGMDpe+Pf6hwJ0ZE6SeVQw9zFUCIluWkrrsSDWq48ADmdRhbIDucAp5mxjrQEWVr9zZz
+ 1zne4S0Fm8Qh7NjHczSDlVmA8t7PXs4H7YVSROUY0J6HKDv3dZi66Y6MI3c=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 09, 2018 at 05:48:55PM +0800, Lai Jiangshan wrote:
-> On Tue, Mar 6, 2018 at 12:14 AM, Paul E. McKenney
-> <paulmck@linux.vnet.ibm.com> wrote:
-> > On Mon, Mar 05, 2018 at 08:33:20AM -0600, Eric W. Biederman wrote:
-> >>
-> >> Moving this discussion to a public list as discussing how to reduce the
-> >> number of rcu variants does not make sense in private.  We should have
-> >> an archive of such discussions.
-> >>
-> >> Ingo Molnar <mingo@kernel.org> writes:
-> >>
-> >> > * Paul E. McKenney <paulmck@linux.vnet.ibm.com> wrote:
-> >> >
-> >> >> > So if people really want that low-cost RCU, and some people really
-> >> >> > need the sleepable version, the only one that can _possibly_ be dumped
-> >> >> > is the preempt one.
-> >> >> >
-> >> >> > But I may - again - be confused and/or missing something.
-> >> >>
-> >> >> I am going to do something very stupid and say that I was instead thinking in
-> >> >> terms of getting rid of RCU-bh, thus reminding you of its existence.  ;-)
-> >> >>
-> >> >> The reason for believing that it is possible to get rid of RCU-bh is the work
-> >> >> that has gone into improving the forward progress of RCU grace periods under
-> >> >> heavy load and in corner-case workloads.
-> >> >>
-> >> >
-> >> > [...]
-> >> >
-> >> >> The other reason for RCU-sched is it has the side effect of waiting
-> >> >> for all in-flight hardware interrupt handlers, NMI handlers, and
-> >> >> preempt-disable regions of code to complete, and last I checked, this side
-> >> >> effect is relied on.  In contrast, RCU-preeempt is only guaranteed to wait
-> >> >> on regions of code protected by rcu_read_lock() and rcu_read_unlock().
-> >> >
-> >> > Instead of only trying to fix the documentation (which is never a bad idea but it
-> >> > is fighting the symptom in this case), I think the first step should be to
-> >> > simplify the RCU read side APIs of RCU from 4 APIs:
-> >> >
-> >> >     rcu_read_lock()
-> >> >     srcu_read_lock()
-> >> >     rcu_read_lock_sched()
-> >> >     rcu_read_lock_bh()
-> >> >
-> >> > ... which have ~8 further sub-model variations depending on CONFIG_PREEMPT,
-> >> > CONFIG_PREEMPT_RCU - which is really a crazy design!
-> >
-> > If it is possible to set CONFIG_PREEMPT_RCU differently than CONFIG_PREEMPT,
-> > then that is a bug that I need to fix.
-> >
-> >> > I think we could reduce this to just two APIs with no Kconfig dependencies:
-> >> >
-> >> >     rcu_read_lock()
-> >> >     rcu_read_lock_preempt_disable()
-> >> >
-> >> > Which would be much, much simpler.
-> >
-> > No argument on the simpler part, at least from an API perspective.
-> >
-> >> > This is how we could do it I think:
-> >> >
-> >> > 1)
-> >> >
-> >> > Getting rid of the _bh() variant should be reasonably simple and involve a
-> >> > treewide replacement of:
-> >> >
-> >> >     rcu_read_lock_bh()   -> local_bh_disable()
-> >> >     rcu_read_unlock_bh() -> local_bh_enable()
-> >> >
-> >> > Correct?
-> >
-> > Assuming that I have done enough forward-progress work on grace periods, yes.
-> >
-> >> > 2)
-> >> >
-> >> > Further reducing the variants is harder, due to this main asymmetry:
-> >> >
-> >> >                           !PREEMPT_RCU  PREEMPT_RCU=y
-> >> >   rcu_read_lock_sched():  atomic        atomic
-> >> >   rcu_read_lock():        atomic        preemptible
-> >> >
-> >> > ('atomic' here is meant in the scheduler, non-preemptible sense.)
-> >> >
-> >> > But if we look at the bigger API picture:
-> >> >
-> >> >                           !PREEMPT_RCU  PREEMPT_RCU=y
-> >> >   rcu_read_lock():        atomic        preemptiblep
-> >> >   rcu_read_lock_sched():  atomic        atomic
-> >> >   srcu_read_lock():       preemptible   preemptible
-> >> >
-> >> > Then we could maintain full read side API flexibility by making PREEMPT_RCU=y the
-> >> > only model, merging it with SRCU and using these main read side APIs:
-> >> >
-> >> >   rcu_read_lock_preempt_disable((): atomic
-> >> >   rcu_read_lock()                   preemptible
-> >
-> > One issue with merging SRCU into rcu_read_lock() is the general blocking
-> > within SRCU readers.  Once merged in, these guys block everyone.  We should
-> > focus initially on the non-SRCU variants.
-> >
-> > On the other hand, Linus's suggestion of merging rcu_read_lock_sched()
-> > into rcu_read_lock() just might be feasible.  If that really does pan
-> > out, we end up with the following:
-> >
-> >                                 !PREEMPT        PREEMPT=y
-> >         rcu_read_lock():        atomic          preemptible
-> >         srcu_read_lock():       preemptible     preemptible
-> >
-> > In this model, rcu_read_lock_sched() maps to preempt_disable() and (as
-> > you say above) rcu_read_lock_bh() maps to local_bh_disable().  The way
-> > this works is that in PREEMPT=y kernels, synchronize_rcu() waits not
-> > only for RCU read-side critical sections, but also for regions of code
-> > with preemption disabled.  The main caveat seems to be that there be an
-> > assumed point of preemptibility between each interrupt and each softirq
-> > handler, which should be OK.
-> >
-> > There will be some adjustments required for lockdep-RCU, but that should
-> > be reasonably straightforward.
-> >
-> > Seem reasonable?
-> 
-> It's good. I hope there is only one global(non-srcu) rcu variant.
+On 2018.03.10 01:00 Rafael J. Wysocki wrote:
+> On Saturday, March 10, 2018 8:41:39 AM CET Doug Smythies wrote:
+>> 
+>> With apologies to those that do not like the term "PowerNightmares",
+>
+> OK, and what exactly do you count as "PowerNightmares"?
 
-Well, there will still be both SRCU and RCU-tasks, but reducing by
-two should at least help.
+I'll snip some below and then explain:
 
-> It does have the trade-off, the grace period will be extended a little
-> in some cases,
-> so will the call_rcu()/synchronze_rcu(). But it simplifies the coding a lot.
+...[snip]...
 
-True, and the extended grace periods did bother me at first.  But then
-I realized that it was no worse than RCU-sched, so it should be OK.
+>> 
+>> Kernel 4.16-rc4: Summary: Average processor package power 27.41 watts
+>> 
+>> Idle State 0: Total Entries: 9096 : PowerNightmares: 6540 : Not PN time (seconds): 0.051532 : PN time: 7886.309553 : Ratio:
+153037.133492
+>> Idle State 1: Total Entries: 28731 : PowerNightmares: 215 : Not PN time (seconds): 0.211999 : PN time: 77.395467 : Ratio:
+365.074679
+>> Idle State 2: Total Entries: 4474 : PowerNightmares: 97 : Not PN time (seconds): 1.959059 : PN time: 0.874112 : Ratio: 0.446190
+>> Idle State 3: Total Entries: 2319 : PowerNightmares: 0 : Not PN time (seconds): 1.663376 : PN time: 0.000000 : Ratio: 0.000000
 
-And thank you for looking this over!
+O.K. let's go deeper than the summary, and focus on idle state 0, which has been my area of interest in this saga.
 
-							Thanx, Paul
+Idle State 0:
+CPU: 0: Entries: 2093 : PowerNightmares: 1136 : Not PN time (seconds): 0.024840 : PN time: 1874.417840 : Ratio: 75459.655439
+CPU: 1: Entries: 1051 : PowerNightmares: 721 : Not PN time (seconds): 0.004668 : PN time: 198.845193 : Ratio: 42597.513425
+CPU: 2: Entries: 759 : PowerNightmares: 583 : Not PN time (seconds): 0.003299 : PN time: 1099.069256 : Ratio: 333152.246028
+CPU: 3: Entries: 1033 : PowerNightmares: 1008 : Not PN time (seconds): 0.000361 : PN time: 1930.340683 : Ratio: 5347203.995237
+CPU: 4: Entries: 1310 : PowerNightmares: 1025 : Not PN time (seconds): 0.006214 : PN time: 1332.497114 : Ratio: 214434.682950
+CPU: 5: Entries: 1097 : PowerNightmares: 848 : Not PN time (seconds): 0.005029 : PN time: 785.366864 : Ratio: 156167.601340
+CPU: 6: Entries: 1753 : PowerNightmares: 1219 : Not PN time (seconds): 0.007121 : PN time: 665.772603 : Ratio: 93494.256958
 
-> >> > It's a _really_ simple and straightforward RCU model, with very obvious semantics
-> >> > all around:
-> >> >
-> >> > - Note how the 'atomic' (non-preempt) variant uses the well-known
-> >> >   preempt_disable() name as a postfix to signal its main property. (It's also a
-> >> >   bit of a mouthful, which should discourage over-use.)
-> >
-> > My thought is to eliminate the atomic variant entirely.  If you want
-> > to disable preemption, interrupts, or whatever, you simply do so.
-> > It might turn out that there are documentation benefits to having a
-> > separate rcu_read_lock_preempt_disable() that maps to preempt_disable()
-> > with lockdep semantics, and if so, that can be provided trivially.
-> >
-> >> > - The read side APIs are really as straightforward as possible: there's no SRCU
-> >> >   distinction on the read side, no _bh() distinction and no _sched() distinction.
-> >> >   (On -rt all of these would turn into preemptible sections,
-> >> >   obviously.)
-> >
-> > Agreed, and both models accomplish that.
-> >
-> >> And it looses the one advantage of srcu_read_lock.  That you don't have
-> >> to wait for the entire world.  If you actually allow sleeping that is an
-> >> important distinction to have.  Or are you proposing that we add the
-> >> equivalent of init_srcu_struct to all of the rcu users?
-> >
-> > I am instead proposing folding rcu_read_lock_bh() and rcu_read_lock_sched()
-> > into rcu_read_lock(), and leaving srcu_read_lock() separate.
-> >
-> >> That rcu_read_lock would need to take an argument about which rcu region
-> >> we are talking about.
-> >
-> > From what I can see, it would be far better to leave SRCU separate.  As you
-> > say, it really does have very different semantics.
-> >
-> >> > rcu_read_lock_preempt_disable() would essentially be all the current
-> >> > rcu_read_lock_sched() users (where the _sched() postfix was a confusing misnomer
-> >> > anyway).
-> >
-> > I agree that rcu_read_lock_preempt_disable() is a better name.
-> > We might not need it at all, though.  There are only about 20 uses of
-> > rcu_read_lock_sched() in v4.15.  ;-)
-> >
-> >> > Wrt. merging SRCU and RCU: this can be done by making PREEMPT_RCU=y the one and
-> >> > only main RCU model and converting all SRCU users to main RCU. This is relatively
-> >> > straightforward to perform, as there are only ~170 SRCU critical sections, versus
-> >> > the 3000+ main RCU critical sections ...
-> >>
-> >> It really sounds like you are talking about adding a requirement that
-> >> everyone update their rcu_read_lock() calls with information about which
-> >> region you are talking about.  That seems like quite a bit of work.
-> >
-> > Agreed, merging RCU, RCU-bh, and RCU-sched seems much more straightforward
-> > to me from the viewpoint of both usage and implementation.
-> >
-> >> Doing something implicit when PREEMPT_RCU=y and converting
-> >> "rcu_read_lock()" to "srcu_read_lock(&kernel_srcu_region)" only in that
-> >> case I can see.
-> >>
-> >> Except in very specific circustances I don't think I ever want to run a
-> >> kernel with PREEMPT_RCU the default.  All of that real time stuff trades
-> >> off predictability with performance.  Having lost enough performance to
-> >> spectre and meltdown I don't think it makes sense for us all to start
-> >> runing predictable^H^H^H^H^H^H^H^H^H^H^H time kernels now.
-> >
-> > Yes, in PREEMPT=n kernels RCU would act exactly as it does today.
-> >
-> >> > AFAICS this should be a possible read side design that keeps correctness, without
-> >> > considering grace period length patterns, i.e. without considering GC latency and
-> >> > scalability aspects.
-> >> >
-> >> > Before we get into ways to solve the latency and scalability aspects of such a
-> >> > simplified RCU model, do you agree with this analysis so far, or have I missed
-> >> > something important wrt. correctness?
-> >>
-> >> RCU region specification.  If we routinely allow preemption of rcu
-> >> critical sections for any length of time I can't imagine we will want to
-> >> wait for every possible preempted rcu critical section.
-> >>
-> >> Of course I could see the merge working the other way.  Adding the
-> >> debugging we need to find rcu critical secions that are held to long and
-> >> shrinking them so we don't need PREEMPT_RCU at all.
-> >
-> > Again, from what I can see, merging rcu_read_lock(), rcu_read_lock_sched(),
-> > and rcu_read_lock_bh() together should get us to a much better place.
-> >
-> > Make sense, or am I missing something?
-> >
-> >                                                         Thanx, Paul
-> >
-> 
+Note: CPU 7 is busy and doesn't go into idle at all.
+
+And also look at the histograms of the times spent in idle state 0:
+CPU 3 might be the most interesting:
+
+Idle State: 0  CPU: 3:
+4 1
+5 3
+7 2
+11 1
+12 1
+13 2
+14 3
+15 3
+17 4
+18 1
+19 2
+28 2
+7563 1
+8012 1
+9999 1006
+
+Where:
+Column 1 is the time in microseconds it was in that idle state
+up to 9999 microseconds, which includes anything more.
+Column 2 is the number of occurrences of that time.
+
+Notice that 1008 times out of the 1033, it spent an excessive amount
+of time in idle state 0, leading to excessive power consumption.
+I adopted Thomas Ilsche's "Powernightmare" term for this several
+months ago.
+
+This CPU 3 example was pretty clear, but sometimes it is not so
+obvious. I admit that my thresholds for is it a "powernigthmare" or
+not are somewhat arbitrary, and I'll change them to whatever anybody
+wants. Currently:
+
+#define THRESHOLD_0 100       /* Idle state 0 PowerNightmare threshold in microseconds */
+#define THRESHOLD_1 1000      /* Idle state 1 PowerNightmare threshold in microseconds */
+#define THRESHOLD_2 2000      /* Idle state 2 PowerNightmare threshold in microseconds */
+#define THRESHOLD_3 4000      /* Idle state 3 PowerNightmare threshold in microseconds */
+
+Let's have a look at another example from the same test run:
+
+Idle State 1:
+CPU: 0: Entries: 3104 : PowerNightmares: 41 : Not PN time (seconds): 0.012196 : PN time: 10.841577 : Ratio: 888.945312
+CPU: 1: Entries: 2637 : PowerNightmares: 40 : Not PN time (seconds): 0.013135 : PN time: 11.334686 : Ratio: 862.937649
+CPU: 2: Entries: 1618 : PowerNightmares: 41 : Not PN time (seconds): 0.008351 : PN time: 10.193641 : Ratio: 1220.649147
+CPU: 3: Entries: 10180 : PowerNightmares: 31 : Not PN time (seconds): 0.087596 : PN time: 14.748787 : Ratio: 168.372836
+CPU: 4: Entries: 3878 : PowerNightmares: 22 : Not PN time (seconds): 0.040360 : PN time: 14.207233 : Ratio: 352.012710
+CPU: 5: Entries: 3658 : PowerNightmares: 1 : Not PN time (seconds): 0.031188 : PN time: 0.604176 : Ratio: 19.372066
+CPU: 6: Entries: 3656 : PowerNightmares: 39 : Not PN time (seconds): 0.019173 : PN time: 15.465367 : Ratio: 806.622179
+
+Idle State: 1  CPU: 2:
+0 230
+1 566
+2 161
+3 86
+4 61
+5 13
+6 32
+7 37
+8 42
+9 41
+10 4
+11 41
+12 38
+13 24
+14 27
+15 26
+16 5
+17 21
+18 16
+19 17
+20 15
+21 1
+22 12
+23 17
+24 16
+25 11
+26 2
+27 5
+28 5
+29 3
+35 1
+47 1
+1733 1
+1850 1
+2027 1
+3929 1
+9999 37
+
+The 41 "Powernightmares" out of 1618 seems correct to me.
+Even if someone claims that the threshold should have been >3929 uSec,
+there are still 37 "powenightmares".
+
+>>> 
+>> Graph of package power verses time: http://fast.smythies.com/rjwv3_100.png
+>
+> The graph actually shows an improvement to my eyes, as the blue line is quite
+> consistently above the red one except for a few regions (and I don't really
+> understand the drop in the blue line by the end of the test window).
+
+Agreed, it shows improvement, as does the average package power.
+
+The roughly 22 minute drop in the reference test, unmodified kernel 4.16-rc4,
+the blue line, is something that has been driving me crazy since the start
+of this work and is the reason my tests run for so long (even 4 hours is short).
+It all has to do with subtle timing changes of events. Sometimes events lineup
+in such a way that there are lots of these "powernightmares" and sometimes
+events lineup in such way that there are not. These conditions can persist for
+hours at a time. By "events" I mean ones that ask for a resched upon exit and ones
+that don't (I think, I am going from memory here and haven't found my notes).
+I have the trace data and can look in more detail if you want.
+
+... Doug
