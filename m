@@ -1,28 +1,28 @@
 Return-Path: <mcgrof@kernel.org>
-X-Google-Smtp-Source: AG47ELuG0nkWklqZ0nYPeJKhbwmTJkabTynSnUtVqkN+mjX3K1T1D08aYAoohSZPn7F2g07R1wp/
-ARC-Seal: i=1; a=rsa-sha256; t=1520691331; cv=none;
+X-Google-Smtp-Source: AG47ELs5PeIU8e0gWa+ynDHwDVl7qFtNvdjc/zoIclU94i6nr/9UNgMx4ysLevYM6CQkZQ/Gu/BK
+ARC-Seal: i=1; a=rsa-sha256; t=1520691330; cv=none;
         d=google.com; s=arc-20160816;
-        b=fPqqcLtqFBNsk9Kp0E+OTnSQ9jAWFzWXn4XS8LrsanHmUN4tq7oGdbfZkkinDoJ2jg
-         4O1fwmQ3Ts+wbGtsejF6hoL5k2iTOncLXgrnEkYcarkAAyo0yLNGEaopidMeC8lYs5lH
-         uuWcTdKVCAGOZyRRkmlLxU99D5REYShwkRdubs1NFIL4kpm3iM6G5oy6a8BsjaEhETPn
-         o70FONOu3RG58UIZ8QKDymHlk0qIHRqxkidCjbwwgcNtK3atQHVVSd57eQZd6zI7eASc
-         bTI+UdT7m4fFGb4Wb04brd+wbMQddibw3u/77MueOITL0pYlh3v9HEF/OJ4xOEs27Qc4
-         rM0A==
+        b=mlg1cjYHF68IZPlqIWAH2HC5oy/uysGVMaESLNKH77Oj/Sn9JGXMd9d1C/zoXlfBts
+         5lyox7ArRqOJ7k4MqqI/kClNkCeMd1ezOqEQZ7d+VIx/14TvOnud5Aeoo3iWSmZfftl2
+         qDuxSXPsd8zfoo64g2Cp2i3ovAd4j5Og1r/MQajPxU+M8i/W40KHXDdAjdsYtaUSZVCg
+         +JIhplzFMDXzSDyjp1p3ZxHbdRso0IvPp1zxdrwk6VPjb5dcSWETnc7RrAy5bQiqMc7z
+         w+ckkh0eGdKcX/YiGpyRg/nEw6CcyD0rffOxCbKebQJIkd9/HVa2zQRjfrgiRrYczUAx
+         ygXA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dmarc-filter:arc-authentication-results;
-        bh=p8CzU3aXR/7JQOAH6soyg6ngWaHvDyonrP4tBTBJBT8=;
-        b=mO53tL15UPU6qdT1Tkh5t7hpbb93GmpqUB8eNC+ljFlQqExkn14V13UhWA0qaUiUhS
-         81rb0xmYF0KwCXgPr7UHphYNNox71rNflV7zeXoAQEnaNUxKg/2NNLy2Hy7hU2xmQzFJ
-         mqP8/1y88wmdPV2R71SqjtsQ9cys7llSepUqeo5C+1P0TP7OiUYwVmliO6ptTPNRUS19
-         9Ko0AEzVPn72Tw/TH0QDpwwBvQh/x9XQf6WMNqMV/6jsE1evfBp7moOWMrbgQ9kw9AJO
-         RSaUHNHtZi3cPddrhnCt2nL/GMPypQ3Gytjg+S+mpYQW3N8OmosmNcx6uIp4KEu0EoMx
-         +JxQ==
+        bh=maVKqsQDiM/HH9N4onBGOhnqkoujZpEBf8uMTZT28m4=;
+        b=RzWdDFDm54V7bmXpr7E/IBIfNrLblTGMQbvahKjDlJvMH60FOT38s7PQKtxssYkLdm
+         5ZseS/5iFipadzVBBHrLu694zUGO9VRKsrLeI0Uul++WnqEd27fdAWzd8LFkEWsPW0O2
+         V2Lac3S4hvuDnpV47yQ1zEEcQHc7ugd9dlUs0VZyeOSS9hSubGwova4kirGK8DhWymLl
+         bcT6QMTpPX3/qGelw1UnQ+udwQyVaQwMc4AzItMI/ponqbpnBxXNWcKQHm0NyaL+Nk7R
+         005KuCufGNgVxqAzrhjExVQKLkhHIXni3ohxVjZBnNWyf4oGxLSnztop7psVuYk4StrP
+         2chA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E18A217CA
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67F27217CE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
@@ -55,76 +55,70 @@ Cc: akpm@linux-foundation.org,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	"Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH v3 15/20] firmware: fix checking for return values for fw_add_devm_name()
-Date: Sat, 10 Mar 2018 06:14:56 -0800
-Message-Id: <20180310141501.2214-16-mcgrof@kernel.org>
+Subject: [PATCH v3 14/20] rename: _request_firmware_load() fw_load_sysfs_fallback()
+Date: Sat, 10 Mar 2018 06:14:55 -0800
+Message-Id: <20180310141501.2214-15-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.13.2
 In-Reply-To: <20180310141501.2214-1-mcgrof@kernel.org>
 References: <20180310141501.2214-1-mcgrof@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594560434149748897?=
-X-GMAIL-MSGID: =?utf-8?q?1594560434149748897?=
+X-GMAIL-THRID: =?utf-8?q?1594560432724549744?=
+X-GMAIL-MSGID: =?utf-8?q?1594560432724549744?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Currently fw_add_devm_name() returns 1 if the firmware cache
-was already set. This makes it complicated for us to check for
-correctness. It is actually non-fatal if the firmware cache
-is already setup, so just return 0, and simplify the checkers.
+This reflects much clearer what is being done.
+While at it, kdoc'ify it.
 
-fw_add_devm_name() adds device's name onto the devres for the
-device so that prior to suspend we cache the firmware onto memory,
-so that on resume the firmware is reliably available. We never
-were checking for success for this call though, meaning in some
-really rare cases we my have never setup the firmware cache for
-a device, which could in turn make resume fail.
-
-This is all theoretical, no known issues have been reported.
-This small issue has been present way since the addition of the
-devres firmware cache names on v3.7.
-
-Fixes: f531f05ae9437 ("firmware loader: store firmware name into devres list")
 Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 ---
- drivers/base/firmware_loader/main.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ Documentation/driver-api/firmware/fallback-mechanisms.rst |  2 +-
+ drivers/base/firmware_loader/fallback.c                   | 13 ++++++++++---
+ 2 files changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-index c8966c84bd44..f5046887e362 100644
---- a/drivers/base/firmware_loader/main.c
-+++ b/drivers/base/firmware_loader/main.c
-@@ -403,7 +403,7 @@ static int fw_add_devm_name(struct device *dev, const char *name)
+diff --git a/Documentation/driver-api/firmware/fallback-mechanisms.rst b/Documentation/driver-api/firmware/fallback-mechanisms.rst
+index 4055ac76b288..f353783ae0be 100644
+--- a/Documentation/driver-api/firmware/fallback-mechanisms.rst
++++ b/Documentation/driver-api/firmware/fallback-mechanisms.rst
+@@ -112,7 +112,7 @@ Since a device is created for the sysfs interface to help load firmware as a
+ fallback mechanism userspace can be informed of the addition of the device by
+ relying on kobject uevents. The addition of the device into the device
+ hierarchy means the fallback mechanism for firmware loading has been initiated.
+-For details of implementation refer to _request_firmware_load(), in particular
++For details of implementation refer to fw_load_sysfs_fallback(), in particular
+ on the use of dev_set_uevent_suppress() and kobject_uevent().
  
- 	fwn = fw_find_devm_name(dev, name);
- 	if (fwn)
--		return 1;
-+		return 0;
+ The kernel's kobject uevent mechanism is implemented in lib/kobject_uevent.c,
+diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
+index d6838e7ec00c..0a8ec7fec585 100644
+--- a/drivers/base/firmware_loader/fallback.c
++++ b/drivers/base/firmware_loader/fallback.c
+@@ -535,8 +535,15 @@ fw_create_instance(struct firmware *firmware, const char *fw_name,
+ 	return fw_sysfs;
+ }
  
- 	fwn = devres_alloc(fw_name_devm_release, sizeof(struct fw_name_devm),
- 			   GFP_KERNEL);
-@@ -431,6 +431,7 @@ int assign_fw(struct firmware *fw, struct device *device,
- 	      unsigned int opt_flags)
+-/* load a firmware via user helper */
+-static int _request_firmware_load(struct fw_sysfs *fw_sysfs,
++/**
++ * fw_load_sysfs_fallback - load a firmware via the syfs fallback mechanism
++ * @fw_sysfs: firmware syfs information for the firmware to load
++ * @opt_flags: flags of options, FW_OPT_*
++ * @timeout: timeout to wait for the load
++ *
++ * In charge of constructing a sysfs fallback interface for firmware loading.
++ **/
++static int fw_load_sysfs_fallback(struct fw_sysfs *fw_sysfs,
+ 				  unsigned int opt_flags, long timeout)
  {
- 	struct fw_priv *fw_priv = fw->priv;
-+	int ret;
+ 	int retval = 0;
+@@ -621,7 +628,7 @@ static int fw_load_from_user_helper(struct firmware *firmware,
+ 	}
  
- 	mutex_lock(&fw_lock);
- 	if (!fw_priv->size || fw_state_is_aborted(fw_priv)) {
-@@ -447,8 +448,13 @@ int assign_fw(struct firmware *fw, struct device *device,
- 	 */
- 	/* don't cache firmware handled without uevent */
- 	if (device && (opt_flags & FW_OPT_UEVENT) &&
--	    !(opt_flags & FW_OPT_NOCACHE))
--		fw_add_devm_name(device, fw_priv->fw_name);
-+	    !(opt_flags & FW_OPT_NOCACHE)) {
-+		ret = fw_add_devm_name(device, fw_priv->fw_name);
-+		if (ret) {
-+			mutex_unlock(&fw_lock);
-+			return ret;
-+		}
-+	}
+ 	fw_sysfs->fw_priv = firmware->priv;
+-	ret = _request_firmware_load(fw_sysfs, opt_flags, timeout);
++	ret = fw_load_sysfs_fallback(fw_sysfs, opt_flags, timeout);
  
- 	/*
- 	 * After caching firmware image is started, let it piggyback
+ 	if (!ret)
+ 		ret = assign_fw(firmware, device, opt_flags);
 -- 
 2.16.2
