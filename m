@@ -1,200 +1,110 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1720711-1520641128-2-5777636589269093944
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520641127; b=g+GaZSTTVEsmF3Q4RNNisEhoFyHoMXneCxPA9r+EGeMvA1v
-    gM+stZJ1gD6AOvuUXrFJ6WyGU09QVxaTq3oXbYcsV9IreKFQ9SpZguwEMUMaFzV2
-    qMSbNlrUZyok3sBPsogz7aqxRvpfXuNMD8ZV5c89ZCMVbLMKDfK0G1ykrbCSj+79
-    K3px4+8WneHwVaom5hnI1FSQ52PqBuFyRyHDkekYKanowzvbn1lPVMz1NPOXZMHp
-    DTg7n8ZZ3tQThHWL8i8+QwHks9eijldM5WbTtbKKOtLYxKc/YtIRzhXby30XTTaR
-    zQisKJIm3gkw2Xtj0iWb1pOa/YCJXhayJmI7sJw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1520641127; bh=vor/q8B1g30aqmB5rljKXlJq6c
-    /uylUy0MbcnpmRp8Y=; b=OfFLiVvFKLHF90xFsGPNchw8R8dY3KsKNhGnsC6Cfg
-    vsQsrZ4B4sJGdu8zMoCcVIXmBdqBrnAYt/2JjPOplmD9YENRpQIVQsZwl5A1SeQa
-    gAqOWRxyCef77NM1vkY77NiAS7JXK0G3YgwTOITHY6oGCV8K2aOLb23sDBLoj59K
-    Z6t6Ya/hJk+taHS+vgMq97LXiVR5nVTB72676xfghxqWveu9elATqscWdAbL5dNw
-    IoX99wP171LThgbUOZ7frORL1H3cwwQJFnKzN6f3zh34/MdAPr1gjVUhpFEM/2Ak
-    S2VHqoy7dVL6z9xD+CPrHAsmJf2CoI5lN9mrtaewhfAg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751275AbeCJASn (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Mar 2018 19:18:43 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38328 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751231AbeCJASn (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:18:43 -0500
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuahkh@osg.samsung.com, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 3.18 00/21] 3.18.99-stable review
-Date: Fri,  9 Mar 2018 16:18:22 -0800
-Message-Id: <20180310001801.045114869@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
-User-Agent: quilt/0.65
-X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-3.18.99-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-3.18.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 3.18.99-rc1
-X-KernelTest-Deadline: 2018-03-12T00:18+00:00
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <msfjarvis@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520697098; cv=none;
+        d=google.com; s=arc-20160816;
+        b=J9htYdPqQ5ysZEvv+NfsGcVGSr960wXSq6dzfvSl2TLBuG6/I1c47awT2grI6z57ji
+         TEywPpIAZ4iGCs5KovosGPJX2uHxhhwJUN+spPT5wt5XR/0QkkV3qNzmTV2tS6cv8jIo
+         OBHXMooGEAxjA5QQqZtmpw/0dZv8vERyiaPOojALL/ASHlwnpQSnu0cgLj2rEXTWf7r/
+         ABZahV9bf9jGAEG+myxrBDn3KeFwzW0YDPf/vWhI1okcX7etimxe6BqWfxbrdAI0YD8m
+         4Dous0uXNftuq2ZDgdxZZ9FhtUhMSsm0V7YoPFV7Rd/ypptMF2muDeMN48hIsfTFFHLX
+         p1Mg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=hcwJKhjESplHWvLL/wjKOCJD6q7GKn1vprUQlWq2Y1c=;
+        b=P4P3vq8C89I/28UYzVUGmVK/C0VT7NUXRO6cWp5q7hC0R2UMwaYvFBm3j38jokkSqU
+         RM2N0VVoZ9ekG2eU0uupEuhqG0DDc6wlQM53C76mUQzC52cPFzwDxbqeSBkbf9qWW9gF
+         xVhojLHn/M3UovZr85f2pvfC5pCvwx1xSClneCK+oJDAlY3hjMsyPKMIiJksqbNhzYrH
+         4ApPKkZiYPcIIA1+gFsCLoqQoWh1WfXyPNnKro4+V1cddfgBsv0X09B1UqS65TBN/yN4
+         XoaWgieKbqF4wL51xck5rZ9FIRj6phldgEUMcsQBQ/pn0jIyghLEJZyA0svpQ0ck8sbn
+         XSbA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=MftmZVaX;
+       spf=pass (google.com: domain of msfjarvis@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=msfjarvis@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=MftmZVaX;
+       spf=pass (google.com: domain of msfjarvis@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=msfjarvis@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELupoYKHnn1HO7Umx+vjEuvuJe6apz5rxQ7T2QllvgB1em38Zn57c9ofkaYpKDViL6R+IpJJ/Ob2g29Ona0sPos=
+MIME-Version: 1.0
+References: <20180310001801.045114869@linuxfoundation.org>
+In-Reply-To: <20180310001801.045114869@linuxfoundation.org>
+From: Harsh Shandilya <msfjarvis@gmail.com>
+Date: Sat, 10 Mar 2018 15:51:27 +0000
+Message-ID: <CALpmF+FAUJRNkuMDc4bZ6fKGNsVwd_1m=jY0vTdqkpbJqNPuNw@mail.gmail.com>
+Subject: Re: [PATCH 3.18 00/21] 3.18.99-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: akpm@linux-foundation.org, ben.hutchings@codethink.co.uk,
+	linux@roeck-us.net, linux-kernel@vger.kernel.org,
+	lkft-triage@lists.linaro.org, patches@kernelci.org, shuahkh@osg.samsung.com,
+	stable@vger.kernel.org, torvalds@linux-foundation.org
+Content-Type: multipart/alternative; boundary="001a1140fb705a8735056710e2f4"
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594507787184257773?=
+X-GMAIL-MSGID: =?utf-8?q?1594566481422766199?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is the start of the stable review cycle for the 3.18.99 release.
-There are 21 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+--001a1140fb705a8735056710e2f4
+Content-Type: text/plain; charset="UTF-8"
 
-Responses should be made by Mon Mar 12 00:17:44 UTC 2018.
-Anything received after that time might be too late.
+On Sat, 10 Mar, 2018, 5:48 AM Greg Kroah-Hartman, <
+gregkh@linuxfoundation.org> wrote:
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.99-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
-and the diffstat can be found below.
+> This is the start of the stable review cycle for the 3.18.99 release.
+> There are 21 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Mon Mar 12 00:17:44 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>
+> https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.99-rc1.gz
+> or in the git tree and branch at:
+>         git://
+> git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> linux-3.18.y
+> and the diffstat can be found below.
+>
 
-thanks,
+No issues on the OnePlus 3T, clean merge into the CAF msm-3.18 tree.
 
-greg k-h
+>
 
--------------
-Pseudo-Shortlog of commits:
+--001a1140fb705a8735056710e2f4
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 3.18.99-rc1
+<br><br><div class=3D"gmail_quote"><div dir=3D"ltr">On Sat, 10 Mar, 2018, 5=
+:48 AM Greg Kroah-Hartman, &lt;<a href=3D"mailto:gregkh@linuxfoundation.org=
+">gregkh@linuxfoundation.org</a>&gt; wrote:<br></div><blockquote class=3D"g=
+mail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-l=
+eft:1ex">This is the start of the stable review cycle for the 3.18.99 relea=
+se.<br>
+There are 21 patches in this series, all will be posted as a response<br>
+to this one.=C2=A0 If anyone has any issues with these being applied, pleas=
+e<br>
+let me know.<br>
+<br>
+Responses should be made by Mon Mar 12 00:17:44 UTC 2018.<br>
+Anything received after that time might be too late.<br>
+<br>
+The whole patch series can be found in one patch at:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 <a href=3D"https://www.kernel.org/pub/linux/ker=
+nel/v3.x/stable-review/patch-3.18.99-rc1.gz" rel=3D"noreferrer" target=3D"_=
+blank">https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.1=
+8.99-rc1.gz</a><br>
+or in the git tree and branch at:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 git://<a href=3D"http://git.kernel.org/pub/scm/=
+linux/kernel/git/stable/linux-stable-rc.git" rel=3D"noreferrer" target=3D"_=
+blank">git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git</=
+a> linux-3.18.y<br>
+and the diffstat can be found below.<br></blockquote></div><div><br></div><=
+div>No issues on the OnePlus 3T, clean merge into the CAF msm-3.18 tree.</d=
+iv><div class=3D"gmail_quote"><blockquote class=3D"gmail_quote" style=3D"ma=
+rgin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">
+</blockquote></div>
 
-Mike Snitzer <snitzer@redhat.com>
-    dm io: fix duplicate bio completion due to missing ref count
-
-Stefano Brivio <sbrivio@redhat.com>
-    fib_semantics: Don't match route with mismatching tclassid
-
-Sabrina Dubroca <sd@queasysnail.net>
-    net: ipv4: don't allow setting net.ipv4.route.min_pmtu below 68
-
-Alexey Kodanev <alexey.kodanev@oracle.com>
-    sctp: verify size of a new chunk in _sctp_make_chunk()
-
-Julian Wiedmann <jwi@linux.vnet.ibm.com>
-    s390/qeth: fix IPA command submission race
-
-Julian Wiedmann <jwi@linux.vnet.ibm.com>
-    s390/qeth: fix SETIP command handling
-
-Alexey Kodanev <alexey.kodanev@oracle.com>
-    sctp: fix dst refcnt leak in sctp_v6_get_dst()
-
-Alexey Kodanev <alexey.kodanev@oracle.com>
-    udplite: fix partial checksum initialization
-
-Guillaume Nault <g.nault@alphalink.fr>
-    ppp: prevent unregistered channels from connecting to PPP units
-
-Nicolas Dichtel <nicolas.dichtel@6wind.com>
-    netlink: ensure to loop over all netns in genlmsg_multicast_allns()
-
-Jakub Kicinski <jakub.kicinski@netronome.com>
-    net: fix race on decreasing number of TX queues
-
-Arnd Bergmann <arnd@arndb.de>
-    ipv6 sit: work around bogus gcc-8 -Wrestrict warning
-
-Denis Du <dudenis2000@yahoo.ca>
-    hdlc_ppp: carrier detect ok, don't turn off negotiation
-
-Xin Long <lucien.xin@gmail.com>
-    bridge: check brport attr show in brport_show
-
-Nathan Sullivan <nathan.sullivan@ni.com>
-    leds: do not overflow sysfs buffer in led_trigger_show
-
-Lucas Stach <l.stach@pengutronix.de>
-    net: fec: introduce fec_ptp_stop and use in probe fail path
-
-Ulf Magnusson <ulfalizer@gmail.com>
-    ARM: mvebu: Fix broken PL310_ERRATA_753970 selects
-
-Viresh Kumar <viresh.kumar@linaro.org>
-    cpufreq: s3c24xx: Fix broken s3c_cpufreq_init()
-
-Erik Veijola <erik.veijola@gmail.com>
-    ALSA: usb-audio: Add a quirck for B&W PX headphones
-
-Jeremy Boone <jeremy.boone@nccgroup.trust>
-    tpm_i2c_nuvoton: fix potential buffer overruns caused by bit glitches on the bus
-
-Jeremy Boone <jeremy.boone@nccgroup.trust>
-    tpm_i2c_infineon: fix potential buffer overruns caused by bit glitches on the bus
-
-
--------------
-
-Diffstat:
-
- Makefile                                  |  4 +--
- arch/arm/mach-mvebu/Kconfig               |  4 +--
- drivers/char/tpm/tpm_i2c_infineon.c       |  5 ++--
- drivers/char/tpm/tpm_i2c_nuvoton.c        |  8 ++++--
- drivers/cpufreq/s3c24xx-cpufreq.c         |  8 +++++-
- drivers/leds/led-triggers.c               | 12 ++++----
- drivers/md/dm-io.c                        |  1 +
- drivers/net/ethernet/freescale/fec.h      |  1 +
- drivers/net/ethernet/freescale/fec_main.c |  5 ++--
- drivers/net/ethernet/freescale/fec_ptp.c  | 10 +++++++
- drivers/net/ppp/ppp_generic.c             |  9 ++++++
- drivers/net/wan/hdlc_ppp.c                |  5 +++-
- drivers/s390/net/qeth_core.h              |  5 ++++
- drivers/s390/net/qeth_core_main.c         | 33 ++++++++++++----------
- include/net/udplite.h                     |  1 +
- net/bridge/br_sysfs_if.c                  |  3 ++
- net/core/dev.c                            | 11 ++++++--
- net/ipv4/fib_semantics.c                  |  5 ++++
- net/ipv4/route.c                          |  7 +++--
- net/ipv4/udp.c                            |  5 ++++
- net/ipv6/ip6_checksum.c                   |  5 ++++
- net/ipv6/sit.c                            |  2 +-
- net/netlink/genetlink.c                   | 12 ++++++--
- net/sctp/ipv6.c                           | 10 +++++--
- net/sctp/sm_make_chunk.c                  |  8 ++++--
- sound/usb/quirks-table.h                  | 47 +++++++++++++++++++++++++++++++
- 26 files changed, 181 insertions(+), 45 deletions(-)
+--001a1140fb705a8735056710e2f4--
