@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751866AbeCJC5h (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 21:57:37 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6222 "EHLO huawei.com"
+        id S932938AbeCJDAF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 22:00:05 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6223 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751349AbeCJC5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 21:57:35 -0500
+        id S932515AbeCJC5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 21:57:37 -0500
 From: Peng Li <lipeng321@huawei.com>
 To: <davem@davemloft.net>
 CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
         <lipeng321@huawei.com>
-Subject: [PATCH net-next 07/12] net: hns3: fix for loopback failure when vlan filter is enable
-Date: Sat, 10 Mar 2018 11:29:28 +0800
-Message-ID: <1520652573-75644-8-git-send-email-lipeng321@huawei.com>
+Subject: [PATCH net-next 00/12] fix some bugs for HNS3 driver
+Date: Sat, 10 Mar 2018 11:29:21 +0800
+Message-ID: <1520652573-75644-1-git-send-email-lipeng321@huawei.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520652573-75644-1-git-send-email-lipeng321@huawei.com>
-References: <1520652573-75644-1-git-send-email-lipeng321@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.71.200.31]
@@ -25,60 +23,44 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+This patchset fixes some bugs for HNS3 driver:
+[Patch 1/12 - Patch 8/12] fix various bugs for PF driver.
+[Patch 9/12 - Patch 12/12] fix issues when change the us mac address of
+PF/VF device to an existent one in the mac_vlan table.
 
-When vlan ctag filter is enabled, the loopback selftest fails because
-loopback selftest does not support vlan.
+Fuyun Liang (4):
+  net: hns3: add existence check when remove old uc mac address
+  net: hns3: fix for netdev not running problem after calling net_stop
+    and net_open
+  net: hns3: fix for ipv6 address loss problem after setting channels
+  net: hns3: unify the pause params setup function
 
-This patch fixes it by disabling the vlan ctag filter when runnig
-loopback selftest.
+Jian Shen (4):
+  net: hns3: fix error type definition of return value
+  net: hns3: fix return value error of hclge_get_mac_vlan_cmd_status()
+  net: hns3: add existence checking before adding unicast mac address
+  net: hns3: add result checking for VF when modify unicast mac address
 
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Peng Li (2):
+  net: hns3: fix rx path skb->truesize reporting bug
+  net: hns3: add support for querying pfc puase packets statistic
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-index 26274bc..2db127c 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-@@ -309,6 +309,9 @@ static void hns3_self_test(struct net_device *ndev,
- 	struct hnae3_handle *h = priv->ae_handle;
- 	int st_param[HNS3_SELF_TEST_TPYE_NUM][2];
- 	bool if_running = netif_running(ndev);
-+#if IS_ENABLED(CONFIG_VLAN_8021Q)
-+	bool dis_vlan_filter;
-+#endif
- 	int test_index = 0;
- 	u32 i;
- 
-@@ -323,6 +326,14 @@ static void hns3_self_test(struct net_device *ndev,
- 	if (if_running)
- 		dev_close(ndev);
- 
-+#if IS_ENABLED(CONFIG_VLAN_8021Q)
-+	/* Disable the vlan filter for selftest does not support it */
-+	dis_vlan_filter = (ndev->features & NETIF_F_HW_VLAN_CTAG_FILTER) &&
-+				h->ae_algo->ops->enable_vlan_filter;
-+	if (dis_vlan_filter)
-+		h->ae_algo->ops->enable_vlan_filter(h, false);
-+#endif
-+
- 	set_bit(HNS3_NIC_STATE_TESTING, &priv->state);
- 
- 	for (i = 0; i < HNS3_SELF_TEST_TPYE_NUM; i++) {
-@@ -345,6 +356,11 @@ static void hns3_self_test(struct net_device *ndev,
- 
- 	clear_bit(HNS3_NIC_STATE_TESTING, &priv->state);
- 
-+#if IS_ENABLED(CONFIG_VLAN_8021Q)
-+	if (dis_vlan_filter)
-+		h->ae_algo->ops->enable_vlan_filter(h, true);
-+#endif
-+
- 	if (if_running)
- 		dev_open(ndev);
- }
+Yunsheng Lin (2):
+  net: hns3: fix for loopback failure when vlan filter is enable
+  net: hns3: fix for buffer overflow smatch warning
+
+ drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h    |  2 +
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |  3 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    | 18 +++--
+ drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c | 16 +++++
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c | 14 ++++
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 59 ++++++++++-------
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c | 23 ++++---
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  | 76 ++++++++++++++++++----
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  |  8 ++-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  | 75 +++++++++++----------
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c   |  4 ++
+ 11 files changed, 205 insertions(+), 93 deletions(-)
+
 -- 
 2.9.3
