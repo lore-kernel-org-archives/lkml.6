@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752081AbeCJScY (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:32:24 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:35977 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932586AbeCJSVQ (ORCPT
+        id S1751866AbeCJScW (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:32:22 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:34540 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932643AbeCJSVR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:21:16 -0500
-X-Google-Smtp-Source: AG47ELszmkyEefESXpPbmk23pmrcLWl48NtqsHhgcB6SZPyeyq3RZImZ+ush1FmHGTT/nMlPM73vYg==
+        Sat, 10 Mar 2018 13:21:17 -0500
+X-Google-Smtp-Source: AG47ELu7ucIGCWGmJvrGInRA6d/Hj0iHIqBBgi6cylWOjaCFY9Oeakjndg5SqskM0fenMFd0hbMp0g==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 49/83] Dir: Append create/remove dentry.
-Date: Sat, 10 Mar 2018 10:18:30 -0800
-Message-Id: <1520705944-6723-50-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 50/83] Inode: Add nova_evict_inode.
+Date: Sat, 10 Mar 2018 10:18:31 -0800
+Message-Id: <1520705944-6723-51-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -27,183 +27,337 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andiry Xu <jix024@cs.ucsd.edu>
 
-NOVA adds or removes a directory/file by appending a dentry
-to the parent directory's log. Dentry contains filename and inode number.
-A positive inode number indicates a create(valid) dentry, and
-a dentry with inode number zero is a remove dentry.
-NOVA can also inplace update a create dentry to invalidate it.
+If the inode still have links, release the DRAM resource (radix tree, etc).
+Otherwise reclaim data pages and log pages.
 
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/dir.c  | 140 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/nova/nova.h |   4 ++
- 2 files changed, 144 insertions(+)
+ fs/nova/inode.c | 257 +++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ fs/nova/inode.h |   5 ++
+ fs/nova/log.h   |   7 ++
+ fs/nova/super.c |   1 +
+ 4 files changed, 269 insertions(+), 1 deletion(-)
 
-diff --git a/fs/nova/dir.c b/fs/nova/dir.c
-index 35a66f9..47ee9ad 100644
---- a/fs/nova/dir.c
-+++ b/fs/nova/dir.c
-@@ -222,6 +222,146 @@ int nova_append_dir_init_entries(struct super_block *sb,
+diff --git a/fs/nova/inode.c b/fs/nova/inode.c
+index 41417e3..17addd3 100644
+--- a/fs/nova/inode.c
++++ b/fs/nova/inode.c
+@@ -457,7 +457,7 @@ static int nova_alloc_unused_inode(struct super_block *sb, int cpuid,
  	return 0;
  }
  
-+/* adds a directory entry pointing to the inode. assumes the inode has
-+ * already been logged for consistency
-+ */
-+int nova_add_dentry(struct dentry *dentry, u64 ino, int inc_link,
-+	struct nova_inode_update *update, u64 epoch_id)
-+{
-+	struct inode *dir = dentry->d_parent->d_inode;
-+	struct super_block *sb = dir->i_sb;
-+	struct nova_inode_info *si = NOVA_I(dir);
-+	struct nova_inode_info_header *sih = &si->header;
-+	struct nova_inode *pidir;
-+	const char *name = dentry->d_name.name;
-+	int namelen = dentry->d_name.len;
-+	struct nova_dentry *direntry;
-+	unsigned short loglen;
-+	int ret;
-+	u64 curr_entry;
-+	timing_t add_dentry_time;
-+
-+	nova_dbg_verbose("%s: dir %lu new inode %llu\n",
-+				__func__, dir->i_ino, ino);
-+	nova_dbg_verbose("%s: %s %d\n", __func__, name, namelen);
-+	NOVA_START_TIMING(add_dentry_t, add_dentry_time);
-+	if (namelen == 0)
-+		return -EINVAL;
-+
-+	pidir = nova_get_inode(sb, dir);
-+
-+	/*
-+	 * XXX shouldn't update any times until successful
-+	 * completion of syscall, but too many callers depend
-+	 * on this.
-+	 */
-+	dir->i_mtime = dir->i_ctime = current_time(dir);
-+
-+	loglen = NOVA_DIR_LOG_REC_LEN(namelen);
-+	ret = nova_append_dentry(sb, pidir, dir, dentry,
-+				ino, loglen, update,
-+				inc_link, epoch_id);
-+
-+	if (ret) {
-+		nova_dbg("%s: append dir entry failure\n", __func__);
-+		return ret;
-+	}
-+
-+	curr_entry = update->curr_entry;
-+	direntry = (struct nova_dentry *)nova_get_block(sb, curr_entry);
-+	sih->last_dentry = curr_entry;
-+	ret = nova_insert_dir_radix_tree(sb, sih, name, namelen, direntry);
-+
-+	sih->trans_id++;
-+	NOVA_END_TIMING(add_dentry_t, add_dentry_time);
-+	return ret;
-+}
-+
-+static int nova_can_inplace_update_dentry(struct super_block *sb,
-+	struct nova_dentry *dentry, u64 epoch_id)
-+{
-+	if (dentry && dentry->epoch_id == epoch_id)
-+		return 1;
-+
-+	return 0;
-+}
-+
-+/* removes a directory entry pointing to the inode. assumes the inode has
-+ * already been logged for consistency
-+ */
-+int nova_remove_dentry(struct dentry *dentry, int dec_link,
-+	struct nova_inode_update *update, u64 epoch_id)
-+{
-+	struct inode *dir = dentry->d_parent->d_inode;
-+	struct super_block *sb = dir->i_sb;
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
-+	struct nova_inode_info *si = NOVA_I(dir);
-+	struct nova_inode_info_header *sih = &si->header;
-+	struct nova_inode *pidir;
-+	struct qstr *entry = &dentry->d_name;
-+	struct nova_dentry *old_dentry = NULL;
-+	unsigned short loglen;
-+	int ret;
-+	u64 curr_entry;
-+	timing_t remove_dentry_time;
-+
-+	NOVA_START_TIMING(remove_dentry_t, remove_dentry_time);
-+
-+	update->create_dentry = NULL;
-+	update->delete_dentry = NULL;
-+
-+	if (!dentry->d_name.len) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	ret = nova_remove_dir_radix_tree(sb, sih, entry->name, entry->len, 0,
-+					&old_dentry);
-+
-+	if (ret)
-+		goto out;
-+
-+	pidir = nova_get_inode(sb, dir);
-+
-+	dir->i_mtime = dir->i_ctime = current_time(dir);
-+
-+	if (nova_can_inplace_update_dentry(sb, old_dentry, epoch_id)) {
-+		nova_inplace_update_dentry(sb, dir, old_dentry,
-+						dec_link, epoch_id);
-+		curr_entry = nova_get_addr_off(sbi, old_dentry);
-+
-+		sih->last_dentry = curr_entry;
-+		/* Leave create/delete_dentry to NULL
-+		 * Do not change tail if used as input
-+		 */
-+		if (update->tail == 0) {
-+			update->tail = sih->log_tail;
-+		}
-+		sih->trans_id++;
-+		goto out;
-+	}
-+
-+	loglen = NOVA_DIR_LOG_REC_LEN(entry->len);
-+	ret = nova_append_dentry(sb, pidir, dir, dentry,
-+				0, loglen, update,
-+				dec_link, epoch_id);
-+
-+	if (ret) {
-+		nova_dbg("%s: append dir entry failure\n", __func__);
-+		goto out;
-+	}
-+
-+	update->create_dentry = old_dentry;
-+	curr_entry = update->curr_entry;
-+	update->delete_dentry = (struct nova_dentry *)nova_get_block(sb,
-+						curr_entry);
-+	sih->last_dentry = curr_entry;
-+	sih->trans_id++;
-+out:
-+	NOVA_END_TIMING(remove_dentry_t, remove_dentry_time);
-+	return ret;
-+}
-+
- static u64 nova_find_next_dentry_addr(struct super_block *sb,
- 	struct nova_inode_info_header *sih, u64 pos)
+-int nova_free_inuse_inode(struct super_block *sb, unsigned long ino)
++static int nova_free_inuse_inode(struct super_block *sb, unsigned long ino)
  {
-diff --git a/fs/nova/nova.h b/fs/nova/nova.h
-index ed269fe..3a51dae 100644
---- a/fs/nova/nova.h
-+++ b/fs/nova/nova.h
-@@ -461,6 +461,10 @@ struct nova_dentry *nova_find_dentry(struct super_block *sb,
- 	unsigned long name_len);
- int nova_append_dir_init_entries(struct super_block *sb,
- 	struct nova_inode *pi, u64 self_ino, u64 parent_ino, u64 epoch_id);
-+int nova_add_dentry(struct dentry *dentry, u64 ino, int inc_link,
-+	struct nova_inode_update *update, u64 epoch_id);
-+int nova_remove_dentry(struct dentry *dentry, int dec_link,
-+	struct nova_inode_update *update, u64 epoch_id);
+ 	struct nova_sb_info *sbi = NOVA_SB(sb);
+ 	struct inode_map *inode_map;
+@@ -532,6 +532,261 @@ int nova_free_inuse_inode(struct super_block *sb, unsigned long ino)
+ 	return ret;
+ }
  
- /* rebuild.c */
- int nova_rebuild_inode(struct super_block *sb, struct nova_inode_info *si,
++static int nova_free_inode(struct super_block *sb, struct nova_inode *pi,
++	struct nova_inode_info_header *sih)
++{
++	int err = 0;
++	timing_t free_time;
++
++	NOVA_START_TIMING(free_inode_t, free_time);
++
++	nova_free_inode_log(sb, pi, sih);
++
++	sih->log_pages = 0;
++	sih->i_mode = 0;
++	sih->pi_addr = 0;
++	sih->i_size = 0;
++	sih->i_blocks = 0;
++
++	err = nova_free_inuse_inode(sb, pi->nova_ino);
++
++	NOVA_END_TIMING(free_inode_t, free_time);
++	return err;
++}
++
++/*
++ * We do not really rely on this last blocknr
++ * because blocks can be allocated beyond file end
++ */
++static unsigned long nova_get_last_blocknr(struct super_block *sb,
++	struct nova_inode_info_header *sih)
++{
++	struct nova_inode *pi, fake_pi;
++	unsigned long last_blocknr;
++	unsigned int btype;
++	unsigned int data_bits;
++	int ret;
++
++	ret = nova_get_reference(sb, sih->pi_addr, &fake_pi,
++			(void **)&pi, sizeof(struct nova_inode));
++	if (ret) {
++		nova_dbg("%s: read pi @ 0x%lx failed\n",
++				__func__, sih->pi_addr);
++		btype = 0;
++	} else {
++		btype = sih->i_blk_type;
++	}
++
++	data_bits = blk_type_to_shift[btype];
++
++	if (sih->i_size == 0)
++		last_blocknr = 0;
++	else
++		last_blocknr = (sih->i_size - 1) >> data_bits;
++
++	return last_blocknr;
++}
++
++int nova_delete_file_tree(struct super_block *sb,
++	struct nova_inode_info_header *sih, unsigned long start_blocknr,
++	unsigned long last_blocknr, bool delete_nvmm, bool delete_dead,
++	u64 epoch_id)
++{
++	struct nova_file_write_entry *entry;
++	struct nova_file_write_entry *old_entry = NULL;
++	unsigned long pgoff = start_blocknr;
++	unsigned long old_pgoff = 0;
++	unsigned int num_free = 0;
++	int freed = 0;
++	void *ret;
++	timing_t delete_time;
++
++	NOVA_START_TIMING(delete_file_tree_t, delete_time);
++
++	/* Handle EOF blocks */
++	do {
++		entry = radix_tree_lookup(&sih->tree, pgoff);
++		if (entry) {
++			ret = radix_tree_delete(&sih->tree, pgoff);
++			WARN_ON(!ret || ret != entry);
++			if (entry != old_entry) {
++				if (old_entry && delete_nvmm) {
++					nova_free_old_entry(sb, sih,
++							old_entry, old_pgoff,
++							num_free, delete_dead,
++							epoch_id);
++					freed += num_free;
++				}
++
++				old_entry = entry;
++				old_pgoff = pgoff;
++				num_free = 1;
++			} else {
++				num_free++;
++			}
++			pgoff++;
++		} else {
++			/* We are finding a hole. Jump to the next entry. */
++			entry = nova_find_next_entry(sb, sih, pgoff);
++			if (!entry)
++				break;
++
++			pgoff++;
++			pgoff = pgoff > entry->pgoff ? pgoff : entry->pgoff;
++		}
++	} while (1);
++
++	if (old_entry && delete_nvmm) {
++		nova_free_old_entry(sb, sih, old_entry, old_pgoff,
++					num_free, delete_dead, epoch_id);
++		freed += num_free;
++	}
++
++	nova_dbgv("Inode %lu: delete file tree from pgoff %lu to %lu, %d blocks freed\n",
++			sih->ino, start_blocknr, last_blocknr, freed);
++
++	NOVA_END_TIMING(delete_file_tree_t, delete_time);
++	return freed;
++}
++
++static int nova_free_dram_resource(struct super_block *sb,
++	struct nova_inode_info_header *sih)
++{
++	unsigned long last_blocknr;
++	int freed = 0;
++
++	if (sih->ino == 0)
++		return 0;
++
++	if (!(S_ISREG(sih->i_mode)) && !(S_ISDIR(sih->i_mode)))
++		return 0;
++
++	if (S_ISREG(sih->i_mode)) {
++		last_blocknr = nova_get_last_blocknr(sb, sih);
++		freed = nova_delete_file_tree(sb, sih, 0,
++					last_blocknr, false, false, 0);
++	} else {
++		nova_delete_dir_tree(sb, sih);
++		freed = 1;
++	}
++
++	return freed;
++}
++
++static int nova_free_inode_resource(struct super_block *sb,
++	struct nova_inode *pi, struct nova_inode_info_header *sih)
++{
++	unsigned long last_blocknr;
++	int ret = 0;
++	int freed = 0;
++
++	pi->deleted = 1;
++
++	if (pi->valid) {
++		nova_dbg("%s: inode %lu still valid\n",
++				__func__, sih->ino);
++		pi->valid = 0;
++	}
++	nova_persist_inode(pi);
++
++	/* We need the log to free the blocks from the b-tree */
++	switch (__le16_to_cpu(pi->i_mode) & S_IFMT) {
++	case S_IFREG:
++		last_blocknr = nova_get_last_blocknr(sb, sih);
++		nova_dbgv("%s: file ino %lu\n", __func__, sih->ino);
++		freed = nova_delete_file_tree(sb, sih, 0,
++					last_blocknr, true, true, 0);
++		break;
++	case S_IFDIR:
++		nova_dbgv("%s: dir ino %lu\n", __func__, sih->ino);
++		nova_delete_dir_tree(sb, sih);
++		break;
++	case S_IFLNK:
++		/* Log will be freed later */
++		nova_dbgv("%s: symlink ino %lu\n",
++				__func__, sih->ino);
++		freed = nova_delete_file_tree(sb, sih, 0, 0,
++						true, true, 0);
++		break;
++	default:
++		nova_dbgv("%s: special ino %lu\n",
++				__func__, sih->ino);
++		break;
++	}
++
++	nova_dbg_verbose("%s: Freed %d\n", __func__, freed);
++	/* Then we can free the inode */
++	ret = nova_free_inode(sb, pi, sih);
++	if (ret)
++		nova_err(sb, "%s: free inode %lu failed\n",
++				__func__, sih->ino);
++
++	return ret;
++}
++
++void nova_evict_inode(struct inode *inode)
++{
++	struct super_block *sb = inode->i_sb;
++	struct nova_inode *pi = nova_get_inode(sb, inode);
++	struct nova_inode_info *si = NOVA_I(inode);
++	struct nova_inode_info_header *sih = &si->header;
++	timing_t evict_time;
++	int destroy = 0;
++	int ret;
++
++	NOVA_START_TIMING(evict_inode_t, evict_time);
++	if (!sih) {
++		nova_err(sb, "%s: ino %lu sih is NULL!\n",
++				__func__, inode->i_ino);
++		NOVA_ASSERT(0);
++		goto out;
++	}
++
++	// pi can be NULL if the file has already been deleted, but a handle
++	// remains.
++	if (pi && pi->nova_ino != inode->i_ino) {
++		nova_err(sb, "%s: inode %lu ino does not match: %llu\n",
++				__func__, inode->i_ino, pi->nova_ino);
++		nova_dbg("inode size %llu, pi addr 0x%lx, pi head 0x%llx, tail 0x%llx, mode %u\n",
++				inode->i_size, sih->pi_addr, sih->log_head,
++				sih->log_tail, pi->i_mode);
++		nova_dbg("sih: ino %lu, inode size %lu, mode %u, inode mode %u\n",
++				sih->ino, sih->i_size,
++				sih->i_mode, inode->i_mode);
++		nova_print_inode_log(sb, inode);
++	}
++
++	nova_dbg_verbose("%s: %lu\n", __func__, inode->i_ino);
++	if (!inode->i_nlink && !is_bad_inode(inode)) {
++		if (IS_APPEND(inode) || IS_IMMUTABLE(inode))
++			goto out;
++
++		if (pi) {
++			ret = nova_free_inode_resource(sb, pi, sih);
++			if (ret)
++				goto out;
++		}
++
++		destroy = 1;
++		pi = NULL; /* we no longer own the nova_inode */
++
++		inode->i_mtime = inode->i_ctime = current_time(inode);
++		inode->i_size = 0;
++	}
++out:
++	if (destroy == 0) {
++		nova_dbgv("%s: destroying %lu\n", __func__, inode->i_ino);
++		nova_free_dram_resource(sb, sih);
++	}
++	/* TODO: Since we don't use page-cache, do we really need the following
++	 * call?
++	 */
++	truncate_inode_pages(&inode->i_data, 0);
++
++	clear_inode(inode);
++	NOVA_END_TIMING(evict_inode_t, evict_time);
++}
++
+ /* Returns 0 on failure */
+ u64 nova_new_nova_inode(struct super_block *sb, u64 *pi_addr)
+ {
+diff --git a/fs/nova/inode.h b/fs/nova/inode.h
+index 6970872..62c8bdc 100644
+--- a/fs/nova/inode.h
++++ b/fs/nova/inode.h
+@@ -245,6 +245,11 @@ u64 nova_new_nova_inode(struct super_block *sb, u64 *pi_addr);
+ struct inode *nova_new_vfs_inode(enum nova_new_inode_type type,
+ 	struct inode *dir, u64 pi_addr, u64 ino, umode_t mode,
+ 	size_t size, dev_t rdev, const struct qstr *qstr, u64 epoch_id);
++int nova_delete_file_tree(struct super_block *sb,
++	struct nova_inode_info_header *sih, unsigned long start_blocknr,
++	unsigned long last_blocknr, bool delete_nvmm, bool delete_dead,
++	u64 epoch_id);
++extern void nova_evict_inode(struct inode *inode);
+ extern int nova_write_inode(struct inode *inode, struct writeback_control *wbc);
+ extern void nova_dirty_inode(struct inode *inode, int flags);
+ 
+diff --git a/fs/nova/log.h b/fs/nova/log.h
+index f5149f7..87ce5f9 100644
+--- a/fs/nova/log.h
++++ b/fs/nova/log.h
+@@ -364,6 +364,13 @@ static inline int is_dir_init_entry(struct super_block *sb,
+ }
+ 
+ 
++unsigned int nova_free_old_entry(struct super_block *sb,
++	struct nova_inode_info_header *sih,
++	struct nova_file_write_entry *entry,
++	unsigned long pgoff, unsigned int num_free,
++	bool delete_dead, u64 epoch_id);
++struct nova_file_write_entry *nova_find_next_entry(struct super_block *sb,
++	struct nova_inode_info_header *sih, pgoff_t pgoff);
+ int nova_handle_setattr_operation(struct super_block *sb, struct inode *inode,
+ 	struct nova_inode *pi, unsigned int ia_valid, struct iattr *attr,
+ 	u64 epoch_id);
+diff --git a/fs/nova/super.c b/fs/nova/super.c
+index 1e67062..daf3270 100644
+--- a/fs/nova/super.c
++++ b/fs/nova/super.c
+@@ -884,6 +884,7 @@ static struct super_operations nova_sops = {
+ 	.destroy_inode	= nova_destroy_inode,
+ 	.write_inode	= nova_write_inode,
+ 	.dirty_inode	= nova_dirty_inode,
++	.evict_inode	= nova_evict_inode,
+ 	.put_super	= nova_put_super,
+ 	.statfs		= nova_statfs,
+ 	.remount_fs	= nova_remount,
 -- 
 2.7.4
