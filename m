@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtk3arPVDGQMVxZK5+uKfyGVOM9PrYC+KbrGGaAvHzDRtPXw755VNHhOyWKawtjBlS7Jhn7
-ARC-Seal: i=1; a=rsa-sha256; t=1520641136; cv=none;
+X-Google-Smtp-Source: AG47ELvImedBNHmpMl/trhz4LsDC4il92+1pb+0ekKjnlUqAuUjpiq4TQSNSbAIOTJkrmTDRJDFy
+ARC-Seal: i=1; a=rsa-sha256; t=1520641134; cv=none;
         d=google.com; s=arc-20160816;
-        b=QrRDMb9aVumUZS0gBstw9JA2JMqORamyWmBa86RJ0xqyf+1A3ECMociAVoBztbzvf0
-         FdkAFJFscD66JxfJaimTHxWk/Vw7fabakYpdQebmEgxnpLaNsq7H7xPY/ahacmBHuoAa
-         7yn60yLQFF1kxnYRFSxlaSmvE1RsGkcUqX0Q0xSVjCmc9TQ3GsY/ZhJAHT585VEU56Ml
-         S38HNcXlD3wQiSDtp9YXqqCYL7WcTSyseD03vAKGrxn6pKbBlrv1mUKm1c+DAS9kN83N
-         /HGaW202ENrwxZYJIS91Aihxil0yT0SfYWEcbMRa5Fu2n7GUueAqaw+VMFKJ374yxyT2
-         Sw4g==
+        b=QXmQwaFS9DTNvnXQOOdL/NEr9bzTc0sAvrUwl096OoAfbTExBvpGy6ybl7WIUU4b4C
+         /LnuPZk482ao2350ElTqgRP+mGKY4kEi9b1uePyn+2MvhHDQOEFZw+q3qK0kHsfqeVED
+         nDeuP3dUFFTkmMoujC+UtfGyS96BEzvrYo1pX0S0TgQHLUoE69J0wlBHESm8gCQZsBM3
+         AJEYgWGQFbabyScQgyHqlqLB4oZnWxrgLNy0BFsYr2a7sTu43Ds5c53f2v3wbO97V41f
+         IJ8vewZtn6R+aLKO3ItLb9BO66wYTHsTQqYTPBP3hutafOb73eYydXVAH1RJSks+z1+c
+         GhSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AniGun/sYuP+3HmlIHSEDC8nc1MvDFZt9j9KN7V1+/8=;
-        b=g7ocxOwd9g6s8ZpCcnY4867IyK8Q9YR/XLyNCE7Ow4jiN/jsSyAao6IAx7e7F75dqJ
-         s0mSGNCGPwGuCTVSbPeFZFN58neGwazK3E7tbhd0CXYl6I1iw1jqKcjCTWwAgLJcHBSX
-         f0ESBabucxtQSasCcb73P0DkGiThgbPVqv90rTAUg983vD+XA7Mtr620GwG6GCwiTUKY
-         twyF0if68hdxjHwpa38+fiVbsvL3tztfK5xLLfX9VFBmRUtTrx96B/9oA4XAGzY5/xd4
-         xANAoXFGh5zyhxZW/tNdD7zmw3qcjb2IMiuwBUmSCNd7WGIVJTjKZdcnzlHZYvFXkR+v
-         T3nw==
+        bh=Nu3Kx167gPe1KKRKku2bplvrsedp5LxUGfXXtzm76rk=;
+        b=g5aBOaG/0Dp0pfkop9lEb6sbLvZKcfvUACQAEMH2JYzW4xoz1bNZQv1TCXeufZ2OAb
+         rWMmpAwLwWMNT3ZsS5nMBgGFv7CfBCLyHqaYPilow+09n6zfIU1CjHCOifUsdAs8f343
+         sWpb+qPXbTXES/KBWPio8LQZEYvxoiaOms7V98IskI2lGgfT7d3JcYTzIW+T6Mz/cm0b
+         6IeMohATpOidzNZCNX68xTr3D+cbQ8eyQYsMMGGNpZJo+RuuFB2Mc/CXk/7HI4utzcKO
+         +VtAt2VdHmQJL/UvGfpugM0dFT9igq139sDfQKa8IxV408fhLizT5rVjU0u8/+JMuTDG
+         e1XQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jakub Kicinski <jakub.kicinski@netronome.com>,
+	Martin Sebor <msebor@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 11/21] net: fix race on decreasing number of TX queues
-Date: Fri,  9 Mar 2018 16:18:33 -0800
-Message-Id: <20180310001801.708384251@linuxfoundation.org>
+Subject: [PATCH 3.18 10/21] ipv6 sit: work around bogus gcc-8 -Wrestrict warning
+Date: Fri,  9 Mar 2018 16:18:32 -0800
+Message-Id: <20180310001801.631686321@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001801.045114869@linuxfoundation.org>
 References: <20180310001801.045114869@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507800170011350?=
-X-GMAIL-MSGID: =?utf-8?q?1594507800170011350?=
+X-GMAIL-THRID: =?utf-8?q?1594507798184824818?=
+X-GMAIL-MSGID: =?utf-8?q?1594507798184824818?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,66 +50,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
 
-[ Upstream commit ac5b70198adc25c73fba28de4f78adcee8f6be0b ]
+[ Upstream commit ca79bec237f5809a7c3c59bd41cd0880aa889966 ]
 
-netif_set_real_num_tx_queues() can be called when netdev is up.
-That usually happens when user requests change of number of
-channels/rings with ethtool -L.  The procedure for changing
-the number of queues involves resetting the qdiscs and setting
-dev->num_tx_queues to the new value.  When the new value is
-lower than the old one, extra care has to be taken to ensure
-ordering of accesses to the number of queues vs qdisc reset.
+gcc-8 has a new warning that detects overlapping input and output arguments
+in memcpy(). It triggers for sit_init_net() calling ipip6_tunnel_clone_6rd(),
+which is actually correct:
 
-Currently the queues are reset before new dev->num_tx_queues
-is assigned, leaving a window of time where packets can be
-enqueued onto the queues going down, leading to a likely
-crash in the drivers, since most drivers don't check if TX
-skbs are assigned to an active queue.
+net/ipv6/sit.c: In function 'sit_init_net':
+net/ipv6/sit.c:192:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
 
-Fixes: e6484930d7c7 ("net: allocate tx queues in register_netdevice")
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+The problem here is that the logic detecting the memcpy() arguments finds them
+to be the same, but the conditional that tests for the input and output of
+ipip6_tunnel_clone_6rd() to be identical is not a compile-time constant.
+
+We know that netdev_priv(t->dev) is the same as t for a tunnel device,
+and comparing "dev" directly here lets the compiler figure out as well
+that 'dev == sitn->fb_tunnel_dev' when called from sit_init_net(), so
+it no longer warns.
+
+This code is old, so Cc stable to make sure that we don't get the warning
+for older kernels built with new gcc.
+
+Cc: Martin Sebor <msebor@gmail.com>
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83456
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/dev.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ net/ipv6/sit.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -2070,8 +2070,11 @@ EXPORT_SYMBOL(netif_set_xps_queue);
-  */
- int netif_set_real_num_tx_queues(struct net_device *dev, unsigned int txq)
- {
-+	bool disabling;
- 	int rc;
+--- a/net/ipv6/sit.c
++++ b/net/ipv6/sit.c
+@@ -176,7 +176,7 @@ static void ipip6_tunnel_clone_6rd(struc
+ #ifdef CONFIG_IPV6_SIT_6RD
+ 	struct ip_tunnel *t = netdev_priv(dev);
  
-+	disabling = txq < dev->real_num_tx_queues;
-+
- 	if (txq < 1 || txq > dev->num_tx_queues)
- 		return -EINVAL;
- 
-@@ -2087,15 +2090,19 @@ int netif_set_real_num_tx_queues(struct
- 		if (dev->num_tc)
- 			netif_setup_tc(dev, txq);
- 
--		if (txq < dev->real_num_tx_queues) {
-+		dev->real_num_tx_queues = txq;
-+
-+		if (disabling) {
-+			synchronize_net();
- 			qdisc_reset_all_tx_gt(dev, txq);
- #ifdef CONFIG_XPS
- 			netif_reset_xps_queues_gt(dev, txq);
- #endif
- 		}
-+	} else {
-+		dev->real_num_tx_queues = txq;
- 	}
- 
--	dev->real_num_tx_queues = txq;
- 	return 0;
- }
- EXPORT_SYMBOL(netif_set_real_num_tx_queues);
+-	if (t->dev == sitn->fb_tunnel_dev) {
++	if (dev == sitn->fb_tunnel_dev) {
+ 		ipv6_addr_set(&t->ip6rd.prefix, htonl(0x20020000), 0, 0, 0);
+ 		t->ip6rd.relay_prefix = 0;
+ 		t->ip6rd.prefixlen = 16;
