@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932231AbeCJSUY (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:20:24 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:32897 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932168AbeCJSUR (ORCPT
+        id S932271AbeCJSU2 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:20:28 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:32994 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932217AbeCJSUY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:20:17 -0500
-X-Google-Smtp-Source: AG47ELvLHJeZkfC6VkGQht7NTm70TP5vhS0iZ0sEZY7gZ3MmU01vHutzS2z5GU42qS5LY0m3uQ01Ew==
+        Sat, 10 Mar 2018 13:20:24 -0500
+X-Google-Smtp-Source: AG47ELv4bTPLYwlmEo7IH3tMaYE9q/UrGkRq8GNBt2iOl+eHL6UyJJIZBEu2+UrOwM0Io7HqEVzlww==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 02/83] Add nova_def.h.
-Date: Sat, 10 Mar 2018 10:17:43 -0800
-Message-Id: <1520705944-6723-3-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 07/83] Initialize inode_info and rebuild inode information in nova_iget().
+Date: Sat, 10 Mar 2018 10:17:48 -0800
+Message-Id: <1520705944-6723-8-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -27,25 +27,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andiry Xu <jix024@cs.ucsd.edu>
 
-This file defines NOVA filesystem macros and routines to persist updates
-by using Intel persistent memory instruction CLWB or clflush.
+Incomplete nova_rebuild_inode() implemenation.
+nova_rebuild_inode() will go through the inode log and rebuild
+radix tree and metadata. Leave for later patches.
 
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/nova_def.h | 128 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 128 insertions(+)
- create mode 100644 fs/nova/nova_def.h
+ fs/nova/bbuild.c  | 53 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/nova/bbuild.h  |  7 +++++++
+ fs/nova/inode.c   |  6 ++++++
+ fs/nova/nova.h    | 10 ++++++++++
+ fs/nova/rebuild.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 124 insertions(+)
+ create mode 100644 fs/nova/bbuild.c
+ create mode 100644 fs/nova/bbuild.h
+ create mode 100644 fs/nova/rebuild.c
 
-diff --git a/fs/nova/nova_def.h b/fs/nova/nova_def.h
+diff --git a/fs/nova/bbuild.c b/fs/nova/bbuild.c
 new file mode 100644
-index 0000000..1cbed6f
+index 0000000..8bc0545
 --- /dev/null
-+++ b/fs/nova/nova_def.h
-@@ -0,0 +1,128 @@
++++ b/fs/nova/bbuild.c
+@@ -0,0 +1,53 @@
 +/*
-+ * BRIEF DESCRIPTION
-+ *
-+ * Definitions for the NOVA filesystem.
++ * NOVA Recovery routines.
 + *
 + * Copyright 2015-2016 Regents of the University of California,
 + * UCSD Non-Volatile Systems Lab, Andiry Xu <jix024@cs.ucsd.edu>
@@ -55,120 +60,150 @@ index 0000000..1cbed6f
 + * Copyright 2003 Matsushita Electric Industrial Co., Ltd.
 + * 2003-2004 (c) MontaVista Software, Inc. , Steve Longerbeam
 + *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ */
++
++#include <linux/fs.h>
++#include <linux/bitops.h>
++#include <linux/slab.h>
++#include <linux/random.h>
++#include <linux/delay.h>
++#include "nova.h"
++#include "super.h"
++#include "inode.h"
++
++void nova_init_header(struct super_block *sb,
++	struct nova_inode_info_header *sih, u16 i_mode)
++{
++	sih->log_pages = 0;
++	sih->i_size = 0;
++	sih->ino = 0;
++	sih->i_blocks = 0;
++	sih->pi_addr = 0;
++	INIT_RADIX_TREE(&sih->tree, GFP_ATOMIC);
++	sih->i_mode = i_mode;
++	sih->i_flags = 0;
++	sih->valid_entries = 0;
++	sih->num_entries = 0;
++	sih->last_setattr = 0;
++	sih->last_link_change = 0;
++	sih->last_dentry = 0;
++	sih->trans_id = 0;
++	sih->log_head = 0;
++	sih->log_tail = 0;
++	sih->i_blk_type = NOVA_DEFAULT_BLOCK_TYPE;
++	init_rwsem(&sih->i_sem);
++}
++
+diff --git a/fs/nova/bbuild.h b/fs/nova/bbuild.h
+new file mode 100644
+index 0000000..162a832
+--- /dev/null
++++ b/fs/nova/bbuild.h
+@@ -0,0 +1,7 @@
++#ifndef __BBUILD_H
++#define __BBUILD_H
++
++void nova_init_header(struct super_block *sb,
++	struct nova_inode_info_header *sih, u16 i_mode);
++
++#endif
+diff --git a/fs/nova/inode.c b/fs/nova/inode.c
+index bfdc5dc..f7d6410 100644
+--- a/fs/nova/inode.c
++++ b/fs/nova/inode.c
+@@ -158,6 +158,12 @@ struct inode *nova_iget(struct super_block *sb, unsigned long ino)
+ 		goto fail;
+ 	}
+ 
++	err = nova_rebuild_inode(sb, si, ino, pi_addr, 1);
++	if (err) {
++		nova_dbg("%s: failed to rebuild inode %lu\n", __func__, ino);
++		goto fail;
++	}
++
+ 	err = nova_read_inode(sb, inode, pi_addr);
+ 	if (unlikely(err)) {
+ 		nova_dbg("%s: failed to read inode %lu\n", __func__, ino);
+diff --git a/fs/nova/nova.h b/fs/nova/nova.h
+index 5eb696c..ded9fe8 100644
+--- a/fs/nova/nova.h
++++ b/fs/nova/nova.h
+@@ -296,4 +296,14 @@ static inline u64 nova_get_epoch_id(struct super_block *sb)
+ }
+ 
+ #include "inode.h"
++#include "bbuild.h"
++
++/* ====================================================== */
++/* ==============  Function prototypes  ================= */
++/* ====================================================== */
++
++/* rebuild.c */
++int nova_rebuild_inode(struct super_block *sb, struct nova_inode_info *si,
++	u64 ino, u64 pi_addr, int rebuild_dir);
++
+ #endif /* __NOVA_H */
+diff --git a/fs/nova/rebuild.c b/fs/nova/rebuild.c
+new file mode 100644
+index 0000000..0595851
+--- /dev/null
++++ b/fs/nova/rebuild.c
+@@ -0,0 +1,48 @@
++/*
++ * BRIEF DESCRIPTION
++ *
++ * Inode rebuild methods.
++ *
++ * Copyright 2015-2016 Regents of the University of California,
++ * UCSD Non-Volatile Systems Lab, Andiry Xu <jix024@cs.ucsd.edu>
++ * Copyright 2012-2013 Intel Corporation
++ * Copyright 2009-2011 Marco Stornelli <marco.stornelli@gmail.com>
++ * Copyright 2003 Sony Corporation
++ * Copyright 2003 Matsushita Electric Industrial Co., Ltd.
++ * 2003-2004 (c) MontaVista Software, Inc. , Steve Longerbeam
 + * This file is licensed under the terms of the GNU General Public
 + * License version 2. This program is licensed "as is" without any
 + * warranty of any kind, whether express or implied.
 + */
-+#ifndef _LINUX_NOVA_DEF_H
-+#define _LINUX_NOVA_DEF_H
 +
-+#include <linux/types.h>
-+#include <linux/magic.h>
++#include "nova.h"
++#include "inode.h"
 +
-+#define	NOVA_SUPER_MAGIC	0x4E4F5641	/* NOVA */
-+
-+/*
-+ * The NOVA filesystem constants/structures
-+ */
-+
-+/*
-+ * Mount flags
-+ */
-+#define NOVA_MOUNT_XATTR_USER   0x000002    /* Extended user attributes */
-+#define NOVA_MOUNT_POSIX_ACL    0x000004    /* POSIX Access Control Lists */
-+#define NOVA_MOUNT_DAX          0x000008    /* Direct Access */
-+#define NOVA_MOUNT_ERRORS_CONT  0x000010    /* Continue on errors */
-+#define NOVA_MOUNT_ERRORS_RO    0x000020    /* Remount fs ro on errors */
-+#define NOVA_MOUNT_ERRORS_PANIC 0x000040    /* Panic on errors */
-+#define NOVA_MOUNT_HUGEMMAP     0x000080    /* Huge mappings with mmap */
-+#define NOVA_MOUNT_HUGEIOREMAP  0x000100    /* Huge mappings with ioremap */
-+#define NOVA_MOUNT_FORMAT       0x000200    /* was FS formatted on mount? */
-+
-+/*
-+ * Maximal count of links to a file
-+ */
-+#define NOVA_LINK_MAX          32000
-+
-+#define NOVA_DEF_BLOCK_SIZE_4K 4096
-+
-+#define NOVA_INODE_BITS   7
-+#define NOVA_INODE_SIZE   128    /* must be power of two */
-+
-+#define NOVA_NAME_LEN 255
-+
-+#define MAX_CPUS 1024
-+
-+/* NOVA supported data blocks */
-+#define NOVA_BLOCK_TYPE_4K     0
-+#define NOVA_BLOCK_TYPE_2M     1
-+#define NOVA_BLOCK_TYPE_1G     2
-+#define NOVA_BLOCK_TYPE_MAX    3
-+
-+#define META_BLK_SHIFT 9
-+
-+/*
-+ * Play with this knob to change the default block type.
-+ * By changing the NOVA_DEFAULT_BLOCK_TYPE to 2M or 1G,
-+ * we should get pretty good coverage in testing.
-+ */
-+#define NOVA_DEFAULT_BLOCK_TYPE NOVA_BLOCK_TYPE_4K
-+
-+
-+/* ======================= Write ordering ========================= */
-+
-+#define CACHELINE_SIZE  (64)
-+#define CACHELINE_MASK  (~(CACHELINE_SIZE - 1))
-+#define CACHELINE_ALIGN(addr) (((addr)+CACHELINE_SIZE-1) & CACHELINE_MASK)
-+
-+
-+static inline bool arch_has_clwb(void)
++/* initialize nova inode header and other DRAM data structures */
++int nova_rebuild_inode(struct super_block *sb, struct nova_inode_info *si,
++	u64 ino, u64 pi_addr, int rebuild_dir)
 +{
-+	return static_cpu_has(X86_FEATURE_CLWB);
-+}
++	struct nova_inode_info_header *sih = &si->header;
++	struct nova_inode *pi;
 +
-+extern int support_clwb;
++	pi = (struct nova_inode *)nova_get_block(sb, pi_addr);
++	// We need this valid in case we need to evict the inode.
 +
-+#define _mm_clflush(addr)\
-+	asm volatile("clflush %0" : "+m" (*(volatile char *)(addr)))
-+#define _mm_clflushopt(addr)\
-+	asm volatile(".byte 0x66; clflush %0" : "+m" \
-+		     (*(volatile char *)(addr)))
-+#define _mm_clwb(addr)\
-+	asm volatile(".byte 0x66; xsaveopt %0" : "+m" \
-+		     (*(volatile char *)(addr)))
++	nova_init_header(sb, sih, __le16_to_cpu(pi->i_mode));
++	sih->pi_addr = pi_addr;
 +
-+/* Provides ordering from all previous clflush too */
-+static inline void PERSISTENT_MARK(void)
-+{
-+	/* TODO: Fix me. */
-+}
-+
-+static inline void PERSISTENT_BARRIER(void)
-+{
-+	asm volatile ("sfence\n" : : );
-+}
-+
-+static inline void nova_flush_buffer(void *buf, uint32_t len, bool fence)
-+{
-+	uint32_t i;
-+
-+	len = len + ((unsigned long)(buf) & (CACHELINE_SIZE - 1));
-+	if (support_clwb) {
-+		for (i = 0; i < len; i += CACHELINE_SIZE)
-+			_mm_clwb(buf + i);
-+	} else {
-+		for (i = 0; i < len; i += CACHELINE_SIZE)
-+			_mm_clflush(buf + i);
++	if (pi->deleted == 1) {
++		nova_dbgv("%s: inode %llu has been deleted.\n", __func__, ino);
++		return -ESTALE;
 +	}
-+	/* Do a fence only if asked. We often don't need to do a fence
-+	 * immediately after clflush because even if we get context switched
-+	 * between clflush and subsequent fence, the context switch operation
-+	 * provides implicit fence.
-+	 */
-+	if (fence)
-+		PERSISTENT_BARRIER();
++
++	nova_dbgv("%s: inode %llu, addr 0x%llx, valid %d, head 0x%llx, tail 0x%llx\n",
++			__func__, ino, pi_addr, pi->valid,
++			pi->log_head, pi->log_tail);
++
++	sih->ino = ino;
++
++	/* Traverse the log */
++	return 0;
 +}
 +
-+#endif /* _LINUX_NOVA_DEF_H */
 -- 
 2.7.4
