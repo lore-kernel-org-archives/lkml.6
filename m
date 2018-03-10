@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsRPAqwkc9bLzkiGNosDODzy77evYmhjFyTdZ8KmD2Q4oLVjCi2g0gFsi8W7KQ5FVINigX7
-ARC-Seal: i=1; a=rsa-sha256; t=1520641251; cv=none;
+X-Google-Smtp-Source: AG47ELvYaLwk1VP6YheOItMykFfD3a8fwRTWGg0ZKr3PJzllhQ6IkUkQ2IbUnyn+mduJlCCc9LID
+ARC-Seal: i=1; a=rsa-sha256; t=1520641247; cv=none;
         d=google.com; s=arc-20160816;
-        b=tlAYXgNcYgJJY4pSiwfFZHLj6DuVxZixS35ovh81wILht25+XZ4/jm47aW7YvDWDC6
-         yUQEdHDVG6mrhXdEEISQYRsgy+/2t5O57dhAlm16a/TG59FmnY+v9Dx0wvExbXGMZlU+
-         qk/1EsuyoUicjwu9rBg9qauRVMqv4bOUCBmzK3f+y8ynvjmc9LkfF0tf4sITIbXS9luu
-         D3voYpIyB44S6MUD4htvhPYjyHcZ1VvxzEPe3OHAJUarayR6gDQYlei+sKc84JtmnJh/
-         YvszRgdMBQWmPe5C2gowzI54DZkMeTyqZBkeYygCrKpCwyKMND4+T4De2jxxQU4UdAoV
-         uJDQ==
+        b=y1rTq8lF685AZtnsJYZ/RUYKz0nzVpI+GUwXLGlKW4sWLnxwrB1TVV/h4KKgSP31yi
+         qN89RJWpigLycCqsNtRB26NHo+ktuM7Ad+ce8IVKu8if0GVd9J1oaNc4LyBWgWqY1XqP
+         +iuP3sNKsV6Q0wk84bHHfq9oqQJ9dokHDfQ61HHuh23+y0PjvSPAkdsyGM47E7o7Jg4k
+         mjIbJIyIZmNunp3z7hBFmXYqU5VSW22BwGhwLRL0acI9Uo5m0g+TURqfX1UG02Z/9xYp
+         tdmrPLgvD3MZrNpUMgDwa+tjcuUD1gFuewbx2KPYxxo/uNChvwcHU1w1hY4AXziWGVV3
+         lxrQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yF0g3bT1DzAAGNu95QAbbkV8klCQO4U6OJLlw0MQ2nY=;
-        b=syY4e8sw7cdw9tmKcTUgcpaLsH3vJPi/xEzedX820WUqtdim+mMR5RK3yEXZdYqiF3
-         +oeh2tUx09hvD41utwZtypX2/WFO0Srw9sx42G3s4hX1XIhgJW/P7GVy+mKgErcjxNKm
-         cXLGOg4lQHvsMRnnz+kSd63Etha09ExqFflKVL52C5XuN/ORKbm3nS4IoeO6Z7P56Q/b
-         lyfUUOS6QZXL1/jVEtuTZ3ArIqkxPxGXWwhTmBtd558+4HWbWhMdsTsdgdOsmVt8MUkW
-         42QW+w5LZTUoqD83mCEvojP3YOJhjkvjD2LlL8/K3KYCGa9NsKjxMF4cx83bTopHAuss
-         BpEQ==
+        bh=F+7O1A1GlvroiHRhqYsB4fmEtXjh6fNDOrdrqYhTUNM=;
+        b=FXvZnyblagmoJClRE6eMPVleMVM18GQgPvWPVEjkAPD0CXZs5DXfaML3UrEcka86Di
+         S9JJ+sK2F8vQQEIubTidjUH7JZoUR/SUA4fX7bTKHOtTzngrcAeM2KRnzaQn++QIkGRh
+         UGHzFp5ib1AKF4qFkwNeZIBWjZEbgergaqK+UqxVqphQ2TqilUvZdMlptJJSb2keqsMR
+         37rUJinWgbl7HHhN5pIpUDgMQzF6IkGWh9SdIOydp6AxS8y5bR0A4VHbsL1x72BquBy3
+         LopW6sayvcFSKwvtGWziYzrIiexCuIVCdEpWNogkxK4FddXbEQr8o32RDxTstGCed97L
+         dnOw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Ahern <dsahern@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 32/36] net: mpls: Pull common label check into helper
-Date: Fri,  9 Mar 2018 16:18:48 -0800
-Message-Id: <20180310001809.138665604@linuxfoundation.org>
+	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 30/36] s390/qeth: fix IPA command submission race
+Date: Fri,  9 Mar 2018 16:18:46 -0800
+Message-Id: <20180310001809.024181221@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001807.213987241@linuxfoundation.org>
 References: <20180310001807.213987241@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507920885870676?=
-X-GMAIL-MSGID: =?utf-8?q?1594507920885870676?=
+X-GMAIL-THRID: =?utf-8?q?1594507828423441186?=
+X-GMAIL-MSGID: =?utf-8?q?1594507916847136958?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,81 +49,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 
-commit b7b386f42f079b25b942c756820e36c6bd09b2ca upstream.
 
-mpls_route_add and mpls_route_del have the same checks on the label.
-Move to a helper. Avoid duplicate extack messages in the next patch.
+[ Upstream commit d22ffb5a712f9211ffd104c38fc17cbfb1b5e2b0 ]
 
-Signed-off-by: David Ahern <dsahern@gmail.com>
+If multiple IPA commands are build & sent out concurrently,
+fill_ipacmd_header() may assign a seqno value to a command that's
+different from what send_control_data() later assigns to this command's
+reply.
+This is due to other commands passing through send_control_data(),
+and incrementing card->seqno.ipa along the way.
+
+So one IPA command has no reply that's waiting for its seqno, while some
+other IPA command has multiple reply objects waiting for it.
+Only one of those waiting replies wins, and the other(s) times out and
+triggers a recovery via send_ipa_cmd().
+
+Fix this by making sure that the same seqno value is assigned to
+a command and its reply object.
+Do so immediately before submitting the command & while holding the
+irq_pending "lock", to produce nicely ascending seqnos.
+
+As a side effect, *all* IPA commands now use a reply object that's
+waiting for its actual seqno. Previously, early IPA commands that were
+submitted while the card was still DOWN used the "catch-all" IDX seqno.
+
+Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mpls/af_mpls.c |   32 +++++++++++++++++---------------
- 1 file changed, 17 insertions(+), 15 deletions(-)
+ drivers/s390/net/qeth_core_main.c |   19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
---- a/net/mpls/af_mpls.c
-+++ b/net/mpls/af_mpls.c
-@@ -714,6 +714,19 @@ errout:
- 	return err;
- }
- 
-+static bool mpls_label_ok(struct net *net, unsigned int index)
-+{
-+	/* Reserved labels may not be set */
-+	if (index < MPLS_LABEL_FIRST_UNRESERVED)
-+		return false;
-+
-+	/* The full 20 bit range may not be supported. */
-+	if (index >= net->mpls.platform_labels)
-+		return false;
-+
-+	return true;
-+}
-+
- static int mpls_route_add(struct mpls_route_config *cfg)
- {
- 	struct mpls_route __rcu **platform_label;
-@@ -732,12 +745,7 @@ static int mpls_route_add(struct mpls_ro
- 		index = find_free_label(net);
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -2068,25 +2068,26 @@ int qeth_send_control_data(struct qeth_c
  	}
+ 	reply->callback = reply_cb;
+ 	reply->param = reply_param;
+-	if (card->state == CARD_STATE_DOWN)
+-		reply->seqno = QETH_IDX_COMMAND_SEQNO;
+-	else
+-		reply->seqno = card->seqno.ipa++;
++
+ 	init_waitqueue_head(&reply->wait_q);
+-	spin_lock_irqsave(&card->lock, flags);
+-	list_add_tail(&reply->list, &card->cmd_waiter_list);
+-	spin_unlock_irqrestore(&card->lock, flags);
+ 	QETH_DBF_HEX(CTRL, 2, iob->data, QETH_DBF_CTRL_LEN);
  
--	/* Reserved labels may not be set */
--	if (index < MPLS_LABEL_FIRST_UNRESERVED)
--		goto errout;
--
--	/* The full 20 bit range may not be supported. */
--	if (index >= net->mpls.platform_labels)
-+	if (!mpls_label_ok(net, index))
- 		goto errout;
+ 	while (atomic_cmpxchg(&card->write.irq_pending, 0, 1)) ;
+-	qeth_prepare_control_data(card, len, iob);
  
- 	/* Append makes no sense with mpls */
-@@ -798,12 +806,7 @@ static int mpls_route_del(struct mpls_ro
+ 	if (IS_IPA(iob->data)) {
+ 		cmd = __ipa_cmd(iob);
++		cmd->hdr.seqno = card->seqno.ipa++;
++		reply->seqno = cmd->hdr.seqno;
+ 		event_timeout = QETH_IPA_TIMEOUT;
+ 	} else {
++		reply->seqno = QETH_IDX_COMMAND_SEQNO;
+ 		event_timeout = QETH_TIMEOUT;
+ 	}
++	qeth_prepare_control_data(card, len, iob);
++
++	spin_lock_irqsave(&card->lock, flags);
++	list_add_tail(&reply->list, &card->cmd_waiter_list);
++	spin_unlock_irqrestore(&card->lock, flags);
  
- 	index = cfg->rc_label;
+ 	timeout = jiffies + event_timeout;
  
--	/* Reserved labels may not be removed */
--	if (index < MPLS_LABEL_FIRST_UNRESERVED)
--		goto errout;
--
--	/* The full 20 bit range may not be supported */
--	if (index >= net->mpls.platform_labels)
-+	if (!mpls_label_ok(net, index))
- 		goto errout;
- 
- 	mpls_route_update(net, index, NULL, &cfg->rc_nlinfo);
-@@ -1162,10 +1165,9 @@ static int rtm_to_route_config(struct sk
- 					   &cfg->rc_label))
- 				goto errout;
- 
--			/* Reserved labels may not be set */
--			if (cfg->rc_label < MPLS_LABEL_FIRST_UNRESERVED)
-+			if (!mpls_label_ok(cfg->rc_nlinfo.nl_net,
-+					   cfg->rc_label))
- 				goto errout;
--
- 			break;
- 		}
- 		case RTA_VIA:
+@@ -2879,7 +2880,7 @@ static void qeth_fill_ipacmd_header(stru
+ 	memset(cmd, 0, sizeof(struct qeth_ipa_cmd));
+ 	cmd->hdr.command = command;
+ 	cmd->hdr.initiator = IPA_CMD_INITIATOR_HOST;
+-	cmd->hdr.seqno = card->seqno.ipa;
++	/* cmd->hdr.seqno is set by qeth_send_control_data() */
+ 	cmd->hdr.adapter_type = qeth_get_ipa_adp_type(card->info.link_type);
+ 	cmd->hdr.rel_adapter_no = (__u8) card->info.portno;
+ 	if (card->options.layer2)
