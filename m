@@ -1,37 +1,38 @@
 Return-Path: <mcgrof@kernel.org>
-X-Google-Smtp-Source: AG47ELultRkAFuaiuoJ4nQuTP7I1l0I2vOHbnEOI3C9hhMWk3FBi78kaSBELF07PEEMzAsTKBgYr
-ARC-Seal: i=1; a=rsa-sha256; t=1520692552; cv=none;
+X-Google-Smtp-Source: AG47ELus1gtpaAA75DKYds7Scbhtx2zqTOXbH0/qD/rS84alhrRgzdgxBN8wE/v742nuK8R1IKn6
+ARC-Seal: i=1; a=rsa-sha256; t=1520692876; cv=none;
         d=google.com; s=arc-20160816;
-        b=UET7nYpwpOA/9b2WXH/pru87hQwk5iVKkWJrwxXdDPK0tRmsa7MFZpv7giNcgXrhBz
-         q4Ay1aKADiJSIjjXwlIA6knStnrVe8wCNCqN8VroTIzcifn6eMtY3ZiztkffujLouBj8
-         NDvHiHb0ZyjleM+Klmsn4YFPXl5nnsfzE92r7YpYNEWiZUl5HSZrcCuo5QRSgT3XSPEu
-         Gika/HpRiDOaCKrmQmwKpHLGsufll/+VNiM3MHi1V++zFznT9NtNckIfZAHxAWEWvEr+
-         Raux4vd8mKqejBxCueanFZ7d4VERALNcNyalol02N/32SQLplVNyPNtqeV6uAHH9Lh48
-         /Yzg==
+        b=ILHAn7x9lzHYFmXl2pSf7wQedfoWmTNQ3tB4ZYnQT6LjUU7wW6G7O4kKgqBRnPsJPK
+         xUFGxO8t1ZjOgbU7hxqTMYeccwU345pCEVDMOZKk4W/PWov8wUaCqyENCTEVckYWEvF2
+         YIhFSP/rxqmsnud8aRYuQkYbN+ckQfQ+Tgaz1uMA4TVfIGPaqrRu8ZhF3K31EbWv/KPt
+         Z7u88elkJX8EyzRSNKRlCUXu+haFptq4BFDtAmAulUsBs6w3N6sqCNHgzimNVvdKJDlu
+         mk9TSreC9fQOi6dPE/9uRqwnj/Ng0wtRQDkb1nbG6ZFOhJ40dDkt/WkNe3pynhEmm64o
+         OiVQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to
          :mime-version:dmarc-filter:arc-authentication-results;
-        bh=VN+FzQe1i/FeoLEOdBOSmmoukEbSzPcOOehPqSb2BMQ=;
-        b=KFpOJA4dOxYhf4A8cnG8Sipf/oeML54n1rxAoBmW8g8gS4WZHcl0f6EGPnV/UtKPaF
-         bFMrCemPVRuyIxeelEBeeTjceWNNqRmdegCRan2kJG2VI+5DMW63Vpr6OAa47BMN/B//
-         5L6eD/EjTjGPtjOFwtiGc0IGGkFl1fpevHN6XYIMbd1lJOekj0B+mzEKSdz58KA+4iMC
-         ++RCbhxdbhV0gTK8NYbOoPUGrT2KWFm2D7t1xy2HfWI7oyGoZR+aK9Jh6SiNQvkxcPcA
-         Xrpl4QcIxdQXgFfmykfTuhllA9deGwBaOE5TPZltpZz/F87sv+kH5Y8O5qy8IGFGkye7
-         DMSA==
+        bh=mv7Z7Fi4ZfmS7GhMV4CvVxQCfp26vFGRvV7IctwU+tA=;
+        b=GDHBtfE/Zwhq4FMDYh95j3Ll5wyufN/88td5vZI9+HKNmO8Zty8YSOQ0oWMiqaYzWq
+         +nKefVhZQAeN3QAMvQYgFhGsuP+UqzFn2OnoVTDckF/yfzgS5xr3UnHnXzjU7tarlSjN
+         Wwl7R9CENYp+n1q6AW8AnDIkjJNoFv1TU8Or5N3o8tWhB6kQ7tJJBmp/9P15HwPJiG3v
+         O7tS2QraJYhcdNIrNgNdvkHxlNLtHnLS1VNRy2BGY2HfFHaccVsUsVITQCDKcTadwHRj
+         dtJxDsk2XuIu7rBHX22cTtNIhwXS5715p1IoxzavE168yYLa0jwDm8wCw3kwkkhSD71X
+         iDsA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDC1B21795
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2A3221795
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
 MIME-Version: 1.0
-In-Reply-To: <20180309230925.3573-1-andresx7@gmail.com>
+In-Reply-To: <CAB=NE6VY62KqmhzD=zT8od=PhgPi3rGKKKxKz_zad-ZrYW-97A@mail.gmail.com>
 References: <20180309221243.15489-2-andresx7@gmail.com> <20180309230925.3573-1-andresx7@gmail.com>
+ <CAB=NE6VY62KqmhzD=zT8od=PhgPi3rGKKKxKz_zad-ZrYW-97A@mail.gmail.com>
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Date: Sat, 10 Mar 2018 06:35:30 -0800
-X-Gmail-Original-Message-ID: <CAB=NE6VY62KqmhzD=zT8od=PhgPi3rGKKKxKz_zad-ZrYW-97A@mail.gmail.com>
-Message-ID: <CAB=NE6VY62KqmhzD=zT8od=PhgPi3rGKKKxKz_zad-ZrYW-97A@mail.gmail.com>
+Date: Sat, 10 Mar 2018 06:40:54 -0800
+X-Gmail-Original-Message-ID: <CAB=NE6XpY4LuDwnakCa6gZ_HjjhZDnu=gDeHwmpNRaSkqQOB2g@mail.gmail.com>
+Message-ID: <CAB=NE6XpY4LuDwnakCa6gZ_HjjhZDnu=gDeHwmpNRaSkqQOB2g@mail.gmail.com>
 Subject: Re: [PATCH] firmware: add a function to load optional firmware v2
 To: Andres Rodriguez <andresx7@gmail.com>
 Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -41,119 +42,35 @@ Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594503439621024078?=
-X-GMAIL-MSGID: =?utf-8?q?1594561713902862739?=
+X-GMAIL-MSGID: =?utf-8?q?1594562053148348963?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-First, thanks for your patch!
+On Sat, Mar 10, 2018 at 6:35 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
+> You also I take it have users in
+> mind? I'd like to see at least one user of the API or this fixing a
+> reported issue. Ie, if users have reported this as issues incorrectly,
+> referring to those incorrect posts as issues and how this created
+> confusion would help.
 
-On Fri, Mar 9, 2018 at 3:09 PM, Andres Rodriguez <andresx7@gmail.com> wrote:
-> Currently the firmware loader only exposes one silent path for querying
-> optional firmware, and that is request_firmware_direct(). This function
-> also disables the usermodehelper fallback which might not always be the
-> desired behaviour.
+Your patch series then should also have the driver callers who you
+want to modify to use this new API. Collect from the 802.11 folks the
+other drivers which I think they wanted changed as well. The old up on
+that front was that the firmware API was in a huge state of flux and
+debate about *how* we'd evolve the API, either through a data driven
+API or functional driven API, ie whether or not we'd add a flexible
+one API call with a set of options, or keep extending functionality
+with new exported symbols per use case. The later is how we'd keep
+evolving the API as such the way you are doing it is fine. Ie, if
+there is a use case for an optional firmware also for the async case a
+new API call will have to be made. As stupid as this sounds.
 
-You should explain on the commit log how at least there is one driver
-which needs full silence. Also FYI I think there are others who have
-asked for the same before, on the 802.11 world. Kalle, Arend, do you
-guys recall if it was a synchronous or async use case?
+Also please take a look at lib/test_firmware.c -- I don't think it
+makes sense to add a new test case for this API call, so at least
+worth documenting why somewhere if you find a suitable place for that.
 
-> This patch introduces request_firmware_optional(), which will not
-> produce error/warning messages if the firmware file is not found, but
-
-This looks good for a commit message so far modulo the above.
-
-> will still attempt to query the usermodehelper
-
-The "usermodehelper" is a loose term which I've been trying to fight
-in the firmware API. Please refer to this as the fallback mechanism.
-The usermode helper actually is kernel/umh.c and in so far as the
-firmware API is concerned the kernel/umc.c is used only for the uevent
-for the default fallback case. In the custom fallback case there is no
-kernel/umc.c API use, and I'm now wondering if use of the UMH lock
-doesn't make sense there and we should remove it.
-
-> for the optional
-> firmware. Effectively, FW_OPT_UEVENT | FW_OPT_FALLBACK | FW_OPT_NO_WARN.
-
-Can you do me a favor? The above flags are not well documented at all.
-I have a big sized cleanup for v4.17 on my , can you base your patch
-on top of my tree, modify these flags to become enums, and in the
-process kdocify them as part of your work? Refer to
-include/uapi/linux/nl80211.h for a good example of how to properly
-kdocify enums.
-
-Please base your patch on top of my tree and branch
-20180307-firmware-dev-for-v4.17 [0] and resubmit with the above and
-below feedback into consideration. You also I take it have users in
-mind? I'd like to see at least one user of the API or this fixing a
-reported issue. Ie, if users have reported this as issues incorrectly,
-referring to those incorrect posts as issues and how this created
-confusion would help.
-
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/log/?h=20180307-firmware-dev-for-v4.17
-
-> v2: add header prototype, use updated opt_flags
->
-> Signed-off-by: Andres Rodriguez <andresx7@gmail.com>
-> ---
->
-> Sorry, I messed up the v1 patch and sent the wrong one from before I
-> rebased.
->
->  drivers/base/firmware_class.c | 26 +++++++++++++++++++++++++-
->  include/linux/firmware.h      |  2 ++
->  2 files changed, 27 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_class.c
-> index 7dd36ace6152..4e1eddea241b 100644
-> --- a/drivers/base/firmware_class.c
-> +++ b/drivers/base/firmware_class.c
-> @@ -1181,7 +1181,7 @@ static int fw_sysfs_fallback(struct firmware *fw, const char *name,
->         if (!fw_run_sysfs_fallback(opt_flags))
->                 return ret;
->
-> -       dev_warn(device, "Falling back to user helper\n");
-> +       dev_warn(device, "Falling back to user helper for %s\n", name);
-
-This seems like it should be a separate patch, and it should be
-justified, also please modify the language given what I said above
-about kernel/umc.c API use. In so far as your actual change is
-concerned for this print, *why* do we need another print with the
-firmware name on it? The commit log should explain that very well in a
-separate patch.
-
->         return fw_load_from_user_helper(fw, name, device, opt_flags);
->  }
->  #else /* CONFIG_FW_LOADER_USER_HELPER */
-> @@ -1351,6 +1351,30 @@ request_firmware(const struct firmware **firmware_p, const char *name,
->  }
->  EXPORT_SYMBOL(request_firmware);
->
-> +/**
-> + * request_firmware_optional: - request for an optional fw module
-> + * @firmware_p: pointer to firmware image
-> + * @name: name of firmware file
-> + * @device: device for which firmware is being loaded
-> + *
-> + * This function is similar in behaviour to request_firmware(), except
-> + * it doesn't produce warning messages when the file is not found.
-> + **/
-> +int
-> +request_firmware_optional(const struct firmware **firmware_p, const char *name,
-> +                         struct device *device)
-> +{
-> +       int ret;
-> +
-> +       /* Need to pin this module until return */
-> +       __module_get(THIS_MODULE);
-> +               ret = _request_firmware(firmware_p, name, device, NULL, 0,
-> +                               FW_OPT_UEVENT | FW_OPT_NO_WARN );
-> +       module_put(THIS_MODULE);
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL(request_firmware_optional);
-
-New exported symbols for the firmware API should be EXPORT_SYMBOL_GPL().
+Also - I forgot to ask you to extend the
+Documentation/driver-api/firmware/ documentation accordingly. Please
+do that.
 
   Luis
