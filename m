@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsSkZWlJo4LE3x9UvcY/pCt0jEWgiTwsoKfz2Mv+9qlXQRWNw58sssPSvce+yj2y9kOpSrc
-ARC-Seal: i=1; a=rsa-sha256; t=1520641290; cv=none;
+X-Google-Smtp-Source: AG47ELvW5WaFIcDwjornrz19n7ZZC0BlY1oz2olaSbpktwNm4mtE0dOYcZw2Bi0V4NV+QXwLK/Eb
+ARC-Seal: i=1; a=rsa-sha256; t=1520641288; cv=none;
         d=google.com; s=arc-20160816;
-        b=L2F2hkvV2Q7bE2AXaTTUKy0jCjDcpjSS2a5KaIaB5WPJ3sWFK9zQabH/PDuR5dWVlV
-         GPE2y1ejVXUFZCzRkoN7M4eACkXtGHAZZNM9A/8a4h7M/aSYSNn2vLyTdAcZ2c6I2mez
-         4chVDTl5Rag8ttdMQGDVre+QUkVo5TeLQYIFYGN2Ah+05MMrHQ16PGzGB+FC5xzhE32B
-         uu4BzEZoU0eTOCrOFn+kG4TkI+Gg5SV6O/70Diq65Oyjvn3P++DC+iwVfpfMC2D8Npo6
-         aH275C1QOd8Gxj2mVLeMfyX/kIlb8jO385ddfXKCyCGjphXKn0Lta5UGF4UmIycINZDI
-         xCZw==
+        b=0jno9g9MEbGvzNbkGeQ2Qn2kskNXKgkd7dUx1ZMbq2fJBBJYKQTjVHSNjfEVakflbw
+         0XQrRTZWPi0qvHCq1Gxa+34zbMwFIath951rzE40qlcz6Uth3A49drtd+ZHBrnlT3TI4
+         hA2TtpQ+ZlfGXwvr0AOTokYODutaonprYpOQW1YZG3q7DoOzC05RbZ2qdcSrWI89+PMK
+         3TeabsWqWI4nhVZ80Ho8jlMNm24T/5KDUxhkU4FGbI4h7FNTj8/Bimc94FFo/WPO6UiY
+         d5AyaAZvixH3VtNMqW5EgDDcJ2PaxB/AH+nIW+rTvt4VQw2yoYZfcjUkQw8BpDaYK0qq
+         TpUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Q+Z2vL2u/NaAW7kobK2oeLXFawnJWU2iBXWyjQPQUt8=;
-        b=PjW8i/EvHmwu0tWU6iEOdn28bny/wZA7P7vWIiDcoPk/LBXUXyk3uiYR8jG3xLEhdQ
-         PAZ3AIqfiIUOffqfamC8FdfNYZVn/x57CUs8EPhCPp1Z+j2PREHkhZ+j9x1RiNVXJPi1
-         e5BYHVk+1p1K1yztleqYXL1R078qdlWs/uOD/6tjgfXtXC3iQ61DNhcRJjcb/ose5ND1
-         Tf+89gEGEajiLYr/xEMZV2X1z8OVzeavxeHuGnSq+slKItbDt0KID8nsq2DR0OXMSLtc
-         DsYspO7fsvP31wCMBnBeqMpEIbsbJUKmYZ+tKJbdizUKx3SCaeFL2R86KLvr44mrNKIr
-         Dh7w==
+        bh=5w/JdI/kzCWrIM7VRAyXmyr0nYxhf5bZ0YIirbQ16iI=;
+        b=NLB05WQywEjiNKqg1OrCU8VNdOpPZbGEinEfoHU2twvQsg5ZxnCOCEJC4UyYu2bCNM
+         50asnnguMjcf0UnxbjdfhdTFpkqPn+KmpAeelqeo2Np9lF/KcA4yBBjlPuUio61KHUun
+         FFGDL1Ip6HXEQY2tPlsRcJYAQ9umE4a2AjHu5azzhnO16qgSyXayQ8sW7736HZX1v/UD
+         b7/j4qiwIrvSSbK1826BtRaEX/EFHqzMrIOmw2srNwp1ifgEzBYu0p1WAIAxTKi4mj/e
+         2abEMZxJEqOEZB0M68eh+hyrpcpSOHdhRGuZbC3bsETAO6TjvT30D6O023XrjFr7w3OY
+         swIg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	James Bottomley <James.Bottomley@HansenPartnership.com>,
 	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
 	James Morris <james.morris@microsoft.com>
-Subject: [PATCH 4.9 04/65] tpm_tis: fix potential buffer overruns caused by bit glitches on the bus
-Date: Fri,  9 Mar 2018 16:18:04 -0800
-Message-Id: <20180310001825.268027029@linuxfoundation.org>
+Subject: [PATCH 4.9 03/65] tpm_i2c_nuvoton: fix potential buffer overruns caused by bit glitches on the bus
+Date: Fri,  9 Mar 2018 16:18:03 -0800
+Message-Id: <20180310001825.182967821@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
 References: <20180310001824.927996722@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507961790979150?=
-X-GMAIL-MSGID: =?utf-8?q?1594507961790979150?=
+X-GMAIL-THRID: =?utf-8?q?1594507802508927264?=
+X-GMAIL-MSGID: =?utf-8?q?1594507959838657561?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,7 +53,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Jeremy Boone <jeremy.boone@nccgroup.trust>
 
-commit 6bb320ca4a4a7b5b3db8c8d7250cc40002046878 upstream.
+commit f9d4d9b5a5ef2f017bc344fb65a58a902517173b upstream.
 
 Discrete TPMs are often connected over slow serial buses which, on
 some platforms, can have glitches causing bit flips.  In all the
@@ -66,34 +66,36 @@ large enough for the TPM header.
 Signed-off-by: Jeremy Boone <jeremy.boone@nccgroup.trust>
 Cc: stable@vger.kernel.org
 Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm_tis_core.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/char/tpm/tpm_i2c_nuvoton.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -208,7 +208,8 @@ static int tpm_tis_recv(struct tpm_chip
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 	int size = 0;
--	int expected, status;
+--- a/drivers/char/tpm/tpm_i2c_nuvoton.c
++++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
+@@ -281,7 +281,11 @@ static int i2c_nuvoton_recv(struct tpm_c
+ 	struct device *dev = chip->dev.parent;
+ 	struct i2c_client *client = to_i2c_client(dev);
+ 	s32 rc;
+-	int expected, status, burst_count, retries, size = 0;
 +	int status;
++	int burst_count;
++	int retries;
++	int size = 0;
 +	u32 expected;
  
  	if (count < TPM_HEADER_SIZE) {
- 		size = -EIO;
-@@ -223,7 +224,7 @@ static int tpm_tis_recv(struct tpm_chip
- 	}
- 
- 	expected = be32_to_cpu(*(__be32 *) (buf + 2));
--	if (expected > count) {
-+	if (expected > count || expected < TPM_HEADER_SIZE) {
- 		size = -EIO;
- 		goto out;
- 	}
+ 		i2c_nuvoton_ready(chip);    /* return to idle */
+@@ -323,7 +327,7 @@ static int i2c_nuvoton_recv(struct tpm_c
+ 		 * to machine native
+ 		 */
+ 		expected = be32_to_cpu(*(__be32 *) (buf + 2));
+-		if (expected > count) {
++		if (expected > count || expected < size) {
+ 			dev_err(dev, "%s() expected > count\n", __func__);
+ 			size = -EIO;
+ 			continue;
