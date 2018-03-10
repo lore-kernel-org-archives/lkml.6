@@ -1,165 +1,128 @@
-Return-Path: <ben.hutchings@codethink.co.uk>
-X-Google-Smtp-Source: AG47ELvArDOlAhD+T5F/PJ5WPfpEbhvsnAS2P/LccdKSkoxNQ/Opaolv7F6SzOjcVsq9e5t2i3Gg
-ARC-Seal: i=1; a=rsa-sha256; t=1521044644; cv=none;
-        d=google.com; s=arc-20160816;
-        b=J/Qyu8XQ84WWiY3abvoKO0ZluDNVtNDvO22TSXQq+7K7X9tLvDH5qKd9zxIFNSc1OF
-         e0iWru5+Bt/S9ng5YqippRU9Wns5nyiQF1RBOUtVsIKxce9Kj1HOeWHEZPhhw2FQZeGp
-         7cIWlfduogpGKKuYfHQlZR70a5DA000hz1iHUCXMM0Xk3A9aS+IpcDK2dsDtPA07/v8O
-         iHb4SdmW8hEMixu9oQuDapDWAH2cC9NM5+xy4AoVFGtD6JA83NCEr2MdekZuQ8oBnOtG
-         uq7M9A6FpjAo1woxmLbdhFcfz/UmDTUO7yaonrYpq4oeBLJ0jDpgkEfcCuaNXF86oi6H
-         hQQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:date:cc:to:from:subject:message-id
-         :arc-authentication-results;
-        bh=RAZ/4+wwxz9nwO2DWwZojgVeIVhaLXmSCFROIw0fmt0=;
-        b=MTG+3r0gVIc3qi/a+4AAjz9QnEKx/P8nzei2/W4BXREmdOEuAnfl7LWRyf9j8HMtSv
-         u6QilHYmF9yFMrLNSN5D3pr+MZNrmtQg68XJGdFm9H73sQmEgvwjaC+gw8RNmzFUFT78
-         Nycs88thlYYtMCfSIlE4urnLq59yODAmvcKOKHC5X1MAsCfp8FsXm99a8ohX0uyOASAw
-         zVduUHKhMBUZhr/8FPqCvS2Ag94Z/kEm9O60Xh/ZtvJgK4W1JZYppaLwYN1mTo2CiWuM
-         C+oUgN+iTfkZ1kTTot1T6sKfa6OmNdjqzhl4vS3h/XtrvyHypDm2UOTSnWfOSFj3LZEx
-         wXmg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of ben.hutchings@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=ben.hutchings@codethink.co.uk;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of ben.hutchings@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=ben.hutchings@codethink.co.uk;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
-Message-ID: <1521044638.23626.98.camel@codethink.co.uk>
-Subject: Re: [PATCH 4.4 31/36] sctp: verify size of a new chunk in
- _sctp_make_chunk()
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, Alexey Kodanev
- <alexey.kodanev@oracle.com>, Marcelo Ricardo Leitner
- <marcelo.leinter@gmail.com>,  Neil Horman <nhorman@tuxdriver.com>, "David
- S. Miller" <davem@davemloft.net>
-Date: Wed, 14 Mar 2018 16:23:58 +0000
-In-Reply-To: <20180313095600.GA5131@kroah.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1715849-1520641191-2-10114556080642218692
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520641190; b=i2z+RANBk0urQa7h+EGD6u//Edsl1b5bUhnwRvMDDlXbeZt
+    33g9dDbwYRZCYQ1RTWxNejSEpzu+Ih/2BFA8tkCY9ghKtnBNBPiIwz+uArV8qcvb
+    HMLcubJ3wJBm4LNFdY6I+CEYkAD278NuBEuAQIpSD4a8RSaO2mqZe7rOVKSyhpDG
+    LsquYh/4OFHIpdLqfKpKayRgGGd1s0NlUKX/dnIxupBYQ/2HjwKVzv7MSLBZRCJz
+    iBmscoAAQkCS1gZL7K0OiD+rGGRTtmknkvxca9yUS5ZLsu53GqJ31Cw8SH9H37zI
+    XKeRxkQlAy/mACOTTjkzMHvoLJgiAMxIf8eNSBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520641190; bh=5VE5CQTw9MNKJUof2x9nm342z0
+    sN/CRAsdUrtzmdJVk=; b=Swe1B6rJ0yi+DI1BzW4myTJ2j6J1XiTvkzEVnVS5mu
+    3yCZF/UDO5LZgZKWetRHhhTJB7slLPFgFWOnTGUzp2iq0jfq0scHHzdRZVIpDuno
+    5rxKqVlTZu4FiYU5BEOFx+zIQTWw3GDpaFpD7jOxZ78uxUZ3rCnFgNR6GePdGZX2
+    lAs366RrbZOmxm41S34u4e+P+9x0sWInCXUve2bwj8EZ2Su+xUJOayFupZfWL7eA
+    CA1Nc9m9lmT4XTWgRl5Wgqjn1eraN7V000fE2g+l763eFL8aJVuwGRkYxiAUeero
+    ZRHwD1y3eSD9Hduvn9bOVUYsh1jrakJjoY9L6xtuzBrw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751764AbeCJATq (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Mar 2018 19:19:46 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38814 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751696AbeCJATp (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:19:45 -0500
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 4.4 13/36] ARM: dts: LogicPD Torpedo: Fix I2C1 pinmux
+Date: Fri,  9 Mar 2018 16:18:29 -0800
+Message-Id: <20180310001807.970379538@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180310001807.213987241@linuxfoundation.org>
 References: <20180310001807.213987241@linuxfoundation.org>
-	 <20180310001809.079131255@linuxfoundation.org>
-	 <1520902018.23626.90.camel@codethink.co.uk>
-	 <20180313095600.GA5131@kroah.com>
-Organization: Codethink Ltd.
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594507831057879306?=
-X-GMAIL-MSGID: =?utf-8?q?1594930909431365341?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 2018-03-13 at 10:56 +0100, Greg Kroah-Hartman wrote:
-> On Tue, Mar 13, 2018 at 12:46:58AM +0000, Ben Hutchings wrote:
-> > On Fri, 2018-03-09 at 16:18 -0800, Greg Kroah-Hartman wrote:
-> > > 4.4-stable review patch.  If anyone has any objections, please
-> > > let me know.
-> > > 
-> > > ------------------
-> > > 
-> > > From: Alexey Kodanev <alexey.kodanev@oracle.com>
-> > > 
-> > > 
-> > > [ Upstream commit 07f2c7ab6f8d0a7e7c5764c4e6cc9c52951b9d9c ]
-> > > 
-> > > When SCTP makes INIT or INIT_ACK packet the total chunk length
-> > > can exceed SCTP_MAX_CHUNK_LEN which leads to kernel panic when
-> > > transmitting these packets, e.g. the crash on sending INIT_ACK:
-> > > 
-> > > [  597.804948] skbuff: skb_over_panic: text:00000000ffae06e4
-> > > len:120168
-> > >                put:120156 head:000000007aa47635
-> > > data:00000000d991c2de
-> > >                tail:0x1d640 end:0xfec0 dev:<NULL>
-> > > ...
-> > > [  597.976970] ------------[ cut here ]------------
-> > > [  598.033408] kernel BUG at net/core/skbuff.c:104!
-> > > [  600.314841] Call Trace:
-> > > [  600.345829]  <IRQ>
-> > > [  600.371639]  ? sctp_packet_transmit+0x2095/0x26d0 [sctp]
-> > > [  600.436934]  skb_put+0x16c/0x200
-> > > [  600.477295]  sctp_packet_transmit+0x2095/0x26d0 [sctp]
-> > > [  600.540630]  ? sctp_packet_config+0x890/0x890 [sctp]
-> > > [  600.601781]  ? __sctp_packet_append_chunk+0x3b4/0xd00 [sctp]
-> > > [  600.671356]  ? sctp_cmp_addr_exact+0x3f/0x90 [sctp]
-> > > [  600.731482]  sctp_outq_flush+0x663/0x30d0 [sctp]
-> > > [  600.788565]  ? sctp_make_init+0xbf0/0xbf0 [sctp]
-> > > [  600.845555]  ? sctp_check_transmitted+0x18f0/0x18f0 [sctp]
-> > > [  600.912945]  ? sctp_outq_tail+0x631/0x9d0 [sctp]
-> > > [  600.969936]  sctp_cmd_interpreter.isra.22+0x3be1/0x5cb0 [sctp]
-> > > [  601.041593]  ? sctp_sf_do_5_1B_init+0x85f/0xc30 [sctp]
-> > > [  601.104837]  ? sctp_generate_t1_cookie_event+0x20/0x20 [sctp]
-> > > [  601.175436]  ? sctp_eat_data+0x1710/0x1710 [sctp]
-> > > [  601.233575]  sctp_do_sm+0x182/0x560 [sctp]
-> > > [  601.284328]  ? sctp_has_association+0x70/0x70 [sctp]
-> > > [  601.345586]  ? sctp_rcv+0xef4/0x32f0 [sctp]
-> > > [  601.397478]  ? sctp6_rcv+0xa/0x20 [sctp]
-> > > ...
-> > > 
-> > > Here the chunk size for INIT_ACK packet becomes too big, mostly
-> > > because of the state cookie (INIT packet has large size with
-> > > many address parameters), plus additional server parameters.
-> > > 
-> > > Later this chunk causes the panic in skb_put_data():
-> > > 
-> > >   skb_packet_transmit()
-> > >       sctp_packet_pack()
-> > >           skb_put_data(nskb, chunk->skb->data, chunk->skb->len);
-> > > 
-> > > 'nskb' (head skb) was previously allocated with packet->size
-> > > from u16 'chunk->chunk_hdr->length'.
-> > > 
-> > > As suggested by Marcelo we should check the chunk's length in
-> > > _sctp_make_chunk() before trying to allocate skb for it and
-> > > discard a chunk if its size bigger than SCTP_MAX_CHUNK_LEN.
-> > > 
-> > > > Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
-> > > > Acked-by: Marcelo Ricardo Leitner <marcelo.leinter@gmail.com>
-> > > > Acked-by: Neil Horman <nhorman@tuxdriver.com>
-> > > > Signed-off-by: David S. Miller <davem@davemloft.net>
-> > > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > 
-> > > ---
-> > >  net/sctp/sm_make_chunk.c |    8 ++++++--
-> > >  1 file changed, 6 insertions(+), 2 deletions(-)
-> > > 
-> > > --- a/net/sctp/sm_make_chunk.c
-> > > +++ b/net/sctp/sm_make_chunk.c
-> > > @@ -1367,10 +1367,14 @@ static struct sctp_chunk *_sctp_make_chu
-> > >  	sctp_chunkhdr_t *chunk_hdr;
-> > >  	struct sk_buff *skb;
-> > >  	struct sock *sk;
-> > > +	int chunklen;
-> > > +
-> > > +	chunklen = sizeof(*chunk_hdr) + paylen;
-> > 
-> > I think this length still needs to be rounded up (with WORD_ROUND
-> > here,
-> > instead of SCTP_PAD4 upstream).
-> 
-> Ah, good point, how's this patch:
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-LGTM.
+------------------
 
-Ben.
+From: Adam Ford <aford173@gmail.com>
 
-> diff --git a/net/sctp/sm_make_chunk.c b/net/sctp/sm_make_chunk.c
-> index 4ca31e052dd8..509e9426a056 100644
-> --- a/net/sctp/sm_make_chunk.c
-> +++ b/net/sctp/sm_make_chunk.c
-> @@ -1369,7 +1369,7 @@ static struct sctp_chunk
-> *_sctp_make_chunk(const struct sctp_association *asoc,
->  	struct sock *sk;
->  	int chunklen;
->  
-> -	chunklen = sizeof(*chunk_hdr) + paylen;
-> +	chunklen = WORD_ROUND(sizeof(*chunk_hdr) + paylen);
->  	if (chunklen > SCTP_MAX_CHUNK_LEN)
->  		goto nodata;
->  
-> 
--- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+commit 74402055a2d3ec998a1ded599e86185a27d9bbf4 upstream.
+
+The pinmuxing was missing for I2C1 which was causing intermittent issues
+with the PMIC which is connected to I2C1.  The bootloader did not quite
+configure the I2C1 either, so when running at 2.6MHz, it was generating
+errors at time.
+
+This correctly sets the I2C1 pinmuxing so it can operate at 2.6MHz
+
+Fixes: 687c27676151 ("ARM: dts: Add minimal support for LogicPD Torpedo
+DM3730 devkit")
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/arm/boot/dts/logicpd-torpedo-som.dtsi |    8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+--- a/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
++++ b/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
+@@ -90,6 +90,8 @@
+ };
+ 
+ &i2c1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c1_pins>;
+ 	clock-frequency = <2600000>;
+ 
+ 	twl: twl@48 {
+@@ -146,6 +148,12 @@
+ 			OMAP3630_CORE2_IOPAD(0x25da, PIN_INPUT_PULLUP | MUX_MODE2)   /* etk_ctl.sdmmc3_cmd */
+ 		>;
+ 	};
++	i2c1_pins: pinmux_i2c1_pins {
++		pinctrl-single,pins = <
++			OMAP3_CORE1_IOPAD(0x21ba, PIN_INPUT | MUX_MODE0)        /* i2c1_scl.i2c1_scl */
++			OMAP3_CORE1_IOPAD(0x21bc, PIN_INPUT | MUX_MODE0)        /* i2c1_sda.i2c1_sda */
++		>;
++	};
+ };
+ 
+ #include "twl4030.dtsi"
