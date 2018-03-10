@@ -1,195 +1,314 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932446AbeCJQHp (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 11:07:45 -0500
-Received: from cmta19.telus.net ([209.171.16.92]:38605 "EHLO cmta19.telus.net"
+        id S932489AbeCJQPT (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 11:15:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932329AbeCJQHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 11:07:44 -0500
-X-Authority-Analysis: v=2.2 cv=TI+qcxta c=1 sm=1 tr=0
- a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
- a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=kj9zAlcOel0A:10 a=FGbulvE0AAAA:8
- a=SMlCtqHl8cuezqKOnRcA:9 a=rHzEqscNGhXt8Ysn:21 a=Vvrgx22Z1NXd2xuj:21
- a=CjuIK1q_8ugA:10 a=svzTaB3SJmTkU8mK-ULk:22
-From: "Doug Smythies" <dsmythies@telus.net>
-To: "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
-Cc: "'Rik van Riel'" <riel@surriel.com>,
-        "'Mike Galbraith'" <mgalbraith@suse.de>,
-        "'Thomas Gleixner'" <tglx@linutronix.de>,
-        "'Paul McKenney'" <paulmck@linux.vnet.ibm.com>,
-        "'Thomas Ilsche'" <thomas.ilsche@tu-dresden.de>,
-        "'Frederic Weisbecker'" <fweisbec@gmail.com>,
-        "'Linux PM'" <linux-pm@vger.kernel.org>,
-        "'Aubrey Li'" <aubrey.li@linux.intel.com>,
-        "'LKML'" <linux-kernel@vger.kernel.org>,
-        "'Peter Zijlstra'" <peterz@infradead.org>,
-        "Doug Smythies" <dsmythies@telus.net>
-References: <2450532.XN8DODrtDf@aspire.rjw.lan> <007c01d3b843$3d825e70$b8871b50$@net> uaLheCDiLpApsuaLmer66C
-In-Reply-To: uaLheCDiLpApsuaLmer66C
-Subject: RE: [RFC/RFT][PATCH v3 0/6] sched/cpuidle: Idle loop rework
-Date: Sat, 10 Mar 2018 08:07:36 -0800
-Message-ID: <000701d3b889$eadd5340$c097f9c0$@net>
+        id S932329AbeCJQPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 11:15:17 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB1AD2133D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
+Date: Sat, 10 Mar 2018 16:15:11 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, devicetree@vger.kernel.org,
+        linux-iio@vger.kernel.org
+Subject: Re: [PATCH 2/2] iio: potentiometer: mcp4018: driver for Microchip
+ digital potentiometers
+Message-ID: <20180310161511.66d2ef97@archlinux>
+In-Reply-To: <20180308195830.16348-3-peda@axentia.se>
+References: <20180308195830.16348-1-peda@axentia.se>
+        <20180308195830.16348-3-peda@axentia.se>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Office Outlook 12.0
-Thread-Index: AdO4Th5ZahZlIECWSn2GzoCuQh+aDgAMoeCA
-Content-Language: en-ca
-X-CMAE-Envelope: MS4wfD6BOZEhe2dVmHqetlVbTCdaoxVvsPVXDJYymDQ5YVVvjW54Ad/uOxk2zopT7jx2aabtmFkwSxLUJ2LPuQ6mjY5E5nkF6ByN2/lxeWlgFNwsmri94FQd
- IzpYEud+GvKFTVoAFHlwtvoNTSgDrbxQFsErV0b6pln24m+2SqwNEe6ydNkjK4VhLig72QMTK66IlC3epdjzZaed21OeZI5+bIpBWXvVJ9UOfjvBF1tDpGdm
- zXSgfumDnT6Y2GS7UhOcti6as+3+sH0ANOQUNQe+GS8sUyRbg6kttKcdA2yFsqCy5g+k7pn+kjWlkONPREDanXfMfmfPgRX0O7wBC3RxLu25OVNaO66bPXaF
- +LY8cdnu5Vab6+eW31JQpXXiAVSY7nG1+uZZxBOdP1xyiPlRN/0OYGMDpe+Pf6hwJ0ZE6SeVQw9zFUCIluWkrrsSDWq48ADmdRhbIDucAp5mxjrQEWVr9zZz
- 1zne4S0Fm8Qh7NjHczSDlVmA8t7PXs4H7YVSROUY0J6HKDv3dZi66Y6MI3c=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018.03.10 01:00 Rafael J. Wysocki wrote:
-> On Saturday, March 10, 2018 8:41:39 AM CET Doug Smythies wrote:
->> 
->> With apologies to those that do not like the term "PowerNightmares",
->
-> OK, and what exactly do you count as "PowerNightmares"?
+On Thu,  8 Mar 2018 20:58:30 +0100
+Peter Rosin <peda@axentia.se> wrote:
 
-I'll snip some below and then explain:
+> Add support for Microchip digital potentiometers and rheostats
+> 	MCP4017, MCP4018, MCP4019
+> 
+> They all have one wiper with 128 steps and come in 5, 10, 50 and 100 kOhm
+> variations.
+> 
+> Datasheet: http://www.microchip.com/downloads/en/DeviceDoc/22147a.pdf
+> 
+> Signed-off-by: Peter Rosin <peda@axentia.se>
+Nice little driver.
 
-...[snip]...
+Applied to the togreg branch of iio.git and pushed out as testing
+for the autobuilders to play with it.
 
->> 
->> Kernel 4.16-rc4: Summary: Average processor package power 27.41 watts
->> 
->> Idle State 0: Total Entries: 9096 : PowerNightmares: 6540 : Not PN time (seconds): 0.051532 : PN time: 7886.309553 : Ratio:
-153037.133492
->> Idle State 1: Total Entries: 28731 : PowerNightmares: 215 : Not PN time (seconds): 0.211999 : PN time: 77.395467 : Ratio:
-365.074679
->> Idle State 2: Total Entries: 4474 : PowerNightmares: 97 : Not PN time (seconds): 1.959059 : PN time: 0.874112 : Ratio: 0.446190
->> Idle State 3: Total Entries: 2319 : PowerNightmares: 0 : Not PN time (seconds): 1.663376 : PN time: 0.000000 : Ratio: 0.000000
+Thanks,
 
-O.K. let's go deeper than the summary, and focus on idle state 0, which has been my area of interest in this saga.
+Jonathan
 
-Idle State 0:
-CPU: 0: Entries: 2093 : PowerNightmares: 1136 : Not PN time (seconds): 0.024840 : PN time: 1874.417840 : Ratio: 75459.655439
-CPU: 1: Entries: 1051 : PowerNightmares: 721 : Not PN time (seconds): 0.004668 : PN time: 198.845193 : Ratio: 42597.513425
-CPU: 2: Entries: 759 : PowerNightmares: 583 : Not PN time (seconds): 0.003299 : PN time: 1099.069256 : Ratio: 333152.246028
-CPU: 3: Entries: 1033 : PowerNightmares: 1008 : Not PN time (seconds): 0.000361 : PN time: 1930.340683 : Ratio: 5347203.995237
-CPU: 4: Entries: 1310 : PowerNightmares: 1025 : Not PN time (seconds): 0.006214 : PN time: 1332.497114 : Ratio: 214434.682950
-CPU: 5: Entries: 1097 : PowerNightmares: 848 : Not PN time (seconds): 0.005029 : PN time: 785.366864 : Ratio: 156167.601340
-CPU: 6: Entries: 1753 : PowerNightmares: 1219 : Not PN time (seconds): 0.007121 : PN time: 665.772603 : Ratio: 93494.256958
-
-Note: CPU 7 is busy and doesn't go into idle at all.
-
-And also look at the histograms of the times spent in idle state 0:
-CPU 3 might be the most interesting:
-
-Idle State: 0  CPU: 3:
-4 1
-5 3
-7 2
-11 1
-12 1
-13 2
-14 3
-15 3
-17 4
-18 1
-19 2
-28 2
-7563 1
-8012 1
-9999 1006
-
-Where:
-Column 1 is the time in microseconds it was in that idle state
-up to 9999 microseconds, which includes anything more.
-Column 2 is the number of occurrences of that time.
-
-Notice that 1008 times out of the 1033, it spent an excessive amount
-of time in idle state 0, leading to excessive power consumption.
-I adopted Thomas Ilsche's "Powernightmare" term for this several
-months ago.
-
-This CPU 3 example was pretty clear, but sometimes it is not so
-obvious. I admit that my thresholds for is it a "powernigthmare" or
-not are somewhat arbitrary, and I'll change them to whatever anybody
-wants. Currently:
-
-#define THRESHOLD_0 100       /* Idle state 0 PowerNightmare threshold in microseconds */
-#define THRESHOLD_1 1000      /* Idle state 1 PowerNightmare threshold in microseconds */
-#define THRESHOLD_2 2000      /* Idle state 2 PowerNightmare threshold in microseconds */
-#define THRESHOLD_3 4000      /* Idle state 3 PowerNightmare threshold in microseconds */
-
-Let's have a look at another example from the same test run:
-
-Idle State 1:
-CPU: 0: Entries: 3104 : PowerNightmares: 41 : Not PN time (seconds): 0.012196 : PN time: 10.841577 : Ratio: 888.945312
-CPU: 1: Entries: 2637 : PowerNightmares: 40 : Not PN time (seconds): 0.013135 : PN time: 11.334686 : Ratio: 862.937649
-CPU: 2: Entries: 1618 : PowerNightmares: 41 : Not PN time (seconds): 0.008351 : PN time: 10.193641 : Ratio: 1220.649147
-CPU: 3: Entries: 10180 : PowerNightmares: 31 : Not PN time (seconds): 0.087596 : PN time: 14.748787 : Ratio: 168.372836
-CPU: 4: Entries: 3878 : PowerNightmares: 22 : Not PN time (seconds): 0.040360 : PN time: 14.207233 : Ratio: 352.012710
-CPU: 5: Entries: 3658 : PowerNightmares: 1 : Not PN time (seconds): 0.031188 : PN time: 0.604176 : Ratio: 19.372066
-CPU: 6: Entries: 3656 : PowerNightmares: 39 : Not PN time (seconds): 0.019173 : PN time: 15.465367 : Ratio: 806.622179
-
-Idle State: 1  CPU: 2:
-0 230
-1 566
-2 161
-3 86
-4 61
-5 13
-6 32
-7 37
-8 42
-9 41
-10 4
-11 41
-12 38
-13 24
-14 27
-15 26
-16 5
-17 21
-18 16
-19 17
-20 15
-21 1
-22 12
-23 17
-24 16
-25 11
-26 2
-27 5
-28 5
-29 3
-35 1
-47 1
-1733 1
-1850 1
-2027 1
-3929 1
-9999 37
-
-The 41 "Powernightmares" out of 1618 seems correct to me.
-Even if someone claims that the threshold should have been >3929 uSec,
-there are still 37 "powenightmares".
-
->>> 
->> Graph of package power verses time: http://fast.smythies.com/rjwv3_100.png
->
-> The graph actually shows an improvement to my eyes, as the blue line is quite
-> consistently above the red one except for a few regions (and I don't really
-> understand the drop in the blue line by the end of the test window).
-
-Agreed, it shows improvement, as does the average package power.
-
-The roughly 22 minute drop in the reference test, unmodified kernel 4.16-rc4,
-the blue line, is something that has been driving me crazy since the start
-of this work and is the reason my tests run for so long (even 4 hours is short).
-It all has to do with subtle timing changes of events. Sometimes events lineup
-in such a way that there are lots of these "powernightmares" and sometimes
-events lineup in such way that there are not. These conditions can persist for
-hours at a time. By "events" I mean ones that ask for a resched upon exit and ones
-that don't (I think, I am going from memory here and haven't found my notes).
-I have the trace data and can look in more detail if you want.
-
-... Doug
+> ---
+>  MAINTAINERS                         |   3 +-
+>  drivers/iio/potentiometer/Kconfig   |  11 ++
+>  drivers/iio/potentiometer/Makefile  |   1 +
+>  drivers/iio/potentiometer/mcp4018.c | 194 ++++++++++++++++++++++++++++++++++++
+>  4 files changed, 208 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/iio/potentiometer/mcp4018.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 4623caf8d72d..81527c75adee 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8589,11 +8589,12 @@ W:	https://linuxtv.org
+>  S:	Maintained
+>  F:	drivers/media/radio/radio-maxiradio*
+>  
+> -MCP4531 MICROCHIP DIGITAL POTENTIOMETER DRIVER
+> +MCP4018 AND MCP4531 MICROCHIP DIGITAL POTENTIOMETER DRIVERS
+>  M:	Peter Rosin <peda@axentia.se>
+>  L:	linux-iio@vger.kernel.org
+>  S:	Maintained
+>  F:	Documentation/ABI/testing/sysfs-bus-iio-potentiometer-mcp4531
+> +F:	drivers/iio/potentiometer/mcp4018.c
+>  F:	drivers/iio/potentiometer/mcp4531.c
+>  
+>  MEASUREMENT COMPUTING CIO-DAC IIO DRIVER
+> diff --git a/drivers/iio/potentiometer/Kconfig b/drivers/iio/potentiometer/Kconfig
+> index 8bf282510be6..84bdbcd53114 100644
+> --- a/drivers/iio/potentiometer/Kconfig
+> +++ b/drivers/iio/potentiometer/Kconfig
+> @@ -37,6 +37,17 @@ config MAX5487
+>            To compile this driver as a module, choose M here: the
+>            module will be called max5487.
+>  
+> +config MCP4018
+> +	tristate "Microchip MCP4017/18/19 Digital Potentiometer driver"
+> +	depends on I2Cs
+> +	help
+> +	  Say yes here to build support for the Microchip
+> +	  MCP4017, MCP4018, MCP4019
+> +	  digital potentiometer chips.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called mcp4018.
+> +
+>  config MCP4131
+>  	tristate "Microchip MCP413X/414X/415X/416X/423X/424X/425X/426X Digital Potentiometer driver"
+>  	depends on SPI
+> diff --git a/drivers/iio/potentiometer/Makefile b/drivers/iio/potentiometer/Makefile
+> index 1afd1e70f8cc..0cff8a2916d5 100644
+> --- a/drivers/iio/potentiometer/Makefile
+> +++ b/drivers/iio/potentiometer/Makefile
+> @@ -7,6 +7,7 @@
+>  obj-$(CONFIG_DS1803) += ds1803.o
+>  obj-$(CONFIG_MAX5481) += max5481.o
+>  obj-$(CONFIG_MAX5487) += max5487.o
+> +obj-$(CONFIG_MCP4018) += mcp4018.o
+>  obj-$(CONFIG_MCP4131) += mcp4131.o
+>  obj-$(CONFIG_MCP4531) += mcp4531.o
+>  obj-$(CONFIG_TPL0102) += tpl0102.o
+> diff --git a/drivers/iio/potentiometer/mcp4018.c b/drivers/iio/potentiometer/mcp4018.c
+> new file mode 100644
+> index 000000000000..601b25d1f387
+> --- /dev/null
+> +++ b/drivers/iio/potentiometer/mcp4018.c
+> @@ -0,0 +1,194 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Industrial I/O driver for Microchip digital potentiometers
+> + * Copyright (c) 2018  Axentia Technologies AB
+> + * Author: Peter Rosin <peda@axentia.se>
+> + *
+> + * Datasheet: http://www.microchip.com/downloads/en/DeviceDoc/22147a.pdf
+> + *
+> + * DEVID	#Wipers	#Positions	Resistor Opts (kOhm)
+> + * mcp4017	1	128		5, 10, 50, 100
+> + * mcp4018	1	128		5, 10, 50, 100
+> + * mcp4019	1	128		5, 10, 50, 100
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/i2c.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +
+> +#define MCP4018_WIPER_MAX 127
+> +
+> +struct mcp4018_cfg {
+> +	int kohms;
+> +};
+> +
+> +enum mcp4018_type {
+> +	MCP4018_502,
+> +	MCP4018_103,
+> +	MCP4018_503,
+> +	MCP4018_104,
+> +};
+> +
+> +static const struct mcp4018_cfg mcp4018_cfg[] = {
+> +	[MCP4018_502] = { .kohms =   5, },
+> +	[MCP4018_103] = { .kohms =  10, },
+> +	[MCP4018_503] = { .kohms =  50, },
+> +	[MCP4018_104] = { .kohms = 100, },
+> +};
+> +
+> +struct mcp4018_data {
+> +	struct i2c_client *client;
+> +	const struct mcp4018_cfg *cfg;
+> +};
+> +
+> +static const struct iio_chan_spec mcp4018_channel = {
+> +	.type = IIO_RESISTANCE,
+> +	.indexed = 1,
+> +	.output = 1,
+> +	.channel = 0,
+> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> +	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),
+> +};
+> +
+> +static int mcp4018_read_raw(struct iio_dev *indio_dev,
+> +			    struct iio_chan_spec const *chan,
+> +			    int *val, int *val2, long mask)
+> +{
+> +	struct mcp4018_data *data = iio_priv(indio_dev);
+> +	s32 ret;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		ret = i2c_smbus_read_byte(data->client);
+> +		if (ret < 0)
+> +			return ret;
+> +		*val = ret;
+> +		return IIO_VAL_INT;
+> +	case IIO_CHAN_INFO_SCALE:
+> +		*val = 1000 * data->cfg->kohms;
+> +		*val2 = MCP4018_WIPER_MAX;
+> +		return IIO_VAL_FRACTIONAL;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int mcp4018_write_raw(struct iio_dev *indio_dev,
+> +			     struct iio_chan_spec const *chan,
+> +			     int val, int val2, long mask)
+> +{
+> +	struct mcp4018_data *data = iio_priv(indio_dev);
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		if (val > MCP4018_WIPER_MAX || val < 0)
+> +			return -EINVAL;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return i2c_smbus_write_byte(data->client, val);
+> +}
+> +
+> +static const struct iio_info mcp4018_info = {
+> +	.read_raw = mcp4018_read_raw,
+> +	.write_raw = mcp4018_write_raw,
+> +};
+> +
+> +#ifdef CONFIG_OF
+> +
+> +#define MCP4018_COMPATIBLE(of_compatible, cfg) {	\
+> +	.compatible = of_compatible,			\
+> +	.data = &mcp4018_cfg[cfg],			\
+> +}
+> +
+> +static const struct of_device_id mcp4018_of_match[] = {
+> +	MCP4018_COMPATIBLE("microchip,mcp4017-502", MCP4018_502),
+> +	MCP4018_COMPATIBLE("microchip,mcp4017-103", MCP4018_103),
+> +	MCP4018_COMPATIBLE("microchip,mcp4017-503", MCP4018_503),
+> +	MCP4018_COMPATIBLE("microchip,mcp4017-104", MCP4018_104),
+> +	MCP4018_COMPATIBLE("microchip,mcp4018-502", MCP4018_502),
+> +	MCP4018_COMPATIBLE("microchip,mcp4018-103", MCP4018_103),
+> +	MCP4018_COMPATIBLE("microchip,mcp4018-503", MCP4018_503),
+> +	MCP4018_COMPATIBLE("microchip,mcp4018-104", MCP4018_104),
+> +	MCP4018_COMPATIBLE("microchip,mcp4019-502", MCP4018_502),
+> +	MCP4018_COMPATIBLE("microchip,mcp4019-103", MCP4018_103),
+> +	MCP4018_COMPATIBLE("microchip,mcp4019-503", MCP4018_503),
+> +	MCP4018_COMPATIBLE("microchip,mcp4019-104", MCP4018_104),
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, mcp4018_of_match);
+> +
+> +#endif
+> +
+> +static int mcp4018_probe(struct i2c_client *client,
+> +			 const struct i2c_device_id *id)
+> +{
+> +	struct device *dev = &client->dev;
+> +	struct mcp4018_data *data;
+> +	struct iio_dev *indio_dev;
+> +	const struct of_device_id *match;
+> +
+> +	if (!i2c_check_functionality(client->adapter,
+> +				     I2C_FUNC_SMBUS_BYTE)) {
+> +		dev_err(dev, "SMBUS Byte transfers not supported\n");
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +	data = iio_priv(indio_dev);
+> +	i2c_set_clientdata(client, indio_dev);
+> +	data->client = client;
+> +
+> +	match = of_match_device(of_match_ptr(mcp4018_of_match), dev);
+> +	if (match)
+> +		data->cfg = of_device_get_match_data(dev);
+> +	else
+> +		data->cfg = &mcp4018_cfg[id->driver_data];
+> +
+> +	indio_dev->dev.parent = dev;
+> +	indio_dev->info = &mcp4018_info;
+> +	indio_dev->channels = &mcp4018_channel;
+> +	indio_dev->num_channels = 1;
+> +	indio_dev->name = client->name;
+> +
+> +	return devm_iio_device_register(dev, indio_dev);
+> +}
+> +
+> +static const struct i2c_device_id mcp4018_id[] = {
+> +	{ "mcp4017-502", MCP4018_502 },
+> +	{ "mcp4017-103", MCP4018_103 },
+> +	{ "mcp4017-503", MCP4018_503 },
+> +	{ "mcp4017-104", MCP4018_104 },
+> +	{ "mcp4018-502", MCP4018_502 },
+> +	{ "mcp4018-103", MCP4018_103 },
+> +	{ "mcp4018-503", MCP4018_503 },
+> +	{ "mcp4018-104", MCP4018_104 },
+> +	{ "mcp4019-502", MCP4018_502 },
+> +	{ "mcp4019-103", MCP4018_103 },
+> +	{ "mcp4019-503", MCP4018_503 },
+> +	{ "mcp4019-104", MCP4018_104 },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(i2c, mcp4018_id);
+> +
+> +static struct i2c_driver mcp4018_driver = {
+> +	.driver = {
+> +		.name	= "mcp4018",
+> +		.of_match_table = of_match_ptr(mcp4018_of_match),
+> +	},
+> +	.probe		= mcp4018_probe,
+> +	.id_table	= mcp4018_id,
+> +};
+> +
+> +module_i2c_driver(mcp4018_driver);
+> +
+> +MODULE_AUTHOR("Peter Rosin <peda@axentia.se>");
+> +MODULE_DESCRIPTION("MCP4018 digital potentiometer");
+> +MODULE_LICENSE("GPL");
