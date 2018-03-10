@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsjLlh2pXEH4TvcIE85GmCXMAkw2V9UdEWKxXZMmICzPWIiv5LbuthM56y5K7DLMdzNDH7k
-ARC-Seal: i=1; a=rsa-sha256; t=1520641382; cv=none;
+X-Google-Smtp-Source: AG47ELvXW+ssCukrhmNFFM8QF3vPDUN2YEX81kOQe16Psl6ZuwJEYjkCEiM5M/UKBHfHShg4up3i
+ARC-Seal: i=1; a=rsa-sha256; t=1520641378; cv=none;
         d=google.com; s=arc-20160816;
-        b=y9evea9Kau6+z00JheiqaVP+ZDlYCHGh7cs2tBcwW92bxVmSqTIlIjw1naIe7ysY//
-         3Aom5nJxFWE2AusmO9c+lbuFUGr48itP0UEjE0ajmPa7Li7UB7k3hSN97MvqxXDdAAJR
-         HRBd/KsoMHIad1302TmXkn4laditn4WqIET75lqZh+5Jk6MhB4aRBnzQTMZ9VOayphSd
-         z36bja1YIn0g1BOY8ueDlVr2jTjR/yOrVwxRoerIyOZLHfO6nU1Dyfc7IBR3xRqtanPo
-         xASHfe6EuBOkm1An0ih8MolP5tXes2ph6Nu/iz0iHRgFPyP477hWtVcScPoYfV6PFl6H
-         Hnhw==
+        b=vSy1oHViVU4Z7fljxUc6xbKtfp4Grb77m1KDPOsIB1tWwuts3t/GiRikSs8tagb9GA
+         tB2mNc5fvm+UXy9xp9etWVGTFwTQOfi7yjMH2Z7gH3Wanl06FkwGeyv6ja7fWLdWetWf
+         wWGAlX3PI4kazUP6j1r9sVPUXbc0oS3RvTcpadAfqavDz34thP7fVZHAyKlmvVqvhluo
+         qZXil94MgHAF99Zd1QIwmu8XpUavSYxaK54ILXAn8tQIoVNYUacokrPYBfe/13heP3y0
+         FYoXuk66cghyYutw1ILhAwKxSqZTeXeUhaP6gCP+MOSel9wY0c3G7f2zsdRVN9Vi/00T
+         LM3g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=GIjT+ylj7ARHm2XNzXmb/JPlJ+EacUnRCA+6W/IJjMc=;
-        b=juvcZcJzgSOCVN5X42Sv0vSmlGgE04lGMGK1WBwodh+qAdFA2+fJYX1lvtErx540WN
-         Z/HcXBd4ac0nQsOoCmGMUMm3LADwKv0AleCnsdma/HneURH5dhzH7/n02ObwONp1MmgT
-         LSTsoByim4s8a81gF8TOIb0HTgbX3cYAevuMKHOwGvOMbY9ZYSqSm4c6baOOuGBxU8Xl
-         +hqW5Sk4TNxv9trI+2TNwmL7IFS1On05u4Uu0QR1Io/aul3jqcGKA3PQG/l3LjyQabSt
-         P2SYapMfbRj2OV1RoKjkXvi5BOHx1hnHYajLx3wpkkBck0YLqS9O+saFSATheyPdzA1N
-         MbtQ==
+        bh=qock6rUIyhZVeXDSVq0yELL4IxqG6H54MOypZxMWRo0=;
+        b=zfNBar86gRsiPPi8BzkfSUqzCTdEnwX1lAa6sX4oVwkp0k1pA8aofkXMK76AqiNHOv
+         eDxBzTWeFt0eYWxMiWB5ztkmRQb/7SdNwGBvFs9lrJQKSkQgocVxG5pMXRuFdCWOLI9D
+         NQSgWQ/ls5LOOGe2qKXpHvAZwABtqpnmWVk63CMW/rB0P39gkHXpCGUee9TwoK4zmmOa
+         hW7jh+hwn7G2wH+DhHwO6Vt80WYUx7q+yzo3uFOEWjXhXUgyu7izZJ5SDjyeD+6uUMnu
+         1z0e9AEr231w7K3kahmpce6Au5ob21I1oBnNKSCHW0OOWQUxjiSj2p+atrIX/DPn8gF7
+         UuXw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,19 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"ast@kernel.org, daniel@iogearbox.net, stable@vger.kernel.org, Dennis Zhou" <dennisszhou@gmail.com>,
-	syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Dennis Zhou <dennisszhou@gmail.com>
-Subject: [PATCH 4.9 60/65] bpf: fix mlock precharge on arraymaps
-Date: Fri,  9 Mar 2018 16:19:00 -0800
-Message-Id: <20180310001830.129847750@linuxfoundation.org>
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Jim Mattson <jmattson@google.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	KarimAllah Ahmed <karahmed@amazon.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	kvm@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 22/65] KVM/x86: Remove indirect MSR op calls from SPEC_CTRL
+Date: Fri,  9 Mar 2018 16:18:22 -0800
+Message-Id: <20180310001826.702902379@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
 References: <20180310001824.927996722@linuxfoundation.org>
@@ -43,8 +48,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594508058053763900?=
-X-GMAIL-MSGID: =?utf-8?q?1594508058053763900?=
+X-GMAIL-THRID: =?utf-8?q?1594508053489211194?=
+X-GMAIL-MSGID: =?utf-8?q?1594508053489211194?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,89 +57,96 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-[ upstream commit 9c2d63b843a5c8a8d0559cc067b5398aa5ec3ffc ]
+commit ecb586bd29c99fb4de599dec388658e74388daad upstream.
 
-syzkaller recently triggered OOM during percpu map allocation;
-while there is work in progress by Dennis Zhou to add __GFP_NORETRY
-semantics for percpu allocator under pressure, there seems also a
-missing bpf_map_precharge_memlock() check in array map allocation.
+Having a paravirt indirect call in the IBRS restore path is not a
+good idea, since we are trying to protect from speculative execution
+of bogus indirect branch targets.  It is also slower, so use
+native_wrmsrl() on the vmentry path too.
 
-Given today the actual bpf_map_charge_memlock() happens after the
-find_and_alloc_map() in syscall path, the bpf_map_precharge_memlock()
-is there to bail out early before we go and do the map setup work
-when we find that we hit the limits anyway. Therefore add this for
-array map as well.
-
-Fixes: 6c9059817432 ("bpf: pre-allocate hash map elements")
-Fixes: a10423b87a7e ("bpf: introduce BPF_MAP_TYPE_PERCPU_ARRAY map")
-Reported-by: syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Dennis Zhou <dennisszhou@gmail.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kvm@vger.kernel.org
+Cc: stable@vger.kernel.org
+Fixes: d28b387fb74da95d69d2615732f50cceb38e9a4d
+Link: http://lkml.kernel.org/r/20180222154318.20361-2-pbonzini@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- kernel/bpf/arraymap.c |   29 ++++++++++++++++++-----------
- 1 file changed, 18 insertions(+), 11 deletions(-)
 
---- a/kernel/bpf/arraymap.c
-+++ b/kernel/bpf/arraymap.c
-@@ -48,8 +48,9 @@ static struct bpf_map *array_map_alloc(u
- 	bool percpu = attr->map_type == BPF_MAP_TYPE_PERCPU_ARRAY;
- 	u32 elem_size, index_mask, max_entries;
- 	bool unpriv = !capable(CAP_SYS_ADMIN);
-+	u64 cost, array_size, mask64;
- 	struct bpf_array *array;
--	u64 array_size, mask64;
-+	int ret;
+---
+ arch/x86/kvm/svm.c |    7 ++++---
+ arch/x86/kvm/vmx.c |    7 ++++---
+ 2 files changed, 8 insertions(+), 6 deletions(-)
+
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -44,6 +44,7 @@
+ #include <asm/debugreg.h>
+ #include <asm/kvm_para.h>
+ #include <asm/irq_remapping.h>
++#include <asm/microcode.h>
+ #include <asm/nospec-branch.h>
  
- 	/* check sanity of attributes */
- 	if (attr->max_entries == 0 || attr->key_size != 4 ||
-@@ -92,8 +93,19 @@ static struct bpf_map *array_map_alloc(u
- 		array_size += (u64) max_entries * elem_size;
+ #include <asm/virtext.h>
+@@ -4919,7 +4920,7 @@ static void svm_vcpu_run(struct kvm_vcpu
+ 	 * being speculatively taken.
+ 	 */
+ 	if (svm->spec_ctrl)
+-		wrmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
++		native_wrmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
  
- 	/* make sure there is no u32 overflow later in round_up() */
--	if (array_size >= U32_MAX - PAGE_SIZE)
-+	cost = array_size;
-+	if (cost >= U32_MAX - PAGE_SIZE)
- 		return ERR_PTR(-ENOMEM);
-+	if (percpu) {
-+		cost += (u64)attr->max_entries * elem_size * num_possible_cpus();
-+		if (cost >= U32_MAX - PAGE_SIZE)
-+			return ERR_PTR(-ENOMEM);
-+	}
-+	cost = round_up(cost, PAGE_SIZE) >> PAGE_SHIFT;
-+
-+	ret = bpf_map_precharge_memlock(cost);
-+	if (ret < 0)
-+		return ERR_PTR(ret);
+ 	asm volatile (
+ 		"push %%" _ASM_BP "; \n\t"
+@@ -5029,10 +5030,10 @@ static void svm_vcpu_run(struct kvm_vcpu
+ 	 * save it.
+ 	 */
+ 	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
+-		rdmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
++		svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
  
- 	/* allocate all map elements and zero-initialize them */
- 	array = bpf_map_area_alloc(array_size);
-@@ -108,20 +120,15 @@ static struct bpf_map *array_map_alloc(u
- 	array->map.value_size = attr->value_size;
- 	array->map.max_entries = attr->max_entries;
- 	array->map.map_flags = attr->map_flags;
-+	array->map.pages = cost;
- 	array->elem_size = elem_size;
+ 	if (svm->spec_ctrl)
+-		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++		native_wrmsrl(MSR_IA32_SPEC_CTRL, 0);
  
--	if (!percpu)
--		goto out;
--
--	array_size += (u64) attr->max_entries * elem_size * num_possible_cpus();
--
--	if (array_size >= U32_MAX - PAGE_SIZE ||
--	    elem_size > PCPU_MIN_UNIT_SIZE || bpf_array_alloc_percpu(array)) {
-+	if (percpu &&
-+	    (elem_size > PCPU_MIN_UNIT_SIZE ||
-+	     bpf_array_alloc_percpu(array))) {
- 		bpf_map_area_free(array);
- 		return ERR_PTR(-ENOMEM);
- 	}
--out:
--	array->map.pages = round_up(array_size, PAGE_SIZE) >> PAGE_SHIFT;
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -49,6 +49,7 @@
+ #include <asm/kexec.h>
+ #include <asm/apic.h>
+ #include <asm/irq_remapping.h>
++#include <asm/microcode.h>
+ #include <asm/nospec-branch.h>
  
- 	return &array->map;
- }
+ #include "trace.h"
+@@ -8906,7 +8907,7 @@ static void __noclone vmx_vcpu_run(struc
+ 	 * being speculatively taken.
+ 	 */
+ 	if (vmx->spec_ctrl)
+-		wrmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
++		native_wrmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
+ 
+ 	vmx->__launched = vmx->loaded_vmcs->launched;
+ 	asm(
+@@ -9042,10 +9043,10 @@ static void __noclone vmx_vcpu_run(struc
+ 	 * save it.
+ 	 */
+ 	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
+-		rdmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
++		vmx->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
+ 
+ 	if (vmx->spec_ctrl)
+-		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++		native_wrmsrl(MSR_IA32_SPEC_CTRL, 0);
+ 
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
