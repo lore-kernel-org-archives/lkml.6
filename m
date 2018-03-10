@@ -1,100 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933034AbeCJNz0 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 08:55:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48524 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932863AbeCJNzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 08:55:24 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 368B32133D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Sat, 10 Mar 2018 22:55:19 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        x86@kernel.org, Yang Bo <yangbo@deepin.com>,
-        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: Re: [RFC PATCH -tip 0/9] kprobes: Cleanup jprobe implementation
-Message-Id: <20180310225519.11461d77742247c927268dfe@kernel.org>
-In-Reply-To: <20180309185402.301a97ae@gandalf.local.home>
-References: <152059891712.4214.9539716544254881611.stgit@devbox>
-        <20180309185402.301a97ae@gandalf.local.home>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S933102AbeCJN5r (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 08:57:47 -0500
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:33923 "EHLO
+        mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932863AbeCJN5o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 08:57:44 -0500
+X-Google-Smtp-Source: AG47ELvZPizDvd+nrfTGC7dzeCLtZXnAGz7nLAhULxkaZFLtyEWUADz4XkXEZydbNom98vN4hmDd7EDYHhaZbwWYw8c=
+MIME-Version: 1.0
+In-Reply-To: <1520287361-12569-2-git-send-email-tharvey@gateworks.com>
+References: <1520287361-12569-1-git-send-email-tharvey@gateworks.com> <1520287361-12569-2-git-send-email-tharvey@gateworks.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Sat, 10 Mar 2018 10:57:43 -0300
+Message-ID: <CAOMZO5Cw+XW_G_euCL5itmuvfxDDnWWHqg2EjPTCVkuTzqXHug@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: mfd: Add Gateworks System Controller bindings
+To: Tim Harvey <tharvey@gateworks.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 9 Mar 2018 18:54:02 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Hi Tim,
 
-> On Fri,  9 Mar 2018 21:35:17 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > Hello,
-> > 
-> > Since we decided to remove jprobe from kernel last year,
-> > its APIs are disabled and we worked on moving in-kernel
-> > jprobe users to kprobes or trace-events. And now no jprobe
-> > users are here anymore.
-> > 
-> > I think it is good time to get rid of jprobe implementation
-> > from the kernel. However, I need other arch developers help
-> > to complete it, since jprobe is implemented multi arch wide.
-> > I can remove those code, but can not test all of those.
-> > 
-> > Here is the series of patches to show how to do that.
-> > I tried to remove it from x86 tree. Basically we need to
-> > do 3 things;
-> > 
-> >  - Remove jprobe functions (register/unregister,
-> >    setjump/longjump) from generic/arch-dependent code.
-> >    [1/9][2/9][3/9]
-> >  - Remove break_handler related code.
-> >    [4/9][5/9][6/9]
-> >  - Do not disable preemption on exception handler
-> >    [7/9][8/9][9/9]
-> > 
-> > The [3/9] and [6/9] are destractive changes except for x86
-> > (means causes build errors) since those arch still have some
-> > references of those functions. So we need to write patches
-> > similar to [2/9] and [5/9] for each arch before applying those.
-> > In this series I sorted it as this order just for review,
-> > [3/9] and [6/9] should be applied after all archs have
-> > been fixed.
-> > 
-> > Also, [7/9] is a kind of destractive, which changes required
-> > behavior for the pre_handlers which changes regs->ip.
-> > So we also need a patch similar to [7/9] for each arch too.
-> > Fortunately, current in-tree such user is very limited, both
-> > works only on x86. So it is not hurry, but we need to change
-> > arch dependent code.
-> >
-> 
-> Hi Masami,
-> 
-> thanks for doing all this. I do want to review this and your other
-> patch set.
+On Mon, Mar 5, 2018 at 7:02 PM, Tim Harvey <tharvey@gateworks.com> wrote:
 
-Thanks!
+> +
+> +                       hwmon@1 { /* A1: Input Voltage */
+> +                               type = <1>;
+> +                               reg = <0x02>;
 
-> I've just been traveling a lot. I came home from California
-> yesterday and will be leaving Sunday to Portland for ELC. Will you be
-> there?
+Unit address (@1) does not match the 'reg' value.
 
-Oh, no, sorry I'll not be there. Anyway, I will wait for your review. :)
+If someone build this example with W=1 a warning will be shown.
 
-> 
-> -- Steve
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Same problem happens in other places of this example.
