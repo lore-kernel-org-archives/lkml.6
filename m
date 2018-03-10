@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932625AbeCJSfg (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:35:36 -0500
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:37768 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932499AbeCJSVE (ORCPT
+        id S1751323AbeCJSgD (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:36:03 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:39703 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932521AbeCJSVC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:21:04 -0500
-X-Google-Smtp-Source: AG47ELuWpUlBGY4tAjWecu5oxHK4i4Q+qMeB87WoH42wXKqK2qTASCCskfmjNgIfY4X96elL6k92Gw==
+        Sat, 10 Mar 2018 13:21:02 -0500
+X-Google-Smtp-Source: AG47ELvT/0MjM7d4uJaWQpoUgYqI3I37C1y23SSem93HIfwpbsGWIy0A2/nkolmmRhuX4AmSDLSSrw==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 39/83] Log operation: dentry append.
-Date: Sat, 10 Mar 2018 10:18:20 -0800
-Message-Id: <1520705944-6723-40-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 38/83] Journal: NOVA lite journal initialization.
+Date: Sat, 10 Mar 2018 10:18:19 -0800
+Message-Id: <1520705944-6723-39-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -27,202 +27,169 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andiry Xu <jix024@cs.ucsd.edu>
 
-NOVA performs atomic log appending by first appending the entry
-to the tail of the log, and then atomically update the log tail pointer.
+NOVA uses per-CPU spinlock to protect the journals.
+Lite journal initialization consists of two parts:
+for a new NOVA instance, hard_init allocates the journal pages.
+soft_init initializes the locks and performs journal recovery.
 
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/log.c | 162 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/nova/log.h |   4 ++
- 2 files changed, 166 insertions(+)
+ fs/nova/journal.c | 70 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/nova/journal.h |  2 ++
+ fs/nova/super.c   | 15 ++++++++++++
+ fs/nova/super.h   |  3 +++
+ 4 files changed, 90 insertions(+)
 
-diff --git a/fs/nova/log.c b/fs/nova/log.c
-index f01b7c8..13f9597 100644
---- a/fs/nova/log.c
-+++ b/fs/nova/log.c
-@@ -20,6 +20,168 @@
- #include "inode.h"
- #include "log.h"
- 
-+static int nova_update_old_dentry(struct super_block *sb,
-+	struct inode *dir, struct nova_dentry *dentry,
-+	struct nova_log_entry_info *entry_info)
+diff --git a/fs/nova/journal.c b/fs/nova/journal.c
+index 0e203fa..d2578e2 100644
+--- a/fs/nova/journal.c
++++ b/fs/nova/journal.c
+@@ -340,3 +340,73 @@ void nova_commit_lite_transaction(struct super_block *sb, u64 tail, int cpu)
+ 	pair->journal_head = tail;
+ 	nova_flush_buffer(&pair->journal_head, CACHELINE_SIZE, 1);
+ }
++
++/**************************** Initialization ******************************/
++
++// Initialized DRAM journal state, validate, and recover
++int nova_lite_journal_soft_init(struct super_block *sb)
 +{
-+	unsigned short links_count;
-+	int link_change = entry_info->link_change;
-+	u64 addr;
++	struct nova_sb_info *sbi = NOVA_SB(sb);
++	struct journal_ptr_pair *pair;
++	int i;
++	int ret = 0;
 +
-+	dentry->epoch_id = entry_info->epoch_id;
-+	dentry->trans_id = entry_info->trans_id;
-+	/* Remove_dentry */
-+	dentry->ino = cpu_to_le64(0);
-+	dentry->invalid = 1;
-+	dentry->mtime = cpu_to_le32(dir->i_mtime.tv_sec);
++	sbi->journal_locks = kcalloc(sbi->cpus, sizeof(spinlock_t),
++				     GFP_KERNEL);
++	if (!sbi->journal_locks)
++		return -ENOMEM;
 +
-+	links_count = cpu_to_le16(dir->i_nlink);
-+	if (links_count == 0 && link_change == -1)
-+		links_count = 0;
-+	else
-+		links_count += link_change;
-+	dentry->links_count = cpu_to_le16(links_count);
++	for (i = 0; i < sbi->cpus; i++)
++		spin_lock_init(&sbi->journal_locks[i]);
 +
-+	addr = nova_get_addr_off(NOVA_SB(sb), dentry);
-+	nova_inc_page_invalid_entries(sb, addr);
++	for (i = 0; i < sbi->cpus; i++) {
++		pair = nova_get_journal_pointers(sb, i);
++		if (pair->journal_head == pair->journal_tail)
++			continue;
 +
-+	nova_persist_entry(dentry);
++		/* Ensure all entries are genuine */
++		ret = nova_check_journal_entries(sb, pair);
++		if (ret) {
++			nova_err(sb, "Journal %d checksum failure\n", i);
++			ret = -EINVAL;
++			break;
++		}
 +
-+	return 0;
-+}
-+
-+static int nova_update_new_dentry(struct super_block *sb,
-+	struct inode *dir, struct nova_dentry *entry,
-+	struct nova_log_entry_info *entry_info)
-+{
-+	struct dentry *dentry = entry_info->data;
-+	unsigned short links_count;
-+	int link_change = entry_info->link_change;
-+
-+	entry->entry_type = DIR_LOG;
-+	entry->epoch_id = entry_info->epoch_id;
-+	entry->trans_id = entry_info->trans_id;
-+	entry->ino = entry_info->ino;
-+	entry->name_len = dentry->d_name.len;
-+	memcpy_to_pmem_nocache(entry->name, dentry->d_name.name,
-+				dentry->d_name.len);
-+	entry->name[dentry->d_name.len] = '\0';
-+	entry->mtime = cpu_to_le32(dir->i_mtime.tv_sec);
-+	//entry->size = cpu_to_le64(dir->i_size);
-+
-+	links_count = cpu_to_le16(dir->i_nlink);
-+	if (links_count == 0 && link_change == -1)
-+		links_count = 0;
-+	else
-+		links_count += link_change;
-+	entry->links_count = cpu_to_le16(links_count);
-+
-+	/* Update actual de_len */
-+	entry->de_len = cpu_to_le16(entry_info->file_size);
-+
-+	nova_persist_entry(entry);
-+
-+	return 0;
-+}
-+
-+static int nova_update_log_entry(struct super_block *sb, struct inode *inode,
-+	void *entry, struct nova_log_entry_info *entry_info)
-+{
-+	enum nova_entry_type type = entry_info->type;
-+
-+	switch (type) {
-+	case FILE_WRITE:
-+		break;
-+	case DIR_LOG:
-+		if (entry_info->inplace)
-+			nova_update_old_dentry(sb, inode, entry, entry_info);
-+		else
-+			nova_update_new_dentry(sb, inode, entry, entry_info);
-+		break;
-+	case SET_ATTR:
-+		break;
-+	case LINK_CHANGE:
-+		break;
-+	default:
-+		break;
++		ret = nova_recover_lite_journal(sb, pair);
 +	}
 +
-+	return 0;
-+}
-+
-+static int nova_append_log_entry(struct super_block *sb,
-+	struct nova_inode *pi, struct inode *inode,
-+	struct nova_inode_info_header *sih,
-+	struct nova_log_entry_info *entry_info)
-+{
-+	void *entry;
-+	enum nova_entry_type type = entry_info->type;
-+	struct nova_inode_update *update = entry_info->update;
-+	u64 tail;
-+	u64 curr_p;
-+	size_t size;
-+	int extended = 0;
-+
-+	if (type == DIR_LOG)
-+		size = entry_info->file_size;
-+	else
-+		size = nova_get_log_entry_size(sb, type);
-+
-+	tail = update->tail;
-+
-+	curr_p = nova_get_append_head(sb, pi, sih, tail, size,
-+						MAIN_LOG, 0, &extended);
-+	if (curr_p == 0)
-+		return -ENOSPC;
-+
-+	nova_dbg_verbose("%s: inode %lu attr change entry @ 0x%llx\n",
-+				__func__, sih->ino, curr_p);
-+
-+	entry = nova_get_block(sb, curr_p);
-+	/* inode is already updated with attr */
-+	memset(entry, 0, size);
-+	nova_update_log_entry(sb, inode, entry, entry_info);
-+	nova_inc_page_num_entries(sb, curr_p);
-+	update->curr_entry = curr_p;
-+	update->tail = curr_p + size;
-+
-+	entry_info->curr_p = curr_p;
-+	return 0;
-+}
-+
-+int nova_append_dentry(struct super_block *sb, struct nova_inode *pi,
-+	struct inode *dir, struct dentry *dentry, u64 ino,
-+	unsigned short de_len, struct nova_inode_update *update,
-+	int link_change, u64 epoch_id)
-+{
-+	struct nova_inode_info *si = NOVA_I(dir);
-+	struct nova_inode_info_header *sih = &si->header;
-+	struct nova_log_entry_info entry_info;
-+	timing_t append_time;
-+	int ret;
-+
-+	NOVA_START_TIMING(append_dir_entry_t, append_time);
-+
-+	entry_info.type = DIR_LOG;
-+	entry_info.update = update;
-+	entry_info.data = dentry;
-+	entry_info.ino = ino;
-+	entry_info.link_change = link_change;
-+	entry_info.file_size = de_len;
-+	entry_info.epoch_id = epoch_id;
-+	entry_info.trans_id = sih->trans_id;
-+	entry_info.inplace = 0;
-+
-+	ret = nova_append_log_entry(sb, pi, dir, sih, &entry_info);
-+	if (ret)
-+		nova_err(sb, "%s failed\n", __func__);
-+
-+	dir->i_blocks = sih->i_blocks;
-+
-+	NOVA_END_TIMING(append_dir_entry_t, append_time);
 +	return ret;
 +}
 +
- /* Coalesce log pages to a singly linked list */
- static int nova_coalesce_log_pages(struct super_block *sb,
- 	unsigned long prev_blocknr, unsigned long first_blocknr,
-diff --git a/fs/nova/log.h b/fs/nova/log.h
-index 6b4a085..305e69b 100644
---- a/fs/nova/log.h
-+++ b/fs/nova/log.h
-@@ -364,6 +364,10 @@ static inline int is_dir_init_entry(struct super_block *sb,
- }
++/* Initialized persistent journal state */
++int nova_lite_journal_hard_init(struct super_block *sb)
++{
++	struct nova_sb_info *sbi = NOVA_SB(sb);
++	struct nova_inode_info_header sih;
++	struct journal_ptr_pair *pair;
++	unsigned long blocknr = 0;
++	int allocated;
++	int i;
++	u64 block;
++
++	sih.ino = NOVA_LITEJOURNAL_INO;
++	sih.i_blk_type = NOVA_BLOCK_TYPE_4K;
++
++	for (i = 0; i < sbi->cpus; i++) {
++		pair = nova_get_journal_pointers(sb, i);
++
++		allocated = nova_new_log_blocks(sb, &sih, &blocknr, 1,
++			ALLOC_INIT_ZERO, ANY_CPU, ALLOC_FROM_HEAD);
++		nova_dbg_verbose("%s: allocate log @ 0x%lx\n", __func__,
++							blocknr);
++		if (allocated != 1 || blocknr == 0)
++			return -ENOSPC;
++
++		block = nova_get_block_off(sb, blocknr, NOVA_BLOCK_TYPE_4K);
++		pair->journal_head = pair->journal_tail = block;
++		nova_flush_buffer(pair, CACHELINE_SIZE, 0);
++	}
++
++	PERSISTENT_BARRIER();
++	return nova_lite_journal_soft_init(sb);
++}
+diff --git a/fs/nova/journal.h b/fs/nova/journal.h
+index 2259880..6e3a528 100644
+--- a/fs/nova/journal.h
++++ b/fs/nova/journal.h
+@@ -50,5 +50,7 @@ u64 nova_create_rename_transaction(struct super_block *sb,
+ u64 nova_create_logentry_transaction(struct super_block *sb,
+ 	void *entry, enum nova_entry_type type, int cpu);
+ void nova_commit_lite_transaction(struct super_block *sb, u64 tail, int cpu);
++int nova_lite_journal_soft_init(struct super_block *sb);
++int nova_lite_journal_hard_init(struct super_block *sb);
  
+ #endif
+diff --git a/fs/nova/super.c b/fs/nova/super.c
+index d73c202..216d396 100644
+--- a/fs/nova/super.c
++++ b/fs/nova/super.c
+@@ -379,6 +379,11 @@ static struct nova_inode *nova_init(struct super_block *sb,
  
-+int nova_append_dentry(struct super_block *sb, struct nova_inode *pi,
-+	struct inode *dir, struct dentry *dentry, u64 ino,
-+	unsigned short de_len, struct nova_inode_update *update,
-+	int link_change, u64 epoch_id);
- int nova_allocate_inode_log_pages(struct super_block *sb,
- 	struct nova_inode_info_header *sih, unsigned long num_pages,
- 	u64 *new_block, int cpuid, enum nova_alloc_direction from_tail);
+ 	nova_init_blockmap(sb, 0);
+ 
++	if (nova_lite_journal_hard_init(sb) < 0) {
++		nova_err(sb, "Lite journal hard initialization failed\n");
++		return ERR_PTR(-EINVAL);
++	}
++
+ 	if (nova_init_inode_inuse_list(sb) < 0)
+ 		return ERR_PTR(-EINVAL);
+ 
+@@ -598,6 +603,12 @@ static int nova_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto out;
+ 	}
+ 
++	if (nova_lite_journal_soft_init(sb)) {
++		retval = -EINVAL;
++		nova_err(sb, "Lite journal initialization failed\n");
++		goto out;
++	}
++
+ 	blocksize = le32_to_cpu(sbi->nova_sb->s_blocksize);
+ 	nova_set_blocksize(sb, blocksize);
+ 
+@@ -647,6 +658,9 @@ static int nova_fill_super(struct super_block *sb, void *data, int silent)
+ 
+ 	nova_delete_free_lists(sb);
+ 
++	kfree(sbi->journal_locks);
++	sbi->journal_locks = NULL;
++
+ 	kfree(sbi->inode_maps);
+ 	sbi->inode_maps = NULL;
+ 
+@@ -745,6 +759,7 @@ static void nova_put_super(struct super_block *sb)
+ 
+ 	kfree(sbi->zeroed_page);
+ 	nova_dbgmask = 0;
++	kfree(sbi->journal_locks);
+ 
+ 	for (i = 0; i < sbi->cpus; i++) {
+ 		inode_map = &sbi->inode_maps[i];
+diff --git a/fs/nova/super.h b/fs/nova/super.h
+index 9772d2f..56a840e 100644
+--- a/fs/nova/super.h
++++ b/fs/nova/super.h
+@@ -119,6 +119,9 @@ struct nova_sb_info {
+ 	/* ZEROED page for cache page initialized */
+ 	void *zeroed_page;
+ 
++	/* Per-CPU journal lock */
++	spinlock_t *journal_locks;
++
+ 	/* Per-CPU inode map */
+ 	struct inode_map	*inode_maps;
+ 
 -- 
 2.7.4
