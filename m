@@ -1,76 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751392AbeCJFVy (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 00:21:54 -0500
-Received: from p3plsmtpa07-03.prod.phx3.secureserver.net ([173.201.192.232]:49357
-        "EHLO p3plsmtpa07-03.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750733AbeCJFVw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 00:21:52 -0500
-To: idryomov@gmail.com
-Cc: sage@redhat.com, elder@kernel.org, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keescook@chromium.org
-From: Kyle Spiers <kyle@spiers.me>
-Subject: [PATCH] rbd: Remove VLA usage
-Message-ID: <744974f1-d9b3-9fc1-621d-f4b5d3e806b6@spiers.me>
-Date: Fri, 9 Mar 2018 21:14:31 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1750985AbeCJF0F (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 00:26:05 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:51573 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750714AbeCJF0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 00:26:04 -0500
+Date: Sat, 10 Mar 2018 06:26:01 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        arm@kernel.org
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] ARM: at91: DT for 4.17
+Message-ID: <20180310052601.GA6294@piout.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CMAE-Envelope: MS4wfPiNHpsDP6Xo8FJlkzzkLE1K6W0gNjZaH5DNlqAocNN9YtkZJm5jykvv+mPThl7HBHNIWcOytrsQ2onANSALMjC7vOMTqQ8GxzzUzrUrgOk3wNpgAZY1
- o9G8kRq/TbwhfgL09Xurss4FRiY/kXzGXqs+13K5E1RRKGWoDE8pDeP6MfFNjtY6T5dYuueOyROPsF2rIS5WYDrUhNw2uIQ1quZi0tkQSL+GShKky/0lawba
- cV18B32HWr9hzuVSM9FjkUGjLSd7D3xIPJrLDeEIKy6qjmAwGgMBqAXi3laa+4Jx+zLPL1wOirELAOJBhUuOOw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->From 4198ebe2e8058ff676d8e2f993d8806d6ca29c11 Mon Sep 17 00:00:00 2001
-From: Kyle Spiers <kyle@spiers.me>
-Date: Fri, 9 Mar 2018 12:34:15 -0800
-Subject: [PATCH] rbd: Remove VLA usage
+Arnd, Olof,
 
-As part of the effort to remove VLAs from the kernel[1], this moves
-the literal values into the stack array calculation instead of using a
-variable for the sizing. The resulting size can be found from
-sizeof(buf).
+Not much this cycle, mainly changes on the Axentia boards from Peter and
+a cleanup from Bartosz.
 
-[1] https://lkml.org/lkml/2018/3/7/621
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
 
-Signed-off-by: Kyle Spiers <kyle@spiers.me>
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
 
----
- drivers/block/rbd.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+are available in the Git repository at:
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 8e40da0..0e94e1f 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -3100,8 +3100,8 @@ static int __rbd_notify_op_lock(struct rbd_device
-*rbd_dev,
- {
-     struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
-     struct rbd_client_id cid = rbd_get_cid(rbd_dev);
--    int buf_size = 4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN;
--    char buf[buf_size];
-+    char buf[4 + 4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN];
-+    int buf_size = sizeof(buf);
-     void *p = buf;
- 
-     dout("%s rbd_dev %p notify_op %d\n", __func__, rbd_dev, notify_op);
-@@ -3619,8 +3619,8 @@ static void __rbd_acknowledge_notify(struct
-rbd_device *rbd_dev,
-                      u64 notify_id, u64 cookie, s32 *result)
- {
-     struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
--    int buf_size = 4 + CEPH_ENCODING_START_BLK_LEN;
--    char buf[buf_size];
-+    char buf[4 + CEPH_ENCODING_START_BLK_LEN];
-+    int buf_size = sizeof(buf);
-     int ret;
- 
-     if (result) {
--- 2.7.4
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git tags/at91-ab-4.17-dt
+
+for you to fetch changes up to 6fa65edf87886f85a18680ed7bdedc15cb810065:
+
+  ARM: dts: at91: use 'atmel' as at24 manufacturer for at91sam9263ek (2018-02-13 17:15:18 +0100)
+
+----------------------------------------------------------------
+AT91 DT for 4.17:
+
+ - use 'atmel' as at24 manufacturer
+ - device addition and fixes for axentia boards
+ - fix sama5d4 pinctrl compatible
+
+----------------------------------------------------------------
+Alexandre Belloni (1):
+      ARM: dts: at91: sam9rl: Properly assign copyright
+
+Bartosz Golaszewski (5):
+      ARM: dts: at91: use 'atmel' as at24 manufacturer for sama5d34ek
+      ARM: dts: at91: use 'atmel' as at24 manufacturer for at91sam9260ek
+      ARM: dts: at91: use 'atmel' as at24 manufacturer for at91sam9g20ek
+      ARM: dts: at91: use 'atmel' as at24 manufacturer for at91-sama5d2_ptc_ek
+      ARM: dts: at91: use 'atmel' as at24 manufacturer for at91sam9263ek
+
+Peter Rosin (5):
+      ARM: dts: at91: nattis: use the correct compatible for the eeprom
+      ARM: dts: at91: tse850: use the correct compatible for the eeprom
+      ARM: dts: at91: nattis: use up-to-date mtd partitions
+      ARM: dts: at91: nattis: add lvds-encoder
+      ARM: dts: at91: tse850: make the sound dai cell count explicit
+
+Santiago Esteban (1):
+      ARM: dts: at91: sama5d4: fix pinctrl compatible string
+
+ arch/arm/boot/dts/at91-nattis-2-natte-2.dts | 60 +++++++++++++++++++++--------
+ arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts   |  2 +-
+ arch/arm/boot/dts/at91-tse850-3.dts         |  3 +-
+ arch/arm/boot/dts/at91sam9260ek.dts         |  2 +-
+ arch/arm/boot/dts/at91sam9263ek.dts         |  2 +-
+ arch/arm/boot/dts/at91sam9g20ek_common.dtsi |  2 +-
+ arch/arm/boot/dts/at91sam9rl.dtsi           |  3 +-
+ arch/arm/boot/dts/at91sam9rlek.dts          |  3 +-
+ arch/arm/boot/dts/sama5d34ek.dts            |  2 +-
+ arch/arm/boot/dts/sama5d4.dtsi              |  2 +-
+ 10 files changed, 57 insertions(+), 24 deletions(-)
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
