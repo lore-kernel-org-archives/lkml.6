@@ -1,70 +1,39 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1720711-1520641429-2-149672466461509920
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES daensv,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520641428; b=HHkmSGtAC9AysZMGgp18s5Wqtx7CKR7I/ADGaQUcN0SLAZ1
-    luzp4xCEFAP34+uo5LtrHpm2LTPF8ZHbUiYFeemTY5Uz+Kcb6XTdtu66rywO8niZ
-    TScEDwGFYLFo7CdChvtIJ3p2LDOVQaKieMraGHn6H4fCkYbW2nKRF56TZ0FVnSOS
-    JxhO8CQJU5GVW0l6s8+CTqe/RG/aM/eW/PAChZWa+Tv8JulK1XMw1iMVf9o8MBLM
-    8mbTHtJKRQ3Qv0Nv6rXvqVwFsHgMOI0dJpo3IuYAripiaQgQe3hIiz1rnGTnnKwj
-    k+z+Y0tj5pWEo8OBHZTolXfdQo4CDn6aX/ZNkVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520641428; bh=YZ2pwC1Tz4ydFS0kq9DNL7xEiz
-    Yi8VBDfZOOIMcE6i8=; b=wqwHHnpNTYEs1qDZSQggXYdVHGMbUnZtzrVtbr1WmZ
-    oCtJ9H3t1IeR9dkhPGFmgjfcYDBTmHwt16s/NupvWz3jn3ZMWR2+1vKg1B52zIQV
-    mIy0ePPSXWx95FKkypGqygiI4qlS0KN6PcnOiLcSbmqFRY6WM2kWq4x7T0mBZgp4
-    yFV17bXohz44H5LaXgecfQ9lVZuGXaVRS+KVxoXrGcvCO7IFbg+bpPwo3nUTchTD
-    tMxeWShjYZalu6GIwEvj+C/iVxHLJUtG9iCgdlsmg1KpCKlKriNSmbL7rNRZZGcI
-    77hFpadFvP2Y4645lvXVnm1e6xKCXQamdxw094FaN+1A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933857AbeCJAXj (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Mar 2018 19:23:39 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40944 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933088AbeCJAXi (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:23:38 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELvksaLE6HAfhrnWw6582K/veUyh6pY/lICZneT55BBBwwAOMyZ+AtRlbnUQQGC0kdiToz+5
+ARC-Seal: i=1; a=rsa-sha256; t=1520641421; cv=none;
+        d=google.com; s=arc-20160816;
+        b=PLjQNPhng5Krx13tz1Dmeans1R5mm8aYBOJeC5W0uXzYPb7MUnj8j7dcRgDpA6QM+P
+         Ix/F8A+NnxnMr7icmpn4pl3PCpoNEB4F3xpdSMIveK9Ruy2GRR5cCJ7Nsv5XWiPPqTDU
+         vAAq+p1cW/DQnUK+cdjuOPVQg4oSRZyDxaO1UCB1yoite8n4PG4Owg949GiJFeGYmQcO
+         8jmEdbqSOPJoEfbs7uyCGgjKK1LxqNZB8rS4ENo2Gdnb83xFH2rzGyG21oKQ/I5WYmgP
+         HzDmpNoXtwWlwEnMh76PNfhIjZsZJdW4+gvEm43jzyUZ2qq6letAH86f/gnovPSzhl5g
+         WNYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=kYlEC0u6yZ4TvqvjP1+AOJWPSPEZ9pQyy/HAJZ50TRk=;
+        b=YCDos71f4kB5SvB2LO9BgOM8fUaixwk5GRlGLHoK1OcIxymm3XYDAXTPcG+4SPX5B/
+         oSMTn28yMX5CRtwn7a/JRA6WMwkd4eUKqAWOGOvLqtu0Bm6fZSZa9zdXWO1XvmqDfrHs
+         1tOYSr55uaaNJ6ehq+IiCO8iCx0pYGjKeNsdEoygyv+4tX4Hh6ssNMHG2GdXWJ0/67CG
+         ewLauES6tO86+UbMM6+8EpTWY+wfX2qyJdnrXUpYLoToIYAUiD0f5YE9I6+NiPOYPR0y
+         r2F7Hlubfsao3oICG5cl3l+Ys6UN7ZDxr0G/O6Tg6eIb5JejsB3MXcBcD0kC0B2GEd9i
+         LaMA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.15 10/11] scsi: mpt3sas: wait for and flush running commands on shutdown/unload
-Date: Fri,  9 Mar 2018 16:19:24 -0800
-Message-Id: <20180310001835.126447960@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Wanpeng Li <wanpengli@tencent.com>,
+	David Hildenbrand <david@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Jack Wang <jinpu.wang@profitbricks.com>
+Subject: [PATCH 4.15 11/11] KVM: x86: fix backward migration with async_PF
+Date: Fri,  9 Mar 2018 16:19:25 -0800
+Message-Id: <20180310001835.172970815@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001834.560857664@linuxfoundation.org>
 References: <20180310001834.560857664@linuxfoundation.org>
@@ -72,9 +41,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594508090342902873?=
+X-GMAIL-MSGID: =?utf-8?q?1594508098846170890?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -82,106 +52,95 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+From: Radim Krčmář <rkrcmar@redhat.com>
 
-commit c666d3be99c000bb889a33353e9be0fa5808d3de upstream.
+commit fe2a3027e74e40a3ece3a4c1e4e51403090a907a upstream.
 
-This patch finishes all outstanding SCSI IO commands (but not other commands,
-e.g., task management) in the shutdown and unload paths.
+Guests on new hypersiors might set KVM_ASYNC_PF_DELIVERY_AS_PF_VMEXIT
+bit when enabling async_PF, but this bit is reserved on old hypervisors,
+which results in a failure upon migration.
 
-It first waits for the commands to complete (this is done after setting
-'ioc->remove_host = 1 ', which prevents new commands to be queued) then it
-flushes commands that might still be running.
+To avoid breaking different cases, we are checking for CPUID feature bit
+before enabling the feature and nothing else.
 
-This avoids triggering error handling (e.g., abort command) for all commands
-possibly completed by the adapter after interrupts disabled.
-
-[mauricfo: introduced something in commit message.]
-
-Signed-off-by: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-Tested-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
-Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-[mauricfo: backport to linux-4.15.y (a few updates to context lines)]
-Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+Fixes: 52a5c155cf79 ("KVM: async_pf: Let guest support delivery of async_pf from guest mode")
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Wanpeng Li <wanpengli@tencent.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+[jwang: port to 4.14]
+Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/mpt3sas/mpt3sas_base.c  |    8 ++++----
- drivers/scsi/mpt3sas/mpt3sas_base.h  |    3 +++
- drivers/scsi/mpt3sas/mpt3sas_scsih.c |   10 +++++++++-
- 3 files changed, 16 insertions(+), 5 deletions(-)
+ Documentation/virtual/kvm/cpuid.txt  |    4 ++++
+ Documentation/virtual/kvm/msr.txt    |    3 ++-
+ arch/x86/include/uapi/asm/kvm_para.h |    1 +
+ arch/x86/kernel/kvm.c                |    8 ++++----
+ arch/x86/kvm/cpuid.c                 |    3 ++-
+ 5 files changed, 13 insertions(+), 6 deletions(-)
 
---- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-@@ -6289,14 +6289,14 @@ _base_reset_handler(struct MPT3SAS_ADAPT
- }
+--- a/Documentation/virtual/kvm/cpuid.txt
++++ b/Documentation/virtual/kvm/cpuid.txt
+@@ -54,6 +54,10 @@ KVM_FEATURE_PV_UNHALT              ||
+                                    ||       || before enabling paravirtualized
+                                    ||       || spinlock support.
+ ------------------------------------------------------------------------------
++KVM_FEATURE_ASYNC_PF_VMEXIT        ||    10 || paravirtualized async PF VM exit
++                                   ||       || can be enabled by setting bit 2
++                                   ||       || when writing to msr 0x4b564d02
++------------------------------------------------------------------------------
+ KVM_FEATURE_CLOCKSOURCE_STABLE_BIT ||    24 || host will warn if no guest-side
+                                    ||       || per-cpu warps are expected in
+                                    ||       || kvmclock.
+--- a/Documentation/virtual/kvm/msr.txt
++++ b/Documentation/virtual/kvm/msr.txt
+@@ -170,7 +170,8 @@ MSR_KVM_ASYNC_PF_EN: 0x4b564d02
+ 	when asynchronous page faults are enabled on the vcpu 0 when
+ 	disabled. Bit 1 is 1 if asynchronous page faults can be injected
+ 	when vcpu is in cpl == 0. Bit 2 is 1 if asynchronous page faults
+-	are delivered to L1 as #PF vmexits.
++	are delivered to L1 as #PF vmexits.  Bit 2 can be set only if
++	KVM_FEATURE_ASYNC_PF_VMEXIT is present in CPUID.
  
- /**
-- * _wait_for_commands_to_complete - reset controller
-+ * mpt3sas_wait_for_commands_to_complete - reset controller
-  * @ioc: Pointer to MPT_ADAPTER structure
-  *
-  * This function waiting(3s) for all pending commands to complete
-  * prior to putting controller in reset.
-  */
--static void
--_wait_for_commands_to_complete(struct MPT3SAS_ADAPTER *ioc)
-+void
-+mpt3sas_wait_for_commands_to_complete(struct MPT3SAS_ADAPTER *ioc)
- {
- 	u32 ioc_state;
- 	unsigned long flags;
-@@ -6375,7 +6375,7 @@ mpt3sas_base_hard_reset_handler(struct M
- 			is_fault = 1;
- 	}
- 	_base_reset_handler(ioc, MPT3_IOC_PRE_RESET);
--	_wait_for_commands_to_complete(ioc);
-+	mpt3sas_wait_for_commands_to_complete(ioc);
- 	_base_mask_interrupts(ioc);
- 	r = _base_make_ioc_ready(ioc, type);
- 	if (r)
---- a/drivers/scsi/mpt3sas/mpt3sas_base.h
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.h
-@@ -1435,6 +1435,9 @@ void mpt3sas_base_update_missing_delay(s
+ 	First 4 byte of 64 byte memory location will be written to by
+ 	the hypervisor at the time of asynchronous page fault (APF)
+--- a/arch/x86/include/uapi/asm/kvm_para.h
++++ b/arch/x86/include/uapi/asm/kvm_para.h
+@@ -25,6 +25,7 @@
+ #define KVM_FEATURE_STEAL_TIME		5
+ #define KVM_FEATURE_PV_EOI		6
+ #define KVM_FEATURE_PV_UNHALT		7
++#define KVM_FEATURE_ASYNC_PF_VMEXIT	10
  
- int mpt3sas_port_enable(struct MPT3SAS_ADAPTER *ioc);
+ /* The last 8 bits are used to indicate how to interpret the flags field
+  * in pvclock structure. If no bits are set, all flags are ignored.
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -341,10 +341,10 @@ static void kvm_guest_cpu_init(void)
+ #endif
+ 		pa |= KVM_ASYNC_PF_ENABLED;
  
-+void
-+mpt3sas_wait_for_commands_to_complete(struct MPT3SAS_ADAPTER *ioc);
+-		/* Async page fault support for L1 hypervisor is optional */
+-		if (wrmsr_safe(MSR_KVM_ASYNC_PF_EN,
+-			(pa | KVM_ASYNC_PF_DELIVERY_AS_PF_VMEXIT) & 0xffffffff, pa >> 32) < 0)
+-			wrmsrl(MSR_KVM_ASYNC_PF_EN, pa);
++		if (kvm_para_has_feature(KVM_FEATURE_ASYNC_PF_VMEXIT))
++			pa |= KVM_ASYNC_PF_DELIVERY_AS_PF_VMEXIT;
 +
++		wrmsrl(MSR_KVM_ASYNC_PF_EN, pa);
+ 		__this_cpu_write(apf_reason.enabled, 1);
+ 		printk(KERN_INFO"KVM setup async PF for cpu %d\n",
+ 		       smp_processor_id());
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -597,7 +597,8 @@ static inline int __do_cpuid_ent(struct
+ 			     (1 << KVM_FEATURE_ASYNC_PF) |
+ 			     (1 << KVM_FEATURE_PV_EOI) |
+ 			     (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT) |
+-			     (1 << KVM_FEATURE_PV_UNHALT);
++			     (1 << KVM_FEATURE_PV_UNHALT) |
++			     (1 << KVM_FEATURE_ASYNC_PF_VMEXIT);
  
- /* scsih shared API */
- u8 mpt3sas_scsih_event_callback(struct MPT3SAS_ADAPTER *ioc, u8 msix_index,
---- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -4614,7 +4614,7 @@ _scsih_flush_running_cmds(struct MPT3SAS
- 		_scsih_set_satl_pending(scmd, false);
- 		mpt3sas_base_free_smid(ioc, smid);
- 		scsi_dma_unmap(scmd);
--		if (ioc->pci_error_recovery)
-+		if (ioc->pci_error_recovery || ioc->remove_host)
- 			scmd->result = DID_NO_CONNECT << 16;
- 		else
- 			scmd->result = DID_RESET << 16;
-@@ -9904,6 +9904,10 @@ static void scsih_remove(struct pci_dev
- 	unsigned long flags;
- 
- 	ioc->remove_host = 1;
-+
-+	mpt3sas_wait_for_commands_to_complete(ioc);
-+	_scsih_flush_running_cmds(ioc);
-+
- 	_scsih_fw_event_cleanup_queue(ioc);
- 
- 	spin_lock_irqsave(&ioc->fw_event_lock, flags);
-@@ -9980,6 +9984,10 @@ scsih_shutdown(struct pci_dev *pdev)
- 	unsigned long flags;
- 
- 	ioc->remove_host = 1;
-+
-+	mpt3sas_wait_for_commands_to_complete(ioc);
-+	_scsih_flush_running_cmds(ioc);
-+
- 	_scsih_fw_event_cleanup_queue(ioc);
- 
- 	spin_lock_irqsave(&ioc->fw_event_lock, flags);
+ 		if (sched_info_on())
+ 			entry->eax |= (1 << KVM_FEATURE_STEAL_TIME);
