@@ -1,38 +1,69 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtNGe661dq/JB83l+QSuJuOQ/UrkJ2lh9bm1uc7yMmtxuAxno3zKNvoNvE9cZOJXOnchHDK
-ARC-Seal: i=1; a=rsa-sha256; t=1520641211; cv=none;
-        d=google.com; s=arc-20160816;
-        b=09ZqP/u3rM1vb/eOpP0qAFwB4qnkz2yq5E7ySTVa4GPYczqwurp0JAUPsheT2zUYwP
-         6BskvyEgTdxbbKxc7x9LTxdFSTER376ZaZM0FFxu5iRDZAajkuFms064IuMvWrI+IrwY
-         jQ42Q+0GU9qX1xDqlEujgYVzMpO2Z2kf2fxmmEAFY9sERbaYV59XLs5GY0Tz/kKyREyZ
-         xp7/O39AEQno/TQEK06SGpl4w7EpvlLlKchrXX2+BKSjsX0IYhbOVIBAOMBfneLnT62W
-         O+XW1+jnfWRRgdlo7mkffHEx9laWa6Cf37OIFfgW1jl00PEzDw3ZofxDw9MNF9z5gnoC
-         cr+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=QmPTdMHDIJlHcTfcamxFDZAzcwP6ElA2xMvR2IkxEL8=;
-        b=tHGqDoGm6ujrbrF9RHoOqYrwBCu6ZlCXZ+VzfCIh/FLuvBOUJulE1wb3Qiq2KTrX8E
-         7PV98HSSotuz57qJM88/c1NrtD8zhiWIPr27030wO3BaQAqDcMBrMzA/cbhlbfipcNOE
-         8Vre7tK62vkNnqTGTtrWX/OEJ6edeEfTHd5IFT1WUoqaPJ7GeGBQpw+HjUgoB9qnt75M
-         o+2G23F1xut1wsLUJhojfRiHEZalPLIXm+VACcHrm7w/ueTzdzTXBuvItPVTWrBgeoSB
-         gE57LDI8FXmXcUwqHw5nG4iJQxiXegvRZ40Ybn0QGTy6AOdzbyWtiqF1jH9dx61i5vgs
-         rMBQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1715849-1520641211-2-13594196874538116156
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520641210; b=YkoCrN0P+dQ4m9/qmhhjkBMl6UasN+v2DKHajz7J5e0gkRe
+    pWAvURA0xtikkx2Ue9LzXRgXjYc/gQ2u4Oa2AP4OwEOSxfHtgcP8J/3JHjcdy6kD
+    rGcxqypRG8vzgE5aCSlCc80Lz1LHH4QZ2VtZchA7gTUyBrnDjjrFE5+uI0dDrrDj
+    w3qOyY6Ocsaq+3TUtRLkTky2KPBvjZRkwySLIkEL4UXQcMDzYi6Zd8dkPStW5f60
+    hYrC58qFP4h+j0+oMHgE6ACeYMmPeI0HjYYuxGP5qncoPcHWS8RBIgLfQQmwVfIp
+    k35ZyGo7ftc57okOnIpP4+UQXRLT2THWoDTTvoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520641210; bh=9/ZHbWjCaC5opc69WlAKHXJH1/
+    kpEyDsivu4hCVV0gQ=; b=aroykDFEjwbJkFCZI0lctSXvvt4DmOK88LXPxMfKEe
+    b3jegH2QKraYyIDfqhp4X0iQ0kL00RBguRpmTZ/r5BTaZlS94IriUbHCD+uRaDsP
+    NVk6fLogQcp9/1Yj8i7B8HRBC+c2PnCnao36SfMB3Ylkqg+ad+lvtTsisUiXglfX
+    rnK+4ZKkV+OhDEv2OjrkTHT4VDeB1WHE/Nx2BmrBABUNjCJHa0FR4GN/LQ/PLGUP
+    EJx6SZU16XlUXYv7FYo/t2g7uax+FyMdHj/s5ipTLaqAqaS/VsZ0PUwFM1+9Yxuc
+    QQRcKkDeMNng+aQL5A3hhrfgqmcY7lnDMUPd3pifMRqw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932414AbeCJAUI (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Mar 2018 19:20:08 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38984 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933237AbeCJAUG (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:20:06 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Jianlin Shi <jishi@redhat.com>,
-	Sabrina Dubroca <sd@queasysnail.net>,
-	Stefano Brivio <sbrivio@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 23/36] net: ipv4: dont allow setting net.ipv4.route.min_pmtu below 68
-Date: Fri,  9 Mar 2018 16:18:39 -0800
-Message-Id: <20180310001808.625785589@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Sebor <msebor@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 21/36] ipv6 sit: work around bogus gcc-8 -Wrestrict warning
+Date: Fri,  9 Mar 2018 16:18:37 -0800
+Message-Id: <20180310001808.517143778@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001807.213987241@linuxfoundation.org>
 References: <20180310001807.213987241@linuxfoundation.org>
@@ -40,10 +71,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507833206218413?=
-X-GMAIL-MSGID: =?utf-8?q?1594507879441569506?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,62 +81,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+From: Arnd Bergmann <arnd@arndb.de>
 
 
-[ Upstream commit c7272c2f1229125f74f22dcdd59de9bbd804f1c8 ]
+[ Upstream commit ca79bec237f5809a7c3c59bd41cd0880aa889966 ]
 
-According to RFC 1191 sections 3 and 4, ICMP frag-needed messages
-indicating an MTU below 68 should be rejected:
+gcc-8 has a new warning that detects overlapping input and output arguments
+in memcpy(). It triggers for sit_init_net() calling ipip6_tunnel_clone_6rd(),
+which is actually correct:
 
-    A host MUST never reduce its estimate of the Path MTU below 68
-    octets.
+net/ipv6/sit.c: In function 'sit_init_net':
+net/ipv6/sit.c:192:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
 
-and (talking about ICMP frag-needed's Next-Hop MTU field):
+The problem here is that the logic detecting the memcpy() arguments finds them
+to be the same, but the conditional that tests for the input and output of
+ipip6_tunnel_clone_6rd() to be identical is not a compile-time constant.
 
-    This field will never contain a value less than 68, since every
-    router "must be able to forward a datagram of 68 octets without
-    fragmentation".
+We know that netdev_priv(t->dev) is the same as t for a tunnel device,
+and comparing "dev" directly here lets the compiler figure out as well
+that 'dev == sitn->fb_tunnel_dev' when called from sit_init_net(), so
+it no longer warns.
 
-Furthermore, by letting net.ipv4.route.min_pmtu be set to negative
-values, we can end up with a very large PMTU when (-1) is cast into u32.
+This code is old, so Cc stable to make sure that we don't get the warning
+for older kernels built with new gcc.
 
-Let's also make ip_rt_min_pmtu a u32, since it's only ever compared to
-unsigned ints.
-
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
+Cc: Martin Sebor <msebor@gmail.com>
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83456
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/route.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ net/ipv6/sit.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -126,10 +126,13 @@ static int ip_rt_redirect_silence __read
- static int ip_rt_error_cost __read_mostly	= HZ;
- static int ip_rt_error_burst __read_mostly	= 5 * HZ;
- static int ip_rt_mtu_expires __read_mostly	= 10 * 60 * HZ;
--static int ip_rt_min_pmtu __read_mostly		= 512 + 20 + 20;
-+static u32 ip_rt_min_pmtu __read_mostly		= 512 + 20 + 20;
- static int ip_rt_min_advmss __read_mostly	= 256;
+--- a/net/ipv6/sit.c
++++ b/net/ipv6/sit.c
+@@ -176,7 +176,7 @@ static void ipip6_tunnel_clone_6rd(struc
+ #ifdef CONFIG_IPV6_SIT_6RD
+ 	struct ip_tunnel *t = netdev_priv(dev);
  
- static int ip_rt_gc_timeout __read_mostly	= RT_GC_TIMEOUT;
-+
-+static int ip_min_valid_pmtu __read_mostly	= IPV4_MIN_MTU;
-+
- /*
-  *	Interface to generic destination cache.
-  */
-@@ -2765,7 +2768,8 @@ static struct ctl_table ipv4_route_table
- 		.data		= &ip_rt_min_pmtu,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= &ip_min_valid_pmtu,
- 	},
- 	{
- 		.procname	= "min_adv_mss",
+-	if (t->dev == sitn->fb_tunnel_dev) {
++	if (dev == sitn->fb_tunnel_dev) {
+ 		ipv6_addr_set(&t->ip6rd.prefix, htonl(0x20020000), 0, 0, 0);
+ 		t->ip6rd.relay_prefix = 0;
+ 		t->ip6rd.prefixlen = 16;
