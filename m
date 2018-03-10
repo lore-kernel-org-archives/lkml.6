@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELul+etB6jeSq0XENrDm5VxU4rdjKJUhSE3Yj/nfDBiNbsJqXICfeL72mwZbZA+8avm0vJLy
-ARC-Seal: i=1; a=rsa-sha256; t=1520641253; cv=none;
+X-Google-Smtp-Source: AG47ELsRPAqwkc9bLzkiGNosDODzy77evYmhjFyTdZ8KmD2Q4oLVjCi2g0gFsi8W7KQ5FVINigX7
+ARC-Seal: i=1; a=rsa-sha256; t=1520641251; cv=none;
         d=google.com; s=arc-20160816;
-        b=rTjMHp+zJL85Yml1reDDRPSB8LOWOq7JDXehzSRP5QDIOeBTOobQvCegZhw87T3NYJ
-         KGKfyl/Roun85dkjB6RokR/qF95FlwtSbJ9BGKVMhjsoRY5x+gui345L7jX3aUvirir+
-         GmnMr3n8wtKiNxGd5TtsOg/4WEKQKkUQhjR39P8gGOfCSSmmi4mdMR2glrsIaGe2OdAt
-         BShWqOJzHuDUdMAJSlxLAbgT7w7+zBp8mYJ0dmfoK7YAXNvxeE3mGCFZsJ/MhHSA0ZZl
-         wn7jFiglwGkOmpZIvCU1rkiUyMatwAl1k/OB1mx6tn2FCybCO8w8jCa57Nj0p/jUPZBJ
-         /WYw==
+        b=tlAYXgNcYgJJY4pSiwfFZHLj6DuVxZixS35ovh81wILht25+XZ4/jm47aW7YvDWDC6
+         yUQEdHDVG6mrhXdEEISQYRsgy+/2t5O57dhAlm16a/TG59FmnY+v9Dx0wvExbXGMZlU+
+         qk/1EsuyoUicjwu9rBg9qauRVMqv4bOUCBmzK3f+y8ynvjmc9LkfF0tf4sITIbXS9luu
+         D3voYpIyB44S6MUD4htvhPYjyHcZ1VvxzEPe3OHAJUarayR6gDQYlei+sKc84JtmnJh/
+         YvszRgdMBQWmPe5C2gowzI54DZkMeTyqZBkeYygCrKpCwyKMND4+T4De2jxxQU4UdAoV
+         uJDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=eU2qyRh8JiLw+69zsQ2cnj1xB7kFXRXxfV2Kh8MJZug=;
-        b=pJVa1GEbesLVbNYZFPxXM0lxBenxWKyGGJR6Nq815JCXhtR8NWHIB4Zv//DJKUj7Ls
-         Z6XA+TvH2BpnjtpKynzWi6enHAknWxSArXbUBOBVnF9UpygxDVhKuGF0s0NcZvKfPMRp
-         dwVHdgyReXndn8y4+AiWp+UH/PLWNBp7/Sjlt2y0icBCUA3nAyLGwsDDjfWDYE3dEEV4
-         o9XCx4e7qhrMGQ1fGFgjFpG8ak6bm3TLikCLPOXAanMzqftsNLEWXFyNwCs5L9abURV4
-         WdgCjV82Q+z+IAnfKJxWMowICZdyqpTaw5YHIA7VtmYmMi/UNydjjaPNJi2EjOl2iBjG
-         GSnQ==
+        bh=yF0g3bT1DzAAGNu95QAbbkV8klCQO4U6OJLlw0MQ2nY=;
+        b=syY4e8sw7cdw9tmKcTUgcpaLsH3vJPi/xEzedX820WUqtdim+mMR5RK3yEXZdYqiF3
+         +oeh2tUx09hvD41utwZtypX2/WFO0Srw9sx42G3s4hX1XIhgJW/P7GVy+mKgErcjxNKm
+         cXLGOg4lQHvsMRnnz+kSd63Etha09ExqFflKVL52C5XuN/ORKbm3nS4IoeO6Z7P56Q/b
+         lyfUUOS6QZXL1/jVEtuTZ3ArIqkxPxGXWwhTmBtd558+4HWbWhMdsTsdgdOsmVt8MUkW
+         42QW+w5LZTUoqD83mCEvojP3YOJhjkvjD2LlL8/K3KYCGa9NsKjxMF4cx83bTopHAuss
+         BpEQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	David Ahern <dsahern@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Dan Williams <dan.j.williams@intel.com>,
 	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 33/36] mpls, nospec: Sanitize array index in mpls_label_ok()
-Date: Fri,  9 Mar 2018 16:18:49 -0800
-Message-Id: <20180310001809.184616649@linuxfoundation.org>
+Subject: [PATCH 4.4 32/36] net: mpls: Pull common label check into helper
+Date: Fri,  9 Mar 2018 16:18:48 -0800
+Message-Id: <20180310001809.138665604@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001807.213987241@linuxfoundation.org>
 References: <20180310001807.213987241@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507923154596222?=
-X-GMAIL-MSGID: =?utf-8?q?1594507923154596222?=
+X-GMAIL-THRID: =?utf-8?q?1594507920885870676?=
+X-GMAIL-MSGID: =?utf-8?q?1594507920885870676?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,91 +50,81 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: David Ahern <dsahern@gmail.com>
 
-commit 3968523f855050b8195134da951b87c20bd66130 upstream.
+commit b7b386f42f079b25b942c756820e36c6bd09b2ca upstream.
 
-mpls_label_ok() validates that the 'platform_label' array index from a
-userspace netlink message payload is valid. Under speculation the
-mpls_label_ok() result may not resolve in the CPU pipeline until after
-the index is used to access an array element. Sanitize the index to zero
-to prevent userspace-controlled arbitrary out-of-bounds speculation, a
-precursor for a speculative execution side channel vulnerability.
+mpls_route_add and mpls_route_del have the same checks on the label.
+Move to a helper. Avoid duplicate extack messages in the next patch.
 
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 4.4:
- - mpls_label_ok() doesn't take an extack parameter
- - Drop change in mpls_getroute()]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mpls/af_mpls.c |   22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ net/mpls/af_mpls.c |   32 +++++++++++++++++---------------
+ 1 file changed, 17 insertions(+), 15 deletions(-)
 
 --- a/net/mpls/af_mpls.c
 +++ b/net/mpls/af_mpls.c
-@@ -7,6 +7,7 @@
- #include <linux/if_arp.h>
- #include <linux/ipv6.h>
- #include <linux/mpls.h>
-+#include <linux/nospec.h>
- #include <linux/vmalloc.h>
- #include <net/ip.h>
- #include <net/dst.h>
-@@ -714,17 +715,20 @@ errout:
+@@ -714,6 +714,19 @@ errout:
  	return err;
  }
  
--static bool mpls_label_ok(struct net *net, unsigned int index)
-+static bool mpls_label_ok(struct net *net, unsigned int *index)
- {
-+	bool is_ok = true;
++static bool mpls_label_ok(struct net *net, unsigned int index)
++{
++	/* Reserved labels may not be set */
++	if (index < MPLS_LABEL_FIRST_UNRESERVED)
++		return false;
 +
- 	/* Reserved labels may not be set */
--	if (index < MPLS_LABEL_FIRST_UNRESERVED)
--		return false;
-+	if (*index < MPLS_LABEL_FIRST_UNRESERVED)
-+		is_ok = false;
- 
- 	/* The full 20 bit range may not be supported. */
--	if (index >= net->mpls.platform_labels)
--		return false;
-+	if (is_ok && *index >= net->mpls.platform_labels)
-+		is_ok = false;
- 
--	return true;
-+	*index = array_index_nospec(*index, net->mpls.platform_labels);
-+	return is_ok;
- }
- 
++	/* The full 20 bit range may not be supported. */
++	if (index >= net->mpls.platform_labels)
++		return false;
++
++	return true;
++}
++
  static int mpls_route_add(struct mpls_route_config *cfg)
-@@ -745,7 +749,7 @@ static int mpls_route_add(struct mpls_ro
+ {
+ 	struct mpls_route __rcu **platform_label;
+@@ -732,12 +745,7 @@ static int mpls_route_add(struct mpls_ro
  		index = find_free_label(net);
  	}
  
--	if (!mpls_label_ok(net, index))
-+	if (!mpls_label_ok(net, &index))
+-	/* Reserved labels may not be set */
+-	if (index < MPLS_LABEL_FIRST_UNRESERVED)
+-		goto errout;
+-
+-	/* The full 20 bit range may not be supported. */
+-	if (index >= net->mpls.platform_labels)
++	if (!mpls_label_ok(net, index))
  		goto errout;
  
  	/* Append makes no sense with mpls */
-@@ -806,7 +810,7 @@ static int mpls_route_del(struct mpls_ro
+@@ -798,12 +806,7 @@ static int mpls_route_del(struct mpls_ro
  
  	index = cfg->rc_label;
  
--	if (!mpls_label_ok(net, index))
-+	if (!mpls_label_ok(net, &index))
+-	/* Reserved labels may not be removed */
+-	if (index < MPLS_LABEL_FIRST_UNRESERVED)
+-		goto errout;
+-
+-	/* The full 20 bit range may not be supported */
+-	if (index >= net->mpls.platform_labels)
++	if (!mpls_label_ok(net, index))
  		goto errout;
  
  	mpls_route_update(net, index, NULL, &cfg->rc_nlinfo);
-@@ -1166,7 +1170,7 @@ static int rtm_to_route_config(struct sk
+@@ -1162,10 +1165,9 @@ static int rtm_to_route_config(struct sk
+ 					   &cfg->rc_label))
  				goto errout;
  
- 			if (!mpls_label_ok(cfg->rc_nlinfo.nl_net,
--					   cfg->rc_label))
-+					   &cfg->rc_label))
+-			/* Reserved labels may not be set */
+-			if (cfg->rc_label < MPLS_LABEL_FIRST_UNRESERVED)
++			if (!mpls_label_ok(cfg->rc_nlinfo.nl_net,
++					   cfg->rc_label))
  				goto errout;
+-
  			break;
  		}
+ 		case RTA_VIA:
