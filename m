@@ -1,140 +1,336 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932505AbeCJQWf (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 11:22:35 -0500
-Received: from mail-qk0-f173.google.com ([209.85.220.173]:33180 "EHLO
-        mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932401AbeCJQWd (ORCPT
+        id S1751215AbeCJQow (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 11:44:52 -0500
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:46560 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750703AbeCJQou (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 11:22:33 -0500
-X-Google-Smtp-Source: AG47ELs6zS3Jj4l8GMyJdvzHPqTITgM5LD10Ce//VLZI/NxVeMkZQyV1zlH2c7piVY8NoZO3FDz8yMqlo2d0S8vVbxc=
+        Sat, 10 Mar 2018 11:44:50 -0500
+X-Google-Smtp-Source: AG47ELv9My2AfdDACNfiuWNaLf4r13Tk/hoBoriJ0khpyFvvraTry7z4kjf9gSTN+TFHC5vwZb5pUw==
+Subject: Re: [PATCH 1/2] hwmon: (ucd9000) Add gpio chip interface
+To: Eddie James <eajames@linux.vnet.ibm.com>, linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, jdelvare@suse.com, joel@jms.id.au,
+        Christopher Bostic <cbostic@linux.vnet.ibm.com>,
+        Andrew Jeffery <andrew@aj.id.au>
+References: <1520623196-9534-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <1520623196-9534-2-git-send-email-eajames@linux.vnet.ibm.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <39df66cf-2580-5e49-17b5-2187469b5d44@roeck-us.net>
+Date: Sat, 10 Mar 2018 08:44:46 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180310131355.GA8798@hmswarspite.think-freely.org>
-References: <00000000000017dfe905670110cf@google.com> <20180309220823.GA24848@neilslaptop.think-freely.org>
- <CADvbK_fGkhJeirYwiu9ORmmPPBpqamgO2+vi9Osyd92cUWJBVA@mail.gmail.com> <20180310131355.GA8798@hmswarspite.think-freely.org>
-From: Xin Long <lucien.xin@gmail.com>
-Date: Sun, 11 Mar 2018 00:22:32 +0800
-Message-ID: <CADvbK_cFjeC-eGdKzYnJxySBY6emVVC8KXQtzLDUZLJzBLb-UA@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in sctp_association_free (2)
-To: Neil Horman <nhorman@tuxdriver.com>
-Cc: syzbot <syzbot+a4e4112c3aff00c8cfd8@syzkaller.appspotmail.com>,
-        davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-sctp@vger.kernel.org, network dev <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com, Vlad Yasevich <vyasevich@gmail.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1520623196-9534-2-git-send-email-eajames@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 10, 2018 at 9:13 PM, Neil Horman <nhorman@tuxdriver.com> wrote:
-> On Sat, Mar 10, 2018 at 03:58:04PM +0800, Xin Long wrote:
->> On Sat, Mar 10, 2018 at 6:08 AM, Neil Horman <nhorman@tuxdriver.com> wrote:
->> > On Fri, Mar 09, 2018 at 12:59:06PM -0800, syzbot wrote:
->> >> Hello,
->> >>
->> >> syzbot hit the following crash on net-next commit
->> >> fd372a7a9e5e9d8011a0222d10edd3523abcd3b1 (Thu Mar 8 19:43:48 2018 +0000)
->> >> Merge tag 'mlx5-updates-2018-02-28-2' of
->> >> git://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux
->> >>
->> >> So far this crash happened 2 times on net-next.
->> >> C reproducer is attached.
->> >> syzkaller reproducer is attached.
->> >> Raw console output is attached.
->> >> compiler: gcc (GCC) 7.1.1 20170620
->> >> .config is attached.
->> >>
->> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> >> Reported-by: syzbot+a4e4112c3aff00c8cfd8@syzkaller.appspotmail.com
->> >> It will help syzbot understand when the bug is fixed. See footer for
->> >> details.
->> >> If you forward the report, please keep this part and the footer.
->> >>
->> >> IPVS: ftp: loaded support on port[0] = 21
->> >> IPVS: ftp: loaded support on port[0] = 21
->> >> IPVS: ftp: loaded support on port[0] = 21
->> >> IPVS: ftp: loaded support on port[0] = 21
->> >> ==================================================================
->> >> BUG: KASAN: use-after-free in sctp_association_free+0x7b7/0x930
->> >> net/sctp/associola.c:332
->> >> Read of size 8 at addr ffff8801d8006ae0 by task syzkaller914861/4202
->> >>
->> >> CPU: 1 PID: 4202 Comm: syzkaller914861 Not tainted 4.16.0-rc4+ #258
->> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> >> Google 01/01/2011
->> >> Call Trace:
->> >>  __dump_stack lib/dump_stack.c:17 [inline]
->> >>  dump_stack+0x194/0x24d lib/dump_stack.c:53
->> >>  print_address_description+0x73/0x250 mm/kasan/report.c:256
->> >>  kasan_report_error mm/kasan/report.c:354 [inline]
->> >>  kasan_report+0x23c/0x360 mm/kasan/report.c:412
->> >>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
->> >>  sctp_association_free+0x7b7/0x930 net/sctp/associola.c:332
->> >>  sctp_sendmsg+0xc67/0x1a80 net/sctp/socket.c:2075
->> >>  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:763
->> >>  sock_sendmsg_nosec net/socket.c:629 [inline]
->> >>  sock_sendmsg+0xca/0x110 net/socket.c:639
->> >>  SYSC_sendto+0x361/0x5c0 net/socket.c:1748
->> >>  SyS_sendto+0x40/0x50 net/socket.c:1716
->> >>  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
->> >>  entry_SYSCALL_64_after_hwframe+0x42/0xb7
->> >> RIP: 0033:0x446d09
->> >> RSP: 002b:00007f5dbac21da8 EFLAGS: 00000216 ORIG_RAX: 000000000000002c
->> >> RAX: ffffffffffffffda RBX: 00000000006e29fc RCX: 0000000000446d09
->> >> RDX: 0000000000000001 RSI: 0000000020000340 RDI: 0000000000000003
->> >> RBP: 00000000006e29f8 R08: 00000000204d9000 R09: 000000000000001c
->> >> R10: 0000000000000000 R11: 0000000000000216 R12: 0000000000000000
->> >> R13: 00007fff7b26fb1f R14: 00007f5dbac229c0 R15: 00000000006e2b60
->> >>
->> > I think we have a corner case with a0ff660058b88d12625a783ce9e5c1371c87951f
->> > here.  If a peeloff event happens during a wait for sendbuf space, EPIPE will be
->> > returned, and the code path appears to call sctp_association_put twice, leading
->> > to the use after free situation.  I'll write a patch this weekend
->> Hi, Neil, you're right.
->>
->> I didn't expect peeloff can be done on a NEW asoc, as peeloff needs
->> assoc_id, which can only be set when connecting has started.
->>
->> But I realized that:
->> f84af33 sctp: factor out sctp_sendmsg_to_asoc from sctp_sendmsg
->>
->> moved sctp_primitive_ASSOCIATE(connecting) before sctp_wait_for_sndbuf
->> (snd buffer waiting). It means peeloff can be done on a NEW asoc.
->> So you may want to move it back.
->>
-> I agree with the root cause, but I'm not sure I agree with just moving the
-> wait_for_sndbuf call back above the call to associate.  I'm not sure I like
-> relying on placing a call in a spcific order solely to avoid an error condition
-> that might legitimately occur.  I think would rather check the return code at
-> the call site for the complete set of conditions for which we should not free
-> the association.  Something like this:
->
-> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-> index 7d3476a4860d..a68846d2b0ef 100644
-> --- a/net/sctp/socket.c
-> +++ b/net/sctp/socket.c
-> @@ -2071,8 +2071,9 @@ static int sctp_sendmsg(struct sock *sk, struct msghdr *msg, size_t msg_len)
->
->         /* Send msg to the asoc */
->         err = sctp_sendmsg_to_asoc(asoc, msg, msg_len, transport, sinfo);
-> -       if (err < 0 && err != -ESRCH && new)
-> -               sctp_association_free(asoc);
-> +       if ((err != -ESRCH) && (err != -EPIPE))
-> +               if (err < 0 && new)
-> +                       sctp_association_free(asoc);
->
->  out_unlock:
->         release_sock(sk);
->
-> Which I think also avoids the noted conflict.
->
-> Thoughts?
-If sctp_association_free is called for general asoc, yes, I agree with you.
-But it's actually only for NEW asoc, a special case, not worth a extra check.
-'err != -ESRCH' is already kind of ugly there (I couldn't find a nicer way :D),
-I don't hope there will be more like that.
+On 03/09/2018 11:19 AM, Eddie James wrote:
+> From: Christopher Bostic <cbostic@linux.vnet.ibm.com>
+> 
+> Add a struct gpio_chip and define some methods so that this device's
+> I/O can be accessed via /sys/class/gpio.
+> 
+> Signed-off-by: Christopher Bostic <cbostic@linux.vnet.ibm.com>
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+> ---
+>   drivers/hwmon/pmbus/ucd9000.c | 220 ++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 220 insertions(+)
+> 
+> diff --git a/drivers/hwmon/pmbus/ucd9000.c b/drivers/hwmon/pmbus/ucd9000.c
+> index b74dbec..e3a507f 100644
+> --- a/drivers/hwmon/pmbus/ucd9000.c
+> +++ b/drivers/hwmon/pmbus/ucd9000.c
+> @@ -27,6 +27,7 @@
+>   #include <linux/slab.h>
+>   #include <linux/i2c.h>
+>   #include <linux/pmbus.h>
+> +#include <linux/gpio.h>
+>   #include "pmbus.h"
+>   
+>   enum chips { ucd9000, ucd90120, ucd90124, ucd90160, ucd9090, ucd90910 };
+> @@ -35,8 +36,18 @@
+>   #define UCD9000_NUM_PAGES		0xd6
+>   #define UCD9000_FAN_CONFIG_INDEX	0xe7
+>   #define UCD9000_FAN_CONFIG		0xe8
+> +#define UCD9000_GPIO_SELECT		0xfa
+> +#define UCD9000_GPIO_CONFIG		0xfb
+>   #define UCD9000_DEVICE_ID		0xfd
+>   
+> +/* GPIO CONFIG bits */
+> +#define UCD9000_GPIO_CONFIG_ENABLE	BIT(0)
+> +#define UCD9000_GPIO_CONFIG_OUT_ENABLE	BIT(1)
+> +#define UCD9000_GPIO_CONFIG_OUT_VALUE	BIT(2)
+> +#define UCD9000_GPIO_CONFIG_STATUS	BIT(3)
+> +#define UCD9000_GPIO_INPUT		0
+> +#define UCD9000_GPIO_OUTPUT		1
+> +
+>   #define UCD9000_MON_TYPE(x)	(((x) >> 5) & 0x07)
+>   #define UCD9000_MON_PAGE(x)	((x) & 0x0f)
+>   
+> @@ -47,9 +58,15 @@
+>   
+>   #define UCD9000_NUM_FAN		4
+>   
+> +#define UCD9000_GPIO_NAME_LEN	16
+> +#define UCD9090_NUM_GPIOS	23
+> +#define UCD901XX_NUM_GPIOS	26
+> +#define UCD90910_NUM_GPIOS	26
+> +
+>   struct ucd9000_data {
+>   	u8 fan_data[UCD9000_NUM_FAN][I2C_SMBUS_BLOCK_MAX];
+>   	struct pmbus_driver_info info;
+> +	struct gpio_chip gpio;
+>   };
+>   #define to_ucd9000_data(_info) container_of(_info, struct ucd9000_data, info)
+>   
+> @@ -149,6 +166,168 @@ static int ucd9000_read_byte_data(struct i2c_client *client, int page, int reg)
+>   };
+>   MODULE_DEVICE_TABLE(of, ucd9000_of_match);
+>   
+> +static int ucd9000_gpio_read_config(struct i2c_client *client,
+> +				    unsigned int offset)
+> +{
+> +	int ret;
+> +
+> +	/* No page set required */
+> +	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_SELECT, offset);
+> +	if (ret < 0) {
+> +		dev_err(&client->dev, "Failed to select GPIO %d: %d\n", offset,
+> +			ret);
+> +
 
-And also, I think I moved sctp_primitive_ASSOCIATE before
-sctp_wait_for_sndbuf by accident in that patch(Sorry), which may
-already change some behavior. We have to move it back.
+I am not a fan of kernel log error messages outside the probe function.
+Please consider dropping those or making it dev_dbg.
+
+Would it make sense to cache those values ?
+
+> +		return ret;
+> +	}
+> +
+> +	return i2c_smbus_read_byte_data(client, UCD9000_GPIO_CONFIG);
+> +}
+> +
+> +static int ucd9000_gpio_get(struct gpio_chip *gc, unsigned int offset)
+> +{
+> +	struct i2c_client *client  = gpiochip_get_data(gc);
+> +	int ret;
+> +
+> +	ret = ucd9000_gpio_read_config(client, offset);
+> +	if (ret < 0) {
+> +		dev_err(&client->dev, "failed to read GPIO %d config: %d\n",
+> +			offset, ret);
+> +
+... even more so if a single error can result in multiple error messages.
+
+> +		return ret;
+> +	}
+> +
+> +	return !!(ret & UCD9000_GPIO_CONFIG_STATUS);
+> +}
+> +
+> +static void ucd9000_gpio_set(struct gpio_chip *gc, unsigned int offset,
+> +			     int value)
+> +{
+> +	struct i2c_client *client = gpiochip_get_data(gc);
+> +	int ret;
+> +
+> +	ret = ucd9000_gpio_read_config(client, offset);
+> +	if (ret < 0) {
+> +		dev_err(&client->dev, "failed to read GPIO %d config: %d\n",
+> +			offset, ret);
+> +
+> +		return;
+> +	}
+> +
+> +	if (value) {
+> +		if (ret & UCD9000_GPIO_CONFIG_STATUS)
+> +			return;
+> +
+> +		ret |= UCD9000_GPIO_CONFIG_STATUS;
+> +	} else {
+> +		if (!(ret & UCD9000_GPIO_CONFIG_STATUS))
+> +			return;
+> +
+> +		ret &= ~UCD9000_GPIO_CONFIG_STATUS;
+> +	}
+> +
+> +	ret |= UCD9000_GPIO_CONFIG_ENABLE;
+> +
+> +	/* Page set not required */
+> +	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, ret);
+> +	if (ret < 0) {
+> +		dev_err(&client->dev, "Failed to write GPIO %d config: %d\n",
+> +			offset, ret);
+> +
+> +		return;
+> +	}
+> +
+> +	ret &= ~UCD9000_GPIO_CONFIG_ENABLE;
+> +
+> +	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, ret);
+> +	if (ret < 0)
+> +		dev_err(&client->dev, "Failed to write GPIO %d config: %d\n",
+> +			offset, ret);
+> +}
+> +
+> +static int ucd9000_gpio_get_direction(struct gpio_chip *gc,
+> +				      unsigned int offset)
+> +{
+> +	struct i2c_client *client = gpiochip_get_data(gc);
+> +	int ret;
+> +
+> +	ret = ucd9000_gpio_read_config(client, offset);
+> +	if (ret < 0) {
+> +		dev_err(&client->dev, "failed to read GPIO %d config: %d\n",
+> +			offset, ret);
+> +
+> +		return ret;
+> +	}
+> +
+> +	return !(ret & UCD9000_GPIO_CONFIG_OUT_ENABLE);
+> +}
+> +
+> +static int ucd9000_gpio_set_direction(struct gpio_chip *gc,
+> +				      unsigned int offset, bool direction_out,
+> +				      int requested_out)
+> +{
+> +	struct i2c_client *client = gpiochip_get_data(gc);
+> +	int ret, config, out_val;
+> +
+> +	ret = ucd9000_gpio_read_config(client, offset);
+> +	if (ret < 0) {
+> +		dev_err(&client->dev, "failed to read GPIO %d config: %d\n",
+> +			offset, ret);
+> +
+> +		return ret;
+> +	}
+> +
+> +	if (direction_out) {
+> +		out_val = requested_out ? UCD9000_GPIO_CONFIG_OUT_VALUE : 0;
+> +
+> +		if (ret & UCD9000_GPIO_CONFIG_OUT_ENABLE) {
+> +			if ((ret & UCD9000_GPIO_CONFIG_OUT_VALUE) == out_val)
+> +				return 0;
+> +		} else {
+> +			ret |= UCD9000_GPIO_CONFIG_OUT_ENABLE;
+> +		}
+> +
+> +		if (out_val)
+> +			ret |= UCD9000_GPIO_CONFIG_OUT_VALUE;
+> +		else
+> +			ret &= ~UCD9000_GPIO_CONFIG_OUT_VALUE;
+> +
+> +	} else {
+> +		if (!(ret & UCD9000_GPIO_CONFIG_OUT_ENABLE))
+> +			return 0;
+> +
+> +		ret &= ~UCD9000_GPIO_CONFIG_OUT_ENABLE;
+> +	}
+> +
+> +	ret |= UCD9000_GPIO_CONFIG_ENABLE;
+> +	config = ret;
+> +
+> +	/* Page set not required */
+> +	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, config);
+> +	if (ret < 0) {
+> +		dev_err(&client->dev, "Failed to write GPIO %d config: %d\n",
+> +			offset, ret);
+> +
+> +		return ret;
+> +	}
+> +
+> +	config &= ~UCD9000_GPIO_CONFIG_ENABLE;
+> +
+> +	return i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, config);
+> +}
+> +
+> +static int ucd9000_gpio_direction_input(struct gpio_chip *gc,
+> +					unsigned int offset)
+> +{
+> +	return ucd9000_gpio_set_direction(gc, offset, UCD9000_GPIO_INPUT, 0);
+> +}
+> +
+> +static int ucd9000_gpio_direction_output(struct gpio_chip *gc,
+> +					 unsigned int offset, int val)
+> +{
+> +	return ucd9000_gpio_set_direction(gc, offset, UCD9000_GPIO_OUTPUT,
+> +					  val);
+> +}
+> +
+>   static int ucd9000_probe(struct i2c_client *client,
+>   			 const struct i2c_device_id *id)
+>   {
+> @@ -263,6 +442,47 @@ static int ucd9000_probe(struct i2c_client *client,
+>   		  | PMBUS_HAVE_FAN34 | PMBUS_HAVE_STATUS_FAN34;
+>   	}
+>   
+> +	/*
+> +	 * Note:
+> +	 *
+> +	 * Pinmux support has not been added to the new gpio_chip.
+> +	 * This support should be added when possible given the mux
+> +	 * behavior of these IO devices.
+> +	 */
+> +	data->gpio.label = (const char *)&client->name;
+> +	data->gpio.get_direction = ucd9000_gpio_get_direction;
+> +	data->gpio.direction_input = ucd9000_gpio_direction_input;
+> +	data->gpio.direction_output = ucd9000_gpio_direction_output;
+> +	data->gpio.get = ucd9000_gpio_get;
+> +	data->gpio.set = ucd9000_gpio_set;
+> +	data->gpio.can_sleep = 1;
+> +	data->gpio.base = -1;
+> +
+
+Also set of_node ?
+
+> +	/* No default case. No data available for ucd9000. */
+> +	switch (mid->driver_data) {
+> +	case ucd9090:
+> +		data->gpio.ngpio = UCD9090_NUM_GPIOS;
+> +		break;
+> +	case ucd90120:
+> +	case ucd90124:
+> +	case ucd90160:
+> +		data->gpio.ngpio = UCD901XX_NUM_GPIOS;
+> +		break;
+> +	case ucd90910:
+> +		data->gpio.ngpio = UCD90910_NUM_GPIOS;
+> +		break;
+
+Why not:
+
+	default:
+		break;
+
+instead of the comment above ?
+
+> +	}
+> +
+> +	data->gpio.parent = &client->dev;
+> +	data->gpio.owner = THIS_MODULE;
+> +
+
+Since there are chips with no gpio support (ngpio=0), it would be better
+to make the gpio registration conditional.
+
+> +	ret = devm_gpiochip_add_data(&client->dev, &data->gpio, client);
+> +	if (ret) {
+> +		data->gpio.parent = NULL;
+> +		dev_warn(&client->dev, "Could not add gpiochip: %d\n", ret);
+
+Either dev_warn and ignore the error, or dev_err. Either case setting data->gpio.parent
+to NULL should be unnecessary.
+
+> +		return ret;
+> +	}
+> +
+>   	return pmbus_do_probe(client, mid, info);
+>   }
+>   
+> 
