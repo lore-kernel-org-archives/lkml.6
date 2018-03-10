@@ -1,113 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751748AbeCJCjL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 21:39:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49034 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751373AbeCJCjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 21:39:09 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9102221771
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180310023442.791997138@goodmis.org>
-User-Agent: quilt/0.63-1
-Date: Fri, 09 Mar 2018 21:34:42 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>, Jiri Olsa <jolsa@kernel.org>
-Subject: [PATCH 0/3] tracing: Rewrite the function filter code
+        id S932885AbeCJCjp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 21:39:45 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:54181 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932696AbeCJCjm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 21:39:42 -0500
+X-Google-Smtp-Source: AG47ELs4KrvI4oc+ge63g9CycNwOEERIu53kywpEm4rVQnx065rXxbEXPgI1aXa8LlYurOcMY4ccow==
+From: srinivas.kandagatla@linaro.org
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2] ASoC: dapm: add support to pinctrl dapm
+Date: Sat, 10 Mar 2018 02:37:27 +0000
+Message-Id: <20180310023727.27077-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Al Viro reviewed the ftrace event filter logic and was horrified. He wrote
-Tom and I a lengthy private email with a formal proof on how to do it
-simpler as well as more efficient.
+Purpose of having pinctrl dapm is to dynamically put the pins in
+low power state when they are not actively used by the audio and
+saving power.
 
-Currently the filter logic creates a binary search tree (with some
-optimizations), and walks it to get a result.
+Without this each driver has to set the pinctrl states, either
+during probe or dynamically depending on the callbacks received
+from ASoC core.
 
-Say we had the following filter: a && !(!b || c) || d && !e
-Where each letter is a predicate. A tree would be made to look something
-like:
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+Changes since v1:
+	- removed synchronize with the DAPM async queue
 
-             ||
-            /  \
-          &&    &&
-         /  |   | \
-        a  !||  d  !e
-           /  \
-          !b   c
+ include/sound/soc-dapm.h | 16 ++++++++++++++++
+ sound/soc/soc-dapm.c     | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 58 insertions(+)
 
-If a == 1, b == 1, c == 1, d == 1, e == 0, then all nodes would be walked.
-
- || -> && -> a -> && -> !|| -> !b -> !|| -> c -> !|| -> && -> || -> && ->
- d -> && -> !e -> && -> || -> return TRUE!
-
-That's 16 steps across vertices.
-
-Al's method would create a program using an array that denotes the predicate
-function, when to branch, and a target to branch to if the value is the same
-as when to branch. Storing the array as:
-
- prog[0] = { a, 0, 2}; // predicate, when_to_branch, target
- prog[1] = { b, 0, 2};
- prog[2] = { c, 0, 4};
- prog[3] = { d, 0, 5};
- prog[4] = { e, 1, 5};
- prog[5] = { NULL, 0, 1}; // TRUE
- prog[6] = { NULL, 0, 0}; // FALSE
-
-Where the code to execute the above looks like:
-
-	for (i = 0; prog[i].pred; i++) {
-		struct filter_pred *pred = prog[i].pred;
-		int match = pred->fn(pred, rec);
-		if (match == prog[i].when_to_branch)
-			i = prog[i].target;
-	}
-	return prog[i].target;
-
-Which translates the above program array into:
-
- n0: if (!a) goto n3;
- n1: if (!b) goto n3;
- n2: if (!c) goto T;
- n3: if (!d) goto F;
- n4: if (e) goto F;
- T: return TRUE;
- F: return FALSE;
-
-And the above example only takes 6 steps to return TRUE.
-
-Special thanks goes out to Al for his patience and his time that he spent in
-educating us in a proper logical parser.
-
-Two patches were added to do some initial clean up. The last patch
-implements Al's suggestions. I wrote up a very lengthy comment describing
-what Al taught us in my own words (hopefully I got it right), and the
-implementation is similar to what Al showed with a few changes (again,
-hopefully I got that right too). I tested this with lots of different
-filters and it looks to be holding up.
-
-
- Jiri,
-
-This affects perf as well. I ran some tests and I believe I got
-it woking as it does today.
-
-Steven Rostedt (VMware) (3):
-      tracing: Combine enum and arrays into single macro in filter code
-      tracing: Clean up and document pred_funcs_##type creation and use
-      tracing: Rewrite filter logic to be simpler and faster
-
-----
- kernel/trace/trace.h               |   15 +-
- kernel/trace/trace_events_filter.c | 2372 ++++++++++++++++--------------------
- 2 files changed, 1083 insertions(+), 1304 deletions(-)
+diff --git a/include/sound/soc-dapm.h b/include/sound/soc-dapm.h
+index 344b96c206a3..a6ce2de4e20a 100644
+--- a/include/sound/soc-dapm.h
++++ b/include/sound/soc-dapm.h
+@@ -269,6 +269,13 @@ struct device;
+ 	.reg = SND_SOC_NOPM, .shift = wdelay, .event = dapm_regulator_event, \
+ 	.event_flags = SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD, \
+ 	.on_val = wflags}
++#define SND_SOC_DAPM_PINCTRL(wname, active, sleep) \
++{	.id = snd_soc_dapm_pinctrl, .name = wname, \
++	.priv = (&(struct snd_soc_dapm_pinctrl_priv) \
++		{ .active_state = active, .sleep_state = sleep,}), \
++	.reg = SND_SOC_NOPM, .event = dapm_pinctrl_event, \
++	.event_flags = SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD }
++
+ 
+ 
+ /* dapm kcontrol types */
+@@ -374,6 +381,8 @@ int dapm_regulator_event(struct snd_soc_dapm_widget *w,
+ 			 struct snd_kcontrol *kcontrol, int event);
+ int dapm_clock_event(struct snd_soc_dapm_widget *w,
+ 			 struct snd_kcontrol *kcontrol, int event);
++int dapm_pinctrl_event(struct snd_soc_dapm_widget *w,
++			 struct snd_kcontrol *kcontrol, int event);
+ 
+ /* dapm controls */
+ int snd_soc_dapm_put_volsw(struct snd_kcontrol *kcontrol,
+@@ -500,6 +509,7 @@ enum snd_soc_dapm_type {
+ 	snd_soc_dapm_pre,			/* machine specific pre widget - exec first */
+ 	snd_soc_dapm_post,			/* machine specific post widget - exec last */
+ 	snd_soc_dapm_supply,		/* power/clock supply */
++	snd_soc_dapm_pinctrl,		/* pinctrl */
+ 	snd_soc_dapm_regulator_supply,	/* external regulator */
+ 	snd_soc_dapm_clock_supply,	/* external clock */
+ 	snd_soc_dapm_aif_in,		/* audio interface input */
+@@ -581,6 +591,7 @@ struct snd_soc_dapm_widget {
+ 
+ 	void *priv;				/* widget specific data */
+ 	struct regulator *regulator;		/* attached regulator */
++	struct pinctrl *pinctrl;		/* attached pinctrl */
+ 	const struct snd_soc_pcm_stream *params; /* params for dai links */
+ 	unsigned int num_params; /* number of params for dai links */
+ 	unsigned int params_select; /* currently selected param for dai link */
+@@ -683,6 +694,11 @@ struct snd_soc_dapm_stats {
+ 	int neighbour_checks;
+ };
+ 
++struct snd_soc_dapm_pinctrl_priv {
++	const char *active_state;
++	const char *sleep_state;
++};
++
+ /**
+  * snd_soc_dapm_init_bias_level() - Initialize DAPM bias level
+  * @dapm: The DAPM context to initialize
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index 40085a4c8f92..ac4f13230faf 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -35,6 +35,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/pinctrl/consumer.h>
+ #include <linux/clk.h>
+ #include <linux/slab.h>
+ #include <sound/core.h>
+@@ -72,6 +73,7 @@ snd_soc_dapm_new_control_unlocked(struct snd_soc_dapm_context *dapm,
+ static int dapm_up_seq[] = {
+ 	[snd_soc_dapm_pre] = 0,
+ 	[snd_soc_dapm_regulator_supply] = 1,
++	[snd_soc_dapm_pinctrl] = 1,
+ 	[snd_soc_dapm_clock_supply] = 1,
+ 	[snd_soc_dapm_supply] = 2,
+ 	[snd_soc_dapm_micbias] = 3,
+@@ -119,6 +121,7 @@ static int dapm_down_seq[] = {
+ 	[snd_soc_dapm_dai_link] = 11,
+ 	[snd_soc_dapm_supply] = 12,
+ 	[snd_soc_dapm_clock_supply] = 13,
++	[snd_soc_dapm_pinctrl] = 13,
+ 	[snd_soc_dapm_regulator_supply] = 13,
+ 	[snd_soc_dapm_post] = 14,
+ };
+@@ -1287,6 +1290,31 @@ int dapm_regulator_event(struct snd_soc_dapm_widget *w,
+ }
+ EXPORT_SYMBOL_GPL(dapm_regulator_event);
+ 
++/*
++ * Handler for pinctrl widget.
++ */
++int dapm_pinctrl_event(struct snd_soc_dapm_widget *w,
++		       struct snd_kcontrol *kcontrol, int event)
++{
++	struct snd_soc_dapm_pinctrl_priv *priv = w->priv;
++	struct pinctrl *p = w->pinctrl;
++	struct pinctrl_state *s;
++
++	if (!p || !priv)
++		return -EIO;
++
++	if (SND_SOC_DAPM_EVENT_ON(event))
++		s = pinctrl_lookup_state(p, priv->active_state);
++	else
++		s = pinctrl_lookup_state(p, priv->sleep_state);
++
++	if (IS_ERR(s))
++		return PTR_ERR(s);
++
++	return pinctrl_select_state(p, s);
++}
++EXPORT_SYMBOL_GPL(dapm_pinctrl_event);
++
+ /*
+  * Handler for clock supply widget.
+  */
+@@ -1900,6 +1928,7 @@ static int dapm_power_widgets(struct snd_soc_card *card, int event)
+ 				break;
+ 			case snd_soc_dapm_supply:
+ 			case snd_soc_dapm_regulator_supply:
++			case snd_soc_dapm_pinctrl:
+ 			case snd_soc_dapm_clock_supply:
+ 			case snd_soc_dapm_micbias:
+ 				if (d->target_bias_level < SND_SOC_BIAS_STANDBY)
+@@ -2313,6 +2342,7 @@ static ssize_t dapm_widget_show_component(struct snd_soc_component *cmpnt,
+ 		case snd_soc_dapm_mixer_named_ctl:
+ 		case snd_soc_dapm_supply:
+ 		case snd_soc_dapm_regulator_supply:
++		case snd_soc_dapm_pinctrl:
+ 		case snd_soc_dapm_clock_supply:
+ 			if (w->name)
+ 				count += sprintf(buf + count, "%s: %s\n",
+@@ -3462,6 +3492,17 @@ snd_soc_dapm_new_control_unlocked(struct snd_soc_dapm_context *dapm,
+ 					 w->name, ret);
+ 		}
+ 		break;
++	case snd_soc_dapm_pinctrl:
++		w->pinctrl = devm_pinctrl_get(dapm->dev);
++		if (IS_ERR_OR_NULL(w->pinctrl)) {
++			ret = PTR_ERR(w->pinctrl);
++			if (ret == -EPROBE_DEFER)
++				return ERR_PTR(ret);
++			dev_err(dapm->dev, "ASoC: Failed to request %s: %d\n",
++				w->name, ret);
++			return NULL;
++		}
++		break;
+ 	case snd_soc_dapm_clock_supply:
+ #ifdef CONFIG_CLKDEV_LOOKUP
+ 		w->clk = devm_clk_get(dapm->dev, w->name);
+@@ -3541,6 +3582,7 @@ snd_soc_dapm_new_control_unlocked(struct snd_soc_dapm_context *dapm,
+ 		break;
+ 	case snd_soc_dapm_supply:
+ 	case snd_soc_dapm_regulator_supply:
++	case snd_soc_dapm_pinctrl:
+ 	case snd_soc_dapm_clock_supply:
+ 	case snd_soc_dapm_kcontrol:
+ 		w->is_supply = 1;
+-- 
+2.15.1
