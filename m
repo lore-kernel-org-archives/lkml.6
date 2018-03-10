@@ -1,89 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751194AbeCJUnR (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 15:43:17 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:58018 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751043AbeCJUnQ (ORCPT
+        id S1751266AbeCJUoH (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 15:44:07 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:44510 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750704AbeCJUoF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 15:43:16 -0500
-Subject: Re: [RESEND PATCH] sched/fair: consider RT/IRQ pressure in
- select_idle_sibling
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, linux-kernel@vger.kernel.org,
-        steven.sistare@oracle.com, dhaval.giani@oracle.com, joelaf@google.com,
-        dietmar.eggemann@arm.com, vincent.guittot@linaro.org,
-        morten.rasmussen@arm.com, eas-dev@lists.linaro.org
-References: <1517268429-933-1-git-send-email-rohit.k.jain@oracle.com>
- <20180209125358.GO25201@hirez.programming.kicks-ass.net>
-From: Rohit Jain <rohit.k.jain@oracle.com>
-Message-ID: <11d1a1df-7a4e-fdb5-6de2-680f447a63ad@oracle.com>
-Date: Sat, 10 Mar 2018 12:41:47 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sat, 10 Mar 2018 15:44:05 -0500
+X-Google-Smtp-Source: AG47ELsvB4cMzUWbR5iJxroFZ4YxrQNGSsm2xRaPwZ4RGDYXqHaH5rU/9Ex6L6k/u0wfT3UwRuds2w==
+From: =?UTF-8?q?Micha=C5=82=20K=C4=99pie=C5=84?= <kernel@kempniu.pl>
+To: Jonathan Woithe <jwoithe@just42.net>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86: fujitsu-laptop: Revert UNSUPPORTED_CMD back to an int
+Date: Sat, 10 Mar 2018 21:43:53 +0100
+Message-Id: <20180310204353.9584-1-kernel@kempniu.pl>
+X-Mailer: git-send-email 2.16.2
 MIME-Version: 1.0
-In-Reply-To: <20180209125358.GO25201@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8828 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803100253
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+UNSUPPORTED_CMD was previously 0x80000000 (int), but commit 819cddae7cfa
+("platform/x86: fujitsu-laptop: Clean up constants") changed it into an
+unsigned long due to BIT() being used to define it.  As call_fext_func()
+returns an int, 0x80000000 would get type promoted when compared to an
+unsigned long, which on a 64-bit system would cause it to become
+0xffffffff80000000 due to sign extension.  This causes one logical
+condition in fujitsu-laptop to always be true and another one to always
+be false on 64-bit systems.  Fix this by reverting UNSUPPORTED_CMD back
+to an int.
 
-On 02/09/2018 04:53 AM, Peter Zijlstra wrote:
+This patch fixes the following smatch warnings:
 
-<snip>
+drivers/platform/x86/fujitsu-laptop.c:763 acpi_fujitsu_laptop_leds_register() warn: always true condition '(call_fext_func(device, ((1 << (12)) | (1 << (0))), 2, (1 << (16)), 0) != (1 << (31))) => (s32min-s32max != 2147483648)'
+drivers/platform/x86/fujitsu-laptop.c:816 acpi_fujitsu_laptop_add() warn: impossible condition '(priv->flags_supported == (1 << (31))) => (0-2147483647,18446744071562067968-u64max == 2147483648)'
 
->>   	this_sd = rcu_dereference(*this_cpu_ptr(&sd_llc));
->>   	if (!this_sd)
->> @@ -6173,8 +6183,15 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
->>   			return -1;
->>   		if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
->>   			continue;
->> +		if (idle_cpu(cpu)) {
->> +			if (full_capacity(cpu)) {
->> +				best_cpu = cpu;
->> +				break;
->> +			} else if (capacity_of(cpu) > best_cap) {
->> +				best_cap = capacity_of(cpu);
->> +				best_cpu = cpu;
->> +			}
->> +		}
-> No need for the else. And you'll note you're once again inconsistent
-> with your previous self.
->
-> But here I worry about big.little a wee bit. I think we're allowed big
-> and little cores on the same L3 these days, and you can't directly
-> compare capacity between them.
->
->
-<snip>
+Fixes: 819cddae7cfa ("platform/x86: fujitsu-laptop: Clean up constants")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Michał Kępień <kernel@kempniu.pl>
+---
+This fixes a bug introduced by a commit queued for 4.17, so it needs to
+be applied on top of for-next.
 
-After pulling to the latest code I see that the changes by Mel Gorman
-(commit 32e839dda3ba576943365f0f5817ce5c843137dc) have created a short
-path for returning an idle CPU.
+ drivers/platform/x86/fujitsu-laptop.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The fact that now there exists a short path, to bypass rest of
-select_idle_sibling (SIS) is causing a regression in the
-"hackbench + ping" testcase *when* I add capacity awareness in the baseline
-code as was discussed here.
-
-In details: baseline today has a short cut in the recent_used_cpu to
-bypass SIS. When I add capacity awareness in the SIS code path, causing
-that extra search to find a better CPU itself is taking more time than
-the benefit it provides.
-
-However, there are certain patches which reduce SIS cost while
-maintaining a similar spread for threads on CPUs. When I use those
-patches I see that the benefit for adding capacity awareness is
-restored. Please suggest how to proceed on this.
-
-Thanks,
-Rohit
+diff --git a/drivers/platform/x86/fujitsu-laptop.c b/drivers/platform/x86/fujitsu-laptop.c
+index 13bcdfea5349..6f4a55a53ced 100644
+--- a/drivers/platform/x86/fujitsu-laptop.c
++++ b/drivers/platform/x86/fujitsu-laptop.c
+@@ -85,7 +85,7 @@
+ #define FUNC_BACKLIGHT			(BIT(12) | BIT(2))
+ 
+ /* FUNC interface - responses */
+-#define UNSUPPORTED_CMD			BIT(31)
++#define UNSUPPORTED_CMD			0x80000000
+ 
+ /* FUNC interface - status flags */
+ #define FLAG_RFKILL			BIT(5)
+-- 
+2.16.2
