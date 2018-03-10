@@ -1,117 +1,141 @@
-Return-Path: <lurodriguez@suse.de>
-X-Google-Smtp-Source: AG47ELshMjOs9z8rljs/ETGjDau+VbQQ7W+c6JkbKjJmokDrtDZYsTJERVGlEpHNJHHZJRR/us2X
-ARC-Seal: i=1; a=rsa-sha256; t=1521575514; cv=none;
+Return-Path: <mcgrof@kernel.org>
+X-Google-Smtp-Source: AG47ELvSoXpURm6/oEgtqP3p5olHkuwhTC3elydhOEQtRizFDCVFJbnLr7X49sf4gnkC/0hS5QYD
+ARC-Seal: i=1; a=rsa-sha256; t=1520691327; cv=none;
         d=google.com; s=arc-20160816;
-        b=V2innkoXlJduSkLvmzqD1IveVXX67tAxkHStIDknBHgw4XtBVmyyeOGgg1QBoa6h+9
-         T2YOfmSiIouqyNgJSVO253ufFT0rjyLjbfEDaJZ/UNTDeV1puhbRHT31k9/DyRO9QHK6
-         Abr61OuWOKbKaIT377O/3gc4RMS/fE5BoOKYVjO1exfih5pWkpWnCVrjSWzSDtJE+fbc
-         1TrWTpF0r434rSssgBuFAtbO5opprlUV1swUztnEauP2L1PRzcFklsOjtCvUlp0aSDww
-         Yl+foy5wVS3hrLOd8qCUcnRmyza2A+3G3WlUCUi4blQSWWP2SHkgbJB27KAyJIK3RoJd
-         PclQ==
+        b=YxqAbaaRVwBSQaFGKQE0O/dBTPbLPYYc88fZkG9/9gv68FtJW2p/Wyc8pqEk55vEie
+         ZJgBbx20P11+5TbGPnjTv+oo2FbjTrW4Fi+kOz1PiP/PKnnaZA/qVIBkaaPXHfDJPzjf
+         OsJtYmzCsqaEonZBqKyc2x8f3ZOUgZgRbInbwOEPfrHU3/uunXov+4aekX9HUdVg2VSV
+         ZgTymRuMr7Z9y2rbUG/Sq/AuiEPXP9UJPQKZtfiJxo7Zz4FE7JESIRhQ4fyVP/oRZng5
+         qYWdt63km4TG4ORGRm4wI0IYWGUjK3qJxxl/kf1of9jXjRbCACz+o/wgLrm50T4Qc3E4
+         Yj3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=NwHpW4t66ug6/XeuTLhR/HDDNfTc4EHhsMYLcX3r8LU=;
-        b=Y+kJsPzWZlajzfiBIWeum8d+o4Fau6Dl6RJ7Df9YEo2oQ+umjMWIOlMd0w9i8A23wm
-         NjwRVRks2jFJ1hiElKsfArDZtkAw4lZi2SJVT1GqGjKKXckku4chBn/Q24GOjgW+2dUd
-         QHdNuOu7RARiq2TNFV0K1tHe8MQo4ZmfgeQB8sqsZ7UE54c5zc79gDHAg7aN3+OvCpRC
-         WWt5aQSNx8p9XjQ4RF0d0mBWc0g9nMQSzB89zAVfiX6ATabUa5V4lr5ZmJTAOJ6he9dK
-         TweV2mfLCpuWs9ZyYP5HJeeCvHvjCBou+PkJfePYtHArALsLBr0bdSHK9e8c/lNamovf
-         PcNA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dmarc-filter:arc-authentication-results;
+        bh=f8oxiO0d0D9nHeQsWlMFfBLlvWSGj55zUM+FMX8K79Q=;
+        b=YXAsiKF75y9MtweHQDp9VNHV3qB8WxDHf4sqWSANu3m1ehADGn0x0mJNBIAX7R10BQ
+         J9puHs1wSr9UM59Uzt0mxtLd6mFL+1fuaP0Eb+EBkHS1f4eP4GKgMjRTgDokUjvZOmhH
+         3oIoQXIqJynlfGOtERrnwFL5ZVWqfbHT0U7xhBT0Ye35e7ldz7k2pHNuYMaVySqROF9D
+         9HiWTy+lO50vP3FnPwYITcYN9VobKMp/r9piFE+Jn9ouleNu3Soo6X2f8sgj4VNLUVdS
+         9LylyzBFXVfSsRgorSeuvjtX+Pje7ppsFtCBQFIEvOFY1QCPmUNzbVWjNtFnY/mwY/um
+         tzUQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
+       spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
-Date: Tue, 20 Mar 2018 19:51:48 +0000
+       spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF057217C7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Julia Lawall <julia.lawall@lip6.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	Joe Perches <joe@perches.com>, Takashi Iwai <tiwai@suse.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jiri Kosina <jikos@kernel.org>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	akpm@linux-foundation.org, cantabile.desu@gmail.com, kubakici@wp.pl,
-	linux-wireless@vger.kernel.org, keescook@chromium.org,
-	shuah@kernel.org, mfuzzey@parkeon.com, zohar@linux.vnet.ibm.com,
-	dhowells@redhat.com, pali.rohar@gmail.com,
-	arend.vanspriel@broadcom.com, zajec5@gmail.com, nbroeking@me.com,
-	markivx@codeaurora.org, broonie@kernel.org,
-	dmitry.torokhov@gmail.com, dwmw2@infradead.org,
-	Abhay_Salunke@dell.com, bjorn.andersson@linaro.org,
-	jewalt@lgsinnovations.com, oneukum@suse.com, ast@fb.com,
-	andresx7@gmail.com, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 19/20] firmware: add request_firmware_cache() to help
- with cache on reboot
-Message-ID: <20180320195148.GH4449@wotan.suse.de>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	cantabile.desu@gmail.com,
+	kubakici@wp.pl,
+	linux-wireless@vger.kernel.org,
+	keescook@chromium.org,
+	shuah@kernel.org,
+	mfuzzey@parkeon.com,
+	zohar@linux.vnet.ibm.com,
+	dhowells@redhat.com,
+	pali.rohar@gmail.com,
+	tiwai@suse.de,
+	arend.vanspriel@broadcom.com,
+	zajec5@gmail.com,
+	nbroeking@me.com,
+	markivx@codeaurora.org,
+	broonie@kernel.org,
+	dmitry.torokhov@gmail.com,
+	dwmw2@infradead.org,
+	torvalds@linux-foundation.org,
+	Abhay_Salunke@dell.com,
+	bjorn.andersson@linaro.org,
+	jewalt@lgsinnovations.com,
+	oneukum@suse.com,
+	ast@fb.com,
+	andresx7@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: [PATCH v3 11/20] firmware: enable to force disable the fallback mechanism at run time
+Date: Sat, 10 Mar 2018 06:14:52 -0800
+Message-Id: <20180310141501.2214-12-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.13.2
+In-Reply-To: <20180310141501.2214-1-mcgrof@kernel.org>
 References: <20180310141501.2214-1-mcgrof@kernel.org>
- <20180310141501.2214-20-mcgrof@kernel.org>
- <20180320083055.GA21640@kroah.com>
- <20180320173409.GD4449@wotan.suse.de>
- <20180320173801.GA25040@kroah.com>
- <20180320182409.GF4449@wotan.suse.de>
- <5dc49c7f-56f6-28df-38da-bfa998afbdbb@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5dc49c7f-56f6-28df-38da-bfa998afbdbb@linuxfoundation.org>
-User-Agent: Mutt/1.6.0 (2016-04-01)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594560438545867805?=
-X-GMAIL-MSGID: =?utf-8?q?1595487566010669083?=
+X-GMAIL-THRID: =?utf-8?q?1594560429046312575?=
+X-GMAIL-MSGID: =?utf-8?q?1594560429046312575?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 20, 2018 at 02:54:44PM -0400, Konstantin Ryabitsev wrote:
-> On 03/20/18 14:24, Luis R. Rodriguez wrote:
-> > *Iff* this seems sensible, this would only mean kernel.org would have to start
-> > accepting git notes long term, for those who optionally want to push them or
-> > fetch them.
-> 
-> We don't disallow them. You just need to make sure you're fetching and
-> pushing them, because they aren't by default. You can set this in your
-> kernel.org origin section of .git/config:
-> 
-> [remote origin]
->   ...
->   fetch = +refs/notes/*:refs/notes/*
-> 
-> And then push them separately as "git push origin refs/notes/*".
+You currently need four different kernel builds to test the firmware
+API fully. By adding a proc knob to force disable the fallback mechanism
+completely we are able to reduce the amount of kernels you need built
+to test the firmware API down to two.
 
-Superb, thanks!
+Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+---
+ drivers/base/firmware_loader/fallback.c       | 5 +++++
+ drivers/base/firmware_loader/fallback.h       | 4 ++++
+ drivers/base/firmware_loader/fallback_table.c | 9 +++++++++
+ 3 files changed, 18 insertions(+)
 
-> Since frontends clone with --mirror, the notes will be available on all
-> git.kernel.org nodes (e.g. see
-> https://git.kernel.org/mricon/hook-test/c/a8d310d4c13)
-
-Good to know thanks, and it looks good!
-
-> If you do start using notes, I strongly suggest you pick a dedicated
-> refspace for it instead of putting things into the default
-> refs/notes/commits, e.g.:
-> 
-> git notes --ref crosstree [...]
-> 
-> This will create refs/notes/crosstree that has less of a chance to be
-> clobbered by someone else's use of notes.
-
-Indeed, the default is crap. I was suggesting perhaps having it also be
-per branch, so:
-
-git note --ref branch/iso-coccinelle/ add commit-id
-
-If it was required sed I guess
-
-git note --ref branch/sed/ add commit-id
-
-And if we wanted a resolution handler which could manage the above for you:
-
-git note --ref branch/merger-script add commit-id
-
-Which could use the above two to run what is needed to mimic the commit.
-
-  Luis
+diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
+index 45cc40933a47..d6838e7ec00c 100644
+--- a/drivers/base/firmware_loader/fallback.c
++++ b/drivers/base/firmware_loader/fallback.c
+@@ -643,6 +643,11 @@ static bool fw_force_sysfs_fallback(unsigned int opt_flags)
+ 
+ static bool fw_run_sysfs_fallback(unsigned int opt_flags)
+ {
++	if (fw_fallback_config.ignore_sysfs_fallback) {
++		pr_info_once("Ignoring firmware sysfs fallback due to debugfs knob\n");
++		return false;
++	}
++
+ 	if ((opt_flags & FW_OPT_NOFALLBACK))
+ 		return false;
+ 
+diff --git a/drivers/base/firmware_loader/fallback.h b/drivers/base/firmware_loader/fallback.h
+index ca7e69a8417b..dfebc644ed35 100644
+--- a/drivers/base/firmware_loader/fallback.h
++++ b/drivers/base/firmware_loader/fallback.h
+@@ -14,12 +14,16 @@
+  * 	as if one had enabled CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y.
+  * 	Useful to help debug a CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
+  * 	functionality on a kernel where that config entry has been disabled.
++ * @ignore_sysfs_fallback: force to disable the sysfs fallback mechanism.
++ * 	This emulates the behaviour as if we had set the kernel
++ * 	config CONFIG_FW_LOADER_USER_HELPER=n.
+  * @old_timeout: for internal use
+  * @loading_timeout: the timeout to wait for the fallback mechanism before
+  * 	giving up, in seconds.
+  */
+ struct firmware_fallback_config {
+ 	unsigned int force_sysfs_fallback;
++	unsigned int ignore_sysfs_fallback;
+ 	int old_timeout;
+ 	int loading_timeout;
+ };
+diff --git a/drivers/base/firmware_loader/fallback_table.c b/drivers/base/firmware_loader/fallback_table.c
+index 92365e053e30..7428659d8df9 100644
+--- a/drivers/base/firmware_loader/fallback_table.c
++++ b/drivers/base/firmware_loader/fallback_table.c
+@@ -39,6 +39,15 @@ struct ctl_table firmware_config_table[] = {
+ 		.extra1		= &zero,
+ 		.extra2		= &one,
+ 	},
++	{
++		.procname	= "ignore_sysfs_fallback",
++		.data		= &fw_fallback_config.ignore_sysfs_fallback,
++		.maxlen         = sizeof(unsigned int),
++		.mode           = 0644,
++		.proc_handler   = proc_douintvec_minmax,
++		.extra1		= &zero,
++		.extra2		= &one,
++	},
+ 	{ }
+ };
+ EXPORT_SYMBOL_GPL(firmware_config_table);
+-- 
+2.16.2
