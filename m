@@ -1,57 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751443AbeCJGui (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 01:50:38 -0500
-Received: from mga18.intel.com ([134.134.136.126]:54367 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750735AbeCJGuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 01:50:37 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,449,1515484800";
-   d="scan'208";a="210417997"
-Subject: Re: [PATCH] x86, powerpc : pkey-mprotect must allow pkey-0
-To: Ram Pai <linuxram@us.ibm.com>
-References: <1520583161-11741-1-git-send-email-linuxram@us.ibm.com>
- <60886e4a-59d4-541a-a6af-d4504e6719ad@intel.com>
- <20180310055544.GU1060@ram.oc3035372033.ibm.com>
-Cc: mpe@ellerman.id.au, mingo@redhat.com, akpm@linux-foundation.org,
-        linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        benh@kernel.crashing.org, paulus@samba.org,
-        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
-        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
-        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com, corbet@lwn.net,
-        arnd@arndb.de, fweimer@redhat.com, msuchanek@suse.com,
-        Ulrich.Weigand@de.ibm.com
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <842bd8a3-d869-f796-32ea-831427fefe4d@intel.com>
-Date: Fri, 9 Mar 2018 22:50:33 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751754AbeCJGup (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 01:50:45 -0500
+Received: from bmailout2.hostsharing.net ([83.223.90.240]:46379 "EHLO
+        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751495AbeCJGul (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 01:50:41 -0500
+Date: Sat, 10 Mar 2018 07:50:39 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Kai Heng Feng <kai.heng.feng@canonical.com>
+Cc: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+        mjg59@srcf.ucam.org, dvhart@infradead.org, andy@infradead.org,
+        Mario Limonciello <mario.limonciello@dell.com>, tiwai@suse.com,
+        platform-driver-x86@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH v2 3/3] ALSA: hda: Disabled unused audio controller for
+ Dell platforms with Switchable Graphics
+Message-ID: <20180310065039.GA6633@wunner.de>
+References: <20180308091023.9061-1-kai.heng.feng@canonical.com>
+ <20180308091023.9061-3-kai.heng.feng@canonical.com>
+ <20180309090223.xb55ltac4pfesdrh@pali>
+ <723DA929-C9FA-4F69-8D3A-03D8A75D09A6@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <20180310055544.GU1060@ram.oc3035372033.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <723DA929-C9FA-4F69-8D3A-03D8A75D09A6@canonical.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09/2018 09:55 PM, Ram Pai wrote:
-> On Fri, Mar 09, 2018 at 02:40:32PM -0800, Dave Hansen wrote:
->> On 03/09/2018 12:12 AM, Ram Pai wrote:
->>> Once an address range is associated with an allocated pkey, it cannot be
->>> reverted back to key-0. There is no valid reason for the above behavior.  On
->>> the contrary applications need the ability to do so.
->> Why don't we just set pkey 0 to be allocated in the allocation bitmap by
->> default?
-> ok. that will make it allocatable. But it will not be associatable,
-> given the bug in the current code. And what will be the
-> default key associated with a pte? zero? or something else?
+On Fri, Mar 09, 2018 at 05:30:15PM +0800, Kai Heng Feng wrote:
+> >On Thursday 08 March 2018 17:10:23 Kai-Heng Feng wrote:
+> >>Some Dell platforms (Preicsion 7510/7710/7520/7720) have a BIOS option
+> >>"Switchable Graphics" (SG).
+> >>
+> >>When SG is enabled, we have:
+> >>00:02.0 VGA compatible controller: Intel Corporation Device 591b (rev 04)
+> >>00:1f.3 Audio device: Intel Corporation CM238 HD Audio Controller (rev 31)
+> >>01:00.0 VGA compatible controller: Advanced Micro Devices, Inc.
+> >>[AMD/ATI] Ellesmere [Polaris10]
+> >>01:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Ellesmere
+> >>[Radeon RX 580]
+> >>
+> >>The Intel Audio outputs all the sound, including HDMI audio. The audio
+> >>controller comes with AMD graphics doesn't get used.
+> >>
+> >>When SG is disabled, we have:
+> >>00:1f.3 Audio device: Intel Corporation CM238 HD Audio Controller (rev 31)
+> >>01:00.0 VGA compatible controller: Advanced Micro Devices, Inc.
+> >>[AMD/ATI] Ellesmere [Polaris10]
+> >>01:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Ellesmere
+> >>[Radeon RX 580]
+> >>
+> >>Now it's a typical discrete-only system. HDMI audio comes from AMD audio
+> >>controller, others from Intel audio controller.
+> >>
+> >>When SG is enabled, the unused AMD audio controller still exposes its
+> >>sysfs, so userspace still opens the control file and stream. If
+> >>userspace tries to output sound through the stream, it hangs when
+> >>runtime suspend kicks in:
+> >>[ 12.796265] snd_hda_intel 0000:01:00.1: Disabling via vga_switcheroo
+> >>[ 12.796367] snd_hda_intel 0000:01:00.1: Cannot lock devices!
+> >>
+> >>Since the discrete audio controller isn't useful when SG enabled, we
+> >>should just disable the device.
+> 
+> The platform does have a NVIDIA variant, but the discrete NVIDIA have a
+> audio controller, hence it doesn't have the issue.
 
-I'm just saying that I think we should try to keep from making it
-special as much as possible.
+Sorry, I don't quite understand:  The AMD variant *also* has an audio
+controller, so what's the difference?  Or did you mean the Nvidia
+variant *doesn't* have an audio controller?
 
-Let's fix the bug that keeps it from being associatable.
+Pretty much all modern Nvidia GPUs do have an integrated HDA
+controller, however it's possible to hide it by clearing a bit
+at offset 0x488 in the GPU's config space.  Some BIOSes hide
+the HDA if no external display is attached.
+
+I could imagine that the BIOS of the Dell machines in question
+hides the HDA if Switchable Graphics is enabled.  If that is the
+case, be aware that there's an ongoing discussion to always expose
+the HDA controller because the behavior of some BIOSes to only
+expose the HDA when a display is attached causes massive problems
+with Linux' HDA driver:
+https://bugs.freedesktop.org/show_bug.cgi?id=75985
+
+If we decide to always expose the HDA controller on Nvidia cards,
+you may need to also match for the Nvidia vendor ID here.
+
+Thanks,
+
+Lukas
