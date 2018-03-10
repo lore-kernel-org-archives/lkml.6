@@ -1,90 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932919AbeCJExf convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 23:53:35 -0500
-Received: from mga02.intel.com ([134.134.136.20]:64931 "EHLO mga02.intel.com"
+        id S1750866AbeCJFBg (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 00:01:36 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51598 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932189AbeCJExd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 23:53:33 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,449,1515484800";
-   d="scan'208";a="40742564"
-From: "Brown, Aaron F" <aaron.f.brown@intel.com>
-To: Benjamin Poirier <bpoirier@suse.com>,
-        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
-CC: Alexander Duyck <alexander.duyck@gmail.com>,
-        Lennart Sorensen <lsorense@csclub.uwaterloo.ca>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 2/2] e1000e: Fix link check race condition
-Thread-Topic: [PATCH 2/2] e1000e: Fix link check race condition
-Thread-Index: AQHTtO5oYz5spVXvZkqQ2Wbb2ru4kaPI7W0g
-Date: Sat, 10 Mar 2018 04:53:31 +0000
-Message-ID: <309B89C4C689E141A5FF6A0C5FB2118B8C801AC3@ORSMSX101.amr.corp.intel.com>
-References: <20180306015553.10441-1-bpoirier@suse.com>
- <20180306015553.10441-2-bpoirier@suse.com>
-In-Reply-To: <20180306015553.10441-2-bpoirier@suse.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        id S1750703AbeCJFBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 00:01:34 -0500
+Message-ID: <1520658091.15339.4.camel@suse.de>
+Subject: Re: [RFC/RFT][PATCH v3 0/6] sched/cpuidle: Idle loop rework
+From: Mike Galbraith <mgalbraith@suse.de>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Date: Sat, 10 Mar 2018 06:01:31 +0100
+In-Reply-To: <2450532.XN8DODrtDf@aspire.rjw.lan>
+References: <2450532.XN8DODrtDf@aspire.rjw.lan>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: netdev-owner@vger.kernel.org [mailto:netdev-
-> owner@vger.kernel.org] On Behalf Of Benjamin Poirier
-> Sent: Monday, March 5, 2018 5:56 PM
-> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>
-> Cc: Alexander Duyck <alexander.duyck@gmail.com>; Lennart Sorensen
-> <lsorense@csclub.uwaterloo.ca>; intel-wired-lan@lists.osuosl.org;
-> netdev@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [PATCH 2/2] e1000e: Fix link check race condition
+On Fri, 2018-03-09 at 10:34 +0100, Rafael J. Wysocki wrote:
+> Hi All,
 > 
-> Alex reported the following race condition:
+> Thanks a lot for the discussion and testing so far!
 > 
-> /* link goes up... interrupt... schedule watchdog */
-> \ e1000_watchdog_task
-> 	\ e1000e_has_link
-> 		\ hw->mac.ops.check_for_link() ===
-> e1000e_check_for_copper_link
-> 			\ e1000e_phy_has_link_generic(..., &link)
-> 				link = true
-> 
-> 					 /* link goes down... interrupt */
-> 					 \ e1000_msix_other
-> 						 hw->mac.get_link_status =
-> true
-> 
-> 			/* link is up */
-> 			mac->get_link_status = false
-> 
-> 		link_active = true
-> 		/* link_active is true, wrongly, and stays so because
-> 		 * get_link_status is false */
-> 
-> Avoid this problem by making sure that we don't set get_link_status = false
-> after having checked the link.
-> 
-> It seems this problem has been present since the introduction of e1000e.
-> 
-> Link: https://lkml.org/lkml/2018/1/29/338
-> Reported-by: Alexander Duyck <alexander.duyck@gmail.com>
-> Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
-> ---
->  drivers/net/ethernet/intel/e1000e/ich8lan.c | 31 ++++++++++++++++-------
-> ------
->  drivers/net/ethernet/intel/e1000e/mac.c     | 14 ++++++-------
->  2 files changed, 24 insertions(+), 21 deletions(-)
+> This is a total respin of the whole series, so please look at it afresh.
+> Patches 2 and 3 are the most similar to their previous versions, but
+> still they are different enough.
 
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Respin of testdrive...
+
+i4790 booted nopti nospectre_v2
+
+30 sec tbench
+4.16.0.g1b88acc-master (virgin)
+Throughput 559.279 MB/sec  1 clients  1 procs  max_latency=0.046 ms
+Throughput 997.119 MB/sec  2 clients  2 procs  max_latency=0.246 ms
+Throughput 1693.04 MB/sec  4 clients  4 procs  max_latency=4.309 ms
+Throughput 3597.2 MB/sec  8 clients  8 procs  max_latency=6.760 ms
+Throughput 3474.55 MB/sec  16 clients  16 procs  max_latency=6.743 ms
+
+4.16.0.g1b88acc-master (+ v2)
+Throughput 588.929 MB/sec  1 clients  1 procs  max_latency=0.291 ms
+Throughput 1080.93 MB/sec  2 clients  2 procs  max_latency=0.639 ms
+Throughput 1826.3 MB/sec  4 clients  4 procs  max_latency=0.647 ms
+Throughput 3561.01 MB/sec  8 clients  8 procs  max_latency=1.279 ms
+Throughput 3382.98 MB/sec  16 clients  16 procs  max_latency=4.817 ms
+
+4.16.0.g1b88acc-master (+ v3)
+Throughput 588.711 MB/sec  1 clients  1 procs  max_latency=0.067 ms
+Throughput 1077.71 MB/sec  2 clients  2 procs  max_latency=0.298 ms
+Throughput 1803.47 MB/sec  4 clients  4 procs  max_latency=0.667 ms
+Throughput 3591.4 MB/sec  8 clients  8 procs  max_latency=4.999 ms
+Throughput 3444.74 MB/sec  16 clients  16 procs  max_latency=1.995 ms
+
+4.16.0.g1b88acc-master (+ my local patches)
+Throughput 722.559 MB/sec  1 clients  1 procs  max_latency=0.087 ms
+Throughput 1208.59 MB/sec  2 clients  2 procs  max_latency=0.289 ms
+Throughput 2071.94 MB/sec  4 clients  4 procs  max_latency=0.654 ms
+Throughput 3784.91 MB/sec  8 clients  8 procs  max_latency=0.974 ms
+Throughput 3644.4 MB/sec  16 clients  16 procs  max_latency=5.620 ms
+
+turbostat -q -- firefox /root/tmp/video/BigBuckBunny-DivXPlusHD.mkv & sleep 300;killall firefox
+
+                        PkgWatt
+                              1     2     3
+4.16.0.g1b88acc-master     6.95  7.03  6.91 (virgin)
+4.16.0.g1b88acc-master     7.20  7.25  7.26 (+v2)
+4.16.0.g1b88acc-master     7.04  6.97  7.07 (+v3)
+4.16.0.g1b88acc-master     6.90  7.06  6.95 (+my patches)
+
+No change wrt nohz high frequency cross core scheduling overhead, but
+the light load power consumption oddity did go away.
+
+(btw, don't read anything into max_latency numbers, that's GUI noise)
+
+	-Mike
