@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932445AbeCJSUw (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:20:52 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:35548 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932374AbeCJSUr (ORCPT
+        id S1752065AbeCJShl (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:37:41 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:34761 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932449AbeCJSUy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:20:47 -0500
-X-Google-Smtp-Source: AG47ELtJbqcQFzn42WT51zByu52Z6IDueQQKBXyo5ZpExq/Jhcwxu6zPxOgcWW74dBoNcQmD0tkg8w==
+        Sat, 10 Mar 2018 13:20:54 -0500
+X-Google-Smtp-Source: AG47ELuC/qu+zN0NK7Qj2ip6FREle4/csc65xbjU+iePePZq3kau9h4xjQCnGC5l9au4sdka29OVzg==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 25/83] Support get normal inode address and inode table extentsion.
-Date: Sat, 10 Mar 2018 10:18:06 -0800
-Message-Id: <1520705944-6723-26-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 31/83] Add new vfs inode allocation.
+Date: Sat, 10 Mar 2018 10:18:12 -0800
+Message-Id: <1520705944-6723-32-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -27,113 +27,191 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andiry Xu <jix024@cs.ucsd.edu>
 
-Inodes are assigned to per-CPU inode tables in a round-robin way:
-
-If there are four cores, then
-
-CPU 0's inode table contains inode 0, inode 4, inode 8, ...
-CPU 1's inode table contains inode 1, inode 5, inode 9, ...
-CPU 2's inode table contains inode 2, inode 6, inode 10, ...
-CPU 3's inode table contains inode 3, inode 7, inode 11, ...
-
-So given an inode number, the inode table and inode position
-can be easily calculated.
-
-If NOVA runs out of 2MB inode table size, it will allocate a new
-2MB log page and links it to the tail of the previous inode table.
+This routine allocates and initializes a new vfs inode, and setup
+the attributes of corresponding NOVA inode and inode_info.
+inode operations are missing now.
 
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/inode.c | 67 +++++++++++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 65 insertions(+), 2 deletions(-)
+ fs/nova/inode.c | 144 +++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ fs/nova/inode.h |   3 ++
+ 2 files changed, 146 insertions(+), 1 deletion(-)
 
 diff --git a/fs/nova/inode.c b/fs/nova/inode.c
-index 42816ff..4e2842d 100644
+index e4b8960..15517cc 100644
 --- a/fs/nova/inode.c
 +++ b/fs/nova/inode.c
-@@ -167,18 +167,81 @@ static int nova_read_inode(struct super_block *sb, struct inode *inode,
- 	return ret;
+@@ -363,7 +363,49 @@ static inline int nova_search_inodetree(struct nova_sb_info *sbi,
+ 	return nova_find_range_node(sbi, tree, internal_ino, ret_node);
  }
  
--/* Get the address in PMEM of an inode by inode number.  Allocate additional
-+/*
-+ * Get the address in PMEM of an inode by inode number.  Allocate additional
-  * block to store additional inodes if necessary.
-  */
- int nova_get_inode_address(struct super_block *sb, u64 ino,
- 	u64 *pi_addr, int extendable)
+-int nova_alloc_unused_inode(struct super_block *sb, int cpuid,
++static void nova_get_inode_flags(struct inode *inode, struct nova_inode *pi)
++{
++	unsigned int flags = inode->i_flags;
++	unsigned int nova_flags = le32_to_cpu(pi->i_flags);
++
++	nova_flags &= ~(FS_SYNC_FL | FS_APPEND_FL | FS_IMMUTABLE_FL |
++			 FS_NOATIME_FL | FS_DIRSYNC_FL);
++	if (flags & S_SYNC)
++		nova_flags |= FS_SYNC_FL;
++	if (flags & S_APPEND)
++		nova_flags |= FS_APPEND_FL;
++	if (flags & S_IMMUTABLE)
++		nova_flags |= FS_IMMUTABLE_FL;
++	if (flags & S_NOATIME)
++		nova_flags |= FS_NOATIME_FL;
++	if (flags & S_DIRSYNC)
++		nova_flags |= FS_DIRSYNC_FL;
++
++	pi->i_flags = cpu_to_le32(nova_flags);
++}
++
++static void nova_init_inode(struct inode *inode, struct nova_inode *pi)
++{
++	pi->i_mode = cpu_to_le16(inode->i_mode);
++	pi->i_uid = cpu_to_le32(i_uid_read(inode));
++	pi->i_gid = cpu_to_le32(i_gid_read(inode));
++	pi->i_links_count = cpu_to_le16(inode->i_nlink);
++	pi->i_size = cpu_to_le64(inode->i_size);
++	pi->i_atime = cpu_to_le32(inode->i_atime.tv_sec);
++	pi->i_ctime = cpu_to_le32(inode->i_ctime.tv_sec);
++	pi->i_mtime = cpu_to_le32(inode->i_mtime.tv_sec);
++	pi->i_generation = cpu_to_le32(inode->i_generation);
++	pi->log_head = 0;
++	pi->log_tail = 0;
++	pi->deleted = 0;
++	pi->delete_epoch_id = 0;
++	nova_get_inode_flags(inode, pi);
++
++	if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode))
++		pi->dev.rdev = cpu_to_le32(inode->i_rdev);
++}
++
++static int nova_alloc_unused_inode(struct super_block *sb, int cpuid,
+ 	unsigned long *ino)
  {
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
-+	struct nova_inode_info_header sih;
-+	struct inode_table *inode_table;
-+	unsigned int data_bits;
-+	unsigned int num_inodes_bits;
-+	u64 curr;
-+	unsigned int superpage_count;
-+	u64 internal_ino;
-+	int cpuid;
-+	int extended = 0;
-+	unsigned int index;
-+	unsigned int i = 0;
-+	unsigned long blocknr;
-+	unsigned long curr_addr;
-+	int allocated;
-+
- 	if (ino < NOVA_NORMAL_INODE_START) {
- 		*pi_addr = nova_get_reserved_inode_addr(sb, ino);
- 		return 0;
- 	}
+ 	struct nova_sb_info *sbi = NOVA_SB(sb);
+@@ -529,6 +571,106 @@ u64 nova_new_nova_inode(struct super_block *sb, u64 *pi_addr)
+ 	return ino;
+ }
  
--	*pi_addr = 0;
-+	sih.ino = NOVA_INODETABLE_INO;
-+	sih.i_blk_type = NOVA_BLOCK_TYPE_2M;
-+	data_bits = blk_type_to_shift[sih.i_blk_type];
-+	num_inodes_bits = data_bits - NOVA_INODE_BITS;
++struct inode *nova_new_vfs_inode(enum nova_new_inode_type type,
++	struct inode *dir, u64 pi_addr, u64 ino, umode_t mode,
++	size_t size, dev_t rdev, const struct qstr *qstr, u64 epoch_id)
++{
++	struct super_block *sb;
++	struct nova_sb_info *sbi;
++	struct inode *inode;
++	struct nova_inode *diri = NULL;
++	struct nova_inode_info *si;
++	struct nova_inode_info_header *sih = NULL;
++	struct nova_inode *pi;
++	int errval;
++	timing_t new_inode_time;
 +
-+	cpuid = ino % sbi->cpus;
-+	internal_ino = ino / sbi->cpus;
-+
-+	inode_table = nova_get_inode_table(sb, cpuid);
-+	superpage_count = internal_ino >> num_inodes_bits;
-+	index = internal_ino & ((1 << num_inodes_bits) - 1);
-+
-+	curr = inode_table->log_head;
-+	if (curr == 0)
-+		return -EINVAL;
-+
-+	for (i = 0; i < superpage_count; i++) {
-+		if (curr == 0)
-+			return -EINVAL;
-+
-+		curr_addr = (unsigned long)nova_get_block(sb, curr);
-+		/* Next page pointer in the last 8 bytes of the superpage */
-+		curr_addr += nova_inode_blk_size(&sih) - 8;
-+		curr = *(u64 *)(curr_addr);
-+
-+		if (curr == 0) {
-+			if (extendable == 0)
-+				return -EINVAL;
-+
-+			extended = 1;
-+
-+			allocated = nova_new_log_blocks(sb, &sih, &blocknr,
-+				1, ALLOC_INIT_ZERO, cpuid, ALLOC_FROM_HEAD);
-+
-+			if (allocated != 1)
-+				return allocated;
-+
-+			curr = nova_get_block_off(sb, blocknr,
-+						NOVA_BLOCK_TYPE_2M);
-+			*(u64 *)(curr_addr) = curr;
-+			nova_flush_buffer((void *)curr_addr,
-+						NOVA_INODE_SIZE, 1);
-+		}
++	NOVA_START_TIMING(new_vfs_inode_t, new_inode_time);
++	sb = dir->i_sb;
++	sbi = (struct nova_sb_info *)sb->s_fs_info;
++	inode = new_inode(sb);
++	if (!inode) {
++		errval = -ENOMEM;
++		goto fail2;
 +	}
 +
-+	*pi_addr = curr + index * NOVA_INODE_SIZE;
++	inode_init_owner(inode, dir, mode);
++	inode->i_blocks = inode->i_size = 0;
++	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
 +
- 	return 0;
- }
++	inode->i_generation = atomic_add_return(1, &sbi->next_generation);
++	inode->i_size = size;
++
++	diri = nova_get_inode(sb, dir);
++	if (!diri) {
++		errval = -EACCES;
++		goto fail1;
++	}
++
++	pi = (struct nova_inode *)nova_get_block(sb, pi_addr);
++	nova_dbg_verbose("%s: allocating inode %llu @ 0x%llx\n",
++					__func__, ino, pi_addr);
++
++	/* chosen inode is in ino */
++	inode->i_ino = ino;
++
++	switch (type) {
++	case TYPE_CREATE:
++		inode->i_mapping->a_ops = &nova_aops_dax;
++		break;
++	case TYPE_MKNOD:
++		init_special_inode(inode, mode, rdev);
++		break;
++	case TYPE_SYMLINK:
++		inode->i_mapping->a_ops = &nova_aops_dax;
++		break;
++	case TYPE_MKDIR:
++		inode->i_mapping->a_ops = &nova_aops_dax;
++		set_nlink(inode, 2);
++		break;
++	default:
++		nova_dbg("Unknown new inode type %d\n", type);
++		break;
++	}
++
++	/*
++	 * Pi is part of the dir log so no transaction is needed,
++	 * but we need to flush to NVMM.
++	 */
++	pi->i_blk_type = NOVA_DEFAULT_BLOCK_TYPE;
++	pi->i_flags = nova_mask_flags(mode, diri->i_flags);
++	pi->nova_ino = ino;
++	pi->i_create_time = current_time(inode).tv_sec;
++	pi->create_epoch_id = epoch_id;
++	nova_init_inode(inode, pi);
++
++	si = NOVA_I(inode);
++	sih = &si->header;
++	nova_init_header(sb, sih, inode->i_mode);
++	sih->pi_addr = pi_addr;
++	sih->ino = ino;
++	sih->i_blk_type = NOVA_DEFAULT_BLOCK_TYPE;
++
++	nova_set_inode_flags(inode, pi, le32_to_cpu(pi->i_flags));
++	sih->i_flags = le32_to_cpu(pi->i_flags);
++
++	if (insert_inode_locked(inode) < 0) {
++		nova_err(sb, "nova_new_inode failed ino %lx\n", inode->i_ino);
++		errval = -EINVAL;
++		goto fail1;
++	}
++
++	nova_flush_buffer(pi, NOVA_INODE_SIZE, 0);
++	NOVA_END_TIMING(new_vfs_inode_t, new_inode_time);
++	return inode;
++fail1:
++	make_bad_inode(inode);
++	iput(inode);
++fail2:
++	NOVA_END_TIMING(new_vfs_inode_t, new_inode_time);
++	return ERR_PTR(errval);
++}
++
+ int nova_write_inode(struct inode *inode, struct writeback_control *wbc)
+ {
+ 	/* write_inode should never be called because we always keep our inodes
+diff --git a/fs/nova/inode.h b/fs/nova/inode.h
+index fc1876c..943f77f 100644
+--- a/fs/nova/inode.h
++++ b/fs/nova/inode.h
+@@ -230,6 +230,9 @@ struct inode *nova_iget(struct super_block *sb, unsigned long ino);
+ inline int nova_insert_inodetree(struct nova_sb_info *sbi,
+ 	struct nova_range_node *new_node, int cpu);
+ u64 nova_new_nova_inode(struct super_block *sb, u64 *pi_addr);
++struct inode *nova_new_vfs_inode(enum nova_new_inode_type type,
++	struct inode *dir, u64 pi_addr, u64 ino, umode_t mode,
++	size_t size, dev_t rdev, const struct qstr *qstr, u64 epoch_id);
+ extern int nova_write_inode(struct inode *inode, struct writeback_control *wbc);
+ extern void nova_dirty_inode(struct inode *inode, int flags);
  
 -- 
 2.7.4
