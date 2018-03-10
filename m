@@ -1,208 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932819AbeCJCnC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 21:43:02 -0500
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:45693 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932716AbeCJCnA (ORCPT
+        id S932737AbeCJCos (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 21:44:48 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:41822 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751275AbeCJCoq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 21:43:00 -0500
-X-Google-Smtp-Source: AG47ELvW08J33w32shpLajnS5pA1I4zjwK6LbcLGUq70eB1vBmU9mFs3xoL+Bod3VMdhj5qGX+PpCA==
-Subject: Re: [PATCH] ipmi: Remove ACPI SPMI probing from the SSIF (I2C) driver
-To: Jiandi An <anjiandi@codeaurora.org>, minyard@acm.org
-Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
-References: <1520543298-18163-1-git-send-email-minyard@acm.org>
- <ea095e0f-023b-dca2-90da-cc95782a6fb0@codeaurora.org>
-From: Corey Minyard <cminyard@mvista.com>
-Message-ID: <e16a9133-e8d7-537c-7cf4-e0a4caa6fdee@mvista.com>
-Date: Fri, 9 Mar 2018 20:42:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <ea095e0f-023b-dca2-90da-cc95782a6fb0@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+        Fri, 9 Mar 2018 21:44:46 -0500
+X-Google-Smtp-Source: AG47ELvvwQupKce3eRN6A+HjIBryOJMKgLBw4N+454/hveJ4ZwJar1VZ9KZdBPuxdhJbDSgMx6jbkQ==
+From: Brian Norris <briannorris@chromium.org>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc: <linux-kernel@vger.kernel.org>, linux-watchdog@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Brian Norris <briannorris@chromium.org>
+Subject: [PATCH 1/2] watchdog: dw: RMW the control register
+Date: Fri,  9 Mar 2018 18:44:30 -0800
+Message-Id: <20180310024431.160195-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.16.2.660.g709887971b-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09/2018 04:28 PM, Jiandi An wrote:
->
->
-> On 03/08/2018 03:08 PM, minyard@acm.org wrote:
->> From: Corey Minyard <cminyard@mvista.com>
->>
->> The IPMI spec states:
->>
->>    The purpose of the SPMI Table is to provide a mechanism that can
->>    be used by the OSPM (an ACPI term for “OS Operating System-directed
->>    configuration and Power Management” essentially meaning an ACPI-aware
->>    OS or OS loader) very early in the boot process, e.g., before the
->>    ability to execute ACPI control methods in the OS is available.
->>
->> When we are probing IPMI in Linux, ACPI control methods are available,
->> so we shouldn't be probing using SPMI.  It could cause some confusion
->> during the probing process.
->>
->> Signed-off-by: Corey Minyard <cminyard@mvista.com>
->> Cc: Jiandi An <anjiandi@codeaurora.org>
->> ---
->>
->> Jiandi, this just yanks out the SPMI code.  Your platform
->> should have an ACPI control method in it's namespace specifying the
->> IPMI interface.  If it doesn't, that's a bug in your platform and
->> really needs to be fixed.  Finding IPMI devices with SMBIOS tables
->> is kind of risky since there is no real way to know which I2C bus
->> has the IPMI device if your system has more than one I2C bus. With
->> an ACPI control method, the IPMI control method will be inside the
->> I2C bus control method, so it will be unambiguous.
->
-> Thanks Corey.  I tested this patch.  It works for us through the ACPI
-> control method.
+RK3399 has rst_pulse_length in CONTROL_REG[4:2], determining the length
+of pulse to issue for system reset. We shouldn't clobber this value,
+because that might make the system reset ineffective. On RK3399, we're
+seeing that a value of 000b (meaning 2 cycles) yields an unreliable
+(partial?) reset, and so we only fully reset after the watchdog fires a
+second time. If we retain the system default (010b, or 8 clock cycles),
+then the watchdog reset is much more reliable.
 
-Thanks.  May I add a "Tested-by" for you?
+Read-modify-write retains the system value and improves reset
+reliability.
 
-> By the way, FYI the ipmi_si driver is also having the
-> SPMI probe code.
->
-> [   17.370835] ipmi_si: probing via SPMI
->
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+---
+ drivers/watchdog/dw_wdt.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-Yes, I've removed that in a separate patch.
-
--corey
-
-> Thanks
-> - Jiandi
->
->>
->>   drivers/char/ipmi/ipmi_ssif.c | 105 
->> ------------------------------------------
->>   1 file changed, 105 deletions(-)
->>
->> diff --git a/drivers/char/ipmi/ipmi_ssif.c 
->> b/drivers/char/ipmi/ipmi_ssif.c
->> index 4cff4cd..206257b 100644
->> --- a/drivers/char/ipmi/ipmi_ssif.c
->> +++ b/drivers/char/ipmi/ipmi_ssif.c
->> @@ -1994,108 +1994,6 @@ static const struct acpi_device_id 
->> ssif_acpi_match[] = {
->>       { },
->>   };
->>   MODULE_DEVICE_TABLE(acpi, ssif_acpi_match);
->> -
->> -/*
->> - * Once we get an ACPI failure, we don't try any more, because we go
->> - * through the tables sequentially.  Once we don't find a table, there
->> - * are no more.
->> - */
->> -static int acpi_failure;
->> -
->> -/*
->> - * Defined in the IPMI 2.0 spec.
->> - */
->> -struct SPMITable {
->> -    s8    Signature[4];
->> -    u32    Length;
->> -    u8    Revision;
->> -    u8    Checksum;
->> -    s8    OEMID[6];
->> -    s8    OEMTableID[8];
->> -    s8    OEMRevision[4];
->> -    s8    CreatorID[4];
->> -    s8    CreatorRevision[4];
->> -    u8    InterfaceType;
->> -    u8    IPMIlegacy;
->> -    s16    SpecificationRevision;
->> -
->> -    /*
->> -     * Bit 0 - SCI interrupt supported
->> -     * Bit 1 - I/O APIC/SAPIC
->> -     */
->> -    u8    InterruptType;
->> -
->> -    /*
->> -     * If bit 0 of InterruptType is set, then this is the SCI
->> -     * interrupt in the GPEx_STS register.
->> -     */
->> -    u8    GPE;
->> -
->> -    s16    Reserved;
->> -
->> -    /*
->> -     * If bit 1 of InterruptType is set, then this is the I/O
->> -     * APIC/SAPIC interrupt.
->> -     */
->> -    u32    GlobalSystemInterrupt;
->> -
->> -    /* The actual register address. */
->> -    struct acpi_generic_address addr;
->> -
->> -    u8    UID[4];
->> -
->> -    s8      spmi_id[1]; /* A '\0' terminated array starts here. */
->> -};
->> -
->> -static int try_init_spmi(struct SPMITable *spmi)
->> -{
->> -    unsigned short myaddr;
->> -
->> -    if (num_addrs >= MAX_SSIF_BMCS)
->> -        return -1;
->> -
->> -    if (spmi->IPMIlegacy != 1) {
->> -        pr_warn("IPMI: Bad SPMI legacy: %d\n", spmi->IPMIlegacy);
->> -        return -ENODEV;
->> -    }
->> -
->> -    if (spmi->InterfaceType != 4)
->> -        return -ENODEV;
->> -
->> -    if (spmi->addr.space_id != ACPI_ADR_SPACE_SMBUS) {
->> -        pr_warn(PFX "Invalid ACPI SSIF I/O Address type: %d\n",
->> -            spmi->addr.space_id);
->> -        return -EIO;
->> -    }
->> -
->> -    myaddr = spmi->addr.address & 0x7f;
->> -
->> -    return new_ssif_client(myaddr, NULL, 0, 0, SI_SPMI, NULL);
->> -}
->> -
->> -static void spmi_find_bmc(void)
->> -{
->> -    acpi_status      status;
->> -    struct SPMITable *spmi;
->> -    int              i;
->> -
->> -    if (acpi_disabled)
->> -        return;
->> -
->> -    if (acpi_failure)
->> -        return;
->> -
->> -    for (i = 0; ; i++) {
->> -        status = acpi_get_table(ACPI_SIG_SPMI, i+1,
->> -                    (struct acpi_table_header **)&spmi);
->> -        if (status != AE_OK)
->> -            return;
->> -
->> -        try_init_spmi(spmi);
->> -    }
->> -}
->> -#else
->> -static void spmi_find_bmc(void) { }
->>   #endif
->>     #ifdef CONFIG_DMI
->> @@ -2200,9 +2098,6 @@ static int init_ipmi_ssif(void)
->>           ssif_i2c_driver.driver.acpi_match_table    =
->>               ACPI_PTR(ssif_acpi_match);
->>   -    if (ssif_tryacpi)
->> -        spmi_find_bmc();
->> -
->>       if (ssif_trydmi) {
->>           rv = platform_driver_register(&ipmi_driver);
->>           if (rv)
->>
->
+diff --git a/drivers/watchdog/dw_wdt.c b/drivers/watchdog/dw_wdt.c
+index c2f4ff516230..6925d3e6c6b3 100644
+--- a/drivers/watchdog/dw_wdt.c
++++ b/drivers/watchdog/dw_wdt.c
+@@ -34,6 +34,7 @@
+ 
+ #define WDOG_CONTROL_REG_OFFSET		    0x00
+ #define WDOG_CONTROL_REG_WDT_EN_MASK	    0x01
++#define WDOG_CONTROL_REG_RESP_MODE_MASK	    0x02
+ #define WDOG_TIMEOUT_RANGE_REG_OFFSET	    0x04
+ #define WDOG_TIMEOUT_RANGE_TOPINIT_SHIFT    4
+ #define WDOG_CURRENT_COUNT_REG_OFFSET	    0x08
+@@ -124,11 +125,16 @@ static int dw_wdt_set_timeout(struct watchdog_device *wdd, unsigned int top_s)
+ static int dw_wdt_start(struct watchdog_device *wdd)
+ {
+ 	struct dw_wdt *dw_wdt = to_dw_wdt(wdd);
++	u32 val;
+ 
+ 	dw_wdt_set_timeout(wdd, wdd->timeout);
+ 
+-	writel(WDOG_CONTROL_REG_WDT_EN_MASK,
+-	       dw_wdt->regs + WDOG_CONTROL_REG_OFFSET);
++	val = readl(dw_wdt->regs + WDOG_CONTROL_REG_OFFSET);
++	/* Disable interrupt mode; always perform system reset. */
++	val &= ~WDOG_CONTROL_REG_RESP_MODE_MASK;
++	/* Enable watchdog. */
++	val |= WDOG_CONTROL_REG_WDT_EN_MASK;
++	writel(val, dw_wdt->regs + WDOG_CONTROL_REG_OFFSET);
+ 
+ 	return 0;
+ }
+-- 
+2.16.2.660.g709887971b-goog
