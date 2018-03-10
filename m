@@ -1,317 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751616AbeCJSZv (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:25:51 -0500
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:45321 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932855AbeCJSVm (ORCPT
+        id S1751538AbeCJSZt (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:25:49 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:59798 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751441AbeCJSZr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:21:42 -0500
-X-Google-Smtp-Source: AG47ELuXLDSzEvZwW89WNpC0cm0d40MQMD7qFCoZWCVWtnaxTqYeUECO/iyLqXULhYnJMbUlbaPubA==
-From: Andiry Xu <jix024@eng.ucsd.edu>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org
-Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
-        swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
-        swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
-        Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 71/83] Symlink support.
-Date: Sat, 10 Mar 2018 10:18:52 -0800
-Message-Id: <1520705944-6723-72-git-send-email-jix024@eng.ucsd.edu>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
-References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
+        Sat, 10 Mar 2018 13:25:47 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A924660592
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
+Reply-To: shankerd@codeaurora.org
+Subject: Re: [PATCH] arm64: KVM: Use SMCCC_ARCH_WORKAROUND_1 for Falkor BP
+ hardening
+To: Will Deacon <will.deacon@arm.com>
+Cc: Thomas Speier <tspeier@codeaurora.org>,
+        Vikram Sethi <vikrams@codeaurora.org>,
+        Sean Campbell <scampbel@codeaurora.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <1520027418-10646-1-git-send-email-shankerd@codeaurora.org>
+ <20180305155614.GG6618@arm.com>
+ <05c25982-4939-593f-ad30-bf496e879885@codeaurora.org>
+ <20180305171529.GA12869@arm.com>
+ <770bb422-7a53-06b9-a136-4e38a0a4bed2@codeaurora.org>
+ <20180306152540.GC18477@arm.com>
+From: Shanker Donthineni <shankerd@codeaurora.org>
+Message-ID: <e0c6d403-beab-395b-ae19-766deeb867aa@codeaurora.org>
+Date: Sat, 10 Mar 2018 12:25:43 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <20180306152540.GC18477@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andiry Xu <jix024@cs.ucsd.edu>
+Hi Will,
 
-NOVA alloates two blocks for symlink inode: One for inode log,
-and the other one is a data block, storing symname.
+On 03/06/2018 09:25 AM, Will Deacon wrote:
+> On Mon, Mar 05, 2018 at 12:03:33PM -0600, Shanker Donthineni wrote:
+>> On 03/05/2018 11:15 AM, Will Deacon wrote:
+>>> On Mon, Mar 05, 2018 at 10:57:58AM -0600, Shanker Donthineni wrote:
+>>>> On 03/05/2018 09:56 AM, Will Deacon wrote:
+>>>>> On Fri, Mar 02, 2018 at 03:50:18PM -0600, Shanker Donthineni wrote:
+>>>>>> @@ -199,33 +208,15 @@ static int enable_smccc_arch_workaround_1(void *data)
+>>>>>>  		return 0;
+>>>>>>  	}
+>>>>>>  
+>>>>>> +	if (((midr & MIDR_CPU_MODEL_MASK) == MIDR_QCOM_FALKOR) ||
+>>>>>> +	    ((midr & MIDR_CPU_MODEL_MASK) == MIDR_QCOM_FALKOR_V1))
+>>>>>> +		cb = qcom_link_stack_sanitization;
+>>>>>
+>>>>> Is this just a performance thing? Do you actually see an advantage over
+>>>>> always making the firmware call? We've seen minimal impact in our testing.
+>>>>>
+>>>>
+>>>> Yes, we've couple of advantages using the standard SMCCC_ARCH_WOKAROUND_1 framework. 
+>>>>   - Improves the code readability.
+>>>>   - Avoid the unnecessary MIDR checks on each vCPU exit.
+>>>>   - Validates ID_AA64PFR0_CVS2 feature for Falkor chips.
+>>>>   - Avoids the 2nd link stack sanitization workaround in firmware.
+>>>
+>>> What I mean is, can we drop qcom_link_stack_sanitization altogether and
+>>> use the SMCCC interface for everything?
+>>>
+>>
+>> No, We would like to keep it qcom_link_stack_sanitization for host kernel
+>> since it takes a few CPU cycles instead of heavyweight SMCCC call.
+> 
+> Is that something that you can actually measure in the workloads and
+> benchmarks that you care about? If so, fine, but that doesn't seem to be the
+> case for the Cortex cores we've looked at internally and it would be nice to
+> avoid having different workarounds in the kernel just because the SMCCC
+> interface wasn't baked in time, rather than because there's a meaningful
+> performance difference.
+>
 
-Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
----
- fs/nova/Makefile  |   2 +-
- fs/nova/inode.c   |   2 +
- fs/nova/namei.c   |  70 ++++++++++++++++++++++++++++
- fs/nova/nova.h    |   5 ++
- fs/nova/symlink.c | 133 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 211 insertions(+), 1 deletion(-)
- create mode 100644 fs/nova/symlink.c
+We've seen noticeable performance improvement with the microbench workloads,
+ans also some of our customers have observed improvements on heavy workloads. 
+Unfortunately I can't share those specific results here. SMCCC call overhead 
+is much higher as compared to link stack workaround on Falkor, ~99X.
 
-diff --git a/fs/nova/Makefile b/fs/nova/Makefile
-index 7f851f2..7bf6403 100644
---- a/fs/nova/Makefile
-+++ b/fs/nova/Makefile
-@@ -5,4 +5,4 @@
- obj-$(CONFIG_NOVA_FS) += nova.o
+Host kernel workaround takes less than ~20 CPU cycles, whereas SMCCC_ARCH_WOKAROUND_1
+consumes thousands of CPU cycles to sanitize the branch prediction on Falkor.  
+
+Especially workloads inside virtual machines provides much better results because
+no KVM involvement is required whenever guest calls qcom_link_stack_sanitization().            
  
- nova-y := balloc.o bbuild.o dax.o dir.o file.o inode.o journal.o log.o namei.o\
--	  rebuild.o stats.o super.o
-+	  rebuild.o stats.o super.o symlink.o
-diff --git a/fs/nova/inode.c b/fs/nova/inode.c
-index a6d74cb..21be31a 100644
---- a/fs/nova/inode.c
-+++ b/fs/nova/inode.c
-@@ -285,6 +285,7 @@ static int nova_read_inode(struct super_block *sb, struct inode *inode,
- 		inode->i_fop = &nova_dir_operations;
- 		break;
- 	case S_IFLNK:
-+		inode->i_op = &nova_symlink_inode_operations;
- 		break;
- 	default:
- 		inode->i_op = &nova_special_inode_operations;
-@@ -983,6 +984,7 @@ struct inode *nova_new_vfs_inode(enum nova_new_inode_type type,
- 		inode->i_op = &nova_special_inode_operations;
- 		break;
- 	case TYPE_SYMLINK:
-+		inode->i_op = &nova_symlink_inode_operations;
- 		inode->i_mapping->a_ops = &nova_aops_dax;
- 		break;
- 	case TYPE_MKDIR:
-diff --git a/fs/nova/namei.c b/fs/nova/namei.c
-index 7a81672..58f6a72 100644
---- a/fs/nova/namei.c
-+++ b/fs/nova/namei.c
-@@ -207,6 +207,75 @@ static int nova_mknod(struct inode *dir, struct dentry *dentry, umode_t mode,
- 	return err;
- }
- 
-+static int nova_symlink(struct inode *dir, struct dentry *dentry,
-+	const char *symname)
-+{
-+	struct super_block *sb = dir->i_sb;
-+	int err = -ENAMETOOLONG;
-+	unsigned int len = strlen(symname);
-+	struct inode *inode;
-+	struct nova_inode_info *si;
-+	struct nova_inode_info_header *sih;
-+	u64 pi_addr = 0;
-+	struct nova_inode *pidir, *pi;
-+	struct nova_inode_update update;
-+	u64 ino;
-+	u64 epoch_id;
-+	timing_t symlink_time;
-+
-+	NOVA_START_TIMING(symlink_t, symlink_time);
-+	if (len + 1 > sb->s_blocksize)
-+		goto out;
-+
-+	pidir = nova_get_inode(sb, dir);
-+	if (!pidir)
-+		goto out_fail;
-+
-+	epoch_id = nova_get_epoch_id(sb);
-+	ino = nova_new_nova_inode(sb, &pi_addr);
-+	if (ino == 0)
-+		goto out_fail;
-+
-+	nova_dbgv("%s: name %s, symname %s\n", __func__,
-+				dentry->d_name.name, symname);
-+	nova_dbgv("%s: inode %llu, dir %lu\n", __func__, ino, dir->i_ino);
-+
-+	update.tail = 0;
-+	err = nova_add_dentry(dentry, ino, 0, &update, epoch_id);
-+	if (err)
-+		goto out_fail;
-+
-+	inode = nova_new_vfs_inode(TYPE_SYMLINK, dir, pi_addr, ino,
-+					S_IFLNK|0777, len, 0,
-+					&dentry->d_name, epoch_id);
-+	if (IS_ERR(inode)) {
-+		err = PTR_ERR(inode);
-+		goto out_fail;
-+	}
-+
-+	pi = nova_get_inode(sb, inode);
-+
-+	si = NOVA_I(inode);
-+	sih = &si->header;
-+
-+	err = nova_block_symlink(sb, pi, inode, symname, len, epoch_id);
-+	if (err)
-+		goto out_fail;
-+
-+	d_instantiate(dentry, inode);
-+	unlock_new_inode(inode);
-+
-+	nova_lite_transaction_for_new_inode(sb, pi, pidir, inode, dir,
-+					&update);
-+out:
-+	NOVA_END_TIMING(symlink_t, symlink_time);
-+	return err;
-+
-+out_fail:
-+	nova_err(sb, "%s return %d\n", __func__, err);
-+	goto out;
-+}
-+
- static void nova_lite_transaction_for_time_and_link(struct super_block *sb,
- 	struct nova_inode *pi, struct nova_inode *pidir, struct inode *inode,
- 	struct inode *dir, struct nova_inode_update *update,
-@@ -764,6 +833,7 @@ const struct inode_operations nova_dir_inode_operations = {
- 	.lookup		= nova_lookup,
- 	.link		= nova_link,
- 	.unlink		= nova_unlink,
-+	.symlink	= nova_symlink,
- 	.mkdir		= nova_mkdir,
- 	.rmdir		= nova_rmdir,
- 	.mknod		= nova_mknod,
-diff --git a/fs/nova/nova.h b/fs/nova/nova.h
-index 40c70da..6392bb3 100644
---- a/fs/nova/nova.h
-+++ b/fs/nova/nova.h
-@@ -518,6 +518,11 @@ int nova_rebuild_dir_inode_tree(struct super_block *sb,
- int nova_rebuild_inode(struct super_block *sb, struct nova_inode_info *si,
- 	u64 ino, u64 pi_addr, int rebuild_dir);
- 
-+/* symlink.c */
-+int nova_block_symlink(struct super_block *sb, struct nova_inode *pi,
-+	struct inode *inode, const char *symname, int len, u64 epoch_id);
-+extern const struct inode_operations nova_symlink_inode_operations;
-+
- /* stats.c */
- void nova_get_timing_stats(void);
- void nova_get_IO_stats(void);
-diff --git a/fs/nova/symlink.c b/fs/nova/symlink.c
-new file mode 100644
-index 0000000..dbd57c5
---- /dev/null
-+++ b/fs/nova/symlink.c
-@@ -0,0 +1,133 @@
-+/*
-+ * BRIEF DESCRIPTION
-+ *
-+ * Symlink operations
-+ *
-+ * Copyright 2015-2016 Regents of the University of California,
-+ * UCSD Non-Volatile Systems Lab, Andiry Xu <jix024@cs.ucsd.edu>
-+ * Copyright 2012-2013 Intel Corporation
-+ * Copyright 2009-2011 Marco Stornelli <marco.stornelli@gmail.com>
-+ * Copyright 2003 Sony Corporation
-+ * Copyright 2003 Matsushita Electric Industrial Co., Ltd.
-+ * 2003-2004 (c) MontaVista Software, Inc. , Steve Longerbeam
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2. This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
-+ */
-+
-+#include <linux/fs.h>
-+#include <linux/namei.h>
-+#include <linux/version.h>
-+#include "nova.h"
-+#include "inode.h"
-+
-+int nova_block_symlink(struct super_block *sb, struct nova_inode *pi,
-+	struct inode *inode, const char *symname, int len, u64 epoch_id)
-+{
-+	struct nova_file_write_item entry_item;
-+	struct nova_inode_info *si = NOVA_I(inode);
-+	struct nova_inode_info_header *sih = &si->header;
-+	struct nova_inode_update update;
-+	unsigned long name_blocknr = 0;
-+	int allocated;
-+	u64 block;
-+	char *blockp;
-+	u32 time;
-+	int ret;
-+
-+	update.tail = sih->log_tail;
-+
-+	allocated = nova_new_data_blocks(sb, sih, &name_blocknr, 0, 1,
-+				 ALLOC_INIT_ZERO, ANY_CPU, ALLOC_FROM_TAIL);
-+	if (allocated != 1 || name_blocknr == 0) {
-+		ret = allocated;
-+		return ret;
-+	}
-+
-+	/* First copy name to name block */
-+	block = nova_get_block_off(sb, name_blocknr, NOVA_BLOCK_TYPE_4K);
-+	blockp = (char *)nova_get_block(sb, block);
-+
-+	memcpy_to_pmem_nocache(blockp, symname, len);
-+	blockp[len] = '\0';
-+
-+	/* Apply a write entry to the log page */
-+	time = current_time(inode).tv_sec;
-+	nova_init_file_write_item(sb, sih, &entry_item, epoch_id, 0, 1,
-+					name_blocknr, time, len + 1);
-+
-+	sih_lock(sih);
-+	ret = nova_append_file_write_entry(sb, pi, inode, &entry_item, &update);
-+	if (ret) {
-+		nova_dbg("%s: append file write entry failed %d\n",
-+					__func__, ret);
-+		nova_free_data_blocks(sb, sih, name_blocknr, 1);
-+		return ret;
-+	}
-+
-+	nova_update_inode(sb, inode, pi, &update);
-+	sih->trans_id++;
-+	sih_unlock(sih);
-+
-+	return 0;
-+}
-+
-+/* FIXME: Temporary workaround */
-+static int nova_readlink_copy(char __user *buffer, int buflen, const char *link)
-+{
-+	int len = PTR_ERR(link);
-+
-+	if (IS_ERR(link))
-+		goto out;
-+
-+	len = strlen(link);
-+	if (len > (unsigned int) buflen)
-+		len = buflen;
-+	if (copy_to_user(buffer, link, len))
-+		len = -EFAULT;
-+out:
-+	return len;
-+}
-+
-+static int nova_readlink(struct dentry *dentry, char __user *buffer, int buflen)
-+{
-+	struct nova_file_write_entry *entry;
-+	struct inode *inode = dentry->d_inode;
-+	struct super_block *sb = inode->i_sb;
-+	struct nova_inode_info *si = NOVA_I(inode);
-+	struct nova_inode_info_header *sih = &si->header;
-+	char *blockp;
-+
-+	entry = (struct nova_file_write_entry *)nova_get_block(sb,
-+							sih->log_head);
-+
-+	blockp = (char *)nova_get_block(sb, BLOCK_OFF(entry->block));
-+
-+	return nova_readlink_copy(buffer, buflen, blockp);
-+}
-+
-+static const char *nova_get_link(struct dentry *dentry, struct inode *inode,
-+	struct delayed_call *done)
-+{
-+	struct nova_file_write_entry *entry;
-+	struct super_block *sb = inode->i_sb;
-+	struct nova_inode_info *si = NOVA_I(inode);
-+	struct nova_inode_info_header *sih = &si->header;
-+	char *blockp;
-+
-+	entry = (struct nova_file_write_entry *)nova_get_block(sb,
-+							sih->log_head);
-+
-+	blockp = (char *)nova_get_block(sb, BLOCK_OFF(entry->block));
-+
-+	return blockp;
-+}
-+
-+const struct inode_operations nova_symlink_inode_operations = {
-+	.readlink	= nova_readlink,
-+	.get_link	= nova_get_link,
-+	.setattr	= nova_notify_change,
-+};
+> Will
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+
 -- 
-2.7.4
+Shanker Donthineni
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
