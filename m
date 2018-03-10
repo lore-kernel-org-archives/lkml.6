@@ -1,115 +1,178 @@
-Return-Path: <kernel-hardening-return-12455-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELv7jyt6q3jzW5KVQZ9ut4Bkz6B+P3g3mh4AhFlfleLF2cqvxPEDEBCGifW3CSpbjkwsWXM3
-ARC-Seal: i=1; a=rsa-sha256; t=1520858985; cv=none;
+Return-Path: <kernel-hardening-return-12350-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELvj3oAF18ibg8VujJea/SMzszeaHDNrXIOIpcHY/oLOfEAwCbzT24KEI5tOxFSDAGeY+1IN
+ARC-Seal: i=1; a=rsa-sha256; t=1520640663; cv=none;
         d=google.com; s=arc-20160816;
-        b=YUm70aQ4ZsgxqmdR9a62vtqgokQ4+i2KaRgzZ3Wma2bDHUtGp5RHc8OOdJdIb6CDZ+
-         ThXN/qb8y5OYMrAFgdYB6sBVCCw4ALTyOzSuDU0wo40lASl0y/FnLv8+hTiA5gRvgiFJ
-         Fp5hIMitw45JT2shc5kazVZpyhc2KYm3swXKNlVwp0VBm5HI2KY1rXDtuJ3uuae6+A78
-         w4pyF9uxeMsf8+OhjoV22jTkWnd74TB+YN3IoEFYY+hB8w2kU7n9XibELu4/s+Yb0ySH
-         UUn3/b+iF+SY9NaoI6SDALwGifzjSI7ROcFchTBfWy3nXlQ3LzfVZ/zFp8r3ONIxMI9w
-         xxaQ==
+        b=E83BKUIKWHavui3yvIHgax9UDYrb3j/7OzuncZ3cQgOC/TOeHJ5V/cjQRw6lCrXFgJ
+         eHT7OZDOgwFga/laFK0V1TEFphzW9IwsagNpOpu4QTGYl6myI7fdZFEvhngu1RCUcTkd
+         zayyRm//Kime68NvNp90Ib0r79EIkLyHL2ELdKUX0YOffcycqS2nHk6r2iKy4dfbL9zF
+         aQNHnbFXAFKHwtJ5sq77/bUwMfPwL/e5uH7N8XaeJrmpznXZr1ZIzVry+UXSAtPlr809
+         0boJYgyL6ClIK8Jeolonsc96ZHV58H4VY0T1G6Rd3OPHt/QG7MFHYBFLi8jvBqJw1E9G
+         Gi7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :delivered-to:delivered-to:list-id:list-subscribe:list-unsubscribe
-         :list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=qFmRZ4InlsOIi+TUyCUrQpTQhnr06YdhUplOMDsgPew=;
-        b=J9Njm6Wae0IWKG3S5ct5DlBLFpaVNURjtqXkiyfo8rs7gQuqiERz2t6xzTfCfL2GDu
-         X70P4W/E8kDpBWbYpdLDj+uMbR3HvweyvTiu6Pn9olJDS23fOgOGQ4L37gk3jC7mShRf
-         W8zqbrZwNanwsdtZaLI0gO2x9L+vx+j53k6OvAy5RBT5msWFG0w57NIb2K8oIY8g5V84
-         sjZRbx3I+Gnt0r7eotNbZyqsz4lJsZt1Iqg1eNhsubvDY+g6eNXvVOgOK1fEHzS9Ju/a
-         6oClHTiOec5LYOU/X4zX9g6gp4ItN1nq4UlS3F5KAz7FcM0Rick95qEcKSpWPwa/MH5q
-         VzPg==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=roQovXqc354fTff3XJfD8Mqu/kAFDMxTuYxokb4/mj8=;
+        b=TvwutWC7Bk3Ot3GXlZqnUEq1fCLgmhEpUHr1ulHEkuPq7Ex6tmDGnK5O0BU9s/0xGO
+         wQ6tc5mENxgqZZ0d/MuXP8m2AzDktMV55qTatr+XqYYNJRJr4JagIFlMEdgwXrqjd6rh
+         SXIHSOZw1pkb7B4ihsRFpeRBWQ8y1dQCX1udlGfXypZi2duFu6tbYyJg+xwXJGo8J8CQ
+         RihEFGZdXM80iA1T9Q1YId+irs+2NiH+8sq/hGLtq6OBhO5zPFQKrzsfBaKQITgaVv/C
+         QJOuPVu4Y3NV9PilcGjHZL5r8A2ulfV8CdMVjB85oXrFDVfJJsEJ9Hn+USmJOEr0ruPQ
+         6Ymg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12455-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12455-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12350-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12350-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12455-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12455-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12350-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12350-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Subject: Re: EXT: [PATCH 3/4] gpio: Remove VLA from xra1403 driver
-To: Laura Abbott <labbott@redhat.com>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Kees Cook <keescook@chromium.org>, Semi Malinen
-	<semi.malinen@ge.com>
-CC: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-hardening@lists.openwall.com>
+From: Laura Abbott <labbott@redhat.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Kees Cook <keescook@chromium.org>
+Cc: Laura Abbott <labbott@redhat.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	Lukas Wunner <lukas@wunner.de>,
+	Mathias Duckeck <m.duckeck@kunbus.de>,
+	Nandor Han <nandor.han@ge.com>,
+	Semi Malinen <semi.malinen@ge.com>,
+	Patrice Chotard <patrice.chotard@st.com>
+Subject: [PATCH 1/4] gpio: Remove VLA from gpiolib
+Date: Fri,  9 Mar 2018 16:10:18 -0800
+Message-Id: <20180310001021.6437-2-labbott@redhat.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180310001021.6437-1-labbott@redhat.com>
 References: <20180310001021.6437-1-labbott@redhat.com>
- <20180310001021.6437-4-labbott@redhat.com>
-From: Nandor Han <nandor.han@ge.com>
-Message-ID: <2ba65a3e-3bc9-d709-caf9-f0c512d718a3@ge.com>
-Date: Mon, 12 Mar 2018 08:06:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180310001021.6437-4-labbott@redhat.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [3.159.212.192]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-12_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
- definitions=main-1803120071
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594736231408516491?=
-X-GMAIL-MSGID: =?utf-8?q?1594736231408516491?=
+X-GMAIL-THRID: =?utf-8?q?1594507304079648871?=
+X-GMAIL-MSGID: =?utf-8?q?1594507304079648871?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 10/03/18 02:10, Laura Abbott wrote:
-> 
-> The new challenge is to remove VLAs from the kernel
-> (see https://lkml.org/lkml/2018/3/7/621)
-> 
-> This patch replaces a VLA with an appropriate call to kmalloc_array.
-> 
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
 
-This looks good to me.
-Reviewed-by: Nandor Han <nandor.han@ge.com>
 
-Nandor
+The new challenge is to remove VLAs from the kernel
+(see https://lkml.org/lkml/2018/3/7/621)
 
->   drivers/gpio/gpio-xra1403.c | 8 +++++++-
->   1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpio/gpio-xra1403.c b/drivers/gpio/gpio-xra1403.c
-> index 0230e4b7a2fb..8d4c8e99b251 100644
-> --- a/drivers/gpio/gpio-xra1403.c
-> +++ b/drivers/gpio/gpio-xra1403.c
-> @@ -126,11 +126,16 @@ static void xra1403_dbg_show(struct seq_file *s, struct gpio_chip *chip)
->   {
->   	int reg;
->   	struct xra1403 *xra = gpiochip_get_data(chip);
-> -	int value[xra1403_regmap_cfg.max_register];
-> +	int *value;
->   	int i;
->   	unsigned int gcr;
->   	unsigned int gsr;
->   
-> +	value = kmalloc_array(xra1403_regmap_cfg.max_register, sizeof(*value),
-> +				GFP_KERNEL);
-> +	if (!value)
-> +		return;
-> +
->   	seq_puts(s, "xra reg:");
->   	for (reg = 0; reg <= xra1403_regmap_cfg.max_register; reg++)
->   		seq_printf(s, " %2.2x", reg);
-> @@ -154,6 +159,7 @@ static void xra1403_dbg_show(struct seq_file *s, struct gpio_chip *chip)
->   			   (gcr & BIT(i)) ? "in" : "out",
->   			   (gsr & BIT(i)) ? "hi" : "lo");
->   	}
-> +	kfree(value);
->   }
->   #else
->   #define xra1403_dbg_show NULL
-> 
+This patch replaces several VLAs with an appropriate call to
+kmalloc_array.
+
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+ drivers/gpio/gpiolib.c | 55 +++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 48 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index d66de67ef307..124727c74931 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2662,16 +2662,33 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 
+ 	while (i < array_size) {
+ 		struct gpio_chip *chip = desc_array[i]->gdev->chip;
+-		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
+-		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
++		unsigned long *mask;
++		unsigned long *bits;
+ 		int first, j, ret;
+ 
++		mask = kmalloc_array(BITS_TO_LONGS(chip->ngpio),
++				sizeof(*mask),
++				can_sleep ? GFP_KERNEL : GFP_ATOMIC);
++
++		if (!mask)
++			return -ENOMEM;
++
++		bits = kmalloc_array(BITS_TO_LONGS(chip->ngpio),
++				sizeof(*bits),
++				can_sleep ? GFP_KERNEL : GFP_ATOMIC);
++
++		if (!bits) {
++			kfree(mask);
++			return -ENOMEM;
++		}
++
++
+ 		if (!can_sleep)
+ 			WARN_ON(chip->can_sleep);
+ 
+ 		/* collect all inputs belonging to the same chip */
+ 		first = i;
+-		memset(mask, 0, sizeof(mask));
++		memset(mask, 0, sizeof(*mask));
+ 		do {
+ 			const struct gpio_desc *desc = desc_array[i];
+ 			int hwgpio = gpio_chip_hwgpio(desc);
+@@ -2682,8 +2699,11 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 			 (desc_array[i]->gdev->chip == chip));
+ 
+ 		ret = gpio_chip_get_multiple(chip, mask, bits);
+-		if (ret)
++		if (ret) {
++			kfree(bits);
++			kfree(mask);
+ 			return ret;
++		}
+ 
+ 		for (j = first; j < i; j++) {
+ 			const struct gpio_desc *desc = desc_array[j];
+@@ -2695,6 +2715,8 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 			value_array[j] = value;
+ 			trace_gpio_value(desc_to_gpio(desc), 1, value);
+ 		}
++		kfree(bits);
++		kfree(mask);
+ 	}
+ 	return 0;
+ }
+@@ -2887,14 +2909,30 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 
+ 	while (i < array_size) {
+ 		struct gpio_chip *chip = desc_array[i]->gdev->chip;
+-		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
+-		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
++		unsigned long *mask;
++		unsigned long *bits;
+ 		int count = 0;
+ 
++		mask = kmalloc_array(BITS_TO_LONGS(chip->ngpio),
++				sizeof(*mask),
++				can_sleep ? GFP_KERNEL : GFP_ATOMIC);
++
++		if (!mask)
++			return;
++
++		bits = kmalloc_array(BITS_TO_LONGS(chip->ngpio),
++				sizeof(*bits),
++				can_sleep ? GFP_KERNEL : GFP_ATOMIC);
++
++		if (!bits) {
++			kfree(mask);
++			return;
++		}
++
+ 		if (!can_sleep)
+ 			WARN_ON(chip->can_sleep);
+ 
+-		memset(mask, 0, sizeof(mask));
++		memset(mask, 0, sizeof(*mask));
+ 		do {
+ 			struct gpio_desc *desc = desc_array[i];
+ 			int hwgpio = gpio_chip_hwgpio(desc);
+@@ -2925,6 +2963,9 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 		/* push collected bits to outputs */
+ 		if (count != 0)
+ 			gpio_chip_set_multiple(chip, mask, bits);
++
++		kfree(mask);
++		kfree(bits);
+ 	}
+ }
+ 
+-- 
+2.14.3
