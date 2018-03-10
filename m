@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs7HFErsIs4OrLsOS5foOvy4x6zT8WgKXAK4zlYkI2dJX9nLe7RWE1RiYOhyCppWw0zGYxd
-ARC-Seal: i=1; a=rsa-sha256; t=1520641193; cv=none;
+X-Google-Smtp-Source: AG47ELtNmw+ZBHP5nK5P6DmUNLoIjsmhlZLsbaFtNQPII+jofdiN9izZyMDwLCOg2GJiQ5jg8nxU
+ARC-Seal: i=1; a=rsa-sha256; t=1520641191; cv=none;
         d=google.com; s=arc-20160816;
-        b=dCfSmqsdGsvD7FZnCjp93lhvMZrrRx1BNzNS987fNeH0uaT8grlW9tcmjZUqtVnnZP
-         cPFVjw6n1VKUUru/hFDP0W9OOwXptgCF5OQB2o5gew4NI/PNovfT7RZO/82tfzgLD1/a
-         6twe5p5yuwpvL95d6EPLoOywTkZXOqR4QwebAdW7hTVMvYY94wI2j5bw5/zZQGsHF4JM
-         598a4ofgdTLFDcTmmPVE/K5Hns+kKc9p1hn7QTZeYQ2qL9NDRbq1LrgbSeZHg8/RI8XD
-         TnZGRbtf669em1PXZ7xz+weGomRn1zZyMXUiIA4Y7ZCitfspWwWXaKsAb5Goidh4cR8i
-         COpQ==
+        b=unwY2TneW5478Rbl8DRaxxTyeHuW1eejYAw1yZjaL+SsFXLN+/uwnxPX9lV+uviYUQ
+         djdR3x9vJXtp20xDLzCuT5Am85wdELIweE8YyE2iG4CFNGaj0t0bgur/eCuC7pw/VJpw
+         dx6/2qLMFhe7ORWFvSD+I/exYTryM5BWE9kRIEXR7JtOnwRY0eFmnXLz+9k28Ybfu/t6
+         4Msc4mKpK70bFXLz6zqfSt9JYfKfaLB+JadUBMShFkoq6c6o8DELeHh1J/k694H+zeUB
+         4nUNqBtRDHFZVzINzergKoHfKM2dW7RL9t0G3ZNsLZxYATxJ/eADwEb0aCJ3SjhL7pxD
+         Umcg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gxSnFuPvqWbtWXTiSmt+Jg3GImSMHSkMFaX5wwcf2hI=;
-        b=IP1AxYaRqGduw53nezD3m+CkYFlrg9GEjziaJAx3P8JPqGpSDkAxlYtBl1oDU0znWG
-         hjVtGLoqxMWuK9Wz3VY6V/vxk9DzBNRyy+jUrUxoEvGIFRmraSnO4YpRMBXz/mNRASrL
-         pA6Ehww7n35aCdoCRZe7fZavRjPz0E9Xj86lPmRgwc2mquO/wwPTrFulYAosmny+Qc0o
-         91h38NgqnfuWrzj/CV0tb29F9cZgVbOpzk5TFwy4PNbItNhNbJNo+4eL+1d0LE8a8mXF
-         ovFFJzmo0mAZtYrp2MjzRSMDzO2vuMooyqTAT3myPJ655CJjApmFB5HRI6ft4WcO9cl+
-         HzaA==
+        bh=bN56o2FSyr6HCk1ViJiZ0KckLdRJ6yHwHcAkMVqsOk8=;
+        b=Fbec6XcqcX9QEQh4OUvmvGe/4+S/j5v+RZ0bVH5eg7bCufT4VJAhU8IsazvXWt6Ycv
+         NECdqvsOQ4D13xT8LTXDNd8VVYEt/EoiIVP86ZOKO7oz1ttZqzA7p6xU54ER1Sr1573Q
+         D3Ms0c8xe1vRvvExpo0xkDQVGhEWlF/FL5S1vW6K8SFTkb0cQk0+0jncPyfv7Yxj92wQ
+         XA/cW60XUzlf/xcGvYujXjULqgHgkYPTOoEi6VWumpz15oL6Ltu8vwh8ePAn6nfldvJF
+         VJRxbKJH0FTRun/OoRYitXoof2Ki5tL8WArYfdEPKBwGHSr1jJn5Id90hKTPTxe/PlJ6
+         yspg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,20 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@suse.de>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	KarimAllah Ahmed <karahmed@amazon.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	kernel-janitors@vger.kernel.org,
-	Ingo Molnar <mingo@kernel.org>,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 16/36] x86/spectre: Fix an error message
-Date: Fri,  9 Mar 2018 16:18:32 -0800
-Message-Id: <20180310001808.223312534@linuxfoundation.org>
+	Nathan Sullivan <nathan.sullivan@ni.com>,
+	Zach Brown <zach.brown@ni.com>,
+	Jacek Anaszewski <j.anaszewski@samsung.com>,
+	Willy Tarreau <w@1wt.eu>,
+	Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH 4.4 15/36] leds: do not overflow sysfs buffer in led_trigger_show
+Date: Fri,  9 Mar 2018 16:18:31 -0800
+Message-Id: <20180310001808.135271502@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001807.213987241@linuxfoundation.org>
 References: <20180310001807.213987241@linuxfoundation.org>
@@ -49,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507859737766837?=
-X-GMAIL-MSGID: =?utf-8?q?1594507859737766837?=
+X-GMAIL-THRID: =?utf-8?q?1594507812947407686?=
+X-GMAIL-MSGID: =?utf-8?q?1594507857765242638?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,42 +52,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Nathan Sullivan <nathan.sullivan@ni.com>
 
-commit 9de29eac8d2189424d81c0d840cd0469aa3d41c8 upstream.
+commit 3b9b95363c45365d606ad4bbba16acca75fdf6d3 upstream.
 
-If i == ARRAY_SIZE(mitigation_options) then we accidentally print
-garbage from one space beyond the end of the mitigation_options[] array.
+Per the documentation, use scnprintf instead of sprintf to ensure there
+is never more than PAGE_SIZE bytes of trigger names put into the
+buffer.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: KarimAllah Ahmed <karahmed@amazon.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org
-Fixes: 9005c6834c0f ("x86/spectre: Simplify spectre_v2 command line parsing")
-Link: http://lkml.kernel.org/r/20180214071416.GA26677@mwanda
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Nathan Sullivan <nathan.sullivan@ni.com>
+Signed-off-by: Zach Brown <zach.brown@ni.com>
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Willy Tarreau <w@1wt.eu>
+Cc: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/bugs.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/leds/led-triggers.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -175,8 +175,7 @@ static enum spectre_v2_mitigation_cmd __
- 		}
+--- a/drivers/leds/led-triggers.c
++++ b/drivers/leds/led-triggers.c
+@@ -88,21 +88,23 @@ ssize_t led_trigger_show(struct device *
+ 	down_read(&led_cdev->trigger_lock);
  
- 		if (i >= ARRAY_SIZE(mitigation_options)) {
--			pr_err("unknown option (%s). Switching to AUTO select\n",
--			       mitigation_options[i].option);
-+			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
- 			return SPECTRE_V2_CMD_AUTO;
- 		}
+ 	if (!led_cdev->trigger)
+-		len += sprintf(buf+len, "[none] ");
++		len += scnprintf(buf+len, PAGE_SIZE - len, "[none] ");
+ 	else
+-		len += sprintf(buf+len, "none ");
++		len += scnprintf(buf+len, PAGE_SIZE - len, "none ");
+ 
+ 	list_for_each_entry(trig, &trigger_list, next_trig) {
+ 		if (led_cdev->trigger && !strcmp(led_cdev->trigger->name,
+ 							trig->name))
+-			len += sprintf(buf+len, "[%s] ", trig->name);
++			len += scnprintf(buf+len, PAGE_SIZE - len, "[%s] ",
++					 trig->name);
+ 		else
+-			len += sprintf(buf+len, "%s ", trig->name);
++			len += scnprintf(buf+len, PAGE_SIZE - len, "%s ",
++					 trig->name);
  	}
+ 	up_read(&led_cdev->trigger_lock);
+ 	up_read(&triggers_list_lock);
+ 
+-	len += sprintf(len+buf, "\n");
++	len += scnprintf(len+buf, PAGE_SIZE - len, "\n");
+ 	return len;
+ }
+ EXPORT_SYMBOL_GPL(led_trigger_show);
