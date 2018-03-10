@@ -1,38 +1,38 @@
-Return-Path: <kernel-hardening-return-12368-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELvZwkqRZwWthz7ujYI6T3lQrhlJ3oX9VbOcKwvHW8UzT0H2wMmhJYY5mVi46Dp3qi42JUae
-ARC-Seal: i=1; a=rsa-sha256; t=1520664217; cv=none;
+Return-Path: <kernel-hardening-return-12369-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELuznblmTd/wUHk4P5KVpX3jK4PIS4DK2MM93UfNFenwC5xDOft18SOINfiyo6B3j0rQpfSi
+ARC-Seal: i=1; a=rsa-sha256; t=1520664223; cv=none;
         d=google.com; s=arc-20160816;
-        b=c9aE/5prsZOcqQCB2XheQMBu4HLng/V7c9m1s+QRhnYy728JzkcnYUxhwUUU62LV57
-         3mGTny9L2KJ5m7Hbgrih9ucTl5XwcAbAzoZhOsxdHZkSuGAR6GaHz9DSfSyDJ7ft2mWS
-         JETyLMUfeAbKP3UVCkZiCXl7XrNzW8nKAhxjw8IvHqfgBORwXba1qjSzoVoOqa4HsAJv
-         bTmx8JrI5kub599sLtNLUzVUSlL7bGv+tSDVQYhQrcKzX3qK7yErTKmgNA0tRSldidNI
-         SEijgzsXzSQmofLgN89+spdiP1EFvsnc/5CYB1I8QfuxAGXiPQPQYTWmm1bY7+57Oml2
-         IFpQ==
+        b=fLH+4POlE96kFDiPqv0ofVZexBSUuFkRj6jOSUt/y8AYWjDf36Nq7Y4dtIE2sYcUUh
+         wL1MibgWmdFQ0jOTyfLivBwQ3jg/cARaGW4wkHnL1J9wU0cyJfr5paY3ZWojuarh+01i
+         cuaWrqNkiqC1P5CcVrw2US3uX48Q3InwAjqRV9sKHwAb61s9Cvq2jR+7tJ5bk763J7Fv
+         TdjZGuvUbIluT8NKPQ6LdsE0TRxs+6w3KQdE4KY4lhhRWXk24Ey4yH7gAfN2gatCj72Y
+         mStH4H3Klo0IO9TWxfOHBk+o4oaCEhcVK1Mqh+T9VpKYd+jb3JXza2iHnFsxnq0yITd4
+         wcnw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:subject:cc:to:from:date:dmarc-filter:delivered-to
          :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
          :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=DEMQW1hvpudVCEXqngQwTujKUfTlqZ295b+jiZjPoAs=;
-        b=cizce+fUXHrdYf0+JPF/z7m0EfuLx27JpjHDNH7u21/q816sgHrZJFBeIx4O0gVcDd
-         xdBm9PeVK0Xw2gSaSnYW7qiDG+MCqorjGs5Hu9PyNMexmLvUGPjnfuNe5FwBrqBXn85w
-         eEva00BHIpl9VTXSZ6TwGzxXQMqTiM2ViqwW7w5uMboMfHOuzsY0A7DyyGR7aT2s2m4k
-         QiTzKz5nOZf95a3GAk611cuT2LV/r6SIfNI+iELmN7d/XNen2Lx3VmZGn4KCEE6vO3vS
-         BoWyKA1gRHAaNuGBVI05Ai5KP8PG6CDic9H0zbZ1yYiI+gw2RftWuHLYBkw2fvuG/l9U
-         awBA==
+        bh=VzkT7uuVmxBuCYLHz10MmqyHFwQTFdTDX1jTvFMW0P8=;
+        b=OsXqd9qEcjBJUAx0E9L0GQeXUEX44ZCcdWhLFTWpSvyll2chp2PYZmSfdhdiCwX1Tt
+         jCMAakfxmwAujncZHbg6y0o9FdX6YKZQ5zxJmngbtfuf8CLYDG+Q9vBEP9QKUNImXtQl
+         DIot19Jzz09zglN830dkd3dPiiVylWuRey3imb8nbZp5yU6/7qmsRGESGrkUvYVVXPS8
+         1/TYH26jXpRkq9Gqg+6eYQspxaAjunMR9DDRSOTGbF/Qwtrb0BOApRiQlJWSQ7KCkuHI
+         1xODwegg5u++5wRUXAgKaiWVQrcUPSlvEOAVzaV3sRx0o1Lb3zoGWhBTkUihDWOcqzA+
+         280Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12368-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12368-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12369-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12369-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12368-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12368-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12369-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12369-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 693512178B
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FC3B21771
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 9 Mar 2018 22:15:23 -0500
+Date: Fri, 9 Mar 2018 22:22:38 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Andrew Morton <akpm@linux-foundation.org>, Josh Poimboeuf
@@ -54,8 +54,8 @@ Cc: Andrew Morton <akpm@linux-foundation.org>, Josh Poimboeuf
  <kernel-hardening@lists.openwall.com>
 Subject: Re: [PATCH 3/3] tracing: Rewrite filter logic to be simpler and
  faster
-Message-ID: <20180309221523.1fce7118@vmware.local.home>
-In-Reply-To: <20180309221019.31c896a3@vmware.local.home>
+Message-ID: <20180309222238.6761728e@vmware.local.home>
+In-Reply-To: <20180309221523.1fce7118@vmware.local.home>
 References: <20180309200536.GA5670@beast>
 	<20180309160719.154a3158e2d8ee56e43a918f@linux-foundation.org>
 	<CA+55aFw9hWz1-YFVoHEiXDjqb9q7dz=rQVXr7YLkMuVLvbwaOg@mail.gmail.com>
@@ -65,44 +65,34 @@ References: <20180309200536.GA5670@beast>
 	<CAGXu5j+4_2vZF9uPy_agcGymbHbVqohSqApKZZxwcTz4OC_Skg@mail.gmail.com>
 	<20180310023907.798690563@goodmis.org>
 	<20180309221019.31c896a3@vmware.local.home>
+	<20180309221523.1fce7118@vmware.local.home>
 X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594531931322322791?=
-X-GMAIL-MSGID: =?utf-8?q?1594532003167402572?=
+X-GMAIL-MSGID: =?utf-8?q?1594532008827068735?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
-I don't know what the hell happened, but claws mail just inserted a
-ton of people into the Cc (I didn't add you). I noticed it just after I
-hit send. The added Cc looks like it came from the email right after the
-email I was replying to "Subject: Re: [PATCH v3] kernel.h: Skip
-single-eval logic on literals in min()/max()".
-
-Sorry for the spam.
-
--- Steve
-
-
-On Fri, 9 Mar 2018 22:10:19 -0500
+On Fri, 9 Mar 2018 22:15:23 -0500
 Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> On Fri, 09 Mar 2018 21:34:45 -0500
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> >  2 files changed, 1050 insertions(+), 1273 deletions(-)  
-> 
-> BTW, it's a bit bigger impact than 223 deletions. As I added a lot of
-> comments to explain the logic better. Removing comments and white space
-> from the modifications we have:
-> 
->  649 insertions(+), 1035 deletions(-)
-> 
-> That's 386 lines of code removed.
-> 
-> -- Steve
+> Sorry for the spam.
 
-'
+A little more spam ;-)
+
+I know what happened, as I'm able to recreate it. For those that use
+claws-mail, be careful.
+
+I clicked on the email I wanted to reply to. Then I must have hit the
+down arrow key, as it moved the selected email to the next email. I hit
+"Reply All", and it showed the email I clicked on (as well as the
+subject), but the Cc list belonged to the email that was selected by the
+down arrow key.
+
+That's a nasty subtle bug. I think I'll go report this to the claws
+folks.
+
+-- Steve
