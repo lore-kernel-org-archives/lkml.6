@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932665AbeCJSVT (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:21:19 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:46194 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932632AbeCJSVO (ORCPT
+        id S932915AbeCJSVq (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:21:46 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:41911 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932892AbeCJSVo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:21:14 -0500
-X-Google-Smtp-Source: AG47ELuWTgubcgt8uWXrFzih1YuRqWtmuRH/fjIfVjCk0ySjUULGsJLL/Flu2xtAiBcU9AfSWVNwlg==
+        Sat, 10 Mar 2018 13:21:44 -0500
+X-Google-Smtp-Source: AG47ELsBzexsaRxgZLjintVXIGm6K5ye/pFVkkF8TU/CZWgUJ/0A3eqgSZD/RYuE/fXa6keLrQN/JQ==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 48/83] Dir: Readdir operation.
-Date: Sat, 10 Mar 2018 10:18:29 -0800
-Message-Id: <1520705944-6723-49-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 72/83] File operation: fallocate.
+Date: Sat, 10 Mar 2018 10:18:53 -0800
+Message-Id: <1520705944-6723-73-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -27,209 +27,196 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andiry Xu <jix024@cs.ucsd.edu>
 
-NOVA reads the directory by traversing the log and reports
-the valid dentries. Valid dentris have inode number greater than zero,
-meaning it's a create dentry.
+Fallocate works similar as writes, allocating zeroed blocked
+for the holes in the request region.
 
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/dir.c   | 153 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/nova/inode.c |   2 +
- fs/nova/nova.h  |   1 +
- 3 files changed, 156 insertions(+)
+ fs/nova/file.c | 148 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/nova/nova.h |   5 ++
+ 2 files changed, 153 insertions(+)
 
-diff --git a/fs/nova/dir.c b/fs/nova/dir.c
-index 377d2da..35a66f9 100644
---- a/fs/nova/dir.c
-+++ b/fs/nova/dir.c
-@@ -221,3 +221,156 @@ int nova_append_dir_init_entries(struct super_block *sb,
- 
- 	return 0;
+diff --git a/fs/nova/file.c b/fs/nova/file.c
+index b94a9a3..a6b5bd3 100644
+--- a/fs/nova/file.c
++++ b/fs/nova/file.c
+@@ -113,6 +113,153 @@ static int nova_open(struct inode *inode, struct file *filp)
+ 	return generic_file_open(inode, filp);
  }
-+
-+static u64 nova_find_next_dentry_addr(struct super_block *sb,
-+	struct nova_inode_info_header *sih, u64 pos)
+ 
++static long nova_fallocate(struct file *file, int mode, loff_t offset,
++	loff_t len)
 +{
-+	struct nova_sb_info *sbi = NOVA_SB(sb);
-+	struct nova_file_write_entry *entry = NULL;
-+	struct nova_file_write_entry *entries[1];
-+	int nr_entries;
-+	u64 addr = 0;
-+
-+	nr_entries = radix_tree_gang_lookup(&sih->tree,
-+					(void **)entries, pos, 1);
-+	if (nr_entries == 1) {
-+		entry = entries[0];
-+		addr = nova_get_addr_off(sbi, entry);
-+	}
-+
-+	return addr;
-+}
-+
-+static int nova_readdir(struct file *file, struct dir_context *ctx)
-+{
-+	struct inode *inode = file_inode(file);
++	struct inode *inode = file->f_path.dentry->d_inode;
 +	struct super_block *sb = inode->i_sb;
-+	struct nova_inode *pidir;
 +	struct nova_inode_info *si = NOVA_I(inode);
 +	struct nova_inode_info_header *sih = &si->header;
-+	struct nova_inode *child_pi;
-+	struct nova_inode *prev_child_pi = NULL;
-+	struct nova_dentry *entry = NULL;
-+	struct nova_dentry *prev_entry = NULL;
-+	unsigned short de_len;
-+	u64 pi_addr;
-+	unsigned long pos = 0;
-+	ino_t ino;
-+	void *addr;
-+	u64 curr_p;
-+	u8 type;
-+	int ret = 0;
-+	timing_t readdir_time;
++	struct nova_inode *pi;
++	struct nova_file_write_entry *entry;
++	struct nova_file_write_item *entry_item;
++	struct list_head item_head;
++	struct nova_inode_update update;
++	unsigned long start_blk, num_blocks, ent_blks = 0;
++	unsigned long total_blocks = 0;
++	unsigned long blocknr = 0;
++	unsigned long blockoff;
++	loff_t new_size;
++	long ret = 0;
++	int inplace = 0;
++	int blocksize_mask;
++	int allocated = 0;
++	timing_t fallocate_time;
++	u64 epoch_id;
++	u32 time;
 +
-+	NOVA_START_TIMING(readdir_t, readdir_time);
-+	pidir = nova_get_inode(sb, inode);
-+	nova_dbgv("%s: ino %llu, size %llu, pos 0x%llx\n",
-+			__func__, (u64)inode->i_ino,
-+			pidir->i_size, ctx->pos);
++	/*
++	 * Fallocate does not make much sence for CoW,
++	 * but we still support it for DAX-mmap purpose.
++	 */
 +
-+	if (sih->log_head == 0) {
-+		nova_err(sb, "Dir %lu log is NULL!\n", inode->i_ino);
-+		ret = -ENOSPC;
++	/* We only support the FALLOC_FL_KEEP_SIZE mode */
++	if (mode & ~FALLOC_FL_KEEP_SIZE)
++		return -EOPNOTSUPP;
++
++	if (S_ISDIR(inode->i_mode))
++		return -ENODEV;
++
++	INIT_LIST_HEAD(&item_head);
++	new_size = len + offset;
++	if (!(mode & FALLOC_FL_KEEP_SIZE) && new_size > inode->i_size) {
++		ret = inode_newsize_ok(inode, new_size);
++		if (ret)
++			return ret;
++	} else {
++		new_size = inode->i_size;
++	}
++
++	nova_dbgv("%s: inode %lu, offset %lld, count %lld, mode 0x%x\n",
++			__func__, inode->i_ino,	offset, len, mode);
++
++	NOVA_START_TIMING(fallocate_t, fallocate_time);
++	inode_lock(inode);
++	sih_lock(sih);
++
++	pi = nova_get_inode(sb, inode);
++	if (!pi) {
++		ret = -EACCES;
 +		goto out;
 +	}
 +
-+	pos = ctx->pos;
++	inode->i_mtime = inode->i_ctime = current_time(inode);
++	time = current_time(inode).tv_sec;
 +
-+	if (pos == 0)
-+		curr_p = sih->log_head;
-+	else if (pos == READDIR_END)
++	blocksize_mask = sb->s_blocksize - 1;
++	start_blk = offset >> sb->s_blocksize_bits;
++	blockoff = offset & blocksize_mask;
++	num_blocks = (blockoff + len + blocksize_mask) >> sb->s_blocksize_bits;
++
++	epoch_id = nova_get_epoch_id(sb);
++	update.tail = sih->log_tail;
++	while (num_blocks > 0) {
++		ent_blks = nova_check_existing_entry(sb, inode, num_blocks,
++						start_blk, &entry,
++						1, epoch_id, &inplace);
++
++		if (entry && inplace) {
++			if (entry->size < new_size) {
++				/* Update existing entry */
++				entry->size = new_size;
++				nova_persist_entry(entry);
++			}
++			allocated = ent_blks;
++			goto next;
++		}
++
++		/* Allocate zeroed blocks to fill hole */
++		allocated = nova_new_data_blocks(sb, sih, &blocknr, start_blk,
++				 ent_blks, ALLOC_INIT_ZERO, ANY_CPU,
++				 ALLOC_FROM_HEAD);
++		nova_dbgv("%s: alloc %d blocks @ %lu\n", __func__,
++						allocated, blocknr);
++
++		if (allocated <= 0) {
++			nova_dbg("%s alloc %lu blocks failed!, %d\n",
++						__func__, ent_blks, allocated);
++			ret = allocated;
++			goto out;
++		}
++
++		entry_item = nova_alloc_file_write_item(sb);
++		if (!entry_item) {
++			ret = -ENOMEM;
++			goto out;
++		}
++
++		/* Handle hole fill write */
++		nova_init_file_write_item(sb, sih, entry_item, epoch_id,
++					start_blk, allocated, blocknr,
++					time, new_size);
++
++		list_add_tail(&entry_item->list, &item_head);
++
++		total_blocks += allocated;
++next:
++		num_blocks -= allocated;
++		start_blk += allocated;
++	}
++
++	ret = nova_commit_writes_to_log(sb, pi, inode,
++					&item_head, total_blocks, 1);
++	if (ret < 0) {
++		nova_err(sb, "commit to log failed\n");
 +		goto out;
-+	else {
-+		curr_p = nova_find_next_dentry_addr(sb, sih, pos);
-+		if (curr_p == 0)
-+			goto out;
 +	}
 +
-+	while (curr_p != sih->log_tail) {
-+		if (goto_next_page(sb, curr_p))
-+			curr_p = next_log_page(sb, curr_p);
-+
-+
-+		if (curr_p == 0) {
-+			nova_err(sb, "Dir %lu log is NULL!\n", inode->i_ino);
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		addr = (void *)nova_get_block(sb, curr_p);
-+		type = nova_get_entry_type(addr);
-+		switch (type) {
-+		case SET_ATTR:
-+			curr_p += sizeof(struct nova_setattr_logentry);
-+			continue;
-+		case LINK_CHANGE:
-+			curr_p += sizeof(struct nova_link_change_entry);
-+			continue;
-+		case DIR_LOG:
-+			break;
-+		default:
-+			nova_err(sb, "%s: unknown type %d, 0x%llx\n",
-+				 __func__, type, curr_p);
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		entry = (struct nova_dentry *)nova_get_block(sb, curr_p);
-+		nova_dbgv("curr_p: 0x%llx, type %d, ino %llu, name %s, namelen %u, rec len %u\n",
-+			  curr_p, entry->entry_type, le64_to_cpu(entry->ino),
-+			  entry->name, entry->name_len,
-+			  le16_to_cpu(entry->de_len));
-+
-+		de_len = le16_to_cpu(entry->de_len);
-+		if (entry->ino > 0 && entry->invalid == 0
-+					&& entry->reassigned == 0) {
-+			ino = __le64_to_cpu(entry->ino);
-+			pos = BKDRHash(entry->name, entry->name_len);
-+
-+			ret = nova_get_inode_address(sb, ino,
-+						     &pi_addr, 0);
-+			if (ret) {
-+				nova_dbg("%s: get child inode %lu address failed %d\n",
-+					 __func__, ino, ret);
-+				ctx->pos = READDIR_END;
-+				goto out;
-+			}
-+
-+			child_pi = nova_get_block(sb, pi_addr);
-+			nova_dbgv("ctx: ino %llu, name %s, name_len %u, de_len %u\n",
-+				(u64)ino, entry->name, entry->name_len,
-+				entry->de_len);
-+			if (prev_entry && !dir_emit(ctx, prev_entry->name,
-+				prev_entry->name_len, ino,
-+				IF2DT(le16_to_cpu(prev_child_pi->i_mode)))) {
-+				nova_dbgv("Here: pos %llu\n", ctx->pos);
-+				ret = 0;
-+				goto out;
-+			}
-+			prev_entry = entry;
-+
-+			prev_child_pi = child_pi;
-+		}
-+		ctx->pos = pos;
-+		curr_p += de_len;
++	if (ret || (mode & FALLOC_FL_KEEP_SIZE)) {
++		pi->i_flags |= cpu_to_le32(NOVA_EOFBLOCKS_FL);
++		sih->i_flags |= cpu_to_le32(NOVA_EOFBLOCKS_FL);
 +	}
 +
-+	if (prev_entry && !dir_emit(ctx, prev_entry->name,
-+			prev_entry->name_len, ino,
-+			IF2DT(le16_to_cpu(prev_child_pi->i_mode))))
-+		return 0;
++	if (!(mode & FALLOC_FL_KEEP_SIZE) && new_size > inode->i_size) {
++		inode->i_size = new_size;
++		sih->i_size = new_size;
++	}
 +
-+	ctx->pos = READDIR_END;
-+	ret = 0;
++	nova_persist_inode(pi);
++
 +out:
-+	NOVA_END_TIMING(readdir_t, readdir_time);
-+	nova_dbgv("%s return\n", __func__);
++	if (ret < 0)
++		nova_cleanup_incomplete_write(sb, sih, &item_head, 1);
++
++	sih_unlock(sih);
++	inode_unlock(inode);
++	NOVA_END_TIMING(fallocate_t, fallocate_time);
 +	return ret;
 +}
 +
-+const struct file_operations nova_dir_operations = {
-+	.llseek		= generic_file_llseek,
-+	.read		= generic_read_dir,
-+	.iterate	= nova_readdir,
-+	.fsync		= noop_fsync,
-+};
-diff --git a/fs/nova/inode.c b/fs/nova/inode.c
-index 15517cc..41417e3 100644
---- a/fs/nova/inode.c
-+++ b/fs/nova/inode.c
-@@ -181,6 +181,7 @@ static int nova_read_inode(struct super_block *sb, struct inode *inode,
- 	case S_IFREG:
- 		break;
- 	case S_IFDIR:
-+		inode->i_fop = &nova_dir_operations;
- 		break;
- 	case S_IFLNK:
- 		break;
-@@ -625,6 +626,7 @@ struct inode *nova_new_vfs_inode(enum nova_new_inode_type type,
- 		inode->i_mapping->a_ops = &nova_aops_dax;
- 		break;
- 	case TYPE_MKDIR:
-+		inode->i_fop = &nova_dir_operations;
- 		inode->i_mapping->a_ops = &nova_aops_dax;
- 		set_nlink(inode, 2);
- 		break;
+ static ssize_t
+ do_dax_mapping_read(struct file *filp, char __user *buf,
+ 	size_t len, loff_t *ppos)
+@@ -477,6 +624,7 @@ const struct file_operations nova_dax_file_operations = {
+ 	.open		= nova_open,
+ 	.fsync		= nova_fsync,
+ 	.flush		= nova_flush,
++	.fallocate	= nova_fallocate,
+ };
+ 
+ const struct inode_operations nova_file_inode_operations = {
 diff --git a/fs/nova/nova.h b/fs/nova/nova.h
-index a94f44d..ed269fe 100644
+index 6392bb3..ab9e8f3 100644
 --- a/fs/nova/nova.h
 +++ b/fs/nova/nova.h
-@@ -447,6 +447,7 @@ nova_get_blocknr(struct super_block *sb, u64 block, unsigned short btype)
- /* ====================================================== */
- 
- /* dir.c */
-+extern const struct file_operations nova_dir_operations;
- int nova_insert_dir_radix_tree(struct super_block *sb,
- 	struct nova_inode_info_header *sih, const char *name,
- 	int namelen, struct nova_dentry *direntry);
+@@ -477,6 +477,11 @@ void nova_init_file_write_item(struct super_block *sb,
+ 	struct nova_inode_info_header *sih, struct nova_file_write_item *item,
+ 	u64 epoch_id, u64 pgoff, int num_pages, u64 blocknr, u32 time,
+ 	u64 file_size);
++unsigned long nova_check_existing_entry(struct super_block *sb,
++	struct inode *inode, unsigned long num_blocks, unsigned long start_blk,
++	struct nova_file_write_entry **ret_entry,
++	int check_next, u64 epoch_id,
++	int *inplace);
+ ssize_t nova_inplace_file_write(struct file *filp, const char __user *buf,
+ 	size_t len, loff_t *ppos);
+ ssize_t do_nova_inplace_file_write(struct file *filp, const char __user *buf,
 -- 
 2.7.4
