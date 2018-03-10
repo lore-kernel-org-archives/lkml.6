@@ -1,36 +1,69 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvdoYHrWPgDxr5E4E19iXH17Kwej9kSgQvah5XiPfM9w0oSCIzPvDMgmAqadvPhfqQDkGNm
-ARC-Seal: i=1; a=rsa-sha256; t=1520641386; cv=none;
-        d=google.com; s=arc-20160816;
-        b=VizziHmETEylibaVDC7nuVO6bYCy2fKp8k8TnF2rLj5MwAqMVUiKYa8AmkreaX4rVj
-         hRS3WYN+dhz7OD776B37Gvl93zcIuOnYgndVrIFwmUbNb8JubtjI3ulgAY7Hi4yJKQ46
-         2SNgK0e/jL7mK1or0iMAN4uEujrhEOaSpmaMdkUC1B7yLKfGJxLSmQQwucoX5QTydJjy
-         fTYdoiQzbEWa04Me8G+W+pKYYwy2BZguOGvKMkMo/viuHgTKM+hoeXjvuaYDbrWrskZU
-         rqS+GDIAaRT9kXvgjTY6ETMNeFGpuFiw39R7KzTb8j1VUCyjLxWMX8ExruFqWDldviwH
-         nkaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=7V49E1U33Qxcl0LeHgsCGXDiW9P+0FQnPE78w4ni+OQ=;
-        b=yxIwNd1nv59J4Ath+KgwDLyGkrDoVRfAorjAxRqVC87aB71fv1ecpmIdBjnV8O36iN
-         kh3bm3kS2vaT3B8gOJwt/4ST9/XewG6CsA7dSBNR9cXdQeTlsaildIUUrlpXfeuSfuin
-         r2/1LKvEKlN3pISfocSITpqh+QfXnZy5H3Dd+0y+8+OyQ49G+Nj+5hcqeA806o8lzZyc
-         AWlfZOtmPxA3By4QI6jIzu+5QB0mTs2uh3ymjN3XOZ8z0Gc1ipPacBWokO+4Y5M/ihxu
-         rbpB+MjcVaj6SdJxz0NrAWhETGiul5avV5Jr3PJ0D3O8+rHhOnOxaqnog5CqEVyqsl3u
-         kaHA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1715849-1520641386-2-727662218549042021
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520641385; b=nCGBs8OU5tFqd79UXG8G4MIDUusvoievhbij8JhCtKz7ptb
+    FBvVT/NFv7EjfkQahw6h6lVo7s0WogcqRr2e35oaLqwRgYyuvwL7nvwlyxajQcxQ
+    F4ZdB1zsNhY2LmprmGCi7+FfiFwEsPZqj7wR10JDaGJHVvGVJuRtQWO12N426q6a
+    V2o5LUJ7NnB28zZhsag4w8w8mTqjt4y/nQMMPVuQXeGziuJIpYC6rILr4D8xq3FM
+    XvuVyOLbad1i+8jEr/18eS/g2f/9xJZ2SAI/vNiwUFqH2LlP/iF06voKoxQo3hi1
+    WJhg19bypJZhlO7g1WWTMPf677G/m7PUVFv72ZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520641385; bh=rOlN72Wrqt3iRvO/8cjcePeqTa
+    bflSSFFTo9eohfR+Q=; b=Je/RO6XL7E+qVKyuAu8UvYtf9uVLLLIlcAsnFrAvMG
+    q6kEJJ+pVwPAPaxarear87oQ0tUZcK13M7F4O56tbua+23O2u/xC9nmvG5HBqkcf
+    78SJFKQFxKTfAft1OCtz08tm9aMk6TSYrlRM8QwpT7FQq2oG70i9BFem/emaJxoJ
+    D1G7jvB16BCn9b61gtRhgD8UYw2izyt1eegDVI2ppEmn4S/ccoRIq79K/HDo91Vo
+    sCV+fI39JcDSiEbtYXvBuqzkgHRNP/azFyCwQ7v7X2qLruhQWyYITmzOpdpQlpKJ
+    mvCJsLdPPXSt//eTDbpZgaiUnRIu6QVOxqIJv8n/TD4w==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933946AbeCJAXA (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Mar 2018 19:23:00 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40286 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933647AbeCJAW6 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:22:58 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH 4.9 62/65] bpf, arm64: fix out of bounds access in tail call
-Date: Fri,  9 Mar 2018 16:19:02 -0800
-Message-Id: <20180310001830.271405889@linuxfoundation.org>
+        stable@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net,
+        "David S . Miller" <davem@davemloft.net>,
+        Jarno Rajahalme <jarno@covalent.io>
+Subject: [PATCH 4.9 59/65] bpf: fix wrong exposure of map_flags into fdinfo for lpm
+Date: Fri,  9 Mar 2018 16:18:59 -0800
+Message-Id: <20180310001830.032356503@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
 References: <20180310001824.927996722@linuxfoundation.org>
@@ -38,10 +71,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594508062378391968?=
-X-GMAIL-MSGID: =?utf-8?q?1594508062378391968?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,115 +83,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Daniel Borkmann <daniel@iogearbox.net>
 
-[ upstream commit 16338a9b3ac30740d49f5dfed81bac0ffa53b9c7 ]
+[ upstream commit a316338cb71a3260201490e615f2f6d5c0d8fb2c ]
 
-I recently noticed a crash on arm64 when feeding a bogus index
-into BPF tail call helper. The crash would not occur when the
-interpreter is used, but only in case of JIT. Output looks as
-follows:
+trie_alloc() always needs to have BPF_F_NO_PREALLOC passed in via
+attr->map_flags, since it does not support preallocation yet. We
+check the flag, but we never copy the flag into trie->map.map_flags,
+which is later on exposed into fdinfo and used by loaders such as
+iproute2. Latter uses this in bpf_map_selfcheck_pinned() to test
+whether a pinned map has the same spec as the one from the BPF obj
+file and if not, bails out, which is currently the case for lpm
+since it exposes always 0 as flags.
 
-  [  347.007486] Unable to handle kernel paging request at virtual address fffb850e96492510
-  [...]
-  [  347.043065] [fffb850e96492510] address between user and kernel address ranges
-  [  347.050205] Internal error: Oops: 96000004 [#1] SMP
-  [...]
-  [  347.190829] x13: 0000000000000000 x12: 0000000000000000
-  [  347.196128] x11: fffc047ebe782800 x10: ffff808fd7d0fd10
-  [  347.201427] x9 : 0000000000000000 x8 : 0000000000000000
-  [  347.206726] x7 : 0000000000000000 x6 : 001c991738000000
-  [  347.212025] x5 : 0000000000000018 x4 : 000000000000ba5a
-  [  347.217325] x3 : 00000000000329c4 x2 : ffff808fd7cf0500
-  [  347.222625] x1 : ffff808fd7d0fc00 x0 : ffff808fd7cf0500
-  [  347.227926] Process test_verifier (pid: 4548, stack limit = 0x000000007467fa61)
-  [  347.235221] Call trace:
-  [  347.237656]  0xffff000002f3a4fc
-  [  347.240784]  bpf_test_run+0x78/0xf8
-  [  347.244260]  bpf_prog_test_run_skb+0x148/0x230
-  [  347.248694]  SyS_bpf+0x77c/0x1110
-  [  347.251999]  el0_svc_naked+0x30/0x34
-  [  347.255564] Code: 9100075a d280220a 8b0a002a d37df04b (f86b694b)
-  [...]
+Also copy over flags in array_map_alloc() and stack_map_alloc().
+They always have to be 0 right now, but we should make sure to not
+miss to copy them over at a later point in time when we add actual
+flags for them to use.
 
-In this case the index used in BPF r3 is the same as in r1
-at the time of the call, meaning we fed a pointer as index;
-here, it had the value 0xffff808fd7cf0500 which sits in x2.
-
-While I found tail calls to be working in general (also for
-hitting the error cases), I noticed the following in the code
-emission:
-
-  # bpftool p d j i 988
-  [...]
-  38:   ldr     w10, [x1,x10]
-  3c:   cmp     w2, w10
-  40:   b.ge    0x000000000000007c              <-- signed cmp
-  44:   mov     x10, #0x20                      // #32
-  48:   cmp     x26, x10
-  4c:   b.gt    0x000000000000007c
-  50:   add     x26, x26, #0x1
-  54:   mov     x10, #0x110                     // #272
-  58:   add     x10, x1, x10
-  5c:   lsl     x11, x2, #3
-  60:   ldr     x11, [x10,x11]                  <-- faulting insn (f86b694b)
-  64:   cbz     x11, 0x000000000000007c
-  [...]
-
-Meaning, the tests passed because commit ddb55992b04d ("arm64:
-bpf: implement bpf_tail_call() helper") was using signed compares
-instead of unsigned which as a result had the test wrongly passing.
-
-Change this but also the tail call count test both into unsigned
-and cap the index as u32. Latter we did as well in 90caccdd8cc0
-("bpf: fix bpf_tail_call() x64 JIT") and is needed in addition here,
-too. Tested on HiSilicon Hi1616.
-
-Result after patch:
-
-  # bpftool p d j i 268
-  [...]
-  38:	ldr	w10, [x1,x10]
-  3c:	add	w2, w2, #0x0
-  40:	cmp	w2, w10
-  44:	b.cs	0x0000000000000080
-  48:	mov	x10, #0x20                  	// #32
-  4c:	cmp	x26, x10
-  50:	b.hi	0x0000000000000080
-  54:	add	x26, x26, #0x1
-  58:	mov	x10, #0x110                 	// #272
-  5c:	add	x10, x1, x10
-  60:	lsl	x11, x2, #3
-  64:	ldr	x11, [x10,x11]
-  68:	cbz	x11, 0x0000000000000080
-  [...]
-
-Fixes: ddb55992b04d ("arm64: bpf: implement bpf_tail_call() helper")
+Fixes: b95a5c4db09b ("bpf: add a longest prefix match trie map implementation")
+Reported-by: Jarno Rajahalme <jarno@covalent.io>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/net/bpf_jit_comp.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ kernel/bpf/arraymap.c |    1 +
+ kernel/bpf/stackmap.c |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/arch/arm64/net/bpf_jit_comp.c
-+++ b/arch/arm64/net/bpf_jit_comp.c
-@@ -234,8 +234,9 @@ static int emit_bpf_tail_call(struct jit
- 	off = offsetof(struct bpf_array, map.max_entries);
- 	emit_a64_mov_i64(tmp, off, ctx);
- 	emit(A64_LDR32(tmp, r2, tmp), ctx);
-+	emit(A64_MOV(0, r3, r3), ctx);
- 	emit(A64_CMP(0, r3, tmp), ctx);
--	emit(A64_B_(A64_COND_GE, jmp_offset), ctx);
-+	emit(A64_B_(A64_COND_CS, jmp_offset), ctx);
+--- a/kernel/bpf/arraymap.c
++++ b/kernel/bpf/arraymap.c
+@@ -107,6 +107,7 @@ static struct bpf_map *array_map_alloc(u
+ 	array->map.key_size = attr->key_size;
+ 	array->map.value_size = attr->value_size;
+ 	array->map.max_entries = attr->max_entries;
++	array->map.map_flags = attr->map_flags;
+ 	array->elem_size = elem_size;
  
- 	/* if (tail_call_cnt > MAX_TAIL_CALL_CNT)
- 	 *     goto out;
-@@ -243,7 +244,7 @@ static int emit_bpf_tail_call(struct jit
- 	 */
- 	emit_a64_mov_i64(tmp, MAX_TAIL_CALL_CNT, ctx);
- 	emit(A64_CMP(1, tcc, tmp), ctx);
--	emit(A64_B_(A64_COND_GT, jmp_offset), ctx);
-+	emit(A64_B_(A64_COND_HI, jmp_offset), ctx);
- 	emit(A64_ADD_I(1, tcc, tcc, 1), ctx);
+ 	if (!percpu)
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -88,6 +88,7 @@ static struct bpf_map *stack_map_alloc(u
+ 	smap->map.key_size = attr->key_size;
+ 	smap->map.value_size = value_size;
+ 	smap->map.max_entries = attr->max_entries;
++	smap->map.map_flags = attr->map_flags;
+ 	smap->n_buckets = n_buckets;
+ 	smap->map.pages = round_up(cost, PAGE_SIZE) >> PAGE_SHIFT;
  
- 	/* prog = array->ptrs[index];
