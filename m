@@ -1,368 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751971AbeCJHEh (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 02:04:37 -0500
-Received: from mga17.intel.com ([192.55.52.151]:44340 "EHLO mga17.intel.com"
+        id S1752004AbeCJHEn (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 02:04:43 -0500
+Received: from mga07.intel.com ([134.134.136.100]:34007 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751695AbeCJHEc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 02:04:32 -0500
+        id S1751348AbeCJHEi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 02:04:38 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,449,1515484800";
-   d="scan'208";a="37005674"
-Subject: [PATCH v5 07/11] mm, dev_pagemap: introduce CONFIG_DEV_PAGEMAP_OPS
+   d="scan'208";a="24453590"
+Subject: [PATCH v5 08/11] wait_bit: introduce {wait_on,wake_up}_atomic_one
 From: Dan Williams <dan.j.williams@intel.com>
 To: linux-nvdimm@lists.01.org
-Cc: =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@suse.com>, david@fromorbit.com, hch@lst.de,
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Christoph Hellwig <hch@lst.de>, david@fromorbit.com,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
         ross.zwisler@linux.intel.com, hch@lst.de, linux-kernel@vger.kernel.org
-Date: Fri, 09 Mar 2018 22:55:26 -0800
-Message-ID: <152066492680.40260.6843692416565308005.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date: Fri, 09 Mar 2018 22:55:32 -0800
+Message-ID: <152066493247.40260.10849841915366086021.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The HMM sub-system extended dev_pagemap to arrange a callback when a
-dev_pagemap managed page is freed. Since a dev_pagemap page is free /
-idle when its reference count is 1 it requires an additional branch to
-check the page-type at put_page() time. Given put_page() is a hot-path
-we do not want to incur that check if HMM is not in use, so a static
-branch is used to avoid that overhead when not necessary.
+Add a generic facility for awaiting an atomic_t to reach a value of 1.
 
-Now, the FS_DAX implementation wants to reuse this mechanism for
-receiving dev_pagemap ->page_free() callbacks. Rework the HMM-specific
-static-key into a generic mechanism that either HMM or FS_DAX code paths
-can enable.
+Page reference counts typically need to reach 0 to be considered a
+free / inactive page. However, ZONE_DEVICE pages allocated via
+devm_memremap_pages() are never 'onlined', i.e. the put_page() typically
+done at init time to assign pages to the page allocator is skipped.
 
-Cc: "Jérôme Glisse" <jglisse@redhat.com>
-Cc: Michal Hocko <mhocko@suse.com>
+These pages will have their reference count elevated > 1 by
+get_user_pages() when they are under DMA. In order to coordinate DMA to
+these pages vs filesytem operations like hole-punch and truncate the
+filesystem-dax implementation needs to capture the DMA-idle event i.e.
+the 2 to 1 count transition).
+
+For now, this implementation does not have functional behavior change,
+follow-on patches will add waiters for these page-idle events.
+
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/dax/super.c      |    2 ++
- fs/Kconfig               |    1 +
- include/linux/memremap.h |   20 ++-------------
- include/linux/mm.h       |   61 ++++++++++++++++++++++++++++++++--------------
- kernel/memremap.c        |   30 ++++++++++++++++++++---
- mm/Kconfig               |    5 ++++
- mm/hmm.c                 |   13 ++--------
- mm/swap.c                |    3 ++
- 8 files changed, 84 insertions(+), 51 deletions(-)
+ drivers/dax/super.c      |    2 +-
+ include/linux/wait_bit.h |   13 ++++++++++
+ kernel/sched/wait_bit.c  |   59 +++++++++++++++++++++++++++++++++++++++-------
+ 3 files changed, 64 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-index ecefe9f7eb60..619b1ed6434c 100644
+index 619b1ed6434c..7e10fa3460e2 100644
 --- a/drivers/dax/super.c
 +++ b/drivers/dax/super.c
-@@ -191,6 +191,7 @@ struct dax_device *fs_dax_claim_bdev(struct block_device *bdev, void *owner)
- 		return NULL;
+@@ -167,7 +167,7 @@ struct dax_device {
+ #if IS_ENABLED(CONFIG_FS_DAX)
+ static void generic_dax_pagefree(struct page *page, void *data)
+ {
+-	/* TODO: wakeup page-idle waiters */
++	wake_up_atomic_one(&page->_refcount);
+ }
+ 
+ struct dax_device *fs_dax_claim_bdev(struct block_device *bdev, void *owner)
+diff --git a/include/linux/wait_bit.h b/include/linux/wait_bit.h
+index 61b39eaf7cad..564c9a0141cd 100644
+--- a/include/linux/wait_bit.h
++++ b/include/linux/wait_bit.h
+@@ -33,10 +33,15 @@ int __wait_on_bit(struct wait_queue_head *wq_head, struct wait_bit_queue_entry *
+ int __wait_on_bit_lock(struct wait_queue_head *wq_head, struct wait_bit_queue_entry *wbq_entry, wait_bit_action_f *action, unsigned int mode);
+ void wake_up_bit(void *word, int bit);
+ void wake_up_atomic_t(atomic_t *p);
++static inline void wake_up_atomic_one(atomic_t *p)
++{
++	wake_up_atomic_t(p);
++}
+ int out_of_line_wait_on_bit(void *word, int, wait_bit_action_f *action, unsigned int mode);
+ int out_of_line_wait_on_bit_timeout(void *word, int, wait_bit_action_f *action, unsigned int mode, unsigned long timeout);
+ int out_of_line_wait_on_bit_lock(void *word, int, wait_bit_action_f *action, unsigned int mode);
+ int out_of_line_wait_on_atomic_t(atomic_t *p, wait_atomic_t_action_f action, unsigned int mode);
++int out_of_line_wait_on_atomic_one(atomic_t *p, wait_atomic_t_action_f action, unsigned int mode);
+ struct wait_queue_head *bit_waitqueue(void *word, int bit);
+ extern void __init wait_bit_init(void);
+ 
+@@ -262,4 +267,12 @@ int wait_on_atomic_t(atomic_t *val, wait_atomic_t_action_f action, unsigned mode
+ 	return out_of_line_wait_on_atomic_t(val, action, mode);
+ }
+ 
++static inline
++int wait_on_atomic_one(atomic_t *val, wait_atomic_t_action_f action, unsigned mode)
++{
++	might_sleep();
++	if (atomic_read(val) == 1)
++		return 0;
++	return out_of_line_wait_on_atomic_one(val, action, mode);
++}
+ #endif /* _LINUX_WAIT_BIT_H */
+diff --git a/kernel/sched/wait_bit.c b/kernel/sched/wait_bit.c
+index 84cb3acd9260..8739b1e50df5 100644
+--- a/kernel/sched/wait_bit.c
++++ b/kernel/sched/wait_bit.c
+@@ -162,28 +162,47 @@ static inline wait_queue_head_t *atomic_t_waitqueue(atomic_t *p)
+ 	return bit_waitqueue(p, 0);
+ }
+ 
+-static int wake_atomic_t_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync,
+-				  void *arg)
++static struct wait_bit_queue_entry *to_wait_bit_q(
++		struct wait_queue_entry *wq_entry)
++{
++	return container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
++}
++
++static int __wake_atomic_t_function(struct wait_queue_entry *wq_entry,
++		unsigned mode, int sync, void *arg, int target)
+ {
+ 	struct wait_bit_key *key = arg;
+-	struct wait_bit_queue_entry *wait_bit = container_of(wq_entry, struct wait_bit_queue_entry, wq_entry);
++	struct wait_bit_queue_entry *wait_bit = to_wait_bit_q(wq_entry);
+ 	atomic_t *val = key->flags;
+ 
+ 	if (wait_bit->key.flags != key->flags ||
+ 	    wait_bit->key.bit_nr != key->bit_nr ||
+-	    atomic_read(val) != 0)
++	    atomic_read(val) != target)
+ 		return 0;
+ 	return autoremove_wake_function(wq_entry, mode, sync, key);
+ }
+ 
++static int wake_atomic_t_function(struct wait_queue_entry *wq_entry,
++		unsigned mode, int sync, void *arg)
++{
++	return __wake_atomic_t_function(wq_entry, mode, sync, arg, 0);
++}
++
++static int wake_atomic_one_function(struct wait_queue_entry *wq_entry,
++		unsigned mode, int sync, void *arg)
++{
++	return __wake_atomic_t_function(wq_entry, mode, sync, arg, 1);
++}
++
+ /*
+  * To allow interruptible waiting and asynchronous (i.e. nonblocking) waiting,
+  * the actions of __wait_on_atomic_t() are permitted return codes.  Nonzero
+  * return codes halt waiting and return.
+  */
+ static __sched
+-int __wait_on_atomic_t(struct wait_queue_head *wq_head, struct wait_bit_queue_entry *wbq_entry,
+-		       wait_atomic_t_action_f action, unsigned int mode)
++int __wait_on_atomic_t(struct wait_queue_head *wq_head,
++		struct wait_bit_queue_entry *wbq_entry,
++		wait_atomic_t_action_f action, unsigned int mode, int target)
+ {
+ 	atomic_t *val;
+ 	int ret = 0;
+@@ -191,10 +210,10 @@ int __wait_on_atomic_t(struct wait_queue_head *wq_head, struct wait_bit_queue_en
+ 	do {
+ 		prepare_to_wait(wq_head, &wbq_entry->wq_entry, mode);
+ 		val = wbq_entry->key.flags;
+-		if (atomic_read(val) == 0)
++		if (atomic_read(val) == target)
+ 			break;
+ 		ret = (*action)(val, mode);
+-	} while (!ret && atomic_read(val) != 0);
++	} while (!ret && atomic_read(val) != target);
+ 	finish_wait(wq_head, &wbq_entry->wq_entry);
+ 	return ret;
+ }
+@@ -210,6 +229,17 @@ int __wait_on_atomic_t(struct wait_queue_head *wq_head, struct wait_bit_queue_en
+ 		},							\
  	}
  
-+	dev_pagemap_get_ops();
- 	pgmap->type = MEMORY_DEVICE_FS_DAX;
- 	pgmap->page_free = generic_dax_pagefree;
- 	pgmap->data = owner;
-@@ -215,6 +216,7 @@ void fs_dax_release(struct dax_device *dax_dev, void *owner)
- 	pgmap->type = MEMORY_DEVICE_HOST;
- 	pgmap->page_free = NULL;
- 	pgmap->data = NULL;
-+	dev_pagemap_put_ops();
- 	mutex_unlock(&devmap_lock);
- }
- EXPORT_SYMBOL_GPL(fs_dax_release);
-diff --git a/fs/Kconfig b/fs/Kconfig
-index bc821a86d965..1f0832bbc32f 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -38,6 +38,7 @@ config FS_DAX
- 	bool "Direct Access (DAX) support"
- 	depends on MMU
- 	depends on !(ARM || MIPS || SPARC)
-+	select DEV_PAGEMAP_OPS
- 	select FS_IOMAP
- 	select DAX
- 	help
-diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-index 02d6d042ee7f..9faf25d6abef 100644
---- a/include/linux/memremap.h
-+++ b/include/linux/memremap.h
-@@ -1,7 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #ifndef _LINUX_MEMREMAP_H_
- #define _LINUX_MEMREMAP_H_
--#include <linux/mm.h>
- #include <linux/ioport.h>
- #include <linux/percpu-refcount.h>
- 
-@@ -130,6 +129,9 @@ struct dev_pagemap {
- 	enum memory_type type;
- };
- 
-+void dev_pagemap_get_ops(void);
-+void dev_pagemap_put_ops(void);
-+
- #ifdef CONFIG_ZONE_DEVICE
- void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap);
- struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
-@@ -137,8 +139,6 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
- 
- unsigned long vmem_altmap_offset(struct vmem_altmap *altmap);
- void vmem_altmap_free(struct vmem_altmap *altmap, unsigned long nr_pfns);
--
--static inline bool is_zone_device_page(const struct page *page);
- #else
- static inline void *devm_memremap_pages(struct device *dev,
- 		struct dev_pagemap *pgmap)
-@@ -169,20 +169,6 @@ static inline void vmem_altmap_free(struct vmem_altmap *altmap,
- }
- #endif /* CONFIG_ZONE_DEVICE */
- 
--#if defined(CONFIG_DEVICE_PRIVATE) || defined(CONFIG_DEVICE_PUBLIC)
--static inline bool is_device_private_page(const struct page *page)
--{
--	return is_zone_device_page(page) &&
--		page->pgmap->type == MEMORY_DEVICE_PRIVATE;
--}
--
--static inline bool is_device_public_page(const struct page *page)
--{
--	return is_zone_device_page(page) &&
--		page->pgmap->type == MEMORY_DEVICE_PUBLIC;
--}
--#endif /* CONFIG_DEVICE_PRIVATE || CONFIG_DEVICE_PUBLIC */
--
- static inline void put_dev_pagemap(struct dev_pagemap *pgmap)
- {
- 	if (pgmap)
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index ad06d42adb1a..088c76bce360 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -812,27 +812,55 @@ static inline bool is_zone_device_page(const struct page *page)
- }
- #endif
- 
--#if defined(CONFIG_DEVICE_PRIVATE) || defined(CONFIG_DEVICE_PUBLIC)
--void put_zone_device_private_or_public_page(struct page *page);
--DECLARE_STATIC_KEY_FALSE(device_private_key);
--#define IS_HMM_ENABLED static_branch_unlikely(&device_private_key)
--static inline bool is_device_private_page(const struct page *page);
--static inline bool is_device_public_page(const struct page *page);
--#else /* CONFIG_DEVICE_PRIVATE || CONFIG_DEVICE_PUBLIC */
--static inline void put_zone_device_private_or_public_page(struct page *page)
-+#ifdef CONFIG_DEV_PAGEMAP_OPS
-+void __put_devmap_managed_page(struct page *page);
-+DECLARE_STATIC_KEY_FALSE(devmap_managed_key);
-+static inline bool put_devmap_managed_page(struct page *page)
- {
-+	if (!static_branch_unlikely(&devmap_managed_key))
-+		return false;
-+	if (!is_zone_device_page(page))
-+		return false;
-+	switch (page->pgmap->type) {
-+	case MEMORY_DEVICE_PRIVATE:
-+	case MEMORY_DEVICE_PUBLIC:
-+	case MEMORY_DEVICE_FS_DAX:
-+		__put_devmap_managed_page(page);
-+		return true;
-+	default:
-+		break;
++#define DEFINE_WAIT_ATOMIC_ONE(name, p)					\
++	struct wait_bit_queue_entry name = {				\
++		.key = __WAIT_ATOMIC_T_KEY_INITIALIZER(p),		\
++		.wq_entry = {						\
++			.private	= current,			\
++			.func		= wake_atomic_one_function,	\
++			.entry		=				\
++				LIST_HEAD_INIT((name).wq_entry.entry),	\
++		},							\
 +	}
-+	return false;
++
+ __sched int out_of_line_wait_on_atomic_t(atomic_t *p,
+ 					 wait_atomic_t_action_f action,
+ 					 unsigned int mode)
+@@ -217,7 +247,7 @@ __sched int out_of_line_wait_on_atomic_t(atomic_t *p,
+ 	struct wait_queue_head *wq_head = atomic_t_waitqueue(p);
+ 	DEFINE_WAIT_ATOMIC_T(wq_entry, p);
+ 
+-	return __wait_on_atomic_t(wq_head, &wq_entry, action, mode);
++	return __wait_on_atomic_t(wq_head, &wq_entry, action, mode, 0);
  }
--#define IS_HMM_ENABLED 0
-+
- static inline bool is_device_private_page(const struct page *page)
- {
--	return false;
-+	return is_zone_device_page(page) &&
-+		page->pgmap->type == MEMORY_DEVICE_PRIVATE;
+ EXPORT_SYMBOL(out_of_line_wait_on_atomic_t);
+ 
+@@ -230,6 +260,17 @@ __sched int atomic_t_wait(atomic_t *counter, unsigned int mode)
  }
-+
- static inline bool is_device_public_page(const struct page *page)
- {
-+	return is_zone_device_page(page) &&
-+		page->pgmap->type == MEMORY_DEVICE_PUBLIC;
-+}
-+
-+#else /* CONFIG_DEV_PAGEMAP_OPS */
-+static inline bool put_devmap_managed_page(struct page *page)
+ EXPORT_SYMBOL(atomic_t_wait);
+ 
++__sched int out_of_line_wait_on_atomic_one(atomic_t *p,
++					   wait_atomic_t_action_f action,
++					   unsigned int mode)
 +{
- 	return false;
- }
--#endif /* CONFIG_DEVICE_PRIVATE || CONFIG_DEVICE_PUBLIC */
- 
-+static inline bool is_device_private_page(const struct page *page)
-+{
-+	return false;
++	struct wait_queue_head *wq_head = atomic_t_waitqueue(p);
++	DEFINE_WAIT_ATOMIC_ONE(wq_entry, p);
++
++	return __wait_on_atomic_t(wq_head, &wq_entry, action, mode, 1);
 +}
++EXPORT_SYMBOL(out_of_line_wait_on_atomic_one);
 +
-+static inline bool is_device_public_page(const struct page *page)
-+{
-+	return false;
-+}
-+#endif /* CONFIG_DEV_PAGEMAP_OPS */
- 
- static inline void get_page(struct page *page)
- {
-@@ -850,16 +878,13 @@ static inline void put_page(struct page *page)
- 	page = compound_head(page);
- 
- 	/*
--	 * For private device pages we need to catch refcount transition from
--	 * 2 to 1, when refcount reach one it means the private device page is
--	 * free and we need to inform the device driver through callback. See
-+	 * For devmap managed pages we need to catch refcount transition from
-+	 * 2 to 1, when refcount reach one it means the page is free and we
-+	 * need to inform the device driver through callback. See
- 	 * include/linux/memremap.h and HMM for details.
- 	 */
--	if (IS_HMM_ENABLED && unlikely(is_device_private_page(page) ||
--	    unlikely(is_device_public_page(page)))) {
--		put_zone_device_private_or_public_page(page);
-+	if (put_devmap_managed_page(page))
- 		return;
--	}
- 
- 	if (put_page_testzero(page))
- 		__put_page(page);
-diff --git a/kernel/memremap.c b/kernel/memremap.c
-index 4dd4274cabe2..bd8300d02d7c 100644
---- a/kernel/memremap.c
-+++ b/kernel/memremap.c
-@@ -476,8 +476,30 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
- }
- #endif /* CONFIG_ZONE_DEVICE */
- 
--#if IS_ENABLED(CONFIG_DEVICE_PRIVATE) ||  IS_ENABLED(CONFIG_DEVICE_PUBLIC)
--void put_zone_device_private_or_public_page(struct page *page)
-+#ifdef CONFIG_DEV_PAGEMAP_OPS
-+DEFINE_STATIC_KEY_FALSE(devmap_managed_key);
-+EXPORT_SYMBOL(devmap_managed_key);
-+static atomic_t devmap_enable;
-+
-+/*
-+ * Toggle the static key for ->page_free() callbacks when dev_pagemap
-+ * pages go idle.
-+ */
-+void dev_pagemap_get_ops(void)
-+{
-+	if (atomic_inc_return(&devmap_enable) == 1)
-+		static_branch_enable(&devmap_managed_key);
-+}
-+EXPORT_SYMBOL_GPL(dev_pagemap_get_ops);
-+
-+void dev_pagemap_put_ops(void)
-+{
-+	if (atomic_dec_and_test(&devmap_enable))
-+		static_branch_disable(&devmap_managed_key);
-+}
-+EXPORT_SYMBOL_GPL(dev_pagemap_put_ops);
-+
-+void __put_devmap_managed_page(struct page *page)
- {
- 	int count = page_ref_dec_return(page);
- 
-@@ -497,5 +519,5 @@ void put_zone_device_private_or_public_page(struct page *page)
- 	} else if (!count)
- 		__put_page(page);
- }
--EXPORT_SYMBOL(put_zone_device_private_or_public_page);
--#endif /* CONFIG_DEVICE_PRIVATE || CONFIG_DEVICE_PUBLIC */
-+EXPORT_SYMBOL_GPL(__put_devmap_managed_page);
-+#endif /* CONFIG_DEV_PAGEMAP_OPS */
-diff --git a/mm/Kconfig b/mm/Kconfig
-index c782e8fb7235..dc32828984a3 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -700,6 +700,9 @@ config ARCH_HAS_HMM
- config MIGRATE_VMA_HELPER
- 	bool
- 
-+config DEV_PAGEMAP_OPS
-+	bool
-+
- config HMM
- 	bool
- 	select MIGRATE_VMA_HELPER
-@@ -720,6 +723,7 @@ config DEVICE_PRIVATE
- 	bool "Unaddressable device memory (GPU memory, ...)"
- 	depends on ARCH_HAS_HMM
- 	select HMM
-+	select DEV_PAGEMAP_OPS
- 
- 	help
- 	  Allows creation of struct pages to represent unaddressable device
-@@ -730,6 +734,7 @@ config DEVICE_PUBLIC
- 	bool "Addressable device memory (like GPU memory)"
- 	depends on ARCH_HAS_HMM
- 	select HMM
-+	select DEV_PAGEMAP_OPS
- 
- 	help
- 	  Allows creation of struct pages to represent addressable device
-diff --git a/mm/hmm.c b/mm/hmm.c
-index 320545b98ff5..4aa554e76d06 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -35,15 +35,6 @@
- 
- #define PA_SECTION_SIZE (1UL << PA_SECTION_SHIFT)
- 
--#if defined(CONFIG_DEVICE_PRIVATE) || defined(CONFIG_DEVICE_PUBLIC)
--/*
-- * Device private memory see HMM (Documentation/vm/hmm.txt) or hmm.h
-- */
--DEFINE_STATIC_KEY_FALSE(device_private_key);
--EXPORT_SYMBOL(device_private_key);
--#endif /* CONFIG_DEVICE_PRIVATE || CONFIG_DEVICE_PUBLIC */
--
--
- #if IS_ENABLED(CONFIG_HMM_MIRROR)
- static const struct mmu_notifier_ops hmm_mmu_notifier_ops;
- 
-@@ -996,7 +987,7 @@ struct hmm_devmem *hmm_devmem_add(const struct hmm_devmem_ops *ops,
- 	resource_size_t addr;
- 	int ret;
- 
--	static_branch_enable(&device_private_key);
-+	dev_pagemap_get_ops();
- 
- 	devmem = devres_alloc_node(&hmm_devmem_release, sizeof(*devmem),
- 				   GFP_KERNEL, dev_to_node(device));
-@@ -1090,7 +1081,7 @@ struct hmm_devmem *hmm_devmem_add_resource(const struct hmm_devmem_ops *ops,
- 	if (res->desc != IORES_DESC_DEVICE_PUBLIC_MEMORY)
- 		return ERR_PTR(-EINVAL);
- 
--	static_branch_enable(&device_private_key);
-+	dev_pagemap_get_ops();
- 
- 	devmem = devres_alloc_node(&hmm_devmem_release, sizeof(*devmem),
- 				   GFP_KERNEL, dev_to_node(device));
-diff --git a/mm/swap.c b/mm/swap.c
-index 0f17330dd0e5..eed846cfc8b8 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -29,6 +29,7 @@
- #include <linux/cpu.h>
- #include <linux/notifier.h>
- #include <linux/backing-dev.h>
-+#include <linux/memremap.h>
- #include <linux/memcontrol.h>
- #include <linux/gfp.h>
- #include <linux/uio.h>
-@@ -744,7 +745,7 @@ void release_pages(struct page **pages, int nr)
- 						       flags);
- 				locked_pgdat = NULL;
- 			}
--			put_zone_device_private_or_public_page(page);
-+			put_devmap_managed_page(page);
- 			continue;
- 		}
- 
+ /**
+  * wake_up_atomic_t - Wake up a waiter on a atomic_t
+  * @p: The atomic_t being waited on, a kernel virtual address
