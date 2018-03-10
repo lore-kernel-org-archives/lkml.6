@@ -1,67 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752220AbeCJLut (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 06:50:49 -0500
-Received: from mail-it0-f66.google.com ([209.85.214.66]:36704 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752170AbeCJLur (ORCPT
+        id S1752192AbeCJL7L (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 06:59:11 -0500
+Received: from mail-io0-f173.google.com ([209.85.223.173]:45004 "EHLO
+        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752079AbeCJL7J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 06:50:47 -0500
-X-Google-Smtp-Source: AG47ELthCQiRMkAchHEQbjseRzxW2uPAfTNNWzXDC8TH/pr7CfuLwDEP2r8cCVen65jbYo6iF4tIbuJtrok7YGIPweM=
+        Sat, 10 Mar 2018 06:59:09 -0500
+X-Google-Smtp-Source: AG47ELtPp7R+xLT/7Tfvv7IwS8CCvzjeoiGlwqMaNIaKCX/NxrNabYgImItkVndmBHqcJpZMYjoTa/1LdJQwcuVHlZU=
 MIME-Version: 1.0
-In-Reply-To: <20180308234024.24145-1-j.neuschaefer@gmx.net>
-References: <20180308234024.24145-1-j.neuschaefer@gmx.net>
+In-Reply-To: <67491d8c-7eb3-e8c5-7eb0-3006ff668a60@wdc.com>
+References: <1519731229-19141-1-git-send-email-harish_kandiga@mentor.com>
+ <CACRpkdYuxoZaF9xyoA9tsyBuXOkrcdZVGWYfcyEMe0psk6UydQ@mail.gmail.com> <67491d8c-7eb3-e8c5-7eb0-3006ff668a60@wdc.com>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 10 Mar 2018 12:50:46 +0100
-Message-ID: <CACRpkda=5i-j=W8+yosF9WiZRKFF=iRC-djja7MJE+k6b1xtaQ@mail.gmail.com>
-Subject: Re: [PATCH 0/8] Move most GPIO documentation to driver-api/gpio/ and ReST
-To: =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org
+Date: Sat, 10 Mar 2018 12:59:08 +0100
+Message-ID: <CACRpkdaPk6=DNH_Wk6q-8_Sa8BCCHA28Jr5FO64Q0eeUCFCBXQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: card: Don't show eMMC RPMB and BOOT areas in /proc/partitions
+To: Alex Lemberg <Alex.Lemberg@wdc.com>
+Cc: Harish Jenny K N <harish_kandiga@mentor.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2ABp3kv022574
 
-On Fri, Mar 9, 2018 at 12:40 AM, Jonathan Neuschäfer
-<j.neuschaefer@gmx.net> wrote:
+On Thu, Mar 8, 2018 at 9:36 PM, Alex Lemberg <Alex.Lemberg@wdc.com> wrote:
+> On 3/2/18 4:53 AM, Linus Walleij wrote:
 
-> The aim of this patchset is to move the GPIO subsystem's documentation
-> under Documentation/driver-api/gpio/ such that it is picked up by Sphinx
-> and compiled into HTML.
-
-Awesome!
-
-> I moved everything except for sysfs.txt, because
-> this file describes the legacy sysfs ABI, and doesn't seem to serve much
-> (non-historical) purpose anymore.
+>> What we need to do is make the "special partitions" part of the
+>> main block device and stop spawning these special block
+>> devices for each boot partions or general partitions. In addition,
+>> each of these boot partitions or general partitions will get their
+>> own block queue and state container which is not cheap in
+>> runtime memory footprint terms.
+>>
+>> So what I want to do (unless someone beats me to it) it to come
+>> up with some way making boot and general partitions part
+>> of the main block device. Possibly the core kernel partitioning
+>> code needs to be augmented. The tentative idea is to just
+>> put the sectors representing these partitions after the main
+>> block device and access them from there, with an offset.
 >
-> There are still some rough edges:
->
-> * I think the API documentation (kernel-doc) should be moved out of
->   index.rst into more appropriate files.
-> * The headings are arguably wrong, because driver.rst, consumer.rst,
->   etc. use the "document title" style, even though they are part of the
->   GPIO chapter. But the resulting TOC tree is consistent, and I did not
->   want to change almost all headings.
-> * Some of the files could use more :c:func:`...` references and general
->   ReST polish.
->
-> But I don't want to make this patchset too large.
+> I don't think that hiding the Boot and RPMB will resolve the problem
+> described above.
 
-It's fine, we take it one step at a time.
+Me neither. I'm just trying to discuss the problem lurking behind
+these partitions.
 
-On Fri, Mar 09, 2018 at 10:41:20AM -0700, Jonathan Corbet wrote:
+> Boot partition (same as RPMB) in eMMC device is a separate
+> "physical" partition.
+> It has its own logical address range and different from general
+> partition characteristics.
 
-> Anyway, I'm happy to take these through the docs tree or see them go via
-> GPIO; Linus, what's your preference?
+Yep.
 
-I might have some doc patches that could collide so I can take them.
+> From the protocol - the access to this partition it requires switch
+> partition command.
 
-I take it there will be a v2?
+Yeah I saw that as well... it's a bit funny.
+
+> From the device side - it can be managed in totally different manner
+> (SLC vs. MLC blocks, etc.)
+> I think it completely makes sense to allow access to Boot partition from the
+> user space. For example - to allow R/W the boot image.
+
+But this patch doesn't hide the partition from userspace does it?
+
+They will still appear in /dev/mmcblk0boot1 etc.
+
+Just not reported as "real" partitions in /proc/partitions.
+
+Or do I misunderstand it?
+
+> AFAIK, in case of SCSI/UFS devices - Boot LUN's are represented as
+> separate block
+> device partitions (/dev/sdb, dev/sdc...).
+> Shouldn't we have the same for eMMC?
+
+I think we should, but we have the problem with the boot partitions
+and general partitions that they do not work anything like SCSCI
+LUNs.
+
+On a SCSI device dd from the whole device will copy all data on
+the device, the partition table and contents of all partitions.
+
+For say /dev/mmcblk0 this is not true of the device contains
+boot or general partitions, those other partitions will not be
+copied.
 
 Yours,
 Linus Walleij
