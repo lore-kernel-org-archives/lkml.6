@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt9SnVVou7t/LnsSwi2lINrzqnnWCA8qX55zx8lsBujEW/UAZS01K2dbZSY0R0G/w1skf6H
-ARC-Seal: i=1; a=rsa-sha256; t=1520641182; cv=none;
+X-Google-Smtp-Source: AG47ELvqQRL7YGgrb9Zf+qfenRR6RS6Gx2K/tTeuJ9c84FJCLfttj3N5CzniliTfn5Bo6wfOn2Dh
+ARC-Seal: i=1; a=rsa-sha256; t=1520641180; cv=none;
         d=google.com; s=arc-20160816;
-        b=jb0DW0MDPxMbo6K7vYrv4nHKcgE7ZoibkR+LaMwoxcFYtUOXREE4ahx4m8ukJ0JHZv
-         yBRQvehv0/6l8C9RT1czMBa9exEutVrzg6Fygf7X20JjmxIm/fhk/Fg9qiOLJ1vSYf3h
-         dODBpbtIRCLfnm4Yo0neYkrUtzvZmwYyl0T6qbeO6T72odVx3ppR+NpY5po6yQE0neUw
-         iYQXxpWXDpwxx8m1/i7OQstn7BukjyBjKkLSacyJ4P287vT4T/WBpX8Z7Le+a8k8n2zl
-         5PlOItZ8QkzRQJOOgpCH9jLCinMtLdoDMB9xsbHogxX3lfxZVk3Mo3y47KL+FcL1qEcQ
-         624w==
+        b=UEZrrXzvz2yqiDVAvrRM6wZIy+dr9vQnPHm5tMn6LkEVkj0u0fOZwTtueYQRMA+MWC
+         9YkOVIHZ9gcpIFJGZgVG625216BKrHZr308S7KcKz47IG5YEX4yZl42NmbFSAIorF7dV
+         ZEZiIgMsAvRvm2BAlyUpnOHkUt5Mq+kOUEfd9TTIdO/LdQUlkGa4cQ4jjoTUC8nB1LWs
+         6NlejD3Ll6BeWqwVFJwpo4G4ArKb2fv5/URTuhGStK9YyynWe0hH5z3t/75XMyHE/cbs
+         Yqemm9v/E+C3MQAKvjjt+yxORbmeXEo9ELYR0pIRQrSLb+QhCGnHDOoqMbGwFP241bqi
+         jUaQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LYvmrzCcUqbQKx4M8OrEDXr8CKU/e1Cg6SDvhUOeYYI=;
-        b=zm4KpAeWkV3TXrZWeKdZf0pTEilO+7jRJUhTb9/d2jViUNbsIe29MjjihaOW2dEkFW
-         xewAFgAby+QnWuJ5g7VwjKTd1xUlImSj5KvFh2Yxccjx/BRsEvs/W7EEKvaaySSqdHS4
-         VgJLXX60rQ8Sz+uelNMAn1k6cM+KD1El5pPUYS5cOOIBB+D0PS3wbsmzx06x5ICK6gNa
-         kSrXML5Ro6023Yz8+zFs4+9+mreLMHzpZmqm41vEvG37e/V0zivRAeX1J6sxuW49PFxJ
-         QWbgrSeHJuB6HrdVYm/CIv8xBGZnBelT6DjU1xrjg9tZLeZG0vwEmcec9x3d8sm4jG+Q
-         NQBA==
+        bh=pKXlsX6K2ZkibikbzuFHjaXCPBkvq3RWVvIvLdbEg8c=;
+        b=IqfMKpPQ4co0Lk9lKJpPJrcMUWlUpOA5/niKofw7BCwwsQfCWaZJZi4oGjOAduMmNu
+         6Q0/aakE+ZEpPSZW6+8xhcj6yozmnFTkaiPo1i58kAmU6MPJoicQSBTFC2u1EMrzjXrA
+         xS4uUiVcZQag0sV/i3IIgHhTXLG77JjFxbr9NSKiZVtIXI4mtmiX/fylIYHLbtNfDXly
+         gVpnQ6vuHzWgDto+piiUNq1TheQjms6xsQp2bn6hJaNuJI2TVy0s71nCCylksHpE1L2v
+         J2dyolJmMhWJ6RZ+wbbXLb82eYLZyn3t1KdRUDS3/L1k6ULH9V3eZBCEAKkdIzwQLFgh
+         NpTQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,19 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jan Beulich <JBeulich@suse.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-arch@vger.kernel.org,
-	kernel-hardening@lists.openwall.com,
-	Andy Lutomirski <luto@kernel.org>,
-	alan@linux.intel.com,
-	Jinpu Wang <jinpu.wang@profitbricks.com>,
-	Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 4.4 11/36] x86/syscall: Sanitize syscall table de-references under speculation fix
-Date: Fri,  9 Mar 2018 16:18:27 -0800
-Message-Id: <20180310001807.821338686@linuxfoundation.org>
+	Dmitry Vyukov <dvyukov@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	Eric Biggers <ebiggers3@gmail.com>,
+	Wanpeng Li <wanpeng.li@hotmail.com>
+Subject: [PATCH 4.4 10/36] KVM: mmu: Fix overlap between public and private memslots
+Date: Fri,  9 Mar 2018 16:18:26 -0800
+Message-Id: <20180310001807.773303334@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001807.213987241@linuxfoundation.org>
 References: <20180310001807.213987241@linuxfoundation.org>
@@ -48,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507848831732989?=
-X-GMAIL-MSGID: =?utf-8?q?1594507848831732989?=
+X-GMAIL-THRID: =?utf-8?q?1594507846754131769?=
+X-GMAIL-MSGID: =?utf-8?q?1594507846754131769?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,77 +52,108 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: Wanpeng Li <wanpeng.li@hotmail.com>
 
-In 4.4.118, we have commit c8961332d6da (x86/syscall: Sanitize syscall
-table de-references under speculation), which is a backport of upstream
-commit 2fbd7af5af86. But it fixed only the C part of the upstream patch
--- the IA32 sysentry. So it ommitted completely the assembly part -- the
-64bit sysentry.
+commit b28676bb8ae4569cced423dc2a88f7cb319d5379 upstream.
 
-Fix that in this patch by explicit array_index_mask_nospec written in
-assembly. The same was used in lib/getuser.S.
+Reported by syzkaller:
 
-However, to have "sbb" working properly, we have to switch from "cmp"
-against (NR_syscalls-1) to (NR_syscalls), otherwise the last syscall
-number would be "and"ed by 0. It is because the original "ja" relies on
-"CF" or "ZF", but we rely only on "CF" in "sbb". That means: switch to
-"jae" conditional jump too.
+    pte_list_remove: ffff9714eb1f8078 0->BUG
+    ------------[ cut here ]------------
+    kernel BUG at arch/x86/kvm/mmu.c:1157!
+    invalid opcode: 0000 [#1] SMP
+    RIP: 0010:pte_list_remove+0x11b/0x120 [kvm]
+    Call Trace:
+     drop_spte+0x83/0xb0 [kvm]
+     mmu_page_zap_pte+0xcc/0xe0 [kvm]
+     kvm_mmu_prepare_zap_page+0x81/0x4a0 [kvm]
+     kvm_mmu_invalidate_zap_all_pages+0x159/0x220 [kvm]
+     kvm_arch_flush_shadow_all+0xe/0x10 [kvm]
+     kvm_mmu_notifier_release+0x6c/0xa0 [kvm]
+     ? kvm_mmu_notifier_release+0x5/0xa0 [kvm]
+     __mmu_notifier_release+0x79/0x110
+     ? __mmu_notifier_release+0x5/0x110
+     exit_mmap+0x15a/0x170
+     ? do_exit+0x281/0xcb0
+     mmput+0x66/0x160
+     do_exit+0x2c9/0xcb0
+     ? __context_tracking_exit.part.5+0x4a/0x150
+     do_group_exit+0x50/0xd0
+     SyS_exit_group+0x14/0x20
+     do_syscall_64+0x73/0x1f0
+     entry_SYSCALL64_slow_path+0x25/0x25
 
-Final note: use rcx for mask as this is exactly what is overwritten by
-the 4th syscall argument (r10) right after.
+The reason is that when creates new memslot, there is no guarantee for new
+memslot not overlap with private memslots. This can be triggered by the
+following program:
 
-Reported-by: Jan Beulich <JBeulich@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arch@vger.kernel.org
-Cc: kernel-hardening@lists.openwall.com
-Cc: gregkh@linuxfoundation.org
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: alan@linux.intel.com
-Cc: Jinpu Wang <jinpu.wang@profitbricks.com>
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+   #include <fcntl.h>
+   #include <pthread.h>
+   #include <setjmp.h>
+   #include <signal.h>
+   #include <stddef.h>
+   #include <stdint.h>
+   #include <stdio.h>
+   #include <stdlib.h>
+   #include <string.h>
+   #include <sys/ioctl.h>
+   #include <sys/stat.h>
+   #include <sys/syscall.h>
+   #include <sys/types.h>
+   #include <unistd.h>
+   #include <linux/kvm.h>
+
+   long r[16];
+
+   int main()
+   {
+	void *p = valloc(0x4000);
+
+	r[2] = open("/dev/kvm", 0);
+	r[3] = ioctl(r[2], KVM_CREATE_VM, 0x0ul);
+
+	uint64_t addr = 0xf000;
+	ioctl(r[3], KVM_SET_IDENTITY_MAP_ADDR, &addr);
+	r[6] = ioctl(r[3], KVM_CREATE_VCPU, 0x0ul);
+	ioctl(r[3], KVM_SET_TSS_ADDR, 0x0ul);
+	ioctl(r[6], KVM_RUN, 0);
+	ioctl(r[6], KVM_RUN, 0);
+
+	struct kvm_userspace_memory_region mr = {
+		.slot = 0,
+		.flags = KVM_MEM_LOG_DIRTY_PAGES,
+		.guest_phys_addr = 0xf000,
+		.memory_size = 0x4000,
+		.userspace_addr = (uintptr_t) p
+	};
+	ioctl(r[3], KVM_SET_USER_MEMORY_REGION, &mr);
+	return 0;
+   }
+
+This patch fixes the bug by not adding a new memslot even if it
+overlaps with private memslots.
+
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Eric Biggers <ebiggers3@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
 ---
- arch/x86/entry/entry_64.S |   16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ virt/kvm/kvm_main.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -178,12 +178,14 @@ GLOBAL(entry_SYSCALL_64_after_swapgs)
- 	jnz	tracesys
- entry_SYSCALL_64_fastpath:
- #if __SYSCALL_MASK == ~0
--	cmpq	$__NR_syscall_max, %rax
-+	cmpq	$NR_syscalls, %rax
- #else
- 	andl	$__SYSCALL_MASK, %eax
--	cmpl	$__NR_syscall_max, %eax
-+	cmpl	$NR_syscalls, %eax
- #endif
--	ja	1f				/* return -ENOSYS (already in pt_regs->ax) */
-+	jae	1f				/* return -ENOSYS (already in pt_regs->ax) */
-+	sbb	%rcx, %rcx			/* array_index_mask_nospec() */
-+	and	%rcx, %rax
- 	movq	%r10, %rcx
- #ifdef CONFIG_RETPOLINE
- 	movq	sys_call_table(, %rax, 8), %rax
-@@ -276,12 +278,14 @@ tracesys_phase2:
- 	RESTORE_C_REGS_EXCEPT_RAX
- 	RESTORE_EXTRA_REGS
- #if __SYSCALL_MASK == ~0
--	cmpq	$__NR_syscall_max, %rax
-+	cmpq	$NR_syscalls, %rax
- #else
- 	andl	$__SYSCALL_MASK, %eax
--	cmpl	$__NR_syscall_max, %eax
-+	cmpl	$NR_syscalls, %eax
- #endif
--	ja	1f				/* return -ENOSYS (already in pt_regs->ax) */
-+	jae	1f				/* return -ENOSYS (already in pt_regs->ax) */
-+	sbb	%rcx, %rcx			/* array_index_mask_nospec() */
-+	and	%rcx, %rax
- 	movq	%r10, %rcx			/* fixup for C */
- #ifdef CONFIG_RETPOLINE
- 	movq	sys_call_table(, %rax, 8), %rax
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -902,8 +902,7 @@ int __kvm_set_memory_region(struct kvm *
+ 		/* Check for overlaps */
+ 		r = -EEXIST;
+ 		kvm_for_each_memslot(slot, __kvm_memslots(kvm, as_id)) {
+-			if ((slot->id >= KVM_USER_MEM_SLOTS) ||
+-			    (slot->id == id))
++			if (slot->id == id)
+ 				continue;
+ 			if (!((base_gfn + npages <= slot->base_gfn) ||
+ 			      (base_gfn >= slot->base_gfn + slot->npages)))
