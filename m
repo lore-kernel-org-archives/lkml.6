@@ -1,318 +1,348 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933878AbeCJAev (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 19:34:51 -0500
-Received: from vps-vb.mhejs.net ([37.28.154.113]:58622 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932257AbeCJAet (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 19:34:49 -0500
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Subject: [PATCH] x86/microcode/AMD: check microcode file sanity before loading
- it
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Message-ID: <34e9d679-2eca-90cf-9a95-3864f0be060e@maciej.szmigiero.name>
-Date: Sat, 10 Mar 2018 01:34:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Language: en-US
-Content-Transfer-Encoding: 7BIT
+        id S933929AbeCJAfj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 19:35:39 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44384 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932701AbeCJAfh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 19:35:37 -0500
+Date: Fri, 09 Mar 2018 16:35:35 -0800
+From: akpm@linux-foundation.org
+To: broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz, mm-commits@vger.kernel.org,
+        sfr@canb.auug.org.au
+Subject: mmotm 2018-03-09-16-34 uploaded
+Message-ID: <20180310003535.EGTT0DXj5%akpm@linux-foundation.org>
+User-Agent: s-nail v14.8.16
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, it is very easy to make the AMD microcode update driver crash
-or spin on a malformed microcode file since it does very little
-consistency checking on data loaded from such file.
+The mm-of-the-moment snapshot 2018-03-09-16-34 has been uploaded to
 
-This commit introduces various checks, mostly on length-type fields, so
-all corrupted microcode files are (hopefully) correctly rejected instead.
+   http://www.ozlabs.org/~akpm/mmotm/
 
-Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
----
-Test files are at https://pastebin.com/XkKUSmMp
-One has to enable KASAN in the kernel config and rename a particular
-test file to name appropriate to the running CPU family to test its
-loading.
+mmotm-readme.txt says
 
- arch/x86/include/asm/microcode_amd.h |   6 ++
- arch/x86/kernel/cpu/microcode/amd.c  | 111 ++++++++++++++++++++++++++---------
- 2 files changed, 89 insertions(+), 28 deletions(-)
+README for mm-of-the-moment:
 
-diff --git a/arch/x86/include/asm/microcode_amd.h b/arch/x86/include/asm/microcode_amd.h
-index 209492849566..e797d5d939d7 100644
---- a/arch/x86/include/asm/microcode_amd.h
-+++ b/arch/x86/include/asm/microcode_amd.h
-@@ -19,6 +19,9 @@ struct equiv_cpu_entry {
- 	u16	res;
- } __attribute__((packed));
- 
-+/* 4k */
-+#define UCODE_EQUIV_CPU_TABLE_MAX_SIZE (256 * sizeof(struct equiv_cpu_entry))
-+
- struct microcode_header_amd {
- 	u32	data_code;
- 	u32	patch_id;
-@@ -41,6 +44,9 @@ struct microcode_amd {
- 	unsigned int			mpb[0];
- };
- 
-+/* if a patch is larger than this the microcode file is surely corrupted */
-+#define PATCH_MAX_SIZE_ABSOLUTE (16 * 1024 * 1024)
-+
- #define PATCH_MAX_SIZE PAGE_SIZE
- 
- #ifdef CONFIG_MICROCODE_AMD
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index a998e1a7d46f..f798bd4004aa 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -39,6 +39,7 @@
- #include <asm/msr.h>
- 
- static struct equiv_cpu_entry *equiv_cpu_table;
-+static unsigned int equiv_cpu_table_size;
- 
- /*
-  * This points to the current valid container of microcode patches which we will
-@@ -63,12 +64,17 @@ static u8 amd_ucode_patch[PATCH_MAX_SIZE];
- static const char
- ucode_path[] __maybe_unused = "kernel/x86/microcode/AuthenticAMD.bin";
- 
--static u16 find_equiv_id(struct equiv_cpu_entry *equiv_table, u32 sig)
-+static u16 find_equiv_id(const struct equiv_cpu_entry *equiv_table,
-+			 unsigned int equiv_table_size, u32 sig)
- {
--	for (; equiv_table && equiv_table->installed_cpu; equiv_table++) {
--		if (sig == equiv_table->installed_cpu)
--			return equiv_table->equiv_cpu;
--	}
-+	unsigned int i;
-+
-+	if (!equiv_table)
-+		return 0;
-+
-+	for (i = 0; i < equiv_table_size && equiv_table[i].installed_cpu; i++)
-+		if (sig == equiv_table[i].installed_cpu)
-+			return equiv_table[i].equiv_cpu;
- 
- 	return 0;
- }
-@@ -80,29 +86,41 @@ static u16 find_equiv_id(struct equiv_cpu_entry *equiv_table, u32 sig)
-  * Returns the amount of bytes consumed while scanning. @desc contains all the
-  * data we're going to use in later stages of the application.
-  */
--static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
-+static size_t parse_container(u8 *ucode, size_t size, struct cont_desc *desc)
- {
- 	struct equiv_cpu_entry *eq;
--	ssize_t orig_size = size;
-+	size_t orig_size = size;
- 	u32 *hdr = (u32 *)ucode;
-+	u32 eqsize;
- 	u16 eq_id;
- 	u8 *buf;
- 
-+	if (size < CONTAINER_HDR_SZ)
-+		return 0;
-+
- 	/* Am I looking at an equivalence table header? */
- 	if (hdr[0] != UCODE_MAGIC ||
- 	    hdr[1] != UCODE_EQUIV_CPU_TABLE_TYPE ||
- 	    hdr[2] == 0)
- 		return CONTAINER_HDR_SZ;
- 
-+	eqsize = hdr[2];
-+	if (eqsize < sizeof(*eq) ||
-+	    eqsize > UCODE_EQUIV_CPU_TABLE_MAX_SIZE)
-+		return 0;
-+
-+	if (size < CONTAINER_HDR_SZ + eqsize)
-+		return 0;
-+
- 	buf = ucode;
- 
- 	eq = (struct equiv_cpu_entry *)(buf + CONTAINER_HDR_SZ);
- 
- 	/* Find the equivalence ID of our CPU in this table: */
--	eq_id = find_equiv_id(eq, desc->cpuid_1_eax);
-+	eq_id = find_equiv_id(eq, eqsize / sizeof(*eq), desc->cpuid_1_eax);
- 
--	buf  += hdr[2] + CONTAINER_HDR_SZ;
--	size -= hdr[2] + CONTAINER_HDR_SZ;
-+	buf  += eqsize + CONTAINER_HDR_SZ;
-+	size -= eqsize + CONTAINER_HDR_SZ;
- 
- 	/*
- 	 * Scan through the rest of the container to find where it ends. We do
-@@ -112,6 +130,9 @@ static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
- 		struct microcode_amd *mc;
- 		u32 patch_size;
- 
-+		if (size < SECTION_HDR_SIZE)
-+			break;
-+
- 		hdr = (u32 *)buf;
- 
- 		if (hdr[0] != UCODE_UCODE_TYPE)
-@@ -126,6 +147,10 @@ static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
- 		buf  += SECTION_HDR_SIZE;
- 		size -= SECTION_HDR_SIZE;
- 
-+		if (size < sizeof(*mc) ||
-+		    size < patch_size)
-+			break;
-+
- 		mc = (struct microcode_amd *)buf;
- 		if (eq_id == mc->hdr.processor_rev_id) {
- 			desc->psize = patch_size;
-@@ -159,15 +184,13 @@ static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
-  */
- static void scan_containers(u8 *ucode, size_t size, struct cont_desc *desc)
- {
--	ssize_t rem = size;
--
--	while (rem >= 0) {
--		ssize_t s = parse_container(ucode, rem, desc);
-+	while (size > 0) {
-+		size_t s = parse_container(ucode, size, desc);
- 		if (!s)
- 			return;
- 
- 		ucode += s;
--		rem   -= s;
-+		size  -= s;
- 	}
- }
- 
-@@ -364,20 +387,21 @@ void reload_ucode_amd(void)
- static u16 __find_equiv_id(unsigned int cpu)
- {
- 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
--	return find_equiv_id(equiv_cpu_table, uci->cpu_sig.sig);
-+	return find_equiv_id(equiv_cpu_table, equiv_cpu_table_size,
-+			     uci->cpu_sig.sig);
- }
- 
- static u32 find_cpu_family_by_equiv_cpu(u16 equiv_cpu)
- {
--	int i = 0;
-+	unsigned int i;
- 
- 	BUG_ON(!equiv_cpu_table);
- 
--	while (equiv_cpu_table[i].equiv_cpu != 0) {
-+	for (i = 0; i < equiv_cpu_table_size &&
-+		     equiv_cpu_table[i].equiv_cpu != 0; i++)
- 		if (equiv_cpu == equiv_cpu_table[i].equiv_cpu)
- 			return equiv_cpu_table[i].installed_cpu;
--		i++;
--	}
-+
- 	return 0;
- }
- 
-@@ -540,15 +564,31 @@ static enum ucode_state apply_microcode_amd(int cpu)
- 	return UCODE_UPDATED;
- }
- 
--static int install_equiv_cpu_table(const u8 *buf)
-+static int install_equiv_cpu_table(const u8 *buf, size_t bufsize)
- {
- 	unsigned int *ibuf = (unsigned int *)buf;
--	unsigned int type = ibuf[1];
--	unsigned int size = ibuf[2];
-+	unsigned int type, size;
- 
--	if (type != UCODE_EQUIV_CPU_TABLE_TYPE || !size) {
--		pr_err("empty section/"
--		       "invalid type field in container file section header\n");
-+	if (bufsize < CONTAINER_HDR_SZ) {
-+		pr_err("no container header\n");
-+		return -EINVAL;
-+	}
-+
-+	type = ibuf[1];
-+	if (type != UCODE_EQUIV_CPU_TABLE_TYPE) {
-+		pr_err("invalid type field in container file section header\n");
-+		return -EINVAL;
-+	}
-+
-+	size = ibuf[2];
-+	if (size < sizeof(struct equiv_cpu_entry) ||
-+	    size > UCODE_EQUIV_CPU_TABLE_MAX_SIZE) {
-+		pr_err("equivalent CPU table size invalid\n");
-+		return -EINVAL;
-+	}
-+
-+	if (bufsize < CONTAINER_HDR_SZ + size) {
-+		pr_err("equivalent CPU table truncated\n");
- 		return -EINVAL;
- 	}
- 
-@@ -559,6 +599,7 @@ static int install_equiv_cpu_table(const u8 *buf)
- 	}
- 
- 	memcpy(equiv_cpu_table, buf + CONTAINER_HDR_SZ, size);
-+	equiv_cpu_table_size = size / sizeof(struct equiv_cpu_entry);
- 
- 	/* add header length */
- 	return size + CONTAINER_HDR_SZ;
-@@ -568,6 +609,7 @@ static void free_equiv_cpu_table(void)
- {
- 	vfree(equiv_cpu_table);
- 	equiv_cpu_table = NULL;
-+	equiv_cpu_table_size = 0;
- }
- 
- static void cleanup(void)
-@@ -591,7 +633,15 @@ static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
- 	u32 proc_fam;
- 	u16 proc_id;
- 
-+	if (leftover < SECTION_HDR_SIZE + sizeof(*mc_hdr))
-+		return leftover;
-+
- 	patch_size  = *(u32 *)(fw + 4);
-+	if (patch_size > PATCH_MAX_SIZE_ABSOLUTE) {
-+		pr_err("mammoth patch size %u\n", patch_size);
-+		return -EINVAL;
-+	}
-+
- 	crnt_size   = patch_size + SECTION_HDR_SIZE;
- 	mc_hdr	    = (struct microcode_header_amd *)(fw + SECTION_HDR_SIZE);
- 	proc_id	    = mc_hdr->processor_rev_id;
-@@ -613,7 +663,8 @@ static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
- 		return crnt_size;
- 	}
- 
--	ret = verify_patch_size(family, patch_size, leftover);
-+	ret = verify_patch_size(family, patch_size,
-+				leftover - SECTION_HDR_SIZE);
- 	if (!ret) {
- 		pr_err("Patch-ID 0x%08x: size mismatch.\n", mc_hdr->patch_id);
- 		return crnt_size;
-@@ -654,7 +705,7 @@ static enum ucode_state __load_microcode_amd(u8 family, const u8 *data,
- 	int crnt_size = 0;
- 	int offset;
- 
--	offset = install_equiv_cpu_table(data);
-+	offset = install_equiv_cpu_table(data, size);
- 	if (offset < 0) {
- 		pr_err("failed to create equivalent cpu table\n");
- 		return ret;
-@@ -745,6 +796,10 @@ static enum ucode_state request_microcode_amd(int cpu, struct device *device,
- 	}
- 
- 	ret = UCODE_ERROR;
-+	if (fw->size < sizeof(u32)) {
-+		pr_err("microcode far too short\n");
-+		goto fw_release;
-+	}
- 	if (*(u32 *)fw->data != UCODE_MAGIC) {
- 		pr_err("invalid magic value (0x%08x)\n", *(u32 *)fw->data);
- 		goto fw_release;
+http://www.ozlabs.org/~akpm/mmotm/
+
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
+
+You will need quilt to apply these patches to the latest Linus release (4.x
+or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
+
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
+
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+A git tree which contains the memory management portion of this tree is
+maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+by Michal Hocko.  It contains the patches which are between the
+"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+file, http://www.ozlabs.org/~akpm/mmotm/series.
+
+
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+
+To develop on top of mmotm git:
+
+  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+  $ git remote update mmotm
+  $ git checkout -b topic mmotm/master
+  <make changes, commit>
+  $ git send-email mmotm/master.. [...]
+
+To rebase a branch with older patches to a new mmotm release:
+
+  $ git remote update mmotm
+  $ git rebase --onto mmotm/master <topic base> topic
+
+
+
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is available at
+
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 4.16-rc4:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+  i-need-old-gcc.patch
+* hugetlb-fix-surplus-pages-accounting.patch
+* bug-use-%pb-in-bug-and-stack-protector-failure.patch
+* bug-exclude-non-bug-warn-exceptions-from-report_bug.patch
+* mm-gup-teach-get_user_pages_unlocked-to-handle-foll_nowait.patch
+* mm-memblock-hardcode-the-end_pfn-being-1.patch
+* mm-page_alloc-fix-memmap_init_zone-pageblock-alignment.patch
+* selftests-vm-run_vmtests-adjust-hugetlb-size-accroding-to-nr_cpus.patch
+* test_kmod-fix-limit-check-on-number-of-test-devices-created.patch
+* mm-mempolicy-avoid-use-uninitialized-preferred_node.patch
+* mm-mempolicy-avoid-use-uninitialized-preferred_node-fix.patch
+* lockdep-fix-fs_reclaim-warning.patch
+* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
+* prctl-add-pr_et_pdeathsig_proc.patch
+* tile-pci_gx-make-setup_pcie_rc_delay-__init.patch
+* net-9p-avoid-erestartsys-leak-to-userspace.patch
+* ocfs2-use-osb-instead-of-ocfs2_sb.patch
+* ocfs2-use-oi-instead-of-ocfs2_i.patch
+* ocfs2-clean-up-some-unused-function-declaration.patch
+* ocfs2-keep-the-trace-point-consistent-with-the-function-name.patch
+* ocfs2-dlm-dont-handle-migrate-lockres-if-already-in-shutdown.patch
+* ocfs2-dlm-dont-handle-migrate-lockres-if-already-in-shutdown-v3.patch
+* ocfs2-remove-unnecessary-null-pointer-check-before-kmem_cache_destroy.patch
+* ocfs2-clean-up-two-unused-functions-in-suballocc.patch
+* ocfs2-dlm-clean-unrelated-comment.patch
+* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
+* ocfs2-move-some-definitions-to-header-file.patch
+* ocfs2-fix-some-small-problems.patch
+* ocfs2-add-kobject-for-online-file-check.patch
+* ocfs2-add-duplicative-ino-number-check.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery-checkpatch-fixes.patch
+* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
+* dentry-fix-kmemcheck-splat-at-take_dentry_name_snapshot.patch
+  mm.patch
+* slab-mark-kmalloc-machinery-as-__ro_after_init.patch
+* slub-use-jitter-free-reference-while-printing-age.patch
+* slab-fixup-calculate_alignment-argument-type.patch
+* slab-make-kmalloc_index-return-unsigned-int.patch
+* slab-make-kmalloc_size-return-unsigned-int.patch
+* slab-make-create_kmalloc_cache-work-with-32-bit-sizes.patch
+* slab-make-create_boot_cache-work-with-32-bit-sizes.patch
+* slab-make-kmem_cache_create-work-with-32-bit-sizes.patch
+* slab-make-size_index-array-u8.patch
+* slab-make-size_index_elem-unsigned-int.patch
+* slub-make-remote_node_defrag_ratio-unsigned-int.patch
+* slub-make-max_attr_size-unsigned-int.patch
+* slub-make-red_left_pad-unsigned-int.patch
+* slub-make-reserved-unsigned-int.patch
+* slub-make-align-unsigned-int.patch
+* slub-make-inuse-unsigned-int.patch
+* slub-make-cpu_partial-unsigned-int.patch
+* slub-make-offset-unsigned-int.patch
+* slub-make-object_size-unsigned-int.patch
+* slub-make-size-unsigned-int.patch
+* slab-make-kmem_cache_flags-accept-32-bit-object-size.patch
+* kasan-make-kasan_cache_create-work-with-32-bit-slab-cache-sizes.patch
+* slab-make-usercopy-region-32-bit.patch
+* slub-make-slab_index-return-unsigned-int.patch
+* slub-make-struct-kmem_cache_order_objects-x-unsigned-int.patch
+* slub-make-size_from_object-return-unsigned-int.patch
+* slab-use-32-bit-arithmetic-in-freelist_randomize.patch
+* mm-ksm-make-function-stable_node_dup-static.patch
+* mm-always-print-rlimit_data-warning.patch
+* mm-migrate-change-migration-reason-mr_cma-as-mr_contig_range.patch
+* mm-hugetlbfs-move-hugetlbfs_i-outside-ifdef-config_hugetlbfs.patch
+* mm-memfd-split-out-memfd-for-use-by-multiple-filesystems.patch
+* mm-memfd-remove-memfd-code-from-shmem-files-and-use-new-memfd-files.patch
+* mm-swap_slots-use-conditional-compilation-for-swap_slotsc.patch
+* mm-disable-interrupts-while-initializing-deferred-pages.patch
+* mm-initialize-pages-on-demand-during-boot.patch
+* mm-initialize-pages-on-demand-during-boot-fix-3.patch
+* mm-initialize-pages-on-demand-during-boot-fix-4.patch
+* mm-initialize-pages-on-demand-during-boot-fix-4-fix.patch
+* mm-initialize-pages-on-demand-during-boot-v5.patch
+* mm-initialize-pages-on-demand-during-boot-v5-fix.patch
+* mm-thp-fix-potential-clearing-to-referenced-flag-in-page_idle_clear_pte_refs_one.patch
+* mm-memory_hotplug-enforce-block-size-aligned-range-check.patch
+* x86-mm-memory_hotplug-determine-block-size-based-on-the-end-of-boot-memory.patch
+* x86-mm-memory_hotplug-determine-block-size-based-on-the-end-of-boot-memory-v4.patch
+* mm-uninitialized-struct-page-poisoning-sanity-checking.patch
+* mm-uninitialized-struct-page-poisoning-sanity-checking-v4.patch
+* mm-memory_hotplug-optimize-probe-routine.patch
+* mm-memory_hotplug-dont-read-nid-from-struct-page-during-hotplug.patch
+* mm-memory_hotplug-dont-read-nid-from-struct-page-during-hotplug-v5.patch
+* mm-memory_hotplug-optimize-memory-hotplug.patch
+* mm-memory_hotplug-optimize-memory-hotplug-v5.patch
+* mm-hwpoison-disable-memory-error-handling-on-1gb-hugepage.patch
+* mm-page_alloc-extend-kernelcore-and-movablecore-for-percent.patch
+* mm-page_alloc-extend-kernelcore-and-movablecore-for-percent-fix.patch
+* mm-page_alloc-move-mirrored_kernelcore-to-__meminitdata.patch
+* mm-re-use-define_show_attribute-macro.patch
+* mm-re-use-define_show_attribute-macro-v2.patch
+* mm-fix-races-between-address_space-dereference-and-free-in-page_evicatable.patch
+* mm-page_ref-use-atomic_set_release-in-page_ref_unfreeze.patch
+* mm-huge_memoryc-reorder-operations-in-__split_huge_page_tail.patch
+* z3fold-limit-use-of-stale-list-for-allocation.patch
+* mmvmscan-dont-pretend-forward-progress-upon-shrinker_rwsem-contention.patch
+* mm-swap-clean-up-swap-readahead.patch
+* mm-swap-clean-up-swap-readahead-fix.patch
+* mm-swap-unify-cluster-based-and-vma-based-swap-readahead.patch
+* mm-page_alloc-skip-over-regions-of-invalid-pfns-on-uma.patch
+* mm-page_alloc-skip-over-regions-of-invalid-pfns-on-uma-fix.patch
+* mm-kmemleak-make-kmemleak_boot_config-__init.patch
+* mm-page_owner-make-early_page_owner_param-__init.patch
+* mm-page_poison-make-early_page_poison_param-__init.patch
+* mm-make-should_failslab-always-available-for-fault-injection.patch
+* mm-compaction-drain-pcps-for-zone-when-kcompactd-fails.patch
+* mm-free_pcppages_bulk-update-pcp-count-inside.patch
+* mm-free_pcppages_bulk-do-not-hold-lock-when-picking-pages-to-free.patch
+* mm-free_pcppages_bulk-prefetch-buddy-while-not-holding-lock.patch
+* mm-free_pcppages_bulk-prefetch-buddy-while-not-holding-lockpatch-v4.patch
+* mm-sparse-add-a-static-variable-nr_present_sections.patch
+* mm-sparsemem-defer-the-ms-section_mem_map-clearing.patch
+* mm-sparse-add-a-new-parameter-data_unit_size-for-alloc_usemap_and_memmap.patch
+* mm-sparse-optimize-memmap-allocation-during-sparse_init.patch
+* mm-gupc-fixed-coding-style-issues.patch
+* mm-powerpc-use-vma_kernel_pagesize-in-vma_mmu_pagesize.patch
+* mm-hugetlbfs-introduce-pagesize-to-vm_operations_struct.patch
+* device-dax-implement-pagesize-for-smaps-to-report-mmupagesize.patch
+* mm-provide-consistent-declaration-for-num_poisoned_pages.patch
+* direct-io-minor-cleanups-in-do_blockdev_direct_io.patch
+* direct-io-minor-cleanups-in-do_blockdev_direct_io-fix.patch
+* mm-introduce-nr_indirectly_reclaimable_bytes.patch
+* mm-treat-indirectly-reclaimable-memory-as-available-in-memavailable.patch
+* dcache-account-external-names-as-indirectly-reclaimable-memory.patch
+* mm-fix-races-between-swapoff-and-flush-dcache.patch
+* mm-fix-races-between-swapoff-and-flush-dcache-fix.patch
+* zsmalloc-introduce-zs_huge_class_size-function.patch
+* zram-drop-max_zpage_size-and-use-zs_huge_class_size.patch
+* mm-nommu-remove-description-of-alloc_vm_area.patch
+* mm-swap-remove-cold-parameter-description-for-release_pages.patch
+* mm-kernel-doc-add-missing-parameter-descriptions.patch
+* block_invalidatepage-only-release-page-if-the-full-page-was-invalidated.patch
+* mm-swap-make-bool-enable_vma_readahead-and-function-swap_vma_readahead-static.patch
+* mm-make-count-list_lru_one-nr_items-lockless.patch
+* mm-oom-remove-3%-bonus-for-cap_sys_admin-processes.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
+* mmvmscan-mark-register_shrinker-as-__must_check.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
+* mm-oom-refactor-the-oom_kill_process-function.patch
+* mm-implement-mem_cgroup_scan_tasks-for-the-root-memory-cgroup.patch
+* mm-oom-cgroup-aware-oom-killer.patch
+* mm-oom-cgroup-aware-oom-killer-fix.patch
+* mm-oom-introduce-memoryoom_group.patch
+* mm-oom-introduce-memoryoom_group-fix.patch
+* mm-oom-add-cgroup-v2-mount-option-for-cgroup-aware-oom-killer.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2-fix.patch
+* cgroup-list-groupoom-in-cgroup-features.patch
+* mm-add-strictlimit-knob-v2.patch
+* mm-page_alloc-dont-reserve-zone_highmem-for-zone_movable-request.patch
+* mm-cma-manage-the-memory-of-the-cma-area-by-using-the-zone_movable.patch
+* mm-cma-remove-alloc_cma.patch
+* arm-cma-avoid-double-mapping-to-the-cma-area-if-config_highmem-=-y.patch
+* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
+* mm-swap-make-pointer-swap_avail_heads-static.patch
+* mm-numa-rework-do_pages_move.patch
+* mm-migrate-remove-reason-argument-from-new_page_t.patch
+* mm-unclutter-thp-migration.patch
+* mm-page_owner-align-with-pageblock_nr_pages.patch
+* mm-page_owner-align-with-pageblock_nr-pages.patch
+* kasan-slub-fix-handling-of-kasan_slab_free-hook.patch
+* kasan-slub-fix-handling-of-kasan_slab_free-hook-v2.patch
+* kasan-fix-invalid-free-test-crashing-the-kernel.patch
+* kasan-disallow-compiler-to-optimize-away-memset-in-tests.patch
+* mm-kasan-dont-vfree-nonexistent-vm_area.patch
+* procfs-add-seq_put_hex_ll-to-speed-up-proc-pid-maps.patch
+* procfs-add-seq_put_hex_ll-to-speed-up-proc-pid-maps-v3.patch
+* procfs-optimize-seq_pad-to-speed-up-proc-pid-maps.patch
+* proc-get-rid-of-task-lock-unlock-pair-to-read-umask-for-the-status-file.patch
+* proc-do-less-stuff-under-pde_unload_lock.patch
+* proc-move-proc-sysvipc-creation-to-where-it-belongs.patch
+* proc-faster-open-close-of-files-without-release-hook.patch
+* proc-randomize-struct-pde_opener.patch
+* proc-move-struct-pde_opener-to-kmem-cache.patch
+* proc-account-struct-pde_opener.patch
+* proc-add-seq_put_decimal_ull_width-to-speed-up-proc-pid-smaps.patch
+* proc-add-seq_put_decimal_ull_width-to-speed-up-proc-pid-smaps-fix.patch
+* proc-replace-seq_printf-on-seq_putc-to-speed-up-proc-pid-smaps.patch
+* proc-optimize-single-symbol-delimiters-to-spead-up-seq_put_decimal_ull.patch
+* proc-replace-seq_printf-by-seq_put_smth-to-speed-up-proc-pid-status.patch
+* proc-check-permissions-earlier-for-proc-wchan.patch
+* proc-use-set_puts-at-proc-wchan.patch
+* fs-sysctl-fix-potential-page-fault-while-unregistering-sysctl-table.patch
+* fs-sysctl-remove-redundant-link-check-in-proc_sys_link_fill_cache.patch
+* proc-test-proc-self-wchan.patch
+* proc-test-proc-self-syscall.patch
+* proc-move-struct-proc_dir_entry-into-kmem-cache.patch
+* proc-fix-proc-map_files-lookup-some-more.patch
+* proc-register-filesystem-last.patch
+* proc-faster-proc-cmdline.patch
+* proc-do-mmput-asap-for-proc-map_files.patch
+* taint-convert-to-indexed-initialization.patch
+* taint-consolidate-documentation.patch
+* taint-add-taint-for-randstruct.patch
+* uts-create-struct-uts_namespace-from-kmem_cache.patch
+* kernelh-skip-single-eval-logic-on-literals-in-min-max.patch
+* kernelh-skip-single-eval-logic-on-literals-in-min-max-v2.patch
+* kernelh-skip-single-eval-logic-on-literals-in-min-max-v3.patch
+* lib-kconfigdebug-debug-lockups-and-hangs-keep-softlockup-options-together.patch
+* test_bitmap-do-not-accidentally-use-stack-vla.patch
+* lib-add-testing-module-for-ubsan.patch
+* checkpatch-improve-parse_email-signature-checking.patch
+* checkpatchpl-add-spdx-license-tag-check.patch
+* checkpatch-add-crypto-on_stack-to-declaration_macros.patch
+* checkpatch-add-sub-routine-get_stat_real.patch
+* checkpatch-remove-unused-variable-declarations.patch
+* checkpatch-add-sub-routine-get_stat_here.patch
+* checkpatch-warn-for-use-of-%px.patch
+* checkpatch-improve-get_quoted_string-for-trace_event-macros.patch
+* checkpatch-two-spelling-fixes.patch
+* init-ramdisk-use-pr_cont-at-the-end-of-ramdisk-loading.patch
+* seq_file-delete-small-value-optimization.patch
+* fork-unconditionally-clear-stack-on-fork.patch
+* exec-pass-stack-rlimit-into-mm-layout-functions.patch
+* exec-introduce-finalize_exec-before-start_thread.patch
+* exec-pin-stack-limit-during-exec.patch
+* kernel-downgrade-warning-for-unsafe-parameters.patch
+* ipc-shm-introduce-shmctlshm_stat_any.patch
+* ipc-sem-introduce-semctlsem_stat_any.patch
+* ipc-msg-introduce-msgctlmsg_stat_any.patch
+* proc-sysctl-fix-typo-in-sysctl_check_table_array.patch
+* sysctl-add-kdoc-comments-to-do_proc_douintvec_minmax_conv_param.patch
+  linux-next.patch
+  linux-next-rejects.patch
+  linux-next-fixup.patch
+* ipc-mqueue-add-missing-error-code-in-init_mqueue_fs.patch
+* mm-introduce-map_fixed_safe.patch
+* fs-elf-drop-map_fixed-usage-from-elf_map.patch
+* elf-enforce-map_fixed-on-overlaying-elf-segments.patch
+* xen-mm-allow-deferred-page-initialization-for-xen-pv-domains.patch
+* linux-consth-prefix-include-guard-of-uapi-linux-consth-with-_uapi.patch
+* linux-consth-move-ul-macro-to-include-linux-consth.patch
+* linux-consth-refactor-_bitul-and-_bitull-a-bit.patch
+* linux-consth-move-bit_ull-to-linux-consth-for-use-in-assembly.patch
+* mm-memcg-remote-memcg-charging-for-kmem-allocations.patch
+* fs-fsnotify-account-fsnotify-metadata-to-kmemcg.patch
+* fs-fsnotify-account-fsnotify-metadata-to-kmemcg-fix.patch
+* headers-untangle-kmemleakh-from-mmh.patch
+* headers-untangle-kmemleakh-from-mmh-fix.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+* sparc64-ng4-memset-32-bits-overflow.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  mutex-subsystem-synchro-test-module.patch
+  slab-leaks3-default-y.patch
+  workaround-for-a-pci-restoring-bug.patch
