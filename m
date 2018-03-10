@@ -1,72 +1,274 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932123AbeCJQrN (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 11:47:13 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:33170 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750703AbeCJQrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 11:47:12 -0500
-Date: Sat, 10 Mar 2018 17:46:55 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/microcode/AMD: check microcode file sanity before
- loading it
-Message-ID: <20180310164654.GD8261@pd.tnic>
-References: <34e9d679-2eca-90cf-9a95-3864f0be060e@maciej.szmigiero.name>
- <f61522e6-fa15-0fc1-feef-6e0c84d6fc80@maciej.szmigiero.name>
+        id S1751216AbeCJQvA (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 11:51:00 -0500
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:39949 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750946AbeCJQu6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 11:50:58 -0500
+X-Google-Smtp-Source: AG47ELtvKSj0xgHDpfL+tW7RSrvYe+cQ7YWnXoczyarRMiOZWkTfOMrwOYNnGm35EtcatYZV1JQzaw==
+Subject: Re: [PATCH 2/2] hwmon: (ucd9000) Add debugfs attributes to provide
+ mfr_status
+To: Eddie James <eajames@linux.vnet.ibm.com>, linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, jdelvare@suse.com, joel@jms.id.au,
+        Christopher Bostic <cbostic@linux.vnet.ibm.com>,
+        Andrew Jeffery <andrew@aj.id.au>
+References: <1520623196-9534-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <1520623196-9534-3-git-send-email-eajames@linux.vnet.ibm.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <cedded07-3b6d-1b1f-573b-3790a52e1700@roeck-us.net>
+Date: Sat, 10 Mar 2018 08:50:55 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f61522e6-fa15-0fc1-feef-6e0c84d6fc80@maciej.szmigiero.name>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1520623196-9534-3-git-send-email-eajames@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 10, 2018 at 05:16:40PM +0100, Maciej S. Szmigiero wrote:
-> To make sure that it is clear what this patch is about:
-
-I know what you're trying to do but it seems you don't want to listen.
-So let me try one last time to clear your confusion.
-
-> It *isn't* about verifying the actual microcode update, that is, the
-> blob that gets sent to the CPU as the new microcode.
-> Such verification is (hopefully) done by the CPU itself.
-
-Yes, it is done by the CPU. Microcode is encrypted.
-
-> There is no container file at all for family 17h (Zen) so
-> distributions like OpenSUSE that include this file must have gotten it
-> from some other source
-
-Or maybe they've gotten it from AMD directly. Don't you think that
-getting microcode from the CPU vendor directly is the logical thing?
-
-> That's why to get things like IBPB it is sometimes necessary to use
-> a newer microcode version than included in linux-firmware, sourced for
-> example from a BIOS update.
-
-linux-firmware will get F17h microcode soon.
-
-> Since BIOS updates contain only actual (raw) microcode updates one
-> has to place it in a microcode container file so this driver can parse
-> it.
+On 03/09/2018 11:19 AM, Eddie James wrote:
+> From: Christopher Bostic <cbostic@linux.vnet.ibm.com>
 > 
-> As far I know there is no tool to automate this work so one has to
-> manually tweak the container metadata.
+> Expose the gpiN_fault fields of mfr_status as individual debugfs
+> attributes. This provides a way for users to be easily notified of gpi
+> faults. Also provide the whole mfr_status register in debugfs.
+> 
+> Signed-off-by: Christopher Bostic <cbostic@linux.vnet.ibm.com>
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+> ---
+>   drivers/hwmon/pmbus/ucd9000.c | 172 +++++++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 171 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hwmon/pmbus/ucd9000.c b/drivers/hwmon/pmbus/ucd9000.c
+> index e3a507f..297da0e 100644
+> --- a/drivers/hwmon/pmbus/ucd9000.c
+> +++ b/drivers/hwmon/pmbus/ucd9000.c
+> @@ -19,6 +19,7 @@
+>    * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+>    */
+>   
+> +#include <linux/debugfs.h>
+>   #include <linux/kernel.h>
+>   #include <linux/module.h>
+>   #include <linux/of_device.h>
+> @@ -36,6 +37,7 @@
+>   #define UCD9000_NUM_PAGES		0xd6
+>   #define UCD9000_FAN_CONFIG_INDEX	0xe7
+>   #define UCD9000_FAN_CONFIG		0xe8
+> +#define UCD9000_MFR_STATUS		0xf3
+>   #define UCD9000_GPIO_SELECT		0xfa
+>   #define UCD9000_GPIO_CONFIG		0xfb
+>   #define UCD9000_DEVICE_ID		0xfd
+> @@ -63,13 +65,22 @@
+>   #define UCD901XX_NUM_GPIOS	26
+>   #define UCD90910_NUM_GPIOS	26
+>   
+> +#define UCD9000_DEBUGFS_NAME_LEN	24
+> +#define UCD9000_GPI_COUNT		8
+> +
+>   struct ucd9000_data {
+>   	u8 fan_data[UCD9000_NUM_FAN][I2C_SMBUS_BLOCK_MAX];
+>   	struct pmbus_driver_info info;
+>   	struct gpio_chip gpio;
+> +	struct dentry *debugfs;
+>   };
+>   #define to_ucd9000_data(_info) container_of(_info, struct ucd9000_data, info)
+>   
+> +struct ucd9000_debugfs_entry {
+> +	struct i2c_client *client;
+> +	u8 index;
+> +};
+> +
+>   static int ucd9000_get_fan_config(struct i2c_client *client, int fan)
+>   {
+>   	int fan_config = 0;
+> @@ -328,6 +339,156 @@ static int ucd9000_gpio_direction_output(struct gpio_chip *gc,
+>   					  val);
+>   }
+>   
+> +#if IS_ENABLED(CONFIG_DEBUG_FS)
+> +static int ucd9000_get_mfr_status(struct i2c_client *client, u8 *buffer)
+> +{
+> +	int ret = pmbus_set_page(client, 0);
+> +
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/*
+> +	 * With the ucd90120 and ucd90124 devices, this command [MFR_STATUS]
+> +	 * is 2 bytes long (bits 0-15).  With the ucd90240 this command is 5
+> +	 * bytes long.  With all other devices, it is 4 bytes long.
+> +	 */
+> +	return i2c_smbus_read_block_data(client, UCD9000_MFR_STATUS, buffer);
+> +}
+> +
+> +static int ucd9000_debugfs_show_mfr_status_bit(void *data, u64 *val)
+> +{
+> +	struct ucd9000_debugfs_entry *entry = data;
+> +	struct i2c_client *client = entry->client;
+> +	u8 buffer[4];
+> +	int ret;
+> +
+> +	/*
+> +	 * This attribute is only created for devices that return 4 bytes for
+> +	 * status_mfr, so it's safe to call with 4-byte buffer.
+> +	 */
+> +	ret = ucd9000_get_mfr_status(client, buffer);
+> +	if (ret < 0) {
+> +		dev_err(&client->dev, "Failed to read mfr status. rc:%d\n",
+> +			ret);
+> +
+> +		return ret;
+> +	}
+> +
+> +	/*
+> +	 * Attribute only created for devices with gpi fault bits at bits
+> +	 * 16-23, which is the second byte of the response.
+> +	 */
+> +	*val = !!(buffer[1] & BIT(entry->index));
+> +
+> +	return 0;
+> +}
+> +DEFINE_DEBUGFS_ATTRIBUTE(ucd9000_debugfs_mfr_status_bit,
+> +			 ucd9000_debugfs_show_mfr_status_bit, NULL, "%1lld\n");
+> +
+> +static int ucd9000_debugfs_show_mfr_status_word2(void *data, u64 *val)
+> +{
+> +	struct i2c_client *client = data;
+> +	__be16 buffer;
+> +	int ret;
+> +
+> +	ret = ucd9000_get_mfr_status(client, (u8 *)&buffer);
+> +	if (ret < 0) {
+> +		dev_err(&client->dev, "Failed to read mfr status. rc:%d\n",
+> +			ret);
+> +
+> +		return ret;
+> +	}
+> +
+> +	*val = be16_to_cpu(buffer);
+> +
+> +	return 0;
+> +}
+> +DEFINE_DEBUGFS_ATTRIBUTE(ucd9000_debugfs_mfr_status_word2,
+> +			 ucd9000_debugfs_show_mfr_status_word2, NULL,
+> +			 "%04llx\n");
+> +
+> +static int ucd9000_debugfs_show_mfr_status_word4(void *data, u64 *val)
+> +{
+> +	struct i2c_client *client = data;
+> +	__be32 buffer;
+> +	int ret;
+> +
+> +	ret = ucd9000_get_mfr_status(client, (u8 *)&buffer);
+> +	if (ret < 0) {
+> +		dev_err(&client->dev, "Failed to read mfr status. rc:%d\n",
+> +			ret);
+> +
+> +		return ret;
+> +	}
+> +
+> +	*val = be32_to_cpu(buffer);
+> +
+> +	return 0;
+> +}
+> +DEFINE_DEBUGFS_ATTRIBUTE(ucd9000_debugfs_mfr_status_word4,
+> +			 ucd9000_debugfs_show_mfr_status_word4, NULL,
+> +			 "%08llx\n");
+> +
+> +static int ucd9000_init_debugfs(struct i2c_client *client,
+> +				const struct i2c_device_id *mid,
+> +				struct ucd9000_data *data)
+> +{
+> +	struct dentry *debugfs;
+> +	struct ucd9000_debugfs_entry *entries;
+> +	int i;
+> +	char name[UCD9000_DEBUGFS_NAME_LEN];
+> +
+> +	debugfs = pmbus_get_debugfs_dir(client);
+> +	if (!debugfs)
+> +		return -ENOENT;
+> +
+> +	data->debugfs = debugfs_create_dir(client->name, debugfs);
+> +	if (!data->debugfs)
+> +		return -ENOENT;
+> +
+> +	/*
+> +	 * Of the chips this driver supports, only the UCD9090, UCD90160,
+> +	 * and UCD90910 report GPI faults in their MFR_STATUS register, so only
+> +	 * create the GPI fault debugfs attributes for those chips.
+> +	 */
+> +	if (mid->driver_data == ucd9090 || mid->driver_data == ucd90160 ||
+> +	    mid->driver_data == ucd90910) {
+> +		entries = devm_kzalloc(&client->dev,
+> +				       sizeof(*entries) * UCD9000_GPI_COUNT,
+> +				       GFP_KERNEL);
+> +		if (!entries)
+> +			return -ENOMEM;
+> +
+> +		for (i = 0; i < UCD9000_GPI_COUNT; i++) {
+> +			entries[i].client = client;
+> +			entries[i].index = i;
+> +			scnprintf(name, UCD9000_DEBUGFS_NAME_LEN,
+> +				  "gpi%d_alarm", i + 1);
+> +			debugfs_create_file(name, 0444, data->debugfs,
+> +					    &entries[i],
+> +					    &ucd9000_debugfs_mfr_status_bit);
+> +		}
+> +
+> +		scnprintf(name, UCD9000_DEBUGFS_NAME_LEN, "mfr_status");
+> +		debugfs_create_file(name, 0444, data->debugfs, client,
+> +				    &ucd9000_debugfs_mfr_status_word4);
+> +	} else if (mid->driver_data == ucd90120 ||
+> +		   mid->driver_data == ucd90124) {
+> +		scnprintf(name, UCD9000_DEBUGFS_NAME_LEN, "mfr_status");
+> +		debugfs_create_file(name, 0444, data->debugfs, client,
+> +				    &ucd9000_debugfs_mfr_status_word2);
+> +	}
+> +
+> +	return 0;
+> +}
 
-Let me get this straight: am I reading this correctly that you've tried
-to carve out the F17h microcode from a BIOS update blob and you're
-trying to load that?!?
+Is all that complexity really worth it ? Why not just read the manufacturing
+status as byte string into a buffer and use hexdump to pront it, no matter how
+many bytes are actually returned ? This would also be less error prone, and
+automatically support future chips.
 
-If so, you could've simply taken a distro microcode package and used
-F17h microcode from there - they are all the same.
+Thanks,
+Guenter
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> +#else
+> +static int ucd9000_init_debugfs(struct i2c_client *client,
+> +				struct ucd9000_data *data)
+> +{
+> +	return 0;
+> +}
+> +#endif /* IS_ENABLED(CONFIG_DEBUG_FS) */
+> +
+>   static int ucd9000_probe(struct i2c_client *client,
+>   			 const struct i2c_device_id *id)
+>   {
+> @@ -483,7 +644,16 @@ static int ucd9000_probe(struct i2c_client *client,
+>   		return ret;
+>   	}
+>   
+> -	return pmbus_do_probe(client, mid, info);
+> +	ret = pmbus_do_probe(client, mid, info);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = ucd9000_init_debugfs(client, mid, data);
+> +	if (ret)
+> +		dev_warn(&client->dev, "Failed to register debugfs: %d\n",
+> +			 ret);
+> +
+> +	return 0;
+>   }
+>   
+>   /* This is the driver that will be inserted */
+> 
