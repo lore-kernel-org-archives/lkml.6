@@ -1,51 +1,51 @@
-Return-Path: <kernel-hardening-return-12385-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELvZhSTHj7dSVkjS1lrnizixGrZrVsXDIgJbfZAOGiimmyMMxVxehrbHKgaGyh6N2g7pn9fJ
-ARC-Seal: i=1; a=rsa-sha256; t=1520708974; cv=none;
+Return-Path: <kernel-hardening-return-12378-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELtD6oNqNYby8ds2BnAwJ7MAzkf0x72LOnDDRm7w9lezVXbkmgwcLxNgG9NUNg4a2cNO0hJ7
+ARC-Seal: i=1; a=rsa-sha256; t=1520698288; cv=none;
         d=google.com; s=arc-20160816;
-        b=a8RBsml0DirTKN8VzVodb/q6oP2rDYvBzSOs3irb3wj0dTnTWKStipqTkJFh9XVqb/
-         jQzVWY9qvE6vZclpXIJj3k93H31DRY5MOWoojLJqVTJLYTayPJU+9pQM9f3E+cuzwjJD
-         SUqMuHklxfrKkgmF0yOC1PupD+p48fqqaAQfxRAwR2gcvQAHj2LS7BNkSUb0RcAms265
-         YOyDCGQ3t9gnsY1orRR7oOa0WzHKI13pjDFO+n03DVpvaXjCU0cqaDQAdJ+J9Y02M3Qv
-         OdGUM8bUvU6yDu/DXGkvz9jznCGnoilVuVJGT3q0DGxcetVEfaUOZQj8Rvtfwpj9ZLnr
-         rFTw==
+        b=yMAYy2v9vpOVxtKdaWOJqWyFIIdTkoGZ6ir0Qk/ZdPVD29f5E5EZ2sy1SBntI+Tecy
+         iE/klXqSHD6w3smYyfQUH4dpmDCJ522VDSvYzygAW5/u14OUFwOFnNfyL2pkC0oBL2qo
+         Dd0ergkwnK2JJOVPKAAVRuE33DRsT4x2ePRdQSCsn5Eky8rkNuAbLy5m+mxGtW3qhLP4
+         ZMBMc7ZGtQ4li1S3aNzqcvC1loEUlCduo6tfe+HvzAVnXw4zPMefafSirsyHNh9i9REN
+         Kg/U33Ow8yCDzIwtICaHUoZJ1EIQSZQUxrCGmyDBkEw/xT01X3mhxoCPZ37f7R1u9ZVJ
+         5X3g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=XJUNSdJLPTAB9EPny0aEb+atJmBZWnMr09bidkf90+0=;
-        b=K+xXRJJDjiHxB/aJirvf9LZm/gzN8GmkiCgU2IxS+lI5kJPsZ3LMD08/xMZOcVQUo5
-         s3vFcDCoEABA8/Ssk+zbYRorvDhPWNxYKzUKwJny5CF9cEOIJT23iIWp7kg951u4HKN+
-         7znnw/3ODehMGUAUk+/PvCTpPe3U/6e8XsGsFvaDZ2MWUj6ZDNigsW65ZSiHqB8RmRFz
-         PBJQ6epYpzVh10tlQZKujktnWgR46D7ZWTHEuE6w8BXqhbmI/d+Fh3bIKDpuOLaex0fV
-         uDLCcP/o+OKq7Z7jTNDoFE6FmirKsFA/7hzn+ZW7TRK6yYqE20LN1WIhsE4j+LjmZkYc
-         BQvg==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=jZzJUEyasqAKEwzh1feeFzcld/Vq9xfvbjawFxpUoqE=;
+        b=VjDWmp+QqBY7Hv29NEMMF9liIKlntRshtusmrajBtlpTOUaZ6vnSFYQRSg3t+VnICA
+         xPe8gY//+GYP9xuco6SS6RfvgJ45UW92ElF683r7DGxHNjjSxclwGZz6gpoYZnmVTR4E
+         jDyu1O5QcJSro6KYUrVvslTjG1svKFV/8yHlhUbGgOwJokrrlZZ20EecE783KjB+H6J0
+         sOKV+iKri6fx/aZ2e/4cshlgarULdrWU2PJ1AdwTNV+Zh/g3RJKloK2aGoyvv7OYAllA
+         2ALg7lbIyZbPdM2alncWRC4u5P3RRYNEjkHh50SvcTPufW29iNvsmgycocrDfz/Wy8V5
+         zIdw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ozVNO5hS;
-       spf=pass (google.com: domain of kernel-hardening-return-12385-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12385-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=bF04HXX2;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=g2iaaiYa;
+       spf=pass (google.com: domain of kernel-hardening-return-12378-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12378-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ozVNO5hS;
-       spf=pass (google.com: domain of kernel-hardening-return-12385-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12385-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=bF04HXX2;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=g2iaaiYa;
+       spf=pass (google.com: domain of kernel-hardening-return-12378-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12378-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFw+guiiJ3OavrP-RpFV9NRAF4t=oj3-GDfSyuZ9zBRfdg@mail.gmail.com>
+Sender: linus971@gmail.com
+In-Reply-To: <CAGXu5jLtKAUsoYemHZTrJqKEH9=BqwO_QXk=x3BPfCKqZ6DRYA@mail.gmail.com>
 References: <20180309200536.GA5670@beast> <20180309160719.154a3158e2d8ee56e43a918f@linux-foundation.org>
  <e8874944-f0b7-7a1f-26f3-446d7d7fcc38@infradead.org> <CANiq72k_vsTPMXvcfTNo+sjRoVMkihvRz-fzeXdcXvNEEeY-Pw@mail.gmail.com>
  <CAGXu5jLtKAUsoYemHZTrJqKEH9=BqwO_QXk=x3BPfCKqZ6DRYA@mail.gmail.com>
- <CA+55aFyLicYSe+R4yQ2Eu+P9m6qsRfso-HiK78Sw+-dPuZvAYg@mail.gmail.com>
- <CANiq72nwg3mMhWeE_bLKdQ5WP+0E+SxxvcuUF=Rn9a1MM+EapQ@mail.gmail.com> <CA+55aFw+guiiJ3OavrP-RpFV9NRAF4t=oj3-GDfSyuZ9zBRfdg@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 10 Mar 2018 20:08:55 +0100
-Message-ID: <CANiq72mTC6oo5WnomzOOh31FO_a9hiUebPmensLOcDAfi0sQ-A@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 10 Mar 2018 08:11:09 -0800
+X-Google-Sender-Auth: Gj-uaecmhmiKJAHjloIpWFxfa3Q
+Message-ID: <CA+55aFyt0Aua_Jzp__kTRZaiBoki6-EWmVnrFrjntpYiytqe4g@mail.gmail.com>
 Subject: Re: [PATCH v3] kernel.h: Skip single-eval logic on literals in min()/max()
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <keescook@chromium.org>, Randy Dunlap <rdunlap@infradead.org>,
+To: Kees Cook <keescook@chromium.org>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Randy Dunlap <rdunlap@infradead.org>,
 	Andrew Morton <akpm@linux-foundation.org>, linux-kernel <linux-kernel@vger.kernel.org>,
 	Josh Poimboeuf <jpoimboe@redhat.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
 	"Gustavo A. R. Silva" <gustavo@embeddedor.com>, "Tobin C. Harding" <me@tobin.cc>,
@@ -63,89 +63,25 @@ Cc: Kees Cook <keescook@chromium.org>, Randy Dunlap <rdunlap@infradead.org>,
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594491887701841138?=
-X-GMAIL-MSGID: =?utf-8?q?1594578934222034661?=
+X-GMAIL-MSGID: =?utf-8?q?1594567728966471545?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, Mar 10, 2018 at 6:51 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Sat, Mar 10, 2018 at 7:33 AM, Kees Cook <keescook@chromium.org> wrote:
 >
-> So in *historical* context - when a compiler didn't do variable length
-> arrays at all - the original semantics of C "constant expressions"
-> actually make a ton of sense.
+> And sparse freaks out too:
 >
-> You can basically think of a constant expression as something that can
-> be (historically) handled by the front-end without any real
-> complexity, and no optimization phases - just evaluating a simple
-> parse tree with purely compile-time constants.
->
-> So there's a good and perfectly valid reason for why C limits certain
-> expressions to just a very particular subset. It's not just array
-> sizes, it's  case statements etc too. And those are very much part of
-> the C standard.
->
-> So an error message like
->
->    warning: ISO C90 requires array sizes to be constant-expressions
->
-> would be technically correct and useful from a portability angle. It
-> tells you when you're doing something non-portable, and should be
-> automatically enabled with "-ansi -pedantic", for example.
->
-> So what's misleading is actually the name of the warning and the
-> message, not that it happens. The warning isn't about "variable
-> length", it's literally about the rules for what a
-> "constant-expression" is.
->
-> And in C, the expression (2,3) has a constant _value_ (namely 3), but
-> it isn't a constant-expression as specified by the language.
->
-> Now, the thing is that once you actually do variable length arrays,
-> those old front-end rules make no sense any more (outside of the "give
-> portability warnings" thing).
->
-> Because once you do variable length arrays, you obviously _parse_
-> everything just fine, and you're doing to evaluate much more complex
-> expressions than some limited constant-expression rule.
->
-> And at that point it would make a whole lot more sense to add a *new*
-> warning that basically says "I have to generate code for a
-> variable-sized array", if you actually talk about VLA's.
->
-> But that's clearly not what gcc actually did.
->
-> So the problem really is that -Wvla doesn't actually warn about VLA's,
-> but about something technically completely different.
->
+>    drivers/net/ethernet/via/via-velocity.c:97:26: sparse: incorrect
+> type in initializer (different address spaces) @@    expected void
+> *addr @@    got struct mac_regs [noderef] <avoid *addr @@
 
-I *think* I followed your reasoning. For gcc, -Wvla is the "I have to
-generate code for a variable-sized array" one; but in this case, the
-array size is the actual issue that you would have liked to be warned
-about; since people writing:
+Actually, this seems a valid warning - it's assigning a __iomem
+pointer to a regular void, and dropping the iomem in the process.
 
-    int a[(2,3)];
+Sparse does *not* like VLA's, so what may be going on is that fixing
+something VLA-related in your tree just makes sparse (correctly) check
+something that it had given up on before.
 
-did not really mean to declare a VLA. Therefore, you say warning them
-about the "warning: ISO C90 requires array sizes to be
-constant-expressions" (let's call it -Wpedantic-array-sizes) would be
-more helpful here instead of saying stuff about VLAs.
+So don't worry about the sparse ones, if they are new. They seem correct.
 
-In my case, I was just expecting gcc to give us both warnings and
-that's it, instead of trying to be smart and give only the
--Wpedantic-array-sizes one (which is the one I was wondering in my
-previous email about why it was missing). I think it would be clear
-enough if both warnings are shown are the same time. And it makes
-sense, since if you write that line in ISO C90 it means there really
-are 2 things going wrong in the end (fishy syntax while in ISO C90
-mode and, due to that, VLA code generated as well), no?
-
-Thanks for taking the time to write about the historical context, by the way!
-
-Miguel
-
-> And that's why those stupid syntactic issues with min/max matter. It's
-> not whether the end result is a compile-time constant or not, it's
-> about completely different issues, like whether there is a
-> comma-expression in it.
->
->               Linus
+                     Linus
