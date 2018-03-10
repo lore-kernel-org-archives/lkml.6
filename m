@@ -1,29 +1,29 @@
-Return-Path: <kernel-hardening-return-12349-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELtwBwFO1DFT9bxA9BHeXjpwlQ5UftFfxchJKhgbACNWXZ5DBpHgUqYfUP8ufXs/fOTPh7IQ
-ARC-Seal: i=1; a=rsa-sha256; t=1520640649; cv=none;
+Return-Path: <kernel-hardening-return-12352-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELteOfX9Wo1r6ZkdneWigMdF2MiP5NRzwNdWNEcBgPFCUbRENb0wR9LXy53nSuksS2PZL6Do
+ARC-Seal: i=1; a=rsa-sha256; t=1520640677; cv=none;
         d=google.com; s=arc-20160816;
-        b=V6WEfwviFUm1JZy38U8DhfweGtQgwZJOgIr9C3CiHBMEjV762Pt21jqNxBH+GDYce+
-         IPY9DwTD76R62mYFzPnzIKFv9eyzviLZ5i1XnroO7XJMUbY0vfd735s4BBfs92dTz0gN
-         5V71PkmwyvCmpem71TV8SkcERsZxUn9NGc5XzVKnmwZeYra/sV8JwJSsZy5bKkUVMd5V
-         Ua6Vpf7R0HBYBOK1rPJ3zxPaZ4OEFdv3Cir6UvR9/DgLxlEbWnnpEbAtcW9qjhjakBta
-         s51QJYX/3QoL6LjMtEWbozFLqbcYY8sktmxNp6Xnj7UfR5Sk8gp+ikoGQAODYmyGDw3p
-         3W2g==
+        b=SUDhqzwYEyNusewUEXE5+veSZQ9HNhhkohtOA0HIigsyF2vpvELzuIzcra8wXk/PyO
+         PNGG2FPTjzWzFlwjsoggN4LAJmaZZO0CRGMu2aee/8EGzf8XLWjY4ESJDpuh8CX7dnPW
+         0GBrgMLF3vz5gU7uK0b4UaDfaMh/NRu2a4DHdveZpr4gIJBRZkCShDAQIfUCq6fqupC+
+         DG19BTcsFnACiR8vZourQKB//Qryvdv/hnr6SSlFfCxRdSzYVcpVuWwIWhyo6vxy0GtY
+         Dk4WajW/Z5+mzPhHjEn54AULiveS3ihu+dAVqzWC2xkav8zGmd9Mhp5rQpNuUJY3guXK
+         BNQA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=IBd9OZLge3AY6G9096e8hor2bDOooalwwRNfV7wVINs=;
-        b=RB/8VJq9DWvo0mi5Mo3hc1LCsI5lxzDsRhg55JZmK9QIAOs0CLgzTXbmqcJPmAwGbf
-         cg+40JkNOZEMaOw24YPNF+S0ar8rWL79FJZ/pDhQM/CNzsqcMQE9ujrb0wLsCqrNIRlT
-         cJHCkudDnW4X00G1iKRNkjlkc/ZgVuqja672cC17ZI/Faf0xiLlXTLv3CizgYb1h0maV
-         eVV5LcSFmav24T7g8CkRMItVpPxvhHj5lLf4v/F5jKqP6Bq3I3qXm8xSd3bKXpDHSUdQ
-         ZqXdlpRZx7ScA5RUwYLC8zz+b+IHNrx527d+B3ClRrUOy/WPLmCpXjs9xIqd40toq3fe
-         xpww==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=17zt0Sf3Wd3XozX5xGu4WLBb9pLFNLfrxbzuq8iiG7g=;
+        b=W45TRmVDZvyZQQkQ1MjkGFc5Q8x4C83tHofx/buDqZTIxgY+luHRSAIMA7XY8vL4tO
+         DagYwzuJhx+nRZ09ljsO95wWSc8asUEujyZvpWi5e79njYEpqUvBrtTghVGVMU53Pknr
+         0PLvonlDoe3q0f4nKePLZqnWCAegtIP0qwi9hOlI8yXW873ekGyx6nqaDyrVKLFK601r
+         HSy1Bl5FDtW7ToGcqc6uoPA3E/YjuzHdtp9AxfWGkOQ869My2KDoAtiYjEK2iIF49wsa
+         LELjItOFmj+vBYSjTp+aHX4JSk7QY0o9h+3NIsreEIlr9kifWmy6nunNZ0YbXh99l+Zn
+         IyFw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12349-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12349-gregkh=linuxfoundation.org@lists.openwall.com;
+       spf=pass (google.com: domain of kernel-hardening-return-12352-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12352-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12349-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12349-gregkh=linuxfoundation.org@lists.openwall.com;
+       spf=pass (google.com: domain of kernel-hardening-return-12352-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12352-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
@@ -33,50 +33,64 @@ List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
 From: Laura Abbott <labbott@redhat.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Kees Cook <keescook@chromium.org>,
-	Lukas Wunner <lukas@wunner.de>,
 	Nandor Han <nandor.han@ge.com>,
-	Semi Malinen <semi.malinen@ge.com>,
-	Patrice Chotard <patrice.chotard@st.com>
+	Semi Malinen <semi.malinen@ge.com>
 Cc: Laura Abbott <labbott@redhat.com>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kernel-hardening@lists.openwall.com,
-	Mathias Duckeck <m.duckeck@kunbus.de>
-Subject: [PATCH 0/4] VLA removal from the GPIO subsystem
-Date: Fri,  9 Mar 2018 16:10:17 -0800
-Message-Id: <20180310001021.6437-1-labbott@redhat.com>
+	kernel-hardening@lists.openwall.com
+Subject: [PATCH 3/4] gpio: Remove VLA from xra1403 driver
+Date: Fri,  9 Mar 2018 16:10:20 -0800
+Message-Id: <20180310001021.6437-4-labbott@redhat.com>
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180310001021.6437-1-labbott@redhat.com>
+References: <20180310001021.6437-1-labbott@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594507290189676556?=
-X-GMAIL-MSGID: =?utf-8?q?1594507290189676556?=
+X-GMAIL-THRID: =?utf-8?q?1594507318656304803?=
+X-GMAIL-MSGID: =?utf-8?q?1594507318656304803?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
 
-For those who haven't seen it, there's an effort to remove VLAs from the
-kernel so we can turn on -Wvla in the name of security. See
-https://lkml.org/lkml/2018/3/7/621 for more details and discussion.
+The new challenge is to remove VLAs from the kernel
+(see https://lkml.org/lkml/2018/3/7/621)
 
-This is a series to remove a few VLAs from the gpio subsystem. These are
-compile tested only so I'd appreciate reviews and tests from
-maintainers. When these get Acked, I expect these to just go through the
-GPIO tree like usual.
+This patch replaces a VLA with an appropriate call to kmalloc_array.
 
-Thanks,
-Laura
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+ drivers/gpio/gpio-xra1403.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Laura Abbott (4):
-  gpio: Remove VLA from gpiolib
-  gpio: Remove VLA from MAX3191X driver
-  gpio: Remove VLA from xra1403 driver
-  gpio: Remove VLA from stmpe driver
-
- drivers/gpio/gpio-max3191x.c |  7 +++++-
- drivers/gpio/gpio-stmpe.c    |  7 +++++-
- drivers/gpio/gpio-xra1403.c  |  8 ++++++-
- drivers/gpio/gpiolib.c       | 55 ++++++++++++++++++++++++++++++++++++++------
- 4 files changed, 67 insertions(+), 10 deletions(-)
-
+diff --git a/drivers/gpio/gpio-xra1403.c b/drivers/gpio/gpio-xra1403.c
+index 0230e4b7a2fb..8d4c8e99b251 100644
+--- a/drivers/gpio/gpio-xra1403.c
++++ b/drivers/gpio/gpio-xra1403.c
+@@ -126,11 +126,16 @@ static void xra1403_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ {
+ 	int reg;
+ 	struct xra1403 *xra = gpiochip_get_data(chip);
+-	int value[xra1403_regmap_cfg.max_register];
++	int *value;
+ 	int i;
+ 	unsigned int gcr;
+ 	unsigned int gsr;
+ 
++	value = kmalloc_array(xra1403_regmap_cfg.max_register, sizeof(*value),
++				GFP_KERNEL);
++	if (!value)
++		return;
++
+ 	seq_puts(s, "xra reg:");
+ 	for (reg = 0; reg <= xra1403_regmap_cfg.max_register; reg++)
+ 		seq_printf(s, " %2.2x", reg);
+@@ -154,6 +159,7 @@ static void xra1403_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 			   (gcr & BIT(i)) ? "in" : "out",
+ 			   (gsr & BIT(i)) ? "hi" : "lo");
+ 	}
++	kfree(value);
+ }
+ #else
+ #define xra1403_dbg_show NULL
 -- 
 2.14.3
