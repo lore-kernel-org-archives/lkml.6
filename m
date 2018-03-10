@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932201AbeCJSUW (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:20:22 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:32894 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932161AbeCJSUR (ORCPT
+        id S932326AbeCJSpg (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:45:36 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:37734 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932180AbeCJSUV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:20:17 -0500
-X-Google-Smtp-Source: AG47ELsmE1Ld/Fmcxcy5/57N7lv6P2p34Y0mSYC6EiwFOmZzoyvS6RVoCslo6jdXAyNuZ2ejx7BVcQ==
+        Sat, 10 Mar 2018 13:20:21 -0500
+X-Google-Smtp-Source: AG47ELs9SAfPARSwANWVLkKwUD8iorTbdnnFx9Tb+w3SJYWbJ/2hLN6CkD8BgjXQsK+mJG7nfm50pg==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,584 +15,332 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 01/83] Introduction and documentation of NOVA filesystem.
-Date: Sat, 10 Mar 2018 10:17:42 -0800
-Message-Id: <1520705944-6723-2-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 05/83] Add NOVA filesystem definitions and useful helper routines.
+Date: Sat, 10 Mar 2018 10:17:46 -0800
+Message-Id: <1520705944-6723-6-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andiry Xu <jix024@cs.ucsd.edu>
 
-NOVA is a log-structured file system tailored for byte-addressable non-volatile memories.
-It was designed and developed at the Non-Volatile Systems Laboratory in the Computer
-Science and Engineering Department at the University of California, San Diego.
-Its primary authors are Andiry Xu <jix024@eng.ucsd.edu>, Lu Zhang
-<luzh@eng.ucsd.edu>, and Steven Swanson <swanson@eng.ucsd.edu>.
-
-These two papers provide a detailed, high-level description of NOVA's design goals and approach:
-
-   NOVA: A Log-structured File system for Hybrid Volatile/Non-volatile Main Memories
-   In The 14th USENIX Conference on File and Storage Technologies (FAST '16)
-   (http://cseweb.ucsd.edu/~swanson/papers/FAST2016NOVA.pdf)
-
-   NOVA-Fortis: A Fault-Tolerant Non-Volatile Main Memory File System
-   In The 26th ACM Symposium on Operating Systems Principles (SOSP '17)
-   (http://cseweb.ucsd.edu/~swanson/papers/SOSP2017-NOVAFortis.pdf)
-
-This patchset contains features from the FAST paper. We leave NOVA-Fortis features,
-such as snapshot, metadata and data replication and RAID parity for
-future submission.
+NOVA stores offset rather than absolute addresses in pmem.
+nova_get_block() and nova_get_addr_off() provide transitions
+between these two kinds of addresses.
 
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- Documentation/filesystems/00-INDEX |   2 +
- Documentation/filesystems/nova.txt | 498 +++++++++++++++++++++++++++++++++++++
- MAINTAINERS                        |   8 +
- 3 files changed, 508 insertions(+)
- create mode 100644 Documentation/filesystems/nova.txt
+ fs/nova/nova.h | 299 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 299 insertions(+)
+ create mode 100644 fs/nova/nova.h
 
-diff --git a/Documentation/filesystems/00-INDEX b/Documentation/filesystems/00-INDEX
-index b7bd6c9..dc5c722 100644
---- a/Documentation/filesystems/00-INDEX
-+++ b/Documentation/filesystems/00-INDEX
-@@ -95,6 +95,8 @@ nfs/
- 	- nfs-related documentation.
- nilfs2.txt
- 	- info and mount options for the NILFS2 filesystem.
-+nova.txt
-+	- info on the NOVA filesystem.
- ntfs.txt
- 	- info and mount options for the NTFS filesystem (Windows NT).
- ocfs2.txt
-diff --git a/Documentation/filesystems/nova.txt b/Documentation/filesystems/nova.txt
+diff --git a/fs/nova/nova.h b/fs/nova/nova.h
 new file mode 100644
-index 0000000..4728f50
+index 0000000..5eb696c
 --- /dev/null
-+++ b/Documentation/filesystems/nova.txt
-@@ -0,0 +1,498 @@
-+The NOVA Filesystem
-+===================
-+
-+NOn-Volatile memory Accelerated file system (NOVA) is a DAX file system
-+designed to provide a high performance and production-ready file system
-+tailored for byte-addressable non-volatile memories (e.g., NVDIMMs
-+and Intel's soon-to-be-released 3DXPoint DIMMs).
-+NOVA combines design elements from many other file systems
-+and adapts conventional log-structured file system techniques to
-+exploit the fast random access that NVMs provide. In particular, NOVA maintains
-+separate logs for each inode to improve concurrency, and stores file data
-+outside the log to minimize log size and reduce garbage collection costs. NOVA's
-+logs provide metadata and data atomicity and focus on simplicity and
-+reliability, keeping complex metadata structures in DRAM to accelerate lookup
-+operations.
-+
-+NOVA was developed by the Non-Volatile Systems Laboratory (NVSL) in
-+the Computer Science and Engineering Department at the University of
-+California, San Diego.
-+
-+A more thorough discussion of NOVA's design is avaialable in these two papers:
-+
-+NOVA: A Log-structured File System for Hybrid Volatile/Non-volatile Main Memories
-+Jian Xu and Steven Swanson
-+In The 14th USENIX Conference on File and Storage Technologies (FAST '16)
-+
-+NOVA-Fortis: A Fault-Tolerant Non-Volatile Main Memory File System
-+Jian Xu, Lu Zhang, Amirsaman Memaripour, Akshatha Gangadharaiah, Amit Borase,
-+Tamires Brito Da Silva, Andy Rudoff and Steven Swanson
-+In The 26th ACM Symposium on Operating Systems Principles (SOSP '17)
-+
-+This version of NOVA contains features from the FAST paper.
-+NOVA-Fortis features, such as snapshot, metadata and data protection and replication
-+are left for future submission.
-+
-+The main NOVA features include:
-+
-+  * POSIX semantics
-+  * Directly access (DAX) byte-addressable NVMM without page caching
-+  * Per-CPU NVMM pool to maximize concurrency
-+  * Strong consistency guarantees with 8-byte atomic stores
-+
-+
-+Filesystem Design
-+=================
-+
-+NOVA divides NVMM into several regions. NOVA's 512B superblock contains global
-+file system information and the recovery inode. The recovery inode represents a
-+special file that stores recovery information (e.g., the list of unallocated
-+NVMM pages). NOVA divides its inode tables into per-CPU stripes. It also
-+provides per-CPU journals for complex file operations that involve multiple
-+inodes. The rest of the available NVMM stores logs and file data.
-+
-+NOVA is log-structured and stores a separate log for each inode to maximize
-+concurrency and provide atomicity for operations that affect a single file. The
-+logs only store metadata and comprise a linked list of 4 KB pages. Log entries
-+are small – between 32 and 64 bytes. Logs are generally non-contiguous, and log
-+pages may reside anywhere in NVMM.
-+
-+NOVA keeps copies of most file metadata in DRAM during normal
-+operations, eliminating the need to access metadata in NVMM during reads.
-+
-+NOVA supports both copy-on-write and in-place file data updates and appends
-+metadata about the write to the log. For operations that affect multiple inodes
-+NOVA uses lightweight, fixed-length journals –one per core.
-+
-+NOVA divides the allocatable NVMM into multiple regions, one region per CPU
-+core. A per-core allocator manages each of the regions, minimizing contention
-+during memory allocation.
-+
-+After a system crash, NOVA must scan all the logs to rebuild the memory
-+allocator state. Since, there are many logs, NOVA aggressively parallelizes the
-+scan.
-+
-+
-+Building and using NOVA
-+=======================
-+
-+To build NOVA, build the kernel with PMEM (`CONFIG_BLK_DEV_PMEM`),
-+DAX (`CONFIG_FS_DAX`) and NOVA (`CONFIG_NOVA_FS`) support.  Install as usual.
-+
-+NOVA runs on a pmem non-volatile memory region.  You can create one of these
-+regions with the `memmap` kernel command line option.  For instance, adding
-+`memmap=16G!8G` to the kernel boot parameters will reserve 16GB memory starting
-+from address 8GB, and the kernel will create a `pmem0` block device under the
-+`/dev` directory.
-+
-+After the OS has booted, you can initialize a NOVA instance with the following commands:
-+
-+
-+# modprobe nova
-+# mount -t NOVA -o init /dev/pmem0 /mnt/nova
-+
-+
-+The above commands create a NOVA instance on `/dev/pmem0` and mounts it on
-+`/mnt/nova`.
-+
-+NOVA support several module command line options:
-+
-+ * measure_timing: Measure the timing of file system operations for profiling (default: 0)
-+
-+ * inplace_data_updates:  Update data in place rather than with COW (default: 0)
-+
-+To recover an existing NOVA instance, mount NOVA without the init option, for example:
-+
-+# mount -t NOVA /dev/pmem0 /mnt/nova
-+
-+
-+Sysfs support
-+-------------
-+
-+NOVA provides sysfs support to enable user to get/set information of 
-+a running NOVA instance.
-+After mount, NOVA creates four entries under proc directory /proc/fs/nova/pmem#/:
-+
-+timing_stats	IO_stats	allocator	gc
-+
-+Show NOVA file operation timing statistics:
-+# cat /proc/fs/NOVA/pmem#/timing_stats
-+
-+Clear timing statistics:
-+# echo 1 > /proc/fs/NOVA/pmem#/timing_stats
-+
-+Show NOVA I/O statistics:
-+# cat /proc/fs/NOVA/pmem#/IO_stats
-+
-+Clear I/O statistics:
-+# echo 1 > /proc/fs/NOVA/pmem#/IO_stats
-+
-+Show NOVA allocator information:
-+# cat /proc/fs/NOVA/pmem#/allocator
-+
-+Manual garbage collection:
-+# echo #inode_number > /proc/fs/NOVA/pmem#/gc
-+
-+
-+Source File Structure
-+=====================
-+
-+  * nova_def.h/nova.h
-+   Defines NOVA macros and key inline functions.
-+
-+  * balloc.{h,c}
-+    NOVA's pmem allocator implementation.
-+
-+  * bbuild.c
-+    Implements recovery routines to restore the in-use inode list and the NVMM
-+    allocator information.
-+
-+  * dax.c
-+    Implements DAX read/write and mmap functions to access file data. NOVA uses
-+    copy-on-write to modify file pages by default, unless inplace data update is
-+    enabled at mount-time.
-+
-+  * dir.c
-+    Contains functions to create, update, and remove NOVA dentries.
-+
-+  * file.c
-+    Implements file-related operations such as open, fallocate, llseek, fsync,
-+    and flush.
-+
-+  * gc.c
-+    NOVA's garbage collection functions.
-+
-+  * inode.{h,c}
-+    Creates, reads, and frees NOVA inode tables and inodes.
-+
-+  * ioctl.c
-+    Implements some ioctl commands to call NOVA's internal functions.
-+
-+  * journal.{h,c}
-+    For operations that affect multiple inodes NOVA uses lightweight,
-+    fixed-length journals – one per core. This file contains functions to
-+    create and manage the lite journals.
-+
-+  * log.{h,c}
-+    Functions to manipulate NOVA inode logs, including log page allocation, log
-+    entry creation, commit, modification, and deletion.
-+
-+  * namei.c
-+    Functions to create/remove files, directories, and links. It also looks for
-+    the NOVA inode number for a given path name.
-+
-+  * rebuild.c
-+    When mounting NOVA, rebuild NOVA inodes from its logs.
-+
-+  * stats.{h,c}
-+    Provide routines to gather and print NOVA usage statistics.
-+
-+  * super.{h,c}
-+    Super block structures and NOVA FS layout and entry points for NOVA
-+    mounting and unmounting, initializing or recovering the NOVA super block
-+    and other global file system information.
-+
-+  * symlink.c
-+    Implements functions to create and read symbolic links in the filesystem.
-+
-+  * sysfs.c
-+    Implements sysfs entries to take user inputs for printing NOVA statistics.
-+
-+
-+Filesystem Layout
-+=================
-+
-+A NOVA file systems resides in single PMEM device.
-+NOVA divides the device into 4KB blocks.
-+
-+ block
-++---------------------------------------------------------+
-+|    0    | primary super block (struct nova_super_block) |
-++---------------------------------------------------------+
-+|    1    | Reserved inodes                               |
-++---------------------------------------------------------+
-+|  2 - 15 | reserved                                      |
-++---------------------------------------------------------+
-+| 16 - 31 | Inode table pointers                          |
-++---------------------------------------------------------+
-+| 32 - 47 | Journal pointers                              |
-++---------------------------------------------------------+
-+| 48 - 63 | reserved                                      |
-++---------------------------------------------------------+
-+|   ...   | log and data pages                            |
-++---------------------------------------------------------+
-+|   n-2   | replica reserved Inodes                       |
-++---------------------------------------------------------+
-+|   n-1   | replica super block                           |
-++---------------------------------------------------------+
-+
-+
-+
-+Superblock and Associated Structures
-+====================================
-+
-+The beginning of the PMEM device hold the super block and its associated
-+tables.  These include reserved inodes, a table of pointers to the journals
-+NOVA uses for complex operations, and pointers to inodes tables.  NOVA
-+maintains replicas of the super block and reserved inodes in the last two
-+blocks of the PMEM area.
-+
-+
-+Block Allocator/Free Lists
-+==========================
-+
-+NOVA uses per-CPU allocators to manage free PMEM blocks.  On initialization,
-+NOVA divides the range of blocks in the PMEM device among the CPUs, and those
-+blocks are managed solely by that CPU.  We call these ranges of "allocation regions".
-+Each allocator maintains a red-black tree of unallocated ranges (struct
-+nova_range_node).
-+
-+Allocation Functions
-+--------------------
-+
-+NOVA allocate PMEM blocks using two mechanisms:
-+
-+1.  Static allocation as defined in super.h
-+
-+2.  Allocation for log and data pages via nova_new_log_blocks() and
-+nova_new_data_blocks().
-+
-+
-+PMEM Address Translation
-+------------------------
-+
-+In NOVA's persistent data structures, memory locations are given as offsets
-+from the beginning of the PMEM region.  nova_get_block() translates offsets to
-+PMEM addresses.  nova_get_addr_off() performs the reverse translation.
-+
-+
-+Inodes
-+======
-+
-+NOVA maintains per-CPU inode tables, and inode numbers are striped across the
-+tables (i.e., inos 0, n, 2n,... on cpu 0; inos 1, n + 1, 2n + 1, ... on cpu 1).
-+
-+The inodes themselves live in a set of linked lists (one per CPU) of 2MB
-+blocks.  The last 8 bytes of each block points to the next block.  Pointers to
-+heads of these list live in PMEM block INODE_TABLE_START.
-+Additional space for inodes is allocated on demand.
-+
-+To allocate inodes, NOVA maintains a per-cpu "inuse_list" in DRAM holds a RB
-+tree that holds ranges of allocated inode numbers.
-+
-+
-+Logs
-+====
-+
-+NOVA maintains a log for each inode that records updates to the inode's
-+metadata and holds pointers to the file data.  NOVA makes updates to file data
-+and metadata atomic by atomically appending log entries to the log.
-+
-+Each inode contains pointers to head and tail of the inode's log.  When the log
-+grows past the end of the last page, nova allocates additional space.  For
-+short logs (less than 1MB) , it doubles the length.  For longer logs, it adds a
-+fixed amount of additional space (1MB).
-+
-+Log space is reclaimed during garbage collection.
-+
-+Log Entries
-+-----------
-+
-+There are four kinds of log entry, documented in log.h.  The log entries have
-+several entries in common:
-+
-+   1.  'epoch_id' gives the epoch during which the log entry was created.
-+   Creating a snapshot increments the epoch_id for the file systems.
-+   Currently disabled (always zero).
-+
-+   2.  'trans_id' is per-inode, monotone increasing, number assigned each
-+   log entry.  It provides an ordering over FS operations on a single inode.
-+
-+   3.  'invalid' is true if the effects of this entry are dead and the log
-+   entry can be garbage collected.
-+
-+   4.  'csum' is a CRC32 checksum for the entry. Currently it is disabled.
-+
-+Log structure
-+-------------
-+
-+The logs comprise a linked list of PMEM blocks.  The tail of each block
-+contains some metadata about the block and pointers to the next block and
-+block's replica (struct nova_inode_page_tail).
-+
-++----------------+
-+| log entry      |
-++----------------+
-+| log entry      |
-++----------------+
-+| ...            |
-++----------------+
-+| tail           |
-+|  metadata      |
-+|  -> next block |
-++----------------+
-+
-+
-+Journals
-+========
-+
-+NOVA uses a lightweight journaling mechanisms to provide atomicity for
-+operations that modify more than one on inode.  The journals providing logging
-+for two operations:
-+
-+1.  Single word updates (JOURNAL_ENTRY)
-+2.  Copying inodes (JOURNAL_INODE)
-+
-+The journals are undo logs: NOVA creates the journal entries for an operation,
-+and if the operation does not complete due to a system failure, the recovery
-+process rolls back the changes using the journal entries.
-+
-+To commit, NOVA drops the log.
-+
-+NOVA maintains one journal per CPU.  The head and tail pointers for each
-+journal live in a reserved page near the beginning of the file system.
-+
-+During recovery, NOVA scans the journals and undoes the operations described by
-+each entry.
-+
-+
-+File and Directory Access
-+=========================
-+
-+To access file data via read(), NOVA maintains a radix tree in DRAM for each
-+inode (nova_inode_info_header.tree) that maps file offsets to write log
-+entries.  For directories, the same tree maps a hash of filenames to their
-+corresponding dentry.
-+
-+In both cases, the nova populates the tree when the file or directory is opened
-+by scanning its log.
-+
-+
-+MMap and DAX
-+============
-+
-+NOVA leverages the kernel's DAX mechanisms for mmap and file data access.
-+NOVA supports DAX-style mmap, i.e. mapping NVM pages directly to the
-+application's address space.
-+
-+
-+Garbage Collection
-+==================
-+
-+NOVA recovers log space with a two-phase garbage collection system.  When a log
-+reaches the end of its allocated pages, NOVA allocates more space.  Then, the
-+fast GC algorithm scans the log to remove pages that have no valid entries.
-+Then, it estimates how many pages the logs valid entries would fill.  If this
-+is less than half the number of pages in the log, the second GC phase copies
-+the valid entries to new pages.
-+
-+For example (V=valid; I=invalid):
-+
-++---+         +---+	        +---+
-+| I |	       | I |  	      	| V |
-++---+	       +---+  Thorough	+---+
-+| V |	       | V |  	 GC   	| V |
-++---+	       +---+   =====> 	+---+
-+| I |	       | I |  	      	| V |
-++---+	       +---+	        +---+
-+| V |	       | V |  	        | V |
-++---+	       +---+            +---+
-+  |	         |
-+  V	         V
-++---+	       +---+
-+| I |	       | V |
-++---+	       +---+
-+| I | fast GC  | I |
-++---+  ====>   +---+
-+| I |	       | I |
-++---+	       +---+
-+| I |	       | V |
-++---+	       +---+
-+  |
-+  V
-++---+
-+| V |
-++---+
-+| I |
-++---+
-+| I |
-++---+
-+| V |
-++---+
-+
-+
-+Umount and Recovery
-+===================
-+
-+Clean umount/mount
-+------------------
-+
-+On a clean unmount, NOVA saves the contents of many of its DRAM data structures
-+to PMEM to accelerate the next mount:
-+
-+1. NOVA stores the allocator state for each of the per-cpu allocators to the
-+   log of a reserved inode (NOVA_BLOCK_NODE_INO).
-+
-+2. NOVA stores the per-CPU lists of alive inodes (the inuse_list) to the
-+   NOVA_BLOCK_INODELIST_INO reserved inode.
-+
-+After a clean unmount, the following mount restores these data and then
-+invalidates them.
-+
-+Recovery after failures
-+-----------------------
-+
-+In case of a unclean dismount (e.g., system crash), NOVA must rebuild these
-+DRAM structures by scanning the inode logs.  NOVA log scanning is fast because
-+per-CPU inode tables and per-inode logs allow for parallel recovery.
-+
-+The number of live log entries in an inode log is roughly the number of extents
-+in the file.  As a result, NOVA only needs to scan a small fraction of the NVMM
-+during recovery.
-+
-+The NOVA failure recovery consists of two steps:
-+
-+First, NOVA checks its lite weight journals and rolls back any uncommitted
-+transactions to restore the file system to a consistent state.
-+
-+Second, NOVA starts a recovery thread on each CPU and scans the inode tables in
-+parallel, performing log scanning for every valid inode in the inode table.
-+NOVA use different recovery mechanisms for directory inodes and file inodes:
-+For a directory inode, NOVA scans the log's linked list to enumerate the pages
-+it occupies, but it does not inspect the log's contents.  For a file inode,
-+NOVA reads the write entries in the log to enumerate the data pages.
-+
-+During the recovery scan NOVA builds a bitmap of occupied pages, and rebuilds
-+the allocator based on the result. After this process completes, the file
-+system is ready to accept new requests.
-+
-+During the same scan, it rebuilds the list of available inodes.
-+
-+
-+Gaps, Missing Features, and Development Status
-+==============================================
-+
-+Although NOVA is a fully-functional file system, there is still much work left
-+to be done.  In particular, (at least) the following items are currently missing:
-+
-+1.  Snapshot, metadata and data replication and protection are left for future submission.
-+2.  There is no mkfs or fsck utility (`mount` takes `-o init` to create a NOVA file system).
-+3.  NOVA only works on x86-64 kernels.
-+4.  NOVA does not currently support extended attributes or ACL.
-+5.  NOVA doesn't provide quota support.
-+6.  Moving NOVA file systems between machines with different numbers of CPUs does not work.
-+
-+None of these are fundamental limitations of NOVA's design.
-+
-+NOVA is complete and robust enough to run a range of complex applications, but
-+it is not yet ready for production use.  Our current focus is on adding a few
-+missing features from the list above and finding/fixing bugs.
-+
-+
-+Hacking and Contributing
-+========================
-+
-+If you find bugs, please report them at https://github.com/NVSL/linux-nova/issues.
-+
-+If you have other questions or suggestions you can contact the NOVA developers
-+at cse-nova-hackers@eng.ucsd.edu.
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4623caf..89ac59b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9825,6 +9825,14 @@ F:	drivers/power/supply/bq27xxx_battery_i2c.c
- F:	drivers/power/supply/isp1704_charger.c
- F:	drivers/power/supply/rx51_battery.c
- 
-+NOVA FILESYSTEM
-+M:	Andiry Xu <jix024@cs.ucsd.edu>
-+M:	Steven Swanson <swanson@cs.ucsd.edu>
-+L:	linux-fsdevel@vger.kernel.org
-+L:	linux-nvdimm@lists.01.org
-+F:	Documentation/filesystems/nova.txt
-+F:	fs/nova/
-+
- NTB AMD DRIVER
- M:	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
- L:	linux-ntb@googlegroups.com
++++ b/fs/nova/nova.h
+@@ -0,0 +1,299 @@
++/*
++ * BRIEF DESCRIPTION
++ *
++ * Definitions for the NOVA filesystem.
++ *
++ * Copyright 2015-2016 Regents of the University of California,
++ * UCSD Non-Volatile Systems Lab, Andiry Xu <jix024@cs.ucsd.edu>
++ * Copyright 2012-2013 Intel Corporation
++ * Copyright 2009-2011 Marco Stornelli <marco.stornelli@gmail.com>
++ * Copyright 2003 Sony Corporation
++ * Copyright 2003 Matsushita Electric Industrial Co., Ltd.
++ * 2003-2004 (c) MontaVista Software, Inc. , Steve Longerbeam
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2. This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++#ifndef __NOVA_H
++#define __NOVA_H
++
++#include <linux/fs.h>
++#include <linux/dax.h>
++#include <linux/init.h>
++#include <linux/time.h>
++#include <linux/rtc.h>
++#include <linux/mm.h>
++#include <linux/delay.h>
++#include <linux/slab.h>
++#include <linux/vmalloc.h>
++#include <linux/sched.h>
++#include <linux/mutex.h>
++#include <linux/pagemap.h>
++#include <linux/backing-dev.h>
++#include <linux/proc_fs.h>
++#include <linux/seq_file.h>
++#include <linux/rcupdate.h>
++#include <linux/types.h>
++#include <linux/rbtree.h>
++#include <linux/radix-tree.h>
++#include <linux/version.h>
++#include <linux/kthread.h>
++#include <linux/buffer_head.h>
++#include <linux/uio.h>
++#include <linux/iomap.h>
++#include <linux/crc32c.h>
++#include <asm/tlbflush.h>
++#include <linux/version.h>
++#include <linux/pfn_t.h>
++#include <linux/pagevec.h>
++
++#include "nova_def.h"
++
++#define PAGE_SHIFT_2M 21
++#define PAGE_SHIFT_1G 30
++
++
++/*
++ * Debug code
++ */
++#ifdef pr_fmt
++#undef pr_fmt
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++#endif
++
++/* #define nova_dbg(s, args...)		pr_debug(s, ## args) */
++#define nova_dbg(s, args ...)		pr_info(s, ## args)
++#define nova_err(sb, s, args ...)	nova_error_mng(sb, s, ## args)
++#define nova_warn(s, args ...)		pr_warn(s, ## args)
++#define nova_info(s, args ...)		pr_info(s, ## args)
++
++extern unsigned int nova_dbgmask;
++#define NOVA_DBGMASK_MMAPHUGE	       (0x00000001)
++#define NOVA_DBGMASK_MMAP4K	       (0x00000002)
++#define NOVA_DBGMASK_MMAPVERBOSE       (0x00000004)
++#define NOVA_DBGMASK_MMAPVVERBOSE      (0x00000008)
++#define NOVA_DBGMASK_VERBOSE	       (0x00000010)
++#define NOVA_DBGMASK_TRANSACTION       (0x00000020)
++
++#define nova_dbg_mmap4k(s, args ...)		 \
++	((nova_dbgmask & NOVA_DBGMASK_MMAP4K) ? nova_dbg(s, args) : 0)
++#define nova_dbg_mmapv(s, args ...)		 \
++	((nova_dbgmask & NOVA_DBGMASK_MMAPVERBOSE) ? nova_dbg(s, args) : 0)
++#define nova_dbg_mmapvv(s, args ...)		 \
++	((nova_dbgmask & NOVA_DBGMASK_MMAPVVERBOSE) ? nova_dbg(s, args) : 0)
++
++#define nova_dbg_verbose(s, args ...)		 \
++	((nova_dbgmask & NOVA_DBGMASK_VERBOSE) ? nova_dbg(s, ##args) : 0)
++#define nova_dbgv(s, args ...)	nova_dbg_verbose(s, ##args)
++#define nova_dbg_trans(s, args ...)		 \
++	((nova_dbgmask & NOVA_DBGMASK_TRANSACTION) ? nova_dbg(s, ##args) : 0)
++
++#define NOVA_ASSERT(x) do {\
++			       if (!(x))\
++				       nova_warn("assertion failed %s:%d: %s\n", \
++			       __FILE__, __LINE__, #x);\
++		       } while (0)
++
++#define nova_set_bit		       __test_and_set_bit_le
++#define nova_clear_bit		       __test_and_clear_bit_le
++#define nova_find_next_zero_bit	       find_next_zero_bit_le
++
++#define clear_opt(o, opt)	(o &= ~NOVA_MOUNT_ ## opt)
++#define set_opt(o, opt)		(o |= NOVA_MOUNT_ ## opt)
++#define test_opt(sb, opt)	(NOVA_SB(sb)->s_mount_opt & NOVA_MOUNT_ ## opt)
++
++#define NOVA_LARGE_INODE_TABLE_SIZE    (0x200000)
++/* NOVA size threshold for using 2M blocks for inode table */
++#define NOVA_LARGE_INODE_TABLE_THREASHOLD    (0x20000000)
++/*
++ * nova inode flags
++ *
++ * NOVA_EOFBLOCKS_FL	There are blocks allocated beyond eof
++ */
++#define NOVA_EOFBLOCKS_FL      0x20000000
++/* Flags that should be inherited by new inodes from their parent. */
++#define NOVA_FL_INHERITED (FS_SECRM_FL | FS_UNRM_FL | FS_COMPR_FL | \
++			    FS_SYNC_FL | FS_NODUMP_FL | FS_NOATIME_FL |	\
++			    FS_COMPRBLK_FL | FS_NOCOMP_FL | \
++			    FS_JOURNAL_DATA_FL | FS_NOTAIL_FL | FS_DIRSYNC_FL)
++/* Flags that are appropriate for regular files (all but dir-specific ones). */
++#define NOVA_REG_FLMASK (~(FS_DIRSYNC_FL | FS_TOPDIR_FL))
++/* Flags that are appropriate for non-directories/regular files. */
++#define NOVA_OTHER_FLMASK (FS_NODUMP_FL | FS_NOATIME_FL)
++#define NOVA_FL_USER_VISIBLE (FS_FL_USER_VISIBLE | NOVA_EOFBLOCKS_FL)
++
++/* IOCTLs */
++#define	NOVA_PRINT_TIMING		0xBCD00010
++#define	NOVA_CLEAR_STATS		0xBCD00011
++#define	NOVA_PRINT_LOG			0xBCD00013
++#define	NOVA_PRINT_LOG_BLOCKNODE	0xBCD00014
++#define	NOVA_PRINT_LOG_PAGES		0xBCD00015
++#define	NOVA_PRINT_FREE_LISTS		0xBCD00018
++
++
++#define	READDIR_END			(ULONG_MAX)
++#define	ANY_CPU				(65536)
++#define	FREE_BATCH			(16)
++
++extern unsigned int blk_type_to_shift[NOVA_BLOCK_TYPE_MAX];
++extern unsigned int blk_type_to_size[NOVA_BLOCK_TYPE_MAX];
++
++
++/* Mask out flags that are inappropriate for the given type of inode. */
++static inline __le32 nova_mask_flags(umode_t mode, __le32 flags)
++{
++	flags &= cpu_to_le32(NOVA_FL_INHERITED);
++	if (S_ISDIR(mode))
++		return flags;
++	else if (S_ISREG(mode))
++		return flags & cpu_to_le32(NOVA_REG_FLMASK);
++	else
++		return flags & cpu_to_le32(NOVA_OTHER_FLMASK);
++}
++
++static inline u32 nova_crc32c(u32 crc, const u8 *data, size_t len)
++{
++	u8 *ptr = (u8 *) data;
++	u64 acc = crc; /* accumulator, crc32c value in lower 32b */
++	u32 csum;
++
++	/* x86 instruction crc32 is part of SSE-4.2 */
++	if (static_cpu_has(X86_FEATURE_XMM4_2)) {
++		/* This inline assembly implementation should be equivalent
++		 * to the kernel's crc32c_intel_le_hw() function used by
++		 * crc32c(), but this performs better on test machines.
++		 */
++		while (len > 8) {
++			asm volatile(/* 64b quad words */
++				"crc32q (%1), %0"
++				: "=r" (acc)
++				: "r"  (ptr), "0" (acc)
++			);
++			ptr += 8;
++			len -= 8;
++		}
++
++		while (len > 0) {
++			asm volatile(/* trailing bytes */
++				"crc32b (%1), %0"
++				: "=r" (acc)
++				: "r"  (ptr), "0" (acc)
++			);
++			ptr++;
++			len--;
++		}
++
++		csum = (u32) acc;
++	} else {
++		/* The kernel's crc32c() function should also detect and use the
++		 * crc32 instruction of SSE-4.2. But calling in to this function
++		 * is about 3x to 5x slower than the inline assembly version on
++		 * some test machines.
++		 */
++		csum = crc32c(crc, data, len);
++	}
++
++	return csum;
++}
++
++static inline int memcpy_to_pmem_nocache(void *dst, const void *src,
++	unsigned int size)
++{
++	int ret;
++
++	ret = __copy_from_user_inatomic_nocache(dst, src, size);
++
++	return ret;
++}
++
++
++/* assumes the length to be 4-byte aligned */
++static inline void memset_nt(void *dest, uint32_t dword, size_t length)
++{
++	uint64_t dummy1, dummy2;
++	uint64_t qword = ((uint64_t)dword << 32) | dword;
++
++	asm volatile ("movl %%edx,%%ecx\n"
++		"andl $63,%%edx\n"
++		"shrl $6,%%ecx\n"
++		"jz 9f\n"
++		"1:	 movnti %%rax,(%%rdi)\n"
++		"2:	 movnti %%rax,1*8(%%rdi)\n"
++		"3:	 movnti %%rax,2*8(%%rdi)\n"
++		"4:	 movnti %%rax,3*8(%%rdi)\n"
++		"5:	 movnti %%rax,4*8(%%rdi)\n"
++		"8:	 movnti %%rax,5*8(%%rdi)\n"
++		"7:	 movnti %%rax,6*8(%%rdi)\n"
++		"8:	 movnti %%rax,7*8(%%rdi)\n"
++		"leaq 64(%%rdi),%%rdi\n"
++		"decl %%ecx\n"
++		"jnz 1b\n"
++		"9:	movl %%edx,%%ecx\n"
++		"andl $7,%%edx\n"
++		"shrl $3,%%ecx\n"
++		"jz 11f\n"
++		"10:	 movnti %%rax,(%%rdi)\n"
++		"leaq 8(%%rdi),%%rdi\n"
++		"decl %%ecx\n"
++		"jnz 10b\n"
++		"11:	 movl %%edx,%%ecx\n"
++		"shrl $2,%%ecx\n"
++		"jz 12f\n"
++		"movnti %%eax,(%%rdi)\n"
++		"12:\n"
++		: "=D"(dummy1), "=d" (dummy2)
++		: "D" (dest), "a" (qword), "d" (length)
++		: "memory", "rcx");
++}
++
++
++#include "super.h" // Remove when we factor out these and other functions.
++
++/* Translate an offset the beginning of the Nova instance to a PMEM address.
++ *
++ * If this is part of a read-modify-write of the block,
++ * nova_memunlock_block() before calling!
++ */
++static inline void *nova_get_block(struct super_block *sb, u64 block)
++{
++	struct nova_super_block *ps = nova_get_super(sb);
++
++	return block ? ((void *)ps + block) : NULL;
++}
++
++static inline int nova_get_reference(struct super_block *sb, u64 block,
++	void *dram, void **nvmm, size_t size)
++{
++	int rc;
++
++	*nvmm = nova_get_block(sb, block);
++	rc = memcpy_mcsafe(dram, *nvmm, size);
++	return rc;
++}
++
++
++static inline u64
++nova_get_addr_off(struct nova_sb_info *sbi, void *addr)
++{
++	NOVA_ASSERT((addr >= sbi->virt_addr) &&
++			(addr < (sbi->virt_addr + sbi->initsize)));
++	return (u64)(addr - sbi->virt_addr);
++}
++
++static inline u64
++nova_get_block_off(struct super_block *sb, unsigned long blocknr,
++		    unsigned short btype)
++{
++	return (u64)blocknr << PAGE_SHIFT;
++}
++
++
++static inline u64 nova_get_epoch_id(struct super_block *sb)
++{
++	struct nova_sb_info *sbi = NOVA_SB(sb);
++
++	return sbi->s_epoch_id;
++}
++
++#include "inode.h"
++#endif /* __NOVA_H */
 -- 
 2.7.4
