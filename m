@@ -1,336 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751215AbeCJQow (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 11:44:52 -0500
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:46560 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750703AbeCJQou (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 11:44:50 -0500
-X-Google-Smtp-Source: AG47ELv9My2AfdDACNfiuWNaLf4r13Tk/hoBoriJ0khpyFvvraTry7z4kjf9gSTN+TFHC5vwZb5pUw==
-Subject: Re: [PATCH 1/2] hwmon: (ucd9000) Add gpio chip interface
-To: Eddie James <eajames@linux.vnet.ibm.com>, linux-hwmon@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, jdelvare@suse.com, joel@jms.id.au,
-        Christopher Bostic <cbostic@linux.vnet.ibm.com>,
-        Andrew Jeffery <andrew@aj.id.au>
-References: <1520623196-9534-1-git-send-email-eajames@linux.vnet.ibm.com>
- <1520623196-9534-2-git-send-email-eajames@linux.vnet.ibm.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <39df66cf-2580-5e49-17b5-2187469b5d44@roeck-us.net>
-Date: Sat, 10 Mar 2018 08:44:46 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932123AbeCJQrN (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 11:47:13 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:33170 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750703AbeCJQrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 11:47:12 -0500
+Date: Sat, 10 Mar 2018 17:46:55 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/microcode/AMD: check microcode file sanity before
+ loading it
+Message-ID: <20180310164654.GD8261@pd.tnic>
+References: <34e9d679-2eca-90cf-9a95-3864f0be060e@maciej.szmigiero.name>
+ <f61522e6-fa15-0fc1-feef-6e0c84d6fc80@maciej.szmigiero.name>
 MIME-Version: 1.0
-In-Reply-To: <1520623196-9534-2-git-send-email-eajames@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f61522e6-fa15-0fc1-feef-6e0c84d6fc80@maciej.szmigiero.name>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09/2018 11:19 AM, Eddie James wrote:
-> From: Christopher Bostic <cbostic@linux.vnet.ibm.com>
+On Sat, Mar 10, 2018 at 05:16:40PM +0100, Maciej S. Szmigiero wrote:
+> To make sure that it is clear what this patch is about:
+
+I know what you're trying to do but it seems you don't want to listen.
+So let me try one last time to clear your confusion.
+
+> It *isn't* about verifying the actual microcode update, that is, the
+> blob that gets sent to the CPU as the new microcode.
+> Such verification is (hopefully) done by the CPU itself.
+
+Yes, it is done by the CPU. Microcode is encrypted.
+
+> There is no container file at all for family 17h (Zen) so
+> distributions like OpenSUSE that include this file must have gotten it
+> from some other source
+
+Or maybe they've gotten it from AMD directly. Don't you think that
+getting microcode from the CPU vendor directly is the logical thing?
+
+> That's why to get things like IBPB it is sometimes necessary to use
+> a newer microcode version than included in linux-firmware, sourced for
+> example from a BIOS update.
+
+linux-firmware will get F17h microcode soon.
+
+> Since BIOS updates contain only actual (raw) microcode updates one
+> has to place it in a microcode container file so this driver can parse
+> it.
 > 
-> Add a struct gpio_chip and define some methods so that this device's
-> I/O can be accessed via /sys/class/gpio.
-> 
-> Signed-off-by: Christopher Bostic <cbostic@linux.vnet.ibm.com>
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
-> ---
->   drivers/hwmon/pmbus/ucd9000.c | 220 ++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 220 insertions(+)
-> 
-> diff --git a/drivers/hwmon/pmbus/ucd9000.c b/drivers/hwmon/pmbus/ucd9000.c
-> index b74dbec..e3a507f 100644
-> --- a/drivers/hwmon/pmbus/ucd9000.c
-> +++ b/drivers/hwmon/pmbus/ucd9000.c
-> @@ -27,6 +27,7 @@
->   #include <linux/slab.h>
->   #include <linux/i2c.h>
->   #include <linux/pmbus.h>
-> +#include <linux/gpio.h>
->   #include "pmbus.h"
->   
->   enum chips { ucd9000, ucd90120, ucd90124, ucd90160, ucd9090, ucd90910 };
-> @@ -35,8 +36,18 @@
->   #define UCD9000_NUM_PAGES		0xd6
->   #define UCD9000_FAN_CONFIG_INDEX	0xe7
->   #define UCD9000_FAN_CONFIG		0xe8
-> +#define UCD9000_GPIO_SELECT		0xfa
-> +#define UCD9000_GPIO_CONFIG		0xfb
->   #define UCD9000_DEVICE_ID		0xfd
->   
-> +/* GPIO CONFIG bits */
-> +#define UCD9000_GPIO_CONFIG_ENABLE	BIT(0)
-> +#define UCD9000_GPIO_CONFIG_OUT_ENABLE	BIT(1)
-> +#define UCD9000_GPIO_CONFIG_OUT_VALUE	BIT(2)
-> +#define UCD9000_GPIO_CONFIG_STATUS	BIT(3)
-> +#define UCD9000_GPIO_INPUT		0
-> +#define UCD9000_GPIO_OUTPUT		1
-> +
->   #define UCD9000_MON_TYPE(x)	(((x) >> 5) & 0x07)
->   #define UCD9000_MON_PAGE(x)	((x) & 0x0f)
->   
-> @@ -47,9 +58,15 @@
->   
->   #define UCD9000_NUM_FAN		4
->   
-> +#define UCD9000_GPIO_NAME_LEN	16
-> +#define UCD9090_NUM_GPIOS	23
-> +#define UCD901XX_NUM_GPIOS	26
-> +#define UCD90910_NUM_GPIOS	26
-> +
->   struct ucd9000_data {
->   	u8 fan_data[UCD9000_NUM_FAN][I2C_SMBUS_BLOCK_MAX];
->   	struct pmbus_driver_info info;
-> +	struct gpio_chip gpio;
->   };
->   #define to_ucd9000_data(_info) container_of(_info, struct ucd9000_data, info)
->   
-> @@ -149,6 +166,168 @@ static int ucd9000_read_byte_data(struct i2c_client *client, int page, int reg)
->   };
->   MODULE_DEVICE_TABLE(of, ucd9000_of_match);
->   
-> +static int ucd9000_gpio_read_config(struct i2c_client *client,
-> +				    unsigned int offset)
-> +{
-> +	int ret;
-> +
-> +	/* No page set required */
-> +	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_SELECT, offset);
-> +	if (ret < 0) {
-> +		dev_err(&client->dev, "Failed to select GPIO %d: %d\n", offset,
-> +			ret);
-> +
+> As far I know there is no tool to automate this work so one has to
+> manually tweak the container metadata.
 
-I am not a fan of kernel log error messages outside the probe function.
-Please consider dropping those or making it dev_dbg.
+Let me get this straight: am I reading this correctly that you've tried
+to carve out the F17h microcode from a BIOS update blob and you're
+trying to load that?!?
 
-Would it make sense to cache those values ?
+If so, you could've simply taken a distro microcode package and used
+F17h microcode from there - they are all the same.
 
-> +		return ret;
-> +	}
-> +
-> +	return i2c_smbus_read_byte_data(client, UCD9000_GPIO_CONFIG);
-> +}
-> +
-> +static int ucd9000_gpio_get(struct gpio_chip *gc, unsigned int offset)
-> +{
-> +	struct i2c_client *client  = gpiochip_get_data(gc);
-> +	int ret;
-> +
-> +	ret = ucd9000_gpio_read_config(client, offset);
-> +	if (ret < 0) {
-> +		dev_err(&client->dev, "failed to read GPIO %d config: %d\n",
-> +			offset, ret);
-> +
-... even more so if a single error can result in multiple error messages.
+-- 
+Regards/Gruss,
+    Boris.
 
-> +		return ret;
-> +	}
-> +
-> +	return !!(ret & UCD9000_GPIO_CONFIG_STATUS);
-> +}
-> +
-> +static void ucd9000_gpio_set(struct gpio_chip *gc, unsigned int offset,
-> +			     int value)
-> +{
-> +	struct i2c_client *client = gpiochip_get_data(gc);
-> +	int ret;
-> +
-> +	ret = ucd9000_gpio_read_config(client, offset);
-> +	if (ret < 0) {
-> +		dev_err(&client->dev, "failed to read GPIO %d config: %d\n",
-> +			offset, ret);
-> +
-> +		return;
-> +	}
-> +
-> +	if (value) {
-> +		if (ret & UCD9000_GPIO_CONFIG_STATUS)
-> +			return;
-> +
-> +		ret |= UCD9000_GPIO_CONFIG_STATUS;
-> +	} else {
-> +		if (!(ret & UCD9000_GPIO_CONFIG_STATUS))
-> +			return;
-> +
-> +		ret &= ~UCD9000_GPIO_CONFIG_STATUS;
-> +	}
-> +
-> +	ret |= UCD9000_GPIO_CONFIG_ENABLE;
-> +
-> +	/* Page set not required */
-> +	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, ret);
-> +	if (ret < 0) {
-> +		dev_err(&client->dev, "Failed to write GPIO %d config: %d\n",
-> +			offset, ret);
-> +
-> +		return;
-> +	}
-> +
-> +	ret &= ~UCD9000_GPIO_CONFIG_ENABLE;
-> +
-> +	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, ret);
-> +	if (ret < 0)
-> +		dev_err(&client->dev, "Failed to write GPIO %d config: %d\n",
-> +			offset, ret);
-> +}
-> +
-> +static int ucd9000_gpio_get_direction(struct gpio_chip *gc,
-> +				      unsigned int offset)
-> +{
-> +	struct i2c_client *client = gpiochip_get_data(gc);
-> +	int ret;
-> +
-> +	ret = ucd9000_gpio_read_config(client, offset);
-> +	if (ret < 0) {
-> +		dev_err(&client->dev, "failed to read GPIO %d config: %d\n",
-> +			offset, ret);
-> +
-> +		return ret;
-> +	}
-> +
-> +	return !(ret & UCD9000_GPIO_CONFIG_OUT_ENABLE);
-> +}
-> +
-> +static int ucd9000_gpio_set_direction(struct gpio_chip *gc,
-> +				      unsigned int offset, bool direction_out,
-> +				      int requested_out)
-> +{
-> +	struct i2c_client *client = gpiochip_get_data(gc);
-> +	int ret, config, out_val;
-> +
-> +	ret = ucd9000_gpio_read_config(client, offset);
-> +	if (ret < 0) {
-> +		dev_err(&client->dev, "failed to read GPIO %d config: %d\n",
-> +			offset, ret);
-> +
-> +		return ret;
-> +	}
-> +
-> +	if (direction_out) {
-> +		out_val = requested_out ? UCD9000_GPIO_CONFIG_OUT_VALUE : 0;
-> +
-> +		if (ret & UCD9000_GPIO_CONFIG_OUT_ENABLE) {
-> +			if ((ret & UCD9000_GPIO_CONFIG_OUT_VALUE) == out_val)
-> +				return 0;
-> +		} else {
-> +			ret |= UCD9000_GPIO_CONFIG_OUT_ENABLE;
-> +		}
-> +
-> +		if (out_val)
-> +			ret |= UCD9000_GPIO_CONFIG_OUT_VALUE;
-> +		else
-> +			ret &= ~UCD9000_GPIO_CONFIG_OUT_VALUE;
-> +
-> +	} else {
-> +		if (!(ret & UCD9000_GPIO_CONFIG_OUT_ENABLE))
-> +			return 0;
-> +
-> +		ret &= ~UCD9000_GPIO_CONFIG_OUT_ENABLE;
-> +	}
-> +
-> +	ret |= UCD9000_GPIO_CONFIG_ENABLE;
-> +	config = ret;
-> +
-> +	/* Page set not required */
-> +	ret = i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, config);
-> +	if (ret < 0) {
-> +		dev_err(&client->dev, "Failed to write GPIO %d config: %d\n",
-> +			offset, ret);
-> +
-> +		return ret;
-> +	}
-> +
-> +	config &= ~UCD9000_GPIO_CONFIG_ENABLE;
-> +
-> +	return i2c_smbus_write_byte_data(client, UCD9000_GPIO_CONFIG, config);
-> +}
-> +
-> +static int ucd9000_gpio_direction_input(struct gpio_chip *gc,
-> +					unsigned int offset)
-> +{
-> +	return ucd9000_gpio_set_direction(gc, offset, UCD9000_GPIO_INPUT, 0);
-> +}
-> +
-> +static int ucd9000_gpio_direction_output(struct gpio_chip *gc,
-> +					 unsigned int offset, int val)
-> +{
-> +	return ucd9000_gpio_set_direction(gc, offset, UCD9000_GPIO_OUTPUT,
-> +					  val);
-> +}
-> +
->   static int ucd9000_probe(struct i2c_client *client,
->   			 const struct i2c_device_id *id)
->   {
-> @@ -263,6 +442,47 @@ static int ucd9000_probe(struct i2c_client *client,
->   		  | PMBUS_HAVE_FAN34 | PMBUS_HAVE_STATUS_FAN34;
->   	}
->   
-> +	/*
-> +	 * Note:
-> +	 *
-> +	 * Pinmux support has not been added to the new gpio_chip.
-> +	 * This support should be added when possible given the mux
-> +	 * behavior of these IO devices.
-> +	 */
-> +	data->gpio.label = (const char *)&client->name;
-> +	data->gpio.get_direction = ucd9000_gpio_get_direction;
-> +	data->gpio.direction_input = ucd9000_gpio_direction_input;
-> +	data->gpio.direction_output = ucd9000_gpio_direction_output;
-> +	data->gpio.get = ucd9000_gpio_get;
-> +	data->gpio.set = ucd9000_gpio_set;
-> +	data->gpio.can_sleep = 1;
-> +	data->gpio.base = -1;
-> +
-
-Also set of_node ?
-
-> +	/* No default case. No data available for ucd9000. */
-> +	switch (mid->driver_data) {
-> +	case ucd9090:
-> +		data->gpio.ngpio = UCD9090_NUM_GPIOS;
-> +		break;
-> +	case ucd90120:
-> +	case ucd90124:
-> +	case ucd90160:
-> +		data->gpio.ngpio = UCD901XX_NUM_GPIOS;
-> +		break;
-> +	case ucd90910:
-> +		data->gpio.ngpio = UCD90910_NUM_GPIOS;
-> +		break;
-
-Why not:
-
-	default:
-		break;
-
-instead of the comment above ?
-
-> +	}
-> +
-> +	data->gpio.parent = &client->dev;
-> +	data->gpio.owner = THIS_MODULE;
-> +
-
-Since there are chips with no gpio support (ngpio=0), it would be better
-to make the gpio registration conditional.
-
-> +	ret = devm_gpiochip_add_data(&client->dev, &data->gpio, client);
-> +	if (ret) {
-> +		data->gpio.parent = NULL;
-> +		dev_warn(&client->dev, "Could not add gpiochip: %d\n", ret);
-
-Either dev_warn and ignore the error, or dev_err. Either case setting data->gpio.parent
-to NULL should be unnecessary.
-
-> +		return ret;
-> +	}
-> +
->   	return pmbus_do_probe(client, mid, info);
->   }
->   
-> 
+Good mailing practices for 400: avoid top-posting and trim the reply.
