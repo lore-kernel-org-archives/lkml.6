@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtIZwMlXsJT+vNN3sDQmGwzgVoObCslu7En8S1sFe25BbAk8Sri6GEoUuatT5jOnI/G89bV
-ARC-Seal: i=1; a=rsa-sha256; t=1520641161; cv=none;
+X-Google-Smtp-Source: AG47ELtRzUpQ5fotn7vFXBLCOTw3iNd3sbJoQxhh8h4KLim2nr2UqoTXtKaw2D2mwRW1ptD4Cgq4
+ARC-Seal: i=1; a=rsa-sha256; t=1520641159; cv=none;
         d=google.com; s=arc-20160816;
-        b=QsrisAQjIkliF8a/VXQp/5oInDlSooeXJ6L/P8yzbWbG4O+vKjUXs5JrvExrC2tkmn
-         iuIjsPxioDzYWFkQdYZ9oSjWi33Megzd6XhkkE6MLPSTnicqmdl2IukryHaYlSaFwprG
-         +4geqhlpPp25SKbzX6C5uuFnp3iuZmJX1QmbAZwNlMfrEB3s31+G4Xa+CXjuyuEJ2MI/
-         IeU86I7ZrTLBGXl7qbRbzjHtTMv5x9g9G8xXnBIqxz9tfukbpNckmu3wDM+DQp6NeX2/
-         Eb2c9VneJCqW2si1y2/5tJXd2DIvdRzcxBQHcJqjztzz6J49vL8EbU7A8b0QfhVz3UHT
-         kLEg==
+        b=CDhH82LQGzuqdkW/t/YqpzyJkOeJEl3mSewdiFEqjpvEf8/cnSyyuWCOiXnE5UWAoG
+         ZYDlEk0SueRcDslri1RMvafdm4pb6H7fVwuF5XhK7bd4O5ylf8kvmjWjvhSPS7D2tjFU
+         XzF1UayWBzKRX7fauM7kLEuW8v80bHbeCNzpJ93kXwxxWarZkAFZEnIIbRvGPogZJFDH
+         mcWTxTMJ1dptyNyYeyDmN53utn7E5u5bDXnwymWur1AG+7zQz3JjzUsNDkkGLyOjs8SM
+         8bEFJnq8Lu+TiCOL7tpnkGXCbLUs7Cn7OldwBFOIwPxg0uSXi7PgBtvU7wfUg8FdSEVF
+         650g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=k5LEE/Fhaz12dAhBlUcegOjC6LJtcdVe7hE/q1VikrM=;
-        b=l9mKS5PkXkDxBrKmkMKwha5orzjivqtIfyoLyVo+bEs+z1KV6FmY4YWp1YfUgHFwmK
-         I221w+3PAueF6WEHcRHaIVvX/5sc4C1ndodJU0FVSReCIs8KGK7uJPf4LReifzt+tqaA
-         g4hrPe8BYPuwz9P966K14dxF+F99pq9YTThqzFVpGWPkIqHoT3Nbtf8ps8vX61NOzJuz
-         eLxdszsTaTbaKuV75S+QvwCSo4kauLRNQ66FF5oN3CPQfQGTTT79ToI8AY31ayxCQyac
-         5WBjxNAjRfbLU4adMM9qhkhkvPFyrBZknCmA9hmOh91wcGD7/jxwrN3VevNsKNszxQrI
-         Aulw==
+        bh=rD2nMsXz1LzDisLAWI06qgt1Bu8DTPoayMowdSTvZGQ=;
+        b=VvUW8LuUEuohxYypSfWxILWkLdHceGfdlBjtNKzm4B2ND65MXsbCNAJqbjLtLHmTuA
+         BMlC7gaP5DNsePtOfP6dBiRWvGbJ+SY6hpOgSdssnbs95W7h/QBvS9sY5dSNvnJPaBa1
+         ftMpAlQTrxm7vWij9rtf56CqFd3ujlo88hPNRKjAtD0fqY9SEI8QCO36+MhORSEYlSon
+         +dFIAy3y6NfEY6h6aAnOOhv/o1rmLTXE15NrKvYlWaC2fLXQI9zaufe1Vor0SOf7V5dv
+         8rWEXfTPP8+rnrXea0tBSAAI63/4iW8TYxW53ruH7OTmJN58UbbxZi9l+hrmY69T7Bvm
+         wE3A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
+	Alexey Kodanev <alexey.kodanev@oracle.com>,
+	Neil Horman <nhorman@tuxdriver.com>,
+	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 16/21] s390/qeth: fix SETIP command handling
-Date: Fri,  9 Mar 2018 16:18:38 -0800
-Message-Id: <20180310001802.060960819@linuxfoundation.org>
+Subject: [PATCH 3.18 15/21] sctp: fix dst refcnt leak in sctp_v6_get_dst()
+Date: Fri,  9 Mar 2018 16:18:37 -0800
+Message-Id: <20180310001801.988711805@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001801.045114869@linuxfoundation.org>
 References: <20180310001801.045114869@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507826559003537?=
-X-GMAIL-MSGID: =?utf-8?q?1594507826559003537?=
+X-GMAIL-THRID: =?utf-8?q?1594507824174857982?=
+X-GMAIL-MSGID: =?utf-8?q?1594507824174857982?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,74 +51,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+From: Alexey Kodanev <alexey.kodanev@oracle.com>
 
 
-[ Upstream commit 1c5b2216fbb973a9410e0b06389740b5c1289171 ]
+[ Upstream commit 957d761cf91cdbb175ad7d8f5472336a4d54dbf2 ]
 
-send_control_data() applies some special handling to SETIP v4 IPA
-commands. But current code parses *all* command types for the SETIP
-command code. Limit the command code check to IPA commands.
+When going through the bind address list in sctp_v6_get_dst() and
+the previously found address is better ('matchlen > bmatchlen'),
+the code continues to the next iteration without releasing currently
+held destination.
 
-Fixes: 5b54e16f1a54 ("qeth: do not spin for SETIP ip assist command")
-Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+Fix it by releasing 'bdst' before continue to the next iteration, and
+instead of introducing one more '!IS_ERR(bdst)' check for dst_release(),
+move the already existed one right after ip6_dst_lookup_flow(), i.e. we
+shouldn't proceed further if we get an error for the route lookup.
+
+Fixes: dbc2b5e9a09e ("sctp: fix src address selection if using secondary addresses for ipv6")
+Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_core.h      |    5 +++++
- drivers/s390/net/qeth_core_main.c |   14 ++++++++------
- 2 files changed, 13 insertions(+), 6 deletions(-)
+ net/sctp/ipv6.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/s390/net/qeth_core.h
-+++ b/drivers/s390/net/qeth_core.h
-@@ -593,6 +593,11 @@ struct qeth_cmd_buffer {
- 	void (*callback) (struct qeth_channel *, struct qeth_cmd_buffer *);
- };
+--- a/net/sctp/ipv6.c
++++ b/net/sctp/ipv6.c
+@@ -323,8 +323,10 @@ static void sctp_v6_get_dst(struct sctp_
+ 		final_p = fl6_update_dst(fl6, rcu_dereference(np->opt), &final);
+ 		bdst = ip6_dst_lookup_flow(sk, fl6, final_p);
  
-+static inline struct qeth_ipa_cmd *__ipa_cmd(struct qeth_cmd_buffer *iob)
-+{
-+	return (struct qeth_ipa_cmd *)(iob->data + IPA_PDU_HEADER_SIZE);
-+}
+-		if (!IS_ERR(bdst) &&
+-		    ipv6_chk_addr(dev_net(bdst->dev),
++		if (IS_ERR(bdst))
++			continue;
 +
- /**
-  * definition of a qeth channel, used for read and write
-  */
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -2023,7 +2023,7 @@ int qeth_send_control_data(struct qeth_c
- 	unsigned long flags;
- 	struct qeth_reply *reply = NULL;
- 	unsigned long timeout, event_timeout;
--	struct qeth_ipa_cmd *cmd;
-+	struct qeth_ipa_cmd *cmd = NULL;
++		if (ipv6_chk_addr(dev_net(bdst->dev),
+ 				  &laddr->a.v6.sin6_addr, bdst->dev, 1)) {
+ 			if (!IS_ERR_OR_NULL(dst))
+ 				dst_release(dst);
+@@ -333,8 +335,10 @@ static void sctp_v6_get_dst(struct sctp_
+ 		}
  
- 	QETH_CARD_TEXT(card, 2, "sendctl");
+ 		bmatchlen = sctp_v6_addr_match_len(daddr, &laddr->a);
+-		if (matchlen > bmatchlen)
++		if (matchlen > bmatchlen) {
++			dst_release(bdst);
+ 			continue;
++		}
  
-@@ -2050,10 +2050,13 @@ int qeth_send_control_data(struct qeth_c
- 	while (atomic_cmpxchg(&card->write.irq_pending, 0, 1)) ;
- 	qeth_prepare_control_data(card, len, iob);
- 
--	if (IS_IPA(iob->data))
-+	if (IS_IPA(iob->data)) {
-+		cmd = __ipa_cmd(iob);
- 		event_timeout = QETH_IPA_TIMEOUT;
--	else
-+	} else {
- 		event_timeout = QETH_TIMEOUT;
-+	}
-+
- 	timeout = jiffies + event_timeout;
- 
- 	QETH_CARD_TEXT(card, 6, "noirqpnd");
-@@ -2078,9 +2081,8 @@ int qeth_send_control_data(struct qeth_c
- 
- 	/* we have only one long running ipassist, since we can ensure
- 	   process context of this command we can sleep */
--	cmd = (struct qeth_ipa_cmd *)(iob->data+IPA_PDU_HEADER_SIZE);
--	if ((cmd->hdr.command == IPA_CMD_SETIP) &&
--	    (cmd->hdr.prot_version == QETH_PROT_IPV4)) {
-+	if (cmd && cmd->hdr.command == IPA_CMD_SETIP &&
-+	    cmd->hdr.prot_version == QETH_PROT_IPV4) {
- 		if (!wait_event_timeout(reply->wait_q,
- 		    atomic_read(&reply->received), event_timeout))
- 			goto time_err;
+ 		if (!IS_ERR_OR_NULL(dst))
+ 			dst_release(dst);
