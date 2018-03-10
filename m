@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932326AbeCJSpg (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:45:36 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:37734 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932180AbeCJSUV (ORCPT
+        id S932377AbeCJSp5 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:45:57 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:34494 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932110AbeCJSUU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:20:21 -0500
-X-Google-Smtp-Source: AG47ELs9SAfPARSwANWVLkKwUD8iorTbdnnFx9Tb+w3SJYWbJ/2hLN6CkD8BgjXQsK+mJG7nfm50pg==
+        Sat, 10 Mar 2018 13:20:20 -0500
+X-Google-Smtp-Source: AG47ELtp3+qRgnLQIWQx0Wvbjdp+HEWDuqosPY3ORCW1WaYoODdVdQJJd8QZIlH4LRO+CdTXZCmtfw==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 05/83] Add NOVA filesystem definitions and useful helper routines.
-Date: Sat, 10 Mar 2018 10:17:46 -0800
-Message-Id: <1520705944-6723-6-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 03/83] Add super.h.
+Date: Sat, 10 Mar 2018 10:17:44 -0800
+Message-Id: <1520705944-6723-4-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -27,320 +27,182 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andiry Xu <jix024@cs.ucsd.edu>
 
-NOVA stores offset rather than absolute addresses in pmem.
-nova_get_block() and nova_get_addr_off() provide transitions
-between these two kinds of addresses.
+This header file defines NOVA persistent and volatile superblock
+data structures.
+
+It also defines NOVA block layout:
+
+Page 0: Superblock
+Page 1: Reserved inodes
+Page 2 - 15: Reserved
+Page 16 - 31: Inode table pointers
+Page 32 - 47: Journal address pointers
+Page 48 - 63: Reserved
+Pages n-2: Replicate reserved inodes
+Pages n-1: Replicate superblock
+
+Other pages are for normal inodes, logs and data.
 
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/nova.h | 299 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 299 insertions(+)
- create mode 100644 fs/nova/nova.h
+ fs/nova/super.h | 149 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 149 insertions(+)
+ create mode 100644 fs/nova/super.h
 
-diff --git a/fs/nova/nova.h b/fs/nova/nova.h
+diff --git a/fs/nova/super.h b/fs/nova/super.h
 new file mode 100644
-index 0000000..5eb696c
+index 0000000..cb53908
 --- /dev/null
-+++ b/fs/nova/nova.h
-@@ -0,0 +1,299 @@
++++ b/fs/nova/super.h
+@@ -0,0 +1,149 @@
++#ifndef __SUPER_H
++#define __SUPER_H
 +/*
-+ * BRIEF DESCRIPTION
++ * Structure of the NOVA super block in PMEM
 + *
-+ * Definitions for the NOVA filesystem.
-+ *
-+ * Copyright 2015-2016 Regents of the University of California,
-+ * UCSD Non-Volatile Systems Lab, Andiry Xu <jix024@cs.ucsd.edu>
-+ * Copyright 2012-2013 Intel Corporation
-+ * Copyright 2009-2011 Marco Stornelli <marco.stornelli@gmail.com>
-+ * Copyright 2003 Sony Corporation
-+ * Copyright 2003 Matsushita Electric Industrial Co., Ltd.
-+ * 2003-2004 (c) MontaVista Software, Inc. , Steve Longerbeam
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2. This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
++ * The fields are partitioned into static and dynamic fields. The static fields
++ * never change after file system creation. This was primarily done because
++ * nova_get_block() returns NULL if the block offset is 0 (helps in catching
++ * bugs). So if we modify any field using journaling (for consistency), we
++ * will have to modify s_sum which is at offset 0. So journaling code fails.
++ * This (static+dynamic fields) is a temporary solution and can be avoided
++ * once the file system becomes stable and nova_get_block() returns correct
++ * pointers even for offset 0.
 + */
-+#ifndef __NOVA_H
-+#define __NOVA_H
++struct nova_super_block {
++	/* static fields. they never change after file system creation.
++	 * checksum only validates up to s_start_dynamic field below
++	 */
++	__le32		s_sum;			/* checksum of this sb */
++	__le32		s_magic;		/* magic signature */
++	__le32		s_padding32;
++	__le32		s_blocksize;		/* blocksize in bytes */
++	__le64		s_size;			/* total size of fs in bytes */
++	char		s_volume_name[16];	/* volume name */
 +
-+#include <linux/fs.h>
-+#include <linux/dax.h>
-+#include <linux/init.h>
-+#include <linux/time.h>
-+#include <linux/rtc.h>
-+#include <linux/mm.h>
-+#include <linux/delay.h>
-+#include <linux/slab.h>
-+#include <linux/vmalloc.h>
-+#include <linux/sched.h>
-+#include <linux/mutex.h>
-+#include <linux/pagemap.h>
-+#include <linux/backing-dev.h>
-+#include <linux/proc_fs.h>
-+#include <linux/seq_file.h>
-+#include <linux/rcupdate.h>
-+#include <linux/types.h>
-+#include <linux/rbtree.h>
-+#include <linux/radix-tree.h>
-+#include <linux/version.h>
-+#include <linux/kthread.h>
-+#include <linux/buffer_head.h>
-+#include <linux/uio.h>
-+#include <linux/iomap.h>
-+#include <linux/crc32c.h>
-+#include <asm/tlbflush.h>
-+#include <linux/version.h>
-+#include <linux/pfn_t.h>
-+#include <linux/pagevec.h>
++	/* all the dynamic fields should go here */
++	__le64		s_epoch_id;		/* Epoch ID */
 +
-+#include "nova_def.h"
++	/* s_mtime and s_wtime should be together and their order should not be
++	 * changed. we use an 8 byte write to update both of them atomically
++	 */
++	__le32		s_mtime;		/* mount time */
++	__le32		s_wtime;		/* write time */
++} __attribute((__packed__));
 +
-+#define PAGE_SHIFT_2M 21
-+#define PAGE_SHIFT_1G 30
++#define NOVA_SB_SIZE 512       /* must be power of two */
 +
++/* ======================= Reserved blocks ========================= */
 +
 +/*
-+ * Debug code
++ * Page 0 contains super blocks;
++ * Page 1 contains reserved inodes;
++ * Page 2 - 15 are reserved.
++ * Page 16 - 31 contain pointers to inode tables.
++ * Page 32 - 47 contain pointers to journal pages.
 + */
-+#ifdef pr_fmt
-+#undef pr_fmt
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+#endif
++#define	HEAD_RESERVED_BLOCKS	64
++#define	NUM_JOURNAL_PAGES	16
 +
-+/* #define nova_dbg(s, args...)		pr_debug(s, ## args) */
-+#define nova_dbg(s, args ...)		pr_info(s, ## args)
-+#define nova_err(sb, s, args ...)	nova_error_mng(sb, s, ## args)
-+#define nova_warn(s, args ...)		pr_warn(s, ## args)
-+#define nova_info(s, args ...)		pr_info(s, ## args)
++#define	SUPER_BLOCK_START       0 // Superblock
++#define	RESERVE_INODE_START	1 // Reserved inodes
++#define	INODE_TABLE_START	16 // inode table pointers
++#define	JOURNAL_START		32 // journal pointer table
 +
-+extern unsigned int nova_dbgmask;
-+#define NOVA_DBGMASK_MMAPHUGE	       (0x00000001)
-+#define NOVA_DBGMASK_MMAP4K	       (0x00000002)
-+#define NOVA_DBGMASK_MMAPVERBOSE       (0x00000004)
-+#define NOVA_DBGMASK_MMAPVVERBOSE      (0x00000008)
-+#define NOVA_DBGMASK_VERBOSE	       (0x00000010)
-+#define NOVA_DBGMASK_TRANSACTION       (0x00000020)
++/* For replica super block and replica reserved inodes */
++#define	TAIL_RESERVED_BLOCKS	2
 +
-+#define nova_dbg_mmap4k(s, args ...)		 \
-+	((nova_dbgmask & NOVA_DBGMASK_MMAP4K) ? nova_dbg(s, args) : 0)
-+#define nova_dbg_mmapv(s, args ...)		 \
-+	((nova_dbgmask & NOVA_DBGMASK_MMAPVERBOSE) ? nova_dbg(s, args) : 0)
-+#define nova_dbg_mmapvv(s, args ...)		 \
-+	((nova_dbgmask & NOVA_DBGMASK_MMAPVVERBOSE) ? nova_dbg(s, args) : 0)
++/* ======================= Reserved inodes ========================= */
 +
-+#define nova_dbg_verbose(s, args ...)		 \
-+	((nova_dbgmask & NOVA_DBGMASK_VERBOSE) ? nova_dbg(s, ##args) : 0)
-+#define nova_dbgv(s, args ...)	nova_dbg_verbose(s, ##args)
-+#define nova_dbg_trans(s, args ...)		 \
-+	((nova_dbgmask & NOVA_DBGMASK_TRANSACTION) ? nova_dbg(s, ##args) : 0)
++/* We have space for 31 reserved inodes */
++#define NOVA_ROOT_INO		(1)
++#define NOVA_INODETABLE_INO	(2)	/* Fake inode associated with inode
++					 * stroage.  We need this because our
++					 * allocator requires inode to be
++					 * associated with each allocation.
++					 * The data actually lives in linked
++					 * lists in INODE_TABLE_START. */
++#define NOVA_BLOCKNODE_INO	(3)     /* Storage for allocator state */
++#define NOVA_LITEJOURNAL_INO	(4)     /* Storage for lightweight journals */
++#define NOVA_INODELIST_INO	(5)     /* Storage for Inode free list */
 +
-+#define NOVA_ASSERT(x) do {\
-+			       if (!(x))\
-+				       nova_warn("assertion failed %s:%d: %s\n", \
-+			       __FILE__, __LINE__, #x);\
-+		       } while (0)
 +
-+#define nova_set_bit		       __test_and_set_bit_le
-+#define nova_clear_bit		       __test_and_clear_bit_le
-+#define nova_find_next_zero_bit	       find_next_zero_bit_le
++/* Normal inode starts at 32 */
++#define NOVA_NORMAL_INODE_START      (32)
 +
-+#define clear_opt(o, opt)	(o &= ~NOVA_MOUNT_ ## opt)
-+#define set_opt(o, opt)		(o |= NOVA_MOUNT_ ## opt)
-+#define test_opt(sb, opt)	(NOVA_SB(sb)->s_mount_opt & NOVA_MOUNT_ ## opt)
 +
-+#define NOVA_LARGE_INODE_TABLE_SIZE    (0x200000)
-+/* NOVA size threshold for using 2M blocks for inode table */
-+#define NOVA_LARGE_INODE_TABLE_THREASHOLD    (0x20000000)
++
 +/*
-+ * nova inode flags
-+ *
-+ * NOVA_EOFBLOCKS_FL	There are blocks allocated beyond eof
++ * NOVA super-block data in DRAM
 + */
-+#define NOVA_EOFBLOCKS_FL      0x20000000
-+/* Flags that should be inherited by new inodes from their parent. */
-+#define NOVA_FL_INHERITED (FS_SECRM_FL | FS_UNRM_FL | FS_COMPR_FL | \
-+			    FS_SYNC_FL | FS_NODUMP_FL | FS_NOATIME_FL |	\
-+			    FS_COMPRBLK_FL | FS_NOCOMP_FL | \
-+			    FS_JOURNAL_DATA_FL | FS_NOTAIL_FL | FS_DIRSYNC_FL)
-+/* Flags that are appropriate for regular files (all but dir-specific ones). */
-+#define NOVA_REG_FLMASK (~(FS_DIRSYNC_FL | FS_TOPDIR_FL))
-+/* Flags that are appropriate for non-directories/regular files. */
-+#define NOVA_OTHER_FLMASK (FS_NODUMP_FL | FS_NOATIME_FL)
-+#define NOVA_FL_USER_VISIBLE (FS_FL_USER_VISIBLE | NOVA_EOFBLOCKS_FL)
++struct nova_sb_info {
++	struct super_block *sb;			/* VFS super block */
++	struct nova_super_block *nova_sb;	/* DRAM copy of SB */
++	struct block_device *s_bdev;
++	struct dax_device *s_dax_dev;
 +
-+/* IOCTLs */
-+#define	NOVA_PRINT_TIMING		0xBCD00010
-+#define	NOVA_CLEAR_STATS		0xBCD00011
-+#define	NOVA_PRINT_LOG			0xBCD00013
-+#define	NOVA_PRINT_LOG_BLOCKNODE	0xBCD00014
-+#define	NOVA_PRINT_LOG_PAGES		0xBCD00015
-+#define	NOVA_PRINT_FREE_LISTS		0xBCD00018
++	/*
++	 * base physical and virtual address of NOVA (which is also
++	 * the pointer to the super block)
++	 */
++	phys_addr_t	phys_addr;
++	void		*virt_addr;
++	void		*replica_reserved_inodes_addr;
++	void		*replica_sb_addr;
 +
++	unsigned long	num_blocks;
 +
-+#define	READDIR_END			(ULONG_MAX)
-+#define	ANY_CPU				(65536)
-+#define	FREE_BATCH			(16)
++	/* Mount options */
++	unsigned long	bpi;
++	unsigned long	blocksize;
++	unsigned long	initsize;
++	unsigned long	s_mount_opt;
++	kuid_t		uid;    /* Mount uid for root directory */
++	kgid_t		gid;    /* Mount gid for root directory */
++	umode_t		mode;   /* Mount mode for root directory */
++	atomic_t	next_generation;
++	/* inode tracking */
++	unsigned long	s_inodes_used_count;
++	unsigned long	head_reserved_blocks;
++	unsigned long	tail_reserved_blocks;
 +
-+extern unsigned int blk_type_to_shift[NOVA_BLOCK_TYPE_MAX];
-+extern unsigned int blk_type_to_size[NOVA_BLOCK_TYPE_MAX];
++	struct mutex	s_lock;	/* protects the SB's buffer-head */
 +
++	int cpus;
 +
-+/* Mask out flags that are inappropriate for the given type of inode. */
-+static inline __le32 nova_mask_flags(umode_t mode, __le32 flags)
++	/* Current epoch. volatile guarantees visibility */
++	volatile u64 s_epoch_id;
++
++	/* ZEROED page for cache page initialized */
++	void *zeroed_page;
++};
++
++static inline struct nova_sb_info *NOVA_SB(struct super_block *sb)
 +{
-+	flags &= cpu_to_le32(NOVA_FL_INHERITED);
-+	if (S_ISDIR(mode))
-+		return flags;
-+	else if (S_ISREG(mode))
-+		return flags & cpu_to_le32(NOVA_REG_FLMASK);
-+	else
-+		return flags & cpu_to_le32(NOVA_OTHER_FLMASK);
++	return sb->s_fs_info;
 +}
 +
-+static inline u32 nova_crc32c(u32 crc, const u8 *data, size_t len)
-+{
-+	u8 *ptr = (u8 *) data;
-+	u64 acc = crc; /* accumulator, crc32c value in lower 32b */
-+	u32 csum;
-+
-+	/* x86 instruction crc32 is part of SSE-4.2 */
-+	if (static_cpu_has(X86_FEATURE_XMM4_2)) {
-+		/* This inline assembly implementation should be equivalent
-+		 * to the kernel's crc32c_intel_le_hw() function used by
-+		 * crc32c(), but this performs better on test machines.
-+		 */
-+		while (len > 8) {
-+			asm volatile(/* 64b quad words */
-+				"crc32q (%1), %0"
-+				: "=r" (acc)
-+				: "r"  (ptr), "0" (acc)
-+			);
-+			ptr += 8;
-+			len -= 8;
-+		}
-+
-+		while (len > 0) {
-+			asm volatile(/* trailing bytes */
-+				"crc32b (%1), %0"
-+				: "=r" (acc)
-+				: "r"  (ptr), "0" (acc)
-+			);
-+			ptr++;
-+			len--;
-+		}
-+
-+		csum = (u32) acc;
-+	} else {
-+		/* The kernel's crc32c() function should also detect and use the
-+		 * crc32 instruction of SSE-4.2. But calling in to this function
-+		 * is about 3x to 5x slower than the inline assembly version on
-+		 * some test machines.
-+		 */
-+		csum = crc32c(crc, data, len);
-+	}
-+
-+	return csum;
-+}
-+
-+static inline int memcpy_to_pmem_nocache(void *dst, const void *src,
-+	unsigned int size)
-+{
-+	int ret;
-+
-+	ret = __copy_from_user_inatomic_nocache(dst, src, size);
-+
-+	return ret;
-+}
-+
-+
-+/* assumes the length to be 4-byte aligned */
-+static inline void memset_nt(void *dest, uint32_t dword, size_t length)
-+{
-+	uint64_t dummy1, dummy2;
-+	uint64_t qword = ((uint64_t)dword << 32) | dword;
-+
-+	asm volatile ("movl %%edx,%%ecx\n"
-+		"andl $63,%%edx\n"
-+		"shrl $6,%%ecx\n"
-+		"jz 9f\n"
-+		"1:	 movnti %%rax,(%%rdi)\n"
-+		"2:	 movnti %%rax,1*8(%%rdi)\n"
-+		"3:	 movnti %%rax,2*8(%%rdi)\n"
-+		"4:	 movnti %%rax,3*8(%%rdi)\n"
-+		"5:	 movnti %%rax,4*8(%%rdi)\n"
-+		"8:	 movnti %%rax,5*8(%%rdi)\n"
-+		"7:	 movnti %%rax,6*8(%%rdi)\n"
-+		"8:	 movnti %%rax,7*8(%%rdi)\n"
-+		"leaq 64(%%rdi),%%rdi\n"
-+		"decl %%ecx\n"
-+		"jnz 1b\n"
-+		"9:	movl %%edx,%%ecx\n"
-+		"andl $7,%%edx\n"
-+		"shrl $3,%%ecx\n"
-+		"jz 11f\n"
-+		"10:	 movnti %%rax,(%%rdi)\n"
-+		"leaq 8(%%rdi),%%rdi\n"
-+		"decl %%ecx\n"
-+		"jnz 10b\n"
-+		"11:	 movl %%edx,%%ecx\n"
-+		"shrl $2,%%ecx\n"
-+		"jz 12f\n"
-+		"movnti %%eax,(%%rdi)\n"
-+		"12:\n"
-+		: "=D"(dummy1), "=d" (dummy2)
-+		: "D" (dest), "a" (qword), "d" (length)
-+		: "memory", "rcx");
-+}
-+
-+
-+#include "super.h" // Remove when we factor out these and other functions.
-+
-+/* Translate an offset the beginning of the Nova instance to a PMEM address.
-+ *
-+ * If this is part of a read-modify-write of the block,
-+ * nova_memunlock_block() before calling!
-+ */
-+static inline void *nova_get_block(struct super_block *sb, u64 block)
-+{
-+	struct nova_super_block *ps = nova_get_super(sb);
-+
-+	return block ? ((void *)ps + block) : NULL;
-+}
-+
-+static inline int nova_get_reference(struct super_block *sb, u64 block,
-+	void *dram, void **nvmm, size_t size)
-+{
-+	int rc;
-+
-+	*nvmm = nova_get_block(sb, block);
-+	rc = memcpy_mcsafe(dram, *nvmm, size);
-+	return rc;
-+}
-+
-+
-+static inline u64
-+nova_get_addr_off(struct nova_sb_info *sbi, void *addr)
-+{
-+	NOVA_ASSERT((addr >= sbi->virt_addr) &&
-+			(addr < (sbi->virt_addr + sbi->initsize)));
-+	return (u64)(addr - sbi->virt_addr);
-+}
-+
-+static inline u64
-+nova_get_block_off(struct super_block *sb, unsigned long blocknr,
-+		    unsigned short btype)
-+{
-+	return (u64)blocknr << PAGE_SHIFT;
-+}
-+
-+
-+static inline u64 nova_get_epoch_id(struct super_block *sb)
++static inline struct nova_super_block
++*nova_get_redund_super(struct super_block *sb)
 +{
 +	struct nova_sb_info *sbi = NOVA_SB(sb);
 +
-+	return sbi->s_epoch_id;
++	return (struct nova_super_block *)(sbi->replica_sb_addr);
 +}
 +
-+#include "inode.h"
-+#endif /* __NOVA_H */
++
++/* If this is part of a read-modify-write of the super block,
++ * nova_memunlock_super() before calling!
++ */
++static inline struct nova_super_block *nova_get_super(struct super_block *sb)
++{
++	struct nova_sb_info *sbi = NOVA_SB(sb);
++
++	return (struct nova_super_block *)sbi->virt_addr;
++}
++
++extern void nova_error_mng(struct super_block *sb, const char *fmt, ...);
++
++#endif
 -- 
 2.7.4
