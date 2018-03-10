@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751595AbeCJSnO (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:43:14 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:46197 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932279AbeCJSUa (ORCPT
+        id S1752164AbeCJSns (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:43:48 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:39514 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932244AbeCJSU1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:20:30 -0500
-X-Google-Smtp-Source: AG47ELtW5kq5E8kWAoShZI9KIDZrbQJS2hZ1SubjjMPCYIXnMfghYatQ+mtO5glfniRibrK/OMF18Q==
+        Sat, 10 Mar 2018 13:20:27 -0500
+X-Google-Smtp-Source: AG47ELvvHqWeKiyIa1mPHGHa/owW2laYDwNleeLoFkceTkatPnShWBhcm7HaYIXvXWDAVSi7t+ARGg==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 12/83] Add timing for mount and init.
-Date: Sat, 10 Mar 2018 10:17:53 -0800
-Message-Id: <1520705944-6723-13-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 09/83] Add Kconfig and Makefile
+Date: Sat, 10 Mar 2018 10:17:50 -0800
+Message-Id: <1520705944-6723-10-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -29,110 +29,72 @@ From: Andiry Xu <jix024@cs.ucsd.edu>
 
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/super.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+ fs/Kconfig       |  2 ++
+ fs/Makefile      |  1 +
+ fs/nova/Kconfig  | 15 +++++++++++++++
+ fs/nova/Makefile |  7 +++++++
+ 4 files changed, 25 insertions(+)
+ create mode 100644 fs/nova/Kconfig
+ create mode 100644 fs/nova/Makefile
 
-diff --git a/fs/nova/super.c b/fs/nova/super.c
-index 9295d23..3efb560 100644
---- a/fs/nova/super.c
-+++ b/fs/nova/super.c
-@@ -347,6 +347,9 @@ static struct nova_inode *nova_init(struct super_block *sb,
- 	struct nova_inode *root_i, *pi;
- 	struct nova_super_block *super;
- 	struct nova_sb_info *sbi = NOVA_SB(sb);
-+	timing_t init_time;
+diff --git a/fs/Kconfig b/fs/Kconfig
+index bc821a8..5e9ff3e 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -58,6 +58,8 @@ config FS_DAX_PMD
+ 	depends on ZONE_DEVICE
+ 	depends on TRANSPARENT_HUGEPAGE
+ 
++source "fs/nova/Kconfig"
 +
-+	NOVA_START_TIMING(new_init_t, init_time);
- 
- 	nova_info("creating an empty nova of size %lu\n", size);
- 	sbi->num_blocks = ((unsigned long)(size) >> PAGE_SHIFT);
-@@ -357,6 +360,7 @@ static struct nova_inode *nova_init(struct super_block *sb,
- 
- 	if (!nova_check_size(sb, size)) {
- 		nova_warn("Specified NOVA size too small 0x%lx.\n", size);
-+		NOVA_END_TIMING(new_init_t, init_time);
- 		return ERR_PTR(-EINVAL);
- 	}
- 
-@@ -399,6 +403,7 @@ static struct nova_inode *nova_init(struct super_block *sb,
- 	PERSISTENT_MARK();
- 	PERSISTENT_BARRIER();
- 	nova_info("NOVA initialization finish\n");
-+	NOVA_END_TIMING(new_init_t, init_time);
- 	return root_i;
- }
- 
-@@ -473,15 +478,22 @@ static int nova_fill_super(struct super_block *sb, void *data, int silent)
- 	unsigned long blocksize;
- 	u32 random = 0;
- 	int retval = -EINVAL;
-+	timing_t mount_time;
+ # Selected by DAX drivers that do not expect filesystem DAX to support
+ # get_user_pages() of DAX mappings. I.e. "limited" indicates no support
+ # for fork() of processes with MAP_SHARED mappings or support for
+diff --git a/fs/Makefile b/fs/Makefile
+index add789e..65ea619 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -113,6 +113,7 @@ obj-$(CONFIG_OMFS_FS)		+= omfs/
+ obj-$(CONFIG_JFS_FS)		+= jfs/
+ obj-$(CONFIG_XFS_FS)		+= xfs/
+ obj-$(CONFIG_9P_FS)		+= 9p/
++obj-$(CONFIG_NOVA_FS)		+= nova/
+ obj-$(CONFIG_AFS_FS)		+= afs/
+ obj-$(CONFIG_NILFS2_FS)		+= nilfs2/
+ obj-$(CONFIG_BEFS_FS)		+= befs/
+diff --git a/fs/nova/Kconfig b/fs/nova/Kconfig
+new file mode 100644
+index 0000000..c1c692e
+--- /dev/null
++++ b/fs/nova/Kconfig
+@@ -0,0 +1,15 @@
++config NOVA_FS
++	tristate "NOVA: log-structured file system for non-volatile memories"
++	depends on FS_DAX
++	select CRC32
++	select LIBCRC32C
++	help
++	  If your system has a block of fast (comparable in access speed to
++	  system memory) and non-volatile byte-addressable memory and you wish
++	  to mount a light-weight filesystem with strong consistency support
++	  over it, say Y here.
 +
-+	NOVA_START_TIMING(mount_t, mount_time);
- 
- 	BUILD_BUG_ON(sizeof(struct nova_super_block) > NOVA_SB_SIZE);
- 
- 	sbi = kzalloc(sizeof(struct nova_sb_info), GFP_KERNEL);
--	if (!sbi)
-+	if (!sbi) {
-+		NOVA_END_TIMING(mount_t, mount_time);
- 		return -ENOMEM;
-+	}
++	  To compile this as a module, choose M here: the module will be
++	  called nova.
 +
- 	sbi->nova_sb = kzalloc(sizeof(struct nova_super_block), GFP_KERNEL);
- 	if (!sbi->nova_sb) {
- 		kfree(sbi);
-+		NOVA_END_TIMING(mount_t, mount_time);
- 		return -ENOMEM;
- 	}
- 
-@@ -591,6 +603,7 @@ static int nova_fill_super(struct super_block *sb, void *data, int silent)
- 		nova_update_mount_time(sb);
- 
- 	retval = 0;
-+	NOVA_END_TIMING(mount_t, mount_time);
- 	return retval;
- 
- out:
-@@ -600,6 +613,7 @@ static int nova_fill_super(struct super_block *sb, void *data, int silent)
- 	kfree(sbi->nova_sb);
- 	kfree(sbi);
- 	nova_dbg("%s failed: return %d\n", __func__, retval);
-+	NOVA_END_TIMING(mount_t, mount_time);
- 	return retval;
- }
- 
-@@ -701,6 +715,9 @@ static struct file_system_type nova_fs_type = {
- static int __init init_nova_fs(void)
- {
- 	int rc = 0;
-+	timing_t init_time;
++	  If unsure, say N.
+diff --git a/fs/nova/Makefile b/fs/nova/Makefile
+new file mode 100644
+index 0000000..eb19646
+--- /dev/null
++++ b/fs/nova/Makefile
+@@ -0,0 +1,7 @@
++#
++# Makefile for the linux NOVA filesystem routines.
++#
 +
-+	NOVA_START_TIMING(init_t, init_time);
- 
- 	nova_dbg("%s: %d cpus online\n", __func__, num_online_cpus());
- 	if (arch_has_clwb())
-@@ -711,17 +728,19 @@ static int __init init_nova_fs(void)
- 
- 	rc = init_inodecache();
- 	if (rc)
--		return rc;
-+		goto out;
- 
- 	rc = register_filesystem(&nova_fs_type);
- 	if (rc)
- 		goto out1;
- 
-+out:
-+	NOVA_END_TIMING(init_t, init_time);
- 	return rc;
- 
- out1:
- 	destroy_inodecache();
--	return rc;
-+	goto out;
- }
- 
- static void __exit exit_nova_fs(void)
++obj-$(CONFIG_NOVA_FS) += nova.o
++
++nova-y := bbuild.o inode.o rebuild.o super.o
 -- 
 2.7.4
