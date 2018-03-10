@@ -1,225 +1,459 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751764AbeCJS1V (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:27:21 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:43056 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750971AbeCJS1S (ORCPT
+        id S932872AbeCJSVl (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:21:41 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:46213 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932848AbeCJSVj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:27:18 -0500
-X-Google-Smtp-Source: AG47ELtohNI0IfXkkOP1kuNbZdPPQ7Alv1fYjDONkzER+RCPTILV7A3ApRW7SNDzFTRaoRnGuxEEiQ==
-Date: Sat, 10 Mar 2018 10:27:14 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Tirupathi Reddy <tirupath@codeaurora.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-input@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V1] Input: pm8941-pwrkey: add resin key capabilities
-Message-ID: <20180310182714.GD260013@dtor-ws>
-References: <1520410173-2507-1-git-send-email-tirupath@codeaurora.org>
- <20180307202147.GB195580@dtor-ws>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180307202147.GB195580@dtor-ws>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Sat, 10 Mar 2018 13:21:39 -0500
+X-Google-Smtp-Source: AG47ELsNiTWF6WzM0G5FeYiZfwEJcxBq16HfeJC1c89u+/beT4KGVVOjTxOqUcLBnEHfsgnGFZt+lQ==
+From: Andiry Xu <jix024@eng.ucsd.edu>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org
+Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
+        swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
+        swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
+        Andiry Xu <jix024@cs.ucsd.edu>
+Subject: [RFC v2 68/83] File operation: copy-on-write write.
+Date: Sat, 10 Mar 2018 10:18:49 -0800
+Message-Id: <1520705944-6723-69-git-send-email-jix024@eng.ucsd.edu>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
+References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 12:21:47PM -0800, Dmitry Torokhov wrote:
-> Hi Tirupathi,
-> 
-> On Wed, Mar 07, 2018 at 01:39:33PM +0530, Tirupathi Reddy wrote:
-> > Add resin key support to handle different types of key events
-> > defined in different platforms.
+From: Andiry Xu <jix024@cs.ucsd.edu>
 
-Also, when you say "resin" key, I do not suppose it refers to teh
-material of the key, but rather have something to so with "reset in"
-signal or similar when is not actually used for resetting the device?
+If the file is not mmaped, NOVA performs copy-on-write.
+The CoW is composed of parts:
 
-> > 
-> > Signed-off-by: Tirupathi Reddy <tirupath@codeaurora.org>
-> > ---
-> >  .../bindings/input/qcom,pm8941-pwrkey.txt          | 20 ++++++-
-> >  drivers/input/misc/pm8941-pwrkey.c                 | 63 +++++++++++++++++++++-
-> >  2 files changed, 81 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt b/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
-> > index 07bf55f..1c437e9 100644
-> > --- a/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
-> > +++ b/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
-> > @@ -20,6 +20,14 @@ PROPERTIES
-> >  		    defined by the binding document describing the node's
-> >  		    interrupt parent.
-> >  
-> > +- interrupt-names:
-> > +	Usage: required
-> > +	Value type: <stringlist>
-> > +	Definition: Interrupt names.  This list must match up 1-to-1 with the
-> > +		    interrupts specified in the 'interrupts' property. "kpdpwr"
-> > +		    must be specified.  "resin" may be specified for some
-> > +		    platforms.
-> > +
-> >  - debounce:
-> >  	Usage: optional
-> >  	Value type: <u32>
-> > @@ -32,12 +40,22 @@ PROPERTIES
-> >  	Definition: presence of this property indicates that the KPDPWR_N pin
-> >  		    should be configured for pull up.
-> >  
-> > +- linux,code:
-> > +	Usage: required for "resin" key
-> > +	Value type: <u32>
-> > +	Definition: The input key-code associated with the resin key.
-> > +		    Use the linux event codes defined in
-> > +		    include/dt-bindings/input/linux-event-codes.h
-> > +
-> >  EXAMPLE
-> >  
-> >  	pwrkey@800 {
-> >  		compatible = "qcom,pm8941-pwrkey";
-> >  		reg = <0x800>;
-> > -		interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
-> > +		interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>,
-> > +			     <0x0 0x8 1 IRQ_TYPE_EDGE_BOTH>;
-> > +		interrupt-names = "kpdpwr", "resin";
-> >  		debounce = <15625>;
-> >  		bias-pull-up;
-> > +		linux,code = <KEY_VOLUMEDOWN>;
-> >  	};
-> > diff --git a/drivers/input/misc/pm8941-pwrkey.c b/drivers/input/misc/pm8941-pwrkey.c
-> > index 18ad956..3f801cf 100644
-> > --- a/drivers/input/misc/pm8941-pwrkey.c
-> > +++ b/drivers/input/misc/pm8941-pwrkey.c
-> > @@ -28,6 +28,7 @@
-> >  
-> >  #define PON_RT_STS			0x10
-> >  #define  PON_KPDPWR_N_SET		BIT(0)
-> > +#define  PON_RESIN_N_SET		BIT(1)
-> >  
-> >  #define PON_PS_HOLD_RST_CTL		0x5a
-> >  #define PON_PS_HOLD_RST_CTL2		0x5b
-> > @@ -46,6 +47,8 @@
-> >  struct pm8941_pwrkey {
-> >  	struct device *dev;
-> >  	int irq;
-> > +	int resin_irq;
-> > +	u32 resin_key_code;
-> >  	u32 baseaddr;
-> >  	struct regmap *regmap;
-> >  	struct input_dev *input;
-> > @@ -130,6 +133,24 @@ static irqreturn_t pm8941_pwrkey_irq(int irq, void *_data)
-> >  	return IRQ_HANDLED;
-> >  }
-> >  
-> > +static irqreturn_t pm8941_resinkey_irq(int irq, void *_data)
-> > +{
-> > +	struct pm8941_pwrkey *pwrkey = _data;
-> > +	unsigned int sts;
-> > +	int error;
-> > +
-> > +	error = regmap_read(pwrkey->regmap,
-> > +			    pwrkey->baseaddr + PON_RT_STS, &sts);
-> > +	if (error)
-> > +		return IRQ_HANDLED;
-> 
-> It looks like you are reading the same register as the power on key.
-> Won't you lose events if both are pressed at the same time?
-> 
-> I think you need a unified interrupt handler...
-> 
-> > +
-> > +	input_report_key(pwrkey->input, pwrkey->resin_key_code,
-> > +			 !!(sts & PON_RESIN_N_SET));
-> > +	input_sync(pwrkey->input);
-> > +
-> > +	return IRQ_HANDLED;
-> > +}
-> > +
-> >  static int __maybe_unused pm8941_pwrkey_suspend(struct device *dev)
-> >  {
-> >  	struct pm8941_pwrkey *pwrkey = dev_get_drvdata(dev);
-> > @@ -153,6 +174,35 @@ static int __maybe_unused pm8941_pwrkey_resume(struct device *dev)
-> >  static SIMPLE_DEV_PM_OPS(pm8941_pwr_key_pm_ops,
-> >  			 pm8941_pwrkey_suspend, pm8941_pwrkey_resume);
-> >  
-> > +static int pm8941_resin_key_init(struct pm8941_pwrkey *pwrkey)
-> > +{
-> > +	int error;
-> > +
-> > +	/*
-> > +	 * Get the standard-key parameters. This might not be
-> > +	 * specified if there is no key mapping on the reset line.
-> > +	 */
-> > +	error = of_property_read_u32(pwrkey->dev->of_node, "linux,code",
-> > +			&pwrkey->resin_key_code);
-> > +	if (error) {
-> > +		dev_err(pwrkey->dev, "failed to read key-code for resin key\n");
-> > +		return error;
-> > +	}
-> > +
-> > +	/* Register key configuration */
-> > +	input_set_capability(pwrkey->input, EV_KEY, pwrkey->resin_key_code);
-> > +
-> > +	error = devm_request_threaded_irq(pwrkey->dev, pwrkey->resin_irq,
-> > +					  NULL, pm8941_resinkey_irq,
-> > +					  IRQF_ONESHOT,
-> > +					  "pm8941_resinkey", pwrkey);
-> > +	if (error)
-> > +		dev_err(pwrkey->dev, "failed requesting resin key IRQ: %d\n",
-> > +			error);
-> > +
-> > +	return error;
-> > +}
-> > +
-> >  static int pm8941_pwrkey_probe(struct platform_device *pdev)
-> >  {
-> >  	struct pm8941_pwrkey *pwrkey;
-> > @@ -182,7 +232,7 @@ static int pm8941_pwrkey_probe(struct platform_device *pdev)
-> >  		return -ENODEV;
-> >  	}
-> >  
-> > -	pwrkey->irq = platform_get_irq(pdev, 0);
-> > +	pwrkey->irq = platform_get_irq_byname(pdev, "kpdpwr");
-> 
-> You are breaking support for old DTS here I'm afraid.
-> 
-> >  	if (pwrkey->irq < 0) {
-> >  		dev_err(&pdev->dev, "failed to get irq\n");
-> >  		return pwrkey->irq;
-> > @@ -241,6 +291,17 @@ static int pm8941_pwrkey_probe(struct platform_device *pdev)
-> >  		return error;
-> >  	}
-> >  
-> > +	pwrkey->resin_irq = platform_get_irq_byname(pdev, "resin");
-> > +	if (pwrkey->resin_irq >= 0) {
-> 
-> This is not entirely correct. I'd say if you have -ENXIO you can
-> conclude that the support for "resin" key is not enabled, but the rest
-> of the errors you should report up the stack. Deferrals will be retried
-> and other errors are fatal.
-> 
-> > +		/* resin key capabilities are defined in device node */
-> > +		error = pm8941_resin_key_init(pwrkey);
-> > +		if (error) {
-> > +			dev_err(&pdev->dev, "failed resin key initialization: %d\n",
-> > +				error);
-> > +			return error;
-> > +		}
-> > +	}
-> > +
-> >  	error = input_register_device(pwrkey->input);
-> >  	if (error) {
-> >  		dev_err(&pdev->dev, "failed to register input device: %d\n",
-> > -- 
-> > QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
-> > 
-> 
-> Thanks.
-> 
-> -- 
-> Dmitry
+1. Allocate contiguous data pages.
+2. Copy data from user buffer to the data pages.
+   If the write is not aligned to page size, also copy data from existing
+   pmem pages.
+3. Allocate and initialize a file write item, add it to a linked list.
+4. Repeat 1 - 3 until the whole user data is copied to pmem pages.
+5. Commit the list of file write items to the log and update the radix tree.
+6. Update log tail pointer once all the items are committed.
 
+Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
+---
+ fs/nova/dax.c  | 149 +++++++++++++++++++++++++++++++++++++++++
+ fs/nova/file.c | 208 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/nova/nova.h |   8 +++
+ 3 files changed, 365 insertions(+)
+
+diff --git a/fs/nova/dax.c b/fs/nova/dax.c
+index 1669dc0..9561d8e 100644
+--- a/fs/nova/dax.c
++++ b/fs/nova/dax.c
+@@ -22,6 +22,113 @@
+ #include "inode.h"
+ 
+ 
++static inline int nova_copy_partial_block(struct super_block *sb,
++	struct nova_inode_info_header *sih,
++	struct nova_file_write_entry *entry, unsigned long index,
++	size_t offset, size_t length, void *kmem)
++{
++	void *ptr;
++	int rc = 0;
++	unsigned long nvmm;
++
++	nvmm = get_nvmm(sb, sih, entry, index);
++	ptr = nova_get_block(sb, (nvmm << PAGE_SHIFT));
++
++	if (ptr != NULL) {
++		if (support_clwb)
++			rc = memcpy_mcsafe(kmem + offset, ptr + offset,
++						length);
++		else
++			memcpy_to_pmem_nocache(kmem + offset, ptr + offset,
++						length);
++	}
++
++	/* TODO: If rc < 0, go to MCE data recovery. */
++	return rc;
++}
++
++static inline int nova_handle_partial_block(struct super_block *sb,
++	struct nova_inode_info_header *sih,
++	struct nova_file_write_entry *entry, unsigned long index,
++	size_t offset, size_t length, void *kmem)
++{
++	struct nova_sb_info *sbi = NOVA_SB(sb);
++
++	if (entry == NULL) {
++		/* Fill zero */
++		if (support_clwb)
++			memset(kmem + offset, 0, length);
++		else
++			memcpy_to_pmem_nocache(kmem + offset,
++					sbi->zeroed_page, length);
++	} else {
++		nova_copy_partial_block(sb, sih, entry, index,
++					offset, length, kmem);
++
++	}
++	if (support_clwb)
++		nova_flush_buffer(kmem + offset, length, 0);
++	return 0;
++}
++
++/*
++ * Fill the new start/end block from original blocks.
++ * Do nothing if fully covered; copy if original blocks present;
++ * Fill zero otherwise.
++ */
++int nova_handle_head_tail_blocks(struct super_block *sb,
++	struct inode *inode, loff_t pos, size_t count, void *kmem)
++{
++	struct nova_inode_info *si = NOVA_I(inode);
++	struct nova_inode_info_header *sih = &si->header;
++	size_t offset, eblk_offset;
++	unsigned long start_blk, end_blk, num_blocks;
++	struct nova_file_write_entry *entry;
++	timing_t partial_time;
++	int ret = 0;
++
++	NOVA_START_TIMING(partial_block_t, partial_time);
++	offset = pos & (sb->s_blocksize - 1);
++	num_blocks = ((count + offset - 1) >> sb->s_blocksize_bits) + 1;
++	/* offset in the actual block size block */
++	offset = pos & (nova_inode_blk_size(sih) - 1);
++	start_blk = pos >> sb->s_blocksize_bits;
++	end_blk = start_blk + num_blocks - 1;
++
++	nova_dbg_verbose("%s: %lu blocks\n", __func__, num_blocks);
++	/* We avoid zeroing the alloc'd range, which is going to be overwritten
++	 * by this system call anyway
++	 */
++	nova_dbg_verbose("%s: start offset %lu start blk %lu %p\n", __func__,
++				offset, start_blk, kmem);
++	if (offset != 0) {
++		entry = nova_get_write_entry(sb, sih, start_blk);
++		ret = nova_handle_partial_block(sb, sih, entry,
++						start_blk, 0, offset, kmem);
++		if (ret < 0)
++			return ret;
++	}
++
++	kmem = (void *)((char *)kmem +
++			((num_blocks - 1) << sb->s_blocksize_bits));
++	eblk_offset = (pos + count) & (nova_inode_blk_size(sih) - 1);
++	nova_dbg_verbose("%s: end offset %lu, end blk %lu %p\n", __func__,
++				eblk_offset, end_blk, kmem);
++	if (eblk_offset != 0) {
++		entry = nova_get_write_entry(sb, sih, end_blk);
++
++		ret = nova_handle_partial_block(sb, sih, entry, end_blk,
++						eblk_offset,
++						sb->s_blocksize - eblk_offset,
++						kmem);
++		if (ret < 0)
++			return ret;
++	}
++	NOVA_END_TIMING(partial_block_t, partial_time);
++
++	return ret;
++}
++
+ static int nova_reassign_file_tree(struct super_block *sb,
+ 	struct nova_inode_info_header *sih, u64 begin_tail, u64 end_tail)
+ {
+@@ -110,3 +217,45 @@ int nova_commit_writes_to_log(struct super_block *sb, struct nova_inode *pi,
+ 
+ 	return ret;
+ }
++
++int nova_cleanup_incomplete_write(struct super_block *sb,
++	struct nova_inode_info_header *sih, struct list_head *head, int free)
++{
++	struct nova_file_write_item *entry_item, *temp;
++	struct nova_file_write_entry *entry;
++	unsigned long blocknr;
++
++	list_for_each_entry_safe(entry_item, temp, head, list) {
++		entry = &entry_item->entry;
++		blocknr = nova_get_blocknr(sb, entry->block, sih->i_blk_type);
++		nova_free_data_blocks(sb, sih, blocknr, entry->num_pages);
++
++		if (free)
++			nova_free_file_write_item(entry_item);
++	}
++
++	return 0;
++}
++
++void nova_init_file_write_item(struct super_block *sb,
++	struct nova_inode_info_header *sih, struct nova_file_write_item *item,
++	u64 epoch_id, u64 pgoff, int num_pages, u64 blocknr, u32 time,
++	u64 file_size)
++{
++	struct nova_file_write_entry *entry = &item->entry;
++
++	INIT_LIST_HEAD(&item->list);
++	memset(entry, 0, sizeof(struct nova_file_write_entry));
++	entry->entry_type = FILE_WRITE;
++	entry->reassigned = 0;
++	entry->epoch_id = epoch_id;
++	entry->trans_id = sih->trans_id;
++	entry->pgoff = cpu_to_le64(pgoff);
++	entry->num_pages = cpu_to_le32(num_pages);
++	entry->invalid_pages = 0;
++	entry->block = cpu_to_le64(nova_get_block_off(sb, blocknr,
++							sih->i_blk_type));
++	entry->mtime = cpu_to_le32(time);
++
++	entry->size = file_size;
++}
+diff --git a/fs/nova/file.c b/fs/nova/file.c
+index 842da45..26f15c7 100644
+--- a/fs/nova/file.c
++++ b/fs/nova/file.c
+@@ -256,10 +256,218 @@ static ssize_t nova_dax_file_read(struct file *filp, char __user *buf,
+ 	return res;
+ }
+ 
++/*
++ * Perform a COW write.   Must hold the inode lock before calling.
++ */
++static ssize_t do_nova_cow_file_write(struct file *filp,
++	const char __user *buf,	size_t len, loff_t *ppos)
++{
++	struct address_space *mapping = filp->f_mapping;
++	struct inode	*inode = mapping->host;
++	struct nova_inode_info *si = NOVA_I(inode);
++	struct nova_inode_info_header *sih = &si->header;
++	struct super_block *sb = inode->i_sb;
++	struct nova_inode *pi;
++	struct nova_file_write_item *entry_item;
++	struct list_head item_head;
++	struct nova_inode_update update;
++	ssize_t	    written = 0;
++	loff_t pos;
++	size_t count, offset, copied;
++	unsigned long start_blk, num_blocks;
++	unsigned long total_blocks;
++	unsigned long blocknr = 0;
++	int allocated = 0;
++	void *kmem;
++	u64 file_size;
++	size_t bytes;
++	long status = 0;
++	timing_t cow_write_time, memcpy_time;
++	unsigned long step = 0;
++	ssize_t ret;
++	u64 epoch_id;
++	u32 time;
++
++
++	if (len == 0)
++		return 0;
++
++	sih_lock(sih);
++	NOVA_START_TIMING(cow_write_t, cow_write_time);
++	INIT_LIST_HEAD(&item_head);
++
++	if (!access_ok(VERIFY_READ, buf, len)) {
++		ret = -EFAULT;
++		goto out;
++	}
++	pos = *ppos;
++
++	if (filp->f_flags & O_APPEND)
++		pos = i_size_read(inode);
++
++	count = len;
++
++	pi = nova_get_block(sb, sih->pi_addr);
++
++	offset = pos & (sb->s_blocksize - 1);
++	num_blocks = ((count + offset - 1) >> sb->s_blocksize_bits) + 1;
++	total_blocks = num_blocks;
++	start_blk = pos >> sb->s_blocksize_bits;
++
++	/* offset in the actual block size block */
++
++	ret = file_remove_privs(filp);
++	if (ret)
++		goto out;
++
++	inode->i_ctime = inode->i_mtime = current_time(inode);
++	time = current_time(inode).tv_sec;
++
++	nova_dbgv("%s: inode %lu, offset %lld, count %lu\n",
++			__func__, inode->i_ino,	pos, count);
++
++	epoch_id = nova_get_epoch_id(sb);
++	update.tail = sih->log_tail;
++	while (num_blocks > 0) {
++		offset = pos & (nova_inode_blk_size(sih) - 1);
++		start_blk = pos >> sb->s_blocksize_bits;
++
++		/* don't zero-out the allocated blocks */
++		allocated = nova_new_data_blocks(sb, sih, &blocknr, start_blk,
++				 num_blocks, ALLOC_NO_INIT, ANY_CPU,
++				 ALLOC_FROM_HEAD);
++
++		nova_dbg_verbose("%s: alloc %d blocks @ %lu\n", __func__,
++						allocated, blocknr);
++
++		if (allocated <= 0) {
++			nova_dbg("%s alloc blocks failed %d\n", __func__,
++								allocated);
++			ret = allocated;
++			goto out;
++		}
++
++		step++;
++		bytes = sb->s_blocksize * allocated - offset;
++		if (bytes > count)
++			bytes = count;
++
++		kmem = nova_get_block(inode->i_sb,
++			     nova_get_block_off(sb, blocknr, sih->i_blk_type));
++
++		if (offset || ((offset + bytes) & (PAGE_SIZE - 1)) != 0)  {
++			ret = nova_handle_head_tail_blocks(sb, inode, pos,
++							   bytes, kmem);
++			if (ret)
++				goto out;
++		}
++		/* Now copy from user buf */
++		//		nova_dbg("Write: %p\n", kmem);
++		NOVA_START_TIMING(memcpy_w_nvmm_t, memcpy_time);
++		copied = bytes - memcpy_to_pmem_nocache(kmem + offset,
++						buf, bytes);
++		NOVA_END_TIMING(memcpy_w_nvmm_t, memcpy_time);
++
++		if (pos + copied > inode->i_size)
++			file_size = cpu_to_le64(pos + copied);
++		else
++			file_size = cpu_to_le64(inode->i_size);
++
++		entry_item = nova_alloc_file_write_item(sb);
++		if (!entry_item) {
++			ret = -ENOMEM;
++			goto out;
++		}
++
++		nova_init_file_write_item(sb, sih, entry_item, epoch_id,
++					start_blk, allocated, blocknr, time,
++					file_size);
++
++		list_add_tail(&entry_item->list, &item_head);
++
++		nova_dbgv("Write: %p, %lu\n", kmem, copied);
++		if (copied > 0) {
++			status = copied;
++			written += copied;
++			pos += copied;
++			buf += copied;
++			count -= copied;
++			num_blocks -= allocated;
++		}
++		if (unlikely(copied != bytes)) {
++			nova_dbg("%s ERROR!: %p, bytes %lu, copied %lu\n",
++				__func__, kmem, bytes, copied);
++			if (status >= 0)
++				status = -EFAULT;
++		}
++		if (status < 0)
++			break;
++	}
++
++	ret = nova_commit_writes_to_log(sb, pi, inode,
++					&item_head, total_blocks, 1);
++	if (ret < 0) {
++		nova_err(sb, "commit to log failed\n");
++		goto out;
++	}
++
++	ret = written;
++	NOVA_STATS_ADD(cow_write_breaks, step);
++	nova_dbgv("blocks: %lu, %lu\n", inode->i_blocks, sih->i_blocks);
++
++	*ppos = pos;
++	if (pos > inode->i_size) {
++		i_size_write(inode, pos);
++		sih->i_size = pos;
++	}
++
++out:
++	if (ret < 0)
++		nova_cleanup_incomplete_write(sb, sih, &item_head, 1);
++
++	NOVA_END_TIMING(cow_write_t, cow_write_time);
++	NOVA_STATS_ADD(cow_write_bytes, written);
++	sih_unlock(sih);
++
++	return ret;
++}
++
++/*
++ * Acquire locks and perform COW write.
++ */
++ssize_t nova_cow_file_write(struct file *filp,
++	const char __user *buf,	size_t len, loff_t *ppos)
++{
++	struct address_space *mapping = filp->f_mapping;
++	struct inode *inode = mapping->host;
++	int ret;
++
++	if (len == 0)
++		return 0;
++
++	sb_start_write(inode->i_sb);
++	inode_lock(inode);
++
++	ret = do_nova_cow_file_write(filp, buf, len, ppos);
++
++	inode_unlock(inode);
++	sb_end_write(inode->i_sb);
++
++	return ret;
++}
++
++
++static ssize_t nova_dax_file_write(struct file *filp, const char __user *buf,
++				   size_t len, loff_t *ppos)
++{
++	return nova_cow_file_write(filp, buf, len, ppos);
++}
++
+ 
+ const struct file_operations nova_dax_file_operations = {
+ 	.llseek		= nova_llseek,
+ 	.read		= nova_dax_file_read,
++	.write		= nova_dax_file_write,
+ 	.open		= nova_open,
+ 	.fsync		= nova_fsync,
+ 	.flush		= nova_flush,
+diff --git a/fs/nova/nova.h b/fs/nova/nova.h
+index dcda02a..1c2205e 100644
+--- a/fs/nova/nova.h
++++ b/fs/nova/nova.h
+@@ -465,9 +465,17 @@ nova_get_blocknr(struct super_block *sb, u64 block, unsigned short btype)
+ /* ====================================================== */
+ 
+ /* dax.c */
++int nova_handle_head_tail_blocks(struct super_block *sb,
++	struct inode *inode, loff_t pos, size_t count, void *kmem);
+ int nova_commit_writes_to_log(struct super_block *sb, struct nova_inode *pi,
+ 	struct inode *inode, struct list_head *head, unsigned long new_blocks,
+ 	int free);
++int nova_cleanup_incomplete_write(struct super_block *sb,
++	struct nova_inode_info_header *sih, struct list_head *head, int free);
++void nova_init_file_write_item(struct super_block *sb,
++	struct nova_inode_info_header *sih, struct nova_file_write_item *item,
++	u64 epoch_id, u64 pgoff, int num_pages, u64 blocknr, u32 time,
++	u64 file_size);
+ 
+ /* dir.c */
+ extern const struct file_operations nova_dir_operations;
 -- 
-Dmitry
+2.7.4
