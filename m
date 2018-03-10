@@ -1,110 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933063AbeCJNPm (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 08:15:42 -0500
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:52407 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932854AbeCJNPk (ORCPT
+        id S932993AbeCJNQI (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 08:16:08 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47810 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932854AbeCJNQH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 08:15:40 -0500
-X-Google-Smtp-Source: AG47ELsoQug4PHhgQFD7qg25zPWzFQWkjMn1ccsQbiJQoHjDNntUlUpKNVv5NkKnUPWWzyL6sAc2Hg==
-Reply-To: monstr@monstr.eu
-Subject: Re: Bug: Microblaze stopped booting after
- 0fa1c579349fdd90173381712ad78aa99c09d38b
-To: Rob Herring <robh@kernel.org>,
-        "Alvaro G. M." <alvaro.gamez@hazent.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180309125106.GA1644@salem.gmr.ssr.upm.es>
- <CAL_JsqLenrLARsjHvkkL3ByuXARPShz-VAEBDE2FukJc=vD+Sg@mail.gmail.com>
-From: Michal Simek <monstr@monstr.eu>
-Message-ID: <ac91e42c-87fa-bdee-5dd1-640802a06e91@monstr.eu>
-Date: Sat, 10 Mar 2018 14:15:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sat, 10 Mar 2018 08:16:07 -0500
+Date: Sat, 10 Mar 2018 14:16:05 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Andrew Worsley <amworsley@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, 844788@bugs.debian.org
+Subject: Re: 4.16-rc3 fails to resume on MacBookPro10,1 -
+Message-ID: <20180310131605.GA28296@amd>
+References: <CA+Y=x3=U_zheHBxeNSzL9nSdXOZB7rs-JDNr36323uJ9Uhx0Hg@mail.gmail.com>
+ <CA+Y=x3=+kPXJRNYo91i4yJiqqVHDsMhn2pAwkmAH2LV3usd7Hg@mail.gmail.com>
+ <20180303092417.GA30917@amd>
+ <CAJZ5v0iVmE0jwRW1f6hnohSVzKsZbLr0axi+VKoR+FQcHM+_7w@mail.gmail.com>
+ <20180303204512.GA9259@amd>
+ <CA+Y=x3k5tsf+oxTo9YQv195XQpEECfqtFcbCoYGkJVCQsbjWpA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqLenrLARsjHvkkL3ByuXARPShz-VAEBDE2FukJc=vD+Sg@mail.gmail.com>
 Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="mblUGwnFd7TPUqHJntuZuAgBqiCBjBIst"
+        protocol="application/pgp-signature"; boundary="IS0zKkzwUGydFO0o"
+Content-Disposition: inline
+In-Reply-To: <CA+Y=x3k5tsf+oxTo9YQv195XQpEECfqtFcbCoYGkJVCQsbjWpA@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---mblUGwnFd7TPUqHJntuZuAgBqiCBjBIst
-Content-Type: multipart/mixed; boundary="tqB2F5M1vcoa0FG2A4OYvDOXdDyF4bNS6";
- protected-headers="v1"
-From: Michal Simek <monstr@monstr.eu>
-Reply-To: monstr@monstr.eu
-To: Rob Herring <robh@kernel.org>, "Alvaro G. M." <alvaro.gamez@hazent.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Message-ID: <ac91e42c-87fa-bdee-5dd1-640802a06e91@monstr.eu>
-Subject: Re: Bug: Microblaze stopped booting after
- 0fa1c579349fdd90173381712ad78aa99c09d38b
-References: <20180309125106.GA1644@salem.gmr.ssr.upm.es>
- <CAL_JsqLenrLARsjHvkkL3ByuXARPShz-VAEBDE2FukJc=vD+Sg@mail.gmail.com>
-In-Reply-To: <CAL_JsqLenrLARsjHvkkL3ByuXARPShz-VAEBDE2FukJc=vD+Sg@mail.gmail.com>
 
---tqB2F5M1vcoa0FG2A4OYvDOXdDyF4bNS6
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+--IS0zKkzwUGydFO0o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On 9.3.2018 20:05, Rob Herring wrote:
-> On Fri, Mar 9, 2018 at 6:51 AM, Alvaro G. M. <alvaro.gamez@hazent.com> =
-wrote:
->> Hi,
->>
->> I've found via git bisect that 0fa1c579349fdd90173381712ad78aa99c09d38=
-b
->> makes microblaze unbootable.
->>
->> I'm sorry I can't provide any console output, as nothing appears at al=
-l,
->> even when setting earlyprintk (or at least I wasn't able to get anythi=
-ng
->> back!).
->=20
-> Ah, looks like microblaze doesn't set CONFIG_NO_BOOTMEM and so
-> memblock_virt_alloc() doesn't work for CONFIG_HAVE_MEMBLOCK &&
-> !CONFIG_NO_BOOTMEM. AFAICT, microblaze doesn't really need bootmem and
-> it can be removed, but I'm still investigating. Can you try out this
-> branch[1].
->=20
-> Rob
->=20
-> [1] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
-> microblaze-fixes
->=20
+Hi!
 
-Let me take a look at it on Monday with the rest of patches sent by you.
+> > Ok, I've just tested linux-next, and it works ok for me on thinkpad
+> > x60. (But that's probably rather different configuration from the
+> > macbook).
+> >
+> > Unfortunately, I could not deduce anything useful from the
+> > backtraces. Andrew, could you try v4.15 with KPTI disabled ?
+> >
+> > Thanks,
+> >                                                                        =
+ Pavel
+>=20
+> This is 4.15 kernel with KPTI disabled:
+> % grep PAGE_TABLE .config
+> # CONFIG_PAGE_TABLE_ISOLATION is not set
+>=20
+> As I expected it appears no more infomative to me.
+>=20
+> What I really need is some clue as to what is supposed to be happening
+> at this point.
 
-Thanks,
-Michal
+You may want to add some printks to see where it hangs.
 
+But maybe before that, you may want to test CPU hotplug, and make sure
+s2ram works, etc...
 
+Perhaps basic-pm-debugging.txt is good place to start?
+
+Best regards,
+									Pavel
 --=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Xilinx Microblaze
-Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
-U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-
-
---tqB2F5M1vcoa0FG2A4OYvDOXdDyF4bNS6--
-
---mblUGwnFd7TPUqHJntuZuAgBqiCBjBIst
+--IS0zKkzwUGydFO0o
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Version: GnuPG v1
 
-iEYEARECAAYFAlqj2nUACgkQykllyylKDCGbVwCgj9qGosojfZnw46xvHr/phNxa
-uL8An0/fXnWk5cdyc860tLw0ij7hCJg3
-=LhRy
+iEYEARECAAYFAlqj2pUACgkQMOfwapXb+vJDIgCZAWZ+L/H4yZdnrsyUO3R4JZXp
+wpQAn1X6i4bBkLVxWsYbdV1lpOqomRYu
+=onj6
 -----END PGP SIGNATURE-----
 
---mblUGwnFd7TPUqHJntuZuAgBqiCBjBIst--
+--IS0zKkzwUGydFO0o--
