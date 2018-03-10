@@ -1,68 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1720711-1520641208-2-12413228521417004026
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520641208; b=jeLqa9pxSXeJK5RTFNUs+e6KQ1/m1HGpgZZA7uhOsoPx2Ij
-    U5K8xFmopNGV8rumLy6RA+ZatN5I7fmr3X0hBRGxHSiOABRm48Iu63yMytPQJk41
-    6pFUywRClaiIwHWX60jEZgSjoWvaDNKOzjpTm8y/Gk8681VyLyoQ3LSf5QaL0CHR
-    1w1vOxz2bbtyJQmi0tcmLyCPzpsdU3vLaBZdenZZnIvFQXooQSvNFYuf9Rl2qWT1
-    TPmW5nB2ak0bJqRsdXaecPG0ehmuiE1xElkPHSQ3nSNi+8Hm+BcHBQSq83/507bn
-    q/1lpJHXAO5QPHOZ5U90uhpCeT0zoqB87tsvoVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520641208; bh=XrWhxIZiP4uwxPpIhwsE2Xy4P6
-    bgir0LU83zboo3GqY=; b=nN+Zg3r4JVitICZ/90jFRiq1aDbVzQEd/AxD95VPWN
-    GZj0NPvQbytr26dAF3SSq3uWi9ooftJ0xDEs7S214ahFyiHNc03ky3sQ6VYz5SX/
-    BPyPVFeqYsfHz/4yLBJ3dVdMSJNM13O15oUR24xb3U83aMFQod1encjFtSf6wNEG
-    55AJF7XCudENfbg15UNejXMmMrN/eQaHIntaHjGJQxdcOR8d6uUg+Z0gOVBPZX/C
-    s9lqXO+IJxpUG1XhGtZLtBnRftIzJjiiam51ZDbYP1kxEoIwXKfD9FdZq/mCZyu+
-    JiFNSbbfo1l011wHVzhZUKT1a3/X3L7SYS7BZhC4/2Zw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933265AbeCJAUF (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Mar 2018 19:20:05 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38972 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933237AbeCJAUE (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:20:04 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELsWnLW0Fh2i+VYTY4kPQH2QtSqRSLvQw21tN59a2XAah7ckNez6KE6xaplKvOf7SCLukVTA
+ARC-Seal: i=1; a=rsa-sha256; t=1520641201; cv=none;
+        d=google.com; s=arc-20160816;
+        b=w3p3eVMOTLzbfmf5cZeTTw0dNzUBE4qctiEXgHtfiFIMaUPR0pMP3PTGZ0cZjMGr/5
+         BXDXRJpznrbCPT6b9c/07uGQ7YqVQUVkn2L5/7BiE+6v60iJxwExdzk11zJSk2cV+urY
+         g89IXFY3dGCRYP1jA3w57EjyPh3yqvpZWO4CO/ZnNpvOIG8/ycE4UG4JKxTVikjRajUX
+         uUGH6RYihHBsEL5ab5xU5Xfn041mlWUsfFv30ch0bKPNLHm+4Um/sqbIEcT3WR6eIfzS
+         dMihUkPeD4yNveEJiu9VZjUE9ddC2Esov0UJRV1Dr6qJpruwLL2PdEDVE8oMwEHFa/0y
+         XtVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=/Hi+4KDesAaNIub1iNnmYL0uco3/CWPm33LfJmDlMIc=;
+        b=G2P1pAQ9Im474vbSiH20xLcuv2dp/dp6QBx2zJhMHTfC+S+6rokqqYPkouvvbkuvMC
+         UVD9FFYuElLVEBedRvTBuOtk6i5u5s3MXFfZjbv+xYopV05jK5ccdsCdLkeq/o2J2bzF
+         vxLVLILgeKqzZnPCXkfVUMK6cN6IHSDwfk4a1Ezslt9KJ2cMGvHOC/1KhB5ifyDtqXXD
+         MS8+Z7NGpj/6piHF3kx6kzlerTGegwdLZthnJHsw2WyWBHSzvb3ROeFpWXwDrm04RGTL
+         iew+QylQ3I0hvn2PVcKRXYQJiG6pyudP8Cw1ZdOGrEhoiHt4hsA2R6jbH5zMpmftorUg
+         aOXw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Du <dudenis2000@yahoo.ca>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 20/36] hdlc_ppp: carrier detect ok, dont turn off negotiation
-Date: Fri,  9 Mar 2018 16:18:36 -0800
-Message-Id: <20180310001808.462928150@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Jeremy Boone <jeremy.boone@nccgroup.trust>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	James Morris <james.morris@microsoft.com>
+Subject: [PATCH 4.4 02/36] tpm_i2c_infineon: fix potential buffer overruns caused by bit glitches on the bus
+Date: Fri,  9 Mar 2018 16:18:18 -0800
+Message-Id: <20180310001807.334957172@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001807.213987241@linuxfoundation.org>
 References: <20180310001807.213987241@linuxfoundation.org>
@@ -70,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594507795452945508?=
+X-GMAIL-MSGID: =?utf-8?q?1594507868731185354?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -80,35 +51,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Denis Du <dudenis2000@yahoo.ca>
+From: Jeremy Boone <jeremy.boone@nccgroup.trust>
 
+commit 9b8cb28d7c62568a5916bdd7ea1c9176d7f8f2ed upstream.
 
-[ Upstream commit b6c3bad1ba83af1062a7ff6986d9edc4f3d7fc8e ]
+Discrete TPMs are often connected over slow serial buses which, on
+some platforms, can have glitches causing bit flips.  In all the
+driver _recv() functions, we need to use a u32 to unmarshal the
+response size, otherwise a bit flip of the 31st bit would cause the
+expected variable to go negative, which would then try to read a huge
+amount of data.  Also sanity check that the expected amount of data is
+large enough for the TPM header.
 
-Sometimes when physical lines have a just good noise to make the protocol
-handshaking fail, but the carrier detect still good. Then after remove of
-the noise, nobody will trigger this protocol to be start again to cause
-the link to never come back. The fix is when the carrier is still on, not
-terminate the protocol handshaking.
-
-Signed-off-by: Denis Du <dudenis2000@yahoo.ca>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Jeremy Boone <jeremy.boone@nccgroup.trust>
+Cc: stable@vger.kernel.org
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/wan/hdlc_ppp.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wan/hdlc_ppp.c
-+++ b/drivers/net/wan/hdlc_ppp.c
-@@ -574,7 +574,10 @@ static void ppp_timer(unsigned long arg)
- 			ppp_cp_event(proto->dev, proto->pid, TO_GOOD, 0, 0,
- 				     0, NULL);
- 			proto->restart_counter--;
--		} else
-+		} else if (netif_carrier_ok(proto->dev))
-+			ppp_cp_event(proto->dev, proto->pid, TO_GOOD, 0, 0,
-+				     0, NULL);
-+		else
- 			ppp_cp_event(proto->dev, proto->pid, TO_BAD, 0, 0,
- 				     0, NULL);
- 		break;
+---
+ drivers/char/tpm/tpm_i2c_infineon.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+--- a/drivers/char/tpm/tpm_i2c_infineon.c
++++ b/drivers/char/tpm/tpm_i2c_infineon.c
+@@ -436,7 +436,8 @@ static int recv_data(struct tpm_chip *ch
+ static int tpm_tis_i2c_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+ {
+ 	int size = 0;
+-	int expected, status;
++	int status;
++	u32 expected;
+ 
+ 	if (count < TPM_HEADER_SIZE) {
+ 		size = -EIO;
+@@ -451,7 +452,7 @@ static int tpm_tis_i2c_recv(struct tpm_c
+ 	}
+ 
+ 	expected = be32_to_cpu(*(__be32 *)(buf + 2));
+-	if ((size_t) expected > count) {
++	if (((size_t) expected > count) || (expected < TPM_HEADER_SIZE)) {
+ 		size = -EIO;
+ 		goto out;
+ 	}
