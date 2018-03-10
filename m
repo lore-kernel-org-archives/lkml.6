@@ -1,25 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751278AbeCJWHA (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 17:07:00 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:51558 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751161AbeCJWG6 (ORCPT
+        id S1751313AbeCJWHI (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 17:07:08 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33759 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751161AbeCJWHE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 17:06:58 -0500
-X-Google-Smtp-Source: AG47ELs+hvpYJYWgLlsPNbxHbjmfeSiDivcS1AsOD/g4LTmdO2UBF46t1Guw7Fl1UzwLZzfAKonevw==
-Message-ID: <cb0f18f82afd7df898e58dda7ddd3e973941fcfe.camel@elementarea.net>
-Subject: [PATCH v2 0/2] iio: chemical: sgp30: Support SGP30 / SGPC3 Gas
- Sensors
+        Sat, 10 Mar 2018 17:07:04 -0500
+X-Google-Smtp-Source: AG47ELsp/FHBdVBHp5Dc8CBUdumjluKlpX2b/CrAueuMd9lBJbhHyvL6YQrACBQhM4vZM29Pc7H3zA==
+Message-ID: <aa5e8170ba7419318ccb34a06d2610d1ac8b7826.camel@elementarea.net>
+Subject: [PATCH v2 1/2] iio: Add modifiers for ethanol and H2 gases
 From: Andreas Brauchli <a.brauchli@elementarea.net>
 To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
         Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
 Cc: linux-iio@vger.kernel.org,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date: Sat, 10 Mar 2018 23:06:55 +0100
+Date: Sat, 10 Mar 2018 23:07:02 +0100
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.27.90-1 
 Mime-Version: 1.0
@@ -28,48 +25,66 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series adds support for Sensirion SGP30 and SGPC3 I2C gas
-sensors.
+Add ethanol and H2 gas modifiers:
+* IIO_MOD_ETHANOL
+* IIO_MOD_H2
 
-Further product specs available from:
-https://www.sensirion.com/en/environmental-sensors/gas-sensors/multi-pixel-gas-sensors/
-https://www.sensirion.com/en/about-us/links/#c15360
+Signed-off-by: Andreas Brauchli <andreas.brauchli@sensirion.com>
+---
+ Documentation/ABI/testing/sysfs-bus-iio | 4 ++++
+ include/uapi/linux/iio/types.h          | 2 ++
+ tools/iio/iio_event_monitor.c           | 4 ++++
+ 3 files changed, 10 insertions(+)
 
-Patch 1/2 add new IIO modifiers used by the driver
-Patch 2/2 add sgp30/sgpc3 driver and documentation
-
-Major changes to v1:
-* Driver renamed to sgp30
-* No or minimal sensor knowledge required to use the device:
-  automatic fixed interval polling (see next point) and initialization.
-* Background thread for IAQ polling
-* Remove triggered-buffers support
-* Add new IIO modifiers for ethanol and H2
-* Support for SGPC3 product increment ("feature set 0.6") including 
-  humidity compensation and an ultra-low power mode. Unfortunately, the
-  datasheet for this new SGPC3 has not been released yet.
-* ABI/DT Documentation
-
-Many thanks to Peter Meerwald-Standler and Jonathan Cameron for their most valuable feedback on v1.
-
-Andreas Brauchli (2):
-  iio: Add modifiers for ethanol and H2 gases
-  iio: chemical: sgp30: Support Sensirion SGPxx sensors
-
- Documentation/ABI/testing/sysfs-bus-iio            |    4 +
- .../ABI/testing/sysfs-bus-iio-chemical-sgp30       |   62 ++
- .../bindings/iio/chemical/sensirion,sgp30.txt      |   15 +
- Documentation/iio/chemical/sgp30.txt               |   97 ++
- drivers/iio/chemical/Kconfig                       |   13 +
- drivers/iio/chemical/Makefile                      |    1 +
- drivers/iio/chemical/sgp30.c                       | 1120 ++++++++++++++++++++
- include/uapi/linux/iio/types.h                     |    2 +
- tools/iio/iio_event_monitor.c                      |    4 +
- 9 files changed, 1318 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-chemical-sgp30
- create mode 100644 Documentation/devicetree/bindings/iio/chemical/sensirion,sgp30.txt
- create mode 100644 Documentation/iio/chemical/sgp30.txt
- create mode 100644 drivers/iio/chemical/sgp30.c
-
+diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
+index 6a5f34b4d5b9..6856fe1c05e5 100644
+--- a/Documentation/ABI/testing/sysfs-bus-iio
++++ b/Documentation/ABI/testing/sysfs-bus-iio
+@@ -1530,6 +1530,10 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_concentration_raw
+ What:		/sys/bus/iio/devices/iio:deviceX/in_concentrationX_raw
+ What:		/sys/bus/iio/devices/iio:deviceX/in_concentration_co2_raw
+ What:		/sys/bus/iio/devices/iio:deviceX/in_concentrationX_co2_raw
++What:		/sys/bus/iio/devices/iio:deviceX/in_concentration_ethanol_raw
++What:		/sys/bus/iio/devices/iio:deviceX/in_concentrationX_ethanol_raw
++What:		/sys/bus/iio/devices/iio:deviceX/in_concentration_h2_raw
++What:		/sys/bus/iio/devices/iio:deviceX/in_concentrationX_h2_raw
+ What:		/sys/bus/iio/devices/iio:deviceX/in_concentration_voc_raw
+ What:		/sys/bus/iio/devices/iio:deviceX/in_concentrationX_voc_raw
+ KernelVersion:	4.3
+diff --git a/include/uapi/linux/iio/types.h b/include/uapi/linux/iio/types.h
+index 4213cdf88e3c..587233143e1e 100644
+--- a/include/uapi/linux/iio/types.h
++++ b/include/uapi/linux/iio/types.h
+@@ -82,6 +82,8 @@ enum iio_modifier {
+ 	IIO_MOD_I,
+ 	IIO_MOD_Q,
+ 	IIO_MOD_CO2,
++	IIO_MOD_ETHANOL,
++	IIO_MOD_H2,
+ 	IIO_MOD_VOC,
+ 	IIO_MOD_LIGHT_UV,
+ };
+diff --git a/tools/iio/iio_event_monitor.c b/tools/iio/iio_event_monitor.c
+index b61245e1181d..a49fe0d181f7 100644
+--- a/tools/iio/iio_event_monitor.c
++++ b/tools/iio/iio_event_monitor.c
+@@ -111,6 +111,8 @@ static const char * const iio_modifier_names[] = {
+ 	[IIO_MOD_I] = "i",
+ 	[IIO_MOD_Q] = "q",
+ 	[IIO_MOD_CO2] = "co2",
++	[IIO_MOD_ETHANOL] = "ethanol",
++	[IIO_MOD_H2] = "h2",
+ 	[IIO_MOD_VOC] = "voc",
+ };
+ 
+@@ -193,6 +195,8 @@ static bool event_is_known(struct iio_event_data *event)
+ 	case IIO_MOD_I:
+ 	case IIO_MOD_Q:
+ 	case IIO_MOD_CO2:
++	case IIO_MOD_ETHANOL:
++	case IIO_MOD_H2:
+ 	case IIO_MOD_VOC:
+ 		break;
+ 	default:
 -- 
 2.15.1
