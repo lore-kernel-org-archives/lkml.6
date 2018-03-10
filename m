@@ -1,71 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932893AbeCJMrD (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 07:47:03 -0500
-Received: from mga07.intel.com ([134.134.136.100]:14086 "EHLO mga07.intel.com"
+        id S932912AbeCJMvR (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 07:51:17 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41598 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752136AbeCJMrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 07:47:01 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,451,1515484800";
-   d="scan'208";a="40805599"
-Message-ID: <d4c32cca021456c61e5c6e3c29b6928426541305.camel@linux.intel.com>
-Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
- commands.
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Winkler, Tomas" <tomas.winkler@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Sat, 10 Mar 2018 14:46:55 +0200
-In-Reply-To: <1520440503.10396.534.camel@linux.vnet.ibm.com>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
-         <20180305125642.GA3425@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
-         <20180306074932.GB3624@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
-         <1520353933.5393.21.camel@HansenPartnership.com>
-         <1520361396.10396.396.camel@linux.vnet.ibm.com>
-         <20180307085454.2c820a13@lwn.net>
-         <1520440503.10396.534.camel@linux.vnet.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.27.90-1 
-Mime-Version: 1.0
+        id S932130AbeCJMvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 07:51:16 -0500
+Date: Sat, 10 Mar 2018 13:51:13 +0100
+From: Jean Delvare <jdelvare@suse.de>
+To: Alex Hung <alex.hung@canonical.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][V2] firmware: dmi_scan: add DMI_OEM_STRING support to
+ dmi_matches
+Message-ID: <20180310135113.61683f08@endymion>
+In-Reply-To: <CAJ=jqubM2P8=pJQ8cofD3C67hiTOEoB4J99suAdS3YY30eZy-g@mail.gmail.com>
+References: <1519800494-32107-1-git-send-email-alex.hung@canonical.com>
+        <20180309143315.354ad0be@endymion>
+        <CAJ=jqubM2P8=pJQ8cofD3C67hiTOEoB4J99suAdS3YY30eZy-g@mail.gmail.com>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-03-07 at 11:35 -0500, Mimi Zohar wrote:
-> On Wed, 2018-03-07 at 08:54 -0700, Jonathan Corbet wrote:
-> > On Tue, 06 Mar 2018 13:36:36 -0500
-> > Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> > 
-> > > I've heard that some maintainers are moving away from cover letters,
-> > > since they are not include in the git repo and are lost.
-> > 
-> > If I get a patch series with a cover letter that should be preserved, I
-> > apply the series in a branch then do a no-ff merge; the cover letter can
-> > then go into the merge commit.  There's no reason why cover letters need to
-> > be lost.
+On Fri, 9 Mar 2018 10:56:07 -0800, Alex Hung wrote:
+> On Fri, Mar 9, 2018 at 5:33 AM, Jean Delvare <jdelvare@suse.de> wrote:
+> > However it doesn't make sense to commit this change unless there will
+> > be at least one user of it. What is the status of the piece of code
+> > which was supposed to use this new feature?  
 > 
-> Thanks, Jon.  That sounds like a really, good idea.
+> The original use of DMI on _OSI is no needed anymore - the OEM _OSI
+> string will always enabled; however, this patch is still needed
+> because DMI_OEM_STRING are more suitable for many DMI quirks,
+> especially for Dell systems, and many, if not all, DMI quirks for Dell
+> systems with DMI_PRODUCT_NAME can be (and should be) replaced by
+> DMI_OEM_STRING because 1) OEM string contains system id, 2) multiple
+> product names can be used for the same system id and 3) the number DMI
+> quirks can be reduced.
 > 
-> Some maintainers are saying to put the Changelog after the "---" so
-> that it isn't included in the patch description.
+> For example, the DMI_MATCH(DMI_PRODUCT_NAME, "OptiPlex 9020M") in
+> commit 1f59ab2783aed04f131 can be replaced by
+> DMI_MATCH_EXACT(DMI_OEM_STRING, "1[0669]")
 > 
-> One of the reasons for including the Changelog in the patch
-> description, is to credit people with bug fixes, important rework of
-> the patch, etc.
+> I will start sending DMI quirks with DMI_OEM_STRING myself and perhaps
+> sending a clean up patch to replace DMI_PRODUCT_NAME by DMI_OEM_STRING
+> for the Dell systems I have access to. With this patch in place first,
+> I am able to convince others to use DMI_OEM_STRING because there will
+> fewer risks to spend time in vain.
 
-This is a really good point. By adding the cover letter to the
-GIT history helps to better track people who to thank or blame :-)
+Fair enough. I've fixed the blank line issue and queued your patch for
+kernel v4.17, thanks for your contribution.
 
-/Jarkko
+-- 
+Jean Delvare
+SUSE L3 Support
