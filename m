@@ -1,77 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751297AbeCJRWV (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 12:22:21 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:42930 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750985AbeCJRWU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 12:22:20 -0500
-Date: Sat, 10 Mar 2018 18:22:08 +0100
-From: jacopo mondi <jacopo@jmondi.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
-        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
-        airlied@linux.ie, horms@verge.net.au, magnus.damm@gmail.com,
-        geert@linux-m68k.org, niklas.soderlund@ragnatech.se,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] arm64: dts: renesas: Add LVDS decoder to R-Car
- V3M Eagle
-Message-ID: <20180310172208.GI4023@w540>
-References: <1520603500-15218-1-git-send-email-jacopo+renesas@jmondi.org>
- <1520603500-15218-4-git-send-email-jacopo+renesas@jmondi.org>
- <e0ff40be-f134-5a86-6d00-9506d9829364@cogentembedded.com>
+        id S1751242AbeCJR0I (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 12:26:08 -0500
+Received: from vps-vb.mhejs.net ([37.28.154.113]:34004 "EHLO vps-vb.mhejs.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750884AbeCJR0H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 12:26:07 -0500
+Subject: Re: [PATCH] x86/microcode/AMD: check microcode file sanity before
+ loading it
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <34e9d679-2eca-90cf-9a95-3864f0be060e@maciej.szmigiero.name>
+ <f61522e6-fa15-0fc1-feef-6e0c84d6fc80@maciej.szmigiero.name>
+ <20180310164654.GD8261@pd.tnic>
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Message-ID: <b290050f-7102-aebf-6a4d-79d63c7335e0@maciej.szmigiero.name>
+Date: Sat, 10 Mar 2018 18:26:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <20180310164654.GD8261@pd.tnic>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e0ff40be-f134-5a86-6d00-9506d9829364@cogentembedded.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sergei,
+On 10.03.2018 17:46, Borislav Petkov wrote:
+> On Sat, Mar 10, 2018 at 05:16:40PM +0100, Maciej S. Szmigiero wrote:
+(..)
+>> There is no container file at all for family 17h (Zen) so
+>> distributions like OpenSUSE that include this file must have gotten it
+>> from some other source
+> 
+> Or maybe they've gotten it from AMD directly. Don't you think that
+> getting microcode from the CPU vendor directly is the logical thing?
 
-On Fri, Mar 09, 2018 at 08:30:36PM +0300, Sergei Shtylyov wrote:
-> On 03/09/2018 04:51 PM, Jacopo Mondi wrote:
->
-> > The R-Car V3M Eagle board includes a transparent LVDS decoder, connected
-> > to the on-chip LVDS encoder output on one side and to HDMI encoder
-> > ADV7511w on the other one.
-> >
-> > As the decoder does not need any configuration it has been so-far
-> > omitted from DTS. Now that a driver for transparent LVDS decoder is
-> > available, describe it in DT as well.
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> >  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 31 ++++++++++++++++++++++++--
-> >  1 file changed, 29 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> > index c0fd144..0a95c20 100644
-> > --- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> > +++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-> > @@ -42,6 +42,33 @@
-> >  			};
-> >  		};
-> >  	};
-> > +
-> > +	lvds,decoder {
->
->    I said hyphen (-), not comma (,)! :-)
+"some other source" than linux-firmware includes the CPU vendor.
 
-Ahah ok, my bad, I somehow confused the two :)
-It looked weird to me, but I thought you were pointing me to some
-convention I didn't know about!
+Also please note that while OpenSUSE can get the microcode directly
+from the CPU vendor there seems to be no official AMD web site that
+distributes microcode.
+And it looks like other distros simply get it from OpenSUSE:
+https://bugs.archlinux.org/task/56951
 
-I'll change this in v3
+>> That's why to get things like IBPB it is sometimes necessary to use
+>> a newer microcode version than included in linux-firmware, sourced for
+>> example from a BIOS update.
+> 
+> linux-firmware will get F17h microcode soon.
 
-Thanks
-  j
+Great!
+Hope it will include latest production versions for the whole family
+17h.
+
+>> Since BIOS updates contain only actual (raw) microcode updates one
+>> has to place it in a microcode container file so this driver can parse
+>> it.
+>>
+>> As far I know there is no tool to automate this work so one has to
+>> manually tweak the container metadata.
+> 
+> Let me get this straight: am I reading this correctly that you've tried
+> to carve out the F17h microcode from a BIOS update blob and you're
+> trying to load that?!?
 >
-> [...]
->
-> MBR, Sergei
+> If so, you could've simply taken a distro microcode package and used
+> F17h microcode from there - they are all the same.
+> 
+
+"microcode_amd_fam17h.bin" from both my distro (Gentoo) and OpenSUSE
+only contains family 23 model 2 microcode while my Ryzen is model 1.
+
+And my motherboard BIOS-loaded microcode is too old to contain IBPB
+support.
+
+Maciej
