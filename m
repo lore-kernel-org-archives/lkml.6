@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752034AbeCJC7W (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 9 Mar 2018 21:59:22 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6224 "EHLO huawei.com"
+        id S1751866AbeCJC5h (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 9 Mar 2018 21:57:37 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6222 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932343AbeCJC5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Mar 2018 21:57:38 -0500
+        id S1751349AbeCJC5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Mar 2018 21:57:35 -0500
 From: Peng Li <lipeng321@huawei.com>
 To: <davem@davemloft.net>
 CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
         <lipeng321@huawei.com>
-Subject: [PATCH net-next 06/12] net: hns3: add support for querying pfc puase packets statistic
-Date: Sat, 10 Mar 2018 11:29:27 +0800
-Message-ID: <1520652573-75644-7-git-send-email-lipeng321@huawei.com>
+Subject: [PATCH net-next 07/12] net: hns3: fix for loopback failure when vlan filter is enable
+Date: Sat, 10 Mar 2018 11:29:28 +0800
+Message-ID: <1520652573-75644-8-git-send-email-lipeng321@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520652573-75644-1-git-send-email-lipeng321@huawei.com>
 References: <1520652573-75644-1-git-send-email-lipeng321@huawei.com>
@@ -25,145 +25,60 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add support for querying pfc puase packets statistic
-in hclge_ieee_getpfc, which is used to tell user how many pfc
-puase packets have been sent and received by this mac port.
+From: Yunsheng Lin <linyunsheng@huawei.com>
+
+When vlan ctag filter is enabled, the loopback selftest fails because
+loopback selftest does not support vlan.
+
+This patch fixes it by disabling the vlan ctag filter when runnig
+loopback selftest.
 
 Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 ---
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c | 14 ++++++
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  | 53 ++++++++++++++++++++++
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  |  6 +++
- 3 files changed, 73 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-index 407cfab..955f0e3 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-@@ -205,9 +205,11 @@ static int hclge_ieee_setets(struct hnae3_handle *h, struct ieee_ets *ets)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+index 26274bc..2db127c 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+@@ -309,6 +309,9 @@ static void hns3_self_test(struct net_device *ndev,
+ 	struct hnae3_handle *h = priv->ae_handle;
+ 	int st_param[HNS3_SELF_TEST_TPYE_NUM][2];
+ 	bool if_running = netif_running(ndev);
++#if IS_ENABLED(CONFIG_VLAN_8021Q)
++	bool dis_vlan_filter;
++#endif
+ 	int test_index = 0;
+ 	u32 i;
  
- static int hclge_ieee_getpfc(struct hnae3_handle *h, struct ieee_pfc *pfc)
- {
-+	u64 requests[HNAE3_MAX_TC], indications[HNAE3_MAX_TC];
- 	struct hclge_vport *vport = hclge_get_vport(h);
- 	struct hclge_dev *hdev = vport->back;
- 	u8 i, j, pfc_map, *prio_tc;
-+	int ret;
+@@ -323,6 +326,14 @@ static void hns3_self_test(struct net_device *ndev,
+ 	if (if_running)
+ 		dev_close(ndev);
  
- 	memset(pfc, 0, sizeof(*pfc));
- 	pfc->pfc_cap = hdev->pfc_max;
-@@ -222,6 +224,18 @@ static int hclge_ieee_getpfc(struct hnae3_handle *h, struct ieee_pfc *pfc)
- 		}
- 	}
- 
-+	ret = hclge_pfc_tx_stats_get(hdev, requests);
-+	if (ret)
-+		return ret;
++#if IS_ENABLED(CONFIG_VLAN_8021Q)
++	/* Disable the vlan filter for selftest does not support it */
++	dis_vlan_filter = (ndev->features & NETIF_F_HW_VLAN_CTAG_FILTER) &&
++				h->ae_algo->ops->enable_vlan_filter;
++	if (dis_vlan_filter)
++		h->ae_algo->ops->enable_vlan_filter(h, false);
++#endif
 +
-+	ret = hclge_pfc_rx_stats_get(hdev, indications);
-+	if (ret)
-+		return ret;
+ 	set_bit(HNS3_NIC_STATE_TESTING, &priv->state);
+ 
+ 	for (i = 0; i < HNS3_SELF_TEST_TPYE_NUM; i++) {
+@@ -345,6 +356,11 @@ static void hns3_self_test(struct net_device *ndev,
+ 
+ 	clear_bit(HNS3_NIC_STATE_TESTING, &priv->state);
+ 
++#if IS_ENABLED(CONFIG_VLAN_8021Q)
++	if (dis_vlan_filter)
++		h->ae_algo->ops->enable_vlan_filter(h, true);
++#endif
 +
-+	for (i = 0; i < HCLGE_MAX_TC_NUM; i++) {
-+		pfc->requests[i] = requests[i];
-+		pfc->indications[i] = indications[i];
-+	}
- 	return 0;
+ 	if (if_running)
+ 		dev_open(ndev);
  }
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-index 4134a82..885f25c 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-@@ -23,6 +23,9 @@ enum hclge_shaper_level {
- 	HCLGE_SHAPER_LVL_PF	= 1,
- };
- 
-+#define HCLGE_TM_PFC_PKT_GET_CMD_NUM	3
-+#define HCLGE_TM_PFC_NUM_GET_PER_CMD	3
-+
- #define HCLGE_SHAPER_BS_U_DEF	5
- #define HCLGE_SHAPER_BS_S_DEF	20
- 
-@@ -112,6 +115,56 @@ static int hclge_shaper_para_calc(u32 ir, u8 shaper_level,
- 	return 0;
- }
- 
-+static int hclge_pfc_stats_get(struct hclge_dev *hdev,
-+			       enum hclge_opcode_type opcode, u64 *stats)
-+{
-+	struct hclge_desc desc[HCLGE_TM_PFC_PKT_GET_CMD_NUM];
-+	int ret, i, j;
-+
-+	if (!(opcode == HCLGE_OPC_QUERY_PFC_RX_PKT_CNT ||
-+	      opcode == HCLGE_OPC_QUERY_PFC_TX_PKT_CNT))
-+		return -EINVAL;
-+
-+	for (i = 0; i < HCLGE_TM_PFC_PKT_GET_CMD_NUM; i++) {
-+		hclge_cmd_setup_basic_desc(&desc[i], opcode, true);
-+		if (i != (HCLGE_TM_PFC_PKT_GET_CMD_NUM - 1))
-+			desc[i].flag |= cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
-+		else
-+			desc[i].flag &= ~cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
-+	}
-+
-+	ret = hclge_cmd_send(&hdev->hw, desc, HCLGE_TM_PFC_PKT_GET_CMD_NUM);
-+	if (ret) {
-+		dev_err(&hdev->pdev->dev,
-+			"Get pfc pause stats fail, ret = %d.\n", ret);
-+		return ret;
-+	}
-+
-+	for (i = 0; i < HCLGE_TM_PFC_PKT_GET_CMD_NUM; i++) {
-+		struct hclge_pfc_stats_cmd *pfc_stats =
-+				(struct hclge_pfc_stats_cmd *)desc[i].data;
-+
-+		for (j = 0; j < HCLGE_TM_PFC_NUM_GET_PER_CMD; j++) {
-+			u32 index = i * HCLGE_TM_PFC_PKT_GET_CMD_NUM + j;
-+
-+			if (index < HCLGE_MAX_TC_NUM)
-+				stats[index] =
-+					le64_to_cpu(pfc_stats->pkt_num[j]);
-+		}
-+	}
-+	return 0;
-+}
-+
-+int hclge_pfc_rx_stats_get(struct hclge_dev *hdev, u64 *stats)
-+{
-+	return hclge_pfc_stats_get(hdev, HCLGE_OPC_QUERY_PFC_RX_PKT_CNT, stats);
-+}
-+
-+int hclge_pfc_tx_stats_get(struct hclge_dev *hdev, u64 *stats)
-+{
-+	return hclge_pfc_stats_get(hdev, HCLGE_OPC_QUERY_PFC_TX_PKT_CNT, stats);
-+}
-+
- int hclge_mac_pause_en_cfg(struct hclge_dev *hdev, bool tx, bool rx)
- {
- 	struct hclge_desc desc;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-index c30c85b..2dbe177 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-@@ -109,6 +109,10 @@ struct hclge_cfg_pause_param_cmd {
- 	__le16 pause_trans_time;
- };
- 
-+struct hclge_pfc_stats_cmd {
-+	__le64 pkt_num[3];
-+};
-+
- struct hclge_port_shapping_cmd {
- 	__le32 port_shapping_para;
- };
-@@ -130,4 +134,6 @@ int hclge_tm_map_cfg(struct hclge_dev *hdev);
- int hclge_tm_init_hw(struct hclge_dev *hdev);
- int hclge_mac_pause_en_cfg(struct hclge_dev *hdev, bool tx, bool rx);
- int hclge_pause_addr_cfg(struct hclge_dev *hdev, const u8 *mac_addr);
-+int hclge_pfc_rx_stats_get(struct hclge_dev *hdev, u64 *stats);
-+int hclge_pfc_tx_stats_get(struct hclge_dev *hdev, u64 *stats);
- #endif
 -- 
 2.9.3
