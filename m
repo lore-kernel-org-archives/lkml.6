@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu6Kva6r9Ny3UyvVhaVg5UAj1nWiP70+0/gD/P0zW3vdgxZcGy4U5q2EvVt6mHI+FNGb3xB
-ARC-Seal: i=1; a=rsa-sha256; t=1520641365; cv=none;
+X-Google-Smtp-Source: AG47ELvmuuwNNJgtEJSwP6TFynyq4An+fqj7p12HOBP8zMR1QqvVmtHKgoZtGqINp4Kr2eb1lpbu
+ARC-Seal: i=1; a=rsa-sha256; t=1520641363; cv=none;
         d=google.com; s=arc-20160816;
-        b=L6EKSgBqLXf/qTDFZ3Ubt6y1BQke6mvlvd9kJYSZRUF/5+xEcP0GdWHwD1Rq+0Q4wn
-         5QKdE/wigNXELpS4a4iT8ZX4EHne6tgPVnPsCzo9nBuFxfIYH27Mpyy61E7QWvGXPKUn
-         KZHpJ4vjjOuMaqm0rldloxSTLfQO3kVuApp/0M0w0Ca8ePR2D78vHEhQYGRo+RiW4q9H
-         qbEP1JcUNGDRxvjYaB7YW8wBoE+L25IhJlcKZlnH6JyWS4cMmoqE2xPJtbYa6T/3lnpH
-         F/WyNKxSBjkuyz2AOmfEVgnw2h8Zez4+hUZ/lsVqmVf+gpzGVpP/f5LXBclWHKyEV2m2
-         mO9w==
+        b=EjVqAXZl7uCC/Z/45zLMuJKyyw9uEnbnioIuiTh7vGOdHhMdGXF2lEOcg9FpKhdLdQ
+         n5D/2JjFQXx7lQFdYhhqjrHX0dnd+X38ppT1So8VIWncFl+LB2TteQ6kODWbHSfvTtxp
+         8epgU+mxddUw5lAEH3WVUyKHK58JhJCyhgw0+X1X7Ecx8fCoF7S4l94WX5rZTVbalTLF
+         lfziXXvuyFLQjCo5ngy5D/jHWHq509wbuZFkbYSAMU8fxWwDQlJLnARwPmEnAcVX74Ea
+         axhjLTMVNhmb4Qu9JIkRE1VK7XYg6Zy+BuU5u2Tbm8CTK+TYw0hcGP0aTF7j666RwN55
+         aDQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=inV8xa9BsGuPS+czjhIUVGmdWM0GFnmoSTpHNyn9y0c=;
-        b=bfabJ6Npw0RMYbFHZ0G38Zt5yw//+XpYkBO2GbR1CAC+v0ZiK/on4kBfDvEzuxoEZV
-         ZaNAWtF2OysdqPIqb1Rc9zyp/h2j1ZcWHOXE20cq5Zee2mlSS+Vjx2rG9LZXPV5rF5AU
-         dj79BR7MsCuf5EyxNWJtmkauq1mMF75+V/WDQj2gEplaTd7lCwdxaDsRZ6KIvQw8MdJb
-         jnZidbmqe2/1fAI3xm2Wp9x/PJ525uZIF9pTpdD1Tp5JNkr0GRaIYphOH1uZLmonTgPu
-         PVQJN+jhcxNJQZJ7Byxg4fFDSgFyA3GOK96A5v9BPiW+xrawYNTOFbzQMFdgrkb/Oz3l
-         V67g==
+        bh=IWzHZGIKBE/IVVHaaU26iKWh687Lxs57SV4DsZdcp74=;
+        b=TwQUK7KCSFWy6Zi70blDw7VKt1XAU2syX1hmpgdETs82xl4+7tmX+SpKTXYq/NDoYN
+         ipUBcntTD0sZYT3tFTFbR9sGp/q9pD4i5tnC99YfKoFBDhba/TexH+QVVKOj2pRl2QzZ
+         /NQE5jDgNudixOuLErydcAMbNUm9GCNNEJv7irQ3Xiq+jEbBkgm3fqDEdn38/JNY66Yg
+         Pd5BkJLR+cembbtD4G6zL35Oqzx+wzlpHd0ZMNxYYNE+x136omfSBXl0oYsVtVAPJh2+
+         /SkAPCFfcGUYiX286n1LiPv0WAc7sx3nI9r9jcKsTIiTsn45J0SMH5ELf1Rw06QdJjYl
+         tYQA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Adam Ford <aford173@gmail.com>,
-	Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 4.9 26/65] ARM: dts: LogicPD SOM-LV: Fix I2C1 pinmux
-Date: Fri,  9 Mar 2018 16:18:26 -0800
-Message-Id: <20180310001827.031845889@linuxfoundation.org>
+	David Ahern <dsahern@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.9 57/65] net: mpls: Pull common label check into helper
+Date: Fri,  9 Mar 2018 16:18:57 -0800
+Message-Id: <20180310001829.699068126@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
 References: <20180310001824.927996722@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594508040560199237?=
-X-GMAIL-MSGID: =?utf-8?q?1594508040560199237?=
+X-GMAIL-THRID: =?utf-8?q?1594507920885870676?=
+X-GMAIL-MSGID: =?utf-8?q?1594508038518987673?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,50 +50,81 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Adam Ford <aford173@gmail.com>
+From: David Ahern <dsahern@gmail.com>
 
-commit 84c7efd607e7fb6933920322086db64654f669b2 upstream.
+commit b7b386f42f079b25b942c756820e36c6bd09b2ca upstream.
 
-The pinmuxing was missing for I2C1 which was causing intermittent issues
-with the PMIC which is connected to I2C1.  The bootloader did not quite
-configure the I2C1 either, so when running at 2.6MHz, it was generating
-errors at times.
+mpls_route_add and mpls_route_del have the same checks on the label.
+Move to a helper. Avoid duplicate extack messages in the next patch.
 
-This correctly sets the I2C1 pinmuxing so it can operate at 2.6MHz
-
-Fixes: ab8dd3aed011 ("ARM: DTS: Add minimal Support for Logic PD DM3730
-SOM-LV")
-
-Signed-off-by: Adam Ford <aford173@gmail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arm/boot/dts/logicpd-som-lv.dtsi |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ net/mpls/af_mpls.c |   32 +++++++++++++++++---------------
+ 1 file changed, 17 insertions(+), 15 deletions(-)
 
---- a/arch/arm/boot/dts/logicpd-som-lv.dtsi
-+++ b/arch/arm/boot/dts/logicpd-som-lv.dtsi
-@@ -97,6 +97,8 @@
- };
+--- a/net/mpls/af_mpls.c
++++ b/net/mpls/af_mpls.c
+@@ -756,6 +756,19 @@ errout:
+ 	return err;
+ }
  
- &i2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1_pins>;
- 	clock-frequency = <2600000>;
++static bool mpls_label_ok(struct net *net, unsigned int index)
++{
++	/* Reserved labels may not be set */
++	if (index < MPLS_LABEL_FIRST_UNRESERVED)
++		return false;
++
++	/* The full 20 bit range may not be supported. */
++	if (index >= net->mpls.platform_labels)
++		return false;
++
++	return true;
++}
++
+ static int mpls_route_add(struct mpls_route_config *cfg)
+ {
+ 	struct mpls_route __rcu **platform_label;
+@@ -774,12 +787,7 @@ static int mpls_route_add(struct mpls_ro
+ 		index = find_free_label(net);
+ 	}
  
- 	twl: twl@48 {
-@@ -215,7 +217,12 @@
- 		>;
- 	};
- 
+-	/* Reserved labels may not be set */
+-	if (index < MPLS_LABEL_FIRST_UNRESERVED)
+-		goto errout;
 -
-+	i2c1_pins: pinmux_i2c1_pins {
-+		pinctrl-single,pins = <
-+			OMAP3_CORE1_IOPAD(0x21ba, PIN_INPUT | MUX_MODE0)        /* i2c1_scl.i2c1_scl */
-+			OMAP3_CORE1_IOPAD(0x21bc, PIN_INPUT | MUX_MODE0)        /* i2c1_sda.i2c1_sda */
-+		>;
-+	};
- };
+-	/* The full 20 bit range may not be supported. */
+-	if (index >= net->mpls.platform_labels)
++	if (!mpls_label_ok(net, index))
+ 		goto errout;
  
- &omap3_pmx_wkup {
+ 	/* Append makes no sense with mpls */
+@@ -840,12 +848,7 @@ static int mpls_route_del(struct mpls_ro
+ 
+ 	index = cfg->rc_label;
+ 
+-	/* Reserved labels may not be removed */
+-	if (index < MPLS_LABEL_FIRST_UNRESERVED)
+-		goto errout;
+-
+-	/* The full 20 bit range may not be supported */
+-	if (index >= net->mpls.platform_labels)
++	if (!mpls_label_ok(net, index))
+ 		goto errout;
+ 
+ 	mpls_route_update(net, index, NULL, &cfg->rc_nlinfo);
+@@ -1279,10 +1282,9 @@ static int rtm_to_route_config(struct sk
+ 					   &cfg->rc_label))
+ 				goto errout;
+ 
+-			/* Reserved labels may not be set */
+-			if (cfg->rc_label < MPLS_LABEL_FIRST_UNRESERVED)
++			if (!mpls_label_ok(cfg->rc_nlinfo.nl_net,
++					   cfg->rc_label))
+ 				goto errout;
+-
+ 			break;
+ 		}
+ 		case RTA_VIA:
