@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932421AbeCJSic (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 13:38:32 -0500
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:43993 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751247AbeCJSUt (ORCPT
+        id S1751695AbeCJSiy (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 13:38:54 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:38833 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751216AbeCJSUs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 13:20:49 -0500
-X-Google-Smtp-Source: AG47ELuftCLbg+wXT//Vrel5tRAFfk4BPLNxSllFYWLasa72NIAcE/yXtmnxbpQquVSIuHcO+Xr0Dg==
+        Sat, 10 Mar 2018 13:20:48 -0500
+X-Google-Smtp-Source: AG47ELuMywD+6XAB9xGoSzAcmJW4BPJURw4mkcNDsarySO6z03r4QfaRn4OCbMtboBR056uk91Ykrw==
 From: Andiry Xu <jix024@eng.ucsd.edu>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -15,9 +15,9 @@ Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
         swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
         swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
         Andiry Xu <jix024@cs.ucsd.edu>
-Subject: [RFC v2 27/83] Save the inode inuse list to pmem upon umount
-Date: Sat, 10 Mar 2018 10:18:08 -0800
-Message-Id: <1520705944-6723-28-git-send-email-jix024@eng.ucsd.edu>
+Subject: [RFC v2 26/83] Add inode_map to track inuse inodes.
+Date: Sat, 10 Mar 2018 10:18:07 -0800
+Message-Id: <1520705944-6723-27-git-send-email-jix024@eng.ucsd.edu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
@@ -27,95 +27,403 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andiry Xu <jix024@cs.ucsd.edu>
 
+NOVA uses per-CPU inode map to track inuse inodes.
+It works in the same way as the allocator, the only difference is that inode map
+tracks in-use inodes, while free list contains free ranges. NOVA always try
+to allocate the first available inode number.
+
 Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
 ---
- fs/nova/bbuild.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
- fs/nova/bbuild.h |  1 +
- fs/nova/super.c  |  1 +
- 3 files changed, 50 insertions(+)
+ fs/nova/inode.c | 190 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/nova/inode.h |   3 +
+ fs/nova/nova.h  |  10 +++
+ fs/nova/super.c |  44 +++++++++++++
+ fs/nova/super.h |   9 +++
+ 5 files changed, 256 insertions(+)
 
-diff --git a/fs/nova/bbuild.c b/fs/nova/bbuild.c
-index 12a2f11..66053cb 100644
---- a/fs/nova/bbuild.c
-+++ b/fs/nova/bbuild.c
-@@ -116,6 +116,54 @@ static u64 nova_save_free_list_blocknodes(struct super_block *sb, int cpu,
- 	return temp_tail;
- }
+diff --git a/fs/nova/inode.c b/fs/nova/inode.c
+index 4e2842d..7c10d0e 100644
+--- a/fs/nova/inode.c
++++ b/fs/nova/inode.c
+@@ -29,6 +29,43 @@
+ unsigned int blk_type_to_shift[NOVA_BLOCK_TYPE_MAX] = {12, 21, 30};
+ uint32_t blk_type_to_size[NOVA_BLOCK_TYPE_MAX] = {0x1000, 0x200000, 0x40000000};
  
-+void nova_save_inode_list_to_log(struct super_block *sb)
++int nova_init_inode_inuse_list(struct super_block *sb)
 +{
-+	struct nova_inode *pi = nova_get_inode_by_ino(sb, NOVA_INODELIST_INO);
-+	struct nova_inode_info_header sih;
 +	struct nova_sb_info *sbi = NOVA_SB(sb);
-+	unsigned long num_blocks;
-+	unsigned long num_nodes = 0;
++	struct nova_range_node *range_node;
 +	struct inode_map *inode_map;
-+	unsigned long i;
-+	u64 temp_tail;
-+	u64 new_block;
-+	int allocated;
++	unsigned long range_high;
++	int i;
++	int ret;
 +
-+	sih.ino = NOVA_INODELIST_INO;
-+	sih.i_blk_type = NOVA_DEFAULT_BLOCK_TYPE;
-+	sih.i_blocks = 0;
++	sbi->s_inodes_used_count = NOVA_NORMAL_INODE_START;
++
++	range_high = NOVA_NORMAL_INODE_START / sbi->cpus;
++	if (NOVA_NORMAL_INODE_START % sbi->cpus)
++		range_high++;
 +
 +	for (i = 0; i < sbi->cpus; i++) {
 +		inode_map = &sbi->inode_maps[i];
-+		num_nodes += inode_map->num_range_node_inode;
++		range_node = nova_alloc_inode_node(sb);
++		if (range_node == NULL)
++			/* FIXME: free allocated memories */
++			return -ENOMEM;
++
++		range_node->range_low = 0;
++		range_node->range_high = range_high;
++		ret = nova_insert_inodetree(sbi, range_node, i);
++		if (ret) {
++			nova_err(sb, "%s failed\n", __func__);
++			nova_free_inode_node(sb, range_node);
++			return ret;
++		}
++		inode_map->num_range_node_inode = 1;
++		inode_map->first_inode_range = range_node;
 +	}
 +
-+	num_blocks = num_nodes / RANGENODE_PER_PAGE;
-+	if (num_nodes % RANGENODE_PER_PAGE)
-+		num_blocks++;
-+
-+	allocated = nova_allocate_inode_log_pages(sb, &sih, num_blocks,
-+						&new_block, ANY_CPU, 0);
-+	if (allocated != num_blocks) {
-+		nova_dbg("Error saving inode list: %d\n", allocated);
-+		return;
-+	}
-+
-+	temp_tail = new_block;
-+	for (i = 0; i < sbi->cpus; i++) {
-+		inode_map = &sbi->inode_maps[i];
-+		temp_tail = nova_save_range_nodes_to_log(sb,
-+				&inode_map->inode_inuse_tree, temp_tail, i);
-+	}
-+
-+	pi->log_head = new_block;
-+	nova_update_tail(pi, temp_tail);
-+	nova_flush_buffer(&pi->log_head, CACHELINE_SIZE, 0);
-+
-+	nova_dbg("%s: %lu inode nodes, pi head 0x%llx, tail 0x%llx\n",
-+		__func__, num_nodes, pi->log_head, pi->log_tail);
++	return 0;
 +}
 +
- void nova_save_blocknode_mappings_to_log(struct super_block *sb)
+ static int nova_alloc_inode_table(struct super_block *sb,
+ 	struct nova_inode_info_header *sih)
  {
- 	struct nova_inode *pi = nova_get_inode_by_ino(sb, NOVA_BLOCKNODE_INO);
-diff --git a/fs/nova/bbuild.h b/fs/nova/bbuild.h
-index 59cc379..5d2b5f0 100644
---- a/fs/nova/bbuild.h
-+++ b/fs/nova/bbuild.h
-@@ -3,6 +3,7 @@
+@@ -298,3 +335,156 @@ struct inode *nova_iget(struct super_block *sb, unsigned long ino)
+ 	return ERR_PTR(err);
+ }
  
- void nova_init_header(struct super_block *sb,
- 	struct nova_inode_info_header *sih, u16 i_mode);
-+void nova_save_inode_list_to_log(struct super_block *sb);
- void nova_save_blocknode_mappings_to_log(struct super_block *sb);
++inline int nova_insert_inodetree(struct nova_sb_info *sbi,
++	struct nova_range_node *new_node, int cpu)
++{
++	struct rb_root *tree;
++	int ret;
++
++	tree = &sbi->inode_maps[cpu].inode_inuse_tree;
++	ret = nova_insert_range_node(tree, new_node);
++	if (ret)
++		nova_dbg("ERROR: %s failed %d\n", __func__, ret);
++
++	return ret;
++}
++
++static inline int nova_search_inodetree(struct nova_sb_info *sbi,
++	unsigned long ino, struct nova_range_node **ret_node)
++{
++	struct rb_root *tree;
++	unsigned long internal_ino;
++	int cpu;
++
++	cpu = ino % sbi->cpus;
++	tree = &sbi->inode_maps[cpu].inode_inuse_tree;
++	internal_ino = ino / sbi->cpus;
++	return nova_find_range_node(sbi, tree, internal_ino, ret_node);
++}
++
++int nova_alloc_unused_inode(struct super_block *sb, int cpuid,
++	unsigned long *ino)
++{
++	struct nova_sb_info *sbi = NOVA_SB(sb);
++	struct inode_map *inode_map;
++	struct nova_range_node *i, *next_i;
++	struct rb_node *temp, *next;
++	unsigned long next_range_low;
++	unsigned long new_ino;
++	unsigned long MAX_INODE = 1UL << 31;
++
++	inode_map = &sbi->inode_maps[cpuid];
++	i = inode_map->first_inode_range;
++	NOVA_ASSERT(i);
++
++	temp = &i->node;
++	next = rb_next(temp);
++
++	if (!next) {
++		next_i = NULL;
++		next_range_low = MAX_INODE;
++	} else {
++		next_i = container_of(next, struct nova_range_node, node);
++		next_range_low = next_i->range_low;
++	}
++
++	new_ino = i->range_high + 1;
++
++	if (next_i && new_ino == (next_range_low - 1)) {
++		/* Fill the gap completely */
++		i->range_high = next_i->range_high;
++		rb_erase(&next_i->node, &inode_map->inode_inuse_tree);
++		nova_free_inode_node(sb, next_i);
++		inode_map->num_range_node_inode--;
++	} else if (new_ino < (next_range_low - 1)) {
++		/* Aligns to left */
++		i->range_high = new_ino;
++	} else {
++		nova_dbg("%s: ERROR: new ino %lu, next low %lu\n", __func__,
++			new_ino, next_range_low);
++		return -ENOSPC;
++	}
++
++	*ino = new_ino * sbi->cpus + cpuid;
++	sbi->s_inodes_used_count++;
++	inode_map->allocated++;
++
++	nova_dbg_verbose("Alloc ino %lu\n", *ino);
++	return 0;
++}
++
++int nova_free_inuse_inode(struct super_block *sb, unsigned long ino)
++{
++	struct nova_sb_info *sbi = NOVA_SB(sb);
++	struct inode_map *inode_map;
++	struct nova_range_node *i = NULL;
++	struct nova_range_node *curr_node;
++	int found = 0;
++	int cpuid = ino % sbi->cpus;
++	unsigned long internal_ino = ino / sbi->cpus;
++	int ret = 0;
++
++	nova_dbg_verbose("Free inuse ino: %lu\n", ino);
++	inode_map = &sbi->inode_maps[cpuid];
++
++	mutex_lock(&inode_map->inode_table_mutex);
++	found = nova_search_inodetree(sbi, ino, &i);
++	if (!found) {
++		nova_dbg("%s ERROR: ino %lu not found\n", __func__, ino);
++		mutex_unlock(&inode_map->inode_table_mutex);
++		return -EINVAL;
++	}
++
++	if ((internal_ino == i->range_low) && (internal_ino == i->range_high)) {
++		/* fits entire node */
++		rb_erase(&i->node, &inode_map->inode_inuse_tree);
++		nova_free_inode_node(sb, i);
++		inode_map->num_range_node_inode--;
++		goto block_found;
++	}
++	if ((internal_ino == i->range_low) && (internal_ino < i->range_high)) {
++		/* Aligns left */
++		i->range_low = internal_ino + 1;
++		goto block_found;
++	}
++	if ((internal_ino > i->range_low) && (internal_ino == i->range_high)) {
++		/* Aligns right */
++		i->range_high = internal_ino - 1;
++		goto block_found;
++	}
++	if ((internal_ino > i->range_low) && (internal_ino < i->range_high)) {
++		/* Aligns somewhere in the middle */
++		curr_node = nova_alloc_inode_node(sb);
++		NOVA_ASSERT(curr_node);
++		if (curr_node == NULL) {
++			/* returning without freeing the block */
++			goto block_found;
++		}
++		curr_node->range_low = internal_ino + 1;
++		curr_node->range_high = i->range_high;
++
++		i->range_high = internal_ino - 1;
++
++		ret = nova_insert_inodetree(sbi, curr_node, cpuid);
++		if (ret) {
++			nova_free_inode_node(sb, curr_node);
++			goto err;
++		}
++		inode_map->num_range_node_inode++;
++		goto block_found;
++	}
++
++err:
++	nova_error_mng(sb, "Unable to free inode %lu\n", ino);
++	nova_error_mng(sb, "Found inuse block %lu - %lu\n",
++				 i->range_low, i->range_high);
++	mutex_unlock(&inode_map->inode_table_mutex);
++	return ret;
++
++block_found:
++	sbi->s_inodes_used_count--;
++	inode_map->freed++;
++	mutex_unlock(&inode_map->inode_table_mutex);
++	return ret;
++}
++
+diff --git a/fs/nova/inode.h b/fs/nova/inode.h
+index a88f0a2..497343d 100644
+--- a/fs/nova/inode.h
++++ b/fs/nova/inode.h
+@@ -221,9 +221,12 @@ static inline int nova_persist_inode(struct nova_inode *pi)
+ }
+ 
+ 
++int nova_init_inode_inuse_list(struct super_block *sb);
+ int nova_init_inode_table(struct super_block *sb);
+ int nova_get_inode_address(struct super_block *sb, u64 ino,
+ 	u64 *pi_addr, int extendable);
+ struct inode *nova_iget(struct super_block *sb, unsigned long ino);
++inline int nova_insert_inodetree(struct nova_sb_info *sbi,
++	struct nova_range_node *new_node, int cpu);
  
  #endif
+diff --git a/fs/nova/nova.h b/fs/nova/nova.h
+index aa88d9f..bf4b6ac 100644
+--- a/fs/nova/nova.h
++++ b/fs/nova/nova.h
+@@ -318,6 +318,16 @@ struct nova_range_node {
+ };
+ 
+ #include "bbuild.h"
++
++struct inode_map {
++	struct mutex		inode_table_mutex;
++	struct rb_root		inode_inuse_tree;
++	unsigned long		num_range_node_inode;
++	struct nova_range_node *first_inode_range;
++	int			allocated;
++	int			freed;
++};
++
+ #include "balloc.h"
+ 
+ static inline unsigned long
 diff --git a/fs/nova/super.c b/fs/nova/super.c
-index 9b60873..69e4afc 100644
+index 32fe29b..9b60873 100644
 --- a/fs/nova/super.c
 +++ b/fs/nova/super.c
-@@ -734,6 +734,7 @@ static void nova_put_super(struct super_block *sb)
- 	int i;
+@@ -378,6 +378,9 @@ static struct nova_inode *nova_init(struct super_block *sb,
+ 
+ 	nova_init_blockmap(sb, 0);
+ 
++	if (nova_init_inode_inuse_list(sb) < 0)
++		return ERR_PTR(-EINVAL);
++
+ 	if (nova_init_inode_table(sb) < 0)
+ 		return ERR_PTR(-EINVAL);
+ 
+@@ -420,6 +423,7 @@ static inline void set_default_opts(struct nova_sb_info *sbi)
+ 	sbi->head_reserved_blocks = HEAD_RESERVED_BLOCKS;
+ 	sbi->tail_reserved_blocks = TAIL_RESERVED_BLOCKS;
+ 	sbi->cpus = num_online_cpus();
++	sbi->map_id = 0;
+ }
+ 
+ static void nova_root_check(struct super_block *sb, struct nova_inode *root_pi)
+@@ -481,9 +485,11 @@ static int nova_fill_super(struct super_block *sb, void *data, int silent)
+ 	struct nova_sb_info *sbi = NULL;
+ 	struct nova_inode *root_pi;
+ 	struct inode *root_i = NULL;
++	struct inode_map *inode_map;
+ 	unsigned long blocksize;
+ 	u32 random = 0;
+ 	int retval = -EINVAL;
++	int i;
+ 	timing_t mount_time;
+ 
+ 	NOVA_START_TIMING(mount_t, mount_time);
+@@ -533,6 +539,21 @@ static int nova_fill_super(struct super_block *sb, void *data, int silent)
+ 	sbi->gid = current_fsgid();
+ 	set_opt(sbi->s_mount_opt, HUGEIOREMAP);
+ 
++	sbi->inode_maps = kcalloc(sbi->cpus, sizeof(struct inode_map),
++					GFP_KERNEL);
++	if (!sbi->inode_maps) {
++		retval = -ENOMEM;
++		nova_dbg("%s: Allocating inode maps failed.",
++			 __func__);
++		goto out;
++	}
++
++	for (i = 0; i < sbi->cpus; i++) {
++		inode_map = &sbi->inode_maps[i];
++		mutex_init(&inode_map->inode_table_mutex);
++		inode_map->inode_inuse_tree = RB_ROOT;
++	}
++
+ 	mutex_init(&sbi->s_lock);
+ 
+ 	sbi->zeroed_page = kzalloc(PAGE_SIZE, GFP_KERNEL);
+@@ -625,6 +646,9 @@ static int nova_fill_super(struct super_block *sb, void *data, int silent)
+ 
+ 	nova_delete_free_lists(sb);
+ 
++	kfree(sbi->inode_maps);
++	sbi->inode_maps = NULL;
++
+ 	kfree(sbi->nova_sb);
+ 	kfree(sbi);
+ 	nova_dbg("%s failed: return %d\n", __func__, retval);
+@@ -706,6 +730,8 @@ static int nova_remount(struct super_block *sb, int *mntflags, char *data)
+ static void nova_put_super(struct super_block *sb)
+ {
+ 	struct nova_sb_info *sbi = NOVA_SB(sb);
++	struct inode_map *inode_map;
++	int i;
  
  	if (sbi->virt_addr) {
-+		nova_save_inode_list_to_log(sb);
  		/* Save everything before blocknode mapping! */
- 		nova_save_blocknode_mappings_to_log(sb);
- 		sbi->virt_addr = NULL;
+@@ -718,6 +744,13 @@ static void nova_put_super(struct super_block *sb)
+ 	kfree(sbi->zeroed_page);
+ 	nova_dbgmask = 0;
+ 
++	for (i = 0; i < sbi->cpus; i++) {
++		inode_map = &sbi->inode_maps[i];
++		nova_dbgv("CPU %d: inode allocated %d, freed %d\n",
++			i, inode_map->allocated, inode_map->freed);
++	}
++
++	kfree(sbi->inode_maps);
+ 	kfree(sbi->nova_sb);
+ 	kfree(sbi);
+ 	sb->s_fs_info = NULL;
+@@ -728,6 +761,12 @@ inline void nova_free_range_node(struct nova_range_node *node)
+ 	kmem_cache_free(nova_range_node_cachep, node);
+ }
+ 
++inline void nova_free_inode_node(struct super_block *sb,
++	struct nova_range_node *node)
++{
++	nova_free_range_node(node);
++}
++
+ inline struct nova_range_node *nova_alloc_range_node(struct super_block *sb)
+ {
+ 	struct nova_range_node *p;
+@@ -737,6 +776,11 @@ inline struct nova_range_node *nova_alloc_range_node(struct super_block *sb)
+ 	return p;
+ }
+ 
++inline struct nova_range_node *nova_alloc_inode_node(struct super_block *sb)
++{
++	return nova_alloc_range_node(sb);
++}
++
+ static struct inode *nova_alloc_inode(struct super_block *sb)
+ {
+ 	struct nova_inode_info *vi;
+diff --git a/fs/nova/super.h b/fs/nova/super.h
+index dcafbd8..9772d2f 100644
+--- a/fs/nova/super.h
++++ b/fs/nova/super.h
+@@ -119,6 +119,12 @@ struct nova_sb_info {
+ 	/* ZEROED page for cache page initialized */
+ 	void *zeroed_page;
+ 
++	/* Per-CPU inode map */
++	struct inode_map	*inode_maps;
++
++	/* Decide new inode map id */
++	unsigned long map_id;
++
+ 	/* Per-CPU free block list */
+ 	struct free_list *free_lists;
+ 	unsigned long per_list_blocks;
+@@ -150,6 +156,9 @@ static inline struct nova_super_block *nova_get_super(struct super_block *sb)
+ 
+ extern void nova_error_mng(struct super_block *sb, const char *fmt, ...);
+ extern struct nova_range_node *nova_alloc_range_node(struct super_block *sb);
++extern inline struct nova_range_node *nova_alloc_inode_node(struct super_block *sb);
+ extern void nova_free_range_node(struct nova_range_node *node);
++extern inline void nova_free_inode_node(struct super_block *sb,
++	struct nova_range_node *node);
+ 
+ #endif
 -- 
 2.7.4
