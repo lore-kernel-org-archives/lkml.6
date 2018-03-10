@@ -1,145 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933050AbeCJNOl (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 08:14:41 -0500
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:42238 "EHLO
-        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932947AbeCJNOj (ORCPT
+        id S933063AbeCJNPm (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 08:15:42 -0500
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:52407 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932854AbeCJNPk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 08:14:39 -0500
-Date: Sat, 10 Mar 2018 08:13:55 -0500
-From: Neil Horman <nhorman@tuxdriver.com>
-To: Xin Long <lucien.xin@gmail.com>
-Cc: syzbot <syzbot+a4e4112c3aff00c8cfd8@syzkaller.appspotmail.com>,
-        davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-sctp@vger.kernel.org, network dev <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com, Vlad Yasevich <vyasevich@gmail.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Subject: Re: KASAN: use-after-free Read in sctp_association_free (2)
-Message-ID: <20180310131355.GA8798@hmswarspite.think-freely.org>
-References: <00000000000017dfe905670110cf@google.com>
- <20180309220823.GA24848@neilslaptop.think-freely.org>
- <CADvbK_fGkhJeirYwiu9ORmmPPBpqamgO2+vi9Osyd92cUWJBVA@mail.gmail.com>
+        Sat, 10 Mar 2018 08:15:40 -0500
+X-Google-Smtp-Source: AG47ELsoQug4PHhgQFD7qg25zPWzFQWkjMn1ccsQbiJQoHjDNntUlUpKNVv5NkKnUPWWzyL6sAc2Hg==
+Reply-To: monstr@monstr.eu
+Subject: Re: Bug: Microblaze stopped booting after
+ 0fa1c579349fdd90173381712ad78aa99c09d38b
+To: Rob Herring <robh@kernel.org>,
+        "Alvaro G. M." <alvaro.gamez@hazent.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180309125106.GA1644@salem.gmr.ssr.upm.es>
+ <CAL_JsqLenrLARsjHvkkL3ByuXARPShz-VAEBDE2FukJc=vD+Sg@mail.gmail.com>
+From: Michal Simek <monstr@monstr.eu>
+Message-ID: <ac91e42c-87fa-bdee-5dd1-640802a06e91@monstr.eu>
+Date: Sat, 10 Mar 2018 14:15:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADvbK_fGkhJeirYwiu9ORmmPPBpqamgO2+vi9Osyd92cUWJBVA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-Spam-Score: -2.9 (--)
+In-Reply-To: <CAL_JsqLenrLARsjHvkkL3ByuXARPShz-VAEBDE2FukJc=vD+Sg@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="mblUGwnFd7TPUqHJntuZuAgBqiCBjBIst"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 10, 2018 at 03:58:04PM +0800, Xin Long wrote:
-> On Sat, Mar 10, 2018 at 6:08 AM, Neil Horman <nhorman@tuxdriver.com> wrote:
-> > On Fri, Mar 09, 2018 at 12:59:06PM -0800, syzbot wrote:
-> >> Hello,
-> >>
-> >> syzbot hit the following crash on net-next commit
-> >> fd372a7a9e5e9d8011a0222d10edd3523abcd3b1 (Thu Mar 8 19:43:48 2018 +0000)
-> >> Merge tag 'mlx5-updates-2018-02-28-2' of
-> >> git://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux
-> >>
-> >> So far this crash happened 2 times on net-next.
-> >> C reproducer is attached.
-> >> syzkaller reproducer is attached.
-> >> Raw console output is attached.
-> >> compiler: gcc (GCC) 7.1.1 20170620
-> >> .config is attached.
-> >>
-> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> >> Reported-by: syzbot+a4e4112c3aff00c8cfd8@syzkaller.appspotmail.com
-> >> It will help syzbot understand when the bug is fixed. See footer for
-> >> details.
-> >> If you forward the report, please keep this part and the footer.
-> >>
-> >> IPVS: ftp: loaded support on port[0] = 21
-> >> IPVS: ftp: loaded support on port[0] = 21
-> >> IPVS: ftp: loaded support on port[0] = 21
-> >> IPVS: ftp: loaded support on port[0] = 21
-> >> ==================================================================
-> >> BUG: KASAN: use-after-free in sctp_association_free+0x7b7/0x930
-> >> net/sctp/associola.c:332
-> >> Read of size 8 at addr ffff8801d8006ae0 by task syzkaller914861/4202
-> >>
-> >> CPU: 1 PID: 4202 Comm: syzkaller914861 Not tainted 4.16.0-rc4+ #258
-> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> >> Google 01/01/2011
-> >> Call Trace:
-> >>  __dump_stack lib/dump_stack.c:17 [inline]
-> >>  dump_stack+0x194/0x24d lib/dump_stack.c:53
-> >>  print_address_description+0x73/0x250 mm/kasan/report.c:256
-> >>  kasan_report_error mm/kasan/report.c:354 [inline]
-> >>  kasan_report+0x23c/0x360 mm/kasan/report.c:412
-> >>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-> >>  sctp_association_free+0x7b7/0x930 net/sctp/associola.c:332
-> >>  sctp_sendmsg+0xc67/0x1a80 net/sctp/socket.c:2075
-> >>  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:763
-> >>  sock_sendmsg_nosec net/socket.c:629 [inline]
-> >>  sock_sendmsg+0xca/0x110 net/socket.c:639
-> >>  SYSC_sendto+0x361/0x5c0 net/socket.c:1748
-> >>  SyS_sendto+0x40/0x50 net/socket.c:1716
-> >>  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-> >>  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> >> RIP: 0033:0x446d09
-> >> RSP: 002b:00007f5dbac21da8 EFLAGS: 00000216 ORIG_RAX: 000000000000002c
-> >> RAX: ffffffffffffffda RBX: 00000000006e29fc RCX: 0000000000446d09
-> >> RDX: 0000000000000001 RSI: 0000000020000340 RDI: 0000000000000003
-> >> RBP: 00000000006e29f8 R08: 00000000204d9000 R09: 000000000000001c
-> >> R10: 0000000000000000 R11: 0000000000000216 R12: 0000000000000000
-> >> R13: 00007fff7b26fb1f R14: 00007f5dbac229c0 R15: 00000000006e2b60
-> >>
-> > I think we have a corner case with a0ff660058b88d12625a783ce9e5c1371c87951f
-> > here.  If a peeloff event happens during a wait for sendbuf space, EPIPE will be
-> > returned, and the code path appears to call sctp_association_put twice, leading
-> > to the use after free situation.  I'll write a patch this weekend
-> Hi, Neil, you're right.
-> 
-> I didn't expect peeloff can be done on a NEW asoc, as peeloff needs
-> assoc_id, which can only be set when connecting has started.
-> 
-> But I realized that:
-> f84af33 sctp: factor out sctp_sendmsg_to_asoc from sctp_sendmsg
-> 
-> moved sctp_primitive_ASSOCIATE(connecting) before sctp_wait_for_sndbuf
-> (snd buffer waiting). It means peeloff can be done on a NEW asoc.
-> So you may want to move it back.
-> 
-I agree with the root cause, but I'm not sure I agree with just moving the
-wait_for_sndbuf call back above the call to associate.  I'm not sure I like
-relying on placing a call in a spcific order solely to avoid an error condition
-that might legitimately occur.  I think would rather check the return code at
-the call site for the complete set of conditions for which we should not free
-the association.  Something like this:
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--mblUGwnFd7TPUqHJntuZuAgBqiCBjBIst
+Content-Type: multipart/mixed; boundary="tqB2F5M1vcoa0FG2A4OYvDOXdDyF4bNS6";
+ protected-headers="v1"
+From: Michal Simek <monstr@monstr.eu>
+Reply-To: monstr@monstr.eu
+To: Rob Herring <robh@kernel.org>, "Alvaro G. M." <alvaro.gamez@hazent.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Message-ID: <ac91e42c-87fa-bdee-5dd1-640802a06e91@monstr.eu>
+Subject: Re: Bug: Microblaze stopped booting after
+ 0fa1c579349fdd90173381712ad78aa99c09d38b
+References: <20180309125106.GA1644@salem.gmr.ssr.upm.es>
+ <CAL_JsqLenrLARsjHvkkL3ByuXARPShz-VAEBDE2FukJc=vD+Sg@mail.gmail.com>
+In-Reply-To: <CAL_JsqLenrLARsjHvkkL3ByuXARPShz-VAEBDE2FukJc=vD+Sg@mail.gmail.com>
 
-diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-index 7d3476a4860d..a68846d2b0ef 100644
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -2071,8 +2071,9 @@ static int sctp_sendmsg(struct sock *sk, struct msghdr *msg, size_t msg_len)
- 
-        /* Send msg to the asoc */
-        err = sctp_sendmsg_to_asoc(asoc, msg, msg_len, transport, sinfo);
--       if (err < 0 && err != -ESRCH && new)
--               sctp_association_free(asoc);
-+       if ((err != -ESRCH) && (err != -EPIPE))
-+               if (err < 0 && new)
-+                       sctp_association_free(asoc);
- 
- out_unlock:
-        release_sock(sk);
+--tqB2F5M1vcoa0FG2A4OYvDOXdDyF4bNS6
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Which I think also avoids the noted conflict.
+On 9.3.2018 20:05, Rob Herring wrote:
+> On Fri, Mar 9, 2018 at 6:51 AM, Alvaro G. M. <alvaro.gamez@hazent.com> =
+wrote:
+>> Hi,
+>>
+>> I've found via git bisect that 0fa1c579349fdd90173381712ad78aa99c09d38=
+b
+>> makes microblaze unbootable.
+>>
+>> I'm sorry I can't provide any console output, as nothing appears at al=
+l,
+>> even when setting earlyprintk (or at least I wasn't able to get anythi=
+ng
+>> back!).
+>=20
+> Ah, looks like microblaze doesn't set CONFIG_NO_BOOTMEM and so
+> memblock_virt_alloc() doesn't work for CONFIG_HAVE_MEMBLOCK &&
+> !CONFIG_NO_BOOTMEM. AFAICT, microblaze doesn't really need bootmem and
+> it can be removed, but I'm still investigating. Can you try out this
+> branch[1].
+>=20
+> Rob
+>=20
+> [1] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
+> microblaze-fixes
+>=20
 
-Thoughts?
+Let me take a look at it on Monday with the rest of patches sent by you.
 
-Neil
+Thanks,
+Michal
 
-> One good thing is the fix shouldn't touch the conflict on
-> https://lkml.org/lkml/2018/3/7/1175
-> We can fix it right now, I think. But pls double check it before
-> submitting the patch. We just can't grow up that fixup for linus
-> tree's merge.
-> 
-> Thanks.
-> 
+
+--=20
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Xilinx Microblaze
+Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
+U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
+
+
+
+--tqB2F5M1vcoa0FG2A4OYvDOXdDyF4bNS6--
+
+--mblUGwnFd7TPUqHJntuZuAgBqiCBjBIst
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iEYEARECAAYFAlqj2nUACgkQykllyylKDCGbVwCgj9qGosojfZnw46xvHr/phNxa
+uL8An0/fXnWk5cdyc860tLw0ij7hCJg3
+=LhRy
+-----END PGP SIGNATURE-----
+
+--mblUGwnFd7TPUqHJntuZuAgBqiCBjBIst--
