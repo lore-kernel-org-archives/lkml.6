@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtZJTwLsQLlyp6L+0VM2mkTo4RJwPuqdA1rh81H++5OvveOVXmU9BQ05hSJLreT9ar0XiaG
-ARC-Seal: i=1; a=rsa-sha256; t=1520641199; cv=none;
+X-Google-Smtp-Source: AG47ELsALd38Ac1jULzcS/DzkQl7qhj7Km6S9l0uRVNIPgMRRly0CnS7L4lvMvaxjsVymzm8pUxw
+ARC-Seal: i=1; a=rsa-sha256; t=1520641197; cv=none;
         d=google.com; s=arc-20160816;
-        b=G6ajdS+8yD4RB1okSXQWUn7hWumkspUw8AJUkmIJYQXWsOVWROm/nDwRtDRKeEtte5
-         iKRAlkH5FCbta+vfYo19C72MnBrEnucQD6bHNgKycTYikMczZMFjBxYvfAC67AntofH8
-         PLvUzxFUuZYYt3UZNSrbDc2OalswFpOEo3qeTvO2V+Q/Z7Dfv+ebuA5jaXOMbFjkFxyX
-         l2u9SRKEXkybChEkoLwF5i3/+N5yonrjxYAVhOqQfTMlft4e206AUhUd3BVtAcS2+Qa3
-         FDKNKGUjULQ3fuuOCtJEarHaEahkauMQDrFj1LyXa8Bu+RfxpJKK1qFciDLfMkgqK22Q
-         1LRw==
+        b=D6iQtZXtL1Wrq4h6KkwBdF0gx/1cpU/of1miiOct2JtuXcSz2lmCwOFPdFhnjH4MSO
+         +73D9up4bSUm42ct5zCV6axpR2yKUHFEnHobYoAHuoCKUAbfC+x7MWdGQFYdQXa+TnZ6
+         Xgd12szKmkPWCg8t85p6Iu3tLsBNKCKokcqTvhhzULsD0ND7KlM5O9auYa0J87OEaVRx
+         SyzqcJRJtsA/oUZbJIDYPuJtO9iP1Sp6iGGYWQVNpW43KdsJUJvP5xJgDa9LNzrEPn0N
+         sfOfC/0ZRsgEAy0D2SlRNrq7UZI0bCwmGU+IOb181F42niCvIj2ke9BmOK6wtP4qB5t0
+         UnZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=hMt67OoY3p5lhBhgqdDI/Su9q4985d08R6K9VNYHOMQ=;
-        b=osMc7bXXmXidukPBjJPrusk+TxRMv5JCUU+7WEHbYEggHKc4hSHtNgMNznS/OQwIkd
-         csU8NOTRqSc7hurolJFaB1e1uURUVk0fl4JibmpQ7KDi6uj6Egq/Iiqu22LkL2BvxuuI
-         g0L0ATn4M5ydoLXW6lgyM+80N07V6Dc+oUawysK1YIYJh9h8LCqNMPziziz1ZulUFHGP
-         yrqqDuKNPByszqYxF7gMc+GejNSB0Tkuu+JBXb9xi1gz4Koa+1gK8MMkVQT7DFDtNbDz
-         jyjxMYMh1XwZhaG7wS4+cVNGg3ZIou8xoPh6sMbtvCRqFu2Jba3VDjzfZq6d91TGDzEK
-         jKYg==
+        bh=nuyAestoZpZgVQheSAUCjU/XYWrWvjBxWzelSddtmog=;
+        b=l26lqoO+WRBBlRvBqQ+8Ijd1rd3/IaBpcqOJyshL9My1mkvVxsFkKlokZE5UYfJ8YS
+         lvt3AAvfsxcKqeC+aCeF6QrNe6xSwy69kqhkxKJvd61Yafj0w88VB9EP2KbL3r7Run8B
+         m7lTQqWouJTHFFvZGOHH/YlvmT8Q7kkv0tPg8NdqIABdsFCn5FJaQamHJmkXPijoMLvL
+         Iy2WD4mz4/Dd/P+7f3SvG8ukiuu2qKGbYa9l2nDRVVRssLTfTwIpwPT+zPidEPmZCp72
+         lsPEMTedd6XO9zd8ozvTI5LTj0LEAePIYbQ1+QCsDFNZchtZffUF4/3/1ohCga6APcTE
+         vBfA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jianlin Shi <jishi@redhat.com>,
-	Stefano Brivio <sbrivio@redhat.com>,
-	David Ahern <dsahern@gmail.com>,
+	Xiong Zhou <xzhou@redhat.com>,
+	Xin Long <lucien.xin@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 19/36] fib_semantics: Dont match route with mismatching tclassid
-Date: Fri,  9 Mar 2018 16:18:35 -0800
-Message-Id: <20180310001808.398098537@linuxfoundation.org>
+Subject: [PATCH 4.4 18/36] bridge: check brport attr show in brport_show
+Date: Fri,  9 Mar 2018 16:18:34 -0800
+Message-Id: <20180310001808.337030039@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001807.213987241@linuxfoundation.org>
 References: <20180310001807.213987241@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507835006519942?=
-X-GMAIL-MSGID: =?utf-8?q?1594507866770511385?=
+X-GMAIL-THRID: =?utf-8?q?1594507815386940691?=
+X-GMAIL-MSGID: =?utf-8?q?1594507864215811707?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,64 +50,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stefano Brivio <sbrivio@redhat.com>
+From: Xin Long <lucien.xin@gmail.com>
 
 
-[ Upstream commit a8c6db1dfd1b1d18359241372bb204054f2c3174 ]
+[ Upstream commit 1b12580af1d0677c3c3a19e35bfe5d59b03f737f ]
 
-In fib_nh_match(), if output interface or gateway are passed in
-the FIB configuration, we don't have to check next hops of
-multipath routes to conclude whether we have a match or not.
+Now br_sysfs_if file flush doesn't have attr show. To read it will
+cause kernel panic after users chmod u+r this file.
 
-However, we might still have routes with different realms
-matching the same output interface and gateway configuration,
-and this needs to cause the match to fail. Otherwise the first
-route inserted in the FIB will match, regardless of the realms:
+Xiong found this issue when running the commands:
 
- # ip route add 1.1.1.1 dev eth0 table 1234 realms 1/2
- # ip route append 1.1.1.1 dev eth0 table 1234 realms 3/4
- # ip route list table 1234
- 1.1.1.1 dev eth0 scope link realms 1/2
- 1.1.1.1 dev eth0 scope link realms 3/4
- # ip route del 1.1.1.1 dev ens3 table 1234 realms 3/4
- # ip route list table 1234
- 1.1.1.1 dev ens3 scope link realms 3/4
+  ip link add br0 type bridge
+  ip link add type veth
+  ip link set veth0 master br0
+  chmod u+r /sys/devices/virtual/net/veth0/brport/flush
+  timeout 3 cat /sys/devices/virtual/net/veth0/brport/flush
 
-whereas route with realms 3/4 should have been deleted instead.
+kernel crashed with NULL a pointer dereference call trace.
 
-Explicitly check for fc_flow passed in the FIB configuration
-(this comes from RTA_FLOW extracted by rtm_to_fib_config()) and
-fail matching if it differs from nh_tclassid.
+This patch is to fix it by return -EINVAL when brport_attr->show
+is null, just the same as the check for brport_attr->store in
+brport_store().
 
-The handling of RTA_FLOW for multipath routes later in
-fib_nh_match() is still needed, as we can have multiple RTA_FLOW
-attributes that need to be matched against the tclassid of each
-next hop.
-
-v2: Check that fc_flow is set before discarding the match, so
-    that the user can still select the first matching rule by
-    not specifying any realm, as suggested by David Ahern.
-
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
-Acked-by: David Ahern <dsahern@gmail.com>
+Fixes: 9cf637473c85 ("bridge: add sysfs hook to flush forwarding table")
+Reported-by: Xiong Zhou <xzhou@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/fib_semantics.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ net/bridge/br_sysfs_if.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/ipv4/fib_semantics.c
-+++ b/net/ipv4/fib_semantics.c
-@@ -640,6 +640,11 @@ int fib_nh_match(struct fib_config *cfg,
- 					    fi->fib_nh, cfg))
- 			    return 1;
- 		}
-+#ifdef CONFIG_IP_ROUTE_CLASSID
-+		if (cfg->fc_flow &&
-+		    cfg->fc_flow != fi->fib_nh->nh_tclassid)
-+			return 1;
-+#endif
- 		if ((!cfg->fc_oif || cfg->fc_oif == fi->fib_nh->nh_oif) &&
- 		    (!cfg->fc_gw  || cfg->fc_gw == fi->fib_nh->nh_gw))
- 			return 0;
+--- a/net/bridge/br_sysfs_if.c
++++ b/net/bridge/br_sysfs_if.c
+@@ -229,6 +229,9 @@ static ssize_t brport_show(struct kobjec
+ 	struct brport_attribute *brport_attr = to_brport_attr(attr);
+ 	struct net_bridge_port *p = to_brport(kobj);
+ 
++	if (!brport_attr->show)
++		return -EINVAL;
++
+ 	return brport_attr->show(p, buf);
+ }
+ 
