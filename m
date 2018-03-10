@@ -1,107 +1,74 @@
-Return-Path: <jeffy.chen@rock-chips.com>
-X-Google-Smtp-Source: AG47ELvK+M9Kx8zn9n9uZd+QKLvQleYta+c13bNuhLT9Qt4EQfoYelad8VtctpUp/pOO02xbkBdF
-ARC-Seal: i=1; a=rsa-sha256; t=1520851288; cv=none;
+Return-Path: <andy.shevchenko@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520706742; cv=none;
         d=google.com; s=arc-20160816;
-        b=NqtpiV0iJ6jlp2vfIhdHJwEiC6rc1FuGp+i0CW+Fl2qWFFrb9UdBOT7c6yT8IY6DtE
-         9ahZudGNQihkXIb/2eGlIGDTGWh+XK0yPzt8S4ZEsEdvM1Be5P7e9AiPtiTEac4jcyxE
-         pK/CVuGRrlLPeO7sWdpUqExw7660HUgPPJPpioX6CjvjEoDe14B7ggdBnlsKNEtTdjKj
-         aZnp0ugU+HDeu5MciRQR2tPenBAslqj+uQAATwzPgxbk62Nl4Ms6dcJMhihL4+fb6A7s
-         09xsj4TD9FZ4rKjowBSQv9MtQ6IhZ2089Xw3+9hrUXyq1ODzSARQ4wkOb90zx8FaLyfb
-         BV+w==
+        b=KdyFsJ99JrwwfXqp6apYH3CxNCXsVmfGvBqbmeXNKdGcZnjmlbB4LyjoINiClxwGlF
+         Cr7Q7ZD38ucqvcsvEHnKTllpz+At4ZuderXjknEyfndO8x8fAN+Os4MdP1UHMeaYVFk1
+         cfu8ZSfepR7s/AsfDq7UzQJUMFP4DzaCKkp1h/mph47BxLGNOV4/lyUtwbMuznDh/M+n
+         nTJuE+HZRX9DsOD3Hx4SwjoB/OhkKokkLkI+LZQtW0BlOF4YfiKyMiEaq00klSugxIWh
+         6QA48nV7Zlb6COUiFZQmmKwwcncTL73cSVqfQ03Duao8FgEsp77Xt+UrRg7cWOzOVe3B
+         ItBg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:in-reply-to:references:subject:cc:to
-         :mime-version:user-agent:from:date:message-id
-         :arc-authentication-results;
-        bh=D+SwsyI0LP8bkbxPhArxY7EQzSL7UywbN0KeHsWqnLc=;
-        b=WXukrmMHSrMdmjPRsQQW5kntXCfPOsVgauxoXmu1D+iIWwI8YO7gpiys/konDoTZqc
-         VbfPgaJlvZi7qvbieW7UF2Q8xey+sNEkkUkvpxc9D4v7L1Gv7lzslqWSqW9onazHCfeG
-         F5Zp63w8QFlOToizU5J0fKtwuTXM5Lu1fFlNOo93lcac2scpSBjE1pCYXiHwBvx4Rey3
-         t65vH7QFtqtcBp3r7zoq7bF4ime6jvqGqUdwDvf69CekgwyxhsXLl4yjKrNRgcXoYROI
-         TK71MAXNm13ZzEf4tIJSUQv8JzsBpkOnBZmJXimsUr/e7AtI3GePhOc88GVItTPOdiUe
-         YFbQ==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=R8FBQr2wCOhhu1GVhovejOhyMXM66VFH4uJo/Bm48Og=;
+        b=R/goo5dr6GkVUIvmyRADuyEROp+RqJ7/GnVMP7lSmPhxIwctc69HJ1X3/pDAM8dqNj
+         lNKO7ZTiqsLAdWYOzckkBvklx9jUcVcUy7AXhPxpOLfvQxq0tuhbLP9zX+W1JWTuco+P
+         8aSKbgd9gpNmnSNrmdUti+FKdLZAA2i6YeqAouxDdH/XdXOVuicJmB9ut+iFzGRAgrMN
+         7Tw8d0fmyUFVoWH+f5QAzcEk5ESNVuKRNvMhikJwDQFJaIo39saAEBx40Cp5B3fokBj3
+         6QjWauW+VfPCZkWUsgKfSfGNUrqd1aEIiHZKJbIUvXAfhBQFdw4yAnttwJCFmmmzWeDU
+         MERg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.23 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=g9mqvIGi;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.23 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
-X-263anti-spam: KSV:0;BIG:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ADDR-CHECKED4: 1
-X-ABS-CHECKED: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: dmitry.torokhov@gmail.com
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <17ae0c86732fcf0a53f11d02bce73a94>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Message-ID: <5AA65936.7040500@rock-chips.com>
-Date: Mon, 12 Mar 2018 18:40:54 +0800
-From: JeffyChen <jeffy.chen@rock-chips.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20130126 Thunderbird/19.0
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=g9mqvIGi;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELuQOFe0G2LA4QSceIfxjPi27Oni0wcPsJSYxxoymE/8dqNlnOKPDaDDLbwjqnopNuUgUdBBOrXTyJH4gcqmB4E=
 MIME-Version: 1.0
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-CC: linux-kernel@vger.kernel.org, briannorris@google.com,
- heiko@sntech.de, dtor@google.com, dianders@google.com,
- devicetree@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
- Thomas Gleixner <tglx@linutronix.de>,
- Joseph Lo <josephl@nvidia.com>, stephen lu <lumotuwe@gmail.com>,
- Rob Herring <robh+dt@kernel.org>,
- Kate Stewart <kstewart@linuxfoundation.org>,
- linux-input@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Philippe Ombredanne <pombredanne@nexb.com>,
- Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: Re: [PATCH v5 1/3] Input: gpio-keys - add support for wakeup event
- action
-References: <20180308073213.8419-1-jeffy.chen@rock-chips.com> <20180308073213.8419-2-jeffy.chen@rock-chips.com> <20180310181509.GB260013@dtor-ws>
 In-Reply-To: <20180310181509.GB260013@dtor-ws>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20180308073213.8419-1-jeffy.chen@rock-chips.com>
+ <20180308073213.8419-2-jeffy.chen@rock-chips.com> <20180310181509.GB260013@dtor-ws>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 10 Mar 2018 20:32:20 +0200
+Message-ID: <CAHp75VfOUSd0WquVjpkyxqmcmm2XUshAy0b+2fC0uO=S-+ZudQ@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] Input: gpio-keys - add support for wakeup event action
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Brian Norris <briannorris@google.com>,
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	Dmitry Torokhov <dtor@google.com>, Douglas Anderson <dianders@google.com>,
+	devicetree <devicetree@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>,
+	Thomas Gleixner <tglx@linutronix.de>, Joseph Lo <josephl@nvidia.com>, stephen lu <lumotuwe@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>, Kate Stewart <kstewart@linuxfoundation.org>,
+	linux-input <linux-input@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Rutland <mark.rutland@arm.com>,
+	Philippe Ombredanne <pombredanne@nexb.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593796398351218110?=
-X-GMAIL-MSGID: =?utf-8?q?1594728160429085153?=
+X-GMAIL-MSGID: =?utf-8?q?1594576592646077030?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Dmitry,
+On Sat, Mar 10, 2018 at 8:15 PM, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
 
-Thanks for your reply.
+> +       while (--i >= 0) {
 
-On 03/11/2018 02:15 AM, Dmitry Torokhov wrote:>> +static int 
-gpio_keys_enable_wakeup(struct gpio_button_data *bdata)
- > These new helpers need to be __maybe_unused in case we compile on system
- > without suspend support.
- >
- > I also wanted a bit more of error handling, so I ended up with the
- > version of the patch below. Can you please try it and let me know if I
- > broke it.
+Just in case
 
-sure, the patch you sent works :)
+while (i--) {
 
-Tested-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+is slightly better to read.
 
- >
- > Thanks.
- >
- > -- Dmitry
- >
- > Input: gpio-keys - add support for wakeup event action
- >
- > From: Jeffy Chen <jeffy.chen@rock-chips.com>
- >
- > Add support for specifying event actions to trigger wakeup when using
- > the gpio-keys input device as a wakeup source.
- >
- > This would allow the device to configure when to wakeup the system. For
- > example a gpio-keys input device for pen insert, may only want to wakeup
- > the system when ejecting the pen.
- >
- > Suggested-by: Brian Norris <briannorris@chromium.org>
- > Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
- > Reviewed-by: Rob Herring <robh@kernel.org>
- > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> +               bdata = &ddata->data[i];
+> +               if (bdata->button->wakeup)
+> +                       gpio_keys_button_disable_wakeup(bdata);
+> +               bdata->suspended = false;
+> +       }
+
+-- 
+With Best Regards,
+Andy Shevchenko
