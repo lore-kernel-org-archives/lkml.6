@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsiIsrspdwMpjZzMNpLsdW4QxjPLO1NHLCAyuUDkoRFn5qrceoy8CigJWUNF9NLL9fRc9Zm
-ARC-Seal: i=1; a=rsa-sha256; t=1520641304; cv=none;
+X-Google-Smtp-Source: AG47ELuWQcth9ETDDh/RY3b3pST1bGPhbjzmAjnPS3GMiOMgn+DHgbNXgEOjSyA93PYiYHUxweeb
+ARC-Seal: i=1; a=rsa-sha256; t=1520641300; cv=none;
         d=google.com; s=arc-20160816;
-        b=iVCEtuUS1vnzYLo6zo/AwdeZvtcsa5EAKfcsGL5ZVYBtPI0fYD4gx0kIzF/YHCcY4i
-         O8K/6rGmC4mOngw0nFpAt5Qhq0Zl3bfw7uSt+5xtmYmXAA/rIXvw9RqWmBW+dMePmYSK
-         zTr50NUDb4u7quut/XhatAoylB/WG42EE8VxfL7lfoPosmWCqJ22iy7ShazvqrmgTG6M
-         FYOtGQHx3pRgSMlarL4gjMNJo6/+WmQfLiHMDLuKvu7DKdyAVschQJVHZHFp3iMMmQKb
-         ningBab8w7myOtBTDa+5IxvVsmTABTjLIO4haM6yy4Y/C/7sZhIXl6/M+ab8XrWE4wo3
-         BjAw==
+        b=gGHiYtxAMH8FCTycOqoMxpBC+7G0G4e8iOgernlUL3h5ve1W+/mhMcninph2cAb4jM
+         9TjPuPLQi7rozMhFRuY2q0fftWcBswCfoM1Ihx0gamSEVDuQ3NKfzWL3a6hQ0Tl1xuVN
+         YQyIEvxbZmT2OYv71O2qDdBqIdfymUr7rsZ36xKugEbxrv4lq5ko7JUBm7LFo+1Ba0f1
+         VK/Ty1TtrAGB50hV0BttG8nwBS5dco7tH8JOah4Gb64yJx+JQNQg4gHVu8qa2F7MYZ5b
+         bMavgaDoku+EFsm48x3fbv4/wyzdBvKuKJpc71EKh0pteVoGZnOwHJJGk6D9ZMDi88BM
+         AehA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fNTi0Sxz9pPDiuYJ/JsVR8QV0PxgQW6+c5fVND01zqI=;
-        b=JnXqwd8iDn3HbTk76+Qz2xaXS92hunzwQb0zicNYJ0NExGzgAvqGZOWLbg2Hvbh2MC
-         1k2KLNJCVK5WdD5Si0Qgq/zVj7t8YdDQlssAU1mcpwO4auc8Pv3b1iaREZN+Snkss6P3
-         o+kzO0JxLYAosqVcqNOGT/aZpMYOKjyzhas1vU/Fw9EjMp/IcYsjcs30BzI2h346k+xB
-         ap6nnEZ2Kx+jt6elPcr7fWPEKIXyaU64enBcLMeDIuDTcVv4au1QSVN7BpMWIKqBWeZg
-         wTheBoewKDq2U5XuTNGnyGmWw/Zp0uQquNXgFaaAE7x11EW5l3je6FNvoKnDL6Lk+Xug
-         frrw==
+        bh=dMrgPtjYI1VCek8RppG1SEFBSY/25ySbRNu3ax87HvE=;
+        b=YWFj6CR6s4WQ16xoqFJCld+DLkoMOkQrS/YaPgcgTUS1tuXrn8vgQ/X+V0DF2D7IaX
+         dTN5CUr5vdnFLK64kW4/2N1+at3XOeZRDSzeRFSeYD4tz5SLms0emTgWdjpORxG6yEOd
+         9Yjkyra6GuaZFTCbgDaehPj8A+rokU2PNVWB3p61j/WPfScScuykSy4mPKmojJwpZCJj
+         QUsj+7ssEsngJxJe+oHz/+IQcrQy45koM0JPU5dml8jYYPy9FQ/qlW/wt9lOqOdD9gXr
+         LptLd2/ZNJxn9i/+VVIzLY2lIJJM7fQj7tzpHssxryAGLDp3xv+n4AQw1riURCc2mwpr
+         AlSg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,19 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Jim Mattson <jmattson@google.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	KarimAllah Ahmed <karahmed@amazon.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	kvm@vger.kernel.org,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 23/65] KVM/VMX: Optimize vmx_vcpu_run() and svm_vcpu_run() by marking the RDMSR path as unlikely()
-Date: Fri,  9 Mar 2018 16:18:23 -0800
-Message-Id: <20180310001826.784593752@linuxfoundation.org>
+	Hans de Goede <hdegoede@redhat.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 09/65] ALSA: hda: Add a power_save blacklist
+Date: Fri,  9 Mar 2018 16:18:09 -0800
+Message-Id: <20180310001825.664705510@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
 References: <20180310001824.927996722@linuxfoundation.org>
@@ -48,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507976662296743?=
-X-GMAIL-MSGID: =?utf-8?q?1594507976662296743?=
+X-GMAIL-THRID: =?utf-8?q?1594507886013119019?=
+X-GMAIL-MSGID: =?utf-8?q?1594507972396214077?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,55 +49,108 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 946fbbc13dce68902f64515b610eeb2a6c3d7a64 upstream.
+commit 1ba8f9d308174e647b864c36209b4d7934d99888 upstream.
 
-vmx_vcpu_run() and svm_vcpu_run() are large functions, and giving
-branch hints to the compiler can actually make a substantial cycle
-difference by keeping the fast path contiguous in memory.
+On some boards setting power_save to a non 0 value leads to clicking /
+popping sounds when ever we enter/leave powersaving mode. Ideally we would
+figure out how to avoid these sounds, but that is not always feasible.
 
-With this optimization, the retpoline-guest/retpoline-host case is
-about 50 cycles faster.
+This commit adds a blacklist for devices where powersaving is known to
+cause problems and disables it on these devices.
 
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: KarimAllah Ahmed <karahmed@amazon.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kvm@vger.kernel.org
+Note I tried to put this blacklist in userspace first:
+https://github.com/systemd/systemd/pull/8128
+
+But the systemd maintainers rightfully pointed out that it would be
+impossible to then later remove entries once we actually find a way to
+make power-saving work on listed boards without issues. Having this list
+in the kernel will allow removal of the blacklist entry in the same commit
+which fixes the clicks / plops.
+
+The blacklist only applies to the default power_save module-option value,
+if a user explicitly sets the module-option then the blacklist is not
+used.
+
+[ added an ifdef CONFIG_PM for the build error -- tiwai]
+
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1525104
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=198611
 Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180222154318.20361-3-pbonzini@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/svm.c |    2 +-
- arch/x86/kvm/vmx.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ sound/pci/hda/hda_intel.c |   38 ++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 36 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -5029,7 +5029,7 @@ static void svm_vcpu_run(struct kvm_vcpu
- 	 * If the L02 MSR bitmap does not intercept the MSR, then we need to
- 	 * save it.
- 	 */
--	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
-+	if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
- 		svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -180,7 +180,7 @@ static const struct kernel_param_ops par
+ };
+ #define param_check_xint param_check_int
  
- 	if (svm->spec_ctrl)
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -9042,7 +9042,7 @@ static void __noclone vmx_vcpu_run(struc
- 	 * If the L02 MSR bitmap does not intercept the MSR, then we need to
- 	 * save it.
- 	 */
--	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
-+	if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
- 		vmx->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
+-static int power_save = CONFIG_SND_HDA_POWER_SAVE_DEFAULT;
++static int power_save = -1;
+ module_param(power_save, xint, 0644);
+ MODULE_PARM_DESC(power_save, "Automatic power-saving timeout "
+ 		 "(in second, 0 = disable).");
+@@ -2042,6 +2042,24 @@ out_free:
+ 	return err;
+ }
  
- 	if (vmx->spec_ctrl)
++#ifdef CONFIG_PM
++/* On some boards setting power_save to a non 0 value leads to clicking /
++ * popping sounds when ever we enter/leave powersaving mode. Ideally we would
++ * figure out how to avoid these sounds, but that is not always feasible.
++ * So we keep a list of devices where we disable powersaving as its known
++ * to causes problems on these devices.
++ */
++static struct snd_pci_quirk power_save_blacklist[] = {
++	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
++	SND_PCI_QUIRK(0x1849, 0x0c0c, "Asrock B85M-ITX", 0),
++	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
++	SND_PCI_QUIRK(0x1043, 0x8733, "Asus Prime X370-Pro", 0),
++	/* https://bugzilla.kernel.org/show_bug.cgi?id=198611 */
++	SND_PCI_QUIRK(0x17aa, 0x2227, "Lenovo X1 Carbon 3rd Gen", 0),
++	{}
++};
++#endif /* CONFIG_PM */
++
+ /* number of codec slots for each chipset: 0 = default slots (i.e. 4) */
+ static unsigned int azx_max_codecs[AZX_NUM_DRIVERS] = {
+ 	[AZX_DRIVER_NVIDIA] = 8,
+@@ -2054,6 +2072,7 @@ static int azx_probe_continue(struct azx
+ 	struct hdac_bus *bus = azx_bus(chip);
+ 	struct pci_dev *pci = chip->pci;
+ 	int dev = chip->dev_index;
++	int val;
+ 	int err;
+ 
+ 	hda->probe_continued = 1;
+@@ -2129,7 +2148,22 @@ static int azx_probe_continue(struct azx
+ 
+ 	chip->running = 1;
+ 	azx_add_card_list(chip);
+-	snd_hda_set_power_save(&chip->bus, power_save * 1000);
++
++	val = power_save;
++#ifdef CONFIG_PM
++	if (val == -1) {
++		const struct snd_pci_quirk *q;
++
++		val = CONFIG_SND_HDA_POWER_SAVE_DEFAULT;
++		q = snd_pci_quirk_lookup(chip->pci, power_save_blacklist);
++		if (q && val) {
++			dev_info(chip->card->dev, "device %04x:%04x is on the power_save blacklist, forcing power_save to 0\n",
++				 q->subvendor, q->subdevice);
++			val = 0;
++		}
++	}
++#endif /* CONFIG_PM */
++	snd_hda_set_power_save(&chip->bus, val * 1000);
+ 	if (azx_has_pm_runtime(chip) || hda->use_vga_switcheroo)
+ 		pm_runtime_put_autosuspend(&pci->dev);
+ 
