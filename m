@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1715849-1520641576-2-2391339437173525734
+X-Cyrus-Session-Id: sloti22d1t05-1715849-1520641552-2-16886341644900280757
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520641576; b=nc8zOIBlCEX2sp6RN/wKRwb6hZo08QReb81wbqHhgUjoV0O
-    3Tc+jHIL1waNoCSQCaGE15QmM2lLIBWNb2duhExR1rGidixUnmXNwQVhXwFl8vAs
-    gZWvlznBsWOdnjQhcdQjbZlRn82udaTy2qD6RlXGBngZe2UxifbTLaE3z1OoEC7k
-    vwz8QI5rgRaok/kr86Ilc+4W3Qku30lBpS7HVKwy04vgi0tvI3GFBXk4jPSu4+Pi
-    iKBeK/d3HVYSS0g2oyK6QHsvSmKLGvjqDvL9R39Eec+CVKF+s544vQzXqfR9BwQE
-    Be0QatZGvXeF3z4umn9pnc4zDIaYvEPPDmwNspQ==
+    t=1520641551; b=kQ6Wbx5SGAzs7dWzj20VvlrJJHzRMVYI+ja+hCX384HgrY9
+    yJaOMXgkcfjW9n+rag7qyejqAN//11S4K7ZzCariYJDzS3ZD0sIv9qNKHfcWnvfp
+    b3xxrQyvvNzV2kFAfbcty9LJKnHsWcextW+YtVFK5Cq8ouTe/e8VkrKchNRvmNNv
+    XNoVNleGuv7NLT3j5P8I9BDtUPqZdNp/LcBlec9eISDec4Hw5sdQSORXWqpSZ4ei
+    uKJs7RE3jyPrarKmO1nQADr8BAB6jNCOKTkYwr9RtyjmbCIa2Xhv4T0W2zAePllE
+    u+ZcZn568LnRrkxrnkiSPvudcDgtQrWqJQkEb7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520641576; bh=7SHuI/2JQcsTs6lTq9JFtXSPrH
-    D3gTZ1+MQL+FW1cMc=; b=oIq4RoNk8IKg51FOeE6FFfkdEFWz5AFas/ji0r2Cw0
-    865olPveGX2GU1oZa/HQZUEahqiKjfjjA1+w8lNe1k4VxcCVX+gcJT6pX9Jtb9zB
-    9gjoGP8A96WsIXxPFXr4FU+E4kMi8fkJCekRK5TXq3HNKURaR4E1wgi3cbYSBGmX
-    jKXMTzqIhmSvz5DYJkKCOOOZIAfl6pMsPmZ7R0aGFj+ERewJyfV+DbzgV295SqKd
-    Pg4BBqCSH99pvdbwKwKoJt3hNCoN/8LgSrgzI6Jfg0mg71dqzjVXq8arODHVcS7G
-    COCmFiYDUwux/B0Lq68584x089s88p61r0tqiwriSz4w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1520641551; bh=Nrci6v5ReBGvdenDdJCff4b3in
+    j0/GlTIaToTDnSKKI=; b=TAqiB8O3zppthTFj9d3+Ji1vnRzIFeKeeqKweEsJL5
+    ++KiC8LrBNtjmUcrylhg30Gjoexaq0AsuONJDB/C3CIdpdKxUorBWcryxBAAwXpy
+    /e0OhrJX5Q2mPlnlQariKV+/hhVE8X/QhAg0EdcOcOY3i1aLcv7AP4kGZ+fvYwp1
+    RUpCX81Ex0GCG4EupwPTaRQ8aNA7XrXDBLIFg3SWKQkbR2ex94zxheOdKC6W9emr
+    /zXSyzngQXqePckP0pzSIVjw7JLI9PHLvWzqPBJ4lqDD0M8YLEeSA66VhEj8CVic
+    jY15+G8LMLy90Mxagu1yaFL97Z4zNn6La9kuOL0ajdCA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,29 +49,29 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933583AbeCJA0A (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Mar 2018 19:26:00 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40882 "EHLO
+        id S933927AbeCJAZg (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Mar 2018 19:25:36 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41150 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933798AbeCJAXg (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:23:36 -0500
+        with ESMTP id S933885AbeCJAXo (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:23:44 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "ast@kernel.org, daniel@iogearbox.net, stable@vger.kernel.org, Dennis
-        Zhou" <dennisszhou@gmail.com>,
-        syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com,
+        "ast@kernel.org, daniel@iogearbox.net, stable@vger.kernel.org, Yonghong
+        Song" <yhs@fb.com>, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Dennis Zhou <dennisszhou@gmail.com>
-Subject: [PATCH 4.15 01/11] bpf: fix mlock precharge on arraymaps
-Date: Fri,  9 Mar 2018 16:19:15 -0800
-Message-Id: <20180310001834.624988627@linuxfoundation.org>
+        Yonghong Song <yhs@fb.com>
+Subject: [PATCH 4.15 03/11] bpf: fix rcu lockdep warning for lpm_trie map_free callback
+Date: Fri,  9 Mar 2018 16:19:17 -0800
+Message-Id: <20180310001834.715003968@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001834.560857664@linuxfoundation.org>
 References: <20180310001834.560857664@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
@@ -84,90 +84,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Yonghong Song <yhs@fb.com>
 
-[ upstream commit 9c2d63b843a5c8a8d0559cc067b5398aa5ec3ffc ]
+[ upstream commit 6c5f61023c5b0edb0c8a64c902fe97c6453b1852 ]
 
-syzkaller recently triggered OOM during percpu map allocation;
-while there is work in progress by Dennis Zhou to add __GFP_NORETRY
-semantics for percpu allocator under pressure, there seems also a
-missing bpf_map_precharge_memlock() check in array map allocation.
+Commit 9a3efb6b661f ("bpf: fix memory leak in lpm_trie map_free callback function")
+fixed a memory leak and removed unnecessary locks in map_free callback function.
+Unfortrunately, it introduced a lockdep warning. When lockdep checking is turned on,
+running tools/testing/selftests/bpf/test_lpm_map will have:
 
-Given today the actual bpf_map_charge_memlock() happens after the
-find_and_alloc_map() in syscall path, the bpf_map_precharge_memlock()
-is there to bail out early before we go and do the map setup work
-when we find that we hit the limits anyway. Therefore add this for
-array map as well.
+  [   98.294321] =============================
+  [   98.294807] WARNING: suspicious RCU usage
+  [   98.295359] 4.16.0-rc2+ #193 Not tainted
+  [   98.295907] -----------------------------
+  [   98.296486] /home/yhs/work/bpf/kernel/bpf/lpm_trie.c:572 suspicious rcu_dereference_check() usage!
+  [   98.297657]
+  [   98.297657] other info that might help us debug this:
+  [   98.297657]
+  [   98.298663]
+  [   98.298663] rcu_scheduler_active = 2, debug_locks = 1
+  [   98.299536] 2 locks held by kworker/2:1/54:
+  [   98.300152]  #0:  ((wq_completion)"events"){+.+.}, at: [<00000000196bc1f0>] process_one_work+0x157/0x5c0
+  [   98.301381]  #1:  ((work_completion)(&map->work)){+.+.}, at: [<00000000196bc1f0>] process_one_work+0x157/0x5c0
 
-Fixes: 6c9059817432 ("bpf: pre-allocate hash map elements")
-Fixes: a10423b87a7e ("bpf: introduce BPF_MAP_TYPE_PERCPU_ARRAY map")
-Reported-by: syzbot+adb03f3f0bb57ce3acda@syzkaller.appspotmail.com
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Dennis Zhou <dennisszhou@gmail.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Since actual trie tree removal happens only after no other
+accesses to the tree are possible, replacing
+  rcu_dereference_protected(*slot, lockdep_is_held(&trie->lock))
+with
+  rcu_dereference_protected(*slot, 1)
+fixed the issue.
+
+Fixes: 9a3efb6b661f ("bpf: fix memory leak in lpm_trie map_free callback function")
+Reported-by: Eric Dumazet <edumazet@google.com>
+Suggested-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Yonghong Song <yhs@fb.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Acked-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/bpf/arraymap.c |   28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+ kernel/bpf/lpm_trie.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/kernel/bpf/arraymap.c
-+++ b/kernel/bpf/arraymap.c
-@@ -52,11 +52,11 @@ static int bpf_array_alloc_percpu(struct
- static struct bpf_map *array_map_alloc(union bpf_attr *attr)
- {
- 	bool percpu = attr->map_type == BPF_MAP_TYPE_PERCPU_ARRAY;
--	int numa_node = bpf_map_attr_numa_node(attr);
-+	int ret, numa_node = bpf_map_attr_numa_node(attr);
- 	u32 elem_size, index_mask, max_entries;
- 	bool unpriv = !capable(CAP_SYS_ADMIN);
-+	u64 cost, array_size, mask64;
- 	struct bpf_array *array;
--	u64 array_size, mask64;
+--- a/kernel/bpf/lpm_trie.c
++++ b/kernel/bpf/lpm_trie.c
+@@ -574,8 +574,7 @@ static void trie_free(struct bpf_map *ma
+ 		slot = &trie->root;
  
- 	/* check sanity of attributes */
- 	if (attr->max_entries == 0 || attr->key_size != 4 ||
-@@ -101,8 +101,19 @@ static struct bpf_map *array_map_alloc(u
- 		array_size += (u64) max_entries * elem_size;
+ 		for (;;) {
+-			node = rcu_dereference_protected(*slot,
+-					lockdep_is_held(&trie->lock));
++			node = rcu_dereference_protected(*slot, 1);
+ 			if (!node)
+ 				goto out;
  
- 	/* make sure there is no u32 overflow later in round_up() */
--	if (array_size >= U32_MAX - PAGE_SIZE)
-+	cost = array_size;
-+	if (cost >= U32_MAX - PAGE_SIZE)
- 		return ERR_PTR(-ENOMEM);
-+	if (percpu) {
-+		cost += (u64)attr->max_entries * elem_size * num_possible_cpus();
-+		if (cost >= U32_MAX - PAGE_SIZE)
-+			return ERR_PTR(-ENOMEM);
-+	}
-+	cost = round_up(cost, PAGE_SIZE) >> PAGE_SHIFT;
-+
-+	ret = bpf_map_precharge_memlock(cost);
-+	if (ret < 0)
-+		return ERR_PTR(ret);
- 
- 	/* allocate all map elements and zero-initialize them */
- 	array = bpf_map_area_alloc(array_size, numa_node);
-@@ -118,20 +129,13 @@ static struct bpf_map *array_map_alloc(u
- 	array->map.max_entries = attr->max_entries;
- 	array->map.map_flags = attr->map_flags;
- 	array->map.numa_node = numa_node;
-+	array->map.pages = cost;
- 	array->elem_size = elem_size;
- 
--	if (!percpu)
--		goto out;
--
--	array_size += (u64) attr->max_entries * elem_size * num_possible_cpus();
--
--	if (array_size >= U32_MAX - PAGE_SIZE ||
--	    bpf_array_alloc_percpu(array)) {
-+	if (percpu && bpf_array_alloc_percpu(array)) {
- 		bpf_map_area_free(array);
- 		return ERR_PTR(-ENOMEM);
- 	}
--out:
--	array->map.pages = round_up(array_size, PAGE_SIZE) >> PAGE_SHIFT;
- 
- 	return &array->map;
- }
