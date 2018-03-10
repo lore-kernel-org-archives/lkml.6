@@ -1,36 +1,70 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuE0BU0H0r4vV9Bj4ICuiI8QR7Bm9OTmuIJdFe57XF6OitrQ70t8UhKXEQHm2i9iPt2ieE6
-ARC-Seal: i=1; a=rsa-sha256; t=1520641351; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ven/hy09JXVyNl33qyKTprr5ldEAHoujDZ3Z16w1BNFUh+T6OLXogTr49eWYfCTsbc
-         hOkjmKzgyiGcBWmRZfY8o7UB/rKmW4cgfVaeeoEi0RIIvYJGRqcKkcgqI0BM5n+deRkj
-         GQyIbyTmrVWbu867lxTVZ9RU6ofJr9e06ECYcxva0UeVfBPYu+vVIiQBRTepbRFtKFV+
-         ACIf+HW8KBWdirZ/JKPcEtjNscB7MRclWf3bTIHvExJA3Y9d799DCOjFCen2hphpWkse
-         o4PA16ZfCwBftzod4RZxoXjsLpxXXfBoEyAU24mCac7vFaCXr1CMCWlgsZHFYZIj0jKA
-         x3RQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=O0yTtLy4kzpTcj4CQDL05LnHWTLyc+qHNwQUE7C+pEA=;
-        b=Hos3vm4JlrKbCQB4nqD+cwF0LrzcpYik6UGhvlshtT5fwkaoEDt5F6foCxCWc90LKG
-         TnMN228wOr1REb2rfqq/i4dUWwiz/lpN5ka3inzJ4MoLlxAr0m3m+KKfBC1B+rfGjC1/
-         9Jz1PoElUsqElSnbWxMHuZ7PODKbezkPYhY+BF12QxlheFGtEIu1TklrAHlmgIVkxozl
-         K45fSF/jHevLiyhqQQ/NFQGuDBOEvqcKPt9BgXJqLhYSQPsNAFGdE+7T8as+140pKbfZ
-         N152WJK4rnz5hAVE++gw8/DPb7T2Ab7hkh3dGMGvbVghEVnEn6V28QbkxoS2TfS8s5PX
-         fzFg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1720711-1520641351-2-441938113216183895
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520641350; b=VoVfMwTbMO6O40De8rUFGKulK/XdNcG1HN5KPP7zVw3IHMR
+    1UOI8oSu5LGy2YnBmnBFR8Higv2IFKGLhGBYAUePdRczwdWuj7JuPeJgCWflgecU
+    v4Sw56X3jfurGWoRHI7pvPsD6dwWgux0ydEpreC8gJCGOm1aHbx/TLGw5pcxxllx
+    WXVelDdyK030aJafV6aUjBEN18zscRYDN81XlwLDr5FEbTmpdAYddOh01TxwPPCE
+    sYQitU36kn5N1vs4uX6u8FpRNb02XSMWyimNoqiNeCYwvg3n3nX91Sw/qPoGbqH5
+    uImvGqgwQMNZbYc0WvdyWv1UgskPWRJz1GnuE9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520641350; bh=Ws8Ofx0bASgqATAfFykxNu4OBp
+    gujsaa9xXlgnnrI+I=; b=arPAG9Tm3yl+z/FOkVvKsXUb9T64FZopq1udkPeM1c
+    zxMTQjjHG2ncl645zSDrnVRHgYlRTlCDWaKamUeITXTOr71AatIMD1lk/x5pEDou
+    nmDmzuXaMuyoPkdPXEDmXvbxKIs7HrlDNzAp8ZAZOuP0JBP1/qjrC1CnQ85wdX9L
+    2P5cx4qLYkOjSmabOwgReu1m1R8g/i0A/HX0VtNVxCBq3ok8Bq7CzZL32l2p+Ii9
+    HxWBBi2iNM2SeLkJ+EGNSRdAHx+2moxkVffSJRVqZhnnYMuvZKmnXyDe1ALUjNm3
+    frD6YjONaUHNV/p84qcJVhv9+nSza1PbiUNJ6HcIvijw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932801AbeCJAWY (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 9 Mar 2018 19:22:24 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39978 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751878AbeCJAWV (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 9 Mar 2018 19:22:21 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Zhang Yi <yizhan@redhat.com>,
-	Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.9 25/65] dm io: fix duplicate bio completion due to missing ref count
-Date: Fri,  9 Mar 2018 16:18:25 -0800
-Message-Id: <20180310001826.924856436@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Kodanev <alexey.kodanev@oracle.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 48/65] sctp: fix dst refcnt leak in sctp_v6_get_dst()
+Date: Fri,  9 Mar 2018 16:18:48 -0800
+Message-Id: <20180310001828.807994342@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
 References: <20180310001824.927996722@linuxfoundation.org>
@@ -38,10 +72,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507837427893471?=
-X-GMAIL-MSGID: =?utf-8?q?1594508025555865788?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,35 +82,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mike Snitzer <snitzer@redhat.com>
+From: Alexey Kodanev <alexey.kodanev@oracle.com>
 
-commit feb7695fe9fb83084aa29de0094774f4c9d4c9fc upstream.
 
-If only a subset of the devices associated with multiple regions support
-a given special operation (eg. DISCARD) then the dec_count() that is
-used to set error for the region must increment the io->count.
+[ Upstream commit 957d761cf91cdbb175ad7d8f5472336a4d54dbf2 ]
 
-Otherwise, when the dec_count() is called it can cause the dm-io
-caller's bio to be completed multiple times.  As was reported against
-the dm-mirror target that had mirror legs with a mix of discard
-capabilities.
+When going through the bind address list in sctp_v6_get_dst() and
+the previously found address is better ('matchlen > bmatchlen'),
+the code continues to the next iteration without releasing currently
+held destination.
 
-Bug: https://bugzilla.kernel.org/show_bug.cgi?id=196077
-Reported-by: Zhang Yi <yizhan@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Fix it by releasing 'bdst' before continue to the next iteration, and
+instead of introducing one more '!IS_ERR(bdst)' check for dst_release(),
+move the already existed one right after ip6_dst_lookup_flow(), i.e. we
+shouldn't proceed further if we get an error for the route lookup.
+
+Fixes: dbc2b5e9a09e ("sctp: fix src address selection if using secondary addresses for ipv6")
+Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/md/dm-io.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/sctp/ipv6.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/md/dm-io.c
-+++ b/drivers/md/dm-io.c
-@@ -302,6 +302,7 @@ static void do_region(int op, int op_fla
- 		special_cmd_max_sectors = q->limits.max_write_same_sectors;
- 	if ((op == REQ_OP_DISCARD || op == REQ_OP_WRITE_SAME) &&
- 	    special_cmd_max_sectors == 0) {
-+		atomic_inc(&io->count);
- 		dec_count(io, region, -EOPNOTSUPP);
- 		return;
- 	}
+--- a/net/sctp/ipv6.c
++++ b/net/sctp/ipv6.c
+@@ -324,8 +324,10 @@ static void sctp_v6_get_dst(struct sctp_
+ 		final_p = fl6_update_dst(fl6, rcu_dereference(np->opt), &final);
+ 		bdst = ip6_dst_lookup_flow(sk, fl6, final_p);
+ 
+-		if (!IS_ERR(bdst) &&
+-		    ipv6_chk_addr(dev_net(bdst->dev),
++		if (IS_ERR(bdst))
++			continue;
++
++		if (ipv6_chk_addr(dev_net(bdst->dev),
+ 				  &laddr->a.v6.sin6_addr, bdst->dev, 1)) {
+ 			if (!IS_ERR_OR_NULL(dst))
+ 				dst_release(dst);
+@@ -334,8 +336,10 @@ static void sctp_v6_get_dst(struct sctp_
+ 		}
+ 
+ 		bmatchlen = sctp_v6_addr_match_len(daddr, &laddr->a);
+-		if (matchlen > bmatchlen)
++		if (matchlen > bmatchlen) {
++			dst_release(bdst);
+ 			continue;
++		}
+ 
+ 		if (!IS_ERR_OR_NULL(dst))
+ 			dst_release(dst);
