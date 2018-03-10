@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtDJv1TyResju8ytA5KrwVRzNdCn/sqNxC+kZmlafPjf733Ae1uCZAY1kOr7vpFrpbAhhNa
-ARC-Seal: i=1; a=rsa-sha256; t=1520641308; cv=none;
+X-Google-Smtp-Source: AG47ELuTnbQ7bcBtrtJiig0KFahCzwPoOVVcxvxOq0IzODgXpYV72Xk1x8B/AW+r68FyMBnT+tMZ
+ARC-Seal: i=1; a=rsa-sha256; t=1520641306; cv=none;
         d=google.com; s=arc-20160816;
-        b=BbHdIcA0HIBjhQwmNLWsWJRoRynXFHoUxqTYqI6cpmHYyCQ2qgSqiPXIXjgGNjT0T9
-         k+YhyoN2sVpVdefrGoT4N3p3RWjs4cJDk1y8u0rRJX+hvnE9cG8bwCW0xJ6QfblnDoOm
-         HJkyE1lxiFpoY3JA+O3u3mzYDfmugjw76COyI7gDnhcBkknsr/QphWU17af4HHPhvwAA
-         ImnWdPStF29m//3Fm1sltqM7XW1cbINNiE0td9ZMkwWLKOqAIQvIfqzBQvhs9K0imVWI
-         BdYuiQgSK6F6NkEJz19EzrfpOHeJ+vj8jKAZxLjFTY89hzmabcnGmnbuUx4xkgDs32zg
-         RJ/A==
+        b=a20UqGoFWS0sgAXCSzWc1qi3iwGGvLWmshlQuqMr3Cacj5/yM56XSV/CbPkYMx2+aK
+         HBH2nrHciUu0e3ZFQkFW3n2iFIiJluGEA0dXmZO5IxvNLV4HIBQlzskLieXzyd3gkrK4
+         2wzwJACugBSwA5rVz/e1EvrJn9xP/f1NDVJNkMD1dPi37ZWyeYGblNKoLTmMPF2ssOiD
+         Ty07ziXtXQ1K/T4CEmTK7FgM3IHQ3HBTH3Nyv95GdeSob2YDlxkACZOVJyVViWaHDTfC
+         7af7bY2AHGPcxot+8MXztGiaiGW2OqjNgNQkS513LQy18lkabNAIx349Z418el8tCRqs
+         wJvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=a/tRkKPUy6LvprJ2had3wjgvBGpmzSysWDNuaqiNcG8=;
-        b=RuIkrDeLJLwUVColEys885ZJf81os2wlC2hV7bfdWJ4Ful4AFWOdjJ4D2vrRqLPaGg
-         kqBXuReUEZk8Ywwlpllqtv/wfesZghxrYNecZNJ7yP/KQYUSFcmW86c6/M4UKQOdlexY
-         1E2AEzMszbWEroari7yLkJnukd8Yq/cFr3rOlJfwvFKRg+52faDvEkUP4MmbhIjsSOQN
-         dhTpS7shQePWm6sXlQMd2LeR6zGbqIwPIhphw7dE9F1lxNWUi81h9hxpA7i6L9qE4tis
-         jw08rBFNdlRe1nejO1JlGmYDKDknMTpoTQYOrNpwv9HK0YkjRDjQNBLW4EK0hqTxbmxH
-         XfQg==
+        bh=amcnU8ubN3K3RF+BLiWCjmIhwmiv9BGc9z3sHVLM1J0=;
+        b=abPxnQOJdP84l27z/9l0TgVGBumWdd/5x1i9p/jOOWNSfCfRaSplcE0TQazbA++oQM
+         xzuscNR3hQApxyCldF1vkyQoXrlWRlE+Lt2ddurH5oSe69cDAB/cj4MSOvh9mTvOEeYn
+         tNlU/O289VNNbxQ2WQsargpZFq7TyYXoLRRB2WdhqiXYlwoKH2/dg+1HPuE7c8IKy36l
+         FGoMwRm9yL52B0xQdRhT1orVnVK92k2fHZISCXPA2x9+L+MBbT4QHWqR415oBAu7jRgt
+         S04l1ClBp4Sc1eGAGHBXG2WgQLJ4OzvPRnMCqcYUNK16Aucb/LIHZR13/YdLikdyO8Eb
+         mA7A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Xiong Zhou <xzhou@redhat.com>,
-	Xin Long <lucien.xin@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 33/65] bridge: check brport attr show in brport_show
-Date: Fri,  9 Mar 2018 16:18:33 -0800
-Message-Id: <20180310001827.580920633@linuxfoundation.org>
+	Ben Hutchings <ben.hutchings@codethink.co.uk>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.9 32/65] x86/apic/vector: Handle legacy irq data correctly
+Date: Fri,  9 Mar 2018 16:18:32 -0800
+Message-Id: <20180310001827.461127419@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180310001824.927996722@linuxfoundation.org>
 References: <20180310001824.927996722@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594507815386940691?=
-X-GMAIL-MSGID: =?utf-8?q?1594507980936206019?=
+X-GMAIL-THRID: =?utf-8?q?1594507855707423265?=
+X-GMAIL-MSGID: =?utf-8?q?1594507978929458689?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,46 +49,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
 
+From: Thomas Gleixner <tglx@linutronix.de>
 
-[ Upstream commit 1b12580af1d0677c3c3a19e35bfe5d59b03f737f ]
+The backport of upstream commit 45d55e7bac40 ("x86/apic/vector: Fix off by
+one in error path") missed to fixup the legacy interrupt data which is not
+longer available upstream.
 
-Now br_sysfs_if file flush doesn't have attr show. To read it will
-cause kernel panic after users chmod u+r this file.
+Handle legacy irq data correctly by clearing the legacy storage to prevent
+use after free.
 
-Xiong found this issue when running the commands:
-
-  ip link add br0 type bridge
-  ip link add type veth
-  ip link set veth0 master br0
-  chmod u+r /sys/devices/virtual/net/veth0/brport/flush
-  timeout 3 cat /sys/devices/virtual/net/veth0/brport/flush
-
-kernel crashed with NULL a pointer dereference call trace.
-
-This patch is to fix it by return -EINVAL when brport_attr->show
-is null, just the same as the check for brport_attr->store in
-brport_store().
-
-Fixes: 9cf637473c85 ("bridge: add sysfs hook to flush forwarding table")
-Reported-by: Xiong Zhou <xzhou@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 7fd133539289 ("x86/apic/vector: Fix off by one in error path") - 4.4.y
+Fixes: c557481a9491 ("x86/apic/vector: Fix off by one in error path") - 4.9.y
+Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/bridge/br_sysfs_if.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/kernel/apic/vector.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/net/bridge/br_sysfs_if.c
-+++ b/net/bridge/br_sysfs_if.c
-@@ -230,6 +230,9 @@ static ssize_t brport_show(struct kobjec
- 	struct brport_attribute *brport_attr = to_brport_attr(attr);
- 	struct net_bridge_port *p = to_brport(kobj);
- 
-+	if (!brport_attr->show)
-+		return -EINVAL;
-+
- 	return brport_attr->show(p, buf);
+--- a/arch/x86/kernel/apic/vector.c
++++ b/arch/x86/kernel/apic/vector.c
+@@ -93,8 +93,12 @@ out_data:
+ 	return NULL;
  }
  
+-static void free_apic_chip_data(struct apic_chip_data *data)
++static void free_apic_chip_data(unsigned int virq, struct apic_chip_data *data)
+ {
++#ifdef	CONFIG_X86_IO_APIC
++	if (virq  < nr_legacy_irqs())
++		legacy_irq_data[virq] = NULL;
++#endif
+ 	if (data) {
+ 		free_cpumask_var(data->domain);
+ 		free_cpumask_var(data->old_domain);
+@@ -318,11 +322,7 @@ static void x86_vector_free_irqs(struct
+ 			apic_data = irq_data->chip_data;
+ 			irq_domain_reset_irq_data(irq_data);
+ 			raw_spin_unlock_irqrestore(&vector_lock, flags);
+-			free_apic_chip_data(apic_data);
+-#ifdef	CONFIG_X86_IO_APIC
+-			if (virq + i < nr_legacy_irqs())
+-				legacy_irq_data[virq + i] = NULL;
+-#endif
++			free_apic_chip_data(virq + i, apic_data);
+ 		}
+ 	}
+ }
+@@ -363,7 +363,7 @@ static int x86_vector_alloc_irqs(struct
+ 		err = assign_irq_vector_policy(virq + i, node, data, info);
+ 		if (err) {
+ 			irq_data->chip_data = NULL;
+-			free_apic_chip_data(data);
++			free_apic_chip_data(virq + i, data);
+ 			goto error;
+ 		}
+ 	}
