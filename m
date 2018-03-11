@@ -1,72 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932217AbeCKTQ2 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 15:16:28 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:38520 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932148AbeCKTQ0 (ORCPT
+        id S932211AbeCKTXC (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 15:23:02 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:36176 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932139AbeCKTXA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 15:16:26 -0400
-X-Google-Smtp-Source: AG47ELsc2i+3bDk4Wueeh945OH/HYZvZO02kMbtxprpiJ2GhY+BcoRxyrMuNULUCs+CPaRESg6jAZFNPft3rfItbsHc=
+        Sun, 11 Mar 2018 15:23:00 -0400
+X-Google-Smtp-Source: AG47ELtgPhEKD7G24FIUHNr6+mGbes2DnYfOMjFg3rbtMO7VgiU0dSy1cKoWbeTqzUEbzNZjy2WGfA==
+Date: Sun, 11 Mar 2018 12:22:56 -0700
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Nikolay Borisov <n.borisov.lkml@gmail.com>
+Cc: Andiry Xu <jix024@eng.ucsd.edu>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
+        swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
+        swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
+        Andiry Xu <jix024@cs.ucsd.edu>, herbert@gondor.apana.org.au
+Subject: Re: [RFC v2 05/83] Add NOVA filesystem definitions and useful helper
+ routines.
+Message-ID: <20180311192256.GA630@zzz.localdomain>
+References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
+ <1520705944-6723-6-git-send-email-jix024@eng.ucsd.edu>
+ <0924a2b3-6f21-4aaf-224d-2f5accc21d10@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4iZFW9Lk=KdEy=0iYzM9GmQ4ccoN2imYNDq6XwXDgXsDw@mail.gmail.com>
-References: <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152066489984.40260.2215636951958334858.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180310094633.GA31604@lst.de> <CAPcyv4iZFW9Lk=KdEy=0iYzM9GmQ4ccoN2imYNDq6XwXDgXsDw@mail.gmail.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Sun, 11 Mar 2018 12:16:25 -0700
-Message-ID: <CAPcyv4ijGP_77VgLUekE53=i7JxMPjvUqpebKPnV2vXMqzpWcw@mail.gmail.com>
-Subject: Re: [PATCH v5 02/11] xfs, dax: introduce xfs_dax_aops
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>, Jan Kara <jack@suse.cz>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0924a2b3-6f21-4aaf-224d-2f5accc21d10@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 10, 2018 at 9:40 AM, Dan Williams <dan.j.williams@intel.com> wrote:
-> On Sat, Mar 10, 2018 at 1:46 AM, Christoph Hellwig <hch@lst.de> wrote:
->>> +int dax_set_page_dirty(struct page *page)
->>> +{
->>> +     /*
->>> +      * Unlike __set_page_dirty_no_writeback that handles dirty page
->>> +      * tracking in the page object, dax does all dirty tracking in
->>> +      * the inode address_space in response to mkwrite faults. In the
->>> +      * dax case we only need to worry about potentially dirty CPU
->>> +      * caches, not dirty page cache pages to write back.
->>> +      *
->>> +      * This callback is defined to prevent fallback to
->>> +      * __set_page_dirty_buffers() in set_page_dirty().
->>> +      */
->>> +     return 0;
->>> +}
->>
->> Make this a generic noop_set_page_dirty maybe?
->>
->>> +EXPORT_SYMBOL(dax_set_page_dirty);
->>> +
->>> +void dax_invalidatepage(struct page *page, unsigned int offset,
->>> +             unsigned int length)
->>> +{
->>> +     /*
->>> +      * There is no page cache to invalidate in the dax case, however
->>> +      * we need this callback defined to prevent falling back to
->>> +      * block_invalidatepage() in do_invalidatepage().
->>> +      */
->>> +}
->>
->> Same here.
->
-> I guess I'm not sure what you mean. These nops are specific to dax I
-> don't think they make sense in another context besides dax.
->
+On Sun, Mar 11, 2018 at 02:00:13PM +0200, Nikolay Borisov wrote:
+> [Adding Herbert Xu to CC since he is the maintainer of the crypto subsys
+> maintainer]
+> 
+> On 10.03.2018 20:17, Andiry Xu wrote:
+> <snip>
+> 
+> > +static inline u32 nova_crc32c(u32 crc, const u8 *data, size_t len)
+> > +{
+> > +	u8 *ptr = (u8 *) data;
+> > +	u64 acc = crc; /* accumulator, crc32c value in lower 32b */
+> > +	u32 csum;
+> > +
+> > +	/* x86 instruction crc32 is part of SSE-4.2 */
+> > +	if (static_cpu_has(X86_FEATURE_XMM4_2)) {
+> > +		/* This inline assembly implementation should be equivalent
+> > +		 * to the kernel's crc32c_intel_le_hw() function used by
+> > +		 * crc32c(), but this performs better on test machines.
+> > +		 */
+> > +		while (len > 8) {
+> > +			asm volatile(/* 64b quad words */
+> > +				"crc32q (%1), %0"
+> > +				: "=r" (acc)
+> > +				: "r"  (ptr), "0" (acc)
+> > +			);
+> > +			ptr += 8;
+> > +			len -= 8;
+> > +		}
+> > +
+> > +		while (len > 0) {
+> > +			asm volatile(/* trailing bytes */
+> > +				"crc32b (%1), %0"
+> > +				: "=r" (acc)
+> > +				: "r"  (ptr), "0" (acc)
+> > +			);
+> > +			ptr++;
+> > +			len--;
+> > +		}
+> > +
+> > +		csum = (u32) acc;
+> > +	} else {
+> > +		/* The kernel's crc32c() function should also detect and use the
+> > +		 * crc32 instruction of SSE-4.2. But calling in to this function
+> > +		 * is about 3x to 5x slower than the inline assembly version on
+> > +		 * some test machines.
+> 
+> That is really odd. Did you try to characterize why this is the case? Is
+> it purely the overhead of dispatching to the correct backend function?
+> That's a rather big performance hit.
+> 
+> > +		 */
+> > +		csum = crc32c(crc, data, len);
+> > +	}
+> > +
+> > +	return csum;
+> > +}
+> > +
 
-I did the rename, and am housing these in fs/dax.c, I assume that's
-what you wanted.
+Are you sure that CONFIG_CRYPTO_CRC32C_INTEL was enabled during your tests and
+that the accelerated version was being called?  Or, perhaps CRC32C_PCL_BREAKEVEN
+(defined in arch/x86/crypto/crc32c-intel_glue.c) needs to be adjusted.  Please
+don't hack around performance problems like this; if they exist, they need to be
+fixed for everyone.
+
+Eric
