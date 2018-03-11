@@ -1,60 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932215AbeCKQ2G (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 12:28:06 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:44011 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932136AbeCKQ2F (ORCPT
+        id S932244AbeCKQ2b convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 12:28:31 -0400
+Received: from mondschein.lichtvoll.de ([194.150.191.11]:32817 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932136AbeCKQ2a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 12:28:05 -0400
-From: Colin King <colin.king@canonical.com>
-To: Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][rds-next] rds: remove redundant variable 'sg_off'
-Date: Sun, 11 Mar 2018 17:27:56 +0100
-Message-Id: <20180311162756.26950-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Sun, 11 Mar 2018 12:28:30 -0400
+From: Martin Steigerwald <martin@lichtvoll.de>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thorsten Leemhuis <regressions@leemhuis.info>,
+        Tejun Heo <tj@kernel.org>
+Subject: Re: [Possible REGRESSION, 4.16-rc4] Error updating SMART data during runtime and could not connect to lvmetad at some boot attempts
+Date: Sun, 11 Mar 2018 17:28:28 +0100
+Message-ID: <6020448.5HgvTYnRh2@merkaba>
+In-Reply-To: <f6e73c8e-1186-744b-c856-2c56ceeeab10@redhat.com>
+References: <27165802.vQ9JbjrmvU@merkaba> <f6e73c8e-1186-744b-c856-2c56ceeeab10@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hans de Goede - 11.03.18, 15:37:
+> Hi Martin,
+> 
+> On 11-03-18 09:20, Martin Steigerwald wrote:
+> > Hello.
+> > 
+> > Since 4.16-rc4 (upgraded from 4.15.2 which worked) I have an issue
+> > with SMART checks occassionally failing like this:
+> > 
+> > smartd[28017]: Device: /dev/sdb [SAT], is in SLEEP mode, suspending checks
+> > udisksd[24408]: Error performing housekeeping for drive
+> > /org/freedesktop/UDisks2/drives/INTEL_SSDSA2CW300G3_[…]: Error updating
+> > SMART data: Error sending ATA command CHECK POWER MODE: Unexpected sense
+> > data returned:#0120000: 0e 09 0c 00  00 00 ff 00  00 00 00 00  00 00 50
+> > 00    ..............P.#0120010: 00 00 00 00  00 00 00 00  00 00 00 00  00
+> > 00 00 00    ................#012 (g-io-error-quark, 0) merkaba
+> > udisksd[24408]: Error performing housekeeping for drive
+> > /org/freedesktop/UDisks2/drives/Crucial_CT480M500SSD3_[…]: Error updating
+> > SMART dat a: Error sending ATA command CHECK POWER MODE: Unexpected sense
+> > data returned:#0120000: 01 00 1d 00  00 00 0e 09  0c 00 00 00  ff 00 00
+> > 00    ................#0120010: 00 0 0 00 00  50 00 00 00  00 00 00 00 
+> > 00 00 00 00    ....P...........#012 (g-io-error-quark, 0)
+> > 
+> > (Intel SSD is connected via SATA, Crucial via mSATA in a ThinkPad T520)
+> > 
+> > However when I then check manually with smartctl -a | -x | -H the device
+> > reports SMART data just fine.
+> > 
+> > As smartd correctly detects that device is in sleep mode, this may be an
+> > userspace issue in udisksd.
+> > 
+> > Also at some boot attempts the boot hangs with a message like "could not
+> > connect to lvmetad, scanning manually for devices". I use BTRFS RAID 1
+> > on to LVs (each on one of the SSDs). A configuration that requires a
+> > manual
+> > adaption to InitRAMFS in order to boot (basically vgchange -ay before
+> > btrfs device scan).
+> > 
+> > I wonder whether that has to do with the new SATA LPM policy stuff, but as
+> > I had issues with
+> > 
+> >   3 => Medium power with Device Initiated PM enabled
+> > 
+> > (machine did not boot, which could also have been caused by me
+> > accidentally
+> > removing all TCP/IP network support in the kernel with that setting)
+> > 
+> > I set it back to
+> > 
+> > CONFIG_SATA_MOBILE_LPM_POLICY=0
+> > 
+> > (firmware settings)
+> 
+> Right, so at that settings the LPM policy changes are effectively
+> disabled and cannot explain your SMART issues.
+> 
+> Still I would like to zoom in on this part of your bug report, because
+> for Fedora 28 we are planning to ship with CONFIG_SATA_MOBILE_LPM_POLICY=3
+> and AFAIK Ubuntu has similar plans.
+> 
+> I suspect that the issue you were seeing with
+> CONFIG_SATA_MOBILE_LPM_POLICY=3 were with the Crucial disk ? I've attached
+> a patch for you to test, which disabled LPM for your model Crucial SSD (but
+> keeps it on for the Intel disk) if you can confirm that with that patch you
+> can run with
+> CONFIG_SATA_MOBILE_LPM_POLICY=3 without issues that would be great.
 
-Variable sg_off is assigned a value but it is never read, hence it is
-redundant and can be removed.
+I think I can do that during the week with 4.16-rc5 then.
 
-Cleans up clang warning:
-net/rds/message.c:373:2: warning: Value stored to 'sg_off' is never read
+Is it possible to override that setting at boot time with a kernel parameter? 
+It would make it easier to switch between the policies for testing.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- net/rds/message.c | 2 --
- 1 file changed, 2 deletions(-)
+I didn´t see anything regarding that in the help of the kernel option.
 
-diff --git a/net/rds/message.c b/net/rds/message.c
-index 90dcdcfe9f62..9c41bdd9e444 100644
---- a/net/rds/message.c
-+++ b/net/rds/message.c
-@@ -357,7 +357,6 @@ struct rds_message *rds_message_map_pages(unsigned long *page_addrs, unsigned in
- 
- int rds_message_zcopy_from_user(struct rds_message *rm, struct iov_iter *from)
- {
--	unsigned long sg_off;
- 	struct scatterlist *sg;
- 	int ret = 0;
- 	int length = iov_iter_count(from);
-@@ -370,7 +369,6 @@ int rds_message_zcopy_from_user(struct rds_message *rm, struct iov_iter *from)
- 	 * now allocate and copy in the data payload.
- 	 */
- 	sg = rm->data.op_sg;
--	sg_off = 0; /* Dear gcc, sg->page will be null from kzalloc. */
- 
- 	info = kzalloc(sizeof(*info), GFP_KERNEL);
- 	if (!info)
+Thanks,
 -- 
-2.15.1
+Martin
