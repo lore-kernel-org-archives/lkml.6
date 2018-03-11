@@ -1,57 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932497AbeCKWpd convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 18:45:33 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:45815 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932284AbeCKWpb (ORCPT
+        id S932523AbeCKWpv (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 18:45:51 -0400
+Received: from gateway22.websitewelcome.com ([192.185.47.79]:49921 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932361AbeCKWpt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 18:45:31 -0400
-X-ME-Helo: linux.numericable.fr
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 11 Mar 2018 23:45:30 +0100
-X-ME-IP: 77.198.79.136
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: tariqt@mellanox.com
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] net/mlx4_en: Fix a memory leak in case of error in 'mlx4_en_init_netdev()'
-Date: Sun, 11 Mar 2018 23:45:29 +0100
-Message-Id: <20180311224529.4427-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.14.1
+        Sun, 11 Mar 2018 18:45:49 -0400
+Subject: Re: [RFC] netfilter: cttimeout: remove VLA in
+ ctnl_timeout_parse_policy
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+References: <20180306184755.GA7628@embeddedgus>
+ <20180311220414.feda33aw72zw2rko@salvia>
+ <20df6b07-b3e7-7733-ee05-b12589bd287f@embeddedor.com>
+ <20180311222110.yk34o63ha5y34ssx@salvia>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <fb8c8194-ce51-828c-f8e9-52a1c7763caa@embeddedor.com>
+Date: Sun, 11 Mar 2018 17:45:46 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180311222110.yk34o63ha5y34ssx@salvia>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.117.58
+X-Source-L: No
+X-Exim-ID: 1ev9it-0047Ks-Mv
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.66]) [189.175.117.58]:54000
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 16
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If 'kzalloc' fails, we must free some memory before returning.
-
-Fixes: 67f8b1dcb9ee ("net/mlx4_en: Refactor the XDP forwarding rings scheme")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/ethernet/mellanox/mlx4/en_netdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
-index 8fc51bc29003..f9db018e858f 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
-@@ -3327,7 +3327,7 @@ int mlx4_en_init_netdev(struct mlx4_en_dev *mdev, int port,
- 		if (!priv->tx_cq[t]) {
- 			kfree(priv->tx_ring[t]);
- 			err = -ENOMEM;
--			goto out;
-+			goto err_free_tx;
- 		}
- 	}
- 	priv->rx_ring_num = prof->rx_ring_num;
--- 
-2.14.1
 
 
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+On 03/11/2018 05:21 PM, Pablo Neira Ayuso wrote:
+> On Sun, Mar 11, 2018 at 05:12:09PM -0500, Gustavo A. R. Silva wrote:
+>> Hi Pablo,
+>>
+>> On 03/11/2018 05:04 PM, Pablo Neira Ayuso wrote:
+>>> On Tue, Mar 06, 2018 at 12:47:55PM -0600, Gustavo A. R. Silva wrote:
+>>>> In preparation to enabling -Wvla, remove VLA and replace it
+>>>> with dynamic memory allocation.
+>>>
+>>> Looks good but...
+>>>
+>>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>>>> ---
+>>>>    net/netfilter/nfnetlink_cttimeout.c | 12 ++++++++++--
+>>>>    1 file changed, 10 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/net/netfilter/nfnetlink_cttimeout.c b/net/netfilter/nfnetlink_cttimeout.c
+>>>> index 95b0470..a2f7d92 100644
+>>>> --- a/net/netfilter/nfnetlink_cttimeout.c
+>>>> +++ b/net/netfilter/nfnetlink_cttimeout.c
+>>>> @@ -52,18 +52,26 @@ ctnl_timeout_parse_policy(void *timeouts,
+>>>>    			  struct net *net, const struct nlattr *attr)
+>>>>    {
+>>>>    	int ret = 0;
+>>>> +	struct nlattr **tb = NULL;
+>>>
+>>> I think we don't need to initialize this, right?
+>>>
+>>
+>> We actually do have to initialized it because in the unlikely case that the
+>> code block inside the 'if' below is not executed, then we will end up
+>> freeing an uninitialized pointer.
+> 
+> I see, you're right indeed.
+> 
+> We can probably simplify this code, but just doing:
+> 
+>          if (!l4proto->ctnl_timeout.nlattr_to_obj))
+>                  return 0;
+> 
+
+I wonder if it is better to code this instead:
+
+if (unlikely(!l4proto->ctnl_timeout.nlattr_to_obj)))
+	return 0;
+
+
+>          netlink attribute parsing here.
+> 
+> You could even remove the likely() thing, which doesn't make much
+> sense for control plane code.
+> 
+
+Why is that?
+
+> I understand this is a larger change, but I think this function will
+> look better while we're removing VLA.
+> 
+> Would you mind having a look? I'd appreciate if so.
+> 
+
+I can do that. No problem.
+
+Thanks
+--
+Gustavo
