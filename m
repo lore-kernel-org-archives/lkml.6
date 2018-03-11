@@ -1,110 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932487AbeCKVqA (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 17:46:00 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:50283 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932161AbeCKVp6 (ORCPT
+        id S932491AbeCKVq3 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 17:46:29 -0400
+Received: from mail-it0-f44.google.com ([209.85.214.44]:50977 "EHLO
+        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932161AbeCKVq1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 17:45:58 -0400
-X-Google-Smtp-Source: AG47ELtCOiw4WYjxLM6EB7aO7iPXiXKGtEeH+fuKK+xkZDBn9NQxpYE93Iyie5jOCDtgmEd72uDThDF7ITpxR4Qo3uU=
+        Sun, 11 Mar 2018 17:46:27 -0400
+X-Google-Smtp-Source: AG47ELtXEAnuaBIOfVXkvybseCWDHCMK5dHa818QtdUpUhvrwQCVWdeqoHHedzorJ3iQ0RYCrm+1bHTjhDXmaArU0/4=
 MIME-Version: 1.0
-In-Reply-To: <20180311192256.GA630@zzz.localdomain>
-References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
- <1520705944-6723-6-git-send-email-jix024@eng.ucsd.edu> <0924a2b3-6f21-4aaf-224d-2f5accc21d10@gmail.com>
- <20180311192256.GA630@zzz.localdomain>
-From: Andiry Xu <jix024@eng.ucsd.edu>
-Date: Sun, 11 Mar 2018 14:45:57 -0700
-Message-ID: <CAD4Szjvo_wuqOZyoaW6gJsuDiNjyHkh4nGW+QdMR0U-NzBXBsg@mail.gmail.com>
-Subject: Re: [RFC v2 05/83] Add NOVA filesystem definitions and useful helper routines.
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: Nikolay Borisov <n.borisov.lkml@gmail.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Rudoff, Andy" <andy.rudoff@intel.com>, coughlan@redhat.com,
-        Steven Swanson <swanson@cs.ucsd.edu>,
-        Dave Chinner <david@fromorbit.com>, jack@suse.com, swhiteho@redhat.com,
-        miklos@szeredi.hu, Jian Xu <andiry.xu@gmail.com>,
-        Andiry Xu <jix024@cs.ucsd.edu>, herbert@gondor.apana.org.au
+In-Reply-To: <20180311210537.3674-1-christian.brauner@ubuntu.com>
+References: <20180311210537.3674-1-christian.brauner@ubuntu.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 11 Mar 2018 14:46:26 -0700
+X-Google-Sender-Auth: weW2ubdGc_olrWjChkhsf5cM1wo
+Message-ID: <CA+55aFxH0O4tXtOux0kajrhCHGo0NcUT1jTvT-O0prfsegyp_A@mail.gmail.com>
+Subject: Re: [PATCH 0/3 v2] devpts: handle /dev/ptmx bind-mounts
+To: Christian Brauner <christian.brauner@ubuntu.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 11, 2018 at 12:22 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> On Sun, Mar 11, 2018 at 02:00:13PM +0200, Nikolay Borisov wrote:
->> [Adding Herbert Xu to CC since he is the maintainer of the crypto subsys
->> maintainer]
->>
->> On 10.03.2018 20:17, Andiry Xu wrote:
->> <snip>
->>
->> > +static inline u32 nova_crc32c(u32 crc, const u8 *data, size_t len)
->> > +{
->> > +   u8 *ptr = (u8 *) data;
->> > +   u64 acc = crc; /* accumulator, crc32c value in lower 32b */
->> > +   u32 csum;
->> > +
->> > +   /* x86 instruction crc32 is part of SSE-4.2 */
->> > +   if (static_cpu_has(X86_FEATURE_XMM4_2)) {
->> > +           /* This inline assembly implementation should be equivalent
->> > +            * to the kernel's crc32c_intel_le_hw() function used by
->> > +            * crc32c(), but this performs better on test machines.
->> > +            */
->> > +           while (len > 8) {
->> > +                   asm volatile(/* 64b quad words */
->> > +                           "crc32q (%1), %0"
->> > +                           : "=r" (acc)
->> > +                           : "r"  (ptr), "0" (acc)
->> > +                   );
->> > +                   ptr += 8;
->> > +                   len -= 8;
->> > +           }
->> > +
->> > +           while (len > 0) {
->> > +                   asm volatile(/* trailing bytes */
->> > +                           "crc32b (%1), %0"
->> > +                           : "=r" (acc)
->> > +                           : "r"  (ptr), "0" (acc)
->> > +                   );
->> > +                   ptr++;
->> > +                   len--;
->> > +           }
->> > +
->> > +           csum = (u32) acc;
->> > +   } else {
->> > +           /* The kernel's crc32c() function should also detect and use the
->> > +            * crc32 instruction of SSE-4.2. But calling in to this function
->> > +            * is about 3x to 5x slower than the inline assembly version on
->> > +            * some test machines.
->>
->> That is really odd. Did you try to characterize why this is the case? Is
->> it purely the overhead of dispatching to the correct backend function?
->> That's a rather big performance hit.
->>
->> > +            */
->> > +           csum = crc32c(crc, data, len);
->> > +   }
->> > +
->> > +   return csum;
->> > +}
->> > +
+On Sun, Mar 11, 2018 at 2:05 PM, Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
 >
-> Are you sure that CONFIG_CRYPTO_CRC32C_INTEL was enabled during your tests and
-> that the accelerated version was being called?  Or, perhaps CRC32C_PCL_BREAKEVEN
-> (defined in arch/x86/crypto/crc32c-intel_glue.c) needs to be adjusted.  Please
-> don't hack around performance problems like this; if they exist, they need to be
-> fixed for everyone.
->
+> This is the second iteration of this patch.
 
-I think we found the issue when implementing NOVA-Fortis metadata and
-data protections, which use crc32c a lot. They have been removed in
-this patchset; but I will double check and make sure if the issue
-exists or not.
+This looks good to me. Just wondering how this should be merged, and
+whether we should have a Cc: stable for it?
 
-Thanks,
-Andiry
+.. and, just in case, maybe Al can verify that there's nothing subtle
+about follow_up() that we need to worry about. That said, NFS already
+has that exact same loop for follow_to_parent(), just syntactically
+slightly different version.
 
-> Eric
+In fact, I wonder if we even need to do that
+
+        if ((DEVPTS_SB(path.mnt->mnt_sb) == fsi) &&
+            (path.mnt->mnt_root == fsi->ptmx_dentry)) {
+
+and maybe we could do the follow_up() loop unconditionally?
+
+Because if the ptmx dentry is *not* a bind mount, then the loop will
+be a no-op, and if it *is* a bind-mount, then I'm not convinced we
+should even try to just limit it to the devpts case - maybe somebody
+did a bind-mount on just a legacy ptmx device node?
+
+So that "if()" actually seems to be to be superfluous, and only limit
+the "follow bind mounts' case unnecessarily. Hmm?
+
+           Linus
