@@ -1,21 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932388AbeCKK6D (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 06:58:03 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:54518 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932261AbeCKK4y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S932269AbeCKK4y (ORCPT <rfc822;w@1wt.eu>);
         Sun, 11 Mar 2018 06:56:54 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:54362 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932120AbeCKK4t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Mar 2018 06:56:49 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, luto@kernel.org,
         torvalds@linux-foundation.org, mingo@kernel.org,
         viro@zeniv.linux.org.uk, akpm@linux-foundation.org
-Cc: Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-        user-mode-linux-devel@lists.sourceforge.net
-Subject: [RFC PATCH 25/35] hostfs: rename do_rmdir() to hostfs_do_rmdir()
-Date: Sun, 11 Mar 2018 11:55:47 +0100
-Message-Id: <20180311105557.20807-26-linux@dominikbrodowski.net>
+Subject: [RFC PATCH 35/35] syscalls: do not call sys_close() within the kernel
+Date: Sun, 11 Mar 2018 11:55:57 +0100
+Message-Id: <20180311105557.20807-36-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180311105557.20807-1-linux@dominikbrodowski.net>
 References: <20180311105557.20807-1-linux@dominikbrodowski.net>
@@ -23,57 +21,226 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-do_rmdir() is used in the VFS layer at fs/namei.c, so use a different
-name in hostfs.
+The few places which checked the return value did not care about the return
+value re-writing in sys_close(), so simply use a wrapper to __close_fd().
 
-CC: Jeff Dike <jdike@addtoit.com>
-CC: Richard Weinberger <richard@nod.at>
-CC: user-mode-linux-devel@lists.sourceforge.net
+CC: Al Viro <viro@zeniv.linux.org.uk>
+CC: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- fs/hostfs/hostfs.h      | 2 +-
- fs/hostfs/hostfs_kern.c | 2 +-
- fs/hostfs/hostfs_user.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ fs/autofs4/dev-ioctl.c   | 2 +-
+ fs/binfmt_misc.c         | 2 +-
+ fs/file.c                | 1 +
+ fs/open.c                | 2 +-
+ include/linux/syscalls.h | 6 ++++++
+ init/do_mounts.c         | 4 ++--
+ init/do_mounts_initrd.c  | 2 +-
+ init/do_mounts_md.c      | 8 ++++----
+ init/do_mounts_rd.c      | 6 +++---
+ init/initramfs.c         | 8 ++++----
+ 10 files changed, 24 insertions(+), 17 deletions(-)
 
-diff --git a/fs/hostfs/hostfs.h b/fs/hostfs/hostfs.h
-index ffaec2e7526c..cb8374af08a6 100644
---- a/fs/hostfs/hostfs.h
-+++ b/fs/hostfs/hostfs.h
-@@ -84,7 +84,7 @@ extern int set_attr(const char *file, struct hostfs_iattr *attrs, int fd);
- extern int make_symlink(const char *from, const char *to);
- extern int unlink_file(const char *file);
- extern int do_mkdir(const char *file, int mode);
--extern int do_rmdir(const char *file);
-+extern int hostfs_do_rmdir(const char *file);
- extern int do_mknod(const char *file, int mode, unsigned int major,
- 		    unsigned int minor);
- extern int link_file(const char *from, const char *to);
-diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
-index c148e7f4f451..3cd85eb5bbb1 100644
---- a/fs/hostfs/hostfs_kern.c
-+++ b/fs/hostfs/hostfs_kern.c
-@@ -706,7 +706,7 @@ static int hostfs_rmdir(struct inode *ino, struct dentry *dentry)
- 
- 	if ((file = dentry_name(dentry)) == NULL)
- 		return -ENOMEM;
--	err = do_rmdir(file);
-+	err = hostfs_do_rmdir(file);
- 	__putname(file);
- 	return err;
- }
-diff --git a/fs/hostfs/hostfs_user.c b/fs/hostfs/hostfs_user.c
-index 9c1e0f019880..5ecc4706172b 100644
---- a/fs/hostfs/hostfs_user.c
-+++ b/fs/hostfs/hostfs_user.c
-@@ -304,7 +304,7 @@ int do_mkdir(const char *file, int mode)
- 	return 0;
- }
- 
--int do_rmdir(const char *file)
-+int hostfs_do_rmdir(const char *file)
+diff --git a/fs/autofs4/dev-ioctl.c b/fs/autofs4/dev-ioctl.c
+index b7c816f39404..26f6b4f41ce6 100644
+--- a/fs/autofs4/dev-ioctl.c
++++ b/fs/autofs4/dev-ioctl.c
+@@ -310,7 +310,7 @@ static int autofs_dev_ioctl_closemount(struct file *fp,
+ 				       struct autofs_sb_info *sbi,
+ 				       struct autofs_dev_ioctl *param)
  {
- 	int err;
+-	return sys_close(param->ioctlfd);
++	return ksys_close(param->ioctlfd);
+ }
  
+ /*
+diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+index a7c5a9861bef..a41b48f82a70 100644
+--- a/fs/binfmt_misc.c
++++ b/fs/binfmt_misc.c
+@@ -241,7 +241,7 @@ static int load_misc_binary(struct linux_binprm *bprm)
+ 	return retval;
+ error:
+ 	if (fd_binary > 0)
+-		sys_close(fd_binary);
++		ksys_close(fd_binary);
+ 	bprm->interp_flags = 0;
+ 	bprm->interp_data = 0;
+ 	goto ret;
+diff --git a/fs/file.c b/fs/file.c
+index d304004f0b65..7ffd6e9d103d 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -638,6 +638,7 @@ int __close_fd(struct files_struct *files, unsigned fd)
+ 	spin_unlock(&files->file_lock);
+ 	return -EBADF;
+ }
++EXPORT_SYMBOL(__close_fd); /* for ksys_close() */
+ 
+ void do_close_on_exec(struct files_struct *files)
+ {
+diff --git a/fs/open.c b/fs/open.c
+index b3f3b2cd9f19..aab4ad7d9c9a 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1200,7 +1200,7 @@ SYSCALL_DEFINE1(close, unsigned int, fd)
+ 
+ 	return retval;
+ }
+-EXPORT_SYMBOL(sys_close);
++
+ 
+ /*
+  * This routine simulates a hangup on the tty, to arrange that users
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index fd1dcdc7fb1b..dda95f614916 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -1042,4 +1042,10 @@ static inline long ksys_lchown(const char __user *filename, uid_t user,
+ 	return do_fchownat(AT_FDCWD, filename, user, group,
+ 			     AT_SYMLINK_NOFOLLOW);
+ }
++
++extern int __close_fd(struct files_struct *files, unsigned int fd);
++static inline int ksys_close(unsigned int fd)
++{
++	return __close_fd(current->files, fd);
++}
+ #endif
+diff --git a/init/do_mounts.c b/init/do_mounts.c
+index 89f18985fa90..a28dd42d1f84 100644
+--- a/init/do_mounts.c
++++ b/init/do_mounts.c
+@@ -492,7 +492,7 @@ void __init change_floppy(char *fmt, ...)
+ 	fd = sys_open("/dev/root", O_RDWR | O_NDELAY, 0);
+ 	if (fd >= 0) {
+ 		sys_ioctl(fd, FDEJECT, 0);
+-		sys_close(fd);
++		ksys_close(fd);
+ 	}
+ 	printk(KERN_NOTICE "VFS: Insert %s and press ENTER\n", buf);
+ 	fd = sys_open("/dev/console", O_RDWR, 0);
+@@ -503,7 +503,7 @@ void __init change_floppy(char *fmt, ...)
+ 		sys_read(fd, &c, 1);
+ 		termios.c_lflag |= ICANON;
+ 		sys_ioctl(fd, TCSETSF, (long)&termios);
+-		sys_close(fd);
++		ksys_close(fd);
+ 	}
+ }
+ #endif
+diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
+index d30db6bbf014..50decd9999b7 100644
+--- a/init/do_mounts_initrd.c
++++ b/init/do_mounts_initrd.c
+@@ -111,7 +111,7 @@ static void __init handle_initrd(void)
+ 			error = fd;
+ 		} else {
+ 			error = sys_ioctl(fd, BLKFLSBUF, 0);
+-			sys_close(fd);
++			ksys_close(fd);
+ 		}
+ 		printk(!error ? "okay\n" : "failed\n");
+ 	}
+diff --git a/init/do_mounts_md.c b/init/do_mounts_md.c
+index 3f733c760a8c..ebd4013d589e 100644
+--- a/init/do_mounts_md.c
++++ b/init/do_mounts_md.c
+@@ -191,7 +191,7 @@ static void __init md_setup_drive(void)
+ 			printk(KERN_WARNING
+ 			       "md: Ignoring md=%d, already autodetected. (Use raid=noautodetect)\n",
+ 			       minor);
+-			sys_close(fd);
++			ksys_close(fd);
+ 			continue;
+ 		}
+ 
+@@ -243,11 +243,11 @@ static void __init md_setup_drive(void)
+ 			 * boot a kernel with devfs compiled in from partitioned md
+ 			 * array without it
+ 			 */
+-			sys_close(fd);
++			ksys_close(fd);
+ 			fd = sys_open(name, 0, 0);
+ 			sys_ioctl(fd, BLKRRPART, 0);
+ 		}
+-		sys_close(fd);
++		ksys_close(fd);
+ 	}
+ }
+ 
+@@ -297,7 +297,7 @@ static void __init autodetect_raid(void)
+ 	fd = sys_open("/dev/md0", 0, 0);
+ 	if (fd >= 0) {
+ 		sys_ioctl(fd, RAID_AUTORUN, raid_autopart);
+-		sys_close(fd);
++		ksys_close(fd);
+ 	}
+ }
+ 
+diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+index 5b69056f610a..f1aa341862d3 100644
+--- a/init/do_mounts_rd.c
++++ b/init/do_mounts_rd.c
+@@ -257,7 +257,7 @@ int __init rd_load_image(char *from)
+ 		if (i && (i % devblocks == 0)) {
+ 			printk("done disk #%d.\n", disk++);
+ 			rotate = 0;
+-			if (sys_close(in_fd)) {
++			if (ksys_close(in_fd)) {
+ 				printk("Error closing the disk.\n");
+ 				goto noclose_input;
+ 			}
+@@ -283,9 +283,9 @@ int __init rd_load_image(char *from)
+ successful_load:
+ 	res = 1;
+ done:
+-	sys_close(in_fd);
++	ksys_close(in_fd);
+ noclose_input:
+-	sys_close(out_fd);
++	ksys_close(out_fd);
+ out:
+ 	kfree(buf);
+ 	ksys_unlink("/dev/ram");
+diff --git a/init/initramfs.c b/init/initramfs.c
+index 0d3b001b0dc5..ce2bcad97cdf 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -373,7 +373,7 @@ static int __init do_copy(void)
+ 	if (byte_count >= body_len) {
+ 		if (xwrite(wfd, victim, body_len) != body_len)
+ 			error("write error");
+-		sys_close(wfd);
++		ksys_close(wfd);
+ 		do_utime(vcollected, mtime);
+ 		kfree(vcollected);
+ 		eat(body_len);
+@@ -574,7 +574,7 @@ static void __init clean_rootfs(void)
+ 	buf = kzalloc(BUF_SIZE, GFP_KERNEL);
+ 	WARN_ON(!buf);
+ 	if (!buf) {
+-		sys_close(fd);
++		ksys_close(fd);
+ 		return;
+ 	}
+ 
+@@ -602,7 +602,7 @@ static void __init clean_rootfs(void)
+ 		num = sys_getdents64(fd, dirp, BUF_SIZE);
+ 	}
+ 
+-	sys_close(fd);
++	ksys_close(fd);
+ 	kfree(buf);
+ }
+ #endif
+@@ -639,7 +639,7 @@ static int __init populate_rootfs(void)
+ 				pr_err("/initrd.image: incomplete write (%zd != %ld)\n",
+ 				       written, initrd_end - initrd_start);
+ 
+-			sys_close(fd);
++			ksys_close(fd);
+ 			free_initrd();
+ 		}
+ 	done:
 -- 
 2.16.2
