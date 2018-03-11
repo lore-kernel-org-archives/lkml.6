@@ -1,29 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932176AbeCKKVA (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 06:21:00 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:59192 "EHLO
+        id S932169AbeCKKY5 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 06:24:57 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:54693 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932126AbeCKKU7 (ORCPT
+        with ESMTP id S932120AbeCKKYz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 06:20:59 -0400
+        Sun, 11 Mar 2018 06:24:55 -0400
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Doug Smythies <dsmythies@telus.net>
-Cc: "'Rik van Riel'" <riel@surriel.com>,
-        "'Mike Galbraith'" <mgalbraith@suse.de>,
-        "'Thomas Gleixner'" <tglx@linutronix.de>,
-        "'Paul McKenney'" <paulmck@linux.vnet.ibm.com>,
-        "'Thomas Ilsche'" <thomas.ilsche@tu-dresden.de>,
-        "'Frederic Weisbecker'" <fweisbec@gmail.com>,
-        "'Linux PM'" <linux-pm@vger.kernel.org>,
-        "'Aubrey Li'" <aubrey.li@linux.intel.com>,
-        "'LKML'" <linux-kernel@vger.kernel.org>,
-        "'Peter Zijlstra'" <peterz@infradead.org>
-Subject: Re: [RFC/RFT][PATCH v3 0/6] sched/cpuidle: Idle loop rework
-Date: Sun, 11 Mar 2018 11:21:36 +0100
-Message-ID: <1773378.CTekz94moy@aspire.rjw.lan>
-In-Reply-To: <001801d3b90c$99232600$cb697200$@net>
-References: <2450532.XN8DODrtDf@aspire.rjw.lan> <000701d3b889$eadd5340$c097f9c0$@net> <001801d3b90c$99232600$cb697200$@net>
+To: Andrew Worsley <amworsley@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>, "Rafael J. Wysocki" <rafael@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        Len Brown <len.brown@intel.com>, 844788@bugs.debian.org
+Subject: Re: 4.16-rc3 fails to resume on MacBookPro10,1 -
+Date: Sun, 11 Mar 2018 11:25:33 +0100
+Message-ID: <1796290.BApLEM9bFY@aspire.rjw.lan>
+In-Reply-To: <CA+Y=x3mwNDNJTt=n-K__wbCb8P+VhgMafRiofc0tnXqdgRk43w@mail.gmail.com>
+References: <CA+Y=x3=U_zheHBxeNSzL9nSdXOZB7rs-JDNr36323uJ9Uhx0Hg@mail.gmail.com> <20180310131605.GA28296@amd> <CA+Y=x3mwNDNJTt=n-K__wbCb8P+VhgMafRiofc0tnXqdgRk43w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -31,41 +25,61 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sunday, March 11, 2018 8:43:02 AM CET Doug Smythies wrote:
-> On 2018.03.10 15:55 Rafael J. Wysocki wrote: 
-> >On Saturday, March 10, 2018 5:07:36 PM CET Doug Smythies wrote:
-> >> On 2018.03.10 01:00 Rafael J. Wysocki wrote:
-> >
-> ... [snip] ...
+On Sunday, March 11, 2018 5:52:47 AM CET Andrew Worsley wrote:
 > 
-> > The information that they often spend more time than a tick
-> > period in state 0 in one go *is* relevant, though.
-> >
-> >
-> > That issue can be dealt with in a couple of ways and the patch below is a
-> > rather straightforward attempt to do that.  The idea, basically, is to discard
-> > the result of governor prediction if the tick has been stopped alread and
-> > the predicted idle duration is within the tick range.
-> >
-> > Please try it on top of the v3 and tell me if you see an improvement.
+> --94eb2c04c64405d3da05671bccce
+> Content-Type: text/plain; charset="UTF-8"
 > 
-> It seems pretty good so far.
-> See a new line added to the previous graph, "rjwv3plus".
+> On 11 March 2018 at 00:16, Pavel Machek <pavel@ucw.cz> wrote:
+> > Hi!
+> >
+> >> > Ok, I've just tested linux-next, and it works ok for me on thinkpad
+> >> > x60. (But that's probably rather different configuration from the
+> >> > macbook).
+> >> >
+> >> > Unfortunately, I could not deduce anything useful from the
+> >> > backtraces. Andrew, could you try v4.15 with KPTI disabled ?
+> >> >
+> >> > Thanks,
+> >> >                                                                         Pavel
+> >>
+> >> This is 4.15 kernel with KPTI disabled:
+> >> % grep PAGE_TABLE .config
+> >> # CONFIG_PAGE_TABLE_ISOLATION is not set
+> >>
+> >> As I expected it appears no more infomative to me.
+> >>
+> >> What I really need is some clue as to what is supposed to be happening
+> >> at this point.
+> >
+> > You may want to add some printks to see where it hangs.
+> >
+> > But maybe before that, you may want to test CPU hotplug, and make sure
+> > s2ram works, etc...
+> >
+> > Perhaps basic-pm-debugging.txt is good place to start?
+> >
+> > Best regards,
+> >                                                                         Pavel
+> > --
 > 
-> http://fast.smythies.com/rjwv3plus_100.png
+> Ok - all the test modes work but a full s2ram hangs (never comes back)
+> and obviously the resume full save to disk fails.
 
-OK, cool!
+So there probably is a common cause to these failures and it most likely
+is low-level.
 
-Below is a respin of the last patch which also prevents shallow states from
-being chosen due to interactivity_req when the tick is stopped.
+It also seems to be specific to your system as S2RAM works for me w/
+4.16-rc4 on a few machines and hibernation appears to work here too.
 
-You may also add a poll_idle() fix I've just posted:
+> I attach the following files:
+> 
+> echo reboot > /sys/power/disk
+> echo disk > /sys/power/state
+> Then saved dmesg to file  dmesg-reboot-disk-ok.txt
 
-https://patchwork.kernel.org/patch/10274595/
+It is better to file a bug at bugzilla.kernel.org for these things,
+as they don't always go through email in a good shape.
 
-on top of this.  It makes quite a bit of a difference for me. :-)
-
-> I'll do another 100% load on one CPU test overnight, this time with
-> a trace.
-
-Thanks!
+Thanks,
+Rafael
