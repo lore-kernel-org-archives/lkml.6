@@ -1,76 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751250AbeCKEL4 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 23:11:56 -0500
-Received: from server.atrad.com.au ([150.101.241.2]:40842 "EHLO
-        server.atrad.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751227AbeCKELz (ORCPT
+        id S1751255AbeCKE6z (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 23:58:55 -0500
+Received: from mail-it0-f68.google.com ([209.85.214.68]:37767 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751232AbeCKE6x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 23:11:55 -0500
-Date: Sun, 11 Mar 2018 14:40:56 +1030
-From: Jonathan Woithe <jwoithe@just42.net>
-To: Micha?? K??pie?? <kernel@kempniu.pl>
-Cc: Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] platform/x86: fujitsu-laptop: Revert UNSUPPORTED_CMD
- back to an int
-Message-ID: <20180311041056.GA5432@gateway.atrad.com.au>
-References: <20180310204353.9584-1-kernel@kempniu.pl>
+        Sat, 10 Mar 2018 23:58:53 -0500
+X-Google-Smtp-Source: AG47ELs2uMwjwhFBGNjwcLGmNNHQeEEzfjJMQBEU36/ztCIEyocAg58u3KPP3bHG4U2FUKuutbQG+qzvnuQQ/GMeZOY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180310204353.9584-1-kernel@kempniu.pl>
-User-Agent: Mutt/1.6.1 (2016-04-27)
-X-MIMEDefang-action: accept
+In-Reply-To: <20180311021406.GA388@thunk.org>
+References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu> <20180311021406.GA388@thunk.org>
+From: Andiry Xu <jix024@eng.ucsd.edu>
+Date: Sat, 10 Mar 2018 20:58:52 -0800
+Message-ID: <CAD4Szjt0xZ8Y1MM6-dcCGq3Y2FjkjK7=9O-LZHR4++TFZdh4Ug@mail.gmail.com>
+Subject: Re: [RFC v2 00/83] NOVA: a new file system for persistent memory
+To: "Theodore Y. Ts'o" <tytso@mit.edu>, Andiry Xu <jix024@eng.ucsd.edu>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Rudoff, Andy" <andy.rudoff@intel.com>, coughlan@redhat.com,
+        Steven Swanson <swanson@cs.ucsd.edu>,
+        Dave Chinner <david@fromorbit.com>, jack@suse.com, swhiteho@redhat.com,
+        miklos@szeredi.hu, Jian Xu <andiry.xu@gmail.com>,
+        Andiry Xu <jix024@cs.ucsd.edu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 10, 2018 at 09:43:53PM +0100, Micha?? K??pie?? wrote:
-> UNSUPPORTED_CMD was previously 0x80000000 (int), but commit 819cddae7cfa
-> ("platform/x86: fujitsu-laptop: Clean up constants") changed it into an
-> unsigned long due to BIT() being used to define it.  As call_fext_func()
-> returns an int, 0x80000000 would get type promoted when compared to an
-> unsigned long, which on a 64-bit system would cause it to become
-> 0xffffffff80000000 due to sign extension.  This causes one logical
-> condition in fujitsu-laptop to always be true and another one to always
-> be false on 64-bit systems.  Fix this by reverting UNSUPPORTED_CMD back
-> to an int.
-> 
-> This patch fixes the following smatch warnings:
-> 
-> drivers/platform/x86/fujitsu-laptop.c:763 acpi_fujitsu_laptop_leds_register() warn: always true condition '(call_fext_func(device, ((1 << (12)) | (1 << (0))), 2, (1 << (16)), 0) != (1 << (31))) => (s32min-s32max != 2147483648)'
-> drivers/platform/x86/fujitsu-laptop.c:816 acpi_fujitsu_laptop_add() warn: impossible condition '(priv->flags_supported == (1 << (31))) => (0-2147483647,18446744071562067968-u64max == 2147483648)'
-> 
-> Fixes: 819cddae7cfa ("platform/x86: fujitsu-laptop: Clean up constants")
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Micha?? K??pie?? <kernel@kempniu.pl>
-> ---
-> This fixes a bug introduced by a commit queued for 4.17, so it needs to
-> be applied on top of for-next.
-> 
->  drivers/platform/x86/fujitsu-laptop.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/x86/fujitsu-laptop.c b/drivers/platform/x86/fujitsu-laptop.c
-> index 13bcdfea5349..6f4a55a53ced 100644
-> --- a/drivers/platform/x86/fujitsu-laptop.c
-> +++ b/drivers/platform/x86/fujitsu-laptop.c
-> @@ -85,7 +85,7 @@
->  #define FUNC_BACKLIGHT			(BIT(12) | BIT(2))
->  
->  /* FUNC interface - responses */
-> -#define UNSUPPORTED_CMD			BIT(31)
-> +#define UNSUPPORTED_CMD			0x80000000
->  
->  /* FUNC interface - status flags */
->  #define FLAG_RFKILL			BIT(5)
+On Sat, Mar 10, 2018 at 6:14 PM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> FYI, your patch set doesn't even compile for me without these fixups.
+> I'm not sure why you were trying to declare inline functions in a
+> header file without the function body?
+>
 
-This looks like a sensible, succinct solution to the regression.
+Thanks for catching this. I will fix it in the next version and adopt
+stricter flags next time.
 
-Reviewed-by: Jonathan Woithe <jwoithe@just42.net>
+Thanks,
+Andiry
 
-Regards
-  jonathan
+>                                                 - Ted
+>
+> diff --git a/fs/nova/balloc.c b/fs/nova/balloc.c
+> index 8e992156f28c..9c7b74aa712e 100644
+> --- a/fs/nova/balloc.c
+> +++ b/fs/nova/balloc.c
+> @@ -74,12 +74,12 @@ static void nova_init_free_list(struct super_block *sb,
+>                 free_list->block_end -= sbi->tail_reserved_blocks;
+>  }
+>
+> -inline struct nova_range_node *nova_alloc_blocknode(struct super_block *sb)
+> +struct nova_range_node *nova_alloc_blocknode(struct super_block *sb)
+>  {
+>         return nova_alloc_range_node(sb);
+>  }
+>
+> -inline void nova_free_blocknode(struct super_block *sb,
+> +void nova_free_blocknode(struct super_block *sb,
+>         struct nova_range_node *node)
+>  {
+>         nova_free_range_node(node);
+> @@ -206,7 +206,7 @@ int nova_insert_range_node(struct rb_root *tree,
+>         return 0;
+>  }
+>
+> -inline int nova_insert_blocktree(struct nova_sb_info *sbi,
+> +int nova_insert_blocktree(struct nova_sb_info *sbi,
+>         struct rb_root *tree, struct nova_range_node *new_node)
+>  {
+>         int ret;
+> @@ -659,7 +659,7 @@ static int nova_new_blocks(struct super_block *sb, unsigned long *blocknr,
+>
+>  // Allocate data blocks.  The offset for the allocated block comes back in
+>  // blocknr.  Return the number of blocks allocated.
+> -inline int nova_new_data_blocks(struct super_block *sb,
+> +int nova_new_data_blocks(struct super_block *sb,
+>         struct nova_inode_info_header *sih, unsigned long *blocknr,
+>         unsigned long start_blk, unsigned int num,
+>         enum nova_alloc_init zero, int cpu,
+> diff --git a/fs/nova/balloc.h b/fs/nova/balloc.h
+> index 463fbac99eff..aca7e8c18dde 100644
+> --- a/fs/nova/balloc.h
+> +++ b/fs/nova/balloc.h
+> @@ -62,18 +62,18 @@ enum alloc_type {
+>
+>  int nova_alloc_block_free_lists(struct super_block *sb);
+>  void nova_delete_free_lists(struct super_block *sb);
+> -inline struct nova_range_node *nova_alloc_blocknode(struct super_block *sb);
+> -inline void nova_free_blocknode(struct super_block *sb,
+> +struct nova_range_node *nova_alloc_blocknode(struct super_block *sb);
+> +void nova_free_blocknode(struct super_block *sb,
+>         struct nova_range_node *bnode);
+>  extern void nova_init_blockmap(struct super_block *sb, int recovery);
+>  extern unsigned long nova_count_free_blocks(struct super_block *sb);
+> -inline int nova_insert_blocktree(struct nova_sb_info *sbi,
+> +int nova_insert_blocktree(struct nova_sb_info *sbi,
+>         struct rb_root *tree, struct nova_range_node *new_node);
+>  extern int nova_free_data_blocks(struct super_block *sb,
+>         struct nova_inode_info_header *sih, unsigned long blocknr, int num);
+>  extern int nova_free_log_blocks(struct super_block *sb,
+>         struct nova_inode_info_header *sih, unsigned long blocknr, int num);
+> -extern inline int nova_new_data_blocks(struct super_block *sb,
+> +extern int nova_new_data_blocks(struct super_block *sb,
+>         struct nova_inode_info_header *sih, unsigned long *blocknr,
+>         unsigned long start_blk, unsigned int num,
+>         enum nova_alloc_init zero, int cpu,
+> diff --git a/fs/nova/inode.c b/fs/nova/inode.c
+> index 21be31a05d26..31ef258978ba 100644
+> --- a/fs/nova/inode.c
+> +++ b/fs/nova/inode.c
+> @@ -440,7 +440,7 @@ struct inode *nova_iget(struct super_block *sb, unsigned long ino)
+>         return ERR_PTR(err);
+>  }
+>
+> -inline int nova_insert_inodetree(struct nova_sb_info *sbi,
+> +int nova_insert_inodetree(struct nova_sb_info *sbi,
+>         struct nova_range_node *new_node, int cpu)
+>  {
+>         struct rb_root *tree;
+> diff --git a/fs/nova/inode.h b/fs/nova/inode.h
+> index 086a7cba8ac3..1097e15ff7af 100644
+> --- a/fs/nova/inode.h
+> +++ b/fs/nova/inode.h
+> @@ -254,7 +254,7 @@ int nova_init_inode_table(struct super_block *sb);
+>  int nova_get_inode_address(struct super_block *sb, u64 ino,
+>         u64 *pi_addr, int extendable);
+>  struct inode *nova_iget(struct super_block *sb, unsigned long ino);
+> -inline int nova_insert_inodetree(struct nova_sb_info *sbi,
+> +int nova_insert_inodetree(struct nova_sb_info *sbi,
+>         struct nova_range_node *new_node, int cpu);
+>  u64 nova_new_nova_inode(struct super_block *sb, u64 *pi_addr);
+>  struct inode *nova_new_vfs_inode(enum nova_new_inode_type type,
+> diff --git a/fs/nova/super.c b/fs/nova/super.c
+> index 039c003b698b..9f06ec847c95 100644
+> --- a/fs/nova/super.c
+> +++ b/fs/nova/super.c
+> @@ -795,23 +795,23 @@ static void nova_put_super(struct super_block *sb)
+>         sb->s_fs_info = NULL;
+>  }
+>
+> -inline void nova_free_range_node(struct nova_range_node *node)
+> +void nova_free_range_node(struct nova_range_node *node)
+>  {
+>         kmem_cache_free(nova_range_node_cachep, node);
+>  }
+>
+> -inline void nova_free_inode_node(struct super_block *sb,
+> +void nova_free_inode_node(struct super_block *sb,
+>         struct nova_range_node *node)
+>  {
+>         nova_free_range_node(node);
+>  }
+>
+> -inline void nova_free_file_write_item(struct nova_file_write_item *item)
+> +void nova_free_file_write_item(struct nova_file_write_item *item)
+>  {
+>         kmem_cache_free(nova_file_write_item_cachep, item);
+>  }
+>
+> -inline struct nova_file_write_item *
+> +struct nova_file_write_item *
+>  nova_alloc_file_write_item(struct super_block *sb)
+>  {
+>         struct nova_file_write_item *p;
+> diff --git a/fs/nova/super.h b/fs/nova/super.h
+> index bcbe862ac914..dc98346266e1 100644
+> --- a/fs/nova/super.h
+> +++ b/fs/nova/super.h
+> @@ -160,11 +160,11 @@ static inline struct nova_super_block *nova_get_super(struct super_block *sb)
+>
+>  extern void nova_error_mng(struct super_block *sb, const char *fmt, ...);
+>  extern struct nova_range_node *nova_alloc_range_node(struct super_block *sb);
+> -extern inline struct nova_range_node *nova_alloc_inode_node(struct super_block *sb);
+> +extern struct nova_range_node *nova_alloc_inode_node(struct super_block *sb);
+>  extern struct nova_file_write_item *
+>  nova_alloc_file_write_item(struct super_block *sb);
+>  extern void nova_free_range_node(struct nova_range_node *node);
+> -extern inline void nova_free_inode_node(struct super_block *sb,
+> +extern void nova_free_inode_node(struct super_block *sb,
+>         struct nova_range_node *node);
+>  void nova_free_file_write_item(struct nova_file_write_item *item);
+>
