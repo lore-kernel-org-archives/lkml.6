@@ -1,120 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932331AbeCKVcM (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 17:32:12 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:35228 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932275AbeCKVcK (ORCPT
+        id S932444AbeCKVeI (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 17:34:08 -0400
+Received: from mail-pl0-f48.google.com ([209.85.160.48]:40982 "EHLO
+        mail-pl0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932275AbeCKVeG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 17:32:10 -0400
-X-Google-Smtp-Source: AG47ELsFKj4c2fVEcC55S6KGAdb8wf6zaHtyOPw0iGbZvMqjmxKbLSpXFbkHpcsRPx6Zeu20y3y5KwD5D1eql5496bg=
+        Sun, 11 Mar 2018 17:34:06 -0400
+X-Google-Smtp-Source: AG47ELtMzktzDmNcjgFWuzDTgmlMbOm/8omlyEGcjlwL0IUw5Eg0lVorQ+IDeovxI2a/ZJk4WZ7Low==
+Date: Sun, 11 Mar 2018 14:34:02 -0700
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Tom Herbert <tom@quantonium.net>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>, Tejun Heo <tj@kernel.org>,
+        syzbot
+        <bot+ea75c0ffcd353d32515f064aaebefc5279e6161e@syzkaller.appspotmail.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>, syzkaller-bugs@googlegroups.com,
+        David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+        Eric Biggers <ebiggers@google.com>, netdev <netdev@vger.kernel.org>
+Subject: Re: KASAN: use-after-free Read in get_work_pool
+Message-ID: <20180311213402.GA2267@zzz.localdomain>
+References: <089e0825d42484310b055c75c3f6@google.com>
+ <20171026175847.GH59538@devbig577.frc2.facebook.com>
+ <CACT4Y+Y9cEkLwg54qXvDtgp2rbEcw-MUiLik8THtL3yWWH0-Ow@mail.gmail.com>
+ <CAM_iQpU0XFuj_Qc_Usug5=ymRWGU0nhQyPso6O=VbhPKAMa91Q@mail.gmail.com>
+ <CACT4Y+ab1RyHGJrD_KQQrh7bTbFTDx71RZ9H_QSNtAagtB1V8A@mail.gmail.com>
+ <CACT4Y+Z0hLxC1GeSSpWm1YzUZYuDOG7+d407RJ=ffZ=8d5_vbw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <53fde8ab-60df-be2e-002e-f1d7f04e933b@gmail.com>
-References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
- <1520705944-6723-10-git-send-email-jix024@eng.ucsd.edu> <53fde8ab-60df-be2e-002e-f1d7f04e933b@gmail.com>
-From: Andiry Xu <jix024@eng.ucsd.edu>
-Date: Sun, 11 Mar 2018 14:32:09 -0700
-Message-ID: <CAD4SzjunDkKhXMO5PvCnhqUebXt4_f7d7725qNs+Dz7Xv1vohg@mail.gmail.com>
-Subject: Re: [RFC v2 09/83] Add Kconfig and Makefile
-To: Nikolay Borisov <n.borisov.lkml@gmail.com>
-Cc: Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Rudoff, Andy" <andy.rudoff@intel.com>, coughlan@redhat.com,
-        Steven Swanson <swanson@cs.ucsd.edu>,
-        Dave Chinner <david@fromorbit.com>, jack@suse.com, swhiteho@redhat.com,
-        miklos@szeredi.hu, Jian Xu <andiry.xu@gmail.com>,
-        Andiry Xu <jix024@cs.ucsd.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+Z0hLxC1GeSSpWm1YzUZYuDOG7+d407RJ=ffZ=8d5_vbw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 11, 2018 at 5:15 AM, Nikolay Borisov
-<n.borisov.lkml@gmail.com> wrote:
->
->
-> On 10.03.2018 20:17, Andiry Xu wrote:
->> From: Andiry Xu <jix024@cs.ucsd.edu>
->>
->> Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
->> ---
->>  fs/Kconfig       |  2 ++
->>  fs/Makefile      |  1 +
->>  fs/nova/Kconfig  | 15 +++++++++++++++
->>  fs/nova/Makefile |  7 +++++++
->>  4 files changed, 25 insertions(+)
->>  create mode 100644 fs/nova/Kconfig
->>  create mode 100644 fs/nova/Makefile
->>
->> diff --git a/fs/Kconfig b/fs/Kconfig
->> index bc821a8..5e9ff3e 100644
->> --- a/fs/Kconfig
->> +++ b/fs/Kconfig
->> @@ -58,6 +58,8 @@ config FS_DAX_PMD
->>       depends on ZONE_DEVICE
->>       depends on TRANSPARENT_HUGEPAGE
->>
->> +source "fs/nova/Kconfig"
->> +
->>  # Selected by DAX drivers that do not expect filesystem DAX to support
->>  # get_user_pages() of DAX mappings. I.e. "limited" indicates no support
->>  # for fork() of processes with MAP_SHARED mappings or support for
->> diff --git a/fs/Makefile b/fs/Makefile
->> index add789e..65ea619 100644
->> --- a/fs/Makefile
->> +++ b/fs/Makefile
->> @@ -113,6 +113,7 @@ obj-$(CONFIG_OMFS_FS)             += omfs/
->>  obj-$(CONFIG_JFS_FS)         += jfs/
->>  obj-$(CONFIG_XFS_FS)         += xfs/
->>  obj-$(CONFIG_9P_FS)          += 9p/
->> +obj-$(CONFIG_NOVA_FS)                += nova/
->>  obj-$(CONFIG_AFS_FS)         += afs/
->>  obj-$(CONFIG_NILFS2_FS)              += nilfs2/
->>  obj-$(CONFIG_BEFS_FS)                += befs/
->> diff --git a/fs/nova/Kconfig b/fs/nova/Kconfig
->> new file mode 100644
->> index 0000000..c1c692e
->> --- /dev/null
->> +++ b/fs/nova/Kconfig
->> @@ -0,0 +1,15 @@
->> +config NOVA_FS
->> +     tristate "NOVA: log-structured file system for non-volatile memories"
->> +     depends on FS_DAX
->> +     select CRC32
->
-> What do you need crc32 for? Selecting libcrc32c is enough to do "the
-> right thing"
->
+On Wed, Feb 14, 2018 at 02:45:05PM +0100, 'Dmitry Vyukov' via syzkaller-bugs wrote:
+> On Wed, Dec 6, 2017 at 1:50 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> > On Fri, Oct 27, 2017 at 11:18 PM, Cong Wang <xiyou.wangcong@gmail.com> wrote:
+> >> On Thu, Oct 26, 2017 at 11:00 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> >>> On Thu, Oct 26, 2017 at 7:58 PM, Tejun Heo <tj@kernel.org> wrote:
+> >>>> Hello,
+> >>>>
+> >>>> On Thu, Oct 26, 2017 at 09:35:44AM -0700, syzbot wrote:
+> >>>>> BUG: KASAN: use-after-free in __read_once_size
+> >>>>> include/linux/compiler.h:276 [inline]
+> >>>>> BUG: KASAN: use-after-free in atomic64_read
+> >>>>> arch/x86/include/asm/atomic64_64.h:21 [inline]
+> >>>>> BUG: KASAN: use-after-free in atomic_long_read
+> >>>>> include/asm-generic/atomic-long.h:44 [inline]
+> >>>>> BUG: KASAN: use-after-free in get_work_pool+0x1c2/0x1e0
+> >>>>> kernel/workqueue.c:709
+> >>>>> Read of size 8 at addr ffff8801cc58c378 by task syz-executor5/21326
+> >>>>>
+> >>>>> CPU: 1 PID: 21326 Comm: syz-executor5 Not tainted 4.13.0+ #43
+> >>>>> Hardware name: Google Google Compute Engine/Google Compute Engine,
+> >>>>> BIOS Google 01/01/2011
+> >>>>> Call Trace:
+> >>>>>  __dump_stack lib/dump_stack.c:16 [inline]
+> >>>>>  dump_stack+0x194/0x257 lib/dump_stack.c:52
+> >>>>>  print_address_description+0x73/0x250 mm/kasan/report.c:252
+> >>>>>  kasan_report_error mm/kasan/report.c:351 [inline]
+> >>>>>  kasan_report+0x24e/0x340 mm/kasan/report.c:409
+> >>>>>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:430
+> >>>>>  __read_once_size include/linux/compiler.h:276 [inline]
+> >>>>>  atomic64_read arch/x86/include/asm/atomic64_64.h:21 [inline]
+> >>>>>  atomic_long_read include/asm-generic/atomic-long.h:44 [inline]
+> >>>>>  get_work_pool+0x1c2/0x1e0 kernel/workqueue.c:709
+> >>>>>  __queue_work+0x235/0x1150 kernel/workqueue.c:1401
+> >>>>>  queue_work_on+0x16a/0x1c0 kernel/workqueue.c:1486
+> >>>>>  queue_work include/linux/workqueue.h:489 [inline]
+> >>>>>  strp_check_rcv+0x25/0x30 net/strparser/strparser.c:553
+> >>>>>  kcm_attach net/kcm/kcmsock.c:1439 [inline]
+> >>>>>  kcm_attach_ioctl net/kcm/kcmsock.c:1460 [inline]
+> >>>>>  kcm_ioctl+0x826/0x1610 net/kcm/kcmsock.c:1695
+> >>>>>  sock_do_ioctl+0x65/0xb0 net/socket.c:961
+> >>>>>  sock_ioctl+0x2c2/0x440 net/socket.c:1058
+> >>>>>  vfs_ioctl fs/ioctl.c:45 [inline]
+> >>>>>  do_vfs_ioctl+0x1b1/0x1530 fs/ioctl.c:685
+> >>>>>  SYSC_ioctl fs/ioctl.c:700 [inline]
+> >>>>>  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:691
+> >>>>>  entry_SYSCALL_64_fastpath+0x1f/0xbe
+> >>>>
+> >>>> Looks like kcm is trying to reuse a work item whose last workqueue has
+> >>>> been destroyed without re-initing it.  A work item needs to be
+> >>>> reinit'd.
+> >>>
+> >>> +kcm maintainers
+> >>
+> >> Can you try the fix below? There is no C reproducer so I can't verify it.
+> >
+> >
+> > Hi Cong,
+> >
+> > syzbot can now test proposed patches, see
+> > https://github.com/google/syzkaller/blob/master/docs/syzbot.md#communication-with-syzbot
+> > for details. Please give it a try.
+> >
+> >> diff --git a/net/kcm/kcmsock.c b/net/kcm/kcmsock.c
+> >> index af4e76ac88ff..7816f44c576a 100644
+> >> --- a/net/kcm/kcmsock.c
+> >> +++ b/net/kcm/kcmsock.c
+> >> @@ -1433,11 +1433,12 @@ static int kcm_attach(struct socket *sock,
+> >> struct socket *csock,
+> >>         KCM_STATS_INCR(mux->stats.psock_attach);
+> >>         mux->psocks_cnt++;
+> >>         psock_now_avail(psock);
+> >> -       spin_unlock_bh(&mux->lock);
+> >>
+> >>         /* Schedule RX work in case there are already bytes queued */
+> >>         strp_check_rcv(&psock->strp);
+> >>
+> >> +       spin_unlock_bh(&mux->lock);
+> >> +
+> >>         return 0;
+> >>  }
+> 
+> 
+> Hi Cong,
+> 
+> Was this ever merged? Is it still necessary?
+> 
 
-I think this is the legacy of the removed NOVA-Fortis code. I will double check.
+syzbot is no longer hitting this bug for some reason but it's still there.  Tom,
+it looks like you wrote the buggy code (it's yet another KCM bug, apparently);
+can you please look into it?
 
-Thanks,
-Andiry
+I've put together a C reproducer that works on latest linux-next (next-20180309,
+commit 61530b14b059d).  It works as an unprivileged user provided that KCM is
+enabled, and that KASAN is enabled so you see the use-after-free report:
 
->> +     select LIBCRC32C
->> +     help
->> +       If your system has a block of fast (comparable in access speed to
->> +       system memory) and non-volatile byte-addressable memory and you wish
->> +       to mount a light-weight filesystem with strong consistency support
->> +       over it, say Y here.
->> +
->> +       To compile this as a module, choose M here: the module will be
->> +       called nova.
->> +
->> +       If unsure, say N.
->> diff --git a/fs/nova/Makefile b/fs/nova/Makefile
->> new file mode 100644
->> index 0000000..eb19646
->> --- /dev/null
->> +++ b/fs/nova/Makefile
->> @@ -0,0 +1,7 @@
->> +#
->> +# Makefile for the linux NOVA filesystem routines.
->> +#
->> +
->> +obj-$(CONFIG_NOVA_FS) += nova.o
->> +
->> +nova-y := bbuild.o inode.o rebuild.o super.o
->>
+#include <linux/bpf.h>
+#include <linux/in.h>
+#include <linux/kcm.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <sys/syscall.h>
+#include <unistd.h>
+
+int main()
+{
+        union bpf_attr prog = {
+                .prog_type = BPF_PROG_TYPE_SOCKET_FILTER,
+                .insn_cnt = 2,
+                .insns = (__u64)(__u64[]){ 0xb7, 0x95 },
+                .license = (__u64)"",
+        };
+        int tcp_fd, bpf_fd, kcm_fd;
+        struct sockaddr_in addr = {
+                .sin_family = AF_INET,
+                .sin_port = __constant_htons(3270),
+                .sin_addr = { __constant_htonl(0x7f000001) }
+        };
+
+        tcp_fd = socket(AF_INET, SOCK_STREAM, 0);
+        bind(tcp_fd, (void *)&addr, sizeof(addr));
+        listen(tcp_fd, 1);
+        tcp_fd = socket(AF_INET, SOCK_STREAM, 0);
+        connect(tcp_fd, (void *)&addr, sizeof(addr));
+        bpf_fd = syscall(__NR_bpf, BPF_PROG_LOAD, &prog, 48);
+        kcm_fd = socket(AF_KCM, SOCK_SEQPACKET, 0);
+        if (fork() == 0) {
+                struct kcm_attach attach = { tcp_fd, bpf_fd };
+
+                for (;;)
+                        ioctl(kcm_fd, SIOCKCMATTACH, &attach);
+        } else {
+                struct kcm_unattach unattach = { tcp_fd };
+
+                for (;;)
+                        ioctl(kcm_fd, SIOCKCMUNATTACH, &unattach);
+        }
+}
