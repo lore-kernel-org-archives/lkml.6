@@ -1,99 +1,232 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932211AbeCKTXC (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 15:23:02 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36176 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932139AbeCKTXA (ORCPT
+        id S932257AbeCKTX4 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 15:23:56 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:52029 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932139AbeCKTXz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 15:23:00 -0400
-X-Google-Smtp-Source: AG47ELtgPhEKD7G24FIUHNr6+mGbes2DnYfOMjFg3rbtMO7VgiU0dSy1cKoWbeTqzUEbzNZjy2WGfA==
-Date: Sun, 11 Mar 2018 12:22:56 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Nikolay Borisov <n.borisov.lkml@gmail.com>
-Cc: Andiry Xu <jix024@eng.ucsd.edu>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
-        swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
-        swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
-        Andiry Xu <jix024@cs.ucsd.edu>, herbert@gondor.apana.org.au
-Subject: Re: [RFC v2 05/83] Add NOVA filesystem definitions and useful helper
- routines.
-Message-ID: <20180311192256.GA630@zzz.localdomain>
-References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
- <1520705944-6723-6-git-send-email-jix024@eng.ucsd.edu>
- <0924a2b3-6f21-4aaf-224d-2f5accc21d10@gmail.com>
+        Sun, 11 Mar 2018 15:23:55 -0400
+X-Google-Smtp-Source: AG47ELvCEDWDXB52okeRTgHIn/4QHEkCsTIagw8o23PR9MLTP6JFWiLWJ5WUjJPELJEI7o0/ucdJ5g==
+From: Jason Vas Dias <jason.vas.dias@gmail.com>
+To: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, andi <andi@firstfloor.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH v4.16-rc4 1/1] x86/vdso: on Intel, VDSO should handle CLOCK_MONOTONIC_RAW
+Date: Sun, 11 Mar 2018 06:25:56 +0000
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+Message-ID: <y3iyfmbe.fsf@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0924a2b3-6f21-4aaf-224d-2f5accc21d10@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 11, 2018 at 02:00:13PM +0200, Nikolay Borisov wrote:
-> [Adding Herbert Xu to CC since he is the maintainer of the crypto subsys
-> maintainer]
-> 
-> On 10.03.2018 20:17, Andiry Xu wrote:
-> <snip>
-> 
-> > +static inline u32 nova_crc32c(u32 crc, const u8 *data, size_t len)
-> > +{
-> > +	u8 *ptr = (u8 *) data;
-> > +	u64 acc = crc; /* accumulator, crc32c value in lower 32b */
-> > +	u32 csum;
-> > +
-> > +	/* x86 instruction crc32 is part of SSE-4.2 */
-> > +	if (static_cpu_has(X86_FEATURE_XMM4_2)) {
-> > +		/* This inline assembly implementation should be equivalent
-> > +		 * to the kernel's crc32c_intel_le_hw() function used by
-> > +		 * crc32c(), but this performs better on test machines.
-> > +		 */
-> > +		while (len > 8) {
-> > +			asm volatile(/* 64b quad words */
-> > +				"crc32q (%1), %0"
-> > +				: "=r" (acc)
-> > +				: "r"  (ptr), "0" (acc)
-> > +			);
-> > +			ptr += 8;
-> > +			len -= 8;
-> > +		}
-> > +
-> > +		while (len > 0) {
-> > +			asm volatile(/* trailing bytes */
-> > +				"crc32b (%1), %0"
-> > +				: "=r" (acc)
-> > +				: "r"  (ptr), "0" (acc)
-> > +			);
-> > +			ptr++;
-> > +			len--;
-> > +		}
-> > +
-> > +		csum = (u32) acc;
-> > +	} else {
-> > +		/* The kernel's crc32c() function should also detect and use the
-> > +		 * crc32 instruction of SSE-4.2. But calling in to this function
-> > +		 * is about 3x to 5x slower than the inline assembly version on
-> > +		 * some test machines.
-> 
-> That is really odd. Did you try to characterize why this is the case? Is
-> it purely the overhead of dispatching to the correct backend function?
-> That's a rather big performance hit.
-> 
-> > +		 */
-> > +		csum = crc32c(crc, data, len);
-> > +	}
-> > +
-> > +	return csum;
-> > +}
-> > +
 
-Are you sure that CONFIG_CRYPTO_CRC32C_INTEL was enabled during your tests and
-that the accelerated version was being called?  Or, perhaps CRC32C_PCL_BREAKEVEN
-(defined in arch/x86/crypto/crc32c-intel_glue.c) needs to be adjusted.  Please
-don't hack around performance problems like this; if they exist, they need to be
-fixed for everyone.
+  Currently the VDSO does not handle
+     clock_gettime( CLOCK_MONOTONIC_RAW, &ts )
+  on Intel / AMD - it calls
+     vdso_fallback_gettime()
+  for this clock, which issues a syscall, having an unacceptably high
+  latency (minimum measurable time or time between measurements)
+  of 300-700ns on 2 2.8-3.9ghz Haswell x86_64 Family'_'Model : 06_3C
+  machines under various versions of Linux.
 
-Eric
+  Sometimes, particularly when correlating elapsed time to performance
+  counter values,  code needs to know elapsed time from the perspective
+  of the CPU no matter how "hot" / fast or "cold" / slow it might be
+  running wrt NTP / PTP ; when code needs this, the latencies with
+  a syscall are often unacceptably high.
+
+  I reported this as Bug #198161 :
+    'https://bugzilla.kernel.org/show_bug.cgi?id=198961'
+  and in previous posts with subjects matching 'CLOCK_MONOTONIC_RAW' .
+     
+  This patch handles CLOCK_MONOTONIC_RAW clock_gettime() in the VDSO ,
+  by exporting the raw clock calibration, last cycles, last xtime_nsec,
+  and last raw_sec value in the vsyscall_gtod_data during vsyscall_update() .
+
+  Now the new do_monotonic_raw() function in the vDSO has a latency of @ 24ns
+  on average, and the test program:
+   tools/testing/selftest/timers/inconsistency-check.c
+  succeeds with arguments: '-c 4 -t 120' or any arbitrary -t value.
+
+  The patch is against Linus' latest 4.16-rc4 tree,
+  current HEAD of :
+    git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+  .
+
+  The patch affects only files:
+  
+   arch/x86/include/asm/vgtod.h
+   arch/x86/entry/vdso/vclock_gettime.c
+   arch/x86/entry/vsyscall/vsyscall_gtod.c
+
+
+  This is a resend of the original patch fixing indentation issues
+  after installation of emacs Lisp cc-mode hooks in
+      Documentation/coding-style.rst
+  and calling 'indent-region' and 'tabify' (whitespace only changes) - SORRY ! 
+
+  Best Regards,
+     Jason Vas Dias  .
+     
+---
+diff -up linux-4.16-rc4/arch/x86/entry/vdso/vclock_gettime.c.4.16-rc4 linux-4.16-rc4/arch/x86/entry/vdso/vclock_gettime.c
+--- linux-4.16-rc4/arch/x86/entry/vdso/vclock_gettime.c.4.16-rc4	2018-03-04 22:54:11.000000000 +0000
++++ linux-4.16-rc4/arch/x86/entry/vdso/vclock_gettime.c	2018-03-11 19:00:04.630019100 +0000
+@@ -182,6 +182,29 @@ notrace static u64 vread_tsc(void)
+ 	return last;
+ }
+ 
++notrace static u64 vread_tsc_raw(void)
++{
++	u64 tsc, last=gtod->raw_cycle_last;
++	if( likely( gtod->has_rdtscp ) ) {
++		u32	tsc_lo, tsc_hi,
++			tsc_cpu __attribute__((unused));
++		asm volatile
++			( "rdtscp"
++				/* ^- has built-in cancellation point / pipeline stall"barrier" */
++				:   "=a" (tsc_lo)
++				  , "=d" (tsc_hi)
++				  , "=c" (tsc_cpu)
++			); // since all variables 32-bit, eax, edx, ecx used - NOT rax, rdx, rcx
++		tsc	= ((((u64)tsc_hi) & 0xffffffffUL) << 32) | (((u64)tsc_lo) & 0xffffffffUL);
++	} else {
++		tsc	= rdtsc_ordered();
++	}
++	if (likely(tsc >= last))
++		return tsc;
++	asm volatile ("");
++	return last;
++}
++
+ notrace static inline u64 vgetsns(int *mode)
+ {
+ 	u64 v;
+@@ -203,6 +226,27 @@ notrace static inline u64 vgetsns(int *m
+ 	return v * gtod->mult;
+ }
+ 
++notrace static inline u64 vgetsns_raw(int *mode)
++{
++	u64 v;
++	cycles_t cycles;
++
++	if (gtod->vclock_mode == VCLOCK_TSC)
++		cycles = vread_tsc_raw();
++#ifdef CONFIG_PARAVIRT_CLOCK
++	else if (gtod->vclock_mode == VCLOCK_PVCLOCK)
++		cycles = vread_pvclock(mode);
++#endif
++#ifdef CONFIG_HYPERV_TSCPAGE
++	else if (gtod->vclock_mode == VCLOCK_HVCLOCK)
++		cycles = vread_hvclock(mode);
++#endif
++	else
++		return 0;
++	v = (cycles - gtod->raw_cycle_last) & gtod->raw_mask;
++	return v * gtod->raw_mult;
++}
++
+ /* Code size doesn't matter (vdso is 4k anyway) and this is faster. */
+ notrace static int __always_inline do_realtime(struct timespec *ts)
+ {
+@@ -246,6 +290,27 @@ notrace static int __always_inline do_mo
+ 	return mode;
+ }
+ 
++notrace static int __always_inline do_monotonic_raw( struct timespec *ts)
++{
++	unsigned long seq;
++	u64 ns;
++	int mode;
++
++	do {
++		seq = gtod_read_begin(gtod);
++		mode = gtod->vclock_mode;
++		ts->tv_sec = gtod->monotonic_time_raw_sec;
++		ns = gtod->monotonic_time_raw_nsec;
++		ns += vgetsns_raw(&mode);
++		ns >>= gtod->raw_shift;
++	} while (unlikely(gtod_read_retry(gtod, seq)));
++
++	ts->tv_sec += __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
++	ts->tv_nsec = ns;
++
++	return mode;
++}
++
+ notrace static void do_realtime_coarse(struct timespec *ts)
+ {
+ 	unsigned long seq;
+@@ -277,6 +342,10 @@ notrace int __vdso_clock_gettime(clockid
+ 		if (do_monotonic(ts) == VCLOCK_NONE)
+ 			goto fallback;
+ 		break;
++	case CLOCK_MONOTONIC_RAW:
++		if (do_monotonic_raw(ts) == VCLOCK_NONE)
++			goto fallback;
++		break;
+ 	case CLOCK_REALTIME_COARSE:
+ 		do_realtime_coarse(ts);
+ 		break;
+diff -up linux-4.16-rc4/arch/x86/entry/vsyscall/vsyscall_gtod.c.4.16-rc4 linux-4.16-rc4/arch/x86/entry/vsyscall/vsyscall_gtod.c
+--- linux-4.16-rc4/arch/x86/entry/vsyscall/vsyscall_gtod.c.4.16-rc4	2018-03-04 22:54:11.000000000 +0000
++++ linux-4.16-rc4/arch/x86/entry/vsyscall/vsyscall_gtod.c	2018-03-11 19:06:36.584178867 +0000
+@@ -16,6 +16,7 @@
+ #include <linux/timekeeper_internal.h>
+ #include <asm/vgtod.h>
+ #include <asm/vvar.h>
++#include <asm/cpufeature.h>
+ 
+ int vclocks_used __read_mostly;
+ 
+@@ -45,6 +46,12 @@ void update_vsyscall(struct timekeeper *
+ 	vdata->mult		= tk->tkr_mono.mult;
+ 	vdata->shift		= tk->tkr_mono.shift;
+ 
++	vdata->raw_cycle_last	= tk->tkr_raw.cycle_last;
++	vdata->raw_mask		= tk->tkr_raw.mask;
++	vdata->raw_mult		= tk->tkr_raw.mult;
++	vdata->raw_shift	= tk->tkr_raw.shift;
++	vdata->has_rdtscp	= static_cpu_has(X86_FEATURE_RDTSCP);
++
+ 	vdata->wall_time_sec		= tk->xtime_sec;
+ 	vdata->wall_time_snsec		= tk->tkr_mono.xtime_nsec;
+ 
+@@ -74,5 +81,8 @@ void update_vsyscall(struct timekeeper *
+ 		vdata->monotonic_time_coarse_sec++;
+ 	}
+ 
++	vdata->monotonic_time_raw_sec  = tk->raw_sec;
++	vdata->monotonic_time_raw_nsec = tk->tkr_raw.xtime_nsec;
++
+ 	gtod_write_end(vdata);
+ }
+diff -up linux-4.16-rc4/arch/x86/include/asm/vgtod.h.4.16-rc4 linux-4.16-rc4/arch/x86/include/asm/vgtod.h
+--- linux-4.16-rc4/arch/x86/include/asm/vgtod.h.4.16-rc4	2018-03-04 22:54:11.000000000 +0000
++++ linux-4.16-rc4/arch/x86/include/asm/vgtod.h	2018-03-11 18:58:36.670840250 +0000
+@@ -22,6 +22,11 @@ struct vsyscall_gtod_data {
+ 	u64	mask;
+ 	u32	mult;
+ 	u32	shift;
++	u64	raw_cycle_last;
++	u64	raw_mask;
++	u32	raw_mult;
++	u32	raw_shift;
++	u32	has_rdtscp;
+ 
+ 	/* open coded 'struct timespec' */
+ 	u64		wall_time_snsec;
+@@ -32,6 +37,8 @@ struct vsyscall_gtod_data {
+ 	gtod_long_t	wall_time_coarse_nsec;
+ 	gtod_long_t	monotonic_time_coarse_sec;
+ 	gtod_long_t	monotonic_time_coarse_nsec;
++	gtod_long_t	monotonic_time_raw_sec;
++	gtod_long_t	monotonic_time_raw_nsec;
+ 
+ 	int		tz_minuteswest;
+ 	int		tz_dsttime;
+---
