@@ -1,88 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932576AbeCKWqy (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 18:46:54 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:40898 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932321AbeCKWqw (ORCPT
+        id S932469AbeCKWve (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 18:51:34 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:44892 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932224AbeCKWvd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 18:46:52 -0400
-X-Google-Smtp-Source: AG47ELsizZurck7cKPiWJKqqRApvXMrq90TOVATYesH28s6gwR6ep5I9eMUVvs6pj9QH0kDlpT80rQ==
-Subject: Re: [PATCH v2 1/4] dt-bindings: soc: add SCPSYS binding for MT7623
- and MT7623A SoC
-To: Sean Wang <sean.wang@mediatek.com>, robh+dt@kernel.org
-Cc: rjw@rjwysocki.net, khilman@baylibre.com, ulf.hansson@linaro.org,
-        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <ecfc548fc3d22aa335b50e552ad2ad88427a0bb2.1517998367.git.sean.wang@mediatek.com>
- <1520414224.677.2.camel@mtkswgap22>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <25eceb5d-7f5e-8bac-0bfd-ad547520a9b5@gmail.com>
-Date: Sun, 11 Mar 2018 23:44:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sun, 11 Mar 2018 18:51:33 -0400
+Date: Sun, 11 Mar 2018 15:51:21 -0700 (PDT)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Jason Vas Dias <jason.vas.dias@gmail.com>
+cc: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        andi <andi@firstfloor.org>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v4.16-rc4 1/1] x86/vdso: on Intel, VDSO should handle
+ CLOCK_MONOTONIC_RAW
+In-Reply-To: <CALyZvKwDARXJaf3-Z5U_9mwK0oYpJorS3NzPB0P3UriYM8Gn4w@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1803111513110.1625@nanos.tec.linutronix.de>
+References: <d10bglsa.fsf@gmail.com> <alpine.DEB.2.21.1803111048360.3841@nanos.tec.linutronix.de> <CALyZvKwDARXJaf3-Z5U_9mwK0oYpJorS3NzPB0P3UriYM8Gn4w@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <1520414224.677.2.camel@mtkswgap22>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 03/07/2018 10:17 AM, Sean Wang wrote:
-> Hi, Matthias
+On Sun, 11 Mar 2018, Jason Vas Dias wrote:
+> On 11/03/2018, Thomas Gleixner <tglx@linutronix.de> wrote:
+> > On Sun, 11 Mar 2018, Jason Vas Dias wrote:
+> >
+> > This looks better now. Though running that patch through checkpatch.pl
+> > results in:
+> >
+> > total: 28 errors, 20 warnings, 139 lines checked
+> >
 > 
-> just a gentle ping to the four related patches
-> 
+> Hmm, I was unaware of that script, I'll run and find out why -
 
-All four pushed with Ulf's reviewed-by to v4.16-next/soc
+Documentation/process/* which I recommended for reading before definitely
+mentions it.
 
-Thanks a lot!
+> probably because whitespace is not visible in emacs with
+> my monospace font and it is very difficult to see if tabs
+> are used if somehow a '\t\ ' or ' \t' has slipped in .
 
-> 	Sean
+It's not only about whitespace ....
+
+> >> +notrace static u64 vread_tsc_raw(void)
+> >
+> > Why do you need a separate function? I asked you to use vread_tsc(). So you
+> > might have reasons for doing that, but please then explain WHY and not just
+> > throw the stuff in my direction w/o any comment.
+> >
 > 
-> On Wed, 2018-02-07 at 18:22 +0800, sean.wang@mediatek.com wrote:
->> From: Sean Wang <sean.wang@mediatek.com>
->>
->> document the binding for enabling SCPSYS on MediaTek MT7623 and MT7623A
->> SoC. Where MT7623 SoC has the same definition about power domains with
->> MT2701, so it's fine to using MT2701 ones as MT7623's fallback.
->>
->> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
->> Reviewed-by: Rob Herring <robh@kernel.org>
->> ---
->>  Documentation/devicetree/bindings/soc/mediatek/scpsys.txt | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
->> index 76bf45b..d6fe16f 100644
->> --- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
->> +++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
->> @@ -21,6 +21,8 @@ Required properties:
->>  	- "mediatek,mt2712-scpsys"
->>  	- "mediatek,mt6797-scpsys"
->>  	- "mediatek,mt7622-scpsys"
->> +	- "mediatek,mt7623-scpsys", "mediatek,mt2701-scpsys": For MT7623 SoC
->> +	- "mediatek,mt7623a-scpsys": For MT7623A SoC
->>  	- "mediatek,mt8173-scpsys"
->>  - #power-domain-cells: Must be 1
->>  - reg: Address range of the SCPSYS unit
->> @@ -28,10 +30,11 @@ Required properties:
->>  - clock, clock-names: clocks according to the common clock binding.
->>                        These are clocks which hardware needs to be
->>                        enabled before enabling certain power domains.
->> -	Required clocks for MT2701: "mm", "mfg", "ethif"
->> +	Required clocks for MT2701 or MT7623: "mm", "mfg", "ethif"
->>  	Required clocks for MT2712: "mm", "mfg", "venc", "jpgdec", "audio", "vdec"
->>  	Required clocks for MT6797: "mm", "mfg", "vdec"
->>  	Required clocks for MT7622: "hif_sel"
->> +	Required clocks for MT7622A: "ethif"
->>  	Required clocks for MT8173: "mm", "mfg", "venc", "venc_lt"
->>  
->>  Optional properties:
-> 
-> 
+> mainly, because vread_tsc() makes its comparison against gtod->cycles_last ,
+> a copy of tk->tkr_mono.cycle_last, while vread_tsc_raw() uses
+> gtod->raw_cycle_last, a copy of tk->tkr_raw.cycle_last .
+
+Well, if you look at the timekeeping core then you'll notice that it's
+actually the same value. It's updated in both tkr_mono and tkr_raw so its
+available when either of the tkr_* structs is handed to the relevant
+functions.
+
+> A complete patch , against 4.15.9, is attached , that I am using ,
+> including a suggested '__vdso_linux_tsc_calibration()'
+> function and arch/x86/include/uapi/asm/vdso_tsc_calibration.h file
+> that does not return any pointers into the VDSO .
+
+I'm not going to look at attached complete patches. The development process
+is well defined for a reason and it's not optional.
+
+Thanks,
+
+	tglx
