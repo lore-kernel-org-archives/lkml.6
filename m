@@ -1,58 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932200AbeCKQTu (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 12:19:50 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:44578 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932136AbeCKQTt (ORCPT
+        id S932215AbeCKQ2G (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 12:28:06 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44011 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932136AbeCKQ2F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 12:19:49 -0400
-Date: Sun, 11 Mar 2018 09:19:40 -0700 (PDT)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
-Subject: [GIT pull] timer fix for 4.16
-Message-ID: <alpine.DEB.2.21.1803110911500.3841@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 11 Mar 2018 12:28:05 -0400
+From: Colin King <colin.king@canonical.com>
+To: Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][rds-next] rds: remove redundant variable 'sg_off'
+Date: Sun, 11 Mar 2018 17:27:56 +0100
+Message-Id: <20180311162756.26950-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+From: Colin Ian King <colin.king@canonical.com>
 
-please pull the latest timers-urgent-for-linus git tree from:
+Variable sg_off is assigned a value but it is never read, hence it is
+redundant and can be removed.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-for-linus
+Cleans up clang warning:
+net/rds/message.c:373:2: warning: Value stored to 'sg_off' is never read
 
-Just a single fix which adds a missing Kconfig dependency to avoid unmet
-dependency warnings.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/rds/message.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Thanks,
-
-	tglx
-
------------------->
-Masahiro Yamada (1):
-      clocksource/atmel-st: Add 'depends on HAS_IOMEM' to fix unmet dependency
-
-
- drivers/clocksource/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index b3b4ed9b6874..d2e5382821a4 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -386,6 +386,7 @@ config ATMEL_PIT
+diff --git a/net/rds/message.c b/net/rds/message.c
+index 90dcdcfe9f62..9c41bdd9e444 100644
+--- a/net/rds/message.c
++++ b/net/rds/message.c
+@@ -357,7 +357,6 @@ struct rds_message *rds_message_map_pages(unsigned long *page_addrs, unsigned in
  
- config ATMEL_ST
- 	bool "Atmel ST timer support" if COMPILE_TEST
-+	depends on HAS_IOMEM
- 	select TIMER_OF
- 	select MFD_SYSCON
- 	help
+ int rds_message_zcopy_from_user(struct rds_message *rm, struct iov_iter *from)
+ {
+-	unsigned long sg_off;
+ 	struct scatterlist *sg;
+ 	int ret = 0;
+ 	int length = iov_iter_count(from);
+@@ -370,7 +369,6 @@ int rds_message_zcopy_from_user(struct rds_message *rm, struct iov_iter *from)
+ 	 * now allocate and copy in the data payload.
+ 	 */
+ 	sg = rm->data.op_sg;
+-	sg_off = 0; /* Dear gcc, sg->page will be null from kzalloc. */
+ 
+ 	info = kzalloc(sizeof(*info), GFP_KERNEL);
+ 	if (!info)
+-- 
+2.15.1
