@@ -1,41 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932166AbeCKLRx convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 07:17:53 -0400
-Received: from lilium.sigma-star.at ([109.75.188.150]:58546 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932120AbeCKLRw (ORCPT
+        id S932184AbeCKL2F (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 07:28:05 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:60740 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932120AbeCKL2D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 07:17:52 -0400
-From: Richard Weinberger <richard@nod.at>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: linux-kernel@vger.kernel.org, luto@kernel.org,
-        torvalds@linux-foundation.org, mingo@kernel.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        Jeff Dike <jdike@addtoit.com>,
-        user-mode-linux-devel@lists.sourceforge.net
-Subject: Re: [RFC PATCH 25/35] hostfs: rename do_rmdir() to hostfs_do_rmdir()
-Date: Sun, 11 Mar 2018 12:19:21 +0100
-Message-ID: <3779476.NRYLIFElLR@blindfold>
-In-Reply-To: <20180311105557.20807-26-linux@dominikbrodowski.net>
-References: <20180311105557.20807-1-linux@dominikbrodowski.net> <20180311105557.20807-26-linux@dominikbrodowski.net>
+        Sun, 11 Mar 2018 07:28:03 -0400
+Date: Sun, 11 Mar 2018 12:27:26 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-nvdimm@lists.01.org, Ingo Molnar <mingo@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, david@fromorbit.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+        ross.zwisler@linux.intel.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 08/11] wait_bit: introduce {wait_on,wake_up}_atomic_one
+Message-ID: <20180311112725.GC4043@hirez.programming.kicks-ass.net>
+References: <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152066493247.40260.10849841915366086021.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152066493247.40260.10849841915366086021.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Sonntag, 11. März 2018, 11:55:47 CET schrieb Dominik Brodowski:
-> do_rmdir() is used in the VFS layer at fs/namei.c, so use a different
-> name in hostfs.
+On Fri, Mar 09, 2018 at 10:55:32PM -0800, Dan Williams wrote:
+> Add a generic facility for awaiting an atomic_t to reach a value of 1.
 > 
-> CC: Jeff Dike <jdike@addtoit.com>
-> CC: Richard Weinberger <richard@nod.at>
-> CC: user-mode-linux-devel@lists.sourceforge.net
-> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+> Page reference counts typically need to reach 0 to be considered a
+> free / inactive page. However, ZONE_DEVICE pages allocated via
+> devm_memremap_pages() are never 'onlined', i.e. the put_page() typically
+> done at init time to assign pages to the page allocator is skipped.
+> 
+> These pages will have their reference count elevated > 1 by
+> get_user_pages() when they are under DMA. In order to coordinate DMA to
+> these pages vs filesytem operations like hole-punch and truncate the
+> filesystem-dax implementation needs to capture the DMA-idle event i.e.
+> the 2 to 1 count transition).
+> 
+> For now, this implementation does not have functional behavior change,
+> follow-on patches will add waiters for these page-idle events.
 
-Acked-by: Richard Weinberger <richard@nod.at>
+Argh, no no no.. That whole wait_for_atomic_t thing is a giant
+trainwreck already and now you're making it worse still.
 
-Thanks,
-//richard
+Please have a look here:
+
+  https://lkml.kernel.org/r/20171101190644.chwhfpoz3ywxx2m7@hirez.programming.kicks-ass.net
