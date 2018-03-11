@@ -1,77 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932469AbeCKWve (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 18:51:34 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:44892 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932224AbeCKWvd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 18:51:33 -0400
-Date: Sun, 11 Mar 2018 15:51:21 -0700 (PDT)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Jason Vas Dias <jason.vas.dias@gmail.com>
-cc: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        andi <andi@firstfloor.org>, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v4.16-rc4 1/1] x86/vdso: on Intel, VDSO should handle
- CLOCK_MONOTONIC_RAW
-In-Reply-To: <CALyZvKwDARXJaf3-Z5U_9mwK0oYpJorS3NzPB0P3UriYM8Gn4w@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1803111513110.1625@nanos.tec.linutronix.de>
-References: <d10bglsa.fsf@gmail.com> <alpine.DEB.2.21.1803111048360.3841@nanos.tec.linutronix.de> <CALyZvKwDARXJaf3-Z5U_9mwK0oYpJorS3NzPB0P3UriYM8Gn4w@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S932379AbeCKW6e (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 18:58:34 -0400
+Received: from namei.org ([65.99.196.166]:52586 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932224AbeCKW6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Mar 2018 18:58:32 -0400
+Date: Mon, 12 Mar 2018 09:58:02 +1100 (AEDT)
+From: James Morris <jmorris@namei.org>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+cc: "Serge E. Hallyn" <serge@hallyn.com>,
+        Mehmet Kayaalp <mkayaalp@cs.binghamton.edu>,
+        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>,
+        Yuqiong Sun <sunyuqiong1988@gmail.com>,
+        containers <containers@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        David Safford <david.safford@ge.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        ima-devel <linux-ima-devel@lists.sourceforge.net>,
+        Yuqiong Sun <suny@us.ibm.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: Re: [RFC PATCH 1/5] ima: extend clone() with IMA namespace support
+In-Reply-To: <ec137677-34f8-df91-0d1c-6c6d6c951496@linux.vnet.ibm.com>
+Message-ID: <alpine.LRH.2.21.1803120953310.26512@namei.org>
+References: <20170720225033.21298-1-mkayaalp@linux.vnet.ibm.com> <20170720225033.21298-2-mkayaalp@linux.vnet.ibm.com> <20170725175317.GA727@mail.hallyn.com> <1501008554.3689.30.camel@HansenPartnership.com> <20170725190406.GA1883@mail.hallyn.com>
+ <1501009739.3689.33.camel@HansenPartnership.com> <1501012082.27413.17.camel@linux.vnet.ibm.com> <645db815-7773-e351-5db7-89f38cd88c3d@linux.vnet.ibm.com> <20170725204622.GA4969@mail.hallyn.com> <97839865-b0ab-8e5d-114e-0603ef2edf6f@linux.vnet.ibm.com>
+ <20180309025942.GA15295@mail.hallyn.com> <ec137677-34f8-df91-0d1c-6c6d6c951496@linux.vnet.ibm.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 11 Mar 2018, Jason Vas Dias wrote:
-> On 11/03/2018, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > On Sun, 11 Mar 2018, Jason Vas Dias wrote:
-> >
-> > This looks better now. Though running that patch through checkpatch.pl
-> > results in:
-> >
-> > total: 28 errors, 20 warnings, 139 lines checked
-> >
+On Fri, 9 Mar 2018, Stefan Berger wrote:
+
+> Yuqiong is publishing a paper in this area. I believe the conference is only
+> later this year.
 > 
-> Hmm, I was unaware of that script, I'll run and find out why -
+> Our goals are to enable IMA measurements, appraisal, and auditing inside a
+> container using namespaces. 
 
-Documentation/process/* which I recommended for reading before definitely
-mentions it.
+This is excellent to have -- can you include this requirements analysis as 
+a file Documentation/security on the next posting?
 
-> probably because whitespace is not visible in emacs with
-> my monospace font and it is very difficult to see if tabs
-> are used if somehow a '\t\ ' or ' \t' has slipped in .
+Also, if you need a public space for managing these kinds of documents, 
+consider utilizing 
+http://kernsec.org/wiki/index.php/Linux_Kernel_Integrity
 
-It's not only about whitespace ....
 
-> >> +notrace static u64 vread_tsc_raw(void)
-> >
-> > Why do you need a separate function? I asked you to use vread_tsc(). So you
-> > might have reasons for doing that, but please then explain WHY and not just
-> > throw the stuff in my direction w/o any comment.
-> >
-> 
-> mainly, because vread_tsc() makes its comparison against gtod->cycles_last ,
-> a copy of tk->tkr_mono.cycle_last, while vread_tsc_raw() uses
-> gtod->raw_cycle_last, a copy of tk->tkr_raw.cycle_last .
 
-Well, if you look at the timekeeping core then you'll notice that it's
-actually the same value. It's updated in both tkr_mono and tkr_raw so its
-available when either of the tkr_* structs is handed to the relevant
-functions.
-
-> A complete patch , against 4.15.9, is attached , that I am using ,
-> including a suggested '__vdso_linux_tsc_calibration()'
-> function and arch/x86/include/uapi/asm/vdso_tsc_calibration.h file
-> that does not return any pointers into the VDSO .
-
-I'm not going to look at attached complete patches. The development process
-is well defined for a reason and it's not optional.
-
-Thanks,
-
-	tglx
+- James
+-- 
+James Morris
+<jmorris@namei.org>
