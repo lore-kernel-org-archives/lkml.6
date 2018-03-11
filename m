@@ -1,98 +1,110 @@
-Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELts5t7ei+3DZSlELsWKBrlMeVyLnF50mxTboUjKt2iwfjinmVpPWud8D5kvJxObRZ5Tut8O
-ARC-Seal: i=1; a=rsa-sha256; t=1520824059; cv=none;
+Return-Path: <kernel-hardening-return-12400-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELsmkd4dLV4OoErZ6oOf3KwneZUdCsXjn2e9iSQZJC/aR+6qKsksPfTmSPecwINZzwEg8I5r
+ARC-Seal: i=1; a=rsa-sha256; t=1520802608; cv=none;
         d=google.com; s=arc-20160816;
-        b=pJfKfBuf3kr/32TMXDsv+yvRWXU7anqTuc+T2MMeGS0lLSud3Aqv+b9i20ltfrf9hZ
-         QKkDf9uNDyM3wAh5pakf6QOchbufE/FNIsjhzc5v2mmrZA8zZ8ny4WONFJrTd5nwC5ie
-         aJtkinUemxmUQMGDk0pphWRWUmWesq5TnkDLFkcJvsuVQqnMCCjM7xfdiFMUe979ygoS
-         9aoDGAo+UuOaleMlYhsIGk6o2XJBrU9htKwxNoazhZ1hGunPvRM1UodlR5CZGZkSzybt
-         GZKhukhhj7cHDrlNbz1vLUxCv1naqGuOAFlNzrPuIurogA1WJmQ/mPGnXHy/PN7o46kG
-         ICDA==
+        b=uegVUcm6ZpjcfKpGwLeSTFAJoje99ObHtt0qmO+p4scKs4R4rhNkF/ShHZBdAEDI8L
+         8y2swoCwKE0ENCYEPZmBygbSCD0NRTESxObOi4UcInUYE3MpIiUkhEgqsAcTZAiTI2+u
+         jElwgurPE/MHK5HYRqoyU/eMs6Ouz1TLsPwVcCw4Mo5pdX52JzB0S9d04nUz7yjTjrdY
+         9IRx6YU0zxAuYpnbjRRxhWXQHYySfDiSqWnhd6JlrQJ2jspDIPDa7iTue6F9qSihSqnz
+         sssHFLBc258HFtQ8g65Y+ptodX/iZT7yLJP76Tk0xhFnz1MkTNfSut5cTuusglT9xl9s
+         zQRw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
-         :content-transfer-encoding:content-disposition
-         :arc-authentication-results;
-        bh=DzVHuqOw95w3ApYc4GrwpVNqh81tAtriIWZyjfObS6E=;
-        b=rz6eoezm5whnr/tJTiv+fIlDq6yVyI25Y0dHQqWIKwZt0mRBrkIsSCwq3KBXoCZ9Vy
-         NXcQyxPyEUd2PU1i/zu+3Q2n18SCBYAQ4TU33J20RRNY9XVxsplWF8FgtsdF3RW8XQN8
-         rGeFNE7gEhdLU/ftl5WKqZEJ9gNtSDmxnN45fcqjcfrLYmwk1tPDEYD8DSCvPDTHMCUJ
-         ENkr8PFY39M2KizJjRupe2868KGKM7QRvG46a7fiDNrDm9AAQykmw6rUUYKRPR0XO6I+
-         08Pplf1XqU9GA7wIO8/DahinEl+8iEsMpLWOYU1c83Jnhs6eBTLU36dWxw8imqCt/1qm
-         kB5Q==
+        h=message-id:date:subject:cc:to:from:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=ASBoo/iq4FnQZM67OtjBA1CkBLKa93AR6pHEA4zVrsA=;
+        b=p4yV2f++keE7iw5NCFa5d8fobh3lTB6m1H4811HtERuUgCFrQWl1myAxHQOQcNJBVd
+         nC0EjJgKsIOOdMwQVWQzFN2pnZ+9rvekKB1qujco1l2nnHUtwRqmWRnqWPrPH66LUy8N
+         QHpDV3R/5Cd1Ag8yuy9GXShfdrJCsh8RI/so6LVJirAxM82lwEKkiAY8MwG3fwv/cmFn
+         s/tZENBZLZt1VfPCkHZZONxjGrfO/TGYz73pQfL86EDZG8jRlyIa9AUu4F8YlTOsSghQ
+         dwDdX+Of8167AdohA8dVey3mJPIgKJHWb2gsgwPvvKfeZ4WPN3MTa8MiWt8Pq1iF28ZM
+         Udjg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=IRCQpDnS;
+       spf=pass (google.com: domain of kernel-hardening-return-12400-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12400-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Hugh Dickins" <hughd@google.com>,
- "Arnd Bergmann" <arnd@arndb.de>,
- "Kees Cook" <keescook@chromium.org>
-Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.428778762@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 103/104] x86: fix build warnign with 32-bit PAE
-In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
-X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=IRCQpDnS;
+       spf=pass (google.com: domain of kernel-hardening-return-12400-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12400-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-hardening@lists.openwall.com,
+	linux-rdma@vger.kernel.org,
+	netdev@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Kees Cook <keescook@chromium.org>,
+	Salvatore Mesoraca <s.mesoraca16@gmail.com>,
+	Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Subject: [PATCH 1/2] net: rds: drop VLA in rds_for_each_conn_info()
+Date: Sun, 11 Mar 2018 22:07:49 +0100
+Message-Id: <1520802470-17374-1-git-send-email-s.mesoraca16@gmail.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699608797216012?=
-X-GMAIL-MSGID: =?utf-8?q?1594699608797216012?=
+X-GMAIL-THRID: =?utf-8?q?1594677115997192072?=
+X-GMAIL-MSGID: =?utf-8?q?1594677115997192072?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-3.2.101-rc1 review patch.  If anyone has any objections, please let me know.
+Avoid VLA[1] by using an already allocated buffer passed
+by the caller.
 
-------------------
+[1] https://lkml.org/lkml/2018/3/7/621
 
-From: Arnd Bergmann <arnd@arndb.de>
-
-I ran into a 4.9 build warning in randconfig testing, starting with the
-KAISER patches:
-
-arch/x86/kernel/ldt.c: In function 'alloc_ldt_struct':
-arch/x86/include/asm/pgtable_types.h:208:24: error: large integer implicitly truncated to unsigned type [-Werror=overflow]
- #define __PAGE_KERNEL  (__PAGE_KERNEL_EXEC | _PAGE_NX)
-                        ^
-arch/x86/kernel/ldt.c:81:6: note: in expansion of macro '__PAGE_KERNEL'
-      __PAGE_KERNEL);
-      ^~~~~~~~~~~~~
-
-I originally ran into this last year when the patches were part of linux-next,
-and tried to work around it by using the proper 'pteval_t' types consistently,
-but that caused additional problems.
-
-This takes a much simpler approach, and makes the argument type of the dummy
-helper always 64-bit, which is wide enough for any page table layout and
-won't hurt since this call is just an empty stub anyway.
-
-Fixes: 8f0baadf2bea ("kaiser: merged update")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Hugh Dickins <hughd@google.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
 ---
- include/linux/kaiser.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/rds/connection.c | 2 +-
+ net/rds/ib.c         | 3 +++
+ net/rds/rds.h        | 1 +
+ 3 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/kaiser.h b/include/linux/kaiser.h
-index 58c55b1589d0..b56c19010480 100644
---- a/include/linux/kaiser.h
-+++ b/include/linux/kaiser.h
-@@ -32,7 +32,7 @@ static inline void kaiser_init(void)
+diff --git a/net/rds/connection.c b/net/rds/connection.c
+index 2da3176..f80792c 100644
+--- a/net/rds/connection.c
++++ b/net/rds/connection.c
+@@ -540,9 +540,9 @@ void rds_for_each_conn_info(struct socket *sock, unsigned int len,
+ 			  struct rds_info_iterator *iter,
+ 			  struct rds_info_lengths *lens,
+ 			  int (*visitor)(struct rds_connection *, void *),
++			  u64 *buffer,
+ 			  size_t item_len)
  {
- }
- static inline int kaiser_add_mapping(unsigned long addr,
--				     unsigned long size, unsigned long flags)
-+				     unsigned long size, u64 flags)
+-	uint64_t buffer[(item_len + 7) / 8];
+ 	struct hlist_head *head;
+ 	struct rds_connection *conn;
+ 	size_t i;
+diff --git a/net/rds/ib.c b/net/rds/ib.c
+index 50a88f3..02deee2 100644
+--- a/net/rds/ib.c
++++ b/net/rds/ib.c
+@@ -321,8 +321,11 @@ static void rds_ib_ic_info(struct socket *sock, unsigned int len,
+ 			   struct rds_info_iterator *iter,
+ 			   struct rds_info_lengths *lens)
  {
- 	return 0;
++	u64 buffer[(sizeof(struct rds_info_rdma_connection) + 7) / 8];
++
+ 	rds_for_each_conn_info(sock, len, iter, lens,
+ 				rds_ib_conn_info_visitor,
++				buffer,
+ 				sizeof(struct rds_info_rdma_connection));
  }
+ 
+diff --git a/net/rds/rds.h b/net/rds/rds.h
+index 7301b9b..91ea08f 100644
+--- a/net/rds/rds.h
++++ b/net/rds/rds.h
+@@ -709,6 +709,7 @@ void rds_for_each_conn_info(struct socket *sock, unsigned int len,
+ 			  struct rds_info_iterator *iter,
+ 			  struct rds_info_lengths *lens,
+ 			  int (*visitor)(struct rds_connection *, void *),
++			  u64 *buffer,
+ 			  size_t item_len);
+ 
+ __printf(2, 3)
+-- 
+1.9.1
