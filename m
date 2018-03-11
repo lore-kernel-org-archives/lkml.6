@@ -1,93 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932261AbeCKUM6 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 16:12:58 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35512 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932144AbeCKUM5 (ORCPT
+        id S932294AbeCKUPT (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 16:15:19 -0400
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:60860 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932144AbeCKUPS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 16:12:57 -0400
-To: linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] kbuild: check for pkg-config on make menu/n/g/xconfig
-Message-ID: <09cf5537-b2d7-5bf5-0c0b-d0b765e1e75b@infradead.org>
-Date: Sun, 11 Mar 2018 13:12:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sun, 11 Mar 2018 16:15:18 -0400
+Date: Sun, 11 Mar 2018 22:15:14 +0200
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com,
+        mchehab@kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] media: MAINTAINERS: Add entry for Aptina MT9T112
+Message-ID: <20180311201514.7ljwikv4twj6hxpk@valkosipuli.retiisi.org.uk>
+References: <1520008541-3961-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1520008541-3961-6-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520008541-3961-6-git-send-email-jacopo+renesas@jmondi.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Hi Jacopo,
 
-Each of 'make {menu,n,g,x}config' uses (needs) pkg-config to make sure
-that other required files are present, but none of these check that
-pkg-config itself is present.  Add a check for all 4 of these targets.
+On Fri, Mar 02, 2018 at 05:35:41PM +0100, Jacopo Mondi wrote:
+> Add entry for Aptina/Micron MT9T112 camera sensor. The driver is
+> currently orphaned.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  MAINTAINERS | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 91ed6ad..1d8be25 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -9385,6 +9385,13 @@ S:	Maintained
+>  F:	drivers/media/i2c/mt9t001.c
+>  F:	include/media/i2c/mt9t001.h
+>  
+> +MT9T112 APTINA CAMERA SENSOR
+> +L:	linux-media@vger.kernel.org
+> +T:	git git://linuxtv.org/media_tree.git
+> +S:	Orphan
 
-Fixes kernel bugzilla #77511:
-https://bugzilla.kernel.org/show_bug.cgi?id=77511
+I don't like adding a driver which is in orphaned state to begin with.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
----
-I'm also OK with just documenting the pkg-config requirement in
-Documentation/Changes (= Documentation/process/changes.rst).
+Would you like to maintain it? :-)
 
-+ chmod +x scripts/kconfig/check-pkgconfig.sh
+> +F:	drivers/media/i2c/mt9t112.c
+> +F:	include/media/i2c/mt9t112.h
+> +
+>  MT9V032 APTINA CAMERA SENSOR
+>  M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>  L:	linux-media@vger.kernel.org
 
- scripts/kconfig/Makefile           |   15 ++++++++++++++-
- scripts/kconfig/check-pkgconfig.sh |   13 +++++++++++++
- 2 files changed, 27 insertions(+), 1 deletion(-)
+-- 
+Regards,
 
---- lnx-416-rc3.orig/scripts/kconfig/Makefile
-+++ lnx-416-rc3/scripts/kconfig/Makefile
-@@ -160,6 +160,9 @@ help:
- 	@echo  '  xenconfig       - Enable additional options for xen dom0 and guest kernel support'
- 	@echo  '  tinyconfig	  - Configure the tiniest possible kernel'
- 
-+# pkg-config check
-+check-pkgconfig  := $(srctree)/$(src)/check-pkgconfig.sh
-+
- # lxdialog stuff
- check-lxdialog  := $(srctree)/$(src)/lxdialog/check-lxdialog.sh
- 
-@@ -205,7 +208,17 @@ $(addprefix $(obj)/, mconf.o $(lxdialog)
- $(obj)/dochecklxdialog:
- 	$(Q)$(CONFIG_SHELL) $(check-lxdialog) -check $(HOSTCC) $(HOST_EXTRACFLAGS) $(HOSTLOADLIBES_mconf)
- 
--always := dochecklxdialog
-+# Check that we have pkg-config (used by each of menu/n/g/xconfig)
-+PHONY += $(obj)/docheckpkgconfig
-+$(addprefix $(obj)/, mconf.o): $(obj)/docheckpkgconfig
-+$(addprefix $(obj)/, nconf.o): $(obj)/docheckpkgconfig
-+$(addprefix $(obj)/, gconf.o): $(obj)/docheckpkgconfig
-+$(addprefix $(obj)/, qconf.o): $(obj)/docheckpkgconfig
-+
-+$(obj)/docheckpkgconfig:
-+	$(Q)$(CONFIG_SHELL) $(check-pkgconfig)
-+
-+always := docheckpkgconfig dochecklxdialog
- 
- # Add environment specific flags
- HOST_EXTRACFLAGS += $(shell $(CONFIG_SHELL) $(srctree)/$(src)/check.sh $(HOSTCC) $(HOSTCFLAGS))
---- /dev/null
-+++ lnx-416-rc3/scripts/kconfig/check-pkgconfig.sh
-@@ -0,0 +1,13 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# Check for pkg-config presence
-+
-+pkgcfg=`which pkg-config >/dev/null 2>&1`
-+found=$?
-+
-+if [ $found -ne 0 ]; then
-+	echo "'make *config' requires 'pkg-config'. Please install it." 1>&2
-+	exit 1		# error
-+fi
-+
-+exit 0
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
