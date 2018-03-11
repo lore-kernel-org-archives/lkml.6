@@ -1,67 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932517AbeCKWE1 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 18:04:27 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:34339 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932370AbeCKWEU (ORCPT
+        id S932483AbeCKWGx (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 18:06:53 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41152 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932398AbeCKWGv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 18:04:20 -0400
-X-Google-Smtp-Source: AG47ELuwn6X3ABx4W87KtKG3auoVZzpFiQ/Ct30OwyzuKGD1tjLov9xB20sbGlHgp9XVCyxcfnvnKA==
-Subject: Re: [PATCH v3 00/15] add dts nodes to MT7622 SoC
-To: sean.wang@mediatek.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <cover.1518895232.git.sean.wang@mediatek.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <9c34bec9-87af-153a-6bff-9138fd8d62e7@gmail.com>
-Date: Sun, 11 Mar 2018 23:04:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <cover.1518895232.git.sean.wang@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Sun, 11 Mar 2018 18:06:51 -0400
+Subject: Re: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Jiandi An <anjiandi@codeaurora.org>, dmitry.kasatkin@gmail.com,
+        jmorris@namei.org, serge@hallyn.com
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date: Sun, 11 Mar 2018 18:06:41 -0400
+In-Reply-To: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
+References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18031122-0016-0000-0000-000005300BF1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031122-0017-0000-0000-0000286D3686
+Message-Id: <1520806001.3547.10.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-11_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803110282
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 02/17/2018 08:54 PM, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
+On Tue, 2018-03-06 at 23:26 -0600, Jiandi An wrote:
+> TPM_CRB driver is the TPM support for ARM64.  If it
+> is built as module, TPM chip is registered after IMA
+> init.  tpm_pcr_read() in IMA driver would fail and
+> display the following message even though eventually
+> there is TPM chip on the system:
 > 
-> Changes since v2:
-> - rebase to 4.16-rc1 and solve all conflicts
-> - add proper list Cc in patch 1
-> - add fixup in patch 4 in v2 with the uniform pinmux definition
->   that is always adding property function before property groups
-> - add Acked-by from Philippe in patch 5
-> - add clock related property into all CPU nodes in patch 6
-> - merge patch 14 in v2 into patch 8 as this is where the node is
->   defined in the first place
+> ima: No TPM chip found, activating TPM-bypass! (rc=-19)
 > 
-> Changes since v1:
-> - add usb, thermal, HSDMA, mmc related nodes
-> - fix Warning (unit_address_vs_reg): Node /oscillator@0 has
->   a unit name, but no reg property in patch 2
-> - fix Warning (pci_bridge): Node /pcie@1a140000/pcie@0,0 missing
->   bus-range for PCI bridge
-> - fix Warning (pci_bridge): Node /pcie@1a140000/pcie@1,0 missing
->   bus-range for PCI bridge
-> - fix Warning (unit_address_format): Failed prerequisite 'pci_bridge'
-> - fix Warning (pci_device_reg): Failed prerequisite 'pci_bridge'
-> - fix Warning (pci_device_bus_num): Failed prerequisite 'pci_bridge'
-> - enhance commit log in patch 4
-> - use - instead of _ in DT node name in patch 4 and 6
-> - use SPDX-License-Identifier for newly added files in patch 5
-> - use proper #size-cells for spi nor nodes in patch 9
-> - remove currently no needed #address-cells and #size-cells in
-> children nodes of spi nor in patch 9.
+> Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is
+> built in kernel and initializes before IMA driver.
 > 
+> Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
 
-Pushed 2-13 and 15 to v4.16-next/dts64
+Thanks, this patch has been applied.
 
-Thanks a lot.
-Matthias
+Mimi
+
+> ---
+>  security/integrity/ima/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+> index 35ef693..6a8f677 100644
+> --- a/security/integrity/ima/Kconfig
+> +++ b/security/integrity/ima/Kconfig
+> @@ -10,6 +10,7 @@ config IMA
+>  	select CRYPTO_HASH_INFO
+>  	select TCG_TPM if HAS_IOMEM && !UML
+>  	select TCG_TIS if TCG_TPM && X86
+> +	select TCG_CRB if TCG_TPM && ACPI
+>  	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
+>  	help
+>  	  The Trusted Computing Group(TCG) runtime Integrity
