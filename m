@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932303AbeCKPF2 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 11:05:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55694 "EHLO mail.kernel.org"
+        id S932166AbeCKPNU (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 11:13:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932155AbeCKPF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 11:05:27 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF4FF20685
+        id S932118AbeCKPNT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Mar 2018 11:13:19 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BC5421707
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Mon, 12 Mar 2018 00:05:22 +0900
+Date: Mon, 12 Mar 2018 00:13:15 +0900
 From: Masami Hiramatsu <mhiramat@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
@@ -20,13 +20,11 @@ Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
         Steven Rostedt <rostedt@goodmis.org>,
         Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
         Alexei Starovoitov <ast@kernel.org>
-Subject: Re: [RFC PATCH -tip 8/9] error-injection: Fix to not enabling
- preemption in pre_handler
-Message-Id: <20180312000522.8bfbd3d5da5fce8a5242ee84@kernel.org>
-In-Reply-To: <20180310082248.6inyi5rcxhay2e6v@gmail.com>
+Subject: Re: [RFC PATCH -tip 0/9] kprobes: Cleanup jprobe implementation
+Message-Id: <20180312001315.7a5382b772a352919e638699@kernel.org>
+In-Reply-To: <20180310082444.uiy7fdqlxh6qbuwp@gmail.com>
 References: <152059891712.4214.9539716544254881611.stgit@devbox>
-        <152059915597.4214.4086303893931787678.stgit@devbox>
-        <20180310082248.6inyi5rcxhay2e6v@gmail.com>
+        <20180310082444.uiy7fdqlxh6qbuwp@gmail.com>
 X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -35,46 +33,89 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 10 Mar 2018 09:22:48 +0100
+On Sat, 10 Mar 2018 09:24:44 +0100
 Ingo Molnar <mingo@kernel.org> wrote:
 
 > 
 > * Masami Hiramatsu <mhiramat@kernel.org> wrote:
 > 
-> > Since kprobes pre_handler doesn't need to recover preemption
-> > even if it modifies regs->ip anymore, this fixes to remove
-> > the preempt_enable_no_resched() from pre_handler.
+> > Hello,
 > > 
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > Since we decided to remove jprobe from kernel last year,
+> > its APIs are disabled and we worked on moving in-kernel
+> > jprobe users to kprobes or trace-events. And now no jprobe
+> > users are here anymore.
+> > 
+> > I think it is good time to get rid of jprobe implementation
+> > from the kernel. However, I need other arch developers help
+> > to complete it, since jprobe is implemented multi arch wide.
+> > I can remove those code, but can not test all of those.
+> > 
+> > Here is the series of patches to show how to do that.
+> > I tried to remove it from x86 tree. Basically we need to
+> > do 3 things;
+> > 
+> >  - Remove jprobe functions (register/unregister,
+> >    setjump/longjump) from generic/arch-dependent code.
+> >    [1/9][2/9][3/9]
+> >  - Remove break_handler related code.
+> >    [4/9][5/9][6/9]
+> >  - Do not disable preemption on exception handler
+> >    [7/9][8/9][9/9]
+> > 
+> > The [3/9] and [6/9] are destractive changes except for x86
+> > (means causes build errors) since those arch still have some
+> > references of those functions. So we need to write patches
+> > similar to [2/9] and [5/9] for each arch before applying those.
+> > In this series I sorted it as this order just for review,
+> > [3/9] and [6/9] should be applied after all archs have
+> > been fixed.
+> > 
+> > Also, [7/9] is a kind of destractive, which changes required
+> > behavior for the pre_handlers which changes regs->ip.
+> > So we also need a patch similar to [7/9] for each arch too.
+> > Fortunately, current in-tree such user is very limited, both
+> > works only on x86. So it is not hurry, but we need to change
+> > arch dependent code.
+> >
+> > Thank you,
+> > 
 > > ---
-> >  kernel/fail_function.c |    1 -
-> >  1 file changed, 1 deletion(-)
 > > 
-> > diff --git a/kernel/fail_function.c b/kernel/fail_function.c
-> > index 21b0122cb39c..b1713521f096 100644
-> > --- a/kernel/fail_function.c
-> > +++ b/kernel/fail_function.c
-> > @@ -176,7 +176,6 @@ static int fei_kprobe_handler(struct kprobe *kp, struct pt_regs *regs)
-> >  		override_function_with_return(regs);
-> >  		/* Kprobe specific fixup */
-> >  		reset_current_kprobe();
-> > -		preempt_enable_no_resched();
-> >  		return 1;
-> >  	}
+> > Masami Hiramatsu (9):
+> >       kprobes: Remove jprobe API implementation
+> >       x86: kprobes: Remove jprobe implementation
+> >       kprobes: Remove jprobe data structure and interfaces
+> >       kprobes: Ignore break_handler
+> >       x86: kprobes: Ignore break_handler
+> >       kprobes: Remove break_handler from struct kprobe
+> >       x86: kprobes: Do not disable preempt on int3 path
+> >       error-injection: Fix to not enabling preemption in pre_handler
+> >       tracing: kprobes: Fix to not enabling preemption
+> > 
+> > 
+> >  Documentation/kprobes.txt        |   13 ++--
+> >  arch/x86/include/asm/kprobes.h   |    3 -
+> >  arch/x86/kernel/kprobes/common.h |   10 ---
+> >  arch/x86/kernel/kprobes/core.c   |  114 ++------------------------------------
+> >  arch/x86/kernel/kprobes/ftrace.c |   21 +------
+> >  arch/x86/kernel/kprobes/opt.c    |    1 
+> >  include/linux/kprobes.h          |   54 ------------------
+> >  kernel/fail_function.c           |    1 
+> >  kernel/kprobes.c                 |  115 ++------------------------------------
+> >  kernel/trace/trace_kprobe.c      |    3 -
+> >  10 files changed, 20 insertions(+), 315 deletions(-)
 > 
-> So where did the matching preempt_disable() get removed? If it's the 6/9 patch, 
-> then this patch (and 8/9) should very much be part of it.
+> Nice work, and I love the diffstat, but please do a series that works (builds and 
+> boots and has working kprobes) at every interim step.
 
-It is 7/9, in kprobe_int3_handler() and kprobe_ftrace_handler().
-The latter is a bit tricky, originally it enable preemption only when
-the pre_handler returns 0, but 7/9 changes it always enables preemption.
-
-> 
-> There should be no bisection breakage in the series.
-
-OK, I will merge 7/9-9/9 (anyway those are currently only support x86).
+Thank you! Yes, I'm thinking just keep header files no change (no removing
+API and structure) until all archs apply C file changes in next version,
+so that we can avoid any build error/test error.
 
 Thanks,
+
+
 
 > 
 > Thanks,
