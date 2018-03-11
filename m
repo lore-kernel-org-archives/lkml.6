@@ -1,111 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932439AbeCKXMi (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 19:12:38 -0400
-Received: from us-smtp-delivery-172.mimecast.com ([216.205.24.172]:22593 "EHLO
-        us-smtp-delivery-172.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932290AbeCKXMg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 19:12:36 -0400
-Subject: Re: [PATCH v5 0/4] new driver for Valve Steam Controller
-To: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Cameron Gutman <aicommander@gmail.com>,
-        =?UTF-8?Q?Cl=c3=a9ment_VUCHENER?= <clement.vuchener@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <linux-input@vger.kernel.org>
-References: <20180311195842.5551-1-rodrigorivascosta@gmail.com>
-From: "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>
-Message-ID: <99cb195e-589c-b3fc-1237-e1c8f557c51e@valvesoftware.com>
-Date: Sun, 11 Mar 2018 16:12:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932482AbeCKXNO (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 19:13:14 -0400
+Received: from ozlabs.org ([103.22.144.67]:36895 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932290AbeCKXNN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Mar 2018 19:13:13 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Mon, 12 Mar 2018 10:12:07 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jesper Nilsson <jesper.nilsson@axis.com>
+Cc: Jesper Nilsson <jespern@axis.com>, Arnd Bergmann <arnd@arndb.de>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Michal Simek <monstr@monstr.eu>, Andi Kleen <ak@linux.intel.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-cris-kernel@axis.com, Petr Mladek <pmladek@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        adi-buildroot-devel@lists.sourceforge.net,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jesper Nilsson <jesper@jni.nu>, Greentime Hu <green.hu@gmail.com>,
+        Tejun Heo <tj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+        Vincent Chen <deanbo422@gmail.com>, Dave Young <dyoung@redhat.com>
+Subject: Re: [GIT PULL] CRIS: Drop support for the CRIS-port
+Message-ID: <20180312101207.67ce00ca@canb.auug.org.au>
+In-Reply-To: <20180311200056.GY17177@axis.com>
+References: <CAK8P3a1KE_0+vDC48-NzzW8eT1YZ8MZRun-1GeRMNg+o8dqZUg@mail.gmail.com>
+        <20180308155116.GW17177@axis.com>
+        <20180311110551.GX17177@axis.com>
+        <20180312011344.6071896c@canb.auug.org.au>
+        <20180311200056.GY17177@axis.com>
 MIME-Version: 1.0
-In-Reply-To: <20180311195842.5551-1-rodrigorivascosta@gmail.com>
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: fe5cb8ea-1338-4c54-81e0-ad323678e037
-X-Mlf-Version: 8.3.2.6535
-X-Mlf-UniqueId: o201803112312320020041
-X-MC-Unique: aE8x7ms4OGGzjFiPcT07zQ-1
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/_NqHWnDV0cpAA+Inw4LdbMh"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2BNCiOi019094
 
+--Sig_/_NqHWnDV0cpAA+Inw4LdbMh
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Jesper,
 
-On 03/11/2018 12:58 PM, Rodrigo Rivas Costa wrote:
-> This patchset implements a driver for Valve Steam Controller, based on a
-> reverse analysis by myself.
-> 
-> Sorry, I've been out of town for a few weeks and couldn't keep up with this...
-> 
-> @Pierre-Loup and @Clément, could you please have another look at this and
-> check if it is worthy? Benjamin will not commit it without an express ACK from
-> Valve. Of course he is right to be cautious, but I checked this driver with
-> the Steam Client and all seems to go just fine. I think that there is a lot of
-> Linux out of the desktop that could use this driver and cannot use the Steam
-> Client. Worst case scenario, this driver can now be blacklisted, but I hope
-> that will not be needed.
+On Sun, 11 Mar 2018 21:00:56 +0100 Jesper Nilsson <jesper.nilsson@axis.com>=
+ wrote:
+>
+> On Mon, Mar 12, 2018 at 01:13:44AM +1100, Stephen Rothwell wrote:
+> > Hi Jesper,
+> >=20
+> > On Sun, 11 Mar 2018 12:05:51 +0100 Jesper Nilsson <jesper.nilsson@axis.=
+com> wrote: =20
+> > >
+> > > As promised, pull the below tag for the removal of the CRIS-port. =20
+> >=20
+> > I guess the easiest thing for me to do is just remove the cris tree
+> > from linux-next at this point? =20
+>=20
+> Yeah, that's probably the way to go.
 
-Hi Rodrigo,
+OK, done.
 
-I think the approach you outlined earlier of only sending configuration 
-commands to the device when something is actively using the driver is 
-sane. I won't have the cycles to thoroughly check all the possible 
-interactions with the client in the near future, so in the interest of 
-not blocking development I'd say go for it. I'll try to get someone to 
-take the patchset for a spin soon.
+--=20
+Cheers,
+Stephen Rothwell
 
-Thanks,
-  - Pierre-Loup
+--Sig_/_NqHWnDV0cpAA+Inw4LdbMh
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> 
-> For full reference, I'm adding a full changelog of this patchset.
-> 
-> Changes in v5:
->   * Fix license SPDX to GPL-2.0+.
->   * Minor stylistic changes (BIT(3) instead 0x08 and so on).
-> 
-> Changes in v4:
->   * Add command to check the wireless connection status on probe, without
->     waiting for a message (thanks to Clément Vuchener for the tip).
->   * Removed the error code on redundant connection/disconnection messages. That
->     was harmless but polluted dmesg.
->   * Added buttons for touching the left-pad and right-pad.
->   * Fixed a misplaced #include from 2/4 to 1/4.
-> 
-> Changes in v3:
->   * Use RCU to do the dynamic connec/disconnect of wireless devices.
->   * Remove entries in hid-quirks.c as they are no longer needed. This allows
->     this module to be blacklisted without side effects.
->   * Do not bypass the virtual keyboard/mouse HID devices to avoid breaking
->     existing use cases (lizard mode). A user-space tool to do that is
->     linked.
->   * Fully separated axes for joystick and left-pad. As it happens.
->   * Add fuzz values for left/right pad axes, they are a little wiggly.
-> 
-> Changes in v2:
->   * Remove references to USB. Now the interesting interfaces are selected by
->     looking for the ones with feature reports.
->   * Feature reports buffers are allocated with hid_alloc_report_buf().
->   * Feature report length is checked, to avoid overflows in case of
->     corrupt/malicius USB devices.
->   * Resolution added to the ABS axes.
->   * A lot of minor cleanups.
-> 
-> Rodrigo Rivas Costa (4):
->    HID: add driver for Valve Steam Controller
->    HID: steam: add serial number information.
->    HID: steam: command to check wireless connection
->    HID: steam: add battery device.
-> 
->   drivers/hid/Kconfig     |   8 +
->   drivers/hid/Makefile    |   1 +
->   drivers/hid/hid-ids.h   |   4 +
->   drivers/hid/hid-steam.c | 794 ++++++++++++++++++++++++++++++++++++++++++++++++
->   4 files changed, 807 insertions(+)
->   create mode 100644 drivers/hid/hid-steam.c
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqlt8cACgkQAVBC80lX
+0Gwx5Af/aJEdlD+0XoSMBrAWdi8JOE8l+s5HkhRS3UWdwil8WvlJgedYp/8jUgHk
+5iHJvCtdspVDxlb43u/ce+TzSpYQxwVc33vldXw44sUCv2kB5JTj9rcNYKRQpom5
+VsLiIkdypJWwpf2n8ChASoe7jvsLJ9/dYixh4VWARqfC/tgsKycPQrwsfVK99eJ/
+M+ws7MPgTbK8HVyjpBilq3Azf6e6yu5ugoBdOCFBvlPDPH9/aIcRZ7yMIQQI+bnM
+MXTIbEbzmfhkreLFO9LKp4qlAGrkLjWicLjTZdJt95Acsru9muHIIqjF2S/WkufG
+oqb34xp/tyYee0iywCibVBlW3vt/Ew==
+=FvwZ
+-----END PGP SIGNATURE-----
+
+--Sig_/_NqHWnDV0cpAA+Inw4LdbMh--
