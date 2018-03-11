@@ -1,1101 +1,1139 @@
-Date: Sun, 11 Mar 2018 17:44:59 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-	torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 4.4.121
-Message-ID: <20180311164459.GB21716@kroah.com>
-References: <20180311164453.GA21716@kroah.com>
+Return-Path: <tglx@linutronix.de>
+X-Google-Smtp-Source: AG47ELuj0hIWklVn/WfdCpNu15OtQ+rZC8bybX/5R1CDP/k0JSnGiEg3RoTOKAU+7df960PFxgVt
+ARC-Seal: i=1; a=rsa-sha256; t=1520785574; cv=none;
+        d=google.com; s=arc-20160816;
+        b=c67CMZedaNNTQNYdwsAsIF6AArRS3ZSdinN7E9q8Gek1cnZJsVW8V2LpgXytYZpC3j
+         EaxTDVvv9AMGpu5Pd1M4o95BRQbGwiHcFus17NHswyT0Fk7+J3BFGoQDDwRuQCRYXPid
+         C2SCI0sulW7amJsxr0sfPyJHxggKCMgSgHqnexshuhCRFtj0G65UKyglmHgP1LzINQbf
+         2xFvlIcCed5mkvmpKQE11PMyQP4RK5Hu8YPLyF2xXYzDARmiZdaKUMnOnKvixmabcssC
+         7wtJ9gBm0zEyeNCzpFgvv5TNuN3bmb52BZuP2Cyd+gg0jYMDNWEVNpgsxYuNt7FlzzRh
+         0LYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:message-id:subject:cc:to:from:date
+         :arc-authentication-results;
+        bh=J1+HxYFa0ohKGNcaCBSy3AjfecuncdRBMhPUSQfVswU=;
+        b=c3A7qeZblw4jDsG51iAydcRW6nGrf9M56z7l5h+jEY2w8Bm6/FNrhOcLjpCxSO1qR5
+         +nZsH6oA1MJkbX/Coikuiru0Xxi55njWiQvR36BB0w2ZH5byZ4/abXyEyBEcwblGNAoM
+         pwvbHcIXrOHJia2aO86dIAyeTDkI+1H7H2B1OPp5wvMZDL1G69N7J3KL7dYL1UK0zLnq
+         hnrgwtRZ5Voza8JIpt3lg3DSbMjGDemucWGgrNq7Ahvkc9whHwP3ma+UVyojhDbyejjB
+         KHVmCnwwdVP5NayGDD+hjN4MyIBcapVvMyhaCBb7LqAH5wVYCGelswPKCFC754qB1m9/
+         2UiA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 146.0.238.70 as permitted sender) smtp.mailfrom=tglx@linutronix.de
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 146.0.238.70 as permitted sender) smtp.mailfrom=tglx@linutronix.de
+Date: Sun, 11 Mar 2018 09:26:03 -0700 (PDT)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+    Greg KH <gregkh@linuxfoundation.org>, David Woodhouse <dwmw@amazon.co.uk>
+Subject: [GIT pull] x86/pti updates for 4.16
+Message-ID: <alpine.DEB.2.21.1803110919510.3841@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180311164453.GA21716@kroah.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594659254368136142?=
+X-GMAIL-MSGID: =?utf-8?q?1594659254368136142?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-diff --git a/Makefile b/Makefile
-index d874d7de0cde..0e22e4eb85cc 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,6 +1,6 @@
- VERSION = 4
- PATCHLEVEL = 4
--SUBLEVEL = 120
-+SUBLEVEL = 121
- EXTRAVERSION =
- NAME = Blurry Fish Butt
+Linus,
+
+please pull the latest x86-pti-for-linus git tree from:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-pti-for-linus
+
+Yet another pile of melted spectrum related updates:
+
+  - Drop native vsyscall support finally as it causes more trouble than
+    benefit.
+
+  - Make microcode loading more robust. There were a few issues especially
+    related to late loading which are new surfacing because late loading of
+    the IB* microcodes addressing spectre issues has become more widely used.
+
+  - Simplfy and robistify the syscall handling in the entry code
+
+  - Prevent kprobes on the entry trampoline code which lead to kernel
+    crashes when the probe hits before CR3 is updated
+
+  - Don't check microcode versions when running on hypervisors as they are
+    considered as lying anyway.
+
+  - Fix the 32bit objtool build and a coment typo
+
+
+Thanks,
+
+	tglx
+
+------------------>
+Andy Lutomirski (1):
+      x86/vsyscall/64: Drop "native" vsyscalls
+
+Ashok Raj (4):
+      x86/microcode/intel: Check microcode revision before updating sibling threads
+      x86/microcode/intel: Writeback and invalidate caches before updating microcode
+      x86/microcode: Do not upload microcode if CPUs are offline
+      x86/microcode: Synchronize late microcode loading
+
+Borislav Petkov (3):
+      x86/microcode: Get rid of struct apply_microcode_ctx
+      x86/microcode/intel: Look into the patch cache first
+      x86/microcode: Request microcode on the BSP
+
+Dominik Brodowski (6):
+      x86/syscalls/32: Simplify $entry == $compat entries
+      x86/entry: Remove stale syscall prototype
+      x86/syscalls: Use proper syscall definition for sys_ioperm()
+      x86/syscalls: Use COMPAT_SYSCALL_DEFINEx() macros for x86-only compat syscalls
+      x86/entry: Do not special-case clone(2) in compat entry
+      x86/entry/64/compat: Save one instruction in entry_INT80_compat()
+
+Francis Deslauriers (1):
+      x86/kprobes: Fix kernel crash when probing .entry_trampoline code
+
+Josh Poimboeuf (1):
+      objtool: Fix 32-bit build
+
+Konrad Rzeszutek Wilk (1):
+      x86/spectre_v2: Don't check microcode versions when running under hypervisors
+
+Seunghun Han (1):
+      x86/pti: Fix a comment typo
+
+
+ arch/x86/Kconfig                            |  11 +-
+ arch/x86/entry/entry_64_compat.S            |  16 +--
+ arch/x86/entry/syscalls/syscall_32.tbl      |  38 +++----
+ arch/x86/entry/vsyscall/vsyscall_64.c       |  16 +--
+ arch/x86/ia32/sys_ia32.c                    |  74 +++++++------
+ arch/x86/include/asm/pgtable_types.h        |   2 -
+ arch/x86/include/asm/sections.h             |   1 +
+ arch/x86/include/asm/sys_ia32.h             |  48 +++++----
+ arch/x86/kernel/cpu/intel.c                 |   7 ++
+ arch/x86/kernel/cpu/microcode/core.c        | 158 +++++++++++++++++++++-------
+ arch/x86/kernel/cpu/microcode/intel.c       |  48 +++++++--
+ arch/x86/kernel/ioport.c                    |   2 +-
+ arch/x86/kernel/kprobes/core.c              |  10 +-
+ arch/x86/kernel/vmlinux.lds.S               |   2 +
+ arch/x86/mm/pti.c                           |   2 +-
+ tools/objtool/check.c                       |  27 ++---
+ tools/testing/selftests/x86/test_vsyscall.c |  11 +-
+ 17 files changed, 291 insertions(+), 182 deletions(-)
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index c1aed6c0e413..09c599e0900d 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2266,7 +2266,7 @@ choice
+ 	  it can be used to assist security vulnerability exploitation.
  
-diff --git a/arch/arm/boot/dts/logicpd-torpedo-som.dtsi b/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
-index 80f6c786a37e..5562c5feb0be 100644
---- a/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
-+++ b/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
-@@ -90,6 +90,8 @@
- };
+ 	  This setting can be changed at boot time via the kernel command
+-	  line parameter vsyscall=[native|emulate|none].
++	  line parameter vsyscall=[emulate|none].
  
- &i2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1_pins>;
- 	clock-frequency = <2600000>;
+ 	  On a system with recent enough glibc (2.14 or newer) and no
+ 	  static binaries, you can say None without a performance penalty
+@@ -2274,15 +2274,6 @@ choice
  
- 	twl: twl@48 {
-@@ -146,6 +148,12 @@
- 			OMAP3630_CORE2_IOPAD(0x25da, PIN_INPUT_PULLUP | MUX_MODE2)   /* etk_ctl.sdmmc3_cmd */
- 		>;
- 	};
-+	i2c1_pins: pinmux_i2c1_pins {
-+		pinctrl-single,pins = <
-+			OMAP3_CORE1_IOPAD(0x21ba, PIN_INPUT | MUX_MODE0)        /* i2c1_scl.i2c1_scl */
-+			OMAP3_CORE1_IOPAD(0x21bc, PIN_INPUT | MUX_MODE0)        /* i2c1_sda.i2c1_sda */
-+		>;
-+	};
- };
+ 	  If unsure, select "Emulate".
  
- #include "twl4030.dtsi"
-diff --git a/arch/arm/mach-mvebu/Kconfig b/arch/arm/mach-mvebu/Kconfig
-index e20fc4178b15..1c8a6098a2ca 100644
---- a/arch/arm/mach-mvebu/Kconfig
-+++ b/arch/arm/mach-mvebu/Kconfig
-@@ -37,7 +37,7 @@ config MACH_ARMADA_370
- config MACH_ARMADA_375
- 	bool "Marvell Armada 375 boards" if ARCH_MULTI_V7
- 	select ARM_ERRATA_720789
--	select ARM_ERRATA_753970
-+	select PL310_ERRATA_753970
- 	select ARM_GIC
- 	select ARMADA_375_CLK
- 	select HAVE_ARM_SCU
-@@ -52,7 +52,7 @@ config MACH_ARMADA_375
- config MACH_ARMADA_38X
- 	bool "Marvell Armada 380/385 boards" if ARCH_MULTI_V7
- 	select ARM_ERRATA_720789
--	select ARM_ERRATA_753970
-+	select PL310_ERRATA_753970
- 	select ARM_GIC
- 	select ARMADA_38X_CLK
- 	select HAVE_ARM_SCU
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index a03b22c615d9..59a4e1604a36 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -178,12 +178,14 @@ GLOBAL(entry_SYSCALL_64_after_swapgs)
- 	jnz	tracesys
- entry_SYSCALL_64_fastpath:
- #if __SYSCALL_MASK == ~0
--	cmpq	$__NR_syscall_max, %rax
-+	cmpq	$NR_syscalls, %rax
+-	config LEGACY_VSYSCALL_NATIVE
+-		bool "Native"
+-		help
+-		  Actual executable code is located in the fixed vsyscall
+-		  address mapping, implementing time() efficiently. Since
+-		  this makes the mapping executable, it can be used during
+-		  security vulnerability exploitation (traditionally as
+-		  ROP gadgets). This configuration is not recommended.
+-
+ 	config LEGACY_VSYSCALL_EMULATE
+ 		bool "Emulate"
+ 		help
+diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
+index e811dd9c5e99..08425c42f8b7 100644
+--- a/arch/x86/entry/entry_64_compat.S
++++ b/arch/x86/entry/entry_64_compat.S
+@@ -363,9 +363,7 @@ ENTRY(entry_INT80_compat)
+ 	pushq	2*8(%rdi)		/* regs->ip */
+ 	pushq	1*8(%rdi)		/* regs->orig_ax */
+ 
+-	movq	(%rdi), %rdi		/* restore %rdi */
+-
+-	pushq	%rdi			/* pt_regs->di */
++	pushq	(%rdi)			/* pt_regs->di */
+ 	pushq	%rsi			/* pt_regs->si */
+ 	pushq	%rdx			/* pt_regs->dx */
+ 	pushq	%rcx			/* pt_regs->cx */
+@@ -406,15 +404,3 @@ ENTRY(entry_INT80_compat)
+ 	TRACE_IRQS_ON
+ 	jmp	swapgs_restore_regs_and_return_to_usermode
+ END(entry_INT80_compat)
+-
+-ENTRY(stub32_clone)
+-	/*
+-	 * The 32-bit clone ABI is: clone(..., int tls_val, int *child_tidptr).
+-	 * The 64-bit clone ABI is: clone(..., int *child_tidptr, int tls_val).
+-	 *
+-	 * The native 64-bit kernel's sys_clone() implements the latter,
+-	 * so we need to swap arguments here before calling it:
+-	 */
+-	xchg	%r8, %rcx
+-	jmp	sys_clone
+-ENDPROC(stub32_clone)
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 448ac2161112..2a5e99cff859 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -8,12 +8,12 @@
+ #
+ 0	i386	restart_syscall		sys_restart_syscall
+ 1	i386	exit			sys_exit
+-2	i386	fork			sys_fork			sys_fork
++2	i386	fork			sys_fork
+ 3	i386	read			sys_read
+ 4	i386	write			sys_write
+ 5	i386	open			sys_open			compat_sys_open
+ 6	i386	close			sys_close
+-7	i386	waitpid			sys_waitpid			sys32_waitpid
++7	i386	waitpid			sys_waitpid			compat_sys_x86_waitpid
+ 8	i386	creat			sys_creat
+ 9	i386	link			sys_link
+ 10	i386	unlink			sys_unlink
+@@ -78,7 +78,7 @@
+ 69	i386	ssetmask		sys_ssetmask
+ 70	i386	setreuid		sys_setreuid16
+ 71	i386	setregid		sys_setregid16
+-72	i386	sigsuspend		sys_sigsuspend			sys_sigsuspend
++72	i386	sigsuspend		sys_sigsuspend
+ 73	i386	sigpending		sys_sigpending			compat_sys_sigpending
+ 74	i386	sethostname		sys_sethostname
+ 75	i386	setrlimit		sys_setrlimit			compat_sys_setrlimit
+@@ -96,7 +96,7 @@
+ 87	i386	swapon			sys_swapon
+ 88	i386	reboot			sys_reboot
+ 89	i386	readdir			sys_old_readdir			compat_sys_old_readdir
+-90	i386	mmap			sys_old_mmap			sys32_mmap
++90	i386	mmap			sys_old_mmap			compat_sys_x86_mmap
+ 91	i386	munmap			sys_munmap
+ 92	i386	truncate		sys_truncate			compat_sys_truncate
+ 93	i386	ftruncate		sys_ftruncate			compat_sys_ftruncate
+@@ -126,7 +126,7 @@
+ 117	i386	ipc			sys_ipc				compat_sys_ipc
+ 118	i386	fsync			sys_fsync
+ 119	i386	sigreturn		sys_sigreturn			sys32_sigreturn
+-120	i386	clone			sys_clone			stub32_clone
++120	i386	clone			sys_clone			compat_sys_x86_clone
+ 121	i386	setdomainname		sys_setdomainname
+ 122	i386	uname			sys_newuname
+ 123	i386	modify_ldt		sys_modify_ldt
+@@ -186,8 +186,8 @@
+ 177	i386	rt_sigtimedwait		sys_rt_sigtimedwait		compat_sys_rt_sigtimedwait
+ 178	i386	rt_sigqueueinfo		sys_rt_sigqueueinfo		compat_sys_rt_sigqueueinfo
+ 179	i386	rt_sigsuspend		sys_rt_sigsuspend
+-180	i386	pread64			sys_pread64			sys32_pread
+-181	i386	pwrite64		sys_pwrite64			sys32_pwrite
++180	i386	pread64			sys_pread64			compat_sys_x86_pread
++181	i386	pwrite64		sys_pwrite64			compat_sys_x86_pwrite
+ 182	i386	chown			sys_chown16
+ 183	i386	getcwd			sys_getcwd
+ 184	i386	capget			sys_capget
+@@ -196,14 +196,14 @@
+ 187	i386	sendfile		sys_sendfile			compat_sys_sendfile
+ 188	i386	getpmsg
+ 189	i386	putpmsg
+-190	i386	vfork			sys_vfork			sys_vfork
++190	i386	vfork			sys_vfork
+ 191	i386	ugetrlimit		sys_getrlimit			compat_sys_getrlimit
+ 192	i386	mmap2			sys_mmap_pgoff
+-193	i386	truncate64		sys_truncate64			sys32_truncate64
+-194	i386	ftruncate64		sys_ftruncate64			sys32_ftruncate64
+-195	i386	stat64			sys_stat64			sys32_stat64
+-196	i386	lstat64			sys_lstat64			sys32_lstat64
+-197	i386	fstat64			sys_fstat64			sys32_fstat64
++193	i386	truncate64		sys_truncate64			compat_sys_x86_truncate64
++194	i386	ftruncate64		sys_ftruncate64			compat_sys_x86_ftruncate64
++195	i386	stat64			sys_stat64			compat_sys_x86_stat64
++196	i386	lstat64			sys_lstat64			compat_sys_x86_lstat64
++197	i386	fstat64			sys_fstat64			compat_sys_x86_fstat64
+ 198	i386	lchown32		sys_lchown
+ 199	i386	getuid32		sys_getuid
+ 200	i386	getgid32		sys_getgid
+@@ -231,7 +231,7 @@
+ # 222 is unused
+ # 223 is unused
+ 224	i386	gettid			sys_gettid
+-225	i386	readahead		sys_readahead			sys32_readahead
++225	i386	readahead		sys_readahead			compat_sys_x86_readahead
+ 226	i386	setxattr		sys_setxattr
+ 227	i386	lsetxattr		sys_lsetxattr
+ 228	i386	fsetxattr		sys_fsetxattr
+@@ -256,7 +256,7 @@
+ 247	i386	io_getevents		sys_io_getevents		compat_sys_io_getevents
+ 248	i386	io_submit		sys_io_submit			compat_sys_io_submit
+ 249	i386	io_cancel		sys_io_cancel
+-250	i386	fadvise64		sys_fadvise64			sys32_fadvise64
++250	i386	fadvise64		sys_fadvise64			compat_sys_x86_fadvise64
+ # 251 is available for reuse (was briefly sys_set_zone_reclaim)
+ 252	i386	exit_group		sys_exit_group
+ 253	i386	lookup_dcookie		sys_lookup_dcookie		compat_sys_lookup_dcookie
+@@ -278,7 +278,7 @@
+ 269	i386	fstatfs64		sys_fstatfs64			compat_sys_fstatfs64
+ 270	i386	tgkill			sys_tgkill
+ 271	i386	utimes			sys_utimes			compat_sys_utimes
+-272	i386	fadvise64_64		sys_fadvise64_64		sys32_fadvise64_64
++272	i386	fadvise64_64		sys_fadvise64_64		compat_sys_x86_fadvise64_64
+ 273	i386	vserver
+ 274	i386	mbind			sys_mbind
+ 275	i386	get_mempolicy		sys_get_mempolicy		compat_sys_get_mempolicy
+@@ -306,7 +306,7 @@
+ 297	i386	mknodat			sys_mknodat
+ 298	i386	fchownat		sys_fchownat
+ 299	i386	futimesat		sys_futimesat			compat_sys_futimesat
+-300	i386	fstatat64		sys_fstatat64			sys32_fstatat
++300	i386	fstatat64		sys_fstatat64			compat_sys_x86_fstatat
+ 301	i386	unlinkat		sys_unlinkat
+ 302	i386	renameat		sys_renameat
+ 303	i386	linkat			sys_linkat
+@@ -320,7 +320,7 @@
+ 311	i386	set_robust_list		sys_set_robust_list		compat_sys_set_robust_list
+ 312	i386	get_robust_list		sys_get_robust_list		compat_sys_get_robust_list
+ 313	i386	splice			sys_splice
+-314	i386	sync_file_range		sys_sync_file_range		sys32_sync_file_range
++314	i386	sync_file_range		sys_sync_file_range		compat_sys_x86_sync_file_range
+ 315	i386	tee			sys_tee
+ 316	i386	vmsplice		sys_vmsplice			compat_sys_vmsplice
+ 317	i386	move_pages		sys_move_pages			compat_sys_move_pages
+@@ -330,7 +330,7 @@
+ 321	i386	signalfd		sys_signalfd			compat_sys_signalfd
+ 322	i386	timerfd_create		sys_timerfd_create
+ 323	i386	eventfd			sys_eventfd
+-324	i386	fallocate		sys_fallocate			sys32_fallocate
++324	i386	fallocate		sys_fallocate			compat_sys_x86_fallocate
+ 325	i386	timerfd_settime		sys_timerfd_settime		compat_sys_timerfd_settime
+ 326	i386	timerfd_gettime		sys_timerfd_gettime		compat_sys_timerfd_gettime
+ 327	i386	signalfd4		sys_signalfd4			compat_sys_signalfd4
+diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/vsyscall_64.c
+index 577fa8adb785..8560ef68a9d6 100644
+--- a/arch/x86/entry/vsyscall/vsyscall_64.c
++++ b/arch/x86/entry/vsyscall/vsyscall_64.c
+@@ -42,10 +42,8 @@
+ #define CREATE_TRACE_POINTS
+ #include "vsyscall_trace.h"
+ 
+-static enum { EMULATE, NATIVE, NONE } vsyscall_mode =
+-#if defined(CONFIG_LEGACY_VSYSCALL_NATIVE)
+-	NATIVE;
+-#elif defined(CONFIG_LEGACY_VSYSCALL_NONE)
++static enum { EMULATE, NONE } vsyscall_mode =
++#ifdef CONFIG_LEGACY_VSYSCALL_NONE
+ 	NONE;
  #else
- 	andl	$__SYSCALL_MASK, %eax
--	cmpl	$__NR_syscall_max, %eax
-+	cmpl	$NR_syscalls, %eax
- #endif
--	ja	1f				/* return -ENOSYS (already in pt_regs->ax) */
-+	jae	1f				/* return -ENOSYS (already in pt_regs->ax) */
-+	sbb	%rcx, %rcx			/* array_index_mask_nospec() */
-+	and	%rcx, %rax
- 	movq	%r10, %rcx
- #ifdef CONFIG_RETPOLINE
- 	movq	sys_call_table(, %rax, 8), %rax
-@@ -276,12 +278,14 @@ tracesys_phase2:
- 	RESTORE_C_REGS_EXCEPT_RAX
- 	RESTORE_EXTRA_REGS
- #if __SYSCALL_MASK == ~0
--	cmpq	$__NR_syscall_max, %rax
-+	cmpq	$NR_syscalls, %rax
- #else
- 	andl	$__SYSCALL_MASK, %eax
--	cmpl	$__NR_syscall_max, %eax
-+	cmpl	$NR_syscalls, %eax
- #endif
--	ja	1f				/* return -ENOSYS (already in pt_regs->ax) */
-+	jae	1f				/* return -ENOSYS (already in pt_regs->ax) */
-+	sbb	%rcx, %rcx			/* array_index_mask_nospec() */
-+	and	%rcx, %rax
- 	movq	%r10, %rcx			/* fixup for C */
- #ifdef CONFIG_RETPOLINE
- 	movq	sys_call_table(, %rax, 8), %rax
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 66094a0473a8..249f1c769f21 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -195,4 +195,41 @@ static inline void vmexit_fill_RSB(void)
+ 	EMULATE;
+@@ -56,8 +54,6 @@ static int __init vsyscall_setup(char *str)
+ 	if (str) {
+ 		if (!strcmp("emulate", str))
+ 			vsyscall_mode = EMULATE;
+-		else if (!strcmp("native", str))
+-			vsyscall_mode = NATIVE;
+ 		else if (!strcmp("none", str))
+ 			vsyscall_mode = NONE;
+ 		else
+@@ -139,10 +135,6 @@ bool emulate_vsyscall(struct pt_regs *regs, unsigned long address)
+ 
+ 	WARN_ON_ONCE(address != regs->ip);
+ 
+-	/* This should be unreachable in NATIVE mode. */
+-	if (WARN_ON(vsyscall_mode == NATIVE))
+-		return false;
+-
+ 	if (vsyscall_mode == NONE) {
+ 		warn_bad_vsyscall(KERN_INFO, regs,
+ 				  "vsyscall attempted with vsyscall=none");
+@@ -370,9 +362,7 @@ void __init map_vsyscall(void)
+ 
+ 	if (vsyscall_mode != NONE) {
+ 		__set_fixmap(VSYSCALL_PAGE, physaddr_vsyscall,
+-			     vsyscall_mode == NATIVE
+-			     ? PAGE_KERNEL_VSYSCALL
+-			     : PAGE_KERNEL_VVAR);
++			     PAGE_KERNEL_VVAR);
+ 		set_vsyscall_pgtable_user_bits(swapper_pg_dir);
+ 	}
+ 
+diff --git a/arch/x86/ia32/sys_ia32.c b/arch/x86/ia32/sys_ia32.c
+index 96cd33bbfc85..6512498bbef6 100644
+--- a/arch/x86/ia32/sys_ia32.c
++++ b/arch/x86/ia32/sys_ia32.c
+@@ -51,15 +51,14 @@
+ #define AA(__x)		((unsigned long)(__x))
+ 
+ 
+-asmlinkage long sys32_truncate64(const char __user *filename,
+-				 unsigned long offset_low,
+-				 unsigned long offset_high)
++COMPAT_SYSCALL_DEFINE3(x86_truncate64, const char __user *, filename,
++		       unsigned long, offset_low, unsigned long, offset_high)
+ {
+        return sys_truncate(filename, ((loff_t) offset_high << 32) | offset_low);
  }
  
- #endif /* __ASSEMBLY__ */
+-asmlinkage long sys32_ftruncate64(unsigned int fd, unsigned long offset_low,
+-				  unsigned long offset_high)
++COMPAT_SYSCALL_DEFINE3(x86_ftruncate64, unsigned int, fd,
++		       unsigned long, offset_low, unsigned long, offset_high)
+ {
+        return sys_ftruncate(fd, ((loff_t) offset_high << 32) | offset_low);
+ }
+@@ -96,8 +95,8 @@ static int cp_stat64(struct stat64 __user *ubuf, struct kstat *stat)
+ 	return 0;
+ }
+ 
+-asmlinkage long sys32_stat64(const char __user *filename,
+-			     struct stat64 __user *statbuf)
++COMPAT_SYSCALL_DEFINE2(x86_stat64, const char __user *, filename,
++		       struct stat64 __user *, statbuf)
+ {
+ 	struct kstat stat;
+ 	int ret = vfs_stat(filename, &stat);
+@@ -107,8 +106,8 @@ asmlinkage long sys32_stat64(const char __user *filename,
+ 	return ret;
+ }
+ 
+-asmlinkage long sys32_lstat64(const char __user *filename,
+-			      struct stat64 __user *statbuf)
++COMPAT_SYSCALL_DEFINE2(x86_lstat64, const char __user *, filename,
++		       struct stat64 __user *, statbuf)
+ {
+ 	struct kstat stat;
+ 	int ret = vfs_lstat(filename, &stat);
+@@ -117,7 +116,8 @@ asmlinkage long sys32_lstat64(const char __user *filename,
+ 	return ret;
+ }
+ 
+-asmlinkage long sys32_fstat64(unsigned int fd, struct stat64 __user *statbuf)
++COMPAT_SYSCALL_DEFINE2(x86_fstat64, unsigned int, fd,
++		       struct stat64 __user *, statbuf)
+ {
+ 	struct kstat stat;
+ 	int ret = vfs_fstat(fd, &stat);
+@@ -126,8 +126,9 @@ asmlinkage long sys32_fstat64(unsigned int fd, struct stat64 __user *statbuf)
+ 	return ret;
+ }
+ 
+-asmlinkage long sys32_fstatat(unsigned int dfd, const char __user *filename,
+-			      struct stat64 __user *statbuf, int flag)
++COMPAT_SYSCALL_DEFINE4(x86_fstatat, unsigned int, dfd,
++		       const char __user *, filename,
++		       struct stat64 __user *, statbuf, int, flag)
+ {
+ 	struct kstat stat;
+ 	int error;
+@@ -153,7 +154,7 @@ struct mmap_arg_struct32 {
+ 	unsigned int offset;
+ };
+ 
+-asmlinkage long sys32_mmap(struct mmap_arg_struct32 __user *arg)
++COMPAT_SYSCALL_DEFINE1(x86_mmap, struct mmap_arg_struct32 __user *, arg)
+ {
+ 	struct mmap_arg_struct32 a;
+ 
+@@ -167,22 +168,22 @@ asmlinkage long sys32_mmap(struct mmap_arg_struct32 __user *arg)
+ 			       a.offset>>PAGE_SHIFT);
+ }
+ 
+-asmlinkage long sys32_waitpid(compat_pid_t pid, unsigned int __user *stat_addr,
+-			      int options)
++COMPAT_SYSCALL_DEFINE3(x86_waitpid, compat_pid_t, pid, unsigned int __user *,
++		       stat_addr, int, options)
+ {
+ 	return compat_sys_wait4(pid, stat_addr, options, NULL);
+ }
+ 
+ /* warning: next two assume little endian */
+-asmlinkage long sys32_pread(unsigned int fd, char __user *ubuf, u32 count,
+-			    u32 poslo, u32 poshi)
++COMPAT_SYSCALL_DEFINE5(x86_pread, unsigned int, fd, char __user *, ubuf,
++		       u32, count, u32, poslo, u32, poshi)
+ {
+ 	return sys_pread64(fd, ubuf, count,
+ 			 ((loff_t)AA(poshi) << 32) | AA(poslo));
+ }
+ 
+-asmlinkage long sys32_pwrite(unsigned int fd, const char __user *ubuf,
+-			     u32 count, u32 poslo, u32 poshi)
++COMPAT_SYSCALL_DEFINE5(x86_pwrite, unsigned int, fd, const char __user *, ubuf,
++		       u32, count, u32, poslo, u32, poshi)
+ {
+ 	return sys_pwrite64(fd, ubuf, count,
+ 			  ((loff_t)AA(poshi) << 32) | AA(poslo));
+@@ -193,8 +194,9 @@ asmlinkage long sys32_pwrite(unsigned int fd, const char __user *ubuf,
+  * Some system calls that need sign extended arguments. This could be
+  * done by a generic wrapper.
+  */
+-long sys32_fadvise64_64(int fd, __u32 offset_low, __u32 offset_high,
+-			__u32 len_low, __u32 len_high, int advice)
++COMPAT_SYSCALL_DEFINE6(x86_fadvise64_64, int, fd, __u32, offset_low,
++		       __u32, offset_high, __u32, len_low, __u32, len_high,
++		       int, advice)
+ {
+ 	return sys_fadvise64_64(fd,
+ 			       (((u64)offset_high)<<32) | offset_low,
+@@ -202,31 +204,43 @@ long sys32_fadvise64_64(int fd, __u32 offset_low, __u32 offset_high,
+ 				advice);
+ }
+ 
+-asmlinkage ssize_t sys32_readahead(int fd, unsigned off_lo, unsigned off_hi,
+-				   size_t count)
++COMPAT_SYSCALL_DEFINE4(x86_readahead, int, fd, unsigned int, off_lo,
++		       unsigned int, off_hi, size_t, count)
+ {
+ 	return sys_readahead(fd, ((u64)off_hi << 32) | off_lo, count);
+ }
+ 
+-asmlinkage long sys32_sync_file_range(int fd, unsigned off_low, unsigned off_hi,
+-				      unsigned n_low, unsigned n_hi,  int flags)
++COMPAT_SYSCALL_DEFINE6(x86_sync_file_range, int, fd, unsigned int, off_low,
++		       unsigned int, off_hi, unsigned int, n_low,
++		       unsigned int, n_hi, int, flags)
+ {
+ 	return sys_sync_file_range(fd,
+ 				   ((u64)off_hi << 32) | off_low,
+ 				   ((u64)n_hi << 32) | n_low, flags);
+ }
+ 
+-asmlinkage long sys32_fadvise64(int fd, unsigned offset_lo, unsigned offset_hi,
+-				size_t len, int advice)
++COMPAT_SYSCALL_DEFINE5(x86_fadvise64, int, fd, unsigned int, offset_lo,
++		       unsigned int, offset_hi, size_t, len, int, advice)
+ {
+ 	return sys_fadvise64_64(fd, ((u64)offset_hi << 32) | offset_lo,
+ 				len, advice);
+ }
+ 
+-asmlinkage long sys32_fallocate(int fd, int mode, unsigned offset_lo,
+-				unsigned offset_hi, unsigned len_lo,
+-				unsigned len_hi)
++COMPAT_SYSCALL_DEFINE6(x86_fallocate, int, fd, int, mode,
++		       unsigned int, offset_lo, unsigned int, offset_hi,
++		       unsigned int, len_lo, unsigned int, len_hi)
+ {
+ 	return sys_fallocate(fd, mode, ((u64)offset_hi << 32) | offset_lo,
+ 			     ((u64)len_hi << 32) | len_lo);
+ }
 +
 +/*
-+ * Below is used in the eBPF JIT compiler and emits the byte sequence
-+ * for the following assembly:
-+ *
-+ * With retpolines configured:
-+ *
-+ *    callq do_rop
-+ *  spec_trap:
-+ *    pause
-+ *    lfence
-+ *    jmp spec_trap
-+ *  do_rop:
-+ *    mov %rax,(%rsp)
-+ *    retq
-+ *
-+ * Without retpolines configured:
-+ *
-+ *    jmp *%rax
++ * The 32-bit clone ABI is CONFIG_CLONE_BACKWARDS
 + */
-+#ifdef CONFIG_RETPOLINE
-+# define RETPOLINE_RAX_BPF_JIT_SIZE	17
-+# define RETPOLINE_RAX_BPF_JIT()				\
-+	EMIT1_off32(0xE8, 7);	 /* callq do_rop */		\
-+	/* spec_trap: */					\
-+	EMIT2(0xF3, 0x90);       /* pause */			\
-+	EMIT3(0x0F, 0xAE, 0xE8); /* lfence */			\
-+	EMIT2(0xEB, 0xF9);       /* jmp spec_trap */		\
-+	/* do_rop: */						\
-+	EMIT4(0x48, 0x89, 0x04, 0x24); /* mov %rax,(%rsp) */	\
-+	EMIT1(0xC3);             /* retq */
-+#else
-+# define RETPOLINE_RAX_BPF_JIT_SIZE	2
-+# define RETPOLINE_RAX_BPF_JIT()				\
-+	EMIT2(0xFF, 0xE0);	 /* jmp *%rax */
-+#endif
-+
- #endif /* _ASM_X86_NOSPEC_BRANCH_H_ */
-diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
-index a41e523536a2..592e260ba05b 100644
---- a/arch/x86/kernel/apic/vector.c
-+++ b/arch/x86/kernel/apic/vector.c
-@@ -91,8 +91,12 @@ out_data:
- 	return NULL;
- }
- 
--static void free_apic_chip_data(struct apic_chip_data *data)
-+static void free_apic_chip_data(unsigned int virq, struct apic_chip_data *data)
- {
-+#ifdef	CONFIG_X86_IO_APIC
-+	if (virq  < nr_legacy_irqs())
-+		legacy_irq_data[virq] = NULL;
-+#endif
- 	if (data) {
- 		free_cpumask_var(data->domain);
- 		free_cpumask_var(data->old_domain);
-@@ -316,11 +320,7 @@ static void x86_vector_free_irqs(struct irq_domain *domain,
- 			apic_data = irq_data->chip_data;
- 			irq_domain_reset_irq_data(irq_data);
- 			raw_spin_unlock_irqrestore(&vector_lock, flags);
--			free_apic_chip_data(apic_data);
--#ifdef	CONFIG_X86_IO_APIC
--			if (virq + i < nr_legacy_irqs())
--				legacy_irq_data[virq + i] = NULL;
--#endif
-+			free_apic_chip_data(virq + i, apic_data);
- 		}
- 	}
- }
-@@ -361,7 +361,7 @@ static int x86_vector_alloc_irqs(struct irq_domain *domain, unsigned int virq,
- 		err = assign_irq_vector_policy(virq + i, node, data, info);
- 		if (err) {
- 			irq_data->chip_data = NULL;
--			free_apic_chip_data(data);
-+			free_apic_chip_data(virq + i, data);
- 			goto error;
- 		}
- 	}
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index ecaf7c9baf75..2bbc74f8a4a8 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -175,8 +175,7 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
- 		}
- 
- 		if (i >= ARRAY_SIZE(mitigation_options)) {
--			pr_err("unknown option (%s). Switching to AUTO select\n",
--			       mitigation_options[i].option);
-+			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
- 			return SPECTRE_V2_CMD_AUTO;
- 		}
- 	}
-diff --git a/arch/x86/net/bpf_jit_comp.c b/arch/x86/net/bpf_jit_comp.c
-index 33c42b826791..a889211e21c5 100644
---- a/arch/x86/net/bpf_jit_comp.c
-+++ b/arch/x86/net/bpf_jit_comp.c
-@@ -12,6 +12,7 @@
- #include <linux/filter.h>
- #include <linux/if_vlan.h>
- #include <asm/cacheflush.h>
-+#include <asm/nospec-branch.h>
- #include <linux/bpf.h>
- 
- int bpf_jit_enable __read_mostly;
-@@ -269,7 +270,7 @@ static void emit_bpf_tail_call(u8 **pprog)
- 	EMIT2(0x89, 0xD2);                        /* mov edx, edx */
- 	EMIT3(0x39, 0x56,                         /* cmp dword ptr [rsi + 16], edx */
- 	      offsetof(struct bpf_array, map.max_entries));
--#define OFFSET1 43 /* number of bytes to jump */
-+#define OFFSET1 (41 + RETPOLINE_RAX_BPF_JIT_SIZE) /* number of bytes to jump */
- 	EMIT2(X86_JBE, OFFSET1);                  /* jbe out */
- 	label1 = cnt;
- 
-@@ -278,7 +279,7 @@ static void emit_bpf_tail_call(u8 **pprog)
- 	 */
- 	EMIT2_off32(0x8B, 0x85, -STACKSIZE + 36); /* mov eax, dword ptr [rbp - 516] */
- 	EMIT3(0x83, 0xF8, MAX_TAIL_CALL_CNT);     /* cmp eax, MAX_TAIL_CALL_CNT */
--#define OFFSET2 32
-+#define OFFSET2 (30 + RETPOLINE_RAX_BPF_JIT_SIZE)
- 	EMIT2(X86_JA, OFFSET2);                   /* ja out */
- 	label2 = cnt;
- 	EMIT3(0x83, 0xC0, 0x01);                  /* add eax, 1 */
-@@ -292,7 +293,7 @@ static void emit_bpf_tail_call(u8 **pprog)
- 	 *   goto out;
- 	 */
- 	EMIT3(0x48, 0x85, 0xC0);		  /* test rax,rax */
--#define OFFSET3 10
-+#define OFFSET3 (8 + RETPOLINE_RAX_BPF_JIT_SIZE)
- 	EMIT2(X86_JE, OFFSET3);                   /* je out */
- 	label3 = cnt;
- 
-@@ -305,7 +306,7 @@ static void emit_bpf_tail_call(u8 **pprog)
- 	 * rdi == ctx (1st arg)
- 	 * rax == prog->bpf_func + prologue_size
- 	 */
--	EMIT2(0xFF, 0xE0);                        /* jmp rax */
-+	RETPOLINE_RAX_BPF_JIT();
- 
- 	/* out: */
- 	BUILD_BUG_ON(cnt - label1 != OFFSET1);
-diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
-index 8d626784cd8d..49e4040eeb55 100644
---- a/drivers/char/tpm/st33zp24/st33zp24.c
-+++ b/drivers/char/tpm/st33zp24/st33zp24.c
-@@ -485,7 +485,7 @@ static int st33zp24_recv(struct tpm_chip *chip, unsigned char *buf,
- 			    size_t count)
- {
- 	int size = 0;
--	int expected;
-+	u32 expected;
- 
- 	if (!chip)
- 		return -EBUSY;
-@@ -502,7 +502,7 @@ static int st33zp24_recv(struct tpm_chip *chip, unsigned char *buf,
- 	}
- 
- 	expected = be32_to_cpu(*(__be32 *)(buf + 2));
--	if (expected > count) {
-+	if (expected > count || expected < TPM_HEADER_SIZE) {
- 		size = -EIO;
- 		goto out;
- 	}
-diff --git a/drivers/char/tpm/tpm_i2c_infineon.c b/drivers/char/tpm/tpm_i2c_infineon.c
-index f2aa99e34b4b..9f12ad74a09b 100644
---- a/drivers/char/tpm/tpm_i2c_infineon.c
-+++ b/drivers/char/tpm/tpm_i2c_infineon.c
-@@ -436,7 +436,8 @@ static int recv_data(struct tpm_chip *chip, u8 *buf, size_t count)
- static int tpm_tis_i2c_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- {
- 	int size = 0;
--	int expected, status;
-+	int status;
-+	u32 expected;
- 
- 	if (count < TPM_HEADER_SIZE) {
- 		size = -EIO;
-@@ -451,7 +452,7 @@ static int tpm_tis_i2c_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- 	}
- 
- 	expected = be32_to_cpu(*(__be32 *)(buf + 2));
--	if ((size_t) expected > count) {
-+	if (((size_t) expected > count) || (expected < TPM_HEADER_SIZE)) {
- 		size = -EIO;
- 		goto out;
- 	}
-diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
-index a1e1474dda30..aedf726cbab6 100644
---- a/drivers/char/tpm/tpm_i2c_nuvoton.c
-+++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
-@@ -267,7 +267,11 @@ static int i2c_nuvoton_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- 	struct device *dev = chip->dev.parent;
- 	struct i2c_client *client = to_i2c_client(dev);
- 	s32 rc;
--	int expected, status, burst_count, retries, size = 0;
-+	int status;
-+	int burst_count;
-+	int retries;
-+	int size = 0;
-+	u32 expected;
- 
- 	if (count < TPM_HEADER_SIZE) {
- 		i2c_nuvoton_ready(chip);    /* return to idle */
-@@ -309,7 +313,7 @@ static int i2c_nuvoton_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- 		 * to machine native
- 		 */
- 		expected = be32_to_cpu(*(__be32 *) (buf + 2));
--		if (expected > count) {
-+		if (expected > count || expected < size) {
- 			dev_err(dev, "%s() expected > count\n", __func__);
- 			size = -EIO;
- 			continue;
-diff --git a/drivers/cpufreq/s3c24xx-cpufreq.c b/drivers/cpufreq/s3c24xx-cpufreq.c
-index 68ef8fd9482f..f5c4e009113c 100644
---- a/drivers/cpufreq/s3c24xx-cpufreq.c
-+++ b/drivers/cpufreq/s3c24xx-cpufreq.c
-@@ -364,7 +364,13 @@ struct clk *s3c_cpufreq_clk_get(struct device *dev, const char *name)
- static int s3c_cpufreq_init(struct cpufreq_policy *policy)
- {
- 	policy->clk = clk_arm;
--	return cpufreq_generic_init(policy, ftab, cpu_cur.info->latency);
-+
-+	policy->cpuinfo.transition_latency = cpu_cur.info->latency;
-+
-+	if (ftab)
-+		return cpufreq_table_validate_and_show(policy, ftab);
-+
-+	return 0;
- }
- 
- static int __init s3c_cpufreq_initclks(void)
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index 92b6798ef5b3..c1c3af089634 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -149,7 +149,7 @@ void led_blink_set(struct led_classdev *led_cdev,
- 		   unsigned long *delay_on,
- 		   unsigned long *delay_off)
- {
--	led_stop_software_blink(led_cdev);
-+	del_timer_sync(&led_cdev->blink_timer);
- 
- 	led_cdev->flags &= ~LED_BLINK_ONESHOT;
- 	led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
-diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index e8b1120f486d..eef3e64ca0a8 100644
---- a/drivers/leds/led-triggers.c
-+++ b/drivers/leds/led-triggers.c
-@@ -88,21 +88,23 @@ ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
- 	down_read(&led_cdev->trigger_lock);
- 
- 	if (!led_cdev->trigger)
--		len += sprintf(buf+len, "[none] ");
-+		len += scnprintf(buf+len, PAGE_SIZE - len, "[none] ");
- 	else
--		len += sprintf(buf+len, "none ");
-+		len += scnprintf(buf+len, PAGE_SIZE - len, "none ");
- 
- 	list_for_each_entry(trig, &trigger_list, next_trig) {
- 		if (led_cdev->trigger && !strcmp(led_cdev->trigger->name,
- 							trig->name))
--			len += sprintf(buf+len, "[%s] ", trig->name);
-+			len += scnprintf(buf+len, PAGE_SIZE - len, "[%s] ",
-+					 trig->name);
- 		else
--			len += sprintf(buf+len, "%s ", trig->name);
-+			len += scnprintf(buf+len, PAGE_SIZE - len, "%s ",
-+					 trig->name);
- 	}
- 	up_read(&led_cdev->trigger_lock);
- 	up_read(&triggers_list_lock);
- 
--	len += sprintf(len+buf, "\n");
-+	len += scnprintf(len+buf, PAGE_SIZE - len, "\n");
- 	return len;
- }
- EXPORT_SYMBOL_GPL(led_trigger_show);
-diff --git a/drivers/md/dm-io.c b/drivers/md/dm-io.c
-index 81c5e1a1f363..1b84d2890fbf 100644
---- a/drivers/md/dm-io.c
-+++ b/drivers/md/dm-io.c
-@@ -300,6 +300,7 @@ static void do_region(int rw, unsigned region, struct dm_io_region *where,
- 	else if (rw & REQ_WRITE_SAME)
- 		special_cmd_max_sectors = q->limits.max_write_same_sectors;
- 	if ((rw & (REQ_DISCARD | REQ_WRITE_SAME)) && special_cmd_max_sectors == 0) {
-+		atomic_inc(&io->count);
- 		dec_count(io, region, -EOPNOTSUPP);
- 		return;
- 	}
-diff --git a/drivers/media/dvb-frontends/m88ds3103.c b/drivers/media/dvb-frontends/m88ds3103.c
-index feeeb70d841e..d14d075ab1d6 100644
---- a/drivers/media/dvb-frontends/m88ds3103.c
-+++ b/drivers/media/dvb-frontends/m88ds3103.c
-@@ -1281,11 +1281,12 @@ static int m88ds3103_select(struct i2c_adapter *adap, void *mux_priv, u32 chan)
-  * New users must use I2C client binding directly!
-  */
- struct dvb_frontend *m88ds3103_attach(const struct m88ds3103_config *cfg,
--		struct i2c_adapter *i2c, struct i2c_adapter **tuner_i2c_adapter)
-+				      struct i2c_adapter *i2c,
-+				      struct i2c_adapter **tuner_i2c_adapter)
- {
- 	struct i2c_client *client;
- 	struct i2c_board_info board_info;
--	struct m88ds3103_platform_data pdata;
-+	struct m88ds3103_platform_data pdata = {};
- 
- 	pdata.clk = cfg->clock;
- 	pdata.i2c_wr_max = cfg->i2c_wr_max;
-@@ -1428,6 +1429,8 @@ static int m88ds3103_probe(struct i2c_client *client,
- 	case M88DS3103_CHIP_ID:
- 		break;
- 	default:
-+		ret = -ENODEV;
-+		dev_err(&client->dev, "Unknown device. Chip_id=%02x\n", dev->chip_id);
- 		goto err_kfree;
- 	}
- 
-diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
-index e2decf71c6d1..46448d7e3290 100644
---- a/drivers/net/ppp/ppp_generic.c
-+++ b/drivers/net/ppp/ppp_generic.c
-@@ -2952,6 +2952,15 @@ ppp_connect_channel(struct channel *pch, int unit)
- 		goto outl;
- 
- 	ppp_lock(ppp);
-+	spin_lock_bh(&pch->downl);
-+	if (!pch->chan) {
-+		/* Don't connect unregistered channels */
-+		spin_unlock_bh(&pch->downl);
-+		ppp_unlock(ppp);
-+		ret = -ENOTCONN;
-+		goto outl;
-+	}
-+	spin_unlock_bh(&pch->downl);
- 	if (pch->file.hdrlen > ppp->file.hdrlen)
- 		ppp->file.hdrlen = pch->file.hdrlen;
- 	hdrlen = pch->file.hdrlen + 2;	/* for protocol bytes */
-diff --git a/drivers/net/wan/hdlc_ppp.c b/drivers/net/wan/hdlc_ppp.c
-index 0d7645581f91..4842344a96f1 100644
---- a/drivers/net/wan/hdlc_ppp.c
-+++ b/drivers/net/wan/hdlc_ppp.c
-@@ -574,7 +574,10 @@ static void ppp_timer(unsigned long arg)
- 			ppp_cp_event(proto->dev, proto->pid, TO_GOOD, 0, 0,
- 				     0, NULL);
- 			proto->restart_counter--;
--		} else
-+		} else if (netif_carrier_ok(proto->dev))
-+			ppp_cp_event(proto->dev, proto->pid, TO_GOOD, 0, 0,
-+				     0, NULL);
-+		else
- 			ppp_cp_event(proto->dev, proto->pid, TO_BAD, 0, 0,
- 				     0, NULL);
- 		break;
-diff --git a/drivers/s390/net/qeth_core.h b/drivers/s390/net/qeth_core.h
-index 5006cb6ce62d..50030cdf91fb 100644
---- a/drivers/s390/net/qeth_core.h
-+++ b/drivers/s390/net/qeth_core.h
-@@ -591,6 +591,11 @@ struct qeth_cmd_buffer {
- 	void (*callback) (struct qeth_channel *, struct qeth_cmd_buffer *);
- };
- 
-+static inline struct qeth_ipa_cmd *__ipa_cmd(struct qeth_cmd_buffer *iob)
++COMPAT_SYSCALL_DEFINE5(x86_clone, unsigned long, clone_flags,
++		       unsigned long, newsp, int __user *, parent_tidptr,
++		       unsigned long, tls_val, int __user *, child_tidptr)
 +{
-+	return (struct qeth_ipa_cmd *)(iob->data + IPA_PDU_HEADER_SIZE);
++	return sys_clone(clone_flags, newsp, parent_tidptr, child_tidptr,
++			tls_val);
++}
+diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
+index 246f15b4e64c..acfe755562a6 100644
+--- a/arch/x86/include/asm/pgtable_types.h
++++ b/arch/x86/include/asm/pgtable_types.h
+@@ -174,7 +174,6 @@ enum page_cache_mode {
+ #define __PAGE_KERNEL_RO		(__PAGE_KERNEL & ~_PAGE_RW)
+ #define __PAGE_KERNEL_RX		(__PAGE_KERNEL_EXEC & ~_PAGE_RW)
+ #define __PAGE_KERNEL_NOCACHE		(__PAGE_KERNEL | _PAGE_NOCACHE)
+-#define __PAGE_KERNEL_VSYSCALL		(__PAGE_KERNEL_RX | _PAGE_USER)
+ #define __PAGE_KERNEL_VVAR		(__PAGE_KERNEL_RO | _PAGE_USER)
+ #define __PAGE_KERNEL_LARGE		(__PAGE_KERNEL | _PAGE_PSE)
+ #define __PAGE_KERNEL_LARGE_EXEC	(__PAGE_KERNEL_EXEC | _PAGE_PSE)
+@@ -206,7 +205,6 @@ enum page_cache_mode {
+ #define PAGE_KERNEL_NOCACHE	__pgprot(__PAGE_KERNEL_NOCACHE | _PAGE_ENC)
+ #define PAGE_KERNEL_LARGE	__pgprot(__PAGE_KERNEL_LARGE | _PAGE_ENC)
+ #define PAGE_KERNEL_LARGE_EXEC	__pgprot(__PAGE_KERNEL_LARGE_EXEC | _PAGE_ENC)
+-#define PAGE_KERNEL_VSYSCALL	__pgprot(__PAGE_KERNEL_VSYSCALL | _PAGE_ENC)
+ #define PAGE_KERNEL_VVAR	__pgprot(__PAGE_KERNEL_VVAR | _PAGE_ENC)
+ 
+ #define PAGE_KERNEL_IO		__pgprot(__PAGE_KERNEL_IO)
+diff --git a/arch/x86/include/asm/sections.h b/arch/x86/include/asm/sections.h
+index d6baf23782bc..5c019d23d06b 100644
+--- a/arch/x86/include/asm/sections.h
++++ b/arch/x86/include/asm/sections.h
+@@ -10,6 +10,7 @@ extern struct exception_table_entry __stop___ex_table[];
+ 
+ #if defined(CONFIG_X86_64)
+ extern char __end_rodata_hpage_align[];
++extern char __entry_trampoline_start[], __entry_trampoline_end[];
+ #endif
+ 
+ #endif	/* _ASM_X86_SECTIONS_H */
+diff --git a/arch/x86/include/asm/sys_ia32.h b/arch/x86/include/asm/sys_ia32.h
+index 82c34ee25a65..906794aa034e 100644
+--- a/arch/x86/include/asm/sys_ia32.h
++++ b/arch/x86/include/asm/sys_ia32.h
+@@ -20,31 +20,43 @@
+ #include <asm/ia32.h>
+ 
+ /* ia32/sys_ia32.c */
+-asmlinkage long sys32_truncate64(const char __user *, unsigned long, unsigned long);
+-asmlinkage long sys32_ftruncate64(unsigned int, unsigned long, unsigned long);
++asmlinkage long compat_sys_x86_truncate64(const char __user *, unsigned long,
++					  unsigned long);
++asmlinkage long compat_sys_x86_ftruncate64(unsigned int, unsigned long,
++					   unsigned long);
+ 
+-asmlinkage long sys32_stat64(const char __user *, struct stat64 __user *);
+-asmlinkage long sys32_lstat64(const char __user *, struct stat64 __user *);
+-asmlinkage long sys32_fstat64(unsigned int, struct stat64 __user *);
+-asmlinkage long sys32_fstatat(unsigned int, const char __user *,
++asmlinkage long compat_sys_x86_stat64(const char __user *,
++				      struct stat64 __user *);
++asmlinkage long compat_sys_x86_lstat64(const char __user *,
++				       struct stat64 __user *);
++asmlinkage long compat_sys_x86_fstat64(unsigned int, struct stat64 __user *);
++asmlinkage long compat_sys_x86_fstatat(unsigned int, const char __user *,
+ 			      struct stat64 __user *, int);
+ struct mmap_arg_struct32;
+-asmlinkage long sys32_mmap(struct mmap_arg_struct32 __user *);
++asmlinkage long compat_sys_x86_mmap(struct mmap_arg_struct32 __user *);
+ 
+-asmlinkage long sys32_waitpid(compat_pid_t, unsigned int __user *, int);
++asmlinkage long compat_sys_x86_waitpid(compat_pid_t, unsigned int __user *,
++				       int);
+ 
+-asmlinkage long sys32_pread(unsigned int, char __user *, u32, u32, u32);
+-asmlinkage long sys32_pwrite(unsigned int, const char __user *, u32, u32, u32);
++asmlinkage long compat_sys_x86_pread(unsigned int, char __user *, u32, u32,
++				     u32);
++asmlinkage long compat_sys_x86_pwrite(unsigned int, const char __user *, u32,
++				      u32, u32);
+ 
+-long sys32_fadvise64_64(int, __u32, __u32, __u32, __u32, int);
+-long sys32_vm86_warning(void);
++asmlinkage long compat_sys_x86_fadvise64_64(int, __u32, __u32, __u32, __u32,
++					    int);
+ 
+-asmlinkage ssize_t sys32_readahead(int, unsigned, unsigned, size_t);
+-asmlinkage long sys32_sync_file_range(int, unsigned, unsigned,
+-				      unsigned, unsigned, int);
+-asmlinkage long sys32_fadvise64(int, unsigned, unsigned, size_t, int);
+-asmlinkage long sys32_fallocate(int, int, unsigned,
+-				unsigned, unsigned, unsigned);
++asmlinkage ssize_t compat_sys_x86_readahead(int, unsigned int, unsigned int,
++					    size_t);
++asmlinkage long compat_sys_x86_sync_file_range(int, unsigned int, unsigned int,
++					       unsigned int, unsigned int,
++					       int);
++asmlinkage long compat_sys_x86_fadvise64(int, unsigned int, unsigned int,
++					 size_t, int);
++asmlinkage long compat_sys_x86_fallocate(int, int, unsigned int, unsigned int,
++					 unsigned int, unsigned int);
++asmlinkage long compat_sys_x86_clone(unsigned long, unsigned long, int __user *,
++				     unsigned long, int __user *);
+ 
+ /* ia32/ia32_signal.c */
+ asmlinkage long sys32_sigreturn(void);
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index d19e903214b4..4aa9fd379390 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -144,6 +144,13 @@ static bool bad_spectre_microcode(struct cpuinfo_x86 *c)
+ {
+ 	int i;
+ 
++	/*
++	 * We know that the hypervisor lie to us on the microcode version so
++	 * we may as well hope that it is running the correct version.
++	 */
++	if (cpu_has(c, X86_FEATURE_HYPERVISOR))
++		return false;
++
+ 	for (i = 0; i < ARRAY_SIZE(spectre_bad_microcodes); i++) {
+ 		if (c->x86_model == spectre_bad_microcodes[i].model &&
+ 		    c->x86_stepping == spectre_bad_microcodes[i].stepping)
+diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
+index aa1b9a422f2b..70ecbc8099c9 100644
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -22,13 +22,16 @@
+ #define pr_fmt(fmt) "microcode: " fmt
+ 
+ #include <linux/platform_device.h>
++#include <linux/stop_machine.h>
+ #include <linux/syscore_ops.h>
+ #include <linux/miscdevice.h>
+ #include <linux/capability.h>
+ #include <linux/firmware.h>
+ #include <linux/kernel.h>
++#include <linux/delay.h>
+ #include <linux/mutex.h>
+ #include <linux/cpu.h>
++#include <linux/nmi.h>
+ #include <linux/fs.h>
+ #include <linux/mm.h>
+ 
+@@ -64,6 +67,11 @@ LIST_HEAD(microcode_cache);
+  */
+ static DEFINE_MUTEX(microcode_mutex);
+ 
++/*
++ * Serialize late loading so that CPUs get updated one-by-one.
++ */
++static DEFINE_SPINLOCK(update_lock);
++
+ struct ucode_cpu_info		ucode_cpu_info[NR_CPUS];
+ 
+ struct cpu_info_ctx {
+@@ -373,26 +381,23 @@ static int collect_cpu_info(int cpu)
+ 	return ret;
+ }
+ 
+-struct apply_microcode_ctx {
+-	enum ucode_state err;
+-};
+-
+ static void apply_microcode_local(void *arg)
+ {
+-	struct apply_microcode_ctx *ctx = arg;
++	enum ucode_state *err = arg;
+ 
+-	ctx->err = microcode_ops->apply_microcode(smp_processor_id());
++	*err = microcode_ops->apply_microcode(smp_processor_id());
+ }
+ 
+ static int apply_microcode_on_target(int cpu)
+ {
+-	struct apply_microcode_ctx ctx = { .err = 0 };
++	enum ucode_state err;
+ 	int ret;
+ 
+-	ret = smp_call_function_single(cpu, apply_microcode_local, &ctx, 1);
+-	if (!ret)
+-		ret = ctx.err;
+-
++	ret = smp_call_function_single(cpu, apply_microcode_local, &err, 1);
++	if (!ret) {
++		if (err == UCODE_ERROR)
++			ret = 1;
++	}
+ 	return ret;
+ }
+ 
+@@ -489,19 +494,100 @@ static void __exit microcode_dev_exit(void)
+ /* fake device for request_firmware */
+ static struct platform_device	*microcode_pdev;
+ 
+-static enum ucode_state reload_for_cpu(int cpu)
++/*
++ * Late loading dance. Why the heavy-handed stomp_machine effort?
++ *
++ * - HT siblings must be idle and not execute other code while the other sibling
++ *   is loading microcode in order to avoid any negative interactions caused by
++ *   the loading.
++ *
++ * - In addition, microcode update on the cores must be serialized until this
++ *   requirement can be relaxed in the future. Right now, this is conservative
++ *   and good.
++ */
++#define SPINUNIT 100 /* 100 nsec */
++
++static int check_online_cpus(void)
+ {
+-	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
+-	enum ucode_state ustate;
++	if (num_online_cpus() == num_present_cpus())
++		return 0;
+ 
+-	if (!uci->valid)
+-		return UCODE_OK;
++	pr_err("Not all CPUs online, aborting microcode update.\n");
++
++	return -EINVAL;
 +}
 +
- /**
-  * definition of a qeth channel, used for read and write
-  */
-diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
-index e5b9506698b1..75d37148c8cd 100644
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -2054,7 +2054,7 @@ int qeth_send_control_data(struct qeth_card *card, int len,
- 	unsigned long flags;
- 	struct qeth_reply *reply = NULL;
- 	unsigned long timeout, event_timeout;
--	struct qeth_ipa_cmd *cmd;
-+	struct qeth_ipa_cmd *cmd = NULL;
- 
- 	QETH_CARD_TEXT(card, 2, "sendctl");
- 
-@@ -2068,23 +2068,27 @@ int qeth_send_control_data(struct qeth_card *card, int len,
- 	}
- 	reply->callback = reply_cb;
- 	reply->param = reply_param;
--	if (card->state == CARD_STATE_DOWN)
--		reply->seqno = QETH_IDX_COMMAND_SEQNO;
--	else
--		reply->seqno = card->seqno.ipa++;
++static atomic_t late_cpus;
 +
- 	init_waitqueue_head(&reply->wait_q);
--	spin_lock_irqsave(&card->lock, flags);
--	list_add_tail(&reply->list, &card->cmd_waiter_list);
--	spin_unlock_irqrestore(&card->lock, flags);
- 	QETH_DBF_HEX(CTRL, 2, iob->data, QETH_DBF_CTRL_LEN);
++/*
++ * Returns:
++ * < 0 - on error
++ *   0 - no update done
++ *   1 - microcode was updated
++ */
++static int __reload_late(void *info)
++{
++	unsigned int timeout = NSEC_PER_SEC;
++	int all_cpus = num_online_cpus();
++	int cpu = smp_processor_id();
++	enum ucode_state err;
++	int ret = 0;
++
++	atomic_dec(&late_cpus);
++
++	/*
++	 * Wait for all CPUs to arrive. A load will not be attempted unless all
++	 * CPUs show up.
++	 * */
++	while (atomic_read(&late_cpus)) {
++		if (timeout < SPINUNIT) {
++			pr_err("Timeout while waiting for CPUs rendezvous, remaining: %d\n",
++				atomic_read(&late_cpus));
++			return -1;
++		}
  
- 	while (atomic_cmpxchg(&card->write.irq_pending, 0, 1)) ;
--	qeth_prepare_control_data(card, len, iob);
+-	ustate = microcode_ops->request_microcode_fw(cpu, &microcode_pdev->dev, true);
+-	if (ustate != UCODE_OK)
+-		return ustate;
++		ndelay(SPINUNIT);
++		timeout -= SPINUNIT;
  
--	if (IS_IPA(iob->data))
-+	if (IS_IPA(iob->data)) {
-+		cmd = __ipa_cmd(iob);
-+		cmd->hdr.seqno = card->seqno.ipa++;
-+		reply->seqno = cmd->hdr.seqno;
- 		event_timeout = QETH_IPA_TIMEOUT;
--	else
-+	} else {
-+		reply->seqno = QETH_IDX_COMMAND_SEQNO;
- 		event_timeout = QETH_TIMEOUT;
+-	return apply_microcode_on_target(cpu);
++		touch_nmi_watchdog();
 +	}
-+	qeth_prepare_control_data(card, len, iob);
 +
-+	spin_lock_irqsave(&card->lock, flags);
-+	list_add_tail(&reply->list, &card->cmd_waiter_list);
-+	spin_unlock_irqrestore(&card->lock, flags);
++	spin_lock(&update_lock);
++	apply_microcode_local(&err);
++	spin_unlock(&update_lock);
 +
- 	timeout = jiffies + event_timeout;
- 
- 	QETH_CARD_TEXT(card, 6, "noirqpnd");
-@@ -2109,9 +2113,8 @@ int qeth_send_control_data(struct qeth_card *card, int len,
- 
- 	/* we have only one long running ipassist, since we can ensure
- 	   process context of this command we can sleep */
--	cmd = (struct qeth_ipa_cmd *)(iob->data+IPA_PDU_HEADER_SIZE);
--	if ((cmd->hdr.command == IPA_CMD_SETIP) &&
--	    (cmd->hdr.prot_version == QETH_PROT_IPV4)) {
-+	if (cmd && cmd->hdr.command == IPA_CMD_SETIP &&
-+	    cmd->hdr.prot_version == QETH_PROT_IPV4) {
- 		if (!wait_event_timeout(reply->wait_q,
- 		    atomic_read(&reply->received), event_timeout))
- 			goto time_err;
-@@ -2877,7 +2880,7 @@ static void qeth_fill_ipacmd_header(struct qeth_card *card,
- 	memset(cmd, 0, sizeof(struct qeth_ipa_cmd));
- 	cmd->hdr.command = command;
- 	cmd->hdr.initiator = IPA_CMD_INITIATOR_HOST;
--	cmd->hdr.seqno = card->seqno.ipa;
-+	/* cmd->hdr.seqno is set by qeth_send_control_data() */
- 	cmd->hdr.adapter_type = qeth_get_ipa_adp_type(card->info.link_type);
- 	cmd->hdr.rel_adapter_no = (__u8) card->info.portno;
- 	if (card->options.layer2)
-diff --git a/fs/btrfs/acl.c b/fs/btrfs/acl.c
-index fb3e64d37cb4..6b16b8653d98 100644
---- a/fs/btrfs/acl.c
-+++ b/fs/btrfs/acl.c
-@@ -82,12 +82,6 @@ static int __btrfs_set_acl(struct btrfs_trans_handle *trans,
- 	switch (type) {
- 	case ACL_TYPE_ACCESS:
- 		name = POSIX_ACL_XATTR_ACCESS;
--		if (acl) {
--			ret = posix_acl_update_mode(inode, &inode->i_mode, &acl);
--			if (ret)
--				return ret;
--		}
--		ret = 0;
- 		break;
- 	case ACL_TYPE_DEFAULT:
- 		if (!S_ISDIR(inode->i_mode))
-@@ -123,7 +117,18 @@ out:
- 
- int btrfs_set_acl(struct inode *inode, struct posix_acl *acl, int type)
- {
--	return __btrfs_set_acl(NULL, inode, acl, type);
++	if (err > UCODE_NFOUND) {
++		pr_warn("Error reloading microcode on CPU %d\n", cpu);
++		ret = -1;
++	} else if (err == UCODE_UPDATED) {
++		ret = 1;
++	}
++
++	atomic_inc(&late_cpus);
++
++	while (atomic_read(&late_cpus) != all_cpus)
++		cpu_relax();
++
++	return ret;
++}
++
++/*
++ * Reload microcode late on all CPUs. Wait for a sec until they
++ * all gather together.
++ */
++static int microcode_reload_late(void)
++{
 +	int ret;
-+	umode_t old_mode = inode->i_mode;
 +
-+	if (type == ACL_TYPE_ACCESS && acl) {
-+		ret = posix_acl_update_mode(inode, &inode->i_mode, &acl);
-+		if (ret)
-+			return ret;
-+	}
-+	ret = __btrfs_set_acl(NULL, inode, acl, type);
-+	if (ret)
-+		inode->i_mode = old_mode;
++	atomic_set(&late_cpus, num_online_cpus());
++
++	ret = stop_machine_cpuslocked(__reload_late, NULL, cpu_online_mask);
++	if (ret < 0)
++		return ret;
++	else if (ret > 0)
++		microcode_check();
++
 +	return ret;
  }
  
- /*
-diff --git a/include/linux/nospec.h b/include/linux/nospec.h
-index b99bced39ac2..4a040862f4bf 100644
---- a/include/linux/nospec.h
-+++ b/include/linux/nospec.h
-@@ -66,7 +66,6 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
- 	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
- 	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
- 									\
--	_i &= _mask;							\
--	_i;								\
-+	(typeof(_i)) (_i & _mask);					\
- })
- #endif /* _LINUX_NOSPEC_H */
-diff --git a/include/net/udplite.h b/include/net/udplite.h
-index 80761938b9a7..8228155b305e 100644
---- a/include/net/udplite.h
-+++ b/include/net/udplite.h
-@@ -62,6 +62,7 @@ static inline int udplite_checksum_init(struct sk_buff *skb, struct udphdr *uh)
- 		UDP_SKB_CB(skb)->cscov = cscov;
- 		if (skb->ip_summed == CHECKSUM_COMPLETE)
- 			skb->ip_summed = CHECKSUM_NONE;
-+		skb->csum_valid = 0;
-         }
- 
- 	return 0;
-diff --git a/net/bridge/br_sysfs_if.c b/net/bridge/br_sysfs_if.c
-index efe415ad842a..83bb695f9645 100644
---- a/net/bridge/br_sysfs_if.c
-+++ b/net/bridge/br_sysfs_if.c
-@@ -229,6 +229,9 @@ static ssize_t brport_show(struct kobject *kobj,
- 	struct brport_attribute *brport_attr = to_brport_attr(attr);
- 	struct net_bridge_port *p = to_brport(kobj);
- 
-+	if (!brport_attr->show)
-+		return -EINVAL;
-+
- 	return brport_attr->show(p, buf);
- }
- 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 389807c1c36f..b2f589012c6b 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -2183,8 +2183,11 @@ EXPORT_SYMBOL(netif_set_xps_queue);
-  */
- int netif_set_real_num_tx_queues(struct net_device *dev, unsigned int txq)
+ static ssize_t reload_store(struct device *dev,
+@@ -509,10 +595,9 @@ static ssize_t reload_store(struct device *dev,
+ 			    const char *buf, size_t size)
  {
-+	bool disabling;
- 	int rc;
+ 	enum ucode_state tmp_ret = UCODE_OK;
+-	bool do_callback = false;
++	int bsp = boot_cpu_data.cpu_index;
+ 	unsigned long val;
+ 	ssize_t ret = 0;
+-	int cpu;
  
-+	disabling = txq < dev->real_num_tx_queues;
-+
- 	if (txq < 1 || txq > dev->num_tx_queues)
- 		return -EINVAL;
+ 	ret = kstrtoul(buf, 0, &val);
+ 	if (ret)
+@@ -521,29 +606,24 @@ static ssize_t reload_store(struct device *dev,
+ 	if (val != 1)
+ 		return size;
  
-@@ -2200,15 +2203,19 @@ int netif_set_real_num_tx_queues(struct net_device *dev, unsigned int txq)
- 		if (dev->num_tc)
- 			netif_setup_tc(dev, txq);
- 
--		if (txq < dev->real_num_tx_queues) {
-+		dev->real_num_tx_queues = txq;
-+
-+		if (disabling) {
-+			synchronize_net();
- 			qdisc_reset_all_tx_gt(dev, txq);
- #ifdef CONFIG_XPS
- 			netif_reset_xps_queues_gt(dev, txq);
- #endif
- 		}
-+	} else {
-+		dev->real_num_tx_queues = txq;
- 	}
- 
--	dev->real_num_tx_queues = txq;
- 	return 0;
- }
- EXPORT_SYMBOL(netif_set_real_num_tx_queues);
-diff --git a/net/ipv4/fib_semantics.c b/net/ipv4/fib_semantics.c
-index 313e3c11a15a..44abc52bae13 100644
---- a/net/ipv4/fib_semantics.c
-+++ b/net/ipv4/fib_semantics.c
-@@ -640,6 +640,11 @@ int fib_nh_match(struct fib_config *cfg, struct fib_info *fi)
- 					    fi->fib_nh, cfg))
- 			    return 1;
- 		}
-+#ifdef CONFIG_IP_ROUTE_CLASSID
-+		if (cfg->fc_flow &&
-+		    cfg->fc_flow != fi->fib_nh->nh_tclassid)
-+			return 1;
-+#endif
- 		if ((!cfg->fc_oif || cfg->fc_oif == fi->fib_nh->nh_oif) &&
- 		    (!cfg->fc_gw  || cfg->fc_gw == fi->fib_nh->nh_gw))
- 			return 0;
-diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-index 52d718e3f077..f0020260b0d4 100644
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -126,10 +126,13 @@ static int ip_rt_redirect_silence __read_mostly	= ((HZ / 50) << (9 + 1));
- static int ip_rt_error_cost __read_mostly	= HZ;
- static int ip_rt_error_burst __read_mostly	= 5 * HZ;
- static int ip_rt_mtu_expires __read_mostly	= 10 * 60 * HZ;
--static int ip_rt_min_pmtu __read_mostly		= 512 + 20 + 20;
-+static u32 ip_rt_min_pmtu __read_mostly		= 512 + 20 + 20;
- static int ip_rt_min_advmss __read_mostly	= 256;
- 
- static int ip_rt_gc_timeout __read_mostly	= RT_GC_TIMEOUT;
-+
-+static int ip_min_valid_pmtu __read_mostly	= IPV4_MIN_MTU;
-+
- /*
-  *	Interface to generic destination cache.
-  */
-@@ -2765,7 +2768,8 @@ static struct ctl_table ipv4_route_table[] = {
- 		.data		= &ip_rt_min_pmtu,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= &ip_min_valid_pmtu,
- 	},
- 	{
- 		.procname	= "min_adv_mss",
-diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
-index 301e60829c7e..a98ae890adb9 100644
---- a/net/ipv4/udp.c
-+++ b/net/ipv4/udp.c
-@@ -1744,6 +1744,11 @@ static inline int udp4_csum_init(struct sk_buff *skb, struct udphdr *uh,
- 		err = udplite_checksum_init(skb, uh);
- 		if (err)
- 			return err;
-+
-+		if (UDP_SKB_CB(skb)->partial_cov) {
-+			skb->csum = inet_compute_pseudo(skb, proto);
-+			return 0;
-+		}
- 	}
- 
- 	return skb_checksum_init_zero_check(skb, proto, uh->check,
-diff --git a/net/ipv6/ip6_checksum.c b/net/ipv6/ip6_checksum.c
-index 9a4d7322fb22..391a8fedb27e 100644
---- a/net/ipv6/ip6_checksum.c
-+++ b/net/ipv6/ip6_checksum.c
-@@ -73,6 +73,11 @@ int udp6_csum_init(struct sk_buff *skb, struct udphdr *uh, int proto)
- 		err = udplite_checksum_init(skb, uh);
- 		if (err)
- 			return err;
-+
-+		if (UDP_SKB_CB(skb)->partial_cov) {
-+			skb->csum = ip6_compute_pseudo(skb, proto);
-+			return 0;
-+		}
- 	}
- 
- 	/* To support RFC 6936 (allow zero checksum in UDP/IPV6 for tunnels)
-diff --git a/net/ipv6/sit.c b/net/ipv6/sit.c
-index d17d64edb718..bbba435d0639 100644
---- a/net/ipv6/sit.c
-+++ b/net/ipv6/sit.c
-@@ -176,7 +176,7 @@ static void ipip6_tunnel_clone_6rd(struct net_device *dev, struct sit_net *sitn)
- #ifdef CONFIG_IPV6_SIT_6RD
- 	struct ip_tunnel *t = netdev_priv(dev);
- 
--	if (t->dev == sitn->fb_tunnel_dev) {
-+	if (dev == sitn->fb_tunnel_dev) {
- 		ipv6_addr_set(&t->ip6rd.prefix, htonl(0x20020000), 0, 0, 0);
- 		t->ip6rd.relay_prefix = 0;
- 		t->ip6rd.prefixlen = 16;
-diff --git a/net/mpls/af_mpls.c b/net/mpls/af_mpls.c
-index 52cfc4478511..c2ce7dec5198 100644
---- a/net/mpls/af_mpls.c
-+++ b/net/mpls/af_mpls.c
-@@ -7,6 +7,7 @@
- #include <linux/if_arp.h>
- #include <linux/ipv6.h>
- #include <linux/mpls.h>
-+#include <linux/nospec.h>
- #include <linux/vmalloc.h>
- #include <net/ip.h>
- #include <net/dst.h>
-@@ -714,6 +715,22 @@ errout:
- 	return err;
- }
- 
-+static bool mpls_label_ok(struct net *net, unsigned int *index)
-+{
-+	bool is_ok = true;
-+
-+	/* Reserved labels may not be set */
-+	if (*index < MPLS_LABEL_FIRST_UNRESERVED)
-+		is_ok = false;
-+
-+	/* The full 20 bit range may not be supported. */
-+	if (is_ok && *index >= net->mpls.platform_labels)
-+		is_ok = false;
-+
-+	*index = array_index_nospec(*index, net->mpls.platform_labels);
-+	return is_ok;
-+}
-+
- static int mpls_route_add(struct mpls_route_config *cfg)
- {
- 	struct mpls_route __rcu **platform_label;
-@@ -732,12 +749,7 @@ static int mpls_route_add(struct mpls_route_config *cfg)
- 		index = find_free_label(net);
- 	}
- 
--	/* Reserved labels may not be set */
--	if (index < MPLS_LABEL_FIRST_UNRESERVED)
--		goto errout;
+-	get_online_cpus();
+-	mutex_lock(&microcode_mutex);
+-	for_each_online_cpu(cpu) {
+-		tmp_ret = reload_for_cpu(cpu);
+-		if (tmp_ret > UCODE_NFOUND) {
+-			pr_warn("Error reloading microcode on CPU %d\n", cpu);
 -
--	/* The full 20 bit range may not be supported. */
--	if (index >= net->mpls.platform_labels)
-+	if (!mpls_label_ok(net, &index))
- 		goto errout;
+-			/* set retval for the first encountered reload error */
+-			if (!ret)
+-				ret = -EINVAL;
+-		}
++	tmp_ret = microcode_ops->request_microcode_fw(bsp, &microcode_pdev->dev, true);
++	if (tmp_ret != UCODE_OK)
++		return size;
  
- 	/* Append makes no sense with mpls */
-@@ -798,12 +810,7 @@ static int mpls_route_del(struct mpls_route_config *cfg)
+-		if (tmp_ret == UCODE_UPDATED)
+-			do_callback = true;
+-	}
++	get_online_cpus();
  
- 	index = cfg->rc_label;
+-	if (!ret && do_callback)
+-		microcode_check();
++	ret = check_online_cpus();
++	if (ret)
++		goto put;
  
--	/* Reserved labels may not be removed */
--	if (index < MPLS_LABEL_FIRST_UNRESERVED)
--		goto errout;
--
--	/* The full 20 bit range may not be supported */
--	if (index >= net->mpls.platform_labels)
-+	if (!mpls_label_ok(net, &index))
- 		goto errout;
- 
- 	mpls_route_update(net, index, NULL, &cfg->rc_nlinfo);
-@@ -1162,10 +1169,9 @@ static int rtm_to_route_config(struct sk_buff *skb,  struct nlmsghdr *nlh,
- 					   &cfg->rc_label))
- 				goto errout;
- 
--			/* Reserved labels may not be set */
--			if (cfg->rc_label < MPLS_LABEL_FIRST_UNRESERVED)
-+			if (!mpls_label_ok(cfg->rc_nlinfo.nl_net,
-+					   &cfg->rc_label))
- 				goto errout;
--
- 			break;
- 		}
- 		case RTA_VIA:
-diff --git a/net/netlink/genetlink.c b/net/netlink/genetlink.c
-index 8e63662c6fb0..30c46aaf4575 100644
---- a/net/netlink/genetlink.c
-+++ b/net/netlink/genetlink.c
-@@ -1118,6 +1118,7 @@ static int genlmsg_mcast(struct sk_buff *skb, u32 portid, unsigned long group,
- {
- 	struct sk_buff *tmp;
- 	struct net *net, *prev = NULL;
-+	bool delivered = false;
- 	int err;
- 
- 	for_each_net_rcu(net) {
-@@ -1129,14 +1130,21 @@ static int genlmsg_mcast(struct sk_buff *skb, u32 portid, unsigned long group,
- 			}
- 			err = nlmsg_multicast(prev->genl_sock, tmp,
- 					      portid, group, flags);
--			if (err)
-+			if (!err)
-+				delivered = true;
-+			else if (err != -ESRCH)
- 				goto error;
- 		}
- 
- 		prev = net;
- 	}
- 
--	return nlmsg_multicast(prev->genl_sock, skb, portid, group, flags);
-+	err = nlmsg_multicast(prev->genl_sock, skb, portid, group, flags);
-+	if (!err)
-+		delivered = true;
-+	else if (err != -ESRCH)
-+		goto error;
-+	return delivered ? 0 : -ESRCH;
-  error:
- 	kfree_skb(skb);
- 	return err;
-diff --git a/net/sctp/ipv6.c b/net/sctp/ipv6.c
-index 8a61ccc37e12..481806b43de8 100644
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -323,8 +323,10 @@ static void sctp_v6_get_dst(struct sctp_transport *t, union sctp_addr *saddr,
- 		final_p = fl6_update_dst(fl6, rcu_dereference(np->opt), &final);
- 		bdst = ip6_dst_lookup_flow(sk, fl6, final_p);
- 
--		if (!IS_ERR(bdst) &&
--		    ipv6_chk_addr(dev_net(bdst->dev),
-+		if (IS_ERR(bdst))
-+			continue;
++	mutex_lock(&microcode_mutex);
++	ret = microcode_reload_late();
+ 	mutex_unlock(&microcode_mutex);
 +
-+		if (ipv6_chk_addr(dev_net(bdst->dev),
- 				  &laddr->a.v6.sin6_addr, bdst->dev, 1)) {
- 			if (!IS_ERR_OR_NULL(dst))
- 				dst_release(dst);
-@@ -333,8 +335,10 @@ static void sctp_v6_get_dst(struct sctp_transport *t, union sctp_addr *saddr,
- 		}
++put:
+ 	put_online_cpus();
  
- 		bmatchlen = sctp_v6_addr_match_len(daddr, &laddr->a);
--		if (matchlen > bmatchlen)
-+		if (matchlen > bmatchlen) {
-+			dst_release(bdst);
- 			continue;
-+		}
+-	if (!ret)
++	if (ret >= 0)
+ 		ret = size;
  
- 		if (!IS_ERR_OR_NULL(dst))
- 			dst_release(dst);
-diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
-index 8b4ff315695e..dc030efa4447 100644
---- a/net/sctp/protocol.c
-+++ b/net/sctp/protocol.c
-@@ -508,22 +508,20 @@ static void sctp_v4_get_dst(struct sctp_transport *t, union sctp_addr *saddr,
- 		if (IS_ERR(rt))
- 			continue;
+ 	return ret;
+diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+index 923054a6b760..2aded9db1d42 100644
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -589,6 +589,23 @@ static int apply_microcode_early(struct ucode_cpu_info *uci, bool early)
+ 	if (!mc)
+ 		return 0;
  
--		if (!dst)
--			dst = &rt->dst;
--
- 		/* Ensure the src address belongs to the output
- 		 * interface.
- 		 */
- 		odev = __ip_dev_find(sock_net(sk), laddr->a.v4.sin_addr.s_addr,
- 				     false);
- 		if (!odev || odev->ifindex != fl4->flowi4_oif) {
--			if (&rt->dst != dst)
-+			if (!dst)
-+				dst = &rt->dst;
-+			else
- 				dst_release(&rt->dst);
- 			continue;
- 		}
- 
--		if (dst != &rt->dst)
--			dst_release(dst);
-+		dst_release(dst);
- 		dst = &rt->dst;
- 		break;
- 	}
-diff --git a/net/sctp/sm_make_chunk.c b/net/sctp/sm_make_chunk.c
-index 5d6a03fad378..4ca31e052dd8 100644
---- a/net/sctp/sm_make_chunk.c
-+++ b/net/sctp/sm_make_chunk.c
-@@ -1367,10 +1367,14 @@ static struct sctp_chunk *_sctp_make_chunk(const struct sctp_association *asoc,
- 	sctp_chunkhdr_t *chunk_hdr;
- 	struct sk_buff *skb;
- 	struct sock *sk;
-+	int chunklen;
-+
-+	chunklen = sizeof(*chunk_hdr) + paylen;
-+	if (chunklen > SCTP_MAX_CHUNK_LEN)
-+		goto nodata;
- 
- 	/* No need to allocate LL here, as this is only a chunk. */
--	skb = alloc_skb(WORD_ROUND(sizeof(sctp_chunkhdr_t) + paylen),
--			GFP_ATOMIC);
-+	skb = alloc_skb(chunklen, GFP_ATOMIC);
- 	if (!skb)
- 		goto nodata;
- 
-diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-index 20512fe32a97..e2212830df0c 100644
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -179,7 +179,7 @@ static const struct kernel_param_ops param_ops_xint = {
- };
- #define param_check_xint param_check_int
- 
--static int power_save = CONFIG_SND_HDA_POWER_SAVE_DEFAULT;
-+static int power_save = -1;
- module_param(power_save, xint, 0644);
- MODULE_PARM_DESC(power_save, "Automatic power-saving timeout "
- 		 "(in second, 0 = disable).");
-@@ -2055,6 +2055,24 @@ out_free:
- 	return err;
- }
- 
-+#ifdef CONFIG_PM
-+/* On some boards setting power_save to a non 0 value leads to clicking /
-+ * popping sounds when ever we enter/leave powersaving mode. Ideally we would
-+ * figure out how to avoid these sounds, but that is not always feasible.
-+ * So we keep a list of devices where we disable powersaving as its known
-+ * to causes problems on these devices.
-+ */
-+static struct snd_pci_quirk power_save_blacklist[] = {
-+	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
-+	SND_PCI_QUIRK(0x1849, 0x0c0c, "Asrock B85M-ITX", 0),
-+	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
-+	SND_PCI_QUIRK(0x1043, 0x8733, "Asus Prime X370-Pro", 0),
-+	/* https://bugzilla.kernel.org/show_bug.cgi?id=198611 */
-+	SND_PCI_QUIRK(0x17aa, 0x2227, "Lenovo X1 Carbon 3rd Gen", 0),
-+	{}
-+};
-+#endif /* CONFIG_PM */
-+
- /* number of codec slots for each chipset: 0 = default slots (i.e. 4) */
- static unsigned int azx_max_codecs[AZX_NUM_DRIVERS] = {
- 	[AZX_DRIVER_NVIDIA] = 8,
-@@ -2067,6 +2085,7 @@ static int azx_probe_continue(struct azx *chip)
- 	struct hdac_bus *bus = azx_bus(chip);
- 	struct pci_dev *pci = chip->pci;
- 	int dev = chip->dev_index;
-+	int val;
- 	int err;
- 
- 	hda->probe_continued = 1;
-@@ -2142,7 +2161,22 @@ static int azx_probe_continue(struct azx *chip)
- 
- 	chip->running = 1;
- 	azx_add_card_list(chip);
--	snd_hda_set_power_save(&chip->bus, power_save * 1000);
-+
-+	val = power_save;
-+#ifdef CONFIG_PM
-+	if (val == -1) {
-+		const struct snd_pci_quirk *q;
-+
-+		val = CONFIG_SND_HDA_POWER_SAVE_DEFAULT;
-+		q = snd_pci_quirk_lookup(chip->pci, power_save_blacklist);
-+		if (q && val) {
-+			dev_info(chip->card->dev, "device %04x:%04x is on the power_save blacklist, forcing power_save to 0\n",
-+				 q->subvendor, q->subdevice);
-+			val = 0;
-+		}
-+	}
-+#endif /* CONFIG_PM */
-+	snd_hda_set_power_save(&chip->bus, val * 1000);
- 	if (azx_has_pm_runtime(chip) || hda->use_vga_switcheroo)
- 		pm_runtime_put_noidle(&pci->dev);
- 
-diff --git a/sound/usb/quirks-table.h b/sound/usb/quirks-table.h
-index 8a59d4782a0f..69bf5cf1e91e 100644
---- a/sound/usb/quirks-table.h
-+++ b/sound/usb/quirks-table.h
-@@ -3277,4 +3277,51 @@ AU0828_DEVICE(0x2040, 0x7270, "Hauppauge", "HVR-950Q"),
- 	}
- },
- 
-+{
 +	/*
-+	 * Bower's & Wilkins PX headphones only support the 48 kHz sample rate
-+	 * even though it advertises more. The capture interface doesn't work
-+	 * even on windows.
++	 * Save us the MSR write below - which is a particular expensive
++	 * operation - when the other hyperthread has updated the microcode
++	 * already.
 +	 */
-+	USB_DEVICE(0x19b5, 0x0021),
-+	.driver_info = (unsigned long) &(const struct snd_usb_audio_quirk) {
-+		.ifnum = QUIRK_ANY_INTERFACE,
-+		.type = QUIRK_COMPOSITE,
-+		.data = (const struct snd_usb_audio_quirk[]) {
-+			{
-+				.ifnum = 0,
-+				.type = QUIRK_AUDIO_STANDARD_MIXER,
-+			},
-+			/* Capture */
-+			{
-+				.ifnum = 1,
-+				.type = QUIRK_IGNORE_INTERFACE,
-+			},
-+			/* Playback */
-+			{
-+				.ifnum = 2,
-+				.type = QUIRK_AUDIO_FIXED_ENDPOINT,
-+				.data = &(const struct audioformat) {
-+					.formats = SNDRV_PCM_FMTBIT_S16_LE,
-+					.channels = 2,
-+					.iface = 2,
-+					.altsetting = 1,
-+					.altset_idx = 1,
-+					.attributes = UAC_EP_CS_ATTR_FILL_MAX |
-+						UAC_EP_CS_ATTR_SAMPLE_RATE,
-+					.endpoint = 0x03,
-+					.ep_attr = USB_ENDPOINT_XFER_ISOC,
-+					.rates = SNDRV_PCM_RATE_48000,
-+					.rate_min = 48000,
-+					.rate_max = 48000,
-+					.nr_rates = 1,
-+					.rate_table = (unsigned int[]) {
-+						48000
-+					}
-+				}
-+			},
-+		}
++	rev = intel_get_microcode_revision();
++	if (rev >= mc->hdr.rev) {
++		uci->cpu_sig.rev = rev;
++		return UCODE_OK;
 +	}
-+},
 +
- #undef USB_DEVICE_VENDOR_SPEC
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index d080f06fd8d9..b814ae6822b6 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -902,8 +902,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
- 		/* Check for overlaps */
- 		r = -EEXIST;
- 		kvm_for_each_memslot(slot, __kvm_memslots(kvm, as_id)) {
--			if ((slot->id >= KVM_USER_MEM_SLOTS) ||
--			    (slot->id == id))
-+			if (slot->id == id)
- 				continue;
- 			if (!((base_gfn + npages <= slot->base_gfn) ||
- 			      (base_gfn >= slot->base_gfn + slot->npages)))
++	/*
++	 * Writeback and invalidate caches before updating microcode to avoid
++	 * internal issues depending on what the microcode is updating.
++	 */
++	native_wbinvd();
++
+ 	/* write microcode via MSR 0x79 */
+ 	native_wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
+ 
+@@ -774,9 +791,9 @@ static int collect_cpu_info(int cpu_num, struct cpu_signature *csig)
+ 
+ static enum ucode_state apply_microcode_intel(int cpu)
+ {
++	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
++	struct cpuinfo_x86 *c = &cpu_data(cpu);
+ 	struct microcode_intel *mc;
+-	struct ucode_cpu_info *uci;
+-	struct cpuinfo_x86 *c;
+ 	static int prev_rev;
+ 	u32 rev;
+ 
+@@ -784,15 +801,32 @@ static enum ucode_state apply_microcode_intel(int cpu)
+ 	if (WARN_ON(raw_smp_processor_id() != cpu))
+ 		return UCODE_ERROR;
+ 
+-	uci = ucode_cpu_info + cpu;
+-	mc = uci->mc;
++	/* Look for a newer patch in our cache: */
++	mc = find_patch(uci);
+ 	if (!mc) {
+-		/* Look for a newer patch in our cache: */
+-		mc = find_patch(uci);
++		mc = uci->mc;
+ 		if (!mc)
+ 			return UCODE_NFOUND;
+ 	}
+ 
++	/*
++	 * Save us the MSR write below - which is a particular expensive
++	 * operation - when the other hyperthread has updated the microcode
++	 * already.
++	 */
++	rev = intel_get_microcode_revision();
++	if (rev >= mc->hdr.rev) {
++		uci->cpu_sig.rev = rev;
++		c->microcode = rev;
++		return UCODE_OK;
++	}
++
++	/*
++	 * Writeback and invalidate caches before updating microcode to avoid
++	 * internal issues depending on what the microcode is updating.
++	 */
++	native_wbinvd();
++
+ 	/* write microcode via MSR 0x79 */
+ 	wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
+ 
+@@ -813,8 +847,6 @@ static enum ucode_state apply_microcode_intel(int cpu)
+ 		prev_rev = rev;
+ 	}
+ 
+-	c = &cpu_data(cpu);
+-
+ 	uci->cpu_sig.rev = rev;
+ 	c->microcode = rev;
+ 
+diff --git a/arch/x86/kernel/ioport.c b/arch/x86/kernel/ioport.c
+index 2f723301eb58..38deafebb21b 100644
+--- a/arch/x86/kernel/ioport.c
++++ b/arch/x86/kernel/ioport.c
+@@ -23,7 +23,7 @@
+ /*
+  * this changes the io permissions bitmap in the current task.
+  */
+-asmlinkage long sys_ioperm(unsigned long from, unsigned long num, int turn_on)
++SYSCALL_DEFINE3(ioperm, unsigned long, from, unsigned long, num, int, turn_on)
+ {
+ 	struct thread_struct *t = &current->thread;
+ 	struct tss_struct *tss;
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index bd36f3c33cd0..0715f827607c 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -1168,10 +1168,18 @@ NOKPROBE_SYMBOL(longjmp_break_handler);
+ 
+ bool arch_within_kprobe_blacklist(unsigned long addr)
+ {
++	bool is_in_entry_trampoline_section = false;
++
++#ifdef CONFIG_X86_64
++	is_in_entry_trampoline_section =
++		(addr >= (unsigned long)__entry_trampoline_start &&
++		 addr < (unsigned long)__entry_trampoline_end);
++#endif
+ 	return  (addr >= (unsigned long)__kprobes_text_start &&
+ 		 addr < (unsigned long)__kprobes_text_end) ||
+ 		(addr >= (unsigned long)__entry_text_start &&
+-		 addr < (unsigned long)__entry_text_end);
++		 addr < (unsigned long)__entry_text_end) ||
++		is_in_entry_trampoline_section;
+ }
+ 
+ int __init arch_init_kprobes(void)
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 9b138a06c1a4..b854ebf5851b 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -118,9 +118,11 @@ SECTIONS
+ 
+ #ifdef CONFIG_X86_64
+ 		. = ALIGN(PAGE_SIZE);
++		VMLINUX_SYMBOL(__entry_trampoline_start) = .;
+ 		_entry_trampoline = .;
+ 		*(.entry_trampoline)
+ 		. = ALIGN(PAGE_SIZE);
++		VMLINUX_SYMBOL(__entry_trampoline_end) = .;
+ 		ASSERT(. - _entry_trampoline == PAGE_SIZE, "entry trampoline is too big");
+ #endif
+ 
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index ce38f165489b..631507f0c198 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -332,7 +332,7 @@ static void __init pti_clone_user_shared(void)
+ }
+ 
+ /*
+- * Clone the ESPFIX P4D into the user space visinble page table
++ * Clone the ESPFIX P4D into the user space visible page table
+  */
+ static void __init pti_setup_espfix64(void)
+ {
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 46c1d239cc1b..92b6a2c21631 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -1116,42 +1116,29 @@ static int read_unwind_hints(struct objtool_file *file)
+ 
+ static int read_retpoline_hints(struct objtool_file *file)
+ {
+-	struct section *sec, *relasec;
++	struct section *sec;
+ 	struct instruction *insn;
+ 	struct rela *rela;
+-	int i;
+ 
+-	sec = find_section_by_name(file->elf, ".discard.retpoline_safe");
++	sec = find_section_by_name(file->elf, ".rela.discard.retpoline_safe");
+ 	if (!sec)
+ 		return 0;
+ 
+-	relasec = sec->rela;
+-	if (!relasec) {
+-		WARN("missing .rela.discard.retpoline_safe section");
+-		return -1;
+-	}
+-
+-	if (sec->len % sizeof(unsigned long)) {
+-		WARN("retpoline_safe size mismatch: %d %ld", sec->len, sizeof(unsigned long));
+-		return -1;
+-	}
+-
+-	for (i = 0; i < sec->len / sizeof(unsigned long); i++) {
+-		rela = find_rela_by_dest(sec, i * sizeof(unsigned long));
+-		if (!rela) {
+-			WARN("can't find rela for retpoline_safe[%d]", i);
++	list_for_each_entry(rela, &sec->rela_list, list) {
++		if (rela->sym->type != STT_SECTION) {
++			WARN("unexpected relocation symbol type in %s", sec->name);
+ 			return -1;
+ 		}
+ 
+ 		insn = find_insn(file, rela->sym->sec, rela->addend);
+ 		if (!insn) {
+-			WARN("can't find insn for retpoline_safe[%d]", i);
++			WARN("bad .discard.retpoline_safe entry");
+ 			return -1;
+ 		}
+ 
+ 		if (insn->type != INSN_JUMP_DYNAMIC &&
+ 		    insn->type != INSN_CALL_DYNAMIC) {
+-			WARN_FUNC("retpoline_safe hint not a indirect jump/call",
++			WARN_FUNC("retpoline_safe hint not an indirect jump/call",
+ 				  insn->sec, insn->offset);
+ 			return -1;
+ 		}
+diff --git a/tools/testing/selftests/x86/test_vsyscall.c b/tools/testing/selftests/x86/test_vsyscall.c
+index be81621446f0..0b4f1cc2291c 100644
+--- a/tools/testing/selftests/x86/test_vsyscall.c
++++ b/tools/testing/selftests/x86/test_vsyscall.c
+@@ -450,7 +450,7 @@ static void sigtrap(int sig, siginfo_t *info, void *ctx_void)
+ 		num_vsyscall_traps++;
+ }
+ 
+-static int test_native_vsyscall(void)
++static int test_emulation(void)
+ {
+ 	time_t tmp;
+ 	bool is_native;
+@@ -458,7 +458,7 @@ static int test_native_vsyscall(void)
+ 	if (!vtime)
+ 		return 0;
+ 
+-	printf("[RUN]\tchecking for native vsyscall\n");
++	printf("[RUN]\tchecking that vsyscalls are emulated\n");
+ 	sethandler(SIGTRAP, sigtrap, 0);
+ 	set_eflags(get_eflags() | X86_EFLAGS_TF);
+ 	vtime(&tmp);
+@@ -474,11 +474,12 @@ static int test_native_vsyscall(void)
+ 	 */
+ 	is_native = (num_vsyscall_traps > 1);
+ 
+-	printf("\tvsyscalls are %s (%d instructions in vsyscall page)\n",
++	printf("[%s]\tvsyscalls are %s (%d instructions in vsyscall page)\n",
++	       (is_native ? "FAIL" : "OK"),
+ 	       (is_native ? "native" : "emulated"),
+ 	       (int)num_vsyscall_traps);
+ 
+-	return 0;
++	return is_native;
+ }
+ #endif
+ 
+@@ -498,7 +499,7 @@ int main(int argc, char **argv)
+ 	nerrs += test_vsys_r();
+ 
+ #ifdef __x86_64__
+-	nerrs += test_native_vsyscall();
++	nerrs += test_emulation();
+ #endif
+ 
+ 	return nerrs ? 1 : 0;
