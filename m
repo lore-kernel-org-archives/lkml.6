@@ -1,93 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932513AbeCKWbm (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 18:31:42 -0400
-Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:60598 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932166AbeCKWbl (ORCPT
+        id S932534AbeCKWcJ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 18:32:09 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:37266 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932363AbeCKWcH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 18:31:41 -0400
-Date: Sun, 11 Mar 2018 23:31:33 +0100
-From: Florian Westphal <fw@strlen.de>
-To: Arushi Singhal <arushisinghal19971997@gmail.com>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>, Joe Perches <joe@perches.com>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Netfilter Developer Mailing List
-        <netfilter-devel@vger.kernel.org>,
-        coreteam@netfilter.org,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] net: netfilter: Replace printk() with appropriate
- pr_*() macro
-Message-ID: <20180311223133.GH11882@breakpoint.cc>
-References: <20180311194104.GA17450@seema-Inspiron-15-3567>
- <1520797961.19456.4.camel@perches.com>
- <20180311204734.aczkhqqgtb7z2kkj@salvia>
- <CA+XqjF-HhYADuFicA1S4tmU2Hfi2bAWinO2DR4g42ORkyGMW_A@mail.gmail.com>
+        Sun, 11 Mar 2018 18:32:07 -0400
+X-Google-Smtp-Source: AG47ELuLSPWuJu0JY24ZminbIToYTs0yYN/X6/Ji5WBoNK6QlA+6+CDLX4dXpg2hTtKBc+G0bNriPw==
+Date: Sun, 11 Mar 2018 15:31:58 -0700
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v2 0/8] clk: helpers and fixes
+To: Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180214134340.17242-1-jbrunet@baylibre.com>
+In-Reply-To: <20180214134340.17242-1-jbrunet@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+XqjF-HhYADuFicA1S4tmU2Hfi2bAWinO2DR4g42ORkyGMW_A@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+User-Agent: astroid/8ea8c2a3 (https://github.com/astroidmail/astroid)
+Message-Id: <1520807121.n44nt5z8tk.astroid@resonance.none>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2BMWFnY015595
 
-Arushi Singhal <arushisinghal19971997@gmail.com> wrote:
-> On Mon, Mar 12, 2018 at 2:17 AM, Pablo Neira Ayuso <pablo@netfilter.org>
-> wrote:
+Excerpts from Jerome Brunet's message of February 14, 2018 5:43 am:
+> This changset is consist of various patches I have recently sent
+> for the clock framework. They are gathered here for your convinience.
 > 
-> > Hi Joe,
-> >
-> > On Sun, Mar 11, 2018 at 12:52:41PM -0700, Joe Perches wrote:
-> > > On Mon, 2018-03-12 at 01:11 +0530, Arushi Singhal wrote:
-> > > > Using pr_<loglevel>() is more concise than
-> > > > printk(KERN_<LOGLEVEL>).
-> > > > Replace printks having a log level with the appropriate
-> > > > pr_*() macros.
-> > > >
-> > > > Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
-> > > > ---
-> > > > changes in v2
-> > > > *in v1 printk() were replaced with netdev_*()
-> > >
-> > > >  net/netfilter/nf_conntrack_acct.c      | 2 +-
-> > > >  net/netfilter/nf_conntrack_ecache.c    | 2 +-
-> > > >  net/netfilter/nf_conntrack_timestamp.c | 2 +-
-> > > >  net/netfilter/nf_nat_core.c            | 2 +-
-> > > >  net/netfilter/nfnetlink_queue.c        | 4 ++--
-> > > >  5 files changed, 6 insertions(+), 6 deletions(-)
-> > >
-> > > None of these files have a #define for pr_fmt so this
-> > > should be OK.
-> >
-> > I think Arushi could add pr_fmt in the same go, so we skip another
-> > follow up patch for this. @Arushi: I suggested this in my previous
-> > email, please have a look.
-> >
-> > Hello Pablo
+> The first two changes exports helpers of the generic clocks (divider and
+> mux). The goal is to avoid code duplication when writing clock driver
+> derived from these generic clock drivers.
 > 
-> Should I send two patches, one with the conversion of printk() to pr_() and
-> another for defining pr_fmt().
+> The rest fixes various issues found in the clock framework while working on
+> a rework of meson's clock controllers [0]
+
+Applied to clk-helpers towards v4.17.
+
+Regards,
+Mike
+
 > 
-> Or
+> Changes since the v1s:
+>  * dropped lpc32xx divider read-only patches as requested by
+>    Vladimir Zapolskiy [2]
+>  * Squashed generic divider read-only patches
+>  * Squashed mux documentations patches
 > 
-> only one patch with all the changes?
-
-Both in one, it reduces code churn.
-
-With pr_* + pr_fmt, the module name will be prefixed automatically, see
-e.g. commit e016c5e43db51875c2b541b59bd217494d213174 as an example.
-
-> > This would also probably allows us to save the line break in the error
-> > message, which IIRC is not a good practise either, eg.
-> >
-> >                                 pr_warn("nf_queue: OOM "
-> >                                         "in mangle, dropping packet\n");
-> >
-> > > Perhaps coalesce the formats and remove the unnecessary periods too.
-
-The above message should be removed, its useless (on oom allocator
-already warns).
+> [0]: https://lkml.kernel.org/r/20180212145846.19380-1-jbrunet@baylibre.com
+> [2]: https://lkml.kernel.org/r/54782a8f-9735-a574-d8e1-7ff3e9173229@mleia.com
+> 
+> Jerome Brunet (8):
+>   clk: divider: export clk_div_mask() helper
+>   clk: mux: add helper function for index/value translation
+>   clk: fix determine rate error with pass-through clock
+>   clk: migrate the count of orphaned clocks at init
+>   clk: call the clock init() callback before any other ops callback
+>   clk: fix mux clock documentation
+>   clk: divider: read-only divider can propagate rate change
+>   clk: qcom: use divider_ro_round_rate helper
+> 
+>  drivers/clk/clk-divider.c             | 58 ++++++++++++++++++---------
+>  drivers/clk/clk-mux.c                 | 75 ++++++++++++++++++++---------------
+>  drivers/clk/clk.c                     | 63 ++++++++++++++++-------------
+>  drivers/clk/qcom/clk-regmap-divider.c | 20 +++-------
+>  include/linux/clk-provider.h          | 23 ++++++++++-
+>  5 files changed, 146 insertions(+), 93 deletions(-)
+> 
+> -- 
+> 2.14.3
+> 
+> 
