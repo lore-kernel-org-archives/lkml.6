@@ -1,92 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751306AbeCKDVh (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 22:21:37 -0500
-Received: from smtp.nue.novell.com ([195.135.221.5]:52570 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751224AbeCKDVg (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Sat, 10 Mar 2018 22:21:36 -0500
-Date: Sun, 11 Mar 2018 11:20:22 +0800
-From: joeyli <jlee@suse.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, Jiri Slaby <jslaby@suse.cz>,
-        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        matthew.garrett@nebula.com, linux-security-module@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/9] KEYS: Blacklisting & UEFI database load
-Message-ID: <20180311032022.GA31059@linux-l9pv.suse>
-References: <147931984418.16460.6639993676886095760.stgit@warthog.procyon.org.uk>
- <6eabbb43-295e-9ba0-c0d9-120f48aa0e1d@suse.cz>
- <1520428682.10396.445.camel@linux.vnet.ibm.com>
- <1520436517.5558.2.camel@HansenPartnership.com>
+        id S1751250AbeCKEL4 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 23:11:56 -0500
+Received: from server.atrad.com.au ([150.101.241.2]:40842 "EHLO
+        server.atrad.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751227AbeCKELz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 23:11:55 -0500
+Date: Sun, 11 Mar 2018 14:40:56 +1030
+From: Jonathan Woithe <jwoithe@just42.net>
+To: Micha?? K??pie?? <kernel@kempniu.pl>
+Cc: Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] platform/x86: fujitsu-laptop: Revert UNSUPPORTED_CMD
+ back to an int
+Message-ID: <20180311041056.GA5432@gateway.atrad.com.au>
+References: <20180310204353.9584-1-kernel@kempniu.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1520436517.5558.2.camel@HansenPartnership.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180310204353.9584-1-kernel@kempniu.pl>
+User-Agent: Mutt/1.6.1 (2016-04-27)
+X-MIMEDefang-action: accept
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 07:28:37AM -0800, James Bottomley wrote:
-> On Wed, 2018-03-07 at 08:18 -0500, Mimi Zohar wrote:
-> > On Tue, 2018-03-06 at 15:05 +0100, Jiri Slaby wrote:
-> > > what's the status of this please? Distributors (I checked SUSE,
-> > > RedHat and Ubuntu) have to carry these patches and every of them
-> > > have to forward-port the patches to new kernels. So are you going
-> > > to resend the PR to have this merged?
-> [...]
-> > Just because I trust the platform keys prior to booting the kernel,
-> > doesn't mean that I *want* to trust those keys once booted.  There
-> > are, however, places where we need access to those keys to verify a
-> > signature (eg. kexec kernel image).
+On Sat, Mar 10, 2018 at 09:43:53PM +0100, Micha?? K??pie?? wrote:
+> UNSUPPORTED_CMD was previously 0x80000000 (int), but commit 819cddae7cfa
+> ("platform/x86: fujitsu-laptop: Clean up constants") changed it into an
+> unsigned long due to BIT() being used to define it.  As call_fext_func()
+> returns an int, 0x80000000 would get type promoted when compared to an
+> unsigned long, which on a 64-bit system would cause it to become
+> 0xffffffff80000000 due to sign extension.  This causes one logical
+> condition in fujitsu-laptop to always be true and another one to always
+> be false on 64-bit systems.  Fix this by reverting UNSUPPORTED_CMD back
+> to an int.
 > 
-> Which is essentially the reason I always give when these patches come
-> back
->
-
-Josh Boyer's "MODSIGN: Allow the "db" UEFI variable to be suppressed"
-patch checks MokIgnoreDB variable to ignore db:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=keys-uefi&id=7c395b30a33a617c5cc2cdd419300af71277b79a
-
-I think that we can consider to use MokAllowDB. Which means that kernel
-ignores DB by default.
-
-> > Nayna Jain's "certs: define a trusted platform keyring" patch set
-> > introduces a new, separate keyring for these platform keys.
+> This patch fixes the following smatch warnings:
 > 
-> Perhaps, to break the deadlock, we should ask Jiří what the reason is
-> the distros want these keys to be trusted.  Apart from the Microsoft
-> key, it will also give you an OEM key in your trusted keyring.  Is it
-> something to do with OEM supplied modules?
->
+> drivers/platform/x86/fujitsu-laptop.c:763 acpi_fujitsu_laptop_leds_register() warn: always true condition '(call_fext_func(device, ((1 << (12)) | (1 << (0))), 2, (1 << (16)), 0) != (1 << (31))) => (s32min-s32max != 2147483648)'
+> drivers/platform/x86/fujitsu-laptop.c:816 acpi_fujitsu_laptop_add() warn: impossible condition '(priv->flags_supported == (1 << (31))) => (0-2147483647,18446744071562067968-u64max == 2147483648)'
+> 
+> Fixes: 819cddae7cfa ("platform/x86: fujitsu-laptop: Clean up constants")
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Micha?? K??pie?? <kernel@kempniu.pl>
+> ---
+> This fixes a bug introduced by a commit queued for 4.17, so it needs to
+> be applied on top of for-next.
+> 
+>  drivers/platform/x86/fujitsu-laptop.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/platform/x86/fujitsu-laptop.c b/drivers/platform/x86/fujitsu-laptop.c
+> index 13bcdfea5349..6f4a55a53ced 100644
+> --- a/drivers/platform/x86/fujitsu-laptop.c
+> +++ b/drivers/platform/x86/fujitsu-laptop.c
+> @@ -85,7 +85,7 @@
+>  #define FUNC_BACKLIGHT			(BIT(12) | BIT(2))
+>  
+>  /* FUNC interface - responses */
+> -#define UNSUPPORTED_CMD			BIT(31)
+> +#define UNSUPPORTED_CMD			0x80000000
+>  
+>  /* FUNC interface - status flags */
+>  #define FLAG_RFKILL			BIT(5)
 
-As I remember that some manufacturers uses certificate in db to
-sign their kernel module. We need to discuss with them for switching
-to mok. Currently I do not know all use cases for using db.
+This looks like a sensible, succinct solution to the regression.
 
-There have some benefits for using db:
+Reviewed-by: Jonathan Woithe <jwoithe@just42.net>
 
- - User does not need to deal with shim-mokmanager to enroll mok.
-   Target machine doesn't need to reboot and user doesn't need to
-   face to mokmanager UI.  
-
- - The db is a authenticated variable, it's still secure when secure
-   boot is disabled.
-   The db is a authenticated variable that it can only be modified
-   by manufacturer's key. Kernel can trust it when secure boot
-   is disabled. It's useful for we do not need to taint kernel
-   for loading a manufacturer's kernel module even secure boot is
-   disabled.
-
- - Do not need to worry about the space of NVRAM and the EFI firmware
-   implementation for writing a boot time variable.
-  
-But I also agree that we should not trust all keys (like Microsoft key)
-in db by default.
-
-Thanks a lot!
-Joey Lee
+Regards
+  jonathan
