@@ -1,115 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932289AbeCKTlo (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 15:41:44 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:45906 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932147AbeCKTlm (ORCPT
+        id S932339AbeCKTmQ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 15:42:16 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:44087 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932161AbeCKTmO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 15:41:42 -0400
-X-Google-Smtp-Source: AG47ELvi6rBFgVngpEhz7xWUywSwewPFTH+Te11pgQg6dhXwpydKJDOqU00GY7b8l1r2uJqb5Fo5mw==
-Date: Mon, 12 Mar 2018 01:11:05 +0530
-From: Arushi Singhal <arushisinghal19971997@gmail.com>
-To: pablo@netfilter.org
-Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] net: netfilter: Replace printk() with appropriate pr_*()
- macro
-Message-ID: <20180311194104.GA17450@seema-Inspiron-15-3567>
+        Sun, 11 Mar 2018 15:42:14 -0400
+X-Google-Smtp-Source: AG47ELth7pWhCq++m+I30v3uRUrHSO25rc8Eeh2k7R1ZssNzDA6hoxqs9O8hhpGCuWcjLQhSsGCoRA==
+Subject: Re: [PATCH v3 14/15] arm64: dts: mt7622: add High-Speed DMA device
+ nodes
+To: sean.wang@mediatek.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <cover.1518895232.git.sean.wang@mediatek.com>
+ <a350bd0f5ce5b94bd71fd7f02af804b9c0584fd7.1518895232.git.sean.wang@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <78991976-0af0-2292-78a1-89b19e4781c0@gmail.com>
+Date: Sun, 11 Mar 2018 20:39:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <a350bd0f5ce5b94bd71fd7f02af804b9c0584fd7.1518895232.git.sean.wang@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using pr_<loglevel>() is more concise than
-printk(KERN_<LOGLEVEL>).
-Replace printks having a log level with the appropriate
-pr_*() macros.
 
-Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
----
-changes in v2
-*in v1 printk() were replaced with netdev_*()
 
- net/netfilter/nf_conntrack_acct.c      | 2 +-
- net/netfilter/nf_conntrack_ecache.c    | 2 +-
- net/netfilter/nf_conntrack_timestamp.c | 2 +-
- net/netfilter/nf_nat_core.c            | 2 +-
- net/netfilter/nfnetlink_queue.c        | 4 ++--
- 5 files changed, 6 insertions(+), 6 deletions(-)
+On 02/17/2018 08:54 PM, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> add High-Speed DMA (HSDMA) nodes
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 
-diff --git a/net/netfilter/nf_conntrack_acct.c b/net/netfilter/nf_conntrack_acct.c
-index 8669167..b1c3286 100644
---- a/net/netfilter/nf_conntrack_acct.c
-+++ b/net/netfilter/nf_conntrack_acct.c
-@@ -80,7 +80,7 @@ static int nf_conntrack_acct_init_sysctl(struct net *net)
- 	net->ct.acct_sysctl_header = register_net_sysctl(net, "net/netfilter",
- 							 table);
- 	if (!net->ct.acct_sysctl_header) {
--		printk(KERN_ERR "nf_conntrack_acct: can't register to sysctl.\n");
-+		pr_err("nf_conntrack_acct: can't register to sysctl.\n");
- 		goto out_register;
- 	}
- 	return 0;
-diff --git a/net/netfilter/nf_conntrack_ecache.c b/net/netfilter/nf_conntrack_ecache.c
-index caac41a..21a3048 100644
---- a/net/netfilter/nf_conntrack_ecache.c
-+++ b/net/netfilter/nf_conntrack_ecache.c
-@@ -372,7 +372,7 @@ static int nf_conntrack_event_init_sysctl(struct net *net)
- 	net->ct.event_sysctl_header =
- 		register_net_sysctl(net, "net/netfilter", table);
- 	if (!net->ct.event_sysctl_header) {
--		printk(KERN_ERR "nf_ct_event: can't register to sysctl.\n");
-+		pr_err("nf_ct_event: can't register to sysctl.\n");
- 		goto out_register;
- 	}
- 	return 0;
-diff --git a/net/netfilter/nf_conntrack_timestamp.c b/net/netfilter/nf_conntrack_timestamp.c
-index 4c4734b..f32cc86 100644
---- a/net/netfilter/nf_conntrack_timestamp.c
-+++ b/net/netfilter/nf_conntrack_timestamp.c
-@@ -58,7 +58,7 @@ static int nf_conntrack_tstamp_init_sysctl(struct net *net)
- 	net->ct.tstamp_sysctl_header = register_net_sysctl(net,	"net/netfilter",
- 							   table);
- 	if (!net->ct.tstamp_sysctl_header) {
--		printk(KERN_ERR "nf_ct_tstamp: can't register to sysctl.\n");
-+		pr_err("nf_ct_tstamp: can't register to sysctl.\n");
- 		goto out_register;
- 	}
- 	return 0;
-diff --git a/net/netfilter/nf_nat_core.c b/net/netfilter/nf_nat_core.c
-index 6c38421..dcda5ac 100644
---- a/net/netfilter/nf_nat_core.c
-+++ b/net/netfilter/nf_nat_core.c
-@@ -814,7 +814,7 @@ static int __init nf_nat_init(void)
- 	ret = nf_ct_extend_register(&nat_extend);
- 	if (ret < 0) {
- 		nf_ct_free_hashtable(nf_nat_bysource, nf_nat_htable_size);
--		printk(KERN_ERR "nf_nat_core: Unable to register extension\n");
-+		pr_err("nf_nat_core: Unable to register extension\n");
- 		return ret;
- 	}
- 
-diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
-index 8bba231..f5ddab1 100644
---- a/net/netfilter/nfnetlink_queue.c
-+++ b/net/netfilter/nfnetlink_queue.c
-@@ -834,8 +834,8 @@ nfqnl_mangle(void *data, int data_len, struct nf_queue_entry *e, int diff)
- 			nskb = skb_copy_expand(e->skb, skb_headroom(e->skb),
- 					       diff, GFP_ATOMIC);
- 			if (!nskb) {
--				printk(KERN_WARNING "nf_queue: OOM "
--				      "in mangle, dropping packet\n");
-+				pr_warn("nf_queue: OOM "
-+					"in mangle, dropping packet\n");
- 				return -ENOMEM;
- 			}
- 			kfree_skb(e->skb);
--- 
-2.7.4
+NAK. AFAIK the driver is not yest upstream
+
+Regards,
+Matthias
+
+> ---
+>  arch/arm64/boot/dts/mediatek/mt7622.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+> index bad1e99..ffb934b 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+> @@ -715,6 +715,16 @@
+>  		#reset-cells = <1>;
+>  	};
+>  
+> +	hsdma: dma-controller@1b007000 {
+> +		compatible = "mediatek,mt7622-hsdma";
+> +		reg = <0 0x1b007000 0 0x1000>;
+> +		interrupts = <GIC_SPI 219 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&ethsys CLK_ETH_HSDMA_EN>;
+> +		clock-names = "hsdma";
+> +		power-domains = <&scpsys MT7622_POWER_DOMAIN_ETHSYS>;
+> +		#dma-cells = <1>;
+> +	};
+> +
+>  	eth: ethernet@1b100000 {
+>  		compatible = "mediatek,mt7622-eth",
+>  			     "mediatek,mt2701-eth",
+> 
