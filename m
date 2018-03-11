@@ -1,99 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932447AbeCKXCX (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 19:02:23 -0400
-Received: from cmta20.telus.net ([209.171.16.93]:52408 "EHLO cmta20.telus.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932355AbeCKXCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 19:02:21 -0400
-X-Authority-Analysis: v=2.2 cv=Pr98V0E3 c=1 sm=1 tr=0
- a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
- a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=kj9zAlcOel0A:10 a=FGbulvE0AAAA:8
- a=VwQbUJbxAAAA:8 a=P-Pedy7ncC1TvRnTAiwA:9 a=CjuIK1q_8ugA:10
- a=svzTaB3SJmTkU8mK-ULk:22 a=AjGcO6oz07-iQ99wixmX:22
-From: "Doug Smythies" <dsmythies@telus.net>
-To: "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
-Cc: "'Rik van Riel'" <riel@surriel.com>,
-        "'Mike Galbraith'" <mgalbraith@suse.de>,
-        "'Thomas Gleixner'" <tglx@linutronix.de>,
-        "'Paul McKenney'" <paulmck@linux.vnet.ibm.com>,
-        "'Thomas Ilsche'" <thomas.ilsche@tu-dresden.de>,
-        "'Frederic Weisbecker'" <fweisbec@gmail.com>,
-        "'Linux PM'" <linux-pm@vger.kernel.org>,
-        "'Aubrey Li'" <aubrey.li@linux.intel.com>,
-        "'LKML'" <linux-kernel@vger.kernel.org>,
-        "'Peter Zijlstra'" <peterz@infradead.org>,
-        "'Doug Smythies'" <dsmythies@telus.net>
-References: <2450532.XN8DODrtDf@aspire.rjw.lan> <000701d3b889$eadd5340$c097f9c0$@net> <001801d3b90c$99232600$cb697200$@net> uy66ebKjsFfdwuy6Be0qnb v2lnemfac1Konv3GbegAC4
-In-Reply-To: v2lnemfac1Konv3GbegAC4
-Subject: RE: [RFC/RFT][PATCH v3 0/6] sched/cpuidle: Idle loop rework
-Date: Sun, 11 Mar 2018 16:02:14 -0700
-Message-ID: <000c01d3b98d$016eeb10$044cc130$@net>
+        id S932439AbeCKXMi (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 19:12:38 -0400
+Received: from us-smtp-delivery-172.mimecast.com ([216.205.24.172]:22593 "EHLO
+        us-smtp-delivery-172.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932290AbeCKXMg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Mar 2018 19:12:36 -0400
+Subject: Re: [PATCH v5 0/4] new driver for Valve Steam Controller
+To: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Cameron Gutman <aicommander@gmail.com>,
+        =?UTF-8?Q?Cl=c3=a9ment_VUCHENER?= <clement.vuchener@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-input@vger.kernel.org>
+References: <20180311195842.5551-1-rodrigorivascosta@gmail.com>
+From: "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>
+Message-ID: <99cb195e-589c-b3fc-1237-e1c8f557c51e@valvesoftware.com>
+Date: Sun, 11 Mar 2018 16:12:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Office Outlook 12.0
-Thread-Index: AdO5Iqo8D92TMYoqSVyabI5dAwHWqAAKkqFgAA9qg9A=
-Content-Language: en-ca
-X-CMAE-Envelope: MS4wfGSMf/JZWUvALWtRoFQ525uFAtHA+g6S5WqXusVgmuPvKOe6KLET/fdu2uPqwMkJEAhXMH/MliIX0S3UG2rCjpQ4q414KhjpBoDUh9ISAeqAsx4FPGOR
- VmLM/WTba4N1PPApxl/nGds7r+opJjHzmXUT6u7+akvGS3RDeQ448cu6vDBy9BgyAwwlnfdEHKsDuxYuZg7T0uzs/UhVNdec9Nv/HtRqV0Y4oXVvDgIB41UF
- LrlVj/7BVK9J+q+8A7TFwW0dkBASo0pm7fiql9Zus2jzqut3wRuGaRX0KbfXLlfScncK64IgUKQIjy3yHhuQZhMlzEoxhkLRR7JQHNH4OeQWTwV27A45QfMB
- bmGE/c8HPfBtdt/XNMy639xvVGnQyPPlrJT5Wufbx0J63qYqI8xYwPRlnfWFbAxHEbKV4BcxFoVlBGS8QanZRs0q2lgsajcwNjVgo0Z/6sAYi2a/SFjyux5F
- fBn/oBHsXZkuzZxSDzqxdKDg779kXyE/EhxYAuCmOpUn5s3piaoZ2m1taZ0=
+In-Reply-To: <20180311195842.5551-1-rodrigorivascosta@gmail.com>
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: fe5cb8ea-1338-4c54-81e0-ad323678e037
+X-Mlf-Version: 8.3.2.6535
+X-Mlf-UniqueId: o201803112312320020041
+X-MC-Unique: aE8x7ms4OGGzjFiPcT07zQ-1
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2BNCiOi019094
 
-On 2018.03.11 08:52 Doug Smythies wrote:
-> On 2018.03.11 03:22 Rafael J. Wysocki wrote:
->> On Sunday, March 11, 2018 8:43:02 AM CET Doug Smythies wrote:
->>> On 2018.03.10 15:55 Rafael J. Wysocki wrote: 
->>>> On Saturday, March 10, 2018 5:07:36 PM CET Doug Smythies wrote:
->>>>> On 2018.03.10 01:00 Rafael J. Wysocki wrote:
->>>
->>> ... [snip] ...
->>> 
->>>> The information that they often spend more time than a tick
->>>> period in state 0 in one go *is* relevant, though.
->>>>
->>>>
->>>> That issue can be dealt with in a couple of ways and the patch below is a
->>>> rather straightforward attempt to do that.  The idea, basically, is to discard
->>>> the result of governor prediction if the tick has been stopped alread and
->>>> the predicted idle duration is within the tick range.
->>>
->>>> Please try it on top of the v3 and tell me if you see an improvement.
->>> 
->>> It seems pretty good so far.
->>> See a new line added to the previous graph, "rjwv3plus".
->>> 
->>> http://fast.smythies.com/rjwv3plus_100.png
->>
->> OK, cool!
->>
->> Below is a respin of the last patch which also prevents shallow states from
->> being chosen due to interactivity_req when the tick is stopped.
->>
->> You may also add a poll_idle() fix I've just posted:
->>
->> https://patchwork.kernel.org/patch/10274595/
->>
->> on top of this.  It makes quite a bit of a difference for me. :-)
->
-> I will add and test, but I already know from testing previous versions
-> of this patch, from Rik van Riel and myself, that the results will be
-> awesome.
 
-And the results are indeed awesome.
 
-A four hour 100% load on one CPU test was run, with trace, however
-there is nothing to report, as everything is great.
+On 03/11/2018 12:58 PM, Rodrigo Rivas Costa wrote:
+> This patchset implements a driver for Valve Steam Controller, based on a
+> reverse analysis by myself.
+> 
+> Sorry, I've been out of town for a few weeks and couldn't keep up with this...
+> 
+> @Pierre-Loup and @Clément, could you please have another look at this and
+> check if it is worthy? Benjamin will not commit it without an express ACK from
+> Valve. Of course he is right to be cautious, but I checked this driver with
+> the Steam Client and all seems to go just fine. I think that there is a lot of
+> Linux out of the desktop that could use this driver and cannot use the Steam
+> Client. Worst case scenario, this driver can now be blacklisted, but I hope
+> that will not be needed.
 
-The same graph as the last couple of days, with a new line added for
-V3 + the respin of patch 7 of 6 + the poll-idle fix, called rjwv3pp,
-is here:
+Hi Rodrigo,
 
-http://fast.smythies.com/rjwv3pp_100.png
+I think the approach you outlined earlier of only sending configuration 
+commands to the device when something is actively using the driver is 
+sane. I won't have the cycles to thoroughly check all the possible 
+interactions with the client in the near future, so in the interest of 
+not blocking development I'd say go for it. I'll try to get someone to 
+take the patchset for a spin soon.
 
-... Doug
+Thanks,
+  - Pierre-Loup
+
+> 
+> For full reference, I'm adding a full changelog of this patchset.
+> 
+> Changes in v5:
+>   * Fix license SPDX to GPL-2.0+.
+>   * Minor stylistic changes (BIT(3) instead 0x08 and so on).
+> 
+> Changes in v4:
+>   * Add command to check the wireless connection status on probe, without
+>     waiting for a message (thanks to Clément Vuchener for the tip).
+>   * Removed the error code on redundant connection/disconnection messages. That
+>     was harmless but polluted dmesg.
+>   * Added buttons for touching the left-pad and right-pad.
+>   * Fixed a misplaced #include from 2/4 to 1/4.
+> 
+> Changes in v3:
+>   * Use RCU to do the dynamic connec/disconnect of wireless devices.
+>   * Remove entries in hid-quirks.c as they are no longer needed. This allows
+>     this module to be blacklisted without side effects.
+>   * Do not bypass the virtual keyboard/mouse HID devices to avoid breaking
+>     existing use cases (lizard mode). A user-space tool to do that is
+>     linked.
+>   * Fully separated axes for joystick and left-pad. As it happens.
+>   * Add fuzz values for left/right pad axes, they are a little wiggly.
+> 
+> Changes in v2:
+>   * Remove references to USB. Now the interesting interfaces are selected by
+>     looking for the ones with feature reports.
+>   * Feature reports buffers are allocated with hid_alloc_report_buf().
+>   * Feature report length is checked, to avoid overflows in case of
+>     corrupt/malicius USB devices.
+>   * Resolution added to the ABS axes.
+>   * A lot of minor cleanups.
+> 
+> Rodrigo Rivas Costa (4):
+>    HID: add driver for Valve Steam Controller
+>    HID: steam: add serial number information.
+>    HID: steam: command to check wireless connection
+>    HID: steam: add battery device.
+> 
+>   drivers/hid/Kconfig     |   8 +
+>   drivers/hid/Makefile    |   1 +
+>   drivers/hid/hid-ids.h   |   4 +
+>   drivers/hid/hid-steam.c | 794 ++++++++++++++++++++++++++++++++++++++++++++++++
+>   4 files changed, 807 insertions(+)
+>   create mode 100644 drivers/hid/hid-steam.c
+> 
