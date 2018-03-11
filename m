@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932292AbeCKK44 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 06:56:56 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:54378 "EHLO
+        id S932409AbeCKK6E (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 06:58:04 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:54292 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932205AbeCKK4u (ORCPT
+        with ESMTP id S932257AbeCKK4y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 06:56:50 -0400
+        Sun, 11 Mar 2018 06:56:54 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, luto@kernel.org,
         torvalds@linux-foundation.org, mingo@kernel.org,
         viro@zeniv.linux.org.uk, akpm@linux-foundation.org
-Subject: [RFC PATCH 26/35] syscalls: do not call sys_rmdir() within the kernel
-Date: Sun, 11 Mar 2018 11:55:48 +0100
-Message-Id: <20180311105557.20807-27-linux@dominikbrodowski.net>
+Subject: [RFC PATCH 06/35] syscalls: do not call sys_pipe2() within the kernel
+Date: Sun, 11 Mar 2018 11:55:28 +0100
+Message-Id: <20180311105557.20807-7-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180311105557.20807-1-linux@dominikbrodowski.net>
 References: <20180311105557.20807-1-linux@dominikbrodowski.net>
@@ -21,77 +21,40 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CC: Al Viro <viro@zeniv.linux.org.uk>
-CC: Andrew Morton <akpm@linux-foundation.org>
+CC: Alexander Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- fs/internal.h            | 1 +
- fs/namei.c               | 2 +-
- include/linux/syscalls.h | 6 ++++++
- init/initramfs.c         | 4 ++--
- 4 files changed, 10 insertions(+), 3 deletions(-)
+ fs/pipe.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index df262f41a0ef..0eda35fa1743 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -55,6 +55,7 @@ extern void __init chrdev_init(void);
- extern int user_path_mountpoint_at(int, const char __user *, unsigned int, struct path *);
- extern int vfs_path_lookup(struct dentry *, struct vfsmount *,
- 			   const char *, unsigned int, struct path *);
-+long do_rmdir(int dfd, const char __user *pathname);
- long do_unlinkat(int dfd, struct filename *name);
- 
- /*
-diff --git a/fs/namei.c b/fs/namei.c
-index 524e829ffc7d..8545151f74e9 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3872,7 +3872,7 @@ int vfs_rmdir(struct inode *dir, struct dentry *dentry)
- }
- EXPORT_SYMBOL(vfs_rmdir);
- 
--static long do_rmdir(int dfd, const char __user *pathname)
-+long do_rmdir(int dfd, const char __user *pathname)
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 7b1954caf388..39d6f431da83 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -841,7 +841,7 @@ int do_pipe_flags(int *fd, int flags)
+  * sys_pipe() is the normal C calling standard for creating
+  * a pipe. It's not the way Unix traditionally does this, though.
+  */
+-SYSCALL_DEFINE2(pipe2, int __user *, fildes, int, flags)
++static int do_pipe2(int __user *fildes, int flags)
  {
- 	int error = 0;
- 	struct filename *name;
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 452be95ab9ca..bb610042a1ec 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -973,4 +973,10 @@ static inline long ksys_unlink(const char __user *pathname)
- 	return do_unlinkat(AT_FDCWD, getname(pathname));
+ 	struct file *files[2];
+ 	int fd[2];
+@@ -863,9 +863,14 @@ SYSCALL_DEFINE2(pipe2, int __user *, fildes, int, flags)
+ 	return error;
  }
  
-+extern long do_rmdir(int dfd, const char __user *pathname);
-+static inline long ksys_rmdir(const char __user *pathname)
++SYSCALL_DEFINE2(pipe2, int __user *, fildes, int, flags)
 +{
-+	return do_rmdir(AT_FDCWD, pathname);
++	return do_pipe2(fildes, flags);
 +}
 +
- #endif
-diff --git a/init/initramfs.c b/init/initramfs.c
-index 08eb551168a8..73bbb227f868 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -317,7 +317,7 @@ static void __init clean_path(char *path, umode_t fmode)
+ SYSCALL_DEFINE1(pipe, int __user *, fildes)
+ {
+-	return sys_pipe2(fildes, 0);
++	return do_pipe2(fildes, 0);
+ }
  
- 	if (!vfs_lstat(path, &st) && (st.mode ^ fmode) & S_IFMT) {
- 		if (S_ISDIR(st.mode))
--			sys_rmdir(path);
-+			ksys_rmdir(path);
- 		else
- 			ksys_unlink(path);
- 	}
-@@ -589,7 +589,7 @@ static void __init clean_rootfs(void)
- 			WARN_ON_ONCE(ret);
- 			if (!ret) {
- 				if (S_ISDIR(st.mode))
--					sys_rmdir(dirp->d_name);
-+					ksys_rmdir(dirp->d_name);
- 				else
- 					ksys_unlink(dirp->d_name);
- 			}
+ static int wait_for_partner(struct pipe_inode_info *pipe, unsigned int *cnt)
 -- 
 2.16.2
