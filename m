@@ -1,88 +1,223 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932575AbeCLINn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 04:13:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36174 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750752AbeCLINl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 04:13:41 -0400
-Date: Mon, 12 Mar 2018 04:08:57 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
-        Steve Grubb <sgrubb@redhat.com>, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH ghak21 V2 0/4] audit: address ANOM_LINK excess records
-Message-ID: <20180312080857.pbc5mml6fiznav35@madcap2.tricolour.ca>
-References: <cover.1520835596.git.rgb@redhat.com>
+        id S1751519AbeCLIPR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 04:15:17 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52034 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750752AbeCLIPO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 04:15:14 -0400
+X-Google-Smtp-Source: AG47ELsK1EnpfQGnCUxFldSQN0N7PJk2oVQhbqWGe90YikCj7QQ+a9NcjCYXyX4GCfARfzVaoiLf/A==
+From: Jason Vas Dias <jason.vas.dias@gmail.com>
+To: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, andi <andi@firstfloor.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH v4.16-rc4 1/3] x86/vdso: on Intel, VDSO should handle CLOCK_MONOTONIC_RAW
+Date: Sun, 11 Mar 2018 06:25:56 +0000
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+Message-ID: <7eqhiub5.fsf@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1520835596.git.rgb@redhat.com>
-User-Agent: NeoMutt/20171027
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-12 02:31, Richard Guy Briggs wrote:
-> Audit link denied events were being unexpectedly produced in a disjoint
-> way when audit was disabled, and when they were expected, there were
-> duplicate PATH records.  This patchset addresses both issues for
-> symlinks and hardlinks.
-> 
-> This was introduced with
-> 	commit b24a30a7305418ff138ff51776fc555ec57c011a
-> 	("audit: fix event coverage of AUDIT_ANOM_LINK")
-> 	commit a51d9eaa41866ab6b4b6ecad7b621f8b66ece0dc
-> 	("fs: add link restriction audit reporting")
-> 
-> Here are the resulting events:
-> 
-> symlink:
-> type=PROCTITLE msg=audit(03/12/2018 02:21:49.578:310) : proctitle=ls ./my-passwd 
-> type=PATH msg=audit(03/12/2018 02:21:49.578:310) : item=1 name=/tmp/ inode=13529 dev=00:27 mode=dir,sticky,777 ouid=root ogid=root rdev=00:00 obj=system_u:object_r:tmp_t:s0 nametype=PARENT cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 
-> type=PATH msg=audit(03/12/2018 02:21:49.578:310) : item=0 name=./my-passwd inode=17090 dev=00:27 mode=link,777 ouid=rgb ogid=rgb rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=NORMAL cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 
-> type=CWD msg=audit(03/12/2018 02:21:49.578:310) : cwd=/tmp 
-> type=SYSCALL msg=audit(03/12/2018 02:21:49.578:310) : arch=x86_64 syscall=stat success=no exit=EACCES(Permission denied) a0=0x7ffd79950dda a1=0x563f658a03c8 a2=0x563f658a03c8 a3=0x79950d00 items=2 ppid=552 pid=629 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=ls exe=/usr/bin/ls subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=(null) 
-> type=ANOM_LINK msg=audit(03/12/2018 02:21:49.578:310) : op=follow_link ppid=552 pid=629 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=ls exe=/usr/bin/ls subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 res=no 
-> ----
-> hardlink:
-> type=PROCTITLE msg=audit(03/12/2018 02:24:39.813:314) : proctitle=ln test test-ln 
-> type=PATH msg=audit(03/12/2018 02:24:39.813:314) : item=1 name=/tmp inode=13529 dev=00:27 mode=dir,sticky,777 ouid=root ogid=root rdev=00:00 obj=system_u:object_r:tmp_t:s0 nametype=PARENT cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 
-> type=PATH msg=audit(03/12/2018 02:24:39.813:314) : item=0 name=test inode=18112 dev=00:27 mode=file,700 ouid=root ogid=root rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=NORMAL cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 
-> type=CWD msg=audit(03/12/2018 02:24:39.813:314) : cwd=/tmp 
-> type=SYSCALL msg=audit(03/12/2018 02:24:39.813:314) : arch=x86_64 syscall=linkat success=no exit=EPERM(Operation not permitted) a0=0xffffff9c a1=0x7ffccba77629 a2=0xffffff9c a3=0x7ffccba7762e items=2 ppid=605 pid=638 auid=rgb uid=rgb gid=rgb euid=rgb suid=rgb fsuid=rgb egid=rgb sgid=rgb fsgid=rgb tty=pts0 ses=4 comm=ln exe=/usr/bin/ln subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=(null) 
-> type=ANOM_LINK msg=audit(03/12/2018 02:24:39.813:314) : op=linkat ppid=605 pid=638 auid=rgb uid=rgb gid=rgb euid=rgb suid=rgb fsuid=rgb egid=rgb sgid=rgb fsgid=rgb tty=pts0 ses=4 comm=ln exe=/usr/bin/ln subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 res=no 
-> 
-> See: https://github.com/linux-audit/audit-kernel/issues/21
-> See also: https://github.com/linux-audit/audit-kernel/issues/51
-> 
-> Richard Guy Briggs (4):
->   audit: make ANOM_LINK obey audit_enabled and audit_dummy_context
->   audit: link denied should not directly generate PATH record
->   audit: add refused symlink to audit_names
->   audit: add parent of refused symlink to audit_names
-> 
->  fs/namei.c            |  5 +++--
->  include/linux/audit.h |  9 +++++----
->  kernel/audit.c        | 43 ++++++++++++++++++++++++++++++++-----------
->  3 files changed, 40 insertions(+), 17 deletions(-)
-> 
-> -- 
 
-Changelog:
-v2:
-- remove now supperfluous struct path * parameter from audit_log_link_denied()
-- refactor audit_log_symlink_denied() to properly free memory (pathname, filename)
+  Currently the VDSO does not handle
+     clock_gettime( CLOCK_MONOTONIC_RAW, &ts )
+  on Intel / AMD - it calls
+     vdso_fallback_gettime()
+  for this clock, which issues a syscall, having an unacceptably high
+  latency (minimum measurable time or time between measurements)
+  of 300-700ns on 2 2.8-3.9ghz Haswell x86_64 Family'_'Model : 06_3C
+  machines under various versions of Linux.
 
-> 1.8.3.1
-> 
+  Sometimes, particularly when correlating elapsed time to performance
+  counter values,  code needs to know elapsed time from the perspective
+  of the CPU no matter how "hot" / fast or "cold" / slow it might be
+  running wrt NTP / PTP ; when code needs this, the latencies with
+  a syscall are often unacceptably high.
 
-- RGB
+  I reported this as Bug #198161 :
+    'https://bugzilla.kernel.org/show_bug.cgi?id=198961'
+  and in previous posts with subjects matching 'CLOCK_MONOTONIC_RAW' .
+     
+  This patch handles CLOCK_MONOTONIC_RAW clock_gettime() in the VDSO ,
+  by exporting the raw clock calibration, last cycles, last xtime_nsec,
+  and last raw_sec value in the vsyscall_gtod_data during vsyscall_update() .
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+  Now the new do_monotonic_raw() function in the vDSO has a latency of @ 24ns
+  on average, about the same as do_monotonic(), and the test program:
+   tools/testing/selftest/timers/inconsistency-check.c
+  succeeds with arguments: '-c 4 -t 120' or any arbitrary -t value.
+
+  The patch is against Linus' latest 4.16-rc5 tree,
+  current HEAD of :
+    git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+  .
+
+  The patch affects only files:
+  
+   arch/x86/include/asm/vgtod.h
+   arch/x86/entry/vdso/vclock_gettime.c
+   arch/x86/entry/vsyscall/vsyscall_gtod.c
+
+
+  This is a resend of the original patch fixing review issues -
+  the next patch will add the rdtscp() function .
+
+  The patch passes the checkpatch.pl script .
+
+  Best Regards,
+     Jason Vas Dias  .
+     
+---
+diff -up linux-4.16-rc5.1/arch/x86/entry/vdso/vclock_gettime.c.4.16-rc5 linux-4.16-rc5.1/arch/x86/entry/vdso/vclock_gettime.c
+--- linux-4.16-rc5.1/arch/x86/entry/vdso/vclock_gettime.c.4.16-rc5	2018-03-12 00:25:09.000000000 +0000
++++ linux-4.16-rc5.1/arch/x86/entry/vdso/vclock_gettime.c	2018-03-12 08:12:17.110120433 +0000
+@@ -182,6 +182,18 @@ notrace static u64 vread_tsc(void)
+ 	return last;
+ }
+ 
++notrace static u64 vread_tsc_raw(void)
++{
++	u64 tsc
++	  , last = gtod->raw_cycle_last;
++
++	tsc = rdtsc_ordered();
++	if (likely(tsc >= last))
++		return tsc;
++	asm volatile ("");
++	return last;
++}
++
+ notrace static inline u64 vgetsns(int *mode)
+ {
+ 	u64 v;
+@@ -203,6 +215,27 @@ notrace static inline u64 vgetsns(int *m
+ 	return v * gtod->mult;
+ }
+ 
++notrace static inline u64 vgetsns_raw(int *mode)
++{
++	u64 v;
++	cycles_t cycles;
++
++	if (gtod->vclock_mode == VCLOCK_TSC)
++		cycles = vread_tsc_raw();
++#ifdef CONFIG_PARAVIRT_CLOCK
++	else if (gtod->vclock_mode == VCLOCK_PVCLOCK)
++		cycles = vread_pvclock(mode);
++#endif
++#ifdef CONFIG_HYPERV_TSCPAGE
++	else if (gtod->vclock_mode == VCLOCK_HVCLOCK)
++		cycles = vread_hvclock(mode);
++#endif
++	else
++		return 0;
++	v = (cycles - gtod->raw_cycle_last) & gtod->raw_mask;
++	return v * gtod->raw_mult;
++}
++
+ /* Code size doesn't matter (vdso is 4k anyway) and this is faster. */
+ notrace static int __always_inline do_realtime(struct timespec *ts)
+ {
+@@ -246,6 +279,27 @@ notrace static int __always_inline do_mo
+ 	return mode;
+ }
+ 
++notrace static __always_inline int do_monotonic_raw(struct timespec *ts)
++{
++	unsigned long seq;
++	u64 ns;
++	int mode;
++
++	do {
++		seq = gtod_read_begin(gtod);
++		mode = gtod->vclock_mode;
++		ts->tv_sec = gtod->monotonic_time_raw_sec;
++		ns = gtod->monotonic_time_raw_nsec;
++		ns += vgetsns_raw(&mode);
++		ns >>= gtod->raw_shift;
++	} while (unlikely(gtod_read_retry(gtod, seq)));
++
++	ts->tv_sec += __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
++	ts->tv_nsec = ns;
++
++	return mode;
++}
++
+ notrace static void do_realtime_coarse(struct timespec *ts)
+ {
+ 	unsigned long seq;
+@@ -277,6 +331,10 @@ notrace int __vdso_clock_gettime(clockid
+ 		if (do_monotonic(ts) == VCLOCK_NONE)
+ 			goto fallback;
+ 		break;
++	case CLOCK_MONOTONIC_RAW:
++		if (do_monotonic_raw(ts) == VCLOCK_NONE)
++			goto fallback;
++		break;
+ 	case CLOCK_REALTIME_COARSE:
+ 		do_realtime_coarse(ts);
+ 		break;
+diff -up linux-4.16-rc5.1/arch/x86/entry/vsyscall/vsyscall_gtod.c.4.16-rc5 linux-4.16-rc5.1/arch/x86/entry/vsyscall/vsyscall_gtod.c
+--- linux-4.16-rc5.1/arch/x86/entry/vsyscall/vsyscall_gtod.c.4.16-rc5	2018-03-12 00:25:09.000000000 +0000
++++ linux-4.16-rc5.1/arch/x86/entry/vsyscall/vsyscall_gtod.c	2018-03-12 07:58:07.974214168 +0000
+@@ -45,6 +45,11 @@ void update_vsyscall(struct timekeeper *
+ 	vdata->mult		= tk->tkr_mono.mult;
+ 	vdata->shift		= tk->tkr_mono.shift;
+ 
++	vdata->raw_cycle_last	= tk->tkr_raw.cycle_last;
++	vdata->raw_mask		= tk->tkr_raw.mask;
++	vdata->raw_mult		= tk->tkr_raw.mult;
++	vdata->raw_shift	= tk->tkr_raw.shift;
++
+ 	vdata->wall_time_sec		= tk->xtime_sec;
+ 	vdata->wall_time_snsec		= tk->tkr_mono.xtime_nsec;
+ 
+@@ -74,5 +79,8 @@ void update_vsyscall(struct timekeeper *
+ 		vdata->monotonic_time_coarse_sec++;
+ 	}
+ 
++	vdata->monotonic_time_raw_sec  = tk->raw_sec;
++	vdata->monotonic_time_raw_nsec = tk->tkr_raw.xtime_nsec;
++
+ 	gtod_write_end(vdata);
+ }
+diff -up linux-4.16-rc5.1/arch/x86/include/asm/msr.h.4.16-rc5 linux-4.16-rc5.1/arch/x86/include/asm/msr.h
+--- linux-4.16-rc5.1/arch/x86/include/asm/msr.h.4.16-rc5	2018-03-12 00:25:09.000000000 +0000
++++ linux-4.16-rc5.1/arch/x86/include/asm/msr.h	2018-03-12 08:01:25.400289554 +0000
+@@ -218,7 +218,7 @@ static __always_inline unsigned long lon
+ 	return rdtsc();
+ }
+ 
+-/* Deprecated, keep it for a cycle for easier merging: */
++/* Deprecated, keep it for a cycle for easier merging: */o
+ #define rdtscll(now)	do { (now) = rdtsc_ordered(); } while (0)
+ 
+ static inline unsigned long long native_read_pmc(int counter)
+diff -up linux-4.16-rc5.1/arch/x86/include/asm/vgtod.h.4.16-rc5 linux-4.16-rc5.1/arch/x86/include/asm/vgtod.h
+--- linux-4.16-rc5.1/arch/x86/include/asm/vgtod.h.4.16-rc5	2018-03-12 00:25:09.000000000 +0000
++++ linux-4.16-rc5.1/arch/x86/include/asm/vgtod.h	2018-03-12 07:44:17.910539760 +0000
+@@ -22,6 +22,10 @@ struct vsyscall_gtod_data {
+ 	u64	mask;
+ 	u32	mult;
+ 	u32	shift;
++	u64	raw_cycle_last;
++	u64	raw_mask;
++	u32	raw_mult;
++	u32	raw_shift;
+ 
+ 	/* open coded 'struct timespec' */
+ 	u64		wall_time_snsec;
+@@ -32,6 +36,8 @@ struct vsyscall_gtod_data {
+ 	gtod_long_t	wall_time_coarse_nsec;
+ 	gtod_long_t	monotonic_time_coarse_sec;
+ 	gtod_long_t	monotonic_time_coarse_nsec;
++	gtod_long_t	monotonic_time_raw_sec;
++	gtod_long_t	monotonic_time_raw_nsec;
+ 
+ 	int		tz_minuteswest;
+ 	int		tz_dsttime;
+---
