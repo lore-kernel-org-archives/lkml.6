@@ -1,122 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932227AbeCKQlv (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 12:41:51 -0400
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:51011 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932153AbeCKQlu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 12:41:50 -0400
-X-Google-Smtp-Source: AG47ELtwj+hNftlAizVVSEjFcWJxHuYhxIxSQj7KWHuTcSgvRJ/If6kOgNN7RmuwtO/a7YC705BZrA==
-Subject: Re: [Possible REGRESSION, 4.16-rc4] Error updating SMART data during
- runtime and could not connect to lvmetad at some boot attempts
-To: Martin Steigerwald <martin@lichtvoll.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thorsten Leemhuis <regressions@leemhuis.info>,
-        Tejun Heo <tj@kernel.org>
-References: <27165802.vQ9JbjrmvU@merkaba>
- <f6e73c8e-1186-744b-c856-2c56ceeeab10@redhat.com>
- <6020448.5HgvTYnRh2@merkaba>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <5e7417f9-e928-406f-e8e2-5ed5b8165451@redhat.com>
-Date: Sun, 11 Mar 2018 17:41:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932256AbeCKQmC (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 12:42:02 -0400
+Received: from botnar.kaiser.cx ([176.28.20.183]:59290 "EHLO botnar.kaiser.cx"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932153AbeCKQl7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Mar 2018 12:41:59 -0400
+Date: Sun, 11 Mar 2018 17:39:46 +0100
+From: Martin Kaiser <martin@kaiser.cx>
+To: Fabio Estevam <festevam@gmail.com>,
+        Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: imx25: set correct parents for ssi ipg clocks
+Message-ID: <20180311163946.GA11507@botnar.kaiser.cx>
+References: <1520373735-13699-1-git-send-email-martin@kaiser.cx>
+ <CAOMZO5A7W4rbPbZB8ERs518obrg+6F6mDeojkwJaGComFAJB0A@mail.gmail.com>
+ <20180308140851.GA25601@botnar.kaiser.cx>
+ <CAOMZO5BdBWExt9FvPrfUG74Y62e4EUs6cqFyfVs5JuUtym00hQ@mail.gmail.com>
+ <20180308164654.GA31199@botnar.kaiser.cx>
+ <CAOMZO5Czv7Rj-wA9L42S9GJhufjw3br0d+iLcf070NWH4SjCbA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <6020448.5HgvTYnRh2@merkaba>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOMZO5Czv7Rj-wA9L42S9GJhufjw3br0d+iLcf070NWH4SjCbA@mail.gmail.com>
+User-Agent: Mutt/1.5.20 (2009-06-14)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Fabio & Lothar,
 
-On 11-03-18 17:28, Martin Steigerwald wrote:
-> Hans de Goede - 11.03.18, 15:37:
->> Hi Martin,
->>
->> On 11-03-18 09:20, Martin Steigerwald wrote:
->>> Hello.
->>>
->>> Since 4.16-rc4 (upgraded from 4.15.2 which worked) I have an issue
->>> with SMART checks occassionally failing like this:
->>>
->>> smartd[28017]: Device: /dev/sdb [SAT], is in SLEEP mode, suspending checks
->>> udisksd[24408]: Error performing housekeeping for drive
->>> /org/freedesktop/UDisks2/drives/INTEL_SSDSA2CW300G3_[…]: Error updating
->>> SMART data: Error sending ATA command CHECK POWER MODE: Unexpected sense
->>> data returned:#0120000: 0e 09 0c 00  00 00 ff 00  00 00 00 00  00 00 50
->>> 00    ..............P.#0120010: 00 00 00 00  00 00 00 00  00 00 00 00  00
->>> 00 00 00    ................#012 (g-io-error-quark, 0) merkaba
->>> udisksd[24408]: Error performing housekeeping for drive
->>> /org/freedesktop/UDisks2/drives/Crucial_CT480M500SSD3_[…]: Error updating
->>> SMART dat a: Error sending ATA command CHECK POWER MODE: Unexpected sense
->>> data returned:#0120000: 01 00 1d 00  00 00 0e 09  0c 00 00 00  ff 00 00
->>> 00    ................#0120010: 00 0 0 00 00  50 00 00 00  00 00 00 00
->>> 00 00 00 00    ....P...........#012 (g-io-error-quark, 0)
->>>
->>> (Intel SSD is connected via SATA, Crucial via mSATA in a ThinkPad T520)
->>>
->>> However when I then check manually with smartctl -a | -x | -H the device
->>> reports SMART data just fine.
->>>
->>> As smartd correctly detects that device is in sleep mode, this may be an
->>> userspace issue in udisksd.
->>>
->>> Also at some boot attempts the boot hangs with a message like "could not
->>> connect to lvmetad, scanning manually for devices". I use BTRFS RAID 1
->>> on to LVs (each on one of the SSDs). A configuration that requires a
->>> manual
->>> adaption to InitRAMFS in order to boot (basically vgchange -ay before
->>> btrfs device scan).
->>>
->>> I wonder whether that has to do with the new SATA LPM policy stuff, but as
->>> I had issues with
->>>
->>>    3 => Medium power with Device Initiated PM enabled
->>>
->>> (machine did not boot, which could also have been caused by me
->>> accidentally
->>> removing all TCP/IP network support in the kernel with that setting)
->>>
->>> I set it back to
->>>
->>> CONFIG_SATA_MOBILE_LPM_POLICY=0
->>>
->>> (firmware settings)
->>
->> Right, so at that settings the LPM policy changes are effectively
->> disabled and cannot explain your SMART issues.
->>
->> Still I would like to zoom in on this part of your bug report, because
->> for Fedora 28 we are planning to ship with CONFIG_SATA_MOBILE_LPM_POLICY=3
->> and AFAIK Ubuntu has similar plans.
->>
->> I suspect that the issue you were seeing with
->> CONFIG_SATA_MOBILE_LPM_POLICY=3 were with the Crucial disk ? I've attached
->> a patch for you to test, which disabled LPM for your model Crucial SSD (but
->> keeps it on for the Intel disk) if you can confirm that with that patch you
->> can run with
->> CONFIG_SATA_MOBILE_LPM_POLICY=3 without issues that would be great.
-> 
-> I think I can do that during the week with 4.16-rc5 then.
+Thus wrote Fabio Estevam (festevam@gmail.com):
 
-Great, thank you.
+> On Thu, Mar 8, 2018 at 1:46 PM, Martin Kaiser <martin@kaiser.cx> wrote:
 
-> Is it possible to override that setting at boot time with a kernel parameter?
+> >> I can get audio to work fine without your patch on a mx25pdk.
 
-Yes the Kconfig determines the default value for the ahci.mobile_lpm_policy
-cmdline option, and that (setting the default val) is all it does, changing
-that option has the same result as changing the Kconfig option and rebuilding.
+> > this is surprising. How come the ssi1_ipg_per clock is not turned off by
+> > clk_disable_unused()? Where is it used? Do you have
 
- > It would make it easier to switch between the policies for testing.
+> > <&clks 55>
 
-Ack, as said the plan is to make CONFIG_SATA_MOBILE_LPM_POLICY=3 the default for
-Fedora 28, so it is in my own interest to make it easy to test different
-settings :)
+> > anywhere in your DT?
 
-Regards,
+> No, I don't. imx25-pdk board operates SSI in slave mode.
 
-Hans
+> > (My codec chip does not use a dedicated clock line. It takes the bit clock that
+> > is the output of SSI. Are you maybe using ssi1_ipg_per for your codec and
+> > enable it there?)
+
+> The difference between our boards is that you use SSI in master mode
+> and mx25pdk in slave mode.
+
+> > In my first mail, I was wondering about imx25 uart1, where we also have
+> > uart1_ipg and uart_ipg_per and the clock seeting is
+
+> >    clk[uart1_ipg] = imx_clk_gate("uart1_ipg", "ipg", ccm(CCM_CGCR2), 14);
+
+> > In this case, both uart1 and uart_ipg_per are listed in the device tree
+
+> >          uart1: serial@43f90000 {
+> > ...
+> >             clocks = <&clks 120>, <&clks 57>;
+> >             clock-names = "ipg", "per";
+> >          };
+
+> > Documentation/devicetree/bindings/clock/imx25-clock.txt
+> >    uart_ipg_per      57
+> >    uart1_ipg      120
+
+> > and the driver enables both clocks explicitly. So they are not unused.
+
+
+> > Doing something like this is not an option for ssi, this will not work with
+> > imx31, 35 etc.
+
+> The solution to this is passing the "baud" clock as Lothar pointed out.
+
+ok, I got your point now.
+
+The ssi1_ipg clock does not depend on ssi1_ipg_per. This is in line with
+the clock generation scheme in the reference manual.
+
+And there's configurations where ssi1_ipg should be switched on, but not
+ssi1_ipg_per.
+
+I'll look into using the baud clock on my board.
+
+Thanks to both of you for taking the time to explain this.
+
+Best regards,
+
+   Martin
