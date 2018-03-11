@@ -1,88 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932325AbeCKSm3 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 14:42:29 -0400
-Received: from ivanoab5.miniserver.com ([78.31.111.25]:44926 "EHLO
-        www.kot-begemot.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932217AbeCKSm2 (ORCPT
+        id S932190AbeCKSwx (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 14:52:53 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:36946 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932137AbeCKSwv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 14:42:28 -0400
-Subject: Re: [PATCH 1/9] um/drivers/vector_user: Delete unnecessary code in
- user_init_raw_fds()
-To: SF Markus Elfring <elfring@users.sourceforge.net>,
-        user-mode-linux-devel@lists.sourceforge.net,
-        Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
-Cc: user-mode-linux-user@lists.sourceforge.net,
-        kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
- <a8ec6fce-df95-10a9-6dd7-3604fd403d0d@users.sourceforge.net>
-From: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Organization: Cambridge Greys Limited
-Message-ID: <33ff08e8-39cd-8558-152f-dac474fb0b5b@cambridgegreys.com>
-Date: Sun, 11 Mar 2018 18:08:22 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sun, 11 Mar 2018 14:52:51 -0400
+X-Google-Smtp-Source: AG47ELveOZjiXJTuL4ztF1wrz3dV6j88wthFnsqu2Aepu4xc33PKrQLxkG0cHFsoNEJ7xoQoWVC2Wg==
+From: =?UTF-8?q?Jaros=C5=82aw=20Janik?= <jaroslaw.janik@gmail.com>
+To: Keith Busch <keith.busch@intel.com>
+Cc: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Jaros=C5=82aw=20Janik?= <jaroslaw.janik@gmail.com>
+Subject: [PATCH] nvme-pci: disable APST for Samsung NVMe SSD 960 EVO + ASUS PRIME Z370-A
+Date: Sun, 11 Mar 2018 19:51:56 +0100
+Message-Id: <20180311185156.3807-1-jaroslaw.janik@gmail.com>
+X-Mailer: git-send-email 2.16.1
 MIME-Version: 1.0
-In-Reply-To: <a8ec6fce-df95-10a9-6dd7-3604fd403d0d@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Clacks-Overhead: GNU Terry Pratchett
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks, well noted.
+Yet another "incompatible" Samsung NVMe SSD 960 EVO and Asus motherboard
+combination. 960 EVO device disappears from PCIe bus within few minutes
+after boot-up when APST is in use and never gets back. Forcing
+NVME_QUIRK_NO_APST is the only way to make this drive work with this
+particular motherboard. NVME_QUIRK_NO_DEEPEST_PS doesn't work, upgrading
+motherboard's BIOS didn't help either.
+Since this is a desktop motherboard, the only drawback of not using APST
+is increased device temperature.
 
-It still does not fix it completely though.
+Signed-off-by: Jarosław Janik <jaroslaw.janik@gmail.com>
+---
+ drivers/nvme/host/pci.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Re-reading the code it will leak a fd if the malloc for result fails. 
-That return result; there should be inside the conditional falling back 
-to cleanup if the alloc fails.
-
-A.
-
-
-On 03/11/18 15:16, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 11 Mar 2018 11:36:18 +0100
->
-> * One condition check could never be reached with a non-null pointer
->    at the end of this function. Thus remove the corresponding statement.
->
-> * Delete an initialisation for the local variable "result"
->    which became unnecessary with this refactoring.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   arch/um/drivers/vector_user.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
-> index 4291f1a5d342..d6a6207d4061 100644
-> --- a/arch/um/drivers/vector_user.c
-> +++ b/arch/um/drivers/vector_user.c
-> @@ -211,7 +211,7 @@ static struct vector_fds *user_init_raw_fds(struct arglist *ifspec)
->   	struct sockaddr_ll sock;
->   	int err = -ENOMEM;
->   	char *iface;
-> -	struct vector_fds *result = NULL;
-> +	struct vector_fds *result;
->   	int optval = 1;
->   
->   
-> @@ -276,8 +276,6 @@ static struct vector_fds *user_init_raw_fds(struct arglist *ifspec)
->   		os_close_file(rxfd);
->   	if (txfd >= 0)
->   		os_close_file(txfd);
-> -	if (result != NULL)
-> -		kfree(result);
->   	return NULL;
->   }
->   
-
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 5933a5c732e8..3bfaf083ca0b 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2460,10 +2460,13 @@ static unsigned long check_vendor_combination_bug(struct pci_dev *pdev)
+ 	} else if (pdev->vendor == 0x144d && pdev->device == 0xa804) {
+ 		/*
+ 		 * Samsung SSD 960 EVO drops off the PCIe bus after system
+-		 * suspend on a Ryzen board, ASUS PRIME B350M-A.
++		 * suspend on a Ryzen board, ASUS PRIME B350M-A, as well as
++		 * within few minutes after bootup on a Coffee Lake board -
++		 * ASUS PRIME Z370-A
+ 		 */
+ 		if (dmi_match(DMI_BOARD_VENDOR, "ASUSTeK COMPUTER INC.") &&
+-		    dmi_match(DMI_BOARD_NAME, "PRIME B350M-A"))
++		    (dmi_match(DMI_BOARD_NAME, "PRIME B350M-A") ||
++		     dmi_match(DMI_BOARD_NAME, "PRIME Z370-A")))
+ 			return NVME_QUIRK_NO_APST;
+ 	}
+ 
 -- 
-Anton R. Ivanov
-
-Cambridge Greys Limited, England and Wales company No 10273661
-http://www.cambridgegreys.com/
+2.16.1
