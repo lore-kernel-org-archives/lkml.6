@@ -1,116 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932230AbeCKOMX (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 10:12:23 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:34639 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932136AbeCKOMV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 10:12:21 -0400
-X-Google-Smtp-Source: AG47ELsL8/EoVOpBXPOfqOsOYxy7o/zBSJ1p+oMklPOMLVNC/fLVk4aA8T0yRIRORZa5FNuK+EjDMl4eNTkUEmyAYoI=
-MIME-Version: 1.0
-In-Reply-To: <20180311123815.17916-4-ard.biesheuvel@linaro.org>
-References: <20180311123815.17916-1-ard.biesheuvel@linaro.org> <20180311123815.17916-4-ard.biesheuvel@linaro.org>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Sun, 11 Mar 2018 14:12:19 +0000
-Message-ID: <CAKv+Gu-TMT5bJ9V69sNK+8_aHeqz6EQ0ugTsjCPgDgfb6_=xqg@mail.gmail.com>
-Subject: Re: [PATCH v8 3/6] module: use relative references for __ksymtab entries
-To: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Garnier <thgarnie@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Paul Mackerras <paulus@samba.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nicolas Pitre <nico@linaro.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
+        id S932290AbeCKOOb (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 10:14:31 -0400
+Received: from ozlabs.org ([103.22.144.67]:34993 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932136AbeCKOOa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Mar 2018 10:14:30 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Mon, 12 Mar 2018 01:13:44 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jesper Nilsson <jesper.nilsson@axis.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jessica Yu <jeyu@kernel.org>,
+        Michal Simek <monstr@monstr.eu>, Andi Kleen <ak@linux.intel.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-cris-kernel@axis.com, Petr Mladek <pmladek@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        adi-buildroot-devel@lists.sourceforge.net,
+        Steven Rostedt <rostedt@goodmis.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Jesper Nilsson <jesper@jni.nu>, Greentime Hu <green.hu@gmail.com>,
+        Tejun Heo <tj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+        Vincent Chen <deanbo422@gmail.com>, Dave Young <dyoung@redhat.com>
+Subject: Re: [GIT PULL] CRIS: Drop support for the CRIS-port
+Message-ID: <20180312011344.6071896c@canb.auug.org.au>
+In-Reply-To: <20180311110551.GX17177@axis.com>
+References: <CAK8P3a1KE_0+vDC48-NzzW8eT1YZ8MZRun-1GeRMNg+o8dqZUg@mail.gmail.com>
+        <20180308155116.GW17177@axis.com>
+        <20180311110551.GX17177@axis.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/vYf6Q1j5Q18j+77fvZ4dtj_"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11 March 2018 at 12:38, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> An ordinary arm64 defconfig build has ~64 KB worth of __ksymtab
-> entries, each consisting of two 64-bit fields containing absolute
-> references, to the symbol itself and to a char array containing
-> its name, respectively.
->
-> When we build the same configuration with KASLR enabled, we end
-> up with an additional ~192 KB of relocations in the .init section,
-> i.e., one 24 byte entry for each absolute reference, which all need
-> to be processed at boot time.
->
-> Given how the struct kernel_symbol that describes each entry is
-> completely local to module.c (except for the references emitted
-> by EXPORT_SYMBOL() itself), we can easily modify it to contain
-> two 32-bit relative references instead. This reduces the size of
-> the __ksymtab section by 50% for all 64-bit architectures, and
-> gets rid of the runtime relocations entirely for architectures
-> implementing KASLR, either via standard PIE linking (arm64) or
-> using custom host tools (x86).
->
-> Note that the binary search involving __ksymtab contents relies
-> on each section being sorted by symbol name. This is implemented
-> based on the input section names, not the names in the ksymtab
-> entries, so this patch does not interfere with that.
->
-> Given that the use of place-relative relocations requires support
-> both in the toolchain and in the module loader, we cannot enable
-> this feature for all architectures. So make it dependent on whether
-> CONFIG_HAVE_ARCH_PREL32_RELOCATIONS is defined.
->
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Thomas Garnier <thgarnie@google.com>
-> Cc: Nicolas Pitre <nico@linaro.org>
-> Acked-by: Jessica Yu <jeyu@kernel.org>
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> ---
->  arch/x86/include/asm/Kbuild   |  1 +
->  arch/x86/include/asm/export.h |  5 ---
->  include/asm-generic/export.h  | 12 ++++-
->  include/linux/compiler.h      | 19 ++++++++
->  include/linux/export.h        | 46 +++++++++++++++-----
->  kernel/module.c               | 32 +++++++++++---
->  6 files changed, 91 insertions(+), 24 deletions(-)
->
-...
-> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> index ab4711c63601..0a9328ea9dbd 100644
-> --- a/include/linux/compiler.h
-> +++ b/include/linux/compiler.h
-> @@ -280,6 +280,25 @@ unsigned long read_word_at_a_time(const void *addr)
->
->  #endif /* __KERNEL__ */
->
-> +/*
-> + * Force the compiler to emit 'sym' as a symbol, so that we can reference
-> + * it from inline assembler. Necessary in case 'sym' could be inlined
-> + * otherwise, or eliminated entirely due to lack of references that are
-> + * visible to the compiler.
-> + */
-> +#define __ADDRESSABLE(sym) \
-> +       static void * const __attribute__((section(".discard"), used))  \
-> +               __PASTE(__addressable_##sym, __LINE__) = (void *)&sym;
-> +
+--Sig_/vYf6Q1j5Q18j+77fvZ4dtj_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-kernelci.org tells me that I need to drop the 'const' here, or we may
-end up with .discard sections with conflicting attributes (r/o vs r/w)
-in some cases (CONFIG_DEBUG_FORCE_WEAK_PER_CPU=y)
+Hi Jesper,
+
+On Sun, 11 Mar 2018 12:05:51 +0100 Jesper Nilsson <jesper.nilsson@axis.com>=
+ wrote:
+>
+> As promised, pull the below tag for the removal of the CRIS-port.
+
+I guess the easiest thing for me to do is just remove the cris tree
+from linux-next at this point?
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/vYf6Q1j5Q18j+77fvZ4dtj_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqlOZgACgkQAVBC80lX
+0Gwr2gf/W0AnDKZ/Xb6qMMiA8QHSNYd2tPMUpatATyv5MKU/TWaCkHJ3QfEJDUVf
+eP3gKQ+HzJUiym4s+O8+BpdQI6Hn5WFzjKnxhxDm0H+MnMEA4JEOitq4oH+e6LJx
+kWFYk8V7hCxhhG275nW7L27/wJwgEepFbLs0IyiUT2pGyly2GxMqCTXAnrfNSB8O
+rLnEPE+cPTVHJ9FCyNVJSQwH2kOsP/jPQ6gE0CPp2kM41Ipj5VJBwESP61lC14A3
+1Orvt8CZc3s4+4dsdCPovxTPwh8wE1JwwwsevYkhKnqRN7pgolXWc3kBilfHJjgo
+vWHs445z1vYrJkAvOS2AA8QpDkkP1Q==
+=hgjp
+-----END PGP SIGNATURE-----
+
+--Sig_/vYf6Q1j5Q18j+77fvZ4dtj_--
