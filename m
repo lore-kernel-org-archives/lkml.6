@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932424AbeCKK6e (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 06:58:34 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:54510 "EHLO
+        id S932564AbeCKK7q (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 06:59:46 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:54362 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932252AbeCKK4x (ORCPT
+        with ESMTP id S932232AbeCKK4w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 06:56:53 -0400
+        Sun, 11 Mar 2018 06:56:52 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, luto@kernel.org,
         torvalds@linux-foundation.org, mingo@kernel.org,
         viro@zeniv.linux.org.uk, akpm@linux-foundation.org
-Subject: [RFC PATCH 27/35] syscalls: do not call sys_mkdir{,at}() within the kernel
-Date: Sun, 11 Mar 2018 11:55:49 +0100
-Message-Id: <20180311105557.20807-28-linux@dominikbrodowski.net>
+Cc: linux-s390@vger.kernel.org
+Subject: [RFC PATCH 18/35] syscalls: do not call sys_write() within the kernel
+Date: Sun, 11 Mar 2018 11:55:40 +0100
+Message-Id: <20180311105557.20807-19-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180311105557.20807-1-linux@dominikbrodowski.net>
 References: <20180311105557.20807-1-linux@dominikbrodowski.net>
@@ -21,121 +22,102 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CC: Al Viro <viro@zeniv.linux.org.uk>
-CC: Andrew Morton <akpm@linux-foundation.org>
+CC: Alexander Viro <viro@zeniv.linux.org.uk>
+CC: linux-s390@vger.kernel.org
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- fs/internal.h            | 1 +
- fs/namei.c               | 9 +++++++--
- include/linux/syscalls.h | 6 ++++++
- init/do_mounts_initrd.c  | 2 +-
- init/initramfs.c         | 2 +-
- init/noinitramfs.c       | 4 ++--
- 6 files changed, 18 insertions(+), 6 deletions(-)
+ arch/s390/kernel/compat_linux.c | 2 +-
+ fs/read_write.c                 | 9 +++++++--
+ include/linux/syscalls.h        | 1 +
+ init/do_mounts_rd.c             | 4 ++--
+ init/initramfs.c                | 2 +-
+ 5 files changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 0eda35fa1743..53846bd4d9d7 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -55,6 +55,7 @@ extern void __init chrdev_init(void);
- extern int user_path_mountpoint_at(int, const char __user *, unsigned int, struct path *);
- extern int vfs_path_lookup(struct dentry *, struct vfsmount *,
- 			   const char *, unsigned int, struct path *);
-+long do_mkdirat(int dfd, const char __user *pathname, umode_t mode);
- long do_rmdir(int dfd, const char __user *pathname);
- long do_unlinkat(int dfd, struct filename *name);
+diff --git a/arch/s390/kernel/compat_linux.c b/arch/s390/kernel/compat_linux.c
+index 79b7a3438d54..5a9cfde5fc28 100644
+--- a/arch/s390/kernel/compat_linux.c
++++ b/arch/s390/kernel/compat_linux.c
+@@ -468,7 +468,7 @@ COMPAT_SYSCALL_DEFINE3(s390_write, unsigned int, fd, const char __user *, buf, c
+ 	if ((compat_ssize_t) count < 0)
+ 		return -EINVAL; 
  
-diff --git a/fs/namei.c b/fs/namei.c
-index 8545151f74e9..dcf506227509 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3803,7 +3803,7 @@ int vfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+-	return sys_write(fd, buf, count);
++	return ksys_write(fd, buf, count);
  }
- EXPORT_SYMBOL(vfs_mkdir);
  
--SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
-+long do_mkdirat(int dfd, const char __user *pathname, umode_t mode)
+ /*
+diff --git a/fs/read_write.c b/fs/read_write.c
+index f8547b82dfb3..8e8f0b4f52e2 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -578,8 +578,7 @@ SYSCALL_DEFINE3(read, unsigned int, fd, char __user *, buf, size_t, count)
+ 	return ret;
+ }
+ 
+-SYSCALL_DEFINE3(write, unsigned int, fd, const char __user *, buf,
+-		size_t, count)
++ssize_t ksys_write(unsigned int fd, const char __user *buf, size_t count)
  {
- 	struct dentry *dentry;
- 	struct path path;
-@@ -3828,9 +3828,14 @@ SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
- 	return error;
+ 	struct fd f = fdget_pos(fd);
+ 	ssize_t ret = -EBADF;
+@@ -595,6 +594,12 @@ SYSCALL_DEFINE3(write, unsigned int, fd, const char __user *, buf,
+ 	return ret;
  }
  
-+SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
++SYSCALL_DEFINE3(write, unsigned int, fd, const char __user *, buf,
++		size_t, count)
 +{
-+	return do_mkdirat(dfd, pathname, mode);
++	return ksys_write(fd, buf, count);
 +}
 +
- SYSCALL_DEFINE2(mkdir, const char __user *, pathname, umode_t, mode)
+ SYSCALL_DEFINE4(pread64, unsigned int, fd, char __user *, buf,
+ 			size_t, count, loff_t, pos)
  {
--	return sys_mkdirat(AT_FDCWD, pathname, mode);
-+	return do_mkdirat(AT_FDCWD, pathname, mode);
- }
- 
- int vfs_rmdir(struct inode *dir, struct dentry *dentry)
 diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index bb610042a1ec..e7fb0295dbfc 100644
+index c3416f8e8e29..51dd1e9185e1 100644
 --- a/include/linux/syscalls.h
 +++ b/include/linux/syscalls.h
-@@ -979,4 +979,10 @@ static inline long ksys_rmdir(const char __user *pathname)
- 	return do_rmdir(AT_FDCWD, pathname);
- }
+@@ -953,5 +953,6 @@ int ksys_mount(char __user *dev_name, char __user *dir_name, char __user *type,
+ int ksys_umount(char __user *name, int flags);
+ int ksys_dup(unsigned int fildes);
+ int ksys_chroot(const char __user *filename);
++ssize_t ksys_write(unsigned int fd, const char __user *buf, size_t count);
  
-+extern long do_mkdirat(int dfd, const char __user *pathname, umode_t mode);
-+static inline long ksys_mkdir(const char __user *pathname, umode_t mode)
-+{
-+	return do_mkdirat(AT_FDCWD, pathname, mode);
-+}
-+
  #endif
-diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
-index 784576b633fd..d30db6bbf014 100644
---- a/init/do_mounts_initrd.c
-+++ b/init/do_mounts_initrd.c
-@@ -60,7 +60,7 @@ static void __init handle_initrd(void)
- 	create_dev("/dev/root.old", Root_RAM0);
- 	/* mount initrd on rootfs' /root */
- 	mount_block_root("/dev/root.old", root_mountflags & ~MS_RDONLY);
--	sys_mkdir("/old", 0700);
-+	ksys_mkdir("/old", 0700);
- 	ksys_chdir("/old");
+diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+index 99e0b649fc0e..2d365c398ccc 100644
+--- a/init/do_mounts_rd.c
++++ b/init/do_mounts_rd.c
+@@ -270,7 +270,7 @@ int __init rd_load_image(char *from)
+ 			printk("Loading disk #%d... ", disk);
+ 		}
+ 		sys_read(in_fd, buf, BLOCK_SIZE);
+-		sys_write(out_fd, buf, BLOCK_SIZE);
++		ksys_write(out_fd, buf, BLOCK_SIZE);
+ #if !defined(CONFIG_S390)
+ 		if (!(i % 16)) {
+ 			pr_cont("%c\b", rotator[rotate & 0x3]);
+@@ -317,7 +317,7 @@ static long __init compr_fill(void *buf, unsigned long len)
  
- 	/* try loading default modules from initrd */
+ static long __init compr_flush(void *window, unsigned long outcnt)
+ {
+-	long written = sys_write(crd_outfd, window, outcnt);
++	long written = ksys_write(crd_outfd, window, outcnt);
+ 	if (written != outcnt) {
+ 		if (decompress_error == 0)
+ 			printk(KERN_ERR
 diff --git a/init/initramfs.c b/init/initramfs.c
-index 73bbb227f868..ca538a5f9fa9 100644
+index 7e99a0038942..6f972df15bf2 100644
 --- a/init/initramfs.c
 +++ b/init/initramfs.c
-@@ -352,7 +352,7 @@ static int __init do_name(void)
- 			}
- 		}
- 	} else if (S_ISDIR(mode)) {
--		sys_mkdir(collected, mode);
-+		ksys_mkdir(collected, mode);
- 		sys_chown(collected, uid, gid);
- 		sys_chmod(collected, mode);
- 		dir_add(collected, mtime);
-diff --git a/init/noinitramfs.c b/init/noinitramfs.c
-index 267739d85179..a08a9d937e60 100644
---- a/init/noinitramfs.c
-+++ b/init/noinitramfs.c
-@@ -29,7 +29,7 @@ static int __init default_rootfs(void)
- {
- 	int err;
+@@ -27,7 +27,7 @@ static ssize_t __init xwrite(int fd, const char *p, size_t count)
  
--	err = sys_mkdir((const char __user __force *) "/dev", 0755);
-+	err = ksys_mkdir((const char __user __force *) "/dev", 0755);
- 	if (err < 0)
- 		goto out;
+ 	/* sys_write only can write MAX_RW_COUNT aka 2G-4K bytes at most */
+ 	while (count) {
+-		ssize_t rv = sys_write(fd, p, count);
++		ssize_t rv = ksys_write(fd, p, count);
  
-@@ -39,7 +39,7 @@ static int __init default_rootfs(void)
- 	if (err < 0)
- 		goto out;
- 
--	err = sys_mkdir((const char __user __force *) "/root", 0700);
-+	err = ksys_mkdir((const char __user __force *) "/root", 0700);
- 	if (err < 0)
- 		goto out;
- 
+ 		if (rv < 0) {
+ 			if (rv == -EINTR || rv == -EAGAIN)
 -- 
 2.16.2
