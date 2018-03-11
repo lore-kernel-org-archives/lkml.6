@@ -1,186 +1,189 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751255AbeCKE6z (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 23:58:55 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:37767 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751232AbeCKE6x (ORCPT
+        id S932123AbeCKG0F (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 01:26:05 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54344 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932075AbeCKG0E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 23:58:53 -0500
-X-Google-Smtp-Source: AG47ELs2uMwjwhFBGNjwcLGmNNHQeEEzfjJMQBEU36/ztCIEyocAg58u3KPP3bHG4U2FUKuutbQG+qzvnuQQ/GMeZOY=
+        Sun, 11 Mar 2018 01:26:04 -0500
+X-Google-Smtp-Source: AG47ELs58nYtXjr7LnCcAQHFEiTClNAjzdXHFzi6roebhbKd0qlqGWTZlex0EIzucO9ytqVmKyhDvg==
+From: Jason Vas Dias <jason.vas.dias@gmail.com>
+To: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, andi <andi@firstfloor.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH v4.16-rc4 1/1] x86/vdso: on Intel, VDSO should handle CLOCK_MONOTONIC_RAW
+Date: Sun, 11 Mar 2018 06:25:56 +0000
+Message-ID: <h8pngmbv.fsf@gmail.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180311021406.GA388@thunk.org>
-References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu> <20180311021406.GA388@thunk.org>
-From: Andiry Xu <jix024@eng.ucsd.edu>
-Date: Sat, 10 Mar 2018 20:58:52 -0800
-Message-ID: <CAD4Szjt0xZ8Y1MM6-dcCGq3Y2FjkjK7=9O-LZHR4++TFZdh4Ug@mail.gmail.com>
-Subject: Re: [RFC v2 00/83] NOVA: a new file system for persistent memory
-To: "Theodore Y. Ts'o" <tytso@mit.edu>, Andiry Xu <jix024@eng.ucsd.edu>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Rudoff, Andy" <andy.rudoff@intel.com>, coughlan@redhat.com,
-        Steven Swanson <swanson@cs.ucsd.edu>,
-        Dave Chinner <david@fromorbit.com>, jack@suse.com, swhiteho@redhat.com,
-        miklos@szeredi.hu, Jian Xu <andiry.xu@gmail.com>,
-        Andiry Xu <jix024@cs.ucsd.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2B6QA5W015213
 
-On Sat, Mar 10, 2018 at 6:14 PM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> FYI, your patch set doesn't even compile for me without these fixups.
-> I'm not sure why you were trying to declare inline functions in a
-> header file without the function body?
->
 
-Thanks for catching this. I will fix it in the next version and adopt
-stricter flags next time.
+  Currently the VDSO does not handle
+     clock_gettime( CLOCK_MONOTONIC_RAW, &ts )
+  on Intel / AMD - it calls
+     vdso_fallback_gettime()
+  for this clock, which issues a syscall, having an unacceptably high
+  latency (minimum measurable time or time between measurements)
+  of 300-700ns on 2 2.8-3.9ghz Haswell x86_64 Family'_'Model : 06_3C
+  machines under various versions of Linux.
+     
+  This patch handles CLOCK_MONOTONIC_RAW clock_gettime() in the VDSO ,
+  by exporting the raw clock calibration, last cycles, last xtime_nsec,
+  and last raw_sec value in the vsyscall_gtod_data during vsyscall_update() .
 
-Thanks,
-Andiry
+  Now the new do_monotonic_raw() function in the vDSO has a latency of @ 24ns
+  on average, and the test program:
+   tools/testing/selftest/timers/inconsistency-check.c
+  succeeds with arguments: '-c 4 -t 120' or any arbitrary -t value.
 
->                                                 - Ted
->
-> diff --git a/fs/nova/balloc.c b/fs/nova/balloc.c
-> index 8e992156f28c..9c7b74aa712e 100644
-> --- a/fs/nova/balloc.c
-> +++ b/fs/nova/balloc.c
-> @@ -74,12 +74,12 @@ static void nova_init_free_list(struct super_block *sb,
->                 free_list->block_end -= sbi->tail_reserved_blocks;
->  }
->
-> -inline struct nova_range_node *nova_alloc_blocknode(struct super_block *sb)
-> +struct nova_range_node *nova_alloc_blocknode(struct super_block *sb)
->  {
->         return nova_alloc_range_node(sb);
->  }
->
-> -inline void nova_free_blocknode(struct super_block *sb,
-> +void nova_free_blocknode(struct super_block *sb,
->         struct nova_range_node *node)
->  {
->         nova_free_range_node(node);
-> @@ -206,7 +206,7 @@ int nova_insert_range_node(struct rb_root *tree,
->         return 0;
->  }
->
-> -inline int nova_insert_blocktree(struct nova_sb_info *sbi,
-> +int nova_insert_blocktree(struct nova_sb_info *sbi,
->         struct rb_root *tree, struct nova_range_node *new_node)
->  {
->         int ret;
-> @@ -659,7 +659,7 @@ static int nova_new_blocks(struct super_block *sb, unsigned long *blocknr,
->
->  // Allocate data blocks.  The offset for the allocated block comes back in
->  // blocknr.  Return the number of blocks allocated.
-> -inline int nova_new_data_blocks(struct super_block *sb,
-> +int nova_new_data_blocks(struct super_block *sb,
->         struct nova_inode_info_header *sih, unsigned long *blocknr,
->         unsigned long start_blk, unsigned int num,
->         enum nova_alloc_init zero, int cpu,
-> diff --git a/fs/nova/balloc.h b/fs/nova/balloc.h
-> index 463fbac99eff..aca7e8c18dde 100644
-> --- a/fs/nova/balloc.h
-> +++ b/fs/nova/balloc.h
-> @@ -62,18 +62,18 @@ enum alloc_type {
->
->  int nova_alloc_block_free_lists(struct super_block *sb);
->  void nova_delete_free_lists(struct super_block *sb);
-> -inline struct nova_range_node *nova_alloc_blocknode(struct super_block *sb);
-> -inline void nova_free_blocknode(struct super_block *sb,
-> +struct nova_range_node *nova_alloc_blocknode(struct super_block *sb);
-> +void nova_free_blocknode(struct super_block *sb,
->         struct nova_range_node *bnode);
->  extern void nova_init_blockmap(struct super_block *sb, int recovery);
->  extern unsigned long nova_count_free_blocks(struct super_block *sb);
-> -inline int nova_insert_blocktree(struct nova_sb_info *sbi,
-> +int nova_insert_blocktree(struct nova_sb_info *sbi,
->         struct rb_root *tree, struct nova_range_node *new_node);
->  extern int nova_free_data_blocks(struct super_block *sb,
->         struct nova_inode_info_header *sih, unsigned long blocknr, int num);
->  extern int nova_free_log_blocks(struct super_block *sb,
->         struct nova_inode_info_header *sih, unsigned long blocknr, int num);
-> -extern inline int nova_new_data_blocks(struct super_block *sb,
-> +extern int nova_new_data_blocks(struct super_block *sb,
->         struct nova_inode_info_header *sih, unsigned long *blocknr,
->         unsigned long start_blk, unsigned int num,
->         enum nova_alloc_init zero, int cpu,
-> diff --git a/fs/nova/inode.c b/fs/nova/inode.c
-> index 21be31a05d26..31ef258978ba 100644
-> --- a/fs/nova/inode.c
-> +++ b/fs/nova/inode.c
-> @@ -440,7 +440,7 @@ struct inode *nova_iget(struct super_block *sb, unsigned long ino)
->         return ERR_PTR(err);
->  }
->
-> -inline int nova_insert_inodetree(struct nova_sb_info *sbi,
-> +int nova_insert_inodetree(struct nova_sb_info *sbi,
->         struct nova_range_node *new_node, int cpu)
->  {
->         struct rb_root *tree;
-> diff --git a/fs/nova/inode.h b/fs/nova/inode.h
-> index 086a7cba8ac3..1097e15ff7af 100644
-> --- a/fs/nova/inode.h
-> +++ b/fs/nova/inode.h
-> @@ -254,7 +254,7 @@ int nova_init_inode_table(struct super_block *sb);
->  int nova_get_inode_address(struct super_block *sb, u64 ino,
->         u64 *pi_addr, int extendable);
->  struct inode *nova_iget(struct super_block *sb, unsigned long ino);
-> -inline int nova_insert_inodetree(struct nova_sb_info *sbi,
-> +int nova_insert_inodetree(struct nova_sb_info *sbi,
->         struct nova_range_node *new_node, int cpu);
->  u64 nova_new_nova_inode(struct super_block *sb, u64 *pi_addr);
->  struct inode *nova_new_vfs_inode(enum nova_new_inode_type type,
-> diff --git a/fs/nova/super.c b/fs/nova/super.c
-> index 039c003b698b..9f06ec847c95 100644
-> --- a/fs/nova/super.c
-> +++ b/fs/nova/super.c
-> @@ -795,23 +795,23 @@ static void nova_put_super(struct super_block *sb)
->         sb->s_fs_info = NULL;
->  }
->
-> -inline void nova_free_range_node(struct nova_range_node *node)
-> +void nova_free_range_node(struct nova_range_node *node)
->  {
->         kmem_cache_free(nova_range_node_cachep, node);
->  }
->
-> -inline void nova_free_inode_node(struct super_block *sb,
-> +void nova_free_inode_node(struct super_block *sb,
->         struct nova_range_node *node)
->  {
->         nova_free_range_node(node);
->  }
->
-> -inline void nova_free_file_write_item(struct nova_file_write_item *item)
-> +void nova_free_file_write_item(struct nova_file_write_item *item)
->  {
->         kmem_cache_free(nova_file_write_item_cachep, item);
->  }
->
-> -inline struct nova_file_write_item *
-> +struct nova_file_write_item *
->  nova_alloc_file_write_item(struct super_block *sb)
->  {
->         struct nova_file_write_item *p;
-> diff --git a/fs/nova/super.h b/fs/nova/super.h
-> index bcbe862ac914..dc98346266e1 100644
-> --- a/fs/nova/super.h
-> +++ b/fs/nova/super.h
-> @@ -160,11 +160,11 @@ static inline struct nova_super_block *nova_get_super(struct super_block *sb)
->
->  extern void nova_error_mng(struct super_block *sb, const char *fmt, ...);
->  extern struct nova_range_node *nova_alloc_range_node(struct super_block *sb);
-> -extern inline struct nova_range_node *nova_alloc_inode_node(struct super_block *sb);
-> +extern struct nova_range_node *nova_alloc_inode_node(struct super_block *sb);
->  extern struct nova_file_write_item *
->  nova_alloc_file_write_item(struct super_block *sb);
->  extern void nova_free_range_node(struct nova_range_node *node);
-> -extern inline void nova_free_inode_node(struct super_block *sb,
-> +extern void nova_free_inode_node(struct super_block *sb,
->         struct nova_range_node *node);
->  void nova_free_file_write_item(struct nova_file_write_item *item);
->
+  The patch is against Linus' latest 4.16-rc4 tree,
+  current HEAD of :
+    git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+  .
+
+  The patch affects only files:
+  
+   arch/x86/include/asm/vgtod.h
+   arch/x86/entry/vdso/vclock_gettime.c
+   arch/x86/entry/vsyscall/vsyscall_gtod.c
+
+
+  Best Regards,
+     Jason Vas Dias  .
+     
+---
+diff -up linux-4.16-rc4/arch/x86/entry/vdso/vclock_gettime.c.4.16-rc4linux-4.16-rc4/arch/x86/entry/vdso/vclock_gettime.c
+--- linux-4.16-rc4/arch/x86/entry/vdso/vclock_gettime.c.4.16-rc4 2018-03-04 22:54:11.000000000 +0000
++++ linux-4.16-rc4/arch/x86/entry/vdso/vclock_gettime.c	2018-03-11 05:08:31.137681337 +0000
+@@ -182,6 +182,29 @@ notrace static u64 vread_tsc(void)
+ 	return last;
+ }
+ 
++notrace static u64 vread_tsc_raw(void)
++{
++        u64 tsc, last+        if( likely( gtod->has_rdtscp ) ) {
++                u32     tsc_lo, tsc_hi,
++                        tsc_cpu __attribute__((unused));
++                asm volatile
++                ( "rdtscp"
++                /* ^- has built-in cancellation point / pipeline stall"barrier" */
++                : "¬_lo)
++                , "Ü_hi)
++                , "Ì_cpu)
++                ); // since all variables 32-bit, eax, edx, ecx used - NOT rax, rdx, rcx                 
++                tsc      _lo) & 0xffffffffUL);
++        } else {
++                tsc      +        }
++	if (likely(tsc >+		return tsc;        
++        asm volatile ("");                                
++        return last;
++}
++
+ notrace static inline u64 vgetsns(int *mode)
+ {
+ 	u64 v;
+@@ -203,6 +226,27 @@ notrace static inline u64 vgetsns(int *m
+ 	return v * gtod->mult;
+ }
+ 
++notrace static inline u64 vgetsns_raw(int *mode)
++{
++	u64 v;
++	cycles_t cycles;
++
++	if (gtod->vclock_mode +		cycles +#ifdef CONFIG_PARAVIRT_CLOCK
++	else if (gtod->vclock_mode +		cycles +#endif
++#ifdef CONFIG_HYPERV_TSCPAGE
++	else if (gtod->vclock_mode +		cycles +#endif
++	else
++		return 0;
++	v +	return v * gtod->raw_mult;
++}
++
+ /* Code size doesn't matter (vdso is 4k anyway) and this is faster. */
+ notrace static int __always_inline do_realtime(struct timespec *ts)
+ {
+@@ -246,6 +290,27 @@ notrace static int __always_inline do_mo
+ 	return mode;
+ }
+ 
++notrace static int __always_inline do_monotonic_raw( struct timespec *ts)
++{
++	unsigned long seq;
++	u64 ns;
++	int mode;
++
++	do {
++		seq +		mode +		ts->tv_sec +		ns +		ns ++		ns >>+	} while (unlikely(gtod_read_retry(gtod, seq)));
++
++	ts->tv_sec ++	ts->tv_nsec +
++	return mode;
++}
++
+ notrace static void do_realtime_coarse(struct timespec *ts)
+ {
+ 	unsigned long seq;
+@@ -277,6 +342,10 @@ notrace int __vdso_clock_gettime(clockid
+ 		if (do_monotonic(ts)  			goto fallback;
+ 		break;
++	case CLOCK_MONOTONIC_RAW:
++		if (do_monotonic_raw(ts) +			goto fallback;
++		break;
+ 	case CLOCK_REALTIME_COARSE:
+ 		do_realtime_coarse(ts);
+ 		break;
+diff -up linux-4.16-rc4/arch/x86/entry/vsyscall/vsyscall_gtod.c.4.16-rc4 linux-4.16-rc4/arch/x86/entry/vsyscall/vsyscall_gtod.c
+--- linux-4.16-rc4/arch/x86/entry/vsyscall/vsyscall_gtod.c.4.16-rc4 2018-03-04 22:54:11.000000000 +0000
++++ linux-4.16-rc4/arch/x86/entry/vsyscall/vsyscall_gtod.c 2018-03-11 05:10:57.371197747 +0000
+@@ -16,6 +16,7 @@
+ #include <linux/timekeeper_internal.h>
+ #include <asm/vgtod.h>
+ #include <asm/vvar.h>
++#include <asm/cpufeature.h>
+ 
+ int vclocks_used __read_mostly;
+ 
+@@ -45,6 +46,12 @@ void update_vsyscall(struct timekeeper *
+ 	vdata->mult		 	vdata->shift		 
++	vdata->raw_cycle_last   +	vdata->raw_mask         +	vdata->raw_mult         +	vdata->raw_shift	+	vdata->has_rdtscp	+
+ 	vdata->wall_time_sec		 	vdata->wall_time_snsec		 
+@@ -74,5 +81,8 @@ void update_vsyscall(struct timekeeper *
+ 		vdata->monotonic_time_coarse_sec++;
+ 	}
+ 
++	vdata->monotonic_time_raw_sec  +	vdata->monotonic_time_raw_nsec +
+ 	gtod_write_end(vdata);
+ }
+diff -up linux-4.16-rc4/arch/x86/include/asm/vgtod.h.4.16-rc4 linux-4.16-rc4/arch/x86/include/asm/vgtod.h
+--- linux-4.16-rc4/arch/x86/include/asm/vgtod.h.4.16-rc4 2018-03-04 22:54:11.000000000 +0000
++++ linux-4.16-rc4/arch/x86/include/asm/vgtod.h	2018-03-11 05:12:35.916338703 +0000
+@@ -22,6 +22,11 @@ struct vsyscall_gtod_data {
+ 	u64	mask;
+ 	u32	mult;
+ 	u32	shift;
++	u64	raw_cycle_last;
++	u64     raw_mask;
++	u32     raw_mult;
++	u32     raw_shift;
++	u32     has_rdtscp;
+ 
+ 	/* open coded 'struct timespec' */
+ 	u64		wall_time_snsec;
+@@ -32,6 +37,8 @@ struct vsyscall_gtod_data {
+ 	gtod_long_t	wall_time_coarse_nsec;
+ 	gtod_long_t	monotonic_time_coarse_sec;
+ 	gtod_long_t	monotonic_time_coarse_nsec;
++	gtod_long_t	monotonic_time_raw_sec;
++	gtod_long_t	monotonic_time_raw_nsec;
+ 
+ 	int		tz_minuteswest;
+ 	int		tz_dsttime;
+
+---
