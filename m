@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932269AbeCKK4y (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 06:56:54 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:54362 "EHLO
+        id S932496AbeCKK6i (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 06:58:38 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:54490 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932120AbeCKK4t (ORCPT
+        with ESMTP id S932242AbeCKK4x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 06:56:49 -0400
+        Sun, 11 Mar 2018 06:56:53 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, luto@kernel.org,
         torvalds@linux-foundation.org, mingo@kernel.org,
         viro@zeniv.linux.org.uk, akpm@linux-foundation.org
-Subject: [RFC PATCH 35/35] syscalls: do not call sys_close() within the kernel
-Date: Sun, 11 Mar 2018 11:55:57 +0100
-Message-Id: <20180311105557.20807-36-linux@dominikbrodowski.net>
+Subject: [RFC PATCH 33/35] syscalls: do not call sys_ftruncate() within the kernel
+Date: Sun, 11 Mar 2018 11:55:55 +0100
+Message-Id: <20180311105557.20807-34-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180311105557.20807-1-linux@dominikbrodowski.net>
 References: <20180311105557.20807-1-linux@dominikbrodowski.net>
@@ -21,226 +21,175 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The few places which checked the return value did not care about the return
-value re-writing in sys_close(), so simply use a wrapper to __close_fd().
-
 CC: Al Viro <viro@zeniv.linux.org.uk>
 CC: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- fs/autofs4/dev-ioctl.c   | 2 +-
- fs/binfmt_misc.c         | 2 +-
- fs/file.c                | 1 +
- fs/open.c                | 2 +-
- include/linux/syscalls.h | 6 ++++++
- init/do_mounts.c         | 4 ++--
- init/do_mounts_initrd.c  | 2 +-
- init/do_mounts_md.c      | 8 ++++----
- init/do_mounts_rd.c      | 6 +++---
- init/initramfs.c         | 8 ++++----
- 10 files changed, 24 insertions(+), 17 deletions(-)
+ arch/mips/kernel/linux32.c      | 2 +-
+ arch/parisc/kernel/sys_parisc.c | 4 ++--
+ arch/powerpc/kernel/sys_ppc32.c | 2 +-
+ arch/s390/kernel/compat_linux.c | 2 +-
+ arch/sparc/kernel/sys_sparc32.c | 2 +-
+ arch/tile/kernel/compat.c       | 2 +-
+ arch/x86/ia32/sys_ia32.c        | 2 +-
+ fs/internal.h                   | 1 +
+ fs/open.c                       | 2 +-
+ include/linux/syscalls.h        | 6 ++++++
+ init/initramfs.c                | 2 +-
+ 11 files changed, 17 insertions(+), 10 deletions(-)
 
-diff --git a/fs/autofs4/dev-ioctl.c b/fs/autofs4/dev-ioctl.c
-index b7c816f39404..26f6b4f41ce6 100644
---- a/fs/autofs4/dev-ioctl.c
-+++ b/fs/autofs4/dev-ioctl.c
-@@ -310,7 +310,7 @@ static int autofs_dev_ioctl_closemount(struct file *fp,
- 				       struct autofs_sb_info *sbi,
- 				       struct autofs_dev_ioctl *param)
+diff --git a/arch/mips/kernel/linux32.c b/arch/mips/kernel/linux32.c
+index db895771ab06..740eee40c668 100644
+--- a/arch/mips/kernel/linux32.c
++++ b/arch/mips/kernel/linux32.c
+@@ -88,7 +88,7 @@ SYSCALL_DEFINE4(32_truncate64, const char __user *, path,
+ SYSCALL_DEFINE4(32_ftruncate64, unsigned long, fd, unsigned long, __dummy,
+ 	unsigned long, a2, unsigned long, a3)
  {
--	return sys_close(param->ioctlfd);
-+	return ksys_close(param->ioctlfd);
+-	return sys_ftruncate(fd, merge_64(a2, a3));
++	return ksys_ftruncate(fd, merge_64(a2, a3));
+ }
+ 
+ SYSCALL_DEFINE5(32_llseek, unsigned int, fd, unsigned int, offset_high,
+diff --git a/arch/parisc/kernel/sys_parisc.c b/arch/parisc/kernel/sys_parisc.c
+index 0b0e1cfb4bd9..59b315d6d194 100644
+--- a/arch/parisc/kernel/sys_parisc.c
++++ b/arch/parisc/kernel/sys_parisc.c
+@@ -298,7 +298,7 @@ asmlinkage long parisc_truncate64(const char __user * path,
+ asmlinkage long parisc_ftruncate64(unsigned int fd,
+ 					unsigned int high, unsigned int low)
+ {
+-	return sys_ftruncate(fd, (long)high << 32 | low);
++	return ksys_ftruncate(fd, (long)high << 32 | low);
+ }
+ 
+ /* stubs for the benefit of the syscall_table since truncate64 and truncate 
+@@ -309,7 +309,7 @@ asmlinkage long sys_truncate64(const char __user * path, unsigned long length)
+ }
+ asmlinkage long sys_ftruncate64(unsigned int fd, unsigned long length)
+ {
+-	return sys_ftruncate(fd, length);
++	return ksys_ftruncate(fd, length);
+ }
+ asmlinkage long sys_fcntl64(unsigned int fd, unsigned int cmd, unsigned long arg)
+ {
+diff --git a/arch/powerpc/kernel/sys_ppc32.c b/arch/powerpc/kernel/sys_ppc32.c
+index 3871aa9267e6..f41cb34c84c8 100644
+--- a/arch/powerpc/kernel/sys_ppc32.c
++++ b/arch/powerpc/kernel/sys_ppc32.c
+@@ -107,7 +107,7 @@ asmlinkage long compat_sys_fallocate(int fd, int mode, u32 offhi, u32 offlo,
+ asmlinkage int compat_sys_ftruncate64(unsigned int fd, u32 reg4, unsigned long high,
+ 				 unsigned long low)
+ {
+-	return sys_ftruncate(fd, (high << 32) | low);
++	return ksys_ftruncate(fd, (high << 32) | low);
+ }
+ 
+ long ppc32_fadvise64(int fd, u32 unused, u32 offset_high, u32 offset_low,
+diff --git a/arch/s390/kernel/compat_linux.c b/arch/s390/kernel/compat_linux.c
+index 82e99bf3b00e..572349852b75 100644
+--- a/arch/s390/kernel/compat_linux.c
++++ b/arch/s390/kernel/compat_linux.c
+@@ -307,7 +307,7 @@ COMPAT_SYSCALL_DEFINE3(s390_truncate64, const char __user *, path, u32, high, u3
+ 
+ COMPAT_SYSCALL_DEFINE3(s390_ftruncate64, unsigned int, fd, u32, high, u32, low)
+ {
+-	return sys_ftruncate(fd, (unsigned long)high << 32 | low);
++	return ksys_ftruncate(fd, (unsigned long)high << 32 | low);
+ }
+ 
+ COMPAT_SYSCALL_DEFINE5(s390_pread64, unsigned int, fd, char __user *, ubuf,
+diff --git a/arch/sparc/kernel/sys_sparc32.c b/arch/sparc/kernel/sys_sparc32.c
+index c56f43893283..f8d357540748 100644
+--- a/arch/sparc/kernel/sys_sparc32.c
++++ b/arch/sparc/kernel/sys_sparc32.c
+@@ -65,7 +65,7 @@ asmlinkage long sys32_ftruncate64(unsigned int fd, unsigned long high, unsigned
+ 	if ((int)high < 0)
+ 		return -EINVAL;
+ 	else
+-		return sys_ftruncate(fd, (high << 32) | low);
++		return ksys_ftruncate(fd, (high << 32) | low);
+ }
+ 
+ static int cp_compat_stat64(struct kstat *stat,
+diff --git a/arch/tile/kernel/compat.c b/arch/tile/kernel/compat.c
+index 24414d4d592d..d1fff2b0dade 100644
+--- a/arch/tile/kernel/compat.c
++++ b/arch/tile/kernel/compat.c
+@@ -48,7 +48,7 @@ COMPAT_SYSCALL_DEFINE4(truncate64, char __user *, filename, u32, dummy,
+ COMPAT_SYSCALL_DEFINE4(ftruncate64, unsigned int, fd, u32, dummy,
+ 		       SYSCALL_PAIR(length))
+ {
+-	return sys_ftruncate(fd, ((loff_t)length_hi << 32) | length_lo);
++	return ksys_ftruncate(fd, ((loff_t)length_hi << 32) | length_lo);
+ }
+ 
+ COMPAT_SYSCALL_DEFINE6(pread64, unsigned int, fd, char __user *, ubuf,
+diff --git a/arch/x86/ia32/sys_ia32.c b/arch/x86/ia32/sys_ia32.c
+index 42badedd5ebc..3bac9e81a363 100644
+--- a/arch/x86/ia32/sys_ia32.c
++++ b/arch/x86/ia32/sys_ia32.c
+@@ -61,7 +61,7 @@ asmlinkage long sys32_truncate64(const char __user *filename,
+ asmlinkage long sys32_ftruncate64(unsigned int fd, unsigned long offset_low,
+ 				  unsigned long offset_high)
+ {
+-       return sys_ftruncate(fd, ((loff_t) offset_high << 32) | offset_low);
++	return ksys_ftruncate(fd, ((loff_t) offset_high << 32) | offset_low);
  }
  
  /*
-diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index a7c5a9861bef..a41b48f82a70 100644
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -241,7 +241,7 @@ static int load_misc_binary(struct linux_binprm *bprm)
- 	return retval;
- error:
- 	if (fd_binary > 0)
--		sys_close(fd_binary);
-+		ksys_close(fd_binary);
- 	bprm->interp_flags = 0;
- 	bprm->interp_data = 0;
- 	goto ret;
-diff --git a/fs/file.c b/fs/file.c
-index d304004f0b65..7ffd6e9d103d 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -638,6 +638,7 @@ int __close_fd(struct files_struct *files, unsigned fd)
- 	spin_unlock(&files->file_lock);
- 	return -EBADF;
- }
-+EXPORT_SYMBOL(__close_fd); /* for ksys_close() */
+diff --git a/fs/internal.h b/fs/internal.h
+index 26f4f05b52ef..49e0bf51576c 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -119,6 +119,7 @@ extern struct file *do_filp_open(int dfd, struct filename *pathname,
+ extern struct file *do_file_open_root(struct dentry *, struct vfsmount *,
+ 		const char *, const struct open_flags *);
  
- void do_close_on_exec(struct files_struct *files)
- {
++long do_sys_ftruncate(unsigned int fd, loff_t length, int small);
+ long do_faccessat(int dfd, const char __user *filename, int mode);
+ int do_fchmodat(int dfd, const char __user *filename, umode_t mode);
+ 
 diff --git a/fs/open.c b/fs/open.c
-index b3f3b2cd9f19..aab4ad7d9c9a 100644
+index 0fc8188be31a..77a4494f605d 100644
 --- a/fs/open.c
 +++ b/fs/open.c
-@@ -1200,7 +1200,7 @@ SYSCALL_DEFINE1(close, unsigned int, fd)
- 
- 	return retval;
+@@ -162,7 +162,7 @@ COMPAT_SYSCALL_DEFINE2(truncate, const char __user *, path, compat_off_t, length
  }
--EXPORT_SYMBOL(sys_close);
-+
+ #endif
  
- /*
-  * This routine simulates a hangup on the tty, to arrange that users
+-static long do_sys_ftruncate(unsigned int fd, loff_t length, int small)
++long do_sys_ftruncate(unsigned int fd, loff_t length, int small)
+ {
+ 	struct inode *inode;
+ 	struct dentry *dentry;
 diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index fd1dcdc7fb1b..dda95f614916 100644
+index ac4ba9439e52..ebb8eb458415 100644
 --- a/include/linux/syscalls.h
 +++ b/include/linux/syscalls.h
-@@ -1042,4 +1042,10 @@ static inline long ksys_lchown(const char __user *filename, uid_t user,
- 	return do_fchownat(AT_FDCWD, filename, user, group,
- 			     AT_SYMLINK_NOFOLLOW);
+@@ -1022,4 +1022,10 @@ static inline long ksys_access(const char __user *filename, int mode)
+ 	return do_faccessat(AT_FDCWD, filename, mode);
  }
-+
-+extern int __close_fd(struct files_struct *files, unsigned int fd);
-+static inline int ksys_close(unsigned int fd)
+ 
++extern long do_sys_ftruncate(unsigned int fd, loff_t length, int small);
++static inline long ksys_ftruncate(unsigned int fd, unsigned long length)
 +{
-+	return __close_fd(current->files, fd);
++	return do_sys_ftruncate(fd, length, 1);
 +}
++
  #endif
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index 89f18985fa90..a28dd42d1f84 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -492,7 +492,7 @@ void __init change_floppy(char *fmt, ...)
- 	fd = sys_open("/dev/root", O_RDWR | O_NDELAY, 0);
- 	if (fd >= 0) {
- 		sys_ioctl(fd, FDEJECT, 0);
--		sys_close(fd);
-+		ksys_close(fd);
- 	}
- 	printk(KERN_NOTICE "VFS: Insert %s and press ENTER\n", buf);
- 	fd = sys_open("/dev/console", O_RDWR, 0);
-@@ -503,7 +503,7 @@ void __init change_floppy(char *fmt, ...)
- 		sys_read(fd, &c, 1);
- 		termios.c_lflag |= ICANON;
- 		sys_ioctl(fd, TCSETSF, (long)&termios);
--		sys_close(fd);
-+		ksys_close(fd);
- 	}
- }
- #endif
-diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
-index d30db6bbf014..50decd9999b7 100644
---- a/init/do_mounts_initrd.c
-+++ b/init/do_mounts_initrd.c
-@@ -111,7 +111,7 @@ static void __init handle_initrd(void)
- 			error = fd;
- 		} else {
- 			error = sys_ioctl(fd, BLKFLSBUF, 0);
--			sys_close(fd);
-+			ksys_close(fd);
- 		}
- 		printk(!error ? "okay\n" : "failed\n");
- 	}
-diff --git a/init/do_mounts_md.c b/init/do_mounts_md.c
-index 3f733c760a8c..ebd4013d589e 100644
---- a/init/do_mounts_md.c
-+++ b/init/do_mounts_md.c
-@@ -191,7 +191,7 @@ static void __init md_setup_drive(void)
- 			printk(KERN_WARNING
- 			       "md: Ignoring md=%d, already autodetected. (Use raid=noautodetect)\n",
- 			       minor);
--			sys_close(fd);
-+			ksys_close(fd);
- 			continue;
- 		}
- 
-@@ -243,11 +243,11 @@ static void __init md_setup_drive(void)
- 			 * boot a kernel with devfs compiled in from partitioned md
- 			 * array without it
- 			 */
--			sys_close(fd);
-+			ksys_close(fd);
- 			fd = sys_open(name, 0, 0);
- 			sys_ioctl(fd, BLKRRPART, 0);
- 		}
--		sys_close(fd);
-+		ksys_close(fd);
- 	}
- }
- 
-@@ -297,7 +297,7 @@ static void __init autodetect_raid(void)
- 	fd = sys_open("/dev/md0", 0, 0);
- 	if (fd >= 0) {
- 		sys_ioctl(fd, RAID_AUTORUN, raid_autopart);
--		sys_close(fd);
-+		ksys_close(fd);
- 	}
- }
- 
-diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
-index 5b69056f610a..f1aa341862d3 100644
---- a/init/do_mounts_rd.c
-+++ b/init/do_mounts_rd.c
-@@ -257,7 +257,7 @@ int __init rd_load_image(char *from)
- 		if (i && (i % devblocks == 0)) {
- 			printk("done disk #%d.\n", disk++);
- 			rotate = 0;
--			if (sys_close(in_fd)) {
-+			if (ksys_close(in_fd)) {
- 				printk("Error closing the disk.\n");
- 				goto noclose_input;
- 			}
-@@ -283,9 +283,9 @@ int __init rd_load_image(char *from)
- successful_load:
- 	res = 1;
- done:
--	sys_close(in_fd);
-+	ksys_close(in_fd);
- noclose_input:
--	sys_close(out_fd);
-+	ksys_close(out_fd);
- out:
- 	kfree(buf);
- 	ksys_unlink("/dev/ram");
 diff --git a/init/initramfs.c b/init/initramfs.c
-index 0d3b001b0dc5..ce2bcad97cdf 100644
+index 16c3c23076e2..237a975738ba 100644
 --- a/init/initramfs.c
 +++ b/init/initramfs.c
-@@ -373,7 +373,7 @@ static int __init do_copy(void)
- 	if (byte_count >= body_len) {
- 		if (xwrite(wfd, victim, body_len) != body_len)
- 			error("write error");
--		sys_close(wfd);
-+		ksys_close(wfd);
- 		do_utime(vcollected, mtime);
- 		kfree(vcollected);
- 		eat(body_len);
-@@ -574,7 +574,7 @@ static void __init clean_rootfs(void)
- 	buf = kzalloc(BUF_SIZE, GFP_KERNEL);
- 	WARN_ON(!buf);
- 	if (!buf) {
--		sys_close(fd);
-+		ksys_close(fd);
- 		return;
- 	}
- 
-@@ -602,7 +602,7 @@ static void __init clean_rootfs(void)
- 		num = sys_getdents64(fd, dirp, BUF_SIZE);
- 	}
- 
--	sys_close(fd);
-+	ksys_close(fd);
- 	kfree(buf);
- }
- #endif
-@@ -639,7 +639,7 @@ static int __init populate_rootfs(void)
- 				pr_err("/initrd.image: incomplete write (%zd != %ld)\n",
- 				       written, initrd_end - initrd_start);
- 
--			sys_close(fd);
-+			ksys_close(fd);
- 			free_initrd();
- 		}
- 	done:
+@@ -346,7 +346,7 @@ static int __init do_name(void)
+ 				sys_fchown(wfd, uid, gid);
+ 				ksys_fchmod(wfd, mode);
+ 				if (body_len)
+-					sys_ftruncate(wfd, body_len);
++					ksys_ftruncate(wfd, body_len);
+ 				vcollected = kstrdup(collected, GFP_KERNEL);
+ 				state = CopyFile;
+ 			}
 -- 
 2.16.2
