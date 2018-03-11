@@ -1,40 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932303AbeCKQs3 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 12:48:29 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:36878 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932196AbeCKQs1 (ORCPT
+        id S932279AbeCKQmR (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 12:42:17 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:34424 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932153AbeCKQmP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 12:48:27 -0400
-Date: Sun, 11 Mar 2018 12:48:14 -0400
-From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [rds-devel] [PATCH][rds-next] rds: remove redundant variable
- 'sg_off'
-Message-ID: <20180311164814.GA7812@oracle.com>
-References: <20180311162756.26950-1-colin.king@canonical.com>
+        Sun, 11 Mar 2018 12:42:15 -0400
+X-Google-Smtp-Source: AG47ELtKo5sEezKvKnmbzLdHXKXb4ybkIL/ZNAKXzobJjGDuMJ/JfTxwc8tCqmBTG89nYe/sYmL8/2ywp4mqyNQA0I4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180311162756.26950-1-colin.king@canonical.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8828 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=689
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803110216
+From: =?UTF-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>
+Date: Mon, 12 Mar 2018 00:42:14 +0800
+Message-ID: <CAJDTihyScHH58fau9xPbPzgWeTGHQrPUUBVDxtCw2Fu7TZN8jQ@mail.gmail.com>
+Subject: finish_wait with list_empty_careful maybe fragile or buggy
+To: linux-kernel@vger.kernel.org
+Cc: mingo@elte.hu
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (03/11/18 17:27), Colin King wrote:
-> Variable sg_off is assigned a value but it is never read, hence it is
-> redundant and can be removed.
-> 
+void finish_wait(struct wait_queue_head *wq_head, struct
+wait_queue_entry *wq_entry)
+{
+    ....
+->    if (!list_empty_careful(&wq_entry->entry)) {
+->        spin_lock_irqsave(&wq_head->lock, flags);
+->        list_del_init(&wq_entry->entry);
+->        spin_unlock_irqrestore(&wq_head->lock, flags);
+->    }
+}
 
-Acked-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+After careful look into the stop/wakeup code, I found the above code
+fragile or even
+buggy. This code was introduced at least 14 years ago and seems
+fragile or buggy now
+after years of study on SMP synchronization by us.
+
+I understand this code are being used a lot and no bug seems to
+emerge. But, as I'll
+explain, it depends on a lot of unreliable implementation details.
+
+Firstly,
+
+static inline int list_empty_careful(const struct list_head *head)
+{
+    struct list_head *next = head->next;
+    return (next == head) && (next == head->prev);
+}
+
+note that the read of head->next & head->prev is not protected by READ_ONCE. So
+the read is free to be optimized out entirely. Luckily, this
+optimization is hard for compilers
+now, since all other accesses are out of finish_wait. And still, GCC
+won't spit aligned
+accesses into multiple instructions so it is atomic so far.
+
+Secondly,
+
+if ( ! list_empty_careful(&wq_entry->entry) ) {
+     <remove entry with spinning-lock>
+}
+<ends stack frame of the function calling finish_wait>
+<overwrites wq_entry with another frame>
+
+and
+
+__wake_up_common()   -->
+<read wq_entry->func>  -->
+<read wq_entry->flags>  -->
+autoremove_wake_function()  -->
+<remove wq_entry->entry from wait queue>  -->
+
+are not properly ordered for SMP so that  <read wq_entry->flags> may
+be reordered after
+<remove wq_entry->entry from wait queue> since no dependency or memory
+barrier forbids
+it. This may cause <overwrites wq_entry with another frame> on one CPU
+takes place before
+<read wq_entry->flags> on another CPU and cause <read wq_entry->flags>
+to return bad
+value.
+
+This behavior is not reported may thank to:
+- quite a few code is using autoremove_wake_function
+- CPU pipeline is not as deep as to make this emerge
+
+Best regards,
+Patrick Trol
