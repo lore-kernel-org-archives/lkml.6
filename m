@@ -1,112 +1,257 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932232AbeCKMP4 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 08:15:56 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:40178 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932125AbeCKMPy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 08:15:54 -0400
-X-Google-Smtp-Source: AG47ELsEYyYmyLOecJK9tVMcPz60zCgxIzNVDe9fQ2I4buwzqklhj91hWC1sFsLPAMCGjIDbt/MGzQ==
-Subject: Re: [RFC v2 09/83] Add Kconfig and Makefile
-To: Andiry Xu <jix024@eng.ucsd.edu>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
-Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
-        swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
-        swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
-        Andiry Xu <jix024@cs.ucsd.edu>
-References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
- <1520705944-6723-10-git-send-email-jix024@eng.ucsd.edu>
-From: Nikolay Borisov <n.borisov.lkml@gmail.com>
-Message-ID: <53fde8ab-60df-be2e-002e-f1d7f04e933b@gmail.com>
-Date: Sun, 11 Mar 2018 14:15:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932200AbeCKMRn convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 08:17:43 -0400
+Received: from foss.arm.com ([217.140.101.70]:44558 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932125AbeCKMRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Mar 2018 08:17:41 -0400
+Date: Sun, 11 Mar 2018 12:17:33 +0000
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: Christoffer Dall <cdall@kernel.org>,
+        Shunyong Yang <shunyong.yang@hxt-semitech.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>, Auger Eric <eric.auger@redhat.com>,
+        david.daney@cavium.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        kvmarm@lists.cs.columbia.edu,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Joey Zheng <yu.zheng@hxt-semitech.com>
+Subject: Re: [RFC PATCH] KVM: arm/arm64: vgic: change condition for level
+ interrupt resampling
+Message-ID: <20180311121733.643fb1a5@why.wild-wind.fr.eu.org>
+In-Reply-To: <CAEDV+g+29ZK6QQEn=2h_77dMZC7wmw+d4MZC-GU-CqeaK_xhMg@mail.gmail.com>
+References: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
+        <9ad47673-068e-f732-d2ca-9c76a8fbdfbc@arm.com>
+        <0a15633d-8944-cb9b-3e6b-b08ee5ec42b9@arm.com>
+        <20180308161900.GC1917@lvm>
+        <86r2oubho3.wl-marc.zyngier@arm.com>
+        <20180309213612.GD1917@lvm>
+        <86k1ukazr0.wl-marc.zyngier@arm.com>
+        <CAEDV+g+29ZK6QQEn=2h_77dMZC7wmw+d4MZC-GU-CqeaK_xhMg@mail.gmail.com>
+Organization: ARM Ltd
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1520705944-6723-10-git-send-email-jix024@eng.ucsd.edu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, 11 Mar 2018 01:55:08 +0000
+Christoffer Dall <cdall@kernel.org> wrote:
 
-
-On 10.03.2018 20:17, Andiry Xu wrote:
-> From: Andiry Xu <jix024@cs.ucsd.edu>
+> On Sat, Mar 10, 2018 at 12:20 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> > On Fri, 09 Mar 2018 21:36:12 +0000,
+> > Christoffer Dall wrote:  
+> >>
+> >> On Thu, Mar 08, 2018 at 05:28:44PM +0000, Marc Zyngier wrote:  
+> >> > I'd be more confident if we did forbid P+A for such interrupts
+> >> > altogether, as they really feel like another kind of HW interrupt.  
+> >>
+> >> How about a slightly bigger hammer:  Can we avoid doing P+A for level
+> >> interrupts completely?  I don't think that really makes much sense, and
+> >> I think we simply everything if we just come back out and resample the
+> >> line.  For an edge, something like a network card, there's a potential
+> >> performance win to appending a new pending state, but I doubt that this
+> >> is the case for level interrupts.  
+> >
+> > I started implementing the same thing yesterday. Somehow, it feels
+> > slightly better to have the same flow for all level interrupts,
+> > including the timer, and we only use the MI on EOI as a way to trigger
+> > the next state of injection. Still testing, but looking good so far.
+> >
+> > I'm still puzzled that we have this level-but-not-quite behaviour for
+> > VFIO interrupts. At some point, it is going to bite us badly.
+> >  
 > 
-> Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
-> ---
->  fs/Kconfig       |  2 ++
->  fs/Makefile      |  1 +
->  fs/nova/Kconfig  | 15 +++++++++++++++
->  fs/nova/Makefile |  7 +++++++
->  4 files changed, 25 insertions(+)
->  create mode 100644 fs/nova/Kconfig
->  create mode 100644 fs/nova/Makefile
-> 
-> diff --git a/fs/Kconfig b/fs/Kconfig
-> index bc821a8..5e9ff3e 100644
-> --- a/fs/Kconfig
-> +++ b/fs/Kconfig
-> @@ -58,6 +58,8 @@ config FS_DAX_PMD
->  	depends on ZONE_DEVICE
->  	depends on TRANSPARENT_HUGEPAGE
->  
-> +source "fs/nova/Kconfig"
-> +
->  # Selected by DAX drivers that do not expect filesystem DAX to support
->  # get_user_pages() of DAX mappings. I.e. "limited" indicates no support
->  # for fork() of processes with MAP_SHARED mappings or support for
-> diff --git a/fs/Makefile b/fs/Makefile
-> index add789e..65ea619 100644
-> --- a/fs/Makefile
-> +++ b/fs/Makefile
-> @@ -113,6 +113,7 @@ obj-$(CONFIG_OMFS_FS)		+= omfs/
->  obj-$(CONFIG_JFS_FS)		+= jfs/
->  obj-$(CONFIG_XFS_FS)		+= xfs/
->  obj-$(CONFIG_9P_FS)		+= 9p/
-> +obj-$(CONFIG_NOVA_FS)		+= nova/
->  obj-$(CONFIG_AFS_FS)		+= afs/
->  obj-$(CONFIG_NILFS2_FS)		+= nilfs2/
->  obj-$(CONFIG_BEFS_FS)		+= befs/
-> diff --git a/fs/nova/Kconfig b/fs/nova/Kconfig
-> new file mode 100644
-> index 0000000..c1c692e
-> --- /dev/null
-> +++ b/fs/nova/Kconfig
-> @@ -0,0 +1,15 @@
-> +config NOVA_FS
-> +	tristate "NOVA: log-structured file system for non-volatile memories"
-> +	depends on FS_DAX
-> +	select CRC32
+> Where is the departure from level-triggered behavior with VFIO?  As
+> far as I can tell, the GIC flow of the interrupts will be just a level
+> interrupt, 
 
-What do you need crc32 for? Selecting libcrc32c is enough to do "the
-right thing"
+The GIC is fine, I believe. What is not exactly fine is the signalling
+from the device, which will never be dropped until the EOI has been
+detected.
 
-> +	select LIBCRC32C
-> +	help
-> +	  If your system has a block of fast (comparable in access speed to
-> +	  system memory) and non-volatile byte-addressable memory and you wish
-> +	  to mount a light-weight filesystem with strong consistency support
-> +	  over it, say Y here.
-> +
-> +	  To compile this as a module, choose M here: the module will be
-> +	  called nova.
-> +
-> +	  If unsure, say N.
-> diff --git a/fs/nova/Makefile b/fs/nova/Makefile
-> new file mode 100644
-> index 0000000..eb19646
-> --- /dev/null
-> +++ b/fs/nova/Makefile
-> @@ -0,0 +1,7 @@
-> +#
-> +# Makefile for the linux NOVA filesystem routines.
-> +#
-> +
-> +obj-$(CONFIG_NOVA_FS) += nova.o
-> +
-> +nova-y := bbuild.o inode.o rebuild.o super.o
-> 
+> but we just need to make sure the resamplefd mechanism is
+> supported for both types of interrupts.  Whether or not that's a
+> decent mechanism seems orthogonal to me, but that's a discussion for
+> another day I think.
+
+Given that VFIO is built around this mechanism, I don't think we have a
+choice but to support it. Anyway, I came up with the following patch,
+which I tested on Seattle with mtty. It also survived my usual
+hammering of cyclictest, hackbench  and bulk VM installs.
+
+Shunyong, could you please give it a go?
+
+Thanks,
+
+	M.
+
+>From 9ca96b9fb535cc6ab578bda85c4ecbc4a8c63cd7 Mon Sep 17 00:00:00 2001
+From: Marc Zyngier <marc.zyngier@arm.com>
+Date: Fri, 9 Mar 2018 14:59:40 +0000
+Subject: [PATCH] KVM: arm/arm64: vgic: Disallow Active+Pending for level
+ interrupts
+
+It was recently reported that VFIO mediated devices, and anything
+that VFIO exposes as level interrupts, do no strictly follow the
+expected logic of such interrupts as it only lowers the input
+line when the guest has EOId the interrupt at the GIC level, rather
+than when it Acked the interrupt at the device level.
+
+The GIC's Active+Pending state is fundamentally incompatible with
+this behaviour, as it prevents KVM from observing the EOI, and in
+turn results in VFIO never dropping the line. This results in an
+interrupt storm in the guest, which it really never expected.
+
+As we cannot really change VFIO to follow the strict rules of level
+signalling, let's forbid the A+P state altogether, as it is in the
+end only an optimization. It ensures that we will transition via
+an invalid state, which we can use to notify VFIO of the EOI.
+
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+---
+ virt/kvm/arm/vgic/vgic-v2.c | 47 +++++++++++++++++++++++++++------------------
+ virt/kvm/arm/vgic/vgic-v3.c | 47 +++++++++++++++++++++++++++------------------
+ 2 files changed, 56 insertions(+), 38 deletions(-)
+
+diff --git a/virt/kvm/arm/vgic/vgic-v2.c b/virt/kvm/arm/vgic/vgic-v2.c
+index 29556f71b691..9356d749da1d 100644
+--- a/virt/kvm/arm/vgic/vgic-v2.c
++++ b/virt/kvm/arm/vgic/vgic-v2.c
+@@ -153,8 +153,35 @@ void vgic_v2_fold_lr_state(struct kvm_vcpu *vcpu)
+ void vgic_v2_populate_lr(struct kvm_vcpu *vcpu, struct vgic_irq *irq, int lr)
+ {
+ 	u32 val = irq->intid;
++	bool allow_pending = true;
+ 
+-	if (irq_is_pending(irq)) {
++	if (irq->active)
++		val |= GICH_LR_ACTIVE_BIT;
++
++	if (irq->hw) {
++		val |= GICH_LR_HW;
++		val |= irq->hwintid << GICH_LR_PHYSID_CPUID_SHIFT;
++		/*
++		 * Never set pending+active on a HW interrupt, as the
++		 * pending state is kept at the physical distributor
++		 * level.
++		 */
++		if (irq->active)
++			allow_pending = false;
++	} else {
++		if (irq->config == VGIC_CONFIG_LEVEL) {
++			val |= GICH_LR_EOI;
++
++			/*
++			 * Software resampling doesn't work very well
++			 * if we allow P+A, so let's not do that.
++			 */
++			if (irq->active)
++				allow_pending = false;
++		}
++	}
++
++	if (allow_pending && irq_is_pending(irq)) {
+ 		val |= GICH_LR_PENDING_BIT;
+ 
+ 		if (irq->config == VGIC_CONFIG_EDGE)
+@@ -171,24 +198,6 @@ void vgic_v2_populate_lr(struct kvm_vcpu *vcpu, struct vgic_irq *irq, int lr)
+ 		}
+ 	}
+ 
+-	if (irq->active)
+-		val |= GICH_LR_ACTIVE_BIT;
+-
+-	if (irq->hw) {
+-		val |= GICH_LR_HW;
+-		val |= irq->hwintid << GICH_LR_PHYSID_CPUID_SHIFT;
+-		/*
+-		 * Never set pending+active on a HW interrupt, as the
+-		 * pending state is kept at the physical distributor
+-		 * level.
+-		 */
+-		if (irq->active && irq_is_pending(irq))
+-			val &= ~GICH_LR_PENDING_BIT;
+-	} else {
+-		if (irq->config == VGIC_CONFIG_LEVEL)
+-			val |= GICH_LR_EOI;
+-	}
+-
+ 	/*
+ 	 * Level-triggered mapped IRQs are special because we only observe
+ 	 * rising edges as input to the VGIC.  We therefore lower the line
+diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+index 0ff2006f3781..6b484575cafb 100644
+--- a/virt/kvm/arm/vgic/vgic-v3.c
++++ b/virt/kvm/arm/vgic/vgic-v3.c
+@@ -135,8 +135,35 @@ void vgic_v3_populate_lr(struct kvm_vcpu *vcpu, struct vgic_irq *irq, int lr)
+ {
+ 	u32 model = vcpu->kvm->arch.vgic.vgic_model;
+ 	u64 val = irq->intid;
++	bool allow_pending = true;
+ 
+-	if (irq_is_pending(irq)) {
++	if (irq->active)
++		val |= ICH_LR_ACTIVE_BIT;
++
++	if (irq->hw) {
++		val |= ICH_LR_HW;
++		val |= ((u64)irq->hwintid) << ICH_LR_PHYS_ID_SHIFT;
++		/*
++		 * Never set pending+active on a HW interrupt, as the
++		 * pending state is kept at the physical distributor
++		 * level.
++		 */
++		if (irq->active)
++			allow_pending = false;
++	} else {
++		if (irq->config == VGIC_CONFIG_LEVEL) {
++			val |= ICH_LR_EOI;
++
++			/*
++			 * Software resampling doesn't work very well
++			 * if we allow P+A, so let's not do that.
++			 */
++			if (irq->active)
++				allow_pending = false;
++		}
++	}
++
++	if (allow_pending && irq_is_pending(irq)) {
+ 		val |= ICH_LR_PENDING_BIT;
+ 
+ 		if (irq->config == VGIC_CONFIG_EDGE)
+@@ -154,24 +181,6 @@ void vgic_v3_populate_lr(struct kvm_vcpu *vcpu, struct vgic_irq *irq, int lr)
+ 		}
+ 	}
+ 
+-	if (irq->active)
+-		val |= ICH_LR_ACTIVE_BIT;
+-
+-	if (irq->hw) {
+-		val |= ICH_LR_HW;
+-		val |= ((u64)irq->hwintid) << ICH_LR_PHYS_ID_SHIFT;
+-		/*
+-		 * Never set pending+active on a HW interrupt, as the
+-		 * pending state is kept at the physical distributor
+-		 * level.
+-		 */
+-		if (irq->active && irq_is_pending(irq))
+-			val &= ~ICH_LR_PENDING_BIT;
+-	} else {
+-		if (irq->config == VGIC_CONFIG_LEVEL)
+-			val |= ICH_LR_EOI;
+-	}
+-
+ 	/*
+ 	 * Level-triggered mapped IRQs are special because we only observe
+ 	 * rising edges as input to the VGIC.  We therefore lower the line
+-- 
+2.14.2
+
+
+-- 
+Without deviation from the norm, progress is not possible.
