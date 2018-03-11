@@ -1,34 +1,35 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2031234-1520786688-2-7232369023850314806
+X-Cyrus-Session-Id: sloti22d1t05-2031234-1520786808-2-16000787160673931541
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enroca,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='utf-8'
+X-Attached: signature.asc
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520786687; b=PHzCykGL/sQnINJ3taTepwY2vFzF2YmpS5WItfhRUyUVBDV
-    a0l6MGri0JSGN7/i6FCHf5ZKTZAYY5bvy4+tjS8i1V3BSKKxHe7a+LqWbQKxwuhp
-    +I3WeXUoMQK8igOo6QvXUidL9694uUyp++borSffcEcNCPpqfpkpD4ffE55YZRn+
-    nAMOFhkseLGaX8uzUYy2ePN4gcFI5ljnZzC6F8Qu4wtp70tBDvEt4AJKGGKI4tGb
-    /dMtSOdxlPFwxhVil6DL426qIlXGs27pVGMONIWk0WknvbFfWOdysB9ypN4OIQm2
-    Uyaro3LMxftwt2N9C5rM1VjAsg22XKtJ3BCrTqg==
+    t=1520786807; b=GWXM/1PJtBAff8Cx9F+SaKJe6khoCux7de0bAW8Xee+wgkf
+    d0ix+qEpPaKZFr8drqpJUQol4tBU2UZ440shWgSpwIAdDJdemUrqvtD/GnWS8xZs
+    6gp1rvc1SgNhHvOUi2PaVXcvMMGuldiFcLbNNKBTSduYcPJmRK3qBrRn7k+Rf4GE
+    nkIM6Fi8QwQ98HgEnQF9hbxtixx3RhkVW4PL78ESbWelDWPLvGdibj4j2cQEnhIZ
+    yPCfm8QwKadebgG/1sdxrEf36khQ46W7s5h3Bu4ehUdpYx6De+13GJNaji1iCLvJ
+    JcMYhc8E3KmecyE5w1C6AYb0ndndA+l9DVYKk5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1520786687; bh=vk5MhArsRW0g8DP7Km4Zz1GsmH
-    lfc8vU2xdtY7yw99E=; b=OcA0IVBS8NCV8ufAg2QpDf+o0fpavgp3fltGUHvtoc
-    0pgq457it8SCgy3FJ0duSfnAJDzbB/qBbm4U1frcSFReafKcfxkHcCjhv+xPUGYd
-    Ug5LVV9+ghsz2vKMhGo6O+xalzirn7vRkTKCXg5+3HIH5NnXx/apqrJJoZ9dGhL2
-    UuRk+butMoUES2Ny16dsk6utNKn1sAwds7qStBSABR92VJEboVfqLxtIFrmR8A8x
-    RP3mQCOAdrf8jQ8CFj9M1sZ0tyeO1s4LH2vpxhSLBlAtogjE+WnuhSEANsepYwG/
-    qXqRchL/LzT6ZsLxxL9PBhRbAEmLD5FbFg7vsa31O7bQ==
+    :mime-version:content-type:sender:list-id; s=arctest; t=
+    1520786807; bh=tq4soiLwjy5XocasSLSgXiL/4YhC7+xb2CpJzyQTZmQ=; b=b
+    hh/t/BEA2zjvM9lvuVb2D4RDwb6TU3mKvIz8kiIBRR0drXXDyUbJQyozfN3W5zcb
+    LfpxyvwsGee8PpH5TVKu/6gu2f7TGDlvnOLuqsYrxGiW2tHBRa5xvsjo+JZ/ofaT
+    RMl6haBJZQCo3WqosaWuf+lQZwi4MWwzK8eAywDNYdWW2Au59f0yXzT9PIlYKoHK
+    caP7M0EuNEoG2k0YO7cTPRPZtojCfSMpbNWecdDle364kCn9npbSs6K/5bc4aYoS
+    3NU+5rwS+bo034jzy2pVTtQt9nm+7r0EVZkt9odFFaLRP93ykU4eXwvBa+cWM0/Z
+    4MvccTiEhIRhH4Jjx6P/g==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,25 +50,24 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932273AbeCKQoh (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Mar 2018 12:44:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42232 "EHLO
+        id S932153AbeCKQpr (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Mar 2018 12:45:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42488 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932153AbeCKQod (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 12:44:33 -0400
-Date: Sun, 11 Mar 2018 17:44:33 +0100
+        with ESMTP id S932225AbeCKQpp (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 12:45:45 -0400
+Date: Sun, 11 Mar 2018 17:45:46 +0100
 From: Greg KH <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 3.18.99
-Message-ID: <20180311164433.GB11253@kroah.com>
-References: <20180311164429.GA11253@kroah.com>
+Subject: Linux 4.14.26
+Message-ID: <20180311164546.GA23941@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
 Content-Disposition: inline
-In-Reply-To: <20180311164429.GA11253@kroah.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
@@ -75,629 +75,85 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-diff --git a/Makefile b/Makefile
-index 1e7d18b5025c..a94a5e5d84ca 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,6 +1,6 @@
- VERSION = 3
- PATCHLEVEL = 18
--SUBLEVEL = 98
-+SUBLEVEL = 99
- EXTRAVERSION =
- NAME = Diseased Newt
- 
-diff --git a/arch/arm/mach-mvebu/Kconfig b/arch/arm/mach-mvebu/Kconfig
-index c1e4567a5ab3..2d0cc0d88639 100644
---- a/arch/arm/mach-mvebu/Kconfig
-+++ b/arch/arm/mach-mvebu/Kconfig
-@@ -37,7 +37,7 @@ config MACH_ARMADA_370
- config MACH_ARMADA_375
- 	bool "Marvell Armada 375 boards" if ARCH_MULTI_V7
- 	select ARM_ERRATA_720789
--	select ARM_ERRATA_753970
-+	select PL310_ERRATA_753970
- 	select ARM_GIC
- 	select ARMADA_375_CLK
- 	select HAVE_ARM_SCU
-@@ -52,7 +52,7 @@ config MACH_ARMADA_375
- config MACH_ARMADA_38X
- 	bool "Marvell Armada 380/385 boards" if ARCH_MULTI_V7
- 	select ARM_ERRATA_720789
--	select ARM_ERRATA_753970
-+	select PL310_ERRATA_753970
- 	select ARM_GIC
- 	select ARMADA_38X_CLK
- 	select HAVE_ARM_SCU
-diff --git a/drivers/char/tpm/tpm_i2c_infineon.c b/drivers/char/tpm/tpm_i2c_infineon.c
-index 472af4bb1b61..ce41780a4213 100644
---- a/drivers/char/tpm/tpm_i2c_infineon.c
-+++ b/drivers/char/tpm/tpm_i2c_infineon.c
-@@ -436,7 +436,8 @@ static int recv_data(struct tpm_chip *chip, u8 *buf, size_t count)
- static int tpm_tis_i2c_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- {
- 	int size = 0;
--	int expected, status;
-+	int status;
-+	u32 expected;
- 
- 	if (count < TPM_HEADER_SIZE) {
- 		size = -EIO;
-@@ -451,7 +452,7 @@ static int tpm_tis_i2c_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- 	}
- 
- 	expected = be32_to_cpu(*(__be32 *)(buf + 2));
--	if ((size_t) expected > count) {
-+	if (((size_t) expected > count) || (expected < TPM_HEADER_SIZE)) {
- 		size = -EIO;
- 		goto out;
- 	}
-diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
-index 23c7b137a7fd..39635429ea3f 100644
---- a/drivers/char/tpm/tpm_i2c_nuvoton.c
-+++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
-@@ -267,7 +267,11 @@ static int i2c_nuvoton_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- 	struct device *dev = chip->dev;
- 	struct i2c_client *client = to_i2c_client(dev);
- 	s32 rc;
--	int expected, status, burst_count, retries, size = 0;
-+	int status;
-+	int burst_count;
-+	int retries;
-+	int size = 0;
-+	u32 expected;
- 
- 	if (count < TPM_HEADER_SIZE) {
- 		i2c_nuvoton_ready(chip);    /* return to idle */
-@@ -309,7 +313,7 @@ static int i2c_nuvoton_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- 		 * to machine native
- 		 */
- 		expected = be32_to_cpu(*(__be32 *) (buf + 2));
--		if (expected > count) {
-+		if (expected > count || expected < size) {
- 			dev_err(dev, "%s() expected > count\n", __func__);
- 			size = -EIO;
- 			continue;
-diff --git a/drivers/cpufreq/s3c24xx-cpufreq.c b/drivers/cpufreq/s3c24xx-cpufreq.c
-index 733aa5153e74..e23fd9a9b8c4 100644
---- a/drivers/cpufreq/s3c24xx-cpufreq.c
-+++ b/drivers/cpufreq/s3c24xx-cpufreq.c
-@@ -364,7 +364,13 @@ struct clk *s3c_cpufreq_clk_get(struct device *dev, const char *name)
- static int s3c_cpufreq_init(struct cpufreq_policy *policy)
- {
- 	policy->clk = clk_arm;
--	return cpufreq_generic_init(policy, ftab, cpu_cur.info->latency);
-+
-+	policy->cpuinfo.transition_latency = cpu_cur.info->latency;
-+
-+	if (ftab)
-+		return cpufreq_table_validate_and_show(policy, ftab);
-+
-+	return 0;
- }
- 
- static int __init s3c_cpufreq_initclks(void)
-diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index c3734f10fdd5..9e801d6dda22 100644
---- a/drivers/leds/led-triggers.c
-+++ b/drivers/leds/led-triggers.c
-@@ -78,21 +78,23 @@ ssize_t led_trigger_show(struct device *dev, struct device_attribute *attr,
- 	down_read(&led_cdev->trigger_lock);
- 
- 	if (!led_cdev->trigger)
--		len += sprintf(buf+len, "[none] ");
-+		len += scnprintf(buf+len, PAGE_SIZE - len, "[none] ");
- 	else
--		len += sprintf(buf+len, "none ");
-+		len += scnprintf(buf+len, PAGE_SIZE - len, "none ");
- 
- 	list_for_each_entry(trig, &trigger_list, next_trig) {
- 		if (led_cdev->trigger && !strcmp(led_cdev->trigger->name,
- 							trig->name))
--			len += sprintf(buf+len, "[%s] ", trig->name);
-+			len += scnprintf(buf+len, PAGE_SIZE - len, "[%s] ",
-+					 trig->name);
- 		else
--			len += sprintf(buf+len, "%s ", trig->name);
-+			len += scnprintf(buf+len, PAGE_SIZE - len, "%s ",
-+					 trig->name);
- 	}
- 	up_read(&led_cdev->trigger_lock);
- 	up_read(&triggers_list_lock);
- 
--	len += sprintf(len+buf, "\n");
-+	len += scnprintf(len+buf, PAGE_SIZE - len, "\n");
- 	return len;
- }
- EXPORT_SYMBOL_GPL(led_trigger_show);
-diff --git a/drivers/md/dm-io.c b/drivers/md/dm-io.c
-index 74adcd2c967e..01d7b5785b8e 100644
---- a/drivers/md/dm-io.c
-+++ b/drivers/md/dm-io.c
-@@ -299,6 +299,7 @@ static void do_region(int rw, unsigned region, struct dm_io_region *where,
- 	else if (rw & REQ_WRITE_SAME)
- 		special_cmd_max_sectors = q->limits.max_write_same_sectors;
- 	if ((rw & (REQ_DISCARD | REQ_WRITE_SAME)) && special_cmd_max_sectors == 0) {
-+		atomic_inc(&io->count);
- 		dec_count(io, region, -EOPNOTSUPP);
- 		return;
- 	}
-diff --git a/drivers/net/ethernet/freescale/fec.h b/drivers/net/ethernet/freescale/fec.h
-index 9af296a1ca99..c16b6deff5ea 100644
---- a/drivers/net/ethernet/freescale/fec.h
-+++ b/drivers/net/ethernet/freescale/fec.h
-@@ -546,6 +546,7 @@ struct fec_enet_private {
- };
- 
- void fec_ptp_init(struct platform_device *pdev);
-+void fec_ptp_stop(struct platform_device *pdev);
- void fec_ptp_start_cyclecounter(struct net_device *ndev);
- int fec_ptp_set(struct net_device *ndev, struct ifreq *ifr);
- int fec_ptp_get(struct net_device *ndev, struct ifreq *ifr);
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index 065a7616e961..f1224c2d112a 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -3312,6 +3312,7 @@ failed_register:
- failed_mii_init:
- failed_irq:
- failed_init:
-+	fec_ptp_stop(pdev);
- 	if (fep->reg_phy)
- 		regulator_disable(fep->reg_phy);
- failed_regulator:
-@@ -3331,14 +3332,12 @@ fec_drv_remove(struct platform_device *pdev)
- 	struct net_device *ndev = platform_get_drvdata(pdev);
- 	struct fec_enet_private *fep = netdev_priv(ndev);
- 
--	cancel_delayed_work_sync(&fep->time_keep);
- 	cancel_work_sync(&fep->tx_timeout_work);
-+	fec_ptp_stop(pdev);
- 	unregister_netdev(ndev);
- 	fec_enet_mii_remove(fep);
- 	if (fep->reg_phy)
- 		regulator_disable(fep->reg_phy);
--	if (fep->ptp_clock)
--		ptp_clock_unregister(fep->ptp_clock);
- 	fec_enet_clk_enable(ndev, false);
- 	of_node_put(fep->phy_node);
- 	free_netdev(ndev);
-diff --git a/drivers/net/ethernet/freescale/fec_ptp.c b/drivers/net/ethernet/freescale/fec_ptp.c
-index 992c8c3db553..9b2dcf4261a5 100644
---- a/drivers/net/ethernet/freescale/fec_ptp.c
-+++ b/drivers/net/ethernet/freescale/fec_ptp.c
-@@ -620,6 +620,16 @@ void fec_ptp_init(struct platform_device *pdev)
- 	schedule_delayed_work(&fep->time_keep, HZ);
- }
- 
-+void fec_ptp_stop(struct platform_device *pdev)
-+{
-+	struct net_device *ndev = platform_get_drvdata(pdev);
-+	struct fec_enet_private *fep = netdev_priv(ndev);
-+
-+	cancel_delayed_work_sync(&fep->time_keep);
-+	if (fep->ptp_clock)
-+		ptp_clock_unregister(fep->ptp_clock);
-+}
-+
- /**
-  * fec_ptp_check_pps_event
-  * @fep: the fec_enet_private structure handle
-diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
-index 088cbd8e229b..1f32220a868a 100644
---- a/drivers/net/ppp/ppp_generic.c
-+++ b/drivers/net/ppp/ppp_generic.c
-@@ -2908,6 +2908,15 @@ ppp_connect_channel(struct channel *pch, int unit)
- 		goto outl;
- 
- 	ppp_lock(ppp);
-+	spin_lock_bh(&pch->downl);
-+	if (!pch->chan) {
-+		/* Don't connect unregistered channels */
-+		spin_unlock_bh(&pch->downl);
-+		ppp_unlock(ppp);
-+		ret = -ENOTCONN;
-+		goto outl;
-+	}
-+	spin_unlock_bh(&pch->downl);
- 	if (pch->file.hdrlen > ppp->file.hdrlen)
- 		ppp->file.hdrlen = pch->file.hdrlen;
- 	hdrlen = pch->file.hdrlen + 2;	/* for protocol bytes */
-diff --git a/drivers/net/wan/hdlc_ppp.c b/drivers/net/wan/hdlc_ppp.c
-index 0d7645581f91..4842344a96f1 100644
---- a/drivers/net/wan/hdlc_ppp.c
-+++ b/drivers/net/wan/hdlc_ppp.c
-@@ -574,7 +574,10 @@ static void ppp_timer(unsigned long arg)
- 			ppp_cp_event(proto->dev, proto->pid, TO_GOOD, 0, 0,
- 				     0, NULL);
- 			proto->restart_counter--;
--		} else
-+		} else if (netif_carrier_ok(proto->dev))
-+			ppp_cp_event(proto->dev, proto->pid, TO_GOOD, 0, 0,
-+				     0, NULL);
-+		else
- 			ppp_cp_event(proto->dev, proto->pid, TO_BAD, 0, 0,
- 				     0, NULL);
- 		break;
-diff --git a/drivers/s390/net/qeth_core.h b/drivers/s390/net/qeth_core.h
-index 841fe58fb0b5..862f7f358cc4 100644
---- a/drivers/s390/net/qeth_core.h
-+++ b/drivers/s390/net/qeth_core.h
-@@ -593,6 +593,11 @@ struct qeth_cmd_buffer {
- 	void (*callback) (struct qeth_channel *, struct qeth_cmd_buffer *);
- };
- 
-+static inline struct qeth_ipa_cmd *__ipa_cmd(struct qeth_cmd_buffer *iob)
-+{
-+	return (struct qeth_ipa_cmd *)(iob->data + IPA_PDU_HEADER_SIZE);
-+}
-+
- /**
-  * definition of a qeth channel, used for read and write
-  */
-diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
-index 2acac8c2ca49..536f7270cb1b 100644
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -2023,7 +2023,7 @@ int qeth_send_control_data(struct qeth_card *card, int len,
- 	unsigned long flags;
- 	struct qeth_reply *reply = NULL;
- 	unsigned long timeout, event_timeout;
--	struct qeth_ipa_cmd *cmd;
-+	struct qeth_ipa_cmd *cmd = NULL;
- 
- 	QETH_CARD_TEXT(card, 2, "sendctl");
- 
-@@ -2037,23 +2037,27 @@ int qeth_send_control_data(struct qeth_card *card, int len,
- 	}
- 	reply->callback = reply_cb;
- 	reply->param = reply_param;
--	if (card->state == CARD_STATE_DOWN)
--		reply->seqno = QETH_IDX_COMMAND_SEQNO;
--	else
--		reply->seqno = card->seqno.ipa++;
-+
- 	init_waitqueue_head(&reply->wait_q);
--	spin_lock_irqsave(&card->lock, flags);
--	list_add_tail(&reply->list, &card->cmd_waiter_list);
--	spin_unlock_irqrestore(&card->lock, flags);
- 	QETH_DBF_HEX(CTRL, 2, iob->data, QETH_DBF_CTRL_LEN);
- 
- 	while (atomic_cmpxchg(&card->write.irq_pending, 0, 1)) ;
--	qeth_prepare_control_data(card, len, iob);
- 
--	if (IS_IPA(iob->data))
-+	if (IS_IPA(iob->data)) {
-+		cmd = __ipa_cmd(iob);
-+		cmd->hdr.seqno = card->seqno.ipa++;
-+		reply->seqno = cmd->hdr.seqno;
- 		event_timeout = QETH_IPA_TIMEOUT;
--	else
-+	} else {
-+		reply->seqno = QETH_IDX_COMMAND_SEQNO;
- 		event_timeout = QETH_TIMEOUT;
-+	}
-+	qeth_prepare_control_data(card, len, iob);
-+
-+	spin_lock_irqsave(&card->lock, flags);
-+	list_add_tail(&reply->list, &card->cmd_waiter_list);
-+	spin_unlock_irqrestore(&card->lock, flags);
-+
- 	timeout = jiffies + event_timeout;
- 
- 	QETH_CARD_TEXT(card, 6, "noirqpnd");
-@@ -2078,9 +2082,8 @@ int qeth_send_control_data(struct qeth_card *card, int len,
- 
- 	/* we have only one long running ipassist, since we can ensure
- 	   process context of this command we can sleep */
--	cmd = (struct qeth_ipa_cmd *)(iob->data+IPA_PDU_HEADER_SIZE);
--	if ((cmd->hdr.command == IPA_CMD_SETIP) &&
--	    (cmd->hdr.prot_version == QETH_PROT_IPV4)) {
-+	if (cmd && cmd->hdr.command == IPA_CMD_SETIP &&
-+	    cmd->hdr.prot_version == QETH_PROT_IPV4) {
- 		if (!wait_event_timeout(reply->wait_q,
- 		    atomic_read(&reply->received), event_timeout))
- 			goto time_err;
-@@ -2887,7 +2890,7 @@ static void qeth_fill_ipacmd_header(struct qeth_card *card,
- 	memset(cmd, 0, sizeof(struct qeth_ipa_cmd));
- 	cmd->hdr.command = command;
- 	cmd->hdr.initiator = IPA_CMD_INITIATOR_HOST;
--	cmd->hdr.seqno = card->seqno.ipa;
-+	/* cmd->hdr.seqno is set by qeth_send_control_data() */
- 	cmd->hdr.adapter_type = qeth_get_ipa_adp_type(card->info.link_type);
- 	cmd->hdr.rel_adapter_no = (__u8) card->info.portno;
- 	if (card->options.layer2)
-diff --git a/include/net/udplite.h b/include/net/udplite.h
-index 2caadabcd07b..3c8985489992 100644
---- a/include/net/udplite.h
-+++ b/include/net/udplite.h
-@@ -61,6 +61,7 @@ static inline int udplite_checksum_init(struct sk_buff *skb, struct udphdr *uh)
- 		UDP_SKB_CB(skb)->cscov = cscov;
- 		if (skb->ip_summed == CHECKSUM_COMPLETE)
- 			skb->ip_summed = CHECKSUM_NONE;
-+		skb->csum_valid = 0;
-         }
- 
- 	return 0;
-diff --git a/net/bridge/br_sysfs_if.c b/net/bridge/br_sysfs_if.c
-index e561cd59b8a6..65a092c5e0f5 100644
---- a/net/bridge/br_sysfs_if.c
-+++ b/net/bridge/br_sysfs_if.c
-@@ -225,6 +225,9 @@ static ssize_t brport_show(struct kobject *kobj,
- 	struct brport_attribute *brport_attr = to_brport_attr(attr);
- 	struct net_bridge_port *p = to_brport(kobj);
- 
-+	if (!brport_attr->show)
-+		return -EINVAL;
-+
- 	return brport_attr->show(p, buf);
- }
- 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index a8564e793d0f..5fa8a6e1d0d4 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -2070,8 +2070,11 @@ EXPORT_SYMBOL(netif_set_xps_queue);
-  */
- int netif_set_real_num_tx_queues(struct net_device *dev, unsigned int txq)
- {
-+	bool disabling;
- 	int rc;
- 
-+	disabling = txq < dev->real_num_tx_queues;
-+
- 	if (txq < 1 || txq > dev->num_tx_queues)
- 		return -EINVAL;
- 
-@@ -2087,15 +2090,19 @@ int netif_set_real_num_tx_queues(struct net_device *dev, unsigned int txq)
- 		if (dev->num_tc)
- 			netif_setup_tc(dev, txq);
- 
--		if (txq < dev->real_num_tx_queues) {
-+		dev->real_num_tx_queues = txq;
-+
-+		if (disabling) {
-+			synchronize_net();
- 			qdisc_reset_all_tx_gt(dev, txq);
- #ifdef CONFIG_XPS
- 			netif_reset_xps_queues_gt(dev, txq);
- #endif
- 		}
-+	} else {
-+		dev->real_num_tx_queues = txq;
- 	}
- 
--	dev->real_num_tx_queues = txq;
- 	return 0;
- }
- EXPORT_SYMBOL(netif_set_real_num_tx_queues);
-diff --git a/net/ipv4/fib_semantics.c b/net/ipv4/fib_semantics.c
-index f99f41bd15b8..987862c6d474 100644
---- a/net/ipv4/fib_semantics.c
-+++ b/net/ipv4/fib_semantics.c
-@@ -514,6 +514,11 @@ int fib_nh_match(struct fib_config *cfg, struct fib_info *fi)
- 		return 1;
- 
- 	if (cfg->fc_oif || cfg->fc_gw) {
-+#ifdef CONFIG_IP_ROUTE_CLASSID
-+		if (cfg->fc_flow &&
-+		    cfg->fc_flow != fi->fib_nh->nh_tclassid)
-+			return 1;
-+#endif
- 		if ((!cfg->fc_oif || cfg->fc_oif == fi->fib_nh->nh_oif) &&
- 		    (!cfg->fc_gw  || cfg->fc_gw == fi->fib_nh->nh_gw))
- 			return 0;
-diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-index 79c9bacafc61..b8a3a6c0b97a 100644
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -122,9 +122,11 @@ static int ip_rt_redirect_silence __read_mostly	= ((HZ / 50) << (9 + 1));
- static int ip_rt_error_cost __read_mostly	= HZ;
- static int ip_rt_error_burst __read_mostly	= 5 * HZ;
- static int ip_rt_mtu_expires __read_mostly	= 10 * 60 * HZ;
--static int ip_rt_min_pmtu __read_mostly		= 512 + 20 + 20;
-+static u32 ip_rt_min_pmtu __read_mostly		= 512 + 20 + 20;
- static int ip_rt_min_advmss __read_mostly	= 256;
- 
-+static int ip_min_valid_pmtu __read_mostly	= IPV4_MIN_MTU;
-+
- /*
-  *	Interface to generic destination cache.
-  */
-@@ -2629,7 +2631,8 @@ static struct ctl_table ipv4_route_table[] = {
- 		.data		= &ip_rt_min_pmtu,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= &ip_min_valid_pmtu,
- 	},
- 	{
- 		.procname	= "min_adv_mss",
-diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
-index 085fd0d357e2..0f6d4d404e92 100644
---- a/net/ipv4/udp.c
-+++ b/net/ipv4/udp.c
-@@ -1718,6 +1718,11 @@ static inline int udp4_csum_init(struct sk_buff *skb, struct udphdr *uh,
- 		err = udplite_checksum_init(skb, uh);
- 		if (err)
- 			return err;
-+
-+		if (UDP_SKB_CB(skb)->partial_cov) {
-+			skb->csum = inet_compute_pseudo(skb, proto);
-+			return 0;
-+		}
- 	}
- 
- 	return skb_checksum_init_zero_check(skb, proto, uh->check,
-diff --git a/net/ipv6/ip6_checksum.c b/net/ipv6/ip6_checksum.c
-index 9a4d7322fb22..391a8fedb27e 100644
---- a/net/ipv6/ip6_checksum.c
-+++ b/net/ipv6/ip6_checksum.c
-@@ -73,6 +73,11 @@ int udp6_csum_init(struct sk_buff *skb, struct udphdr *uh, int proto)
- 		err = udplite_checksum_init(skb, uh);
- 		if (err)
- 			return err;
-+
-+		if (UDP_SKB_CB(skb)->partial_cov) {
-+			skb->csum = ip6_compute_pseudo(skb, proto);
-+			return 0;
-+		}
- 	}
- 
- 	/* To support RFC 6936 (allow zero checksum in UDP/IPV6 for tunnels)
-diff --git a/net/ipv6/sit.c b/net/ipv6/sit.c
-index a67dc0c28cdc..45a35cfbafd1 100644
---- a/net/ipv6/sit.c
-+++ b/net/ipv6/sit.c
-@@ -176,7 +176,7 @@ static void ipip6_tunnel_clone_6rd(struct net_device *dev, struct sit_net *sitn)
- #ifdef CONFIG_IPV6_SIT_6RD
- 	struct ip_tunnel *t = netdev_priv(dev);
- 
--	if (t->dev == sitn->fb_tunnel_dev) {
-+	if (dev == sitn->fb_tunnel_dev) {
- 		ipv6_addr_set(&t->ip6rd.prefix, htonl(0x20020000), 0, 0, 0);
- 		t->ip6rd.relay_prefix = 0;
- 		t->ip6rd.prefixlen = 16;
-diff --git a/net/netlink/genetlink.c b/net/netlink/genetlink.c
-index 2983147f8ef2..f20774e4e0d5 100644
---- a/net/netlink/genetlink.c
-+++ b/net/netlink/genetlink.c
-@@ -1058,6 +1058,7 @@ static int genlmsg_mcast(struct sk_buff *skb, u32 portid, unsigned long group,
- {
- 	struct sk_buff *tmp;
- 	struct net *net, *prev = NULL;
-+	bool delivered = false;
- 	int err;
- 
- 	for_each_net_rcu(net) {
-@@ -1069,14 +1070,21 @@ static int genlmsg_mcast(struct sk_buff *skb, u32 portid, unsigned long group,
- 			}
- 			err = nlmsg_multicast(prev->genl_sock, tmp,
- 					      portid, group, flags);
--			if (err)
-+			if (!err)
-+				delivered = true;
-+			else if (err != -ESRCH)
- 				goto error;
- 		}
- 
- 		prev = net;
- 	}
- 
--	return nlmsg_multicast(prev->genl_sock, skb, portid, group, flags);
-+	err = nlmsg_multicast(prev->genl_sock, skb, portid, group, flags);
-+	if (!err)
-+		delivered = true;
-+	else if (err != -ESRCH)
-+		goto error;
-+	return delivered ? 0 : -ESRCH;
-  error:
- 	kfree_skb(skb);
- 	return err;
-diff --git a/net/sctp/ipv6.c b/net/sctp/ipv6.c
-index 5b5ddc0f2dbc..3bee4324535c 100644
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -323,8 +323,10 @@ static void sctp_v6_get_dst(struct sctp_transport *t, union sctp_addr *saddr,
- 		final_p = fl6_update_dst(fl6, rcu_dereference(np->opt), &final);
- 		bdst = ip6_dst_lookup_flow(sk, fl6, final_p);
- 
--		if (!IS_ERR(bdst) &&
--		    ipv6_chk_addr(dev_net(bdst->dev),
-+		if (IS_ERR(bdst))
-+			continue;
-+
-+		if (ipv6_chk_addr(dev_net(bdst->dev),
- 				  &laddr->a.v6.sin6_addr, bdst->dev, 1)) {
- 			if (!IS_ERR_OR_NULL(dst))
- 				dst_release(dst);
-@@ -333,8 +335,10 @@ static void sctp_v6_get_dst(struct sctp_transport *t, union sctp_addr *saddr,
- 		}
- 
- 		bmatchlen = sctp_v6_addr_match_len(daddr, &laddr->a);
--		if (matchlen > bmatchlen)
-+		if (matchlen > bmatchlen) {
-+			dst_release(bdst);
- 			continue;
-+		}
- 
- 		if (!IS_ERR_OR_NULL(dst))
- 			dst_release(dst);
-diff --git a/net/sctp/sm_make_chunk.c b/net/sctp/sm_make_chunk.c
-index 642c11570285..6d48cbf6465d 100644
---- a/net/sctp/sm_make_chunk.c
-+++ b/net/sctp/sm_make_chunk.c
-@@ -1367,10 +1367,14 @@ static struct sctp_chunk *_sctp_make_chunk(const struct sctp_association *asoc,
- 	sctp_chunkhdr_t *chunk_hdr;
- 	struct sk_buff *skb;
- 	struct sock *sk;
-+	int chunklen;
-+
-+	chunklen = sizeof(*chunk_hdr) + paylen;
-+	if (chunklen > SCTP_MAX_CHUNK_LEN)
-+		goto nodata;
- 
- 	/* No need to allocate LL here, as this is only a chunk. */
--	skb = alloc_skb(WORD_ROUND(sizeof(sctp_chunkhdr_t) + paylen),
--			GFP_ATOMIC);
-+	skb = alloc_skb(chunklen, GFP_ATOMIC);
- 	if (!skb)
- 		goto nodata;
- 
-diff --git a/sound/usb/quirks-table.h b/sound/usb/quirks-table.h
-index 814a118d2ef6..adec087725d1 100644
---- a/sound/usb/quirks-table.h
-+++ b/sound/usb/quirks-table.h
-@@ -3312,4 +3312,51 @@ AU0828_DEVICE(0x2040, 0x7270, "Hauppauge", "HVR-950Q"),
- 	}
- },
- 
-+{
-+	/*
-+	 * Bower's & Wilkins PX headphones only support the 48 kHz sample rate
-+	 * even though it advertises more. The capture interface doesn't work
-+	 * even on windows.
-+	 */
-+	USB_DEVICE(0x19b5, 0x0021),
-+	.driver_info = (unsigned long) &(const struct snd_usb_audio_quirk) {
-+		.ifnum = QUIRK_ANY_INTERFACE,
-+		.type = QUIRK_COMPOSITE,
-+		.data = (const struct snd_usb_audio_quirk[]) {
-+			{
-+				.ifnum = 0,
-+				.type = QUIRK_AUDIO_STANDARD_MIXER,
-+			},
-+			/* Capture */
-+			{
-+				.ifnum = 1,
-+				.type = QUIRK_IGNORE_INTERFACE,
-+			},
-+			/* Playback */
-+			{
-+				.ifnum = 2,
-+				.type = QUIRK_AUDIO_FIXED_ENDPOINT,
-+				.data = &(const struct audioformat) {
-+					.formats = SNDRV_PCM_FMTBIT_S16_LE,
-+					.channels = 2,
-+					.iface = 2,
-+					.altsetting = 1,
-+					.altset_idx = 1,
-+					.attributes = UAC_EP_CS_ATTR_FILL_MAX |
-+						UAC_EP_CS_ATTR_SAMPLE_RATE,
-+					.endpoint = 0x03,
-+					.ep_attr = USB_ENDPOINT_XFER_ISOC,
-+					.rates = SNDRV_PCM_RATE_48000,
-+					.rate_min = 48000,
-+					.rate_max = 48000,
-+					.nr_rates = 1,
-+					.rate_table = (unsigned int[]) {
-+						48000
-+					}
-+				}
-+			},
-+		}
-+	}
-+},
-+
- #undef USB_DEVICE_VENDOR_SPEC
+
+--mYCpIKhGyMATD0i+
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+I'm announcing the release of the 4.14.26 kernel.
+
+All users of the 4.14 kernel series must upgrade.
+
+The updated 4.14.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-4.14.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
+mmary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Documentation/virtual/kvm/cpuid.txt         |    4 +
+ Documentation/virtual/kvm/msr.txt           |    3 -
+ Makefile                                    |    2=20
+ arch/arm64/net/bpf_jit_comp.c               |    5 +
+ arch/powerpc/net/bpf_jit_comp64.c           |    1=20
+ arch/x86/include/asm/nospec-branch.h        |   37 ++++++++++++
+ arch/x86/include/uapi/asm/kvm_para.h        |    1=20
+ arch/x86/kernel/kvm.c                       |    8 +-
+ arch/x86/kvm/cpuid.c                        |    3 -
+ arch/x86/net/bpf_jit_comp.c                 |    9 +--
+ kernel/bpf/arraymap.c                       |   33 ++++++-----
+ kernel/bpf/lpm_trie.c                       |   14 ++--
+ kernel/bpf/verifier.c                       |   42 ++++++++------
+ tools/testing/selftests/bpf/test_verifier.c |   84 +++++++++++++++++++++++=
++++++
+ 14 files changed, 198 insertions(+), 48 deletions(-)
+
+Daniel Borkmann (5):
+      bpf: fix mlock precharge on arraymaps
+      bpf, x64: implement retpoline for tail call
+      bpf, arm64: fix out of bounds access in tail call
+      bpf: allow xadd only on aligned memory
+      bpf, ppc64: fix out of bounds access in tail call
+
+Eric Dumazet (1):
+      bpf: add schedule points in percpu arrays management
+
+Greg Kroah-Hartman (1):
+      Linux 4.14.26
+
+Radim Kr=C4=8Dm=C3=A1=C5=99 (1):
+      KVM: x86: fix backward migration with async_PF
+
+Yonghong Song (2):
+      bpf: fix memory leak in lpm_trie map_free callback function
+      bpf: fix rcu lockdep warning for lpm_trie map_free callback
+
+
+--mYCpIKhGyMATD0i+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlqlXTkACgkQONu9yGCS
+aT7YuhAA1nNZa6eqtjUNPEzaPc+gQU55J1NSRfFsWvQfnYzMA5lwXnNOgUt2bo30
+sZUEoHsWaM6/jDvaCjvnDLCJ/1MLuW3JoG/oPXPUINwQDTGxlGsXSWw2z8dXMAZk
+7qH82sn0LVbfEh+S4+xWPgKocG+kSNyGFutn5ql+8jwB8WsmqjH8XPpw4ZsjXbb8
+iSyrKWj52c/giwXVe3Fqoaq+SHNtMU6VqADZAmNeteT4K/uLTM5KlMPyBApBMjhh
+6QKDzLlIDIju5GTkKFse+0H4gtoYezms1k0GXt1IRhe+79B3TvG6qXIRDTYbxr+p
+XzuQOpHQDmbdUcscdS0nI03obYA6sckgpjE5SwxHQcykP7ahS3wArFUYSkzXIVim
+rNgD1xsMEud37iFTdW4+HFHB6pOdMDGYYcA8VgvnMeOKZs9fkoqZWJlKWZJ/z9Ad
+3wbigthh4qb4lJ44OHNtk54KPTNqNjkVcaX1lBig9OnUsbAqs7SAOxX7K4KD5Bf+
+HASVhYu0sIRyvq8NE4VbiEEVCw05V0dMO0OX/jAxWyOflrj44tTJvl/hLTiJvHts
+nsydDFYFxWY+GcaYhY2lRPTp0yjR7LqwGvOZ5ihdqiJ1mNuxM0XpPS0RWnf/o2YY
+ENkn0P/1wQoMd3p540vNrmqdvuj21/GVm0ioy5HxLZ9prdDSpjE=
+=SpcM
+-----END PGP SIGNATURE-----
+
+--mYCpIKhGyMATD0i+--
