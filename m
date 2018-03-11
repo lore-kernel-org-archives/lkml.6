@@ -1,191 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932481AbeCKVbS (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 17:31:18 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:37557 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932453AbeCKVbQ (ORCPT
+        id S932494AbeCKVbd (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 17:31:33 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:46729 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932275AbeCKVbc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 17:31:16 -0400
-X-Google-Smtp-Source: AG47ELs1ZXdvxfrhxN+WPZS0r6qzIZ4KMokPUu+gxZg6ttFb2kmGjmMeelFCJZ86CQtpgailPAjwFXa0ii9y6KJq/2E=
+        Sun, 11 Mar 2018 17:31:32 -0400
+X-Google-Smtp-Source: AG47ELvOHjDcUB8THIlLC7qpSQ2PcayOt9VA7Oa1Al/UgsGprKzIA3Q7VVB6Hk4UUTF/8v6CcKvTNw==
+Date: Sun, 11 Mar 2018 17:31:29 -0400 (EDT)
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>, Will Deacon <will.deacon@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Garnier <thgarnie@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Paul Mackerras <paulus@samba.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@redhat.com>,
+        James Morris <james.l.morris@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org
+Subject: Re: [PATCH v8 2/6] module: allow symbol exports to be disabled
+In-Reply-To: <20180311123815.17916-3-ard.biesheuvel@linaro.org>
+Message-ID: <nycvar.YSQ.7.76.1803111731001.28583@knanqh.ubzr>
+References: <20180311123815.17916-1-ard.biesheuvel@linaro.org> <20180311123815.17916-3-ard.biesheuvel@linaro.org>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <73dae166-2e71-7fc9-7985-89cc44b38bf6@gmail.com>
-References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
- <1520705944-6723-15-git-send-email-jix024@eng.ucsd.edu> <73dae166-2e71-7fc9-7985-89cc44b38bf6@gmail.com>
-From: Andiry Xu <jix024@eng.ucsd.edu>
-Date: Sun, 11 Mar 2018 14:31:15 -0700
-Message-ID: <CAD4Szjurt=QyWr=yO-z_p56uvMAcv2mb5M-j21Lmy3we0Xo4mg@mail.gmail.com>
-Subject: Re: [RFC v2 14/83] Add range node kmem cache.
-To: Nikolay Borisov <n.borisov.lkml@gmail.com>
-Cc: Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Rudoff, Andy" <andy.rudoff@intel.com>, coughlan@redhat.com,
-        Steven Swanson <swanson@cs.ucsd.edu>,
-        Dave Chinner <david@fromorbit.com>, jack@suse.com, swhiteho@redhat.com,
-        miklos@szeredi.hu, Jian Xu <andiry.xu@gmail.com>,
-        Andiry Xu <jix024@cs.ucsd.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 11, 2018 at 4:55 AM, Nikolay Borisov
-<n.borisov.lkml@gmail.com> wrote:
->
->
-> On 10.03.2018 20:17, Andiry Xu wrote:
->> From: Andiry Xu <jix024@cs.ucsd.edu>
->>
->> Range node specifies a range of [start, end]. and is managed by a red-black tree.
->> NOVA uses range node to manage NVM allocator and inodes being used.
->>
->> Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
->> ---
->>  fs/nova/nova.h  |  8 ++++++++
->>  fs/nova/super.c | 45 ++++++++++++++++++++++++++++++++++++++++++---
->>  fs/nova/super.h |  2 ++
->>  3 files changed, 52 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/nova/nova.h b/fs/nova/nova.h
->> index ba7ffca..e0e85fb 100644
->> --- a/fs/nova/nova.h
->> +++ b/fs/nova/nova.h
->> @@ -301,6 +301,14 @@ static inline u64 nova_get_epoch_id(struct super_block *sb)
->>  }
->>
->>  #include "inode.h"
->> +
->> +/* A node in the RB tree representing a range of pages */
->> +struct nova_range_node {
->> +     struct rb_node node;
->> +     unsigned long range_low;
->> +     unsigned long range_high;
->> +};
->> +
->>  #include "bbuild.h"
->>
->>  /* ====================================================== */
->> diff --git a/fs/nova/super.c b/fs/nova/super.c
->> index f41cc04..aec1cd3 100644
->> --- a/fs/nova/super.c
->> +++ b/fs/nova/super.c
->> @@ -52,6 +52,7 @@ MODULE_PARM_DESC(nova_dbgmask, "Control debugging output");
->>  static struct super_operations nova_sops;
->>
->>  static struct kmem_cache *nova_inode_cachep;
->> +static struct kmem_cache *nova_range_node_cachep;
->>
->>
->>  /* FIXME: should the following variable be one per NOVA instance? */
->> @@ -686,6 +687,20 @@ static void nova_put_super(struct super_block *sb)
->>       sb->s_fs_info = NULL;
->>  }
->>
->> +inline void nova_free_range_node(struct nova_range_node *node)
->> +{
->> +     kmem_cache_free(nova_range_node_cachep, node);
->> +}
->> +
->> +inline struct nova_range_node *nova_alloc_range_node(struct super_block *sb)
->> +{
->> +     struct nova_range_node *p;
->> +
->> +     p = (struct nova_range_node *)
-> nit: needless cast
+On Sun, 11 Mar 2018, Ard Biesheuvel wrote:
 
-Thanks. Will fix.
+> To allow existing C code to be incorporated into the decompressor or
+> the UEFI stub, introduce a CPP macro that turns all EXPORT_SYMBOL_xxx
+> declarations into nops, and #define it in places where such exports
+> are undesirable. Note that this gets rid of a rather dodgy redefine
+> of linux/export.h's header guard.
+> 
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-Andiry
+Acked-by: Nicolas Pitre <nico@linaro.org>
 
->> +             kmem_cache_zalloc(nova_range_node_cachep, GFP_NOFS);
->> +     return p;
->> +}
->> +
->>  static struct inode *nova_alloc_inode(struct super_block *sb)
->>  {
->>       struct nova_inode_info *vi;
->> @@ -719,6 +734,17 @@ static void init_once(void *foo)
->>       inode_init_once(&vi->vfs_inode);
->>  }
->>
->> +static int __init init_rangenode_cache(void)
->> +{
->> +     nova_range_node_cachep = kmem_cache_create("nova_range_node_cache",
->> +                                     sizeof(struct nova_range_node),
->> +                                     0, (SLAB_RECLAIM_ACCOUNT |
->
->> +                                     SLAB_MEM_SPREAD), NULL);
->> +     if (nova_range_node_cachep == NULL)
->> +             return -ENOMEM;
->> +     return 0;
->> +}
->> +
->>  static int __init init_inodecache(void)
->>  {
->>       nova_inode_cachep = kmem_cache_create("nova_inode_cache",
->> @@ -740,6 +766,11 @@ static void destroy_inodecache(void)
->>       kmem_cache_destroy(nova_inode_cachep);
->>  }
->>
->> +static void destroy_rangenode_cache(void)
->> +{
->> +     kmem_cache_destroy(nova_range_node_cachep);
->> +}
->> +
->>
->>  /*
->>   * the super block writes are all done "on the fly", so the
->> @@ -781,20 +812,27 @@ static int __init init_nova_fs(void)
->>       nova_info("Arch new instructions support: CLWB %s\n",
->>                       support_clwb ? "YES" : "NO");
->>
->> -     rc = init_inodecache();
->> +     rc = init_rangenode_cache();
->>       if (rc)
->>               goto out;
->>
->> -     rc = register_filesystem(&nova_fs_type);
->> +     rc = init_inodecache();
->>       if (rc)
->>               goto out1;
->>
->> +     rc = register_filesystem(&nova_fs_type);
->> +     if (rc)
->> +             goto out2;
->> +
->>  out:
->>       NOVA_END_TIMING(init_t, init_time);
->>       return rc;
->>
->> -out1:
->> +out2:
->>       destroy_inodecache();
->> +
->> +out1:
->> +     destroy_rangenode_cache();
->>       goto out;
->>  }
->>
->> @@ -802,6 +840,7 @@ static void __exit exit_nova_fs(void)
->>  {
->>       unregister_filesystem(&nova_fs_type);
->>       destroy_inodecache();
->> +     destroy_rangenode_cache();
->>  }
->>
->>  MODULE_AUTHOR("Andiry Xu <jix024@cs.ucsd.edu>");
->> diff --git a/fs/nova/super.h b/fs/nova/super.h
->> index cb53908..b478080 100644
->> --- a/fs/nova/super.h
->> +++ b/fs/nova/super.h
->> @@ -145,5 +145,7 @@ static inline struct nova_super_block *nova_get_super(struct super_block *sb)
->>  }
->>
->>  extern void nova_error_mng(struct super_block *sb, const char *fmt, ...);
->> +extern struct nova_range_node *nova_alloc_range_node(struct super_block *sb);
->> +extern void nova_free_range_node(struct nova_range_node *node);
->>
->>  #endif
->>
+> ---
+>  arch/x86/boot/compressed/kaslr.c      |  5 +----
+>  drivers/firmware/efi/libstub/Makefile |  3 ++-
+>  include/linux/export.h                | 11 ++++++++++-
+>  3 files changed, 13 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+> index 8199a6187251..3a2a6d7049e4 100644
+> --- a/arch/x86/boot/compressed/kaslr.c
+> +++ b/arch/x86/boot/compressed/kaslr.c
+> @@ -23,11 +23,8 @@
+>   * _ctype[] in lib/ctype.c is needed by isspace() of linux/ctype.h.
+>   * While both lib/ctype.c and lib/cmdline.c will bring EXPORT_SYMBOL
+>   * which is meaningless and will cause compiling error in some cases.
+> - * So do not include linux/export.h and define EXPORT_SYMBOL(sym)
+> - * as empty.
+>   */
+> -#define _LINUX_EXPORT_H
+> -#define EXPORT_SYMBOL(sym)
+> +#define __DISABLE_EXPORTS
+>  
+>  #include "misc.h"
+>  #include "error.h"
+> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+> index 7b3ba40f0745..896a882c89f4 100644
+> --- a/drivers/firmware/efi/libstub/Makefile
+> +++ b/drivers/firmware/efi/libstub/Makefile
+> @@ -20,7 +20,8 @@ cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
+>  KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
+>  				   -D__NO_FORTIFY \
+>  				   $(call cc-option,-ffreestanding) \
+> -				   $(call cc-option,-fno-stack-protector)
+> +				   $(call cc-option,-fno-stack-protector) \
+> +				   -D__DISABLE_EXPORTS
+>  
+>  GCOV_PROFILE			:= n
+>  KASAN_SANITIZE			:= n
+> diff --git a/include/linux/export.h b/include/linux/export.h
+> index 1a1dfdb2a5c6..25005b55b079 100644
+> --- a/include/linux/export.h
+> +++ b/include/linux/export.h
+> @@ -72,7 +72,16 @@ extern struct module __this_module;
+>  	__attribute__((section("___ksymtab" sec "+" #sym), used))	\
+>  	= { (unsigned long)&sym, __kstrtab_##sym }
+>  
+> -#if defined(__KSYM_DEPS__)
+> +#if defined(__DISABLE_EXPORTS)
+> +
+> +/*
+> + * Allow symbol exports to be disabled completely so that C code may
+> + * be reused in other execution contexts such as the UEFI stub or the
+> + * decompressor.
+> + */
+> +#define __EXPORT_SYMBOL(sym, sec)
+> +
+> +#elif defined(__KSYM_DEPS__)
+>  
+>  /*
+>   * For fine grained build dependencies, we want to tell the build system
+> -- 
+> 2.15.1
+> 
+> 
