@@ -1,61 +1,89 @@
-Return-Path: <jwerner@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521062535; cv=none;
+Return-Path: <helgaas@kernel.org>
+X-Google-Smtp-Source: AG47ELvbG3AourA9GXntZs+2TqxE0Bxttjtvl5tDhI4qC3E7FHhMzGvUawdZqmCHHIPx8RibtlNv
+ARC-Seal: i=1; a=rsa-sha256; t=1520805865; cv=none;
         d=google.com; s=arc-20160816;
-        b=i+w0nSr5sq+bZXVwvzbjrZ5GQ+fUGC4konE+pW1liAQu+MM+PRr447CEO66YONT+dE
-         AY2RHramX6RPXHIiMHGJIVfxpgGxWuo1kBKX41D1wX4d3XHb+aNyOs6B8jtnjdjwPJl4
-         WeWXpZgCfwrbLONENYvNrW6gof19Y5fkX+80mQIxPFLCfsq+wkKUIFqpv/ii3FgtseX3
-         vDqfcLXNQmeoA8HM6cJ3BRN6Bg7o8/XsDOKDKXR0lgJRtdUGxed7EYnBZ8z2Hm2szhPn
-         r7F21hI5mrvLtAZ81T+80dMqHgGyTirW1Sn9N9PgVsUlrMawIMLVUDeWfcqRpjxpL55m
-         rLFw==
+        b=qMOUrTMyN3JTwAUtJOgixAxwpReODdZa9OLpnxSGbJdbupjVOz7Vtv2AeYF9Yleqgg
+         s7EL4ILFi/7NkZRzOQqUlrnGaIz77WwB9QnBIyfF9vKWK9/mwMSUCjCBi4Kb6sWLXrR1
+         e510WNYhjIF85HtfQVQOlTyXob5UqP8Ly3pZleDAWFqsoLZw0VqFehQYyrOiC2BocJm/
+         arAvRcI1cCPyv2VNolGKRRbHrFSNzUxrXqi/IWbVW2Kgvj5Mbm+y78iFGjYBBUi93BIp
+         VjRXU3U1RkaTSlyfcx1u3kaZH8KC+cvM0bPKK4UKBpB/zJhF39Qq0QVyynMYE0ZA8+PP
+         fn+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=Rg+ydLWDQsuZ/b8mPgQTS+QdBzHhwH0YTlMmCurQxHE=;
-        b=aMcR5M3QRJD89MVH7swyp61EYm7eBWSFZCvj6JgNWfpTslvNKj+t+9ULNb+vZT62SX
-         IJsO/OAFQ5bxW6dTVvJU9eHVmOdQWpDED1c6LJFbK9QLlnkIu91O0diuCADLQLnu48mG
-         1zT0tdpp3oz5eJKb0+gU4JevotXIl6fzKYNOVUWvCd7YkMDsP+LXotvnZnC9bFU8UDvE
-         taRdnighNTNWCDyTjxvIACOkgnSNusxKINUVOAxBR4rt7QrlyNuww1sZQ5OOWLy+8OjU
-         Lp7iuaNjOkCwd4k1w+cJufHcX7mFeU8yR3gb7oCT1lkVhQFebM7PtfN7HIUst+CxMxVM
-         n6xw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dmarc-filter
+         :arc-authentication-results;
+        bh=B7duFtoNEM7MhCckbQwKNsfMVQhNrhnYdweJTV85Zx4=;
+        b=Gq7gTSTUzA++nH1pX3YaHQeAs4SKR5RLqpC89JvQnC0i6/DjJKM33rC8Rhde5AvPJx
+         mGtrZGd2ae/YMZ9ZNR8GOTlVg5ok/XC5Icgo44Mco7B0bI+belcg3v6cbHrBATPNT20/
+         fr1TPOqP0z/6/BlYd9eKC5KL612FM00efuq5fIJGUhrpvkZw/ZlCgmFBZ0niylHmP32t
+         vzpD4fv7OCflCMVVfrayL0U3fuKmOktr0PDmGO/edRozw+csvFYNcQTaihYSag28xWWD
+         Gd6F5goYJ10nYRYxThInOlV4MxkBGcBbZHhgT3yx3JQ1w2BwjK687Yv02m7G3P48uAFK
+         +1Ig==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=e/syL7Z3;
-       spf=pass (google.com: domain of jwerner@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jwerner@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=e/syL7Z3;
-       spf=pass (google.com: domain of jwerner@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jwerner@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AG47ELsxwy/9yNSrREoPuOyMI2NfjkwqdrD46HPtaQjZt69f6nbiQOMDhuAZtxXTHzFOH7GXABQ7ONLQFCERcapkaq0=
+       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBE51208FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Sun, 11 Mar 2018 17:03:37 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Oza Pawandeep <poza@codeaurora.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dongdong Liu <liudongdong3@huawei.com>,
+	Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
+	Sinan Kaya <okaya@codeaurora.org>,
+	Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH v12 0/6] Address error and recovery for AER and DPC
+Message-ID: <20180311220337.GA194000@bhelgaas-glaptop.roam.corp.google.com>
+References: <1519837457-3596-1-git-send-email-poza@codeaurora.org>
 MIME-Version: 1.0
-References: <20180125014120.20851-1-samuel@sholland.org> <20180314180830.GA6311@kroah.com>
- <CAODwPW9gbZgFKs6_Lc_oD_pPgGa1nUSdM2p0k8o9Mygx9d+HJw@mail.gmail.com>
-In-Reply-To: <CAODwPW9gbZgFKs6_Lc_oD_pPgGa1nUSdM2p0k8o9Mygx9d+HJw@mail.gmail.com>
-From: Julius Werner <jwerner@chromium.org>
-Date: Wed, 14 Mar 2018 21:22:04 +0000
-Message-ID: <CAODwPW96LfXRbLFkX9OAUV7DH9t1MPogqvUUrCExrzk00Vy4_w@mail.gmail.com>
-Subject: Re: [PATCH 0/5] coreboot table bus and framebuffer driver
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: samuel@sholland.org, LKML <linux-kernel@vger.kernel.org>,
-	Coreboot <coreboot@coreboot.org>, Julius Werner <jwerner@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519837457-3596-1-git-send-email-poza@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1590526722620328845?=
-X-GMAIL-MSGID: =?utf-8?q?1594949669376091564?=
+X-GMAIL-THRID: =?utf-8?q?1593665102741565714?=
+X-GMAIL-MSGID: =?utf-8?q?1594680531668685472?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-[resend in plain text]
+On Wed, Feb 28, 2018 at 10:34:11PM +0530, Oza Pawandeep wrote:
+> This patch set brings in error handling support for DPC
+> 
+> The current implementation of AER and error message broadcasting to the
+> EP driver is tightly coupled and limited to AER service driver.
+> It is important to factor out broadcasting and other link handling
+> callbacks. So that not only when AER gets triggered, but also when DPC get
+> triggered (for e.g. ERR_FATAL), callbacks are handled appropriately.
+> 
+> DPC should enumerate the devices after recovering the link, which is
+> achieved by implementing error_resume callback.
 
-> It would be great to get some of the google developers to ack these, as
-> this touches their code...
+The main point of this series is to call the driver error handling
+callbacks (error_detected(), mmio_enabled(), slot_reset(), etc.) when
+DPC events occur.  We've always called them for AER events, but prior
+to this series, we didn't call them for DPC events.
 
- From the coreboot point of view I guess we're fine with it since it claims
-to maintain all of the existing functionality. It's just changing the
-kernel-level plumbing for these drivers and I don't really have the
-expertise to comment on whether this is better or worse than the old code
-(maybe Dmitry or Guenter will?). It seems a little odd to me to call this a
-"bus", but if we think that's the most fitting abstraction the kernel has
-for it, I'm okay with that. All I care about is that it will work (in all
-combinations... e.g. regardless of probe order and even if some parts are
-compiled as modules and loaded/unloaded at runtime).
+That's a good thing -- we should treat DPC events as much like AER
+events as possible.
+
+This series does make it more obvious that there's still a big
+difference between AER and DPC handling -- for DPC, we remove and
+re-enumerate all the devices, but we don't for AER.  
+
+That difference has been there since the beginning of DPC, so it has
+nothing to do with *this* series EXCEPT for the fact that it really
+complicates the logic you're adding to reset_link() and
+broadcast_error_message().
+
+We ought to be able to simplify that somehow because the only real
+difference between AER and DPC should be that DPC automatically
+disables the link and AER does it in software.
+
+Bjorn
