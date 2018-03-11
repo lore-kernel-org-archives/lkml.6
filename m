@@ -1,696 +1,294 @@
-Date: Sun, 11 Mar 2018 17:46:16 +0100
+Date: Sun, 11 Mar 2018 17:45:16 +0100
 From: Greg KH <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
 	torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 4.15.9
-Message-ID: <20180311164616.GB24041@kroah.com>
-References: <20180311164611.GA24041@kroah.com>
+Subject: Linux 4.9.87
+Message-ID: <20180311164516.GA23799@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="M9NhX3UHpAaciwkO"
 Content-Disposition: inline
-In-Reply-To: <20180311164611.GA24041@kroah.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-diff --git a/Documentation/virtual/kvm/cpuid.txt b/Documentation/virtual/kvm/cpuid.txt
-index 3c65feb83010..a81c97a4b4a5 100644
---- a/Documentation/virtual/kvm/cpuid.txt
-+++ b/Documentation/virtual/kvm/cpuid.txt
-@@ -54,6 +54,10 @@ KVM_FEATURE_PV_UNHALT              ||     7 || guest checks this feature bit
-                                    ||       || before enabling paravirtualized
-                                    ||       || spinlock support.
- ------------------------------------------------------------------------------
-+KVM_FEATURE_ASYNC_PF_VMEXIT        ||    10 || paravirtualized async PF VM exit
-+                                   ||       || can be enabled by setting bit 2
-+                                   ||       || when writing to msr 0x4b564d02
-+------------------------------------------------------------------------------
- KVM_FEATURE_CLOCKSOURCE_STABLE_BIT ||    24 || host will warn if no guest-side
-                                    ||       || per-cpu warps are expected in
-                                    ||       || kvmclock.
-diff --git a/Documentation/virtual/kvm/msr.txt b/Documentation/virtual/kvm/msr.txt
-index 1ebecc115dc6..f3f0d57ced8e 100644
---- a/Documentation/virtual/kvm/msr.txt
-+++ b/Documentation/virtual/kvm/msr.txt
-@@ -170,7 +170,8 @@ MSR_KVM_ASYNC_PF_EN: 0x4b564d02
- 	when asynchronous page faults are enabled on the vcpu 0 when
- 	disabled. Bit 1 is 1 if asynchronous page faults can be injected
- 	when vcpu is in cpl == 0. Bit 2 is 1 if asynchronous page faults
--	are delivered to L1 as #PF vmexits.
-+	are delivered to L1 as #PF vmexits.  Bit 2 can be set only if
-+	KVM_FEATURE_ASYNC_PF_VMEXIT is present in CPUID.
- 
- 	First 4 byte of 64 byte memory location will be written to by
- 	the hypervisor at the time of asynchronous page fault (APF)
-diff --git a/Makefile b/Makefile
-index eb18d200a603..0420f9a0c70f 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- VERSION = 4
- PATCHLEVEL = 15
--SUBLEVEL = 8
-+SUBLEVEL = 9
- EXTRAVERSION =
- NAME = Fearless Coyote
- 
-diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
-index bb32f7f6dd0f..be155f70f108 100644
---- a/arch/arm64/net/bpf_jit_comp.c
-+++ b/arch/arm64/net/bpf_jit_comp.c
-@@ -238,8 +238,9 @@ static int emit_bpf_tail_call(struct jit_ctx *ctx)
- 	off = offsetof(struct bpf_array, map.max_entries);
- 	emit_a64_mov_i64(tmp, off, ctx);
- 	emit(A64_LDR32(tmp, r2, tmp), ctx);
-+	emit(A64_MOV(0, r3, r3), ctx);
- 	emit(A64_CMP(0, r3, tmp), ctx);
--	emit(A64_B_(A64_COND_GE, jmp_offset), ctx);
-+	emit(A64_B_(A64_COND_CS, jmp_offset), ctx);
- 
- 	/* if (tail_call_cnt > MAX_TAIL_CALL_CNT)
- 	 *     goto out;
-@@ -247,7 +248,7 @@ static int emit_bpf_tail_call(struct jit_ctx *ctx)
- 	 */
- 	emit_a64_mov_i64(tmp, MAX_TAIL_CALL_CNT, ctx);
- 	emit(A64_CMP(1, tcc, tmp), ctx);
--	emit(A64_B_(A64_COND_GT, jmp_offset), ctx);
-+	emit(A64_B_(A64_COND_HI, jmp_offset), ctx);
- 	emit(A64_ADD_I(1, tcc, tcc, 1), ctx);
- 
- 	/* prog = array->ptrs[index];
-diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/bpf_jit_comp64.c
-index d183b4801bdb..35591fb09042 100644
---- a/arch/powerpc/net/bpf_jit_comp64.c
-+++ b/arch/powerpc/net/bpf_jit_comp64.c
-@@ -242,6 +242,7 @@ static void bpf_jit_emit_tail_call(u32 *image, struct codegen_context *ctx, u32
- 	 *   goto out;
- 	 */
- 	PPC_LWZ(b2p[TMP_REG_1], b2p_bpf_array, offsetof(struct bpf_array, map.max_entries));
-+	PPC_RLWINM(b2p_index, b2p_index, 0, 0, 31);
- 	PPC_CMPLW(b2p_index, b2p[TMP_REG_1]);
- 	PPC_BCC(COND_GE, out);
- 
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 76b058533e47..81a1be326571 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -177,4 +177,41 @@ static inline void indirect_branch_prediction_barrier(void)
- }
- 
- #endif /* __ASSEMBLY__ */
-+
-+/*
-+ * Below is used in the eBPF JIT compiler and emits the byte sequence
-+ * for the following assembly:
-+ *
-+ * With retpolines configured:
-+ *
-+ *    callq do_rop
-+ *  spec_trap:
-+ *    pause
-+ *    lfence
-+ *    jmp spec_trap
-+ *  do_rop:
-+ *    mov %rax,(%rsp)
-+ *    retq
-+ *
-+ * Without retpolines configured:
-+ *
-+ *    jmp *%rax
-+ */
-+#ifdef CONFIG_RETPOLINE
-+# define RETPOLINE_RAX_BPF_JIT_SIZE	17
-+# define RETPOLINE_RAX_BPF_JIT()				\
-+	EMIT1_off32(0xE8, 7);	 /* callq do_rop */		\
-+	/* spec_trap: */					\
-+	EMIT2(0xF3, 0x90);       /* pause */			\
-+	EMIT3(0x0F, 0xAE, 0xE8); /* lfence */			\
-+	EMIT2(0xEB, 0xF9);       /* jmp spec_trap */		\
-+	/* do_rop: */						\
-+	EMIT4(0x48, 0x89, 0x04, 0x24); /* mov %rax,(%rsp) */	\
-+	EMIT1(0xC3);             /* retq */
-+#else
-+# define RETPOLINE_RAX_BPF_JIT_SIZE	2
-+# define RETPOLINE_RAX_BPF_JIT()				\
-+	EMIT2(0xFF, 0xE0);	 /* jmp *%rax */
-+#endif
-+
- #endif /* _ASM_X86_NOSPEC_BRANCH_H_ */
-diff --git a/arch/x86/include/uapi/asm/kvm_para.h b/arch/x86/include/uapi/asm/kvm_para.h
-index 09cc06483bed..989db885de97 100644
---- a/arch/x86/include/uapi/asm/kvm_para.h
-+++ b/arch/x86/include/uapi/asm/kvm_para.h
-@@ -25,6 +25,7 @@
- #define KVM_FEATURE_STEAL_TIME		5
- #define KVM_FEATURE_PV_EOI		6
- #define KVM_FEATURE_PV_UNHALT		7
-+#define KVM_FEATURE_ASYNC_PF_VMEXIT	10
- 
- /* The last 8 bits are used to indicate how to interpret the flags field
-  * in pvclock structure. If no bits are set, all flags are ignored.
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index b40ffbf156c1..0a93e83b774a 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -341,10 +341,10 @@ static void kvm_guest_cpu_init(void)
- #endif
- 		pa |= KVM_ASYNC_PF_ENABLED;
- 
--		/* Async page fault support for L1 hypervisor is optional */
--		if (wrmsr_safe(MSR_KVM_ASYNC_PF_EN,
--			(pa | KVM_ASYNC_PF_DELIVERY_AS_PF_VMEXIT) & 0xffffffff, pa >> 32) < 0)
--			wrmsrl(MSR_KVM_ASYNC_PF_EN, pa);
-+		if (kvm_para_has_feature(KVM_FEATURE_ASYNC_PF_VMEXIT))
-+			pa |= KVM_ASYNC_PF_DELIVERY_AS_PF_VMEXIT;
-+
-+		wrmsrl(MSR_KVM_ASYNC_PF_EN, pa);
- 		__this_cpu_write(apf_reason.enabled, 1);
- 		printk(KERN_INFO"KVM setup async PF for cpu %d\n",
- 		       smp_processor_id());
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 13f5d4217e4f..4f544f2a7b06 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -597,7 +597,8 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 			     (1 << KVM_FEATURE_ASYNC_PF) |
- 			     (1 << KVM_FEATURE_PV_EOI) |
- 			     (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT) |
--			     (1 << KVM_FEATURE_PV_UNHALT);
-+			     (1 << KVM_FEATURE_PV_UNHALT) |
-+			     (1 << KVM_FEATURE_ASYNC_PF_VMEXIT);
- 
- 		if (sched_info_on())
- 			entry->eax |= (1 << KVM_FEATURE_STEAL_TIME);
-diff --git a/arch/x86/net/bpf_jit_comp.c b/arch/x86/net/bpf_jit_comp.c
-index 0554e8aef4d5..940aac70b4da 100644
---- a/arch/x86/net/bpf_jit_comp.c
-+++ b/arch/x86/net/bpf_jit_comp.c
-@@ -13,6 +13,7 @@
- #include <linux/if_vlan.h>
- #include <asm/cacheflush.h>
- #include <asm/set_memory.h>
-+#include <asm/nospec-branch.h>
- #include <linux/bpf.h>
- 
- int bpf_jit_enable __read_mostly;
-@@ -287,7 +288,7 @@ static void emit_bpf_tail_call(u8 **pprog)
- 	EMIT2(0x89, 0xD2);                        /* mov edx, edx */
- 	EMIT3(0x39, 0x56,                         /* cmp dword ptr [rsi + 16], edx */
- 	      offsetof(struct bpf_array, map.max_entries));
--#define OFFSET1 43 /* number of bytes to jump */
-+#define OFFSET1 (41 + RETPOLINE_RAX_BPF_JIT_SIZE) /* number of bytes to jump */
- 	EMIT2(X86_JBE, OFFSET1);                  /* jbe out */
- 	label1 = cnt;
- 
-@@ -296,7 +297,7 @@ static void emit_bpf_tail_call(u8 **pprog)
- 	 */
- 	EMIT2_off32(0x8B, 0x85, 36);              /* mov eax, dword ptr [rbp + 36] */
- 	EMIT3(0x83, 0xF8, MAX_TAIL_CALL_CNT);     /* cmp eax, MAX_TAIL_CALL_CNT */
--#define OFFSET2 32
-+#define OFFSET2 (30 + RETPOLINE_RAX_BPF_JIT_SIZE)
- 	EMIT2(X86_JA, OFFSET2);                   /* ja out */
- 	label2 = cnt;
- 	EMIT3(0x83, 0xC0, 0x01);                  /* add eax, 1 */
-@@ -310,7 +311,7 @@ static void emit_bpf_tail_call(u8 **pprog)
- 	 *   goto out;
- 	 */
- 	EMIT3(0x48, 0x85, 0xC0);		  /* test rax,rax */
--#define OFFSET3 10
-+#define OFFSET3 (8 + RETPOLINE_RAX_BPF_JIT_SIZE)
- 	EMIT2(X86_JE, OFFSET3);                   /* je out */
- 	label3 = cnt;
- 
-@@ -323,7 +324,7 @@ static void emit_bpf_tail_call(u8 **pprog)
- 	 * rdi == ctx (1st arg)
- 	 * rax == prog->bpf_func + prologue_size
- 	 */
--	EMIT2(0xFF, 0xE0);                        /* jmp rax */
-+	RETPOLINE_RAX_BPF_JIT();
- 
- 	/* out: */
- 	BUILD_BUG_ON(cnt - label1 != OFFSET1);
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
-index 8027de465d47..f43b51452596 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-@@ -6289,14 +6289,14 @@ _base_reset_handler(struct MPT3SAS_ADAPTER *ioc, int reset_phase)
- }
- 
- /**
-- * _wait_for_commands_to_complete - reset controller
-+ * mpt3sas_wait_for_commands_to_complete - reset controller
-  * @ioc: Pointer to MPT_ADAPTER structure
-  *
-  * This function waiting(3s) for all pending commands to complete
-  * prior to putting controller in reset.
-  */
--static void
--_wait_for_commands_to_complete(struct MPT3SAS_ADAPTER *ioc)
-+void
-+mpt3sas_wait_for_commands_to_complete(struct MPT3SAS_ADAPTER *ioc)
- {
- 	u32 ioc_state;
- 	unsigned long flags;
-@@ -6375,7 +6375,7 @@ mpt3sas_base_hard_reset_handler(struct MPT3SAS_ADAPTER *ioc,
- 			is_fault = 1;
- 	}
- 	_base_reset_handler(ioc, MPT3_IOC_PRE_RESET);
--	_wait_for_commands_to_complete(ioc);
-+	mpt3sas_wait_for_commands_to_complete(ioc);
- 	_base_mask_interrupts(ioc);
- 	r = _base_make_ioc_ready(ioc, type);
- 	if (r)
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.h b/drivers/scsi/mpt3sas/mpt3sas_base.h
-index 60f42ca3954f..69022b10a3d8 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_base.h
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.h
-@@ -1435,6 +1435,9 @@ void mpt3sas_base_update_missing_delay(struct MPT3SAS_ADAPTER *ioc,
- 
- int mpt3sas_port_enable(struct MPT3SAS_ADAPTER *ioc);
- 
-+void
-+mpt3sas_wait_for_commands_to_complete(struct MPT3SAS_ADAPTER *ioc);
-+
- 
- /* scsih shared API */
- u8 mpt3sas_scsih_event_callback(struct MPT3SAS_ADAPTER *ioc, u8 msix_index,
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-index b258f210120a..741b0a28c2e3 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -2998,7 +2998,8 @@ scsih_abort(struct scsi_cmnd *scmd)
- 	_scsih_tm_display_info(ioc, scmd);
- 
- 	sas_device_priv_data = scmd->device->hostdata;
--	if (!sas_device_priv_data || !sas_device_priv_data->sas_target) {
-+	if (!sas_device_priv_data || !sas_device_priv_data->sas_target ||
-+	    ioc->remove_host) {
- 		sdev_printk(KERN_INFO, scmd->device,
- 			"device been deleted! scmd(%p)\n", scmd);
- 		scmd->result = DID_NO_CONNECT << 16;
-@@ -3060,7 +3061,8 @@ scsih_dev_reset(struct scsi_cmnd *scmd)
- 	_scsih_tm_display_info(ioc, scmd);
- 
- 	sas_device_priv_data = scmd->device->hostdata;
--	if (!sas_device_priv_data || !sas_device_priv_data->sas_target) {
-+	if (!sas_device_priv_data || !sas_device_priv_data->sas_target ||
-+	    ioc->remove_host) {
- 		sdev_printk(KERN_INFO, scmd->device,
- 			"device been deleted! scmd(%p)\n", scmd);
- 		scmd->result = DID_NO_CONNECT << 16;
-@@ -3122,7 +3124,8 @@ scsih_target_reset(struct scsi_cmnd *scmd)
- 	_scsih_tm_display_info(ioc, scmd);
- 
- 	sas_device_priv_data = scmd->device->hostdata;
--	if (!sas_device_priv_data || !sas_device_priv_data->sas_target) {
-+	if (!sas_device_priv_data || !sas_device_priv_data->sas_target ||
-+	    ioc->remove_host) {
- 		starget_printk(KERN_INFO, starget, "target been deleted! scmd(%p)\n",
- 			scmd);
- 		scmd->result = DID_NO_CONNECT << 16;
-@@ -3179,7 +3182,7 @@ scsih_host_reset(struct scsi_cmnd *scmd)
- 	    ioc->name, scmd);
- 	scsi_print_command(scmd);
- 
--	if (ioc->is_driver_loading) {
-+	if (ioc->is_driver_loading || ioc->remove_host) {
- 		pr_info(MPT3SAS_FMT "Blocking the host reset\n",
- 		    ioc->name);
- 		r = FAILED;
-@@ -4611,7 +4614,7 @@ _scsih_flush_running_cmds(struct MPT3SAS_ADAPTER *ioc)
- 		_scsih_set_satl_pending(scmd, false);
- 		mpt3sas_base_free_smid(ioc, smid);
- 		scsi_dma_unmap(scmd);
--		if (ioc->pci_error_recovery)
-+		if (ioc->pci_error_recovery || ioc->remove_host)
- 			scmd->result = DID_NO_CONNECT << 16;
- 		else
- 			scmd->result = DID_RESET << 16;
-@@ -9901,6 +9904,10 @@ static void scsih_remove(struct pci_dev *pdev)
- 	unsigned long flags;
- 
- 	ioc->remove_host = 1;
-+
-+	mpt3sas_wait_for_commands_to_complete(ioc);
-+	_scsih_flush_running_cmds(ioc);
-+
- 	_scsih_fw_event_cleanup_queue(ioc);
- 
- 	spin_lock_irqsave(&ioc->fw_event_lock, flags);
-@@ -9977,6 +9984,10 @@ scsih_shutdown(struct pci_dev *pdev)
- 	unsigned long flags;
- 
- 	ioc->remove_host = 1;
-+
-+	mpt3sas_wait_for_commands_to_complete(ioc);
-+	_scsih_flush_running_cmds(ioc);
-+
- 	_scsih_fw_event_cleanup_queue(ioc);
- 
- 	spin_lock_irqsave(&ioc->fw_event_lock, flags);
-diff --git a/kernel/bpf/arraymap.c b/kernel/bpf/arraymap.c
-index ab94d304a634..8596aa31c75e 100644
---- a/kernel/bpf/arraymap.c
-+++ b/kernel/bpf/arraymap.c
-@@ -26,8 +26,10 @@ static void bpf_array_free_percpu(struct bpf_array *array)
- {
- 	int i;
- 
--	for (i = 0; i < array->map.max_entries; i++)
-+	for (i = 0; i < array->map.max_entries; i++) {
- 		free_percpu(array->pptrs[i]);
-+		cond_resched();
-+	}
- }
- 
- static int bpf_array_alloc_percpu(struct bpf_array *array)
-@@ -43,6 +45,7 @@ static int bpf_array_alloc_percpu(struct bpf_array *array)
- 			return -ENOMEM;
- 		}
- 		array->pptrs[i] = ptr;
-+		cond_resched();
- 	}
- 
- 	return 0;
-@@ -52,11 +55,11 @@ static int bpf_array_alloc_percpu(struct bpf_array *array)
- static struct bpf_map *array_map_alloc(union bpf_attr *attr)
- {
- 	bool percpu = attr->map_type == BPF_MAP_TYPE_PERCPU_ARRAY;
--	int numa_node = bpf_map_attr_numa_node(attr);
-+	int ret, numa_node = bpf_map_attr_numa_node(attr);
- 	u32 elem_size, index_mask, max_entries;
- 	bool unpriv = !capable(CAP_SYS_ADMIN);
-+	u64 cost, array_size, mask64;
- 	struct bpf_array *array;
--	u64 array_size, mask64;
- 
- 	/* check sanity of attributes */
- 	if (attr->max_entries == 0 || attr->key_size != 4 ||
-@@ -101,8 +104,19 @@ static struct bpf_map *array_map_alloc(union bpf_attr *attr)
- 		array_size += (u64) max_entries * elem_size;
- 
- 	/* make sure there is no u32 overflow later in round_up() */
--	if (array_size >= U32_MAX - PAGE_SIZE)
-+	cost = array_size;
-+	if (cost >= U32_MAX - PAGE_SIZE)
- 		return ERR_PTR(-ENOMEM);
-+	if (percpu) {
-+		cost += (u64)attr->max_entries * elem_size * num_possible_cpus();
-+		if (cost >= U32_MAX - PAGE_SIZE)
-+			return ERR_PTR(-ENOMEM);
-+	}
-+	cost = round_up(cost, PAGE_SIZE) >> PAGE_SHIFT;
-+
-+	ret = bpf_map_precharge_memlock(cost);
-+	if (ret < 0)
-+		return ERR_PTR(ret);
- 
- 	/* allocate all map elements and zero-initialize them */
- 	array = bpf_map_area_alloc(array_size, numa_node);
-@@ -118,20 +132,13 @@ static struct bpf_map *array_map_alloc(union bpf_attr *attr)
- 	array->map.max_entries = attr->max_entries;
- 	array->map.map_flags = attr->map_flags;
- 	array->map.numa_node = numa_node;
-+	array->map.pages = cost;
- 	array->elem_size = elem_size;
- 
--	if (!percpu)
--		goto out;
--
--	array_size += (u64) attr->max_entries * elem_size * num_possible_cpus();
--
--	if (array_size >= U32_MAX - PAGE_SIZE ||
--	    bpf_array_alloc_percpu(array)) {
-+	if (percpu && bpf_array_alloc_percpu(array)) {
- 		bpf_map_area_free(array);
- 		return ERR_PTR(-ENOMEM);
- 	}
--out:
--	array->map.pages = round_up(array_size, PAGE_SIZE) >> PAGE_SHIFT;
- 
- 	return &array->map;
- }
-diff --git a/kernel/bpf/lpm_trie.c b/kernel/bpf/lpm_trie.c
-index 885e45479680..424f89ac4adc 100644
---- a/kernel/bpf/lpm_trie.c
-+++ b/kernel/bpf/lpm_trie.c
-@@ -560,7 +560,10 @@ static void trie_free(struct bpf_map *map)
- 	struct lpm_trie_node __rcu **slot;
- 	struct lpm_trie_node *node;
- 
--	raw_spin_lock(&trie->lock);
-+	/* Wait for outstanding programs to complete
-+	 * update/lookup/delete/get_next_key and free the trie.
-+	 */
-+	synchronize_rcu();
- 
- 	/* Always start at the root and walk down to a node that has no
- 	 * children. Then free that node, nullify its reference in the parent
-@@ -571,10 +574,9 @@ static void trie_free(struct bpf_map *map)
- 		slot = &trie->root;
- 
- 		for (;;) {
--			node = rcu_dereference_protected(*slot,
--					lockdep_is_held(&trie->lock));
-+			node = rcu_dereference_protected(*slot, 1);
- 			if (!node)
--				goto unlock;
-+				goto out;
- 
- 			if (rcu_access_pointer(node->child[0])) {
- 				slot = &node->child[0];
-@@ -592,8 +594,8 @@ static void trie_free(struct bpf_map *map)
- 		}
- 	}
- 
--unlock:
--	raw_spin_unlock(&trie->lock);
-+out:
-+	kfree(trie);
- }
- 
- static int trie_get_next_key(struct bpf_map *map, void *key, void *next_key)
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 13551e623501..7125ddbb24df 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -985,6 +985,13 @@ static bool is_ctx_reg(struct bpf_verifier_env *env, int regno)
- 	return reg->type == PTR_TO_CTX;
- }
- 
-+static bool is_pkt_reg(struct bpf_verifier_env *env, int regno)
-+{
-+	const struct bpf_reg_state *reg = cur_regs(env) + regno;
-+
-+	return type_is_pkt_pointer(reg->type);
-+}
-+
- static int check_pkt_ptr_alignment(struct bpf_verifier_env *env,
- 				   const struct bpf_reg_state *reg,
- 				   int off, int size, bool strict)
-@@ -1045,10 +1052,10 @@ static int check_generic_ptr_alignment(struct bpf_verifier_env *env,
- }
- 
- static int check_ptr_alignment(struct bpf_verifier_env *env,
--			       const struct bpf_reg_state *reg,
--			       int off, int size)
-+			       const struct bpf_reg_state *reg, int off,
-+			       int size, bool strict_alignment_once)
- {
--	bool strict = env->strict_alignment;
-+	bool strict = env->strict_alignment || strict_alignment_once;
- 	const char *pointer_desc = "";
- 
- 	switch (reg->type) {
-@@ -1108,9 +1115,9 @@ static void coerce_reg_to_size(struct bpf_reg_state *reg, int size)
-  * if t==write && value_regno==-1, some unknown value is stored into memory
-  * if t==read && value_regno==-1, don't care what we read from memory
-  */
--static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regno, int off,
--			    int bpf_size, enum bpf_access_type t,
--			    int value_regno)
-+static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regno,
-+			    int off, int bpf_size, enum bpf_access_type t,
-+			    int value_regno, bool strict_alignment_once)
- {
- 	struct bpf_verifier_state *state = env->cur_state;
- 	struct bpf_reg_state *regs = cur_regs(env);
-@@ -1122,7 +1129,7 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
- 		return size;
- 
- 	/* alignment checks will add in reg->off themselves */
--	err = check_ptr_alignment(env, reg, off, size);
-+	err = check_ptr_alignment(env, reg, off, size, strict_alignment_once);
- 	if (err)
- 		return err;
- 
-@@ -1265,21 +1272,23 @@ static int check_xadd(struct bpf_verifier_env *env, int insn_idx, struct bpf_ins
- 		return -EACCES;
- 	}
- 
--	if (is_ctx_reg(env, insn->dst_reg)) {
--		verbose(env, "BPF_XADD stores into R%d context is not allowed\n",
--			insn->dst_reg);
-+	if (is_ctx_reg(env, insn->dst_reg) ||
-+	    is_pkt_reg(env, insn->dst_reg)) {
-+		verbose(env, "BPF_XADD stores into R%d %s is not allowed\n",
-+			insn->dst_reg, is_ctx_reg(env, insn->dst_reg) ?
-+			"context" : "packet");
- 		return -EACCES;
- 	}
- 
- 	/* check whether atomic_add can read the memory */
- 	err = check_mem_access(env, insn_idx, insn->dst_reg, insn->off,
--			       BPF_SIZE(insn->code), BPF_READ, -1);
-+			       BPF_SIZE(insn->code), BPF_READ, -1, true);
- 	if (err)
- 		return err;
- 
- 	/* check whether atomic_add can write into the same memory */
- 	return check_mem_access(env, insn_idx, insn->dst_reg, insn->off,
--				BPF_SIZE(insn->code), BPF_WRITE, -1);
-+				BPF_SIZE(insn->code), BPF_WRITE, -1, true);
- }
- 
- /* Does this register contain a constant zero? */
-@@ -1763,7 +1772,8 @@ static int check_call(struct bpf_verifier_env *env, int func_id, int insn_idx)
- 	 * is inferred from register state.
- 	 */
- 	for (i = 0; i < meta.access_size; i++) {
--		err = check_mem_access(env, insn_idx, meta.regno, i, BPF_B, BPF_WRITE, -1);
-+		err = check_mem_access(env, insn_idx, meta.regno, i, BPF_B,
-+				       BPF_WRITE, -1, false);
- 		if (err)
- 			return err;
- 	}
-@@ -3933,7 +3943,7 @@ static int do_check(struct bpf_verifier_env *env)
- 			 */
- 			err = check_mem_access(env, insn_idx, insn->src_reg, insn->off,
- 					       BPF_SIZE(insn->code), BPF_READ,
--					       insn->dst_reg);
-+					       insn->dst_reg, false);
- 			if (err)
- 				return err;
- 
-@@ -3985,7 +3995,7 @@ static int do_check(struct bpf_verifier_env *env)
- 			/* check that memory (dst_reg + off) is writeable */
- 			err = check_mem_access(env, insn_idx, insn->dst_reg, insn->off,
- 					       BPF_SIZE(insn->code), BPF_WRITE,
--					       insn->src_reg);
-+					       insn->src_reg, false);
- 			if (err)
- 				return err;
- 
-@@ -4020,7 +4030,7 @@ static int do_check(struct bpf_verifier_env *env)
- 			/* check that memory (dst_reg + off) is writeable */
- 			err = check_mem_access(env, insn_idx, insn->dst_reg, insn->off,
- 					       BPF_SIZE(insn->code), BPF_WRITE,
--					       -1);
-+					       -1, false);
- 			if (err)
- 				return err;
- 
-diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testing/selftests/bpf/test_verifier.c
-index 5ed4175c4ff8..0694527acaa0 100644
---- a/tools/testing/selftests/bpf/test_verifier.c
-+++ b/tools/testing/selftests/bpf/test_verifier.c
-@@ -2254,6 +2254,32 @@ static struct bpf_test tests[] = {
- 		.result_unpriv = REJECT,
- 		.result = ACCEPT,
- 	},
-+	{
-+		"runtime/jit: pass negative index to tail_call",
-+		.insns = {
-+			BPF_MOV64_IMM(BPF_REG_3, -1),
-+			BPF_LD_MAP_FD(BPF_REG_2, 0),
-+			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
-+				     BPF_FUNC_tail_call),
-+			BPF_MOV64_IMM(BPF_REG_0, 0),
-+			BPF_EXIT_INSN(),
-+		},
-+		.fixup_prog = { 1 },
-+		.result = ACCEPT,
-+	},
-+	{
-+		"runtime/jit: pass > 32bit index to tail_call",
-+		.insns = {
-+			BPF_LD_IMM64(BPF_REG_3, 0x100000000ULL),
-+			BPF_LD_MAP_FD(BPF_REG_2, 0),
-+			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
-+				     BPF_FUNC_tail_call),
-+			BPF_MOV64_IMM(BPF_REG_0, 0),
-+			BPF_EXIT_INSN(),
-+		},
-+		.fixup_prog = { 2 },
-+		.result = ACCEPT,
-+	},
- 	{
- 		"stack pointer arithmetic",
- 		.insns = {
-@@ -8826,6 +8852,64 @@ static struct bpf_test tests[] = {
- 		.result = REJECT,
- 		.prog_type = BPF_PROG_TYPE_CGROUP_SOCK,
- 	},
-+	{
-+		"xadd/w check unaligned stack",
-+		.insns = {
-+			BPF_MOV64_IMM(BPF_REG_0, 1),
-+			BPF_STX_MEM(BPF_DW, BPF_REG_10, BPF_REG_0, -8),
-+			BPF_STX_XADD(BPF_W, BPF_REG_10, BPF_REG_0, -7),
-+			BPF_LDX_MEM(BPF_DW, BPF_REG_0, BPF_REG_10, -8),
-+			BPF_EXIT_INSN(),
-+		},
-+		.result = REJECT,
-+		.errstr = "misaligned stack access off",
-+		.prog_type = BPF_PROG_TYPE_SCHED_CLS,
-+	},
-+	{
-+		"xadd/w check unaligned map",
-+		.insns = {
-+			BPF_ST_MEM(BPF_DW, BPF_REG_10, -8, 0),
-+			BPF_MOV64_REG(BPF_REG_2, BPF_REG_10),
-+			BPF_ALU64_IMM(BPF_ADD, BPF_REG_2, -8),
-+			BPF_LD_MAP_FD(BPF_REG_1, 0),
-+			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
-+				     BPF_FUNC_map_lookup_elem),
-+			BPF_JMP_IMM(BPF_JNE, BPF_REG_0, 0, 1),
-+			BPF_EXIT_INSN(),
-+			BPF_MOV64_IMM(BPF_REG_1, 1),
-+			BPF_STX_XADD(BPF_W, BPF_REG_0, BPF_REG_1, 3),
-+			BPF_LDX_MEM(BPF_W, BPF_REG_0, BPF_REG_0, 3),
-+			BPF_EXIT_INSN(),
-+		},
-+		.fixup_map1 = { 3 },
-+		.result = REJECT,
-+		.errstr = "misaligned value access off",
-+		.prog_type = BPF_PROG_TYPE_SCHED_CLS,
-+	},
-+	{
-+		"xadd/w check unaligned pkt",
-+		.insns = {
-+			BPF_LDX_MEM(BPF_W, BPF_REG_2, BPF_REG_1,
-+				    offsetof(struct xdp_md, data)),
-+			BPF_LDX_MEM(BPF_W, BPF_REG_3, BPF_REG_1,
-+				    offsetof(struct xdp_md, data_end)),
-+			BPF_MOV64_REG(BPF_REG_1, BPF_REG_2),
-+			BPF_ALU64_IMM(BPF_ADD, BPF_REG_1, 8),
-+			BPF_JMP_REG(BPF_JLT, BPF_REG_1, BPF_REG_3, 2),
-+			BPF_MOV64_IMM(BPF_REG_0, 99),
-+			BPF_JMP_IMM(BPF_JA, 0, 0, 6),
-+			BPF_MOV64_IMM(BPF_REG_0, 1),
-+			BPF_ST_MEM(BPF_W, BPF_REG_2, 0, 0),
-+			BPF_ST_MEM(BPF_W, BPF_REG_2, 3, 0),
-+			BPF_STX_XADD(BPF_W, BPF_REG_2, BPF_REG_0, 1),
-+			BPF_STX_XADD(BPF_W, BPF_REG_2, BPF_REG_0, 2),
-+			BPF_LDX_MEM(BPF_W, BPF_REG_0, BPF_REG_2, 1),
-+			BPF_EXIT_INSN(),
-+		},
-+		.result = REJECT,
-+		.errstr = "BPF_XADD stores into R2 packet",
-+		.prog_type = BPF_PROG_TYPE_XDP,
-+	},
- };
- 
- static int probe_filter_length(const struct bpf_insn *fp)
+
+--M9NhX3UHpAaciwkO
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+I'm announcing the release of the 4.9.87 kernel.
+
+All users of the 4.9 kernel series must upgrade.
+
+The updated 4.9.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-4.9.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
+mmary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Makefile                                                 |    2=20
+ arch/arm/boot/dts/logicpd-som-lv.dtsi                    |    9 +
+ arch/arm/boot/dts/logicpd-torpedo-som.dtsi               |    8 +
+ arch/arm/kvm/hyp/Makefile                                |    5=20
+ arch/arm/kvm/hyp/banked-sr.c                             |    4=20
+ arch/arm/mach-mvebu/Kconfig                              |    4=20
+ arch/arm64/net/bpf_jit_comp.c                            |    5=20
+ arch/parisc/include/asm/cacheflush.h                     |    1=20
+ arch/parisc/kernel/cache.c                               |   57 +++----
+ arch/parisc/kernel/pacache.S                             |   22 ++
+ arch/powerpc/net/bpf_jit_comp64.c                        |    1=20
+ arch/x86/include/asm/mmu.h                               |   15 +
+ arch/x86/include/asm/mmu_context.h                       |    5=20
+ arch/x86/include/asm/nospec-branch.h                     |   37 ++++
+ arch/x86/include/asm/tlbflush.h                          |    2=20
+ arch/x86/kernel/apic/vector.c                            |   14 -
+ arch/x86/kvm/svm.c                                       |    9 -
+ arch/x86/kvm/vmx.c                                       |    9 -
+ arch/x86/mm/tlb.c                                        |   33 ++++
+ arch/x86/net/bpf_jit_comp.c                              |    9 -
+ arch/x86/platform/intel-mid/intel-mid.c                  |    2=20
+ arch/x86/xen/suspend.c                                   |   16 ++
+ drivers/char/tpm/st33zp24/st33zp24.c                     |    4=20
+ drivers/char/tpm/tpm-dev.c                               |    6=20
+ drivers/char/tpm/tpm_i2c_infineon.c                      |    5=20
+ drivers/char/tpm/tpm_i2c_nuvoton.c                       |    8 -
+ drivers/char/tpm/tpm_tis.c                               |    2=20
+ drivers/char/tpm/tpm_tis_core.c                          |    9 -
+ drivers/char/tpm/tpm_tis_core.h                          |    4=20
+ drivers/char/tpm/tpm_tis_spi.c                           |   48 +++---
+ drivers/cpufreq/s3c24xx-cpufreq.c                        |    8 -
+ drivers/md/dm-io.c                                       |    1=20
+ drivers/md/md.c                                          |    4=20
+ drivers/media/dvb-frontends/m88ds3103.c                  |    7=20
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c |   29 +++
+ drivers/net/phy/phy.c                                    |    2=20
+ drivers/net/ppp/ppp_generic.c                            |    9 +
+ drivers/net/wan/hdlc_ppp.c                               |    5=20
+ drivers/pci/pcie/aspm.c                                  |    8 -
+ drivers/s390/net/qeth_core.h                             |    7=20
+ drivers/s390/net/qeth_core_main.c                        |   43 +++--
+ drivers/s390/net/qeth_l3.h                               |   34 ++++
+ drivers/s390/net/qeth_l3_main.c                          |  119 ++++++----=
+-----
+ fs/btrfs/acl.c                                           |    6=20
+ include/linux/fs.h                                       |    2=20
+ include/linux/nospec.h                                   |    3=20
+ include/net/udplite.h                                    |    1=20
+ kernel/bpf/arraymap.c                                    |   35 ++--
+ kernel/bpf/stackmap.c                                    |    1=20
+ kernel/time/timer.c                                      |    6=20
+ net/bridge/br_sysfs_if.c                                 |    3=20
+ net/core/dev.c                                           |   11 +
+ net/ipv4/fib_semantics.c                                 |    5=20
+ net/ipv4/route.c                                         |    8 -
+ net/ipv4/tcp_output.c                                    |   33 +++-
+ net/ipv4/udp.c                                           |    5=20
+ net/ipv6/ip6_checksum.c                                  |    5=20
+ net/ipv6/sit.c                                           |    2=20
+ net/mpls/af_mpls.c                                       |   36 ++--
+ net/netlink/af_netlink.c                                 |    4=20
+ net/netlink/genetlink.c                                  |   12 +
+ net/rxrpc/output.c                                       |    2=20
+ net/sctp/ipv6.c                                          |   10 -
+ net/sctp/protocol.c                                      |   10 -
+ net/sctp/sm_make_chunk.c                                 |    7=20
+ sound/pci/hda/hda_intel.c                                |   38 ++++
+ sound/pci/hda/patch_realtek.c                            |    3=20
+ sound/usb/quirks-table.h                                 |   47 +++++
+ virt/kvm/kvm_main.c                                      |    3=20
+ 69 files changed, 686 insertions(+), 243 deletions(-)
+
+Adam Ford (2):
+      ARM: dts: LogicPD SOM-LV: Fix I2C1 pinmux
+      ARM: dts: LogicPD Torpedo: Fix I2C1 pinmux
+
+Alexander Steffen (2):
+      tpm_tis_spi: Use DMA-safe memory for SPI transfers
+      tpm-dev-common: Reject too short writes
+
+Alexey Kodanev (3):
+      udplite: fix partial checksum initialization
+      sctp: fix dst refcnt leak in sctp_v6_get_dst()
+      sctp: verify size of a new chunk in _sctp_make_chunk()
+
+Andy Lutomirski (1):
+      x86/mm: Give each mm TLB flush generation a unique ID
+
+Ard Biesheuvel (1):
+      PCI/ASPM: Deal with missing root ports in link state handling
+
+Arnd Bergmann (3):
+      tpm: constify transmit data pointers
+      ARM: kvm: fix building with gcc-8
+      ipv6 sit: work around bogus gcc-8 -Wrestrict warning
+
+Dan Williams (2):
+      dax: fix vma_is_fsdax() helper
+      mpls, nospec: Sanitize array index in mpls_label_ok()
+
+Daniel Borkmann (5):
+      bpf: fix wrong exposure of map_flags into fdinfo for lpm
+      bpf: fix mlock precharge on arraymaps
+      bpf, x64: implement retpoline for tail call
+      bpf, arm64: fix out of bounds access in tail call
+      bpf, ppc64: fix out of bounds access in tail call
+
+David Ahern (1):
+      net: mpls: Pull common label check into helper
+
+David Howells (1):
+      rxrpc: Fix send in rxrpc_send_data_packet()
+
+Denis Du (1):
+      hdlc_ppp: carrier detect ok, don't turn off negotiation
+
+Eric Dumazet (2):
+      tcp_bbr: better deal with suboptimal GSO
+      bpf: add schedule points in percpu arrays management
+
+Erik Veijola (1):
+      ALSA: usb-audio: Add a quirck for B&W PX headphones
+
+Ernesto A. Fern=E1ndez (1):
+      btrfs: preserve i_mode if __btrfs_set_acl() fails
+
+Greg Kroah-Hartman (1):
+      Linux 4.9.87
+
+Guillaume Nault (1):
+      ppp: prevent unregistered channels from connecting to PPP units
+
+Hans de Goede (1):
+      ALSA: hda: Add a power_save blacklist
+
+Heiner Kallweit (1):
+      net: phy: fix phy_start to consider PHY_IGNORE_INTERRUPT
+
+Ilya Lesokhin (1):
+      tcp: Honor the eor bit in tcp_mtu_probe
+
+Jakub Kicinski (1):
+      net: fix race on decreasing number of TX queues
+
+Jason A. Donenfeld (1):
+      netlink: put module reference if dump start fails
+
+Jeremy Boone (4):
+      tpm: st33zp24: fix potential buffer overruns caused by bit glitches o=
+n the bus
+      tpm_i2c_infineon: fix potential buffer overruns caused by bit glitche=
+s on the bus
+      tpm_i2c_nuvoton: fix potential buffer overruns caused by bit glitches=
+ on the bus
+      tpm_tis: fix potential buffer overruns caused by bit glitches on the =
+bus
+
+John David Anglin (1):
+      parisc: Fix ordering of cache and TLB flushes
+
+Juergen Gross (1):
+      x86/xen: Zero MSR_IA32_SPEC_CTRL before suspend
+
+Julian Wiedmann (6):
+      s390/qeth: fix SETIP command handling
+      s390/qeth: fix overestimated count of buffer elements
+      s390/qeth: fix IP removal on offline cards
+      s390/qeth: fix double-free on IP add/remove race
+      s390/qeth: fix IP address lookup for L3 devices
+      s390/qeth: fix IPA command submission race
+
+Lingutla Chandrasekhar (1):
+      timers: Forward timer base before migrating timers
+
+Mauro Carvalho Chehab (1):
+      media: m88ds3103: don't call a non-initalized function
+
+Mike Snitzer (1):
+      dm io: fix duplicate bio completion due to missing ref count
+
+NeilBrown (1):
+      md: only allow remove_and_add_spares when no sync_thread running.
+
+Nicolas Dichtel (1):
+      netlink: ensure to loop over all netns in genlmsg_multicast_allns()
+
+Paolo Bonzini (2):
+      KVM/x86: Remove indirect MSR op calls from SPEC_CTRL
+      KVM/VMX: Optimize vmx_vcpu_run() and svm_vcpu_run() by marking the RD=
+MSR path as unlikely()
+
+Rasmus Villemoes (1):
+      nospec: Allow index argument to have const-qualified type
+
+Sabrina Dubroca (1):
+      net: ipv4: don't allow setting net.ipv4.route.min_pmtu below 68
+
+Sebastian Panceac (1):
+      x86/platform/intel-mid: Handle Intel Edison reboot correctly
+
+Shalom Toledo (1):
+      mlxsw: spectrum_switchdev: Check success of FDB add operation
+
+Stefano Brivio (1):
+      fib_semantics: Don't match route with mismatching tclassid
+
+Takashi Iwai (1):
+      ALSA: hda - Fix pincfg at resume on Lenovo T470 dock
+
+Thomas Gleixner (1):
+      x86/apic/vector: Handle legacy irq data correctly
+
+Tim Chen (1):
+      x86/speculation: Use Indirect Branch Prediction Barrier in context sw=
+itch
+
+Tommi Rantala (1):
+      sctp: fix dst refcnt leak in sctp_v4_get_dst
+
+Ulf Magnusson (1):
+      ARM: mvebu: Fix broken PL310_ERRATA_753970 selects
+
+Ursula Braun (1):
+      s390/qeth: fix underestimated count of buffer elements
+
+Viresh Kumar (1):
+      cpufreq: s3c24xx: Fix broken s3c_cpufreq_init()
+
+Wanpeng Li (1):
+      KVM: mmu: Fix overlap between public and private memslots
+
+Xin Long (1):
+      bridge: check brport attr show in brport_show
+
+
+--M9NhX3UHpAaciwkO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlqlXRsACgkQONu9yGCS
+aT4aXRAAs1B+j45AJssYSJxgGw0+yivNR90rUgMg+nzc6UO5KC17NAmEzPutsJvK
+uenPx00o/ItpKj9tjXaYO+VMe5PmGIudADqD513rNaSQxgpO5TPhR/GtzDG/JJMj
+T5F8zV2oiDWUN/41jx159JzFkquY6iDs+RVnTwI1AzsKfP8BMvAyKSGK1g6JjMoL
+EdUSygblUDhcG+PSf/cOouKw17dL7ZLPUpajRYkZNSGc5pvDlwK7i5E84A9iJVCF
+V+Zfj2jAyBnvXEfBQBxCKqs02RQatkVgksbst6Vorw72qA2g89TYiOdogu9th6w4
+rg+xRiKFbRIIYwZa04DbAm4frxbaxY4Xpxeo3aNnyElXEKdIkDX8mX3HGGoEmKWe
+jSiBKkX1lOlYUcXMWKQTFGATdrnzgz0E0YtQ6Mcx/YNUZKJ7piJPoOLZj8GYDcLx
+8VZnActBMZWCrKnX3lkhU2hGO1vwQofen+AoI21Jd0CVWCgrshPXBnUcy0ePpu53
+hXrJhm9RHXcIsHIx1ASsUEhnX1MDQCfsKTuMJ/VQRw5zaiiiHH8F1mLxkJMFCLPx
+1tsOXtbmE6mdupH7h/zU9kdl5Aus//sW/nZDXUOlAorwm8Rf6djqnfm0zGO8e4Wo
+0UfcAg11lie7BpzDAHF8yZ4Io1TayfDZWUp/b4FcucFB6KAm82M=
+=kdSh
+-----END PGP SIGNATURE-----
+
+--M9NhX3UHpAaciwkO--
