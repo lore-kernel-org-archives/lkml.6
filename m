@@ -1,19 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932489AbeCKLEB (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 07:04:01 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:54054 "EHLO
+        id S932454AbeCKLD7 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 07:03:59 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:54122 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932126AbeCKK4r (ORCPT
+        with ESMTP id S932136AbeCKK4r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 11 Mar 2018 06:56:47 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, luto@kernel.org,
         torvalds@linux-foundation.org, mingo@kernel.org,
         viro@zeniv.linux.org.uk, akpm@linux-foundation.org
-Subject: [RFC PATCH 11/35] syscalls: do not call sys_eventfd2() within the kernel
-Date: Sun, 11 Mar 2018 11:55:33 +0100
-Message-Id: <20180311105557.20807-12-linux@dominikbrodowski.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>
+Subject: [RFC PATCH 03/35] syscalls: mm_release(): use do_futex() instead of sys_futex()
+Date: Sun, 11 Mar 2018 11:55:25 +0100
+Message-Id: <20180311105557.20807-4-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180311105557.20807-1-linux@dominikbrodowski.net>
 References: <20180311105557.20807-1-linux@dominikbrodowski.net>
@@ -21,39 +24,40 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CC: Alexander Viro <viro@zeniv.linux.org.uk>
+sys_futex() is a wrapper to do_futex() which does not modify any
+values here:
+
+- uaddr, val and val3 are kept the same
+
+- op is masked with FUTEX_CMD_MASK, but is always set to FUTEX_WAKE.
+  Therefore, val2 is always 0.
+
+- as utime is set to NULL, *timeout is NULL
+
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Darren Hart <dvhart@infradead.org>
+CC: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- fs/eventfd.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ kernel/fork.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/eventfd.c b/fs/eventfd.c
-index 012f5bd46dfa..08d3bd602f73 100644
---- a/fs/eventfd.c
-+++ b/fs/eventfd.c
-@@ -380,7 +380,7 @@ struct eventfd_ctx *eventfd_ctx_fileget(struct file *file)
- }
- EXPORT_SYMBOL_GPL(eventfd_ctx_fileget);
- 
--SYSCALL_DEFINE2(eventfd2, unsigned int, count, int, flags)
-+static int do_eventfd(unsigned int count, int flags)
- {
- 	struct eventfd_ctx *ctx;
- 	int fd;
-@@ -409,8 +409,13 @@ SYSCALL_DEFINE2(eventfd2, unsigned int, count, int, flags)
- 	return fd;
- }
- 
-+SYSCALL_DEFINE2(eventfd2, unsigned int, count, int, flags)
-+{
-+	return do_eventfd(count, flags);
-+}
-+
- SYSCALL_DEFINE1(eventfd, unsigned int, count)
- {
--	return sys_eventfd2(count, 0);
-+	return do_eventfd(count, 0);
- }
- 
+diff --git a/kernel/fork.c b/kernel/fork.c
+index e5d9d405ae4e..b1e031aac9db 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1198,8 +1198,8 @@ void mm_release(struct task_struct *tsk, struct mm_struct *mm)
+ 			 * not set up a proper pointer then tough luck.
+ 			 */
+ 			put_user(0, tsk->clear_child_tid);
+-			sys_futex(tsk->clear_child_tid, FUTEX_WAKE,
+-					1, NULL, NULL, 0);
++			do_futex(tsk->clear_child_tid, FUTEX_WAKE,
++					1, NULL, NULL, 0, 0);
+ 		}
+ 		tsk->clear_child_tid = NULL;
+ 	}
 -- 
 2.16.2
