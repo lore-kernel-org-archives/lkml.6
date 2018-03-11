@@ -1,31 +1,31 @@
 Return-Path: <jelsasser@appneta.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520796287; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520796293; cv=none;
         d=google.com; s=arc-20160816;
-        b=n6aT10W3KdvL+Eyfb4yUNlNFOlFt6OeceVg0rvqR53k8bfUUUl5RonOoA3lqOUbivC
-         x4ZNK9fixO3XPkoadfeEr3inr5JIfvw+FhT0GvsYRgHU+qiNW7uO+GlFmT0LZRQDqo/7
-         S11789VC8WhEeHbUcRvtC71DGH3QtYBUKOID92G/x79vPmsYkICUs/ssHxDf7m7VUuXz
-         rpgo/LLxAJCun7fHrdYJhM3sCQJuvvfaDmv0Zq32gyijGLLWYfOv8DNtu6drha32pWV0
-         C7XhBLlUbVAmGnVgJ0vg4Rx4qM/FspH22YgrBnUDl5FzzW5m+oAh3vGgHAngfSJVW+6O
-         rskw==
+        b=wHLHZ2JrA6t3EgLqvVm9NwORKx3jOhx5akGlh9KPSAspXM6MVpvKJ/uKOFl3BFBd0x
+         q63PU/2e9HBVkxA9HigW/EFRdkiZo+/gW4a9ca0EddpQC08mBAtrHTmORWkrT+grfnpJ
+         k+6b2Qjb81qL+T3A8Zijiy+1bZqX4v7IyUauftysnz/zaUlLvKbfG4ncYkxtkEKwoKaC
+         O2D+wyBNAU2/JeoE0dnrik+f7HXsVJp273fhVK10lch10pCEffi+WT9dQs7cEgrLY1IN
+         C5q1GuZRsKVDnDIc/SkuDoTKE+FFyl2bJL5D6GQu1UHNnspWG+tlLqgWPEm7rVYtKrON
+         jedg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=7F0cSAct/NcVJQUTb7D9RJzQN5Msr9Q2K4iYF0AqccQ=;
-        b=Lgsp5YPxCgIZjsm8+E2bV3qlv/J/AOeXU3zD5D/ASUJacb+twD3tcVDjsHaMFponWj
-         6ZWjzJtl/VU5CLKuMQdE492DLFM8bBvs1oe7vFZBN0cXzSglinzoKBpQjvKqK1asXHJX
-         H0pbUYKZb8FhD8lKn0KBfOAOhunTPDm1rPOwu59OBZ52qGYaOjaixePg4OQxFbTr3Rwo
-         9j4i+TSG+UhQYliJcOKsmQcMa61iD8qcvbRlh2NuT7ZCshkM8tduHLL8xITpg7In714E
-         xcq4OjZBgmyVpmPkBEUgU9oqx0pCTlNyfWIRcGhkYJpAuJkSGmFVkk8kkL8yCs0tQw+B
-         kLXQ==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=Ma/gtyU8jEHFiwVDecb14yecvM5eV0bTE+1obKTH3oI=;
+        b=suaOqQvpWA6TMd+N2JZq4JKWjZE+WEg/V0NCCsgbIBAdwalQI5hJP3Jkh11wZ9YhxD
+         dMeQCmT0ftFgZ2oxY1KUEBPBMQok/vZs4CCgODzKUpPpaVqPkXGhGqvpbceQUK2yYc6d
+         NGAH9tj/778Vr0LDgzElqgpHiqB13m9Dzv0fDqV1y7YoanXVG9KvA/L1r4uUvuL9Nmdq
+         L2AyOM1fEI+PPWIyTjhHdq+pP1jD/u4/dYkdaSF4REyhYCzY7l1rHH6lquh8+l9COSOR
+         3FP9UOH0mazyODcbNY+gW0K3xK4F0IFuJNvKDUSVGY9FbFCprqGjAg3Vwy0YgAuezjCJ
+         J87g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@appneta.com header.s=google header.b=QKnSKm+W;
-       spf=pass (google.com: domain of jelsasser@appneta.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jelsasser@appneta.com;
+       dkim=pass header.i=@appneta.com header.s=google header.b=bWXoGl8h;
+       spf=pass (google.com: domain of jelsasser@appneta.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jelsasser@appneta.com;
        dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=appneta.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@appneta.com header.s=google header.b=QKnSKm+W;
-       spf=pass (google.com: domain of jelsasser@appneta.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jelsasser@appneta.com;
+       dkim=pass header.i=@appneta.com header.s=google header.b=bWXoGl8h;
+       spf=pass (google.com: domain of jelsasser@appneta.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jelsasser@appneta.com;
        dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=appneta.com
-X-Google-Smtp-Source: AG47ELsLHEq9Q6fL9i6rRjWVz7FdIg1kBcgNc5lZqw2ZMLCToApmHxyfU51JpBdsnd3UbzucteAkxQ==
+X-Google-Smtp-Source: AG47ELu+iBITcGVGDjFIi2jB32jDjh+n+Ar3RoXtEhQKQs5Lq85h0RGq1oTgDaskkWZS3YsNkBIeQQ==
 From: Josh Elsasser <jelsasser@appneta.com>
 To: davem@davemloft.net
 Cc: Josh Elsasser <jelsasser@appneta.com>,
@@ -33,51 +33,81 @@ Cc: Josh Elsasser <jelsasser@appneta.com>,
 	Eric Dumazet <edumazet@google.com>,
 	Sasha Levin <alexander.levin@verizon.com>,
 	Willem de Bruijn <willemb@google.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>,
 	Alexander Potapenko <glider@google.com>,
-	Myungho Jung <mhjungk@gmail.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
 	=?UTF-8?q?Michal=20Kube=C4=8Dek?= <mkubecek@suse.cz>,
 	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/1] net: avoid a kernel panic during sk_busy_loop
-Date: Sun, 11 Mar 2018 12:22:54 -0700
-Message-Id: <20180311192322.101598-1-jelsasser@appneta.com>
+Subject: [PATCH 1/1] net: check dev->reg_state before deref of napi netdev_ops
+Date: Sun, 11 Mar 2018 12:22:55 -0700
+Message-Id: <20180311192322.101598-2-jelsasser@appneta.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180311192322.101598-1-jelsasser@appneta.com>
+References: <20180311192322.101598-1-jelsasser@appneta.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594670487609907296?=
-X-GMAIL-MSGID: =?utf-8?q?1594670487609907296?=
+X-GMAIL-THRID: =?utf-8?q?1594670494249773186?=
+X-GMAIL-MSGID: =?utf-8?q?1594670494249773186?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Dave,
+init_dummy_netdev() leaves its netdev_ops pointer zeroed. This leads
+to a NULL pointer dereference when sk_busy_loop fires against an iwlwifi
+wireless adapter and checks napi->dev->netdev_ops->ndo_busy_poll.
 
-I stumbled across a reproducible kernel panic while playing around with
-busy_poll on a Linux 4.9.86 kernel. There's an unfortunate interaction
-between init_dummy_netdev, which doesn't bother to fill in netdev_ops, and
-sk_busy_loop, which assumes netdev_ops is a valid pointer.
+Avoid this by ensuring that napi->dev is not a dummy device before
+dereferencing napi dev's netdev_ops, preventing the following panic:
 
-To reproduce on the device under test (DUT), I did:
+  BUG: unable to handle kernel NULL pointer dereference at 00000000000000c8
+  IP: [<ffffffff817b4b72>] sk_busy_loop+0x92/0x2f0
+  Call Trace:
+   [<ffffffff815a3134>] ? uart_write_room+0x74/0xf0
+   [<ffffffff817964a9>] sock_poll+0x99/0xa0
+   [<ffffffff81223142>] do_sys_poll+0x2e2/0x520
+   [<ffffffff8118d3fc>] ? get_page_from_freelist+0x3bc/0xa30
+   [<ffffffff810ada22>] ? update_curr+0x62/0x140
+   [<ffffffff811ea671>] ? __slab_free+0xa1/0x2a0
+   [<ffffffff811ea671>] ? __slab_free+0xa1/0x2a0
+   [<ffffffff8179dbb1>] ? skb_free_head+0x21/0x30
+   [<ffffffff81221bd0>] ? poll_initwait+0x50/0x50
+   [<ffffffff811eaa36>] ? kmem_cache_free+0x1c6/0x1e0
+   [<ffffffff815a4884>] ? uart_write+0x124/0x1d0
+   [<ffffffff810bd1cd>] ? remove_wait_queue+0x4d/0x60
+   [<ffffffff810bd224>] ? __wake_up+0x44/0x50
+   [<ffffffff81582731>] ? tty_write_unlock+0x31/0x40
+   [<ffffffff8158c5c6>] ? tty_ldisc_deref+0x16/0x20
+   [<ffffffff81584820>] ? tty_write+0x1e0/0x2f0
+   [<ffffffff81587e50>] ? process_echoes+0x80/0x80
+   [<ffffffff8120c17b>] ? __vfs_write+0x2b/0x130
+   [<ffffffff8120d09a>] ? vfs_write+0x15a/0x1a0
+   [<ffffffff81223455>] SyS_poll+0x75/0x100
+   [<ffffffff819a6524>] entry_SYSCALL_64_fastpath+0x24/0xcf
 
-  $ ip addr show dev wlan0
-  8: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq [...]
-      inet 172.16.122.6/23 brd 172.16.123.255 scope global wlan0
-  $ sysctl -w net.core.busy_read=50
-  $ nc -l 172.16.122.6 5001
+Commit 79e7fff47b7b ("net: remove support for per driver ndo_busy_poll()")
+indirectly fixed this upstream in linux-4.11 by removing the offending
+pointer usage. No other users of napi->dev touch its netdev_ops.
 
-Then transmitted some data to this socket from a second host:
+Fixes: 060212928670 ("net: add low latency socket poll")
+Fixes: ce6aea93f751 ("net: network drivers no longer need to implement ndo_busy_poll()") - 4.9.y
+Signed-off-by: Josh Elsasser <jelsasser@appneta.com>
+---
+ net/core/dev.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-  $ echo "foo" | nc 172.16.122.6 5001
-
-The DUT immediately hits a kernel panic.
-
-I've attached a patch that applies cleanly to the 4.9.87 stable release.
-This fix isn't necessary for net/net-next (ndo_busy_poll was removed in
-linux-4.11), but a further backport of this commit is likely required for
-any stable releases older than linux-4.5.
-
-I hope this is the right way to raise something like this. I couldn't find
-a clear answer from the -stable and netdev howtos for bugs against features
-that no longer exist in mainline.
-
-Thanks,
-Josh
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 8898618bf341..d0f67d544587 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -5042,7 +5042,10 @@ bool sk_busy_loop(struct sock *sk, int nonblock)
+ 		goto out;
+ 
+ 	/* Note: ndo_busy_poll method is optional in linux-4.5 */
+-	busy_poll = napi->dev->netdev_ops->ndo_busy_poll;
++	if (napi->dev->reg_state != NETREG_DUMMY)
++		busy_poll = napi->dev->netdev_ops->ndo_busy_poll;
++	else
++		busy_poll = NULL;
+ 
+ 	do {
+ 		rc = 0;
+-- 
+2.11.0
