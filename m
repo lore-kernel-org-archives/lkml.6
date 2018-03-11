@@ -1,169 +1,236 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932349AbeCKTnE (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 15:43:04 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:41498 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932161AbeCKTnC (ORCPT
+        id S932247AbeCKTqe (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 15:46:34 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50932 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932161AbeCKTqd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 15:43:02 -0400
-X-Google-Smtp-Source: AG47ELscp8YA/NK3zHDU03hfZ1fnqsCyusxFgEDm6tqFGkkYdU2lXni+DNUA+5XNneiuPQ3CJmjFtA==
-Subject: Re: [RFCv4,19/21] media: vim2m: add request support
-To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Gustavo Padovan <gustavo.padovan@collabora.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-References: <20180220044425.169493-20-acourbot@chromium.org>
- <1520440654.1092.15.camel@bootlin.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <6470b45d-e9dc-0a22-febc-cd18ae1092be@gmail.com>
-Date: Sun, 11 Mar 2018 22:42:50 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sun, 11 Mar 2018 15:46:33 -0400
+X-Google-Smtp-Source: AG47ELuEIG8jJTpktZ43sqG2is4wFYjPKnCuMf+hc3Bjb0y79j7cX3TsfeQ3s3kMC7pcGNmCnxEQTg==
+From: Jason Vas Dias <jason.vas.dias@gmail.com>
+To: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, andi <andi@firstfloor.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH v4.16-rc4 1/1] x86/vdso: on Intel, VDSO should handle CLOCK_MONOTONIC_RAW
+Date: Sun, 11 Mar 2018 19:46:26 +0000
+Message-ID: <po4az97x.fsf@gmail.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <1520440654.1092.15.camel@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-On 07.03.2018 19:37, Paul Kocialkowski wrote:
-> Hi,
-> 
-> First off, I'd like to take the occasion to say thank-you for your work.
-> This is a major piece of plumbing that is required for me to add support
-> for the Allwinner CedarX VPU hardware in upstream Linux. Other drivers,
-> such as tegra-vde (that was recently merged in staging) are also badly
-> in need of this API.
+  Currently the VDSO does not handle
+     clock_gettime( CLOCK_MONOTONIC_RAW, &ts )
+  on Intel / AMD - it calls
+     vdso_fallback_gettime()
+  for this clock, which issues a syscall, having an unacceptably high
+  latency (minimum measurable time or time between measurements)
+  of 300-700ns on 2 2.8-3.9ghz Haswell x86_64 Family'_'Model : 06_3C
+  machines under various versions of Linux.
 
-Certainly it would be good to have a common UAPI. Yet I haven't got my hands on
-trying to implement the V4L interface for the tegra-vde driver, but I've taken a
-look at Cedrus driver and for now I've one question:
+  Sometimes, particularly when correlating elapsed time to performance
+  counter values,  code needs to know elapsed time from the perspective
+  of the CPU no matter how "hot" / fast or "cold" / slow it might be
+  running wrt NTP / PTP ; when code needs this, the latencies with
+  a syscall are often unacceptably high.
 
-Would it be possible (or maybe already is) to have a single IOCTL that takes
-input/output buffers with codec parameters, processes the request(s) and returns
-to userspace when everything is done? Having 5 context switches for a single
-frame decode (like Cedrus VAAPI driver does) looks like a bit of overhead.
+  I reported this as Bug #198161 :
+    'https://bugzilla.kernel.org/show_bug.cgi?id=198961'
+  and in previous posts with subjects matching 'CLOCK_MONOTONIC_RAW' .
+     
+  This patch handles CLOCK_MONOTONIC_RAW clock_gettime() in the VDSO ,
+  by exporting the raw clock calibration, last cycles, last xtime_nsec,
+  and last raw_sec value in the vsyscall_gtod_data during vsyscall_update() .
 
-> I have a few comments based on my experience integrating this request
-> API with the Cedrus VPU driver (and the associated libva backend), that
-> also concern the vim2m driver.
-> 
-> On Tue, 2018-02-20 at 13:44 +0900, Alexandre Courbot wrote:
->> Set the necessary ops for supporting requests in vim2m.
->>
->> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
->> ---
->>  drivers/media/platform/Kconfig |  1 +
->>  drivers/media/platform/vim2m.c | 75
->> ++++++++++++++++++++++++++++++++++
->>  2 files changed, 76 insertions(+)
->>
->> diff --git a/drivers/media/platform/Kconfig
->> b/drivers/media/platform/Kconfig
->> index 614fbef08ddc..09be0b5f9afe 100644
->> --- a/drivers/media/platform/Kconfig
->> +++ b/drivers/media/platform/Kconfig
-> 
-> [...]
-> 
->> +static int vim2m_request_submit(struct media_request *req,
->> +				struct media_request_entity_data
->> *_data)
->> +{
->> +	struct v4l2_request_entity_data *data;
->> +
->> +	data = to_v4l2_entity_data(_data);
-> 
-> We need to call v4l2_m2m_try_schedule here so that m2m scheduling can
-> happen when only 2 buffers were queued and no other action was taken
-> from usespace. In that scenario, m2m scheduling currently doesn't
-> happen.
-> 
-> However, this requires access to the m2m context, which is not easy to
-> get from req or _data. I'm not sure that some container_of magic would
-> even do the trick here.
-> 
->> +	return vb2_request_submit(data);
-> 
-> vb2_request_submit does not lock the associated request mutex although
-> it accesses the associated queued buffers list, which I believe this
-> mutex is supposed to protect.
-> 
-> We could either wrap this call with media_request_lock(req) and
-> media_request_unlock(req) or have the lock in the function itself, which
-> would require passing it the req pointer.
-> 
-> The latter would probably be safer for future use of the function.
-> 
->> +}
->> +
->> +static const struct media_request_entity_ops vim2m_request_entity_ops
->> = {
->> +	.data_alloc	= vim2m_entity_data_alloc,
->> +	.data_free	= v4l2_request_entity_data_free,
->> +	.submit		= vim2m_request_submit,
->> +};
->> +
->>  /*
->>   * File operations
->>   */
->> @@ -900,6 +967,9 @@ static int vim2m_open(struct file *file)
->>  	ctx->dev = dev;
->>  	hdl = &ctx->hdl;
->>  	v4l2_ctrl_handler_init(hdl, 4);
->> +	v4l2_request_entity_init(&ctx->req_entity,
->> &vim2m_request_entity_ops,
->> +				 &ctx->dev->vfd);
->> +	ctx->fh.entity = &ctx->req_entity.base;
->>  	v4l2_ctrl_new_std(hdl, &vim2m_ctrl_ops, V4L2_CID_HFLIP, 0, 1,
->> 1, 0);
->>  	v4l2_ctrl_new_std(hdl, &vim2m_ctrl_ops, V4L2_CID_VFLIP, 0, 1,
->> 1, 0);
->>  	v4l2_ctrl_new_custom(hdl, &vim2m_ctrl_trans_time_msec, NULL);
->> @@ -999,6 +1069,9 @@ static int vim2m_probe(struct platform_device
->> *pdev)
->>  	if (!dev)
->>  		return -ENOMEM;
->>  
->> +	v4l2_request_mgr_init(&dev->req_mgr, &dev->vfd,
->> +			      &v4l2_request_ops);
->> +
->>  	spin_lock_init(&dev->irqlock);
->>  
->>  	ret = v4l2_device_register(&pdev->dev, &dev->v4l2_dev);
->> @@ -1012,6 +1085,7 @@ static int vim2m_probe(struct platform_device
->> *pdev)
->>  	vfd = &dev->vfd;
->>  	vfd->lock = &dev->dev_mutex;
->>  	vfd->v4l2_dev = &dev->v4l2_dev;
->> +	vfd->req_mgr = &dev->req_mgr.base;
->>  
->>  	ret = video_register_device(vfd, VFL_TYPE_GRABBER, 0);
->>  	if (ret) {
->> @@ -1054,6 +1128,7 @@ static int vim2m_remove(struct platform_device
->> *pdev)
->>  	del_timer_sync(&dev->timer);
->>  	video_unregister_device(&dev->vfd);
->>  	v4l2_device_unregister(&dev->v4l2_dev);
->> +	v4l2_request_mgr_free(&dev->req_mgr);
->>  
->>  	return 0;
->>  }
-> 
+  Now the new do_monotonic_raw() function in the vDSO has a latency of @ 24ns
+  on average, and the test program:
+   tools/testing/selftest/timers/inconsistency-check.c
+  succeeds with arguments: '-c 4 -t 120' or any arbitrary -t value.
+
+  The patch is against Linus' latest 4.16-rc4 tree,
+  current HEAD of :
+    git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+  .
+
+  The patch affects only files:
+  
+   arch/x86/include/asm/vgtod.h
+   arch/x86/entry/vdso/vclock_gettime.c
+   arch/x86/entry/vsyscall/vsyscall_gtod.c
 
 
--- 
-Dmitry
+  This is a resend of the original patch fixing indentation issues
+  after installation of emacs Lisp cc-mode hooks in
+      Documentation/coding-style.rst
+  and calling 'indent-region' and 'tabify' (whitespace only changes) -
+  SORRY !
+  (and even after that, somehow 2 '\t\n's got left in vgtod.h -
+   now removed - sorry again!) .
+
+  Best Regards,
+     Jason Vas Dias  .
+
+  PATCH:
+---     
+diff -up linux-4.16-rc4/arch/x86/entry/vdso/vclock_gettime.c.4.16-rc4 linux-4.16-rc4/arch/x86/entry/vdso/vclock_gettime.c
+--- linux-4.16-rc4/arch/x86/entry/vdso/vclock_gettime.c.4.16-rc4	2018-03-04 22:54:11.000000000 +0000
++++ linux-4.16-rc4/arch/x86/entry/vdso/vclock_gettime.c	2018-03-11 19:00:04.630019100 +0000
+@@ -182,6 +182,29 @@ notrace static u64 vread_tsc(void)
+ 	return last;
+ }
+ 
++notrace static u64 vread_tsc_raw(void)
++{
++	u64 tsc, last=gtod->raw_cycle_last;
++	if( likely( gtod->has_rdtscp ) ) {
++		u32	tsc_lo, tsc_hi,
++			tsc_cpu __attribute__((unused));
++		asm volatile
++			( "rdtscp"
++				/* ^- has built-in cancellation point / pipeline stall"barrier" */
++				:   "=a" (tsc_lo)
++				  , "=d" (tsc_hi)
++				  , "=c" (tsc_cpu)
++			); // since all variables 32-bit, eax, edx, ecx used - NOT rax, rdx, rcx
++		tsc	= ((((u64)tsc_hi) & 0xffffffffUL) << 32) | (((u64)tsc_lo) & 0xffffffffUL);
++	} else {
++		tsc	= rdtsc_ordered();
++	}
++	if (likely(tsc >= last))
++		return tsc;
++	asm volatile ("");
++	return last;
++}
++
+ notrace static inline u64 vgetsns(int *mode)
+ {
+ 	u64 v;
+@@ -203,6 +226,27 @@ notrace static inline u64 vgetsns(int *m
+ 	return v * gtod->mult;
+ }
+ 
++notrace static inline u64 vgetsns_raw(int *mode)
++{
++	u64 v;
++	cycles_t cycles;
++
++	if (gtod->vclock_mode == VCLOCK_TSC)
++		cycles = vread_tsc_raw();
++#ifdef CONFIG_PARAVIRT_CLOCK
++	else if (gtod->vclock_mode == VCLOCK_PVCLOCK)
++		cycles = vread_pvclock(mode);
++#endif
++#ifdef CONFIG_HYPERV_TSCPAGE
++	else if (gtod->vclock_mode == VCLOCK_HVCLOCK)
++		cycles = vread_hvclock(mode);
++#endif
++	else
++		return 0;
++	v = (cycles - gtod->raw_cycle_last) & gtod->raw_mask;
++	return v * gtod->raw_mult;
++}
++
+ /* Code size doesn't matter (vdso is 4k anyway) and this is faster. */
+ notrace static int __always_inline do_realtime(struct timespec *ts)
+ {
+@@ -246,6 +290,27 @@ notrace static int __always_inline do_mo
+ 	return mode;
+ }
+ 
++notrace static int __always_inline do_monotonic_raw( struct timespec *ts)
++{
++	unsigned long seq;
++	u64 ns;
++	int mode;
++
++	do {
++		seq = gtod_read_begin(gtod);
++		mode = gtod->vclock_mode;
++		ts->tv_sec = gtod->monotonic_time_raw_sec;
++		ns = gtod->monotonic_time_raw_nsec;
++		ns += vgetsns_raw(&mode);
++		ns >>= gtod->raw_shift;
++	} while (unlikely(gtod_read_retry(gtod, seq)));
++
++	ts->tv_sec += __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
++	ts->tv_nsec = ns;
++
++	return mode;
++}
++
+ notrace static void do_realtime_coarse(struct timespec *ts)
+ {
+ 	unsigned long seq;
+@@ -277,6 +342,10 @@ notrace int __vdso_clock_gettime(clockid
+ 		if (do_monotonic(ts) == VCLOCK_NONE)
+ 			goto fallback;
+ 		break;
++	case CLOCK_MONOTONIC_RAW:
++		if (do_monotonic_raw(ts) == VCLOCK_NONE)
++			goto fallback;
++		break;
+ 	case CLOCK_REALTIME_COARSE:
+ 		do_realtime_coarse(ts);
+ 		break;
+diff -up linux-4.16-rc4/arch/x86/entry/vsyscall/vsyscall_gtod.c.4.16-rc4 linux-4.16-rc4/arch/x86/entry/vsyscall/vsyscall_gtod.c
+--- linux-4.16-rc4/arch/x86/entry/vsyscall/vsyscall_gtod.c.4.16-rc4	2018-03-04 22:54:11.000000000 +0000
++++ linux-4.16-rc4/arch/x86/entry/vsyscall/vsyscall_gtod.c	2018-03-11 19:06:36.584178867 +0000
+@@ -16,6 +16,7 @@
+ #include <linux/timekeeper_internal.h>
+ #include <asm/vgtod.h>
+ #include <asm/vvar.h>
++#include <asm/cpufeature.h>
+ 
+ int vclocks_used __read_mostly;
+ 
+@@ -45,6 +46,12 @@ void update_vsyscall(struct timekeeper *
+ 	vdata->mult		= tk->tkr_mono.mult;
+ 	vdata->shift		= tk->tkr_mono.shift;
+ 
++	vdata->raw_cycle_last	= tk->tkr_raw.cycle_last;
++	vdata->raw_mask		= tk->tkr_raw.mask;
++	vdata->raw_mult		= tk->tkr_raw.mult;
++	vdata->raw_shift	= tk->tkr_raw.shift;
++	vdata->has_rdtscp	= static_cpu_has(X86_FEATURE_RDTSCP);
++
+ 	vdata->wall_time_sec		= tk->xtime_sec;
+ 	vdata->wall_time_snsec		= tk->tkr_mono.xtime_nsec;
+ 
+@@ -74,5 +81,8 @@ void update_vsyscall(struct timekeeper *
+ 		vdata->monotonic_time_coarse_sec++;
+ 	}
+ 
++	vdata->monotonic_time_raw_sec  = tk->raw_sec;
++	vdata->monotonic_time_raw_nsec = tk->tkr_raw.xtime_nsec;
++
+ 	gtod_write_end(vdata);
+ }
+diff -up linux-4.16-rc4/arch/x86/include/asm/vgtod.h.4.16-rc4 linux-4.16-rc4/arch/x86/include/asm/vgtod.h
+--- linux-4.16-rc4/arch/x86/include/asm/vgtod.h.4.16-rc4	2018-03-04 22:54:11.000000000 +0000
++++ linux-4.16-rc4/arch/x86/include/asm/vgtod.h	2018-03-11 19:34:39.290617098 +0000
+@@ -22,6 +22,11 @@ struct vsyscall_gtod_data {
+ 	u64	mask;
+ 	u32	mult;
+ 	u32	shift;
++	u64	raw_cycle_last;
++	u64	raw_mask;
++	u32	raw_mult;
++	u32	raw_shift;
++	u32	has_rdtscp;
+ 
+ 	/* open coded 'struct timespec' */
+ 	u64		wall_time_snsec;
+@@ -32,6 +37,8 @@ struct vsyscall_gtod_data {
+ 	gtod_long_t	wall_time_coarse_nsec;
+ 	gtod_long_t	monotonic_time_coarse_sec;
+ 	gtod_long_t	monotonic_time_coarse_nsec;
++	gtod_long_t	monotonic_time_raw_sec;
++	gtod_long_t	monotonic_time_raw_nsec;
+ 
+ 	int		tz_minuteswest;
+ 	int		tz_dsttime;
+---
