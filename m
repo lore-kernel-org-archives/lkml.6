@@ -1,226 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932479AbeCLAAU (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 20:00:20 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:39413 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932290AbeCLAAS (ORCPT
+        id S932509AbeCLAAb (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 20:00:31 -0400
+Received: from claranet-outbound-smtp06.uk.clara.net ([195.8.89.39]:36725 "EHLO
+        claranet-outbound-smtp06.uk.clara.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932290AbeCLAA3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 20:00:18 -0400
-X-Google-Smtp-Source: AG47ELv72y7h+U+l7jl6Pio8wg8S/jHJHu6PShzEZLhZKkH2290ik18zFjfBOpTyIK0hb0F+PPFiiQ==
-Date: Sun, 11 Mar 2018 17:00:16 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Andrew Morton <akpm@linux-foundation.org>
-cc: Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [patch] mm, page_alloc: wakeup kcompactd even if kswapd cannot free
- more memory
-Message-ID: <alpine.DEB.2.20.1803111659420.209721@chino.kir.corp.google.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Sun, 11 Mar 2018 20:00:29 -0400
+Date: Sun, 11 Mar 2018 23:24:38 +0000
+From: Ian Armstrong <mail01@iarmst.co.uk>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: "French, Nicholas A." <naf@ou.edu>, Andy Lutomirski <luto@kernel.org>,
+        "hans.verkuil@cisco.com" <hans.verkuil@cisco.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Subject: Re: ivtv: use arch_phys_wc_add() and require PAT disabled
+Message-ID: <20180311232438.2b204c51@spike.private.network>
+In-Reply-To: <CAB=NE6VvDNbe=XsfG0tYeFcxcXzsRkHnZxVHM79-V+1t6foU5g@mail.gmail.com>
+References: <DM5PR03MB3035EE1AFCEE298AFB15AC46D3C60@DM5PR03MB3035.namprd03.prod.outlook.com>
+        <20180301171936.GU14069@wotan.suse.de>
+        <DM5PR03MB303587F12D7E56B951730A76D3D90@DM5PR03MB3035.namprd03.prod.outlook.com>
+        <20180307190205.GA14069@wotan.suse.de>
+        <DM5PR03MB30352350D588A81D2D02BE93D3DF0@DM5PR03MB3035.namprd03.prod.outlook.com>
+        <20180308040601.GQ14069@wotan.suse.de>
+        <20180308041411.GR14069@wotan.suse.de>
+        <DM5PR03MB3035CCBF9718D7E42B35357FD3DF0@DM5PR03MB3035.namprd03.prod.outlook.com>
+        <MWHPR03MB30402C0F8B8F457F5F760412D3DD0@MWHPR03MB3040.namprd03.prod.outlook.com>
+        <CAB=NE6VvDNbe=XsfG0tYeFcxcXzsRkHnZxVHM79-V+1t6foU5g@mail.gmail.com>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-unknown-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kswapd will not wakeup if per-zone watermarks are not failing or if too
-many previous attempts at background reclaim have failed.
+On Sat, 10 Mar 2018 16:57:41 +0000
+"French, Nicholas A." <naf@ou.edu> wrote:
 
-This can be true if there is a lot of free memory available.  For high-
-order allocations, kswapd is responsible for waking up kcompactd for
-background compaction.  If the zone is now below its watermarks or
-reclaim has recently failed (lots of free memory, nothing left to
-reclaim), kcompactd does not get woken up.
+> > > No what if the framebuffer driver is just requested as a
+> > > secondary step after firmware loading?  
+> >
+> > Its a possibility. The decoder firmware gets loaded at the
+> > beginning of the decoder memory range and we know its length, so
+> > its possible to ioremap_nocache enough room for the firmware only
+> > on init and then ioremap the remaining non-firmware decoder memory
+> > areas appropriately after the firmware load succeeds...  
+> 
+> I looked in more detail, and this would be "hard" due to the way the
+> rest of the decoder offsets are determined by either making firmware
+> calls or scanning the decoder memory range for magic bytes and other
+> mess.
 
-When __GFP_DIRECT_RECLAIM is not allowed, allow kcompactd to still be
-woken up even if kswapd will not reclaim.  This allows high-order
-allocations, such as thp, to still trigger background compaction even
-when the zone has an abundance of free memory.
+The buffers used for yuv output are fixed. They are located both before
+and after the framebuffer. Their offset is fixed at 'base_addr +
+IVTV_DECODER_OFFSET + yuv_offset[]'. The yuv offsets can be found in
+'ivtv-yuv.c'. The buffers are 622080 bytes in length.
 
-Signed-off-by: David Rientjes <rientjes@google.com>
----
- .../postprocess/trace-vmscan-postprocess.pl   |  4 +--
- include/linux/mmzone.h                        |  3 +-
- include/trace/events/vmscan.h                 | 17 ++++++----
- mm/page_alloc.c                               | 14 ++++----
- mm/vmscan.c                                   | 32 +++++++++++++------
- 5 files changed, 45 insertions(+), 25 deletions(-)
+The range would be from 'base_addr + 0x01000000 + 0x00029000' to
+'base_addr + 0x01000000 + 0x00748200 + 0x97dff'. This is larger than
+required, but will catch the framebuffer and should not cause any
+problems. If you wanted to render direct to the yuv buffers, you would
+probably want this region included anyway (not that the current driver
+supports that).
 
-diff --git a/Documentation/trace/postprocess/trace-vmscan-postprocess.pl b/Documentation/trace/postprocess/trace-vmscan-postprocess.pl
---- a/Documentation/trace/postprocess/trace-vmscan-postprocess.pl
-+++ b/Documentation/trace/postprocess/trace-vmscan-postprocess.pl
-@@ -111,7 +111,7 @@ my $regex_direct_begin_default = 'order=([0-9]*) may_writepage=([0-9]*) gfp_flag
- my $regex_direct_end_default = 'nr_reclaimed=([0-9]*)';
- my $regex_kswapd_wake_default = 'nid=([0-9]*) order=([0-9]*)';
- my $regex_kswapd_sleep_default = 'nid=([0-9]*)';
--my $regex_wakeup_kswapd_default = 'nid=([0-9]*) zid=([0-9]*) order=([0-9]*)';
-+my $regex_wakeup_kswapd_default = 'nid=([0-9]*) zid=([0-9]*) order=([0-9]*) gfp_flags=([A-Z_|]*)';
- my $regex_lru_isolate_default = 'isolate_mode=([0-9]*) classzone_idx=([0-9]*) order=([0-9]*) nr_requested=([0-9]*) nr_scanned=([0-9]*) nr_skipped=([0-9]*) nr_taken=([0-9]*) lru=([a-z_]*)';
- my $regex_lru_shrink_inactive_default = 'nid=([0-9]*) nr_scanned=([0-9]*) nr_reclaimed=([0-9]*) nr_dirty=([0-9]*) nr_writeback=([0-9]*) nr_congested=([0-9]*) nr_immediate=([0-9]*) nr_activate=([0-9]*) nr_ref_keep=([0-9]*) nr_unmap_fail=([0-9]*) priority=([0-9]*) flags=([A-Z_|]*)';
- my $regex_lru_shrink_active_default = 'lru=([A-Z_]*) nr_scanned=([0-9]*) nr_rotated=([0-9]*) priority=([0-9]*)';
-@@ -201,7 +201,7 @@ $regex_kswapd_sleep = generate_traceevent_regex(
- $regex_wakeup_kswapd = generate_traceevent_regex(
- 			"vmscan/mm_vmscan_wakeup_kswapd",
- 			$regex_wakeup_kswapd_default,
--			"nid", "zid", "order");
-+			"nid", "zid", "order", "gfp_flags");
- $regex_lru_isolate = generate_traceevent_regex(
- 			"vmscan/mm_vmscan_lru_isolate",
- 			$regex_lru_isolate_default,
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -775,7 +775,8 @@ static inline bool is_dev_zone(const struct zone *zone)
- #include <linux/memory_hotplug.h>
- 
- void build_all_zonelists(pg_data_t *pgdat);
--void wakeup_kswapd(struct zone *zone, int order, enum zone_type classzone_idx);
-+void wakeup_kswapd(struct zone *zone, gfp_t gfp_mask, int order,
-+		   enum zone_type classzone_idx);
- bool __zone_watermark_ok(struct zone *z, unsigned int order, unsigned long mark,
- 			 int classzone_idx, unsigned int alloc_flags,
- 			 long free_pages);
-diff --git a/include/trace/events/vmscan.h b/include/trace/events/vmscan.h
---- a/include/trace/events/vmscan.h
-+++ b/include/trace/events/vmscan.h
-@@ -78,26 +78,29 @@ TRACE_EVENT(mm_vmscan_kswapd_wake,
- 
- TRACE_EVENT(mm_vmscan_wakeup_kswapd,
- 
--	TP_PROTO(int nid, int zid, int order),
-+	TP_PROTO(int nid, int zid, int order, gfp_t gfp_flags),
- 
--	TP_ARGS(nid, zid, order),
-+	TP_ARGS(nid, zid, order, gfp_flags),
- 
- 	TP_STRUCT__entry(
--		__field(	int,		nid	)
--		__field(	int,		zid	)
--		__field(	int,		order	)
-+		__field(	int,	nid		)
-+		__field(	int,	zid		)
-+		__field(	int,	order		)
-+		__field(	gfp_t,	gfp_flags	)
- 	),
- 
- 	TP_fast_assign(
- 		__entry->nid		= nid;
- 		__entry->zid		= zid;
- 		__entry->order		= order;
-+		__entry->gfp_flags	= gfp_flags;
- 	),
- 
--	TP_printk("nid=%d zid=%d order=%d",
-+	TP_printk("nid=%d zid=%d order=%d gfp_flags=%s",
- 		__entry->nid,
- 		__entry->zid,
--		__entry->order)
-+		__entry->order,
-+		show_gfp_flags(__entry->gfp_flags))
- );
- 
- DECLARE_EVENT_CLASS(mm_vmscan_direct_reclaim_begin_template,
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3683,16 +3683,18 @@ __alloc_pages_direct_reclaim(gfp_t gfp_mask, unsigned int order,
- 	return page;
- }
- 
--static void wake_all_kswapds(unsigned int order, const struct alloc_context *ac)
-+static void wake_all_kswapds(unsigned int order, gfp_t gfp_mask,
-+			     const struct alloc_context *ac)
- {
- 	struct zoneref *z;
- 	struct zone *zone;
- 	pg_data_t *last_pgdat = NULL;
-+	enum zone_type high_zoneidx = ac->high_zoneidx;
- 
--	for_each_zone_zonelist_nodemask(zone, z, ac->zonelist,
--					ac->high_zoneidx, ac->nodemask) {
-+	for_each_zone_zonelist_nodemask(zone, z, ac->zonelist, high_zoneidx,
-+					ac->nodemask) {
- 		if (last_pgdat != zone->zone_pgdat)
--			wakeup_kswapd(zone, order, ac->high_zoneidx);
-+			wakeup_kswapd(zone, gfp_mask, order, high_zoneidx);
- 		last_pgdat = zone->zone_pgdat;
- 	}
- }
-@@ -3971,7 +3973,7 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
- 		goto nopage;
- 
- 	if (gfp_mask & __GFP_KSWAPD_RECLAIM)
--		wake_all_kswapds(order, ac);
-+		wake_all_kswapds(order, gfp_mask, ac);
- 
- 	/*
- 	 * The adjusted alloc_flags might result in immediate success, so try
-@@ -4029,7 +4031,7 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
- retry:
- 	/* Ensure kswapd doesn't accidentally go to sleep as long as we loop */
- 	if (gfp_mask & __GFP_KSWAPD_RECLAIM)
--		wake_all_kswapds(order, ac);
-+		wake_all_kswapds(order, gfp_mask, ac);
- 
- 	reserve_flags = __gfp_pfmemalloc_flags(gfp_mask);
- 	if (reserve_flags)
-diff --git a/mm/vmscan.c b/mm/vmscan.c
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -3546,16 +3546,21 @@ static int kswapd(void *p)
- }
- 
- /*
-- * A zone is low on free memory, so wake its kswapd task to service it.
-+ * A zone is low on free memory or too fragmented for high-order memory.  If
-+ * kswapd should reclaim (direct reclaim is deferred), wake it up for the zone's
-+ * pgdat.  It will wake up kcompactd after reclaiming memory.  If kswapd reclaim
-+ * has failed or is not needed, still wake up kcompactd if only compaction is
-+ * needed.
-  */
--void wakeup_kswapd(struct zone *zone, int order, enum zone_type classzone_idx)
-+void wakeup_kswapd(struct zone *zone, gfp_t gfp_flags, int order,
-+		   enum zone_type classzone_idx)
- {
- 	pg_data_t *pgdat;
- 
- 	if (!managed_zone(zone))
- 		return;
- 
--	if (!cpuset_zone_allowed(zone, GFP_KERNEL | __GFP_HARDWALL))
-+	if (!cpuset_zone_allowed(zone, gfp_flags))
- 		return;
- 	pgdat = zone->zone_pgdat;
- 	pgdat->kswapd_classzone_idx = kswapd_classzone_idx(pgdat,
-@@ -3564,14 +3569,23 @@ void wakeup_kswapd(struct zone *zone, int order, enum zone_type classzone_idx)
- 	if (!waitqueue_active(&pgdat->kswapd_wait))
- 		return;
- 
--	/* Hopeless node, leave it to direct reclaim */
--	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES)
--		return;
--
--	if (pgdat_balanced(pgdat, order, classzone_idx))
-+	/* Hopeless node, leave it to direct reclaim if possible */
-+	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES ||
-+	    pgdat_balanced(pgdat, order, classzone_idx)) {
-+		/*
-+		 * There may be plenty of free memory available, but it's too
-+		 * fragmented for high-order allocations.  Wake up kcompactd
-+		 * and rely on compaction_suitable() to determine if it's
-+		 * needed.  If it fails, it will defer subsequent attempts to
-+		 * ratelimit its work.
-+		 */
-+		if (!(gfp_flags & __GFP_DIRECT_RECLAIM))
-+			wakeup_kcompactd(pgdat, order, classzone_idx);
- 		return;
-+	}
- 
--	trace_mm_vmscan_wakeup_kswapd(pgdat->node_id, classzone_idx, order);
-+	trace_mm_vmscan_wakeup_kswapd(pgdat->node_id, classzone_idx, order,
-+				      gfp_flags);
- 	wake_up_interruptible(&pgdat->kswapd_wait);
- }
- 
+-- 
+Ian
