@@ -1,313 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932499AbeCKWDc (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 18:03:32 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:40486 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932409AbeCKWDb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 18:03:31 -0400
-X-Google-Smtp-Source: AG47ELv/JKdXWAy2lbROezf2t/LwwKssT+PpF9QHMxsjfD2mJIWjivRVJfuuvr4W6WYagB4qJWThWyl+kC7ZeiuuJmA=
+        id S932473AbeCKWEV (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 18:04:21 -0400
+Received: from mail.us.es ([193.147.175.20]:44386 "EHLO mail.us.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932344AbeCKWES (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Mar 2018 18:04:18 -0400
+Date: Sun, 11 Mar 2018 23:04:14 +0100
+X-SMTPAUTHUS: auth mail.us.es
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: Re: [RFC] netfilter: cttimeout: remove VLA in
+ ctnl_timeout_parse_policy
+Message-ID: <20180311220414.feda33aw72zw2rko@salvia>
+References: <20180306184755.GA7628@embeddedgus>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1803111048360.3841@nanos.tec.linutronix.de>
-References: <d10bglsa.fsf@gmail.com> <alpine.DEB.2.21.1803111048360.3841@nanos.tec.linutronix.de>
-From: Jason Vas Dias <jason.vas.dias@gmail.com>
-Date: Sun, 11 Mar 2018 22:03:29 +0000
-Message-ID: <CALyZvKwDARXJaf3-Z5U_9mwK0oYpJorS3NzPB0P3UriYM8Gn4w@mail.gmail.com>
-Subject: Re: [PATCH v4.16-rc4 1/1] x86/vdso: on Intel, VDSO should handle CLOCK_MONOTONIC_RAW
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        andi <andi@firstfloor.org>, Peter Zijlstra <peterz@infradead.org>
-Content-Type: multipart/mixed; boundary="001a113d41481c84ea05672a3218"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180306184755.GA7628@embeddedgus>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---001a113d41481c84ea05672a3218
-Content-Type: text/plain; charset="UTF-8"
+On Tue, Mar 06, 2018 at 12:47:55PM -0600, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wvla, remove VLA and replace it
+> with dynamic memory allocation.
 
-Thanks Thomas -
+Looks good but...
 
-On 11/03/2018, Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Sun, 11 Mar 2018, Jason Vas Dias wrote:
->
-> This looks better now. Though running that patch through checkpatch.pl
-> results in:
->
-> total: 28 errors, 20 warnings, 139 lines checked
->
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  net/netfilter/nfnetlink_cttimeout.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/netfilter/nfnetlink_cttimeout.c b/net/netfilter/nfnetlink_cttimeout.c
+> index 95b0470..a2f7d92 100644
+> --- a/net/netfilter/nfnetlink_cttimeout.c
+> +++ b/net/netfilter/nfnetlink_cttimeout.c
+> @@ -52,18 +52,26 @@ ctnl_timeout_parse_policy(void *timeouts,
+>  			  struct net *net, const struct nlattr *attr)
+>  {
+>  	int ret = 0;
+> +	struct nlattr **tb = NULL;
 
-Hmm, I was unaware of that script, I'll run and find out why -
-probably because whitespace is not visible in emacs with
-my monospace font and it is very difficult to see if tabs
-are used if somehow a '\t\ ' or ' \t' has slipped in .
+I think we don't need to initialize this, right?
 
-I'll run the script, fix the errors. and repost.
-
-> ....
->
->> +notrace static u64 vread_tsc_raw(void)
->
-> Why do you need a separate function? I asked you to use vread_tsc(). So you
-> might have reasons for doing that, but please then explain WHY and not just
-> throw the stuff in my direction w/o any comment.
->
-
-mainly, because vread_tsc() makes its comparison against gtod->cycles_last ,
-a copy of tk->tkr_mono.cycle_last, while vread_tsc_raw() uses
-gtod->raw_cycle_last, a copy of tk->tkr_raw.cycle_last .
-
-And rdtscp has a built-in "barrier", as the comments explain, making
-rdtsc_ordered()'s 'barrier()' unnecessary .
-
-
->> +{
->> +        u64 tsc, last=gtod->raw_cycle_last;
->> +        if( likely( gtod->has_rdtscp ) ) {
->> +                u32     tsc_lo, tsc_hi,
->> +                        tsc_cpu __attribute__((unused));
->> +                asm volatile
->> +                ( "rdtscp"
->> +                /* ^- has built-in cancellation point / pipeline stall
->> "barrier" */
->> +                : "=a" (tsc_lo)
->> +                , "=d" (tsc_hi)
->> +                , "=c" (tsc_cpu)
->> +                ); // since all variables 32-bit, eax, edx, ecx used -
->> NOT rax, rdx, rcx
->> +                tsc      = ((((u64)tsc_hi) & 0xffffffffUL) << 32) |
->> (((u64)tsc_lo) & 0xffffffffUL);
->
-> This is not required to make the vdso accessor for monotonic raw work.
->
-> If at all then the rdtscp support wants to be in a separate patch with a
-> proper explanation.
->
-
-
-> Aside of that the code for rdtscp wants to be in a proper inline helper in
-> the relevant header file and written according to the coding style the
-> kernel uses for asm inlines.
->
-
-Sorry, I will put the function in the same header as rdtsc_ordered () ,
-in a separate patch.
-
-> The rest looks ok.
->
-> Thanks,
->
-> 	tglx
->
-
-I'll re-generate patches and resend .
-
-A complete patch , against 4.15.9, is attached , that I am using ,
-including a suggested '__vdso_linux_tsc_calibration()'
-function and arch/x86/include/uapi/asm/vdso_tsc_calibration.h file
-that does not return any pointers into the VDSO .
-
-Presuming this was split into separate patches as you suggest,
-and was against the latest HEAD branch (4.16-rcX), would it be OK to
-include the vdso_linux_tsc_calibration() work ?
-It does enable user space code to develop accurate TSC readers
-which are free to use different structures and pico-second resolution.
-The actual user-space clock_gettime(CLOCK_MONOTONIC_RAW)
-replacement I am using for work just reads the TSC ,  with a latency of
-< 8ns, and uses the linux_tsc_calibration to convert using
-floating-point as required.
-
-Thanks & Regards,
-Jason
-
---001a113d41481c84ea05672a3218
-Content-Type: application/octet-stream;
-	name="vdso_gettime_monotonic_raw-4.15.9.patch"
-Content-Disposition: attachment;
-	filename="vdso_gettime_monotonic_raw-4.15.9.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: file1
-
-ZGlmZiAtLWdpdCBhL2FyY2gveDg2L2VudHJ5L3Zkc28vdmNsb2NrX2dldHRpbWUuYyBiL2FyY2gv
-eDg2L2VudHJ5L3Zkc28vdmNsb2NrX2dldHRpbWUuYwppbmRleCBmMTk4NTZkLi4wNTBhZWE3IDEw
-MDY0NAotLS0gYS9hcmNoL3g4Ni9lbnRyeS92ZHNvL3ZjbG9ja19nZXR0aW1lLmMKKysrIGIvYXJj
-aC94ODYvZW50cnkvdmRzby92Y2xvY2tfZ2V0dGltZS5jCkBAIC0yMSw2ICsyMSw3IEBACiAjaW5j
-bHVkZSA8bGludXgvbWF0aDY0Lmg+CiAjaW5jbHVkZSA8bGludXgvdGltZS5oPgogI2luY2x1ZGUg
-PGxpbnV4L2tlcm5lbC5oPgorI2luY2x1ZGUgPHVhcGkvYXNtL3Zkc29fdHNjX2NhbGlicmF0aW9u
-Lmg+CiAKICNkZWZpbmUgZ3RvZCAoJlZWQVIodnN5c2NhbGxfZ3RvZF9kYXRhKSkKIApAQCAtNTcs
-NyArNTgsNiBAQCBub3RyYWNlIHN0YXRpYyBsb25nIHZkc29fZmFsbGJhY2tfZ3RvZChzdHJ1Y3Qg
-dGltZXZhbCAqdHYsIHN0cnVjdCB0aW1lem9uZSAqdHopCiAJcmV0dXJuIHJldDsKIH0KIAotCiAj
-ZWxzZQogCiBub3RyYWNlIHN0YXRpYyBsb25nIHZkc29fZmFsbGJhY2tfZ2V0dGltZShsb25nIGNs
-b2NrLCBzdHJ1Y3QgdGltZXNwZWMgKnRzKQpAQCAtMTgyLDYgKzE4MiwyOSBAQCBub3RyYWNlIHN0
-YXRpYyB1NjQgdnJlYWRfdHNjKHZvaWQpCiAJcmV0dXJuIGxhc3Q7CiB9CiAKK25vdHJhY2Ugc3Rh
-dGljIHU2NCB2cmVhZF90c2NfcmF3KHZvaWQpCit7CisgICAgICAgIHU2NCB0c2MsIGxhc3Q9Z3Rv
-ZC0+cmF3X2N5Y2xlX2xhc3Q7CisgICAgICAgIGlmKCBsaWtlbHkoIGd0b2QtPmhhc19yZHRzY3Ag
-KSApIHsKKyAgICAgICAgICAgICAgICB1MzIgICAgIHRzY19sbywgdHNjX2hpLAorICAgICAgICAg
-ICAgICAgICAgICAgICAgdHNjX2NwdSBfX2F0dHJpYnV0ZV9fKCh1bnVzZWQpKTsKKyAgICAgICAg
-ICAgICAgICBhc20gdm9sYXRpbGUKKyAgICAgICAgICAgICAgICAoICJyZHRzY3AiCisgICAgICAg
-ICAgICAgICAgLyogXi0gaGFzIGJ1aWx0LWluIGNhbmNlbGxhdGlvbiBwb2ludCAvIHBpcGVsaW5l
-IHN0YWxsICJiYXJyaWVyIiAqLworICAgICAgICAgICAgICAgIDogIj1hIiAodHNjX2xvKQorICAg
-ICAgICAgICAgICAgICwgIj1kIiAodHNjX2hpKQorICAgICAgICAgICAgICAgICwgIj1jIiAodHNj
-X2NwdSkKKyAgICAgICAgICAgICAgICApOyAvLyBzaW5jZSBhbGwgdmFyaWFibGVzIDMyLWJpdCwg
-ZWF4LCBlZHgsIGVjeCB1c2VkIC0gTk9UIHJheCwgcmR4LCByY3gKKyAgICAgICAgICAgICAgICB0
-c2MgICAgICA9ICgoKCh1NjQpdHNjX2hpKSAmIDB4ZmZmZmZmZmZVTCkgPDwgMzIpIHwgKCgodTY0
-KXRzY19sbykgJiAweGZmZmZmZmZmVUwpOworICAgICAgICB9IGVsc2UgeworICAgICAgICAgICAg
-ICAgIHRzYyAgICAgID0gcmR0c2Nfb3JkZXJlZCgpOworICAgICAgICB9CisJaWYgKGxpa2VseSh0
-c2MgPj0gbGFzdCkpCisJCXJldHVybiB0c2M7CisgICAgICAgIGFzbSB2b2xhdGlsZSAoIiIpOwor
-ICAgICAgICByZXR1cm4gbGFzdDsKK30KKwogbm90cmFjZSBzdGF0aWMgaW5saW5lIHU2NCB2Z2V0
-c25zKGludCAqbW9kZSkKIHsKIAl1NjQgdjsKQEAgLTIwMyw2ICsyMjYsMjcgQEAgbm90cmFjZSBz
-dGF0aWMgaW5saW5lIHU2NCB2Z2V0c25zKGludCAqbW9kZSkKIAlyZXR1cm4gdiAqIGd0b2QtPm11
-bHQ7CiB9CiAKK25vdHJhY2Ugc3RhdGljIGlubGluZSB1NjQgdmdldHNuc19yYXcoaW50ICptb2Rl
-KQoreworCXU2NCB2OworCWN5Y2xlc190IGN5Y2xlczsKKworCWlmIChndG9kLT52Y2xvY2tfbW9k
-ZSA9PSBWQ0xPQ0tfVFNDKQorCQljeWNsZXMgPSB2cmVhZF90c2NfcmF3KCk7CisjaWZkZWYgQ09O
-RklHX1BBUkFWSVJUX0NMT0NLCisJZWxzZSBpZiAoZ3RvZC0+dmNsb2NrX21vZGUgPT0gVkNMT0NL
-X1BWQ0xPQ0spCisJCWN5Y2xlcyA9IHZyZWFkX3B2Y2xvY2sobW9kZSk7CisjZW5kaWYKKyNpZmRl
-ZiBDT05GSUdfSFlQRVJWX1RTQ1BBR0UKKwllbHNlIGlmIChndG9kLT52Y2xvY2tfbW9kZSA9PSBW
-Q0xPQ0tfSFZDTE9DSykKKwkJY3ljbGVzID0gdnJlYWRfaHZjbG9jayhtb2RlKTsKKyNlbmRpZgor
-CWVsc2UKKwkJcmV0dXJuIDA7CisJdiA9IChjeWNsZXMgLSBndG9kLT5yYXdfY3ljbGVfbGFzdCkg
-JiBndG9kLT5yYXdfbWFzazsKKwlyZXR1cm4gdiAqIGd0b2QtPnJhd19tdWx0OworfQorCiAvKiBD
-b2RlIHNpemUgZG9lc24ndCBtYXR0ZXIgKHZkc28gaXMgNGsgYW55d2F5KSBhbmQgdGhpcyBpcyBm
-YXN0ZXIuICovCiBub3RyYWNlIHN0YXRpYyBpbnQgX19hbHdheXNfaW5saW5lIGRvX3JlYWx0aW1l
-KHN0cnVjdCB0aW1lc3BlYyAqdHMpCiB7CkBAIC0yNDYsNiArMjkwLDI3IEBAIG5vdHJhY2Ugc3Rh
-dGljIGludCBfX2Fsd2F5c19pbmxpbmUgZG9fbW9ub3RvbmljKHN0cnVjdCB0aW1lc3BlYyAqdHMp
-CiAJcmV0dXJuIG1vZGU7CiB9CiAKK25vdHJhY2Ugc3RhdGljIGludCBfX2Fsd2F5c19pbmxpbmUg
-ZG9fbW9ub3RvbmljX3Jhdyggc3RydWN0IHRpbWVzcGVjICp0cykKK3sKKwl1bnNpZ25lZCBsb25n
-IHNlcTsKKwl1NjQgbnM7CisJaW50IG1vZGU7CisKKwlkbyB7CisJCXNlcSA9IGd0b2RfcmVhZF9i
-ZWdpbihndG9kKTsKKwkJbW9kZSA9IGd0b2QtPnZjbG9ja19tb2RlOworCQl0cy0+dHZfc2VjID0g
-Z3RvZC0+bW9ub3RvbmljX3RpbWVfcmF3X3NlYzsKKwkJbnMgPSBndG9kLT5tb25vdG9uaWNfdGlt
-ZV9yYXdfbnNlYzsKKwkJbnMgKz0gdmdldHNuc19yYXcoJm1vZGUpOworCQlucyA+Pj0gZ3RvZC0+
-cmF3X3NoaWZ0OworCX0gd2hpbGUgKHVubGlrZWx5KGd0b2RfcmVhZF9yZXRyeShndG9kLCBzZXEp
-KSk7CisKKwl0cy0+dHZfc2VjICs9IF9faXRlcl9kaXZfdTY0X3JlbShucywgTlNFQ19QRVJfU0VD
-LCAmbnMpOworCXRzLT50dl9uc2VjID0gbnM7CisKKwlyZXR1cm4gbW9kZTsKK30KKwogbm90cmFj
-ZSBzdGF0aWMgdm9pZCBkb19yZWFsdGltZV9jb2Fyc2Uoc3RydWN0IHRpbWVzcGVjICp0cykKIHsK
-IAl1bnNpZ25lZCBsb25nIHNlcTsKQEAgLTI3Nyw2ICszNDIsMTAgQEAgbm90cmFjZSBpbnQgX192
-ZHNvX2Nsb2NrX2dldHRpbWUoY2xvY2tpZF90IGNsb2NrLCBzdHJ1Y3QgdGltZXNwZWMgKnRzKQog
-CQlpZiAoZG9fbW9ub3RvbmljKHRzKSA9PSBWQ0xPQ0tfTk9ORSkKIAkJCWdvdG8gZmFsbGJhY2s7
-CiAJCWJyZWFrOworCWNhc2UgQ0xPQ0tfTU9OT1RPTklDX1JBVzoKKwkJaWYgKGRvX21vbm90b25p
-Y19yYXcodHMpID09IFZDTE9DS19OT05FKQorCQkJZ290byBmYWxsYmFjazsKKwkJYnJlYWs7CiAJ
-Y2FzZSBDTE9DS19SRUFMVElNRV9DT0FSU0U6CiAJCWRvX3JlYWx0aW1lX2NvYXJzZSh0cyk7CiAJ
-CWJyZWFrOwpAQCAtMzI2LDMgKzM5NSwyMyBAQCBub3RyYWNlIHRpbWVfdCBfX3Zkc29fdGltZSh0
-aW1lX3QgKnQpCiB9CiB0aW1lX3QgdGltZSh0aW1lX3QgKnQpCiAJX19hdHRyaWJ1dGVfXygod2Vh
-aywgYWxpYXMoIl9fdmRzb190aW1lIikpKTsKKworZXh0ZXJuIHVuc2lnbmVkCitfX3Zkc29fbGlu
-dXhfdHNjX2NhbGlicmF0aW9uKHN0cnVjdCBsaW51eF90c2NfY2FsaWJyYXRpb24gKik7CisKK25v
-dHJhY2UJdW5zaWduZWQKK19fdmRzb19saW51eF90c2NfY2FsaWJyYXRpb24oc3RydWN0IGxpbnV4
-X3RzY19jYWxpYnJhdGlvbiAqdHNjX2NhbCkKK3sKKwlpZiAoIChndG9kLT52Y2xvY2tfbW9kZSA9
-PSBWQ0xPQ0tfVFNDKSAmJiAodHNjX2NhbCAhPSAoKHZvaWQqKTBVTCkpICkKKwl7CisJCXRzY19j
-YWwgLT4gdHNjX2toeiA9IGd0b2QtPnRzY19raHo7CisJCXRzY19jYWwgLT4gbXVsdCAgICA9IGd0
-b2QtPnJhd19tdWx0OworCQl0c2NfY2FsIC0+IHNoaWZ0ICAgPSBndG9kLT5yYXdfc2hpZnQ7CisJ
-CXJldHVybiAxOworCX0KKwlyZXR1cm4gMDsKK30KKworY29uc3Qgc3RydWN0IGxpbnV4X3RzY19j
-YWxpYnJhdGlvbiAqIGxpbnV4X3RzY19jYWxpYnJhdGlvbih2b2lkKQorCV9fYXR0cmlidXRlKCh3
-ZWFrLCBhbGlhcygiX192ZHNvX2xpbnV4X3RzY19jYWxpYnJhdGlvbiIpKSk7CisKZGlmZiAtLWdp
-dCBhL2FyY2gveDg2L2VudHJ5L3Zkc28vdmRzby5sZHMuUyBiL2FyY2gveDg2L2VudHJ5L3Zkc28v
-dmRzby5sZHMuUwppbmRleCBkM2EyZGNlLi5lMGI1Y2NlIDEwMDY0NAotLS0gYS9hcmNoL3g4Ni9l
-bnRyeS92ZHNvL3Zkc28ubGRzLlMKKysrIGIvYXJjaC94ODYvZW50cnkvdmRzby92ZHNvLmxkcy5T
-CkBAIC0yNSw2ICsyNSw4IEBAIFZFUlNJT04gewogCQlfX3Zkc29fZ2V0Y3B1OwogCQl0aW1lOwog
-CQlfX3Zkc29fdGltZTsKKwkJbGludXhfdHNjX2NhbGlicmF0aW9uOworCQlfX3Zkc29fbGludXhf
-dHNjX2NhbGlicmF0aW9uOwogCWxvY2FsOiAqOwogCX07CiB9CmRpZmYgLS1naXQgYS9hcmNoL3g4
-Ni9lbnRyeS92ZHNvL3Zkc28zMi92ZHNvMzIubGRzLlMgYi9hcmNoL3g4Ni9lbnRyeS92ZHNvL3Zk
-c28zMi92ZHNvMzIubGRzLlMKaW5kZXggNDIyNzY0YS4uMTdmZDA3ZiAxMDA2NDQKLS0tIGEvYXJj
-aC94ODYvZW50cnkvdmRzby92ZHNvMzIvdmRzbzMyLmxkcy5TCisrKyBiL2FyY2gveDg2L2VudHJ5
-L3Zkc28vdmRzbzMyL3Zkc28zMi5sZHMuUwpAQCAtMjYsNiArMjYsNyBAQCBWRVJTSU9OCiAJCV9f
-dmRzb19jbG9ja19nZXR0aW1lOwogCQlfX3Zkc29fZ2V0dGltZW9mZGF5OwogCQlfX3Zkc29fdGlt
-ZTsKKwkJX192ZHNvX2xpbnV4X3RzY19jYWxpYnJhdGlvbjsKIAl9OwogCiAJTElOVVhfMi41IHsK
-ZGlmZiAtLWdpdCBhL2FyY2gveDg2L2VudHJ5L3Zkc28vdmRzb3gzMi5sZHMuUyBiL2FyY2gveDg2
-L2VudHJ5L3Zkc28vdmRzb3gzMi5sZHMuUwppbmRleCAwNWNkMWM1Li5iNjliMGJmIDEwMDY0NAot
-LS0gYS9hcmNoL3g4Ni9lbnRyeS92ZHNvL3Zkc294MzIubGRzLlMKKysrIGIvYXJjaC94ODYvZW50
-cnkvdmRzby92ZHNveDMyLmxkcy5TCkBAIC0yMSw2ICsyMSw3IEBAIFZFUlNJT04gewogCQlfX3Zk
-c29fZ2V0dGltZW9mZGF5OwogCQlfX3Zkc29fZ2V0Y3B1OwogCQlfX3Zkc29fdGltZTsKKwkJX192
-ZHNvX2xpbnV4X3RzY19jYWxpYnJhdGlvbiA7CiAJbG9jYWw6ICo7CiAJfTsKIH0KZGlmZiAtLWdp
-dCBhL2FyY2gveDg2L2VudHJ5L3ZzeXNjYWxsL3ZzeXNjYWxsX2d0b2QuYyBiL2FyY2gveDg2L2Vu
-dHJ5L3ZzeXNjYWxsL3ZzeXNjYWxsX2d0b2QuYwppbmRleCBlMTIxNmRkLi41ZmM0OWI5YiAxMDA2
-NDQKLS0tIGEvYXJjaC94ODYvZW50cnkvdnN5c2NhbGwvdnN5c2NhbGxfZ3RvZC5jCisrKyBiL2Fy
-Y2gveDg2L2VudHJ5L3ZzeXNjYWxsL3ZzeXNjYWxsX2d0b2QuYwpAQCAtMTYsMTEgKzE2LDE0IEBA
-CiAjaW5jbHVkZSA8bGludXgvdGltZWtlZXBlcl9pbnRlcm5hbC5oPgogI2luY2x1ZGUgPGFzbS92
-Z3RvZC5oPgogI2luY2x1ZGUgPGFzbS92dmFyLmg+CisjaW5jbHVkZSA8YXNtL2NwdWZlYXR1cmUu
-aD4KIAogaW50IHZjbG9ja3NfdXNlZCBfX3JlYWRfbW9zdGx5OwogCiBERUZJTkVfVlZBUihzdHJ1
-Y3QgdnN5c2NhbGxfZ3RvZF9kYXRhLCB2c3lzY2FsbF9ndG9kX2RhdGEpOwogCitleHRlcm4gdW5z
-aWduZWQgaW50IHRzY19raHo7CisKIHZvaWQgdXBkYXRlX3ZzeXNjYWxsX3R6KHZvaWQpCiB7CiAJ
-dnN5c2NhbGxfZ3RvZF9kYXRhLnR6X21pbnV0ZXN3ZXN0ID0gc3lzX3R6LnR6X21pbnV0ZXN3ZXN0
-OwpAQCAtNDUsNiArNDgsMTIgQEAgdm9pZCB1cGRhdGVfdnN5c2NhbGwoc3RydWN0IHRpbWVrZWVw
-ZXIgKnRrKQogCXZkYXRhLT5tdWx0CQk9IHRrLT50a3JfbW9uby5tdWx0OwogCXZkYXRhLT5zaGlm
-dAkJPSB0ay0+dGtyX21vbm8uc2hpZnQ7CiAKKwl2ZGF0YS0+cmF3X2N5Y2xlX2xhc3QgICA9IHRr
-LT50a3JfcmF3LmN5Y2xlX2xhc3Q7CisJdmRhdGEtPnJhd19tYXNrICAgICAgICAgPSB0ay0+dGty
-X3Jhdy5tYXNrOworCXZkYXRhLT5yYXdfbXVsdCAgICAgICAgID0gdGstPnRrcl9yYXcubXVsdDsK
-Kwl2ZGF0YS0+cmF3X3NoaWZ0CT0gdGstPnRrcl9yYXcuc2hpZnQ7CisJdmRhdGEtPmhhc19yZHRz
-Y3AJPSBzdGF0aWNfY3B1X2hhcyhYODZfRkVBVFVSRV9SRFRTQ1ApOworCiAJdmRhdGEtPndhbGxf
-dGltZV9zZWMJCT0gdGstPnh0aW1lX3NlYzsKIAl2ZGF0YS0+d2FsbF90aW1lX3Nuc2VjCQk9IHRr
-LT50a3JfbW9uby54dGltZV9uc2VjOwogCkBAIC03NCw1ICs4Myw5IEBAIHZvaWQgdXBkYXRlX3Zz
-eXNjYWxsKHN0cnVjdCB0aW1la2VlcGVyICp0aykKIAkJdmRhdGEtPm1vbm90b25pY190aW1lX2Nv
-YXJzZV9zZWMrKzsKIAl9CiAKKwl2ZGF0YS0+bW9ub3RvbmljX3RpbWVfcmF3X3NlYyAgPSB0ay0+
-cmF3X3NlYzsKKwl2ZGF0YS0+bW9ub3RvbmljX3RpbWVfcmF3X25zZWMgPSB0ay0+dGtyX3Jhdy54
-dGltZV9uc2VjOworCXZkYXRhLT50c2Nfa2h6ID0gdHNjX2toejsKKwogCWd0b2Rfd3JpdGVfZW5k
-KHZkYXRhKTsKIH0KZGlmZiAtLWdpdCBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3ZndG9kLmggYi9h
-cmNoL3g4Ni9pbmNsdWRlL2FzbS92Z3RvZC5oCmluZGV4IGZiODU2YzkuLjRjNDc0ZmEgMTAwNjQ0
-Ci0tLSBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3ZndG9kLmgKKysrIGIvYXJjaC94ODYvaW5jbHVk
-ZS9hc20vdmd0b2QuaApAQCAtMjIsNyArMjIsMTIgQEAgc3RydWN0IHZzeXNjYWxsX2d0b2RfZGF0
-YSB7CiAJdTY0CW1hc2s7CiAJdTMyCW11bHQ7CiAJdTMyCXNoaWZ0OwotCisJdTY0CXJhd19jeWNs
-ZV9sYXN0OworCXU2NAlyYXdfbWFzazsKKwl1MzIJcmF3X211bHQ7CisJdTMyCXJhd19zaGlmdDsK
-Kwl1MzIJaGFzX3JkdHNjcDsKKwl1MzIgICAgIHRzY19raHo7CiAJLyogb3BlbiBjb2RlZCAnc3Ry
-dWN0IHRpbWVzcGVjJyAqLwogCXU2NAkJd2FsbF90aW1lX3Nuc2VjOwogCWd0b2RfbG9uZ190CXdh
-bGxfdGltZV9zZWM7CkBAIC0zMiw2ICszNyw4IEBAIHN0cnVjdCB2c3lzY2FsbF9ndG9kX2RhdGEg
-ewogCWd0b2RfbG9uZ190CXdhbGxfdGltZV9jb2Fyc2VfbnNlYzsKIAlndG9kX2xvbmdfdAltb25v
-dG9uaWNfdGltZV9jb2Fyc2Vfc2VjOwogCWd0b2RfbG9uZ190CW1vbm90b25pY190aW1lX2NvYXJz
-ZV9uc2VjOworCWd0b2RfbG9uZ190CW1vbm90b25pY190aW1lX3Jhd19zZWM7CisJZ3RvZF9sb25n
-X3QJbW9ub3RvbmljX3RpbWVfcmF3X25zZWM7CiAKIAlpbnQJCXR6X21pbnV0ZXN3ZXN0OwogCWlu
-dAkJdHpfZHN0dGltZTsKZGlmZiAtLWdpdCBhL2FyY2gveDg2L2luY2x1ZGUvdWFwaS9hc20vdmRz
-b190c2NfY2FsaWJyYXRpb24uaCBiL2FyY2gveDg2L2luY2x1ZGUvdWFwaS9hc20vdmRzb190c2Nf
-Y2FsaWJyYXRpb24uaApuZXcgZmlsZSBtb2RlIDEwMDY0NAppbmRleCAwMDAwMDAwLi4zZWRlZDU5
-Ci0tLSAvZGV2L251bGwKKysrIGIvYXJjaC94ODYvaW5jbHVkZS91YXBpL2FzbS92ZHNvX3RzY19j
-YWxpYnJhdGlvbi5oCkBAIC0wLDAgKzEsNzMgQEAKKy8qIFNQRFgtTGljZW5zZS1JZGVudGlmaWVy
-OiBHUEwtMi4wIFdJVEggTGludXgtc3lzY2FsbC1ub3RlICovCisjaWZuZGVmIF9BU01fWDg2X1ZE
-U09fVFNDX0NBTElCUkFUSU9OX0gKKyNkZWZpbmUgX0FTTV9YODZfVkRTT19UU0NfQ0FMSUJSQVRJ
-T05fSAorLyogCisgKiBQcm9ncmFtcyB0aGF0IHdhbnQgdG8gdXNlIHJkdHNjIC8gcmR0c2NwIGlu
-c3RydWN0aW9ucworICogZnJvbSB1c2VyLXNwYWNlIGNhbiBtYWtlIHVzZSBvZiB0aGUgTGludXgg
-a2VybmVsIFRTQyBjYWxpYnJhdGlvbgorICogYnkgY2FsbGluZyA6CisgKiAgICBfX3Zkc29fbGlu
-dXhfdHNjX2NhbGlicmF0aW9uKHN0cnVjdCBsaW51eF90c2NfY2FsaWJyYXRpb25fcyAqKTsKKyAq
-ICggb25lIGhhcyB0byByZXNvbHZlIHRoaXMgc3ltYm9sIGFzIGluIAorICogICB0b29scy90ZXN0
-aW5nL3NlbGZ0ZXN0cy92RFNPL3BhcnNlX3Zkc28uYworICogKQorICogd2hpY2ggZmlsbHMgaW4g
-YSBzdHJ1Y3R1cmUKKyAqIHdpdGggdGhlIGZvbGxvd2luZyBsYXlvdXQgOgorICovCisKKy8qKiBz
-dHJ1Y3QgbGludXhfdHNjX2NhbGlicmF0aW9uIC0KKyAqIG11bHQ6ICAgIGFtb3VudCB0byBtdWx0
-aXBseSA2NC1iaXQgVFNDIHZhbHVlIGJ5CisgKiBzaGlmdDogICB0aGUgcmlnaHQgc2hpZnQgdG8g
-YXBwbHkgdG8gKG11bHQqVFNDKSB5aWVsZGluZyBuYW5vc2Vjb25kcworICogdHNjX2toejogdGhl
-IGNhbGlicmF0ZWQgVFNDIGZyZXF1ZW5jeSBpbiBLSHogZnJvbSB3aGljaCBwcmV2aW91cyBtZW1i
-ZXJzIGNhbGN1bGF0ZWQKKyAqLworc3RydWN0IGxpbnV4X3RzY19jYWxpYnJhdGlvbgoreworICAg
-ICAgICB1bnNpZ25lZCBpbnQgbXVsdDsKKyAgICAgICAgdW5zaWduZWQgaW50IHNoaWZ0OworICAg
-ICAgICB1bnNpZ25lZCBpbnQgdHNjX2toejsKK307CisKKy8qIFRvIHVzZToKKyAqCisgKiAgc3Rh
-dGljIHVuc2lnbmVkCisgKiAgKCpsaW51eF90c2NfY2FsKShzdHJ1Y3QgbGludXhfdHNjX2NhbGli
-cmF0aW9uICpsaW51eF90c2NfY2FsKSA9IHZkc29fc3ltKCJMSU5VWF8yLjYiLCAiX192ZHNvX2xp
-bnV4X3RzY19jYWxpYnJhdGlvbiIpOworICogIGlmKCBsaW51eF90c2NfY2FsID09IDBVTCApCisg
-KiAgeyBmcHJpbnRmKHN0ZGVyciwidGhlIHBhdGNoIHByb3ZpZGluZyBfX3Zkc29fbGludXhfdHNj
-X2NhbGlicmF0aW9uIGlzIG5vdCBhcHBsaWVkIHRvIHRoZSBrZXJuZWwuXG4iKTsKKyAqICAgIHJl
-dHVybiBFUlJPUjsKKyAqICB9CisgKiAgc3RhdGljIGNvbnN0IHN0cnVjdCBsaW51eF90c2NfY2Fs
-aWJyYXRpb24gKmNsb2NrX3NvdXJjZT0odm9pZCopMFVMOworICogIGlmKCAhICgqbGludXhfdHNj
-X2NhbCkoJmNsb2NrX3NvdXJjZSkgKQorICogICAgZnByaW50ZihzdGRlcnIsIlRTQyBpcyBub3Qg
-dGhlIHN5c3RlbSBjbG9ja3NvdXJjZS5cbiIpOworICogIHVuc2lnbmVkIGludCB0c2NfbG8sIHRz
-Y19oaSwgdHNjX2NwdTsKKyAqICBhc20gdm9sYXRpbGUKKyAqICAoICJyZHRzY3AiIDogKD1hKSB0
-c2NfaGksICAoPWQpIHRzY19sbywgKD1jKSB0c2NfY3B1ICk7CisgKiAgdW5zaWduZWQgbG9uZyB0
-c2MgPSAoKCh1bnNpZ25lZCBsb25nKXRzY19oaSkgPDwgMzIpIHwgdHNjX2xvOworICogIHVuc2ln
-bmVkIGxvbmcgbmFub3NlY29uZHMgPQorICogICAoKCBjbG9ja19zb3VyY2UgLT4gbXVsdCApICog
-dHNjICkgPj4gKGNsb2NrX3NvdXJjZSAtPiBzaGlmdCk7CisgKgorICogIG5hbm9zZWNvbmRzIGlz
-IG5vdyBUU0MgdmFsdWUgY29udmVydGVkIHRvIG5hbm9zZWNvbmRzLAorICogIGFjY29yZGluZyB0
-byBMaW51eCcgY2xvY2tzb3VyY2UgY2FsaWJyYXRpb24gdmFsdWVzLgorICogIEluY2lkZW50YWxs
-eSwgJ3RzY19jcHUnIGlzIHRoZSBudW1iZXIgb2YgdGhlIENQVSB0aGUgdGFzayBpcyBydW5uaW5n
-IG9uLgorICoKKyAqIEJ1dCBiZXR0ZXIgcmVzdWx0cyBhcmUgb2J0YWluZWQgYnkgYXBwbHlpbmcg
-dGhpcyB0byB0aGUgZGlmZmVyZW5jZSAoZGVsdGEpCisgKiBhbmQgYWRkaW5nIHRoaXMgdG8gc29t
-ZSBwcmV2aW91cyB0aW1lc3BlYyB2YWx1ZToKKyAqICAgc3RhdGljIHU2NCBwcmV2aW91c190c2M9
-MCwgcHJldmlvdXNfbnNlYz0wLCBwcmV2aW91c19zZWM9MDsKKyAqICAgdTY0ICB0c2MgICAgICA9
-IHJkdHNjcCgpOworICogICB1NjQgIGRlbHRhICAgID0gdHNjIC0gcHJldmlvdXNfdHNjOworICog
-ICB1NjQgIG5zZWMgICAgID0gKChkZWx0YSAqIGNsb2NrX3NvdXJjZS0+bXVsdCkgKyBwcmV2aW91
-c19uc2VjICkKKyAqCSAgICAgICAgICAgPj4gY2xvY2tfc291cmNlLT5zaGlmdDsKKyAqICAgdHMt
-PnR2X3NlYyAgICA9IHByZXZpb3VzX3NlYyArIChuc2VjIC8gTlNFQ19QRVJfU0VDKTsKKyAqICAg
-dHMtPnR2X25zZWMgICA9IG5zZWMgJSBOU0VDX1BFUl9TRUM7CisgKiAgIHByZXZpb3VzX3RzYyAg
-PSB0c2MKKyAqICAgcHJldmlvdXNfc2VjICA9IHRzLT50dl9zZWM7CisgKiAgIHByZXZpb3VzX25z
-ZWMgPSB0cy0+dHZfbnNlYyA8PCBjbG9ja19zb3VyY2UtPnNoaWZ0OworICogICByZXR1cm4gdHM7
-CisgKiBUaGlzIGlzIHRoZSBhcHByb2FjaCB0YWtlbiBieSBMaW51eCBrZXJuZWwgJiBpbiBWRFNP
-IC4KKyAqCisgKiBPciwgaW4gdXNlci1zcGFjZSwgd2l0aCBmbG9hdGluZyBwb2ludCwgb25lIGNv
-dWxkIHVzZSB0aGUgcmR0c2NwIHZhbHVlIGFzIG51bWJlciBvZiBwaWNvc2Vjb25kcyA6CisgKiAg
-ICAgdTY0IG5zID0gbHJvdW5kKCAoKGRvdWJsZSlyZHRzY3AoKSkgLyAoKChkb3VibGUpY2xvY2tf
-c291cmNlLT50c2Nfa2h6KSAvIDFlMykgKTsKKyAqIChpZS4gaWYgdHNjX2toeiBpcyAzMDAwICwg
-dGhlcmUgYXJlIDMgdHNjIHRpY2tzIHBlciBuYW5vc2Vjb25kLCBzbyBkaXZpZGUgdHNjIHRpY2tz
-IGJ5IDMpLgorICoKKyAqIFRoZXJlIHNob3VsZCBhY3R1YWxseSBiZSB2ZXJ5IGxpdHRsZSBkaWZm
-ZXJlbmNlIGJldHdlZW4gdGhlIHR3byB2YWx1ZXMgb2J0YWluZWQgKEAgMC4wMiUgKQorICogYnkg
-ZWl0aGVyIG1ldGhvZC4KKyAqLworCisjZW5kaWYK
---001a113d41481c84ea05672a3218--
+>  
+>  	if (likely(l4proto->ctnl_timeout.nlattr_to_obj)) {
+> -		struct nlattr *tb[l4proto->ctnl_timeout.nlattr_max+1];
+> +		tb = kcalloc(l4proto->ctnl_timeout.nlattr_max + 1, sizeof(*tb),
+> +			     GFP_KERNEL);
+> +
+> +		if (!tb)
+> +			return -ENOMEM;
+>  
+>  		ret = nla_parse_nested(tb, l4proto->ctnl_timeout.nlattr_max,
+>  				       attr, l4proto->ctnl_timeout.nla_policy,
+>  				       NULL);
+>  		if (ret < 0)
+> -			return ret;
+> +			goto err;
+>  
+>  		ret = l4proto->ctnl_timeout.nlattr_to_obj(tb, net, timeouts);
+>  	}
+> +
+> +err:
+> +	kfree(tb);
+>  	return ret;
+>  }
+>  
+> -- 
+> 2.7.4
+> 
