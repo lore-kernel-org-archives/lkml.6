@@ -1,146 +1,225 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932271AbeCKOhq (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 10:37:46 -0400
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:36427 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932152AbeCKOhp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 10:37:45 -0400
-X-Google-Smtp-Source: AG47ELsc1r7wIhV4jNLJaGuofQjYvYNtaUu6FTMz5Jf2YryPj0MK/3kC/3IHU7xlwFdbdx0BFvsuQA==
-Subject: Re: [Possible REGRESSION, 4.16-rc4] Error updating SMART data during
- runtime and could not connect to lvmetad at some boot attempts
-To: Martin Steigerwald <martin@lichtvoll.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
-        Tejun Heo <tj@kernel.org>
-References: <27165802.vQ9JbjrmvU@merkaba>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <f6e73c8e-1186-744b-c856-2c56ceeeab10@redhat.com>
-Date: Sun, 11 Mar 2018 15:37:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932268AbeCKO54 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 10:57:56 -0400
+Received: from mga17.intel.com ([192.55.52.151]:30407 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932144AbeCKO5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Mar 2018 10:57:54 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,455,1515484800";
+   d="scan'208";a="41016630"
+Date: Sun, 11 Mar 2018 20:31:51 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: fmhess@users.sourceforge.net
+Cc: dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] dmaengine: pl330: flush before wait, and add dev
+ burst support.
+Message-ID: <20180311150151.GB15443@localhost>
+References: <1957017.QzKNMJJqD6@bear>
+ <20180306120259.GT15443@localhost>
+ <23394379.8nZhno5foU@bear>
 MIME-Version: 1.0
-In-Reply-To: <27165802.vQ9JbjrmvU@merkaba>
-Content-Type: multipart/mixed;
- boundary="------------A03418BFF6026D45F7B2BB5B"
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <23394379.8nZhno5foU@bear>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------A03418BFF6026D45F7B2BB5B
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-Hi Martin,
-
-On 11-03-18 09:20, Martin Steigerwald wrote:
-> Hello.
+On Tue, Mar 06, 2018 at 11:03:22AM -0500, Frank Mori Hess wrote:
+> Do DMAFLUSHP _before_ the first DMAWFP to ensure controller
+> and peripheral are in agreement about dma request state before first
+> transfer.  Add support for burst transfers to/from peripherals. In the new
+> scheme, the controller does as many burst transfers as it can then
+> transfers the remaining dregs with either single transfers for
+> peripherals, or with a reduced size burst for memory-to-memory transfers.
 > 
-> Since 4.16-rc4 (upgraded from 4.15.2 which worked) I have an issue
-> with SMART checks occassionally failing like this:
+> Signed-off-by: Frank Mori Hess <fmh6jj@gmail.com>
+> Tested-by: Frank Mori Hess <fmh6jj@gmail.com>
+
+sorry if it wasnt clear earlier, the lines below should come after the ---
+line. git-am skips that part while applying..
+
 > 
-> smartd[28017]: Device: /dev/sdb [SAT], is in SLEEP mode, suspending checks
-> udisksd[24408]: Error performing housekeeping for drive /org/freedesktop/UDisks2/drives/INTEL_SSDSA2CW300G3_[…]: Error updating SMART
-> data: Error sending ATA command CHECK POWER MODE: Unexpected sense data returned:#0120000: 0e 09 0c 00  00 00 ff 00  00 00 00 00  00 00 50 00    ..............P.#0120010:
-> 00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00    ................#012 (g-io-error-quark, 0)
-> merkaba udisksd[24408]: Error performing housekeeping for drive /org/freedesktop/UDisks2/drives/Crucial_CT480M500SSD3_[…]: Error updating SMART dat
-> a: Error sending ATA command CHECK POWER MODE: Unexpected sense data returned:#0120000: 01 00 1d 00  00 00 0e 09  0c 00 00 00  ff 00 00 00    ................#0120010: 00 0
-> 0 00 00  50 00 00 00  00 00 00 00  00 00 00 00    ....P...........#012 (g-io-error-quark, 0)
+> I tested dma transfers to peripherals with designware serial port
+> (drivers/tty/serial/8250/8250_dw.c) and a GPIB interface
+> (https://github.com/fmhess/fmh_gpib_core).  I tested memory-to-memory
+> transfers using the dmatest module.
 > 
-> (Intel SSD is connected via SATA, Crucial via mSATA in a ThinkPad T520)
+> v3 of this patch should be the same as v2 except with checkpatch.pl
+> warnings and errors cleaned up.
 > 
-> However when I then check manually with smartctl -a | -x | -H the device
-> reports SMART data just fine.
+> ---
+>  drivers/dma/pl330.c | 146 +++++++++++++++++++++++++++++++++++++---------------
+>  1 file changed, 104 insertions(+), 42 deletions(-)
 > 
-> As smartd correctly detects that device is in sleep mode, this may be an
-> userspace issue in udisksd.
-> 
-> Also at some boot attempts the boot hangs with a message like "could not
-> connect to lvmetad, scanning manually for devices". I use BTRFS RAID 1
-> on to LVs (each on one of the SSDs). A configuration that requires a manual
-> adaption to InitRAMFS in order to boot (basically vgchange -ay before
-> btrfs device scan).
-> 
-> I wonder whether that has to do with the new SATA LPM policy stuff, but as
-> I had issues with
-> 
->   3 => Medium power with Device Initiated PM enabled
-> 
-> (machine did not boot, which could also have been caused by me accidentally
-> removing all TCP/IP network support in the kernel with that setting)
-> 
-> I set it back to
-> 
-> CONFIG_SATA_MOBILE_LPM_POLICY=0
-> 
-> (firmware settings)
+> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+> index d7327fd5f445..cc2e4456bec1 100644
+> --- a/drivers/dma/pl330.c
+> +++ b/drivers/dma/pl330.c
+> @@ -1094,26 +1094,33 @@ static inline int _ldst_memtomem(unsigned dry_run, u8 buf[],
+>  	return off;
+>  }
+>  
+> -static inline int _ldst_devtomem(struct pl330_dmac *pl330, unsigned dry_run,
+> -				 u8 buf[], const struct _xfer_spec *pxs,
+> -				 int cyc)
+> +static inline int _ldst_devtomem(struct pl330_dmac *pl330,
+> +				unsigned int dry_run, u8 buf[],
+> +				const struct _xfer_spec *pxs,
+> +				int cyc, enum pl330_cond cond)
+>  {
+>  	int off = 0;
+> -	enum pl330_cond cond;
+>  
+>  	if (pl330->quirks & PL330_QUIRK_BROKEN_NO_FLUSHP)
+>  		cond = BURST;
+> -	else
+> -		cond = SINGLE;
+>  
+> +	/* do FLUSHP at beginning to clear any stale dma requests before the
+> +	 * first WFP.
+> +	 */
 
-Right, so at that settings the LPM policy changes are effectively
-disabled and cannot explain your SMART issues.
+multiline comments should be:
 
-Still I would like to zoom in on this part of your bug report, because
-for Fedora 28 we are planning to ship with CONFIG_SATA_MOBILE_LPM_POLICY=3
-and AFAIK Ubuntu has similar plans.
+/*
+ * this is an example of multi-line
+ * comment
+ */
 
-I suspect that the issue you were seeing with CONFIG_SATA_MOBILE_LPM_POLICY=3
-were with the Crucial disk ? I've attached a patch for you to test, which
-disabled LPM for your model Crucial SSD (but keeps it on for the Intel disk)
-if you can confirm that with that patch you can run with
-CONFIG_SATA_MOBILE_LPM_POLICY=3 without issues that would be great.
+Pls fix at this and other places...
 
-Regards,
+>  static inline int _ldst_memtodev(struct pl330_dmac *pl330,
+>  				 unsigned dry_run, u8 buf[],
+> -				 const struct _xfer_spec *pxs, int cyc)
+> +				 const struct _xfer_spec *pxs, int cyc,
+> +				 enum pl330_cond cond)
+>  {
+>  	int off = 0;
+> -	enum pl330_cond cond;
+>  
+>  	if (pl330->quirks & PL330_QUIRK_BROKEN_NO_FLUSHP)
+>  		cond = BURST;
+> -	else
+> -		cond = SINGLE;
+>  
+> +	/* do FLUSHP at beginning to clear any stale dma requests before the
+> +	 * first WFP.
+> +	 */
+> +	if (!(pl330->quirks & PL330_QUIRK_BROKEN_NO_FLUSHP))
+> +		off += _emit_FLUSHP(dry_run, &buf[off], pxs->desc->peri);
+>  	while (cyc--) {
+>  		off += _emit_WFP(dry_run, &buf[off], cond, pxs->desc->peri);
+>  		off += _emit_LD(dry_run, &buf[off], ALWAYS);
+> -		off += _emit_STP(dry_run, &buf[off], cond, pxs->desc->peri);
+> -
+> -		if (!(pl330->quirks & PL330_QUIRK_BROKEN_NO_FLUSHP))
+> -			off += _emit_FLUSHP(dry_run, &buf[off],
+> -					    pxs->desc->peri);
+> +		if (cond == ALWAYS) {
+> +			off += _emit_STP(dry_run, &buf[off], SINGLE,
+> +				pxs->desc->peri);
+> +			off += _emit_STP(dry_run, &buf[off], BURST,
+> +				pxs->desc->peri);
+> +		} else {
+> +			off += _emit_STP(dry_run, &buf[off], cond,
+> +				pxs->desc->peri);
+> +		}
 
-Hans
+this looks quite similar to previous routine above, if so can we please make
+it common function and invoke from both of these...
 
---------------A03418BFF6026D45F7B2BB5B
-Content-Type: text/x-patch;
- name="0001-libata-Apply-NOLPM-quirk-to-Crucial-M500-480GB-SSDs.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-libata-Apply-NOLPM-quirk-to-Crucial-M500-480GB-SSDs.pat";
- filename*1="ch"
+> +static int _dregs(struct pl330_dmac *pl330, unsigned int dry_run, u8 buf[],
+> +		const struct _xfer_spec *pxs, int transfer_length)
+> +{
+> +	int off = 0;
+> +	int dregs_ccr;
+> +
+> +	if (transfer_length == 0)
+> +		return off;
+> +
+> +	switch (pxs->desc->rqtype) {
+> +	case DMA_MEM_TO_DEV:
+> +		off += _ldst_memtodev(pl330, dry_run, &buf[off], pxs,
+> +			transfer_length, SINGLE);
+> +		break;
 
->From 551654d311d91c3cecde233eda86686f5d786fc2 Mon Sep 17 00:00:00 2001
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Sun, 11 Mar 2018 15:32:00 +0100
-Subject: [PATCH] libata: Apply NOLPM quirk to Crucial M500 480GB SSDs
+empty line after each case pls
 
-There have been reports of the Crucial M500 480GB model not working
-with LPM set to min_power / med_power_with_dipm level.
+> +	case DMA_DEV_TO_MEM:
+> +		off += _ldst_devtomem(pl330, dry_run, &buf[off], pxs,
+> +			transfer_length, SINGLE);
+> +		break;
+> +	case DMA_MEM_TO_MEM:
+> +		dregs_ccr = pxs->ccr;
+> +		dregs_ccr &= ~((0xf << CC_SRCBRSTLEN_SHFT) |
+> +			(0xf << CC_DSTBRSTLEN_SHFT));
+> +		dregs_ccr |= (((transfer_length - 1) & 0xf) <<
+> +			CC_SRCBRSTLEN_SHFT);
+> +		dregs_ccr |= (((transfer_length - 1) & 0xf) <<
+> +			CC_DSTBRSTLEN_SHFT);
+> +		off += _emit_MOV(dry_run, &buf[off], CCR, dregs_ccr);
+> +		off += _ldst_memtomem(dry_run, &buf[off], pxs, 1);
+> +		break;
+> +	default:
+> +		off += 0x40000000; /* Scare off the Client */
 
-It has no been tested with medium_power, but that typically has no
-measurable power-savings.
+Can you explain this bit, shouldnt this be err?
 
-This commit adds a NOLPM quirk to avoid LPM causing issues with these SSDs.
+> @@ -1303,11 +1362,6 @@ static int _setup_req(struct pl330_dmac *pl330, unsigned dry_run,
+>  	/* DMAMOV CCR, ccr */
+>  	off += _emit_MOV(dry_run, &buf[off], CCR, pxs->ccr);
+>  
+> -	x = &pxs->desc->px;
+> -	/* Error if xfer length is not aligned at burst size */
+> -	if (x->bytes % (BRST_SIZE(pxs->ccr) * BRST_LEN(pxs->ccr)))
+> -		return -EINVAL;
+> -
+>  	off += _setup_xfer(pl330, dry_run, &buf[off], pxs);
+>  
+>  	/* DMASEV peripheral/event */
+> @@ -2115,15 +2169,29 @@ static int pl330_config(struct dma_chan *chan,
+>  			pch->fifo_addr = slave_config->dst_addr;
+>  		if (slave_config->dst_addr_width)
+>  			pch->burst_sz = __ffs(slave_config->dst_addr_width);
+> -		if (slave_config->dst_maxburst)
+> -			pch->burst_len = slave_config->dst_maxburst;
+> +		if (pch->dmac->quirks & PL330_QUIRK_BROKEN_NO_FLUSHP)
+> +			pch->burst_len = 1;
 
-Cc: stable@vger.kernel.org
-Reported-by: Martin Steigerwald <martin@lichtvoll.de>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/ata/libata-core.c | 5 +++++
- 1 file changed, 5 insertions(+)
+so in this case we don't honour the requested burst length?
 
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index d8be0fe548f7..197e2c7f560e 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4535,6 +4535,11 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
- 						ATA_HORKAGE_ZERO_AFTER_TRIM |
- 						ATA_HORKAGE_NOLPM, },
- 
-+	/* The 480GB version of the M500 has both queued TRIM and LPM issues */
-+	{ "Crucial_CT480M500*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
-+						ATA_HORKAGE_ZERO_AFTER_TRIM |
-+						ATA_HORKAGE_NOLPM, },
-+
- 	/* devices that don't properly handle queued TRIM commands */
- 	{ "Micron_M500_*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
- 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
+> +		else if (slave_config->dst_maxburst) {
+> +			if (slave_config->dst_maxburst > PL330_MAX_BURST)
+> +				pch->burst_len = PL330_MAX_BURST;
+> +			else
+> +				pch->burst_len = slave_config->dst_maxburst;
+> +		} else
+> +			pch->burst_len = 1;
+>  	} else if (slave_config->direction == DMA_DEV_TO_MEM) {
+>  		if (slave_config->src_addr)
+>  			pch->fifo_addr = slave_config->src_addr;
+>  		if (slave_config->src_addr_width)
+>  			pch->burst_sz = __ffs(slave_config->src_addr_width);
+> -		if (slave_config->src_maxburst)
+> -			pch->burst_len = slave_config->src_maxburst;
+> +		if (pch->dmac->quirks & PL330_QUIRK_BROKEN_NO_FLUSHP)
+> +			pch->burst_len = 1;
+> +		else if (slave_config->src_maxburst) {
+> +			if (slave_config->src_maxburst > PL330_MAX_BURST)
+> +				pch->burst_len = PL330_MAX_BURST;
+> +			else
+> +				pch->burst_len = slave_config->src_maxburst;
+> +		} else
+> +			pch->burst_len = 1;
+
+again this looks duplicate..
 -- 
-2.14.3
-
-
---------------A03418BFF6026D45F7B2BB5B--
+~Vinod
