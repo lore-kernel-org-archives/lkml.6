@@ -1,143 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932259AbeCKPWr (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 11:22:47 -0400
-Received: from mail-wr0-f173.google.com ([209.85.128.173]:36396 "EHLO
-        mail-wr0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932137AbeCKPWq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 11:22:46 -0400
-X-Google-Smtp-Source: AG47ELuuygbRXhfEhbD3FVuQicLZ6WWUmVn/4rWcC7o0jaH+qePu9DXeF4HaXp4AGhuihiohHQrpKw==
-Date: Sun, 11 Mar 2018 18:22:41 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH -mm] proc: test last field of /proc/loadavg
-Message-ID: <20180311152241.GA26247@avx2>
+        id S932302AbeCKPWx (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 11:22:53 -0400
+Received: from mout.web.de ([212.227.17.11]:58855 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932137AbeCKPWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Mar 2018 11:22:50 -0400
+Subject: [PATCH 7/9] um/drivers/vector_user: Adjust an error message in
+ user_init_tap_fds()
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: user-mode-linux-devel@lists.sourceforge.net,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
+Cc: user-mode-linux-user@lists.sourceforge.net,
+        kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
+Message-ID: <04d337d2-a2db-a5c8-e056-4eb51a3882b3@users.sourceforge.net>
+Date: Sun, 11 Mar 2018 16:22:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.7.2 (2016-11-26)
+X-Provags-ID: V03:K0:dNI4VHlg5hPBMbbZIiIiD+r0mHSvBylT2SrSFWChGqZMuOYAQre
+ KfcqEQ/kH8A45JWB8E2iiyUSieYBZDxCBiqyuaYvUVk64rvM2Qf4WXmziqAleq24EqgBfv6
+ eqdaVHGgmiHVBZSIAz7p9ShwELZUrExaCnP4lzw9K6La7tbMV4Z76Ft9aiA/UOlO1tOzQ1f
+ K9UHsquJZqTbLyoIcqz2g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:nzd4sV8/mPY=:+Xj6RjEYktBM6sohBeMqUG
+ wOn6/mO6bx+Ky8ShDrqR0MJx1SMImKoQEn8SmrGHUHXkwSWdhDRIR7HZ+LXZe1tiVvzPv3HjV
+ KkrvLbFf5ihGSiidDv+s4YOyWCrdzN5ihRT7EAHA0Qv6Bs/kr9wHJ1/SSCcBKFKxoqXrCT1Os
+ mvWJ/uhPSwuT/xkWluVPRYVd3C7kFsyrTcfuMaK8xEkg015h64CkihBLAlRz1vpyuJUhdTfWv
+ VFLvVQBUdPhPBo72YLt/F1oWaSC7j8hK5MbfsZmI19njk0/xWLigs9JLxNQR7zt7lYj4vL16u
+ L1P2IBKH0KSydNgZBJ2n74UdmFOmvUpfJH5wSBu70SKolHbBovSbudLukCeoEhPwRADs807GA
+ T8y05gB2ejXmxzewyDzp8GGhf8T0zoe7MPr7Titg51xELi7i82CkktA5kWbKeP6/KLmyS5Kq9
+ /KVICJburAKIbFOSjwn0O+Zp1PZwO/XYh10PDr8SR2VmDG4kk9VAMLKlGuKgTo/KseHcYrMqD
+ 6oQFyChM9zXhgTWCk/yMnej+s/qegpblMES/ch5CN+8ayaqhjgmdF8rVWgUFZIStVb3D1UDgP
+ 5zWQCDxcaLxzqVAf921c6e94Ubak61m5XfQCUp5g+Q5U2gBw32CIdEN6xigL8udM5ve4mktY8
+ OCGhnxX3qhQoXY2kPKHKA4PxVHH/1RCTNF2RYleYJlcX5WmR6e6NWzI1OE3v2jLm/yOVIzHMd
+ Bfd+ZyZMjq1nLGYgCaK1DFeoResezvI9ro6zxXUWa1uWwUdGJarckKQPHmHA9wyOuyagROyZl
+ QavUKFIphmYzFbNVrbeQ6e8Gx8kLRQrNytUeBzEGFMQQVjTYIo=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Test fork counter formerly known as ->last_pid, the only part of
-/proc/loadavg which can be tested.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 11 Mar 2018 15:10:05 +0100
 
-Testing in init pid namespace is not reliable because of
-background activity.
+Adjust an error message at the end of this function so that its name
+will be automatically determined as a parameter.
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
+ arch/um/drivers/vector_user.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- tools/testing/selftests/proc/.gitignore         |    1 
- tools/testing/selftests/proc/Makefile           |    1 
- tools/testing/selftests/proc/proc-loadavg-001.c |   83 ++++++++++++++++++++++++
- 3 files changed, 85 insertions(+)
-
---- a/tools/testing/selftests/proc/.gitignore
-+++ b/tools/testing/selftests/proc/.gitignore
-@@ -1,3 +1,4 @@
-+/proc-loadavg-001
- /proc-self-map-files-001
- /proc-self-map-files-002
- /proc-self-syscall
---- a/tools/testing/selftests/proc/Makefile
-+++ b/tools/testing/selftests/proc/Makefile
-@@ -1,6 +1,7 @@
- CFLAGS += -Wall -O2
+diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
+index 4c265262a369..5e78723c34d4 100644
+--- a/arch/um/drivers/vector_user.c
++++ b/arch/um/drivers/vector_user.c
+@@ -192,7 +192,6 @@ static struct vector_fds *user_init_tap_fds(struct arglist *ifspec)
+ 	}
+ 	return result;
+ tap_cleanup:
+-	printk(UM_KERN_ERR "user_init_tap: init failed, error %d", err);
+ 	if (result != NULL) {
+ 		if (result->rx_fd >= 0)
+ 			os_close_file(result->rx_fd);
+@@ -200,6 +199,8 @@ static struct vector_fds *user_init_tap_fds(struct arglist *ifspec)
+ 			os_close_file(result->tx_fd);
+ 		kfree(result);
+ 	}
++
++	printk(UM_KERN_ERR "%s: init failed: %d", __func__, err);
+ 	return NULL;
+ }
  
- TEST_GEN_PROGS :=
-+TEST_GEN_PROGS += proc-loadavg-001
- TEST_GEN_PROGS += proc-self-map-files-001
- TEST_GEN_PROGS += proc-self-map-files-002
- TEST_GEN_PROGS += proc-self-syscall
-new file mode 100644
---- /dev/null
-+++ b/tools/testing/selftests/proc/proc-loadavg-001.c
-@@ -0,0 +1,83 @@
-+/*
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ *
-+ * Permission to use, copy, modify, and distribute this software for any
-+ * purpose with or without fee is hereby granted, provided that the above
-+ * copyright notice and this permission notice appear in all copies.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+ */
-+/* Test that /proc/loadavg correctly reports last pid in pid namespace. */
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <sched.h>
-+#include <sys/types.h>
-+#include <sys/stat.h>
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <sys/wait.h>
-+
-+int main(void)
-+{
-+	pid_t pid;
-+	int wstatus;
-+
-+	if (unshare(CLONE_NEWPID) == -1) {
-+		if (errno == ENOSYS || errno == EPERM)
-+			return 2;
-+		return 1;
-+	}
-+
-+	pid = fork();
-+	if (pid == -1)
-+		return 1;
-+	if (pid == 0) {
-+		char buf[128], *p;
-+		int fd;
-+		ssize_t rv;
-+
-+		fd = open("/proc/loadavg" , O_RDONLY);
-+		if (fd == -1)
-+			return 1;
-+		rv = read(fd, buf, sizeof(buf));
-+		if (rv < 3)
-+			return 1;
-+		p = buf + rv;
-+
-+		/* pid 1 */
-+		if (!(p[-3] == ' ' && p[-2] == '1' && p[-1] == '\n'))
-+			return 1;
-+
-+		pid = fork();
-+		if (pid == -1)
-+			return 1;
-+		if (pid == 0)
-+			return 0;
-+		if (waitpid(pid, NULL, 0) == -1)
-+			return 1;
-+
-+		lseek(fd, 0, SEEK_SET);
-+		rv = read(fd, buf, sizeof(buf));
-+		if (rv < 3)
-+			return 1;
-+		p = buf + rv;
-+
-+		/* pid 2 */
-+		if (!(p[-3] == ' ' && p[-2] == '2' && p[-1] == '\n'))
-+			return 1;
-+
-+		return 0;
-+	}
-+
-+	if (waitpid(pid, &wstatus, 0) == -1)
-+		return 1;
-+	if (WIFEXITED(wstatus) && WEXITSTATUS(wstatus) == 0)
-+		return 0;
-+	return 1;
-+}
+-- 
+2.16.2
