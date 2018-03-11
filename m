@@ -1,1036 +1,197 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932220AbeCKM0O convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 08:26:14 -0400
-Received: from bastet.se.axis.com ([195.60.68.11]:40241 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932126AbeCKM0N (ORCPT
+        id S932162AbeCKMi5 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 08:38:57 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:35059 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932126AbeCKMiz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 08:26:13 -0400
-From: Mikael Starvik <mikael.starvik@axis.com>
-To: Jesper Nilsson <jespern@axis.com>
-CC: Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>,
-        Michal Simek <monstr@monstr.eu>, Andi Kleen <ak@linux.intel.com>,
-        "Sergey Senozhatsky" <sergey.senozhatsky.work@gmail.com>,
-        linux-cris-kernel <linux-cris-kernel@axis.com>,
-        Petr Mladek <pmladek@suse.com>, Peter Zijlstra <peterz@infradead.org>,
-        "adi-buildroot-devel@lists.sourceforge.net"
-        <adi-buildroot-devel@lists.sourceforge.net>,
+        Sun, 11 Mar 2018 08:38:55 -0400
+X-Google-Smtp-Source: AG47ELtgSJnn7CiXzk1swhfV+NWGFu0eCY6CidX+7ezQll6QtNd0SL3EWJt21Ei0euMfLb622+3yXg==
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Garnier <thgarnie@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Paul Mackerras <paulus@samba.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@redhat.com>,
+        James Morris <james.l.morris@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nicolas Pitre <nico@linaro.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
         Steven Rostedt <rostedt@goodmis.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Jesper Nilsson <jesper@jni.nu>, Greentime Hu <green.hu@gmail.com>,
-        Tejun Heo <tj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
-        Vincent Chen <deanbo422@gmail.com>, Dave Young <dyoung@redhat.com>
-Subject: Re: [GIT PULL] CRIS: Drop support for the CRIS-port
-Thread-Topic: [GIT PULL] CRIS: Drop support for the CRIS-port
-Thread-Index: AQHTuSjs6Oq0VYWaMkeaekeg4v/OUKPK9e7k
-Date: Sun, 11 Mar 2018 12:26:05 +0000
-Message-ID: <AD4BD6E6-C151-411C-9C0D-1D0A928752CB@axis.com>
-References: <CAK8P3a1KE_0+vDC48-NzzW8eT1YZ8MZRun-1GeRMNg+o8dqZUg@mail.gmail.com>
- <20180308155116.GW17177@axis.com>,<20180311110551.GX17177@axis.com>
-In-Reply-To: <20180311110551.GX17177@axis.com>
-Accept-Language: sv-SE, en-US
-Content-Language: sv-SE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-TM-AS-GCONF: 00
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org
+Subject: [PATCH v8 0/6] add support for relative references in special sections
+Date: Sun, 11 Mar 2018 12:38:09 +0000
+Message-Id: <20180311123815.17916-1-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RIP CRIS. Lots of fun memories! 
+This adds support for emitting special sections such as initcall arrays,
+PCI fixups and tracepoints as relative references rather than absolute
+references. This reduces the size by 50% on 64-bit architectures, but
+more importantly, it removes the need for carrying relocation metadata
+for these sections in relocatable kernels (e.g., for KASLR) that needs
+to be fixed up at boot time. On arm64, this reduces the vmlinux footprint
+of such a reference by 8x (8 byte absolute reference + 24 byte RELA entry
+vs 4 byte relative reference)
 
-> 11 mars 2018 kl. 12:05 skrev Jesper Nilsson <jespern@axis.com>:
-> 
-> Hi Arnd,
-> 
-> As promised, pull the below tag for the removal of the CRIS-port.
-> There are still a few references to the CRIS port left, and they
-> can be grouped into two categories:
-> 
-> - Examples or references to the CRIS port as provenance.
->    These I believe can be left as is.
-> 
-> - The workarounds for CRIS not having "unpacked" structs.
->    When I looked at it 10 years ago, CRIS was the only port
->    that needed explicit alignment of some structs,
->    due to pointers being valid at any byte offset in CRIS,
->    which would wreak havoc with code that assumed that the
->    lower bits of a pointer are free to use as flags.
->    I'm leaving these in until we can say that no newer
->    port has the same problem.
-> 
-> Best regards,
-> 
-> /Jesper
-> 
-> 
-> 
-> The following changes since commit 1b88accf6a659c46d5c8e68912896f112bf882bb:
-> 
->  Merge tag 'for_linus' of git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost (2018-03-07 17:49:33 -0800)
-> 
-> are available in the Git repository at:
-> 
->  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/jesper/cris.git tags/cris-eol
-> 
-> for you to fetch changes up to 657adcf3a431293cd86a6f9d5dd5dbf9378b63f9:
-> 
->  CRIS: Drop support for the CRIS port (2018-03-11 11:16:55 +0100)
-> 
-> ----------------------------------------------------------------
-> Drop support for the CRIS-port
-> 
-> ----------------------------------------------------------------
-> Jesper Nilsson (1):
->      CRIS: Drop support for the CRIS port
-> 
-> Documentation/00-INDEX                             |    2 -
-> Documentation/admin-guide/README.rst               |    2 +-
-> Documentation/cris/README                          |  195 -
-> Documentation/devicetree/bindings/cris/axis.txt    |    9 -
-> Documentation/devicetree/bindings/cris/boards.txt  |    8 -
-> .../devicetree/bindings/gpio/gpio-etraxfs.txt      |   22 -
-> .../interrupt-controller/axis,crisv32-intc.txt     |   23 -
-> .../bindings/serial/axis,etraxfs-uart.txt          |   22 -
-> .../features/core/BPF-JIT/arch-support.txt         |    1 -
-> .../core/generic-idle-thread/arch-support.txt      |    1 -
-> .../features/core/jump-labels/arch-support.txt     |    1 -
-> .../features/core/tracehook/arch-support.txt       |    1 -
-> .../features/debug/KASAN/arch-support.txt          |    1 -
-> .../debug/gcov-profile-all/arch-support.txt        |    1 -
-> Documentation/features/debug/kgdb/arch-support.txt |    1 -
-> .../debug/kprobes-on-ftrace/arch-support.txt       |    1 -
-> .../features/debug/kprobes/arch-support.txt        |    1 -
-> .../features/debug/kretprobes/arch-support.txt     |    1 -
-> .../features/debug/optprobes/arch-support.txt      |    1 -
-> .../features/debug/stackprotector/arch-support.txt |    1 -
-> .../features/debug/uprobes/arch-support.txt        |    1 -
-> .../debug/user-ret-profiler/arch-support.txt       |    1 -
-> .../features/io/dma-api-debug/arch-support.txt     |    1 -
-> .../features/io/dma-contiguous/arch-support.txt    |    1 -
-> .../features/io/sg-chain/arch-support.txt          |    1 -
-> .../features/lib/strncasecmp/arch-support.txt      |    1 -
-> .../locking/cmpxchg-local/arch-support.txt         |    1 -
-> .../features/locking/lockdep/arch-support.txt      |    1 -
-> .../locking/queued-rwlocks/arch-support.txt        |    1 -
-> .../locking/queued-spinlocks/arch-support.txt      |    1 -
-> .../locking/rwsem-optimized/arch-support.txt       |    1 -
-> .../features/perf/kprobes-event/arch-support.txt   |    1 -
-> .../features/perf/perf-regs/arch-support.txt       |    1 -
-> .../features/perf/perf-stackdump/arch-support.txt  |    1 -
-> .../sched/membarrier-sync-core/arch-support.txt    |    1 -
-> .../features/sched/numa-balancing/arch-support.txt |    1 -
-> .../seccomp/seccomp-filter/arch-support.txt        |    1 -
-> .../time/arch-tick-broadcast/arch-support.txt      |    1 -
-> .../features/time/clockevents/arch-support.txt     |    1 -
-> .../time/context-tracking/arch-support.txt         |    1 -
-> .../features/time/irq-time-acct/arch-support.txt   |    1 -
-> .../time/modern-timekeeping/arch-support.txt       |    1 -
-> .../features/time/virt-cpuacct/arch-support.txt    |    1 -
-> .../features/vm/ELF-ASLR/arch-support.txt          |    1 -
-> .../features/vm/PG_uncached/arch-support.txt       |    1 -
-> Documentation/features/vm/THP/arch-support.txt     |    1 -
-> Documentation/features/vm/TLB/arch-support.txt     |    1 -
-> .../features/vm/huge-vmap/arch-support.txt         |    1 -
-> .../features/vm/ioremap_prot/arch-support.txt      |    1 -
-> .../features/vm/numa-memblock/arch-support.txt     |    1 -
-> .../features/vm/pte_special/arch-support.txt       |    1 -
-> MAINTAINERS                                        |   10 -
-> arch/cris/Kconfig                                  |  595 --
-> arch/cris/Kconfig.debug                            |   41 -
-> arch/cris/Makefile                                 |  104 -
-> arch/cris/arch-v10/Kconfig                         |  399 --
-> arch/cris/arch-v10/README.mm                       |  244 -
-> arch/cris/arch-v10/drivers/Kconfig                 |  561 --
-> arch/cris/arch-v10/drivers/Makefile                |   11 -
-> arch/cris/arch-v10/drivers/axisflashmap.c          |  413 --
-> arch/cris/arch-v10/drivers/eeprom.c                |  852 ---
-> arch/cris/arch-v10/drivers/gpio.c                  |  857 ---
-> arch/cris/arch-v10/drivers/i2c.c                   |  699 --
-> arch/cris/arch-v10/drivers/i2c.h                   |   18 -
-> arch/cris/arch-v10/drivers/sync_serial.c           | 1463 ----
-> arch/cris/arch-v10/kernel/Makefile                 |   18 -
-> arch/cris/arch-v10/kernel/crisksyms.c              |   17 -
-> arch/cris/arch-v10/kernel/debugport.c              |  560 --
-> arch/cris/arch-v10/kernel/dma.c                    |  288 -
-> arch/cris/arch-v10/kernel/entry.S                  |  978 ---
-> arch/cris/arch-v10/kernel/fasttimer.c              |  835 ---
-> arch/cris/arch-v10/kernel/head.S                   |  620 --
-> arch/cris/arch-v10/kernel/io_interface_mux.c       | 1183 ----
-> arch/cris/arch-v10/kernel/irq.c                    |  236 -
-> arch/cris/arch-v10/kernel/kgdb.c                   | 1128 ---
-> arch/cris/arch-v10/kernel/process.c                |  180 -
-> arch/cris/arch-v10/kernel/ptrace.c                 |  204 -
-> arch/cris/arch-v10/kernel/setup.c                  |  107 -
-> arch/cris/arch-v10/kernel/shadows.c                |   37 -
-> arch/cris/arch-v10/kernel/signal.c                 |  440 --
-> arch/cris/arch-v10/kernel/time.c                   |  268 -
-> arch/cris/arch-v10/kernel/traps.c                  |  134 -
-> arch/cris/arch-v10/lib/Makefile                    |    6 -
-> arch/cris/arch-v10/lib/checksum.S                  |  119 -
-> arch/cris/arch-v10/lib/checksumcopy.S              |  127 -
-> arch/cris/arch-v10/lib/csumcpfruser.S              |   65 -
-> arch/cris/arch-v10/lib/dram_init.S                 |  147 -
-> arch/cris/arch-v10/lib/hw_settings.S               |   61 -
-> arch/cris/arch-v10/lib/memset.c                    |  259 -
-> arch/cris/arch-v10/lib/string.c                    |  236 -
-> arch/cris/arch-v10/lib/usercopy.c                  |  511 --
-> arch/cris/arch-v10/mm/Makefile                     |    6 -
-> arch/cris/arch-v10/mm/fault.c                      |   96 -
-> arch/cris/arch-v10/mm/init.c                       |  256 -
-> arch/cris/arch-v10/mm/tlb.c                        |  179 -
-> arch/cris/arch-v10/output_arch.ld                  |    2 -
-> arch/cris/arch-v32/Kconfig                         |  211 -
-> arch/cris/arch-v32/drivers/Kconfig                 |  263 -
-> arch/cris/arch-v32/drivers/Makefile                |   12 -
-> arch/cris/arch-v32/drivers/axisflashmap.c          |  592 --
-> arch/cris/arch-v32/drivers/cryptocop.c             | 3522 ----------
-> arch/cris/arch-v32/drivers/iop_fw_load.c           |  230 -
-> arch/cris/arch-v32/drivers/mach-a3/Makefile        |    5 -
-> arch/cris/arch-v32/drivers/mach-a3/nandflash.c     |  177 -
-> arch/cris/arch-v32/drivers/mach-fs/Makefile        |    5 -
-> arch/cris/arch-v32/drivers/mach-fs/nandflash.c     |  171 -
-> arch/cris/arch-v32/drivers/pci/Makefile            |    5 -
-> arch/cris/arch-v32/drivers/pci/bios.c              |   74 -
-> arch/cris/arch-v32/drivers/sync_serial.c           | 1715 -----
-> arch/cris/arch-v32/kernel/Makefile                 |   18 -
-> arch/cris/arch-v32/kernel/cache.c                  |   34 -
-> arch/cris/arch-v32/kernel/cacheflush.S             |  100 -
-> arch/cris/arch-v32/kernel/crisksyms.c              |   26 -
-> arch/cris/arch-v32/kernel/debugport.c              |  232 -
-> arch/cris/arch-v32/kernel/entry.S                  |  909 ---
-> arch/cris/arch-v32/kernel/fasttimer.c              |  793 ---
-> arch/cris/arch-v32/kernel/head.S                   |  439 --
-> arch/cris/arch-v32/kernel/irq.c                    |  520 --
-> arch/cris/arch-v32/kernel/kgdb.c                   | 1593 -----
-> arch/cris/arch-v32/kernel/kgdb_asm.S               |  552 --
-> arch/cris/arch-v32/kernel/process.c                |  180 -
-> arch/cris/arch-v32/kernel/ptrace.c                 |  492 --
-> arch/cris/arch-v32/kernel/setup.c                  |  163 -
-> arch/cris/arch-v32/kernel/signal.c                 |  541 --
-> arch/cris/arch-v32/kernel/time.c                   |  345 -
-> arch/cris/arch-v32/kernel/traps.c                  |  196 -
-> arch/cris/arch-v32/lib/Makefile                    |    7 -
-> arch/cris/arch-v32/lib/checksum.S                  |   89 -
-> arch/cris/arch-v32/lib/checksumcopy.S              |   95 -
-> arch/cris/arch-v32/lib/csumcpfruser.S              |   70 -
-> arch/cris/arch-v32/lib/delay.c                     |   29 -
-> arch/cris/arch-v32/lib/memset.c                    |  259 -
-> arch/cris/arch-v32/lib/strcmp.S                    |   21 -
-> arch/cris/arch-v32/lib/string.c                    |  236 -
-> arch/cris/arch-v32/lib/usercopy.c                  |  458 --
-> arch/cris/arch-v32/mach-a3/Kconfig                 |  111 -
-> arch/cris/arch-v32/mach-a3/Makefile                |    8 -
-> arch/cris/arch-v32/mach-a3/arbiter.c               |  635 --
-> arch/cris/arch-v32/mach-a3/dma.c                   |  184 -
-> arch/cris/arch-v32/mach-a3/dram_init.S             |  119 -
-> arch/cris/arch-v32/mach-a3/hw_settings.S           |   54 -
-> arch/cris/arch-v32/mach-a3/pinmux.c                |  389 --
-> arch/cris/arch-v32/mach-fs/Kconfig                 |  198 -
-> arch/cris/arch-v32/mach-fs/Makefile                |    8 -
-> arch/cris/arch-v32/mach-fs/arbiter.c               |  405 --
-> arch/cris/arch-v32/mach-fs/dma.c                   |  229 -
-> arch/cris/arch-v32/mach-fs/dram_init.S             |  117 -
-> arch/cris/arch-v32/mach-fs/hw_settings.S           |   71 -
-> arch/cris/arch-v32/mach-fs/pinmux.c                |  328 -
-> arch/cris/arch-v32/mm/Makefile                     |    4 -
-> arch/cris/arch-v32/mm/init.c                       |  163 -
-> arch/cris/arch-v32/mm/intmem.c                     |  157 -
-> arch/cris/arch-v32/mm/l2cache.c                    |   30 -
-> arch/cris/arch-v32/mm/mmu.S                        |  211 -
-> arch/cris/arch-v32/mm/tlb.c                        |  209 -
-> arch/cris/arch-v32/output_arch.ld                  |    2 -
-> arch/cris/boot/.gitignore                          |    2 -
-> arch/cris/boot/Makefile                            |   25 -
-> arch/cris/boot/compressed/Makefile                 |   36 -
-> arch/cris/boot/compressed/README                   |   24 -
-> arch/cris/boot/compressed/decompress_v10.lds       |   31 -
-> arch/cris/boot/compressed/decompress_v32.lds       |   31 -
-> arch/cris/boot/compressed/head_v10.S               |  127 -
-> arch/cris/boot/compressed/head_v32.S               |  146 -
-> arch/cris/boot/compressed/misc.c                   |  377 -
-> arch/cris/boot/dts/Makefile                        |    5 -
-> arch/cris/boot/dts/artpec3.dtsi                    |   47 -
-> arch/cris/boot/dts/dev88.dts                       |   68 -
-> arch/cris/boot/dts/etraxfs.dtsi                    |   47 -
-> arch/cris/boot/dts/p1343.dts                       |   77 -
-> arch/cris/boot/rescue/Makefile                     |   53 -
-> arch/cris/boot/rescue/head_v10.S                   |  358 -
-> arch/cris/boot/rescue/head_v32.S                   |   27 -
-> arch/cris/boot/rescue/kimagerescue.S               |  142 -
-> arch/cris/boot/rescue/rescue_v10.lds               |   21 -
-> arch/cris/boot/rescue/rescue_v32.lds               |   44 -
-> arch/cris/boot/rescue/testrescue.S                 |   25 -
-> arch/cris/boot/tools/build.c                       |  288 -
-> arch/cris/configs/artpec_3_defconfig               |   40 -
-> arch/cris/configs/dev88_defconfig                  |   48 -
-> arch/cris/configs/etrax-100lx_defconfig            |   23 -
-> arch/cris/configs/etrax-100lx_v2_defconfig         |   42 -
-> arch/cris/configs/etraxfs_defconfig                |   40 -
-> arch/cris/include/arch-v10/arch/bitops.h           |   74 -
-> arch/cris/include/arch-v10/arch/bug.h              |   74 -
-> arch/cris/include/arch-v10/arch/cache.h            |    9 -
-> arch/cris/include/arch-v10/arch/checksum.h         |   30 -
-> arch/cris/include/arch-v10/arch/delay.h            |   21 -
-> arch/cris/include/arch-v10/arch/dma.h              |   75 -
-> arch/cris/include/arch-v10/arch/io.h               |  173 -
-> arch/cris/include/arch-v10/arch/io_interface_mux.h |   76 -
-> arch/cris/include/arch-v10/arch/irq.h              |  162 -
-> arch/cris/include/arch-v10/arch/irqflags.h         |   46 -
-> arch/cris/include/arch-v10/arch/memmap.h           |   23 -
-> arch/cris/include/arch-v10/arch/mmu.h              |  108 -
-> arch/cris/include/arch-v10/arch/offset.h           |   34 -
-> arch/cris/include/arch-v10/arch/page.h             |   31 -
-> arch/cris/include/arch-v10/arch/pgtable.h          |   18 -
-> arch/cris/include/arch-v10/arch/processor.h        |   70 -
-> arch/cris/include/arch-v10/arch/swab.h             |   31 -
-> arch/cris/include/arch-v10/arch/system.h           |   40 -
-> arch/cris/include/arch-v10/arch/thread_info.h      |   13 -
-> arch/cris/include/arch-v10/arch/timex.h            |   31 -
-> arch/cris/include/arch-v10/arch/tlb.h              |   14 -
-> arch/cris/include/arch-v10/arch/uaccess.h          |  651 --
-> arch/cris/include/arch-v10/arch/unistd.h           |  149 -
-> arch/cris/include/arch-v32/arch/bitops.h           |   65 -
-> arch/cris/include/arch-v32/arch/bug.h              |   41 -
-> arch/cris/include/arch-v32/arch/cache.h            |   22 -
-> arch/cris/include/arch-v32/arch/checksum.h         |   30 -
-> arch/cris/include/arch-v32/arch/cryptocop.h        |  159 -
-> arch/cris/include/arch-v32/arch/delay.h            |   29 -
-> arch/cris/include/arch-v32/arch/dma.h              |    1 -
-> arch/cris/include/arch-v32/arch/hwregs/Makefile    |  187 -
-> .../arch-v32/arch/hwregs/asm/ata_defs_asm.h        |  223 -
-> .../arch-v32/arch/hwregs/asm/bif_core_defs_asm.h   |  320 -
-> .../arch-v32/arch/hwregs/asm/bif_dma_defs_asm.h    |  496 --
-> .../arch-v32/arch/hwregs/asm/bif_slave_defs_asm.h  |  250 -
-> .../arch-v32/arch/hwregs/asm/config_defs_asm.h     |  132 -
-> .../include/arch-v32/arch/hwregs/asm/cpu_vect.h    |   41 -
-> .../arch-v32/arch/hwregs/asm/cris_defs_asm.h       |  115 -
-> .../arch-v32/arch/hwregs/asm/cris_supp_reg.h       |   11 -
-> .../arch-v32/arch/hwregs/asm/dma_defs_asm.h        |  369 -
-> .../arch-v32/arch/hwregs/asm/eth_defs_asm.h        |  499 --
-> .../arch-v32/arch/hwregs/asm/gio_defs_asm.h        |  277 -
-> .../include/arch-v32/arch/hwregs/asm/intr_vect.h   |   39 -
-> .../arch-v32/arch/hwregs/asm/intr_vect_defs_asm.h  |  356 -
-> .../arch-v32/arch/hwregs/asm/irq_nmi_defs_asm.h    |   70 -
-> .../arch-v32/arch/hwregs/asm/marb_defs_asm.h       |  580 --
-> .../arch-v32/arch/hwregs/asm/mmu_defs_asm.h        |  213 -
-> .../arch-v32/arch/hwregs/asm/mmu_supp_reg.h        |    8 -
-> .../arch-v32/arch/hwregs/asm/rt_trace_defs_asm.h   |  143 -
-> .../arch-v32/arch/hwregs/asm/ser_defs_asm.h        |  360 -
-> .../arch-v32/arch/hwregs/asm/sser_defs_asm.h       |  463 --
-> .../arch-v32/arch/hwregs/asm/strcop_defs_asm.h     |   85 -
-> .../arch-v32/arch/hwregs/asm/strmux_defs_asm.h     |  101 -
-> .../arch-v32/arch/hwregs/asm/timer_defs_asm.h      |  230 -
-> arch/cris/include/arch-v32/arch/hwregs/ata_defs.h  |  223 -
-> .../include/arch-v32/arch/hwregs/bif_core_defs.h   |  285 -
-> .../include/arch-v32/arch/hwregs/bif_dma_defs.h    |  474 --
-> .../include/arch-v32/arch/hwregs/bif_slave_defs.h  |  250 -
-> .../include/arch-v32/arch/hwregs/config_defs.h     |  143 -
-> arch/cris/include/arch-v32/arch/hwregs/cpu_vect.h  |   42 -
-> arch/cris/include/arch-v32/arch/hwregs/dma.h       |  128 -
-> arch/cris/include/arch-v32/arch/hwregs/dma_defs.h  |  437 --
-> arch/cris/include/arch-v32/arch/hwregs/eth_defs.h  |  379 -
-> .../include/arch-v32/arch/hwregs/extmem_defs.h     |  370 -
-> .../cris/include/arch-v32/arch/hwregs/iop/Makefile |  147 -
-> .../arch/hwregs/iop/asm/iop_crc_par_defs_asm.h     |  172 -
-> .../arch/hwregs/iop/asm/iop_dmc_in_defs_asm.h      |  322 -
-> .../arch/hwregs/iop/asm/iop_dmc_out_defs_asm.h     |  350 -
-> .../arch/hwregs/iop/asm/iop_fifo_in_defs_asm.h     |  235 -
-> .../hwregs/iop/asm/iop_fifo_in_extra_defs_asm.h    |  156 -
-> .../arch/hwregs/iop/asm/iop_fifo_out_defs_asm.h    |  255 -
-> .../hwregs/iop/asm/iop_fifo_out_extra_defs_asm.h   |  159 -
-> .../arch/hwregs/iop/asm/iop_mpu_defs_asm.h         |  178 -
-> .../arch/hwregs/iop/asm/iop_reg_space_asm.h        |   45 -
-> .../arch/hwregs/iop/asm/iop_sap_in_defs_asm.h      |  183 -
-> .../arch/hwregs/iop/asm/iop_sap_out_defs_asm.h     |  347 -
-> .../arch/hwregs/iop/asm/iop_scrc_in_defs_asm.h     |  112 -
-> .../arch/hwregs/iop/asm/iop_scrc_out_defs_asm.h    |  106 -
-> .../arch/hwregs/iop/asm/iop_spu_defs_asm.h |  574 --
-> .../arch/hwregs/iop/asm/iop_sw_cfg_defs_asm.h      | 1053 ---
-> .../arch/hwregs/iop/asm/iop_sw_cpu_defs_asm.h      | 1759 -----
-> .../arch/hwregs/iop/asm/iop_sw_mpu_defs_asm.h      | 1777 -----
-> .../arch/hwregs/iop/asm/iop_sw_spu_defs_asm.h      |  692 --
-> .../arch/hwregs/iop/asm/iop_timer_grp_defs_asm.h   |  238 -
-> .../arch/hwregs/iop/asm/iop_trigger_grp_defs_asm.h |  158 -
-> .../arch/hwregs/iop/asm/iop_version_defs_asm.h     |   65 -
-> .../arch-v32/arch/hwregs/iop/iop_crc_par_defs.h    |  233 -
-> .../arch-v32/arch/hwregs/iop/iop_dmc_in_defs.h     |  326 -
-> .../arch-v32/arch/hwregs/iop/iop_dmc_out_defs.h    |  327 -
-> .../arch-v32/arch/hwregs/iop/iop_fifo_in_defs.h    |  256 -
-> .../arch/hwregs/iop/iop_fifo_in_extra_defs.h       |  165 -
-> .../arch-v32/arch/hwregs/iop/iop_fifo_out_defs.h   |  279 -
-> .../arch/hwregs/iop/iop_fifo_out_extra_defs.h |  165 -
-> .../arch-v32/arch/hwregs/iop/iop_mpu_defs.h        |  191 -
-> .../arch-v32/arch/hwregs/iop/iop_mpu_macros.h      |  765 --
-> .../arch-v32/arch/hwregs/iop/iop_reg_space.h       |   45 -
-> .../arch-v32/arch/hwregs/iop/iop_sap_in_defs.h     |  180 -
-> .../arch-v32/arch/hwregs/iop/iop_sap_out_defs.h    |  307 -
-> .../arch-v32/arch/hwregs/iop/iop_scrc_in_defs.h    |  161 -
-> .../arch-v32/arch/hwregs/iop/iop_scrc_out_defs.h   |  147 -
-> .../arch-v32/arch/hwregs/iop/iop_spu_defs.h        |  454 --
-> .../arch-v32/arch/hwregs/iop/iop_sw_cfg_defs.h     | 1043 ---
-> .../arch-v32/arch/hwregs/iop/iop_sw_cpu_defs.h     |  854 ---
-> .../arch-v32/arch/hwregs/iop/iop_sw_mpu_defs.h     |  894 ---
-> .../arch-v32/arch/hwregs/iop/iop_sw_spu_defs.h     |  553 --
-> .../arch-v32/arch/hwregs/iop/iop_timer_grp_defs.h  |  250 -
-> .../arch/hwregs/iop/iop_trigger_grp_defs.h         |  171 -
-> .../arch-v32/arch/hwregs/iop/iop_version_defs.h    |  100 -
-> .../include/arch-v32/arch/hwregs/irq_nmi_defs.h    |  105 -
-> .../include/arch-v32/arch/hwregs/marb_bp_defs.h    |  206 -
-> arch/cris/include/arch-v32/arch/hwregs/marb_defs.h |  476 --
-> arch/cris/include/arch-v32/arch/hwregs/reg_rdwr.h  |   18 -
-> .../include/arch-v32/arch/hwregs/rt_trace_defs.h   |  174 -
-> arch/cris/include/arch-v32/arch/hwregs/ser_defs.h  |  309 -
-> arch/cris/include/arch-v32/arch/hwregs/sser_defs.h |  332 -
-> arch/cris/include/arch-v32/arch/hwregs/strcop.h    |   58 -
-> .../include/arch-v32/arch/hwregs/strcop_defs.h     |  110 -
-> arch/cris/include/arch-v32/arch/hwregs/supp_reg.h  |   79 -
-> arch/cris/include/arch-v32/arch/intmem.h           |   10 -
-> arch/cris/include/arch-v32/arch/irq.h              |  125 -
-> arch/cris/include/arch-v32/arch/irqflags.h         |   47 -
-> arch/cris/include/arch-v32/arch/memmap.h           |    1 -
-> arch/cris/include/arch-v32/arch/mmu.h              |  111 -
-> arch/cris/include/arch-v32/arch/offset.h           |   36 -
-> arch/cris/include/arch-v32/arch/page.h             |   23 -
-> arch/cris/include/arch-v32/arch/pgtable.h          |   18 -
-> arch/cris/include/arch-v32/arch/processor.h        |   54 -
-> arch/cris/include/arch-v32/arch/swab.h             |   25 -
-> arch/cris/include/arch-v32/arch/system.h           |   38 -
-> arch/cris/include/arch-v32/arch/thread_info.h      |   14 -
-> arch/cris/include/arch-v32/arch/timex.h            |   32 -
-> arch/cris/include/arch-v32/arch/tlb.h              |   15 -
-> arch/cris/include/arch-v32/arch/uaccess.h          |  730 --
-> arch/cris/include/arch-v32/arch/unistd.h           |  156 -
-> arch/cris/include/arch-v32/mach-a3/mach/arbiter.h  |   35 -
-> arch/cris/include/arch-v32/mach-a3/mach/dma.h      |   59 -
-> .../mach-a3/mach/hwregs/asm/clkgen_defs_asm.h      |  165 -
-> .../mach-a3/mach/hwregs/asm/ddr2_defs_asm.h        |  267 -
-> .../mach-a3/mach/hwregs/asm/gio_defs_asm.h         |  850 ---
-> .../mach-a3/mach/hwregs/asm/pinmux_defs_asm.h      |  573 --
-> .../mach-a3/mach/hwregs/asm/pio_defs_asm.h         |  338 -
-> .../arch-v32/mach-a3/mach/hwregs/asm/reg_map_asm.h |  100 -
-> .../mach-a3/mach/hwregs/asm/timer_defs_asm.h       |  229 -
-> .../arch-v32/mach-a3/mach/hwregs/clkgen_defs.h     |  160 -
-> .../arch-v32/mach-a3/mach/hwregs/ddr2_defs.h       |  282 -
-> .../arch-v32/mach-a3/mach/hwregs/gio_defs.h        |  838 ---
-> .../arch-v32/mach-a3/mach/hwregs/intr_vect.h       |   47 -
-> .../arch-v32/mach-a3/mach/hwregs/intr_vect_defs.h  |  342 -
-> .../mach/hwregs/iop/asm/iop_reg_space_asm.h        |   32 -
-> .../mach/hwregs/iop/asm/iop_sap_in_defs_asm.h      |  110 -
-> .../mach/hwregs/iop/asm/iop_sap_out_defs_asm.h     |  277 -
-> .../mach/hwregs/iop/asm/iop_sw_cfg_defs_asm.h      |  740 --
-> .../mach/hwregs/iop/asm/iop_sw_cpu_defs_asm.h      |  951 ---
-> .../mach/hwregs/iop/asm/iop_sw_mpu_defs_asm.h      | 1087 ---
-> .../mach/hwregs/iop/asm/iop_sw_spu_defs_asm.h      |  524 --
-> .../mach/hwregs/iop/asm/iop_version_defs_asm.h     |   62 -
-> .../mach-a3/mach/hwregs/iop/iop_reg_space.h        |   32 -
-> .../mach-a3/mach/hwregs/iop/iop_sap_in_defs.h      |  142 -
-> .../mach-a3/mach/hwregs/iop/iop_sap_out_defs.h     |  232 -
-> .../mach-a3/mach/hwregs/iop/iop_sw_cfg_defs.h      |  726 --
-> .../mach-a3/mach/hwregs/iop/iop_sw_cpu_defs.h      |  523 --
-> .../mach-a3/mach/hwregs/iop/iop_sw_mpu_defs.h      |  649 --
-> .../mach-a3/mach/hwregs/iop/iop_sw_spu_defs.h      |  442 --
-> .../mach-a3/mach/hwregs/iop/iop_version_defs.h     |   97 -
-> .../arch-v32/mach-a3/mach/hwregs/l2cache_defs.h    |  143 -
-> .../arch-v32/mach-a3/mach/hwregs/marb_bar_defs.h   |  483 --
-> .../arch-v32/mach-a3/mach/hwregs/marb_foo_defs.h   |  627 --
-> .../arch-v32/mach-a3/mach/hwregs/pinmux_defs.h     |  313 -
-> .../arch-v32/mach-a3/mach/hwregs/pio_defs.h        |  372 -
-> .../include/arch-v32/mach-a3/mach/hwregs/reg_map.h |  104 -
-> .../arch-v32/mach-a3/mach/hwregs/strmux_defs.h     |  121 -
-> .../arch-v32/mach-a3/mach/hwregs/timer_defs.h      |  266 -
-> arch/cris/include/arch-v32/mach-a3/mach/memmap.h   |   11 -
-> arch/cris/include/arch-v32/mach-a3/mach/pinmux.h   |   46 -
-> .../cris/include/arch-v32/mach-a3/mach/startup.inc |   84 -
-> arch/cris/include/arch-v32/mach-fs/mach/arbiter.h  |   29 -
-> arch/cris/include/arch-v32/mach-fs/mach/dma.h      |   80 -
-> .../mach-fs/mach/hwregs/asm/bif_core_defs_asm.h    |  320 -
-> .../mach-fs/mach/hwregs/asm/config_defs_asm.h      |  132 -
-> .../mach-fs/mach/hwregs/asm/gio_defs_asm.h         |  277 -
-> .../mach-fs/mach/hwregs/asm/pinmux_defs_asm.h      |  633 --
-> .../arch-v32/mach-fs/mach/hwregs/asm/reg_map_asm.h |   97 -
-> .../mach-fs/mach/hwregs/asm/timer_defs_asm.h       |  230 -
-> .../arch-v32/mach-fs/mach/hwregs/bif_core_defs.h   |  285 -
-> .../arch-v32/mach-fs/mach/hwregs/bif_dma_defs.h    |  474 --
-> .../arch-v32/mach-fs/mach/hwregs/bif_slave_defs.h  |  250 -
-> .../arch-v32/mach-fs/mach/hwregs/config_defs.h     |  143 -
-> .../arch-v32/mach-fs/mach/hwregs/gio_defs.h        |  296 -
-> .../arch-v32/mach-fs/mach/hwregs/intr_vect.h       |   42 -
-> .../arch-v32/mach-fs/mach/hwregs/intr_vect_defs.h  |  229 -
-> .../arch-v32/mach-fs/mach/hwregs/marb_bp_defs.h    |  206 -
-> .../arch-v32/mach-fs/mach/hwregs/marb_defs.h       |  476 --
-> .../arch-v32/mach-fs/mach/hwregs/pinmux_defs.h     |  358 -
-> .../include/arch-v32/mach-fs/mach/hwregs/reg_map.h |  105 -
-> .../arch-v32/mach-fs/mach/hwregs/strmux_defs.h     |  128 -
-> .../arch-v32/mach-fs/mach/hwregs/timer_defs.h      |  267 -
-> arch/cris/include/arch-v32/mach-fs/mach/memmap.h   |   25 -
-> arch/cris/include/arch-v32/mach-fs/mach/pinmux.h   |   37 -
-> .../cris/include/arch-v32/mach-fs/mach/startup.inc |   76 -
-> arch/cris/include/asm/Kbuild                       |   31 -
-> arch/cris/include/asm/asm-offsets.h                |    1 -
-> arch/cris/include/asm/axisflashmap.h               |   62 -
-> arch/cris/include/asm/bitops.h                     |   51 -
-> arch/cris/include/asm/bug.h                        |    5 -
-> arch/cris/include/asm/bugs.h                       |   21 -
-> arch/cris/include/asm/cache.h                      |    7 -
-> arch/cris/include/asm/cacheflush.h                 |   33 -
-> arch/cris/include/asm/checksum.h                   |   83 -
-> arch/cris/include/asm/delay.h                      |   28 -
-> arch/cris/include/asm/dma.h                        |   22 -
-> arch/cris/include/asm/eshlibld.h                   |  113 -
-> arch/cris/include/asm/etraxi2c.h                   |   37 -
-> arch/cris/include/asm/fasttimer.h                  |   48 -
-> arch/cris/include/asm/fb.h                         |   13 -
-> arch/cris/include/asm/ftrace.h                     |    1 -
-> arch/cris/include/asm/hw_irq.h                     |    5 -
-> arch/cris/include/asm/io.h                         |   26 -
-> arch/cris/include/asm/irq.h                        |   14 -
-> arch/cris/include/asm/irqflags.h                   |    1 -
-> arch/cris/include/asm/mmu.h                        |   11 -
-> arch/cris/include/asm/mmu_context.h                |   35 -
-> arch/cris/include/asm/page.h                       |   74 -
-> arch/cris/include/asm/pci.h                        |   44 -
-> arch/cris/include/asm/pgalloc.h                    |   64 -
-> arch/cris/include/asm/pgtable.h                    |  297 -
-> arch/cris/include/asm/processor.h                  |   59 -
-> arch/cris/include/asm/ptrace.h                     |   15 -
-> arch/cris/include/asm/segment.h                    |    9 -
-> arch/cris/include/asm/serial.h                     |   10 -
-> arch/cris/include/asm/shmparam.h                   |    9 -
-> arch/cris/include/asm/signal.h                     |   24 -
-> arch/cris/include/asm/stacktrace.h                 |    9 -
-> arch/cris/include/asm/string.h                     |   21 -
-> arch/cris/include/asm/swab.h                       |    8 -
-> arch/cris/include/asm/switch_to.h                  |   13 -
-> arch/cris/include/asm/termios.h                    |   52 -
-> arch/cris/include/asm/thread_info.h                |   91 -
-> arch/cris/include/asm/timex.h                      |   25 -
-> arch/cris/include/asm/tlb.h                        |   20 -
-> arch/cris/include/asm/tlbflush.h                   |   42 -
-> arch/cris/include/asm/uaccess.h                    |  361 -
-> arch/cris/include/asm/ucontext.h                   |   13 -
-> arch/cris/include/asm/unaligned.h                  |   14 -
-> arch/cris/include/asm/unistd.h                     |   37 -
-> arch/cris/include/asm/user.h                       |   53 -
-> arch/cris/include/uapi/arch-v10/arch/sv_addr.agh   | 7306 --------------------
-> arch/cris/include/uapi/arch-v10/arch/sv_addr_ag.h  |  140 -
-> arch/cris/include/uapi/arch-v10/arch/svinto.h      |   65 -
-> arch/cris/include/uapi/arch-v10/arch/user.h        |   47 -
-> arch/cris/include/uapi/arch-v32/arch/cryptocop.h   |  123 -
-> arch/cris/include/uapi/arch-v32/arch/user.h        |   42 -
-> arch/cris/include/uapi/asm/Kbuild                  |   22 -
-> arch/cris/include/uapi/asm/byteorder.h             |    9 -
-> arch/cris/include/uapi/asm/elf.h                   |   91 -
-> arch/cris/include/uapi/asm/elf_v10.h               |   85 -
-> arch/cris/include/uapi/asm/elf_v32.h               |   77 -
-> arch/cris/include/uapi/asm/ethernet.h              |   22 -
-> arch/cris/include/uapi/asm/etraxgpio.h             |   83 -
-> arch/cris/include/uapi/asm/ioctls.h                |   12 -
-> arch/cris/include/uapi/asm/param.h                 |   11 -
-> arch/cris/include/uapi/asm/posix_types.h           |   31 -
-> arch/cris/include/uapi/asm/ptrace.h                |    6 -
-> arch/cris/include/uapi/asm/ptrace_v10.h            |  119 -
-> arch/cris/include/uapi/asm/ptrace_v32.h            |  119 -
-> arch/cris/include/uapi/asm/rs485.h                 |   19 -
-> arch/cris/include/uapi/asm/setup.h                 |    7 -
-> arch/cris/include/uapi/asm/sigcontext.h            |   25 -
-> arch/cris/include/uapi/asm/signal.h                |  117 -
-> arch/cris/include/uapi/asm/stat.h                  |   82 -
-> arch/cris/include/uapi/asm/swab.h                  |    3 -
-> arch/cris/include/uapi/asm/sync_serial.h           |  133 -
-> arch/cris/include/uapi/asm/termbits.h              |  236 -
-> arch/cris/include/uapi/asm/termios.h               |   46 -
-> arch/cris/include/uapi/asm/unistd.h                |  369 -
-> arch/cris/kernel/Makefile                          |   17 -
-> arch/cris/kernel/asm-offsets.c                     |   60 -
-> arch/cris/kernel/crisksyms.c                       |   69 -
-> arch/cris/kernel/irq.c                             |   72 -
-> arch/cris/kernel/module.c                          |   82 -
-> arch/cris/kernel/process.c                         |   81 -
-> arch/cris/kernel/profile.c                         |   87 -
-> arch/cris/kernel/ptrace.c                          |   68 -
-> arch/cris/kernel/setup.c                           |  214 -
-> arch/cris/kernel/stacktrace.c                      |   76 -
-> arch/cris/kernel/sys_cris.c                        |   36 -
-> arch/cris/kernel/time.c                            |   73 -
-> arch/cris/kernel/traps.c                           |  241 -
-> arch/cris/kernel/vmlinux.lds.S                     |  138 -
-> arch/cris/mm/Makefile                              |    6 -
-> arch/cris/mm/fault.c                               |  390 --
-> arch/cris/mm/init.c                                |   69 -
-> arch/cris/mm/ioremap.c                             |   90 -
-> arch/cris/mm/tlb.c                                 |  117 -
-> drivers/cpufreq/Makefile                           |    2 -
-> drivers/cpufreq/cris-artpec3-cpufreq.c             |   93 -
-> drivers/cpufreq/cris-etraxfs-cpufreq.c             |   92 -
-> drivers/gpio/Kconfig                               |    9 -
-> drivers/gpio/Makefile                              |    1 -
-> drivers/gpio/gpio-etraxfs.c                        |  475 --
-> drivers/net/Makefile                               |    1 -
-> drivers/net/cris/Makefile                          |    1 -
-> drivers/net/cris/eth_v10.c                         | 1742 -----
-> drivers/tty/serial/Kconfig                         |   11 -
-> drivers/tty/serial/Makefile                        |    2 -
-> drivers/tty/serial/crisv10.c                       | 4248 ------------
-> drivers/tty/serial/crisv10.h                       |  133 -
-> drivers/tty/serial/etraxfs-uart.c                  |  960 ---
-> drivers/video/console/Kconfig                      |    2 +-
-> drivers/watchdog/Kconfig                           |    2 -
-> drivers/watchdog/Makefile                          |    2 -
-> include/linux/ide.h                                |    2 +-
-> include/uapi/linux/audit.h                         |    1 -
-> include/uapi/linux/elf-em.h                        |    1 -
-> include/uapi/linux/serial_core.h                   |    3 -
-> init/Kconfig                                       |    2 +-
-> lib/Kconfig.debug                                  |    2 +-
-> mm/percpu.c                                        |    4 -
-> tools/testing/ktest/examples/crosstests.conf       |   10 -
-> 501 files changed, 5 insertions(+), 107868 deletions(-)
-> delete mode 100644 Documentation/cris/README
-> delete mode 100644 Documentation/devicetree/bindings/cris/axis.txt
-> delete mode 100644 Documentation/devicetree/bindings/cris/boards.txt
-> delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-etraxfs.txt
-> delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/axis,crisv32-intc.txt
-> delete mode 100644 Documentation/devicetree/bindings/serial/axis,etraxfs-uart.txt
-> delete mode 100644 arch/cris/Kconfig
-> delete mode 100644 arch/cris/Kconfig.debug
-> delete mode 100644 arch/cris/Makefile
-> delete mode 100644 arch/cris/arch-v10/Kconfig
-> delete mode 100644 arch/cris/arch-v10/README.mm
-> delete mode 100644 arch/cris/arch-v10/drivers/Kconfig
-> delete mode 100644 arch/cris/arch-v10/drivers/Makefile
-> delete mode 100644 arch/cris/arch-v10/drivers/axisflashmap.c
-> delete mode 100644 arch/cris/arch-v10/drivers/eeprom.c
-> delete mode 100644 arch/cris/arch-v10/drivers/gpio.c
-> delete mode 100644 arch/cris/arch-v10/drivers/i2c.c
-> delete mode 100644 arch/cris/arch-v10/drivers/i2c.h
-> delete mode 100644 arch/cris/arch-v10/drivers/sync_serial.c
-> delete mode 100644 arch/cris/arch-v10/kernel/Makefile
-> delete mode 100644 arch/cris/arch-v10/kernel/crisksyms.c
-> delete mode 100644 arch/cris/arch-v10/kernel/debugport.c
-> delete mode 100644 arch/cris/arch-v10/kernel/dma.c
-> delete mode 100644 arch/cris/arch-v10/kernel/entry.S
-> delete mode 100644 arch/cris/arch-v10/kernel/fasttimer.c
-> delete mode 100644 arch/cris/arch-v10/kernel/head.S
-> delete mode 100644 arch/cris/arch-v10/kernel/io_interface_mux.c
-> delete mode 100644 arch/cris/arch-v10/kernel/irq.c
-> delete mode 100644 arch/cris/arch-v10/kernel/kgdb.c
-> delete mode 100644 arch/cris/arch-v10/kernel/process.c
-> delete mode 100644 arch/cris/arch-v10/kernel/ptrace.c
-> delete mode 100644 arch/cris/arch-v10/kernel/setup.c
-> delete mode 100644 arch/cris/arch-v10/kernel/shadows.c
-> delete mode 100644 arch/cris/arch-v10/kernel/signal.c
-> delete mode 100644 arch/cris/arch-v10/kernel/time.c
-> delete mode 100644 arch/cris/arch-v10/kernel/traps.c
-> delete mode 100644 arch/cris/arch-v10/lib/Makefile
-> delete mode 100644 arch/cris/arch-v10/lib/checksum.S
-> delete mode 100644 arch/cris/arch-v10/lib/checksumcopy.S
-> delete mode 100644 arch/cris/arch-v10/lib/csumcpfruser.S
-> delete mode 100644 arch/cris/arch-v10/lib/dram_init.S
-> delete mode 100644 arch/cris/arch-v10/lib/hw_settings.S
-> delete mode 100644 arch/cris/arch-v10/lib/memset.c
-> delete mode 100644 arch/cris/arch-v10/lib/string.c
-> delete mode 100644 arch/cris/arch-v10/lib/usercopy.c
-> delete mode 100644 arch/cris/arch-v10/mm/Makefile
-> delete mode 100644 arch/cris/arch-v10/mm/fault.c
-> delete mode 100644 arch/cris/arch-v10/mm/init.c
-> delete mode 100644 arch/cris/arch-v10/mm/tlb.c
-> delete mode 100644 arch/cris/arch-v10/output_arch.ld
-> delete mode 100644 arch/cris/arch-v32/Kconfig
-> delete mode 100644 arch/cris/arch-v32/drivers/Kconfig
-> delete mode 100644 arch/cris/arch-v32/drivers/Makefile
-> delete mode 100644 arch/cris/arch-v32/drivers/axisflashmap.c
-> delete mode 100644 arch/cris/arch-v32/drivers/cryptocop.c
-> delete mode 100644 arch/cris/arch-v32/drivers/iop_fw_load.c
-> delete mode 100644 arch/cris/arch-v32/drivers/mach-a3/Makefile
-> delete mode 100644 arch/cris/arch-v32/drivers/mach-a3/nandflash.c
-> delete mode 100644 arch/cris/arch-v32/drivers/mach-fs/Makefile
-> delete mode 100644 arch/cris/arch-v32/drivers/mach-fs/nandflash.c
-> delete mode 100644 arch/cris/arch-v32/drivers/pci/Makefile
-> delete mode 100644 arch/cris/arch-v32/drivers/pci/bios.c
-> delete mode 100644 arch/cris/arch-v32/drivers/sync_serial.c
-> delete mode 100644 arch/cris/arch-v32/kernel/Makefile
-> delete mode 100644 arch/cris/arch-v32/kernel/cache.c
-> delete mode 100644 arch/cris/arch-v32/kernel/cacheflush.S
-> delete mode 100644 arch/cris/arch-v32/kernel/crisksyms.c
-> delete mode 100644 arch/cris/arch-v32/kernel/debugport.c
-> delete mode 100644 arch/cris/arch-v32/kernel/entry.S
-> delete mode 100644 arch/cris/arch-v32/kernel/fasttimer.c
-> delete mode 100644 arch/cris/arch-v32/kernel/head.S
-> delete mode 100644 arch/cris/arch-v32/kernel/irq.c
-> delete mode 100644 arch/cris/arch-v32/kernel/kgdb.c
-> delete mode 100644 arch/cris/arch-v32/kernel/kgdb_asm.S
-> delete mode 100644 arch/cris/arch-v32/kernel/process.c
-> delete mode 100644 arch/cris/arch-v32/kernel/ptrace.c
-> delete mode 100644 arch/cris/arch-v32/kernel/setup.c
-> delete mode 100644 arch/cris/arch-v32/kernel/signal.c
-> delete mode 100644 arch/cris/arch-v32/kernel/time.c
-> delete mode 100644 arch/cris/arch-v32/kernel/traps.c
-> delete mode 100644 arch/cris/arch-v32/lib/Makefile
-> delete mode 100644 arch/cris/arch-v32/lib/checksum.S
-> delete mode 100644 arch/cris/arch-v32/lib/checksumcopy.S
-> delete mode 100644 arch/cris/arch-v32/lib/csumcpfruser.S
-> delete mode 100644 arch/cris/arch-v32/lib/delay.c
-> delete mode 100644 arch/cris/arch-v32/lib/memset.c
-> delete mode 100644 arch/cris/arch-v32/lib/strcmp.S
-> delete mode 100644 arch/cris/arch-v32/lib/string.c
-> delete mode 100644 arch/cris/arch-v32/lib/usercopy.c
-> delete mode 100644 arch/cris/arch-v32/mach-a3/Kconfig
-> delete mode 100644 arch/cris/arch-v32/mach-a3/Makefile
-> delete mode 100644 arch/cris/arch-v32/mach-a3/arbiter.c
-> delete mode 100644 arch/cris/arch-v32/mach-a3/dma.c
-> delete mode 100644 arch/cris/arch-v32/mach-a3/dram_init.S
-> delete mode 100644 arch/cris/arch-v32/mach-a3/hw_settings.S
-> delete mode 100644 arch/cris/arch-v32/mach-a3/pinmux.c
-> delete mode 100644 arch/cris/arch-v32/mach-fs/Kconfig
-> delete mode 100644 arch/cris/arch-v32/mach-fs/Makefile
-> delete mode 100644 arch/cris/arch-v32/mach-fs/arbiter.c
-> delete mode 100644 arch/cris/arch-v32/mach-fs/dma.c
-> delete mode 100644 arch/cris/arch-v32/mach-fs/dram_init.S
-> delete mode 100644 arch/cris/arch-v32/mach-fs/hw_settings.S
-> delete mode 100644 arch/cris/arch-v32/mach-fs/pinmux.c
-> delete mode 100644 arch/cris/arch-v32/mm/Makefile
-> delete mode 100644 arch/cris/arch-v32/mm/init.c
-> delete mode 100644 arch/cris/arch-v32/mm/intmem.c
-> delete mode 100644 arch/cris/arch-v32/mm/l2cache.c
-> delete mode 100644 arch/cris/arch-v32/mm/mmu.S
-> delete mode 100644 arch/cris/arch-v32/mm/tlb.c
-> delete mode 100644 arch/cris/arch-v32/output_arch.ld
-> delete mode 100644 arch/cris/boot/.gitignore
-> delete mode 100644 arch/cris/boot/Makefile
-> delete mode 100644 arch/cris/boot/compressed/Makefile
-> delete mode 100644 arch/cris/boot/compressed/README
-> delete mode 100644 arch/cris/boot/compressed/decompress_v10.lds
-> delete mode 100644 arch/cris/boot/compressed/decompress_v32.lds
-> delete mode 100644 arch/cris/boot/compressed/head_v10.S
-> delete mode 100644 arch/cris/boot/compressed/head_v32.S
-> delete mode 100644 arch/cris/boot/compressed/misc.c
-> delete mode 100644 arch/cris/boot/dts/Makefile
-> delete mode 100644 arch/cris/boot/dts/artpec3.dtsi
-> delete mode 100644 arch/cris/boot/dts/dev88.dts
-> delete mode 100644 arch/cris/boot/dts/etraxfs.dtsi
-> delete mode 100644 arch/cris/boot/dts/p1343.dts
-> delete mode 100644 arch/cris/boot/rescue/Makefile
-> delete mode 100644 arch/cris/boot/rescue/head_v10.S
-> delete mode 100644 arch/cris/boot/rescue/head_v32.S
-> delete mode 100644 arch/cris/boot/rescue/kimagerescue.S
-> delete mode 100644 arch/cris/boot/rescue/rescue_v10.lds
-> delete mode 100644 arch/cris/boot/rescue/rescue_v32.lds
-> delete mode 100644 arch/cris/boot/rescue/testrescue.S
-> delete mode 100644 arch/cris/boot/tools/build.c
-> delete mode 100644 arch/cris/configs/artpec_3_defconfig
-> delete mode 100644 arch/cris/configs/dev88_defconfig
-> delete mode 100644 arch/cris/configs/etrax-100lx_defconfig
-> delete mode 100644 arch/cris/configs/etrax-100lx_v2_defconfig
-> delete mode 100644 arch/cris/configs/etraxfs_defconfig
-> delete mode 100644 arch/cris/include/arch-v10/arch/bitops.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/bug.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/cache.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/checksum.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/delay.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/dma.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/io.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/io_interface_mux.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/irq.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/irqflags.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/memmap.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/mmu.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/offset.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/page.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/pgtable.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/processor.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/swab.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/system.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/thread_info.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/timex.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/tlb.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/uaccess.h
-> delete mode 100644 arch/cris/include/arch-v10/arch/unistd.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/bitops.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/bug.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/cache.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/checksum.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/cryptocop.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/delay.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/dma.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/Makefile
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/ata_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/bif_core_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/bif_dma_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/bif_slave_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/config_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/cpu_vect.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/cris_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/cris_supp_reg.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/dma_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/eth_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/gio_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/intr_vect.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/intr_vect_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/irq_nmi_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/marb_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/mmu_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/mmu_supp_reg.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/rt_trace_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/ser_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/sser_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/strcop_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/strmux_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/asm/timer_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/ata_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/bif_core_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/bif_dma_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/bif_slave_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/config_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/cpu_vect.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/dma.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/dma_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/eth_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/extmem_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/Makefile
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_crc_par_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_dmc_in_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_dmc_out_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_fifo_in_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_fifo_in_extra_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_fifo_out_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_fifo_out_extra_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_mpu_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_reg_space_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_sap_in_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_sap_out_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_scrc_in_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_scrc_out_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_spu_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_sw_cfg_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_sw_cpu_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_sw_mpu_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_sw_spu_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_timer_grp_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_trigger_grp_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/asm/iop_version_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_crc_par_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_dmc_in_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_dmc_out_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_fifo_in_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_fifo_in_extra_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_fifo_out_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_fifo_out_extra_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_mpu_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_mpu_macros.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_reg_space.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_sap_in_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_sap_out_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_scrc_in_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_scrc_out_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_spu_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_sw_cfg_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_sw_cpu_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_sw_mpu_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_sw_spu_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_timer_grp_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_trigger_grp_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/iop/iop_version_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/irq_nmi_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/marb_bp_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/marb_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/reg_rdwr.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/rt_trace_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/ser_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/sser_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/strcop.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/strcop_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/hwregs/supp_reg.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/intmem.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/irq.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/irqflags.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/memmap.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/mmu.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/offset.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/page.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/pgtable.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/processor.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/swab.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/system.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/thread_info.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/timex.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/tlb.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/uaccess.h
-> delete mode 100644 arch/cris/include/arch-v32/arch/unistd.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/arbiter.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/dma.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/asm/clkgen_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/asm/ddr2_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/asm/gio_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/asm/pinmux_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/asm/pio_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/asm/reg_map_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/asm/timer_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/clkgen_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/ddr2_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/gio_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/intr_vect.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/intr_vect_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/iop/asm/iop_reg_space_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/iop/asm/iop_sap_in_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/iop/asm/iop_sap_out_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/iop/asm/iop_sw_cfg_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/iop/asm/iop_sw_cpu_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/iop/asm/iop_sw_mpu_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/iop/asm/iop_sw_spu_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/iop/asm/iop_version_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/iop/iop_reg_space.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/iop/iop_sap_in_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/iop/iop_sap_out_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/iop/iop_sw_cfg_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/iop/iop_sw_cpu_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/iop/iop_sw_mpu_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/iop/iop_sw_spu_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/iop/iop_version_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/l2cache_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/marb_bar_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/marb_foo_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/pinmux_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/pio_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/reg_map.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/strmux_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/hwregs/timer_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/memmap.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/pinmux.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-a3/mach/startup.inc
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/arbiter.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/dma.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/hwregs/asm/bif_core_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/hwregs/asm/config_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/hwregs/asm/gio_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/hwregs/asm/pinmux_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/hwregs/asm/reg_map_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/hwregs/asm/timer_defs_asm.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/hwregs/bif_core_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/hwregs/bif_dma_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/hwregs/bif_slave_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/hwregs/config_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/hwregs/gio_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/hwregs/intr_vect.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/hwregs/intr_vect_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/hwregs/marb_bp_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/hwregs/marb_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/hwregs/pinmux_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/hwregs/reg_map.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/hwregs/strmux_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/hwregs/timer_defs.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/memmap.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/pinmux.h
-> delete mode 100644 arch/cris/include/arch-v32/mach-fs/mach/startup.inc
-> delete mode 100644 arch/cris/include/asm/Kbuild
-> delete mode 100644 arch/cris/include/asm/asm-offsets.h
-> delete mode 100644 arch/cris/include/asm/axisflashmap.h
-> delete mode 100644 arch/cris/include/asm/bitops.h
-> delete mode 100644 arch/cris/include/asm/bug.h
-> delete mode 100644 arch/cris/include/asm/bugs.h
-> delete mode 100644 arch/cris/include/asm/cache.h
-> delete mode 100644 arch/cris/include/asm/cacheflush.h
-> delete mode 100644 arch/cris/include/asm/checksum.h
-> delete mode 100644 arch/cris/include/asm/delay.h
-> delete mode 100644 arch/cris/include/asm/dma.h
-> delete mode 100644 arch/cris/include/asm/eshlibld.h
-> delete mode 100644 arch/cris/include/asm/etraxi2c.h
-> delete mode 100644 arch/cris/include/asm/fasttimer.h
-> delete mode 100644 arch/cris/include/asm/fb.h
-> delete mode 100644 arch/cris/include/asm/ftrace.h
-> delete mode 100644 arch/cris/include/asm/hw_irq.h
-> delete mode 100644 arch/cris/include/asm/io.h
-> delete mode 100644 arch/cris/include/asm/irq.h
-> delete mode 100644 arch/cris/include/asm/irqflags.h
-> delete mode 100644 arch/cris/include/asm/mmu.h
-> delete mode 100644 arch/cris/include/asm/mmu_context.h
-> delete mode 100644 arch/cris/include/asm/page.h
-> delete mode 100644 arch/cris/include/asm/pci.h
-> delete mode 100644 arch/cris/include/asm/pgalloc.h
-> delete mode 100644 arch/cris/include/asm/pgtable.h
-> delete mode 100644 arch/cris/include/asm/processor.h
-> delete mode 100644 arch/cris/include/asm/ptrace.h
-> delete mode 100644 arch/cris/include/asm/segment.h
-> delete mode 100644 arch/cris/include/asm/serial.h
-> delete mode 100644 arch/cris/include/asm/shmparam.h
-> delete mode 100644 arch/cris/include/asm/signal.h
-> delete mode 100644 arch/cris/include/asm/stacktrace.h
-> delete mode 100644 arch/cris/include/asm/string.h
-> delete mode 100644 arch/cris/include/asm/swab.h
-> delete mode 100644 arch/cris/include/asm/switch_to.h
-> delete mode 100644 arch/cris/include/asm/termios.h
-> delete mode 100644 arch/cris/include/asm/thread_info.h
-> delete mode 100644 arch/cris/include/asm/timex.h
-> delete mode 100644 arch/cris/include/asm/tlb.h
-> delete mode 100644 arch/cris/include/asm/tlbflush.h
-> delete mode 100644 arch/cris/include/asm/uaccess.h
-> delete mode 100644 arch/cris/include/asm/ucontext.h
-> delete mode 100644 arch/cris/include/asm/unaligned.h
-> delete mode 100644 arch/cris/include/asm/unistd.h
-> delete mode 100644 arch/cris/include/asm/user.h
-> delete mode 100644 arch/cris/include/uapi/arch-v10/arch/sv_addr.agh
-> delete mode 100644 arch/cris/include/uapi/arch-v10/arch/sv_addr_ag.h
-> delete mode 100644 arch/cris/include/uapi/arch-v10/arch/svinto.h
-> delete mode 100644 arch/cris/include/uapi/arch-v10/arch/user.h
-> delete mode 100644 arch/cris/include/uapi/arch-v32/arch/cryptocop.h
-> delete mode 100644 arch/cris/include/uapi/arch-v32/arch/user.h
-> delete mode 100644 arch/cris/include/uapi/asm/Kbuild
-> delete mode 100644 arch/cris/include/uapi/asm/byteorder.h
-> delete mode 100644 arch/cris/include/uapi/asm/elf.h
-> delete mode 100644 arch/cris/include/uapi/asm/elf_v10.h
-> delete mode 100644 arch/cris/include/uapi/asm/elf_v32.h
-> delete mode 100644 arch/cris/include/uapi/asm/ethernet.h
-> delete mode 100644 arch/cris/include/uapi/asm/etraxgpio.h
-> delete mode 100644 arch/cris/include/uapi/asm/ioctls.h
-> delete mode 100644 arch/cris/include/uapi/asm/param.h
-> delete mode 100644 arch/cris/include/uapi/asm/posix_types.h
-> delete mode 100644 arch/cris/include/uapi/asm/ptrace.h
-> delete mode 100644 arch/cris/include/uapi/asm/ptrace_v10.h
-> delete mode 100644 arch/cris/include/uapi/asm/ptrace_v32.h
-> delete mode 100644 arch/cris/include/uapi/asm/rs485.h
-> delete mode 100644 arch/cris/include/uapi/asm/setup.h
-> delete mode 100644 arch/cris/include/uapi/asm/sigcontext.h
-> delete mode 100644 arch/cris/include/uapi/asm/signal.h
-> delete mode 100644 arch/cris/include/uapi/asm/stat.h
-> delete mode 100644 arch/cris/include/uapi/asm/swab.h
-> delete mode 100644 arch/cris/include/uapi/asm/sync_serial.h
-> delete mode 100644 arch/cris/include/uapi/asm/termbits.h
-> delete mode 100644 arch/cris/include/uapi/asm/termios.h
-> delete mode 100644 arch/cris/include/uapi/asm/unistd.h
-> delete mode 100644 arch/cris/kernel/Makefile
-> delete mode 100644 arch/cris/kernel/asm-offsets.c
-> delete mode 100644 arch/cris/kernel/crisksyms.c
-> delete mode 100644 arch/cris/kernel/irq.c
-> delete mode 100644 arch/cris/kernel/module.c
-> delete mode 100644 arch/cris/kernel/process.c
-> delete mode 100644 arch/cris/kernel/profile.c
-> delete mode 100644 arch/cris/kernel/ptrace.c
-> delete mode 100644 arch/cris/kernel/setup.c
-> delete mode 100644 arch/cris/kernel/stacktrace.c
-> delete mode 100644 arch/cris/kernel/sys_cris.c
-> delete mode 100644 arch/cris/kernel/time.c
-> delete mode 100644 arch/cris/kernel/traps.c
-> delete mode 100644 arch/cris/kernel/vmlinux.lds.S
-> delete mode 100644 arch/cris/mm/Makefile
-> delete mode 100644 arch/cris/mm/fault.c
-> delete mode 100644 arch/cris/mm/init.c
-> delete mode 100644 arch/cris/mm/ioremap.c
-> delete mode 100644 arch/cris/mm/tlb.c
-> delete mode 100644 drivers/cpufreq/cris-artpec3-cpufreq.c
-> delete mode 100644 drivers/cpufreq/cris-etraxfs-cpufreq.c
-> delete mode 100644 drivers/gpio/gpio-etraxfs.c
-> delete mode 100644 drivers/net/cris/Makefile
-> delete mode 100644 drivers/net/cris/eth_v10.c
-> delete mode 100644 drivers/tty/serial/crisv10.c
-> delete mode 100644 drivers/tty/serial/crisv10.h
-> delete mode 100644 drivers/tty/serial/etraxfs-uart.c
-> 
-> /^JN - Jesper Nilsson
-> -- 
->               Jesper Nilsson -- jesper.nilsson@axis.com
+Patch #3 was sent out before as a single patch. This series supersedes
+the previous submission. This version makes relative ksymtab entries
+dependent on the new Kconfig symbol HAVE_ARCH_PREL32_RELOCATIONS rather
+than trying to infer from kbuild test robot replies for which architectures
+it should be blacklisted.
+
+Patch #1 introduces the new Kconfig symbol HAVE_ARCH_PREL32_RELOCATIONS,
+and sets it for the main architectures that are expected to benefit the
+most from this feature, i.e., 64-bit architectures or ones that use
+runtime relocations.
+
+Patch #2 add support for #define'ing __DISABLE_EXPORTS to get rid of
+ksymtab/kcrctab sections in decompressor and EFI stub objects when
+rebuilding existing C files to run in a different context.
+
+Patches #4 - #6 implement relative references for initcalls, PCI fixups
+and tracepoints, respectively, all of which produce sections with order
+~1000 entries on an arm64 defconfig kernel with tracing enabled. This
+means we save about 28 KB of vmlinux space for each of these patches.
+
+[From the v7 series blurb, which included the jump_label patches as well]:
+  For the arm64 kernel, all patches combined reduce the memory footprint of
+  vmlinux by about 1.3 MB (using a config copied from Ubuntu that has KASLR
+  enabled), of which ~1 MB is the size reduction of the RELA section in .init,
+  and the remaining 300 KB is reduction of .text/.data.
+
+Branch:
+git://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git relative-special-sections-v8
+
+Changes since v7:
+- dropped the jump_label patches, these will be revisited in a separate series
+- reorder __DISABLE_EXPORTS with __KSYM_DEPS__ check in #2
+- use offset_to_ptr() helper function to abstract the relative pointer
+  conversion [int *off -> (ulong)off + *off] (#3 - #6)
+- rebase onto v4.16-rc3
+
+Changes since v6:
+- drop S390 from patch #1 introducing HAVE_ARCH_PREL32_RELOCATIONS: kbuild
+  robot threw me some s390 curveballs, and given that s390 does not define
+  CONFIG_RELOCATABLE in the first place, it does not benefit as much from
+  relative references as arm64, x86 and power do
+- add patch to allow symbol exports to be disabled at compilation unit
+  granularity (#2)
+- get rid of arm64 vmlinux.lds.S hunk to ensure code generated by __ADDRESSABLE
+  gets discarded from the EFI stub - it is no longer needed after adding #2 (#1)
+- change _ADDRESSABLE() to emit a data reference, not a code reference - this
+  is another simplification made possible by patch #2 (#3)
+- add Steven's ack to #6
+- split x86 jump_label patch into two (#9, #10)
+
+Changes since v5:
+- add missing jump_label prototypes to s390 jump_label.h (#6)
+- fix inverted condition in call to jump_entry_is_module_init() (#6)
+
+Changes since v4:
+- add patches to convert x86 and arm64 to use relative references for jump
+  tables (#6 - #8)
+- rename PCI patch and add Bjorn's ack (#4)
+- rebase onto v4.15-rc5
+
+Changes since v3:
+- fix module unload issue in patch #5 reported by Jessica, by reusing the
+  updated routine for_each_tracepoint_range() for the quiescent check at
+  module unload time; this requires this routine to be moved before
+  tracepoint_module_going() in kernel/tracepoint.c
+- add Jessica's ack to #2
+- rebase onto v4.14-rc1
+
+Changes since v2:
+- Revert my slightly misguided attempt to appease checkpatch, which resulted
+  in needless churn and worse code. This v3 is based on v1 with a few tweaks
+  that were actually reasonable checkpatch warnings: unnecessary braces (as
+  pointed out by Ingo) and other minor whitespace misdemeanors.
+
+Changes since v1:
+- Remove checkpatch errors to the extent feasible: in some cases, this
+  involves moving extern declarations into C files, and switching to
+  struct definitions rather than typedefs. Some errors are impossible
+  to fix: please find the remaining ones after the diffstat.
+- Used 'int' instead if 'signed int' for the various offset fields: there
+  is no ambiguity between architectures regarding its signedness (unlike
+  'char')
+- Refactor the different patches to be more uniform in the way they define
+  the section entry type and accessors in the .h file, and avoid the need to
+  add #ifdefs to the C code.
+
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Thomas Garnier <thgarnie@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: James Morris <james.l.morris@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Nicolas Pitre <nico@linaro.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jessica Yu <jeyu@kernel.org>
+
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: x86@kernel.org
+
+Ard Biesheuvel (6):
+  arch: enable relative relocations for arm64, power and x86
+  module: allow symbol exports to be disabled
+  module: use relative references for __ksymtab entries
+  init: allow initcall tables to be emitted using relative references
+  PCI: Add support for relative addressing in quirk tables
+  kernel: tracepoints: add support for relative references
+
+ arch/Kconfig                          | 10 ++++
+ arch/arm64/Kconfig                    |  1 +
+ arch/powerpc/Kconfig                  |  1 +
+ arch/x86/Kconfig                      |  1 +
+ arch/x86/boot/compressed/kaslr.c      |  5 +-
+ arch/x86/include/asm/Kbuild           |  1 +
+ arch/x86/include/asm/export.h         |  5 --
+ drivers/firmware/efi/libstub/Makefile |  3 +-
+ drivers/pci/quirks.c                  | 12 +++--
+ include/asm-generic/export.h          | 12 ++++-
+ include/linux/compiler.h              | 19 +++++++
+ include/linux/export.h                | 57 +++++++++++++++-----
+ include/linux/init.h                  | 44 +++++++++++----
+ include/linux/pci.h                   | 20 +++++++
+ include/linux/tracepoint.h            | 19 +++++--
+ init/main.c                           | 32 +++++------
+ kernel/module.c                       | 32 ++++++++---
+ kernel/printk/printk.c                |  4 +-
+ kernel/tracepoint.c                   | 49 +++++++++--------
+ security/security.c                   |  4 +-
+ 20 files changed, 240 insertions(+), 91 deletions(-)
+ delete mode 100644 arch/x86/include/asm/export.h
+
+-- 
+2.15.1
