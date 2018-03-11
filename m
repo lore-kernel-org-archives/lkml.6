@@ -1,51 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932405AbeCKRo1 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 13:44:27 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34503 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932191AbeCKRoY (ORCPT
+        id S932315AbeCKSBr (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 14:01:47 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:44655 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932177AbeCKSBq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 13:44:24 -0400
-X-Google-Smtp-Source: AG47ELt2lI/iQsYL4dWmsfwR0PnHdWLrpWKZ1huFbJuo1sbwI3zFxDmnrgNH8rAcHDuPn6BjTTmlUA==
-Date: Sun, 11 Mar 2018 18:44:21 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: kgene@kernel.org, devicetree@vger.kernel.org, javierm@redhat.com,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
-        m.szyprowski@samsung.com
-Subject: Re: [PATCH v3 2/6] ARM: dts: exynos: Add audio clocks configuration
- for exynos5250-snow
-Message-ID: <20180311174421.ooontplgqqo4xdxl@kozik-lap>
-References: <20180309172250.23019-1-s.nawrocki@samsung.com>
- <CGME20180309172404epcas1p446cf7033027ccefe2d8cfcfc49edc179@epcas1p4.samsung.com>
- <20180309172250.23019-2-s.nawrocki@samsung.com>
+        Sun, 11 Mar 2018 14:01:46 -0400
+Date: Sun, 11 Mar 2018 11:01:35 -0700 (PDT)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Jason Vas Dias <jason.vas.dias@gmail.com>
+cc: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        andi <andi@firstfloor.org>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v4.16-rc4 1/1] x86/vdso: on Intel, VDSO should handle
+ CLOCK_MONOTONIC_RAW
+In-Reply-To: <d10bglsa.fsf@gmail.com>
+Message-ID: <alpine.DEB.2.21.1803111048360.3841@nanos.tec.linutronix.de>
+References: <d10bglsa.fsf@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180309172250.23019-2-s.nawrocki@samsung.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 09, 2018 at 06:22:46PM +0100, Sylwester Nawrocki wrote:
-> Currently the audio subsystem clocks are not configured properly on Snow
-> and sound is not working. The MAX98095 CODEC is not getting its master clock
-> on the MCLK pin connected to the SOC's CLKOUT GPIO. This patch adds CLKOUT
-> and other clocks configuration so HDMI audio can also be supported.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
-> Changes since v1:
->  - edited commit summary line.
-> ---
->  arch/arm/boot/dts/exynos5250-snow-common.dtsi | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
+On Sun, 11 Mar 2018, Jason Vas Dias wrote:
 
-Thanks, applied.
+This looks better now. Though running that patch through checkpatch.pl
+results in:
 
-Best regards,
-Krzysztof
+total: 28 errors, 20 warnings, 139 lines checked
+
+....
+
+> +notrace static u64 vread_tsc_raw(void)
+
+Why do you need a separate function? I asked you to use vread_tsc(). So you
+might have reasons for doing that, but please then explain WHY and not just
+throw the stuff in my direction w/o any comment.
+
+> +{
+> +        u64 tsc, last=gtod->raw_cycle_last;
+> +        if( likely( gtod->has_rdtscp ) ) {
+> +                u32     tsc_lo, tsc_hi,
+> +                        tsc_cpu __attribute__((unused));
+> +                asm volatile
+> +                ( "rdtscp"
+> +                /* ^- has built-in cancellation point / pipeline stall "barrier" */
+> +                : "=a" (tsc_lo)
+> +                , "=d" (tsc_hi)
+> +                , "=c" (tsc_cpu)
+> +                ); // since all variables 32-bit, eax, edx, ecx used - NOT rax, rdx, rcx                 
+> +                tsc      = ((((u64)tsc_hi) & 0xffffffffUL) << 32) | (((u64)tsc_lo) & 0xffffffffUL);
+
+This is not required to make the vdso accessor for monotonic raw work.
+
+If at all then the rdtscp support wants to be in a separate patch with a
+proper explanation.
+
+Aside of that the code for rdtscp wants to be in a proper inline helper in
+the relevant header file and written according to the coding style the
+kernel uses for asm inlines.
+
+> +        } else {
+> +                tsc      = rdtsc_ordered();
+> +        }
+> +	if (likely(tsc >= last))
+> +		return tsc;        
+> +        asm volatile ("");                                
+> +        return last;
+> +}
+
+The rest looks ok.
+
+Thanks,
+
+	tglx
