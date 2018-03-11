@@ -1,69 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751232AbeCKBzL (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 10 Mar 2018 20:55:11 -0500
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:42423 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751164AbeCKBzK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Mar 2018 20:55:10 -0500
-X-Google-Smtp-Source: AG47ELt2AsZjSMTsogRmhLiyoaHQ8VtRA76sJK18AZX2AVIC/u0umADQz/Hbt/PhGUq5eQu4/yjATxAtqB1L06X+Cl0=
+        id S932096AbeCKCO1 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 10 Mar 2018 21:14:27 -0500
+Received: from imap.thunk.org ([74.207.234.97]:53002 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751206AbeCKCO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Mar 2018 21:14:26 -0500
+Date: Sat, 10 Mar 2018 21:14:06 -0500
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Andiry Xu <jix024@eng.ucsd.edu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, dan.j.williams@intel.com,
+        andy.rudoff@intel.com, coughlan@redhat.com, swanson@cs.ucsd.edu,
+        david@fromorbit.com, jack@suse.com, swhiteho@redhat.com,
+        miklos@szeredi.hu, andiry.xu@gmail.com, Andiry Xu <jix024@cs.ucsd.edu>
+Subject: Re: [RFC v2 00/83] NOVA: a new file system for persistent memory
+Message-ID: <20180311021406.GA388@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Andiry Xu <jix024@eng.ucsd.edu>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        dan.j.williams@intel.com, andy.rudoff@intel.com,
+        coughlan@redhat.com, swanson@cs.ucsd.edu, david@fromorbit.com,
+        jack@suse.com, swhiteho@redhat.com, miklos@szeredi.hu,
+        andiry.xu@gmail.com, Andiry Xu <jix024@cs.ucsd.edu>
+References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
 MIME-Version: 1.0
-In-Reply-To: <86k1ukazr0.wl-marc.zyngier@arm.com>
-References: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
- <9ad47673-068e-f732-d2ca-9c76a8fbdfbc@arm.com> <0a15633d-8944-cb9b-3e6b-b08ee5ec42b9@arm.com>
- <20180308161900.GC1917@lvm> <86r2oubho3.wl-marc.zyngier@arm.com>
- <20180309213612.GD1917@lvm> <86k1ukazr0.wl-marc.zyngier@arm.com>
-From: Christoffer Dall <cdall@kernel.org>
-Date: Sun, 11 Mar 2018 01:55:08 +0000
-X-Google-Sender-Auth: IKcRQCZXeu6sBJzHIJOJWnd-Qik
-Message-ID: <CAEDV+g+29ZK6QQEn=2h_77dMZC7wmw+d4MZC-GU-CqeaK_xhMg@mail.gmail.com>
-Subject: Re: [RFC PATCH] KVM: arm/arm64: vgic: change condition for level
- interrupt resampling
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Shunyong Yang <shunyong.yang@hxt-semitech.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>, Auger Eric <eric.auger@redhat.com>,
-        david.daney@cavium.com,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        kvmarm@lists.cs.columbia.edu,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Joey Zheng <yu.zheng@hxt-semitech.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 10, 2018 at 12:20 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> On Fri, 09 Mar 2018 21:36:12 +0000,
-> Christoffer Dall wrote:
->>
->> On Thu, Mar 08, 2018 at 05:28:44PM +0000, Marc Zyngier wrote:
->> > I'd be more confident if we did forbid P+A for such interrupts
->> > altogether, as they really feel like another kind of HW interrupt.
->>
->> How about a slightly bigger hammer:  Can we avoid doing P+A for level
->> interrupts completely?  I don't think that really makes much sense, and
->> I think we simply everything if we just come back out and resample the
->> line.  For an edge, something like a network card, there's a potential
->> performance win to appending a new pending state, but I doubt that this
->> is the case for level interrupts.
->
-> I started implementing the same thing yesterday. Somehow, it feels
-> slightly better to have the same flow for all level interrupts,
-> including the timer, and we only use the MI on EOI as a way to trigger
-> the next state of injection. Still testing, but looking good so far.
->
-> I'm still puzzled that we have this level-but-not-quite behaviour for
-> VFIO interrupts. At some point, it is going to bite us badly.
->
+FYI, your patch set doesn't even compile for me without these fixups.
+I'm not sure why you were trying to declare inline functions in a
+header file without the function body?
 
-Where is the departure from level-triggered behavior with VFIO?  As
-far as I can tell, the GIC flow of the interrupts will be just a level
-interrupt, but we just need to make sure the resamplefd mechanism is
-supported for both types of interrupts.  Whether or not that's a
-decent mechanism seems orthogonal to me, but that's a discussion for
-another day I think.
+						- Ted
 
-Thanks,
--Christoffer
+diff --git a/fs/nova/balloc.c b/fs/nova/balloc.c
+index 8e992156f28c..9c7b74aa712e 100644
+--- a/fs/nova/balloc.c
++++ b/fs/nova/balloc.c
+@@ -74,12 +74,12 @@ static void nova_init_free_list(struct super_block *sb,
+ 		free_list->block_end -= sbi->tail_reserved_blocks;
+ }
+ 
+-inline struct nova_range_node *nova_alloc_blocknode(struct super_block *sb)
++struct nova_range_node *nova_alloc_blocknode(struct super_block *sb)
+ {
+ 	return nova_alloc_range_node(sb);
+ }
+ 
+-inline void nova_free_blocknode(struct super_block *sb,
++void nova_free_blocknode(struct super_block *sb,
+ 	struct nova_range_node *node)
+ {
+ 	nova_free_range_node(node);
+@@ -206,7 +206,7 @@ int nova_insert_range_node(struct rb_root *tree,
+ 	return 0;
+ }
+ 
+-inline int nova_insert_blocktree(struct nova_sb_info *sbi,
++int nova_insert_blocktree(struct nova_sb_info *sbi,
+ 	struct rb_root *tree, struct nova_range_node *new_node)
+ {
+ 	int ret;
+@@ -659,7 +659,7 @@ static int nova_new_blocks(struct super_block *sb, unsigned long *blocknr,
+ 
+ // Allocate data blocks.  The offset for the allocated block comes back in
+ // blocknr.  Return the number of blocks allocated.
+-inline int nova_new_data_blocks(struct super_block *sb,
++int nova_new_data_blocks(struct super_block *sb,
+ 	struct nova_inode_info_header *sih, unsigned long *blocknr,
+ 	unsigned long start_blk, unsigned int num,
+ 	enum nova_alloc_init zero, int cpu,
+diff --git a/fs/nova/balloc.h b/fs/nova/balloc.h
+index 463fbac99eff..aca7e8c18dde 100644
+--- a/fs/nova/balloc.h
++++ b/fs/nova/balloc.h
+@@ -62,18 +62,18 @@ enum alloc_type {
+ 
+ int nova_alloc_block_free_lists(struct super_block *sb);
+ void nova_delete_free_lists(struct super_block *sb);
+-inline struct nova_range_node *nova_alloc_blocknode(struct super_block *sb);
+-inline void nova_free_blocknode(struct super_block *sb,
++struct nova_range_node *nova_alloc_blocknode(struct super_block *sb);
++void nova_free_blocknode(struct super_block *sb,
+ 	struct nova_range_node *bnode);
+ extern void nova_init_blockmap(struct super_block *sb, int recovery);
+ extern unsigned long nova_count_free_blocks(struct super_block *sb);
+-inline int nova_insert_blocktree(struct nova_sb_info *sbi,
++int nova_insert_blocktree(struct nova_sb_info *sbi,
+ 	struct rb_root *tree, struct nova_range_node *new_node);
+ extern int nova_free_data_blocks(struct super_block *sb,
+ 	struct nova_inode_info_header *sih, unsigned long blocknr, int num);
+ extern int nova_free_log_blocks(struct super_block *sb,
+ 	struct nova_inode_info_header *sih, unsigned long blocknr, int num);
+-extern inline int nova_new_data_blocks(struct super_block *sb,
++extern int nova_new_data_blocks(struct super_block *sb,
+ 	struct nova_inode_info_header *sih, unsigned long *blocknr,
+ 	unsigned long start_blk, unsigned int num,
+ 	enum nova_alloc_init zero, int cpu,
+diff --git a/fs/nova/inode.c b/fs/nova/inode.c
+index 21be31a05d26..31ef258978ba 100644
+--- a/fs/nova/inode.c
++++ b/fs/nova/inode.c
+@@ -440,7 +440,7 @@ struct inode *nova_iget(struct super_block *sb, unsigned long ino)
+ 	return ERR_PTR(err);
+ }
+ 
+-inline int nova_insert_inodetree(struct nova_sb_info *sbi,
++int nova_insert_inodetree(struct nova_sb_info *sbi,
+ 	struct nova_range_node *new_node, int cpu)
+ {
+ 	struct rb_root *tree;
+diff --git a/fs/nova/inode.h b/fs/nova/inode.h
+index 086a7cba8ac3..1097e15ff7af 100644
+--- a/fs/nova/inode.h
++++ b/fs/nova/inode.h
+@@ -254,7 +254,7 @@ int nova_init_inode_table(struct super_block *sb);
+ int nova_get_inode_address(struct super_block *sb, u64 ino,
+ 	u64 *pi_addr, int extendable);
+ struct inode *nova_iget(struct super_block *sb, unsigned long ino);
+-inline int nova_insert_inodetree(struct nova_sb_info *sbi,
++int nova_insert_inodetree(struct nova_sb_info *sbi,
+ 	struct nova_range_node *new_node, int cpu);
+ u64 nova_new_nova_inode(struct super_block *sb, u64 *pi_addr);
+ struct inode *nova_new_vfs_inode(enum nova_new_inode_type type,
+diff --git a/fs/nova/super.c b/fs/nova/super.c
+index 039c003b698b..9f06ec847c95 100644
+--- a/fs/nova/super.c
++++ b/fs/nova/super.c
+@@ -795,23 +795,23 @@ static void nova_put_super(struct super_block *sb)
+ 	sb->s_fs_info = NULL;
+ }
+ 
+-inline void nova_free_range_node(struct nova_range_node *node)
++void nova_free_range_node(struct nova_range_node *node)
+ {
+ 	kmem_cache_free(nova_range_node_cachep, node);
+ }
+ 
+-inline void nova_free_inode_node(struct super_block *sb,
++void nova_free_inode_node(struct super_block *sb,
+ 	struct nova_range_node *node)
+ {
+ 	nova_free_range_node(node);
+ }
+ 
+-inline void nova_free_file_write_item(struct nova_file_write_item *item)
++void nova_free_file_write_item(struct nova_file_write_item *item)
+ {
+ 	kmem_cache_free(nova_file_write_item_cachep, item);
+ }
+ 
+-inline struct nova_file_write_item *
++struct nova_file_write_item *
+ nova_alloc_file_write_item(struct super_block *sb)
+ {
+ 	struct nova_file_write_item *p;
+diff --git a/fs/nova/super.h b/fs/nova/super.h
+index bcbe862ac914..dc98346266e1 100644
+--- a/fs/nova/super.h
++++ b/fs/nova/super.h
+@@ -160,11 +160,11 @@ static inline struct nova_super_block *nova_get_super(struct super_block *sb)
+ 
+ extern void nova_error_mng(struct super_block *sb, const char *fmt, ...);
+ extern struct nova_range_node *nova_alloc_range_node(struct super_block *sb);
+-extern inline struct nova_range_node *nova_alloc_inode_node(struct super_block *sb);
++extern struct nova_range_node *nova_alloc_inode_node(struct super_block *sb);
+ extern struct nova_file_write_item *
+ nova_alloc_file_write_item(struct super_block *sb);
+ extern void nova_free_range_node(struct nova_range_node *node);
+-extern inline void nova_free_inode_node(struct super_block *sb,
++extern void nova_free_inode_node(struct super_block *sb,
+ 	struct nova_range_node *node);
+ void nova_free_file_write_item(struct nova_file_write_item *item);
+ 
