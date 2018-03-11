@@ -1,74 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932534AbeCKWcJ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 18:32:09 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:37266 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932363AbeCKWcH (ORCPT
+        id S932553AbeCKWcP convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 18:32:15 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:33184 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932458AbeCKWcN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 18:32:07 -0400
-X-Google-Smtp-Source: AG47ELuLSPWuJu0JY24ZminbIToYTs0yYN/X6/Ji5WBoNK6QlA+6+CDLX4dXpg2hTtKBc+G0bNriPw==
-Date: Sun, 11 Mar 2018 15:31:58 -0700
-From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v2 0/8] clk: helpers and fixes
-To: Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180214134340.17242-1-jbrunet@baylibre.com>
-In-Reply-To: <20180214134340.17242-1-jbrunet@baylibre.com>
+        Sun, 11 Mar 2018 18:32:13 -0400
+X-ME-Helo: linux.numericable.fr
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 11 Mar 2018 23:32:11 +0100
+X-ME-IP: 77.198.79.136
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: shawnguo@kernel.org, airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] drm: zte: Fix an error handling path in 'zx_crtc_bind()'
+Date: Sun, 11 Mar 2018 23:32:03 +0100
+Message-Id: <20180311223203.3669-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.14.1
 MIME-Version: 1.0
-User-Agent: astroid/8ea8c2a3 (https://github.com/astroidmail/astroid)
-Message-Id: <1520807121.n44nt5z8tk.astroid@resonance.none>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2BMWFnY015595
 
-Excerpts from Jerome Brunet's message of February 14, 2018 5:43 am:
-> This changset is consist of various patches I have recently sent
-> for the clock framework. They are gathered here for your convinience.
-> 
-> The first two changes exports helpers of the generic clocks (divider and
-> mux). The goal is to avoid code duplication when writing clock driver
-> derived from these generic clock drivers.
-> 
-> The rest fixes various issues found in the clock framework while working on
-> a rework of meson's clock controllers [0]
+'ret' is known to be 0 at this point. It must be updated by the value
+returned by 'clk_prepare_enable()'.
 
-Applied to clk-helpers towards v4.17.
+Fixes: 0a886f59528a ("drm: zte: add initial vou drm driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/zte/zx_vou.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Mike
+diff --git a/drivers/gpu/drm/zte/zx_vou.c b/drivers/gpu/drm/zte/zx_vou.c
+index 7491813131f3..3351b258ed7a 100644
+--- a/drivers/gpu/drm/zte/zx_vou.c
++++ b/drivers/gpu/drm/zte/zx_vou.c
+@@ -838,7 +838,7 @@ static int zx_crtc_bind(struct device *dev, struct device *master, void *data)
+ 		return ret;
+ 	}
+ 
+-	clk_prepare_enable(vou->ppu_clk);
++	ret = clk_prepare_enable(vou->ppu_clk);
+ 	if (ret) {
+ 		DRM_DEV_ERROR(dev, "failed to enable ppu_clk: %d\n", ret);
+ 		goto disable_axi_clk;
+-- 
+2.14.1
 
-> 
-> Changes since the v1s:
->  * dropped lpc32xx divider read-only patches as requested by
->    Vladimir Zapolskiy [2]
->  * Squashed generic divider read-only patches
->  * Squashed mux documentations patches
-> 
-> [0]: https://lkml.kernel.org/r/20180212145846.19380-1-jbrunet@baylibre.com
-> [2]: https://lkml.kernel.org/r/54782a8f-9735-a574-d8e1-7ff3e9173229@mleia.com
-> 
-> Jerome Brunet (8):
->   clk: divider: export clk_div_mask() helper
->   clk: mux: add helper function for index/value translation
->   clk: fix determine rate error with pass-through clock
->   clk: migrate the count of orphaned clocks at init
->   clk: call the clock init() callback before any other ops callback
->   clk: fix mux clock documentation
->   clk: divider: read-only divider can propagate rate change
->   clk: qcom: use divider_ro_round_rate helper
-> 
->  drivers/clk/clk-divider.c             | 58 ++++++++++++++++++---------
->  drivers/clk/clk-mux.c                 | 75 ++++++++++++++++++++---------------
->  drivers/clk/clk.c                     | 63 ++++++++++++++++-------------
->  drivers/clk/qcom/clk-regmap-divider.c | 20 +++-------
->  include/linux/clk-provider.h          | 23 ++++++++++-
->  5 files changed, 146 insertions(+), 93 deletions(-)
-> 
-> -- 
-> 2.14.3
-> 
-> 
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
