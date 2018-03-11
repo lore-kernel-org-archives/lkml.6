@@ -1,56 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932379AbeCKW6e (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 18:58:34 -0400
-Received: from namei.org ([65.99.196.166]:52586 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932224AbeCKW6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 18:58:32 -0400
-Date: Mon, 12 Mar 2018 09:58:02 +1100 (AEDT)
-From: James Morris <jmorris@namei.org>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-cc: "Serge E. Hallyn" <serge@hallyn.com>,
-        Mehmet Kayaalp <mkayaalp@cs.binghamton.edu>,
-        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>,
-        Yuqiong Sun <sunyuqiong1988@gmail.com>,
-        containers <containers@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        David Safford <david.safford@ge.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        ima-devel <linux-ima-devel@lists.sourceforge.net>,
-        Yuqiong Sun <suny@us.ibm.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: Re: [RFC PATCH 1/5] ima: extend clone() with IMA namespace support
-In-Reply-To: <ec137677-34f8-df91-0d1c-6c6d6c951496@linux.vnet.ibm.com>
-Message-ID: <alpine.LRH.2.21.1803120953310.26512@namei.org>
-References: <20170720225033.21298-1-mkayaalp@linux.vnet.ibm.com> <20170720225033.21298-2-mkayaalp@linux.vnet.ibm.com> <20170725175317.GA727@mail.hallyn.com> <1501008554.3689.30.camel@HansenPartnership.com> <20170725190406.GA1883@mail.hallyn.com>
- <1501009739.3689.33.camel@HansenPartnership.com> <1501012082.27413.17.camel@linux.vnet.ibm.com> <645db815-7773-e351-5db7-89f38cd88c3d@linux.vnet.ibm.com> <20170725204622.GA4969@mail.hallyn.com> <97839865-b0ab-8e5d-114e-0603ef2edf6f@linux.vnet.ibm.com>
- <20180309025942.GA15295@mail.hallyn.com> <ec137677-34f8-df91-0d1c-6c6d6c951496@linux.vnet.ibm.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S932452AbeCKXAd (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 19:00:33 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38845 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932373AbeCKXA2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Mar 2018 19:00:28 -0400
+X-Google-Smtp-Source: AG47ELvejAFWmy3oRNMcd0XzoDpEDSXUFpxahwWT3R+h/CGG8khxP/D51s6C35b64xdyLL7OAiFlBw==
+Subject: Re: [PATCH 3/3] wlcore: Use common error handling code in
+ wl1271_acx_sta_rate_policies()
+To: SF Markus Elfring <elfring@users.sourceforge.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        Colin Ian King <colin.king@canonical.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+References: <b5db0825-394a-1d6d-351a-43be14e4c6b4@users.sourceforge.net>
+ <7d5cc7b4-f0ce-192a-3e5e-c2944c1e3e3d@users.sourceforge.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <5AA5B50B.6000101@broadcom.com>
+Date: Mon, 12 Mar 2018 00:00:27 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <7d5cc7b4-f0ce-192a-3e5e-c2944c1e3e3d@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 9 Mar 2018, Stefan Berger wrote:
+On 3/10/2018 10:33 PM, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 10 Mar 2018 22:18:45 +0100
+>
+> Add a jump target so that a bit of exception handling can be better reused
+> at the end of this function.
+>
+> This issue was detected by using the Coccinelle software.
 
-> Yuqiong is publishing a paper in this area. I believe the conference is only
-> later this year.
-> 
-> Our goals are to enable IMA measurements, appraisal, and auditing inside a
-> container using namespaces. 
+You call this an issue?
 
-This is excellent to have -- can you include this requirements analysis as 
-a file Documentation/security on the next posting?
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>   drivers/net/wireless/ti/wlcore/acx.c | 24 +++++++++++-------------
+>   1 file changed, 11 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/net/wireless/ti/wlcore/acx.c b/drivers/net/wireless/ti/wlcore/acx.c
+> index 1cc5bba670e1..7d37a417c756 100644
+> --- a/drivers/net/wireless/ti/wlcore/acx.c
+> +++ b/drivers/net/wireless/ti/wlcore/acx.c
 
-Also, if you need a public space for managing these kinds of documents, 
-consider utilizing 
-http://kernsec.org/wiki/index.php/Linux_Kernel_Integrity
+[...]
 
+>   	ret = wl1271_cmd_configure(wl, ACX_RATE_POLICY, acx, sizeof(*acx));
+> -	if (ret < 0) {
+> -		wl1271_warning("Setting of rate policies failed: %d", ret);
+> -		goto out;
+> -	}
+> +	if (ret < 0)
+> +		goto report_failure;
+>
+> -out:
+> +free_acx:
+>   	kfree(acx);
+>   	return ret;
+> +
+> +report_failure:
+> +	wl1271_warning("Setting of rate policies failed: %d", ret);
+> +	goto free_acx;
 
+In my opinion you are introducing a new issue. I don't call this 
+"common" in any way. It is leaning more towards "spaghetti code" [1]. 
+Jumping over a label to return to it with another jump. They are not 
+long jumps, but it sure does not make thing more readable. Always aim 
+for simple top-to-bottom.
 
-- James
--- 
-James Morris
-<jmorris@namei.org>
+Regards,
+Arend
+
+[1] https://en.wikipedia.org/wiki/Spaghetti_code
+
+>   }
+>
+>   int wl1271_acx_ap_rate_policy(struct wl1271 *wl, struct conf_tx_rate_class *c,
+>
