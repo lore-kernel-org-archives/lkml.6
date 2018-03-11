@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932419AbeCKLCR (ORCPT <rfc822;w@1wt.eu>);
+        id S932376AbeCKLCR (ORCPT <rfc822;w@1wt.eu>);
         Sun, 11 Mar 2018 07:02:17 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:54416 "EHLO
+Received: from isilmar-4.linta.de ([136.243.71.142]:54292 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932214AbeCKK4u (ORCPT
+        with ESMTP id S932215AbeCKK4u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 11 Mar 2018 06:56:50 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, luto@kernel.org,
         torvalds@linux-foundation.org, mingo@kernel.org,
         viro@zeniv.linux.org.uk, akpm@linux-foundation.org
-Subject: [RFC PATCH 34/35] syscalls: do not call sys_{,l,f}chown() within the kernel
-Date: Sun, 11 Mar 2018 11:55:56 +0100
-Message-Id: <20180311105557.20807-35-linux@dominikbrodowski.net>
+Subject: [RFC PATCH 14/35] syscalls: do not call sys_mount() within the kernel
+Date: Sun, 11 Mar 2018 11:55:36 +0100
+Message-Id: <20180311105557.20807-15-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180311105557.20807-1-linux@dominikbrodowski.net>
 References: <20180311105557.20807-1-linux@dominikbrodowski.net>
@@ -21,206 +21,131 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CC: Al Viro <viro@zeniv.linux.org.uk>
-CC: Andrew Morton <akpm@linux-foundation.org>
+CC: Alexander Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- arch/s390/kernel/compat_linux.c |  6 +++---
- fs/internal.h                   |  2 ++
- fs/open.c                       | 23 +++++++++++++++++------
- include/linux/syscalls.h        | 14 ++++++++++++++
- init/initramfs.c                |  8 ++++----
- kernel/uid16.c                  |  6 +++---
- 6 files changed, 43 insertions(+), 16 deletions(-)
+ drivers/base/devtmpfs.c  |  5 +++--
+ fs/namespace.c           | 10 ++++++++--
+ include/linux/syscalls.h |  3 +++
+ init/do_mounts.c         |  4 ++--
+ init/do_mounts_initrd.c  |  6 +++---
+ 5 files changed, 19 insertions(+), 9 deletions(-)
 
-diff --git a/arch/s390/kernel/compat_linux.c b/arch/s390/kernel/compat_linux.c
-index 572349852b75..a1fa8051fe63 100644
---- a/arch/s390/kernel/compat_linux.c
-+++ b/arch/s390/kernel/compat_linux.c
-@@ -89,18 +89,18 @@
- COMPAT_SYSCALL_DEFINE3(s390_chown16, const char __user *, filename,
- 		       u16, user, u16, group)
+diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
+index 50025d7959cb..4afb04686c8e 100644
+--- a/drivers/base/devtmpfs.c
++++ b/drivers/base/devtmpfs.c
+@@ -356,7 +356,8 @@ int devtmpfs_mount(const char *mntdir)
+ 	if (!thread)
+ 		return 0;
+ 
+-	err = sys_mount("devtmpfs", (char *)mntdir, "devtmpfs", MS_SILENT, NULL);
++	err = ksys_mount("devtmpfs", (char *)mntdir, "devtmpfs", MS_SILENT,
++			 NULL);
+ 	if (err)
+ 		printk(KERN_INFO "devtmpfs: error mounting %i\n", err);
+ 	else
+@@ -382,7 +383,7 @@ static int devtmpfsd(void *p)
+ 	*err = sys_unshare(CLONE_NEWNS);
+ 	if (*err)
+ 		goto out;
+-	*err = sys_mount("devtmpfs", "/", "devtmpfs", MS_SILENT, options);
++	*err = ksys_mount("devtmpfs", "/", "devtmpfs", MS_SILENT, options);
+ 	if (*err)
+ 		goto out;
+ 	sys_chdir("/.."); /* will traverse into overmounted root */
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 9d1374ab6e06..642b8b229944 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -3032,8 +3032,8 @@ struct dentry *mount_subtree(struct vfsmount *mnt, const char *name)
+ }
+ EXPORT_SYMBOL(mount_subtree);
+ 
+-SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
+-		char __user *, type, unsigned long, flags, void __user *, data)
++int ksys_mount(char __user *dev_name, char __user *dir_name, char __user *type,
++	       unsigned long flags, void __user *data)
  {
--	return sys_chown(filename, low2highuid(user), low2highgid(group));
-+	return ksys_chown(filename, low2highuid(user), low2highgid(group));
+ 	int ret;
+ 	char *kernel_type;
+@@ -3066,6 +3066,12 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
+ 	return ret;
  }
  
- COMPAT_SYSCALL_DEFINE3(s390_lchown16, const char __user *,
- 		       filename, u16, user, u16, group)
- {
--	return sys_lchown(filename, low2highuid(user), low2highgid(group));
-+	return ksys_lchown(filename, low2highuid(user), low2highgid(group));
- }
- 
- COMPAT_SYSCALL_DEFINE3(s390_fchown16, unsigned int, fd, u16, user, u16, group)
- {
--	return sys_fchown(fd, low2highuid(user), low2highgid(group));
-+	return ksys_fchown(fd, low2highuid(user), low2highgid(group));
- }
- 
- COMPAT_SYSCALL_DEFINE2(s390_setregid16, u16, rgid, u16, egid)
-diff --git a/fs/internal.h b/fs/internal.h
-index 49e0bf51576c..980d005b21b4 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -122,6 +122,8 @@ extern struct file *do_file_open_root(struct dentry *, struct vfsmount *,
- long do_sys_ftruncate(unsigned int fd, loff_t length, int small);
- long do_faccessat(int dfd, const char __user *filename, int mode);
- int do_fchmodat(int dfd, const char __user *filename, umode_t mode);
-+int do_fchownat(int dfd, const char __user *filename, uid_t user, gid_t group,
-+		int flag);
- 
- extern int open_check_o_direct(struct file *f);
- extern int vfs_open(const struct path *, struct file *, const struct cred *);
-diff --git a/fs/open.c b/fs/open.c
-index 77a4494f605d..b3f3b2cd9f19 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -645,8 +645,8 @@ static int chown_common(const struct path *path, uid_t user, gid_t group)
- 	return error;
- }
- 
--SYSCALL_DEFINE5(fchownat, int, dfd, const char __user *, filename, uid_t, user,
--		gid_t, group, int, flag)
-+int do_fchownat(int dfd, const char __user *filename, uid_t user, gid_t group,
-+		int flag)
- {
- 	struct path path;
- 	int error = -EINVAL;
-@@ -677,18 +677,24 @@ SYSCALL_DEFINE5(fchownat, int, dfd, const char __user *, filename, uid_t, user,
- 	return error;
- }
- 
-+SYSCALL_DEFINE5(fchownat, int, dfd, const char __user *, filename, uid_t, user,
-+		gid_t, group, int, flag)
++SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
++		char __user *, type, unsigned long, flags, void __user *, data)
 +{
-+	return do_fchownat(dfd, filename, user, group, flag);
++	return ksys_mount(dev_name, dir_name, type, flags, data);
 +}
 +
- SYSCALL_DEFINE3(chown, const char __user *, filename, uid_t, user, gid_t, group)
- {
--	return sys_fchownat(AT_FDCWD, filename, user, group, 0);
-+	return do_fchownat(AT_FDCWD, filename, user, group, 0);
- }
- 
- SYSCALL_DEFINE3(lchown, const char __user *, filename, uid_t, user, gid_t, group)
- {
--	return sys_fchownat(AT_FDCWD, filename, user, group,
--			    AT_SYMLINK_NOFOLLOW);
-+	return do_fchownat(AT_FDCWD, filename, user, group,
-+			   AT_SYMLINK_NOFOLLOW);
- }
- 
--SYSCALL_DEFINE3(fchown, unsigned int, fd, uid_t, user, gid_t, group)
-+int ksys_fchown(unsigned int fd, uid_t user, gid_t group)
- {
- 	struct fd f = fdget(fd);
- 	int error = -EBADF;
-@@ -708,6 +714,11 @@ SYSCALL_DEFINE3(fchown, unsigned int, fd, uid_t, user, gid_t, group)
- 	return error;
- }
- 
-+SYSCALL_DEFINE3(fchown, unsigned int, fd, uid_t, user, gid_t, group)
-+{
-+	return ksys_fchown(fd, user, group);
-+}
-+
- int open_check_o_direct(struct file *f)
- {
- 	/* NB: we're sure to have correct a_ops only after f_op->open */
+ /*
+  * Return true if path is reachable from root
+  *
 diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index ebb8eb458415..fd1dcdc7fb1b 100644
+index 79c46c46603b..63625d2cbcb8 100644
 --- a/include/linux/syscalls.h
 +++ b/include/linux/syscalls.h
-@@ -963,6 +963,7 @@ int ksys_chdir(const char __user *filename);
- int ksys_sync_file_range(int fd, loff_t offset, loff_t nbytes,
- 			 unsigned int flags);
- int ksys_fchmod(unsigned int fd, umode_t mode);
-+int ksys_fchown(unsigned int fd, uid_t user, gid_t group);
+@@ -948,4 +948,7 @@ asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
+  * the syscall they are named for.
+  */
  
- /*
-  * The following kernel syscall equivalents are just wrappers to fs-internal
-@@ -1028,4 +1029,17 @@ static inline long ksys_ftruncate(unsigned int fd, unsigned long length)
- 	return do_sys_ftruncate(fd, length, 1);
- }
- 
-+extern int do_fchownat(int dfd, const char __user *filename, uid_t user,
-+		       gid_t group, int flag);
-+static inline long ksys_chown(const char __user *filename, uid_t user,
-+			      gid_t group)
-+{
-+	return do_fchownat(AT_FDCWD, filename, user, group, 0);
-+}
-+static inline long ksys_lchown(const char __user *filename, uid_t user,
-+			       gid_t group)
-+{
-+	return do_fchownat(AT_FDCWD, filename, user, group,
-+			     AT_SYMLINK_NOFOLLOW);
-+}
++int ksys_mount(char __user *dev_name, char __user *dir_name, char __user *type,
++	       unsigned long flags, void __user *data);
++
  #endif
-diff --git a/init/initramfs.c b/init/initramfs.c
-index 237a975738ba..0d3b001b0dc5 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -343,7 +343,7 @@ static int __init do_name(void)
- 			wfd = sys_open(collected, openflags, mode);
- 
- 			if (wfd >= 0) {
--				sys_fchown(wfd, uid, gid);
-+				ksys_fchown(wfd, uid, gid);
- 				ksys_fchmod(wfd, mode);
- 				if (body_len)
- 					ksys_ftruncate(wfd, body_len);
-@@ -353,14 +353,14 @@ static int __init do_name(void)
- 		}
- 	} else if (S_ISDIR(mode)) {
- 		ksys_mkdir(collected, mode);
--		sys_chown(collected, uid, gid);
-+		ksys_chown(collected, uid, gid);
- 		ksys_chmod(collected, mode);
- 		dir_add(collected, mtime);
- 	} else if (S_ISBLK(mode) || S_ISCHR(mode) ||
- 		   S_ISFIFO(mode) || S_ISSOCK(mode)) {
- 		if (maybe_link() == 0) {
- 			ksys_mknod(collected, mode, rdev);
--			sys_chown(collected, uid, gid);
-+			ksys_chown(collected, uid, gid);
- 			ksys_chmod(collected, mode);
- 			do_utime(collected, mtime);
- 		}
-@@ -393,7 +393,7 @@ static int __init do_symlink(void)
- 	collected[N_ALIGN(name_len) + body_len] = '\0';
- 	clean_path(collected, 0);
- 	ksys_symlink(collected + N_ALIGN(name_len), collected);
--	sys_lchown(collected, uid, gid);
-+	ksys_lchown(collected, uid, gid);
- 	do_utime(collected, mtime);
- 	state = SkipIt;
- 	next_state = Reset;
-diff --git a/kernel/uid16.c b/kernel/uid16.c
-index ef1da2a5f9bd..ea3cf87ff000 100644
---- a/kernel/uid16.c
-+++ b/kernel/uid16.c
-@@ -20,17 +20,17 @@
- 
- SYSCALL_DEFINE3(chown16, const char __user *, filename, old_uid_t, user, old_gid_t, group)
+diff --git a/init/do_mounts.c b/init/do_mounts.c
+index 7cf4f6dafd5f..eb768de43d84 100644
+--- a/init/do_mounts.c
++++ b/init/do_mounts.c
+@@ -363,7 +363,7 @@ static void __init get_fs_names(char *page)
+ static int __init do_mount_root(char *name, char *fs, int flags, void *data)
  {
--	return sys_chown(filename, low2highuid(user), low2highgid(group));
-+	return ksys_chown(filename, low2highuid(user), low2highgid(group));
+ 	struct super_block *s;
+-	int err = sys_mount(name, "/root", fs, flags, data);
++	int err = ksys_mount(name, "/root", fs, flags, data);
+ 	if (err)
+ 		return err;
+ 
+@@ -599,7 +599,7 @@ void __init prepare_namespace(void)
+ 	mount_root();
+ out:
+ 	devtmpfs_mount("dev");
+-	sys_mount(".", "/", NULL, MS_MOVE, NULL);
++	ksys_mount(".", "/", NULL, MS_MOVE, NULL);
+ 	sys_chroot(".");
  }
  
- SYSCALL_DEFINE3(lchown16, const char __user *, filename, old_uid_t, user, old_gid_t, group)
- {
--	return sys_lchown(filename, low2highuid(user), low2highgid(group));
-+	return ksys_lchown(filename, low2highuid(user), low2highgid(group));
- }
+diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
+index 53d4f0f326e7..7868a6039fb4 100644
+--- a/init/do_mounts_initrd.c
++++ b/init/do_mounts_initrd.c
+@@ -43,7 +43,7 @@ static int init_linuxrc(struct subprocess_info *info, struct cred *new)
+ 	sys_dup(0);
+ 	/* move initrd over / and chdir/chroot in initrd root */
+ 	sys_chdir("/root");
+-	sys_mount(".", "/", NULL, MS_MOVE, NULL);
++	ksys_mount(".", "/", NULL, MS_MOVE, NULL);
+ 	sys_chroot(".");
+ 	sys_setsid();
+ 	return 0;
+@@ -81,7 +81,7 @@ static void __init handle_initrd(void)
+ 	current->flags &= ~PF_FREEZER_SKIP;
  
- SYSCALL_DEFINE3(fchown16, unsigned int, fd, old_uid_t, user, old_gid_t, group)
- {
--	return sys_fchown(fd, low2highuid(user), low2highgid(group));
-+	return ksys_fchown(fd, low2highuid(user), low2highgid(group));
- }
+ 	/* move initrd to rootfs' /old */
+-	sys_mount("..", ".", NULL, MS_MOVE, NULL);
++	ksys_mount("..", ".", NULL, MS_MOVE, NULL);
+ 	/* switch root and cwd back to / of rootfs */
+ 	sys_chroot("..");
  
- SYSCALL_DEFINE2(setregid16, old_gid_t, rgid, old_gid_t, egid)
+@@ -95,7 +95,7 @@ static void __init handle_initrd(void)
+ 	mount_root();
+ 
+ 	printk(KERN_NOTICE "Trying to move old root to /initrd ... ");
+-	error = sys_mount("/old", "/root/initrd", NULL, MS_MOVE, NULL);
++	error = ksys_mount("/old", "/root/initrd", NULL, MS_MOVE, NULL);
+ 	if (!error)
+ 		printk("okay\n");
+ 	else {
 -- 
 2.16.2
