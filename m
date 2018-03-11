@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932593AbeCKLAm (ORCPT <rfc822;w@1wt.eu>);
+        id S932575AbeCKLAm (ORCPT <rfc822;w@1wt.eu>);
         Sun, 11 Mar 2018 07:00:42 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:54444 "EHLO
+Received: from isilmar-4.linta.de ([136.243.71.142]:54364 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932227AbeCKK4v (ORCPT
+        with ESMTP id S932225AbeCKK4v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 11 Mar 2018 06:56:51 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, luto@kernel.org,
         torvalds@linux-foundation.org, mingo@kernel.org,
         viro@zeniv.linux.org.uk, akpm@linux-foundation.org
-Subject: [RFC PATCH 01/35] syscalls: define goal to not call sys_xyzzy() from within the kernel
-Date: Sun, 11 Mar 2018 11:55:23 +0100
-Message-Id: <20180311105557.20807-2-linux@dominikbrodowski.net>
+Subject: [RFC PATCH 29/35] syscalls: do not call sys_mknod{,at}() within the kernel
+Date: Sun, 11 Mar 2018 11:55:51 +0100
+Message-Id: <20180311105557.20807-30-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180311105557.20807-1-linux@dominikbrodowski.net>
 References: <20180311105557.20807-1-linux@dominikbrodowski.net>
@@ -21,80 +21,118 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The syscall entry points to the kernel defined by SYSCALL_DEFINEx()
-and COMPAT_SYSCALL_DEFINEx() should only be called from userspace
-through kernel entry points, but not from the kernel itself. This
-will allow cleanups and optimizations to the entry paths *and* to
-the parts of the kernel code which currently need to pretend to be
-userspace in order to make use of syscalls.
-
+CC: Al Viro <viro@zeniv.linux.org.uk>
+CC: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- Documentation/process/adding-syscalls.rst | 14 --------------
- include/linux/syscalls.h                  |  7 +++++++
- 2 files changed, 7 insertions(+), 14 deletions(-)
+ fs/internal.h            |  2 ++
+ fs/namei.c               | 12 +++++++++---
+ include/linux/syscalls.h |  8 ++++++++
+ init/do_mounts.h         |  2 +-
+ init/initramfs.c         |  2 +-
+ init/noinitramfs.c       |  2 +-
+ 6 files changed, 22 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/process/adding-syscalls.rst b/Documentation/process/adding-syscalls.rst
-index 8cc25a06f353..35a14b730da9 100644
---- a/Documentation/process/adding-syscalls.rst
-+++ b/Documentation/process/adding-syscalls.rst
-@@ -201,12 +201,6 @@ followed by the (type, name) pairs for the parameters as arguments.  Using
- this macro allows metadata about the new system call to be made available for
- other tools.
+diff --git a/fs/internal.h b/fs/internal.h
+index a3f04ca2a08b..4f0b67054c54 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -55,6 +55,8 @@ extern void __init chrdev_init(void);
+ extern int user_path_mountpoint_at(int, const char __user *, unsigned int, struct path *);
+ extern int vfs_path_lookup(struct dentry *, struct vfsmount *,
+ 			   const char *, unsigned int, struct path *);
++long do_mknodat(int dfd, const char __user *filename, umode_t mode,
++		unsigned int dev);
+ long do_mkdirat(int dfd, const char __user *pathname, umode_t mode);
+ long do_rmdir(int dfd, const char __user *pathname);
+ long do_unlinkat(int dfd, struct filename *name);
+diff --git a/fs/namei.c b/fs/namei.c
+index e15da92209d5..8459a18cdd18 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3728,8 +3728,8 @@ static int may_mknod(umode_t mode)
+ 	}
+ }
  
--The new entry point also needs a corresponding function prototype, in
--``include/linux/syscalls.h``, marked as asmlinkage to match the way that system
--calls are invoked::
--
--    asmlinkage long sys_xyzzy(...);
--
- Some architectures (e.g. x86) have their own architecture-specific syscall
- tables, but several other architectures share a generic syscall table. Add your
- new system call to the generic list by adding an entry to the list in
-@@ -240,7 +234,6 @@ To summarize, you need a commit that includes:
+-SYSCALL_DEFINE4(mknodat, int, dfd, const char __user *, filename, umode_t, mode,
+-		unsigned, dev)
++long do_mknodat(int dfd, const char __user *filename, umode_t mode,
++		unsigned int dev)
+ {
+ 	struct dentry *dentry;
+ 	struct path path;
+@@ -3772,9 +3772,15 @@ SYSCALL_DEFINE4(mknodat, int, dfd, const char __user *, filename, umode_t, mode,
+ 	return error;
+ }
  
-  - ``CONFIG`` option for the new function, normally in ``init/Kconfig``
-  - ``SYSCALL_DEFINEn(xyzzy, ...)`` for the entry point
-- - corresponding prototype in ``include/linux/syscalls.h``
-  - generic table entry in ``include/uapi/asm-generic/unistd.h``
-  - fallback stub in ``kernel/sys_ni.c``
++SYSCALL_DEFINE4(mknodat, int, dfd, const char __user *, filename, umode_t, mode,
++		unsigned int, dev)
++{
++	return do_mknodat(dfd, filename, mode, dev);
++}
++
+ SYSCALL_DEFINE3(mknod, const char __user *, filename, umode_t, mode, unsigned, dev)
+ {
+-	return sys_mknodat(AT_FDCWD, filename, mode, dev);
++	return do_mknodat(AT_FDCWD, filename, mode, dev);
+ }
  
-@@ -302,12 +295,6 @@ needed to deal with them.  (Typically, the ``compat_sys_`` version converts the
- values to 64-bit versions and either calls on to the ``sys_`` version, or both of
- them call a common inner implementation function.)
- 
--The compat entry point also needs a corresponding function prototype, in
--``include/linux/compat.h``, marked as asmlinkage to match the way that system
--calls are invoked::
--
--    asmlinkage long compat_sys_xyzzy(...);
--
- If the system call involves a structure that is laid out differently on 32-bit
- and 64-bit systems, say ``struct xyzzy_args``, then the include/linux/compat.h
- header file should also include a compat version of the structure (``struct
-@@ -344,7 +331,6 @@ version; the entry in ``include/uapi/asm-generic/unistd.h`` should use
- To summarize, you need:
- 
-  - a ``COMPAT_SYSCALL_DEFINEn(xyzzy, ...)`` for the compat entry point
-- - corresponding prototype in ``include/linux/compat.h``
-  - (if needed) 32-bit mapping struct in ``include/linux/compat.h``
-  - instance of ``__SC_COMP`` not ``__SYSCALL`` in
-    ``include/uapi/asm-generic/unistd.h``
+ int vfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
 diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index a78186d826d7..700a83a9c1ad 100644
+index 178d1321a037..617f72c0aae8 100644
 --- a/include/linux/syscalls.h
 +++ b/include/linux/syscalls.h
-@@ -941,4 +941,11 @@ asmlinkage long sys_pkey_free(int pkey);
- asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
- 			  unsigned mask, struct statx __user *buffer);
+@@ -993,4 +993,12 @@ static inline long ksys_symlink(const char __user *oldname,
+ 	return do_symlinkat(oldname, AT_FDCWD, newname);
+ }
  
-+
-+/*
-+ * The kernel should not use call syscalls (i.e., sys_xyzyyz()) directly.
-+ * Instead, use one of the following functions which work equivalent to
-+ * the syscall they are named for.
-+ */
++extern long do_mknodat(int dfd, const char __user *filename, umode_t mode,
++		       unsigned int dev);
++static inline long ksys_mknod(const char __user *filename, umode_t mode,
++			      unsigned int dev)
++{
++	return do_mknodat(AT_FDCWD, filename, mode, dev);
++}
 +
  #endif
+diff --git a/init/do_mounts.h b/init/do_mounts.h
+index 401f90ee1eeb..0bb0806de4ce 100644
+--- a/init/do_mounts.h
++++ b/init/do_mounts.h
+@@ -17,7 +17,7 @@ extern int root_mountflags;
+ static inline int create_dev(char *name, dev_t dev)
+ {
+ 	ksys_unlink(name);
+-	return sys_mknod(name, S_IFBLK|0600, new_encode_dev(dev));
++	return ksys_mknod(name, S_IFBLK|0600, new_encode_dev(dev));
+ }
+ 
+ static inline u32 bstat(char *name)
+diff --git a/init/initramfs.c b/init/initramfs.c
+index cd9571a113b6..2972ed0ab399 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -359,7 +359,7 @@ static int __init do_name(void)
+ 	} else if (S_ISBLK(mode) || S_ISCHR(mode) ||
+ 		   S_ISFIFO(mode) || S_ISSOCK(mode)) {
+ 		if (maybe_link() == 0) {
+-			sys_mknod(collected, mode, rdev);
++			ksys_mknod(collected, mode, rdev);
+ 			sys_chown(collected, uid, gid);
+ 			sys_chmod(collected, mode);
+ 			do_utime(collected, mtime);
+diff --git a/init/noinitramfs.c b/init/noinitramfs.c
+index a08a9d937e60..f4bad8436c93 100644
+--- a/init/noinitramfs.c
++++ b/init/noinitramfs.c
+@@ -33,7 +33,7 @@ static int __init default_rootfs(void)
+ 	if (err < 0)
+ 		goto out;
+ 
+-	err = sys_mknod((const char __user __force *) "/dev/console",
++	err = ksys_mknod((const char __user __force *) "/dev/console",
+ 			S_IFCHR | S_IRUSR | S_IWUSR,
+ 			new_encode_dev(MKDEV(5, 1)));
+ 	if (err < 0)
 -- 
 2.16.2
