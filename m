@@ -1,192 +1,123 @@
-Return-Path: <leo.wen@rock-chips.com>
-X-Google-Smtp-Source: AG47ELuy5nMH5whQFDOTrRKeCBSkoQ1r1fFPmABvEfFQUmjmWo+ifB2epZewJ1F+1V2Fh9CuecGk
-ARC-Seal: i=1; a=rsa-sha256; t=1520491135; cv=none;
-        d=google.com; s=arc-20160816;
-        b=KtkXsKvq84wxt/4KOm8XiST5DMGyaMbEtHX4g11RhHKDU+/r9yQLVN6p5oaRHa5huJ
-         W6XGaVR8cRxlwogF8sKdxMDfqufo6w9sMiK7FA8OpiK5LBv0TNMLdRFJGCHuzpL59HLK
-         H85ejjhnyPIdSqIqRBLsaGkLkThDGfWVPJyI1fCQ7S1vbxSK/7w9l3FajDC2PwT8tA8a
-         BP1cVQ8Jb2dUK2ARkM7+6HIrfu3HHaGCdjn0PklwOE635O0FhYguIY3qFiAMONrZCaQU
-         uTWbmlxyN3cwNYdPapb7aTgGsMLMGFMf7KZnqA7B3EXwigZU5/OijO2pGMm/0rYyb2XG
-         QAUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=itQyiu6bHOh8yNLaRX5nk/+zCCWRmhxWkIKCMTQk58g=;
-        b=quC0dn5O/ZSxVN4GSUKPaTodU5egaN8SluGYS8cfEeXAD7xRRA+j08laSMZ+5PFPca
-         fQRWTOlaoLkL9AJCsMWl1JnwoAXOdDbcQ+Fw/YgFy1RFMbeoANYXbzT3i/mT3rMPVcyw
-         kPOwMkOzKNQCY5P3L46ckAo4GsIjKXVu2Rvqjq0kwMAVvTvELgt8kppSJHSPnCmKqpxs
-         LYVh5Nmdku+JlRM9QZ3hMF3QsfsXyHyXaprgYLZStWZP0fuxmmDRyJRMvcRcCNKy6kp7
-         pGLnwU5d7H+k+07tZLcrMSrtYiCL/JtddJE1lYeY9VyG2vLqZZA+f09X6eIrjkP+c6IR
-         0VoQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of leo.wen@rock-chips.com designates 211.150.99.133 as permitted sender) smtp.mailfrom=leo.wen@rock-chips.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of leo.wen@rock-chips.com designates 211.150.99.133 as permitted sender) smtp.mailfrom=leo.wen@rock-chips.com
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: leo.wen@rock-chips.com
-X-FST-TO: mchehab@kernel.org
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: leo.wen@rock-chips.com
-X-UNIQUE-TAG: <d67ac6d1ebc92104109bf4ba7ecdb5e0>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From: Wen Nuan <leo.wen@rock-chips.com>
-To: mchehab@kernel.org,
-	davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	linus.walleij@linaro.org,
-	rdunlap@infradead.org,
-	jacob2.chen@rock-chips.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	eddie.cai@rock-chips.com,
-	Leo Wen <leo.wen@rock-chips.com>
-Subject: [PATCH v4 2/2] dt-bindings: Document the Rockchip RK1608 bindings
-Date: Thu,  8 Mar 2018 14:38:42 +0800
-Message-Id: <1520491122-5629-3-git-send-email-leo.wen@rock-chips.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520491122-5629-1-git-send-email-leo.wen@rock-chips.com>
-References: <1520491122-5629-1-git-send-email-leo.wen@rock-chips.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2935051-1520808695-2-11450437384530309628
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520808695; b=sx12DkuCLWl/AIdf1x7Fyign48RMhVo4vke4CO6sKBRHAxi
+    wrSTMB93dzwrwYSMlqQT/NHMQh/teCXBBYAUFLcflU9bYpA5i9ToHw6LSRsU5+Qt
+    mTRFZPQW+NdxsUMY4KvsHBKieio2mMPrG3nVHbSLwq3k5ImeUQ0zFnDDR4kmw4T5
+    6iibU+VoNgmSDuohLy5GRc3WsNDBN4T+9xgJkV4jcRc5um9Dq7T6QXafNOR/wbnS
+    NQ5PyJyk3S7HnXIMhmZQclqkl7XKxsrhO6jLClHMDRvoR6glKGWtu6czxnND7nx6
+    tWrcaqaFo3SkdOxl7i009FXN9NnJDS2iD0KxijA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1520808695; bh=zJ28zOYfFHaqrdQFuDh7KB1kcBYs/P6EkyjtcLVi7Yo=; b=B
+    gC+kpUA70i0lke7HuktAZe+CNFxyrILxY9EBcl8DifaH3R1YyaCktMSSAK/o6Ntp
+    Y6Y0iXH0grXlL86dNyhdSB3Cz1b8QWpP2pniOXcaBHF4nytODexQapMIj70+B/5T
+    B56woivhiaIosh/aAChztNgbVU+C9603dMACEeVoWnvFozSTEWSMQmBnGjwOXp0T
+    9Be5L2AxFHFq/FFAnz8vKbgikk0k9/+g4HjGfNXFPh2gyVQiU/2H5HyUopB0+Mrc
+    zahrvqEDEwXyVspHyGXwBqS0MUnsjacuI8qjoas2YfZIFow9AFMptGn4i83l5Mge
+    Hk+Ox7CEdO8OMaozw6O8A==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=TvoVZQy1 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=AkIP6tzT;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=TvoVZQy1 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=AkIP6tzT;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932358AbeCKWvV (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Mar 2018 18:51:21 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39130 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932290AbeCKWvU (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 18:51:20 -0400
+X-Google-Smtp-Source: AG47ELtX3o15ToIQlamHWvX0Y9mJNKUEyBv9zXsUSnP6kYeKJ/VxM3RG14NkKzR2nF9SHzeW6R9eGw==
+Subject: Re: [PATCH] soc: mediatek: fix the mistaken pointer accessed when
+ subdomains are added
+To: sean.wang@mediatek.com, rjw@rjwysocki.net, khilman@baylibre.com
+Cc: ulf.hansson@linaro.org, linux-mediatek@lists.infradead.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <9d9d75250bf62b491294a0c550c35ab7aba05eef.1518113047.git.sean.wang@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <b3923ae4-3fb4-c107-e7df-cd9d3c5f0652@gmail.com>
+Date: Sun, 11 Mar 2018 23:51:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <9d9d75250bf62b491294a0c550c35ab7aba05eef.1518113047.git.sean.wang@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593451230041702429?=
-X-GMAIL-MSGID: =?utf-8?q?1594350512697866071?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Leo Wen <leo.wen@rock-chips.com>
 
-Add DT bindings documentation for Rockchip RK1608.
 
-Changes V4:
-- Revise the comment of node.
-- Revise the comment of 'endpoint@1'.
+On 02/08/2018 07:07 PM, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> Fix the pointer to struct scp_subdomian not being moved forward
+> when each sub-domain is expected to be iteratively added through
+> pm_genpd_add_subdomain call.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 53fddb1a66dd ("soc: mediatek: reduce code duplication of scpsys_probe across all SoCs")
+> Reported-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 
-Signed-off-by: Leo Wen <leo.wen@rock-chips.com>
----
- Documentation/devicetree/bindings/media/rk1608.txt | 95 ++++++++++++++++++++++
- MAINTAINERS                                        |  1 +
- 2 files changed, 96 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/rk1608.txt
+Pushed now to v4.16-next/soc
 
-diff --git a/Documentation/devicetree/bindings/media/rk1608.txt b/Documentation/devicetree/bindings/media/rk1608.txt
-new file mode 100644
-index 0000000..ea23d2d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/rk1608.txt
-@@ -0,0 +1,95 @@
-+Rockchip RK1608 as a PreISP to link on Soc
-+------------------------------------------
-+
-+Required properties:
-+
-+- compatible		: "rockchip,rk1608";
-+- reg			: SPI slave address of the rk1608;
-+- clocks		: Must contain an entry for each entry in clock-names;
-+- clock-names		: Must contain "mclk" for the device's master clock;
-+- reset-gpios		: GPIO connected to reset pin;
-+- irq-gpios		: GPIO connected to irq pin;
-+- sleepst-gpios		: GPIO connected to sleepst pin;
-+- wakeup-gpios		: GPIO connected to wakeup pin;
-+- powerdown-gpios	: GPIO connected to powerdown pin;
-+- pinctrl-names		: Should contain only one value - "default";
-+- pinctrl-0		: Pin control group to be used for this controller;
-+
-+Optional properties:
-+
-+- spi-max-frequency	: Maximum SPI clocking speed of the device;
-+
-+The device node should contain one or two port child nodes with child
-+'endpoint' node. There are two ports then port@0 must
-+describe the output and port@1 input channels. Please refer to the
-+bindings defined in
-+Documentation/devicetree/bindings/media/video-interfaces.txt.
-+
-+endpoint node
-+-------------
-+
-+- data-lanes : (optional) specifies MIPI CSI-2 data lanes as covered in
-+	       video-interfaces.txt. If present it should be <1> - the device
-+	       supports only one data lane without re-mapping.
-+
-+Note1: Since no data is generated in RK1608，so this is meaningful that you need
-+a extra sensor (such as a camera) mounted on RK1608. You need to use endpoint@x
-+to match these sensors.
-+
-+Note2:You must set the current value of the spi pins to be 8mA, if they are not.
-+
-+Example:
-+&spi0 {
-+	status = "okay";
-+	spi_rk1608@00 {
-+		compatible =  "rockchip,rk1608";
-+		status = "okay";
-+		reg = <0>;
-+		spi-max-frequency = <24000000>;
-+		link-freqs = /bits/ 64 <LINK_FREQ>;
-+		clocks = <&cru SCLK_SPI0>, <&cru SCLK_VIP_OUT>,
-+		<&cru DCLK_VOP0>, <&cru ACLK_VIP>, <&cru HCLK_VIP>,
-+		<&cru PCLK_ISP_IN>, <&cru PCLK_ISP_IN>,
-+		<&cru PCLK_ISP_IN>, <&cru SCLK_MIPIDSI_24M>,
-+		<&cru PCLK_MIPI_CSI>;
-+		clock-names = "mclk", "mipi_clk",  "pd_cif", "aclk_cif",
-+			"hclk_cif", "cif0_in", "g_pclkin_cif",
-+			"cif0_out", "clk_mipi_24m", "hclk_mipiphy";
-+		reset-gpios = <&gpio6 0 GPIO_ACTIVE_HIGH>;
-+		irq-gpios = <&gpio6 2 GPIO_ACTIVE_HIGH>;
-+		sleepst-gpios = <&gpio6 1 GPIO_ACTIVE_HIGH>;
-+		wakeup-gpios = <&gpio6 4 GPIO_ACTIVE_HIGH>;
-+		powerdown-gpios = <&gpio8 0 GPIO_ACTIVE_HIGH>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&rk1608_irq_gpios &rk1608_wake_gpios
-+			     &rk1608_sleep_gpios>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			port@0 {
-+				mipi_dphy_out0: endpoint@0 {
-+					remote-endpoint = <&mipi_dphy_in0>;
-+					clock-lanes = <0>;
-+					data-lanes = <1 2 3 4>;
-+					clock-noncontinuous;
-+					link-frequencies =
-+						/bits/ 64 <LINK_FREQ>;
-+				};
-+			};
-+
-+			port@1 {
-+				sensor_in0: endpoint@0 {
-+					remote-endpoint = <&sensor_out0>;
-+				};
-+				/* If you have a second sensor,
-+				 * add the 'endpoint@1' node here.
-+				 */
-+				sensor_in1: endpoint@1 {
-+					remote-endpoint = <&sensor_out1>;
-+				};
-+			};
-+		};
-+	};
-+};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b2a98e3..04d227b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -141,6 +141,7 @@ M:	Leo Wen <leo.wen@rock-chips.com>
- S:	Maintained
- F:	drivers/media/spi/rk1608.c
- F:	drivers/media/spi/rk1608.h
-+F:	Documentation/devicetree/bindings/media/rk1608.txt
- 
- 3C59X NETWORK DRIVER
- M:	Steffen Klassert <klassert@mathematik.tu-chemnitz.de>
--- 
-2.7.4
+Thanks a lot
+
+@stable this would need to be applied since v4.13
+
+> ---
+>  drivers/soc/mediatek/mtk-scpsys.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+> index fc55faa..9de801e 100644
+> --- a/drivers/soc/mediatek/mtk-scpsys.c
+> +++ b/drivers/soc/mediatek/mtk-scpsys.c
+> @@ -1048,7 +1048,7 @@ static int scpsys_probe(struct platform_device *pdev)
+>  
+>  	pd_data = &scp->pd_data;
+>  
+> -	for (i = 0, sd = soc->subdomains ; i < soc->num_subdomains ; i++) {
+> +	for (i = 0, sd = soc->subdomains; i < soc->num_subdomains; i++, sd++) {
+>  		ret = pm_genpd_add_subdomain(pd_data->domains[sd->origin],
+>  					     pd_data->domains[sd->subdomain]);
+>  		if (ret && IS_ENABLED(CONFIG_PM))
+> 
