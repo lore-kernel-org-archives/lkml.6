@@ -1,127 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932166AbeCKPNU (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 11:13:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55874 "EHLO mail.kernel.org"
+        id S932179AbeCKPPm (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 11:15:42 -0400
+Received: from mout.web.de ([212.227.17.12]:35019 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932118AbeCKPNT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 11:13:19 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BC5421707
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Mon, 12 Mar 2018 00:13:15 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        Yang Bo <yangbo@deepin.com>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: Re: [RFC PATCH -tip 0/9] kprobes: Cleanup jprobe implementation
-Message-Id: <20180312001315.7a5382b772a352919e638699@kernel.org>
-In-Reply-To: <20180310082444.uiy7fdqlxh6qbuwp@gmail.com>
-References: <152059891712.4214.9539716544254881611.stgit@devbox>
-        <20180310082444.uiy7fdqlxh6qbuwp@gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S932118AbeCKPPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Mar 2018 11:15:40 -0400
+To: user-mode-linux-devel@lists.sourceforge.net,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>
+Cc: user-mode-linux-user@lists.sourceforge.net,
+        kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/9] UML vector network driver: Adjustments for three function
+ implementations
+Message-ID: <e21083ff-0ba7-42ad-e3f0-d84da9c93208@users.sourceforge.net>
+Date: Sun, 11 Mar 2018 16:15:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:iq+utSECWgNHzLrNq1y9R46ivSzL723vpPBlIg15O2Q9hW/JAgH
+ +dsQTvbJrw/Au1RWTBDkoqPEqM9hohNS4913lVv/39Jw5PzEQoS91ZP9EMxG5uapSYdhmiA
+ IBWwD85s6LwJSVNDzy24d77N4KyYIdm3tXCwX7YoUWnatFhRbQazo0B+t+sEi8rWOzjeuRH
+ nNwDReKkQnAPeJ2yY6aEQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:9bWW00RnfSA=:IPnwAHKZP7BhIghqwA+M3p
+ YqofJlGcZla8KemyrP7kRo3C/AhDWhVL03+6i9m4SvsY/9PrcSRna2k+nN8kjtbF5mTm01qIT
+ XWK2kgGmSzfE+aeuGjkDvNUPmDMjFC/NGrXU9qS9qZtntGzYtEo/j8vCO4D2ipaUc1ZMuO31W
+ t+CCzf8EC2DMOJaiP1hKERj2BICLYlLt/nxNDHlPul80i7SfnshtVXkHaHarsPhJp3SO0Q8hv
+ 1XMrU76u0GpuuW4y1TcMy7OC7U5QQk4Cf5aBTpoUyhbpxZT+73oyUlx4vEKUe/uCjFqcT8YAs
+ 0jcMMQuz/hvRP3a8rbP9LtufvAJn1klsxsqQXkCiA0xl2Dg168LDXUqnJ6sjICEYySIpQvzVP
+ vci53D0M6TwNP3l76jP4XJUuB2fqeHSJg7j0xhTRXLH5uP0qPdhCCCEZuIRqo2FMntOmtLXJR
+ mC8Z7BhDB6r3MWBx14VXLmOx2tDz+3BWA+/Kow1N89UoS5Q7dE5ZSoPdKLFR3PtdrM07rP7Sw
+ Dc0O0SZby2Ao8jJbc3q6QD3sSLPyJsZb4ixblmemDqf/o8UyuGBsorP/R4pIFug8bw0OS+JQQ
+ vEq92MGiIyUw9pwCYn9J0JnJeJgNUJ5wZmiEvpKfdz9MPbi7rlbnxWHh1wmZ/NRx+ensXUk26
+ MjW5V9qvkVSpI2yokOPsSRkKdIhA1/rkYNH8tG45T0drwImrMqroeJxwzzoXOpT9lUIuHPceo
+ pTdVsZuPV5EImNo1HViJfFhyON+tFGgCieU9bm83b5mJGKmCi6kH5FsXh1HQvAMkkVSNhWQDB
+ DMizJKqA/tSPknjAP97xLvGHgCM4QSQTq1HpI/J9Nla3r+wBkY=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 10 Mar 2018 09:24:44 +0100
-Ingo Molnar <mingo@kernel.org> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 11 Mar 2018 16:06:16 +0100
 
-> 
-> * Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > Hello,
-> > 
-> > Since we decided to remove jprobe from kernel last year,
-> > its APIs are disabled and we worked on moving in-kernel
-> > jprobe users to kprobes or trace-events. And now no jprobe
-> > users are here anymore.
-> > 
-> > I think it is good time to get rid of jprobe implementation
-> > from the kernel. However, I need other arch developers help
-> > to complete it, since jprobe is implemented multi arch wide.
-> > I can remove those code, but can not test all of those.
-> > 
-> > Here is the series of patches to show how to do that.
-> > I tried to remove it from x86 tree. Basically we need to
-> > do 3 things;
-> > 
-> >  - Remove jprobe functions (register/unregister,
-> >    setjump/longjump) from generic/arch-dependent code.
-> >    [1/9][2/9][3/9]
-> >  - Remove break_handler related code.
-> >    [4/9][5/9][6/9]
-> >  - Do not disable preemption on exception handler
-> >    [7/9][8/9][9/9]
-> > 
-> > The [3/9] and [6/9] are destractive changes except for x86
-> > (means causes build errors) since those arch still have some
-> > references of those functions. So we need to write patches
-> > similar to [2/9] and [5/9] for each arch before applying those.
-> > In this series I sorted it as this order just for review,
-> > [3/9] and [6/9] should be applied after all archs have
-> > been fixed.
-> > 
-> > Also, [7/9] is a kind of destractive, which changes required
-> > behavior for the pre_handlers which changes regs->ip.
-> > So we also need a patch similar to [7/9] for each arch too.
-> > Fortunately, current in-tree such user is very limited, both
-> > works only on x86. So it is not hurry, but we need to change
-> > arch dependent code.
-> >
-> > Thank you,
-> > 
-> > ---
-> > 
-> > Masami Hiramatsu (9):
-> >       kprobes: Remove jprobe API implementation
-> >       x86: kprobes: Remove jprobe implementation
-> >       kprobes: Remove jprobe data structure and interfaces
-> >       kprobes: Ignore break_handler
-> >       x86: kprobes: Ignore break_handler
-> >       kprobes: Remove break_handler from struct kprobe
-> >       x86: kprobes: Do not disable preempt on int3 path
-> >       error-injection: Fix to not enabling preemption in pre_handler
-> >       tracing: kprobes: Fix to not enabling preemption
-> > 
-> > 
-> >  Documentation/kprobes.txt        |   13 ++--
-> >  arch/x86/include/asm/kprobes.h   |    3 -
-> >  arch/x86/kernel/kprobes/common.h |   10 ---
-> >  arch/x86/kernel/kprobes/core.c   |  114 ++------------------------------------
-> >  arch/x86/kernel/kprobes/ftrace.c |   21 +------
-> >  arch/x86/kernel/kprobes/opt.c    |    1 
-> >  include/linux/kprobes.h          |   54 ------------------
-> >  kernel/fail_function.c           |    1 
-> >  kernel/kprobes.c                 |  115 ++------------------------------------
-> >  kernel/trace/trace_kprobe.c      |    3 -
-> >  10 files changed, 20 insertions(+), 315 deletions(-)
-> 
-> Nice work, and I love the diffstat, but please do a series that works (builds and 
-> boots and has working kprobes) at every interim step.
+Some update suggestions were taken into account
+from static source code analysis.
 
-Thank you! Yes, I'm thinking just keep header files no change (no removing
-API and structure) until all archs apply C file changes in next version,
-so that we can avoid any build error/test error.
+Markus Elfring (9):
+  Delete unnecessary code in user_init_raw_fds()
+  Less checks in user_init_raw_fds() after error detection
+  Adjust an error message in user_init_socket_fds()
+  Delete an unnecessary check before kfree() in user_init_socket_fds()
+  Delete two unnecessary checks before freeaddrinfo() in user_init_socket_fds()
+  Less checks in user_init_socket_fds() after error detection
+  Adjust an error message in user_init_tap_fds()
+  Less checks in user_init_tap_fds() after error detection
+  Delete an unnecessary variable initialisation in user_init_tap_fds()
 
-Thanks,
-
-
-
-> 
-> Thanks,
-> 
-> 	Ingo
-
+ arch/um/drivers/vector_user.c | 133 +++++++++++++++++++-----------------------
+ 1 file changed, 60 insertions(+), 73 deletions(-)
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.16.2
