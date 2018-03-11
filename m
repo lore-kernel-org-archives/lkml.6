@@ -1,87 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932452AbeCKXAd (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 19:00:33 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38845 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932373AbeCKXA2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 19:00:28 -0400
-X-Google-Smtp-Source: AG47ELvejAFWmy3oRNMcd0XzoDpEDSXUFpxahwWT3R+h/CGG8khxP/D51s6C35b64xdyLL7OAiFlBw==
-Subject: Re: [PATCH 3/3] wlcore: Use common error handling code in
- wl1271_acx_sta_rate_policies()
-To: SF Markus Elfring <elfring@users.sourceforge.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        Colin Ian King <colin.king@canonical.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-References: <b5db0825-394a-1d6d-351a-43be14e4c6b4@users.sourceforge.net>
- <7d5cc7b4-f0ce-192a-3e5e-c2944c1e3e3d@users.sourceforge.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <5AA5B50B.6000101@broadcom.com>
-Date: Mon, 12 Mar 2018 00:00:27 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.0
+        id S932447AbeCKXCX (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 19:02:23 -0400
+Received: from cmta20.telus.net ([209.171.16.93]:52408 "EHLO cmta20.telus.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932355AbeCKXCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Mar 2018 19:02:21 -0400
+X-Authority-Analysis: v=2.2 cv=Pr98V0E3 c=1 sm=1 tr=0
+ a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
+ a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=kj9zAlcOel0A:10 a=FGbulvE0AAAA:8
+ a=VwQbUJbxAAAA:8 a=P-Pedy7ncC1TvRnTAiwA:9 a=CjuIK1q_8ugA:10
+ a=svzTaB3SJmTkU8mK-ULk:22 a=AjGcO6oz07-iQ99wixmX:22
+From: "Doug Smythies" <dsmythies@telus.net>
+To: "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
+Cc: "'Rik van Riel'" <riel@surriel.com>,
+        "'Mike Galbraith'" <mgalbraith@suse.de>,
+        "'Thomas Gleixner'" <tglx@linutronix.de>,
+        "'Paul McKenney'" <paulmck@linux.vnet.ibm.com>,
+        "'Thomas Ilsche'" <thomas.ilsche@tu-dresden.de>,
+        "'Frederic Weisbecker'" <fweisbec@gmail.com>,
+        "'Linux PM'" <linux-pm@vger.kernel.org>,
+        "'Aubrey Li'" <aubrey.li@linux.intel.com>,
+        "'LKML'" <linux-kernel@vger.kernel.org>,
+        "'Peter Zijlstra'" <peterz@infradead.org>,
+        "'Doug Smythies'" <dsmythies@telus.net>
+References: <2450532.XN8DODrtDf@aspire.rjw.lan> <000701d3b889$eadd5340$c097f9c0$@net> <001801d3b90c$99232600$cb697200$@net> uy66ebKjsFfdwuy6Be0qnb v2lnemfac1Konv3GbegAC4
+In-Reply-To: v2lnemfac1Konv3GbegAC4
+Subject: RE: [RFC/RFT][PATCH v3 0/6] sched/cpuidle: Idle loop rework
+Date: Sun, 11 Mar 2018 16:02:14 -0700
+Message-ID: <000c01d3b98d$016eeb10$044cc130$@net>
 MIME-Version: 1.0
-In-Reply-To: <7d5cc7b4-f0ce-192a-3e5e-c2944c1e3e3d@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain;
+        charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Office Outlook 12.0
+Thread-Index: AdO5Iqo8D92TMYoqSVyabI5dAwHWqAAKkqFgAA9qg9A=
+Content-Language: en-ca
+X-CMAE-Envelope: MS4wfGSMf/JZWUvALWtRoFQ525uFAtHA+g6S5WqXusVgmuPvKOe6KLET/fdu2uPqwMkJEAhXMH/MliIX0S3UG2rCjpQ4q414KhjpBoDUh9ISAeqAsx4FPGOR
+ VmLM/WTba4N1PPApxl/nGds7r+opJjHzmXUT6u7+akvGS3RDeQ448cu6vDBy9BgyAwwlnfdEHKsDuxYuZg7T0uzs/UhVNdec9Nv/HtRqV0Y4oXVvDgIB41UF
+ LrlVj/7BVK9J+q+8A7TFwW0dkBASo0pm7fiql9Zus2jzqut3wRuGaRX0KbfXLlfScncK64IgUKQIjy3yHhuQZhMlzEoxhkLRR7JQHNH4OeQWTwV27A45QfMB
+ bmGE/c8HPfBtdt/XNMy639xvVGnQyPPlrJT5Wufbx0J63qYqI8xYwPRlnfWFbAxHEbKV4BcxFoVlBGS8QanZRs0q2lgsajcwNjVgo0Z/6sAYi2a/SFjyux5F
+ fBn/oBHsXZkuzZxSDzqxdKDg779kXyE/EhxYAuCmOpUn5s3piaoZ2m1taZ0=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/10/2018 10:33 PM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 10 Mar 2018 22:18:45 +0100
+On 2018.03.11 08:52 Doug Smythies wrote:
+> On 2018.03.11 03:22 Rafael J. Wysocki wrote:
+>> On Sunday, March 11, 2018 8:43:02 AM CET Doug Smythies wrote:
+>>> On 2018.03.10 15:55 Rafael J. Wysocki wrote: 
+>>>> On Saturday, March 10, 2018 5:07:36 PM CET Doug Smythies wrote:
+>>>>> On 2018.03.10 01:00 Rafael J. Wysocki wrote:
+>>>
+>>> ... [snip] ...
+>>> 
+>>>> The information that they often spend more time than a tick
+>>>> period in state 0 in one go *is* relevant, though.
+>>>>
+>>>>
+>>>> That issue can be dealt with in a couple of ways and the patch below is a
+>>>> rather straightforward attempt to do that.  The idea, basically, is to discard
+>>>> the result of governor prediction if the tick has been stopped alread and
+>>>> the predicted idle duration is within the tick range.
+>>>
+>>>> Please try it on top of the v3 and tell me if you see an improvement.
+>>> 
+>>> It seems pretty good so far.
+>>> See a new line added to the previous graph, "rjwv3plus".
+>>> 
+>>> http://fast.smythies.com/rjwv3plus_100.png
+>>
+>> OK, cool!
+>>
+>> Below is a respin of the last patch which also prevents shallow states from
+>> being chosen due to interactivity_req when the tick is stopped.
+>>
+>> You may also add a poll_idle() fix I've just posted:
+>>
+>> https://patchwork.kernel.org/patch/10274595/
+>>
+>> on top of this.  It makes quite a bit of a difference for me. :-)
 >
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function.
->
-> This issue was detected by using the Coccinelle software.
+> I will add and test, but I already know from testing previous versions
+> of this patch, from Rik van Riel and myself, that the results will be
+> awesome.
 
-You call this an issue?
+And the results are indeed awesome.
 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   drivers/net/wireless/ti/wlcore/acx.c | 24 +++++++++++-------------
->   1 file changed, 11 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/net/wireless/ti/wlcore/acx.c b/drivers/net/wireless/ti/wlcore/acx.c
-> index 1cc5bba670e1..7d37a417c756 100644
-> --- a/drivers/net/wireless/ti/wlcore/acx.c
-> +++ b/drivers/net/wireless/ti/wlcore/acx.c
+A four hour 100% load on one CPU test was run, with trace, however
+there is nothing to report, as everything is great.
 
-[...]
+The same graph as the last couple of days, with a new line added for
+V3 + the respin of patch 7 of 6 + the poll-idle fix, called rjwv3pp,
+is here:
 
->   	ret = wl1271_cmd_configure(wl, ACX_RATE_POLICY, acx, sizeof(*acx));
-> -	if (ret < 0) {
-> -		wl1271_warning("Setting of rate policies failed: %d", ret);
-> -		goto out;
-> -	}
-> +	if (ret < 0)
-> +		goto report_failure;
->
-> -out:
-> +free_acx:
->   	kfree(acx);
->   	return ret;
-> +
-> +report_failure:
-> +	wl1271_warning("Setting of rate policies failed: %d", ret);
-> +	goto free_acx;
+http://fast.smythies.com/rjwv3pp_100.png
 
-In my opinion you are introducing a new issue. I don't call this 
-"common" in any way. It is leaning more towards "spaghetti code" [1]. 
-Jumping over a label to return to it with another jump. They are not 
-long jumps, but it sure does not make thing more readable. Always aim 
-for simple top-to-bottom.
-
-Regards,
-Arend
-
-[1] https://en.wikipedia.org/wiki/Spaghetti_code
-
->   }
->
->   int wl1271_acx_ap_rate_policy(struct wl1271 *wl, struct conf_tx_rate_class *c,
->
+... Doug
