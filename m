@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932512AbeCKLEC (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 07:04:02 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:54072 "EHLO
+        id S932489AbeCKLEB (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 07:04:01 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:54054 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932128AbeCKK4r (ORCPT
+        with ESMTP id S932126AbeCKK4r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 11 Mar 2018 06:56:47 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, luto@kernel.org,
         torvalds@linux-foundation.org, mingo@kernel.org,
         viro@zeniv.linux.org.uk, akpm@linux-foundation.org
-Subject: [RFC PATCH 30/35] syscalls: do not call sys_link{,at}() within the kernel
-Date: Sun, 11 Mar 2018 11:55:52 +0100
-Message-Id: <20180311105557.20807-31-linux@dominikbrodowski.net>
+Subject: [RFC PATCH 11/35] syscalls: do not call sys_eventfd2() within the kernel
+Date: Sun, 11 Mar 2018 11:55:33 +0100
+Message-Id: <20180311105557.20807-12-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180311105557.20807-1-linux@dominikbrodowski.net>
 References: <20180311105557.20807-1-linux@dominikbrodowski.net>
@@ -21,90 +21,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CC: Al Viro <viro@zeniv.linux.org.uk>
-CC: Andrew Morton <akpm@linux-foundation.org>
+CC: Alexander Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- fs/internal.h            |  2 ++
- fs/namei.c               | 12 +++++++++---
- include/linux/syscalls.h |  8 ++++++++
- init/initramfs.c         |  2 +-
- 4 files changed, 20 insertions(+), 4 deletions(-)
+ fs/eventfd.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 4f0b67054c54..91e6fc93fcb5 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -62,6 +62,8 @@ long do_rmdir(int dfd, const char __user *pathname);
- long do_unlinkat(int dfd, struct filename *name);
- long do_symlinkat(const char __user *oldname, int newdfd,
- 		  const char __user *newname);
-+int do_linkat(int olddfd, const char __user *oldname, int newdfd,
-+	      const char __user *newname, int flags);
+diff --git a/fs/eventfd.c b/fs/eventfd.c
+index 012f5bd46dfa..08d3bd602f73 100644
+--- a/fs/eventfd.c
++++ b/fs/eventfd.c
+@@ -380,7 +380,7 @@ struct eventfd_ctx *eventfd_ctx_fileget(struct file *file)
+ }
+ EXPORT_SYMBOL_GPL(eventfd_ctx_fileget);
  
- /*
-  * namespace.c
-diff --git a/fs/namei.c b/fs/namei.c
-index 8459a18cdd18..10148235829f 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -4250,8 +4250,8 @@ EXPORT_SYMBOL(vfs_link);
-  * with linux 2.0, and to avoid hard-linking to directories
-  * and other special files.  --ADM
-  */
--SYSCALL_DEFINE5(linkat, int, olddfd, const char __user *, oldname,
--		int, newdfd, const char __user *, newname, int, flags)
-+int do_linkat(int olddfd, const char __user *oldname, int newdfd,
-+	      const char __user *newname, int flags)
+-SYSCALL_DEFINE2(eventfd2, unsigned int, count, int, flags)
++static int do_eventfd(unsigned int count, int flags)
  {
- 	struct dentry *new_dentry;
- 	struct path old_path, new_path;
-@@ -4315,9 +4315,15 @@ SYSCALL_DEFINE5(linkat, int, olddfd, const char __user *, oldname,
- 	return error;
+ 	struct eventfd_ctx *ctx;
+ 	int fd;
+@@ -409,8 +409,13 @@ SYSCALL_DEFINE2(eventfd2, unsigned int, count, int, flags)
+ 	return fd;
  }
  
-+SYSCALL_DEFINE5(linkat, int, olddfd, const char __user *, oldname,
-+		int, newdfd, const char __user *, newname, int, flags)
++SYSCALL_DEFINE2(eventfd2, unsigned int, count, int, flags)
 +{
-+	return do_linkat(olddfd, oldname, newdfd, newname, flags);
++	return do_eventfd(count, flags);
 +}
 +
- SYSCALL_DEFINE2(link, const char __user *, oldname, const char __user *, newname)
+ SYSCALL_DEFINE1(eventfd, unsigned int, count)
  {
--	return sys_linkat(AT_FDCWD, oldname, AT_FDCWD, newname, 0);
-+	return do_linkat(AT_FDCWD, oldname, AT_FDCWD, newname, 0);
+-	return sys_eventfd2(count, 0);
++	return do_eventfd(count, 0);
  }
  
- /**
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 617f72c0aae8..27620caed7e4 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -1001,4 +1001,12 @@ static inline long ksys_mknod(const char __user *filename, umode_t mode,
- 	return do_mknodat(AT_FDCWD, filename, mode, dev);
- }
- 
-+extern int do_linkat(int olddfd, const char __user *oldname, int newdfd,
-+		     const char __user *newname, int flags);
-+static inline long ksys_link(const char __user *oldname,
-+			     const char __user *newname)
-+{
-+	return do_linkat(AT_FDCWD, oldname, AT_FDCWD, newname, 0);
-+}
-+
- #endif
-diff --git a/init/initramfs.c b/init/initramfs.c
-index 2972ed0ab399..5855ab632b4e 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -306,7 +306,7 @@ static int __init maybe_link(void)
- 	if (nlink >= 2) {
- 		char *old = find_link(major, minor, ino, mode, collected);
- 		if (old)
--			return (sys_link(old, collected) < 0) ? -1 : 1;
-+			return (ksys_link(old, collected) < 0) ? -1 : 1;
- 	}
- 	return 0;
- }
 -- 
 2.16.2
