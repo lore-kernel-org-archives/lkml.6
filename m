@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932348AbeCKLAk (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 07:00:40 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:54446 "EHLO
+        id S932279AbeCKLAj (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 07:00:39 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:54448 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932230AbeCKK4v (ORCPT
+        with ESMTP id S932231AbeCKK4v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 11 Mar 2018 06:56:51 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, luto@kernel.org,
         torvalds@linux-foundation.org, mingo@kernel.org,
         viro@zeniv.linux.org.uk, akpm@linux-foundation.org
-Subject: [RFC PATCH 32/35] syscalls: do not call sys_{f,}access{,at}() within the kernel
-Date: Sun, 11 Mar 2018 11:55:54 +0100
-Message-Id: <20180311105557.20807-33-linux@dominikbrodowski.net>
+Cc: "Luis R . Rodriguez" <mcgrof@kernel.org>
+Subject: [RFC PATCH 02/35] syscalls: use kernel_wait4() instead of sys_wait4()
+Date: Sun, 11 Mar 2018 11:55:24 +0100
+Message-Id: <20180311105557.20807-3-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180311105557.20807-1-linux@dominikbrodowski.net>
 References: <20180311105557.20807-1-linux@dominikbrodowski.net>
@@ -21,85 +22,69 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+All call sites of sys_wait4() set *rusage to NULL. Therefore, there is
+no need for the copy_to_user() handling of *rusage, and we can use
+kernel_wait4() directly.
+
+CC: Luis R. Rodriguez <mcgrof@kernel.org>
 CC: Al Viro <viro@zeniv.linux.org.uk>
 CC: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- fs/internal.h            | 1 +
- fs/open.c                | 9 +++++++--
- include/linux/syscalls.h | 6 ++++++
- init/main.c              | 3 ++-
- 4 files changed, 16 insertions(+), 3 deletions(-)
+ kernel/exit.c          | 2 +-
+ kernel/pid_namespace.c | 6 +++---
+ kernel/umh.c           | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 2474bf460f96..26f4f05b52ef 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -119,6 +119,7 @@ extern struct file *do_filp_open(int dfd, struct filename *pathname,
- extern struct file *do_file_open_root(struct dentry *, struct vfsmount *,
- 		const char *, const struct open_flags *);
- 
-+long do_faccessat(int dfd, const char __user *filename, int mode);
- int do_fchmodat(int dfd, const char __user *filename, umode_t mode);
- 
- extern int open_check_o_direct(struct file *f);
-diff --git a/fs/open.c b/fs/open.c
-index 6037f2bf418c..0fc8188be31a 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -350,7 +350,7 @@ SYSCALL_DEFINE4(fallocate, int, fd, int, mode, loff_t, offset, loff_t, len)
-  * We do this by temporarily clearing all FS-related capabilities and
-  * switching the fsuid/fsgid around to the real ones.
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 995453d9fb55..c3c7ac560114 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -1691,7 +1691,7 @@ SYSCALL_DEFINE4(wait4, pid_t, upid, int __user *, stat_addr,
   */
--SYSCALL_DEFINE3(faccessat, int, dfd, const char __user *, filename, int, mode)
-+long do_faccessat(int dfd, const char __user *filename, int mode)
+ SYSCALL_DEFINE3(waitpid, pid_t, pid, int __user *, stat_addr, int, options)
  {
- 	const struct cred *old_cred;
- 	struct cred *override_cred;
-@@ -426,9 +426,14 @@ SYSCALL_DEFINE3(faccessat, int, dfd, const char __user *, filename, int, mode)
- 	return res;
+-	return sys_wait4(pid, stat_addr, options, NULL);
++	return kernel_wait4(pid, stat_addr, options, NULL);
  }
  
-+SYSCALL_DEFINE3(faccessat, int, dfd, const char __user *, filename, int, mode)
-+{
-+	return do_faccessat(dfd, filename, mode);
-+}
-+
- SYSCALL_DEFINE2(access, const char __user *, filename, int, mode)
- {
--	return sys_faccessat(AT_FDCWD, filename, mode);
-+	return do_faccessat(AT_FDCWD, filename, mode);
- }
- 
- int ksys_chdir(const char __user *filename)
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 87feef73c077..ac4ba9439e52 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -1016,4 +1016,10 @@ static inline int ksys_chmod(const char __user *filename, umode_t mode)
- 	return do_fchmodat(AT_FDCWD, filename, mode);
- }
- 
-+extern long do_faccessat(int dfd, const char __user *filename, int mode);
-+static inline long ksys_access(const char __user *filename, int mode)
-+{
-+	return do_faccessat(AT_FDCWD, filename, mode);
-+}
-+
  #endif
-diff --git a/init/main.c b/init/main.c
-index b8649d1466e1..d0ded4322c6b 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -1087,7 +1087,8 @@ static noinline void __init kernel_init_freeable(void)
- 	if (!ramdisk_execute_command)
- 		ramdisk_execute_command = "/init";
+diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+index 0b53eef7d34b..93b57f026688 100644
+--- a/kernel/pid_namespace.c
++++ b/kernel/pid_namespace.c
+@@ -242,16 +242,16 @@ void zap_pid_ns_processes(struct pid_namespace *pid_ns)
  
--	if (sys_access((const char __user *) ramdisk_execute_command, 0) != 0) {
-+	if (ksys_access((const char __user *)
-+			ramdisk_execute_command, 0) != 0) {
- 		ramdisk_execute_command = NULL;
- 		prepare_namespace();
- 	}
+ 	/*
+ 	 * Reap the EXIT_ZOMBIE children we had before we ignored SIGCHLD.
+-	 * sys_wait4() will also block until our children traced from the
++	 * kernel_wait4() will also block until our children traced from the
+ 	 * parent namespace are detached and become EXIT_DEAD.
+ 	 */
+ 	do {
+ 		clear_thread_flag(TIF_SIGPENDING);
+-		rc = sys_wait4(-1, NULL, __WALL, NULL);
++		rc = kernel_wait4(-1, NULL, __WALL, NULL);
+ 	} while (rc != -ECHILD);
+ 
+ 	/*
+-	 * sys_wait4() above can't reap the EXIT_DEAD children but we do not
++	 * kernel_wait4() above can't reap the EXIT_DEAD children but we do not
+ 	 * really care, we could reparent them to the global init. We could
+ 	 * exit and reap ->child_reaper even if it is not the last thread in
+ 	 * this pid_ns, free_pid(pid_allocated == 0) calls proc_cleanup_work(),
+diff --git a/kernel/umh.c b/kernel/umh.c
+index 18e5fa4b0e71..f4b557cadf08 100644
+--- a/kernel/umh.c
++++ b/kernel/umh.c
+@@ -135,7 +135,7 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
+ 		 *
+ 		 * Thus the __user pointer cast is valid here.
+ 		 */
+-		sys_wait4(pid, (int __user *)&ret, 0, NULL);
++		kernel_wait4(pid, (int __user *)&ret, 0, NULL);
+ 
+ 		/*
+ 		 * If ret is 0, either call_usermodehelper_exec_async failed and
 -- 
 2.16.2
