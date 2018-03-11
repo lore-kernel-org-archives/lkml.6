@@ -1,84 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932482AbeCKXNO (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 19:13:14 -0400
-Received: from ozlabs.org ([103.22.144.67]:36895 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932290AbeCKXNN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 19:13:13 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 12 Mar 2018 10:12:07 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jesper Nilsson <jesper.nilsson@axis.com>
-Cc: Jesper Nilsson <jespern@axis.com>, Arnd Bergmann <arnd@arndb.de>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Michal Simek <monstr@monstr.eu>, Andi Kleen <ak@linux.intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-cris-kernel@axis.com, Petr Mladek <pmladek@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        adi-buildroot-devel@lists.sourceforge.net,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jesper Nilsson <jesper@jni.nu>, Greentime Hu <green.hu@gmail.com>,
-        Tejun Heo <tj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
-        Vincent Chen <deanbo422@gmail.com>, Dave Young <dyoung@redhat.com>
-Subject: Re: [GIT PULL] CRIS: Drop support for the CRIS-port
-Message-ID: <20180312101207.67ce00ca@canb.auug.org.au>
-In-Reply-To: <20180311200056.GY17177@axis.com>
-References: <CAK8P3a1KE_0+vDC48-NzzW8eT1YZ8MZRun-1GeRMNg+o8dqZUg@mail.gmail.com>
-        <20180308155116.GW17177@axis.com>
-        <20180311110551.GX17177@axis.com>
-        <20180312011344.6071896c@canb.auug.org.au>
-        <20180311200056.GY17177@axis.com>
+        id S932489AbeCKXTQ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 19:19:16 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:19995 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932284AbeCKXTP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Mar 2018 19:19:15 -0400
+X-ME-Helo: linux.numericable.fr
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 12 Mar 2018 00:19:13 +0100
+X-ME-IP: 77.198.79.136
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: maxime.ripard@free-electrons.com, airlied@linux.ie, wens@csie.org
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] drm/sun4i: Fix an error handling path in 'sun4i_drv_bind()'
+Date: Mon, 12 Mar 2018 00:19:09 +0100
+Message-Id: <20180311231909.5381-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.14.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/_NqHWnDV0cpAA+Inw4LdbMh"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/_NqHWnDV0cpAA+Inw4LdbMh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Commit 070badfab767 ("drm/sun4i: call drm_vblank_init with correct number
+of crtcs") has moved some code without updating the error handling gotos
+accordingly.
 
-Hi Jesper,
+Branch to the correct label and remove a now unused lablel.
 
-On Sun, 11 Mar 2018 21:00:56 +0100 Jesper Nilsson <jesper.nilsson@axis.com>=
- wrote:
->
-> On Mon, Mar 12, 2018 at 01:13:44AM +1100, Stephen Rothwell wrote:
-> > Hi Jesper,
-> >=20
-> > On Sun, 11 Mar 2018 12:05:51 +0100 Jesper Nilsson <jesper.nilsson@axis.=
-com> wrote: =20
-> > >
-> > > As promised, pull the below tag for the removal of the CRIS-port. =20
-> >=20
-> > I guess the easiest thing for me to do is just remove the cris tree
-> > from linux-next at this point? =20
->=20
-> Yeah, that's probably the way to go.
+Fixes: 070badfab767 ("drm/sun4i: call drm_vblank_init with correct number of crtcs")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-OK, done.
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 4570da0227b4..d9a71f361b14 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -111,7 +111,7 @@ static int sun4i_drv_bind(struct device *dev)
+ 	/* drm_vblank_init calls kcalloc, which can fail */
+ 	ret = drm_vblank_init(drm, drm->mode_config.num_crtc);
+ 	if (ret)
+-		goto free_mem_region;
++		goto cleanup_mode_config;
+ 
+ 	drm->irq_enabled = true;
+ 
+@@ -139,7 +139,6 @@ static int sun4i_drv_bind(struct device *dev)
+ 	sun4i_framebuffer_free(drm);
+ cleanup_mode_config:
+ 	drm_mode_config_cleanup(drm);
+-free_mem_region:
+ 	of_reserved_mem_device_release(dev);
+ free_drm:
+ 	drm_dev_unref(drm);
+-- 
+2.14.1
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/_NqHWnDV0cpAA+Inw4LdbMh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqlt8cACgkQAVBC80lX
-0Gwx5Af/aJEdlD+0XoSMBrAWdi8JOE8l+s5HkhRS3UWdwil8WvlJgedYp/8jUgHk
-5iHJvCtdspVDxlb43u/ce+TzSpYQxwVc33vldXw44sUCv2kB5JTj9rcNYKRQpom5
-VsLiIkdypJWwpf2n8ChASoe7jvsLJ9/dYixh4VWARqfC/tgsKycPQrwsfVK99eJ/
-M+ws7MPgTbK8HVyjpBilq3Azf6e6yu5ugoBdOCFBvlPDPH9/aIcRZ7yMIQQI+bnM
-MXTIbEbzmfhkreLFO9LKp4qlAGrkLjWicLjTZdJt95Acsru9muHIIqjF2S/WkufG
-oqb34xp/tyYee0iywCibVBlW3vt/Ew==
-=FvwZ
------END PGP SIGNATURE-----
-
---Sig_/_NqHWnDV0cpAA+Inw4LdbMh--
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
