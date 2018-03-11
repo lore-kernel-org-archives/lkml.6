@@ -1,270 +1,420 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932190AbeCKMMx (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 08:12:53 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:46902 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932125AbeCKMMv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 08:12:51 -0400
-X-Google-Smtp-Source: AG47ELtdMpRMlJZ1K/sXy1Hf3dlp5Yb+yHkrAE420L3iFG2RJuAzzRK+wr+5/1vTFRSxGrlPg8dfsQ==
-Subject: Re: [RFC v2 16/83] Initialize block map and free lists in
- nova_init().
-To: Andiry Xu <jix024@eng.ucsd.edu>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
-Cc: dan.j.williams@intel.com, andy.rudoff@intel.com, coughlan@redhat.com,
-        swanson@cs.ucsd.edu, david@fromorbit.com, jack@suse.com,
-        swhiteho@redhat.com, miklos@szeredi.hu, andiry.xu@gmail.com,
-        Andiry Xu <jix024@cs.ucsd.edu>
-References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
- <1520705944-6723-17-git-send-email-jix024@eng.ucsd.edu>
-From: Nikolay Borisov <n.borisov.lkml@gmail.com>
-Message-ID: <3c1e2c80-ad39-c10f-a4c3-9228ebed776e@gmail.com>
-Date: Sun, 11 Mar 2018 14:12:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932224AbeCKMOe (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 08:14:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42246 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932125AbeCKMOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Mar 2018 08:14:32 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A269B20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
+Date: Sun, 11 Mar 2018 12:14:27 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andreas Brauchli <a.brauchli@elementarea.net>
+Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] iio: chemical: sgpxx: Support Sensirion SGPxx
+ sensors
+Message-ID: <20180311121427.02082f2b@archlinux>
+In-Reply-To: <83a96255a243b9298897b78192dbe658ae3f4307.camel@elementarea.net>
+References: <1511280685.12439.35.camel@elementarea.net>
+        <alpine.DEB.2.20.1711212149110.28150@vps.pmeerw.net>
+        <20171125174110.699c114e@archlinux>
+        <83a96255a243b9298897b78192dbe658ae3f4307.camel@elementarea.net>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1520705944-6723-17-git-send-email-jix024@eng.ucsd.edu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, 10 Mar 2018 23:02:17 +0100
+Andreas Brauchli <a.brauchli@elementarea.net> wrote:
 
-
-On 10.03.2018 20:17, Andiry Xu wrote:
-> From: Andiry Xu <jix024@cs.ucsd.edu>
+> Dear Peter, Jonathan,
 > 
-> NOVA divides the pmem range equally among per-CPU free lists,
-> and format the red-black trees by inserting the initial free range.
+> Thanks for the thourough and speedy review and apologies for the delayed reply.
 > 
-> Signed-off-by: Andiry Xu <jix024@cs.ucsd.edu>
-> ---
->  fs/nova/balloc.c | 161 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  fs/nova/balloc.h |  13 ++++-
->  fs/nova/super.c  |   2 +
->  3 files changed, 175 insertions(+), 1 deletion(-)
+> Many of your comments are integrated in the v2 patch series - details below.
 > 
-> diff --git a/fs/nova/balloc.c b/fs/nova/balloc.c
-> index 450c942..cb627db 100644
-> --- a/fs/nova/balloc.c
-> +++ b/fs/nova/balloc.c
-> @@ -55,4 +55,165 @@ void nova_delete_free_lists(struct super_block *sb)
->  	sbi->free_lists = NULL;
->  }
->  
-> +// Initialize a free list.  Each CPU gets an equal share of the block space to
-> +// manage.
-> +static void nova_init_free_list(struct super_block *sb,
-> +	struct free_list *free_list, int index)
-> +{
-> +	struct nova_sb_info *sbi = NOVA_SB(sb);
-> +	unsigned long per_list_blocks;
-> +
-> +	per_list_blocks = sbi->num_blocks / sbi->cpus;
-
-nit: You've already initialised per_list_blocks in nova_init_blockmap,
-which calls this function. So just reference it, rather than performing
-the the divison every time
-
-> +
-> +	free_list->block_start = per_list_blocks * index;
-> +	free_list->block_end = free_list->block_start +
-> +					per_list_blocks - 1;
-> +	if (index == 0)
-> +		free_list->block_start += sbi->head_reserved_blocks;
-> +	if (index == sbi->cpus - 1)
-> +		free_list->block_end -= sbi->tail_reserved_blocks;
-> +}
-> +
-> +inline struct nova_range_node *nova_alloc_blocknode(struct super_block *sb)
-> +{
-> +	return nova_alloc_range_node(sb);
-> +}
-> +
-> +inline void nova_free_blocknode(struct super_block *sb,
-> +	struct nova_range_node *node)
-> +{
-> +	nova_free_range_node(node);
-> +}
-> +
-> +void nova_init_blockmap(struct super_block *sb, int recovery)
-> +{
-> +	struct nova_sb_info *sbi = NOVA_SB(sb);
-> +	struct rb_root *tree;
-> +	struct nova_range_node *blknode;
-> +	struct free_list *free_list;
-> +	int i;
-> +	int ret;
-> +
-> +	/* Divide the block range among per-CPU free lists */
-> +	sbi->per_list_blocks = sbi->num_blocks / sbi->cpus;
-> +	for (i = 0; i < sbi->cpus; i++) {
-> +		free_list = nova_get_free_list(sb, i);
-> +		tree = &(free_list->block_free_tree);
-> +		nova_init_free_list(sb, free_list, i);
-> +
-> +		/* For recovery, update these fields later */
-> +		if (recovery == 0) {
-> +			free_list->num_free_blocks = free_list->block_end -
-> +						free_list->block_start + 1;
-> +
-> +			blknode = nova_alloc_blocknode(sb);
-> +			if (blknode == NULL)
-> +				return;
-> +			blknode->range_low = free_list->block_start;
-> +			blknode->range_high = free_list->block_end;
-> +			ret = nova_insert_blocktree(sbi, tree, blknode);
-> +			if (ret) {
-> +				nova_err(sb, "%s failed\n", __func__);
-> +				nova_free_blocknode(sb, blknode);
-> +				return;
-> +			}
-> +			free_list->first_node = blknode;
-> +			free_list->last_node = blknode;
-> +			free_list->num_blocknode = 1;
-> +		}
-> +
-> +		nova_dbgv("%s: free list %d: block start %lu, end %lu, %lu free blocks\n",
-> +			  __func__, i,
-> +			  free_list->block_start,
-> +			  free_list->block_end,
-> +			  free_list->num_free_blocks);
-> +	}
-> +}
-> +
-> +static inline int nova_rbtree_compare_rangenode(struct nova_range_node *curr,
-> +	unsigned long range_low)
-> +{
-> +	if (range_low < curr->range_low)
-> +		return -1;
-> +	if (range_low > curr->range_high)
-> +		return 1;
->  
-> +	return 0;
-> +}
-> +
-> +int nova_find_range_node(struct nova_sb_info *sbi,
-> +	struct rb_root *tree, unsigned long range_low,
-> +	struct nova_range_node **ret_node)
-
-Instead of having a **ret_node pointer as an argument, just make the
-function return struct nova_range *node and have callers check for null:
-
-struct nova_range_node *node = nova_find_range_node(sbi, tree, range);
-
-if (ret) {
-//do stuff with *node
-}
-
-> +{
-> +	struct nova_range_node *curr = NULL;
-> +	struct rb_node *temp;
-> +	int compVal;
-> +	int ret = 0;
-> +
-> +	temp = tree->rb_node;
-> +
-> +	while (temp) {
-> +		curr = container_of(temp, struct nova_range_node, node);
-> +		compVal = nova_rbtree_compare_rangenode(curr, range_low);
-> +
-> +		if (compVal == -1) {
-> +			temp = temp->rb_left;
-> +		} else if (compVal == 1) {
-> +			temp = temp->rb_right;
-> +		} else {
-> +			ret = 1;
-> +			break;
-> +		}
-> +	}
-> +
-> +	*ret_node = curr;
-> +	return ret;
-> +}
-> +
-> +
-> +int nova_insert_range_node(struct rb_root *tree,
-> +	struct nova_range_node *new_node)
-> +{
-> +	struct nova_range_node *curr;
-> +	struct rb_node **temp, *parent;
-> +	int compVal;
-> +
-> +	temp = &(tree->rb_node);
-> +	parent = NULL;
-> +
-> +	while (*temp) {
-> +		curr = container_of(*temp, struct nova_range_node, node);
-> +		compVal = nova_rbtree_compare_rangenode(curr,
-> +					new_node->range_low);
-> +		parent = *temp;
-> +
-> +		if (compVal == -1) {
-> +			temp = &((*temp)->rb_left);
-> +		} else if (compVal == 1) {
-> +			temp = &((*temp)->rb_right);
-> +		} else {
-> +			nova_dbg("%s: entry %lu - %lu already exists: %lu - %lu\n",
-> +				 __func__, new_node->range_low,
-> +				new_node->range_high, curr->range_low,
-> +				curr->range_high);
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	rb_link_node(&new_node->node, parent, temp);
-> +	rb_insert_color(&new_node->node, tree);
-> +
-> +	return 0;
-> +}
-> +
-> +inline int nova_insert_blocktree(struct nova_sb_info *sbi,
-> +	struct rb_root *tree, struct nova_range_node *new_node)
-> +{
-> +	int ret;
-> +
-> +	ret = nova_insert_range_node(tree, new_node);
-> +	if (ret)
-> +		nova_dbg("ERROR: %s failed %d\n", __func__, ret);
-> +
-> +	return ret;
-> +}
-> diff --git a/fs/nova/balloc.h b/fs/nova/balloc.h
-> index e7c7a1d..57a93e4 100644
-> --- a/fs/nova/balloc.h
-> +++ b/fs/nova/balloc.h
-> @@ -62,5 +62,16 @@ enum alloc_type {
->  
->  int nova_alloc_block_free_lists(struct super_block *sb);
->  void nova_delete_free_lists(struct super_block *sb);
-> -
-> +inline struct nova_range_node *nova_alloc_blocknode(struct super_block *sb);
-> +inline void nova_free_blocknode(struct super_block *sb,
-> +	struct nova_range_node *bnode);
-> +extern void nova_init_blockmap(struct super_block *sb, int recovery);
-> +inline int nova_insert_blocktree(struct nova_sb_info *sbi,
-> +	struct rb_root *tree, struct nova_range_node *new_node);
-> +
-> +extern int nova_insert_range_node(struct rb_root *tree,
-> +				  struct nova_range_node *new_node);
-> +extern int nova_find_range_node(struct nova_sb_info *sbi,
-> +				struct rb_root *tree, unsigned long range_low,
-> +				struct nova_range_node **ret_node);
->  #endif
-> diff --git a/fs/nova/super.c b/fs/nova/super.c
-> index 43b24a7..9762f26 100644
-> --- a/fs/nova/super.c
-> +++ b/fs/nova/super.c
-> @@ -376,6 +376,8 @@ static struct nova_inode *nova_init(struct super_block *sb,
->  	pi->nova_ino = NOVA_BLOCKNODE_INO;
->  	nova_flush_buffer(pi, CACHELINE_SIZE, 1);
->  
-> +	nova_init_blockmap(sb, 0);
-> +
->  	sbi->nova_sb->s_size = cpu_to_le64(size);
->  	sbi->nova_sb->s_blocksize = cpu_to_le32(blocksize);
->  	sbi->nova_sb->s_magic = cpu_to_le32(NOVA_SUPER_MAGIC);
+...
+> > >   
+> > > > +
+> > > > +2.2. Indoor Air Quality (IAQ) concentrations
+> > > > +
+> > > > +* tVOC (in_concentration_voc_input) at ppb precision (1e-9)
+> > > > +* CO2eq (in_concentration_co2_input) at ppm precision (1e-6) -- SGP30 only
+> > > > +
+> > > > +2.2.1. IAQ Initialization
+> > > > +Before Indoor Air Quality (IAQ) values can be read, the IAQ mode must be
+> > > > +initialized by writing a non-empty value to out_iaq_init:
+> > > > +
+> > > > +    $ echo init > out_iaq_init    
+> > > 
+> > > can't this be done on probe()?  
 > 
+> Yes, v2 now uses this approach and removes iaq_init entirely.
+> A semi-replacement is provided in the form of a set_iaq_preheat_seconds
+> interface that sets the pre-heat duration, on the low-power SGPC3. All uses of
+> iaq_init are now purely internal and called as needed E.g. running the selftest
+> can mess up the state on the SGP30. So we're also re-initializing after a
+> selftest and after set_baseline.
+> 
+> > It very much needs to be - userspace code for this sort of sensor
+> > should be generic and hence not need to know about how to initialize
+> > your particular sensor.  It will assume if the driver is there, the
+> > device is on - or will be dynamically enabled when it wants to talk
+> > to it.  
+> > > 
+> > > in any case, private API should be documented under
+> > > Documentation/ABI/testing/sysfs-bus-iio-*  
+> 
+> amended in v2, please check if the format is as expected.
+> 
+> > >   
+> > > > +After initializing IAQ, at least one IAQ signal must be read out every second
+> > > > +(SGP30) / every two seconds (SGPC3) for the sensor to correctly maintain its
+> > > > +internal baseline:    
+> > > 
+> > > shouldn't the driver do this?  
+> > 
+> > Absolutely!
+> > 
+> > As I understand it, the requirement is also to prevent the hardware being read
+> > more often than this so it needs to be under control of the driver.  
+> 
+> fixed with a kernel thread in v2 - the IAQ thread is now the only accessor of
+> the chip's iaq_{init,measure,set_baseline} functions. A separate dedicated
+> IAQ-values buffer is used for caching.
+> 
+> > >   
+> > > > +
+> > > > +    SGP30:
+> > > > +    $ watch -n1 cat in_concentration_voc_input
+> > > > +
+> > > > +    SGPC3:
+> > > > +    $ watch -n2 cat in_concentration_voc_input
+> > > > +
+> > > > +For the first 15s of operation after writing to out_iaq_init, default values are
+> > > > +retured by the sensor.    
+> > 
+> > In which case it should return -EBUSY from the read function and not garbage
+> > data (userspace in general has no way of knowing these chip specific
+> > things).  
+> 
+> fixed in v2. For the low-power/pulsed SGPC3, the time is dependent on the
+> pre-heating duration and whether the initialization is performed with a restored
+> baseline. This is reflected in the code (sgpc3_iaq_init). A query of default
+> values now results in -EBUSY.
+> 
+> Consequently, in_iaq_baseline now also returns -EBUSY instead of "0000" which is
+> considered invalid.
+> 
+> > > typo: returned  
+> 
+> fixed in v2
+> 
+> > > > +
+> > > > +2.2.2. Pausing and Resuming IAQ
+> > > > +
+> > > > +For best performance and faster startup times, the baseline should be saved
+> > > > +once every hour, after 12h of operation. The baseline is restored by writing a
+> > > > +non-empty value to out_iaq_init, followed by writing an unmodified retrieved
+> > > > +baseline value from in_iaq_baseline to out_iaq_baseline.    
+> > > 
+> > > the out_ prefix seems inappropriate here, the sensors doesn't output CO2 :)  
+> 
+> renamed to set_iaq_baseline in v2. Should in_iaq_baseline also be renamed to
+> get_iaq_baseline?
+Nope, just iaq_baseline for both.
+
+> 
+> > > 
+> > > handling calibration data in a generic way is difficult  
+> > 
+> > We can do better than this though.  Init is automatic - if you are updating the
+> > baseline and it needs to call it again, then do that in the write of the baseline
+> > not a separate init write.  
+> 
+> Yes, in v2, iaq_init is now always performed automatically by the driver.
+> 
+> > > > +
+> > > > +    Saving the baseline:
+> > > > +    $ baseline=$(cat in_iaq_baseline)
+> > > > +
+> > > > +    Restoring the baseline:
+> > > > +    $ echo init > out_iaq_init
+> > > > +    $ echo -n $baseline > out_iaq_baseline
+> > > > +
+> > > > +2.3. Gas Concentration Signals
+> > > > +
+> > > > +* Ethanol (in_concentration_ethanol_raw)    
+> > > 
+> > > we'd need a IIO_MOD_ETHANOL?  
+> > 
+> > Cool a new sensor type ;)  
+> 
+> Added in v2 - On a side note, I can imagine quite a few more gases to be added
+> down the road.. maybe half a dozen if you don't ask a chemist.
+> 
+Sure, it's fine to add them as they come up.
+ 
+> > These are really calibration values being input to the device.
+> > The ABI needs to reflect that rather than putting them through as output channels.
+> >   
+> > > 
+> > > absolute humidity is new, IIO has relative humidity so far (jus saying)  
+> 
+> Absolute humidity is in fact a concentration but I see the added value in
+> knowing what specific concentration it is. I didn't add the IIO_HUMIDITYABSOLUTE
+> channel to the type list since it's not used as channel and would therefore
+> remain unused.
+> 
+> > > relative humidity is in milli percent in IIO
+> > > temperature is in milli degree Celsius
+> > >   
+> > > > +converting the relative humidity and temperature. The following units are used:
+> > > > +AH in mg/m^3, RH in percent (0..100), T in degrees Celsius, and exp() being the
+> > > > +base-e exponential function.
+> > > > +
+> > > > +                  RH            exp(17.62 * T)
+> > > > +                ----- * 6.112 * --------------
+> > > > +                100.0            243.12 + T
+> > > > +  AH = 216.7 * ------------------------------- * 1000
+> > > > +                        273.15 + T
+> > > > +
+> > > > +Writing a value of 0 to out_absolute_humidity disables the humidity    
+> > > 
+> > > out_absolute_humidity is the same as out_concentration_ah_raw?  
+> 
+> Yes, my bad, out_absolute_humidity does not exist, in v2 it's replaced with
+> set_absolute_humidity.
+I don't like that one much either I'm afraid, we need to be clear this is
+a control related to calibration/compensation rather than anything else.
+
+> 
+> > >   
+> > > > +compensation.
+> > > > +
+> > > > +2.5. On-chip self test
+> > > > +
+> > > > +    $ cat in_selftest
+> > > > +
+> > > > +in_selftest returns OK or FAILED.
+> > > > +
+> > > > +The self test interferes with IAQ operations. If needed, first save the current
+> > > > +baseline, then restore it after the self test:
+> > > > +
+> > > > +    $ baseline=$(cat in_iaq_baseline)
+> > > > +    $ cat in_selftest
+> > > > +    $ echo init > out_iaq_init
+> > > > +    $ echo -n $baseline > out_iaq_baseline
+> > > > +
+> > > > +If the sensor's current operating duration is less than 12h the baseline should
+> > > > +not be restored by skipping the last step.  
+> > 
+> > Talk me through the usecase - is power up often enough or are there reasons
+> > to do it more often?  
+> 
+> The self test is more of a convenience than a necessity. It can be useful to
+> confirm a broken device (e.g. physically broken hotplate) if the signal remains
+> constantly high. I'd expect user space to perform it since they'll have to
+> report the failure. Some failures are also non-fatal.
+Is there any way of telling if it is fatal?
+If not it isn't all that much use...
+> 
+> > > > +
+> > > > +3. Sensor Interface
+> > > > +
+> > > > +    $ cat in_feature_set_version
+> > > > +
+> > > > +The SGP sensors' minor interface (feature set) version guarantees interface
+> > > > +stability: a sensor with feature set 1.1 works with a driver for feature set 1.0    
+> > > 
+> > > really needed?  
+> > 
+> > Shouldn't be exposed to userspace.  Worth checking in kernel perhaps and refusing
+> > to probe if we don't support the newer hardware.  
+> 
+> The driver already refuses to probe newer major version interfaces.
+> 
+> Different feature sets have different features, new in v2 is support for the
+> SGPC3 FS0.6 with an ultra low power mode and humidity compensation. Trying to
+> set either will result in an -EINVAL when unsupported, so user-space code might
+> be interested in it.
+>
+Don't provide the userspace interface if it doesn't do anything.
+ 
+...
+> > > > +static int sgp_write_raw(struct iio_dev *indio_dev,
+> > > > +			 struct iio_chan_spec const *chan,
+> > > > +			 int val, int val2, long mask)
+> > > > +{
+> > > > +	struct sgp_data *data = iio_priv(indio_dev);
+> > > > +	int ret;
+> > > > +
+> > > > +	switch (chan->address) {
+> > > > +	case SGP30_SET_AH_IDX:
+> > > > +		ret = sgp_absolute_humidity_store(data, val, val2);  
+> > 
+> > This is fun - making the world wet ;)
+> > Joking aside, we need to handle this differently as it
+> > isn't an output device but rather a calibration parameter.  
+> 
+> Consider it my involuntary contribution against said reviewer grumpyness :D
+> 
+> Refactored from channel to attribute set_absolute_humidity in v2. Since it's not
+> a channel I didn't add IIO_HUMIDITYABSOLUTE to the types, but if it were, the
+> name would likely be in_humidityabsolute_raw - should the attribute also reflect
+> this scheme (set_humidityabsolute)?
+This needs some more thought.  It's really a calibration parameter so we
+should indicate it in some way but I'm not totally sure how to do so cleanly.
+I don't like the idea of set_* though as if we can write to a value then
+it should be clear we are setting it.
+
+Hopefully we'll get some other people's input on this question.
+
+> 
+> > 
+> >    
+...
+> > > > +
+> > > > +	return sprintf(buf, "%s\n",
+> > > > +		       measure_test ^ SGP_SELFTEST_OK ? "FAILED" : "OK");
+> > > > +  
+> > 
+> > How would userspace software know to do a self test?
+> > Usual convention is to do it on module load and report the failure in the
+> > kernel logs if there is one.  
+> 
+> Not successfully probing might be less desirable since userspace would have to
+> check the logs to find out that the sensor is detected as broken, also the
+> self-test is quite complete and an unsucessful self-test doesn't have to be a
+> completely broken/useless sensor.
+Hmm.  I'm still a little unconvinced but let's ignore that one for now as
+bigger things to deal with.
+
+Generic usespace is simply never going to run it however...
+
+> 
+> >   
+> > > > +unlock_fail:
+> > > > +	mutex_unlock(&data->data_lock);
+> > > > +	return ret;
+> > > > +}
+> > > > +
+> > > > +static ssize_t sgp_serial_id_show(struct device *dev,
+> > > > +				  struct device_attribute *attr, char *buf)
+> > > > +{
+> > > > +	struct sgp_data *data = iio_priv(dev_to_iio_dev(dev));
+> > > > +
+> > > > +	return sprintf(buf, "%llu\n", data->serial_id);  
+> > 
+> > Not normally of much use except in perhaps debugging so we normally
+> > only expose these as a kernel log message rather than cluttering the
+> > sysfs abi.  
+> 
+> Let me know if the following use case is not good enough to keep it:
+> The baseline is per-sensor and the sensor id is a good way of couple both
+> together in case the system has multiple SGPs attached and i2c bus ids aren't
+> stable or the sensors are reattached on a different machine/bus.
+> 
+Hmm. OK, I think that is a good enough reason...
+
+...
+
+> > > > +static IIO_DEVICE_ATTR(in_serial_id, 0444, sgp_serial_id_show, NULL, 0);
+> > > > +static IIO_DEVICE_ATTR(in_feature_set_version, 0444,
+> > > > +		       sgp_feature_set_version_show, NULL, 0);
+> > > > +static IIO_DEVICE_ATTR(in_selftest, 0444, sgp_selftest_show, NULL, 0);
+> > > > +static IIO_DEVICE_ATTR(out_iaq_init, 0220, NULL, sgp_iaq_init_store, 0);
+> > > > +static IIO_DEVICE_ATTR(in_iaq_baseline, 0444, sgp_iaq_baseline_show, NULL, 0);
+> > > > +static IIO_DEVICE_ATTR(out_iaq_baseline, 0220, NULL, sgp_iaq_baseline_store, 0);    
+> > > 
+> > > lot of private ABI; all needed?
+> > > needs documentation...  
+> 
+> Better in v2?
+Somewhat but still needs discussion.
+
+> 
+> > >   
+> > > > +static struct attribute *sgp_attributes[] = {
+> > > > +	&iio_dev_attr_in_serial_id.dev_attr.attr,
+> > > > +	&iio_dev_attr_in_feature_set_version.dev_attr.attr,
+> > > > +	&iio_dev_attr_in_selftest.dev_attr.attr,
+> > > > +	&iio_dev_attr_out_iaq_init.dev_attr.attr,
+> > > > +	&iio_dev_attr_in_iaq_baseline.dev_attr.attr,
+> > > > +	&iio_dev_attr_out_iaq_baseline.dev_attr.attr,
+> > > > +	NULL
+> > > > +};
+> > > > +
+> > > > +static const struct attribute_group sgp_attr_group = {
+> > > > +	.attrs = sgp_attributes,
+> > > > +};
+> > > > +
+> > > > +static const struct iio_info sgp_info = {
+> > > > +	.attrs		= &sgp_attr_group,
+> > > > +	.read_raw	= sgp_read_raw,
+> > > > +	.write_raw	= sgp_write_raw,
+> > > > +};
+> > > > +
+> > > > +static const struct of_device_id sgp_dt_ids[] = {
+> > > > +	{ .compatible = "sensirion,sgp30", .data = (void *)SGP30 },
+> > > > +	{ .compatible = "sensirion,sgpc3", .data = (void *)SGPC3 },
+> > > > +	{ }
+> > > > +};
+> > > > +
+> > > > +static int sgp_probe(struct i2c_client *client,
+> > > > +		     const struct i2c_device_id *id)
+> > > > +{
+> > > > +	struct iio_dev *indio_dev;
+> > > > +	struct sgp_data *data;
+> > > > +	struct sgp_device *chip;  
+> > 
+> > Not convinced this local variable adds anything to readability.  
+> 
+> Do you have a suggestion? I'm not sure if it's the name or the fact that's it's
+> there at all.
+There at all - just use the array directly in all cases.
+ 
+> >   
+> > > > +	const struct of_device_id *of_id;
+> > > > +	unsigned long chip_id;
+> > > > +	int ret;
+> > > > +
+> > > > +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
+> > > > +	if (!indio_dev)
+> > > > +		return -ENOMEM;
+> > > > +
+> > > > +	of_id = of_match_device(sgp_dt_ids, &client->dev);
+> > > > +	if (!of_id)  
+> > 
+> > Seems a touch backward
+> > if (of_id)
+> > 	chip_id = (unsigned long)of_id->data;
+> > else
+> > 	chip_id = id->driver_data;  
+> 
+> fixed in v2
+> 
+> >   
+> > > > +		chip_id = id->driver_data;
+> > > > +	else
+> > > > +		chip_id = (unsigned long)of_id->data;
+> > > > +
+> > > > +	chip = &sgp_devices[chip_id];
+> > > > +	data = iio_priv(indio_dev);
+> > > > +	i2c_set_clientdata(client, indio_dev);
+> > > > +	data->client = client;
+> > > > +	crc8_populate_msb(sgp_crc8_table, SGP_CRC8_POLYNOMIAL);
+> > > > +	mutex_init(&data->data_lock);
+> > > > +	mutex_init(&data->i2c_lock);
+> > > > +
+> > > > +	/* get serial id and write it to client data */
+> > > > +	ret = sgp_get_serial_id(data);  
+> > 
+...
