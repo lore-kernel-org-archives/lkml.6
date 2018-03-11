@@ -1,22 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932454AbeCKLD7 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 07:03:59 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:54122 "EHLO
+        id S932375AbeCKLD6 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 07:03:58 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:54104 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932136AbeCKK4r (ORCPT
+        with ESMTP id S932129AbeCKK4r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 11 Mar 2018 06:56:47 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, luto@kernel.org,
         torvalds@linux-foundation.org, mingo@kernel.org,
         viro@zeniv.linux.org.uk, akpm@linux-foundation.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Darren Hart <dvhart@infradead.org>
-Subject: [RFC PATCH 03/35] syscalls: mm_release(): use do_futex() instead of sys_futex()
-Date: Sun, 11 Mar 2018 11:55:25 +0100
-Message-Id: <20180311105557.20807-4-linux@dominikbrodowski.net>
+Subject: [RFC PATCH 22/35] syscalls: do not call sys_chdir() within the kernel
+Date: Sun, 11 Mar 2018 11:55:44 +0100
+Message-Id: <20180311105557.20807-23-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180311105557.20807-1-linux@dominikbrodowski.net>
 References: <20180311105557.20807-1-linux@dominikbrodowski.net>
@@ -24,40 +21,114 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sys_futex() is a wrapper to do_futex() which does not modify any
-values here:
-
-- uaddr, val and val3 are kept the same
-
-- op is masked with FUTEX_CMD_MASK, but is always set to FUTEX_WAKE.
-  Therefore, val2 is always 0.
-
-- as utime is set to NULL, *timeout is NULL
-
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Darren Hart <dvhart@infradead.org>
+CC: Al Viro <viro@zeniv.linux.org.uk>
 CC: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- kernel/fork.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/base/devtmpfs.c  | 2 +-
+ fs/open.c                | 7 ++++++-
+ include/linux/syscalls.h | 1 +
+ init/do_mounts.c         | 2 +-
+ init/do_mounts_initrd.c  | 8 ++++----
+ 5 files changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index e5d9d405ae4e..b1e031aac9db 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1198,8 +1198,8 @@ void mm_release(struct task_struct *tsk, struct mm_struct *mm)
- 			 * not set up a proper pointer then tough luck.
- 			 */
- 			put_user(0, tsk->clear_child_tid);
--			sys_futex(tsk->clear_child_tid, FUTEX_WAKE,
--					1, NULL, NULL, 0);
-+			do_futex(tsk->clear_child_tid, FUTEX_WAKE,
-+					1, NULL, NULL, 0, 0);
- 		}
- 		tsk->clear_child_tid = NULL;
+diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
+index d6f37537275c..f7768077e817 100644
+--- a/drivers/base/devtmpfs.c
++++ b/drivers/base/devtmpfs.c
+@@ -386,7 +386,7 @@ static int devtmpfsd(void *p)
+ 	*err = ksys_mount("devtmpfs", "/", "devtmpfs", MS_SILENT, options);
+ 	if (*err)
+ 		goto out;
+-	sys_chdir("/.."); /* will traverse into overmounted root */
++	ksys_chdir("/.."); /* will traverse into overmounted root */
+ 	ksys_chroot(".");
+ 	complete(&setup_done);
+ 	while (1) {
+diff --git a/fs/open.c b/fs/open.c
+index 7a475e8a2e41..a19b8277c439 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -431,7 +431,7 @@ SYSCALL_DEFINE2(access, const char __user *, filename, int, mode)
+ 	return sys_faccessat(AT_FDCWD, filename, mode);
+ }
+ 
+-SYSCALL_DEFINE1(chdir, const char __user *, filename)
++int ksys_chdir(const char __user *filename)
+ {
+ 	struct path path;
+ 	int error;
+@@ -457,6 +457,11 @@ SYSCALL_DEFINE1(chdir, const char __user *, filename)
+ 	return error;
+ }
+ 
++SYSCALL_DEFINE1(chdir, const char __user *, filename)
++{
++	return ksys_chdir(filename);
++}
++
+ SYSCALL_DEFINE1(fchdir, unsigned int, fd)
+ {
+ 	struct fd f = fdget_raw(fd);
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 197c622d0b9f..03c70fa26852 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -959,5 +959,6 @@ int ksys_fadvise64_64(int fd, loff_t offset, loff_t len, int advice);
+ unsigned long ksys_mmap_pgoff(unsigned long addr, unsigned long len,
+ 			      unsigned long prot, unsigned long flags,
+ 			      unsigned long fd, unsigned long pgoff);
++int ksys_chdir(const char __user *filename);
+ 
+ #endif
+diff --git a/init/do_mounts.c b/init/do_mounts.c
+index 2f06f7827b0c..89f18985fa90 100644
+--- a/init/do_mounts.c
++++ b/init/do_mounts.c
+@@ -367,7 +367,7 @@ static int __init do_mount_root(char *name, char *fs, int flags, void *data)
+ 	if (err)
+ 		return err;
+ 
+-	sys_chdir("/root");
++	ksys_chdir("/root");
+ 	s = current->fs->pwd.dentry->d_sb;
+ 	ROOT_DEV = s->s_dev;
+ 	printk(KERN_INFO
+diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
+index 414284dadc64..c19d9070134e 100644
+--- a/init/do_mounts_initrd.c
++++ b/init/do_mounts_initrd.c
+@@ -42,7 +42,7 @@ static int init_linuxrc(struct subprocess_info *info, struct cred *new)
+ 	ksys_dup(0);
+ 	ksys_dup(0);
+ 	/* move initrd over / and chdir/chroot in initrd root */
+-	sys_chdir("/root");
++	ksys_chdir("/root");
+ 	ksys_mount(".", "/", NULL, MS_MOVE, NULL);
+ 	ksys_chroot(".");
+ 	sys_setsid();
+@@ -61,7 +61,7 @@ static void __init handle_initrd(void)
+ 	/* mount initrd on rootfs' /root */
+ 	mount_block_root("/dev/root.old", root_mountflags & ~MS_RDONLY);
+ 	sys_mkdir("/old", 0700);
+-	sys_chdir("/old");
++	ksys_chdir("/old");
+ 
+ 	/* try loading default modules from initrd */
+ 	load_default_modules();
+@@ -86,11 +86,11 @@ static void __init handle_initrd(void)
+ 	ksys_chroot("..");
+ 
+ 	if (new_decode_dev(real_root_dev) == Root_RAM0) {
+-		sys_chdir("/old");
++		ksys_chdir("/old");
+ 		return;
  	}
+ 
+-	sys_chdir("/");
++	ksys_chdir("/");
+ 	ROOT_DEV = new_decode_dev(real_root_dev);
+ 	mount_root();
+ 
 -- 
 2.16.2
