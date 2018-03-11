@@ -1,189 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932123AbeCKG0F (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 01:26:05 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54344 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932075AbeCKG0E (ORCPT
+        id S932127AbeCKGfN (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 01:35:13 -0500
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:32785 "EHLO
+        mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932071AbeCKGfM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 01:26:04 -0500
-X-Google-Smtp-Source: AG47ELs58nYtXjr7LnCcAQHFEiTClNAjzdXHFzi6roebhbKd0qlqGWTZlex0EIzucO9ytqVmKyhDvg==
+        Sun, 11 Mar 2018 01:35:12 -0500
+X-Google-Smtp-Source: AG47ELutq377Bi4lf/qm0um4pxmTdFyCt4ls2ik/g/ms2Gz/lqfnl7YlC/jbiCQHZ054m21fLfwH2UBH7s2Gy139xsI=
+MIME-Version: 1.0
+In-Reply-To: <h8pngmbv.fsf@gmail.com>
+References: <h8pngmbv.fsf@gmail.com>
 From: Jason Vas Dias <jason.vas.dias@gmail.com>
+Date: Sun, 11 Mar 2018 06:35:10 +0000
+Message-ID: <CALyZvKxOGh9U1HD6SUL4wHyD_T8Ptb2dMdonyZb1EcnfE2FP7g@mail.gmail.com>
+Subject: Re: [PATCH v4.16-rc4 1/1] x86/vdso: on Intel, VDSO should handle CLOCK_MONOTONIC_RAW
 To: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>, andi <andi@firstfloor.org>,
         Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH v4.16-rc4 1/1] x86/vdso: on Intel, VDSO should handle CLOCK_MONOTONIC_RAW
-Date: Sun, 11 Mar 2018 06:25:56 +0000
-Message-ID: <h8pngmbv.fsf@gmail.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/mixed; boundary="001a113cd4f6327d3005671d3a10"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2B6QA5W015213
 
+--001a113cd4f6327d3005671d3a10
+Content-Type: text/plain; charset="UTF-8"
 
-  Currently the VDSO does not handle
-     clock_gettime( CLOCK_MONOTONIC_RAW, &ts )
-  on Intel / AMD - it calls
-     vdso_fallback_gettime()
-  for this clock, which issues a syscall, having an unacceptably high
-  latency (minimum measurable time or time between measurements)
-  of 300-700ns on 2 2.8-3.9ghz Haswell x86_64 Family'_'Model : 06_3C
-  machines under various versions of Linux.
-     
-  This patch handles CLOCK_MONOTONIC_RAW clock_gettime() in the VDSO ,
-  by exporting the raw clock calibration, last cycles, last xtime_nsec,
-  and last raw_sec value in the vsyscall_gtod_data during vsyscall_update() .
+Oops, please disregard 1st mail on  $subject - I guess use of Quoted Printable
+is not a way of getting past the email line length.
+Patch I tried to send is attached as attachment - will resend inline using
+other method.
 
-  Now the new do_monotonic_raw() function in the vDSO has a latency of @ 24ns
-  on average, and the test program:
-   tools/testing/selftest/timers/inconsistency-check.c
-  succeeds with arguments: '-c 4 -t 120' or any arbitrary -t value.
+Sorry, Regards, Jason
 
-  The patch is against Linus' latest 4.16-rc4 tree,
-  current HEAD of :
-    git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-  .
+--001a113cd4f6327d3005671d3a10
+Content-Type: application/octet-stream;
+	name="vdso_monotonic_raw-v4.16-rc4.patch"
+Content-Disposition: attachment;
+	filename="vdso_monotonic_raw-v4.16-rc4.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: file0
 
-  The patch affects only files:
-  
-   arch/x86/include/asm/vgtod.h
-   arch/x86/entry/vdso/vclock_gettime.c
-   arch/x86/entry/vsyscall/vsyscall_gtod.c
-
-
-  Best Regards,
-     Jason Vas Dias  .
-     
----
-diff -up linux-4.16-rc4/arch/x86/entry/vdso/vclock_gettime.c.4.16-rc4linux-4.16-rc4/arch/x86/entry/vdso/vclock_gettime.c
---- linux-4.16-rc4/arch/x86/entry/vdso/vclock_gettime.c.4.16-rc4 2018-03-04 22:54:11.000000000 +0000
-+++ linux-4.16-rc4/arch/x86/entry/vdso/vclock_gettime.c	2018-03-11 05:08:31.137681337 +0000
-@@ -182,6 +182,29 @@ notrace static u64 vread_tsc(void)
- 	return last;
- }
- 
-+notrace static u64 vread_tsc_raw(void)
-+{
-+        u64 tsc, last+        if( likely( gtod->has_rdtscp ) ) {
-+                u32     tsc_lo, tsc_hi,
-+                        tsc_cpu __attribute__((unused));
-+                asm volatile
-+                ( "rdtscp"
-+                /* ^- has built-in cancellation point / pipeline stall"barrier" */
-+                : "¬_lo)
-+                , "Ü_hi)
-+                , "Ì_cpu)
-+                ); // since all variables 32-bit, eax, edx, ecx used - NOT rax, rdx, rcx                 
-+                tsc      _lo) & 0xffffffffUL);
-+        } else {
-+                tsc      +        }
-+	if (likely(tsc >+		return tsc;        
-+        asm volatile ("");                                
-+        return last;
-+}
-+
- notrace static inline u64 vgetsns(int *mode)
- {
- 	u64 v;
-@@ -203,6 +226,27 @@ notrace static inline u64 vgetsns(int *m
- 	return v * gtod->mult;
- }
- 
-+notrace static inline u64 vgetsns_raw(int *mode)
-+{
-+	u64 v;
-+	cycles_t cycles;
-+
-+	if (gtod->vclock_mode +		cycles +#ifdef CONFIG_PARAVIRT_CLOCK
-+	else if (gtod->vclock_mode +		cycles +#endif
-+#ifdef CONFIG_HYPERV_TSCPAGE
-+	else if (gtod->vclock_mode +		cycles +#endif
-+	else
-+		return 0;
-+	v +	return v * gtod->raw_mult;
-+}
-+
- /* Code size doesn't matter (vdso is 4k anyway) and this is faster. */
- notrace static int __always_inline do_realtime(struct timespec *ts)
- {
-@@ -246,6 +290,27 @@ notrace static int __always_inline do_mo
- 	return mode;
- }
- 
-+notrace static int __always_inline do_monotonic_raw( struct timespec *ts)
-+{
-+	unsigned long seq;
-+	u64 ns;
-+	int mode;
-+
-+	do {
-+		seq +		mode +		ts->tv_sec +		ns +		ns ++		ns >>+	} while (unlikely(gtod_read_retry(gtod, seq)));
-+
-+	ts->tv_sec ++	ts->tv_nsec +
-+	return mode;
-+}
-+
- notrace static void do_realtime_coarse(struct timespec *ts)
- {
- 	unsigned long seq;
-@@ -277,6 +342,10 @@ notrace int __vdso_clock_gettime(clockid
- 		if (do_monotonic(ts)  			goto fallback;
- 		break;
-+	case CLOCK_MONOTONIC_RAW:
-+		if (do_monotonic_raw(ts) +			goto fallback;
-+		break;
- 	case CLOCK_REALTIME_COARSE:
- 		do_realtime_coarse(ts);
- 		break;
-diff -up linux-4.16-rc4/arch/x86/entry/vsyscall/vsyscall_gtod.c.4.16-rc4 linux-4.16-rc4/arch/x86/entry/vsyscall/vsyscall_gtod.c
---- linux-4.16-rc4/arch/x86/entry/vsyscall/vsyscall_gtod.c.4.16-rc4 2018-03-04 22:54:11.000000000 +0000
-+++ linux-4.16-rc4/arch/x86/entry/vsyscall/vsyscall_gtod.c 2018-03-11 05:10:57.371197747 +0000
-@@ -16,6 +16,7 @@
- #include <linux/timekeeper_internal.h>
- #include <asm/vgtod.h>
- #include <asm/vvar.h>
-+#include <asm/cpufeature.h>
- 
- int vclocks_used __read_mostly;
- 
-@@ -45,6 +46,12 @@ void update_vsyscall(struct timekeeper *
- 	vdata->mult		 	vdata->shift		 
-+	vdata->raw_cycle_last   +	vdata->raw_mask         +	vdata->raw_mult         +	vdata->raw_shift	+	vdata->has_rdtscp	+
- 	vdata->wall_time_sec		 	vdata->wall_time_snsec		 
-@@ -74,5 +81,8 @@ void update_vsyscall(struct timekeeper *
- 		vdata->monotonic_time_coarse_sec++;
- 	}
- 
-+	vdata->monotonic_time_raw_sec  +	vdata->monotonic_time_raw_nsec +
- 	gtod_write_end(vdata);
- }
-diff -up linux-4.16-rc4/arch/x86/include/asm/vgtod.h.4.16-rc4 linux-4.16-rc4/arch/x86/include/asm/vgtod.h
---- linux-4.16-rc4/arch/x86/include/asm/vgtod.h.4.16-rc4 2018-03-04 22:54:11.000000000 +0000
-+++ linux-4.16-rc4/arch/x86/include/asm/vgtod.h	2018-03-11 05:12:35.916338703 +0000
-@@ -22,6 +22,11 @@ struct vsyscall_gtod_data {
- 	u64	mask;
- 	u32	mult;
- 	u32	shift;
-+	u64	raw_cycle_last;
-+	u64     raw_mask;
-+	u32     raw_mult;
-+	u32     raw_shift;
-+	u32     has_rdtscp;
- 
- 	/* open coded 'struct timespec' */
- 	u64		wall_time_snsec;
-@@ -32,6 +37,8 @@ struct vsyscall_gtod_data {
- 	gtod_long_t	wall_time_coarse_nsec;
- 	gtod_long_t	monotonic_time_coarse_sec;
- 	gtod_long_t	monotonic_time_coarse_nsec;
-+	gtod_long_t	monotonic_time_raw_sec;
-+	gtod_long_t	monotonic_time_raw_nsec;
- 
- 	int		tz_minuteswest;
- 	int		tz_dsttime;
-
----
+ZGlmZiAtdXAgbGludXgtNC4xNi1yYzQvYXJjaC94ODYvZW50cnkvdmRzby92Y2xvY2tfZ2V0dGlt
+ZS5jLjQuMTYtcmM0IGxpbnV4LTQuMTYtcmM0L2FyY2gveDg2L2VudHJ5L3Zkc28vdmNsb2NrX2dl
+dHRpbWUuYwotLS0gbGludXgtNC4xNi1yYzQvYXJjaC94ODYvZW50cnkvdmRzby92Y2xvY2tfZ2V0
+dGltZS5jLjQuMTYtcmM0CTIwMTgtMDMtMDQgMjI6NTQ6MTEuMDAwMDAwMDAwICswMDAwCisrKyBs
+aW51eC00LjE2LXJjNC9hcmNoL3g4Ni9lbnRyeS92ZHNvL3ZjbG9ja19nZXR0aW1lLmMJMjAxOC0w
+My0xMSAwNTowODozMS4xMzc2ODEzMzcgKzAwMDAKQEAgLTE4Miw2ICsxODIsMjkgQEAgbm90cmFj
+ZSBzdGF0aWMgdTY0IHZyZWFkX3RzYyh2b2lkKQogCXJldHVybiBsYXN0OwogfQogCitub3RyYWNl
+IHN0YXRpYyB1NjQgdnJlYWRfdHNjX3Jhdyh2b2lkKQoreworICAgICAgICB1NjQgdHNjLCBsYXN0
+PWd0b2QtPnJhd19jeWNsZV9sYXN0OworICAgICAgICBpZiggbGlrZWx5KCBndG9kLT5oYXNfcmR0
+c2NwICkgKSB7CisgICAgICAgICAgICAgICAgdTMyICAgICB0c2NfbG8sIHRzY19oaSwKKyAgICAg
+ICAgICAgICAgICAgICAgICAgIHRzY19jcHUgX19hdHRyaWJ1dGVfXygodW51c2VkKSk7CisgICAg
+ICAgICAgICAgICAgYXNtIHZvbGF0aWxlCisgICAgICAgICAgICAgICAgKCAicmR0c2NwIgorICAg
+ICAgICAgICAgICAgIC8qIF4tIGhhcyBidWlsdC1pbiBjYW5jZWxsYXRpb24gcG9pbnQgLyBwaXBl
+bGluZSBzdGFsbCAiYmFycmllciIgKi8KKyAgICAgICAgICAgICAgICA6ICI9YSIgKHRzY19sbykK
+KyAgICAgICAgICAgICAgICAsICI9ZCIgKHRzY19oaSkKKyAgICAgICAgICAgICAgICAsICI9YyIg
+KHRzY19jcHUpCisgICAgICAgICAgICAgICAgKTsgLy8gc2luY2UgYWxsIHZhcmlhYmxlcyAzMi1i
+aXQsIGVheCwgZWR4LCBlY3ggdXNlZCAtIE5PVCByYXgsIHJkeCwgcmN4ICAgICAgICAgICAgICAg
+ICAKKyAgICAgICAgICAgICAgICB0c2MgICAgICA9ICgoKCh1NjQpdHNjX2hpKSAmIDB4ZmZmZmZm
+ZmZVTCkgPDwgMzIpIHwgKCgodTY0KXRzY19sbykgJiAweGZmZmZmZmZmVUwpOworICAgICAgICB9
+IGVsc2UgeworICAgICAgICAgICAgICAgIHRzYyAgICAgID0gcmR0c2Nfb3JkZXJlZCgpOworICAg
+ICAgICB9CisJaWYgKGxpa2VseSh0c2MgPj0gbGFzdCkpCisJCXJldHVybiB0c2M7ICAgICAgICAK
+KyAgICAgICAgYXNtIHZvbGF0aWxlICgiIik7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAKKyAgICAgICAgcmV0dXJuIGxhc3Q7Cit9CisKIG5vdHJhY2Ugc3RhdGljIGlubGluZSB1NjQg
+dmdldHNucyhpbnQgKm1vZGUpCiB7CiAJdTY0IHY7CkBAIC0yMDMsNiArMjI2LDI3IEBAIG5vdHJh
+Y2Ugc3RhdGljIGlubGluZSB1NjQgdmdldHNucyhpbnQgKm0KIAlyZXR1cm4gdiAqIGd0b2QtPm11
+bHQ7CiB9CiAKK25vdHJhY2Ugc3RhdGljIGlubGluZSB1NjQgdmdldHNuc19yYXcoaW50ICptb2Rl
+KQoreworCXU2NCB2OworCWN5Y2xlc190IGN5Y2xlczsKKworCWlmIChndG9kLT52Y2xvY2tfbW9k
+ZSA9PSBWQ0xPQ0tfVFNDKQorCQljeWNsZXMgPSB2cmVhZF90c2NfcmF3KCk7CisjaWZkZWYgQ09O
+RklHX1BBUkFWSVJUX0NMT0NLCisJZWxzZSBpZiAoZ3RvZC0+dmNsb2NrX21vZGUgPT0gVkNMT0NL
+X1BWQ0xPQ0spCisJCWN5Y2xlcyA9IHZyZWFkX3B2Y2xvY2sobW9kZSk7CisjZW5kaWYKKyNpZmRl
+ZiBDT05GSUdfSFlQRVJWX1RTQ1BBR0UKKwllbHNlIGlmIChndG9kLT52Y2xvY2tfbW9kZSA9PSBW
+Q0xPQ0tfSFZDTE9DSykKKwkJY3ljbGVzID0gdnJlYWRfaHZjbG9jayhtb2RlKTsKKyNlbmRpZgor
+CWVsc2UKKwkJcmV0dXJuIDA7CisJdiA9IChjeWNsZXMgLSBndG9kLT5yYXdfY3ljbGVfbGFzdCkg
+JiBndG9kLT5yYXdfbWFzazsKKwlyZXR1cm4gdiAqIGd0b2QtPnJhd19tdWx0OworfQorCiAvKiBD
+b2RlIHNpemUgZG9lc24ndCBtYXR0ZXIgKHZkc28gaXMgNGsgYW55d2F5KSBhbmQgdGhpcyBpcyBm
+YXN0ZXIuICovCiBub3RyYWNlIHN0YXRpYyBpbnQgX19hbHdheXNfaW5saW5lIGRvX3JlYWx0aW1l
+KHN0cnVjdCB0aW1lc3BlYyAqdHMpCiB7CkBAIC0yNDYsNiArMjkwLDI3IEBAIG5vdHJhY2Ugc3Rh
+dGljIGludCBfX2Fsd2F5c19pbmxpbmUgZG9fbW8KIAlyZXR1cm4gbW9kZTsKIH0KIAorbm90cmFj
+ZSBzdGF0aWMgaW50IF9fYWx3YXlzX2lubGluZSBkb19tb25vdG9uaWNfcmF3KCBzdHJ1Y3QgdGlt
+ZXNwZWMgKnRzKQoreworCXVuc2lnbmVkIGxvbmcgc2VxOworCXU2NCBuczsKKwlpbnQgbW9kZTsK
+KworCWRvIHsKKwkJc2VxID0gZ3RvZF9yZWFkX2JlZ2luKGd0b2QpOworCQltb2RlID0gZ3RvZC0+
+dmNsb2NrX21vZGU7CisJCXRzLT50dl9zZWMgPSBndG9kLT5tb25vdG9uaWNfdGltZV9yYXdfc2Vj
+OworCQlucyA9IGd0b2QtPm1vbm90b25pY190aW1lX3Jhd19uc2VjOworCQlucyArPSB2Z2V0c25z
+X3JhdygmbW9kZSk7CisJCW5zID4+PSBndG9kLT5yYXdfc2hpZnQ7CisJfSB3aGlsZSAodW5saWtl
+bHkoZ3RvZF9yZWFkX3JldHJ5KGd0b2QsIHNlcSkpKTsKKworCXRzLT50dl9zZWMgKz0gX19pdGVy
+X2Rpdl91NjRfcmVtKG5zLCBOU0VDX1BFUl9TRUMsICZucyk7CisJdHMtPnR2X25zZWMgPSBuczsK
+KworCXJldHVybiBtb2RlOworfQorCiBub3RyYWNlIHN0YXRpYyB2b2lkIGRvX3JlYWx0aW1lX2Nv
+YXJzZShzdHJ1Y3QgdGltZXNwZWMgKnRzKQogewogCXVuc2lnbmVkIGxvbmcgc2VxOwpAQCAtMjc3
+LDYgKzM0MiwxMCBAQCBub3RyYWNlIGludCBfX3Zkc29fY2xvY2tfZ2V0dGltZShjbG9ja2lkCiAJ
+CWlmIChkb19tb25vdG9uaWModHMpID09IFZDTE9DS19OT05FKQogCQkJZ290byBmYWxsYmFjazsK
+IAkJYnJlYWs7CisJY2FzZSBDTE9DS19NT05PVE9OSUNfUkFXOgorCQlpZiAoZG9fbW9ub3Rvbmlj
+X3Jhdyh0cykgPT0gVkNMT0NLX05PTkUpCisJCQlnb3RvIGZhbGxiYWNrOworCQlicmVhazsKIAlj
+YXNlIENMT0NLX1JFQUxUSU1FX0NPQVJTRToKIAkJZG9fcmVhbHRpbWVfY29hcnNlKHRzKTsKIAkJ
+YnJlYWs7CmRpZmYgLXVwIGxpbnV4LTQuMTYtcmM0L2FyY2gveDg2L2VudHJ5L3ZzeXNjYWxsL3Zz
+eXNjYWxsX2d0b2QuYy40LjE2LXJjNCBsaW51eC00LjE2LXJjNC9hcmNoL3g4Ni9lbnRyeS92c3lz
+Y2FsbC92c3lzY2FsbF9ndG9kLmMKLS0tIGxpbnV4LTQuMTYtcmM0L2FyY2gveDg2L2VudHJ5L3Zz
+eXNjYWxsL3ZzeXNjYWxsX2d0b2QuYy40LjE2LXJjNAkyMDE4LTAzLTA0IDIyOjU0OjExLjAwMDAw
+MDAwMCArMDAwMAorKysgbGludXgtNC4xNi1yYzQvYXJjaC94ODYvZW50cnkvdnN5c2NhbGwvdnN5
+c2NhbGxfZ3RvZC5jCTIwMTgtMDMtMTEgMDU6MTA6NTcuMzcxMTk3NzQ3ICswMDAwCkBAIC0xNiw2
+ICsxNiw3IEBACiAjaW5jbHVkZSA8bGludXgvdGltZWtlZXBlcl9pbnRlcm5hbC5oPgogI2luY2x1
+ZGUgPGFzbS92Z3RvZC5oPgogI2luY2x1ZGUgPGFzbS92dmFyLmg+CisjaW5jbHVkZSA8YXNtL2Nw
+dWZlYXR1cmUuaD4KIAogaW50IHZjbG9ja3NfdXNlZCBfX3JlYWRfbW9zdGx5OwogCkBAIC00NSw2
+ICs0NiwxMiBAQCB2b2lkIHVwZGF0ZV92c3lzY2FsbChzdHJ1Y3QgdGltZWtlZXBlciAqCiAJdmRh
+dGEtPm11bHQJCT0gdGstPnRrcl9tb25vLm11bHQ7CiAJdmRhdGEtPnNoaWZ0CQk9IHRrLT50a3Jf
+bW9uby5zaGlmdDsKIAorCXZkYXRhLT5yYXdfY3ljbGVfbGFzdCAgID0gdGstPnRrcl9yYXcuY3lj
+bGVfbGFzdDsKKwl2ZGF0YS0+cmF3X21hc2sgICAgICAgICA9IHRrLT50a3JfcmF3Lm1hc2s7CisJ
+dmRhdGEtPnJhd19tdWx0ICAgICAgICAgPSB0ay0+dGtyX3Jhdy5tdWx0OworCXZkYXRhLT5yYXdf
+c2hpZnQJPSB0ay0+dGtyX3Jhdy5zaGlmdDsKKwl2ZGF0YS0+aGFzX3JkdHNjcAk9IHN0YXRpY19j
+cHVfaGFzKFg4Nl9GRUFUVVJFX1JEVFNDUCk7CisKIAl2ZGF0YS0+d2FsbF90aW1lX3NlYwkJPSB0
+ay0+eHRpbWVfc2VjOwogCXZkYXRhLT53YWxsX3RpbWVfc25zZWMJCT0gdGstPnRrcl9tb25vLnh0
+aW1lX25zZWM7CiAKQEAgLTc0LDUgKzgxLDggQEAgdm9pZCB1cGRhdGVfdnN5c2NhbGwoc3RydWN0
+IHRpbWVrZWVwZXIgKgogCQl2ZGF0YS0+bW9ub3RvbmljX3RpbWVfY29hcnNlX3NlYysrOwogCX0K
+IAorCXZkYXRhLT5tb25vdG9uaWNfdGltZV9yYXdfc2VjICA9IHRrLT5yYXdfc2VjOworCXZkYXRh
+LT5tb25vdG9uaWNfdGltZV9yYXdfbnNlYyA9IHRrLT50a3JfcmF3Lnh0aW1lX25zZWM7CisKIAln
+dG9kX3dyaXRlX2VuZCh2ZGF0YSk7CiB9CmRpZmYgLXVwIGxpbnV4LTQuMTYtcmM0L2FyY2gveDg2
+L2luY2x1ZGUvYXNtL3ZndG9kLmguNC4xNi1yYzQgbGludXgtNC4xNi1yYzQvYXJjaC94ODYvaW5j
+bHVkZS9hc20vdmd0b2QuaAotLS0gbGludXgtNC4xNi1yYzQvYXJjaC94ODYvaW5jbHVkZS9hc20v
+dmd0b2QuaC40LjE2LXJjNAkyMDE4LTAzLTA0IDIyOjU0OjExLjAwMDAwMDAwMCArMDAwMAorKysg
+bGludXgtNC4xNi1yYzQvYXJjaC94ODYvaW5jbHVkZS9hc20vdmd0b2QuaAkyMDE4LTAzLTExIDA1
+OjEyOjM1LjkxNjMzODcwMyArMDAwMApAQCAtMjIsNiArMjIsMTEgQEAgc3RydWN0IHZzeXNjYWxs
+X2d0b2RfZGF0YSB7CiAJdTY0CW1hc2s7CiAJdTMyCW11bHQ7CiAJdTMyCXNoaWZ0OworCXU2NAly
+YXdfY3ljbGVfbGFzdDsKKwl1NjQgICAgIHJhd19tYXNrOworCXUzMiAgICAgcmF3X211bHQ7CisJ
+dTMyICAgICByYXdfc2hpZnQ7CisJdTMyICAgICBoYXNfcmR0c2NwOwogCiAJLyogb3BlbiBjb2Rl
+ZCAnc3RydWN0IHRpbWVzcGVjJyAqLwogCXU2NAkJd2FsbF90aW1lX3Nuc2VjOwpAQCAtMzIsNiAr
+MzcsOCBAQCBzdHJ1Y3QgdnN5c2NhbGxfZ3RvZF9kYXRhIHsKIAlndG9kX2xvbmdfdAl3YWxsX3Rp
+bWVfY29hcnNlX25zZWM7CiAJZ3RvZF9sb25nX3QJbW9ub3RvbmljX3RpbWVfY29hcnNlX3NlYzsK
+IAlndG9kX2xvbmdfdAltb25vdG9uaWNfdGltZV9jb2Fyc2VfbnNlYzsKKwlndG9kX2xvbmdfdAlt
+b25vdG9uaWNfdGltZV9yYXdfc2VjOworCWd0b2RfbG9uZ190CW1vbm90b25pY190aW1lX3Jhd19u
+c2VjOwogCiAJaW50CQl0el9taW51dGVzd2VzdDsKIAlpbnQJCXR6X2RzdHRpbWU7Cg==
+--001a113cd4f6327d3005671d3a10--
