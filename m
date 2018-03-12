@@ -1,100 +1,64 @@
-Return-Path: <kernel-hardening-return-12409-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELt3qmtND94V3sW9TWHtMyIKkaIYMZUSB/ZjsjgdmlQiDn4HWfTmiw1+036R/UnWXSUx/psk
-ARC-Seal: i=1; a=rsa-sha256; t=1520830207; cv=none;
+Return-Path: <kernel-hardening-return-12411-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELu9DmjAoL3SaTlrfvStVQKLt02BFydkmZYu+d2ukQ+mgJWIz59Jb2SfzSRgENzxlaZAO0hV
+ARC-Seal: i=1; a=rsa-sha256; t=1520830946; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZyXU1hKs4wFrYyQ9XP4G5BMm3PZaC6Xry1eZK3zIuRoQ1GrC0jCWI+wtARnhvJLUUt
-         CmA3l0VKlop5Yk4jCjhUdPpjrIZfpl20Uthsyqxx6YfO9xVJT2pch9iXMPPiCbIZt0DD
-         Ky7Auh1T+YeKVzfgFVKzPK7Sdp3gtJ6KyjgFzxBLPrTMH5TOvfjNtxEgrj/kzhV46Vla
-         fUlvGThpcgd3CMbzJ3NS7ijmxZXD2W+iDiiZVReK+iQrpah7ZwzEB4jfcZ5c5sAkK3yq
-         8egSp3NVReZmDZ8KC4Mbneez36fki3oELOuuyS527MFdWYP6tvcoWiH5DRJsyvvdgarn
-         rwcA==
+        b=wDXuctlGywlVB+8JLXRKavqOANVplHq9Z8ofnZwiHL5tPfuc7bA0EOKsP+jtIgjL8i
+         CRVt2rroIlYD+2/swoCQto6CWoqX7X8ch0hQOy2QUXJbysFs1AmjASeMgCfoj5C2D5Ck
+         dsxjuryw+7AsEs65MvrMElCa+ZCFPG23NEJvDLIyRvDi9vs+5xWiNSeFVVKdGP6PFZcO
+         x/j2Sz4P98Hr3epsHfAeQ0vkzejwktyJlJxnv3DBUc8VmsbMBpXxs3uUM50PdEsrnWp9
+         cfz9Ng/nygSt3oEh6oO1i/Vaz99MYdAOYzeQg6J2DHJiUkQm1otrkFOBtf1l0Ji1W2pr
+         bKKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature:dkim-signature
-         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=fY71O/oZVqj7ORjPmj1+SBUiM0AiqJV/d2FT6UTP1mg=;
-        b=NJcdfYpvoO6YjGytt1xvQRrlkwLoByBAQUfa6Dq1C/zk1Qx2Y807s5ZuSp5ighu5z9
-         +CEXyUTS+mwxZSgJa1AKu0x1uuQ60v3hB2/ZDtdHPY1xugmGbslrO5WYBicFqUhv/GM4
-         TYKRh4rmTuyTGpXKRUSSjyZFXrnZiPC6XW0Y3YAUjQbP4mKKaCoqAZgb/jvVUBTkafzi
-         iuoegwFP/05YLEokxaBzVG2hBFrVbf9NuwLzxfz9oBjizDFsa2oAB+Nn0hExro5XmSXn
-         6DbK7LrmKkFNBCJ8Sb9HvlV9YbMycSKOWIN3SCrGGBLDjjaw9/R1W0rF39aZmrNsRDMU
-         rQZw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=XOiurX6AV+s392nVo5LsWZ9u7rothzZI8FGeu0MetSQ=;
+        b=beO0IGzvbLMWl2CJEYBCO/NAiv6nrfJiYeX+l+EOT9Lh2ZbwoN/y/WxUfRIM3f8UCi
+         NTVmRQUWfub0M1sCm9fhhs8sOSJY9K7LTRxFQtTe4hRGfuvSg8UZmmS5fztgMvYUCASJ
+         aJrKO3U6ofqNjeaOHEeH1KeAMK5LpjxJNX1klDQzwpSyPBOmET9Q+yGdkgCom9WIvloU
+         t+foNPl0rVreSy5jaEzlO8CGdJGvgWbeNftSnoyb0jXnpV2DC1GGbLBgcYtdtgtdssg5
+         Hp5F2kXS41Xa/CwtdIse3jG3OjgNIrR9hUQmVeXNOQELCnAUMqbpzBfMBxmFJlq9zuuM
+         uUKg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=qs/AWPpP;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=Rl4VIvQZ;
-       spf=pass (google.com: domain of kernel-hardening-return-12409-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12409-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QA1v1I+P;
+       spf=pass (google.com: domain of kernel-hardening-return-12411-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12411-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=qs/AWPpP;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=Rl4VIvQZ;
-       spf=pass (google.com: domain of kernel-hardening-return-12409-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12409-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QA1v1I+P;
+       spf=pass (google.com: domain of kernel-hardening-return-12411-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12411-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-X-ME-Sender: <xms:7AamWi2Tv6nlUTRHDJFZ-aGnG7NEPrSltu0EDq4kqlapDLG7ObEM4Q>
-From: "Tobin C. Harding" <me@tobin.cc>
-To: Ilya Dryomov <idryomov@gmail.com>,
-	Sage Weil <sage@redhat.com>,
-	Alex Elder <elder@kernel.org>
-Cc: "Tobin C. Harding" <me@tobin.cc>,
-	ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-hardening@lists.openwall.com,
-	Tycho Andersen <tycho@tycho.ws>,
-	Kees Cook <keescook@chromium.org>
-Subject: [PATCH] rbd: Remove VLA stack usage
-Date: Mon, 12 Mar 2018 15:49:40 +1100
-Message-Id: <1520830180-25452-1-git-send-email-me@tobin.cc>
-X-Mailer: git-send-email 2.7.4
+Date: Sun, 11 Mar 2018 22:02:04 -0700
+From: Eric Biggers <ebiggers3@gmail.com>
+To: "Tobin C. Harding" <me@tobin.cc>
+Cc: Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>,
+	Alex Elder <elder@kernel.org>, ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
+	Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] rbd: Remove VLA stack usage
+Message-ID: <20180312050204.GC25480@zzz.localdomain>
+References: <1520830180-25452-1-git-send-email-me@tobin.cc>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520830180-25452-1-git-send-email-me@tobin.cc>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594706055475539474?=
-X-GMAIL-MSGID: =?utf-8?q?1594706055475539474?=
+X-GMAIL-MSGID: =?utf-8?q?1594706830023590006?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The kernel would like to have all stack VLA usage removed[1].  Here the
-array is declared using a variable that is declared using a constant
-statement but the compiler still emits a warning.  We can clear the
-warning bu using the constant statement directly.  In place of later
-usage of the size variable we can use the ARRAY_SIZE() macro.
+On Mon, Mar 12, 2018 at 03:49:40PM +1100, Tobin C. Harding wrote:
+> The kernel would like to have all stack VLA usage removed[1].
 
-Use constant statement to declare array.
+Can you please stop writing this?  The Linux kernel isn't sentient; it doesn't
+"like" anything.  You need to explain why *you* (and other people) believe these
+changes should be made.
 
-[1]: https://lkml.org/lkml/2018/3/7/621
-
-Signed-off-by: Tobin C. Harding <me@tobin.cc>
----
- drivers/block/rbd.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 0016170cde0a..927ecd9a2511 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -3100,20 +3100,19 @@ static int __rbd_notify_op_lock(struct rbd_device *rbd_dev,
- {
- 	struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
- 	struct rbd_client_id cid = rbd_get_cid(rbd_dev);
--	int buf_size = 4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN;
--	char buf[buf_size];
-+	char buf[4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN];
- 	void *p = buf;
- 
- 	dout("%s rbd_dev %p notify_op %d\n", __func__, rbd_dev, notify_op);
- 
- 	/* encode *LockPayload NotifyMessage (op + ClientId) */
--	ceph_start_encoding(&p, 2, 1, buf_size - CEPH_ENCODING_START_BLK_LEN);
-+	ceph_start_encoding(&p, 2, 1, ARRAY_SIZE(buf) - CEPH_ENCODING_START_BLK_LEN);
- 	ceph_encode_32(&p, notify_op);
- 	ceph_encode_64(&p, cid.gid);
- 	ceph_encode_64(&p, cid.handle);
- 
- 	return ceph_osdc_notify(osdc, &rbd_dev->header_oid,
--				&rbd_dev->header_oloc, buf, buf_size,
-+				&rbd_dev->header_oloc, buf, ARRAY_SIZE(buf),
- 				RBD_NOTIFY_TIMEOUT, preply_pages, preply_len);
- }
- 
--- 
-2.7.4
+Eric
