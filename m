@@ -1,106 +1,66 @@
-Return-Path: <dvyukov@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520845023; cv=none;
+Return-Path: <davem@davemloft.net>
+X-Google-Smtp-Source: AG47ELsXL/ztsgHsTtbhl1aHdRqamW/+me633NsKYb6sd8fTowc6Z9VZcHUKJ0fMEEVVyIdmCGny
+ARC-Seal: i=1; a=rsa-sha256; t=1520863390; cv=none;
         d=google.com; s=arc-20160816;
-        b=cGL3ehQe7rmgDTm+gRjeeneL4kSk6vKgrbeIW0iCPoB1H8NAiwxl+bPPkklZ8LJPQc
-         ZZXTd+1quMdS57jqMf3E2DxF2dyOcuCSFqJIaxKS70hHMLZG+2g77FC/I3PsvL5Us2wI
-         5QB1ZT9i/sZcdo0MuVtcdwHopSfV5IdUeeaLi2SGhJd/5fxAMjsGeLCXdbdN0wA2+NQW
-         7iXpgoSp9iL5Z76RnEvuAsx8ys6tnHqNvOpN4fN5vVxfq3HYxMwo8va92I0X6EbtzXFZ
-         H/YBe2XqU0XGRhn5lUvtLy98bo+LYxLclucz4PdTQwp5HaBilTkHjnSvoSeWAeUmNfJE
-         N1oQ==
+        b=yO8k1fVulE5IDKeuzpr+Kt9hVNtn8NFRowVsepAQCxEGDWj0yIbPqnRSVQ+WJYDhbb
+         mGXvglnLF52ke7PLAvqqEfSe106WUJdliRVhqj/ImhR72Apaw/awqKXnJy+axf58qrwe
+         30or8Yf8sWMq9RNkKaz3L6k/0AJLqO/6S9AGqSdZpFOqmqAvqDM00Ic9xc5ubXomnySO
+         jZe0mXNwqMa+8aWYGNB24upIjenAo8/QBNGHfyfCAN8/nwlixi+/c+aLFRLBi0rYH79T
+         SlezGHrsiQ8oZWRfPGOiDGZinyFIv6dXj7erx6rXaBO+MywWfy+xtTOJKBsMVmKGIWrW
+         Wnbw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=bq6uDqw9+PrN9wYmEEnfHHsm/oJ9CTcx8tovGYqOkek=;
-        b=0+NpHMK3Bran1ES9xxaQQJc+jeMzMbkrlk4EvisDy5wpO+nqZzN6frD7MOGW1QRVeA
-         8C8llAbu2H4K9hifIxyIr8o7ySl8Gqlji7W0Lmn+OxKmHPXozDPq2tN0anq+vrfgQHM0
-         QU9Ugeyl2X/ZwpIWoCGwjlDdOkyN5Tx1+nd8QlxjagmC8o5DrAVCCTOAWujPEA+t92S0
-         oDx8DAgTKJLmXGsiworMPO4cmGvvXhMv/DuKb6TW5HuYr/DqxI/X95hZDrURxMEtfL87
-         5i+4tJFtqMbW+5tWHlRLKoLSE2zgNHaPWiDsumz5h+S7DRqHsgJGtG0/h6E5uifSyAwR
-         onxg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:arc-authentication-results;
+        bh=AEv8v0DKP9lHsENkwe++w0We/zdBkiQKisu+XNDutOs=;
+        b=xt4xCVk39X7aQ4MGVVF4o2wD9469vlSCVqWWB91CZTQxwrcc07LDy8IT8l6zKccMur
+         D0KFg0diPVnWiVZuqVlX+bFix9dil6dqeXeeP3qvU2feB1XrjWdDRhj5BhO0W4KTjfqj
+         caub/1d7AP7WGPJ732qvlEctkY/DTCQdoFuCrXIN3acOtBkoKFZ/omEKpPe5O+riC1Sl
+         JEsVd39D7l8h4wdT3e7+Olxkz9EjzzdKM4u+HTj3/aKOQ6+ylbzrIcomksxoDLaiRK4a
+         BrBdth9Ew85HpUe52f7Cf44n9G77RcvpcfjG4J/zyGIBVPAvsJ6pQgDBf6v3aHY7sl48
+         iCNg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=wSz7Ct5M;
-       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=dvyukov@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+       spf=neutral (google.com: 184.105.139.130 is neither permitted nor denied by best guess record for domain of davem@davemloft.net) smtp.mailfrom=davem@davemloft.net
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=wSz7Ct5M;
-       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=dvyukov@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AG47ELtLo9e7Q6o8G0NeL4fPezb+7GHPrfRKVu1BAQf+j2X3xZpNiAt5wtRVBfT2KJHMnjrVVlUSaPGhtW3D8ds1lvg=
-MIME-Version: 1.0
-In-Reply-To: <20180308.150309.1043571795208899259.davem@davemloft.net>
-References: <CACT4Y+Z_DV6sgQ7FodoxBj8MdVkcij3bS0P1pp9GOMDS4-f92A@mail.gmail.com>
- <20180104112028.GA7583@kroah.com> <CACT4Y+Z2-Z6GN0SDb5jySJkCrTRxf9qvdzuyM_OoruCTB9EoqQ@mail.gmail.com>
- <20180308.150309.1043571795208899259.davem@davemloft.net>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 12 Mar 2018 09:56:42 +0100
-Message-ID: <CACT4Y+Z7E1e05R1pBhS4oD7Moy8sn3N7POvuDTCYNDYDc_uE=Q@mail.gmail.com>
+       spf=neutral (google.com: 184.105.139.130 is neither permitted nor denied by best guess record for domain of davem@davemloft.net) smtp.mailfrom=davem@davemloft.net
+Date: Mon, 12 Mar 2018 10:03:06 -0400 (EDT)
+Message-Id: <20180312.100306.1226474832894044539.davem@davemloft.net>
+To: dvyukov@google.com
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ akpm@linux-foundation.org, torvalds@linux-foundation.org,
+ syzkaller@googlegroups.com
 Subject: Re: LKML admins (syzbot emails are not delivered)
-To: David Miller <davem@davemloft.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>,
-	syzkaller <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <CACT4Y+Z7E1e05R1pBhS4oD7Moy8sn3N7POvuDTCYNDYDc_uE=Q@mail.gmail.com>
+References: <CACT4Y+Z2-Z6GN0SDb5jySJkCrTRxf9qvdzuyM_OoruCTB9EoqQ@mail.gmail.com>
+	<20180308.150309.1043571795208899259.davem@davemloft.net>
+	<CACT4Y+Z7E1e05R1pBhS4oD7Moy8sn3N7POvuDTCYNDYDc_uE=Q@mail.gmail.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1588652385455174541?=
-X-GMAIL-MSGID: =?utf-8?q?1594721591151500424?=
+X-GMAIL-MSGID: =?utf-8?q?1594740850604214490?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 8, 2018 at 9:03 PM, David Miller <davem@davemloft.net> wrote:
-> From: Dmitry Vyukov <dvyukov@google.com>
-> Date: Thu, 1 Mar 2018 17:22:54 +0100
->
->> The problem strikes back.
->> Again people complain that a email does not appear on LKML:
->> https://www.spinics.net/lists/kernel/msg2735905.html
->> Though, it appeared on syzkaller-bugs group:
->> https://groups.google.com/d/msg/syzkaller-bugs/OkwLGoS6UQA/hHAtCdnNBgAJ
->> https://groups.google.com/forum/message/raw?msg=syzkaller-bugs/OkwLGoS6UQA/hHAtCdnNBgAJ
->> syzbot now receives and logs bounce notifications, but there were none...
->
-> The problem is that the name 'kernelci.orgbot' has a special character
-> in it, namely "."
->
-> And when such special characters occur in email headers, the string
-> in question must be surrounded by double quotes.
->
-> People have to do this when they use my name "David S. Miller" as
-> well, for example.
->
-> So I think if you put double quotes around kernelci.orgbot when it
-> is provided in email headers, the problem will go away.
->
-> Please also make sure that multiple From: headers are not being
-> generated or anything like that.
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 12 Mar 2018 09:56:42 +0100
 
+> But I don't see kernelci.orgbot referenced anywhere in the emails.
+> E.g. in the one that was linked above:
+> https://groups.google.com/forum/message/raw?msg=syzkaller-bugs/OkwLGoS6UQA/hHAtCdnNBgAJ
 
-Thanks for looking into this, David!
+I'm not referencing that one above, I'm simply reporting what I've
+seen in the vger bounce logs.
 
-But I don't see kernelci.orgbot referenced anywhere in the emails.
-E.g. in the one that was linked above:
-https://groups.google.com/forum/message/raw?msg=syzkaller-bugs/OkwLGoS6UQA/hHAtCdnNBgAJ
+> Could a dot in email address produce the same result? E.g.
+> To: foo.bar@something.com
 
-Which one do you mean? syzbot takes emails from get_maintainers.pl, I
-guess kernelci.orgbot is not usually there. And syzbot does not
-includes names, just email addresses.
-Could a dot in email address produce the same result? E.g.
-To: foo.bar@something.com
-? I see such addresses in some of the emails (but not in the one
-referenced above).
+No.
 
-Is it possible to revive autoanswer@vger.kernel.org? It would
-hopefully allow us to debug this without bothering you.
+> Is it possible to revive autoanswer@vger.kernel.org? It would
+> hopefully allow us to debug this without bothering you.
 
-
-Possibly related, when I am searching for "syzkaller" I am finding
-entries like the following titled "This message generated a parse
-failure. Raw output follows here. Please use 'back' to navigate.".
-
-https://lkml.org/lkml/2018/3/10/73
-https://lkml.org/lkml/2018/2/27/581
-https://lkml.org/lkml/2018/2/22/774
-
-Could this "parse failure" explain the undelivered emails? How can I
-figure out what exactly caused the failure?
-
-Thanks again
+Sorry, no engineering resources will be put into the current
+setup as we prepare a new system based upon mailman.
