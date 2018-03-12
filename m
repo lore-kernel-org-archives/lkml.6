@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932508AbeCLUth (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 16:49:37 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:43494 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932274AbeCLUtf (ORCPT
+        id S932522AbeCLUtz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 16:49:55 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:40901 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932247AbeCLUtx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 16:49:35 -0400
-X-Google-Smtp-Source: AG47ELsfSxv34e3PZDx3bwYqqED1ZyT5YmH1f/oqviXHlsw1rYV7HtV3/xYK+0qF1cmdrfeApsm2qw==
+        Mon, 12 Mar 2018 16:49:53 -0400
+X-Google-Smtp-Source: AG47ELuYKkH72MRV7JkGWUa3t7w87w5H7bCgaCIfjJVfraq6BxH87lG6uZyX3+DsVrtvvoT8o8Vs4Q==
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
 To: linus.walleij@linaro.org
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-iio@vger.kernel.org,
         William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 4/8] gpio: pcie-idio-24: Implement get_multiple callback
-Date: Mon, 12 Mar 2018 16:49:28 -0400
-Message-Id: <5d46c780a6e3be82e672dbd17ba70d275e35b51b.1520886945.git.vilhelm.gray@gmail.com>
+Subject: [PATCH 5/8] gpio: 104-dio-48e: Implement get_multiple callback
+Date: Mon, 12 Mar 2018 16:49:46 -0400
+Message-Id: <5b8ac88568320f8a1b00f3ade7da51b1f3e1cdb3.1520886945.git.vilhelm.gray@gmail.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <cover.1520886945.git.vilhelm.gray@gmail.com>
 References: <cover.1520886945.git.vilhelm.gray@gmail.com>
@@ -23,39 +23,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ACCES I/O PCIe-IDIO-24 series of devices provides 24
-optically-isolated digital inputs accessed via three 8-bit ports. Since
-eight input lines are acquired on a single port input read, the
-PCIe-IDIO-24 GPIO driver may improve multiple input reads by utilizing a
-get_multiple callback. This patch implements the
-idio_24_gpio_get_multiple function which serves as the respective
+The ACCES I/O 104-DIO-48E series of devices contain two Programmable
+Peripheral Interface (PPI) chips of type 82C55, which each feature three
+8-bit ports of I/O. Since eight input lines are acquired on a single
+port input read, the 104-DIO-48E GPIO driver may improve multiple input
+reads by utilizing a get_multiple callback. This patch implements the
+dio48e_gpio_get_multiple function which serves as the respective
 get_multiple callback.
 
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- drivers/gpio/gpio-pcie-idio-24.c | 63 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+ drivers/gpio/gpio-104-dio-48e.c | 41 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-diff --git a/drivers/gpio/gpio-pcie-idio-24.c b/drivers/gpio/gpio-pcie-idio-24.c
-index f666e2e69074..6efc85292c49 100644
---- a/drivers/gpio/gpio-pcie-idio-24.c
-+++ b/drivers/gpio/gpio-pcie-idio-24.c
-@@ -193,6 +193,68 @@ static int idio_24_gpio_get(struct gpio_chip *chip, unsigned int offset)
- 	return !!(ioread8(&idio24gpio->reg->ttl_in0_7) & offset_mask);
+diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
+index bab3b94c5cbc..35ae2357d2ba 100644
+--- a/drivers/gpio/gpio-104-dio-48e.c
++++ b/drivers/gpio/gpio-104-dio-48e.c
+@@ -182,6 +182,46 @@ static int dio48e_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 	return !!(port_state & mask);
  }
  
-+static int idio_24_gpio_get_multiple(struct gpio_chip *chip,
-+	unsigned long *mask, unsigned long *bits)
++static int dio48e_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
++	unsigned long *bits)
 +{
-+	struct idio_24_gpio *const idio24gpio = gpiochip_get_data(chip);
-+	struct idio_24_gpio_reg __iomem *const reg = idio24gpio->reg;
++	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
 +	unsigned int i;
 +	const unsigned int gpio_reg_size = 8;
 +	unsigned int bit_word_offset;
 +	unsigned int bits_mask;
 +	const unsigned long reg_mask = GENMASK(gpio_reg_size, 0);
++	unsigned int port;
++	unsigned int in_port;
 +	unsigned long port_state;
-+	const unsigned long out_mode_mask = BIT(1);
 +
 +	/* clear bits array to a clean slate */
 +	for (i = 0; i < chip->ngpio; i += BITS_PER_LONG)
@@ -70,34 +70,12 @@ index f666e2e69074..6efc85292c49 100644
 +			continue;
 +		}
 +
-+		/* read bits from current gpio register */
-+		switch (i / gpio_reg_size) {
-+		case 0:
-+			port_state = ioread8(&reg->out0_7);
-+			break;
-+		case 1:
-+			port_state = ioread8(&reg->out8_15);
-+			break;
-+		case 2:
-+			port_state = ioread8(&reg->out16_23);
-+			break;
-+		case 3:
-+			port_state = ioread8(&reg->in0_7);
-+			break;
-+		case 4:
-+			port_state = ioread8(&reg->in8_15);
-+			break;
-+		case 5:
-+			port_state = ioread8(&reg->in16_23);
-+			break;
-+		case 6:
-+			/* TTL/CMOS Outputs/Inputs */
-+			if (ioread8(&reg->ctl) & out_mode_mask)
-+				port_state = ioread8(&reg->ttl_out0_7);
-+			else
-+				port_state = ioread8(&reg->ttl_in0_7);
-+			break;
-+		}
++		/* compute input port offset */
++		port = i / gpio_reg_size;
++		in_port = (port > 2) ? port + 1 : port;
++
++		/* get input bits */
++		port_state = inb(dio48egpio->base + in_port);
 +
 +		/* store acquired bits */
 +		bits[BIT_WORD(i)] |= port_state << bit_word_offset;
@@ -106,16 +84,16 @@ index f666e2e69074..6efc85292c49 100644
 +	return 0;
 +}
 +
- static void idio_24_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 	int value)
+ static void dio48e_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
  {
-@@ -397,6 +459,7 @@ static int idio_24_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	idio24gpio->chip.direction_input = idio_24_gpio_direction_input;
- 	idio24gpio->chip.direction_output = idio_24_gpio_direction_output;
- 	idio24gpio->chip.get = idio_24_gpio_get;
-+	idio24gpio->chip.get_multiple = idio_24_gpio_get_multiple;
- 	idio24gpio->chip.set = idio_24_gpio_set;
- 
- 	raw_spin_lock_init(&idio24gpio->lock);
+ 	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
+@@ -384,6 +424,7 @@ static int dio48e_probe(struct device *dev, unsigned int id)
+ 	dio48egpio->chip.direction_input = dio48e_gpio_direction_input;
+ 	dio48egpio->chip.direction_output = dio48e_gpio_direction_output;
+ 	dio48egpio->chip.get = dio48e_gpio_get;
++	dio48egpio->chip.get_multiple = dio48e_gpio_get_multiple;
+ 	dio48egpio->chip.set = dio48e_gpio_set;
+ 	dio48egpio->chip.set_multiple = dio48e_gpio_set_multiple;
+ 	dio48egpio->base = base[id];
 -- 
 2.16.2
