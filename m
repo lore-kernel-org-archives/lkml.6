@@ -1,84 +1,279 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932231AbeCLSpC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 14:45:02 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:45698 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751232AbeCLSpB (ORCPT
+        id S1751419AbeCLStu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 14:49:50 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:54507 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751232AbeCLSts (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 14:45:01 -0400
-X-Google-Smtp-Source: AG47ELt/LeH6w7K9XadpjvA5iTnJjC+LFmNbP+AgJNyXDyevjbgW3t7MnGnx5dyA9r6qj+R+XDG74g==
-Date: Mon, 12 Mar 2018 11:44:57 -0700
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Daniel Borkmann <daniel@iogearbox.net>, Wangnan <wangnan0@huawei.com>
-Subject: Re: [PATCH 11/13] perf bpf: Add helper header files
-Message-ID: <20180312184455.bs2rk6qr3qrz7vmy@ast-mbp>
-References: <20180312094313.18738-1-jolsa@kernel.org>
- <20180312094313.18738-12-jolsa@kernel.org>
+        Mon, 12 Mar 2018 14:49:48 -0400
+X-Google-Smtp-Source: AG47ELuhfSxhQDTt3ZY/I/5km+iNohuW046X/Qk5JDotjmfwGjJNUJMyuOa4i3yGDDTXMByJ3Z0GWg==
+Date: Mon, 12 Mar 2018 11:49:43 -0700
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Wanpeng Li <kernellwp@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        syzbot
+        <bot+d9fbc5c299aa8a95ac07572b4f6e191c0f4efff6@syzkaller.appspotmail.com>,
+        kvm <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>, syzkaller-bugs@googlegroups.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: WARNING in kvm_arch_vcpu_ioctl_run (2)
+Message-ID: <20180312184943.GB230165@gmail.com>
+References: <001a114aa95cf6decb055cf1623b@google.com>
+ <001a113ebb3240667d055e337d48@google.com>
+ <CANRm+CwOti9F4Fitr5TvX+ji8s807n_kGXe_p=SPe5tp27=3mw@mail.gmail.com>
+ <CANRm+CyZZJDbKNwu25ZCf0LhZizUfcehZqoO=SiqS0r_H51=Zg@mail.gmail.com>
+ <CACT4Y+aq1tXikwzz-dGvexjOx=50cbo-RrgHC=Nqgm=dzVwwbQ@mail.gmail.com>
+ <CACT4Y+a0vsKyoOuwSvZEBc1mZmhOr1WauMM03sAvbZiZ6SGi+Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180312094313.18738-12-jolsa@kernel.org>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <CACT4Y+a0vsKyoOuwSvZEBc1mZmhOr1WauMM03sAvbZiZ6SGi+Q@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 10:43:11AM +0100, Jiri Olsa wrote:
-> diff --git a/tools/perf/util/bpf-userapi.h b/tools/perf/util/bpf-userapi.h
-> new file mode 100644
-> index 000000000000..63f2b4c13a5c
-> --- /dev/null
-> +++ b/tools/perf/util/bpf-userapi.h
-> @@ -0,0 +1,11 @@
-> +#ifndef __BPF_USERAPI_H
-> +#define __BPF_USERAPI_H
-> +
-> +enum {
-> +	BPF_FUNC_USER_START			= 10000,
-> +	BPF_FUNC_USER_print			= BPF_FUNC_USER_START,
-> +	BPF_FUNC_USER_bpf_map_get_next_key,
-> +	BPF_FUNC_USER_bpf_map_lookup_elem,
-> +};
-> +
-> +#endif /* __BPF_USERFUNCS_H */
-> diff --git a/tools/perf/util/bpf-userfuncs.h b/tools/perf/util/bpf-userfuncs.h
-> new file mode 100644
-> index 000000000000..e920420237ee
-> --- /dev/null
-> +++ b/tools/perf/util/bpf-userfuncs.h
-> @@ -0,0 +1,19 @@
-> +#ifndef __BPF_USERFUNCS_H
-> +#define __BPF_USERFUNCS_H
-> +
-> +#include <bpf-userapi.h>
-> +
-> +static int (*bpfu_print)(const char *fmt, ...) =
-> +	(void *) BPF_FUNC_USER_print;
-> +static int (*bpfu_map_get_next_key)(void *map, void *key, void *value) =
-> +	(void *) BPF_FUNC_USER_bpf_map_get_next_key;
-> +static int (*bpfu_map_lookup_elem)(void *map, void *key, void *value) =
-> +	(void *) BPF_FUNC_USER_bpf_map_lookup_elem;
-> +
-> +#define print(fmt, ...)                                  \
-> +({                                                       \
-> +	char ____fmt[] = fmt;                            \
-> +	bpfu_print(____fmt, ##__VA_ARGS__);              \
-> +})
+On Wed, Dec 27, 2017 at 07:27:40PM +0100, 'Dmitry Vyukov' via syzkaller-bugs wrote:
+> On Sun, Dec 3, 2017 at 5:38 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> >>>> Hello,
+> >>>>
+> >>>> syzbot has tested the proposed patch but the reproducer still triggered
+> >>>> crash:
+> >>>> WARNING in kvm_arch_vcpu_ioctl_run
+> >>>>
+> >>>> VMExit: intr_info=00000000 errcode=00000000 ilen=00000000
+> >>>>         reason=80000021 qualification=0000000000000000
+> >>>> IDTVectoring: info=00000000 errcode=00000000
+> >>>> TSC Offset = 0xffffffeeb46bc6ac
+> >>>> EPT pointer = 0x00000001ce37601e
+> >>>> WARNING: CPU: 0 PID: 3023 at arch/x86/kvm/x86.c:7293
+> >>>> kvm_arch_vcpu_ioctl_run+0x213/0x5d20
+> >>>> Kernel panic - not syncing: panic_on_warn set ...
+> >>>>
+> >>>> CPU: 0 PID: 3023 Comm: syz-executor4 Not tainted 4.14.0-next-20171117+ #9
+> >>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> >>>> Google 01/01/2011
+> >>>> Call Trace:
+> >>>>  dump_stack+0x173/0x237
+> >>>>  panic+0x1e4/0x41c
+> >>>>  __warn+0x1d9/0x1f0
+> >>>>  report_bug+0x20a/0x2d0
+> >>>>  fixup_bug.part.10+0x32/0x80
+> >>>>  do_error_trap+0x29c/0x370
+> >>>>  invalid_op+0x18/0x20
+> >>>> RIP: 0010:kvm_arch_vcpu_ioctl_run+0x213/0x5d20
+> >>>> RSP: 0018:ffff8801ce197680 EFLAGS: 00010293
+> >>>> RAX: ffff8801ce588440 RBX: ffff8801d5b8f000 RCX: ffffffff810d4003
+> >>>> RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8801ce0e02b8
+> >>>> RBP: ffff8801ce197a50 R08: 0000000000000001 R09: 0000000000000001
+> >>>> R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000000
+> >>>> R13: ffff8801ce0e0168 R14: ffff8801cec10980 R15: ffff8801ce0e0080
+> >>>>  kvm_vcpu_ioctl+0x619/0xf80
+> >>>>  do_vfs_ioctl+0x18b/0x13e0
+> >>>>  SyS_ioctl+0x7e/0xb0
+> >>>>  entry_SYSCALL_64_fastpath+0x1f/0x96
+> >>>> RIP: 0033:0x452879
+> >>>> RSP: 002b:00007f4bc97fdbe8 EFLAGS: 00000212 ORIG_RAX: 0000000000000010
+> >>>> RAX: ffffffffffffffda RBX: 0000000000000082 RCX: 0000000000452879
+> >>>> RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000004
+> >>>> RBP: 00007ffce1993510 R08: 0000000000000000 R09: 0000000000000000
+> >>>> R10: 0000000000000000 R11: 0000000000000212 R12: 0000000000000000
+> >>>> R13: 00007ffce199348f R14: 00007f4bc97fe9c0 R15: 0000000000000006
+> >>>> Dumping ftrace buffer:
+> >>>>    (ftrace buffer empty)
+> >>>> Kernel Offset: disabled
+> >>>> Rebooting in 86400 seconds..
+> >>>
+> >>> I will have a look.
+> >>
+> >> Please have a try. https://lkml.org/lkml/2017/11/20/118
+> >
+> > Hi Wanpeng,
+> >
+> > Please also follow this part:
+> >
+> >> syzbot will keep track of this bug report.
+> >> Once a fix for this bug is committed, please reply to this email with:
+> >> #syz fix: exact-commit-title
+> >> Note: all commands must start from beginning of the line.
+> >
+> > It will greatly help to keep overall process running.
+> > Thanks
+> 
+> still happens, number of crashes crossed 40K
+> we won't know if it's a new bugs or the same issue is still not fixed
+> until you tell syzbot about the fix as it asks
+> 
 
-since there is no verifier for this user space bpf interpreter
-there is no need to restrict what BEGIN/END progs can do and can call.
-llvm will happily compile any C code into bpf instructions.
-With little bit of elf magic it's possible to let it call any libc
-function instead of only 3 above.
-perf loader will see bpf_call into normal printf, memcpy, memcmp, etc
-then during the loading need to associate symbol with actual address
-of these functions inside perf binary and let call_cb do the call.
-I think this way begin/end will be much more powerful and useful.
-Potentially allowing some of the bcc scripts to be written this way.
+syzbot still doesn't know about Wanpeng's fix for this from a few months ago
+(commit c37c28730bb0), so telling it:
+
+#syz fix: KVM: VMX: Fix rflags cache during vCPU reset
+
+However, this WARN actually continued occurring very frequently for a couple
+months afterwards, presumably for a different reason, then stopped.  From what I
+can gather, the reason it stopped occurring was not due to an upstream kernel
+change, but rather GCE started exposing the "unrestricted guest" CPU feature,
+which changed the reachable code paths in guest kernels.  So, syzbot will not be
+reporting it anymore.  But if anyone is still interested in looking into it, I
+can still reproduce the WARN locally, provided that you first run the following
+on the host:
+
+    rmmod kvm_intel
+    modprobe kvm_intel nested=1 unrestricted_guest=0
+
+Here's the reproducer (for running in L1 guest):
+
+// autogenerated by syzkaller (http://github.com/google/syzkaller)
+
+#define _GNU_SOURCE
+#include <endian.h>
+#include <linux/futex.h>
+#include <pthread.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/syscall.h>
+#include <unistd.h>
+
+static void test();
+
+void loop()
+{
+  while (1) {
+    test();
+  }
+}
+
+struct thread_t {
+  int created, running, call;
+  pthread_t th;
+};
+
+static struct thread_t threads[16];
+static void execute_call(int call);
+static int running;
+static int collide;
+
+static void* thr(void* arg)
+{
+  struct thread_t* th = (struct thread_t*)arg;
+  for (;;) {
+    while (!__atomic_load_n(&th->running, __ATOMIC_ACQUIRE))
+      syscall(SYS_futex, &th->running, FUTEX_WAIT, 0, 0);
+    execute_call(th->call);
+    __atomic_fetch_sub(&running, 1, __ATOMIC_RELAXED);
+    __atomic_store_n(&th->running, 0, __ATOMIC_RELEASE);
+    syscall(SYS_futex, &th->running, FUTEX_WAKE);
+  }
+  return 0;
+}
+
+static void execute(int num_calls)
+{
+  int call, thread;
+  running = 0;
+  for (call = 0; call < num_calls; call++) {
+    for (thread = 0; thread < sizeof(threads) / sizeof(threads[0]); thread++) {
+      struct thread_t* th = &threads[thread];
+      if (!th->created) {
+        th->created = 1;
+        pthread_attr_t attr;
+        pthread_attr_init(&attr);
+        pthread_attr_setstacksize(&attr, 128 << 10);
+        pthread_create(&th->th, &attr, thr, th);
+      }
+      if (!__atomic_load_n(&th->running, __ATOMIC_ACQUIRE)) {
+        th->call = call;
+        __atomic_fetch_add(&running, 1, __ATOMIC_RELAXED);
+        __atomic_store_n(&th->running, 1, __ATOMIC_RELEASE);
+        syscall(SYS_futex, &th->running, FUTEX_WAKE);
+        if (collide && call % 2)
+          break;
+        struct timespec ts;
+        ts.tv_sec = 0;
+        ts.tv_nsec = 20 * 1000 * 1000;
+        syscall(SYS_futex, &th->running, FUTEX_WAIT, 1, &ts);
+        if (running)
+          usleep((call == num_calls - 1) ? 10000 : 1000);
+        break;
+      }
+    }
+  }
+}
+
+long r[3];
+uint64_t procid;
+void execute_call(int call)
+{
+  switch (call) {
+  case 0:
+    syscall(__NR_mmap, 0x20000000, 0xfff000, 3, 0x32, -1, 0);
+    break;
+  case 1:
+    memcpy((void*)0x20d7eff7, "/dev/kvm", 9);
+    r[0] = syscall(__NR_openat, 0xffffffffffffff9c, 0x20d7eff7, 0, 0);
+    break;
+  case 2:
+    r[1] = syscall(__NR_ioctl, r[0], 0xae01, 0);
+    break;
+  case 3:
+    r[2] = syscall(__NR_ioctl, r[1], 0xae41, 0);
+    break;
+  case 4:
+    *(uint32_t*)0x206cf000 = 0x10004;
+    *(uint32_t*)0x206cf004 = 0;
+    *(uint64_t*)0x206cf008 = 0;
+    *(uint64_t*)0x206cf010 = 0x1000;
+    *(uint64_t*)0x206cf018 = 0x20a98000;
+    syscall(__NR_ioctl, r[1], 0x4020ae46, 0x206cf000);
+    break;
+  case 5:
+    syscall(__NR_ioctl, r[2], 0xaeb7);
+    break;
+  case 6:
+    syscall(__NR_ioctl, r[2], 0xae80, 0);
+    break;
+  case 7:
+    *(uint32_t*)0x20413000 = 0x20003;
+    *(uint32_t*)0x20413004 = 0;
+    *(uint64_t*)0x20413008 = 0;
+    *(uint64_t*)0x20413010 = 0;
+    *(uint64_t*)0x20413018 = 0;
+    *(uint64_t*)0x20413020 = 0;
+    *(uint64_t*)0x20413028 = 0;
+    *(uint64_t*)0x20413030 = 0;
+    *(uint64_t*)0x20413038 = 0;
+    *(uint64_t*)0x20413040 = 1;
+    syscall(__NR_ioctl, r[2], 0x4048ae9b, 0x20413000);
+    break;
+  case 8:
+    syscall(__NR_ioctl, r[2], 0xae80, 0);
+    break;
+  }
+}
+
+void test()
+{
+  memset(r, -1, sizeof(r));
+  execute(9);
+  collide = 1;
+  execute(9);
+}
+
+int main()
+{
+  for (procid = 0; procid < 8; procid++) {
+    if (fork() == 0) {
+      for (;;) {
+        loop();
+      }
+    }
+  }
+  sleep(1000000);
+  return 0;
+}
