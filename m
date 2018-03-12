@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELscp/yq91xE9fIgUV0g4myZnQ+u0VlaMgWNIQcCFokFPdylhOCzESHngTuedPlCnUu3DWcR
-ARC-Seal: i=1; a=rsa-sha256; t=1520824081; cv=none;
+X-Google-Smtp-Source: AG47ELvxhrosb2oFIm2x1mYOJ+3p+ssx/k7O68R0Ehl9I9hkUhXBj3BjXqXBSY4LXOtO3133AVCf
+ARC-Seal: i=1; a=rsa-sha256; t=1520824073; cv=none;
         d=google.com; s=arc-20160816;
-        b=vrjE5GgJxX22SIcYjbh9a1Xq5rehETUCCeFKbJ/nepxSdP8csZlMC88oAGrnFkueUo
-         STXkEejC8jTxJ8AUDVLzj7IkwWrI48PnYSkgLkKUL/ogN36bRDBBnWCHMt50ORZZcFF9
-         ImYlwTeUKOOvhdvC6q/gS9S4Gcp87YfpJlOSdImVd0Mm43bJGqr6HIJJuJym5jACxHCv
-         hpOxaE8LziVYkL4VJwaEE8Yy9/B5OzzLSAB/2YkNndMktsA5r4MH+QmY5qmRHKA9rftZ
-         58vN8pO8jYdDj1Pq4Y+IrUsnJOt1QjIl8u9K/loPZ91824LjLu+CNTBJbPD1Bl9Uiyb0
-         A1JQ==
+        b=xwFhEgTHhJFB5twR2AsEpgUK27IAqAvNyzwCPkiLWzKl0IzaxlMrBK4JMtWsv3hidj
+         6sSBNxP6mwEhqU7UOIH363uo2QxzTwb3625uLb3TEmh/4W9xEkmFWe9FPm3HgVQMl+GT
+         W0+c+b3IlF7AoijZaeK6ApEkLAOYVqbxSwTn8SmzxhqHdK0xiixsBXhigC9kiKzFYiu6
+         x6E2ee8mgSf7Ec0FLun6jwv3ygBOZTdtA9p0HN4ZXQJ0XOpTN7/91b7Rddzurfes2Zn6
+         1gq2pUSxZ3gpEn0Qve9sibjSL4RHPMkXVs9+SJ7+7CA0m6b6y6aTRJkvfKPItm761CVl
+         sc3g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=NNnL2arrPA37Z1nmULMVLI76Pk3JisLZY4M4a2H5Jvs=;
-        b=kPSzKVBEc7DmbBmLs6MN2N1WrBk2fIZ/cjpGkbMuIAg36d+bv2XryI/Un28IpQGmOG
-         b5yXOehSSXJ8m14PQsGN/H2PsIDI+f+OiBuZvuC/gGugQFY9cgfLsQJdEF9hzLGw4Z7V
-         9dFsAjxfb6dS6/fzI62Vq9dBAtMk6LcwVGMduofgCevLQJQ3lHzOh8tMu0MbKU0txeD+
-         C1cFGck9tS2eiwpXSFXWKacau0Ls7JWcsAYHmlRcSFDZF3aYyPgvH/Z6z/e7XdOrNfvu
-         EbXVVtWM2h2Z2HDWG9Olt8mvhLc95WCitzIFnDjuCYXYH9/nk+5XptakIvIo20P/56HX
-         GQyg==
+        bh=P1PMp//FqEKNWU28MtPEmi0VgAvifPQpy21WOWdV2CQ=;
+        b=Anq3uOYMlLhb+3yCwSi2K9T/XkvwpyWzyPS7A5H+0uOa3KrCqBo4s2C4Ypeec3+Fge
+         dKjU0C8U0CAWuOcEofCYZi6Lr1KL5IEQAMkjKq0fDJoZzZPg6bIckOHra6O5ZpSB7fFE
+         41hr9lM5Pub36Frxd2kbXowcXMOpAS4dSsiysjkgVmel8upZM9A5BrR2et/f7IrJ+rMp
+         4LHrfXLe102JLdqft+OloaBqmjEQnXXt5pv7KNznHTiLwjz8IphT4QKdw1D5FiuP2Maj
+         WMIhwEHHdjzrP/qJ7wyhf0cKiFGhR/r2s5dJLvnvlAnB8SwvYxi7NXogFoGwU4fA5Hha
+         NC9A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,25 +30,35 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Borislav Petkov" <bp@suse.de>,
- luto@amacapital.net, keescook@google.com, dave.hansen@intel.com,
- "Josh Poimboeuf" <jpoimboe@redhat.com>,
- ak@linux.intel.com, riel@redhat.com, pjt@google.com,
- torvalds@linux-foundation.org, peterz@infradead.org,
+ "Paul Turner" <pjt@google.com>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ gnomes@lxorguk.ukuu.org.uk,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Tim Chen" <tim.c.chen@linux.intel.com>,
+ "Ingo Molnar" <mingo@kernel.org>,
+ "David Woodhouse" <dwmw@amazon.co.uk>,
+ "Andi Kleen" <ak@linux.intel.com>,
+ "Rik van Riel" <riel@redhat.com>,
  "Thomas Gleixner" <tglx@linutronix.de>,
- jikos@kernel.org, gregkh@linux-foundation.org, tim.c.chen@linux.intel.com,
- "David Woodhouse" <dwmw2@infradead.org>
+ "Dave Hansen" <dave.hansen@intel.com>,
+ "Greg Kroah-Hartman" <gregkh@linux-foundation.org>,
+ "Jiri Kosina" <jikos@kernel.org>,
+ "Josh Poimboeuf" <jpoimboe@redhat.com>,
+ "Andy Lutomirski" <luto@amacapital.net>,
+ "Kees Cook" <keescook@google.com>,
+ "Arjan van de Ven" <arjan@linux.intel.com>,
+ thomas.lendacky@amd.com
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.808048825@decadent.org.uk>
+Message-ID: <lsq.1520823814.638064176@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 078/104] x86/nospec: Fix header guards names
+Subject: [PATCH 3.2 058/104] x86/retpoline: Add initial retpoline support
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699632692841359?=
-X-GMAIL-MSGID: =?utf-8?q?1594699632692841359?=
+X-GMAIL-THRID: =?utf-8?q?1594699624373063214?=
+X-GMAIL-MSGID: =?utf-8?q?1594699624373063214?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,50 +66,319 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-commit 7a32fc51ca938e67974cbb9db31e1a43f98345a9 upstream.
+commit 76b043848fd22dbf7f8bf3a1452f8c70d557b860 upstream.
 
-... to adhere to the _ASM_X86_ naming scheme.
+Enable the use of -mindirect-branch=thunk-extern in newer GCC, and provide
+the corresponding thunks. Provide assembler macros for invoking the thunks
+in the same way that GCC does, from native and inline assembler.
 
-No functional change.
+This adds X86_FEATURE_RETPOLINE and sets it by default on all CPUs. In
+some circumstances, IBRS microcode features may be used instead, and the
+retpoline can be disabled.
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
+On AMD CPUs if lfence is serialising, the retpoline can be dramatically
+simplified to a simple "lfence; jmp *\reg". A future patch, after it has
+been verified that lfence really is serialising in all circumstances, can
+enable this by setting the X86_FEATURE_RETPOLINE_AMD feature bit in addition
+to X86_FEATURE_RETPOLINE.
+
+Do not align the retpoline in the altinstr section, because there is no
+guarantee that it stays aligned when it's copied over the oldinstr during
+alternative patching.
+
+[ Andi Kleen: Rename the macros, add CONFIG_RETPOLINE option, export thunks]
+[ tglx: Put actual function CALL/JMP in front of the macros, convert to
+  	symbolic labels ]
+[ dwmw2: Convert back to numeric labels, merge objtool fixes ]
+
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: riel@redhat.com
-Cc: ak@linux.intel.com
-Cc: peterz@infradead.org
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: jikos@kernel.org
-Cc: luto@amacapital.net
-Cc: dave.hansen@intel.com
-Cc: torvalds@linux-foundation.org
-Cc: keescook@google.com
+Acked-by: Arjan van de Ven <arjan@linux.intel.com>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Cc: gnomes@lxorguk.ukuu.org.uk
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: tim.c.chen@linux.intel.com
-Cc: gregkh@linux-foundation.org
-Cc: pjt@google.com
-Link: https://lkml.kernel.org/r/20180126121139.31959-3-bp@alien8.de
+Cc: thomas.lendacky@amd.com
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Kosina <jikos@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Kees Cook <keescook@google.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linux-foundation.org>
+Cc: Paul Turner <pjt@google.com>
+Link: https://lkml.kernel.org/r/1515707194-20531-4-git-send-email-dwmw@amazon.co.uk
+[bwh: Backported to 3.2:
+ - Add C source to export the thunk symbols
+ - Drop ANNOTATE_NOSPEC_ALTERNATIVE since we don't have objtool
+ - Use the first available feaure numbers
+ - Adjust filename, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/include/asm/nospec-branch.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
---- a/arch/x86/include/asm/nospec-branch.h
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -312,6 +312,19 @@ config X86_BIGSMP
+ 	---help---
+ 	  This option is needed for the systems that have more than 8 CPUs
+ 
++config RETPOLINE
++	bool "Avoid speculative indirect branches in kernel"
++	default y
++	help
++	  Compile kernel with the retpoline compiler options to guard against
++	  kernel-to-user data leaks by avoiding speculative indirect
++	  branches. Requires a compiler with -mindirect-branch=thunk-extern
++	  support for full protection. The kernel may run slower.
++
++	  Without compiler support, at least indirect branches in assembler
++	  code are eliminated. Since this includes the syscall entry path,
++	  it is not entirely pointless.
++
+ if X86_32
+ config X86_EXTENDED_PLATFORM
+ 	bool "Support for extended (non-PC) x86 platforms"
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -117,6 +117,16 @@ KBUILD_CFLAGS += $(call cc-option,-mno-s
+ KBUILD_CFLAGS += $(mflags-y)
+ KBUILD_AFLAGS += $(mflags-y)
+ 
++# Avoid indirect branches in kernel to deal with Spectre
++ifdef CONFIG_RETPOLINE
++    RETPOLINE_CFLAGS += $(call cc-option,-mindirect-branch=thunk-extern -mindirect-branch-register)
++    ifneq ($(RETPOLINE_CFLAGS),)
++        KBUILD_CFLAGS += $(RETPOLINE_CFLAGS) -DRETPOLINE
++    else
++        $(warning CONFIG_RETPOLINE=y, but not supported by the compiler. Toolchain update recommended.)
++    endif
++endif
++
+ archscripts:
+ 	$(Q)$(MAKE) $(build)=arch/x86/tools relocs
+ 
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -179,6 +179,8 @@
+ #define X86_FEATURE_DTHERM	(7*32+ 7) /* Digital Thermal Sensor */
+ #define X86_FEATURE_INVPCID_SINGLE (7*32+ 8) /* Effectively INVPCID && CR4.PCIDE=1 */
+ 
++#define X86_FEATURE_RETPOLINE	(7*32+29) /* Generic Retpoline mitigation for Spectre variant 2 */
++#define X86_FEATURE_RETPOLINE_AMD (7*32+30) /* AMD Retpoline mitigation for Spectre variant 2 */
+ /* Because the ALTERNATIVE scheme is for members of the X86_FEATURE club... */
+ #define X86_FEATURE_KAISER	( 7*32+31) /* "" CONFIG_PAGE_TABLE_ISOLATION w/o nokaiser */
+ 
+--- /dev/null
 +++ b/arch/x86/include/asm/nospec-branch.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: GPL-2.0 */
+@@ -0,0 +1,106 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __NOSPEC_BRANCH_H__
++#define __NOSPEC_BRANCH_H__
++
++#include <asm/alternative.h>
++#include <asm/alternative-asm.h>
++#include <asm/cpufeature.h>
++
++#ifdef __ASSEMBLY__
++
++/*
++ * These are the bare retpoline primitives for indirect jmp and call.
++ * Do not use these directly; they only exist to make the ALTERNATIVE
++ * invocation below less ugly.
++ */
++.macro RETPOLINE_JMP reg:req
++	call	.Ldo_rop_\@
++.Lspec_trap_\@:
++	pause
++	jmp	.Lspec_trap_\@
++.Ldo_rop_\@:
++	mov	\reg, (%_ASM_SP)
++	ret
++.endm
++
++/*
++ * This is a wrapper around RETPOLINE_JMP so the called function in reg
++ * returns to the instruction after the macro.
++ */
++.macro RETPOLINE_CALL reg:req
++	jmp	.Ldo_call_\@
++.Ldo_retpoline_jmp_\@:
++	RETPOLINE_JMP \reg
++.Ldo_call_\@:
++	call	.Ldo_retpoline_jmp_\@
++.endm
++
++/*
++ * JMP_NOSPEC and CALL_NOSPEC macros can be used instead of a simple
++ * indirect jmp/call which may be susceptible to the Spectre variant 2
++ * attack.
++ */
++.macro JMP_NOSPEC reg:req
++#ifdef CONFIG_RETPOLINE
++	ALTERNATIVE_2 __stringify(jmp *\reg),				\
++		__stringify(RETPOLINE_JMP \reg), X86_FEATURE_RETPOLINE,	\
++		__stringify(lfence; jmp *\reg), X86_FEATURE_RETPOLINE_AMD
++#else
++	jmp	*\reg
++#endif
++.endm
++
++.macro CALL_NOSPEC reg:req
++#ifdef CONFIG_RETPOLINE
++	ALTERNATIVE_2 __stringify(call *\reg),				\
++		__stringify(RETPOLINE_CALL \reg), X86_FEATURE_RETPOLINE,\
++		__stringify(lfence; call *\reg), X86_FEATURE_RETPOLINE_AMD
++#else
++	call	*\reg
++#endif
++.endm
++
++#else /* __ASSEMBLY__ */
++
++#if defined(CONFIG_X86_64) && defined(RETPOLINE)
++
++/*
++ * Since the inline asm uses the %V modifier which is only in newer GCC,
++ * the 64-bit one is dependent on RETPOLINE not CONFIG_RETPOLINE.
++ */
++# define CALL_NOSPEC						\
++	ALTERNATIVE(						\
++	"call *%[thunk_target]\n",				\
++	"call __x86_indirect_thunk_%V[thunk_target]\n",		\
++	X86_FEATURE_RETPOLINE)
++# define THUNK_TARGET(addr) [thunk_target] "r" (addr)
++
++#elif defined(CONFIG_X86_32) && defined(CONFIG_RETPOLINE)
++/*
++ * For i386 we use the original ret-equivalent retpoline, because
++ * otherwise we'll run out of registers. We don't care about CET
++ * here, anyway.
++ */
++# define CALL_NOSPEC ALTERNATIVE("call *%[thunk_target]\n",	\
++	"       jmp    904f;\n"					\
++	"       .align 16\n"					\
++	"901:	call   903f;\n"					\
++	"902:	pause;\n"					\
++	"       jmp    902b;\n"					\
++	"       .align 16\n"					\
++	"903:	addl   $4, %%esp;\n"				\
++	"       pushl  %[thunk_target];\n"			\
++	"       ret;\n"						\
++	"       .align 16\n"					\
++	"904:	call   901b;\n",				\
++	X86_FEATURE_RETPOLINE)
++
++# define THUNK_TARGET(addr) [thunk_target] "rm" (addr)
++#else /* No retpoline */
++# define CALL_NOSPEC "call *%[thunk_target]\n"
++# define THUNK_TARGET(addr) [thunk_target] "rm" (addr)
++#endif
++
++#endif /* __ASSEMBLY__ */
++#endif /* __NOSPEC_BRANCH_H__ */
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -773,6 +773,10 @@ static void __init early_identify_cpu(st
  
--#ifndef __NOSPEC_BRANCH_H__
--#define __NOSPEC_BRANCH_H__
-+#ifndef _ASM_X86_NOSPEC_BRANCH_H_
-+#define _ASM_X86_NOSPEC_BRANCH_H_
- 
- #include <asm/alternative.h>
- #include <asm/alternative-asm.h>
-@@ -195,4 +195,4 @@ static inline void vmexit_fill_RSB(void)
+ 	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
+ 	setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
++
++#ifdef CONFIG_RETPOLINE
++	setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
++#endif
  }
  
- #endif /* __ASSEMBLY__ */
--#endif /* __NOSPEC_BRANCH_H__ */
-+#endif /* _ASM_X86_NOSPEC_BRANCH_H_ */
+ void __init early_cpu_init(void)
+--- a/arch/x86/lib/Makefile
++++ b/arch/x86/lib/Makefile
+@@ -23,6 +23,8 @@ lib-y += memcpy_$(BITS).o
+ lib-$(CONFIG_SMP) += rwlock.o
+ lib-$(CONFIG_RWSEM_XCHGADD_ALGORITHM) += rwsem.o
+ lib-$(CONFIG_INSTRUCTION_DECODER) += insn.o inat.o
++lib-$(CONFIG_RETPOLINE) += retpoline.o
++obj-$(CONFIG_RETPOLINE) += retpoline-export.o
+ 
+ obj-y += msr.o msr-reg.o msr-reg-export.o
+ 
+--- /dev/null
++++ b/arch/x86/lib/retpoline.S
+@@ -0,0 +1,46 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#include <linux/stringify.h>
++#include <linux/linkage.h>
++#include <asm/dwarf2.h>
++#include <asm/cpufeature.h>
++#include <asm/alternative-asm.h>
++#include <asm/nospec-branch.h>
++
++.macro THUNK reg
++	.section .text.__x86.indirect_thunk.\reg
++
++ENTRY(__x86_indirect_thunk_\reg)
++	CFI_STARTPROC
++	JMP_NOSPEC %\reg
++	CFI_ENDPROC
++ENDPROC(__x86_indirect_thunk_\reg)
++.endm
++
++/*
++ * Despite being an assembler file we can't just use .irp here
++ * because __KSYM_DEPS__ only uses the C preprocessor and would
++ * only see one instance of "__x86_indirect_thunk_\reg" rather
++ * than one per register with the correct names. So we do it
++ * the simple and nasty way...
++ */
++#define GENERATE_THUNK(reg) THUNK reg
++
++GENERATE_THUNK(_ASM_AX)
++GENERATE_THUNK(_ASM_BX)
++GENERATE_THUNK(_ASM_CX)
++GENERATE_THUNK(_ASM_DX)
++GENERATE_THUNK(_ASM_SI)
++GENERATE_THUNK(_ASM_DI)
++GENERATE_THUNK(_ASM_BP)
++GENERATE_THUNK(_ASM_SP)
++#ifdef CONFIG_64BIT
++GENERATE_THUNK(r8)
++GENERATE_THUNK(r9)
++GENERATE_THUNK(r10)
++GENERATE_THUNK(r11)
++GENERATE_THUNK(r12)
++GENERATE_THUNK(r13)
++GENERATE_THUNK(r14)
++GENERATE_THUNK(r15)
++#endif
+--- /dev/null
++++ b/arch/x86/lib/retpoline-export.c
+@@ -0,0 +1,26 @@
++#include <linux/export.h>
++#include <linux/linkage.h>
++
++#ifdef CONFIG_RETPOLINE
++#ifdef CONFIG_X86_32
++#define INDIRECT_THUNK(reg) extern asmlinkage void __x86_indirect_thunk_e ## reg(void); EXPORT_SYMBOL(__x86_indirect_thunk_e ## reg);
++#else
++#define INDIRECT_THUNK(reg) extern asmlinkage void __x86_indirect_thunk_r ## reg(void); EXPORT_SYMBOL(__x86_indirect_thunk_r ## reg);
++INDIRECT_THUNK(8)
++INDIRECT_THUNK(9)
++INDIRECT_THUNK(10)
++INDIRECT_THUNK(11)
++INDIRECT_THUNK(12)
++INDIRECT_THUNK(13)
++INDIRECT_THUNK(14)
++INDIRECT_THUNK(15)
++#endif
++INDIRECT_THUNK(ax)
++INDIRECT_THUNK(bx)
++INDIRECT_THUNK(cx)
++INDIRECT_THUNK(dx)
++INDIRECT_THUNK(si)
++INDIRECT_THUNK(di)
++INDIRECT_THUNK(bp)
++INDIRECT_THUNK(sp)
++#endif /* CONFIG_RETPOLINE */
