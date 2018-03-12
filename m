@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELtdICX7xqbO1vonzf1ZvmUlejOi2O2Vg22GuLDO2HI3YtUrShgBxZcx6sqsIL3xRmO78TPA
-ARC-Seal: i=1; a=rsa-sha256; t=1520824087; cv=none;
+X-Google-Smtp-Source: AG47ELtm8YXrfUEVd/R0MUKU7XulQLHdeLzJmP1OPeYF/7Fw09PsLN1N2b5jS9615qK6GVdG0Wz8
+ARC-Seal: i=1; a=rsa-sha256; t=1520824074; cv=none;
         d=google.com; s=arc-20160816;
-        b=vCpkbGFFzdJErTIDewbfqfFOjlY5SW78SxXjriCNbioVh2cr+NDAL9/M5oysi+RtwV
-         U0I7vGJ5ZRsZ/ZBV5FVTAJ1cs7ew7D45aLsTSupLoGDMqv94s0UzQzrL/TyQUmIQSvX4
-         Az2Ik6Tg7PR01bECNIBEvs7WiycdBDpaN2aofbY8tG1NoYTnZ5pCArywa/qTI88kVVWJ
-         OVXIMgMeU8RA2CuMF+mpCoguGxpmwdpGQ4Kgxf3RgG+cQXRazeYdACc2N2aAzpL5oNAE
-         kuVWypdwyfyUW6C5R/opRW0ewlnAvMN2A6ca3Q/6z+N4I3x3IjGKTbEsDdhHDozYHFjd
-         LHTA==
+        b=Rns3HlFuskwVrKH/oK8Rx9U+y9LmsJXEb663XlQhzT0HD2L38C7s3898K4pKltyR+9
+         2d66glKyq4HRtOs7NdERi0CtwjuNw9RORr6wFyR9En7cCiZ2jTJXykGDtXAbmYerrhAV
+         OjsJJzyLfgdC38plnuYQCDK88LcWmHeJf5H7i+5qHpW/luLKUXcfkacDWP2jqvCoMhXM
+         HY0QGTRZQi1ndyAz1ZXBhLhUuuVM4RxVd+tumDXyCGQ3xlcC1re3Rb94/ADwswkzg9RG
+         mO0BjoH8+1lJOL+535n5/zkZzBT4wuP2ysZrvxPudyRYECidV2+t0i/hNaSCdB14lfr/
+         2HmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=pEFFRGgPc1EKWQctEjJBA2Q+SvRWPKDVyFdxgy+fjaY=;
-        b=JwUrN3MkK8Qh/SdjdXWfo7alXIz0RjJ91kTwEH32GNuC3fGAmDHb+wwzliJqkf6eOm
-         8Rlwjk1Rxgltb/CVRVLA59DOhORPkSN76mch1ewYdTsLcpy2YK7/rmY5+ucGAadS8Del
-         uZuOscLnmYxriVI3ywb2VWHhA8WbQHeD3G19vWMbkp7sqFJSfpy9O9xqh3qPKhB+Fbna
-         VhtYK58wMUoLSC6UplymG5KhG7b3DcqES9MYMywb5OVj9DQM48sDWgvbWZkRkjV5jJTh
-         FnIbf25bfhL4AGfc0BushAfR48olQSpei5Wm75mPlm+AoWr77zSUzLljVBwo+GXS2I1A
-         zeig==
+        bh=F716oF+lqmpBbq7JVav8Qdws4BmWqZhz9/jOaz587oc=;
+        b=NKEKndaXOBR1wdy3KEx0cDuO9ex95HDezaaQ8lFW3bupzkqYj1yjLhuJwBDez6aL+x
+         j3Fyezuz33lTwrcMLmRI5DUl1dTzQQLXhCdCtKQ8xuI/36eDUp2WFiF972FuknKyH6f3
+         n4OvRwe7HDisLpJQwdk2UEhWvolJ1tUvri9xvGSHmrqR9cPHPpWY+BA1JvLpFYAQhlR7
+         stYU7FAVzQwOWxYPvAYGq14vNL8fqANTCZ+3ec0tAExSihdpzxef6RgjiuwgtYBMVdKi
+         6yh7vS5TFI9jTSQbZ6c98pXsouXBrdRnVqCbzrAru6NwpSSLL9nNvj699v40dI4YiFrv
+         xTVw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,35 +30,32 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Paul Turner" <pjt@google.com>,
- "Tim Chen" <tim.c.chen@linux.intel.com>,
- "Peter Zijlstra" <peterz@infradead.org>,
- gnomes@lxorguk.ukuu.org.uk,
- "Ingo Molnar" <mingo@kernel.org>,
- "Rik van Riel" <riel@redhat.com>,
- "Andi Kleen" <ak@linux.intel.com>,
- "Dave Hansen" <dave.hansen@intel.com>,
  "Thomas Gleixner" <tglx@linutronix.de>,
- "Josh Poimboeuf" <jpoimboe@redhat.com>,
- "Greg Kroah-Hartman" <gregkh@linux-foundation.org>,
- "Jiri Kosina" <jikos@kernel.org>,
- "Andy Lutomirski" <luto@amacapital.net>,
+ "Dave Hansen" <dave.hansen@intel.com>,
+ "Greg KH" <gregkh@linux-foundation.org>,
+ "Jiri Koshina" <jikos@kernel.org>,
+ "Andi Lutomirski" <luto@amacapital.net>,
  "Kees Cook" <keescook@google.com>,
- "Arjan van de Ven" <arjan@linux.intel.com>,
- thomas.lendacky@amd.com
+ "Tom Lendacky" <thomas.lendacky@amd.com>,
+ "Paul Turner" <pjt@google.com>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Alan Cox" <gnomes@lxorguk.ukuu.org.uk>,
+ "Tim Chen" <tim.c.chen@linux.intel.com>,
+ "David Woodhouse" <dwmw@amazon.co.uk>,
+ "Andi Kleen" <ak@linux.intel.com>
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.412053836@decadent.org.uk>
+Message-ID: <lsq.1520823814.205773972@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 065/104] x86/retpoline/irq32: Convert assembler
- indirect jumps
+Subject: [PATCH 3.2 043/104] x86/pti: Rename BUG_CPU_INSECURE to
+ BUG_CPU_MELTDOWN
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699634841948642?=
-X-GMAIL-MSGID: =?utf-8?q?1594699638069855956?=
+X-GMAIL-THRID: =?utf-8?q?1594699653185874182?=
+X-GMAIL-MSGID: =?utf-8?q?1594699624648615226?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -66,72 +63,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 7614e913db1f40fff819b36216484dc3808995d4 upstream.
+commit de791821c295cc61419a06fe5562288417d1bc58 upstream.
 
-Convert all indirect jumps in 32bit irq inline asm code to use non
-speculative sequences.
+Use the name associated with the particular attack which needs page table
+isolation for mitigation.
 
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Arjan van de Ven <arjan@linux.intel.com>
-Acked-by: Ingo Molnar <mingo@kernel.org>
-Cc: gnomes@lxorguk.ukuu.org.uk
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: thomas.lendacky@amd.com
-Cc: Peter Zijlstra <peterz@infradead.org>
+Acked-by: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc: Jiri Koshina <jikos@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jikos@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Andi Lutomirski  <luto@amacapital.net>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Paul Turner <pjt@google.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Greg KH <gregkh@linux-foundation.org>
 Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Kees Cook <keescook@google.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linux-foundation.org>
-Cc: Paul Turner <pjt@google.com>
-Link: https://lkml.kernel.org/r/1515707194-20531-12-git-send-email-dwmw@amazon.co.uk
-[bwh: Backported to 3.2: adjust context]
+Link: https://lkml.kernel.org/r/alpine.DEB.2.20.1801051525300.1724@nanos
+[bwh: Backported to 3.2: bug number is different]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/irq_32.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
---- a/arch/x86/kernel/irq_32.c
-+++ b/arch/x86/kernel/irq_32.c
-@@ -20,6 +20,7 @@
- #include <linux/mm.h>
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -214,7 +214,7 @@
+  */
+ #define X86_BUG(x)		(NCAPINTS*32 + (x))
  
- #include <asm/apic.h>
-+#include <asm/nospec-branch.h>
+-#define X86_BUG_CPU_INSECURE	X86_BUG(0) /* CPU is insecure and needs kernel page table isolation */
++#define X86_BUG_CPU_MELTDOWN	X86_BUG(0) /* CPU is affected by meltdown attack and needs kernel page table isolation */
  
- DEFINE_PER_CPU_SHARED_ALIGNED(irq_cpustat_t, irq_stat);
- EXPORT_PER_CPU_SYMBOL(irq_stat);
-@@ -64,11 +65,11 @@ static DEFINE_PER_CPU(union irq_ctx *, s
- static void call_on_stack(void *func, void *stack)
- {
- 	asm volatile("xchgl	%%ebx,%%esp	\n"
--		     "call	*%%edi		\n"
-+		     CALL_NOSPEC
- 		     "movl	%%ebx,%%esp	\n"
- 		     : "=b" (stack)
- 		     : "0" (stack),
--		       "D"(func)
-+		       [thunk_target] "D"(func)
- 		     : "memory", "cc", "edx", "ecx", "eax");
+ #if defined(__KERNEL__) && !defined(__ASSEMBLY__)
+ 
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -769,7 +769,7 @@ static void __init early_identify_cpu(st
+ 		this_cpu->c_bsp_init(c);
+ 
+ 	if (c->x86_vendor != X86_VENDOR_AMD)
+-		setup_force_cpu_bug(X86_BUG_CPU_INSECURE);
++		setup_force_cpu_bug(X86_BUG_CPU_MELTDOWN);
  }
  
-@@ -107,11 +108,11 @@ execute_on_irq_stack(int overflow, struc
- 		call_on_stack(print_stack_overflow, isp);
- 
- 	asm volatile("xchgl	%%ebx,%%esp	\n"
--		     "call	*%%edi		\n"
-+		     CALL_NOSPEC
- 		     "movl	%%ebx,%%esp	\n"
- 		     : "=a" (arg1), "=d" (arg2), "=b" (isp)
- 		     :  "0" (irq),   "1" (desc),  "2" (isp),
--			"D" (desc->handle_irq)
-+			[thunk_target] "D" (desc->handle_irq)
- 		     : "memory", "cc", "ecx");
- 	return 1;
- }
+ void __init early_cpu_init(void)
