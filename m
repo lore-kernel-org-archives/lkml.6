@@ -1,67 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751312AbeCLLBa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 07:01:30 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:36402 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750752AbeCLLB2 (ORCPT
+        id S1751247AbeCLLDu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 07:03:50 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52489 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750752AbeCLLDt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 07:01:28 -0400
-X-Google-Smtp-Source: AG47ELsM1cgLlOPIx/ei2HiaBcyucSW/acc0n0/dpbdaXhgLSCQikDRkEMrTpTr8AZGUSmzn2y8Jtw==
-Date: Mon, 12 Mar 2018 12:01:22 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Juergen Gross <jgross@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 1/3] ACPI / x86: boot: Split out
- acpi_generic_reduce_hw_init() and export
-Message-ID: <20180312110122.x7srrgui6r4e7jxm@gmail.com>
-References: <20180220180506.65523-1-andriy.shevchenko@linux.intel.com>
- <CAJZ5v0g7XO2N0vCi-A95MDjgJpTS0M=ZXrSGu2fqkwSHZ79GEg@mail.gmail.com>
- <1519383078.10722.107.camel@linux.intel.com>
- <1520427371.10722.453.camel@linux.intel.com>
+        Mon, 12 Mar 2018 07:03:49 -0400
+X-Google-Smtp-Source: AG47ELt3G37haOlCOBzoQb30dhge39U07ktjc2F6bpc4WWdITMNhzieU2XHd2avMiXCk5Cj3TaqyPA==
+Subject: Re: [PATCH v1 04/19] dt-bindings: arm: mediatek: add support for more
+ mt7623 reference boards
+To: Rob Herring <robh@kernel.org>, sean.wang@mediatek.com
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <cover.1519378871.git.sean.wang@mediatek.com>
+ <e77690ea7f7332e9e1ee64204a4e72c759c41aa9.1519378871.git.sean.wang@mediatek.com>
+ <20180302160022.ub6vinw6br3l2dyb@rob-hp-laptop>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <adeee56f-97c6-1999-4f1c-d420ce24ee13@gmail.com>
+Date: Mon, 12 Mar 2018 12:03:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520427371.10722.453.camel@linux.intel.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180302160022.ub6vinw6br3l2dyb@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-> On Fri, 2018-02-23 at 12:51 +0200, Andy Shevchenko wrote:
-> > On Tue, 2018-02-20 at 19:42 +0100, Rafael J. Wysocki wrote:
-> > > On Tue, Feb 20, 2018 at 7:05 PM, Andy Shevchenko
-> > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > > This is a preparation patch to allow override the hardware reduced
-> > > > initialization on ACPI enabled platforms.
-> > > > 
-> > > > No functional change intended.
-> > > > 
-> > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > > 
-> > > Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > 
-> > Thanks, Rafael!
-> > 
-> > Ingo, can it be applied?
+On 03/02/2018 05:00 PM, Rob Herring wrote:
+> On Fri, Feb 23, 2018 at 06:16:24PM +0800, sean.wang@mediatek.com wrote:
+>> From: Sean Wang <sean.wang@mediatek.com>
+>>
+>> Update binding document for more mt7623[A,N] reference boards being
+>> supported.
+>>
+>> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+>> Cc: Rob Herring <robh+dt@kernel.org>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Cc: devicetree@vger.kernel.org
+>> ---
+>>  Documentation/devicetree/bindings/arm/mediatek.txt | 9 +++++++++
+>>  1 file changed, 9 insertions(+)
 > 
-> Hmm... It seems Ingo is busy with something else.
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> 
 
-Sorry, it all looks good to me:
-
-  Acked-by: Ingo Molnar <mingo@kernel.org>
-
-Thanks,
-
-	Ingo
+Pushed to v4.16-next/dts32
