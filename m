@@ -1,48 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752632AbeCLJzq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 05:55:46 -0400
-Received: from foss.arm.com ([217.140.101.70]:51756 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751899AbeCLJzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:55:45 -0400
-Subject: Re: [RFC PATCH 0/4] add support for CommonLPIAff field
-To: Yang Yingliang <yangyingliang@huawei.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1520837395-10288-1-git-send-email-yangyingliang@huawei.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <3b6997c9-761f-3f5e-79ac-6b785a9a14d9@arm.com>
-Date: Mon, 12 Mar 2018 09:55:43 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1520837395-10288-1-git-send-email-yangyingliang@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S1752611AbeCLJ6c (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 05:58:32 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:40932 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752472AbeCLJ6b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 05:58:31 -0400
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: linux-m68k@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] m68k/defconfig: Update defconfigs for v4.16-rc5
+Date: Mon, 12 Mar 2018 10:58:28 +0100
+Message-Id: <1520848708-18066-1-git-send-email-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/03/18 06:49, Yang Yingliang wrote:
-> This patch set adjust struct rdists to support CommonLPIAff field.
-> This field is described in spec:
-> 
-> CommonLPIAff, bits [25:24]
-> The affinity level at which Redistributors share a LPI Configuration table.
-> 00 All Redistributors must share a LPI Configuration table.
-> 01 All Redistributors with the same Aff3 value must share an LPI Configurationt table.
-> 10 All Redistributors
-> 11 All Redistributors with the same Aff3.Aff2.Aff1 value must share an LPI Configuration
-> table.
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+To be combined with "m68k/defconfig: Update defconfigs for v4.16-rc1".
 
-What are you trying to achieve here? We already share the same
-configuration table across all the redistributors, irrelevant the of
-CommonLPIAff. Why would we need to do anything else?
+ arch/m68k/configs/amiga_defconfig    | 1 -
+ arch/m68k/configs/apollo_defconfig   | 1 -
+ arch/m68k/configs/atari_defconfig    | 1 -
+ arch/m68k/configs/bvme6000_defconfig | 1 -
+ arch/m68k/configs/hp300_defconfig    | 1 -
+ arch/m68k/configs/mac_defconfig      | 1 -
+ arch/m68k/configs/multi_defconfig    | 1 -
+ arch/m68k/configs/mvme147_defconfig  | 1 -
+ arch/m68k/configs/mvme16x_defconfig  | 1 -
+ arch/m68k/configs/q40_defconfig      | 1 -
+ arch/m68k/configs/sun3_defconfig     | 1 -
+ arch/m68k/configs/sun3x_defconfig    | 1 -
+ 12 files changed, 12 deletions(-)
 
-Thanks,
-
-	M.
+diff --git a/arch/m68k/configs/amiga_defconfig b/arch/m68k/configs/amiga_defconfig
+index e7995c1e534a0b4a..37a8e5ab87285e7d 100644
+--- a/arch/m68k/configs/amiga_defconfig
++++ b/arch/m68k/configs/amiga_defconfig
+@@ -589,7 +589,6 @@ CONFIG_DLM=m
+ # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_TEST_LIST_SORT=m
+ CONFIG_TEST_SORT=m
+ CONFIG_ATOMIC64_SELFTEST=m
+diff --git a/arch/m68k/configs/apollo_defconfig b/arch/m68k/configs/apollo_defconfig
+index dbbdac446b77f3b4..6a466266b852fb77 100644
+--- a/arch/m68k/configs/apollo_defconfig
++++ b/arch/m68k/configs/apollo_defconfig
+@@ -548,7 +548,6 @@ CONFIG_DLM=m
+ # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_TEST_LIST_SORT=m
+ CONFIG_TEST_SORT=m
+ CONFIG_ATOMIC64_SELFTEST=m
+diff --git a/arch/m68k/configs/atari_defconfig b/arch/m68k/configs/atari_defconfig
+index ebe626eaf28a311a..c319a7712f736299 100644
+--- a/arch/m68k/configs/atari_defconfig
++++ b/arch/m68k/configs/atari_defconfig
+@@ -580,7 +580,6 @@ CONFIG_DLM=m
+ # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_TEST_LIST_SORT=m
+ CONFIG_TEST_SORT=m
+ CONFIG_ATOMIC64_SELFTEST=m
+diff --git a/arch/m68k/configs/bvme6000_defconfig b/arch/m68k/configs/bvme6000_defconfig
+index 7de712e4d32a547e..6f6470fa9a508552 100644
+--- a/arch/m68k/configs/bvme6000_defconfig
++++ b/arch/m68k/configs/bvme6000_defconfig
+@@ -540,7 +540,6 @@ CONFIG_DLM=m
+ # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_TEST_LIST_SORT=m
+ CONFIG_TEST_SORT=m
+ CONFIG_ATOMIC64_SELFTEST=m
+diff --git a/arch/m68k/configs/hp300_defconfig b/arch/m68k/configs/hp300_defconfig
+index d8790a1461946836..31a1a2b5e86031e2 100644
+--- a/arch/m68k/configs/hp300_defconfig
++++ b/arch/m68k/configs/hp300_defconfig
+@@ -550,7 +550,6 @@ CONFIG_DLM=m
+ # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_TEST_LIST_SORT=m
+ CONFIG_TEST_SORT=m
+ CONFIG_ATOMIC64_SELFTEST=m
+diff --git a/arch/m68k/configs/mac_defconfig b/arch/m68k/configs/mac_defconfig
+index 2f19dff379b9b7ee..390d4a87441c3d11 100644
+--- a/arch/m68k/configs/mac_defconfig
++++ b/arch/m68k/configs/mac_defconfig
+@@ -572,7 +572,6 @@ CONFIG_DLM=m
+ # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_TEST_LIST_SORT=m
+ CONFIG_TEST_SORT=m
+ CONFIG_ATOMIC64_SELFTEST=m
+diff --git a/arch/m68k/configs/multi_defconfig b/arch/m68k/configs/multi_defconfig
+index 49ba135c4dc58144..77be97d82dc378a2 100644
+--- a/arch/m68k/configs/multi_defconfig
++++ b/arch/m68k/configs/multi_defconfig
+@@ -652,7 +652,6 @@ CONFIG_DLM=m
+ # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_TEST_LIST_SORT=m
+ CONFIG_TEST_SORT=m
+ CONFIG_ATOMIC64_SELFTEST=m
+diff --git a/arch/m68k/configs/mvme147_defconfig b/arch/m68k/configs/mvme147_defconfig
+index 3eecfaff5e92167a..2ca140757b0fd12d 100644
+--- a/arch/m68k/configs/mvme147_defconfig
++++ b/arch/m68k/configs/mvme147_defconfig
+@@ -540,7 +540,6 @@ CONFIG_DLM=m
+ # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_TEST_LIST_SORT=m
+ CONFIG_TEST_SORT=m
+ CONFIG_ATOMIC64_SELFTEST=m
+diff --git a/arch/m68k/configs/mvme16x_defconfig b/arch/m68k/configs/mvme16x_defconfig
+index 5c64b3c93f14f8f9..6a3b4dcc5aab9ca8 100644
+--- a/arch/m68k/configs/mvme16x_defconfig
++++ b/arch/m68k/configs/mvme16x_defconfig
+@@ -540,7 +540,6 @@ CONFIG_DLM=m
+ # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_TEST_LIST_SORT=m
+ CONFIG_TEST_SORT=m
+ CONFIG_ATOMIC64_SELFTEST=m
+diff --git a/arch/m68k/configs/q40_defconfig b/arch/m68k/configs/q40_defconfig
+index 9632ca33d8c8c17f..2a3e29c97652b0cd 100644
+--- a/arch/m68k/configs/q40_defconfig
++++ b/arch/m68k/configs/q40_defconfig
+@@ -563,7 +563,6 @@ CONFIG_DLM=m
+ # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_TEST_LIST_SORT=m
+ CONFIG_TEST_SORT=m
+ CONFIG_ATOMIC64_SELFTEST=m
+diff --git a/arch/m68k/configs/sun3_defconfig b/arch/m68k/configs/sun3_defconfig
+index f4fb9f49babe8e08..cba2494c99b2da58 100644
+--- a/arch/m68k/configs/sun3_defconfig
++++ b/arch/m68k/configs/sun3_defconfig
+@@ -542,7 +542,6 @@ CONFIG_DLM=m
+ # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_TEST_LIST_SORT=m
+ CONFIG_TEST_SORT=m
+ CONFIG_ATOMIC64_SELFTEST=m
+diff --git a/arch/m68k/configs/sun3x_defconfig b/arch/m68k/configs/sun3x_defconfig
+index 5dce6f545e5020cd..d911561137fd79d8 100644
+--- a/arch/m68k/configs/sun3x_defconfig
++++ b/arch/m68k/configs/sun3x_defconfig
+@@ -542,7 +542,6 @@ CONFIG_DLM=m
+ # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_RUNTIME_TESTING_MENU=y
+ CONFIG_TEST_LIST_SORT=m
+ CONFIG_TEST_SORT=m
+ CONFIG_ATOMIC64_SELFTEST=m
 -- 
-Jazz is not dead. It just smells funny...
+2.7.4
