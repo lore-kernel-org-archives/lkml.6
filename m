@@ -1,248 +1,229 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932311AbeCLOKS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 10:10:18 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39349 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751788AbeCLOKQ (ORCPT
+        id S932405AbeCLOKa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 10:10:30 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:45313 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932331AbeCLOK3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 10:10:16 -0400
-X-Google-Smtp-Source: AG47ELsaOKpmIN9XAcaHdE7vpreT/0sNxDhXLpJTEjZQo7ieVgNmLIlfZir1pX2FHM90/F2d9WdnOA==
-Date: Mon, 12 Mar 2018 14:10:12 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Daniel Schultz <d.schultz@phytec.de>
-Cc: zyw@rock-chips.com, zhangqing@rock-chips.com, chenjh@rock-chips.com,
-        linux-kernel@vger.kernel.org, w.egorov@phytec.de
-Subject: Re: [PATCH v2 2/2] mfd: rk808: Add restart functionality
-Message-ID: <20180312141012.bc3xkhymkgd4q6b7@dell>
-References: <1520442110-28420-1-git-send-email-d.schultz@phytec.de>
- <1520442110-28420-2-git-send-email-d.schultz@phytec.de>
+        Mon, 12 Mar 2018 10:10:29 -0400
+X-Google-Smtp-Source: AG47ELvhGW4j7hertrY/MCEvgtfTE0QnaNpHBUkGzBOMxcb2rMm7+00rEzgalSO76K5NUu0MdMZOlIuEmDbV90HeLOw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1520442110-28420-2-git-send-email-d.schultz@phytec.de>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180312132427.GA11222@andrea>
+References: <CAJDTihwMgUqjK6YL2M_WZY4VBaifVYgNvdZOF_fNrnk_p27Kvw@mail.gmail.com>
+ <20180312054412.yqyde34ly3kjoajj@tardis> <CAJDTihxxhy7zmhTJ-ky4wvMby_o9y8UOcs9R1dABN7NccekAiQ@mail.gmail.com>
+ <20180312132427.GA11222@andrea>
+From: =?UTF-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>
+Date: Mon, 12 Mar 2018 22:10:27 +0800
+Message-ID: <CAJDTihxrzqGHwwPcb3BBYsqQOzZuycz=4=pUm_77t6U+ssawwQ@mail.gmail.com>
+Subject: Re: smp_mb__after_spinlock requirement too strong?
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, Alan Stern <stern@rowland.harvard.edu>,
+        will.deacon@arm.com, torvalds@linux-foundation.org, npiggin@gmail.com,
+        mingo@kernel.org, mpe@ellerman.id.au, oleg@redhat.com,
+        benh@kernel.crashing.org, Paul McKenney <paulmck@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rockchip guys,
-
-I'd really appreciate your input on these two patches please.
-
-Please provide Reviewed-by/Tested-by tags.
-
-On Wed, 07 Mar 2018, Daniel Schultz wrote:
-> When using Rockchip SoCs with rk805/808/818 PMICs, restarts are realized by
-> setting the reset registers in the "Clock and Reset Unit".
-> 
-> Since all three shutdown functions have almost the same code, all logic
-> from the shutdown functions can be refactored to a new function
-> "rk808_update_bits", which can update a register by a given address and
-> bitmask.
-> 
-> After that, notifier blocks and the restart functions were added to the
-> driver. Like the shutdown function, the restart is bound to the
-> "rockchip,system-power-controller" device tree property and can easily
-> revoked to the software restart by removing the property.
-> 
-> Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
+On Mon, Mar 12, 2018 at 9:24 PM, Andrea Parri <parri.andrea@gmail.com> wrote:
+> Hi Trol,
+>
+> [...]
+>
+>
+>> But this is just one special case that acquire-release chains promise us.
+>>
+>> A=B=0 as initial
+>>
+>>   CPU0                CPU1                CPU2                CPU3
+>>  write A=1
+>>                            read A=1
+>>                            write B=1
+>>                            release X
+>>                                                  acquire X
+>>                                                  read A=?
+>>                                                  release Y
+>>
+>>     acquire Y
+>>
+>>     read B=?
+>>
+>> assurance 1: CPU3 will surely see B=1 writing by CPU1, and
+>> assurance 2: CPU2 will also see A=1 writing by CPU0 as a special case
+>>
+>> The second assurance is both in theory and implemented by real hardware.
+>>
+>> As for theory, the C++11 memory model, which is a potential formal model
+>> for kernel memory model as
+>> http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0124r4.html
+>> descripes, states that:
+>>
+>> If a value computation A of an atomic object M happens before a value
+>> computation B of M, and A takes its value from a side effect X on M, then
+>> the value computed by B shall either be the value stored by X or the value
+>> stored by a side effect Y on M, where Y follows X in the modification
+>> order of M.
+>
+> A formal memory consistency model for the Linux kernel is now available at:
+>
+>  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git lkmm
+>
+> Commit
+>
+>   1c27b644c0fdbc61e113b8faee14baeb8df32486
+>   ("Automate memory-barriers.txt; provide Linux-kernel memory model")
+>
+> provides some information (and references) on the development of this work.
+>
 > ---
-> Changes:
-> 	v2: Re-submit with recipients from Rockchip.
-> 
->  drivers/mfd/rk808.c       | 97 ++++++++++++++++++++++++++++++-----------------
->  include/linux/mfd/rk808.h |  1 +
->  2 files changed, 63 insertions(+), 35 deletions(-)
-> 
-> diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
-> index d138721..2c68f8c 100644
-> --- a/drivers/mfd/rk808.c
-> +++ b/drivers/mfd/rk808.c
-> @@ -27,6 +27,7 @@
->  #include <linux/module.h>
->  #include <linux/of_device.h>
->  #include <linux/regmap.h>
-> +#include <linux/reboot.h>
->  
->  struct rk808_reg_data {
->  	int addr;
-> @@ -369,59 +370,73 @@ static const struct regmap_irq_chip rk818_irq_chip = {
->  
->  static struct i2c_client *rk808_i2c_client;
->  
-> -static void rk805_device_shutdown(void)
-> +static void rk808_update_bits(unsigned int reg, unsigned int bit_mask)
->  {
->  	int ret;
->  	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
->  
->  	if (!rk808) {
->  		dev_warn(&rk808_i2c_client->dev,
-> -			 "have no rk805, so do nothing here\n");
-> +			 "have no %s, so do nothing here\n",
-> +			 rk808->regmap_irq_chip->name);
->  		return;
->  	}
->  
->  	ret = regmap_update_bits(rk808->regmap,
-> -				 RK805_DEV_CTRL_REG,
-> -				 DEV_OFF, DEV_OFF);
-> +				 reg,
-> +				 bit_mask, bit_mask);
->  	if (ret)
-> -		dev_err(&rk808_i2c_client->dev, "power off error!\n");
-> +		dev_err(&rk808_i2c_client->dev, "can't write to DEVCTRL: %x!\n",
-> +			ret);
->  }
->  
-> -static void rk808_device_shutdown(void)
-> +static void rk805_device_shutdown(void)
->  {
-> -	int ret;
-> -	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
-> -
-> -	if (!rk808) {
-> -		dev_warn(&rk808_i2c_client->dev,
-> -			 "have no rk808, so do nothing here\n");
-> -		return;
-> -	}
-> +	rk808_update_bits(RK805_DEV_CTRL_REG, DEV_OFF);
-> +}
-> +static int rk805_restart_notify(struct notifier_block *this,
-> +				   unsigned long mode, void *cmd)
-> +{
-> +	rk808_update_bits(RK805_DEV_CTRL_REG, DEV_OFF_RST);
-> +	return NOTIFY_DONE;
-> +}
->  
-> -	ret = regmap_update_bits(rk808->regmap,
-> -				 RK808_DEVCTRL_REG,
-> -				 DEV_OFF_RST, DEV_OFF_RST);
-> -	if (ret)
-> -		dev_err(&rk808_i2c_client->dev, "power off error!\n");
-> +static void rk808_device_shutdown(void)
-> +{
-> +	rk808_update_bits(RK808_DEVCTRL_REG, DEV_OFF_RST);
-> +}
-> +static int rk808_restart_notify(struct notifier_block *this,
-> +				   unsigned long mode, void *cmd)
-> +{
-> +	rk808_update_bits(RK808_DEVCTRL_REG, DEV_OFF);
-> +	return NOTIFY_DONE;
->  }
->  
->  static void rk818_device_shutdown(void)
->  {
-> -	int ret;
-> -	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
-> +	rk808_update_bits(RK818_DEVCTRL_REG, DEV_OFF_RST);
-> +}
-> +static int rk818_restart_notify(struct notifier_block *this,
-> +				   unsigned long mode, void *cmd)
-> +{
-> +	rk808_update_bits(RK818_DEVCTRL_REG, DEV_OFF);
-> +	return NOTIFY_DONE;
-> +}
->  
-> -	if (!rk808) {
-> -		dev_warn(&rk808_i2c_client->dev,
-> -			 "have no rk818, so do nothing here\n");
-> -		return;
-> -	}
-> +static struct notifier_block rk805_restart_handler = {
-> +	.notifier_call = rk805_restart_notify,
-> +	.priority = 196,
-> +};
->  
-> -	ret = regmap_update_bits(rk808->regmap,
-> -				 RK818_DEVCTRL_REG,
-> -				 DEV_OFF_RST, DEV_OFF_RST);
-> -	if (ret)
-> -		dev_err(&rk808_i2c_client->dev, "power off error!\n");
-> -}
-> +static struct notifier_block rk808_restart_handler = {
-> +	.notifier_call = rk808_restart_notify,
-> +	.priority = 196,
-> +};
-> +
-> +static struct notifier_block rk818_restart_handler = {
-> +	.notifier_call = rk818_restart_notify,
-> +	.priority = 196,
-> +};
->  
->  static const struct of_device_id rk808_of_match[] = {
->  	{ .compatible = "rockchip,rk805" },
-> @@ -476,6 +491,7 @@ static int rk808_probe(struct i2c_client *client,
->  		cells = rk805s;
->  		nr_cells = ARRAY_SIZE(rk805s);
->  		pm_pwroff_fn = rk805_device_shutdown;
-> +		rk808->nb = &rk805_restart_handler;
->  		break;
->  	case RK808_ID:
->  		rk808->regmap_cfg = &rk808_regmap_config;
-> @@ -485,6 +501,7 @@ static int rk808_probe(struct i2c_client *client,
->  		cells = rk808s;
->  		nr_cells = ARRAY_SIZE(rk808s);
->  		pm_pwroff_fn = rk808_device_shutdown;
-> +		rk808->nb = &rk808_restart_handler;
->  		break;
->  	case RK818_ID:
->  		rk808->regmap_cfg = &rk818_regmap_config;
-> @@ -494,6 +511,7 @@ static int rk808_probe(struct i2c_client *client,
->  		cells = rk818s;
->  		nr_cells = ARRAY_SIZE(rk818s);
->  		pm_pwroff_fn = rk818_device_shutdown;
-> +		rk808->nb = &rk818_restart_handler;
->  		break;
->  	default:
->  		dev_err(&client->dev, "Unsupported RK8XX ID %lu\n",
-> @@ -546,11 +564,18 @@ static int rk808_probe(struct i2c_client *client,
->  
->  	pm_off = of_property_read_bool(np,
->  				"rockchip,system-power-controller");
-> -	if (pm_off && !pm_power_off) {
-> +	if (pm_off) {
->  		rk808_i2c_client = client;
-> -		pm_power_off = pm_pwroff_fn;
-> +		if (!pm_power_off)
-> +			pm_power_off = pm_pwroff_fn;
-> +		if (rk808->nb) {
-> +			ret = register_restart_handler(rk808->nb);
-> +			if (ret)
-> +				dev_err(&client->dev,
-> +					"cannot register restart handler, %d\n",
-> +					ret);
-> +		}
->  	}
-> -
->  	return 0;
->  
->  err_irq:
-> @@ -564,6 +589,8 @@ static int rk808_remove(struct i2c_client *client)
->  
->  	regmap_del_irq_chip(client->irq, rk808->irq_data);
->  	pm_power_off = NULL;
-> +	if (rk808->nb)
-> +		unregister_restart_handler(rk808->nb);
->  
->  	return 0;
->  }
-> diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
-> index 338e0f6..9c26ca2 100644
-> --- a/include/linux/mfd/rk808.h
-> +++ b/include/linux/mfd/rk808.h
-> @@ -453,5 +453,6 @@ struct rk808 {
->  	long				variant;
->  	const struct regmap_config	*regmap_cfg;
->  	const struct regmap_irq_chip	*regmap_irq_chip;
-> +	struct notifier_block		*nb;
->  };
->  #endif /* __LINUX_REGULATOR_RK808_H */
+>
+> You can check the above observation against this model: unless I mis-typed
+> your snippet,
+>
+> andrea@andrea:~/linux-rcu/tools/memory-model$ cat trol0.litmus
+> C trol0
+>
+> {}
+>
+> P0(int *a)
+> {
+>         WRITE_ONCE(*a, 1);
+> }
+>
+> P1(int *a, int *b, int *x)
+> {
+>         int r0;
+>
+>         r0 = READ_ONCE(*a);
+>         WRITE_ONCE(*b, 1);
+>         smp_store_release(x, 1);
+> }
+>
+> P2(int *a, int *x, int *y)
+> {
+>         int r0;
+>         int r1;
+>
+>         r0 = smp_load_acquire(x);
+>         r1 = READ_ONCE(*a);
+>         smp_store_release(y, 1);
+> }
+>
+> P3(int *b, int *y)
+> {
+>         int r0;
+>         int r1;
+>
+>         r0 = smp_load_acquire(y);
+>         r1 = READ_ONCE(*b);
+> }
+>
+> exists (1:r0=1 /\ 2:r0=1 /\ 3:r0=1 /\ (2:r1=0 \/ 3:r1=0))
+>
+> andrea@andrea:~/linux-rcu/tools/memory-model$ herd7 -conf linux-kernel.cfg trol0.litmus
+> Test trol0 Allowed
+> States 25
+> 1:r0=0; 2:r0=0; 2:r1=0; 3:r0=0; 3:r1=0;
+> 1:r0=0; 2:r0=0; 2:r1=0; 3:r0=0; 3:r1=1;
+> 1:r0=0; 2:r0=0; 2:r1=0; 3:r0=1; 3:r1=0;
+> 1:r0=0; 2:r0=0; 2:r1=0; 3:r0=1; 3:r1=1;
+> 1:r0=0; 2:r0=0; 2:r1=1; 3:r0=0; 3:r1=0;
+> 1:r0=0; 2:r0=0; 2:r1=1; 3:r0=0; 3:r1=1;
+> 1:r0=0; 2:r0=0; 2:r1=1; 3:r0=1; 3:r1=0;
+> 1:r0=0; 2:r0=0; 2:r1=1; 3:r0=1; 3:r1=1;
+> 1:r0=0; 2:r0=1; 2:r1=0; 3:r0=0; 3:r1=0;
+> 1:r0=0; 2:r0=1; 2:r1=0; 3:r0=0; 3:r1=1;
+> 1:r0=0; 2:r0=1; 2:r1=0; 3:r0=1; 3:r1=1;
+> 1:r0=0; 2:r0=1; 2:r1=1; 3:r0=0; 3:r1=0;
+> 1:r0=0; 2:r0=1; 2:r1=1; 3:r0=0; 3:r1=1;
+> 1:r0=0; 2:r0=1; 2:r1=1; 3:r0=1; 3:r1=1;
+> 1:r0=1; 2:r0=0; 2:r1=0; 3:r0=0; 3:r1=0;
+> 1:r0=1; 2:r0=0; 2:r1=0; 3:r0=0; 3:r1=1;
+> 1:r0=1; 2:r0=0; 2:r1=0; 3:r0=1; 3:r1=0;
+> 1:r0=1; 2:r0=0; 2:r1=0; 3:r0=1; 3:r1=1;
+> 1:r0=1; 2:r0=0; 2:r1=1; 3:r0=0; 3:r1=0;
+> 1:r0=1; 2:r0=0; 2:r1=1; 3:r0=0; 3:r1=1;
+> 1:r0=1; 2:r0=0; 2:r1=1; 3:r0=1; 3:r1=0;
+> 1:r0=1; 2:r0=0; 2:r1=1; 3:r0=1; 3:r1=1;
+> 1:r0=1; 2:r0=1; 2:r1=1; 3:r0=0; 3:r1=0;
+> 1:r0=1; 2:r0=1; 2:r1=1; 3:r0=0; 3:r1=1;
+> 1:r0=1; 2:r0=1; 2:r1=1; 3:r0=1; 3:r1=1;
+> No
+> Witnesses
+> Positive: 0 Negative: 25
+> Condition exists (1:r0=1 /\ 2:r0=1 /\ 3:r0=1 /\ (2:r1=0 \/ 3:r1=0))
+> Observation trol0 Never 0 25
+> Time trol0 0.03
+> Hash=21369772c98e442dd382bd84b43067ee
+>
+> Please see "tools/memory-model/README" or "tools/memory-model/Documentation/"
+> for further information about these tools/model.
+>
+> Best,
+>   Andrea
+>
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+This work is amazingly great, Andrea.
+I'd like to study on it.
+
+>
+>>
+>> at
+>> $1.10 rule 18, on page 14
+>> http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4296.pdf
+>>
+>> As for real hardware, Luc provided detailed test and explanation on
+>> ARM and POWER in 5.1 Cumulative Barriers for WRC  on page 19
+>> in this paper:
+>>
+>> A Tutorial Introduction to the ARM and POWER Relaxed Memory Models
+>> https://www.cl.cam.ac.uk/~pes20/ppc-supplemental/test7.pdf
+>>
+>> So, I think we may remove RCsc from smp_mb__after_spinlock which is
+>> really confusing.
+>>
+>> Best Regards,
+>> Trol
+>>
+>> >
+>> >> And for stopped tasks,
+>> >>
+>> >>  CPU0         CPU1            CPU2
+>> >>
+>> >> <ACCESS before schedule out A>
+>> >>
+>> >> lock(rq0)
+>> >> schedule out A
+>> >> remove A from rq0
+>> >> store-release(A->on_cpu)
+>> >> unock(rq0)
+>> >>
+>> >>               load_acquire(A->on_cpu)
+>> >>               set_task_cpu(A, 2)
+>> >>
+>> >>               lock(rq2)
+>> >>               add A into rq2
+>> >>               unlock(rq2)
+>> >>
+>> >>                                         lock(rq2)
+>> >>                                         schedule in A
+>> >>                                         unlock(rq2)
+>> >>
+>> >>                                         <ACCESS after schedule in A>
+>> >>
+>> >> <ACCESS before schedule out A> happens-before
+>> >> store-release(A->on_cpu)  happens-before
+>> >> load_acquire(A->on_cpu)  happens-before
+>> >> unlock(rq2) happens-before
+>> >> lock(rq2) happens-before
+>> >> <ACCESS after schedule in A>
+>> >>
+>> >> So, I think the only requirement to smp_mb__after_spinlock is
+>> >> to guarantee a STORE before the spin_lock() is ordered
+>> >> against a LOAD after it. So we could remove the RCsc requirement
+>> >> to allow more efficient implementation.
+>> >>
+>> >> Did I miss something or this RCsc requirement does not really matter?
