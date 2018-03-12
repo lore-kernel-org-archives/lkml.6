@@ -1,85 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751339AbeCLNhe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 09:37:34 -0400
-Received: from mail-qt0-f175.google.com ([209.85.216.175]:37755 "EHLO
-        mail-qt0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751242AbeCLNhd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 09:37:33 -0400
-X-Google-Smtp-Source: AG47ELt/ReKh0kZXZIB6mQlnXmHp3mQeHUVkvUqdtEFWshyc4CbfATjaP9Jx76R7P3MF0x2tjwJPPJBNOvBn1O6upXc=
+        id S1751458AbeCLNkZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 09:40:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47896 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751242AbeCLNkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 09:40:24 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 487AA205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
+Date: Mon, 12 Mar 2018 14:40:21 +0100
+From: Sebastian Reichel <sre@kernel.org>
+To: "Pierre Bourdon (delroth)" <delroth@google.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andre Heider <a.heider@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the battery tree
+Message-ID: <20180312134021.3x5dboqj5wfjhgoq@earth.universe>
+References: <20180312124007.61288892@canb.auug.org.au>
+ <CANEr7oV8GTU8X1ijUYJKZjF6Pdr1i7+mvUqoDCaaKBCPkvrFgg@mail.gmail.com>
+ <CANEr7oWy2ATCnExdoFkCt9Sz3OUEgEQpQQiqmKnOh7iVDekiKg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAP6Zq1jEAg2OrmnHzJdk9UBjPkDctu5oGHYyJ+QLBzN+E31sPw@mail.gmail.com>
-References: <20180307162430.2664523-1-arnd@arndb.de> <CAFd5g45h3wAZtx-4oJb_uLbtDTzSsD6eLM5G0VF=3BBHNmW8YQ@mail.gmail.com>
- <CAP6Zq1jEAg2OrmnHzJdk9UBjPkDctu5oGHYyJ+QLBzN+E31sPw@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 12 Mar 2018 14:37:32 +0100
-X-Google-Sender-Auth: 6exdRStu4kyAXOEBZS-wRlbkHjw
-Message-ID: <CAK8P3a2=0ZUqyhmKVa4u_VvOg4rtd6vUWdpRojfsoP3OSvGyeQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: npcm: add CONFIG_ARCH_MULTI_V7 dependency
-To: Tomer Maimon <tmaimon77@gmail.com>
-Cc: Brendan Higgins <brendanhiggins@google.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="wrk2jlvvhhilgn2q"
+Content-Disposition: inline
+In-Reply-To: <CANEr7oWy2ATCnExdoFkCt9Sz3OUEgEQpQQiqmKnOh7iVDekiKg@mail.gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 2:28 PM, Tomer Maimon <tmaimon77@gmail.com> wrote:
-> Hi Brendan,
->
-> According to the last mail I have with Arnd can you modify the Kconfig
-> as follow:
->
-> +menuconfig ARCH_NPCM
-> +       bool "Nuvoton NPCM Architecture"
-> +       depends on ARCH_MULTI_V7
-> +       select PINCTRL
-> +
-> +if ARCH_NPCM
-> +
-> +config ARCH_NPCM7XX
-> +       bool "Support for NPCM7xx BMC (Poleg)"
-> +       depends on ARCH_MULTI_V7
-> +       select PINCTRL_NPCM7XX
-> +       select NPCM7XX_TIMER
-> +       select ARCH_REQUIRE_GPIOLIB
-> +       select CACHE_L2X0
-> +       select ARM_GIC
-> +       select HAVE_ARM_TWD if SMP
-> +       select HAVE_ARM_SCU if SMP
-> +       select ARM_ERRATA_764369 if SMP
-> +       select ARM_ERRATA_720789
-> +       select ARM_ERRATA_754322
-> +       select ARM_ERRATA_794072
-> +       select PL310_ERRATA_588369
-> +       select PL310_ERRATA_727915
-> +       select MFD_SYSCON
-> +       help
-> +         General support for NPCM7xx BMC (Poleg).
-> +
-> +         Nuvoton NPCM7xx BMC based on the Cortex A9.
-> +
-> +endif
 
-One more change is needed to avoid a link error without CONFIG_SMP:
+--wrk2jlvvhhilgn2q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/mach-npcm/Makefile b/arch/arm/mach-npcm/Makefile
-index c7a1316d27c1..34d51f9f207c 100644
---- a/arch/arm/mach-npcm/Makefile
-+++ b/arch/arm/mach-npcm/Makefile
-@@ -1,3 +1,4 @@
- AFLAGS_headsmp.o               += -march=armv7-a
+Hi Stephen and Pierre,
 
--obj-$(CONFIG_ARCH_NPCM750)     += npcm7xx.o platsmp.o headsmp.o
-+obj-$(CONFIG_ARCH_NPCM750)     += npcm7xx.o
-+obj-$(CONFIG_SMP)              += platsmp.o headsmp.o
+On Mon, Mar 12, 2018 at 10:46:08AM +0100, Pierre Bourdon (delroth) wrote:
+> On Mon, Mar 12, 2018 at 10:35 AM, Pierre Bourdon (delroth)
+> <delroth@google.com> wrote:
+> > On Mon, 12 Mar 2018 at 02:40, Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+> >>
+> >> Hi Sebastian,
+> >>
+> >> Commit
+> >>
+> >>   5e0dfcbb1194 ("max17042: propagate of_node to power supply device")
+> >>
+> >> is missing a Signed-off-by from its author.
 
-Can one of you send me a pull request or the full patch series on top
-of the version I have in arm-soc?
+Thanks for the hint!
 
-      Arnd
+> > I failed hard :) will resend.
+>=20
+> So, since I'm very clearly not familiar with the process... is sending
+> a v2 with proper s-o-b the Right Way to do it, or are you just fine
+> with a correction by email?
+>=20
+> If the latter:
+>=20
+> Signed-off-by: Pierre Bourdon <delroth@google.com>
+>=20
+> Sorry for the screwup, slowly learning (I hope).
+> Best,
+
+Thanks for your SoB. I fixed this up in the existing patch.
+
+-- Sebastian
+
+--wrk2jlvvhhilgn2q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqmgz4ACgkQ2O7X88g7
++prdoxAApwkolmWURlRPJLSBnHm9L5ez2Jwo6ydXGbRVvgIpgBYMaYTfNoxRWOh8
+2IXTd8yLteAyHUVVXTOrY31JA/NWPmLVCxWRt2ce91C62VbG2HYwdHm13e/GFVrD
+RNJJFTVwZ482BAQF0p7mHnk3VxX7c4URLLJKq9taiq+1owTTOi1FuVj8Cho02h0S
+1XZQyqjiXSjO/vBKaGuzpZjvzgoq4hqNh9jl10JqGAiwlXUxdVaefqrCLk0y8tss
+GTtpdELz2KR0N4AiDCddEK2wERmcGPuraTIiAZuBFsUSeBeQ6oc4t19kF0b7rs/K
+h/Tr6NojOfE7ydI6mZ1LLLzxuEZxLlJL7jv150UMlAi+FPtUEKhy14A87HCsAle5
+Xn93BMQM569pRY+5SYbxo8+cb5H8PNP9IiRhquN/p5OtYunxGegV/qVGbPt9+krh
+62wcg+QVXPye0bcQU8l+4G3jXfOo7IMRewrx3wuQOxtStYSu6IpdggGcDNUfdLDy
+smCUpXYkj/fiK+jAh3VzaYZYkXFUGjGtFZtg0hWGwdEAJW100iRD9IpK56pf1s4c
+k5RoSZbxYZ6PWpBmfu2pwSZy567XXmy8bW/y1MRRfKhIHP4OvKaUc+8efMbjqaJT
++9D8AhEW+gIrsiT/mR5AfgZQUD1O7ej+ZQXVPj/iNItqC9Th3Gg=
+=xr/6
+-----END PGP SIGNATURE-----
+
+--wrk2jlvvhhilgn2q--
