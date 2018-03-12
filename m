@@ -1,91 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751488AbeCLSZs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 14:25:48 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:42064 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751232AbeCLSZq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 14:25:46 -0400
-X-Google-Smtp-Source: AG47ELtF4Njj0Z3AMZiO5ryLithB2fxCEsOiOub2VeBK+F9d89qR+eOG2vbjOYJI2vufclW32KZDFQ==
-Date: Sun, 11 Mar 2018 22:54:08 -0700
-From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v2 4/8] clk: migrate the count of orphaned clocks at init
-To: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>
-References: <20180214134340.17242-1-jbrunet@baylibre.com>
-        <20180214134340.17242-5-jbrunet@baylibre.com> <1970074.VYjjbDuVRv@diego>
-In-Reply-To: <1970074.VYjjbDuVRv@diego>
+        id S932215AbeCLS2c (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 14:28:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56956 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751232AbeCLS2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 14:28:31 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F39D208FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Mon, 12 Mar 2018 15:28:27 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: John Garry <john.garry@huawei.com>
+Cc: jolsa@redhat.com, ak@linux.intel.com, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, wcohen@redhat.com, will.deacon@arm.com,
+        ganapatrao.kulkarni@cavium.com, linuxarm@huawei.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        zhangshaokun@hisilicon.com
+Subject: Re: [PATCH v3 04/11] perf vendor events: add support for pmu events
+ vendor subdirectory
+Message-ID: <20180312182827.GA10004@kernel.org>
+References: <1520506716-197429-1-git-send-email-john.garry@huawei.com>
+ <1520506716-197429-5-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-User-Agent: astroid/8ea8c2a3 (https://github.com/astroidmail/astroid)
-Message-Id: <1520834013.z6bypcssbs.astroid@resonance.none>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520506716-197429-5-git-send-email-john.garry@huawei.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2CIQCg2010644
 
-Excerpts from Heiko Stübner's message of February 15, 2018 1:01 pm:
-> Am Mittwoch, 14. Februar 2018, 14:43:36 CET schrieb Jerome Brunet:
->> The orphan clocks reparents should migrate any existing count from the
->> orphan clock to its new acestor clocks, otherwise we may have
->> inconsistent counts in the tree and end-up with gated critical clocks
->> 
->> Assuming we have two clocks, A and B.
->> * Clock A has CLK_IS_CRITICAL flag set.
->> * Clock B is an ancestor of A which can gate. Clock B gate is left
->>   enabled by the bootloader.
->> 
->> Step 1: Clock A is registered. Since it is a critical clock, it is
->> enabled. The clock being still an orphan, no parent are enabled.
->> 
->> Step 2: Clock B is registered and reparented to clock A (potentially
->> through several other clocks). We are now in situation where the enable
->> count of clock A is 1 while the enable count of its ancestors is 0, which
->> is not good.
->> 
->> Step 3: in lateinit, clk_disable_unused() is called, the enable_count of
->> clock B being 0, clock B is gated and and critical clock A actually gets
->> disabled.
->> 
->> This situation was found while adding fdiv_clk gates to the meson8b
->> platform.  These clocks parent clk81 critical clock, which is the mother
->> of all peripheral clocks in this system. Because of the issue described
->> here, the system is crashing when clk_disable_unused() is called.
->> 
->> The situation is solved by reverting
->> commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting during
->> registration"). To avoid breaking again the situation described in this
->> commit
->> description, enabling critical clock should be done before walking the
->> orphan list. This way, a parent critical clock may not be accidentally
->> disabled due to the CLK_OPS_PARENT_ENABLE mechanism.
->> 
->> Fixes: f8f8f1d04494 ("clk: Don't touch hardware when reparenting during
->> registration") Cc: Stephen Boyd <sboyd@codeaurora.org>
->> Cc: Shawn Guo <shawnguo@kernel.org>
->> Cc: Dong Aisheng <aisheng.dong@nxp.com>
->> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> 
-> On a rk3288-veyron Chromebook
-> Tested-by: Heiko Stuebner <heiko@sntech.de>
-> 
-> This made the hdmi on the machine work again with 4.16-rc1 .
-> (hdmi-cec clock is sourced from the i2c connected pmic which provides
-> the 32kHz clock needed)
-> 
-> So it would be really cool if this could make it into 4.16-rc :-)
+Em Thu, Mar 08, 2018 at 06:58:29PM +0800, John Garry escreveu:
+> index 1d02faf..7b9e210 100644
+> --- a/tools/perf/pmu-events/jevents.c
+> @@ -739,25 +739,77 @@ static int get_maxfds(void)
+>  static FILE *eventsfp;
+>  static char *mapfile;
+>  
+> +static int is_leaf_dir(const char *fpath)
+> +{
+> +	DIR *d;
+> +	struct dirent *dir;
+> +	int res = 1;
+> +
+> +	d = opendir(fpath);
+> +	if (!d)
+> +		return 0;
+> +
+> +	while ((dir = readdir(d)) != NULL) {
+> +		if (dir->d_type == DT_DIR && dir->d_name[0] != '.') {
+> +			res = 0;
+> +			break;
+> +		} else if (dir->d_type == DT_UNKNOWN) {
+> +			char path[PATH_MAX];
 
-I separated this patch out into clk-fixes to be set for -rc5 or -rc6.
 
-Regards,
-Mike
+You forgot to add:
 
-> 
-> 
-> Heiko
-> 
+#include <limits.h>
+
+Which broke the build on at least:
+
+[root@jouet ~]# time dm
+   1    13.78 alpine:3.4                    : FAIL gcc (Alpine 5.3.0) 5.3.0
+   2    14.40 alpine:3.5                    : FAIL gcc (Alpine 6.2.1) 6.2.1 20160822
+   3    13.59 alpine:3.6                    : FAIL gcc (Alpine 6.3.0) 6.3.0
+   4    14.94 alpine:3.7                    : FAIL gcc (Alpine 6.4.0) 6.4.0
+   5    14.70 alpine:edge                   : FAIL gcc (Alpine 6.4.0) 6.4.0
+   6: amazonlinux:1^C^C
+
+I just fixed it.
+
+build failure:
+
+  MKDIR    /tmp/build/perf/pmu-events/
+  HOSTCC   /tmp/build/perf/pmu-events/json.o
+  MKDIR    /tmp/build/perf/pmu-events/
+  HOSTCC   /tmp/build/perf/pmu-events/jsmn.o
+  HOSTCC   /tmp/build/perf/pmu-events/jevents.o
+  LD       /tmp/build/perf/libtraceevent-in.o
+  LINK     /tmp/build/perf/libtraceevent.a
+  LD       /tmp/build/perf/libsubcmd-in.o
+  CC       /tmp/build/perf/plugin_jbd2.o
+  CC       /tmp/build/perf/plugin_hrtimer.o
+pmu-events/jevents.c: In function 'is_leaf_dir':
+pmu-events/jevents.c:879:14: error: 'PATH_MAX' undeclared (first use in this function)
+    char path[PATH_MAX];
+              ^~~~~~~~
+pmu-events/jevents.c:879:14: note: each undeclared identifier is reported only once for each function it appears in
+  AR       /tmp/build/perf/libsubcmd.a
+mv: can't rename '/tmp/build/perf/pmu-events/.jevents.o.tmp': No such file or directory
+make[3]: *** [/git/linux/tools/build/Makefile.build:96: /tmp/build/perf/pmu-events/jevents.o] Error 1
+  CC       /tmp/build/perf/plugin_kmem.o
+  LD       /tmp/build/perf/plugin_jbd2-in.o
+make[2]: *** [Makefile.perf:501: /tmp/build/perf/pmu-events/jevents-in.o] Error 2
+make[2]: *** Waiting for unfinished jobs....
+  GEN      perf-archive
+  CC       /tmp/build/perf/plugin_kvm.o
