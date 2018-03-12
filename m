@@ -1,68 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752503AbeCLIob (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 04:44:31 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46265 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752474AbeCLIo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 04:44:29 -0400
-Date: Mon, 12 Mar 2018 09:44:27 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] ARM: dts: sun8i: a33: Improvements for A33-OLinuXino
-Message-ID: <20180312084427.r75ko3jgmukmuls4@flea>
-References: <20180312042356.18625-1-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cv73grxaoujzzehz"
-Content-Disposition: inline
-In-Reply-To: <20180312042356.18625-1-wens@csie.org>
-User-Agent: NeoMutt/20180223
+        id S1752455AbeCLIpb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 04:45:31 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:35681 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751118AbeCLIp1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 04:45:27 -0400
+X-Google-Smtp-Source: AG47ELtPqL94II8NDr6o/LjZZbCtqo3zmQmSR43TkFGiHFVknMUc6r8LpSZz8+eHhrFMvB3l4MlKMQ==
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To: linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Bhupesh Sharma <bhsharma@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, "Lee, Chun-Yi" <jlee@suse.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Tony Luck <tony.luck@intel.com>, Tyler Baicar <tbaicar@codeaurora.org>
+Subject: [GIT PULL 0/5] more EFI changes for v4.17
+Date: Mon, 12 Mar 2018 08:44:55 +0000
+Message-Id: <20180312084500.10764-1-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The following changes since commit f779ca740f25c8a6a72d951334f9efc3158a318b:
 
---cv73grxaoujzzehz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  efi: Make const array 'apple' static (2018-03-09 09:30:35 +0100)
 
-On Mon, Mar 12, 2018 at 12:23:52PM +0800, Chen-Yu Tsai wrote:
-> Hi,
->=20
-> Here are some cleanup and improvements for the A33-OLinuXino device
-> tree. The first two patches drop some unneeded bits. The latter two
-> enable peripherals that we now support.
+are available in the Git repository at:
 
-Applied all four, thanks!
-Maxime
+  git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git tags/efi-next
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+for you to fetch changes up to a6072c0ecf3a39e9eadfaea1477533fd24261b05:
 
---cv73grxaoujzzehz
-Content-Type: application/pgp-signature; name="signature.asc"
+  efi: use string literals for efi_char16_t variable initializers (2018-03-10 11:05:19 +0000)
 
------BEGIN PGP SIGNATURE-----
+----------------------------------------------------------------
+Second batch of EFI changes for v4.17:
+- take 2 of 'use efi_switch_mm() on x86 instead of manipulating %cr3 directly'
+- fix early memremap leak in ESRT code
+- switch to L"xxx" notation for wide string literals
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqmPeoACgkQ0rTAlCFN
-r3QzNQ//Q5jZqfzFS0aHoJz+hg2vw5EN/HRR427q07Va48IFo2PU5kqDyM20gVIH
-Rtq1tKnG9kVDZZwSQFwsh6dUUXdUpHxXW/3zMUb5/TlWfPJbiIk/whiD5zbCSJw+
-AYn6hRSz6jRLhQnIlwXsKZkUlRVp4fpsmKCooaBW7BUuiWp43CoXvbQ5VvmGV4XD
-qlYpPCwmoKu6lem3GqzFny1QWU5MRsMa83u73EBadJDzoWuWJQ4tEdO+eQxxizdZ
-1QFV8H0CQyva4SDC9W2TlUpMnBuuAE//vCsN3RfbzFK3luNOMATwMXNsUij1kGeD
-YrETSMfSB+QhqQ5APTvGqzFZ8NmbPEAeGesgjMHXnb9LTtJ0BnDLmDX9o1H/3FJB
-IZ4V6C8hrDXgoUHgF5C6b+190jQgkVugw5Od3U3XiiDPSVfDN9kSMkEaCsaa2nKs
-kMbJ5PfyutjDm7jyMo7m1iUBSZPJoO049noohhlspuvy4u9x4vNf8d9tfnNN+pVh
-25FbtMSB1cZAX/mC0T/SleZauSHSPqJky61Dsnn6+V8nUuZ6KplAHUMLNl0J6cIG
-QYB/qmG5JF4okyECzul3KSvOEqA/iwndT4AVYLEuvmr97ZkKHCNrbyto4Ru24ygO
-CtHCsNe7v8RCjrKI/iw5Q6QLGUn3HszCX2s9TXK5Z7txs1nIWwo=
-=mJi2
------END PGP SIGNATURE-----
+----------------------------------------------------------------
+Ard Biesheuvel (2):
+      efi/esrt: fix handling of early ESRT table mapping
+      efi: use string literals for efi_char16_t variable initializers
 
---cv73grxaoujzzehz--
+Sai Praneeth (3):
+      efi: Use efi_mm in x86 as well as ARM
+      x86/efi: Replace efi_pgd with efi_mm.pgd
+      x86/efi: Use efi_switch_mm() rather than manually twiddling with %cr3
+
+ arch/x86/boot/compressed/eboot.c          |  3 +-
+ arch/x86/include/asm/efi.h                | 26 ++++++--------
+ arch/x86/platform/efi/efi_64.c            | 59 +++++++++++++++++--------------
+ arch/x86/platform/efi/efi_thunk_64.S      |  2 +-
+ arch/x86/platform/efi/quirks.c            |  8 +++--
+ drivers/firmware/efi/arm-runtime.c        |  9 -----
+ drivers/firmware/efi/efi.c                |  9 +++++
+ drivers/firmware/efi/esrt.c               | 17 +++------
+ drivers/firmware/efi/libstub/Makefile     |  2 +-
+ drivers/firmware/efi/libstub/secureboot.c | 12 ++-----
+ drivers/firmware/efi/libstub/tpm.c        |  7 ++--
+ include/linux/efi.h                       |  2 ++
+ 12 files changed, 72 insertions(+), 84 deletions(-)
