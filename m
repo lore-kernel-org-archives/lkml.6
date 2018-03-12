@@ -1,67 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752689AbeCLJrz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 05:47:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38524 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752360AbeCLJnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:43:18 -0400
-From: Jiri Olsa <jolsa@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH 01/13] lib bpf: Add bpf_program__insns function
-Date: Mon, 12 Mar 2018 10:43:01 +0100
-Message-Id: <20180312094313.18738-2-jolsa@kernel.org>
-In-Reply-To: <20180312094313.18738-1-jolsa@kernel.org>
-References: <20180312094313.18738-1-jolsa@kernel.org>
+        id S1752563AbeCLJsp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 05:48:45 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:34989 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751344AbeCLJsn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 05:48:43 -0400
+X-Google-Smtp-Source: AG47ELsxviIHNAtQHnA8ELe32395imCsyCWreOeLWqtmhGM3ZruluAlB1FFkQ4lxQ+VucmMZaRygvw==
+Date: Mon, 12 Mar 2018 10:48:38 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Andy Lutomirski <luto@kernel.org>, linux-efi@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sai Praneeth <sai.praneeth.prakhya@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Lee, Chun-Yi" <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
+        Tony Luck <tony.luck@intel.com>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Ravi Shankar <ravi.v.shankar@intel.com>
+Subject: Re: [PATCH 2/5] x86/efi: Replace efi_pgd with efi_mm.pgd
+Message-ID: <20180312094838.h7vm3lmssijag7la@gmail.com>
+References: <20180312084500.10764-1-ard.biesheuvel@linaro.org>
+ <20180312084500.10764-3-ard.biesheuvel@linaro.org>
+ <20180312090220.lmohpvj62v7l2qsc@gmail.com>
+ <20180312092650.nbvidgia5s5r5t7b@gmail.com>
+ <CAKv+Gu8QOo67fg2Hgxz3C4bgm3Oeunf1hpdW=rrtNGUJLK4a9w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu8QOo67fg2Hgxz3C4bgm3Oeunf1hpdW=rrtNGUJLK4a9w@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding bpf_program__insns helper function to retrieve
-prog's instructions. It's used later in the patchset.
 
-Link: http://lkml.kernel.org/n/tip-xvpbbusx8gie33kj0et5wx6l@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/lib/bpf/libbpf.c | 7 +++++++
- tools/lib/bpf/libbpf.h | 3 +++
- 2 files changed, 10 insertions(+)
+* Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
 
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 5bbbf285af74..6b9df10470e8 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -261,6 +261,13 @@ struct bpf_object {
- };
- #define obj_elf_valid(o)	((o)->efile.elf)
- 
-+struct bpf_insn*
-+bpf_program__insns(struct bpf_program *prog, int *insns_cnt)
-+{
-+	*insns_cnt = prog->insns_cnt;
-+	return prog->insns;
-+}
-+
- static void bpf_program__unload(struct bpf_program *prog)
- {
- 	int i;
-diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
-index f85906533cdd..bfc4d0411ec5 100644
---- a/tools/lib/bpf/libbpf.h
-+++ b/tools/lib/bpf/libbpf.h
-@@ -180,6 +180,9 @@ int bpf_program__set_prep(struct bpf_program *prog, int nr_instance,
- 
- int bpf_program__nth_fd(struct bpf_program *prog, int n);
- 
-+struct bpf_insn*
-+bpf_program__insns(struct bpf_program *prog, int *insns_cnt);
-+
- /*
-  * Adjust type of bpf program. Default is kprobe.
-  */
--- 
-2.13.6
+> On 12 March 2018 at 09:26, Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> > * Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> >> > -static pgd_t *efi_pgd;
+> >> > -
+> >>
+> >> Hm, so there's some interaction here with:
+> >>
+> >>   116fef640859: x86/mm/dump_pagetables: Add the EFI pagetable to the debugfs 'page_tables' directory
+> >>
+> >> which is in tip:x86/mm.
+> >>
+> >> Could you please resolve that conflict? I'll sort out the topic branches
+> >> afterwards.
+> >
+> > So I've resolved it the following way, I merged the conflicting commit into
+> > tip:efi/core and applied the 3 unrelated patches from your series:
+> >
+> >  36b649760e94: efi: Use string literals for efi_char16_t variable initializers
+> >  136d5d57e35c: efi/esrt: Fix handling of early ESRT table mapping
+> >  7e904a91bf60: efi: Use efi_mm in x86 as well as ARM
+> >  b0599e2801df: Merge branch 'x86/mm' into efi/core
+> >
+> > and pushed it out.
+> >
+> > So if you could resolve the two conflicting patches on top of 36b649760e94 then we
+> > should be good going forward.
+> >
+> 
+> By 'resolve' you mean rebase and resend, right?
+
+Yeah.
+
+I expected it to probably be a bit more work than a regular rebase, because we 
+grew a new efi_pgd user and I didn't want to trivialize the conflict resolution 
+effort - hence the 'resolve the conflict' formulation! :-)
+
+Thanks,
+
+	Ingo
