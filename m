@@ -1,50 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932497AbeCLRFe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 13:05:34 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:35111 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932190AbeCLRFd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 13:05:33 -0400
-X-Google-Smtp-Source: AG47ELvszZHYNoE2s3i/4OVPDXgGnP+6nMJPWuM8MO0t0MkQYn0SqRmPfMJ/POuqzlRgYbNZ2BQA1A==
-Date: Mon, 12 Mar 2018 13:05:31 -0400 (EDT)
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-To: Arnd Bergmann <arnd@arndb.de>
-cc: Andi Kleen <ak@linux.intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/7] ARM: disallow combining XIP and LTO
-In-Reply-To: <nycvar.YSQ.7.76.1803121250360.28583@knanqh.ubzr>
-Message-ID: <nycvar.YSQ.7.76.1803121303350.28583@knanqh.ubzr>
-References: <20180220215954.4092811-1-arnd@arndb.de> <20180220215954.4092811-2-arnd@arndb.de> <nycvar.YSQ.7.76.1803112233070.28583@knanqh.ubzr> <CAK8P3a06_zke6Zy77TCX6aUS1C0aK2btvnLA7APxRykkxS6S_w@mail.gmail.com> <CAK8P3a128iw+HB5Fp6ZOBCyuK0LypqSXqnkNPQs8sWR1pc8x3g@mail.gmail.com>
- <nycvar.YSQ.7.76.1803121250360.28583@knanqh.ubzr>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        id S932536AbeCLRGq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 13:06:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48306 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932331AbeCLRGp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 13:06:45 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88C56217A7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+X-Google-Smtp-Source: AG47ELsZKIcMhgOQyh8WJYYrnxRQdxaSP2WwTRlB3JyqTTVHdURYd5Bi60CnwHgkje3g/w6OZpwwP6KA5nnjQGPKVKE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CA+55aFyKOkO1BBYX+-SZyON2FA_FSc9YqVDLU9-pRj1=jh9sUw@mail.gmail.com>
+References: <20180226180451.86788-2-kirill.shutemov@linux.intel.com>
+ <tip-a403d798182f4f7be5e9bab56cfa37e9828fd92a@git.kernel.org>
+ <20180312124027.GG4064@hirez.programming.kicks-ass.net> <20180312124337.vw7bchm6brfzghfa@node.shutemov.name>
+ <20180312131055.GH4064@hirez.programming.kicks-ass.net> <20180312140449.oyngtgqppnjuh3lf@node.shutemov.name>
+ <20180312143212.77z2ptyqbsbqdll3@gmail.com> <20180312145049.boh3wmaotim6sfh2@black.fi.intel.com>
+ <CA+55aFyKOkO1BBYX+-SZyON2FA_FSc9YqVDLU9-pRj1=jh9sUw@mail.gmail.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Mon, 12 Mar 2018 17:06:23 +0000
+X-Gmail-Original-Message-ID: <CALCETrU8=_A9VzJMWuLouoyVQVLbnh_1etQK4tB4kvD8b51opQ@mail.gmail.com>
+Message-ID: <CALCETrU8=_A9VzJMWuLouoyVQVLbnh_1etQK4tB4kvD8b51opQ@mail.gmail.com>
+Subject: Re: [tip:x86/mm] x86/boot/compressed/64: Describe the logic behind
+ the LA57 check
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@suse.de>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Anvin <hpa@zytor.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+        linux-tip-commits@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Mar 2018, Nicolas Pitre wrote:
+On Mon, Mar 12, 2018 at 4:42 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Mon, Mar 12, 2018 at 7:50 AM, Kirill A. Shutemov
+> <kirill.shutemov@linux.intel.com> wrote:
+>>
+>> I disagree that we should decide usefulness of the 5-level paging based on
+>> size of physical memory on the machine.
+>>
+>> Consider use case when you have 100TiB database file. It's pretty
+>> reasonable to mmap() such file at once even if you don't have 100TiB of
+>> physical memory to back it up. 1/100 of the file size may still work
+>> fairly well.
+>>
+>> Virtual address space is useful on its own and we shouldn't take the
+>> value from the user just because he doesn't have tens of terabytes of
+>> memory.
+>
+> Absolutely.
+>
+> Also, I'd suggest enabling 5-level paging as aggressively as possible
+> by default (ie whenever the hardware supports it), just for test
+> coverage.
+>
+> Maybe in a year or two, when we actually have a fair amount of
+> coverage, we'll then say "ok, this just hurts normal workstations that
+> have the capability but only have ridiculously small fraction of
+> memory", and at that point say that unless you have a ton of RAM we'll
+> default to 4-level.
+>
 
-> On Mon, 12 Mar 2018, Arnd Bergmann wrote:
-> 
-> > arm-linux-gnueabi-nm: 'arch/arm/boot/compressed/../../../../vmlinux':
-> > No such file
-> 
-> That is weird. The Makefile has:
-> 
-> cmd_mkxip = $(cmd_objcopy) && $(cmd_deflate_xip_data)
-> 
-> $(obj)/xipImage: vmlinux FORCE
->         $(call if_changed,mkxip)
-> 
-> So the objcopy must succeed at producing vmlinux for deflate_xip_data 
-> (where nm is used) to be called.
+I'd be surprised if there's a noticeable performance hit on anything
+except the micro-est of benchmarks.  We're talking one extra
+intermediate paging structure cache entry in use, maybe a few data
+cache lines, and (wild guess) 0 extra cycles on a TLB miss in the
+normal case.  This is because the walks are almost never going to
+start at the root.
 
-Correction: vmlinux is a dependency not a product, so it must be there 
-for this rule to be executed, and it is input to both objcopy and nm.
-
-
-Nicolas
+The real hit will be the extra page table for every task.
