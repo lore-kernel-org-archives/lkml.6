@@ -1,144 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932423AbeCLJxV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 05:53:21 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:31333 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932386AbeCLJxS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:53:18 -0400
-X-UUID: 662b5191c4f44b2c9837948b2ea1ef6f-20180312
-Message-ID: <1520848387.27000.0.camel@mtkswgap22>
-Subject: Re: [PATCH v1 05/19] arm: dts: mt7623: add BTIF, HSDMA and SPI-NOR
- device nodes
-From: Sean Wang <sean.wang@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-CC: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Date: Mon, 12 Mar 2018 17:53:07 +0800
-In-Reply-To: <cea7b0bf-fcd9-6405-c437-d3251e7bb4bf@gmail.com>
-References: <cover.1519378871.git.sean.wang@mediatek.com>
-         <ca071fec200f80d894523b11c94ddde19381f936.1519378871.git.sean.wang@mediatek.com>
-         <cea7b0bf-fcd9-6405-c437-d3251e7bb4bf@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S1752699AbeCLJx5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 05:53:57 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:45760 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752568AbeCLJx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 05:53:56 -0400
+Date: Mon, 12 Mar 2018 10:53:37 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/microcode/AMD: check microcode file sanity before
+ loading it
+Message-ID: <20180312095336.GB9431@pd.tnic>
+References: <787b0ecc-8c1a-3b5a-82e0-9840c7b7c595@maciej.szmigiero.name>
 MIME-Version: 1.0
-X-MTK: N
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <787b0ecc-8c1a-3b5a-82e0-9840c7b7c595@maciej.szmigiero.name>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-03-12 at 10:40 +0100, Matthias Brugger wrote:
-> 
-> On 02/23/2018 11:16 AM, sean.wang@mediatek.com wrote:
-> > From: Sean Wang <sean.wang@mediatek.com>
-> > 
-> > add BTIF, HSDMA and SPI-NOR device nodes and enable it on relevant boards
-> 
-> AFAIK hsdma controller is not upstream yet.
-> Please resubmit when at least the binding got merged.
-> 
+On Sun, Mar 11, 2018 at 04:27:03PM +0100, Maciej S. Szmigiero wrote:
+> +/* 4k */
+> +#define UCODE_EQUIV_CPU_TABLE_MAX_SIZE (256 * sizeof(struct equiv_cpu_entry))
 
-Sure, I will drop the node for HSDMA in the next version.
+And you came up with that max size how exactly?
 
-> Thanks,
-> Matthias
-> 
-> > 
-> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> > ---
-> >  arch/arm/boot/dts/mt7623.dtsi                 | 36 ++++++++++++++++++++++++++-
-> >  arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts |  6 ++++-
-> >  2 files changed, 40 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
-> > index 91317a1..da56c54 100644
-> > --- a/arch/arm/boot/dts/mt7623.dtsi
-> > +++ b/arch/arm/boot/dts/mt7623.dtsi
-> > @@ -1,5 +1,5 @@
-> >  /*
-> > - * Copyright (c) 2017 MediaTek Inc.
-> > + * Copyright (c) 2017-2018 MediaTek Inc.
-> >   * Author: John Crispin <john@phrozen.org>
-> >   *	   Sean Wang <sean.wang@mediatek.com>
-> >   *
-> > @@ -483,6 +483,18 @@
-> >  		nvmem-cell-names = "calibration-data";
-> >  	};
-> >  
-> > +	btif: serial@1100c000 {
-> > +		compatible = "mediatek,mt7623-btif",
-> > +			     "mediatek,mtk-btif";
-> > +		reg = <0 0x1100c000 0 0x1000>;
-> > +		interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_LOW>;
-> > +		clocks = <&pericfg CLK_PERI_BTIF>;
-> > +		clock-names = "main";
-> > +		reg-shift = <2>;
-> > +		reg-io-width = <4>;
-> > +		status = "disabled";
-> > +	};
-> > +
-> >  	nandc: nfi@1100d000 {
-> >  		compatible = "mediatek,mt7623-nfc",
-> >  			     "mediatek,mt2701-nfc";
-> > @@ -508,6 +520,18 @@
-> >  		status = "disabled";
-> >  	};
-> >  
-> > +	nor_flash: spi@11014000 {
-> > +		compatible = "mediatek,mt7623-nor",
-> > +			     "mediatek,mt8173-nor";
-> > +		reg = <0 0x11014000 0 0x1000>;
-> > +		clocks = <&pericfg CLK_PERI_FLASH>,
-> > +			 <&topckgen CLK_TOP_FLASH_SEL>;
-> > +		clock-names = "spi", "sf";
-> > +		#address-cells = <1>;
-> > +		#size-cells = <0>;
-> > +		status = "disabled";
-> > +	};
-> > +
-> >  	spi1: spi@11016000 {
-> >  		compatible = "mediatek,mt7623-spi",
-> >  			     "mediatek,mt2701-spi";
-> > @@ -861,6 +885,16 @@
-> >  		#reset-cells = <1>;
-> >  	};
-> >  
-> > +	hsdma: dma-controller@1b007000 {
-> > +		compatible = "mediatek,mt7623-hsdma";
-> > +		reg = <0 0x1b007000 0 0x1000>;
-> > +		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_LOW>;
-> > +		clocks = <&ethsys CLK_ETHSYS_HSDMA>;
-> > +		clock-names = "hsdma";
-> > +		power-domains = <&scpsys MT2701_POWER_DOMAIN_ETH>;
-> > +		#dma-cells = <1>;
-> > +	};
-> > +
-> >  	eth: ethernet@1b100000 {
-> >  		compatible = "mediatek,mt7623-eth",
-> >  			     "mediatek,mt2701-eth",
-> > diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-> > index 3efecc5..ec11e14 100644
-> > --- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-> > +++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-> > @@ -1,5 +1,5 @@
-> >  /*
-> > - * Copyright 2017 Sean Wang <sean.wang@mediatek.com>
-> > + * Copyright 2017-2018 Sean Wang <sean.wang@mediatek.com>
-> >   *
-> >   * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> >   */
-> > @@ -86,6 +86,10 @@
-> >  	};
-> >  };
-> >  
-> > +&btif {
-> > +	status = "okay";
-> > +};
-> > +
-> >  &cir {
-> >  	pinctrl-names = "default";
-> >  	pinctrl-0 = <&cir_pins_a>;
-> > 
+> +/* If a patch is larger than this the microcode file is surely corrupted */
+> +#define PATCH_MAX_SIZE_ABSOLUTE (16 * 1024 * 1024)a
+
+Same question here.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
