@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751293AbeCLNPQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 09:15:16 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41392 "EHLO
+        id S1751415AbeCLNPX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 09:15:23 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41502 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751180AbeCLNPO (ORCPT
+        with ESMTP id S1751180AbeCLNPU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 09:15:14 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8F68A603AF
+        Mon, 12 Mar 2018 09:15:20 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EEF7A603AF
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
 From: Abhishek Sahu <absahu@codeaurora.org>
@@ -17,72 +17,47 @@ Cc: David Brown <david.brown@linaro.org>,
         Austin Christ <austinwc@codeaurora.org>, linux-arm-msm@vger.kernel.org,
         linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
         linux-kernel@vger.kernel.org, Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v2 00/13] Major code reorganization to make all i2c transfers working
-Date: Mon, 12 Mar 2018 18:44:49 +0530
-Message-Id: <1520860502-14886-1-git-send-email-absahu@codeaurora.org>
+Subject: [PATCH v2 01/13] i2c: qup: fix copyrights and update to SPDX identifier
+Date: Mon, 12 Mar 2018 18:44:50 +0530
+Message-Id: <1520860502-14886-2-git-send-email-absahu@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1520860502-14886-1-git-send-email-absahu@codeaurora.org>
+References: <1520860502-14886-1-git-send-email-absahu@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* v2:
+The file has been updated from 2016 to 2018 so fixed the
+copyright years.
 
-1. Address review comments in v1
-2. Changed the license to SPDX
-3. Changed commit messages for some of the patch having more detail
-4. Removed event-based completion and changed transfer completion
-   detection logic in interrupt handler
-5. Removed dma_threshold and blk_mode_threshold from global structure
-6. Improved determine mode logic for QUP v2 transfers
-7. Fixed function comments
-8. Fixed auto build test WARNING ‘idx' may be used uninitialized
-   in this function
-9. Renamed tx/rx_buf to tx/rx_cnt
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/i2c/busses/i2c-qup.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
 
-* v1:
-
-The current driver is failing in following test case
-1. Handling of failure cases is not working in long run for BAM
-   mode. It generates error message “bam-dma-engine 7884000.dma: Cannot
-   free busy channel” sometimes.
-2. Following I2C transfers are failing
-   a. Single transfer with multiple read messages
-   b. Single transfer with multiple read/write message with maximum
-      allowed length per message (65K) in BAM mode
-   c. Single transfer with write greater than 32 bytes in QUP v1 and
-      write greater than 64 bytes in QUP v2 for non-DMA mode.
-3. No handling is present for Block/FIFO interrupts. Any non-error
-   interrupts are being treated as the transfer completion and then
-   polling is being done for available/free bytes in FIFO.
-
-To fix all these issues, major code changes are required. This patch
-series fixes all the above issues and makes the driver interrupt based
-instead of polling based. After these changes, all the mentioned test
-cases are working properly.
-
-The code changes have been tested for QUP v1 (IPQ8064) and QUP
-v2 (IPQ8074) with sample application written over i2c-dev.
-
-Abhishek Sahu (13):
-  i2c: qup: fix copyrights and update to SPDX identifier
-  i2c: qup: fixed releasing dma without flush operation completion
-  i2c: qup: minor code reorganization for use_dma
-  i2c: qup: remove redundant variables for BAM SG count
-  i2c: qup: schedule EOT and FLUSH tags at the end of transfer
-  i2c: qup: fix the transfer length for BAM RX EOT FLUSH tags
-  i2c: qup: proper error handling for i2c error in BAM mode
-  i2c: qup: use the complete transfer length to choose DMA mode
-  i2c: qup: change completion timeout according to transfer length
-  i2c: qup: fix buffer overflow for multiple msg of maximum xfer len
-  i2c: qup: send NACK for last read sub transfers
-  i2c: qup: reorganization of driver code to remove polling for qup v1
-  i2c: qup: reorganization of driver code to remove polling for qup v2
-
- drivers/i2c/busses/i2c-qup.c | 1507 ++++++++++++++++++++++++------------------
- 1 file changed, 880 insertions(+), 627 deletions(-)
-
+diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
+index 08f8e01..ac5edfa 100644
+--- a/drivers/i2c/busses/i2c-qup.c
++++ b/drivers/i2c/busses/i2c-qup.c
+@@ -1,17 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+- * Copyright (c) 2009-2013, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2009-2013, 2016-2018, The Linux Foundation. All rights reserved.
+  * Copyright (c) 2014, Sony Mobile Communications AB.
+  *
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+  */
+ 
+ #include <linux/acpi.h>
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
