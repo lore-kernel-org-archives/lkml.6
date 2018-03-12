@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3340693-1520824482-2-6132998844848338724
+X-Cyrus-Session-Id: sloti22d1t05-3369064-1520824471-2-14916809989745035873
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520824481; b=UjwrRjau/a+r3/eudjm/aq6+sCRrikk1Fvr7MKYKYcCTC4A
-    /5v+it6Vw1x3S8AKtE+i6OaaiJcYj7mpuIoFVZrAfQylVZ6sd+TGH3fvZMwZ8vUz
-    mDIn6OOoJ+ybQPWamY3cdl+GSitAbooUaeQNS+n2foNVe0nYJL8x31eImQ97a2Xg
-    fPjSMNWwoGdsO2xVIGMZD5Xdu6K2ZQdIYuH2Bi3O7FIjrh3Kvnfzcsqchp8fENf7
-    fWqHyfDrtV/i6o0ZckmaB7Y2HXjrzYNT9wXJNgHBoLjVjYR+T6jiK6A3dH/hlD6q
-    hdWJSsSqgCZE9C6Kzc3Hy4h9oFFFvaW4GZd9Vvw==
+    t=1520824470; b=R7fllFO1s7JTd740szHzWkZLHhSJFOZg2lvCXyyoGwIOqzv
+    zmRikV0+WVUjij8S8gKGlfOqL0sIQDBzUkJEDLZ56xlWvGk9Ml7jxX2cfnQX8ALv
+    I8Zgi/51XeJgqdpLEq4tM7gpMRks7JUmuOT80J0a5WbDis3fhUKvSUxmIf32w4mL
+    IvOJ8ym8eMC26io1arRV1wJju8T98F6Ks58pnKYWRskG6D1ia0JYHwiCM090VVMq
+    ddJpnp8/5qdYjaw58g0RNbXZHxbYQxg9lQwzeBLSB2cZdHKwodqYNz2SJHtZuEH9
+    3KHgdYvU5fmIaSnQltWD7Fk+mP4yV0RSAM+pREw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1520824481; bh=u+k7qEbgcQyRgp5bbvX
-    m2lQsGQ5w565/WFCTJ/ZRv70=; b=JlL6iCBbZHWuNV1aJNrN0Hc3D995JIDzzxV
-    9ll6I9MY+hMOEdf1YhgyUvuo7w9eo4ubDhfyeoGBIjLTdW/1+AWF5F4Dq1ilNmSG
-    2NYokn8tjnw91+FHhtIV9X2JCVALN+UdvteG2Bzo9G47b3mTcHR7cYyuSf0IQVnp
-    oywMjjW/ON9bjrhGgT7cSltWALG1yR+xRoWHQiiusmcoJmJsKh9aOxPFy2aadNCd
-    nEE16f8CvSnxPoxnZXITqwbo8adxMFxMgPLex6QLDrsXmPkfBvKaiN4cOgRzeQAT
-    VYZeMKF+seI41YnSqLBxwMKNwuDVE6xwdp/l+ErgvmuRsyGqb+A==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1520824470; bh=rrL+Fn03QefKMHjXnCw
+    RJfrguR06MaXajNE2wehs5JU=; b=IEsBUQ1vBbXfPKGFCOsRvlIkFz4e/E9aeh5
+    I3aKkscvtxOwto6m/O4lytLJmEm68Wt4s03Bb1fSew8vvKmeunGHNL5Eyc872vAb
+    RkSuiZaadkMEmZANVvMPr2bUzkW6QzoPTq/NMrb1N9nuG19uMbs7fo+lK2u3hTDx
+    a03COPdacH/iPtB7/O/2yIgOX7ls2ClRYMNsXx/jO1MoOvSjuZKG8oe9CVdGhOzC
+    K/86JTiYajZ0LWuqe4WbLXiWKDUzOl1krX331XS2ML0PHncSo4dtPjviqqGZMWs6
+    LmASj2TFCQ0PTsVt/h6mYP9Tk/DWRTsqAVjmN/MwcPfhych2MUA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -49,12 +49,12 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932951AbeCLDNJ (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Mar 2018 23:13:09 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41584 "EHLO
+        id S932988AbeCLDNL (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Mar 2018 23:13:11 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41526 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932803AbeCLDHw (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 23:07:52 -0400
+        by vger.kernel.org with ESMTP id S932795AbeCLDHv (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 23:07:51 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -62,16 +62,19 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org, "Will Deacon" <will.deacon@arm.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Dan Williams" <dan.j.williams@intel.com>,
+        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
         "Thomas Gleixner" <tglx@linutronix.de>,
-        "Peter Zijlstra" <peterz@infradead.org>
+        "Borislav Petkov" <bp@alien8.de>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Linus Torvalds" <torvalds@linuxfoundation.org>,
+        "David Woodhouse" <dwmw@amazon.co.uk>,
+        "Dave Hansen" <dave.hansen@intel.com>
 Date: Mon, 12 Mar 2018 03:06:12 +0000
-Message-ID: <lsq.1520823972.289522228@decadent.org.uk>
+Message-ID: <lsq.1520823972.385995810@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 68/76] nospec: Move array_index_nospec() parameter
- checking into separate macro
+Subject: [PATCH 3.16 11/76] x86/cpu: Implement CPU vulnerabilites sysfs
+ functions
 In-Reply-To: <lsq.1520823971.5976735@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -86,86 +89,81 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 8fa80c503b484ddc1abbd10c7cb2ab81f3824a50 upstream.
+commit 61dc0f555b5c761cdafb0ba5bd41ecf22d68a4c4 upstream.
 
-For architectures providing their own implementation of
-array_index_mask_nospec() in asm/barrier.h, attempting to use WARN_ONCE() to
-complain about out-of-range parameters using WARN_ON() results in a mess
-of mutually-dependent include files.
+Implement the CPU vulnerabilty show functions for meltdown, spectre_v1 and
+spectre_v2.
 
-Rather than unpick the dependencies, simply have the core code in nospec.h
-perform the checking for us.
-
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1517840166-15399-1-git-send-email-will.deacon@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Linus Torvalds <torvalds@linuxfoundation.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Link: https://lkml.kernel.org/r/20180107214913.177414879@linutronix.de
+[bwh: Backported to 3.16:
+ - Meltdown mitigation feature flag is KAISER
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- include/linux/nospec.h | 36 +++++++++++++++++++++---------------
- 1 file changed, 21 insertions(+), 15 deletions(-)
+ arch/x86/Kconfig           |  1 +
+ arch/x86/kernel/cpu/bugs.c | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
 
---- a/include/linux/nospec.h
-+++ b/include/linux/nospec.h
-@@ -20,20 +20,6 @@ static inline unsigned long array_index_
- 						    unsigned long size)
- {
- 	/*
--	 * Warn developers about inappropriate array_index_nospec() usage.
--	 *
--	 * Even if the CPU speculates past the WARN_ONCE branch, the
--	 * sign bit of @index is taken into account when generating the
--	 * mask.
--	 *
--	 * This warning is compiled out when the compiler can infer that
--	 * @index and @size are less than LONG_MAX.
--	 */
--	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,
--			"array_index_nospec() limited to range of [0, LONG_MAX]\n"))
--		return 0;
--
--	/*
- 	 * Always calculate and emit the mask even if the compiler
- 	 * thinks the mask is not needed. The compiler does not take
- 	 * into account the value of @index under speculation.
-@@ -44,6 +30,26 @@ static inline unsigned long array_index_
- #endif
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -130,6 +130,7 @@ config X86
+ 	select HAVE_IRQ_EXIT_ON_IRQ_STACK if X86_64
+ 	select HAVE_CC_STACKPROTECTOR
+ 	select GENERIC_CPU_AUTOPROBE
++	select GENERIC_CPU_VULNERABILITIES
+ 	select HAVE_ARCH_AUDITSYSCALL
+ 	select ARCH_SUPPORTS_ATOMIC_RMW
  
- /*
-+ * Warn developers about inappropriate array_index_nospec() usage.
-+ *
-+ * Even if the CPU speculates past the WARN_ONCE branch, the
-+ * sign bit of @index is taken into account when generating the
-+ * mask.
-+ *
-+ * This warning is compiled out when the compiler can infer that
-+ * @index and @size are less than LONG_MAX.
-+ */
-+#define array_index_mask_nospec_check(index, size)				\
-+({										\
-+	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,			\
-+	    "array_index_nospec() limited to range of [0, LONG_MAX]\n"))	\
-+		_mask = 0;							\
-+	else									\
-+		_mask = array_index_mask_nospec(index, size);			\
-+	_mask;									\
-+})
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -9,6 +9,7 @@
+  */
+ #include <linux/init.h>
+ #include <linux/utsname.h>
++#include <linux/cpu.h>
+ #include <asm/bugs.h>
+ #include <asm/processor.h>
+ #include <asm/processor-flags.h>
+@@ -122,3 +123,31 @@ void __init check_bugs(void)
+ 		set_memory_4k((unsigned long)__va(0), 1);
+ #endif
+ }
 +
-+/*
-  * array_index_nospec - sanitize an array index after a bounds check
-  *
-  * For a code sequence like:
-@@ -61,7 +67,7 @@ static inline unsigned long array_index_
- ({									\
- 	typeof(index) _i = (index);					\
- 	typeof(size) _s = (size);					\
--	unsigned long _mask = array_index_mask_nospec(_i, _s);		\
-+	unsigned long _mask = array_index_mask_nospec_check(_i, _s);	\
- 									\
- 	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
- 	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
++#ifdef CONFIG_SYSFS
++ssize_t cpu_show_meltdown(struct device *dev,
++			  struct device_attribute *attr, char *buf)
++{
++	if (!boot_cpu_has_bug(X86_BUG_CPU_MELTDOWN))
++		return sprintf(buf, "Not affected\n");
++	if (boot_cpu_has(X86_FEATURE_KAISER))
++		return sprintf(buf, "Mitigation: PTI\n");
++	return sprintf(buf, "Vulnerable\n");
++}
++
++ssize_t cpu_show_spectre_v1(struct device *dev,
++			    struct device_attribute *attr, char *buf)
++{
++	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V1))
++		return sprintf(buf, "Not affected\n");
++	return sprintf(buf, "Vulnerable\n");
++}
++
++ssize_t cpu_show_spectre_v2(struct device *dev,
++			    struct device_attribute *attr, char *buf)
++{
++	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
++		return sprintf(buf, "Not affected\n");
++	return sprintf(buf, "Vulnerable\n");
++}
++#endif
