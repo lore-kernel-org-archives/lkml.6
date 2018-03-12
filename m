@@ -1,5 +1,5 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-4009664-1520844651-2-18412016822518267617
+X-Cyrus-Session-Id: sloti22d1t05-4009665-1520844650-2-12768116457890981967
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,26 +13,26 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520844649; b=q99W0iFgISMO01S9YmgdqKjNZw/TIIXBl8Mk1FJta+QiZl6
-    CGVfo0yjBjKxqcEOGg8u24U6zySha87W/7veLPJZKsvfwYA1Sm0XfaAhGoDq6s3X
-    4ru3ZDR9Jgs13AloNoqD2j2ohgJNjnCwSTwh96WCJZACvldu/fcsTRYygI/PGBHQ
-    h1E3yy/9yqHWNGtGdRA2ooVbaJgbPu6AYD8MoD3iYUTa3Ljcutpd/IBwdotGUb0A
-    OmCCdz28MEpXkX8bJOsySwXLb+8RyolW0VMoukcCJF0/R6H39xPpCec4ZHpI0PL8
-    uDASxdi4xiEKK8J57JKiBFdRV5SQJbS+H7vW35A==
+    t=1520844650; b=h3fvyuo/eTmavDymAglzMuROQdDy349RC10KZ3hiYo+8EQR
+    /T65NDlhSvfZ+qo9tiBSWpI0bL9M1C8FDKJyGmBxfR9jHPPMVJ+ykBTSRPY5WEb4
+    Qod0f/8Y9zPWtvPO0nYA/HdyUQjnzup3Z+zArxxd5fgQ9WxH1MpwY1qXvuqapACh
+    uaSapVhVQ/xyHlU8jcCQxXcHoiv8chk3rpuK+xglqVVlk50EFqmtK97JAxHiIAOG
+    MHFPeWx/x1atceKn7OBqgX37vN43tseIzhbdgdbLDxzsddHxuIw4b6J5Vga0xgQH
+    3lYsSIG+2JUd9xbz+e5mjcph2vx07Cu+Q97XLCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:mime-version:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520844649; bh=A
-    YYBrNmGvdFv1hjK+7Fi+VSvkiT986SdxNwxB9fF3O8=; b=phi4VL+ooL+zUBWDl
-    8GNJPlcUz9+Knw2SID+EFJUKycuEFjQCq1jdEPJHeIK06yvkhNMa8bwOk5Ygy2VU
-    nmVFl+u0ZUWINhyPyRlPwCO4eBCHpAO+VU7XCaaT+EFwRhjHeApz9vZTCIR+pxwh
-    W+S6pfkJw/644CM5lVg/mwJ7la/zOWmuQNmgdXRJZjdArDDGbjIeQSWaNheKCD82
-    vZnNg2u+iUXThPNfpy1eYeMzzAFLI32sD2IFhaEkE8dzXDhQwkJk5TCtnWnDL2BV
-    zLX1dnc/CDwks95m500q4tk70w8AuqSgi4RG0Y71x2nlLyv1rP4O1rhT34YwU68e
-    z8UGQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=RPZfVD2o x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :content-transfer-encoding:sender; s=arctest; t=1520844650; bh=Z
+    lx7VHnxbrVw26Gnq/As1idlwrCQjAhTVyaMeaVV89U=; b=dnSx8gB+XG0xFv5bo
+    Vm0ojYhb5S8bnukUdoiujBYdeiv4sgJsR1sTyffWqpK+j+YLO0fPeUMB4aLL+Zke
+    AXmVt6nLAMhEcLwXPmhcCE2vxS7QCC/LhfhSU03/oajeoaY42REGrl7mWVH7iHC2
+    iFPMKqHdPdvekDkGWbLxH7iEfAuv940cCydq6ts5QU3sQ3Iof233PW6Z8E1Yt3a/
+    ZWBh5GLuac0qnDMUReak2+Z/JwDsdDoDtPc6O08VARoIBYE8MfuBdZqYosN6LQDk
+    P9ZjhfwNjPiGMMRnA8V2uepBX6bQwhZWtZcrOHYwqvMAfafcB1c89T56RmFiDKNN
+    ba/6Q==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=qfwU/iJJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
     iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
@@ -41,9 +41,9 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=RPZfVD2o x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=qfwU/iJJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
     iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
@@ -57,9 +57,9 @@ Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=razvan.stefanescu@nxp.com;
 From: Razvan Stefanescu <razvan.stefanescu@nxp.com>
 To: gregkh@linuxfoundation.org
-Subject: [PATCH v4 1/6] staging: fsl-dpaa2/ethsw: Add APIs for DPSW object
-Date: Mon, 12 Mar 2018 03:49:50 -0500
-Message-Id: <20180312084955.12686-2-razvan.stefanescu@nxp.com>
+Subject: [PATCH v4 3/6] staging: fsl-dpaa2/ethsw: Add ethtool support
+Date: Mon, 12 Mar 2018 03:49:52 -0500
+Message-Id: <20180312084955.12686-4-razvan.stefanescu@nxp.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20180312084955.12686-1-razvan.stefanescu@nxp.com>
 References: <20180312084955.12686-1-razvan.stefanescu@nxp.com>
@@ -70,64 +70,63 @@ X-ClientProxiedBy: DM5PR19CA0022.namprd19.prod.outlook.com
  (2a01:111:e400:8839::23)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 0bd557c1-53e0-49e4-15d3-08d587f64311
+X-MS-Office365-Filtering-Correlation-Id: d45b5921-2ca1-4a4a-f094-08d587f64655
 X-Microsoft-Antispam: UriScan:; BCL:0; PCL:0;
  RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);
  SRVR:AM3PR04MB0743;
 X-Microsoft-Exchange-Diagnostics: 1; AM3PR04MB0743;
- 3:iMsrF0eMhBxWEka4XMOzE+x1wNMP+qz9wqu9uL4A+9f0rNUrzFCymlb+3WVQkB3lbjZtFjLA6hhr1/u639JhOB/tJQXVi4rRpiyEKgI179RLWzVOd8Lc0XTVTYhOzYdhlT6Fxb86yblEjDLqQBc1eyg3VPjm9jIFQ3Ujjs8y9sFVprI6cQL1p10kCXoZaJLGkMOD1lGOghG3pHu1+BIfA5/qdnKx7w02p7Fm6m9gtawRRy9PfQV9WWlMxHSrInzb;
- 25:EFW7k7OrtGB7dxTkHV94eTBYx7k+Cs0Ds3iL3/jyZuIVd+UjIC31/PQN6BN3rK0N2wxiVcmqIFiQ+oBgInrmz2cL5scsrowot4BrqCcpLfO3uOmHnW0mSJXJ9mWtoQAQt6D7y8FzGpqiyHg5TTT3LRtBxRE/1L9K1UyZIFydouulN1E1nSGFZ7pwocfBIRFFVAryMkfrmJfoaRJC1EsnMQaYCMp7Z8hucruBBws1n9SNDjzDT9guZX5C4C2PoLSNekCuXN1FQ731BqbMBj8D/eZLAX0c06jv0acA3AUM9uTnRwASkD9EclL62yy7N15ROUsDkgWWUugcMkJ1GPcBFA==;
- 31:6ffTvJS2Z7azPsOv3TfyBHrltZbblRHIFmG2I2TebaWZS+3d36hCh92794jnp9Cuf4ewdB4q+RRur6/FXQxg2Fj2xbB8diCkFdCxqTuNAHP1av3lu1jf4zKYS40Z5xpOmPHWIMpmRg0F6zbu0pjr7mcv+n6ksZ4MfveEIJ4kGvwsIV02tXnl7Mj5b9SJmo4EyNUALxp9jD0nsdoHRuzfGf6fy6ssxbrC4v302kiY5H8=
+ 3:Vr+kn4L8DysydgDci8xWfQq4xHbn5+ZcCdmvzytEjt+HPAv40KgTLw3folU7A/zVycmXY0LuV7z7H0gd9bdOLsuPhP49vbY3i0P8VzXVMF3VWaX1yBKafvKVI2FpHN0GZXHgwLIPOx2FlBdTB3THERxcEWZw5rBNDDoEy2MY0QWJ+85uPBFAliklq81AM+wNQ1Q2+U+ujIdwa9H3v4j0JdfVAESDb3JJy7v2ImGZlfWTuQy+FYP4Tpbb3zhXg52q;
+ 25:HvGqV+o9fjNXuEi4RNePE+Fy1cs457K8vN1Dj826u1lYqBPimhQZW5eYKgi3FlHxDoq3cYMvjk2HEzH1gAhjt6OND+GYwsl1uiV9WAtiecrp16NmiZOfgKO6n0lo7xbXhqk2m/WRkQVo1a18UvUetlKWL0JRud/ZucNgZd9WRw0tvtX+m6Yzmo3FCQOZSmGUAcN00wSZayP2U/ehuP3K3/ln6YPtIO1YBIG0JLfPbh9GrIUqg3Gg5eOxvt5djKPw9mtQ3843LkifzKpJTezBZV+FZ82lqgZXD7fudWAS1xMga5yymSjoUgk7p35sutBAJq/F2l8bVxtIYl9DBhX4OQ==;
+ 31:PkXI1dBFEMB93bgY7so7+yCVK98ajgb05441kb8kmWloq4p6vTe2xKSXZ9VYgcnfNbZL7YgoH58RzfqsC/vCKqzs59jhPN4Lh4aXxpRV02a6dIMLVtPNImhN0P0v+cStUvupK05lSLvLa3v5xv5QppWC4WH3XEYwxjoslHy7prv94m70STPiI/SIQis+58xdmynsAbCntml5aadQAASH+bm2clh41D2rWksK+zhMZmk=
 X-MS-TrafficTypeDiagnostic: AM3PR04MB0743:
 X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
 X-Microsoft-Exchange-Diagnostics: 1; AM3PR04MB0743;
- 20:mnrwHI0oO7mPHyCyQQnMQofiXmOpUutWEzZ5H2jo5StNoZ7TyzaTbU0CeZGZlvswzAhRySu6f19ALGFcXQfwLtaAkRo4P7XKN3LdtFvkTtcn3y7koBq7MZIV+gFDeWMEchHzFMyIFJbs1iHKbYoftdGCGjQc4M6PLxvi6czm7zfg8orNuXFo3oXUmKh3dPMO+vCqNM6P7r3cQqndbBQf6ebfvH5J5BEee+V7CLBTFMfZ9rrYJICFI6nW1D5kgVFtJS1gS9/P1MxFtZYqWa47NUKY8SNKQSFugX8AuOG8K5JjOLo2XI0kLGKV3rp8iY9F1WG0Sz1KxXumcwPSvp9X23lzsSAgDbqBcKSksrLwK1RFWn/9gTZReG2a/hNXQfeoyNb40HzWM34w/KcPWGlYOSPFVkoH/TOGEJ+PEONkYIdwRPK/xST6WkqaRyQTReTf5cG6x6pVI3VSaPH9mKE6CZ/hmeGHkilKDSmF1McOI8VwUB1LivEg8TgOK/LXEotd;
- 4:PS3GeOEWGkzzitm6I8xUTnjMEpsOonz+S2mgh0cbDP6Yjh1GCCYTUBRAqmJeDAYiSoHEPuV1UXBrpnql7FB4bQQWulncC1/qX6z0Gxrm5Y4FGeoX2gcUVrZs/HEXqfvM9KolYmjLu7He/r1NakcTJytIEQYDMX7qrqEExsXXHD7QL04E/GuKDKtdTe6u5Oe4Hp9XPT1TMOpumGdfPNWhjiRhuSVWfrP3aaGmp6wRY2gngDvuVwdxFQ2MXbYdNo7ZSwPZp/Eeq6zSd1Q4uP46Ali8RPE2ITLkRECgJgme+j0dVbF6cMVqFogS7nFOxf/vPTd7c4gOBAi5c07y3ArYy0Maf/5O0OTkbhnYrhBiKs4=
-X-Microsoft-Antispam-PRVS: <AM3PR04MB0743ED8BDA14DEA980D85184E6D30@AM3PR04MB0743.eurprd04.prod.outlook.com>
+ 20:frJdz9gnjqMbMf/9CzmrFNlxfELZcH4r8+fZGDIuxrBHy8flGwOaz8VfJLbWC4Sv1WQcPzwrFF47j9K4Nxj32CWxcqoPAJCcW75kirk97bTvxHRL+neTdXzTwPlzceNIdaoR7eP4I76AYMHDKlqlsj/D8OLmm0gfSmeu4SP6pa3kQPWfeo6NEKoWWU/n6rSW2Qc+K/TPQD7B9VZzCHBDmtmRyCyFh15uwfUdH+9XUG5q/XcNopsWsUigoJSzgwaXgUAfEYZPYecl313ztRhifXLkql5QHHALSftZArRoQ9lLzLXlFKJdVzaeuHTXT+stw0t3O02y283N8CuBPM2lpLuIvp3wfmcXbJXE5ptGYlFGBaWyk1p07TrJ9cU4QVTIlsCYt+Tx3tucXMX+C3RxeikJsLYb//E4tMiMsZWDJ01ZInDSc11x9aE1BNV+uObGkwDRvRU2ucUUmBSz9H/5mW82Yrg53hYlak1ErejlKGySEjfSY8Wr/qv6XNCfr97s;
+ 4:8An5NTYDi/3WaQ7QQx034QwENOtCL+fQ7rv42/gXR5rpGnLTKfismHu3ff6rXIWlPEuW9MDdZ69oX48etzd39dmGnTt7MIyyhxzH9ieETivfRQoF+tYkRpNMFA7hg0FBO5Xtir/Ricjij9DXEqwpeZcCqeXbkmi0CWr8dZy2Ca3Y6t9RhaAJjT+gJ7Bg4O6c5UI34vtiz/8b98iX+emv9w+y8rmNIhJOYo+0p5orWENKRDTAWV0uuqmQ8LiyyAQ/4kDL8IvPyOCexFAqI6+XDDBfACy4RjQ5q+wZ2XjXg/y+XcpVVfci4/bcZHhtgaPe8ThD8Cq4/PYHbJz1sAwthtpHSsBv7x+qEZj/JqqnqBw=
+X-Microsoft-Antispam-PRVS: <AM3PR04MB07439BC5BFFC99FDDA7A8A95E6D30@AM3PR04MB0743.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197)(275809806118684);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0; PCL:0;
  RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(3231220)(944501244)(52105095)(10201501046)(6055026)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(6072148)(201708071742011);
  SRVR:AM3PR04MB0743; BCL:0; PCL:0; RULEID:; SRVR:AM3PR04MB0743;
 X-Forefront-PRVS: 06098A2863
 X-Forefront-Antispam-Report: SFV:NSPM;
- SFS:(10009020)(396003)(346002)(39860400002)(366004)(39380400002)(376002)(199004)(189003)(54534003)(45074003)(1076002)(47776003)(76176011)(52116002)(6512007)(16200700003)(53946003)(36756003)(6486002)(39060400002)(66066001)(51416003)(386003)(6506007)(59450400001)(5660300001)(478600001)(26005)(4326008)(53936002)(48376002)(6116002)(3846002)(16586007)(2950100002)(6916009)(6666003)(105586002)(2361001)(2351001)(25786009)(8936002)(97736004)(106356001)(2906002)(81156014)(316002)(50226002)(81166006)(16526019)(50466002)(86362001)(68736007)(186003)(305945005)(7736002)(8676002)(2004002)(569006);
+ SFS:(10009020)(396003)(346002)(39860400002)(366004)(39380400002)(376002)(199004)(189003)(54534003)(1076002)(47776003)(76176011)(52116002)(6512007)(36756003)(6486002)(39060400002)(66066001)(51416003)(386003)(6506007)(59450400001)(5660300001)(478600001)(26005)(4326008)(53936002)(48376002)(6116002)(3846002)(16586007)(2950100002)(6916009)(6666003)(105586002)(2361001)(2351001)(25786009)(8936002)(97736004)(106356001)(2906002)(81156014)(316002)(50226002)(81166006)(16526019)(575784001)(50466002)(86362001)(68736007)(186003)(305945005)(7736002)(8676002)(2004002);
  DIR:OUT; SFP:1101; SCL:1; SRVR:AM3PR04MB0743; H:rhuath.am.freescale.net; FPR:;
  SPF:None; PTR:InfoNoRecords; A:1; MX:1; LANG:en;
 X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1; AM3PR04MB0743;
- 23:pVgsUM0Z/VWPgxLftkiVMT0uiFQi+nDbPEfgwYz4j?=
- =?us-ascii?Q?pBs9+7yAXNrFVIrAXmNf2PpGGI1R7xcL/toFtWVVq1MM9QKcTwF4z8KWsMHL?=
- =?us-ascii?Q?Wfy/huQB0GqPiIR+KrwCKj67KLR0vacWyxnwVatMttLbfrA9uDTJrfNwtNry?=
- =?us-ascii?Q?VQ/SU23TU4WLWI8L8j0lPmXqtwF2EH+rgOYAJKVpueVPT5vJX+shjgkIsqvv?=
- =?us-ascii?Q?Cfygdo2s0EG8LTYdrC3A471i8IfRrrW6RjNW7R1/EHt3TdBmJIiaAOE4y0rp?=
- =?us-ascii?Q?zapNbdlRxXWZCDdxuP4qPNY9GwgnZLNLXhrvWEzLZZf4lAtqYjkJKkhkcteB?=
- =?us-ascii?Q?XUAdL03eLc8XrbbC3KvVrxLHBpc0/NdXvuHDL/29r5/qugt7LpXeEJNqTQVS?=
- =?us-ascii?Q?34Bm9ijFI2xfMTZozD110CZNrwDTMQNV4BGEYxqNPxfNmtjCuWwLaj4f1mc9?=
- =?us-ascii?Q?Xo57HmXAe13wuCE7ZNV+9OYxEmSyw83U61K7oyWuZYhPFTdeVbUaP1rYDuwN?=
- =?us-ascii?Q?Kyof1T9VPsFqLxT4PR+KeuSeK6SfxTfvKLbXBCDlr5cAQmf+LFV2ymS1dXiJ?=
- =?us-ascii?Q?uEnjw90kJzV/9vyhw3RIz9qeTNlsMSGsR2MQahdmgeZghIPQobRuyM7FK2Fw?=
- =?us-ascii?Q?0d4EpCFjcwLyllY/1Aq6JLXwLHONsru0XJe/0nVPJNPA0kbVnWCcLq8kQNYB?=
- =?us-ascii?Q?N5X7d2hJaujiyBr0+bmbWIKwaZ0XOqDoUvOBiWxch2e5hjn6m8kfAn8wuue0?=
- =?us-ascii?Q?0kI2yhSztnq6ENetAWD4imkDxeBUFiToGYvDgx5i0haqWLwIi/jm/mFQMgHh?=
- =?us-ascii?Q?0pWmGCsRTv4ueUAw2oUu5rPqfUlTLZmO3AQPwzBr0Aw/ffgIbnWrzcauXvA4?=
- =?us-ascii?Q?MMRs7qRzyhSnSGdnzzvt0beyzVw7EPU/eF9Efp+akSet9sjvCf2NF1nrBLr2?=
- =?us-ascii?Q?FKpW1y+geuzN9TlvUSVy6MUANK4IlGEa7jnpeTgyTr+ldR1KSk8/6RK3wW1h?=
- =?us-ascii?Q?aPZ1/u6wZsrtxDESONiqHEnR/KgJIyA3Ui4GglZPuoHyqiDyszGKVDoZt9sY?=
- =?us-ascii?Q?bY0oO/SU8PC1DKy2cwo0l4EvgVIDGvYpjAYJVuRvzfNzDuNrQKrVSLsVzfkA?=
- =?us-ascii?Q?N26MfqAWtHtJNUwQ7nsoOrlWduXxW4TQr/vvFQS6qkvRuSXQNtntOIqKlGqk?=
- =?us-ascii?Q?KvaKV9tay6JY7IqJaX9s5d21Vim44GjeREg3Wgh4+/Wo+tvb39Ir1gBPOZSs?=
- =?us-ascii?Q?utmjhkxmtTPFInKCmez8XcjMS+ZeKJ/LJHvWcpW/DcI7XLcFMVEfVljDAjIy?=
- =?us-ascii?Q?9+3JpmbDuq5Wq057mWzMrKMaO3WKn9p96RDBccw4XqR?=
-X-Microsoft-Antispam-Message-Info: AueuNufPC2qUTKvg4yWMR+7H1NF4rhaDAxOFzYow/D3AtekgwxkuC5PUSIE+29IeKzZjP8oVedE0z6Z1Env/oM8akQQ0lvJe1kmAmps5vjcf2hjSKRmIoSsunBGMpymM3UTNYvwh0zfM0kyGAmTkurL6XFgv/QSA1IRnofFYirg9jdgEcXi5M1ltEfj1M+IY
+ 23:MYd5ouSrVo8JIx9Mhrzj6ty76LnbBh1lkpOWqA7v2?=
+ =?us-ascii?Q?3kJjA1RqQiRBj9Pq3TQtHQMwjzSr5phJ79RElE5NwrEPCWEbnxZpvGMkeBwC?=
+ =?us-ascii?Q?5LDwJDJhpbzECGxj55FJlIvOXd9ctoGgAYeeljCzaE+Ciadc6h+zAqo7VIu4?=
+ =?us-ascii?Q?sF5olF0MYrHc9f6BM9eZ/QZucVhzqOAwu2YssGpy0LzM/tEAJ/9638Xw4va0?=
+ =?us-ascii?Q?gg3d7AEktOCuCxfVwvbQKkKMD5V3kOmlehuevDSWYVjM7e+pyAK7xqpujZj2?=
+ =?us-ascii?Q?+cGcc++2AgFU8nPNpP5yLahT55b86ojBimMtdwiUzTflDhaSVU3vA4+w+vIv?=
+ =?us-ascii?Q?edVwQhX71QkFGRRn0ISc7XNaLASDaV74RLIHYd15v4fB8mfiTSTemE8cgdll?=
+ =?us-ascii?Q?9qkgQQvYf4s6KcwRqdgRcoP1WCPbzO5PqQwk6PQpz73rsAvITSpFxU+oHBEl?=
+ =?us-ascii?Q?WBzLnSPdRX9vKHIjvO4Rz1TXnadJONsgCrZ3h0z/57I9WetwvH7tia+40J/5?=
+ =?us-ascii?Q?6EALHCl/Jp42Ha1KiGrz++vAUbyAvTCqjCZWA6loAgsDqM6+GdQ8jgIFqjxF?=
+ =?us-ascii?Q?tSugg15NgPwSIicpvgC8C7xnKy9bDDKs10tBQJrQAsDf0ms13aak/P5UBn1w?=
+ =?us-ascii?Q?yZZgBahS242uf5bHM6XbnQMcUFeAcwXeVa9lkYqNc+LAbzkngFOz0WRHMTtm?=
+ =?us-ascii?Q?Q+HxaAie55w4VC1q9rk0UH2HBgjdRqY4oyzzp0KBR2ir973JQcn+mYJSuL1m?=
+ =?us-ascii?Q?frFJLYv81xEqZ3HO07lIncz9vA+6sdeRrmo2FDjl9DEHvldoynn6KElOCoFM?=
+ =?us-ascii?Q?DGOiSL90RbZy2g/vVHLM9xphxmFUJaN9+tT76RSIHSHxU+VqGdTxCvpTmIe4?=
+ =?us-ascii?Q?i3puGk59j5Eg/ybcRYQiDFOFNcUFPasmiGPZwacfJEH+tXjM5k/ILSMJg47I?=
+ =?us-ascii?Q?CPSvwpoigjOy5GfFzfpYzxz2v/JpJO/nouy/xcgbMPEnjCpiH3cOCo3R0Jyj?=
+ =?us-ascii?Q?yH/NhlbrHZ2w2R9OYWKmlXORssR5d944nhWHf8/VIcJoytW/8vaa1ROtrMsV?=
+ =?us-ascii?Q?hdG4jwGDiA6PnPitlkbRAl3c1guTeAqlp9B6Fxo5856sxdeoJGPuxA05AlJe?=
+ =?us-ascii?Q?cuqHcdWp5B6KqQbKEkXzahHrwy8sxCpEHDdgGZrBWfMo8kPryDUgZyu9nA+i?=
+ =?us-ascii?Q?fkW0HZDjbqecaP6rH7Nvin2k61gJGPgA2ylxFCrNjI7cjHb0PZ476/4EUs7s?=
+ =?us-ascii?Q?QCN/mY+1mv7Fun96Ji9ajY8Zpq77IeOjehqUzj6?=
+X-Microsoft-Antispam-Message-Info: bmI3SXg+fdjwo81c8KiZvEA/8DS4+OvNb8AE91UNLArDm+KaGRJJTSSareX91Hpr3gKtjRRSUPLCp74wHk0UPm27PzqE1Ov945qK5Sv+gO0b5atwZPC0zMJml/U0WCEPgJ5uLIeCGE/xs4MHq32VOyl3y2baEvbgZeXOzEAE1ah+8pRenuWRb/cELkCjoLJ2
 X-Microsoft-Exchange-Diagnostics: 1; AM3PR04MB0743;
- 6:/f/6sexAOfFy6ckbzvllt10UTI/uRJliTvBKd25j6x8ReM+9FZ3UUuSOoJ4uonthYsnLbn7zYyIlICEwqk1mW48GMj2oB4c4CkbDGDfNsOWteOGSKOIIaDsI1svF2ZJ0OPWr3xQLUFJ+uAlvZ9wY789cswDq8brOIbBO61Tue6nfzJoPDltLKNVAbrM0WowcpLWpUztBAWociVy38sCQJoasRf7XYiP6jGGAuewIYqlih9/r/A8Av+6Kse5n8RqS5NTtJspMS6JqQts9ERvZA1ywbrEHuYFoRU0YoeXE85Luf/YlehC2yWwXan2seAvibU4WeN46CehFD/m3rBDghVkfXJ0uvHUEE/CDzy4aUoc=;
- 5:Bgn/0/vRejgeoCL/lcvd7Pz/MtPb60KpaHKt6hDLT5+V2/i4HCfDBWJ4zLivwT5QfFktJwyQhEx36/0L/MqhdtYhvq0GGRRwOD8QdzKOM4eUMRMyX4F4UW3upd1qOBi9TAKovqWPcrKmuhCH+5yTB0LeXIVnwWz0rHByIHdfHVs=;
- 24:ejHzg1UteupT5zioWRGq7JEhBek7+XVUBb5RbNaLF0fhn8dZk9KXc8mEx2nWJwBC3k4x1PdBXPiMSh9tHLXidoSgeT/f3cpkvkN1DNjQqPc=;
- 7:UJMrB0V2ibG9TeBtvKeBZ/mij8nwRNKj/hNjWf1mR7ybJEZ3B6O3IRa0Jt4GENIfvjwf5zcMtj1FOegi8jZPXDNF9f897lqhSxrO4blMhTEVoPfcWRgZgJTf2v+rsdwt8makt1WYMA2OUVikB/5EVkkdJ/x456WtZsx/jAeJR0pCYVJ6NKw8qp87rC8/586Cn4Gp1Zhl2C+TeZob9t5cTCheDqeegxIFcKy2vY1f4rC605Daik+wfUqJt9ajmPpD
+ 6:VVEVuhnJYnPJih04jGm+1dVUXEgHFHhKhMzmQpPAeVekQzG3MPQxYU4LHapcRdRUmfqbKZZvFFhWMJOcvn75cdF/TSuBCbRfvnTHkWQwwRVwDQ18LKiC4luqSiGmdxi00MRmiIH4zNoQlvTbu9cmFQFWr7U42X+O74I7SsV9zl1YKpgi+zfdcKCBKBMqnMk54h5FAnwXs16psGYZ5N2sY6lRworpW5m/s4Dswr0I8ua8QH532cvCNeOz0/qVbpC+6pRbT5VFKqRL3FEQxyq7aGSYCtHQXvc7vLqazM4Yn+I4JiRzhPcugmhmb6ij/k1ipHFudnePESzVx/zFVJAnMZR+s6HUj557NMbmqUWwVnk=;
+ 5:pb41HjQNHE7MpcxsFUm8+JMHyfaRPevwTHGyoEemQjwQls+URDcA2bu5eaX99NQwxqw1qA2y14V/WcVliK6EU86GERSdQkJ7ngIAu3Za+NJz/Rl4uNFetVb8uRNlxfkwx0cKwAGK5tlWwHw1KDPD8UbRtzdXgcwCiWqbTRTV58o=;
+ 24:UcEPRfNRb+CVehWOGTRCQfOz9P9+MFXgxY1e3niGMhLXtz8lYgajiXT2qHZMp2LPv2VMG1w1/88Ux8MKfBofg/zMnjrCevvugpQPwFFVus8=;
+ 7:ml8i+aDljn5se/oOiC0kVBPewQeB02iTUCBMHKzeFFms4ZjUV67lRyrUvqsqli3fHkWhrSZuNcu8uJTLVN/W40YfxBd1c56lJigurRG3/vZ29/bSxbtbsvErjY3WCW3yrM7SP2Xbd2wMmqT/YsX9IHvXPcAViYxV4Kc+/+I8XJaE0TF7tPKMMSRwbAZLLaggpRC9QL++oIkNTyT6rzrTj9vb1I1V+ygT+MwPXKVYa/9sxuMJ7KREUOzbTqRpx3je
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2018 08:50:07.7972 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0bd557c1-53e0-49e4-15d3-08d587f64311
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2018 08:50:13.2503 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d45b5921-2ca1-4a4a-f094-08d587f64655
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB0743
@@ -152,1563 +151,163 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add the command build/parse APIs for operating on DPSW objects through
-the DPAA2 Management Complex.
+Add driver information, link details and hardware statistics to be
+reported via ethtool -S.
 
 Signed-off-by: Razvan Stefanescu <razvan.stefanescu@nxp.com>
 ---
 Changelog:
  v2:
-    - use u8 for en parameter of dpsw_if_set_flooding/broadcast()
- v3:
     - no changes
+ v3:
+    - removed driver version
  v4:
-    - adjust to moving MC-bus out of staging
-    - fix sparse warnings
+    - no changes
 
- drivers/staging/fsl-dpaa2/Kconfig          |    8 +
- drivers/staging/fsl-dpaa2/Makefile         |    1 +
- drivers/staging/fsl-dpaa2/ethsw/Makefile   |    7 +
- drivers/staging/fsl-dpaa2/ethsw/dpsw-cmd.h |  358 +++++++++
- drivers/staging/fsl-dpaa2/ethsw/dpsw.c     | 1116 ++++++++++++++++++++++++++++
- drivers/staging/fsl-dpaa2/ethsw/dpsw.h     |  579 +++++++++++++++
- 6 files changed, 2069 insertions(+)
- create mode 100644 drivers/staging/fsl-dpaa2/ethsw/Makefile
- create mode 100644 drivers/staging/fsl-dpaa2/ethsw/dpsw-cmd.h
- create mode 100644 drivers/staging/fsl-dpaa2/ethsw/dpsw.c
- create mode 100644 drivers/staging/fsl-dpaa2/ethsw/dpsw.h
+ drivers/staging/fsl-dpaa2/ethsw/Makefile        |   2 +-
+ drivers/staging/fsl-dpaa2/ethsw/dpsw-cmd.h      |  13 ++
+ drivers/staging/fsl-dpaa2/ethsw/dpsw.c          |  32 ++++
+ drivers/staging/fsl-dpaa2/ethsw/dpsw.h          |  32 ++++
+ drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c | 206 ++++++++++++++++++++++++
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c         |   1 +
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.h         |   2 +
+ 7 files changed, 287 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c
 
-diff --git a/drivers/staging/fsl-dpaa2/Kconfig b/drivers/staging/fsl-dpaa2/Kconfig
-index dfff675..8a508ef 100644
---- a/drivers/staging/fsl-dpaa2/Kconfig
-+++ b/drivers/staging/fsl-dpaa2/Kconfig
-@@ -16,3 +16,11 @@ config FSL_DPAA2_ETH
- 	---help---
- 	  Ethernet driver for Freescale DPAA2 SoCs, using the
- 	  Freescale MC bus driver
-+
-+config FSL_DPAA2_ETHSW
-+	tristate "Freescale DPAA2 Ethernet Switch"
-+	depends on FSL_DPAA2
-+	depends on NET_SWITCHDEV
-+	---help---
-+	Driver for Freescale DPAA2 Ethernet Switch. Select
-+	BRIDGE to have support for bridge tools.
-diff --git a/drivers/staging/fsl-dpaa2/Makefile b/drivers/staging/fsl-dpaa2/Makefile
-index 0836ba8..6cfd76b 100644
---- a/drivers/staging/fsl-dpaa2/Makefile
-+++ b/drivers/staging/fsl-dpaa2/Makefile
-@@ -3,3 +3,4 @@
- #
- 
- obj-$(CONFIG_FSL_DPAA2_ETH)	+= ethernet/
-+obj-$(CONFIG_FSL_DPAA2_ETHSW)	+= ethsw/
 diff --git a/drivers/staging/fsl-dpaa2/ethsw/Makefile b/drivers/staging/fsl-dpaa2/ethsw/Makefile
-new file mode 100644
-index 0000000..db137f7
---- /dev/null
+index a6d72d1..de92cd9 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/Makefile
 +++ b/drivers/staging/fsl-dpaa2/ethsw/Makefile
-@@ -0,0 +1,7 @@
-+#
-+# Makefile for the Freescale DPAA2 Ethernet Switch
-+#
-+
-+obj-$(CONFIG_FSL_DPAA2_ETHSW) += dpaa2-ethsw.o
-+
-+dpaa2-ethsw-objs := dpsw.o
+@@ -4,4 +4,4 @@
+ 
+ obj-$(CONFIG_FSL_DPAA2_ETHSW) += dpaa2-ethsw.o
+ 
+-dpaa2-ethsw-objs := ethsw.o dpsw.o
++dpaa2-ethsw-objs := ethsw.o ethsw-ethtool.o dpsw.o
 diff --git a/drivers/staging/fsl-dpaa2/ethsw/dpsw-cmd.h b/drivers/staging/fsl-dpaa2/ethsw/dpsw-cmd.h
-new file mode 100644
-index 0000000..36edef6
---- /dev/null
+index 36edef6..c45f001 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/dpsw-cmd.h
 +++ b/drivers/staging/fsl-dpaa2/ethsw/dpsw-cmd.h
-@@ -0,0 +1,358 @@
-+/* Copyright 2013-2016 Freescale Semiconductor Inc.
-+ * Copyright 2017-2018 NXP
-+ *
-+ * Redistribution and use in source and binary forms, with or without
-+ * modification, are permitted provided that the following conditions are met:
-+ *     * Redistributions of source code must retain the above copyright
-+ *	 notice, this list of conditions and the following disclaimer.
-+ *     * Redistributions in binary form must reproduce the above copyright
-+ *	 notice, this list of conditions and the following disclaimer in the
-+ *	 documentation and/or other materials provided with the distribution.
-+ *     * Neither the name of the above-listed copyright holders nor the
-+ *	 names of any contributors may be used to endorse or promote products
-+ *	 derived from this software without specific prior written permission.
-+ *
-+ *
-+ * ALTERNATIVELY, this software may be distributed under the terms of the
-+ * GNU General Public License ("GPL") as published by the Free Software
-+ * Foundation, either version 2 of that License or (at your option) any
-+ * later version.
-+ *
-+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
-+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-+ * POSSIBILITY OF SUCH DAMAGE.
-+ */
-+#ifndef __FSL_DPSW_CMD_H
-+#define __FSL_DPSW_CMD_H
+@@ -74,6 +74,8 @@
+ #define DPSW_CMDID_IF_SET_FLOODING          DPSW_CMD_ID(0x047)
+ #define DPSW_CMDID_IF_SET_BROADCAST         DPSW_CMD_ID(0x048)
+ 
++#define DPSW_CMDID_IF_SET_LINK_CFG          DPSW_CMD_ID(0x04C)
 +
-+/* DPSW Version */
-+#define DPSW_VER_MAJOR		8
-+#define DPSW_VER_MINOR		0
-+
-+#define DPSW_CMD_BASE_VERSION	1
-+#define DPSW_CMD_ID_OFFSET	4
-+
-+#define DPSW_CMD_ID(id)	(((id) << DPSW_CMD_ID_OFFSET) | DPSW_CMD_BASE_VERSION)
-+
-+/* Command IDs */
-+#define DPSW_CMDID_CLOSE                    DPSW_CMD_ID(0x800)
-+#define DPSW_CMDID_OPEN                     DPSW_CMD_ID(0x802)
-+
-+#define DPSW_CMDID_GET_API_VERSION          DPSW_CMD_ID(0xa02)
-+
-+#define DPSW_CMDID_ENABLE                   DPSW_CMD_ID(0x002)
-+#define DPSW_CMDID_DISABLE                  DPSW_CMD_ID(0x003)
-+#define DPSW_CMDID_GET_ATTR                 DPSW_CMD_ID(0x004)
-+#define DPSW_CMDID_RESET                    DPSW_CMD_ID(0x005)
-+
-+#define DPSW_CMDID_SET_IRQ_ENABLE           DPSW_CMD_ID(0x012)
-+
-+#define DPSW_CMDID_SET_IRQ_MASK             DPSW_CMD_ID(0x014)
-+
-+#define DPSW_CMDID_GET_IRQ_STATUS           DPSW_CMD_ID(0x016)
-+#define DPSW_CMDID_CLEAR_IRQ_STATUS         DPSW_CMD_ID(0x017)
-+
-+#define DPSW_CMDID_IF_SET_TCI               DPSW_CMD_ID(0x030)
-+#define DPSW_CMDID_IF_SET_STP               DPSW_CMD_ID(0x031)
-+
-+#define DPSW_CMDID_IF_GET_COUNTER           DPSW_CMD_ID(0x034)
-+
-+#define DPSW_CMDID_IF_ENABLE                DPSW_CMD_ID(0x03D)
-+#define DPSW_CMDID_IF_DISABLE               DPSW_CMD_ID(0x03E)
-+
-+#define DPSW_CMDID_IF_SET_MAX_FRAME_LENGTH  DPSW_CMD_ID(0x044)
-+
-+#define DPSW_CMDID_IF_GET_LINK_STATE        DPSW_CMD_ID(0x046)
-+#define DPSW_CMDID_IF_SET_FLOODING          DPSW_CMD_ID(0x047)
-+#define DPSW_CMDID_IF_SET_BROADCAST         DPSW_CMD_ID(0x048)
-+
-+#define DPSW_CMDID_VLAN_ADD                 DPSW_CMD_ID(0x060)
-+#define DPSW_CMDID_VLAN_ADD_IF              DPSW_CMD_ID(0x061)
-+#define DPSW_CMDID_VLAN_ADD_IF_UNTAGGED     DPSW_CMD_ID(0x062)
-+
-+#define DPSW_CMDID_VLAN_REMOVE_IF           DPSW_CMD_ID(0x064)
-+#define DPSW_CMDID_VLAN_REMOVE_IF_UNTAGGED  DPSW_CMD_ID(0x065)
-+#define DPSW_CMDID_VLAN_REMOVE_IF_FLOODING  DPSW_CMD_ID(0x066)
-+#define DPSW_CMDID_VLAN_REMOVE              DPSW_CMD_ID(0x067)
-+
-+#define DPSW_CMDID_FDB_ADD_UNICAST          DPSW_CMD_ID(0x084)
-+#define DPSW_CMDID_FDB_REMOVE_UNICAST       DPSW_CMD_ID(0x085)
-+#define DPSW_CMDID_FDB_ADD_MULTICAST        DPSW_CMD_ID(0x086)
-+#define DPSW_CMDID_FDB_REMOVE_MULTICAST     DPSW_CMD_ID(0x087)
-+#define DPSW_CMDID_FDB_SET_LEARNING_MODE    DPSW_CMD_ID(0x088)
-+
-+/* Macros for accessing command fields smaller than 1byte */
-+#define DPSW_MASK(field)        \
-+	GENMASK(DPSW_##field##_SHIFT + DPSW_##field##_SIZE - 1, \
-+		DPSW_##field##_SHIFT)
-+#define dpsw_set_field(var, field, val) \
-+	((var) |= (((val) << DPSW_##field##_SHIFT) & DPSW_MASK(field)))
-+#define dpsw_get_field(var, field)      \
-+	(((var) & DPSW_MASK(field)) >> DPSW_##field##_SHIFT)
-+#define dpsw_get_bit(var, bit) \
-+	(((var)  >> (bit)) & GENMASK(0, 0))
-+
-+struct dpsw_cmd_open {
-+	__le32 dpsw_id;
-+};
-+
-+#define DPSW_COMPONENT_TYPE_SHIFT	0
-+#define DPSW_COMPONENT_TYPE_SIZE	4
-+
-+struct dpsw_cmd_create {
+ #define DPSW_CMDID_VLAN_ADD                 DPSW_CMD_ID(0x060)
+ #define DPSW_CMDID_VLAN_ADD_IF              DPSW_CMD_ID(0x061)
+ #define DPSW_CMDID_VLAN_ADD_IF_UNTAGGED     DPSW_CMD_ID(0x062)
+@@ -262,6 +264,17 @@ struct dpsw_cmd_if_set_max_frame_length {
+ 	__le16 frame_length;
+ };
+ 
++struct dpsw_cmd_if_set_link_cfg {
 +	/* cmd word 0 */
-+	__le16 num_ifs;
-+	u8 max_fdbs;
-+	u8 max_meters_per_if;
-+	/* from LSB: only the first 4 bits */
-+	u8 component_type;
-+	u8 pad[3];
-+	/* cmd word 1 */
-+	__le16 max_vlans;
-+	__le16 max_fdb_entries;
-+	__le16 fdb_aging_time;
-+	__le16 max_fdb_mc_groups;
-+	/* cmd word 2 */
-+	__le64 options;
-+};
-+
-+struct dpsw_cmd_destroy {
-+	__le32 dpsw_id;
-+};
-+
-+#define DPSW_ENABLE_SHIFT 0
-+#define DPSW_ENABLE_SIZE  1
-+
-+struct dpsw_rsp_is_enabled {
-+	/* from LSB: enable:1 */
-+	u8 enabled;
-+};
-+
-+struct dpsw_cmd_set_irq_enable {
-+	u8 enable_state;
-+	u8 pad[3];
-+	u8 irq_index;
-+};
-+
-+struct dpsw_cmd_get_irq_enable {
-+	__le32 pad;
-+	u8 irq_index;
-+};
-+
-+struct dpsw_rsp_get_irq_enable {
-+	u8 enable_state;
-+};
-+
-+struct dpsw_cmd_set_irq_mask {
-+	__le32 mask;
-+	u8 irq_index;
-+};
-+
-+struct dpsw_cmd_get_irq_mask {
-+	__le32 pad;
-+	u8 irq_index;
-+};
-+
-+struct dpsw_rsp_get_irq_mask {
-+	__le32 mask;
-+};
-+
-+struct dpsw_cmd_get_irq_status {
-+	__le32 status;
-+	u8 irq_index;
-+};
-+
-+struct dpsw_rsp_get_irq_status {
-+	__le32 status;
-+};
-+
-+struct dpsw_cmd_clear_irq_status {
-+	__le32 status;
-+	u8 irq_index;
-+};
-+
-+#define DPSW_COMPONENT_TYPE_SHIFT	0
-+#define DPSW_COMPONENT_TYPE_SIZE	4
-+
-+struct dpsw_rsp_get_attr {
-+	/* cmd word 0 */
-+	__le16 num_ifs;
-+	u8 max_fdbs;
-+	u8 num_fdbs;
-+	__le16 max_vlans;
-+	__le16 num_vlans;
-+	/* cmd word 1 */
-+	__le16 max_fdb_entries;
-+	__le16 fdb_aging_time;
-+	__le32 dpsw_id;
-+	/* cmd word 2 */
-+	__le16 mem_size;
-+	__le16 max_fdb_mc_groups;
-+	u8 max_meters_per_if;
-+	/* from LSB only the first 4 bits */
-+	u8 component_type;
-+	__le16 pad;
-+	/* cmd word 3 */
-+	__le64 options;
-+};
-+
-+struct dpsw_cmd_if_set_flooding {
 +	__le16 if_id;
-+	/* from LSB: enable:1 */
-+	u8 enable;
-+};
-+
-+struct dpsw_cmd_if_set_broadcast {
-+	__le16 if_id;
-+	/* from LSB: enable:1 */
-+	u8 enable;
-+};
-+
-+#define DPSW_VLAN_ID_SHIFT	0
-+#define DPSW_VLAN_ID_SIZE	12
-+#define DPSW_DEI_SHIFT		12
-+#define DPSW_DEI_SIZE		1
-+#define DPSW_PCP_SHIFT		13
-+#define DPSW_PCP_SIZE		3
-+
-+struct dpsw_cmd_if_set_tci {
-+	__le16 if_id;
-+	/* from LSB: VLAN_ID:12 DEI:1 PCP:3 */
-+	__le16 conf;
-+};
-+
-+#define DPSW_STATE_SHIFT	0
-+#define DPSW_STATE_SIZE		4
-+
-+struct dpsw_cmd_if_set_stp {
-+	__le16 if_id;
-+	__le16 vlan_id;
-+	/* only the first LSB 4 bits */
-+	u8 state;
-+};
-+
-+#define DPSW_COUNTER_TYPE_SHIFT		0
-+#define DPSW_COUNTER_TYPE_SIZE		5
-+
-+struct dpsw_cmd_if_get_counter {
-+	__le16 if_id;
-+	/* from LSB: type:5 */
-+	u8 type;
-+};
-+
-+struct dpsw_rsp_if_get_counter {
-+	__le64 pad;
-+	__le64 counter;
-+};
-+
-+struct dpsw_cmd_if {
-+	__le16 if_id;
-+};
-+
-+struct dpsw_cmd_if_set_max_frame_length {
-+	__le16 if_id;
-+	__le16 frame_length;
-+};
-+
-+struct dpsw_cmd_if_get_link_state {
-+	__le16 if_id;
-+};
-+
-+#define DPSW_UP_SHIFT	0
-+#define DPSW_UP_SIZE	1
-+
-+struct dpsw_rsp_if_get_link_state {
-+	/* cmd word 0 */
-+	__le32 pad0;
-+	u8 up;
-+	u8 pad1[3];
++	u8 pad[6];
 +	/* cmd word 1 */
 +	__le32 rate;
-+	__le32 pad2;
++	__le32 pad1;
 +	/* cmd word 2 */
 +	__le64 options;
 +};
 +
-+struct dpsw_vlan_add {
-+	__le16 fdb_id;
-+	__le16 vlan_id;
-+};
-+
-+struct dpsw_cmd_vlan_manage_if {
-+	/* cmd word 0 */
-+	__le16 pad0;
-+	__le16 vlan_id;
-+	__le32 pad1;
-+	/* cmd word 1-4 */
-+	__le64 if_id[4];
-+};
-+
-+struct dpsw_cmd_vlan_remove {
-+	__le16 pad;
-+	__le16 vlan_id;
-+};
-+
-+struct dpsw_cmd_fdb_add {
-+	__le32 pad;
-+	__le16 fdb_aging_time;
-+	__le16 num_fdb_entries;
-+};
-+
-+struct dpsw_rsp_fdb_add {
-+	__le16 fdb_id;
-+};
-+
-+struct dpsw_cmd_fdb_remove {
-+	__le16 fdb_id;
-+};
-+
-+#define DPSW_ENTRY_TYPE_SHIFT	0
-+#define DPSW_ENTRY_TYPE_SIZE	4
-+
-+struct dpsw_cmd_fdb_unicast_op {
-+	/* cmd word 0 */
-+	__le16 fdb_id;
-+	u8 mac_addr[6];
-+	/* cmd word 1 */
-+	__le16 if_egress;
-+	/* only the first 4 bits from LSB */
-+	u8 type;
-+};
-+
-+struct dpsw_cmd_fdb_multicast_op {
-+	/* cmd word 0 */
-+	__le16 fdb_id;
-+	__le16 num_ifs;
-+	/* only the first 4 bits from LSB */
-+	u8 type;
-+	u8 pad[3];
-+	/* cmd word 1 */
-+	u8 mac_addr[6];
-+	__le16 pad2;
-+	/* cmd word 2-5 */
-+	__le64 if_id[4];
-+};
-+
-+#define DPSW_LEARNING_MODE_SHIFT	0
-+#define DPSW_LEARNING_MODE_SIZE		4
-+
-+struct dpsw_cmd_fdb_set_learning_mode {
-+	__le16 fdb_id;
-+	/* only the first 4 bits from LSB */
-+	u8 mode;
-+};
-+
-+struct dpsw_rsp_get_api_version {
-+	__le16 version_major;
-+	__le16 version_minor;
-+};
-+
-+#endif /* __FSL_DPSW_CMD_H */
+ struct dpsw_cmd_if_get_link_state {
+ 	__le16 if_id;
+ };
 diff --git a/drivers/staging/fsl-dpaa2/ethsw/dpsw.c b/drivers/staging/fsl-dpaa2/ethsw/dpsw.c
-new file mode 100644
-index 0000000..8e52d74
---- /dev/null
+index 8e52d74..e63531d 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/dpsw.c
 +++ b/drivers/staging/fsl-dpaa2/ethsw/dpsw.c
-@@ -0,0 +1,1116 @@
-+/* Copyright 2013-2016 Freescale Semiconductor Inc.
-+ * Copyright 2017-2018 NXP
-+ *
-+ * Redistribution and use in source and binary forms, with or without
-+ * modification, are permitted provided that the following conditions are met:
-+ *     * Redistributions of source code must retain the above copyright
-+ *	 notice, this list of conditions and the following disclaimer.
-+ *     * Redistributions in binary form must reproduce the above copyright
-+ *	 notice, this list of conditions and the following disclaimer in the
-+ *	 documentation and/or other materials provided with the distribution.
-+ *     * Neither the name of the above-listed copyright holders nor the
-+ *	 names of any contributors may be used to endorse or promote products
-+ *	 derived from this software without specific prior written permission.
-+ *
-+ *
-+ * ALTERNATIVELY, this software may be distributed under the terms of the
-+ * GNU General Public License ("GPL") as published by the Free Software
-+ * Foundation, either version 2 of that License or (at your option) any
-+ * later version.
-+ *
-+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
-+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-+ * POSSIBILITY OF SUCH DAMAGE.
-+ */
-+#include <linux/fsl/mc.h>
-+#include "dpsw.h"
-+#include "dpsw-cmd.h"
-+
-+static void build_if_id_bitmap(__le64 *bmap,
-+			       const u16 *id,
-+			       const u16 num_ifs)
-+{
-+	int i;
-+
-+	for (i = 0; (i < num_ifs) && (i < DPSW_MAX_IF); i++) {
-+		if (id[i] < DPSW_MAX_IF)
-+			bmap[id[i] / 64] |= cpu_to_le64(BIT_MASK(id[i] % 64));
-+	}
-+}
-+
-+/**
-+ * dpsw_open() - Open a control session for the specified object
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @dpsw_id:	DPSW unique ID
-+ * @token:	Returned token; use in subsequent API calls
-+ *
-+ * This function can be used to open a control session for an
-+ * already created object; an object may have been declared in
-+ * the DPL or by calling the dpsw_create() function.
-+ * This function returns a unique authentication token,
-+ * associated with the specific object ID and the specific MC
-+ * portal; this token must be used in all subsequent commands for
-+ * this specific object
-+ *
-+ * Return:	'0' on Success; Error code otherwise.
-+ */
-+int dpsw_open(struct fsl_mc_io *mc_io,
-+	      u32 cmd_flags,
-+	      int dpsw_id,
-+	      u16 *token)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_open *cmd_params;
-+	int err;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_OPEN,
-+					  cmd_flags,
-+					  0);
-+	cmd_params = (struct dpsw_cmd_open *)cmd.params;
-+	cmd_params->dpsw_id = cpu_to_le32(dpsw_id);
-+
-+	/* send command to mc*/
-+	err = mc_send_command(mc_io, &cmd);
-+	if (err)
-+		return err;
-+
-+	/* retrieve response parameters */
-+	*token = mc_cmd_hdr_read_token(&cmd);
-+
-+	return 0;
-+}
-+
-+/**
-+ * dpsw_close() - Close the control session of the object
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ *
-+ * After this function is called, no further operations are
-+ * allowed on the object without opening a new control session.
-+ *
-+ * Return:	'0' on Success; Error code otherwise.
-+ */
-+int dpsw_close(struct fsl_mc_io *mc_io,
-+	       u32 cmd_flags,
-+	       u16 token)
-+{
-+	struct mc_command cmd = { 0 };
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_CLOSE,
-+					  cmd_flags,
-+					  token);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_enable() - Enable DPSW functionality
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_enable(struct fsl_mc_io *mc_io,
-+		u32 cmd_flags,
-+		u16 token)
-+{
-+	struct mc_command cmd = { 0 };
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_ENABLE,
-+					  cmd_flags,
-+					  token);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_disable() - Disable DPSW functionality
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_disable(struct fsl_mc_io *mc_io,
-+		 u32 cmd_flags,
-+		 u16 token)
-+{
-+	struct mc_command cmd = { 0 };
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_DISABLE,
-+					  cmd_flags,
-+					  token);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_reset() - Reset the DPSW, returns the object to initial state.
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ *
-+ * Return:	'0' on Success; Error code otherwise.
-+ */
-+int dpsw_reset(struct fsl_mc_io *mc_io,
-+	       u32 cmd_flags,
-+	       u16 token)
-+{
-+	struct mc_command cmd = { 0 };
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_RESET,
-+					  cmd_flags,
-+					  token);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_set_irq_enable() - Set overall interrupt state.
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPCI object
-+ * @irq_index:	The interrupt index to configure
-+ * @en:		Interrupt state - enable = 1, disable = 0
-+ *
-+ * Allows GPP software to control when interrupts are generated.
-+ * Each interrupt can have up to 32 causes.  The enable/disable control's the
-+ * overall interrupt state. if the interrupt is disabled no causes will cause
-+ * an interrupt
-+ *
-+ * Return:	'0' on Success; Error code otherwise.
-+ */
-+int dpsw_set_irq_enable(struct fsl_mc_io *mc_io,
-+			u32 cmd_flags,
-+			u16 token,
-+			u8 irq_index,
-+			u8 en)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_set_irq_enable *cmd_params;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_SET_IRQ_ENABLE,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_set_irq_enable *)cmd.params;
-+	dpsw_set_field(cmd_params->enable_state, ENABLE, en);
-+	cmd_params->irq_index = irq_index;
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_set_irq_mask() - Set interrupt mask.
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPCI object
-+ * @irq_index:	The interrupt index to configure
-+ * @mask:	Event mask to trigger interrupt;
-+ *		each bit:
-+ *			0 = ignore event
-+ *			1 = consider event for asserting IRQ
-+ *
-+ * Every interrupt can have up to 32 causes and the interrupt model supports
-+ * masking/unmasking each cause independently
-+ *
-+ * Return:	'0' on Success; Error code otherwise.
-+ */
-+int dpsw_set_irq_mask(struct fsl_mc_io *mc_io,
-+		      u32 cmd_flags,
-+		      u16 token,
-+		      u8 irq_index,
-+		      u32 mask)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_set_irq_mask *cmd_params;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_SET_IRQ_MASK,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_set_irq_mask *)cmd.params;
-+	cmd_params->mask = cpu_to_le32(mask);
-+	cmd_params->irq_index = irq_index;
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_get_irq_status() - Get the current status of any pending interrupts
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @irq_index:	The interrupt index to configure
-+ * @status:	Returned interrupts status - one bit per cause:
-+ *			0 = no interrupt pending
-+ *			1 = interrupt pending
-+ *
-+ * Return:	'0' on Success; Error code otherwise.
-+ */
-+int dpsw_get_irq_status(struct fsl_mc_io *mc_io,
-+			u32 cmd_flags,
-+			u16 token,
-+			u8 irq_index,
-+			u32 *status)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_get_irq_status *cmd_params;
-+	struct dpsw_rsp_get_irq_status *rsp_params;
-+	int err;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_GET_IRQ_STATUS,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_get_irq_status *)cmd.params;
-+	cmd_params->status = cpu_to_le32(*status);
-+	cmd_params->irq_index = irq_index;
-+
-+	/* send command to mc*/
-+	err = mc_send_command(mc_io, &cmd);
-+	if (err)
-+		return err;
-+
-+	/* retrieve response parameters */
-+	rsp_params = (struct dpsw_rsp_get_irq_status *)cmd.params;
-+	*status = le32_to_cpu(rsp_params->status);
-+
-+	return 0;
-+}
-+
-+/**
-+ * dpsw_clear_irq_status() - Clear a pending interrupt's status
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPCI object
-+ * @irq_index:	The interrupt index to configure
-+ * @status:	bits to clear (W1C) - one bit per cause:
-+ *			0 = don't change
-+ *			1 = clear status bit
-+ *
-+ * Return:	'0' on Success; Error code otherwise.
-+ */
-+int dpsw_clear_irq_status(struct fsl_mc_io *mc_io,
-+			  u32 cmd_flags,
-+			  u16 token,
-+			  u8 irq_index,
-+			  u32 status)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_clear_irq_status *cmd_params;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_CLEAR_IRQ_STATUS,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_clear_irq_status *)cmd.params;
-+	cmd_params->status = cpu_to_le32(status);
-+	cmd_params->irq_index = irq_index;
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_get_attributes() - Retrieve DPSW attributes
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @attr:	Returned DPSW attributes
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_get_attributes(struct fsl_mc_io *mc_io,
-+			u32 cmd_flags,
-+			u16 token,
-+			struct dpsw_attr *attr)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_rsp_get_attr *rsp_params;
-+	int err;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_GET_ATTR,
-+					  cmd_flags,
-+					  token);
-+
-+	/* send command to mc*/
-+	err = mc_send_command(mc_io, &cmd);
-+	if (err)
-+		return err;
-+
-+	/* retrieve response parameters */
-+	rsp_params = (struct dpsw_rsp_get_attr *)cmd.params;
-+	attr->num_ifs = le16_to_cpu(rsp_params->num_ifs);
-+	attr->max_fdbs = rsp_params->max_fdbs;
-+	attr->num_fdbs = rsp_params->num_fdbs;
-+	attr->max_vlans = le16_to_cpu(rsp_params->max_vlans);
-+	attr->num_vlans = le16_to_cpu(rsp_params->num_vlans);
-+	attr->max_fdb_entries = le16_to_cpu(rsp_params->max_fdb_entries);
-+	attr->fdb_aging_time = le16_to_cpu(rsp_params->fdb_aging_time);
-+	attr->id = le32_to_cpu(rsp_params->dpsw_id);
-+	attr->mem_size = le16_to_cpu(rsp_params->mem_size);
-+	attr->max_fdb_mc_groups = le16_to_cpu(rsp_params->max_fdb_mc_groups);
-+	attr->max_meters_per_if = rsp_params->max_meters_per_if;
-+	attr->options = le64_to_cpu(rsp_params->options);
-+	attr->component_type = dpsw_get_field(rsp_params->component_type,
-+					      COMPONENT_TYPE);
-+
-+	return 0;
-+}
-+
-+/**
-+ * dpsw_if_get_link_state - Return the link state
+@@ -383,6 +383,38 @@ int dpsw_get_attributes(struct fsl_mc_io *mc_io,
+ }
+ 
+ /**
++ * dpsw_if_set_link_cfg() - Set the link configuration.
 + * @mc_io:	Pointer to MC portal's I/O object
 + * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
 + * @token:	Token of DPSW object
 + * @if_id:	Interface id
-+ * @state:	Link state	1 - linkup, 0 - link down or disconnected
++ * @cfg:	Link configuration
 + *
-+ * @Return	'0' on Success; Error code otherwise.
++ * Return:	'0' on Success; Error code otherwise.
 + */
-+int dpsw_if_get_link_state(struct fsl_mc_io *mc_io,
-+			   u32 cmd_flags,
-+			   u16 token,
-+			   u16 if_id,
-+			   struct dpsw_link_state *state)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_if_get_link_state *cmd_params;
-+	struct dpsw_rsp_if_get_link_state *rsp_params;
-+	int err;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_IF_GET_LINK_STATE,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_if_get_link_state *)cmd.params;
-+	cmd_params->if_id = cpu_to_le16(if_id);
-+
-+	/* send command to mc*/
-+	err = mc_send_command(mc_io, &cmd);
-+	if (err)
-+		return err;
-+
-+	/* retrieve response parameters */
-+	rsp_params = (struct dpsw_rsp_if_get_link_state *)cmd.params;
-+	state->rate = le32_to_cpu(rsp_params->rate);
-+	state->options = le64_to_cpu(rsp_params->options);
-+	state->up = dpsw_get_field(rsp_params->up, UP);
-+
-+	return 0;
-+}
-+
-+/**
-+ * dpsw_if_set_flooding() - Enable Disable flooding for particular interface
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @if_id:	Interface Identifier
-+ * @en:		1 - enable, 0 - disable
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_if_set_flooding(struct fsl_mc_io *mc_io,
++int dpsw_if_set_link_cfg(struct fsl_mc_io *mc_io,
 +			 u32 cmd_flags,
 +			 u16 token,
 +			 u16 if_id,
-+			 u8 en)
++			 struct dpsw_link_cfg *cfg)
 +{
 +	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_if_set_flooding *cmd_params;
++	struct dpsw_cmd_if_set_link_cfg *cmd_params;
 +
 +	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_IF_SET_FLOODING,
++	cmd.header = mc_encode_cmd_header(DPSW_CMDID_IF_SET_LINK_CFG,
 +					  cmd_flags,
 +					  token);
-+	cmd_params = (struct dpsw_cmd_if_set_flooding *)cmd.params;
++	cmd_params = (struct dpsw_cmd_if_set_link_cfg *)cmd.params;
 +	cmd_params->if_id = cpu_to_le16(if_id);
-+	dpsw_set_field(cmd_params->enable, ENABLE, en);
++	cmd_params->rate = cpu_to_le32(cfg->rate);
++	cmd_params->options = cpu_to_le64(cfg->options);
 +
 +	/* send command to mc*/
 +	return mc_send_command(mc_io, &cmd);
 +}
 +
 +/**
-+ * dpsw_if_set_broadcast() - Enable/disable broadcast for particular interface
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @if_id:	Interface Identifier
-+ * @en:		1 - enable, 0 - disable
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
+  * dpsw_if_get_link_state - Return the link state
+  * @mc_io:	Pointer to MC portal's I/O object
+  * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/dpsw.h b/drivers/staging/fsl-dpaa2/ethsw/dpsw.h
+index d13970c..5a0c7ad 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/dpsw.h
++++ b/drivers/staging/fsl-dpaa2/ethsw/dpsw.h
+@@ -245,6 +245,38 @@ enum dpsw_action {
+ };
+ 
+ /**
++ * Enable auto-negotiation
 + */
-+int dpsw_if_set_broadcast(struct fsl_mc_io *mc_io,
-+			  u32 cmd_flags,
-+			  u16 token,
-+			  u16 if_id,
-+			  u8 en)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_if_set_broadcast *cmd_params;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_IF_SET_BROADCAST,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_if_set_broadcast *)cmd.params;
-+	cmd_params->if_id = cpu_to_le16(if_id);
-+	dpsw_set_field(cmd_params->enable, ENABLE, en);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
++#define DPSW_LINK_OPT_AUTONEG		0x0000000000000001ULL
++/**
++ * Enable half-duplex mode
++ */
++#define DPSW_LINK_OPT_HALF_DUPLEX	0x0000000000000002ULL
++/**
++ * Enable pause frames
++ */
++#define DPSW_LINK_OPT_PAUSE		0x0000000000000004ULL
++/**
++ * Enable a-symmetric pause frames
++ */
++#define DPSW_LINK_OPT_ASYM_PAUSE	0x0000000000000008ULL
 +
 +/**
-+ * dpsw_if_set_tci() - Set default VLAN Tag Control Information (TCI)
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @if_id:	Interface Identifier
-+ * @cfg:	Tag Control Information Configuration
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
++ * struct dpsw_link_cfg - Structure representing DPSW link configuration
++ * @rate: Rate
++ * @options: Mask of available options; use 'DPSW_LINK_OPT_<X>' values
 + */
-+int dpsw_if_set_tci(struct fsl_mc_io *mc_io,
-+		    u32 cmd_flags,
-+		    u16 token,
-+		    u16 if_id,
-+		    const struct dpsw_tci_cfg *cfg)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_if_set_tci *cmd_params;
-+	u16 tmp_conf = 0;
++struct dpsw_link_cfg {
++	u32 rate;
++	u64 options;
++};
 +
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_IF_SET_TCI,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_if_set_tci *)cmd.params;
-+	cmd_params->if_id = cpu_to_le16(if_id);
-+	dpsw_set_field(tmp_conf, VLAN_ID, cfg->vlan_id);
-+	dpsw_set_field(tmp_conf, DEI, cfg->dei);
-+	dpsw_set_field(tmp_conf, PCP, cfg->pcp);
-+	cmd_params->conf = cpu_to_le16(tmp_conf);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_if_set_stp() - Function sets Spanning Tree Protocol (STP) state.
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @if_id:	Interface Identifier
-+ * @cfg:	STP State configuration parameters
-+ *
-+ * The following STP states are supported -
-+ * blocking, listening, learning, forwarding and disabled.
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_if_set_stp(struct fsl_mc_io *mc_io,
-+		    u32 cmd_flags,
-+		    u16 token,
-+		    u16 if_id,
-+		    const struct dpsw_stp_cfg *cfg)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_if_set_stp *cmd_params;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_IF_SET_STP,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_if_set_stp *)cmd.params;
-+	cmd_params->if_id = cpu_to_le16(if_id);
-+	cmd_params->vlan_id = cpu_to_le16(cfg->vlan_id);
-+	dpsw_set_field(cmd_params->state, STATE, cfg->state);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_if_get_counter() - Get specific counter of particular interface
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @if_id:	Interface Identifier
-+ * @type:	Counter type
-+ * @counter:	return value
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_if_get_counter(struct fsl_mc_io *mc_io,
-+			u32 cmd_flags,
-+			u16 token,
-+			u16 if_id,
-+			enum dpsw_counter type,
-+			u64 *counter)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_if_get_counter *cmd_params;
-+	struct dpsw_rsp_if_get_counter *rsp_params;
-+	int err;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_IF_GET_COUNTER,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_if_get_counter *)cmd.params;
-+	cmd_params->if_id = cpu_to_le16(if_id);
-+	dpsw_set_field(cmd_params->type, COUNTER_TYPE, type);
-+
-+	/* send command to mc*/
-+	err = mc_send_command(mc_io, &cmd);
-+	if (err)
-+		return err;
-+
-+	/* retrieve response parameters */
-+	rsp_params = (struct dpsw_rsp_if_get_counter *)cmd.params;
-+	*counter = le64_to_cpu(rsp_params->counter);
-+
-+	return 0;
-+}
-+
-+/**
-+ * dpsw_if_enable() - Enable Interface
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @if_id:	Interface Identifier
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_if_enable(struct fsl_mc_io *mc_io,
-+		   u32 cmd_flags,
-+		   u16 token,
-+		   u16 if_id)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_if *cmd_params;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_IF_ENABLE,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_if *)cmd.params;
-+	cmd_params->if_id = cpu_to_le16(if_id);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_if_disable() - Disable Interface
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @if_id:	Interface Identifier
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_if_disable(struct fsl_mc_io *mc_io,
-+		    u32 cmd_flags,
-+		    u16 token,
-+		    u16 if_id)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_if *cmd_params;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_IF_DISABLE,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_if *)cmd.params;
-+	cmd_params->if_id = cpu_to_le16(if_id);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_if_set_max_frame_length() - Set Maximum Receive frame length.
-+ * @mc_io:		Pointer to MC portal's I/O object
-+ * @cmd_flags:		Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:		Token of DPSW object
-+ * @if_id:		Interface Identifier
-+ * @frame_length:	Maximum Frame Length
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_if_set_max_frame_length(struct fsl_mc_io *mc_io,
-+				 u32 cmd_flags,
-+				 u16 token,
-+				 u16 if_id,
-+				 u16 frame_length)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_if_set_max_frame_length *cmd_params;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_IF_SET_MAX_FRAME_LENGTH,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_if_set_max_frame_length *)cmd.params;
-+	cmd_params->if_id = cpu_to_le16(if_id);
-+	cmd_params->frame_length = cpu_to_le16(frame_length);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_vlan_add() - Adding new VLAN to DPSW.
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @vlan_id:	VLAN Identifier
-+ * @cfg:	VLAN configuration
-+ *
-+ * Only VLAN ID and FDB ID are required parameters here.
-+ * 12 bit VLAN ID is defined in IEEE802.1Q.
-+ * Adding a duplicate VLAN ID is not allowed.
-+ * FDB ID can be shared across multiple VLANs. Shared learning
-+ * is obtained by calling dpsw_vlan_add for multiple VLAN IDs
-+ * with same fdb_id
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_vlan_add(struct fsl_mc_io *mc_io,
-+		  u32 cmd_flags,
-+		  u16 token,
-+		  u16 vlan_id,
-+		  const struct dpsw_vlan_cfg *cfg)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_vlan_add *cmd_params;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_VLAN_ADD,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_vlan_add *)cmd.params;
-+	cmd_params->fdb_id = cpu_to_le16(cfg->fdb_id);
-+	cmd_params->vlan_id = cpu_to_le16(vlan_id);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_vlan_add_if() - Adding a set of interfaces to an existing VLAN.
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @vlan_id:	VLAN Identifier
-+ * @cfg:	Set of interfaces to add
-+ *
-+ * It adds only interfaces not belonging to this VLAN yet,
-+ * otherwise an error is generated and an entire command is
-+ * ignored. This function can be called numerous times always
-+ * providing required interfaces delta.
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_vlan_add_if(struct fsl_mc_io *mc_io,
-+		     u32 cmd_flags,
-+		     u16 token,
-+		     u16 vlan_id,
-+		     const struct dpsw_vlan_if_cfg *cfg)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_vlan_manage_if *cmd_params;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_VLAN_ADD_IF,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_vlan_manage_if *)cmd.params;
-+	cmd_params->vlan_id = cpu_to_le16(vlan_id);
-+	build_if_id_bitmap(cmd_params->if_id, cfg->if_id, cfg->num_ifs);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_vlan_add_if_untagged() - Defining a set of interfaces that should be
-+ *				transmitted as untagged.
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @vlan_id:	VLAN Identifier
-+ * @cfg:	Set of interfaces that should be transmitted as untagged
-+ *
-+ * These interfaces should already belong to this VLAN.
-+ * By default all interfaces are transmitted as tagged.
-+ * Providing un-existing interface or untagged interface that is
-+ * configured untagged already generates an error and the entire
-+ * command is ignored.
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_vlan_add_if_untagged(struct fsl_mc_io *mc_io,
-+			      u32 cmd_flags,
-+			      u16 token,
-+			      u16 vlan_id,
-+			      const struct dpsw_vlan_if_cfg *cfg)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_vlan_manage_if *cmd_params;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_VLAN_ADD_IF_UNTAGGED,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_vlan_manage_if *)cmd.params;
-+	cmd_params->vlan_id = cpu_to_le16(vlan_id);
-+	build_if_id_bitmap(cmd_params->if_id, cfg->if_id, cfg->num_ifs);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_vlan_remove_if() - Remove interfaces from an existing VLAN.
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @vlan_id:	VLAN Identifier
-+ * @cfg:	Set of interfaces that should be removed
-+ *
-+ * Interfaces must belong to this VLAN, otherwise an error
-+ * is returned and an the command is ignored
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_vlan_remove_if(struct fsl_mc_io *mc_io,
-+			u32 cmd_flags,
-+			u16 token,
-+			u16 vlan_id,
-+			const struct dpsw_vlan_if_cfg *cfg)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_vlan_manage_if *cmd_params;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_VLAN_REMOVE_IF,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_vlan_manage_if *)cmd.params;
-+	cmd_params->vlan_id = cpu_to_le16(vlan_id);
-+	build_if_id_bitmap(cmd_params->if_id, cfg->if_id, cfg->num_ifs);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_vlan_remove_if_untagged() - Define a set of interfaces that should be
-+ *		converted from transmitted as untagged to transmit as tagged.
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @vlan_id:	VLAN Identifier
-+ * @cfg:	Set of interfaces that should be removed
-+ *
-+ * Interfaces provided by API have to belong to this VLAN and
-+ * configured untagged, otherwise an error is returned and the
-+ * command is ignored
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_vlan_remove_if_untagged(struct fsl_mc_io *mc_io,
-+				 u32 cmd_flags,
-+				 u16 token,
-+				 u16 vlan_id,
-+				 const struct dpsw_vlan_if_cfg *cfg)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_vlan_manage_if *cmd_params;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_VLAN_REMOVE_IF_UNTAGGED,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_vlan_manage_if *)cmd.params;
-+	cmd_params->vlan_id = cpu_to_le16(vlan_id);
-+	build_if_id_bitmap(cmd_params->if_id, cfg->if_id, cfg->num_ifs);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_vlan_remove() - Remove an entire VLAN
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @vlan_id:	VLAN Identifier
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_vlan_remove(struct fsl_mc_io *mc_io,
-+		     u32 cmd_flags,
-+		     u16 token,
-+		     u16 vlan_id)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_vlan_remove *cmd_params;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_VLAN_REMOVE,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_vlan_remove *)cmd.params;
-+	cmd_params->vlan_id = cpu_to_le16(vlan_id);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_fdb_add_unicast() - Function adds an unicast entry into MAC lookup table
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @fdb_id:	Forwarding Database Identifier
-+ * @cfg:	Unicast entry configuration
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_fdb_add_unicast(struct fsl_mc_io *mc_io,
++int dpsw_if_set_link_cfg(struct fsl_mc_io *mc_io,
 +			 u32 cmd_flags,
 +			 u16 token,
-+			 u16 fdb_id,
-+			 const struct dpsw_fdb_unicast_cfg *cfg)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_fdb_unicast_op *cmd_params;
-+	int i;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_FDB_ADD_UNICAST,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_fdb_unicast_op *)cmd.params;
-+	cmd_params->fdb_id = cpu_to_le16(fdb_id);
-+	cmd_params->if_egress = cpu_to_le16(cfg->if_egress);
-+	for (i = 0; i < 6; i++)
-+		cmd_params->mac_addr[i] = cfg->mac_addr[5 - i];
-+	dpsw_set_field(cmd_params->type, ENTRY_TYPE, cfg->type);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
++			 u16 if_id,
++			 struct dpsw_link_cfg *cfg);
 +/**
-+ * dpsw_fdb_remove_unicast() - removes an entry from MAC lookup table
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @fdb_id:	Forwarding Database Identifier
-+ * @cfg:	Unicast entry configuration
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_fdb_remove_unicast(struct fsl_mc_io *mc_io,
-+			    u32 cmd_flags,
-+			    u16 token,
-+			    u16 fdb_id,
-+			    const struct dpsw_fdb_unicast_cfg *cfg)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_fdb_unicast_op *cmd_params;
-+	int i;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_FDB_REMOVE_UNICAST,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_fdb_unicast_op *)cmd.params;
-+	cmd_params->fdb_id = cpu_to_le16(fdb_id);
-+	for (i = 0; i < 6; i++)
-+		cmd_params->mac_addr[i] = cfg->mac_addr[5 - i];
-+	cmd_params->if_egress = cpu_to_le16(cfg->if_egress);
-+	dpsw_set_field(cmd_params->type, ENTRY_TYPE, cfg->type);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_fdb_add_multicast() - Add a set of egress interfaces to multi-cast group
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @fdb_id:	Forwarding Database Identifier
-+ * @cfg:	Multicast entry configuration
-+ *
-+ * If group doesn't exist, it will be created.
-+ * It adds only interfaces not belonging to this multicast group
-+ * yet, otherwise error will be generated and the command is
-+ * ignored.
-+ * This function may be called numerous times always providing
-+ * required interfaces delta.
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_fdb_add_multicast(struct fsl_mc_io *mc_io,
-+			   u32 cmd_flags,
-+			   u16 token,
-+			   u16 fdb_id,
-+			   const struct dpsw_fdb_multicast_cfg *cfg)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_fdb_multicast_op *cmd_params;
-+	int i;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_FDB_ADD_MULTICAST,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_fdb_multicast_op *)cmd.params;
-+	cmd_params->fdb_id = cpu_to_le16(fdb_id);
-+	cmd_params->num_ifs = cpu_to_le16(cfg->num_ifs);
-+	dpsw_set_field(cmd_params->type, ENTRY_TYPE, cfg->type);
-+	build_if_id_bitmap(cmd_params->if_id, cfg->if_id, cfg->num_ifs);
-+	for (i = 0; i < 6; i++)
-+		cmd_params->mac_addr[i] = cfg->mac_addr[5 - i];
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_fdb_remove_multicast() - Removing interfaces from an existing multicast
-+ *				group.
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @fdb_id:	Forwarding Database Identifier
-+ * @cfg:	Multicast entry configuration
-+ *
-+ * Interfaces provided by this API have to exist in the group,
-+ * otherwise an error will be returned and an entire command
-+ * ignored. If there is no interface left in the group,
-+ * an entire group is deleted
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_fdb_remove_multicast(struct fsl_mc_io *mc_io,
-+			      u32 cmd_flags,
-+			      u16 token,
-+			      u16 fdb_id,
-+			      const struct dpsw_fdb_multicast_cfg *cfg)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_fdb_multicast_op *cmd_params;
-+	int i;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_FDB_REMOVE_MULTICAST,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_fdb_multicast_op *)cmd.params;
-+	cmd_params->fdb_id = cpu_to_le16(fdb_id);
-+	cmd_params->num_ifs = cpu_to_le16(cfg->num_ifs);
-+	dpsw_set_field(cmd_params->type, ENTRY_TYPE, cfg->type);
-+	build_if_id_bitmap(cmd_params->if_id, cfg->if_id, cfg->num_ifs);
-+	for (i = 0; i < 6; i++)
-+		cmd_params->mac_addr[i] = cfg->mac_addr[5 - i];
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_fdb_set_learning_mode() - Define FDB learning mode
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPSW object
-+ * @fdb_id:	Forwarding Database Identifier
-+ * @mode:	Learning mode
-+ *
-+ * Return:	Completion status. '0' on Success; Error code otherwise.
-+ */
-+int dpsw_fdb_set_learning_mode(struct fsl_mc_io *mc_io,
-+			       u32 cmd_flags,
-+			       u16 token,
-+			       u16 fdb_id,
-+			       enum dpsw_fdb_learning_mode mode)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_cmd_fdb_set_learning_mode *cmd_params;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_FDB_SET_LEARNING_MODE,
-+					  cmd_flags,
-+					  token);
-+	cmd_params = (struct dpsw_cmd_fdb_set_learning_mode *)cmd.params;
-+	cmd_params->fdb_id = cpu_to_le16(fdb_id);
-+	dpsw_set_field(cmd_params->mode, LEARNING_MODE, mode);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpsw_get_api_version() - Get Data Path Switch API version
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @major_ver:	Major version of data path switch API
-+ * @minor_ver:	Minor version of data path switch API
-+ *
-+ * Return:  '0' on Success; Error code otherwise.
-+ */
-+int dpsw_get_api_version(struct fsl_mc_io *mc_io,
-+			 u32 cmd_flags,
-+			 u16 *major_ver,
-+			 u16 *minor_ver)
-+{
-+	struct mc_command cmd = { 0 };
-+	struct dpsw_rsp_get_api_version *rsp_params;
-+	int err;
-+
-+	cmd.header = mc_encode_cmd_header(DPSW_CMDID_GET_API_VERSION,
-+					  cmd_flags,
-+					  0);
-+
-+	err = mc_send_command(mc_io, &cmd);
-+	if (err)
-+		return err;
-+
-+	rsp_params = (struct dpsw_rsp_get_api_version *)cmd.params;
-+	*major_ver = le16_to_cpu(rsp_params->version_major);
-+	*minor_ver = le16_to_cpu(rsp_params->version_minor);
-+
-+	return 0;
-+}
-diff --git a/drivers/staging/fsl-dpaa2/ethsw/dpsw.h b/drivers/staging/fsl-dpaa2/ethsw/dpsw.h
+  * struct dpsw_link_state - Structure representing DPSW link state
+  * @rate: Rate
+  * @options: Mask of available options; use 'DPSW_LINK_OPT_<X>' values
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c
 new file mode 100644
-index 0000000..d13970c
+index 0000000..2853105
 --- /dev/null
-+++ b/drivers/staging/fsl-dpaa2/ethsw/dpsw.h
-@@ -0,0 +1,579 @@
-+/* Copyright 2013-2016 Freescale Semiconductor Inc.
++++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw-ethtool.c
+@@ -0,0 +1,206 @@
++/* Copyright 2014-2016 Freescale Semiconductor Inc.
 + * Copyright 2017-2018 NXP
 + *
 + * Redistribution and use in source and binary forms, with or without
@@ -1740,553 +339,205 @@ index 0000000..d13970c
 + * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 + * POSSIBILITY OF SUCH DAMAGE.
 + */
-+#ifndef __FSL_DPSW_H
-+#define __FSL_DPSW_H
 +
-+/* Data Path L2-Switch API
-+ * Contains API for handling DPSW topology and functionality
-+ */
++#include "ethsw.h"
 +
-+struct fsl_mc_io;
++static struct {
++	enum dpsw_counter id;
++	char name[ETH_GSTRING_LEN];
++} ethsw_ethtool_counters[] =  {
++	{DPSW_CNT_ING_FRAME,		"rx frames"},
++	{DPSW_CNT_ING_BYTE,		"rx bytes"},
++	{DPSW_CNT_ING_FLTR_FRAME,	"rx filtered frames"},
++	{DPSW_CNT_ING_FRAME_DISCARD,	"rx discarded frames"},
++	{DPSW_CNT_ING_BCAST_FRAME,	"rx b-cast frames"},
++	{DPSW_CNT_ING_BCAST_BYTES,	"rx b-cast bytes"},
++	{DPSW_CNT_ING_MCAST_FRAME,	"rx m-cast frames"},
++	{DPSW_CNT_ING_MCAST_BYTE,	"rx m-cast bytes"},
++	{DPSW_CNT_EGR_FRAME,		"tx frames"},
++	{DPSW_CNT_EGR_BYTE,		"tx bytes"},
++	{DPSW_CNT_EGR_FRAME_DISCARD,	"tx discarded frames"},
 +
-+/**
-+ * DPSW general definitions
-+ */
-+
-+/**
-+ * Maximum number of traffic class priorities
-+ */
-+#define DPSW_MAX_PRIORITIES	8
-+/**
-+ * Maximum number of interfaces
-+ */
-+#define DPSW_MAX_IF		64
-+
-+int dpsw_open(struct fsl_mc_io *mc_io,
-+	      u32 cmd_flags,
-+	      int dpsw_id,
-+	      u16 *token);
-+
-+int dpsw_close(struct fsl_mc_io *mc_io,
-+	       u32 cmd_flags,
-+	       u16 token);
-+
-+/**
-+ * DPSW options
-+ */
-+
-+/**
-+ * Disable flooding
-+ */
-+#define DPSW_OPT_FLOODING_DIS		0x0000000000000001ULL
-+/**
-+ * Disable Multicast
-+ */
-+#define DPSW_OPT_MULTICAST_DIS		0x0000000000000004ULL
-+/**
-+ * Support control interface
-+ */
-+#define DPSW_OPT_CTRL_IF_DIS		0x0000000000000010ULL
-+/**
-+ * Disable flooding metering
-+ */
-+#define DPSW_OPT_FLOODING_METERING_DIS  0x0000000000000020ULL
-+/**
-+ * Enable metering
-+ */
-+#define DPSW_OPT_METERING_EN            0x0000000000000040ULL
-+
-+/**
-+ * enum dpsw_component_type - component type of a bridge
-+ * @DPSW_COMPONENT_TYPE_C_VLAN: A C-VLAN component of an
-+ *   enterprise VLAN bridge or of a Provider Bridge used
-+ *   to process C-tagged frames
-+ * @DPSW_COMPONENT_TYPE_S_VLAN: An S-VLAN component of a
-+ *   Provider Bridge
-+ *
-+ */
-+enum dpsw_component_type {
-+	DPSW_COMPONENT_TYPE_C_VLAN = 0,
-+	DPSW_COMPONENT_TYPE_S_VLAN
 +};
 +
-+/**
-+ * struct dpsw_cfg - DPSW configuration
-+ * @num_ifs: Number of external and internal interfaces
-+ * @adv: Advanced parameters; default is all zeros;
-+ *		 use this structure to change default settings
-+ */
-+struct dpsw_cfg {
-+	u16 num_ifs;
-+	/**
-+	 * struct adv - Advanced parameters
-+	 * @options: Enable/Disable DPSW features (bitmap)
-+	 * @max_vlans: Maximum Number of VLAN's; 0 - indicates default 16
-+	 * @max_meters_per_if: Number of meters per interface
-+	 * @max_fdbs: Maximum Number of FDB's; 0 - indicates default 16
-+	 * @max_fdb_entries: Number of FDB entries for default FDB table;
-+	 *			0 - indicates default 1024 entries.
-+	 * @fdb_aging_time: Default FDB aging time for default FDB table;
-+	 *			0 - indicates default 300 seconds
-+	 * @max_fdb_mc_groups: Number of multicast groups in each FDB table;
-+	 *			0 - indicates default 32
-+	 * @component_type: Indicates the component type of this bridge
++#define ETHSW_NUM_COUNTERS	ARRAY_SIZE(ethsw_ethtool_counters)
++
++static void ethsw_get_drvinfo(struct net_device *netdev,
++			      struct ethtool_drvinfo *drvinfo)
++{
++	struct ethsw_port_priv *port_priv = netdev_priv(netdev);
++	u16 version_major, version_minor;
++	int err;
++
++	strlcpy(drvinfo->driver, KBUILD_MODNAME, sizeof(drvinfo->driver));
++
++	err = dpsw_get_api_version(port_priv->ethsw_data->mc_io, 0,
++				   &version_major,
++				   &version_minor);
++	if (err)
++		strlcpy(drvinfo->fw_version, "N/A",
++			sizeof(drvinfo->fw_version));
++	else
++		snprintf(drvinfo->fw_version, sizeof(drvinfo->fw_version),
++			 "%u.%u", version_major, version_minor);
++
++	strlcpy(drvinfo->bus_info, dev_name(netdev->dev.parent->parent),
++		sizeof(drvinfo->bus_info));
++}
++
++static int
++ethsw_get_link_ksettings(struct net_device *netdev,
++			 struct ethtool_link_ksettings *link_ksettings)
++{
++	struct ethsw_port_priv *port_priv = netdev_priv(netdev);
++	struct dpsw_link_state state = {0};
++	int err = 0;
++
++	err = dpsw_if_get_link_state(port_priv->ethsw_data->mc_io, 0,
++				     port_priv->ethsw_data->dpsw_handle,
++				     port_priv->idx,
++				     &state);
++	if (err) {
++		netdev_err(netdev, "ERROR %d getting link state", err);
++		goto out;
++	}
++
++	/* At the moment, we have no way of interrogating the DPMAC
++	 * from the DPSW side or there may not exist a DPMAC at all.
++	 * Report only autoneg state, duplexity and speed.
 +	 */
-+	struct {
-+		u64 options;
-+		u16 max_vlans;
-+		u8 max_meters_per_if;
-+		u8 max_fdbs;
-+		u16 max_fdb_entries;
-+		u16 fdb_aging_time;
-+		u16 max_fdb_mc_groups;
-+		enum dpsw_component_type component_type;
-+	} adv;
++	if (state.options & DPSW_LINK_OPT_AUTONEG)
++		link_ksettings->base.autoneg = AUTONEG_ENABLE;
++	if (!(state.options & DPSW_LINK_OPT_HALF_DUPLEX))
++		link_ksettings->base.duplex = DUPLEX_FULL;
++	link_ksettings->base.speed = state.rate;
++
++out:
++	return err;
++}
++
++static int
++ethsw_set_link_ksettings(struct net_device *netdev,
++			 const struct ethtool_link_ksettings *link_ksettings)
++{
++	struct ethsw_port_priv *port_priv = netdev_priv(netdev);
++	struct dpsw_link_cfg cfg = {0};
++	int err = 0;
++
++	netdev_dbg(netdev, "Setting link parameters...");
++
++	/* Due to a temporary MC limitation, the DPSW port must be down
++	 * in order to be able to change link settings. Taking steps to let
++	 * the user know that.
++	 */
++	if (netif_running(netdev)) {
++		netdev_info(netdev, "Sorry, interface must be brought down first.\n");
++		return -EACCES;
++	}
++
++	cfg.rate = link_ksettings->base.speed;
++	if (link_ksettings->base.autoneg == AUTONEG_ENABLE)
++		cfg.options |= DPSW_LINK_OPT_AUTONEG;
++	else
++		cfg.options &= ~DPSW_LINK_OPT_AUTONEG;
++	if (link_ksettings->base.duplex  == DUPLEX_HALF)
++		cfg.options |= DPSW_LINK_OPT_HALF_DUPLEX;
++	else
++		cfg.options &= ~DPSW_LINK_OPT_HALF_DUPLEX;
++
++	err = dpsw_if_set_link_cfg(port_priv->ethsw_data->mc_io, 0,
++				   port_priv->ethsw_data->dpsw_handle,
++				   port_priv->idx,
++				   &cfg);
++	if (err)
++		/* ethtool will be loud enough if we return an error; no point
++		 * in putting our own error message on the console by default
++		 */
++		netdev_dbg(netdev, "ERROR %d setting link cfg", err);
++
++	return err;
++}
++
++static int ethsw_ethtool_get_sset_count(struct net_device *dev, int sset)
++{
++	switch (sset) {
++	case ETH_SS_STATS:
++		return ETHSW_NUM_COUNTERS;
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++
++static void ethsw_ethtool_get_strings(struct net_device *netdev,
++				      u32 stringset, u8 *data)
++{
++	int i;
++
++	switch (stringset) {
++	case ETH_SS_STATS:
++		for (i = 0; i < ETHSW_NUM_COUNTERS; i++)
++			memcpy(data + i * ETH_GSTRING_LEN,
++			       ethsw_ethtool_counters[i].name, ETH_GSTRING_LEN);
++		break;
++	}
++}
++
++static void ethsw_ethtool_get_stats(struct net_device *netdev,
++				    struct ethtool_stats *stats,
++				    u64 *data)
++{
++	struct ethsw_port_priv *port_priv = netdev_priv(netdev);
++	int i, err;
++
++	memset(data, 0,
++	       sizeof(u64) * ETHSW_NUM_COUNTERS);
++
++	for (i = 0; i < ETHSW_NUM_COUNTERS; i++) {
++		err = dpsw_if_get_counter(port_priv->ethsw_data->mc_io, 0,
++					  port_priv->ethsw_data->dpsw_handle,
++					  port_priv->idx,
++					  ethsw_ethtool_counters[i].id,
++					  &data[i]);
++		if (err)
++			netdev_err(netdev, "dpsw_if_get_counter[%s] err %d\n",
++				   ethsw_ethtool_counters[i].name, err);
++	}
++}
++
++const struct ethtool_ops ethsw_port_ethtool_ops = {
++	.get_drvinfo		= ethsw_get_drvinfo,
++	.get_link		= ethtool_op_get_link,
++	.get_link_ksettings	= ethsw_get_link_ksettings,
++	.set_link_ksettings	= ethsw_set_link_ksettings,
++	.get_strings		= ethsw_ethtool_get_strings,
++	.get_ethtool_stats	= ethsw_ethtool_get_stats,
++	.get_sset_count		= ethsw_ethtool_get_sset_count,
 +};
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+index b992434..022450b 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
++++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+@@ -1384,6 +1384,7 @@ static int ethsw_probe_port(struct ethsw_core *ethsw, u16 port_idx)
+ 
+ 	SET_NETDEV_DEV(port_netdev, dev);
+ 	port_netdev->netdev_ops = &ethsw_port_ops;
++	port_netdev->ethtool_ops = &ethsw_port_ethtool_ops;
+ 	port_netdev->switchdev_ops = &ethsw_port_switchdev_ops;
+ 
+ 	/* Set MTU limits */
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.h b/drivers/staging/fsl-dpaa2/ethsw/ethsw.h
+index d1930b6..2994b37 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.h
++++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.h
+@@ -57,6 +57,8 @@
+ #define ETHSW_MAX_FRAME_LENGTH	(DPAA2_MFL - VLAN_ETH_HLEN - ETH_FCS_LEN)
+ #define ETHSW_L2_MAX_FRM(mtu)	((mtu) + VLAN_ETH_HLEN + ETH_FCS_LEN)
+ 
++extern const struct ethtool_ops ethsw_port_ethtool_ops;
 +
-+int dpsw_enable(struct fsl_mc_io *mc_io,
-+		u32 cmd_flags,
-+		u16 token);
-+
-+int dpsw_disable(struct fsl_mc_io *mc_io,
-+		 u32 cmd_flags,
-+		 u16 token);
-+
-+int dpsw_reset(struct fsl_mc_io *mc_io,
-+	       u32 cmd_flags,
-+	       u16 token);
-+
-+/**
-+ * DPSW IRQ Index and Events
-+ */
-+
-+#define DPSW_IRQ_INDEX_IF		0x0000
-+#define DPSW_IRQ_INDEX_L2SW		0x0001
-+
-+/**
-+ * IRQ event - Indicates that the link state changed
-+ */
-+#define DPSW_IRQ_EVENT_LINK_CHANGED	0x0001
-+
-+/**
-+ * struct dpsw_irq_cfg - IRQ configuration
-+ * @addr:	Address that must be written to signal a message-based interrupt
-+ * @val:	Value to write into irq_addr address
-+ * @irq_num: A user defined number associated with this IRQ
-+ */
-+struct dpsw_irq_cfg {
-+	u64 addr;
-+	u32 val;
-+	int irq_num;
-+};
-+
-+int dpsw_set_irq_enable(struct fsl_mc_io *mc_io,
-+			u32 cmd_flags,
-+			u16 token,
-+			u8 irq_index,
-+			u8 en);
-+
-+int dpsw_set_irq_mask(struct fsl_mc_io *mc_io,
-+		      u32 cmd_flags,
-+		      u16 token,
-+		      u8 irq_index,
-+		      u32 mask);
-+
-+int dpsw_get_irq_status(struct fsl_mc_io *mc_io,
-+			u32 cmd_flags,
-+			u16 token,
-+			u8 irq_index,
-+			u32 *status);
-+
-+int dpsw_clear_irq_status(struct fsl_mc_io *mc_io,
-+			  u32 cmd_flags,
-+			  u16 token,
-+			  u8 irq_index,
-+			  u32 status);
-+
-+/**
-+ * struct dpsw_attr - Structure representing DPSW attributes
-+ * @id: DPSW object ID
-+ * @options: Enable/Disable DPSW features
-+ * @max_vlans: Maximum Number of VLANs
-+ * @max_meters_per_if:  Number of meters per interface
-+ * @max_fdbs: Maximum Number of FDBs
-+ * @max_fdb_entries: Number of FDB entries for default FDB table;
-+ *			0 - indicates default 1024 entries.
-+ * @fdb_aging_time: Default FDB aging time for default FDB table;
-+ *			0 - indicates default 300 seconds
-+ * @max_fdb_mc_groups: Number of multicast groups in each FDB table;
-+ *			0 - indicates default 32
-+ * @mem_size: DPSW frame storage memory size
-+ * @num_ifs: Number of interfaces
-+ * @num_vlans: Current number of VLANs
-+ * @num_fdbs: Current number of FDBs
-+ * @component_type: Component type of this bridge
-+ */
-+struct dpsw_attr {
-+	int id;
-+	u64 options;
-+	u16 max_vlans;
-+	u8 max_meters_per_if;
-+	u8 max_fdbs;
-+	u16 max_fdb_entries;
-+	u16 fdb_aging_time;
-+	u16 max_fdb_mc_groups;
-+	u16 num_ifs;
-+	u16 mem_size;
-+	u16 num_vlans;
-+	u8 num_fdbs;
-+	enum dpsw_component_type component_type;
-+};
-+
-+int dpsw_get_attributes(struct fsl_mc_io *mc_io,
-+			u32 cmd_flags,
-+			u16 token,
-+			struct dpsw_attr *attr);
-+
-+/**
-+ * enum dpsw_action - Action selection for special/control frames
-+ * @DPSW_ACTION_DROP: Drop frame
-+ * @DPSW_ACTION_REDIRECT: Redirect frame to control port
-+ */
-+enum dpsw_action {
-+	DPSW_ACTION_DROP = 0,
-+	DPSW_ACTION_REDIRECT = 1
-+};
-+
-+/**
-+ * struct dpsw_link_state - Structure representing DPSW link state
-+ * @rate: Rate
-+ * @options: Mask of available options; use 'DPSW_LINK_OPT_<X>' values
-+ * @up: 0 - covers two cases: down and disconnected, 1 - up
-+ */
-+struct dpsw_link_state {
-+	u32 rate;
-+	u64 options;
-+	u8 up;
-+};
-+
-+int dpsw_if_get_link_state(struct fsl_mc_io *mc_io,
-+			   u32 cmd_flags,
-+			   u16 token,
-+			   u16 if_id,
-+			   struct dpsw_link_state *state);
-+
-+int dpsw_if_set_flooding(struct fsl_mc_io *mc_io,
-+			 u32 cmd_flags,
-+			 u16 token,
-+			 u16 if_id,
-+			 u8 en);
-+
-+int dpsw_if_set_broadcast(struct fsl_mc_io *mc_io,
-+			  u32 cmd_flags,
-+			  u16 token,
-+			  u16 if_id,
-+			  u8 en);
-+
-+/**
-+ * struct dpsw_tci_cfg - Tag Control Information (TCI) configuration
-+ * @pcp: Priority Code Point (PCP): a 3-bit field which refers
-+ *		 to the IEEE 802.1p priority
-+ * @dei: Drop Eligible Indicator (DEI): a 1-bit field. May be used
-+ *		 separately or in conjunction with PCP to indicate frames
-+ *		 eligible to be dropped in the presence of congestion
-+ * @vlan_id: VLAN Identifier (VID): a 12-bit field specifying the VLAN
-+ *			to which the frame belongs. The hexadecimal values
-+ *			of 0x000 and 0xFFF are reserved;
-+ *			all other values may be used as VLAN identifiers,
-+ *			allowing up to 4,094 VLANs
-+ */
-+struct dpsw_tci_cfg {
-+	u8 pcp;
-+	u8 dei;
-+	u16 vlan_id;
-+};
-+
-+int dpsw_if_set_tci(struct fsl_mc_io *mc_io,
-+		    u32 cmd_flags,
-+		    u16 token,
-+		    u16 if_id,
-+		    const struct dpsw_tci_cfg *cfg);
-+
-+/**
-+ * enum dpsw_stp_state - Spanning Tree Protocol (STP) states
-+ * @DPSW_STP_STATE_BLOCKING: Blocking state
-+ * @DPSW_STP_STATE_LISTENING: Listening state
-+ * @DPSW_STP_STATE_LEARNING: Learning state
-+ * @DPSW_STP_STATE_FORWARDING: Forwarding state
-+ *
-+ */
-+enum dpsw_stp_state {
-+	DPSW_STP_STATE_DISABLED = 0,
-+	DPSW_STP_STATE_LISTENING = 1,
-+	DPSW_STP_STATE_LEARNING = 2,
-+	DPSW_STP_STATE_FORWARDING = 3,
-+	DPSW_STP_STATE_BLOCKING = 0
-+};
-+
-+/**
-+ * struct dpsw_stp_cfg - Spanning Tree Protocol (STP) Configuration
-+ * @vlan_id: VLAN ID STP state
-+ * @state: STP state
-+ */
-+struct dpsw_stp_cfg {
-+	u16 vlan_id;
-+	enum dpsw_stp_state state;
-+};
-+
-+int dpsw_if_set_stp(struct fsl_mc_io *mc_io,
-+		    u32 cmd_flags,
-+		    u16 token,
-+		    u16 if_id,
-+		    const struct dpsw_stp_cfg *cfg);
-+
-+/**
-+ * enum dpsw_accepted_frames - Types of frames to accept
-+ * @DPSW_ADMIT_ALL: The device accepts VLAN tagged, untagged and
-+ *			priority tagged frames
-+ * @DPSW_ADMIT_ONLY_VLAN_TAGGED: The device discards untagged frames or
-+ *			Priority-Tagged frames received on this interface.
-+ *
-+ */
-+enum dpsw_accepted_frames {
-+	DPSW_ADMIT_ALL = 1,
-+	DPSW_ADMIT_ONLY_VLAN_TAGGED = 3
-+};
-+
-+/**
-+ * enum dpsw_counter  - Counters types
-+ * @DPSW_CNT_ING_FRAME: Counts ingress frames
-+ * @DPSW_CNT_ING_BYTE: Counts ingress bytes
-+ * @DPSW_CNT_ING_FLTR_FRAME: Counts filtered ingress frames
-+ * @DPSW_CNT_ING_FRAME_DISCARD: Counts discarded ingress frame
-+ * @DPSW_CNT_ING_MCAST_FRAME: Counts ingress multicast frames
-+ * @DPSW_CNT_ING_MCAST_BYTE: Counts ingress multicast bytes
-+ * @DPSW_CNT_ING_BCAST_FRAME: Counts ingress broadcast frames
-+ * @DPSW_CNT_ING_BCAST_BYTES: Counts ingress broadcast bytes
-+ * @DPSW_CNT_EGR_FRAME: Counts egress frames
-+ * @DPSW_CNT_EGR_BYTE: Counts eEgress bytes
-+ * @DPSW_CNT_EGR_FRAME_DISCARD: Counts discarded egress frames
-+ * @DPSW_CNT_EGR_STP_FRAME_DISCARD: Counts egress STP discarded frames
-+ */
-+enum dpsw_counter {
-+	DPSW_CNT_ING_FRAME = 0x0,
-+	DPSW_CNT_ING_BYTE = 0x1,
-+	DPSW_CNT_ING_FLTR_FRAME = 0x2,
-+	DPSW_CNT_ING_FRAME_DISCARD = 0x3,
-+	DPSW_CNT_ING_MCAST_FRAME = 0x4,
-+	DPSW_CNT_ING_MCAST_BYTE = 0x5,
-+	DPSW_CNT_ING_BCAST_FRAME = 0x6,
-+	DPSW_CNT_ING_BCAST_BYTES = 0x7,
-+	DPSW_CNT_EGR_FRAME = 0x8,
-+	DPSW_CNT_EGR_BYTE = 0x9,
-+	DPSW_CNT_EGR_FRAME_DISCARD = 0xa,
-+	DPSW_CNT_EGR_STP_FRAME_DISCARD = 0xb
-+};
-+
-+int dpsw_if_get_counter(struct fsl_mc_io *mc_io,
-+			u32 cmd_flags,
-+			u16 token,
-+			u16 if_id,
-+			enum dpsw_counter type,
-+			u64 *counter);
-+
-+int dpsw_if_enable(struct fsl_mc_io *mc_io,
-+		   u32 cmd_flags,
-+		   u16 token,
-+		   u16 if_id);
-+
-+int dpsw_if_disable(struct fsl_mc_io *mc_io,
-+		    u32 cmd_flags,
-+		    u16 token,
-+		    u16 if_id);
-+
-+int dpsw_if_set_max_frame_length(struct fsl_mc_io *mc_io,
-+				 u32 cmd_flags,
-+				 u16 token,
-+				 u16 if_id,
-+				 u16 frame_length);
-+
-+/**
-+ * struct dpsw_vlan_cfg - VLAN Configuration
-+ * @fdb_id: Forwarding Data Base
-+ */
-+struct dpsw_vlan_cfg {
-+	u16 fdb_id;
-+};
-+
-+int dpsw_vlan_add(struct fsl_mc_io *mc_io,
-+		  u32 cmd_flags,
-+		  u16 token,
-+		  u16 vlan_id,
-+		  const struct dpsw_vlan_cfg *cfg);
-+
-+/**
-+ * struct dpsw_vlan_if_cfg - Set of VLAN Interfaces
-+ * @num_ifs: The number of interfaces that are assigned to the egress
-+ *		list for this VLAN
-+ * @if_id: The set of interfaces that are
-+ *		assigned to the egress list for this VLAN
-+ */
-+struct dpsw_vlan_if_cfg {
-+	u16 num_ifs;
-+	u16 if_id[DPSW_MAX_IF];
-+};
-+
-+int dpsw_vlan_add_if(struct fsl_mc_io *mc_io,
-+		     u32 cmd_flags,
-+		     u16 token,
-+		     u16 vlan_id,
-+		     const struct dpsw_vlan_if_cfg *cfg);
-+
-+int dpsw_vlan_add_if_untagged(struct fsl_mc_io *mc_io,
-+			      u32 cmd_flags,
-+			      u16 token,
-+			      u16 vlan_id,
-+			      const struct dpsw_vlan_if_cfg *cfg);
-+
-+int dpsw_vlan_remove_if(struct fsl_mc_io *mc_io,
-+			u32 cmd_flags,
-+			u16 token,
-+			u16 vlan_id,
-+			const struct dpsw_vlan_if_cfg *cfg);
-+
-+int dpsw_vlan_remove_if_untagged(struct fsl_mc_io *mc_io,
-+				 u32 cmd_flags,
-+				 u16 token,
-+				 u16 vlan_id,
-+				 const struct dpsw_vlan_if_cfg *cfg);
-+
-+int dpsw_vlan_remove(struct fsl_mc_io *mc_io,
-+		     u32 cmd_flags,
-+		     u16 token,
-+		     u16 vlan_id);
-+
-+/**
-+ * enum dpsw_fdb_entry_type - FDB Entry type - Static/Dynamic
-+ * @DPSW_FDB_ENTRY_STATIC: Static entry
-+ * @DPSW_FDB_ENTRY_DINAMIC: Dynamic entry
-+ */
-+enum dpsw_fdb_entry_type {
-+	DPSW_FDB_ENTRY_STATIC = 0,
-+	DPSW_FDB_ENTRY_DINAMIC = 1
-+};
-+
-+/**
-+ * struct dpsw_fdb_unicast_cfg - Unicast entry configuration
-+ * @type: Select static or dynamic entry
-+ * @mac_addr: MAC address
-+ * @if_egress: Egress interface ID
-+ */
-+struct dpsw_fdb_unicast_cfg {
-+	enum dpsw_fdb_entry_type type;
-+	u8 mac_addr[6];
-+	u16 if_egress;
-+};
-+
-+int dpsw_fdb_add_unicast(struct fsl_mc_io *mc_io,
-+			 u32 cmd_flags,
-+			 u16 token,
-+			 u16 fdb_id,
-+			 const struct dpsw_fdb_unicast_cfg *cfg);
-+
-+int dpsw_fdb_remove_unicast(struct fsl_mc_io *mc_io,
-+			    u32 cmd_flags,
-+			    u16 token,
-+			    u16 fdb_id,
-+			    const struct dpsw_fdb_unicast_cfg *cfg);
-+
-+/**
-+ * struct dpsw_fdb_multicast_cfg - Multi-cast entry configuration
-+ * @type: Select static or dynamic entry
-+ * @mac_addr: MAC address
-+ * @num_ifs: Number of external and internal interfaces
-+ * @if_id: Egress interface IDs
-+ */
-+struct dpsw_fdb_multicast_cfg {
-+	enum dpsw_fdb_entry_type type;
-+	u8 mac_addr[6];
-+	u16 num_ifs;
-+	u16 if_id[DPSW_MAX_IF];
-+};
-+
-+int dpsw_fdb_add_multicast(struct fsl_mc_io *mc_io,
-+			   u32 cmd_flags,
-+			   u16 token,
-+			   u16 fdb_id,
-+			   const struct dpsw_fdb_multicast_cfg *cfg);
-+
-+int dpsw_fdb_remove_multicast(struct fsl_mc_io *mc_io,
-+			      u32 cmd_flags,
-+			      u16 token,
-+			      u16 fdb_id,
-+			      const struct dpsw_fdb_multicast_cfg *cfg);
-+
-+/**
-+ * enum dpsw_fdb_learning_mode - Auto-learning modes
-+ * @DPSW_FDB_LEARNING_MODE_DIS: Disable Auto-learning
-+ * @DPSW_FDB_LEARNING_MODE_HW: Enable HW auto-Learning
-+ * @DPSW_FDB_LEARNING_MODE_NON_SECURE: Enable None secure learning by CPU
-+ * @DPSW_FDB_LEARNING_MODE_SECURE: Enable secure learning by CPU
-+ *
-+ *	NONE - SECURE LEARNING
-+ *	SMAC found	DMAC found	CTLU Action
-+ *	v		v	Forward frame to
-+ *						1.  DMAC destination
-+ *	-		v	Forward frame to
-+ *						1.  DMAC destination
-+ *						2.  Control interface
-+ *	v		-	Forward frame to
-+ *						1.  Flooding list of interfaces
-+ *	-		-	Forward frame to
-+ *						1.  Flooding list of interfaces
-+ *						2.  Control interface
-+ *	SECURE LEARING
-+ *	SMAC found	DMAC found	CTLU Action
-+ *	v		v		Forward frame to
-+ *						1.  DMAC destination
-+ *	-		v		Forward frame to
-+ *						1.  Control interface
-+ *	v		-		Forward frame to
-+ *						1.  Flooding list of interfaces
-+ *	-		-		Forward frame to
-+ *						1.  Control interface
-+ */
-+enum dpsw_fdb_learning_mode {
-+	DPSW_FDB_LEARNING_MODE_DIS = 0,
-+	DPSW_FDB_LEARNING_MODE_HW = 1,
-+	DPSW_FDB_LEARNING_MODE_NON_SECURE = 2,
-+	DPSW_FDB_LEARNING_MODE_SECURE = 3
-+};
-+
-+int dpsw_fdb_set_learning_mode(struct fsl_mc_io *mc_io,
-+			       u32 cmd_flags,
-+			       u16 token,
-+			       u16 fdb_id,
-+			       enum dpsw_fdb_learning_mode mode);
-+
-+/**
-+ * struct dpsw_fdb_attr - FDB Attributes
-+ * @max_fdb_entries: Number of FDB entries
-+ * @fdb_aging_time: Aging time in seconds
-+ * @learning_mode: Learning mode
-+ * @num_fdb_mc_groups: Current number of multicast groups
-+ * @max_fdb_mc_groups: Maximum number of multicast groups
-+ */
-+struct dpsw_fdb_attr {
-+	u16 max_fdb_entries;
-+	u16 fdb_aging_time;
-+	enum dpsw_fdb_learning_mode learning_mode;
-+	u16 num_fdb_mc_groups;
-+	u16 max_fdb_mc_groups;
-+};
-+
-+int dpsw_get_api_version(struct fsl_mc_io *mc_io,
-+			 u32 cmd_flags,
-+			 u16 *major_ver,
-+			 u16 *minor_ver);
-+
-+#endif /* __FSL_DPSW_H */
+ struct ethsw_core;
+ 
+ /* Per port private data */
 -- 
 1.9.1
 
