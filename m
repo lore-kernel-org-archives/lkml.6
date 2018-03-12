@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELtkW4auGubozdxbmpZyYMyf8GyeZnzPXH4Zmv/dybMTL0m0pEmiUm1JxDAAq1EXBhlrQXxx
-ARC-Seal: i=1; a=rsa-sha256; t=1520824075; cv=none;
+X-Google-Smtp-Source: AG47ELsQnC/5KODaAGQhbvYvY5oNvyzWznoTvwaqeoRaprLCPzaUaCuaXMQUh0ekYLsolXJtHD4O
+ARC-Seal: i=1; a=rsa-sha256; t=1520824085; cv=none;
         d=google.com; s=arc-20160816;
-        b=O50WUC4BZfz9yJU7dCqbV9i84Ac7IwzM9PALm+uSSFGYI5ZioxctwshFA2qY4/i4hW
-         FOU4d+BAc3Md50ZrWRsD22lhieNwaR7cMqvO6JeGUD5Ps3oclFrM4T3nLvgTPcTUR7vM
-         ofXw8YJpR6W/64B59r4akOJPiXpNY7SuuoQBnZ5l+/tPI0Tg837F1BgI4oJnUzAnziYt
-         X6g7TL6ah7O/ksJWNPUv3ExnJitQtk3eye/8TB/XLuNfOinRqsswdBeBvl4zR1tgmd4N
-         tT75JGTWP2AReXcDJWUt7z3ts1i6bb4FEZrwkdQ14cCKQCY5oXDMEMWXLrbgT7yWSTWX
-         qcAg==
+        b=gHqURC8XHlSZH/Ve75IV3lA2uCfGpnRllufBwhneYUXavgw6uXUzijlqmjY+xGJK36
+         tNuvDZfJziTVytnGBoLYG9wtpWGjM3jxTDVIiyDnXB3x1LMiLFktS4tkpn1+xAt+7qXe
+         8m+/fd/9OpqBnUwBTji2wovr7Hty59TDMhmk7OYlnKEpPuN/7whe6Sk7h76/iciVReTp
+         TD7l2eWoPTw8pdVMtAMcC7urYixn5Ur6OVP5+nqBT4a+f1/sv+zDTyFjQSp8BLnkVKsp
+         Y50n5ICLHUEOOkxSXcUCXeQtGvJvqHV2RGXU6INWm+EbleyMWsKaCeCzKgZg5lE2YW45
+         Yclg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=/mpbZmmlb40uwiksTZ1s1InDVmVwkbV2Rm1SSbRXfZg=;
-        b=myTo4KjH6RjrpdzWVTWOJO3KxmsJpiUdRzm+8JY86DaU3CzqCFH+xA7vB+llRS9qWB
-         NqnVgc1LPzcvJd4i1HFzArYp3OJ7S4PBuFllViGZ0rYluJF8GKPx08wkJMglXVzPjvJQ
-         NL8rQCBO4wBqrXaMN9+zD1IY3+N6dqzxkQswnP4YRpx4B9SJdu18QJzZSp7wm9BkdWm6
-         KpvkfwEIcwzCOG9zqmKpBPzisiembUGlBD1hRaGnus6Zvw2Z2hbstM8I9/bjgmg4YwEQ
-         AfjcG+d9wUL2nAjbV3a5KK1GGHwe3PSti7xEgSwsupwRQld1lTjxu1RyHprwlDV8P/x0
-         z8gQ==
+        bh=qPD1gtJlrp2HEVedFTyvP+pScuy+a6PY6cUffllHPkU=;
+        b=YIgqlMtFyYh651xTr/Dfw0tUe0JfO6YqA9Jc4SUMKSzTpxR51DBw6xEcwqUEuzpbrP
+         5/TcLB5dIidz3AXU+kHiO3hkGrLhGi+NaDLxuqUxxvCgyeV11ZQs8pZQXQvWQAsmCU4D
+         hnSEbu9nYcck2rFryqlc0LkWpjZcNnjsdNfhB2FaMaDOO0qWiAnK/cWxsZIeSaY1uWGz
+         Cf3SfWK4wnpt2/axOIUQksCBgZEYgkD9sk2X/HzPH3uVa8U1Hmxy5w5x2RzswIj1GnOv
+         7D4SbbGcZbXG6u7TOaWD2GwZlM5x1mlWHw39FMlx8oH1+ZoMJmUwdM3rHeEsSzVihX7x
+         xazg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,29 +30,31 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Dan Williams" <dan.j.williams@intel.com>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- alan@linux.intel.com,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Paul Turner" <pjt@google.com>,
+ "Borislav Petkov" <bp@suse.de>,
+ "Andi Kleen" <ak@linux.intel.com>,
+ "Tim Chen" <tim.c.chen@linux.intel.com>,
+ "Andrew Lutomirski" <luto@kernel.org>,
+ "David Woodhouse" <dwmw2@infradead.org>,
+ "Andi Kleen" <andi@firstfloor.org>,
  "Peter Zijlstra" <peterz@infradead.org>,
- gregkh@linuxfoundation.org, linux-arch@vger.kernel.org,
- kernel-hardening@lists.openwall.com,
- "Russell King" <linux@armlinux.org.uk>,
- "Cyril Novikov" <cnovikov@lynx.com>,
- "Will Deacon" <will.deacon@arm.com>,
- torvalds@linux-foundation.org,
- "Catalin Marinas" <catalin.marinas@arm.com>
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Greg Kroah-Hartman" <gregkh@linux-foundation.org>,
+ "Tom Lendacky" <thomas.lendacky@amd.com>,
+ "Jiri Kosina" <jikos@kernel.org>,
+ "Dave Hansen" <dave.hansen@intel.com>
 Date: Mon, 12 Mar 2018 03:06:12 +0000
-Message-ID: <lsq.1520823972.225516073@decadent.org.uk>
+Message-ID: <lsq.1520823972.126225421@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 52/76] array_index_nospec: Sanitize speculative array
- de-references
+Subject: [PATCH 3.16 16/76] x86/alternatives: Fix optimize_nops() checking
 In-Reply-To: <lsq.1520823971.5976735@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699612399286204?=
-X-GMAIL-MSGID: =?utf-8?q?1594699626173334883?=
+X-GMAIL-THRID: =?utf-8?q?1594699636412875983?=
+X-GMAIL-MSGID: =?utf-8?q?1594699636412875983?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -60,113 +62,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Borislav Petkov <bp@suse.de>
 
-commit f3804203306e098dae9ca51540fcd5eb700d7f40 upstream.
+commit 612e8e9350fd19cae6900cf36ea0c6892d1a0dca upstream.
 
-array_index_nospec() is proposed as a generic mechanism to mitigate
-against Spectre-variant-1 attacks, i.e. an attack that bypasses boundary
-checks via speculative execution. The array_index_nospec()
-implementation is expected to be safe for current generation CPUs across
-multiple architectures (ARM, x86).
+The alternatives code checks only the first byte whether it is a NOP, but
+with NOPs in front of the payload and having actual instructions after it
+breaks the "optimized' test.
 
-Based on an original implementation by Linus Torvalds, tweaked to remove
-speculative flows by Alexei Starovoitov, and tweaked again by Linus to
-introduce an x86 assembly implementation for the mask generation.
+Make sure to scan all bytes before deciding to optimize the NOPs in there.
 
-Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
-Co-developed-by: Alexei Starovoitov <ast@kernel.org>
-Suggested-by: Cyril Novikov <cnovikov@lynx.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Reported-by: David Woodhouse <dwmw2@infradead.org>
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arch@vger.kernel.org
-Cc: kernel-hardening@lists.openwall.com
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: gregkh@linuxfoundation.org
-Cc: torvalds@linux-foundation.org
-Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727414229.33451.18411580953862676575.stgit@dwillia2-desk3.amr.corp.intel.com
+Cc: Jiri Kosina <jikos@kernel.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: Andrew Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linux-foundation.org>
+Cc: Paul Turner <pjt@google.com>
+Link: https://lkml.kernel.org/r/20180110112815.mgciyf5acwacphkq@pd.tnic
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- include/linux/nospec.h | 72 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
- create mode 100644 include/linux/nospec.h
+ arch/x86/kernel/alternative.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- /dev/null
-+++ b/include/linux/nospec.h
-@@ -0,0 +1,72 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright(c) 2018 Linus Torvalds. All rights reserved.
-+// Copyright(c) 2018 Alexei Starovoitov. All rights reserved.
-+// Copyright(c) 2018 Intel Corporation. All rights reserved.
-+
-+#ifndef _LINUX_NOSPEC_H
-+#define _LINUX_NOSPEC_H
-+
-+/**
-+ * array_index_mask_nospec() - generate a ~0 mask when index < size, 0 otherwise
-+ * @index: array element index
-+ * @size: number of elements in array
-+ *
-+ * When @index is out of bounds (@index >= @size), the sign bit will be
-+ * set.  Extend the sign bit to all bits and invert, giving a result of
-+ * zero for an out of bounds index, or ~0 if within bounds [0, @size).
-+ */
-+#ifndef array_index_mask_nospec
-+static inline unsigned long array_index_mask_nospec(unsigned long index,
-+						    unsigned long size)
-+{
-+	/*
-+	 * Warn developers about inappropriate array_index_nospec() usage.
-+	 *
-+	 * Even if the CPU speculates past the WARN_ONCE branch, the
-+	 * sign bit of @index is taken into account when generating the
-+	 * mask.
-+	 *
-+	 * This warning is compiled out when the compiler can infer that
-+	 * @index and @size are less than LONG_MAX.
-+	 */
-+	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,
-+			"array_index_nospec() limited to range of [0, LONG_MAX]\n"))
-+		return 0;
-+
-+	/*
-+	 * Always calculate and emit the mask even if the compiler
-+	 * thinks the mask is not needed. The compiler does not take
-+	 * into account the value of @index under speculation.
-+	 */
-+	OPTIMIZER_HIDE_VAR(index);
-+	return ~(long)(index | (size - 1UL - index)) >> (BITS_PER_LONG - 1);
-+}
-+#endif
-+
-+/*
-+ * array_index_nospec - sanitize an array index after a bounds check
-+ *
-+ * For a code sequence like:
-+ *
-+ *     if (index < size) {
-+ *         index = array_index_nospec(index, size);
-+ *         val = array[index];
-+ *     }
-+ *
-+ * ...if the CPU speculates past the bounds check then
-+ * array_index_nospec() will clamp the index within the range of [0,
-+ * size).
-+ */
-+#define array_index_nospec(index, size)					\
-+({									\
-+	typeof(index) _i = (index);					\
-+	typeof(size) _s = (size);					\
-+	unsigned long _mask = array_index_mask_nospec(_i, _s);		\
-+									\
-+	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
-+	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
-+									\
-+	_i &= _mask;							\
-+	_i;								\
-+})
-+#endif /* _LINUX_NOSPEC_H */
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -326,9 +326,12 @@ done:
+ static void __init_or_module optimize_nops(struct alt_instr *a, u8 *instr)
+ {
+ 	unsigned long flags;
++	int i;
+ 
+-	if (instr[0] != 0x90)
+-		return;
++	for (i = 0; i < a->padlen; i++) {
++		if (instr[i] != 0x90)
++			return;
++	}
+ 
+ 	local_irq_save(flags);
+ 	add_nops(instr + (a->instrlen - a->padlen), a->padlen);
