@@ -1,153 +1,173 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1923497-1521566779-2-2897455912184351253
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
-  MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Attached: signature.asc
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521566778; b=HCW7VfJiiuFVHmqaQh3wST8woMinUkg6ImC93sUXw8qOWGQ
-    ktQ77wnRq57pgG9+7GnM3rPSmcLQhuU4oOpuqcS6mwYXX0gaXQiGc8uIcKJfoDFO
-    ycj8lUCAoBvLx+cAHagonUwZ+/tGUI6MBMNbWFJctUfJddTxjX6e3R6wdwv8IIPE
-    wvsdgg4gnXffZrhDyYBhSZ8M3xwBZJChfRfkyXIvcsR0wwW7gXjMqYeypc026v2W
-    j3PQuWIiiWYKYGUC1OUREyqMEGEOfn1ODSRaTiLVk3jsk8JP2YmgOi9LpsRcVW3U
-    sy5eNurUhuP6NJrMW0dYZFqvvWPtR0sTMqOouvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:cc:date
-    :in-reply-to:references:content-type:mime-version:sender
-    :list-id; s=arctest; t=1521566778; bh=oko4zAaudiS1UmypmQ6P0K+hnc
-    HbZjS8T151BGMl8YA=; b=kHVz4NUiLILrD9ieiUBz+vV7eEwJcTBIfWl1R+jepF
-    9U8fxxdHFb/fgqcCVMFFo46s87/7YwFGLVr4tcUOELNMHQGLZcUHZfTzRao9PzhI
-    Iy2tc234d2piOpABK6yrtrYZmLQc85ulw8nDTstzRI2+ysWaql4jv3sChm72LcPh
-    Q9L2lsXympNEa0oUqh8i3Egzbn77XS7GUaEpQ+NSruphjo+J9jZU7j2mgGUttoy1
-    gQpkppMqoDNBlNiQFcfMgmhu9oZlNvBUCavTHz7naQ7Yj97p0wNl+0R/lWtg2g0+
-    ftJSM/+Wa8DVrHz18E424fsFz910tCr9241o4xWZzwjQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751502AbeCTR0Q (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 20 Mar 2018 13:26:16 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:59223 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751186AbeCTR0P (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 20 Mar 2018 13:26:15 -0400
-Message-ID: <1521566757.2495.208.camel@decadent.org.uk>
-Subject: Re: [PATCH 3.16 00/76] 3.16.56-rc1 review
+Return-Path: <ben@decadent.org.uk>
+X-Google-Smtp-Source: AG47ELth+C9GT47RBOo2mlhALzYZch3zot/+Eai0VuvnsoKdhPjDRqd+1PJBrs8ZWosZV3L4ciGy
+ARC-Seal: i=1; a=rsa-sha256; t=1520824080; cv=none;
+        d=google.com; s=arc-20160816;
+        b=My78nVLB8+bIGqekpQleTbJYE6pnG0rQgxasQQNzwCguUj4vnlFpplqDQgd5p2cEGP
+         WjxZtnUSZIM8LbSih0bMYJwz4xJLtwVvz0x4IGY04T7zdpJ8cNAuSnjELn8ZrINRgEqn
+         zkX/3aqh7YpgPC8Cm3FAEYf8RT6VZUgiKrwBk6CWR+aa6/XqqttbNPsQIivcnry3UeIx
+         y70wByAzHb+9NWCdxaYQuE9RsZwFn4P+iXArKO5S7V7RsKWrjf3/fuw4ULNjP2p/S/4y
+         DqbGd1MoAJfbZUPxLYR9qSza5uqcgZJi4Mag/8Uo9e2C8oJivAV96CtmsULjVltw+tVi
+         q1OA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
+         :content-transfer-encoding:content-disposition
+         :arc-authentication-results;
+        bh=snKBt6MjN2NWESHz5In5LhcL22gjFCvqCIMVmk6e1oE=;
+        b=PdhAjFJ/wa7eA7A7LHG7u/rZ+2+H+gMgcgo0XKqthVqQZvmYxBIPhi/DWrGdt2gWJP
+         EJPEso4NuKycaKubfH04UuhUq15a3kHXOjafVZNXhQLboXgOt3Lw56miVnvH0BtnMhZ9
+         bUVCEoCmx0aglEnugzaeWxaRB5C9t0n2Hkht3te96pdVE/5YMoBTzcB881xpYOM0/CQ7
+         9bIhsg/lP9eJath8TqfJy2XxN8c44lQfbEXepEXjBcPrR9tc30IC3dK9hfhx0BpyAmrb
+         GMXw3WFWeKsUde++DuXIgmg+6Tu1I7nLpkzvDD4ARcKsknNxU2IuT02oy0Y9CGKJO872
+         gNrA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        "Maciej W. Rozycki" <macro@mips.com>
-Date: Tue, 20 Mar 2018 17:25:57 +0000
-In-Reply-To: <20180312164512.GA9933@roeck-us.net>
-References: <lsq.1520823971.5976735@decadent.org.uk>
-         <20180312150053.GB3917@roeck-us.net> <20180312164512.GA9933@roeck-us.net>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-k3GGIAl9OaK+I1JxblmP"
-X-Mailer: Evolution 3.26.5-1 
-Mime-Version: 1.0
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+ "Jinpu Wang" <jinpu.wang@profitbricks.com>,
+ kernel-hardening@lists.openwall.com,
+ "Jiri Slaby" <jslaby@suse.cz>,
+ "Andy Lutomirski" <luto@kernel.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Jan Beulich" <JBeulich@suse.com>,
+ alan@linux.intel.com,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Dan Williams" <dan.j.williams@intel.com>,
+ gregkh@linuxfoundation.org, linux-arch@vger.kernel.org
+Date: Mon, 12 Mar 2018 03:06:12 +0000
+Message-ID: <lsq.1520823972.93871245@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 56/76] x86/syscall: Sanitize syscall table
+ de-references under speculation
+In-Reply-To: <lsq.1520823971.5976735@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594699616206088143?=
+X-GMAIL-MSGID: =?utf-8?q?1594699630435159109?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+3.16.56-rc1 review patch.  If anyone has any objections, please let me know.
 
---=-k3GGIAl9OaK+I1JxblmP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+------------------
 
-On Mon, 2018-03-12 at 09:45 -0700, Guenter Roeck wrote:
-> On Mon, Mar 12, 2018 at 08:00:53AM -0700, Guenter Roeck wrote:
-> > On Mon, Mar 12, 2018 at 03:06:11AM +0000, Ben Hutchings wrote:
-> > > This is the start of the stable review cycle for the 3.16.56 release.
-> > > There are 76 patches in this series, which will be posted as response=
-s
-> > > to this one.  If anyone has any issues with these being applied, plea=
-se
-> > > let me know.
-> > >=20
-> > > Responses should be made by Wed Mar 14 12:00:00 UTC 2018.
-> > > Anything received after that time might be too late.
-> > >=20
-> >=20
-> > Build results:
-> > 	total: 136 pass: 136 fail:0
-> > Qemu test results:
-> > 	total: 115 pass: 112 fail:3
-> > Failed tests:
-> > 	mipsel:24Kf:malta_defconfig:smp:rootfs
-> > 	mipsel64:malta_defconfig:nosmp:rootfs
-> > 	mipsel64:malta_defconfig:smp:rootfs
-> >=20
-> > The failures are due to newly added tests; the init process crashes.
-> > v3.16 passes those tests, so the problem was introduced later.
-> > I'll run a bisect later to see if I can find the culprit. If not,
-> > I'll drop the new tests from this kernel version.
-> >=20
->=20
-> Turns out I did the bisect kalready. Attached. It does suggest that there
-> may be a real problem.
+From: Ben Hutchings <ben@decadent.org.uk>
 
-Maciej W. Rozycki worked out that it depends on commit 27e28e8ec47a
-("MIPS: Normalise code flow in the CpU exception handler") which I
-mistakenly omitted.  I'll include that in the next update (3.16.57).
+commit 2fbd7af5af8665d18bcefae3e9700be07e22b681 upstream.
 
-Ben.
+The upstream version of this, touching C code, was written by Dan Williams,
+with the following description:
 
---=20
-Ben Hutchings
-Time is nature's way of making sure that
-everything doesn't happen at once.
+> The syscall table base is a user controlled function pointer in kernel
+> space. Use array_index_nospec() to prevent any out of bounds speculation.
+>
+> While retpoline prevents speculating into a userspace directed target it
+> does not stop the pointer de-reference, the concern is leaking memory
+> relative to the syscall table base, by observing instruction cache
+> behavior.
 
---=-k3GGIAl9OaK+I1JxblmP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+The x86_64 assembly version for 4.4 was written by Jiri Slaby, with
+the following description:
 
------BEGIN PGP SIGNATURE-----
+> In 4.4.118, we have commit c8961332d6da (x86/syscall: Sanitize syscall
+> table de-references under speculation), which is a backport of upstream
+> commit 2fbd7af5af86. But it fixed only the C part of the upstream patch
+> -- the IA32 sysentry. So it ommitted completely the assembly part -- the
+> 64bit sysentry.
+>
+> Fix that in this patch by explicit array_index_mask_nospec written in
+> assembly. The same was used in lib/getuser.S.
+>
+> However, to have "sbb" working properly, we have to switch from "cmp"
+> against (NR_syscalls-1) to (NR_syscalls), otherwise the last syscall
+> number would be "and"ed by 0. It is because the original "ja" relies on
+> "CF" or "ZF", but we rely only on "CF" in "sbb". That means: switch to
+> "jae" conditional jump too.
+>
+> Final note: use rcx for mask as this is exactly what is overwritten by
+> the 4th syscall argument (r10) right after.
 
-iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAlqxRCUACgkQ57/I7JWG
-EQlxYhAAwAJZuuvKkOLiuyid2xJnQp1nu0LOaoDbevJ4Znhqs8pdvJlGLjLM1JD3
-7jd1sIB8Z4fb156beRVx31z8i0ijKtwV18Ce9rZG2iSeVtSFJ7eDFxSfGu0afNHT
-5KACuwVLdNgeUe34liLb2QwLz/ZDR/f2P+1BXuAur4HtKOmQ1HGFHG5FKAzPMvKr
-NhS/eoaCsZvrwqASc1PO10ovlP68i9Bo/x33tvsj8ngUu3lgjj+xGJZhLAX+hBqD
-Ac+w4NuekE28V9wR7Xqg0XakVru4NvNycZ9Xf2egAAKuGaJuapOjFZI7LxP83DNa
-Ej550zZ3TBVGKC80weMW8Q1r0KHtd4ghkRFhATC1tiSwe2G5wNv/Ja8UYCEBFIOg
-nJowOzaFSSPkLYsfqMqlr803Mq3/TkhCRkt+3/znRTiAJO/KyNhLZPDWFJj/6HvM
-Zad16GtGMSr9HjaDqY+fZtYZlDGMWmBAiuYaxGJpZcJ6fLnXAxsAvlbRZS73a7Nl
-I1mqO/IT3sya5j9LeOiBXimfrjCbhPqPukaEI3sw6f1KtiSsEwUZJCjOTfUS4w3z
-ODnFOLMdLwBzmdQi/AUU3/6q4y6Bwk5EvKmRBa/rQlZNEKjLTwlkxkCbVZ1398Wn
-eRggM2F3Rzz7KKaaJY+r8q+TMzGvD9VYIT+P8wxIscpk97fJ5oU=
-=9dqV
------END PGP SIGNATURE-----
+In 3.16 the x86_32 syscall table lookup is also written in assembly.
+So I've taken Jiri's version and added similar masking in entry_32.S,
+using edx as the temporary.  edx is clobbered by SAVE_REGS and seems
+to be free at this point.
 
---=-k3GGIAl9OaK+I1JxblmP--
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Jiri Slaby <jslaby@suse.cz>
+Cc: Jan Beulich <JBeulich@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-arch@vger.kernel.org
+Cc: kernel-hardening@lists.openwall.com
+Cc: gregkh@linuxfoundation.org
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: alan@linux.intel.com
+Cc: Jinpu Wang <jinpu.wang@profitbricks.com>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+--- a/arch/x86/kernel/entry_32.S
++++ b/arch/x86/kernel/entry_32.S
+@@ -426,6 +426,8 @@ sysenter_past_esp:
+ sysenter_do_call:
+ 	cmpl $(NR_syscalls), %eax
+ 	jae sysenter_badsys
++	sbb %edx, %edx				/* array_index_mask_nospec() */
++	and %edx, %eax
+ 	call *sys_call_table(,%eax,4)
+ sysenter_after_call:
+ 	movl %eax,PT_EAX(%esp)
+@@ -503,6 +505,8 @@ ENTRY(system_call)
+ 	cmpl $(NR_syscalls), %eax
+ 	jae syscall_badsys
+ syscall_call:
++	sbb %edx, %edx				/* array_index_mask_nospec() */
++	and %edx, %eax
+ 	call *sys_call_table(,%eax,4)
+ syscall_after_call:
+ 	movl %eax,PT_EAX(%esp)		# store the return value
+--- a/arch/x86/kernel/entry_64.S
++++ b/arch/x86/kernel/entry_64.S
+@@ -445,12 +445,14 @@ GLOBAL(system_call_after_swapgs)
+ 	jnz tracesys
+ system_call_fastpath:
+ #if __SYSCALL_MASK == ~0
+-	cmpq $__NR_syscall_max,%rax
++	cmpq	$NR_syscalls, %rax
+ #else
+ 	andl $__SYSCALL_MASK,%eax
+-	cmpl $__NR_syscall_max,%eax
++	cmpl	$NR_syscalls, %eax
+ #endif
+-	ja badsys
++	jae	badsys
++	sbb	%rcx, %rcx			/* array_index_mask_nospec() */
++	and	%rcx, %rax
+ 	movq %r10,%rcx
+ #ifdef CONFIG_RETPOLINE
+ 	movq	sys_call_table(, %rax, 8), %rax
+@@ -577,12 +579,14 @@ tracesys:
+ 	LOAD_ARGS ARGOFFSET, 1
+ 	RESTORE_REST
+ #if __SYSCALL_MASK == ~0
+-	cmpq $__NR_syscall_max,%rax
++	cmpq	$NR_syscalls, %rax
+ #else
+ 	andl $__SYSCALL_MASK,%eax
+-	cmpl $__NR_syscall_max,%eax
++	cmpl	$NR_syscalls, %eax
+ #endif
+-	ja   int_ret_from_sys_call	/* RAX(%rsp) set to -ENOSYS above */
++	jae	int_ret_from_sys_call		/* RAX(%rsp) set to -ENOSYS above */
++	sbb	%rcx, %rcx			/* array_index_mask_nospec() */
++	and	%rcx, %rax
+ 	movq %r10,%rcx	/* fixup for C */
+ #ifdef CONFIG_RETPOLINE
+ 	movq	sys_call_table(, %rax, 8), %rax
