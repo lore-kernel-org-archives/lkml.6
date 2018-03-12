@@ -1,74 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932798AbeCLDTM (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 23:19:12 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56532 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932593AbeCLDTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 23:19:08 -0400
-Date: Mon, 12 Mar 2018 11:18:55 +0800
-From: Dave Young <dyoung@redhat.com>
-To: AKASHI Takahiro <takahiro.akashi@linaro.org>, vgoyal@redhat.com,
-        bhe@redhat.com, mpe@ellerman.id.au, bauerman@linux.vnet.ibm.com,
-        prudo@linux.vnet.ibm.com, kexec@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, akpm@linux-foundation.org
-Subject: Re: [PATCH v2 0/7] kexec_file, x86, powerpc: refactoring for other
- architecutres
-Message-ID: <20180312031855.GA2136@dhcp-128-65.nay.redhat.com>
-References: <20180306102303.9063-1-takahiro.akashi@linaro.org>
- <20180308010502.GA2600@dhcp-128-65.nay.redhat.com>
- <20180309060254.GA9728@dhcp-128-65.nay.redhat.com>
- <20180309064412.GA5327@dhcp-128-65.nay.redhat.com>
- <20180309071813.GE25863@linaro.org>
- <20180309074613.GA6331@dhcp-128-65.nay.redhat.com>
- <20180309075547.GA6718@dhcp-128-65.nay.redhat.com>
- <20180309093346.GF25863@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180309093346.GF25863@linaro.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S933158AbeCLDht (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 23:37:49 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:34778 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932756AbeCLDhs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Mar 2018 23:37:48 -0400
+X-Google-Smtp-Source: AG47ELs8NYQJi7EOSW0NGpWjI+tW3nefLOErNAIjYW0nUFkyA5R//u3J+qkhA7Al5anPg7rVO0LGew==
+From: Shunqian Zheng <zhengsq@rock-chips.com>
+To: linux-rockchip@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, Shunqian Zheng <zhengsq@rock-chips.com>,
+        Jacob Chen <jacob2.chen@rock-chips.com>
+Subject: [v6-1,15/17] arm64: dts: rockchip: add isp0 node for rk3399
+Date: Mon, 12 Mar 2018 11:37:11 +0800
+Message-Id: <1520825831-24229-1-git-send-email-zhengsq@rock-chips.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <20180308094807.9443-1-jacob-chen@iotwrt.com>
+References: <20180308094807.9443-1-jacob-chen@iotwrt.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09/18 at 06:33pm, AKASHI Takahiro wrote:
+rk3399 have two ISP, but we havn't test isp1, so just add isp0 at present.
 
-[snip]
+Signed-off-by: Shunqian Zheng <zhengsq@rock-chips.com>
+Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
+---
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-> Oops, please apply the fix below to my first patch ("kexec_file: make
-> an use of purgatory optional"). My screw-up is trivial here :)
-
-Wow, human eyes sometimes can not catch such issue, thanks for the fix.
-It works for me.
-
-> 
-> Please let me know if you think that I should repost my patch set.
-> 
-
-Because akpm takes kexec patches,  this question should be passing to
-Andrew.  Andrew, do you need a repost?
-
-> Thanks,
-> -Takahiro AKASHI
-> 
-> ===8<===
-> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> index 6dbbb89cbbac..ab1dced677fd 100644
-> --- a/kernel/kexec_file.c
-> +++ b/kernel/kexec_file.c
-> @@ -532,7 +532,7 @@ static int kexec_calculate_store_digests(struct kimage *image)
->  	struct kexec_sha_region *sha_regions;
->  	struct purgatory_info *pi = &image->purgatory_info;
->  
-> -	if (!IS_ENABLED(ARCH_HAS_KEXEC_PURGATORY))
-> +	if (!IS_ENABLED(CONFIG_ARCH_HAS_KEXEC_PURGATORY))
->  		return 0;
->  
->  	zero_buf = __va(page_to_pfn(ZERO_PAGE(0)) << PAGE_SHIFT);
-> ===>8===
-> 
-
-Thanks
-Dave
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+index 2605118..5729786 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+@@ -1614,6 +1614,24 @@
+ 		status = "disabled";
+ 	};
+ 
++	isp0: isp0@ff910000 {
++		compatible = "rockchip,rk3399-cif-isp";
++		reg = <0x0 0xff910000 0x0 0x4000>;
++		interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH 0>;
++		clocks = <&cru SCLK_ISP0>,
++			 <&cru ACLK_ISP0>, <&cru ACLK_ISP0_WRAPPER>,
++			 <&cru HCLK_ISP0>, <&cru HCLK_ISP0_WRAPPER>;
++		clock-names = "clk_isp",
++			      "aclk_isp", "aclk_isp_wrap",
++			      "hclk_isp", "hclk_isp_wrap";
++		assigned-clocks = <&cru SCLK_ISP0>, <&cru ACLK_ISP0>;
++		assigned-clock-rates = <500000000>, <400000000>;
++
++		power-domains = <&power RK3399_PD_ISP0>;
++		iommus = <&isp0_mmu>;
++		status = "disabled";
++	};
++
+ 	isp0_mmu: iommu@ff914000 {
+ 		compatible = "rockchip,iommu";
+ 		reg = <0x0 0xff914000 0x0 0x100>, <0x0 0xff915000 0x0 0x100>;
+-- 
+1.9.1
