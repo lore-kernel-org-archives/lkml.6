@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELs5tIv9kbEXEAHgeh4TLMP6ohlhfmzw23vco/q3+sty58mMAgOburH75DlaK0MRFVVzFwMX
+X-Google-Smtp-Source: AG47ELt6OCmBcALrhrwEgDYkpzG/lT/yhQ2J4S1WqkXhZYq/RN0HNRxVYTY4GJMJyBQTw7ZUrJ40
 ARC-Seal: i=1; a=rsa-sha256; t=1520824082; cv=none;
         d=google.com; s=arc-20160816;
-        b=k5Ma2A/4b/4KmmTiAULiZRLUrDbZJVBSRFPCeSa0dpdnwQoGU+5RNhnYBbVMMlmuud
-         erj+dPJMa3nR4NG7S5BJjeO/EcO6D93LrPIKraxWKYLuwWSuhB7+bAad/B2pNm9UuFO0
-         XitpfGXn0zfpNUmkK310TKr4NKVpHnjp+QpNXvawAMPgV9otvl6J8MotWUQ9EY/iy9XY
-         hC86bbZOfcjU/n02n9P8giPWXnhALFaXIYUBo/BlNXWmgEohxA96xG9JjqzitSlOUX7p
-         J38GONpxQPKJrBXBERlxq+MrbRmo89Sag+LDH6p+8z+fw0w9z8I1R07lphBMC4izBq9/
-         gEjg==
+        b=Myfw0HWv6hlDHMy77v/DJ/K0JI3vk8y5pjDThg8ubiwWdd15XSxBXMEmLIS179QQiq
+         uWLKnesclDFFNysMMhhnm+/jcHpc0rY29yMmIiwdTSF+/yB7hDjzIpaV6VKXhJpz8eQT
+         5zpVCtgDuBiEkCC5wmiiYGk7LvO0dUB+HGb0f76HBpAUuZmi47QMpKw3ry/0ayT7/R42
+         EatroNnASmuJ/wpk03gp3lrnpRm1OBO1eIyU6iZaq93XSDe/KiFOTHREuAPPR+Z6G9/Z
+         hCL6WzqFsYwarbXJ3nCanvtgX2VHgmxFbtWA96Y+sMGPuSjBDyymZxchO0g8NC8UqJ7h
+         FSgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=Kl1yfYd7ImOgSW1RRzgHdIdVvO2oadMf1xIl06KEth8=;
-        b=WVuG6F74GItkaj/cpwmxPzL0JJ8AcGfbV80/ZekItV4+j6pPJwnPjY5aXN4NvwbYmA
-         LCaWSk2o7+eJHZkRASjo0nMn0B3kUjwOVHDpdvi1CYn71z1QURArlHD3Lbt/RD9Ns//o
-         hJDJOrbECGAg3Lh7zvrPqtTj1+Pdmv46y5hzcVvTuxz4v7u5Dn4OUW7XiTzW8RRzNqgj
-         dxv/+JhM7FrPVV0fu/TzYla7ThT9BFKWklP1KXS85AAFMbvR2h+9FKJ/KJNw13vZaMob
-         0sDMWJkYD4auuwai/5R9oezUsig0z/IzITFOyj6gkr7prvRpydGKDLwvIljNhpLX9XSb
-         Bbrg==
+        bh=6GrWQo82E3GSCpmP3GovxAjI7a2iaqXhqM2xOGoLzp4=;
+        b=skBMDmDlPiFWCOit+Nkau8JTPKXDTMIRWIbfzj96i6wnRidcWgy5GIrQYzs9SEQqon
+         CLEbTst0ZBWfqLBhFs9wpB2tvxF6LS3FAW1t0gRR8Ai5PJcoDhWhd+ejzibb9E8yweBQ
+         e/Buw+MKvIVd53Qx0S16qT8DXKOF9Qfm3x0N98RisFffxFOzO83k4Kg0RLxzZwBFR4kn
+         Ed9Y0lif+gaZ7qC650aztqCeKnYhHhjSJ+I/WZlqbky8EKtfhEXowaP8w+ZNxUSKJ2fr
+         sQvaBPYlJBnDZeZT1kt9Yr6orHReb5kANv19fUpYUFthI6uyoe0elMHQTN6eOZ2egkJz
+         3WNQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,36 +30,37 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Andy Lutomirski" <luto@amacapital.net>,
- "Kees Cook" <keescook@google.com>,
- thomas.lendacky@amd.com,
- "Arjan van de Ven" <arjan@linux.intel.com>,
- "Dave Hansen" <dave.hansen@intel.com>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Josh Poimboeuf" <jpoimboe@redhat.com>,
- "Jiri Kosina" <jikos@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linux-foundation.org>,
- "David Woodhouse" <dwmw@amazon.co.uk>,
+ "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
  "Ingo Molnar" <mingo@kernel.org>,
- "Rik van Riel" <riel@redhat.com>,
- "Andi Kleen" <ak@linux.intel.com>,
+ "Andy Lutomirski" <luto@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Brian Gerst" <brgerst@gmail.com>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
  "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Paul Turner" <pjt@google.com>,
- "Tim Chen" <tim.c.chen@linux.intel.com>,
- gnomes@lxorguk.ukuu.org.uk,
- "Peter Zijlstra" <peterz@infradead.org>
+ "Will Deacon" <will.deacon@arm.com>,
+ aliguori@amazon.com, keescook@google.com,
+ "Borislav Petkov" <bp@alien8.de>,
+ "David Laight" <David.Laight@aculab.com>,
+ hughd@google.com,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ daniel.gruss@iaik.tugraz.at,
+ "Greg KH" <gregkh@linuxfoundation.org>,
+ "Eduardo Valentin" <eduval@amazon.com>,
+ "Josh Poimboeuf" <jpoimboe@redhat.com>,
+ "Denys Vlasenko" <dvlasenk@redhat.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Juergen Gross" <jgross@suse.com>
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.970786514@decadent.org.uk>
+Message-ID: <lsq.1520823814.435783386@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 062/104] x86/retpoline/hyperv: Convert assembler
- indirect jumps
+Subject: [PATCH 3.2 041/104] x86/cpufeatures: Add X86_BUG_CPU_INSECURE
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699633509049730?=
-X-GMAIL-MSGID: =?utf-8?q?1594699633509049730?=
+X-GMAIL-THRID: =?utf-8?q?1594699632893002612?=
+X-GMAIL-MSGID: =?utf-8?q?1594699632893002612?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -67,86 +68,70 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit e70e5892b28c18f517f29ab6e83bd57705104b31 upstream.
+commit a89f040fa34ec9cd682aed98b8f04e3c47d998bd upstream.
 
-Convert all indirect jumps in hyperv inline asm code to use non-speculative
-sequences when CONFIG_RETPOLINE is enabled.
+Many x86 CPUs leak information to user space due to missing isolation of
+user space and kernel space page tables. There are many well documented
+ways to exploit that.
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+The upcoming software migitation of isolating the user and kernel space
+page tables needs a misfeature flag so code can be made runtime
+conditional.
+
+Add the BUG bits which indicates that the CPU is affected and add a feature
+bit which indicates that the software migitation is enabled.
+
+Assume for now that _ALL_ x86 CPUs are affected by this. Exceptions can be
+made later.
+
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Arjan van de Ven <arjan@linux.intel.com>
-Acked-by: Ingo Molnar <mingo@kernel.org>
-Cc: gnomes@lxorguk.ukuu.org.uk
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Laight <David.Laight@aculab.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Eduardo Valentin <eduval@amazon.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: thomas.lendacky@amd.com
-Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Juergen Gross <jgross@suse.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jikos@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Kees Cook <keescook@google.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linux-foundation.org>
-Cc: Paul Turner <pjt@google.com>
-Link: https://lkml.kernel.org/r/1515707194-20531-9-git-send-email-dwmw@amazon.co.uk
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: aliguori@amazon.com
+Cc: daniel.gruss@iaik.tugraz.at
+Cc: hughd@google.com
+Cc: keescook@google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 [bwh: Backported to 3.2:
- - Drop changes to hv_do_fast_hypercall8()
- - Include earlier updates to the asm constraints
- - Adjust filename, context]
+ - Assign the first available bug number
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/hv/hv.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
-
---- a/drivers/hv/hv.c
-+++ b/drivers/hv/hv.c
-@@ -27,6 +27,7 @@
- #include <linux/vmalloc.h>
- #include <linux/hyperv.h>
- #include <asm/hyperv.h>
-+#include <asm/nospec-branch.h>
- #include "hyperv_vmbus.h"
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -214,6 +214,8 @@
+  */
+ #define X86_BUG(x)		(NCAPINTS*32 + (x))
  
- /* The one and only */
-@@ -113,10 +114,13 @@ static u64 do_hypercall(u64 control, voi
- 	u64 output_address = (output) ? virt_to_phys(output) : 0;
- 	void *hypercall_page = hv_context.hypercall_page;
++#define X86_BUG_CPU_INSECURE	X86_BUG(0) /* CPU is insecure and needs kernel page table isolation */
++
+ #if defined(__KERNEL__) && !defined(__ASSEMBLY__)
  
--	__asm__ __volatile__("mov %0, %%r8" : : "r" (output_address) : "r8");
--	__asm__ __volatile__("call *%3" : "=a" (hv_status) :
--			     "c" (control), "d" (input_address),
--			     "m" (hypercall_page));
-+	__asm__ __volatile__("mov %4, %%r8\n"
-+			     CALL_NOSPEC
-+			     : "=a" (hv_status), ASM_CALL_CONSTRAINT,
-+			       "+c" (control), "+d" (input_address)
-+			     :  "r" (output_address),
-+				THUNK_TARGET(hypercall_page)
-+			     : "cc", "memory", "r8", "r9", "r10", "r11");
+ #include <asm/asm.h>
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -767,6 +767,9 @@ static void __init early_identify_cpu(st
  
- 	return hv_status;
+ 	if (this_cpu->c_bsp_init)
+ 		this_cpu->c_bsp_init(c);
++
++	/* Assume for now that ALL x86 CPUs are insecure */
++	setup_force_cpu_bug(X86_BUG_CPU_INSECURE);
+ }
  
-@@ -134,11 +138,14 @@ static u64 do_hypercall(u64 control, voi
- 	u32 output_address_lo = output_address & 0xFFFFFFFF;
- 	void *hypercall_page = hv_context.hypercall_page;
- 
--	__asm__ __volatile__ ("call *%8" : "=d"(hv_status_hi),
--			      "=a"(hv_status_lo) : "d" (control_hi),
--			      "a" (control_lo), "b" (input_address_hi),
--			      "c" (input_address_lo), "D"(output_address_hi),
--			      "S"(output_address_lo), "m" (hypercall_page));
-+	__asm__ __volatile__(CALL_NOSPEC
-+			     : "=d" (hv_status_hi), "=a" (hv_status_lo),
-+			       "+c" (input_address_lo), ASM_CALL_CONSTRAINT
-+			     : "d" (control_hi), "a" (control_lo),
-+			       "b" (input_address_hi),
-+			       "D"(output_address_hi), "S"(output_address_lo),
-+			       THUNK_TARGET(hypercall_page)
-+			     : "cc", "memory");
- 
- 	return hv_status_lo | ((u64)hv_status_hi << 32);
- #endif /* !x86_64 */
+ void __init early_cpu_init(void)
