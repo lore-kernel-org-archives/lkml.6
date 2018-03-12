@@ -1,185 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752611AbeCLJ6c (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 05:58:32 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:40932 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752472AbeCLJ6b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:58:31 -0400
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: linux-m68k@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] m68k/defconfig: Update defconfigs for v4.16-rc5
-Date: Mon, 12 Mar 2018 10:58:28 +0100
-Message-Id: <1520848708-18066-1-git-send-email-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.7.4
+        id S1752660AbeCLKBT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 06:01:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51468 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751543AbeCLKBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 06:01:15 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8DEE205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Alexei Starovoitov <ast@fb.com>, Josef Bacik <jbacik@fb.com>
+Cc: rostedt@goodmis.org, mingo@redhat.com, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org, ast@kernel.org,
+        kernel-team@fb.com, daniel@iogearbox.net, linux-btrfs@vger.kernel.org,
+        darrick.wong@oracle.com, mhiramat@kernel.org,
+        Josef Bacik <josef@toxicpanda.com>,
+        Akinobu Mita <akinobu.mita@gmail.com>
+Subject: [BUGFIX PATCH bpf-next] error-injection: Fix to prohibit jump optimization
+Date: Mon, 12 Mar 2018 19:00:49 +0900
+Message-Id: <152084884886.1536.4464134247603910765.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Since the kprobe which was optimized by jump can not change
+the execution path, the kprobe for error-injection must not
+be optimized. To prohibit it, set a dummy post-handler as
+officially stated in Documentation/kprobes.txt.
+
+Fixes: 4b1a29a7f542 ("error-injection: Support fault injection framework")
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
-To be combined with "m68k/defconfig: Update defconfigs for v4.16-rc1".
+ kernel/fail_function.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
- arch/m68k/configs/amiga_defconfig    | 1 -
- arch/m68k/configs/apollo_defconfig   | 1 -
- arch/m68k/configs/atari_defconfig    | 1 -
- arch/m68k/configs/bvme6000_defconfig | 1 -
- arch/m68k/configs/hp300_defconfig    | 1 -
- arch/m68k/configs/mac_defconfig      | 1 -
- arch/m68k/configs/multi_defconfig    | 1 -
- arch/m68k/configs/mvme147_defconfig  | 1 -
- arch/m68k/configs/mvme16x_defconfig  | 1 -
- arch/m68k/configs/q40_defconfig      | 1 -
- arch/m68k/configs/sun3_defconfig     | 1 -
- arch/m68k/configs/sun3x_defconfig    | 1 -
- 12 files changed, 12 deletions(-)
-
-diff --git a/arch/m68k/configs/amiga_defconfig b/arch/m68k/configs/amiga_defconfig
-index e7995c1e534a0b4a..37a8e5ab87285e7d 100644
---- a/arch/m68k/configs/amiga_defconfig
-+++ b/arch/m68k/configs/amiga_defconfig
-@@ -589,7 +589,6 @@ CONFIG_DLM=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_WW_MUTEX_SELFTEST=m
--CONFIG_RUNTIME_TESTING_MENU=y
- CONFIG_TEST_LIST_SORT=m
- CONFIG_TEST_SORT=m
- CONFIG_ATOMIC64_SELFTEST=m
-diff --git a/arch/m68k/configs/apollo_defconfig b/arch/m68k/configs/apollo_defconfig
-index dbbdac446b77f3b4..6a466266b852fb77 100644
---- a/arch/m68k/configs/apollo_defconfig
-+++ b/arch/m68k/configs/apollo_defconfig
-@@ -548,7 +548,6 @@ CONFIG_DLM=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_WW_MUTEX_SELFTEST=m
--CONFIG_RUNTIME_TESTING_MENU=y
- CONFIG_TEST_LIST_SORT=m
- CONFIG_TEST_SORT=m
- CONFIG_ATOMIC64_SELFTEST=m
-diff --git a/arch/m68k/configs/atari_defconfig b/arch/m68k/configs/atari_defconfig
-index ebe626eaf28a311a..c319a7712f736299 100644
---- a/arch/m68k/configs/atari_defconfig
-+++ b/arch/m68k/configs/atari_defconfig
-@@ -580,7 +580,6 @@ CONFIG_DLM=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_WW_MUTEX_SELFTEST=m
--CONFIG_RUNTIME_TESTING_MENU=y
- CONFIG_TEST_LIST_SORT=m
- CONFIG_TEST_SORT=m
- CONFIG_ATOMIC64_SELFTEST=m
-diff --git a/arch/m68k/configs/bvme6000_defconfig b/arch/m68k/configs/bvme6000_defconfig
-index 7de712e4d32a547e..6f6470fa9a508552 100644
---- a/arch/m68k/configs/bvme6000_defconfig
-+++ b/arch/m68k/configs/bvme6000_defconfig
-@@ -540,7 +540,6 @@ CONFIG_DLM=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_WW_MUTEX_SELFTEST=m
--CONFIG_RUNTIME_TESTING_MENU=y
- CONFIG_TEST_LIST_SORT=m
- CONFIG_TEST_SORT=m
- CONFIG_ATOMIC64_SELFTEST=m
-diff --git a/arch/m68k/configs/hp300_defconfig b/arch/m68k/configs/hp300_defconfig
-index d8790a1461946836..31a1a2b5e86031e2 100644
---- a/arch/m68k/configs/hp300_defconfig
-+++ b/arch/m68k/configs/hp300_defconfig
-@@ -550,7 +550,6 @@ CONFIG_DLM=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_WW_MUTEX_SELFTEST=m
--CONFIG_RUNTIME_TESTING_MENU=y
- CONFIG_TEST_LIST_SORT=m
- CONFIG_TEST_SORT=m
- CONFIG_ATOMIC64_SELFTEST=m
-diff --git a/arch/m68k/configs/mac_defconfig b/arch/m68k/configs/mac_defconfig
-index 2f19dff379b9b7ee..390d4a87441c3d11 100644
---- a/arch/m68k/configs/mac_defconfig
-+++ b/arch/m68k/configs/mac_defconfig
-@@ -572,7 +572,6 @@ CONFIG_DLM=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_WW_MUTEX_SELFTEST=m
--CONFIG_RUNTIME_TESTING_MENU=y
- CONFIG_TEST_LIST_SORT=m
- CONFIG_TEST_SORT=m
- CONFIG_ATOMIC64_SELFTEST=m
-diff --git a/arch/m68k/configs/multi_defconfig b/arch/m68k/configs/multi_defconfig
-index 49ba135c4dc58144..77be97d82dc378a2 100644
---- a/arch/m68k/configs/multi_defconfig
-+++ b/arch/m68k/configs/multi_defconfig
-@@ -652,7 +652,6 @@ CONFIG_DLM=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_WW_MUTEX_SELFTEST=m
--CONFIG_RUNTIME_TESTING_MENU=y
- CONFIG_TEST_LIST_SORT=m
- CONFIG_TEST_SORT=m
- CONFIG_ATOMIC64_SELFTEST=m
-diff --git a/arch/m68k/configs/mvme147_defconfig b/arch/m68k/configs/mvme147_defconfig
-index 3eecfaff5e92167a..2ca140757b0fd12d 100644
---- a/arch/m68k/configs/mvme147_defconfig
-+++ b/arch/m68k/configs/mvme147_defconfig
-@@ -540,7 +540,6 @@ CONFIG_DLM=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_WW_MUTEX_SELFTEST=m
--CONFIG_RUNTIME_TESTING_MENU=y
- CONFIG_TEST_LIST_SORT=m
- CONFIG_TEST_SORT=m
- CONFIG_ATOMIC64_SELFTEST=m
-diff --git a/arch/m68k/configs/mvme16x_defconfig b/arch/m68k/configs/mvme16x_defconfig
-index 5c64b3c93f14f8f9..6a3b4dcc5aab9ca8 100644
---- a/arch/m68k/configs/mvme16x_defconfig
-+++ b/arch/m68k/configs/mvme16x_defconfig
-@@ -540,7 +540,6 @@ CONFIG_DLM=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_WW_MUTEX_SELFTEST=m
--CONFIG_RUNTIME_TESTING_MENU=y
- CONFIG_TEST_LIST_SORT=m
- CONFIG_TEST_SORT=m
- CONFIG_ATOMIC64_SELFTEST=m
-diff --git a/arch/m68k/configs/q40_defconfig b/arch/m68k/configs/q40_defconfig
-index 9632ca33d8c8c17f..2a3e29c97652b0cd 100644
---- a/arch/m68k/configs/q40_defconfig
-+++ b/arch/m68k/configs/q40_defconfig
-@@ -563,7 +563,6 @@ CONFIG_DLM=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_WW_MUTEX_SELFTEST=m
--CONFIG_RUNTIME_TESTING_MENU=y
- CONFIG_TEST_LIST_SORT=m
- CONFIG_TEST_SORT=m
- CONFIG_ATOMIC64_SELFTEST=m
-diff --git a/arch/m68k/configs/sun3_defconfig b/arch/m68k/configs/sun3_defconfig
-index f4fb9f49babe8e08..cba2494c99b2da58 100644
---- a/arch/m68k/configs/sun3_defconfig
-+++ b/arch/m68k/configs/sun3_defconfig
-@@ -542,7 +542,6 @@ CONFIG_DLM=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_WW_MUTEX_SELFTEST=m
--CONFIG_RUNTIME_TESTING_MENU=y
- CONFIG_TEST_LIST_SORT=m
- CONFIG_TEST_SORT=m
- CONFIG_ATOMIC64_SELFTEST=m
-diff --git a/arch/m68k/configs/sun3x_defconfig b/arch/m68k/configs/sun3x_defconfig
-index 5dce6f545e5020cd..d911561137fd79d8 100644
---- a/arch/m68k/configs/sun3x_defconfig
-+++ b/arch/m68k/configs/sun3x_defconfig
-@@ -542,7 +542,6 @@ CONFIG_DLM=m
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_WW_MUTEX_SELFTEST=m
--CONFIG_RUNTIME_TESTING_MENU=y
- CONFIG_TEST_LIST_SORT=m
- CONFIG_TEST_SORT=m
- CONFIG_ATOMIC64_SELFTEST=m
--- 
-2.7.4
+diff --git a/kernel/fail_function.c b/kernel/fail_function.c
+index 21b0122cb39c..1d5632d8bbcc 100644
+--- a/kernel/fail_function.c
++++ b/kernel/fail_function.c
+@@ -14,6 +14,15 @@
+ 
+ static int fei_kprobe_handler(struct kprobe *kp, struct pt_regs *regs);
+ 
++static void fei_post_handler(struct kprobe *kp, struct pt_regs *regs,
++			     unsigned long flags)
++{
++	/*
++	 * A dummy post handler is required to prohibit optimizing, because
++	 * jump optimization does not support execution path overriding.
++	 */
++}
++
+ struct fei_attr {
+ 	struct list_head list;
+ 	struct kprobe kp;
+@@ -56,6 +65,7 @@ static struct fei_attr *fei_attr_new(const char *sym, unsigned long addr)
+ 			return NULL;
+ 		}
+ 		attr->kp.pre_handler = fei_kprobe_handler;
++		attr->kp.post_handler = fei_post_handler;
+ 		attr->retval = adjust_error_retval(addr, 0);
+ 		INIT_LIST_HEAD(&attr->list);
+ 	}
