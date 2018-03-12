@@ -1,245 +1,265 @@
-Return-Path: <kieran.bingham@ideasonboard.com>
-X-Google-Smtp-Source: AG47ELsIiYoPhE0UuhWe+DuS77RlZaKh+XhHHmymGT9f1LFL7hprhumsRHDTJ5viFsQGXeY1gaEC
-ARC-Seal: i=1; a=rsa-sha256; t=1521185489; cv=none;
-        d=google.com; s=arc-20160816;
-        b=BO6Yh9IoEEw/2vOB3EGRzuKIdHYf4t6R7vA1PX5wdagryJqBCw/bmC1gafNPvYtrqB
-         0PMf/PKiLdAoA0+y4m40sjA7QWty+xWK6p8hjsnJSZshoBBGR7BDgzxdnhldy36EIGHq
-         92qK1ozfbl98L2RppRbKMqW49wqZSgvFgrjnEfUS8/Wx2yt/7vmavcZpIfqJasp6vCuP
-         Gj0BAwmZbiDMFfXjOM9PPNYNP+zk6xRckAIfmLEZJxR6ISH1WlrP0QJjCvthYBlQQf+7
-         wAUDedQ3SUKhFeD50oQjSLXdrjxT5uVhMR6KFWspTfXm7j5LyWv9uEmrpohL4TiJyihu
-         asEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:organization:from:references:cc:to
-         :subject:dkim-signature:arc-authentication-results;
-        bh=Zeo13r/nYGYZbsIT7FAsiPG2r1uCAth0c1rS0Q3VXXk=;
-        b=K2Vow2ifKB3RByTyTln0pfEjxdSjwakQ8a+4NtNPkhBPHUtjeyS+GyzbIn8I5QmhRr
-         l+0R+kWsyACMwO4Zlj6t0cU29VZskIGFnA0atpjunot97HxV68FiqybO0jB9UOnBh2w7
-         zcvGhTOQVrDDdtvFOx4k2zuch7ObGW1dWrgYDWixDKF16kEIMtVeVVAI4zp2Yt6gVmYF
-         AdOzRvZJIeF38W+v9V7a//n+8p4bH/j22I1eC1HxzNA6SZb6dJ3QKpkLNutTUSlsKqbJ
-         j+S425e138lImU19KBlbw2W222LOjM0G0OUse1LaC12f3eKVLN0eAc5ulR7QtrphTDn7
-         BmTQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@ideasonboard.com header.s=mail header.b=B5Rm1xff;
-       spf=pass (google.com: domain of kieran.bingham@ideasonboard.com designates 185.26.127.97 as permitted sender) smtp.mailfrom=kieran.bingham@ideasonboard.com
-Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@ideasonboard.com header.s=mail header.b=B5Rm1xff;
-       spf=pass (google.com: domain of kieran.bingham@ideasonboard.com designates 185.26.127.97 as permitted sender) smtp.mailfrom=kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH][RFC] kernel.h: provide array iterator
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Kees Cook <keescook@chromium.org>,
- Kieran Bingham <kbingham@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- linux-media@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Masahiro Yamada <yamada.masahiro@socionext.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
- Ian Abbott <abbotti@mev.co.uk>, cocci@systeme.lip6.fr, keescook@google.com
-References: <1521108052-26861-1-git-send-email-kieran.bingham@ideasonboard.com>
- <CAGXu5jJETok21C7Au=+hh+1jMwTOqULXpL1QF5S2b_i-CoeoQw@mail.gmail.com>
- <3d969683074366dfa32e2fbb83bf3b65@lip6.fr>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <f6a501e5-10da-6dac-ba38-735d316dcac0@ideasonboard.com>
-Date: Fri, 16 Mar 2018 08:31:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-942284-1520877226-5-17807110737771066200
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES enca, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520877225; b=CSB/c4CaSbsKiQdRAMHOQ/Wtmw3o01GNpBccQOSyBnTnZ9k
+    /kzpPw0+CvOS0by5uktvLmWhsQmPgoQb2pEonu41WSFQ+GcAh04Rrt2Fwzb1rGAH
+    egKybY9mrGRYUjPxi8GCWbepOF5xfQ47lWAssop0lwIgLRNYR+M95XD8Xuh+b2EN
+    QRTdTo8Qty1Fl+bNM0TlV0vi1Ho2cDFLpEUrL+PzAoeM/XdlB+le8RqFRY3A8VaW
+    qOL0d5ev70I0V88DNufpcv6+PmhyhqzT0Ne1q9N+FWNdzUa0Eks36FQAfM1rk0A3
+    hXgUHQokkOyt/vlZG4Wt2WmYimSz6EoAwT+HgSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520877225; bh=1
+    sOT3FgWt7SW5R3mogU/ChrgHbv3jj2s15Q3XM+uWQ8=; b=LrPyy5jkL93FEQ6DM
+    9hbQRQWbaOILEhMsBBr/wIZykkeWijviggGKp65JEOecghpRDv9XpOHfqIWo/cZU
+    m9Ar+TAsGg7MrzcsroWELN6NJ2YMN+sscu6PAYb4mO7Uh37XgiPIWpcKi4X0wWQF
+    SJ26W9FO3itVoutUvcM5PpWwBjiQ04gmYWrb9XyTO0/OSmY2KK6NmY93SImE/bTI
+    2JBHUVJkK2gWPfCu4wCixI/+2cczocGoA2aRfSjKeKF4Mt53hkznMBRfv1IGJRHU
+    L1zj/Z2qlitbsYnd/lprmhvlY5bjVGRXmXvhGBJ/U9HBuzsjz1nyvAMhjDPubLVU
+    YvJuA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=IlLiKWZ/ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=uDmqr2tx;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=IlLiKWZ/ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=uDmqr2tx;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELtEUHxkloWeYh/+IblZ6uOtqEwDuujY4BXPrvp2EMYTU0kr7iN4DMzE3D+cVOTZLGsuC55y7g==
+From: Deepa Dinamani <deepa.kernel@gmail.com>
+To: arnd@arndb.de,
+	tglx@linutronix.de,
+	john.stultz@linaro.org
+Subject: [PATCH v4 00/10] posix_clocks: Prepare syscalls for 64 bit time_t
+ conversion
+Date: Mon, 12 Mar 2018 10:52:57 -0700
+Message-Id: <20180312175307.11032-1-deepa.kernel@gmail.com>
+X-Mailer: git-send-email 2.14.1
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: mark.rutland@arm.com, linux-mips@linux-mips.org, peterz@infradead.org,
+ benh@kernel.crashing.org, sth@linux.vnet.ibm.com, heiko.carstens@de.ibm.com,
+ paulus@samba.org, hpa@zytor.com, sparclinux@vger.kernel.org,
+ devel@driverdev.osuosl.org, linux-s390@vger.kernel.org, y2038@lists.linaro.org,
+ mpe@ellerman.id.au, deller@gmx.de, x86@kernel.org, sebott@linux.vnet.ibm.com,
+ jejb@parisc-linux.org, will.deacon@arm.com, borntraeger@de.ibm.com,
+ mingo@redhat.com, oprofile-list@lists.sf.net, catalin.marinas@arm.com,
+ linux-arch@vger.kernel.org, rric@kernel.org, cmetcalf@mellanox.com,
+ oberpar@linux.vnet.ibm.com, acme@kernel.org, jwi@linux.vnet.ibm.com,
+ rostedt@goodmis.org, ubraun@linux.vnet.ibm.com, gerald.schaefer@de.ibm.com,
+ linux-parisc@vger.kernel.org, gregkh@linuxfoundation.org, cohuck@redhat.com,
+ linux-kernel@vger.kernel.org, ralf@linux-mips.org, hoeppner@linux.vnet.ibm.com,
+ linux-api@vger.kernel.org, schwidefsky@de.ibm.com,
+ linuxppc-dev@lists.ozlabs.org, davem@davemloft.net
 MIME-Version: 1.0
-In-Reply-To: <3d969683074366dfa32e2fbb83bf3b65@lip6.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594997409535098266?=
-X-GMAIL-MSGID: =?utf-8?q?1595078595323693403?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Kees, Julia,
+The series is a preparation series for individual architectures
+to use 64 bit time_t syscalls in compat and 32 bit emulation modes.
 
-On 16/03/18 07:41, Julia Lawall wrote:
-> Le 16.03.2018 05:21, Kees Cook a écrit :
->> On Thu, Mar 15, 2018 at 3:00 AM, Kieran Bingham
->> <kieran.bingham@ideasonboard.com> wrote:
->>> Simplify array iteration with a helper to iterate each entry in an array.
->>> Utilise the existing ARRAY_SIZE macro to identify the length of the array
->>> and pointer arithmetic to process each item as a for loop.
->>>
->>> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
->>> ---
->>>  include/linux/kernel.h | 10 ++++++++++
->>>  1 file changed, 10 insertions(+)
->>>
->>> The use of static arrays to store data is a common use case throughout the
->>> kernel. Along with that is the obvious need to iterate that data.
->>>
->>> In fact there are just shy of 5000 instances of iterating a static array:
->>>         git grep "for .*ARRAY_SIZE" | wc -l
->>>         4943
->>
->> I suspect the main question is "Does this macro make the code easier to read?"
->>
->> I think it does, and we have other kinds of iterators like this in the
+This is a follow up to the series Arnd Bergmann posted:
+https://sourceware.org/ml/libc-alpha/2015-05/msg00070.html [1]
 
-Great :-D - I'm happy to read that response!
+Thomas, Arnd, this seems ready to be merged now.
+Can you help get this merged?
+
+Big picture is as per the lwn article:
+https://lwn.net/Articles/643234/ [2]
+
+The series is directed at converting posix clock syscalls:
+clock_gettime, clock_settime, clock_getres and clock_nanosleep
+to use a new data structure __kernel_timespec at syscall boundaries.
+__kernel_timespec maintains 64 bit time_t across all execution modes.
+
+vdso will be handled as part of each architecture when they enable
+support for 64 bit time_t.
+
+The compat syscalls are repurposed to provide backward compatibility
+by using them as native syscalls as well for 32 bit architectures.
+They will continue to use timespec at syscall boundaries.
+
+CONFIG_64_BIT_TIME controls whether the syscalls use __kernel_timespec
+or timespec at syscall boundaries.
+
+The series does the following:
+1. Enable compat syscalls on 32 bit architectures.
+2. Add a new __kernel_timespec type to be used as the data structure
+   for all the new syscalls.
+3. Add new config CONFIG_64BIT_TIME(intead of the CONFIG_COMPAT_TIME in
+   [1] and [2] to switch to new definition of __kernel_timespec. It is
+   the same as struct timespec otherwise.
+4. Add new CONFIG_32BIT_TIME to conditionally compile compat syscalls.
+
+* Changes since v3:
+ * Updated include file ordering
+* Changes since v2:
+ * Dropped the ARCH_HAS_64BIT_TIME config.
+ * Fixed zeroing out of higher order bits of tv_nsec for real.
+ * Addressed minor review comments from v1.
+* Changes since v1:
+ * Introduce CONFIG_32BIT_TIME
+ * Fixed zeroing out of higher order bits of tv_nsec
+ * Included Arnd's changes to fix up use of compat headers
+
+I decided against using LEGACY_TIME_SYSCALLS to conditionally compile
+legacy time syscalls such as sys_nanosleep because this will need to
+enclose compat_sys_nanosleep as well. So, defining it as 
+
+config LEGACY_TIME_SYSCALLS
+     def_bool 64BIT || !64BIT_TIME
+
+will not include compat_sys_nanosleep. We will instead need a new config to
+exclusively mark legacy syscalls.
+
+Deepa Dinamani (10):
+  compat: Make compat helpers independent of CONFIG_COMPAT
+  include: Move compat_timespec/ timeval to compat_time.h
+  compat: enable compat_get/put_timespec64 always
+  arch: introduce CONFIG_64BIT_TIME
+  arch: Introduce CONFIG_COMPAT_32BIT_TIME
+  posix-clocks: Make compat syscalls depend on CONFIG_COMPAT_32BIT_TIME
+  include: Add new y2038 safe __kernel_timespec
+  fix get_timespec64() for y2038 safe compat interfaces
+  change time types to new y2038 safe __kernel_* types
+  nanosleep: change time types to safe __kernel_* types
+
+ arch/Kconfig                           | 15 +++++++++
+ arch/arm64/include/asm/compat.h        | 11 -------
+ arch/arm64/include/asm/stat.h          |  1 +
+ arch/arm64/kernel/hw_breakpoint.c      |  1 -
+ arch/arm64/kernel/perf_regs.c          |  2 +-
+ arch/arm64/kernel/process.c            |  1 -
+ arch/mips/include/asm/compat.h         | 11 -------
+ arch/mips/kernel/signal32.c            |  2 +-
+ arch/parisc/include/asm/compat.h       | 11 -------
+ arch/powerpc/include/asm/compat.h      | 11 -------
+ arch/powerpc/kernel/asm-offsets.c      |  2 +-
+ arch/powerpc/oprofile/backtrace.c      |  2 +-
+ arch/s390/hypfs/hypfs_sprp.c           |  1 -
+ arch/s390/include/asm/compat.h         | 11 -------
+ arch/s390/include/asm/elf.h            |  4 +--
+ arch/s390/kvm/priv.c                   |  1 -
+ arch/s390/pci/pci_clp.c                |  1 -
+ arch/sparc/include/asm/compat.h        | 11 -------
+ arch/tile/include/asm/compat.h         | 11 -------
+ arch/x86/events/core.c                 |  2 +-
+ arch/x86/include/asm/compat.h          | 11 -------
+ arch/x86/include/asm/ftrace.h          |  2 +-
+ arch/x86/include/asm/sys_ia32.h        |  2 +-
+ arch/x86/kernel/sys_x86_64.c           |  2 +-
+ drivers/s390/block/dasd_ioctl.c        |  1 -
+ drivers/s390/char/fs3270.c             |  1 -
+ drivers/s390/char/sclp_ctl.c           |  1 -
+ drivers/s390/char/vmcp.c               |  1 -
+ drivers/s390/cio/chsc_sch.c            |  1 -
+ drivers/s390/net/qeth_core_main.c      |  2 +-
+ include/linux/compat.h                 | 11 ++++---
+ include/linux/compat_time.h            | 23 ++++++++++++++
+ include/linux/restart_block.h          |  7 ++--
+ include/linux/syscalls.h               | 12 +++----
+ include/linux/time.h                   |  4 +--
+ include/linux/time64.h                 | 10 +++++-
+ include/uapi/asm-generic/posix_types.h |  1 +
+ include/uapi/linux/time.h              |  7 ++++
+ kernel/compat.c                        | 52 +++++-------------------------
+ kernel/time/hrtimer.c                  | 10 ++++--
+ kernel/time/posix-stubs.c              | 12 ++++---
+ kernel/time/posix-timers.c             | 24 ++++++++++----
+ kernel/time/time.c                     | 58 +++++++++++++++++++++++++++++++---
+ 43 files changed, 177 insertions(+), 190 deletions(-)
+ create mode 100644 include/linux/compat_time.h
 
 
->> kernel already. Would it be worth building a Coccinelle script to do
->> the 5000 replacements?
+base-commit: 61530b14b059d4838dcc2186e9de9d57e195ce55
+-- 
+2.14.1
 
-Perhaps - though I suspect each case may have its nuances.
-
-Looking around - I see some loops depend on their 'i' index variable in
-different ways, so it might not always be convenient to remove that automagically.
-
-Or perhaps I'd have to provide an alternative _indexed variant somehow which can
-include the current offset... (or just include a scoped index in this iterator
-some how)
-
-Is there any policy or precedent on creating variables inside the scope of the
-loop only through a macro like this?
-
-(I'm sure I recall something in the back of my memory so I'll dig, but if anyone
-has pointers...)
-
-
-
-> Coccinelle should be able to replace the for loop header. 
-
-I think that would be the main focus.
-We would also need to add an iterator somewhere in the scope of the function...
-
-
-
-> Coccinelle
-> could create the local macro. 
-
-I made the local macro for better readability of my use case ... Other places
-could use the core macro directly - or also create a local macro.
-
-That would be a per use case option I believe. But I guess it wouldn't be too
-hard to form a macro using coccinelle with the name of the array or type that it
-is iterating though.
-
-
-
-> Coccinelle might not put the definition in
-> exactly the right place.  Before the function of the first use would be
-> possible, or before any function.
-
-IMO - a macro to iterate the array specifically should come directly(ish) after
-the declaration of the array where possible. (but not inside any struct if the
-array is in there of course)
-
-
-
-> I don't think that Coccinelle could figure out how to split one loop into
-> two as done here, unless that specific pattern is very common.  I guess
-> that the split is to add the flush_workqueue, and is not the main goal?
-
-Yes, the split of this loop into two was very specific to this instance of
-adding the flush_workqueue in the middle.
-
-It was this process of splitting the loop in two which led me wanting to
-optimise the iterators, rather than just duplicating it.
-
-
-Regards
-
-Kieran Bingham
-
-
-
-> julia
-> 
-> 
-> 
-> 
->> -Kees
->>
->>>
->>> When working on the UVC driver - I found that I needed to split one such
->>> iteration into two parts, and at the same time felt that this could be
->>> refactored to be cleaner / easier to read.
->>>
->>> I do however worry that this simple short patch might not be desired or could
->>> also be heavily bikeshedded due to it's potential wide spread use (though
->>> perhaps that would be a good thing to have more users) ...  but here it is,
->>> along with an example usage below which is part of a separate series.
->>>
->>> The aim is to simplify iteration on static arrays, in the same way that we have
->>> iterators for lists. The use of the ARRAY_SIZE macro, provides all the
->>> protections given by "__must_be_array(arr)" to this macro too.
->>>
->>> Regards
->>>
->>> Kieran
->>>
->>> =============================================================================
->>> Example Usage from a pending UVC development:
->>>
->>> +#define for_each_uvc_urb(uvc_urb, uvc_streaming) \
->>> +       for_each_array_element(uvc_urb, uvc_streaming->uvc_urb)
->>>
->>>  /*
->>>   * Uninitialize isochronous/bulk URBs and free transfer buffers.
->>>   */
->>>  static void uvc_uninit_video(struct uvc_streaming *stream, int free_buffers)
->>>  {
->>> -       struct urb *urb;
->>> -       unsigned int i;
->>> +       struct uvc_urb *uvc_urb;
->>>
->>>         uvc_video_stats_stop(stream);
->>>
->>> -       for (i = 0; i < UVC_URBS; ++i) {
->>> -               struct uvc_urb *uvc_urb = &stream->uvc_urb[i];
->>> +       for_each_uvc_urb(uvc_urb, stream)
->>> +               usb_kill_urb(uvc_urb->urb);
->>>
->>> -               urb = uvc_urb->urb;
->>> -               if (urb == NULL)
->>> -                       continue;
->>> +       flush_workqueue(stream->async_wq);
->>>
->>> -               usb_kill_urb(urb);
->>> -               usb_free_urb(urb);
->>> +       for_each_uvc_urb(uvc_urb, stream) {
->>> +               usb_free_urb(uvc_urb->urb);
->>>                 uvc_urb->urb = NULL;
->>>         }
->>>
->>>         if (free_buffers)
->>>                 uvc_free_urb_buffers(stream);
->>>  }
->>> =============================================================================
->>>
->>>
->>>
->>>
->>> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
->>> index ce51455e2adf..95d7dae248b7 100644
->>> --- a/include/linux/kernel.h
->>> +++ b/include/linux/kernel.h
->>> @@ -70,6 +70,16 @@
->>>   */
->>>  #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
->>>
->>> +/**
->>> + * for_each_array_element - Iterate all items in an array
->>> + * @elem: pointer of array type for iteration cursor
->>> + * @array: array to be iterated
->>> + */
->>> +#define for_each_array_element(elem, array) \
->>> +       for (elem = &(array)[0]; \
->>> +            elem < &(array)[ARRAY_SIZE(array)]; \
->>> +            ++elem)
->>> +
->>>  #define u64_to_user_ptr(x) (           \
->>>  {                                      \
->>>         typecheck(u64, x);              \
->>> -- 
->>> 2.7.4
->>>
+Cc: acme@kernel.org
+Cc: benh@kernel.crashing.org
+Cc: borntraeger@de.ibm.com
+Cc: catalin.marinas@arm.com
+Cc: cmetcalf@mellanox.com
+Cc: cohuck@redhat.com
+Cc: davem@davemloft.net
+Cc: deller@gmx.de
+Cc: devel@driverdev.osuosl.org
+Cc: gerald.schaefer@de.ibm.com
+Cc: gregkh@linuxfoundation.org
+Cc: heiko.carstens@de.ibm.com
+Cc: hoeppner@linux.vnet.ibm.com
+Cc: hpa@zytor.com
+Cc: jejb@parisc-linux.org
+Cc: jwi@linux.vnet.ibm.com
+Cc: linux-api@vger.kernel.org
+Cc: linux-arch@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-mips@linux-mips.org
+Cc: linux-parisc@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-s390@vger.kernel.org
+Cc: mark.rutland@arm.com
+Cc: mingo@redhat.com
+Cc: mpe@ellerman.id.au
+Cc: oberpar@linux.vnet.ibm.com
+Cc: oprofile-list@lists.sf.net
+Cc: paulus@samba.org
+Cc: peterz@infradead.org
+Cc: ralf@linux-mips.org
+Cc: rostedt@goodmis.org
+Cc: rric@kernel.org
+Cc: schwidefsky@de.ibm.com
+Cc: sebott@linux.vnet.ibm.com
+Cc: sparclinux@vger.kernel.org
+Cc: sth@linux.vnet.ibm.com
+Cc: ubraun@linux.vnet.ibm.com
+Cc: will.deacon@arm.com
+Cc: x86@kernel.org
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
