@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELsDv16tZ7PLmQdTeoTkm12OlLkTHSepMIGk+zwumj6PaHNe4ukKFr9TKWMDhj3sKI4rgx5N
-ARC-Seal: i=1; a=rsa-sha256; t=1520824061; cv=none;
+X-Google-Smtp-Source: AG47ELtu7mmPG12osvp2YMj9GNdVo6GeazSA+xfoPXjP2wpdjm0FPdQwC6JPiDprFvH+KCZanZsJ
+ARC-Seal: i=1; a=rsa-sha256; t=1520824060; cv=none;
         d=google.com; s=arc-20160816;
-        b=qizEcJB9+7lOdjyD0wGh26mV3DAbt2HLpV+f1oldReZGMW9zp3wHNZsUYjBm6TaNb9
-         vYlVxMDnNDlN9X7oz/XCqqgddSJX7AJSs+UD9xgouHq8mowQn5hfnmBE6e6oIQs8KDRy
-         OGXaP77fwR2J/rd2as32hfGf3h4tGhE8UIZoXrgl55FWsme2d8lwgorPhyuGlOEH3oDY
-         0me9uxVrU5OdloSsYrz5CIrYI4aDev15OYbI/DnYCmy2p1241SDZ46kHbT/pn93Yefsj
-         KMYiG3y00xD+plhWIxiGkvtmfBXJBa/lNd/nFM9dqdHRhGgCyOjxt7M0ZrZagAxu1wsJ
-         67/g==
+        b=QBNI3jtbBOYeJWJTHbwQBcfTWLiUfAt5YMyTypPVOslQhuRsgxioI3J2DInmdO/jLQ
+         AUCvyXwYQQfFq6RXcMPiOGB7jvM7gYqLiKwDeZMpqOpiX4hzRyc3SzOUfyZcNZxLAHL8
+         Q7gVvr0ATU4OIWx4I6qJCGjrdrHI8aZ/iQE25ZexN5zOORhuWJerx4yy8u3X/7Mtpslg
+         nd9jP35Zbj0GupYGc/d91oq67cMAwFNqP/pcgCgOPYmSOcOwFfw8/RLl0Ru9WwyDp7Fz
+         jXjsrko32jWCninbOrpTvS+8pSRLtiO1ekSF+JSRKvMFgajxr1xqc3n+azQ2k44yk0xn
+         tv6Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=3ZGWIod28ddEGG0Ve5FK1KTN3tX6wgLj8dhqTpSrEjA=;
-        b=fgZFglLl3VMHc5ELpez5paGQa2kQ4zUD9PXl1yEjSwDbSvJSBkurm7uFyPdYOYD6+7
-         RG5EHULYGZT3ad0hxGNIM2U5pL27RIVXX2Kq+OxbdGvZzqVtuSTeI5f7KY1LT/szo7lR
-         Nu5LqUYK7Nfvg3SaKAoocJuQLgzDXIHnaeR8HiOjRb3AXQAmwEllntaD0h5TYwcHTQb/
-         p8s2MiOlv7KER+3CnHQbe7dSNWm7964a6gS5ohTsnE1J4n9JlI/FxRvG6WnL/qj8DN4t
-         LUmDRZafPfG78caUBohC25hBHamSORRuKnVG8Lm90WsMEznH4th7vijLE5jj59ZH9le4
-         zlKw==
+        bh=38+3gxKdpbgxeeHWXYaGx/JR2iNUnGAo5EqJEWyy1O8=;
+        b=cnQccgxA4bQc6KPRwqCAQVY3M442YLnCmeIEYCkhMbcQm6B7QWs6vLzOYGg3YHqf2y
+         00jFPaikMmlc58LSQBKmifxylzLvcLNsGwMIxSrkI6VVGGoVzCetYpanfJIR/7uk6omh
+         CCbjWmVyQOc9ZibYTfGG4Ae3QawxTL6gfOuD/TKBjkHJ3NfQQBq0jf9q66/aBIiSFtRx
+         6Mt1q13GcEarFbpdiIevzWI8W/cnYAcUacxM+ZxnRf4NqMSG5qYvRdZ2z9yeP8/lL6Fs
+         wM1vLG5de3pWIeL8sRDeZv51WUs1DxoW/MuBiWdDV0iS5Xpf/ihaWmAxt/weZ91Lwtgk
+         Y2Ig==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -29,26 +29,29 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, gregkh@linuxfoundation.org,
+CC: akpm@linux-foundation.org,
  "Thomas Gleixner" <tglx@linutronix.de>,
- "Al Viro" <viro@zeniv.linux.org.uk>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
  "Andy Lutomirski" <luto@kernel.org>,
- linux-arch@vger.kernel.org, alan@linux.intel.com,
- "Kees Cook" <keescook@chromium.org>,
- "Dan Williams" <dan.j.williams@intel.com>,
- kernel-hardening@lists.openwall.com, torvalds@linux-foundation.org
+ "Ingo Molnar" <mingo@kernel.org>,
+ kernel-janitors@vger.kernel.org,
+ "Dan Carpenter" <dan.carpenter@oracle.com>,
+ "Borislav Petkov" <bp@suse.de>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "David Woodhouse" <dwmw@amazon.co.uk>,
+ "KarimAllah Ahmed" <karahmed@amazon.de>
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.163616880@decadent.org.uk>
+Message-ID: <lsq.1520823814.143503038@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 086/104] x86/get_user: Use pointer masking to limit
- speculation
+Subject: [PATCH 3.2 097/104] x86/spectre: Fix an error message
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699610617990203?=
-X-GMAIL-MSGID: =?utf-8?q?1594699610617990203?=
+X-GMAIL-THRID: =?utf-8?q?1594699610185199725?=
+X-GMAIL-MSGID: =?utf-8?q?1594699610185199725?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,88 +59,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit c7f631cb07e7da06ac1d231ca178452339e32a94 upstream.
+commit 9de29eac8d2189424d81c0d840cd0469aa3d41c8 upstream.
 
-Quoting Linus:
+If i == ARRAY_SIZE(mitigation_options) then we accidentally print
+garbage from one space beyond the end of the mitigation_options[] array.
 
-    I do think that it would be a good idea to very expressly document
-    the fact that it's not that the user access itself is unsafe. I do
-    agree that things like "get_user()" want to be protected, but not
-    because of any direct bugs or problems with get_user() and friends,
-    but simply because get_user() is an excellent source of a pointer
-    that is obviously controlled from a potentially attacking user
-    space. So it's a prime candidate for then finding _subsequent_
-    accesses that can then be used to perturb the cache.
-
-Unlike the __get_user() case get_user() includes the address limit check
-near the pointer de-reference. With that locality the speculation can be
-mitigated with pointer narrowing rather than a barrier, i.e.
-array_index_nospec(). Where the narrowing is performed by:
-
-	cmp %limit, %ptr
-	sbb %mask, %mask
-	and %mask, %ptr
-
-With respect to speculation the value of %ptr is either less than %limit
-or NULL.
-
-Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arch@vger.kernel.org
-Cc: Kees Cook <keescook@chromium.org>
-Cc: kernel-hardening@lists.openwall.com
-Cc: gregkh@linuxfoundation.org
-Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Andy Lutomirski <luto@kernel.org>
-Cc: torvalds@linux-foundation.org
-Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727417469.33451.11804043010080838495.stgit@dwillia2-desk3.amr.corp.intel.com
-[bwh: Backported to 3.2:
- - Drop changes to 32-bit implementation of __get_user_8
- - Adjust context]
+Cc: Borislav Petkov <bp@suse.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org
+Fixes: 9005c6834c0f ("x86/spectre: Simplify spectre_v2 command line parsing")
+Link: http://lkml.kernel.org/r/20180214071416.GA26677@mwanda
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.2: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/lib/getuser.S | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
---- a/arch/x86/lib/getuser.S
-+++ b/arch/x86/lib/getuser.S
-@@ -40,6 +40,8 @@ ENTRY(__get_user_1)
- 	GET_THREAD_INFO(%_ASM_DX)
- 	cmp TI_addr_limit(%_ASM_DX),%_ASM_AX
- 	jae bad_get_user
-+	sbb %_ASM_DX, %_ASM_DX		/* array_index_mask_nospec() */
-+	and %_ASM_DX, %_ASM_AX
- 1:	movzb (%_ASM_AX),%edx
- 	xor %eax,%eax
- 	ret
-@@ -53,6 +55,8 @@ ENTRY(__get_user_2)
- 	GET_THREAD_INFO(%_ASM_DX)
- 	cmp TI_addr_limit(%_ASM_DX),%_ASM_AX
- 	jae bad_get_user
-+	sbb %_ASM_DX, %_ASM_DX		/* array_index_mask_nospec() */
-+	and %_ASM_DX, %_ASM_AX
- 2:	movzwl -1(%_ASM_AX),%edx
- 	xor %eax,%eax
- 	ret
-@@ -66,6 +70,8 @@ ENTRY(__get_user_4)
- 	GET_THREAD_INFO(%_ASM_DX)
- 	cmp TI_addr_limit(%_ASM_DX),%_ASM_AX
- 	jae bad_get_user
-+	sbb %_ASM_DX, %_ASM_DX		/* array_index_mask_nospec() */
-+	and %_ASM_DX, %_ASM_AX
- 3:	mov -3(%_ASM_AX),%edx
- 	xor %eax,%eax
- 	ret
-@@ -80,6 +86,8 @@ ENTRY(__get_user_8)
- 	GET_THREAD_INFO(%_ASM_DX)
- 	cmp TI_addr_limit(%_ASM_DX),%_ASM_AX
- 	jae	bad_get_user
-+	sbb %_ASM_DX, %_ASM_DX		/* array_index_mask_nospec() */
-+	and %_ASM_DX, %_ASM_AX
- 4:	movq -7(%_ASM_AX),%_ASM_DX
- 	xor %eax,%eax
- 	ret
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -317,8 +317,7 @@ static enum spectre_v2_mitigation_cmd __
+ 		}
+ 
+ 		if (i >= ARRAY_SIZE(mitigation_options)) {
+-			pr_err("unknown option (%s). Switching to AUTO select\n",
+-			       mitigation_options[i].option);
++			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
+ 			return SPECTRE_V2_CMD_AUTO;
+ 		}
+ 	}
