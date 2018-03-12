@@ -1,50 +1,86 @@
-Return-Path: <namit@vmware.com>
-X-Google-Smtp-Source: AG47ELt1Oi+q0mufGQZT6ICy0RE9U0I2Db1OvAUbdTimw0r/OPvlBtajpczArxwMRkAqU3TMhkuA
-ARC-Seal: i=1; a=rsa-sha256; t=1520882364; cv=none;
-        d=google.com; s=arc-20160816;
-        b=r7pcMrAJejt7O3hHBON6CkMTVEbTOMxbsbfB1xyhj7LpURaS220eKpvqzR2PDCToRm
-         KuR+LKDjrUsZCAX6hWgSoZVwulKgtdKWpKFamWTtGUhwB2/0mG9ZWqf274D8jdXrLXhj
-         AdvGymFEvLSHD61NRkTTQZVagbZo1ZK+vZQsOiZiUckG/wtTeEBFJz8GH7DiyiZ+EWWf
-         fp5uaIclDAftaFGDxyL43RbNSbO8bGCULc5aAB0dPqgPRgrs2LJYwO8AhbfsqEmOWOBe
-         HwL3/IcBUec20JoKtKwSuujGSRRDFH2TSaV9Wgqsl/yqvbF7rTS3aa3zgwuWe4BuzneO
-         vN+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=lpMKocAw17rRMUnkFpLl1m/dpTSdEiJSkDtkDYpqwiY=;
-        b=yrPEFEaC9n/eWld7U0qi8ueDV+AImWVJhEhIAs0JG65yeKn7jnN2dQfgikyLlvXrXh
-         Bmfz08QapImL7SaXI0lO4wb+Rcu+EmWn0mXQQ8aeSNiAVpyqb2FKcuoWab0p0aONVKeI
-         T3ee/cEQf2mEAndRL3XbvziWPPVfvkzNM4LtyJeOOFnCcQLFIsPQe+1a2QFANgeOFXAk
-         EzR0J0Y+dxUk09YApNbfxOagVu0gg3z1FkgvWS44s6U1Oas17MpWRhkZBUknzwIpg3oG
-         ATsC9neUKtP7ykWFbduYdleP2DqgEwRbvn+utD5VNdJR7qWyWeZJY/i8MuVtBNue0QED
-         poDA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of namit@vmware.com designates 208.91.0.189 as permitted sender) smtp.mailfrom=namit@vmware.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of namit@vmware.com designates 208.91.0.189 as permitted sender) smtp.mailfrom=namit@vmware.com
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1086679-1520882933-2-3943401889895859160
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520882932; b=s7nhzyIWr+mxVVSfFYzbMkeTtGibSM282uuFmtm4QTaKHYu
+    sb8fK7xsLrw7jJFjaU1iD4Q+5aU8YOpnS59Nh414Ql0SdGuXGknbcwIMIZ6AvpP5
+    91NOSGTNPUHyWaOn+273Zc8fPOBnsq5GorsbJyj5Rl4R1aLCA/0K5Kj1FBTUxqVB
+    mxPGCsLIRoicja1Q0S/svN0C9Lx3lTuWR9g0LmcprmUfHYxRHcDnd/9FCv0Kr9nz
+    6LoB7MfiF8ddMIv/vdZk05lfLJSY9pHZ3YWXfqVdBXowI9ENOp46B9tJuvsAHtb9
+    jV6u0Uvr/8O1/EwM+CDXdyCJSNOOmJOxu/mRttQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520882932; bh=uVDlPqY3RFy699HrPDtBPat9qF
+    FZ/0XHM5E5AN5MhVY=; b=hL3rxUnlEfpZ3gIQTN1EpDrHBq/i4ZdwUQlp19yZhS
+    OGSyETY/GjMXcdp6QguHh5gXYqRUVCQ4njb3/zD4zewF4a3w0N3DgwcBwlKxbq6u
+    r4Tm8fTS2TjOb+0eTLmrBLzrMAzLh4V5ifvOgVveV6RHmD5kg4ACRjNYMhJLQMom
+    NdaO5NBACUI2EljJW58WVemGK+j+0vJ3Qb6+rkSLCiZyI5/dd9EN5TZGJgKGhnzS
+    +TuxGMwiWR9XRGO6UHko4ReGN1zMLSl+D+o9qOnjh6WEFCJU0oRsE8ieyAbe6rTj
+    bOSFH/wcHu0N3EnDwzqMkeCQ3T2dDoEZuZ6dxgrWzMEA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=vmware.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=vmware.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=vmware.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=vmware.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751275AbeCLT2v (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 12 Mar 2018 15:28:51 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:42598 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750811AbeCLT2u (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 12 Mar 2018 15:28:50 -0400
 From: Nadav Amit <namit@vmware.com>
-To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>
-CC: Xavier Deguillard <xdeguillard@vmware.com>, "VMware, Inc."
-	<pv-drivers@vmware.com>, <linux-kernel@vger.kernel.org>, Gil Kupfer
-	<gilkup@gmail.com>, Oleksandr Natalenko <onatalen@redhat.com>, Nadav Amit
-	<nadav.amit@gmail.com>, <stable@vger.kernel.org>, Nadav Amit
-	<namit@vmware.com>
-Subject: [PATCH] vmw_balloon: fixing double free when batching mode is off
-Date: Mon, 12 Mar 2018 12:19:17 -0700
-Message-ID: <20180312191917.21381-1-namit@vmware.com>
+To: Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Xavier Deguillard <xdeguillard@vmware.com>,
+        "VMware, Inc." <pv-drivers@vmware.com>,
+        <linux-kernel@vger.kernel.org>, Gil Kupfer <gilkup@gmail.com>,
+        Oleksandr Natalenko <onatalen@redhat.com>,
+        Nadav Amit <nadav.amit@gmail.com>, <stable@vger.kernel.org>,
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH v2] vmw_balloon: fixing double free when batching mode is off
+Date: Mon, 12 Mar 2018 12:28:48 -0700
+Message-ID: <20180312192848.22104-1-namit@vmware.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180312191917.21381-1-namit@vmware.com>
+References: <20180312191917.21381-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594760746388076540?=
-X-GMAIL-MSGID: =?utf-8?q?1594760746388076540?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Gil Kupfer <gilkup@gmail.com>
 
-The balloon.page field is used for two different purposes if paging is
+The balloon.page field is used for two different purposes if batching is
 on or off. If batching is on, the field point to the page which is used
 to communicate with with the hypervisor. If it is off, balloon.page
 points to the page that is about to be (un)locked.
@@ -55,11 +91,6 @@ is explicitly removed), the balloon driver frees, unconditionally, the
 page that is held in balloon.page.  As a result, if batching is
 disabled, this leads to double freeing the last page that is sent to the
 hypervisor.
-
-batching and pointer to current page otherwise. When the balloon is
-popped (during reset or rmmode), it tries to free the communication
-page. If batching is disabled, this leads to double free of the last
-page sent to the backend.
 
 The following error occurs during rmmod when kernel checkers are on, and
 the balloon is not empty:
@@ -106,6 +137,8 @@ Signed-off-by: Gil Kupfer <gilkup@gmail.com>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
 ---
+v2: Fixing commit message
+
  drivers/misc/vmw_balloon.c | 23 +++++++----------------
  1 file changed, 7 insertions(+), 16 deletions(-)
 
