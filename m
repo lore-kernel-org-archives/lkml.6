@@ -1,183 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932570AbeCLVBL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 17:01:11 -0400
-Received: from mga06.intel.com ([134.134.136.31]:45092 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932405AbeCLVBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 17:01:08 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,463,1515484800";
-   d="scan'208";a="24028310"
-Date: Mon, 12 Mar 2018 23:01:02 +0200
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Lyude Paul <lyude@redhat.com>
-Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        Manasi Navare <manasi.d.navare@intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] drm/i915: Move DP modeset retry work into intel_dp
-Message-ID: <20180312210102.GR5453@intel.com>
-References: <20180308232421.14049-1-lyude@redhat.com>
- <20180309213232.19855-1-lyude@redhat.com>
+        id S932491AbeCLVC5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 17:02:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49258 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932408AbeCLVC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 17:02:56 -0400
+Subject: Re: [PATCH v4 2/6] proc/sysctl: Check for invalid flags bits
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>
+References: <1520885744-1546-1-git-send-email-longman@redhat.com>
+ <1520885744-1546-3-git-send-email-longman@redhat.com>
+ <20180312204614.GZ4449@wotan.suse.de>
+ <2621ea58-174f-bfe9-8c34-12501bb775fa@redhat.com>
+ <20180312205920.GD4449@wotan.suse.de>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <fdb198a7-8986-3a85-f8ca-9952866a966e@redhat.com>
+Date: Mon, 12 Mar 2018 17:02:55 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180309213232.19855-1-lyude@redhat.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <20180312205920.GD4449@wotan.suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 09, 2018 at 04:32:27PM -0500, Lyude Paul wrote:
-> While having the modeset_retry_work in intel_connector makes sense with
-> SST, this paradigm doesn't make a whole ton of sense when it comes to
-> MST since we have to deal with multiple connectors. In most cases, it's
-> more useful to just use the intel_dp struct since it indicates whether
-> or not we're dealing with an MST device, along with being able to easily
-> trace the intel_dp struct back to it's respective connector (if there is
-> any). So, move the modeset_retry_work function out of the
-> intel_connector struct and into intel_dp.
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Reviewed-by: Manasi Navare <manasi.d.navare@intel.com>
-> Cc: Manasi Navare <manasi.d.navare@intel.com>
-> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> 
-> V2:
->  - Remove accidental duplicate modeset_retry_work in intel_connector
-> V3:
->  - Also check against eDP in intel_hpd_poll_fini() - mdnavare
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  drivers/gpu/drm/i915/intel_display.c          | 25 +++++++++++++++++++++++--
->  drivers/gpu/drm/i915/intel_dp.c               | 10 ++++------
->  drivers/gpu/drm/i915/intel_dp_link_training.c |  2 +-
->  drivers/gpu/drm/i915/intel_drv.h              |  6 +++---
->  4 files changed, 31 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-> index f424fff477f6..3b7fa430a84a 100644
-> --- a/drivers/gpu/drm/i915/intel_display.c
-> +++ b/drivers/gpu/drm/i915/intel_display.c
-> @@ -15394,16 +15394,37 @@ static void intel_hpd_poll_fini(struct drm_device *dev)
->  {
->  	struct intel_connector *connector;
->  	struct drm_connector_list_iter conn_iter;
-> +	struct work_struct *work;
-> +	int conn_type;
->  
->  	/* Kill all the work that may have been queued by hpd. */
->  	drm_connector_list_iter_begin(dev, &conn_iter);
->  	for_each_intel_connector_iter(connector, &conn_iter) {
-> -		if (connector->modeset_retry_work.func)
-> -			cancel_work_sync(&connector->modeset_retry_work);
->  		if (connector->hdcp_shim) {
->  			cancel_delayed_work_sync(&connector->hdcp_check_work);
->  			cancel_work_sync(&connector->hdcp_prop_work);
->  		}
-> +
-> +		conn_type = connector->base.connector_type;
-> +		if (conn_type != DRM_MODE_CONNECTOR_eDP &&
-> +		    conn_type != DRM_MODE_CONNECTOR_DisplayPort)
-> +			continue;
-> +
-> +		if (connector->mst_port) {
-> +			work = &connector->mst_port->modeset_retry_work;
-> +		} else {
-> +			struct intel_encoder *intel_encoder =
-> +				connector->encoder;
-> +			struct intel_dp *intel_dp;
-> +
-> +			if (!intel_encoder)
-> +				continue;
-> +
-> +			intel_dp = enc_to_intel_dp(&intel_encoder->base);
-> +			work = &intel_dp->modeset_retry_work;
-> +		}
-> +
-> +		cancel_work_sync(work);
+On 03/12/2018 04:59 PM, Luis R. Rodriguez wrote:
+> On Mon, Mar 12, 2018 at 04:54:51PM -0400, Waiman Long wrote:
+>> On 03/12/2018 04:46 PM, Luis R. Rodriguez wrote:
+>>> On Mon, Mar 12, 2018 at 04:15:40PM -0400, Waiman Long wrote:
+>>>> Checking code is added to check for invalid flags in the ctl_table
+>>>> and return error if an unknown flag is used.
+>>> This should be merged with the first patch otherwise there are atomic
+>>> points in time on the commit log history where invalid values are allowed
+>>> and that makes no sense.
+>>>
+>>> This can probably be expanded to verify semantics further. Details
+>>> below.
+>>>> Signed-off-by: Waiman Long <longman@redhat.com>
+>>>> ---
+>>>>  fs/proc/proc_sysctl.c | 12 ++++++++++++
+>>>>  1 file changed, 12 insertions(+)
+>>>>
+>>>> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+>>>> index 493c975..67c0c82 100644
+>>>> --- a/fs/proc/proc_sysctl.c
+>>>> +++ b/fs/proc/proc_sysctl.c
+>>>> @@ -1092,6 +1092,16 @@ static int sysctl_check_table_array(const char *path, struct ctl_table *table)
+>>>>  	return err;
+>>>>  }
+>>>>  
+>>>> +static int sysctl_check_flags(const char *path, struct ctl_table *table)
+>>>> +{
+>>>> +	int err = 0;
+>>>> +
+>>>> +	if (table->flags & ~CTL_TABLE_FLAGS_ALL)
+>>>> +		err = sysctl_err(path, table, "invalid flags");
+>>> What if a range for the upper limit is set but not the lower limit and
+>>> the user goes over the lower limit?
+>>>
+>>> How about the inverse?
+>>>
+>>> Do we need both ranges set?
+>>>
+>>>   Luis
+>> This check is just to make sure that no invalid flag bit is set. Range
+>> clamping is just one of flag bits, though this is the only one currently
+>> supported. In fact, it is allowed that the minimum or maximum can be
+>> left unspecified. In this case, no minimum or maximum checking will be
+>> done. So I don't see anything related to range checking should be put here.
+> What if minimum is greater than maximum?
+>
+>   Luis
 
-Why are we even walking the connectors for this? Can't we just
-walk the encoders instead?
+Yes, you are right. That is a valid check. I am going to add that in the
+next patch.
 
->  	}
->  	drm_connector_list_iter_end(&conn_iter);
->  }
-> diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
-> index 4dd1b2287dd6..5abf0c95725a 100644
-> --- a/drivers/gpu/drm/i915/intel_dp.c
-> +++ b/drivers/gpu/drm/i915/intel_dp.c
-> @@ -6261,12 +6261,10 @@ static bool intel_edp_init_connector(struct intel_dp *intel_dp,
->  
->  static void intel_dp_modeset_retry_work_fn(struct work_struct *work)
->  {
-> -	struct intel_connector *intel_connector;
-> -	struct drm_connector *connector;
-> +	struct intel_dp *intel_dp = container_of(work, typeof(*intel_dp),
-> +						 modeset_retry_work);
-> +	struct drm_connector *connector = &intel_dp->attached_connector->base;
->  
-> -	intel_connector = container_of(work, typeof(*intel_connector),
-> -				       modeset_retry_work);
-> -	connector = &intel_connector->base;
->  	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n", connector->base.id,
->  		      connector->name);
->  
-> @@ -6295,7 +6293,7 @@ intel_dp_init_connector(struct intel_digital_port *intel_dig_port,
->  	int type;
->  
->  	/* Initialize the work for modeset in case of link train failure */
-> -	INIT_WORK(&intel_connector->modeset_retry_work,
-> +	INIT_WORK(&intel_dp->modeset_retry_work,
->  		  intel_dp_modeset_retry_work_fn);
->  
->  	if (WARN(intel_dig_port->max_lanes < 1,
-> diff --git a/drivers/gpu/drm/i915/intel_dp_link_training.c b/drivers/gpu/drm/i915/intel_dp_link_training.c
-> index f59b59bb0a21..2cfa58ce1f95 100644
-> --- a/drivers/gpu/drm/i915/intel_dp_link_training.c
-> +++ b/drivers/gpu/drm/i915/intel_dp_link_training.c
-> @@ -340,7 +340,7 @@ intel_dp_start_link_train(struct intel_dp *intel_dp)
->  							     intel_dp->link_rate,
->  							     intel_dp->lane_count))
->  			/* Schedule a Hotplug Uevent to userspace to start modeset */
-> -			schedule_work(&intel_connector->modeset_retry_work);
-> +			schedule_work(&intel_dp->modeset_retry_work);
->  	} else {
->  		DRM_ERROR("[CONNECTOR:%d:%s] Link Training failed at link rate = %d, lane count = %d",
->  			  intel_connector->base.base.id,
-> diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
-> index 83e5ca889d9c..3f19dc80997f 100644
-> --- a/drivers/gpu/drm/i915/intel_drv.h
-> +++ b/drivers/gpu/drm/i915/intel_drv.h
-> @@ -406,9 +406,6 @@ struct intel_connector {
->  
->  	struct intel_dp *mst_port;
->  
-> -	/* Work struct to schedule a uevent on link train failure */
-> -	struct work_struct modeset_retry_work;
-> -
->  	const struct intel_hdcp_shim *hdcp_shim;
->  	struct mutex hdcp_mutex;
->  	uint64_t hdcp_value; /* protected by hdcp_mutex */
-> @@ -1135,6 +1132,9 @@ struct intel_dp {
->  
->  	/* Displayport compliance testing */
->  	struct intel_dp_compliance compliance;
-> +
-> +	/* Work struct to schedule a uevent on link train failure */
-> +	struct work_struct modeset_retry_work;
->  };
->  
->  struct intel_lspcon {
-> -- 
-> 2.14.3
-
--- 
-Ville Syrjälä
-Intel OTC
+Cheers,
+Longman
