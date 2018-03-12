@@ -1,66 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751443AbeCLLTI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 07:19:08 -0400
-Received: from mga09.intel.com ([134.134.136.24]:41259 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750794AbeCLLTH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 07:19:07 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,460,1515484800";
-   d="scan'208";a="23759459"
-From: Anshuman Gupta <anshuman.gupta@intel.com>
-To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, anshuman.gupta@intel.com
-Subject: [PATCH] [sound] hdac-codec runtime suspended at PM:Suspend.
-Date: Mon, 12 Mar 2018 16:47:47 +0530
-Message-Id: <1520853467-31653-1-git-send-email-anshuman.gupta@intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1751333AbeCLLUt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 07:20:49 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:40431 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750967AbeCLLUr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 07:20:47 -0400
+X-Google-Smtp-Source: AG47ELuZcWrLoQKV98rS0Kfha2Bzjb8wijpnujOqtns+9WiD+Y8Xi0e1eflKSQiY38pgUoGyc5+DfA==
+Date: Mon, 12 Mar 2018 12:20:41 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Milind Chabbi <chabbi.milind@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        Jin Yao <yao.jin@linux.intel.com>, Kan Liang <kan.liang@intel.com>,
+        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
+        Oleg Nesterov <onestero@redhat.com>, Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCHv2 0/8] hw_breakpoint: Breakpoint modification fixes and
+ new modify ioctl
+Message-ID: <20180312112041.p6pksk7yj5nhbtju@gmail.com>
+References: <20171129083853.28022-1-jolsa@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171129083853.28022-1-jolsa@kernel.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Keep hdac-codec to be in runtime suspended while entering to suspend.
-If hdac-codec is already in runtime suspend state skip its power down
-sequence in prepare, power up sequence in complete phase.
 
-Avoid resuming hdac controller PCI device 00:1f.3 from runtime suspend
-state in case  hdac-codec already in runtime-suspend state, this is
-unnecessary and block the direct complete even for hdac controller
-PCI device 00:1f.3.
+* Jiri Olsa <jolsa@kernel.org> wrote:
 
-This enabled direct complete path for hdac-codec and PCI device 00:1f.3.
+> hi,
+> Milind Chabbi introduced new ioctl interface to change
+> live breakpoint [1]. It allows to change its bp_addr,
+> bp_len and bp_type throught new ioctl for perf breakpoint
+> event.
+> 
+> We already have a kernel interface for this via 
+> modify_user_hw_breakpoint function. This function however
+> does not update the breakpoint slot counts.
+> 
+> So when the same functionality was exposed to user space
+> (Milind's change), with simple test program I could put wrong
+> slots count on arm server [2] and ended up with no breakpoints
+> available on the system. Note it's not an issue on x86, because
+> it shares slot single counter for both data and inst types
+> (CONFIG_HAVE_MIXED_BREAKPOINTS_REGS).
+> 
+> This patchset contains my fixes for keeping breakpoint slots
+> count updated. On top of it there's Milind's change for new
+> _IOC_MODIFY_ATTRIBUTES ioctl interface to change a breakpoint.
+> 
+> As I mentioned above there're kernel users of
+> modify_user_hw_breakpoint function, all ptrace related
+> AFAICS, which could got broken.. so cc-ing Oleg ;-)
+> 
+> I ran gdb and strace tests suites and got same amount of
+> skip/fail tests as when I run them on unpatched machine,
+> so I assume nothing new got broken.
+> 
+> It's also available in here:
+>   https://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+>   perf/bp
+> 
+> v2 changes:
+>   - added check for the rest of the perf_event_attr fields
+>     to be the same as for kernel event
+>
+> Jiri Olsa (7):
+>       hw_breakpoint: Pass bp_type directly as find_slot_idx argument
+>       hw_breakpoint: Pass bp_type argument to __reserve_bp_slot|__release_bp_slot
+>       hw_breakpoint: Add modify_bp_slot function
+>       hw_breakpoint: Factor out __modify_user_hw_breakpoint function
+>       hw_breakpoint: Add perf_event_attr fields check in __modify_user_hw_breakpoint
+>       perf/core: Move perf_event_attr::sample_max_stack into perf_copy_attr
+>       perf tests: Add breakpoint accounting/modify test
+> 
+> Milind Chabbi (1):
+>       perf/core: fast breakpoint modification via _IOC_MODIFY_ATTRIBUTES.
+> 
+>  include/linux/hw_breakpoint.h         |   7 +++++
+>  include/uapi/linux/perf_event.h       |   2 ++
+>  kernel/events/core.c                  |  53 +++++++++++++++++++++++++++++--
+>  kernel/events/hw_breakpoint.c         | 115 ++++++++++++++++++++++++++++++++++++++++++++++++-------------------
+>  tools/include/uapi/linux/perf_event.h |   2 ++
+>  tools/perf/tests/Build                |   1 +
+>  tools/perf/tests/bp_account.c         | 195 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  tools/perf/tests/builtin-test.c       |   4 +++
+>  tools/perf/tests/tests.h              |   1 +
+>  9 files changed, 344 insertions(+), 36 deletions(-)
+>  create mode 100644 tools/perf/tests/bp_account.c
 
-Signed-off-by: Anshuman Gupta <anshuman.gupta@intel.com>
----
- sound/soc/codecs/hdac_hdmi.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Sorry about the late response - I suppose we could try this feature, but the 
+tooling patches don't apply anymore. Mind re-sending a merged version, on top of 
+latest -tip or so?
 
-diff --git a/sound/soc/codecs/hdac_hdmi.c b/sound/soc/codecs/hdac_hdmi.c
-index f3b4f4d..810a8a6 100644
---- a/sound/soc/codecs/hdac_hdmi.c
-+++ b/sound/soc/codecs/hdac_hdmi.c
-@@ -1852,6 +1852,8 @@ static int hdmi_codec_prepare(struct device *dev)
- 	struct hdac_ext_device *edev = to_hda_ext_device(dev);
- 	struct hdac_device *hdac = &edev->hdac;
- 
-+	if (pm_runtime_status_suspended(dev))
-+		return 1;
- 	pm_runtime_get_sync(&edev->hdac.dev);
- 
- 	/*
-@@ -1873,6 +1875,8 @@ static void hdmi_codec_complete(struct device *dev)
- 	struct hdac_hdmi_priv *hdmi = edev->private_data;
- 	struct hdac_device *hdac = &edev->hdac;
- 
-+	if (pm_runtime_status_suspended(dev))
-+		return;
- 	/* Power up afg */
- 	snd_hdac_codec_read(hdac, hdac->afg, 0,	AC_VERB_SET_POWER_STATE,
- 							AC_PWRST_D0);
--- 
-2.7.4
+Thanks,
+
+	Ingo
