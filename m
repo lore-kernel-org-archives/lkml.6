@@ -1,64 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932517AbeCLQTE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 12:19:04 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56386 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932379AbeCLQTD (ORCPT
+        id S932376AbeCLQUt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 12:20:49 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:39668 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751361AbeCLQUr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 12:19:03 -0400
-Date: Mon, 12 Mar 2018 09:18:59 -0700
-From: Mark Brown <broonie@kernel.org>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH 2/2] ASoC: max9759: Add Amplifier Driver
-Message-ID: <20180312161859.GE2186@sirena.org.uk>
-References: <1520679916-13517-1-git-send-email-narmstrong@baylibre.com>
- <1520679916-13517-3-git-send-email-narmstrong@baylibre.com>
+        Mon, 12 Mar 2018 12:20:47 -0400
+X-Google-Smtp-Source: AG47ELu/3dMVHJyAnUyTS/P7dU3n2b3qLQGy2Cazc8GeA5IWfTJBZrx5Ufjz8mgFb5YnPk4NRUHmcA==
+Subject: Re: [PATCH 1/2] direct-io: Remove unused DIO_ASYNC_EXTEND flag
+To: Nikolay Borisov <nborisov@suse.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hch@lst.de, rgoldwyn@suse.de, linux-block@vger.kernel.org
+References: <1519386329-2734-1-git-send-email-nborisov@suse.com>
+ <f0132588-86e0-1430-dd2c-157e59272f40@suse.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <bea25d90-9e92-dce5-7e32-edf99b4161a2@kernel.dk>
+Date: Mon, 12 Mar 2018 09:20:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+ Thunderbird/59.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="o0ZfoUVt4BxPQnbU"
-Content-Disposition: inline
-In-Reply-To: <1520679916-13517-3-git-send-email-narmstrong@baylibre.com>
-X-Cookie: Am I SHOPLIFTING?
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <f0132588-86e0-1430-dd2c-157e59272f40@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 3/12/18 2:54 AM, Nikolay Borisov wrote:
+> 
+> 
+> On 23.02.2018 13:45, Nikolay Borisov wrote:
+>> This flag was added by 6039257378e4 ("direct-io: add flag to allow aio
+>> writes beyond i_size") to support XFS. However, with the rework of
+>> XFS' DIO's path to use iomap in acdda3aae146 ("xfs: use iomap_dio_rw")
+>> it became redundant. So let's remove it.
+>>
+>> Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+> 
+> Jens,
+> 
+> On a second look I think you are the more appropriate person to take
+> these patches. SO do you have any objections to merging those via the
+> block tree. ( I did CC you but didn't cc linux-block).
 
---o0ZfoUVt4BxPQnbU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Both look fine to me, I can add them for 4.17. Thanks.
 
-On Sat, Mar 10, 2018 at 12:05:16PM +0100, Neil Armstrong wrote:
-
-> @@ -0,0 +1,207 @@
-> +// SPDX-Licence-Identifier: GPL-2.0
-> +/*
-> + * MAX9759 Amplifier Driver
-> + *
-
-Please don't ignore review comments, people are generally making them
-for a reason and are likely to have the same concerns if issues remain
-unaddressed.  Having to repeat the same comments can get repetitive and
-make people question the value of time spent reviewing.  If you disagree
-with the review comments that's fine but you need to reply and discuss
-your concerns so that the reviewer can understand your decisions.
-
---o0ZfoUVt4BxPQnbU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqmqHIACgkQJNaLcl1U
-h9BB8gf+MK7q3rkBhDvD1Mpkt7kP0NukrappIT4pEZVF6wcsM8+ictNoKPEH+2cu
-opb8q3DHXpcHnOqw+M/jySHHRS8FIq7NiTxOWeuORUyfomL92clVi2X4gUeTKYLZ
-1PWmr3UVvD7/DuZVEPVr4MatYIeu4A6dZ9IoFBzad2fJy6yhMt3HD/643CkModIV
-OoPiTOuHOD+Cmx51gv7p+mgVCV42NCO+6yfUv3JWGx52PpkKWMK3wU5guLZUl9rR
-tGAY1h6/oBgvJYRv0i7pRrtW8LxgCiX9a3x1WjAlSo1kjPwsbyV9sW+hZCZ2aDoH
-jALpOnVJ3GIy0uF0bavDYwCz+Y+iKw==
-=um86
------END PGP SIGNATURE-----
-
---o0ZfoUVt4BxPQnbU--
+-- 
+Jens Axboe
