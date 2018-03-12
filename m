@@ -1,334 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932584AbeCLCeR convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 22:34:17 -0400
-Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:59786
-        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932426AbeCLCeP (ORCPT
+        id S932546AbeCLCk5 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 22:40:57 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:37812 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932443AbeCLCk4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 22:34:15 -0400
-X-ASG-Debug-ID: 1520822048-093b7e4ed70e7a0001-xx1T2L
-X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
-From: "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
-To: "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "cdall@kernel.org" <cdall@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "david.daney@cavium.com" <david.daney@cavium.com>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>
-Subject: Re: [RFC PATCH] KVM: arm/arm64: vgic: change condition for level
- interrupt resampling
-Thread-Topic: [RFC PATCH] KVM: arm/arm64: vgic: change condition for level
- interrupt resampling
-X-ASG-Orig-Subj: Re: [RFC PATCH] KVM: arm/arm64: vgic: change condition for level
- interrupt resampling
-Thread-Index: AQHTuaqKUuRM9/vW0E6mL5YCFQL5MQ==
-Date: Mon, 12 Mar 2018 02:33:44 +0000
-Message-ID: <1520822024.2985.12.camel@hxt-semitech.com>
-References: <1520492490-7943-1-git-send-email-shunyong.yang@hxt-semitech.com>
-         <9ad47673-068e-f732-d2ca-9c76a8fbdfbc@arm.com>
-         <0a15633d-8944-cb9b-3e6b-b08ee5ec42b9@arm.com> <20180308161900.GC1917@lvm>
-         <86r2oubho3.wl-marc.zyngier@arm.com>   <20180309213612.GD1917@lvm>
-         <86k1ukazr0.wl-marc.zyngier@arm.com>
-         <CAEDV+g+29ZK6QQEn=2h_77dMZC7wmw+d4MZC-GU-CqeaK_xhMg@mail.gmail.com>
-         <20180311121733.643fb1a5@why.wild-wind.fr.eu.org>
-In-Reply-To: <20180311121733.643fb1a5@why.wild-wind.fr.eu.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.64.6.51]
-Content-Type: text/plain; charset="iso-8859-15"
-Content-ID: <084D4A40BA59B6499E1A4EF86942AD23@hxt-semitech.com>
-Content-Transfer-Encoding: 8BIT
+        Sun, 11 Mar 2018 22:40:56 -0400
+X-Google-Smtp-Source: AG47ELtYnf+UK+hj6Ap/BVsKjm6kLjoFmV+/SsAZqTGbqnFYa4JH3pFEB2mO0rXOW8xgl+/ZZDoUkQ==
+Date: Sun, 11 Mar 2018 22:40:53 -0400 (EDT)
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>
+cc: Andi Kleen <ak@linux.intel.com>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] ARM: disallow combining XIP and LTO
+In-Reply-To: <20180220215954.4092811-2-arnd@arndb.de>
+Message-ID: <nycvar.YSQ.7.76.1803112233070.28583@knanqh.ubzr>
+References: <20180220215954.4092811-1-arnd@arndb.de> <20180220215954.4092811-2-arnd@arndb.de>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-X-Barracuda-Connect: UNKNOWN[10.128.0.15]
-X-Barracuda-Start-Time: 1520822048
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: SPAM GLOBAL 0.9694 1.0000 3.9909
-X-Barracuda-Spam-Score: 3.99
-X-Barracuda-Spam-Status: No, SCORE=3.99 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.48845
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Marc,
+On Tue, 20 Feb 2018, Arnd Bergmann wrote:
 
-On Sun, 2018-03-11 at 12:17 +0000, Marc Zyngier wrote:
-> On Sun, 11 Mar 2018 01:55:08 +0000
-> Christoffer Dall <cdall@kernel.org> wrote:
+> This fails during deflate_xip_data.sh
 > 
-> > 
-> > On Sat, Mar 10, 2018 at 12:20 PM, Marc Zyngier <marc.zyngier@arm.co
-> > m> wrote:
-> > > 
-> > > On Fri, 09 Mar 2018 21:36:12 +0000,
-> > > Christoffer Dall wrote:  
-> > > > 
-> > > > 
-> > > > On Thu, Mar 08, 2018 at 05:28:44PM +0000, Marc Zyngier wrote:  
-> > > > > 
-> > > > > I'd be more confident if we did forbid P+A for such
-> > > > > interrupts
-> > > > > altogether, as they really feel like another kind of HW
-> > > > > interrupt.  
-> > > > How about a slightly bigger hammer:  Can we avoid doing P+A for
-> > > > level
-> > > > interrupts completely?  I don't think that really makes much
-> > > > sense, and
-> > > > I think we simply everything if we just come back out and
-> > > > resample the
-> > > > line.  For an edge, something like a network card, there's a
-> > > > potential
-> > > > performance win to appending a new pending state, but I doubt
-> > > > that this
-> > > > is the case for level interrupts.  
-> > > I started implementing the same thing yesterday. Somehow, it
-> > > feels
-> > > slightly better to have the same flow for all level interrupts,
-> > > including the timer, and we only use the MI on EOI as a way to
-> > > trigger
-> > > the next state of injection. Still testing, but looking good so
-> > > far.
-> > > 
-> > > I'm still puzzled that we have this level-but-not-quite behaviour
-> > > for
-> > > VFIO interrupts. At some point, it is going to bite us badly.
-> > >  
-> > Where is the departure from level-triggered behavior with VFIO?  As
-> > far as I can tell, the GIC flow of the interrupts will be just a
-> > level
-> > interrupt, 
-> The GIC is fine, I believe. What is not exactly fine is the
-> signalling
-> from the device, which will never be dropped until the EOI has been
-> detected.
+>   /home/arnd/cross-gcc/bin/arm-linux-gnueabi-objcopy -O binary -R .comment -S  vmlinux arch/arm/boot/xipImage && /bin/bash -c '/git/arm-soc/arch/arm/boot/deflate_xip_data.sh vmlinux arch/arm/boot/xipImage || { rm -f arch/arm/boot/xipImage; false; }'
+> make -f /git/arm-soc/scripts/Makefile.modpost
+> + sym_val __data_loc
+> + sed -n / __data_loc$/{s/ .*$//p;q}
+> + /home/arnd/cross-gcc/bin/arm-linux-gnueabi-gcc-nm vmlinux
+> /home/arnd/cross-gcc/lib/gcc/arm-linux-gnueabi/8.0.1/../../../../arm-linux-gnueabi/bin/nm terminated with signal 13 [Broken pipe]
+> + local val=ac74c0f4
+> + [ ac74c0f4 ]
+> + echo 2893332724
+> + __data_loc=2893332724
+> + sym_val _edata_loc
+> + /home/arnd/cross-gcc/bin/arm-linux-gnueabi-gcc-nm vmlinux
+> + sed -n / _edata_loc$/{s/ .*$//p;q}
+> /home/arnd/cross-gcc/lib/gcc/arm-linux-gnueabi/8.0.1/../../../../arm-linux-gnueabi/bin/nm terminated with signal 13 [Broken pipe]
+> + local val=ac7b8744
+> + [ ac7b8744 ]
+> + echo 2893776708
+> + _edata_loc=2893776708
+> + sym_val _xiprom
+> + sed -n / _xiprom$/{s/ .*$//p;q}
+> + /home/arnd/cross-gcc/bin/arm-linux-gnueabi-gcc-nm vmlinux
+> /home/arnd/cross-gcc/lib/gcc/arm-linux-gnueabi/8.0.1/../../../../arm-linux-gnueabi/bin/nm terminated with signal 13 [Broken pipe]
 > 
-> > 
-> > but we just need to make sure the resamplefd mechanism is
-> > supported for both types of interrupts.  Whether or not that's a
-> > decent mechanism seems orthogonal to me, but that's a discussion
-> > for
-> > another day I think.
-> Given that VFIO is built around this mechanism, I don't think we have
-> a
-> choice but to support it. Anyway, I came up with the following patch,
-> which I tested on Seattle with mtty. It also survived my usual
-> hammering of cyclictest, hackbench  and bulk VM installs.
-> 
-> Shunyong, could you please give it a go?
-> 
-> Thanks,
-> 
-> 	M.
-> 
+> Obviously we want to make the combination work, no idea why it doesn't.
 
-I have tested the patch. It works on QDF2400 platform
-and kvm_notify_acked_irq() is called when state is idle.
+Well, it does work regardless of the noise. Here the nm output is piped 
+into sed, and the later exits early when it finds what it is looking 
+for, causing nm to complain about the broken pipe.
 
-BTW, I have following questions when I was debugging the issue.
-Coud you please give me some help?
-1)what does "mi" mean in gic code? such as lr_signals_eoi_mi();
-2)In some __hyp_text code where printk() will cause "HYP panic:", such
-as in __kvm_vcpu_run(). How can I output debug information?
+Here's a patch silencing this bogus error message and fixing other minor 
+issues.
 
-Thanks.
-Shunyong.
+----- >8
+Subject: [PATCH] ARM: deflate_xip_data.sh: minor fixes
 
+Send nm complaints about broken pipe (when sed exits early) to /dev/null.
+All errors should be printed to stderr.
+Don't trap on normal exit so the trap can return an error code.
 
-> From 9ca96b9fb535cc6ab578bda85c4ecbc4a8c63cd7 Mon Sep 17 00:00:00
-> 2001
-> From: Marc Zyngier <marc.zyngier@arm.com>
-> Date: Fri, 9 Mar 2018 14:59:40 +0000
-> Subject: [PATCH] KVM: arm/arm64: vgic: Disallow Active+Pending for
-> level
->  interrupts
-> 
-> It was recently reported that VFIO mediated devices, and anything
-> that VFIO exposes as level interrupts, do no strictly follow the
-> expected logic of such interrupts as it only lowers the input
-> line when the guest has EOId the interrupt at the GIC level, rather
-> than when it Acked the interrupt at the device level.
-> 
-> The GIC's Active+Pending state is fundamentally incompatible with
-> this behaviour, as it prevents KVM from observing the EOI, and in
-> turn results in VFIO never dropping the line. This results in an
-> interrupt storm in the guest, which it really never expected.
-> 
-> As we cannot really change VFIO to follow the strict rules of level
-> signalling, let's forbid the A+P state altogether, as it is in the
-> end only an optimization. It ensures that we will transition via
-> an invalid state, which we can use to notify VFIO of the EOI.
-> 
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->  virt/kvm/arm/vgic/vgic-v2.c | 47 +++++++++++++++++++++++++++------
-> ------------
->  virt/kvm/arm/vgic/vgic-v3.c | 47 +++++++++++++++++++++++++++------
-> ------------
->  2 files changed, 56 insertions(+), 38 deletions(-)
-> 
-> diff --git a/virt/kvm/arm/vgic/vgic-v2.c b/virt/kvm/arm/vgic/vgic-
-> v2.c
-> index 29556f71b691..9356d749da1d 100644
-> --- a/virt/kvm/arm/vgic/vgic-v2.c
-> +++ b/virt/kvm/arm/vgic/vgic-v2.c
-> @@ -153,8 +153,35 @@ void vgic_v2_fold_lr_state(struct kvm_vcpu
-> *vcpu)
->  void vgic_v2_populate_lr(struct kvm_vcpu *vcpu, struct vgic_irq
-> *irq, int lr)
->  {
->  	u32 val = irq->intid;
-> +	bool allow_pending = true;
->  
-> -	if (irq_is_pending(irq)) {
-> +	if (irq->active)
-> +		val |= GICH_LR_ACTIVE_BIT;
-> +
-> +	if (irq->hw) {
-> +		val |= GICH_LR_HW;
-> +		val |= irq->hwintid << GICH_LR_PHYSID_CPUID_SHIFT;
-> +		/*
-> +		 * Never set pending+active on a HW interrupt, as
-> the
-> +		 * pending state is kept at the physical distributor
-> +		 * level.
-> +		 */
-> +		if (irq->active)
-> +			allow_pending = false;
-> +	} else {
-> +		if (irq->config == VGIC_CONFIG_LEVEL) {
-> +			val |= GICH_LR_EOI;
-> +
-> +			/*
-> +			 * Software resampling doesn't work very
-> well
-> +			 * if we allow P+A, so let's not do that.
-> +			 */
-> +			if (irq->active)
-> +				allow_pending = false;
-> +		}
-> +	}
-> +
-> +	if (allow_pending && irq_is_pending(irq)) {
->  		val |= GICH_LR_PENDING_BIT;
->  
->  		if (irq->config == VGIC_CONFIG_EDGE)
-> @@ -171,24 +198,6 @@ void vgic_v2_populate_lr(struct kvm_vcpu *vcpu,
-> struct vgic_irq *irq, int lr)
->  		}
->  	}
->  
-> -	if (irq->active)
-> -		val |= GICH_LR_ACTIVE_BIT;
-> -
-> -	if (irq->hw) {
-> -		val |= GICH_LR_HW;
-> -		val |= irq->hwintid << GICH_LR_PHYSID_CPUID_SHIFT;
-> -		/*
-> -		 * Never set pending+active on a HW interrupt, as
-> the
-> -		 * pending state is kept at the physical distributor
-> -		 * level.
-> -		 */
-> -		if (irq->active && irq_is_pending(irq))
-> -			val &= ~GICH_LR_PENDING_BIT;
-> -	} else {
-> -		if (irq->config == VGIC_CONFIG_LEVEL)
-> -			val |= GICH_LR_EOI;
-> -	}
-> -
->  	/*
->  	 * Level-triggered mapped IRQs are special because we only
-> observe
->  	 * rising edges as input to the VGIC.  We therefore lower
-> the line
-> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-
-> v3.c
-> index 0ff2006f3781..6b484575cafb 100644
-> --- a/virt/kvm/arm/vgic/vgic-v3.c
-> +++ b/virt/kvm/arm/vgic/vgic-v3.c
-> @@ -135,8 +135,35 @@ void vgic_v3_populate_lr(struct kvm_vcpu *vcpu,
-> struct vgic_irq *irq, int lr)
->  {
->  	u32 model = vcpu->kvm->arch.vgic.vgic_model;
->  	u64 val = irq->intid;
-> +	bool allow_pending = true;
->  
-> -	if (irq_is_pending(irq)) {
-> +	if (irq->active)
-> +		val |= ICH_LR_ACTIVE_BIT;
-> +
-> +	if (irq->hw) {
-> +		val |= ICH_LR_HW;
-> +		val |= ((u64)irq->hwintid) << ICH_LR_PHYS_ID_SHIFT;
-> +		/*
-> +		 * Never set pending+active on a HW interrupt, as
-> the
-> +		 * pending state is kept at the physical distributor
-> +		 * level.
-> +		 */
-> +		if (irq->active)
-> +			allow_pending = false;
-> +	} else {
-> +		if (irq->config == VGIC_CONFIG_LEVEL) {
-> +			val |= ICH_LR_EOI;
-> +
-> +			/*
-> +			 * Software resampling doesn't work very
-> well
-> +			 * if we allow P+A, so let's not do that.
-> +			 */
-> +			if (irq->active)
-> +				allow_pending = false;
-> +		}
-> +	}
-> +
-> +	if (allow_pending && irq_is_pending(irq)) {
->  		val |= ICH_LR_PENDING_BIT;
->  
->  		if (irq->config == VGIC_CONFIG_EDGE)
-> @@ -154,24 +181,6 @@ void vgic_v3_populate_lr(struct kvm_vcpu *vcpu,
-> struct vgic_irq *irq, int lr)
->  		}
->  	}
->  
-> -	if (irq->active)
-> -		val |= ICH_LR_ACTIVE_BIT;
-> -
-> -	if (irq->hw) {
-> -		val |= ICH_LR_HW;
-> -		val |= ((u64)irq->hwintid) << ICH_LR_PHYS_ID_SHIFT;
-> -		/*
-> -		 * Never set pending+active on a HW interrupt, as
-> the
-> -		 * pending state is kept at the physical distributor
-> -		 * level.
-> -		 */
-> -		if (irq->active && irq_is_pending(irq))
-> -			val &= ~ICH_LR_PENDING_BIT;
-> -	} else {
-> -		if (irq->config == VGIC_CONFIG_LEVEL)
-> -			val |= ICH_LR_EOI;
-> -	}
-> -
->  	/*
->  	 * Level-triggered mapped IRQs are special because we only
-> observe
->  	 * rising edges as input to the VGIC.  We therefore lower
-> the line
-> -- 
-> 2.14.2
-> 
-> 
+Signed-off-by: Nicolas Pitre <nico@linaro.org>
+
+diff --git a/arch/arm/boot/deflate_xip_data.sh b/arch/arm/boot/deflate_xip_data.sh
+index 1189598a25..5e7d758ebd 100755
+--- a/arch/arm/boot/deflate_xip_data.sh
++++ b/arch/arm/boot/deflate_xip_data.sh
+@@ -30,7 +30,7 @@ esac
+ 
+ sym_val() {
+ 	# extract hex value for symbol in $1
+-	local val=$($NM "$VMLINUX" | sed -n "/ $1$/{s/ .*$//p;q}")
++	local val=$($NM "$VMLINUX" 2>/dev/null | sed -n "/ $1\$/{s/ .*$//p;q}")
+ 	[ "$val" ] || { echo "can't find $1 in $VMLINUX" 1>&2; exit 1; }
+ 	# convert from hex to decimal
+ 	echo $((0x$val))
+@@ -48,12 +48,12 @@ data_end=$(($_edata_loc - $base_offset))
+ file_end=$(stat -c "%s" "$XIPIMAGE")
+ if [ "$file_end" != "$data_end" ]; then
+ 	printf "end of xipImage doesn't match with _edata_loc (%#x vs %#x)\n" \
+-	       $(($file_end + $base_offset)) $_edata_loc 2>&1
++	       $(($file_end + $base_offset)) $_edata_loc 1>&2
+ 	exit 1;
+ fi
+ 
+ # be ready to clean up
+-trap 'rm -f "$XIPIMAGE.tmp"' 0 1 2 3
++trap 'rm -f "$XIPIMAGE.tmp"; exit 1' 1 2 3
+ 
+ # substitute the data section by a compressed version
+ $DD if="$XIPIMAGE" count=$data_start iflag=count_bytes of="$XIPIMAGE.tmp"
