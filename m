@@ -1,73 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751386AbeCLMo7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 08:44:59 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41422 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751232AbeCLMo6 (ORCPT
+        id S1751282AbeCLMxn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 08:53:43 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:46963 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751104AbeCLMxm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 08:44:58 -0400
-From: Sandipan Das <sandipan@linux.vnet.ibm.com>
-To: acme@kernel.org, jolsa@kernel.org
-Cc: linux-kernel@vger.kernel.org, naveen.n.rao@linux.vnet.ibm.com
-Subject: [PATCH] perf test: Fix exit code for record+probe_libc_inet_pton.sh
-Date: Mon, 12 Mar 2018 18:14:50 +0530
-X-Mailer: git-send-email 2.14.3
-X-TM-AS-GCONF: 00
-x-cbid: 18031212-0016-0000-0000-000005307073
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031212-0017-0000-0000-0000286D9D98
-Message-Id: <20180312124450.30371-1-sandipan@linux.vnet.ibm.com>
+        Mon, 12 Mar 2018 08:53:42 -0400
+From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+To: Wolfram Sang <wsa@the-dreams.de>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Subject: [RESEND PATCH v1] i2c: i2c-stm32f7: fix no check on returned setup
+Date: Mon, 12 Mar 2018 13:53:21 +0100
+Message-ID: <1520859201-30549-1-git-send-email-pierre-yves.mordret@st.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG8NODE2.st.com (10.75.127.23) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-12_06:,,
  signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803120146
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This fixes record+probe_libc_inet_pton.sh from always exiting
-with code 0 and making the test pass even if the perf script
-output does not match the expected pattern.
+Before assigning returned setup structure check if not null
 
-The issue can be observed if this test is run with the verbose
-flags as shown below:
-
-60: probe libc's inet_pton & backtrace it with ping       :
-...
-ping 19602 [006] 16988.413767: probe_libc:inet_pton: (7fff9a2c42e8)
-1842e8 __GI___inet_pton (/usr/lib64/libc-2.26.so)
-130db4 getaddrinfo (/usr/lib64/libc-2.26.so)
-
-FAIL: expected backtrace entry 3 ".*\(.*/bin/ping.*\)$" got ""
-test child finished with 0
-...
-probe libc's inet_pton & backtrace it with ping: Ok
-
-Fixes: e07d585e2454 ("perf tests: Switch trace+probe_libc_inet_pton to use record")
-Signed-off-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Fixes: 463a9215f3ca7600b5ff ("i2c: stm32f7: fix setup structure")
+Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 ---
- tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+  Version history:
+     v1:
+         * Initial
+---
+---
+ drivers/i2c/busses/i2c-stm32f7.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-index 52c3ee701a89..1ecc1f0ff84a 100755
---- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-+++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-@@ -47,7 +47,10 @@ trace_libc_inet_pton_backtrace() {
- 		[ -z "${expected[$idx]}" ] && break
- 	done
+diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
+index b445b3b..16c7d77 100644
+--- a/drivers/i2c/busses/i2c-stm32f7.c
++++ b/drivers/i2c/busses/i2c-stm32f7.c
+@@ -888,6 +888,10 @@ static int stm32f7_i2c_probe(struct platform_device *pdev)
+ 	}
  
--	rm -f $file
-+	# If any statements are executed from this point onwards,
-+	# the exit code of the last among these will be reflected
-+	# in err below. If the exit code is 0, the test will pass
-+	# even if the perf script output does not match.
- }
+ 	setup = of_device_get_match_data(&pdev->dev);
++	if (!setup) {
++		dev_err(&pdev->dev, "Can't get device data\n");
++		goto clk_free;
++	}
+ 	i2c_dev->setup = *setup;
  
- # Check for IPv6 interface existence
+ 	ret = device_property_read_u32(i2c_dev->dev, "i2c-scl-rising-time-ns",
 -- 
-2.14.3
+2.7.4
