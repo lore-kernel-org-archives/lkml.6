@@ -1,107 +1,128 @@
-Return-Path: <jeffy.chen@rock-chips.com>
-X-Google-Smtp-Source: AG47ELucyX6Tzm1BoLu0QtOsZJL7odCIPdJecHI0C+8EZSOJ5RKPkOqZJat3ke9yf520YpO/Y4Iw
-ARC-Seal: i=1; a=rsa-sha256; t=1520585149; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Hco+BCSlnmEFln72+WsWcol3F7975ctIRogXQdZm7cSemeOg7ry3KuyOfCyOeFvbDR
-         6lD1ANVsoxiUpFXVAk3e6ef1C0lgDlrPD9iHsZzN2mZ+GsSWxcu48Ny5sWk6DPscTiBp
-         BhIXG/J55M/HP/xkNYPGLu4+wqyop2GkMJysaEuArZ828X1skAvOvDOoZIeAdCHlKFLg
-         6ylhoYpONLVJzRix6AqQQTl6TEkpb4oZQUIc5kZkR0FCxxXEYo7U8uWrOuzfLEBySbCK
-         oYmA/jMyckf1y2/TgY0zVI/j5MmWotOKGFpmvRauSw+D5ChSUdCmE9vsufyItos2I/0J
-         3Cyg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=7Ip+hQEhapXMb4uV6ga7rXAGPTEnxXg8PptDLbkfBxM=;
-        b=CcjdXfesMnW+MGWfu71hUk4LkZlFaPDeMDyqbQds4XfgZ3u89QBYlkTaxJq1B4Dp6W
-         dRhEoFgmkNC1h63fRvCMGyV+XFbhcHTYQev7gbSKQjysrHZQR3XdDEb0BEA5jmGTrk24
-         DoP+abiinsM/m8SsJmKGudpSkrmlBHiKSCkU0D0aiVmrtbqip8lYe+3rT7jmcTFFsUQK
-         w7ucWOry5pToQiDAMXYKfrp/hwCD8sDRydUX4dKncfP1ITbCQWJE2NTSbYIYYh1/ebiw
-         PzvUR2kDRQUL+lnOF3J+NlyiE1RLNG0fLwxxb7NhdbSkpvyY+bnrrS6BIhR1eWQqg6vc
-         77zg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.18 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.18 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <e6f5af254cd7f3ace2c95cbc2d16da04>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org,
-	broonie@kernel.org,
-	alexandre.belloni@bootlin.com
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Joseph Lo <josephl@nvidia.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Brian Norris <briannorris@chromium.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	linux-rockchip@lists.infradead.org,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	linux-input@vger.kernel.org,
-	Will Deacon <will.deacon@arm.com>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Matthias Kaehlcke <mka@chromium.org>,
-	devicetree@vger.kernel.org,
-	stephen lu <lumotuwe@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-rtc@vger.kernel.org,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: [RESEND PATCH v4 2/4] rtc: at91sam9: Set name of regmap_config
-Date: Fri,  9 Mar 2018 16:43:49 +0800
-Message-Id: <20180309084351.32009-3-jeffy.chen@rock-chips.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180309084351.32009-1-jeffy.chen@rock-chips.com>
-References: <20180309084351.32009-1-jeffy.chen@rock-chips.com>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-4009664-1520844466-2-586286289307844342
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520844465; b=FlKPOrNpex5l5qYg2M2+H6XVonphEhiE3P+OQ0jycswwunB
+    acIPXck1T+fVUWeuRFeR6JQhkdKWNOlEiW1QIGMekXdA/dYZUW0I63qWBFFnCQfT
+    JLG4KUIgPqaNFhCdo56AykrpoNhxRIfYUCSKnPmpRNBNjdcgws8MS0AakuT+iTAZ
+    5kr1jB3nK9DBUmbhrDYZOKUxVusYoodgO3XuMj7UIb+1Mwvwg1ehIqrWbWuDMlYu
+    R3Q+SS+UmYp7jBvD7bMWDU3DAxceW9jG7CLsaXCrodqtfCaYDabS+ND4T6iLeMOR
+    +1FykCI/TyXh5dJu2crpXfBBqRwnvowyT0Kd2Mw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520844465; bh=W
+    Rp0nqKTw6kx0MPk6iFroo5KpoizOepNTNvBRaouQK0=; b=MVD+7HjXDYnBAn63G
+    T0CmVwdtaQRXrZuF5lDvsLmyGsWnvffzw8k5CASmZXRyj7MFd2iswUPPh5fFczlI
+    ijyzjT4U0/aziyqefqt0S7GYNMneKfhEXrQaF2UUZnn8pZ4+oKR2MZgoO+fNk3CS
+    mVdElfpwFt/RDIeKDfmzEx3W/+xvG/JmNsZWPg96HRFDtp0XWLHCMqstvVZ7k5NY
+    rxJhCfq5GzZchyjCCZdkTMpFNHotak0Mr0ILF2/KV3j3ELI8KrlsZ0DGm4iKUz7v
+    bD6A6ybo262wHpxEyZry/uiQKdD6wR6j0xvkV1h8yxslDaC7YBP8vY2lepGb4Xv6
+    18q4A==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=PIcU+Vh2 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TkETVdfT;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=PIcU+Vh2 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TkETVdfT;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELuY5qqinWM2Hlqv8Yiq5jaUp9Kk7UeY3NRoAoT9d2wSkdxyNVMkmSnITlpMVrhu1KHL9+avZw==
+From: hariprasath.elango@gmail.com
+To: aditya.shankar@microchip.com
+Subject: [PATCH] staging: wilc1000: use pre-defined macro
+ is_broadcast_ether_addr
+Date: Mon, 12 Mar 2018 14:17:15 +0530
+Message-Id: <20180312084715.30103-1-hariprasath.elango@gmail.com>
+X-Mailer: git-send-email 2.10.0.GIT
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, vbabu3@visteon.com,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-wireless@vger.kernel.org, Hari Prasath <hgujulan@visteon.com>,
+ hariprasath.elango@gmail.com, linux-kernel@vger.kernel.org,
+ Ganesh Krishna <ganesh.krishna@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594449093751226765?=
-X-GMAIL-MSGID: =?utf-8?q?1594449093751226765?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-We are now allowing to register debugfs without a valid device, and not
-having a valid name will end up using "dummy*" to create debugfs dir.
+From: Hari Prasath <hgujulan@visteon.com>
 
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+Use the kernel pre-defined macro is_broadcast_ether_addr() instead of
+doing a memcmp here.
+
+Signed-off-by: Hari Prasath <hgujulan@visteon.com>
 ---
+ drivers/staging/wilc1000/linux_mon.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Changes in v4:
-Not to use rtc dev to init regmap, the gpbr is not directly related to
-the rtc.
-
-Changes in v3: None
-
- drivers/rtc/rtc-at91sam9.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/rtc/rtc-at91sam9.c b/drivers/rtc/rtc-at91sam9.c
-index 7418a763ce52..ee71e647fd43 100644
---- a/drivers/rtc/rtc-at91sam9.c
-+++ b/drivers/rtc/rtc-at91sam9.c
-@@ -349,6 +349,7 @@ static const struct rtc_class_ops at91_rtc_ops = {
- };
+diff --git a/drivers/staging/wilc1000/linux_mon.c b/drivers/staging/wilc1000/linux_mon.c
+index bbdfc7a..f93f411 100644
+--- a/drivers/staging/wilc1000/linux_mon.c
++++ b/drivers/staging/wilc1000/linux_mon.c
+@@ -27,7 +27,6 @@ static struct net_device *wilc_wfi_mon; /* global monitor netdev */
  
- static const struct regmap_config gpbr_regmap_config = {
-+	.name = "gpbr",
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.reg_stride = 4,
+ static u8 srcadd[6];
+ static u8 bssid[6];
+-static u8 broadcast[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+ /**
+  *  @brief      WILC_WFI_monitor_rx
+  *  @details
+@@ -193,7 +192,7 @@ static netdev_tx_t WILC_WFI_mon_xmit(struct sk_buff *skb,
+ 
+ 	skb_pull(skb, rtap_len);
+ 
+-	if (skb->data[0] == 0xc0 && (!(memcmp(broadcast, &skb->data[4], 6)))) {
++	if (skb->data[0] == 0xc0 && is_broadcast_ether_addr(&skb->data[4])) {
+ 		skb2 = dev_alloc_skb(skb->len + sizeof(struct wilc_wfi_radiotap_cb_hdr));
+ 		if (!skb2)
+ 			return -ENOMEM;
 -- 
-2.11.0
+2.10.0.GIT
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
