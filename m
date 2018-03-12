@@ -1,149 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752272AbeCLKQu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 06:16:50 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:39150 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751229AbeCLKQs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 06:16:48 -0400
-X-Google-Smtp-Source: AG47ELsMbE+nWtSi7ZdImprSITy+fARCwZmplrF+KqkmVG0C2URS5WUG+nkTURe9vuYpj1hI0j0nRq92OnE8ICt2sv4=
-MIME-Version: 1.0
-In-Reply-To: <20180307162430.2664523-2-arnd@arndb.de>
-References: <20180307162430.2664523-1-arnd@arndb.de> <20180307162430.2664523-2-arnd@arndb.de>
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Mon, 12 Mar 2018 12:16:47 +0200
-Message-ID: <CAP6Zq1ikUJ9jTLbR6ehdRLjkQHxzFa2VSdXN1G2ocMw9RyhGjg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: npcm: drop extraneous 'select' statements
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Avi Fishman <avifishman70@gmail.com>,
-        Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        linux-arm-kernel@lists.infradead.org,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        id S1752609AbeCLKRd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 06:17:33 -0400
+Received: from mga06.intel.com ([134.134.136.31]:16613 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751229AbeCLKRb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 06:17:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,460,1515484800";
+   d="scan'208";a="37413677"
+Message-ID: <f9098c326ab3070c3215901e3383a3a2d208b2ae.camel@linux.intel.com>
+Subject: Re: Regression from efi: call get_event_log before ExitBootServices
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Thiebaud Weksteen <tweek@google.com>, Jeremy Cline <jeremy@jcline.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: hdegoede@redhat.com, Javier Martinez Canillas <javierm@redhat.com>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Date: Mon, 12 Mar 2018 12:17:27 +0200
+In-Reply-To: <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
+References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
+         <e7c2be5c-cf21-fc2d-efda-d9222d93ffad@redhat.com>
+         <b32f335c-0d77-1749-f7fe-65f512280255@redhat.com>
+         <ade378f6-c997-1d48-a30d-cceee6435fc8@redhat.com>
+         <a3b5f822-f8f4-e2f5-46da-e23e13174f28@redhat.com>
+         <cec36124-0950-6ad9-58a8-9bd69e63aa04@redhat.com>
+         <0100016206a68850-bd5c96b3-f275-46ea-98b1-1317e02a5d6e-000000@email.amazonses.com>
+         <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com>
+         <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
+         <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
+         <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.27.90-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Amd,
+On Sat, 2018-03-10 at 10:45 +0000, Thiebaud Weksteen wrote:
+> On Fri, Mar 9, 2018 at 5:54 PM Jeremy Cline <jeremy@jcline.org> wrote:
+> > and it's hanging at "memset(log_tbl, 0, sizeof(*log_tbl) + log_size);"
+> 
+> Thanks. Well, it looks like the memory that is supposedly allocated is not
+> usable. I'm thinking this is a firmware bug.
+> Ard, would you agree on this assumption? Thoughts on how to proceed?
 
-Sorry for the delayed reply,
+Check if the BIOS is up to date?
 
-the NPCM7xx is a family of BMC's that include NPCM750, NPCM730 and more
-
-All of the NPCM7xx BMC's have the same basic modules like Cortex-A9,
-WDT, timers and more
-
-can we reflacte the NPCM7xx as follow in the Kconfig:
-
-menuconfig ARCH_NPCM
-        bool "Nuvoton NPCM Architecture"
-        depends on ARCH_MULTI_V7
-        select USE_OF
-        select PINCTRL
-
-if ARCH_NPCM
-
-config ARCH_NPCM7XX
-        bool "Support for NPCM7xx BMC (Poleg)"
-        depends on ARCH_MULTI_V7
-        select HAVE_ARM_SCU
-        select PINCTRL_NPCM7XX
-        select NPCM7XX_TIMER
-        select ARCH_REQUIRE_GPIOLIB
-        select ARM_GIC
-        select ARM_ERRATA_720789
-        select ARM_ERRATA_754322
-        select ARM_ERRATA_794072
-        select PL310_ERRATA_588369
-        select PL310_ERRATA_727915
-        select MFD_SYSCON
-        help
-          General support for NPCM7xx BMC (Poleg).
-
-          Nuvoton NPCM7xx BMC based on the Cortex A9.
-
-if ARCH_NPCM7XX
-
-config ARCH_NPCM750
-        bool "NPCM750 BMC support with Device Tree"
-        select HAVE_ARM_TWD if SMP
-        help
-          General support for NPCM750 BMC (Poleg).
-
-          Nuvoton NPCM750 BMC based on the Cortex A9.
-
-config ARCH_NPCM730
-        bool "NPCM730 BMC support with Device Tree"
-        select HAVE_ARM_TWD if SMP
-        select ARM_ERRATA_764369 if SMP
-        help
-          General support for NPCM730 BMC (Poleg).
-
-          Nuvoton NPCM730 BMC based on the Cortex A9.
-
-endif #ARCH_NPCM7XX
-
-endif
-
-On 7 March 2018 at 18:24, Arnd Bergmann <arnd@arndb.de> wrote:
-> While looking at the build regression, I noticed that the
-> platform selects a lot of other Kconfig symbols that it really
-> should not:
->
-> CPU_V7, ARM_GIC, HAVE_SMP, COMMON_CLK, GENERIC_CLOCKEVENTS,
-> and CLKDEV_LOOKUP are all implied by ARCH_MULTI_V7, so they
-> can be dropped.
->
-> CACHE_L2X0, SMP and USB are meant to be user-selectable, we
-> want to be able to turn those off for testing purposes.
->
-> CPU_USE_DOMAINS looks completely misplaced here, we should not
-> select that for an ARMv7 platform.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/arm/mach-npcm/Kconfig | 18 ------------------
->  1 file changed, 18 deletions(-)
->
-> diff --git a/arch/arm/mach-npcm/Kconfig b/arch/arm/mach-npcm/Kconfig
-> index 2bc6697c8d97..c6a16230e8ef 100644
-> --- a/arch/arm/mach-npcm/Kconfig
-> +++ b/arch/arm/mach-npcm/Kconfig
-> @@ -12,12 +12,6 @@ comment "NPCM7XX CPU type"
->  config ARCH_NPCM750
->         depends on ARCH_NPCM
->         bool "Support for NPCM750 BMC CPU (Poleg)"
-> -       select CACHE_L2X0
-> -       select CPU_V7
-> -       select ARM_GIC
-> -       select HAVE_SMP
-> -       select SMP
-> -       select SMP_ON_UP
->         select HAVE_ARM_SCU
->         select HAVE_ARM_TWD if SMP
->         select ARM_ERRATA_720789
-> @@ -26,18 +20,6 @@ config ARCH_NPCM750
->         select ARM_ERRATA_794072
->         select PL310_ERRATA_588369
->         select PL310_ERRATA_727915
-> -       select USB_EHCI_ROOT_HUB_TT
-> -       select USB_ARCH_HAS_HCD
-> -       select USB_ARCH_HAS_EHCI
-> -       select USB_EHCI_HCD
-> -       select USB_ARCH_HAS_OHCI
-> -       select USB_OHCI_HCD
-> -       select USB
-> -       select FIQ
-> -       select CPU_USE_DOMAINS
-> -       select GENERIC_CLOCKEVENTS
-> -       select CLKDEV_LOOKUP
-> -       select COMMON_CLK if OF
->         select NPCM750_TIMER
->         select MFD_SYSCON
->         help
-> --
-> 2.9.0
->
+/Jarkko
