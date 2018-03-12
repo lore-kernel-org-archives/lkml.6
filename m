@@ -1,65 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932897AbeCLSDh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 14:03:37 -0400
-Received: from anholt.net ([50.246.234.109]:57740 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932231AbeCLSDg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 14:03:36 -0400
-From: Eric Anholt <eric@anholt.net>
-To: Matheus Castello <matheus@castello.eng.br>, stefan.wahren@i2se.com
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Matheus Castello <matheus@castello.eng.br>
-Subject: Re: [PATCH v4 2/3] pinctrl: bcm2835: Add support for generic pinctrl binding
-In-Reply-To: <1520615640-9153-3-git-send-email-matheus@castello.eng.br>
-References: <483687035.384686.1520596004410@email.1und1.de> <1520615640-9153-1-git-send-email-matheus@castello.eng.br> <1520615640-9153-3-git-send-email-matheus@castello.eng.br>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date: Mon, 12 Mar 2018 11:03:33 -0700
-Message-ID: <87h8plxjbe.fsf@anholt.net>
+        id S932765AbeCLSJj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 14:09:39 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:33750 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932560AbeCLSJg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 14:09:36 -0400
+X-Google-Smtp-Source: AG47ELsgKP5agbOIiU9Cjczm90huZyBdw8QcxBKb0yuqRRTi8PfAymnUBJWSGRHEAh5F4zdKku26DVcgPD2vdXsFLgo=
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+In-Reply-To: <20180312174012.GE18494@localhost.localdomain>
+References: <20180312171813.3487.94803.stgit@localhost.localdomain>
+ <20180312172031.3487.20651.stgit@localhost.localdomain> <20180312174012.GE18494@localhost.localdomain>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Mon, 12 Mar 2018 11:09:34 -0700
+Message-ID: <CAKgT0UdWc=Sz-xgd4H3bTDt5d17=-PY8VPWz6A3mAciWV6=97w@mail.gmail.com>
+Subject: Re: [pci PATCH v5 1/4] pci: Add pci_sriov_configure_simple for PFs
+ that don't manage VF resources
+To: Keith Busch <keith.busch@intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        "Daly, Dan" <dan.daly@intel.com>, LKML <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org, netanel@amazon.com,
+        Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        dwmw@amazon.co.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-
-Matheus Castello <matheus@castello.eng.br> writes:
-
-> To keep driver up to date we add generic pinctrl binding support, which covers
-> the features used in this driver and has additional node properties that this
-> SoC has compatibility, so enabling future implementations of these properties
-> without the need to create new node properties in the device trees.
+On Mon, Mar 12, 2018 at 10:40 AM, Keith Busch <keith.busch@intel.com> wrote:
+> On Mon, Mar 12, 2018 at 10:21:29AM -0700, Alexander Duyck wrote:
+>> diff --git a/include/linux/pci.h b/include/linux/pci.h
+>> index 024a1beda008..9cab9d0d51dc 100644
+>> --- a/include/linux/pci.h
+>> +++ b/include/linux/pci.h
+>> @@ -1953,6 +1953,7 @@ static inline void pci_mmcfg_late_init(void) { }
+>>  int pci_vfs_assigned(struct pci_dev *dev);
+>>  int pci_sriov_set_totalvfs(struct pci_dev *dev, u16 numvfs);
+>>  int pci_sriov_get_totalvfs(struct pci_dev *dev);
+>> +int pci_sriov_configure_simple(struct pci_dev *dev, int nr_virtfn);
+>>  resource_size_t pci_iov_resource_size(struct pci_dev *dev, int resno);
+>>  void pci_vf_drivers_autoprobe(struct pci_dev *dev, bool probe);
+>>  #else
 >
-> The logic of this change maintain the old brcm legacy binding support in order
-> to keep the ABI stable.
->
-> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
+> I recommend stubbing 'pci_sriov_configure_simple' or defining it to
+> NULL in the '#else' section here so you don't need to repeat the "#ifdef
+> CONFIG_PCI_IOV" in each driver wishing to use this function. Otherwise
+> looks fine to me.
 
-2-3 are:
-
-Reviewed-by: Eric Anholt <eric@anholt.net>
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlqmwPUACgkQtdYpNtH8
-nui7oA/7BSwZ7qOWiwCgJLj0lE13Ym7zgzizCgHnadNzkNGHGlKrcTLcZQjwH4L3
-IFztyPWlGrjg/Sx9MiRLJDLtGU/Pq8MJsYeYXC3bEqS29DythwSW1wU5OZj0fxrR
-2kevNt/hPhuPTPihh4XsofEK4XvK93KMQmtbQu210UaLf9uxNp35OgiPuDdYAsoQ
-/kgHrU1rENU87VW3mqZY/RQ0CBn+KL7V6Uv9N3PgwvoLskpXFggHdWl51lRq/Xyt
-TgxjkeZVByvTWbSvW+PDGG/KGznc+9GK1Ddg/NpS2mTKa0zYQLTbJgdBrhkzIpnG
-6Q7Shzic/i4Uus6KZZkQH7jjLZAmmbZA3yi3JuAgUzzZYiyZ4tFz5JXbFkFvRtRY
-Mn/qW4Dd54VyaiuWxFN4rI5OmraIGNpo+yp2/LRVY3iQIw3WXHfdD+2ExGwH2phL
-rrUwe2hvJXrq/dK1wawkTGa+4xBzfEGt9ZVX6U80YTVkdAQQykzr5AMqADusjCbo
-fgEueKOuRefkbL8kL7fN+YD4ceT8doLv2BY9BpOjUbqmkv0MWN6r54SoNy+FCBDZ
-b4eKZ0DqmXGpzrT6XiOYBWoJnHIgIUlW1mV0EzoHZBYkJzN/vpSp5qzgkCqUfNCu
-jK5/9VHNqlQybWQy/fSnmq0LR/fMpG9lp3h36gLgoMvH5/ACTMU=
-=V9Wi
------END PGP SIGNATURE-----
---=-=-=--
+My concern with defining it as NULL is that somebody may end up
+calling it in the future directly and that may end up causing issues.
+One thought I have been debating is moving it to a different file. I
+am just not sure where the best place to put something like this would
+be. I could move this function to drivers/pci/pci.c if everyone is
+okay with it and then I could just strip the contents out by wrapping
+them in a #ifdef instead.
