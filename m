@@ -1,74 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932447AbeCLJo1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 05:44:27 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47937 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751899AbeCLJoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:44:25 -0400
-Date: Mon, 12 Mar 2018 10:44:13 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: airlied@linux.ie, wens@csie.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/sun4i: Fix an error handling path in
- 'sun4i_drv_bind()'
-Message-ID: <20180312094413.zck7apzghxs7brfr@flea>
-References: <20180311231909.5381-1-christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kwv5wwbq7piw4224"
-Content-Disposition: inline
-In-Reply-To: <20180311231909.5381-1-christophe.jaillet@wanadoo.fr>
-User-Agent: NeoMutt/20180223
+        id S1752620AbeCLJoP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 05:44:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38550 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932416AbeCLJne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 05:43:34 -0400
+From: Jiri Olsa <jolsa@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: [PATCH 12/13] perf bpf: Run begin/end programs
+Date: Mon, 12 Mar 2018 10:43:12 +0100
+Message-Id: <20180312094313.18738-13-jolsa@kernel.org>
+In-Reply-To: <20180312094313.18738-1-jolsa@kernel.org>
+References: <20180312094313.18738-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Running begin and end programs for ebpf object.
 
---kwv5wwbq7piw4224
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Link: http://lkml.kernel.org/n/tip-ego7m00cr7sru8l5bjpjwwcm@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/builtin-bpf.c     |  6 ++++
+ tools/perf/util/bpf-loader.c | 78 ++++++++++++++++++++++++++++++++++++++++++++
+ tools/perf/util/bpf-loader.h |  2 ++
+ 3 files changed, 86 insertions(+)
 
-On Mon, Mar 12, 2018 at 12:19:09AM +0100, Christophe JAILLET wrote:
-> Commit 070badfab767 ("drm/sun4i: call drm_vblank_init with correct number
-> of crtcs") has moved some code without updating the error handling gotos
-> accordingly.
->=20
-> Branch to the correct label and remove a now unused lablel.
->=20
-> Fixes: 070badfab767 ("drm/sun4i: call drm_vblank_init with correct number=
- of crtcs")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---kwv5wwbq7piw4224
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqmS+wACgkQ0rTAlCFN
-r3S8yw/+OuCmCIGSO3r8wrt8W+x1Xs0hCJiJdP8US0ohUvX/B6VbynAmmfTd34U5
-KoYr2Nr7mULmad+20XdxSpCpWFFDg4PS7UrZy0TRYH5K3WR7lI5suiv1HJ9bGPai
-F+90vNq/VkbkFco5mvkowbcP91ZR4v1CJuQ/tzF8mJEkrrrwh58jLAxaIoqHQq0+
-Kgih5Ln85cPcynsxzbeLzyz9tJ0OaauSn9y3gFo3YFxLdGUVvQyrzKaZqfgaGOuX
-sOcw0JllYCK5TCVyJQUfcqWEaRedBJmSHaZxOvB93N5Lb6Yb8UGT6YtoKFWLgldA
-OEvJXWQl6t2Q8m27ygqD4MB3CvbEM0Ao5f08B+LwdltKWCfFny+yNsy+v6L3nRCn
-MHFuzVGCBKl/SZegraX2zm2ZQDHeIOPs4CKNiWaLUWT9PrM0b1ybMelHaR3PPCkD
-dIdaU6CsBj7UA/Ah2TDpLzcTQyuaqXNqIVHWa9o+0aeoZ5d2YEr6AbEo6QrPommg
-VBpzJLT9ymbPOmp/VMEEYVChl4ylKhXK0P3pagej85sbGPv5pfIpY7t6YRnlaUfo
-NRR129CsU7961xn/Bwsgv53cBS4eQzcLNZSFTkJ3Y9t3d5Y9rr+LrRNvh6N8/+2u
-uatfCcwPjk2TI8U2PKNvp7Ek8yvDvaxqHvgVXn8HBQwaOcMfUJI=
-=K0H1
------END PGP SIGNATURE-----
-
---kwv5wwbq7piw4224--
+diff --git a/tools/perf/builtin-bpf.c b/tools/perf/builtin-bpf.c
+index 7065153a9577..1111e240e259 100644
+--- a/tools/perf/builtin-bpf.c
++++ b/tools/perf/builtin-bpf.c
+@@ -94,6 +94,10 @@ static int __cmd_bpf(int argc , const char **argv)
+ 		goto out_child;
+ 	}
+ 
++	err = bpf__run_begin(stdout);
++	if (err)
++		goto out_child;
++
+ 	if (forks) {
+ 		perf_evlist__start_workload(bpf.evlist);
+ 
+@@ -115,6 +119,8 @@ static int __cmd_bpf(int argc , const char **argv)
+ 
+ 	child_pid = -1;
+ 
++	bpf__run_end(stdout);
++
+ out_child:
+ 	if (forks) {
+                 if (workload_exec_errno) {
+diff --git a/tools/perf/util/bpf-loader.c b/tools/perf/util/bpf-loader.c
+index e59168153375..d5f9c3cd5280 100644
+--- a/tools/perf/util/bpf-loader.c
++++ b/tools/perf/util/bpf-loader.c
+@@ -9,6 +9,7 @@
+ #include <linux/bpf.h>
+ #include <bpf/libbpf.h>
+ #include <bpf/bpf.h>
++#include <bpf/interp.h>
+ #include <linux/err.h>
+ #include <linux/kernel.h>
+ #include <linux/string.h>
+@@ -23,6 +24,7 @@
+ #include "strfilter.h"
+ #include "llvm-utils.h"
+ #include "c++/clang-c.h"
++#include "bpf-userapi.h"
+ 
+ #define DEFINE_PRINT_FN(name, level) \
+ static int libbpf_##name(const char *fmt, ...)	\
+@@ -1547,6 +1549,82 @@ int bpf__apply_obj_config(void)
+ 	return 0;
+ }
+ 
++struct interp {
++	struct bpf_interp  in;
++	FILE		  *out;
++};
++
++static int bpf_interp_call_cb(struct bpf_interp *in,
++			      u64 imm, u64 *regs)
++{
++	struct interp *interp = container_of(in, struct interp, in);
++	u64 dr;
++
++	switch (imm) {
++	case BPF_FUNC_USER_bpf_map_lookup_elem:
++		dr = bpf_map_lookup_elem((int)    regs[1],
++					 (void *) regs[2],
++					 (void *) regs[3]);
++		break;
++	case BPF_FUNC_USER_bpf_map_get_next_key:
++		dr = bpf_map_get_next_key((int)    regs[1],
++					  (void *) regs[2],
++					  (void *) regs[3]);
++		break;
++	case BPF_FUNC_USER_print:
++		dr = fprintf(interp->out, (const char *) regs[1],
++			     regs[2], regs[3], regs[4], regs[5]);
++		fflush(interp->out);
++		break;
++	default:
++		return -1;
++		break;
++	};
++
++	regs[0] = dr;
++	regs[1] = 0xdeadbeef;
++	regs[2] = 0xdeadbeef;
++	regs[3] = 0xdeadbeef;
++	regs[4] = 0xdeadbeef;
++	return 0;
++}
++
++int bpf__run_begin(FILE *out)
++{
++	struct interp interp = {
++		.in.call_cb	= bpf_interp_call_cb,
++		.out		= out,
++	};
++	struct bpf_object *obj, *tmp;
++	int err;
++
++	bpf_object__for_each_safe(obj, tmp) {
++		err = bpf_object__run_begin(obj, &interp.in);
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
++
++int bpf__run_end(FILE *out)
++{
++	struct interp interp = {
++		.in.call_cb	= bpf_interp_call_cb,
++		.out		= out,
++	};
++	struct bpf_object *obj, *tmp;
++	int err;
++
++	bpf_object__for_each_safe(obj, tmp) {
++		err = bpf_object__run_end(obj, &interp.in);
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
++
+ #define bpf__for_each_map(pos, obj, objtmp)	\
+ 	bpf_object__for_each_safe(obj, objtmp)	\
+ 		bpf_map__for_each(pos, obj)
+diff --git a/tools/perf/util/bpf-loader.h b/tools/perf/util/bpf-loader.h
+index 8c2a494cab53..1ee4c3ca4927 100644
+--- a/tools/perf/util/bpf-loader.h
++++ b/tools/perf/util/bpf-loader.h
+@@ -87,6 +87,8 @@ int bpf__setup_stdout(struct perf_evlist *evlist);
+ int bpf__strerror_setup_stdout(struct perf_evlist *evlist, int err,
+ 			       char *buf, size_t size);
+ 
++int bpf__run_begin(FILE *out);
++int bpf__run_end(FILE *out);
+ #else
+ #include <errno.h>
+ 
+-- 
+2.13.6
