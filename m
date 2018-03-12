@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELusjPCMkDuUd5g6DVmdD681D274Wj7+F56hHSpaJUjyzOr/yM/jn1F+ucgbMW1dkvQ9ZDOA
-ARC-Seal: i=1; a=rsa-sha256; t=1520824089; cv=none;
+X-Google-Smtp-Source: AG47ELtdICX7xqbO1vonzf1ZvmUlejOi2O2Vg22GuLDO2HI3YtUrShgBxZcx6sqsIL3xRmO78TPA
+ARC-Seal: i=1; a=rsa-sha256; t=1520824087; cv=none;
         d=google.com; s=arc-20160816;
-        b=BJHmYHjGiju/ih38vnicjF/z2CTGwLRO+s3FLpIyMlyXfLIJT8puRpYVCJabwwA8E4
-         l3oIqEbG5amfBxi3Yc34E8A0UFUlk/COW1mm140l916VX8ixuA4gru4gPZns+7PWt4bh
-         l1G4r+6/I6A7Bxe9PB0Q9R+bhuxEK1Rk5/vBe2Rn9f1vVejdIW57ymsG+SVjSBN6uJpf
-         Zhgc4FAh1KA5j6SL7otems3yvaojMXs+/7FZNMOsdqhxnADQwAnbjwPUR1xHndNixWSY
-         KXXZBgw9d3Fds3mwXqebgfgX+R+ck3GsgmfEujPvLDzKpEuOgJJl6QVlqr+xG7zUrTLB
-         Dvng==
+        b=vCpkbGFFzdJErTIDewbfqfFOjlY5SW78SxXjriCNbioVh2cr+NDAL9/M5oysi+RtwV
+         U0I7vGJ5ZRsZ/ZBV5FVTAJ1cs7ew7D45aLsTSupLoGDMqv94s0UzQzrL/TyQUmIQSvX4
+         Az2Ik6Tg7PR01bECNIBEvs7WiycdBDpaN2aofbY8tG1NoYTnZ5pCArywa/qTI88kVVWJ
+         OVXIMgMeU8RA2CuMF+mpCoguGxpmwdpGQ4Kgxf3RgG+cQXRazeYdACc2N2aAzpL5oNAE
+         kuVWypdwyfyUW6C5R/opRW0ewlnAvMN2A6ca3Q/6z+N4I3x3IjGKTbEsDdhHDozYHFjd
+         LHTA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=CDF53EYXC63rapTKzoOvyDQ746/l7UojoZq+LQRGWuc=;
-        b=CZ8bGCYdFfZkWGf4rv5U9mSPym7dddnba6Z4X9pOZ0DSlblefhO7T+CizhJHU/p7Xk
-         jCVJe+hrSjKS/DHZYizH4Nip4KQron0FDOZRW4tE72qJbej08w6ym3Z5IY4KUxDmQ/jU
-         /KGVFHqciHjrKz5CCKLeVEzvrEqgjlw8sX5sKqeY8zytOYhTugAuzQRFkdUJgPyQcqNT
-         FnW2WgCN46Szb3fcwgwa0/YAER/h5fPizUOvTzfzq4271kdBaktdxpVQoU8MduXfvsA3
-         F1zq/MXIXKeaXycBwtUHNk3/pFicCCH5eCzsvC4Unlr0k8pH8LgOZ1V3aStNetzMrMaf
-         i31g==
+        bh=pEFFRGgPc1EKWQctEjJBA2Q+SvRWPKDVyFdxgy+fjaY=;
+        b=JwUrN3MkK8Qh/SdjdXWfo7alXIz0RjJ91kTwEH32GNuC3fGAmDHb+wwzliJqkf6eOm
+         8Rlwjk1Rxgltb/CVRVLA59DOhORPkSN76mch1ewYdTsLcpy2YK7/rmY5+ucGAadS8Del
+         uZuOscLnmYxriVI3ywb2VWHhA8WbQHeD3G19vWMbkp7sqFJSfpy9O9xqh3qPKhB+Fbna
+         VhtYK58wMUoLSC6UplymG5KhG7b3DcqES9MYMywb5OVj9DQM48sDWgvbWZkRkjV5jJTh
+         FnIbf25bfhL4AGfc0BushAfR48olQSpei5Wm75mPlm+AoWr77zSUzLljVBwo+GXS2I1A
+         zeig==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,37 +30,35 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Paul Turner" <pjt@google.com>,
  "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Paul Turner" <pjt@google.com>,
+ "Tim Chen" <tim.c.chen@linux.intel.com>,
  "Peter Zijlstra" <peterz@infradead.org>,
  gnomes@lxorguk.ukuu.org.uk,
- "Tim Chen" <tim.c.chen@linux.intel.com>,
  "Ingo Molnar" <mingo@kernel.org>,
- "David Woodhouse" <dwmw@amazon.co.uk>,
- "Andi Kleen" <ak@linux.intel.com>,
  "Rik van Riel" <riel@redhat.com>,
- "Juergen Gross" <jgross@suse.com>,
- "Thomas Gleixner" <tglx@linutronix.de>,
+ "Andi Kleen" <ak@linux.intel.com>,
  "Dave Hansen" <dave.hansen@intel.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Josh Poimboeuf" <jpoimboe@redhat.com>,
  "Greg Kroah-Hartman" <gregkh@linux-foundation.org>,
  "Jiri Kosina" <jikos@kernel.org>,
- "Josh Poimboeuf" <jpoimboe@redhat.com>,
  "Andy Lutomirski" <luto@amacapital.net>,
- thomas.lendacky@amd.com,
  "Kees Cook" <keescook@google.com>,
- "Arjan van de Ven" <arjan@linux.intel.com>
+ "Arjan van de Ven" <arjan@linux.intel.com>,
+ thomas.lendacky@amd.com
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.733851180@decadent.org.uk>
+Message-ID: <lsq.1520823814.412053836@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 063/104] x86/retpoline/xen: Convert Xen hypercall
+Subject: [PATCH 3.2 065/104] x86/retpoline/irq32: Convert assembler
  indirect jumps
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699641637563018?=
-X-GMAIL-MSGID: =?utf-8?q?1594699640988717678?=
+X-GMAIL-THRID: =?utf-8?q?1594699634841948642?=
+X-GMAIL-MSGID: =?utf-8?q?1594699638069855956?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -68,21 +66,19 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+From: Andi Kleen <ak@linux.intel.com>
 
-commit ea08816d5b185ab3d09e95e393f265af54560350 upstream.
+commit 7614e913db1f40fff819b36216484dc3808995d4 upstream.
 
-Convert indirect call in Xen hypercall to use non-speculative sequence,
-when CONFIG_RETPOLINE is enabled.
+Convert all indirect jumps in 32bit irq inline asm code to use non
+speculative sequences.
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Acked-by: Arjan van de Ven <arjan@linux.intel.com>
 Acked-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Juergen Gross <jgross@suse.com>
 Cc: gnomes@lxorguk.ukuu.org.uk
 Cc: Rik van Riel <riel@redhat.com>
-Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: thomas.lendacky@amd.com
 Cc: Peter Zijlstra <peterz@infradead.org>
@@ -94,32 +90,48 @@ Cc: Kees Cook <keescook@google.com>
 Cc: Tim Chen <tim.c.chen@linux.intel.com>
 Cc: Greg Kroah-Hartman <gregkh@linux-foundation.org>
 Cc: Paul Turner <pjt@google.com>
-Link: https://lkml.kernel.org/r/1515707194-20531-10-git-send-email-dwmw@amazon.co.uk
+Link: https://lkml.kernel.org/r/1515707194-20531-12-git-send-email-dwmw@amazon.co.uk
 [bwh: Backported to 3.2: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/include/asm/xen/hypercall.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/kernel/irq_32.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/arch/x86/include/asm/xen/hypercall.h
-+++ b/arch/x86/include/asm/xen/hypercall.h
-@@ -43,6 +43,7 @@
+--- a/arch/x86/kernel/irq_32.c
++++ b/arch/x86/kernel/irq_32.c
+@@ -20,6 +20,7 @@
+ #include <linux/mm.h>
  
- #include <asm/page.h>
- #include <asm/pgtable.h>
+ #include <asm/apic.h>
 +#include <asm/nospec-branch.h>
  
- #include <xen/interface/xen.h>
- #include <xen/interface/sched.h>
-@@ -212,9 +213,9 @@ privcmd_call(unsigned call,
- 	__HYPERCALL_DECLS;
- 	__HYPERCALL_5ARG(a1, a2, a3, a4, a5);
+ DEFINE_PER_CPU_SHARED_ALIGNED(irq_cpustat_t, irq_stat);
+ EXPORT_PER_CPU_SYMBOL(irq_stat);
+@@ -64,11 +65,11 @@ static DEFINE_PER_CPU(union irq_ctx *, s
+ static void call_on_stack(void *func, void *stack)
+ {
+ 	asm volatile("xchgl	%%ebx,%%esp	\n"
+-		     "call	*%%edi		\n"
++		     CALL_NOSPEC
+ 		     "movl	%%ebx,%%esp	\n"
+ 		     : "=b" (stack)
+ 		     : "0" (stack),
+-		       "D"(func)
++		       [thunk_target] "D"(func)
+ 		     : "memory", "cc", "edx", "ecx", "eax");
+ }
  
--	asm volatile("call *%[call]"
-+	asm volatile(CALL_NOSPEC
- 		     : __HYPERCALL_5PARAM
--		     : [call] "a" (&hypercall_page[call])
-+		     : [thunk_target] "a" (&hypercall_page[call])
- 		     : __HYPERCALL_CLOBBER5);
+@@ -107,11 +108,11 @@ execute_on_irq_stack(int overflow, struc
+ 		call_on_stack(print_stack_overflow, isp);
  
- 	return (long)__res;
+ 	asm volatile("xchgl	%%ebx,%%esp	\n"
+-		     "call	*%%edi		\n"
++		     CALL_NOSPEC
+ 		     "movl	%%ebx,%%esp	\n"
+ 		     : "=a" (arg1), "=d" (arg2), "=b" (isp)
+ 		     :  "0" (irq),   "1" (desc),  "2" (isp),
+-			"D" (desc->handle_irq)
++			[thunk_target] "D" (desc->handle_irq)
+ 		     : "memory", "cc", "ecx");
+ 	return 1;
+ }
