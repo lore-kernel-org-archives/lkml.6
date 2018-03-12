@@ -1,80 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752000AbeCLPB6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 11:01:58 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:30730 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751344AbeCLPBz (ORCPT
+        id S1751596AbeCLPFQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 11:05:16 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:38062 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751247AbeCLPFP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 11:01:55 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180312150153epoutp030e684b1746fbe9fcd657d7740273f27b~bNGZTaPCt1264112641epoutp03s
-X-AuditID: b6c32a45-403ff70000001023-bd-5aa696600e07
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: broonie@kernel.org, linux-kernel@vger.kernel.org,
-        clabbe.montjoie@gmail.com, viresh.kumar@linaro.org,
-        matthias.bgg@gmail.com, linux-pwm@vger.kernel.org,
-        thierry.reding@gmail.com, daniel.vetter@ffwll.ch,
-        christophe.leroy@c-s.fr, seanpaul@chromium.org,
-        linux-spi@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH] video: console: kconfig: Remove AVR32 dep. from
- VGA_CONSOLE
-Date: Mon, 12 Mar 2018 16:01:45 +0100
-Message-id: <12268684.R5uc9OLfbC@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <20180206225254.20036-1-ulfalizer@gmail.com>
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRmVeSWpSXmKPExsWy7bCmqW7CtGVRBp8u6ltMffiEzaKjmcni
-        799Ki4UP7zJbXPn6ns3iRN8HVovLu+awWdy9u4rRovHjTXaLphZji7sbzjJa/Nw1j8Xiwq9b
-        zBYbv3o48Hm09v9g85jdcJHFY++3BSweO2fdZffYtKqTzePOtT1sHve7jzN5fN4kF8ARxWWT
-        kpqTWZZapG+XwJVxdHp8wVumir8bL7I0MK5m6mLk5JAQMJHYNX8aaxcjF4eQwA5GiSWbzjJD
-        ON8ZJc79vsgCU/Vr3hp2EFtIYAOjxPs+MYiir4wSGyeuZgVJsAlYSUxsX8UIYosIqEvcm7Cf
-        DaSIWeAek8STbzvBioQFgiSmH7kANJWDg0VAVeLFulgQk1dAS2Ll+0yQClEBL4kt+9rBruMU
-        sJR4+2YvM4jNKyAo8WPyPbB7mAXkJfbtn8oKYetInD22jhFklYRAM7vEmSfb2CGOdpG4fu8Y
-        M4QtLPHq+BaouLTEs1UbYRoYJb7t2ANVNIFRYs96IQjbWuLw8YtQG/gkOg7/ZQc5VEKAV6Kj
-        DarEQ+LkhVPQAHKUuLjtDTTktgADZepC5gmMsrOQHD4LyeGzkBy+gJF5FaNYakFxbnpqsVGB
-        oV5xYm5xaV66XnJ+7iZGcPrRct3BOOOczyFGAQ5GJR5eg+ZlUUKsiWXFlbmHGCU4mJVEeP2n
-        AoV4UxIrq1KL8uOLSnNSiw8xSnOwKInztgW4RAkJpCeWpGanphakFsFkmTg4pRoYeWIPLhc7
-        +fz7s9OXNib+Cn3j4eInw/3YpUmna8kKNcn+jO926prre24ULLgfqBE8J37eO4VHTLYR0m81
-        ZmkWKLF9VfQWUY440nDmoo2e/BPtz/P5rI1mONro/c/VqbQ+efjnolXxvZ/fy32RNU6/pKg1
-        Jyl4+cc7D1hcdu27fNWwb9bsR7uvK7EUZyQaajEXFScCAK2dCHs7AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkkeLIzCtJLcpLzFFi42I5/e+xoG7CtGVRBnOWcFpMffiEzaKjmcni
-        799Ki4UP7zJbXPn6ns3iRN8HVovLu+awWdy9u4rRovHjTXaLphZji7sbzjJa/Nw1j8Xiwq9b
-        zBYbv3o48Hm09v9g85jdcJHFY++3BSweO2fdZffYtKqTzePOtT1sHve7jzN5fN4kF8ARxWWT
-        kpqTWZZapG+XwJVxdHp8wVumir8bL7I0MK5m6mLk5JAQMJH4NW8NexcjF4eQwDpGianzzjFC
-        OF8ZJS40v2AEqWITsJKY2L4KzBYRUJe4N2E/G0gRs8A9JolJbd/BRgkLBEjcWvoMyObgYBFQ
-        lXixLhbE5BXQklj5PhOkQlTAS2LLvnawak4BS4m3b/YyQ+zawiixYek/FpAEr4CgxI/J98Bs
-        ZgF5iX37p7JC2FoS63ceZ5rAyD8LSdksJGWzkJQtYGRexSiZWlCcm55bbFRglJdarlecmFtc
-        mpeul5yfu4kRGDHbDmv172B8vCT+EKMAB6MSD29H67IoIdbEsuLK3EOMEhzMSiK8/lOBQrwp
-        iZVVqUX58UWlOanFhxilOViUxHn5849FCgmkJ5akZqemFqQWwWSZODilGhjDlr3c6L2m7/dG
-        l00G16uMlv9wjdPp/HAl40EIv9Xj7wHyT/8kJ+Sf3eq0Pj/8wilfw0Uaa7adMDx240GCwZrr
-        yQd/6dT+1rh417vzuOCls6V66uo/blUxL7sXYLWw/4xxg+i1xr9HGO0jt8tOvtacFRP0td1F
-        Kb/eo6hbWn9CX862HzFeptuVWIozEg21mIuKEwGS3t89lAIAAA==
-X-CMS-MailID: 20180312150152epcas2p1de7922ce9b6b81485a1aa48e761e6cf0
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20180206225334epcas4p3f1bf4f40c1fbc4bed23dd79445df1b3a
-X-RootMTR: 20180206225334epcas4p3f1bf4f40c1fbc4bed23dd79445df1b3a
-References: <20180206120825.GF5681@sirena.org.uk>
-        <CGME20180206225334epcas4p3f1bf4f40c1fbc4bed23dd79445df1b3a@epcas4p3.samsung.com>
-        <20180206225254.20036-1-ulfalizer@gmail.com>
+        Mon, 12 Mar 2018 11:05:15 -0400
+X-Google-Smtp-Source: AG47ELvnEZWrJsvRl+M5SMjXkyDg5DkKwMSn1xSf5qSHPBuMxixkAmguLVhIhrG3YxqCf+tePZvtrQ3VadqFjw2YiB4=
+MIME-Version: 1.0
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <9ed76ccb239078ad5a2808d23c7b7f1738b0b2b8.1520835596.git.rgb@redhat.com>
+References: <cover.1520835596.git.rgb@redhat.com> <9ed76ccb239078ad5a2808d23c7b7f1738b0b2b8.1520835596.git.rgb@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 12 Mar 2018 11:05:12 -0400
+Message-ID: <CAHC9VhRDnd55em1YUkswOX4XmDP6xH5x005hcZnCZSRXz66exQ@mail.gmail.com>
+Subject: Re: [PATCH ghak21 V2 2/4] audit: link denied should not directly
+ generate PATH record
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>, Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, February 06, 2018 11:52:46 PM Ulf Magnusson wrote:
-> The AVR32 symbol was removed in commit 26202873bb51 ("avr32: remove
-> support for AVR32 architecture").
-> 
-> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+On Mon, Mar 12, 2018 at 2:31 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> Audit link denied events generate duplicate PATH records which disagree
+> in different ways from symlink and hardlink denials.
+> audit_log_link_denied() should not directly generate PATH records.
+> While we're at it, remove the now useless struct path argument.
+>
+> See: https://github.com/linux-audit/audit-kernel/issues/21
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  fs/namei.c            |  2 +-
+>  include/linux/audit.h |  6 ++----
+>  kernel/audit.c        | 17 ++---------------
+>  3 files changed, 5 insertions(+), 20 deletions(-)
 
-Patch queued for 4.17, thanks.
+I have no objection to the v2 change of removing the link parameter,
+but this patch can not be merged as-is because the v1 patch has
+already been merged into audit/next (as stated on the mailing list).
+You need to respin this patch against audit/next and redo the
+subject/description to indicate that you are just removing the unused
+link parameter in this updated patch.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 9cc91fb..50d2533 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1011,7 +1011,7 @@ static int may_linkat(struct path *link)
+>         if (safe_hardlink_source(inode) || inode_owner_or_capable(inode))
+>                 return 0;
+>
+> -       audit_log_link_denied("linkat", link);
+> +       audit_log_link_denied("linkat");
+>         return -EPERM;
+>  }
+>
+> diff --git a/include/linux/audit.h b/include/linux/audit.h
+> index af410d9..75d5b03 100644
+> --- a/include/linux/audit.h
+> +++ b/include/linux/audit.h
+> @@ -146,8 +146,7 @@ extern void             audit_log_d_path(struct audit_buffer *ab,
+>                                              const struct path *path);
+>  extern void                audit_log_key(struct audit_buffer *ab,
+>                                           char *key);
+> -extern void                audit_log_link_denied(const char *operation,
+> -                                                 const struct path *link);
+> +extern void                audit_log_link_denied(const char *operation);
+>  extern void                audit_log_lost(const char *message);
+>
+>  extern int audit_log_task_context(struct audit_buffer *ab);
+> @@ -194,8 +193,7 @@ static inline void audit_log_d_path(struct audit_buffer *ab,
+>  { }
+>  static inline void audit_log_key(struct audit_buffer *ab, char *key)
+>  { }
+> -static inline void audit_log_link_denied(const char *string,
+> -                                        const struct path *link)
+> +static inline void audit_log_link_denied(const char *string)
+>  { }
+>  static inline int audit_log_task_context(struct audit_buffer *ab)
+>  {
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index 7026d69..e54deaf 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -2301,36 +2301,23 @@ void audit_log_task_info(struct audit_buffer *ab, struct task_struct *tsk)
+>  /**
+>   * audit_log_link_denied - report a link restriction denial
+>   * @operation: specific link operation
+> - * @link: the path that triggered the restriction
+>   */
+> -void audit_log_link_denied(const char *operation, const struct path *link)
+> +void audit_log_link_denied(const char *operation)
+>  {
+>         struct audit_buffer *ab;
+> -       struct audit_names *name;
+>
+>         if (!audit_enabled || audit_dummy_context())
+>                 return;
+>
+> -       name = kzalloc(sizeof(*name), GFP_NOFS);
+> -       if (!name)
+> -               return;
+> -
+>         /* Generate AUDIT_ANOM_LINK with subject, operation, outcome. */
+>         ab = audit_log_start(current->audit_context, GFP_KERNEL,
+>                              AUDIT_ANOM_LINK);
+>         if (!ab)
+> -               goto out;
+> +               return;
+>         audit_log_format(ab, "op=%s", operation);
+>         audit_log_task_info(ab, current);
+>         audit_log_format(ab, " res=0");
+>         audit_log_end(ab);
+> -
+> -       /* Generate AUDIT_PATH record with object. */
+> -       name->type = AUDIT_TYPE_NORMAL;
+> -       audit_copy_inode(name, link->dentry, d_backing_inode(link->dentry));
+> -       audit_log_name(current->audit_context, name, link, 0, NULL);
+> -out:
+> -       kfree(name);
+>  }
+>
+>  /**
+> --
+> 1.8.3.1
+>
+
+
+
+-- 
+paul moore
+www.paul-moore.com
