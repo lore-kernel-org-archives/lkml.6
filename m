@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932517AbeCLThN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 15:37:13 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:54648 "EHLO ale.deltatee.com"
+        id S932354AbeCLTfn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 15:35:43 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:54656 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932292AbeCLTfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 15:35:39 -0400
+        id S932289AbeCLTfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 15:35:38 -0400
 From: Logan Gunthorpe <logang@deltatee.com>
 To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
         linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
@@ -19,70 +19,100 @@ Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Alex Williamson <alex.williamson@redhat.com>,
         Logan Gunthorpe <logang@deltatee.com>
-Date: Mon, 12 Mar 2018 13:35:21 -0600
-Message-Id: <20180312193525.2855-8-logang@deltatee.com>
+Date: Mon, 12 Mar 2018 13:35:24 -0600
+Message-Id: <20180312193525.2855-11-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180312193525.2855-1-logang@deltatee.com>
 References: <20180312193525.2855-1-logang@deltatee.com>
 X-SA-Exim-Connect-IP: 172.16.1.31
 X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, axboe@kernel.dk, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, logang@deltatee.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v3 07/11] IB/core: Ensure we map P2P memory correctly in  rdma_rw_ctx_[init|destroy]()
+Subject: [PATCH v3 10/11] nvme-pci: Add a quirk for a pseudo CMB
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to use PCI P2P memory pci_p2pmem_[un]map_sg() functions must be
-called to map the correct PCI bus address.
+Introduce a quirk to use CMB-like memory on older devices that have
+an exposed BAR but do not advertise support for using CMBLOC and
+CMBSIZE.
 
-To do this, check the first page in the scatter list to see if it is P2P
-memory or not. At the moment, scatter lists that contain P2P memory must
-be homogeneous so if the first page is P2P the entire SGL should be P2P.
+We'd like to use some of these older cards to test P2P memory.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
 ---
- drivers/infiniband/core/rw.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/nvme/host/nvme.h |  7 +++++++
+ drivers/nvme/host/pci.c  | 24 ++++++++++++++++++++----
+ 2 files changed, 27 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/infiniband/core/rw.c b/drivers/infiniband/core/rw.c
-index c8963e91f92a..f495e8a7f8ac 100644
---- a/drivers/infiniband/core/rw.c
-+++ b/drivers/infiniband/core/rw.c
-@@ -12,6 +12,7 @@
-  */
- #include <linux/moduleparam.h>
- #include <linux/slab.h>
-+#include <linux/pci-p2pdma.h>
- #include <rdma/mr_pool.h>
- #include <rdma/rw.h>
- 
-@@ -280,7 +281,11 @@ int rdma_rw_ctx_init(struct rdma_rw_ctx *ctx, struct ib_qp *qp, u8 port_num,
- 	struct ib_device *dev = qp->pd->device;
- 	int ret;
- 
--	ret = ib_dma_map_sg(dev, sg, sg_cnt, dir);
-+	if (is_pci_p2pdma_page(sg_page(sg)))
-+		ret = pci_p2pdma_map_sg(dev->dma_device, sg, sg_cnt, dir);
-+	else
-+		ret = ib_dma_map_sg(dev, sg, sg_cnt, dir);
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index 1fb2b6603d49..d1381bfc40f1 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -83,6 +83,13 @@ enum nvme_quirks {
+ 	 * Supports the LighNVM command set if indicated in vs[1].
+ 	 */
+ 	NVME_QUIRK_LIGHTNVM			= (1 << 6),
 +
- 	if (!ret)
- 		return -ENOMEM;
- 	sg_cnt = ret;
-@@ -602,7 +607,11 @@ void rdma_rw_ctx_destroy(struct rdma_rw_ctx *ctx, struct ib_qp *qp, u8 port_num,
- 		break;
- 	}
++	/*
++	 * Pseudo CMB Support on BAR 4. For adapters like the Microsemi
++	 * NVRAM that have CMB-like memory on a BAR but does not set
++	 * CMBLOC or CMBSZ.
++	 */
++	NVME_QUIRK_PSEUDO_CMB_BAR4		= (1 << 7),
+ };
  
--	ib_dma_unmap_sg(qp->pd->device, sg, sg_cnt, dir);
-+	if (is_pci_p2pdma_page(sg_page(sg)))
-+		pci_p2pdma_unmap_sg(qp->pd->device->dma_device, sg,
-+				    sg_cnt, dir);
-+	else
-+		ib_dma_unmap_sg(qp->pd->device, sg, sg_cnt, dir);
+ /*
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 0ebab7ab4d7e..a798e08a07bc 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1683,6 +1683,13 @@ static ssize_t nvme_cmb_show(struct device *dev,
  }
- EXPORT_SYMBOL(rdma_rw_ctx_destroy);
+ static DEVICE_ATTR(cmb, S_IRUGO, nvme_cmb_show, NULL);
  
++static u32 nvme_pseudo_cmbsz(struct pci_dev *pdev, int bar)
++{
++	return NVME_CMBSZ_WDS | NVME_CMBSZ_RDS |
++		(((ilog2(SZ_16M) - 12) / 4) << NVME_CMBSZ_SZU_SHIFT) |
++		((pci_resource_len(pdev, bar) / SZ_16M) << NVME_CMBSZ_SZ_SHIFT);
++}
++
+ static u64 nvme_cmb_size_unit(struct nvme_dev *dev)
+ {
+ 	u8 szu = (dev->cmbsz >> NVME_CMBSZ_SZU_SHIFT) & NVME_CMBSZ_SZU_MASK;
+@@ -1702,10 +1709,15 @@ static void nvme_map_cmb(struct nvme_dev *dev)
+ 	struct pci_dev *pdev = to_pci_dev(dev->dev);
+ 	int bar;
+ 
+-	dev->cmbsz = readl(dev->bar + NVME_REG_CMBSZ);
+-	if (!dev->cmbsz)
+-		return;
+-	dev->cmbloc = readl(dev->bar + NVME_REG_CMBLOC);
++	if (dev->ctrl.quirks & NVME_QUIRK_PSEUDO_CMB_BAR4) {
++		dev->cmbsz = nvme_pseudo_cmbsz(pdev, 4);
++		dev->cmbloc = 4;
++	} else {
++		dev->cmbsz = readl(dev->bar + NVME_REG_CMBSZ);
++		if (!dev->cmbsz)
++			return;
++		dev->cmbloc = readl(dev->bar + NVME_REG_CMBLOC);
++	}
+ 
+ 	size = nvme_cmb_size_unit(dev) * nvme_cmb_size(dev);
+ 	offset = nvme_cmb_size_unit(dev) * NVME_CMB_OFST(dev->cmbloc);
+@@ -2719,6 +2731,10 @@ static const struct pci_device_id nvme_id_table[] = {
+ 		.driver_data = NVME_QUIRK_LIGHTNVM, },
+ 	{ PCI_DEVICE(0x1d1d, 0x2807),	/* CNEX WL */
+ 		.driver_data = NVME_QUIRK_LIGHTNVM, },
++	{ PCI_DEVICE(0x11f8, 0xf117),	/* Microsemi NVRAM adaptor */
++		.driver_data = NVME_QUIRK_PSEUDO_CMB_BAR4, },
++	{ PCI_DEVICE(0x1db1, 0x0002),	/* Everspin nvNitro adaptor */
++		.driver_data = NVME_QUIRK_PSEUDO_CMB_BAR4,  },
+ 	{ PCI_DEVICE_CLASS(PCI_CLASS_STORAGE_EXPRESS, 0xffffff) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2001) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2003) },
 -- 
 2.11.0
