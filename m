@@ -1,83 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932522AbeCLPoJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 11:44:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34874 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932279AbeCLPoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 11:44:07 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1DE6208FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Mon, 12 Mar 2018 12:44:03 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH 09/13] libbpf: Add bpf_insn__interpret function
-Message-ID: <20180312154403.GC23720@kernel.org>
-References: <20180312094313.18738-1-jolsa@kernel.org>
- <20180312094313.18738-10-jolsa@kernel.org>
+        id S932534AbeCLPp0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 11:45:26 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:35000 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932478AbeCLPpY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 11:45:24 -0400
+X-Google-Smtp-Source: AG47ELsL+Mu4r0ofp2kU+x/Fvd2b1YMzGh/EiNNmXygogE4dYm+K0e/ZVoSlP6FCFazkuuOhfoBi29T8KvgALuR2G2M=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180312094313.18738-10-jolsa@kernel.org>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <b8673a31534c6122545a09abcb6db405e0d0ec50.1520835596.git.rgb@redhat.com>
+References: <cover.1520835596.git.rgb@redhat.com> <b8673a31534c6122545a09abcb6db405e0d0ec50.1520835596.git.rgb@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 12 Mar 2018 11:45:22 -0400
+Message-ID: <CAHC9VhTumvARQP6k=iKA5Vv_w4Qm8b2SyP_gzXcDc_X2wcBbEQ@mail.gmail.com>
+Subject: Re: [PATCH ghak21 V2 4/4] audit: add parent of refused symlink to audit_names
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>, Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Mar 12, 2018 at 10:43:09AM +0100, Jiri Olsa escreveu:
-> Adding bpf_insn__interpret function to run ebpf program
-> in user space.
-> 
-> It's 'borrowed' from systemtap code, I still need to figure
-> the proper credits, that will go to the file header in case
-> this would ever go in.
+On Mon, Mar 12, 2018 at 2:31 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> Audit link denied events for symlinks were missing the parent PATH
+> record.  Add it.  Since the full pathname may not be available,
+> reconstruct it from the path in the nameidata supplied.
+>
+> See: https://github.com/linux-audit/audit-kernel/issues/21
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  fs/namei.c            |  2 +-
+>  include/linux/audit.h |  3 +++
+>  kernel/audit.c        | 31 +++++++++++++++++++++++++++++++
+>  3 files changed, 35 insertions(+), 1 deletion(-)
 
-What is the license? GPL?
- 
-> Link: http://lkml.kernel.org/n/tip-qqxsyw6imdisj3dydd6e21y7@git.kernel.org
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> 
-> +++ b/tools/lib/bpf/Build
-> @@ -1 +1 @@
-> -libbpf-y := libbpf.o bpf.o nlattr.o
-> +libbpf-y := libbpf.o bpf.o nlattr.o interp.o
-> diff --git a/tools/lib/bpf/interp.c b/tools/lib/bpf/interp.c
-> new file mode 100644
-> index 000000000000..2ceb6a0836c3
-> --- /dev/null
-> +++ b/tools/lib/bpf/interp.c
-> @@ -0,0 +1,245 @@
-> +#include <uapi/linux/bpf.h>
-> +#include <stdlib.h>
-> +#include "interp.h"
-> +
-> +u64 bpf_interp__run(struct bpf_interp *interp)
+See my comment in patch 3/4; it should really be folded into this
+patch.  Additional comment inline below ...
+
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index e54deaf..4acf374 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -73,6 +73,7 @@
+>  #include <linux/freezer.h>
+>  #include <linux/pid_namespace.h>
+>  #include <net/netns/generic.h>
+> +#include <linux/namei.h> /* for LOOKUP_PARENT */
+>
+>  #include "audit.h"
+>
+> @@ -2320,6 +2321,36 @@ void audit_log_link_denied(const char *operation)
+>         audit_log_end(ab);
+>  }
+>
+> +/*
+> + * audit_log_symlink_denied - report a symlink restriction denial
+> + * @link: the path that triggered the restriction
+> + */
+> +void audit_log_symlink_denied(const struct path *link)
 > +{
-<SNIP>
+> +       char *pathname;
+> +       struct filename *filename;
 > +
-> +		case BPF_JMP | BPF_EXIT:
-> +			return regs[0];
+> +       if (audit_dummy_context())
+> +               return;
 > +
-> +		default:
-> +			abort();
+> +       pathname = kmalloc(PATH_MAX + 1, GFP_KERNEL);
+> +       if (!pathname) {
+> +               audit_panic("memory allocation error while reporting symlink denied");
+> +               return;
+> +       }
+> +       filename = getname_kernel(d_absolute_path(link, pathname, PATH_MAX + 1));
+> +       if (IS_ERR(filename)) {
+> +               audit_panic("error getting pathname while reporting symlink denied");
+> +               goto out;
+> +       }
+> +       audit_inode(filename, link->dentry->d_parent, LOOKUP_PARENT);
 
-And this should be converted to returning some error that the users can
-tell the user using whatever UI (TUI, etc).
+Since we are already checking audit_dummy_context() above we don't
+need to check it again in audit_inode(), you should just call
+__audit_inode() directly.  As a reminder, make sure you convert
+LOOKUP_PARENT to AUDIT_INODE_PARENT.
 
-> +		}
-> +
-> +		regs[i->dst_reg] = dr;
-> +	nowrite:
-> +		i++;
-> +	}
-> +
-> +	return 0;
+> +       audit_log_link_denied("follow_link");
+> +       putname(filename);
+> +out:
+> +       kfree(pathname);
+> +       return;
 > +}
-> -- 
-> 2.13.6
+
+-- 
+paul moore
+www.paul-moore.com
