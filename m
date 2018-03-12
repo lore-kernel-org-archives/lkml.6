@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELsBN5nsGohbp48e15ddtGii6DY4KW6B6IK0hKt30u3ctpPx6DUAGyjQIorazRxYaqP76t8r
-ARC-Seal: i=1; a=rsa-sha256; t=1520824084; cv=none;
+X-Google-Smtp-Source: AG47ELu+NPyC2jqASstVPXqIscrVBKi3/9V6gX+pKO+/AsOpx2bp+8NjbTszyQXJ6ZORkz7Q2Tl+
+ARC-Seal: i=1; a=rsa-sha256; t=1520824079; cv=none;
         d=google.com; s=arc-20160816;
-        b=MvGWVjycisKmuJFLrB0nEz/EgtpSgRAgO1dL3qOK7mDdTkoEEU4jkfbVBv4jbZuxmc
-         7VZLoTcm1XDsX+b1vDv5GUkBGqG6IFiuzhtan61zrkraRd+P00t6/GGBl1KutWjMQ3cM
-         Z1bobMSWPJERolUS9Q5Qfy9eKYrXeGeSzbaUDZ72zxV0EaivfsxDJV6J79y7FE+jiech
-         z42UMSc704jr0LxJskeGGmaViy2HtinbL3WYtJwlD+f03jQKQoUlclRsntynJAbmXDCQ
-         ZjQ7obYC7WuDAntlm7ZTmz+aZ1k1UqXZXX2oH+4BntYuHMzJ8Nw6S2whYKObfuV8fjvd
-         jzlA==
+        b=oHWuSGjouFsNMgvqxHsRLwMrEdNbsZEtM/k3xEVwq1uB/b8BBUlufvEn2G97Fl2asO
+         TEvXSInCww/3IEVtFt3FYCUA3YsCMNwASXbWb6ZdpBMNIwTu7aHHqaE2s/d1aAm4dSTi
+         zxLF72tKZYQCaKqzc/k/kXP+D84Pbd0U/aj/n6tneHLJnNGWksp1/EyrWgB8z4SBd1g7
+         KOIsdXwgD2yqBxoDpn+0qTW8cGwXyrVKEcx89Z5vNk85rKwf7B829j9T4UAtD1BKzLPt
+         E+tPv37OZZS+SCqdJ7/kVVxZxFLUh3n0dOttEH16bclFOU/jPQCAEHRKUS0QqQ+qMh0c
+         k/Tg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=+98pV2/mAPb8EAbUyY5BkQEZtGU9WN9ts9B8t8daxQc=;
-        b=xOznI6TqibkOJXaZUzS6IcMndaWtdv6ZIefxWbqxXHASPJnow4C1A7bnMvr/c4n0nD
-         WzMZ26+YbfPL1C/nQ7XwUC7Ze5QksLCI1/ENw/hwbhZqjrcXDmCxoPayKFDUv9nUWkdH
-         luwrmigIzVcxR/nbEjs3vyTeCAJUnw6lAiawNjAlc0b00ibzaEoF5c7gNLdtTU0x9J95
-         XAGsnvzre9kvthmC6t3r5+9e+paN6hBXhsRaBLk3h+EvcR8mlagsP89QKystahqHao+9
-         wt4CMyKfFr/Uy08YJgyKKP5h94i/DZIoTRAzzTasCMPB+JiHel1byf7gcGCTZeb50nlC
-         gNqw==
+        bh=U0mEoICuDxarf7rYzGXxmbWGRvWO3TA/5FRTNpccuzA=;
+        b=pgf8LhtQaDsuh/Mdmq++E3/AcQpLRyVkx7HhtI+nRACZVWrf6mmxW3Dyc+hYm2pX3L
+         SdXGoRzj24Aqu0TvUmSWZnqFyPVuQm7SEiMOvWPdvJJSaMt2alMGKgE90hJC8WTYj9B1
+         2LaksX7UpYvaydxNjSQSbm2uKoStmh+0q9mEtoTt3JT/POzuGqR1Cd3ihGycDeCRo7r/
+         z5IKhpG4SXIfzGMmsKnyV9vK+WylJ0tbyi0V61rgUWiB2pdW1hq1aOqC7K4hyo/fOaxl
+         U/YGhq4yUkXW4JOrAPkI1O6KERNJpsmyQxwATJi28UieDKhK4+d7eCVvJysm/3Kl5EX+
+         E57w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,35 +30,38 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
+ "Asit Mallick" <asit.k.mallick@intel.com>,
+ "Jason Baron" <jbaron@akamai.com>,
+ rga@amazon.de,
+ "Dave Hansen" <dave.hansen@intel.com>,
+ "David Woodhouse" <dwmw@amazon.co.uk>,
  "Andi Kleen" <ak@linux.intel.com>,
- "Paul Turner" <pjt@google.com>,
  "Linus Torvalds" <torvalds@linux-foundation.org>,
  "Tim Chen" <tim.c.chen@linux.intel.com>,
- "Andy Lutomirski" <luto@amacapital.net>,
+ "Andy Lutomirski" <luto@kernel.org>,
+ "Arjan Van De Ven" <arjan.van.de.ven@intel.com>,
  "Peter Zijlstra" <peterz@infradead.org>,
  "Josh Poimboeuf" <jpoimboe@redhat.com>,
  "Thomas Gleixner" <tglx@linutronix.de>,
- "Ingo Molnar" <mingo@kernel.org>,
- gnomes@lxorguk.ukuu.org.uk,
- "Dave Hansen" <dave.hansen@intel.com>,
- "Kees Cook" <keescook@google.com>,
- "Jiri Kosina" <jikos@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linux-foundation.org>,
- thomas.lendacky@amd.com,
- "Arjan van de Ven" <arjan@linux.intel.com>,
- "Rik van Riel" <riel@redhat.com>
+ "Jun Nakajima" <jun.nakajima@intel.com>,
+ "Dan Williams" <dan.j.williams@intel.com>,
+ "Ashok Raj" <ashok.raj@intel.com>,
+ "Paolo Bonzini" <pbonzini@redhat.com>,
+ "Greg KH" <gregkh@linuxfoundation.org>,
+ "David Woodhouse" <dwmw2@infradead.org>,
+ "Andrea Arcangeli" <aarcange@redhat.com>
 Date: Mon, 12 Mar 2018 03:06:12 +0000
-Message-ID: <lsq.1520823972.343958071@decadent.org.uk>
+Message-ID: <lsq.1520823972.507953570@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 31/76] x86/retpoline/irq32: Convert assembler
- indirect jumps
+Subject: [PATCH 3.16 44/76] KVM: x86: Make indirect calls in emulator
+ speculation safe
 In-Reply-To: <lsq.1520823971.5976735@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699634841948642?=
-X-GMAIL-MSGID: =?utf-8?q?1594699634841948642?=
+X-GMAIL-THRID: =?utf-8?q?1594699629763359942?=
+X-GMAIL-MSGID: =?utf-8?q?1594699629763359942?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -66,72 +69,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit 7614e913db1f40fff819b36216484dc3808995d4 upstream.
+commit 1a29b5b7f347a1a9230c1e0af5b37e3e571588ab upstream.
 
-Convert all indirect jumps in 32bit irq inline asm code to use non
-speculative sequences.
+Replace the indirect calls with CALL_NOSPEC.
 
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Arjan van de Ven <arjan@linux.intel.com>
-Acked-by: Ingo Molnar <mingo@kernel.org>
-Cc: gnomes@lxorguk.ukuu.org.uk
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: thomas.lendacky@amd.com
-Cc: Peter Zijlstra <peterz@infradead.org>
+Reviewed-by: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Jun Nakajima <jun.nakajima@intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jikos@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: rga@amazon.de
 Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Kees Cook <keescook@google.com>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Jason Baron <jbaron@akamai.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
 Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linux-foundation.org>
-Cc: Paul Turner <pjt@google.com>
-Link: https://lkml.kernel.org/r/1515707194-20531-12-git-send-email-dwmw@amazon.co.uk
+Link: https://lkml.kernel.org/r/20180125095843.595615683@infradead.org
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/irq_32.c | 9 +++++----
+ arch/x86/kvm/emulate.c | 9 +++++----
  1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kernel/irq_32.c
-+++ b/arch/x86/kernel/irq_32.c
-@@ -20,6 +20,7 @@
- #include <linux/mm.h>
- 
- #include <asm/apic.h>
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -25,6 +25,7 @@
+ #include <linux/module.h>
+ #include <asm/kvm_emulate.h>
+ #include <linux/stringify.h>
 +#include <asm/nospec-branch.h>
  
- DEFINE_PER_CPU_SHARED_ALIGNED(irq_cpustat_t, irq_stat);
- EXPORT_PER_CPU_SYMBOL(irq_stat);
-@@ -61,11 +62,11 @@ DEFINE_PER_CPU(struct irq_stack *, softi
- static void call_on_stack(void *func, void *stack)
- {
- 	asm volatile("xchgl	%%ebx,%%esp	\n"
--		     "call	*%%edi		\n"
-+		     CALL_NOSPEC
- 		     "movl	%%ebx,%%esp	\n"
- 		     : "=b" (stack)
- 		     : "0" (stack),
--		       "D"(func)
-+		       [thunk_target] "D"(func)
- 		     : "memory", "cc", "edx", "ecx", "eax");
+ #include "x86.h"
+ #include "tss.h"
+@@ -906,8 +907,8 @@ static u8 test_cc(unsigned int condition
+ 	void (*fop)(void) = (void *)em_setcc + 4 * (condition & 0xf);
+ 
+ 	flags = (flags & EFLAGS_MASK) | X86_EFLAGS_IF;
+-	asm("push %[flags]; popf; call *%[fastop]"
+-	    : "=a"(rc) : [fastop]"r"(fop), [flags]"r"(flags));
++	asm("push %[flags]; popf; " CALL_NOSPEC
++	    : "=a"(rc) : [thunk_target]"r"(fop), [flags]"r"(flags));
+ 	return rc;
  }
  
-@@ -102,11 +103,11 @@ execute_on_irq_stack(int overflow, struc
- 		call_on_stack(print_stack_overflow, isp);
- 
- 	asm volatile("xchgl	%%ebx,%%esp	\n"
--		     "call	*%%edi		\n"
-+		     CALL_NOSPEC
- 		     "movl	%%ebx,%%esp	\n"
- 		     : "=a" (arg1), "=d" (arg2), "=b" (isp)
- 		     :  "0" (irq),   "1" (desc),  "2" (isp),
--			"D" (desc->handle_irq)
-+			[thunk_target] "D" (desc->handle_irq)
- 		     : "memory", "cc", "ecx");
- 	return 1;
- }
+@@ -4622,9 +4623,9 @@ static int fastop(struct x86_emulate_ctx
+ 	ulong flags = (ctxt->eflags & EFLAGS_MASK) | X86_EFLAGS_IF;
+ 	if (!(ctxt->d & ByteOp))
+ 		fop += __ffs(ctxt->dst.bytes) * FASTOP_SIZE;
+-	asm("push %[flags]; popf; call *%[fastop]; pushf; pop %[flags]\n"
++	asm("push %[flags]; popf; " CALL_NOSPEC " ; pushf; pop %[flags]\n"
+ 	    : "+a"(ctxt->dst.val), "+d"(ctxt->src.val), [flags]"+D"(flags),
+-	      [fastop]"+S"(fop)
++	      [thunk_target]"+S"(fop), ASM_CALL_CONSTRAINT
+ 	    : "c"(ctxt->src2.val));
+ 	ctxt->eflags = (ctxt->eflags & ~EFLAGS_MASK) | (flags & EFLAGS_MASK);
+ 	if (!fop) /* exception is returned in fop variable */
