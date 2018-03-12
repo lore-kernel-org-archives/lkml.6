@@ -1,282 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932303AbeCLU3T (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 16:29:19 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:59134 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932171AbeCLU3S (ORCPT
+        id S932332AbeCLU3o (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 16:29:44 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48932 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932171AbeCLU3n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 16:29:18 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Christian Brauner <christian.brauner@canonical.com>
-Cc: Christian Brauner <christian.brauner@ubuntu.com>,
-        viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org
-References: <20180312171330.32054-1-christian.brauner@ubuntu.com>
-        <20180312171330.32054-3-christian.brauner@ubuntu.com>
-        <87a7vdf4ve.fsf@xmission.com> <20180312201022.GA16689@gmail.com>
-Date: Mon, 12 Mar 2018 15:28:30 -0500
-In-Reply-To: <20180312201022.GA16689@gmail.com> (Christian Brauner's message
-        of "Mon, 12 Mar 2018 21:10:23 +0100")
-Message-ID: <87y3ixavip.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Mon, 12 Mar 2018 16:29:43 -0400
+Date: Mon, 12 Mar 2018 13:29:39 -0700
+From: Darren Hart <dvhart@infradead.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Platform Driver <platform-driver-x86@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] platform/x86: dell_smbios: Resolve dependency error on
+ ACPI_WMI
+Message-ID: <20180312202939.GB88572@localhost.localdomain>
+References: <7eb3f317a876a6255aeb0abfd0137894ef8b5166.1520727789.git.dvhart@infradead.org>
+ <CAHp75VeYDiv3gR77xjmj1QitmtTyNykXXFJtYyEFL95sgo1L9A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1evU4J-0001k2-Mx;;;mid=<87y3ixavip.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19jBjbdZUO/3lSBQqYShN5qVHHG/+JXZ2E=
-X-SA-Exim-Connect-IP: 174.19.85.160
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.2 T_XMDrugObfuBody_14 obfuscated drug references
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Christian Brauner <christian.brauner@canonical.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 545 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 2.9 (0.5%), b_tie_ro: 1.97 (0.4%), parse: 1.23 (0.2%),
-        extract_message_metadata: 24 (4.5%), get_uri_detail_list: 7 (1.3%),
-        tests_pri_-1000: 12 (2.2%), tests_pri_-950: 1.27 (0.2%), tests_pri_-900: 0.97
-        (0.2%), tests_pri_-400: 40 (7.3%), check_bayes: 39 (7.1%), b_tokenize: 16
-        (3.0%), b_tok_get_all: 12 (2.2%), b_comp_prob: 4.1 (0.8%), b_tok_touch_all:
-        4.2 (0.8%), b_finish: 0.65 (0.1%), tests_pri_0: 455 (83.5%),
-        check_dkim_signature: 0.75 (0.1%), check_dkim_adsp: 2.8 (0.5%),
-        tests_pri_500: 4.1 (0.8%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 2/3 v3] devpts: resolve devpts bind-mounts
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75VeYDiv3gR77xjmj1QitmtTyNykXXFJtYyEFL95sgo1L9A@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christian Brauner <christian.brauner@canonical.com> writes:
+On Mon, Mar 12, 2018 at 11:23:20AM +0200, Andy Shevchenko wrote:
+> On Sun, Mar 11, 2018 at 2:28 AM, Darren Hart <dvhart@infradead.org> wrote:
+> > Similarly to DCDBAS for DELL_SMBIOS_SMM, if DELL_SMBIOS_WMI is enabled,
+> > DELL_SMBIOS becomes dependent on ACPI_WMI. Update the depends line to
+> > prevent a configuration where DELL_SMBIOS=y and either backend
+> > dependency =m. Update the comment accordingly.
+> 
+> > +# The DELL_SMBIOS driver depends on ACPI_WMI and/or DCDBAS if those
+> > +# backends are selected. The "depends" line prevents a configuration
+> > +# where DELL_SMBIOS=y while either of those dependencies =m.
+> >  #
+> >  config DELL_SMBIOS
+> >         tristate "Dell SMBIOS driver"
+> > -       depends on DCDBAS || DCDBAS=n
+> > +       depends on (DCDBAS || DCDBAS=n) && (ACPI_WMI || ACPI_WMI=n)
+> 
+> A nit: Perhaps separate depends on line for those two?
 
-> On Mon, Mar 12, 2018 at 02:52:53PM -0500, Eric W. Biederman wrote:
->> Christian Brauner <christian.brauner@ubuntu.com> writes:
->> 
->> > Most libcs will still look at /dev/ptmx when opening the master fd of a pty
->> > device. When /dev/ptmx is a bind-mount of /dev/pts/ptmx and the TIOCGPTPEER
->> > ioctl() is used to safely retrieve a file descriptor for the slave side of
->> > the pty based on the master fd, the /proc/self/fd/{0,1,2} symlinks will
->> > point to /.
->> >
->> > When the kernel tries to look up the root mount of the dentry for the slave
->> > file descriptor it will detect that the dentry is escaping its bind-mount
->> > since the root mount of the dentry is /dev/pts where the devpts is mounted
->> > but the root mount of /dev/ptmx is /dev.
->> >
->> > Having bind-mounts of /dev/pts/ptmx to /dev/ptmx not working correctly is a
->> > regression. In addition, it is also a fairly common scenario in containers
->> > employing user namespaces.
->> >
->> > To handle bind-mounts of /dev/pts/ptmx to /dev/ptmx correctly we need to
->> > walk up the bind-mounts for /dev/ptmx in devpts_mntget(). Since the
->> > contents of /proc/<pid>/fd/<nr> symlinks attached to the slave side of a
->> > file descriptor will always point to a path under the devpts mount we need
->> > to try and ensure that the kernel doesn't falsely get the impression that a
->> > pty slave file descriptor retrieved via TIOCGPTPEER based on a pty master
->> > file descriptor opened via a bind-mount of the ptmx device escapes its
->> > bind-mount. To clarify in pseudo code:
->> >
->> > * bind-mount /dev/pts/ptmx to /dev/ptmx
->> > * master = open("/dev/ptmx", O_RDWR | O_NOCTTY | O_CLOEXEC);
->> > * slave = ioctl(master, TIOCGPTPEER, O_RDWR | O_NOCTTY | O_CLOEXEC);
->> >
->> > would cause the kernel to think that slave is escaping its bind-mount. The
->> > reason is that while the devpts mounted at /dev/pts has devtmpfs mounted at
->> > /dev as its parent mount:
->> >
->> > 21 -- -- / /dev
->> > -- 21 -- / /dev/pts
->> >
->> > they are on different devices
->> >
->> > -- -- 0:6  / /dev
->> > -- -- 0:20 / /dev/pts
->> >
->> > which has the consequence that the pathname of the directory which forms
->> > the root of the /dev/pts mount is /. So if we bind-mount /dev/pts/ptmx to
->> > /dev/ptmx we will end up on the same device as the devtmpfs mount at
->> > /dev/pts
->> >
->> > -- -- 0:20 /ptmx /dev/ptmx
->> >
->> > Without the bind-mount resolution patch here the kernel will now perform
->> > the bind-mount escape check directly on /dev/ptmx. When it hits
->> > devpts_ptmx_path()  calls pts_path() which in turn calls
->> > path_parent_directory(). While one would expect that
->> > path_parent_directory() *should* yield /dev it will yield / since
->> > /dev and /dev/pts are on different devices. This will cause path_pts() to
->> > fail finding a "pts" directory since there is none under /. Thus, the
->> > kernel detects that /dev/ptmx is escaping its bind-mount and will set
->> > /proc/<pid>/fd/<nr> to /.
->> >
->> > This patch changes the logic to do bind-mount resolution and after the
->> > bind-mount has been resolved (i.e. we have traced it back to the devpts
->> > mount) we can safely perform devpts_ptmx_path() and check whether we find a
->> > "pts" directory in the parent directory of the devpts mount. Since
->> > path_parent_directory() will now correctly yield /dev as parent directory
->> > for the devpts mount at /dev/pts.
->> >
->> > However, we can only perform devpts_ptmx_path() devpts_mntget() if we
->> > either did resolve a bind-mount or did not find a suitable devpts
->> > filesystem. The reason is that we want and need to support non-standard
->> > mountpoints for the devpts filesystem. If we call devpts_ptmx_path()
->> > although we did already find a devpts filesystem and did not resolve
->> > bind-mounts we will fail on devpts mounts such as:
->> >
->> > mount -t devpts devpts /mnt
->> >
->> > where no "pts" directory will be under /. So change the logic to account
->> > for this.
->> >
->> > Here's a little reproducer that presupposes a libc that uses TIOCGPTPEER in
->> > its openpty() implementation:
->> >
->> > unshare --mount
->> > mount --bind /dev/pts/ptmx /dev/ptmx
->> > chmod 666 /dev/ptmx
->> > script
->> > ls -al /proc/self/fd/0
->> >
->> > with output:
->> >
->> > lrwx------ 1 chb chb 64 Mar  7 16:41 /proc/self/fd/0 -> /
->> >
->> > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
->> > Suggested-by: Eric Biederman <ebiederm@xmission.com>
->> > Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
->> > ---
->> > ChangeLog v2->v3:
->> > * rework logic to account for non-standard devpts mounts such as
->> >   mount -t devpts devpts /mnt
->> > ChangeLog v1->v2:
->> > * move removal of if (path->mnt->mnt_sb->s_magic == DEVPTS_SUPER_MAGIC)
->> >   condition to separate patch with non-functional changes
->> > ChangeLog v0->v1:
->> > * remove
->> >         /* Has the devpts filesystem already been found? */
->> >         if (path->mnt->mnt_sb->s_magic == DEVPTS_SUPER_MAGIC)
->> > 	                return 0
->> >   from devpts_ptmx_path()
->> > * check superblock after devpts_ptmx_path() returned
->> > ---
->> >  fs/devpts/inode.c | 24 ++++++++++++++++--------
->> >  1 file changed, 16 insertions(+), 8 deletions(-)
->> >
->> > diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
->> > index d3ddbb888874..b31362c6c548 100644
->> > --- a/fs/devpts/inode.c
->> > +++ b/fs/devpts/inode.c
->> > @@ -154,27 +154,35 @@ static int devpts_ptmx_path(struct path *path)
->> 
->> There is a question I asked in my original version and I haven't
->> seen it answered.
->> 
->> What do we want to do in the case where TIOCGPTPEER is called and
->> the ptmx file descriptor is not from a mount that has pty's under it.
->> 
->> a) We can continue the existing problematic behavior and return
->>    a pty fd whose proc path is '/'
->> 
->> b) We can return an error which changes the observable behavior.
->> 
->> My comments below are presuming we change the kernel to error.
->> 
->> From my experience introducing the path following version of /dev/ptmx
->> no one in practice has a /dev/ptmx dentry without an accompoanying
->> /dev/pts/ptmx.  Therefore I do not expect changing the behavior to
->> error will introduce a regression in userspace.
->> 
->> So let's just change the behavior of devpts_mntget error if a mount with
->> the pty underneath it can not be found.
->
-> I'm sort of torn but I think I'd prefer changing the behavior too. The
-> /dev/ptmx, /dev/pts/ptmx schisma is really a special case and I would
-> like it to be the only one. I really don't want to support bind-mounting
-> the ptmx character device under the devpts mounts across the system.
-> That seems like unnecessary complexity that is also unused. So if Linus
-> is fine with this change as well I don't mind sending a v4.
->
-> There's only one thing here I'd like to throw into the ring. This error
-> condition only works with TIOCGPTPEER, right? If userspace does a
-> path-based retrieveal of the pty file descriptor by doing e.g. a
-> readlink on the slave file descriptor and calls open() on it they would
-> still hit the /proc/<pid>/fd/<nr> -> / problem? It doesn't hit the same
-> codepath, does it? Or am I missing someting?
+Agreed, resending v2, will run through testing, and send to Linus by EOD
+tomorrow.
 
-The error is preventing TIOCGPTPEER from returning problem file
-descriptors to userspace.  It is uniquely the source of such file
-descriptors so correct the behavior when we can and returning an
-error when we can't should prevent their existence.
-
-Eric
-
->> >  struct vfsmount *devpts_mntget(struct file *filp, struct pts_fs_info *fsi)
->> >  {
->> > +	bool unwind;
->> >  	struct path path;
->> > +	int err = 0;
->> 
->> The only use I see for unwind is to ensure we don't change path
->> when we would want to return the mount from filp->f_path even it
->> is not connected to it's mount.
->
-> Yes.
->
->> 
->> >  
->> >  	path = filp->f_path;
->> >  	path_get(&path);
->> 
->> > -	/* Has the devpts filesystem already been found? */
->> > -	if (path.mnt->mnt_sb->s_magic != DEVPTS_SUPER_MAGIC) {
->> > -		int err;
->> > +	unwind = (DEVPTS_SB(path.mnt->mnt_sb) == fsi) &&
->> > +		 (path.mnt->mnt_root == fsi->ptmx_dentry);
->> > +	/* Walk upward while the start point is a bind mount of
->> > +	 * a single file.
->> > +	 */
->> > +	while (path.mnt->mnt_root == path.dentry && unwind)
->> > +		if (follow_up(&path) == 0)
->> > +			break;
->> This look can become simply:
->> 	while (path.mnt->mnt_root == path.dentry)
->> 		if (follow_up(&path) == 0)
->> 			break;
->> 
->> > +	if ((path.mnt->mnt_sb->s_magic != DEVPTS_SUPER_MAGIC) || unwind)
->> This test can become simply:
->> 
->> 	if ((path.mnt->mnt_sb->s_magic != DEVPTS_SUPER_MAGIC) ||
->>             (DEVPTS_SB(path->mnt.mnt_sb) != fsi))
->> >  		err = devpts_ptmx_path(&path);
->> > -		dput(path.dentry);
->> > -		if (err) {
->> > -			mntput(path.mnt);
->> > -			return ERR_PTR(err);
->> > -		}
->> > +	dput(path.dentry);
->> > +	if (err) {
->> > +		mntput(path.mnt);
->> > +		return ERR_PTR(err);
->> >  	}
->> >  
->> >  	if (DEVPTS_SB(path.mnt->mnt_sb) != fsi) {
->> >  		mntput(path.mnt);
->> >  		return ERR_PTR(-ENODEV);
->> >  	}
->> > +
->> >  	return path.mnt;
->> >  }
->> 
->> Eric
->
-> Christian
+-- 
+Darren Hart
+VMware Open Source Technology Center
