@@ -1,106 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752708AbeCLKp6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 06:45:58 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:41818 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751802AbeCLKp4 (ORCPT
+        id S1751279AbeCLKvU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 06:51:20 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:45824 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750752AbeCLKvT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 06:45:56 -0400
-X-IronPort-AV: E=Sophos;i="5.47,460,1515427200";
-   d="scan'208";a="73966735"
-From: Avri Altman <Avri.Altman@wdc.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>
-CC: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Vladimir_Zapolskiy@mentor.com" <Vladimir_Zapolskiy@mentor.com>
-Subject: RE: [PATCH v9] mmc: Export host capabilities to debugfs.
-Thread-Topic: [PATCH v9] mmc: Export host capabilities to debugfs.
-Thread-Index: AQHTubsGYD25STNRbUa+dM7TicfsWKPMYHQAgAAKQEA=
-Date: Mon, 12 Mar 2018 10:45:53 +0000
-Message-ID: <DM5PR04MB10854C79897A80023EF37F76FCD30@DM5PR04MB1085.namprd04.prod.outlook.com>
-References: <1520829090-3567-1-git-send-email-harish_kandiga@mentor.com>
- <1520849262.10722.582.camel@linux.intel.com>
-In-Reply-To: <1520849262.10722.582.camel@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Avri.Altman@wdc.com;
-x-originating-ip: [212.25.79.133]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR04MB0426;20:8EZw+BvzO4KgXYTLxBqThPfj+bO4wQFhlLzfpFXIWcOd39rC+FGR/AmJ4p1DlpSMaAyn/BIs9bVY0r1F/ngF6fLePN95zPxmCdMrKoQOwtsqix7Qq6DzYPDWs5pVywmsBdFlk+DbfOVKAWJ5dezpDayzVZvIn8EAF4IyjsLnF3I=
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 661aadb9-b853-4653-3738-08d588066df8
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR04MB0426;
-x-ms-traffictypediagnostic: DM5PR04MB0426:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <DM5PR04MB0426DAFD35DD9144FD5A7578FCD30@DM5PR04MB0426.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231220)(944501244)(52105095)(6055026)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR04MB0426;BCL:0;PCL:0;RULEID:;SRVR:DM5PR04MB0426;
-x-forefront-prvs: 06098A2863
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(376002)(366004)(39380400002)(39860400002)(13464003)(189003)(199004)(377424004)(4326008)(186003)(53936002)(68736007)(6506007)(53546011)(316002)(9686003)(97736004)(229853002)(6246003)(2950100002)(25786009)(72206003)(966005)(102836004)(14454004)(26005)(478600001)(6306002)(33656002)(55016002)(105586002)(2900100001)(106356001)(6436002)(99286004)(7736002)(305945005)(66066001)(3846002)(5250100002)(74316002)(7696005)(2501003)(3660700001)(8936002)(81166006)(5660300001)(6116002)(81156014)(76176011)(2906002)(3280700002)(2201001)(8676002)(86362001)(54906003)(110136005);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR04MB0426;H:DM5PR04MB1085.namprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: AKn0zK3L149qKLbqmq8WwRMdnez7EzUdMic/sY8owKT2yKcFjGGp4U+/ylivZUXpSs9nyedcMa3z6hq9FErvFLVgzuBD8gc6t/aBrHgAaitzkEf706f8YBB4N6pghm5JLc2ygxV9Z++2dnnN4vFH/FBZP8RG1ltwWlHvrs7kHYr8CDvRPXRlWvgERUXrUGCOKe0f/uvuMelfXN0vWXMOYplPMe7qbeMyH+qocXFxP999EgrhiyuTBcgpAgIqZdmGfJ9lOXRpPgCIs+6XRroNfS/7dKoYdYLLRPvwPyi85BlG7eigR7dp6nEZH5jee8znEerXIRbZwoB6D3PZHgZPYw==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        Mon, 12 Mar 2018 06:51:19 -0400
+Date: Mon, 12 Mar 2018 11:51:13 +0100
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Corey Minyard <cminyard@mvista.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>
+Subject: Re: Warning from swake_up_all in 4.14.15-rt13 non-RT
+Message-ID: <20180312105113.p7jifhwdwbhpvxds@linutronix.de>
+References: <dd6ad0b5-569b-067d-257f-dbf15ffa7077@mvista.com>
+ <20180306174604.nta5rcvfvrfdfftz@linutronix.de>
+ <1704d817-8fb9-ce8f-1aa1-fe6e8b0c3919@mvista.com>
+ <20180308174103.mduy5qq2ttlcvig3@linutronix.de>
+ <a11f140e-c44f-f967-1cd4-d8a6f09d4d29@mvista.com>
+ <20180309110418.lwtennjqwqcxh422@linutronix.de>
+ <20180309174605.GC4064@hirez.programming.kicks-ass.net>
+ <20180309202550.j66qphz3txupt55u@linutronix.de>
+ <20180309222643.GC5926@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 661aadb9-b853-4653-3738-08d588066df8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Mar 2018 10:45:53.8333
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR04MB0426
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180309222643.GC5926@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2CAk3nZ013889
 
+On 2018-03-09 23:26:43 [+0100], Peter Zijlstra wrote:
+> On Fri, Mar 09, 2018 at 09:25:50PM +0100, Sebastian Andrzej Siewior wrote:
+> > Is it just about the irqsave() usage or something else? I doubt it is
+> > the list walk. It is still unbound if not called from irq-off region.
+> 
+> The current list walk is preemptible. You put the entire iteration (of
+> unbound length) inside a single critical section which destroy RT.
 
+I considered that list walk as cheap. We don't do any wake ups with the
+list walk - just mark the task for a later wake up. But if it is not I
+could add an upper limit of 20 iterations or so.
 
-> -----Original Message-----
-> From: Andy Shevchenko [mailto:andriy.shevchenko@linux.intel.com]
-> Sent: Monday, March 12, 2018 12:08 PM
-> To: Harish Jenny K N <harish_kandiga@mentor.com>; ulf.hansson@linaro.org;
-> linus.walleij@linaro.org; adrian.hunter@intel.com; shawn.lin@rock-
-> chips.com; Avri Altman <Avri.Altman@wdc.com>
-> Cc: linux-mmc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> Vladimir_Zapolskiy@mentor.com
-> Subject: Re: [PATCH v9] mmc: Export host capabilities to debugfs.
+> > But it is now possible, I agree. The wake_q usage should be cheaper
+> > compared to IRQ off+on in each loop. And we wanted to do the wake ups
+> > with enabled interrupts - there is still the list_splice() from that
+> > attempt. Now it can be.
 > 
-> On Mon, 2018-03-12 at 10:01 +0530, Harish Jenny K N wrote:
-> > This patch exports the host capabilities to debugfs
-> >
-> > This idea of sharing host capabilities over debugfs came up from Abbas
-> > Raza <Abbas_Raza@mentor.com> Earlier discussions:
-> > https://lkml.org/lkml/2018/3/5/357
-> > https://www.spinics.net/lists/linux-mmc/msg48219.html
-> >
-> 
-> Address below minors and, FWIW, take mine
-> 
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> > +	for_each_set_bit(bit, (const unsigned long *)&caps,
-> > BITS_PER_LONG)
-> 
-> > +	for_each_set_bit(bit, (const unsigned long *)&caps2,
-> > BITS_PER_LONG)
-> 
-> Explicit casting is not needed anymore in both cases.
-Also maybe use sizeof(mmc_host_capabilities) instead of BITS_PER_LONG?
+> Unbound is still unbound, inf/n := inf. A 'cheaper' unbound doesn't RT
+> make.
 
+What I meant is that wake_q() is invoked with interrupts enabled and we
+don't need the IRQ on/off on each iteration. But as I said in the upper
+paragraph, I can add an upper limit for the list walk. And wake up
+itself is with enabled interrupts.
 
+> > > Yes, wake_up_all() is crap, it is also fundamentally incompatible with
+> > > in-*irq usage. Nothing to be done about that.
+> > I still have (or need) completions which are swait based and do
+> > complete_all(). 
 > 
-> --
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Intel Finland Oy
+> That's fine, as long as they're done from preemptible context. Back when
+> we introduced swait this was an explicit design goal/limitation. And
+> there were no in-irq users of this.
+
+Yes at that time in !RT. wake_up() is using sleeping locks on RT and
+swait is the only thing that can be used there. So if I don't get rid if
+that !preemptible part I try to switch to swait.
+
+> > There are complete_all() caller which wake more than one
+> > waiter (that is PM and crypto from the reports I got once I added the
+> > WARN_ON())).
+> > The in-IRQ usage is !RT only and was there before.
+> 
+> Then that's broken and needs to be undone. Also, why did you need the
+> WARN, lockdep should've equally triggered on this, no?
+
+I added WARN_ON() and I didn't even think about lockdep. I wanted to
+see a warning even with lockdep off.
+After adding this for testing:
+
+        {
+                 raw_spin_lock_irq(&lock1);
+                 raw_spin_unlock_irq(&lock1);
+                 raw_spin_lock_irq(&lock2);
+                 raw_spin_unlock_irq(&lock2);
+ 
+                 raw_spin_lock_irq(&lock1);
+                 raw_spin_lock_irq(&lock2);
+                 raw_spin_unlock_irq(&lock2);
+                 raw_spin_unlock_irq(&lock1);
+
+                 raw_spin_lock_irq(&lock2);
+                 raw_spin_lock_irq(&lock1);
+                 raw_spin_unlock_irq(&lock1);
+                 raw_spin_unlock_irq(&lock2);
+         }
+
+I see only one complaint about the lock order in the last block. With
+that one gone there is no complain about the second block. So no,
+lockdep does not report such things (this was just tested on RT and
+TIP).
+
+> > > So NAK on this.
+> > So I need completions to be swait based and do complete_all() from IRQ
+> > (on !RT, not RT). I have this one call which breaks the usage on !RT and
+> > has wake_up_all() in it in vanilla which needs an swait equivalent since
+> > it calls its callback from an rcu-sched section.
+> 
+> Why isn't this a problem on RT?
+So we remain in the preempt_disable() section due to RCU-sched so we
+have this, yes. But the "disabled interrupts" part is due to
+spin_lock_irqsave() which is a non-issue on RT. So if we managed to get
+rid of the rcu-sched then the swait can go and we can stick with the
+wake_up_all() on RT, too.
+
+Sebastian
