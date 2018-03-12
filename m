@@ -1,407 +1,248 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752009AbeCLOKC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 10:10:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44394 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751866AbeCLOJ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 10:09:59 -0400
-Date: Mon, 12 Mar 2018 10:09:57 -0400
-From: Jerome Glisse <jglisse@redhat.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-nvdimm@lists.01.org, Michal Hocko <mhocko@suse.com>,
-        Christoph Hellwig <hch@lst.de>, david@fromorbit.com,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-        ross.zwisler@linux.intel.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 06/11] mm, dax: enable filesystems to trigger
- dev_pagemap ->page_free callbacks
-Message-ID: <20180312140956.GA4214@redhat.com>
-References: <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152066492126.40260.11297816369314187769.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S932311AbeCLOKS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 10:10:18 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39349 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751788AbeCLOKQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 10:10:16 -0400
+X-Google-Smtp-Source: AG47ELsaOKpmIN9XAcaHdE7vpreT/0sNxDhXLpJTEjZQo7ieVgNmLIlfZir1pX2FHM90/F2d9WdnOA==
+Date: Mon, 12 Mar 2018 14:10:12 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Daniel Schultz <d.schultz@phytec.de>
+Cc: zyw@rock-chips.com, zhangqing@rock-chips.com, chenjh@rock-chips.com,
+        linux-kernel@vger.kernel.org, w.egorov@phytec.de
+Subject: Re: [PATCH v2 2/2] mfd: rk808: Add restart functionality
+Message-ID: <20180312141012.bc3xkhymkgd4q6b7@dell>
+References: <1520442110-28420-1-git-send-email-d.schultz@phytec.de>
+ <1520442110-28420-2-git-send-email-d.schultz@phytec.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <152066492126.40260.11297816369314187769.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1520442110-28420-2-git-send-email-d.schultz@phytec.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 09, 2018 at 10:55:21PM -0800, Dan Williams wrote:
-> In order to resolve collisions between filesystem operations and DMA to
-> DAX mapped pages we need a callback when DMA completes. With a callback
-> we can hold off filesystem operations while DMA is in-flight and then
-> resume those operations when the last put_page() occurs on a DMA page.
-> 
-> Recall that the 'struct page' entries for DAX memory are created with
-> devm_memremap_pages(). That routine arranges for the pages to be
-> allocated, but never onlined, so a DAX page is DMA-idle when its
-> reference count reaches one.
-> 
-> Also recall that the HMM sub-system added infrastructure to trap the
-> page-idle (2-to-1 reference count) transition of the pages allocated by
-> devm_memremap_pages() and trigger a callback via the 'struct
-> dev_pagemap' associated with the page range. Whereas the HMM callbacks
-> are going to a device driver to manage bounce pages in device-memory in
-> the filesystem-dax case we will call back to filesystem specified
-> callback.
-> 
-> Since the callback is not known at devm_memremap_pages() time we arrange
-> for the filesystem to install it at mount time. No functional changes
-> are expected as this only registers a nop handler for the ->page_free()
-> event for device-mapped pages.
-> 
-> Cc: Michal Hocko <mhocko@suse.com>
+Rockchip guys,
 
-Looks good to me
+I'd really appreciate your input on these two patches please.
 
-Reviewed-by: "J�r�me Glisse" <jglisse@redhat.com>
+Please provide Reviewed-by/Tested-by tags.
 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+On Wed, 07 Mar 2018, Daniel Schultz wrote:
+> When using Rockchip SoCs with rk805/808/818 PMICs, restarts are realized by
+> setting the reset registers in the "Clock and Reset Unit".
+> 
+> Since all three shutdown functions have almost the same code, all logic
+> from the shutdown functions can be refactored to a new function
+> "rk808_update_bits", which can update a register by a given address and
+> bitmask.
+> 
+> After that, notifier blocks and the restart functions were added to the
+> driver. Like the shutdown function, the restart is bound to the
+> "rockchip,system-power-controller" device tree property and can easily
+> revoked to the software restart by removing the property.
+> 
+> Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
 > ---
->  drivers/dax/super.c      |   79 ++++++++++++++++++++++++++++++++++++++++------
->  drivers/nvdimm/pmem.c    |    3 +-
->  fs/ext2/super.c          |    6 ++-
->  fs/ext4/super.c          |    6 ++-
->  fs/xfs/xfs_super.c       |   20 ++++++------
->  include/linux/dax.h      |   17 +++++-----
->  include/linux/memremap.h |    8 +++++
->  7 files changed, 103 insertions(+), 36 deletions(-)
+> Changes:
+> 	v2: Re-submit with recipients from Rockchip.
 > 
-> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> index 2b2332b605e4..ecefe9f7eb60 100644
-> --- a/drivers/dax/super.c
-> +++ b/drivers/dax/super.c
-> @@ -29,6 +29,7 @@ static struct vfsmount *dax_mnt;
->  static DEFINE_IDA(dax_minor_ida);
->  static struct kmem_cache *dax_cache __read_mostly;
->  static struct super_block *dax_superblock __read_mostly;
-> +static DEFINE_MUTEX(devmap_lock);
->  
->  #define DAX_HASH_SIZE (PAGE_SIZE / sizeof(struct hlist_head))
->  static struct hlist_head dax_host_list[DAX_HASH_SIZE];
-> @@ -62,16 +63,6 @@ int bdev_dax_pgoff(struct block_device *bdev, sector_t sector, size_t size,
->  }
->  EXPORT_SYMBOL(bdev_dax_pgoff);
->  
-> -#if IS_ENABLED(CONFIG_FS_DAX)
-> -struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev)
-> -{
-> -	if (!blk_queue_dax(bdev->bd_queue))
-> -		return NULL;
-> -	return fs_dax_get_by_host(bdev->bd_disk->disk_name);
-> -}
-> -EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev);
-> -#endif
-> -
->  /**
->   * __bdev_dax_supported() - Check if the device supports dax for filesystem
->   * @sb: The superblock of the device
-> @@ -169,9 +160,66 @@ struct dax_device {
->  	const char *host;
->  	void *private;
->  	unsigned long flags;
-> +	struct dev_pagemap *pgmap;
->  	const struct dax_operations *ops;
->  };
->  
-> +#if IS_ENABLED(CONFIG_FS_DAX)
-> +static void generic_dax_pagefree(struct page *page, void *data)
-> +{
-> +	/* TODO: wakeup page-idle waiters */
-> +}
-> +
-> +struct dax_device *fs_dax_claim_bdev(struct block_device *bdev, void *owner)
-> +{
-> +	struct dax_device *dax_dev;
-> +	struct dev_pagemap *pgmap;
-> +
-> +	if (!blk_queue_dax(bdev->bd_queue))
-> +		return NULL;
-> +	dax_dev = fs_dax_get_by_host(bdev->bd_disk->disk_name);
-> +	if (!dax_dev->pgmap)
-> +		return dax_dev;
-> +	pgmap = dax_dev->pgmap;
-> +
-> +	mutex_lock(&devmap_lock);
-> +	if ((pgmap->data && pgmap->data != owner) || pgmap->page_free
-> +			|| pgmap->page_fault
-> +			|| pgmap->type != MEMORY_DEVICE_HOST) {
-> +		put_dax(dax_dev);
-> +		mutex_unlock(&devmap_lock);
-> +		return NULL;
-> +	}
-> +
-> +	pgmap->type = MEMORY_DEVICE_FS_DAX;
-> +	pgmap->page_free = generic_dax_pagefree;
-> +	pgmap->data = owner;
-> +	mutex_unlock(&devmap_lock);
-> +
-> +	return dax_dev;
-> +}
-> +EXPORT_SYMBOL_GPL(fs_dax_claim_bdev);
-> +
-> +void fs_dax_release(struct dax_device *dax_dev, void *owner)
-> +{
-> +	struct dev_pagemap *pgmap = dax_dev ? dax_dev->pgmap : NULL;
-> +
-> +	put_dax(dax_dev);
-> +	if (!pgmap)
-> +		return;
-> +	if (!pgmap->data)
-> +		return;
-> +
-> +	mutex_lock(&devmap_lock);
-> +	WARN_ON(pgmap->data != owner);
-> +	pgmap->type = MEMORY_DEVICE_HOST;
-> +	pgmap->page_free = NULL;
-> +	pgmap->data = NULL;
-> +	mutex_unlock(&devmap_lock);
-> +}
-> +EXPORT_SYMBOL_GPL(fs_dax_release);
-> +#endif
-> +
->  static ssize_t write_cache_show(struct device *dev,
->  		struct device_attribute *attr, char *buf)
->  {
-> @@ -499,6 +547,17 @@ struct dax_device *alloc_dax(void *private, const char *__host,
->  }
->  EXPORT_SYMBOL_GPL(alloc_dax);
->  
-> +struct dax_device *alloc_dax_devmap(void *private, const char *host,
-> +		const struct dax_operations *ops, struct dev_pagemap *pgmap)
-> +{
-> +	struct dax_device *dax_dev = alloc_dax(private, host, ops);
-> +
-> +	if (dax_dev)
-> +		dax_dev->pgmap = pgmap;
-> +	return dax_dev;
-> +}
-> +EXPORT_SYMBOL_GPL(alloc_dax_devmap);
-> +
->  void put_dax(struct dax_device *dax_dev)
->  {
->  	if (!dax_dev)
-> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-> index 06f8dcc52ca6..e6d7351f3379 100644
-> --- a/drivers/nvdimm/pmem.c
-> +++ b/drivers/nvdimm/pmem.c
-> @@ -408,7 +408,8 @@ static int pmem_attach_disk(struct device *dev,
->  	nvdimm_badblocks_populate(nd_region, &pmem->bb, &bb_res);
->  	disk->bb = &pmem->bb;
->  
-> -	dax_dev = alloc_dax(pmem, disk->disk_name, &pmem_dax_ops);
-> +	dax_dev = alloc_dax_devmap(pmem, disk->disk_name, &pmem_dax_ops,
-> +			&pmem->pgmap);
->  	if (!dax_dev) {
->  		put_disk(disk);
->  		return -ENOMEM;
-> diff --git a/fs/ext2/super.c b/fs/ext2/super.c
-> index 7666c065b96f..6ae20e319bc4 100644
-> --- a/fs/ext2/super.c
-> +++ b/fs/ext2/super.c
-> @@ -172,7 +172,7 @@ static void ext2_put_super (struct super_block * sb)
->  	brelse (sbi->s_sbh);
->  	sb->s_fs_info = NULL;
->  	kfree(sbi->s_blockgroup_lock);
-> -	fs_put_dax(sbi->s_daxdev);
-> +	fs_dax_release(sbi->s_daxdev, sb);
->  	kfree(sbi);
->  }
->  
-> @@ -817,7 +817,7 @@ static unsigned long descriptor_loc(struct super_block *sb,
->  
->  static int ext2_fill_super(struct super_block *sb, void *data, int silent)
->  {
-> -	struct dax_device *dax_dev = fs_dax_get_by_bdev(sb->s_bdev);
-> +	struct dax_device *dax_dev = fs_dax_claim_bdev(sb->s_bdev, sb);
->  	struct buffer_head * bh;
->  	struct ext2_sb_info * sbi;
->  	struct ext2_super_block * es;
-> @@ -1213,7 +1213,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
->  	kfree(sbi->s_blockgroup_lock);
->  	kfree(sbi);
->  failed:
-> -	fs_put_dax(dax_dev);
-> +	fs_dax_release(dax_dev, sb);
->  	return ret;
->  }
->  
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 39bf464c35f1..315a323729e3 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -952,7 +952,7 @@ static void ext4_put_super(struct super_block *sb)
->  	if (sbi->s_chksum_driver)
->  		crypto_free_shash(sbi->s_chksum_driver);
->  	kfree(sbi->s_blockgroup_lock);
-> -	fs_put_dax(sbi->s_daxdev);
-> +	fs_dax_release(sbi->s_daxdev, sb);
->  	kfree(sbi);
->  }
->  
-> @@ -3398,7 +3398,7 @@ static void ext4_set_resv_clusters(struct super_block *sb)
->  
->  static int ext4_fill_super(struct super_block *sb, void *data, int silent)
->  {
-> -	struct dax_device *dax_dev = fs_dax_get_by_bdev(sb->s_bdev);
-> +	struct dax_device *dax_dev = fs_dax_claim_bdev(sb->s_bdev, sb);
->  	char *orig_data = kstrdup(data, GFP_KERNEL);
->  	struct buffer_head *bh;
->  	struct ext4_super_block *es = NULL;
-> @@ -4408,7 +4408,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
->  out_free_base:
->  	kfree(sbi);
->  	kfree(orig_data);
-> -	fs_put_dax(dax_dev);
-> +	fs_dax_release(dax_dev, sb);
->  	return err ? err : ret;
->  }
->  
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index 93588ea3d3d2..ef7dd7148c0b 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -724,7 +724,7 @@ xfs_close_devices(
->  
->  		xfs_free_buftarg(mp, mp->m_logdev_targp);
->  		xfs_blkdev_put(logdev);
-> -		fs_put_dax(dax_logdev);
-> +		fs_dax_release(dax_logdev, mp);
->  	}
->  	if (mp->m_rtdev_targp) {
->  		struct block_device *rtdev = mp->m_rtdev_targp->bt_bdev;
-> @@ -732,10 +732,10 @@ xfs_close_devices(
->  
->  		xfs_free_buftarg(mp, mp->m_rtdev_targp);
->  		xfs_blkdev_put(rtdev);
-> -		fs_put_dax(dax_rtdev);
-> +		fs_dax_release(dax_rtdev, mp);
->  	}
->  	xfs_free_buftarg(mp, mp->m_ddev_targp);
-> -	fs_put_dax(dax_ddev);
-> +	fs_dax_release(dax_ddev, mp);
->  }
->  
->  /*
-> @@ -753,9 +753,9 @@ xfs_open_devices(
->  	struct xfs_mount	*mp)
->  {
->  	struct block_device	*ddev = mp->m_super->s_bdev;
-> -	struct dax_device	*dax_ddev = fs_dax_get_by_bdev(ddev);
-> -	struct dax_device	*dax_logdev = NULL, *dax_rtdev = NULL;
-> +	struct dax_device	*dax_ddev = fs_dax_claim_bdev(ddev, mp);
->  	struct block_device	*logdev = NULL, *rtdev = NULL;
-> +	struct dax_device	*dax_logdev = NULL, *dax_rtdev = NULL;
->  	int			error;
->  
->  	/*
-> @@ -765,7 +765,7 @@ xfs_open_devices(
->  		error = xfs_blkdev_get(mp, mp->m_logname, &logdev);
->  		if (error)
->  			goto out;
-> -		dax_logdev = fs_dax_get_by_bdev(logdev);
-> +		dax_logdev = fs_dax_claim_bdev(logdev, mp);
->  	}
->  
->  	if (mp->m_rtname) {
-> @@ -779,7 +779,7 @@ xfs_open_devices(
->  			error = -EINVAL;
->  			goto out_close_rtdev;
->  		}
-> -		dax_rtdev = fs_dax_get_by_bdev(rtdev);
-> +		dax_rtdev = fs_dax_claim_bdev(rtdev, mp);
->  	}
->  
->  	/*
-> @@ -813,14 +813,14 @@ xfs_open_devices(
->  	xfs_free_buftarg(mp, mp->m_ddev_targp);
->   out_close_rtdev:
->  	xfs_blkdev_put(rtdev);
-> -	fs_put_dax(dax_rtdev);
-> +	fs_dax_release(dax_rtdev, mp);
->   out_close_logdev:
->  	if (logdev && logdev != ddev) {
->  		xfs_blkdev_put(logdev);
-> -		fs_put_dax(dax_logdev);
-> +		fs_dax_release(dax_logdev, mp);
->  	}
->   out:
-> -	fs_put_dax(dax_ddev);
-> +	fs_dax_release(dax_ddev, mp);
->  	return error;
->  }
->  
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index 3045c0d9c804..9b4259aee016 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -51,12 +51,8 @@ static inline struct dax_device *fs_dax_get_by_host(const char *host)
->  	return dax_get_by_host(host);
->  }
->  
-> -static inline void fs_put_dax(struct dax_device *dax_dev)
-> -{
-> -	put_dax(dax_dev);
-> -}
-> -
-> -struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev);
-> +struct dax_device *fs_dax_claim_bdev(struct block_device *bdev, void *owner);
-> +void fs_dax_release(struct dax_device *dax_dev, void *owner);
->  int dax_set_page_dirty(struct page *page);
->  void dax_invalidatepage(struct page *page, unsigned int offset,
->  		unsigned int length);
-> @@ -71,13 +67,14 @@ static inline struct dax_device *fs_dax_get_by_host(const char *host)
->  	return NULL;
->  }
->  
-> -static inline void fs_put_dax(struct dax_device *dax_dev)
-> +static inline struct dax_device *fs_dax_claim_bdev(struct block_device *bdev,
-> +		void *owner)
->  {
-> +	return NULL;
->  }
->  
-> -static inline struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev)
-> +static inline void fs_dax_release(struct dax_device *dax_dev, void *owner)
->  {
-> -	return NULL;
->  }
->  
->  #define dax_set_page_dirty NULL
-> @@ -88,6 +85,8 @@ int dax_read_lock(void);
->  void dax_read_unlock(int id);
->  struct dax_device *alloc_dax(void *private, const char *host,
->  		const struct dax_operations *ops);
-> +struct dax_device *alloc_dax_devmap(void *private, const char *host,
-> +		const struct dax_operations *ops, struct dev_pagemap *pgmap);
->  bool dax_alive(struct dax_device *dax_dev);
->  void kill_dax(struct dax_device *dax_dev);
->  void *dax_get_private(struct dax_device *dax_dev);
-> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-> index 7b4899c06f49..02d6d042ee7f 100644
-> --- a/include/linux/memremap.h
-> +++ b/include/linux/memremap.h
-> @@ -53,11 +53,19 @@ struct vmem_altmap {
->   * driver can hotplug the device memory using ZONE_DEVICE and with that memory
->   * type. Any page of a process can be migrated to such memory. However no one
->   * should be allow to pin such memory so that it can always be evicted.
-> + *
-> + * MEMORY_DEVICE_FS_DAX:
-> + * When MEMORY_DEVICE_HOST memory is represented by a device that can
-> + * host a filesystem, for example /dev/pmem0, that filesystem can
-> + * register for a callback when a page is idled. For the filesystem-dax
-> + * case page idle callbacks are used to coordinate DMA vs
-> + * hole-punch/truncate.
->   */
->  enum memory_type {
->  	MEMORY_DEVICE_HOST = 0,
->  	MEMORY_DEVICE_PRIVATE,
->  	MEMORY_DEVICE_PUBLIC,
-> +	MEMORY_DEVICE_FS_DAX,
->  };
->  
->  /*
+>  drivers/mfd/rk808.c       | 97 ++++++++++++++++++++++++++++++-----------------
+>  include/linux/mfd/rk808.h |  1 +
+>  2 files changed, 63 insertions(+), 35 deletions(-)
 > 
+> diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
+> index d138721..2c68f8c 100644
+> --- a/drivers/mfd/rk808.c
+> +++ b/drivers/mfd/rk808.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/module.h>
+>  #include <linux/of_device.h>
+>  #include <linux/regmap.h>
+> +#include <linux/reboot.h>
+>  
+>  struct rk808_reg_data {
+>  	int addr;
+> @@ -369,59 +370,73 @@ static const struct regmap_irq_chip rk818_irq_chip = {
+>  
+>  static struct i2c_client *rk808_i2c_client;
+>  
+> -static void rk805_device_shutdown(void)
+> +static void rk808_update_bits(unsigned int reg, unsigned int bit_mask)
+>  {
+>  	int ret;
+>  	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
+>  
+>  	if (!rk808) {
+>  		dev_warn(&rk808_i2c_client->dev,
+> -			 "have no rk805, so do nothing here\n");
+> +			 "have no %s, so do nothing here\n",
+> +			 rk808->regmap_irq_chip->name);
+>  		return;
+>  	}
+>  
+>  	ret = regmap_update_bits(rk808->regmap,
+> -				 RK805_DEV_CTRL_REG,
+> -				 DEV_OFF, DEV_OFF);
+> +				 reg,
+> +				 bit_mask, bit_mask);
+>  	if (ret)
+> -		dev_err(&rk808_i2c_client->dev, "power off error!\n");
+> +		dev_err(&rk808_i2c_client->dev, "can't write to DEVCTRL: %x!\n",
+> +			ret);
+>  }
+>  
+> -static void rk808_device_shutdown(void)
+> +static void rk805_device_shutdown(void)
+>  {
+> -	int ret;
+> -	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
+> -
+> -	if (!rk808) {
+> -		dev_warn(&rk808_i2c_client->dev,
+> -			 "have no rk808, so do nothing here\n");
+> -		return;
+> -	}
+> +	rk808_update_bits(RK805_DEV_CTRL_REG, DEV_OFF);
+> +}
+> +static int rk805_restart_notify(struct notifier_block *this,
+> +				   unsigned long mode, void *cmd)
+> +{
+> +	rk808_update_bits(RK805_DEV_CTRL_REG, DEV_OFF_RST);
+> +	return NOTIFY_DONE;
+> +}
+>  
+> -	ret = regmap_update_bits(rk808->regmap,
+> -				 RK808_DEVCTRL_REG,
+> -				 DEV_OFF_RST, DEV_OFF_RST);
+> -	if (ret)
+> -		dev_err(&rk808_i2c_client->dev, "power off error!\n");
+> +static void rk808_device_shutdown(void)
+> +{
+> +	rk808_update_bits(RK808_DEVCTRL_REG, DEV_OFF_RST);
+> +}
+> +static int rk808_restart_notify(struct notifier_block *this,
+> +				   unsigned long mode, void *cmd)
+> +{
+> +	rk808_update_bits(RK808_DEVCTRL_REG, DEV_OFF);
+> +	return NOTIFY_DONE;
+>  }
+>  
+>  static void rk818_device_shutdown(void)
+>  {
+> -	int ret;
+> -	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
+> +	rk808_update_bits(RK818_DEVCTRL_REG, DEV_OFF_RST);
+> +}
+> +static int rk818_restart_notify(struct notifier_block *this,
+> +				   unsigned long mode, void *cmd)
+> +{
+> +	rk808_update_bits(RK818_DEVCTRL_REG, DEV_OFF);
+> +	return NOTIFY_DONE;
+> +}
+>  
+> -	if (!rk808) {
+> -		dev_warn(&rk808_i2c_client->dev,
+> -			 "have no rk818, so do nothing here\n");
+> -		return;
+> -	}
+> +static struct notifier_block rk805_restart_handler = {
+> +	.notifier_call = rk805_restart_notify,
+> +	.priority = 196,
+> +};
+>  
+> -	ret = regmap_update_bits(rk808->regmap,
+> -				 RK818_DEVCTRL_REG,
+> -				 DEV_OFF_RST, DEV_OFF_RST);
+> -	if (ret)
+> -		dev_err(&rk808_i2c_client->dev, "power off error!\n");
+> -}
+> +static struct notifier_block rk808_restart_handler = {
+> +	.notifier_call = rk808_restart_notify,
+> +	.priority = 196,
+> +};
+> +
+> +static struct notifier_block rk818_restart_handler = {
+> +	.notifier_call = rk818_restart_notify,
+> +	.priority = 196,
+> +};
+>  
+>  static const struct of_device_id rk808_of_match[] = {
+>  	{ .compatible = "rockchip,rk805" },
+> @@ -476,6 +491,7 @@ static int rk808_probe(struct i2c_client *client,
+>  		cells = rk805s;
+>  		nr_cells = ARRAY_SIZE(rk805s);
+>  		pm_pwroff_fn = rk805_device_shutdown;
+> +		rk808->nb = &rk805_restart_handler;
+>  		break;
+>  	case RK808_ID:
+>  		rk808->regmap_cfg = &rk808_regmap_config;
+> @@ -485,6 +501,7 @@ static int rk808_probe(struct i2c_client *client,
+>  		cells = rk808s;
+>  		nr_cells = ARRAY_SIZE(rk808s);
+>  		pm_pwroff_fn = rk808_device_shutdown;
+> +		rk808->nb = &rk808_restart_handler;
+>  		break;
+>  	case RK818_ID:
+>  		rk808->regmap_cfg = &rk818_regmap_config;
+> @@ -494,6 +511,7 @@ static int rk808_probe(struct i2c_client *client,
+>  		cells = rk818s;
+>  		nr_cells = ARRAY_SIZE(rk818s);
+>  		pm_pwroff_fn = rk818_device_shutdown;
+> +		rk808->nb = &rk818_restart_handler;
+>  		break;
+>  	default:
+>  		dev_err(&client->dev, "Unsupported RK8XX ID %lu\n",
+> @@ -546,11 +564,18 @@ static int rk808_probe(struct i2c_client *client,
+>  
+>  	pm_off = of_property_read_bool(np,
+>  				"rockchip,system-power-controller");
+> -	if (pm_off && !pm_power_off) {
+> +	if (pm_off) {
+>  		rk808_i2c_client = client;
+> -		pm_power_off = pm_pwroff_fn;
+> +		if (!pm_power_off)
+> +			pm_power_off = pm_pwroff_fn;
+> +		if (rk808->nb) {
+> +			ret = register_restart_handler(rk808->nb);
+> +			if (ret)
+> +				dev_err(&client->dev,
+> +					"cannot register restart handler, %d\n",
+> +					ret);
+> +		}
+>  	}
+> -
+>  	return 0;
+>  
+>  err_irq:
+> @@ -564,6 +589,8 @@ static int rk808_remove(struct i2c_client *client)
+>  
+>  	regmap_del_irq_chip(client->irq, rk808->irq_data);
+>  	pm_power_off = NULL;
+> +	if (rk808->nb)
+> +		unregister_restart_handler(rk808->nb);
+>  
+>  	return 0;
+>  }
+> diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
+> index 338e0f6..9c26ca2 100644
+> --- a/include/linux/mfd/rk808.h
+> +++ b/include/linux/mfd/rk808.h
+> @@ -453,5 +453,6 @@ struct rk808 {
+>  	long				variant;
+>  	const struct regmap_config	*regmap_cfg;
+>  	const struct regmap_irq_chip	*regmap_irq_chip;
+> +	struct notifier_block		*nb;
+>  };
+>  #endif /* __LINUX_REGULATOR_RK808_H */
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
