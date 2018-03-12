@@ -1,43 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752699AbeCLJx5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 05:53:57 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:45760 "EHLO mail.skyhub.de"
+        id S932338AbeCLJzB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 05:55:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43503 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752568AbeCLJx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:53:56 -0400
-Date: Mon, 12 Mar 2018 10:53:37 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] x86/microcode/AMD: check microcode file sanity before
- loading it
-Message-ID: <20180312095336.GB9431@pd.tnic>
-References: <787b0ecc-8c1a-3b5a-82e0-9840c7b7c595@maciej.szmigiero.name>
+        id S1751344AbeCLJzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 05:55:00 -0400
+Subject: Re: [PATCH 1/2] direct-io: Remove unused DIO_ASYNC_EXTEND flag
+To: axboe@kernel.dk
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hch@lst.de, rgoldwyn@suse.de, linux-block@vger.kernel.org
+References: <1519386329-2734-1-git-send-email-nborisov@suse.com>
+From: Nikolay Borisov <nborisov@suse.com>
+Message-ID: <f0132588-86e0-1430-dd2c-157e59272f40@suse.com>
+Date: Mon, 12 Mar 2018 11:54:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <1519386329-2734-1-git-send-email-nborisov@suse.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <787b0ecc-8c1a-3b5a-82e0-9840c7b7c595@maciej.szmigiero.name>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 11, 2018 at 04:27:03PM +0100, Maciej S. Szmigiero wrote:
-> +/* 4k */
-> +#define UCODE_EQUIV_CPU_TABLE_MAX_SIZE (256 * sizeof(struct equiv_cpu_entry))
 
-And you came up with that max size how exactly?
 
-> +/* If a patch is larger than this the microcode file is surely corrupted */
-> +#define PATCH_MAX_SIZE_ABSOLUTE (16 * 1024 * 1024)a
+On 23.02.2018 13:45, Nikolay Borisov wrote:
+> This flag was added by 6039257378e4 ("direct-io: add flag to allow aio
+> writes beyond i_size") to support XFS. However, with the rework of
+> XFS' DIO's path to use iomap in acdda3aae146 ("xfs: use iomap_dio_rw")
+> it became redundant. So let's remove it.
+> 
+> Signed-off-by: Nikolay Borisov <nborisov@suse.com>
 
-Same question here.
+Jens,
 
--- 
-Regards/Gruss,
-    Boris.
+On a second look I think you are the more appropriate person to take
+these patches. SO do you have any objections to merging those via the
+block tree. ( I did CC you but didn't cc linux-block).
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> ---
+>  fs/direct-io.c     | 3 +--
+>  include/linux/fs.h | 3 ---
+>  2 files changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/fs/direct-io.c b/fs/direct-io.c
+> index a0ca9e48e993..99a81c49bce9 100644
+> --- a/fs/direct-io.c
+> +++ b/fs/direct-io.c
+> @@ -1252,8 +1252,7 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
+>  	 */
+>  	if (is_sync_kiocb(iocb))
+>  		dio->is_async = false;
+> -	else if (!(dio->flags & DIO_ASYNC_EXTEND) &&
+> -		 iov_iter_rw(iter) == WRITE && end > i_size_read(inode))
+> +	else if (iov_iter_rw(iter) == WRITE && end > i_size_read(inode))
+>  		dio->is_async = false;
+>  	else
+>  		dio->is_async = true;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 2a815560fda0..260c233e7375 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2977,9 +2977,6 @@ enum {
+>  	/* filesystem does not support filling holes */
+>  	DIO_SKIP_HOLES	= 0x02,
+>  
+> -	/* filesystem can handle aio writes beyond i_size */
+> -	DIO_ASYNC_EXTEND = 0x04,
+> -
+>  	/* inode/fs/bdev does not need truncate protection */
+>  	DIO_SKIP_DIO_COUNT = 0x08,
+>  };
+> 
