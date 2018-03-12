@@ -1,59 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932190AbeCLNbd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 09:31:33 -0400
-Received: from mout.web.de ([212.227.15.3]:57559 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751252AbeCLNbb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 09:31:31 -0400
-To: linux-crypto@vger.kernel.org,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        "David S. Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 0/2] crypto/talitos: Adjustments for talitos_edesc_alloc()
-Message-ID: <ad256dc9-a064-37f9-fb8e-aea22ba40a2b@users.sourceforge.net>
-Date: Mon, 12 Mar 2018 14:30:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932231AbeCLNbv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 09:31:51 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51368 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751255AbeCLNbt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 09:31:49 -0400
+Date: Mon, 12 Mar 2018 14:31:35 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: =?utf-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>, will.deacon@arm.com,
+        torvalds@linux-foundation.org, npiggin@gmail.com, mingo@kernel.org,
+        mpe@ellerman.id.au, oleg@redhat.com, benh@kernel.crashing.org,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>
+Subject: Re: smp_mb__after_spinlock requirement too strong?
+Message-ID: <20180312133135.GJ4064@hirez.programming.kicks-ass.net>
+References: <CAJDTihwMgUqjK6YL2M_WZY4VBaifVYgNvdZOF_fNrnk_p27Kvw@mail.gmail.com>
+ <20180312054412.yqyde34ly3kjoajj@tardis>
+ <CAJDTihxxhy7zmhTJ-ky4wvMby_o9y8UOcs9R1dABN7NccekAiQ@mail.gmail.com>
+ <20180312085600.aczjkpn73axzs2sb@tardis>
+ <20180312085646.GE4064@hirez.programming.kicks-ass.net>
+ <CAJDTihyP96H6XTh5M17uMbMHxz8YjFZ89u0YsBGsRpR+BaEU_Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:yhJIvRS17tF8hQHbOcpzVukayUa+Jccivli/czAk+MsRBrD6HbR
- wsxEo+WF1IQfYAXfV5lz/nsQWHoZWahZ4n7Mwlco2GQ9nzGLpglolHgFnVSQ7GhdFemOdDY
- La0lDXLOcO4Si1dFzHhEBtl6hRDGnVPFK6G97gW7rRdYrU9K4sYRAq2nL2jdMGvmB8/iwpG
- +v6C8J1F7FyEimg2oAcoQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:k9OGV1iZjCQ=:pGug8i1yXPIhU/UyRYFCnW
- X3qH7eUevEwjz5ASpXRCzwcE6IyYgRCOC7fjlos5dKf9FvTVUMUKiWx58bsuOT8sVnimrjNlL
- n5ANzHqXzCg3GeYsCXIDCQMwdIxKHh7eTFd36RBS/iWG1W7uVhr/toEG9+7xvcCxTz835mkF3
- ADP7FpSAILYXj1+5GsG4E2Cw8NNns/T0ETeyEpVka+y9DVo7N07V0DP8i1M2GhIEfUAkZTBQr
- cyazdtntJZQSrQMKYZgWAE1FGY8NibDwBgyNCCSo2x0CoeARgY4QwMhNfcOa7rTaziOvOjPSK
- C8TTuUyrOfH0pMnpw49VbIIRxI7M/0cWbM8CvVGZHOCs+QCoJspwUqdSGakYvSoj7jwJHvLeD
- Yfntpe1ZASjKnIivWYpMvQJeut8ba4Tcbx3NuWfHam8TYKUIg8BH6yz1LIxmzu0BrRWb75P+P
- 5YeJFIAiJZzxtO9mFDVXufzQx+gN4EjKomevEBVq+obH5U7Op7r603MOppMkXPDVRFym+adIP
- zEF+pj7lZkwe+Q6vzs8JQz9dz14SiOaMIzddprgyEtWWDoVXd6ES8oOtpch2000PU/us6dLmQ
- LVJVQirXJsO98YSf3KbQTgFozNOzxLY0mTQgoA0ummtRa+f1zyZRKbE8E/Dkvywop3ZyMB+Ho
- YMqHZMMqEat5keMvRt/vvC+kJ3ONydGSmwxOCwgLiAZJEfPygEehilk5xcotIqm9Jg36gKhUn
- kqn30WT8JJnW1JYkfS1N9VYUQIfFpNbRRKAqZ/ZGG0pPvq2xr2ainUz0A9Tw7mtiHVGqf9j4X
- T5cqvCqnTwX/ZoB8VwORvnbAzjS1KGyF1qlwNMpSJX8jRqucDQ=
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJDTihyP96H6XTh5M17uMbMHxz8YjFZ89u0YsBGsRpR+BaEU_Q@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Mar 2018 14:24:34 +0100
+On Mon, Mar 12, 2018 at 05:13:03PM +0800, 焦晓冬 wrote:
 
-Two update suggestions were taken into account
-from static source code analysis.
+> If the fixed comment could point out where this RCsc is used, it will be great.
 
-Markus Elfring (2):
-  Use common error handling code
-  Delete an error message for a failed memory allocation
-
- drivers/crypto/talitos.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
-
--- 
-2.16.2
+The one that comes to mind first is RCU-sched, that relies on a context
+switch implying a full smp_mb(). But I think there's more..
