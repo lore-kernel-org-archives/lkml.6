@@ -1,202 +1,580 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932709AbeCLRlq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 13:41:46 -0400
-Received: from mga14.intel.com ([192.55.52.115]:41099 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932231AbeCLRlp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 13:41:45 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,462,1515484800";
-   d="gz'50?scan'50,208,50";a="41305638"
-Date: Tue, 13 Mar 2018 01:41:34 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Jason Vas Dias <jason.vas.dias@gmail.com>
-Cc: kbuild-all@01.org, x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, andi <andi@firstfloor.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v4.16-rc4 2/2] x86/vdso: on Intel, VDSO should handle
- CLOCK_MONOTONIC_RAW
-Message-ID: <201803130155.qXzrJk6V%fengguang.wu@intel.com>
-References: <y3ixhczv.fsf@gmail.com>
+        id S932718AbeCLRn7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 13:43:59 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45543 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932593AbeCLRn5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 13:43:57 -0400
+Date: Mon, 12 Mar 2018 10:43:27 -0700
+From: tip-bot for Alexey Budankov <tipbot@zytor.com>
+Message-ID: <tip-8e1a2031e4b556b01ca53cd1fb2d83d811a6605b@git.kernel.org>
+Cc: Dmitry.Prohorov@intel.com, eranian@google.com,
+        torvalds@linux-foundation.org, acme@kernel.org,
+        vincent.weaver@maine.edu, hpa@zytor.com, tglx@linutronix.de,
+        mark.rutland@arm.com, valery.cherepennikov@intel.com,
+        peterz@infradead.org, davidcc@google.com, mingo@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        kan.liang@intel.com, alexey.budankov@linux.intel.com,
+        linux-kernel@vger.kernel.org
+Reply-To: hpa@zytor.com, vincent.weaver@maine.edu, mark.rutland@arm.com,
+        tglx@linutronix.de, peterz@infradead.org,
+        valery.cherepennikov@intel.com, Dmitry.Prohorov@intel.com,
+        eranian@google.com, torvalds@linux-foundation.org, acme@kernel.org,
+        kan.liang@intel.com, jolsa@redhat.com,
+        alexander.shishkin@linux.intel.com, alexey.budankov@linux.intel.com,
+        linux-kernel@vger.kernel.org, davidcc@google.com, mingo@kernel.org
+In-Reply-To: <372f9c8b-0cfe-4240-e44d-83d863d40813@linux.intel.com>
+References: <372f9c8b-0cfe-4240-e44d-83d863d40813@linux.intel.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf/cor: Use RB trees for pinned/flexible groups
+Git-Commit-ID: 8e1a2031e4b556b01ca53cd1fb2d83d811a6605b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="J/dobhs11T7y2rNN"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <y3ixhczv.fsf@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  8e1a2031e4b556b01ca53cd1fb2d83d811a6605b
+Gitweb:     https://git.kernel.org/tip/8e1a2031e4b556b01ca53cd1fb2d83d811a6605b
+Author:     Alexey Budankov <alexey.budankov@linux.intel.com>
+AuthorDate: Fri, 8 Sep 2017 11:47:03 +0300
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 12 Mar 2018 15:28:49 +0100
 
---J/dobhs11T7y2rNN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+perf/cor: Use RB trees for pinned/flexible groups
 
-Hi Jason,
+Change event groups into RB trees sorted by CPU and then by a 64bit
+index, so that multiplexing hrtimer interrupt handler would be able
+skipping to the current CPU's list and ignore groups allocated for the
+other CPUs.
 
-Thank you for the patch! Yet something to improve:
+New API for manipulating event groups in the trees is implemented as well
+as adoption on the API in the current implementation.
 
-[auto build test ERROR on v4.16-rc4]
+pinned_group_sched_in() and flexible_group_sched_in() API are
+introduced to consolidate code enabling the whole group from pinned
+and flexible groups appropriately.
 
-url:    https://github.com/0day-ci/linux/commits/Jason-Vas-Dias/x86-vdso-on-Intel-VDSO-should-handle-CLOCK_MONOTONIC_RAW/20180313-011110
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
-
-All errors (new ones prefixed by >>):
-
->> arch/x86/entry/vsyscall/vsyscall_gtod.c:19:10: fatal error: cpufeatures.h: No such file or directory
-    #include <cpufeatures.h>
-             ^~~~~~~~~~~~~~~
-   compilation terminated.
-
-vim +19 arch/x86/entry/vsyscall/vsyscall_gtod.c
-
-  > 19	#include <cpufeatures.h>
-    20	
-
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: David Carrillo-Cisneros <davidcc@google.com>
+Cc: Dmitri Prokhorov <Dmitry.Prohorov@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Kan Liang <kan.liang@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Valery Cherepennikov <valery.cherepennikov@intel.com>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: linux-kernel@vger.kernel.org
+Link: http://lkml.kernel.org/r/372f9c8b-0cfe-4240-e44d-83d863d40813@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ include/linux/perf_event.h |  16 ++-
+ kernel/events/core.c       | 307 +++++++++++++++++++++++++++++++++++++--------
+ 2 files changed, 267 insertions(+), 56 deletions(-)
 
---J/dobhs11T7y2rNN
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-
---J/dobhs11T7y2rNN--
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 7546822a1d74..6e3f854a34d8 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -558,7 +558,11 @@ struct perf_event {
+ 	 */
+ 	struct list_head		group_entry;
+ 	struct list_head		sibling_list;
+-
++	/*
++	 * Node on the pinned or flexible tree located at the event context;
++	 */
++	struct rb_node			group_node;
++	u64				group_index;
+ 	/*
+ 	 * We need storage to track the entries in perf_pmu_migrate_context; we
+ 	 * cannot use the event_entry because of RCU and we want to keep the
+@@ -690,6 +694,12 @@ struct perf_event {
+ #endif /* CONFIG_PERF_EVENTS */
+ };
+ 
++
++struct perf_event_groups {
++	struct rb_root	tree;
++	u64		index;
++};
++
+ /**
+  * struct perf_event_context - event context structure
+  *
+@@ -710,8 +720,8 @@ struct perf_event_context {
+ 	struct mutex			mutex;
+ 
+ 	struct list_head		active_ctx_list;
+-	struct list_head		pinned_groups;
+-	struct list_head		flexible_groups;
++	struct perf_event_groups	pinned_groups;
++	struct perf_event_groups	flexible_groups;
+ 	struct list_head		event_list;
+ 	int				nr_events;
+ 	int				nr_active;
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 8b6a2774e084..c9fee3640f40 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -1460,8 +1460,21 @@ static enum event_type_t get_event_type(struct perf_event *event)
+ 	return event_type;
+ }
+ 
+-static struct list_head *
+-ctx_group_list(struct perf_event *event, struct perf_event_context *ctx)
++/*
++ * Helper function to initialize group leader event;
++ */
++void init_event_group(struct perf_event *event)
++{
++	RB_CLEAR_NODE(&event->group_node);
++	event->group_index = 0;
++}
++
++/*
++ * Extract pinned or flexible groups from the context
++ * based on event attrs bits;
++ */
++static struct perf_event_groups *
++get_event_groups(struct perf_event *event, struct perf_event_context *ctx)
+ {
+ 	if (event->attr.pinned)
+ 		return &ctx->pinned_groups;
+@@ -1469,6 +1482,169 @@ ctx_group_list(struct perf_event *event, struct perf_event_context *ctx)
+ 		return &ctx->flexible_groups;
+ }
+ 
++/*
++ * Helper function to initializes perf event groups object;
++ */
++void perf_event_groups_init(struct perf_event_groups *groups)
++{
++	groups->tree = RB_ROOT;
++	groups->index = 0;
++}
++
++/*
++ * Compare function for event groups;
++ * Implements complex key that first sorts by CPU and then by
++ * virtual index which provides ordering when rotating
++ * groups for the same CPU;
++ */
++int perf_event_groups_less(struct perf_event *left, struct perf_event *right)
++{
++	if (left->cpu < right->cpu) {
++		return 1;
++	} else if (left->cpu > right->cpu) {
++		return 0;
++	} else {
++		if (left->group_index < right->group_index) {
++			return 1;
++		} else if(left->group_index > right->group_index) {
++			return 0;
++		} else {
++			return 0;
++		}
++	}
++}
++
++/*
++ * Insert a group into a tree using event->cpu as a key. If event->cpu node
++ * is already attached to the tree then the event is added to the attached
++ * group's group_list list.
++ */
++static void
++perf_event_groups_insert(struct perf_event_groups *groups,
++		struct perf_event *event)
++{
++	struct perf_event *node_event;
++	struct rb_node *parent;
++	struct rb_node **node;
++
++	event->group_index = ++groups->index;
++
++	node = &groups->tree.rb_node;
++	parent = *node;
++
++	while (*node) {
++		parent = *node;
++		node_event = container_of(*node,
++				struct perf_event, group_node);
++
++		if (perf_event_groups_less(event, node_event))
++			node = &parent->rb_left;
++		else
++			node = &parent->rb_right;
++	}
++
++	rb_link_node(&event->group_node, parent, node);
++	rb_insert_color(&event->group_node, &groups->tree);
++}
++
++/*
++ * Helper function to insert event into the pinned or
++ * flexible groups;
++ */
++static void
++add_event_to_groups(struct perf_event *event, struct perf_event_context *ctx)
++{
++	struct perf_event_groups *groups;
++
++	groups = get_event_groups(event, ctx);
++	perf_event_groups_insert(groups, event);
++}
++
++/*
++ * Delete a group from a tree. If the group is directly attached to the tree
++ * it also detaches all groups on the group's group_list list.
++ */
++static void
++perf_event_groups_delete(struct perf_event_groups *groups,
++		struct perf_event *event)
++{
++	if (!RB_EMPTY_NODE(&event->group_node) &&
++	    !RB_EMPTY_ROOT(&groups->tree))
++		rb_erase(&event->group_node, &groups->tree);
++
++	init_event_group(event);
++}
++
++/*
++ * Helper function to delete event from its groups;
++ */
++static void
++del_event_from_groups(struct perf_event *event, struct perf_event_context *ctx)
++{
++	struct perf_event_groups *groups;
++
++	groups = get_event_groups(event, ctx);
++	perf_event_groups_delete(groups, event);
++}
++
++/*
++ * Get a group by a cpu key from groups tree with the least group_index;
++ */
++static struct perf_event *
++perf_event_groups_first(struct perf_event_groups *groups, int cpu)
++{
++	struct perf_event *node_event = NULL, *match = NULL;
++	struct rb_node *node = groups->tree.rb_node;
++
++	while (node) {
++		node_event = container_of(node,
++				struct perf_event, group_node);
++
++		if (cpu < node_event->cpu) {
++			node = node->rb_left;
++		} else if (cpu > node_event->cpu) {
++			node = node->rb_right;
++		} else {
++			match = node_event;
++			node = node->rb_left;
++		}
++	}
++
++	return match;
++}
++
++/*
++ * Find group list by a cpu key and rotate it.
++ */
++static void
++perf_event_groups_rotate(struct perf_event_groups *groups, int cpu)
++{
++	struct perf_event *event =
++			perf_event_groups_first(groups, cpu);
++
++	if (event) {
++		perf_event_groups_delete(groups, event);
++		perf_event_groups_insert(groups, event);
++	}
++}
++
++/*
++ * Iterate event groups thru the whole tree.
++ */
++#define perf_event_groups_for_each(event, groups, node)		\
++	for (event = rb_entry_safe(rb_first(&((groups)->tree)),	\
++				typeof(*event), node); event;	\
++		event = rb_entry_safe(rb_next(&event->node),	\
++				typeof(*event), node))
++/*
++ * Iterate event groups with cpu == key.
++ */
++#define perf_event_groups_for_each_cpu(event, key, groups, node) \
++	for (event = perf_event_groups_first(groups, key);	 \
++		event && event->cpu == key;			 \
++		event = rb_entry_safe(rb_next(&event->node),	 \
++				typeof(*event), node))
++
+ /*
+  * Add a event from the lists for its context.
+  * Must be called with ctx->mutex and ctx->lock held.
+@@ -1489,12 +1665,8 @@ list_add_event(struct perf_event *event, struct perf_event_context *ctx)
+ 	 * perf_group_detach can, at all times, locate all siblings.
+ 	 */
+ 	if (event->group_leader == event) {
+-		struct list_head *list;
+-
+ 		event->group_caps = event->event_caps;
+-
+-		list = ctx_group_list(event, ctx);
+-		list_add_tail(&event->group_entry, list);
++		add_event_to_groups(event, ctx);
+ 	}
+ 
+ 	list_update_cgroup_event(event, ctx, true);
+@@ -1688,7 +1860,7 @@ list_del_event(struct perf_event *event, struct perf_event_context *ctx)
+ 	list_del_rcu(&event->event_entry);
+ 
+ 	if (event->group_leader == event)
+-		list_del_init(&event->group_entry);
++		del_event_from_groups(event, ctx);
+ 
+ 	/*
+ 	 * If event was in error state, then keep it
+@@ -1706,7 +1878,6 @@ list_del_event(struct perf_event *event, struct perf_event_context *ctx)
+ static void perf_group_detach(struct perf_event *event)
+ {
+ 	struct perf_event *sibling, *tmp;
+-	struct list_head *list = NULL;
+ 
+ 	lockdep_assert_held(&event->ctx->lock);
+ 
+@@ -1727,22 +1898,23 @@ static void perf_group_detach(struct perf_event *event)
+ 		goto out;
+ 	}
+ 
+-	if (!list_empty(&event->group_entry))
+-		list = &event->group_entry;
+-
+ 	/*
+ 	 * If this was a group event with sibling events then
+ 	 * upgrade the siblings to singleton events by adding them
+ 	 * to whatever list we are on.
+ 	 */
+ 	list_for_each_entry_safe(sibling, tmp, &event->sibling_list, group_entry) {
+-		if (list)
+-			list_move_tail(&sibling->group_entry, list);
++
+ 		sibling->group_leader = sibling;
+ 
+ 		/* Inherit group flags from the previous leader */
+ 		sibling->group_caps = event->group_caps;
+ 
++		if (!RB_EMPTY_NODE(&event->group_node)) {
++			list_del_init(&sibling->group_entry);
++			add_event_to_groups(sibling, event->ctx);
++		}
++
+ 		WARN_ON_ONCE(sibling->ctx != event->ctx);
+ 	}
+ 
+@@ -2186,6 +2358,22 @@ static int group_can_go_on(struct perf_event *event,
+ 	return can_add_hw;
+ }
+ 
++static int
++flexible_group_sched_in(struct perf_event *event,
++			struct perf_event_context *ctx,
++		        struct perf_cpu_context *cpuctx,
++			int *can_add_hw)
++{
++	if (event->state <= PERF_EVENT_STATE_OFF || !event_filter_match(event))
++		return 0;
++
++	if (group_can_go_on(event, cpuctx, *can_add_hw))
++		if (group_sched_in(event, cpuctx, ctx))
++			*can_add_hw = 0;
++
++	return 1;
++}
++
+ static void add_event_to_ctx(struct perf_event *event,
+ 			       struct perf_event_context *ctx)
+ {
+@@ -2652,6 +2840,7 @@ static void ctx_sched_out(struct perf_event_context *ctx,
+ 			  struct perf_cpu_context *cpuctx,
+ 			  enum event_type_t event_type)
+ {
++	int sw = -1, cpu = smp_processor_id();
+ 	int is_active = ctx->is_active;
+ 	struct perf_event *event;
+ 
+@@ -2700,12 +2889,20 @@ static void ctx_sched_out(struct perf_event_context *ctx,
+ 
+ 	perf_pmu_disable(ctx->pmu);
+ 	if (is_active & EVENT_PINNED) {
+-		list_for_each_entry(event, &ctx->pinned_groups, group_entry)
++		perf_event_groups_for_each_cpu(event, cpu,
++				&ctx->pinned_groups, group_node)
++			group_sched_out(event, cpuctx, ctx);
++		perf_event_groups_for_each_cpu(event, sw,
++				&ctx->pinned_groups, group_node)
+ 			group_sched_out(event, cpuctx, ctx);
+ 	}
+ 
+ 	if (is_active & EVENT_FLEXIBLE) {
+-		list_for_each_entry(event, &ctx->flexible_groups, group_entry)
++		perf_event_groups_for_each_cpu(event, cpu,
++				&ctx->flexible_groups, group_node)
++			group_sched_out(event, cpuctx, ctx);
++		perf_event_groups_for_each_cpu(event, sw,
++				&ctx->flexible_groups, group_node)
+ 			group_sched_out(event, cpuctx, ctx);
+ 	}
+ 	perf_pmu_enable(ctx->pmu);
+@@ -2996,23 +3193,28 @@ static void
+ ctx_pinned_sched_in(struct perf_event_context *ctx,
+ 		    struct perf_cpu_context *cpuctx)
+ {
++	int sw = -1, cpu = smp_processor_id();
+ 	struct perf_event *event;
++	int can_add_hw;
++
++	perf_event_groups_for_each_cpu(event, sw,
++			&ctx->pinned_groups, group_node) {
++		can_add_hw = 1;
++		if (flexible_group_sched_in(event, ctx, cpuctx, &can_add_hw)) {
++			if (event->state == PERF_EVENT_STATE_INACTIVE)
++				perf_event_set_state(event,
++						PERF_EVENT_STATE_ERROR);
++		}
++	}
+ 
+-	list_for_each_entry(event, &ctx->pinned_groups, group_entry) {
+-		if (event->state <= PERF_EVENT_STATE_OFF)
+-			continue;
+-		if (!event_filter_match(event))
+-			continue;
+-
+-		if (group_can_go_on(event, cpuctx, 1))
+-			group_sched_in(event, cpuctx, ctx);
+-
+-		/*
+-		 * If this pinned group hasn't been scheduled,
+-		 * put it in error state.
+-		 */
+-		if (event->state == PERF_EVENT_STATE_INACTIVE)
+-			perf_event_set_state(event, PERF_EVENT_STATE_ERROR);
++	perf_event_groups_for_each_cpu(event, cpu,
++			&ctx->pinned_groups, group_node) {
++		can_add_hw = 1;
++		if (flexible_group_sched_in(event, ctx, cpuctx, &can_add_hw)) {
++			if (event->state == PERF_EVENT_STATE_INACTIVE)
++				perf_event_set_state(event,
++						PERF_EVENT_STATE_ERROR);
++		}
+ 	}
+ }
+ 
+@@ -3020,25 +3222,19 @@ static void
+ ctx_flexible_sched_in(struct perf_event_context *ctx,
+ 		      struct perf_cpu_context *cpuctx)
+ {
++	int sw = -1, cpu = smp_processor_id();
+ 	struct perf_event *event;
+ 	int can_add_hw = 1;
+ 
+-	list_for_each_entry(event, &ctx->flexible_groups, group_entry) {
+-		/* Ignore events in OFF or ERROR state */
+-		if (event->state <= PERF_EVENT_STATE_OFF)
+-			continue;
+-		/*
+-		 * Listen to the 'cpu' scheduling filter constraint
+-		 * of events:
+-		 */
+-		if (!event_filter_match(event))
+-			continue;
++	perf_event_groups_for_each_cpu(event, sw,
++			&ctx->flexible_groups, group_node)
++		flexible_group_sched_in(event, ctx, cpuctx, &can_add_hw);
++
++	can_add_hw = 1;
++	perf_event_groups_for_each_cpu(event, cpu,
++			&ctx->flexible_groups, group_node)
++		flexible_group_sched_in(event, ctx, cpuctx, &can_add_hw);
+ 
+-		if (group_can_go_on(event, cpuctx, can_add_hw)) {
+-			if (group_sched_in(event, cpuctx, ctx))
+-				can_add_hw = 0;
+-		}
+-	}
+ }
+ 
+ static void
+@@ -3119,7 +3315,7 @@ static void perf_event_context_sched_in(struct perf_event_context *ctx,
+ 	 * However, if task's ctx is not carrying any pinned
+ 	 * events, no need to flip the cpuctx's events around.
+ 	 */
+-	if (!list_empty(&ctx->pinned_groups))
++	if (!RB_EMPTY_ROOT(&ctx->pinned_groups.tree))
+ 		cpu_ctx_sched_out(cpuctx, EVENT_FLEXIBLE);
+ 	perf_event_sched_in(cpuctx, ctx, task);
+ 	perf_pmu_enable(ctx->pmu);
+@@ -3356,8 +3552,12 @@ static void rotate_ctx(struct perf_event_context *ctx)
+ 	 * Rotate the first entry last of non-pinned groups. Rotation might be
+ 	 * disabled by the inheritance code.
+ 	 */
+-	if (!ctx->rotate_disable)
+-		list_rotate_left(&ctx->flexible_groups);
++	if (!ctx->rotate_disable) {
++		int sw = -1, cpu = smp_processor_id();
++
++		perf_event_groups_rotate(&ctx->flexible_groups, sw);
++		perf_event_groups_rotate(&ctx->flexible_groups, cpu);
++	}
+ }
+ 
+ static int perf_rotate_context(struct perf_cpu_context *cpuctx)
+@@ -3715,8 +3915,8 @@ static void __perf_event_init_context(struct perf_event_context *ctx)
+ 	raw_spin_lock_init(&ctx->lock);
+ 	mutex_init(&ctx->mutex);
+ 	INIT_LIST_HEAD(&ctx->active_ctx_list);
+-	INIT_LIST_HEAD(&ctx->pinned_groups);
+-	INIT_LIST_HEAD(&ctx->flexible_groups);
++	perf_event_groups_init(&ctx->pinned_groups);
++	perf_event_groups_init(&ctx->flexible_groups);
+ 	INIT_LIST_HEAD(&ctx->event_list);
+ 	atomic_set(&ctx->refcount, 1);
+ }
+@@ -9561,6 +9761,7 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
+ 	INIT_LIST_HEAD(&event->group_entry);
+ 	INIT_LIST_HEAD(&event->event_entry);
+ 	INIT_LIST_HEAD(&event->sibling_list);
++	init_event_group(event);
+ 	INIT_LIST_HEAD(&event->rb_entry);
+ 	INIT_LIST_HEAD(&event->active_entry);
+ 	INIT_LIST_HEAD(&event->addr_filters.list);
+@@ -11085,7 +11286,7 @@ static int perf_event_init_context(struct task_struct *child, int ctxn)
+ 	 * We dont have to disable NMIs - we are only looking at
+ 	 * the list, not manipulating it:
+ 	 */
+-	list_for_each_entry(event, &parent_ctx->pinned_groups, group_entry) {
++	perf_event_groups_for_each(event, &parent_ctx->pinned_groups, group_node) {
+ 		ret = inherit_task_group(event, parent, parent_ctx,
+ 					 child, ctxn, &inherited_all);
+ 		if (ret)
+@@ -11101,7 +11302,7 @@ static int perf_event_init_context(struct task_struct *child, int ctxn)
+ 	parent_ctx->rotate_disable = 1;
+ 	raw_spin_unlock_irqrestore(&parent_ctx->lock, flags);
+ 
+-	list_for_each_entry(event, &parent_ctx->flexible_groups, group_entry) {
++	perf_event_groups_for_each(event, &parent_ctx->flexible_groups, group_node) {
+ 		ret = inherit_task_group(event, parent, parent_ctx,
+ 					 child, ctxn, &inherited_all);
+ 		if (ret)
