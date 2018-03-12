@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751450AbeCLLyc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 07:54:32 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:33531 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750995AbeCLLyY (ORCPT
+        id S1751386AbeCLLya (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 07:54:30 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:33529 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751248AbeCLLyW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 07:54:24 -0400
-X-Google-Smtp-Source: AG47ELsNlmW2Lq6eE7lMBohOMQiOUA/cgFTQUM3nzCKxtQye032gO44z61A+IGzi6o6NvZ2gNWET9Q==
+        Mon, 12 Mar 2018 07:54:22 -0400
+X-Google-Smtp-Source: AG47ELtLm1ex9imt4E5WUyQ5LAL3ga3pMvVzCyaxQ9ZYpmuGImHgsiT594W/jq/Wt+0iXw2NP1TMaw==
 From: Wanpeng Li <kernellwp@gmail.com>
 X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
 To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Cc: Paolo Bonzini <pbonzini@redhat.com>,
         =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
         =?UTF-8?q?Jan=20H=20=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>
-Subject: [PATCH v2 2/3] KVM: X86: Provides userspace with a capability to not intercept HLT
-Date: Mon, 12 Mar 2018 04:53:03 -0700
-Message-Id: <1520855584-10079-3-git-send-email-wanpengli@tencent.com>
+Subject: [PATCH v2 1/3] KVM: X86: Provides userspace with a capability to not intercept MWAIT
+Date: Mon, 12 Mar 2018 04:53:02 -0700
+Message-Id: <1520855584-10079-2-git-send-email-wanpengli@tencent.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520855584-10079-1-git-send-email-wanpengli@tencent.com>
 References: <1520855584-10079-1-git-send-email-wanpengli@tencent.com>
@@ -29,211 +29,238 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Wanpeng Li <wanpengli@tencent.com>
 
-If host CPUs are dedicated to a VM, we can avoid VM exits on HLT.
-This patch adds the per-VM non-HLT-exiting capability.
+Allowing a guest to execute MWAIT without interception enables a guest
+to put a (physical) CPU into a power saving state, where it takes
+longer to return from than what may be desired by the host.
+
+Don't give a guest that power over a host by default. (Especially,
+since nothing prevents a guest from using MWAIT even when it is not
+advertised via CPUID.)
 
 Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Radim Krčmář <rkrcmar@redhat.com>
 Cc: Jan H. Schönherr <jschoenh@amazon.de>
 Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
 ---
- Documentation/virtual/kvm/api.txt |  3 ++-
- arch/x86/include/asm/kvm_host.h   |  1 +
- arch/x86/kvm/cpuid.c              |  5 +++++
- arch/x86/kvm/svm.c                |  4 +++-
- arch/x86/kvm/vmx.c                | 24 ++++++++++++++++++++++++
- arch/x86/kvm/x86.c                |  3 +++
- arch/x86/kvm/x86.h                |  9 ++++++++-
- 7 files changed, 46 insertions(+), 3 deletions(-)
+ Documentation/virtual/kvm/api.txt | 23 ++++++++++++++---------
+ arch/x86/include/asm/kvm_host.h   |  2 ++
+ arch/x86/kvm/svm.c                |  2 +-
+ arch/x86/kvm/vmx.c                |  9 +++++----
+ arch/x86/kvm/x86.c                | 24 ++++++++++++++++++++----
+ arch/x86/kvm/x86.h                | 10 +++++-----
+ include/uapi/linux/kvm.h          |  2 +-
+ tools/include/uapi/linux/kvm.h    |  2 +-
+ 8 files changed, 49 insertions(+), 25 deletions(-)
 
 diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
-index 76e5a15..b46494d 100644
+index 98de506..76e5a15 100644
 --- a/Documentation/virtual/kvm/api.txt
 +++ b/Documentation/virtual/kvm/api.txt
-@@ -4367,10 +4367,11 @@ Returns: 0 on success, -EINVAL when args[0] contains invalid exits
- Valid exits in args[0] are
+@@ -4358,6 +4358,20 @@ enables QEMU to build error log and branch to guest kernel registered
+ machine check handling routine. Without this capability KVM will
+ branch to guests' 0x200 interrupt vector.
  
- #define KVM_X86_DISABLE_EXITS_MWAIT            (1 << 0)
-+#define KVM_X86_DISABLE_EXITS_HLT              (1 << 1)
- 
- Enabling this capability on a VM provides userspace with a way to no
- longer intercepts some instructions for improved latency in some
--workloads.
-+workloads. Do not enable KVM_FEATURE_PV_UNHALT if you disable HLT exits.
- 
++7.13 KVM_CAP_X86_DISABLE_EXITS
++
++Architectures: x86
++Parameters: args[0] defines which exits are disabled
++Returns: 0 on success, -EINVAL when args[0] contains invalid exits
++
++Valid exits in args[0] are
++
++#define KVM_X86_DISABLE_EXITS_MWAIT            (1 << 0)
++
++Enabling this capability on a VM provides userspace with a way to no
++longer intercepts some instructions for improved latency in some
++workloads.
++
  8. Other capabilities.
  ----------------------
+ 
+@@ -4470,15 +4484,6 @@ reserved.
+     Both registers and addresses are 64-bits wide.
+     It will be possible to run 64-bit or 32-bit guest code.
+ 
+-8.8 KVM_CAP_X86_GUEST_MWAIT
+-
+-Architectures: x86
+-
+-This capability indicates that guest using memory monotoring instructions
+-(MWAIT/MWAITX) to stop the virtual CPU will not cause a VM exit.  As such time
+-spent while virtual CPU is halted in this way will then be accounted for as
+-guest running time on the host (as opposed to e.g. HLT).
+-
+ 8.9 KVM_CAP_ARM_USER_IRQ
+ 
+ Architectures: arm, arm64
 diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index e107171..1a79065 100644
+index 0395c35..e107171 100644
 --- a/arch/x86/include/asm/kvm_host.h
 +++ b/arch/x86/include/asm/kvm_host.h
-@@ -812,6 +812,7 @@ struct kvm_arch {
+@@ -811,6 +811,8 @@ struct kvm_arch {
+ 
  	gpa_t wall_clock;
  
- 	bool mwait_in_guest;
-+	bool hlt_in_guest;
- 
++	bool mwait_in_guest;
++
  	bool ept_identity_pagetable_done;
  	gpa_t ept_identity_map_addr;
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index e2d3050..82055b9 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -135,6 +135,11 @@ int kvm_update_cpuid(struct kvm_vcpu *vcpu)
- 			return -EINVAL;
- 	}
  
-+	best = kvm_find_cpuid_entry(vcpu, KVM_CPUID_FEATURES, 0);
-+	if (kvm_hlt_in_guest(vcpu->kvm) && best &&
-+		(best->eax & (1 << KVM_FEATURE_PV_UNHALT)))
-+		best->eax &= ~(1 << KVM_FEATURE_PV_UNHALT);
-+
- 	/* Update physical-address width */
- 	vcpu->arch.maxphyaddr = cpuid_query_maxphyaddr(vcpu);
- 	kvm_mmu_reset_context(vcpu);
 diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 321b3fd..0b2e7af 100644
+index be9c839..321b3fd 100644
 --- a/arch/x86/kvm/svm.c
 +++ b/arch/x86/kvm/svm.c
-@@ -1372,7 +1372,6 @@ static void init_vmcb(struct vcpu_svm *svm)
- 	set_intercept(svm, INTERCEPT_RDPMC);
- 	set_intercept(svm, INTERCEPT_CPUID);
- 	set_intercept(svm, INTERCEPT_INVD);
--	set_intercept(svm, INTERCEPT_HLT);
- 	set_intercept(svm, INTERCEPT_INVLPG);
- 	set_intercept(svm, INTERCEPT_INVLPGA);
- 	set_intercept(svm, INTERCEPT_IOIO_PROT);
-@@ -1395,6 +1394,9 @@ static void init_vmcb(struct vcpu_svm *svm)
+@@ -1390,7 +1390,7 @@ static void init_vmcb(struct vcpu_svm *svm)
+ 	set_intercept(svm, INTERCEPT_XSETBV);
+ 	set_intercept(svm, INTERCEPT_RSM);
+ 
+-	if (!kvm_mwait_in_guest()) {
++	if (!kvm_mwait_in_guest(svm->vcpu.kvm)) {
+ 		set_intercept(svm, INTERCEPT_MONITOR);
  		set_intercept(svm, INTERCEPT_MWAIT);
  	}
- 
-+	if (!kvm_hlt_in_guest(svm->vcpu.kvm))
-+		set_intercept(svm, INTERCEPT_HLT);
-+
- 	control->iopm_base_pa = __sme_set(iopm_base);
- 	control->msrpm_base_pa = __sme_set(__pa(svm->msrpm));
- 	control->int_ctl = V_INTR_MASKING_MASK;
 diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 2302ae2..fa0c5e1 100644
+index 6cefd7b..2302ae2 100644
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -2543,6 +2543,19 @@ static int nested_vmx_check_exception(struct kvm_vcpu *vcpu, unsigned long *exit
- 	return 0;
- }
+@@ -3733,13 +3733,11 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf)
+ 	      CPU_BASED_UNCOND_IO_EXITING |
+ 	      CPU_BASED_MOV_DR_EXITING |
+ 	      CPU_BASED_USE_TSC_OFFSETING |
++	      CPU_BASED_MWAIT_EXITING |
++	      CPU_BASED_MONITOR_EXITING |
+ 	      CPU_BASED_INVLPG_EXITING |
+ 	      CPU_BASED_RDPMC_EXITING;
  
-+static void vmx_clear_hlt(struct kvm_vcpu *vcpu)
-+{
-+	/*
-+	 * Ensure that we clear the HLT state in the VMCS.  We don't need to
-+	 * explicitly skip the instruction because if the HLT state is set,
-+	 * then the instruction is already executing and RIP has already been
-+	 * advanced.
-+	 */
-+	if (kvm_hlt_in_guest(vcpu->kvm) &&
-+			vmcs_read32(GUEST_ACTIVITY_STATE) == GUEST_ACTIVITY_HLT)
-+		vmcs_write32(GUEST_ACTIVITY_STATE, GUEST_ACTIVITY_ACTIVE);
-+}
-+
- static void vmx_queue_exception(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
-@@ -2573,6 +2586,8 @@ static void vmx_queue_exception(struct kvm_vcpu *vcpu)
- 		intr_info |= INTR_TYPE_HARD_EXCEPTION;
- 
- 	vmcs_write32(VM_ENTRY_INTR_INFO_FIELD, intr_info);
-+
-+	vmx_clear_hlt(vcpu);
- }
- 
- static bool vmx_rdtscp_supported(void)
-@@ -5532,6 +5547,8 @@ static u32 vmx_exec_control(struct vcpu_vmx *vmx)
- 	if (kvm_mwait_in_guest(vmx->vcpu.kvm))
- 		exec_control &= ~(CPU_BASED_MWAIT_EXITING |
- 				CPU_BASED_MONITOR_EXITING);
-+	if (kvm_hlt_in_guest(vmx->vcpu.kvm))
-+		exec_control &= ~CPU_BASED_HLT_EXITING;
+-	if (!kvm_mwait_in_guest())
+-		min |= CPU_BASED_MWAIT_EXITING |
+-			CPU_BASED_MONITOR_EXITING;
+-
+ 	opt = CPU_BASED_TPR_SHADOW |
+ 	      CPU_BASED_USE_MSR_BITMAPS |
+ 	      CPU_BASED_ACTIVATE_SECONDARY_CONTROLS;
+@@ -5531,6 +5529,9 @@ static u32 vmx_exec_control(struct vcpu_vmx *vmx)
+ 		exec_control |= CPU_BASED_CR3_STORE_EXITING |
+ 				CPU_BASED_CR3_LOAD_EXITING  |
+ 				CPU_BASED_INVLPG_EXITING;
++	if (kvm_mwait_in_guest(vmx->vcpu.kvm))
++		exec_control &= ~(CPU_BASED_MWAIT_EXITING |
++				CPU_BASED_MONITOR_EXITING);
  	return exec_control;
  }
  
-@@ -5893,6 +5910,8 @@ static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
- 	update_exception_bitmap(vcpu);
- 
- 	vpid_sync_context(vmx->vpid);
-+	if (init_event)
-+		vmx_clear_hlt(vcpu);
- }
- 
- /*
-@@ -5963,6 +5982,8 @@ static void vmx_inject_irq(struct kvm_vcpu *vcpu)
- 	} else
- 		intr |= INTR_TYPE_EXT_INTR;
- 	vmcs_write32(VM_ENTRY_INTR_INFO_FIELD, intr);
-+
-+	vmx_clear_hlt(vcpu);
- }
- 
- static void vmx_inject_nmi(struct kvm_vcpu *vcpu)
-@@ -5993,6 +6014,8 @@ static void vmx_inject_nmi(struct kvm_vcpu *vcpu)
- 
- 	vmcs_write32(VM_ENTRY_INTR_INFO_FIELD,
- 			INTR_TYPE_NMI_INTR | INTR_INFO_VALID_MASK | NMI_VECTOR);
-+
-+	vmx_clear_hlt(vcpu);
- }
- 
- static bool vmx_get_nmi_mask(struct kvm_vcpu *vcpu)
-@@ -12314,6 +12337,7 @@ static int vmx_pre_enter_smm(struct kvm_vcpu *vcpu, char *smstate)
- 
- 	vmx->nested.smm.vmxon = vmx->nested.vmxon;
- 	vmx->nested.vmxon = false;
-+	vmx_clear_hlt(vcpu);
- 	return 0;
- }
- 
 diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 5fae476..73255e6 100644
+index 36ef3d8..5fae476 100644
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -2874,6 +2874,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 		r = KVM_CLOCK_TSC_STABLE;
- 		break;
- 	case KVM_CAP_X86_DISABLE_EXITS:
-+		r |=  KVM_X86_DISABLE_EXITS_HTL;
- 		if(kvm_can_mwait_in_guest())
- 			r |= KVM_X86_DISABLE_EXITS_MWAIT;
- 		break;
-@@ -4228,6 +4229,8 @@ static int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
- 		if ((cap->args[0] & KVM_X86_DISABLE_EXITS_MWAIT) &&
- 			kvm_can_mwait_in_guest())
- 			kvm->arch.mwait_in_guest = true;
-+		if (cap->args[0] & KVM_X86_DISABLE_EXITS_HTL)
-+			kvm->arch.hlt_in_guest = true;
- 		r = 0;
- 		break;
- 	default:
-diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-index cd1215e..d4ddb00 100644
---- a/arch/x86/kvm/x86.h
-+++ b/arch/x86/kvm/x86.h
-@@ -263,11 +263,18 @@ static inline u64 nsec_to_cycles(struct kvm_vcpu *vcpu, u64 nsec)
- 	 })
- 
- #define KVM_X86_DISABLE_EXITS_MWAIT          (1 << 0)
--#define KVM_X86_DISABLE_VALID_EXITS          (KVM_X86_DISABLE_EXITS_MWAIT)
-+#define KVM_X86_DISABLE_EXITS_HTL            (1 << 1)
-+#define KVM_X86_DISABLE_VALID_EXITS          (KVM_X86_DISABLE_EXITS_MWAIT | \
-+                                              KVM_X86_DISABLE_EXITS_HTL)
- 
- static inline bool kvm_mwait_in_guest(struct kvm *kvm)
- {
- 	return kvm->arch.mwait_in_guest;
+@@ -2809,9 +2809,15 @@ static int msr_io(struct kvm_vcpu *vcpu, struct kvm_msrs __user *user_msrs,
+ 	return r;
  }
  
-+static inline bool kvm_hlt_in_guest(struct kvm *kvm)
++static inline bool kvm_can_mwait_in_guest(void)
 +{
-+	return kvm->arch.hlt_in_guest;
++	return boot_cpu_has(X86_FEATURE_MWAIT) &&
++		!boot_cpu_has_bug(X86_BUG_MONITOR);
 +}
 +
+ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ {
+-	int r;
++	int r = 0;
+ 
+ 	switch (ext) {
+ 	case KVM_CAP_IRQCHIP:
+@@ -2867,8 +2873,9 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ 	case KVM_CAP_ADJUST_CLOCK:
+ 		r = KVM_CLOCK_TSC_STABLE;
+ 		break;
+-	case KVM_CAP_X86_GUEST_MWAIT:
+-		r = kvm_mwait_in_guest();
++	case KVM_CAP_X86_DISABLE_EXITS:
++		if(kvm_can_mwait_in_guest())
++			r |= KVM_X86_DISABLE_EXITS_MWAIT;
+ 		break;
+ 	case KVM_CAP_X86_SMM:
+ 		/* SMBASE is usually relocated above 1M on modern chipsets,
+@@ -2909,7 +2916,6 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ 		r = KVM_X2APIC_API_VALID_FLAGS;
+ 		break;
+ 	default:
+-		r = 0;
+ 		break;
+ 	}
+ 	return r;
+@@ -4214,6 +4220,16 @@ static int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+ 
+ 		r = 0;
+ 		break;
++	case KVM_CAP_X86_DISABLE_EXITS:
++		r = -EINVAL;
++		if (cap->args[0] & ~KVM_X86_DISABLE_VALID_EXITS)
++			break;
++
++		if ((cap->args[0] & KVM_X86_DISABLE_EXITS_MWAIT) &&
++			kvm_can_mwait_in_guest())
++			kvm->arch.mwait_in_guest = true;
++		r = 0;
++		break;
+ 	default:
+ 		r = -EINVAL;
+ 		break;
+diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+index b91215d..cd1215e 100644
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -2,8 +2,6 @@
+ #ifndef ARCH_X86_KVM_X86_H
+ #define ARCH_X86_KVM_X86_H
+ 
+-#include <asm/processor.h>
+-#include <asm/mwait.h>
+ #include <linux/kvm_host.h>
+ #include <asm/pvclock.h>
+ #include "kvm_cache_regs.h"
+@@ -264,10 +262,12 @@ static inline u64 nsec_to_cycles(struct kvm_vcpu *vcpu, u64 nsec)
+ 	    __rem;						\
+ 	 })
+ 
+-static inline bool kvm_mwait_in_guest(void)
++#define KVM_X86_DISABLE_EXITS_MWAIT          (1 << 0)
++#define KVM_X86_DISABLE_VALID_EXITS          (KVM_X86_DISABLE_EXITS_MWAIT)
++
++static inline bool kvm_mwait_in_guest(struct kvm *kvm)
+ {
+-	return boot_cpu_has(X86_FEATURE_MWAIT) &&
+-		!boot_cpu_has_bug(X86_BUG_MONITOR);
++	return kvm->arch.mwait_in_guest;
+ }
+ 
  #endif
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index 088c2c9..1065006 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -929,7 +929,7 @@ struct kvm_ppc_resize_hpt {
+ #define KVM_CAP_S390_GS 140
+ #define KVM_CAP_S390_AIS 141
+ #define KVM_CAP_SPAPR_TCE_VFIO 142
+-#define KVM_CAP_X86_GUEST_MWAIT 143
++#define KVM_CAP_X86_DISABLE_EXITS 143
+ #define KVM_CAP_ARM_USER_IRQ 144
+ #define KVM_CAP_S390_CMMA_MIGRATION 145
+ #define KVM_CAP_PPC_FWNMI 146
+diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
+index 0fb5ef9..b13c257 100644
+--- a/tools/include/uapi/linux/kvm.h
++++ b/tools/include/uapi/linux/kvm.h
+@@ -924,7 +924,7 @@ struct kvm_ppc_resize_hpt {
+ #define KVM_CAP_S390_GS 140
+ #define KVM_CAP_S390_AIS 141
+ #define KVM_CAP_SPAPR_TCE_VFIO 142
+-#define KVM_CAP_X86_GUEST_MWAIT 143
++#define KVM_CAP_X86_DISABLE_EXITS 143
+ #define KVM_CAP_ARM_USER_IRQ 144
+ #define KVM_CAP_S390_CMMA_MIGRATION 145
+ #define KVM_CAP_PPC_FWNMI 146
 -- 
 2.7.4
