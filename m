@@ -1,101 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752362AbeCLIEO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 04:04:14 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:37015 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751773AbeCLIEI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 04:04:08 -0400
-X-Google-Smtp-Source: AG47ELs7E+v2nF5UO79N+AU9eC64cS9e/M4N0OnA4QmX9g/DwnmGtrV8TtLliMr8yk/Vdea/VxZevg==
-Date: Mon, 12 Mar 2018 09:04:04 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Philippe Cornu <philippe.cornu@st.com>
-Cc: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: [PATCH v2 0/2] drm/panel: Add support for Raydium RM68200 panel
-Message-ID: <20180312080404.GE23060@ulmo>
-References: <20180302153222.4377-1-philippe.cornu@st.com>
+        id S1752407AbeCLIEY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 04:04:24 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34304 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752370AbeCLIET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 04:04:19 -0400
+Date: Mon, 12 Mar 2018 03:59:38 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>, Kees Cook <keescook@chromium.org>
+Subject: Re: [RFC PATCH ghak21 4/4] audit: add parent of refused symlink to
+ audit_names
+Message-ID: <20180312075938.7uo7vhzdyzhtzsph@madcap2.tricolour.ca>
+References: <cover.1518603831.git.rgb@redhat.com>
+ <1c5184985e422774329484153b0147c2861e91a7.1518603831.git.rgb@redhat.com>
+ <CAHC9VhQAiQdCeayzYY5Nr0rqJu0q0AbbM2ovqAe7hYNZGOwyxA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sfyO1m2EN8ZOtJL6"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180302153222.4377-1-philippe.cornu@st.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAHC9VhQAiQdCeayzYY5Nr0rqJu0q0AbbM2ovqAe7hYNZGOwyxA@mail.gmail.com>
+User-Agent: NeoMutt/20171027
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-03-08 19:50, Paul Moore wrote:
+> On Wed, Feb 14, 2018 at 11:18 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> > Audit link denied events for symlinks were missing the parent PATH
+> > record.  Add it.  Since the full pathname may not be available,
+> > reconstruct it from the path in the nameidata supplied.
+> >
+> > See: https://github.com/linux-audit/audit-kernel/issues/21
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> >  fs/namei.c | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> >
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index 0edf133..bf1c046b 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -923,6 +923,7 @@ static inline int may_follow_link(struct nameidata *nd)
+> >         const struct inode *inode;
+> >         const struct inode *parent;
+> >         kuid_t puid;
+> > +       char *pathname;
+> >
+> >         if (!sysctl_protected_symlinks)
+> >                 return 0;
+> > @@ -945,6 +946,14 @@ static inline int may_follow_link(struct nameidata *nd)
+> >         if (nd->flags & LOOKUP_RCU)
+> >                 return -ECHILD;
+> >
+> > +       pathname = kmalloc(PATH_MAX + 1, GFP_KERNEL);
+> > +       if (!pathname)
+> > +               return -ENOMEM;
+> 
+> Two things here:
+> 
+> 1. We need to allocate a buffer to feed to d_absolute_path(), and
+> getname_kernel() is just going to make another copy so we need to make
+> sure we clean up after ourselves.  Perhaps I missing it, but I'm not
+> seeing where we free the kmalloc'd buffer or call putname().  Feel
+> free to correct me if I'm missing something obvious.
 
---sfyO1m2EN8ZOtJL6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That is put very diplomatically!  Both fixed, with audit_panic() as
+needed.
 
-On Fri, Mar 02, 2018 at 04:32:20PM +0100, Philippe Cornu wrote:
-> The Raydium Semiconductor Corporation RM68200 is a 5.5" 720x1280
-> TFT LCD panel connected using a MIPI-DSI video interface.
->=20
-> Version 2:
-> - Add Rob Herring Reviewed-by on dt-bindings.
-> - Update Kconfig & driver thanks to Thierry Reding comments: no more
->   DRV_NAME, DRM_WARN_ONCE instead of DRV_NAME where applicable, use
->   backlight_enable/disable() & devm_of_find_backlight(), no extra
->   gpio reset to 0, no more msg if successful, use RM68200 instead of
->   rm68200 where necessary.
->=20
-> Version 1:
-> - Initial commit
->=20
-> Philippe Cornu (2):
->   dt-bindings/display/panel: Add support for Raydium rm68200 dsi panel
->   drm/panel: Add support for Raydium RM68200 panel driver
->=20
->  .../bindings/display/panel/raydium,rm68200.txt     |  25 ++
->  drivers/gpu/drm/panel/Kconfig                      |   8 +
->  drivers/gpu/drm/panel/Makefile                     |   1 +
->  drivers/gpu/drm/panel/panel-raydium-rm68200.c      | 437 +++++++++++++++=
-++++++
->  4 files changed, 471 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/raydi=
-um,rm68200.txt
->  create mode 100755 drivers/gpu/drm/panel/panel-raydium-rm68200.c
+> 2. While the audit_* calls are going to bail early in the cases where
+> audit is disabled, or not configured, we are going to pay the penalty
+> for the kmalloc() call above, as well as the getname_kernel() and
+> d_absolute_path() calls below.  I think it might be beneficial to
+> create a new function (audit_log_symlink_denied() perhaps?) which
+> encapsulates all the audit bits in may_follow_link() and exits early
+> when needed.  What do you think?
 
-Applied, thanks. There were a few tiny things I wasn't entirely happy
-about, but I fixed those up myself.
+I agree a seperate function is appropriate.  There was some back and
+forth between namei.c and audit.c due to struct nameidata and
+audit_panic() not able to co-exist due to them both being local to their
+respective sub-systems.
 
-Most notable was the use of DRM_WARN_ONCE(), which is bad in this case
-because it won't show any subsequent errors, ever again. I think in this
-case the proper solution is DRM_ERROR_RATELIMITED(), or erroring out on
-the first error, assuming that subsequent operations won't succeed
-either. I went with the rate limitation.
+> (Point #2 is why I didn't merge patch 3/4, just include it in this
+> revised patch)
 
-Thierry
+On reviewing this, I'm not totally convinced the parent record is
+necessary to fully understand what happenned since there is a CWD
+record.  I left 3 and 4 as seperate patches in case it is found that
+only 3 is necessary.
 
---sfyO1m2EN8ZOtJL6
-Content-Type: application/pgp-signature; name="signature.asc"
+> > +       audit_inode(getname_kernel(d_absolute_path(&nd->stack[0].link, pathname,
+> > +                                                  PATH_MAX + 1)),
+> > +                   nd->stack[0].link.dentry, 0);
+> > +       audit_inode(nd->name, nd->stack[0].link.dentry->d_parent, LOOKUP_PARENT);
+> > +
+> >         audit_inode(nd->name, nd->stack[0].link.dentry, 0);
+> >         audit_log_link_denied("follow_link", &nd->stack[0].link);
+> >
+> >         return -EACCES;
+> > --
+> > 1.8.3.1
+> 
+> -- 
+> paul moore
+> www.paul-moore.com
 
------BEGIN PGP SIGNATURE-----
+- RGB
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqmNHAACgkQ3SOs138+
-s6FJPxAAkcVyNFgq6clEHSv/FUN5JRrV8NAYLAomWppOAD46e/9EekeQEPiPJ1zS
-UWcUDu/xySAH+FlkIgecDeO6v+V2F56qBEkrRyxqXTGtBffv2Q/p/jDioDGUniMA
-63eSn4OUeHv4FEAyx1k92gdCxKdNwGMFINMkMvAOha3MryXGp4UpRfkiv3jFDJdG
-6XQyUSV4UCtw33GA32kkCMSINNFZZHtxGuav6MUe4ZV32wYNca3dNnuBDTb7Ucu6
-oJyZvyiX56ZrHd1mWW3ehR5ilt+5fobZjzNwnUiipdVLO3j+aWjHzm5xxNrw0C3a
-HPiQuN2oCF5Y7umnMpLVX/0jJPMKzCNV51nZJsWU3s1AoZ9jA5eqrrisVWGnlZC8
-f5Wkms/1zjX8pIgsejD/QEZinKHr0SaX899MOPG4nbfBdtx52gNFVRiYereicmRe
-YBvzDVxpQPlsKHR0N8vVCm+jjXcdi2UeFMgTlCmm7WIyExvU/MDzXB6hPquWW6zN
-A9VF6lOUKIBw0q5dsg4VMa533p2LDvmeW0akXtL+nO6IZqJfAHKj2+wb6KZkayUV
-J6iiDwvYPw2Q6ovmCtvcytH+S88CEiYMzt50g8B32H7SGSkeBIUlfIpBifiNwQT4
-sn7l1ieNAEThrOkv4mLL20g2PYdDBARFp+VaGoCMpT7as96zcD4=
-=w22k
------END PGP SIGNATURE-----
-
---sfyO1m2EN8ZOtJL6--
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
