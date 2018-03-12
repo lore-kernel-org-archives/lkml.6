@@ -1,88 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932439AbeCLVp5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 17:45:57 -0400
-Received: from ozlabs.org ([103.22.144.67]:54157 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932265AbeCLVp4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 17:45:56 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 13 Mar 2018 08:45:16 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andy Gross <agross@codeaurora.org>,
-        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Amit Kucheria <amit.kucheria@linaro.org>
-Subject: linux-next: manual merge of the qcom tree with the amlogic tree
-Message-ID: <20180313084516.49718221@canb.auug.org.au>
+        id S932449AbeCLVwr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 17:52:47 -0400
+Received: from mail-it0-f50.google.com ([209.85.214.50]:50568 "EHLO
+        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932265AbeCLVwq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 17:52:46 -0400
+X-Google-Smtp-Source: AG47ELvTJOG3Vfpg9zJfVnebkvliv6KRB1mwKv7K5UJPJ+d1BbZxNQV5RnSzUTpw211kx282kOJZUSRpWwyqJK2MfM4=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5XX3mInVEPgUs6+wuJ2GbmB"; protocol="application/pgp-signature"
+In-Reply-To: <20180312201022.GA16689@gmail.com>
+References: <20180312171330.32054-1-christian.brauner@ubuntu.com>
+ <20180312171330.32054-3-christian.brauner@ubuntu.com> <87a7vdf4ve.fsf@xmission.com>
+ <20180312201022.GA16689@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 12 Mar 2018 14:52:44 -0700
+X-Google-Sender-Auth: E9xw32rAvD3lmDAhk1wTSyXcRa8
+Message-ID: <CA+55aFzRbM9NiDThT-WrFQ_emmumcxyAF1SRsDZL2nYdJVy55w@mail.gmail.com>
+Subject: Re: [PATCH 2/3 v3] devpts: resolve devpts bind-mounts
+To: Christian Brauner <christian.brauner@canonical.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/5XX3mInVEPgUs6+wuJ2GbmB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Mar 12, 2018 at 1:10 PM, Christian Brauner
+<christian.brauner@canonical.com> wrote:
+>>
+>> So let's just change the behavior of devpts_mntget error if a mount with
+>> the pty underneath it can not be found.
+>
+> I'm sort of torn but I think I'd prefer changing the behavior too. The
+> /dev/ptmx, /dev/pts/ptmx schisma is really a special case and I would
+> like it to be the only one. I really don't want to support bind-mounting
+> the ptmx character device under the devpts mounts across the system.
+> That seems like unnecessary complexity that is also unused. So if Linus
+> is fine with this change as well I don't mind sending a v4.
 
-Hi Andy,
+I'm fine with whatever error handling - I cannot imagine that it matters.
 
-Today's linux-next merge of the qcom tree got a conflict in:
+And if it does, and somebody finds somebody who depends on insane
+behavior, we can revisit it then,
 
-  arch/arm64/configs/defconfig
+But fundamentally. I think there are only two valid situations:
 
-between commit:
+ - people use devpts as-is (so the ptmx node is inherently in the same
+subdirectory as the pts nodes, and is fundamentally the same
+filesystem)
 
-  266c157de3b2 ("arm64: defconfig: enable MESON EFUSE")
+   NOTE! In this case, the ptmx node is *never* a bind-mount. It is
+simply part of the pts directory as exported by devpts.
 
-from the amlogic tree and commit:
+   This is the "people actually use /dev/pts/ptmx" case. It's fairly
+rare, I think.
 
-  52fe48c2b9bb ("arm64: defconfig: enable thermal sensor on QCOM platforms")
+ - the parent directory ptmx node is an arbitrary ptmx node (symlink,
+bind mount, or mknod)
 
-from the qcom tree.
+   NOTE! In this case, the ptmx node is not necessarily associated
+with the pts directory in any way, and the only thing that matters is
+that it's the right special character device.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Honestly, I personally detest case #1, even if some people think it's
+the "clean" case. It isn't particularly clean, since it fundamentally
+is not how /dev/ptmx has traditionally ever worked. It would have been
+clean had that been how ptmx worked traditionally, but that' ssimply
+not the case.
 
---=20
-Cheers,
-Stephen Rothwell
+But if something really odd happens, and we cannot find a pts
+subdirectory, or there is not a pts node, or not a ptmx node in that
+subdirectory, I think all bets are pretty much off path-wise.
+Returning an error is probably better than returning a bogus path.
 
-diff --cc arch/arm64/configs/defconfig
-index df2b08b1554f,a37130b54fae..000000000000
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@@ -565,7 -572,7 +575,8 @@@ CONFIG_PHY_XGENE=3D
-  CONFIG_PHY_TEGRA_XUSB=3Dy
-  CONFIG_QCOM_L2_PMU=3Dy
-  CONFIG_QCOM_L3_PMU=3Dy
- +CONFIG_MESON_EFUSE=3Dm
-+ CONFIG_QCOM_QFPROM=3Dy
-  CONFIG_UNIPHIER_EFUSE=3Dy
-  CONFIG_TEE=3Dy
-  CONFIG_OPTEE=3Dy
-
---Sig_/5XX3mInVEPgUs6+wuJ2GbmB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqm9OwACgkQAVBC80lX
-0GxOdQf/ZvQsipdh+fg8zd4azJ2CuMwF9J7LGXRIsaCoL/pTwxg3pRroH9G6970B
-t2wuBNkjqa4jqhLDb7tgqIdnF6GqutbqhlWNtFi9sxyq8iG7KDp78yO9iOJaWmwo
-/4D1vxSnwrsmqvRfMb6W1E472IBVBm8zUa3kjw4IOzxIgSf+ttcDbuSgeyYMXycw
-+KqFyvgcBayaWPAEdkg+yrKqZD6j9A+7PWssDm34V0oPmCYW3LsCgpvBBLD+Do4p
-T2r051BInb+oCIsLIuISAJnCOpFHB81NzW8WeFzOdIe+32TdyR3XeJQsXueqp2Ti
-Hb3LjywFIFrPnRfvZjQ0C5zM+Hrs9A==
-=mdCv
------END PGP SIGNATURE-----
-
---Sig_/5XX3mInVEPgUs6+wuJ2GbmB--
+                 Linus
