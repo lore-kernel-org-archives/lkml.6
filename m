@@ -1,333 +1,549 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-858207-1522468361-2-10964891796621993493
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-845454-1520875121-2-11327197783795726139
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Attached: signature.asc
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522468360; b=o6gsRo45rgcYXk+csul72L80ufgNtvDHn+hMvqL3Ea6U8Y8tlN
-    I/z6eFjZ6685Yc/t2weuuRgnXO8eksgaj1zN1bq01d31cPkQ/5FioBq2tNTpVZTn
-    KZCdeLadKwIohdqRHkbaBiCT12kWBiddSwqXo/BMXtR4iBaDalwIxkuLo6HNQTT/
-    JqFgRHnUcDWANdIxntCKOfbuFju3pLmXRzFFSIFIf84iXwrpjDwmnehNf1czlVJm
-    MR5zw1+Yyzy8Vzsy8Z3IYGsPRQ8YBVRI4WYr1QZnIbWreB8HuRqiKIpfGPdVyRrA
-    kRTJoMUQAWRJQEnuOne14LYAHE2Fy3bpnM4A==
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520875118; b=a9wyJqKQThmZ3aHYoKF4+1UlXhr5uqaDjlUE3bb7qIcR4J8
+    fnVazS3H2IUJNLbF6W41pO+ySWVv9v7nkiNvqSMXFBy/gLYeiZB10g+hxWHz3t4N
+    3wVaCD3ZO/tdTaTgLFjOLd2d+hFTpOYmXx8G7nKxRfRh0xNBIhvhAdYP+/0Vfxim
+    OgJPzQDg5Ce5YVG/Y0lirZACUKLqpPSO7MkDxeTmboJBaqsQh1TKSQZ5hFf94kZV
+    2IcYwpaEqgd48a1XSYbYyjTMZiBlRmwc6q34T+3i1orx7YNEpPce1D26zUWCE5db
+    4H/fXvq/QjW9KPjCdBRfdX1I+0vlNdxJGnHOsRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:date:subject:in-reply-to
-    :references:message-id:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :sender; s=fm2; t=1522468360; bh=7PO/yJ89Ox34QHgS45O9+7EI8l3ijUS
-    Tti+A+CxDFak=; b=frZk7W3HLpYCaARhVCo25RfXrbfKTtCHgl/NkIGilREcdWw
-    t8ZToCmJjgBF6hncyYaga92h+b4UEThwIXS6mw3VX7GZBnc6pO/JRjvOsSUkp3Am
-    f9W0urIeCSFmVXHyDNKC8eLfhtCp9kQutQAedGoEwcqCiT16b41eYkWpxV0ojrdR
-    KefTPYUNKFt6r8gNCl5BVFwpqw7JHYpSxmcBDGINKo8VQKnCJQseGOqUh5UV18sF
-    6B4b8zpJYCo33iBCvaWwNsY5s4ZL1nut5n6oLNuefiS652z+OpiNKiJgpcLRcNDL
-    0UiaHcqOFp9w6M/WpjTCzN90ORhAXnYyJW/zc1A==
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1520875118; bh=DCRmIidAWbEkFc/2PRPwSzFUiW
+    yWIwJKlYxuNcwcqsk=; b=p2GRNj5szxSLvXPXzPeaHHxUPwxnuK6eXWjmDdhR9H
+    T6tGwZpPcOiJKjrPMHywjHgew/zgjkGx0f7f1OrUXTg/Tipwv2Wu3yK/3cC4oH6Z
+    E0MTgibLJgePGKONxYuC1jfOlCZpLvcaBWNNdiQyT2RhbHKmLardf7aMD+FaDu70
+    oGEguXTUfAfyh6pnPb0K/9ZnqvGz0zNw//wpSG+leZdYP9ZyaYfme3IUh4vR/BD8
+    375eh/YK2+j1hE6+WFThbETfTPuSPnDbsv2cGkblSiGV/lKiVGIy0zHpYDD6AmFM
+    L9dp3fp0O4J0mwM9lFllomNfnee1oz4D8U8Qbjz6Pojw==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    smime=temperror;
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=uyNC7uQc x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=suse.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
+    x-category=clean score=0 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    smime=temperror;
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=uyNC7uQc x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=suse.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKVqFmWxHJ1EXpP36EbU9WLwNgVeQtY5KdzhM5emc8T+JKrflxgFYtSeix+m5QZuM9SJYLcToD2qKiBSvhvyTZBXGNCdqyBM118WGrEEVphq8wn7iTZ1
-    RBTVILC+/fUcWi3Hey8oKITMeZfNeG1ClKv2FufNBh57hrAelGl3O6Q3blyKEVeKM1sbZKWFn0uZnzpWPDsUlN20qGRvjKqW3F2AmxFb37vcLfdAT15EbeTo
-    oUs3EDZc+eCHLsQWwmh2jg==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=1oJP67jkp3AA:10 a=v2DPQv5-lfwA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=ZZnuYtJkoWoA:10 a=QyXUC8HyAAAA:8
-    a=ySfo2T4IAAAA:8 a=JfrnYn6hAAAA:8 a=iox4zFpeAAAA:8 a=sK_hXKufAAAA:8
-    a=Pv3XZVpQ2yypkRIsQrIA:9 a=N2WSDsOodWJD5QhigVcA:9 a=ONNS8QRKHyMA:10
-    a=DDOyTI_5AAAA:8 a=w27ZC7bHMYj9Vt11HkIA:9 a=CjuIK1q_8ugA:10 a=pC-h2on8RWMA:10
-    a=ZUkhVnNHqyo2at-WnAgH:22 a=1CNFftbPRP8L7MoqJWF3:22 a=WzC6qhA0u3u7Ye7llzcV:22
-    a=yWjlxG-dkHreuWcaj4iL:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: NeilBrown <neilb@suse.com>
-To: James Simmons <jsimmons@infradead.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org,
- Andreas Dilger <andreas.dilger@intel.com>, Oleg Drokin <oleg.drokin@intel.com>
-Date: Sat, 31 Mar 2018 14:52:18 +1100
-Subject: Re: [PATCH] staging: lustre: libcfs: use dynamic minors for
- /dev/{lnet, obd}
-In-Reply-To: <1522437006-31539-1-git-send-email-jsimmons@infradead.org>
-References: <1522437006-31539-1-git-send-email-jsimmons@infradead.org>
-Message-ID: <877eps3nrh.fsf@notabene.neil.brown.name>
-MIME-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: "John L. Hammond" <john.hammond@intel.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Lustre Development List <lustre-devel@lists.lustre.org>
-Content-Type: multipart/mixed; boundary="===============6411582534038953732=="
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+    x-category=clean score=0 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932494AbeCLRSg (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 12 Mar 2018 13:18:36 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:58460 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932342AbeCLRSf (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Mon, 12 Mar 2018 13:18:35 -0400
+From: nagarathnam.muthusamy@oracle.com
+To: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Cc: khlebnikov@yandex-team.ru, nagarathnam.muthusamy@oracle.com,
+        Nagarajan.Muthukrishnan@oracle.com, prakash.sangappa@oracle.com,
+        luto@kernel.org, akpm@linux-foundation.org, oleg@redhat.com,
+        serge.hallyn@ubuntu.com, ebiederm@xmission.com, esyr@redhat.com,
+        jannh@google.com, xemul@parallels.com
+Subject: [RESEND RFC] translate_pid API
+Date: Mon, 12 Mar 2018 11:18:13 -0600
+Message-Id: <1520875093-18174-1-git-send-email-nagarathnam.muthusamy@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8830 signatures=668690
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803120196
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---===============6411582534038953732==
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha256; protocol="application/pgp-signature"
+Resending the RFC with participants of previous discussions
+in the list.
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Following patch which is a variation of a solution discussed
+in https://lwn.net/Articles/736330/ provides the users of
+pid namespace, the functionality of pid translation between
+namespaces using a namespace identifier. The topic of
+pid translation has been discussed in the community few times
+but there has always been a resistance to adding new solution
+for this problem.
 
-On Fri, Mar 30 2018, James Simmons wrote:
+I will outline the planned usecase of pid namespace by oracle
+database and explain why any of the existing solution cannot
+be used to solve their problem.
 
-> From: "John L. Hammond" <john.hammond@intel.com>
->
-> Request dynamic minor allocation when registering /dev/lnet and
-> /dev/obd.
->
-> Signed-off-by: John L. Hammond <john.hammond@intel.com>
-> Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-100086
-> Reviewed-on: https://review.whamcloud.com/29741
-> Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
-> Reviewed-by: Jian Yu <jian.yu@intel.com>
-> Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
-> Signed-off-by: James Simmons <jsimmons@infradead.org>
+Consider a system in which several PID namespaces with multiple
+nested levels exists in parallel with monitor processes managing
+all the namespaces. PID translation is required for controlling
+and accessing information about the processes by the monitors
+and other processes down the hierarchy of namespaces. Controlling
+primarily involves sending signals or using ptrace by a process in
+parent namespace on any of the processes in its child namespace.
+Accessing information deals with the reading /proc/<pid>/* files
+of processes in child namespace. None of the processes have
+root/CAP_SYS_ADMIN privileges.
 
-Yes, this is a much better fix than my kconfig change.
+Existing methods:
 
- Reviewed-by: NeilBrown <neilb@suse.com>
+*) SCM_CREDENTIALS message:
+	Ref: http://man7.org/linux/man-pages/man7/unix.7.html
+	The sender can translate its pid from its own namespace
+to a pid in the target namespace by sending and receiving the
+SCM_CREDENTIALS message. The drawback of this method is the
+requirement of a socket communication channel to pid translation
+which adds to the management overhead. This method does not enable
+the sender to translate the pid of other process unless it is root
+or it has CAP_SYS_ADMIN.
 
-and thanks for your quick review on my last series!
-Thanks,
-NeilBrown
+*) /proc/<pid>/status file
+	Ref: http://man7.org/linux/man-pages/man5/proc.5.html
+	Ref: https://patchwork.kernel.org/patch/5861791/
+	/proc/<pid>/status file provides a way to find the pids
+associated with a process in different namespaces. Pid translation
+from child namespace to parent namespace from parent namespace would
+require searching all the status file in the parent namespace to find
+the desired pid at desired level which is inefficient.
 
+Method under review:
 
-> ---
->  drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h    |  1 -
->  drivers/staging/lustre/include/uapi/linux/lnet/lnetctl.h      | 11 -----=
-------
->  .../staging/lustre/include/uapi/linux/lustre/lustre_ioctl.h   |  2 --
->  drivers/staging/lustre/lnet/libcfs/linux/linux-debug.c        |  1 -
->  drivers/staging/lustre/lnet/libcfs/linux/linux-module.c       |  5 ++---
->  drivers/staging/lustre/lnet/libcfs/module.c                   |  1 +
->  drivers/staging/lustre/lustre/obdclass/class_obd.c            |  6 ++++--
->  drivers/staging/lustre/lustre/obdclass/linux/linux-module.c   |  3 +--
->  8 files changed, 8 insertions(+), 22 deletions(-)
->
-> diff --git a/drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h b=
-/drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h
-> index 30e333a..cf4c606 100644
-> --- a/drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h
-> +++ b/drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h
-> @@ -50,7 +50,6 @@
->  #include <linux/kernel.h>
->  #include <linux/kmod.h>
->  #include <linux/kthread.h>
-> -#include <linux/miscdevice.h>
->  #include <linux/mm.h>
->  #include <linux/mm_inline.h>
->  #include <linux/module.h>
-> diff --git a/drivers/staging/lustre/include/uapi/linux/lnet/lnetctl.h b/d=
-rivers/staging/lustre/include/uapi/linux/lnet/lnetctl.h
-> index d9da625..cccb32d 100644
-> --- a/drivers/staging/lustre/include/uapi/linux/lnet/lnetctl.h
-> +++ b/drivers/staging/lustre/include/uapi/linux/lnet/lnetctl.h
-> @@ -119,16 +119,5 @@ struct lnet_fault_stat {
->=20=20
->  #define LNET_DEV_ID 0
->  #define LNET_DEV_PATH "/dev/lnet"
-> -#define LNET_DEV_MAJOR 10
-> -#define LNET_DEV_MINOR 240
-> -#define OBD_DEV_ID 1
-> -#define OBD_DEV_NAME "obd"
-> -#define OBD_DEV_PATH "/dev/" OBD_DEV_NAME
-> -#define OBD_DEV_MAJOR 10
-> -#define OBD_DEV_MINOR 241
-> -#define SMFS_DEV_ID  2
-> -#define SMFS_DEV_PATH "/dev/snapdev"
-> -#define SMFS_DEV_MAJOR 10
-> -#define SMFS_DEV_MINOR 242
->=20=20
->  #endif
-> diff --git a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_ioct=
-l.h b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_ioctl.h
-> index 9590864..6e4e109 100644
-> --- a/drivers/staging/lustre/include/uapi/linux/lustre/lustre_ioctl.h
-> +++ b/drivers/staging/lustre/include/uapi/linux/lustre/lustre_ioctl.h
-> @@ -51,8 +51,6 @@ enum md_echo_cmd {
->  #define OBD_DEV_ID 1
->  #define OBD_DEV_NAME "obd"
->  #define OBD_DEV_PATH "/dev/" OBD_DEV_NAME
-> -#define OBD_DEV_MAJOR 10
-> -#define OBD_DEV_MINOR 241
->=20=20
->  #define OBD_IOCTL_VERSION	0x00010004
->  #define OBD_DEV_BY_DEVNAME	0xffffd0de
-> diff --git a/drivers/staging/lustre/lnet/libcfs/linux/linux-debug.c b/dri=
-vers/staging/lustre/lnet/libcfs/linux/linux-debug.c
-> index 0092166..1d728f1 100644
-> --- a/drivers/staging/lustre/lnet/libcfs/linux/linux-debug.c
-> +++ b/drivers/staging/lustre/lnet/libcfs/linux/linux-debug.c
-> @@ -48,7 +48,6 @@
->  #include <linux/completion.h>
->  #include <linux/fs.h>
->  #include <linux/uaccess.h>
-> -#include <linux/miscdevice.h>
->=20=20
->  # define DEBUG_SUBSYSTEM S_LNET
->=20=20
-> diff --git a/drivers/staging/lustre/lnet/libcfs/linux/linux-module.c b/dr=
-ivers/staging/lustre/lnet/libcfs/linux/linux-module.c
-> index ddf6256..c8908e8 100644
-> --- a/drivers/staging/lustre/lnet/libcfs/linux/linux-module.c
-> +++ b/drivers/staging/lustre/lnet/libcfs/linux/linux-module.c
-> @@ -33,10 +33,9 @@
->=20=20
->  #define DEBUG_SUBSYSTEM S_LNET
->=20=20
-> +#include <linux/miscdevice.h>
->  #include <linux/libcfs/libcfs.h>
->=20=20
-> -#define LNET_MINOR 240
-> -
->  static inline size_t libcfs_ioctl_packlen(struct libcfs_ioctl_data *data)
->  {
->  	size_t len =3D sizeof(*data);
-> @@ -191,7 +190,7 @@ int libcfs_ioctl_getdata(struct libcfs_ioctl_hdr **hd=
-r_pp,
->  };
->=20=20
->  struct miscdevice libcfs_dev =3D {
-> -	.minor =3D LNET_MINOR,
-> +	.minor =3D MISC_DYNAMIC_MINOR,
->  	.name =3D "lnet",
->  	.fops =3D &libcfs_fops,
->  };
-> diff --git a/drivers/staging/lustre/lnet/libcfs/module.c b/drivers/stagin=
-g/lustre/lnet/libcfs/module.c
-> index a03f924..4b9acd7 100644
-> --- a/drivers/staging/lustre/lnet/libcfs/module.c
-> +++ b/drivers/staging/lustre/lnet/libcfs/module.c
-> @@ -30,6 +30,7 @@
->   * This file is part of Lustre, http://www.lustre.org/
->   * Lustre is a trademark of Sun Microsystems, Inc.
->   */
-> +#include <linux/miscdevice.h>
->  #include <linux/module.h>
->  #include <linux/kernel.h>
->  #include <linux/mm.h>
-> diff --git a/drivers/staging/lustre/lustre/obdclass/class_obd.c b/drivers=
-/staging/lustre/lustre/obdclass/class_obd.c
-> index 3e24b76..7b5be6b 100644
-> --- a/drivers/staging/lustre/lustre/obdclass/class_obd.c
-> +++ b/drivers/staging/lustre/lustre/obdclass/class_obd.c
-> @@ -32,7 +32,9 @@
->   */
->=20=20
->  #define DEBUG_SUBSYSTEM S_CLASS
-> -# include <linux/atomic.h>
-> +
-> +#include <linux/atomic.h>
-> +#include <linux/miscdevice.h>
->=20=20
->  #include <obd_support.h>
->  #include <obd_class.h>
-> @@ -462,7 +464,7 @@ static int __init obdclass_init(void)
->=20=20
->  	err =3D misc_register(&obd_psdev);
->  	if (err) {
-> -		CERROR("cannot register %d err %d\n", OBD_DEV_MINOR, err);
-> +		CERROR("cannot register OBD miscdevices: err %d\n", err);
->  		return err;
->  	}
->=20=20
-> diff --git a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c =
-b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
-> index 7bceee7..3b1d096 100644
-> --- a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
-> +++ b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
-> @@ -42,7 +42,6 @@
->  #include <linux/module.h>
->  #include <linux/errno.h>
->  #include <linux/kernel.h>
-> -#include <linux/major.h>
->  #include <linux/sched.h>
->  #include <linux/lp.h>
->  #include <linux/slab.h>
-> @@ -271,7 +270,7 @@ static long obd_class_ioctl(struct file *filp, unsign=
-ed int cmd,
->=20=20
->  /* modules setup */
->  struct miscdevice obd_psdev =3D {
-> -	.minor =3D OBD_DEV_MINOR,
-> +	.minor =3D MISC_DYNAMIC_MINOR,
->  	.name  =3D OBD_DEV_NAME,
->  	.fops  =3D &obd_psdev_fops,
->  };
-> --=20
-> 1.8.3.1
+*) pidns: introduce syscall translate_pid
+	Ref: https://lwn.net/Articles/736330/
+	This solution though not integrated yet, when used would require
+monitor to have open file descriptor for every level of namespace it
+has to monitor which results in explosion of number of file descriptors
+the monitor has to keep open.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+Following patch uses a 64-bit ID for namespace exported by procfs
+for pid translation through a new file /proc/<pid>/ns/pidns_id.
 
------BEGIN PGP SIGNATURE-----
+[root@brm-x4600-01 ~]# ls -l /proc/4690/ns
+total 0
+lrwxrwxrwx 1 root root 0 Mar  1 15:55 cgroup -> cgroup:[4026531835]
+lrwxrwxrwx 1 root root 0 Mar  1 15:55 ipc -> ipc:[4026531839]
+lrwxrwxrwx 1 root root 0 Mar  1 15:55 mnt -> mnt:[4026532324]
+lrwxrwxrwx 1 root root 0 Mar  1 15:55 net -> net:[4026531993]
+lrwxrwxrwx 1 root root 0 Mar  1 15:55 pid -> pid:[4026532325]
+lrwxrwxrwx 1 root root 0 Mar  1 15:55 pid_for_children -> pid:[4026532325]
+lrwxrwxrwx 1 root root 0 Mar  1 15:55 pidns_id -> [14994344851325148137]
+lrwxrwxrwx 1 root root 0 Mar  1 15:55 user -> user:[4026531837]
+lrwxrwxrwx 1 root root 0 Mar  1 15:55 uts -> uts:[4026531838]
 
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlq/BfIACgkQOeye3VZi
-gbnXQhAAtIuCTrInME7qA1sab6sOWUSWAGVxn9ETf3pPxdSL9JH7/9IU75ZV35z8
-dn0zUD9RJMiHtGEP+eFrlHLZT66dxV1yBoKRDQvxPnXRh4p4/G+VicB7RnP0huEG
-9OSZstxe/Tse8+y7T9qwDmejeDPelx3Rt2sjpW9lxNl1Q4Q/t8QVHan8jKgya6SO
-I2BOBoeOxpQQJmxzd9ChwjkL1xe1fRO/speMsRubrXqRitaL7GItIHLPjTLR1LsC
-HF7y8D87gnZAPQ6fVp8f6gDYpZgewnpS094WDMP0my+G61uyd8W70tWt5cZ1+kkf
-1og4CBDe/xyiiR2+8fa9PWo5ys8WJKGNfywJjeL/6hG5x2xtWcgkkhSlKJFtkm2F
-LcDT5tj4boUEmFqK/BDNvlUAiDU3KImAoLcNYiBee+5OwVv4kwfnfiTdvFRf68ef
-bH7P2eHwSRiHVpUb0hH1uVlM5/JfVQ5OxhzMzIo90e5jsfASALxhKhOiEVW7j0b8
-dizD4CMW//1E9SYzghAAhfN1H4LlfUH/ueaJjrlBtzM5zwxNK6oZaZ2dQRsGwBdQ
-03XOOk6McX+wVcXKDs3UyfF4za5q1IePeoYXLbhTR5FDX42EF9PIojgEfeoGcwii
-70V0//acDaNvrDf2Y2tACfvHn8pcKwUOE8ZiK8JZJ3b+6g6fyiM=
-=4bVZ
------END PGP SIGNATURE-----
---=-=-=--
+Though there is a problem of ID being recycled in longterm, managing
+an ID per namespace is easier than having open file descriptors per
+pid namespace. Existing namespace inode numbers recycles faster and hence
+their usability as ID for this API is less.
 
---===============6411582534038953732==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Signed-off-by: Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
+---
+ arch/x86/entry/syscalls/syscall_32.tbl |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl |   2 +
+ fs/nsfs.c                              |   9 +-
+ fs/proc/namespaces.c                   |   1 +
+ include/linux/ns_common.h              |   1 +
+ include/linux/pid_namespace.h          |   3 +
+ include/linux/proc_ns.h                |   1 +
+ include/linux/syscalls.h               |   1 +
+ kernel/pid_namespace.c                 | 190 ++++++++++++++++++++++++++++++++-
+ kernel/sys_ni.c                        |   4 +
+ 10 files changed, 208 insertions(+), 5 deletions(-)
 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 448ac21..31bf798 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -391,3 +391,4 @@
+ 382	i386	pkey_free		sys_pkey_free
+ 383	i386	statx			sys_statx
+ 384	i386	arch_prctl		sys_arch_prctl			compat_sys_arch_prctl
++385	i386	translate_pid		sys_translate_pid		compat_sys_translate_pid
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 5aef183..89196c3 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -339,6 +339,7 @@
+ 330	common	pkey_alloc		sys_pkey_alloc
+ 331	common	pkey_free		sys_pkey_free
+ 332	common	statx			sys_statx
++333	64	translate_pid		sys_translate_pid
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+@@ -380,3 +381,4 @@
+ 545	x32	execveat		compat_sys_execveat/ptregs
+ 546	x32	preadv2			compat_sys_preadv64v2
+ 547	x32	pwritev2		compat_sys_pwritev64v2
++548	x32	translate_pid		compat_sys_translate_pid
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index 36b0772..c635465 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -222,8 +222,13 @@ int ns_get_name(char *buf, size_t size, struct task_struct *task,
+ 	const char *name;
+ 	ns = ns_ops->get(task);
+ 	if (ns) {
+-		name = ns_ops->real_ns_name ? : ns_ops->name;
+-		res = snprintf(buf, size, "%s:[%u]", name, ns->inum);
++		if (!strcmp(ns_ops->name, "pidns_id")) {
++			res = snprintf(buf, size, "[%llu]",
++				       (unsigned long long)ns->ns_id);
++		} else {
++			name = ns_ops->real_ns_name ? : ns_ops->name;
++			res = snprintf(buf, size, "%s:[%u]", name, ns->inum);
++		}
+ 		ns_ops->put(ns);
+ 	}
+ 	return res;
+diff --git a/fs/proc/namespaces.c b/fs/proc/namespaces.c
+index 59b17e5..ac823ce 100644
+--- a/fs/proc/namespaces.c
++++ b/fs/proc/namespaces.c
+@@ -24,6 +24,7 @@
+ #endif
+ #ifdef CONFIG_PID_NS
+ 	&pidns_operations,
++	&pidns_id_operations,
+ 	&pidns_for_children_operations,
+ #endif
+ #ifdef CONFIG_USER_NS
+diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
+index 5fbc400..6ca3d43 100644
+--- a/include/linux/ns_common.h
++++ b/include/linux/ns_common.h
+@@ -8,6 +8,7 @@ struct ns_common {
+ 	atomic_long_t stashed;
+ 	const struct proc_ns_operations *ops;
+ 	unsigned int inum;
++	u64 ns_id;
+ };
+ 
+ #endif
+diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
+index 49538b1..11d1d57 100644
+--- a/include/linux/pid_namespace.h
++++ b/include/linux/pid_namespace.h
+@@ -11,6 +11,7 @@
+ #include <linux/kref.h>
+ #include <linux/ns_common.h>
+ #include <linux/idr.h>
++#include <linux/list_bl.h>
+ 
+ 
+ struct fs_pin;
+@@ -44,6 +45,8 @@ struct pid_namespace {
+ 	kgid_t pid_gid;
+ 	int hide_pid;
+ 	int reboot;	/* group exit code if this pidns was rebooted */
++	struct hlist_bl_node node;
++	atomic_t lookups_pending;
+ 	struct ns_common ns;
+ } __randomize_layout;
+ 
+diff --git a/include/linux/proc_ns.h b/include/linux/proc_ns.h
+index d31cb62..861e38bd 100644
+--- a/include/linux/proc_ns.h
++++ b/include/linux/proc_ns.h
+@@ -28,6 +28,7 @@ struct proc_ns_operations {
+ extern const struct proc_ns_operations utsns_operations;
+ extern const struct proc_ns_operations ipcns_operations;
+ extern const struct proc_ns_operations pidns_operations;
++extern const struct proc_ns_operations pidns_id_operations;
+ extern const struct proc_ns_operations pidns_for_children_operations;
+ extern const struct proc_ns_operations userns_operations;
+ extern const struct proc_ns_operations mntns_operations;
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index a78186d..574349a 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -901,6 +901,7 @@ asmlinkage long sys_open_by_handle_at(int mountdirfd,
+ 				      struct file_handle __user *handle,
+ 				      int flags);
+ asmlinkage long sys_setns(int fd, int nstype);
++asmlinkage long sys_translate_pid(pid_t pid, u64 source, u64 target);
+ asmlinkage long sys_process_vm_readv(pid_t pid,
+ 				     const struct iovec __user *lvec,
+ 				     unsigned long liovcnt,
+diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+index 0b53eef..ff83aa8 100644
+--- a/kernel/pid_namespace.c
++++ b/kernel/pid_namespace.c
+@@ -22,6 +22,12 @@
+ #include <linux/sched/task.h>
+ #include <linux/sched/signal.h>
+ #include <linux/idr.h>
++#include <linux/random.h>
++#include <linux/compat.h>
++
++#define	PID_NS_ID_HASH_BITS     9
++
++struct	hlist_bl_head *pid_ns_hash;
+ 
+ struct pid_cache {
+ 	int nr_ids;
+@@ -34,6 +40,13 @@ struct pid_cache {
+ static DEFINE_MUTEX(pid_caches_mutex);
+ static struct kmem_cache *pid_ns_cachep;
+ 
++static inline struct hlist_bl_head *
++	pid_ns_hash_head(struct hlist_bl_head *hash,
++			 uint64_t key)
++{
++	return &hash[hash_64(key, PID_NS_ID_HASH_BITS)];
++}
++
+ /*
+  * creates the kmem cache to allocate pids from.
+  * @nr_ids: the number of numerical ids this pid will have to carry
+@@ -93,12 +106,24 @@ static void dec_pid_namespaces(struct ucounts *ucounts)
+ 	dec_ucount(ucounts, UCOUNT_PID_NAMESPACES);
+ }
+ 
++static inline u64 get_namespace_id(void)
++{
++	u64 id = 0;
++
++	while (!id)
++		get_random_bytes(&id, sizeof(id));
++
++	return id;
++}
++
+ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns,
+ 	struct pid_namespace *parent_pid_ns)
+ {
+-	struct pid_namespace *ns;
+-	unsigned int level = parent_pid_ns->level + 1;
++	struct pid_namespace *ns, *pt;
+ 	struct ucounts *ucounts;
++	struct hlist_bl_head *head;
++	struct hlist_bl_node *dup_node;
++	unsigned int level = parent_pid_ns->level + 1;
+ 	int err;
+ 
+ 	err = -EINVAL;
+@@ -135,7 +160,24 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
+ 	ns->ucounts = ucounts;
+ 	ns->pid_allocated = PIDNS_ADDING;
+ 	INIT_WORK(&ns->proc_work, proc_cleanup_work);
+-
++	ns->ns.ns_id = get_namespace_id();
++	while (1) {
++		head = pid_ns_hash_head(pid_ns_hash, ns->ns.ns_id);
++		hlist_bl_lock(head);
++		hlist_bl_for_each_entry(pt, dup_node, head, node) {
++			if (ns->ns.ns_id == pt->ns.ns_id) {
++				/*
++				 * ID is taken. Move to next ID;
++				 */
++				ns->ns.ns_id = get_namespace_id();
++				hlist_bl_unlock(head);
++				continue;
++			}
++		}
++		break;
++	}
++	hlist_bl_add_head(&ns->node, head);
++	hlist_bl_unlock(head);
+ 	return ns;
+ 
+ out_free_idr:
+@@ -159,6 +201,30 @@ static void delayed_free_pidns(struct rcu_head *p)
+ 
+ static void destroy_pid_namespace(struct pid_namespace *ns)
+ {
++	struct pid_namespace *ph;
++	struct hlist_bl_head *head;
++	struct hlist_bl_node *dup_node;
++
++	/*
++	 * Remove the namespace structure from hash table so
++	 * now new lookups can start on it.
++	 */
++	if (ns->ns.ns_id) {
++		head = pid_ns_hash_head(pid_ns_hash, ns->ns.ns_id);
++		hlist_bl_lock(head);
++		hlist_bl_for_each_entry(ph, dup_node, head, node) {
++			if (ns->ns.ns_id == ph->ns.ns_id) {
++				hlist_bl_del_init(&ph->node);
++				break;
++			}
++		}
++		hlist_bl_unlock(head);
++	}
++	/*
++	 * Wait for pending lookups to complete.
++	 */
++	while (atomic_read(&ns->lookups_pending))
++		cpu_relax();
+ 	ns_free_inum(&ns->ns);
+ 
+ 	idr_destroy(&ns->idr);
+@@ -463,6 +529,17 @@ static struct user_namespace *pidns_owner(struct ns_common *ns)
+ 	.get_parent	= pidns_get_parent,
+ };
+ 
++const struct proc_ns_operations pidns_id_operations = {
++	.name		= "pidns_id",
++	.real_ns_name	= "pid",
++	.type		= CLONE_NEWPID,
++	.get		= pidns_get,
++	.put		= pidns_put,
++	.install	= pidns_install,
++	.owner		= pidns_owner,
++	.get_parent	= pidns_get_parent,
++};
++
+ const struct proc_ns_operations pidns_for_children_operations = {
+ 	.name		= "pid_for_children",
+ 	.real_ns_name	= "pid",
+@@ -474,9 +551,116 @@ static struct user_namespace *pidns_owner(struct ns_common *ns)
+ 	.get_parent	= pidns_get_parent,
+ };
+ 
++/*
++ * translate_pid - convert pid in source pid-ns into target pid-ns.
++ * @pid: pid for translation
++ * @source: pid-ns id
++ * @target: pid-ns id
++ *
++ * Return pid in @target pid-ns, zero if task have no pid there,
++ * or -ESRCH of task with @pid is not found in @source pid-ns.
++ */
++SYSCALL_DEFINE3(translate_pid, pid_t, pid, u64, source,
++		u64, target)
++{
++	struct pid_namespace *source_ns = NULL, *target_ns = NULL;
++	struct pid *struct_pid;
++	struct pid_namespace *ph;
++	struct hlist_bl_head *shead = NULL;
++	struct hlist_bl_head *thead = NULL;
++	struct hlist_bl_node *dup_node;
++	pid_t result;
++
++	if (!source) {
++		source_ns = &init_pid_ns;
++	} else {
++		shead = pid_ns_hash_head(pid_ns_hash, source);
++		hlist_bl_lock(shead);
++		hlist_bl_for_each_entry(ph, dup_node, shead, node) {
++			if (source == ph->ns.ns_id) {
++				source_ns = ph;
++				break;
++			}
++		}
++		if (!source_ns) {
++			hlist_bl_unlock(shead);
++			return -EINVAL;
++		}
++	}
++	if (!ptrace_may_access(source_ns->child_reaper,
++			       PTRACE_MODE_READ_FSCREDS)) {
++		if (shead)
++			hlist_bl_unlock(shead);
++		return -EPERM;
++	}
++
++	atomic_inc(&source_ns->lookups_pending);
++	if (shead)
++		hlist_bl_unlock(shead);
++
++	if (!target) {
++		target_ns = &init_pid_ns;
++	} else {
++		thead = pid_ns_hash_head(pid_ns_hash, target);
++		hlist_bl_lock(thead);
++		hlist_bl_for_each_entry(ph, dup_node, thead, node) {
++			if (target == ph->ns.ns_id) {
++				target_ns = ph;
++				break;
++			}
++		}
++		if (!target_ns) {
++			atomic_dec(&source_ns->lookups_pending);
++			hlist_bl_unlock(thead);
++			return -EINVAL;
++		}
++	}
++	if (!ptrace_may_access(target_ns->child_reaper,
++			       PTRACE_MODE_READ_FSCREDS)) {
++		atomic_dec(&source_ns->lookups_pending);
++		if (thead)
++			hlist_bl_unlock(thead);
++		return -EPERM;
++	}
++	atomic_inc(&target_ns->lookups_pending);
++	if (thead)
++		hlist_bl_unlock(thead);
++
++	rcu_read_lock();
++	struct_pid = find_pid_ns(pid, source_ns);
++	result = struct_pid ? pid_nr_ns(struct_pid, target_ns) : -ESRCH;
++	rcu_read_unlock();
++	atomic_dec(&source_ns->lookups_pending);
++	atomic_dec(&target_ns->lookups_pending);
++	return result;
++}
++
++#ifdef	CONFIG_COMPAT
++COMPAT_SYSCALL_DEFINE5(translate_pid, pid_t, pid, u32, s0, u32, s1,
++		       u32, t0, u32, t1)
++{
++#ifdef __BIG_ENDIAN
++	return sys_translate_pid(pid, ((u64)s0 << 32) | s1,
++				 ((u64)t0 << 32) | t1);
++#else
++	return sys_translate_pid(pid, ((u64)s1 << 32) | s0,
++				 ((u64)t1 << 32) | t0);
++#endif
++}
++#endif
++
+ static __init int pid_namespaces_init(void)
+ {
++	unsigned long bucket_count;
++	int i;
++
++	bucket_count = (1UL << PID_NS_ID_HASH_BITS);
+ 	pid_ns_cachep = KMEM_CACHE(pid_namespace, SLAB_PANIC);
++	pid_ns_hash = kmalloc_array(bucket_count, sizeof(struct hlist_bl_head),
++				    GFP_KERNEL);
++
++	for (i = 0; i < bucket_count; i++)
++		INIT_HLIST_BL_HEAD(&pid_ns_hash[i]);
+ 
+ #ifdef CONFIG_CHECKPOINT_RESTORE
+ 	register_sysctl_paths(kern_path, pid_ns_ctl_table);
+diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+index b518976..467255f 100644
+--- a/kernel/sys_ni.c
++++ b/kernel/sys_ni.c
+@@ -259,3 +259,7 @@ asmlinkage long sys_ni_syscall(void)
+ cond_syscall(sys_pkey_mprotect);
+ cond_syscall(sys_pkey_alloc);
+ cond_syscall(sys_pkey_free);
++
++/* pid translation */
++cond_syscall(sys_translate_pid);
++cond_syscall(compat_sys_translate_pid);
+-- 
+1.8.3.1
 
---===============6411582534038953732==--
