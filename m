@@ -1,200 +1,264 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751899AbeCLSWA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 14:22:00 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:45559 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751616AbeCLSV6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 14:21:58 -0400
-X-Google-Smtp-Source: AG47ELsGurStcvBLnwt1J/zd3pvR72+W7VcvJTvG2RKFbBRSwwvZELyg11qrYqM84+A0am+lwCd7Og==
-Date: Mon, 12 Mar 2018 15:21:52 -0300
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Graff Yang <graff.yang@gmail.com>
-Cc: daniel.baluta@nxp.com, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] staging:iio:ad2s1210: Add write_raw to handle frequency
-Message-ID: <ae60ca5cf37d1678cb6b498450f75f93f3d498d2.1520878492.git.rodrigosiqueiramelo@gmail.com>
-References: <cover.1520878492.git.rodrigosiqueiramelo@gmail.com>
+        id S1751352AbeCLSXs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 14:23:48 -0400
+Received: from mga14.intel.com ([192.55.52.115]:43490 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751232AbeCLSXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 14:23:47 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,462,1515484800";
+   d="gz'50?scan'50,208,50";a="36679243"
+Date: Tue, 13 Mar 2018 02:22:59 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: kbuild-all@01.org, Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
+        Paul Moore <paul@paul-moore.com>, Steve Grubb <sgrubb@redhat.com>,
+        Kees Cook <keescook@chromium.org>, Richard Guy Briggs <rgb@redhat.com>
+Subject: Re: [PATCH ghak21 V2 2/4] audit: link denied should not directly
+ generate PATH record
+Message-ID: <201803130221.QotEZsdF%fengguang.wu@intel.com>
+References: <9ed76ccb239078ad5a2808d23c7b7f1738b0b2b8.1520835596.git.rgb@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary="ReaqsoxgOBHFXBhH"
 Content-Disposition: inline
-In-Reply-To: <cover.1520878492.git.rodrigosiqueiramelo@gmail.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <9ed76ccb239078ad5a2808d23c7b7f1738b0b2b8.1520835596.git.rgb@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The write interface of AD2S1210 utilizes IIO_DEVICE_ATTR, which violate
-the official IIO ABI. This patch, add the write_raw function responsible
-for handling the fclkin and fexcit channel; also it removes the use of
-IIO_DEVICE_ATTR for fclkin and fexcit.
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+--ReaqsoxgOBHFXBhH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi Richard,
+
+Thank you for the patch! Yet something to improve:
+
+[auto build test ERROR on linus/master]
+[also build test ERROR on v4.16-rc5 next-20180309]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Richard-Guy-Briggs/audit-address-ANOM_LINK-excess-records/20180313-015527
+config: i386-tinyconfig (attached as .config)
+compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+reproduce:
+        # save the attached .config to linux build tree
+        make ARCH=i386 
+
+Note: the linux-review/Richard-Guy-Briggs/audit-address-ANOM_LINK-excess-records/20180313-015527 HEAD 12e8c56bcd359f7d20d4ae011674d37bc832bc4c builds fine.
+      It only hurts bisectibility.
+
+All errors (new ones prefixed by >>):
+
+   fs/namei.c: In function 'may_follow_link':
+>> fs/namei.c:929:2: error: too many arguments to function 'audit_log_link_denied'
+     audit_log_link_denied("follow_link", &nd->stack[0].link);
+     ^~~~~~~~~~~~~~~~~~~~~
+   In file included from include/linux/fsnotify.h:16:0,
+                    from fs/namei.c:25:
+   include/linux/audit.h:196:20: note: declared here
+    static inline void audit_log_link_denied(const char *string)
+                       ^~~~~~~~~~~~~~~~~~~~~
+
+vim +/audit_log_link_denied +929 fs/namei.c
+
+800179c9b Kees Cook         2012-07-25  886  
+800179c9b Kees Cook         2012-07-25  887  /**
+800179c9b Kees Cook         2012-07-25  888   * may_follow_link - Check symlink following for unsafe situations
+55852635a Randy Dunlap      2012-08-18  889   * @nd: nameidata pathwalk data
+800179c9b Kees Cook         2012-07-25  890   *
+800179c9b Kees Cook         2012-07-25  891   * In the case of the sysctl_protected_symlinks sysctl being enabled,
+800179c9b Kees Cook         2012-07-25  892   * CAP_DAC_OVERRIDE needs to be specifically ignored if the symlink is
+800179c9b Kees Cook         2012-07-25  893   * in a sticky world-writable directory. This is to protect privileged
+800179c9b Kees Cook         2012-07-25  894   * processes from failing races against path names that may change out
+800179c9b Kees Cook         2012-07-25  895   * from under them by way of other users creating malicious symlinks.
+800179c9b Kees Cook         2012-07-25  896   * It will permit symlinks to be followed only when outside a sticky
+800179c9b Kees Cook         2012-07-25  897   * world-writable directory, or when the uid of the symlink and follower
+800179c9b Kees Cook         2012-07-25  898   * match, or when the directory owner matches the symlink's owner.
+800179c9b Kees Cook         2012-07-25  899   *
+800179c9b Kees Cook         2012-07-25  900   * Returns 0 if following the symlink is allowed, -ve on error.
+800179c9b Kees Cook         2012-07-25  901   */
+fec2fa24e Al Viro           2015-05-06  902  static inline int may_follow_link(struct nameidata *nd)
+800179c9b Kees Cook         2012-07-25  903  {
+800179c9b Kees Cook         2012-07-25  904  	const struct inode *inode;
+800179c9b Kees Cook         2012-07-25  905  	const struct inode *parent;
+2d7f9e2ad Seth Forshee      2016-04-26  906  	kuid_t puid;
+800179c9b Kees Cook         2012-07-25  907  
+800179c9b Kees Cook         2012-07-25  908  	if (!sysctl_protected_symlinks)
+800179c9b Kees Cook         2012-07-25  909  		return 0;
+800179c9b Kees Cook         2012-07-25  910  
+800179c9b Kees Cook         2012-07-25  911  	/* Allowed if owner and follower match. */
+fceef393a Al Viro           2015-12-29  912  	inode = nd->link_inode;
+81abe27b1 Eric W. Biederman 2012-08-03  913  	if (uid_eq(current_cred()->fsuid, inode->i_uid))
+800179c9b Kees Cook         2012-07-25  914  		return 0;
+800179c9b Kees Cook         2012-07-25  915  
+800179c9b Kees Cook         2012-07-25  916  	/* Allowed if parent directory not sticky and world-writable. */
+aa65fa35b Al Viro           2015-08-04  917  	parent = nd->inode;
+800179c9b Kees Cook         2012-07-25  918  	if ((parent->i_mode & (S_ISVTX|S_IWOTH)) != (S_ISVTX|S_IWOTH))
+800179c9b Kees Cook         2012-07-25  919  		return 0;
+800179c9b Kees Cook         2012-07-25  920  
+800179c9b Kees Cook         2012-07-25  921  	/* Allowed if parent directory and link owner match. */
+2d7f9e2ad Seth Forshee      2016-04-26  922  	puid = parent->i_uid;
+2d7f9e2ad Seth Forshee      2016-04-26  923  	if (uid_valid(puid) && uid_eq(puid, inode->i_uid))
+800179c9b Kees Cook         2012-07-25  924  		return 0;
+800179c9b Kees Cook         2012-07-25  925  
+31956502d Al Viro           2015-05-07  926  	if (nd->flags & LOOKUP_RCU)
+31956502d Al Viro           2015-05-07  927  		return -ECHILD;
+31956502d Al Viro           2015-05-07  928  
+1cf2665b5 Al Viro           2015-05-06 @929  	audit_log_link_denied("follow_link", &nd->stack[0].link);
+800179c9b Kees Cook         2012-07-25  930  	return -EACCES;
+800179c9b Kees Cook         2012-07-25  931  }
+800179c9b Kees Cook         2012-07-25  932  
+
+:::::: The code at line 929 was first introduced by commit
+:::::: 1cf2665b5bdfc63185fb4a416bff54b14ad30c79 namei: kill nd->link
+
+:::::: TO: Al Viro <viro@zeniv.linux.org.uk>
+:::::: CC: Al Viro <viro@zeniv.linux.org.uk>
+
 ---
- drivers/staging/iio/resolver/ad2s1210.c | 117 +++++++++++++++-----------------
- 1 file changed, 55 insertions(+), 62 deletions(-)
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-diff --git a/drivers/staging/iio/resolver/ad2s1210.c b/drivers/staging/iio/resolver/ad2s1210.c
-index 27a42ed10fcd..ea6ade4e563c 100644
---- a/drivers/staging/iio/resolver/ad2s1210.c
-+++ b/drivers/staging/iio/resolver/ad2s1210.c
-@@ -60,6 +60,8 @@
- 
- #define AD2S1210_DEF_EXCIT	10000
- 
-+#define ERROR_MESSAGE "ad2s1210: %s out of range\n"
-+
- enum ad2s1210_mode {
- 	MOD_POS = 0,
- 	MOD_VEL,
-@@ -210,64 +212,6 @@ static inline int ad2s1210_soft_reset(struct ad2s1210_state *st)
- 	return ad2s1210_config_write(st, 0x0);
- }
- 
--static ssize_t ad2s1210_store_fclkin(struct device *dev,
--				     struct device_attribute *attr,
--				     const char *buf,
--				     size_t len)
--{
--	struct ad2s1210_state *st = iio_priv(dev_to_iio_dev(dev));
--	unsigned int fclkin;
--	int ret;
--
--	ret = kstrtouint(buf, 10, &fclkin);
--	if (ret)
--		return ret;
--	if (fclkin < AD2S1210_MIN_CLKIN || fclkin > AD2S1210_MAX_CLKIN) {
--		dev_err(dev, "ad2s1210: fclkin out of range\n");
--		return -EINVAL;
--	}
--
--	mutex_lock(&st->lock);
--	st->fclkin = fclkin;
--
--	ret = ad2s1210_update_frequency_control_word(st);
--	if (ret < 0)
--		goto error_ret;
--	ret = ad2s1210_soft_reset(st);
--error_ret:
--	mutex_unlock(&st->lock);
--
--	return ret < 0 ? ret : len;
--}
--
--static ssize_t ad2s1210_store_fexcit(struct device *dev,
--				     struct device_attribute *attr,
--				     const char *buf, size_t len)
--{
--	struct ad2s1210_state *st = iio_priv(dev_to_iio_dev(dev));
--	unsigned int fexcit;
--	int ret;
--
--	ret = kstrtouint(buf, 10, &fexcit);
--	if (ret < 0)
--		return ret;
--	if (fexcit < AD2S1210_MIN_EXCIT || fexcit > AD2S1210_MAX_EXCIT) {
--		dev_err(dev,
--			"ad2s1210: excitation frequency out of range\n");
--		return -EINVAL;
--	}
--	mutex_lock(&st->lock);
--	st->fexcit = fexcit;
--	ret = ad2s1210_update_frequency_control_word(st);
--	if (ret < 0)
--		goto error_ret;
--	ret = ad2s1210_soft_reset(st);
--error_ret:
--	mutex_unlock(&st->lock);
--
--	return ret < 0 ? ret : len;
--}
--
- static ssize_t ad2s1210_show_control(struct device *dev,
- 				     struct device_attribute *attr,
- 				     char *buf)
-@@ -545,8 +489,58 @@ static int ad2s1210_read_raw(struct iio_dev *indio_dev,
- 	return ret;
- }
- 
--static IIO_DEVICE_ATTR(fclkin, 0644, NULL, ad2s1210_store_fclkin, 0);
--static IIO_DEVICE_ATTR(fexcit, 0644, NULL, ad2s1210_store_fexcit, 0);
-+static int ad2s1210_write_raw(struct iio_dev *indio_dev,
-+			      struct iio_chan_spec const *chan, int val,
-+			      int val2, long mask)
-+{
-+	struct ad2s1210_state *st = iio_priv(indio_dev);
-+	unsigned int clk = val;
-+	int ret;
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_FREQUENCY:
-+		switch (chan->channel) {
-+		case FCLKIN:
-+			if (clk < AD2S1210_MIN_CLKIN ||
-+			    clk > AD2S1210_MAX_CLKIN) {
-+				dev_err(&indio_dev->dev, ERROR_MESSAGE,
-+					"fclkin");
-+				ret = -EINVAL;
-+				goto error_ret;
-+			}
-+			mutex_lock(&st->lock);
-+			st->fclkin = clk;
-+			break;
-+		case FEXCIT:
-+			if (clk < AD2S1210_MIN_EXCIT ||
-+			    clk > AD2S1210_MAX_EXCIT) {
-+				dev_err(&indio_dev->dev, ERROR_MESSAGE,
-+					"excitation frequency");
-+				ret = -EINVAL;
-+				goto error_ret;
-+			}
-+			mutex_lock(&st->lock);
-+			st->fexcit = clk;
-+			break;
-+		default:
-+			ret = -EINVAL;
-+			goto error_ret;
-+		}
-+		break;
-+	default:
-+		ret = -EINVAL;
-+		goto error_ret;
-+	}
-+	ret = ad2s1210_update_frequency_control_word(st);
-+	if (ret < 0)
-+		goto error_unlock_mutex;
-+	ret = ad2s1210_soft_reset(st);
-+error_unlock_mutex:
-+	mutex_unlock(&st->lock);
-+error_ret:
-+	return ret;
-+}
-+
- static IIO_DEVICE_ATTR(control, 0644,
- 		       ad2s1210_show_control, ad2s1210_store_control, 0);
- static IIO_DEVICE_ATTR(bits, 0644,
-@@ -577,8 +571,6 @@ static IIO_DEVICE_ATTR(lot_low_thrd, 0644,
- 		       AD2S1210_REG_LOT_LOW_THRD);
- 
- static struct attribute *ad2s1210_attributes[] = {
--	&iio_dev_attr_fclkin.dev_attr.attr,
--	&iio_dev_attr_fexcit.dev_attr.attr,
- 	&iio_dev_attr_control.dev_attr.attr,
- 	&iio_dev_attr_bits.dev_attr.attr,
- 	&iio_dev_attr_fault.dev_attr.attr,
-@@ -635,6 +627,7 @@ static int ad2s1210_initial(struct ad2s1210_state *st)
- 
- static const struct iio_info ad2s1210_info = {
- 	.read_raw = ad2s1210_read_raw,
-+	.write_raw = ad2s1210_write_raw,
- 	.attrs = &ad2s1210_attribute_group,
- };
- 
--- 
-2.16.2
+--ReaqsoxgOBHFXBhH
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+H4sICJDCploAAy5jb25maWcAjFxbc+M2sn7Pr2AlVacmD5nxbRynTvkBAkEREUEyBCjJfmEp
+sjyjGlvySnIy8+9PN0CJt4b2bFU2EboB4tKXrxsN//LTLwF7P2xfF4f1cvHy8iP4stqsdovD
+6il4Xr+s/jcIsyDNTCBCaT4Cc7LevH//tL6+uw1uPl7efrz4bbe8CSar3Wb1EvDt5nn95R26
+r7ebn34Bdp6lkRxXtzcjaYL1PthsD8F+dfipbp/f3VbXV/c/Wr+bHzLVpii5kVlahYJnoSga
+YlaavDRVlBWKmfufVy/P11e/4bR+PnKwgsfQL3I/739e7JZfP32/u/20tLPc20VUT6tn9/vU
+L8n4JBR5pcs8zwrTfFIbxiemYFwMaUqVzQ/7ZaVYXhVpWMHKdaVken93js7m95e3NAPPVM7M
+fx2nw9YZLhUirPS4ChWrEpGOTdzMdSxSUUheSc2QPiTEMyHHsemvjj1UMZuKKudVFPKGWsy0
+UNWcx2MWhhVLxlkhTayG43KWyFHBjIAzSthDb/yY6YrnZVUAbU7RGI9FlcgUzkI+iobDTkoL
+U+ZVLgo7BitEa112M44koUbwK5KFNhWPy3Ti4cvZWNBsbkZyJIqUWUnNM63lKBE9Fl3qXMAp
+ecgzlpoqLuEruYKzimHOFIfdPJZYTpOMBt+wUqmrLDdSwbaEoEOwRzId+zhDMSrHdnksAcHv
+aCJoZpWwx4dqrH3dy7zIRqJFjuS8EqxIHuB3pUTr3POxYbBuEMCpSPT91UnLi7+qWVa0tnRU
+yiSEBYhKzF0f3dE1E8OB4tKiDP6vMkxjZ2tuxtZ4vaCJeX+DluOIRTYRaQVT0ipvGxhpKpFO
+YVGg9rBj5v76NC9ewElZpZJwWj//3Bizuq0yQlM2DbaRJVNRaJCGTr82oWKlyYjOVnwnIEwi
+qcaPMu8Jdk0ZAeWKJiWPbSVuU+aPvh6Zj3ADhNP0W7NqT7xPt3M7x4AzJFbenuWwS3Z+xBti
+QDD9rExAqzJtUqbgDD9stpvVr60T0Q96KnNOju3OH0Q4Kx4qZsD2xyRfqQUYMt9RWnVhJThP
++BYcf3KUVBD7YP/+9/7H/rB6bST1ZI5BK6xuEZYaSDrOZjSlEFoUU2eKFLjMlrQDFdwlB6vg
+NKhjFnTOCi2QqWnj6Ap1VkIfMD+Gx2HWNyRtlpAZRneegq0P0dQnDC3oA0+IdVmNnzbb1PcX
+OB7YjtTos0R0kRUL/yy1IfhUhkYL53I8CLN+Xe321FnEj2j/ZRZK3pbJNEOKDBNByoMlk5QY
+/Ciej11pods8Divl5Sez2H8LDjClYLF5CvaHxWEfLJbL7fvmsN58aeZmJJ8458Z5VqbGneXp
+U3jWdj8b8uBzBS8DPVw18D5UQGsPBz/BFsNmUPZOO+Z2d93rjyZa4yjkvuDogK2SBC2rylIv
+k8MxYsxHieya3hOb9R2AgdIrWqvlxP2HT19LwJzO5QC+CJ1cUY54hOoADGWK8AtccRUlpY7b
+i+bjIitzTU7DjY4+wDLRK0ZYRC8ymYB1m1r/VYS09eInEIBKj4JsoXLKBbH0PncXUrEUbIlM
+wZjonqMoZXjZAuyouyYBSeEitwbIguVen5zrfAITSpjBGTVUJ2DtHVRgviXY14LeQ4BACgSr
+qk0GzfSgI32WI4pZ6tNlAGuAZ4bq2jAUMjUTjySO6S7d9dN9GZjiqPTNuDRiTlJEnvn2QY5T
+lkS0sNgFemjWqHpoOgb3SFKYpB02C6cSllafB72nMOaIFYX0HDtoDp/kGew72lKTFfTRTXD8
+B0V/YpRHZ2UCZc6Ch+7C+0FIM1MYLQXvkrVRu40tQhH25R+Grk5+rCUWlxcdFGNtdB1X56vd
+83b3utgsV4H4Z7UBp8DAPXB0C+C8GuPtGbxG+UiEpVVTZcE+ufSpcv0r6zd8cn+MNQta9nXC
+Rh5CSUElnWSj9nyxP+xuMRZHFOdTbgPBJuKOCnC1jCS3wMejqlkkk54jbB9M5jhaJ3hsqVIl
+nZK0J/lnqXIANCPhkSEXGtFIAL9ncyIQIYNmoi/gXGjtm5uIYG0Sj6VMuz16zgmPF30guOFq
+pGesH0BIEFH0WDA50yNN+rGcay2EIQngMOgOrhWDrYiy/1GZupSOKApwNTL9U9jfPTbY8l6L
+XZ8dMc6ySY+IqQ34beS4zEoCIELcZyFbDX2JjAIYYyMjwC4WshIMWpg6HCAn5oJSl7GqZrE0
+AkEKgR0g6H6AeAQRr/VetkdvyEKMNfjd0OWc6qOuWN7fE1w2tDoF79HiGeinYM5W9mhKzkGC
+GrK2X+x7d7CC0G7KIgVUC5sj2wm4vjEjTixmRYgAqsxhggaOuQYi1CDE94/2qqh3ISxVX5zt
+pjaK2N9FwIwOzUWFGB6pk7JKs0hAYJBjzqo3QN3qIncPLcxKTzoHIsvKRVXHbAAxeS04GtMK
+7IwZbO8YgFmelGOZdsx5q9lnMIDDbhrqud34VmDWJ8HhpqKDXAcccDplwjwOecANIp2lNPoZ
+MnsSISbGMA52SE4HJsZtsbQsTjSiAgL8PhsRBHlMSorRr6gzcJgM66tLFtanlQuObqaV+M3C
+MgFzh4ZXJCjHCWE7LAX0OVPDZOUwG9xjEHPwE6Td6va660pAlj8crZJJOvLTfBbmRmc1MB08
+Kq3JoeKFBCQGUCqfzEDFW/PNIPgCqFknO68HBHY09Y1AQAwLIXPj4KLojM+0k57iqu250xgT
+eTIbgLDkmCIqZjRi9jFTuGPgEAx4FtPq1L4q8JL63Z0AeXjy+EFXJutm5k/UAi83yrQTMx3b
+BuGDy4/ybPrb34v96in45qDl2277vH7p5BZO4yN3dcRAnaSMs061b3W+NxaoQa0sLsYwGpHm
+/WUL3Dt1Ibb1qEgGTDUY3Ay8RntdI3QkRDeb4IYP5WALyhSZujmsmm7VwNHP0ci+swKcua9z
+m9jt3c2UM5Ohyy/UrMeBhuOvUpSY2oBF2KyZn6WYUQxWnI4RSDUSEf4LPWedAWxCR9jcx25g
+ZeUi322Xq/1+uwsOP95c7ul5tTi871b79jXeI6p92E3fNmhc0XkMvEmIBAMYAf4WzbSfC7OD
+R1bMrtOsYzAmkfQYLoSrGZ4MbdYgpAF9DOl4Aucg5gYsF179nAvQ69sRWchz+R04ceNcU2VR
+lieijR8A6UBcDM5wXNJ3CmAhR1lm3IVKo0w3d7d0CP35DMFoOvJDmlJzSjVv7bVswwnG3chS
+SUkPdCKfp9Nbe6Te0NSJZ2GT3z3td3Q7L0qd0UKirDMSnjhSzWQKqCTnnonU5Gs6ZaJEwjzj
+jgUo63h+eYZaJbQXU/yhkHPvfk8l49cVfSljiZ69Q2vi6YXmzKsZtWPw3PdbRcBsYn2Jq2MZ
+mfvPbZbkskfrDJ+DSwIzQacykQHtpWWyuSJdtpKMSAYF6DbUUP72pt+cTbstSqZSlcqClghC
+uOTh/rZNt2EYN4nSnUwBTAXjN0TGIgHUSyEqGBF8hTNQLaxeN9vz7VRKHClMhQQ7qBAriyHB
+Yl0lDCPHKhV37Y1pyiHotZkP8rBDRaHD1N6ZawS8Y/RGEKcABCCJYGqHpBp6DQhNQw5uTOVm
+ELgc26dZAhCIFXT6vObyii/uai5pI2mloCt4zoG2MnSv2836sN05TNV8tRUqw6GBR5h5dtVq
+gACs/ABQ12PIvQSTgc6MaA8t72jEjB8sBDqYSM59VxaAXkCMQW39+6L964Hzk1QuNc3wVqzn
+1+qmGzqErKm3N1Qmb6p0noDXve5chzWtiPU9G+pYruiPNuT/OsIlNS9bQJJBbCPM/cV3fuH+
+17NrjDJo7Wwz6AsvHvJ+VikCqOKojCg8sSkIP9lapOM9N+LFlvmRCcphckQveI9bivuLU5Rz
+ru9xUoqlpU2eNODoNCNHIxZdd+6OVlmn4fq1EkHNcBATmnZs7mJ3oUZd5N5prgcdJEqPwc24
+zHs7FkrNIeptD9wNUmuk5gpU0p7GnCaNopIbOwVr3G562XXuz2RjUMjCsKiMt7BuKguDgeOo
+7ET+E60I5mOlhE0nuOvzsLi/ufjjtmVXiCyJP6J2eU4TQ5w+Yzml9+3qqklH+3kiWGrdP51B
+8oQfj3mW0Zn4x1FJg7FHPbwIOcYY9fHbWqZj1rzjakRh3SaInCdKATcyAn2NFfPckli7iAil
+GskMS42Kosz7p94x0VjagcHx7P62JS7KFLThtUfh0k7eCcAW+MM2Fy4BkqdZ6twlbaUfq8uL
+Cyo9+Vhdfb7oKM1jdd1l7Y1CD3MPw/QjrrjAwgj6QlDMBXXSqE2Sg5GDoyzQOF/2bXMhMP9r
+E8nn+tt7Geh/1ete35VNQ03fiXIV2kzCyCe/YFjxYiIJDXVp6eDH9t/VLgD4sfiyel1tDjaC
+ZzyXwfYNa3E7UXydnaNtCy0pOpKDb4L4B9Fu9Z/31Wb5I9gvFy89xGNRciH+InvKp5dVn9lb
+U2MFGU2GPvHh/WSeiHAw+Oh9f1x08CHnMlgdlh9/7SAxTqFWaLWlv4mwZX/YdiwR4ounFQI7
+YFkFy+3msNu+vLiiobe37Q4m6vjC1X79ZTNb7CxrwLfwH7rLgu1i8/S2XW8OvTkhGLaO9lxC
+lsqAucrd+nao3cGTmkAJJUlZ4qmFA9GmA89UmM+fL+iQNefoJv2G50FHo8Hpie+r5fth8ffL
+ypafBxZUH/bBp0C8vr8sBrI8AierDObXyQ/VZM0LmVNu0iWVs7KTQq07YfO5QZX0JFIwbMa7
+KirMc7bgul+8WWcHZdbzMrC/gy0KV/+sQRjD3fofd/ffVL6ul3VzkA3VvnT3+rFIcl84J6ZG
+5Z78O5jHNGSY+PcFVXb4SBZqxgp3C02ffjQDRWOhZxLokWe2vInax9ZcsaQhLOTUuxjLIKaF
+J+PoGDDNWA8Dhh4ifnp5IK2tPB3t8I81hmCh4LOSk2nuNhdefXmKPJE8LROs9h5JgIpSdAs6
+QN9tkXgI+xxFREYXzeCTlZSOEChDn0kWEXN1d0xY/X+q9QcEWD98aE7eNQ1mkE6V6Js/td4v
+qWnBMasHTJ+TkwMUlWQak8IIgPob25xRwTwpRdDUqjCatmH8ipy+EHA0qmXim+lYSvXHNZ/f
+DrqZ1ffFPpCb/WH3/mordfZfwSE8BYfdYrPHoQLwk6vgCXZi/Yb/edwb9nJY7RZBlI8Z2L7d
+67/oR562/25etoun4HX79A728AM63PVuBZ+44r8eu8rNYfUSgAUJ/ifYrV7s652eb2pYUDKc
+lTjSNJcR0TzNcqK1GSje7g9eIl/snqjPePm3b6c7CH2AFQSqQTMfeKbVr32Th/M7DdecDo89
+OGue2EspL5FF5dESZJ4kCLL1qr0bFaI+0DbyMjwVHWuuZa0HrYM6eWgtEfR1YmZs8928KMYB
+NmQ6rqc/LC2Wm7f3w/CDDVhI83KoAjGcoZVC+SkLsEsXRmJt9P/PaljWTgUDU4LUOg7KsliC
+IlBWwhg6oQfW1leICKSJj4azAtyOrqaHrJp9yZWsXIGo5+5mdi7ASqc+k5Tzu9+vb79X49xT
+KZmCyfISYUZjFzn6c7OGwz8eOA9RHe/fpzo5ueKkeHiqqXVO3zjoXNGEWNPteT6U2dzkwfJl
+u/zWN2ViY/EhBF6oihjpAEzCJ0QYi9kdAayiciz1O2xhvFVw+LoKFk9Pa8REixc36v5jB3/L
+lJuCjr/wGHxKP/NgX0zuVmzqqRq2VAznaYDp6Hh1nNACH898ZfImFoVi9DqOTziodJQetV+m
+NQepqXLNEQf4QbGPeskZ5/PfXw7r5/fNEnf/aIOeTqa8sWJRaCEfbeKQWGS6ErQkxgaxCQTi
+197uE6FyDyJFsjK31394LsKArJUvzmGj+eeLi/NTx7jdd58IZCMrpq6vP8/xboqFnvtZZFQe
+i+AKtIwHmioRSnasRRgc0Hi3ePu6Xu4pzQ+7F+AOqPA8+MDen9Zb8NqnyoFfB69/HbMKg2T9
+926x+xHstu8HADydU+feEiT4NPpawr7a/tFu8boK/n5/fgZnEQ6dRUQrLBYtJdY5JTyktuTE
+OR0zzO554oGsTKn7jBIUKYsxlSCNSewFl2Stwj+kDx4PY+MpzR/zjuMv9TBIxjaLJJ+6gAjb
+868/9viSO0gWP9CLDvUMvwaGkvY6WW7pcy7klORA6piFY4/pMhAj0eKLHcskl15fW87oE1PK
+ow9CaW+2LxUQZIqQ/pIrp5U2sHogDlGEjB9Dcs2LsvXO1pIGB1iA9QFR7TYofnlze3d5V1Ma
+VTX4Xo1pT1SqGBE8usBfMQj2yIwe1v5glRa93HIeSp37XhOVHpNirxAIQNlhkBmcQ1oO5qrW
+y912v30+BPGPt9Xut2nw5X0F4QJhYlxYjZbPe6cAejiWnopSe3NW1+pQcXfL0kDUJk68vscn
+ScLSbH6+/CeeHUu1hgDWIha9fd91vNxxDslEF7ySd1efW8WR0CqmhmgdJeGptTlOA5MEwOJ5
+ExE7TFhx9V8YlCnp4o4Th1H0gz2hagbQP09AIpNRRofbMlOq9PqiYvW6PawwFKRMFyZoDEbf
+fNjx7XX/heyTK32UVb8pn8lieKmv4TsftH0fGWQbiE3Wb78G+7fVcv18yrSdjC97fdl+gWa9
+5X27PNpBBL/cvlK09Uc1p9r/el+8QJd+n2bWZTqX/pQHTL0yw5z9HEs9v/vGnOP7mHk19bzT
+zK1+9TP6jVTMjRfj2BtiWhw8p5LPhi4f80NLOIRhyMxA98dgrRWbV2nRLjg9UqbXlfTc1Mkc
+S8h9bsnCdPu2pMgSXxgYqaFEoo9tv68dJAp9ThhQdDXJUoYu88rLhbFOPmfV1V2qMK6inWSH
+C8fzBxzccxGo+BCBEOUulGkv2NCLsc3Tbrt+arMBwCsySUPzkHluHrwhvzZ0u7vMNDTYtFk3
+kuCJWLX02DedSNWTJYdXjym9cKh4IvRkyo/JdFir7542BI9VFSNaZUMejpivijYbJ+L0CSKR
++WW3aCUiO3m7CO9mnGS3vFvoivYgFG+9TmvtZP2elnE6PhVzdAnA5gozfDk4W42OHD5EACPU
+dTK+CopI2/dMnmzSGZp0tMr7KDliZ3r/VWaGljJL4YbeF7wmiPRN5bmYibDc0UPLALwB7uuR
+60vN5ddexKQHVRdO2fer96etvY9rjryxHeCNfZ+3NB7LJCwEfRL4QsJ34YRPt2n45f76zXlq
+5UWT7l8gJZ4B7HUBSpl7X0ozpclwS+vXul8Xy2/dP9Zg/2YUeK8oYWPdCh9sr7fdenP4ZvNY
+T68rADENwG8mrDMr9GP713NOFZK/nyq0QdewwmzAcVMf9vb1DY7vN/uXJeDcl9/29oNL176j
+ggp3P4ZFTLS22mqyCmwH/nWuvBAcYmXPG3LHqkr755ME+Y7DlcnjaPeXF1c3bXNeyLxiWlXe
+59z4gMN+gWna9Jcp6AhmYdQo87w6dwV6s/TsbWJXYI7yJvAuU7uVDV9da/e8FaVKYQLu/xq5
+luY2YSD8V3zsodPJ49IrxthRDYIAtpNcPG3Hk8mhmUwazzT/vvuQAIldJbfEuwjQY1mtvu+T
+53rkxN1aW6X+556mJmGWItt6JJWSjGP+A3M5PF0LmmKikp+RFSThr++L1enX+fExhrFiPxFJ
+otOia6QppXd3U5uutloY52bamujdsdZS5FUvkUWssiHdS8JXtITemo+RtyTuwDzDXacFFfba
+S/C6obTjfGArEiEiA0OieYe0RN2P9KvS02LwX5ckFCS9jDenXvomOpJ1AASYF4sS9rnnFw4j
+Nz+fH8PdSb3uI+avHKvnDGHlcdAIod2ymIzodLgVS9yTOWdhIcAqq6PUQrLHWFc24rYX0SIz
+4JkaJtnMswf132bxL+pyvMO2KBpJsQe7fFyViy9/X56e6Sjj6+LP+e307wR/INrpW4h3cmMp
+VCzi6YXCIkm0xOHATqjYcGgyJZlmX0riEhGgrffpPI4awBJs4ia+SldCl33wLHAb4sp3RbnW
+yWV0U5iGAwdNnmpDP7jGtLKVE4yUG8EYj7JHO9sVBXLOEkeJLlBxoEu9qaaM5KKy+cijS0Vj
+LwOQmiN5C+9ie5MJGRJKQMmfFZoNmkLUh+OBTH8iWCQ9PtWMPl6kgnXrwnhqkTidtWOrf5R9
+R8YqGMqmAtHZoo9PcAaVBEWfNJTeIKdYbGCwbtqsuZF9vHKFqOwRGomgL8k6OHPFNGXIG2G7
+GLk4mCs/AwtUxOoL7sLKE6AnqTYu9LEDxl7URzaQ0ZDHHvUDKp462H5c9J6WutTpRZmKZb0a
+Ge09ho6samSe9MiD325WwcEC/p9KP3bLLrPQMmQPKPTFhO5JoWzA7bOjrY9Wk6Aij3SqsycK
+RMd4viI408KSPSQfy7pjsoQigMbY+4TEFpX+e4QI6qevo09qxcqlHJb20PWH3BcbdqKo/aaN
+VVWZWlmVpmbxWzo2O17cfb8YE47YVkyYcqFtxwK6V7KVOHLXMxvdbAoXHg3KLm7w4PulfWyE
+Ex16zMWy6SNOs6m8year0BczvETdRNQ2Ggv47ih15oGeeVwrIXlnD8bCTk5nbMeOyNbuBkjX
+6ff59entXdpKb4t7pcZR5LvW9PcQgYqOas0kCpH01cpAgX6Rlo/0EJ+9MMAcCRyN0vh02YRV
+FVtDbVwsu+nCtvuA6eM2POZBV+1aGpu1LggEEFVOiOfAAnfdoPvUtzZv7mFM64pefA61RZey
+sIp1DUPtlJ+XRlAUReC+h21HpujnUWkKZQ5I27ApTagplrf5Mc9NL88AsF7KrE+8rr+8WBkZ
+Bo9m00Nuo1mv5XMBsMg0fDDIUJnSLKk5TVM3l+n4pJDrFGUZIi9wyMePMaXJ11fp7PvuAVXj
+E6bjMv8hztQOh27KPuSfMHbHTMHOSbOMa2xTJjY9mGisTIt7Wa28jS509K5iUCHtUTpmtZK3
+z6QmrEpDOjaiZox5dfF07gjEYwJVHwxjdiOOz3+cg8WrcmAAAA==
+
+--ReaqsoxgOBHFXBhH--
