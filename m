@@ -1,81 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751386AbeCLMib (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 08:38:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34770 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751053AbeCLMi3 (ORCPT
+        id S1751323AbeCLMkp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 08:40:45 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:42104 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751053AbeCLMko (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 08:38:29 -0400
-Date: Mon, 12 Mar 2018 13:38:24 +0100
+        Mon, 12 Mar 2018 08:40:44 -0400
+Date: Mon, 12 Mar 2018 13:40:27 +0100
 From: Peter Zijlstra <peterz@infradead.org>
-To: Song Liu <songliubraving@fb.com>
-Cc: linux-kernel@vger.kernel.org, jolsa@redhat.com, kernel-team@fb.com,
-        ephiepark@fb.com, Tejun Heo <tj@kernel.org>,
-        Stephane Eranian <eranian@google.com>,
-        Lin Xiulei <linxiulei@gmail.com>
-Subject: Re: [PATCH] perf: update perf_cgroup time for ancestor cgroup(s)
-Message-ID: <20180312123824.GF4064@hirez.programming.kicks-ass.net>
-References: <20180312053244.2593974-1-songliubraving@fb.com>
+To: kirill.shutemov@linux.intel.com, gorcunov@openvz.org,
+        luto@amacapital.net, keescook@chromium.org, willy@infradead.org,
+        torvalds@linux-foundation.org, tglx@linutronix.de, bp@suse.de,
+        andy.shevchenko@gmail.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        mingo@kernel.org, ebiederm@xmission.com, jgross@suse.com
+Cc: linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/mm] x86/boot/compressed/64: Describe the logic behind
+ the LA57 check
+Message-ID: <20180312124027.GG4064@hirez.programming.kicks-ass.net>
+References: <20180226180451.86788-2-kirill.shutemov@linux.intel.com>
+ <tip-a403d798182f4f7be5e9bab56cfa37e9828fd92a@git.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180312053244.2593974-1-songliubraving@fb.com>
+In-Reply-To: <tip-a403d798182f4f7be5e9bab56cfa37e9828fd92a@git.kernel.org>
 User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 11, 2018 at 10:32:44PM -0700, Song Liu wrote:
-> When a perf_event is attached to parent cgroup, it should count events
-> for all children cgroups:
-> 
->  parent_group   <---- perf_event
->    \
->     - child_group  <---- process(es)
-> 
-> However, in our tests, we found this perf_event cannot report reliable
-> results. This is because perf_event->cgrp and cpuctx->cgrp are not
-> identical, thus perf_event->cgrp are not updated properly.
-
-It might help now and in for our older selves, if you could provide a
-simple reproducer for this.
-
-> Signed-off-by: Song Liu <songliubraving@fb.com>
-> Reported-by: Ephraim Park <ephiepark@fb.com>
-> ---
->  kernel/events/core.c | 68 +++++++++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 67 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 5789810..623d38f 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-
-> @@ -766,6 +821,17 @@ perf_cgroup_set_timestamp(struct task_struct *task,
->  	cgrp = perf_cgroup_from_task(task, ctx);
->  	info = this_cpu_ptr(cgrp->info);
->  	info->timestamp = ctx->timestamp;
-> +
-> +	/* set timestamp for ancestor cgroups */
-> +	if (cgrp->css.cgroup->level > 1) {
-> +		struct perf_cgroup_info *info = this_cpu_ptr(cgrp->info);
-> +		struct perf_event *event;
-> +
-> +		list_for_each_entry(event, &ctx->pinned_groups, group_entry)
-> +			perf_ancestor_cgroup_set_timestamp(event, cgrp, info);
-> +		list_for_each_entry(event, &ctx->flexible_groups, group_entry)
-> +			perf_ancestor_cgroup_set_timestamp(event, cgrp, info);
+On Mon, Mar 12, 2018 at 02:27:58AM -0700, tip-bot for Kirill A. Shutemov wrote:
+> +	/*
+> +	 * Check if LA57 is desired and supported.
+> +	 *
+> +	 * There are two parts to the check:
+> +	 *   - if the kernel supports 5-level paging: CONFIG_X86_5LEVEL=y
+> +	 *   - if the machine supports 5-level paging:
+> +	 *     + CPUID leaf 7 is supported
+> +	 *     + the leaf has the feature bit set
+> +	 *
+> +	 * That's substitute for boot_cpu_has() in early boot code.
+> +	 */
+> +	if (IS_ENABLED(CONFIG_X86_5LEVEL) &&
+> +			native_cpuid_eax(0) >= 7 &&
+> +			(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31)))) {
+>  		paging_config.l5_required = 1;
 > +	}
->  }
 
-That doesn't make any kind of sense... if we're interested in ancestor
-groups, then WTH are you iterating _events_ ?
-
-I'm expecting something like:
-
-	struct cgroup_subsys_state *css;
-
-	for (css = cgrp->css; css; css = css->parent) {
-		/* fudge time */
-	}
+Should this not also include something like: machine actually has
+suffient memory for it to make sense to use l5 ?
