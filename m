@@ -1,209 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751620AbeCLO4M (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 10:56:12 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:37324 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751280AbeCLO4J (ORCPT
+        id S932343AbeCLPBO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 11:01:14 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:33052 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751613AbeCLPBL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 10:56:09 -0400
-X-Google-Smtp-Source: AG47ELvQV8bW18eQDd6HE3CBSEwSqCKIwiiDVC9RQhbrNTAh4cY9ajreM2Xnf1ff5fyePYKJq+S3w0JlTvfnFZfAHI0=
+        Mon, 12 Mar 2018 11:01:11 -0400
+From: Colin King <colin.king@canonical.com>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] echoaudio: remove redundant initialization of pointer 'pipe'
+Date: Mon, 12 Mar 2018 15:01:00 +0000
+Message-Id: <20180312150100.8089-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-In-Reply-To: <010001621a9e5069-0b1a6328-97e4-4396-9438-b90f5b8c82a4-000000@email.amazonses.com>
-References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
- <e7c2be5c-cf21-fc2d-efda-d9222d93ffad@redhat.com> <b32f335c-0d77-1749-f7fe-65f512280255@redhat.com>
- <ade378f6-c997-1d48-a30d-cceee6435fc8@redhat.com> <a3b5f822-f8f4-e2f5-46da-e23e13174f28@redhat.com>
- <cec36124-0950-6ad9-58a8-9bd69e63aa04@redhat.com> <0100016206a68850-bd5c96b3-f275-46ea-98b1-1317e02a5d6e-000000@email.amazonses.com>
- <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com> <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
- <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
- <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
- <CAKv+Gu-KPU+kQ0z3jJ+CcgNPq3PuqjF_CCB_2LR_5VoYaynTJw@mail.gmail.com> <010001621a9e5069-0b1a6328-97e4-4396-9438-b90f5b8c82a4-000000@email.amazonses.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Mon, 12 Mar 2018 14:56:08 +0000
-Message-ID: <CAKv+Gu8+x=5nU9MmYQKKc=3fhMXoUYjGSjYYfhjaFtdGG2NkaA@mail.gmail.com>
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-To: Jeremy Cline <jeremy@jcline.org>
-Cc: Thiebaud Weksteen <tweek@google.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="001a114a85969ab76f05673857d4"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---001a114a85969ab76f05673857d4
-Content-Type: text/plain; charset="UTF-8"
+From: Colin Ian King <colin.king@canonical.com>
 
-On 12 March 2018 at 14:30, Jeremy Cline <jeremy@jcline.org> wrote:
-> On 03/12/2018 07:08 AM, Ard Biesheuvel wrote:
->> On 10 March 2018 at 10:45, Thiebaud Weksteen <tweek@google.com> wrote:
->>> On Fri, Mar 9, 2018 at 5:54 PM Jeremy Cline <jeremy@jcline.org> wrote:
->>>
->>>> On Fri, Mar 09, 2018 at 10:43:50AM +0000, Thiebaud Weksteen wrote:
->>>>> Thanks a lot for trying out the patch!
->>>>>
->>>>> Please don't modify your install at this stage, I think we are hitting a
->>>>> firmware bug and that would be awesome if we can fix how we are
->>> handling it.
->>>>> So, if we reach that stage in the function it could either be that:
->>>>> * The allocation did not succeed, somehow, but the firmware still
->>> returned
->>>>> EFI_SUCCEED.
->>>>> * The size requested is incorrect (I'm thinking something like a 1G of
->>>>> log). This would be due to either a miscalculation of log_size
->>> (possible)
->>>>> or; the returned values of GetEventLog are not correct.
->>>>> I'm sending a patch to add checks for these. Could you please apply and
->>>>> retest?
->>>>> Again, thanks for helping debugging this.
->>>
->>>> No problem, thanks for the help :)
->>>
->>>> With the new patch:
->>>
->>>> Locating the TCG2Protocol
->>>> Calling GetEventLog on TCG2Protocol
->>>> Log returned
->>>> log_location is not empty
->>>> log_size != 0
->>>> log_size < 1M
->>>> Allocating memory for storing the logs
->>>> Returned from memory allocation
->>>> Copying log to new location
->>>
->>>> And then it hangs. I added a couple more print statements:
->>>
->>>> diff --git a/drivers/firmware/efi/libstub/tpm.c
->>> b/drivers/firmware/efi/libstub/tpm.c
->>>> index ee3fac109078..1ab5638bc50e 100644
->>>> --- a/drivers/firmware/efi/libstub/tpm.c
->>>> +++ b/drivers/firmware/efi/libstub/tpm.c
->>>> @@ -148,8 +148,11 @@ void
->>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
->>>>          efi_printk(sys_table_arg, "Copying log to new location\n");
->>>
->>>>          memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
->>>> +       efi_printk(sys_table_arg, "Successfully memset log_tbl to 0\n");
->>>>          log_tbl->size = log_size;
->>>> +       efi_printk(sys_table_arg, "Set log_tbl->size\n");
->>>>          log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
->>>> +       efi_printk(sys_table_arg, "Set log_tbl-version\n");
->>>>          memcpy(log_tbl->log, (void *) first_entry_addr, log_size);
->>>
->>>>          efi_printk(sys_table_arg, "Installing the log into the
->>> configuration table\n");
->>>
->>>> and it's hanging at "memset(log_tbl, 0, sizeof(*log_tbl) + log_size);"
->>>
->>> Thanks. Well, it looks like the memory that is supposedly allocated is not
->>> usable. I'm thinking this is a firmware bug.
->>> Ard, would you agree on this assumption? Thoughts on how to proceed?
->>>
->>
->> I am rather puzzled why the allocate_pool() should succeed and the
->> subsequent memset() should fail. This does not look like an issue that
->> is intimately related to TPM2 support, rather an issue in the firmware
->> that happens to get tickled after the change.
->>
->> Would you mind trying replacing EFI_LOADER_DATA with
->> EFI_BOOT_SERVICES_DATA in the allocate_pool() call?
->
-> Replacing EFI_LOADER_DATA with EFI_BOOT_SERVICES_DATA still hangs at the
-> memset() call.
->
+The pointer 'pipe' is being initialized with a value that is never
+read and it is re-assigned later, hence the initialization is redundant
+and can be removed. Also remove pointer 'runtime' as it is no longer
+required.
 
-Could you try the following please? (attached as well in case gmail mangles it)
+Cleans up clang warning:
+sound/pci/echoaudio/echoaudio.c:740:20: warning: Value stored to 'pipe'
+during its initialization is never read
 
-diff --git a/drivers/firmware/efi/libstub/tpm.c
-b/drivers/firmware/efi/libstub/tpm.c
-index 2298560cea72..30d960a344b7 100644
---- a/drivers/firmware/efi/libstub/tpm.c
-+++ b/drivers/firmware/efi/libstub/tpm.c
-@@ -70,6 +70,8 @@ void
-efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
-        size_t log_size, last_entry_size;
-        efi_bool_t truncated;
-        void *tcg2_protocol;
-+       unsigned long num_pages;
-+       efi_physical_addr_t log_tbl_alloc;
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/pci/echoaudio/echoaudio.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-        status = efi_call_early(locate_protocol, &tcg2_guid, NULL,
-                                &tcg2_protocol);
-@@ -104,9 +106,12 @@ void
-efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
-        }
-
-        /* Allocate space for the logs and copy them. */
--       status = efi_call_early(allocate_pool, EFI_LOADER_DATA,
--                               sizeof(*log_tbl) + log_size,
--                               (void **) &log_tbl);
-+       num_pages = DIV_ROUND_UP(sizeof(*log_tbl) + log_size, EFI_PAGE_SIZE);
-+       status = efi_call_early(allocate_pages,
-+                               EFI_ALLOCATE_ANY_PAGES,
-+                               EFI_LOADER_DATA,
-+                               num_pages,
-+                               &log_tbl_alloc);
-
-        if (status != EFI_SUCCESS) {
-                efi_printk(sys_table_arg,
-@@ -114,6 +119,7 @@ void
-efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
-                return;
-        }
-
-+       log_tbl = (struct linux_efi_tpm_eventlog *)(unsigned long)log_tbl_alloc;
-        memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
-        log_tbl->size = log_size;
-        log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
-@@ -126,7 +132,7 @@ void
-efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
-        return;
-
- err_free:
--       efi_call_early(free_pool, log_tbl);
-+       efi_call_early(free_pages, log_tbl_alloc, num_pages);
- }
-
- void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
-
---001a114a85969ab76f05673857d4
-Content-Type: text/x-patch; charset="US-ASCII"; name="efitpm.diff"
-Content-Disposition: attachment; filename="efitpm.diff"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_jeocnnyp0
-
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZmlybXdhcmUvZWZpL2xpYnN0dWIvdHBtLmMgYi9kcml2ZXJz
-L2Zpcm13YXJlL2VmaS9saWJzdHViL3RwbS5jCmluZGV4IDIyOTg1NjBjZWE3Mi4uMzBkOTYwYTM0
-NGI3IDEwMDY0NAotLS0gYS9kcml2ZXJzL2Zpcm13YXJlL2VmaS9saWJzdHViL3RwbS5jCisrKyBi
-L2RyaXZlcnMvZmlybXdhcmUvZWZpL2xpYnN0dWIvdHBtLmMKQEAgLTcwLDYgKzcwLDggQEAgdm9p
-ZCBlZmlfcmV0cmlldmVfdHBtMl9ldmVudGxvZ18xXzIoZWZpX3N5c3RlbV90YWJsZV90ICpzeXNf
-dGFibGVfYXJnKQogCXNpemVfdCBsb2dfc2l6ZSwgbGFzdF9lbnRyeV9zaXplOwogCWVmaV9ib29s
-X3QgdHJ1bmNhdGVkOwogCXZvaWQgKnRjZzJfcHJvdG9jb2w7CisJdW5zaWduZWQgbG9uZyBudW1f
-cGFnZXM7CisJZWZpX3BoeXNpY2FsX2FkZHJfdCBsb2dfdGJsX2FsbG9jOwogCiAJc3RhdHVzID0g
-ZWZpX2NhbGxfZWFybHkobG9jYXRlX3Byb3RvY29sLCAmdGNnMl9ndWlkLCBOVUxMLAogCQkJCSZ0
-Y2cyX3Byb3RvY29sKTsKQEAgLTEwNCw5ICsxMDYsMTIgQEAgdm9pZCBlZmlfcmV0cmlldmVfdHBt
-Ml9ldmVudGxvZ18xXzIoZWZpX3N5c3RlbV90YWJsZV90ICpzeXNfdGFibGVfYXJnKQogCX0KIAog
-CS8qIEFsbG9jYXRlIHNwYWNlIGZvciB0aGUgbG9ncyBhbmQgY29weSB0aGVtLiAqLwotCXN0YXR1
-cyA9IGVmaV9jYWxsX2Vhcmx5KGFsbG9jYXRlX3Bvb2wsIEVGSV9MT0FERVJfREFUQSwKLQkJCQlz
-aXplb2YoKmxvZ190YmwpICsgbG9nX3NpemUsCi0JCQkJKHZvaWQgKiopICZsb2dfdGJsKTsKKwlu
-dW1fcGFnZXMgPSBESVZfUk9VTkRfVVAoc2l6ZW9mKCpsb2dfdGJsKSArIGxvZ19zaXplLCBFRklf
-UEFHRV9TSVpFKTsKKwlzdGF0dXMgPSBlZmlfY2FsbF9lYXJseShhbGxvY2F0ZV9wYWdlcywKKwkJ
-CQlFRklfQUxMT0NBVEVfQU5ZX1BBR0VTLAorCQkJCUVGSV9MT0FERVJfREFUQSwKKwkJCQludW1f
-cGFnZXMsCisJCQkJJmxvZ190YmxfYWxsb2MpOwogCiAJaWYgKHN0YXR1cyAhPSBFRklfU1VDQ0VT
-UykgewogCQllZmlfcHJpbnRrKHN5c190YWJsZV9hcmcsCkBAIC0xMTQsNiArMTE5LDcgQEAgdm9p
-ZCBlZmlfcmV0cmlldmVfdHBtMl9ldmVudGxvZ18xXzIoZWZpX3N5c3RlbV90YWJsZV90ICpzeXNf
-dGFibGVfYXJnKQogCQlyZXR1cm47CiAJfQogCisJbG9nX3RibCA9IChzdHJ1Y3QgbGludXhfZWZp
-X3RwbV9ldmVudGxvZyAqKSh1bnNpZ25lZCBsb25nKWxvZ190YmxfYWxsb2M7CiAJbWVtc2V0KGxv
-Z190YmwsIDAsIHNpemVvZigqbG9nX3RibCkgKyBsb2dfc2l6ZSk7CiAJbG9nX3RibC0+c2l6ZSA9
-IGxvZ19zaXplOwogCWxvZ190YmwtPnZlcnNpb24gPSBFRklfVENHMl9FVkVOVF9MT0dfRk9STUFU
-X1RDR18xXzI7CkBAIC0xMjYsNyArMTMyLDcgQEAgdm9pZCBlZmlfcmV0cmlldmVfdHBtMl9ldmVu
-dGxvZ18xXzIoZWZpX3N5c3RlbV90YWJsZV90ICpzeXNfdGFibGVfYXJnKQogCXJldHVybjsKIAog
-ZXJyX2ZyZWU6Ci0JZWZpX2NhbGxfZWFybHkoZnJlZV9wb29sLCBsb2dfdGJsKTsKKwllZmlfY2Fs
-bF9lYXJseShmcmVlX3BhZ2VzLCBsb2dfdGJsX2FsbG9jLCBudW1fcGFnZXMpOwogfQogCiB2b2lk
-IGVmaV9yZXRyaWV2ZV90cG0yX2V2ZW50bG9nKGVmaV9zeXN0ZW1fdGFibGVfdCAqc3lzX3RhYmxl
-X2FyZykK
---001a114a85969ab76f05673857d4--
+diff --git a/sound/pci/echoaudio/echoaudio.c b/sound/pci/echoaudio/echoaudio.c
+index d68f99e076a8..0935a5c8741f 100644
+--- a/sound/pci/echoaudio/echoaudio.c
++++ b/sound/pci/echoaudio/echoaudio.c
+@@ -736,8 +736,7 @@ static int pcm_prepare(struct snd_pcm_substream *substream)
+ static int pcm_trigger(struct snd_pcm_substream *substream, int cmd)
+ {
+ 	struct echoaudio *chip = snd_pcm_substream_chip(substream);
+-	struct snd_pcm_runtime *runtime = substream->runtime;
+-	struct audiopipe *pipe = runtime->private_data;
++	struct audiopipe *pipe;
+ 	int i, err;
+ 	u32 channelmask = 0;
+ 	struct snd_pcm_substream *s;
+-- 
+2.15.1
