@@ -1,66 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751344AbeCLJEt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 05:04:49 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:9349 "EHLO
+        id S1751488AbeCLJGi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 05:06:38 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:9760 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751248AbeCLJEr (ORCPT
+        by vger.kernel.org with ESMTP id S1750988AbeCLJGg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:04:47 -0400
-From: <patrice.chotard@st.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Mon, 12 Mar 2018 05:06:36 -0400
+From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+To: Rob Herring <robh@kernel.org>
+CC: "sboyd@kernel.org" <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
-        Patrice Chotard <patrice.chotard@st.com>
-Subject: [RESEND PATCH] clk: stm32: Add clk entry for SDMMC2 on stm32F769
-Date: Mon, 12 Mar 2018 10:04:07 +0100
-Message-ID: <1520845447-10279-1-git-send-email-patrice.chotard@st.com>
-X-Mailer: git-send-email 1.9.1
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "gabriel.fernandez.st@gmail.com" <gabriel.fernandez.st@gmail.com>,
+        Olivier BIDEAU <olivier.bideau@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>,
+        Benjamin GAIGNARD <benjamin.gaignard@st.com>
+Subject: Re: [PATCH v2 01/12] dt-bindings: Document STM32MP1 Reset Clock
+ Controller (RCC) bindings
+Thread-Topic: [PATCH v2 01/12] dt-bindings: Document STM32MP1 Reset Clock
+ Controller (RCC) bindings
+Thread-Index: AQHTtv4YAZrTZxLX0kSjTI36DqQJ5KPIhQUAgAO+9oA=
+Date: Mon, 12 Mar 2018 09:06:11 +0000
+Message-ID: <7d552f25-a7b8-c99a-8f28-eb9beb455724@st.com>
+References: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
+ <1520528045-18330-2-git-send-email-gabriel.fernandez@st.com>
+ <20180309235356.qd2wx6teeuxkwwjz@rob-hp-laptop>
+In-Reply-To: <20180309235356.qd2wx6teeuxkwwjz@rob-hp-laptop>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.45]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8D139A43B588564B91C9154FD6C33D94@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG4NODE3.st.com (10.75.127.12) To SFHDAG6NODE3.st.com
- (10.75.127.18)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-12_04:,,
  signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2C96jjd003604
 
-From: Patrice Chotard <patrice.chotard@st.com>
+Thanks Rob !
 
-STM32F769 has 2 SDMMC port, add clock entry for the second one.
+Best Regards
 
-Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk-stm32f4.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Gabriel
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index da44f8dc1d29..e7e3965c7aae 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -282,6 +282,7 @@ struct stm32f4_gate_data {
- 
- 	{ STM32F4_RCC_APB2ENR,  0,	"tim1",		"apb2_mul" },
- 	{ STM32F4_RCC_APB2ENR,  1,	"tim8",		"apb2_mul" },
-+	{ STM32F4_RCC_APB2ENR,  7,	"sdmmc2",	"sdmux"    },
- 	{ STM32F4_RCC_APB2ENR,  8,	"adc1",		"apb2_div" },
- 	{ STM32F4_RCC_APB2ENR,  9,	"adc2",		"apb2_div" },
- 	{ STM32F4_RCC_APB2ENR, 10,	"adc3",		"apb2_div" },
-@@ -315,7 +316,7 @@ struct stm32f4_gate_data {
- 
- static const u64 stm32f746_gate_map[MAX_GATE_MAP] = { 0x000000f17ef417ffull,
- 						      0x0000000000000003ull,
--						      0x04f77f033e01c9ffull };
-+						      0x04f77f833e01c9ffull };
- 
- static const u64 *stm32f4_gate_map;
- 
--- 
-1.9.1
+
+On 03/10/2018 12:53 AM, Rob Herring wrote:
+> On Thu, Mar 08, 2018 at 05:53:54PM +0100, gabriel.fernandez@st.com wrote:
+>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>
+>> The RCC block is responsible of the management of the clock and reset
+>> generation for the complete circuit.
+>>
+>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+>> ---
+>>   .../devicetree/bindings/clock/st,stm32mp1-rcc.txt  | 60 ++++++++++++++++++++++
+>>   1 file changed, 60 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.txt
+> Reviewed-by: Rob Herring <robh@kernel.org>
