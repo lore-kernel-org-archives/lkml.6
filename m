@@ -1,51 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932487AbeCLPmi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 11:42:38 -0400
-Received: from mga04.intel.com ([192.55.52.120]:43880 "EHLO mga04.intel.com"
+        id S1752166AbeCLPmr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 11:42:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932440AbeCLPmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 11:42:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,461,1515484800";
-   d="scan'208";a="207483919"
-From: Kan Liang <kan.liang@linux.intel.com>
-To: peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org
-Cc: eranian@google.com, ak@linux.intel.com,
-        Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH] perf/x86/uncore: Add missing filter constraint for SKX CHA event
-Date: Mon, 12 Mar 2018 08:41:34 -0700
-Message-Id: <1520869294-14176-1-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1751758AbeCLPmp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 11:42:45 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4F9221799
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+X-Google-Smtp-Source: AG47ELvLzpvFuvmJ5tce0vxsZ8XUuty804eJWp4QvA/GPFUr0iogSRzTh+Wd4INCUD+Y76VFgQhqoiWjbg9WxL52Zl4=
+MIME-Version: 1.0
+In-Reply-To: <20180312140300.6166-4-vkuznets@redhat.com>
+References: <20180312140300.6166-1-vkuznets@redhat.com> <20180312140300.6166-4-vkuznets@redhat.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Mon, 12 Mar 2018 15:42:23 +0000
+X-Gmail-Original-Message-ID: <CALCETrUnKsNh8mbe-F=i8ZpcbbH8hDo4WmDPdmF9vEGLYk75+w@mail.gmail.com>
+Message-ID: <CALCETrUnKsNh8mbe-F=i8ZpcbbH8hDo4WmDPdmF9vEGLYk75+w@mail.gmail.com>
+Subject: Re: [PATCH 3/3] x86/kvm/vmx: avoid expensive rdmsr for MSR_GS_BASE
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: kvm list <kvm@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephane Eranian <eranian@google.com>
+On Mon, Mar 12, 2018 at 2:03 PM, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+> vmx_save_host_state() is only called from kvm_arch_vcpu_ioctl_run() so
+> the context is pretty well defined and as we're past 'swapgs' MSR_GS_BASE
+> should contain kernel's GS base which we point to irq_stack_union.
+>
+> Add new kernelmode_gs_base() API, irq_stack_union needs to be exported
+> as KVM can be build as module.
+>
 
-Adding a filter constraint for Intel Skylake CHA event
-UNC_CHA_UPI_CREDITS_ACQUIRED (0x38).
-The event supports core-id/thread-id and link filtering.
-
-Signed-off-by: Stephane Eranian <eranian@google.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- arch/x86/events/intel/uncore_snbep.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index 8ff1aac..d4672ed 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -3355,6 +3355,7 @@ static struct extra_reg skx_uncore_cha_extra_regs[] = {
- 	SNBEP_CBO_EVENT_EXTRA_REG(0x9134, 0xffff, 0x4),
- 	SNBEP_CBO_EVENT_EXTRA_REG(0x35, 0xff, 0x8),
- 	SNBEP_CBO_EVENT_EXTRA_REG(0x36, 0xff, 0x8),
-+	SNBEP_CBO_EVENT_EXTRA_REG(0x38, 0xff, 0x3),
- 	EVENT_EXTRA_END
- };
- 
--- 
-2.7.4
+Acked-by: Andy Lutomirski <luto@kernel.org>
