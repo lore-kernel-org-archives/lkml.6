@@ -1,260 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932585AbeCLVDG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 17:03:06 -0400
-Received: from mail-it0-f43.google.com ([209.85.214.43]:53195 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932408AbeCLVDA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 17:03:00 -0400
-X-Google-Smtp-Source: AG47ELuoq4PDzH8uXFGGjq7Iu4Q1PgX04DKakE7mxIA0n/ZB/uhTfmHbkkN5VWZUW64HWhUOpVlzKJhUIic1s4eD4vQ=
+        id S932505AbeCLVE7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 17:04:59 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56874 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932372AbeCLVE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 17:04:58 -0400
+Subject: Re: [PATCH v4 3/6] sysctl: Warn when a clamped sysctl parameter is
+ set out of range
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>
+References: <1520885744-1546-1-git-send-email-longman@redhat.com>
+ <1520885744-1546-4-git-send-email-longman@redhat.com>
+ <20180312140027.97db31d5dfc5c5f52a7c19a3@linux-foundation.org>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <ddfd63f8-f061-72ab-744e-1e6cf9c764b7@redhat.com>
+Date: Mon, 12 Mar 2018 17:04:57 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com>
-References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
- <a3b5f822-f8f4-e2f5-46da-e23e13174f28@redhat.com> <cec36124-0950-6ad9-58a8-9bd69e63aa04@redhat.com>
- <0100016206a68850-bd5c96b3-f275-46ea-98b1-1317e02a5d6e-000000@email.amazonses.com>
- <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com> <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
- <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
- <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
- <CAKv+Gu-KPU+kQ0z3jJ+CcgNPq3PuqjF_CCB_2LR_5VoYaynTJw@mail.gmail.com>
- <010001621a9e5069-0b1a6328-97e4-4396-9438-b90f5b8c82a4-000000@email.amazonses.com>
- <CAKv+Gu8+x=5nU9MmYQKKc=3fhMXoUYjGSjYYfhjaFtdGG2NkaA@mail.gmail.com>
- <010001621b287e42-58955302-cc14-4212-b7b0-e6e358633dab-000000@email.amazonses.com>
- <CAKv+Gu_hLR3YNZF=taLM++LdfqmPpGG+vR1O8NfKNP00PNeiYA@mail.gmail.com>
- <CA+zpnLdxGT08citakzZwZsSQAFeTJw-j6S7udHk6-sEJ9R3xpA@mail.gmail.com>
- <010001621b7ce5a3-b80c55b8-be68-4b44-ab52-4949e8ddb8d0-000000@email.amazonses.com>
- <CA+zpnLf=JDUxyorH7yP=08FD_u=+UoQ6ubsKyVLD+4w9raYAKQ@mail.gmail.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Mon, 12 Mar 2018 21:02:58 +0000
-Message-ID: <CAKv+Gu-se-O0aNjjA==8_aB9qBaGks7+sUjGvgT8qFekUVg4PA@mail.gmail.com>
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-To: Thiebaud Weksteen <tweek@google.com>
-Cc: Jeremy Cline <jeremy@jcline.org>, Hans de Goede <hdegoede@redhat.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180312140027.97db31d5dfc5c5f52a7c19a3@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12 March 2018 at 19:55, Thiebaud Weksteen <tweek@google.com> wrote:
-> On Mon, Mar 12, 2018 at 7:33 PM Jeremy Cline <jeremy@jcline.org> wrote:
+On 03/12/2018 05:00 PM, Andrew Morton wrote:
+> On Mon, 12 Mar 2018 16:15:41 -0400 Waiman Long <longman@redhat.com> wrote:
 >
->> On 03/12/2018 02:29 PM, Thiebaud Weksteen wrote:
->> > On Mon, Mar 12, 2018 at 6:30 PM Ard Biesheuvel <
-> ard.biesheuvel@linaro.org>
->> > wrote:
->> >
->> >> On 12 March 2018 at 17:01, Jeremy Cline <jeremy@jcline.org> wrote:
->> >>> On 03/12/2018 10:56 AM, Ard Biesheuvel wrote:
->> >>>> On 12 March 2018 at 14:30, Jeremy Cline <jeremy@jcline.org> wrote:
->> >>>>> On 03/12/2018 07:08 AM, Ard Biesheuvel wrote:
->> >>>>>> On 10 March 2018 at 10:45, Thiebaud Weksteen <tweek@google.com>
->> > wrote:
->> >>>>>>> On Fri, Mar 9, 2018 at 5:54 PM Jeremy Cline <jeremy@jcline.org>
->> > wrote:
->> >>>>>>>
->> >>>>>>>> On Fri, Mar 09, 2018 at 10:43:50AM +0000, Thiebaud Weksteen
-> wrote:
->> >>>>>>>>> Thanks a lot for trying out the patch!
->> >>>>>>>>>
->> >>>>>>>>> Please don't modify your install at this stage, I think we are
->> > hitting a
->> >>>>>>>>> firmware bug and that would be awesome if we can fix how we are
->> >>>>>>> handling it.
->> >>>>>>>>> So, if we reach that stage in the function it could either be
->> > that:
->> >>>>>>>>> * The allocation did not succeed, somehow, but the firmware
-> still
->> >>>>>>> returned
->> >>>>>>>>> EFI_SUCCEED.
->> >>>>>>>>> * The size requested is incorrect (I'm thinking something like a
->> > 1G of
->> >>>>>>>>> log). This would be due to either a miscalculation of log_size
->> >>>>>>> (possible)
->> >>>>>>>>> or; the returned values of GetEventLog are not correct.
->> >>>>>>>>> I'm sending a patch to add checks for these. Could you please
->> > apply and
->> >>>>>>>>> retest?
->> >>>>>>>>> Again, thanks for helping debugging this.
->> >>>>>>>
->> >>>>>>>> No problem, thanks for the help :)
->> >>>>>>>
->> >>>>>>>> With the new patch:
->> >>>>>>>
->> >>>>>>>> Locating the TCG2Protocol
->> >>>>>>>> Calling GetEventLog on TCG2Protocol
->> >>>>>>>> Log returned
->> >>>>>>>> log_location is not empty
->> >>>>>>>> log_size != 0
->> >>>>>>>> log_size < 1M
->> >>>>>>>> Allocating memory for storing the logs
->> >>>>>>>> Returned from memory allocation
->> >>>>>>>> Copying log to new location
->> >>>>>>>
->> >>>>>>>> And then it hangs. I added a couple more print statements:
->> >>>>>>>
->> >>>>>>>> diff --git a/drivers/firmware/efi/libstub/tpm.c
->> >>>>>>> b/drivers/firmware/efi/libstub/tpm.c
->> >>>>>>>> index ee3fac109078..1ab5638bc50e 100644
->> >>>>>>>> --- a/drivers/firmware/efi/libstub/tpm.c
->> >>>>>>>> +++ b/drivers/firmware/efi/libstub/tpm.c
->> >>>>>>>> @@ -148,8 +148,11 @@ void
->> >>>>>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
->> >>>>>>>>          efi_printk(sys_table_arg, "Copying log to new
->> > location\n");
->> >>>>>>>
->> >>>>>>>>          memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
->> >>>>>>>> +       efi_printk(sys_table_arg, "Successfully memset log_tbl to
->> > 0\n");
->> >>>>>>>>          log_tbl->size = log_size;
->> >>>>>>>> +       efi_printk(sys_table_arg, "Set log_tbl->size\n");
->> >>>>>>>>          log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
->> >>>>>>>> +       efi_printk(sys_table_arg, "Set log_tbl-version\n");
->> >>>>>>>>          memcpy(log_tbl->log, (void *) first_entry_addr,
-> log_size);
->> >>>>>>>
->> >>>>>>>>          efi_printk(sys_table_arg, "Installing the log into the
->> >>>>>>> configuration table\n");
->> >>>>>>>
->> >>>>>>>> and it's hanging at "memset(log_tbl, 0, sizeof(*log_tbl) +
->> > log_size);"
->> >>>>>>>
->> >>>>>>> Thanks. Well, it looks like the memory that is supposedly
-> allocated
->> > is not
->> >>>>>>> usable. I'm thinking this is a firmware bug.
->> >>>>>>> Ard, would you agree on this assumption? Thoughts on how to
-> proceed?
->> >>>>>>>
->> >>>>>>
->> >>>>>> I am rather puzzled why the allocate_pool() should succeed and the
->> >>>>>> subsequent memset() should fail. This does not look like an issue
->> > that
->> >>>>>> is intimately related to TPM2 support, rather an issue in the
->> > firmware
->> >>>>>> that happens to get tickled after the change.
->> >>>>>>
->> >>>>>> Would you mind trying replacing EFI_LOADER_DATA with
->> >>>>>> EFI_BOOT_SERVICES_DATA in the allocate_pool() call?
->> >>>>>
->> >>>>> Replacing EFI_LOADER_DATA with EFI_BOOT_SERVICES_DATA still hangs at
->> > the
->> >>>>> memset() call.
->> >>>>>
->> >>>>
->> >>>> Could you try the following please? (attached as well in case gmail
->> > mangles it)
->> >>>>
->> >>>> diff --git a/drivers/firmware/efi/libstub/tpm.c
->> >>>> b/drivers/firmware/efi/libstub/tpm.c
->> >>>> index 2298560cea72..30d960a344b7 100644
->> >>>> --- a/drivers/firmware/efi/libstub/tpm.c
->> >>>> +++ b/drivers/firmware/efi/libstub/tpm.c
->> >>>> @@ -70,6 +70,8 @@ void
->> >>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
->> >>>>         size_t log_size, last_entry_size;
->> >>>>         efi_bool_t truncated;
->> >>>>         void *tcg2_protocol;
->> >>>> +       unsigned long num_pages;
->> >>>> +       efi_physical_addr_t log_tbl_alloc;
->> >>>>
->> >>>>         status = efi_call_early(locate_protocol, &tcg2_guid, NULL,
->> >>>>                                 &tcg2_protocol);
->> >>>> @@ -104,9 +106,12 @@ void
->> >>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
->> >>>>         }
->> >>>>
->> >>>>         /* Allocate space for the logs and copy them. */
->> >>>> -       status = efi_call_early(allocate_pool, EFI_LOADER_DATA,
->> >>>> -                               sizeof(*log_tbl) + log_size,
->> >>>> -                               (void **) &log_tbl);
->> >>>> +       num_pages = DIV_ROUND_UP(sizeof(*log_tbl) + log_size,
->> > EFI_PAGE_SIZE);
->> >>>> +       status = efi_call_early(allocate_pages,
->> >>>> +                               EFI_ALLOCATE_ANY_PAGES,
->> >>>> +                               EFI_LOADER_DATA,
->> >>>> +                               num_pages,
->> >>>> +                               &log_tbl_alloc);
->> >>>>
->> >>>>         if (status != EFI_SUCCESS) {
->> >>>>                 efi_printk(sys_table_arg,
->> >>>> @@ -114,6 +119,7 @@ void
->> >>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
->> >>>>                 return;
->> >>>>         }
->> >>>>
->> >>>> +       log_tbl = (struct linux_efi_tpm_eventlog *)(unsigned
->> > long)log_tbl_alloc;
->> >>>>         memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
->> >>>>         log_tbl->size = log_size;
->> >>>>         log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
->> >>>> @@ -126,7 +132,7 @@ void
->> >>>> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
->> >>>>         return;
->> >>>>
->> >>>>  err_free:
->> >>>> -       efi_call_early(free_pool, log_tbl);
->> >>>> +       efi_call_early(free_pages, log_tbl_alloc, num_pages);
->> >>>>  }
->> >>>>
->> >>>>  void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
->> >>>>
->> >>>
->> >>> Hi Ard,
->> >>>
->> >>> When I apply this, it starts hanging at
->> >>>
->> >>> status = efi_call_proto(efi_tcg2_protocol, get_event_log,
-> tcg2_protocol,
->> >>>                         EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2,
->> >>>                         &log_location, &log_last_entry, &truncated);
->> >>>
->> >>> rather than at the memset() call.
->> >>>
->> >
->> >> That is *very* surprising, given that the change only affects code
->> >> that executes after that.
->> >
+>> Even with clamped sysctl parameters, it is still not that straight
+>> forward to figure out the exact range of those parameters. One may
+>> try to write extreme parameter values to see if they get clamped.
+>> To make it easier, a warning with the expected range will now be
+>> printed into the kernel ring buffer when a clamped sysctl parameter
+>> receives an out of range value.
+>>
+>> The pr_warn_ratelimited() macro is used to limit the number of warning
+>> messages that can be printed within a given period of time.
+>>
+>> ...
+>>
+>> +#ifdef pr_fmt
+>> +#undef pr_fmt
+>> +#endif
+>> +#define pr_fmt(fmt)	"sysctl: " fmt
+> Why is it necessary to undefine pr_fmt?  That's a somewhat unusual
+> thing to do.
 >
-> Hans, you said you configured the tablet to use the 32-bit version of grub
-> instead
-> of 64. Why's that?
 >
-> Jeremy, could you confirm if you are building the kernel in 64bit mode? Is
-> your Android install working? (that is, what happens if you boot Boot0000)?
->
->> >> I understand how annoying this is for you, and I think we should try
->> >> to fix this, but reverting the patches outright isn't the solution
->> >> either.
->> >
->> >> Which UEFI vendor and version does your system report?
->> >
->> > You should be able to find this info using the "ver" command in the UEFI
->> > shell.
->> > The UEFI vendor is Insyde (see first message).
->> >
->
->> Ah, thanks!
->
->> EFI Specification Revision      : 2.40
->> EFI Vendor                      : INSYDE Corp.
->> EFI Revision                    : 21573.83
->
+Because it is defined in the printk.h. I should have put the pr_fmt
+definition before the iinclude file to eliminate the need to undefine it.
 
-Thiebaud,
-
-If we don't manage to resolve this, do you see any way to blacklist
-systems based on this information? Would it be reasonable, say, to
-require UEFI v2.5 or later for TPM2 support? Or doesn't that make any
-sense (I am aware that the TCG EFI spec and the UEFI spec are somewhat
-orthogonal, but it also depends on the hardware you are targetting, I
-guess). Otherwise, we could use a more specific match, perhaps?
-
-This is of course depending on whether we reach consensus on whether
-we should make any changes at all for what appears to be a single
-sample of a certain piece of hardware, where other samples running the
-same firmware (right?) are working fine.
+-Longman
