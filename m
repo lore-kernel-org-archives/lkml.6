@@ -1,56 +1,84 @@
-Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELsV7KSLaNOvcAbb54Mu33MQDZAD6jW8/VYYROhsGqeQ9qTVzHrIuorwDo3uhtnSbA+WEtMi
-ARC-Seal: i=1; a=rsa-sha256; t=1520824071; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ROlpOHr9BfXg9xRIWsnEHbcVOWye5Nk+hew+xfGbiFUpkqRIP8OA5wfDJkM9XZzVUU
-         KmGCuDBjaN8Je2SgD/ka/Sdc69l7cW80VdAIZh92DhsyMEYddJtzZXr3u69YUGarrMPL
-         L/E1c9WYgoCoYnB7+xginLKqjWgw3s1b6cAzxZ7eamXjffWDmu4yMULX3rvnx2CSHaYV
-         zTjs5XoC9+Yw5dnvdPDMMXUAdaj0WKqfrweku/x0frnVL8lXSJQEnpbvZ3HjgSNefQGk
-         BFkRAcUfr43AAgq3zZ+5ZVu3tRRAMhltJ/o9DoDH8DD7C9WhCgC18mu7T0puVPOCJsCx
-         Wv9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
-         :content-transfer-encoding:content-disposition
-         :arc-authentication-results;
-        bh=a6auVPEYTX3I3iQhqkphXs/zieC4hPdzIUJfO1rRoxk=;
-        b=vmzsdxEiXL2wR9wfCIV6VFY43BbCTnSm9kizJWe4/TWuTwU2SkC+286uw7ZBu7K93I
-         L5x8hQriQDQ+qS4DnuUFKr5fvvpNd0B72TQixSgiEzZYpH1hryjnK3SHIP6fTciWXnBH
-         BYbAN4ttEsXx4VEaW+e/K/jXbdtLNjkQmHPlUsY+tuQ6LsPPcmanCd6ovagQUH3gZgNg
-         FXQCySQuF/dSVSZsPIHmxYK2zudbllKNJRvIz/v3QheA0D+G0Tvzjulwauqb8WpXsb+U
-         P2CjQzuaAcc9NYghhepDv2HBIwAFrAg7g+Bq0xOatrL9Yz9E6N/ZZgP4n3EUp97vArFp
-         aHFQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3340693-1520824151-2-7395698803918606831
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
+  MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520824150; b=A0XdcMRR90lWbDhWcP/2zO002iIq2vjfGpdmLNWO6efcX4Y
+    3bNrxNKsOrSZ0G+xIXE7xo2XAl4SUimAzu3s6TyDZN/O6oV0dhHyAofPE9VO+LOg
+    NFpO7AB8TOWy8inhttZ7ZFn2eKVExuAS3kJtnYrfn5Xr9yCkHyloOrDZqgOEakMf
+    /z0oX4khY3QFaFJptaoVmPSnU+eXpBBEKYBrrL/wir87nMj2YfIK2qHfLXEtSXre
+    RxNwHJd63SZFr8wGHPivCO8kKqyUbUFTSpLbyVn+hAwdJhE8N05F4X0dammZDc3f
+    CvgeL8/t+zqrNQ8e+uD+HzJ5ovZsTMmUxe9Oy/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=content-type:content-transfer-encoding
+    :mime-version:from:to:cc:date:message-id:subject:in-reply-to
+    :sender:list-id; s=arctest; t=1520824150; bh=/PCVuikvsN+/wWhaGVR
+    hVP9TRne/5BqpZ1IJMQd4oH8=; b=IWvt/a+4mhUc3ZEoR3htL8cBzshDX8opsGt
+    UkYyECSDTpqhs1iLMA5JGWd/SFvOmdCU4UvjRsNNgodgu6Ow/455G/tyO2x4qcO3
+    8OEF3hqELy2rZEghNghAbDNH9VJ8c7pegIaYEA0vzP01TvHpIXzHSnkPsR6+UMr8
+    rdiQFAruNdiSl9E8jokmHqB/6W++6KMQnRWxvbDpayRAKYkzdWCXCXVb0Zkwslf6
+    CFb56uzbsmfr3Yq+VW59iOEJynn7P39TOX573ShcCIohktilbeNUOKxXBQ2zJZwI
+    gtINPvY9/GReIE8WsN+5PWRR+E2VEdA/uxFwN1f7uA1si+ejkzA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932815AbeCLDJH (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Mar 2018 23:09:07 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41611 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932811AbeCLDHw (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 23:07:52 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
- "Thomas Gleixner" <tglx@linutronix.de>,
- alan@linux.intel.com,
- "Dan Williams" <dan.j.williams@intel.com>,
- gregkh@linuxfoundation.org, linux-arch@vger.kernel.org,
- kernel-hardening@lists.openwall.com,
- "Kees Cook" <keescook@chromium.org>,
- "Al Viro" <viro@zeniv.linux.org.uk>,
- "Andi Kleen" <ak@linux.intel.com>,
- "Linus Torvalds" <torvalds@linux-foundation.org>
+CC: akpm@linux-foundation.org, ak@linux.intel.com,
+        torvalds@linux-foundation.org, tim.c.chen@linux.intel.com,
+        bp@alien8.de, arjan@linux.intel.com, dave.hansen@intel.com,
+        "David Woodhouse" <dwmw@amazon.co.uk>, karahmed@amazon.de,
+        "Thomas Gleixner" <tglx@linutronix.de>, peterz@infradead.org,
+        pbonzini@redhat.com, gregkh@linux-foundation.org
 Date: Mon, 12 Mar 2018 03:06:12 +0000
-Message-ID: <lsq.1520823972.968056966@decadent.org.uk>
+Message-ID: <lsq.1520823972.392599267@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 75/76] x86/uaccess: Use __uaccess_begin_nospec() and
- uaccess_try_nospec
+Subject: [PATCH 3.16 66/76] x86/cpufeatures: Clean up Spectre v2 related
+ CPUID flags
 In-Reply-To: <lsq.1520823971.5976735@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699621289542728?=
-X-GMAIL-MSGID: =?utf-8?q?1594699621289542728?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,289 +86,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-commit 304ec1b050310548db33063e567123fae8fd0301 upstream.
+commit 2961298efe1ea1b6fc0d7ee8b76018fa6c0bcef2 upstream.
 
-Quoting Linus:
+We want to expose the hardware features simply in /proc/cpuinfo as "ibrs",
+"ibpb" and "stibp". Since AMD has separate CPUID bits for those, use them
+as the user-visible bits.
 
-    I do think that it would be a good idea to very expressly document
-    the fact that it's not that the user access itself is unsafe. I do
-    agree that things like "get_user()" want to be protected, but not
-    because of any direct bugs or problems with get_user() and friends,
-    but simply because get_user() is an excellent source of a pointer
-    that is obviously controlled from a potentially attacking user
-    space. So it's a prime candidate for then finding _subsequent_
-    accesses that can then be used to perturb the cache.
+When the Intel SPEC_CTRL bit is set which indicates both IBRS and IBPB
+capability, set those (AMD) bits accordingly. Likewise if the Intel STIBP
+bit is set, set the AMD STIBP that's used for the generic hardware
+capability.
 
-__uaccess_begin_nospec() covers __get_user() and copy_from_iter() where the
-limit check is far away from the user pointer de-reference. In those cases
-a barrier_nospec() prevents speculation with a potential pointer to
-privileged memory. uaccess_try_nospec covers get_user_try.
+Hide the rest from /proc/cpuinfo by putting "" in the comments. Including
+RETPOLINE and RETPOLINE_AMD which shouldn't be visible there. There are
+patches to make the sysfs vulnerabilities information non-readable by
+non-root, and the same should apply to all information about which
+mitigations are actually in use. Those *shouldn't* appear in /proc/cpuinfo.
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Suggested-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+The feature bit for whether IBPB is actually used, which is needed for
+ALTERNATIVEs, is renamed to X86_FEATURE_USE_IBPB.
+
+Originally-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arch@vger.kernel.org
-Cc: Kees Cook <keescook@chromium.org>
-Cc: kernel-hardening@lists.openwall.com
-Cc: gregkh@linuxfoundation.org
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727416953.33451.10508284228526170604.stgit@dwillia2-desk3.amr.corp.intel.com
-[bwh: Backported to 3.16:
- - Convert several more functions to use __uaccess_begin_nospec(), that
-   are just wrappers in mainline
- - There's no 'case 8' in __copy_to_user_inatomic()
- - Adjust context]
+Cc: ak@linux.intel.com
+Cc: dave.hansen@intel.com
+Cc: karahmed@amazon.de
+Cc: arjan@linux.intel.com
+Cc: torvalds@linux-foundation.org
+Cc: peterz@infradead.org
+Cc: bp@alien8.de
+Cc: pbonzini@redhat.com
+Cc: tim.c.chen@linux.intel.com
+Cc: gregkh@linux-foundation.org
+Link: https://lkml.kernel.org/r/1517070274-12128-2-git-send-email-dwmw@amazon.co.uk
+[bwh: For 3.16, just apply the part that hides fake CPU feature bits]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -433,7 +433,7 @@ do {									\
- ({									\
- 	int __gu_err;							\
- 	unsigned long __gu_val;						\
--	__uaccess_begin();						\
-+	__uaccess_begin_nospec();					\
- 	__get_user_size(__gu_val, (ptr), (size), __gu_err, -EFAULT);	\
- 	__uaccess_end();						\
- 	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
-@@ -541,7 +541,7 @@ struct __large_struct { unsigned long bu
-  *	get_user_ex(...);
-  * } get_user_catch(err)
-  */
--#define get_user_try		uaccess_try
-+#define get_user_try		uaccess_try_nospec
- #define get_user_catch(err)	uaccess_catch(err)
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -187,10 +187,10 @@
+ #define X86_FEATURE_HW_PSTATE	(7*32+ 8) /* AMD HW-PState */
+ #define X86_FEATURE_PROC_FEEDBACK (7*32+ 9) /* AMD ProcFeedbackInterface */
+ #define X86_FEATURE_INVPCID_SINGLE (7*32+10) /* Effectively INVPCID && CR4.PCIDE=1 */
+-#define X86_FEATURE_RSB_CTXSW	(7*32+11) /* Fill RSB on context switches */
++#define X86_FEATURE_RSB_CTXSW	(7*32+11) /* "" Fill RSB on context switches */
  
- #define get_user_ex(x, ptr)	do {					\
-@@ -576,7 +576,7 @@ extern void __cmpxchg_wrong_size(void)
- 	__typeof__(ptr) __uval = (uval);				\
- 	__typeof__(*(ptr)) __old = (old);				\
- 	__typeof__(*(ptr)) __new = (new);				\
--	__uaccess_begin();						\
-+	__uaccess_begin_nospec();					\
- 	switch (size) {							\
- 	case 1:								\
- 	{								\
---- a/arch/x86/include/asm/uaccess_32.h
-+++ b/arch/x86/include/asm/uaccess_32.h
-@@ -48,19 +48,19 @@ __copy_to_user_inatomic(void __user *to,
+-#define X86_FEATURE_RETPOLINE	(7*32+29) /* Generic Retpoline mitigation for Spectre variant 2 */
+-#define X86_FEATURE_RETPOLINE_AMD (7*32+30) /* AMD Retpoline mitigation for Spectre variant 2 */
++#define X86_FEATURE_RETPOLINE	(7*32+29) /* "" Generic Retpoline mitigation for Spectre variant 2 */
++#define X86_FEATURE_RETPOLINE_AMD (7*32+30) /* "" AMD Retpoline mitigation for Spectre variant 2 */
+ /* Because the ALTERNATIVE scheme is for members of the X86_FEATURE club... */
+ #define X86_FEATURE_KAISER	(7*32+31) /* "" CONFIG_PAGE_TABLE_ISOLATION w/o nokaiser */
  
- 		switch (n) {
- 		case 1:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__put_user_size(*(u8 *)from, (u8 __user *)to,
- 					1, ret, 1);
- 			__uaccess_end();
- 			return ret;
- 		case 2:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__put_user_size(*(u16 *)from, (u16 __user *)to,
- 					2, ret, 2);
- 			__uaccess_end();
- 			return ret;
- 		case 4:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__put_user_size(*(u32 *)from, (u32 __user *)to,
- 					4, ret, 4);
- 			__uaccess_end();
-@@ -104,17 +104,17 @@ __copy_from_user_inatomic(void *to, cons
- 
- 		switch (n) {
- 		case 1:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u8 *)to, from, 1, ret, 1);
- 			__uaccess_end();
- 			return ret;
- 		case 2:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u16 *)to, from, 2, ret, 2);
- 			__uaccess_end();
- 			return ret;
- 		case 4:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u32 *)to, from, 4, ret, 4);
- 			__uaccess_end();
- 			return ret;
-@@ -154,17 +154,17 @@ __copy_from_user(void *to, const void __
- 
- 		switch (n) {
- 		case 1:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u8 *)to, from, 1, ret, 1);
- 			__uaccess_end();
- 			return ret;
- 		case 2:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u16 *)to, from, 2, ret, 2);
- 			__uaccess_end();
- 			return ret;
- 		case 4:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u32 *)to, from, 4, ret, 4);
- 			__uaccess_end();
- 			return ret;
-@@ -182,17 +182,17 @@ static __always_inline unsigned long __c
- 
- 		switch (n) {
- 		case 1:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u8 *)to, from, 1, ret, 1);
- 			__uaccess_end();
- 			return ret;
- 		case 2:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u16 *)to, from, 2, ret, 2);
- 			__uaccess_end();
- 			return ret;
- 		case 4:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u32 *)to, from, 4, ret, 4);
- 			__uaccess_end();
- 			return ret;
---- a/arch/x86/include/asm/uaccess_64.h
-+++ b/arch/x86/include/asm/uaccess_64.h
-@@ -57,31 +57,31 @@ int __copy_from_user_nocheck(void *dst,
- 		return copy_user_generic(dst, (__force void *)src, size);
- 	switch (size) {
- 	case 1:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(*(u8 *)dst, (u8 __user *)src,
- 			      ret, "b", "b", "=q", 1);
- 		__uaccess_end();
- 		return ret;
- 	case 2:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(*(u16 *)dst, (u16 __user *)src,
- 			      ret, "w", "w", "=r", 2);
- 		__uaccess_end();
- 		return ret;
- 	case 4:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(*(u32 *)dst, (u32 __user *)src,
- 			      ret, "l", "k", "=r", 4);
- 		__uaccess_end();
- 		return ret;
- 	case 8:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(*(u64 *)dst, (u64 __user *)src,
- 			      ret, "q", "", "=r", 8);
- 		__uaccess_end();
- 		return ret;
- 	case 10:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(*(u64 *)dst, (u64 __user *)src,
- 			       ret, "q", "", "=r", 10);
- 		if (likely(!ret))
-@@ -91,7 +91,7 @@ int __copy_from_user_nocheck(void *dst,
- 		__uaccess_end();
- 		return ret;
- 	case 16:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(*(u64 *)dst, (u64 __user *)src,
- 			       ret, "q", "", "=r", 16);
- 		if (likely(!ret))
-@@ -190,7 +190,7 @@ int __copy_in_user(void __user *dst, con
- 	switch (size) {
- 	case 1: {
- 		u8 tmp;
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(tmp, (u8 __user *)src,
- 			       ret, "b", "b", "=q", 1);
- 		if (likely(!ret))
-@@ -201,7 +201,7 @@ int __copy_in_user(void __user *dst, con
- 	}
- 	case 2: {
- 		u16 tmp;
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(tmp, (u16 __user *)src,
- 			       ret, "w", "w", "=r", 2);
- 		if (likely(!ret))
-@@ -213,7 +213,7 @@ int __copy_in_user(void __user *dst, con
- 
- 	case 4: {
- 		u32 tmp;
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(tmp, (u32 __user *)src,
- 			       ret, "l", "k", "=r", 4);
- 		if (likely(!ret))
-@@ -224,7 +224,7 @@ int __copy_in_user(void __user *dst, con
- 	}
- 	case 8: {
- 		u64 tmp;
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(tmp, (u64 __user *)src,
- 			       ret, "q", "", "=r", 8);
- 		if (likely(!ret))
---- a/arch/x86/lib/usercopy_32.c
-+++ b/arch/x86/lib/usercopy_32.c
-@@ -570,7 +570,7 @@ do {									\
- unsigned long __copy_to_user_ll(void __user *to, const void *from,
- 				unsigned long n)
- {
--	__uaccess_begin();
-+	__uaccess_begin_nospec();
- 	if (movsl_is_ok(to, from, n))
- 		__copy_user(to, from, n);
- 	else
-@@ -583,7 +583,7 @@ EXPORT_SYMBOL(__copy_to_user_ll);
- unsigned long __copy_from_user_ll(void *to, const void __user *from,
- 					unsigned long n)
- {
--	__uaccess_begin();
-+	__uaccess_begin_nospec();
- 	if (movsl_is_ok(to, from, n))
- 		__copy_user_zeroing(to, from, n);
- 	else
-@@ -596,7 +596,7 @@ EXPORT_SYMBOL(__copy_from_user_ll);
- unsigned long __copy_from_user_ll_nozero(void *to, const void __user *from,
- 					 unsigned long n)
- {
--	__uaccess_begin();
-+	__uaccess_begin_nospec();
- 	if (movsl_is_ok(to, from, n))
- 		__copy_user(to, from, n);
- 	else
-@@ -610,7 +610,7 @@ EXPORT_SYMBOL(__copy_from_user_ll_nozero
- unsigned long __copy_from_user_ll_nocache(void *to, const void __user *from,
- 					unsigned long n)
- {
--	__uaccess_begin();
-+	__uaccess_begin_nospec();
- #ifdef CONFIG_X86_INTEL_USERCOPY
- 	if (n > 64 && cpu_has_xmm2)
- 		n = __copy_user_zeroing_intel_nocache(to, from, n);
-@@ -627,7 +627,7 @@ EXPORT_SYMBOL(__copy_from_user_ll_nocach
- unsigned long __copy_from_user_ll_nocache_nozero(void *to, const void __user *from,
- 					unsigned long n)
- {
--	__uaccess_begin();
-+	__uaccess_begin_nospec();
- #ifdef CONFIG_X86_INTEL_USERCOPY
- 	if (n > 64 && cpu_has_xmm2)
- 		n = __copy_user_intel_nocache(to, from, n);
