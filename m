@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELt6OCmBcALrhrwEgDYkpzG/lT/yhQ2J4S1WqkXhZYq/RN0HNRxVYTY4GJMJyBQTw7ZUrJ40
-ARC-Seal: i=1; a=rsa-sha256; t=1520824082; cv=none;
+X-Google-Smtp-Source: AG47ELscp/yq91xE9fIgUV0g4myZnQ+u0VlaMgWNIQcCFokFPdylhOCzESHngTuedPlCnUu3DWcR
+ARC-Seal: i=1; a=rsa-sha256; t=1520824081; cv=none;
         d=google.com; s=arc-20160816;
-        b=Myfw0HWv6hlDHMy77v/DJ/K0JI3vk8y5pjDThg8ubiwWdd15XSxBXMEmLIS179QQiq
-         uWLKnesclDFFNysMMhhnm+/jcHpc0rY29yMmIiwdTSF+/yB7hDjzIpaV6VKXhJpz8eQT
-         5zpVCtgDuBiEkCC5wmiiYGk7LvO0dUB+HGb0f76HBpAUuZmi47QMpKw3ry/0ayT7/R42
-         EatroNnASmuJ/wpk03gp3lrnpRm1OBO1eIyU6iZaq93XSDe/KiFOTHREuAPPR+Z6G9/Z
-         hCL6WzqFsYwarbXJ3nCanvtgX2VHgmxFbtWA96Y+sMGPuSjBDyymZxchO0g8NC8UqJ7h
-         FSgw==
+        b=vrjE5GgJxX22SIcYjbh9a1Xq5rehETUCCeFKbJ/nepxSdP8csZlMC88oAGrnFkueUo
+         STXkEejC8jTxJ8AUDVLzj7IkwWrI48PnYSkgLkKUL/ogN36bRDBBnWCHMt50ORZZcFF9
+         ImYlwTeUKOOvhdvC6q/gS9S4Gcp87YfpJlOSdImVd0Mm43bJGqr6HIJJuJym5jACxHCv
+         hpOxaE8LziVYkL4VJwaEE8Yy9/B5OzzLSAB/2YkNndMktsA5r4MH+QmY5qmRHKA9rftZ
+         58vN8pO8jYdDj1Pq4Y+IrUsnJOt1QjIl8u9K/loPZ91824LjLu+CNTBJbPD1Bl9Uiyb0
+         A1JQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=6GrWQo82E3GSCpmP3GovxAjI7a2iaqXhqM2xOGoLzp4=;
-        b=skBMDmDlPiFWCOit+Nkau8JTPKXDTMIRWIbfzj96i6wnRidcWgy5GIrQYzs9SEQqon
-         CLEbTst0ZBWfqLBhFs9wpB2tvxF6LS3FAW1t0gRR8Ai5PJcoDhWhd+ejzibb9E8yweBQ
-         e/Buw+MKvIVd53Qx0S16qT8DXKOF9Qfm3x0N98RisFffxFOzO83k4Kg0RLxzZwBFR4kn
-         Ed9Y0lif+gaZ7qC650aztqCeKnYhHhjSJ+I/WZlqbky8EKtfhEXowaP8w+ZNxUSKJ2fr
-         sQvaBPYlJBnDZeZT1kt9Yr6orHReb5kANv19fUpYUFthI6uyoe0elMHQTN6eOZ2egkJz
-         3WNQ==
+        bh=NNnL2arrPA37Z1nmULMVLI76Pk3JisLZY4M4a2H5Jvs=;
+        b=kPSzKVBEc7DmbBmLs6MN2N1WrBk2fIZ/cjpGkbMuIAg36d+bv2XryI/Un28IpQGmOG
+         b5yXOehSSXJ8m14PQsGN/H2PsIDI+f+OiBuZvuC/gGugQFY9cgfLsQJdEF9hzLGw4Z7V
+         9dFsAjxfb6dS6/fzI62Vq9dBAtMk6LcwVGMduofgCevLQJQ3lHzOh8tMu0MbKU0txeD+
+         C1cFGck9tS2eiwpXSFXWKacau0Ls7JWcsAYHmlRcSFDZF3aYyPgvH/Z6z/e7XdOrNfvu
+         EbXVVtWM2h2Z2HDWG9Olt8mvhLc95WCitzIFnDjuCYXYH9/nk+5XptakIvIo20P/56HX
+         GQyg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,37 +30,25 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
- "Ingo Molnar" <mingo@kernel.org>,
- "Andy Lutomirski" <luto@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>,
- "Brian Gerst" <brgerst@gmail.com>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Will Deacon" <will.deacon@arm.com>,
- aliguori@amazon.com, keescook@google.com,
- "Borislav Petkov" <bp@alien8.de>,
- "David Laight" <David.Laight@aculab.com>,
- hughd@google.com,
- "H. Peter Anvin" <hpa@zytor.com>,
- daniel.gruss@iaik.tugraz.at,
- "Greg KH" <gregkh@linuxfoundation.org>,
- "Eduardo Valentin" <eduval@amazon.com>,
+ "Borislav Petkov" <bp@suse.de>,
+ luto@amacapital.net, keescook@google.com, dave.hansen@intel.com,
  "Josh Poimboeuf" <jpoimboe@redhat.com>,
- "Denys Vlasenko" <dvlasenk@redhat.com>,
+ ak@linux.intel.com, riel@redhat.com, pjt@google.com,
+ torvalds@linux-foundation.org, peterz@infradead.org,
  "Thomas Gleixner" <tglx@linutronix.de>,
- "Juergen Gross" <jgross@suse.com>
+ jikos@kernel.org, gregkh@linux-foundation.org, tim.c.chen@linux.intel.com,
+ "David Woodhouse" <dwmw2@infradead.org>
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.435783386@decadent.org.uk>
+Message-ID: <lsq.1520823814.808048825@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 041/104] x86/cpufeatures: Add X86_BUG_CPU_INSECURE
+Subject: [PATCH 3.2 078/104] x86/nospec: Fix header guards names
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699632893002612?=
-X-GMAIL-MSGID: =?utf-8?q?1594699632893002612?=
+X-GMAIL-THRID: =?utf-8?q?1594699632692841359?=
+X-GMAIL-MSGID: =?utf-8?q?1594699632692841359?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -68,70 +56,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Borislav Petkov <bp@suse.de>
 
-commit a89f040fa34ec9cd682aed98b8f04e3c47d998bd upstream.
+commit 7a32fc51ca938e67974cbb9db31e1a43f98345a9 upstream.
 
-Many x86 CPUs leak information to user space due to missing isolation of
-user space and kernel space page tables. There are many well documented
-ways to exploit that.
+... to adhere to the _ASM_X86_ naming scheme.
 
-The upcoming software migitation of isolating the user and kernel space
-page tables needs a misfeature flag so code can be made runtime
-conditional.
+No functional change.
 
-Add the BUG bits which indicates that the CPU is affected and add a feature
-bit which indicates that the software migitation is enabled.
-
-Assume for now that _ALL_ x86 CPUs are affected by this. Exceptions can be
-made later.
-
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Laight <David.Laight@aculab.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Eduardo Valentin <eduval@amazon.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: aliguori@amazon.com
-Cc: daniel.gruss@iaik.tugraz.at
-Cc: hughd@google.com
+Cc: riel@redhat.com
+Cc: ak@linux.intel.com
+Cc: peterz@infradead.org
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: jikos@kernel.org
+Cc: luto@amacapital.net
+Cc: dave.hansen@intel.com
+Cc: torvalds@linux-foundation.org
 Cc: keescook@google.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.2:
- - Assign the first available bug number
- - Adjust context]
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: tim.c.chen@linux.intel.com
+Cc: gregkh@linux-foundation.org
+Cc: pjt@google.com
+Link: https://lkml.kernel.org/r/20180126121139.31959-3-bp@alien8.de
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -214,6 +214,8 @@
-  */
- #define X86_BUG(x)		(NCAPINTS*32 + (x))
+ arch/x86/include/asm/nospec-branch.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
  
-+#define X86_BUG_CPU_INSECURE	X86_BUG(0) /* CPU is insecure and needs kernel page table isolation */
-+
- #if defined(__KERNEL__) && !defined(__ASSEMBLY__)
+-#ifndef __NOSPEC_BRANCH_H__
+-#define __NOSPEC_BRANCH_H__
++#ifndef _ASM_X86_NOSPEC_BRANCH_H_
++#define _ASM_X86_NOSPEC_BRANCH_H_
  
- #include <asm/asm.h>
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -767,6 +767,9 @@ static void __init early_identify_cpu(st
- 
- 	if (this_cpu->c_bsp_init)
- 		this_cpu->c_bsp_init(c);
-+
-+	/* Assume for now that ALL x86 CPUs are insecure */
-+	setup_force_cpu_bug(X86_BUG_CPU_INSECURE);
+ #include <asm/alternative.h>
+ #include <asm/alternative-asm.h>
+@@ -195,4 +195,4 @@ static inline void vmexit_fill_RSB(void)
  }
  
- void __init early_cpu_init(void)
+ #endif /* __ASSEMBLY__ */
+-#endif /* __NOSPEC_BRANCH_H__ */
++#endif /* _ASM_X86_NOSPEC_BRANCH_H_ */
