@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELseUyAFvcdm139/lLnXr/DhTsg5BuBBOy3srtj7/wfQe4Yl5tiG0+GT5K/6ypTlFSmiHGl9
-ARC-Seal: i=1; a=rsa-sha256; t=1520824072; cv=none;
+X-Google-Smtp-Source: AG47ELsAcjRGx6EBrrEerX2ph18arTE5DO3U9xCRJc1z0TXhFCm5FDg1mRnGu/ymWnvaMzUyrHU1
+ARC-Seal: i=1; a=rsa-sha256; t=1520824071; cv=none;
         d=google.com; s=arc-20160816;
-        b=Bl5zfh82jSeAEPeLcW6aAvnYV52a2AhUy02L+DgJzwSZ8ic+ygHADqIdRfaZjwS24g
-         iHa4pW+ySonnEf3X9djCQiS7z+6UmetYFPvGD9tIH9wZzkX9+QJEqraRGGk/QbafYQsp
-         Hm+/Bg1s9CXRRSoxg2OrLrjNC5a0UGFPHiyfl3F6CcUBnLqxY0zr5fbYPx4scApO/1tb
-         zC9aOYTcmu+FCon4zmBPrDwAKliVC/dmieSHVc+OTD//NO9qUO3uZOm+/lu+/XjKO2Mv
-         h1DYctK8RUcAqyFqAl74phIEZYpilU0skVCu2cLZY29WLU9SBLpOr+4rJs19NmoH5C+q
-         zSXg==
+        b=0ql5XsNXyxpOLAJnXzRmlar5C4Jn9M1Urn4J1XNZBPPUWDpb+ici8BsoayMJbuEjco
+         ril9r40jurT4qu2wu3JW7+dcBPk1dcdeajQuzl3w0HyCkDbKWLiVikZlvjZ2jSdX9qgo
+         fFEKazaZzC2O27kxONavZ1QuL6yn2Im2/+Owenn0ELpfC8xgy+r7JpkyjPdmF5J10ttF
+         xiBr+K07s3a2eiGRKZw619ayXhGFTqD9VpfcZUKUzpeanScjaEd2GpIw6hVmdW+UaJ02
+         TJK94YFPIB9Uu8p3rbMKyj+jZUKj3hpKqcTFULI/ddtuY4wwhXyiw2YZJL2x/wDKhFBC
+         JoZg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=af5m8B+qB73UFpOPeLI8fXkSvi4riIXjhwmc//WiOJc=;
-        b=SxYwxDNWj8URpFc9oh82qcMKgDax/YChk5gJn6rt2HozV3fD8gfpgKjirTjU+lRWC1
-         JeGKwHT3MkK9geN7Vbdf0pf59LTXXJ7KJdVSgevhiwTdaHgSR1kWJeM/ehYCmaPB50OC
-         7JXF1Nd+EuRgpvBcpR8Z2+gDf3g1ZPVQjwJRU4/R/s0iGXOgGFlLPgisth2WU7Qkggnm
-         hRYOEsi/wH9UP49DXv4L6L7VnT2jc33AkjO0/vyN5TgfpTUgQqP/vxdhhQ4MOyrGaQ09
-         XolyDlGfEdZdiByM/xzD1bBMa/1d3hU4evYGWkcjWzGE9svZWj2Yb+Sw/EiLkjK6ihWT
-         5Feg==
+        bh=g/aj8qO5aFf00yIgCukCNBgX6uzLTUHhZnDfgXfrwlg=;
+        b=doOAfKgTFL2jC+5PzAdpKOoal/q1Y9J7kaHYsfgPF5ARPedivdE2COQMYOD8PFJ6jM
+         NnJC8qmqaH91ezONuXfDj9m65qGArqYl7m0KQbOHuhZAVDIIyDA85smOmh5TufIieXFD
+         PQOnNFx2AhwexT0wgIB875SGgHIXC22V2Cd0DI7Wtcu7SUy6ug71A6kYobWWNkTCO7vz
+         xW9E9DOY1htlNrcljcjMW3dNdejJhHLWgBh5CfEFnxragL0BMbpBgT29iZnG5pPa8fK/
+         akGvmOd+xZjpxOBmLTtb+vSoQEC4haKLllWg//O6kJKmD7fFvU50tniA9FGv81sn5LiK
+         g4Iw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -29,32 +29,25 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
- "Ingo Molnar" <mingo@kernel.org>,
- "David Woodhouse" <dwmw2@infradead.org>,
- "Andy Lutomirski" <luto@kernel.org>,
- linux-arch@vger.kernel.org,
- "Will Deacon" <will.deacon@arm.com>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "Arjan van de Ven" <arjan@linux.intel.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+CC: akpm@linux-foundation.org, linux-arch@vger.kernel.org,
+ "Al Viro" <viro@zeniv.linux.org.uk>,
+ gregkh@linuxfoundation.org,
  "Thomas Gleixner" <tglx@linutronix.de>,
  "Dan Williams" <dan.j.williams@intel.com>,
- "Peter Zijlstra" <peterz@infradead.org>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Borislav Petkov" <bp@alien8.de>,
- "Josh Poimboeuf" <jpoimboe@redhat.com>
+ torvalds@linux-foundation.org, kernel-hardening@lists.openwall.com,
+ alan@linux.intel.com
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.733970867@decadent.org.uk>
+Message-ID: <lsq.1520823814.357571797@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 099/104] nospec: Kill array_index_nospec_mask_check()
+Subject: [PATCH 3.2 088/104] vfs, fdtable: Prevent bounds-check bypass via
+ speculative execution
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699623234297784?=
-X-GMAIL-MSGID: =?utf-8?q?1594699623234297784?=
+X-GMAIL-THRID: =?utf-8?q?1594699621976171926?=
+X-GMAIL-MSGID: =?utf-8?q?1594699621976171926?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -64,78 +57,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Dan Williams <dan.j.williams@intel.com>
 
-commit 1d91c1d2c80cb70e2e553845e278b87a960c04da upstream.
+commit 56c30ba7b348b90484969054d561f711ba196507 upstream.
 
-There are multiple problems with the dynamic sanity checking in
-array_index_nospec_mask_check():
+'fd' is a user controlled value that is used as a data dependency to
+read from the 'fdt->fd' array.  In order to avoid potential leaks of
+kernel memory values, block speculative execution of the instruction
+stream that could issue reads based on an invalid 'file *' returned from
+__fcheck_files.
 
-* It causes unnecessary overhead in the 32-bit case since integer sized
-  @index values will no longer cause the check to be compiled away like
-  in the 64-bit case.
-
-* In the 32-bit case it may trigger with user controllable input when
-  the expectation is that should only trigger during development of new
-  kernel enabling.
-
-* The macro reuses the input parameter in multiple locations which is
-  broken if someone passes an expression like 'index++' to
-  array_index_nospec().
-
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Co-developed-by: Elena Reshetova <elena.reshetova@intel.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-arch@vger.kernel.org
-Link: http://lkml.kernel.org/r/151881604278.17395.6605847763178076520.stgit@dwillia2-desk3.amr.corp.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: kernel-hardening@lists.openwall.com
+Cc: gregkh@linuxfoundation.org
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: torvalds@linux-foundation.org
+Cc: alan@linux.intel.com
+Link: https://lkml.kernel.org/r/151727418500.33451.17392199002892248656.stgit@dwillia2-desk3.amr.corp.intel.com
+[bwh: Backported to 3.2: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- include/linux/nospec.h | 22 +---------------------
- 1 file changed, 1 insertion(+), 21 deletions(-)
+ include/linux/fdtable.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/include/linux/nospec.h
-+++ b/include/linux/nospec.h
-@@ -30,26 +30,6 @@ static inline unsigned long array_index_
- #endif
+--- a/include/linux/fdtable.h
++++ b/include/linux/fdtable.h
+@@ -9,6 +9,7 @@
+ #include <linux/compiler.h>
+ #include <linux/spinlock.h>
+ #include <linux/rcupdate.h>
++#include <linux/nospec.h>
+ #include <linux/types.h>
+ #include <linux/init.h>
+ #include <linux/fs.h>
+@@ -85,8 +86,10 @@ static inline struct file * fcheck_files
+ 	struct file * file = NULL;
+ 	struct fdtable *fdt = files_fdtable(files);
  
- /*
-- * Warn developers about inappropriate array_index_nospec() usage.
-- *
-- * Even if the CPU speculates past the WARN_ONCE branch, the
-- * sign bit of @index is taken into account when generating the
-- * mask.
-- *
-- * This warning is compiled out when the compiler can infer that
-- * @index and @size are less than LONG_MAX.
-- */
--#define array_index_mask_nospec_check(index, size)				\
--({										\
--	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,			\
--	    "array_index_nospec() limited to range of [0, LONG_MAX]\n"))	\
--		_mask = 0;							\
--	else									\
--		_mask = array_index_mask_nospec(index, size);			\
--	_mask;									\
--})
--
--/*
-  * array_index_nospec - sanitize an array index after a bounds check
-  *
-  * For a code sequence like:
-@@ -67,7 +47,7 @@ static inline unsigned long array_index_
- ({									\
- 	typeof(index) _i = (index);					\
- 	typeof(size) _s = (size);					\
--	unsigned long _mask = array_index_mask_nospec_check(_i, _s);	\
-+	unsigned long _mask = array_index_mask_nospec(_i, _s);		\
- 									\
- 	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
- 	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
+-	if (fd < fdt->max_fds)
++	if (fd < fdt->max_fds) {
++		fd = array_index_nospec(fd, fdt->max_fds);
+ 		file = rcu_dereference_check_fdtable(files, fdt->fd[fd]);
++	}
+ 	return file;
+ }
+ 
