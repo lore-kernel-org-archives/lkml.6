@@ -1,44 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932687AbeCLRov (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 13:44:51 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:44934 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932231AbeCLRot (ORCPT
+        id S932703AbeCLRp7 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 13:45:59 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:50323 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932231AbeCLRp6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 13:44:49 -0400
-Subject: Re: [PATCH] kbuild: check for pkg-config on make menu/n/g/xconfig
-To: =?UTF-8?Q?Bj=c3=b8rn_Forsman?= <bjorn.forsman@gmail.com>
-Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <09cf5537-b2d7-5bf5-0c0b-d0b765e1e75b@infradead.org>
- <CAEYzJUEr0Wvv9UOV4wBYC6E3bh_0ih5A=ebPaKs06egZAZfPUw@mail.gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <a06826d9-1607-72c6-2e30-ab56b2306bd8@infradead.org>
-Date: Mon, 12 Mar 2018 10:44:44 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 12 Mar 2018 13:45:58 -0400
+Date: Mon, 12 Mar 2018 18:45:36 +0100 (CET)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: Florian Fainelli <f.fainelli@gmail.com>, Eric Anholt <eric@anholt.net>
+Cc: linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Message-ID: <258037433.356163.1520876736286@email.1und1.de>
+In-Reply-To: <20180309233639.2029-1-eric@anholt.net>
+References: <20180309233639.2029-1-eric@anholt.net>
+Subject: Re: [PATCH] ARM: bcm2835: Add the DPI hardware to the device tree.
 MIME-Version: 1.0
-In-Reply-To: <CAEYzJUEr0Wvv9UOV4wBYC6E3bh_0ih5A=ebPaKs06egZAZfPUw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev22
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K0:R9PRCC/rE3uz9Vyu7FiSFOfEskVMAx3ysbgF+XL+A30PZ90p/6Q
+ JYdA1ahfT5Tqig9kiVEu5nbCmM6W4uy3a0FQvMV30vROF2rnIWnWBHqKAUyW2Kmi5a7GuUA
+ X725mR33/5vVClI7Ra7MmuffugMOppEwFgOlyNvwREI9GOJZrAoYqZMXvc6SvVf1hLkJGpG
+ S6GDmlYik4pRwWyljLCRg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:pwamHl9OL5o=:ERJzFcS3ZwH997tY0Hb5qD
+ p06jizW58H8NHAjzgJXOvA+NK46C84UKri2AS3A93jgnEhdA9BdEQqGszleyZwaVzfKBeRe2A
+ trgOv+GWUqt+jrqhorhhH2UTcMRjj0D4wo4sCZmomgkem73stbtnWbjmGFKIl7RgpUnOuApnj
+ fj9LZrDF1Bh4fsE1pTS1YYXZn2xHSo/JZ/LDD8rVlaMLEoZl9hjVcNPcLM3M+qMi5OIr0+7pf
+ r6fYnXci/AGJoOsnGdnvxY2rj7cHl01xMrlFYkcnpqbG/Zbgq+Bbhku2LB6fvmP+d7mZBiLul
+ IBs7DjM1m7GfPVLXjHg9Fzu8uLP5mi4oriUnODJCWL4KzSHj4SIXw71kxk865y/n0ZkkI2leJ
+ 1GuXYgxttUyvEMjDk3UDI7egc/R8KhRcZr5VRXWhUJB3O9yfO8OqAuMUjW/5eQUsCwBlRVWII
+ rXwLAdq0nviGbJVQnvn9wglnrXEk8t+xDjFDzOsJbRAe/fdBxIgNPiftM7DeTLcUmBomqG/c4
+ 0zVrgjhtN9fv9jn8317wAzjxcCfTYRfEekGDFbqW0ppm6rgIS9RLhiX1cSyhbKY9EszqSWaf5
+ inaO8yNs/1txyB9mZKnafkGxb5Swy5hNDFjpQmtO/KIdUQD5gXKvWQCWID5Jf6hjIMjTc9keI
+ va89+Jky4bEtGPj8/u9PfxGb+NuZonSmj51DZJzBTYw79nU87+wmdm90CuhW1Rod1Lw5zggEF
+ y3UxhJqgs0o7ydOIhiE/Y+S4ZCQufBH6/Rdbc8IUGACXDC9fD8QWlV0JCbM=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/11/2018 02:00 PM, Bjørn Forsman wrote:
-> On 11 March 2018 at 21:12, Randy Dunlap <rdunlap@infradead.org> wrote:
->> +pkgcfg=`which pkg-config >/dev/null 2>&1`
+> Eric Anholt <eric@anholt.net> hat am 10. März 2018 um 00:36 geschrieben:
 > 
-> Please use "command -v" instead of "which". command -v is in POSIX, so
-> the shell will have it for sure (builtin). which is not a builtin, it
-> is an external command that may or may not be installed on the system.
+> 
+> It's currently marked disabled, as it's not useful without a panel
+> associated with it and the GPIO pins routed to ALT2.
+> 
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> ---
+> 
 
-Will do. Thanks.
-
-Just waiting to see if there are any other comments...
-
--- 
-~Randy
+FWIW, Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
