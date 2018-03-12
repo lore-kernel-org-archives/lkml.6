@@ -1,11 +1,11 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3443661-1520825997-2-5547131447297092370
+X-Cyrus-Session-Id: sloti22d1t05-3443661-1520826010-2-730423385075283397
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
   RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, UNPARSEABLE_RELAY 0.001,
-  LANGUAGES encada, BAYES_USED global, SA_VERSION 3.4.0
+  LANGUAGES roensk.us-ascii, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: 
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520825997; b=sY3mMAPUVWmLHdxlKRQxZ/uiLe2rBMQyOdiLgF88sQj5k3e
-    yCJ/y2UL4fz+z11qCJc0hS+MLgJtbOqP7Md2WBEzNKy1c3Fo9JsVjG5vRpOlcFbj
-    GI0GtogoLPPHvA4+Z89xUlq2j+hxTocnSR6kWlVOj2LVE09dm9vGU/HnIvX1z7uw
-    AI0ZZF4l/g347GYc2BKaHjwLXQjy2PuBSO0flUDh0WAHvWWJ8eHFywk+KWZKR2Ry
-    7Tx9CjMVI7ePpp9IRHuBaRE63TbWdpmgLvzptPP6kNLM4SCA46j79T4nGeqtmwWO
-    RYpH6XDPyYlNl+9ezSyt5rk56Aa9ovAsIkAXe0g==
+    t=1520826010; b=Hi5lFzrh5UzpBB84CUC6Vok/4i/+HOV4I8SqFUpsWq5ejS/
+    t7Bc8Rym08UIw/j8DQs+RZ4MWiNeP0MGrg8tYRIgEhghxl3c5xkcXdk/kPJGaKUr
+    qyTvGGGqRCSXiIzBd/RjG4IggsPVnbSQjKq+Fkf2eW/KdTZ2EnGEqjvaGNk794Km
+    cTOWfc3ZMCzcruHIV+ik/JqnrCt9kLTv4bDRqKGGR9JPiICTYm3b424UmjM+1ros
+    sUfJddg3zWzQ+T6lQXlv82yt/xUpCm7yJTPbgi/rYcdFRs3yvn5Ps7KElii3v/ne
+    vqZo+Iolv3H9LUd/FPylzjziKebB17wnYaE2fYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :mime-version:content-type:sender:list-id; s=arctest; t=
-    1520825997; bh=bxWt2QQOBPyb2P8kP9bWP3HO3/ZYwulBd0/6/5hh2WQ=; b=c
-    ndTEw8woTNRiHkZgeV/Z0ZgtFZqyghdcnMFaNmw2hiV7H+28YnTQ5Ejo2gqar9sM
-    v762ImwJKgDwUMTuyJy6WqKHkyq0XXmdR8SiQTGEsU/mtBGpf0rdQfwGacRF6+Xj
-    88Pi1oRkwWYE56q+BbjriX7hB+Y528KfDl4w79wNfXtsXxpI8y1+BAso/sLZebU2
-    VZtKPbvzW/E+KzOSvCHBgP9rXfObMRvYJ9D+lZI+K9IwNusH09y8slL6w5avNpkZ
-    lxVx3AU4GkA83dRHrMfwRBcRZXbYstJq8k//rUtXUN/RQC+vtC1U08XKbt/Jeyoi
-    yzhNSRoiZr6MgLbp1cl9A==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520826010; bh=ilwpkXeDgJLvjeZequq8rMO25k
+    y+E3rlCq+5PRhuViE=; b=b2wPw5pkwshQQNoXyf9qQ91ffCrQGsoiD0rfSE8WN1
+    bGz1tp14UhkDA7HXTyavWkw6hPTklDl2ocgokuZdMTIxATb/aa2qfNeqAiI+AO8f
+    UGjbCoYz780aJw77dzEcrbMyGhCkw5R0PRN68ojQe1kKdEiO58pRt4JgK39etQu+
+    vJ78/C0Npc28TIezG1r/z9KiDQGow6Mb8ZPBPo3arLsELanDDI9zptwR47EEW/PA
+    IdIPSimbB+eE7pjRJRR0Bcxilo2U9OWQxApXYg7jOjYCtiXW9iz7ZPfiulgepimA
+    ld2Tu470hGap7NhaXrfrsVy0kyLFavZ5zIesC9FWJdKw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mediatek.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
@@ -49,13 +49,13 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mediatek.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933214AbeCLDjj (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Mar 2018 23:39:39 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:5101 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932739AbeCLDjT (ORCPT
+        id S933077AbeCLDji (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Mar 2018 23:39:38 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:56942 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932743AbeCLDjT (ORCPT
         <rfc822;linux-usb@vger.kernel.org>); Sun, 11 Mar 2018 23:39:19 -0400
-X-UUID: 30c61c18c535450ca94a4283e98bb775-20180312
+X-UUID: 7c595adb8667408e89fec7f91d1f2915-20180312
 From: Chunfeng Yun <chunfeng.yun@mediatek.com>
 To: Kishon Vijay Abraham I <kishon@ti.com>
 CC: Matthias Brugger <matthias.bgg@gmail.com>,
@@ -68,21 +68,23 @@ CC: Matthias Brugger <matthias.bgg@gmail.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-usb@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
         <devicetree@vger.kernel.org>
-Subject: [PATCH 1/3] phy: phy-mtk-tphy: keep default value of mcu_bus_ck_gate_en
-Date: Mon, 12 Mar 2018 11:39:06 +0800
-Message-ID: <c9679bc6e969ebf0f97a01c6d1aff3bbc0e8e4f7.1520824899.git.chunfeng.yun@mediatek.com>
+Subject: [PATCH 2/3] phy: phy-mtk-tphy: add configurable parameters for slew rate calibrate
+Date: Mon, 12 Mar 2018 11:39:07 +0800
+Message-ID: <123d1a24659be168d0b040de4a67612acacf66f1.1520824899.git.chunfeng.yun@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <c9679bc6e969ebf0f97a01c6d1aff3bbc0e8e4f7.1520824899.git.chunfeng.yun@mediatek.com>
+References: <c9679bc6e969ebf0f97a01c6d1aff3bbc0e8e4f7.1520824899.git.chunfeng.yun@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23714.000
-X-TM-AS-Result: No-1.908400-8.000000-10
-X-TMASE-MatchedRID: vws8hDIFFaMx6KucKu0cuu7KTDtx8CggHIOuQjCOKFtd15Kx2hUn1PlY
-        oV6p/cSxdaFz8kVCOhx5OPD8XJFfpB8TzIzimOwP0C1sQRfQzEHEQdG7H66TyN+E/XGDLHcMxgX
-        JkdlDcqFt46joM/BziE/ZqQ3W0/wWJoZ1iX3RkdWUc/Dt3amsQitKSMGtticXxKznzw+nKt4U4P
-        KSo1WaKM/qwp+F9lXT8OyccFNBL2TKhETi2//sjuP9Cb59K8ACZrS+A8PszW/U9h9N881NSQ==
+X-TM-AS-Result: No-5.648400-8.000000-10
+X-TMASE-MatchedRID: RZGtuGBMNjXT8bI3kykaU/SG/+sPtZVkAWQaZTMSP85d15Kx2hUn1PlY
+        oV6p/cSxhVmF9kz2wxKE+/1bNiTZfG5/NyTKlG69yeVujmXuYYVXLUapz6y7gZsoi2XrUn/Jn6K
+        dMrRsL14qtq5d3cxkNa6KQIvxVddM3bsfrFOkvbJNhN8QxBlnsWz9AG6WDepGlr1oe/64dxKXmU
+        /FzSSM1Q==
 X-TM-AS-User-Approved-Sender: No
 X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--1.908400-8.000000
+X-TMASE-Result: 10--5.648400-8.000000
 X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23714.000
 X-TMASE-POSTMAN: 2-d;
 X-MTK: N
@@ -92,29 +94,65 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The default value of mcu_bus_ck_gate_en is 1, if clear it, will
-prevent system to enter deep idle mode, so keep its default value
-and without affecting PCIe function.
+There are two parameters, ref_clk and coefficient, for U2 slew rate
+calibrate which may vary on different SoCs, here allow them to be
+configurable
 
 Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 ---
- drivers/phy/mediatek/phy-mtk-tphy.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/phy/mediatek/phy-mtk-tphy.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/phy/mediatek/phy-mtk-tphy.c b/drivers/phy/mediatek/phy-mtk-tphy.c
-index 1e96d07..6073c25 100644
+index 6073c25..38c281b 100644
 --- a/drivers/phy/mediatek/phy-mtk-tphy.c
 +++ b/drivers/phy/mediatek/phy-mtk-tphy.c
-@@ -688,8 +688,7 @@ static void pcie_phy_instance_power_on(struct mtk_tphy *tphy,
- 	u32 tmp;
+@@ -306,6 +306,8 @@ struct mtk_tphy {
+ 	const struct mtk_phy_pdata *pdata;
+ 	struct mtk_phy_instance **phys;
+ 	int nphys;
++	int src_ref_clk; /* MHZ, reference clock for slew rate calibrate */
++	int src_coef; /* coefficient for slew rate calibrate */
+ };
  
- 	tmp = readl(bank->chip + U3P_U3_CHIP_GPIO_CTLD);
--	tmp &= ~(P3C_FORCE_IP_SW_RST | P3C_MCU_BUS_CK_GATE_EN |
--		P3C_REG_IP_SW_RST);
-+	tmp &= ~(P3C_FORCE_IP_SW_RST | P3C_REG_IP_SW_RST);
- 	writel(tmp, bank->chip + U3P_U3_CHIP_GPIO_CTLD);
+ static void hs_slew_rate_calibrate(struct mtk_tphy *tphy,
+@@ -360,16 +362,17 @@ static void hs_slew_rate_calibrate(struct mtk_tphy *tphy,
+ 	writel(tmp, fmreg + U3P_U2FREQ_FMMONR1);
  
- 	tmp = readl(bank->chip + U3P_U3_CHIP_GPIO_CTLE);
+ 	if (fm_out) {
+-		/* ( 1024 / FM_OUT ) x reference clock frequency x 0.028 */
+-		tmp = U3P_FM_DET_CYCLE_CNT * U3P_REF_CLK * U3P_SLEW_RATE_COEF;
+-		tmp /= fm_out;
++		/* ( 1024 / FM_OUT ) x reference clock frequency x coef */
++		tmp = tphy->src_ref_clk * tphy->src_coef;
++		tmp = (tmp * U3P_FM_DET_CYCLE_CNT) / fm_out;
+ 		calibration_val = DIV_ROUND_CLOSEST(tmp, U3P_SR_COEF_DIVISOR);
+ 	} else {
+ 		/* if FM detection fail, set default value */
+ 		calibration_val = 4;
+ 	}
+-	dev_dbg(tphy->dev, "phy:%d, fm_out:%d, calib:%d\n",
+-		instance->index, fm_out, calibration_val);
++	dev_dbg(tphy->dev, "phy:%d, fm_out:%d, calib:%d (clk:%d, coef:%d)\n",
++		instance->index, fm_out, calibration_val,
++		tphy->src_ref_clk, tphy->src_coef);
+ 
+ 	/* set HS slew rate */
+ 	tmp = readl(com + U3P_USBPHYACR5);
+@@ -1041,6 +1044,13 @@ static int mtk_tphy_probe(struct platform_device *pdev)
+ 		tphy->u3phya_ref = NULL;
+ 	}
+ 
++	tphy->src_ref_clk = U3P_REF_CLK;
++	tphy->src_coef = U3P_SLEW_RATE_COEF;
++	/* update parameters of slew rate calibrate if exist */
++	device_property_read_u32(dev, "mediatek,src-ref-clk-mhz",
++		&tphy->src_ref_clk);
++	device_property_read_u32(dev, "mediatek,src-coef", &tphy->src_coef);
++
+ 	port = 0;
+ 	for_each_child_of_node(np, child_np) {
+ 		struct mtk_phy_instance *instance;
 -- 
 1.9.1
 
