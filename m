@@ -1,70 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751336AbeCLNFu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 09:05:50 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44050 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751104AbeCLNFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 09:05:49 -0400
-Date: Mon, 12 Mar 2018 14:05:47 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Sandipan Das <sandipan@linux.vnet.ibm.com>
-Cc: acme@kernel.org, jolsa@kernel.org, linux-kernel@vger.kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com
-Subject: Re: [PATCH] perf test: Fix exit code for
- record+probe_libc_inet_pton.sh
-Message-ID: <20180312130547.GD23111@krava>
-References: <20180312124450.30371-1-sandipan@linux.vnet.ibm.com>
+        id S1751390AbeCLNHN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 09:07:13 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:52802 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751104AbeCLNHM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 09:07:12 -0400
+Date: Mon, 12 Mar 2018 14:06:53 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/microcode/AMD: check microcode file sanity before
+ loading it
+Message-ID: <20180312130653.GC9431@pd.tnic>
+References: <787b0ecc-8c1a-3b5a-82e0-9840c7b7c595@maciej.szmigiero.name>
+ <20180312095336.GB9431@pd.tnic>
+ <ddf0ddc2-bc46-d61c-7080-0eca26d6bfcf@maciej.szmigiero.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180312124450.30371-1-sandipan@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <ddf0ddc2-bc46-d61c-7080-0eca26d6bfcf@maciej.szmigiero.name>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 06:14:50PM +0530, Sandipan Das wrote:
-> This fixes record+probe_libc_inet_pton.sh from always exiting
-> with code 0 and making the test pass even if the perf script
-> output does not match the expected pattern.
-> 
-> The issue can be observed if this test is run with the verbose
-> flags as shown below:
-> 
-> 60: probe libc's inet_pton & backtrace it with ping       :
-> ...
-> ping 19602 [006] 16988.413767: probe_libc:inet_pton: (7fff9a2c42e8)
-> 1842e8 __GI___inet_pton (/usr/lib64/libc-2.26.so)
-> 130db4 getaddrinfo (/usr/lib64/libc-2.26.so)
-> 
-> FAIL: expected backtrace entry 3 ".*\(.*/bin/ping.*\)$" got ""
-> test child finished with 0
-> ...
-> probe libc's inet_pton & backtrace it with ping: Ok
-> 
-> Fixes: e07d585e2454 ("perf tests: Switch trace+probe_libc_inet_pton to use record")
-> Signed-off-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
-> ---
->  tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-> index 52c3ee701a89..1ecc1f0ff84a 100755
-> --- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-> +++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-> @@ -47,7 +47,10 @@ trace_libc_inet_pton_backtrace() {
->  		[ -z "${expected[$idx]}" ] && break
->  	done
->  
-> -	rm -f $file
-> +	# If any statements are executed from this point onwards,
-> +	# the exit code of the last among these will be reflected
-> +	# in err below. If the exit code is 0, the test will pass
-> +	# even if the perf script output does not match.
+On Mon, Mar 12, 2018 at 01:56:59PM +0100, Maciej S. Szmigiero wrote:
+> The equivalent CPU table is allocated using vmalloc() so it is nice
+> when the maximum size is an integer multiple of the page size.
 
-right :-\ but we still need to delete that $file.. I assume it will
-get delete by the 'rm -f ${file}' in the script main body?
+Arbitrary.
 
-thanks,
-jirka
+> Since the maximum entry count in current microcode files is 18 the
+
+Where did you dream up that 18?
+
+> maximum size of 256 entries (or one page) gives us plenty of headroom.
+
+Arbitrary.
+
+> Also, looking in the past, there probably won't be more than 256 AMD CPU
+> types in one CPU family.
+
+Wrong.
+
+The only limitation on the equivalence table size we have is the 32-bit
+unsigned length field at offset 8 in the equivalence table header.
+
+> This limit is an absolute upper cap of a patch size.
+
+More dreamt up crap.
+
+See verify_patch_size() for the actual patch sizes.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
