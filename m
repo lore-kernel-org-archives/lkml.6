@@ -1,136 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932634AbeCLRNh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 13:13:37 -0400
-Received: from mail-wr0-f175.google.com ([209.85.128.175]:37849 "EHLO
-        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932326AbeCLRNg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 13:13:36 -0400
-X-Google-Smtp-Source: AG47ELuNEaaUc25vbKXGCYNZwjgTRXp4ZLXwujv4jB/Ocq1wVGFP+Bq3y8/SCvY1e2L/uKV+Bs2cpQ==
-From: Christian Brauner <christian.brauner@ubuntu.com>
-To: viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        ebiederm@xmission.com, torvalds@linux-foundation.org
-Cc: Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 0/3 v3] devpts: handle bind-mounts
-Date: Mon, 12 Mar 2018 18:13:27 +0100
-Message-Id: <20180312171330.32054-1-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.15.1
+        id S932635AbeCLRQM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 13:16:12 -0400
+Received: from mx1.riseup.net ([198.252.153.129]:50291 "EHLO mx1.riseup.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932394AbeCLRQJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 13:16:09 -0400
+X-Riseup-User-ID: 8C6DA30095281D1ACA3A657BC657D5E57D36D12C2FF9684EFF7B9864CD341704
+Subject: Re: [linux-sunxi] [PATCH 5/9] media: platform: Add Sunxi Cedrus
+ decoder driver
+To: paul.kocialkowski@bootlin.com
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+        Florent Revest <revestflo@gmail.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Thomas van Kleef <thomas@vitsch.nl>,
+        "Signed-off-by : Bob Ham" <rah@settrans.net>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+References: <20180309100933.15922-3-paul.kocialkowski@bootlin.com>
+ <20180309101445.16190-3-paul.kocialkowski@bootlin.com>
+From: =?UTF-8?Q?Joonas_Kylm=c3=a4l=c3=a4?= <joonas.kylmala@iki.fi>
+Message-ID: <a133f4f9-8b99-323f-5e57-c2c6966d3ecb@iki.fi>
+Date: Mon, 12 Mar 2018 17:15:00 +0000
+MIME-Version: 1.0
+In-Reply-To: <20180309101445.16190-3-paul.kocialkowski@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey everyone,
+Paul Kocialkowski:
+> diff --git a/drivers/media/platform/sunxi-cedrus/sunxi_cedrus_regs.h b/drivers/media/platform/sunxi-cedrus/sunxi_cedrus_regs.h
+> new file mode 100644
+> index 000000000000..7384daa94737
+> --- /dev/null
+> +++ b/drivers/media/platform/sunxi-cedrus/sunxi_cedrus_regs.h
+> @@ -0,0 +1,170 @@
+> +/*
+> + * Sunxi Cedrus codec driver
+> + *
+> + * Copyright (C) 2016 Florent Revest
+> + * Florent Revest <florent.revest@free-electrons.com>
+> + *
+> + * Based on Cedrus
+> + *
+> + * Copyright (c) 2013 Jens Kuske <jenskuske@gmail.com>
+> + *
+> + * This software is licensed under the terms of the GNU General Public
+> + * License version 2, as published by the Free Software Foundation, and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#ifndef SUNXI_CEDRUS_REGS_H
+> +#define SUNXI_CEDRUS_REGS_H
+> +
+> +/*
+> + * For more information consult http://linux-sunxi.org/VE_Register_guide
+> + */
+> +
+> +/* Special registers values */
+> +
+> +/* VE_CTRL:
+> + * The first 3 bits indicate the engine (0 for MPEG, 1 for H264, b for AVC...)
+> + * The 16th and 17th bits indicate the memory type (3 for DDR3 32 bits)
+> + * The 20th bit is unknown but needed
+> + */
+> +#define VE_CTRL_MPEG		0x130000
+> +#define VE_CTRL_H264		0x130001
+> +#define VE_CTRL_AVC		0x13000b
+> +#define VE_CTRL_REINIT		0x130007
+> +
+> +/* VE_MPEG_CTRL:
+> + * The bit 3 (0x8) is used to enable IRQs
+> + * The other bits are unknown but needed
+> + */
+> +#define VE_MPEG_CTRL_MPEG2	0x800001b8
+> +#define VE_MPEG_CTRL_MPEG4	(0x80084118 | BIT(7))
+> +#define VE_MPEG_CTRL_MPEG4_P	(VE_MPEG_CTRL_MPEG4 | BIT(12))
+> +
+> +/* VE_MPEG_VLD_ADDR:
+> + * The bits 27 to 4 are used for the address
+> + * The bits 31 to 28 (0x7) are used to select the MPEG or JPEG engine
+> + */
+> +#define VE_MPEG_VLD_ADDR_VAL(x)	((x & 0x0ffffff0) | (x >> 28) | (0x7 << 28))
+> +
+> +/* VE_MPEG_TRIGGER:
+> + * The first three bits are used to trigger the engine
+> + * The bits 24 to 26 are used to select the input format (1 for MPEG1, 2 for 
 
-This is the third iteration of this patch. Major changes are:
-- rewritten commit message to thoroughly analyse the problem for
-  posterity in Subject: [PATCH 2/3 v3] devpts: resolve devpts bind-mounts
-  and in this cover letter.
-- extended selftests to test for correct handling of /dev/pts/ptmx
-  bind-mounts to /dev/ptmx and non-standard devpts mounts such as
-  mount -t devpts devpts /mnt
-
-Most libcs will still look at /dev/ptmx when opening the master fd of a pty
-device. When /dev/ptmx is a bind-mount of /dev/pts/ptmx and the TIOCGPTPEER
-ioctl() is used to safely retrieve a file descriptor for the slave side of
-the pty based on the master fd, the /proc/self/fd/{0,1,2} symlinks will
-point to /.
-
-When the kernel tries to look up the root mount of the dentry for the slave
-file descriptor it will detect that the dentry is escaping its bind-mount
-since the root mount of the dentry is /dev/pts where the devpts is mounted
-but the root mount of /dev/ptmx is /dev.
-
-Having bind-mounts of /dev/pts/ptmx to /dev/ptmx not working correctly is a
-regression. In addition, it is also a fairly common scenario in containers
-employing user namespaces.
-
-To handle bind-mounts of /dev/pts/ptmx to /dev/ptmx correctly we need to
-walk up the bind-mounts for /dev/ptmx in devpts_mntget(). Since the
-contents of /proc/<pid>/fd/<nr> symlinks attached to the slave side of a
-file descriptor will always point to a path under the devpts mount we need
-to try and ensure that the kernel doesn't falsely get the impression that a
-pty slave file descriptor retrieved via TIOCGPTPEER based on a pty master
-file descriptor opened via a bind-mount of the ptmx device escapes its
-bind-mount. To clarify in pseudo code:
-
-* bind-mount /dev/pts/ptmx to /dev/ptmx
-* master = open("/dev/ptmx", O_RDWR | O_NOCTTY | O_CLOEXEC);
-* slave = ioctl(master, TIOCGPTPEER, O_RDWR | O_NOCTTY | O_CLOEXEC);
-
-would cause the kernel to think that slave is escaping its bind-mount. The
-reason is that while the devpts mounted at /dev/pts has devtmpfs mounted at
-/dev as its parent mount:
-
-21 -- -- / /dev
--- 21 -- / /dev/pts
-
-they are on different devices
-
--- -- 0:6  / /dev
--- -- 0:20 / /dev/pts
-
-which has the consequence that the pathname of the directory which forms
-the root of the /dev/pts mount is /. So if we bind-mount /dev/pts/ptmx to
-/dev/ptmx we will end up on the same device as the devtmpfs mount at
-/dev/pts
-
--- -- 0:20 /ptmx /dev/ptmx
-
-Without the bind-mount resolution patch here the kernel will now perform
-the bind-mount escape check directly on /dev/ptmx. When it hits
-devpts_ptmx_path()  calls pts_path() which in turn calls
-path_parent_directory(). While one would expect that
-path_parent_directory() *should* yield /dev it will yield / since
-/dev and /dev/pts are on different devices. This will cause path_pts() to
-fail finding a "pts" directory since there is none under /. Thus, the
-kernel detects that /dev/ptmx is escaping its bind-mount and will set
-/proc/<pid>/fd/<nr> to /.
-
-This patch changes the logic to do bind-mount resolution and after the
-bind-mount has been resolved (i.e. we have traced it back to the devpts
-mount) we can safely perform devpts_ptmx_path() and check whether we find a
-"pts" directory in the parent directory of the devpts mount. Since
-path_parent_directory() will now correctly yield /dev as parent directory
-for the devpts mount at /dev/pts.
-
-However, we can only perform devpts_ptmx_path() devpts_mntget() if we
-either did resolve a bind-mount or did not find a suitable devpts
-filesystem. The reason is that we want and need to support non-standard
-mountpoints for the devpts filesystem. If we call devpts_ptmx_path()
-although we did already find a devpts filesystem and did not resolve
-bind-mounts we will fail on devpts mounts such as:
-
-mount -t devpts devpts /mnt
-
-where no "pts" directory will be under /. So change the logic to account
-for this.
-
-Here's a little reproducer that presupposes a libc that uses TIOCGPTPEER in
-its openpty() implementation:
-
-unshare --mount
-mount --bind /dev/pts/ptmx /dev/ptmx
-chmod 666 /dev/ptmx
-script
-ls -al /proc/self/fd/0
-
-with output:
-
-lrwx------ 1 chb chb 64 Mar  7 16:41 /proc/self/fd/0 -> /
-
-Christian Brauner (3):
-  devpts: hoist out check for DEVPTS_SUPER_MAGIC
-  devpts: resolve devpts bind-mounts
-  selftests: add devpts selftests
-
- fs/devpts/inode.c                                |  35 ++-
- tools/testing/selftests/Makefile                 |   1 +
- tools/testing/selftests/filesystems/.gitignore   |   1 +
- tools/testing/selftests/filesystems/Makefile     |   2 +-
- tools/testing/selftests/filesystems/devpts_pts.c | 281 +++++++++++++++++++++++
- 5 files changed, 308 insertions(+), 12 deletions(-)
- create mode 100644 tools/testing/selftests/filesystems/devpts_pts.c
-
--- 
-2.15.1
+Trailing whitespace.
