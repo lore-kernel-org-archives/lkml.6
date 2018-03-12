@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932178AbeCLNp5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 09:45:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41948 "EHLO mx1.redhat.com"
+        id S932303AbeCLNqD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 09:46:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45360 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751279AbeCLNpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 09:45:55 -0400
+        id S932242AbeCLNqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 09:46:01 -0400
 From: Jiri Olsa <jolsa@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
@@ -20,67 +20,112 @@ Cc: lkml <linux-kernel@vger.kernel.org>,
         Jin Yao <yao.jin@linux.intel.com>, Kan Liang <kan.liang@intel.com>,
         Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
         Oleg Nesterov <onestero@redhat.com>, Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 1/8] hw_breakpoint: Pass bp_type directly as find_slot_idx argument
-Date: Mon, 12 Mar 2018 14:45:41 +0100
-Message-Id: <20180312134548.31532-2-jolsa@kernel.org>
+Subject: [PATCH 3/8] hw_breakpoint: Add modify_bp_slot function
+Date: Mon, 12 Mar 2018 14:45:43 +0100
+Message-Id: <20180312134548.31532-4-jolsa@kernel.org>
 In-Reply-To: <20180312134548.31532-1-jolsa@kernel.org>
 References: <20180312134548.31532-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Passing bp_type directly as find_slot_idx argument,
-so we don't need to have whole event to get the
-breakpoint slot type. It will be used in following
-changes.
+Adding modify_bp_slot function to keep slot numbers
+correct when changing the breakpoint type.
+
+Using existing __release_bp_slot/__reserve_bp_slot
+call sequence to update the slot counts.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- kernel/events/hw_breakpoint.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ kernel/events/hw_breakpoint.c | 46 ++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 39 insertions(+), 7 deletions(-)
 
 diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
-index 3f8cb1e14588..395ca07965af 100644
+index 9b31fbcc3305..776948beb4ac 100644
 --- a/kernel/events/hw_breakpoint.c
 +++ b/kernel/events/hw_breakpoint.c
-@@ -85,9 +85,9 @@ __weak int hw_breakpoint_weight(struct perf_event *bp)
- 	return 1;
+@@ -44,6 +44,7 @@
+ #include <linux/list.h>
+ #include <linux/cpu.h>
+ #include <linux/smp.h>
++#include <linux/bug.h>
+ 
+ #include <linux/hw_breakpoint.h>
+ /*
+@@ -344,6 +345,38 @@ void release_bp_slot(struct perf_event *bp)
+ 	mutex_unlock(&nr_bp_mutex);
  }
  
--static inline enum bp_type_idx find_slot_idx(struct perf_event *bp)
-+static inline enum bp_type_idx find_slot_idx(u64 bp_type)
- {
--	if (bp->attr.bp_type & HW_BREAKPOINT_RW)
-+	if (bp_type & HW_BREAKPOINT_RW)
- 		return TYPE_DATA;
++static int __modify_bp_slot(struct perf_event *bp, u64 old_type)
++{
++	int err;
++
++	__release_bp_slot(bp, old_type);
++
++	err = __reserve_bp_slot(bp, bp->attr.bp_type);
++	if (err) {
++		/*
++		 * Reserve the old_type slot back in case
++		 * there's no space for the new type.
++		 *
++		 * This must succeed, because we just released
++		 * the old_type slot in the __release_bp_slot
++		 * call above. If not, something is broken.
++		 */
++		WARN_ON(__reserve_bp_slot(bp, old_type));
++	}
++
++	return err;
++}
++
++static int modify_bp_slot(struct perf_event *bp, u64 old_type)
++{
++	int ret;
++
++	mutex_lock(&nr_bp_mutex);
++	ret = __modify_bp_slot(bp, old_type);
++	mutex_unlock(&nr_bp_mutex);
++	return ret;
++}
++
+ /*
+  * Allow the kernel debugger to reserve breakpoint slots without
+  * taking a lock using the dbg_* variant of for the reserve and
+@@ -435,6 +468,7 @@ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *att
+ 	u64 old_addr = bp->attr.bp_addr;
+ 	u64 old_len = bp->attr.bp_len;
+ 	int old_type = bp->attr.bp_type;
++	bool modify = attr->bp_type != old_type;
+ 	int err = 0;
  
- 	return TYPE_INST;
-@@ -122,7 +122,7 @@ static int task_bp_pinned(int cpu, struct perf_event *bp, enum bp_type_idx type)
+ 	/*
+@@ -452,12 +486,9 @@ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *att
+ 	bp->attr.bp_type = attr->bp_type;
+ 	bp->attr.bp_len = attr->bp_len;
  
- 	list_for_each_entry(iter, &bp_task_head, hw.bp_list) {
- 		if (iter->hw.target == tsk &&
--		    find_slot_idx(iter) == type &&
-+		    find_slot_idx(iter->attr.bp_type) == type &&
- 		    (iter->cpu < 0 || cpu == iter->cpu))
- 			count += hw_breakpoint_weight(iter);
+-	if (attr->disabled)
+-		goto end;
+-
+ 	err = validate_hw_breakpoint(bp);
+-	if (!err)
+-		perf_event_enable(bp);
++	if (!err && modify)
++		err = modify_bp_slot(bp, old_type);
+ 
+ 	if (err) {
+ 		bp->attr.bp_addr = old_addr;
+@@ -469,9 +500,10 @@ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *att
+ 		return err;
  	}
-@@ -292,7 +292,7 @@ static int __reserve_bp_slot(struct perf_event *bp)
- 	    bp->attr.bp_type == HW_BREAKPOINT_INVALID)
- 		return -EINVAL;
  
--	type = find_slot_idx(bp);
-+	type = find_slot_idx(bp->attr.bp_type);
- 	weight = hw_breakpoint_weight(bp);
+-end:
+-	bp->attr.disabled = attr->disabled;
++	if (!attr->disabled)
++		perf_event_enable(bp);
  
- 	fetch_bp_busy_slots(&slots, bp, type);
-@@ -329,7 +329,7 @@ static void __release_bp_slot(struct perf_event *bp)
- 	enum bp_type_idx type;
- 	int weight;
- 
--	type = find_slot_idx(bp);
-+	type = find_slot_idx(bp->attr.bp_type);
- 	weight = hw_breakpoint_weight(bp);
- 	toggle_bp_slot(bp, false, type, weight);
++	bp->attr.disabled = attr->disabled;
+ 	return 0;
  }
+ EXPORT_SYMBOL_GPL(modify_user_hw_breakpoint);
 -- 
 2.13.6
