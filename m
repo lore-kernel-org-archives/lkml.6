@@ -1,50 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932317AbeCLXAu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 19:00:50 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:39514 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751352AbeCLXAs (ORCPT
+        id S932372AbeCLXBK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 19:01:10 -0400
+Received: from mail-io0-f172.google.com ([209.85.223.172]:43085 "EHLO
+        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751523AbeCLXBJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 19:00:48 -0400
-X-Google-Smtp-Source: AG47ELsYNBUSo/PexBIY/vZ9pgycq6feMZ4JzxLuuP0wgZIgiinfla5LEJ1OtutnFYy31CxNzHkujw==
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: netdev@vger.kernel.org
-Cc: yxj790222@163.com, Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net] net: dsa: Fix dsa_is_user_port() test inversion
-Date: Mon, 12 Mar 2018 16:00:40 -0700
-Message-Id: <1520895640-28139-1-git-send-email-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 12 Mar 2018 19:01:09 -0400
+X-Google-Smtp-Source: AG47ELsHwlkl5FeT08dFFmHVUBnT0w1zZOkKHGVbVxW/tvyjtlgRLuuqUX5ikObk2pU9lo3cDdPWxxdjj2vs1TvgFVw=
+MIME-Version: 1.0
+From: Joe Smith <codesoldier1@gmail.com>
+Date: Mon, 12 Mar 2018 16:01:08 -0700
+Message-ID: <CABGNeczK4Jdw5aAoT62-SZsKrYTTKh+pUgMZWcCa59c5YqZgXg@mail.gmail.com>
+Subject: Guidelines for Submitting an RFC PATCH
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During the conversion to dsa_is_user_port(), a condition ended up being
-reversed, which would prevent the creation of any user port when using
-the legacy binding and/or platform data, fix that.
+Hi All,
 
-Fixes: 4a5b85ffe2a0 ("net: dsa: use dsa_is_user_port everywhere")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- net/dsa/legacy.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+What are the guidelines for submitting an RFC patch? If a developer
+wants to get early input on a design is it fine to submit a patch that
+is in reasonable shape but does not fully meets the requirements of a
+regular patch, for example, the patch consists of a series of patches,
+it only compiles when all patches in the series are applied. Going
+through the process of meeting all the patch requirements for an RFC
+patch seems too much.
 
-diff --git a/net/dsa/legacy.c b/net/dsa/legacy.c
-index cb54b81d0bd9..42a7b85b84e1 100644
---- a/net/dsa/legacy.c
-+++ b/net/dsa/legacy.c
-@@ -194,7 +194,7 @@ static int dsa_switch_setup_one(struct dsa_switch *ds,
- 		ds->ports[i].dn = cd->port_dn[i];
- 		ds->ports[i].cpu_dp = dst->cpu_dp;
- 
--		if (dsa_is_user_port(ds, i))
-+		if (!dsa_is_user_port(ds, i))
- 			continue;
- 
- 		ret = dsa_slave_create(&ds->ports[i]);
+Regards
+
+
 -- 
-2.7.4
+JS
