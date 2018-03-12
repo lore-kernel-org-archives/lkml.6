@@ -1,60 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751495AbeCLLfx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 07:35:53 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6190 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751377AbeCLLfv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 07:35:51 -0400
-From: Yisheng Xie <xieyisheng1@huawei.com>
-To: <acme@kernel.org>
-CC: <jolsa@redhat.com>, <namhyung@kernel.org>,
-        <alexander.shishkin@linux.intel.com>, <mingo@redhat.com>,
-        <peterz@infradead.org>, <linux-kernel@vger.kernel.org>,
-        Yisheng Xie <xieyisheng1@huawei.com>
-Subject: [PATCH 1/2] perf top: Fix top.call-graph works abnormal
-Date: Mon, 12 Mar 2018 19:25:56 +0800
-Message-ID: <1520853957-36106-1-git-send-email-xieyisheng1@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        id S1751345AbeCLLm0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 07:42:26 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:32978 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751104AbeCLLmX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 07:42:23 -0400
+X-Google-Smtp-Source: AG47ELstbRhNsgV3WU5a9XoCer0w9UgLX2t+MTM1pJbhuiiiB1l4v8zfqXlT+9fBE8J4G1g91mwLkRkTMXqbB+rfU2s=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180312113349.seolbpec7e3czad3@gmail.com>
+References: <20180220180506.65523-1-andriy.shevchenko@linux.intel.com>
+ <CAJZ5v0g7XO2N0vCi-A95MDjgJpTS0M=ZXrSGu2fqkwSHZ79GEg@mail.gmail.com>
+ <1519383078.10722.107.camel@linux.intel.com> <1520427371.10722.453.camel@linux.intel.com>
+ <20180312110122.x7srrgui6r4e7jxm@gmail.com> <CAJZ5v0hN0SjwLhFiK_5u25CaNVeVXOF=HAd8UrBM3LEU8rgVVQ@mail.gmail.com>
+ <20180312113349.seolbpec7e3czad3@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 12 Mar 2018 12:42:22 +0100
+X-Google-Sender-Auth: Qbt-s9n7q7HAO1k-lB7jTdtY0NI
+Message-ID: <CAJZ5v0gTzC8bqqzrpHJ_ZaO1LQEdubnGu9ePDoJ+ixPOocYBxA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] ACPI / x86: boot: Split out acpi_generic_reduce_hw_init()
+ and export
+To: Ingo Molnar <mingo@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Juergen Gross <jgross@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When try to add call-graph for top into .perfconfig file, like:
+On Mon, Mar 12, 2018 at 12:33 PM, Ingo Molnar <mingo@kernel.org> wrote:
+>
+> * Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+>> On Mon, Mar 12, 2018 at 12:01 PM, Ingo Molnar <mingo@kernel.org> wrote:
+>> >
+>> > * Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+>> >
+>> >> On Fri, 2018-02-23 at 12:51 +0200, Andy Shevchenko wrote:
+>> >> > On Tue, 2018-02-20 at 19:42 +0100, Rafael J. Wysocki wrote:
+>> >> > > On Tue, Feb 20, 2018 at 7:05 PM, Andy Shevchenko
+>> >> > > <andriy.shevchenko@linux.intel.com> wrote:
+>> >> > > > This is a preparation patch to allow override the hardware reduced
+>> >> > > > initialization on ACPI enabled platforms.
+>> >> > > >
+>> >> > > > No functional change intended.
+>> >> > > >
+>> >> > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>> >> > >
+>> >> > > Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>> >> >
+>> >> > Thanks, Rafael!
+>> >> >
+>> >> > Ingo, can it be applied?
+>> >>
+>> >> Hmm... It seems Ingo is busy with something else.
+>> >
+>> > Sorry, it all looks good to me:
+>> >
+>> >   Acked-by: Ingo Molnar <mingo@kernel.org>
+>>
+>> It depends on some material in -tip AFAICS, so can you apply it, please?
+>
+> Sure, done!
+>
+> Once they have passed testing it will live in tip:x86/mm, that's where the
+> dependent x86/boot commits ended up in this development cycle.
 
-      [top]
-            call-graph = fp
-
-find it cannot work for perf_top_config() do not parse this option.
-
-Fix it by call perf_default_config() when config top.call-graph.
-
-Fixes: b8cbb349061e (perf config: Bring perf_default_config to the very beginning at main())
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
----
- tools/perf/builtin-top.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 35ac016..fd6e238 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1224,8 +1224,10 @@ static int __cmd_top(struct perf_top *top)
- 
- static int perf_top_config(const char *var, const char *value, void *cb __maybe_unused)
- {
--	if (!strcmp(var, "top.call-graph"))
--		var = "call-graph.record-mode"; /* fall-through */
-+	if (!strcmp(var, "top.call-graph")) {
-+		var = "call-graph.record-mode";
-+		return perf_default_config(var, value, cb);
-+	}
- 	if (!strcmp(var, "top.children")) {
- 		symbol_conf.cumulate_callchain = perf_config_bool(var, value);
- 		return 0;
--- 
-1.7.12.4
+Thanks!
