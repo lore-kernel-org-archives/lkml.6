@@ -1,292 +1,307 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1132802-1521013498-2-624888402024479046
+X-Cyrus-Session-Id: sloti22d1t05-3703740-1520834254-2-5258661859548956359
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES ensk.us-ascii,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='jp',
-  MailFrom='org'
-X-Spam-charsets: plain='US-ASCII'
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Attached: .config.gz
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521013497; b=kB6NYpaMGEU6Z00Rd7Yxsz7/tkZGz5Kv35+rwH8xj59vRX/
-    qPyP8WEzJMbJv4+KyrlfaO5rCAjNeeA81vfJqPhCpk4kV64GX17dCe05/HzQrcaI
-    QeFXEM+b0nCsojg1wg59Q+MrQGnoIw06E53oyhreNWYhPuihnxTkuc3wQkRjHVzz
-    wdPFnuD7XgxX6ls+nDetr9wPBO9tDc6hEr2q4HA2qEZm3cEP3YTAXTugQeSJffc2
-    NRVArB4Ii5ky38fBZDEr+YYKAn4QDN+orBab8d5zd18mnsre0wbxuK4qnxqS1zaF
-    nZDDANBbzn8LjpWX3Md6yULI5VfJqfsJjZT/cdQ==
+    t=1520834254; b=nhO2nZ+z9ZRnsdjAAnS/c+zvISjpXpoJdhs5dr/C6JoL51u
+    lTVVuZjRhxIWFugMLXCxfe6MAys1RI30laCOKoYoR3U3myUMYxfmAbAztGW+u083
+    0IjeI3Joe5hgFbc0+hXCSun15SH0XlIC6STITHme/ubTT5M0Qgto6KTfiChyU6t7
+    nZYgCFmtAPcbfaTYJS1LLp1R1sxY3EdpXxHXGihFJ3D0+xS90QFZ0NYWcbkXDFY+
+    pkJViYjkqctC/FddEeNDHw4KCccjNkZZk9zB6BTYGjwzzXPMpX2IYjUsv7RzibIs
+    LnjgR6Xa1xAvqQpTMlANynHk6yC9Lb7jOrG0R/Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:message-id:from:to:cc:subject
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521013497; bh=rtd7zgLyqnqk4yWwtxucoenJlj
-    TA8GADrlMpTTi9e+g=; b=eZWPERZxkolxoE3KhEHF6/bA7FNR4ZYQnBHEM+jnkr
-    zoPE6grJ9aii87E6i9Hx3jlcB/qFhPANxJjfs2rnUTpYYBDmwQVl6XeXtsRLlryU
-    Z3O0zTbrGjlWVgjOJd9m9aKt5gB3RGrWK37/+FxRsxehqV13tMB8mqznmxDkn24s
-    SbCo0tiCFgnfNapuCyDW1rRsJAqcxu1aky3x8OM7Y2fZUFQhfWa52A6ML/pCcicb
-    UJ1rntJgpdw1cdm0PT0yunfjhvPL7TQh/VkVUpaH8I8cP3Vo0IgGXpAcfwTNjh9N
-    pKGie43J5K2pFrJIzK1NQHWmGd/0PT0C9snuzVz4DUdg==
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1520834254; bh=EhqR8RS6xVVFubEt9ez/PVGxvb
+    nCmD9erVcjRzo8Dws=; b=WBssdrF4AUEnSATW0t8+DpsIOnXXO93zpyghvKqXuf
+    g5g4h8VGJ/Y4jPA4/I5qbsflpAYBVTPz7MoKZQtdhGaSsZN7cExi6VFj2qtcqXaJ
+    LbhA1sGBKyWmjzXUxG2FSaRuAZneKAI42zZLg7kLHsUZ1HnixZP+BUZphhZMYv5e
+    N80wLuXqWG7KagOfIa3Jh5EHeaB/zNoDhOuI0aUSCE6BD0PK7YUeiSNVGj3H4gJO
+    pcQq/TEss4JFceFfq30hf9sXp00mdhF9hp9XZk6B6H4vJffy8iMyNBKytWop8iy7
+    jikeNzj/Z9ePGI5CTN6FQVkb1ULfPLNHIxq94UJHyAIQ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=users.sourceforge.jp;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=users.sourceforge.jp header.result=pass header_org.domain=sourceforge.jp header_org.result=pass header_is_org_domain=no
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=users.sourceforge.jp;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=users.sourceforge.jp header.result=pass header_org.domain=sourceforge.jp header_org.result=pass header_is_org_domain=no
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753307AbeCNHoy (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 14 Mar 2018 03:44:54 -0400
-Received: from h61-195-96-97.vps.ablenet.jp ([61.195.96.97]:33652 "EHLO
-        h61-195-96-97.vps.ablenet.jp" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750934AbeCNHox (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 14 Mar 2018 03:44:53 -0400
-Date: Wed, 14 Mar 2018 16:34:38 +0900
-Message-ID: <87sh93az5d.wl-ysato@users.sourceforge.jp>
-From: Yoshinori Sato <ysato@users.sourceforge.jp>
+        id S1751509AbeCLF5U (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 12 Mar 2018 01:57:20 -0400
+Received: from mga12.intel.com ([192.55.52.136]:28758 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751324AbeCLF5T (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 12 Mar 2018 01:57:19 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,459,1515484800";
+   d="gz'50?scan'50,208,50";a="34206010"
+Date: Mon, 12 Mar 2018 13:56:30 +0800
+From: kbuild test robot <lkp@intel.com>
 To: Huacai Chen <chenhc@lemote.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
+Cc: kbuild-all@01.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <james.hogan@mips.com>,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        James Hogan <james.hogan@mips.com>, linux-mips@linux-mips.org,
         Russell King <linux@arm.linux.org.uk>,
         linux-arm-kernel@lists.infradead.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
         Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
-        stable <stable@vger.kernel.org>
+        Huacai Chen <chenhc@lemote.com>, stable@vger.kernel.org
 Subject: Re: [PATCH V2] ZBOOT: fix stack protector in compressed boot phase
-In-Reply-To: <CAAhV-H4zFAMjg9W2f1VfYrgLnDfNDPaUHUechGDT+v3o_8WNTg@mail.gmail.com>
+Message-ID: <201803121309.rL1h1C83%fengguang.wu@intel.com>
 References: <1520820258-19225-1-git-send-email-chenhc@lemote.com>
-        <CAAhV-H4zFAMjg9W2f1VfYrgLnDfNDPaUHUechGDT+v3o_8WNTg@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL/10.8 EasyPG/1.0.0 Emacs/24.5
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="pf9I7BMVVzbSWLtt"
+Content-Disposition: inline
+In-Reply-To: <1520820258-19225-1-git-send-email-chenhc@lemote.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 13 Mar 2018 17:55:53 +0900,
-Huacai Chen wrote:
-> 
-> Hi, Yoshinori, Rich and SuperH developers,
-> 
-> I'm not familiar with SuperH assembly, but SuperH has the same bug
-> obviously. Could you please fix that?
-> 
-> Huacai
->
 
-OK. Apply this fix.
-SuperH can not handle long int directly.
+--pf9I7BMVVzbSWLtt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/sh/boot/compressed/head_32.S b/arch/sh/boot/compressed/head_32.S
-index a3fdb053f351..7411fcb5764a 100644
---- a/arch/sh/boot/compressed/head_32.S
-+++ b/arch/sh/boot/compressed/head_32.S
-@@ -76,8 +76,8 @@ l1:
- 	mov.l	init_stack_addr, r0
- 	mov.l	@r0, r15
- 
--	mov.l	__stack_chk_guard, r0
--	mov	#0x000a0dff, r1
-+	mov.l	__stack_chk_guard_ptr, r0
-+	mov.l	__stack_chk_val, r1
- 	mov.l	r1, @r0
- 
- 	/* Decompress the kernel */
-@@ -109,6 +109,10 @@ kernel_start_addr:
- #else
- 	.long	_text+PAGE_SIZE
- #endif
-+__stack_chk_guard_ptr:
-+	.long	__stack_chk_guard
-+__stack_chk_val:
-+	.long	0x000a0dff
- 
- 	.align	9
- fake_headers_as_bzImage:
+Hi Huacai,
 
-> On Mon, Mar 12, 2018 at 10:04 AM, Huacai Chen <chenhc@lemote.com> wrote:
-> > Call __stack_chk_guard_setup() in decompress_kernel() is too late that
-> > stack checking always fails for decompress_kernel() itself. So remove
-> > __stack_chk_guard_setup() and initialize __stack_chk_guard before we
-> > call decompress_kernel().
-> >
-> > Original code comes from ARM but also used for MIPS and SH, so fix them
-> > together. If without this fix, compressed booting of these archs will
-> > fail because stack checking is enabled by default (>=4.16).
-> >
-> > V2: Fix build on ARM.
-> >
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Huacai Chen <chenhc@lemote.com>
-> > ---
-> >  arch/arm/boot/compressed/head.S        | 4 ++++
-> >  arch/arm/boot/compressed/misc.c        | 7 -------
-> >  arch/mips/boot/compressed/decompress.c | 7 -------
-> >  arch/mips/boot/compressed/head.S       | 4 ++++
-> >  arch/sh/boot/compressed/head_32.S      | 4 ++++
-> >  arch/sh/boot/compressed/head_64.S      | 4 ++++
-> >  arch/sh/boot/compressed/misc.c         | 7 -------
-> >  7 files changed, 16 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/arch/arm/boot/compressed/head.S b/arch/arm/boot/compressed/head.S
-> > index 45c8823..bae1fc6 100644
-> > --- a/arch/arm/boot/compressed/head.S
-> > +++ b/arch/arm/boot/compressed/head.S
-> > @@ -547,6 +547,10 @@ not_relocated:     mov     r0, #0
-> >                 bic     r4, r4, #1
-> >                 blne    cache_on
-> >
-> > +               ldr     r0, =__stack_chk_guard
-> > +               ldr     r1, =0x000a0dff
-> > +               str     r1, [r0]
-> > +
-> >  /*
-> >   * The C runtime environment should now be setup sufficiently.
-> >   * Set up some pointers, and start decompressing.
-> > diff --git a/arch/arm/boot/compressed/misc.c b/arch/arm/boot/compressed/misc.c
-> > index 16a8a80..e518ef5 100644
-> > --- a/arch/arm/boot/compressed/misc.c
-> > +++ b/arch/arm/boot/compressed/misc.c
-> > @@ -130,11 +130,6 @@ asmlinkage void __div0(void)
-> >
-> >  unsigned long __stack_chk_guard;
-> >
-> > -void __stack_chk_guard_setup(void)
-> > -{
-> > -       __stack_chk_guard = 0x000a0dff;
-> > -}
-> > -
-> >  void __stack_chk_fail(void)
-> >  {
-> >         error("stack-protector: Kernel stack is corrupted\n");
-> > @@ -150,8 +145,6 @@ decompress_kernel(unsigned long output_start, unsigned long free_mem_ptr_p,
-> >  {
-> >         int ret;
-> >
-> > -       __stack_chk_guard_setup();
-> > -
-> >         output_data             = (unsigned char *)output_start;
-> >         free_mem_ptr            = free_mem_ptr_p;
-> >         free_mem_end_ptr        = free_mem_ptr_end_p;
-> > diff --git a/arch/mips/boot/compressed/decompress.c b/arch/mips/boot/compressed/decompress.c
-> > index fdf99e9..5ba431c 100644
-> > --- a/arch/mips/boot/compressed/decompress.c
-> > +++ b/arch/mips/boot/compressed/decompress.c
-> > @@ -78,11 +78,6 @@ void error(char *x)
-> >
-> >  unsigned long __stack_chk_guard;
-> >
-> > -void __stack_chk_guard_setup(void)
-> > -{
-> > -       __stack_chk_guard = 0x000a0dff;
-> > -}
-> > -
-> >  void __stack_chk_fail(void)
-> >  {
-> >         error("stack-protector: Kernel stack is corrupted\n");
-> > @@ -92,8 +87,6 @@ void decompress_kernel(unsigned long boot_heap_start)
-> >  {
-> >         unsigned long zimage_start, zimage_size;
-> >
-> > -       __stack_chk_guard_setup();
-> > -
-> >         zimage_start = (unsigned long)(&__image_begin);
-> >         zimage_size = (unsigned long)(&__image_end) -
-> >             (unsigned long)(&__image_begin);
-> > diff --git a/arch/mips/boot/compressed/head.S b/arch/mips/boot/compressed/head.S
-> > index 409cb48..00d0ee0 100644
-> > --- a/arch/mips/boot/compressed/head.S
-> > +++ b/arch/mips/boot/compressed/head.S
-> > @@ -32,6 +32,10 @@ start:
-> >         bne     a2, a0, 1b
-> >          addiu  a0, a0, 4
-> >
-> > +       PTR_LA  a0, __stack_chk_guard
-> > +       PTR_LI  a1, 0x000a0dff
-> > +       sw      a1, 0(a0)
-> > +
-> >         PTR_LA  a0, (.heap)          /* heap address */
-> >         PTR_LA  sp, (.stack + 8192)  /* stack address */
-> >
-> > diff --git a/arch/sh/boot/compressed/head_32.S b/arch/sh/boot/compressed/head_32.S
-> > index 7bb1681..a3fdb05 100644
-> > --- a/arch/sh/boot/compressed/head_32.S
-> > +++ b/arch/sh/boot/compressed/head_32.S
-> > @@ -76,6 +76,10 @@ l1:
-> >         mov.l   init_stack_addr, r0
-> >         mov.l   @r0, r15
-> >
-> > +       mov.l   __stack_chk_guard, r0
-> > +       mov     #0x000a0dff, r1
-> > +       mov.l   r1, @r0
-> > +
-> >         /* Decompress the kernel */
-> >         mov.l   decompress_kernel_addr, r0
-> >         jsr     @r0
-> > diff --git a/arch/sh/boot/compressed/head_64.S b/arch/sh/boot/compressed/head_64.S
-> > index 9993113..8b4d540 100644
-> > --- a/arch/sh/boot/compressed/head_64.S
-> > +++ b/arch/sh/boot/compressed/head_64.S
-> > @@ -132,6 +132,10 @@ startup:
-> >         addi    r22, 4, r22
-> >         bne     r22, r23, tr1
-> >
-> > +       movi    datalabel __stack_chk_guard, r0
-> > +       movi    0x000a0dff, r1
-> > +       st.l    r0, 0, r1
-> > +
-> >         /*
-> >          * Decompress the kernel.
-> >          */
-> > diff --git a/arch/sh/boot/compressed/misc.c b/arch/sh/boot/compressed/misc.c
-> > index 627ce8e..fe4c079 100644
-> > --- a/arch/sh/boot/compressed/misc.c
-> > +++ b/arch/sh/boot/compressed/misc.c
-> > @@ -106,11 +106,6 @@ static void error(char *x)
-> >
-> >  unsigned long __stack_chk_guard;
-> >
-> > -void __stack_chk_guard_setup(void)
-> > -{
-> > -       __stack_chk_guard = 0x000a0dff;
-> > -}
-> > -
-> >  void __stack_chk_fail(void)
-> >  {
-> >         error("stack-protector: Kernel stack is corrupted\n");
-> > @@ -130,8 +125,6 @@ void decompress_kernel(void)
-> >  {
-> >         unsigned long output_addr;
-> >
-> > -       __stack_chk_guard_setup();
-> > -
-> >  #ifdef CONFIG_SUPERH64
-> >         output_addr = (CONFIG_MEMORY_START + 0x2000);
-> >  #else
-> > --
-> > 2.7.0
-> >
+I love your patch! Yet something to improve:
 
---
-Yoshinori Sato
-<ysato@users.sourceforge.jp>
+[auto build test ERROR on linus/master]
+[also build test ERROR on v4.16-rc5 next-20180309]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Huacai-Chen/ZBOOT-fix-stack-protector-in-compressed-boot-phase/20180312-114651
+config: sh-allnoconfig (attached as .config)
+compiler: sh4-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        make.cross ARCH=sh 
+
+All errors (new ones prefixed by >>):
+
+   arch/sh/boot/compressed/head_32.S: Assembler messages:
+>> arch/sh/boot/compressed/head_32.S:79: Error: pcrel too far
+>> arch/sh/boot/compressed/head_32.S:80: Error: offset out of range
+>> arch/sh/boot/compressed/head_32.S:80: Error: value of 658943 too large for field of 2 bytes at 102
+
+vim +79 arch/sh/boot/compressed/head_32.S
+
+    12	
+    13		.global	startup
+    14	startup:
+    15		/* Load initial status register */
+    16		mov.l   init_sr, r1
+    17		ldc     r1, sr
+    18	
+    19		/* Move myself to proper location if necessary */
+    20		mova	1f, r0
+    21		mov.l	1f, r2
+    22		cmp/eq	r2, r0
+    23		bt	clear_bss
+    24		sub	r0, r2
+    25		mov.l	bss_start_addr, r0
+    26		mov	#0xffffffe0, r1
+    27		and	r1, r0			! align cache line
+    28		mov.l	text_start_addr, r3
+    29		mov	r0, r1
+    30		sub	r2, r1
+    31	3:
+    32		mov.l	@r1, r4
+    33		mov.l	@(4,r1), r5
+    34		mov.l	@(8,r1), r6
+    35		mov.l	@(12,r1), r7
+    36		mov.l	@(16,r1), r8
+    37		mov.l	@(20,r1), r9
+    38		mov.l	@(24,r1), r10
+    39		mov.l	@(28,r1), r11
+    40		mov.l	r4, @r0
+    41		mov.l	r5, @(4,r0)
+    42		mov.l	r6, @(8,r0)
+    43		mov.l	r7, @(12,r0)
+    44		mov.l	r8, @(16,r0)
+    45		mov.l	r9, @(20,r0)
+    46		mov.l	r10, @(24,r0)
+    47		mov.l	r11, @(28,r0)
+    48	#ifdef CONFIG_CPU_SH4
+    49		ocbwb	@r0
+    50	#endif
+    51		cmp/hi	r3, r0
+    52		add	#-32, r0
+    53		bt/s	3b
+    54		 add	#-32, r1
+    55		mov.l	2f, r0
+    56		jmp	@r0
+    57		 nop
+    58	
+    59		.align 2
+    60	1:	.long	1b
+    61	2:	.long	clear_bss
+    62	text_start_addr:
+    63		.long	startup
+    64	
+    65		/* Clear BSS */
+    66	clear_bss:
+    67		mov.l	end_addr, r1
+    68		mov.l	bss_start_addr, r2
+    69		mov	#0, r0
+    70	l1:
+    71		mov.l	r0, @-r1
+    72		cmp/eq	r1,r2
+    73		bf	l1
+    74	
+    75		/* Set the initial pointer. */
+    76		mov.l	init_stack_addr, r0
+    77		mov.l	@r0, r15
+    78	
+  > 79		mov.l	__stack_chk_guard, r0
+  > 80		mov	#0x000a0dff, r1
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+--pf9I7BMVVzbSWLtt
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+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
+EQpyJR6Sh/X/4kJda1lOAAA=
+
+--pf9I7BMVVzbSWLtt--
