@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3441149-1520826447-2-1778712710628121285
+X-Cyrus-Session-Id: sloti22d1t05-3443661-1520826445-2-2706569977321964323
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES endasv,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520826446; b=rrR11Qldz+97RG28oHdfrYKF3GpeHyEGxfByOwp/vbiatbt
-    1/2JoG8QgCrZzGRZ/I+T4fcn5NRXs80pOF/boKu22HUx3qwRfmlSEY2ZHBiCZzoD
-    Qwyo3ofAH1VUNaN8CQTmAjtlQxeCcZIJjg2xIit8P4jP4PHbW9OBMUi0M4b7dZBd
-    8/7a4pZFUH7Wm47ThvxxDm1wjRsTdI1d0gHu2uHVpQiSQeTSUzLV9JLleRIK2pBT
-    ztzDC47OjlvYav6ypSwZUDRwhqYM+4tyjVqWA+Yi0MNYgMJzsm8ydpl0OXzD+yOe
-    x1pthk+bQCX3EZFjjVN3yg+C8rWtTlkTXNyb3eg==
+    t=1520826445; b=GO4SXj7qVYXR5cKYADlj6Et/h2+qMj/exXxcfPBzrsF063f
+    7S6Jm4pJFtDmWKuv9ZZNd9lwJyeZtvCaI6uo1TGQdcKwXy/qwTGgkWCWT2lTNwAY
+    UTMRti97GEMsLzr9uHMKh0/WLpZ8+DdU1rNrz170OX3oLnB7uXeqSlZUpZ5VFbul
+    6hMSHk/5cyjxUZ0GV6Ei6oKo8ebbeFK50shi8UWc9zrMU1jMx2MHUEZwzGiaa/wz
+    F1RSgOPM4is9LglRHxiOA/JIZKHBO3K1H3VIj/v+qkApduFzOdrGA910JybhBu7d
+    3l6Wusq+Qp+8sWK8Brq9ld/6EQvMmLcq0k3ROVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1520826446; bh=gF7QtJ29baozW5eClGA
-    fLwKEBvTgj1llYEkqHfRGAms=; b=dyGbQiojjDU/98xy/6f0DGON3UUBroww2zD
-    6bqecW8NpFljESderov/0iCWCLShcILXPO75L1hme5lg9IhH8ZnHdA7hh+zGebBq
-    RxFiWDXQ35U0NpfhpkDHdFkklF8yVd3nkLTshi3gCWy393rYMaya2B1B1GqqnAE5
-    gKIwGFiuvM5alsDjD8iNM8BOMdQinmymSDNBTZ/HaEjlLEfCSOzLnDsX8PByIWNE
-    40snJGU+5avl6zHMCNnGIzstFwTrcp3p50A7i4fP8Q/KDv1RSgC8yD+cQ7/21uhz
-    7gV+PRXekccjoexukO8lgAHUCPfD9cGRwn3aV6trj7e45oKCANg==
+    :sender:list-id; s=arctest; t=1520826445; bh=gfXAZ5PYmrL2VEBVck9
+    JSBiAHoOPmt2s6lXDorR9mcs=; b=qBjzmZNgX8IPbZyL0tUQ+3pMQqb/cn7AGzi
+    YtEMbwkqu+wCGae/umhrFIZNLb4Aofv6c+YAsIRvuwK2Sm54BNs+BURox67maaFD
+    ASxFAqncDtO7Yb9or/9AHie2su58gy87ri+HtqZyhkQHcwds57t5N+wvZ6Ns3BtV
+    cn2tXIOEUWdkk0EkeIggruMx6oqKgKwRlTjV7SdKsIv0BXITma+kO9XKolNcBf7Y
+    qnTsBUsUgIkRfHYLzAveg918hl/Nl6A1/SeXUg3PlSfOfNXsTpah1anGlaJyX+If
+    oMFIn3uc3vqE6jL9nqfGWdmpPRzqiScVFK/RiQSIcBQZ7sSDEEQ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -49,12 +49,12 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932683AbeCLDHm (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Mar 2018 23:07:42 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41023 "EHLO
+        id S932668AbeCLDqm (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Mar 2018 23:46:42 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41084 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932526AbeCLDHi (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 23:07:38 -0400
+        by vger.kernel.org with ESMTP id S932618AbeCLDHm (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 23:07:42 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -62,13 +62,13 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "John W. Linville" <linville@tuxdriver.com>,
-        "Yunlian Jiang" <yunlian@google.com>,
-        "Larry Finger" <Larry.Finger@lwfinger.net>
+        "Jesper Nilsson" <jesper.nilsson@axis.com>,
+        "Paul Gortmaker" <paul.gortmaker@windriver.com>
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.70393716@decadent.org.uk>
+Message-ID: <lsq.1520823814.116991696@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 010/104] rtlwifi: initialize local array and set value.
+Subject: [PATCH 3.2 104/104] cris: Remove old legacy "-traditional" flag
+ from arch-v10/lib/Makefile
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -83,36 +83,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yunlian Jiang <yunlian@google.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-commit ec71997eff2231098212a99934c0fb987a9e6b04 upstream.
+commit 7b91747d42a1012e3781dd09fa638d113809e3fd upstream.
 
-GCC 4.8 is spitting out uninitialized-variable warnings against
-"drivers/net/wireless/rtlwifi/rtl8192de/dm.c".
+Most of these have been purged years ago.  This one silently lived
+on until commit 69349c2dc01c489eccaa4c472542c08e370c6d7e
 
-drivers/net/wireless/rtlwifi/rtl8192de/dm.c:941:31:
-error: 'ofdm_index_old[1]' may be used uninitialized in this
-function [-Werror=maybe-uninitialized]
-     rtlpriv->dm.ofdm_index[i] = ofdm_index_old[i];
+    "kconfig: fix IS_ENABLED to not require all options to be defined"
 
-This patch adds initialization to the variable and properly sets its value.
+In the above, we use some macro trickery to create a conditional that
+is valid in CPP and in C usage.  However that trickery doesn't sit
+well if you have the legacy "-traditional" flag enabled.  You'll get:
 
-Signed-off-by: Yunlian Jiang <yunlian@google.com>
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-Signed-off-by: John W. Linville <linville@tuxdriver.com>
+  AS      arch/cris/arch-v10/lib/checksum.o
+In file included from <command-line>:4:0:
+include/linux/kconfig.h:23:0: error: syntax error in macro parameter list
+make[2]: *** [arch/cris/arch-v10/lib/checksum.o] Error 1
+
+Everything builds fine w/o "-traditional" so simply drop it from this
+location as well.
+
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Jesper Nilsson <jesper.nilsson@axis.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/wireless/rtlwifi/rtl8192de/dm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/cris/arch-v10/lib/Makefile | 3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/drivers/net/wireless/rtlwifi/rtl8192de/dm.c
-+++ b/drivers/net/wireless/rtlwifi/rtl8192de/dm.c
-@@ -844,7 +844,7 @@ static void rtl92d_dm_txpower_tracking_c
- 	long val_y, ele_c = 0;
- 	u8 ofdm_index[2];
- 	s8 cck_index = 0;
--	u8 ofdm_index_old[2];
-+	u8 ofdm_index_old[2] = {0, 0};
- 	s8 cck_index_old = 0;
- 	u8 index;
- 	int i;
+--- a/arch/cris/arch-v10/lib/Makefile
++++ b/arch/cris/arch-v10/lib/Makefile
+@@ -2,8 +2,5 @@
+ # Makefile for Etrax-specific library files..
+ #
+ 
+-
+-EXTRA_AFLAGS := -traditional
+-
+ lib-y  = checksum.o checksumcopy.o string.o usercopy.o memset.o csumcpfruser.o
+ 
