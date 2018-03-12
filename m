@@ -1,246 +1,344 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-515744-1520865282-2-4612008574148038796
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520865281; b=cTImtIJUYP6HhLEbozuzlojhfdmy1Fw6MgAhAtARtQZ0sCM
-    ZOkV8ih9s9a/kV0oHQ6cqv47Y+OCDMAWGqoBQKR2RoI27Z+mjKPfOQjh91NTr1j3
-    +a9KsxqU5JhH1fHPCnWVgdC/v8zMoeuwC3JaGRiL+Q1/TSzlCIQzoG1+SN6lqWFS
-    TanulqAyWSFvvh2Jp6/sT90gDjBtTGe0tvlFtxCZ/FQe++fIU6wq0hkIg3kO9C0M
-    rXfsKwX0ZX9MUF4FoGi9iK9t3vf70PHIdqx8yLXxpgfV+ZuXx57s7Nr9HvyuciKc
-    dhgsp0g4jdHeRdh1ZjlCsiIuz9oCUNZi/XWHo7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1520865281; bh=RoOmS3Nwtt7W6DNVzt8DvPxgKl
-    uqVC26jF01CIE6y2o=; b=cs9W/aJg4R1+4Iyduc9ZlAQtsj0BxlJVMi5tkn9lte
-    DK9TEfYrR7fqEs1sACNzjcS8n75sgTvXhrDURzFctBHYW4V5x2SeE+gysT6syCp+
-    0h8R8XmRIgNm54T2xGFrJrUyzCv8zDys9LPCkbHcc1WA2/6GtU8Ep9UfOeGFz2sz
-    yVz1Y2tBOQRtF4WQM8SGAb8tR/akYBtXpAH8qd4JNzL9VbUofnP0FM+5nU692lv7
-    eNvxqBuq1GDDsji4bNuTrKOz40GttRAQlUCPLl3qLgT00W7NTYmKBkQWFyMyo6jq
-    qRRuNdIF6+i1TPPsSBc638NQgV06uAqVMk0l4kjkYZHg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751944AbeCLOeh (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 12 Mar 2018 10:34:37 -0400
-Received: from mga18.intel.com ([134.134.136.126]:22074 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751660AbeCLOeg (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Mon, 12 Mar 2018 10:34:36 -0400
+Return-Path: <heikki.krogerus@linux.intel.com>
+X-Google-Smtp-Source: AG47ELtGNPmiG5pvgag+wTKXGsVa/WfZ9erJvrFyMz3+fflW54MlQ70wfsM9tjbUDDxaqzY6/X9B
+ARC-Seal: i=1; a=rsa-sha256; t=1520865278; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Qwfi7aIlMvtNEvTo+JGfa4R20gezypluqwy/0eJV/0j2cxHvCSjUaHn9jvEOkt5JXu
+         +rzqgLDccPiAcClP+4BEYLaggccF8xnf08Oq7uz3zlNEH9LT22uWNWQHTA7jDhKFfAar
+         1Ht4pdDPZDB0PdvCMONpzWHj2nyxlMWZF9dK5GKm0yQ1lnXX/4xdE/mXeYHMVPOr/lDl
+         fx732THwD4ozTtgsllxFCJ3TSvnmsjTnDxrX/khcqtrbBGsAX1FzUd8iHovylU6pF+Ok
+         Ga5Z1wjfBJ5fb41rc2bM9qe3eea46kORoks1L10hLqAAjVZc4ipjbnk5DLVl/X1AC7rc
+         5qYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=xb4o94N0/NQk9O0emdLCNZ0mAkHvSYV7oeqUr3/85nw=;
+        b=CfBdiURi/E+z3cw6ZvBMrSqIiyQAQcDLO+60a5Pnop+Kt3MWOyWOAde9/bGSSo/0k/
+         3eesV5HuEURf4KciVI8Wng4BnexuTJE5T0xCJX599EDhfTokOb8AFJB6hX1n2m21SIjq
+         6J/Y41lgPvkeu4EEgvForjxNLjSJ/cEV4+S+2xvUkmkoQIb6AG2/Q24tKNXA4ijo+XGs
+         RrokhJXyUdiB7CHoH6ttBTXyJ9zsFrpLDZiR05ZVGhu6i29hpmCw4wYxPJAKJCBWP+0a
+         jEKc1HYmWwyIZ7eQ0oAyPBbZzsCd3NkX1TsnR0UyCNAvUFNgn2w/n3cnh8mlpzq455bm
+         PVrQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of heikki.krogerus@linux.intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=heikki.krogerus@linux.intel.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of heikki.krogerus@linux.intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=heikki.krogerus@linux.intel.com
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,461,1515484800";
-   d="scan'208";a="37470749"
+   d="scan'208";a="37470763"
 From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>
+	Hans de Goede <hdegoede@redhat.com>
 Cc: Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Guenter Roeck <linux@roeck-us.net>, Jun Li <jun.li@nxp.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: [PATCH v7 00/12] USB Type-C device-connection, mux and switch support
-Date: Mon, 12 Mar 2018 17:34:19 +0300
-Message-Id: <20180312143431.82396-1-heikki.krogerus@linux.intel.com>
+	Andy Shevchenko <andy@infradead.org>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jun Li <jun.li@nxp.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH v7 01/12] drivers: base: Unified device connection lookup
+Date: Mon, 12 Mar 2018 17:34:20 +0300
+Message-Id: <20180312143431.82396-2-heikki.krogerus@linux.intel.com>
 X-Mailer: git-send-email 2.16.1
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+In-Reply-To: <20180312143431.82396-1-heikki.krogerus@linux.intel.com>
+References: <20180312143431.82396-1-heikki.krogerus@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593820906030657716?=
+X-GMAIL-MSGID: =?utf-8?q?1594742830262937131?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+Several frameworks - clk, gpio, phy, pmw, etc. - maintain
+lookup tables for describing connections and provide custom
+API for handling them. This introduces a single generic
+lookup table and API for the connections.
 
-This is version 7 of Hans' and my series introducing support for USB muxes and
-generic device-connections. The api naming for device-connections is now made
-according to proposal from Greg, connection.h is dropped and the prototypes are
-now in device.h. kbuild test robot <fengguang.wu@intel.com> also found stylistic
-problems from patches 9/12 and 10/12 which were fixed. The patch 4/12 ("usb:
-typec: Separate the definitions for data and power roles") was added to the
-series.
+The motivation for this commit is centralizing the
+connection lookup, but the goal is to ultimately extract the
+connection descriptions also from firmware by using the
+fwnode_graph_* functions and other mechanisms that are
+available.
 
-Check the v6 from here:
-https://lkml.org/lkml/2018/3/2/340
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+---
+Changes in v7:
+- API naming improvements suggested by Greg
+- Prototypes to device.h, also suggested by Greg
+- I removed the DEVCON() macro as it was not used yet and it needs to be
+  rewritten
 
+Changes in v6:
+-Fix data and match arguments being swapped in __device_find_connection()
+ call in device_find_connection() (as noticed by Jun Li)
 
-Here is the cover-letter of v6:
+Changes in v5:
+-Add missing documentation for @list struct devcon member
 
-Hi All,
+Changes in v4:
+-Add Andy's Reviewed-by
 
-Here is version 6 of Heikki's and my USB Type-C device-connection, mux and
-switch support series. Versions 2 - 5 bring various small code and style
-fixes based on review (no major changes). Version 6 is rebased on top of
-the latest usb-next and brings one small but important code fix in
-the devcon code.
+Changes in v3:
+-Various spelling and gramar fixes in the docs pointed out by Randy Dunlap
 
-Here is the original cover-letter of v1:
-
-Some devices with an USB Type-C connector have a bunch of muxes
-behind that connector which need to be controlled by the kernel (rather
-then having them controlled by firmware as on most devices).
-
-Quite a while back I submitted a patch-series to tie together these muxes
-and the Type-C Port Manager (tcpm) code, using the then new drivers/mux
-framework. But the way I used the mux framework went against what it was
-designed for, so in the end that series got nowhere.
-
-Heikki Krogerus from Intel, who maintains the USB TYPEC subsystem, has
-recently been working on solving the same problem for some boards he is
-doing hardware-enablement for.
-
-Heikki has come up with a number of infrastructure patches for this.
-The first one is a new device-connection framework. This solves the
-problem of describing non bus device-links on x86 in what in my experience
-with this problematic area is a really nice simple, clean and *generic*
-way. This could for example in the near future also replace the custom
-lookup code in the pwm subsys and the custom pwm_add_table() /
-pwm_remove_table() functions.
-
-The other 3 patches add a framework for the different type of Type-C /
-USB "muxes".
-
-Heikki and I have gone through a number of iterations of these patches
-together and we believe these are now ready for merging. Since merging
-infrastructure patches without users is not done and Heikki's own use-case
-for these is not yet ready for merging, the rest of this series consists
-of patches by me to make the Type-C connector found on some Cherry Trail
-devices (finally) be able to actually work as an USB port and not just
-a charge port.
-
-The last patch uses the new usb-role-switch framework to also do proper
-devcie / host switching on CHT devices with a USB micro AB connector.
-This is also a big feature for CHT users, because before this they had
-to do a reboot to get an OTG-host cable recognized (on some devices).
-
-Part of this series is an usb-role-switch driver for the role-switch
-found inside the xhci controller on e.g. CHT devices, this is currently
-implemented as the generic xhci controller instantiating a platform
-child-device for this, since this really is a separate chunk of HW
-which happens to sit in the XHCI mmio space. This approach may not be
-universally liked, given that in this new series the role-switch driver
-is much smaller and does not have any external deps anymore we could
-just integrate it into the xhci code if that is preferred.
-
-About merging this series (once everything is reviewed, etc.), there are
-quite some interdependencies in it esp. a lot of the patches depend on
-the first patch. Luckily patches 1-10 all apply to subsystems which are
-maintained by Greg (most to the USB subsys). Which just leaves patches
-11 and 12 once 1-10 are merged. Greg, can you create an immutable branch
-for the platform/x86 and extcon maintainers to merge once this is done?
-
-Regards,
-
-Hans
-
-
-Hans de Goede (7):
-  usb: typec: tcpm: Set USB role switch to device mode when configured
-    as such
-  usb: typec: tcpm: Use new Type-C switch/mux and usb-role-switch
-    functions
-  xhci: Add Intel extended cap / otg phy mux handling
-  usb: roles: Add Intel xHCI USB role switch driver
-  usb: typec: driver for Pericom PI3USB30532 Type-C cross switch
-  platform/x86: intel_cht_int33fe: Add device connections for the Type-C
-    port
-  extcon: axp288: Set USB role where necessary
-
-Heikki Krogerus (4):
-  drivers: base: Unified device connection lookup
-  usb: typec: API for controlling USB Type-C Multiplexers
-  usb: common: Small class for USB role switches
-  usb: typec: Separate the definitions for data and power roles
-
-Mathias Nyman (1):
-  xhci: Add option to get next extended capability in list by passing id
-    = 0
-
- Documentation/ABI/testing/sysfs-class-usb_role |  21 ++
- Documentation/driver-api/device_connection.rst |  43 ++++
- Documentation/driver-api/usb/typec.rst         |  73 +++++-
- MAINTAINERS                                    |  12 +
+Changes in v2:
+-Add a (struct devcon) cast to the DEVCON() macro
+---
+ Documentation/driver-api/device_connection.rst |  43 ++++++++
  drivers/base/Makefile                          |   3 +-
- drivers/base/devcon.c                          | 141 ++++++++++++
- drivers/extcon/Kconfig                         |   3 +-
- drivers/extcon/extcon-axp288.c                 | 176 +++++++++++++-
- drivers/platform/x86/intel_cht_int33fe.c       |  24 ++
- drivers/usb/Kconfig                            |   5 +
- drivers/usb/Makefile                           |   2 +
- drivers/usb/common/Makefile                    |   1 +
- drivers/usb/common/roles.c                     | 305 +++++++++++++++++++++++++
- drivers/usb/host/Makefile                      |   2 +-
- drivers/usb/host/xhci-ext-caps.c               |  90 ++++++++
- drivers/usb/host/xhci-ext-caps.h               |   7 +-
- drivers/usb/host/xhci-pci.c                    |   5 +
- drivers/usb/host/xhci.h                        |   2 +
- drivers/usb/roles/Kconfig                      |  14 ++
- drivers/usb/roles/Makefile                     |   1 +
- drivers/usb/roles/intel-xhci-usb-role-switch.c | 192 ++++++++++++++++
- drivers/usb/typec/Kconfig                      |   3 +
- drivers/usb/typec/Makefile                     |   2 +
- drivers/usb/typec/{typec.c => class.c}         | 124 ++++++++--
- drivers/usb/typec/fusb302/fusb302.c            |   2 +-
- drivers/usb/typec/mux.c                        | 191 ++++++++++++++++
- drivers/usb/typec/mux/Kconfig                  |  10 +
- drivers/usb/typec/mux/Makefile                 |   3 +
- drivers/usb/typec/mux/pi3usb30532.c            | 178 +++++++++++++++
- drivers/usb/typec/tcpm.c                       |  63 +++--
- drivers/usb/typec/tps6598x.c                   |  26 ++-
- drivers/usb/typec/typec_wcove.c                |   1 +
- drivers/usb/typec/ucsi/ucsi.c                  |  13 +-
- include/linux/device.h                         |  22 ++
- include/linux/usb/role.h                       |  53 +++++
- include/linux/usb/tcpm.h                       |  15 +-
- include/linux/usb/typec.h                      |  28 ++-
- include/linux/usb/typec_mux.h                  |  55 +++++
- 38 files changed, 1817 insertions(+), 94 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-class-usb_role
+ drivers/base/devcon.c                          | 141 +++++++++++++++++++++++++
+ include/linux/device.h                         |  22 ++++
+ 4 files changed, 208 insertions(+), 1 deletion(-)
  create mode 100644 Documentation/driver-api/device_connection.rst
  create mode 100644 drivers/base/devcon.c
- create mode 100644 drivers/usb/common/roles.c
- create mode 100644 drivers/usb/host/xhci-ext-caps.c
- create mode 100644 drivers/usb/roles/Kconfig
- create mode 100644 drivers/usb/roles/Makefile
- create mode 100644 drivers/usb/roles/intel-xhci-usb-role-switch.c
- rename drivers/usb/typec/{typec.c => class.c} (93%)
- create mode 100644 drivers/usb/typec/mux.c
- create mode 100644 drivers/usb/typec/mux/Kconfig
- create mode 100644 drivers/usb/typec/mux/Makefile
- create mode 100644 drivers/usb/typec/mux/pi3usb30532.c
- create mode 100644 include/linux/usb/role.h
- create mode 100644 include/linux/usb/typec_mux.h
 
+diff --git a/Documentation/driver-api/device_connection.rst b/Documentation/driver-api/device_connection.rst
+new file mode 100644
+index 000000000000..affbc5566ab0
+--- /dev/null
++++ b/Documentation/driver-api/device_connection.rst
+@@ -0,0 +1,43 @@
++==================
++Device connections
++==================
++
++Introduction
++------------
++
++Devices often have connections to other devices that are outside of the direct
++child/parent relationship. A serial or network communication controller, which
++could be a PCI device, may need to be able to get a reference to its PHY
++component, which could be attached for example to the I2C bus. Some device
++drivers need to be able to control the clocks or the GPIOs for their devices,
++and so on.
++
++Device connections are generic descriptions of any type of connection between
++two separate devices.
++
++Device connections alone do not create a dependency between the two devices.
++They are only descriptions which are not tied to either of the devices directly.
++A dependency between the two devices exists only if one of the two endpoint
++devices requests a reference to the other. The descriptions themselves can be
++defined in firmware (not yet supported) or they can be built-in.
++
++Usage
++-----
++
++Device connections should exist before device ``->probe`` callback is called for
++either endpoint device in the description. If the connections are defined in
++firmware, this is not a problem. It should be considered if the connection
++descriptions are "built-in", and need to be added separately.
++
++The connection description consists of the names of the two devices with the
++connection, i.e. the endpoints, and unique identifier for the connection which
++is needed if there are multiple connections between the two devices.
++
++After a description exists, the devices in it can request reference to the other
++endpoint device, or they can request the description itself.
++
++API
++---
++
++.. kernel-doc:: drivers/base/devcon.c
++   : functions: device_connection_find_match device_connection_find device_connection_add device_connection_remove
+diff --git a/drivers/base/Makefile b/drivers/base/Makefile
+index e32a52490051..12a7f64d35a9 100644
+--- a/drivers/base/Makefile
++++ b/drivers/base/Makefile
+@@ -5,7 +5,8 @@ obj-y			:= component.o core.o bus.o dd.o syscore.o \
+ 			   driver.o class.o platform.o \
+ 			   cpu.o firmware.o init.o map.o devres.o \
+ 			   attribute_container.o transport_class.o \
+-			   topology.o container.o property.o cacheinfo.o
++			   topology.o container.o property.o cacheinfo.o \
++			   devcon.o
+ obj-$(CONFIG_DEVTMPFS)	+= devtmpfs.o
+ obj-$(CONFIG_DMA_CMA) += dma-contiguous.o
+ obj-y			+= power/
+diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
+new file mode 100644
+index 000000000000..e783c2c2ed1a
+--- /dev/null
++++ b/drivers/base/devcon.c
+@@ -0,0 +1,141 @@
++// SPDX-License-Identifier: GPL-2.0
++/**
++ * Device connections
++ *
++ * Copyright (C) 2018 Intel Corporation
++ * Author: Heikki Krogerus <heikki.krogerus@linux.intel.com>
++ */
++
++#include <linux/device.h>
++
++static DEFINE_MUTEX(devcon_lock);
++static LIST_HEAD(devcon_list);
++
++/**
++ * device_connection_find_match - Find physical connection to a device
++ * @dev: Device with the connection
++ * @con_id: Identifier for the connection
++ * @data: Data for the match function
++ * @match: Function to check and convert the connection description
++ *
++ * Find a connection with unique identifier @con_id between @dev and another
++ * device. @match will be used to convert the connection description to data the
++ * caller is expecting to be returned.
++ */
++void *device_connection_find_match(struct device *dev, const char *con_id,
++			       void *data,
++			       void *(*match)(struct device_connection *con,
++					      int ep, void *data))
++{
++	const char *devname = dev_name(dev);
++	struct device_connection *con;
++	void *ret = NULL;
++	int ep;
++
++	if (!match)
++		return NULL;
++
++	rcu_read_lock();
++
++	list_for_each_entry_rcu(con, &devcon_list, list) {
++		ep = match_string(con->endpoint, 2, devname);
++		if (ep < 0)
++			continue;
++
++		if (con_id && strcmp(con->id, con_id))
++			continue;
++
++		ret = match(con, !ep, data);
++		if (ret)
++			break;
++	}
++
++	rcu_read_unlock();
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(device_connection_find_match);
++
++#include <linux/platform_device.h>
++#include <linux/spi/spi.h>
++#include <linux/i2c.h>
++#include <linux/pci.h>
++
++static struct bus_type *generic_match_buses[] = {
++	&platform_bus_type,
++#ifdef CONFIG_PCI
++	&pci_bus_type,
++#endif
++#ifdef CONFIG_I2C
++	&i2c_bus_type,
++#endif
++#ifdef CONFIG_SPI_MASTER
++	&spi_bus_type,
++#endif
++	NULL,
++};
++
++/* This tries to find the device from the most common bus types by name. */
++static void *generic_match(struct device_connection *con, int ep, void *data)
++{
++	struct bus_type *bus;
++	struct device *dev;
++
++	for (bus = generic_match_buses[0]; bus; bus++) {
++		dev = bus_find_device_by_name(bus, NULL, con->endpoint[ep]);
++		if (dev)
++			return dev;
++	}
++
++	/*
++	 * We only get called if a connection was found, tell the caller to
++	 * wait for the other device to show up.
++	 */
++	return ERR_PTR(-EPROBE_DEFER);
++}
++
++/**
++ * device_connection_find - Find two devices connected together
++ * @dev: Device with the connection
++ * @con_id: Identifier for the connection
++ *
++ * Find a connection with unique identifier @con_id between @dev and
++ * another device. On success returns handle to the device that is connected
++ * to @dev, with the reference count for the found device incremented. Returns
++ * NULL if no matching connection was found, or ERR_PTR(-EPROBE_DEFER) when a
++ * connection was found but the other device has not been enumerated yet.
++ */
++struct device *device_connection_find(struct device *dev, const char *con_id)
++{
++	return device_connection_find_match(dev, con_id, NULL, generic_match);
++}
++EXPORT_SYMBOL_GPL(device_connection_find);
++
++/**
++ * device_connection_add - Register a connection description
++ * @con: The connection description to be registered
++ */
++void device_connection_add(struct device_connection *con)
++{
++	mutex_lock(&devcon_lock);
++	list_add_tail_rcu(&con->list, &devcon_list);
++	mutex_unlock(&devcon_lock);
++}
++EXPORT_SYMBOL_GPL(device_connection_add);
++
++/**
++ * device_connections_remove - Unregister connection description
++ * @con: The connection description to be unregistered
++ */
++void device_connection_remove(struct device_connection *con)
++{
++	mutex_lock(&devcon_lock);
++	list_del_rcu(&con->list);
++	mutex_unlock(&devcon_lock);
++	/*
++	 * The caller may free the device_connection struct immediately
++	 * afterwards.
++	 */
++	synchronize_rcu();
++}
++EXPORT_SYMBOL_GPL(device_connection_remove);
+diff --git a/include/linux/device.h b/include/linux/device.h
+index b093405ed525..ee992f2d47ed 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -729,6 +729,28 @@ struct device_dma_parameters {
+ 	unsigned long segment_boundary_mask;
+ };
+ 
++/**
++ * struct device_connnection - Device Connection Descriptor
++ * @endpoint: The names of the two devices connected together
++ * @id: Unique identifier for the connection
++ * @list: List head, private, for internal use only
++ */
++struct device_connection {
++	const char		*endpoint[2];
++	const char		*id;
++	struct list_head	list;
++};
++
++void *device_connection_find_match(struct device *dev, const char *con_id,
++				void *data,
++				void *(*match)(struct device_connection *con,
++					       int ep, void *data));
++
++struct device *device_connection_find(struct device *dev, const char *con_id);
++
++void device_connection_add(struct device_connection *con);
++void device_connection_remove(struct device_connection *con);
++
+ /**
+  * enum device_link_state - Device link states.
+  * @DL_STATE_NONE: The presence of the drivers is not being tracked.
 -- 
 2.16.1
-
