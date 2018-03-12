@@ -1,118 +1,195 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932339AbeCLVWN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 17:22:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40514 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932242AbeCLVWM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 17:22:12 -0400
-Date: Mon, 12 Mar 2018 14:22:10 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, aarcange@redhat.com, minchan@kernel.org,
-        kirill.shutemov@linux.intel.com, linux-mm@kvack.org, hughd@google.com,
-        pholasek@redhat.com, borntraeger@de.ibm.com,
-        gerald.schaefer@de.ibm.com
-Subject: Re: [PATCH v1 1/1] mm/ksm: fix interaction with THP
-Message-Id: <20180312142210.4e664519118369d5d129e6dc@linux-foundation.org>
-In-Reply-To: <1520872937-15351-1-git-send-email-imbrenda@linux.vnet.ibm.com>
-References: <1520872937-15351-1-git-send-email-imbrenda@linux.vnet.ibm.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S932388AbeCLVY2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 17:24:28 -0400
+Received: from mout.web.de ([212.227.15.14]:58991 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932242AbeCLVY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 17:24:26 -0400
+To: linux-hwmon@vger.kernel.org,
+        =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>,
+        Hans de Goede <hdegoede@redhat.com>, Jean Delvare <jdelvare@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] hwmon/sch5627: Use common error handling code in
+ sch5627_probe()
+Message-ID: <d08248a2-46d8-6f73-81f4-84ad21b7e640@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 22:23:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:eKzn5tQ3ENssiGqYxr9iLnZDYcuahNmJdEyZrKaGGfK7IMLIxei
+ eYnYHh+fLYdvvyIUsLpv/4Y5LtEjjakkAJDFF9NnTNOPNZ2VwpNIpgiFFAnQeKvJZo2LyvN
+ 7X5Yp2HEdGO8KmPEBQroGUO17v+9MalfJ/O7Uvpj++GcDjfwklvHgBYNMPWg87g7VxAvvGQ
+ hE19FKkDalaWt39PYLRDg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Bs2zJmmVUBs=:uSbtVXX9vOA43ZhUsyXHzL
+ 7O4+XQCaPUAxiEALeU3gAaB1kqNJtpdYKf+1ogN+S76gCrx2jXR0HMeOPXJFbXifPWx/LmW4Y
+ dnjP1sVpMbTeAzywIRMO9ogVN/ThJuCy0vSLkLwLYdpfCa8Z00fA57csaRBIvvK0Eokv4Pmko
+ lAlg/cyekZ2QhwPRnVRvuiKP7aAd7p+/wOlkEvajrf9Gh2+fo0dkGxzSgyAZuN5dCFWewe5H6
+ OXNiRM1gLZNecKSQrkliLd5CW1cy+ZHx8THL8PU2SbckxoEnUQLLXhBMa2/r75l/VDTSl6xD9
+ C7Q0hKO/9AgEg1fy+b2iGghZrSI67mWvpLBaEm5DoAiLh1Hw24DrrHsyqQcR6V2heqH+gKDko
+ BXlXdas00tcFA0KuIkxll645C7Fd7Us3j9ww87NZtzzLYk9sYAiobokfmskQOlMXlDRXlc2zH
+ 7APZ4F+HR87GZqTHNMr5skKQnATLVvldF1HLDZkxXVmndxm+buTxUz56AeNlY1v6q8Ixf20iE
+ ieD8TzEZwTcl4lRp3Sa/iQ3tzrfQGI2t/TlfG5Zea7Q34iqKhpzMc/veEzryFP5Xj3GbnngLJ
+ /RWl6xB9XccIE74UNMy6/mVB9nwyVOMV+kr5QIvnWV7QeN9ZXm6gpi1VkhTGX8z5lGUq6cPmq
+ ioh01ps/f3i/5Pm3UzsB8noR5JoxSQKFyNksOIZPOjIH8Csymnc5oCP4x6kbPL1zqADA2Vl3R
+ tCgk/g27BeU9VOLeWopy1XzhdJP0d2OJIRABt0qo4HxBpxycoAR4zDyJoK4+WAtHD+ipjEbL4
+ nW5jeuRYXbUA8DSkln/9F42yc0WGx5STuj8NNlTo33MeMYUPTk=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Mar 2018 17:42:17 +0100 Claudio Imbrenda <imbrenda@linux.vnet.ibm.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 22:15:59 +0100
 
-> This patch fixes a corner case for KSM. When two pages belong or
-> belonged to the same transparent hugepage, and they should be merged,
-> KSM fails to split the page, and therefore no merging happens.
-> 
-> This bug can be reproduced by:
-> * making sure ksm is running (in case disabling ksmtuned)
-> * enabling transparent hugepages
-> * allocating a THP-aligned 1-THP-sized buffer
->   e.g. on amd64: posix_memalign(&p, 1<<21, 1<<21)
-> * filling it with the same values
->   e.g. memset(p, 42, 1<<21)
-> * performing madvise to make it mergeable
->   e.g. madvise(p, 1<<21, MADV_MERGEABLE)
-> * waiting for KSM to perform a few scans
-> 
-> The expected outcome is that the all the pages get merged (1 shared and
-> the rest sharing); the actual outcome is that no pages get merged (1
-> unshared and the rest volatile)
-> 
-> The reason of this behaviour is that we increase the reference count
-> once for both pages we want to merge, but if they belong to the same
-> hugepage (or compound page), the reference counter used in both cases
-> is the one of the head of the compound page.
-> This means that split_huge_page will find a value of the reference
-> counter too high and will fail.
-> 
-> This patch solves this problem by testing if the two pages to merge
-> belong to the same hugepage when attempting to merge them. If so, the
-> hugepage is split safely. This means that the hugepage is not split if
-> not necessary.
-> 
-> Signed-off-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-> Signed-off-by: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
+Adjust jump targets so that a bit of exception handling can be better
+reused at the end of this function.
 
-Signoff trail is confusing.  Usually people put the primary author's
-signoff first, which makes me wonder whether you or Gerald was the
-primary author?
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/hwmon/sch5627.c | 60 ++++++++++++++++++++++++-------------------------
+ 1 file changed, 29 insertions(+), 31 deletions(-)
 
-> diff --git a/mm/ksm.c b/mm/ksm.c
-> index 293721f..7a826fa 100644
-> --- a/mm/ksm.c
-> +++ b/mm/ksm.c
-> @@ -2001,7 +2001,7 @@ static void cmp_and_merge_page(struct page *page, struct rmap_item *rmap_item)
->  	struct page *kpage;
->  	unsigned int checksum;
->  	int err;
-> -	bool max_page_sharing_bypass = false;
-> +	bool split, max_page_sharing_bypass = false;
-
-`split' could be made local to the `if' block where it is used, which
-improves readability and maintainability somewhat.
-
->  	stable_node = page_stable_node(page);
->  	if (stable_node) {
-> @@ -2084,6 +2084,8 @@ static void cmp_and_merge_page(struct page *page, struct rmap_item *rmap_item)
->  	if (tree_rmap_item) {
->  		kpage = try_to_merge_two_pages(rmap_item, page,
->  						tree_rmap_item, tree_page);
-> +		split = PageTransCompound(page) && PageTransCompound(tree_page)
-> +			&& compound_head(page) == compound_head(tree_page);
-
-I think a comment explainig what's going on would be useful here.
-
->  		put_page(tree_page);
->  		if (kpage) {
->  			/*
-> @@ -2110,6 +2112,11 @@ static void cmp_and_merge_page(struct page *page, struct rmap_item *rmap_item)
->  				break_cow(tree_rmap_item);
->  				break_cow(rmap_item);
->  			}
-> +		} else if (split) {
-> +			if (!trylock_page(page))
-> +				return;
-> +			split_huge_page(page);
-> +			unlock_page(page);
-
-Why did we use trylock_page()?  Perhaps for the same reasons which were
-explained in try_to_merge_one_page(), perhaps for other reasons. 
-cmp_and_merge_page() already does lock_page() and down_read(), so I
-wonder if those reasons are legitimate.
-
-Again, a comment here is needed - otherwise it will be hard for readers
-to understand your intent.
-
->  		}
->  	}
->  }
+diff --git a/drivers/hwmon/sch5627.c b/drivers/hwmon/sch5627.c
+index 91544f2312e6..e7a2a974ab74 100644
+--- a/drivers/hwmon/sch5627.c
++++ b/drivers/hwmon/sch5627.c
+@@ -480,72 +480,64 @@ static int sch5627_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, data);
+ 
+ 	val = sch56xx_read_virtual_reg(data->addr, SCH5627_REG_HWMON_ID);
+-	if (val < 0) {
+-		err = val;
+-		goto error;
+-	}
++	if (val < 0)
++		goto set_error_code;
++
+ 	if (val != SCH5627_HWMON_ID) {
+ 		pr_err("invalid %s id: 0x%02X (expected 0x%02X)\n", "hwmon",
+ 		       val, SCH5627_HWMON_ID);
+-		err = -ENODEV;
+-		goto error;
++		goto e_nodev;
+ 	}
+ 
+ 	val = sch56xx_read_virtual_reg(data->addr, SCH5627_REG_COMPANY_ID);
+-	if (val < 0) {
+-		err = val;
+-		goto error;
+-	}
++	if (val < 0)
++		goto set_error_code;
++
+ 	if (val != SCH5627_COMPANY_ID) {
+ 		pr_err("invalid %s id: 0x%02X (expected 0x%02X)\n", "company",
+ 		       val, SCH5627_COMPANY_ID);
+-		err = -ENODEV;
+-		goto error;
++		goto e_nodev;
+ 	}
+ 
+ 	val = sch56xx_read_virtual_reg(data->addr, SCH5627_REG_PRIMARY_ID);
+-	if (val < 0) {
+-		err = val;
+-		goto error;
+-	}
++	if (val < 0)
++		goto set_error_code;
++
+ 	if (val != SCH5627_PRIMARY_ID) {
+ 		pr_err("invalid %s id: 0x%02X (expected 0x%02X)\n", "primary",
+ 		       val, SCH5627_PRIMARY_ID);
+-		err = -ENODEV;
+-		goto error;
++		goto e_nodev;
+ 	}
+ 
+ 	build_code = sch56xx_read_virtual_reg(data->addr,
+ 					      SCH5627_REG_BUILD_CODE);
+ 	if (build_code < 0) {
+ 		err = build_code;
+-		goto error;
++		goto remove_device;
+ 	}
+ 
+ 	build_id = sch56xx_read_virtual_reg16(data->addr,
+ 					      SCH5627_REG_BUILD_ID);
+ 	if (build_id < 0) {
+ 		err = build_id;
+-		goto error;
++		goto remove_device;
+ 	}
+ 
+ 	hwmon_rev = sch56xx_read_virtual_reg(data->addr,
+ 					     SCH5627_REG_HWMON_REV);
+ 	if (hwmon_rev < 0) {
+ 		err = hwmon_rev;
+-		goto error;
++		goto remove_device;
+ 	}
+ 
+ 	val = sch56xx_read_virtual_reg(data->addr, SCH5627_REG_CTRL);
+-	if (val < 0) {
+-		err = val;
+-		goto error;
+-	}
++	if (val < 0)
++		goto set_error_code;
++
+ 	data->control = val;
+ 	if (!(data->control & 0x01)) {
+ 		pr_err("hardware monitoring not enabled\n");
+-		err = -ENODEV;
+-		goto error;
++		goto e_nodev;
+ 	}
+ 	/* Trigger a Vbat voltage measurement, so that we get a valid reading
+ 	   the first time we read Vbat */
+@@ -559,7 +551,7 @@ static int sch5627_probe(struct platform_device *pdev)
+ 	 */
+ 	err = sch5627_read_limits(data);
+ 	if (err)
+-		goto error;
++		goto remove_device;
+ 
+ 	pr_info("found %s chip at %#hx\n", DEVNAME, data->addr);
+ 	pr_info("firmware build: code 0x%02X, id 0x%04X, hwmon: rev 0x%02X\n",
+@@ -568,13 +560,13 @@ static int sch5627_probe(struct platform_device *pdev)
+ 	/* Register sysfs interface files */
+ 	err = sysfs_create_group(&pdev->dev.kobj, &sch5627_group);
+ 	if (err)
+-		goto error;
++		goto remove_device;
+ 
+ 	data->hwmon_dev = hwmon_device_register(&pdev->dev);
+ 	if (IS_ERR(data->hwmon_dev)) {
+ 		err = PTR_ERR(data->hwmon_dev);
+ 		data->hwmon_dev = NULL;
+-		goto error;
++		goto remove_device;
+ 	}
+ 
+ 	/* Note failing to register the watchdog is not a fatal error */
+@@ -584,7 +576,13 @@ static int sch5627_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
+-error:
++set_error_code:
++	err = val;
++	goto remove_device;
++
++e_nodev:
++	err = -ENODEV;
++remove_device:
+ 	sch5627_remove(pdev);
+ 	return err;
+ }
+-- 
+2.16.2
