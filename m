@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932551AbeCLThQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 15:37:16 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:54642 "EHLO ale.deltatee.com"
+        id S932535AbeCLThP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 15:37:15 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:54638 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932303AbeCLTfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S932311AbeCLTfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Mar 2018 15:35:39 -0400
 From: Logan Gunthorpe <logang@deltatee.com>
 To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
@@ -19,142 +19,114 @@ Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Alex Williamson <alex.williamson@redhat.com>,
         Logan Gunthorpe <logang@deltatee.com>
-Date: Mon, 12 Mar 2018 13:35:17 -0600
-Message-Id: <20180312193525.2855-4-logang@deltatee.com>
+Date: Mon, 12 Mar 2018 13:35:20 -0600
+Message-Id: <20180312193525.2855-7-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180312193525.2855-1-logang@deltatee.com>
 References: <20180312193525.2855-1-logang@deltatee.com>
 X-SA-Exim-Connect-IP: 172.16.1.31
 X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, axboe@kernel.dk, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, logang@deltatee.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v3 03/11] PCI/P2PDMA: Add PCI p2pmem dma mappings to adjust the bus offset
+Subject: [PATCH v3 06/11] block: Introduce PCI P2P flags for request and request queue
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DMA address used when mapping PCI P2P memory must be the PCI bus
-address. Thus, introduce pci_p2pmem_[un]map_sg() to map the correct
-addresses when using P2P memory.
+QUEUE_FLAG_PCI_P2P is introduced meaning a driver's request queue
+supports targeting P2P memory.
 
-For this, we assume that an SGL passed to these functions contain all
-P2P memory or no P2P memory.
+REQ_PCI_P2P is introduced to indicate a particular bio request is
+directed to/from PCI P2P memory. A request with this flag is not
+accepted unless the corresponding queues have the QUEUE_FLAG_PCI_P2P
+flag set.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
 ---
- drivers/pci/p2pdma.c       | 51 ++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/memremap.h   |  1 +
- include/linux/pci-p2pdma.h | 13 ++++++++++++
- 3 files changed, 65 insertions(+)
+ block/blk-core.c          |  3 +++
+ include/linux/blk_types.h | 18 +++++++++++++++++-
+ include/linux/blkdev.h    |  3 +++
+ 3 files changed, 23 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
-index fd4789566a56..ab810c3a93eb 100644
---- a/drivers/pci/p2pdma.c
-+++ b/drivers/pci/p2pdma.c
-@@ -190,6 +190,8 @@ int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
- 	pgmap->res.flags = pci_resource_flags(pdev, bar);
- 	pgmap->ref = &pdev->p2pdma->devmap_ref;
- 	pgmap->type = MEMORY_DEVICE_PCI_P2PDMA;
-+	pgmap->pci_p2pdma_bus_offset = pci_bus_address(pdev, bar) -
-+		pci_resource_start(pdev, bar);
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 6d82c4f7fadd..a2f113738b85 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -2183,6 +2183,9 @@ generic_make_request_checks(struct bio *bio)
+ 	if ((bio->bi_opf & REQ_NOWAIT) && !queue_is_rq_based(q))
+ 		goto not_supported;
  
- 	addr = devm_memremap_pages(&pdev->dev, pgmap);
- 	if (IS_ERR(addr)) {
-@@ -731,3 +733,52 @@ void pci_p2pmem_publish(struct pci_dev *pdev, bool publish)
- 	pdev->p2pdma->p2pmem_published = publish;
- }
- EXPORT_SYMBOL_GPL(pci_p2pmem_publish);
++	if ((bio->bi_opf & REQ_PCI_P2PDMA) && !blk_queue_pci_p2pdma(q))
++		goto not_supported;
 +
-+/**
-+ * pci_p2pdma_map_sg - map a PCI peer-to-peer sg for DMA
-+ * @dev: device doing the DMA request
-+ * @sg: scatter list to map
-+ * @nents: elements in the scatterlist
-+ * @dir: DMA direction
-+ *
-+ * Returns the number of SG entries mapped
-+ */
-+int pci_p2pdma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
-+		      enum dma_data_direction dir)
-+{
-+	struct dev_pagemap *pgmap;
-+	struct scatterlist *s;
-+	phys_addr_t paddr;
-+	int i;
-+
-+	/*
-+	 * p2pdma mappings are not compatible with devices that use
-+	 * dma_virt_ops.
-+	 */
-+	if (IS_ENABLED(CONFIG_DMA_VIRT_OPS) && dev->dma_ops == &dma_virt_ops)
-+		return 0;
-+
-+	for_each_sg(sg, s, nents, i) {
-+		pgmap = sg_page(s)->pgmap;
-+		paddr = sg_phys(s);
-+
-+		s->dma_address = paddr - pgmap->pci_p2pdma_bus_offset;
-+		sg_dma_len(s) = s->length;
-+	}
-+
-+	return nents;
-+}
-+EXPORT_SYMBOL_GPL(pci_p2pdma_map_sg);
-+
-+/**
-+ * pci_p2pdma_unmap_sg - unmap a PCI peer-to-peer sg for DMA
-+ * @dev: device doing the DMA request
-+ * @sg: scatter list to map
-+ * @nents: elements in the scatterlist
-+ * @dir: DMA direction
-+ */
-+void pci_p2pdma_unmap_sg(struct device *dev, struct scatterlist *sg, int nents,
-+			 enum dma_data_direction dir)
-+{
-+}
-+EXPORT_SYMBOL_GPL(pci_p2pdma_unmap_sg);
-diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-index 9e907c338a44..1660f64ce96f 100644
---- a/include/linux/memremap.h
-+++ b/include/linux/memremap.h
-@@ -125,6 +125,7 @@ struct dev_pagemap {
- 	struct device *dev;
- 	void *data;
- 	enum memory_type type;
-+	u64 pci_p2pdma_bus_offset;
- };
+ 	if (should_fail_bio(bio))
+ 		goto end_io;
  
- #ifdef CONFIG_ZONE_DEVICE
-diff --git a/include/linux/pci-p2pdma.h b/include/linux/pci-p2pdma.h
-index 1f7856ff098b..59eb218bdb25 100644
---- a/include/linux/pci-p2pdma.h
-+++ b/include/linux/pci-p2pdma.h
-@@ -36,6 +36,10 @@ int pci_p2pmem_alloc_sgl(struct pci_dev *pdev, struct scatterlist **sgl,
- void pci_p2pmem_free_sgl(struct pci_dev *pdev, struct scatterlist *sgl,
- 		unsigned int nents);
- void pci_p2pmem_publish(struct pci_dev *pdev, bool publish);
-+int pci_p2pdma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
-+		      enum dma_data_direction dir);
-+void pci_p2pdma_unmap_sg(struct device *dev, struct scatterlist *sg, int nents,
-+			 enum dma_data_direction dir);
- #else /* CONFIG_PCI_P2PDMA */
- static inline int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar,
- 		size_t size, u64 offset)
-@@ -97,5 +101,14 @@ static inline void pci_p2pmem_free_sgl(struct pci_dev *pdev,
- static inline void pci_p2pmem_publish(struct pci_dev *pdev, bool publish)
- {
- }
-+static inline int pci_p2pdma_map_sg(struct device *dev,
-+	struct scatterlist *sg, int nents, enum dma_data_direction dir)
-+{
-+	return 0;
-+}
-+static inline void pci_p2pdma_unmap_sg(struct device *dev,
-+	struct scatterlist *sg, int nents, enum dma_data_direction dir)
-+{
-+}
- #endif /* CONFIG_PCI_P2PDMA */
- #endif /* _LINUX_PCI_P2P_H */
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index bf18b95ed92d..490122c85b3f 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -274,6 +274,10 @@ enum req_flag_bits {
+ 	__REQ_BACKGROUND,	/* background IO */
+ 	__REQ_NOWAIT,           /* Don't wait if request will block */
+ 
++#ifdef CONFIG_PCI_P2PDMA
++	__REQ_PCI_P2PDMA,	/* request is to/from P2P memory */
++#endif
++
+ 	/* command specific flags for REQ_OP_WRITE_ZEROES: */
+ 	__REQ_NOUNMAP,		/* do not free blocks when zeroing */
+ 
+@@ -298,6 +302,18 @@ enum req_flag_bits {
+ #define REQ_BACKGROUND		(1ULL << __REQ_BACKGROUND)
+ #define REQ_NOWAIT		(1ULL << __REQ_NOWAIT)
+ 
++#ifdef CONFIG_PCI_P2PDMA
++/*
++ * Currently SGLs do not support mixed P2P and regular memory so
++ * requests with P2P memory must not be merged.
++ */
++#define REQ_PCI_P2PDMA		(1ULL << __REQ_PCI_P2PDMA)
++#define REQ_IS_PCI_P2PDMA(req)	((req)->cmd_flags & REQ_PCI_P2PDMA)
++#else
++#define REQ_PCI_P2PDMA		0
++#define REQ_IS_PCI_P2PDMA(req)	0
++#endif /* CONFIG_PCI_P2PDMA */
++
+ #define REQ_NOUNMAP		(1ULL << __REQ_NOUNMAP)
+ 
+ #define REQ_DRV			(1ULL << __REQ_DRV)
+@@ -306,7 +322,7 @@ enum req_flag_bits {
+ 	(REQ_FAILFAST_DEV | REQ_FAILFAST_TRANSPORT | REQ_FAILFAST_DRIVER)
+ 
+ #define REQ_NOMERGE_FLAGS \
+-	(REQ_NOMERGE | REQ_PREFLUSH | REQ_FUA)
++	(REQ_NOMERGE | REQ_PREFLUSH | REQ_FUA | REQ_PCI_P2PDMA)
+ 
+ #define bio_op(bio) \
+ 	((bio)->bi_opf & REQ_OP_MASK)
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index ed63f3b69c12..0b4a386c73ea 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -698,6 +698,7 @@ struct request_queue {
+ #define QUEUE_FLAG_SCSI_PASSTHROUGH 27	/* queue supports SCSI commands */
+ #define QUEUE_FLAG_QUIESCED    28	/* queue has been quiesced */
+ #define QUEUE_FLAG_PREEMPT_ONLY	29	/* only process REQ_PREEMPT requests */
++#define QUEUE_FLAG_PCI_P2PDMA  30	/* device supports pci p2p requests */
+ 
+ #define QUEUE_FLAG_DEFAULT	((1 << QUEUE_FLAG_IO_STAT) |		\
+ 				 (1 << QUEUE_FLAG_SAME_COMP)	|	\
+@@ -793,6 +794,8 @@ static inline void queue_flag_clear(unsigned int flag, struct request_queue *q)
+ #define blk_queue_dax(q)	test_bit(QUEUE_FLAG_DAX, &(q)->queue_flags)
+ #define blk_queue_scsi_passthrough(q)	\
+ 	test_bit(QUEUE_FLAG_SCSI_PASSTHROUGH, &(q)->queue_flags)
++#define blk_queue_pci_p2pdma(q)	\
++	test_bit(QUEUE_FLAG_PCI_P2PDMA, &(q)->queue_flags)
+ 
+ #define blk_noretry_request(rq) \
+ 	((rq)->cmd_flags & (REQ_FAILFAST_DEV|REQ_FAILFAST_TRANSPORT| \
 -- 
 2.11.0
