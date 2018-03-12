@@ -1,68 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932668AbeCLQvm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 12:51:42 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:57280 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932609AbeCLQvj (ORCPT
+        id S932503AbeCLQxh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 12:53:37 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37448 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751723AbeCLQxf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 12:51:39 -0400
-Date: Mon, 12 Mar 2018 18:51:08 +0200
-From: Yuval Shaia <yuval.shaia@oracle.com>
-To: =?iso-8859-1?Q?Hern=E1n?= Gonzalez <hernan@vanguardiasur.com.ar>
-Cc: Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "monis@mellanox.com" <monis@mellanox.com>,
-        "jgg@ziepe.ca" <jgg@ziepe.ca>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "dledford@redhat.com" <dledford@redhat.com>
-Subject: Re: [PATCH] IB/rxe: Remove unused variable (char
- *rxe_qp_state_name[])
-Message-ID: <20180312165106.GA5986@yuvallap>
-References: <1519769278-20094-1-git-send-email-hernan@vanguardiasur.com.ar>
- <1519769819.23791.19.camel@wdc.com>
- <CALfa3vGLja=CvkK-L+9CV9seF9C=jUkBR9p46bWb4oO1vFkgcg@mail.gmail.com>
+        Mon, 12 Mar 2018 12:53:35 -0400
+Subject: Re: [PATCH] perf test: Fix exit code for
+ record+probe_libc_inet_pton.sh
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: acme@kernel.org, jolsa@kernel.org, linux-kernel@vger.kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com
+References: <20180312124450.30371-1-sandipan@linux.vnet.ibm.com>
+ <20180312130547.GD23111@krava>
+From: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Date: Mon, 12 Mar 2018 22:23:26 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALfa3vGLja=CvkK-L+9CV9seF9C=jUkBR9p46bWb4oO1vFkgcg@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8830 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=754
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803120191
+In-Reply-To: <20180312130547.GD23111@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18031216-0008-0000-0000-000004DB896E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031216-0009-0000-0000-00001E6EB871
+Message-Id: <6cc6c692-2e54-d05f-5cd7-7301cfe6eebb@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-12_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803120191
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 07:58:20PM -0300, Hernán Gonzalez wrote:
-> On Tue, Feb 27, 2018 at 7:17 PM, Bart Van Assche <Bart.VanAssche@wdc.com> wrote:
-> > On Tue, 2018-02-27 at 19:07 -0300, Hernán Gonzalez wrote:
-> >> Note: This is compile only tested as I have no access to the hw.
-> >
-> > Hello Hernán,
-> >
-> > Are you aware that the only hardware that is needed to test this driver is
-> > an Ethernet interface, and that this driver even supports the loopback
-> > interface?
-> >
-> > Bart.
-> >
-> 
-> Hello Bart,
-> 
-> No, I didn't know, sorry about that. I'll test it as soon as I can.
-> Thanks for the response.
 
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
-Tested-by: Yuval Shaia <yuval.shaia@oracle.com>
 
+On 03/12/2018 06:35 PM, Jiri Olsa wrote:
+> On Mon, Mar 12, 2018 at 06:14:50PM +0530, Sandipan Das wrote:
+>> This fixes record+probe_libc_inet_pton.sh from always exiting
+>> with code 0 and making the test pass even if the perf script
+>> output does not match the expected pattern.
+>>
+>> The issue can be observed if this test is run with the verbose
+>> flags as shown below:
+>>
+>> 60: probe libc's inet_pton & backtrace it with ping       :
+>> ...
+>> ping 19602 [006] 16988.413767: probe_libc:inet_pton: (7fff9a2c42e8)
+>> 1842e8 __GI___inet_pton (/usr/lib64/libc-2.26.so)
+>> 130db4 getaddrinfo (/usr/lib64/libc-2.26.so)
+>>
+>> FAIL: expected backtrace entry 3 ".*\(.*/bin/ping.*\)$" got ""
+>> test child finished with 0
+>> ...
+>> probe libc's inet_pton & backtrace it with ping: Ok
+>>
+>> Fixes: e07d585e2454 ("perf tests: Switch trace+probe_libc_inet_pton to use record")
+>> Signed-off-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
+>> ---
+>>  tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+>> index 52c3ee701a89..1ecc1f0ff84a 100755
+>> --- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+>> +++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+>> @@ -47,7 +47,10 @@ trace_libc_inet_pton_backtrace() {
+>>  		[ -z "${expected[$idx]}" ] && break
+>>  	done
+>>  
+>> -	rm -f $file
+>> +	# If any statements are executed from this point onwards,
+>> +	# the exit code of the last among these will be reflected
+>> +	# in err below. If the exit code is 0, the test will pass
+>> +	# even if the perf script output does not match.
 > 
-> Cheers,
-> Hernán
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> right :-\ but we still need to delete that $file.. I assume it will
+> get delete by the 'rm -f ${file}' in the script main body?
+> 
+> thanks,
+> jirka
+> 
+> 
+
+Yes, that deletes $file.
+
+--
+With Regards,
+Sandipan
