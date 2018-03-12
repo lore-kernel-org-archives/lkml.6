@@ -1,118 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752675AbeCLKJ0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 06:09:26 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:55361 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932211AbeCLKHf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 06:07:35 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [RFT][PATCH v4 3/7] sched: idle: Do not stop the tick before cpuidle_idle_call()
-Date: Mon, 12 Mar 2018 10:53:25 +0100
-Message-ID: <3550231.xNMJN5JcLx@aspire.rjw.lan>
-In-Reply-To: <2352117.3UUoYAu18A@aspire.rjw.lan>
-References: <2352117.3UUoYAu18A@aspire.rjw.lan>
+        id S1752677AbeCLKKh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 06:10:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37840 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752096AbeCLKKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 06:10:36 -0400
+Date: Mon, 12 Mar 2018 18:10:31 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Chao Fan <fanc.fnst@cn.fujitsu.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com,
+        keescook@chromium.org, yasu.isimatu@gmail.com,
+        indou.takao@jp.fujitsu.com, lcapitulino@redhat.com
+Subject: Re: [PATCH v9 0/5] x86/KASLR: Add parameter
+ kaslr_boot_mem=nn[KMG]@ss[KMG]
+Message-ID: <20180312101031.GH18656@localhost.localdomain>
+References: <20180228105105.11487-1-fanc.fnst@cn.fujitsu.com>
+ <20180312093557.gxypr66vrbftz3v3@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180312093557.gxypr66vrbftz3v3@gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hi Ingo,
 
-Make cpuidle_idle_call() decide whether or not to stop the tick.
+On 03/12/18 at 10:35am, Ingo Molnar wrote:
+> 
+> * Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
+> 
+> > Long time no reply, rebase the patchset, change the parameter name
+> > from 'kaslr_mem' to 'kaslr_boot_mem'. There's no more code change.
+> > 
+> > ***Background:
+> > People reported that kaslr may randomly chooses some positions
+> > which are located in movable memory regions. This will break memory
+> > hotplug feature.
+> 
+> [...]
+> 
+> > ***Solutions:
+> > Introduce a new kernel parameter 'kaslr_boot_mem=nn@ss' to let users to
+> > specify the memory regions where kernel can be allowed to randomize
+> > safely.
+> 
+> Manual solutions like that are pretty suboptimal to users, aren't they?
+> 
+> In what way does memory hotplug feature 'break'? Does it crash or misbehave? Or 
+> simply does it not allow the movement of the affected memory region, while still 
+> allowing the rest to be moved?
 
-First, the cpuidle_enter_s2idle() path deals with the tick (and with
-the entire timekeeping for that matter) by itself and it doesn't need
-the tick to be stopped beforehand.
+AFAIT, if kernel is randomized into the movable memory region, the
+affected memory region can not be hot added/removed since it has kernel
+data. Surely, the system can still work, the unaffected part still can
+be moved. Still it will cause regression on memory hotplug.
 
-Second, to address the issue with short idle duration predictions
-by the idle governor after the tick has been stopped, it will be
-necessary to change the ordering of cpuidle_select() with respect
-to tick_nohz_idle_stop_tick().  To prepare for that, put a
-tick_nohz_idle_stop_tick() call in the same branch in which
-cpuidle_select() is called.
+Mainly we parse SRAT table to get the ranges of memory provided by
+hot-added memory devices in initmem_init(), that's very late. During boot,
+we don't know it. Chao ever posted patches to grab SRAT at decompressing
+stage, the code is very complicated and not elegant, ACPI maintainer
+NACKed that.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- kernel/sched/idle.c |   25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
-
-Index: linux-pm/kernel/sched/idle.c
-===================================================================
---- linux-pm.orig/kernel/sched/idle.c
-+++ linux-pm/kernel/sched/idle.c
-@@ -146,13 +146,15 @@ static void cpuidle_idle_call(void)
- 	}
- 
- 	/*
--	 * Tell the RCU framework we are entering an idle section,
--	 * so no more rcu read side critical sections and one more
-+	 * The RCU framework needs to be told that we are entering an idle
-+	 * section, so no more rcu read side critical sections and one more
- 	 * step to the grace period
- 	 */
--	rcu_idle_enter();
- 
- 	if (cpuidle_not_available(drv, dev)) {
-+		tick_nohz_idle_stop_tick();
-+		rcu_idle_enter();
-+
- 		default_idle_call();
- 		goto exit_idle;
- 	}
-@@ -169,16 +171,26 @@ static void cpuidle_idle_call(void)
- 
- 	if (idle_should_enter_s2idle() || dev->use_deepest_state) {
- 		if (idle_should_enter_s2idle()) {
-+			rcu_idle_enter();
-+
- 			entered_state = cpuidle_enter_s2idle(drv, dev);
- 			if (entered_state > 0) {
- 				local_irq_enable();
- 				goto exit_idle;
- 			}
-+
-+			rcu_idle_exit();
- 		}
- 
-+		tick_nohz_idle_stop_tick();
-+		rcu_idle_enter();
-+
- 		next_state = cpuidle_find_deepest_state(drv, dev);
- 		call_cpuidle(drv, dev, next_state);
- 	} else {
-+		tick_nohz_idle_stop_tick();
-+		rcu_idle_enter();
-+
- 		/*
- 		 * Ask the cpuidle framework to choose a convenient idle state.
- 		 */
-@@ -241,12 +253,11 @@ static void do_idle(void)
- 		 * broadcast device expired for us, we don't want to go deep
- 		 * idle as we know that the IPI is going to arrive right away.
- 		 */
--		if (cpu_idle_force_poll || tick_check_broadcast_expired()) {
-+		if (cpu_idle_force_poll || tick_check_broadcast_expired())
- 			cpu_idle_poll();
--		} else {
--			tick_nohz_idle_stop_tick();
-+		else
- 			cpuidle_idle_call();
--		}
-+
- 		arch_cpu_idle_exit();
- 	}
- 
+Thanks
+Baoquan
