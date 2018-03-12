@@ -1,83 +1,114 @@
-Return-Path: <kernel-hardening-return-12521-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELtDmXnK3FVBlDCqc04i9fIZt4OaqSU4yU+RCRXa95yx3L4NXYKxqdWF6GvVsok4X+P72pMk
-ARC-Seal: i=1; a=rsa-sha256; t=1520971849; cv=none;
+Return-Path: <kernel-hardening-return-12408-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELvKJqpVGa+l0n5uc+uG3wptWGGh+0sUAgfXcXCL6tZOXHvmrCoKW3GcriQRixDxy7nFL8+W
+ARC-Seal: i=1; a=rsa-sha256; t=1520828876; cv=none;
         d=google.com; s=arc-20160816;
-        b=yuWOUBC2dDZ95XZyZWxNtIxyQlKFuhoMwTrWukWtR45UFlW5J4Mey9P6IL39euJFba
-         RdxB116487/wb/BLcwKGNU9U+NP6kQfYsxQ/iq1HF/t/SwwTpcNRxMwjxT/Vc3eqfnSz
-         eY+fzEvq48rj/llWfWyGZJTyE4VMS6vU+qFfO24LuiRokHEONfQeQdJdfdAlK0ISMtrc
-         7GqY14VUcrc3c28BZqjkZXoWQ+UkFQBYtrh3Vkyv2GIw6sw817BGeY35o8q2cH9amdy8
-         m8kReS7OIm3k2PjrmUJmHkmCd2PiktnRyF3O8xqWY3xeuXrbQvV7ka8/z6+sdFZIVRuQ
-         FGfg==
+        b=cWn+9qjKr431xqO9LM2ToiA6l+VGUiIs7mwJueI6N/hROjwqRIoZxBG+4jDi5lCJy4
+         DdXBwjgtMXshimvFjF94MTvFmCnSv7KhG1h5Y3PNOhCx/9sx2erXsAT20V4et84wdtc2
+         A9NO9WdvBoflqN6obWdusnDgnq4iYt67FIHU+w5E903Od2C/CPmBP4mGaiAUhVCMVBHB
+         DtQn846p/ZGUTsGyb8wk6NmabfrGA/3k2yv11UgN/JsxIcNl43zTXDvm5UG9t1JvRsLa
+         Q82ZyeVWnCoQ/A+hcrirIt26YFBR9LOjNHXFnJkNX2RG5PyM/mqzhb4ZX+EHoANVAyUE
+         4axw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:delivered-to:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=6jVRncZ3RJv8kqRX2W77wx+aLKbCQYSwrTsBGl5uTYg=;
-        b=OlhlQ52Lzo8YLUBB0pYdeqOquE/ficqLwiG4f4u4q/PuPCVx3Sbjea5SjqXLxGOhQE
-         ma2UV1KRc0aGPRVlLf6qFzNNMtvywUOyDU9eqmGxWq6GJ+lesRweq/k5nZerZSnIaLhu
-         3OgKl8d7pvkHA3eSuz28gz36hQjUzKjNqaePfRuHWiz0qPh9WzIBZDlc/tKSZ209H68V
-         TgeneFwh1Q3f/aXlH7IsQjAYRD6LGMatb7dbPw+uuw7rB0401T7A0K7GnWGJEnBXKuE/
-         o4xqf/IjQEl5Z+7Kms7qRifoyaUJJyVsCMj4i6nhnUwQHCPgiWhnaKgdRYwkugJ6Wxha
-         p/Iw==
+        h=message-id:date:subject:cc:to:from:dkim-signature:dkim-signature
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=VpjFo8u6KOeUvTmN6GDsZxaVQ85RQKupAr0HUwUmvXo=;
+        b=H5q6bgoUJJduX6z93Pfa96uSl9YQXoybr3ctwjAqpazIKwKCTQZ11ITQTwX2NiwRKG
+         sHHG95mqXG3xz3l8miWzk3s0o4aR/LpJwlePBV+/anlCX/C4IGbNf6hX3AvfwaLiSuaj
+         fQCpfhxhHLm38EpVA7kx/YOeX9CR+G0VyzcImY04ZbZQkuD0tEJNOmC0uhXJqO9bk19Z
+         LX+0Z66grtX8EhS5Bqgr7j/EMVEEcKj8qzcg3ZyebOrfqMGeBZIko6hGRjCsgpIE+ZDu
+         49AZh2g8gMw340F4bvnGT9lriZYTzJKhWR/MnUH7mekmNTtQu8/UN6CDXIdf3D/KISHw
+         mKfw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=uZ+ufC2o;
-       spf=pass (google.com: domain of kernel-hardening-return-12521-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12521-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=WJ1t/ou7;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=fKwuEN/e;
+       spf=pass (google.com: domain of kernel-hardening-return-12408-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12408-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=uZ+ufC2o;
-       spf=pass (google.com: domain of kernel-hardening-return-12521-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12521-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=WJ1t/ou7;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=fKwuEN/e;
+       spf=pass (google.com: domain of kernel-hardening-return-12408-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12408-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Subject: Re: [PATCH] net: dsa: drop some VLAs in switch.c
-To: Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
- Salvatore Mesoraca <s.mesoraca16@gmail.com>, linux-kernel@vger.kernel.org
-Cc: kernel-hardening@lists.openwall.com, netdev@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
- Kees Cook <keescook@chromium.org>
-References: <1520970647-19587-1-git-send-email-s.mesoraca16@gmail.com>
- <87fu5321du.fsf@weeman.i-did-not-set--mail-host-address--so-tickle-me>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <b948ef55-8b16-fee4-b22f-4c6d09fea0cf@gmail.com>
-Date: Tue, 13 Mar 2018 13:06:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <87fu5321du.fsf@weeman.i-did-not-set--mail-host-address--so-tickle-me>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-ME-Sender: <xms:uAGmWiC_t7FHjw5nOAi3dj1l_scN0_no5mP_VXrJJA6MEIqVCCIhFQ>
+From: "Tobin C. Harding" <me@tobin.cc>
+To: Rob Herring <robh+dt@kernel.org>,
+	Frank Rowand <frowand.list@gmail.com>
+Cc: "Tobin C. Harding" <me@tobin.cc>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	Tycho Andersen <tycho@tycho.ws>,
+	Kees Cook <keescook@chromium.org>
+Subject: [PATCH] of: unittest: Remove VLA stack usage
+Date: Mon, 12 Mar 2018 15:27:23 +1100
+Message-Id: <1520828843-22289-1-git-send-email-me@tobin.cc>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594853343808183482?=
-X-GMAIL-MSGID: =?utf-8?q?1594854577825810314?=
+X-GMAIL-THRID: =?utf-8?q?1594704660258031955?=
+X-GMAIL-MSGID: =?utf-8?q?1594704660258031955?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/13/2018 12:58 PM, Vivien Didelot wrote:
-> Hi Salvatore,
-> 
-> Salvatore Mesoraca <s.mesoraca16@gmail.com> writes:
-> 
->> dsa_switch's num_ports is currently fixed to DSA_MAX_PORTS. So we avoid
->> 2 VLAs[1] by using DSA_MAX_PORTS instead of ds->num_ports.
->>
->> [1] https://lkml.org/lkml/2018/3/7/621
->>
->> Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-> 
-> NAK.
-> 
-> We are in the process to remove hardcoded limits such as DSA_MAX_PORTS
-> and DSA_MAX_SWITCHES, so we have to stick with ds->num_ports.
+The kernel would like to have all stack VLA usage removed[1].  This is a
+test function so the execution speed is not critical.  We can allocate
+memory for this buffer instead of using a VLA.  If kmalloc() fails just
+return.
 
-Then this means that we need to allocate a bitmap from the heap, which
-sounds a bit superfluous and could theoretically fail... not sure which
-way is better, but bumping the size to DSA_MAX_PORTS definitively does
-help people working on enabling -Wvla.
+Allocate buffer with kmalloc().
+
+[1]: https://lkml.org/lkml/2018/3/7/621
+
+Signed-off-by: Tobin C. Harding <me@tobin.cc>
+---
+
+Kees is this annoying you, CC'ing you an all my VLA patches?
+
+ drivers/of/unittest.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+index 1991fe4319f5..38cbc343b7da 100644
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -254,12 +254,18 @@ static void __init of_unittest_check_tree_linkage(void)
+ static void __init of_unittest_printf_one(struct device_node *np, const char *fmt,
+ 					  const char *expected)
+ {
+-	unsigned char buf[strlen(expected)+10];
++	unsigned char *buf;
++	int buf_size;
+ 	int size, i;
+ 
++	buf_size = strlen(expected) + 10;
++	buf = kmalloc(buf_size, GFP_KERNEL);
++	if (!buf)
++		return;
++
+ 	/* Baseline; check conversion with a large size limit */
+-	memset(buf, 0xff, sizeof(buf));
+-	size = snprintf(buf, sizeof(buf) - 2, fmt, np);
++	memset(buf, 0xff, buf_size);
++	size = snprintf(buf, buf_size - 2, fmt, np);
+ 
+ 	/* use strcmp() instead of strncmp() here to be absolutely sure strings match */
+ 	unittest((strcmp(buf, expected) == 0) && (buf[size+1] == 0xff),
+@@ -270,12 +276,13 @@ static void __init of_unittest_printf_one(struct device_node *np, const char *fm
+ 	size++;
+ 	for (i = 0; i < 2; i++, size--) {
+ 		/* Clear the buffer, and make sure it works correctly still */
+-		memset(buf, 0xff, sizeof(buf));
++		memset(buf, 0xff, buf_size);
+ 		snprintf(buf, size+1, fmt, np);
+ 		unittest(strncmp(buf, expected, size) == 0 && (buf[size+1] == 0xff),
+ 			"snprintf failed; size=%i fmt='%s' expected='%s' rslt='%s'\n",
+ 			size, fmt, expected, buf);
+ 	}
++	kfree(buf);
+ }
+ 
+ static void __init of_unittest_printf(void)
 -- 
-Florian
+2.7.4
