@@ -1,121 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932231AbeCLWGr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 18:06:47 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49702 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751282AbeCLWGq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 18:06:46 -0400
-Date: Mon, 12 Mar 2018 16:06:44 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: "Jason Cai (Xiang Feng)" <jason.cai@linux.alibaba.com>
-Cc: pbonzini@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, gnehzuil@linux.alibaba.com
-Subject: Re: [RFC v2] vfio iommu type1: improve memory pinning process for
- raw PFN mapping
-Message-ID: <20180312160644.0de6f96b@w520.home>
-In-Reply-To: <25959294-E232-43EB-9CE2-E558A8D62F57@linux.alibaba.com>
-References: <7090CB2E-8D63-44B1-A739-932FFA649BC9@linux.alibaba.com>
-        <20180226121930.5e1f6300@w520.home>
-        <25959294-E232-43EB-9CE2-E558A8D62F57@linux.alibaba.com>
+        id S932267AbeCLWI0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 18:08:26 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:54242 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751282AbeCLWIY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 18:08:24 -0400
+Date: Mon, 12 Mar 2018 23:07:51 +0100
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Darren Hart <dvhart@infradead.org>
+Cc: mario.limonciello@dell.com, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: Dell Inc. XPS 13 9343/0TM99H fails to boot v4.16-rc5
+Message-ID: <20180312220751.GA1757@light.dominikbrodowski.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4716007c23abeb0e42015786794539454aff487b.1520886814.git.dvhart@infradead.org>
+ <20180312202319.GA88572@localhost.localdomain>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 3 Mar 2018 20:10:33 +0800
-"Jason Cai (Xiang Feng)" <jason.cai@linux.alibaba.com> wrote:
+On Mon, Mar 12, 2018 at 01:23:19PM -0700, Darren Hart wrote:
+> On Mon, Mar 12, 2018 at 07:53:57PM +0100, Dominik Brodowski wrote:
+> > Mario,
+> > 
+> > unfortunately, my Dell Inc. XPS 13 9343/0TM99H, BIOS A11 12/08/2016 fails to
+> > boot v4.16-rc5. More exactly, I could bisect it down to commit 25d47027e10
+> > ("platform/x86: dell-smbios: Link all dell-smbios-* modules together").
+> > Usually, I have enabled
+> > 
+> > CONFIG_SENSORS_DELL_SMM=y
+> > CONFIG_DELL_SMBIOS=y
+> > CONFIG_DELL_SMBIOS_WMI=y
+> > CONFIG_DELL_SMBIOS_SMM=y
+> > CONFIG_DELL_LAPTOP=y
+> > CONFIG_DELL_WMI=y
+> > CONFIG_DELL_WMI_DESCRIPTOR=y
+> > # CONFIG_DELL_WMI_AIO is not set
+> > # CONFIG_DELL_WMI_LED is not set
+> > # CONFIG_DELL_SMO8800 is not set
+> > # CONFIG_DELL_RBTN is not set
+> > # CONFIG_DELL_RBU is not set
+> > 
+> > For v4.16-rc5 to work, I need to manually disable DELL_SMBIOS_WMI:
+> > 
+> > -CONFIG_DELL_SMBIOS_WMI=y
+> > +# CONFIG_DELL_SMBIOS_WMI is not set
+> > 
+> > Any ideas?
+> 
+> We're working on a dependency fix, but I think the problem you have here is
+> likely to be ACPI_WMI=m instead of =y while you have DELL_SMBIOS=y
+> 
+> The fix won't allow that configuration. I'll include you in Cc of v2 of that
+> fix which I'll send shortly.
 
-> When using vfio to pass through a PCIe device (e.g. a GPU card) that
-> has a huge BAR (e.g. 16GB), a lot of cycles are wasted on memory
-> pinning because PFNs of PCI BAR are not backed by struct page, and
-> the corresponding VMA has flag VM_PFNMAP.
-> 
-> With this change, when pinning a region which is a raw PFN mapping,
-> it can skip unnecessary user memory pinning process. Thus, it can
-> significantly improve VM's boot up time when passing through devices
-> via VFIO.
-> 
-> Signed-off-by: Jason Cai (Xiang Feng) <jason.cai@linux.alibaba.com>
-> ---
->  drivers/vfio/vfio_iommu_type1.c | 24 ++++++++++++++----------
->  1 file changed, 14 insertions(+), 10 deletions(-)
+On Mon, Mar 12, 2018 at 01:36:06PM -0700, Darren Hart wrote:
+> Similarly to DCDBAS for DELL_SMBIOS_SMM, if DELL_SMBIOS_WMI is enabled,
+> DELL_SMBIOS becomes dependent on ACPI_WMI. Update the depends lines to
+> prevent a configuration where DELL_SMBIOS=y and either backend
+> dependency =m. Update the comment accordingly.
 
+I'm awfully sorry, but this patch doesn't solve the issue.
+CONFIG_ACPI_WMI=y was/is set, but still enabling CONFIG_DELL_SMBIOS_WMI=y
+causes a very-early crash of v4.16-rc5. In fact, so early that the normal
+boot messages never show up on the screen...
 
-It looks reasonable to me, is this still really an RFC?  It would also
-be interesting to include performance data in the commit log, how much
-faster is it to map that 16GB BAR with this change?  Thanks,
-
-Alex
-
- 
-> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> index e30e29ae4819..82ccfa350315 100644
-> --- a/drivers/vfio/vfio_iommu_type1.c
-> +++ b/drivers/vfio/vfio_iommu_type1.c
-> @@ -385,7 +385,6 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
->  {
->         unsigned long pfn = 0;
->         long ret, pinned = 0, lock_acct = 0;
-> -       bool rsvd;
->         dma_addr_t iova = vaddr - dma->vaddr + dma->iova;
-> 
->         /* This code path is only user initiated */
-> @@ -396,14 +395,22 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
->         if (ret)
->                 return ret;
-> 
-> +       if (is_invalid_reserved_pfn(*pfn_base)) {
-> +               struct vm_area_struct *vma;
-> +               down_read(&current->mm->mmap_sem);
-> +               vma = find_vma_intersection(current->mm, vaddr, vaddr + 1);
-> +               pinned = min(npage, (long)vma_pages(vma));
-> +               up_read(&current->mm->mmap_sem);
-> +               return pinned;
-> +       }
-> +
->         pinned++;
-> -       rsvd = is_invalid_reserved_pfn(*pfn_base);
-> 
->         /*
->          * Reserved pages aren't counted against the user, externally pinned
->          * pages are already counted against the user.
->          */
-> -       if (!rsvd && !vfio_find_vpfn(dma, iova)) {
-> +       if (!vfio_find_vpfn(dma, iova)) {
->                 if (!lock_cap && current->mm->locked_vm + 1 > limit) {
->                         put_pfn(*pfn_base, dma->prot);
->                         pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n", __func__,
-> @@ -423,13 +430,12 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
->                 if (ret)
->                         break;
-> 
-> -               if (pfn != *pfn_base + pinned ||
-> -                   rsvd != is_invalid_reserved_pfn(pfn)) {
-> +               if (pfn != *pfn_base + pinned) {
->                         put_pfn(pfn, dma->prot);
->                         break;
->                 }
-> 
-> -               if (!rsvd && !vfio_find_vpfn(dma, iova)) {
-> +               if (!vfio_find_vpfn(dma, iova)) {
->                         if (!lock_cap &&
->                             current->mm->locked_vm + lock_acct + 1 > limit) {
->                                 put_pfn(pfn, dma->prot);
-> @@ -447,10 +453,8 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
-> 
->  unpin_out:
->         if (ret) {
-> -               if (!rsvd) {
-> -                       for (pfn = *pfn_base ; pinned ; pfn++, pinned--)
-> -                               put_pfn(pfn, dma->prot);
-> -               }
-> +               for (pfn = *pfn_base ; pinned ; pfn++, pinned--)
-> +                       put_pfn(pfn, dma->prot);
-> 
->                 return ret;
->         }
-> --
-> 2.13.6
+Thanks,
+	Dominik
