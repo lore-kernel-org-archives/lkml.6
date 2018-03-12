@@ -1,66 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932356AbeCLQSS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 12:18:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48598 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751315AbeCLQSR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 12:18:17 -0400
-Subject: Re: [PATCH 1/3] x86/kvm/vmx: read MSR_FS_BASE from current->thread
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>, kvm list <kvm@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-References: <20180312140300.6166-1-vkuznets@redhat.com>
- <20180312140300.6166-2-vkuznets@redhat.com>
- <327f3194-715c-7aa7-f1bb-9ee1073f5b99@redhat.com>
- <CALCETrWmytXxC7tSiqCqFOs1Cvz_-u0=YVn7VoRSOr7k6kdkjA@mail.gmail.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <36451719-2905-22e2-6c9b-bbb676e7e663@redhat.com>
-Date: Mon, 12 Mar 2018 17:18:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CALCETrWmytXxC7tSiqCqFOs1Cvz_-u0=YVn7VoRSOr7k6kdkjA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S932479AbeCLQSf convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 12:18:35 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:46710 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751787AbeCLQSd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 12:18:33 -0400
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH 1/5] Bluetooth: btmrvl: Use common error handling code in
+ btmrvl_sdio_register_dev()
+From: Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <5c3361c6-ef1d-b919-8817-05c2c98fb2ef@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 17:18:31 +0100
+Cc: linux-bluetooth@vger.kernel.org,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <EE3DFCC7-3B51-43B6-A28B-3102F55479AA@holtmann.org>
+References: <8d050f76-aed1-7b6b-8778-a78aef34d4ea@users.sourceforge.net>
+ <5c3361c6-ef1d-b919-8817-05c2c98fb2ef@users.sourceforge.net>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/03/2018 17:13, Andy Lutomirski wrote:
->>
->>         savesegment(fs, vmx->host_state.fs_sel);
->>         /*
->>          * When FSGSBASE extensions are enabled, this will have to use
->>          * RD{FS,GS}BASE instead of accessing current, and the
->>          * corresponding WR{FS,GS}BASE should be done unconditionally,
->>          * even if fs_reload_needed (resp. gs_ldt_reload_needed) is 1.
->>          */
->>         if (vmx->host_state.fs_sel <= 3) {
->>                 vmcs_write16(HOST_FS_SELECTOR, vmx->host_state.fs_sel);
->>                 vmcs_write16(HOST_FS_BASE, current->thread.fsbase);
->>                 vmx->host_state.fs_reload_needed = 0;
->>         } else {
->>                 vmcs_write16(HOST_FS_SELECTOR, 0);
->>                 vmcs_write16(HOST_FS_BASE, 0);
->>                 vmx->host_state.fs_reload_needed = 1;
->>         }
->>         savesegment(gs, vmx->host_state.gs_sel);
->>         ...
->>
->> ?
->>
-> Hmm, probably, although this still gets the case where the user writes
-> 0 to %fs wrong.  Of course, save_fsgs() also gets that wrong.
+Hi Markus,
+
+> Adjust a jump target so that a bit of exception handling can be better
+> reused at the end of this function.
 > 
-> I'm okay with this variant as long as you add a comment to
-> save_..._legacy pointing at the KVM code.
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+> drivers/bluetooth/btmrvl_sdio.c | 50 ++++++++++++++++-------------------------
+> 1 file changed, 19 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/btmrvl_sdio.c b/drivers/bluetooth/btmrvl_sdio.c
+> index 0f020254fd39..df2a04bd8428 100644
+> --- a/drivers/bluetooth/btmrvl_sdio.c
+> +++ b/drivers/bluetooth/btmrvl_sdio.c
+> @@ -949,31 +949,24 @@ static int btmrvl_sdio_register_dev(struct btmrvl_sdio_card *card)
+> 	ret = sdio_set_block_size(card->func, SDIO_BLOCK_SIZE);
+> 	if (ret) {
+> 		BT_ERR("cannot set SDIO block size");
+> -		ret = -EIO;
+> -		goto release_irq;
+> +		goto release_with_eio;
+> 	}
+> 
+> 	reg = sdio_readb(func, card->reg->io_port_0, &ret);
+> -	if (ret < 0) {
+> -		ret = -EIO;
+> -		goto release_irq;
+> -	}
+> +	if (ret < 0)
+> +		goto release_with_eio;
+> 
+> 	card->ioport = reg;
+> 
+> 	reg = sdio_readb(func, card->reg->io_port_1, &ret);
+> -	if (ret < 0) {
+> -		ret = -EIO;
+> -		goto release_irq;
+> -	}
+> +	if (ret < 0)
+> +		goto release_with_eio;
+> 
+> 	card->ioport |= (reg << 8);
+> 
+> 	reg = sdio_readb(func, card->reg->io_port_2, &ret);
+> -	if (ret < 0) {
+> -		ret = -EIO;
+> -		goto release_irq;
+> -	}
+> +	if (ret < 0)
+> +		goto release_with_eio;
+> 
+> 	card->ioport |= (reg << 16);
+> 
+> @@ -981,26 +974,20 @@ static int btmrvl_sdio_register_dev(struct btmrvl_sdio_card *card)
+> 
+> 	if (card->reg->int_read_to_clear) {
+> 		reg = sdio_readb(func, card->reg->host_int_rsr, &ret);
+> -		if (ret < 0) {
+> -			ret = -EIO;
+> -			goto release_irq;
+> -		}
+> +		if (ret < 0)
+> +			goto release_with_eio;
+> +
+> 		sdio_writeb(func, reg | 0x3f, card->reg->host_int_rsr, &ret);
+> -		if (ret < 0) {
+> -			ret = -EIO;
+> -			goto release_irq;
+> -		}
+> +		if (ret < 0)
+> +			goto release_with_eio;
+> 
+> 		reg = sdio_readb(func, card->reg->card_misc_cfg, &ret);
+> -		if (ret < 0) {
+> -			ret = -EIO;
+> -			goto release_irq;
+> -		}
+> +		if (ret < 0)
+> +			goto release_with_eio;
+> +
+> 		sdio_writeb(func, reg | 0x10, card->reg->card_misc_cfg, &ret);
+> -		if (ret < 0) {
+> -			ret = -EIO;
+> -			goto release_irq;
+> -		}
+> +		if (ret < 0)
+> +			goto release_with_eio;
+> 	}
+> 
+> 	sdio_set_drvdata(func, card);
+> @@ -1009,7 +996,8 @@ static int btmrvl_sdio_register_dev(struct btmrvl_sdio_card *card)
+> 
+> 	return 0;
+> 
+> -release_irq:
+> +release_with_eio:
+> +	ret = -EIO;
+> 	sdio_release_irq(func);
+> 
+> disable_func:
 
-Why in save_..._legacy?  If it is about FSGSBASE, shouldn't it be in
-save_fsgs?  (Or if not I'm missing what the comment should be about).
+please do not send me any patches with renaming goto labels. I dislike long goto labels anyway and it doesn’t make it any better in mind.
 
-Paolo
+In addition, this patch is half baked. If you want to do something, then you replace all err = -EIO and use this.
+
+release_irq:
+        sdio_release_irq(func);
+
+disable_func:
+        sdio_disable_func(func);
+
+release_host:
+        sdio_release_host(func);
+
+	return -EIO;
+
+And replace goto failed with return -EINVAL;
+
+Regards
+
+Marcel
