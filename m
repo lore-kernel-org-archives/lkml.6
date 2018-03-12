@@ -1,78 +1,73 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-110966-1520853287-2-18057132885808567832
+X-Cyrus-Session-Id: sloti22d1t05-3600986-1520834760-2-3747007630084430613
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='cc', MailFrom='org'
 X-Spam-charsets: plain='iso-8859-1'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520853287; b=Yw9+8ZC8NfBoSEXxBPF9MpF1yelkhq08GZwrszVsppeOZLN
-    FLncyvHX715Ft6zSXbAyviuDEB3MDFdXN2XIyZx9RDOZ3Y94SLfrqLBc/a2d9sKg
-    Ox2DvpfOr6z7T2kLWWqJ+xBqZtV4nv+2K//5FehAOtcf1bT398FP0KUMW3gzK7b0
-    BwLnHgO3WLSfv6xxunYbIalTe9+gcdyee/N63DCf69HFThfIf/sEMk1kZaEGeIXU
-    C8eBJ0XsSB55kN9sRs1f3u9TnbAobYSNL1rIHljzsw6+ELtxoOFjrj5gDOKfyGpU
-    xQvSMBICk2nU+oJyri6WZ1kJMNqD1eGZ/4zlrnA==
+    t=1520834760; b=oMWaItO5WAK4I1Iypq5Wt2JCTfu2tz6WY0ACBSzHAKnuzkz
+    jL7EJUr7A+LY8mLRsus5H4jZVMDsmqgjR3S46UPIzLFy2RsbAPmn+WkT6x67il32
+    OrjO8uRrWJ5Jr414Qj/iZZwuqb15dZTcZ0DmFGoBCchhMEuCNS9T+CZp08viYlLh
+    emrQvORG7HpZW911LX9Dl9TblC07StSStLfbhSkjZly72+h4P+xH83BJQ4cFWMPh
+    IYEi+h+9pUCJL5EjsvwLh3Y0OPLHtcsp/PGnQNVM/9ohvhvo/6fYq1JBr0v5tUmd
+    SFRxXQOltaj+DC0x4B45j7v7jOi0wAbphnR5rCQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:subject:message-id
     :references:mime-version:in-reply-to:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520853287; bh=S
-    n1DnbQhDNZno+Xh0RmEOZ8PumkOrWg/3HpUs7kmKW8=; b=Mvobf9f/JQnLhh32q
-    QAo+WgX7jQO2CBYA2R/jgCzie1+HYvJJL/ahHjkyzMomE8IZnRPlgOpwgQ52J2V2
-    9LPC/VlJCPQGExxYL1OM1OKpG4Wnmtsgbg1oaN0cIkC321/VWPIcwczTsWGFXuMv
-    qVl0E+SZ7xCs6rzM9KxbBpefFgwnIfkO4MAwCixKF7QIjRQ1N7k640Q09pbec0Tn
-    AZ1Cie1lq5K+42sw0LK3C3aQZKS2DufEnrQMRglSfHsx1HswkQ0QKYxx6jnM7Vjo
-    Ftz7sU/35sPlK6rvty/oNChUc2CGUtAB0139yZEEhIENU121YlAhdQ2m3s9oxQXt
-    Lcczg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=Yb1B73jp x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    :content-transfer-encoding:sender; s=arctest; t=1520834760; bh=Y
+    lprKfF9qpxD84ziaKtuQnV777F7q8wse2EUYI4JBBE=; b=CF4jQFurrVyEasksL
+    St6CxnI/BPlcGsTxkEJpk9YttCnnCxrKTo9mCfedEXt7CADu+ghRahVhsbQdZ2Bd
+    eyIGxTo7X7igJKQo9BsY/rRKXiF185TesgYhdpGE78xK1GuBOnw+K4eQn0gd0z4d
+    wdXnDcVD/yPt+N0Wf9MNFor6i/egVPUWW0MdxCzYvGzYlr0wCpqQTX3sun8RAap5
+    AtAyPEaUIZKIwtY6SUZ8/bfa4pEBxDlnysLVB9xoeYZNV0ODOZm7mlHv9J+Oktnt
+    IdsC6qZNtVh3XjeXweEcWjLJxJWTHYQvt1i9yka1jJJsAOZgVxYJujbfeH/9fI2t
+    dO5pw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=messagingengine.com header.i=@messagingengine.com header.b=Pc7VveV8 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=tobin.cc header.i=@tobin.cc header.b=R6iD1m1C x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tobin.cc;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    x-category=clean score=-85 state=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tobin.cc header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=Yb1B73jp x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=messagingengine.com header.i=@messagingengine.com header.b=Pc7VveV8 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=tobin.cc header.i=@tobin.cc header.b=R6iD1m1C x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tobin.cc;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    x-category=clean score=-85 state=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tobin.cc header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Mon, 12 Mar 2018 14:14:22 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
+X-ME-Sender: <xms:wBimWtAhdz-mcBcBavKggos44Pj178iMp-zQhwbzmgHydJvKjklSMg>
+Date: Mon, 12 Mar 2018 17:05:49 +1100
+From: "Tobin C. Harding" <me@tobin.cc>
 To: Stefan Wahren <stefan.wahren@i2se.com>
 Subject: Re: [PATCH v2] staging: vchiq_arm: Clear VLA warning
-Message-ID: <20180312111421.zckzwhspwgcq2vpi@mwanda>
+Message-ID: <20180312060549.GH8631@eros>
 References: <1520818673-14084-1-git-send-email-me@tobin.cc>
  <20180312054613.GG8631@eros>
  <1166411830.411906.1520834284931@email.1und1.de>
 MIME-Version: 1.0
 Content-Disposition: inline
 In-Reply-To: <1166411830.411906.1520834284931@email.1und1.de>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8829
- signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
- malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=985
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803120132
+X-Mailer: Mutt 1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -132,15 +127,11 @@ VLA
 > =
 
 > except from the leak, did you test this patch on a RPi?
-> =
 
+No I didn't, but I can have a go at it.  Will try before doing v3.
 
-Hm...  Yeah.  It looks like we're holding a mutex when we call
-vchiq_check_service() from vchiq_queue_message().
-
-regards,
-dan carpenter
-
+thanks,
+Tobin.
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
