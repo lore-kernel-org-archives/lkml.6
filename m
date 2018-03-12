@@ -1,115 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751305AbeCLMEm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 08:04:42 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:33258 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750967AbeCLMEl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 08:04:41 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="37745850"
-Date: Mon, 12 Mar 2018 20:04:15 +0800
-From: Chao Fan <fanc.fnst@cn.fujitsu.com>
-To: Ingo Molnar <mingo@kernel.org>
-CC: Baoquan He <bhe@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <keescook@chromium.org>,
-        <yasu.isimatu@gmail.com>, <indou.takao@jp.fujitsu.com>,
-        <lcapitulino@redhat.com>, <fanc.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v9 0/5] x86/KASLR: Add parameter
- kaslr_boot_mem=nn[KMG]@ss[KMG]
-Message-ID: <20180312120415.GC8547@localhost.localdomain>
-References: <20180228105105.11487-1-fanc.fnst@cn.fujitsu.com>
- <20180312093557.gxypr66vrbftz3v3@gmail.com>
- <20180312101031.GH18656@localhost.localdomain>
- <20180312105727.mzrtjvnyxgyz7jn7@gmail.com>
+        id S1751280AbeCLMNa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 08:13:30 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59697 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751053AbeCLMN3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 08:13:29 -0400
+Subject: Re: [RFC PATCH 0/4] add support for CommonLPIAff field
+To: Marc Zyngier <marc.zyngier@arm.com>
+References: <1520837395-10288-1-git-send-email-yangyingliang@huawei.com>
+ <3b6997c9-761f-3f5e-79ac-6b785a9a14d9@arm.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+From: Yang Yingliang <yangyingliang@huawei.com>
+Message-ID: <5AA66ED7.7080007@huawei.com>
+Date: Mon, 12 Mar 2018 20:13:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180312105727.mzrtjvnyxgyz7jn7@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: A78E74D0EFF1.AF0E3
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+In-Reply-To: <3b6997c9-761f-3f5e-79ac-6b785a9a14d9@arm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.19.219]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 11:57:27AM +0100, Ingo Molnar wrote:
->
->* Baoquan He <bhe@redhat.com> wrote:
->
->> Hi Ingo,
->> 
->> On 03/12/18 at 10:35am, Ingo Molnar wrote:
->> > 
->> > * Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
->> > 
->> > > Long time no reply, rebase the patchset, change the parameter name
->> > > from 'kaslr_mem' to 'kaslr_boot_mem'. There's no more code change.
->> > > 
->> > > ***Background:
->> > > People reported that kaslr may randomly chooses some positions
->> > > which are located in movable memory regions. This will break memory
->> > > hotplug feature.
->> > 
->> > [...]
->> > 
->> > > ***Solutions:
->> > > Introduce a new kernel parameter 'kaslr_boot_mem=nn@ss' to let users to
->> > > specify the memory regions where kernel can be allowed to randomize
->> > > safely.
->> > 
->> > Manual solutions like that are pretty suboptimal to users, aren't they?
->> > 
->> > In what way does memory hotplug feature 'break'? Does it crash or misbehave? Or 
->> > simply does it not allow the movement of the affected memory region, while still 
->> > allowing the rest to be moved?
->> 
->> AFAIT, if kernel is randomized into the movable memory region, the
->> affected memory region can not be hot added/removed since it has kernel
->> data. Surely, the system can still work, the unaffected part still can
->> be moved. Still it will cause regression on memory hotplug.
->> 
->> Mainly we parse SRAT table to get the ranges of memory provided by
->> hot-added memory devices in initmem_init(), that's very late. During boot,
->> we don't know it. Chao ever posted patches to grab SRAT at decompressing
->> stage, the code is very complicated and not elegant, ACPI maintainer
->> NACKed that.
 
-Thanks for Ingo's suggestion and Baoquan's explaination.
 
-Yes, I did ever try to dig SRAT table in boot period in early RFC PATCH:
-https://lkml.org/lkml/2017/9/3/77
-But the change is too huge so made this patchset to avoid this bug in a
-small change, which will not make the code looks messy.
+On 2018/3/12 17:55, Marc Zyngier wrote:
+> On 12/03/18 06:49, Yang Yingliang wrote:
+>> This patch set adjust struct rdists to support CommonLPIAff field.
+>> This field is described in spec:
+>>
+>> CommonLPIAff, bits [25:24]
+>> The affinity level at which Redistributors share a LPI Configuration table.
+>> 00 All Redistributors must share a LPI Configuration table.
+>> 01 All Redistributors with the same Aff3 value must share an LPI Configurationt table.
+>> 10 All Redistributors with the same Aff3.Aff2 value must share an LPI Configuration table.
+>> 11 All Redistributors with the same Aff3.Aff2.Aff1 value must share an LPI Configuration
+>> table.
+>
+> What are you trying to achieve here? We already share the same
+> configuration table across all the redistributors, irrelevant the of
+> CommonLPIAff. Why would we need to do anything else?
 
-Thanks,
-Chao Fan
+In some cases, such as "with the same Aff3.Aff2 value must share an LPI
+Configuration table", redistributors will access local memory node
+only, it may improve the performance. And I don't have any beneficial
+data now. I may provide it later.
 
+Regards,
+Yang
 >
->So there's apparently a mis-design here:
+> Thanks,
 >
-> - KASLR needs to be done very early on during bootup: - it's not realistic to 
->   expect KASLR to be done with a booted up kernel, because pointers to various 
->   KASLR-ed objects are already widely spread out in memory.
->
-> - But for some unfathomable reason the memory hotplug attribute of memory
->   regions is not part of the regular memory map but part of late-init ACPI data
->   structures.
->
->The right solution would be _not_ to fudge the KASLR location, but to provide the 
->memory hotplug information to early code, preferably via the primary memory map. 
->KASLR can then make use of it and avoid those regions, just like it avoids other 
->memory regions already.
->
->In addition to that hardware makers (including virtualized hardware) should also 
->fix their systems to provide memory hotplug information to early code.
->
->Thanks,
->
->	Ingo
->
+> 	M.
 >
