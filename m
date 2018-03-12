@@ -1,140 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752525AbeCLJkg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 05:40:36 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52666 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752458AbeCLJkc (ORCPT
+        id S1752547AbeCLJlR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 05:41:17 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38090 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751229AbeCLJlP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:40:32 -0400
-X-Google-Smtp-Source: AG47ELt3zR/p1/3k5qHNvnJtVnL9zD0RVQ6KzFxc2W1dK3bahQUBLLV5o8IqUy1AI7llu01noxxY1Q==
-Subject: Re: [PATCH v1 05/19] arm: dts: mt7623: add BTIF, HSDMA and SPI-NOR
- device nodes
-To: sean.wang@mediatek.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <cover.1519378871.git.sean.wang@mediatek.com>
- <ca071fec200f80d894523b11c94ddde19381f936.1519378871.git.sean.wang@mediatek.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <cea7b0bf-fcd9-6405-c437-d3251e7bb4bf@gmail.com>
-Date: Mon, 12 Mar 2018 10:40:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 12 Mar 2018 05:41:15 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 18C8E60300
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <ca071fec200f80d894523b11c94ddde19381f936.1519378871.git.sean.wang@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Subject: Re: [2/3] mwifiex: support sysfs initiated device coredump
+From: Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <1519210220-22437-3-git-send-email-arend.vanspriel@broadcom.com>
+References: <1519210220-22437-3-git-send-email-arend.vanspriel@broadcom.com>
+To: Arend Van Spriel <arend.vanspriel@broadcom.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, linux-wireless@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180312094115.1996760452@smtp.codeaurora.org>
+Date: Mon, 12 Mar 2018 09:41:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Arend Van Spriel <arend.vanspriel@broadcom.com> wrote:
 
-
-On 02/23/2018 11:16 AM, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
+> Since commit 3c47d19ff4dc ("drivers: base: add coredump driver ops")
+> it is possible to initiate a device coredump from user-space. This
+> patch adds support for it adding the .coredump() driver callback.
+> As there is no longer a need to initiate it through debugfs remove
+> that code.
 > 
-> add BTIF, HSDMA and SPI-NOR device nodes and enable it on relevant boards
+> Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
 
-AFAIK hsdma controller is not upstream yet.
-Please resubmit when at least the binding got merged.
+Based on the discussion I assume this is ok to take to w-d-next. If that's not
+the case, please let me know ASAP.
 
-Thanks,
-Matthias
+-- 
+https://patchwork.kernel.org/patch/10231933/
 
-> 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> ---
->  arch/arm/boot/dts/mt7623.dtsi                 | 36 ++++++++++++++++++++++++++-
->  arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts |  6 ++++-
->  2 files changed, 40 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
-> index 91317a1..da56c54 100644
-> --- a/arch/arm/boot/dts/mt7623.dtsi
-> +++ b/arch/arm/boot/dts/mt7623.dtsi
-> @@ -1,5 +1,5 @@
->  /*
-> - * Copyright (c) 2017 MediaTek Inc.
-> + * Copyright (c) 2017-2018 MediaTek Inc.
->   * Author: John Crispin <john@phrozen.org>
->   *	   Sean Wang <sean.wang@mediatek.com>
->   *
-> @@ -483,6 +483,18 @@
->  		nvmem-cell-names = "calibration-data";
->  	};
->  
-> +	btif: serial@1100c000 {
-> +		compatible = "mediatek,mt7623-btif",
-> +			     "mediatek,mtk-btif";
-> +		reg = <0 0x1100c000 0 0x1000>;
-> +		interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_LOW>;
-> +		clocks = <&pericfg CLK_PERI_BTIF>;
-> +		clock-names = "main";
-> +		reg-shift = <2>;
-> +		reg-io-width = <4>;
-> +		status = "disabled";
-> +	};
-> +
->  	nandc: nfi@1100d000 {
->  		compatible = "mediatek,mt7623-nfc",
->  			     "mediatek,mt2701-nfc";
-> @@ -508,6 +520,18 @@
->  		status = "disabled";
->  	};
->  
-> +	nor_flash: spi@11014000 {
-> +		compatible = "mediatek,mt7623-nor",
-> +			     "mediatek,mt8173-nor";
-> +		reg = <0 0x11014000 0 0x1000>;
-> +		clocks = <&pericfg CLK_PERI_FLASH>,
-> +			 <&topckgen CLK_TOP_FLASH_SEL>;
-> +		clock-names = "spi", "sf";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		status = "disabled";
-> +	};
-> +
->  	spi1: spi@11016000 {
->  		compatible = "mediatek,mt7623-spi",
->  			     "mediatek,mt2701-spi";
-> @@ -861,6 +885,16 @@
->  		#reset-cells = <1>;
->  	};
->  
-> +	hsdma: dma-controller@1b007000 {
-> +		compatible = "mediatek,mt7623-hsdma";
-> +		reg = <0 0x1b007000 0 0x1000>;
-> +		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_LOW>;
-> +		clocks = <&ethsys CLK_ETHSYS_HSDMA>;
-> +		clock-names = "hsdma";
-> +		power-domains = <&scpsys MT2701_POWER_DOMAIN_ETH>;
-> +		#dma-cells = <1>;
-> +	};
-> +
->  	eth: ethernet@1b100000 {
->  		compatible = "mediatek,mt7623-eth",
->  			     "mediatek,mt2701-eth",
-> diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-> index 3efecc5..ec11e14 100644
-> --- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-> +++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-> @@ -1,5 +1,5 @@
->  /*
-> - * Copyright 2017 Sean Wang <sean.wang@mediatek.com>
-> + * Copyright 2017-2018 Sean Wang <sean.wang@mediatek.com>
->   *
->   * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->   */
-> @@ -86,6 +86,10 @@
->  	};
->  };
->  
-> +&btif {
-> +	status = "okay";
-> +};
-> +
->  &cir {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&cir_pins_a>;
-> 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
