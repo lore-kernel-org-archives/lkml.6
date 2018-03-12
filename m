@@ -1,72 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752181AbeCLIzI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 04:55:08 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:37843 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750811AbeCLIzG (ORCPT
+        id S1752488AbeCLIzs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 04:55:48 -0400
+Received: from bastet.se.axis.com ([195.60.68.11]:36367 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750752AbeCLIzq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 04:55:06 -0400
-X-Google-Smtp-Source: AG47ELt5CmATS2pbYIPhTwHcMU84j7eJSCUdJsEIfOxEtgHloIXXTnlokDuaPTm6L3uEjrv4ph/7ew==
-Date: Mon, 12 Mar 2018 09:55:02 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Philippe Cornu <philippe.cornu@st.com>
-Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Yannick Fertre <yannick.fertre@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: [PATCH] drm/panel: otm8009a: Adopt SPDX identifiers
-Message-ID: <20180312085502.GK23060@ulmo>
-References: <20180119110516.4916-1-philippe.cornu@st.com>
+        Mon, 12 Mar 2018 04:55:46 -0400
+Date: Mon, 12 Mar 2018 09:55:42 +0100
+From: Niklas Cassel <niklas.cassel@axis.com>
+To: David Miller <davem@davemloft.net>
+Cc: Jose.Abreu@synopsys.com, peppe.cavallaro@st.com,
+        alexandre.torgue@st.com, pavel@ucw.cz, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: stmmac: remove superfluous wmb() memory
+ barriers
+Message-ID: <20180312085541.GA406@axis.com>
+References: <20180308103006.1197-1-niklas.cassel@axis.com>
+ <f245ba4f-9c08-3f04-b0db-97582cc06153@synopsys.com>
+ <20180309.101520.1551234308448290917.davem@davemloft.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mGCtrYeZ202LI9ZG"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180119110516.4916-1-philippe.cornu@st.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180309.101520.1551234308448290917.davem@davemloft.net>
+User-Agent: Mutt/1.9.1+16 (8a41d1c2f267) (2017-09-22)
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Mar 09, 2018 at 10:15:20AM -0500, David Miller wrote:
+> From: Jose Abreu <Jose.Abreu@synopsys.com>
+> Date: Fri, 9 Mar 2018 10:26:11 +0000
+> 
+> > Sorry but I know at least two architectures which don't do a
+> > wmb() upon an writel [1] [2]. This can be critical if if we are
+> > accessing the device through some slow or filled bus which will
+> > delay accesses to the device IO. Notice that writel and then
+> > readl to the same address will force CPU to wait for writel
+> > completion before readl, but in this case we are using DMA and
+> > then writel so I think a wmb() before the writel is a safe measure.
+> 
+> Wait a second.
+> 
+> This is not about whether there is an explicit memory barrier
+> instruction placed in the writel() implementation.
+> 
+> Are you saying that the cpu(s) in question will reorder stores in
+> their store buffers, even if they are to real memory vs. IOMEM?
+> 
+> That's really dangerous.
 
---mGCtrYeZ202LI9ZG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello David,
 
-On Fri, Jan 19, 2018 at 12:05:16PM +0100, Philippe Cornu wrote:
-> Add SPDX identifiers to OriseTech OTM8009a panel driver.
->=20
-> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
-> ---
->  drivers/gpu/drm/panel/panel-orisetech-otm8009a.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Jose is simply responding to the commit message description of this patch.
 
-Applied, thanks.
+You explained that there is an implicit memory barrier between physical memory
+writes and those to MMIO register space, as long as you used writel().
 
-Thierry
+I assumed that you meant writel() vs writel_relaxed(), where there latter
+does not do an implicit barrier.
 
---mGCtrYeZ202LI9ZG
-Content-Type: application/pgp-signature; name="signature.asc"
+I also found this from you:
+https://lwn.net/Articles/198995/
 
------BEGIN PGP SIGNATURE-----
+If my assumption was incorrect, please correct me.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqmQGYACgkQ3SOs138+
-s6GNUg/8CJUGzMvCp25DwJ2EJKV0PQCG+mrKlhxGo/pO97ZXp/2F6Jp9DgZf784y
-iioJDNcWeKzC+78sSfPuAphlfhjjslQQ4Q5Og1kbTD4olln9lWPW/kwOjBUs8oWt
-N4Toy4hCH/1rrUTvdOMSup9fcWlXze275VfNq/65PZKieMz6GMCxuI9uQUv8ZcJb
-BXTMuzpntC78aKBANuc/bdBg3fzK3dbhMsu8W9Iq0jrjIwD5GTrFJWGp/C6B+oPJ
-B7VNmfpFlHgJvxv/TOhQiRz+zHbNw5tfcb7S0C2WDTrsojKD2DpjwgJf1V6iKed2
-g6Miia0teSvRyEFtgNWl3lK58pHIgWLugE0WWp6i8mk0OG6w0nz6Oz2go7CFOnaA
-NK2pOsT9DTCZmkRVG/myi2cRdZP1yrK7udAQ9MszNJ785w3Go6JfjpClsgl7FlDe
-rZjfMefqrZGVxb2apsTKN82Y+u+1s/PQTPscjHXouOJU7Lli+iUGCwcB763qGQLX
-BqX5nBqOSjeCBH4mXa0ZqhCqV7Udo8S2OfLLPr8Qkyti3RheHqCTO1iCM099xsmb
-1/fHIl/kOo5Xwii++0fPEmQCHWyXHjrSg3AnovBOshhD5W4z5E9O/cmdg+e7gu6P
-inzA5LA0zJJIYArICpDgMHFpHipFca3qHnCNefT775jk776ahRI=
-=GlHu
------END PGP SIGNATURE-----
+As you seem to possess knowledge regarding this, you are probably the most
+suited person to know if this patch simply needs a commit message rewrite,
+or if it should be dropped completely.
 
---mGCtrYeZ202LI9ZG--
+
+Best regards,
+Niklas
