@@ -1,75 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932703AbeCLRZw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 13:25:52 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:57406 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932445AbeCLRZu (ORCPT
+        id S932775AbeCLRZ5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 13:25:57 -0400
+Received: from mail-qk0-f174.google.com ([209.85.220.174]:44581 "EHLO
+        mail-qk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932445AbeCLRZy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 13:25:50 -0400
-Date: Mon, 12 Mar 2018 20:25:24 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: kbuild@01.org, Shirish S <shirish.s@amd.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Pratik Vishwakarma <Pratik.Vishwakarma@amd.com>,
-        Harry Wentland <harry.wentland@amd.com>
-Subject: drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:4765
- dm_atomic_check_plane_state_fb() error: 'crtc_state' dereferencing possible
- ERR_PTR()
-Message-ID: <20180312172524.ic7ue6osoqx6ikkf@mwanda>
+        Mon, 12 Mar 2018 13:25:54 -0400
+X-Google-Smtp-Source: AG47ELs+bEyqdarXNKsdXzzYnYS1RaiQD1lDDkJuK8DfAfEseyhF6D8UcmFzGlnukLe9mA0fW7RTG06o/502sR93on0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8830 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=719
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803120197
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Mon, 12 Mar 2018 10:25:52 -0700
+Message-ID: <CAKgT0Uc3xzQn5-0xw4y=2SixZpucaevAodM3NLUOn4W06UbQ3Q@mail.gmail.com>
+Subject: Re: [pci PATCH v5 0/4] Add support for unmanaged SR-IOV (was: Series
+ short description)
+To: Bjorn Helgaas <bhelgaas@google.com>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        linux-pci@vger.kernel.org
+Cc: virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
+        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
+        keith.busch@intel.com, netanel@amazon.com,
+        Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        dwmw@amazon.co.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   0c8efd610b58cb23cefdfa12015799079aef94ae
-commit: 36cc549d59864b7161f0e23d710c1c4d1b9cf022 drm/amd/display: disable CRTCs with NULL FB on their primary plane (V2)
+On Mon, Mar 12, 2018 at 10:20 AM, Alexander Duyck
+<alexander.duyck@gmail.com> wrote:
+> This series is meant to add support for SR-IOV on devices when the VFs are
+> not managed by the kernel. Examples of recent patches attempting to do this
+> include:
+> virto - https://patchwork.kernel.org/patch/10241225/
+> pci-stub - https://patchwork.kernel.org/patch/10109935/
+> vfio - https://patchwork.kernel.org/patch/10103353/
+> uio - https://patchwork.kernel.org/patch/9974031/
+>
+> Since this is quickly blowing up into a multi-driver problem it is probably
+> best to implement this solution as generically as possible.
+>
+> This series is an attempt to do that. What we do with this patch set is
+> provide a generic framework to enable SR-IOV in the case that the PF driver
+> doesn't support managing the VFs itself.
+>
+> I based my patch set originally on the patch by Mark Rustad but there isn't
+> much left after going through and cleaning out the bits that were no longer
+> needed, and after incorporating the feedback from David Miller. At this point
+> the only items to be fully reused was his patch description which is now
+> present in patch 3 of the set.
+>
+> This solution is limited in scope to just adding support for devices that
+> provide no functionality for SR-IOV other than allocating the VFs by
+> calling pci_enable_sriov. Previous sets had included patches for VFIO, but
+> for now I am dropping that as the scope of that work is larger then I
+> think I can take on at this time.
+>
+> v2: Reduced scope back to just virtio_pci and vfio-pci
+>     Broke into 3 patch set from single patch
+>     Changed autoprobe behavior to always set when num_vfs is set non-zero
+> v3: Updated Documentation to clarify when sriov_unmanaged_autoprobe is used
+>     Wrapped vfio_pci_sriov_configure to fix build errors w/o SR-IOV in kernel
+> v4: Dropped vfio-pci patch
+>     Added ena and nvme to drivers now using pci_sriov_configure_unmanaged
+>     Dropped pci_disable_sriov call in virtio_pci to be consistent with ena
+> v5: Dropped sriov_unmanaged_autoprobe and pci_sriov_conifgure_unmanaged
+>     Added new patch that enables pci_sriov_configure_simple
+>     Updated drivers to use pci_sriov_configure_simple
+>
+> Cc: Mark Rustad <mark.d.rustad@intel.com>
+> Cc: Maximilian Heyne <mheyne@amazon.de>
+> Cc: Liang-Min Wang <liang-min.wang@intel.com>
+> Cc: David Woodhouse <dwmw@amazon.co.uk>
 
-smatch warnings:
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:4765 dm_atomic_check_plane_state_fb() error: 'crtc_state' dereferencing possible ERR_PTR()
+Ugh. Just realized I forgot to post the correct subject line in the cover page.
 
-# https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=36cc549d59864b7161f0e23d710c1c4d1b9cf022
-git remote add linus https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-git remote update linus
-git checkout 36cc549d59864b7161f0e23d710c1c4d1b9cf022
-vim +/crtc_state +4765 drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c
+I needed I can resubmit the series, will just leave it for now in case
+there are any other review comments.
 
-62f55537 Andrey Grodzovsky 2017-08-18  4748  
-36cc549d Shirish S         2018-02-28  4749  static int dm_atomic_check_plane_state_fb(struct drm_atomic_state *state,
-36cc549d Shirish S         2018-02-28  4750  					  struct drm_crtc *crtc)
-36cc549d Shirish S         2018-02-28  4751  {
-36cc549d Shirish S         2018-02-28  4752  	struct drm_plane *plane;
-36cc549d Shirish S         2018-02-28  4753  	struct drm_crtc_state *crtc_state;
-36cc549d Shirish S         2018-02-28  4754  
-36cc549d Shirish S         2018-02-28  4755  	WARN_ON(!drm_atomic_get_new_crtc_state(state, crtc));
-36cc549d Shirish S         2018-02-28  4756  
-36cc549d Shirish S         2018-02-28  4757  	drm_for_each_plane_mask(plane, state->dev, crtc->state->plane_mask) {
-36cc549d Shirish S         2018-02-28  4758  		struct drm_plane_state *plane_state =
-36cc549d Shirish S         2018-02-28  4759  			drm_atomic_get_plane_state(state, plane);
-36cc549d Shirish S         2018-02-28  4760  
-36cc549d Shirish S         2018-02-28  4761  		if (IS_ERR(plane_state))
-36cc549d Shirish S         2018-02-28  4762  			return -EDEADLK;
-36cc549d Shirish S         2018-02-28  4763  
-36cc549d Shirish S         2018-02-28  4764  		crtc_state = drm_atomic_get_crtc_state(plane_state->state, crtc);
-36cc549d Shirish S         2018-02-28 @4765  		if (crtc->primary == plane && crtc_state->active) {
-36cc549d Shirish S         2018-02-28  4766  			if (!plane_state->fb)
-36cc549d Shirish S         2018-02-28  4767  				return -EINVAL;
-36cc549d Shirish S         2018-02-28  4768  		}
-36cc549d Shirish S         2018-02-28  4769  	}
-36cc549d Shirish S         2018-02-28  4770  	return 0;
-36cc549d Shirish S         2018-02-28  4771  }
-36cc549d Shirish S         2018-02-28  4772  
+Thanks.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+- Alex
