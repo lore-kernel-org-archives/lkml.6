@@ -1,115 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932365AbeCLJnZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 05:43:25 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37236 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752342AbeCLJnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:43:23 -0400
-From: Jiri Olsa <jolsa@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH 04/13] perf tools: Add bpf__compile function
-Date: Mon, 12 Mar 2018 10:43:04 +0100
-Message-Id: <20180312094313.18738-5-jolsa@kernel.org>
-In-Reply-To: <20180312094313.18738-1-jolsa@kernel.org>
-References: <20180312094313.18738-1-jolsa@kernel.org>
+        id S932497AbeCLJp6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 05:45:58 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:51455 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752404AbeCLJpy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 05:45:54 -0400
+X-Google-Smtp-Source: AG47ELuPTelBrIG7i69DRQ3prIyQKD7NqDWVhyXFyREmgDr+D/NljUx0GR/JG48cM/eRGtCa1PmOhtHediIF6IN2pKI=
+MIME-Version: 1.0
+In-Reply-To: <744974f1-d9b3-9fc1-621d-f4b5d3e806b6@spiers.me>
+References: <744974f1-d9b3-9fc1-621d-f4b5d3e806b6@spiers.me>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Mon, 12 Mar 2018 10:45:53 +0100
+Message-ID: <CAOi1vP-MG5mT_E2DF0heWYFZ4uM9C=MhXkDzwm-z0S-wQZgknw@mail.gmail.com>
+Subject: Re: [PATCH] rbd: Remove VLA usage
+To: Kyle Spiers <kyle@spiers.me>
+Cc: Sage Weil <sage@redhat.com>, Alex Elder <elder@kernel.org>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding bpf__compile function to have interface for
-ebpf object compilation.
+On Sat, Mar 10, 2018 at 6:14 AM, Kyle Spiers <kyle@spiers.me> wrote:
+> From 4198ebe2e8058ff676d8e2f993d8806d6ca29c11 Mon Sep 17 00:00:00 2001
+> From: Kyle Spiers <kyle@spiers.me>
+> Date: Fri, 9 Mar 2018 12:34:15 -0800
+> Subject: [PATCH] rbd: Remove VLA usage
+>
+> As part of the effort to remove VLAs from the kernel[1], this moves
+> the literal values into the stack array calculation instead of using a
+> variable for the sizing. The resulting size can be found from
+> sizeof(buf).
+>
+> [1] https://lkml.org/lkml/2018/3/7/621
+>
+> Signed-off-by: Kyle Spiers <kyle@spiers.me>
+>
+> ---
+>  drivers/block/rbd.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index 8e40da0..0e94e1f 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -3100,8 +3100,8 @@ static int __rbd_notify_op_lock(struct rbd_device
+> *rbd_dev,
+>  {
+>      struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
+>      struct rbd_client_id cid = rbd_get_cid(rbd_dev);
+> -    int buf_size = 4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN;
+> -    char buf[buf_size];
+> +    char buf[4 + 4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN];
+> +    int buf_size = sizeof(buf);
+>      void *p = buf;
+>
+>      dout("%s rbd_dev %p notify_op %d\n", __func__, rbd_dev, notify_op);
+> @@ -3619,8 +3619,8 @@ static void __rbd_acknowledge_notify(struct
+> rbd_device *rbd_dev,
+>                       u64 notify_id, u64 cookie, s32 *result)
+>  {
+>      struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
+> -    int buf_size = 4 + CEPH_ENCODING_START_BLK_LEN;
+> -    char buf[buf_size];
+> +    char buf[4 + CEPH_ENCODING_START_BLK_LEN];
+> +    int buf_size = sizeof(buf);
+>      int ret;
+>
+>      if (result) {
 
-Link: http://lkml.kernel.org/n/tip-3kus9vjbiven8par9j1ju9u5@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/util/bpf-loader.c | 46 +++++++++++++++++++++++++++++++++-----------
- tools/perf/util/bpf-loader.h |  2 ++
- 2 files changed, 37 insertions(+), 11 deletions(-)
+This patch is mangled -- tabs, etc.  See
 
-diff --git a/tools/perf/util/bpf-loader.c b/tools/perf/util/bpf-loader.c
-index af7ad814b2c3..e59168153375 100644
---- a/tools/perf/util/bpf-loader.c
-+++ b/tools/perf/util/bpf-loader.c
-@@ -74,6 +74,38 @@ bpf__prepare_load_buffer(void *obj_buf, size_t obj_buf_sz, const char *name)
- 	return obj;
- }
- 
-+static int compile(const char *filename, void *obj_buf, size_t *obj_buf_sz)
-+{
-+	int err;
-+
-+	perf_clang__init();
-+	err = perf_clang__compile_bpf(filename, obj_buf, obj_buf_sz);
-+	perf_clang__cleanup();
-+	if (err) {
-+		pr_debug("bpf: builtin compilation failed: %d, try external compiler\n", err);
-+		err = llvm__compile_bpf(filename, obj_buf, obj_buf_sz);
-+		if (err)
-+			return -1;
-+	} else {
-+		pr_debug("bpf: successfull builtin compilation\n");
-+	}
-+
-+	return 0;
-+}
-+
-+int bpf__compile(const char *filename)
-+{
-+	void *obj_buf;
-+	size_t obj_buf_sz;
-+
-+	if (compile(filename, &obj_buf, &obj_buf_sz))
-+		return -1;
-+
-+	/* make llvm__dump_obj to return error value */
-+	llvm__dump_obj(filename, obj_buf, obj_buf_sz);
-+	return 0;
-+}
-+
- struct bpf_object *bpf__prepare_load(const char *filename, bool source)
- {
- 	struct bpf_object *obj;
-@@ -86,20 +118,12 @@ struct bpf_object *bpf__prepare_load(const char *filename, bool source)
- 	}
- 
- 	if (source) {
--		int err;
- 		void *obj_buf;
- 		size_t obj_buf_sz;
- 
--		perf_clang__init();
--		err = perf_clang__compile_bpf(filename, &obj_buf, &obj_buf_sz);
--		perf_clang__cleanup();
--		if (err) {
--			pr_debug("bpf: builtin compilation failed: %d, try external compiler\n", err);
--			err = llvm__compile_bpf(filename, &obj_buf, &obj_buf_sz);
--			if (err)
--				return ERR_PTR(-BPF_LOADER_ERRNO__COMPILE);
--		} else
--			pr_debug("bpf: successfull builtin compilation\n");
-+		if (compile(filename, &obj_buf, &obj_buf_sz))
-+			return ERR_PTR(-BPF_LOADER_ERRNO__COMPILE);
-+
- 		obj = bpf_object__open_buffer(obj_buf, obj_buf_sz, filename);
- 
- 		if (!IS_ERR(obj) && llvm_param.dump_obj)
-diff --git a/tools/perf/util/bpf-loader.h b/tools/perf/util/bpf-loader.h
-index 5d3aefd6fae7..8c2a494cab53 100644
---- a/tools/perf/util/bpf-loader.h
-+++ b/tools/perf/util/bpf-loader.h
-@@ -58,6 +58,8 @@ int bpf__strerror_prepare_load(const char *filename, bool source,
- struct bpf_object *bpf__prepare_load_buffer(void *obj_buf, size_t obj_buf_sz,
- 					    const char *name);
- 
-+int bpf__compile(const char *filename);
-+
- void bpf__clear(void);
- 
- int bpf__probe(struct bpf_object *obj);
--- 
-2.13.6
+  https://www.kernel.org/doc/html/v4.15/process/email-clients.html
+
+Thanks,
+
+                Ilya
