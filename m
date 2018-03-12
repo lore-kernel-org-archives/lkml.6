@@ -1,62 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751359AbeCLLaU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 07:30:20 -0400
-Received: from mout.web.de ([212.227.15.3]:45195 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750988AbeCLLaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 07:30:19 -0400
-To: linux-bluetooth@vger.kernel.org,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 0/5] Bluetooth/btmrvl_sdio: Adjustments for three function
- implementations
-Message-ID: <8d050f76-aed1-7b6b-8778-a78aef34d4ea@users.sourceforge.net>
-Date: Mon, 12 Mar 2018 12:30:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751443AbeCLLbC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 07:31:02 -0400
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:55652 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750988AbeCLLbA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 07:31:00 -0400
+Date: Mon, 12 Mar 2018 07:30:03 -0400
+From: Neil Horman <nhorman@tuxdriver.com>
+To: Xin Long <lucien.xin@gmail.com>
+Cc: syzbot <syzbot+a4e4112c3aff00c8cfd8@syzkaller.appspotmail.com>,
+        davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
+        linux-sctp@vger.kernel.org, network dev <netdev@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com, Vlad Yasevich <vyasevich@gmail.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Subject: Re: KASAN: use-after-free Read in sctp_association_free (2)
+Message-ID: <20180312113002.GA7457@hmswarspite.think-freely.org>
+References: <00000000000017dfe905670110cf@google.com>
+ <20180309220823.GA24848@neilslaptop.think-freely.org>
+ <CADvbK_fGkhJeirYwiu9ORmmPPBpqamgO2+vi9Osyd92cUWJBVA@mail.gmail.com>
+ <20180310131355.GA8798@hmswarspite.think-freely.org>
+ <CADvbK_cFjeC-eGdKzYnJxySBY6emVVC8KXQtzLDUZLJzBLb-UA@mail.gmail.com>
+ <20180310190427.GA2484@neilslaptop.think-freely.org>
+ <CADvbK_cFncE8SH=vrc5wKP5affYCYdnTemauezBqQVnpFq+WLQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K0:1FO3v0bWLUtFZuydM3zuXtkIFAPn8Yd9XvYjT2H7y9tNGi69lfE
- 7vOpFpan43HPptizC3BnPAnKeFcGnAgCRoQ3lmneB3xPtqpv5Mc6k8RJwTadqlNdR0Ub5n0
- o4bzaGUS+jexoGsRXhh0TZFmc7JpUOSPQ1E8NAnSusnMJu5TCDLRM3Obpivh+ur1VOQ81NC
- W1BnD8hnISLwETttvuP3A==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:RirKkO7tYIg=:a3vWLtrr6FuneqHSrNXBfT
- 2SVdj/GzZDSsfFudx5lYVZiO5Q1TK6ZBrPajAhOw428+LYtLMgPKGhqtK8P4BtO3SxEeqCMmb
- LMbEGxZfhcNzFqWry0LJ72zQG5459BYtvTmJwnVxAfXjdCFPf1FYNehGA280UHsiQl5isfzJM
- gTyGIeEjrrNui08CX8e44/mvFapB9JdTX8ehY1Aydybtc0YX3j4L68dJluVmXlHMoZKjLhXyV
- KwWVPBnkSz2FT4WowT65klezkw2mgGSAOKtNfxDxs2F6v/Gjae/uvBrVqIWGoiiiONqIdXAiB
- 8FfDVIXPwMTKGQKCZCNU5Ajljtq+EsIoRMn381LRabt6pyLTwoVnPzLpS95Z/VprOFQDsBOsL
- HPGDKwMESpeOt/bQtJzVzlTzutIxyj+1SiqXemdvNQI0/DDDeR+nJ6AVIu04qPWXOSPxKF0WZ
- AVpBUwF3vb++gakrvU/EoM8X2zHTLGERrvY4r7u2BfvBljxGY9av2t+/zbe4F8olfDjQ3xj0t
- 3+b/K4qJr4N2nHdqnqNyY0ZZsR1376ih6V2qPgyO9Eqk/qqrfiAmWDRF0xhS469uCwCKpBCET
- 4CSNKo11UUWJs+bpvYi6fN+Wsks7e2WIOXQddKrlOxn8ptgvpcIgdmjsj69i5okXpYJoXMkbk
- Yx4ukeb4jg9XuiKLD8PDNYV0EgTYtu0D15etN6a8O3DqXT+LYFNUZZDb0sVU5dZ8kYj6nUOxe
- 9/yRBjUktxAX3JyF3SjUCIzpBkU+pw83+FAYUO34v3B+UMkIAosU17XlnOn/gcHWDUFY3ut60
- uxPAZFYTdT6wBPiBlik9+sQ83zrIns6UG/sxuUxZFlpoFs7qK4=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADvbK_cFncE8SH=vrc5wKP5affYCYdnTemauezBqQVnpFq+WLQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Spam-Score: -2.9 (--)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 12 Mar 2018 12:10:24 +0100
+On Mon, Mar 12, 2018 at 04:16:27PM +0800, Xin Long wrote:
+> On Sun, Mar 11, 2018 at 3:04 AM, Neil Horman <nhorman@tuxdriver.com> wrote:
+> > On Sun, Mar 11, 2018 at 12:22:32AM +0800, Xin Long wrote:
+> >> On Sat, Mar 10, 2018 at 9:13 PM, Neil Horman <nhorman@tuxdriver.com> wrote:
+> >> > On Sat, Mar 10, 2018 at 03:58:04PM +0800, Xin Long wrote:
+> >> >> On Sat, Mar 10, 2018 at 6:08 AM, Neil Horman <nhorman@tuxdriver.com> wrote:
+> >> >> > On Fri, Mar 09, 2018 at 12:59:06PM -0800, syzbot wrote:
+> >> >> >> Hello,
+> >> >> >>
+> >> >> >> syzbot hit the following crash on net-next commit
+> >> >> >> fd372a7a9e5e9d8011a0222d10edd3523abcd3b1 (Thu Mar 8 19:43:48 2018 +0000)
+> >> >> >> Merge tag 'mlx5-updates-2018-02-28-2' of
+> >> >> >> git://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux
+> >> >> >>
+> >> >> >> So far this crash happened 2 times on net-next.
+> >> >> >> C reproducer is attached.
+> >> >> >> syzkaller reproducer is attached.
+> >> >> >> Raw console output is attached.
+> >> >> >> compiler: gcc (GCC) 7.1.1 20170620
+> >> >> >> .config is attached.
+> >> >> >>
+> >> >> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> >> >> >> Reported-by: syzbot+a4e4112c3aff00c8cfd8@syzkaller.appspotmail.com
+> >> >> >> It will help syzbot understand when the bug is fixed. See footer for
+> >> >> >> details.
+> >> >> >> If you forward the report, please keep this part and the footer.
+> >> >> >>
+> >> >> >> IPVS: ftp: loaded support on port[0] = 21
+> >> >> >> IPVS: ftp: loaded support on port[0] = 21
+> >> >> >> IPVS: ftp: loaded support on port[0] = 21
+> >> >> >> IPVS: ftp: loaded support on port[0] = 21
+> >> >> >> ==================================================================
+> >> >> >> BUG: KASAN: use-after-free in sctp_association_free+0x7b7/0x930
+> >> >> >> net/sctp/associola.c:332
+> >> >> >> Read of size 8 at addr ffff8801d8006ae0 by task syzkaller914861/4202
+> >> >> >>
+> >> >> >> CPU: 1 PID: 4202 Comm: syzkaller914861 Not tainted 4.16.0-rc4+ #258
+> >> >> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> >> >> >> Google 01/01/2011
+> >> >> >> Call Trace:
+> >> >> >>  __dump_stack lib/dump_stack.c:17 [inline]
+> >> >> >>  dump_stack+0x194/0x24d lib/dump_stack.c:53
+> >> >> >>  print_address_description+0x73/0x250 mm/kasan/report.c:256
+> >> >> >>  kasan_report_error mm/kasan/report.c:354 [inline]
+> >> >> >>  kasan_report+0x23c/0x360 mm/kasan/report.c:412
+> >> >> >>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+> >> >> >>  sctp_association_free+0x7b7/0x930 net/sctp/associola.c:332
+> >> >> >>  sctp_sendmsg+0xc67/0x1a80 net/sctp/socket.c:2075
+> >> >> >>  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:763
+> >> >> >>  sock_sendmsg_nosec net/socket.c:629 [inline]
+> >> >> >>  sock_sendmsg+0xca/0x110 net/socket.c:639
+> >> >> >>  SYSC_sendto+0x361/0x5c0 net/socket.c:1748
+> >> >> >>  SyS_sendto+0x40/0x50 net/socket.c:1716
+> >> >> >>  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+> >> >> >>  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+> >> >> >> RIP: 0033:0x446d09
+> >> >> >> RSP: 002b:00007f5dbac21da8 EFLAGS: 00000216 ORIG_RAX: 000000000000002c
+> >> >> >> RAX: ffffffffffffffda RBX: 00000000006e29fc RCX: 0000000000446d09
+> >> >> >> RDX: 0000000000000001 RSI: 0000000020000340 RDI: 0000000000000003
+> >> >> >> RBP: 00000000006e29f8 R08: 00000000204d9000 R09: 000000000000001c
+> >> >> >> R10: 0000000000000000 R11: 0000000000000216 R12: 0000000000000000
+> >> >> >> R13: 00007fff7b26fb1f R14: 00007f5dbac229c0 R15: 00000000006e2b60
+> >> >> >>
+> >> >> > I think we have a corner case with a0ff660058b88d12625a783ce9e5c1371c87951f
+> >> >> > here.  If a peeloff event happens during a wait for sendbuf space, EPIPE will be
+> >> >> > returned, and the code path appears to call sctp_association_put twice, leading
+> >> >> > to the use after free situation.  I'll write a patch this weekend
+> >> >> Hi, Neil, you're right.
+> >> >>
+> >> >> I didn't expect peeloff can be done on a NEW asoc, as peeloff needs
+> >> >> assoc_id, which can only be set when connecting has started.
+> >> >>
+> >> >> But I realized that:
+> >> >> f84af33 sctp: factor out sctp_sendmsg_to_asoc from sctp_sendmsg
+> >> >>
+> >> >> moved sctp_primitive_ASSOCIATE(connecting) before sctp_wait_for_sndbuf
+> >> >> (snd buffer waiting). It means peeloff can be done on a NEW asoc.
+> >> >> So you may want to move it back.
+> >> >>
+> >> > I agree with the root cause, but I'm not sure I agree with just moving the
+> >> > wait_for_sndbuf call back above the call to associate.  I'm not sure I like
+> >> > relying on placing a call in a spcific order solely to avoid an error condition
+> >> > that might legitimately occur.  I think would rather check the return code at
+> >> > the call site for the complete set of conditions for which we should not free
+> >> > the association.  Something like this:
+> >> >
+> >> > diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+> >> > index 7d3476a4860d..a68846d2b0ef 100644
+> >> > --- a/net/sctp/socket.c
+> >> > +++ b/net/sctp/socket.c
+> >> > @@ -2071,8 +2071,9 @@ static int sctp_sendmsg(struct sock *sk, struct msghdr *msg, size_t msg_len)
+> >> >
+> >> >         /* Send msg to the asoc */
+> >> >         err = sctp_sendmsg_to_asoc(asoc, msg, msg_len, transport, sinfo);
+> >> > -       if (err < 0 && err != -ESRCH && new)
+> >> > -               sctp_association_free(asoc);
+> >> > +       if ((err != -ESRCH) && (err != -EPIPE))
+> >> > +               if (err < 0 && new)
+> >> > +                       sctp_association_free(asoc);
+> >> >
+> >> >  out_unlock:
+> >> >         release_sock(sk);
+> >> >
+> >> > Which I think also avoids the noted conflict.
+> >> >
+> >> > Thoughts?
+> >> If sctp_association_free is called for general asoc, yes, I agree with you.
+> >> But it's actually only for NEW asoc, a special case, not worth a extra check.
+> >> 'err != -ESRCH' is already kind of ugly there (I couldn't find a nicer way :D),
+> >> I don't hope there will be more like that.
+> >>
+> > I agree with you on the uglyness aspect of the return code check, but I really
+> > don't like the idea of placing the call to wait_for_sndbuf to guarantee a given
+> > error code isn't returned, It just feels rickety to me.
+> I understand, let's not count this moving back as the official fix
+> for this, but only for the compatibility :-)
+> 
+> Then we can start a new one for improving it later as you said below,
+> FYI, we've tried to pass 'new' parameter into sctp_sendmsg_to_asoc
+> or use &asoc as the parameter instead. But it seems not good, and
+> also sctp_association_free will have to be done in sctp_sendmsg_to_asoc,
+> which looks worse.
+> 
+Yeah, I thought about that, and don't particularly care for it either.  I also
+thought about checking the dead flag at the end of send_to_asoc, but that won't
+work either, as the caller of wait_for_sndbuf still has a reference.  I think,
+for now, you were right the first time, we just need to reposition it.   I'll be
+checking the fix with the provided reproducer today.
 
-A few update suggestions were taken into account
-from static source code analysis.
-
-Markus Elfring (5):
-  Use common error handling code in btmrvl_sdio_register_dev()
-  Delete an unnecessary variable initialisation in btmrvl_sdio_register_dev()
-  One check less in btmrvl_sdio_card_to_host() after error detection
-  Delete an unnecessary variable initialisation in btmrvl_sdio_card_to_host()
-  Use common error handling code in btmrvl_sdio_download_fw_w_helper()
-
- drivers/bluetooth/btmrvl_sdio.c | 102 ++++++++++++++++++----------------------
- 1 file changed, 46 insertions(+), 56 deletions(-)
-
--- 
-2.16.2
+Neil
