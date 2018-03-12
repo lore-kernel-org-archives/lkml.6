@@ -1,71 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751616AbeCLM2O (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 08:28:14 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49576 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750995AbeCLM2M (ORCPT
+        id S1751361AbeCLMaw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 08:30:52 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:41248 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751180AbeCLMau (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 08:28:12 -0400
+        Mon, 12 Mar 2018 08:30:50 -0400
+Subject: Re: [PATCH v9] mmc: Export host capabilities to debugfs.
+To: Avri Altman <Avri.Altman@wdc.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>
+CC: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Vladimir_Zapolskiy@mentor.com" <Vladimir_Zapolskiy@mentor.com>
+References: <1520829090-3567-1-git-send-email-harish_kandiga@mentor.com>
+ <1520849262.10722.582.camel@linux.intel.com>
+ <DM5PR04MB10854C79897A80023EF37F76FCD30@DM5PR04MB1085.namprd04.prod.outlook.com>
+ <540fef96-aa2f-e6c3-467d-bc1d021dd55b@mentor.com>
+ <DM5PR04MB10859F389CA2D1F2370C02CFFCD30@DM5PR04MB1085.namprd04.prod.outlook.com>
+From: Harish Jenny K N <harish_kandiga@mentor.com>
+Message-ID: <329d521d-1776-43ee-2f0e-e9690c29a693@mentor.com>
+Date: Mon, 12 Mar 2018 18:00:35 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+In-Reply-To: <DM5PR04MB10859F389CA2D1F2370C02CFFCD30@DM5PR04MB1085.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Date: Mon, 12 Mar 2018 17:58:11 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Andy Gross <andy.gross@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, David Brown <david.brown@linaro.org>,
-        Sricharan R <sricharan@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/12] i2c: qup: fix buffer overflow for multiple msg of
- maximum xfer len
-In-Reply-To: <20180227231559.GJ20901@hector.attlocal.net>
-References: <1517644697-30806-1-git-send-email-absahu@codeaurora.org>
- <1517644697-30806-10-git-send-email-absahu@codeaurora.org>
- <20180227231559.GJ20901@hector.attlocal.net>
-Message-ID: <7a25bcc7cc8b29b3a92cdb1088c556c3@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Language: en-US
+X-Originating-IP: [137.202.0.87]
+X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
+ svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-28 04:45, Andy Gross wrote:
-> On Sat, Feb 03, 2018 at 01:28:14PM +0530, Abhishek Sahu wrote:
->> The BAM mode requires buffer for start tag data and tx, rx SG
->> list. Currently, this is being taken for maximum transfer length
->> (65K). But an I2C transfer can have multiple messages and each
->> message can be of this maximum length so the buffer overflow will
->> happen in this case. Since increasing buffer length won’t be
->> feasible since an I2C transfer can contain any number of messages
->> so this patch does following changes to make i2c transfers working
->> for multiple messages case.
->> 
->> 1. Calculate the required buffers for 2 maximum length messages
->>    (65K * 2).
->> 2. Split the descriptor formation and descriptor scheduling.
->>    The idea is to fit as many messages in one DMA transfers for 65K
->>    threshold value (max_xfer_sg_len). Whenever the sg_cnt is
->>    crossing this, then schedule the BAM transfer and subsequent
->>    transfer will again start from zero.
->> 
->> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> 
-> I'm ok with this patch.  I find the idea of a > 64k size message to be 
-> something
-> that usually wouldn't be encountered, but... with some eeproms and 
-> maybe TPMs
-> perhaps this could happen?
-> 
-> Reviewed-by: Andy Gross <andy.gross@linaro.org>
 
-  Thanks Andy for reviewing this patch.
 
-  There are EEPROM available with 1MB size like AT24CM01 in which we can 
-read
-  complete flash (128 KB) in single go by one transfer with 2 read 
-messages of
-  64KB.
+On Monday 12 March 2018 05:02 PM, Avri Altman wrote:
+>
+>> -----Original Message-----
+>> From: Harish Jenny K N [mailto:harish_kandiga@mentor.com]
+>> Sent: Monday, March 12, 2018 1:17 PM
+>> To: Avri Altman <Avri.Altman@wdc.com>; Andy Shevchenko
+>> <andriy.shevchenko@linux.intel.com>; ulf.hansson@linaro.org;
+>> linus.walleij@linaro.org; adrian.hunter@intel.com; shawn.lin@rock-chips.com
+>> Cc: linux-mmc@vger.kernel.org; linux-kernel@vger.kernel.org;
+>> Vladimir_Zapolskiy@mentor.com
+>> Subject: Re: [PATCH v9] mmc: Export host capabilities to debugfs.
+>>
+>>
+>>
+>> On Monday 12 March 2018 04:15 PM, Avri Altman wrote:
+>>>> -----Original Message-----
+>>>> From: Andy Shevchenko [mailto:andriy.shevchenko@linux.intel.com]
+>>>> Sent: Monday, March 12, 2018 12:08 PM
+>>>> To: Harish Jenny K N <harish_kandiga@mentor.com>;
+>>>> ulf.hansson@linaro.org; linus.walleij@linaro.org;
+>>>> adrian.hunter@intel.com; shawn.lin@rock- chips.com; Avri Altman
+>>>> <Avri.Altman@wdc.com>
+>>>> Cc: linux-mmc@vger.kernel.org; linux-kernel@vger.kernel.org;
+>>>> Vladimir_Zapolskiy@mentor.com
+>>>> Subject: Re: [PATCH v9] mmc: Export host capabilities to debugfs.
+>>>>
+>>>> On Mon, 2018-03-12 at 10:01 +0530, Harish Jenny K N wrote:
+>>>>> This patch exports the host capabilities to debugfs
+>>>>>
+>>>>> This idea of sharing host capabilities over debugfs came up from
+>>>>> Abbas Raza <Abbas_Raza@mentor.com> Earlier discussions:
+>>>>> https://lkml.org/lkml/2018/3/5/357
+>>>>> https://www.spinics.net/lists/linux-mmc/msg48219.html
+>>>>>
+>>>> Address below minors and, FWIW, take mine
+>>>>
+>>>> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>>>>
+>>>>> +	for_each_set_bit(bit, (const unsigned long *)&caps,
+>>>>> BITS_PER_LONG)
+>>>>> +	for_each_set_bit(bit, (const unsigned long *)&caps2,
+>>>>> BITS_PER_LONG)
+>>>> Explicit casting is not needed anymore in both cases.
+>>> Also maybe use sizeof(mmc_host_capabilities) instead of BITS_PER_LONG?
+>> You mean sizeof(caps) and not sizeof(mmc_host_capabilities) . Right ?
+> meant ARRAY_SIZE(mmc_host_capabilities)
+>
+> Thanks,
+> Avri
+>
 
-  Thanks,
-  Abhishek
+ARRAY_SIZE(mmc_host_capabilities) will be 32 and this will be my old change for which I got a comment from Andy Shevchenko asking me to replace u32 with unsigned long.
+
+This is the old comment:
+
+>> +    int size = sizeof(u32) * BITS_PER_BYTE;
+> This is redundant. Use BITS_PER_LONG (why's that, see below) in the
+for_each_set_bit().
+
+>> +    for_each_set_bit(bit, (const unsigned long *)&caps, size)
+>> +    for_each_set_bit(bit, (const unsigned long *)&caps2, size)
+> These are UB cases.
+> Fix is simple, replace u32 by unsigned long in (1) above.
+
+Note: Without typecasting &caps to(const unsigned long *) will give compilation error in this case.
+
+
+Thanks,
+Harish Jenny K N
