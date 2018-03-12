@@ -1,161 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752470AbeCLJaw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 05:30:52 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52598 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752380AbeCLJat (ORCPT
+        id S1752568AbeCLJbD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 05:31:03 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58661 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751259AbeCLJbA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:30:49 -0400
-X-Google-Smtp-Source: AG47ELtOnreOZse+uRR0gGgpRNAcuDNGqUhKf1/+vDh41mHAmYVx9H6yf0rudMxHRpwwS5vYSrxFgQ==
-Subject: Re: [PATCH v3] [media] Use common error handling code in 19 functions
-To: SF Markus Elfring <elfring@users.sourceforge.net>,
-        Sean Young <sean@mess.org>, Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Shyam Saini <mayhs11saini@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wei Yongjun <weiyongjun1@huawei.com>
-Cc: linux-media@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Andi Shyti <andi.shyti@samsung.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Utkin <andrey_utkin@fastmail.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Brian Johnson <brijohn@gmail.com>,
-        =?UTF-8?Q?Christoph_B=c3=b6hmwalder?= <christoph@boehmwalder.at>,
-        Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
-        Colin Ian King <colin.king@canonical.com>,
-        Daniele Nicolodi <daniele@grinta.net>,
-        =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>,
-        Devendra Sharma <devendra.sharma9091@gmail.com>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>, Inki Dae <inki.dae@samsung.com>,
-        Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Max Kellermann <max.kellermann@gmail.com>,
-        Mike Isely <isely@pobox.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Santosh Kumar Singh <kumar.san1093@gmail.com>,
-        Satendra Singh Thakur <satendra.t@samsung.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <227d2d7c-5aee-1190-1624-26596a048d9c@users.sourceforge.net>
- <57ef3a56-2578-1d5f-1268-348b49b0c573@users.sourceforge.net>
-From: Todor Tomov <todor.tomov@linaro.org>
-Message-ID: <68dad3db-3bec-7f87-02a0-d77b304fb0ee@linaro.org>
-Date: Mon, 12 Mar 2018 11:30:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Mon, 12 Mar 2018 05:31:00 -0400
+Date: Mon, 12 Mar 2018 02:30:32 -0700
+From: tip-bot for Baoquan He <tipbot@zytor.com>
+Message-ID: <tip-c100a583601d357f923c41af5434dc1f8d07890f@git.kernel.org>
+Cc: kirill.shutemov@linux.intel.com, peterz@infradead.org,
+        torvalds@linux-foundation.org, bhe@redhat.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org
+Reply-To: peterz@infradead.org, kirill.shutemov@linux.intel.com,
+        tglx@linutronix.de, bhe@redhat.com, torvalds@linux-foundation.org,
+        mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20180302051801.19594-1-bhe@redhat.com>
+References: <20180302051801.19594-1-bhe@redhat.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] kdump, vmcoreinfo: Export pgtable_l5_enabled value
+Git-Commit-ID: c100a583601d357f923c41af5434dc1f8d07890f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <57ef3a56-2578-1d5f-1268-348b49b0c573@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Markus,
+Commit-ID:  c100a583601d357f923c41af5434dc1f8d07890f
+Gitweb:     https://git.kernel.org/tip/c100a583601d357f923c41af5434dc1f8d07890f
+Author:     Baoquan He <bhe@redhat.com>
+AuthorDate: Fri, 2 Mar 2018 13:18:01 +0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 12 Mar 2018 09:43:56 +0100
 
-Thank you for the patch.
+kdump, vmcoreinfo: Export pgtable_l5_enabled value
 
-On  9.03.2018 22:10, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 9 Mar 2018 21:00:12 +0100
-> 
-> Adjust jump targets so that a bit of exception handling can be better
-> reused at the end of these functions.
-> 
-> This issue was partly detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
-> 
-> v3:
-> Laurent Pinchart and Todor Tomov requested a few adjustments.
-> Updates were rebased on source files from Linux next-20180308.
-> 
-> v2:
-> Hans Verkuil insisted on patch squashing. Thus several changes
-> were recombined based on source files from Linux next-20180216.
-> 
-> The implementation of the function "tda8261_set_params" was improved
-> after a notification by Christoph Böhmwalder on 2017-09-26.
-> 
->  drivers/media/dvb-core/dmxdev.c                    | 16 ++++----
->  drivers/media/dvb-frontends/tda1004x.c             | 20 ++++++----
->  drivers/media/dvb-frontends/tda8261.c              | 19 ++++++----
->  drivers/media/pci/bt8xx/dst.c                      | 19 ++++++----
->  drivers/media/pci/bt8xx/dst_ca.c                   | 30 +++++++--------
->  drivers/media/pci/cx88/cx88-input.c                | 17 +++++----
->  drivers/media/platform/omap3isp/ispvideo.c         | 28 ++++++--------
->  .../media/platform/qcom/camss-8x16/camss-csid.c    | 19 +++++-----
->  drivers/media/tuners/tuner-xc2028.c                | 30 +++++++--------
->  drivers/media/usb/cpia2/cpia2_usb.c                | 13 ++++---
->  drivers/media/usb/gspca/gspca.c                    | 17 +++++----
->  drivers/media/usb/gspca/sn9c20x.c                  | 17 +++++----
->  drivers/media/usb/pvrusb2/pvrusb2-ioread.c         | 10 +++--
->  drivers/media/usb/tm6000/tm6000-cards.c            |  7 ++--
->  drivers/media/usb/tm6000/tm6000-dvb.c              | 11 ++++--
->  drivers/media/usb/tm6000/tm6000-video.c            | 13 ++++---
->  drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c  | 13 +++----
->  drivers/media/usb/ttusb-dec/ttusb_dec.c            | 43 ++++++++--------------
->  18 files changed, 171 insertions(+), 171 deletions(-)
-> 
+User-space utilities examining crash-kernels need to know if the
+crashed kernel was in 5-level paging mode or not.
 
-<snip>
+So write 'pgtable_l5_enabled' to vmcoreinfo, which covers these
+three cases:
 
-> diff --git a/drivers/media/platform/qcom/camss-8x16/camss-csid.c b/drivers/media/platform/qcom/camss-8x16/camss-csid.c
-> index 64df82817de3..5c790d8c1f80 100644
-> --- a/drivers/media/platform/qcom/camss-8x16/camss-csid.c
-> +++ b/drivers/media/platform/qcom/camss-8x16/camss-csid.c
-> @@ -328,16 +328,12 @@ static int csid_set_power(struct v4l2_subdev *sd, int on)
->  			return ret;
->  
->  		ret = csid_set_clock_rates(csid);
-> -		if (ret < 0) {
-> -			regulator_disable(csid->vdda);
-> -			return ret;
-> -		}
-> +		if (ret < 0)
-> +			goto disable_regulator;
->  
->  		ret = camss_enable_clocks(csid->nclocks, csid->clock, dev);
-> -		if (ret < 0) {
-> -			regulator_disable(csid->vdda);
-> -			return ret;
-> -		}
-> +		if (ret < 0)
-> +			goto disable_regulator;
->  
->  		enable_irq(csid->irq);
->  
-> @@ -345,8 +341,7 @@ static int csid_set_power(struct v4l2_subdev *sd, int on)
->  		if (ret < 0) {
->  			disable_irq(csid->irq);
->  			camss_disable_clocks(csid->nclocks, csid->clock);
-> -			regulator_disable(csid->vdda);
-> -			return ret;
-> +			goto disable_regulator;
->  		}
->  
->  		hw_version = readl_relaxed(csid->base + CAMSS_CSID_HW_VERSION);
-> @@ -358,6 +353,10 @@ static int csid_set_power(struct v4l2_subdev *sd, int on)
->  	}
->  
->  	return ret;
-> +
-> +disable_regulator:
-> +	regulator_disable(csid->vdda);
-> +	return ret;
->  }
->  
+  pgtable_l5_enabled == 0 when:
+   - Compiled with !CONFIG_X86_5LEVEL
+   - Compiled with CONFIG_X86_5LEVEL=y while CPU has no 'la57' flag
 
-For the QComm CAMSS part of the patch:
-Acked-by: Todor Tomov <todor.tomov@linaro.org>
+  pgtable_l5_enabled != 0 when:
+   - Compiled with CONFIG_X86_5LEVEL=y and CPU has 'la57' flag
 
+Signed-off-by: Baoquan He <bhe@redhat.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: douly.fnst@cn.fujitsu.com
+Cc: dyoung@redhat.com
+Cc: ebiederm@xmission.com
+Cc: kirill.shutemov@linux.intel.com
+Cc: vgoyal@redhat.com
+Link: http://lkml.kernel.org/r/20180302051801.19594-1-bhe@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/machine_kexec_64.c | 1 +
+ 1 file changed, 1 insertion(+)
 
--- 
-Best regards,
-Todor Tomov
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index 3b7427aa7d85..02f913cb27b5 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -350,6 +350,7 @@ void arch_crash_save_vmcoreinfo(void)
+ {
+ 	VMCOREINFO_NUMBER(phys_base);
+ 	VMCOREINFO_SYMBOL(init_top_pgt);
++	VMCOREINFO_NUMBER(pgtable_l5_enabled);
+ 
+ #ifdef CONFIG_NUMA
+ 	VMCOREINFO_SYMBOL(node_data);
