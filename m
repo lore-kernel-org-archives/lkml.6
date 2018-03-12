@@ -1,62 +1,75 @@
-Return-Path: <kernel-hardening-return-12475-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELvLiNMFgaNqVg1DgNN164fsxaflziqmNteDs1ILu/gl/EGPWKs3PrZawDh73vzmaHGDdIw5
-ARC-Seal: i=1; a=rsa-sha256; t=1520881708; cv=none;
+Return-Path: <kernel-hardening-return-12456-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELsiKZWjzqvExBoqB3RvF3PnFPgh61e5SL4XG2B+SWG0b69lmlkEsTPYbKATKPgyREEj9VnN
+ARC-Seal: i=1; a=rsa-sha256; t=1520858997; cv=none;
         d=google.com; s=arc-20160816;
-        b=F1KT7JeW2LKoqVDc0POeloXNIQ8D0OnyvN6vgg7iEbHYYQ3crF5iJ42Ya5YZcma/Uz
-         WClOL9FScGQ8TO9UBtFBlZdZlCjNBrnAhv/uv8BEKFbrD5FmvwQSMUf18joY76DRWHtx
-         lwsMX14ErTjVQJHVw0O+M58Zq02R5P9rQe9kiECG087bFn+xOEflswUD7HCyeUWSAUEL
-         iCBACSHbn+2nWWgQXWvJpS++aIqWpd5ZgPua4s1nw9xtxZLxnT6542JHV8NJ+/M6duhT
-         ULiwkS+DeA0Gi5oKVrzi07Q5Kz1saXTvuNe8j+hTVCeJK6IzgG6lTdLQ5+naI3zEcF8x
-         3VVQ==
+        b=SKOK/VDdEcUd29k+JYHaCo1URCLx6aDrRW7V/XBNqUWO0kqInt1luReGndKveD2k4U
+         DpiZ1X0z0USmpdqHyFNxG+tLg/X0nayk/hWH1MAfHzGHu9rOy9zfwUsHViemuQGGejy9
+         j4KLMCMjvRO/7OxwhfmbdUslWUHEcGvxq+eoje8YMUS20XqYxVkzWhlEGFHfN9goHbLz
+         ET/bNZKC8KUQl9CQOW+D8303DxCI6JutcOv3Ng582bcuZ9aFwo/bDc65ZfiAuuMxD8lJ
+         xW3hepksPp+FsbCI11G4f1P9q9AXrkQKv3BqEcUJKv9kB3tv+w3LO0g+WREBX3UBKEnZ
+         2cvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=814xLhRUpRuwt+v0hqw35QM87k8COH0Yt9BtHUPjeCE=;
-        b=VdsPGU8yebFBo+WFWVNcen72QWFdZjXkq+cvVs0jqmfBtwZNLHq2uzdK3Vaocw4aHR
-         ox8W/6hp/OkV/XEdrY8LcDZ2WLF+puE8cpQK28+xuUw4ddNxT4PrcDnt7VHAVesv/gCq
-         TGpD65tqN3FZuXzmq7arA366kZIVzZ1CoMndE0jrZrtSrM/fBm8bwr+QRYgdFfcSMC5q
-         LsdsJSj3S/ag47O5HCKJSSbNJ1cXtu9uEBuZTWAeuraV8SWr8jg8QO29B8nZheocDfyV
-         lpKEjIXWreXgPAuJZuOv5BopdohUr0AO17lntPNGcyqI8iTRMMLMpuQg71Xi6PdBWlqO
-         aCuw==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:organization:from:references:cc:to
+         :subject:dkim-signature:delivered-to:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=2FNm3bUzfq1YFprYhNvw1Pm//3cTquFDtVyI3eSr+Tg=;
+        b=pJcH1xN0kEp0HSnvEJQ/ZhjsXCoYJvc6xiD21FWsCM2AiVAcyDGc8WdyuEKlJHhqKP
+         uZkB8U1pFNyqRMbT8MbrakHh/54rBVET2L9ICfvpnK8oVe7NRSTRU05JVvQeTLqSRyMO
+         0l1qpflprd77llNw9szdbLy0e4NEOwjsfhLer1DduWdKU7YlldUB3WYbnieST7ZB+IZ8
+         9zdfv4aLVrK1qL8Hk3WFAwdNQQ507FNjh2nsNApRG1d1ClDUKfd9wL7umu8dVHOP8rd5
+         IMEOythFHTOIdbKKT2Plv3VFv371fEaZCMdjwZWyDRZLnYD69gFjpy/NSOLi6+UUan3B
+         hoTw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12475-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12475-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=TbUnyjfw;
+       spf=pass (google.com: domain of kernel-hardening-return-12456-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12456-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12475-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12475-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=TbUnyjfw;
+       spf=pass (google.com: domain of kernel-hardening-return-12456-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12456-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Mon, 12 Mar 2018 15:07:57 -0400 (EDT)
-Message-Id: <20180312.150757.1880237990834088910.davem@davemloft.net>
-To: s.mesoraca16@gmail.com
-Cc: linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
- linux-rdma@vger.kernel.org, netdev@vger.kernel.org, keescook@chromium.org,
- santosh.shilimkar@oracle.com
 Subject: Re: [PATCH 1/2] net: rds: drop VLA in rds_for_each_conn_info()
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1520802470-17374-1-git-send-email-s.mesoraca16@gmail.com>
+To: Salvatore Mesoraca <s.mesoraca16@gmail.com>, linux-kernel@vger.kernel.org
+Cc: kernel-hardening@lists.openwall.com, linux-rdma@vger.kernel.org,
+        netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Kees Cook <keescook@chromium.org>
 References: <1520802470-17374-1-git-send-email-s.mesoraca16@gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <9f197147-c050-dd70-23ea-ec880d205201@oracle.com>
+Date: Mon, 12 Mar 2018 00:06:01 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1520802470-17374-1-git-send-email-s.mesoraca16@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8829 signatures=668690
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=734
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803120084
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594677115997192072?=
-X-GMAIL-MSGID: =?utf-8?q?1594760058644679703?=
+X-GMAIL-MSGID: =?utf-8?q?1594736243454842032?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Date: Sun, 11 Mar 2018 22:07:49 +0100
-
+On 3/11/18 2:07 PM, Salvatore Mesoraca wrote:
 > Avoid VLA[1] by using an already allocated buffer passed
 > by the caller.
 > 
 > [1] https://lkml.org/lkml/2018/3/7/621
 > 
 > Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+> ---
+Thanks for both VLA fixes Salvatore.
 
-Applied.
+FWIW, Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
