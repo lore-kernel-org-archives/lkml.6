@@ -1,48 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751961AbeCLJXY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 05:23:24 -0400
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:35598 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751248AbeCLJXW (ORCPT
+        id S1751543AbeCLJ0n (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 05:26:43 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:42959 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751229AbeCLJ0l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:23:22 -0400
-X-Google-Smtp-Source: AG47ELulABYPBFWxvqq+my2Vu7fe2mP4QZS+x4K/Mg2LpR6I3J8rW5u9HxBmCTaBBjCAt6Ulj6/e/ig9kG73BwGbnLU=
+        Mon, 12 Mar 2018 05:26:41 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: David Wang <DavidWang@zhaoxin.com>,
+        "len.brown@intel.com" <len.brown@intel.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-pm@kernel.org" <linux-pm@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Bruce Chang (VAS)" <BruceChang@via-alliance.com>,
+        "Cooper Yan(BJ-RD)" <CooperYan@zhaoxin.com>,
+        "Qiyuan Wang(BJ-RD)" <QiyuanWang@zhaoxin.com>,
+        Benjamin Pan <BenjaminPan@viatech.com>, Luke Lin <LukeLin@viacpu.com>,
+        "Tim Guo(BJ-RD)" <TimGuo@zhaoxin.com>,
+        "Cobe Chen(BJ-RD)" <CobeChen@zhaoxin.com>,
+        "Jiangbo Wang(BJ-RD)" <JiangboWang@zhaoxin.com>
+Subject: Re: =?UTF-8?B?562U5aSNOg==?= [PATCH] Delete some unusefull operations for centaur CPU/platform
+Date: Mon, 12 Mar 2018 10:27:18 +0100
+Message-ID: <1792259.nnz4czxE5K@aspire.rjw.lan>
+In-Reply-To: <20180312084033.lignixrpg4ruoxbq@gmail.com>
+References: <1519963908-4359-1-git-send-email-davidwang@zhaoxin.com> <efc93496e4ba46958b7b09eff54c2ce2@zhaoxin.com> <20180312084033.lignixrpg4ruoxbq@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <7eb3f317a876a6255aeb0abfd0137894ef8b5166.1520727789.git.dvhart@infradead.org>
-References: <7eb3f317a876a6255aeb0abfd0137894ef8b5166.1520727789.git.dvhart@infradead.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 12 Mar 2018 11:23:20 +0200
-Message-ID: <CAHp75VeYDiv3gR77xjmj1QitmtTyNykXXFJtYyEFL95sgo1L9A@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: dell_smbios: Resolve dependency error on ACPI_WMI
-To: Darren Hart <dvhart@infradead.org>
-Cc: Platform Driver <platform-driver-x86@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 11, 2018 at 2:28 AM, Darren Hart <dvhart@infradead.org> wrote:
-> Similarly to DCDBAS for DELL_SMBIOS_SMM, if DELL_SMBIOS_WMI is enabled,
-> DELL_SMBIOS becomes dependent on ACPI_WMI. Update the depends line to
-> prevent a configuration where DELL_SMBIOS=y and either backend
-> dependency =m. Update the comment accordingly.
+On Monday, March 12, 2018 9:40:33 AM CET Ingo Molnar wrote:
+> 
+> * David Wang <DavidWang@zhaoxin.com> wrote:
+> 
+> > [David] pr->flags.has_cst means BIOS define valid C state table.  And at lease 
+> > define 2 entries. On all centaur platform which support C3, this condition is 
+> > always true.
+> 
+> > [David] Just as the following comment said, we need not execute WBINVD and 
+> > ARB_DISABLE/ARB_ENABLE when entering C3 if bm_check=1 and bm_control=0.  This 
+> > logic is valid for all platform not only for Centaur, I think.
+> 
+> Ok, fair enough!
 
-> +# The DELL_SMBIOS driver depends on ACPI_WMI and/or DCDBAS if those
-> +# backends are selected. The "depends" line prevents a configuration
-> +# where DELL_SMBIOS=y while either of those dependencies =m.
->  #
->  config DELL_SMBIOS
->         tristate "Dell SMBIOS driver"
-> -       depends on DCDBAS || DCDBAS=n
-> +       depends on (DCDBAS || DCDBAS=n) && (ACPI_WMI || ACPI_WMI=n)
+Well, I still have this one queued up as cpuidle material.
 
-A nit: Perhaps separate depends on line for those two?
+I can drop it if you want to take it instead.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks,
+Rafael
