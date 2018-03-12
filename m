@@ -1,41 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751315AbeCLKxC convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 06:53:02 -0400
-Received: from gloria.sntech.de ([95.129.55.99]:35654 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750752AbeCLKxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 06:53:01 -0400
-From: Heiko Stuebner <heiko@sntech.de>
-To: Shunqian Zheng <zhengsq@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dianders@chromium.org
-Subject: Re: [PATCH] arm64: dts: rockchip: assign clock rate for ACLK_VIO
-Date: Mon, 12 Mar 2018 11:52:54 +0100
-Message-ID: <4610682.YhluMk2iks@phil>
-In-Reply-To: <1520819448-8316-1-git-send-email-zhengsq@rock-chips.com>
-References: <1520819448-8316-1-git-send-email-zhengsq@rock-chips.com>
+        id S1751595AbeCLKyP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 06:54:15 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:52879 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751053AbeCLKyL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 06:54:11 -0400
+From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+To: Wolfram Sang <wsa@the-dreams.de>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Subject: [RESEND PATCH v1 0/6] Add different features for I2C
+Date: Mon, 12 Mar 2018 11:53:37 +0100
+Message-ID: <1520852023-27083-1-git-send-email-pierre-yves.mordret@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-12_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, 12. März 2018, 02:50:48 CET schrieb Shunqian Zheng:
-> The ACLK_VIO is a parent clock used by a several children,
-> its suggested clock rate is 400MHz. Right now it gets 400MHz
-> because it sources from CPLL(800M) and divides by 2 after reset.
-> It's good not to rely on default values like this, so let's
-> explicitly set it.
-> NOTE: it's expected that at least one board may override cru node and
-> set the CPLL to 1.6 GHz. On that board it will be very important to be
-> explicit about aclk-vio being 400 MHz.
-> 
-> Signed-off-by: Shunqian Zheng <zhengsq@rock-chips.com>
+Append new I2C STM32F7 feature set. This includes 10 bit support, slave
+support, SMBBus protocols support, DMA Support and eventually an I2C recovery
+mechanism.
+resend after rebasing on last kernel.
 
-applied for 4.17
+---
+  Version history:
+    v1:
+        * Initial
+---
+Pierre-Yves MORDRET (6):
+  i2c: i2c-stm32f7: Add 10-bit address support
+  i2c: i2c-stm32f7: Add slave support
+  i2c: i2c-stm32f7: Add initial SMBus protocols support
+  i2c: i2c-stm32: Add generic DMA API
+  i2c: i2c-stm32f7: Add DMA support
+  i2c: i2c-stm32f7: Implement I2C recovery mechanism
 
-Thanks
-Heiko
+ drivers/i2c/busses/Kconfig       |    1 +
+ drivers/i2c/busses/Makefile      |    3 +-
+ drivers/i2c/busses/i2c-stm32.c   |  153 ++++++
+ drivers/i2c/busses/i2c-stm32.h   |   37 ++
+ drivers/i2c/busses/i2c-stm32f7.c | 1047 +++++++++++++++++++++++++++++++++++++-
+ 5 files changed, 1214 insertions(+), 27 deletions(-)
+ create mode 100644 drivers/i2c/busses/i2c-stm32.c
+
+-- 
+2.7.4
