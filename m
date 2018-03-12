@@ -1,60 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932858AbeCLSRh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 14:17:37 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:43182 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932829AbeCLSR0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 14:17:26 -0400
-X-Google-Smtp-Source: AG47ELsCHn/8PA104eOModbia8XNqvksYjeyswSkTBmFyJrSv73lS9WcoeCqXmpCQ9ACA5F8JS8YSEIfN0X+55wWJbI=
+        id S932881AbeCLSSP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 14:18:15 -0400
+Received: from mx1.riseup.net ([198.252.153.129]:36825 "EHLO mx1.riseup.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932548AbeCLSSN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 14:18:13 -0400
+X-Riseup-User-ID: 961C9ED564F86BF6DF6F6AD1A5E07A8FE8B4AD0A80ECAD3F81F85646348198A6
+Subject: Re: [linux-sunxi] [PATCH 2/9] media: videobuf2-v4l2: Copy planes when
+ needed in request qbuf
+To: paul.kocialkowski@bootlin.com
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+        Florent Revest <revestflo@gmail.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Thomas van Kleef <thomas@vitsch.nl>,
+        "Signed-off-by : Bob Ham" <rah@settrans.net>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+References: <20180309100933.15922-1-paul.kocialkowski@bootlin.com>
+ <20180309100933.15922-3-paul.kocialkowski@bootlin.com>
+From: =?UTF-8?Q?Joonas_Kylm=c3=a4l=c3=a4?= <joonas.kylmala@iki.fi>
+Message-ID: <f5b1c8b7-d7c7-a81b-181b-46ef0323dfdd@iki.fi>
+Date: Mon, 12 Mar 2018 18:18:00 +0000
 MIME-Version: 1.0
-In-Reply-To: <20180312141721.GB4214@redhat.com>
-References: <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152066492680.40260.6843692416565308005.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180312141721.GB4214@redhat.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Mon, 12 Mar 2018 11:17:25 -0700
-Message-ID: <CAPcyv4jdOdvUZHS43Q18h3yTNzmiVJceEcVN5XSKstTkQHfDFQ@mail.gmail.com>
-Subject: Re: [PATCH v5 07/11] mm, dev_pagemap: introduce CONFIG_DEV_PAGEMAP_OPS
-To: Jerome Glisse <jglisse@redhat.com>
-Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Michal Hocko <mhocko@suse.com>, david <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>, linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180309100933.15922-3-paul.kocialkowski@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2CIJVDw009903
 
-On Mon, Mar 12, 2018 at 7:17 AM, Jerome Glisse <jglisse@redhat.com> wrote:
-> On Fri, Mar 09, 2018 at 10:55:26PM -0800, Dan Williams wrote:
->> The HMM sub-system extended dev_pagemap to arrange a callback when a
->> dev_pagemap managed page is freed. Since a dev_pagemap page is free /
->> idle when its reference count is 1 it requires an additional branch to
->> check the page-type at put_page() time. Given put_page() is a hot-path
->> we do not want to incur that check if HMM is not in use, so a static
->> branch is used to avoid that overhead when not necessary.
->>
->> Now, the FS_DAX implementation wants to reuse this mechanism for
->> receiving dev_pagemap ->page_free() callbacks. Rework the HMM-specific
->> static-key into a generic mechanism that either HMM or FS_DAX code paths
->> can enable.
->
-> Why EXPORT_SYMBOL_GPL and not EXPORT_SYMBOL like it was prior to this
-> patch ? Not i care that much about that, just wondering. Maybe keep it
-> EXPORT_SYMBOL() ?
+Paul Kocialkowski:
+> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> index 0627c3339572..c14528d4a518 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> @@ -592,6 +592,7 @@ int vb2_qbuf_request(struct vb2_queue *q, struct v4l2_buffer *b,
+>  	struct media_request *req;
+>  	struct vb2_buffer *vb;
+>  	int ret = 0;
+> +	int i;
+>  
+>  	if (b->request_fd <= 0)
+>  		return vb2_qbuf(q, b);
+> @@ -657,6 +658,17 @@ int vb2_qbuf_request(struct vb2_queue *q, struct v4l2_buffer *b,
+>  	qb->pre_req_state = vb->state;
+>  	qb->queue = q;
+>  	memcpy(&qb->v4l2_buf, b, sizeof(*b));
+> +
+> +	if (V4L2_TYPE_IS_MULTIPLANAR(b->type) && b->length > 0) {
+> +		qb->v4l2_buf.m.planes = kcalloc(b->length,
+> +						sizeof(struct v4l2_plane),
+> +						GFP_KERNEL);
+> +
+> +		for (i = 0; i < b->length; i++)
+> +			 memcpy(&qb->v4l2_buf.m.planes[i], &b->m.planes[i],
+> +				sizeof(struct v4l2_plane));
+> +	}
+> +
+>  	vb->request = req;
+>  	vb->state = VB2_BUF_STATE_QUEUED;
+>  	list_add_tail(&qb->node, &data->queued_buffers);
+> @@ -672,6 +684,7 @@ EXPORT_SYMBOL_GPL(vb2_qbuf_request);
+>  int vb2_request_submit(struct v4l2_request_entity_data *data)
+>  {
+>  	struct v4l2_vb2_request_buffer *qb, *n;
+> +	int i;
+>  
+>  	/* v4l2 requests require at least one buffer to reach the device */
+>  	if (list_empty(&data->queued_buffers)) {
+> @@ -686,6 +699,12 @@ int vb2_request_submit(struct v4l2_request_entity_data *data)
+>  		list_del(&qb->node);
+>  		vb->state = qb->pre_req_state;
+>  		ret = vb2_core_qbuf(q, vb->index, &qb->v4l2_buf);
+> +
+> +		if (V4L2_TYPE_IS_MULTIPLANAR(qb->v4l2_buf.type) &&
+> +		    qb->v4l2_buf.length > 0)
 
-HMM has significant integrations and useful hacks within the mm
-sub-system, I think we should go further than just these symbols and
-also include devm_memremap_pages() as EXPORT_SYMBOL_GPL. It was simply
-an oversight that these were EXPORT_SYMBOL previously.
+The test "qb->v4l2_buf.length > 0" seems unnecessary as it's already
+checked in the loop:
 
-> In any case
-> Reviewed-by: "Jérôme Glisse" <jglisse@redhat.com>
-
-Thanks!
+> +			for (i = 0; i < qb->v4l2_buf.length; i++)
+> +				kfree(&qb->v4l2_buf.m.planes[i]);
+> +
+>  		kfree(qb);
+>  		if (ret)
+>  			return ret;
+> 
