@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELuGdRnhlE1bLDlZCW9KxKcD5qdC2xub99rOgUAm9PNFjHPXI7Ri8MYrTRqEITc2tWnAOp11
-ARC-Seal: i=1; a=rsa-sha256; t=1520824066; cv=none;
+X-Google-Smtp-Source: AG47ELs50udwK8iN6srV0NAVHEJp/sArMpigdIVyZ09Kw/zTgCeK9GqC+ClKugeeq/6I38V3d+UT
+ARC-Seal: i=1; a=rsa-sha256; t=1520824065; cv=none;
         d=google.com; s=arc-20160816;
-        b=hcmnut4iLQtM7Vh4TjazaOF8g0kPSuDgfEyppQm7Wp5ubQX1H7j1G2YQNYLKJyGHSh
-         V1WTZgL5xe9LBDwqKBK6yGZmLRbaNaTP3wlnjr7SQgpIaXxG7wybxo2PMvB4RFyARjwy
-         BkIw0Fm/C/xzlnDWyoE6RG1+oL4G2wqM+jqn4bOwNySbTdDnymOR7Kj7aTXMvA45wVXO
-         507LKjFxy5DjjSl9DOoYS3OP3smCdlcRM4hX8zJBg1KY5/vJ70B3XbM7Q3pPp3fERgmI
-         2H54JZ444mqmQ66T8sBLhjfJdjNlQ2AEgwAHEmZjF4H64BJyX3Gj9QsDEQXP96VbgSQB
-         Q+DA==
+        b=qZ1/GR2b+VQHKH+ELS4ONb7ASNNkTuRyPe+UJ4pf/pTgilsBs6zJZjRLsWV9UMWUUh
+         cw2HiLPlodtJ6Y5kTYiN46Ejx/bVSFrH2oZ6ocitnCupKrbrz/RvvNYUVsdMohiDCyPY
+         YCUE1uhbsByiQDVgv7npCvdozBFGcnOaAzbhX6sabKR1Q2bqdtGWfzDBuJPAS0sGYTJ3
+         Mg81XM/OzjxHBPhvLrD/CYeLeWjHMOUVqFVrLvurvOQY9UwZjCba4GDBqjh5DOLaUYbN
+         5DY0u1YBtse2/v91liDF4uGkIiAXLGdOfAg6i2ci+4zwL5ZYUXAEkPfqXIQoMAsu6mL3
+         2XfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=93ORTVi7JzyF6DlXQwOYIfzmDNJz/a98SlPJzzqj5oE=;
-        b=cpfv00Jl+DBxpV/keABHz4y6yoqT/8qLJb8MPCdr8iBgGDASd4+GKrP7pi76c6hjEd
-         vs8uoEiw8odKZUcbisd3th4pKrEdU1ox3cDQGibPHdCczdzTa5dxea0FJtYu4ByXrKdK
-         56P+C3H2a3apQjab2OfMSVah+F6aloiDQL/phVPTeSHRPdG4TY+YYpcSil/nDamb//rc
-         JrrkZtmY2ZoQhnh2akmDc3kU1tukWmTTKrXPVc3JcG29HzwN+G7KZVUXNI8mpHTlAKX0
-         yea3sspgUDj8MrQDe8AxZT1Ka+YEKd+fb+HWBvlkxKtdFvofN1W8HZMY8gl8nIfIFXgO
-         elAQ==
+        bh=D92yE1L5J2xgzwC55o6aP5Z5BlDTBRiQbebtAxIwB2o=;
+        b=RmZYSXc9Z2eYeZFD0h5wBlnDvtFhqF25rqkRYiMJZNDRxVBZ8WLLaqum7Xe/yNT93s
+         esP4l8FmRQ0m0XWDM+lew8GnnaEhT1tctWMsuivnidTWaCRfwik7KEbMGpY9NCwtANIK
+         iGqMgTNhbdxU3rZLPQtYHQFDtIf+fFqEYvLweHMnwiIIaTD/2NFMWrLWLyr7C7AZXHVi
+         Xesf1Hfrd+HyglhPOaG82zsp5Uw/aQgM7beDolqI0/V9i14oBiicXQ3OqFGczreJDEg5
+         +2IF+cpniD9FIHN7NVKJqNpQdLaF5akYvF74SlMQWkTAg1uXtUvlFJZosLS3yhX94O1n
+         tWWg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,28 +30,23 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Dan Williams" <dan.j.williams@intel.com>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Jiri Slaby" <jslaby@suse.cz>,
- kernel-hardening@lists.openwall.com, alan@linux.intel.com,
- "Jan Beulich" <JBeulich@suse.com>,
- linux-arch@vger.kernel.org,
- "Andy Lutomirski" <luto@kernel.org>,
- "Jinpu Wang" <jinpu.wang@profitbricks.com>,
- gregkh@linuxfoundation.org,
- "Thomas Gleixner" <tglx@linutronix.de>
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ arjan@linux.intel.com, gregkh@linuxfoundation.org,
+ "David Woodhouse" <dwmw2@infradead.org>,
+ jeyu@kernel.org, torvalds@linux-foundation.org,
+ "Andi Kleen" <ak@linux.intel.com>
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.932106069@decadent.org.uk>
+Message-ID: <lsq.1520823814.639849575@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 087/104] x86/syscall: Sanitize syscall table
- de-references under speculation
+Subject: [PATCH 3.2 077/104] module/retpoline: Warn about missing
+ retpoline in module
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699616206088143?=
-X-GMAIL-MSGID: =?utf-8?q?1594699616206088143?=
+X-GMAIL-THRID: =?utf-8?q?1594699615683450276?=
+X-GMAIL-MSGID: =?utf-8?q?1594699615683450276?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,107 +54,144 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: Andi Kleen <ak@linux.intel.com>
 
-commit 2fbd7af5af8665d18bcefae3e9700be07e22b681 upstream.
+commit caf7501a1b4ec964190f31f9c3f163de252273b8 upstream.
 
-The upstream version of this, touching C code, was written by Dan Williams,
-with the following description:
+There's a risk that a kernel which has full retpoline mitigations becomes
+vulnerable when a module gets loaded that hasn't been compiled with the
+right compiler or the right option.
 
-> The syscall table base is a user controlled function pointer in kernel
-> space. Use array_index_nospec() to prevent any out of bounds speculation.
->
-> While retpoline prevents speculating into a userspace directed target it
-> does not stop the pointer de-reference, the concern is leaking memory
-> relative to the syscall table base, by observing instruction cache
-> behavior.
+To enable detection of that mismatch at module load time, add a module info
+string "retpoline" at build time when the module was compiled with
+retpoline support. This only covers compiled C source, but assembler source
+or prebuilt object files are not checked.
 
-The x86_64 assembly version for 4.4 was written by Jiri Slaby, with
-the following description:
+If a retpoline enabled kernel detects a non retpoline protected module at
+load time, print a warning and report it in the sysfs vulnerability file.
 
-> In 4.4.118, we have commit c8961332d6da (x86/syscall: Sanitize syscall
-> table de-references under speculation), which is a backport of upstream
-> commit 2fbd7af5af86. But it fixed only the C part of the upstream patch
-> -- the IA32 sysentry. So it ommitted completely the assembly part -- the
-> 64bit sysentry.
->
-> Fix that in this patch by explicit array_index_mask_nospec written in
-> assembly. The same was used in lib/getuser.S.
->
-> However, to have "sbb" working properly, we have to switch from "cmp"
-> against (NR_syscalls-1) to (NR_syscalls), otherwise the last syscall
-> number would be "and"ed by 0. It is because the original "ja" relies on
-> "CF" or "ZF", but we rely only on "CF" in "sbb". That means: switch to
-> "jae" conditional jump too.
->
-> Final note: use rcx for mask as this is exactly what is overwritten by
-> the 4th syscall argument (r10) right after.
+[ tglx: Massaged changelog ]
 
-In 3.2 the x86_32 syscall table lookup is also written in assembly.
-So I've taken Jiri's version and added similar masking in entry_32.S,
-using edx as the temporary.  edx is clobbered by SAVE_REGS and seems
-to be free at this point.
-
-In 3.2 the x86_64 entry code also lacks syscall masking for x32.
-
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Jiri Slaby <jslaby@suse.cz>
-Cc: Jan Beulich <JBeulich@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arch@vger.kernel.org
-Cc: kernel-hardening@lists.openwall.com
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: David Woodhouse <dwmw2@infradead.org>
 Cc: gregkh@linuxfoundation.org
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: alan@linux.intel.com
-Cc: Jinpu Wang <jinpu.wang@profitbricks.com>
+Cc: torvalds@linux-foundation.org
+Cc: jeyu@kernel.org
+Cc: arjan@linux.intel.com
+Link: https://lkml.kernel.org/r/20180125235028.31211-1-andi@firstfloor.org
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/kernel/entry_32.S
-+++ b/arch/x86/kernel/entry_32.S
-@@ -429,6 +429,8 @@ sysenter_past_esp:
- sysenter_do_call:
- 	cmpl $(nr_syscalls), %eax
- 	jae sysenter_badsys
-+	sbb %edx, %edx				/* array_index_mask_nospec() */
-+	and %edx, %eax
- 	call *sys_call_table(,%eax,4)
- sysenter_after_call:
- 	movl %eax,PT_EAX(%esp)
-@@ -512,6 +514,8 @@ ENTRY(system_call)
- 	cmpl $(nr_syscalls), %eax
- 	jae syscall_badsys
- syscall_call:
-+	sbb %edx, %edx				/* array_index_mask_nospec() */
-+	and %edx, %eax
- 	call *sys_call_table(,%eax,4)
- syscall_after_call:
- 	movl %eax,PT_EAX(%esp)		# store the return value
---- a/arch/x86/kernel/entry_64.S
-+++ b/arch/x86/kernel/entry_64.S
-@@ -517,8 +517,10 @@ ENTRY(system_call_after_swapgs)
- 	testl $_TIF_WORK_SYSCALL_ENTRY,TI_flags(%rcx)
- 	jnz tracesys
- system_call_fastpath:
--	cmpq $__NR_syscall_max,%rax
--	ja badsys
-+	cmpq	$NR_syscalls, %rax
-+	jae	badsys
-+	sbb	%rcx, %rcx			/* array_index_mask_nospec() */
-+	and	%rcx, %rax
- 	movq %r10,%rcx
- #ifdef CONFIG_RETPOLINE
- 	movq	sys_call_table(, %rax, 8), %rax
-@@ -646,8 +648,10 @@ tracesys:
- 	 */
- 	LOAD_ARGS ARGOFFSET, 1
- 	RESTORE_REST
--	cmpq $__NR_syscall_max,%rax
--	ja   int_ret_from_sys_call	/* RAX(%rsp) set to -ENOSYS above */
-+	cmpq	$NR_syscalls, %rax
-+	jae	int_ret_from_sys_call		/* RAX(%rsp) set to -ENOSYS above */
-+	sbb	%rcx, %rcx			/* array_index_mask_nospec() */
-+	and	%rcx, %rax
- 	movq %r10,%rcx	/* fixup for C */
- #ifdef CONFIG_RETPOLINE
- 	movq	sys_call_table(, %rax, 8), %rax
+ arch/x86/kernel/cpu/bugs.c | 17 ++++++++++++++++-
+ include/linux/module.h     |  9 +++++++++
+ kernel/module.c            | 11 +++++++++++
+ scripts/mod/modpost.c      |  9 +++++++++
+ 4 files changed, 45 insertions(+), 1 deletion(-)
+
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -10,6 +10,7 @@
+ #include <linux/init.h>
+ #include <linux/utsname.h>
+ #include <linux/cpu.h>
++#include <linux/module.h>
+ 
+ #include <asm/nospec-branch.h>
+ #include <asm/cmdline.h>
+@@ -235,6 +236,19 @@ static const char *spectre_v2_strings[]
+ #define pr_fmt(fmt)     "Spectre V2 mitigation: " fmt
+ 
+ static enum spectre_v2_mitigation spectre_v2_enabled = SPECTRE_V2_NONE;
++static bool spectre_v2_bad_module;
++
++#ifdef RETPOLINE
++bool retpoline_module_ok(bool has_retpoline)
++{
++	if (spectre_v2_enabled == SPECTRE_V2_NONE || has_retpoline)
++		return true;
++
++	pr_err("System may be vunerable to spectre v2\n");
++	spectre_v2_bad_module = true;
++	return false;
++}
++#endif
+ 
+ static void __init spec2_print_if_insecure(const char *reason)
+ {
+@@ -420,6 +434,7 @@ ssize_t cpu_show_spectre_v2(struct sysde
+ 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
+ 		return sprintf(buf, "Not affected\n");
+ 
+-	return sprintf(buf, "%s\n", spectre_v2_strings[spectre_v2_enabled]);
++	return sprintf(buf, "%s%s\n", spectre_v2_strings[spectre_v2_enabled],
++		       spectre_v2_bad_module ? " - vulnerable module loaded" : "");
+ }
+ #endif
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -661,4 +661,13 @@ static inline void module_bug_finalize(c
+ static inline void module_bug_cleanup(struct module *mod) {}
+ #endif	/* CONFIG_GENERIC_BUG */
+ 
++#ifdef RETPOLINE
++extern bool retpoline_module_ok(bool has_retpoline);
++#else
++static inline bool retpoline_module_ok(bool has_retpoline)
++{
++	return true;
++}
++#endif
++
+ #endif /* _LINUX_MODULE_H */
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2335,6 +2335,15 @@ static inline void kmemleak_load_module(
+ }
+ #endif
+ 
++static void check_modinfo_retpoline(struct module *mod, struct load_info *info)
++{
++	if (retpoline_module_ok(get_modinfo(info, "retpoline")))
++		return;
++
++	pr_warn("%s: loading module not compiled with retpoline compiler.\n",
++		mod->name);
++}
++
+ /* Sets info->hdr and info->len. */
+ static int copy_and_check(struct load_info *info,
+ 			  const void __user *umod, unsigned long len,
+@@ -2495,6 +2504,8 @@ static int check_modinfo(struct module *
+ 	if (!get_modinfo(info, "intree"))
+ 		add_taint_module(mod, TAINT_OOT_MODULE);
+ 
++	check_modinfo_retpoline(mod, info);
++
+ 	if (get_modinfo(info, "staging")) {
+ 		add_taint_module(mod, TAINT_CRAP);
+ 		printk(KERN_WARNING "%s: module is from the staging directory,"
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -1889,6 +1889,14 @@ static void add_intree_flag(struct buffe
+ 		buf_printf(b, "\nMODULE_INFO(intree, \"Y\");\n");
+ }
+ 
++/* Cannot check for assembler */
++static void add_retpoline(struct buffer *b)
++{
++	buf_printf(b, "\n#ifdef RETPOLINE\n");
++	buf_printf(b, "MODULE_INFO(retpoline, \"Y\");\n");
++	buf_printf(b, "#endif\n");
++}
++
+ static void add_staging_flag(struct buffer *b, const char *name)
+ {
+ 	static const char *staging_dir = "drivers/staging";
+@@ -2210,6 +2218,7 @@ int main(int argc, char **argv)
+ 
+ 		add_header(&buf, mod);
+ 		add_intree_flag(&buf, !external_module);
++		add_retpoline(&buf);
+ 		add_staging_flag(&buf, mod->name);
+ 		err |= add_versions(&buf, mod);
+ 		add_depends(&buf, mod, modules);
