@@ -1,66 +1,100 @@
-Return-Path: <davem@davemloft.net>
-X-Google-Smtp-Source: AG47ELsXL/ztsgHsTtbhl1aHdRqamW/+me633NsKYb6sd8fTowc6Z9VZcHUKJ0fMEEVVyIdmCGny
-ARC-Seal: i=1; a=rsa-sha256; t=1520863390; cv=none;
+Return-Path: <kernel-hardening-return-12409-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELt3qmtND94V3sW9TWHtMyIKkaIYMZUSB/ZjsjgdmlQiDn4HWfTmiw1+036R/UnWXSUx/psk
+ARC-Seal: i=1; a=rsa-sha256; t=1520830207; cv=none;
         d=google.com; s=arc-20160816;
-        b=yO8k1fVulE5IDKeuzpr+Kt9hVNtn8NFRowVsepAQCxEGDWj0yIbPqnRSVQ+WJYDhbb
-         mGXvglnLF52ke7PLAvqqEfSe106WUJdliRVhqj/ImhR72Apaw/awqKXnJy+axf58qrwe
-         30or8Yf8sWMq9RNkKaz3L6k/0AJLqO/6S9AGqSdZpFOqmqAvqDM00Ic9xc5ubXomnySO
-         jZe0mXNwqMa+8aWYGNB24upIjenAo8/QBNGHfyfCAN8/nwlixi+/c+aLFRLBi0rYH79T
-         SlezGHrsiQ8oZWRfPGOiDGZinyFIv6dXj7erx6rXaBO+MywWfy+xtTOJKBsMVmKGIWrW
-         Wnbw==
+        b=ZyXU1hKs4wFrYyQ9XP4G5BMm3PZaC6Xry1eZK3zIuRoQ1GrC0jCWI+wtARnhvJLUUt
+         CmA3l0VKlop5Yk4jCjhUdPpjrIZfpl20Uthsyqxx6YfO9xVJT2pch9iXMPPiCbIZt0DD
+         Ky7Auh1T+YeKVzfgFVKzPK7Sdp3gtJ6KyjgFzxBLPrTMH5TOvfjNtxEgrj/kzhV46Vla
+         fUlvGThpcgd3CMbzJ3NS7ijmxZXD2W+iDiiZVReK+iQrpah7ZwzEB4jfcZ5c5sAkK3yq
+         8egSp3NVReZmDZ8KC4Mbneez36fki3oELOuuyS527MFdWYP6tvcoWiH5DRJsyvvdgarn
+         rwcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:arc-authentication-results;
-        bh=AEv8v0DKP9lHsENkwe++w0We/zdBkiQKisu+XNDutOs=;
-        b=xt4xCVk39X7aQ4MGVVF4o2wD9469vlSCVqWWB91CZTQxwrcc07LDy8IT8l6zKccMur
-         D0KFg0diPVnWiVZuqVlX+bFix9dil6dqeXeeP3qvU2feB1XrjWdDRhj5BhO0W4KTjfqj
-         caub/1d7AP7WGPJ732qvlEctkY/DTCQdoFuCrXIN3acOtBkoKFZ/omEKpPe5O+riC1Sl
-         JEsVd39D7l8h4wdT3e7+Olxkz9EjzzdKM4u+HTj3/aKOQ6+ylbzrIcomksxoDLaiRK4a
-         BrBdth9Ew85HpUe52f7Cf44n9G77RcvpcfjG4J/zyGIBVPAvsJ6pQgDBf6v3aHY7sl48
-         iCNg==
+        h=message-id:date:subject:cc:to:from:dkim-signature:dkim-signature
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=fY71O/oZVqj7ORjPmj1+SBUiM0AiqJV/d2FT6UTP1mg=;
+        b=NJcdfYpvoO6YjGytt1xvQRrlkwLoByBAQUfa6Dq1C/zk1Qx2Y807s5ZuSp5ighu5z9
+         +CEXyUTS+mwxZSgJa1AKu0x1uuQ60v3hB2/ZDtdHPY1xugmGbslrO5WYBicFqUhv/GM4
+         TYKRh4rmTuyTGpXKRUSSjyZFXrnZiPC6XW0Y3YAUjQbP4mKKaCoqAZgb/jvVUBTkafzi
+         iuoegwFP/05YLEokxaBzVG2hBFrVbf9NuwLzxfz9oBjizDFsa2oAB+Nn0hExro5XmSXn
+         6DbK7LrmKkFNBCJ8Sb9HvlV9YbMycSKOWIN3SCrGGBLDjjaw9/R1W0rF39aZmrNsRDMU
+         rQZw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 184.105.139.130 is neither permitted nor denied by best guess record for domain of davem@davemloft.net) smtp.mailfrom=davem@davemloft.net
+       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=qs/AWPpP;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=Rl4VIvQZ;
+       spf=pass (google.com: domain of kernel-hardening-return-12409-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12409-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 184.105.139.130 is neither permitted nor denied by best guess record for domain of davem@davemloft.net) smtp.mailfrom=davem@davemloft.net
-Date: Mon, 12 Mar 2018 10:03:06 -0400 (EDT)
-Message-Id: <20180312.100306.1226474832894044539.davem@davemloft.net>
-To: dvyukov@google.com
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- akpm@linux-foundation.org, torvalds@linux-foundation.org,
- syzkaller@googlegroups.com
-Subject: Re: LKML admins (syzbot emails are not delivered)
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <CACT4Y+Z7E1e05R1pBhS4oD7Moy8sn3N7POvuDTCYNDYDc_uE=Q@mail.gmail.com>
-References: <CACT4Y+Z2-Z6GN0SDb5jySJkCrTRxf9qvdzuyM_OoruCTB9EoqQ@mail.gmail.com>
-	<20180308.150309.1043571795208899259.davem@davemloft.net>
-	<CACT4Y+Z7E1e05R1pBhS4oD7Moy8sn3N7POvuDTCYNDYDc_uE=Q@mail.gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=qs/AWPpP;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=Rl4VIvQZ;
+       spf=pass (google.com: domain of kernel-hardening-return-12409-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12409-gregkh=linuxfoundation.org@lists.openwall.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+X-ME-Sender: <xms:7AamWi2Tv6nlUTRHDJFZ-aGnG7NEPrSltu0EDq4kqlapDLG7ObEM4Q>
+From: "Tobin C. Harding" <me@tobin.cc>
+To: Ilya Dryomov <idryomov@gmail.com>,
+	Sage Weil <sage@redhat.com>,
+	Alex Elder <elder@kernel.org>
+Cc: "Tobin C. Harding" <me@tobin.cc>,
+	ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	Tycho Andersen <tycho@tycho.ws>,
+	Kees Cook <keescook@chromium.org>
+Subject: [PATCH] rbd: Remove VLA stack usage
+Date: Mon, 12 Mar 2018 15:49:40 +1100
+Message-Id: <1520830180-25452-1-git-send-email-me@tobin.cc>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1588652385455174541?=
-X-GMAIL-MSGID: =?utf-8?q?1594740850604214490?=
+X-GMAIL-THRID: =?utf-8?q?1594706055475539474?=
+X-GMAIL-MSGID: =?utf-8?q?1594706055475539474?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 12 Mar 2018 09:56:42 +0100
+The kernel would like to have all stack VLA usage removed[1].  Here the
+array is declared using a variable that is declared using a constant
+statement but the compiler still emits a warning.  We can clear the
+warning bu using the constant statement directly.  In place of later
+usage of the size variable we can use the ARRAY_SIZE() macro.
 
-> But I don't see kernelci.orgbot referenced anywhere in the emails.
-> E.g. in the one that was linked above:
-> https://groups.google.com/forum/message/raw?msg=syzkaller-bugs/OkwLGoS6UQA/hHAtCdnNBgAJ
+Use constant statement to declare array.
 
-I'm not referencing that one above, I'm simply reporting what I've
-seen in the vger bounce logs.
+[1]: https://lkml.org/lkml/2018/3/7/621
 
-> Could a dot in email address produce the same result? E.g.
-> To: foo.bar@something.com
+Signed-off-by: Tobin C. Harding <me@tobin.cc>
+---
+ drivers/block/rbd.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-No.
-
-> Is it possible to revive autoanswer@vger.kernel.org? It would
-> hopefully allow us to debug this without bothering you.
-
-Sorry, no engineering resources will be put into the current
-setup as we prepare a new system based upon mailman.
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 0016170cde0a..927ecd9a2511 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -3100,20 +3100,19 @@ static int __rbd_notify_op_lock(struct rbd_device *rbd_dev,
+ {
+ 	struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
+ 	struct rbd_client_id cid = rbd_get_cid(rbd_dev);
+-	int buf_size = 4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN;
+-	char buf[buf_size];
++	char buf[4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN];
+ 	void *p = buf;
+ 
+ 	dout("%s rbd_dev %p notify_op %d\n", __func__, rbd_dev, notify_op);
+ 
+ 	/* encode *LockPayload NotifyMessage (op + ClientId) */
+-	ceph_start_encoding(&p, 2, 1, buf_size - CEPH_ENCODING_START_BLK_LEN);
++	ceph_start_encoding(&p, 2, 1, ARRAY_SIZE(buf) - CEPH_ENCODING_START_BLK_LEN);
+ 	ceph_encode_32(&p, notify_op);
+ 	ceph_encode_64(&p, cid.gid);
+ 	ceph_encode_64(&p, cid.handle);
+ 
+ 	return ceph_osdc_notify(osdc, &rbd_dev->header_oid,
+-				&rbd_dev->header_oloc, buf, buf_size,
++				&rbd_dev->header_oloc, buf, ARRAY_SIZE(buf),
+ 				RBD_NOTIFY_TIMEOUT, preply_pages, preply_len);
+ }
+ 
+-- 
+2.7.4
