@@ -1,117 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751280AbeCLL34 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 07:29:56 -0400
-Received: from foss.arm.com ([217.140.101.70]:52962 "EHLO foss.arm.com"
+        id S1751359AbeCLLaU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 07:30:20 -0400
+Received: from mout.web.de ([212.227.15.3]:45195 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751180AbeCLL3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 07:29:54 -0400
-Subject: Re: [PATCH v6 3/3] arm64: dts: sdm845: Add minimal dts/dtsi files for
- sdm845 SoC and MTP
-To: Rajendra Nayak <rnayak@codeaurora.org>, andy.gross@linaro.org
-Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        evgreen@chromium.org, bjorn.andersson@linaro.org,
-        dianders@chromium.org, swboyd@chromium.org
-References: <20180312080656.13247-1-rnayak@codeaurora.org>
- <20180312080656.13247-4-rnayak@codeaurora.org>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <96fac632-8fb8-0933-cc1f-627acb38a595@arm.com>
-Date: Mon, 12 Mar 2018 11:29:51 +0000
+        id S1750988AbeCLLaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 07:30:19 -0400
+To: linux-bluetooth@vger.kernel.org,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/5] Bluetooth/btmrvl_sdio: Adjustments for three function
+ implementations
+Message-ID: <8d050f76-aed1-7b6b-8778-a78aef34d4ea@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 12:30:08 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180312080656.13247-4-rnayak@codeaurora.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:1FO3v0bWLUtFZuydM3zuXtkIFAPn8Yd9XvYjT2H7y9tNGi69lfE
+ 7vOpFpan43HPptizC3BnPAnKeFcGnAgCRoQ3lmneB3xPtqpv5Mc6k8RJwTadqlNdR0Ub5n0
+ o4bzaGUS+jexoGsRXhh0TZFmc7JpUOSPQ1E8NAnSusnMJu5TCDLRM3Obpivh+ur1VOQ81NC
+ W1BnD8hnISLwETttvuP3A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:RirKkO7tYIg=:a3vWLtrr6FuneqHSrNXBfT
+ 2SVdj/GzZDSsfFudx5lYVZiO5Q1TK6ZBrPajAhOw428+LYtLMgPKGhqtK8P4BtO3SxEeqCMmb
+ LMbEGxZfhcNzFqWry0LJ72zQG5459BYtvTmJwnVxAfXjdCFPf1FYNehGA280UHsiQl5isfzJM
+ gTyGIeEjrrNui08CX8e44/mvFapB9JdTX8ehY1Aydybtc0YX3j4L68dJluVmXlHMoZKjLhXyV
+ KwWVPBnkSz2FT4WowT65klezkw2mgGSAOKtNfxDxs2F6v/Gjae/uvBrVqIWGoiiiONqIdXAiB
+ 8FfDVIXPwMTKGQKCZCNU5Ajljtq+EsIoRMn381LRabt6pyLTwoVnPzLpS95Z/VprOFQDsBOsL
+ HPGDKwMESpeOt/bQtJzVzlTzutIxyj+1SiqXemdvNQI0/DDDeR+nJ6AVIu04qPWXOSPxKF0WZ
+ AVpBUwF3vb++gakrvU/EoM8X2zHTLGERrvY4r7u2BfvBljxGY9av2t+/zbe4F8olfDjQ3xj0t
+ 3+b/K4qJr4N2nHdqnqNyY0ZZsR1376ih6V2qPgyO9Eqk/qqrfiAmWDRF0xhS469uCwCKpBCET
+ 4CSNKo11UUWJs+bpvYi6fN+Wsks7e2WIOXQddKrlOxn8ptgvpcIgdmjsj69i5okXpYJoXMkbk
+ Yx4ukeb4jg9XuiKLD8PDNYV0EgTYtu0D15etN6a8O3DqXT+LYFNUZZDb0sVU5dZ8kYj6nUOxe
+ 9/yRBjUktxAX3JyF3SjUCIzpBkU+pw83+FAYUO34v3B+UMkIAosU17XlnOn/gcHWDUFY3ut60
+ uxPAZFYTdT6wBPiBlik9+sQ83zrIns6UG/sxuUxZFlpoFs7qK4=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/03/18 08:06, Rajendra Nayak wrote:
-> Add a skeletal sdm845 SoC dtsi and MTP board dts/dtsi files
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> Reviewed-by: Doug Anderson <dianders@chromium.org>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile       |   1 +
->  arch/arm64/boot/dts/qcom/sdm845-mtp.dts |  15 ++
->  arch/arm64/boot/dts/qcom/sdm845.dtsi    | 278 ++++++++++++++++++++++++++++++++
->  3 files changed, 294 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/sdm845-mtp.dts
->  create mode 100644 arch/arm64/boot/dts/qcom/sdm845.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> index 55ec5ee7f7e8..9319e74b8906 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -6,3 +6,4 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-mtp.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-bullhead-rev-101.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8994-angler-rev-101.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8996-mtp.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-mtp.dtb
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-> new file mode 100644
-> index 000000000000..979ab49913f1
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-> @@ -0,0 +1,15 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * SDM845 MTP board device tree source
-> + *
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "sdm845.dtsi"
-> +
-> +/ {
-> +	model = "Qualcomm Technologies, Inc. SDM845 MTP";
-> +	compatible = "qcom,sdm845-mtp";
-> +};
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> new file mode 100644
-> index 000000000000..d2407cd7a561
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 12:10:24 +0100
 
-[...]
+A few update suggestions were taken into account
+from static source code analysis.
 
-> +		intc: interrupt-controller@17a00000 {
-> +			compatible = "arm,gic-v3";
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			ranges;
-> +			#interrupt-cells = <3>;
-> +			interrupt-controller;
-> +			#redistributor-regions = <1>;
-> +			redistributor-stride = <0x0 0x20000>;
+Markus Elfring (5):
+  Use common error handling code in btmrvl_sdio_register_dev()
+  Delete an unnecessary variable initialisation in btmrvl_sdio_register_dev()
+  One check less in btmrvl_sdio_card_to_host() after error detection
+  Delete an unnecessary variable initialisation in btmrvl_sdio_card_to_host()
+  Use common error handling code in btmrvl_sdio_download_fw_w_helper()
 
-You shouldn't need redistributor-stride here, unless your GIC
-implementation is not compliant with the architecture (i.e. really
-buggy). I only know of one such implementation, and I'd rather you
-remove this property unless your GIC is indeed non-compliant. If that's
-the case, you should also document it.
+ drivers/bluetooth/btmrvl_sdio.c | 102 ++++++++++++++++++----------------------
+ 1 file changed, 46 insertions(+), 56 deletions(-)
 
-> +			reg = <0x17a00000 0x10000>,     /* GICD */
-> +			      <0x17a60000 0x100000>;    /* GICR * 8 */
-> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +			gic-its@17a40000 {
-> +				compatible = "arm,gic-v3-its";
-> +				msi-controller;
-> +				#msi-cells = <1>;
-> +				reg = <0x17a40000 0x20000>;
-> +				status = "disabled";
-> +			};
-> +		};
-
-Thanks,
-
-	M.
 -- 
-Jazz is not dead. It just smells funny...
+2.16.2
