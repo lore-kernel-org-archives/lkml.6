@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELvkJyZL7BPSTqOkYLmxFI3qiFLDIp2wLJpksLQor/EgoKGTOjxKaNVZix/lAST4yTbsylqB
-ARC-Seal: i=1; a=rsa-sha256; t=1520824086; cv=none;
+X-Google-Smtp-Source: AG47ELs5tIv9kbEXEAHgeh4TLMP6ohlhfmzw23vco/q3+sty58mMAgOburH75DlaK0MRFVVzFwMX
+ARC-Seal: i=1; a=rsa-sha256; t=1520824082; cv=none;
         d=google.com; s=arc-20160816;
-        b=ayUZaMm7IvlmVu24XWy+B4C/Z1i7CDMJFume4VeYDLxllTbIz9V2sL9ZhalvdTM7+G
-         +E5du1QmWm5CV31kIDJzp7vp3UVuNxGQZfqUrfUE55MWYK5aDxeAU1/CS4HCEaJMQ+Yc
-         +cKNcyI10FtNOHCE0ixQrAhEnj5TBb7RLxnobj+6cd7u0HXa86EoBIctUGU7c6Gp+xpL
-         EFuPhWtnJTxgxw1Rr6X+Tc8I5FzwMOOOz29XADgd6/nCbrPpXb0aNB54c6nhmrt8cCZp
-         lY7u0Qij1m3Q/rgiBajPNfSqed9brM8ChQ/qPrKhzeYdS2QPjmASg1xGoR1eyzi1K0TW
-         tPBA==
+        b=k5Ma2A/4b/4KmmTiAULiZRLUrDbZJVBSRFPCeSa0dpdnwQoGU+5RNhnYBbVMMlmuud
+         erj+dPJMa3nR4NG7S5BJjeO/EcO6D93LrPIKraxWKYLuwWSuhB7+bAad/B2pNm9UuFO0
+         XitpfGXn0zfpNUmkK310TKr4NKVpHnjp+QpNXvawAMPgV9otvl6J8MotWUQ9EY/iy9XY
+         hC86bbZOfcjU/n02n9P8giPWXnhALFaXIYUBo/BlNXWmgEohxA96xG9JjqzitSlOUX7p
+         J38GONpxQPKJrBXBERlxq+MrbRmo89Sag+LDH6p+8z+fw0w9z8I1R07lphBMC4izBq9/
+         gEjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=K0yvTCT/7zo60RwOquuDRuow9Y1anGe4ABKOcCdZeUo=;
-        b=HRIShyayTJEJtPnJRyJwXp1sslmEW7LI8QDp55DVklODvNo+jYj4mse6EGrQxh5Eqi
-         0K0LdVZbjLICpKE52vXnSSmwM3gMT/+46sxleH76kWJKfrKKY8YfTQVDA/k/AniBdzoV
-         5qxCllA+bxP3IpKMcM9kDeuAFlHkcI/zJ7Lq1THI0wiR6O+416V6lm4ilj8KnKq05sU6
-         Ekd2QKdR7EnZAezgpoFyfb2tj4HLq/ZHPr5vTYKkFg5DYsB+SIsmbePmgkIbd7Xio9BJ
-         zglvmCWCFskNAmiVG3DLnafXPKnQo59thKjrnrdPXxjDc1aogZQNYnxzEzYlCMVnoZeX
-         +fhA==
+        bh=Kl1yfYd7ImOgSW1RRzgHdIdVvO2oadMf1xIl06KEth8=;
+        b=WVuG6F74GItkaj/cpwmxPzL0JJ8AcGfbV80/ZekItV4+j6pPJwnPjY5aXN4NvwbYmA
+         LCaWSk2o7+eJHZkRASjo0nMn0B3kUjwOVHDpdvi1CYn71z1QURArlHD3Lbt/RD9Ns//o
+         hJDJOrbECGAg3Lh7zvrPqtTj1+Pdmv46y5hzcVvTuxz4v7u5Dn4OUW7XiTzW8RRzNqgj
+         dxv/+JhM7FrPVV0fu/TzYla7ThT9BFKWklP1KXS85AAFMbvR2h+9FKJ/KJNw13vZaMob
+         0sDMWJkYD4auuwai/5R9oezUsig0z/IzITFOyj6gkr7prvRpydGKDLwvIljNhpLX9XSb
+         Bbrg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,26 +30,36 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Peter Zijlstra" <peterz@infradead.org>,
- "Masami Hiramatsu" <mhiramat@kernel.org>,
- "Andi Kleen" <ak@linux.intel.com>,
- "David Woodhouse" <dwmw@amazon.co.uk>,
- "Greg Kroah-Hartman" <gregkh@linux-foundation.org>,
+ "Andy Lutomirski" <luto@amacapital.net>,
+ "Kees Cook" <keescook@google.com>,
+ thomas.lendacky@amd.com,
+ "Arjan van de Ven" <arjan@linux.intel.com>,
+ "Dave Hansen" <dave.hansen@intel.com>,
  "Thomas Gleixner" <tglx@linutronix.de>,
- "Ananth N Mavinakayanahalli" <ananth@linux.vnet.ibm.com>,
- "Arjan van de Ven" <arjan@linux.intel.com>
+ "Josh Poimboeuf" <jpoimboe@redhat.com>,
+ "Jiri Kosina" <jikos@kernel.org>,
+ "Greg Kroah-Hartman" <gregkh@linux-foundation.org>,
+ "David Woodhouse" <dwmw@amazon.co.uk>,
+ "Ingo Molnar" <mingo@kernel.org>,
+ "Rik van Riel" <riel@redhat.com>,
+ "Andi Kleen" <ak@linux.intel.com>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Paul Turner" <pjt@google.com>,
+ "Tim Chen" <tim.c.chen@linux.intel.com>,
+ gnomes@lxorguk.ukuu.org.uk,
+ "Peter Zijlstra" <peterz@infradead.org>
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.792574092@decadent.org.uk>
+Message-ID: <lsq.1520823814.970786514@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 071/104] kprobes/x86: Disable optimizing on the
- function jumps to indirect thunk
+Subject: [PATCH 3.2 062/104] x86/retpoline/hyperv: Convert assembler
+ indirect jumps
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699636667812144?=
-X-GMAIL-MSGID: =?utf-8?q?1594699636667812144?=
+X-GMAIL-THRID: =?utf-8?q?1594699633509049730?=
+X-GMAIL-MSGID: =?utf-8?q?1594699633509049730?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,80 +67,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-commit c86a32c09f8ced67971a2310e3b0dda4d1749007 upstream.
+commit e70e5892b28c18f517f29ab6e83bd57705104b31 upstream.
 
-Since indirect jump instructions will be replaced by jump
-to __x86_indirect_thunk_*, those jmp instruction must be
-treated as an indirect jump. Since optprobe prohibits to
-optimize probes in the function which uses an indirect jump,
-it also needs to find out the function which jump to
-__x86_indirect_thunk_* and disable optimization.
+Convert all indirect jumps in hyperv inline asm code to use non-speculative
+sequences when CONFIG_RETPOLINE is enabled.
 
-Add a check that the jump target address is between the
-__indirect_thunk_start/end when optimizing kprobe.
-
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: David Woodhouse <dwmw@amazon.co.uk>
+Acked-by: Arjan van de Ven <arjan@linux.intel.com>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Cc: gnomes@lxorguk.ukuu.org.uk
+Cc: Rik van Riel <riel@redhat.com>
 Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: thomas.lendacky@amd.com
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Kosina <jikos@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Kees Cook <keescook@google.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
 Cc: Greg Kroah-Hartman <gregkh@linux-foundation.org>
-Link: https://lkml.kernel.org/r/151629212062.10241.6991266100233002273.stgit@devbox
+Cc: Paul Turner <pjt@google.com>
+Link: https://lkml.kernel.org/r/1515707194-20531-9-git-send-email-dwmw@amazon.co.uk
 [bwh: Backported to 3.2:
- - Include  __kprobes in both function declarations
+ - Drop changes to hv_do_fast_hypercall8()
+ - Include earlier updates to the asm constraints
  - Adjust filename, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/kprobes.c | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+ drivers/hv/hv.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
---- a/arch/x86/kernel/kprobes.c
-+++ b/arch/x86/kernel/kprobes.c
-@@ -58,6 +58,7 @@
- #include <asm/alternative.h>
- #include <asm/insn.h>
- #include <asm/debugreg.h>
+--- a/drivers/hv/hv.c
++++ b/drivers/hv/hv.c
+@@ -27,6 +27,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/hyperv.h>
+ #include <asm/hyperv.h>
 +#include <asm/nospec-branch.h>
+ #include "hyperv_vmbus.h"
  
- void jprobe_return_end(void);
+ /* The one and only */
+@@ -113,10 +114,13 @@ static u64 do_hypercall(u64 control, voi
+ 	u64 output_address = (output) ? virt_to_phys(output) : 0;
+ 	void *hypercall_page = hv_context.hypercall_page;
  
-@@ -1256,7 +1257,7 @@ static int __kprobes copy_optimized_inst
- }
+-	__asm__ __volatile__("mov %0, %%r8" : : "r" (output_address) : "r8");
+-	__asm__ __volatile__("call *%3" : "=a" (hv_status) :
+-			     "c" (control), "d" (input_address),
+-			     "m" (hypercall_page));
++	__asm__ __volatile__("mov %4, %%r8\n"
++			     CALL_NOSPEC
++			     : "=a" (hv_status), ASM_CALL_CONSTRAINT,
++			       "+c" (control), "+d" (input_address)
++			     :  "r" (output_address),
++				THUNK_TARGET(hypercall_page)
++			     : "cc", "memory", "r8", "r9", "r10", "r11");
  
- /* Check whether insn is indirect jump */
--static int __kprobes insn_is_indirect_jump(struct insn *insn)
-+static int __kprobes __insn_is_indirect_jump(struct insn *insn)
- {
- 	return ((insn->opcode.bytes[0] == 0xff &&
- 		(X86_MODRM_REG(insn->modrm.value) & 6) == 4) || /* Jump */
-@@ -1290,6 +1291,26 @@ static int insn_jump_into_range(struct i
- 	return (start <= target && target <= start + len);
- }
+ 	return hv_status;
  
-+static int __kprobes insn_is_indirect_jump(struct insn *insn)
-+{
-+	int ret = __insn_is_indirect_jump(insn);
-+
-+#ifdef CONFIG_RETPOLINE
-+	/*
-+	 * Jump to x86_indirect_thunk_* is treated as an indirect jump.
-+	 * Note that even with CONFIG_RETPOLINE=y, the kernel compiled with
-+	 * older gcc may use indirect jump. So we add this check instead of
-+	 * replace indirect-jump check.
-+	 */
-+	if (!ret)
-+		ret = insn_jump_into_range(insn,
-+				(unsigned long)__indirect_thunk_start,
-+				(unsigned long)__indirect_thunk_end -
-+				(unsigned long)__indirect_thunk_start);
-+#endif
-+	return ret;
-+}
-+
- /* Decode whole function to ensure any instructions don't jump into target */
- static int __kprobes can_optimize(unsigned long paddr)
- {
+@@ -134,11 +138,14 @@ static u64 do_hypercall(u64 control, voi
+ 	u32 output_address_lo = output_address & 0xFFFFFFFF;
+ 	void *hypercall_page = hv_context.hypercall_page;
+ 
+-	__asm__ __volatile__ ("call *%8" : "=d"(hv_status_hi),
+-			      "=a"(hv_status_lo) : "d" (control_hi),
+-			      "a" (control_lo), "b" (input_address_hi),
+-			      "c" (input_address_lo), "D"(output_address_hi),
+-			      "S"(output_address_lo), "m" (hypercall_page));
++	__asm__ __volatile__(CALL_NOSPEC
++			     : "=d" (hv_status_hi), "=a" (hv_status_lo),
++			       "+c" (input_address_lo), ASM_CALL_CONSTRAINT
++			     : "d" (control_hi), "a" (control_lo),
++			       "b" (input_address_hi),
++			       "D"(output_address_hi), "S"(output_address_lo),
++			       THUNK_TARGET(hypercall_page)
++			     : "cc", "memory");
+ 
+ 	return hv_status_lo | ((u64)hv_status_hi << 32);
+ #endif /* !x86_64 */
