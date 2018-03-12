@@ -1,75 +1,295 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751764AbeCLNq3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 09:46:29 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54216 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751695AbeCLNq1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 09:46:27 -0400
-Date: Mon, 12 Mar 2018 13:46:22 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: kernel test robot <fengguang.wu@intel.com>
-Cc: linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Michal Hocko <mhocko@suse.com>, Peter Zijlstra <peterz@infraded.org>,
-        Rik van Riel <riel@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        lkp@01.org
-Subject: Re: 94d3a25408: kernel_BUG_at_kernel/fork.c
-Message-ID: <20180312134621.xao4map7gw3ts6nv@lakrids.cambridge.arm.com>
-References: <20180228121458.2230-1-mark.rutland@arm.com>
- <20180309211139.24vegrzjmiptdqp5@inn>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180309211139.24vegrzjmiptdqp5@inn>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1751679AbeCLNqY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 09:46:24 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45314 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751232AbeCLNqN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 09:46:13 -0400
+From: Jiri Olsa <jolsa@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Milind Chabbi <chabbi.milind@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        Jin Yao <yao.jin@linux.intel.com>, Kan Liang <kan.liang@intel.com>,
+        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
+        Oleg Nesterov <onestero@redhat.com>, Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 8/8] perf tests: Add breakpoint accounting/modify test
+Date: Mon, 12 Mar 2018 14:45:48 +0100
+Message-Id: <20180312134548.31532-9-jolsa@kernel.org>
+In-Reply-To: <20180312134548.31532-1-jolsa@kernel.org>
+References: <20180312134548.31532-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 10, 2018 at 05:11:39AM +0800, kernel test robot wrote:
-> FYI, we noticed the following commit (built with gcc-7):
-> 
-> commit: 94d3a254089a7cd4f11b7071b4323afd98eea0a6 ("Detect early free of a live mm")
-> url: https://github.com/0day-ci/linux/commits/Mark-Rutland/Detect-early-free-of-a-live-mm/20180303-144149
+Adding test that:
+  - detects the number of watch/break-points,
+    skip test if any is missing
+  - detects PERF_EVENT_IOC_MODIFY_ATTRIBUTES ioctl,
+    skip test if it's missing
+  - detects if watchpoints and breakpoints share
+    same slots
+  - create all possible watchpoints on cpu 0
+  - change one of it to breakpoint
+  - in case wp and bp do not share slots,
+    we create another watchpoint to ensure
+    the slot accounting is correct
 
-> [   47.208935] kernel BUG at kernel/fork.c:599!
-> [   47.210365] invalid opcode: 0000 [#1] SMP PTI
-> [   47.211336] Modules linked in:
-> [   47.212145] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.16.0-rc3-00001-g94d3a25 #1
-> [   47.213966] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> [   47.215869] RIP: 0010:__mmdrop+0x136/0x170
-> [   47.216866] RSP: 0018:ffffffff82803dd8 EFLAGS: 00010293
-> [   47.218160] RAX: ffffffff82818500 RBX: ffff880115770000 RCX: ffffffff810ae876
-> [   47.219758] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff880115770000
-> [   47.221306] RBP: ffffffff82803e00 R08: 0000000000000001 R09: 0000000000000000
-> [   47.223268] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff82818500
-> [   47.224961] R13: ffffffff82a8ce20 R14: ffff88013ff534c0 R15: 00000000000003e7
-> [   47.226716] FS:  0000000000000000(0000) GS:ffff88013b200000(0000) knlGS:0000000000000000
-> [   47.228550] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   47.229884] CR2: 00007fbfc2cc0190 CR3: 0000000002812000 CR4: 00000000000006f0
-> [   47.231580] Call Trace:
-> [   47.232144]  idle_task_exit+0x53/0x60
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/tests/Build          |   1 +
+ tools/perf/tests/bp_account.c   | 195 ++++++++++++++++++++++++++++++++++++++++
+ tools/perf/tests/builtin-test.c |   4 +
+ tools/perf/tests/tests.h        |   1 +
+ 4 files changed, 201 insertions(+)
+ create mode 100644 tools/perf/tests/bp_account.c
 
-Luckily this is a spurious warning. In idle_task_exit(), we switch to
-the init_mm, but leave active_mm stale before calling mmdrop().
-
-In addition to the WARN_ON[_ONCE] changes, I'll drop the following in:
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index e7c535eee0a6..0ef844abc2da 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5506,6 +5506,7 @@ void idle_task_exit(void)
- 
-        if (mm != &init_mm) {
-                switch_mm(mm, &init_mm, current);
-+               current->active_mm = &init_mm;
-                finish_arch_post_lock_switch();
-        }
-        mmdrop(mm);
-
-Thanks,
-Mark.
+diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
+index 45782220ac23..6c108fa79ae3 100644
+--- a/tools/perf/tests/Build
++++ b/tools/perf/tests/Build
+@@ -20,6 +20,7 @@ perf-y += hists_cumulate.o
+ perf-y += python-use.o
+ perf-y += bp_signal.o
+ perf-y += bp_signal_overflow.o
++perf-y += bp_account.o
+ perf-y += task-exit.o
+ perf-y += sw-clock.o
+ perf-y += mmap-thread-lookup.o
+diff --git a/tools/perf/tests/bp_account.c b/tools/perf/tests/bp_account.c
+new file mode 100644
+index 000000000000..2f75fa0c4fef
+--- /dev/null
++++ b/tools/perf/tests/bp_account.c
+@@ -0,0 +1,195 @@
++/*
++ * Powerpc needs __SANE_USERSPACE_TYPES__ before <linux/types.h> to select
++ * 'int-ll64.h' and avoid compile warnings when printing __u64 with %llu.
++ */
++#define __SANE_USERSPACE_TYPES__
++
++#include <stdlib.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <string.h>
++#include <sys/ioctl.h>
++#include <time.h>
++#include <fcntl.h>
++#include <signal.h>
++#include <sys/mman.h>
++#include <linux/compiler.h>
++#include <linux/hw_breakpoint.h>
++#include <sys/ioctl.h>
++
++#include "tests.h"
++#include "debug.h"
++#include "perf.h"
++#include "cloexec.h"
++
++volatile long the_var;
++
++static noinline int test_function(void)
++{
++	return 0;
++}
++
++static int __event(bool is_x, void *addr, struct perf_event_attr *attr)
++{
++	int fd;
++
++	memset(attr, 0, sizeof(struct perf_event_attr));
++	attr->type = PERF_TYPE_BREAKPOINT;
++	attr->size = sizeof(struct perf_event_attr);
++
++	attr->config = 0;
++	attr->bp_type = is_x ? HW_BREAKPOINT_X : HW_BREAKPOINT_W;
++	attr->bp_addr = (unsigned long) addr;
++	attr->bp_len = sizeof(long);
++
++	attr->sample_period = 1;
++	attr->sample_type = PERF_SAMPLE_IP;
++
++	attr->exclude_kernel = 1;
++	attr->exclude_hv = 1;
++
++	fd = sys_perf_event_open(attr, -1, 0, -1,
++				 perf_event_open_cloexec_flag());
++	if (fd < 0) {
++		pr_debug("failed opening event %llx\n", attr->config);
++		return TEST_FAIL;
++	}
++
++	return fd;
++}
++
++static int wp_event(void *addr, struct perf_event_attr *attr)
++{
++	return __event(false, addr, attr);
++}
++
++static int bp_event(void *addr, struct perf_event_attr *attr)
++{
++	return __event(true, addr, attr);
++}
++
++static int bp_accounting(int wp_cnt, int share)
++{
++	struct perf_event_attr attr, attr_mod, attr_new;
++	int i, fd[wp_cnt], fd_wp, ret;
++
++	for (i = 0; i < wp_cnt; i++) {
++		fd[i] = wp_event((void *)&the_var, &attr);
++		TEST_ASSERT_VAL("failed to create wp\n", fd[i] != -1);
++		pr_debug("wp %d created\n", i);
++	}
++
++	attr_mod = attr;
++	attr_mod.bp_type = HW_BREAKPOINT_X;
++	attr_mod.bp_addr = (unsigned long) test_function;
++
++	ret = ioctl(fd[0], PERF_EVENT_IOC_MODIFY_ATTRIBUTES, &attr_mod);
++	TEST_ASSERT_VAL("failed to modify wp\n", ret == 0);
++
++	pr_debug("wp 0 modified to bp\n");
++
++	if (!share) {
++		fd_wp = wp_event((void *)&the_var, &attr_new);
++		TEST_ASSERT_VAL("failed to create max wp\n", fd_wp != -1);
++		pr_debug("wp max created\n");
++	}
++
++	for (i = 0; i < wp_cnt; i++)
++		close(fd[i]);
++
++	return 0;
++}
++
++static int detect_cnt(bool is_x)
++{
++	struct perf_event_attr attr;
++	void *addr = is_x ? test_function : (void *) &the_var;
++	int fd[100], cnt = 0, i;
++
++	while (1) {
++		fd[cnt] = __event(is_x, addr, &attr);
++
++		if (fd[cnt] < 0)
++			break;
++
++		if (cnt == 100) {
++			pr_debug("way too many debug registers, fix the test\n");
++			return 0;
++		}
++
++		cnt++;
++	}
++
++	for (i = 0; i < cnt; i++)
++		close(fd[i]);
++
++	return cnt;
++}
++
++static int detect_ioctl(void)
++{
++	struct perf_event_attr attr;
++	int fd, ret = 1;
++
++	fd = wp_event((void *) &the_var, &attr);
++	if (fd > 0) {
++		ret = ioctl(fd, PERF_EVENT_IOC_MODIFY_ATTRIBUTES, &attr);
++		close(fd);
++	}
++
++	return ret ? 0 : 1;
++}
++
++static int detect_share(int wp_cnt, int bp_cnt)
++{
++	struct perf_event_attr attr;
++	int i, fd[wp_cnt + bp_cnt], ret;
++
++	for (i = 0; i < wp_cnt; i++) {
++		fd[i] = wp_event((void *)&the_var, &attr);
++		TEST_ASSERT_VAL("failed to create wp\n", fd[i] != -1);
++	}
++
++	for (; i < (bp_cnt + wp_cnt); i++) {
++		fd[i] = bp_event((void *)test_function, &attr);
++		if (fd[i] == -1)
++			break;
++	}
++
++	ret = i != (bp_cnt + wp_cnt);
++
++	while (i--)
++		close(fd[i]);
++
++	return ret;
++}
++
++/*
++ * This test does following:
++ *   - detects the number of watch/break-points,
++ *     skip test if any is missing
++ *   - detects PERF_EVENT_IOC_MODIFY_ATTRIBUTES ioctl,
++ *     skip test if it's missing
++ *   - detects if watchpoints and breakpoints share
++ *     same slots
++ *   - create all possible watchpoints on cpu 0
++ *   - change one of it to breakpoint
++ *   - in case wp and bp do not share slots,
++ *     we create another watchpoint to ensure
++ *     the slot accounting is correct
++ */
++int test__bp_accounting(struct test *test __maybe_unused, int subtest __maybe_unused)
++{
++	int has_ioctl = detect_ioctl();
++	int wp_cnt = detect_cnt(false);
++	int bp_cnt = detect_cnt(true);
++	int share  = detect_share(wp_cnt, bp_cnt);
++
++	pr_debug("watchpoints count %d, breakpoints count %d, has_ioctl %d, share %d\n",
++		 wp_cnt, bp_cnt, has_ioctl, share);
++
++	if (!wp_cnt || !bp_cnt || !has_ioctl)
++		return TEST_SKIP;
++
++	return bp_accounting(wp_cnt, share);
++}
+diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
+index 09071ef4434f..625f5a6772af 100644
+--- a/tools/perf/tests/builtin-test.c
++++ b/tools/perf/tests/builtin-test.c
+@@ -116,6 +116,10 @@ static struct test generic_tests[] = {
+ 		.is_supported = test__bp_signal_is_supported,
+ 	},
+ 	{
++		.desc = "Breakpoint accounting",
++		.func = test__bp_accounting,
++	},
++	{
+ 		.desc = "Number of exit events of a simple workload",
+ 		.func = test__task_exit,
+ 	},
+diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
+index 2e169819e647..a9760e790563 100644
+--- a/tools/perf/tests/tests.h
++++ b/tools/perf/tests/tests.h
+@@ -58,6 +58,7 @@ int test__hists_link(struct test *test, int subtest);
+ int test__python_use(struct test *test, int subtest);
+ int test__bp_signal(struct test *test, int subtest);
+ int test__bp_signal_overflow(struct test *test, int subtest);
++int test__bp_accounting(struct test *test, int subtest);
+ int test__task_exit(struct test *test, int subtest);
+ int test__mem(struct test *test, int subtest);
+ int test__sw_clock_freq(struct test *test, int subtest);
+-- 
+2.13.6
