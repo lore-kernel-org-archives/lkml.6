@@ -1,179 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932418AbeCLUm0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 16:42:26 -0400
-Received: from mga18.intel.com ([134.134.136.126]:41821 "EHLO mga18.intel.com"
+        id S932372AbeCLUoQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 16:44:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47566 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932171AbeCLUmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 16:42:24 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,463,1515484800";
-   d="scan'208";a="36709274"
-Date: Mon, 12 Mar 2018 13:45:27 -0700
-From: Manasi Navare <manasi.d.navare@intel.com>
-To: Lyude Paul <lyude@redhat.com>
-Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?=
-        <ville.syrjala@linux.intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] drm/i915: Only use one link bw config for MST
- topologies
-Message-ID: <20180312204526.GA3022@intel.com>
-References: <20180308232421.14049-1-lyude@redhat.com>
- <20180309213232.19855-1-lyude@redhat.com>
- <20180309213232.19855-2-lyude@redhat.com>
+        id S932266AbeCLUoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 16:44:15 -0400
+Date: Mon, 12 Mar 2018 20:44:13 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Waiman Long <longman@redhat.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v4 1/6] sysctl: Add flags to support min/max range
+ clamping
+Message-ID: <20180312204413.GY4449@wotan.suse.de>
+References: <1520885744-1546-1-git-send-email-longman@redhat.com>
+ <1520885744-1546-2-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180309213232.19855-2-lyude@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1520885744-1546-2-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 09, 2018 at 04:32:28PM -0500, Lyude Paul wrote:
-> When a DP MST link needs retraining, sometimes the hub will detect that
-> the current link bw config is impossible and will update it's RX caps in
-> the DPCD to reflect the new maximum link rate. Currently, we make the
-> assumption that the RX caps in the dpcd will never change like this.
-> This means if the sink changes it's RX caps after we've already set up
-> an MST link and we attempt to add or remove another sink from the
-> topology, we could put ourselves into an invalid state where we've tried
-> to configure different sinks on the same MST topology with different
-> link rates. We could also run into this situation if a sink reports a
-> higher link rate after suspend, usually from us having trained it with a
-> fallback bw configuration before suspending.
+On Mon, Mar 12, 2018 at 04:15:39PM -0400, Waiman Long wrote:
+> When minimum/maximum values are specified for a sysctl parameter in
+> the ctl_table structure with proc_dointvec_minmax() handler, update
+> to that parameter will fail with error if the given value is outside
+> of the required range.
 > 
-> So: "lock" the bw config by only using the max DP link rate/lane count
-> on the first modeset for an MST topology. For every modeset following,
-> we instead use the last configured link bw for this topology. We only
-> unlock the bw config when we've detected a new MST sink.
->
+> There are use cases where it may be better to clamp the value of
+> the sysctl parameter to the given range without failing the update,
+> especially if the users are not aware of the actual range limits.
+> Reading the value back after the update will now be a good practice
+> to see if the provided value exceeds the range limits.
+> 
+> To provide this less restrictive form of range checking, a new flags
+> field is added to the ctl_table structure.
+> 
+> When the CTL_FLAGS_CLAMP_RANGE flag is set in the ctl_table
+> entry, any update from the userspace will be clamped to the given
+> range without error if either the proc_dointvec_minmax() or the
+> proc_douintvec_minmax() handlers is used.
 
-Just a nit here on commit message about where we unlock the link bw. So we also unlock it
-meaning set the mst_link_bw_locked to false when we read the dpcd again
-and obtain the fallback values since at that time the RX cap could have
-changed and so we do unlock the link_bw so that during retraining it reads
-the new max link rate and lane count during the mst compute config.
-Isnt that the case or am I missing something here?
+You keep missing to document both on commit log and kdoc which
+end on the range is selected if you happen to go over. To be clear
+it is unclear from reading the commit log if a default is set if
+you go over if you pick another value. In this case it is conditional
+if you go over we pick the high range max, and if you go below the
+lower range minimum set allowed.
 
-Manasi
+What happens if no low range is set and that is what the issue in
+terms of range triggers?
 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Cc: Manasi Navare <manasi.d.navare@intel.com>
-> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> Signed-off-by: Waiman Long <longman@redhat.com>
 > ---
->  drivers/gpu/drm/i915/intel_dp.c     | 11 +++++++++--
->  drivers/gpu/drm/i915/intel_dp_mst.c | 22 +++++++++++++++-------
->  drivers/gpu/drm/i915/intel_drv.h    |  6 ++++++
->  3 files changed, 30 insertions(+), 9 deletions(-)
+>  include/linux/sysctl.h | 15 +++++++++++++++
+>  kernel/sysctl.c        | 48 +++++++++++++++++++++++++++++++++++++++---------
+>  2 files changed, 54 insertions(+), 9 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
-> index 5abf0c95725a..5645a194de92 100644
-> --- a/drivers/gpu/drm/i915/intel_dp.c
-> +++ b/drivers/gpu/drm/i915/intel_dp.c
-> @@ -3871,18 +3871,25 @@ intel_dp_can_mst(struct intel_dp *intel_dp)
->  static void
->  intel_dp_configure_mst(struct intel_dp *intel_dp)
->  {
-> +	bool was_mst;
-> +
->  	if (!i915_modparams.enable_dp_mst)
->  		return;
+> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+> index b769ecf..963e363 100644
+> --- a/include/linux/sysctl.h
+> +++ b/include/linux/sysctl.h
+> @@ -116,6 +116,7 @@ struct ctl_table
+>  	void *data;
+>  	int maxlen;
+>  	umode_t mode;
+> +	unsigned int flags;
+>  	struct ctl_table *child;	/* Deprecated */
+>  	proc_handler *proc_handler;	/* Callback for text formatting */
+>  	struct ctl_table_poll *poll;
+> @@ -123,6 +124,20 @@ struct ctl_table
+>  	void *extra2;
+>  } __randomize_layout;
 >  
->  	if (!intel_dp->can_mst)
->  		return;
->  
-> +	was_mst = intel_dp->is_mst;
->  	intel_dp->is_mst = intel_dp_can_mst(intel_dp);
->  
-> -	if (intel_dp->is_mst)
-> +	if (intel_dp->is_mst) {
->  		DRM_DEBUG_KMS("Sink is MST capable\n");
-> -	else
-> +
-> +		if (!was_mst)
-> +			intel_dp->mst_bw_locked = false;
-> +	} else {
->  		DRM_DEBUG_KMS("Sink is not MST capable\n");
-> +	}
->  
->  	drm_dp_mst_topology_mgr_set_mst(&intel_dp->mst_mgr,
->  					intel_dp->is_mst);
-> diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c b/drivers/gpu/drm/i915/intel_dp_mst.c
-> index c3de0918ee13..c0553456b18e 100644
-> --- a/drivers/gpu/drm/i915/intel_dp_mst.c
-> +++ b/drivers/gpu/drm/i915/intel_dp_mst.c
-> @@ -42,7 +42,7 @@ static bool intel_dp_mst_compute_config(struct intel_encoder *encoder,
->  		to_intel_connector(conn_state->connector);
->  	struct drm_atomic_state *state = pipe_config->base.state;
->  	int bpp;
-> -	int lane_count, slots;
-> +	int lane_count, link_rate, slots;
->  	const struct drm_display_mode *adjusted_mode = &pipe_config->base.adjusted_mode;
->  	int mst_pbn;
->  	bool reduce_m_n = drm_dp_has_quirk(&intel_dp->desc,
-> @@ -56,16 +56,22 @@ static bool intel_dp_mst_compute_config(struct intel_encoder *encoder,
->  			      bpp);
->  	}
->  	/*
-> -	 * for MST we always configure max link bw - the spec doesn't
-> -	 * seem to suggest we should do otherwise.
-> +	 * for MST we always configure max link bw if we don't know better -
-> +	 * the spec doesn't seem to suggest we should do otherwise. But,
-> +	 * ensure it always stays consistent with the rest of this hub's
-> +	 * state.
->  	 */
-> -	lane_count = intel_dp_max_lane_count(intel_dp);
-> +	if (intel_dp->mst_bw_locked) {
-> +		lane_count = intel_dp->lane_count;
-> +		link_rate = intel_dp->link_rate;
-> +	} else {
-> +		lane_count = intel_dp_max_lane_count(intel_dp);
-> +		link_rate = intel_dp_max_link_rate(intel_dp);
-> +	}
->  
->  	pipe_config->lane_count = lane_count;
-> -
->  	pipe_config->pipe_bpp = bpp;
-> -
-> -	pipe_config->port_clock = intel_dp_max_link_rate(intel_dp);
-> +	pipe_config->port_clock = link_rate;
->  
->  	if (drm_dp_mst_port_has_audio(&intel_dp->mst_mgr, connector->port))
->  		pipe_config->has_audio = true;
-> @@ -221,6 +227,8 @@ static void intel_mst_pre_enable_dp(struct intel_encoder *encoder,
->  	connector->encoder = encoder;
->  	intel_mst->connector = connector;
->  
-> +	intel_dp->mst_bw_locked = true;
-> +
->  	DRM_DEBUG_KMS("active links %d\n", intel_dp->active_mst_links);
->  
->  	drm_dp_send_power_updown_phy(&intel_dp->mst_mgr, connector->port, true);
-> diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
-> index 3f19dc80997f..fc338529e918 100644
-> --- a/drivers/gpu/drm/i915/intel_drv.h
-> +++ b/drivers/gpu/drm/i915/intel_drv.h
-> @@ -1107,6 +1107,12 @@ struct intel_dp {
->  	bool can_mst; /* this port supports mst */
->  	bool is_mst;
->  	int active_mst_links;
-> +	/* Set when we've already decided on a link bw for mst, to prevent us
-> +	 * from setting different link bandwiths if the hub tries to confuse
-> +	 * us by changing it later
-> +	 */
-> +	bool mst_bw_locked;
-> +
->  	/* connector directly attached - won't be use for modeset in mst world */
->  	struct intel_connector *attached_connector;
->  
-> -- 
-> 2.14.3
-> 
+> +/**
+> + * enum ctl_table_flags - flags for the ctl table (struct ctl_table.flags)
+> + *
+> + * @CTL_FLAGS_CLAMP_RANGE: Set to indicate that the entry should be
+> + *	flexibly clamped to min/max range in case the user provided
+> + *	an incorrect value.
+
+It should be documented clearly here.
+
+So NACK for now.
+
+  Luis
