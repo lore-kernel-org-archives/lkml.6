@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932754AbeCLP6f (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 11:58:35 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:46347 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932624AbeCLP6E (ORCPT
+        id S932794AbeCLP7Y (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 11:59:24 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:43988 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932425AbeCLP6A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 11:58:04 -0400
-X-Google-Smtp-Source: AG47ELvAS68VgcGi8wO7PLaOfHKOm7NXU3aucFi49gMhwyV5OlvyqGwONUtQvmocSj6zPV+BK/m/XA==
+        Mon, 12 Mar 2018 11:58:00 -0400
+X-Google-Smtp-Source: AG47ELsH6Tvpn/qunBxjxU1ZOU8ChwktP6OVv/1Q/MSVSLvTlZwJ/MxZ38T8sFOugdG/eOHGJwOaUA==
 From: codekipper@gmail.com
 To: maxime.ripard@free-electrons.com, wens@csie.org,
         linux-sunxi@googlegroups.com
@@ -15,9 +15,9 @@ Cc: linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com,
         broonie@kernel.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org, be17068@iperbole.bo.it,
         Marcus Cooper <codekipper@gmail.com>
-Subject: [PATCH v2 5/6] ASoc: sun4i-i2s: Add 20, 24 and 32 bit support
-Date: Mon, 12 Mar 2018 16:57:52 +0100
-Message-Id: <20180312155753.9478-6-codekipper@gmail.com>
+Subject: [PATCH v2 2/6] ASoC: sun4i-i2s: Add regmap field to sign extend sample
+Date: Mon, 12 Mar 2018 16:57:49 +0100
+Message-Id: <20180312155753.9478-3-codekipper@gmail.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180312155753.9478-1-codekipper@gmail.com>
 References: <20180312155753.9478-1-codekipper@gmail.com>
@@ -27,94 +27,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcus Cooper <codekipper@gmail.com>
 
-Extend the functionality of the driver to include support of 20 and
-24 bits per sample for the earlier SoCs.
+On the newer SoCs (H3, H5, A64 etc) this is set by default to
+transfer a 0 after each sample in each slot whereas on the
+earlier SoCs (A20, A31 etc) the default sign extension is to
+pad the LSB.
 
-Newer SoCs can also handle 32bit samples.
+Add the regmap field to configure this and set it so that it
+pads the sample with 0s.
 
 Signed-off-by: Marcus Cooper <codekipper@gmail.com>
 ---
- sound/soc/sunxi/sun4i-i2s.c | 34 +++++++++++++++++++++++++++++++---
- 1 file changed, 31 insertions(+), 3 deletions(-)
+ sound/soc/sunxi/sun4i-i2s.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
 diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index 436480df1844..7cf4dfe440de 100644
+index 873054a6c3be..396b11346361 100644
 --- a/sound/soc/sunxi/sun4i-i2s.c
 +++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -451,6 +451,11 @@ static int sun4i_i2s_hw_params(struct snd_pcm_substream *substream,
- 	case 16:
- 		width = DMA_SLAVE_BUSWIDTH_2_BYTES;
- 		break;
-+	case 20:
-+	case 24:
-+	case 32:
-+		width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+		break;
- 	default:
- 		dev_err(dai->dev, "Unsupported physical sample width: %d\n",
- 			params_physical_width(params));
-@@ -463,7 +468,18 @@ static int sun4i_i2s_hw_params(struct snd_pcm_substream *substream,
- 		sr = 0;
- 		wss = 0;
- 		break;
--
-+	case 20:
-+		sr = 1;
-+		wss = 1;
-+		break;
-+	case 24:
-+		sr = 2;
-+		wss = 2;
-+		break;
-+	case 32:
-+		sr = 4;
-+		wss = 4;
-+		break;
- 	default:
- 		dev_err(dai->dev, "Unsupported sample width: %d\n",
- 			params_width(params));
-@@ -766,6 +782,13 @@ static int sun4i_i2s_dai_probe(struct snd_soc_dai *dai)
+@@ -138,6 +138,7 @@
+  * @field_fmt_bclk: regmap field to set clk polarity.
+  * @field_fmt_lrclk: regmap field to set frame polarity.
+  * @field_fmt_mode: regmap field to set the operational mode.
++ * @field_fmt_sext: regmap field to set the sign extension.
+  * @field_txchanmap: location of the tx channel mapping register.
+  * @field_rxchanmap: location of the rx channel mapping register.
+  * @field_txchansel: location of the tx channel select bit fields.
+@@ -163,6 +164,7 @@ struct sun4i_i2s_quirks {
+ 	struct reg_field		field_fmt_bclk;
+ 	struct reg_field		field_fmt_lrclk;
+ 	struct reg_field		field_fmt_mode;
++	struct reg_field		field_fmt_sext;
+ 	struct reg_field		field_txchanmap;
+ 	struct reg_field		field_rxchanmap;
+ 	struct reg_field		field_txchansel;
+@@ -187,6 +189,7 @@ struct sun4i_i2s {
+ 	struct regmap_field	*field_fmt_bclk;
+ 	struct regmap_field	*field_fmt_lrclk;
+ 	struct regmap_field	*field_fmt_mode;
++	struct regmap_field	*field_fmt_sext;
+ 	struct regmap_field	*field_txchanmap;
+ 	struct regmap_field	*field_rxchanmap;
+ 	struct regmap_field	*field_txchansel;
+@@ -348,6 +351,9 @@ static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
+ 				   SUN8I_I2S_FMT0_LRCK_PERIOD_MASK,
+ 				   SUN8I_I2S_FMT0_LRCK_PERIOD(word_size));
+ 
++	/* Set sign extension to pad out LSB with 0 */
++	regmap_field_write(i2s->field_fmt_sext, 0);
++
  	return 0;
  }
  
-+#define SUN4I_FORMATS	(SNDRV_PCM_FMTBIT_S16_LE | \
-+			 SNDRV_PCM_FMTBIT_S20_3LE | \
-+			 SNDRV_PCM_FMTBIT_S24_LE)
-+
-+#define SUN8I_FORMATS	(SUN4I_FORMATS | \
-+			 SNDRV_PCM_FMTBIT_S32_LE)
-+
- static struct snd_soc_dai_driver sun4i_i2s_dai = {
- 	.probe = sun4i_i2s_dai_probe,
- 	.capture = {
-@@ -773,14 +796,14 @@ static struct snd_soc_dai_driver sun4i_i2s_dai = {
- 		.channels_min = 2,
- 		.channels_max = 2,
- 		.rates = SNDRV_PCM_RATE_8000_192000,
--		.formats = SNDRV_PCM_FMTBIT_S16_LE,
-+		.formats = SUN4I_FORMATS,
- 	},
- 	.playback = {
- 		.stream_name = "Playback",
- 		.channels_min = 2,
- 		.channels_max = 2,
- 		.rates = SNDRV_PCM_RATE_8000_192000,
--		.formats = SNDRV_PCM_FMTBIT_S16_LE,
-+		.formats = SUN4I_FORMATS,
- 	},
- 	.ops = &sun4i_i2s_dai_ops,
- 	.symmetric_rates = 1,
-@@ -1170,6 +1193,11 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
- 		goto err_pm_disable;
- 	}
+@@ -901,6 +907,7 @@ static const struct sun4i_i2s_quirks sun4i_a10_i2s_quirks = {
+ 	.field_fmt_lrclk	= REG_FIELD(SUN4I_I2S_FMT0_REG, 7, 7),
+ 	.has_slave_select_bit	= true,
+ 	.field_fmt_mode		= REG_FIELD(SUN4I_I2S_FMT0_REG, 0, 1),
++	.field_fmt_sext		= REG_FIELD(SUN4I_I2S_FMT1_REG, 8, 8),
+ 	.field_txchanmap	= REG_FIELD(SUN4I_I2S_TX_CHAN_MAP_REG, 0, 31),
+ 	.field_rxchanmap	= REG_FIELD(SUN4I_I2S_RX_CHAN_MAP_REG, 0, 31),
+ 	.field_txchansel	= REG_FIELD(SUN4I_I2S_TX_CHAN_SEL_REG, 0, 2),
+@@ -918,6 +925,7 @@ static const struct sun4i_i2s_quirks sun6i_a31_i2s_quirks = {
+ 	.field_fmt_lrclk	= REG_FIELD(SUN4I_I2S_FMT0_REG, 7, 7),
+ 	.has_slave_select_bit	= true,
+ 	.field_fmt_mode		= REG_FIELD(SUN4I_I2S_FMT0_REG, 0, 1),
++	.field_fmt_sext		= REG_FIELD(SUN4I_I2S_FMT1_REG, 8, 8),
+ 	.field_txchanmap	= REG_FIELD(SUN4I_I2S_TX_CHAN_MAP_REG, 0, 31),
+ 	.field_rxchanmap	= REG_FIELD(SUN4I_I2S_RX_CHAN_MAP_REG, 0, 31),
+ 	.field_txchansel	= REG_FIELD(SUN4I_I2S_TX_CHAN_SEL_REG, 0, 2),
+@@ -958,6 +966,7 @@ static const struct sun4i_i2s_quirks sun8i_h3_i2s_quirks = {
+ 	.field_fmt_bclk		= REG_FIELD(SUN4I_I2S_FMT0_REG, 7, 7),
+ 	.field_fmt_lrclk	= REG_FIELD(SUN4I_I2S_FMT0_REG, 19, 19),
+ 	.field_fmt_mode		= REG_FIELD(SUN4I_I2S_CTRL_REG, 4, 5),
++	.field_fmt_sext		= REG_FIELD(SUN4I_I2S_FMT1_REG, 4, 5),
+ 	.field_txchanmap	= REG_FIELD(SUN8I_I2S_TX_CHAN_MAP_REG, 0, 31),
+ 	.field_rxchanmap	= REG_FIELD(SUN8I_I2S_RX_CHAN_MAP_REG, 0, 31),
+ 	.field_txchansel	= REG_FIELD(SUN8I_I2S_TX_CHAN_SEL_REG, 0, 2),
+@@ -1003,6 +1012,12 @@ static int sun4i_i2s_init_regmap_fields(struct device *dev,
+ 	if (IS_ERR(i2s->field_fmt_mode))
+ 		return PTR_ERR(i2s->field_fmt_mode);
  
-+	if (i2s->variant->has_fmt_set_lrck_period) {
-+		soc_dai->playback.formats = SUN8I_FORMATS;
-+		soc_dai->capture.formats = SUN8I_FORMATS;
-+	}
++	i2s->field_fmt_sext =
++			devm_regmap_field_alloc(dev, i2s->regmap,
++						i2s->variant->field_fmt_sext);
++	if (IS_ERR(i2s->field_fmt_sext))
++		return PTR_ERR(i2s->field_fmt_sext);
 +
- 	if (!of_property_read_u32(pdev->dev.of_node,
- 				  "allwinner,playback-channels", &val)) {
- 		if (val >= 2 && val <= 8)
+ 	i2s->field_txchanmap =
+ 			devm_regmap_field_alloc(dev, i2s->regmap,
+ 						i2s->variant->field_txchanmap);
 -- 
 2.16.2
