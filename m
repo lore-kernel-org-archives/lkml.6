@@ -1,74 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751780AbeCLOTM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 10:19:12 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44748 "EHLO mx1.redhat.com"
+        id S1751574AbeCLOUg convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 10:20:36 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37536 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751232AbeCLOTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 10:19:11 -0400
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: kvm@vger.kernel.org, x86@kernel.org,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] x86/kvm: use Enlightened VMCS when running on Hyper-V
-References: <20180309140249.2840-1-vkuznets@redhat.com>
-        <20180309140249.2840-8-vkuznets@redhat.com>
-        <alpine.DEB.2.21.1803091507300.1364@nanos.tec.linutronix.de>
-Date: Mon, 12 Mar 2018 15:19:05 +0100
-In-Reply-To: <alpine.DEB.2.21.1803091507300.1364@nanos.tec.linutronix.de>
-        (Thomas Gleixner's message of "Fri, 9 Mar 2018 15:08:34 +0100 (CET)")
-Message-ID: <87r2opcr6u.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1751248AbeCLOUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 10:20:34 -0400
+Subject: Re: [PATCH v4] cpuset: Enable cpuset controller in default hierarchy
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Mike Galbraith <efault@gmx.de>, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>
+References: <1520609707-16582-1-git-send-email-longman@redhat.com>
+ <1520613285.12489.36.camel@gmx.de>
+ <1c3fe7b0-2600-c46d-1527-d3aaf024bb91@redhat.com>
+ <1520619426.27998.18.camel@gmx.de>
+ <55809fe4-98ba-5566-86ed-457acfef0e1c@redhat.com>
+ <1520624424.27998.76.camel@gmx.de>
+ <53de9683-01b7-bac4-8b70-dc1f93ede600@redhat.com>
+ <20180309221736.GB5926@hirez.programming.kicks-ass.net>
+ <f0fca497-e4e7-3dbd-1e5c-a7f502c05dcb@redhat.com>
+ <20180310131647.GB4043@hirez.programming.kicks-ass.net>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <12ef7f60-5b14-8e09-2478-1453a3071f21@redhat.com>
+Date: Mon, 12 Mar 2018 10:20:32 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180310131647.GB4043@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thomas Gleixner <tglx@linutronix.de> writes:
-
-> On Fri, 9 Mar 2018, Vitaly Kuznetsov wrote:
+On 03/10/2018 08:16 AM, Peter Zijlstra wrote:
+> On Fri, Mar 09, 2018 at 06:06:29PM -0500, Waiman Long wrote:
+>> So you are talking about sched_relax_domain_level and
+> That one I wouldn't be sad to see the back of.
 >
->> Enlightened VMCS is just a structure in memory, the main benefit
->> besides avoiding somewhat slower VMREAD/VMWRITE is using clean field
->> mask: we tell the underlying hypervisor which fields were modified
->> since VMEXIT so there's no need to inspect them all.
->> 
->> Tight CPUID loop test shows significant speedup:
->> Before: 18890 cycles
->> After: 8304 cycles
->> 
->> Static key is being used to avoid performance penalty for non-Hyper-V
->> deployments. Tests show we add around 3 (three) CPU cycles on each
->> VMEXIT (1077.5 cycles before, 1080.7 cycles after for the same CPUID
->> loop on bare metal). We can probably avoid one test/jmp in vmx_vcpu_run()
->> but I don't see a clean way to use static key in assembly.
+>> sched_load_balance.
+> This one, that's critical. And this is the perfect time to try and fix
+> the whole isolcpus issue.
 >
-> STATIC_JUMP_IF_TRUE, STATIC_JUMP_IF_FALSE are your friends.
+> The primary issue is that to make equivalent functionality available
+> through cpuset, we need to basically start all tasks outside the root
+> group.
 >
+> The equivalent of isolcpus=xxx is a cgroup setup like:
+>
+>         root
+> 	/  \
+>   system    other
+>
+> Where other has the @xxx cpus and system the remainder and
+> root.sched_load_balance = 0.
 
-Thanks for the tip,
+I saw in the kernel-parameters.txt file that the isolcpus option was
+deprecated - use cpusets instead. However, there doesn't seem to have
+document on the right way to do it. Of course, we can achieve similar
+results with what you have outlined above, but the process is more
+complex than just adding another boot command line argument with
+isolcpus. So I doubt isolcpus will die anytime soon unless we can make
+the alternative as easy to use.
 
-with a single kernel user of these APIs it was easy to miss :-)
+> Back before cgroups (and the new workqueue stuff), we could've started
+> everything in the !root group, no worry. But now that doesn't work,
+> because a bunch of controllers can't deal with that and everything
+> cgroup expects the cgroupfs to be empty on boot.
 
-Unfortunately, these APIs are only present if HAVE_JUMP_LABEL and
-(afaiu) we still care about KVM on !HAVE_JUMP_LABEL builds. It would be
-nice if we can make them behave the same way static_branch_likely() and
-friends do: compile into something else when !HAVE_JUMP_LABEL so we can
-avoid nasty #ifdefs in C code.
+AFAIK, all the processes belong to the root cgroup on boot. And the root
+cgroup is usually special that the controller may not exert any control
+for processes in the root cgroup. Many controllers become active for
+processes in the child cgroups only. Would you mind elaborating what
+doesn't quite work currently?
 
-That said I'd like to defer the question to KVM maintainers: Paolo,
-Radim, what would you like me to do? Use STATIC_JUMP_IF_TRUE/FALSE as
-they are, try to make them work for !HAVE_JUMP_LABEL and use them or
-maybe we can commit the series as-is and have it as a future
-optimization (e.g. when HAVE_JUMP_LABEL becomes mandatory)?
+ 
+> It's one of my biggest regrets that I didn't 'fix' this before cgroups
+> came along.
+>
+>> I have not removed any bits. I just haven't exposed
+>> them yet. It does seem like these 2 control knobs are useful from the
+>> scheduling perspective. Do we also need cpu_exclusive or just the two
+>> sched control knobs are enough?
+> I always forget if we need exclusive for load_balance to work; I'll
+> peruse the document/code.
 
--- 
-  Vitaly
+I think the cpu_exclusive feature can be useful to enforce that CPUs
+allocated to the "other" isolated cgroup cannot be used by the processes
+under the "system" parent.
+
+I know that there are special code to handle the isolcpus option. How
+about changing it to create a exclusive cpuset automatically instead.
+Applications that need to run in those isolated CPUs can then use the
+standard cgroup process to be moved into the isolated cgroup. For example,
+
+isolcpus=<cpuset-name>,<cpu-id-list>
+
+or
+
+isolcpuset=<cpuset-name>[,cpu:<cpu-id-list>][,mem:<memory-node-list>]
+
+We can then retire the old usage and encourage users to use the cgroup
+API to manage it.
+
+Cheers,
+Longman
