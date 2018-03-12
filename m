@@ -1,39 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752261AbeCLHgR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 03:36:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34448 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751298AbeCLHgQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 03:36:16 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A349205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
-Date: Mon, 12 Mar 2018 15:35:26 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm: zte: Fix an error handling path in 'zx_crtc_bind()'
-Message-ID: <20180312073524.GM3217@dragon>
-References: <20180311223203.3669-1-christophe.jaillet@wanadoo.fr>
+        id S1752306AbeCLHhY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 03:37:24 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:40759 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751298AbeCLHhX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 03:37:23 -0400
+X-Google-Smtp-Source: AG47ELtSlBbV473BKR9VrjtdHH7FfG8QuN2E2pKZ9K4pCkv9qvmdb/m2Icd4TYopuCJP86yWsw9L3w==
+Date: Mon, 12 Mar 2018 08:37:19 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-kernel@vger.kernel.org, luto@kernel.org,
+        torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org
+Subject: Re: [RFC PATCH 35/35] syscalls: do not call sys_close() within the
+ kernel
+Message-ID: <20180312073719.ugsbv3nlkbbtac4v@gmail.com>
+References: <20180311105557.20807-1-linux@dominikbrodowski.net>
+ <20180311105557.20807-36-linux@dominikbrodowski.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180311223203.3669-1-christophe.jaillet@wanadoo.fr>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180311105557.20807-36-linux@dominikbrodowski.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Daniel
 
-On Sun, Mar 11, 2018 at 11:32:03PM +0100, Christophe JAILLET wrote:
-> 'ret' is known to be 0 at this point. It must be updated by the value
-> returned by 'clk_prepare_enable()'.
-> 
-> Fixes: 0a886f59528a ("drm: zte: add initial vou drm driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+* Dominik Brodowski <linux@dominikbrodowski.net> wrote:
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -1200,7 +1200,7 @@ SYSCALL_DEFINE1(close, unsigned int, fd)
+>  
+>  	return retval;
+>  }
+> -EXPORT_SYMBOL(sys_close);
+> +
+>  
+>  /*
+
+Nit: this introduces a stray newline.
+
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -1042,4 +1042,10 @@ static inline long ksys_lchown(const char __user *filename, uid_t user,
+>  	return do_fchownat(AT_FDCWD, filename, user, group,
+>  			     AT_SYMLINK_NOFOLLOW);
+>  }
+> +
+> +extern int __close_fd(struct files_struct *files, unsigned int fd);
+> +static inline int ksys_close(unsigned int fd)
+> +{
+> +	return __close_fd(current->files, fd);
+> +}
+
+Would be nice to reuse that stray newline after the __close_fd() prototype for the 
+canonical stylistic separation of declarations from definitions.
+
+It would also be very nice to add a short comment before ksys_close() that 
+explains how it differs from sys_close(). This should reduce the amount of 
+cargo-cult copying of existing ksys_close()/sys_close() patterns.
+
+Thanks,
+
+	Ingo
