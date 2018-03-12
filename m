@@ -1,59 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752443AbeCLI46 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 04:56:58 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50876 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750765AbeCLI45 (ORCPT
+        id S1752548AbeCLI5j (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 04:57:39 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:45408 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750988AbeCLI5h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 04:56:57 -0400
-Date: Mon, 12 Mar 2018 09:56:46 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: =?utf-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>,
-        linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        will.deacon@arm.com, torvalds@linux-foundation.org, npiggin@gmail.com,
-        mingo@kernel.org, mpe@ellerman.id.au, oleg@redhat.com,
-        benh@kernel.crashing.org, Paul McKenney <paulmck@linux.vnet.ibm.com>
-Subject: Re: smp_mb__after_spinlock requirement too strong?
-Message-ID: <20180312085646.GE4064@hirez.programming.kicks-ass.net>
-References: <CAJDTihwMgUqjK6YL2M_WZY4VBaifVYgNvdZOF_fNrnk_p27Kvw@mail.gmail.com>
- <20180312054412.yqyde34ly3kjoajj@tardis>
- <CAJDTihxxhy7zmhTJ-ky4wvMby_o9y8UOcs9R1dABN7NccekAiQ@mail.gmail.com>
- <20180312085600.aczjkpn73axzs2sb@tardis>
+        Mon, 12 Mar 2018 04:57:37 -0400
+X-Google-Smtp-Source: AG47ELtIhiYelHlA7mS14I1qe5cvXlZ+Ik8cYJekkImLgkNsBkBecWLSHF2f8F59hxGzQgKXmJQDvw==
+Date: Mon, 12 Mar 2018 08:57:33 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 14/17 4/4] mfd: tps65910: Move an assignment in
+ tps65910_sleepinit()
+Message-ID: <20180312085733.qkau2n3cos4743yj@dell>
+References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
+ <a00bda19-c38c-6733-31e7-7e1c44eb6c6b@users.sourceforge.net>
+ <eb3c38d5-23c3-dcf0-3772-66b917326f0a@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180312085600.aczjkpn73axzs2sb@tardis>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <eb3c38d5-23c3-dcf0-3772-66b917326f0a@users.sourceforge.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 04:56:00PM +0800, Boqun Feng wrote:
-> So I think the purpose of smp_mb__after_spinlock() is to provide RCsc
-> locks, it's just the comments before that may be misleading. We want
-> RCsc locks in schedule code because we want writes in different critical
-> section are ordered even outside the critical sections, for case like:
-> 
-> 	CPU 0		CPU 1		CPU 2
-> 
-> 	{A =0 , B = 0}
-> 	lock(rq0);
-> 	write A=1;
-> 	unlock(rq0);
-> 
-> 			lock(rq0);
-> 			read A=1;
-> 			write B=2;
-> 			unlock(rq0);
-> 
-> 					read B=2;
-> 					smp_rmb();
-> 					read A=1;
-> 
-> I think we need to fix the comments rather than loose the requirement.
-> Peter?
+On Fri, 09 Mar 2018, SF Markus Elfring wrote:
 
-Yes, ISTR people relying on schedule() being RCsc, and I just picked a
-bad exmaple.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 9 Mar 2018 09:19:42 +0100
+> 
+> Move the assignment for the local variable "dev" so that its setting
+> will be performed after a configuration check by this function.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+> 
+> v2:
+> Lee Jones requested a resend for this patch. The change was rebased
+> on source files from Linux next-20180308.
+
+Thanks.
+
+What happened here: [PATCH v2 14/17 4/4]
+
+How have you managed to insert 4 patches into the x/17 thread?
+
+It shouldn't matter for reviewing purposes.  It just looks really
+odd.
+
+>  drivers/mfd/tps65910.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
+> index 7e7d3d1642c6..bf16cbe6fd88 100644
+> --- a/drivers/mfd/tps65910.c
+> +++ b/drivers/mfd/tps65910.c
+> @@ -315,11 +315,11 @@ static int tps65910_sleepinit(struct tps65910 *tps65910,
+>  	struct device *dev;
+>  	int ret;
+>  
+> -	dev = tps65910->dev;
+> -
+>  	if (!pmic_pdata->en_dev_slp)
+>  		return 0;
+>  
+> +	dev = tps65910->dev;
+> +
+>  	/* enabling SLEEP device state */
+>  	ret = tps65910_reg_set_bits(tps65910, TPS65910_DEVCTRL,
+>  				DEVCTRL_DEV_SLP_MASK);
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
