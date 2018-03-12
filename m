@@ -1,85 +1,71 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3369064-1520824139-2-7923106054296696221
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
-  MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520824138; b=B819BV5AvjRgS3bswzgyhJGsEsSPDnxecI+5X8MVISEH5hC
-    XtXcJ2uHUvpr790gIJZEVl6pTKxiI5Z3KbrF7AunPwvweBme7eZI4ldSeIFSNdNO
-    I5jwcnbCY4Qwe8mP+KHTvKWEf6h9r/tJwnB/aDAiF3BjgGAFcqq5qupydxT44OHQ
-    dGmobTiTU7keGo974KypkhIRTufJAvvN3F7vB7srE8DrTgHkX4UY8+fZt1WgQp3j
-    fwFg5uEm351SmGISWPEybFDwLmDhE9xHwEK7AHS1a019tJvr89AoMdo2ZZUah9Yz
-    bAAImPaDujks01Jq+9ySQE1vjwhjFjiiHhbZDnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=content-type:content-transfer-encoding
-    :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1520824138; bh=d+x761UanbI0Ekw/eIF
-    22Srdby8EdD6sTOTrE1aW3Yw=; b=oYvGTawPmTJX/1+5bn7MSAovy7SNxNM1+J/
-    NzOJ2lgo/qDYNHMVuf8L4T3HEeSm0kOGyfhaSWzQ43arXbR41TKhh+mKVpRSbDCU
-    oRjdJ6lKYZCcbJqMWRNPmxqoZrvgNP9gXejpuQoUPunWYBMZlcda8rV7HVP5dDZh
-    z4M7v5+LBsEOYAPSH/H3TiG+0spg39ijeRFROtp7MqCm5n4sZbcz063AJY+CdYDm
-    sdazyS63o+YdFRcH/nYgLHX+CWHqo4pFpTjC2MzaB9QzEmNJqHLRr+vp/d7k85RL
-    +rJUZu8xi46hIU69vsj4kg/cKI3h80IGNvCQufTcTM6FympEH9g==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932821AbeCLDIC (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Mar 2018 23:08:02 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41510 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932781AbeCLDHv (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 23:07:51 -0400
+Return-Path: <ben@decadent.org.uk>
+X-Google-Smtp-Source: AG47ELuqS0pvmrOU50JYGt4YWlC4RbWF2Xrle32SiNzBGaNV7PKx1IVinXmRfE57wQMG4sjKuAad
+ARC-Seal: i=1; a=rsa-sha256; t=1520824119; cv=none;
+        d=google.com; s=arc-20160816;
+        b=gasFozg7OdDKe9I0+KB08PO9F1pRHO9wMjlBstO9V3bwa9ZVfR6mgG5Ma4lqHHfvnX
+         9tkc9H99iGVWyRn8/jID7baBmZmN0Lgvk+PXDkM+ImiVylpRBQj+/i29JqtWyRAF9OE3
+         XYut3wEYLA5Q0pQZZkz3ACEfiANDH0MN1GFluzhRVNTzVm6FNeh7ZuEC/eYHp/9Bfkj6
+         ZcxB8jbGSJ/QsDXkcIiA3F0d5kR2IimywjKqpmwSe8RuLC7H9X7Mp8KMI6SdvWuZN90j
+         KqFoAAcaXJ8i7tCkPuLwtkD68HpNdsukYjRZw4NcKujMCpobyVLvynEd1bm0tOAW+mn5
+         X3tw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
+         :content-transfer-encoding:content-disposition
+         :arc-authentication-results;
+        bh=U2A/LfTpvr1s9bXWTZ6MZH2kaZr7SBFWTQaT4NawRaU=;
+        b=zdz6UYCEOrn/SsLa3CmG+9E7J8oWcddcLCxS4wkWdabRvO/toVU6nkQq2yF6S0fe5Q
+         y/dj2dKRhvXOFkXv7++G3FzKJa4cdc8xGyOn4MUmbboAScaW8T/6RORFhD0d2O/V2dp7
+         gDro0KDN4UVMtecUE27yHjfVAuI6QmQkLF815ed7oezt0GR6dMgPQhIcnDvC1u6vA/Ok
+         uHuLJetgd61qlhquICGVbZrfkKWz7sVE+hc+5k/uHeD3zp7I0rBtmlyDgiUoUEo/xf+z
+         xRQ9oxN7AsDllAP02M+HEjmQ9pNAIK+mc1vps4XD/UrWkeAfk+kNvSoy0UOrmUoSVgDm
+         FsNQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Borislav Petkov" <bp@suse.de>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Andy Lutomirski" <luto@amacapital.net>,
-        "Denys Vlasenko" <dvlasenk@redhat.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@kernel.org>, "Borislav Petkov" <bp@alien8.de>,
-        "Brian Gerst" <brgerst@gmail.com>
+CC: akpm@linux-foundation.org,
+ "Ingo Molnar" <mingo@kernel.org>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "Eduardo Valentin" <eduval@amazon.com>,
+ "Juergen Gross" <jgross@suse.com>,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Denys Vlasenko" <dvlasenk@redhat.com>,
+ "Josh Poimboeuf" <jpoimboe@redhat.com>,
+ "David Laight" <David.Laight@aculab.com>,
+ "Rik van Riel" <riel@redhat.com>,
+ "Brian Gerst" <brgerst@gmail.com>,
+ keescook@google.com,
+ "Dave Hansen" <dave.hansen@intel.com>,
+ "David Woodhouse" <dwmw@amazon.co.uk>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Will Deacon" <will.deacon@arm.com>,
+ "Borislav Petkov" <bp@suse.de>,
+ daniel.gruss@iaik.tugraz.at,
+ "Borislav Petkov" <bpetkov@suse.de>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Greg KH" <gregkh@linuxfoundation.org>,
+ hughd@google.com, aliguori@amazon.com,
+ "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+ "Andy Lutomirski" <luto@kernel.org>
 Date: Mon, 12 Mar 2018 03:06:12 +0000
-Message-ID: <lsq.1520823972.987771650@decadent.org.uk>
+Message-ID: <lsq.1520823972.893939599@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 13/76] x86/alternatives: Guard NOPs optimization
+Subject: [PATCH 3.16 04/76] x86/cpufeatures: Make CPU bugs sticky
 In-Reply-To: <lsq.1520823971.5976735@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594699671986206405?=
+X-GMAIL-MSGID: =?utf-8?q?1594699671986206405?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -87,46 +73,94 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 69df353ff305805fc16082d0c5bfa6e20fa8b863 upstream.
+commit 6cbd2171e89b13377261d15e64384df60ecb530e upstream.
 
-Take a look at the first instruction byte before optimizing the NOP -
-there might be something else there already, like the ALTERNATIVE_2()
-in rdtsc_barrier() which NOPs out on AMD even though we just
-patched in an MFENCE.
+There is currently no way to force CPU bug bits like CPU feature bits. That
+makes it impossible to set a bug bit once at boot and have it stick for all
+upcoming CPUs.
 
-This happens because the alternatives sees X86_FEATURE_MFENCE_RDTSC,
-AMD CPUs set it, we patch in the MFENCE and right afterwards it sees
-X86_FEATURE_LFENCE_RDTSC which AMD CPUs don't set and we blindly
-optimize the NOP.
+Extend the force set/clear arrays to handle bug bits as well.
 
-Checking whether at least the first byte is 0x90 prevents that.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Andy Lutomirski <luto@amacapital.net>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Cc: Borislav Petkov <bp@alien8.de>
+Cc: Borislav Petkov <bpetkov@suse.de>
 Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Laight <David.Laight@aculab.com>
 Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Eduardo Valentin <eduval@amazon.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
 Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1428181662-18020-1-git-send-email-bp@alien8.de
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: aliguori@amazon.com
+Cc: daniel.gruss@iaik.tugraz.at
+Cc: hughd@google.com
+Cc: keescook@google.com
+Link: https://lkml.kernel.org/r/20171204150606.992156574@linutronix.de
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/alternative.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/include/asm/cpufeature.h | 2 ++
+ arch/x86/include/asm/processor.h  | 4 ++--
+ arch/x86/kernel/cpu/common.c      | 6 +++---
+ 3 files changed, 7 insertions(+), 5 deletions(-)
 
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -325,6 +325,9 @@ done:
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -286,6 +286,8 @@ extern const char * const x86_power_flag
+ 	set_bit(bit, (unsigned long *)cpu_caps_set);	\
+ } while (0)
  
- static void __init_or_module optimize_nops(struct alt_instr *a, u8 *instr)
- {
-+	if (instr[0] != 0x90)
-+		return;
++#define setup_force_cpu_bug(bit) setup_force_cpu_cap(bit)
 +
- 	add_nops(instr + (a->instrlen - a->padlen), a->padlen);
+ #define cpu_has_fpu		boot_cpu_has(X86_FEATURE_FPU)
+ #define cpu_has_vme		boot_cpu_has(X86_FEATURE_VME)
+ #define cpu_has_de		boot_cpu_has(X86_FEATURE_DE)
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -147,8 +147,8 @@ extern struct cpuinfo_x86	boot_cpu_data;
+ extern struct cpuinfo_x86	new_cpu_data;
  
- 	DUMP_BYTES(instr, a->instrlen, "%p: [%d:%d) optimized NOPs: ",
+ extern struct tss_struct	doublefault_tss;
+-extern __u32			cpu_caps_cleared[NCAPINTS];
+-extern __u32			cpu_caps_set[NCAPINTS];
++extern __u32			cpu_caps_cleared[NCAPINTS + NBUGINTS];
++extern __u32			cpu_caps_set[NCAPINTS + NBUGINTS];
+ 
+ #ifdef CONFIG_SMP
+ DECLARE_PER_CPU_SHARED_ALIGNED(struct cpuinfo_x86, cpu_info);
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -441,8 +441,8 @@ static const char *table_lookup_model(st
+ 	return NULL;		/* Not found */
+ }
+ 
+-__u32 cpu_caps_cleared[NCAPINTS];
+-__u32 cpu_caps_set[NCAPINTS];
++__u32 cpu_caps_cleared[NCAPINTS + NBUGINTS];
++__u32 cpu_caps_set[NCAPINTS + NBUGINTS];
+ 
+ void load_percpu_segment(int cpu)
+ {
+@@ -674,7 +674,7 @@ static void apply_forced_caps(struct cpu
+ {
+ 	int i;
+ 
+-	for (i = 0; i < NCAPINTS; i++) {
++	for (i = 0; i < NCAPINTS + NBUGINTS; i++) {
+ 		c->x86_capability[i] &= ~cpu_caps_cleared[i];
+ 		c->x86_capability[i] |= cpu_caps_set[i];
+ 	}
