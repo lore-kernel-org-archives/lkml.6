@@ -1,116 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932536AbeCLQ7y (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 12:59:54 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:39830 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932190AbeCLQ7w (ORCPT
+        id S932567AbeCLRAK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 13:00:10 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:37469 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932190AbeCLRAI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 12:59:52 -0400
-Smtp-Origin-Hostprefix: devbig
-From: Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig102.frc2.facebook.com
-To: <linux-kernel@vger.kernel.org>, <peterz@infradead.org>,
-        <jolsa@redhat.com>
-CC: <kernel-team@fb.com>, <ephiepark@fb.com>,
-        Song Liu <songliubraving@fb.com>
-Smtp-Origin-Cluster: frc2c02
-Subject: [PATCH v2] perf: update perf_cgroup time for ancestor cgroup(s)
-Date: Mon, 12 Mar 2018 09:59:43 -0700
-Message-ID: <20180312165943.1057894-1-songliubraving@fb.com>
-X-Mailer: git-send-email 2.9.5
-X-FB-Internal: Safe
+        Mon, 12 Mar 2018 13:00:08 -0400
+X-Google-Smtp-Source: AG47ELsvvPqVlzaVk7jmmz9DIZQCiRIsbKDlW3iQ1iVjLFYTYJqfFOoS1xknGk+vDmmHKAF3taPGOA==
+Date: Mon, 12 Mar 2018 13:00:06 -0400 (EDT)
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>
+cc: Andi Kleen <ak@linux.intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/7] ARM: disallow combining XIP and LTO
+In-Reply-To: <CAK8P3a128iw+HB5Fp6ZOBCyuK0LypqSXqnkNPQs8sWR1pc8x3g@mail.gmail.com>
+Message-ID: <nycvar.YSQ.7.76.1803121250360.28583@knanqh.ubzr>
+References: <20180220215954.4092811-1-arnd@arndb.de> <20180220215954.4092811-2-arnd@arndb.de> <nycvar.YSQ.7.76.1803112233070.28583@knanqh.ubzr> <CAK8P3a06_zke6Zy77TCX6aUS1C0aK2btvnLA7APxRykkxS6S_w@mail.gmail.com>
+ <CAK8P3a128iw+HB5Fp6ZOBCyuK0LypqSXqnkNPQs8sWR1pc8x3g@mail.gmail.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-12_09:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a perf_event is attached to parent cgroup, it should count events
-for all children cgroups:
+On Mon, 12 Mar 2018, Arnd Bergmann wrote:
 
- parent_group   <---- perf_event
-   \
-    - child_group  <---- process(es)
+> On Mon, Mar 12, 2018 at 2:52 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Mon, Mar 12, 2018 at 3:40 AM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
+> >> On Tue, 20 Feb 2018, Arnd Bergmann wrote:
+> >
+> >>> Obviously we want to make the combination work, no idea why it doesn't.
+> >>
+> >> Well, it does work regardless of the noise. Here the nm output is piped
+> >> into sed, and the later exits early when it finds what it is looking
+> >> for, causing nm to complain about the broken pipe.
+> >>
+> >> Here's a patch silencing this bogus error message and fixing other minor
+> >> issues.
+> >>
+> >> ----- >8
+> >> Subject: [PATCH] ARM: deflate_xip_data.sh: minor fixes
+> >>
+> >> Send nm complaints about broken pipe (when sed exits early) to /dev/null.
+> >> All errors should be printed to stderr.
+> >> Don't trap on normal exit so the trap can return an error code.
+> >>
+> >> Signed-off-by: Nicolas Pitre <nico@linaro.org>
+> >
+> > Ah, that explains it, thanks!
+> >
+> > Tested-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> 
+> Nevermind, I confused it with a different problem that I'm running into
+> with randconfig builds:
 
-However, in our tests, we found this perf_event cannot report reliable
-results. Here is an example case:
+At least you no longer get the "broken pipe" warning as your initial 
+report showed, right?
 
-  # create cgroups
-  mkdir -p /sys/fs/cgroup/p/c
-  # start perf for parent group
-  perf stat -e instructions -G "p"
+> arm-linux-gnueabi-nm: 'arch/arm/boot/compressed/../../../../vmlinux':
+> No such file
 
-  # on another console, run test process in child cgroup:
-  stressapptest -s 2 -M 1000 & echo $! > /sys/fs/cgroup/p/c/cgroup.procs
+That is weird. The Makefile has:
 
-  # after the test process is done, stop perf in the first console shows
+cmd_mkxip = $(cmd_objcopy) && $(cmd_deflate_xip_data)
 
-       <not counted>      instructions              p
+$(obj)/xipImage: vmlinux FORCE
+        $(call if_changed,mkxip)
 
-The instruction should not be "not counted" as the process runs in the
-child cgroup.
+So the objcopy must succeed at producing vmlinux for deflate_xip_data 
+(where nm is used) to be called.
 
-We found this is because perf_event->cgrp and cpuctx->cgrp are not
-identical, thus perf_event->cgrp are not updated properly.
+Do you have a .config for this issue?
 
-This patch fixes this by updating perf_cgroup properly for ancestor
-cgroup(s).
 
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Reported-by: Ephraim Park <ephiepark@fb.com>
----
- kernel/events/core.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 5789810..6f015ff 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -724,9 +724,14 @@ static inline void __update_cgrp_time(struct perf_cgroup *cgrp)
- 
- static inline void update_cgrp_time_from_cpuctx(struct perf_cpu_context *cpuctx)
- {
--	struct perf_cgroup *cgrp_out = cpuctx->cgrp;
--	if (cgrp_out)
--		__update_cgrp_time(cgrp_out);
-+	struct perf_cgroup *cgrp = cpuctx->cgrp;
-+	struct cgroup_subsys_state *css;
-+
-+	if (cgrp)
-+		for (css = &cgrp->css; css; css = css->parent) {
-+			cgrp = container_of(css, struct perf_cgroup, css);
-+			__update_cgrp_time(cgrp);
-+		}
- }
- 
- static inline void update_cgrp_time_from_event(struct perf_event *event)
-@@ -754,6 +759,7 @@ perf_cgroup_set_timestamp(struct task_struct *task,
- {
- 	struct perf_cgroup *cgrp;
- 	struct perf_cgroup_info *info;
-+	struct cgroup_subsys_state *css;
- 
- 	/*
- 	 * ctx->lock held by caller
-@@ -764,8 +770,12 @@ perf_cgroup_set_timestamp(struct task_struct *task,
- 		return;
- 
- 	cgrp = perf_cgroup_from_task(task, ctx);
--	info = this_cpu_ptr(cgrp->info);
--	info->timestamp = ctx->timestamp;
-+
-+	for (css = &cgrp->css; css; css = css->parent) {
-+		cgrp = container_of(css, struct perf_cgroup, css);
-+		info = this_cpu_ptr(cgrp->info);
-+		info->timestamp = ctx->timestamp;
-+	}
- }
- 
- static DEFINE_PER_CPU(struct list_head, cgrp_cpuctx_list);
--- 
-2.9.5
+Nicolas
