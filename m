@@ -1,59 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932266AbeCLPMm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 11:12:42 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:36387 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751248AbeCLPMl (ORCPT
+        id S932406AbeCLPMz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 11:12:55 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:60186 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751520AbeCLPMx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 11:12:41 -0400
-X-Google-Smtp-Source: AG47ELt/WiL7v1KCz+WO/cT7dtiS4nGI9VkOiaphZpWiUfBwlHfO4XfRzEDgzdClD+neyV8GySwhmBUacKjYP3pwecY=
-MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <ce98e9600a8d7d0169067ae9f3e3a5ae2fb1f54a.1520835596.git.rgb@redhat.com>
-References: <cover.1520835596.git.rgb@redhat.com> <ce98e9600a8d7d0169067ae9f3e3a5ae2fb1f54a.1520835596.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 12 Mar 2018 11:12:39 -0400
-Message-ID: <CAHC9VhRh094wMJkiBY+iStfwMEotHMrOCWUSW23gva_ccknuqg@mail.gmail.com>
-Subject: Re: [PATCH ghak21 V2 3/4] audit: add refused symlink to audit_names
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>, Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 12 Mar 2018 11:12:53 -0400
+Date: Mon, 12 Mar 2018 11:12:51 -0400 (EDT)
+Message-Id: <20180312.111251.956883878311919021.davem@davemloft.net>
+To: colin.king@canonical.com
+Cc: santosh.shilimkar@oracle.com, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][rds-next] rds: remove redundant variable 'sg_off'
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180311162756.26950-1-colin.king@canonical.com>
+References: <20180311162756.26950-1-colin.king@canonical.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 2:31 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Audit link denied events for symlinks had duplicate PATH records rather
-> than just updating the existing PATH record.  Update the symlink's PATH
-> record with the current dentry and inode information.
->
-> See: https://github.com/linux-audit/audit-kernel/issues/21
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  fs/namei.c | 1 +
->  1 file changed, 1 insertion(+)
+From: Colin King <colin.king@canonical.com>
+Date: Sun, 11 Mar 2018 17:27:56 +0100
 
-Why didn't you include this in patch 4/4 like I asked during the
-previous review?
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variable sg_off is assigned a value but it is never read, hence it is
+> redundant and can be removed.
+> 
+> Cleans up clang warning:
+> net/rds/message.c:373:2: warning: Value stored to 'sg_off' is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 50d2533..00f5041 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -945,6 +945,7 @@ static inline int may_follow_link(struct nameidata *nd)
->         if (nd->flags & LOOKUP_RCU)
->                 return -ECHILD;
->
-> +       audit_inode(nd->name, nd->stack[0].link.dentry, 0);
->         audit_log_link_denied("follow_link", &nd->stack[0].link);
->         return -EACCES;
->  }
-> --
-> 1.8.3.1
-
--- 
-paul moore
-www.paul-moore.com
+Applied.
