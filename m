@@ -1,213 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752636AbeCLKb3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 06:31:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54162 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751802AbeCLKb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 06:31:27 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8F38208FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Mon, 12 Mar 2018 19:31:24 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>, Jiri Olsa <jolsa@kernel.org>
-Subject: Re: [PATCH 1/3] tracing: Combine enum and arrays into single macro
- in filter code
-Message-Id: <20180312193124.7d295423e38317fb056e6ccd@kernel.org>
-In-Reply-To: <20180310023907.528923886@goodmis.org>
-References: <20180310023442.791997138@goodmis.org>
-        <20180310023907.528923886@goodmis.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S932315AbeCLKcB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 06:32:01 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:53468 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751303AbeCLKb7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 06:31:59 -0400
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Date: Mon, 12 Mar 2018 10:31:43 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Mark Brown <broonie@kernel.org>
+CC: Kees Cook <keescook@chromium.org>,
+        moderated for non-subscribers <alsa-devel@alsa-project.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, "Takashi Iwai" <tiwai@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>
+Subject: Re: [alsa-devel] [PATCH] ASoC: soc-core: Add missing NULL check
+Message-ID: <20180312103143.y7bidz4gj6ya7dgo@localhost.localdomain>
+References: <20180308200653.GA47801@beast>
+ <20180309125050.GD5252@sirena.org.uk>
+ <CAGXu5jJo2JVXKV+nieGwzH0XOPpzzo4DmYy0L05iZD6wwO1vGg@mail.gmail.com>
+ <20180309202242.GA3073@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180309202242.GA3073@sirena.org.uk>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=935 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1803120123
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 09 Mar 2018 21:34:43 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Fri, Mar 09, 2018 at 08:22:42PM +0000, Mark Brown wrote:
+> On Fri, Mar 09, 2018 at 10:45:16AM -0800, Kees Cook wrote:
+> > On Fri, Mar 9, 2018 at 4:50 AM, Mark Brown <broonie@kernel.org> wrote:
+> > > On Thu, Mar 08, 2018 at 12:06:53PM -0800, Kees Cook wrote:
+> I think I might just remove the file though, it's been non-functional on
+> most systems for a while now as almost all the drivers migrated to
+> regmap and nobody complained so we should be safe.  There's still
+> something that ought to be investigated here.
 
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> 
-> Instead of having a separate enum that is the index into another array, like
-> a string array, make a single macro that combines them into a single list,
-> and then the two can not get out of sync. This makes it easier to add and
-> remove items.
-> 
-> The macro trick is:
-> 
->  #define DOGS				\
->   C( JACK,     "Jack Russell")		\
->   C( ITALIAN,  "Italian Greyhound")	\
->   C( GERMAN,   "German Shepherd")
-> 
->  #undef C
->  #define C(a, b) a
-> 
->  enum { DOGS };
-> 
->  #undef C
->  #define C(a, b) b
-> 
->  static char dogs[] = { DOGS };
-
-Looks good to me, and nice idea :)
-
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Looks like we might already be about to try that since it looks
+like the componentisation actually removed these files, although
+I assume inadvertently.
 
 Thanks,
-
-> 
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
->  kernel/trace/trace_events_filter.c | 112 ++++++++++++++++---------------------
->  1 file changed, 48 insertions(+), 64 deletions(-)
-> 
-> diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
-> index c3c6eee1e4df..a2ef393b3bb2 100644
-> --- a/kernel/trace/trace_events_filter.c
-> +++ b/kernel/trace/trace_events_filter.c
-> @@ -33,22 +33,26 @@
->  	"# Only events with the given fields will be affected.\n"	\
->  	"# If no events are modified, an error message will be displayed here"
->  
-> -enum filter_op_ids
-> -{
-> -	OP_OR,
-> -	OP_AND,
-> -	OP_GLOB,
-> -	OP_NE,
-> -	OP_EQ,
-> -	OP_LT,
-> -	OP_LE,
-> -	OP_GT,
-> -	OP_GE,
-> -	OP_BAND,
-> -	OP_NOT,
-> -	OP_NONE,
-> -	OP_OPEN_PAREN,
-> -};
-> +#define OPS					\
-> +	C( OP_OR,	"||",		1 ),	\
-> +	C( OP_AND,	"&&",		2 ),	\
-> +	C( OP_GLOB,	"~",		4 ),	\
-> +	C( OP_NE,	"!=",		4 ),	\
-> +	C( OP_EQ,	"==",		4 ),	\
-> +	C( OP_LT,	"<",		5 ),	\
-> +	C( OP_LE,	"<=",		5 ),	\
-> +	C( OP_GT,	">",		5 ),	\
-> +	C( OP_GE,	">=",		5 ),	\
-> +	C( OP_BAND,	"&",		6 ),	\
-> +	C( OP_NOT,	"!",		6 ),	\
-> +	C( OP_NONE,	"OP_NONE",	0 ),	\
-> +	C( OP_OPEN_PAREN, "(",		0 ),	\
-> +	C( OP_MAX,	NULL,		0 )
-> +
-> +#undef C
-> +#define C(a, b, c)	a
-> +
-> +enum filter_op_ids { OPS };
->  
->  struct filter_op {
->  	int id;
-> @@ -56,56 +60,36 @@ struct filter_op {
->  	int precedence;
->  };
->  
-> -/* Order must be the same as enum filter_op_ids above */
-> -static struct filter_op filter_ops[] = {
-> -	{ OP_OR,	"||",		1 },
-> -	{ OP_AND,	"&&",		2 },
-> -	{ OP_GLOB,	"~",		4 },
-> -	{ OP_NE,	"!=",		4 },
-> -	{ OP_EQ,	"==",		4 },
-> -	{ OP_LT,	"<",		5 },
-> -	{ OP_LE,	"<=",		5 },
-> -	{ OP_GT,	">",		5 },
-> -	{ OP_GE,	">=",		5 },
-> -	{ OP_BAND,	"&",		6 },
-> -	{ OP_NOT,	"!",		6 },
-> -	{ OP_NONE,	"OP_NONE",	0 },
-> -	{ OP_OPEN_PAREN, "(",		0 },
-> -};
-> +#undef C
-> +#define C(a, b, c)	{ a, b, c }
->  
-> -enum {
-> -	FILT_ERR_NONE,
-> -	FILT_ERR_INVALID_OP,
-> -	FILT_ERR_UNBALANCED_PAREN,
-> -	FILT_ERR_TOO_MANY_OPERANDS,
-> -	FILT_ERR_OPERAND_TOO_LONG,
-> -	FILT_ERR_FIELD_NOT_FOUND,
-> -	FILT_ERR_ILLEGAL_FIELD_OP,
-> -	FILT_ERR_ILLEGAL_INTVAL,
-> -	FILT_ERR_BAD_SUBSYS_FILTER,
-> -	FILT_ERR_TOO_MANY_PREDS,
-> -	FILT_ERR_MISSING_FIELD,
-> -	FILT_ERR_INVALID_FILTER,
-> -	FILT_ERR_IP_FIELD_ONLY,
-> -	FILT_ERR_ILLEGAL_NOT_OP,
-> -};
-> +static struct filter_op filter_ops[] = { OPS };
->  
-> -static char *err_text[] = {
-> -	"No error",
-> -	"Invalid operator",
-> -	"Unbalanced parens",
-> -	"Too many operands",
-> -	"Operand too long",
-> -	"Field not found",
-> -	"Illegal operation for field type",
-> -	"Illegal integer value",
-> -	"Couldn't find or set field in one of a subsystem's events",
-> -	"Too many terms in predicate expression",
-> -	"Missing field name and/or value",
-> -	"Meaningless filter expression",
-> -	"Only 'ip' field is supported for function trace",
-> -	"Illegal use of '!'",
-> -};
-> +#define ERRORS								\
-> +	C( NONE,	 	"No error"),				\
-> +	C( INVALID_OP,		"Invalid operator"),			\
-> +	C( UNBALANCED_PAREN,	"Unbalanced parens"),			\
-> +	C( TOO_MANY_OPERANDS,	"Too many operands"),			\
-> +	C( OPERAND_TOO_LONG,	"Operand too long"),			\
-> +	C( FIELD_NOT_FOUND,	"Field not found"),			\
-> +	C( ILLEGAL_FIELD_OP,	"Illegal operation for field type"),	\
-> +	C( ILLEGAL_INTVAL,	"Illegal integer value"),		\
-> +	C( BAD_SUBSYS_FILTER,	"Couldn't find or set field in one of a subsystem's events"), \
-> +	C( TOO_MANY_PREDS,	"Too many terms in predicate expression"), \
-> +	C( MISSING_FIELD,	"Missing field name and/or value"),	\
-> +	C( INVALID_FILTER,	"Meaningless filter expression"),	\
-> +	C( IP_FIELD_ONLY,	"Only 'ip' field is supported for function trace"), \
-> +	C( ILLEGAL_NOT_OP,	"Illegal use of '!'"),
-> +
-> +#undef C
-> +#define C(a, b)		FILT_ERR_##a
-> +
-> +enum { ERRORS };
-> +
-> +#undef C
-> +#define C(a, b)		b
-> +
-> +static char *err_text[] = { ERRORS };
->  
->  struct opstack_op {
->  	enum filter_op_ids op;
-> -- 
-> 2.15.1
-> 
-> 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Charles
