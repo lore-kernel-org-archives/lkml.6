@@ -1,83 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751901AbeCLO2s (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 10:28:48 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:46294 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751232AbeCLO2q (ORCPT
+        id S1751787AbeCLO3m (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 10:29:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48242 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751248AbeCLO3k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 10:28:46 -0400
-Date: Mon, 12 Mar 2018 15:28:45 +0100
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-kernel@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] kernel/rtmutex: Handle non enqueued waiters gracefully in
- remove_waiter()
-Message-ID: <20180312142845.m4ohqyg3mak34umf@linutronix.de>
+        Mon, 12 Mar 2018 10:29:40 -0400
+Date: Mon, 12 Mar 2018 15:29:33 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Corey Minyard <cminyard@mvista.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>
+Subject: Re: Warning from swake_up_all in 4.14.15-rt13 non-RT
+Message-ID: <20180312142933.GF4043@hirez.programming.kicks-ass.net>
+References: <1704d817-8fb9-ce8f-1aa1-fe6e8b0c3919@mvista.com>
+ <20180308174103.mduy5qq2ttlcvig3@linutronix.de>
+ <a11f140e-c44f-f967-1cd4-d8a6f09d4d29@mvista.com>
+ <20180309110418.lwtennjqwqcxh422@linutronix.de>
+ <20180309174605.GC4064@hirez.programming.kicks-ass.net>
+ <20180309202550.j66qphz3txupt55u@linutronix.de>
+ <20180309222643.GC5926@hirez.programming.kicks-ass.net>
+ <20180312105113.p7jifhwdwbhpvxds@linutronix.de>
+ <20180312132729.GI4064@hirez.programming.kicks-ass.net>
+ <20180312141107.roveviectc6a75s7@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20180223
+In-Reply-To: <20180312141107.roveviectc6a75s7@linutronix.de>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In -RT task_blocks_on_rt_mutex() may return with -EAGAIN due to
-(->pi_blocked_on == PI_WAKEUP_INPROGRESS) before it added itself as a
-waiter. In such a case we must not call remove_waiter() because without
-a waiter it will trigger the BUG_ON() statement.
+On Mon, Mar 12, 2018 at 03:11:07PM +0100, Sebastian Andrzej Siewior wrote:
+> I assumed you complained about the unbounded list-walk with interrupts
+> disabled (which is cheap but unbound is unbound). So here I suggested I
+> move 20 entries off that list a time and enable interrupts again so an
+> interrupt could set need_resched.
+> But if we get invoked !preemptible then nothing changes.
 
-This was initially reported by Yimin Deng. Thomas Gleixner fixed it then
-with an explicit check for waiters before calling remove_waiter() with
-the following note:
-
-| Guard it with rt_mutex_has_waiters(). This is a quick fix which is
-| easy to backport. The proper fix is to have a central check in
-| remove_waiter() so we can call it unconditionally.
-
-This is the suggested change.
-Now that it is possible to call remove_waiter() unconditionally I also
-remove that check from rt_mutex_slowlock().
-
-Link: https://lkml.kernel.org/r/CAAh1qt=DCL9aUXNxanP5BKtiPp3m+qj4yB+gDohhXPVFCxWwzg@mail.gmail.com
-Reported-and-debugged-by: Yimin Deng <yimin11.deng@gmail.com>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- kernel/locking/rtmutex.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-index 65cc0cb984e6..57d28d8f5280 100644
---- a/kernel/locking/rtmutex.c
-+++ b/kernel/locking/rtmutex.c
-@@ -1068,12 +1068,15 @@ static void mark_wakeup_next_waiter(struct wake_q_head *wake_q,
- static void remove_waiter(struct rt_mutex *lock,
- 			  struct rt_mutex_waiter *waiter)
- {
--	bool is_top_waiter = (waiter == rt_mutex_top_waiter(lock));
-+	bool is_top_waiter = false;
- 	struct task_struct *owner = rt_mutex_owner(lock);
- 	struct rt_mutex *next_lock;
- 
- 	lockdep_assert_held(&lock->wait_lock);
- 
-+	if (rt_mutex_has_waiters(lock))
-+		is_top_waiter = waiter == rt_mutex_top_waiter(lock);
-+
- 	raw_spin_lock(&current->pi_lock);
- 	rt_mutex_dequeue(lock, waiter);
- 	current->pi_blocked_on = NULL;
-@@ -1268,8 +1271,7 @@ rt_mutex_slowlock(struct rt_mutex *lock, int state,
- 
- 	if (unlikely(ret)) {
- 		__set_current_state(TASK_RUNNING);
--		if (rt_mutex_has_waiters(lock))
--			remove_waiter(lock, &waiter);
-+		remove_waiter(lock, &waiter);
- 		rt_mutex_handle_deadlock(ret, chwalk, &waiter);
- 	}
- 
--- 
-2.16.2
+Right, so any !preemptible invocation of wake_all is bad.
