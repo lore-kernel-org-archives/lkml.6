@@ -1,110 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932661AbeCLPz0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 11:55:26 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42022 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932494AbeCLPzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 11:55:24 -0400
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: kvm list <kvm@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH 1/3] x86/kvm/vmx: read MSR_FS_BASE from current->thread
-References: <20180312140300.6166-1-vkuznets@redhat.com>
-        <20180312140300.6166-2-vkuznets@redhat.com>
-        <CALCETrXHBQjHR0w1YhJtzPyr6G1BzcBKRvY_smGufd0b6gizXQ@mail.gmail.com>
-Date: Mon, 12 Mar 2018 16:55:21 +0100
-In-Reply-To: <CALCETrXHBQjHR0w1YhJtzPyr6G1BzcBKRvY_smGufd0b6gizXQ@mail.gmail.com>
-        (Andy Lutomirski's message of "Mon, 12 Mar 2018 15:34:47 +0000")
-Message-ID: <87muzdcmqe.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S932639AbeCLP4m (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 11:56:42 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:43743 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932494AbeCLP4l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 11:56:41 -0400
+X-Google-Smtp-Source: AG47ELvyJY9F0xEE4JCTX/eOlf8UAl6q/CudFIp4626/hSuA/yDSOKWpzltiI+gDF/iRMEALEcUvZ5YZC5dV513jpAg=
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <20180312153049.udobftmchbpb7lou@madcap2.tricolour.ca>
+References: <cover.1520835596.git.rgb@redhat.com> <9ed76ccb239078ad5a2808d23c7b7f1738b0b2b8.1520835596.git.rgb@redhat.com>
+ <CAHC9VhRDnd55em1YUkswOX4XmDP6xH5x005hcZnCZSRXz66exQ@mail.gmail.com> <20180312153049.udobftmchbpb7lou@madcap2.tricolour.ca>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 12 Mar 2018 11:56:38 -0400
+Message-ID: <CAHC9VhSG__5ixkPQsmo+vT0uvKjSBnGX5v-Y5B349vh1ZYJv3Q@mail.gmail.com>
+Subject: Re: [PATCH ghak21 V2 2/4] audit: link denied should not directly
+ generate PATH record
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andy Lutomirski <luto@kernel.org> writes:
-
-> On Mon, Mar 12, 2018 at 2:02 PM, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->> vmx_save_host_state() is only called from kvm_arch_vcpu_ioctl_run() so
->> the context is pretty well defined. Read MSR_FS_BASE from
->> current->thread.fsbase after calling save_fsgs() which takes care of
->> X86_BUG_NULL_SEG case now and will do RD[FG,GS]BASE when FSGSBASE
->> extensions are exposed to userspace (currently they are not).
+On Mon, Mar 12, 2018 at 11:30 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2018-03-12 11:05, Paul Moore wrote:
+>> On Mon, Mar 12, 2018 at 2:31 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+>> > Audit link denied events generate duplicate PATH records which disagree
+>> > in different ways from symlink and hardlink denials.
+>> > audit_log_link_denied() should not directly generate PATH records.
+>> > While we're at it, remove the now useless struct path argument.
+>> >
+>> > See: https://github.com/linux-audit/audit-kernel/issues/21
+>> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+>> > ---
+>> >  fs/namei.c            |  2 +-
+>> >  include/linux/audit.h |  6 ++----
+>> >  kernel/audit.c        | 17 ++---------------
+>> >  3 files changed, 5 insertions(+), 20 deletions(-)
 >>
->> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->> ---
->>  arch/x86/include/asm/processor.h |  3 +++
->>  arch/x86/kernel/process_64.c     | 20 ++++++++++++++++++++
->>  arch/x86/kvm/vmx.c               |  4 +++-
->>  3 files changed, 26 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
->> index b0ccd4847a58..006352b85ba3 100644
->> --- a/arch/x86/include/asm/processor.h
->> +++ b/arch/x86/include/asm/processor.h
->> @@ -410,6 +410,9 @@ DECLARE_INIT_PER_CPU(irq_stack_union);
->>  DECLARE_PER_CPU(char *, irq_stack_ptr);
->>  DECLARE_PER_CPU(unsigned int, irq_count);
->>  extern asmlinkage void ignore_sysret(void);
->> +
->> +/* Save actual FS/GS selectors and bases to current->thread */
->> +void save_current_fsgs(void);
->>  #else  /* X86_64 */
->>  #ifdef CONFIG_CC_STACKPROTECTOR
->>  /*
->> diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
->> index 9eb448c7859d..eb907fefe02e 100644
->> --- a/arch/x86/kernel/process_64.c
->> +++ b/arch/x86/kernel/process_64.c
->> @@ -205,6 +205,26 @@ static __always_inline void save_fsgs(struct task_struct *task)
->>         save_base_legacy(task, task->thread.gsindex, GS);
->>  }
->>
->> +/*
->> + * Currently, the only way for processes to change their FS/GS base is to call
->> + * ARCH_SET_FS/GS prctls and these reflect changes they make in task->thread.
->> + * There are, however, additional considerations:
->> + *
->> + * There is X86_BUG_NULL_SEG: on some CPUs writing '0' to FS/GS selectors zeroes
->> + * the base and on some it doesn't, we need to check for that
->> + * (see save_base_legacy()).
->> + *
->> + * When FSGSBASE extensions are enabled userspace processes will be able to
->> + * change their FS/GS bases without kernel intervention. save_fsgs() will
->> + * have to be updated to actually read FS and GS bases with RD[FG,GS]BASE
->> + * instructions.
->> + */
+>> I have no objection to the v2 change of removing the link parameter,
+>> but this patch can not be merged as-is because the v1 patch has
+>> already been merged into audit/next (as stated on the mailing list).
 >
-> This is all a very complicated way to say "while a process is running,
-> current->thread.fsbase and current->thread.gsbase may not match the
-> corresponding CPU registers.  KVM wants an efficient way to save and
-> restore FSBASE and GSBASE."
+> Yes, I self-NACKed that patch.
 >
+>         https://www.redhat.com/archives/linux-audit/2018-March/msg00070.html
+>
+> Is it not possible to drop it, or would you have to do a revert to avoid
+> a rebase?
 
-Well, I though it is not really obvious why "current->thread.fsbase and
-current->thread.gsbase may not match the corresponding CPU registers"
-:-) but save_base_legacy() is really nearby so I'll trim my comment in
-v2.
-
-> And how about changing this to:
->
-> #if IS_ENABLED(CONFIG_KVM)
-> void save_fsgs_for_kvm(void)
-> {
->     save_fsgs(current);
-> }
-> EXPORT_SYMBOL_GPL(save_fsgs_for_kvm);
->
-
-Sure. Actually, there is nothing KVM-specific in this function but KVM
-will probably be the only user for the time being.
+Yes, it is possible to drop a patch from the audit/next patch stack,
+but dropping patches is considered *very* bad form and not something I
+want to do without a Very Good Reason.  While the v2 patch is the
+"right" patch, the v1 patch is not dangerous, so I would rather you
+just build on top of what is currently in audit/next.
 
 -- 
-  Vitaly
+paul moore
+www.paul-moore.com
