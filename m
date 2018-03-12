@@ -1,86 +1,93 @@
-Return-Path: <fengguang.wu@intel.com>
-X-Google-Smtp-Source: AG47ELtcIMqJx7fwhm4cvq0c6YLRmadGBUWtruuwDeOXRVWj44uWUK/JflM64OR+VH1eEvXu6cRU
-ARC-Seal: i=1; a=rsa-sha256; t=1520978090; cv=none;
+Return-Path: <okaya@codeaurora.org>
+X-Google-Smtp-Source: AG47ELv84Gy06Uo7TstBzdVyVFub0HfC7+h5girX8D01z9/MavqkzAnaEydyYClNP8bTyHm7BVZz
+ARC-Seal: i=1; a=rsa-sha256; t=1520873066; cv=none;
         d=google.com; s=arc-20160816;
-        b=wNsRL/MidnCGBMhX8eDYjzCiND4xRbE3V7ednbFqozo86MwINiByicc9ubjSS26bFF
-         NJGCZbOLlPPVSt5DjasLS8M/+S8xd8QrrFDzJA1cbnGZqp+0CiRHU79filrZ9FoN79sv
-         9O4ooMnU/fBrgWaeNscf9Skj/8bZT8puFNLvCFV6EWWpM9I3j0izn9NyVdYX38EkSPS4
-         1oGTS7BYjab3QrPetEbtcmOCTn2wReSqev+mViCE7EOy3zdB+bm1zfgCpkLBj+YYQ8PT
-         oKGh3xpZd3SU1i/kGri6aIFS7WwlTgW5KkKDjUwwRagw0BTvY5TElx9yW97kaomuTHQH
-         Q5nw==
+        b=cbBsy0Dj+z40emMTenIiToMKNhxCSqV0jvD/sim8VKbNGWNiK/aVjcYtc9FjHie3ZZ
+         TRljGmkLVSzUakhZS63O3fNN6BovXG6DNWZfuO36g2Vfd9iDRDv40NYmlbwVs3MdXUzU
+         l3bN52Nwlry0AhjrRb5ul5XtUIz6f5Lt7A/YXrla1+np5XrCAnyM7MTcHnwGsxhIxROS
+         3ZdxCMHslKDmMKTlaypS/NZs9WQ7gYH+jNRLLByfDOGeU0SVQsAg/kwwVuqC7oB5Adec
+         PHNOFomS3AT/nOoP8mzRKtvLRLmQznc2FtfZm3+IpLjRMkHKDfrwOZG0bXyLHFiDko7C
+         xOrA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=iGhRTvCO5+89q8tU945SRSkdpaepwENKGl5hH+XclrA=;
-        b=eXde9O85lqdFQl7auDY9PC2EQBqMKkyyX4zfjdUDpbmB4OjjXAGd8KJaRwsTX33Jt+
-         pR3aFh3u16XTXmeiVZQdd2a63PnO7qzQWzy4EXhczrV2apINxaH0HDkjwn3mHZhrw8JN
-         lZndVdFgTlBsnmhV7tB9vIIIu7OF7SCYyq8kvEUee2y8hJfVUMuyARhgEsTbqS007WWN
-         Ke0EayExK6etTSmzJwOQLWe6rxVPiup6dtemNDDPe2pvyKg6+IwAiFqA1boI4noo+lJB
-         Xy8vfsSI4gFvgJKuBiov3rdTNwM6koaqToZK0j88z7nsXW8tajP7AtIWGDkRmmx9z/1y
-         XhFA==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dmarc-filter:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=nyTGGf3OJL8Ay3kSSEqYsdjYbIaNsubdbWq4nFEgNcc=;
+        b=GbHZDcs2QxXnthhBZ3exU6rG6KprAZjgXYLKGHsn9/A9MOTlg5fQ+MyJwRUl0/+j6y
+         a0AaiUOmYheZp2/JnvhZ8b2lmn4oqgxirj/1WU4v/TiUa02Xb0jCyNWoaF6G6unWOYtm
+         tYPLQngnGA8JI+6+MRf0CThxOY5J1O8wL+DNPJ94xQlR5yRnURFSl0rIJr4vVaA2Hb+f
+         H6R0Z4e9ocCj4p3chrMFmU2TPjV7gHHWLy3U4xPunXWf8HNMbAi954iZpflkLP1IGtb+
+         hlLmxdpW0BxMTEOl+EqPZYZ1l3IF9sjG0ee7i8atoL8tBwoF/7HhnJ+3YiaHFw3LB7rA
+         hNDQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of fengguang.wu@intel.com designates 134.134.136.20 as permitted sender) smtp.mailfrom=fengguang.wu@intel.com
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=jGlEM7dc;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=jGlEM7dc;
+       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of fengguang.wu@intel.com designates 134.134.136.20 as permitted sender) smtp.mailfrom=fengguang.wu@intel.com
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,466,1515484800";
-   d="scan'208";a="211266008"
-Date: Wed, 14 Mar 2018 05:53:58 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Nipun Gupta <nipun.gupta@nxp.com>
-Cc: kbuild-all@01.org, hch@lst.de, robin.murphy@arm.com,
-	linux@armlinux.org.uk, gregkh@linuxfoundation.org,
-	m.szyprowski@samsung.com, bhelgaas@google.com,
-	dmitry.torokhov@gmail.com, rafael.j.wysocki@intel.com,
-	jarkko.sakkinen@linux.intel.com, linus.walleij@linaro.org,
-	johan@kernel.org, msuchanek@suse.de, linux-kernel@vger.kernel.org,
-	iommu@lists.linux-foundation.org, linux-pci@vger.kernel.org,
-	Nipun Gupta <nipun.gupta@nxp.com>
-Subject: [RFC PATCH] dma-mapping: platform_dma_configure() can be static
-Message-ID: <20180313215358.GA20099@lkp-wsm-ep1>
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=jGlEM7dc;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=jGlEM7dc;
+       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9E370600C1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH] dma-mapping: move dma configuration to bus infrastructure
+To: Nipun Gupta <nipun.gupta@nxp.com>, hch@lst.de, robin.murphy@arm.com,
+ linux@armlinux.org.uk, gregkh@linuxfoundation.org, m.szyprowski@samsung.com,
+ bhelgaas@google.com
+Cc: dmitry.torokhov@gmail.com, rafael.j.wysocki@intel.com,
+ jarkko.sakkinen@linux.intel.com, linus.walleij@linaro.org, johan@kernel.org,
+ msuchanek@suse.de, linux-kernel@vger.kernel.org,
+ iommu@lists.linux-foundation.org, linux-pci@vger.kernel.org
 References: <1520868292-2479-1-git-send-email-nipun.gupta@nxp.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <6a76df69-8c6c-52a6-0afd-fd0b8d2ff703@codeaurora.org>
+Date: Mon, 12 Mar 2018 12:44:22 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <1520868292-2479-1-git-send-email-nipun.gupta@nxp.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594861122609809352?=
-X-GMAIL-MSGID: =?utf-8?q?1594861122609809352?=
+X-GMAIL-THRID: =?utf-8?q?1594746017210545974?=
+X-GMAIL-MSGID: =?utf-8?q?1594750996273751393?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On 3/12/2018 11:24 AM, Nipun Gupta wrote:
+> +	if (dma_dev->of_node) {
+> +		ret = of_dma_configure(dev, dma_dev->of_node);
+> +	} else if (has_acpi_companion(dma_dev)) {
+> +		attr = acpi_get_dma_attr(to_acpi_device_node(dma_dev->fwnode));
+> +		if (attr != DEV_DMA_NOT_SUPPORTED)
+> +			ret = acpi_dma_configure(dev, attr);
+> +	}
+> +
+> +	pci_put_host_bridge_device(bridge);
+> +
+> +	return ret;
+> +}
+> +
+> +void pci_dma_deconfigure(struct device *dev)
+> +{
+> +	of_dma_deconfigure(dev);
+> +	acpi_dma_deconfigure(dev);
+> +}
 
-Fixes: 9a019f425175 ("dma-mapping: move dma configuration to bus infrastructure")
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
----
- platform.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Isn't this one or the other one but not both?
 
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index adf94eb..dc9c790 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -1130,7 +1130,7 @@ int platform_pm_restore(struct device *dev)
- 
- #endif /* CONFIG_HIBERNATE_CALLBACKS */
- 
--int platform_dma_configure(struct device *dev)
-+static int platform_dma_configure(struct device *dev)
- {
- 	enum dev_dma_attr attr;
- 	int ret = 0;
-@@ -1146,7 +1146,7 @@ int platform_dma_configure(struct device *dev)
- 	return ret;
- }
- 
--void platform_dma_deconfigure(struct device *dev)
-+static void platform_dma_deconfigure(struct device *dev)
- {
- 	of_dma_deconfigure(dev);
- 	acpi_dma_deconfigure(dev);
+Something like:
+
+if (dev->of_node)
+	of_dma_deconfigure(dev);
+else
+	acpi_dma_deconfigure(dev);
+
+should work.
+
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
