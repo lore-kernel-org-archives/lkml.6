@@ -1,203 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932247AbeCLJnI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 05:43:08 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49278 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751277AbeCLJnG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:43:06 -0400
-Date: Mon, 12 Mar 2018 10:42:57 +0100
-From: Philipp Rudo <prudo@linux.vnet.ibm.com>
-To: Dave Young <dyoung@redhat.com>
-Cc: kexec@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
-        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: Re: [PATCH 09/11] kexec_file: Remove mis-use of sh_offset field
-In-Reply-To: <20180312074218.GA4125@dhcp-128-65.nay.redhat.com>
-References: <20180226151620.20970-1-prudo@linux.vnet.ibm.com>
-        <20180226151620.20970-10-prudo@linux.vnet.ibm.com>
-        <20180309031420.GA3246@dhcp-128-65.nay.redhat.com>
-        <20180309110241.00b0d3f3@ThinkPad>
-        <20180312074218.GA4125@dhcp-128-65.nay.redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18031209-0040-0000-0000-0000041E64C4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18031209-0041-0000-0000-000026218AB7
-Message-Id: <20180312104257.0d04b5b2@ThinkPad>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-12_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803120111
+        id S1752481AbeCLJnW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 05:43:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58056 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752342AbeCLJnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 05:43:20 -0400
+From: Jiri Olsa <jolsa@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: [PATCH 02/13] perf tools: Display ebpf compiling command in debug output
+Date: Mon, 12 Mar 2018 10:43:02 +0100
+Message-Id: <20180312094313.18738-3-jolsa@kernel.org>
+In-Reply-To: <20180312094313.18738-1-jolsa@kernel.org>
+References: <20180312094313.18738-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Mar 2018 15:42:18 +0800
-Dave Young <dyoung@redhat.com> wrote:
+In addition to template, display also the real compile
+command line with all the variables substituted.
 
-> Hi Philipp,
-> On 03/09/18 at 11:02am, Philipp Rudo wrote:
-> > Hi Dave,
-> > 
-> > 
-> > On Fri, 9 Mar 2018 11:14:20 +0800
-> > Dave Young <dyoung@redhat.com> wrote:
-> >   
-> > > On 02/26/18 at 04:16pm, Philipp Rudo wrote:  
-> > > > The current code uses the sh_offset field in purgatory_info->sechdrs to
-> > > > store a pointer to the current load address of the section. Depending
-> > > > whether the section will be loaded or not this is either a pointer into
-> > > > purgatory_info->purgatory_buf or kexec_purgatory. This is not only a
-> > > > violation of the ELF standard but also makes the code very hard to
-> > > > understand as you cannot tell if the memory you are using is read-only or
-> > > > not.
-> > > > 
-> > > > Remove this mis-use and store the offset of the section in
-> > > > pugaroty_info->purgatory_buf in sh_offset.
-> > > > 
-> > > > Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
-> > > > ---
-> > > >  arch/x86/kernel/machine_kexec_64.c | 10 ++++++----
-> > > >  kernel/kexec_file.c                | 33 +++------------------------------
-> > > >  2 files changed, 9 insertions(+), 34 deletions(-)
-> > > > 
-> > > > diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-> > > > index 51667c8b5c9b..41db74bdc88b 100644
-> > > > --- a/arch/x86/kernel/machine_kexec_64.c
-> > > > +++ b/arch/x86/kernel/machine_kexec_64.c
-> > > > @@ -457,13 +457,15 @@ int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
-> > > >  		 * rel[i].r_offset contains byte offset from beginning
-> > > >  		 * of section to the storage unit affected.
-> > > >  		 *
-> > > > -		 * This is location to update (->sh_offset). This is temporary
-> > > > -		 * buffer where section is currently loaded. This will finally
-> > > > -		 * be loaded to a different address later, pointed to by
-> > > > +		 * This is location to update. This is temporary buffer
-> > > > +		 * where section is currently loaded. This will finally be
-> > > > +		 * loaded to a different address later, pointed to by
-> > > >  		 * ->sh_addr. kexec takes care of moving it
-> > > >  		 *  (kexec_load_segment()).
-> > > >  		 */
-> > > > -		location = (void *)(section->sh_offset + rel[i].r_offset);
-> > > > +		location = pi->purgatory_buf;
-> > > > +		location += section->sh_offset;
-> > > > +		location += rel[i].r_offset;
-> > > >  
-> > > >  		/* Final address of the location */
-> > > >  		address = section->sh_addr + rel[i].r_offset;
-> > > > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> > > > index 746b91e46e34..25b44d1a664a 100644
-> > > > --- a/kernel/kexec_file.c
-> > > > +++ b/kernel/kexec_file.c
-> > > > @@ -736,28 +736,6 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
-> > > >  	       pi->ehdr->e_shnum * sizeof(Elf_Shdr));
-> > > >  	pi->sechdrs = sechdrs;
-> > > >  
-> > > > -	/*
-> > > > -	 * We seem to have multiple copies of sections. First copy is which
-> > > > -	 * is embedded in kernel in read only section. Some of these sections
-> > > > -	 * will be copied to a temporary buffer and relocated. And these
-> > > > -	 * sections will finally be copied to their final destination at
-> > > > -	 * segment load time.    
-> > > 
-> > > It would be good to keep above part comment somewhere..  
-> > 
-> > there is a comment in include/linux/kexec.h for the purgatory_info->sechdrs
-> > field saying 
-> > 
-> > Temporary, modifiable buffer for sechdrs used for relocation.        
-> > This memory can be freed post image load
-> > 
-> > When you think this is not enough i can add a comment here like
-> > 
-> > The section headers in kexec_purgatory are read-only. In order to have them
-> > modifiable make a temporary copy.  
-> 
-> Looks better to add above comment here.
+llvm compiling command template: $CLANG_EXEC -D__KERNEL__ -D__NR_CPUS__=$NR_CPUS ...
+llvm compiling command : /usr/bin/clang -D__KERNEL__ -D__NR_CPUS__=24 -DLINUX_VERSION_CODE=0x41000 ...
 
-Ok, it's added. I'll wait what Ingo says about the string.c issue befor
-sending around v2. 
+Link: http://lkml.kernel.org/n/tip-mygjr5z3c77x9ephks7n06oc@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/util/llvm-utils.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Thanks
-Philipp
-
-> > 
-> > What do you think.
-> > 
-> > Thanks
-> > Philipp
-> >   
-> > > > -	 *
-> > > > -	 * Use ->sh_offset to reflect section address in memory. It will
-> > > > -	 * point to original read only copy if section is not allocatable.
-> > > > -	 * Otherwise it will point to temporary copy which will be relocated.
-> > > > -	 *
-> > > > -	 * Use ->sh_addr to contain final address of the section where it
-> > > > -	 * will go during execution time.
-> > > > -	 */
-> > > > -	for (i = 0; i < pi->ehdr->e_shnum; i++) {
-> > > > -		if (sechdrs[i].sh_type == SHT_NOBITS)
-> > > > -			continue;
-> > > > -
-> > > > -		sechdrs[i].sh_offset = (unsigned long)pi->ehdr +
-> > > > -						sechdrs[i].sh_offset;
-> > > > -	}
-> > > > -
-> > > >  	offset = 0;
-> > > >  	bss_addr = kbuf->mem + kbuf->bufsz;
-> > > >  	kbuf->image->start = pi->ehdr->e_entry;
-> > > > @@ -786,17 +764,12 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
-> > > >  			kbuf->image->start += kbuf->mem + offset;
-> > > >  		}
-> > > >  
-> > > > -		src = (void *)sechdrs[i].sh_offset;
-> > > > +		src = (void *)pi->ehdr + sechdrs[i].sh_offset;
-> > > >  		dst = pi->purgatory_buf + offset;
-> > > >  		memcpy(dst, src, sechdrs[i].sh_size);
-> > > >  
-> > > >  		sechdrs[i].sh_addr = kbuf->mem + offset;
-> > > > -
-> > > > -		/*
-> > > > -		 * This section got copied to temporary buffer. Update
-> > > > -		 * ->sh_offset accordingly.
-> > > > -		 */
-> > > > -		sechdrs[i].sh_offset = (unsigned long)dst;
-> > > > +		sechdrs[i].sh_offset = offset;
-> > > >  		offset += sechdrs[i].sh_size;
-> > > >  	}
-> > > >  
-> > > > @@ -1006,7 +979,7 @@ int kexec_purgatory_get_set_symbol(struct kimage *image, const char *name,
-> > > >  		return -EINVAL;
-> > > >  	}
-> > > >  
-> > > > -	sym_buf = (char *)sec->sh_offset + sym->st_value;
-> > > > +	sym_buf = (char *)pi->purgatory_buf + sec->sh_offset + sym->st_value;
-> > > >  
-> > > >  	if (get_value)
-> > > >  		memcpy((void *)buf, sym_buf, size);
-> > > > -- 
-> > > > 2.13.5
-> > > >     
-> > > 
-> > > Thanks
-> > > Dave
-> > >   
-> >   
-> 
-> Thanks
-> Dave
-> 
+diff --git a/tools/perf/util/llvm-utils.c b/tools/perf/util/llvm-utils.c
+index 4952b429caa7..1cca0a2fa641 100644
+--- a/tools/perf/util/llvm-utils.c
++++ b/tools/perf/util/llvm-utils.c
+@@ -433,6 +433,7 @@ int llvm__compile_bpf(const char *path, void **p_obj_buf,
+ 	char serr[STRERR_BUFSIZE];
+ 	char *kbuild_dir = NULL, *kbuild_include_opts = NULL;
+ 	const char *template = llvm_param.clang_bpf_cmd_template;
++	char *command_echo, *command_out;
+ 
+ 	if (path[0] != '-' && realpath(path, abspath) == NULL) {
+ 		err = errno;
+@@ -487,6 +488,16 @@ int llvm__compile_bpf(const char *path, void **p_obj_buf,
+ 		      (path[0] == '-') ? path : abspath);
+ 
+ 	pr_debug("llvm compiling command template: %s\n", template);
++
++	if (asprintf(&command_echo, "echo -n \"%s\"", template) < 0)
++		goto errout;
++
++	err = read_from_pipe(command_echo, (void **) &command_out, NULL);
++	if (err)
++		goto errout;
++
++	pr_debug("llvm compiling command : %s\n", command_out);
++
+ 	err = read_from_pipe(template, &obj_buf, &obj_buf_sz);
+ 	if (err) {
+ 		pr_err("ERROR:\tunable to compile %s\n", path);
+@@ -497,6 +508,8 @@ int llvm__compile_bpf(const char *path, void **p_obj_buf,
+ 		goto errout;
+ 	}
+ 
++	free(command_echo);
++	free(command_out);
+ 	free(kbuild_dir);
+ 	free(kbuild_include_opts);
+ 
+@@ -509,6 +522,7 @@ int llvm__compile_bpf(const char *path, void **p_obj_buf,
+ 		*p_obj_buf_sz = obj_buf_sz;
+ 	return 0;
+ errout:
++	free(command_echo);
+ 	free(kbuild_dir);
+ 	free(kbuild_include_opts);
+ 	free(obj_buf);
+-- 
+2.13.6
