@@ -1,54 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932315AbeCLOHt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 10:07:49 -0400
-Received: from mail-wr0-f179.google.com ([209.85.128.179]:40582 "EHLO
-        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751564AbeCLOHq (ORCPT
+        id S932372AbeCLOH4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 10:07:56 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:42106 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751860AbeCLOHx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 10:07:46 -0400
-X-Google-Smtp-Source: AG47ELuWjN4xkk1UWDZ8XQjK8FAar8lJkPFoxNMU4rP+IS7B9/r+/0Y6K3NSPRlU5gS/+Jm2dFGB1w==
-Date: Mon, 12 Mar 2018 14:07:42 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: JeffyChen <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2 1/3] mfd: syscon: Set name of regmap_config
-Message-ID: <20180312140742.vazjujloyn5l72nu@dell>
-References: <20180306110403.14438-1-jeffy.chen@rock-chips.com>
- <5A9EAC92.4050702@rock-chips.com>
- <20180307102006.GA7290@sirena.org.uk>
- <5A9FC3E0.5020600@rock-chips.com>
- <20180307105731.GB7290@sirena.org.uk>
- <20180307165405.ltuobrr53vko4do7@dell>
- <20180307165738.GK7290@sirena.org.uk>
+        Mon, 12 Mar 2018 10:07:53 -0400
+X-Google-Smtp-Source: AG47ELuXVg2lQSP7eFKgIpv0+XJlrSqCXyHPSJwmstM1nNhS34kRHJbsJCgqtOHAx/ezbe5Uwu/Vbuv3ZWG2Rh5T+2M=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180307165738.GK7290@sirena.org.uk>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180310052601.GA6294@piout.net>
+References: <20180310052601.GA6294@piout.net>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 12 Mar 2018 15:07:52 +0100
+X-Google-Sender-Auth: LbsSBIhFLBLXUBNTnmJ41lueTv4
+Message-ID: <CAK8P3a0LOjORi7f_YEp+zk28CTrvo7RLS-BmnooRL11MH2nh5A@mail.gmail.com>
+Subject: Re: [GIT PULL] ARM: at91: DT for 4.17
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 07 Mar 2018, Mark Brown wrote:
+On Sat, Mar 10, 2018 at 6:26 AM, Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
+> Arnd, Olof,
+>
+> Not much this cycle, mainly changes on the Axentia boards from Peter and
+> a cleanup from Bartosz.
+...
+> AT91 DT for 4.17:
+>
+>  - use 'atmel' as at24 manufacturer
+>  - device addition and fixes for axentia boards
+>  - fix sama5d4 pinctrl compatible
 
-> On Wed, Mar 07, 2018 at 04:54:05PM +0000, Lee Jones wrote:
-> > On Wed, 07 Mar 2018, Mark Brown wrote:
-> > > On Wed, Mar 07, 2018 at 06:50:08PM +0800, JeffyChen wrote:
-> 
-> > > Yes, like I say I think that's a good idea anyway - that sort of usage
-> > > is the reason we've got the facility to set an explicit name.
-> 
-> > Is that an Ack?
-> 
-> No, it looked like the change was only for MFD?
+I added the first sentence to the commit log and pulled it into next/dt.
+Generally speaking, I find those cleartext descriptions are more helpful
+than a list that repeats the list of commits.
 
-Right, but you can still Review/Ack patches from other subsystems.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+      Arnd
