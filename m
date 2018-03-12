@@ -1,163 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932441AbeCLPfb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 11:35:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45776 "EHLO mx1.redhat.com"
+        id S932488AbeCLPfk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 11:35:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45788 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751458AbeCLPfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 11:35:30 -0400
-Date: Mon, 12 Mar 2018 11:30:49 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH ghak21 V2 2/4] audit: link denied should not directly
- generate PATH record
-Message-ID: <20180312153049.udobftmchbpb7lou@madcap2.tricolour.ca>
-References: <cover.1520835596.git.rgb@redhat.com>
- <9ed76ccb239078ad5a2808d23c7b7f1738b0b2b8.1520835596.git.rgb@redhat.com>
- <CAHC9VhRDnd55em1YUkswOX4XmDP6xH5x005hcZnCZSRXz66exQ@mail.gmail.com>
+        id S932456AbeCLPfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 11:35:38 -0400
+Date: Mon, 12 Mar 2018 10:35:36 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Torsten Duwe <duwe@lst.de>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Jiri Kosina <jkosina@suse.cz>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Nicholas Piggin <npiggin@gmail.com>, live-patching@vger.kernel.org
+Subject: Re: [PATCH v2] On ppc64le we HAVE_RELIABLE_STACKTRACE
+Message-ID: <20180312153536.7avozx64ku4lvd3e@treble>
+References: <20180305164928.GA17953@lst.de>
+ <20180308162616.yhbymodggnfzpskx@treble>
+ <20180309174718.2700b29e@blackhole.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhRDnd55em1YUkswOX4XmDP6xH5x005hcZnCZSRXz66exQ@mail.gmail.com>
-User-Agent: NeoMutt/20171027
+In-Reply-To: <20180309174718.2700b29e@blackhole.lan>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-12 11:05, Paul Moore wrote:
-> On Mon, Mar 12, 2018 at 2:31 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> > Audit link denied events generate duplicate PATH records which disagree
-> > in different ways from symlink and hardlink denials.
-> > audit_log_link_denied() should not directly generate PATH records.
-> > While we're at it, remove the now useless struct path argument.
-> >
-> > See: https://github.com/linux-audit/audit-kernel/issues/21
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  fs/namei.c            |  2 +-
-> >  include/linux/audit.h |  6 ++----
-> >  kernel/audit.c        | 17 ++---------------
-> >  3 files changed, 5 insertions(+), 20 deletions(-)
+On Fri, Mar 09, 2018 at 05:47:18PM +0100, Torsten Duwe wrote:
+> On Thu, 8 Mar 2018 10:26:16 -0600
+> Josh Poimboeuf <jpoimboe@redhat.com> wrote:
 > 
-> I have no objection to the v2 change of removing the link parameter,
-> but this patch can not be merged as-is because the v1 patch has
-> already been merged into audit/next (as stated on the mailing list).
-
-Yes, I self-NACKed that patch.
-
-	https://www.redhat.com/archives/linux-audit/2018-March/msg00070.html
-
-Is it not possible to drop it, or would you have to do a revert to avoid
-a rebase?
-
-> You need to respin this patch against audit/next and redo the
-> subject/description to indicate that you are just removing the unused
-> link parameter in this updated patch.
-
-So the way I had it in my devel tree rather than squashing it...
-
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index 9cc91fb..50d2533 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -1011,7 +1011,7 @@ static int may_linkat(struct path *link)
-> >         if (safe_hardlink_source(inode) || inode_owner_or_capable(inode))
-> >                 return 0;
-> >
-> > -       audit_log_link_denied("linkat", link);
-> > +       audit_log_link_denied("linkat");
-> >         return -EPERM;
-> >  }
-> >
-> > diff --git a/include/linux/audit.h b/include/linux/audit.h
-> > index af410d9..75d5b03 100644
-> > --- a/include/linux/audit.h
-> > +++ b/include/linux/audit.h
-> > @@ -146,8 +146,7 @@ extern void             audit_log_d_path(struct audit_buffer *ab,
-> >                                              const struct path *path);
-> >  extern void                audit_log_key(struct audit_buffer *ab,
-> >                                           char *key);
-> > -extern void                audit_log_link_denied(const char *operation,
-> > -                                                 const struct path *link);
-> > +extern void                audit_log_link_denied(const char *operation);
-> >  extern void                audit_log_lost(const char *message);
-> >
-> >  extern int audit_log_task_context(struct audit_buffer *ab);
-> > @@ -194,8 +193,7 @@ static inline void audit_log_d_path(struct audit_buffer *ab,
-> >  { }
-> >  static inline void audit_log_key(struct audit_buffer *ab, char *key)
-> >  { }
-> > -static inline void audit_log_link_denied(const char *string,
-> > -                                        const struct path *link)
-> > +static inline void audit_log_link_denied(const char *string)
-> >  { }
-> >  static inline int audit_log_task_context(struct audit_buffer *ab)
-> >  {
-> > diff --git a/kernel/audit.c b/kernel/audit.c
-> > index 7026d69..e54deaf 100644
-> > --- a/kernel/audit.c
-> > +++ b/kernel/audit.c
-> > @@ -2301,36 +2301,23 @@ void audit_log_task_info(struct audit_buffer *ab, struct task_struct *tsk)
-> >  /**
-> >   * audit_log_link_denied - report a link restriction denial
-> >   * @operation: specific link operation
-> > - * @link: the path that triggered the restriction
-> >   */
-> > -void audit_log_link_denied(const char *operation, const struct path *link)
-> > +void audit_log_link_denied(const char *operation)
-> >  {
-> >         struct audit_buffer *ab;
-> > -       struct audit_names *name;
-> >
-> >         if (!audit_enabled || audit_dummy_context())
-> >                 return;
-> >
-> > -       name = kzalloc(sizeof(*name), GFP_NOFS);
-> > -       if (!name)
-> > -               return;
-> > -
-> >         /* Generate AUDIT_ANOM_LINK with subject, operation, outcome. */
-> >         ab = audit_log_start(current->audit_context, GFP_KERNEL,
-> >                              AUDIT_ANOM_LINK);
-> >         if (!ab)
-> > -               goto out;
-> > +               return;
-> >         audit_log_format(ab, "op=%s", operation);
-> >         audit_log_task_info(ab, current);
-> >         audit_log_format(ab, " res=0");
-> >         audit_log_end(ab);
-> > -
-> > -       /* Generate AUDIT_PATH record with object. */
-> > -       name->type = AUDIT_TYPE_NORMAL;
-> > -       audit_copy_inode(name, link->dentry, d_backing_inode(link->dentry));
-> > -       audit_log_name(current->audit_context, name, link, 0, NULL);
-> > -out:
-> > -       kfree(name);
-> >  }
-> >
-> >  /**
-> > --
-> > 1.8.3.1
-> >
+> > This doesn't seem to address some of my previous concerns:
 > 
+> You're right. That discussion quickly headed towards objtool
+> and I forgot about this one paragraph with the remarks.
 > 
+> > - Bailing on interrupt/exception frames
 > 
-> -- 
-> paul moore
-> www.paul-moore.com
-> 
-> --
-> Linux-audit mailing list
-> Linux-audit@redhat.com
-> https://www.redhat.com/mailman/listinfo/linux-audit
+> That is a good question. My current code keeps unwinding as long
+> as the trace looks sane. If the exception frame has a valid code
+> pointer in the LR slot it will continue. Couldn't there be cases
+> where this is desirable?
 
-- RGB
+I thought we established in the previous discussion that this could
+cause some functions to get skipped in the stack trace:
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+  https://lkml.kernel.org/r/20171219214652.u7qeb7fxov62ttke@treble
+
+> Should this be configurable? Not that
+> I have an idea how this situation could occur for a thread
+> that is current or sleeping...
+
+Page faults and preemption.
+
+> Michael, Balbir: is that possible? Any Idea how to reliably detect
+> an exception frame? My approach would be to look at the next return
+> address and compare it to the usual suspects (i.e. collect all 
+> "b ret" addresses in the EXCEPTION_COMMON macro, for BookS).
+
+It looks like show_stack() already knows how to do this:
+
+		/*
+		 * See if this is an exception frame.
+		 * We look for the "regshere" marker in the current frame.
+		 */
+		if (validate_sp(sp, tsk, STACK_INT_FRAME_SIZE)
+		    && stack[STACK_FRAME_MARKER] == STACK_FRAME_REGS_MARKER) {
+
+So you could do something similar.
+
+> > - Function graph tracing return address conversion
+> > 
+> > - kretprobes return address conversion
+> 
+> You mean like in arch/x86/kernel/unwind_frame.c the call to
+> ftrace_graph_ret_addr ?
+> 
+> Forgive me my directness but I don't see why these should be handled in
+> arch-dependent code, other than maybe a hook, if inevitable, that calls
+> back into the graph tracer / kretprobes in order to get the proper
+> address,
+
+I don't really follow, where exactly would you propose calling
+ftrace_graph_ret_addr() from?
+
+> or simply call the trace unreliable in case it finds such a
+> return address.
+
+If you're going to make livepatch incompatible with function graph
+tracing, there needs to be a good justification for it (and we'd need to
+make sure existing users are fine with it).
+
+-- 
+Josh
