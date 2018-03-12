@@ -1,63 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933158AbeCLDht (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 23:37:49 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:34778 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932756AbeCLDhs (ORCPT
+        id S933401AbeCLDif (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 23:38:35 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:32908 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933219AbeCLDi3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 23:37:48 -0400
-X-Google-Smtp-Source: AG47ELs8NYQJi7EOSW0NGpWjI+tW3nefLOErNAIjYW0nUFkyA5R//u3J+qkhA7Al5anPg7rVO0LGew==
-From: Shunqian Zheng <zhengsq@rock-chips.com>
-To: linux-rockchip@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Shunqian Zheng <zhengsq@rock-chips.com>,
-        Jacob Chen <jacob2.chen@rock-chips.com>
-Subject: [v6-1,15/17] arm64: dts: rockchip: add isp0 node for rk3399
-Date: Mon, 12 Mar 2018 11:37:11 +0800
-Message-Id: <1520825831-24229-1-git-send-email-zhengsq@rock-chips.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <20180308094807.9443-1-jacob-chen@iotwrt.com>
-References: <20180308094807.9443-1-jacob-chen@iotwrt.com>
+        Sun, 11 Mar 2018 23:38:29 -0400
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <42417d5ef8cb0ecf0c333e5ebafd60de1e08cb08.1520825708.git.fthain@telegraphics.com.au>
+In-Reply-To: <cover.1520825708.git.fthain@telegraphics.com.au>
+References: <cover.1520825708.git.fthain@telegraphics.com.au>
+From: Finn Thain <fthain@telegraphics.com.au>
+Subject: [PATCH 3/3] m68k/mac: Remove bogus "FIXME" comment
+Date: Sun, 11 Mar 2018 23:38:28 -0400 (EDT)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rk3399 have two ISP, but we havn't test isp1, so just add isp0 at present.
+This code works fine. The comment is misleading so remove it.
 
-Signed-off-by: Shunqian Zheng <zhengsq@rock-chips.com>
-Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
- arch/arm64/boot/dts/rockchip/rk3399.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/m68k/mac/misc.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-index 2605118..5729786 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-@@ -1614,6 +1614,24 @@
- 		status = "disabled";
- 	};
+diff --git a/arch/m68k/mac/misc.c b/arch/m68k/mac/misc.c
+index e0a5e2dfeb46..6aa77d1af47a 100644
+--- a/arch/m68k/mac/misc.c
++++ b/arch/m68k/mac/misc.c
+@@ -329,10 +329,6 @@ static void via_shutdown(void)
+ 	}
+ }
  
-+	isp0: isp0@ff910000 {
-+		compatible = "rockchip,rk3399-cif-isp";
-+		reg = <0x0 0xff910000 0x0 0x4000>;
-+		interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH 0>;
-+		clocks = <&cru SCLK_ISP0>,
-+			 <&cru ACLK_ISP0>, <&cru ACLK_ISP0_WRAPPER>,
-+			 <&cru HCLK_ISP0>, <&cru HCLK_ISP0_WRAPPER>;
-+		clock-names = "clk_isp",
-+			      "aclk_isp", "aclk_isp_wrap",
-+			      "hclk_isp", "hclk_isp_wrap";
-+		assigned-clocks = <&cru SCLK_ISP0>, <&cru ACLK_ISP0>;
-+		assigned-clock-rates = <500000000>, <400000000>;
-+
-+		power-domains = <&power RK3399_PD_ISP0>;
-+		iommus = <&isp0_mmu>;
-+		status = "disabled";
-+	};
-+
- 	isp0_mmu: iommu@ff914000 {
- 		compatible = "rockchip,iommu";
- 		reg = <0x0 0xff914000 0x0 0x100>, <0x0 0xff915000 0x0 0x100>;
+-/*
+- * FIXME: not sure how this is supposed to work exactly...
+- */
+-
+ static void oss_shutdown(void)
+ {
+ 	oss->rom_ctrl = OSS_POWEROFF;
 -- 
-1.9.1
+2.16.1
