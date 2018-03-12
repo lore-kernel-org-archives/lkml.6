@@ -1,66 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932354AbeCLUPg convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 16:15:36 -0400
-Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:49019 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932171AbeCLUPf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 16:15:35 -0400
-X-ME-Helo: linux.numericable.fr
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 12 Mar 2018 21:15:34 +0100
-X-ME-IP: 77.198.79.136
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: narmstrong@baylibre.com, airlied@linux.ie, carlo@caione.org,
-        khilman@baylibre.com
-Cc: dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 1/3] drm/meson: Fix an un-handled error path in 'meson_drv_bind_master()'
-Date: Mon, 12 Mar 2018 21:15:08 +0100
-Message-Id: <6cbf3d70ac3904489c7194c895225c4103aebb96.1520885192.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.1520885192.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1520885192.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1520885192.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1520885192.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S932505AbeCLUQN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 16:16:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58104 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932440AbeCLUQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 16:16:10 -0400
+From: Waiman Long <longman@redhat.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>, Waiman Long <longman@redhat.com>
+Subject: [PATCH v4 5/6] ipc: Clamp semmni to the real IPCMNI limit
+Date: Mon, 12 Mar 2018 16:15:43 -0400
+Message-Id: <1520885744-1546-6-git-send-email-longman@redhat.com>
+In-Reply-To: <1520885744-1546-1-git-send-email-longman@redhat.com>
+References: <1520885744-1546-1-git-send-email-longman@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'drm_vblank_init()' can fail. So handle this (unlikely) error.
+This patch clamps the semmni value (fourth element of sem_ctls[]
+array) to within the [0, IPCMNI] range and prints a warning message
+once when an out-of-range value is being written.
 
-Fixes: bbbe775ec5b5 ("drm: Add support for Amlogic Meson Graphic Controller")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- drivers/gpu/drm/meson/meson_drv.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ ipc/ipc_sysctl.c | 13 ++++++++++++-
+ ipc/sem.c        | 28 ++++++++++++++++++++++++++++
+ ipc/util.h       |  4 ++++
+ 3 files changed, 44 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
-index f9ad0e960263..02b0886debc0 100644
---- a/drivers/gpu/drm/meson/meson_drv.c
-+++ b/drivers/gpu/drm/meson/meson_drv.c
-@@ -222,7 +222,10 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
+index 1955dd4..49cbc43 100644
+--- a/ipc/ipc_sysctl.c
++++ b/ipc/ipc_sysctl.c
+@@ -88,12 +88,22 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
+ 	return proc_dointvec_minmax(&ipc_table, write, buffer, lenp, ppos);
+ }
  
- 	priv->vsync_irq = platform_get_irq(pdev, 0);
- 
--	drm_vblank_init(drm, 1);
-+	ret = drm_vblank_init(drm, 1);
-+	if (ret)
-+		goto free_drm;
++static int proc_ipc_sem_dointvec(struct ctl_table *table, int write,
++	void __user *buffer, size_t *lenp, loff_t *ppos)
++{
++	int ret = proc_ipc_dointvec(table, write, buffer, lenp, ppos);
 +
- 	drm_mode_config_init(drm);
- 	drm->mode_config.max_width = 3840;
- 	drm->mode_config.max_height = 2160;
++	sem_check_semmni(table, current->nsproxy->ipc_ns);
++	return ret;
++}
++
+ #else
+ #define proc_ipc_doulongvec_minmax NULL
+ #define proc_ipc_dointvec	   NULL
+ #define proc_ipc_dointvec_minmax   NULL
+ #define proc_ipc_dointvec_minmax_orphans   NULL
+ #define proc_ipc_auto_msgmni	   NULL
++#define proc_ipc_sem_dointvec	   NULL
+ #endif
+ 
+ static int zero;
+@@ -177,7 +187,8 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
+ 		.data		= &init_ipc_ns.sem_ctls,
+ 		.maxlen		= 4*sizeof(int),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_ipc_dointvec,
++		.proc_handler	= proc_ipc_sem_dointvec,
++		.flags		= CTL_FLAGS_CLAMP_RANGE,
+ 	},
+ #ifdef CONFIG_CHECKPOINT_RESTORE
+ 	{
+diff --git a/ipc/sem.c b/ipc/sem.c
+index a4af049..2b47bc3 100644
+--- a/ipc/sem.c
++++ b/ipc/sem.c
+@@ -2337,3 +2337,31 @@ static int sysvipc_sem_proc_show(struct seq_file *s, void *it)
+ 	return 0;
+ }
+ #endif
++
++#ifdef CONFIG_PROC_SYSCTL
++/*
++ * Check to see if semmni is out of range and clamp it if necessary.
++ */
++void sem_check_semmni(struct ctl_table *table, struct ipc_namespace *ns)
++{
++	bool clamped = false;
++
++	if (!(table->flags & CTL_FLAGS_CLAMP_RANGE))
++		return;
++
++	/*
++	 * Clamp semmni to the range [0, IPCMNI].
++	 */
++	if (ns->sc_semmni < 0) {
++		ns->sc_semmni = 0;
++		clamped = true;
++	}
++	if (ns->sc_semmni > IPCMNI) {
++		ns->sc_semmni = IPCMNI;
++		clamped = true;
++	}
++	if (clamped)
++		pr_warn_once("sysctl: \"sem[3]\" was set out of range [%d, %d], clamped to %d.\n",
++			     0, IPCMNI, ns->sc_semmni);
++}
++#endif
+diff --git a/ipc/util.h b/ipc/util.h
+index 89b8ec1..af57394 100644
+--- a/ipc/util.h
++++ b/ipc/util.h
+@@ -206,6 +206,10 @@ int ipcget(struct ipc_namespace *ns, struct ipc_ids *ids,
+ void free_ipcs(struct ipc_namespace *ns, struct ipc_ids *ids,
+ 		void (*free)(struct ipc_namespace *, struct kern_ipc_perm *));
+ 
++#ifdef CONFIG_PROC_SYSCTL
++extern void sem_check_semmni(struct ctl_table *table, struct ipc_namespace *ns);
++#endif
++
+ #ifdef CONFIG_COMPAT
+ #include <linux/compat.h>
+ struct compat_ipc_perm {
 -- 
-2.14.1
-
-
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+1.8.3.1
