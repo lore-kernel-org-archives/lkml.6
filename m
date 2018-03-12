@@ -1,210 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751685AbeCLOnt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 10:43:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56764 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751315AbeCLOnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 10:43:47 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECF88204EF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Cc: x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Yang Bo <yangbo@deepin.com>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Laura Abbott <labbott@redhat.com>, Josef Bacik <jbacik@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH -tip v2 5/5] x86: kprobes: Do not disable preempt on int3 path
-Date: Mon, 12 Mar 2018 23:43:23 +0900
-Message-Id: <152086580283.32679.14053977636883583533.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <152086565510.32679.6953754320525763743.stgit@devbox>
-References: <152086565510.32679.6953754320525763743.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        id S932331AbeCLOpJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 10:45:09 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:36401 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751255AbeCLOpH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 10:45:07 -0400
+X-Google-Smtp-Source: AG47ELtJwjPZ4YkkHvhmlO12bT2WlxBIC+Ms2TybBAQ4tY91PbBUuL46UsV0Hr6f/hUgB9rSzYxKsQ==
+Subject: Re: [RFCv4,19/21] media: vim2m: add request support
+To: Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>
+Cc: Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+References: <20180220044425.169493-20-acourbot@chromium.org>
+ <1520440654.1092.15.camel@bootlin.com>
+ <6470b45d-e9dc-0a22-febc-cd18ae1092be@gmail.com>
+ <1520842245.1513.5.camel@bootlin.com>
+ <CAAFQd5A9mSP8Ufe-gn2Epa55M_NNOVaBL_cdWjdZ5PycbTvqbA@mail.gmail.com>
+ <CAPBb6MXYj0SHUWPRuCNewUetmxrePx1NFQfB6tw+BbPHS+Hkmg@mail.gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <c2a2e158-aa02-f16a-400e-6bde5f78cba1@gmail.com>
+Date: Mon, 12 Mar 2018 17:44:54 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAPBb6MXYj0SHUWPRuCNewUetmxrePx1NFQfB6tw+BbPHS+Hkmg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since int3 and debug exception(for singlestep) are run with
-IRQ disabled and while running single stepping we drop IF
-from regs->flags, that path must not be preemptible. So we
-can remove the preempt disable/enable calls from that path.
+On 12.03.2018 15:32, Alexandre Courbot wrote:
+> On Mon, Mar 12, 2018 at 5:15 PM, Tomasz Figa <tfiga@chromium.org> wrote:
+>> Hi Paul, Dmitry,
+>>
+>> On Mon, Mar 12, 2018 at 5:10 PM, Paul Kocialkowski
+>> <paul.kocialkowski@bootlin.com> wrote:
+>>> Hi,
+>>>
+>>> On Sun, 2018-03-11 at 22:42 +0300, Dmitry Osipenko wrote:
+>>>> Hello,
+>>>>
+>>>> On 07.03.2018 19:37, Paul Kocialkowski wrote:
+>>>>> Hi,
+>>>>>
+>>>>> First off, I'd like to take the occasion to say thank-you for your
+>>>>> work.
+>>>>> This is a major piece of plumbing that is required for me to add
+>>>>> support
+>>>>> for the Allwinner CedarX VPU hardware in upstream Linux. Other
+>>>>> drivers,
+>>>>> such as tegra-vde (that was recently merged in staging) are also
+>>>>> badly
+>>>>> in need of this API.
+>>>>
+>>>> Certainly it would be good to have a common UAPI. Yet I haven't got my
+>>>> hands on
+>>>> trying to implement the V4L interface for the tegra-vde driver, but
+>>>> I've taken a
+>>>> look at Cedrus driver and for now I've one question:
+>>>>
+>>>> Would it be possible (or maybe already is) to have a single IOCTL that
+>>>> takes input/output buffers with codec parameters, processes the
+>>>> request(s) and returns to userspace when everything is done? Having 5
+>>>> context switches for a single frame decode (like Cedrus VAAPI driver
+>>>> does) looks like a bit of overhead.
+>>>
+>>> The V4L2 interface exposes ioctls for differents actions and I don't
+>>> think there's a combined ioctl for this. The request API was introduced
+>>> precisely because we need to have consistency between the various ioctls
+>>> needed for each frame. Maybe one single (atomic) ioctl would have worked
+>>> too, but that's apparently not how the V4L2 API was designed.
+>>>
+>>> I don't think there is any particular overhead caused by having n ioctls
+>>> instead of a single one. At least that would be very surprising IMHO.
+>>
+>> Well, there is small syscall overhead, which normally shouldn't be
+>> very painful, although with all the speculative execution hardening,
+>> can't be sure of anything anymore. :)
+>>
+>> Hans and Alex can correct me if I'm wrong, but I believe there is a
+>> more atomic-like API being planned, which would only need one IOCTL to
+>> do everything. However, that would be a more serious change to the
+>> V4L2 interfaces, so should be decoupled from Request API itself.
+> 
+> Indeed, we discussed the possibility to setup and submit requests in
+> one syscall, similarly (at least in spirit) to the DRM atomic API.
+> 
+> This has only been discussed though, and as a feature to consider
+> *after* the request API is merged for codecs (as the more complex
+> camera use-cases would benefit more from it). As Tomasz mentioned, the
+> overhead of ioctls is somehow negligible compared to the workload of
+> the encoding/decoding itself, although I suppose it can still add up.
+> The main advantage I can see for this is a simpler and less
+> error-prone setup of requests for user-space.
 
-Note that, this changes the behavior of execution path override
-which is done by modifying regs->ip in pre_handler().
-Previously it requires reset_current_kprobe(), enable preempt
-and return !0.
-With this change, preempt count is not changed on int3 path, so
-user no need to enable preempt. To fit this behavior, this
-modifies ftrace-based kprobe too. In total, pre_handler() does
-not need to recover preempt count even if it changes regs->ip.
-
->From above reason, this includes 2 kprobes-users which changes
-regs->ip changes. Both depend on CONFIG_FUNCTION_ERROR_INJECTION
-which is currently implemented only on x86. This means it is
-enough to change x86 kprobes implementation just for these
-users.
-
-Of course, since this changes the kprobes behavior when it
-changes execution path, we also have to update kprobes on
-each arch before implementing CONFIG_FUNCTION_ERROR_INJECTION.
-
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Suggested-by: Ingo Molnar <mingo@kernel.org>
----
- Changes in v2:
-  - Include user-side changes.
----
- Documentation/kprobes.txt        |   11 +++++------
- arch/x86/kernel/kprobes/core.c   |   14 +++-----------
- arch/x86/kernel/kprobes/ftrace.c |    5 ++---
- arch/x86/kernel/kprobes/opt.c    |    1 -
- kernel/fail_function.c           |    1 -
- kernel/trace/trace_kprobe.c      |    3 ---
- 6 files changed, 10 insertions(+), 25 deletions(-)
-
-diff --git a/Documentation/kprobes.txt b/Documentation/kprobes.txt
-index 94df43224c6c..679cba3380e4 100644
---- a/Documentation/kprobes.txt
-+++ b/Documentation/kprobes.txt
-@@ -566,12 +566,11 @@ the same handler) may run concurrently on different CPUs.
- Kprobes does not use mutexes or allocate memory except during
- registration and unregistration.
- 
--Probe handlers are run with preemption disabled.  Depending on the
--architecture and optimization state, handlers may also run with
--interrupts disabled (e.g., kretprobe handlers and optimized kprobe
--handlers run without interrupt disabled on x86/x86-64).  In any case,
--your handler should not yield the CPU (e.g., by attempting to acquire
--a semaphore).
-+Probe handlers are run with preemption disabled or interrupt disabled,
-+which depends on the architecture and optimization state.  (e.g.,
-+kretprobe handlers and optimized kprobe handlers run without interrupt
-+disabled on x86/x86-64).  In any case, your handler should not yield
-+the CPU (e.g., by attempting to acquire a semaphore, or waiting I/O).
- 
- Since a return probe is implemented by replacing the return
- address with the trampoline's address, stack backtraces and calls
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index e7adc2fd8a16..985e7eb839e6 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -592,7 +592,6 @@ static void setup_singlestep(struct kprobe *p, struct pt_regs *regs,
- 		 * stepping.
- 		 */
- 		regs->ip = (unsigned long)p->ainsn.insn;
--		preempt_enable_no_resched();
- 		return;
- 	}
- #endif
-@@ -665,12 +664,10 @@ int kprobe_int3_handler(struct pt_regs *regs)
- 
- 	addr = (kprobe_opcode_t *)(regs->ip - sizeof(kprobe_opcode_t));
- 	/*
--	 * We don't want to be preempted for the entire
--	 * duration of kprobe processing. We conditionally
--	 * re-enable preemption at the end of this function,
--	 * and also in reenter_kprobe() and setup_singlestep().
-+	 * We don't want to be preempted for the entire duration of kprobe
-+	 * processing. Since int3 and debug trap disables irqs and we clear
-+	 * IF while singlestepping, it must be no preemptible.
- 	 */
--	preempt_disable();
- 
- 	kcb = get_kprobe_ctlblk();
- 	p = get_kprobe(addr);
-@@ -704,11 +701,9 @@ int kprobe_int3_handler(struct pt_regs *regs)
- 		 * the original instruction.
- 		 */
- 		regs->ip = (unsigned long)addr;
--		preempt_enable_no_resched();
- 		return 1;
- 	} /* else: not a kprobe fault; let the kernel handle it */
- 
--	preempt_enable_no_resched();
- 	return 0;
- }
- NOKPROBE_SYMBOL(kprobe_int3_handler);
-@@ -959,8 +954,6 @@ int kprobe_debug_handler(struct pt_regs *regs)
- 	}
- 	reset_current_kprobe();
- out:
--	preempt_enable_no_resched();
--
- 	/*
- 	 * if somebody else is singlestepping across a probe point, flags
- 	 * will have TF set, in which case, continue the remaining processing
-@@ -1007,7 +1000,6 @@ int kprobe_fault_handler(struct pt_regs *regs, int trapnr)
- 			restore_previous_kprobe(kcb);
- 		else
- 			reset_current_kprobe();
--		preempt_enable_no_resched();
- 	} else if (kcb->kprobe_status == KPROBE_HIT_ACTIVE ||
- 		   kcb->kprobe_status == KPROBE_HIT_SSDONE) {
- 		/*
-diff --git a/arch/x86/kernel/kprobes/ftrace.c b/arch/x86/kernel/kprobes/ftrace.c
-index c8696f2a583f..f1ac65d6b352 100644
---- a/arch/x86/kernel/kprobes/ftrace.c
-+++ b/arch/x86/kernel/kprobes/ftrace.c
-@@ -67,10 +67,9 @@ void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
- 		preempt_disable();
- 		__this_cpu_write(current_kprobe, p);
- 		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
--		if (!p->pre_handler || !p->pre_handler(p, regs)) {
-+		if (!p->pre_handler || !p->pre_handler(p, regs))
- 			skip_singlestep(p, regs, kcb, orig_ip);
--			preempt_enable_no_resched();
--		}
-+		preempt_enable_no_resched();
- 		/*
- 		 * If pre_handler returns !0, it sets regs->ip and
- 		 * resets current kprobe, and keep preempt count +1.
-diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
-index 203d398802a3..eaf02f2e7300 100644
---- a/arch/x86/kernel/kprobes/opt.c
-+++ b/arch/x86/kernel/kprobes/opt.c
-@@ -491,7 +491,6 @@ int setup_detour_execution(struct kprobe *p, struct pt_regs *regs, int reenter)
- 		regs->ip = (unsigned long)op->optinsn.insn + TMPL_END_IDX;
- 		if (!reenter)
- 			reset_current_kprobe();
--		preempt_enable_no_resched();
- 		return 1;
- 	}
- 	return 0;
-diff --git a/kernel/fail_function.c b/kernel/fail_function.c
-index 21b0122cb39c..b1713521f096 100644
---- a/kernel/fail_function.c
-+++ b/kernel/fail_function.c
-@@ -176,7 +176,6 @@ static int fei_kprobe_handler(struct kprobe *kp, struct pt_regs *regs)
- 		override_function_with_return(regs);
- 		/* Kprobe specific fixup */
- 		reset_current_kprobe();
--		preempt_enable_no_resched();
- 		return 1;
- 	}
- 
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 5ce9b8cf7be3..6c894e2be8d6 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -1221,12 +1221,9 @@ kprobe_perf_func(struct trace_kprobe *tk, struct pt_regs *regs)
- 		 * We need to check and see if we modified the pc of the
- 		 * pt_regs, and if so clear the kprobe and return 1 so that we
- 		 * don't do the single stepping.
--		 * The ftrace kprobe handler leaves it up to us to re-enable
--		 * preemption here before returning if we've modified the ip.
- 		 */
- 		if (orig_ip != instruction_pointer(regs)) {
- 			reset_current_kprobe();
--			preempt_enable_no_resched();
- 			return 1;
- 		}
- 		if (!ret)
+Indeed, atomic API should be nicer from a userspace perspective and a bit more
+optimal for at least some of workloads. Would be good to have it.
