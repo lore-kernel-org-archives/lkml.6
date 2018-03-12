@@ -1,82 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932252AbeCLWwS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 18:52:18 -0400
-Received: from gateway33.websitewelcome.com ([192.185.145.87]:38409 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751312AbeCLWwR (ORCPT
+        id S1751564AbeCLWwk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 18:52:40 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:39299 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751495AbeCLWwi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 18:52:17 -0400
-Subject: Re: [PATCH] EDAC, sb_edac: Remove VLA usage
-To: Borislav Petkov <bp@alien8.de>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180309235654.GA9887@embeddedor.com>
- <20180310140434.GC8261@pd.tnic>
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Message-ID: <f875ba4f-65d0-0f13-850d-f323306b8e13@embeddedor.com>
-Date: Mon, 12 Mar 2018 17:52:13 -0500
+        Mon, 12 Mar 2018 18:52:38 -0400
+X-Google-Smtp-Source: AG47ELvyP+aixKlXMP96xEMD/y9J4dgYUuJzt3jzgRmZo2BQfgtbCkjkNGybuglk1m9skucONQxFEg==
+Subject: Re: [PATCH] ARM: BCM5301X: Fix NAND ECC parameters for Linksys
+ Panamera
+To: Vivek Unune <npcomplete13@gmail.com>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, Jon Mason <jonmason@broadcom.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180310171244.70299-1-npcomplete13@gmail.com>
+ <CACna6rz1TeRbPq-60HkHz9A0TDn+iXtmXniE6FCiANpUmV-qrw@mail.gmail.com>
+ <20180311100313.znonhesgh462rz65@osboxes>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <2ef6e4fc-cce7-372e-e35f-578fd6ada9ca@gmail.com>
+Date: Mon, 12 Mar 2018 15:52:27 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180310140434.GC8261@pd.tnic>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180311100313.znonhesgh462rz65@osboxes>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.117.58
-X-Source-L: No
-X-Exim-ID: 1evWIi-003gZn-0z
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.66]) [189.175.117.58]:39198
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Borislav,
-
-On 03/10/2018 08:04 AM, Borislav Petkov wrote:
-> On Fri, Mar 09, 2018 at 09:02:18PM -0600, Gustavo A. R. Silva wrote:
->> In preparation to enabling -Wvla, remove VLA and replace it
->> with a fixed-length array instead.
+On 03/11/2018 03:03 AM, Vivek Unune wrote:
+> Hi Rafał,
+> 
+> On Sat, Mar 10, 2018 at 10:41:04PM +0100, Rafał Miłecki wrote:
+>> On 10 March 2018 at 18:12, Vivek Unune <npcomplete13@gmail.com> wrote:
+>>> Using BCH8 gives ecc errors and makes the router unsuable.
+>>> Switching to BCH1 fixes these errors.
 >>
->> Fixed as part of the directive to remove all VLAs from
->> the kernel: https://lkml.org/lkml/2018/3/7/621
->>
->> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
->> ---
->>
->> Notice that due to this change, the field max_interleave is no longer
->> used after it has been initialized. Maybe it should be removed?
+>> Can you provide CFE's log messages starting with
+>> "Decompressing...done" and up to the "Press Ctrl+C to stop in CFE"
+>> please? I'd like to see what NAND info CFE prints there.
 > 
-> Yes.
+> See below. It does say BCH-8, however I can't get it to work.
 > 
-
-I'll remove it then.
-
->> @@ -110,6 +110,7 @@ static const u32 knl_interleave_list[] = {
->>   	0xdc, 0xe4, 0xec, 0xf4, 0xfc, /* 15-19 */
->>   	0x104, 0x10c, 0x114, 0x11c,   /* 20-23 */
->>   };
->> +#define MAX_INTERLEAVE	ARRAY_SIZE(knl_interleave_list)
+> CFE log:
 > 
-> define that as the max of all interleave lists array sizes so that
-> people can update it properly when new interleave lists get added.
+> Decompressing...done
+> Found a Toshiba NAND flash:
+> Total size:  128MB
+> Block size:  128KB
+> Page Size:   2048B
+> OOB Size:    64B
+> Sector size: 512B
+> Spare size:  16B
+> ECC level:   8 (8-bit)
+> Device ID: 0x98 0xf1 0x80 0x15 0xf2 0x16
+> find_devinfo: devinfo block found at 0x00180000!
 > 
+> Press Ctrl+C to stop in CFE
 
-Do you mean just adding a code comment?
-
-Thanks for the feedback.
---
-Gustavo
+What kind of error are you getting in Linux with BCH-8?
+-- 
+-- 
+Florian
