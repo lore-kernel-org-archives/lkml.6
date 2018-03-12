@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932316AbeCLNPt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 09:15:49 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42018 "EHLO
+        id S1751564AbeCLNPf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 09:15:35 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41770 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932222AbeCLNPp (ORCPT
+        with ESMTP id S1751345AbeCLNPc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 09:15:45 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 43F4E60849
+        Mon, 12 Mar 2018 09:15:32 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 191E060807
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
 From: Abhishek Sahu <absahu@codeaurora.org>
@@ -17,106 +17,191 @@ Cc: David Brown <david.brown@linaro.org>,
         Austin Christ <austinwc@codeaurora.org>, linux-arm-msm@vger.kernel.org,
         linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
         linux-kernel@vger.kernel.org, Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v2 07/13] i2c: qup: proper error handling for i2c error in BAM mode
-Date: Mon, 12 Mar 2018 18:44:56 +0530
-Message-Id: <1520860502-14886-8-git-send-email-absahu@codeaurora.org>
+Subject: [PATCH v2 04/13] i2c: qup: remove redundant variables for BAM SG count
+Date: Mon, 12 Mar 2018 18:44:53 +0530
+Message-Id: <1520860502-14886-5-git-send-email-absahu@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520860502-14886-1-git-send-email-absahu@codeaurora.org>
 References: <1520860502-14886-1-git-send-email-absahu@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the i2c error handling in BAM mode is not working
-properly in stress condition.
-
-1. After an error, the FIFO are being written with FLUSH and
-   EOT tags which should not be required since already these tags
-   have been written in BAM descriptor itself.
-
-2. QUP state is being moved to RESET in IRQ handler in case
-   of error. When QUP HW encounters an error in BAM mode then it
-   moves the QUP STATE to PAUSE state. In this case, I2C_FLUSH
-   command needs to be executed while moving to RUN_STATE by writing
-   to the QUP_STATE register with the I2C_FLUSH bit set to 1.
-
-3. In Error case, sometimes, QUP generates more than one
-   interrupt which will trigger the complete again. After an error,
-   the flush operation will be scheduled after doing
-   reinit_completion which should be triggered by BAM IRQ callback.
-   If the second QUP IRQ comes during this time then it will call
-   the complete and the transfer function will assume the all the
-   BAM HW descriptors have been completed.
-
-4. The release DMA is being called after each error which
-   will free the DMA tx and rx channels. The error like NACK is very
-   common in I2C transfer and every time this will be overhead. Now,
-   since the error handling is proper so this release channel can be
-   completely avoided.
+The rx_nents and tx_nents are redundant. rx_buf and tx_buf can
+be used for total number of SG entries. Since rx_buf and tx_buf
+give the impression that it is buffer instead of count so rename
+it to tx_cnt and rx_cnt for giving it more meaningful variable
+name.
 
 Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Reviewed-by: Sricharan R <sricharan@codeaurora.org>
 Reviewed-by: Austin Christ <austinwc@codeaurora.org>
+Reviewed-by: Andy Gross <andy.gross@linaro.org>
 ---
 
-* Changes from v1: None
+* Changes from v1:
 
- drivers/i2c/busses/i2c-qup.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+1. Changed rx_buf/tx_buf to tx_cnt/rx_cnt
+2. Modified commit message for the same
+
+ drivers/i2c/busses/i2c-qup.c | 42 ++++++++++++++++++------------------------
+ 1 file changed, 18 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
-index 73a2880..d16361d 100644
+index f6ea074..d970458 100644
 --- a/drivers/i2c/busses/i2c-qup.c
 +++ b/drivers/i2c/busses/i2c-qup.c
-@@ -219,9 +219,24 @@ static irqreturn_t qup_i2c_interrupt(int irq, void *dev)
- 	if (bus_err)
- 		writel(bus_err, qup->base + QUP_I2C_STATUS);
+@@ -683,8 +683,8 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
+ 	struct dma_async_tx_descriptor *txd, *rxd = NULL;
+ 	int ret = 0, idx = 0, limit = QUP_READ_LIMIT;
+ 	dma_cookie_t cookie_rx, cookie_tx;
+-	u32 rx_nents = 0, tx_nents = 0, len, blocks, rem;
+-	u32 i, tlen, tx_len, tx_buf = 0, rx_buf = 0, off = 0;
++	u32 len, blocks, rem;
++	u32 i, tlen, tx_len, tx_cnt = 0, rx_cnt = 0, off = 0;
+ 	u8 *tags;
  
-+	/*
-+	 * Check for BAM mode and returns if already error has come for current
-+	 * transfer. In Error case, sometimes, QUP generates more than one
-+	 * interrupt.
-+	 */
-+	if (qup->use_dma && (qup->qup_err || qup->bus_err))
-+		return IRQ_HANDLED;
-+
- 	/* Reset the QUP State in case of error */
- 	if (qup_err || bus_err) {
--		writel(QUP_RESET_STATE, qup->base + QUP_STATE);
-+		/*
-+		 * Don’t reset the QUP state in case of BAM mode. The BAM
-+		 * flush operation needs to be scheduled in transfer function
-+		 * which will clear the remaining schedule descriptors in BAM
-+		 * HW FIFO and generates the BAM interrupt.
-+		 */
-+		if (!qup->use_dma)
-+			writel(QUP_RESET_STATE, qup->base + QUP_STATE);
- 		goto done;
+ 	while (idx < num) {
+@@ -698,9 +698,6 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
+ 		rem = msg->len - (blocks - 1) * limit;
+ 
+ 		if (msg->flags & I2C_M_RD) {
+-			rx_nents += (blocks * 2) + 1;
+-			tx_nents += 1;
+-
+ 			while (qup->blk.pos < blocks) {
+ 				tlen = (i == (blocks - 1)) ? rem : limit;
+ 				tags = &qup->start_tag.start[off + len];
+@@ -708,14 +705,14 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
+ 				qup->blk.data_len -= tlen;
+ 
+ 				/* scratch buf to read the start and len tags */
+-				ret = qup_sg_set_buf(&qup->brx.sg[rx_buf++],
++				ret = qup_sg_set_buf(&qup->brx.sg[rx_cnt++],
+ 						     &qup->brx.tag.start[0],
+ 						     2, qup, DMA_FROM_DEVICE);
+ 
+ 				if (ret)
+ 					return ret;
+ 
+-				ret = qup_sg_set_buf(&qup->brx.sg[rx_buf++],
++				ret = qup_sg_set_buf(&qup->brx.sg[rx_cnt++],
+ 						     &msg->buf[limit * i],
+ 						     tlen, qup,
+ 						     DMA_FROM_DEVICE);
+@@ -725,7 +722,7 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
+ 				i++;
+ 				qup->blk.pos = i;
+ 			}
+-			ret = qup_sg_set_buf(&qup->btx.sg[tx_buf++],
++			ret = qup_sg_set_buf(&qup->btx.sg[tx_cnt++],
+ 					     &qup->start_tag.start[off],
+ 					     len, qup, DMA_TO_DEVICE);
+ 			if (ret)
+@@ -733,28 +730,26 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
+ 
+ 			off += len;
+ 			/* scratch buf to read the BAM EOT and FLUSH tags */
+-			ret = qup_sg_set_buf(&qup->brx.sg[rx_buf++],
++			ret = qup_sg_set_buf(&qup->brx.sg[rx_cnt++],
+ 					     &qup->brx.tag.start[0],
+ 					     2, qup, DMA_FROM_DEVICE);
+ 			if (ret)
+ 				return ret;
+ 		} else {
+-			tx_nents += (blocks * 2);
+-
+ 			while (qup->blk.pos < blocks) {
+ 				tlen = (i == (blocks - 1)) ? rem : limit;
+ 				tags = &qup->start_tag.start[off + tx_len];
+ 				len = qup_i2c_set_tags(tags, qup, msg, 1);
+ 				qup->blk.data_len -= tlen;
+ 
+-				ret = qup_sg_set_buf(&qup->btx.sg[tx_buf++],
++				ret = qup_sg_set_buf(&qup->btx.sg[tx_cnt++],
+ 						     tags, len,
+ 						     qup, DMA_TO_DEVICE);
+ 				if (ret)
+ 					return ret;
+ 
+ 				tx_len += len;
+-				ret = qup_sg_set_buf(&qup->btx.sg[tx_buf++],
++				ret = qup_sg_set_buf(&qup->btx.sg[tx_cnt++],
+ 						     &msg->buf[limit * i],
+ 						     tlen, qup, DMA_TO_DEVICE);
+ 				if (ret)
+@@ -766,26 +761,25 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
+ 
+ 			if (idx == (num - 1)) {
+ 				len = 1;
+-				if (rx_nents) {
++				if (rx_cnt) {
+ 					qup->btx.tag.start[0] =
+ 							QUP_BAM_INPUT_EOT;
+ 					len++;
+ 				}
+ 				qup->btx.tag.start[len - 1] =
+ 							QUP_BAM_FLUSH_STOP;
+-				ret = qup_sg_set_buf(&qup->btx.sg[tx_buf++],
++				ret = qup_sg_set_buf(&qup->btx.sg[tx_cnt++],
+ 						     &qup->btx.tag.start[0],
+ 						     len, qup, DMA_TO_DEVICE);
+ 				if (ret)
+ 					return ret;
+-				tx_nents += 1;
+ 			}
+ 		}
+ 		idx++;
+ 		msg++;
  	}
  
-@@ -847,20 +862,12 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
+-	txd = dmaengine_prep_slave_sg(qup->btx.dma, qup->btx.sg, tx_nents,
++	txd = dmaengine_prep_slave_sg(qup->btx.dma, qup->btx.sg, tx_cnt,
+ 				      DMA_MEM_TO_DEV,
+ 				      DMA_PREP_INTERRUPT | DMA_PREP_FENCE);
+ 	if (!txd) {
+@@ -794,7 +788,7 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
+ 		goto desc_err;
+ 	}
+ 
+-	if (!rx_nents) {
++	if (!rx_cnt) {
+ 		txd->callback = qup_i2c_bam_cb;
+ 		txd->callback_param = qup;
+ 	}
+@@ -807,9 +801,9 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
+ 
+ 	dma_async_issue_pending(qup->btx.dma);
+ 
+-	if (rx_nents) {
++	if (rx_cnt) {
+ 		rxd = dmaengine_prep_slave_sg(qup->brx.dma, qup->brx.sg,
+-					      rx_nents, DMA_DEV_TO_MEM,
++					      rx_cnt, DMA_DEV_TO_MEM,
+ 					      DMA_PREP_INTERRUPT);
+ 		if (!rxd) {
+ 			dev_err(qup->dev, "failed to get rx desc\n");
+@@ -844,7 +838,7 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
  			goto desc_err;
  		}
  
--		if (rx_cnt)
--			writel(QUP_BAM_INPUT_EOT,
--			       qup->base + QUP_OUT_FIFO_BASE);
--
--		writel(QUP_BAM_FLUSH_STOP, qup->base + QUP_OUT_FIFO_BASE);
--
- 		qup_i2c_flush(qup);
+-		if (rx_nents)
++		if (rx_cnt)
+ 			writel(QUP_BAM_INPUT_EOT,
+ 			       qup->base + QUP_OUT_FIFO_BASE);
  
- 		/* wait for remaining interrupts to occur */
- 		if (!wait_for_completion_timeout(&qup->xfer, HZ))
- 			dev_err(qup->dev, "flush timed out\n");
- 
--		qup_i2c_rel_dma(qup);
--
- 		ret =  (qup->bus_err & QUP_I2C_NACK_FLAG) ? -ENXIO : -EIO;
+@@ -862,10 +856,10 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
  	}
  
+ desc_err:
+-	dma_unmap_sg(qup->dev, qup->btx.sg, tx_nents, DMA_TO_DEVICE);
++	dma_unmap_sg(qup->dev, qup->btx.sg, tx_cnt, DMA_TO_DEVICE);
+ 
+-	if (rx_nents)
+-		dma_unmap_sg(qup->dev, qup->brx.sg, rx_nents,
++	if (rx_cnt)
++		dma_unmap_sg(qup->dev, qup->brx.sg, rx_cnt,
+ 			     DMA_FROM_DEVICE);
+ 
+ 	return ret;
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
