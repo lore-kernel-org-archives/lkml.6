@@ -1,99 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932316AbeCLTGY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 15:06:24 -0400
-Received: from v2201708193052815.ultrasrv.de ([46.38.233.140]:56925 "EHLO
-        lallafa.objecthunter.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751473AbeCLTGX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 15:06:23 -0400
-From: Frank Asseg <frank.asseg@objecthunter.net>
-Subject: [PATCH] tools/thermal: tmon: fix for segfault
-To: trivial@kernel.org
-Cc: linux-kernel@vger.kernel.org
-Message-ID: <0ef0f303-de13-326c-efa4-82fa40847099@objecthunter.net>
-Date: Mon, 12 Mar 2018 19:57:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932359AbeCLTG2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 15:06:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33338 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932325AbeCLTGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 15:06:25 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF32F21707
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Mon, 12 Mar 2018 16:06:22 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Daniel Borkmann <daniel@iogearbox.net>, Wangnan <wangnan0@huawei.com>
+Subject: Re: [PATCH 11/13] perf bpf: Add helper header files
+Message-ID: <20180312190622.GB10004@kernel.org>
+References: <20180312094313.18738-1-jolsa@kernel.org>
+ <20180312094313.18738-12-jolsa@kernel.org>
+ <20180312184455.bs2rk6qr3qrz7vmy@ast-mbp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180312184455.bs2rk6qr3qrz7vmy@ast-mbp>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes a segfault occurring when e.g. <TAB> is pressed multiple times in
-the ncurses tmon application. The segfault is caused by incrementing
-cur_thermal_record in the main function without checking if it's value
-reached NR_THERMAL_RECORD immediately. Since the boundary check only
-occurred in update_thermal_data a race condition existed, which lead to
-an attempted read beyond the last element of the trec array.
-The fix was implemented by moving the cur_thermal_record incrementation
-to the update_thermal_data function using a temporary variable
-on which the boundary condition is checked before updating
-cur_thread_record, so that the variable is never incremented beyond the
-trec array's boundary.
-It seems the segfault does not occur on every machine: On a HP EliteBook
-G4 the segfault happens, while it does not happen on a Thinkpad T540p.
+Em Mon, Mar 12, 2018 at 11:44:57AM -0700, Alexei Starovoitov escreveu:
+> On Mon, Mar 12, 2018 at 10:43:11AM +0100, Jiri Olsa wrote:
+> > diff --git a/tools/perf/util/bpf-userapi.h b/tools/perf/util/bpf-userapi.h
+> > new file mode 100644
+> > index 000000000000..63f2b4c13a5c
+> > --- /dev/null
+> > +++ b/tools/perf/util/bpf-userapi.h
+> > @@ -0,0 +1,11 @@
+> > +#ifndef __BPF_USERAPI_H
+> > +#define __BPF_USERAPI_H
+> > +
+> > +enum {
+> > +	BPF_FUNC_USER_START			= 10000,
+> > +	BPF_FUNC_USER_print			= BPF_FUNC_USER_START,
+> > +	BPF_FUNC_USER_bpf_map_get_next_key,
+> > +	BPF_FUNC_USER_bpf_map_lookup_elem,
+> > +};
+> > +
+> > +#endif /* __BPF_USERFUNCS_H */
+> > diff --git a/tools/perf/util/bpf-userfuncs.h b/tools/perf/util/bpf-userfuncs.h
+> > new file mode 100644
+> > index 000000000000..e920420237ee
+> > --- /dev/null
+> > +++ b/tools/perf/util/bpf-userfuncs.h
+> > @@ -0,0 +1,19 @@
+> > +#ifndef __BPF_USERFUNCS_H
+> > +#define __BPF_USERFUNCS_H
+> > +
+> > +#include <bpf-userapi.h>
+> > +
+> > +static int (*bpfu_print)(const char *fmt, ...) =
+> > +	(void *) BPF_FUNC_USER_print;
+> > +static int (*bpfu_map_get_next_key)(void *map, void *key, void *value) =
+> > +	(void *) BPF_FUNC_USER_bpf_map_get_next_key;
+> > +static int (*bpfu_map_lookup_elem)(void *map, void *key, void *value) =
+> > +	(void *) BPF_FUNC_USER_bpf_map_lookup_elem;
+> > +
+> > +#define print(fmt, ...)                                  \
+> > +({                                                       \
+> > +	char ____fmt[] = fmt;                            \
+> > +	bpfu_print(____fmt, ##__VA_ARGS__);              \
+> > +})
+> 
+> since there is no verifier for this user space bpf interpreter
+> there is no need to restrict what BEGIN/END progs can do and can call.
+> llvm will happily compile any C code into bpf instructions.
+> With little bit of elf magic it's possible to let it call any libc
+> function instead of only 3 above.
+> perf loader will see bpf_call into normal printf, memcpy, memcmp, etc
+> then during the loading need to associate symbol with actual address
+> of these functions inside perf binary and let call_cb do the call.
+> I think this way begin/end will be much more powerful and useful.
+> Potentially allowing some of the bcc scripts to be written this way.
 
-Signed-off-by: Frank Asseg <frank.asseg@objecthunter.net>
----
- tools/thermal/tmon/sysfs.c | 12 +++++++-----
- tools/thermal/tmon/tmon.c  |  1 -
- 2 files changed, 7 insertions(+), 6 deletions(-)
+Yeah, what is in perf right now, i.e. symbol resolution, rbtree, etc
+provides a really nice lib for use in these scripts.
 
-diff --git a/tools/thermal/tmon/sysfs.c b/tools/thermal/tmon/sysfs.c
-index 1c12536f2081..18f523557983 100644
---- a/tools/thermal/tmon/sysfs.c
-+++ b/tools/thermal/tmon/sysfs.c
-@@ -486,6 +486,7 @@ int zone_instance_to_index(int zone_inst)
- int update_thermal_data()
- {
- 	int i;
-+	int next_thermal_record = cur_thermal_record + 1;
- 	char tz_name[256];
- 	static unsigned long samples;
-
-@@ -495,9 +496,9 @@ int update_thermal_data()
- 	}
-
- 	/* circular buffer for keeping historic data */
--	if (cur_thermal_record >= NR_THERMAL_RECORDS)
--		cur_thermal_record = 0;
--	gettimeofday(&trec[cur_thermal_record].tv, NULL);
-+	if (next_thermal_record >= NR_THERMAL_RECORDS)
-+		next_thermal_record = 0;
-+	gettimeofday(&trec[next_thermal_record].tv, NULL);
- 	if (tmon_log) {
- 		fprintf(tmon_log, "%lu ", ++samples);
- 		fprintf(tmon_log, "%3.1f ", p_param.t_target);
-@@ -507,11 +508,12 @@ int update_thermal_data()
- 		snprintf(tz_name, 256, "%s/%s%d", THERMAL_SYSFS, TZONE,
- 			ptdata.tzi[i].instance);
- 		sysfs_get_ulong(tz_name, "temp",
--				&trec[cur_thermal_record].temp[i]);
-+				&trec[next_thermal_record].temp[i]);
- 		if (tmon_log)
- 			fprintf(tmon_log, "%lu ",
--				trec[cur_thermal_record].temp[i]/1000);
-+				trec[next_thermal_record].temp[i] / 1000);
- 	}
-+	cur_thermal_record = next_thermal_record;
- 	for (i = 0; i < ptdata.nr_cooling_dev; i++) {
- 		char cdev_name[256];
- 		unsigned long val;
-diff --git a/tools/thermal/tmon/tmon.c b/tools/thermal/tmon/tmon.c
-index 9aa19652e8e8..b43138f8b862 100644
---- a/tools/thermal/tmon/tmon.c
-+++ b/tools/thermal/tmon/tmon.c
-@@ -336,7 +336,6 @@ int main(int argc, char **argv)
- 			show_data_w();
- 			show_cooling_device();
- 		}
--		cur_thermal_record++;
- 		time_elapsed += ticktime;
- 		controller_handler(trec[0].temp[target_tz_index] / 1000,
- 				&yk);
--- 
-2.16.2
+- Arnaldo
