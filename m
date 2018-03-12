@@ -1,83 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751450AbeCLJC0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 05:02:26 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33984 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751248AbeCLJCY (ORCPT
+        id S1751344AbeCLJEt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 05:04:49 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:9349 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751248AbeCLJEr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:02:24 -0400
-X-Google-Smtp-Source: AG47ELv9HDBEUuOWtH7az3la5Zcm78cDWv3Q7UX9c5f9VCrGKIppwbVq6OMYOCGh7H9GJPm5TOLk6w==
-Date: Mon, 12 Mar 2018 10:02:20 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>
-Cc: linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Sai Praneeth <sai.praneeth.prakhya@intel.com>,
-        linux-kernel@vger.kernel.org, "Lee, Chun-Yi" <jlee@suse.com>,
-        Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>
-Subject: Re: [PATCH 2/5] x86/efi: Replace efi_pgd with efi_mm.pgd
-Message-ID: <20180312090220.lmohpvj62v7l2qsc@gmail.com>
-References: <20180312084500.10764-1-ard.biesheuvel@linaro.org>
- <20180312084500.10764-3-ard.biesheuvel@linaro.org>
+        Mon, 12 Mar 2018 05:04:47 -0400
+From: <patrice.chotard@st.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Patrice Chotard <patrice.chotard@st.com>
+Subject: [RESEND PATCH] clk: stm32: Add clk entry for SDMMC2 on stm32F769
+Date: Mon, 12 Mar 2018 10:04:07 +0100
+Message-ID: <1520845447-10279-1-git-send-email-patrice.chotard@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180312084500.10764-3-ard.biesheuvel@linaro.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG4NODE3.st.com (10.75.127.12) To SFHDAG6NODE3.st.com
+ (10.75.127.18)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-12_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Patrice Chotard <patrice.chotard@st.com>
 
-* Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+STM32F769 has 2 SDMMC port, add clock entry for the second one.
 
-> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
-> 
-> Since the previous patch added support for efi_mm, let's handle efi_pgd
-> through efi_mm and remove global variable efi_pgd.
-> 
-> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-> Cc: "Lee, Chun-Yi" <jlee@suse.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Michael S. Tsirkin <mst@redhat.com>
-> Cc: Bhupesh Sharma <bhsharma@redhat.com>
-> Cc: Ricardo Neri <ricardo.neri@intel.com>
-> Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-> Tested-by: Bhupesh Sharma <bhsharma@redhat.com>
-> Reviewed-by: Matt Fleming <matt@codeblueprint.co.uk>
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> ---
->  arch/x86/platform/efi/efi_64.c | 17 ++++++++---------
->  1 file changed, 8 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/x86/platform/efi/efi_64.c b/arch/x86/platform/efi/efi_64.c
-> index 0045efe9947b..8881e601c32d 100644
-> --- a/arch/x86/platform/efi/efi_64.c
-> +++ b/arch/x86/platform/efi/efi_64.c
-> @@ -190,8 +190,6 @@ void __init efi_call_phys_epilog(pgd_t *save_pgd)
->  	early_code_mapping_set_exec(0);
->  }
->  
-> -static pgd_t *efi_pgd;
-> -
+Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/clk-stm32f4.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Hm, so there's some interaction here with:
-
-  116fef640859: x86/mm/dump_pagetables: Add the EFI pagetable to the debugfs 'page_tables' directory
-
-which is in tip:x86/mm.
-
-Could you please resolve that conflict? I'll sort out the topic branches 
-afterwards.
-
-Thanks,
-
-	Ingo
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index da44f8dc1d29..e7e3965c7aae 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -282,6 +282,7 @@ struct stm32f4_gate_data {
+ 
+ 	{ STM32F4_RCC_APB2ENR,  0,	"tim1",		"apb2_mul" },
+ 	{ STM32F4_RCC_APB2ENR,  1,	"tim8",		"apb2_mul" },
++	{ STM32F4_RCC_APB2ENR,  7,	"sdmmc2",	"sdmux"    },
+ 	{ STM32F4_RCC_APB2ENR,  8,	"adc1",		"apb2_div" },
+ 	{ STM32F4_RCC_APB2ENR,  9,	"adc2",		"apb2_div" },
+ 	{ STM32F4_RCC_APB2ENR, 10,	"adc3",		"apb2_div" },
+@@ -315,7 +316,7 @@ struct stm32f4_gate_data {
+ 
+ static const u64 stm32f746_gate_map[MAX_GATE_MAP] = { 0x000000f17ef417ffull,
+ 						      0x0000000000000003ull,
+-						      0x04f77f033e01c9ffull };
++						      0x04f77f833e01c9ffull };
+ 
+ static const u64 *stm32f4_gate_map;
+ 
+-- 
+1.9.1
