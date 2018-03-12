@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3340693-1520825225-2-2765522620397882213
+X-Cyrus-Session-Id: sloti22d1t05-3369064-1520825218-2-16128563666003202104
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520825225; b=utzhD4a6GCmUD7rG6QUJv3zEDY7MXWtC9SbmI+Z5pcGdsm/
-    0sWW43cYPuwkUUHLdpDEAaBsLF1BgkipZywNwZkvf8G4rjlXiuaqh6Mf6HL9risF
-    qbw5k6X/eYqhkGOUsuTrHrLX4HjMe+b88Oilgh8zw2KMbl29Y32bv2BfQtz6x4Dr
-    Jqt38V0Sh2m6KdIdmQ0JNuqvqmgnOuHBlYOt5O5T0qob91i+N88UvxlGE4jGZbFc
-    WBT2PM16iJlBhMZuWZhSkvse3bQsGrcVP3rJu1pZYLLkhVoGdw61fBaSrjMJrPTM
-    rxohSCvNN5+76DDoPg7IhtuUrGQlqqvIu8EfH8Q==
+    t=1520825218; b=vwhdE1qXYXntp8rJpYnNdRSTkabAYqli6UAYy/xyZhDOkDz
+    0qEB5qa5cXn706SHmZY69tU2y6qKPqeU6oVkohlIoj9gOOxkeBQRu5+6mvnyFwgj
+    PNnTL83NEQ+76Z/e5Q3BfiPC4K5qlMGwTJqzvXKLCl3IVJ2CLZZTu0yRk5sk8EOt
+    sHCoki0bRqUMRN61peuRL08c3aja2HAADbK/DyNYKqbB92JifIOd+iCoArd3wpSc
+    +HiCxQzAz+Vqv3LJyFrEF8hkbkkyotGur/XnSjIIFGUWUAIGHrBR0cPW9Cr21wEK
+    3ZAVFvid6BNdbXrcBrjy27fUm1PY12zCgbgil9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1520825225; bh=UFCQYtfB9U78kushcE1
-    nWQnVZZrxrkf6sjoU86NI6pI=; b=RXGKTb8DtbxM4hNWRWmtc299N7FUvsfFkY3
-    TvU0YAStkJzuZcEvlzsf+77nfL//t5xGyCgq+zTMufvfBsjYalUBiuB/E6eyES1j
-    MfqJhupyM+h4io7jQf7OLyNzfBuZC1+Illxe/4sSuQXJE6aaCuGRiWN2C8ZCtQr1
-    ANXdEMqwvPVqy5dZn9SJd6L8CY6DB6FLcRpzWTXgT9SVk58EWJ01OtTjzf6Bjw2S
-    CkxwxfPlP7Cm//pXVcs5wj0RsYEGEU4GkVfyjnsBFC16nVuh3c1YsgvEvTvVdOui
-    LhcgdIi0ctdWjOHC3h9gHLONySiV52SVTs7EWvql6WVADmhjCkg==
+    :sender:list-id; s=arctest; t=1520825218; bh=0l36Rlghu0mIP1CSBsx
+    w1JdsnPB09UBviavxXrZBk+I=; b=JiY/lsanfMjKd1Ru91RY6jHfUJjiXLSQ1xc
+    OyP13QztfVu0i5IqCjkHX5d8d+X+5QAhR7jEnkd+Bb3EVpSTpQv5eJnxr8V0v7XM
+    OIuFTfOW04NvY/SVNYI1WcEAPRNExjrf+I5LkpoNDViZs9Y8UPe4KMo9hxQGb1Du
+    obIZ+KMR3wHvgwJHk4YzjTrudkpzWcFnk3yWXv1CL2Fu6kDpWjQnXPMWneS9fHfS
+    iX2FRLIHOjpv7auA+IRnBfg94D4Xv5H1+caZghwa6MmpSOp0OTBaJLkc3D3kSktI
+    YoYENsogUC5gpG9wmq7XSNUmBJrK1Ly6GJD7mR+iRIOOnZhqXjA==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -49,11 +49,11 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932687AbeCLDZ1 (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Mar 2018 23:25:27 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41219 "EHLO
+        id S932750AbeCLDZ2 (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Mar 2018 23:25:28 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41232 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932681AbeCLDHn (ORCPT
+        by vger.kernel.org with ESMTP id S932686AbeCLDHn (ORCPT
         <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 23:07:43 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -62,13 +62,13 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Tim Gardner" <tim.gardner@canonical.com>,
-        "Alexander Viro" <viro@zeniv.linux.org.uk>
+        "Mauro Carvalho Chehab" <mchehab@redhat.com>,
+        "Danny Kukawka" <danny.kukawka@bisect.de>
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.945827679@decadent.org.uk>
+Message-ID: <lsq.1520823814.800740796@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 022/104] fs: namespace: suppress 'may be used
- uninitialized' warnings
+Subject: [PATCH 3.2 023/104] [media] max2165: trival fix for some
+ -Wuninitialized warning
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -83,123 +83,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tim Gardner <tim.gardner@canonical.com>
+From: Danny Kukawka <danny.kukawka@bisect.de>
 
-commit b8850d1fa8e2f6653e57daf6d08e58c5f5eb2c85 upstream.
+commit 32d7e63c1f4f86ad18404e3f36be99c9910fae9b upstream.
 
-The gcc version 4.9.1 compiler complains Even though it isn't possible for
-these variables to not get initialized before they are used.
+Fix for some -Wuninitialized compiler warnings.
 
-fs/namespace.c: In function ‘SyS_mount’:
-fs/namespace.c:2720:8: warning: ‘kernel_dev’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-  ret = do_mount(kernel_dev, kernel_dir->name, kernel_type, flags,
-        ^
-fs/namespace.c:2699:8: note: ‘kernel_dev’ was declared here
-  char *kernel_dev;
-        ^
-fs/namespace.c:2720:8: warning: ‘kernel_type’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-  ret = do_mount(kernel_dev, kernel_dir->name, kernel_type, flags,
-        ^
-fs/namespace.c:2697:8: note: ‘kernel_type’ was declared here
-  char *kernel_type;
-        ^
-
-Fix the warnings by simplifying copy_mount_string() as suggested by Al Viro.
-
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Tim Gardner <tim.gardner@canonical.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Danny Kukawka <danny.kukawka@bisect.de>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/compat.c    | 10 ++++++----
- fs/internal.h  |  2 +-
- fs/namespace.c | 26 ++++++++------------------
- 3 files changed, 15 insertions(+), 23 deletions(-)
+ drivers/media/common/tuners/max2165.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/fs/compat.c
-+++ b/fs/compat.c
-@@ -797,8 +797,9 @@ asmlinkage long compat_sys_mount(const c
- 	char *dir_page;
- 	int retval;
+--- a/drivers/media/common/tuners/max2165.c
++++ b/drivers/media/common/tuners/max2165.c
+@@ -168,7 +168,7 @@ int fixpt_div32(u32 dividend, u32 diviso
+ 	int i;
  
--	retval = copy_mount_string(type, &kernel_type);
--	if (retval < 0)
-+	kernel_type = copy_mount_string(type);
-+	retval = PTR_ERR(kernel_type);
-+	if (IS_ERR(kernel_type))
- 		goto out;
+ 	if (0 == divisor)
+-		return -1;
++		return -EINVAL;
  
- 	dir_page = getname(dir_name);
-@@ -806,8 +807,9 @@ asmlinkage long compat_sys_mount(const c
- 	if (IS_ERR(dir_page))
- 		goto out1;
+ 	q = dividend / divisor;
+ 	remainder = dividend - q * divisor;
+@@ -194,10 +194,13 @@ static int max2165_set_rf(struct max2165
+ 	u8 tf_ntch;
+ 	u32 t;
+ 	u32 quotient, fraction;
++	int ret;
  
--	retval = copy_mount_string(dev_name, &kernel_dev);
--	if (retval < 0)
-+	kernel_dev = copy_mount_string(dev_name);
-+	retval = PTR_ERR(kernel_dev);
-+	if (IS_ERR(kernel_dev))
- 		goto out2;
+ 	/* Set PLL divider according to RF frequency */
+-	fixpt_div32(freq / 1000, priv->config->osc_clk * 1000,
+-		&quotient, &fraction);
++	ret = fixpt_div32(freq / 1000, priv->config->osc_clk * 1000,
++			 &quotient, &fraction);
++	if (ret != 0)
++		return ret;
  
- 	retval = copy_mount_options(data, &data_page);
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -60,7 +60,7 @@ extern int check_unsafe_exec(struct linu
-  * namespace.c
-  */
- extern int copy_mount_options(const void __user *, unsigned long *);
--extern int copy_mount_string(const void __user *, char **);
-+extern char *copy_mount_string(const void __user *);
- 
- extern unsigned int mnt_get_count(struct vfsmount *mnt);
- extern struct vfsmount *__lookup_mnt(struct vfsmount *, struct dentry *, int);
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2253,21 +2253,9 @@ int copy_mount_options(const void __user
- 	return 0;
- }
- 
--int copy_mount_string(const void __user *data, char **where)
-+char *copy_mount_string(const void __user *data)
- {
--	char *tmp;
--
--	if (!data) {
--		*where = NULL;
--		return 0;
--	}
--
--	tmp = strndup_user(data, PAGE_SIZE);
--	if (IS_ERR(tmp))
--		return PTR_ERR(tmp);
--
--	*where = tmp;
--	return 0;
-+	return data ? strndup_user(data, PAGE_SIZE) : NULL;
- }
- 
- /*
-@@ -2535,8 +2523,9 @@ SYSCALL_DEFINE5(mount, char __user *, de
- 	char *kernel_dev;
- 	unsigned long data_page;
- 
--	ret = copy_mount_string(type, &kernel_type);
--	if (ret < 0)
-+	kernel_type = copy_mount_string(type);
-+	ret = PTR_ERR(kernel_type);
-+	if (IS_ERR(kernel_type))
- 		goto out_type;
- 
- 	kernel_dir = getname(dir_name);
-@@ -2545,8 +2534,9 @@ SYSCALL_DEFINE5(mount, char __user *, de
- 		goto out_dir;
- 	}
- 
--	ret = copy_mount_string(dev_name, &kernel_dev);
--	if (ret < 0)
-+	kernel_dev = copy_mount_string(dev_name);
-+	ret = PTR_ERR(kernel_dev);
-+	if (IS_ERR(kernel_dev))
- 		goto out_dev;
- 
- 	ret = copy_mount_options(data, &data_page);
+ 	/* 20-bit fraction */
+ 	fraction >>= 12;
