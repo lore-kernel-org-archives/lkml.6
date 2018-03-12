@@ -1,70 +1,213 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752652AbeCLK2l (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 06:28:41 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:61035 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751303AbeCLK2k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 06:28:40 -0400
-Subject: Re: [PATCH v9] mmc: Export host capabilities to debugfs.
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        <ulf.hansson@linaro.org>, <linus.walleij@linaro.org>,
-        <adrian.hunter@intel.com>, <shawn.lin@rock-chips.com>,
-        <avri.altman@wdc.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <Vladimir_Zapolskiy@mentor.com>
-References: <1520829090-3567-1-git-send-email-harish_kandiga@mentor.com>
- <1520849262.10722.582.camel@linux.intel.com>
-From: Harish Jenny K N <harish_kandiga@mentor.com>
-Message-ID: <39d886ff-7bfe-5ef9-5d51-4ff1eaa55278@mentor.com>
-Date: Mon, 12 Mar 2018 15:57:12 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1520849262.10722.582.camel@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"
+        id S1752636AbeCLKb3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 06:31:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54162 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751802AbeCLKb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 06:31:27 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8F38208FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+Date: Mon, 12 Mar 2018 19:31:24 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>, Jiri Olsa <jolsa@kernel.org>
+Subject: Re: [PATCH 1/3] tracing: Combine enum and arrays into single macro
+ in filter code
+Message-Id: <20180312193124.7d295423e38317fb056e6ccd@kernel.org>
+In-Reply-To: <20180310023907.528923886@goodmis.org>
+References: <20180310023442.791997138@goodmis.org>
+        <20180310023907.528923886@goodmis.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [137.202.0.87]
-X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 09 Mar 2018 21:34:43 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> 
+> Instead of having a separate enum that is the index into another array, like
+> a string array, make a single macro that combines them into a single list,
+> and then the two can not get out of sync. This makes it easier to add and
+> remove items.
+> 
+> The macro trick is:
+> 
+>  #define DOGS				\
+>   C( JACK,     "Jack Russell")		\
+>   C( ITALIAN,  "Italian Greyhound")	\
+>   C( GERMAN,   "German Shepherd")
+> 
+>  #undef C
+>  #define C(a, b) a
+> 
+>  enum { DOGS };
+> 
+>  #undef C
+>  #define C(a, b) b
+> 
+>  static char dogs[] = { DOGS };
 
-On Monday 12 March 2018 03:37 PM, Andy Shevchenko wrote:
-> On Mon, 2018-03-12 at 10:01 +0530, Harish Jenny K N wrote:
->> This patch exports the host capabilities to debugfs
->>
->> This idea of sharing host capabilities over debugfs
->> came up from Abbas Raza <Abbas_Raza@mentor.com>
->> Earlier discussions:
->> https://lkml.org/lkml/2018/3/5/357
->> https://www.spinics.net/lists/linux-mmc/msg48219.html
->>
-> Address below minors and, FWIW, take mine
->
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Looks good to me, and nice idea :)
 
-Thanks.
-
->
->> +	for_each_set_bit(bit, (const unsigned long *)&caps,
->> BITS_PER_LONG)
->> +	for_each_set_bit(bit, (const unsigned long *)&caps2,
->> BITS_PER_LONG)
-> Explicit casting is not needed anymore in both cases.
->
-
-I will address these.
-Before sending new patch , I would like to inform that I have been sending this patch with the following checkpatch warning, just to keep it same as other usages of debugfs_create_file in the drivers/mmc/core/debugfs.c file.
-
-WARNING:SYMBOLIC_PERMS: Symbolic permissions 'S_IRUSR' are not preferred. Consider using octal permissions '0400'.
-
-Do I need to address this or keep it same as S_IRUSR ?
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
 
 Thanks,
-Harish Jenny K N
+
+> 
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  kernel/trace/trace_events_filter.c | 112 ++++++++++++++++---------------------
+>  1 file changed, 48 insertions(+), 64 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+> index c3c6eee1e4df..a2ef393b3bb2 100644
+> --- a/kernel/trace/trace_events_filter.c
+> +++ b/kernel/trace/trace_events_filter.c
+> @@ -33,22 +33,26 @@
+>  	"# Only events with the given fields will be affected.\n"	\
+>  	"# If no events are modified, an error message will be displayed here"
+>  
+> -enum filter_op_ids
+> -{
+> -	OP_OR,
+> -	OP_AND,
+> -	OP_GLOB,
+> -	OP_NE,
+> -	OP_EQ,
+> -	OP_LT,
+> -	OP_LE,
+> -	OP_GT,
+> -	OP_GE,
+> -	OP_BAND,
+> -	OP_NOT,
+> -	OP_NONE,
+> -	OP_OPEN_PAREN,
+> -};
+> +#define OPS					\
+> +	C( OP_OR,	"||",		1 ),	\
+> +	C( OP_AND,	"&&",		2 ),	\
+> +	C( OP_GLOB,	"~",		4 ),	\
+> +	C( OP_NE,	"!=",		4 ),	\
+> +	C( OP_EQ,	"==",		4 ),	\
+> +	C( OP_LT,	"<",		5 ),	\
+> +	C( OP_LE,	"<=",		5 ),	\
+> +	C( OP_GT,	">",		5 ),	\
+> +	C( OP_GE,	">=",		5 ),	\
+> +	C( OP_BAND,	"&",		6 ),	\
+> +	C( OP_NOT,	"!",		6 ),	\
+> +	C( OP_NONE,	"OP_NONE",	0 ),	\
+> +	C( OP_OPEN_PAREN, "(",		0 ),	\
+> +	C( OP_MAX,	NULL,		0 )
+> +
+> +#undef C
+> +#define C(a, b, c)	a
+> +
+> +enum filter_op_ids { OPS };
+>  
+>  struct filter_op {
+>  	int id;
+> @@ -56,56 +60,36 @@ struct filter_op {
+>  	int precedence;
+>  };
+>  
+> -/* Order must be the same as enum filter_op_ids above */
+> -static struct filter_op filter_ops[] = {
+> -	{ OP_OR,	"||",		1 },
+> -	{ OP_AND,	"&&",		2 },
+> -	{ OP_GLOB,	"~",		4 },
+> -	{ OP_NE,	"!=",		4 },
+> -	{ OP_EQ,	"==",		4 },
+> -	{ OP_LT,	"<",		5 },
+> -	{ OP_LE,	"<=",		5 },
+> -	{ OP_GT,	">",		5 },
+> -	{ OP_GE,	">=",		5 },
+> -	{ OP_BAND,	"&",		6 },
+> -	{ OP_NOT,	"!",		6 },
+> -	{ OP_NONE,	"OP_NONE",	0 },
+> -	{ OP_OPEN_PAREN, "(",		0 },
+> -};
+> +#undef C
+> +#define C(a, b, c)	{ a, b, c }
+>  
+> -enum {
+> -	FILT_ERR_NONE,
+> -	FILT_ERR_INVALID_OP,
+> -	FILT_ERR_UNBALANCED_PAREN,
+> -	FILT_ERR_TOO_MANY_OPERANDS,
+> -	FILT_ERR_OPERAND_TOO_LONG,
+> -	FILT_ERR_FIELD_NOT_FOUND,
+> -	FILT_ERR_ILLEGAL_FIELD_OP,
+> -	FILT_ERR_ILLEGAL_INTVAL,
+> -	FILT_ERR_BAD_SUBSYS_FILTER,
+> -	FILT_ERR_TOO_MANY_PREDS,
+> -	FILT_ERR_MISSING_FIELD,
+> -	FILT_ERR_INVALID_FILTER,
+> -	FILT_ERR_IP_FIELD_ONLY,
+> -	FILT_ERR_ILLEGAL_NOT_OP,
+> -};
+> +static struct filter_op filter_ops[] = { OPS };
+>  
+> -static char *err_text[] = {
+> -	"No error",
+> -	"Invalid operator",
+> -	"Unbalanced parens",
+> -	"Too many operands",
+> -	"Operand too long",
+> -	"Field not found",
+> -	"Illegal operation for field type",
+> -	"Illegal integer value",
+> -	"Couldn't find or set field in one of a subsystem's events",
+> -	"Too many terms in predicate expression",
+> -	"Missing field name and/or value",
+> -	"Meaningless filter expression",
+> -	"Only 'ip' field is supported for function trace",
+> -	"Illegal use of '!'",
+> -};
+> +#define ERRORS								\
+> +	C( NONE,	 	"No error"),				\
+> +	C( INVALID_OP,		"Invalid operator"),			\
+> +	C( UNBALANCED_PAREN,	"Unbalanced parens"),			\
+> +	C( TOO_MANY_OPERANDS,	"Too many operands"),			\
+> +	C( OPERAND_TOO_LONG,	"Operand too long"),			\
+> +	C( FIELD_NOT_FOUND,	"Field not found"),			\
+> +	C( ILLEGAL_FIELD_OP,	"Illegal operation for field type"),	\
+> +	C( ILLEGAL_INTVAL,	"Illegal integer value"),		\
+> +	C( BAD_SUBSYS_FILTER,	"Couldn't find or set field in one of a subsystem's events"), \
+> +	C( TOO_MANY_PREDS,	"Too many terms in predicate expression"), \
+> +	C( MISSING_FIELD,	"Missing field name and/or value"),	\
+> +	C( INVALID_FILTER,	"Meaningless filter expression"),	\
+> +	C( IP_FIELD_ONLY,	"Only 'ip' field is supported for function trace"), \
+> +	C( ILLEGAL_NOT_OP,	"Illegal use of '!'"),
+> +
+> +#undef C
+> +#define C(a, b)		FILT_ERR_##a
+> +
+> +enum { ERRORS };
+> +
+> +#undef C
+> +#define C(a, b)		b
+> +
+> +static char *err_text[] = { ERRORS };
+>  
+>  struct opstack_op {
+>  	enum filter_op_ids op;
+> -- 
+> 2.15.1
+> 
+> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
