@@ -1,62 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932211AbeCLSfa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 14:35:30 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59978 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751279AbeCLSf3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 14:35:29 -0400
-Date: Mon, 12 Mar 2018 11:35:21 -0700
-From: Mark Brown <broonie@kernel.org>
-To: codekipper@gmail.com
-Cc: maxime.ripard@free-electrons.com, wens@csie.org,
-        linux-sunxi@googlegroups.com, linux-arm-kernel@lists.infradead.org,
-        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, be17068@iperbole.bo.it
-Subject: Re: [PATCH v2 6/6] ASoC: sun4i-i2s: Add support for loopback
-Message-ID: <20180312183521.GP2186@sirena.org.uk>
-References: <20180312155753.9478-1-codekipper@gmail.com>
- <20180312155753.9478-7-codekipper@gmail.com>
+        id S1751359AbeCLSiY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 14:38:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57916 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751232AbeCLSiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 14:38:23 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42832204EE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 12 Mar 2018 14:38:20 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>, Jiri Olsa <jolsa@kernel.org>
+Subject: Re: [PATCH 3/3] tracing: Rewrite filter logic to be simpler and
+ faster
+Message-ID: <20180312143820.5da7cd6f@vmware.local.home>
+In-Reply-To: <20180312124246.GC23111@krava>
+References: <20180310023442.791997138@goodmis.org>
+        <20180310023907.798690563@goodmis.org>
+        <20180312124246.GC23111@krava>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cmVHo2jXx4bdYlgS"
-Content-Disposition: inline
-In-Reply-To: <20180312155753.9478-7-codekipper@gmail.com>
-X-Cookie: Am I SHOPLIFTING?
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 12 Mar 2018 13:42:46 +0100
+Jiri Olsa <jolsa@redhat.com> wrote:
 
---cmVHo2jXx4bdYlgS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On Fri, Mar 09, 2018 at 09:34:45PM -0500, Steven Rostedt wrote:
+> 
+> SNIP
+> 
+> >  
+> > -/* If not of not match is equal to not of not, then it is a match */
+> > +/*
+> > + * Without going into a formal proof, this explains the method that is used in
+> > + * parsing the logical expressions.
+> > + *
+> > + * For example, if we have: "a && !(!b || (c && g)) || d || e && !f"
+> > + * The first pass will convert it into the following program:
+> > + *
+> > + * n1: r=a;       l1: if (!r) goto l4;
+> > + * n2: r=b;       l2: if (!r) goto l4;  
+> 
+> got stuck in here.. should that be 'goto l5' ?
 
-On Mon, Mar 12, 2018 at 04:57:53PM +0100, codekipper@gmail.com wrote:
+Nope, this is correct. In fact, my user space implementation of the
+code is what generated this output.
 
-> +- loopback:	if this property is present then the dai is configured in
-> +		loopback mode where the output fifo is redirected to the input
-> +		fifo.
+ !(!b || (c && g)) is the same as (b && (!c || !g)), so we can rewrite
+ the above as:
 
-This really doesn't seem like something that ought to go into the DT
-and hence ABI given that there's obviously no reason to use this in
-production.  Just make it be a #define in the code or something.
+ a && b && (!c || !g) || d || e && !f
 
---cmVHo2jXx4bdYlgS
-Content-Type: application/pgp-signature; name="signature.asc"
+Which makes it more obvious why it is goto l4.
 
------BEGIN PGP SIGNATURE-----
+And since we have:
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqmyGgACgkQJNaLcl1U
-h9DKGwf/fEsKyLWh7qHH1FKS9OOo2Lr6CBEU/7DAHjMAkQvpRKPEKH0pEgS99uuW
-moEpDFHrScp6A+vgQsZMKO/rk5bgqOeoz+9gFHIfR5bGz17QPNjuA5T8Uvw7PBHk
-kGpaKcLk0T7dkPng1igOlc9pQrwokaldDJRj38ixBEcRybfooNF2wFq07a66z5NI
-qK0hOGzIMbetpG2Spits83X0N3K/P4/gG72V+UlCR65K31dnhX0U+iSAtYY5srYC
-ZQMzLLXzAwjjCrJYFsYWUkTgUKdk2t27y+Z7ZebKAWXiij1zzmOX0cC/MRo2fist
-Sd51QiGaluqqNiqwrooyxghGBhlZ2A==
-=KOfl
------END PGP SIGNATURE-----
+ n1: r=a;	l1: if (!r) goto l4;
+ n2: r=b;	l2: if (!r) goto l4;
+ n3: r=c; r=!r;	l3: if (r) goto l4;
+ n4: r=g; r=!r;	l4: if (r) goto l5;
+ n5; r=d;	l5: if (r) goto T;
 
---cmVHo2jXx4bdYlgS--
+If a is true, if (!r) is false so we continue to n2.
+If b is false, then if (!r) is true, so we take the branch. Let's see
+what that does:
+
+ l4: if (r) goto l5;
+
+But since we jumped because r is false, then this if statement is
+guaranteed to be false, and we continue to n5. Then we need to test d.
+
+ a && b && ... || d
+
+You can see how that is correct. If a is true and then be is false,
+then we ignore the rest of the && statement and jump to testing the
+other side of || which is d.
+
+-- Steve
+
+> 
+> jirka
+> 
+> > + * n3: r=c; r=!r; l3: if (r) goto l4;
+> > + * n4: r=g; r=!r; l4: if (r) goto l5;
+> > + * n5: r=d;       l5: if (r) goto T
+> > + * n6: r=e;       l6: if (!r) goto l7;
+> > + * n7: r=f; r=!r; l7: if (!r) goto F
+> > + * T: return TRUE
+> > + * F: return FALSE  
+> 
+> jirka
