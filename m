@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3369064-1520824297-2-1909785526969375884
+X-Cyrus-Session-Id: sloti22d1t05-3340693-1520824287-2-6014063302917813005
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enroca,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520824295; b=VD4hkME6sx2u12KkSf9efluSsLGYoWhcy2uW/u6ic4VTqKP
-    LehdLdTkBU1R5pdAkRksst+EYfFzulDbNzn3M41vjdPDorxxhXGKbSUVJcr4MERW
-    Cn4OImY0J3hJgxBp6ZW8xjkIaKE0DNOky/beG9/bveX4sIMDQ9TDILaERzEGxccH
-    DXAlJ+l6VGH60zhFkQ/Vzbf5FlNJN5zu+KgYRnoW69wjiTJ6niZfCD1PLfUJP/fn
-    HApuUIPlC85qlu+b4OLdRskD/bX3iN/jg+YQUvYSmSzD2bBn1c78L/0lHc91FIIt
-    aCZma7yz6dixj8pAZwilOS62jToV5ImvfQaA8+A==
+    t=1520824287; b=K0+XjIRyWlE+cceD10J+M9qmV6yceEdZld6E5EF4DFtF+u9
+    AYk5fCiVBW8GTPSoxqsdXgQ9TP0IlmOL/wyT6u6Xe7UapVhgT8tThqN0W3bBFjoH
+    w6MxmVg4iNM9Xc/BHBrUVnVmzU8DZXAQZQZrlzrA33mSoWrMWbgFieIPBrX1R8Ig
+    uXHwpLtj4tPEIziyAxOiBYvym3aka9YOT136x+c/d9TyWa8SZ/aYW1WBvymof7tn
+    mOsgqPc5Ya08D30PxSbitQC+E/5i29aZP3YkqYL4zuNALlFIMfWTXMcKxeCyWJEf
+    UOQ9eSYJCY23Bt67X1wrH0ayy1A6csiecMsuDbw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1520824295; bh=ireE8KIUEC48mSa63PX
-    VAZPeeYK+6/FJMULeWAQ6IE4=; b=akXCPRvClckJPi3LxEnpV6oVPNtUPmepZTT
-    FeAgWnP6byt4lMQDatFzm3baSLlun634Ln5JmzWXFedKgh90LQti2G7p3hlzyUbV
-    akiIZ8EW2TqOp7n8wMQraI+9AOiInCRwv9fPpF/18ZRK2ETg6tGpdLJEPIDGn27X
-    d6HrwPBEjgowd9qRogYAplKCpWIJ9XWWrpcJfPeXhNeG1ifEaZGfrrjOhXXUL54U
-    NLDHcKZSKUW8pGzQPqcm8mAe3xKpNMW69efC6gBwcM++c0UY+Zj6STJdTUadCrnJ
-    aZSx1m7jVVsCXDC9M7cxdqNtSlyfQQxEoL5dgy7gqOr0YfcqhDg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1520824287; bh=upW7nKU3vXlNwDnN/oU
+    YvmEO36KbIwha4mBvCftBktI=; b=SSCeDa7OgOrgsoEAamrNxIYevF3LlkLFUzE
+    ATrEa/5tiUrBfYjGrRTMlkqy6Py+U2NeXIe9tuQQY5PQmaZdBixFDaYs7JsISjDf
+    LS8+wJ+8cglsBhXxDJ59UuFj+RMf3FpCTRNnFfQOxzbEH8Q1qOKp9Lxq2uKEzdRX
+    gKxvJbelvNnPOT7aUoaiQVkBR4wCsAIxS9+2SLLBmmlt+SQr8NhOL9wCLqTeFHeb
+    59UyBvkr4WIc5nDY8yuG4mdNqLRv1a1ZIeyF9CXxd0wh0ce4zG1GFBUK6ojTVyG4
+    MIPVSrCXXBLnRm56/T26GrUEH2RKV7rnR5UtzapUHSis2cn6n4g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -49,11 +49,11 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932907AbeCLDJA (ORCPT <rfc822;greg@kroah.com>);
+        id S932917AbeCLDJA (ORCPT <rfc822;greg@kroah.com>);
         Sun, 11 Mar 2018 23:09:00 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41679 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41676 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932819AbeCLDHx (ORCPT
+        by vger.kernel.org with ESMTP id S932818AbeCLDHx (ORCPT
         <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 23:07:53 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -61,17 +61,15 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Borislav Petkov" <bp@alien8.de>, "Ingo Molnar" <mingo@kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Peter Zijlstra" <peterz@infradead.org>
+CC: akpm@linux-foundation.org, "Andi Kleen" <ak@linux.intel.com>,
+        "Borislav Petkov" <bp@alien8.de>,
+        "David Woodhouse" <dwmw2@infradead.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>
 Date: Mon, 12 Mar 2018 03:06:12 +0000
-Message-ID: <lsq.1520823972.375460400@decadent.org.uk>
+Message-ID: <lsq.1520823972.223835015@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 42/76] x86/cpu: Change type of x86_cache_size
- variable to unsigned int
+Subject: [PATCH 3.16 49/76] x86/cpu/bugs: Make retpoline module warning
+ conditional
 In-Reply-To: <lsq.1520823971.5976735@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -86,74 +84,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 24dbc6000f4b9b0ef5a9daecb161f1907733765a upstream.
+commit e383095c7fe8d218e00ec0f83e4b95ed4e627b02 upstream.
 
-Currently, x86_cache_size is of type int, which makes no sense as we
-will never have a valid cache size equal or less than 0. So instead of
-initializing this variable to -1, it can perfectly be initialized to 0
-and use it as an unsigned variable instead.
+If sysfs is disabled and RETPOLINE not defined:
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Addresses-Coverity-ID: 1464429
-Link: http://lkml.kernel.org/r/20180213192208.GA26414@embeddedor.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+arch/x86/kernel/cpu/bugs.c:97:13: warning: ‘spectre_v2_bad_module’ defined but not used
+[-Wunused-variable]
+ static bool spectre_v2_bad_module;
+
+Hide it.
+
+Fixes: caf7501a1b4e ("module/retpoline: Warn about missing retpoline in module")
+Reported-by: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/include/asm/processor.h      | 2 +-
- arch/x86/kernel/cpu/common.c          | 2 +-
- arch/x86/kernel/cpu/microcode/intel.c | 2 +-
- arch/x86/kernel/cpu/proc.c            | 4 ++--
- 4 files changed, 5 insertions(+), 5 deletions(-)
+ arch/x86/kernel/cpu/bugs.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -107,7 +107,7 @@ struct cpuinfo_x86 {
- 	char			x86_vendor_id[16];
- 	char			x86_model_id[64];
- 	/* in KB - valid for CPUS which support this call: */
--	int			x86_cache_size;
-+	unsigned int		x86_cache_size;
- 	int			x86_cache_alignment;	/* In bytes */
- 	int			x86_power;
- 	unsigned long		loops_per_jiffy;
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -905,7 +905,7 @@ static void identify_cpu(struct cpuinfo_
- 	int i;
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -156,9 +156,10 @@ static const char *spectre_v2_strings[]
+ #define pr_fmt(fmt)     "Spectre V2 : " fmt
  
- 	c->loops_per_jiffy = loops_per_jiffy;
--	c->x86_cache_size = -1;
-+	c->x86_cache_size = 0;
- 	c->x86_vendor = X86_VENDOR_UNKNOWN;
- 	c->x86_model = c->x86_mask = 0;	/* So far unknown... */
- 	c->x86_vendor_id[0] = '\0'; /* Unset */
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -352,7 +352,7 @@ static struct microcode_ops microcode_in
+ static enum spectre_v2_mitigation spectre_v2_enabled = SPECTRE_V2_NONE;
+-static bool spectre_v2_bad_module;
  
- static int __init calc_llc_size_per_core(struct cpuinfo_x86 *c)
+ #ifdef RETPOLINE
++static bool spectre_v2_bad_module;
++
+ bool retpoline_module_ok(bool has_retpoline)
  {
--	u64 llc_size = c->x86_cache_size * 1024;
-+	u64 llc_size = c->x86_cache_size * 1024ULL;
+ 	if (spectre_v2_enabled == SPECTRE_V2_NONE || has_retpoline)
+@@ -168,6 +169,13 @@ bool retpoline_module_ok(bool has_retpol
+ 	spectre_v2_bad_module = true;
+ 	return false;
+ }
++
++static inline const char *spectre_v2_module_string(void)
++{
++	return spectre_v2_bad_module ? " - vulnerable module loaded" : "";
++}
++#else
++static inline const char *spectre_v2_module_string(void) { return ""; }
+ #endif
  
- 	do_div(llc_size, c->x86_max_cores);
+ static void __init spec2_print_if_insecure(const char *reason)
+@@ -355,6 +363,6 @@ ssize_t cpu_show_spectre_v2(struct devic
+ 		return sprintf(buf, "Not affected\n");
  
---- a/arch/x86/kernel/cpu/proc.c
-+++ b/arch/x86/kernel/cpu/proc.c
-@@ -86,8 +86,8 @@ static int show_cpuinfo(struct seq_file
- 	}
- 
- 	/* Cache size */
--	if (c->x86_cache_size >= 0)
--		seq_printf(m, "cache size\t: %d KB\n", c->x86_cache_size);
-+	if (c->x86_cache_size)
-+		seq_printf(m, "cache size\t: %u KB\n", c->x86_cache_size);
- 
- 	show_cpuinfo_core(m, c, cpu);
- 	show_cpuinfo_misc(m, c);
+ 	return sprintf(buf, "%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+-		       spectre_v2_bad_module ? " - vulnerable module loaded" : "");
++		       spectre_v2_module_string());
+ }
+ #endif
