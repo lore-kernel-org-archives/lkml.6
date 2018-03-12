@@ -1,69 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932331AbeCLUqQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 16:46:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47672 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932247AbeCLUqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 16:46:15 -0400
-Date: Mon, 12 Mar 2018 20:46:14 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        id S932354AbeCLUsK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 16:48:10 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57112 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932171AbeCLUsI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 16:48:08 -0400
+Subject: Re: [PATCH v4 1/6] sysctl: Add flags to support min/max range
+ clamping
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v4 2/6] proc/sysctl: Check for invalid flags bits
-Message-ID: <20180312204614.GZ4449@wotan.suse.de>
 References: <1520885744-1546-1-git-send-email-longman@redhat.com>
- <1520885744-1546-3-git-send-email-longman@redhat.com>
+ <1520885744-1546-2-git-send-email-longman@redhat.com>
+ <20180312204413.GY4449@wotan.suse.de>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <53093737-776f-d455-5651-3a57d5ac7be9@redhat.com>
+Date: Mon, 12 Mar 2018 16:48:07 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520885744-1546-3-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <20180312204413.GY4449@wotan.suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 04:15:40PM -0400, Waiman Long wrote:
-> Checking code is added to check for invalid flags in the ctl_table
-> and return error if an unknown flag is used.
+On 03/12/2018 04:44 PM, Luis R. Rodriguez wrote:
+> On Mon, Mar 12, 2018 at 04:15:39PM -0400, Waiman Long wrote:
+>> When minimum/maximum values are specified for a sysctl parameter in
+>> the ctl_table structure with proc_dointvec_minmax() handler, update
+>> to that parameter will fail with error if the given value is outside
+>> of the required range.
+>>
+>> There are use cases where it may be better to clamp the value of
+>> the sysctl parameter to the given range without failing the update,
+>> especially if the users are not aware of the actual range limits.
+>> Reading the value back after the update will now be a good practice
+>> to see if the provided value exceeds the range limits.
+>>
+>> To provide this less restrictive form of range checking, a new flags
+>> field is added to the ctl_table structure.
+>>
+>> When the CTL_FLAGS_CLAMP_RANGE flag is set in the ctl_table
+>> entry, any update from the userspace will be clamped to the given
+>> range without error if either the proc_dointvec_minmax() or the
+>> proc_douintvec_minmax() handlers is used.
+> You keep missing to document both on commit log and kdoc which
+> end on the range is selected if you happen to go over. To be clear
+> it is unclear from reading the commit log if a default is set if
+> you go over if you pick another value. In this case it is conditional
+> if you go over we pick the high range max, and if you go below the
+> lower range minimum set allowed.
+>
+> What happens if no low range is set and that is what the issue in
+> terms of range triggers?
 
-This should be merged with the first patch otherwise there are atomic
-points in time on the commit log history where invalid values are allowed
-and that makes no sense.
+Sorry for missing that.
 
-This can probably be expanded to verify semantics further. Details
-below.
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  fs/proc/proc_sysctl.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index 493c975..67c0c82 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -1092,6 +1092,16 @@ static int sysctl_check_table_array(const char *path, struct ctl_table *table)
->  	return err;
->  }
->  
-> +static int sysctl_check_flags(const char *path, struct ctl_table *table)
-> +{
-> +	int err = 0;
-> +
-> +	if (table->flags & ~CTL_TABLE_FLAGS_ALL)
-> +		err = sysctl_err(path, table, "invalid flags");
+If a minimum value is not specified, no minimum checking and clamping
+will be done. Similarly for maximum. I will clarify that.
 
-What if a range for the upper limit is set but not the lower limit and
-the user goes over the lower limit?
-
-How about the inverse?
-
-Do we need both ranges set?
-
-  Luis
+Cheers,
+Longman
