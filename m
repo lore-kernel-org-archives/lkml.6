@@ -1,121 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932507AbeCLBd4 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 21:33:56 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6230 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932419AbeCLBdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 21:33:54 -0400
-Subject: Re: [PATCH] net/9p: avoid -ERESTARTSYS leak to userspace
-To: Greg Kurz <groug@kaod.org>, <linux-kernel@vger.kernel.org>
-References: <152062809886.10599.7361006774123053312.stgit@bahia.lan>
-CC: <netdev@vger.kernel.org>, <v9fs-developer@lists.sourceforge.net>,
-        "Eric Van Hensbergen" <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        "Latchesar Ionkov" <lucho@ionkov.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Andrew Morton" <akpm@linux-foundation.org>
-From: jiangyiwen <jiangyiwen@huawei.com>
-Message-ID: <5AA5D8ED.2080107@huawei.com>
-Date: Mon, 12 Mar 2018 09:33:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S932506AbeCLBkf (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 21:40:35 -0400
+Received: from ozlabs.org ([103.22.144.67]:35315 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932419AbeCLBkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Mar 2018 21:40:33 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Mon, 12 Mar 2018 12:40:07 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Pierre Bourdon <delroth@google.com>, Andre Heider <a.heider@gmail.com>
+Subject: linux-next: Signed-off-by missing for commit in the battery tree
+Message-ID: <20180312124007.61288892@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <152062809886.10599.7361006774123053312.stgit@bahia.lan>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.16.168]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/tdX_uVXC7iujCXZws49o4cF"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/3/10 4:41, Greg Kurz wrote:
-> If it was interrupted by a signal, the 9p client may need to send some
-> more requests to the server for cleanup before returning to userspace.
-> 
-> To avoid such a last minute request to be interrupted right away, the
-> client memorizes if a signal is pending, clears TIF_SIGPENDING, handles
-> the request and calls recalc_sigpending() before returning.
-> 
-> Unfortunately, if the transmission of this cleanup request fails for any
-> reason, the transport returns an error and the client propagates it right
-> away, without calling recalc_sigpending().
-> 
-> This ends up with -ERESTARTSYS from the initially interrupted request
-> crawling up to syscall exit, with TIF_SIGPENDING cleared by the cleanup
-> request. The specific signal handling code, which is responsible for
-> converting -ERESTARTSYS to -EINTR is not called, and userspace receives
-> the confusing errno value:
-> 
-> open: Unknown error 512 (512)
-> 
-> This is really hard to hit in real life. I discovered the issue while
-> working on hot-unplug of a virtio-9p-pci device with an instrumented
-> QEMU allowing to control request completion.
-> 
-> Both p9_client_zc_rpc() and p9_client_rpc() functions have this buggy
-> error path actually. Their code flow is a bit obscure and the best
-> thing to do would probably be a full rewrite: to really ensure this
-> situation of clearing TIF_SIGPENDING and returning -ERESTARTSYS can
-> never happen.
-> 
-> But given the general lack of interest for the 9p code, I won't risk
-> breaking more things. So this patch simply fixes the buggy paths in
-> both functions with a trivial label+goto.
-> 
-> Thanks to Laurent Dufour for his help and suggestions on how to find
-> the root cause and how to fix it.
-> 
+--Sig_/tdX_uVXC7iujCXZws49o4cF
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Looks good.
+Hi Sebastian,
 
-Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Commit
 
-> Signed-off-by: Greg Kurz <groug@kaod.org>
-> ---
->  net/9p/client.c |    6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/9p/client.c b/net/9p/client.c
-> index b433aff5ff13..e6cae8332e2e 100644
-> --- a/net/9p/client.c
-> +++ b/net/9p/client.c
-> @@ -769,7 +769,7 @@ p9_client_rpc(struct p9_client *c, int8_t type, const char *fmt, ...)
->  	if (err < 0) {
->  		if (err != -ERESTARTSYS && err != -EFAULT)
->  			c->status = Disconnected;
-> -		goto reterr;
-> +		goto recalc_sigpending;
->  	}
->  again:
->  	/* Wait for the response */
-> @@ -804,6 +804,7 @@ p9_client_rpc(struct p9_client *c, int8_t type, const char *fmt, ...)
->  		if (req->status == REQ_STATUS_RCVD)
->  			err = 0;
->  	}
-> +recalc_sigpending:
->  	if (sigpending) {
->  		spin_lock_irqsave(&current->sighand->siglock, flags);
->  		recalc_sigpending();
-> @@ -867,7 +868,7 @@ static struct p9_req_t *p9_client_zc_rpc(struct p9_client *c, int8_t type,
->  		if (err == -EIO)
->  			c->status = Disconnected;
->  		if (err != -ERESTARTSYS)
-> -			goto reterr;
-> +			goto recalc_sigpending;
->  	}
->  	if (req->status == REQ_STATUS_ERROR) {
->  		p9_debug(P9_DEBUG_ERROR, "req_status error %d\n", req->t_err);
-> @@ -885,6 +886,7 @@ static struct p9_req_t *p9_client_zc_rpc(struct p9_client *c, int8_t type,
->  		if (req->status == REQ_STATUS_RCVD)
->  			err = 0;
->  	}
-> +recalc_sigpending:
->  	if (sigpending) {
->  		spin_lock_irqsave(&current->sighand->siglock, flags);
->  		recalc_sigpending();
-> 
-> 
-> .
-> 
+  5e0dfcbb1194 ("max17042: propagate of_node to power supply device")
+
+is missing a Signed-off-by from its author.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/tdX_uVXC7iujCXZws49o4cF
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlql2ncACgkQAVBC80lX
+0GzxvQgAh5kFT4cwqJnq1X856kadaoIoDRmaOJX1BL6XqNQ/RAlgy8v6tU8GozUp
+8GEqbS5Xlr5gCWsYuEHaXMHLjO15dwPz5JCg0W2c89OeBY/XT21M1+MYXxs9m4TI
+eUUKeG60OhUQuOc9A3KdFKkdErm8MyxfQfq0hhZjfIRIcwRAjbXFCuFEANaFibI4
++Ym3X+J0XkXjjABy3/J5X45Y6VX+4aBi0mFmsr23FKlg355orH4Th0B+Z1zUnDws
+mMBDud+Odep0tASj1EO84GLPAUKc8gH1mw5cWP+9AVdKzTqfMTz6MCeYHIbbU9ZV
+XgWL/Ja406X4qDsAexNqdS0e81xfxw==
+=1sfl
+-----END PGP SIGNATURE-----
+
+--Sig_/tdX_uVXC7iujCXZws49o4cF--
