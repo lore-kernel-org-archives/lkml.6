@@ -1,71 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932354AbeCLUsK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 16:48:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57112 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932171AbeCLUsI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 16:48:08 -0400
-Subject: Re: [PATCH v4 1/6] sysctl: Add flags to support min/max range
- clamping
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>
-References: <1520885744-1546-1-git-send-email-longman@redhat.com>
- <1520885744-1546-2-git-send-email-longman@redhat.com>
- <20180312204413.GY4449@wotan.suse.de>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <53093737-776f-d455-5651-3a57d5ac7be9@redhat.com>
-Date: Mon, 12 Mar 2018 16:48:07 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180312204413.GY4449@wotan.suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S932418AbeCLUsS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 16:48:18 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:43380 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932271AbeCLUsP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 16:48:15 -0400
+X-Google-Smtp-Source: AG47ELu5zWa3LniPIJNT5nOXPxoJqhl12FHwcO2lMk/qz0cOSVZ25jr0hYSYQMgnV8HxxJ+bvS7aHg==
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH 0/8] Implement get_multiple for ACCES and PC104 drivers
+Date: Mon, 12 Mar 2018 16:48:03 -0400
+Message-Id: <cover.1520886945.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/12/2018 04:44 PM, Luis R. Rodriguez wrote:
-> On Mon, Mar 12, 2018 at 04:15:39PM -0400, Waiman Long wrote:
->> When minimum/maximum values are specified for a sysctl parameter in
->> the ctl_table structure with proc_dointvec_minmax() handler, update
->> to that parameter will fail with error if the given value is outside
->> of the required range.
->>
->> There are use cases where it may be better to clamp the value of
->> the sysctl parameter to the given range without failing the update,
->> especially if the users are not aware of the actual range limits.
->> Reading the value back after the update will now be a good practice
->> to see if the provided value exceeds the range limits.
->>
->> To provide this less restrictive form of range checking, a new flags
->> field is added to the ctl_table structure.
->>
->> When the CTL_FLAGS_CLAMP_RANGE flag is set in the ctl_table
->> entry, any update from the userspace will be clamped to the given
->> range without error if either the proc_dointvec_minmax() or the
->> proc_douintvec_minmax() handlers is used.
-> You keep missing to document both on commit log and kdoc which
-> end on the range is selected if you happen to go over. To be clear
-> it is unclear from reading the commit log if a default is set if
-> you go over if you pick another value. In this case it is conditional
-> if you go over we pick the high range max, and if you go below the
-> lower range minimum set allowed.
->
-> What happens if no low range is set and that is what the issue in
-> terms of range triggers?
+This patchset implements get_multiple callbacks for the PC104 GPIO
+drivers as well as the PCI-IDIO-16 and PCIe-IDIO-24 GPIO drivers. These
+devices all acquire the multiple input lines with a single read, so
+utilizing the get_multiple callback can provide improvement for those
+users who regularly access multiple input lines.
 
-Sorry for missing that.
+While developing this patchset I noticed many of these devices make use
+of Intel 8255 compatible interfaces for their I/O. I may write a generic
+8255 GPIO driver in the future to reduce some of the redundant code I
+see pop among the drivers for these devices.
 
-If a minimum value is not specified, no minimum checking and clamping
-will be done. Similarly for maximum. I will clarify that.
+William Breathitt Gray (8):
+  iio: stx104: Implement get_multiple callback
+  gpio: 104-idio-16: Implement get_multiple callback
+  gpio: pci-idio-16: Implement get_multiple callback
+  gpio: pcie-idio-24: Implement get_multiple callback
+  gpio: 104-dio-48e: Implement get_multiple callback
+  gpio: 104-idi-48: Implement get_multiple callback
+  gpio: gpio-mm: Implement get_multiple callback
+  gpio: ws16c48: Implement get_multiple callback
 
-Cheers,
-Longman
+ drivers/gpio/gpio-104-dio-48e.c  | 41 ++++++++++++++++++++++++++
+ drivers/gpio/gpio-104-idi-48.c   | 41 ++++++++++++++++++++++++++
+ drivers/gpio/gpio-104-idio-16.c  | 15 ++++++++++
+ drivers/gpio/gpio-gpio-mm.c      | 41 ++++++++++++++++++++++++++
+ drivers/gpio/gpio-pci-idio-16.c  | 48 ++++++++++++++++++++++++++++++
+ drivers/gpio/gpio-pcie-idio-24.c | 63 ++++++++++++++++++++++++++++++++++++++++
+ drivers/gpio/gpio-ws16c48.c      | 39 +++++++++++++++++++++++++
+ drivers/iio/adc/stx104.c         | 11 +++++++
+ 8 files changed, 299 insertions(+)
+
+-- 
+2.16.2
