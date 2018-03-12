@@ -1,79 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932375AbeCLJdC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 05:33:02 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:53056 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751229AbeCLJc7 (ORCPT
+        id S1752177AbeCLJfv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 05:35:51 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:65069 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751229AbeCLJfu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:32:59 -0400
-X-Google-Smtp-Source: AG47ELsKHXof7ptuT5R9Uz490L0KY6GQLzZWRrvMW3oYfbL5yvjh9tVh6jTdYNsz/gW2piF2FjX6Ww==
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-X-Google-Original-From: Benjamin Gaignard <benjamin.gaignard@st.com>
-To: mturquette@baylibre.com, sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH v3] clk: stm32: add configuration flags for each of the stm32 drivers
-Date: Mon, 12 Mar 2018 10:32:48 +0100
-Message-Id: <20180312093248.27512-1-benjamin.gaignard@st.com>
-X-Mailer: git-send-email 2.15.0
+        Mon, 12 Mar 2018 05:35:50 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] cpuidle: poll_state: Add time limit to poll_idle()
+Date: Mon, 12 Mar 2018 10:36:27 +0100
+Message-ID: <4137867.C4jYrWdt8n@aspire.rjw.lan>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add two configuration flags to be able to not compile all the time
-stm32f and stm32h7 drivers when ARCH_STM32 is set.
-That help to save some space on those small platforms.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-Acked-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+If poll_idle() is allowed to spin until need_resched() returns 'true',
+it may actually spin for a much longer time than expected by the idle
+governor, since set_tsk_need_resched() is not always called by the
+timer interrupt handler.  If that happens, the CPU may spend much
+more time than anticipated in the "polling" state.
+
+To prevent that from happening, limit the time of the spinning loop
+in poll_idle().
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
-version 3:
-- rebase on clk-next where clk-stm32mp1 branch has been merged
 
- drivers/clk/Kconfig  | 14 ++++++++++++++
- drivers/clk/Makefile |  4 ++--
- 2 files changed, 16 insertions(+), 2 deletions(-)
+-> v2: After additional testing reduce POLL_IDLE_TIME_CHECK_COUNT to 1000.
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index cbb9b0c05442..a26cde051158 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -244,6 +244,20 @@ config COMMON_CLK_STM32MP157
- 	---help---
- 	  Support for stm32mp157 SoC family clocks
+---
+ drivers/cpuidle/poll_state.c |   17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
+
+Index: linux-pm/drivers/cpuidle/poll_state.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/poll_state.c
++++ linux-pm/drivers/cpuidle/poll_state.c
+@@ -5,16 +5,31 @@
+  */
  
-+config COMMON_CLK_STM32F
-+	bool "Clock driver for stm32f4 and stm32f7 SoC families"
-+	depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
-+	help
-+	---help---
-+	  Support for stm32f4 and stm32f7 SoC families clocks
+ #include <linux/cpuidle.h>
++#include <linux/ktime.h>
+ #include <linux/sched.h>
+ #include <linux/sched/idle.h>
+ 
++#define POLL_IDLE_TIME_CHECK_COUNT	1000
++#define POLL_IDLE_TIME_LIMIT		(TICK_NSEC / 16)
 +
-+config COMMON_CLK_STM32H7
-+	bool "Clock driver for stm32h7 SoC family"
-+	depends on MACH_STM32H743
-+	help
-+	---help---
-+	  Support for stm32h7 SoC family clocks
+ static int __cpuidle poll_idle(struct cpuidle_device *dev,
+ 			       struct cpuidle_driver *drv, int index)
+ {
++	ktime_t start = ktime_get();
 +
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/imgtec/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 8d812c701aa6..e0c106ed9407 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -45,8 +45,8 @@ obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
- obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
- obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
- obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
--obj-$(CONFIG_ARCH_STM32)		+= clk-stm32f4.o
--obj-$(CONFIG_ARCH_STM32)		+= clk-stm32h7.o
-+obj-$(CONFIG_COMMON_CLK_STM32F)		+= clk-stm32f4.o
-+obj-$(CONFIG_COMMON_CLK_STM32H7)	+= clk-stm32h7.o
- obj-$(CONFIG_COMMON_CLK_STM32MP157)	+= clk-stm32mp1.o
- obj-$(CONFIG_ARCH_TANGO)		+= clk-tango4.o
- obj-$(CONFIG_CLK_TWL6040)		+= clk-twl6040.o
--- 
-2.15.0
+ 	local_irq_enable();
+ 	if (!current_set_polling_and_test()) {
+-		while (!need_resched())
++		unsigned int time_check_counter = 0;
++
++		while (!need_resched()) {
+ 			cpu_relax();
++			if (time_check_counter++ < POLL_IDLE_TIME_CHECK_COUNT)
++				continue;
++
++			time_check_counter = 0;
++			if (ktime_sub(ktime_get(), start) > POLL_IDLE_TIME_LIMIT)
++				break;
++		}
+ 	}
+ 	current_clr_polling();
+ 
