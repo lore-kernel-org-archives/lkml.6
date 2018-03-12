@@ -1,26 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932621AbeCLROD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 13:14:03 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40874 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932548AbeCLRNh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S932634AbeCLRNh (ORCPT <rfc822;w@1wt.eu>);
         Mon, 12 Mar 2018 13:13:37 -0400
-X-Google-Smtp-Source: AG47ELt9bMUPY6H9N64DQAsg+DS0QQuj7qRPL+uFHSQX1vIstBC8EU4zhl8YjS2AUTSk6ZXFAQJt7g==
+Received: from mail-wr0-f175.google.com ([209.85.128.175]:37849 "EHLO
+        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932326AbeCLRNg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 13:13:36 -0400
+X-Google-Smtp-Source: AG47ELuNEaaUc25vbKXGCYNZwjgTRXp4ZLXwujv4jB/Ocq1wVGFP+Bq3y8/SCvY1e2L/uKV+Bs2cpQ==
 From: Christian Brauner <christian.brauner@ubuntu.com>
 To: viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
         ebiederm@xmission.com, torvalds@linux-foundation.org
 Cc: Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 2/3 v3] devpts: resolve devpts bind-mounts
-Date: Mon, 12 Mar 2018 18:13:29 +0100
-Message-Id: <20180312171330.32054-3-christian.brauner@ubuntu.com>
+Subject: [PATCH 0/3 v3] devpts: handle bind-mounts
+Date: Mon, 12 Mar 2018 18:13:27 +0100
+Message-Id: <20180312171330.32054-1-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180312171330.32054-1-christian.brauner@ubuntu.com>
-References: <20180312171330.32054-1-christian.brauner@ubuntu.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+
+Hey everyone,
+
+This is the third iteration of this patch. Major changes are:
+- rewritten commit message to thoroughly analyse the problem for
+  posterity in Subject: [PATCH 2/3 v3] devpts: resolve devpts bind-mounts
+  and in this cover letter.
+- extended selftests to test for correct handling of /dev/pts/ptmx
+  bind-mounts to /dev/ptmx and non-standard devpts mounts such as
+  mount -t devpts devpts /mnt
 
 Most libcs will still look at /dev/ptmx when opening the master fd of a pty
 device. When /dev/ptmx is a bind-mount of /dev/pts/ptmx and the TIOCGPTPEER
@@ -111,74 +119,18 @@ with output:
 
 lrwx------ 1 chb chb 64 Mar  7 16:41 /proc/self/fd/0 -> /
 
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-Suggested-by: Eric Biederman <ebiederm@xmission.com>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
----
-ChangeLog v2->v3:
-* rework logic to account for non-standard devpts mounts such as
-  mount -t devpts devpts /mnt
-ChangeLog v1->v2:
-* move removal of if (path->mnt->mnt_sb->s_magic == DEVPTS_SUPER_MAGIC)
-  condition to separate patch with non-functional changes
-ChangeLog v0->v1:
-* remove
-        /* Has the devpts filesystem already been found? */
-        if (path->mnt->mnt_sb->s_magic == DEVPTS_SUPER_MAGIC)
-	                return 0
-  from devpts_ptmx_path()
-* check superblock after devpts_ptmx_path() returned
----
- fs/devpts/inode.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+Christian Brauner (3):
+  devpts: hoist out check for DEVPTS_SUPER_MAGIC
+  devpts: resolve devpts bind-mounts
+  selftests: add devpts selftests
 
-diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
-index d3ddbb888874..b31362c6c548 100644
---- a/fs/devpts/inode.c
-+++ b/fs/devpts/inode.c
-@@ -154,27 +154,35 @@ static int devpts_ptmx_path(struct path *path)
- 
- struct vfsmount *devpts_mntget(struct file *filp, struct pts_fs_info *fsi)
- {
-+	bool unwind;
- 	struct path path;
-+	int err = 0;
- 
- 	path = filp->f_path;
- 	path_get(&path);
- 
--	/* Has the devpts filesystem already been found? */
--	if (path.mnt->mnt_sb->s_magic != DEVPTS_SUPER_MAGIC) {
--		int err;
-+	unwind = (DEVPTS_SB(path.mnt->mnt_sb) == fsi) &&
-+		 (path.mnt->mnt_root == fsi->ptmx_dentry);
-+	/* Walk upward while the start point is a bind mount of
-+	 * a single file.
-+	 */
-+	while (path.mnt->mnt_root == path.dentry && unwind)
-+		if (follow_up(&path) == 0)
-+			break;
- 
-+	if ((path.mnt->mnt_sb->s_magic != DEVPTS_SUPER_MAGIC) || unwind)
- 		err = devpts_ptmx_path(&path);
--		dput(path.dentry);
--		if (err) {
--			mntput(path.mnt);
--			return ERR_PTR(err);
--		}
-+	dput(path.dentry);
-+	if (err) {
-+		mntput(path.mnt);
-+		return ERR_PTR(err);
- 	}
- 
- 	if (DEVPTS_SB(path.mnt->mnt_sb) != fsi) {
- 		mntput(path.mnt);
- 		return ERR_PTR(-ENODEV);
- 	}
-+
- 	return path.mnt;
- }
- 
+ fs/devpts/inode.c                                |  35 ++-
+ tools/testing/selftests/Makefile                 |   1 +
+ tools/testing/selftests/filesystems/.gitignore   |   1 +
+ tools/testing/selftests/filesystems/Makefile     |   2 +-
+ tools/testing/selftests/filesystems/devpts_pts.c | 281 +++++++++++++++++++++++
+ 5 files changed, 308 insertions(+), 12 deletions(-)
+ create mode 100644 tools/testing/selftests/filesystems/devpts_pts.c
+
 -- 
 2.15.1
