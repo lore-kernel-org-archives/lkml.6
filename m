@@ -1,57 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932506AbeCLBkf (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 21:40:35 -0400
-Received: from ozlabs.org ([103.22.144.67]:35315 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932419AbeCLBkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 21:40:33 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 12 Mar 2018 12:40:07 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Sebastian Reichel <sre@kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Pierre Bourdon <delroth@google.com>, Andre Heider <a.heider@gmail.com>
-Subject: linux-next: Signed-off-by missing for commit in the battery tree
-Message-ID: <20180312124007.61288892@canb.auug.org.au>
+        id S932536AbeCLBqi (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 21:46:38 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60474 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932419AbeCLBqh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Mar 2018 21:46:37 -0400
+Date: Sun, 11 Mar 2018 18:47:09 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: Re: [PATCH] rcu: Use the proper lockdep annotation in
+ dump_blkd_tasks()
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180309013224.23890-1-boqun.feng@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/tdX_uVXC7iujCXZws49o4cF"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180309013224.23890-1-boqun.feng@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18031201-0036-0000-0000-000002CEAA07
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008656; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01001737; UDB=6.00509653; IPR=6.00781067;
+ MB=3.00019979; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-12 01:46:33
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18031201-0037-0000-0000-0000439CD451
+Message-Id: <20180312014709.GL3918@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-11_15:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803120020
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/tdX_uVXC7iujCXZws49o4cF
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Mar 09, 2018 at 09:32:18AM +0800, Boqun Feng wrote:
+> Sparse reported this:
+> 
+> | kernel/rcu/tree_plugin.h:814:9: warning: incorrect type in argument 1 (different modifiers)
+> | kernel/rcu/tree_plugin.h:814:9:    expected struct lockdep_map const *lock
+> | kernel/rcu/tree_plugin.h:814:9:    got struct lockdep_map [noderef] *<noident>
+> 
+> This is caused by using vanilla lockdep annotations on rcu_node::lock,
+> and that requires accessing ->lock of rcu_node directly. However we need
+> to keep rcu_node::lock __private to avoid breaking its extra ordering
+> guarantee. And we have a dedicated lockdep annotation for
+> rcu_node::lock, so use it.
+> 
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 
-Hi Sebastian,
+Good eyes!  Queued both this and v3 for testing and further review.
 
-Commit
+							Thanx, Paul
 
-  5e0dfcbb1194 ("max17042: propagate of_node to power supply device")
-
-is missing a Signed-off-by from its author.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/tdX_uVXC7iujCXZws49o4cF
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlql2ncACgkQAVBC80lX
-0GzxvQgAh5kFT4cwqJnq1X856kadaoIoDRmaOJX1BL6XqNQ/RAlgy8v6tU8GozUp
-8GEqbS5Xlr5gCWsYuEHaXMHLjO15dwPz5JCg0W2c89OeBY/XT21M1+MYXxs9m4TI
-eUUKeG60OhUQuOc9A3KdFKkdErm8MyxfQfq0hhZjfIRIcwRAjbXFCuFEANaFibI4
-+Ym3X+J0XkXjjABy3/J5X45Y6VX+4aBi0mFmsr23FKlg355orH4Th0B+Z1zUnDws
-mMBDud+Odep0tASj1EO84GLPAUKc8gH1mw5cWP+9AVdKzTqfMTz6MCeYHIbbU9ZV
-XgWL/Ja406X4qDsAexNqdS0e81xfxw==
-=1sfl
------END PGP SIGNATURE-----
-
---Sig_/tdX_uVXC7iujCXZws49o4cF--
+> ---
+>  kernel/rcu/tree_plugin.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> index 9accacffd138..ea33f57abae5 100644
+> --- a/kernel/rcu/tree_plugin.h
+> +++ b/kernel/rcu/tree_plugin.h
+> @@ -811,7 +811,7 @@ static void dump_blkd_tasks(struct rcu_node *rnp, int ncheck)
+>  	int i;
+>  	struct list_head *lhp;
+> 
+> -	lockdep_assert_held(&rnp->lock);
+> +	raw_lockdep_assert_held_rcu_node(rnp);
+>  	pr_info("%s: grp: %d-%d level: %d ->qamask %#lx ->gp_tasks %p ->boost_tasks %p ->exp_tasks %p &->blkd_tasks: %p offset: %u\n", __func__, rnp->grplo, rnp->grphi, rnp->level, rnp->qsmask, rnp->gp_tasks, rnp->boost_tasks, rnp->exp_tasks, &rnp->blkd_tasks, (unsigned int)offsetof(typeof(*rnp), blkd_tasks));
+>  	pr_cont("\t->blkd_tasks");
+>  	i = 0;
+> -- 
+> 2.16.2
+> 
