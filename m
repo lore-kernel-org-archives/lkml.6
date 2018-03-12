@@ -1,137 +1,117 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1782201-1521432043-2-7975065695753442850
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521432043; b=kRigp7cLwW2rgVVIQoMeh9VS/sVk/4oyZBHdSNvi6BMW6Qm
-    Y8AQDN1jufac8SeHsdoB3ktAKs6qquIQuecEcsJkU+cgaDB1AXGanj9MlMU1luMJ
-    igKvNB2tvahELj6p4DAdCWk2r8zeTNa8fQQNMKU1pD/Taj+z74WBPkkRx6pRuKQ5
-    kFtgYpK4vQTUjwwNpRlKLIXWhhRMPAtBd8hCu3KsWD/zHegsSL8m/7AgZpEpbXye
-    M2j8/uF9yqAijd6wc7H73RCqg+vGBkpq8XTJWK6K6Ip0bhl9GwD8wWl6Epei+8ap
-    +sC1KU9HGQmm/gK0N+6enArlWi0ujfcsDBmhgsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1521432043; bh=m+5XxdzJZ9WuC7Q/tQ1ApC/+ayk1aXS9UjI+sw
-    hI+So=; b=HOteJ/CocO7FhGotZ6eDqmEW3jJAJs4CZVDHRxd332aOxyB2pLfFeV
-    tpoRGswfYBEuhuizzzxJANsNPuv5fbOo7FJljTESR0SxdCM99Uvjt1plHZk9M8Sk
-    VfOFkHYC0DcoTkGhQ2N/rHKUNWKm9xjEh/ZgVSnG75Y0b54B9eEwGI3OvrYxFsuJ
-    ojszn1Jozh24vbypnJfyR5CzkAxP82xAoJUfXRGSxtKWU5Qy0LNfivtgg2/BOdrF
-    yVxAnOigTKVUqdo6haBDZ10D4oa1ENKkUH72BD6pC3gtrljECCxPXDDTDpr8q5EW
-    jVewBgFR3s3rbyC7VN2ASVmxmfijLFGQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b=zhilRggr x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=endlessm.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-51 state=0;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=tUT9myEe;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=endlessm.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b=zhilRggr x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=endlessm.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-51 state=0;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=tUT9myEe;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=endlessm.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754923AbeCSEAk (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 19 Mar 2018 00:00:40 -0400
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:47035 "EHLO
-        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750739AbeCSEAi (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Mon, 19 Mar 2018 00:00:38 -0400
-X-Google-Smtp-Source: AG47ELs66FXL1F4f4auT7EnXoL+RfQ0dnPilKHQkpv6QtgJgLZeQvTQG6SYCDrj7e9WR0V0Ws3tmcV11e5BUTa9txxA=
-MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0g0DH03WYO3+7CZ2_mR+t3pJ6N9xnKL2OCOjGGRT9HiAw@mail.gmail.com>
-References: <CAD8Lp45tvQP0aA=6zg+1j-_0jTxyyNxnrL=Gt0+0WrzeT6XS0Q@mail.gmail.com>
- <20180316082320.12636-1-drake@endlessm.com> <71f9b3cb-a66b-937a-8cfc-7b9127f6f5b9@linux.intel.com>
- <CAJZ5v0g0DH03WYO3+7CZ2_mR+t3pJ6N9xnKL2OCOjGGRT9HiAw@mail.gmail.com>
-From: Daniel Drake <drake@endlessm.com>
-Date: Mon, 19 Mar 2018 12:00:37 +0800
-Message-ID: <CAD8Lp45iuZDVu++RB9ao8E9t6dBsehneXSSNebSwZdG=o02Zgg@mail.gmail.com>
-Subject: Re: Intel GemniLake xHCI connected devices can never wake up the
- system from suspend
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Chris Chiu <chiu@endlessm.com>,
-        "Nyman, Mathias" <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:ULTRA-WIDEBAND (UWB) SUBSYSTEM:"
-        <linux-usb@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Return-Path: <jeffy.chen@rock-chips.com>
+X-Google-Smtp-Source: AG47ELvpwUX8GaEvhPh4xPlLTcLHxKVaWaxCi8SqK68ohgjrpeTW4grVTtxkL4bzfOfr6Tg4Jwm+
+ARC-Seal: i=1; a=rsa-sha256; t=1520848352; cv=none;
+        d=google.com; s=arc-20160816;
+        b=hR3Bg+gqs8JU1PPTaf0LHsz0vNQbV21RnixJf+NGGt4LxH/gpGsTxBLp6riEu9CI21
+         1KwPPOWpU22YWzi1zg4D5eSEuQqejZgfC/aWrA/OKxDvCGJyJDBq702scDrDQKo9H0PC
+         RvKUpxPmsfjyMBv41mBt2o0rU+UOl0EzDItDfHKokcjNTSEVnJp31cCYLGhNZ/Hz/SkX
+         PwKihdJ2h8zMMVrN92nZDC+L0mtOnWDpAqBT6h/Qh/thGVyqfUxV6su4OFek7S3WGJVe
+         Zj7bgI6y6hf38ma2mMvGJLpjwa4p1ulXJ7vLpr15IYBWX1XQm9tGnMf2grfGxAHF9Uo2
+         X4SQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=vrq9xPlpVoxMV8AosembuvntIVi+nofJ2Zn/WLKlg7A=;
+        b=Qnycez4S5AYm+RBF/YiDg7KfiR0yX5VO7SxX++bZtRxW/Cgh2f5QZvDxTjbx9StHaR
+         g5lSsIj+EauXbNc7wdaCbKOHnsULueGutXWm4DkVjYut1LUTWYrNYMCYpm9k2JYXmVne
+         NiNOzlpopGCVLXbJeD8TwXFGDKv2b2XRqGu721ILIXz9lkZS84wWF0sjdnbYO7pYlrFt
+         ida5ulFu8q0SHGisp0ywKhrkcZjDokBTln9Di70DimBTpg79f2uLw9aJ6suTz5cbPzTU
+         Uy+olkjKLj0Q58Bf5rX8RszDefzfcFo50WVmgzPfoTdjAqA5r2I0wfboYTR8j4F03Uwd
+         OTnA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.14 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.14 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: jeffy.chen@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: jeffy.chen@rock-chips.com
+X-UNIQUE-TAG: <26a21b388c7d413342f3b2ccfae2ac99>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+To: linux-kernel@vger.kernel.org,
+	broonie@kernel.org,
+	alexandre.belloni@bootlin.com
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Joseph Lo <josephl@nvidia.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	lee.jones@linaro.org,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Brian Norris <briannorris@chromium.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	linux-rockchip@lists.infradead.org,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	linux-input@vger.kernel.org,
+	Will Deacon <will.deacon@arm.com>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Matthias Kaehlcke <mka@chromium.org>,
+	devicetree@vger.kernel.org,
+	stephen lu <lumotuwe@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-rtc@vger.kernel.org,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Gabriel Fernandez <gabriel.fernandez@st.com>,
+	linux-clk@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Vladimir Zapolskiy <vz@mleia.com>
+Subject: [PATCH v5 0/4] Set name of regmap_config
+Date: Mon, 12 Mar 2018 17:51:38 +0800
+Message-Id: <20180312095142.30854-1-jeffy.chen@rock-chips.com>
+X-Mailer: git-send-email 2.11.0
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594725081994949457?=
+X-GMAIL-MSGID: =?utf-8?q?1594725081994949457?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 19, 2018 at 6:36 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Fri, Mar 16, 2018 at 10:06 AM, Mathias Nyman
-> <mathias.nyman@linux.intel.com> wrote:
->> Adding Rafael directly to CC
->>
->> In short, if _S3D and _S3W are missing in DSDT then a PCI device
->> stays in D0 during suspend in Linux, but goes to D3 in Windows.
->>
->> USB wake doesn't work in Geminilake because of this.
->>
->> Should this be changed? reasoning below.
->
-> It can be changed if that doesn't cause problems to happen.
 
-I double checked that Windows 10 is going into S3 suspend and that USB
-wakeup works fine on this platform - it works fine there.
-Device manager for the XHCI controller clearly shows D3 being used for
-S3 suspend: https://imgur.com/lF9U3V0
+After 9b947a13e7f6 ("regmap: use debugfs even when no device"), we are
+allowing regmap to create debugfs without a valid device. Some of them
+would end up using "dummy*" as debugfs name.
 
-Current power state:
-D0
+This series try to set names in some regmap_config to avoid that.
 
-Power capabilities:
-00000089
-PDCAP_D0_SUPPORTED
-PDCAP_D3_SUPPORTED
-PDCAP_WAKE_FROM_D3_SUPPORTED
 
-Power state mappings:
-S0 -> D0
-S1 -> Unspecified
-S2 -> Unspecified
-S3 -> D3
-S4 -> D3
-S5 -> D3
+Changes in v5:
+CC lee.jones@linaro.org
 
-The biggest risk of my proposed change is that we would now end up
-putting a wakeup-enabled device into a too low power state where it
-can no longer wake up the system. On the other hand, it solves this
-issue affecting 2 different vendors, and may even result in some power
-savings in general.
+Changes in v4:
+Not to use rtc dev to init regmap, the gpbr is not directly related to
+the rtc.
 
-Perhaps we can consider the change for inclusion in Linux-4.17, giving
-2-3 months of testing time.
+Changes in v3:
+Modify commit message.
 
-I'll submit the patch shortly.
+Jeffy Chen (4):
+  mfd: syscon: Set name of regmap_config
+  rtc: at91sam9: Set name of regmap_config
+  clk: lpc32xx: Set name of regmap_config
+  ARM: rockchip: Set name of regmap_config
 
-Thanks
-Daniel
+ arch/arm/mach-rockchip/platsmp.c | 1 +
+ drivers/clk/nxp/clk-lpc32xx.c    | 1 +
+ drivers/mfd/syscon.c             | 1 +
+ drivers/rtc/rtc-at91sam9.c       | 1 +
+ 4 files changed, 4 insertions(+)
+
+-- 
+2.11.0
