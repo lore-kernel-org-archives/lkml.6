@@ -1,22 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932257AbeCLOU5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 10:20:57 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55041 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751685AbeCLOUm (ORCPT
+        id S1751975AbeCLOVF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 10:21:05 -0400
+Received: from bmailout3.hostsharing.net ([176.9.242.62]:42659 "EHLO
+        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751685AbeCLOVC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 10:20:42 -0400
-X-Google-Smtp-Source: AG47ELuDNY/3GDu/bnalc5Aj7S5eilYaRg3KzzFHsr1lxOPTBsv+o3yc1uNxGqdrOFTIVJxkyEnYoqrcKOd9cOU9Iyo=
+        Mon, 12 Mar 2018 10:21:02 -0400
+Date: Mon, 12 Mar 2018 15:20:59 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-pm@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Frederick Lawler <fred@fredlawl.com>
+Subject: Re: [PATCH v2 08/13] PCI/portdrv: Simplify PCIe feature permission
+ checking
+Message-ID: <20180312142059.GA11186@wunner.de>
+References: <152062141493.77693.9630397416694091342.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <152062203293.77693.8159909590216160503.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <20180312080402.GE10358@infradead.org>
+ <20180312140316.GB194000@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Reply-To: lindseykibler2016@gmail.com
-From: Lindsey <allenallenn26@gmail.com>
-Date: Mon, 12 Mar 2018 16:20:41 +0200
-Message-ID: <CAGUk1eq1KbzKV2d0Rj28UFD1jkxSsJOxZvRn6=CkTw3wqQbmMQ@mail.gmail.com>
-Subject: hihiihi
-To: undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180312140316.GB194000@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Mar 12, 2018 at 09:03:16AM -0500, Bjorn Helgaas wrote:
+> On Mon, Mar 12, 2018 at 01:04:02AM -0700, Christoph Hellwig wrote:
+> > > +	 * We assume we can manage these PCIe features.  Some systems may
+> > > +	 * reserve these for use by the platform itself, e.g., an ACPI BIOS
+> > > +	 * may implement its own AER handling and use _OSC to prevent the
+> > > +	 * OS from interfering.
+> > > +	 */
+> > > +	bridge->use_aer = 1;
+> > > +	bridge->use_hotplug = 1;
+> > > +	bridge->use_pme = 1;
+> > 
+> > If we start out with enabled maybe these should be disable_foo flags
+> > instead?
+> 
+> I went back and forth on that.  "disable_foo" is nice because the
+> default value is correct (zero means enabled).  But then you end up
+> with things like:
+> 
+>   if (pcie_ports_native || !host->disable_hotplug)
+> 
+> where the "!host->disable_hotplug" is a double negative, and I have a
+> really hard time reading that.
+
+native_hotplug or, if you want it reversed, platform_hotplug
+(or firmware_hotplug?) might improve readability.
+
+Thanks,
+
+Lukas
