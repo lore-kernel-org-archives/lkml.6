@@ -1,193 +1,233 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751740AbeCLJRO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 05:17:14 -0400
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:38271 "EHLO
-        mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750811AbeCLJRN (ORCPT
+        id S1751802AbeCLJVP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 05:21:15 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:39565 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751180AbeCLJVO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:17:13 -0400
-X-Google-Smtp-Source: AG47ELv5vQf5z/MejVR18v1XAb9Eeg/FuABGC6ZVMPjPiW2AVQTwnIfTnfJ+tBVsmCWdcNebeciSoGoUqXK8z3tNeNw=
+        Mon, 12 Mar 2018 05:21:14 -0400
+X-Google-Smtp-Source: AG47ELthMKV++Y8R0LNRTw2pAk0tNuFvrqGQvJS+HRe4qYtWhRlbsJwWmQkE1jULZwmmvgMFYNvkHg==
+Date: Mon, 12 Mar 2018 10:21:10 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Lin Huang <hl@rock-chips.com>
+Cc: emil.l.velikov@gmail.com, briannorris@chromium.org, robh+dt@kernel.org,
+        zyw@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        nickey.yang@rock-chips.com
+Subject: Re: [RESEND PATCH v3 1/3] drm/panel: refactor INNOLUX P079ZCA panel
+ driver
+Message-ID: <20180312092110.GC15972@ulmo>
+References: <1512371870-15350-1-git-send-email-hl@rock-chips.com>
 MIME-Version: 1.0
-In-Reply-To: <CALyZvKxnSXat40mqyQFEaKLzAVOd6xjf1teO3GTeP76_ShEtuQ@mail.gmail.com>
-References: <d109lwfe.fsf@gmail.com> <alpine.DEB.2.21.1803112350190.1485@nanos.tec.linutronix.de>
- <20180312072413.toyd5ztkgaah35xg@gmail.com> <CALyZvKx0AfVvhD3gs7mWMA_PE08JHoFSzk4rJWSozsCU9YLWmg@mail.gmail.com>
- <CALyZvKxnSXat40mqyQFEaKLzAVOd6xjf1teO3GTeP76_ShEtuQ@mail.gmail.com>
-From: Jason Vas Dias <jason.vas.dias@gmail.com>
-Date: Mon, 12 Mar 2018 09:17:10 +0000
-Message-ID: <CALyZvKwFQX+JY3DLdMywgVu5sy6j9416xBOOrG5VgxRRaxKEcg@mail.gmail.com>
-Subject: Re: [PATCH v4.16-rc4 1/2] x86/vdso: on Intel, VDSO should handle CLOCK_MONOTONIC_RAW
-To: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, andi <andi@firstfloor.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: multipart/mixed; boundary="001a113de11a79943a0567339b87"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2JFBq9zoW8cOFH7v"
+Content-Disposition: inline
+In-Reply-To: <1512371870-15350-1-git-send-email-hl@rock-chips.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---001a113de11a79943a0567339b87
-Content-Type: text/plain; charset="UTF-8"
 
-The split patches with no checkpatch.pl failures are
-attached and were just sent in separate emails
-to the mailing list .
+--2JFBq9zoW8cOFH7v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry it took a few tries to get right .
+On Mon, Dec 04, 2017 at 03:17:48PM +0800, Lin Huang wrote:
+> Refactor Innolux P079ZCA panel driver, let it support
+> multi panel.
+>=20
+> Signed-off-by: Lin Huang <hl@rock-chips.com>
+> ---
+> Changes in v2:
+> - Change regulator property name to meet the panel datasheet=20
+> Changes in v3:
+> - this patch only refactor P079ZCA panel to support multi panel, support =
+P097PFG panel in another patch=20
+>=20
+>  drivers/gpu/drm/panel/panel-innolux-p079zca.c | 147 ++++++++++++++++++--=
+------
+>  1 file changed, 105 insertions(+), 42 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/panel/panel-innolux-p079zca.c b/drivers/gpu/=
+drm/panel/panel-innolux-p079zca.c
+> index 6ba9344..1597744 100644
+> --- a/drivers/gpu/drm/panel/panel-innolux-p079zca.c
+> +++ b/drivers/gpu/drm/panel/panel-innolux-p079zca.c
+> @@ -20,12 +20,32 @@
+> =20
+>  #include <video/mipi_display.h>
+> =20
+> +struct panel_desc {
+> +	const struct drm_display_mode *modes;
+> +	unsigned int bpc;
+> +	struct {
+> +		unsigned int width;
+> +		unsigned int height;
+> +	} size;
+> +};
+> +
+> +struct panel_desc_dsi {
+> +	struct panel_desc desc;
+> +
+> +	unsigned long flags;
+> +	enum mipi_dsi_pixel_format format;
+> +	unsigned int lanes;
+> +};
 
-This will be my last send today -
-I'm off to use it at work.
+There's no need for the two layers here. Just move everything from
+struct panel_desc_dsi into struct panel_desc.
 
-Thanks & all the best,
-Jason
+> +
+>  struct innolux_panel {
+>  	struct drm_panel base;
+>  	struct mipi_dsi_device *link;
+> +	const struct panel_desc_dsi *dsi_desc;
 
---001a113de11a79943a0567339b87
-Content-Type: application/octet-stream;
-	name="vdso_vclock_gettime_CLOCK_MONOTONIC_RAW-4.16-rc5#1.patch"
-Content-Disposition: attachment;
-	filename="vdso_vclock_gettime_CLOCK_MONOTONIC_RAW-4.16-rc5#1.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: file1
+And then this can just become:
 
-ZGlmZiAtdXAgbGludXgtNC4xNi1yYzUuMS9hcmNoL3g4Ni9lbnRyeS92ZHNvL3ZjbG9ja19nZXR0
-aW1lLmMuNC4xNi1yYzUgbGludXgtNC4xNi1yYzUuMS9hcmNoL3g4Ni9lbnRyeS92ZHNvL3ZjbG9j
-a19nZXR0aW1lLmMKLS0tIGxpbnV4LTQuMTYtcmM1LjEvYXJjaC94ODYvZW50cnkvdmRzby92Y2xv
-Y2tfZ2V0dGltZS5jLjQuMTYtcmM1CTIwMTgtMDMtMTIgMDA6MjU6MDkuMDAwMDAwMDAwICswMDAw
-CisrKyBsaW51eC00LjE2LXJjNS4xL2FyY2gveDg2L2VudHJ5L3Zkc28vdmNsb2NrX2dldHRpbWUu
-YwkyMDE4LTAzLTEyIDA4OjEyOjE3LjExMDEyMDQzMyArMDAwMApAQCAtMTgyLDYgKzE4MiwxOCBA
-QCBub3RyYWNlIHN0YXRpYyB1NjQgdnJlYWRfdHNjKHZvaWQpCiAJcmV0dXJuIGxhc3Q7CiB9CiAK
-K25vdHJhY2Ugc3RhdGljIHU2NCB2cmVhZF90c2NfcmF3KHZvaWQpCit7CisJdTY0IHRzYworCSAg
-LCBsYXN0ID0gZ3RvZC0+cmF3X2N5Y2xlX2xhc3Q7CisKKwl0c2MJICAgICAgPSByZHRzY19vcmRl
-cmVkKCk7CisJaWYgKGxpa2VseSh0c2MgPj0gbGFzdCkpCisJCXJldHVybiB0c2M7CisJYXNtIHZv
-bGF0aWxlICgiIik7CisJcmV0dXJuIGxhc3Q7Cit9CisKIG5vdHJhY2Ugc3RhdGljIGlubGluZSB1
-NjQgdmdldHNucyhpbnQgKm1vZGUpCiB7CiAJdTY0IHY7CkBAIC0yMDMsNiArMjE1LDI3IEBAIG5v
-dHJhY2Ugc3RhdGljIGlubGluZSB1NjQgdmdldHNucyhpbnQgKm0KIAlyZXR1cm4gdiAqIGd0b2Qt
-Pm11bHQ7CiB9CiAKK25vdHJhY2Ugc3RhdGljIGlubGluZSB1NjQgdmdldHNuc19yYXcoaW50ICpt
-b2RlKQoreworCXU2NCB2OworCWN5Y2xlc190IGN5Y2xlczsKKworCWlmIChndG9kLT52Y2xvY2tf
-bW9kZSA9PSBWQ0xPQ0tfVFNDKQorCQljeWNsZXMgPSB2cmVhZF90c2NfcmF3KCk7CisjaWZkZWYg
-Q09ORklHX1BBUkFWSVJUX0NMT0NLCisJZWxzZSBpZiAoZ3RvZC0+dmNsb2NrX21vZGUgPT0gVkNM
-T0NLX1BWQ0xPQ0spCisJCWN5Y2xlcyA9IHZyZWFkX3B2Y2xvY2sobW9kZSk7CisjZW5kaWYKKyNp
-ZmRlZiBDT05GSUdfSFlQRVJWX1RTQ1BBR0UKKwllbHNlIGlmIChndG9kLT52Y2xvY2tfbW9kZSA9
-PSBWQ0xPQ0tfSFZDTE9DSykKKwkJY3ljbGVzID0gdnJlYWRfaHZjbG9jayhtb2RlKTsKKyNlbmRp
-ZgorCWVsc2UKKwkJcmV0dXJuIDA7CisJdiA9IChjeWNsZXMgLSBndG9kLT5yYXdfY3ljbGVfbGFz
-dCkgJiBndG9kLT5yYXdfbWFzazsKKwlyZXR1cm4gdiAqIGd0b2QtPnJhd19tdWx0OworfQorCiAv
-KiBDb2RlIHNpemUgZG9lc24ndCBtYXR0ZXIgKHZkc28gaXMgNGsgYW55d2F5KSBhbmQgdGhpcyBp
-cyBmYXN0ZXIuICovCiBub3RyYWNlIHN0YXRpYyBpbnQgX19hbHdheXNfaW5saW5lIGRvX3JlYWx0
-aW1lKHN0cnVjdCB0aW1lc3BlYyAqdHMpCiB7CkBAIC0yNDYsNiArMjc5LDI3IEBAIG5vdHJhY2Ug
-c3RhdGljIGludCBfX2Fsd2F5c19pbmxpbmUgZG9fbW8KIAlyZXR1cm4gbW9kZTsKIH0KIAorbm90
-cmFjZSBzdGF0aWMgX19hbHdheXNfaW5saW5lIGludCBkb19tb25vdG9uaWNfcmF3KHN0cnVjdCB0
-aW1lc3BlYyAqdHMpCit7CisJdW5zaWduZWQgbG9uZyBzZXE7CisJdTY0IG5zOworCWludCBtb2Rl
-OworCisJZG8geworCQlzZXEgPSBndG9kX3JlYWRfYmVnaW4oZ3RvZCk7CisJCW1vZGUgPSBndG9k
-LT52Y2xvY2tfbW9kZTsKKwkJdHMtPnR2X3NlYyA9IGd0b2QtPm1vbm90b25pY190aW1lX3Jhd19z
-ZWM7CisJCW5zID0gZ3RvZC0+bW9ub3RvbmljX3RpbWVfcmF3X25zZWM7CisJCW5zICs9IHZnZXRz
-bnNfcmF3KCZtb2RlKTsKKwkJbnMgPj49IGd0b2QtPnJhd19zaGlmdDsKKwl9IHdoaWxlICh1bmxp
-a2VseShndG9kX3JlYWRfcmV0cnkoZ3RvZCwgc2VxKSkpOworCisJdHMtPnR2X3NlYyArPSBfX2l0
-ZXJfZGl2X3U2NF9yZW0obnMsIE5TRUNfUEVSX1NFQywgJm5zKTsKKwl0cy0+dHZfbnNlYyA9IG5z
-OworCisJcmV0dXJuIG1vZGU7Cit9CisKIG5vdHJhY2Ugc3RhdGljIHZvaWQgZG9fcmVhbHRpbWVf
-Y29hcnNlKHN0cnVjdCB0aW1lc3BlYyAqdHMpCiB7CiAJdW5zaWduZWQgbG9uZyBzZXE7CkBAIC0y
-NzcsNiArMzMxLDEwIEBAIG5vdHJhY2UgaW50IF9fdmRzb19jbG9ja19nZXR0aW1lKGNsb2NraWQK
-IAkJaWYgKGRvX21vbm90b25pYyh0cykgPT0gVkNMT0NLX05PTkUpCiAJCQlnb3RvIGZhbGxiYWNr
-OwogCQlicmVhazsKKwljYXNlIENMT0NLX01PTk9UT05JQ19SQVc6CisJCWlmIChkb19tb25vdG9u
-aWNfcmF3KHRzKSA9PSBWQ0xPQ0tfTk9ORSkKKwkJCWdvdG8gZmFsbGJhY2s7CisJCWJyZWFrOwog
-CWNhc2UgQ0xPQ0tfUkVBTFRJTUVfQ09BUlNFOgogCQlkb19yZWFsdGltZV9jb2Fyc2UodHMpOwog
-CQlicmVhazsKZGlmZiAtdXAgbGludXgtNC4xNi1yYzUuMS9hcmNoL3g4Ni9lbnRyeS92c3lzY2Fs
-bC92c3lzY2FsbF9ndG9kLmMuNC4xNi1yYzUgbGludXgtNC4xNi1yYzUuMS9hcmNoL3g4Ni9lbnRy
-eS92c3lzY2FsbC92c3lzY2FsbF9ndG9kLmMKLS0tIGxpbnV4LTQuMTYtcmM1LjEvYXJjaC94ODYv
-ZW50cnkvdnN5c2NhbGwvdnN5c2NhbGxfZ3RvZC5jLjQuMTYtcmM1CTIwMTgtMDMtMTIgMDA6MjU6
-MDkuMDAwMDAwMDAwICswMDAwCisrKyBsaW51eC00LjE2LXJjNS4xL2FyY2gveDg2L2VudHJ5L3Zz
-eXNjYWxsL3ZzeXNjYWxsX2d0b2QuYwkyMDE4LTAzLTEyIDA3OjU4OjA3Ljk3NDIxNDE2OCArMDAw
-MApAQCAtNDUsNiArNDUsMTEgQEAgdm9pZCB1cGRhdGVfdnN5c2NhbGwoc3RydWN0IHRpbWVrZWVw
-ZXIgKgogCXZkYXRhLT5tdWx0CQk9IHRrLT50a3JfbW9uby5tdWx0OwogCXZkYXRhLT5zaGlmdAkJ
-PSB0ay0+dGtyX21vbm8uc2hpZnQ7CiAKKwl2ZGF0YS0+cmF3X2N5Y2xlX2xhc3QJPSB0ay0+dGty
-X3Jhdy5jeWNsZV9sYXN0OworCXZkYXRhLT5yYXdfbWFzawkJPSB0ay0+dGtyX3Jhdy5tYXNrOwor
-CXZkYXRhLT5yYXdfbXVsdAkJPSB0ay0+dGtyX3Jhdy5tdWx0OworCXZkYXRhLT5yYXdfc2hpZnQJ
-PSB0ay0+dGtyX3Jhdy5zaGlmdDsKKwogCXZkYXRhLT53YWxsX3RpbWVfc2VjCQk9IHRrLT54dGlt
-ZV9zZWM7CiAJdmRhdGEtPndhbGxfdGltZV9zbnNlYwkJPSB0ay0+dGtyX21vbm8ueHRpbWVfbnNl
-YzsKIApAQCAtNzQsNSArNzksOCBAQCB2b2lkIHVwZGF0ZV92c3lzY2FsbChzdHJ1Y3QgdGltZWtl
-ZXBlciAqCiAJCXZkYXRhLT5tb25vdG9uaWNfdGltZV9jb2Fyc2Vfc2VjKys7CiAJfQogCisJdmRh
-dGEtPm1vbm90b25pY190aW1lX3Jhd19zZWMgID0gdGstPnJhd19zZWM7CisJdmRhdGEtPm1vbm90
-b25pY190aW1lX3Jhd19uc2VjID0gdGstPnRrcl9yYXcueHRpbWVfbnNlYzsKKwogCWd0b2Rfd3Jp
-dGVfZW5kKHZkYXRhKTsKIH0KLS0tIGxpbnV4LTQuMTYtcmM1LjEvYXJjaC94ODYvaW5jbHVkZS9h
-c20vdmd0b2QuaC40LjE2LXJjNQkyMDE4LTAzLTEyIDAwOjI1OjA5LjAwMDAwMDAwMCArMDAwMAor
-KysgbGludXgtNC4xNi1yYzUuMS9hcmNoL3g4Ni9pbmNsdWRlL2FzbS92Z3RvZC5oCTIwMTgtMDMt
-MTIgMDc6NDQ6MTcuOTEwNTM5NzYwICswMDAwCkBAIC0yMiw2ICsyMiwxMCBAQCBzdHJ1Y3QgdnN5
-c2NhbGxfZ3RvZF9kYXRhIHsKIAl1NjQJbWFzazsKIAl1MzIJbXVsdDsKIAl1MzIJc2hpZnQ7CisJ
-dTY0CXJhd19jeWNsZV9sYXN0OworCXU2NAlyYXdfbWFzazsKKwl1MzIJcmF3X211bHQ7CisJdTMy
-CXJhd19zaGlmdDsKIAogCS8qIG9wZW4gY29kZWQgJ3N0cnVjdCB0aW1lc3BlYycgKi8KIAl1NjQJ
-CXdhbGxfdGltZV9zbnNlYzsKQEAgLTMyLDYgKzM2LDggQEAgc3RydWN0IHZzeXNjYWxsX2d0b2Rf
-ZGF0YSB7CiAJZ3RvZF9sb25nX3QJd2FsbF90aW1lX2NvYXJzZV9uc2VjOwogCWd0b2RfbG9uZ190
-CW1vbm90b25pY190aW1lX2NvYXJzZV9zZWM7CiAJZ3RvZF9sb25nX3QJbW9ub3RvbmljX3RpbWVf
-Y29hcnNlX25zZWM7CisJZ3RvZF9sb25nX3QJbW9ub3RvbmljX3RpbWVfcmF3X3NlYzsKKwlndG9k
-X2xvbmdfdAltb25vdG9uaWNfdGltZV9yYXdfbnNlYzsKIAogCWludAkJdHpfbWludXRlc3dlc3Q7
-CiAJaW50CQl0el9kc3R0aW1lOwo=
---001a113de11a79943a0567339b87
-Content-Type: application/octet-stream;
-	name="vdso_vclock_gettime_CLOCK_MONOTONIC_RAW-4.16-rc5#2.patch"
-Content-Disposition: attachment;
-	filename="vdso_vclock_gettime_CLOCK_MONOTONIC_RAW-4.16-rc5#2.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: file2
+	const struct panel_desc *desc;
 
-ZGlmZiAtdXAgbGludXgtNC4xNi1yYzUvYXJjaC94ODYvZW50cnkvdmRzby92Y2xvY2tfZ2V0dGlt
-ZS5jLjQuMTYtcmM1LXAxIGxpbnV4LTQuMTYtcmM1L2FyY2gveDg2L2VudHJ5L3Zkc28vdmNsb2Nr
-X2dldHRpbWUuYwotLS0gbGludXgtNC4xNi1yYzUvYXJjaC94ODYvZW50cnkvdmRzby92Y2xvY2tf
-Z2V0dGltZS5jLjQuMTYtcmM1LXAxCTIwMTgtMDMtMTIgMDg6MTI6MTcuMTEwMTIwNDMzICswMDAw
-CisrKyBsaW51eC00LjE2LXJjNS9hcmNoL3g4Ni9lbnRyeS92ZHNvL3ZjbG9ja19nZXR0aW1lLmMJ
-MjAxOC0wMy0xMiAwODo1OToyMS4xMzU0NzU4NjIgKzAwMDAKQEAgLTE4Nyw3ICsxODcsNyBAQCBu
-b3RyYWNlIHN0YXRpYyB1NjQgdnJlYWRfdHNjX3Jhdyh2b2lkKQogCXU2NCB0c2MKIAkgICwgbGFz
-dCA9IGd0b2QtPnJhd19jeWNsZV9sYXN0OwogCi0JdHNjCSAgICAgID0gcmR0c2Nfb3JkZXJlZCgp
-OworCXRzYyA9IGd0b2QtPmhhc19yZHRzY3AgPyByZHRzY3AoKHZvaWQqKTBVTCkgOiByZHRzY19v
-cmRlcmVkKCk7CiAJaWYgKGxpa2VseSh0c2MgPj0gbGFzdCkpCiAJCXJldHVybiB0c2M7CiAJYXNt
-IHZvbGF0aWxlICgiIik7CmRpZmYgLXVwIGxpbnV4LTQuMTYtcmM1L2FyY2gveDg2L2VudHJ5L3Zz
-eXNjYWxsL3ZzeXNjYWxsX2d0b2QuYy40LjE2LXJjNS1wMSBsaW51eC00LjE2LXJjNS9hcmNoL3g4
-Ni9lbnRyeS92c3lzY2FsbC92c3lzY2FsbF9ndG9kLmMKLS0tIGxpbnV4LTQuMTYtcmM1L2FyY2gv
-eDg2L2VudHJ5L3ZzeXNjYWxsL3ZzeXNjYWxsX2d0b2QuYy40LjE2LXJjNS1wMQkyMDE4LTAzLTEy
-IDA3OjU4OjA3Ljk3NDIxNDE2OCArMDAwMAorKysgbGludXgtNC4xNi1yYzUvYXJjaC94ODYvZW50
-cnkvdnN5c2NhbGwvdnN5c2NhbGxfZ3RvZC5jCTIwMTgtMDMtMTIgMDg6NTQ6MDcuNDkwMjY3NjQw
-ICswMDAwCkBAIC0xNiw2ICsxNiw3IEBACiAjaW5jbHVkZSA8bGludXgvdGltZWtlZXBlcl9pbnRl
-cm5hbC5oPgogI2luY2x1ZGUgPGFzbS92Z3RvZC5oPgogI2luY2x1ZGUgPGFzbS92dmFyLmg+Cisj
-aW5jbHVkZSA8Y3B1ZmVhdHVyZXMuaD4KIAogaW50IHZjbG9ja3NfdXNlZCBfX3JlYWRfbW9zdGx5
-OwogCkBAIC00OSw2ICs1MCw3IEBAIHZvaWQgdXBkYXRlX3ZzeXNjYWxsKHN0cnVjdCB0aW1la2Vl
-cGVyICoKIAl2ZGF0YS0+cmF3X21hc2sJCT0gdGstPnRrcl9yYXcubWFzazsKIAl2ZGF0YS0+cmF3
-X211bHQJCT0gdGstPnRrcl9yYXcubXVsdDsKIAl2ZGF0YS0+cmF3X3NoaWZ0CT0gdGstPnRrcl9y
-YXcuc2hpZnQ7CisJdmRhdGEtPmhhc19yZHRzY3AgICAgICAgPSBzdGF0aWNfY3B1X2hhcyhYODZf
-RkVBVFVSRV9SRFRTQ1ApOwogCiAJdmRhdGEtPndhbGxfdGltZV9zZWMJCT0gdGstPnh0aW1lX3Nl
-YzsKIAl2ZGF0YS0+d2FsbF90aW1lX3Nuc2VjCQk9IHRrLT50a3JfbW9uby54dGltZV9uc2VjOwpk
-aWZmIC11cCBsaW51eC00LjE2LXJjNS9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9tc3IuaC40LjE2LXJj
-NS1wMSBsaW51eC00LjE2LXJjNS9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9tc3IuaAotLS0gbGludXgt
-NC4xNi1yYzUvYXJjaC94ODYvaW5jbHVkZS9hc20vbXNyLmguNC4xNi1yYzUtcDEJMjAxOC0wMy0x
-MiAwMDoyNTowOS4wMDAwMDAwMDAgKzAwMDAKKysrIGxpbnV4LTQuMTYtcmM1L2FyY2gveDg2L2lu
-Y2x1ZGUvYXNtL21zci5oCTIwMTgtMDMtMTIgMDk6MDY6MDMuOTAyNzI4NzQ5ICswMDAwCkBAIC0y
-MTgsNiArMjE4LDM2IEBAIHN0YXRpYyBfX2Fsd2F5c19pbmxpbmUgdW5zaWduZWQgbG9uZyBsb24K
-IAlyZXR1cm4gcmR0c2MoKTsKIH0KIAorLyoqCisgKiByZHRzY3AoKSAtIHJlYWQgdGhlIGN1cnJl
-bnQgVFNDIGFuZCAob3B0aW9uYWxseSkgQ1BVIG51bWJlciwgd2l0aCBidWlsdC1pbgorICogICAg
-ICAgICAgICBjYW5jZWxsYXRpb24gcG9pbnQgcmVwbGFjaW5nIGJhcnJpZXIgLSBvbmx5IGF2YWls
-YWJsZQorICogICAgICAgICAgICBpZiBzdGF0aWNfY3B1X2hhcyhYODZfRkVBVFVSRV9SRFRTQ1Ap
-IC4KKyAqIHJldHVybnM6ICAgVGhlIDY0LWJpdCBUaW1lIFN0YW1wIENvdW50ZXIgKFRTQykgdmFs
-dWUuCisgKiBPcHRpb25hbGx5LCAnY3B1X291dCcgY2FuIGJlIG5vbi1udWxsLCBhbmQgb24gcmV0
-dXJuIGl0IHdpbGwgY29udGFpbgorICogdGhlIG51bWJlciAoSW50ZWwgQ1BVIElEKSBvZiB0aGUg
-Q1BVIHRoYXQgdGhlIHRhc2sgaXMgY3VycmVudGx5IHJ1bm5pbmcgb24uCisgKiBBcyBkb2VzIEVB
-WF9FRFRfUkVULCB0aGlzIHVzZXMgdGhlICJvcGVuLWNvZGVkIGFzbSIgc3R5bGUgdG8KKyAqIGZv
-cmNlIHRoZSBjb21waWxlciArIGFzc2VtYmxlciB0byBhbHdheXMgdXNlIChlYXgsIGVkeCwgZWN4
-KSByZWdpc3RlcnMsCisgKiBOT1Qgd2hvbGUgKHJheCwgcmR4LCByY3gpIG9uIHg4Nl82NCAsIGJl
-Y2F1c2Ugb25seSAzMi1iaXQgCisgKiB2YXJpYWJsZXMgYXJlIHVzZWQgLSBleGFjdGx5IHRoZSBz
-YW1lIGNvZGUgc2hvdWxkIGJlIGdlbmVyYXRlZAorICogZm9yIHRoaXMgaW5zdHJ1Y3Rpb24gb24g
-MzItYml0IGFzIG9uIDY0LWJpdCB3aGVuIHRoaXMgYXNtIHN0YW56YSBpcyB1c2VkLgorICogU2Vl
-OiBTRE0gLCBWb2wgIzIsIFJEVFNDUCBpbnN0cnVjdGlvbi4KKyAqLworc3RhdGljIF9fYWx3YXlz
-X2lubGluZSB1NjQgcmR0c2NwKHUzMiAqY3B1X291dCkKK3sKKwl1MzIJdHNjX2xvLCB0c2NfaGks
-IHRzY19jcHU7CisJYXNtIHZvbGF0aWxlCisJCSggInJkdHNjcCIKKwkJCTogICAiPWEiICh0c2Nf
-bG8pCisJCQkgICwgIj1kIiAodHNjX2hpKQorCQkJICAsICI9YyIgKHRzY19jcHUpCisJCSk7CisJ
-aWYgKCB1bmxpa2VseShjcHVfb3V0ICE9ICgodm9pZCopMCkpICkKKwkJKmNwdV9vdXQgPSB0c2Nf
-Y3B1OworCXJldHVybiAoKCgodTY0KXRzY19oaSkgPDwgMzIpIHwKKwkJKCgodTY0KXRzY19sbykg
-JiAweDBmZmZmZmZmZlVMTCApCisJICAgICAgICk7Cit9CisKIC8qIERlcHJlY2F0ZWQsIGtlZXAg
-aXQgZm9yIGEgY3ljbGUgZm9yIGVhc2llciBtZXJnaW5nOiAqLwogI2RlZmluZSByZHRzY2xsKG5v
-dykJZG8geyAobm93KSA9IHJkdHNjX29yZGVyZWQoKTsgfSB3aGlsZSAoMCkKIApkaWZmIC11cCBs
-aW51eC00LjE2LXJjNS9hcmNoL3g4Ni9pbmNsdWRlL2FzbS92Z3RvZC5oLjQuMTYtcmM1LXAxIGxp
-bnV4LTQuMTYtcmM1L2FyY2gveDg2L2luY2x1ZGUvYXNtL3ZndG9kLmgKLS0tIGxpbnV4LTQuMTYt
-cmM1L2FyY2gveDg2L2luY2x1ZGUvYXNtL3ZndG9kLmguNC4xNi1yYzUtcDEJMjAxOC0wMy0xMiAw
-Nzo0NDoxNy45MTA1Mzk3NjAgKzAwMDAKKysrIGxpbnV4LTQuMTYtcmM1L2FyY2gveDg2L2luY2x1
-ZGUvYXNtL3ZndG9kLmgJMjAxOC0wMy0xMiAwODo1MTo0OC4yMDQ4NDU2MjQgKzAwMDAKQEAgLTI2
-LDYgKzI2LDcgQEAgc3RydWN0IHZzeXNjYWxsX2d0b2RfZGF0YSB7CiAJdTY0CXJhd19tYXNrOwog
-CXUzMglyYXdfbXVsdDsKIAl1MzIJcmF3X3NoaWZ0OworCXUzMiAgICAgaGFzX3JkdHNjcDsKIAog
-CS8qIG9wZW4gY29kZWQgJ3N0cnVjdCB0aW1lc3BlYycgKi8KIAl1NjQJCXdhbGxfdGltZV9zbnNl
-YzsK
---001a113de11a79943a0567339b87--
+The _dsi suffix is redundant because this driver is exclusively for DSI
+devices.
+
+> -static int innolux_panel_add(struct innolux_panel *innolux)
+> +static int innolux_panel_add(struct mipi_dsi_device *dsi,
+> +			     const struct panel_desc_dsi *desc)
+>  {
+> -	struct device *dev =3D &innolux->link->dev;
+> +	struct innolux_panel *innolux;
+> +	struct device *dev =3D &dsi->dev;
+>  	struct device_node *np;
+>  	int err;
+> =20
+> -	innolux->supply =3D devm_regulator_get(dev, "power");
+> -	if (IS_ERR(innolux->supply))
+> -		return PTR_ERR(innolux->supply);
+> +	innolux =3D devm_kzalloc(dev, sizeof(*innolux), GFP_KERNEL);
+> +	if (!innolux)
+> +		return -ENOMEM;
+> +
+> +	innolux->dsi_desc =3D desc;
+> +	innolux->vddi =3D devm_regulator_get(dev, "power");
+> +	if (IS_ERR(innolux->vddi))
+> +		return PTR_ERR(innolux->vddi);
+> +
+> +	innolux->avdd =3D devm_regulator_get(dev, "avdd");
+> +	if (IS_ERR(innolux->avdd))
+> +		return PTR_ERR(innolux->avdd);
+> +
+> +	innolux->avee =3D devm_regulator_get(dev, "avee");
+> +	if (IS_ERR(innolux->avee))
+> +		return PTR_ERR(innolux->avee);
+
+According to the device tree bindings these regulators are all optional.
+Now devm_regulator_get() will return a dummy regulator if one has not
+been specified in DT, so this seems like it should work fine, even for
+existing DTBs that don't have the avdd and avee regulators. However, the
+DT bindings seem to be wrong, because these are in fact required
+regulators.
+
+> =20
+>  	innolux->enable_gpio =3D devm_gpiod_get_optional(dev, "enable",
+>  						       GPIOD_OUT_HIGH);
+> @@ -243,14 +306,16 @@ static int innolux_panel_add(struct innolux_panel *=
+innolux)
+> =20
+>  	drm_panel_init(&innolux->base);
+>  	innolux->base.funcs =3D &innolux_panel_funcs;
+> -	innolux->base.dev =3D &innolux->link->dev;
+> +	innolux->base.dev =3D dev;
+> =20
+>  	err =3D drm_panel_add(&innolux->base);
+>  	if (err < 0)
+>  		goto put_backlight;
+> =20
+> -	return 0;
+> +	dev_set_drvdata(dev, innolux);
+> +	innolux->link =3D dsi;
+> =20
+> +	return 0;
+>  put_backlight:
+>  	put_device(&innolux->backlight->dev);
+> =20
+> @@ -267,28 +332,25 @@ static void innolux_panel_del(struct innolux_panel =
+*innolux)
+> =20
+>  static int innolux_panel_probe(struct mipi_dsi_device *dsi)
+>  {
+> -	struct innolux_panel *innolux;
+> -	int err;
+> =20
+> -	dsi->lanes =3D 4;
+> -	dsi->format =3D MIPI_DSI_FMT_RGB888;
+> -	dsi->mode_flags =3D MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULS=
+E |
+> -			  MIPI_DSI_MODE_LPM;
+> -
+> -	innolux =3D devm_kzalloc(&dsi->dev, sizeof(*innolux), GFP_KERNEL);
+> -	if (!innolux)
+> -		return -ENOMEM;
+> +	const struct panel_desc_dsi *dsi_desc;
+> +	const struct of_device_id *id;
+> +	int err;
+> =20
+> -	mipi_dsi_set_drvdata(dsi, innolux);
+> +	id =3D of_match_node(innolux_of_match, dsi->dev.of_node);
+> +	if (!id)
+> +		return -ENODEV;
+> =20
+> -	innolux->link =3D dsi;
+> +	dsi_desc =3D id->data;
+> +	dsi->mode_flags =3D dsi_desc->flags;
+> +	dsi->format =3D dsi_desc->format;
+> +	dsi->lanes =3D dsi_desc->lanes;
+> =20
+> -	err =3D innolux_panel_add(innolux);
+> +	err =3D innolux_panel_add(dsi, dsi_desc);
+>  	if (err < 0)
+>  		return err;
+> =20
+> -	err =3D mipi_dsi_attach(dsi);
+> -	return err;
+> +	return mipi_dsi_attach(dsi);
+>  }
+> =20
+>  static int innolux_panel_remove(struct mipi_dsi_device *dsi)
+> @@ -326,7 +388,7 @@ static void innolux_panel_shutdown(struct mipi_dsi_de=
+vice *dsi)
+> =20
+>  static struct mipi_dsi_driver innolux_panel_driver =3D {
+>  	.driver =3D {
+> -		.name =3D "panel-innolux-p079zca",
+> +		.name =3D "panel-innolux-dsi",
+
+No need to change that. Also, probably a bad idea to change it because
+there are (or will be) likely other DSI panels from Innolux that are not
+compatible with this driver.
+
+Thierry
+
+--2JFBq9zoW8cOFH7v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqmRoQACgkQ3SOs138+
+s6FGxQ//aPmKYEZ62rc52+gn4EEdRgFykVErPQMkpmLwjszJ9zwzWki9uzfDe8Bq
+lLKaJ2lqmUXazijDb1W/DWZYiVUnYhwF+6Zrs1BYTziM4GK2EdfV0Xdu7cJQ4ZVE
+ICj3+9SlGbvW6h2b4ed+ocJv9T4h10S0GV/w9sQ36ym/DxEswzDietyhDkETBnG8
+kop7Lsn+C9rhF2X3VNtv+3Mf3DRd2PxldBsJ/xZ4b5hb/910arhXnuQOOvuEp9q3
+TiSTlvCspziS8f+pEF7w2HrmULEA1OPYZAEEFxU5tylvilvBtKkyNck9rrZuARh0
+wEzTr+VTWwP6XbKUP7gm92Ckz4QiEO0w7sTIRz9iWsHTZedMQe5ngVc5b+h9Kk1m
+aNohrQYpOVmeYuh1VXcB12qf89w8Zrs/dbr0zKP8DwGFhVVQV4E0l9ZQZwqYhEso
+ENouxSPjLiK0a0lZcm6ARpWv2KXnP8KIOPwOAZRL+H8+sQznWF0hSpFa0HRplZLM
+cTFaercuKlbMRdPeC6ZqpQXdP2xDpJWE0ZIo4J43z/HekA/TvbADoeQa65R20BJp
+maTzHpN+Qw51lbbf9yfZ0xkRWc6dhxw7ZJmxwKlnGTRen4Agj30Cc/BKKD59mzyT
+5Ryogp8gsnzhUOxieGfznYgFJY330W9bq9Um26sVEEBKfhdTBLE=
+=k0H1
+-----END PGP SIGNATURE-----
+
+--2JFBq9zoW8cOFH7v--
