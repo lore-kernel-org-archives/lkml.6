@@ -1,166 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751443AbeCLLbC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 07:31:02 -0400
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:55652 "EHLO
-        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750988AbeCLLbA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 07:31:00 -0400
-Date: Mon, 12 Mar 2018 07:30:03 -0400
-From: Neil Horman <nhorman@tuxdriver.com>
-To: Xin Long <lucien.xin@gmail.com>
-Cc: syzbot <syzbot+a4e4112c3aff00c8cfd8@syzkaller.appspotmail.com>,
-        davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-sctp@vger.kernel.org, network dev <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com, Vlad Yasevich <vyasevich@gmail.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Subject: Re: KASAN: use-after-free Read in sctp_association_free (2)
-Message-ID: <20180312113002.GA7457@hmswarspite.think-freely.org>
-References: <00000000000017dfe905670110cf@google.com>
- <20180309220823.GA24848@neilslaptop.think-freely.org>
- <CADvbK_fGkhJeirYwiu9ORmmPPBpqamgO2+vi9Osyd92cUWJBVA@mail.gmail.com>
- <20180310131355.GA8798@hmswarspite.think-freely.org>
- <CADvbK_cFjeC-eGdKzYnJxySBY6emVVC8KXQtzLDUZLJzBLb-UA@mail.gmail.com>
- <20180310190427.GA2484@neilslaptop.think-freely.org>
- <CADvbK_cFncE8SH=vrc5wKP5affYCYdnTemauezBqQVnpFq+WLQ@mail.gmail.com>
+        id S1751362AbeCLLbt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 07:31:49 -0400
+Received: from mout.web.de ([212.227.15.3]:39579 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750752AbeCLLbr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 07:31:47 -0400
+Subject: [PATCH 1/5] Bluetooth: btmrvl: Use common error handling code in
+ btmrvl_sdio_register_dev()
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-bluetooth@vger.kernel.org,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <8d050f76-aed1-7b6b-8778-a78aef34d4ea@users.sourceforge.net>
+Message-ID: <5c3361c6-ef1d-b919-8817-05c2c98fb2ef@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 12:31:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADvbK_cFncE8SH=vrc5wKP5affYCYdnTemauezBqQVnpFq+WLQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-Spam-Score: -2.9 (--)
+In-Reply-To: <8d050f76-aed1-7b6b-8778-a78aef34d4ea@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K0:ETzZMnIwpKXtzFt+QTvb+TrQqQiIOpxirtEFP+TOiyJ7FeCP6wi
+ wGm8ffPIVOcBxgP882CRnVxAYX/euUFTWA9064r6YVA3L4Z8OUPuc87Ty/NYiHFKKaQFfai
+ zGFAIOnQeWVOBw7YfTIbp7VUjS9PQlsYmnyHsAZvsc026yeOx0/+2eFpCqFoCRZgPBRWOA2
+ fibHp6Mq8v29kLkJmJV5w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:3dvIwYlIbMg=:RlGVbrhHQhoCVr14BItlrF
+ xIpHU0Hex5PtrOzbjfe378jJrTTisSCO4OfKeDxleO5kJqElhKDEWvRhjogkkIFcCyirxy2mp
+ jVRcpQqVOZkQfL0566N3NnCXAn8CbeFomq2G8IuVntsigf8DdB2uwmt+mJstzvmx7/Dj2/br+
+ ivINUzzfxC6uY5zdr4ZSIbw5Qg2k6nKdBs2LCZxDed/ebtIe6btrdsCk1QSczHfBmCvXv/kuQ
+ kD29hO8Vhg93uVwUai3eeFD50Yguo8ZNm/XCyLcz83aNdoPfNZghjS52rR4ZqMUYXIyCOyMK7
+ t5zgA/+/XJvrfeR+BddWq9G+ogt0XpqBH7+fNFGwe6EJYT+zZYvkltvrgxFuYGlKU3pT26adL
+ uR2GkGZpiQ2OsUcaVhFBrUKxvfetwi73+PJHYJUu6JQeU/rI46mQibBhX75st0OIqDx5tKEQg
+ JcZWGzrZP71+Cr7+rLyVekgK5iMSQM46foxWK350z/d9YzIV+7guCpQRK+rqWTerrWd4DPE+0
+ Ukx3PrZlV5sQ6M7dhVvw8bPP7LtJEO+afvafLOkfng2KvYjTcnlJfpuZOQg17wBkmVjrD594V
+ r5UuhhLLGRDAx2WTeniYFeV9IUOlo5jhkamxURK+9tyxR9mUYOQfmDF2equckicRC/Qj5S1e6
+ 8JmT7rC9AMpQb3QrAVfZpYIaNZGuZkeCR5SKi770uiHC4h/ekuj8L3j4sQF1XEflBwhOmAa5J
+ YiKx791nwSLiLO03DeiVh7X/nzgIRJT2IsS0uQwnr/SvJD/hK4np4aS+4N7FQ6t0VOF5BsKig
+ Oq2wcx48BY6m5Crg6WeH+IfXdxoIsQKZRZVKhvLxdqRqUgdTBU=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 04:16:27PM +0800, Xin Long wrote:
-> On Sun, Mar 11, 2018 at 3:04 AM, Neil Horman <nhorman@tuxdriver.com> wrote:
-> > On Sun, Mar 11, 2018 at 12:22:32AM +0800, Xin Long wrote:
-> >> On Sat, Mar 10, 2018 at 9:13 PM, Neil Horman <nhorman@tuxdriver.com> wrote:
-> >> > On Sat, Mar 10, 2018 at 03:58:04PM +0800, Xin Long wrote:
-> >> >> On Sat, Mar 10, 2018 at 6:08 AM, Neil Horman <nhorman@tuxdriver.com> wrote:
-> >> >> > On Fri, Mar 09, 2018 at 12:59:06PM -0800, syzbot wrote:
-> >> >> >> Hello,
-> >> >> >>
-> >> >> >> syzbot hit the following crash on net-next commit
-> >> >> >> fd372a7a9e5e9d8011a0222d10edd3523abcd3b1 (Thu Mar 8 19:43:48 2018 +0000)
-> >> >> >> Merge tag 'mlx5-updates-2018-02-28-2' of
-> >> >> >> git://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux
-> >> >> >>
-> >> >> >> So far this crash happened 2 times on net-next.
-> >> >> >> C reproducer is attached.
-> >> >> >> syzkaller reproducer is attached.
-> >> >> >> Raw console output is attached.
-> >> >> >> compiler: gcc (GCC) 7.1.1 20170620
-> >> >> >> .config is attached.
-> >> >> >>
-> >> >> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> >> >> >> Reported-by: syzbot+a4e4112c3aff00c8cfd8@syzkaller.appspotmail.com
-> >> >> >> It will help syzbot understand when the bug is fixed. See footer for
-> >> >> >> details.
-> >> >> >> If you forward the report, please keep this part and the footer.
-> >> >> >>
-> >> >> >> IPVS: ftp: loaded support on port[0] = 21
-> >> >> >> IPVS: ftp: loaded support on port[0] = 21
-> >> >> >> IPVS: ftp: loaded support on port[0] = 21
-> >> >> >> IPVS: ftp: loaded support on port[0] = 21
-> >> >> >> ==================================================================
-> >> >> >> BUG: KASAN: use-after-free in sctp_association_free+0x7b7/0x930
-> >> >> >> net/sctp/associola.c:332
-> >> >> >> Read of size 8 at addr ffff8801d8006ae0 by task syzkaller914861/4202
-> >> >> >>
-> >> >> >> CPU: 1 PID: 4202 Comm: syzkaller914861 Not tainted 4.16.0-rc4+ #258
-> >> >> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> >> >> >> Google 01/01/2011
-> >> >> >> Call Trace:
-> >> >> >>  __dump_stack lib/dump_stack.c:17 [inline]
-> >> >> >>  dump_stack+0x194/0x24d lib/dump_stack.c:53
-> >> >> >>  print_address_description+0x73/0x250 mm/kasan/report.c:256
-> >> >> >>  kasan_report_error mm/kasan/report.c:354 [inline]
-> >> >> >>  kasan_report+0x23c/0x360 mm/kasan/report.c:412
-> >> >> >>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-> >> >> >>  sctp_association_free+0x7b7/0x930 net/sctp/associola.c:332
-> >> >> >>  sctp_sendmsg+0xc67/0x1a80 net/sctp/socket.c:2075
-> >> >> >>  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:763
-> >> >> >>  sock_sendmsg_nosec net/socket.c:629 [inline]
-> >> >> >>  sock_sendmsg+0xca/0x110 net/socket.c:639
-> >> >> >>  SYSC_sendto+0x361/0x5c0 net/socket.c:1748
-> >> >> >>  SyS_sendto+0x40/0x50 net/socket.c:1716
-> >> >> >>  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-> >> >> >>  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> >> >> >> RIP: 0033:0x446d09
-> >> >> >> RSP: 002b:00007f5dbac21da8 EFLAGS: 00000216 ORIG_RAX: 000000000000002c
-> >> >> >> RAX: ffffffffffffffda RBX: 00000000006e29fc RCX: 0000000000446d09
-> >> >> >> RDX: 0000000000000001 RSI: 0000000020000340 RDI: 0000000000000003
-> >> >> >> RBP: 00000000006e29f8 R08: 00000000204d9000 R09: 000000000000001c
-> >> >> >> R10: 0000000000000000 R11: 0000000000000216 R12: 0000000000000000
-> >> >> >> R13: 00007fff7b26fb1f R14: 00007f5dbac229c0 R15: 00000000006e2b60
-> >> >> >>
-> >> >> > I think we have a corner case with a0ff660058b88d12625a783ce9e5c1371c87951f
-> >> >> > here.  If a peeloff event happens during a wait for sendbuf space, EPIPE will be
-> >> >> > returned, and the code path appears to call sctp_association_put twice, leading
-> >> >> > to the use after free situation.  I'll write a patch this weekend
-> >> >> Hi, Neil, you're right.
-> >> >>
-> >> >> I didn't expect peeloff can be done on a NEW asoc, as peeloff needs
-> >> >> assoc_id, which can only be set when connecting has started.
-> >> >>
-> >> >> But I realized that:
-> >> >> f84af33 sctp: factor out sctp_sendmsg_to_asoc from sctp_sendmsg
-> >> >>
-> >> >> moved sctp_primitive_ASSOCIATE(connecting) before sctp_wait_for_sndbuf
-> >> >> (snd buffer waiting). It means peeloff can be done on a NEW asoc.
-> >> >> So you may want to move it back.
-> >> >>
-> >> > I agree with the root cause, but I'm not sure I agree with just moving the
-> >> > wait_for_sndbuf call back above the call to associate.  I'm not sure I like
-> >> > relying on placing a call in a spcific order solely to avoid an error condition
-> >> > that might legitimately occur.  I think would rather check the return code at
-> >> > the call site for the complete set of conditions for which we should not free
-> >> > the association.  Something like this:
-> >> >
-> >> > diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-> >> > index 7d3476a4860d..a68846d2b0ef 100644
-> >> > --- a/net/sctp/socket.c
-> >> > +++ b/net/sctp/socket.c
-> >> > @@ -2071,8 +2071,9 @@ static int sctp_sendmsg(struct sock *sk, struct msghdr *msg, size_t msg_len)
-> >> >
-> >> >         /* Send msg to the asoc */
-> >> >         err = sctp_sendmsg_to_asoc(asoc, msg, msg_len, transport, sinfo);
-> >> > -       if (err < 0 && err != -ESRCH && new)
-> >> > -               sctp_association_free(asoc);
-> >> > +       if ((err != -ESRCH) && (err != -EPIPE))
-> >> > +               if (err < 0 && new)
-> >> > +                       sctp_association_free(asoc);
-> >> >
-> >> >  out_unlock:
-> >> >         release_sock(sk);
-> >> >
-> >> > Which I think also avoids the noted conflict.
-> >> >
-> >> > Thoughts?
-> >> If sctp_association_free is called for general asoc, yes, I agree with you.
-> >> But it's actually only for NEW asoc, a special case, not worth a extra check.
-> >> 'err != -ESRCH' is already kind of ugly there (I couldn't find a nicer way :D),
-> >> I don't hope there will be more like that.
-> >>
-> > I agree with you on the uglyness aspect of the return code check, but I really
-> > don't like the idea of placing the call to wait_for_sndbuf to guarantee a given
-> > error code isn't returned, It just feels rickety to me.
-> I understand, let's not count this moving back as the official fix
-> for this, but only for the compatibility :-)
-> 
-> Then we can start a new one for improving it later as you said below,
-> FYI, we've tried to pass 'new' parameter into sctp_sendmsg_to_asoc
-> or use &asoc as the parameter instead. But it seems not good, and
-> also sctp_association_free will have to be done in sctp_sendmsg_to_asoc,
-> which looks worse.
-> 
-Yeah, I thought about that, and don't particularly care for it either.  I also
-thought about checking the dead flag at the end of send_to_asoc, but that won't
-work either, as the caller of wait_for_sndbuf still has a reference.  I think,
-for now, you were right the first time, we just need to reposition it.   I'll be
-checking the fix with the provided reproducer today.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 10:15:17 +0100
 
-Neil
+Adjust a jump target so that a bit of exception handling can be better
+reused at the end of this function.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/bluetooth/btmrvl_sdio.c | 50 ++++++++++++++++-------------------------
+ 1 file changed, 19 insertions(+), 31 deletions(-)
+
+diff --git a/drivers/bluetooth/btmrvl_sdio.c b/drivers/bluetooth/btmrvl_sdio.c
+index 0f020254fd39..df2a04bd8428 100644
+--- a/drivers/bluetooth/btmrvl_sdio.c
++++ b/drivers/bluetooth/btmrvl_sdio.c
+@@ -949,31 +949,24 @@ static int btmrvl_sdio_register_dev(struct btmrvl_sdio_card *card)
+ 	ret = sdio_set_block_size(card->func, SDIO_BLOCK_SIZE);
+ 	if (ret) {
+ 		BT_ERR("cannot set SDIO block size");
+-		ret = -EIO;
+-		goto release_irq;
++		goto release_with_eio;
+ 	}
+ 
+ 	reg = sdio_readb(func, card->reg->io_port_0, &ret);
+-	if (ret < 0) {
+-		ret = -EIO;
+-		goto release_irq;
+-	}
++	if (ret < 0)
++		goto release_with_eio;
+ 
+ 	card->ioport = reg;
+ 
+ 	reg = sdio_readb(func, card->reg->io_port_1, &ret);
+-	if (ret < 0) {
+-		ret = -EIO;
+-		goto release_irq;
+-	}
++	if (ret < 0)
++		goto release_with_eio;
+ 
+ 	card->ioport |= (reg << 8);
+ 
+ 	reg = sdio_readb(func, card->reg->io_port_2, &ret);
+-	if (ret < 0) {
+-		ret = -EIO;
+-		goto release_irq;
+-	}
++	if (ret < 0)
++		goto release_with_eio;
+ 
+ 	card->ioport |= (reg << 16);
+ 
+@@ -981,26 +974,20 @@ static int btmrvl_sdio_register_dev(struct btmrvl_sdio_card *card)
+ 
+ 	if (card->reg->int_read_to_clear) {
+ 		reg = sdio_readb(func, card->reg->host_int_rsr, &ret);
+-		if (ret < 0) {
+-			ret = -EIO;
+-			goto release_irq;
+-		}
++		if (ret < 0)
++			goto release_with_eio;
++
+ 		sdio_writeb(func, reg | 0x3f, card->reg->host_int_rsr, &ret);
+-		if (ret < 0) {
+-			ret = -EIO;
+-			goto release_irq;
+-		}
++		if (ret < 0)
++			goto release_with_eio;
+ 
+ 		reg = sdio_readb(func, card->reg->card_misc_cfg, &ret);
+-		if (ret < 0) {
+-			ret = -EIO;
+-			goto release_irq;
+-		}
++		if (ret < 0)
++			goto release_with_eio;
++
+ 		sdio_writeb(func, reg | 0x10, card->reg->card_misc_cfg, &ret);
+-		if (ret < 0) {
+-			ret = -EIO;
+-			goto release_irq;
+-		}
++		if (ret < 0)
++			goto release_with_eio;
+ 	}
+ 
+ 	sdio_set_drvdata(func, card);
+@@ -1009,7 +996,8 @@ static int btmrvl_sdio_register_dev(struct btmrvl_sdio_card *card)
+ 
+ 	return 0;
+ 
+-release_irq:
++release_with_eio:
++	ret = -EIO;
+ 	sdio_release_irq(func);
+ 
+ disable_func:
+-- 
+2.16.2
