@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELuTK3I4gGNpiASsOqRRTUh/gD6y0az6ydf4CpvfhJ51vhsRuOv1UwQfUXYoTHF607CrXt6I
+X-Google-Smtp-Source: AG47ELv8Q/MOvXU0al8Xjrej8prj1/FSBu0n3y6NhpjR0quTPuPjuspTw7GWMXu6davqWb1+zKBm
 ARC-Seal: i=1; a=rsa-sha256; t=1520824062; cv=none;
         d=google.com; s=arc-20160816;
-        b=ru+RYELa5rY4sCJNQck5pzMpIuO8L3EH/Qveaz6h1EPhWqQYpWehSfYkHmG7QUAl7/
-         ZHS/hIrgs3fVccv8YTrM4gPgg1f2aTxdZY9s9kSRINktxqoG/xqlbIrBelxNO+62VL8K
-         P1/swIUCCJ7n5UTO4aXKJCzs1aNn+UaSDjuXYNSBsX6kjU4T7uYmGmUOiTUIonBg82LC
-         LPEXuj94i432Ym7gZJxiizQmbdgu1MP7EkwziEiR7crxs1Q3/pRZTZKx52FALizybDRJ
-         QmLkH111y77aBVTHrLYaAqPck/wObbxNGaRyTrPpkrO//Gu8a7YkcM7UOVl0AF1P4yRn
-         oLIQ==
+        b=O35Lxcv5nyPXkA0TlqUMgjUfuuhIbXLBG/uKztY1tTa8JJ/t05X+J6o8wQPLZTJuw6
+         1RvaSdTBSf3Fmdm7qvD6Kgh7dw1AOe0qOT69rb3oE2K0Xmmqx4tI00PcHMEsxdONFjHO
+         qWeb5tPNARgFdjZ3Gyll3wBVe5qiIzzEt4i2mMVqwtn+2wx5aB6uL1FOt73rM2cDZDrq
+         igutqfjSkIjglwj0J6bqVdW9mMF148OFib5b9sMrJ61KDlPgdczZDtcsTNo4Wxm73whH
+         N8zusWjIHYTFWsNuzGrI+xmG6ZQDlNf9G/vJ205WIHDsOL6YUGwhTu+ZqsjFGa9uTiHH
+         d6yw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=QvE1RJxvKx4nUoFVc29/00uiYmbFvF4sqfadeBgASjc=;
-        b=Kl1WJx17w2rR5ThRjfU7WmniCeUEEF6wYFpSIaaL4hLVDK/oQYSkkeB9uefMMp6xZJ
-         uJjDbPHeN81dMAL1Qof8jPThl8qtnZsn23M/yaKBIhKe5lWBSGMN9ra3VH+v1MDlYgaP
-         XUrGCst5wmDstHqwE8ZS37TmJnpg3j/66kRJr651X6qryvrqWTVTA37HJJfF5QSbFalA
-         T/K2KaPsUTkJWACQmAR2mUazHy8ThR0dnCgU0/KFe+zXOjP08bQx3EN5xEEcYMuzeynb
-         EhWaRPbHnBZjfnMF3oVIDVPmBiN5pKoBZYGAhI80aWzd83EmRfBkVLZ6LLbWWI2+7PJj
-         t69Q==
+        bh=zVhZnOx1UuA/iPBNHjyMEhYVu6KoZHalet7sq+gzreU=;
+        b=VYedNJUlXx5kDSUOFppUzb/LdoPwHvexwGmkn9viQwTcSzesOJ18iUP94TOgceH8Jq
+         r2onVoI2eAR3D4KfmuZqiVil29cMXwwLnM9aCLcv48BUllotOxmzkgSCsEtZo65ZkgTb
+         /kgLrvm7kOUcKwAAJ4sX/DXcO4BuSNej/DnccoZzqurZHiB6vQQwT9or/MXKMGOnI3Db
+         G4xA+IwsYB1LiW/IOD2tRy5BEHG7LnoC1FEPasH5fk/JncSYAbToFfbPZWEA+inJ0pvY
+         SOqEoVM8BKnzULb0pAjTNW7dieykfWGfgFeZ6IU7MGdgHTTXXGSErrTYzqoVz0zPiKFF
+         EkEA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,23 +30,32 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Andrew Honig" <ahonig@google.com>,
- "Benjamin Serebrin" <serebrin@google.com>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Christian Borntraeger" <borntraeger@de.ibm.com>,
+ "Dan Williams" <dan.j.williams@intel.com>,
+ "Josh Poimboeuf" <jpoimboe@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "Will Deacon" <will.deacon@arm.com>,
+ linux-arch@vger.kernel.org,
+ "Andy Lutomirski" <luto@kernel.org>,
+ "David Woodhouse" <dwmw2@infradead.org>,
+ "Ingo Molnar" <mingo@kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
  "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Paolo Bonzini" <pbonzini@redhat.com>,
- "Eric Northup" <digitaleric@google.com>,
- "Jim Mattson" <jmattson@google.com>
+ "Arjan van de Ven" <arjan@linux.intel.com>
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.174970866@decadent.org.uk>
+Message-ID: <lsq.1520823814.380113767@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 037/104] kvm: vmx: Scrub hardware GPRs at VM-exit
+Subject: [PATCH 3.2 100/104] nospec: Include <asm/barrier.h> dependency
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699612224973082?=
-X-GMAIL-MSGID: =?utf-8?q?1594699612224973082?=
+X-GMAIL-THRID: =?utf-8?q?1594699611670700523?=
+X-GMAIL-MSGID: =?utf-8?q?1594699611670700523?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,92 +63,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jim Mattson <jmattson@google.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit 0cb5b30698fdc8f6b4646012e3acb4ddce430788 upstream.
+commit eb6174f6d1be16b19cfa43dac296bfed003ce1a6 upstream.
 
-Guest GPR values are live in the hardware GPRs at VM-exit.  Do not
-leave any guest values in hardware GPRs after the guest GPR values are
-saved to the vcpu_vmx structure.
+The nospec.h header expects the per-architecture header file
+<asm/barrier.h> to optionally define array_index_mask_nospec(). Include
+that dependency to prevent inadvertent fallback to the default
+array_index_mask_nospec() implementation.
 
-This is a partial mitigation for CVE 2017-5715 and CVE 2017-5753.
-Specifically, it defeats the Project Zero PoC for CVE 2017-5715.
+The default implementation may not provide a full mitigation
+on architectures that perform data value speculation.
 
-Suggested-by: Eric Northup <digitaleric@google.com>
-Signed-off-by: Jim Mattson <jmattson@google.com>
-Reviewed-by: Eric Northup <digitaleric@google.com>
-Reviewed-by: Benjamin Serebrin <serebrin@google.com>
-Reviewed-by: Andrew Honig <ahonig@google.com>
-[Paolo: Add AMD bits, Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>]
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.2: adjust context]
+Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arch@vger.kernel.org
+Link: http://lkml.kernel.org/r/151881605404.17395.1341935530792574707.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.2: include <asm/system.h> instead]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kvm/svm.c | 19 +++++++++++++++++++
- arch/x86/kvm/vmx.c | 14 +++++++++++++-
- 2 files changed, 32 insertions(+), 1 deletion(-)
+ include/linux/nospec.h | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -3748,6 +3748,25 @@ static void svm_vcpu_run(struct kvm_vcpu
- 		"mov %%r14, %c[r14](%[svm]) \n\t"
- 		"mov %%r15, %c[r15](%[svm]) \n\t"
- #endif
-+		/*
-+		* Clear host registers marked as clobbered to prevent
-+		* speculative use.
-+		*/
-+		"xor %%" _ASM_BX ", %%" _ASM_BX " \n\t"
-+		"xor %%" _ASM_CX ", %%" _ASM_CX " \n\t"
-+		"xor %%" _ASM_DX ", %%" _ASM_DX " \n\t"
-+		"xor %%" _ASM_SI ", %%" _ASM_SI " \n\t"
-+		"xor %%" _ASM_DI ", %%" _ASM_DI " \n\t"
-+#ifdef CONFIG_X86_64
-+		"xor %%r8, %%r8 \n\t"
-+		"xor %%r9, %%r9 \n\t"
-+		"xor %%r10, %%r10 \n\t"
-+		"xor %%r11, %%r11 \n\t"
-+		"xor %%r12, %%r12 \n\t"
-+		"xor %%r13, %%r13 \n\t"
-+		"xor %%r14, %%r14 \n\t"
-+		"xor %%r15, %%r15 \n\t"
-+#endif
- 		"pop %%" _ASM_BP
- 		:
- 		: [svm]"a"(svm),
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -6228,6 +6228,7 @@ static void __noclone vmx_vcpu_run(struc
- 		/* Save guest registers, load host registers, keep flags */
- 		"mov %0, %c[wordsize](%%" _ASM_SP ") \n\t"
- 		"pop %0 \n\t"
-+		"setbe %c[fail](%0)\n\t"
- 		"mov %%" _ASM_AX ", %c[rax](%0) \n\t"
- 		"mov %%" _ASM_BX ", %c[rbx](%0) \n\t"
- 		__ASM_SIZE(pop) " %c[rcx](%0) \n\t"
-@@ -6244,12 +6245,23 @@ static void __noclone vmx_vcpu_run(struc
- 		"mov %%r13, %c[r13](%0) \n\t"
- 		"mov %%r14, %c[r14](%0) \n\t"
- 		"mov %%r15, %c[r15](%0) \n\t"
-+		"xor %%r8d,  %%r8d \n\t"
-+		"xor %%r9d,  %%r9d \n\t"
-+		"xor %%r10d, %%r10d \n\t"
-+		"xor %%r11d, %%r11d \n\t"
-+		"xor %%r12d, %%r12d \n\t"
-+		"xor %%r13d, %%r13d \n\t"
-+		"xor %%r14d, %%r14d \n\t"
-+		"xor %%r15d, %%r15d \n\t"
- #endif
- 		"mov %%cr2, %%" _ASM_AX "   \n\t"
- 		"mov %%" _ASM_AX ", %c[cr2](%0) \n\t"
+--- a/include/linux/nospec.h
++++ b/include/linux/nospec.h
+@@ -5,6 +5,7 @@
  
-+		"xor %%eax, %%eax \n\t"
-+		"xor %%ebx, %%ebx \n\t"
-+		"xor %%esi, %%esi \n\t"
-+		"xor %%edi, %%edi \n\t"
- 		"pop  %%" _ASM_BP "; pop  %%" _ASM_DX " \n\t"
--		"setbe %c[fail](%0) \n\t"
- 	      : : "c"(vmx), "d"((unsigned long)HOST_RSP),
- 		[launched]"i"(offsetof(struct vcpu_vmx, __launched)),
- 		[fail]"i"(offsetof(struct vcpu_vmx, fail)),
+ #ifndef _LINUX_NOSPEC_H
+ #define _LINUX_NOSPEC_H
++#include <asm/system.h>
+ 
+ /**
+  * array_index_mask_nospec() - generate a ~0 mask when index < size, 0 otherwise
