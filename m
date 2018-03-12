@@ -1,57 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932343AbeCLPBO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 11:01:14 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:33052 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751613AbeCLPBL (ORCPT
+        id S932399AbeCLPBU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 11:01:20 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:35345 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932342AbeCLPBR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 11:01:11 -0400
-From: Colin King <colin.king@canonical.com>
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>, alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] echoaudio: remove redundant initialization of pointer 'pipe'
-Date: Mon, 12 Mar 2018 15:01:00 +0000
-Message-Id: <20180312150100.8089-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Mon, 12 Mar 2018 11:01:17 -0400
+X-Google-Smtp-Source: AG47ELud8+W9Pn+mmYvAQSeiKViwTep1zFkO8EgkF5BdKdq9d8RVQjX86iSafyi80j2qekHF5/fZMfhw0NE2un+J+7Y=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <6b1842619a6f1ba13194328e28b853c18c466c03.1520835596.git.rgb@redhat.com>
+References: <cover.1520835596.git.rgb@redhat.com> <6b1842619a6f1ba13194328e28b853c18c466c03.1520835596.git.rgb@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 12 Mar 2018 11:01:13 -0400
+Message-ID: <CAHC9VhTaHA0v-8=QkEDzTyXFvk1oFHnFj6EbHxGetU+pmr+iPQ@mail.gmail.com>
+Subject: Re: [PATCH ghak21 V2 1/4] audit: make ANOM_LINK obey audit_enabled
+ and audit_dummy_context
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>, Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, Mar 12, 2018 at 2:31 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> Audit link denied events emit disjointed records when audit is disabled.
+> No records should be emitted when audit is disabled.
+>
+> See: https://github.com/linux-audit/audit-kernel/issues/21
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  kernel/audit.c | 3 +++
+>  1 file changed, 3 insertions(+)
 
-The pointer 'pipe' is being initialized with a value that is never
-read and it is re-assigned later, hence the initialization is redundant
-and can be removed. Also remove pointer 'runtime' as it is no longer
-required.
+As stated previously, this has already been merged.  Ignoring.
 
-Cleans up clang warning:
-sound/pci/echoaudio/echoaudio.c:740:20: warning: Value stored to 'pipe'
-during its initialization is never read
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index 1a3e75d..7026d69 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -2308,6 +2308,9 @@ void audit_log_link_denied(const char *operation, const struct path *link)
+>         struct audit_buffer *ab;
+>         struct audit_names *name;
+>
+> +       if (!audit_enabled || audit_dummy_context())
+> +               return;
+> +
+>         name = kzalloc(sizeof(*name), GFP_NOFS);
+>         if (!name)
+>                 return;
+> --
+> 1.8.3.1
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/pci/echoaudio/echoaudio.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/sound/pci/echoaudio/echoaudio.c b/sound/pci/echoaudio/echoaudio.c
-index d68f99e076a8..0935a5c8741f 100644
---- a/sound/pci/echoaudio/echoaudio.c
-+++ b/sound/pci/echoaudio/echoaudio.c
-@@ -736,8 +736,7 @@ static int pcm_prepare(struct snd_pcm_substream *substream)
- static int pcm_trigger(struct snd_pcm_substream *substream, int cmd)
- {
- 	struct echoaudio *chip = snd_pcm_substream_chip(substream);
--	struct snd_pcm_runtime *runtime = substream->runtime;
--	struct audiopipe *pipe = runtime->private_data;
-+	struct audiopipe *pipe;
- 	int i, err;
- 	u32 channelmask = 0;
- 	struct snd_pcm_substream *s;
 -- 
-2.15.1
+paul moore
+www.paul-moore.com
