@@ -1,261 +1,225 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933287AbeCLDib (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 11 Mar 2018 23:38:31 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:32904 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933213AbeCLDi3 (ORCPT
+        id S933249AbeCLDkj (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 11 Mar 2018 23:40:39 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52222 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932770AbeCLDk1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Mar 2018 23:38:29 -0400
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <fbc2f7d0023fa792731c001bd09286ee33e273ca.1520825708.git.fthain@telegraphics.com.au>
-In-Reply-To: <cover.1520825708.git.fthain@telegraphics.com.au>
-References: <cover.1520825708.git.fthain@telegraphics.com.au>
-From: Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH 1/3] m68k/mac: Clean up whitespace and remove redundant
- parentheses
-Date: Sun, 11 Mar 2018 23:38:28 -0400 (EDT)
+        Sun, 11 Mar 2018 23:40:27 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 63BD86016D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=anjiandi@codeaurora.org
+Subject: Re: [PATCH] ipmi: Remove ACPI SPMI probing from the SSIF (I2C) driver
+To: Corey Minyard <cminyard@mvista.com>, minyard@acm.org
+Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
+References: <1520543298-18163-1-git-send-email-minyard@acm.org>
+ <ea095e0f-023b-dca2-90da-cc95782a6fb0@codeaurora.org>
+ <e16a9133-e8d7-537c-7cf4-e0a4caa6fdee@mvista.com>
+From: Jiandi An <anjiandi@codeaurora.org>
+Message-ID: <e572ebc2-f122-64ec-3417-92b0fd6371c3@codeaurora.org>
+Date: Sun, 11 Mar 2018 22:40:24 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <e16a9133-e8d7-537c-7cf4-e0a4caa6fdee@mvista.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
----
-This uses the same spaces-after-tabs style that I've used elsewhere
-in this file. Please let me know if you'd prefer a variation that
-keeps checkpatch quiet.
----
- arch/m68k/mac/misc.c | 68 ++++++++++++++++++++++++++++++----------------------
- 1 file changed, 39 insertions(+), 29 deletions(-)
 
-diff --git a/arch/m68k/mac/misc.c b/arch/m68k/mac/misc.c
-index 4956edaac926..1cae14e140d3 100644
---- a/arch/m68k/mac/misc.c
-+++ b/arch/m68k/mac/misc.c
-@@ -43,18 +43,19 @@ static long cuda_read_time(void)
- 	while (!req.complete)
- 		cuda_poll();
- 
--	time = (req.reply[3] << 24) | (req.reply[4] << 16)
--		| (req.reply[5] << 8) | req.reply[6];
-+	time = (req.reply[3] << 24) | (req.reply[4] << 16) |
-+	       (req.reply[5] << 8) | req.reply[6];
- 	return time - RTC_OFFSET;
- }
- 
- static void cuda_write_time(long data)
- {
- 	struct adb_request req;
-+
- 	data += RTC_OFFSET;
- 	if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
--			(data >> 24) & 0xFF, (data >> 16) & 0xFF,
--			(data >> 8) & 0xFF, data & 0xFF) < 0)
-+	                 (data >> 24) & 0xFF, (data >> 16) & 0xFF,
-+	                 (data >> 8) & 0xFF, data & 0xFF) < 0)
- 		return;
- 	while (!req.complete)
- 		cuda_poll();
-@@ -63,8 +64,9 @@ static void cuda_write_time(long data)
- static __u8 cuda_read_pram(int offset)
- {
- 	struct adb_request req;
-+
- 	if (cuda_request(&req, NULL, 4, CUDA_PACKET, CUDA_GET_PRAM,
--			(offset >> 8) & 0xFF, offset & 0xFF) < 0)
-+	                 (offset >> 8) & 0xFF, offset & 0xFF) < 0)
- 		return 0;
- 	while (!req.complete)
- 		cuda_poll();
-@@ -74,8 +76,9 @@ static __u8 cuda_read_pram(int offset)
- static void cuda_write_pram(int offset, __u8 data)
- {
- 	struct adb_request req;
-+
- 	if (cuda_request(&req, NULL, 5, CUDA_PACKET, CUDA_SET_PRAM,
--			(offset >> 8) & 0xFF, offset & 0xFF, data) < 0)
-+	                 (offset >> 8) & 0xFF, offset & 0xFF, data) < 0)
- 		return;
- 	while (!req.complete)
- 		cuda_poll();
-@@ -98,18 +101,19 @@ static long pmu_read_time(void)
- 	while (!req.complete)
- 		pmu_poll();
- 
--	time = (req.reply[1] << 24) | (req.reply[2] << 16)
--		| (req.reply[3] << 8) | req.reply[4];
-+	time = (req.reply[1] << 24) | (req.reply[2] << 16) |
-+	       (req.reply[3] << 8) | req.reply[4];
- 	return time - RTC_OFFSET;
- }
- 
- static void pmu_write_time(long data)
- {
- 	struct adb_request req;
-+
- 	data += RTC_OFFSET;
- 	if (pmu_request(&req, NULL, 5, PMU_SET_RTC,
--			(data >> 24) & 0xFF, (data >> 16) & 0xFF,
--			(data >> 8) & 0xFF, data & 0xFF) < 0)
-+	                (data >> 24) & 0xFF, (data >> 16) & 0xFF,
-+	                (data >> 8) & 0xFF, data & 0xFF) < 0)
- 		return;
- 	while (!req.complete)
- 		pmu_poll();
-@@ -118,6 +122,7 @@ static void pmu_write_time(long data)
- static __u8 pmu_read_pram(int offset)
- {
- 	struct adb_request req;
-+
- 	if (pmu_request(&req, NULL, 3, PMU_READ_NVRAM,
- 			(offset >> 8) & 0xFF, offset & 0xFF) < 0)
- 		return 0;
-@@ -129,6 +134,7 @@ static __u8 pmu_read_pram(int offset)
- static void pmu_write_pram(int offset, __u8 data)
- {
- 	struct adb_request req;
-+
- 	if (pmu_request(&req, NULL, 4, PMU_WRITE_NVRAM,
- 			(offset >> 8) & 0xFF, offset & 0xFF, data) < 0)
- 		return;
-@@ -151,8 +157,8 @@ static void pmu_write_pram(int offset, __u8 data)
- 
- static __u8 via_pram_readbyte(void)
- {
--	int	i,reg;
--	__u8	data;
-+	int i, reg;
-+	__u8 data;
- 
- 	reg = via1[vBufB] & ~VIA1B_vRTCClk;
- 
-@@ -178,7 +184,7 @@ static __u8 via_pram_readbyte(void)
- 
- static void via_pram_writebyte(__u8 data)
- {
--	int	i,reg,bit;
-+	int i, reg, bit;
- 
- 	reg = via1[vBufB] & ~(VIA1B_vRTCClk | VIA1B_vRTCData);
- 
-@@ -204,7 +210,7 @@ static void via_pram_writebyte(__u8 data)
- static void via_pram_command(int command, __u8 *data)
- {
- 	unsigned long flags;
--	int	is_read;
-+	int is_read;
- 
- 	local_irq_save(flags);
- 
-@@ -298,10 +304,10 @@ static long via_read_time(void)
- static void via_write_time(long time)
- {
- 	union {
--		__u8  cdata[4];
--		long  idata;
-+		__u8 cdata[4];
-+		long idata;
- 	} data;
--	__u8	temp;
-+	__u8 temp;
- 
- 	/* Clear the write protect bit */
- 
-@@ -343,10 +349,10 @@ static void oss_shutdown(void)
- }
- 
- #ifdef CONFIG_ADB_CUDA
--
- static void cuda_restart(void)
- {
- 	struct adb_request req;
-+
- 	if (cuda_request(&req, NULL, 2, CUDA_PACKET, CUDA_RESET_SYSTEM) < 0)
- 		return;
- 	while (!req.complete)
-@@ -356,6 +362,7 @@ static void cuda_restart(void)
- static void cuda_shutdown(void)
- {
- 	struct adb_request req;
-+
- 	if (cuda_request(&req, NULL, 2, CUDA_PACKET, CUDA_POWERDOWN) < 0)
- 		return;
- 
-@@ -372,7 +379,6 @@ static void cuda_shutdown(void)
- 	while (!req.complete)
- 		cuda_poll();
- }
--
- #endif /* CONFIG_ADB_CUDA */
- 
- #ifdef CONFIG_ADB_PMU68K
-@@ -419,13 +425,15 @@ void mac_pram_read(int offset, __u8 *buffer, int len)
- 	__u8 (*func)(int);
- 	int i;
- 
--	switch(macintosh_config->adb_type) {
-+	switch (macintosh_config->adb_type) {
- 	case MAC_ADB_PB1:
- 	case MAC_ADB_PB2:
--		func = pmu_read_pram; break;
-+		func = pmu_read_pram;
-+		break;
- 	case MAC_ADB_EGRET:
- 	case MAC_ADB_CUDA:
--		func = cuda_read_pram; break;
-+		func = cuda_read_pram;
-+		break;
- 	default:
- 		func = via_read_pram;
- 	}
-@@ -441,13 +449,15 @@ void mac_pram_write(int offset, __u8 *buffer, int len)
- 	void (*func)(int, __u8);
- 	int i;
- 
--	switch(macintosh_config->adb_type) {
-+	switch (macintosh_config->adb_type) {
- 	case MAC_ADB_PB1:
- 	case MAC_ADB_PB2:
--		func = pmu_write_pram; break;
-+		func = pmu_write_pram;
-+		break;
- 	case MAC_ADB_EGRET:
- 	case MAC_ADB_CUDA:
--		func = cuda_write_pram; break;
-+		func = cuda_write_pram;
-+		break;
- 	default:
- 		func = via_write_pram;
- 	}
-@@ -531,6 +541,7 @@ void mac_reset(void)
- 		unsigned long phys = virt_to_phys(mac_reset);
- 		unsigned long addr = (phys&0xFF000000)|0x8777;
- 		unsigned long offset = phys-virt;
-+
- 		local_irq_disable(); /* lets not screw this up, ok? */
- 		__asm__ __volatile__(".chip 68030\n\t"
- 				     "pmove %0,%/tt0\n\t"
-@@ -538,7 +549,7 @@ void mac_reset(void)
- 				     : : "m" (addr));
- 		/* Now jump to physical address so we can disable MMU */
- 		__asm__ __volatile__(
--                    ".chip 68030\n\t"
-+		    ".chip 68030\n\t"
- 		    "lea %/pc@(1f),%/a0\n\t"
- 		    "addl %0,%/a0\n\t"/* fixup target address and stack ptr */
- 		    "addl %0,%/sp\n\t"
-@@ -627,9 +638,8 @@ static void unmktime(unsigned long time, long offset,
- 		long int yg = y + days / 365 - (days % 365 < 0);
- 
- 		/* Adjust DAYS and Y to match the guessed year.  */
--		days -= ((yg - y) * 365
--			 + LEAPS_THRU_END_OF (yg - 1)
--			 - LEAPS_THRU_END_OF (y - 1));
-+		days -= (yg - y) * 365 +
-+		        LEAPS_THRU_END_OF(yg - 1) - LEAPS_THRU_END_OF(y - 1);
- 		y = yg;
- 	}
- 	*yearp = y - 1900;
+
+On 03/09/2018 08:42 PM, Corey Minyard wrote:
+> On 03/09/2018 04:28 PM, Jiandi An wrote:
+>>
+>>
+>> On 03/08/2018 03:08 PM, minyard@acm.org wrote:
+>>> From: Corey Minyard <cminyard@mvista.com>
+>>>
+>>> The IPMI spec states:
+>>>
+>>>    The purpose of the SPMI Table is to provide a mechanism that can
+>>>    be used by the OSPM (an ACPI term for “OS Operating System-directed
+>>>    configuration and Power Management” essentially meaning an ACPI-aware
+>>>    OS or OS loader) very early in the boot process, e.g., before the
+>>>    ability to execute ACPI control methods in the OS is available.
+>>>
+>>> When we are probing IPMI in Linux, ACPI control methods are available,
+>>> so we shouldn't be probing using SPMI.  It could cause some confusion
+>>> during the probing process.
+>>>
+>>> Signed-off-by: Corey Minyard <cminyard@mvista.com>
+>>> Cc: Jiandi An <anjiandi@codeaurora.org>
+>>> ---
+>>>
+>>> Jiandi, this just yanks out the SPMI code.  Your platform
+>>> should have an ACPI control method in it's namespace specifying the
+>>> IPMI interface.  If it doesn't, that's a bug in your platform and
+>>> really needs to be fixed.  Finding IPMI devices with SMBIOS tables
+>>> is kind of risky since there is no real way to know which I2C bus
+>>> has the IPMI device if your system has more than one I2C bus. With
+>>> an ACPI control method, the IPMI control method will be inside the
+>>> I2C bus control method, so it will be unambiguous.
+>>
+>> Thanks Corey.  I tested this patch.  It works for us through the ACPI
+>> control method.
+> 
+> Thanks.  May I add a "Tested-by" for you?
+
+Tested-by: Jiandi An <anjiandi@codeaurora.org>
+
+> 
+>> By the way, FYI the ipmi_si driver is also having the
+>> SPMI probe code.
+>>
+>> [   17.370835] ipmi_si: probing via SPMI
+>>
+> 
+> Yes, I've removed that in a separate patch.
+> 
+> -corey
+> 
+>> Thanks
+>> - Jiandi
+>>
+>>>
+>>>   drivers/char/ipmi/ipmi_ssif.c | 105 
+>>> ------------------------------------------
+>>>   1 file changed, 105 deletions(-)
+>>>
+>>> diff --git a/drivers/char/ipmi/ipmi_ssif.c 
+>>> b/drivers/char/ipmi/ipmi_ssif.c
+>>> index 4cff4cd..206257b 100644
+>>> --- a/drivers/char/ipmi/ipmi_ssif.c
+>>> +++ b/drivers/char/ipmi/ipmi_ssif.c
+>>> @@ -1994,108 +1994,6 @@ static const struct acpi_device_id 
+>>> ssif_acpi_match[] = {
+>>>       { },
+>>>   };
+>>>   MODULE_DEVICE_TABLE(acpi, ssif_acpi_match);
+>>> -
+>>> -/*
+>>> - * Once we get an ACPI failure, we don't try any more, because we go
+>>> - * through the tables sequentially.  Once we don't find a table, there
+>>> - * are no more.
+>>> - */
+>>> -static int acpi_failure;
+>>> -
+>>> -/*
+>>> - * Defined in the IPMI 2.0 spec.
+>>> - */
+>>> -struct SPMITable {
+>>> -    s8    Signature[4];
+>>> -    u32    Length;
+>>> -    u8    Revision;
+>>> -    u8    Checksum;
+>>> -    s8    OEMID[6];
+>>> -    s8    OEMTableID[8];
+>>> -    s8    OEMRevision[4];
+>>> -    s8    CreatorID[4];
+>>> -    s8    CreatorRevision[4];
+>>> -    u8    InterfaceType;
+>>> -    u8    IPMIlegacy;
+>>> -    s16    SpecificationRevision;
+>>> -
+>>> -    /*
+>>> -     * Bit 0 - SCI interrupt supported
+>>> -     * Bit 1 - I/O APIC/SAPIC
+>>> -     */
+>>> -    u8    InterruptType;
+>>> -
+>>> -    /*
+>>> -     * If bit 0 of InterruptType is set, then this is the SCI
+>>> -     * interrupt in the GPEx_STS register.
+>>> -     */
+>>> -    u8    GPE;
+>>> -
+>>> -    s16    Reserved;
+>>> -
+>>> -    /*
+>>> -     * If bit 1 of InterruptType is set, then this is the I/O
+>>> -     * APIC/SAPIC interrupt.
+>>> -     */
+>>> -    u32    GlobalSystemInterrupt;
+>>> -
+>>> -    /* The actual register address. */
+>>> -    struct acpi_generic_address addr;
+>>> -
+>>> -    u8    UID[4];
+>>> -
+>>> -    s8      spmi_id[1]; /* A '\0' terminated array starts here. */
+>>> -};
+>>> -
+>>> -static int try_init_spmi(struct SPMITable *spmi)
+>>> -{
+>>> -    unsigned short myaddr;
+>>> -
+>>> -    if (num_addrs >= MAX_SSIF_BMCS)
+>>> -        return -1;
+>>> -
+>>> -    if (spmi->IPMIlegacy != 1) {
+>>> -        pr_warn("IPMI: Bad SPMI legacy: %d\n", spmi->IPMIlegacy);
+>>> -        return -ENODEV;
+>>> -    }
+>>> -
+>>> -    if (spmi->InterfaceType != 4)
+>>> -        return -ENODEV;
+>>> -
+>>> -    if (spmi->addr.space_id != ACPI_ADR_SPACE_SMBUS) {
+>>> -        pr_warn(PFX "Invalid ACPI SSIF I/O Address type: %d\n",
+>>> -            spmi->addr.space_id);
+>>> -        return -EIO;
+>>> -    }
+>>> -
+>>> -    myaddr = spmi->addr.address & 0x7f;
+>>> -
+>>> -    return new_ssif_client(myaddr, NULL, 0, 0, SI_SPMI, NULL);
+>>> -}
+>>> -
+>>> -static void spmi_find_bmc(void)
+>>> -{
+>>> -    acpi_status      status;
+>>> -    struct SPMITable *spmi;
+>>> -    int              i;
+>>> -
+>>> -    if (acpi_disabled)
+>>> -        return;
+>>> -
+>>> -    if (acpi_failure)
+>>> -        return;
+>>> -
+>>> -    for (i = 0; ; i++) {
+>>> -        status = acpi_get_table(ACPI_SIG_SPMI, i+1,
+>>> -                    (struct acpi_table_header **)&spmi);
+>>> -        if (status != AE_OK)
+>>> -            return;
+>>> -
+>>> -        try_init_spmi(spmi);
+>>> -    }
+>>> -}
+>>> -#else
+>>> -static void spmi_find_bmc(void) { }
+>>>   #endif
+>>>     #ifdef CONFIG_DMI
+>>> @@ -2200,9 +2098,6 @@ static int init_ipmi_ssif(void)
+>>>           ssif_i2c_driver.driver.acpi_match_table    =
+>>>               ACPI_PTR(ssif_acpi_match);
+>>>   -    if (ssif_tryacpi)
+>>> -        spmi_find_bmc();
+>>> -
+>>>       if (ssif_trydmi) {
+>>>           rv = platform_driver_register(&ipmi_driver);
+>>>           if (rv)
+>>>
+>>
+> 
+
 -- 
-2.16.1
+Jiandi An
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a 
+Linux Foundation Collaborative Project.
