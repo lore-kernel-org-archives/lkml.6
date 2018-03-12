@@ -1,62 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752226AbeCLHEk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 03:04:40 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:33392 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751976AbeCLHEg (ORCPT
+        id S932632AbeCLHFR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 03:05:17 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:37968 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752113AbeCLHDu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 03:04:36 -0400
-Subject: Re: [PATCH][rds-next] rds: make functions rds_info_from_znotifier and
- rds_message_zcopy_from_user static
-From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
-To: Colin King <colin.king@canonical.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180311170340.27696-1-colin.king@canonical.com>
- <b693b404-3c66-5c45-4610-e119956c8dff@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <046b2275-ba1f-3827-3664-b7c9553ffec3@oracle.com>
-Date: Mon, 12 Mar 2018 00:04:29 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
+        Mon, 12 Mar 2018 03:03:50 -0400
+X-UUID: 773ce1e8198e47db960ff3548a9f5ede-20180312
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v2 2/5] soc: mediatek: update power domain data of MT2712
+Date: Mon, 12 Mar 2018 15:03:39 +0800
+Message-ID: <20180312070342.4335-4-weiyi.lu@mediatek.com>
+X-Mailer: git-send-email 2.12.5
+In-Reply-To: <20180312070342.4335-1-weiyi.lu@mediatek.com>
+References: <20180312070342.4335-1-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <b693b404-3c66-5c45-4610-e119956c8dff@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8829 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=631
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803120084
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/11/18 11:54 PM, santosh.shilimkar@oracle.com wrote:
-> On 3/11/18 10:03 AM, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Functions rds_info_from_znotifier and rds_message_zcopy_from_user are
->> local to the source and do not need to be in global scope, so make them
->> static.
->>
->> Cleans up sparse warnins:
->> net/rds/message.c:70:27: warning: symbol 'rds_info_from_znotifier' was
->> not declared. Should it be static?
->> net/rds/message.c:358:5: warning: symbol 'rds_message_zcopy_from_user'
->> was not declared. Should it be static?
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>   net/rds/message.c | 6 ++++--
->>   1 file changed, 4 insertions(+), 2 deletions(-)
->>
-> Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+1. split MFG power domain into MFG/MFG_SC1/MFG_SC2/MFG_SC3
+according to MT2712 ECO design change
+2. add subdomain support for MT2712
 
-This was fixed by kbuild robot and the fix is already in net-next.
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+---
+ drivers/soc/mediatek/mtk-scpsys.c | 42 +++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 40 insertions(+), 2 deletions(-)
 
-Regards,
-Santosh
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index 59bd749c2f25..edf8fd6c2c85 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -664,12 +664,48 @@ static const struct scp_domain_data scp_domain_data_mt2712[] = {
+ 		.name = "mfg",
+ 		.sta_mask = PWR_STATUS_MFG,
+ 		.ctl_offs = SPM_MFG_PWR_CON,
+-		.sram_pdn_bits = GENMASK(11, 8),
+-		.sram_pdn_ack_bits = GENMASK(19, 16),
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(16, 16),
+ 		.clk_id = {CLK_MFG},
+ 		.bus_prot_mask = BIT(14) | BIT(21) | BIT(23),
+ 		.active_wakeup = true,
+ 	},
++	[MT2712_POWER_DOMAIN_MFG_SC1] = {
++		.name = "mfg_sc1",
++		.sta_mask = BIT(22),
++		.ctl_offs = 0x02c0,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(16, 16),
++		.clk_id = {CLK_NONE},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_MFG_SC2] = {
++		.name = "mfg_sc2",
++		.sta_mask = BIT(23),
++		.ctl_offs = 0x02c4,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(16, 16),
++		.clk_id = {CLK_NONE},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_MFG_SC3] = {
++		.name = "mfg_sc3",
++		.sta_mask = BIT(30),
++		.ctl_offs = 0x01f8,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(16, 16),
++		.clk_id = {CLK_NONE},
++		.active_wakeup = true,
++	},
++};
++
++static const struct scp_subdomain scp_subdomain_mt2712[] = {
++	{MT2712_POWER_DOMAIN_MM, MT2712_POWER_DOMAIN_VDEC},
++	{MT2712_POWER_DOMAIN_MM, MT2712_POWER_DOMAIN_VENC},
++	{MT2712_POWER_DOMAIN_MM, MT2712_POWER_DOMAIN_ISP},
++	{MT2712_POWER_DOMAIN_MFG, MT2712_POWER_DOMAIN_MFG_SC1},
++	{MT2712_POWER_DOMAIN_MFG_SC1, MT2712_POWER_DOMAIN_MFG_SC2},
++	{MT2712_POWER_DOMAIN_MFG_SC2, MT2712_POWER_DOMAIN_MFG_SC3},
+ };
+ 
+ /*
+@@ -905,6 +941,8 @@ static const struct scp_soc_data mt2701_data = {
+ static const struct scp_soc_data mt2712_data = {
+ 	.domains = scp_domain_data_mt2712,
+ 	.num_domains = ARRAY_SIZE(scp_domain_data_mt2712),
++	.subdomains = scp_subdomain_mt2712,
++	.num_subdomains = ARRAY_SIZE(scp_subdomain_mt2712),
+ 	.regs = {
+ 		.pwr_sta_offs = SPM_PWR_STATUS,
+ 		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
+-- 
+2.12.5
