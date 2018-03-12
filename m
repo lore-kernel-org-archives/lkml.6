@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELsWN5XDT9ps/et0i1x3f4354ByvCfDRVDzWoBbdfkck1PcNQo2DDn9V3LJuV/a2THOJptNi
-ARC-Seal: i=1; a=rsa-sha256; t=1520824100; cv=none;
+X-Google-Smtp-Source: AG47ELuz+/qo6HoeS1eze0R6xDO5oq0bsq8J2gUI6AymyVNtyBTXKv9oBpRpi0ALSOK0WVNcy+qS
+ARC-Seal: i=1; a=rsa-sha256; t=1520824099; cv=none;
         d=google.com; s=arc-20160816;
-        b=X4pZ+t/v6UjJA2oGHPGGp00luaMcEa3vkKKyIwYOnwX7ADw/juvlMMTbi1oljx+Li0
-         jm/5HBLmHgMjAUbjEzHkq2N++Ow4DQOGZxBvcwkDKvPx4ZpbeVGg4DrQS/AI+Ba0trga
-         zOjlx/rTHspz2+g6nrIQuDjOmLom7lsbwfmFjJg/TYGWFanCGRymzBVULqfWdv38+pj9
-         B68+9vEXoFQHrY/abnfA0Rk5xs3EIQfK4pHJ1QEtRDzwIoG/74qObQluPEJaLFxFnsFi
-         3qbyaRxW98ZSbi0lp+ChVGdhuUrUUazpPrrjLKjFmXeXLs85yv5jF+ijVwgD7L5ZfMEm
-         Udmw==
+        b=skx5U0BEb9iTgWCPiljafiUQgFd9SvsnfMCE3OhgFFUCfJ5QDB3OHDjlQZZ6mzJtCG
+         6C/iXNJc42pNVt+TO8lpoKWztF039lP7eo8EXSANdJlJ2pFVdI6210eRudCI9ZClmXXX
+         mQeP98Ajv33UPVl4gGbSkDrMp+auT5hlGamotGh+glvKIF76WiZT0GsF8m9HYJdbQLRW
+         YjBugxIIUGI31RhH2DICrHLgCekDxw8AQ5X2+Ym9/yO3inq4V/voYRib/MbPF3oneywK
+         Byn/uuhPB24b1fEG/u8UIHVw3nqIGE4B9l324JP3MZ1uqQ5Z8P82/7h4M5fSUdj9rZT0
+         J59Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=eBeF187xS0fwJXMpoHAETTT1R5OHy+/bAoREht6BTy4=;
-        b=ZlKtlm9MZ9Y2RUH6cd6QTy2ChdlLjO53TpEfp72S4Ylnx9cUf68BALnQ5h9knVQMkE
-         CREPnEch3muehyErLjTIXgVh/1BeRPZfgZGhX1M2cncyYGBx5Ly2iyqzrpdSFZzhdNvC
-         Ee1CikxkrTGvXtP9yju/m85/qW3FxyqP+ezIjKAk4Yo5BvWlHaK4Kjw3/sZFHzMBD866
-         XFR41YapyVLWm/NLxbptrvIKXNxINPbKJbNys1saSsyumCLEwhm8szNyn0JaqRImFyBO
-         5BeFAZ0P7jyKEMjZTrvu+4HBzJez9KsSKMrOWKoRMqFbmETJDM+MdhpQte8GqVIQrUtY
-         Bk7Q==
+        bh=+XX8CcY+NcuVFD/pSw2qhDMOeD3P0Lz8vAgBPm/TIA4=;
+        b=srBj6LcvLFkzpj6oVWoAb9NbioXirBCwI3oPxHwhFWebhFU57CAfKClvrT+fXHrpWl
+         A9xAxu9p+GFx3y+dqUqktInQexFLYKzCS9NrTUWT8Tt6qJ/yUnf634nSoCHst/wiViUi
+         fgB87vi9XA3sz8YoMmGgY3bqXvIpwNonsVSgbbdk3FKnWXPlCO1FggUeJMtUwVJUEwPU
+         UIDqlGdMvnpR5+Hahor2IAbhDhylPw2X1K1fx13ZejuGCYX8PVk0SfJ/G2wH+zlwt23Q
+         OGLukD2Ln2Oz6pSBcCE1Tau9xzfJ4M7F53rE8dlLYYHf1aAGCAejXG4vq4LOloP+IrUC
+         E/bA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -29,27 +29,36 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
- "Ananth N Mavinakayanahalli" <ananth@linux.vnet.ibm.com>,
- "Andi Kleen" <ak@linux.intel.com>,
+CC: akpm@linux-foundation.org, gnomes@lxorguk.ukuu.org.uk,
+ "Ingo Molnar" <mingo@kernel.org>,
  "Thomas Gleixner" <tglx@linutronix.de>,
+ "Josh Poimboeuf" <jpoimboe@redhat.com>,
  "Peter Zijlstra" <peterz@infradead.org>,
- "Masami Hiramatsu" <mhiramat@kernel.org>,
+ "Andy Lutomirski" <luto@amacapital.net>,
+ "Rik van Riel" <riel@redhat.com>,
  "Arjan van de Ven" <arjan@linux.intel.com>,
+ "Jiri Kosina" <jikos@kernel.org>,
+ "Greg Kroah-Hartman" <gregkh@linux-foundation.org>,
+ thomas.lendacky@amd.com,
  "David Woodhouse" <dwmw@amazon.co.uk>,
- "Greg Kroah-Hartman" <gregkh@linux-foundation.org>
+ "Kees Cook" <keescook@google.com>,
+ "Dave Hansen" <dave.hansen@intel.com>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Paul Turner" <pjt@google.com>,
+ "Andi Kleen" <ak@linux.intel.com>,
+ "Tim Chen" <tim.c.chen@linux.intel.com>
 Date: Mon, 12 Mar 2018 03:06:12 +0000
-Message-ID: <lsq.1520823972.709477170@decadent.org.uk>
+Message-ID: <lsq.1520823972.276571405@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 37/76] kprobes/x86: Disable optimizing on the
- function jumps to indirect thunk
+Subject: [PATCH 3.16 30/76] x86/retpoline/checksum32: Convert assembler
+ indirect jumps
 In-Reply-To: <lsq.1520823971.5976735@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699636667812144?=
-X-GMAIL-MSGID: =?utf-8?q?1594699651821223578?=
+X-GMAIL-THRID: =?utf-8?q?1594699639123527975?=
+X-GMAIL-MSGID: =?utf-8?q?1594699651655561627?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,78 +66,65 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-commit c86a32c09f8ced67971a2310e3b0dda4d1749007 upstream.
+commit 5096732f6f695001fa2d6f1335a2680b37912c69 upstream.
 
-Since indirect jump instructions will be replaced by jump
-to __x86_indirect_thunk_*, those jmp instruction must be
-treated as an indirect jump. Since optprobe prohibits to
-optimize probes in the function which uses an indirect jump,
-it also needs to find out the function which jump to
-__x86_indirect_thunk_* and disable optimization.
+Convert all indirect jumps in 32bit checksum assembler code to use
+non-speculative sequences when CONFIG_RETPOLINE is enabled.
 
-Add a check that the jump target address is between the
-__indirect_thunk_start/end when optimizing kprobe.
-
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: David Woodhouse <dwmw@amazon.co.uk>
+Acked-by: Arjan van de Ven <arjan@linux.intel.com>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Cc: gnomes@lxorguk.ukuu.org.uk
+Cc: Rik van Riel <riel@redhat.com>
 Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: thomas.lendacky@amd.com
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Kosina <jikos@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Kees Cook <keescook@google.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
 Cc: Greg Kroah-Hartman <gregkh@linux-foundation.org>
-Link: https://lkml.kernel.org/r/151629212062.10241.6991266100233002273.stgit@devbox
+Cc: Paul Turner <pjt@google.com>
+Link: https://lkml.kernel.org/r/1515707194-20531-11-git-send-email-dwmw@amazon.co.uk
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/kprobes/opt.c | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+ arch/x86/lib/checksum_32.S | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kernel/kprobes/opt.c
-+++ b/arch/x86/kernel/kprobes/opt.c
-@@ -36,6 +36,7 @@
- #include <asm/alternative.h>
- #include <asm/insn.h>
- #include <asm/debugreg.h>
+--- a/arch/x86/lib/checksum_32.S
++++ b/arch/x86/lib/checksum_32.S
+@@ -29,7 +29,8 @@
+ #include <asm/dwarf2.h>
+ #include <asm/errno.h>
+ #include <asm/asm.h>
+-				
 +#include <asm/nospec-branch.h>
- 
- #include "common.h"
- 
-@@ -191,7 +192,7 @@ static int copy_optimized_instructions(u
- }
- 
- /* Check whether insn is indirect jump */
--static int insn_is_indirect_jump(struct insn *insn)
-+static int __insn_is_indirect_jump(struct insn *insn)
- {
- 	return ((insn->opcode.bytes[0] == 0xff &&
- 		(X86_MODRM_REG(insn->modrm.value) & 6) == 4) || /* Jump */
-@@ -225,6 +226,26 @@ static int insn_jump_into_range(struct i
- 	return (start <= target && target <= start + len);
- }
- 
-+static int insn_is_indirect_jump(struct insn *insn)
-+{
-+	int ret = __insn_is_indirect_jump(insn);
 +
-+#ifdef CONFIG_RETPOLINE
-+	/*
-+	 * Jump to x86_indirect_thunk_* is treated as an indirect jump.
-+	 * Note that even with CONFIG_RETPOLINE=y, the kernel compiled with
-+	 * older gcc may use indirect jump. So we add this check instead of
-+	 * replace indirect-jump check.
-+	 */
-+	if (!ret)
-+		ret = insn_jump_into_range(insn,
-+				(unsigned long)__indirect_thunk_start,
-+				(unsigned long)__indirect_thunk_end -
-+				(unsigned long)__indirect_thunk_start);
-+#endif
-+	return ret;
-+}
-+
- /* Decode whole function to ensure any instructions don't jump into target */
- static int can_optimize(unsigned long paddr)
- {
+ /*
+  * computes a partial checksum, e.g. for TCP/UDP fragments
+  */
+@@ -165,7 +166,7 @@ ENTRY(csum_partial)
+ 	negl %ebx
+ 	lea 45f(%ebx,%ebx,2), %ebx
+ 	testl %esi, %esi
+-	jmp *%ebx
++	JMP_NOSPEC %ebx
+ 
+ 	# Handle 2-byte-aligned regions
+ 20:	addw (%esi), %ax
+@@ -463,7 +464,7 @@ ENTRY(csum_partial_copy_generic)
+ 	andl $-32,%edx
+ 	lea 3f(%ebx,%ebx), %ebx
+ 	testl %esi, %esi 
+-	jmp *%ebx
++	JMP_NOSPEC %ebx
+ 1:	addl $64,%esi
+ 	addl $64,%edi 
+ 	SRC(movb -32(%edx),%bl)	; SRC(movb (%edx),%bl)
