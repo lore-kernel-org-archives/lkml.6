@@ -1,100 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751982AbeCLIiU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 04:38:20 -0400
-Received: from mga06.intel.com ([134.134.136.31]:12666 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750752AbeCLIiT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 04:38:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,460,1515484800";
-   d="scan'208";a="24874374"
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH RESEND v1 0/3] perf/core: expose thread context switch out
- event type to user space
-Organization: Intel Corp.
-Message-ID: <fda5bacc-8e84-6cbb-6c4f-9f9318186421@linux.intel.com>
-Date: Mon, 12 Mar 2018 11:38:15 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752356AbeCLIkj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 04:40:39 -0400
+Received: from mail-wr0-f169.google.com ([209.85.128.169]:39478 "EHLO
+        mail-wr0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751229AbeCLIki (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 04:40:38 -0400
+X-Google-Smtp-Source: AG47ELtsZQjiTz5gjx/1iXUsT5o8INB9WUlP75YE/UdJr34xhjLL6b811MZFoDcMFIo9nXxF4d8BXQ==
+Date: Mon, 12 Mar 2018 09:40:33 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: David Wang <DavidWang@zhaoxin.com>
+Cc: "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "len.brown@intel.com" <len.brown@intel.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-pm@kernel.org" <linux-pm@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Bruce Chang (VAS)" <BruceChang@via-alliance.com>,
+        "Cooper Yan(BJ-RD)" <CooperYan@zhaoxin.com>,
+        "Qiyuan Wang(BJ-RD)" <QiyuanWang@zhaoxin.com>,
+        Benjamin Pan <BenjaminPan@viatech.com>, Luke Lin <LukeLin@viacpu.com>,
+        "Tim Guo(BJ-RD)" <TimGuo@zhaoxin.com>,
+        "Cobe Chen(BJ-RD)" <CobeChen@zhaoxin.com>,
+        "Jiangbo Wang(BJ-RD)" <JiangboWang@zhaoxin.com>
+Subject: Re: =?utf-8?B?562U5aSNOiBbUEFUQ0g=?= =?utf-8?Q?=5D?= Delete some
+ unusefull operations for centaur CPU/platform
+Message-ID: <20180312084033.lignixrpg4ruoxbq@gmail.com>
+References: <1519963908-4359-1-git-send-email-davidwang@zhaoxin.com>
+ <20180304093146.rujp4f62fv6xotb7@gmail.com>
+ <efc93496e4ba46958b7b09eff54c2ce2@zhaoxin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <efc93496e4ba46958b7b09eff54c2ce2@zhaoxin.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Here is a series of small patches that implement exposing type of 
-context-switch-out event as a part of PERF_RECORD_SWITCH[_CPU_WIDE] record.
+* David Wang <DavidWang@zhaoxin.com> wrote:
 
-Introduced types of context-switch-out events assumed to be:
+> [David] pr->flags.has_cst means BIOS define valid C state table.  And at lease 
+> define 2 entries. On all centaur platform which support C3, this condition is 
+> always true.
 
-a) preempt: task->state == TASK_RUNNING
-	misc &= PERF_RECORD_MISC_SWITCH_OUT
-	
-b) yield: !preempt - using new bit PERF_RECORD_MISC_SWITCH_OUT_YIELD:
-	misc &= PERF_RECORD_MISC_SWITCH_OUT|PERF_RECORD_MISC_SWITCH_OUT_YIELD
+> [David] Just as the following comment said, we need not execute WBINVD and 
+> ARB_DISABLE/ARB_ENABLE when entering C3 if bm_check=1 and bm_control=0.  This 
+> logic is valid for all platform not only for Centaur, I think.
 
-Perf tool report and script commands output has been extended to decode 
-new yield bit and the updated output looks like in the examples below.
+Ok, fair enough!
 
-The documentation has been updated to mention yield switch out events and its 
-decoding symbols in perf script output.
+Thanks,
 
-The changes have been manually tested on Fedora 27 with the patched kernel:
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
-
-perf report -D -i system-wide.perf: 
-
-0x1b9c50 [0x30]: event: 15
-.
-. ... raw event: size 48 bytes
-.  0000:  0f 00 00 00 00 20 30 00 01 1e 00 00 01 1e 00 00  ..... 0.........
-.  0010:  00 00 00 00 00 00 00 00 85 ae d4 e3 3e 0e 00 00  ............>...
-.  0020:  54 00 00 00 00 00 00 00 05 00 00 00 00 00 00 00  T...............
-
-5 15663273127557 0x1b9c50 [0x30]: PERF_RECORD_SWITCH_CPU_WIDE OUT  next pid/tid:  7681/7681 
-
-0x2646c0 [0x30]: event: 15
-.
-. ... raw event: size 48 bytes
-.  0000:  0f 00 00 00 00 60 30 00 00 00 00 00 00 00 00 00  .....`0.........
-.  0010:  00 1e 00 00 00 1e 00 00 29 1e d5 e3 3e 0e 00 00  ........)...>...
-.  0020:  56 00 00 00 00 00 00 00 07 00 00 00 00 00 00 00  V...............
-
-7 15663273156137 0x2646c0 [0x30]: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid:     0/0
-
-perf script --show-switch-events -F +misc -I -i system-wide.perf:
-
-amplxe-perf  7681 [005] S     15663.273151: PERF_RECORD_SWITCH_CPU_WIDE OUT  next pid/tid:    39/39   
-migration/5    39 [005]       15663.273152: PERF_RECORD_SWITCH_CPU_WIDE IN   prev pid/tid:  7681/7681 
-amplxe-perf  7680 [007] K     15663.273153:          1                                                                                                                                       context-switch: 
-                  aaa488 schedule ([kernel.kallsyms])
-                  1a9f50 __poll_nocancel (inlined)
-
-amplxe-perf  7680 [007] Sy    15663.273156: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid:     0/0    
-migration/5    39 [005] K     15663.273157:
-
----
- Alexey Budankov (3):
-	perf/core: store context switch out type into Perf trace
-	perf report: extend raw dump (-D) out with switch out event type
-	perf script: extend misc field decoding with switch out event type
-  
- include/uapi/linux/perf_event.h          |  5 +++++
- kernel/events/core.c                     |  4 +++-
- tools/include/uapi/linux/perf_event.h    |  5 +++++
- tools/perf/Documentation/perf-script.txt | 17 +++++++++--------
- tools/perf/builtin-script.c              |  5 ++++-
- tools/perf/util/event.c                  |  4 +++-
- 6 files changed, 29 insertions(+), 11 deletions(-)
+	Ingo
