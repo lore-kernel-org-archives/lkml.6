@@ -1,194 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751244AbeCLEbn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 00:31:43 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:34267 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750764AbeCLEbm (ORCPT
+        id S1751280AbeCLEcP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 00:32:15 -0400
+Received: from mail-pl0-f49.google.com ([209.85.160.49]:42954 "EHLO
+        mail-pl0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751251AbeCLEcN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 00:31:42 -0400
-From: Harish Jenny K N <harish_kandiga@mentor.com>
-To: <ulf.hansson@linaro.org>, <linus.walleij@linaro.org>,
-        <adrian.hunter@intel.com>, <shawn.lin@rock-chips.com>,
-        <avri.altman@wdc.com>, <andriy.shevchenko@linux.intel.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <harish_kandiga@mentor.com>, <Vladimir_Zapolskiy@mentor.com>
-Subject: [PATCH v9] mmc: Export host capabilities to debugfs.
-Date: Mon, 12 Mar 2018 10:01:30 +0530
-Message-ID: <1520829090-3567-1-git-send-email-harish_kandiga@mentor.com>
-X-Mailer: git-send-email 1.9.1
+        Mon, 12 Mar 2018 00:32:13 -0400
+X-Google-Smtp-Source: AG47ELtgY+Y6pvTyiyPBpPMz/fAh2uyqD8U87ZqTw0Va7kkisNVqvjh/uE0jWeMaE64X7H6evUKyQw==
+Date: Mon, 12 Mar 2018 10:02:09 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH V4] thermal: Add cooling device's statistics in sysfs
+Message-ID: <20180312043209.GS6842@vireshk-i7>
+References: <6e557b90950723065d49c9a545146ce31d7dc6e1.1516096153.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6e557b90950723065d49c9a545146ce31d7dc6e1.1516096153.git.viresh.kumar@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch exports the host capabilities to debugfs
+On 16-01-18, 15:22, Viresh Kumar wrote:
+> This extends the sysfs interface for thermal cooling devices and exposes
+> some pretty useful statistics. These statistics have proven to be quite
+> useful specially while doing benchmarks related to the task scheduler,
+> where we want to make sure that nothing has disrupted the test,
+> specially the cooling device which may have put constraints on the CPUs.
+> The information exposed here tells us to what extent the CPUs were
+> constrained by the thermal framework.
 
-This idea of sharing host capabilities over debugfs
-came up from Abbas Raza <Abbas_Raza@mentor.com>
-Earlier discussions:
-https://lkml.org/lkml/2018/3/5/357
-https://www.spinics.net/lists/linux-mmc/msg48219.html
+@Eduardo/Zhang: Are you going to merge this for 4.17 ?
 
-Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
----
-
-Changes in v9
-- More code cleanup as suggested by Andy Shevchenko.
-
-Changes in v8
-- Changes to use for_each_set_bit as suggested by Andy Shevchenko.
-
-Changes in v7
-- Moved additional capabilities also to caps file as mentioned by Ulf Hansson
-- compacting the code with macros
-
-Changes in v6:
-- Used DEFINE_SHOW_ATTRIBUTE
-
-Changes in v5:
-- Added parser logic in kernel by using debugfs_create_file  for caps and caps2 instead of debugfs_create_x32
-- Changed Author
-
-Changes in v4:
-- Moved the creation of nodes to mmc_add_host_debugfs
-- Exported caps2
-- Renamed host_caps to caps
-
-Changes in v3:
-- Removed typecasting of &host->caps to (u32 *)
-
-Changes in v2:
-- Changed Author
-
- drivers/mmc/core/debugfs.c | 107 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 107 insertions(+)
-
-diff --git a/drivers/mmc/core/debugfs.c b/drivers/mmc/core/debugfs.c
-index c51e0c0..e19305a 100644
---- a/drivers/mmc/core/debugfs.c
-+++ b/drivers/mmc/core/debugfs.c
-@@ -225,6 +225,110 @@ static int mmc_clock_opt_set(void *data, u64 val)
- DEFINE_SIMPLE_ATTRIBUTE(mmc_clock_fops, mmc_clock_opt_get, mmc_clock_opt_set,
- 	"%llu\n");
-
-+/*
-+ * mmc_host_capabilities - MMC host capabilities
-+ *
-+ * This must be in sync with caps definitions in the mmc/host.h
-+ */
-+static const char * const mmc_host_capabilities[] = {
-+	"4-bit transfers allowed",
-+	"Supports MMC high-speed timing",
-+	"Supports SD high-speed timing",
-+	"Can signal pending SDIO IRQs",
-+	"Talks only SPI protocols",
-+	"Needs polling for card-detection",
-+	"8 bit transfers allowed",
-+	"Suspends (e)MMC/SD at idle",
-+	"Nonremovable",
-+	"Waits while card is busy",
-+	"Allows erase/trim commands",
-+	"Supports DDR mode at 3.3V",
-+	"Supports DDR mode at 1.8V",
-+	"Supports DDR mode at 1.2V",
-+	"Can power off after boot",
-+	"CMD14/CMD19 bus width ok",
-+	"Supports UHS SDR12 mode",
-+	"Supports UHS SDR25 mode",
-+	"Supports UHS SDR50 mode",
-+	"Supports UHS SDR104 mode",
-+	"Supports UHS DDR50 mode",
-+	"Unknown (bit 21)",
-+	"Unknown (bit 22)",
-+	"Supports Driver Type A",
-+	"Supports Driver Type C",
-+	"Supports Driver Type D",
-+	"Unknown (bit 26)",
-+	"RW reqs can be completed within mmc_request_done()",
-+	"Supports Enable card detect wake",
-+	"Can send commands during data transfer",
-+	"CMD23 supported",
-+	"Supports Hardware reset"
-+};
-+
-+/*
-+ * mmc_host_capabilities2 - MMC host additional capabilities
-+ *
-+ * This must be in sync with caps2 definitions in the mmc/host.h
-+ */
-+static const char * const mmc_host_capabilities2[] = {
-+	"No access to Boot partition",
-+	"Unknown (bit 1)",
-+	"Can do full power cycle",
-+	"Unknown (bit 3)",
-+	"Unknown (bit 4)",
-+	"Supports HS200 1.8V SDR",
-+	"Supports HS200 1.2V SDR",
-+	"Unknown (bit 7)",
-+	"Unknown (bit 8)",
-+	"Unknown (bit 9)",
-+	"Card-detect signal active high",
-+	"Write-protect signal active high",
-+	"Unknown (bit 12)",
-+	"Unknown (bit 13)",
-+	"Can do complete power cycle of the card",
-+	"Supports HS400 1.8V",
-+	"Support HS400 1.2V",
-+	"SDIO IRQ - Nothread",
-+	"No physical write protect pin, assume always read-write",
-+	"Do not send SDIO commands during initialization",
-+	"Supports enhanced strobe",
-+	"Do not send SD commands during initialization",
-+	"Do not send (e)MMC commands during initialization",
-+	"Has eMMC command queue engine",
-+	"CQE can issue a direct command",
-+	"Unknown (bit 25)",
-+	"Unknown (bit 26)",
-+	"Unknown (bit 27)",
-+	"Unknown (bit 28)",
-+	"Unknown (bit 29)",
-+	"Unknown (bit 30)",
-+	"Unknown (bit 31)"
-+};
-+
-+static int mmc_caps_show(struct seq_file *s, void *unused)
-+{
-+	struct mmc_host *host = s->private;
-+	unsigned long caps = host->caps;
-+	unsigned long caps2 = host->caps2;
-+	int bit;
-+
-+	seq_puts(s, "MMC Host capabilities are:\n");
-+	seq_puts(s, "=============================================\n");
-+
-+	for_each_set_bit(bit, (const unsigned long *)&caps, BITS_PER_LONG)
-+		seq_printf(s, "%s\n", mmc_host_capabilities[bit]);
-+
-+	seq_puts(s, "=============================================\n");
-+	seq_puts(s, "MMC Host additional capabilities are:\n");
-+	seq_puts(s, "=============================================\n");
-+
-+	for_each_set_bit(bit, (const unsigned long *)&caps2, BITS_PER_LONG)
-+		seq_printf(s, "%s\n", mmc_host_capabilities2[bit]);
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(mmc_caps);
-+
- void mmc_add_host_debugfs(struct mmc_host *host)
- {
- 	struct dentry *root;
-@@ -243,6 +347,9 @@ void mmc_add_host_debugfs(struct mmc_host *host)
- 	if (!debugfs_create_file("ios", S_IRUSR, root, host, &mmc_ios_fops))
- 		goto err_node;
-
-+	if (!debugfs_create_file("caps", S_IRUSR, root, host, &mmc_caps_fops))
-+		goto err_node;
-+
- 	if (!debugfs_create_file("clock", S_IRUSR | S_IWUSR, root, host,
- 			&mmc_clock_fops))
- 		goto err_node;
---
-1.9.1
+-- 
+viresh
