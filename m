@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751303AbeCLKIR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 06:08:17 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:51543 "EHLO
+        id S932512AbeCLKIQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 06:08:16 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:63876 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932294AbeCLKHh (ORCPT
+        with ESMTP id S932315AbeCLKHh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Mar 2018 06:07:37 -0400
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
@@ -18,11 +18,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
         Aubrey Li <aubrey.li@linux.intel.com>,
         Mike Galbraith <mgalbraith@suse.de>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [RFT][PATCH v4 1/7] time: tick-sched: Reorganize idle tick management code
-Date: Mon, 12 Mar 2018 10:47:41 +0100
-Message-ID: <2019498.YXfJVQUTuX@aspire.rjw.lan>
-In-Reply-To: <2352117.3UUoYAu18A@aspire.rjw.lan>
-References: <2352117.3UUoYAu18A@aspire.rjw.lan>
+Subject: [RFT][PATCH v4 0/7] sched/cpuidle: Idle loop rework
+Date: Mon, 12 Mar 2018 10:46:33 +0100
+Message-ID: <2352117.3UUoYAu18A@aspire.rjw.lan>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -30,185 +28,78 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hi All,
 
-Prepare the scheduler tick code for reworking the idle loop to
-avoid stopping the tick in some cases.
+Thanks a lot for the feedback so far!
 
-Move away the tick_nohz_start_idle() invocation from
-__tick_nohz_idle_enter(), rename the latter to
-__tick_nohz_idle_stop_tick() and define tick_nohz_idle_stop_tick()
-as a wrapper around it for calling it from the outside.
+This mostly is a re-send of the v3 except for patch 5 that has been updated
+to address the review comments from Frederic and patch 7 which is new in
+this series (although I have posted it already in response to the feedback
+from Doug).
 
-Make tick_nohz_idle_enter() only call tick_nohz_start_idle() instead
-of calling the entire __tick_nohz_idle_enter(), add another wrapper
-disabling and enabling interrupts around tick_nohz_idle_stop_tick()
-and make the current callers of tick_nohz_idle_enter() call it too
-to retain their current functionality.
+In my view it has passed the RFC phase, but it still is very much RFT. :-)
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- arch/x86/xen/smp_pv.c    |    1 +
- include/linux/tick.h     |    9 +++++++++
- kernel/sched/idle.c      |    1 +
- kernel/time/tick-sched.c |   46 +++++++++++++++++++++++++---------------------
- 4 files changed, 36 insertions(+), 21 deletions(-)
+The original summary:
 
-Index: linux-pm/include/linux/tick.h
-===================================================================
---- linux-pm.orig/include/linux/tick.h
-+++ linux-pm/include/linux/tick.h
-@@ -114,6 +114,7 @@ enum tick_dep_bits {
- #ifdef CONFIG_NO_HZ_COMMON
- extern bool tick_nohz_enabled;
- extern int tick_nohz_tick_stopped(void);
-+extern void tick_nohz_idle_stop_tick(void);
- extern void tick_nohz_idle_enter(void);
- extern void tick_nohz_idle_exit(void);
- extern void tick_nohz_irq_exit(void);
-@@ -125,6 +126,7 @@ extern u64 get_cpu_iowait_time_us(int cp
- #else /* !CONFIG_NO_HZ_COMMON */
- #define tick_nohz_enabled (0)
- static inline int tick_nohz_tick_stopped(void) { return 0; }
-+static inline void tick_nohz_idle_stop_tick(void) { }
- static inline void tick_nohz_idle_enter(void) { }
- static inline void tick_nohz_idle_exit(void) { }
+On Sunday, March 4, 2018 11:21:30 PM CET Rafael J. Wysocki wrote:
+> 
+> The problem is that if we stop the sched tick in
+> tick_nohz_idle_enter() and then the idle governor predicts short idle
+> duration, we lose regardless of whether or not it is right.
+> 
+> If it is right, we've lost already, because we stopped the tick
+> unnecessarily.  If it is not right, we'll lose going forward, because
+> the idle state selected by the governor is going to be too shallow and
+> we'll draw too much power (that has been reported recently to actually
+> happen often enough for people to care).
+> 
+> This patch series is an attempt to improve the situation and the idea
+> here is to make the decision whether or not to stop the tick deeper in
+> the idle loop and in particular after running the idle state selection
+> in the path where the idle governor is invoked.  This way the problem
+> can be avoided, because the idle duration predicted by the idle governor
+> can be used to decide whether or not to stop the tick so that the tick
+> is only stopped if that value is large enough (and, consequently, the
+> idle state selected by the governor is deep enough).
+> 
+> The series tires to avoid adding too much new code, rather reorder the
+> existing code and make it more fine-grained.
+
+Patch 1 prepares the tick-sched code for the subsequent modifications and it
+doesn't change the code's functionality (at least not intentionally).
  
-@@ -136,6 +138,13 @@ static inline u64 get_cpu_idle_time_us(i
- static inline u64 get_cpu_iowait_time_us(int cpu, u64 *unused) { return -1; }
- #endif /* !CONFIG_NO_HZ_COMMON */
- 
-+static inline void tick_nohz_idle_stop_tick_protected(void)
-+{
-+	local_irq_disable();
-+	tick_nohz_idle_stop_tick();
-+	local_irq_enable();
-+}
-+
- #ifdef CONFIG_NO_HZ_FULL
- extern bool tick_nohz_full_running;
- extern cpumask_var_t tick_nohz_full_mask;
-Index: linux-pm/kernel/time/tick-sched.c
-===================================================================
---- linux-pm.orig/kernel/time/tick-sched.c
-+++ linux-pm/kernel/time/tick-sched.c
-@@ -539,14 +539,11 @@ static void tick_nohz_stop_idle(struct t
- 	sched_clock_idle_wakeup_event();
- }
- 
--static ktime_t tick_nohz_start_idle(struct tick_sched *ts)
-+static void tick_nohz_start_idle(struct tick_sched *ts)
- {
--	ktime_t now = ktime_get();
--
--	ts->idle_entrytime = now;
-+	ts->idle_entrytime = ktime_get();
- 	ts->idle_active = 1;
- 	sched_clock_idle_sleep_event();
--	return now;
- }
- 
- /**
-@@ -911,19 +908,21 @@ static bool can_stop_idle_tick(int cpu,
- 	return true;
- }
- 
--static void __tick_nohz_idle_enter(struct tick_sched *ts)
-+static void __tick_nohz_idle_stop_tick(struct tick_sched *ts)
- {
--	ktime_t now, expires;
-+	ktime_t expires;
- 	int cpu = smp_processor_id();
- 
--	now = tick_nohz_start_idle(ts);
--
- 	if (can_stop_idle_tick(cpu, ts)) {
- 		int was_stopped = ts->tick_stopped;
- 
- 		ts->idle_calls++;
- 
--		expires = tick_nohz_stop_sched_tick(ts, now, cpu);
-+		/*
-+		 * The idle entry time should be a sufficient approximation of
-+		 * the current time at this point.
-+		 */
-+		expires = tick_nohz_stop_sched_tick(ts, ts->idle_entrytime, cpu);
- 		if (expires > 0LL) {
- 			ts->idle_sleeps++;
- 			ts->idle_expires = expires;
-@@ -937,16 +936,19 @@ static void __tick_nohz_idle_enter(struc
- }
- 
- /**
-- * tick_nohz_idle_enter - stop the idle tick from the idle task
-+ * tick_nohz_idle_stop_tick - stop the idle tick from the idle task
-  *
-  * When the next event is more than a tick into the future, stop the idle tick
-- * Called when we start the idle loop.
-- *
-- * The arch is responsible of calling:
-+ */
-+void tick_nohz_idle_stop_tick(void)
-+{
-+	__tick_nohz_idle_stop_tick(this_cpu_ptr(&tick_cpu_sched));
-+}
-+
-+/**
-+ * tick_nohz_idle_enter - prepare for entering idle on the current CPU
-  *
-- * - rcu_idle_enter() after its last use of RCU before the CPU is put
-- *  to sleep.
-- * - rcu_idle_exit() before the first use of RCU after the CPU is woken up.
-+ * Called when we start the idle loop.
-  */
- void tick_nohz_idle_enter(void)
- {
-@@ -965,7 +967,7 @@ void tick_nohz_idle_enter(void)
- 
- 	ts = this_cpu_ptr(&tick_cpu_sched);
- 	ts->inidle = 1;
--	__tick_nohz_idle_enter(ts);
-+	tick_nohz_start_idle(ts);
- 
- 	local_irq_enable();
- }
-@@ -982,10 +984,12 @@ void tick_nohz_irq_exit(void)
- {
- 	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
- 
--	if (ts->inidle)
--		__tick_nohz_idle_enter(ts);
--	else
-+	if (ts->inidle) {
-+		tick_nohz_start_idle(ts);
-+		__tick_nohz_idle_stop_tick(ts);
-+	} else {
- 		tick_nohz_full_update_tick(ts);
-+	}
- }
- 
- /**
-Index: linux-pm/arch/x86/xen/smp_pv.c
-===================================================================
---- linux-pm.orig/arch/x86/xen/smp_pv.c
-+++ linux-pm/arch/x86/xen/smp_pv.c
-@@ -425,6 +425,7 @@ static void xen_pv_play_dead(void) /* us
- 	 * data back is to call:
- 	 */
- 	tick_nohz_idle_enter();
-+	tick_nohz_idle_stop_tick_protected();
- 
- 	cpuhp_online_idle(CPUHP_AP_ONLINE_IDLE);
- }
-Index: linux-pm/kernel/sched/idle.c
-===================================================================
---- linux-pm.orig/kernel/sched/idle.c
-+++ linux-pm/kernel/sched/idle.c
-@@ -221,6 +221,7 @@ static void do_idle(void)
- 
- 	__current_set_polling();
- 	tick_nohz_idle_enter();
-+	tick_nohz_idle_stop_tick_protected();
- 
- 	while (!need_resched()) {
- 		check_pgt_cache();
+Patch 2 starts pushing the tick stopping decision deeper into the idle
+loop, but it is limited to do_idle() and tick_nohz_irq_exit().
+
+Patch 3 makes cpuidle_idle_call() decide whether or not to stop the tick
+and sets the stage for the subsequent changes.
+
+Patch 4 adds a bool pointer argument to cpuidle_select() and the ->select
+governor callback allowing them to return a "nohz" hint on whether or not to
+stop the tick to the caller.  It also adds code to decide what value to
+return as "nohz" to the menu governor.
+
+Patch 5 reorders the idle state selection with respect to the stopping of the
+tick and causes the additional "nohz" hint from cpuidle_select() to be used
+for deciding whether or not to stop the tick.
+
+Patch 6 causes the menu governor to refine the state selection in case the
+tick is not going to be stopped and the already selected state may not fit
+before the next tick time.
+
+Patch 7 Deals with the situation in which the tick was stopped previously, but
+the idle governor still predicts short idle.
+
+And this still applies:
+
+> I have tested these patches on a couple of machines, including the very laptop
+> I'm sending them from, without any obvious issues, but please give them a go
+> if you can, especially if you have an easy way to reproduce the problem they
+> are targeting.
+
+Also, for better results please test them along with the poll_idle() patch at:
+
+https://patchwork.kernel.org/patch/10275759/
+
+Thanks,
+Rafael
