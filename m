@@ -1,63 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932765AbeCLSJj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 14:09:39 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:33750 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932560AbeCLSJg (ORCPT
+        id S932858AbeCLSRh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 14:17:37 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:43182 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932829AbeCLSR0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 14:09:36 -0400
-X-Google-Smtp-Source: AG47ELsgKP5agbOIiU9Cjczm90huZyBdw8QcxBKb0yuqRRTi8PfAymnUBJWSGRHEAh5F4zdKku26DVcgPD2vdXsFLgo=
+        Mon, 12 Mar 2018 14:17:26 -0400
+X-Google-Smtp-Source: AG47ELsCHn/8PA104eOModbia8XNqvksYjeyswSkTBmFyJrSv73lS9WcoeCqXmpCQ9ACA5F8JS8YSEIfN0X+55wWJbI=
 MIME-Version: 1.0
-In-Reply-To: <20180312174012.GE18494@localhost.localdomain>
-References: <20180312171813.3487.94803.stgit@localhost.localdomain>
- <20180312172031.3487.20651.stgit@localhost.localdomain> <20180312174012.GE18494@localhost.localdomain>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Mon, 12 Mar 2018 11:09:34 -0700
-Message-ID: <CAKgT0UdWc=Sz-xgd4H3bTDt5d17=-PY8VPWz6A3mAciWV6=97w@mail.gmail.com>
-Subject: Re: [pci PATCH v5 1/4] pci: Add pci_sriov_configure_simple for PFs
- that don't manage VF resources
-To: Keith Busch <keith.busch@intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
-        "Daly, Dan" <dan.daly@intel.com>, LKML <linux-kernel@vger.kernel.org>,
-        linux-nvme@lists.infradead.org, netanel@amazon.com,
-        Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
-        dwmw@amazon.co.uk
+In-Reply-To: <20180312141721.GB4214@redhat.com>
+References: <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152066492680.40260.6843692416565308005.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180312141721.GB4214@redhat.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Mon, 12 Mar 2018 11:17:25 -0700
+Message-ID: <CAPcyv4jdOdvUZHS43Q18h3yTNzmiVJceEcVN5XSKstTkQHfDFQ@mail.gmail.com>
+Subject: Re: [PATCH v5 07/11] mm, dev_pagemap: introduce CONFIG_DEV_PAGEMAP_OPS
+To: Jerome Glisse <jglisse@redhat.com>
+Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Michal Hocko <mhocko@suse.com>, david <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>, linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2CIJVDw009903
 
-On Mon, Mar 12, 2018 at 10:40 AM, Keith Busch <keith.busch@intel.com> wrote:
-> On Mon, Mar 12, 2018 at 10:21:29AM -0700, Alexander Duyck wrote:
->> diff --git a/include/linux/pci.h b/include/linux/pci.h
->> index 024a1beda008..9cab9d0d51dc 100644
->> --- a/include/linux/pci.h
->> +++ b/include/linux/pci.h
->> @@ -1953,6 +1953,7 @@ static inline void pci_mmcfg_late_init(void) { }
->>  int pci_vfs_assigned(struct pci_dev *dev);
->>  int pci_sriov_set_totalvfs(struct pci_dev *dev, u16 numvfs);
->>  int pci_sriov_get_totalvfs(struct pci_dev *dev);
->> +int pci_sriov_configure_simple(struct pci_dev *dev, int nr_virtfn);
->>  resource_size_t pci_iov_resource_size(struct pci_dev *dev, int resno);
->>  void pci_vf_drivers_autoprobe(struct pci_dev *dev, bool probe);
->>  #else
+On Mon, Mar 12, 2018 at 7:17 AM, Jerome Glisse <jglisse@redhat.com> wrote:
+> On Fri, Mar 09, 2018 at 10:55:26PM -0800, Dan Williams wrote:
+>> The HMM sub-system extended dev_pagemap to arrange a callback when a
+>> dev_pagemap managed page is freed. Since a dev_pagemap page is free /
+>> idle when its reference count is 1 it requires an additional branch to
+>> check the page-type at put_page() time. Given put_page() is a hot-path
+>> we do not want to incur that check if HMM is not in use, so a static
+>> branch is used to avoid that overhead when not necessary.
+>>
+>> Now, the FS_DAX implementation wants to reuse this mechanism for
+>> receiving dev_pagemap ->page_free() callbacks. Rework the HMM-specific
+>> static-key into a generic mechanism that either HMM or FS_DAX code paths
+>> can enable.
 >
-> I recommend stubbing 'pci_sriov_configure_simple' or defining it to
-> NULL in the '#else' section here so you don't need to repeat the "#ifdef
-> CONFIG_PCI_IOV" in each driver wishing to use this function. Otherwise
-> looks fine to me.
+> Why EXPORT_SYMBOL_GPL and not EXPORT_SYMBOL like it was prior to this
+> patch ? Not i care that much about that, just wondering. Maybe keep it
+> EXPORT_SYMBOL() ?
 
-My concern with defining it as NULL is that somebody may end up
-calling it in the future directly and that may end up causing issues.
-One thought I have been debating is moving it to a different file. I
-am just not sure where the best place to put something like this would
-be. I could move this function to drivers/pci/pci.c if everyone is
-okay with it and then I could just strip the contents out by wrapping
-them in a #ifdef instead.
+HMM has significant integrations and useful hacks within the mm
+sub-system, I think we should go further than just these symbols and
+also include devm_memremap_pages() as EXPORT_SYMBOL_GPL. It was simply
+an oversight that these were EXPORT_SYMBOL previously.
+
+> In any case
+> Reviewed-by: "Jérôme Glisse" <jglisse@redhat.com>
+
+Thanks!
