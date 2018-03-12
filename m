@@ -1,113 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751574AbeCLOUg convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 10:20:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37536 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751248AbeCLOUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 10:20:34 -0400
-Subject: Re: [PATCH v4] cpuset: Enable cpuset controller in default hierarchy
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mike Galbraith <efault@gmx.de>, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>
-References: <1520609707-16582-1-git-send-email-longman@redhat.com>
- <1520613285.12489.36.camel@gmx.de>
- <1c3fe7b0-2600-c46d-1527-d3aaf024bb91@redhat.com>
- <1520619426.27998.18.camel@gmx.de>
- <55809fe4-98ba-5566-86ed-457acfef0e1c@redhat.com>
- <1520624424.27998.76.camel@gmx.de>
- <53de9683-01b7-bac4-8b70-dc1f93ede600@redhat.com>
- <20180309221736.GB5926@hirez.programming.kicks-ass.net>
- <f0fca497-e4e7-3dbd-1e5c-a7f502c05dcb@redhat.com>
- <20180310131647.GB4043@hirez.programming.kicks-ass.net>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <12ef7f60-5b14-8e09-2478-1453a3071f21@redhat.com>
-Date: Mon, 12 Mar 2018 10:20:32 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180310131647.GB4043@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+        id S1751957AbeCLOUo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 10:20:44 -0400
+Received: from mga02.intel.com ([134.134.136.20]:39208 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751647AbeCLOUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 10:20:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,461,1515484800";
+   d="scan'208";a="210867707"
+Message-ID: <1520864436.10722.592.camel@linux.intel.com>
+Subject: Re: [PATCH v9] mmc: Export host capabilities to debugfs.
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Harish Jenny K N <harish_kandiga@mentor.com>,
+        Avri Altman <Avri.Altman@wdc.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Vladimir_Zapolskiy@mentor.com" <Vladimir_Zapolskiy@mentor.com>
+Date: Mon, 12 Mar 2018 16:20:36 +0200
+In-Reply-To: <9923a92c-f76d-ad87-a648-da212b6b39de@mentor.com>
+References: <1520829090-3567-1-git-send-email-harish_kandiga@mentor.com>
+         <1520849262.10722.582.camel@linux.intel.com>
+         <DM5PR04MB10854C79897A80023EF37F76FCD30@DM5PR04MB1085.namprd04.prod.outlook.com>
+         <540fef96-aa2f-e6c3-467d-bc1d021dd55b@mentor.com>
+         <DM5PR04MB10859F389CA2D1F2370C02CFFCD30@DM5PR04MB1085.namprd04.prod.outlook.com>
+         <329d521d-1776-43ee-2f0e-e9690c29a693@mentor.com>
+         <1520859807.10722.591.camel@linux.intel.com>
+         <5e038945-a09c-5c64-2152-5d2783a249ec@mentor.com>
+         <9923a92c-f76d-ad87-a648-da212b6b39de@mentor.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/10/2018 08:16 AM, Peter Zijlstra wrote:
-> On Fri, Mar 09, 2018 at 06:06:29PM -0500, Waiman Long wrote:
->> So you are talking about sched_relax_domain_level and
-> That one I wouldn't be sad to see the back of.
->
->> sched_load_balance.
-> This one, that's critical. And this is the perfect time to try and fix
-> the whole isolcpus issue.
->
-> The primary issue is that to make equivalent functionality available
-> through cpuset, we need to basically start all tasks outside the root
-> group.
->
-> The equivalent of isolcpus=xxx is a cgroup setup like:
->
->         root
-> 	/  \
->   system    other
->
-> Where other has the @xxx cpus and system the remainder and
-> root.sched_load_balance = 0.
+On Mon, 2018-03-12 at 19:37 +0530, Harish Jenny K N wrote:
 
-I saw in the kernel-parameters.txt file that the isolcpus option was
-deprecated - use cpusets instead. However, there doesn't seem to have
-document on the right way to do it. Of course, we can achieve similar
-results with what you have outlined above, but the process is more
-complex than just adding another boot command line argument with
-isolcpus. So I doubt isolcpus will die anytime soon unless we can make
-the alternative as easy to use.
 
-> Back before cgroups (and the new workqueue stuff), we could've started
-> everything in the !root group, no worry. But now that doesn't work,
-> because a bunch of controllers can't deal with that and everything
-> cgroup expects the cgroupfs to be empty on boot.
+> Can anyone please respond to my previous request?
+> 
+> > Before sending new patch , I would like to inform that I have been
+> > sending this patch with the following checkpatch warning, just to
+> > keep it same as other usages of debugfs_create_file in the
+> > drivers/mmc/core/debugfs.c file.
+> > WARNING:SYMBOLIC_PERMS: Symbolic permissions 'S_IRUSR' are not
+> > preferred. Consider using octal permissions '0400'.
+> > Do I need to address this or keep it same as S_IRUSR ?
 
-AFAIK, all the processes belong to the root cgroup on boot. And the root
-cgroup is usually special that the controller may not exert any control
-for processes in the root cgroup. Many controllers become active for
-processes in the child cgroups only. Would you mind elaborating what
-doesn't quite work currently?
+Please, do.
 
- 
-> It's one of my biggest regrets that I didn't 'fix' this before cgroups
-> came along.
->
->> I have not removed any bits. I just haven't exposed
->> them yet. It does seem like these 2 control knobs are useful from the
->> scheduling perspective. Do we also need cpu_exclusive or just the two
->> sched control knobs are enough?
-> I always forget if we need exclusive for load_balance to work; I'll
-> peruse the document/code.
-
-I think the cpu_exclusive feature can be useful to enforce that CPUs
-allocated to the "other" isolated cgroup cannot be used by the processes
-under the "system" parent.
-
-I know that there are special code to handle the isolcpus option. How
-about changing it to create a exclusive cpuset automatically instead.
-Applications that need to run in those isolated CPUs can then use the
-standard cgroup process to be moved into the isolated cgroup. For example,
-
-isolcpus=<cpuset-name>,<cpu-id-list>
-
-or
-
-isolcpuset=<cpuset-name>[,cpu:<cpu-id-list>][,mem:<memory-node-list>]
-
-We can then retire the old usage and encourage users to use the cgroup
-API to manage it.
-
-Cheers,
-Longman
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
