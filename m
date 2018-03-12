@@ -1,188 +1,230 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932280AbeCLXMi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 19:12:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51558 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751313AbeCLXMg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 19:12:36 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9A7B2173F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Mon, 12 Mar 2018 23:12:11 +0000
-From: James Hogan <jhogan@kernel.org>
-To: "Keller, Jacob E" <jacob.e.keller@intel.com>
-Cc: "Michael, Alice" <alice.michael@intel.com>,
-        Guenter Roeck <linux@roeck-us.net>, Ralf Baechle <ralf@linux-mips.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
-        Shannon Nelson <shannon.nelson@oracle.com>
-Subject: Re: [RFC PATCH] MIPS: Provide cmpxchg64 for 32-bit builds
-Message-ID: <20180312231211.GF21642@saruman>
-References: <1518475021-3337-1-git-send-email-linux@roeck-us.net>
- <20180212234201.GB4290@saruman>
- <20180212235655.GC5199@roeck-us.net>
- <CD14C679C9B9B1409B02829D9B523C297C4D61@ORSMSX101.amr.corp.intel.com>
- <02874ECE860811409154E81DA85FBB5882CDAA1C@ORSMSX115.amr.corp.intel.com>
+        id S1751620AbeCLXNk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 19:13:40 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:43257 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751327AbeCLXNi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 19:13:38 -0400
+X-Google-Smtp-Source: AG47ELtpnjtnGHckSgSdFcmsxrnUiQ3kei0GOyQubMUSTb3zF7MheKBrLNemCY+mbsbCHvzLjp0Q7A==
+Date: Tue, 13 Mar 2018 00:13:35 +0100
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To: Masaki Ota <masaki.ota@jp.alps.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: alps - Demystify trackstick initialization for v3
+ and v6 protocols
+Message-ID: <20180312231335.fnfxgenu22utr3z6@pali>
+References: <20180312230915.26050-1-pali.rohar@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="l+goss899txtYvYf"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="wapmdgzw56g4lcxp"
 Content-Disposition: inline
-In-Reply-To: <02874ECE860811409154E81DA85FBB5882CDAA1C@ORSMSX115.amr.corp.intel.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <20180312230915.26050-1-pali.rohar@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---l+goss899txtYvYf
+--wapmdgzw56g4lcxp
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 14, 2018 at 09:36:33PM +0000, Keller, Jacob E wrote:
-> > -----Original Message-----
-> > From: Michael, Alice
-> > Sent: Wednesday, February 14, 2018 1:03 PM
-> > To: Guenter Roeck <linux@roeck-us.net>; James Hogan <jhogan@kernel.org>;
-> > Keller, Jacob E <jacob.e.keller@intel.com>
-> > Cc: Ralf Baechle <ralf@linux-mips.org>; linux-mips@linux-mips.org; linu=
-x-
-> > kernel@vger.kernel.org; Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com=
->; Shannon
-> > Nelson <shannon.nelson@oracle.com>
-> > Subject: RE: [RFC PATCH] MIPS: Provide cmpxchg64 for 32-bit builds
-> >=20
-> > As has previously been said, we're going to be removing the need for cm=
-pxchg64.
-> > But it takes a little bit of time and work to do so.  I'm adding the de=
-v that is taking
-> > care of the work back onto this email thread as well so he can see any =
-concerns with
-> > it.
-> >=20
-> > Alice
-> >=20
-> > -----Original Message-----
-> > From: Guenter Roeck [mailto:groeck7@gmail.com] On Behalf Of Guenter Roe=
+Masaki, if you have access to the internal ALPS v3 / Rushmore
+documentation, I would like to have a review of this patch or
+confirmation of those information :-)
+
+On Tuesday 13 March 2018 00:09:15 Pali Roh=C3=A1r wrote:
+> Remove cite "Not sure what this does, but it is absolutely essential".
+>=20
+> Extract initialization of trackstick part when touchpad is in passthrought
+> mode for v3 and v6 protocols into own function. Initialization for v3 is:
+> setscale11, setscale11, setscale11, nibble 0x9, nibble 0x4. Initialization
+> for v6 is: setscale11, setscale11, setscale11, setrate 0xC8, setrate 0x14.
+> Nibbles 0x9 and 0x4 for v3 protocol correspondent to setrate 0xC8 and 0x1=
+4,
+> therefore these sequences are same.
+>=20
+> When touchpad is in passthrought mode, then OS communicates with tracksti=
 ck
-> > Sent: Monday, February 12, 2018 3:57 PM
-> > To: James Hogan <jhogan@kernel.org>
-> > Cc: Ralf Baechle <ralf@linux-mips.org>; linux-mips@linux-mips.org; linu=
-x-
-> > kernel@vger.kernel.org; Michael, Alice <alice.michael@intel.com>; Kirsh=
-er, Jeffrey T
-> > <jeffrey.t.kirsher@intel.com>; Shannon Nelson <shannon.nelson@oracle.co=
-m>
-> > Subject: Re: [RFC PATCH] MIPS: Provide cmpxchg64 for 32-bit builds
-> >=20
-> > On Mon, Feb 12, 2018 at 11:42:02PM +0000, James Hogan wrote:
-> > > Hi Guenter,
-> > >
-> > > On Mon, Feb 12, 2018 at 02:37:01PM -0800, Guenter Roeck wrote:
-> > > > Since commit 60f481b970386 ("i40e: change flags to use 64 bits"),
-> > > > the i40e driver uses cmpxchg64(). This causes mips:allmodconfig
-> > > > builds to fail with
-> > > >
-> > > > drivers/net/ethernet/intel/i40e/i40e_ethtool.c:
-> > > > 	In function 'i40e_set_priv_flags':
-> > > > drivers/net/ethernet/intel/i40e/i40e_ethtool.c:4443:2: error:
-> > > > 	implicit declaration of function 'cmpxchg64'
-> > > >
-> > > > Implement a poor-mans-version of cmpxchg64() to fix the problem for
-> > > > 32-bit mips builds. The code is derived from sparc32, but only uses
-> > > > a single spinlock.
-> > >
-> > > Will this be implemened for all 32-bit architectures which are
-> > > currently missing cmpxchg64()?
-> > >
-> > No idea.
-> >=20
-> > > If so, any particular reason not to do it in generic code?
-> > >
-> > Again, no idea. When the problem was previously seen on sparc32, it was
-> > implemented there.
-> >=20
-> > > If not then I think that driver should be fixed to either depend on
-> > > some appropriate Kconfig symbol or to not use this API since it
-> > > clearly isn't portable at the moment.
-> > >
-> > Good point.
-> >=20
-> > > See also Shannon's comment about that specific driver:
-> > > https://lkml.kernel.org/r/e7c934d7-e5f4-ee1b-0647-c31a98d9e944@oracle.
-> > > com
-> > >
-> >=20
-> > Well, this was an RFC only. Feel free to ignore it.
-> >=20
-> > FWIW, this is the second time that the call was introduced in the i40 d=
-river.
-> > After the first time the code was rewritten to avoid the problem, but n=
-ow it came
-> > back. Someone must really like it ;-). For my part, I may just blacklis=
-t the offending
-> > driver in my builds; that is less than perfect, but much easier than ha=
-ving to deal with
-> > the same problem over and over again. Guess I'll wait for a while and d=
-o just that if
-> > the problem isn't fixed in a later RC.
-> >=20
-> > Guenter
+> and this sequence is some magic vendor PS/2 command to put trackstick into
+> "extended" mode. After that sequence trackstick starts reporting packets =
+in
+> some vendor 4 bytes format (first byte is always 0xE8).
 >=20
-> Hi,
+> Next step after configuring trackstick to be in "extended" mode, is to
+> configure touchpad for v3 protocol to expect that trackstick reports data
+> in "extended" mode. For v3 protocol this is done by setting bit 1 in
+> register 0xC2C8 (offset 0x08 from base address 0xC2C0).
 >=20
-> I've been working on re-writing some of the code so that the need for a c=
-ompare-and-exchange in the i40e_set_priv_flags() is not necessary. This mos=
-tly involved moving many flags out into an atomic bitops field instead, it =
-should be posted to IWL soon.
+> When both touchpad and trackstick are not configured for "extended" mode
+> then touchpad reports trackstick packets in different format, which is not
+> supported by psmouse/alps driver (yet).
+>=20
+> In Cirque documentation GP-AN- 130823 INTERFACING TO GEN4 OVER I2C (PDF)
+> available at http://www.cirque.com/gen4-dev-resources is Logical Address
+> 0xC2C8 named as PS2AuxControl and Bit Number 1 as ProcessAuxExtendedData
+> with description: Auxiliary device data is assumed to be extended data wh=
+en
+> set.
+>=20
+> Signed-off-by: Pali Roh=C3=A1r <pali.rohar@gmail.com>
+> ---
+>  drivers/input/mouse/alps.c | 80 ++++++++++++++++++++++++++++------------=
+------
+>  1 file changed, 49 insertions(+), 31 deletions(-)
+>=20
+> diff --git a/drivers/input/mouse/alps.c b/drivers/input/mouse/alps.c
+> index dbe57da8c1a1..010c1bcdb06d 100644
+> --- a/drivers/input/mouse/alps.c
+> +++ b/drivers/input/mouse/alps.c
+> @@ -2063,14 +2063,11 @@ static int alps_hw_init_v1_v2(struct psmouse *psm=
+ouse)
+>  	return 0;
+>  }
+> =20
+> -static int alps_hw_init_v6(struct psmouse *psmouse)
+> +/* Must be in passthrough mode when calling this function */
+> +static int alps_trackstick_enter_extended_mode_v3_v6(struct psmouse *psm=
+ouse)
+>  {
+>  	unsigned char param[2] =3D {0xC8, 0x14};
+> =20
+> -	/* Enter passthrough mode to let trackpoint enter 6byte raw mode */
+> -	if (alps_passthrough_mode_v2(psmouse, true))
+> -		return -1;
+> -
+>  	if (ps2_command(&psmouse->ps2dev, NULL, PSMOUSE_CMD_SETSCALE11) ||
+>  	    ps2_command(&psmouse->ps2dev, NULL, PSMOUSE_CMD_SETSCALE11) ||
+>  	    ps2_command(&psmouse->ps2dev, NULL, PSMOUSE_CMD_SETSCALE11) ||
+> @@ -2078,9 +2075,25 @@ static int alps_hw_init_v6(struct psmouse *psmouse)
+>  	    ps2_command(&psmouse->ps2dev, &param[1], PSMOUSE_CMD_SETRATE))
+>  		return -1;
+> =20
+> +	return 0;
+> +}
+> +
+> +static int alps_hw_init_v6(struct psmouse *psmouse)
+> +{
+> +	int ret;
+> +
+> +	/* Enter passthrough mode to let trackpoint enter 6byte raw mode */
+> +	if (alps_passthrough_mode_v2(psmouse, true))
+> +		return -1;
+> +
+> +	ret =3D alps_trackstick_enter_extended_mode_v3_v6(psmouse);
+> +
+>  	if (alps_passthrough_mode_v2(psmouse, false))
+>  		return -1;
+> =20
+> +	if (ret)
+> +		return ret;
+> +
+>  	if (alps_absolute_mode_v6(psmouse)) {
+>  		psmouse_err(psmouse, "Failed to enable absolute mode\n");
+>  		return -1;
+> @@ -2154,10 +2167,18 @@ static int alps_probe_trackstick_v3_v7(struct psm=
+ouse *psmouse, int reg_base)
+> =20
+>  static int alps_setup_trackstick_v3(struct psmouse *psmouse, int reg_bas=
+e)
+>  {
+> -	struct ps2dev *ps2dev =3D &psmouse->ps2dev;
+>  	int ret =3D 0;
+> +	int reg_val;
+>  	unsigned char param[4];
+> =20
+> +	/*
+> +	 * We need to configure trackstick to report data for touchpad in
+> +	 * extended format. And also we need to tell touchpad to expect data
+> +	 * from trackstick in extended format. Without this configuration
+> +	 * trackstick packets sent from touchpad are in basic format which is
+> +	 * different from what we expect.
+> +	 */
+> +
+>  	if (alps_passthrough_mode_v3(psmouse, reg_base, true))
+>  		return -EIO;
+> =20
+> @@ -2175,39 +2196,36 @@ static int alps_setup_trackstick_v3(struct psmous=
+e *psmouse, int reg_base)
+>  		ret =3D -ENODEV;
+>  	} else {
+>  		psmouse_dbg(psmouse, "trackstick E7 report: %3ph\n", param);
+> -
+> -		/*
+> -		 * Not sure what this does, but it is absolutely
+> -		 * essential. Without it, the touchpad does not
+> -		 * work at all and the trackstick just emits normal
+> -		 * PS/2 packets.
+> -		 */
+> -		if (ps2_command(ps2dev, NULL, PSMOUSE_CMD_SETSCALE11) ||
+> -		    ps2_command(ps2dev, NULL, PSMOUSE_CMD_SETSCALE11) ||
+> -		    ps2_command(ps2dev, NULL, PSMOUSE_CMD_SETSCALE11) ||
+> -		    alps_command_mode_send_nibble(psmouse, 0x9) ||
+> -		    alps_command_mode_send_nibble(psmouse, 0x4)) {
+> -			psmouse_err(psmouse,
+> -				    "Error sending magic E6 sequence\n");
+> +		if (alps_trackstick_enter_extended_mode_v3_v6(psmouse)) {
+> +			psmouse_err(psmouse, "Failed to enter into trackstick extended mode\n=
+");
+>  			ret =3D -EIO;
+> -			goto error;
+>  		}
+> +	}
+> +
+> +	if (alps_passthrough_mode_v3(psmouse, reg_base, false))
+> +		return -EIO;
+> +
+> +	if (ret)
+> +		return ret;
+> =20
+> +	if (alps_enter_command_mode(psmouse))
+> +		return -EIO;
+> +
+> +	reg_val =3D alps_command_mode_read_reg(psmouse, reg_base + 0x08);
+> +	if (reg_val =3D=3D -1) {
+> +		ret =3D -EIO;
+> +	} else {
+>  		/*
+> -		 * This ensures the trackstick packets are in the format
+> -		 * supported by this driver. If bit 1 isn't set the packet
+> -		 * format is different.
+> +		 * Tell touchpad that trackstick is now in extended mode.
+> +		 * If bit 1 isn't set the packet format is different.
+>  		 */
+> -		if (alps_enter_command_mode(psmouse) ||
+> -		    alps_command_mode_write_reg(psmouse,
+> -						reg_base + 0x08, 0x82) ||
+> -		    alps_exit_command_mode(psmouse))
+> +		reg_val |=3D BIT(1);
+> +		if (__alps_command_mode_write_reg(psmouse, reg_val))
+>  			ret =3D -EIO;
+>  	}
+> =20
+> -error:
+> -	if (alps_passthrough_mode_v3(psmouse, reg_base, false))
+> -		ret =3D -EIO;
+> +	if (alps_exit_command_mode(psmouse))
+> +		return -EIO;
+> =20
+>  	return ret;
+>  }
 
-Any update on this? Will a fix to the driver make it into 4.16 or is it
-going to be too big a change?
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
 
-As far as I can tell from grepping around, of the architectures which
-support 32-bit SMP with PCI, these ones implement cmpxchg64 on 32-bit:
-
-arch/arm
-arch/ia64
-arch/x86
-arch/riscv (blindly implements using 64-bit instructions, broken?)
-arch/parisc (with spinlock)
-arch/sparc (with spinlock)
-
-And these don't:
-
-arch/arc
-arch/mips
-arch/powerpc
-arch/sh
-arch/xtensa
-
-(I've excluded arches which are already being removed)
-
-Cheers
-James
-
---l+goss899txtYvYf
+--wapmdgzw56g4lcxp
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqnCUoACgkQbAtpk944
-dnpCww/8CMyW684xDLU8KR1rinwnLH8gC5pisFMuCsYszz09+p0dfhcZq6blGj0/
-yWzY6otfKnEArp224WULyD8MGDymtWYjvLgLeysyNOiKwwhFfUI3HymLUyr0A5BG
-VKnZiXrm9RyK1F3wgpDnGIcPEn1FuZOJShvBaqNoKkRpnrJ6rmClCQe2co01kOHr
-wuf89irWRy6A5T1wDMUOesQKz3Zc7FZbb8PbQDU1rPHKvCIpSIPqvlCO5qdBHh6X
-Oc5tlpc+j2GCGW2GpfyYzRLT3tjKyvYVTVg4uNvH2cSaRdX43S8EFtObkpFKOzwX
-2FIqPPdocoT+7KnPmHI8Is3YjUgRfhodCvNUrgi9/EF+My2ut/6EODsUTKrkB6Sg
-zYg2esqZ2JUGHmobHnk4UbX1EFNC9M/S2gx3bbuIL7JXYgp+8EqbHvZiMRZucHZ6
-0HWLWCOMn/ZuRfhesswvSX1qW8btTUZhSF7xF0I1yKjnD19+mN8B8L70HU/RxFmo
-3k9a4s6iIQgr2lycj3II9FhW3HR6eIjU8dbYXZGwVD7ijqu29GBNSiRRslNz/6pF
-mw5XAtzPrJrAB9Ar/I/tdcV8Rt0CPE1qyWToEAqzo70aEZHby6/xon6OD/LQ50kc
-KCxRyL038IaX65gJlidCyVGle0grv5QvhTV0Ql/7mIcoWpyqD3k=
-=+h2q
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCWqcJmwAKCRCL8Mk9A+RD
+UvtrAJ0bHthOAthzxKY1ko/WTUK2RNBzPwCcCl/+bSes4qWJ5jyrfMHC6CxwgVk=
+=agNz
 -----END PGP SIGNATURE-----
 
---l+goss899txtYvYf--
+--wapmdgzw56g4lcxp--
