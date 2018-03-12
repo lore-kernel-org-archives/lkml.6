@@ -1,74 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932277AbeCLTfe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 15:35:34 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:52204 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751313AbeCLTfc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 15:35:32 -0400
-X-Google-Smtp-Source: AG47ELtHyYXyNnogWwlIr8fEV0zecVOeEFgk8YW3F6q+r+GIRAvDohtUySmujIOvMyoIjDtHLNmgIw==
-X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
-From: valdis.kletnieks@vt.edu
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>
-Cc: linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        netdev@vger.kernel.org
-Subject: linux-next 20180307 - UBSAN whine in lib/radix-tree.c
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1520883323_3561P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date: Mon, 12 Mar 2018 15:35:23 -0400
-Message-ID: <22378.1520883323@turing-police.cc.vt.edu>
+        id S932454AbeCLTfs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 15:35:48 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:54640 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932313AbeCLTfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 15:35:39 -0400
+From: Logan Gunthorpe <logang@deltatee.com>
+To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
+Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date: Mon, 12 Mar 2018 13:35:16 -0600
+Message-Id: <20180312193525.2855-3-logang@deltatee.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180312193525.2855-1-logang@deltatee.com>
+References: <20180312193525.2855-1-logang@deltatee.com>
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, axboe@kernel.dk, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH v3 02/11] PCI/P2PDMA: Add sysfs group to display p2pmem stats
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==_Exmh_1520883323_3561P
-Content-Type: text/plain; charset=us-ascii
+Add a sysfs group to display statistics about P2P memory that is
+registered in each PCI device.
 
-Seen in the dmesg:
+Attributes in the group display the total amount of P2P memory, the
+amount available and whether it is published or not.
 
-[    0.000000] ================================================================================
-[    0.000000] UBSAN: Undefined behaviour in lib/radix-tree.c:123:14
-[    0.000000] member access within null pointer of type 'const struct radix_tree_node'
-[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G                T 4.16.0-rc4-next-20180307-dirty #559
-[    0.000000] Hardware name: Dell Inc. Latitude E6530/07Y85M, BIOS A20 05/08/2017
-[    0.000000] Call Trace:
-[    0.000000]  dump_stack+0x83/0xca
-[    0.000000]  ubsan_epilogue+0xd/0x3a
-[    0.000000]  handle_null_ptr_deref+0x85/0x90
-[    0.000000]  __ubsan_handle_type_mismatch_v1+0x5e/0x70
-[    0.000000]  __radix_tree_replace+0x1e4/0x1f0
-[    0.000000]  radix_tree_iter_replace+0x25/0x50
-[    0.000000]  idr_alloc_u32+0x166/0x1f0
-[    0.000000]  idr_alloc+0x7e/0xd0
-[    0.000000]  worker_pool_assign_id+0x61/0xd0
-[    0.000000]  ? mutex_lock_nested+0x1b/0x20
-[    0.000000]  workqueue_init_early+0x58a/0xc3f
-[    0.000000]  start_kernel+0x4f7/0x809
-[    0.000000]  x86_64_start_reservations+0x40/0x61
-[    0.000000]  x86_64_start_kernel+0x7b/0x9e
-[    0.000000]  secondary_startup_64+0xa5/0xb0
-[    0.000000] ================================================================================
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+---
+ Documentation/ABI/testing/sysfs-bus-pci | 25 +++++++++++++++
+ drivers/pci/p2pdma.c                    | 54 +++++++++++++++++++++++++++++++++
+ 2 files changed, 79 insertions(+)
 
-not sure why a null 'parent' value got passed to get_slot_offset() in the first place, but it sounds
-like something is missing an 'if (NULL)' test...
-
---==_Exmh_1520883323_3561P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.8.0 04/21/2017
-
-iQEVAwUBWqbWe40DS38y7CIcAQIKVAgApf8tgcWmqWY2ryW9qObWSS7xUbj4YsVW
-gYnnLTdGWaqSJIy/ko+XQuzn5UUrykPULez9Nxrbmguiz+DLTFdEFQlzYbPramPk
-0xK8rKyBe9GzCZCzULz4iFp0tWteqi228RhO9Yr3LtDkl6qE3i2vSWxSiqemjvn3
-msK+zMnjjgbuJW5rRdmuZ3D7W0rOaz7HNtR23AfewPMQCk83tlVw8m+HU9TrNKii
-8jF5PR5zdlY1HsP8Cln/YIvnZlYNvWfDHTDDHb/psfHRUWgKqOVti/Ahdr1ro9hO
-xe89gNS9PISA0HI9E3JkjDkPvv2HEtVoCtMkkNaVOM2EZ/oG5UtcNg==
-=ObxP
------END PGP SIGNATURE-----
-
---==_Exmh_1520883323_3561P--
+diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
+index 44d4b2be92fd..044812c816d0 100644
+--- a/Documentation/ABI/testing/sysfs-bus-pci
++++ b/Documentation/ABI/testing/sysfs-bus-pci
+@@ -323,3 +323,28 @@ Description:
+ 
+ 		This is similar to /sys/bus/pci/drivers_autoprobe, but
+ 		affects only the VFs associated with a specific PF.
++
++What:		/sys/bus/pci/devices/.../p2pmem/available
++Date:		November 2017
++Contact:	Logan Gunthorpe <logang@deltatee.com>
++Description:
++		If the device has any Peer-to-Peer memory registered, this
++	        file contains the amount of memory that has not been
++		allocated (in decimal).
++
++What:		/sys/bus/pci/devices/.../p2pmem/size
++Date:		November 2017
++Contact:	Logan Gunthorpe <logang@deltatee.com>
++Description:
++		If the device has any Peer-to-Peer memory registered, this
++	        file contains the total amount of memory that the device
++		provides (in decimal).
++
++What:		/sys/bus/pci/devices/.../p2pmem/published
++Date:		November 2017
++Contact:	Logan Gunthorpe <logang@deltatee.com>
++Description:
++		If the device has any Peer-to-Peer memory registered, this
++	        file contains a '1' if the memory has been published for
++		use inside the kernel or a '0' if it is only intended
++		for use within the driver that published it.
+diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+index 0ee917381dce..fd4789566a56 100644
+--- a/drivers/pci/p2pdma.c
++++ b/drivers/pci/p2pdma.c
+@@ -24,6 +24,54 @@ struct pci_p2pdma {
+ 	bool p2pmem_published;
+ };
+ 
++static ssize_t size_show(struct device *dev, struct device_attribute *attr,
++			 char *buf)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++	size_t size = 0;
++
++	if (pdev->p2pdma->pool)
++		size = gen_pool_size(pdev->p2pdma->pool);
++
++	return snprintf(buf, PAGE_SIZE, "%zd\n", size);
++}
++static DEVICE_ATTR_RO(size);
++
++static ssize_t available_show(struct device *dev, struct device_attribute *attr,
++			      char *buf)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++	size_t avail = 0;
++
++	if (pdev->p2pdma->pool)
++		avail = gen_pool_avail(pdev->p2pdma->pool);
++
++	return snprintf(buf, PAGE_SIZE, "%zd\n", avail);
++}
++static DEVICE_ATTR_RO(available);
++
++static ssize_t published_show(struct device *dev, struct device_attribute *attr,
++			      char *buf)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++
++	return snprintf(buf, PAGE_SIZE, "%d\n",
++			pdev->p2pdma->p2pmem_published);
++}
++static DEVICE_ATTR_RO(published);
++
++static struct attribute *p2pmem_attrs[] = {
++	&dev_attr_size.attr,
++	&dev_attr_available.attr,
++	&dev_attr_published.attr,
++	NULL,
++};
++
++static const struct attribute_group p2pmem_group = {
++	.attrs = p2pmem_attrs,
++	.name = "p2pmem",
++};
++
+ static void pci_p2pdma_percpu_release(struct percpu_ref *ref)
+ {
+ 	struct pci_p2pdma *p2p =
+@@ -53,6 +101,7 @@ static void pci_p2pdma_release(void *data)
+ 	percpu_ref_exit(&pdev->p2pdma->devmap_ref);
+ 
+ 	gen_pool_destroy(pdev->p2pdma->pool);
++	sysfs_remove_group(&pdev->dev.kobj, &p2pmem_group);
+ 	pdev->p2pdma = NULL;
+ }
+ 
+@@ -83,9 +132,14 @@ static int pci_p2pdma_setup(struct pci_dev *pdev)
+ 
+ 	pdev->p2pdma = p2p;
+ 
++	error = sysfs_create_group(&pdev->dev.kobj, &p2pmem_group);
++	if (error)
++		goto out_pool_destroy;
++
+ 	return 0;
+ 
+ out_pool_destroy:
++	pdev->p2pdma = NULL;
+ 	gen_pool_destroy(p2p->pool);
+ out:
+ 	devm_kfree(&pdev->dev, p2p);
+-- 
+2.11.0
