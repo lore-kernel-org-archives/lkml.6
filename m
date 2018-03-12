@@ -1,81 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751279AbeCLLYJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 07:24:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40518 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750752AbeCLLYH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 07:24:07 -0400
-Date: Mon, 12 Mar 2018 12:24:03 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Milind Chabbi <chabbi.milind@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Jin Yao <yao.jin@linux.intel.com>, Kan Liang <kan.liang@intel.com>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        Oleg Nesterov <onestero@redhat.com>, Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCHv2 0/8] hw_breakpoint: Breakpoint modification fixes and
- new modify ioctl
-Message-ID: <20180312112403.GB23111@krava>
-References: <20171129083853.28022-1-jolsa@kernel.org>
- <20180312112041.p6pksk7yj5nhbtju@gmail.com>
+        id S1751348AbeCLL04 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 07:26:56 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:44264 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751247AbeCLL0y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 07:26:54 -0400
+X-Google-Smtp-Source: AG47ELtIQ9NMMSuSBoVBML+vtunOWQrrQ06S0AR/IKdluidgIxtnnyOSADHzfkrhTa4oawYxcOksCcshmW9olPRGwpI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180312112041.p6pksk7yj5nhbtju@gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1520853467-31653-1-git-send-email-anshuman.gupta@intel.com>
+References: <1520853467-31653-1-git-send-email-anshuman.gupta@intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 12 Mar 2018 12:26:53 +0100
+X-Google-Sender-Auth: p6UdRQVdhHL1bbDiEifmzgyZLYY
+Message-ID: <CAJZ5v0hyk=jto8Wt0er==YmKEsgvfvZhO2wDbGOhxZaWWCNgBg@mail.gmail.com>
+Subject: Re: [PATCH] [sound] hdac-codec runtime suspended at PM:Suspend.
+To: Anshuman Gupta <anshuman.gupta@intel.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..."
+        <alsa-devel@alsa-project.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 12:20:41PM +0100, Ingo Molnar wrote:
+On Mon, Mar 12, 2018 at 12:17 PM, Anshuman Gupta
+<anshuman.gupta@intel.com> wrote:
+> Keep hdac-codec to be in runtime suspended while entering to suspend.
+> If hdac-codec is already in runtime suspend state skip its power down
+> sequence in prepare, power up sequence in complete phase.
+>
+> Avoid resuming hdac controller PCI device 00:1f.3 from runtime suspend
+> state in case  hdac-codec already in runtime-suspend state, this is
+> unnecessary and block the direct complete even for hdac controller
+> PCI device 00:1f.3.
+>
+> This enabled direct complete path for hdac-codec and PCI device 00:1f.3.
+>
+> Signed-off-by: Anshuman Gupta <anshuman.gupta@intel.com>
+> ---
+>  sound/soc/codecs/hdac_hdmi.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/sound/soc/codecs/hdac_hdmi.c b/sound/soc/codecs/hdac_hdmi.c
+> index f3b4f4d..810a8a6 100644
+> --- a/sound/soc/codecs/hdac_hdmi.c
+> +++ b/sound/soc/codecs/hdac_hdmi.c
+> @@ -1852,6 +1852,8 @@ static int hdmi_codec_prepare(struct device *dev)
+>         struct hdac_ext_device *edev = to_hda_ext_device(dev);
+>         struct hdac_device *hdac = &edev->hdac;
+>
+> +       if (pm_runtime_status_suspended(dev))
+> +               return 1;
 
-SNIP
+This is racy in principle, because the runtime PM status can still
+change after you've checked here.
 
-> > It's also available in here:
-> >   https://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
-> >   perf/bp
-> > 
-> > v2 changes:
-> >   - added check for the rest of the perf_event_attr fields
-> >     to be the same as for kernel event
-> >
-> > Jiri Olsa (7):
-> >       hw_breakpoint: Pass bp_type directly as find_slot_idx argument
-> >       hw_breakpoint: Pass bp_type argument to __reserve_bp_slot|__release_bp_slot
-> >       hw_breakpoint: Add modify_bp_slot function
-> >       hw_breakpoint: Factor out __modify_user_hw_breakpoint function
-> >       hw_breakpoint: Add perf_event_attr fields check in __modify_user_hw_breakpoint
-> >       perf/core: Move perf_event_attr::sample_max_stack into perf_copy_attr
-> >       perf tests: Add breakpoint accounting/modify test
-> > 
-> > Milind Chabbi (1):
-> >       perf/core: fast breakpoint modification via _IOC_MODIFY_ATTRIBUTES.
-> > 
-> >  include/linux/hw_breakpoint.h         |   7 +++++
-> >  include/uapi/linux/perf_event.h       |   2 ++
-> >  kernel/events/core.c                  |  53 +++++++++++++++++++++++++++++--
-> >  kernel/events/hw_breakpoint.c         | 115 ++++++++++++++++++++++++++++++++++++++++++++++++-------------------
-> >  tools/include/uapi/linux/perf_event.h |   2 ++
-> >  tools/perf/tests/Build                |   1 +
-> >  tools/perf/tests/bp_account.c         | 195 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-> >  tools/perf/tests/builtin-test.c       |   4 +++
-> >  tools/perf/tests/tests.h              |   1 +
-> >  9 files changed, 344 insertions(+), 36 deletions(-)
-> >  create mode 100644 tools/perf/tests/bp_account.c
-> 
-> Sorry about the late response - I suppose we could try this feature, but the 
-> tooling patches don't apply anymore. Mind re-sending a merged version, on top of 
-> latest -tip or so?
+But even if it isn't racy in practice, the following
+pm_runtime_get_sync() becomes redundant after it, doesn't it?
 
-sure, I'll resend
+>         pm_runtime_get_sync(&edev->hdac.dev);
+>
+>         /*
+> @@ -1873,6 +1875,8 @@ static void hdmi_codec_complete(struct device *dev)
+>         struct hdac_hdmi_priv *hdmi = edev->private_data;
+>         struct hdac_device *hdac = &edev->hdac;
+>
+> +       if (pm_runtime_status_suspended(dev))
+> +               return;
 
-thanks,
-jirka
+That, again, is somewhat fragile from the concurrency perspective.
+
+>         /* Power up afg */
+>         snd_hdac_codec_read(hdac, hdac->afg, 0, AC_VERB_SET_POWER_STATE,
+>                                                         AC_PWRST_D0);
+> --
+> 2.7.4
+>
