@@ -1,98 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932376AbeCLPfK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 11:35:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33630 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751442AbeCLPfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 11:35:09 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D680021778
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AG47ELud5+7hZa77puKrhimM6fgaDycd1l6ACyT/xwkfKV6CLNGS/oQqWY3i6N52nmol1aZ9Kw7NIyaDgBlljBhiXEI=
+        id S932441AbeCLPfb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 11:35:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45776 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751458AbeCLPfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 11:35:30 -0400
+Date: Mon, 12 Mar 2018 11:30:49 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH ghak21 V2 2/4] audit: link denied should not directly
+ generate PATH record
+Message-ID: <20180312153049.udobftmchbpb7lou@madcap2.tricolour.ca>
+References: <cover.1520835596.git.rgb@redhat.com>
+ <9ed76ccb239078ad5a2808d23c7b7f1738b0b2b8.1520835596.git.rgb@redhat.com>
+ <CAHC9VhRDnd55em1YUkswOX4XmDP6xH5x005hcZnCZSRXz66exQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180312140300.6166-2-vkuznets@redhat.com>
-References: <20180312140300.6166-1-vkuznets@redhat.com> <20180312140300.6166-2-vkuznets@redhat.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Mon, 12 Mar 2018 15:34:47 +0000
-X-Gmail-Original-Message-ID: <CALCETrXHBQjHR0w1YhJtzPyr6G1BzcBKRvY_smGufd0b6gizXQ@mail.gmail.com>
-Message-ID: <CALCETrXHBQjHR0w1YhJtzPyr6G1BzcBKRvY_smGufd0b6gizXQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] x86/kvm/vmx: read MSR_FS_BASE from current->thread
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm list <kvm@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhRDnd55em1YUkswOX4XmDP6xH5x005hcZnCZSRXz66exQ@mail.gmail.com>
+User-Agent: NeoMutt/20171027
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 2:02 PM, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
-> vmx_save_host_state() is only called from kvm_arch_vcpu_ioctl_run() so
-> the context is pretty well defined. Read MSR_FS_BASE from
-> current->thread.fsbase after calling save_fsgs() which takes care of
-> X86_BUG_NULL_SEG case now and will do RD[FG,GS]BASE when FSGSBASE
-> extensions are exposed to userspace (currently they are not).
->
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> ---
->  arch/x86/include/asm/processor.h |  3 +++
->  arch/x86/kernel/process_64.c     | 20 ++++++++++++++++++++
->  arch/x86/kvm/vmx.c               |  4 +++-
->  3 files changed, 26 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-> index b0ccd4847a58..006352b85ba3 100644
-> --- a/arch/x86/include/asm/processor.h
-> +++ b/arch/x86/include/asm/processor.h
-> @@ -410,6 +410,9 @@ DECLARE_INIT_PER_CPU(irq_stack_union);
->  DECLARE_PER_CPU(char *, irq_stack_ptr);
->  DECLARE_PER_CPU(unsigned int, irq_count);
->  extern asmlinkage void ignore_sysret(void);
-> +
-> +/* Save actual FS/GS selectors and bases to current->thread */
-> +void save_current_fsgs(void);
->  #else  /* X86_64 */
->  #ifdef CONFIG_CC_STACKPROTECTOR
->  /*
-> diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-> index 9eb448c7859d..eb907fefe02e 100644
-> --- a/arch/x86/kernel/process_64.c
-> +++ b/arch/x86/kernel/process_64.c
-> @@ -205,6 +205,26 @@ static __always_inline void save_fsgs(struct task_struct *task)
->         save_base_legacy(task, task->thread.gsindex, GS);
->  }
->
-> +/*
-> + * Currently, the only way for processes to change their FS/GS base is to call
-> + * ARCH_SET_FS/GS prctls and these reflect changes they make in task->thread.
-> + * There are, however, additional considerations:
-> + *
-> + * There is X86_BUG_NULL_SEG: on some CPUs writing '0' to FS/GS selectors zeroes
-> + * the base and on some it doesn't, we need to check for that
-> + * (see save_base_legacy()).
-> + *
-> + * When FSGSBASE extensions are enabled userspace processes will be able to
-> + * change their FS/GS bases without kernel intervention. save_fsgs() will
-> + * have to be updated to actually read FS and GS bases with RD[FG,GS]BASE
-> + * instructions.
-> + */
+On 2018-03-12 11:05, Paul Moore wrote:
+> On Mon, Mar 12, 2018 at 2:31 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> > Audit link denied events generate duplicate PATH records which disagree
+> > in different ways from symlink and hardlink denials.
+> > audit_log_link_denied() should not directly generate PATH records.
+> > While we're at it, remove the now useless struct path argument.
+> >
+> > See: https://github.com/linux-audit/audit-kernel/issues/21
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> >  fs/namei.c            |  2 +-
+> >  include/linux/audit.h |  6 ++----
+> >  kernel/audit.c        | 17 ++---------------
+> >  3 files changed, 5 insertions(+), 20 deletions(-)
+> 
+> I have no objection to the v2 change of removing the link parameter,
+> but this patch can not be merged as-is because the v1 patch has
+> already been merged into audit/next (as stated on the mailing list).
 
-This is all a very complicated way to say "while a process is running,
-current->thread.fsbase and current->thread.gsbase may not match the
-corresponding CPU registers.  KVM wants an efficient way to save and
-restore FSBASE and GSBASE."
+Yes, I self-NACKed that patch.
 
-And how about changing this to:
+	https://www.redhat.com/archives/linux-audit/2018-March/msg00070.html
 
-#if IS_ENABLED(CONFIG_KVM)
-void save_fsgs_for_kvm(void)
-{
-    save_fsgs(current);
-}
-EXPORT_SYMBOL_GPL(save_fsgs_for_kvm);
+Is it not possible to drop it, or would you have to do a revert to avoid
+a rebase?
 
---Andy
+> You need to respin this patch against audit/next and redo the
+> subject/description to indicate that you are just removing the unused
+> link parameter in this updated patch.
+
+So the way I had it in my devel tree rather than squashing it...
+
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index 9cc91fb..50d2533 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -1011,7 +1011,7 @@ static int may_linkat(struct path *link)
+> >         if (safe_hardlink_source(inode) || inode_owner_or_capable(inode))
+> >                 return 0;
+> >
+> > -       audit_log_link_denied("linkat", link);
+> > +       audit_log_link_denied("linkat");
+> >         return -EPERM;
+> >  }
+> >
+> > diff --git a/include/linux/audit.h b/include/linux/audit.h
+> > index af410d9..75d5b03 100644
+> > --- a/include/linux/audit.h
+> > +++ b/include/linux/audit.h
+> > @@ -146,8 +146,7 @@ extern void             audit_log_d_path(struct audit_buffer *ab,
+> >                                              const struct path *path);
+> >  extern void                audit_log_key(struct audit_buffer *ab,
+> >                                           char *key);
+> > -extern void                audit_log_link_denied(const char *operation,
+> > -                                                 const struct path *link);
+> > +extern void                audit_log_link_denied(const char *operation);
+> >  extern void                audit_log_lost(const char *message);
+> >
+> >  extern int audit_log_task_context(struct audit_buffer *ab);
+> > @@ -194,8 +193,7 @@ static inline void audit_log_d_path(struct audit_buffer *ab,
+> >  { }
+> >  static inline void audit_log_key(struct audit_buffer *ab, char *key)
+> >  { }
+> > -static inline void audit_log_link_denied(const char *string,
+> > -                                        const struct path *link)
+> > +static inline void audit_log_link_denied(const char *string)
+> >  { }
+> >  static inline int audit_log_task_context(struct audit_buffer *ab)
+> >  {
+> > diff --git a/kernel/audit.c b/kernel/audit.c
+> > index 7026d69..e54deaf 100644
+> > --- a/kernel/audit.c
+> > +++ b/kernel/audit.c
+> > @@ -2301,36 +2301,23 @@ void audit_log_task_info(struct audit_buffer *ab, struct task_struct *tsk)
+> >  /**
+> >   * audit_log_link_denied - report a link restriction denial
+> >   * @operation: specific link operation
+> > - * @link: the path that triggered the restriction
+> >   */
+> > -void audit_log_link_denied(const char *operation, const struct path *link)
+> > +void audit_log_link_denied(const char *operation)
+> >  {
+> >         struct audit_buffer *ab;
+> > -       struct audit_names *name;
+> >
+> >         if (!audit_enabled || audit_dummy_context())
+> >                 return;
+> >
+> > -       name = kzalloc(sizeof(*name), GFP_NOFS);
+> > -       if (!name)
+> > -               return;
+> > -
+> >         /* Generate AUDIT_ANOM_LINK with subject, operation, outcome. */
+> >         ab = audit_log_start(current->audit_context, GFP_KERNEL,
+> >                              AUDIT_ANOM_LINK);
+> >         if (!ab)
+> > -               goto out;
+> > +               return;
+> >         audit_log_format(ab, "op=%s", operation);
+> >         audit_log_task_info(ab, current);
+> >         audit_log_format(ab, " res=0");
+> >         audit_log_end(ab);
+> > -
+> > -       /* Generate AUDIT_PATH record with object. */
+> > -       name->type = AUDIT_TYPE_NORMAL;
+> > -       audit_copy_inode(name, link->dentry, d_backing_inode(link->dentry));
+> > -       audit_log_name(current->audit_context, name, link, 0, NULL);
+> > -out:
+> > -       kfree(name);
+> >  }
+> >
+> >  /**
+> > --
+> > 1.8.3.1
+> >
+> 
+> 
+> 
+> -- 
+> paul moore
+> www.paul-moore.com
+> 
+> --
+> Linux-audit mailing list
+> Linux-audit@redhat.com
+> https://www.redhat.com/mailman/listinfo/linux-audit
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
