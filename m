@@ -1,64 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932639AbeCLP4m (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 11:56:42 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:43743 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932494AbeCLP4l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 11:56:41 -0400
-X-Google-Smtp-Source: AG47ELvyJY9F0xEE4JCTX/eOlf8UAl6q/CudFIp4626/hSuA/yDSOKWpzltiI+gDF/iRMEALEcUvZ5YZC5dV513jpAg=
-MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <20180312153049.udobftmchbpb7lou@madcap2.tricolour.ca>
-References: <cover.1520835596.git.rgb@redhat.com> <9ed76ccb239078ad5a2808d23c7b7f1738b0b2b8.1520835596.git.rgb@redhat.com>
- <CAHC9VhRDnd55em1YUkswOX4XmDP6xH5x005hcZnCZSRXz66exQ@mail.gmail.com> <20180312153049.udobftmchbpb7lou@madcap2.tricolour.ca>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 12 Mar 2018 11:56:38 -0400
-Message-ID: <CAHC9VhSG__5ixkPQsmo+vT0uvKjSBnGX5v-Y5B349vh1ZYJv3Q@mail.gmail.com>
-Subject: Re: [PATCH ghak21 V2 2/4] audit: link denied should not directly
- generate PATH record
-To: Richard Guy Briggs <rgb@redhat.com>
+        id S932674AbeCLP5m (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 11:57:42 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49450 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932487AbeCLP5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 11:57:41 -0400
+Date: Mon, 12 Mar 2018 11:52:56 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
 Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
         LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH ghak21 V2 3/4] audit: add refused symlink to audit_names
+Message-ID: <20180312155256.4j7uglv7jiyppozm@madcap2.tricolour.ca>
+References: <cover.1520835596.git.rgb@redhat.com>
+ <ce98e9600a8d7d0169067ae9f3e3a5ae2fb1f54a.1520835596.git.rgb@redhat.com>
+ <CAHC9VhRh094wMJkiBY+iStfwMEotHMrOCWUSW23gva_ccknuqg@mail.gmail.com>
+ <20180312152614.qvcxng3biug46lms@madcap2.tricolour.ca>
+ <CAHC9VhR-2tQAsDHDNto7GWkSrCLWGuURexxsxDxECfY9KoVvww@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhR-2tQAsDHDNto7GWkSrCLWGuURexxsxDxECfY9KoVvww@mail.gmail.com>
+User-Agent: NeoMutt/20171027
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 11:30 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2018-03-12 11:05, Paul Moore wrote:
->> On Mon, Mar 12, 2018 at 2:31 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
->> > Audit link denied events generate duplicate PATH records which disagree
->> > in different ways from symlink and hardlink denials.
->> > audit_log_link_denied() should not directly generate PATH records.
->> > While we're at it, remove the now useless struct path argument.
->> >
->> > See: https://github.com/linux-audit/audit-kernel/issues/21
->> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
->> > ---
->> >  fs/namei.c            |  2 +-
->> >  include/linux/audit.h |  6 ++----
->> >  kernel/audit.c        | 17 ++---------------
->> >  3 files changed, 5 insertions(+), 20 deletions(-)
->>
->> I have no objection to the v2 change of removing the link parameter,
->> but this patch can not be merged as-is because the v1 patch has
->> already been merged into audit/next (as stated on the mailing list).
->
-> Yes, I self-NACKed that patch.
->
->         https://www.redhat.com/archives/linux-audit/2018-March/msg00070.html
->
-> Is it not possible to drop it, or would you have to do a revert to avoid
-> a rebase?
+On 2018-03-12 11:53, Paul Moore wrote:
+> On Mon, Mar 12, 2018 at 11:26 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2018-03-12 11:12, Paul Moore wrote:
+> >> On Mon, Mar 12, 2018 at 2:31 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> >> > Audit link denied events for symlinks had duplicate PATH records rather
+> >> > than just updating the existing PATH record.  Update the symlink's PATH
+> >> > record with the current dentry and inode information.
+> >> >
+> >> > See: https://github.com/linux-audit/audit-kernel/issues/21
+> >> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> >> > ---
+> >> >  fs/namei.c | 1 +
+> >> >  1 file changed, 1 insertion(+)
+> >>
+> >> Why didn't you include this in patch 4/4 like I asked during the
+> >> previous review?
+> >
+> > Please see the last comment of:
+> > https://www.redhat.com/archives/linux-audit/2018-March/msg00070.html
+> 
+> Yes, I just saw that ... I hadn't seen your replies on the v1 patches
+> until I had finished reviewing v2.  I just replied to that mail in the
+> v1 thread, but basically you need to figure out what is necessary here
+> and let us know.  If I have to figure it out it likely isn't going to
+> get done with enough soak time prior to the upcoming merge window.
 
-Yes, it is possible to drop a patch from the audit/next patch stack,
-but dropping patches is considered *very* bad form and not something I
-want to do without a Very Good Reason.  While the v2 patch is the
-"right" patch, the v1 patch is not dangerous, so I would rather you
-just build on top of what is currently in audit/next.
+Steve?  I was hoping you could chime in here.
 
--- 
-paul moore
-www.paul-moore.com
+I'd just include it for completeness unless Steve thinks it will stand
+on its own and doesn't want the overhead.
+
+> >> > diff --git a/fs/namei.c b/fs/namei.c
+> >> > index 50d2533..00f5041 100644
+> >> > --- a/fs/namei.c
+> >> > +++ b/fs/namei.c
+> >> > @@ -945,6 +945,7 @@ static inline int may_follow_link(struct nameidata *nd)
+> >> >         if (nd->flags & LOOKUP_RCU)
+> >> >                 return -ECHILD;
+> >> >
+> >> > +       audit_inode(nd->name, nd->stack[0].link.dentry, 0);
+> >> >         audit_log_link_denied("follow_link", &nd->stack[0].link);
+> >> >         return -EACCES;
+> >> >  }
+> >>
+> >> paul moore
+> >
+> > - RGB
+> 
+> paul moore
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
