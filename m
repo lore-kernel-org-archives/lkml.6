@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3443661-1520826723-2-7150750078922092818
+X-Cyrus-Session-Id: sloti22d1t05-3441149-1520826715-2-543985548312078714
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520826722; b=jwmJMhGRmwrMEKKvH4+5UBENphEXL8kI5b63ZTNPzWklCSm
-    ITI7h9G3+5GL+HrPSsSusiuzhR0uJi93iUhL2cRsgarUpA9/xkE43k/sVSaaISxA
-    cXwv7MILNjCHX2d4mPwrMobJOyEzREqEtWcEFj6+KVqOT4fdd2h7PYVk4HxBsDL2
-    T+fDI2rD9SGpU8MG6/cCGRnycb2EBa61ktSh1j1bfFcDK7g1EY+lmpRPYdRfBqFr
-    eZQPslYXQeU9PQlyvT6lPGpMGRJrhImx7WV4ve1X+rgRTQ5U54kMcIfQhJeOS2FC
-    3zPSZe4zQpMDLO4ySumsFO746SOatDkkAcwgurw==
+    t=1520826714; b=aSTCrOml2xWUrFQdcLwixVv67z9oo/GLMwwnQSwZvcGS7UD
+    lCFsvktbkPjvU69wEy0cz5OuBQEax/6Ei8Il20TfbbHU3ER8sdyaJRQx6GoRXa2y
+    kqPYMn7qIBYiBCjjGhpBHivze+1XqexPb3uzjY/xjyM9Klnfxn1HZiYxhziHEQ77
+    zs5K4oJmnAlRZzzK8+7BMdvjPybGzI3hJhkkr1n0RDXn1StwcRLx7MKyUO3hvpQH
+    LgOvnmAsanq+SNPQiWKi2keiOFOTw4N8xbn1nxxuiAA5oXQHbKlasbCmitbp1jlK
+    UBfCowQ99kvUxcbNqPK+z6gJ9mlh2vQCzQW1LqQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1520826722; bh=ePiVywAwdKogKpjrZT+
-    ul+jDyPPMab7uNHhS/iKyD88=; b=K148772aeNt/zf7mizgOjr93MiwFPRpbAeA
-    +ErJLiSF1ELOqK7vtvQAubDZsN1ZFfrSBXgv+SL/lc2GsiX7Z7TA9X2Ueo3dmIdk
-    pJW6YI3SHbPP5mU7XR8C4g9pMH8cothhQ10cdjnS1Joeqp6mVS1zzn8z2F8sOrTH
-    WySI+8nCjZUSEU78DELrGdEdL71EtjGw4bFpxAnP7w3By40mtzi3Hm7Npvj5GGeS
-    5v7Lf6QZm0So5SfQbSh7cC+mUvyugQZ0dPCvhhow3aENUQc54GoE+rYLZDiNnfRg
-    wGNN7GTdjQMjyJShywkp0J6yCOmoV9d05h11Sr5CfkROifUIGKw==
+    :sender:list-id; s=arctest; t=1520826714; bh=W9YLMWmBTBnnMwcds1U
+    QhqFCQCKyNX4FQjYDxTBCwjU=; b=aZOk1zFtzVUirwcF7hGHxWGBnuuPAcysWoN
+    Ss+v+7vUDqwn29afIIyohnjjb3fB3U2z49/x3O4q9M4Zv8zXumQe3zmnXgxnOABh
+    VVZZ5RwAzrhmLt8rMCLR6TJSOV8tvSV95Z9TwM0HagMA1eVI7dh+LYetuUotEm5a
+    vQ95Awvj8fOQjltfBPEAvia4ZeqXd42WhoDkNrokw2GIQT+KYYpz60kommNXl7+7
+    ZIdCRZUjg5ge3ixv3ZCUiSsL87o2o9Hna1wJbejk9E0TcJ3CPf6k5yW9Ne8Hydnm
+    fk3eksVp9WoEpkx7E6kDdL1V9K+fhnsP3g4/PrR6TH8biLVKzFg==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -49,11 +49,11 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932612AbeCLDwA (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Mar 2018 23:52:00 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41033 "EHLO
+        id S933366AbeCLDuc (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Mar 2018 23:50:32 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41058 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932572AbeCLDHj (ORCPT
+        by vger.kernel.org with ESMTP id S932590AbeCLDHj (ORCPT
         <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 23:07:39 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -61,13 +61,20 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Felipe Balbi" <balbi@ti.com>,
-        "Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>
+CC: akpm@linux-foundation.org, "Andi Kleen" <ak@linux.intel.com>,
+        "David Woodhouse" <dwmw@amazon.co.uk>,
+        "Masami Hiramatsu" <mhiramat@kernel.org>,
+        "Borislav Petkov" <bp@alien8.de>,
+        "Darren Kenny" <darren.kenny@oracle.com>,
+        "Tom Lendacky" <thomas.lendacky@amd.com>,
+        "Arjan van de Ven" <arjan@linux.intel.com>,
+        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.892374881@decadent.org.uk>
+Message-ID: <lsq.1520823814.692314103@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 012/104] usb: renesas_usbhs: fixup __usbhs_for_each_pipe
- 1st pos
+Subject: [PATCH 3.2 095/104] x86/speculation: Fix typo IBRS_ATT, which
+ should be IBRS_ALL
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,31 +89,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Darren Kenny <darren.kenny@oracle.com>
 
-commit c2fa3edc58a262dfcb7aea78e24661e90e00098c upstream.
+commit af189c95a371b59f493dbe0f50c0a09724868881 upstream.
 
-__usbhs_for_each_pipe() is the macro which moves around each pipe,
-but it has a bug which didn't care about 1st pipe's position.
-Because of this bug, it moves around
-pipe0, pipe2, pipe3 ... even though it requested pipe1, pipe2, pipe3...
-This patch modifies it.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Felipe Balbi <balbi@ti.com>
+Fixes: 117cc7a908c83 ("x86/retpoline: Fill return stack buffer on vmexit")
+Signed-off-by: Darren Kenny <darren.kenny@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Link: https://lkml.kernel.org/r/20180202191220.blvgkgutojecxr3b@starbug-vm.ie.oracle.com
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/renesas_usbhs/pipe.h | 2 +-
+ arch/x86/include/asm/nospec-branch.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/renesas_usbhs/pipe.h
-+++ b/drivers/usb/renesas_usbhs/pipe.h
-@@ -54,7 +54,7 @@ struct usbhs_pipe_info {
-  * pipe list
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -179,7 +179,7 @@ extern char __indirect_thunk_size[];
+  * On VMEXIT we must ensure that no RSB predictions learned in the guest
+  * can be followed in the host, by overwriting the RSB completely. Both
+  * retpoline and IBRS mitigations for Spectre v2 need this; only on future
+- * CPUs with IBRS_ATT *might* it be avoided.
++ * CPUs with IBRS_ALL *might* it be avoided.
   */
- #define __usbhs_for_each_pipe(start, pos, info, i)	\
--	for (i = start, pos = (info)->pipe;		\
-+	for (i = start, pos = (info)->pipe + i;		\
- 	     i < (info)->size;				\
- 	     i++, pos = (info)->pipe + i)
- 
+ static inline void vmexit_fill_RSB(void)
+ {
