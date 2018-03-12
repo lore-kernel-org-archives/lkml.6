@@ -1,209 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751543AbeCLLRM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 07:17:12 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60406 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751104AbeCLLRJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 07:17:09 -0400
-Date: Mon, 12 Mar 2018 12:17:05 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Stanislav Kozina <skozina@redhat.com>,
-        "Frank Ch. Eigler" <fche@redhat.com>, Will Cohen <wcohen@redhat.com>,
-        Eugene Syromiatnikov <esyromia@redhat.com>,
-        Jerome Marchand <jmarchan@redhat.com>,
-        lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Wang Nan <wangnan0@huawei.com>, Alexei Starovoitov <ast@fb.com>
-Subject: Re: [RFC 00/13] perf bpf: Add support to run BEGIN/END code
-Message-ID: <20180312111705.GA23111@krava>
-References: <20180312094313.18738-1-jolsa@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180312094313.18738-1-jolsa@kernel.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1751602AbeCLLRp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 07:17:45 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:43393 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750811AbeCLLRo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 07:17:44 -0400
+X-Google-Smtp-Source: AG47ELufFYpb6xT/0UeG/c+/6gUUYdtrP4WrYblaPHsxVufetkhmbYJLBjr4+aJT0+gKUR9HuZPmZA==
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: khilman@baylibre.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] amlogic: meson-gx-socinfo: Update soc ids
+Date: Mon, 12 Mar 2018 12:17:40 +0100
+Message-Id: <1520853460-6960-1-git-send-email-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-adding Alexei and Wang to the loop
+Updates the Amlogic Meson SoCs IDs for the Armv8 based SoCs.
+It includes the new families and packages.
 
-On Mon, Mar 12, 2018 at 10:43:00AM +0100, Jiri Olsa wrote:
-> hi,
-> this is *RFC* and the following patchset is very rough
-> and ugly 'prove of concept'-kind-of-toy code. I'm mostly
-> interested in opinions about if this could be useful in
-> your current eBPF usage.
-> 
-> Currently we can load eBPF code within the record command
-> and attach it to event. We have 2 ways of communicating
-> the data back to user: bpf-output event that goes to
-> perf.data or 'trace_printk' output in tracefs buffer.
-> 
-> AFAICS we're not covering quite large usage base that runs
-> code before and once the probe is finished to setup, collect
-> and display the collected data.
-> 
-> This patchset is adding support to run BEGIN and END
-> code snipets before and after eBPF probe is loaded.
-> 
-> This allow to write 'collecting' code in eBPF object,
-> like in the attached example (it's also part of the
-> patchset).
-> 
-> This patchset also adds 'bpf' command to ease up the
-> loading of eBPF files with options for compilation
-> and disassembly of eBPF objects:
-> 
->       $ perf bpf -c samples/syscall-counts.c
->       LLVM: dumping samples/syscall-counts.o
-> 
->       $ perf bpf -d samples/syscall-counts.o | head
->       Disassembly of raw_syscalls:sys_enter:
->          0: (b7) r1 = 1
->              b7 01 00 00 01 00 00 00
->          1: (7b) *(u64 *)(r10 -8) = r1
->              7b 1a f8 ff 00 00 00 00
->          2: (bf) r6 = r10
->       ...
-> 
->       $ sudo perf bpf -e samples/syscall-counts.o -a
->       BEGIN
->       ^CEND
->                     comm            value
->                  firefox              182
->            Socket Thread                8
->          InotifyEventThr               26
->          xmonad-x86_64-l              405
->       ...
-> 
-> The patchset is also available in here:
->   https://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
->   perf/bpf
-> 
-> So far I need following following lines in .perfconfig to run this:
->   [llvm]
->   kbuild-dir=/home/jolsa/kernel/linux-perf
->   clang-opt=-I/home/jolsa/kernel/linux-perf/tools/perf/util
-> 
-> 
-> thoughts? ;-) thanks,
-> jirka
-> 
-> 
-> Cc: Brendan Gregg <bgregg@netflix.com>
-> Cc: Stanislav Kozina <skozina@redhat.com>
-> Cc: "Frank Ch. Eigler" <fche@redhat.com>
-> Cc: Will Cohen <wcohen@redhat.com>
-> Cc: Eugene Syromiatnikov <esyromia@redhat.com>
-> Cc: Jerome Marchand <jmarchan@redhat.com>
-> 
-> ---
-> #include <uapi/linux/bpf.h>
-> #include <bpf-helpers.h>
-> #include <bpf-userfuncs.h>
-> 
-> #define TASK_COMM_LEN 16
-> 
-> char _license[] SEC("license") = "GPL";
-> int _version SEC("version") = LINUX_VERSION_CODE;
-> 
-> struct key_t {
->         char comm[TASK_COMM_LEN];
-> };
-> 
-> struct bpf_map_def SEC("maps") counts_map = {
->         .type = BPF_MAP_TYPE_HASH,
->         .key_size = sizeof(struct key_t),
->         .value_size = sizeof(u64),
->         .max_entries = 100,
-> };
-> 
-> SEC("raw_syscalls:sys_enter")
-> int func(void *ctx)
-> {
->         u64 *val, one = 1;
->         struct key_t key;
->         char comm[TASK_COMM_LEN];
-> 
->         bpf_get_current_comm(&key.comm, sizeof(comm));
-> 
->         val = bpf_map_lookup_elem(&counts_map, &key);
->         if (val)
->                 (*val)++;
->         else
->                 bpf_map_update_elem(&counts_map, &key, &one, BPF_NOEXIST);
-> 
->         return 0;
-> }
-> 
-> int BEGIN(void)
-> {
->         print("BEGIN\n");
->         return 0;
-> }
-> 
-> void END(void)
-> {
->         struct key_t key = {}, next_key;
->         u64 value;
->         int i = 0;
-> 
->         print("END\n");
->         print("\n              comm            value\n");
-> 
->         while (bpfu_map_get_next_key(&counts_map, &key, &next_key) == 0) {
->                 if (bpfu_map_lookup_elem(&counts_map, &next_key, &value))
->                         continue;
-> 
->                 print("%18s %16lu\n", next_key.comm, value);
->                 key = next_key;
->         }
-> }
-> 
-> ---
-> Jiri Olsa (13):
->       lib bpf: Add bpf_program__insns function
->       perf tools: Display ebpf compiling command in debug output
->       perf tools: Add bpf command
->       perf tools: Add bpf__compile function
->       perf bpf: Add compile option
->       perf bpf: Add disasm option
->       libbpf: Make bpf_program__next skip .text section
->       libbpf: Collect begin/end .text functions
->       libbpf: Add bpf_insn__interpret function
->       libbpf: Add bpf_object__run_(begin|end) functions
->       perf bpf: Add helper header files
->       perf bpf: Run begin/end programs
->       perf samples: Add syscall-count.c object
-> 
->  tools/lib/bpf/Build                 |   2 +-
->  tools/lib/bpf/interp.c              | 245 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  tools/lib/bpf/libbpf.c              | 125 +++++++++++++++++++++++++++++++++++++++++++++++--
->  tools/lib/bpf/libbpf.h              |   7 +++
->  tools/perf/Build                    |   7 +++
->  tools/perf/Makefile.config          |   1 +
->  tools/perf/builtin-bpf.c            | 319 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  tools/perf/builtin.h                |   1 +
->  tools/perf/command-list.txt         |   1 +
->  tools/perf/perf.c                   |   1 +
->  tools/perf/samples/syscall-counts.c |  61 ++++++++++++++++++++++++
->  tools/perf/util/bpf-helpers.h       | 246 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  tools/perf/util/bpf-loader.c        | 124 ++++++++++++++++++++++++++++++++++++++++++++-----
->  tools/perf/util/bpf-loader.h        |   4 ++
->  tools/perf/util/bpf-userapi.h       |  11 +++++
->  tools/perf/util/bpf-userfuncs.h     |  19 ++++++++
->  tools/perf/util/llvm-utils.c        |  14 ++++++
->  17 files changed, 1173 insertions(+), 15 deletions(-)
->  create mode 100644 tools/lib/bpf/interp.c
->  create mode 100644 tools/perf/builtin-bpf.c
->  create mode 100644 tools/perf/samples/syscall-counts.c
->  create mode 100644 tools/perf/util/bpf-helpers.h
->  create mode 100644 tools/perf/util/bpf-userapi.h
->  create mode 100644 tools/perf/util/bpf-userfuncs.h
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+Changes since v1 :
+ - Merge with S905H patch
+ - Add missing S905W package id
+ - Fix A113D package ID with jbrunet's comment
+
+ drivers/soc/amlogic/meson-gx-socinfo.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/soc/amlogic/meson-gx-socinfo.c b/drivers/soc/amlogic/meson-gx-socinfo.c
+index f2d8c3c..9f83c0c 100644
+--- a/drivers/soc/amlogic/meson-gx-socinfo.c
++++ b/drivers/soc/amlogic/meson-gx-socinfo.c
+@@ -33,6 +33,10 @@ static const struct meson_gx_soc_id {
+ 	{ "GXL", 0x21 },
+ 	{ "GXM", 0x22 },
+ 	{ "TXL", 0x23 },
++	{ "TXLX", 0x24 },
++	{ "AXG", 0x25 },
++	{ "GXLX", 0x26 },
++	{ "TXHD", 0x27 },
+ };
+ 
+ static const struct meson_gx_package_id {
+@@ -41,12 +45,18 @@ static const struct meson_gx_package_id {
+ 	unsigned int pack_id;
+ } soc_packages[] = {
+ 	{ "S905", 0x1f, 0 },
++	{ "S905H", 0x1f, 0x13 },
+ 	{ "S905M", 0x1f, 0x20 },
+ 	{ "S905D", 0x21, 0 },
+ 	{ "S905X", 0x21, 0x80 },
++	{ "S905W", 0x21, 0xa0 },
+ 	{ "S905L", 0x21, 0xc0 },
+ 	{ "S905M2", 0x21, 0xe0 },
+ 	{ "S912", 0x22, 0 },
++	{ "962X", 0x24, 0x10 },
++	{ "962E", 0x24, 0x20 },
++	{ "A113X", 0x25, 0x37 },
++	{ "A113D", 0x25, 0x22 },
+ };
+ 
+ static inline unsigned int socinfo_to_major(u32 socinfo)
+-- 
+2.7.4
