@@ -1,141 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751682AbeCLMW7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 08:22:59 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:48764 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751255AbeCLMW4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751452AbeCLMW4 (ORCPT <rfc822;w@1wt.eu>);
         Mon, 12 Mar 2018 08:22:56 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180312122253euoutp0184d8bb62ac215dc5270603d92f0ef223~bK7k-yq6z0500505005euoutp01P
-X-AuditID: cbfec7f2-5ffe19c000011644-a6-5aa6711accf1
-Subject: Re: [PATCH v6 0/5] Add coupled regulators mechanism
-To: Tony Lindgren <tony@atomide.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Fabio Estevam <festevam@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Maciej Purski <m.purski@samsung.com>
-Message-id: <c6f43013-3d2e-afbc-9be8-2e07f58fda98@samsung.com>
-Date: Mon, 12 Mar 2018 13:22:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.6.0
-MIME-version: 1.0
-In-reply-to: <20180309155827.GS5799@atomide.com>
-Content-type: text/plain; charset="utf-8"; format="flowed"
-Content-language: en-US
-Content-transfer-encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf0gTYRjHeXe32205Oaflg4nCoDAhUzM40kTJ6gqiH5DEEPXSY1r+aqem
-        FWHK0pQ0laVM8QfmCFGyuTQFE5cmmFnqLEsnjUxJKcg1MQjLeRP87/s838/7Ps/35SUxRYfY
-        h0zNyOY0GWyakpDh3a//jB/0uW5QBZfUB9LPap+KaZ1tgaAbh8bF9FvDIEHbps/Ra5YSET3V
-        V0/QHUNWCd36cUJEa/uHJPSA5UzULqa9oR0xa44qnKkrmMCZXr1Vwhjb7hNMuakNMXaj33mJ
-        ShaRzKWl5nKaQ5GJspQlUw+W1eWR12JlCtCcvBRJSaDCoEZnw0qRjFRQTxBYBh4QQmFH0D9S
-        J9mmGkcXcMEwIKgvbxALxSIC+89a3El5UhEw9920aZCkF3UCtI48J4NR8yJomrVu9QkqENqL
-        E5xSTkXCWBntPIlT+0A337I1azd1GZp135BTyykPWK+ex524lAqGlZLDzjZGHYXFDa1Y0N5Q
-        pP2EC9ofutp/bIUByk7A6vorXNg/Bp5ProgE7QnLIyZXLl+Yqi5zMbdgwtFHCPo23J3tdDHh
-        YK8yYcIAd6jqrsGc+wAlh5J7CgFh4LOlw3V9NEzba5HwOgsIOkaaiIfIT78jjn5HBv2ODPod
-        GZoQ3oa8uRw+Xc3xIRncjSCeTedzMtRBSZnpRrT5id5sjKy+QI7JK2ZEkUjpJo/qbFUpxGwu
-        n59uRkBiSi/53AGDSiFPZvNvcprMBE1OGseb0V4SV3rL4wPuqBSUms3mrnFcFqfZdkWk1KcA
-        7Xm8MhfbG85f8i+8mDR8/JfF5vhn1YSF9qq55sbgjcJl2/zXI2zecnd+7HToKaOsqrFopnh/
-        zIfYCCZ6Jve0Pm80C5NWNKuGR2et+NkAKby/ql3KRIPhE3/dfCsrlRd+R31ZrEg8aTbGV7I5
-        x3x74uPG4oi10Ufuorp3w5UvlTifwoYEYhqe/Q946AQqQAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgkeLIzCtJLcpLzFFi42I5/e/4ZV2JwmVRBjsX6VpsnLGe1WLqwyds
-        FvOPnGO1OLvsIJvFw6v+Ft+udDBZXN41h81i7ZG77BZLr19ksmjde4TdYv8VLwdujzXz1jB6
-        fPs6icVjdsNFFo+ds+6ye2xa1cnm0bdlFaPH501yAexRXDYpqTmZZalF+nYJXBnPt2xnLtgs
-        WLH4rkcD4x3eLkZODgkBE4n5p56wdDFycQgJLGGUmDTxHCuE84xR4krvVhaQKmEBG4k7L7cA
-        JTg4RARcJVq/VoDUMAs8YJJYNmcbM1zD/E1NjCBFbAJaEmva40FMXgE7iTPdFiBjWARUJabe
-        W8wOYosKREh0rpwPNp5XQFDix+R7LCDlnAIGEq87jEHCzAJmEl9eHmaFsMUlmltvskDY8hKb
-        17xlnsAoMAtJ9ywkLbOQtMxC0rKAkWUVo0hqaXFuem6xkV5xYm5xaV66XnJ+7iZGYLxsO/Zz
-        yw7GrnfBhxgFOBiVeHhnbFoaJcSaWFZcmXuIUYKDWUmE947msigh3pTEyqrUovz4otKc1OJD
-        jNIcLErivOcNKqOEBNITS1KzU1MLUotgskwcnFINjOvuG0rceb3GS3Xnvvikd4aGs+/6fjqw
-        cMdCt8WTX80KU19nfIrrSHBkvojstfM91j2xaitLt7ree1s6M9F4m46/jQRH9+31c/uX5Mz7
-        0hryteu04Rz5K/sOl0xpKEsM47D7q9DPtfOXHCv3dsG249sd92hb6e359PJO1Ga3A/NvePMy
-        zqgv/K3EUpyRaKjFXFScCACzxVFGkwIAAA==
-X-CMS-MailID: 20180312122248eucas1p21529896cfc9f35cc3f0c6726427c3f1a
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180309122231eucas1p1b8e0a85a73b31aa07eac08f809face6e
-X-RootMTR: 20180309122231eucas1p1b8e0a85a73b31aa07eac08f809face6e
-References: <CGME20180309122231eucas1p1b8e0a85a73b31aa07eac08f809face6e@eucas1p1.samsung.com>
-        <1520598128-11768-1-git-send-email-m.purski@samsung.com>
-        <20180309124234.GC5252@sirena.org.uk> <20180309155827.GS5799@atomide.com>
+Received: from terminus.zytor.com ([198.137.202.136]:60993 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751053AbeCLMWy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 08:22:54 -0400
+Date: Mon, 12 Mar 2018 05:22:31 -0700
+From: "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
+Message-ID: <tip-be7825c19b4866ddc7b1431740b69ede2eeb93c1@git.kernel.org>
+Cc: kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, dave.hansen@intel.com, tglx@linutronix.de,
+        torvalds@linux-foundation.org, mingo@kernel.org, peterz@infradead.org,
+        kai.huang@linux.intel.com, thomas.lendacky@amd.com
+Reply-To: thomas.lendacky@amd.com, mingo@kernel.org,
+        torvalds@linux-foundation.org, kai.huang@linux.intel.com,
+        peterz@infradead.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, kirill.shutemov@linux.intel.com, dave.hansen@intel.com
+In-Reply-To: <20180305162610.37510-5-kirill.shutemov@linux.intel.com>
+References: <20180305162610.37510-5-kirill.shutemov@linux.intel.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] x86/pconfig: Detect PCONFIG targets
+Git-Commit-ID: be7825c19b4866ddc7b1431740b69ede2eeb93c1
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09/2018 04:58 PM, Tony Lindgren wrote:
-> * Mark Brown <broonie@kernel.org> [180309 12:43]:
->> On Fri, Mar 09, 2018 at 01:22:02PM +0100, Maciej Purski wrote:
->>
->>> I would like to kindly ask Fabio Estevam and Tony Lindgren to test the patch
->>> series on their boards.
-> 
-> I gave it a quick try and this set still causes at least mmc0
-> to fail for me.
-> 
-> Regards,
-> 
-> Tony
-> 
-> 
+Commit-ID:  be7825c19b4866ddc7b1431740b69ede2eeb93c1
+Gitweb:     https://git.kernel.org/tip/be7825c19b4866ddc7b1431740b69ede2eeb93c1
+Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+AuthorDate: Mon, 5 Mar 2018 19:25:52 +0300
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 12 Mar 2018 12:10:54 +0100
 
-Thanks. Here's a small patch, which adds some debugs. Maybe they will reveal,
-where the problem is.
+x86/pconfig: Detect PCONFIG targets
 
-Best Regards,
-Maciej Purski
+Intel PCONFIG targets are enumerated via new CPUID leaf 0x1b. This patch
+detects all supported targets of PCONFIG and implements helper to check
+if the target is supported.
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index f1f11cf..0e80ba5 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -2280,7 +2280,6 @@ int regulator_enable(struct regulator *regulator)
-  {
-  	struct regulator_dev *rdev = regulator->rdev;
-  	int ret = 0;
--	int ret2;
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Kai Huang <kai.huang@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/20180305162610.37510-5-kirill.shutemov@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/include/asm/intel_pconfig.h | 15 +++++++
+ arch/x86/kernel/cpu/Makefile         |  2 +-
+ arch/x86/kernel/cpu/intel_pconfig.c  | 82 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 98 insertions(+), 1 deletion(-)
 
-  	if (rdev->coupling_desc.n_resolved != rdev->coupling_desc.n_coupled) {
-  		rdev_err(rdev, "not all coupled regulators registered\n");
-@@ -2298,15 +2297,9 @@ int regulator_enable(struct regulator *regulator)
-
-  	regulator_lock_dependent(rdev);
-  	ret = _regulator_enable(rdev);
--	ret2 = regulator_balance_voltage(rdev, PM_SUSPEND_ON);
-+	regulator_balance_voltage(rdev, PM_SUSPEND_ON);
-  	regulator_unlock_dependent(rdev);
-
--	if (ret2 != 0) {
--		rdev_err(rdev,
--			"balancing failed when trying to enable regulator: %d",
--			ret2);
--	}
--
-  	if (ret != 0 && rdev->supply)
-  		regulator_disable(rdev->supply);
-
-@@ -3149,7 +3142,7 @@ static int regulator_set_voltage_rdev(struct regulator_dev *rdev, int min_uV,
-  		ret = regulator_set_voltage_unlocked(rdev->supply,
-  				best_supply_uV, INT_MAX, state);
-  		if (ret)
--			dev_err(&rdev->dev, "Failed to decrease supply voltage: %d\n",
-+			dev_warn(&rdev->dev, "Failed to decrease supply voltage: %d\n",
-  					ret);
-  		/* No need to fail here */
-  		ret = 0;
-@@ -3332,11 +3325,8 @@ static int regulator_balance_voltage(struct regulator_dev *rdev,
-  		ret = regulator_set_voltage_rdev(best_rdev, best_uV,
-  						 best_uV, state);
-
--		if (ret < 0) {
--			rdev_err(rdev,
--				"Failed to set voltage with error: %d", ret);
-+		if (ret < 0)
-  			goto out;
--		}
-  	}
-
-  out:
+diff --git a/arch/x86/include/asm/intel_pconfig.h b/arch/x86/include/asm/intel_pconfig.h
+new file mode 100644
+index 000000000000..fb7a37c3798b
+--- /dev/null
++++ b/arch/x86/include/asm/intel_pconfig.h
+@@ -0,0 +1,15 @@
++#ifndef	_ASM_X86_INTEL_PCONFIG_H
++#define	_ASM_X86_INTEL_PCONFIG_H
++
++#include <asm/asm.h>
++#include <asm/processor.h>
++
++enum pconfig_target {
++	INVALID_TARGET	= 0,
++	MKTME_TARGET	= 1,
++	PCONFIG_TARGET_NR
++};
++
++int pconfig_target_supported(enum pconfig_target target);
++
++#endif	/* _ASM_X86_INTEL_PCONFIG_H */
+diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+index 570e8bb1f386..a66229f51b12 100644
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -28,7 +28,7 @@ obj-y			+= cpuid-deps.o
+ obj-$(CONFIG_PROC_FS)	+= proc.o
+ obj-$(CONFIG_X86_FEATURE_NAMES) += capflags.o powerflags.o
+ 
+-obj-$(CONFIG_CPU_SUP_INTEL)		+= intel.o
++obj-$(CONFIG_CPU_SUP_INTEL)		+= intel.o intel_pconfig.o
+ obj-$(CONFIG_CPU_SUP_AMD)		+= amd.o
+ obj-$(CONFIG_CPU_SUP_CYRIX_32)		+= cyrix.o
+ obj-$(CONFIG_CPU_SUP_CENTAUR)		+= centaur.o
+diff --git a/arch/x86/kernel/cpu/intel_pconfig.c b/arch/x86/kernel/cpu/intel_pconfig.c
+new file mode 100644
+index 000000000000..0771a905b286
+--- /dev/null
++++ b/arch/x86/kernel/cpu/intel_pconfig.c
+@@ -0,0 +1,82 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Intel PCONFIG instruction support.
++ *
++ * Copyright (C) 2017 Intel Corporation
++ *
++ * Author:
++ *	Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
++ */
++
++#include <asm/cpufeature.h>
++#include <asm/intel_pconfig.h>
++
++#define	PCONFIG_CPUID			0x1b
++
++#define PCONFIG_CPUID_SUBLEAF_MASK	((1 << 12) - 1)
++
++/* Subleaf type (EAX) for PCONFIG CPUID leaf (0x1B) */
++enum {
++	PCONFIG_CPUID_SUBLEAF_INVALID	= 0,
++	PCONFIG_CPUID_SUBLEAF_TARGETID	= 1,
++};
++
++/* Bitmask of supported targets */
++static u64 targets_supported __read_mostly;
++
++int pconfig_target_supported(enum pconfig_target target)
++{
++	/*
++	 * We would need to re-think the implementation once we get > 64
++	 * PCONFIG targets. Spec allows up to 2^32 targets.
++	 */
++	BUILD_BUG_ON(PCONFIG_TARGET_NR >= 64);
++
++	if (WARN_ON_ONCE(target >= 64))
++		return 0;
++	return targets_supported & (1ULL << target);
++}
++
++static int __init intel_pconfig_init(void)
++{
++	int subleaf;
++
++	if (!boot_cpu_has(X86_FEATURE_PCONFIG))
++		return 0;
++
++	/*
++	 * Scan subleafs of PCONFIG CPUID leaf.
++	 *
++	 * Subleafs of the same type need not to be consecutive.
++	 *
++	 * Stop on the first invalid subleaf type. All subleafs after the first
++	 * invalid are invalid too.
++	 */
++	for (subleaf = 0; subleaf < INT_MAX; subleaf++) {
++		struct cpuid_regs regs;
++
++		cpuid_count(PCONFIG_CPUID, subleaf,
++				&regs.eax, &regs.ebx, &regs.ecx, &regs.edx);
++
++		switch (regs.eax & PCONFIG_CPUID_SUBLEAF_MASK) {
++		case PCONFIG_CPUID_SUBLEAF_INVALID:
++			/* Stop on the first invalid subleaf */
++			goto out;
++		case PCONFIG_CPUID_SUBLEAF_TARGETID:
++			/* Mark supported PCONFIG targets */
++			if (regs.ebx < 64)
++				targets_supported |= (1ULL << regs.ebx);
++			if (regs.ecx < 64)
++				targets_supported |= (1ULL << regs.ecx);
++			if (regs.edx < 64)
++				targets_supported |= (1ULL << regs.edx);
++			break;
++		default:
++			/* Unknown CPUID.PCONFIG subleaf: ignore */
++			break;
++		}
++	}
++out:
++	return 0;
++}
++arch_initcall(intel_pconfig_init);
