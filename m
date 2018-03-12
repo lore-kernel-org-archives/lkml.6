@@ -1,70 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932102AbeCLN1g (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 09:27:36 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49018 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751242AbeCLN1f (ORCPT
+        id S932220AbeCLN2Z (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 09:28:25 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:35237 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751229AbeCLN2Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 09:27:35 -0400
-Date: Mon, 12 Mar 2018 14:27:29 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Corey Minyard <cminyard@mvista.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>
-Subject: Re: Warning from swake_up_all in 4.14.15-rt13 non-RT
-Message-ID: <20180312132729.GI4064@hirez.programming.kicks-ass.net>
-References: <dd6ad0b5-569b-067d-257f-dbf15ffa7077@mvista.com>
- <20180306174604.nta5rcvfvrfdfftz@linutronix.de>
- <1704d817-8fb9-ce8f-1aa1-fe6e8b0c3919@mvista.com>
- <20180308174103.mduy5qq2ttlcvig3@linutronix.de>
- <a11f140e-c44f-f967-1cd4-d8a6f09d4d29@mvista.com>
- <20180309110418.lwtennjqwqcxh422@linutronix.de>
- <20180309174605.GC4064@hirez.programming.kicks-ass.net>
- <20180309202550.j66qphz3txupt55u@linutronix.de>
- <20180309222643.GC5926@hirez.programming.kicks-ass.net>
- <20180312105113.p7jifhwdwbhpvxds@linutronix.de>
+        Mon, 12 Mar 2018 09:28:24 -0400
+X-Google-Smtp-Source: AG47ELvWlR3hGcwCM3ez/Gx9swFA7F7niYhDfxAFWypE06MPzLuhC1/mEP4AfVyyUj20gNUcUzePGGwFCm8R6Ktz7FY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180312105113.p7jifhwdwbhpvxds@linutronix.de>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CAFd5g45h3wAZtx-4oJb_uLbtDTzSsD6eLM5G0VF=3BBHNmW8YQ@mail.gmail.com>
+References: <20180307162430.2664523-1-arnd@arndb.de> <CAFd5g45h3wAZtx-4oJb_uLbtDTzSsD6eLM5G0VF=3BBHNmW8YQ@mail.gmail.com>
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Mon, 12 Mar 2018 15:28:23 +0200
+Message-ID: <CAP6Zq1jEAg2OrmnHzJdk9UBjPkDctu5oGHYyJ+QLBzN+E31sPw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM: npcm: add CONFIG_ARCH_MULTI_V7 dependency
+To: Brendan Higgins <brendanhiggins@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Avi Fishman <avifishman70@gmail.com>,
+        Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 11:51:13AM +0100, Sebastian Andrzej Siewior wrote:
-> On 2018-03-09 23:26:43 [+0100], Peter Zijlstra wrote:
-> > On Fri, Mar 09, 2018 at 09:25:50PM +0100, Sebastian Andrzej Siewior wrote:
-> > > Is it just about the irqsave() usage or something else? I doubt it is
-> > > the list walk. It is still unbound if not called from irq-off region.
-> > 
-> > The current list walk is preemptible. You put the entire iteration (of
-> > unbound length) inside a single critical section which destroy RT.
-> 
-> I considered that list walk as cheap. We don't do any wake ups with the
-> list walk - just mark the task for a later wake up. But if it is not I
-> could add an upper limit of 20 iterations or so.
+Hi Brendan,
 
-So the problem is that as soon as this is exposed to userspace you've
-lost.
+According to the last mail I have with Arnd can you modify the Kconfig
+as follow:
 
-If a user can stack like 10000 tasks on the completion before triggering
-it, you've got yourself a giant !preempt section. Yes the wake_q stuff
-is cheaper, but unbound is still unbound.
++menuconfig ARCH_NPCM
++       bool "Nuvoton NPCM Architecture"
++       depends on ARCH_MULTI_V7
++       select PINCTRL
++
++if ARCH_NPCM
++
++config ARCH_NPCM7XX
++       bool "Support for NPCM7xx BMC (Poleg)"
++       depends on ARCH_MULTI_V7
++       select PINCTRL_NPCM7XX
++       select NPCM7XX_TIMER
++       select ARCH_REQUIRE_GPIOLIB
++       select CACHE_L2X0
++       select ARM_GIC
++       select HAVE_ARM_TWD if SMP
++       select HAVE_ARM_SCU if SMP
++       select ARM_ERRATA_764369 if SMP
++       select ARM_ERRATA_720789
++       select ARM_ERRATA_754322
++       select ARM_ERRATA_794072
++       select PL310_ERRATA_588369
++       select PL310_ERRATA_727915
++       select MFD_SYSCON
++       help
++         General support for NPCM7xx BMC (Poleg).
++
++         Nuvoton NPCM7xx BMC based on the Cortex A9.
++
++endif
 
-wake_all must not be used from !preemptible (IRQ or otherwise) sections.
-And I'm not seeing how waking just the top 20 helps.
+Thanks!
 
-> > Why isn't this a problem on RT?
-> So we remain in the preempt_disable() section due to RCU-sched so we
-> have this, yes. But the "disabled interrupts" part is due to
-> spin_lock_irqsave() which is a non-issue on RT. So if we managed to get
-> rid of the rcu-sched then the swait can go and we can stick with the
-> wake_up_all() on RT, too.
+Tomer
 
-OK, so for RT we simply loose the IRQ-disable thing, but its still a
-!preemptible section.
+On 9 March 2018 at 04:08, Brendan Higgins <brendanhiggins@google.com> wrote:
+> On Wed, Mar 7, 2018 at 8:24 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+>> The top-level CONFIG_ARCH_NPCM symbol is not guarded with a
+>> dependency, and can be selected for builds of traditional
+>> (non-multiplatform) builds as well, where it causes a build
+>> failure:
+>
+>> arch/arm/boot/Makefile:17: arch/arm/mach-npcm//Makefile.boot: No such
+> file or directory
+>
+>> This moves the dependency to avoid that particular condition.
+>
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>>   arch/arm/mach-npcm/Kconfig | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+>> diff --git a/arch/arm/mach-npcm/Kconfig b/arch/arm/mach-npcm/Kconfig
+>> index 6ff9df2636be..2bc6697c8d97 100644
+>> --- a/arch/arm/mach-npcm/Kconfig
+>> +++ b/arch/arm/mach-npcm/Kconfig
+>> @@ -1,5 +1,5 @@
+>>   menuconfig ARCH_NPCM
+>> -       bool "Nuvoton NPCM Architecture"
+>> +       bool "Nuvoton NPCM Architecture" if ARCH_MULTI_V7
+>>          select ARCH_REQUIRE_GPIOLIB
+>>          select USE_OF
+>>          select PINCTRL
+>> @@ -10,7 +10,7 @@ if ARCH_NPCM
+>>   comment "NPCM7XX CPU type"
+>
+>>   config ARCH_NPCM750
+>> -       depends on ARCH_NPCM && ARCH_MULTI_V7
+>> +       depends on ARCH_NPCM
+>>          bool "Support for NPCM750 BMC CPU (Poleg)"
+>>          select CACHE_L2X0
+>>          select CPU_V7
+>> --
+>> 2.9.0
+>
+>
+> Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+>
+> Thanks!
