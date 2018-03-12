@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELtm8YXrfUEVd/R0MUKU7XulQLHdeLzJmP1OPeYF/7Fw09PsLN1N2b5jS9615qK6GVdG0Wz8
-ARC-Seal: i=1; a=rsa-sha256; t=1520824074; cv=none;
+X-Google-Smtp-Source: AG47ELuSvKu7oFOG7RRpRsiv+7IhvdI6dPSeGmVQ/tHVW555zV9+1SDxfTDOAbiPZPW7ulHSYYkv
+ARC-Seal: i=1; a=rsa-sha256; t=1520824083; cv=none;
         d=google.com; s=arc-20160816;
-        b=Rns3HlFuskwVrKH/oK8Rx9U+y9LmsJXEb663XlQhzT0HD2L38C7s3898K4pKltyR+9
-         2d66glKyq4HRtOs7NdERi0CtwjuNw9RORr6wFyR9En7cCiZ2jTJXykGDtXAbmYerrhAV
-         OjsJJzyLfgdC38plnuYQCDK88LcWmHeJf5H7i+5qHpW/luLKUXcfkacDWP2jqvCoMhXM
-         HY0QGTRZQi1ndyAz1ZXBhLhUuuVM4RxVd+tumDXyCGQ3xlcC1re3Rb94/ADwswkzg9RG
-         mO0BjoH8+1lJOL+535n5/zkZzBT4wuP2ysZrvxPudyRYECidV2+t0i/hNaSCdB14lfr/
-         2HmQ==
+        b=oNgMWskRFqM+nQ5UOHHRpj8ReGHcp9V+r+jwSb4eX2mQNz9yBKaieRkK+LgqD3M9N1
+         DknQcHxnHTZ3p+Pvrsyk/SJfM/q+2zRoYGWYxLANJNNwxZ9Vm9sCVmleLyG2THbHaovV
+         IpyLbYcYrGrxsFSYWaVaXbx0qTPPcqPjTDAEp3NFVqcxOtan+gGFgoj5GA+l9G/5zs/F
+         4LxFUpt2Smaw4qc+MyzB2wgidiQEDraB+d4AybI8LByBxcMaV0U1bKZ+ykhZP6tFoQgH
+         t3T6GdGtF0OQcqdAo6zwSPEhJ11Y3W1CTE7yqK/bNx8G8E513flr1LGjDDMXOJ0UnkGu
+         lYoA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=F716oF+lqmpBbq7JVav8Qdws4BmWqZhz9/jOaz587oc=;
-        b=NKEKndaXOBR1wdy3KEx0cDuO9ex95HDezaaQ8lFW3bupzkqYj1yjLhuJwBDez6aL+x
-         j3Fyezuz33lTwrcMLmRI5DUl1dTzQQLXhCdCtKQ8xuI/36eDUp2WFiF972FuknKyH6f3
-         n4OvRwe7HDisLpJQwdk2UEhWvolJ1tUvri9xvGSHmrqR9cPHPpWY+BA1JvLpFYAQhlR7
-         stYU7FAVzQwOWxYPvAYGq14vNL8fqANTCZ+3ec0tAExSihdpzxef6RgjiuwgtYBMVdKi
-         6yh7vS5TFI9jTSQbZ6c98pXsouXBrdRnVqCbzrAru6NwpSSLL9nNvj699v40dI4YiFrv
-         xTVw==
+        bh=wSD8m/d9LC1y4yw3+hWBMVUDcD4oEy/MIrG03fagOms=;
+        b=ovkD7IV7RkE0JoJyU/hB/WlSuIrmrhTGOnRnUen4iyBo8xREFpVfWnduSIr55Li0ku
+         RjVgCR/wXM4lyYK3Dgdvn+EXqPYtwNvwstxZFy01g5oQlJ/pOIfQpNxnIdI4yU7hp2s2
+         tNOjdotuqLpLTWQkNwEqwviUHQYQZso1xVuPDXhXJHw/TCNBl6kHu4Jkof9Y9aXVxz0/
+         /nFfjwXvTcEmpkFQ3zPJ2Jf9OY4nqV2dorjES1SEbkF5T8EkR2m0JvOq7zsmO7E6l/g0
+         Jazw42x0dhgtS3Sji62UFMh3eZ8XlY+BO4wiSxOndk6nMj0eFZBphlBFSJZ5TyvZT+dl
+         EfFw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,32 +30,31 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Thomas Gleixner" <tglx@linutronix.de>,
  "Dave Hansen" <dave.hansen@intel.com>,
- "Greg KH" <gregkh@linux-foundation.org>,
- "Jiri Koshina" <jikos@kernel.org>,
- "Andi Lutomirski" <luto@amacapital.net>,
- "Kees Cook" <keescook@google.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Greg Kroah-Hartman" <gregkh@linux-foundation.org>,
+ "Jiri Kosina" <jikos@kernel.org>,
+ "Borislav Petkov" <bp@suse.de>,
+ "Andi Kleen" <andi@firstfloor.org>,
  "Tom Lendacky" <thomas.lendacky@amd.com>,
- "Paul Turner" <pjt@google.com>,
  "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Peter Zijlstra" <peterz@infradead.org>,
- "Alan Cox" <gnomes@lxorguk.ukuu.org.uk>,
+ "Paul Turner" <pjt@google.com>,
+ "David Woodhouse" <dwmw2@infradead.org>,
  "Tim Chen" <tim.c.chen@linux.intel.com>,
- "David Woodhouse" <dwmw@amazon.co.uk>,
+ "Andrew Lutomirski" <luto@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>,
  "Andi Kleen" <ak@linux.intel.com>
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.205773972@decadent.org.uk>
+Message-ID: <lsq.1520823814.379844244@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 043/104] x86/pti: Rename BUG_CPU_INSECURE to
- BUG_CPU_MELTDOWN
+Subject: [PATCH 3.2 052/104] x86/alternatives: Fix optimize_nops() checking
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699653185874182?=
-X-GMAIL-MSGID: =?utf-8?q?1594699624648615226?=
+X-GMAIL-THRID: =?utf-8?q?1594699636412875983?=
+X-GMAIL-MSGID: =?utf-8?q?1594699633715213598?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -63,50 +62,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Borislav Petkov <bp@suse.de>
 
-commit de791821c295cc61419a06fe5562288417d1bc58 upstream.
+commit 612e8e9350fd19cae6900cf36ea0c6892d1a0dca upstream.
 
-Use the name associated with the particular attack which needs page table
-isolation for mitigation.
+The alternatives code checks only the first byte whether it is a NOP, but
+with NOPs in front of the payload and having actual instructions after it
+breaks the "optimized' test.
 
+Make sure to scan all bytes before deciding to optimize the NOPs in there.
+
+Reported-by: David Woodhouse <dwmw2@infradead.org>
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Cc: Jiri Koshina <jikos@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Andi Lutomirski  <luto@amacapital.net>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Paul Turner <pjt@google.com>
 Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Greg KH <gregkh@linux-foundation.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Jiri Kosina <jikos@kernel.org>
 Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Kees Cook <keescook@google.com>
-Link: https://lkml.kernel.org/r/alpine.DEB.2.20.1801051525300.1724@nanos
-[bwh: Backported to 3.2: bug number is different]
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: Andrew Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linux-foundation.org>
+Cc: Paul Turner <pjt@google.com>
+Link: https://lkml.kernel.org/r/20180110112815.mgciyf5acwacphkq@pd.tnic
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -214,7 +214,7 @@
-  */
- #define X86_BUG(x)		(NCAPINTS*32 + (x))
+ arch/x86/kernel/alternative.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -324,9 +324,12 @@ done:
+ static void __init_or_module optimize_nops(struct alt_instr *a, u8 *instr)
+ {
+ 	unsigned long flags;
++	int i;
  
--#define X86_BUG_CPU_INSECURE	X86_BUG(0) /* CPU is insecure and needs kernel page table isolation */
-+#define X86_BUG_CPU_MELTDOWN	X86_BUG(0) /* CPU is affected by meltdown attack and needs kernel page table isolation */
+-	if (instr[0] != 0x90)
+-		return;
++	for (i = 0; i < a->padlen; i++) {
++		if (instr[i] != 0x90)
++			return;
++	}
  
- #if defined(__KERNEL__) && !defined(__ASSEMBLY__)
- 
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -769,7 +769,7 @@ static void __init early_identify_cpu(st
- 		this_cpu->c_bsp_init(c);
- 
- 	if (c->x86_vendor != X86_VENDOR_AMD)
--		setup_force_cpu_bug(X86_BUG_CPU_INSECURE);
-+		setup_force_cpu_bug(X86_BUG_CPU_MELTDOWN);
- }
- 
- void __init early_cpu_init(void)
+ 	local_irq_save(flags);
+ 	add_nops(instr + (a->instrlen - a->padlen), a->padlen);
