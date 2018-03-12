@@ -1,68 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932266AbeCLNce (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 09:32:34 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:45026 "EHLO vps-vb.mhejs.net"
+        id S1751776AbeCLNdN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 09:33:13 -0400
+Received: from mout.web.de ([212.227.15.3]:58085 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751725AbeCLNcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 09:32:33 -0400
-Subject: Re: [PATCH v2] x86/microcode/AMD: check microcode file sanity before
- loading it
-To: Borislav Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <787b0ecc-8c1a-3b5a-82e0-9840c7b7c595@maciej.szmigiero.name>
- <20180312095336.GB9431@pd.tnic>
- <ddf0ddc2-bc46-d61c-7080-0eca26d6bfcf@maciej.szmigiero.name>
- <20180312130653.GC9431@pd.tnic>
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Message-ID: <df1e721c-f030-68b4-f197-2592bce97bbf@maciej.szmigiero.name>
-Date: Mon, 12 Mar 2018 14:32:30 +0100
+        id S1751320AbeCLNdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 09:33:11 -0400
+Subject: [PATCH 2/2] crypto: talitos: Delete an error message for a failed
+ memory allocation in talitos_edesc_alloc()
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-crypto@vger.kernel.org,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <ad256dc9-a064-37f9-fb8e-aea22ba40a2b@users.sourceforge.net>
+Message-ID: <13bfdc03-1dee-2f1c-da8d-1e452f10c850@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 14:32:58 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180312130653.GC9431@pd.tnic>
+In-Reply-To: <ad256dc9-a064-37f9-fb8e-aea22ba40a2b@users.sourceforge.net>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K0:yTX6GjMwDCqBcfVqXEbVb8OHo09bJKBHeSSFSRpIUVA6KEGkt0S
+ 5TlAxecvx+1mSOtsxHazq11XR9HNNM4fS8C+A8wxmDXVVxagTU2qEFZqwNqYpPgjJ4fT1Z7
+ 7WuYQg6E3RmNQkyJIjqCpIRF+DbC/Ys7TCHG8ncOcvdUlQPVkt4ksd0AQllMgk6tVc+1z19
+ pAkmcd8rNqetmKp0FlO2w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:0XbXKteoV0o=:2lxslNx7yYOQ7NR7M5u+or
+ U5KkZXSlbgqxBHnEN1ZQzXg3mmgc0ibdDqNTLUw5yN5N0+mvE96JQ0OChsNifc3aKQOJvr9Ru
+ llhPPuq/4lkzu3FCDtKeN8WCK1b/0z1gXEFC2tluOROOKHSEPbZDDPZ88vj4CQ1Il3+12Ybds
+ BPjM8AsaSMbMppVSm6sp5eJHcww/vHs+9VpbQ+UIXPMO/fGVeLs3z8sMcBXhj3vex9uvAELw9
+ vzxTVKV5ucZx9Z7hjLpCJNrb5fG7jbx3vPM3O3U7aWSrLYArPHw2ZoAuB11evNsg/h69XtOta
+ lxyPvmqZ0X/h5RIyw4+IQazPEC9qw0ISu/+Td6BeLJ9/geGsGp32huFwRhTUFY3QjPturl+8u
+ Fq6RCdFTDm6gUVLPsKREh/slWE8Xv5SiOQ2KdUwbGVIpc5W+FYWuAL3OUzLjfTxMszVojnSlR
+ A0KmWi/OWWPAgsA4IjIvLzJpw7mjvYxE7i04Qx7n8DOwlG5KY8gpKUGZNc4uVqVK7T1tCFCcF
+ TPzsKhpegGzHiONDaff52n1Cpr8n3meWey8voh5IyXBdAi93CGZSxccT1JktSHAQpO27+1F+n
+ NRYjoYhnIfjO6dCh7kL1slGC/XVoWac9lyKI7m07AohIQr1jpO/iBmLdyghMNFje40Ts7ihJB
+ i0xR0yHsoz+a7kPwheHg7PG6XbyKxHc84sh3XBXG6rqFB7GXm79heRnXmZWZAXHR2zB6TWpbj
+ VBe9vnJxAq4Xjikd7hoy+Z9JRmeAZ/LmRXBum+BQgjHKWGTLz/V4hsj8MjyrALs3CwAS90euJ
+ faYcxDH6hjemdJRHw7BOhX2JfSjgmeq+uaVsI0DlV2R2KaJUQI=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12.03.2018 14:06, Borislav Petkov wrote:
-> On Mon, Mar 12, 2018 at 01:56:59PM +0100, Maciej S. Szmigiero wrote:
-(..)
->> Since the maximum entry count in current microcode files is 18 the
-> 
-> Where did you dream up that 18?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 12 Mar 2018 14:18:23 +0100
 
-"microcode_amd.bin" in linux-firmware.
+Omit an extra message for a memory allocation failure in this function.
 
->> Also, looking in the past, there probably won't be more than 256 AMD CPU
->> types in one CPU family.
-> 
-> Wrong.
+This issue was detected by using the Coccinelle software.
 
-There is no problem raising this value in that (future) case.
-As I wrote previously, currently the maximum used count is 18.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/crypto/talitos.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> The only limitation on the equivalence table size we have is the 32-bit
-> unsigned length field at offset 8 in the equivalence table header.
-
-Not really, since even in the existing code CONTAINER_HDR_SZ (12) gets
-added to this size, then the sum is cast to a (signed) int.
-If this value is negative then the file get rejected.
-
->> This limit is an absolute upper cap of a patch size.
-> 
-> More dreamt up crap.
-> 
-> See verify_patch_size() for the actual patch sizes.
-> 
-
-It can be changed to the current maximum across sizes for particular
-families, but then the limit will need to be raised when adding a new
-family (if it uses a larger patch).
-
-Maciej
+diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
+index a2271322db34..4c7318981d28 100644
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -1399,7 +1399,6 @@ static struct talitos_edesc *talitos_edesc_alloc(struct device *dev,
+ 
+ 	edesc = kmalloc(alloc_len, GFP_DMA | flags);
+ 	if (!edesc) {
+-		dev_err(dev, "could not allocate edescriptor\n");
+ 		err = ERR_PTR(-ENOMEM);
+ 		goto error_sg;
+ 	}
+-- 
+2.16.2
