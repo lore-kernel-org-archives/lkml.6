@@ -1,81 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932326AbeCLUV3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 16:21:29 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:55558 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932200AbeCLUV1 (ORCPT
+        id S932376AbeCLUXX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 16:23:23 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46592 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932214AbeCLUXW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 16:21:27 -0400
-X-Google-Smtp-Source: AG47ELvM/rwjbnSb/k+lylogYk8ymhew/Rmms9y4/tEHT2ULcijNyp6q5HwxS9YLCWXGEMELP2wv0uQC6UfmkUl2Xus=
+        Mon, 12 Mar 2018 16:23:22 -0400
+Date: Mon, 12 Mar 2018 13:23:19 -0700
+From: Darren Hart <dvhart@infradead.org>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: mario.limonciello@dell.com, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Dell Inc. XPS 13 9343/0TM99H fails to boot v4.16-rc5
+Message-ID: <20180312202319.GA88572@localhost.localdomain>
+References: <20180312185357.GA1672@light.dominikbrodowski.net>
 MIME-Version: 1.0
-In-Reply-To: <20180311110551.GX17177@axis.com>
-References: <CAK8P3a1KE_0+vDC48-NzzW8eT1YZ8MZRun-1GeRMNg+o8dqZUg@mail.gmail.com>
- <20180308155116.GW17177@axis.com> <20180311110551.GX17177@axis.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 12 Mar 2018 21:21:25 +0100
-X-Google-Sender-Auth: P-EMC6KffEJXi9ol2nI_RJYMR5I
-Message-ID: <CAK8P3a2LRyHmQ1=bFwrW9a3RR53W0CiiakNTg2823utAnVpBmQ@mail.gmail.com>
-Subject: Re: [GIT PULL] CRIS: Drop support for the CRIS-port
-To: Jesper Nilsson <jesper.nilsson@axis.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Michal Simek <monstr@monstr.eu>, Andi Kleen <ak@linux.intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-cris-kernel@axis.com, Petr Mladek <pmladek@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        adi-buildroot-devel@lists.sourceforge.net,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jesper Nilsson <jesper@jni.nu>, Greentime Hu <green.hu@gmail.com>,
-        Tejun Heo <tj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
-        Vincent Chen <deanbo422@gmail.com>, Dave Young <dyoung@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180312185357.GA1672@light.dominikbrodowski.net>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 11, 2018 at 12:05 PM, Jesper Nilsson
-<jesper.nilsson@axis.com> wrote:
-> Hi Arnd,
->
-> As promised, pull the below tag for the removal of the CRIS-port.
-> There are still a few references to the CRIS port left, and they
-> can be grouped into two categories:
->
-> - Examples or references to the CRIS port as provenance.
->         These I believe can be left as is.
->
-> - The workarounds for CRIS not having "unpacked" structs.
->         When I looked at it 10 years ago, CRIS was the only port
->         that needed explicit alignment of some structs,
->         due to pointers being valid at any byte offset in CRIS,
->         which would wreak havoc with code that assumed that the
->         lower bits of a pointer are free to use as flags.
->         I'm leaving these in until we can say that no newer
->         port has the same problem.
->
-> Best regards,
+On Mon, Mar 12, 2018 at 07:53:57PM +0100, Dominik Brodowski wrote:
+> Mario,
+> 
+> unfortunately, my Dell Inc. XPS 13 9343/0TM99H, BIOS A11 12/08/2016 fails to
+> boot v4.16-rc5. More exactly, I could bisect it down to commit 25d47027e10
+> ("platform/x86: dell-smbios: Link all dell-smbios-* modules together").
+> Usually, I have enabled
+> 
+> CONFIG_SENSORS_DELL_SMM=y
+> CONFIG_DELL_SMBIOS=y
+> CONFIG_DELL_SMBIOS_WMI=y
+> CONFIG_DELL_SMBIOS_SMM=y
+> CONFIG_DELL_LAPTOP=y
+> CONFIG_DELL_WMI=y
+> CONFIG_DELL_WMI_DESCRIPTOR=y
+> # CONFIG_DELL_WMI_AIO is not set
+> # CONFIG_DELL_WMI_LED is not set
+> # CONFIG_DELL_SMO8800 is not set
+> # CONFIG_DELL_RBTN is not set
+> # CONFIG_DELL_RBU is not set
+> 
+> For v4.16-rc5 to work, I need to manually disable DELL_SMBIOS_WMI:
+> 
+> -CONFIG_DELL_SMBIOS_WMI=y
+> +# CONFIG_DELL_SMBIOS_WMI is not set
+> 
+> Any ideas?
 
-Hi Jesper,
+We're working on a dependency fix, but I think the problem you have here is
+likely to be ACPI_WMI=m instead of =y while you have DELL_SMBIOS=y
 
-Thanks for the patch! I had done a slightly different approach, but
-am merging your changes into my tree now. I already have separate
-patches for each driver subsystem, so I'll keep my versions, having
-already made sure that your changes were identical.
+The fix won't allow that configuration. I'll include you in Cc of v2 of that
+fix which I'll send shortly.
 
-For Documentation/features and the Kconfig files that have lists
-of architectures, I also have separate patches that do the changes
-for all architectures, to avoid touching those files (up to) eight times
-for one trivial change each. I could redo those, but since your patch
-conflicts with David Howell's patch for mn10300, it's easier to keep
-what I already have.
-
-This leaves basically the removal of arch/cris along with the MAINTAINER
-file update. I'm keeping the patch I did, but change the author and
-changelog text to what you sent, with my Signed-off-by and a list
-of my modifications) added below.
-
-Hope that works for you.
-
-     Arnd
+-- 
+Darren Hart
+VMware Open Source Technology Center
