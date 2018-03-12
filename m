@@ -1,87 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932775AbeCLRZ5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 13:25:57 -0400
-Received: from mail-qk0-f174.google.com ([209.85.220.174]:44581 "EHLO
-        mail-qk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932445AbeCLRZy (ORCPT
+        id S932781AbeCLR0a (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 13:26:30 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:36627 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932525AbeCLRZn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 13:25:54 -0400
-X-Google-Smtp-Source: AG47ELs+bEyqdarXNKsdXzzYnYS1RaiQD1lDDkJuK8DfAfEseyhF6D8UcmFzGlnukLe9mA0fW7RTG06o/502sR93on0=
+        Mon, 12 Mar 2018 13:25:43 -0400
+From: Colin King <colin.king@canonical.com>
+To: David Howells <dhowells@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-afs@lists.infradead.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rxrpc: remove redundant initialization of variable 'len'
+Date: Mon, 12 Mar 2018 17:25:38 +0000
+Message-Id: <20180312172538.31707-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Mon, 12 Mar 2018 10:25:52 -0700
-Message-ID: <CAKgT0Uc3xzQn5-0xw4y=2SixZpucaevAodM3NLUOn4W06UbQ3Q@mail.gmail.com>
-Subject: Re: [pci PATCH v5 0/4] Add support for unmanaged SR-IOV (was: Series
- short description)
-To: Bjorn Helgaas <bhelgaas@google.com>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        linux-pci@vger.kernel.org
-Cc: virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
-        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
-        keith.busch@intel.com, netanel@amazon.com,
-        Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
-        dwmw@amazon.co.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 10:20 AM, Alexander Duyck
-<alexander.duyck@gmail.com> wrote:
-> This series is meant to add support for SR-IOV on devices when the VFs are
-> not managed by the kernel. Examples of recent patches attempting to do this
-> include:
-> virto - https://patchwork.kernel.org/patch/10241225/
-> pci-stub - https://patchwork.kernel.org/patch/10109935/
-> vfio - https://patchwork.kernel.org/patch/10103353/
-> uio - https://patchwork.kernel.org/patch/9974031/
->
-> Since this is quickly blowing up into a multi-driver problem it is probably
-> best to implement this solution as generically as possible.
->
-> This series is an attempt to do that. What we do with this patch set is
-> provide a generic framework to enable SR-IOV in the case that the PF driver
-> doesn't support managing the VFs itself.
->
-> I based my patch set originally on the patch by Mark Rustad but there isn't
-> much left after going through and cleaning out the bits that were no longer
-> needed, and after incorporating the feedback from David Miller. At this point
-> the only items to be fully reused was his patch description which is now
-> present in patch 3 of the set.
->
-> This solution is limited in scope to just adding support for devices that
-> provide no functionality for SR-IOV other than allocating the VFs by
-> calling pci_enable_sriov. Previous sets had included patches for VFIO, but
-> for now I am dropping that as the scope of that work is larger then I
-> think I can take on at this time.
->
-> v2: Reduced scope back to just virtio_pci and vfio-pci
->     Broke into 3 patch set from single patch
->     Changed autoprobe behavior to always set when num_vfs is set non-zero
-> v3: Updated Documentation to clarify when sriov_unmanaged_autoprobe is used
->     Wrapped vfio_pci_sriov_configure to fix build errors w/o SR-IOV in kernel
-> v4: Dropped vfio-pci patch
->     Added ena and nvme to drivers now using pci_sriov_configure_unmanaged
->     Dropped pci_disable_sriov call in virtio_pci to be consistent with ena
-> v5: Dropped sriov_unmanaged_autoprobe and pci_sriov_conifgure_unmanaged
->     Added new patch that enables pci_sriov_configure_simple
->     Updated drivers to use pci_sriov_configure_simple
->
-> Cc: Mark Rustad <mark.d.rustad@intel.com>
-> Cc: Maximilian Heyne <mheyne@amazon.de>
-> Cc: Liang-Min Wang <liang-min.wang@intel.com>
-> Cc: David Woodhouse <dwmw@amazon.co.uk>
+From: Colin Ian King <colin.king@canonical.com>
 
-Ugh. Just realized I forgot to post the correct subject line in the cover page.
+The variable 'len' is being initialized with a value that is never
+read and it is re-assigned later, hence the initialization is redundant
+and can be removed.
 
-I needed I can resubmit the series, will just leave it for now in case
-there are any other review comments.
+Cleans up clang warning:
+net/rxrpc/recvmsg.c:275:15: warning: Value stored to 'len' during its
+initialization is never read
 
-Thanks.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/rxrpc/recvmsg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Alex
+diff --git a/net/rxrpc/recvmsg.c b/net/rxrpc/recvmsg.c
+index 9d45d8b56744..7bff716e911e 100644
+--- a/net/rxrpc/recvmsg.c
++++ b/net/rxrpc/recvmsg.c
+@@ -272,7 +272,7 @@ static int rxrpc_locate_data(struct rxrpc_call *call, struct sk_buff *skb,
+ 			     unsigned int *_offset, unsigned int *_len)
+ {
+ 	unsigned int offset = sizeof(struct rxrpc_wire_header);
+-	unsigned int len = *_len;
++	unsigned int len;
+ 	int ret;
+ 	u8 annotation = *_annotation;
+ 
+-- 
+2.15.1
