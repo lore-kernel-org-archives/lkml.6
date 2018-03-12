@@ -1,151 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932681AbeCLRrj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 13:47:39 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:53651 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932231AbeCLRrh (ORCPT
+        id S932725AbeCLRxs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 13:53:48 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:34784 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932231AbeCLRxq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 13:47:37 -0400
-Date: Mon, 12 Mar 2018 10:47:08 -0700
-From: "tip-bot for leilei.lin" <tipbot@zytor.com>
-Message-ID: <tip-33801b94741d6c3be9713c10aa627477216c21e2@git.kernel.org>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        alexander.shishkin@linux.intel.com, mingo@kernel.org, hpa@zytor.com,
-        leilei.lin@alibaba-inc.com, acme@redhat.com, peterz@infradead.org,
-        vincent.weaver@maine.edu, jolsa@redhat.com, tglx@linutronix.de,
-        eranian@google.com
-Reply-To: alexander.shishkin@linux.intel.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
-        jolsa@redhat.com, peterz@infradead.org, vincent.weaver@maine.edu,
-        leilei.lin@alibaba-inc.com, acme@redhat.com, eranian@google.com,
-        tglx@linutronix.de
-In-Reply-To: <20180306093637.28247-1-linxiulei@gmail.com>
-References: <20180306093637.28247-1-linxiulei@gmail.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/core: Fix installing cgroup events on CPU
-Git-Commit-ID: 33801b94741d6c3be9713c10aa627477216c21e2
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Mon, 12 Mar 2018 13:53:46 -0400
+X-Google-Smtp-Source: AG47ELtbDAXrhxblHX2VGYqK9dEDLSM2ejTEzinvLwx5hl95ae8aMJ+u9Et/f5j7iZr1HIQVgDactA==
+From: Deepa Dinamani <deepa.kernel@gmail.com>
+To: arnd@arndb.de, tglx@linutronix.de, john.stultz@linaro.org
+Cc: linux-kernel@vger.kernel.org, y2038@lists.linaro.org
+Subject: [PATCH v4 01/10] compat: Make compat helpers independent of CONFIG_COMPAT
+Date: Mon, 12 Mar 2018 10:52:58 -0700
+Message-Id: <20180312175307.11032-2-deepa.kernel@gmail.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180312175307.11032-1-deepa.kernel@gmail.com>
+References: <20180312175307.11032-1-deepa.kernel@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  33801b94741d6c3be9713c10aa627477216c21e2
-Gitweb:     https://git.kernel.org/tip/33801b94741d6c3be9713c10aa627477216c21e2
-Author:     leilei.lin <leilei.lin@alibaba-inc.com>
-AuthorDate: Tue, 6 Mar 2018 17:36:37 +0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 12 Mar 2018 15:28:51 +0100
+Many of the compat time syscalls are also repurposed as 32 bit
+native syscalls to provide backward compatibility while adding
+new y2038 safe sycalls.
+Enabling the helpers makes this possible.
 
-perf/core: Fix installing cgroup events on CPU
-
-There's two problems when installing cgroup events on CPUs: firstly
-list_update_cgroup_event() only tries to set cpuctx->cgrp for the
-first event, if that mismatches on @cgrp we'll not try again for later
-additions.
-
-Secondly, when we install a cgroup event into an active context, only
-issue an event reprogram when the event matches the current cgroup
-context. This avoids a pointless event reprogramming.
-
-Signed-off-by: leilei.lin <leilei.lin@alibaba-inc.com>
-[ Improved the changelog and comments. ]
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: brendan.d.gregg@gmail.com
-Cc: eranian@gmail.com
-Cc: linux-kernel@vger.kernel.org
-Cc: yang_oliver@hotmail.com
-Link: http://lkml.kernel.org/r/20180306093637.28247-1-linxiulei@gmail.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
 ---
- kernel/events/core.c | 46 +++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 35 insertions(+), 11 deletions(-)
+ include/linux/compat.h | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index f98c0f88cc94..969f865f9f1c 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -937,27 +937,39 @@ list_update_cgroup_event(struct perf_event *event,
- 	if (!is_cgroup_event(event))
- 		return;
+diff --git a/include/linux/compat.h b/include/linux/compat.h
+index 16c3027074a2..bdf1908a392e 100644
+--- a/include/linux/compat.h
++++ b/include/linux/compat.h
+@@ -8,8 +8,6 @@
  
--	if (add && ctx->nr_cgroups++)
--		return;
--	else if (!add && --ctx->nr_cgroups)
--		return;
- 	/*
- 	 * Because cgroup events are always per-cpu events,
- 	 * this will always be called from the right CPU.
- 	 */
- 	cpuctx = __get_cpu_context(ctx);
--	cpuctx_entry = &cpuctx->cgrp_cpuctx_entry;
--	/* cpuctx->cgrp is NULL unless a cgroup event is active in this CPU .*/
--	if (add) {
-+
-+	/*
-+	 * Since setting cpuctx->cgrp is conditional on the current @cgrp
-+	 * matching the event's cgroup, we must do this for every new event,
-+	 * because if the first would mismatch, the second would not try again
-+	 * and we would leave cpuctx->cgrp unset.
-+	 */
-+	if (add && !cpuctx->cgrp) {
- 		struct perf_cgroup *cgrp = perf_cgroup_from_task(current, ctx);
+ #include <linux/types.h>
  
--		list_add(cpuctx_entry, this_cpu_ptr(&cgrp_cpuctx_list));
- 		if (cgroup_is_descendant(cgrp->css.cgroup, event->cgrp->css.cgroup))
- 			cpuctx->cgrp = cgrp;
--	} else {
--		list_del(cpuctx_entry);
--		cpuctx->cgrp = NULL;
- 	}
-+
-+	if (add && ctx->nr_cgroups++)
-+		return;
-+	else if (!add && --ctx->nr_cgroups)
-+		return;
-+
-+	/* no cgroup running */
-+	if (!add)
-+		cpuctx->cgrp = NULL;
-+
-+	cpuctx_entry = &cpuctx->cgrp_cpuctx_entry;
-+	if (add)
-+		list_add(cpuctx_entry, this_cpu_ptr(&cgrp_cpuctx_list));
-+	else
-+		list_del(cpuctx_entry);
- }
+-#ifdef CONFIG_COMPAT
+-
+ #include <linux/stat.h>
+ #include <linux/param.h>	/* for HZ */
+ #include <linux/sem.h>
+@@ -20,9 +18,11 @@
+ #include <linux/uaccess.h>
+ #include <linux/unistd.h>
  
- #else /* !CONFIG_CGROUP_PERF */
-@@ -2489,6 +2501,18 @@ static int  __perf_install_in_context(void *info)
- 		raw_spin_lock(&task_ctx->lock);
- 	}
- 
-+#ifdef CONFIG_CGROUP_PERF
-+	if (is_cgroup_event(event)) {
-+		/*
-+		 * If the current cgroup doesn't match the event's
-+		 * cgroup, we should not try to schedule it.
-+		 */
-+		struct perf_cgroup *cgrp = perf_cgroup_from_task(current, ctx);
-+		reprogram = cgroup_is_descendant(cgrp->css.cgroup,
-+					event->cgrp->css.cgroup);
-+	}
++#ifdef CONFIG_COMPAT
+ #include <asm/compat.h>
+ #include <asm/siginfo.h>
+ #include <asm/signal.h>
 +#endif
+ 
+ #ifndef COMPAT_USE_64BIT_TIME
+ #define COMPAT_USE_64BIT_TIME 0
+@@ -59,6 +59,8 @@
+ 	}								\
+ 	static inline long C_SYSC##name(__MAP(x,__SC_DECL,__VA_ARGS__))
+ 
++#ifdef CONFIG_COMPAT
 +
- 	if (reprogram) {
- 		ctx_sched_out(ctx, cpuctx, EVENT_TIME);
- 		add_event_to_ctx(event, ctx);
+ #ifndef compat_user_stack_pointer
+ #define compat_user_stack_pointer() current_user_stack_pointer()
+ #endif
+@@ -891,7 +893,9 @@ static inline struct compat_timeval ns_to_compat_timeval(s64 nsec)
+ #else /* !CONFIG_COMPAT */
+ 
+ #define is_compat_task() (0)
++#ifndef in_compat_syscall
+ static inline bool in_compat_syscall(void) { return false; }
++#endif
+ 
+ #endif /* CONFIG_COMPAT */
+ 
+-- 
+2.14.1
