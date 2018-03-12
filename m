@@ -1,82 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752548AbeCLI5j (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 04:57:39 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:45408 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750988AbeCLI5h (ORCPT
+        id S1751450AbeCLJC0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 05:02:26 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33984 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751248AbeCLJCY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 04:57:37 -0400
-X-Google-Smtp-Source: AG47ELtIhiYelHlA7mS14I1qe5cvXlZ+Ik8cYJekkImLgkNsBkBecWLSHF2f8F59hxGzQgKXmJQDvw==
-Date: Mon, 12 Mar 2018 08:57:33 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 14/17 4/4] mfd: tps65910: Move an assignment in
- tps65910_sleepinit()
-Message-ID: <20180312085733.qkau2n3cos4743yj@dell>
-References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
- <a00bda19-c38c-6733-31e7-7e1c44eb6c6b@users.sourceforge.net>
- <eb3c38d5-23c3-dcf0-3772-66b917326f0a@users.sourceforge.net>
+        Mon, 12 Mar 2018 05:02:24 -0400
+X-Google-Smtp-Source: AG47ELv9HDBEUuOWtH7az3la5Zcm78cDWv3Q7UX9c5f9VCrGKIppwbVq6OMYOCGh7H9GJPm5TOLk6w==
+Date: Mon, 12 Mar 2018 10:02:20 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>
+Cc: linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Sai Praneeth <sai.praneeth.prakhya@intel.com>,
+        linux-kernel@vger.kernel.org, "Lee, Chun-Yi" <jlee@suse.com>,
+        Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Ravi Shankar <ravi.v.shankar@intel.com>
+Subject: Re: [PATCH 2/5] x86/efi: Replace efi_pgd with efi_mm.pgd
+Message-ID: <20180312090220.lmohpvj62v7l2qsc@gmail.com>
+References: <20180312084500.10764-1-ard.biesheuvel@linaro.org>
+ <20180312084500.10764-3-ard.biesheuvel@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <eb3c38d5-23c3-dcf0-3772-66b917326f0a@users.sourceforge.net>
+In-Reply-To: <20180312084500.10764-3-ard.biesheuvel@linaro.org>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 09 Mar 2018, SF Markus Elfring wrote:
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 9 Mar 2018 09:19:42 +0100
+* Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+
+> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 > 
-> Move the assignment for the local variable "dev" so that its setting
-> will be performed after a configuration check by this function.
+> Since the previous patch added support for efi_mm, let's handle efi_pgd
+> through efi_mm and remove global variable efi_pgd.
 > 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+> Cc: "Lee, Chun-Yi" <jlee@suse.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Michael S. Tsirkin <mst@redhat.com>
+> Cc: Bhupesh Sharma <bhsharma@redhat.com>
+> Cc: Ricardo Neri <ricardo.neri@intel.com>
+> Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+> Tested-by: Bhupesh Sharma <bhsharma@redhat.com>
+> Reviewed-by: Matt Fleming <matt@codeblueprint.co.uk>
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 > ---
+>  arch/x86/platform/efi/efi_64.c | 17 ++++++++---------
+>  1 file changed, 8 insertions(+), 9 deletions(-)
 > 
-> v2:
-> Lee Jones requested a resend for this patch. The change was rebased
-> on source files from Linux next-20180308.
-
-Thanks.
-
-What happened here: [PATCH v2 14/17 4/4]
-
-How have you managed to insert 4 patches into the x/17 thread?
-
-It shouldn't matter for reviewing purposes.  It just looks really
-odd.
-
->  drivers/mfd/tps65910.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
-> index 7e7d3d1642c6..bf16cbe6fd88 100644
-> --- a/drivers/mfd/tps65910.c
-> +++ b/drivers/mfd/tps65910.c
-> @@ -315,11 +315,11 @@ static int tps65910_sleepinit(struct tps65910 *tps65910,
->  	struct device *dev;
->  	int ret;
+> diff --git a/arch/x86/platform/efi/efi_64.c b/arch/x86/platform/efi/efi_64.c
+> index 0045efe9947b..8881e601c32d 100644
+> --- a/arch/x86/platform/efi/efi_64.c
+> +++ b/arch/x86/platform/efi/efi_64.c
+> @@ -190,8 +190,6 @@ void __init efi_call_phys_epilog(pgd_t *save_pgd)
+>  	early_code_mapping_set_exec(0);
+>  }
 >  
-> -	dev = tps65910->dev;
+> -static pgd_t *efi_pgd;
 > -
->  	if (!pmic_pdata->en_dev_slp)
->  		return 0;
->  
-> +	dev = tps65910->dev;
-> +
->  	/* enabling SLEEP device state */
->  	ret = tps65910_reg_set_bits(tps65910, TPS65910_DEVCTRL,
->  				DEVCTRL_DEV_SLP_MASK);
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Hm, so there's some interaction here with:
+
+  116fef640859: x86/mm/dump_pagetables: Add the EFI pagetable to the debugfs 'page_tables' directory
+
+which is in tip:x86/mm.
+
+Could you please resolve that conflict? I'll sort out the topic branches 
+afterwards.
+
+Thanks,
+
+	Ingo
