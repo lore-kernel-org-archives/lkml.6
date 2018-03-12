@@ -1,56 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932629AbeCLRiT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 13:38:19 -0400
-Received: from mga04.intel.com ([192.55.52.120]:50509 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932231AbeCLRiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 13:38:17 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,462,1515484800";
-   d="scan'208";a="33207510"
-Date: Mon, 12 Mar 2018 11:40:12 -0600
-From: Keith Busch <keith.busch@intel.com>
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: bhelgaas@google.com, alexander.h.duyck@intel.com,
-        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        kvm@vger.kernel.org, netdev@vger.kernel.org, dan.daly@intel.com,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        netanel@amazon.com, mheyne@amazon.de, liang-min.wang@intel.com,
-        mark.d.rustad@intel.com, dwmw2@infradead.org, hch@lst.de,
-        dwmw@amazon.co.uk
-Subject: Re: [pci PATCH v5 1/4] pci: Add pci_sriov_configure_simple for PFs
- that don't manage VF resources
-Message-ID: <20180312174012.GE18494@localhost.localdomain>
-References: <20180312171813.3487.94803.stgit@localhost.localdomain>
- <20180312172031.3487.20651.stgit@localhost.localdomain>
+        id S932687AbeCLRl3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 13:41:29 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:39849 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932356AbeCLRl1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 13:41:27 -0400
+X-Google-Smtp-Source: AG47ELuxsFMBhY8DJtwqS2FKCDO2Q+3yUfM4F4z1cisIhRtyYLDSVgKIWBMQEKGQCfsJRBiZa4eCnA==
+Date: Mon, 12 Mar 2018 18:41:20 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@suse.de>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Anvin <hpa@zytor.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
+        linux-tip-commits@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [tip:x86/mm] x86/boot/compressed/64: Describe the logic behind
+ the LA57 check
+Message-ID: <20180312174120.wtopp54bskk5a5fu@gmail.com>
+References: <tip-a403d798182f4f7be5e9bab56cfa37e9828fd92a@git.kernel.org>
+ <20180312124027.GG4064@hirez.programming.kicks-ass.net>
+ <20180312124337.vw7bchm6brfzghfa@node.shutemov.name>
+ <20180312131055.GH4064@hirez.programming.kicks-ass.net>
+ <20180312140449.oyngtgqppnjuh3lf@node.shutemov.name>
+ <20180312143212.77z2ptyqbsbqdll3@gmail.com>
+ <20180312145049.boh3wmaotim6sfh2@black.fi.intel.com>
+ <CA+55aFyKOkO1BBYX+-SZyON2FA_FSc9YqVDLU9-pRj1=jh9sUw@mail.gmail.com>
+ <CALCETrU8=_A9VzJMWuLouoyVQVLbnh_1etQK4tB4kvD8b51opQ@mail.gmail.com>
+ <CA+55aFya-fZQVi45axVpv4PF_b8yhHfDxx3xCTX+gbN5Ec9VUQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180312172031.3487.20651.stgit@localhost.localdomain>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CA+55aFya-fZQVi45axVpv4PF_b8yhHfDxx3xCTX+gbN5Ec9VUQ@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 10:21:29AM -0700, Alexander Duyck wrote:
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 024a1beda008..9cab9d0d51dc 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -1953,6 +1953,7 @@ static inline void pci_mmcfg_late_init(void) { }
->  int pci_vfs_assigned(struct pci_dev *dev);
->  int pci_sriov_set_totalvfs(struct pci_dev *dev, u16 numvfs);
->  int pci_sriov_get_totalvfs(struct pci_dev *dev);
-> +int pci_sriov_configure_simple(struct pci_dev *dev, int nr_virtfn);
->  resource_size_t pci_iov_resource_size(struct pci_dev *dev, int resno);
->  void pci_vf_drivers_autoprobe(struct pci_dev *dev, bool probe);
->  #else
 
-I recommend stubbing 'pci_sriov_configure_simple' or defining it to
-NULL in the '#else' section here so you don't need to repeat the "#ifdef
-CONFIG_PCI_IOV" in each driver wishing to use this function. Otherwise
-looks fine to me.
+* Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> But regardless, I think we're better off with a "wait and see" approach.
+> 
+> IOW, try to use 5-level whenever possible for now, and _if_ somebody actually 
+> can show that 4-level page tables perform better or have some other advantage, 
+> we can then try to be clever later when it's all tested and it's just an 
+> optimization, not a "that code won't even run normally and gets basically zero 
+> coverage".
+
+Ok, fair enough - and the testing argument makes sense as well.
+
+Thanks,
+
+	Ingo
