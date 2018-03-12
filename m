@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3443661-1520826229-2-17129110242680359788
+X-Cyrus-Session-Id: sloti22d1t05-3441149-1520826222-2-14912308703126111136
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520826228; b=NGxdhfK6Xy5GlMuf33ABVycnkc47qq6t61YnLF1SyCkbKqZ
-    tLyViBs3ntY3IbpsLPROqa/5XaKWZFj5dt+g6jEY5ssbVycDnUiCAln+4BYVrnYZ
-    HAhFXCZPpL1qP9TE6gjIRFtLrkjGwLEqKcHs6h6/RsPbWWHzf7YA0tZemUQ7QL27
-    iwXOD8iykC9ZbQI4SsnlY0Lg9xTaIeEO6siVoFP0Ff8e90IulmgZUBT9LbIhvOVn
-    /xKSUoMgtG7R9jlxxa8YodZpnwMeXnK59xPt3Rl5favwHOLvT11lHxrU/f9F0hd6
-    KJZkBK1mC6fkQzB05+pdP7lFgTeQR8hFJjPNaDw==
+    t=1520826221; b=Lz4tmDlT+v3mS/C8wMCIvaW3mReJF0Na95kRbGzarQKse+7
+    +QKfsXRiuUizd0lXqaqy5IVswL2jz59rYaOkeAxkZOg5QScTc4/Ug3Xcr0SuabCC
+    yYQN+lNS4wQKJapYLAAeb4X2ksxl830ohT9hj/VlWWFRczDoSuSen16pfINz0H5d
+    ASOZJ5IdFYw11/ffRpostOsE+0qIt+yTb8juRC4MQjw6NkDQYTO8QXTrxu9wlwv2
+    ir+a1Z9EHM7bRfgJn2sSXDUXFbw4BqcqZDBMUsCIgLLzk55y4hOzgyKoGpmb5Qna
+    WIKEUHazUBLM+3mMwq/g1Dm0vSm3fKgjR0WzSYw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1520826228; bh=xPLZoJTYy8T0FUMBw9j
-    Qpskba0dnQgEaoc7Hldv5nRU=; b=fzrJIiYIkRHkySfXfVlb/So/X5HjIMV9KWe
-    LhE5iBS68ew67eqrixldwHFHvV4zVYwMm7Rtr7P2vMNCjiO/zOCHi1TuOEWKaxqf
-    9ufmKZHQnEiFbfHLO147mwke1+MH1IJVjNRmhUWPel8BdurfreLJY01mcUtsV/iR
-    nwbMzx0XYuU+uVN9Iujgf503KkE8hXYK9rpmTCx42eW4T3N5MPr7IzrMTUP3ub9q
-    Hml5mEmEkMg/sviq+B4NYFUNrnRlKF7iUYvqTVwtPnqdkogkzWwgl14iwso5Rn/R
-    yXGBtig9zsnSlywYEqItvzNeyt+DlQGViCYUty6O6JaA80vJIvg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1520826221; bh=QpFduA92K6NlfBz7hyc
+    sbsJVcnT1AY9oipYxTAk4sSI=; b=EXEaMs8Hc74E+Fq7KIdS7aA67VKyQpHuG4I
+    qv71od56Gsg+5G2Jue9ZzstkHcvBjw9kH9fM55jUd3/t4cnUfN8T+HvVCpE5I26V
+    0a+BFqF1b0BrnwstoJaYDunqh9gdpIUK0WwjU5q1GSkTAFBd05Kq8GaV/rZUF096
+    93srPOoBhRLsrFOZhkoAmt/v6ltBTQqcAossenzJx6qXkJRbDPhI1C7gctYMckqX
+    p1y2dwbYI4MqiOktnBHiTjCLBTJ9Dal3lJXZEubIckYgtFTzFdAFAjMQlgm5nKsS
+    Qj3lqpaUv9Qp07zWtQYvJO1zWPVS76kCTwYF2FPgYCyCHnxwgEg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -49,11 +49,11 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933312AbeCLDmB (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Mar 2018 23:42:01 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41162 "EHLO
+        id S933083AbeCLDmD (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Mar 2018 23:42:03 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41160 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932661AbeCLDHm (ORCPT
+        by vger.kernel.org with ESMTP id S932660AbeCLDHm (ORCPT
         <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 23:07:42 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -61,14 +61,25 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Peter Oberparleiter" <oberpar@linux.vnet.ibm.com>,
-        "Yuan Pengfei" <coolypf@qq.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>
+CC: akpm@linux-foundation.org, "Rik van Riel" <riel@redhat.com>,
+        "Matthew Whitehead" <tedheadster@gmail.com>,
+        "Ingo Molnar" <mingo@kernel.org>,
+        "One Thousand Gnomes" <gnomes@lxorguk.ukuu.org.uk>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Brian Gerst" <brgerst@gmail.com>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Fenghua Yu" <fenghua.yu@intel.com>,
+        "Dave Hansen" <dave.hansen@linux.intel.com>,
+        "Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        "Borislav Petkov" <bp@suse.de>, "Oleg Nesterov" <oleg@redhat.com>,
+        "Yu-cheng Yu" <yu-cheng.yu@intel.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.419512224@decadent.org.uk>
+Message-ID: <lsq.1520823814.524396514@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 018/104] gcov: add support for GCC 4.9
+Subject: [PATCH 3.2 039/104] x86/cpu: Factor out application of forced CPU
+ caps
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -83,60 +94,76 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yuan Pengfei <coolypf@qq.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit a992bf836f9c3039a16f4bd068d161c86c6c3e2c upstream.
+commit 8bf1ebca215c262e48c15a4a15f175991776f57f upstream.
 
-This patch handles the gcov-related changes in GCC 4.9:
+There are multiple call sites that apply forced CPU caps.  Factor
+them into a helper.
 
-  A new counter (time profile) is added. The total number is 9 now.
-
-  A new profile merge function __gcov_merge_time_profile is added.
-
-See gcc/gcov-io.h and libgcc/libgcov-merge.c
-
-For the first change, the layout of struct gcov_info is affected.
-
-For the second one, a dummy function is added to kernel/gcov/base.c
-similarly.
-
-Signed-off-by: Yuan Pengfei <coolypf@qq.com>
-Acked-by: Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthew Whitehead <tedheadster@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Link: http://lkml.kernel.org/r/623ff7555488122143e4417de09b18be2085ad06.1484705016.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.2: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/gcov/base.c    | 6 ++++++
- kernel/gcov/gcc_4_7.c | 5 +++++
- 2 files changed, 11 insertions(+)
+ arch/x86/kernel/cpu/common.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
---- a/kernel/gcov/base.c
-+++ b/kernel/gcov/base.c
-@@ -85,6 +85,12 @@ void __gcov_merge_ior(gcov_type *counter
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -632,6 +632,16 @@ void __cpuinit cpu_detect(struct cpuinfo
+ 	}
  }
- EXPORT_SYMBOL(__gcov_merge_ior);
  
-+void __gcov_merge_time_profile(gcov_type *counters, unsigned int n_counters)
++static void apply_forced_caps(struct cpuinfo_x86 *c)
 +{
-+	/* Unused. */
++	int i;
++
++	for (i = 0; i < NCAPINTS; i++) {
++		c->x86_capability[i] &= ~cpu_caps_cleared[i];
++		c->x86_capability[i] |= cpu_caps_set[i];
++	}
 +}
-+EXPORT_SYMBOL(__gcov_merge_time_profile);
 +
- /**
-  * gcov_enable_events - enable event reporting through gcov_event()
-  *
---- a/kernel/gcov/gcc_4_7.c
-+++ b/kernel/gcov/gcc_4_7.c
-@@ -18,7 +18,12 @@
- #include <linux/vmalloc.h>
- #include "gcov.h"
+ void __cpuinit get_cpu_cap(struct cpuinfo_x86 *c)
+ {
+ 	u32 tfms, xlvl;
+@@ -880,10 +890,7 @@ static void __cpuinit identify_cpu(struc
+ 		this_cpu->c_identify(c);
  
-+#if __GNUC__ == 4 && __GNUC_MINOR__ >= 9
-+#define GCOV_COUNTERS			9
-+#else
- #define GCOV_COUNTERS			8
-+#endif
-+
- #define GCOV_TAG_FUNCTION_LENGTH	3
+ 	/* Clear/Set all flags overriden by options, after probe */
+-	for (i = 0; i < NCAPINTS; i++) {
+-		c->x86_capability[i] &= ~cpu_caps_cleared[i];
+-		c->x86_capability[i] |= cpu_caps_set[i];
+-	}
++	apply_forced_caps(c);
  
- static struct gcov_info *gcov_info_head;
+ #ifdef CONFIG_X86_64
+ 	c->apicid = apic->phys_pkg_id(c->initial_apicid, 0);
+@@ -939,10 +946,7 @@ static void __cpuinit identify_cpu(struc
+ 	 * Clear/Set all flags overriden by options, need do it
+ 	 * before following smp all cpus cap AND.
+ 	 */
+-	for (i = 0; i < NCAPINTS; i++) {
+-		c->x86_capability[i] &= ~cpu_caps_cleared[i];
+-		c->x86_capability[i] |= cpu_caps_set[i];
+-	}
++	apply_forced_caps(c);
+ 
+ 	/*
+ 	 * On SMP, boot_cpu_data holds the common feature set between
