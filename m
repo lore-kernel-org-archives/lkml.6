@@ -1,100 +1,152 @@
-Return-Path: <kernel-hardening-return-12574-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELt+N9dOR2d4yWQ4JAB6aIhP154MNrtJjUZH4n6z2kq3YLNzk7CM9aSa5ydjJGYyvkMxEe39
-ARC-Seal: i=1; a=rsa-sha256; t=1521018371; cv=none;
+Return-Path: <kernel-hardening-return-12431-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELttCyQ94YQ5o2XTEpsPXmwwV2WlS4+sQbeiSDnVJ0hpgLVDdMJptaMePT1V552QNM82w2eM
+ARC-Seal: i=1; a=rsa-sha256; t=1520858631; cv=none;
         d=google.com; s=arc-20160816;
-        b=R/8WLzg/0XEtYaO5FjIE6QkyqvhmJKPeE2vS1LUblkuzLOrKL8wTV+ka6ua1vV1Cj+
-         7nVc1yx1C264ZyS/Jo+SzgAdU+rUBOeOPL73KRZHGDc3E2SRBhc3xJXpZnTk7B1JaTPM
-         o39z3NkkNDO8BxiH+fy+Pq5Sh0pYTnlu4WAi2jfstvFOQQEetttyh8mbAZoWt+EjzEvu
-         MLS5fbfiF8JVd0o6ZfBhmz7SdVltWm2a/j5PbYjiazwGcccIH3jiPIr41nkHbNsmrPx8
-         V2P/fGZM07Z0Vsvw0eEe+y2vhW/HYR83fhX4BvkDxaf5ZZj3O60TPvWg6K4Oei1ka4UJ
-         yJjw==
+        b=IcXn37aTh+88w592dwRTsuMy3iPfWdz6j3DPTbnsBq+PX+zZZ1+1mZg67EvyLulveK
+         Fiv6vRFjKHx1S1ZM4CU7nCmqryilDcT2U504nyYnVtxq+BGCbZU4te8wwHHr9+g5KW1K
+         0v3WWml1xPvDKH2qhszm9dDiPXgu1Cv1lUrZR/C7Du63DPjq8vIeEAQuexBRnswx47gI
+         HaHpSZIeziJH7JXDw2YuskZ2q9HbEPgUCPO/uF1bWRhDcpFWZHr0vs8w4eGIvsLtQ7+6
+         JvstcbsrJYoYuZGA/4OTXSvBupNaxYv06pUn2LtDJhPTMTMk/FatKt4PQqYdGFnd+A+c
+         fnqQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:message-id:in-reply-to:date:references
-         :subject:cc:to:from:dmarc-filter:dkim-signature:dkim-signature
-         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=1iSDNnYi7D2BYgiPUoaTIDCCpR8CKPZoh+bYLadlHQA=;
-        b=CoJsrHsqHrtXiNwbCQ2KQYV2QA1Y8PIUSNVrLqpDgH1AF5T7QAAYZyHNCfYWfF0rd0
-         vW862chEYwjYV0ZzLZKhhJ5LkPx02FaS2NgLm+BuIytPu1X1Io5TiwasrFd4cHqyJ50k
-         xBncY2kKEr4SKKW2cdIi8EGIBgzqoudqce90hVMaMVP+HizyPdalESuNPNcr2MuGenlf
-         Isk4WAf8jhly3E2OxsUmjX22IsnzNzLSo0bGLStMUI9Hs4Z9EutmhZNqtdgOc8fOCrAn
-         3KYWg0dkaG8iE/RbWKXe+F+2/B5Lv/PeQXOPyznhFjyvQCfGR9e+3Ufc0S//X4dGteek
-         35Sw==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:sender
+         :dkim-signature:delivered-to:delivered-to:list-id:list-subscribe
+         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+         :arc-authentication-results;
+        bh=8iiVVTkOzGd0zDPS9DXCBGiYFR98UrHQ7gEYMcbsVFQ=;
+        b=Suk8D1rCizzQpGCPIEL9Xd2IdY/F2/2w6k3uTFtlAzBtUbT9v3pNwtSBspKrPN/1TC
+         vmbt/QiXldQ34Fy2/2bAXAZRH4Nvb9w2dxCrYc6zJp3M/DC7cpywAI25Qw7F55B4/W05
+         SBZPxKGqZ5Ha9rrGzjHp6QIoRFirpndz9AckmrtTcI4UtjMswaH9WwpSlhHNN/5Z/FHa
+         44oRrCPRMzQSR/vV7ZSvbQQ8YkJFCTf/eHQJhzgzKcYjwJ9h8FRFjq+bL3JgsXilI264
+         wkrQR45NLOWXAle/xFrtKxmr/+2Oy+sJOLgnxUsZnpSHd3fNqVFwfXw41RAD/eDOwgGB
+         LH4Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=oPD7UHMi;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=cHhGun0u;
-       spf=pass (google.com: domain of kernel-hardening-return-12574-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12574-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ts8cFBLv;
+       spf=pass (google.com: domain of kernel-hardening-return-12431-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12431-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=oPD7UHMi;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=cHhGun0u;
-       spf=pass (google.com: domain of kernel-hardening-return-12574-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12574-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ts8cFBLv;
+       spf=pass (google.com: domain of kernel-hardening-return-12431-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12431-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 13B98603AF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: tcharding <me@tobin.cc>
-Cc: kernel-hardening@lists.openwall.com,  linux-kernel@vger.kernel.org,  netdev@vger.kernel.org,  linux-wireless@vger.kernel.org,  Tycho Andersen <tycho@tycho.ws>,  Kees Cook <keescook@chromium.org>
-Subject: Re: [RESEND] rsi: Remove stack VLA usage
+Sender: Larry Finger <larry.finger@gmail.com>
+Subject: Re: [RESEND PATCH] rsi: Remove stack VLA usage
+To: "Tobin C. Harding" <me@tobin.cc>, Kalle Valo <kvalo@codeaurora.org>
+Cc: kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+ Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>
 References: <1520819022-15238-1-git-send-email-me@tobin.cc>
-	<20180312094606.8192B6081A@smtp.codeaurora.org>
-	<20180313201757.GK8631@eros>
-Date: Wed, 14 Mar 2018 11:05:32 +0200
-In-Reply-To: <20180313201757.GK8631@eros> (tcharding's message of "Wed, 14 Mar
-	2018 07:17:57 +1100")
-Message-ID: <87o9jr6n8j.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <ff9309bf-4c3d-b0f9-cdd0-429dacd3177b@lwfinger.net>
+Date: Sun, 11 Mar 2018 21:06:10 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1520819022-15238-1-git-send-email-me@tobin.cc>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594441103492436943?=
-X-GMAIL-MSGID: =?utf-8?q?1594903360081726561?=
+X-GMAIL-MSGID: =?utf-8?q?1594735860049738865?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-tcharding <me@tobin.cc> writes:
+On 03/11/2018 08:43 PM, Tobin C. Harding wrote:
+> The kernel would like to have all stack VLA usage removed[1].  rsi uses
+> a VLA based on 'blksize'.  Elsewhere in the SDIO code maximum block size
+> is defined using a magic number.  We can use a pre-processor defined
+> constant and declare the array to maximum size.  We add a check before
+> accessing the array in case of programmer error.
+> 
+> [1]: https://lkml.org/lkml/2018/3/7/621
+> 
+> Signed-off-by: Tobin C. Harding <me@tobin.cc>
+> ---
+> 
+> RESEND: add wireless mailing list to CC's (requested by Kalle)
+> 
+>   drivers/net/wireless/rsi/rsi_91x_hal.c  | 13 +++++++------
+>   drivers/net/wireless/rsi/rsi_91x_sdio.c |  9 +++++++--
+>   2 files changed, 14 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/rsi/rsi_91x_hal.c b/drivers/net/wireless/rsi/rsi_91x_hal.c
+> index 1176de646942..839ebdd602df 100644
+> --- a/drivers/net/wireless/rsi/rsi_91x_hal.c
+> +++ b/drivers/net/wireless/rsi/rsi_91x_hal.c
+> @@ -641,7 +641,7 @@ static int ping_pong_write(struct rsi_hw *adapter, u8 cmd, u8 *addr, u32 size)
+>   	u32 cmd_addr;
+>   	u16 cmd_resp, cmd_req;
+>   	u8 *str;
+> -	int status;
+> +	int status, ret;
+>   
+>   	if (cmd == PING_WRITE) {
+>   		cmd_addr = PING_BUFFER_ADDRESS;
+> @@ -655,12 +655,13 @@ static int ping_pong_write(struct rsi_hw *adapter, u8 cmd, u8 *addr, u32 size)
+>   		str = "PONG_VALID";
+>   	}
+>   
+> -	status = hif_ops->load_data_master_write(adapter, cmd_addr, size,
+> +	ret = hif_ops->load_data_master_write(adapter, cmd_addr, size,
+>   					    block_size, addr);
+> -	if (status) {
+> -		rsi_dbg(ERR_ZONE, "%s: Unable to write blk at addr %0x\n",
+> -			__func__, *addr);
+> -		return status;
+> +	if (ret) {
+> +		if (ret != -EINVAL)
+> +			rsi_dbg(ERR_ZONE, "%s: Unable to write blk at addr %0x\n",
+> +				__func__, *addr);
+> +		return ret;
+>   	}
+>   
+>   	status = bl_cmd(adapter, cmd_req, cmd_resp, str);
+> diff --git a/drivers/net/wireless/rsi/rsi_91x_sdio.c b/drivers/net/wireless/rsi/rsi_91x_sdio.c
+> index b0cf41195051..b766578b591a 100644
+> --- a/drivers/net/wireless/rsi/rsi_91x_sdio.c
+> +++ b/drivers/net/wireless/rsi/rsi_91x_sdio.c
+> @@ -20,6 +20,8 @@
+>   #include "rsi_common.h"
+>   #include "rsi_hal.h"
+>   
+> +#define RSI_MAX_BLOCK_SIZE 256
+> +
+>   /**
+>    * rsi_sdio_set_cmd52_arg() - This function prepares cmd 52 read/write arg.
+>    * @rw: Read/write
+> @@ -362,7 +364,7 @@ static int rsi_setblocklength(struct rsi_hw *adapter, u32 length)
+>   	rsi_dbg(INIT_ZONE, "%s: Setting the block length\n", __func__);
+>   
+>   	status = sdio_set_block_size(dev->pfunction, length);
+> -	dev->pfunction->max_blksize = 256;
+> +	dev->pfunction->max_blksize = RSI_MAX_BLOCK_SIZE;
+>   	adapter->block_size = dev->pfunction->max_blksize;
+>   
+>   	rsi_dbg(INFO_ZONE,
+> @@ -567,9 +569,12 @@ static int rsi_sdio_load_data_master_write(struct rsi_hw *adapter,
+>   {
+>   	u32 num_blocks, offset, i;
+>   	u16 msb_address, lsb_address;
+> -	u8 temp_buf[block_size];
+> +	u8 temp_buf[RSI_MAX_BLOCK_SIZE];
+>   	int status;
+>   
+> +	if (block_size > RSI_MAX_BLOCK_SIZE)
+> +		return -EINVAL;
+> +
+>   	num_blocks = instructions_sz / block_size;
+>   	msb_address = base_address >> 16;
 
-> On Mon, Mar 12, 2018 at 09:46:06AM +0000, Kalle Valo wrote:
->> tcharding <me@tobin.cc> wrote:
->> 
->> > The kernel would like to have all stack VLA usage removed[1].  rsi uses
->> > a VLA based on 'blksize'.  Elsewhere in the SDIO code maximum block size
->> > is defined using a magic number.  We can use a pre-processor defined
->> > constant and declare the array to maximum size.  We add a check before
->> > accessing the array in case of programmer error.
->> > 
->> > [1]: https://lkml.org/lkml/2018/3/7/621
->> > 
->> > Signed-off-by: Tobin C. Harding <me@tobin.cc>
->> 
->> Tobin, your name in patchwork.kernel.org is just "tcharding" then it should be
->> "Tobin C. Harding". Patchwork is braindead in a way as it takes the name from
->> it's database instead of the From header of the patch in question.
->> 
->> I can fix that manually but it would be helpful if you could register to
->> patchwork and fix your name during registration. You have only one chance to
->> fix your name (another braindead feature!) so be careful :)
->
-> Hi Kalle,
->
-> I logged into my patchwork account but I don't see any way to set the
-> name.  Within 'profile' there is only 'change password' and 'link
-> email'.  I thought I could unregister then re-register but I can't see
-> how to do that either.
+I am not giving this patch a negative review, but my solution to the same 
+problem has been to change the on-stack array into a u8 pointer, use kmalloc() 
+to assign the space, and then free that space at the end. That way large stack 
+allocations are avoided, with a minimum of changes.
 
-Ok, maybe you have registered (=logged on for the first time) already
-earlier so it's not possible to change the name anymore.
+Larry
 
-> Is there a maintainer of patchwork.kernel.org who I can email to
-> manually remove me from the system?
-
-helpdesk@kernel.org should be able to fix your name in patchwork, at
-least they have done it in the past. This is not the first time this has
-happened.
-
--- 
-Kalle Valo
+>   
+> 
