@@ -1,51 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932570AbeCLQ3f convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 12:29:35 -0400
-Received: from gloria.sntech.de ([95.129.55.99]:39140 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932494AbeCLQ3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 12:29:33 -0400
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
-        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
-        tfiga@chromium.org, dri-devel@lists.freedesktop.org,
-        dianders@chromium.org, a.hajda@samsung.com, ykk@rock-chips.com,
-        kernel@collabora.com, m.szyprowski@samsung.com,
-        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
-        rydberg@bitmath.org, krzk@kernel.org,
-        linux-rockchip@lists.infradead.org, kgene@kernel.org,
-        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
-        jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org,
-        mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com,
-        jingoohan1@gmail.com, sw0312.kim@samsung.com,
-        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
-        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
-        hshi@chromium.org
-Subject: Re: [PATCH v5 04/36] drm/rockchip: add mutex vop lock
-Date: Mon, 12 Mar 2018 17:29:20 +0100
-Message-ID: <3618546.KCVSigYX7Y@diego>
-In-Reply-To: <20180309222327.18689-5-enric.balletbo@collabora.com>
-References: <20180309222327.18689-1-enric.balletbo@collabora.com> <20180309222327.18689-5-enric.balletbo@collabora.com>
+        id S1751892AbeCLQaH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 12:30:07 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46810 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751361AbeCLQaG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 12:30:06 -0400
+Date: Mon, 12 Mar 2018 09:30:03 -0700
+From: Mark Brown <broonie@kernel.org>
+To: Chunyan Zhang <zhang.chunyan@linaro.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: Applied "regulator: leave one item to record if regulator is
+ enabled" to the regulator tree
+Message-ID: <20180312163003.GI2186@sirena.org.uk>
+References: <20171215151112.25C1744006B@finisterre.ee.mobilebroadband>
+ <20180312162859.6479C440079@finisterre.ee.mobilebroadband>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="YrQNB5Deg1WGKZi3"
+Content-Disposition: inline
+In-Reply-To: <20180312162859.6479C440079@finisterre.ee.mobilebroadband>
+X-Cookie: Am I SHOPLIFTING?
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, 9. März 2018, 23:22:55 CET schrieb Enric Balletbo i Serra:
-> From: zain wang <wzz@rock-chips.com>
-> 
-> Add a lock to vop to avoid disabling the crtc while waiting for a line
-> flag while enabling psr. If we disable in the middle of waiting for the
-> line flag, we'll end up timing out or worse.
-> 
-> Signed-off-by: zain wang <wzz@rock-chips.com>
-> Signed-off-by: Sean Paul <seanpaul@chromium.org>
-> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+--YrQNB5Deg1WGKZi3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Mar 12, 2018 at 04:28:59PM +0000, Mark Brown wrote:
+> The patch
+>=20
+>    regulator: leave one item to record if regulator is enabled
+>=20
+> has been applied to the regulator tree at
+>=20
+>    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git=
+=20
+
+Not sure what's going on with these...  my script seems to have exploded
+a bit somewhere.
+
+--YrQNB5Deg1WGKZi3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqmqwoACgkQJNaLcl1U
+h9BPfQf9HavYDRpZYohwYQOzKPLYglJ/PY9nyhB9K96ITTRERLBYdBfnryGOTIWL
+7f4pnMnSFrJneNbxqOKmbF2Va3gpYyw8MTCwoFOvJrtenIZVkoBw1govKj2HTLc7
+bpyJmZBLF7X6udyV1VCLIhM8kpqHla8I/hHTfZTvprPBTk0ogvAuNvlcHtUEkkjp
+l12QzKCD5DPrqvMCci5y5+YJSZzCR6oOP8Zvi9sCx8hjI+0h7wXmPAAzSitiH+vd
+FkrM5gDR/4kG+3aLhT9XdfsdGwIVJkGNxaGi5MEUYSMVb4wsXNsYQGkxCDmBIAWF
+1fHg9LjV4MKcMJHHgRKmkwFq/gzovQ==
+=V0XG
+-----END PGP SIGNATURE-----
+
+--YrQNB5Deg1WGKZi3--
