@@ -1,58 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932482AbeCLKHu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 06:07:50 -0400
-Received: from mga17.intel.com ([192.55.52.151]:57622 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932449AbeCLKHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 06:07:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,460,1515484800";
-   d="scan'208";a="23562720"
-Message-ID: <1520849262.10722.582.camel@linux.intel.com>
-Subject: Re: [PATCH v9] mmc: Export host capabilities to debugfs.
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Harish Jenny K N <harish_kandiga@mentor.com>, ulf.hansson@linaro.org,
-        linus.walleij@linaro.org, adrian.hunter@intel.com,
-        shawn.lin@rock-chips.com, avri.altman@wdc.com
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vladimir_Zapolskiy@mentor.com
-Date: Mon, 12 Mar 2018 12:07:42 +0200
-In-Reply-To: <1520829090-3567-1-git-send-email-harish_kandiga@mentor.com>
-References: <1520829090-3567-1-git-send-email-harish_kandiga@mentor.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S932399AbeCLKHi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 06:07:38 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:60497 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751263AbeCLKHe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 06:07:34 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [RFT][PATCH v4 6/7] cpuidle: menu: Refine idle state selection for running tick
+Date: Mon, 12 Mar 2018 11:05:59 +0100
+Message-ID: <7247268.klz2FnhlQ9@aspire.rjw.lan>
+In-Reply-To: <2352117.3UUoYAu18A@aspire.rjw.lan>
+References: <2352117.3UUoYAu18A@aspire.rjw.lan>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-03-12 at 10:01 +0530, Harish Jenny K N wrote:
-> This patch exports the host capabilities to debugfs
-> 
-> This idea of sharing host capabilities over debugfs
-> came up from Abbas Raza <Abbas_Raza@mentor.com>
-> Earlier discussions:
-> https://lkml.org/lkml/2018/3/5/357
-> https://www.spinics.net/lists/linux-mmc/msg48219.html
-> 
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Address below minors and, FWIW, take mine
+If the tick isn't stopped, the target residency of the state selected
+by the menu governor may be greater than the actual time to the next
+tick and that means lost energy.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To avoid that, make tick_nohz_get_sleep_length() return the current
+time the the next event (before stopping the tick) in addition to
+the estimated one via an extra pointer argument and make
+menu_select() use that value to refine the state selection
+when necessary.
 
-> +	for_each_set_bit(bit, (const unsigned long *)&caps,
-> BITS_PER_LONG)
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpuidle/governors/menu.c |   21 ++++++++++++++++++---
+ include/linux/tick.h             |    2 +-
+ kernel/time/tick-sched.c         |    7 +++++--
+ 3 files changed, 24 insertions(+), 6 deletions(-)
 
-> +	for_each_set_bit(bit, (const unsigned long *)&caps2,
-> BITS_PER_LONG)
-
-Explicit casting is not needed anymore in both cases.
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Index: linux-pm/include/linux/tick.h
+===================================================================
+--- linux-pm.orig/include/linux/tick.h
++++ linux-pm/include/linux/tick.h
+@@ -119,7 +119,7 @@ extern void tick_nohz_idle_retain_tick(v
+ extern void tick_nohz_idle_enter(void);
+ extern void tick_nohz_idle_exit(void);
+ extern void tick_nohz_irq_exit(void);
+-extern ktime_t tick_nohz_get_sleep_length(void);
++extern ktime_t tick_nohz_get_sleep_length(ktime_t *cur_ret);
+ extern unsigned long tick_nohz_get_idle_calls(void);
+ extern unsigned long tick_nohz_get_idle_calls_cpu(int cpu);
+ extern u64 get_cpu_idle_time_us(int cpu, u64 *last_update_time);
+Index: linux-pm/kernel/time/tick-sched.c
+===================================================================
+--- linux-pm.orig/kernel/time/tick-sched.c
++++ linux-pm/kernel/time/tick-sched.c
+@@ -1031,10 +1031,11 @@ void tick_nohz_irq_exit(void)
+ 
+ /**
+  * tick_nohz_get_sleep_length - return the expected length of the current sleep
++ * @cur_ret: pointer for returning the current time to the next event
+  *
+  * Called from power state control code with interrupts disabled
+  */
+-ktime_t tick_nohz_get_sleep_length(void)
++ktime_t tick_nohz_get_sleep_length(ktime_t *cur_ret)
+ {
+ 	struct clock_event_device *dev = __this_cpu_read(tick_cpu_device.evtdev);
+ 	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
+@@ -1047,6 +1048,8 @@ ktime_t tick_nohz_get_sleep_length(void)
+ 
+ 	WARN_ON_ONCE(!ts->inidle);
+ 
++	*cur_ret = ktime_sub(dev->next_event, now);
++
+ 	if (can_stop_idle_tick(cpu, ts)) {
+ 		ktime_t next_event = tick_nohz_next_event(ts, cpu);
+ 
+@@ -1054,7 +1057,7 @@ ktime_t tick_nohz_get_sleep_length(void)
+ 			return ktime_sub(next_event, now);
+ 	}
+ 
+-	return ktime_sub(dev->next_event, now);
++	return *cur_ret;
+ }
+ 
+ /**
+Index: linux-pm/drivers/cpuidle/governors/menu.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/menu.c
++++ linux-pm/drivers/cpuidle/governors/menu.c
+@@ -296,6 +296,7 @@ static int menu_select(struct cpuidle_dr
+ 	unsigned int expected_interval;
+ 	unsigned long nr_iowaiters, cpu_load;
+ 	int resume_latency = dev_pm_qos_raw_read_value(device);
++	ktime_t tick_time;
+ 
+ 	if (data->needs_update) {
+ 		menu_update(drv, dev);
+@@ -313,7 +314,7 @@ static int menu_select(struct cpuidle_dr
+ 	}
+ 
+ 	/* determine the expected residency time, round up */
+-	data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length());
++	data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length(&tick_time));
+ 
+ 	get_iowait_load(&nr_iowaiters, &cpu_load);
+ 	data->bucket = which_bucket(data->next_timer_us, nr_iowaiters);
+@@ -400,8 +401,22 @@ static int menu_select(struct cpuidle_dr
+ 		 * within the tick period range that could be used if longer
+ 		 * idle duration was predicted.
+ 		 */
+-		*nohz_ret = !(first_idx > idx &&
+-			      drv->states[first_idx].target_residency < TICK_USEC_HZ);
++		if (first_idx > idx &&
++		    drv->states[first_idx].target_residency < TICK_USEC_HZ) {
++			unsigned int tick_us = ktime_to_us(tick_time);
++
++			/*
++			 * Find a state with target residency less than the
++			 * time to the next timer event including the tick.
++			 */
++			while (idx > 0 &&
++			    (drv->states[idx].target_residency > tick_us ||
++			     drv->states[idx].disabled ||
++			     dev->states_usage[idx].disable))
++				idx--;
++
++			*nohz_ret = false;
++		}
+ 	}
+ 
+ 	data->last_state_idx = idx;
