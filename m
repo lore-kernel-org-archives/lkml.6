@@ -1,337 +1,366 @@
-Return-Path: <geert@linux-m68k.org>
-X-Google-Smtp-Source: AG47ELvuG875/7xa5VKblPNcP20cGJqcskEwp6z8Ng4057U0fXeee+9FmGBS67u2DD58rklZPPP7
-ARC-Seal: i=1; a=rsa-sha256; t=1521208366; cv=none;
-        d=google.com; s=arc-20160816;
-        b=DW5Oipwp0kSgTpPOB2wdEg4zhhlS6mHAizHZsfDnSKaqyH9VFMkr6XY+aSFaB1g+AH
-         dCb4iYUFk4+MJI6aTTMHbqG6+rW53exIC9vePvjeHPZuZ5GkNltz8NpksCfijlIUFR9O
-         0/Zey0lSmxF8EihJLChyMZB0uwn51+1pJsyg0aUhBCb2+nSC4cv7+oC2J4+d1xe1QQuB
-         LJqKTXbyPs5lVPC7zAI41DgEMMZhXke2NvI+hg787Ei9Zf4p7fpND/pQbfb2Ybh6+UMZ
-         ZgaQSSHMXznQqCdxUjqKsnhOkzqlf/E4+C0wFmOzMxzxmhQvQUm6AQhYft+MRmEcO+kN
-         1tXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=+DvVLish3WvRORH899m3hjXCyadPlaEDJj2YuoGfK20=;
-        b=mOHM8AFLYlznP6VmsXvDGOJzYPWNnTlquQ4hW69+jmQguhoA3oPpHJIAwZkhVJURL2
-         PqR4ydqpfHnFrPSGTKJO5EuyANZRvpVJmBzrmIxtPe4yOlk/rmjZdrOvNPC4cGSePr/q
-         kPDrlxNEEkEetg4IX64lkAMtwZccQrmq5F5LlfaYu0douMa+M/wXICfrJ+zriCJ16ysz
-         lpbNjRpE4aFGEJQDV2TQjVDHw+zq5twwcQ7/gDLcBPwAJHmzFo+cXl7RO3wtYQ7O/yUW
-         R1CV0XTsFTVoeuiIfbZXGdp7HNOldB5hqwgxOZQnylh8xm42ioiOstkA9K0lRWV4Fzj4
-         OOJg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 2a02:1800:110:4::f00:1a is neither permitted nor denied by best guess record for domain of geert@linux-m68k.org) smtp.mailfrom=geert@linux-m68k.org
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 2a02:1800:110:4::f00:1a is neither permitted nor denied by best guess record for domain of geert@linux-m68k.org) smtp.mailfrom=geert@linux-m68k.org
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Felipe Balbi <balbi@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Tejun Heo <tj@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S . Miller" <davem@davemloft.net>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Stefan Richter <stefanr@s5r6.in-berlin.de>,
-	Alan Tull <atull@kernel.org>,
-	Moritz Fischer <mdf@kernel.org>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Joerg Roedel <joro@8bytes.org>,
-	Matias Bjorling <mb@lightnvm.io>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Richard Weinberger <richard@nod.at>,
-	Kalle Valo <kvalo@codeaurora.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Eric Anholt <eric@anholt.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>
-Cc: iommu@lists.linux-foundation.org,
-	linux-usb@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-ide@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	linux-fbdev@vger.kernel.org,
-	linux1394-devel@lists.sourceforge.net,
-	linux-fpga@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	netdev@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2 15/21] net: Remove depends on HAS_DMA in case of platform dependency
-Date: Fri, 16 Mar 2018 14:51:48 +0100
-Message-Id: <1521208314-4783-16-git-send-email-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
-References: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3340693-1520824498-2-10242462094108362805
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
+  MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520824497; b=t6Z8cXupTUVQLFW/YFmFRhp1y2O42AwGF50mxX7C+u+T8pq
+    sQo0wXx5h84TmowjgixnQKghqpYF7IblGJk7a4bqrv0g4RfujMtmH/2zRQ8naf7O
+    eT6qKeCnf26WYPGsK2a14XcpIbDGgDn/lIdQNmpgkEZkw2cm0jGG7OFJEdXJmW9L
+    9zDwc0yKbM/J1qTd78Z6ZZxeuwKQtF29snwLT+MLjMH2nKO02qybb8Ht9whBP0HM
+    q991Dr5U47HmZAtgDl3zLAbrIpzHNWDtKF8UC6Q3sOU8qtAj1KGCe3uToUT6rprx
+    SdFHKCHq7cU0+kpZUw29WQa9i9iLWdVeFQWaUJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=content-type:content-transfer-encoding
+    :mime-version:from:to:cc:date:message-id:subject:sender:list-id;
+    s=arctest; t=1520824497; bh=iTxrqA1m6LKp5j+UCG/xvB0YsRaVTkjsCcr
+    BXEC7n4U=; b=jKcmj84dH35cxIDa3pgY+BRxVuCpVNPHtaH3IZQcESTi3PZlMQH
+    /58CeP/I4PfwRAuJx11nyid3B2RcOwzZB1Wv6gMvieiFMPvCW4mjDDNisgxVblJc
+    eAHw91rAKOmdf2wx7WQJX9SGeHOPrDsafobabbToF6/GCrBWuW1xVmt+hl3feKI7
+    HKSBkk30414MonHIFmdynlpG0Hib/9nidRsqdHwxfM7PjHM+iiErDf4znzbs5Qmi
+    C7XqvIZ/kdeILYNJn40H939osmivUuQa1V6AMBBK5FGHboaIs7aoRAIlOP2xopkF
+    vVNeU2J/ZzNUp0czlk2e5/x/tHSZQV75+CQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932789AbeCLDOx (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Mar 2018 23:14:53 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41505 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932779AbeCLDHv (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 23:07:51 -0400
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: torvalds@linux-foundation.org, Guenter Roeck <linux@roeck-us.net>,
+        akpm@linux-foundation.org
+Date: Mon, 12 Mar 2018 03:06:11 +0000
+Message-ID: <lsq.1520823971.5976735@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 00/76] 3.16.56-rc1 review
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595102583772500389?=
-X-GMAIL-MSGID: =?utf-8?q?1595102583772500389?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
-symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
-In most cases this other symbol is an architecture or platform specific
-symbol, or PCI.
+This is the start of the stable review cycle for the 3.16.56 release.
+There are 76 patches in this series, which will be posted as responses
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Generic symbols and drivers without platform dependencies keep their
-dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
-cannot work anyway.
+Responses should be made by Wed Mar 14 12:00:00 UTC 2018.
+Anything received after that time might be too late.
 
-This simplifies the dependencies, and allows to improve compile-testing.
+All the patches have also been committed to the linux-3.16.y-rc branch of
+https://git.kernel.org/pub/scm/linux/kernel/git/bwh/linux-stable-rc.git .
+A shortlog and diffstat can be found below.
 
-Note:
-  - FSL_FMAN keeps its dependency on HAS_DMA, as it calls set_dma_ops().
-    set_dma_ops() does not exist if NO_DMA=y, and its use in this driver
-    is questionable.
+Ben.
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Acked-by: Robin Murphy <robin.murphy@arm.com>
----
-v2:
-  - Add Reviewed-by, Acked-by,
-  - Drop RFC state,
-  - Split per subsystem.
----
- drivers/net/ethernet/amd/Kconfig                | 2 +-
- drivers/net/ethernet/apm/xgene-v2/Kconfig       | 1 -
- drivers/net/ethernet/apm/xgene/Kconfig          | 1 -
- drivers/net/ethernet/arc/Kconfig                | 6 ++++--
- drivers/net/ethernet/broadcom/Kconfig           | 2 --
- drivers/net/ethernet/calxeda/Kconfig            | 2 +-
- drivers/net/ethernet/hisilicon/Kconfig          | 2 +-
- drivers/net/ethernet/marvell/Kconfig            | 8 +++-----
- drivers/net/ethernet/mellanox/mlxsw/Kconfig     | 2 +-
- drivers/net/ethernet/renesas/Kconfig            | 2 --
- drivers/net/wireless/broadcom/brcm80211/Kconfig | 1 -
- drivers/net/wireless/quantenna/qtnfmac/Kconfig  | 2 +-
- 12 files changed, 12 insertions(+), 19 deletions(-)
+-------------
 
-diff --git a/drivers/net/ethernet/amd/Kconfig b/drivers/net/ethernet/amd/Kconfig
-index d5c15e8bb3de706b..f273af136fc7c995 100644
---- a/drivers/net/ethernet/amd/Kconfig
-+++ b/drivers/net/ethernet/amd/Kconfig
-@@ -173,7 +173,7 @@ config SUNLANCE
- 
- config AMD_XGBE
- 	tristate "AMD 10GbE Ethernet driver"
--	depends on ((OF_NET && OF_ADDRESS) || ACPI || PCI) && HAS_IOMEM && HAS_DMA
-+	depends on ((OF_NET && OF_ADDRESS) || ACPI || PCI) && HAS_IOMEM
- 	depends on X86 || ARM64 || COMPILE_TEST
- 	select BITREVERSE
- 	select CRC32
-diff --git a/drivers/net/ethernet/apm/xgene-v2/Kconfig b/drivers/net/ethernet/apm/xgene-v2/Kconfig
-index 1205861b631896a0..eedd3f3dd22e2201 100644
---- a/drivers/net/ethernet/apm/xgene-v2/Kconfig
-+++ b/drivers/net/ethernet/apm/xgene-v2/Kconfig
-@@ -1,6 +1,5 @@
- config NET_XGENE_V2
- 	tristate "APM X-Gene SoC Ethernet-v2 Driver"
--	depends on HAS_DMA
- 	depends on ARCH_XGENE || COMPILE_TEST
- 	help
- 	  This is the Ethernet driver for the on-chip ethernet interface
-diff --git a/drivers/net/ethernet/apm/xgene/Kconfig b/drivers/net/ethernet/apm/xgene/Kconfig
-index afccb033177b3923..e4e33c900b577161 100644
---- a/drivers/net/ethernet/apm/xgene/Kconfig
-+++ b/drivers/net/ethernet/apm/xgene/Kconfig
-@@ -1,6 +1,5 @@
- config NET_XGENE
- 	tristate "APM X-Gene SoC Ethernet Driver"
--	depends on HAS_DMA
- 	depends on ARCH_XGENE || COMPILE_TEST
- 	select PHYLIB
- 	select MDIO_XGENE
-diff --git a/drivers/net/ethernet/arc/Kconfig b/drivers/net/ethernet/arc/Kconfig
-index e743ddf46343302f..5d0ab8e74b680cc6 100644
---- a/drivers/net/ethernet/arc/Kconfig
-+++ b/drivers/net/ethernet/arc/Kconfig
-@@ -24,7 +24,8 @@ config ARC_EMAC_CORE
- config ARC_EMAC
- 	tristate "ARC EMAC support"
- 	select ARC_EMAC_CORE
--	depends on OF_IRQ && OF_NET && HAS_DMA && (ARC || COMPILE_TEST)
-+	depends on OF_IRQ && OF_NET
-+	depends on ARC || COMPILE_TEST
- 	---help---
- 	  On some legacy ARC (Synopsys) FPGA boards such as ARCAngel4/ML50x
- 	  non-standard on-chip ethernet device ARC EMAC 10/100 is used.
-@@ -33,7 +34,8 @@ config ARC_EMAC
- config EMAC_ROCKCHIP
- 	tristate "Rockchip EMAC support"
- 	select ARC_EMAC_CORE
--	depends on OF_IRQ && OF_NET && REGULATOR && HAS_DMA && (ARCH_ROCKCHIP || COMPILE_TEST)
-+	depends on OF_IRQ && OF_NET && REGULATOR
-+	depends on ARCH_ROCKCHIP || COMPILE_TEST
- 	---help---
- 	  Support for Rockchip RK3036/RK3066/RK3188 EMAC ethernet controllers.
- 	  This selects Rockchip SoC glue layer support for the
-diff --git a/drivers/net/ethernet/broadcom/Kconfig b/drivers/net/ethernet/broadcom/Kconfig
-index af75156919edfead..4c3bfde6e8de00f2 100644
---- a/drivers/net/ethernet/broadcom/Kconfig
-+++ b/drivers/net/ethernet/broadcom/Kconfig
-@@ -157,7 +157,6 @@ config BGMAC
- config BGMAC_BCMA
- 	tristate "Broadcom iProc GBit BCMA support"
- 	depends on BCMA && BCMA_HOST_SOC
--	depends on HAS_DMA
- 	depends on BCM47XX || ARCH_BCM_5301X || COMPILE_TEST
- 	select BGMAC
- 	select PHYLIB
-@@ -170,7 +169,6 @@ config BGMAC_BCMA
- 
- config BGMAC_PLATFORM
- 	tristate "Broadcom iProc GBit platform support"
--	depends on HAS_DMA
- 	depends on ARCH_BCM_IPROC || COMPILE_TEST
- 	depends on OF
- 	select BGMAC
-diff --git a/drivers/net/ethernet/calxeda/Kconfig b/drivers/net/ethernet/calxeda/Kconfig
-index 07d2201530d26c85..9fdd496b90ff47cb 100644
---- a/drivers/net/ethernet/calxeda/Kconfig
-+++ b/drivers/net/ethernet/calxeda/Kconfig
-@@ -1,6 +1,6 @@
- config NET_CALXEDA_XGMAC
- 	tristate "Calxeda 1G/10G XGMAC Ethernet driver"
--	depends on HAS_IOMEM && HAS_DMA
-+	depends on HAS_IOMEM
- 	depends on ARCH_HIGHBANK || COMPILE_TEST
- 	select CRC32
- 	help
-diff --git a/drivers/net/ethernet/hisilicon/Kconfig b/drivers/net/ethernet/hisilicon/Kconfig
-index 8bcf470ff5f38a4e..fb1a7251f45d3369 100644
---- a/drivers/net/ethernet/hisilicon/Kconfig
-+++ b/drivers/net/ethernet/hisilicon/Kconfig
-@@ -5,7 +5,7 @@
- config NET_VENDOR_HISILICON
- 	bool "Hisilicon devices"
- 	default y
--	depends on (OF || ACPI) && HAS_DMA
-+	depends on OF || ACPI
- 	depends on ARM || ARM64 || COMPILE_TEST
- 	---help---
- 	  If you have a network (Ethernet) card belonging to this class, say Y.
-diff --git a/drivers/net/ethernet/marvell/Kconfig b/drivers/net/ethernet/marvell/Kconfig
-index ebe5c91489355c9e..0704a1900bbca444 100644
---- a/drivers/net/ethernet/marvell/Kconfig
-+++ b/drivers/net/ethernet/marvell/Kconfig
-@@ -18,8 +18,8 @@ if NET_VENDOR_MARVELL
- 
- config MV643XX_ETH
- 	tristate "Marvell Discovery (643XX) and Orion ethernet support"
--	depends on (MV64X60 || PPC32 || PLAT_ORION || COMPILE_TEST) && INET
--	depends on HAS_DMA
-+	depends on MV64X60 || PPC32 || PLAT_ORION || COMPILE_TEST
-+	depends on INET
- 	select PHYLIB
- 	select MVMDIO
- 	---help---
-@@ -58,7 +58,6 @@ config MVNETA_BM_ENABLE
- config MVNETA
- 	tristate "Marvell Armada 370/38x/XP/37xx network interface support"
- 	depends on ARCH_MVEBU || COMPILE_TEST
--	depends on HAS_DMA
- 	select MVMDIO
- 	select PHYLINK
- 	---help---
-@@ -84,7 +83,6 @@ config MVNETA_BM
- config MVPP2
- 	tristate "Marvell Armada 375/7K/8K network interface support"
- 	depends on ARCH_MVEBU || COMPILE_TEST
--	depends on HAS_DMA
- 	select MVMDIO
- 	---help---
- 	  This driver supports the network interface units in the
-@@ -92,7 +90,7 @@ config MVPP2
- 
- config PXA168_ETH
- 	tristate "Marvell pxa168 ethernet support"
--	depends on HAS_IOMEM && HAS_DMA
-+	depends on HAS_IOMEM
- 	depends on CPU_PXA168 || ARCH_BERLIN || COMPILE_TEST
- 	select PHYLIB
- 	---help---
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/Kconfig b/drivers/net/ethernet/mellanox/mlxsw/Kconfig
-index d56eea3105090051..b591c8cc9896ccb7 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/Kconfig
-+++ b/drivers/net/ethernet/mellanox/mlxsw/Kconfig
-@@ -30,7 +30,7 @@ config MLXSW_CORE_THERMAL
- 
- config MLXSW_PCI
- 	tristate "PCI bus implementation for Mellanox Technologies Switch ASICs"
--	depends on PCI && HAS_DMA && HAS_IOMEM && MLXSW_CORE
-+	depends on PCI && HAS_IOMEM && MLXSW_CORE
- 	default m
- 	---help---
- 	  This is PCI bus implementation for Mellanox Technologies Switch ASICs.
-diff --git a/drivers/net/ethernet/renesas/Kconfig b/drivers/net/ethernet/renesas/Kconfig
-index 27be51f0a421b43e..f3f7477043ce1061 100644
---- a/drivers/net/ethernet/renesas/Kconfig
-+++ b/drivers/net/ethernet/renesas/Kconfig
-@@ -17,7 +17,6 @@ if NET_VENDOR_RENESAS
- 
- config SH_ETH
- 	tristate "Renesas SuperH Ethernet support"
--	depends on HAS_DMA
- 	depends on ARCH_RENESAS || SUPERH || COMPILE_TEST
- 	select CRC32
- 	select MII
-@@ -31,7 +30,6 @@ config SH_ETH
- 
- config RAVB
- 	tristate "Renesas Ethernet AVB support"
--	depends on HAS_DMA
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	select CRC32
- 	select MII
-diff --git a/drivers/net/wireless/broadcom/brcm80211/Kconfig b/drivers/net/wireless/broadcom/brcm80211/Kconfig
-index 9d99eb42d9176f0f..6acba67bca07abd7 100644
---- a/drivers/net/wireless/broadcom/brcm80211/Kconfig
-+++ b/drivers/net/wireless/broadcom/brcm80211/Kconfig
-@@ -60,7 +60,6 @@ config BRCMFMAC_PCIE
- 	bool "PCIE bus interface support for FullMAC driver"
- 	depends on BRCMFMAC
- 	depends on PCI
--	depends on HAS_DMA
- 	select BRCMFMAC_PROTO_MSGBUF
- 	select FW_LOADER
- 	---help---
-diff --git a/drivers/net/wireless/quantenna/qtnfmac/Kconfig b/drivers/net/wireless/quantenna/qtnfmac/Kconfig
-index 025fa6018550895a..8d1492a90bd135c0 100644
---- a/drivers/net/wireless/quantenna/qtnfmac/Kconfig
-+++ b/drivers/net/wireless/quantenna/qtnfmac/Kconfig
-@@ -7,7 +7,7 @@ config QTNFMAC
- config QTNFMAC_PEARL_PCIE
- 	tristate "Quantenna QSR10g PCIe support"
- 	default n
--	depends on HAS_DMA && PCI && CFG80211
-+	depends on PCI && CFG80211
- 	select QTNFMAC
- 	select FW_LOADER
- 	select CRC32
+Andi Kleen (3):
+      module/retpoline: Warn about missing retpoline in module
+         [caf7501a1b4ec964190f31f9c3f163de252273b8]
+      x86/retpoline/irq32: Convert assembler indirect jumps
+         [7614e913db1f40fff819b36216484dc3808995d4]
+      x86/retpoline: Optimize inline assembler for vmexit_fill_RSB
+         [3f7d875566d8e79c5e0b2c9a413e91b2c29e0854]
+
+Andrey Ryabinin (1):
+      x86/asm: Use register variable to get stack pointer value
+         [196bd485ee4f03ce4c690bfcf38138abfcd0a4bc]
+
+Andy Lutomirski (3):
+      x86/asm: Make asm/alternative.h safe from assembly
+         [f005f5d860e0231fe212cfda8c1a3148b99609f4]
+      x86/cpu: Factor out application of forced CPU caps
+         [8bf1ebca215c262e48c15a4a15f175991776f57f]
+      x86: Clean up current_stack_pointer
+         [83653c16da91112236292871b820cb8b367220e3]
+
+Arnd Bergmann (1):
+      x86: fix build warnign with 32-bit PAE
+         [not upstream; specific to KAISER]
+
+Ben Hutchings (1):
+      x86/syscall: Sanitize syscall table de-references under speculation
+         [2fbd7af5af8665d18bcefae3e9700be07e22b681]
+
+Borislav Petkov (6):
+      x86/alternatives: Fix ALTERNATIVE_2 padding generation properly
+         [dbe4058a6a44af4ca5d146aebe01b0a1f9b7fd2a]
+      x86/alternatives: Fix optimize_nops() checking
+         [612e8e9350fd19cae6900cf36ea0c6892d1a0dca]
+      x86/alternatives: Guard NOPs optimization
+         [69df353ff305805fc16082d0c5bfa6e20fa8b863]
+      x86/bugs: Drop one "mitigation" from dmesg
+         [55fa19d3e51f33d9cd4056d25836d93abf9438db]
+      x86/cpu: Merge bugs.c and bugs_64.c
+         [62a67e123e058a67db58bc6a14354dd037bafd0a]
+      x86/nospec: Fix header guards names
+         [7a32fc51ca938e67974cbb9db31e1a43f98345a9]
+
+Colin Ian King (1):
+      x86/spectre: Fix spelling mistake: "vunerable"-> "vulnerable"
+         [e698dcdfcda41efd0984de539767b4cddd235f1e]
+
+Dan Carpenter (1):
+      x86/spectre: Fix an error message
+         [9de29eac8d2189424d81c0d840cd0469aa3d41c8]
+
+Dan Williams (13):
+      array_index_nospec: Sanitize speculative array de-references
+         [f3804203306e098dae9ca51540fcd5eb700d7f40]
+      nl80211: Sanitize array index in parse_txq_params
+         [259d8c1e984318497c84eef547bbb6b1d9f4eb05]
+      nospec: Include <asm/barrier.h> dependency
+         [eb6174f6d1be16b19cfa43dac296bfed003ce1a6]
+      nospec: Kill array_index_nospec_mask_check()
+         [1d91c1d2c80cb70e2e553845e278b87a960c04da]
+      vfs, fdtable: Prevent bounds-check bypass via speculative execution
+         [56c30ba7b348b90484969054d561f711ba196507]
+      x86/get_user: Use pointer masking to limit speculation
+         [c7f631cb07e7da06ac1d231ca178452339e32a94]
+      x86/kvm: Update spectre-v1 mitigation
+         [085331dfc6bbe3501fb936e657331ca943827600]
+      x86/spectre: Report get_user mitigation for spectre_v1
+         [edfbae53dab8348fca778531be9f4855d2ca0360]
+      x86/uaccess: Use __uaccess_begin_nospec() and uaccess_try_nospec
+         [304ec1b050310548db33063e567123fae8fd0301]
+      x86/usercopy: Replace open coded stac/clac with __uaccess_{begin, end}
+         [b5c4ae4f35325d520b230bab6eb3310613b72ac1]
+      x86: Implement array_index_mask_nospec
+         [babdde2698d482b6c0de1eab4f697cf5856c5859]
+      x86: Introduce __uaccess_begin_nospec() and uaccess_try_nospec
+         [b3bbfb3fb5d25776b8e3f361d2eedaabb0b496cd]
+      x86: Introduce barrier_nospec
+         [b3d7ad85b80bbc404635dca80f5b129f6242bc7a]
+
+Darren Kenny (1):
+      x86/speculation: Fix typo IBRS_ATT, which should be IBRS_ALL
+         [af189c95a371b59f493dbe0f50c0a09724868881]
+
+Dave Hansen (2):
+      x86/Documentation: Add PTI description
+         [01c9b17bf673b05bb401b76ec763e9730ccf1376]
+      x86/cpu/intel: Introduce macros for Intel family numbers
+         [970442c599b22ccd644ebfe94d1d303bf6f87c05]
+
+David Woodhouse (14):
+      sysfs/cpu: Fix typos in vulnerability documentation
+         [9ecccfaa7cb5249bd31bdceb93fcf5bedb8a24d8]
+      x86/cpufeatures: Add X86_BUG_SPECTRE_V[12]
+         [99c6fa2511d8a683e61468be91b83f85452115fa]
+      x86/cpufeatures: Clean up Spectre v2 related CPUID flags
+         [2961298efe1ea1b6fc0d7ee8b76018fa6c0bcef2]
+      x86/retpoline/checksum32: Convert assembler indirect jumps
+         [5096732f6f695001fa2d6f1335a2680b37912c69]
+      x86/retpoline/crypto: Convert crypto assembler indirect jumps
+         [9697fa39efd3fc3692f2949d4045f393ec58450b]
+      x86/retpoline/entry: Convert entry assembler indirect jumps
+         [2641f08bb7fc63a636a2b18173221d7040a3512e]
+      x86/retpoline/ftrace: Convert ftrace assembler indirect jumps
+         [9351803bd803cdbeb9b5a7850b7b6f464806e3db]
+      x86/retpoline/hyperv: Convert assembler indirect jumps
+         [e70e5892b28c18f517f29ab6e83bd57705104b31]
+      x86/retpoline/xen: Convert Xen hypercall indirect jumps
+         [ea08816d5b185ab3d09e95e393f265af54560350]
+      x86/retpoline: Add initial retpoline support
+         [76b043848fd22dbf7f8bf3a1452f8c70d557b860]
+      x86/retpoline: Avoid retpolines for built-in __init functions
+         [66f793099a636862a71c59d4a6ba91387b155e0c]
+      x86/retpoline: Fill RSB on context switch for affected CPUs
+         [c995efd5a740d9cbafbf58bde4973e8b50b4d761]
+      x86/retpoline: Fill return stack buffer on vmexit
+         [117cc7a908c83697b0b737d15ae1eb5943afe35b]
+      x86/spectre: Add boot time option to select Spectre v2 mitigation
+         [da285121560e769cc31797bba6422eea71d473e0]
+
+Dou Liyang (1):
+      x86/spectre: Check CONFIG_RETPOLINE in command line parser
+         [9471eee9186a46893726e22ebb54cade3f9bc043]
+
+Gustavo A. R. Silva (1):
+      x86/cpu: Change type of x86_cache_size variable to unsigned int
+         [24dbc6000f4b9b0ef5a9daecb161f1907733765a]
+
+Jim Mattson (1):
+      kvm: vmx: Scrub hardware GPRs at VM-exit
+         [0cb5b30698fdc8f6b4646012e3acb4ddce430788]
+
+Josh Poimboeuf (1):
+      x86/paravirt: Remove 'noreplace-paravirt' cmdline option
+         [12c69f1e94c89d40696e83804dd2f0965b5250cd]
+
+KarimAllah Ahmed (1):
+      x86/spectre: Simplify spectre_v2 command line parsing
+         [9005c6834c0ffdfe46afa76656bd9276cca864f6]
+
+Linus Torvalds (2):
+      x86: fix SMAP in 32-bit environments
+         [de9e478b9d49f3a0214310d921450cf5bb4a21e6]
+      x86: reorganize SMAP handling in user space accesses
+         [11f1a4b9755f5dbc3e822a96502ebe9b044b14d8]
+
+Mark Rutland (1):
+      Documentation: Document array_index_nospec
+         [f84a56f73dddaeac1dba8045b007f742f61cd2da]
+
+Masahiro Yamada (1):
+      kconfig.h: use __is_defined() to check if MODULE is defined
+         [4f920843d248946545415c1bf6120942048708ed]
+
+Masami Hiramatsu (3):
+      kprobes/x86: Blacklist indirect thunk functions for kprobes
+         [c1804a236894ecc942da7dc6c5abe209e56cba93]
+      kprobes/x86: Disable optimizing on the function jumps to indirect thunk
+         [c86a32c09f8ced67971a2310e3b0dda4d1749007]
+      retpoline: Introduce start/end markers of indirect thunk
+         [736e80a4213e9bbce40a7c050337047128b472ac]
+
+Peter Zijlstra (2):
+      KVM: VMX: Make indirect call speculation safe
+         [c940a3fb1e2e9b7d03228ab28f375fb5a47ff699]
+      KVM: x86: Make indirect calls in emulator speculation safe
+         [1a29b5b7f347a1a9230c1e0af5b37e3e571588ab]
+
+Thomas Gleixner (8):
+      sysfs/cpu: Add vulnerability folder
+         [87590ce6e373d1a5401f6539f0c59ef92dd924a9]
+      x86/alternatives: Make optimize_nops() interrupt safe and synced
+         [66c117d7fa2ae429911e60d84bf31a90b2b96189]
+      x86/cpu/bugs: Make retpoline module warning conditional
+         [e383095c7fe8d218e00ec0f83e4b95ed4e627b02]
+      x86/cpu: Implement CPU vulnerabilites sysfs functions
+         [61dc0f555b5c761cdafb0ba5bd41ecf22d68a4c4]
+      x86/cpufeatures: Add X86_BUG_CPU_INSECURE
+         [a89f040fa34ec9cd682aed98b8f04e3c47d998bd]
+      x86/cpufeatures: Make CPU bugs sticky
+         [6cbd2171e89b13377261d15e64384df60ecb530e]
+      x86/pti: Rename BUG_CPU_INSECURE to BUG_CPU_MELTDOWN
+         [de791821c295cc61419a06fe5562288417d1bc58]
+      x86/retpoline: Remove compile time warning
+         [b8b9ce4b5aec8de9e23cabb0a26b78641f9ab1d6]
+
+Tom Lendacky (4):
+      x86/cpu, x86/pti: Do not enable PTI on AMD processors
+         [694d99d40972f12e59a3696effee8a376b79d7c8]
+      x86/cpu/AMD: Make LFENCE a serializing instruction
+         [e4d0e84e490790798691aaa0f2e598637f1867ec]
+      x86/cpu/AMD: Use LFENCE_RDTSC in preference to MFENCE_RDTSC
+         [9c6a73c75864ad9fa49e5fa6513e4c4071c0e29f]
+      x86/retpoline: Add LFENCE to the retpoline/RSB filling RSB macros
+         [28d437d550e1e39f805d99f9f8ac399c778827b7]
+
+Waiman Long (1):
+      x86/retpoline: Remove the esp/rsp thunk
+         [1df37383a8aeabb9b418698f0bcdffea01f4b1b2]
+
+Will Deacon (1):
+      nospec: Move array_index_nospec() parameter checking into separate macro
+         [8fa80c503b484ddc1abbd10c7cb2ab81f3824a50]
+
+Zhenwei.Pi (1):
+      x86/pti: Document fix wrong index
+         [98f0fceec7f84d80bc053e49e596088573086421]
+
+ Documentation/ABI/testing/sysfs-devices-system-cpu |  16 ++
+ Documentation/kernel-parameters.txt                |  51 +++-
+ Documentation/speculation.txt                      |  90 +++++++
+ Documentation/x86/pti.txt                          | 186 +++++++++++++
+ Makefile                                           |   4 +-
+ arch/x86/Kconfig                                   |  14 +
+ arch/x86/Makefile                                  |   8 +
+ arch/x86/crypto/aesni-intel_asm.S                  |   5 +-
+ arch/x86/crypto/camellia-aesni-avx-asm_64.S        |   3 +-
+ arch/x86/crypto/camellia-aesni-avx2-asm_64.S       |   3 +-
+ arch/x86/crypto/crc32c-pcl-intel-asm_64.S          |   3 +-
+ arch/x86/include/asm/alternative-asm.h             |  14 +-
+ arch/x86/include/asm/alternative.h                 |  20 +-
+ arch/x86/include/asm/asm.h                         |  11 +
+ arch/x86/include/asm/barrier.h                     |  31 ++-
+ arch/x86/include/asm/cpufeature.h                  |   8 +
+ arch/x86/include/asm/intel-family.h                |  68 +++++
+ arch/x86/include/asm/nospec-branch.h               | 198 ++++++++++++++
+ arch/x86/include/asm/processor.h                   |   6 +-
+ arch/x86/include/asm/switch_to.h                   |  38 +++
+ arch/x86/include/asm/uaccess.h                     |  64 +++--
+ arch/x86/include/asm/uaccess_32.h                  |  24 ++
+ arch/x86/include/asm/uaccess_64.h                  |  94 +++++--
+ arch/x86/include/asm/xen/hypercall.h               |   5 +-
+ arch/x86/include/uapi/asm/msr-index.h              |   3 +
+ arch/x86/kernel/alternative.c                      |  29 +-
+ arch/x86/kernel/cpu/Makefile                       |   4 +-
+ arch/x86/kernel/cpu/amd.c                          |  28 +-
+ arch/x86/kernel/cpu/bugs.c                         | 299 ++++++++++++++++++++-
+ arch/x86/kernel/cpu/bugs_64.c                      |  33 ---
+ arch/x86/kernel/cpu/common.c                       |  32 ++-
+ arch/x86/kernel/cpu/microcode/intel.c              |   2 +-
+ arch/x86/kernel/cpu/proc.c                         |   4 +-
+ arch/x86/kernel/entry_32.S                         |  15 +-
+ arch/x86/kernel/entry_64.S                         |  29 +-
+ arch/x86/kernel/irq_32.c                           |  16 +-
+ arch/x86/kernel/kprobes/opt.c                      |  23 +-
+ arch/x86/kernel/mcount_64.S                        |   8 +-
+ arch/x86/kernel/vmlinux.lds.S                      |   6 +
+ arch/x86/kvm/emulate.c                             |   9 +-
+ arch/x86/kvm/svm.c                                 |  23 ++
+ arch/x86/kvm/vmx.c                                 |  46 ++--
+ arch/x86/lib/Makefile                              |   2 +
+ arch/x86/lib/checksum_32.S                         |   7 +-
+ arch/x86/lib/getuser.S                             |  10 +
+ arch/x86/lib/retpoline-export.c                    |  24 ++
+ arch/x86/lib/retpoline.S                           |  47 ++++
+ arch/x86/lib/usercopy_32.c                         |  20 +-
+ drivers/base/Kconfig                               |   3 +
+ drivers/base/cpu.c                                 |  48 ++++
+ drivers/hv/hv.c                                    |  25 +-
+ include/linux/cpu.h                                |   7 +
+ include/linux/fdtable.h                            |   5 +-
+ include/linux/init.h                               |   9 +-
+ include/linux/kaiser.h                             |   2 +-
+ include/linux/kconfig.h                            |   9 +-
+ include/linux/module.h                             |   9 +
+ include/linux/nospec.h                             |  59 ++++
+ kernel/module.c                                    |  11 +
+ net/wireless/nl80211.c                             |   9 +-
+ scripts/mod/modpost.c                              |   9 +
+ 61 files changed, 1662 insertions(+), 226 deletions(-)
+
 -- 
-2.7.4
+Ben Hutchings
+Design a system any fool can use, and only a fool will want to use it.
