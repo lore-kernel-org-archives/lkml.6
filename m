@@ -1,118 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932266AbeCLTFz convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 15:05:55 -0400
-Received: from claranet-outbound-smtp02.uk.clara.net ([195.8.89.35]:55701 "EHLO
-        claranet-outbound-smtp02.uk.clara.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751275AbeCLTFy (ORCPT
+        id S932316AbeCLTGY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 15:06:24 -0400
+Received: from v2201708193052815.ultrasrv.de ([46.38.233.140]:56925 "EHLO
+        lallafa.objecthunter.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751473AbeCLTGX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 15:05:54 -0400
-Date: Mon, 12 Mar 2018 19:05:41 +0000
-From: Ian Armstrong <mail01@iarmst.co.uk>
-To: Nick French <naf@ou.edu>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "hans.verkuil@cisco.com" <hans.verkuil@cisco.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
-Subject: Re: ivtv: use arch_phys_wc_add() and require PAT disabled
-Message-ID: <20180312190541.797ef4de@spike.private.network>
-In-Reply-To: <20180312040401.GA4814@tivo.lan>
-References: <20180301171936.GU14069@wotan.suse.de>
-        <DM5PR03MB303587F12D7E56B951730A76D3D90@DM5PR03MB3035.namprd03.prod.outlook.com>
-        <20180307190205.GA14069@wotan.suse.de>
-        <DM5PR03MB30352350D588A81D2D02BE93D3DF0@DM5PR03MB3035.namprd03.prod.outlook.com>
-        <20180308040601.GQ14069@wotan.suse.de>
-        <20180308041411.GR14069@wotan.suse.de>
-        <DM5PR03MB3035CCBF9718D7E42B35357FD3DF0@DM5PR03MB3035.namprd03.prod.outlook.com>
-        <MWHPR03MB30402C0F8B8F457F5F760412D3DD0@MWHPR03MB3040.namprd03.prod.outlook.com>
-        <CAB=NE6VvDNbe=XsfG0tYeFcxcXzsRkHnZxVHM79-V+1t6foU5g@mail.gmail.com>
-        <20180311232438.2b204c51@spike.private.network>
-        <20180312040401.GA4814@tivo.lan>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-unknown-linux-gnu)
+        Mon, 12 Mar 2018 15:06:23 -0400
+From: Frank Asseg <frank.asseg@objecthunter.net>
+Subject: [PATCH] tools/thermal: tmon: fix for segfault
+To: trivial@kernel.org
+Cc: linux-kernel@vger.kernel.org
+Message-ID: <0ef0f303-de13-326c-efa4-82fa40847099@objecthunter.net>
+Date: Mon, 12 Mar 2018 19:57:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 11 Mar 2018 23:04:02 -0500
-Nick French <naf@ou.edu> wrote:
+Fixes a segfault occurring when e.g. <TAB> is pressed multiple times in
+the ncurses tmon application. The segfault is caused by incrementing
+cur_thermal_record in the main function without checking if it's value
+reached NR_THERMAL_RECORD immediately. Since the boundary check only
+occurred in update_thermal_data a race condition existed, which lead to
+an attempted read beyond the last element of the trec array.
+The fix was implemented by moving the cur_thermal_record incrementation
+to the update_thermal_data function using a temporary variable
+on which the boundary condition is checked before updating
+cur_thread_record, so that the variable is never incremented beyond the
+trec array's boundary.
+It seems the segfault does not occur on every machine: On a HP EliteBook
+G4 the segfault happens, while it does not happen on a Thinkpad T540p.
 
-> On Sun, Mar 11, 2018 at 11:24:38PM +0000, Ian Armstrong wrote:
-> > On Sat, 10 Mar 2018 16:57:41 +0000
-> > "French, Nicholas A." <naf@ou.edu> wrote:
-> >   
-> > > > > No what if the framebuffer driver is just requested as a
-> > > > > secondary step after firmware loading?    
-> > > >
-> > > > Its a possibility. The decoder firmware gets loaded at the
-> > > > beginning of the decoder memory range and we know its length, so
-> > > > its possible to ioremap_nocache enough room for the firmware
-> > > > only on init and then ioremap the remaining non-firmware
-> > > > decoder memory areas appropriately after the firmware load
-> > > > succeeds...    
-> > > 
-> > > I looked in more detail, and this would be "hard" due to the way
-> > > the rest of the decoder offsets are determined by either making
-> > > firmware calls or scanning the decoder memory range for magic
-> > > bytes and other mess.  
-> > 
-> > The buffers used for yuv output are fixed. They are located both
-> > before and after the framebuffer. Their offset is fixed at
-> > 'base_addr + IVTV_DECODER_OFFSET + yuv_offset[]'. The yuv offsets
-> > can be found in 'ivtv-yuv.c'. The buffers are 622080 bytes in
-> > length.
-> > 
-> > The range would be from 'base_addr + 0x01000000 + 0x00029000' to
-> > 'base_addr + 0x01000000 + 0x00748200 + 0x97dff'. This is larger than
-> > required, but will catch the framebuffer and should not cause any
-> > problems. If you wanted to render direct to the yuv buffers, you
-> > would probably want this region included anyway (not that the
-> > current driver supports that).  
-> 
-> Am I correct that you are talking about the possibility of
-> re-ioremap()-ing the 'yuv-fb-yuv' area *after* loading the firmware,
-> not of mapping ranges correctly on the first go-around?
-> 
-> Because unless my math is letting me down, the decoder firmware is
-> already loaded from 'base_addr + 0x01000000 + 0x0' to 'base_addr +
-> 0x01000000 + 0x3ffff' which overlaps the beginning of the yuv range.
+Signed-off-by: Frank Asseg <frank.asseg@objecthunter.net>
+---
+ tools/thermal/tmon/sysfs.c | 12 +++++++-----
+ tools/thermal/tmon/tmon.c  |  1 -
+ 2 files changed, 7 insertions(+), 6 deletions(-)
 
-Good catch. I'd forgotten that the firmware moves after being loaded.
+diff --git a/tools/thermal/tmon/sysfs.c b/tools/thermal/tmon/sysfs.c
+index 1c12536f2081..18f523557983 100644
+--- a/tools/thermal/tmon/sysfs.c
++++ b/tools/thermal/tmon/sysfs.c
+@@ -486,6 +486,7 @@ int zone_instance_to_index(int zone_inst)
+ int update_thermal_data()
+ {
+ 	int i;
++	int next_thermal_record = cur_thermal_record + 1;
+ 	char tz_name[256];
+ 	static unsigned long samples;
 
-Although ivtvfb.c requests the offset to the framebuffer via the
-firmware, I don't believe it ever actually moves. The firmware allows
-more memory to be allocated for video buffers, but will then reduce the
-length of the framebuffer. At present the ivtv driver requests two more
-video buffers, so the framebuffer is shortened (the start address
-doesn't move). Those two buffers are located at base_addr + 0x16B0400
-and 0x1748200. The now shortened framebuffer is of size 1704960 bytes
-(0x1A0400).
+@@ -495,9 +496,9 @@ int update_thermal_data()
+ 	}
 
-These two offsets, plus those of the other video buffers are hardcoded
-in ivtv-yuv.c. It was written on the assumption that the location of the
-video buffers on the card are fixed. To the best of my knowledge, this
-has never caused a problem.
-
->From ivtvfb.c :
-
-/* The osd buffer size depends on the number of video buffers allocated
-   on the PVR350 itself. For now we'll hardcode the smallest osd buffer
-   size to prevent any overlap. */
-	oi->video_buffer_size = 1704960;
-
-We know that one of the additional video buffers is at 0x16B0400, and
-that this is located at the end of the now shortened 1704960 byte
-framebuffer.
-
-0x16B0400 - 0x1A0400 = 0x1510000.
-
-This gives us a 0x1A0400 byte framebuffer at base_addr + 0x1510000.
-
-Assuming the hardware is a PVR350 and is running stock firmware, I
-thinks its safe to say this won't change.
-
+ 	/* circular buffer for keeping historic data */
+-	if (cur_thermal_record >= NR_THERMAL_RECORDS)
+-		cur_thermal_record = 0;
+-	gettimeofday(&trec[cur_thermal_record].tv, NULL);
++	if (next_thermal_record >= NR_THERMAL_RECORDS)
++		next_thermal_record = 0;
++	gettimeofday(&trec[next_thermal_record].tv, NULL);
+ 	if (tmon_log) {
+ 		fprintf(tmon_log, "%lu ", ++samples);
+ 		fprintf(tmon_log, "%3.1f ", p_param.t_target);
+@@ -507,11 +508,12 @@ int update_thermal_data()
+ 		snprintf(tz_name, 256, "%s/%s%d", THERMAL_SYSFS, TZONE,
+ 			ptdata.tzi[i].instance);
+ 		sysfs_get_ulong(tz_name, "temp",
+-				&trec[cur_thermal_record].temp[i]);
++				&trec[next_thermal_record].temp[i]);
+ 		if (tmon_log)
+ 			fprintf(tmon_log, "%lu ",
+-				trec[cur_thermal_record].temp[i]/1000);
++				trec[next_thermal_record].temp[i] / 1000);
+ 	}
++	cur_thermal_record = next_thermal_record;
+ 	for (i = 0; i < ptdata.nr_cooling_dev; i++) {
+ 		char cdev_name[256];
+ 		unsigned long val;
+diff --git a/tools/thermal/tmon/tmon.c b/tools/thermal/tmon/tmon.c
+index 9aa19652e8e8..b43138f8b862 100644
+--- a/tools/thermal/tmon/tmon.c
++++ b/tools/thermal/tmon/tmon.c
+@@ -336,7 +336,6 @@ int main(int argc, char **argv)
+ 			show_data_w();
+ 			show_cooling_device();
+ 		}
+-		cur_thermal_record++;
+ 		time_elapsed += ticktime;
+ 		controller_handler(trec[0].temp[target_tz_index] / 1000,
+ 				&yk);
 -- 
-Ian
+2.16.2
