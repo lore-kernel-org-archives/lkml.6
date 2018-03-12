@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3443661-1520826445-2-2706569977321964323
+X-Cyrus-Session-Id: sloti22d1t05-3441149-1520826441-2-5543682240504840221
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,29 +13,29 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520826445; b=GO4SXj7qVYXR5cKYADlj6Et/h2+qMj/exXxcfPBzrsF063f
-    7S6Jm4pJFtDmWKuv9ZZNd9lwJyeZtvCaI6uo1TGQdcKwXy/qwTGgkWCWT2lTNwAY
-    UTMRti97GEMsLzr9uHMKh0/WLpZ8+DdU1rNrz170OX3oLnB7uXeqSlZUpZ5VFbul
-    6hMSHk/5cyjxUZ0GV6Ei6oKo8ebbeFK50shi8UWc9zrMU1jMx2MHUEZwzGiaa/wz
-    F1RSgOPM4is9LglRHxiOA/JIZKHBO3K1H3VIj/v+qkApduFzOdrGA910JybhBu7d
-    3l6Wusq+Qp+8sWK8Brq9ld/6EQvMmLcq0k3ROVA==
+    t=1520826440; b=uO3WUX/fOAOUwkXs6DXcOkLr0pSquuP6GV8RRO8t3I28Rj4
+    FKtVdZ2IM729C1bpv4qPIKPDphi4DKNBqaCaJom66XwfPzNfIyItw7pKaU3haK4O
+    vdTVP2qWUaQ5cvhgzNTcARPetEXgLMIxUwBWUsi0km/KptN3OSw0HnMISuT3ts2M
+    0jufmIKMRKv0zST5vQOtI+ImnaKEUzwR8iZG8o5A9BY8gS4k05g9CtXZctX0ZZDY
+    eeKYj9/v1YNpOefo9gqZxc5rXM3LT79pXnvx0DT7gTWMb9SWRzrab5dZBobORmkw
+    nMnC8QJdAKdCy9uVCGGMcF+Jx/Y/ee+RoLGYf2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1520826445; bh=gfXAZ5PYmrL2VEBVck9
-    JSBiAHoOPmt2s6lXDorR9mcs=; b=qBjzmZNgX8IPbZyL0tUQ+3pMQqb/cn7AGzi
-    YtEMbwkqu+wCGae/umhrFIZNLb4Aofv6c+YAsIRvuwK2Sm54BNs+BURox67maaFD
-    ASxFAqncDtO7Yb9or/9AHie2su58gy87ri+HtqZyhkQHcwds57t5N+wvZ6Ns3BtV
-    cn2tXIOEUWdkk0EkeIggruMx6oqKgKwRlTjV7SdKsIv0BXITma+kO9XKolNcBf7Y
-    qnTsBUsUgIkRfHYLzAveg918hl/Nl6A1/SeXUg3PlSfOfNXsTpah1anGlaJyX+If
-    oMFIn3uc3vqE6jL9nqfGWdmpPRzqiScVFK/RiQSIcBQZ7sSDEEQ==
+    :sender:list-id; s=arctest; t=1520826440; bh=Vgg4rlqQEGydT1E/MrP
+    GoMPrd9LEPKQv3kTZ07K4sWs=; b=EIuWc77HJRHHrZiq0mJY/w+zZLlfGoikzgA
+    CCPdIKiUIhJMkP947jsuAZk8Kix1nIyFltm1FumBbtGVT/XATuP6cEoD7j+EoXs7
+    JBJKWrZ6s2iXkJi0A8aKQC1SUoSdlAxXTELPv9ei1yrZ46bXh0OV1Y8CKMsvi56D
+    Ze/XzeY5D18Lssb1NtzuqxKjoPHS9bTmqnEvZ/3LphpQR06086z3fmfoG+0wMsXv
+    Bayzz+9SdDnYwo+slK6u+FvPc2VYU4fUzNZD25pL2sWFX02MssFYjRud0IpgM2b+
+    2r/TAQc/EVBs9iaDR+Ck3PhaOwvc6rbR1N1yMFatBUTj6Aqv4gg==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    x-category=clean score=0 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Authentication-Results: mx4.messagingengine.com;
@@ -45,15 +45,15 @@ Authentication-Results: mx4.messagingengine.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    x-category=clean score=0 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932668AbeCLDqm (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Mar 2018 23:46:42 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41084 "EHLO
+        id S932854AbeCLDqn (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Mar 2018 23:46:43 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41131 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932618AbeCLDHm (ORCPT
+        by vger.kernel.org with ESMTP id S932635AbeCLDHm (ORCPT
         <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 23:07:42 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -61,14 +61,13 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Jesper Nilsson" <jesper.nilsson@axis.com>,
-        "Paul Gortmaker" <paul.gortmaker@windriver.com>
+CC: akpm@linux-foundation.org, "David Woodhouse" <dwmw@amazon.co.uk>,
+        "Thomas Gleixner" <tglx@linutronix.de>
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.116991696@decadent.org.uk>
+Message-ID: <lsq.1520823814.243383322@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 104/104] cris: Remove old legacy "-traditional" flag
- from arch-v10/lib/Makefile
+Subject: [PATCH 3.2 048/104] sysfs/cpu: Fix typos in vulnerability
+ documentation
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -83,42 +82,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-commit 7b91747d42a1012e3781dd09fa638d113809e3fd upstream.
+commit 9ecccfaa7cb5249bd31bdceb93fcf5bedb8a24d8 upstream.
 
-Most of these have been purged years ago.  This one silently lived
-on until commit 69349c2dc01c489eccaa4c472542c08e370c6d7e
-
-    "kconfig: fix IS_ENABLED to not require all options to be defined"
-
-In the above, we use some macro trickery to create a conditional that
-is valid in CPP and in C usage.  However that trickery doesn't sit
-well if you have the legacy "-traditional" flag enabled.  You'll get:
-
-  AS      arch/cris/arch-v10/lib/checksum.o
-In file included from <command-line>:4:0:
-include/linux/kconfig.h:23:0: error: syntax error in macro parameter list
-make[2]: *** [arch/cris/arch-v10/lib/checksum.o] Error 1
-
-Everything builds fine w/o "-traditional" so simply drop it from this
-location as well.
-
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-Signed-off-by: Jesper Nilsson <jesper.nilsson@axis.com>
+Fixes: 87590ce6e ("sysfs/cpu: Add vulnerability folder")
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/cris/arch-v10/lib/Makefile | 3 ---
- 1 file changed, 3 deletions(-)
+ Documentation/ABI/testing/sysfs-devices-system-cpu | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/cris/arch-v10/lib/Makefile
-+++ b/arch/cris/arch-v10/lib/Makefile
-@@ -2,8 +2,5 @@
- # Makefile for Etrax-specific library files..
- #
+--- a/Documentation/ABI/testing/sysfs-devices-system-cpu
++++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
+@@ -206,7 +206,7 @@ What:		/sys/devices/system/cpu/vulnerabi
+ 		/sys/devices/system/cpu/vulnerabilities/meltdown
+ 		/sys/devices/system/cpu/vulnerabilities/spectre_v1
+ 		/sys/devices/system/cpu/vulnerabilities/spectre_v2
+-Date:		Januar 2018
++Date:		January 2018
+ Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
+ Description:	Information about CPU vulnerabilities
  
--
--EXTRA_AFLAGS := -traditional
--
- lib-y  = checksum.o checksumcopy.o string.o usercopy.o memset.o csumcpfruser.o
+@@ -216,4 +216,4 @@ Description:	Information about CPU vulne
  
+ 		"Not affected"	  CPU is not affected by the vulnerability
+ 		"Vulnerable"	  CPU is affected and no mitigation in effect
+-		"Mitigation: $M"  CPU is affetcted and mitigation $M is in effect
++		"Mitigation: $M"  CPU is affected and mitigation $M is in effect
