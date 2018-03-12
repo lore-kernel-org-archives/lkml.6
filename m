@@ -1,82 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751835AbeCLPkU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 11:40:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49388 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751458AbeCLPkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 11:40:18 -0400
-Date: Mon, 12 Mar 2018 11:40:16 -0400
-From: Mike Snitzer <snitzer@redhat.com>
-To: hare@suse.de, "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Ewan Milne <emilne@redhat.com>, linux-scsi@vger.kernel.org
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        kbuild test robot <fengguang.wu@intel.com>, dm-devel@redhat.com
-Subject: Re: ERROR: "scsi_device_from_queue" [drivers/md/dm-multipath.ko]
- undefined!
-Message-ID: <20180312154016.GA29395@redhat.com>
-References: <201803110354.yaesL1Mi%fengguang.wu@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201803110354.yaesL1Mi%fengguang.wu@intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S932487AbeCLPmi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 11:42:38 -0400
+Received: from mga04.intel.com ([192.55.52.120]:43880 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932440AbeCLPmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 11:42:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,461,1515484800";
+   d="scan'208";a="207483919"
+From: Kan Liang <kan.liang@linux.intel.com>
+To: peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org
+Cc: eranian@google.com, ak@linux.intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH] perf/x86/uncore: Add missing filter constraint for SKX CHA event
+Date: Mon, 12 Mar 2018 08:41:34 -0700
+Message-Id: <1520869294-14176-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 10 2018 at  2:29pm -0500,
-kbuild test robot <fengguang.wu@intel.com> wrote:
+From: Stephane Eranian <eranian@google.com>
 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   3266b5bd97eaa72793df0b6e5a106c69ccc166c4
-> commit: 8d47e65948ddea4398892946d9e50778a316b397 dm mpath: remove unnecessary NVMe branching in favor of scsi_dh checks
-> date:   4 days ago
-> config: x86_64-randconfig-x004-201810 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-> reproduce:
->         git checkout 8d47e65948ddea4398892946d9e50778a316b397
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> All errors (new ones prefixed by >>):
-> 
-> >> ERROR: "scsi_device_from_queue" [drivers/md/dm-multipath.ko] undefined!
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Adding a filter constraint for Intel Skylake CHA event
+UNC_CHA_UPI_CREDITS_ACQUIRED (0x38).
+The event supports core-id/thread-id and link filtering.
 
-This error is due to CONFIG_SCSI not being set.
+Signed-off-by: Stephane Eranian <eranian@google.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ arch/x86/events/intel/uncore_snbep.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-DM commit 8d47e6594 ("dm mpath: remove unnecessary NVMe branching in
-favor of scsi_dh checks") updated dm-mpath.c to call
-scsi_device_from_queue() to determine if a device is SCSI.
-
-The following patch fixes the buildbot reported case when CONFIG_SCSI
-isn't set... but it is unclear if this is the best way forward.  I don't
-want to make CONFIG_DM_MULTIPATH depend on CONFIG_SCSI, as such we
-either need the following patch or the equivalent in a dm-mpath.c
-wrapper.
-
-Thoughts?
-
-diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
-index 7ae177c..d6bcc96 100644
---- a/include/scsi/scsi_device.h
-+++ b/include/scsi/scsi_device.h
-@@ -333,7 +333,14 @@ extern int scsi_add_device(struct Scsi_Host *host, uint channel,
- extern int scsi_unregister_device_handler(struct scsi_device_handler *scsi_dh);
- void scsi_attach_vpd(struct scsi_device *sdev);
+diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
+index 8ff1aac..d4672ed 100644
+--- a/arch/x86/events/intel/uncore_snbep.c
++++ b/arch/x86/events/intel/uncore_snbep.c
+@@ -3355,6 +3355,7 @@ static struct extra_reg skx_uncore_cha_extra_regs[] = {
+ 	SNBEP_CBO_EVENT_EXTRA_REG(0x9134, 0xffff, 0x4),
+ 	SNBEP_CBO_EVENT_EXTRA_REG(0x35, 0xff, 0x8),
+ 	SNBEP_CBO_EVENT_EXTRA_REG(0x36, 0xff, 0x8),
++	SNBEP_CBO_EVENT_EXTRA_REG(0x38, 0xff, 0x3),
+ 	EVENT_EXTRA_END
+ };
  
-+#ifdef CONFIG_SCSI
- extern struct scsi_device *scsi_device_from_queue(struct request_queue *q);
-+#else
-+static inline struct scsi_device *scsi_device_from_queue(struct request_queue *q)
-+{
-+	return NULL;
-+}
-+#endif
- extern int __must_check scsi_device_get(struct scsi_device *);
- extern void scsi_device_put(struct scsi_device *);
- extern struct scsi_device *scsi_device_lookup(struct Scsi_Host *,
+-- 
+2.7.4
