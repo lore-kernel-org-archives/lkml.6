@@ -1,55 +1,55 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-4009665-1520844647-2-1210290460061532114
+X-Cyrus-Session-Id: sloti22d1t05-4009665-1520844640-2-7070263145025786251
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAD_ENC_HEADER 0.001, BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520844646; b=BFyNKBnG9mPdYDgUJa/pFk1cx0qEc3PAiBNZPRgNgw4mxYW
-    vlUxKxYybSO/6CBvwAC/jv2HzgIWffx62eU/DX7Ig2DZNGqNFYUoav46G6AbQkjW
-    5R1cBuWQL9SO1bWL/DwKr74nJ7Yfd9CRqlFa2+4VyipXKtLCfQZYY6iV3qypEsEy
-    dFM8n7a1pjS7h3a2kqjwNa6+f+/m8eXzU5dRuZEwIfK2+EEksRNLXyZXIBRXsAsa
-    H/p6fCga0VkjNpi29DCksqEkADCAfjFbsCcevBvXh2MNN8noxFyySIFrY4lrvIHa
-    gMmlQs7ejOUG5gsNQJWT6XEPQ8wHESieF0ayDWQ==
+    t=1520844640; b=q85wFR6AtnM+Kr1ETJdd5qtTrLxq5QkzDmXUnR5LAhvoPxw
+    FJMRFugyaptYs8ss401r/C8HrSh6bivU9yfSP7JLZqmiTeHv5NA1/N5FC2dKdPf5
+    JssFPYtEk2fCRPRamvdHbOCdTNgghejnQ2voSmrb3DhhETkBwlmHZ07RL0ixUvHk
+    JvmuTGCma2IJnAqY+aEd/X2WZZpL3iIFoatuzYhsvNoTb8DfGnLuhcbvj+v4eb/6
+    rqG6rIVPHP/vzTLTC9YZEzO9+U1xluscUBFlVBs+si0o3acln5SOzPrHuNS11yG0
+    2WNiVUm/Y1x/avVb6c28WWsGVBJeb7jN0iL4R1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:mime-version:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520844646; bh=5
-    ooRUh2W7XL6RbdOd/Yb2g94TOsuNEJdGFMEJ3b9/FY=; b=Hvu9zVIn7dJNPYphN
-    eqaDY33EP374wcZIhuwJraDvx6Riqc7ntUxRaNoPDJpdSQtj3Qw5vA3lOhjl+0ig
-    +SDgxuc7R+Actqoq1o9ghh+9lsc14HvCQyOol15RsdWUBHNQeVgybbdlrMPq5AYZ
-    gHPhdNDwR3T9iPMZ/LqpzdZdqM5QGzITg8PLIarf4+oEiF4F42w3ZaLicdVIVF2S
-    uMmOrNfuZYrTHkWtbDvxITZFmrR8afVBjuep8Imq7j1fmJcGz4Ae2pWtt8DlYKPF
-    /BhJximoaBdXvmRiaYcupEYTTKGZavtGgQQ7jDeEOECHnvLM8fzC/yz9hw4fqnT6
-    zezDQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=qzfsvEQ9 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :content-transfer-encoding:sender; s=arctest; t=1520844640; bh=l
+    2Trsx5EqUVVLHoF140BBwza6RnWq04QDiUXx27m7pU=; b=Iiteh/WoSxYUcR+BY
+    8KD8BVCPHLBTTwN9Op6IggSoMbpyMD614OrEUIuWrk50GQUdasDVMOy8y3qOArhK
+    C+SgOay8wMs9rxdyUcXDctLPKWlszTrom4L3Mf0LtOqx9QdA8314dUJbDtipsOZv
+    qEwnYklJrtiYPHXA+DQh9drnL1nYxlUpJooHN4PHRyJtK1iGapuV7GeXmGctT0iF
+    KkgdoBz+gwkkvVsxI4nO5MOtQpV4FZfE0fmbKnCngBF7j8fcoOR3FaZ1ktTS+h+W
+    b+0hT4ESZVzWN1gHm6f9A0OZpYLjGFve0sdO+pNK3M2GGIqZNbq2Illjf/5qjt4F
+    sSctQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=kF/Hpj7h x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=0 state=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=qzfsvEQ9 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=kF/Hpj7h x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=0 state=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
@@ -57,9 +57,10 @@ Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=razvan.stefanescu@nxp.com;
 From: Razvan Stefanescu <razvan.stefanescu@nxp.com>
 To: gregkh@linuxfoundation.org
-Subject: [PATCH v4 6/6] staging: fsl-dpaa2/ethsw: Add TODO
-Date: Mon, 12 Mar 2018 03:49:55 -0500
-Message-Id: <20180312084955.12686-7-razvan.stefanescu@nxp.com>
+Subject: [PATCH v4 4/6] staging: fsl-dpaa2/ethsw: Add maintainer for Ethernet
+ Switch driver
+Date: Mon, 12 Mar 2018 03:49:53 -0500
+Message-Id: <20180312084955.12686-5-razvan.stefanescu@nxp.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20180312084955.12686-1-razvan.stefanescu@nxp.com>
 References: <20180312084955.12686-1-razvan.stefanescu@nxp.com>
@@ -70,21 +71,21 @@ X-ClientProxiedBy: DM5PR19CA0022.namprd19.prod.outlook.com
  (2a01:111:e400:8839::23)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 127f35b4-4648-450d-59c6-08d587f64aed
+X-MS-Office365-Filtering-Correlation-Id: d6773ce5-d735-4e3e-a4bb-08d587f647ce
 X-Microsoft-Antispam: UriScan:; BCL:0; PCL:0;
  RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);
  SRVR:AM3PR04MB0743;
 X-Microsoft-Exchange-Diagnostics: 1; AM3PR04MB0743;
- 3:2GSihh1NXHQg/CrGZto8J+VwJBRmLy9dBe3pKubf1MjbC2BNut0RmsP7xncvhLgIcQn0V69QAqR1cTkkjukUwQZbrBOpEYiMLuKOjrGCqua5RJEdUhdBqRmrIZFLxGLSrpEX4ERJUW3Z7EmEUOYjW95XPaP5NKoC+O/bygxtky7RjtAmD4Az01aDBi9wo6eU2kT/OjQXd3hWXAAancecamATqYm1KlhSDhjcQNmZb6vZRGRDLsOx0E9hWTAMDPpw;
- 25:9DzTK+wZ+8ku8Z/rvA9hGPaEMmbPATD/jXAnXAPBM8HD4/O0Hr4NlX4BqsraBg79DMkNFkciG/iPkY3KNKdWfnmSP5H2ivEfkeQdkNZg8hjx950Y400dsgCkKNIAidH3BdKQXv2Lm+nqc8p42Ig1hTbnDTXSl8CsnEolCTJOBKQ9r4IqInu+n2P2c8aOqaLHBhQJawMuMtVBJkdzaLjqzvGoE+iMVviyPaBNCDBSOpGID6S7Pcha90DvM8EpsyAzTE10Knnf05DujuQrjhX42Y5evMGnHoin7uL7fmFMlMTQu2ZeaApCPdrpVOk3VehdGEQjwYZIpPF3FG4zyqSraw==;
- 31:JnaROQ6e2ejJAhZwHYhatJLkR4dd23ylx6IfxGD6y1EN1utBdH+uXC6HiqMC34R3KuWwoxi5peI312K51FkEvGbRdPoFzk0hjZHs520+/fkVM6bZEIo2I6K6veZ06aIH3M286czXwYSTSetZ2+Jhp4WzzU29lOu8Ox3rFSPUiMV1eGlbs0WVWv/lODsgA6QkLGNMi7+a0By0rIRDCkzAlcU9DGWDnX9Ph1qRbZPA9EI=
+ 3:+yyMGWF6rmY3fa7orTU6XHRXjMJVYUSLeOwnscw1em8OYzCazEOa+mWlpWZHSTOEmw76CDqDfvZmcDyx3vT3UrM/CGmJWi6fmpDZ03OzZnZ4e30V3DS+pJDd70obwx7zbZDW77bHh8zAuAlpsen6nLjH19fXkOadMFW3nXZMuN9UQJUjuNWS6m3eu1qz8mbXrj69NMXhpyyqwgfLl7VdUwYdAWbath1ccFbIe2gbrVZW4rnX8yocARWwFyp3CSec;
+ 25:SPrIFieiG3NWLQ8pcf1F76+odAFU6JRaeIax25/OXA7H6Qzsm5Bu/AkOjtqj+7MEzGs3aVSY66oTXcmcqrG6tEReP8U9OkFA5Wqplb3ih6puNQ5HBjJJPmmtTWHWYF2lNBKtD+2iUcTuph1w4EMFLBoeC13IW3uOlxoHZe4MXv5eNE6uA40N+GPbI2hmlS3w7FIorELD/RR1X1kMVumgeILG+Eo1KkPNiF3348k/B3juieKF9FKuW0SaAmQ0KrCdVA+9nTNn+btF/ZvjwfdFWRl2VqZSf//txgB1UWfhC0Si8aQzgIK+n8+A4QuRJc1UgGURDzimTjNb2sih4FCS1g==;
+ 31:m3Adu8EEcV+iudumz+AkZz+knThQvXLlpYr9eknro6zem9IVSuNqZPrTOtHfFUle5hun3cCUvXovNrzTg+G20TlS4AUcnW8PsIQZqR9Ol44jBmV02BlVjsBmGUTPRn8p6jn3QGtZtiZ20LgJCXN+PCBvBI5lG9sMeCWXLgILUv8qVP2wx2zX5Y0B4W2DmxaO3lDFt0c3rd9nM0NNMyJ8dkuh6HTJ1oIJBqjbW9tEqAc=
 X-MS-TrafficTypeDiagnostic: AM3PR04MB0743:
 X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
 X-Microsoft-Exchange-Diagnostics: 1; AM3PR04MB0743;
- 20:IbzfrxSbtUv3IJUUx7PgeJXpzYrGr0/sG0GQk1qGrhynnfMUvDLbdLwyN4+DqtVcHzuFuhE4b2FRGIo1VvT2V7hYUTJvOn9seqKv9MvePARCuHNB3K4EE7U6Z0NtIKTgUFB0xs/4HfwmJfLxMGxHI0r+MigNmsifHUgAWlg5T+tbqHiZKOw5BrWu3ODDQWcqn/KVIlPD1ycSbnaBlVYgxM5zS8CK3xS6AKb9Ym26oP/PLsoWNh4f9js3Oq1yHmfG2bkevPq/v3DdIR8AmP4aQlGi4W9PeyozBEaL8xUry4TP+B0oUtJHteXea+m8iQ0G1fus1afRHPKWqsYJ3NNs78PDljPyJGn6/BN9ar+rqrVv9dPpoBBhmPfJ6h9hKTGdvEIF6Fkksj8jZMMLKHy3OwsHHZ/Mq+yIHrdQcOaClqx4GzL5X0uoJ6Oug1IgO13YY+yGkxqhejtFUrIPViTsEnYccUSdFT52WaePSwi4JSpe/qn61t/h/3VNJXDsjF/6;
- 4:cXcclj6FkMeGhRoeHd2ZbNgIKmYFSgdb/L/6V9SNkpuFH941BoMxMD7CgEr5FKEnvNMqNy+u1fpB8lmovVUMWRgw04uaXcuZBaDl96va+9//EgNynL3esTFoYSo4cROsW1XVvVcs5pVc+RE4IzauMlHQivvayVjU4IoIFtTfZV559sdVC6J3Wh1cWQ4kSTIjwUSv+ed3d3jtoAfQMUReZxhLwxoDMGZXvD8KiY0Py9HrLnzl7K4sqY3YdLt6nemNWfdIVcbqJM6Lf2adh+y4FkMDY8eDfn9nJDxM4dP9zVfu0nuR8qkPwCIfKldE77wo
-X-Microsoft-Antispam-PRVS: <AM3PR04MB0743F467CF528A7944AAE202E6D30@AM3PR04MB0743.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
+ 20:osXe+QGF4QyysJ4qRP1Lz9XZkCaJrlaMyKGjL5asAVzU876A5ya/Y9Cw72zU8k8gYxfm2d+UVqUFnQ9CTc4jhdAilKUp64yyox6VxwkTNC6H2zCQnYOWKuJbJCL4lt8aLqBU+lWhorlJ/Jt3BZ3hFNha9yd9AvONAJ55ykwkwqXiDwV68zcbGs/rbDR2W6pdToQBRL8DdCHjtPxUrFs67e+kXE4j+p5NOTdBb02Xva7gUwsTgLGBNv2t7C4otQ5m7RFOWYh7YVBphBvw7hDh4ruPsKoR8zyyJNS81gsOJGUKg+N+w7SpSpDH7hSw4K1OXiN0K8gJVaWy3ZMZZxHmfA34iFmjAsb2jmNKVbsaDEHVV40HZin6yRaqHMipoPc5ASV6HGzZdTE+xauPWMW7dl8E68wcybTj7KAzpql2M0vFHmfZ8RYGGT2/MDLc068zfBUfCCY/vL2Z0WRaYtLiyYutq9AlVxwn5NEVHZvYgUVnkPY1bqu/XOqf2Gi2uaUx;
+ 4:R3opjAueEb9IBijIkdSSMjF1eFQ9MwJ6+x7g0q7hzLKG162R6S0/NFNMkWNh0vQnb/pX+8gjBl+hW+D+kq/3Pz+CNfVytFGeqYgRRMDyVfPmh9i2uHt8R6HbvoFNrpZLHGFydUw4j74rAb+0q/loBv87AorQs8l0GVl80mzvJ1mo3hBgkBzVyMnW+vu9Zc/MOADHTZnl22+JmwROM6GpyMaGAtYwtWSJ9MxHQvfz/q3eOueCyNrljO0YW85OoQogd7BS2gFOccaUQdFejTVIS5iq4HwDv5l67DdEt66Pic3ZVnSs1Sv1Bsb9nZJ3YrOzaOK0FVpgFd1XGc9DBqfJaZlTwELg/0PLwUpqvfEbez0=
+X-Microsoft-Antispam-PRVS: <AM3PR04MB074334540128B2A72FC09560E6D30@AM3PR04MB0743.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(9452136761055)(185117386973197);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0; PCL:0;
  RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(3231220)(944501244)(52105095)(10201501046)(6055026)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(6072148)(201708071742011);
  SRVR:AM3PR04MB0743; BCL:0; PCL:0; RULEID:; SRVR:AM3PR04MB0743;
@@ -94,38 +95,38 @@ X-Forefront-Antispam-Report: SFV:NSPM;
  DIR:OUT; SFP:1101; SCL:1; SRVR:AM3PR04MB0743; H:rhuath.am.freescale.net; FPR:;
  SPF:None; PTR:InfoNoRecords; A:1; MX:1; LANG:en;
 X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1; AM3PR04MB0743;
- 23:NoQKFcAwZupioopSYT+4tp5FVZCcen733hVaqYuA9?=
- =?us-ascii?Q?ev25ZxKFeKk7wM5i/oKnsqJMwwha6t+8SM4UzV/LIVxzmZFKXABxzVH0L7qW?=
- =?us-ascii?Q?suoy+6/wkocA4UgrqFV20obsPxVN2FprQAUnHcToJcXEfY3W+0AIPF7eawll?=
- =?us-ascii?Q?Q4FBZcXJOksGsj/YotXZWPDw4f1yGFuNy8sW0liKJrIKjdjRtf4bF4dHvt0O?=
- =?us-ascii?Q?mdG9QAcpOloPabMXc+1Sy1s1RZ6+6S/seZnb4Ege4vP1E9i90GqUiJxEmx5T?=
- =?us-ascii?Q?bKVp/0lLCT9OR4evBo4qwfkb71Ju9iDGRHHJ+JZeCXMR54cryap/PhEVE1lk?=
- =?us-ascii?Q?Aypltqit8S7EVx2R97FJW6k38Va6sYWcmNlCaYpQK2jhHBvy1Gh/pn4LhBda?=
- =?us-ascii?Q?Q/98eZmZzieDXlc8tTlX157Qc+RGevbUfR9JOJbi6pxPh92uyX0Dt9c89ApN?=
- =?us-ascii?Q?EJH84NykxYb93hwh5lWzvqeGYzMMFWv+OkoCO+Sn1zpj3zU3VQNDRuQajxu0?=
- =?us-ascii?Q?7BR87tbRRkSvFVwAnJxIEO2Psss88oYqsnhNaXTff1ODQp5B7FRfMYzUzILH?=
- =?us-ascii?Q?Nj2XQofOfr48NdOetZ8QkwgJprtXwOGca01XOtWOBevScY9RiDyUj+5l6Ji3?=
- =?us-ascii?Q?U54raIJvW84QbFgxpjIDMZ8SuUxbfXDGEUbH/yOF2BjFMluzrlb7zujrJ9uf?=
- =?us-ascii?Q?7eyg0vyWXZijnkgteAt7hOfoMn9PXAsSSkOnuOqY1Ow6PniXCzHxHb61/esE?=
- =?us-ascii?Q?KNgtZSFpBJSuLxb3XJs2pWSoFspQxCm16ofW42gQCbm7+BMz7MvDf8L4V9fo?=
- =?us-ascii?Q?0L/6pSUhVzGKIefv3I4Lp5NUOIFUrk+bHLLGnJ/Np4ePiJLEpaJjgRDFxuXC?=
- =?us-ascii?Q?5iRqlltHzgNy/QeeKcwlRxd5n3PUcxQC8kk/aoKjUh0PDaLFq9G5ixNvAK3c?=
- =?us-ascii?Q?DHMEC8gFgnATyzBy/BBNMobuFCphtmylXdQe8iuL6As/caS/eTP2nVndpVQ5?=
- =?us-ascii?Q?30Mky42tC7QnlYdWz5NsWLqWRAtNHuBOMJHogIyZ9ltbhVwDAKCPP65sYT0q?=
- =?us-ascii?Q?pj6cYnEMlHqJVKdCpfvjwAHdfjts80F5ulVz3xDHIJ+Yjh4RxSv64xASWNhZ?=
- =?us-ascii?Q?VlwCAq2Yhf+MMP+M8XAxRC4iddBBBZsOcnBbMWLyjdW9eIkoud+tLc+TslLU?=
- =?us-ascii?Q?657b6ANRaSlCKET3Y3RRt6MSRtK49IGY1mm?=
-X-Microsoft-Antispam-Message-Info: v4P5/or0L2mbs1Qsa2j3azJ3LxIkPeVB5EbOFLe1L/9C7+dCkV/5yJ/41SgjXRmLyZzTnBN8AOqxEQTf4MXrXZjBAVzXqNBDrZMPveiplAHeQEJo7aLut5JtAIesQ2DnGL9tx/CiL6qKy2DYaFzzv4qXzCwIMhZAAjiBFpJLf7RK4cDwwh63bewzskequtcV
+ 23:zwpnCgyGNJQjHc3ej7cBzSj3qLQo65rLkbgVWj9Op?=
+ =?us-ascii?Q?OrO2iCtPhJ/S6LoxEyo06vhuor7WRjly+kSmIPv3CKeuslCdOuI7erqm+OEF?=
+ =?us-ascii?Q?qDs62VUoNp21Duvt+pQUts251wSAqH/4b5IuF1CM7KfgvtHn5taFRgsuzHTz?=
+ =?us-ascii?Q?EBVvRH7sQ9PCH4vSsbLQvfugAppJDza82wN2ofwfh9qJojEKKY+qvNlvga+g?=
+ =?us-ascii?Q?tpz5Ya5pRjxH736996VvLSaweI7i5oHGHMH/OFqp+W/EhWk+ktM9+YIoHINK?=
+ =?us-ascii?Q?NG0lh7jEfXhXYSf6DiRbvXNf67eV9/OQbt5D6rJ5Dph0nfsg7aDCwyzFANk5?=
+ =?us-ascii?Q?UnXpSniItjjrqtu0ydbHbMhlnuG+SDiNl6RCCUv1kVBt4q0YPVCBf/69v4Ez?=
+ =?us-ascii?Q?7+Kbx+elkSrnHglPGt2dAXstgwvBd+TcKwuShK6bnC62QWkZ8/V7RCa+hSoX?=
+ =?us-ascii?Q?MvLYuwjKckrspNT6NWs7C6kiRpfY4Utk/Iz7BFf7Jyiefq1aVAB99zyHZnNd?=
+ =?us-ascii?Q?bcDU5VOuoUYQh0lig3ZGwohBgF1wFKAUnKdoRRCCgkKav7/INJrNmcw48oEU?=
+ =?us-ascii?Q?d1XN0cqgEvpcmNJ58WlrwT5RLiawWobgD8vCySWv6Ze3waZECcqfOI21sBaQ?=
+ =?us-ascii?Q?YGP/kCLP6XTVTHcThS2F46ntR2PA/B/C/mtl2FliPbOR1MhFovk5QX/d6SKU?=
+ =?us-ascii?Q?4lJm2Pi59ZXrINYEnFP7M13AMvXO0VVro8E8a+Ro6bTJBoeTFd3IriWDhjec?=
+ =?us-ascii?Q?6zg/cRZsu5YlqZ7iRVyIe2Dsq9g6/tCcnu9yH9Wks3H6xnZRS0T6AxGt+brU?=
+ =?us-ascii?Q?a4Ig03aR4iUkDireLK2H8mA0C2qW3WheI5RA9MVncyoubnusdrYDbAPuvNlv?=
+ =?us-ascii?Q?uYnPEaUx3K4QTJQMP5r+E73DuMl7Xzqh9cekmKHXLuGWCJeYcFZZoYepFgYG?=
+ =?us-ascii?Q?Tdmabd4c040Z9/Rb+FCBLvZ52LrkNyMFt7p9OjrqROyzqHovHq8kYTxPnxKQ?=
+ =?us-ascii?Q?ZYMnOOjrO2yUBD3LJColrHG6CMbGTajXHwEwUOfNftZE0RRFq7EqvTNQP8Fp?=
+ =?us-ascii?Q?z6ieNz3npNZ1baaxDPdNT7Rb7UiSTOy1yt3Y0ZDoHfVQtdUU6nVo78g1Ij3s?=
+ =?us-ascii?Q?Z6r+PYK65e0NDIx7BOJzjPMWcrJNrWkMqTkklwHpYRz98H4tJ65BhbwfWoqo?=
+ =?us-ascii?Q?sM7+A2QwevAUX7eH6+b9nFHODgniTzNRiv+?=
+X-Microsoft-Antispam-Message-Info: /JYC7z0e6FhJHUZRVYurw43Kf3WVJSRBS8nmdAuW0jarzsd3Zn5boRgm+gPeompLkm+BXuQf1xp9L+TVcfMYfgNfuQIgtiuY96SNMos+PFnCVyGMLxR+Xo148XusEusoayhpn0iIYIUJZxdq1zIecUUpdawngbYGCvvrgGkCQkS79OirGh/eIrCmy9BoDRii
 X-Microsoft-Exchange-Diagnostics: 1; AM3PR04MB0743;
- 6:XoHBzlkLT40vM7JNyvdq0WIdRPEaBn4wQIE7FEv5xHSAQXp52eRiXmhxpX0XPXe2l9+l08quyWd0owxoX+X0xK6Ea+a9HSQlZdTux2yaxNT09mM6Dj9T6pzoA6Up6or5Gn0IWlHpV/kyQFvtkvdFf9PEAlkvn55hRxNkIsst+p+J8X+w5rwg4+Io5/7jprYeTwXdWJKnPyf+HFxklH5KPbTqY6Oi+pxOGB3pnonWeBCCVtE/iHAqrlimgIT+E9or+/PXLnr4Tm+/vkjxMWx4b/wOv7JruIIeXoCjHr8fgWh1EM8qGf6M5Vp3ShZrRlyA3ZljuX5zg1r8/xDuBHb6muzVm5jCoLdCdQaNRxZJRMc=;
- 5:RKikqu5otvq5bsmgsDyUiMeVtVDYYPVsDlzfwH/LQNrXlYPDU95EwkIW/3E17Q8/IB+r5G9KbjofS1bJKojjVVwIkuolRKiLMViDdHxonMKH9TNwTqM59ZKLRKVPPP6JdYTW3pfPWimKVAIHdceRK+PBypAVKsKe0Ce+BVhBuXQ=;
- 24:tkcG/OoEKt5ssO0ba8luAbXc6aAGGu5ppbbD2gI1NDVhRJShJ0hzeHYJOdzsa4Ru7BCes904ufl7Jlyv7xUxf+iy7WWxN3+jolInttd6G9s=;
- 7:jVbBbBri+75qOiaPtXKXUYomuU8JEABSw9RA/u6Ow9FndsahOr4+N3oh6aYA6Oe+HjKVLMWBOCFbXqvdUIIqj7AFYEWszQJyEnGI+k0I7F95+Sj1AZ/XUxT7Sio4XxHzJkjS8rgu7g6Z2auB7XPkhb07nm7RKK1DQJPy1uui9Z4LscDqDyq2IuTe96yuL6JV/fYgjvygWpK5TvAj3tTqdueAu4LCBqGLFsEMEWcWRrtXWrqGwKNo7YB8D3a8eoO0
+ 6:wQibQIw41YbcyjzRv85NwJnlyhL7wU/J/yAWASZp+9Z9wLd2LE3G3WnnL1ZM8p7MtZzvXzLgcHd58pgdIJJytMgSxmg49bn+qWOb41PcaZm9fU09+T/o9dTE9XdmGT+FzBRtgxIuSkaWukafw07F4VJuSMPIERz9Ht1kZhDu/bFGmFRS955kMctIGezbD3iXnPv6HsRDI3fc97bBRS4+RZ31Lr8hRMZxbXsOYswqXziESBKkb//0oE7ly0NdCRqdATWKGvCP47wkm9y1Ayzf0+26vNuZrvrnCGlNWaGU/h+Fj36JEaEQyoDftydOgoWAyS+xpXMQdXpw8KQ0ROxXeB4SjmWKhUHa3nXSXfFYDUo=;
+ 5:63biwCfWxVkqK9MRGNxlicm7itr6Tlr4mBaQsPwzCVqh4PEeH+vRIywDonzdR4IYvUyg2jCBtIdrrIzH1qxUoQJ2N1WGoDNlsc8yLFILHrHW+PL10w9BAcfOy0CYuWdLmCKFvTn+NmG0iJdMN/4qYBNvY/vyQ77RnuShl4YVRXQ=;
+ 24:5XH9UqJumZ33XoWJQvO9D1upSOQalgUtGDx2BVsHnS2V4Tvn/BlwYe61pE4A1jO0BW7jgDOXzZNmoexI3m76Ytc64qLvXoCXmWW+kBw6S/A=;
+ 7:tCtkZEhgTHSz60W2bl6p8oK7yDnHhAedbAy7VB9aA6/ZhgizdHi1ZBkadr0CRblBN1v9fQKkYz2kv9c28SU8mPN907iWKKQbLVlXiyUGL2SBcUBJS989bwtfSt1xZE1bkJLfl0APPCYgE32UEAyVm6v+pHfgcR7Dk/uoDxBcmKMmuTtQe67+GLP/f4apLLtKH/86OHRIFVzNfQKlks7C1FhydK5N9oiRBh0suYwTa4Q0BOv7rifNmakR3FQz/4q4
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2018 08:50:20.9379 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 127f35b4-4648-450d-59c6-08d587f64aed
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2018 08:50:15.7660 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d6773ce5-d735-4e3e-a4bb-08d587f647ce
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB0743
@@ -150,9 +151,6 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add a TODO file describing what needs to be added/changed before the driver
-can be moved out of staging.
-
 Signed-off-by: Razvan Stefanescu <razvan.stefanescu@nxp.com>
 ---
 Changelog:
@@ -161,31 +159,28 @@ Changelog:
  v3:
     - no changes
  v4:
-    - remove fsl-mc bus driver dependency as it is out of staging
+    - no changes
 
- drivers/staging/fsl-dpaa2/ethsw/TODO | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
- create mode 100644 drivers/staging/fsl-dpaa2/ethsw/TODO
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/staging/fsl-dpaa2/ethsw/TODO b/drivers/staging/fsl-dpaa2/ethsw/TODO
-new file mode 100644
-index 0000000..d186875
---- /dev/null
-+++ b/drivers/staging/fsl-dpaa2/ethsw/TODO
-@@ -0,0 +1,13 @@
-+* Add I/O capabilities on switch port netdevices. This will allow control
-+traffic to reach the CPU.
-+* Add ACL to redirect control traffic to CPU.
-+* Add support for displaying learned FDB entries
-+* MC firmware uprev; the DPAA2 objects used by the Ethernet Switch driver
-+need to   be kept in sync with binary interface changes in MC
-+* refine README file
-+* cleanup
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c3c2b75..20d7bf2 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4410,6 +4410,12 @@ L:	linux-kernel@vger.kernel.org
+ S:	Maintained
+ F:	drivers/staging/fsl-dpaa2/ethernet
+ 
++DPAA2 ETHERNET SWITCH DRIVER
++M:	Razvan Stefanescu <razvan.stefanescu@nxp.com>
++L:	linux-kernel@vger.kernel.org
++S:	Maintained
++F:	drivers/staging/fsl-dpaa2/ethsw
 +
-+NOTE: At least first three of the above are required before getting the
-+DPAA2 Ethernet Switch driver out of staging. Another requirement is that
-+dpio driver is moved to drivers/soc (this is required for I/O).
-+
+ DPT_I2O SCSI RAID DRIVER
+ M:	Adaptec OEM Raid Solutions <aacraid@adaptec.com>
+ L:	linux-scsi@vger.kernel.org
 -- 
 1.9.1
 
