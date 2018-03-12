@@ -1,55 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932670AbeCLRDB convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 13:03:01 -0400
-Received: from gloria.sntech.de ([95.129.55.99]:39620 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932494AbeCLRCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 13:02:49 -0400
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
-        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
-        tfiga@chromium.org, dri-devel@lists.freedesktop.org,
-        dianders@chromium.org, a.hajda@samsung.com, ykk@rock-chips.com,
-        kernel@collabora.com, m.szyprowski@samsung.com,
-        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
-        rydberg@bitmath.org, krzk@kernel.org,
-        linux-rockchip@lists.infradead.org, kgene@kernel.org,
-        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
-        jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org,
-        mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com,
-        jingoohan1@gmail.com, sw0312.kim@samsung.com,
-        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
-        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
-        hshi@chromium.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [PATCH v5 03/36] drm/bridge: analogix_dp: Don't change psr while bridge is disabled
-Date: Mon, 12 Mar 2018 18:02:39 +0100
-Message-ID: <11981411.JMsWtk38iA@diego>
-In-Reply-To: <20180309222327.18689-4-enric.balletbo@collabora.com>
-References: <20180309222327.18689-1-enric.balletbo@collabora.com> <20180309222327.18689-4-enric.balletbo@collabora.com>
+        id S932497AbeCLRFe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 13:05:34 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:35111 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932190AbeCLRFd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 13:05:33 -0400
+X-Google-Smtp-Source: AG47ELvszZHYNoE2s3i/4OVPDXgGnP+6nMJPWuM8MO0t0MkQYn0SqRmPfMJ/POuqzlRgYbNZ2BQA1A==
+Date: Mon, 12 Mar 2018 13:05:31 -0400 (EDT)
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>
+cc: Andi Kleen <ak@linux.intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/7] ARM: disallow combining XIP and LTO
+In-Reply-To: <nycvar.YSQ.7.76.1803121250360.28583@knanqh.ubzr>
+Message-ID: <nycvar.YSQ.7.76.1803121303350.28583@knanqh.ubzr>
+References: <20180220215954.4092811-1-arnd@arndb.de> <20180220215954.4092811-2-arnd@arndb.de> <nycvar.YSQ.7.76.1803112233070.28583@knanqh.ubzr> <CAK8P3a06_zke6Zy77TCX6aUS1C0aK2btvnLA7APxRykkxS6S_w@mail.gmail.com> <CAK8P3a128iw+HB5Fp6ZOBCyuK0LypqSXqnkNPQs8sWR1pc8x3g@mail.gmail.com>
+ <nycvar.YSQ.7.76.1803121250360.28583@knanqh.ubzr>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, 9. März 2018, 23:22:54 CET schrieb Enric Balletbo i Serra:
-> From: zain wang <wzz@rock-chips.com>
-> 
-> There is a race between AUX CH bring-up and enabling bridge which will
-> cause link training to fail. To avoid hitting it, don't change psr state
-> while enabling the bridge.
-> 
-> Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> Cc: Sean Paul <seanpaul@chromium.org>
-> Signed-off-by: zain wang <wzz@rock-chips.com>
-> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
-> [seanpaul fixed up the commit message a bit and renamed *_supported to
-> *_enabled] Signed-off-by: Sean Paul <seanpaul@chromium.org>
-> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+On Mon, 12 Mar 2018, Nicolas Pitre wrote:
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> On Mon, 12 Mar 2018, Arnd Bergmann wrote:
+> 
+> > arm-linux-gnueabi-nm: 'arch/arm/boot/compressed/../../../../vmlinux':
+> > No such file
+> 
+> That is weird. The Makefile has:
+> 
+> cmd_mkxip = $(cmd_objcopy) && $(cmd_deflate_xip_data)
+> 
+> $(obj)/xipImage: vmlinux FORCE
+>         $(call if_changed,mkxip)
+> 
+> So the objcopy must succeed at producing vmlinux for deflate_xip_data 
+> (where nm is used) to be called.
+
+Correction: vmlinux is a dependency not a product, so it must be there 
+for this rule to be executed, and it is input to both objcopy and nm.
+
+
+Nicolas
