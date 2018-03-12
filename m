@@ -1,83 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752563AbeCLJsp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 05:48:45 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:34989 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751344AbeCLJsn (ORCPT
+        id S932423AbeCLJxV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 05:53:21 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:31333 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932386AbeCLJxS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:48:43 -0400
-X-Google-Smtp-Source: AG47ELsxviIHNAtQHnA8ELe32395imCsyCWreOeLWqtmhGM3ZruluAlB1FFkQ4lxQ+VucmMZaRygvw==
-Date: Mon, 12 Mar 2018 10:48:38 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Andy Lutomirski <luto@kernel.org>, linux-efi@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sai Praneeth <sai.praneeth.prakhya@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
-        Tony Luck <tony.luck@intel.com>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>
-Subject: Re: [PATCH 2/5] x86/efi: Replace efi_pgd with efi_mm.pgd
-Message-ID: <20180312094838.h7vm3lmssijag7la@gmail.com>
-References: <20180312084500.10764-1-ard.biesheuvel@linaro.org>
- <20180312084500.10764-3-ard.biesheuvel@linaro.org>
- <20180312090220.lmohpvj62v7l2qsc@gmail.com>
- <20180312092650.nbvidgia5s5r5t7b@gmail.com>
- <CAKv+Gu8QOo67fg2Hgxz3C4bgm3Oeunf1hpdW=rrtNGUJLK4a9w@mail.gmail.com>
+        Mon, 12 Mar 2018 05:53:18 -0400
+X-UUID: 662b5191c4f44b2c9837948b2ea1ef6f-20180312
+Message-ID: <1520848387.27000.0.camel@mtkswgap22>
+Subject: Re: [PATCH v1 05/19] arm: dts: mt7623: add BTIF, HSDMA and SPI-NOR
+ device nodes
+From: Sean Wang <sean.wang@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+CC: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Date: Mon, 12 Mar 2018 17:53:07 +0800
+In-Reply-To: <cea7b0bf-fcd9-6405-c437-d3251e7bb4bf@gmail.com>
+References: <cover.1519378871.git.sean.wang@mediatek.com>
+         <ca071fec200f80d894523b11c94ddde19381f936.1519378871.git.sean.wang@mediatek.com>
+         <cea7b0bf-fcd9-6405-c437-d3251e7bb4bf@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu8QOo67fg2Hgxz3C4bgm3Oeunf1hpdW=rrtNGUJLK4a9w@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-
-> On 12 March 2018 at 09:26, Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> > * Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> >> > -static pgd_t *efi_pgd;
-> >> > -
-> >>
-> >> Hm, so there's some interaction here with:
-> >>
-> >>   116fef640859: x86/mm/dump_pagetables: Add the EFI pagetable to the debugfs 'page_tables' directory
-> >>
-> >> which is in tip:x86/mm.
-> >>
-> >> Could you please resolve that conflict? I'll sort out the topic branches
-> >> afterwards.
-> >
-> > So I've resolved it the following way, I merged the conflicting commit into
-> > tip:efi/core and applied the 3 unrelated patches from your series:
-> >
-> >  36b649760e94: efi: Use string literals for efi_char16_t variable initializers
-> >  136d5d57e35c: efi/esrt: Fix handling of early ESRT table mapping
-> >  7e904a91bf60: efi: Use efi_mm in x86 as well as ARM
-> >  b0599e2801df: Merge branch 'x86/mm' into efi/core
-> >
-> > and pushed it out.
-> >
-> > So if you could resolve the two conflicting patches on top of 36b649760e94 then we
-> > should be good going forward.
-> >
+On Mon, 2018-03-12 at 10:40 +0100, Matthias Brugger wrote:
 > 
-> By 'resolve' you mean rebase and resend, right?
+> On 02/23/2018 11:16 AM, sean.wang@mediatek.com wrote:
+> > From: Sean Wang <sean.wang@mediatek.com>
+> > 
+> > add BTIF, HSDMA and SPI-NOR device nodes and enable it on relevant boards
+> 
+> AFAIK hsdma controller is not upstream yet.
+> Please resubmit when at least the binding got merged.
+> 
 
-Yeah.
+Sure, I will drop the node for HSDMA in the next version.
 
-I expected it to probably be a bit more work than a regular rebase, because we 
-grew a new efi_pgd user and I didn't want to trivialize the conflict resolution 
-effort - hence the 'resolve the conflict' formulation! :-)
-
-Thanks,
-
-	Ingo
+> Thanks,
+> Matthias
+> 
+> > 
+> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> > ---
+> >  arch/arm/boot/dts/mt7623.dtsi                 | 36 ++++++++++++++++++++++++++-
+> >  arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts |  6 ++++-
+> >  2 files changed, 40 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
+> > index 91317a1..da56c54 100644
+> > --- a/arch/arm/boot/dts/mt7623.dtsi
+> > +++ b/arch/arm/boot/dts/mt7623.dtsi
+> > @@ -1,5 +1,5 @@
+> >  /*
+> > - * Copyright (c) 2017 MediaTek Inc.
+> > + * Copyright (c) 2017-2018 MediaTek Inc.
+> >   * Author: John Crispin <john@phrozen.org>
+> >   *	   Sean Wang <sean.wang@mediatek.com>
+> >   *
+> > @@ -483,6 +483,18 @@
+> >  		nvmem-cell-names = "calibration-data";
+> >  	};
+> >  
+> > +	btif: serial@1100c000 {
+> > +		compatible = "mediatek,mt7623-btif",
+> > +			     "mediatek,mtk-btif";
+> > +		reg = <0 0x1100c000 0 0x1000>;
+> > +		interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_LOW>;
+> > +		clocks = <&pericfg CLK_PERI_BTIF>;
+> > +		clock-names = "main";
+> > +		reg-shift = <2>;
+> > +		reg-io-width = <4>;
+> > +		status = "disabled";
+> > +	};
+> > +
+> >  	nandc: nfi@1100d000 {
+> >  		compatible = "mediatek,mt7623-nfc",
+> >  			     "mediatek,mt2701-nfc";
+> > @@ -508,6 +520,18 @@
+> >  		status = "disabled";
+> >  	};
+> >  
+> > +	nor_flash: spi@11014000 {
+> > +		compatible = "mediatek,mt7623-nor",
+> > +			     "mediatek,mt8173-nor";
+> > +		reg = <0 0x11014000 0 0x1000>;
+> > +		clocks = <&pericfg CLK_PERI_FLASH>,
+> > +			 <&topckgen CLK_TOP_FLASH_SEL>;
+> > +		clock-names = "spi", "sf";
+> > +		#address-cells = <1>;
+> > +		#size-cells = <0>;
+> > +		status = "disabled";
+> > +	};
+> > +
+> >  	spi1: spi@11016000 {
+> >  		compatible = "mediatek,mt7623-spi",
+> >  			     "mediatek,mt2701-spi";
+> > @@ -861,6 +885,16 @@
+> >  		#reset-cells = <1>;
+> >  	};
+> >  
+> > +	hsdma: dma-controller@1b007000 {
+> > +		compatible = "mediatek,mt7623-hsdma";
+> > +		reg = <0 0x1b007000 0 0x1000>;
+> > +		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_LOW>;
+> > +		clocks = <&ethsys CLK_ETHSYS_HSDMA>;
+> > +		clock-names = "hsdma";
+> > +		power-domains = <&scpsys MT2701_POWER_DOMAIN_ETH>;
+> > +		#dma-cells = <1>;
+> > +	};
+> > +
+> >  	eth: ethernet@1b100000 {
+> >  		compatible = "mediatek,mt7623-eth",
+> >  			     "mediatek,mt2701-eth",
+> > diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> > index 3efecc5..ec11e14 100644
+> > --- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> > +++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> > @@ -1,5 +1,5 @@
+> >  /*
+> > - * Copyright 2017 Sean Wang <sean.wang@mediatek.com>
+> > + * Copyright 2017-2018 Sean Wang <sean.wang@mediatek.com>
+> >   *
+> >   * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> >   */
+> > @@ -86,6 +86,10 @@
+> >  	};
+> >  };
+> >  
+> > +&btif {
+> > +	status = "okay";
+> > +};
+> > +
+> >  &cir {
+> >  	pinctrl-names = "default";
+> >  	pinctrl-0 = <&cir_pins_a>;
+> > 
