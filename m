@@ -1,36 +1,35 @@
-Return-Path: <keith.busch@intel.com>
-X-Google-Smtp-Source: AG47ELtimufYPUK+HZ3ebmUUoFYT+QnIORNKKK6H0oecw73IWQzmTiclypwnpCoTHR+7RQuo5wKg
-ARC-Seal: i=1; a=rsa-sha256; t=1520864637; cv=none;
+Return-Path: <helgaas@kernel.org>
+X-Google-Smtp-Source: AG47ELuSlEJpLcIfW2I6ANWIk4idJLbOGcz3Fcspc2C3RiskB5FGtq/3yiavbEzrn8u6z1G5yRru
+ARC-Seal: i=1; a=rsa-sha256; t=1520884052; cv=none;
         d=google.com; s=arc-20160816;
-        b=IOVgogM78uruZEXVMwspuPAyWoetqNDMVGchyhfEqpsPlkbesyTk8zJw060NWA+tZk
-         lJl1M9B7QD17VB4KzUv1vWjUeQsW6N1c7tfMiVm4z7pkmXz+Lt4ACGzknShX2PV+vxG0
-         2ahmsduHm6xbgXmRAlj7iJ1RMxzUL864t3aDXZNpyPE3QTGk4oyHFccqm+B9d3xLNIfs
-         jUG038ZqQQr/VVgKGFCCmywVvTWtKi/13kM8hasgavupr4YTX1S8nW2M0+VobCGfYS0j
-         hNduL3/wXU0MnEGK/L97CefdNsWo2mTMaTwdRSOvk05yBjSCe++QRoKoX0Dq/ekAa7tW
-         i8cQ==
+        b=Pg4mCkyL75cJIpG8XGestdAibLPcxmA7MhSj8+5TjW6lfCaqannccp5O2OCvRshNWx
+         hwyTULsp4ITfxopkrzXaZcwxSKbSvyRZQ187EwvKAVL9Blp9UhmERudUFSQlf0YiITuy
+         iXmVB5uhmXGRmP8uxn2t7X9B1yRmUyea4VyLx/mYbpnX3768+ku3JCqtvXM8n9LdFLtm
+         P8O8mKVrmkE4q7S9wXiBkbm/0QvNLJDdEOqX+v9klfF2VrCag0xPEvxMV30U73TVRw7/
+         nlUh7bfGBH98F+ymt09G9HrxA7vMk8nkgfYrmbzlPkuJ6EAEKA+KxLUy0iSI9FKdaZvT
+         dxRw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=uLWKxM9fdc1s78BbhkPVaVquZYATVBZ1bnxFF0Osy9Y=;
-        b=HzGAH8OvHtxz20R4Ti5HJfI4m9DIQFcOclS0fe/l9C+FieJju4GuipoX6cwIpZcwD7
-         qmC2unG8RVs2kBbJbSfiB3KtRQJArDlF5fH6x6gP21w25N1+pDsZXeNb7IURtZc0562h
-         0YuoRaGGXGbekXGXiMySSS8bJa8j5IWSMJksCDBI9Owtw6010cXsg0E9D1ZoWGKszgSi
-         yUuQc6gCA70zBrY/oKqm3dQumHokCrp8i0NR5GYkmTuXbIcMkPLFDXOnoDyfL4G17hYw
-         mwcrNWV73XvUth/CPuwgkdRW75JwkStoUFleBmaz7lyp+7M3Vgrefz9LUq0wGUBMwM5Z
-         elJA==
+         :message-id:subject:cc:to:from:date:dmarc-filter
+         :arc-authentication-results;
+        bh=l91DL9QyVeN1u1OWUcsCkaRn3pjAMO+3IEDOSRGRbdw=;
+        b=x+J7/yXPh4q9/vSrscPQfbmTlDpUlwVJA2+B5k6PNDSj10o1+D7ZLtbuVb0wOtkrDY
+         GCQ4lCEGYQnUNPZHKWOELyDmdi6GqoJJmlYyc3Yg888NkjpVz0ImfKw9G6HpwnOddnRp
+         7JP1wDLPbcpPK3l0mro+/07nBxoZpZLmFHf/X83S5T5fAFP08Ihn3vDncAGh9zdWEcFt
+         yWfTk5GyNocrbMfmelhY+YDbKiIvpg2u4rKvQWXLBYoIBB3vI6bxc/qqxczOLRBE/5uu
+         k5dsHpV2N9iXEGNvzANvZTTVclYmhv2rFkXS88EDtYe5qrXnJqTahepqTXU0+ppFKO8S
+         BATg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of keith.busch@intel.com designates 134.134.136.126 as permitted sender) smtp.mailfrom=keith.busch@intel.com
+       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of keith.busch@intel.com designates 134.134.136.126 as permitted sender) smtp.mailfrom=keith.busch@intel.com
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,461,1515484800";
-   d="scan'208";a="41253301"
-Date: Mon, 12 Mar 2018 08:25:51 -0600
-From: Keith Busch <keith.busch@intel.com>
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Oza Pawandeep <poza@codeaurora.org>,
+       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E589221770
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Mon, 12 Mar 2018 14:47:30 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Keith Busch <keith.busch@intel.com>
+Cc: Sinan Kaya <okaya@codeaurora.org>, Oza Pawandeep <poza@codeaurora.org>,
 	Bjorn Helgaas <bhelgaas@google.com>,
 	Philippe Ombredanne <pombredanne@nexb.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -38,49 +37,108 @@ Cc: Bjorn Helgaas <helgaas@kernel.org>, Oza Pawandeep <poza@codeaurora.org>,
 	Kate Stewart <kstewart@linuxfoundation.org>,
 	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Dongdong Liu <liudongdong3@huawei.com>, Wei Zhang <wzhang@fb.com>,
-	Timur Tabi <timur@codeaurora.org>
+	Timur Tabi <timur@codeaurora.org>,
+	Alex Williamson <alex.williamson@redhat.com>
 Subject: Re: [PATCH v12 0/6] Address error and recovery for AER and DPC
-Message-ID: <20180312142551.GB18494@localhost.localdomain>
+Message-ID: <20180312194236.GA12195@bhelgaas-glaptop.roam.corp.google.com>
 References: <1519837457-3596-1-git-send-email-poza@codeaurora.org>
  <20180311220337.GA194000@bhelgaas-glaptop.roam.corp.google.com>
  <04ade52e-d1ea-fe67-bb26-246621d159e6@codeaurora.org>
+ <20180312142551.GB18494@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <04ade52e-d1ea-fe67-bb26-246621d159e6@codeaurora.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180312142551.GB18494@localhost.localdomain>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593665102741565714?=
-X-GMAIL-MSGID: =?utf-8?q?1594742158102785497?=
+X-GMAIL-MSGID: =?utf-8?q?1594762516659980438?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Mar 11, 2018 at 11:03:58PM -0400, Sinan Kaya wrote:
-> On 3/11/2018 6:03 PM, Bjorn Helgaas wrote:
-> > On Wed, Feb 28, 2018 at 10:34:11PM +0530, Oza Pawandeep wrote:
-> 
-> > That difference has been there since the beginning of DPC, so it has
-> > nothing to do with *this* series EXCEPT for the fact that it really
-> > complicates the logic you're adding to reset_link() and
-> > broadcast_error_message().
+[+cc Alex]
+
+On Mon, Mar 12, 2018 at 08:25:51AM -0600, Keith Busch wrote:
+> On Sun, Mar 11, 2018 at 11:03:58PM -0400, Sinan Kaya wrote:
+> > On 3/11/2018 6:03 PM, Bjorn Helgaas wrote:
+> > > On Wed, Feb 28, 2018 at 10:34:11PM +0530, Oza Pawandeep wrote:
 > > 
-> > We ought to be able to simplify that somehow because the only real
-> > difference between AER and DPC should be that DPC automatically
-> > disables the link and AER does it in software.
+> > > That difference has been there since the beginning of DPC, so it has
+> > > nothing to do with *this* series EXCEPT for the fact that it really
+> > > complicates the logic you're adding to reset_link() and
+> > > broadcast_error_message().
+> > > 
+> > > We ought to be able to simplify that somehow because the only real
+> > > difference between AER and DPC should be that DPC automatically
+> > > disables the link and AER does it in software.
+> > 
+> > I agree this should be possible. Code execution path should be almost
+> > identical to fatal error case.
+> > 
+> > Is there any reason why you went to stop driver path, Keith?
 > 
-> I agree this should be possible. Code execution path should be almost
-> identical to fatal error case.
-> 
-> Is there any reason why you went to stop driver path, Keith?
+> The fact is the link is truly down during a DPC event. When the link
+> is enabled again, you don't know at that point if the device(s) on the
+> other side have changed.
 
-The fact is the link is truly down during a DPC event. When the link
-is enabled again, you don't know at that point if the device(s) on the
-other side have changed. Calling a driver's error handler for the wrong
-device in an unknown state may have undefined results. Enumerating the
-slot from scratch should be safe, and will assign resources, tune bus
-settings, and bind to the matching driver.
+When DPC is triggered, the port takes the link down.  When we handle
+an uncorrectable (nonfatal or fatal) AER event, software takes the
+link down.
 
-Per spec, DPC is the recommended way for handling surprise removal
-events and even recommends DPC capable slots *not* set 'Surprise'
-in Slot Capabilities so that removals are always handled by DPC. This
-service driver was developed with that use in mind.
+In both cases, devices on the other side are at least reset.  Whenever
+the link goes down, it's conceivable the device could be replaced with
+a different one before the link comes back up.  Is this why you remove
+and re-enumerate?  (See tangent [1] below.)
+
+The point is that from the device's hardware perspective, these
+scenarios are the same (it sent a ERR_NONFATAL or ERR_FATAL message
+and it sees the link go down).  I think we should make them the same
+on the software side, too: the driver should see the same callbacks,
+in the same order, whether we're doing AER or DPC.
+
+If removing and re-enumerating is the right thing for DPC, I think
+that means it's also the right thing for AER.
+
+Along this line, we had a question a while back about logging AER
+information after a DPC trigger.  Obviously we can't collect any
+logged information from the downstream devices while link is down, but
+I noticed the AER status bits are RW1CS, which means they're sticky
+and are not modified by hot reset or FLR.
+
+So we may be able to read and log the AER information after the DPC
+driver brings the link back up.  We may want to do the same with AER,
+i.e., reset the downstream devices first, then collect the AER status
+bits after the link comes back up.
+
+> Calling a driver's error handler for the wrong device in an unknown
+> state may have undefined results. Enumerating the slot from scratch
+> should be safe, and will assign resources, tune bus settings, and
+> bind to the matching driver.
+
+I agree with this; I think this is heading toward doing
+remove/re-enumerate on AER errors as well because it has also reset
+the device.
+
+> Per spec, DPC is the recommended way for handling surprise removal
+> events and even recommends DPC capable slots *not* set 'Surprise'
+> in Slot Capabilities so that removals are always handled by DPC. This
+> service driver was developed with that use in mind.
+
+Thanks for this tip.  The only thing I've found so far is the mention
+of Surprise Down triggering DPC in the last paragraph of sec 6.7.5.
+Are there other references I should look at?  I haven't found the
+recommendation about not setting 'Surprise' in Slot Capabilities yet.
+
+Bjorn
+
+[1] Tangent: I have similar concerns with the device reset paths.  We
+currently save some config state, reset the device, and restore the
+config state.  It's theoretically possible that the device was
+replaced or came up with different firmware after the reset, so I
+would really prefer to remove and re-enumerate there, too.  But that
+would make it hard for things up the stack that want to reset the
+device but not re-setup the whole stack.
+
+I wonder if DPC is going to cause trouble for that scenario.  That's
+not an argument against DPC, but it might be a stronger reason to
+figure out how to deal with remove/re-enumerate in those stacks.
