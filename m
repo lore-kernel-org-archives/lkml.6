@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3369064-1520824114-2-15011037352797304960
+X-Cyrus-Session-Id: sloti22d1t05-3340693-1520824114-2-3583074515316040502
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,47 +13,47 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520824113; b=pouxckK+QKMnrgx9xg8ngwHNleVx6H4GgnqFwCNUaUA+5w7
-    jCbw9Rr+p2XJnxzLsdYjhX1qwwjHskLb/htD8cmGgoOXpwKGn2FW7tk/KZ6t4fzr
-    Q+PsQD2McRY4U3F1ce5IV78TdsY/ggnUSx6xaC7rJZ9KFTtqJ1jcVzOkcixtqPog
-    9br7Z9RmHMflDSdSglpwOh3a0MnMuLHoua9hyGc74vbsHDXWFrOnPvR0Q5PF4XWj
-    9I/3A6BBgsP1nM68kgBnIG2c4JvT9jIfTA9hh+hRvTnefWFfjocc/VJFyU2RpMf8
-    lhSAb2ust+ri9zFhmWcu59rS391qaE72YZ7vGdw==
+    t=1520824112; b=dwvUbLTPfICkAsAESqbubxqduMeU4ar+rGOAIUcDyntGM+r
+    f7aZrhXNJ3kfLtcM4lNx/zqUriKPUKxb7p06hvlh8KsaftOmfBrx0nuSIefJFZRJ
+    zNMVRYeLZj86mTXPGskQQWzptDLldfsGiv2JAmQSEP79/U1KOXhba6rQn9woIZdt
+    0ZlKAx7j65zo2y3Hs0kK1ce4793EDaWGyRNwOK/LF9KPCt3U4hwQEzXxcqC4w8kT
+    8S04frkuOrIP1Qo738rJgY7ltosvIaMPeHbSreoVLHxjswnlgYIU7wXY+a/NAuqH
+    RNHXK4nTjng+EuFwfMJZ1HuAUZ13U+dAsGKRocA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1520824113; bh=O07N5fYf6deJGjSDcMe
-    6+GUS5OmV8/zk+K/Leuh8/UQ=; b=nh6wWYqdvClTVjmVWSz/ZGz54VPOI+UANsn
-    iIB9KbYHs+QBpcVoCigZUsXwKlQm2dRvP7OjQ3pCiOD2Ymxq0Ad+qySdRMsRWyBT
-    kQYqMHsTd3dRsdgghLw1/MQchBfglM+FqMvacV6ibAnErd6FPimQV7Pk5D5VnQT3
-    i3C7w+0+TruCztboJ81j0XwA0MaqwCMEFDPZKW085EnJsk6+gkkCG5ZITn5xPj1N
-    ymNzBG9MI0+6fLc+vjM9KV6W0l3W1IcL7UNA2xDM7PmYeceLGBjuvtIt3ZOk4YKQ
-    laCCJKqwdq4UXIUg1Catr9D/q9tI3pDax2RwSAo9VXnYLMRmKJw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :sender:list-id; s=arctest; t=1520824112; bh=LyuQtZFPp1glsgxWLqM
+    3xDnDkNJL4iyM4+Nd59p2ovo=; b=YT0Z0LJnrmw5J1x/d2rJA8HB6Nzad0Rub7T
+    V32jkCdm4i0DcJuXrlz04upqG8OUKQdAryvSGDB13GkVHbpVP0r9sp/UfJCJnOpu
+    3OcvFyLRtXZKCZ3ZEKrrpvRVhp1Cgd8xDJkakmKZ57eu0w6Xkz5qvIi7lkXii66w
+    F4J62XAcbNRO+Ve9SjWpZ3zoELiU4nzYGsGoU3gK9/4qxqx9TwmAQuZLSbLUwFsj
+    FFHg1x3Pd7tNeHq4tRDvaWnjxcm+TTTNk7LGZARln557lkzmjaleuoIJKbOOkf6K
+    Ggg5IVsSUXdDvecZo8TiaIgIA0LwNipYJiHnPeeGPFGEE2/ZXZQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=0 state=0;
+    x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=0 state=0;
+    x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932837AbeCLDIE (ORCPT <rfc822;greg@kroah.com>);
+        id S932462AbeCLDIE (ORCPT <rfc822;greg@kroah.com>);
         Sun, 11 Mar 2018 23:08:04 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41514 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41529 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932780AbeCLDHv (ORCPT
+        by vger.kernel.org with ESMTP id S932788AbeCLDHv (ORCPT
         <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 23:07:51 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
@@ -61,13 +61,27 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "David Woodhouse" <dwmw@amazon.co.uk>,
-        "Thomas Gleixner" <tglx@linutronix.de>
+CC: akpm@linux-foundation.org, keescook@google.com,
+        "Brian Gerst" <brgerst@gmail.com>,
+        "David Laight" <David.Laight@aculab.com>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>,
+        "Denys Vlasenko" <dvlasenk@redhat.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Juergen Gross" <jgross@suse.com>,
+        "Eduardo Valentin" <eduval@amazon.com>,
+        "Dave Hansen" <dave.hansen@linux.intel.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@kernel.org>, "Borislav Petkov" <bp@alien8.de>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>, hughd@google.com,
+        "Greg KH" <gregkh@linuxfoundation.org>, aliguori@amazon.com,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        daniel.gruss@iaik.tugraz.at, "Will Deacon" <will.deacon@arm.com>,
+        "H. Peter Anvin" <hpa@zytor.com>
 Date: Mon, 12 Mar 2018 03:06:12 +0000
-Message-ID: <lsq.1520823972.742604983@decadent.org.uk>
+Message-ID: <lsq.1520823972.447521300@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 12/76] sysfs/cpu: Fix typos in vulnerability
- documentation
+Subject: [PATCH 3.16 05/76] x86/cpufeatures: Add X86_BUG_CPU_INSECURE
 In-Reply-To: <lsq.1520823971.5976735@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -82,32 +96,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 9ecccfaa7cb5249bd31bdceb93fcf5bedb8a24d8 upstream.
+commit a89f040fa34ec9cd682aed98b8f04e3c47d998bd upstream.
 
-Fixes: 87590ce6e ("sysfs/cpu: Add vulnerability folder")
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Many x86 CPUs leak information to user space due to missing isolation of
+user space and kernel space page tables. There are many well documented
+ways to exploit that.
+
+The upcoming software migitation of isolating the user and kernel space
+page tables needs a misfeature flag so code can be made runtime
+conditional.
+
+Add the BUG bits which indicates that the CPU is affected and add a feature
+bit which indicates that the software migitation is enabled.
+
+Assume for now that _ALL_ x86 CPUs are affected by this. Exceptions can be
+made later.
+
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Laight <David.Laight@aculab.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Eduardo Valentin <eduval@amazon.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: aliguori@amazon.com
+Cc: daniel.gruss@iaik.tugraz.at
+Cc: hughd@google.com
+Cc: keescook@google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.16: assign the first available bug number]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- Documentation/ABI/testing/sysfs-devices-system-cpu | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-+++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-@@ -229,7 +229,7 @@ What:		/sys/devices/system/cpu/vulnerabi
- 		/sys/devices/system/cpu/vulnerabilities/meltdown
- 		/sys/devices/system/cpu/vulnerabilities/spectre_v1
- 		/sys/devices/system/cpu/vulnerabilities/spectre_v2
--Date:		Januar 2018
-+Date:		January 2018
- Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
- Description:	Information about CPU vulnerabilities
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -241,6 +241,7 @@
+ #define X86_BUG_COMA		X86_BUG(2) /* Cyrix 6x86 coma */
+ #define X86_BUG_AMD_TLB_MMATCH	X86_BUG(3) /* AMD Erratum 383 */
+ #define X86_BUG_AMD_APIC_C1E	X86_BUG(4) /* AMD Erratum 400 */
++#define X86_BUG_CPU_INSECURE	X86_BUG(5) /* CPU is insecure and needs kernel page table isolation */
  
-@@ -239,4 +239,4 @@ Description:	Information about CPU vulne
+ #if defined(__KERNEL__) && !defined(__ASSEMBLY__)
  
- 		"Not affected"	  CPU is not affected by the vulnerability
- 		"Vulnerable"	  CPU is affected and no mitigation in effect
--		"Mitigation: $M"  CPU is affetcted and mitigation $M is in effect
-+		"Mitigation: $M"  CPU is affected and mitigation $M is in effect
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -804,6 +804,9 @@ static void __init early_identify_cpu(st
+ 		this_cpu->c_bsp_init(c);
+ 
+ 	setup_force_cpu_cap(X86_FEATURE_ALWAYS);
++
++	/* Assume for now that ALL x86 CPUs are insecure */
++	setup_force_cpu_bug(X86_BUG_CPU_INSECURE);
+ }
+ 
+ void __init early_cpu_init(void)
