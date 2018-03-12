@@ -1,89 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751478AbeCLXEK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 19:04:10 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36362 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751312AbeCLXEJ (ORCPT
+        id S1751574AbeCLXFK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 19:05:10 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:37803 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751484AbeCLXFI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 19:04:09 -0400
-Date: Tue, 13 Mar 2018 00:04:07 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: Ognjen =?utf-8?B?R2FsacSH?= <smclt30p@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        ACPI mailing list <linux-acpi@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sebastian Reichel <sre@kernel.org>
-Subject: Re: linux-next on thinkpad x60: full battery is indicated as battery
- error in mate
-Message-ID: <20180312230407.GA7612@amd>
-References: <20180312194715.GA3992@amd>
- <20180312194944.GA3979@amd>
- <CAJZ5v0gWd7OCy+P41CFWJ1E9Tzw++Ok=YmjQwLk+iSZutBzphA@mail.gmail.com>
- <20180312223521.vzccevf6z7ik5ysf@thinkpad>
+        Mon, 12 Mar 2018 19:05:08 -0400
+X-Google-Smtp-Source: AG47ELsohsnoH7L90bGnCvCJJ7k0fUYeipZZlVodRdsUXf4b4iQdcAQmBKxPBnqq7iqej5NF3EYYnA==
+Date: Mon, 12 Mar 2018 17:05:01 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jiandi An <anjiandi@codeaurora.org>, dmitry.kasatkin@gmail.com,
+        jmorris@namei.org, serge@hallyn.com, linux-integrity@vger.kernel.org,
+        linux-ima-devel@lists.sourceforge.net,
+        linux-ima-user@lists.sourceforge.net,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Safford <david.safford@ge.com>
+Subject: Re: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
+Message-ID: <20180312230501.GJ24717@ziepe.ca>
+References: <1520448953.10396.565.camel@linux.vnet.ibm.com>
+ <1520449719.5558.28.camel@HansenPartnership.com>
+ <1520450495.10396.587.camel@linux.vnet.ibm.com>
+ <1520451662.24314.5.camel@HansenPartnership.com>
+ <1520461156.10396.654.camel@linux.vnet.ibm.com>
+ <191cfd49-0c66-a5ef-3d2b-b6c4132aa294@codeaurora.org>
+ <1520615461.12216.6.camel@HansenPartnership.com>
+ <1520891598.3547.190.camel@linux.vnet.ibm.com>
+ <20180312215957.GI24717@ziepe.ca>
+ <1520895525.3547.226.camel@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180312223521.vzccevf6z7ik5ysf@thinkpad>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1520895525.3547.226.camel@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Mar 12, 2018 at 06:58:45PM -0400, Mimi Zohar wrote:
+> On Mon, 2018-03-12 at 15:59 -0600, Jason Gunthorpe wrote:
+> > On Mon, Mar 12, 2018 at 05:53:18PM -0400, Mimi Zohar wrote:
+> > 
+> > > Using Kconfig to force the TPM to be builtin is not required, but
+> > > helpful.  Users interested in IMA-measurement could configure the TPM
+> > > as builtin themselves.  Without the TPM builtin, IMA goes into TPM-
+> > > bypass mode.
+> > 
+> > This issues, broadly speaking, we have lots of TPM drivers, selecting
+> > only some to actually support IMA shows we have some kind of problem
+> > here.
+> 
+> True, IMA is not selecting the older TPM vendor specific modules, but
+> only the newer TPM_TIS and now TPM_CRB modules.  That doesn't imply
+> that IMA only supports some TPMs.  It means that by default, these
+> TPMs are builtin.  Anyone building a kernel, can select the vendor
+> specific TPM to be builtin.
 
---IJpNTDwzlM2Ie8A6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That doesn't help distros, which is the main point of the complaint
+with this scheme :)
 
-Hi!
-
-> > >> Fully charged
-> > >> battery shows as empty battery with red "x" in Mate desktop. After
-> > >> reboot to recent mainline problem goes away. Tooltip says "battery
-> > >> waiting to charge".
-> > >>
->=20
-> For the MATE bug see:
-> https://github.com/mate-desktop/mate-power-manager/pull/251
->=20
-> The problem is in the new composite battery system in UPower, it
-> "merges" two external batteries into a single one for reporting. That
-> battery does not understand "Not Charging" inside the MATE Power
-> Manager. The above patch fixes that in MATE.
-
-Ok, so problem is 91eea70e5e5ce12eb1c7cd922e561fab43e201bd.
-
-And now, I see that MATE should be improved.
-
-But what I also see is that kernel is changing its interface in a way
-that (while making sense) breaks existing application. And we don't
-break existing applications.
-
-[Now... maybe if the fix for the application is available for long
-long time and noone is really looking and everyone already has new
-application version, maybe ... But pull request for MATE is 9 days
-old, and not even merged. So there is no way this is suitable for
-4.17.]
-
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---IJpNTDwzlM2Ie8A6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlqnB2cACgkQMOfwapXb+vJNjgCgt2WRQHWFzZise9vYRi6ryIvr
-/a4AoLyqSOQ/14n0JmioxEC265RZ40RT
-=ak1a
------END PGP SIGNATURE-----
-
---IJpNTDwzlM2Ie8A6--
+Jaason
