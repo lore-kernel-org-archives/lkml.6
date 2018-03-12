@@ -1,79 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932533AbeCLQMa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 12:12:30 -0400
-Received: from h1.radempa.de ([176.9.142.194]:56678 "EHLO mail.cosmopool.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932147AbeCLQLN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 12:11:13 -0400
-From: Harald Geyer <harald@ccbib.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
-        Icenowy Zheng <icenowy@aosc.io>, info@olimex.com,
-        Harald Geyer <harald@ccbib.org>
-Subject: [PATCH 4/5] arm64: dts: allwinner: a64: Add pwm device
-Date: Mon, 12 Mar 2018 16:10:49 +0000
-Message-Id: <20180312161050.7647-5-harald@ccbib.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180312161050.7647-1-harald@ccbib.org>
-References: <20180312161050.7647-1-harald@ccbib.org>
+        id S932555AbeCLQMf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 12:12:35 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:50938 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932538AbeCLQMc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 12:12:32 -0400
+Subject: Re: Nokia N900: refcount_t underflow, use after free
+To: Pavel Machek <pavel@ucw.cz>
+CC: Robin Murphy <robin.murphy@arm.com>, <ivo.g.dimitrov.75@gmail.com>,
+        <khilman@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        <aaro.koskinen@iki.fi>, kernel list <linux-kernel@vger.kernel.org>,
+        <sre@kernel.org>, <martijn@brixit.nl>,
+        =?UTF-8?Q?Filip_Matijevi=c4=87?= <filip.matijevic.pz@gmail.com>,
+        <abcloriens@gmail.com>, <sakari.ailus@linux.intel.com>,
+        <pali.rohar@gmail.com>, <clayton@craftyguy.net>,
+        <linux-omap@vger.kernel.org>, <patrikbachan@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        <serge@hallyn.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20180308143053.GA17267@amd> <20180308165903.GM5799@atomide.com>
+ <57c9f17b-fc9d-8506-4b5d-70ac216c9248@ti.com> <20180308185046.GA22796@amd>
+ <1dfc05fe-1612-f5a5-b5f1-9038b3cecfe5@arm.com>
+ <1643b74a-62ba-bea6-71c2-a2dd02430463@ti.com> <20180309221834.GA15476@amd>
+ <c8ee5692-bf71-a9d7-8607-50adc9f0e9f1@ti.com> <20180310112634.GA31614@amd>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <5aa1e2de-96d1-0e88-01ca-49df9ae25457@ti.com>
+Date: Mon, 12 Mar 2018 11:10:58 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180310112634.GA31614@amd>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This device is compatible with A13, so no new driver is needed.
+On 03/10/2018 05:26 AM, Pavel Machek wrote:
+> Hi!
+> 
+>>>>> Well, there certainly seems to be an obvious bug wherein
+>>>>> isp_detach_iommu() just releases the mapping directly without calling
+>>>>> arm_iommu_detach_device() to balance the equivalent attach. That can't
+>>>>> be helping.
+>>>>
+>>>> Indeed, I have been able to reproduce the same warning using a
+>>>> standalone test module, and the missing arm_iommu_detach_device() is
+>>>> causing the warning after probe (during failure path) or during
+>>>> remove.
+>>>
+>>> Ok do you have an idea how to fix the isp error paths? Untested patch
+>>> would be fine... But it seems that you know what needs to be fixed and
+>>> I don't.
+>>>
+>>
+>> OK, see if the following fixes the issue for you, only build tested.
+> 
+> Word-wrapped, so I applied by hand. And yes, the oops at boot is
+> gone. Thanks!
 
-Signed-off-by: Harald Geyer <harald@ccbib.org>
----
-I saw that Andre Przywara has been working on A64 pwm too and has
-submitted some patches a few days ago. I think his patches are functionally
-equivalent to this one here, but clean up things a bit and thus are
-preferable. See:
+Sorry about that, have to check my mail settings. Anyway will post the
+patch again, glad that it fixed your issue.
 
-https://groups.google.com/forum/#!topic/linux-sunxi/hQFeteP591k
+regards
+Suman
 
-I'm including my patch here mostly to have a consistent series for others
-to test. OTOH you might merge the device tree changes here and pick up
-the cleanup patches from him. Either way should work fine.
-
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 05d5e8def68a..95d52f6aa07f 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -364,6 +364,11 @@
- 				bias-pull-up;
- 			};
- 
-+			pwm_pin: pwm_pin {
-+				pins = "PD22";
-+				function = "pwm";
-+			};
-+
- 			rmii_pins: rmii_pins {
- 				pins = "PD10", "PD11", "PD13", "PD14", "PD17",
- 				       "PD18", "PD19", "PD20", "PD22", "PD23";
-@@ -629,6 +634,14 @@
- 			#interrupt-cells = <3>;
- 		};
- 
-+		pwm: pwm@1c21400 {
-+			compatible = "allwinner,sun5i-a13-pwm";
-+			reg = <0x01c21400 0x8>;
-+			clocks = <&osc24M>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
- 		rtc: rtc@1f00000 {
- 			compatible = "allwinner,sun6i-a31-rtc";
- 			reg = <0x01f00000 0x54>;
--- 
-2.11.0
+> 
+> (Camera still does not work in -next... kills system. Oh well. Lets
+> debug that some other day.)
+> 
+>> 8< ---------------------
+>> >From bac9a48fb646dc51f2030d676a0dbe3298c3b134 Mon Sep 17 00:00:00 2001
+>> From: Suman Anna <s-anna@ti.com>
+>> Date: Fri, 9 Mar 2018 16:39:59 -0600
+>> Subject: [PATCH] media: omap3isp: fix unbalanced dma_iommu_mapping
+>>
+>> The OMAP3 ISP driver manages its MMU mappings through the IOMMU-aware
+>> ARM DMA backend. The current code creates a dma_iommu_mapping and
+>> attaches this to the ISP device, but never detaches the mapping in
+>> either the probe failure paths or the driver remove path resulting
+>> in an unbalanced mapping refcount and a memory leak. Fix this properly.
+>>
+>> Reported-by: Pavel Machek <pavel@ucw.cz>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+> 
+> Tested-by: Pavel Machek <pavel@ucw.cz>
+> 									Pavel
+> 
