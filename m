@@ -1,342 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932246AbeCLXAA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 19:00:00 -0400
-Received: from smtp1.de.adit-jv.com ([62.225.105.245]:49884 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751312AbeCLW76 (ORCPT
+        id S1751526AbeCLXAX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 19:00:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44400 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751313AbeCLXAW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 18:59:58 -0400
-Date: Mon, 12 Mar 2018 23:59:45 +0100
-From: Eugeniu Rosca <erosca@de.adit-jv.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-CC: <linux-kbuild@vger.kernel.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-        Petr Vorel <pvorel@suse.cz>, Randy Dunlap <rdunlap@infradead.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>, <linux-kernel@vger.kernel.org>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <rosca.eugeniu@gmail.com>
-Subject: Re: [PATCH v3] kconfig: make unmet dependency warnings readable
-Message-ID: <20180312225945.GA29113@vmlxhi-102.adit-jv.com>
-References: <1520697119-17483-1-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1520697119-17483-1-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.72.93.184]
+        Mon, 12 Mar 2018 19:00:22 -0400
+Date: Mon, 12 Mar 2018 16:00:18 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: linux-kernel@vger.kernel.org, eric.dumazet@gmail.com,
+        xiyou.wangcong@gmail.com, fw@strlen.de
+Subject: Re: [PATCH] proc: reject "." and ".." as filenames
+Message-Id: <20180312160018.5d4cb6917c84b2805ff32d1d@linux-foundation.org>
+In-Reply-To: <20180310001223.GB12443@avx2>
+References: <20180310001223.GB12443@avx2>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masahiro,
+On Sat, 10 Mar 2018 03:12:23 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
 
-Some "final polishing" review comments. Feel free to pick/drop them at
-your will.
+> Various subsystems can create files and directories in /proc
+> with names directly controlled by userspace.
+> 
+> Which means "/", "." and ".." are no-no.
+> 
+> "/" split is already taken care of, do the other 2 prohibited names.
+> 
+> --- a/fs/proc/generic.c
+> +++ b/fs/proc/generic.c
+> @@ -366,6 +366,14 @@ static struct proc_dir_entry *__proc_create(struct proc_dir_entry **parent,
+>  		WARN(1, "name len %u\n", qstr.len);
+>  		return NULL;
+>  	}
+> +	if (qstr.len == 1 && fn[0] == '.') {
+> +		WARN(1, "name '.'\n");
+> +		return NULL;
+> +	}
+> +	if (qstr.len == 2 && fn[0] == '.' && fn[1] == '.') {
+> +		WARN(1, "name '..'\n");
+> +		return NULL;
+> +	}
+>  	if (*parent == &proc_root && name_to_int(&qstr) != ~0U) {
+>  		WARN(1, "create '/proc/%s' by hand\n", qstr.name);
+>  		return NULL;
 
-On Sun, Mar 11, 2018 at 12:51:59AM +0900, Masahiro Yamada wrote:
-> Currently, the unmet dependency warnings end up with endlessly long
-> expressions, most of which are false positives.
-> 
-> Here is test code to demonstrate how it currently works.
-> 
-> [Test Case]
-> 
->   config DEP1
->           def_bool y
-> 
->   config DEP2
->           bool "DEP2"
-> 
->   config A
->           bool "A"
->           select E
-> 
->   config B
->           bool "B"
->           depends on DEP2
->           select E
-> 
->   config C
->           bool "C"
->           depends on DEP1 && DEP2
->           select E
-> 
->   config D
->           def_bool n
->           select E
-> 
->   config E
->           bool
->           depends on DEP1 && DEP2
-> 
-> [Result]
-> 
->   $ make config
->   scripts/kconfig/conf  --oldaskconfig Kconfig
->   *
->   * Linux Kernel Configuration
->   *
->   DEP2 (DEP2) [N/y/?] (NEW) n
->   A (A) [N/y/?] (NEW) y
->   warning: (A && B && D) selects E which has unmet direct
->   dependencies (DEP1 && DEP2)
-> 
-> Here, I see some points to be improved.
-> 
-> First, '(A || B || D)' would make more sense than '(A && B && D)'.
-> I am not sure if this is intentional, but expr_simplify_unmet_dep()
-> turns OR expressions into AND, like follows:
-> 
->         case E_OR:
->                 return expr_alloc_and(
-> 
-> Second, we see false positives.  'A' is a real unmet dependency.
-> 'B' is false positive because 'DEP1' is fixed to 'y', and 'B' depends
-> on 'DEP2'.  'C' was correctly dropped by expr_simplify_unmet_dep().
-> 'D' is also false positive because it has no chance to be enabled.
-> Current expr_simplify_unmet_dep() cannot avoid those false positives.
-> 
-> After all, I decided to use the same helpers as used for printing
-> reverse dependencies in the help.
-> 
-> With this commit, unreadable warnings in the real world:
-> 
-> $ make ARCH=score allyesconfig
-> scripts/kconfig/conf  --allyesconfig Kconfig
-> warning: (HWSPINLOCK_QCOM && AHCI_MTK && STMMAC_PLATFORM && DWMAC_IPQ806X
-> && DWMAC_LPC18XX && DWMAC_OXNAS && DWMAC_ROCKCHIP && DWMAC_SOCFPGA && DWMA
-> C_STI && TI_CPSW && PINCTRL_GEMINI && PINCTRL_OXNAS && PINCTRL_ROCKCHIP &&
->  PINCTRL_DOVE && PINCTRL_ARMADA_37XX && PINCTRL_STM32 && S3C2410_WATCHDOG
-> && VIDEO_OMAP3 && VIDEO_S5P_FIMC && USB_XHCI_MTK && RTC_DRV_AT91SAM9 && LP
-> C18XX_DMAMUX && VIDEO_OMAP4 && COMMON_CLK_GEMINI && COMMON_CLK_ASPEED && C
-> OMMON_CLK_NXP && COMMON_CLK_OXNAS && COMMON_CLK_BOSTON && ATMEL_ST && QCOM
-> _ADSP_PIL && QCOM_Q6V5_PIL && QCOM_GSBI && ATMEL_EBI && ST_IRQCHIP && RESE
-> T_IMX7 && PHY_HI6220_USB && PHY_RALINK_USB && PHY_ROCKCHIP_PCIE && PHY_DA8
-> XX_USB) selects MFD_SYSCON which has unmet direct dependencies (HAS_IOMEM)
-> warning: (PINCTRL_AT91 && PINCTRL_AT91PIO4 && PINCTRL_OXNAS && PINCTRL_PIS
-> TACHIO && PINCTRL_PIC32 && PINCTRL_MESON && PINCTRL_NOMADIK && PINCTRL_MTK
->  && PINCTRL_MT7622 && GPIO_TB10X) selects OF_GPIO which has unmet direct d
-> ependencies (GPIOLIB && OF && HAS_IOMEM)
-> warning: (FAULT_INJECTION_STACKTRACE_FILTER && LATENCYTOP && LOCKDEP) sele
-> cts FRAME_POINTER which has unmet direct dependencies (DEBUG_KERNEL && (CR
-> IS || M68K || FRV || UML || SUPERH || BLACKFIN || MN10300 || METAG) || ARC
-> H_WANT_FRAME_POINTERS)
-> 
-> will be turned into:
-> 
-> $ make ARCH=score allyesconfig
-> scripts/kconfig/conf  --allyesconfig Kconfig
-> 
-> WARNING: unmet direct dependencies detected for MFD_SYSCON
->  Depends on:
+--- a/fs/proc/generic.c~proc-reject-and-as-filenames-fix
++++ a/fs/proc/generic.c
+@@ -387,10 +387,8 @@ static struct proc_dir_entry *__proc_cre
+ 		WARN(1, "name len %u\n", qstr.len);
+ 		return NULL;
+ 	}
+-	if (qstr.len == 1 && fn[0] == '.') {
+-		WARN(1, "name '.'\n");
++	if (WARN(qstr.len == 1 && fn[0] == '.', "name '.'\n"))
+ 		return NULL;
+-	}
+ 	if (qstr.len == 2 && fn[0] == '.' && fn[1] == '.') {
+ 		WARN(1, "name '..'\n");
+ 		return NULL;
 
-Here imho `Depends on [n]:` is more inline with the "Selected by [y|m]"
-family, but this could be subjective. `[n]` might be helpful for long
-direct dependencies, like seen below for FRAME_POINTER. No strong
-preference about it.
-
->     HAS_IOMEM [=n]
-
-Adding a minus in front of expression, i.e. `  - HAS_IOMEM [=n]`
-is probably more inline with how reverse dependencies are printed.
-
->  Selected by [y]:
-
-Shifting this line to the right by one space symbol would resemble the
-`make menuconfig` output. No strong preference about it.
-
->   - PINCTRL_STM32 [=y] && PINCTRL [=y] && (ARCH_STM32 || COMPILE_TEST [=y])
-> && OF [=y]
->   - RTC_DRV_AT91SAM9 [=y] && RTC_CLASS [=y] && (ARCH_AT91 || COMPILE_TEST
-> [=y])
->   - ATMEL_ST [=y] && GENERIC_CLOCKEVENTS [=y]
->   - RESET_IMX7 [=y] && RESET_CONTROLLER [=y]
->   - PHY_HI6220_USB [=y] && (ARCH_HISI && ARM64 || COMPILE_TEST [=y])
->   - PHY_RALINK_USB [=y] && (RALINK || COMPILE_TEST [=y])
->   - PHY_ROCKCHIP_PCIE [=y] && (ARCH_ROCKCHIP && OF [=y] || COMPILE_TEST
-> [=y])
-> 
-> WARNING: unmet direct dependencies detected for OF_GPIO
->  Depends on:
-
-Likewise, shifting the above line to the right by one space would make
-it similar to what's generated by `make menuconfig`.
-
->     GPIOLIB [=y] && OF [=y] && HAS_IOMEM [=n]
->  Selected by [y]:
->   - PINCTRL_MTK [=y] && PINCTRL [=y] && (ARCH_MEDIATEK || COMPILE_TEST
-> [=y]) && OF [=y]
->   - PINCTRL_MT7622 [=y] && PINCTRL [=y] && (ARCH_MEDIATEK || COMPILE_TEST
-> [=y]) && OF [=y] && (ARM64 || COMPILE_TEST [=y])
-> 
-> WARNING: unmet direct dependencies detected for FRAME_POINTER
->  Depends on:
->     DEBUG_KERNEL [=y] && (CRIS || M68K || FRV || UML || SUPERH || BLACKFIN
->  || MN10300 || METAG) || ARCH_WANT_FRAME_POINTERS [=n]
->  Selected by [y]:
->   - LATENCYTOP [=y] && DEBUG_KERNEL [=y] && STACKTRACE_SUPPORT [=y] &&
-> PROC_FS [=y] && !MIPS && !PPC && !S390 && !MICROBLAZE && !ARM_UNWIND &&
-> !ARC && !X86
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Reviewed-by: Petr Vorel <petr.vorel@gmail.com>
-> ---
-> 
-> Changes in v3:
->   - Remove unused expr_get_leftmost_symbol()
->   - Move error message to the same line as 'WARNING'
->   - update test case
-> 
-> Changes in v2:
->   - update test case
-> 
->  scripts/kconfig/expr.c   | 42 ------------------------------------------
->  scripts/kconfig/expr.h   |  1 -
->  scripts/kconfig/symbol.c | 34 ++++++++++++++++++++++------------
->  3 files changed, 22 insertions(+), 55 deletions(-)
-> 
-> diff --git a/scripts/kconfig/expr.c b/scripts/kconfig/expr.c
-> index 49376e1..e1a39e9 100644
-> --- a/scripts/kconfig/expr.c
-> +++ b/scripts/kconfig/expr.c
-> @@ -1137,48 +1137,6 @@ static int expr_compare_type(enum expr_type t1, enum expr_type t2)
->  	return 0;
->  }
->  
-> -static inline struct expr *
-> -expr_get_leftmost_symbol(const struct expr *e)
-> -{
-> -
-> -	if (e == NULL)
-> -		return NULL;
-> -
-> -	while (e->type != E_SYMBOL)
-> -		e = e->left.expr;
-> -
-> -	return expr_copy(e);
-> -}
-> -
-> -/*
-> - * Given expression `e1' and `e2', returns the leaf of the longest
-> - * sub-expression of `e1' not containing 'e2.
-> - */
-> -struct expr *expr_simplify_unmet_dep(struct expr *e1, struct expr *e2)
-> -{
-> -	struct expr *ret;
-> -
-> -	switch (e1->type) {
-> -	case E_OR:
-> -		return expr_alloc_and(
-> -		    expr_simplify_unmet_dep(e1->left.expr, e2),
-> -		    expr_simplify_unmet_dep(e1->right.expr, e2));
-> -	case E_AND: {
-> -		struct expr *e;
-> -		e = expr_alloc_and(expr_copy(e1), expr_copy(e2));
-> -		e = expr_eliminate_dups(e);
-> -		ret = (!expr_eq(e, e1)) ? e1 : NULL;
-> -		expr_free(e);
-> -		break;
-> -		}
-> -	default:
-> -		ret = e1;
-> -		break;
-> -	}
-> -
-> -	return expr_get_leftmost_symbol(ret);
-> -}
-> -
->  void expr_print(struct expr *e,
->  		void (*fn)(void *, struct symbol *, const char *),
->  		void *data, int prevtoken)
-> diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
-> index 8dbf2a4..94a383b 100644
-> --- a/scripts/kconfig/expr.h
-> +++ b/scripts/kconfig/expr.h
-> @@ -305,7 +305,6 @@ struct expr *expr_transform(struct expr *e);
->  int expr_contains_symbol(struct expr *dep, struct symbol *sym);
->  bool expr_depends_symbol(struct expr *dep, struct symbol *sym);
->  struct expr *expr_trans_compare(struct expr *e, enum expr_type type, struct symbol *sym);
-> -struct expr *expr_simplify_unmet_dep(struct expr *e1, struct expr *e2);
->  
->  void expr_fprint(struct expr *e, FILE *out);
->  struct gstr; /* forward */
-> diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
-> index 0f7eba7..8b13c16 100644
-> --- a/scripts/kconfig/symbol.c
-> +++ b/scripts/kconfig/symbol.c
-> @@ -333,6 +333,26 @@ static struct symbol *sym_calc_choice(struct symbol *sym)
->  	return def_sym;
->  }
->  
-> +static void sym_warn_unmet_dependency(struct symbol *sym)
-
-Based on the current naming pattern of kconfig functions:
-
-$> ctags -x --c-types=f scripts/kconfig/*.c | cut -d' ' -f1 | grep dep
-dep_stack_insert
-dep_stack_remove
-expr_depends_symbol
-expr_gstr_print_revdep
-expr_simplify_unmet_dep
-file_write_dep
-menu_add_dep
-sym_check_choice_deps
-sym_check_deps
-sym_check_expr_deps
-sym_check_sym_deps
-
-You could also consider below variants:
-* sym_warn_unmet_dep()
-* sym_warn_unmet_deps()
-* sym_warn_unmet_dirdep()
-
-> +{
-> +	struct gstr gs = str_new();
-> +
-> +	str_printf(&gs,
-> +		   "\nWARNING: unmet direct dependencies detected for %s\n"
-> +		   " Depends on:\n"
-> +		   "    ",
-> +		   sym->name);
-> +	expr_gstr_print(sym->dir_dep.expr, &gs);
-> +	str_printf(&gs, "\n");
-> +
-> +	expr_gstr_print_revdep(sym->rev_dep.expr, &gs, yes,
-> +			       " Selected by [y]:\n");
-> +	expr_gstr_print_revdep(sym->rev_dep.expr, &gs, mod,
-> +			       " Selected by [m]:\n");
-> +
-> +	fputs(str_get(&gs), stderr);
-> +}
-> +
->  void sym_calc_value(struct symbol *sym)
->  {
->  	struct symbol_value newval, oldval;
-> @@ -414,18 +434,8 @@ void sym_calc_value(struct symbol *sym)
->  				}
->  			}
->  		calc_newval:
-> -			if (sym->dir_dep.tri == no && sym->rev_dep.tri != no) {
-> -				struct expr *e;
-> -				e = expr_simplify_unmet_dep(sym->rev_dep.expr,
-> -				    sym->dir_dep.expr);
-> -				fprintf(stderr, "warning: (");
-> -				expr_fprint(e, stderr);
-> -				fprintf(stderr, ") selects %s which has unmet direct dependencies (",
-> -					sym->name);
-> -				expr_fprint(sym->dir_dep.expr, stderr);
-> -				fprintf(stderr, ")\n");
-> -				expr_free(e);
-> -			}
-> +			if (sym->dir_dep.tri == no && sym->rev_dep.tri != no)
-> +				sym_warn_unmet_dependency(sym);
->  			newval.tri = EXPR_OR(newval.tri, sym->rev_dep.tri);
->  		}
->  		if (newval.tri == mod &&
-> -- 
-> 2.7.4
-> 
-
-Best regards,
-Eugeniu.
+is neater, but the whole function should be thus converted and I'll let
+you decide on that.
