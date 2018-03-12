@@ -1,115 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751696AbeCLT0F (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 15:26:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35546 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751300AbeCLT0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 15:26:04 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85A32204EF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Mon, 12 Mar 2018 16:25:51 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Daniel Borkmann <daniel@iogearbox.net>, Wangnan <wangnan0@huawei.com>
-Subject: Re: [PATCH 11/13] perf bpf: Add helper header files
-Message-ID: <20180312192551.GC10004@kernel.org>
-References: <20180312094313.18738-1-jolsa@kernel.org>
- <20180312094313.18738-12-jolsa@kernel.org>
- <20180312184455.bs2rk6qr3qrz7vmy@ast-mbp>
- <20180312192020.GA14525@krava>
+        id S1751462AbeCLTcO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 15:32:14 -0400
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:25497 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751313AbeCLTcL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 15:32:11 -0400
+X-ME-Helo: [192.168.0.14]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 12 Mar 2018 20:32:09 +0100
+X-ME-IP: 77.198.79.136
+Subject: Re: [PATCH] net/mlx4_en: Fix a memory leak in case of error in
+ 'mlx4_en_init_netdev()'
+To: Tariq Toukan <tariqt@mellanox.com>
+Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Newsgroups: gmane.linux.kernel,gmane.linux.network,gmane.linux.drivers.rdma,gmane.linux.kernel.janitors
+References: <20180311224529.4427-1-christophe.jaillet@wanadoo.fr>
+ <a61ed690-7df1-7292-4074-3f7d66c0b490@mellanox.com>
+From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Message-ID: <9cd5ab7d-15c1-7ebf-1bf1-3fcd79525fa8@wanadoo.fr>
+Date: Mon, 12 Mar 2018 20:32:07 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180312192020.GA14525@krava>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <a61ed690-7df1-7292-4074-3f7d66c0b490@mellanox.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Mar 12, 2018 at 08:20:20PM +0100, Jiri Olsa escreveu:
-> On Mon, Mar 12, 2018 at 11:44:57AM -0700, Alexei Starovoitov wrote:
-> > On Mon, Mar 12, 2018 at 10:43:11AM +0100, Jiri Olsa wrote:
-> > > diff --git a/tools/perf/util/bpf-userapi.h b/tools/perf/util/bpf-userapi.h
-> > > new file mode 100644
-> > > index 000000000000..63f2b4c13a5c
-> > > --- /dev/null
-> > > +++ b/tools/perf/util/bpf-userapi.h
-> > > @@ -0,0 +1,11 @@
-> > > +#ifndef __BPF_USERAPI_H
-> > > +#define __BPF_USERAPI_H
-> > > +
-> > > +enum {
-> > > +	BPF_FUNC_USER_START			= 10000,
-> > > +	BPF_FUNC_USER_print			= BPF_FUNC_USER_START,
-> > > +	BPF_FUNC_USER_bpf_map_get_next_key,
-> > > +	BPF_FUNC_USER_bpf_map_lookup_elem,
-> > > +};
-> > > +
-> > > +#endif /* __BPF_USERFUNCS_H */
-> > > diff --git a/tools/perf/util/bpf-userfuncs.h b/tools/perf/util/bpf-userfuncs.h
-> > > new file mode 100644
-> > > index 000000000000..e920420237ee
-> > > --- /dev/null
-> > > +++ b/tools/perf/util/bpf-userfuncs.h
-> > > @@ -0,0 +1,19 @@
-> > > +#ifndef __BPF_USERFUNCS_H
-> > > +#define __BPF_USERFUNCS_H
-> > > +
-> > > +#include <bpf-userapi.h>
-> > > +
-> > > +static int (*bpfu_print)(const char *fmt, ...) =
-> > > +	(void *) BPF_FUNC_USER_print;
-> > > +static int (*bpfu_map_get_next_key)(void *map, void *key, void *value) =
-> > > +	(void *) BPF_FUNC_USER_bpf_map_get_next_key;
-> > > +static int (*bpfu_map_lookup_elem)(void *map, void *key, void *value) =
-> > > +	(void *) BPF_FUNC_USER_bpf_map_lookup_elem;
-> > > +
-> > > +#define print(fmt, ...)                                  \
-> > > +({                                                       \
-> > > +	char ____fmt[] = fmt;                            \
-> > > +	bpfu_print(____fmt, ##__VA_ARGS__);              \
-> > > +})
-> > 
-> > since there is no verifier for this user space bpf interpreter
-> > there is no need to restrict what BEGIN/END progs can do and can call.
-> > llvm will happily compile any C code into bpf instructions.
-> > With little bit of elf magic it's possible to let it call any libc
-> > function instead of only 3 above.
-> > perf loader will see bpf_call into normal printf, memcpy, memcmp, etc
-> > then during the loading need to associate symbol with actual address
-> > of these functions inside perf binary and let call_cb do the call.
-> 
-> right, I kept this way, because it was already there for kernel,
-> so it was fast to write ;-)
-> 
-> but it's true we could leave it symbol based and have some sort of
-> dynamic loader behaviour.. but we'd need to sort out passing the
-> arguments in some generic form.. I'll check on that
+Le 12/03/2018 à 09:42, Tariq Toukan a écrit :
+ >
+ >
+ > On 12/03/2018 12:45 AM, Christophe JAILLET wrote:
+ >> If 'kzalloc' fails, we must free some memory before returning.
+ >>
+ >> Fixes: 67f8b1dcb9ee ("net/mlx4_en: Refactor the XDP forwarding rings
+ >> scheme")
+ >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+ >> ---
+ >>   drivers/net/ethernet/mellanox/mlx4/en_netdev.c | 2 +-
+ >>   1 file changed, 1 insertion(+), 1 deletion(-)
+ >>
+ >> diff --git a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+ >> b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+ >> index 8fc51bc29003..f9db018e858f 100644
+ >> --- a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+ >> +++ b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+ >> @@ -3327,7 +3327,7 @@ int mlx4_en_init_netdev(struct mlx4_en_dev
+ >> *mdev, int port,
+ >>           if (!priv->tx_cq[t]) {
+ >>               kfree(priv->tx_ring[t]);
+ >>               err = -ENOMEM;
+ >> -            goto out;
+ >> +            goto err_free_tx;
+ >>           }
+ >>       }
+ >>       priv->rx_ring_num = prof->rx_ring_num;
+ >>
+ >
+ > Hi Christophe, thanks for spotting this.
+ >
+ > However, I think these err_free_tx label and loop are redundant.
+ > Both tx_ring/tx_cq flows should just goto out, as resources are freed
+ > later in mlx4_en_destroy_netdev() -> mlx4_en_free_resources().
+ >
 
-Does this answer it or am I missing something?
+Hi,
 
-Documentation/bpf/bpf_design_QA.txt
+I do not agree with you and I think that the patch is relevant.
 
-Q: Is BPF a generic virtual machine ?
-A: NO.
+If 'mlx4_en_init_netdev' fails, the only caller, 'mlx4_en_activate()', 
+will set:
+	mdev->pndev[i] = NULL
+(see 
+https://elixir.bootlin.com/linux/v4.16-rc5/source/drivers/net/ethernet/mellanox/mlx4/en_main.c#L254)
 
-BPF is generic instruction set _with_ C calling convention.
+and 'mlx4_en_destroy_netdev()' is not called in this case.
+(see 
+https://elixir.bootlin.com/linux/v4.16-rc5/source/drivers/net/ethernet/mellanox/mlx4/en_main.c#L232)
 
-Q: Why C calling convention was chosen?
-A: Because BPF programs are designed to run in the linux kernel
-   which is written in C, hence BPF defines instruction set compatible
-   with two most used architectures x64 and arm64 (and takes into
-   consideration important quirks of other architectures) and
-   defines calling convention that is compatible with C calling
-   convention of the linux kernel on those architectures.
+My understanding is that 'mlx4_en_destroy_netdev()' will free resources 
+in the normal case but that resources should be freed at allocation time 
+if it does not fully succeed.
 
-- Arnaldo
+Best regards,
+CJ
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
