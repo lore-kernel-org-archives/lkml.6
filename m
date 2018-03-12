@@ -1,85 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932399AbeCLVmS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 17:42:18 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:52608 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932265AbeCLVmR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 17:42:17 -0400
-Date: Mon, 12 Mar 2018 22:39:54 +0100
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC PATCH 00/35] remove in-kernel syscall invocations
-Message-ID: <20180312213954.GA5969@light.dominikbrodowski.net>
-References: <20180311105557.20807-1-linux@dominikbrodowski.net>
- <CA+55aFx9eSF2X7Cu84hPym+ca+uO4HStZ4r5XFmneH44ZJPoyw@mail.gmail.com>
+        id S932439AbeCLVp5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 17:45:57 -0400
+Received: from ozlabs.org ([103.22.144.67]:54157 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932265AbeCLVp4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 17:45:56 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 13 Mar 2018 08:45:16 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andy Gross <agross@codeaurora.org>,
+        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Amit Kucheria <amit.kucheria@linaro.org>
+Subject: linux-next: manual merge of the qcom tree with the amlogic tree
+Message-ID: <20180313084516.49718221@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFx9eSF2X7Cu84hPym+ca+uO4HStZ4r5XFmneH44ZJPoyw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/5XX3mInVEPgUs6+wuJ2GbmB"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 11, 2018 at 01:15:59PM -0700, Linus Torvalds wrote:
-> On Sun, Mar 11, 2018 at 3:55 AM, Dominik Brodowski
-> <linux@dominikbrodowski.net> wrote:
-> > Here is a first set of patches which reduce the number of syscall invocations
-> > from within the kernel.
-> 
-> This all looks ok to me. I think there may be some room for cleanup
-> and bikeshedding later (the "ksys_mmap_pgoff()" name made me go "that
-> sounds more like a real helper than a kernel syscall", for example),
-> but on the whole I think it's best to start with this kind of fairly
-> direct translation.
-> 
-> In fact, because it all looks *so* mechanical, I'd even be willing to
-> just pull this into 4.16, if that makes the real work that this
-> depends on easier?
-> 
-> Anyway, ack from me, qith the only question being how you want to
-> handle the patches. Direct pull request to me, go through the -mm
-> tree, or just keep them in your own git tree and then build upon it
-> and send it all later?
+--Sig_/5XX3mInVEPgUs6+wuJ2GbmB
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for your feedback! As I think this deserves at least another round of
-review and some testing by 0day, I've set up a git tree at
+Hi Andy,
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/brodo/linux syscalls-next
+Today's linux-next merge of the qcom tree got a conflict in:
 
-This will allow me to re-base and tweak the patches for a while, and add
-some more similar patches on top. For example, besides the first set of
-35+1 patches in the aforementioned branch "syscalls-next" there are a few
-other patches -- including one you might find familiar -- in "syscalls-WIP"
-which are not fully ready yet.
+  arch/arm64/configs/defconfig
 
-The patches in that repository also include the following changes since
-yesterday's RFC:
+between commit:
 
-- rebase to v4.15-rc5
-	- sys_ioperm already got its SYSCALL_DEFINE3
+  266c157de3b2 ("arm64: defconfig: enable MESON EFUSE")
 
-- add ACK from Richard Weinberger
+from the amlogic tree and commit:
 
-- modify CC -> Cc (suggested by Ingo Molnar)
+  52fe48c2b9bb ("arm64: defconfig: enable thermal sensor on QCOM platforms")
 
-- update comment in include/linux/syscalls.h (suggested by Ingo Molnar and
-	Andy Lutomirski)
+from the qcom tree.
 
-- separate declarations from definitions with newlines in
-	include/linux/syscalls.h; add comment on ksys_close() (suggested by
-	Ingo Molnar)
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-- expand commit messages (suggested by Christoph Hellwig)
+--=20
+Cheers,
+Stephen Rothwell
 
-- add patch 36: fs: add ksys_open() wrapper; remove in-kernel calls to
-	sys_open()
+diff --cc arch/arm64/configs/defconfig
+index df2b08b1554f,a37130b54fae..000000000000
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@@ -565,7 -572,7 +575,8 @@@ CONFIG_PHY_XGENE=3D
+  CONFIG_PHY_TEGRA_XUSB=3Dy
+  CONFIG_QCOM_L2_PMU=3Dy
+  CONFIG_QCOM_L3_PMU=3Dy
+ +CONFIG_MESON_EFUSE=3Dm
++ CONFIG_QCOM_QFPROM=3Dy
+  CONFIG_UNIPHIER_EFUSE=3Dy
+  CONFIG_TEE=3Dy
+  CONFIG_OPTEE=3Dy
 
-Thanks,
-	Dominik
+--Sig_/5XX3mInVEPgUs6+wuJ2GbmB
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqm9OwACgkQAVBC80lX
+0GxOdQf/ZvQsipdh+fg8zd4azJ2CuMwF9J7LGXRIsaCoL/pTwxg3pRroH9G6970B
+t2wuBNkjqa4jqhLDb7tgqIdnF6GqutbqhlWNtFi9sxyq8iG7KDp78yO9iOJaWmwo
+/4D1vxSnwrsmqvRfMb6W1E472IBVBm8zUa3kjw4IOzxIgSf+ttcDbuSgeyYMXycw
++KqFyvgcBayaWPAEdkg+yrKqZD6j9A+7PWssDm34V0oPmCYW3LsCgpvBBLD+Do4p
+T2r051BInb+oCIsLIuISAJnCOpFHB81NzW8WeFzOdIe+32TdyR3XeJQsXueqp2Ti
+Hb3LjywFIFrPnRfvZjQ0C5zM+Hrs9A==
+=mdCv
+-----END PGP SIGNATURE-----
+
+--Sig_/5XX3mInVEPgUs6+wuJ2GbmB--
