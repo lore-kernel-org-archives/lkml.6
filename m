@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELvTmw9SvswBTC0kNFu+7a/TttqvIlgCVWMhjAi8cH8wE9xF/stnywPqANTrN76njVAiEU8+
-ARC-Seal: i=1; a=rsa-sha256; t=1520824060; cv=none;
+X-Google-Smtp-Source: AG47ELts5t7ei+3DZSlELsWKBrlMeVyLnF50mxTboUjKt2iwfjinmVpPWud8D5kvJxObRZ5Tut8O
+ARC-Seal: i=1; a=rsa-sha256; t=1520824059; cv=none;
         d=google.com; s=arc-20160816;
-        b=V91mPOvgFXylDZbjFWoIGz3+u3VmjBEIn6Ghn9WLuE6QNuQMyMHz4LeqELbCiFivQW
-         NiOz0W+awAbDkLG5Cm01RHprpSlf3Te5IQC/4b2HfQj9+jeU7Pc1h6ONVgbXgEVpL8ET
-         ASidmIffsteSVB1tQYZeJ77VWSTDMZxBAsM7xmrEycUotsHXHjvLKwZL6ePU8EJQ3wNL
-         QeSeFaSm1a8cX51dS6Ic9ltx2QO58EO5M16yQNOM65sUXMOoN7DzJ4bDqvaJ/5aEtjDb
-         I3W/WPY5wuNzFc4NRO194TCPnETi1hCDueW2XlSLn4MqelImhAqnlUw2OvixMd28nW9S
-         bWsQ==
+        b=pJfKfBuf3kr/32TMXDsv+yvRWXU7anqTuc+T2MMeGS0lLSud3Aqv+b9i20ltfrf9hZ
+         QKkDf9uNDyM3wAh5pakf6QOchbufE/FNIsjhzc5v2mmrZA8zZ8ny4WONFJrTd5nwC5ie
+         aJtkinUemxmUQMGDk0pphWRWUmWesq5TnkDLFkcJvsuVQqnMCCjM7xfdiFMUe979ygoS
+         9aoDGAo+UuOaleMlYhsIGk6o2XJBrU9htKwxNoazhZ1hGunPvRM1UodlR5CZGZkSzybt
+         GZKhukhhj7cHDrlNbz1vLUxCv1naqGuOAFlNzrPuIurogA1WJmQ/mPGnXHy/PN7o46kG
+         ICDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=mavnszmK86PT2iamtOmHgfgsiO24cW1Ze8DxIqaV9pc=;
-        b=ZgLmfmcTFaOV/D9dkeqGtjxg0wjD/TTiHn6CHJcjGRdNuzVg2NnQMMPR7IIW+qJ9cf
-         lyPmpBpidanyFV2A51tLFSIlBw4FMkj4GdHDeLuEssrlPe2p/NzcWazchSDuzzwc3c/+
-         XdHMOL7BrN1wILdGuheQlg19LStpYKfSuyJhhUmwThC/ikOIaG42uC7c2bcDOpCZayuA
-         TAXMEDYVmB7oXaSPiHYLVNzz1icY53glmBsvAwkTBi+1SnIUwcme7grd13B2I0p2QCFq
-         Z9yKsf6l2YdfqCwCvRr9+aX7hKT7OFhjh8FeLjEUCRxXUu5BmAmmG4m7hcH8qIXY4cmE
-         90Ng==
+        bh=DzVHuqOw95w3ApYc4GrwpVNqh81tAtriIWZyjfObS6E=;
+        b=rz6eoezm5whnr/tJTiv+fIlDq6yVyI25Y0dHQqWIKwZt0mRBrkIsSCwq3KBXoCZ9Vy
+         NXcQyxPyEUd2PU1i/zu+3Q2n18SCBYAQ4TU33J20RRNY9XVxsplWF8FgtsdF3RW8XQN8
+         rGeFNE7gEhdLU/ftl5WKqZEJ9gNtSDmxnN45fcqjcfrLYmwk1tPDEYD8DSCvPDTHMCUJ
+         ENkr8PFY39M2KizJjRupe2868KGKM7QRvG46a7fiDNrDm9AAQykmw6rUUYKRPR0XO6I+
+         08Pplf1XqU9GA7wIO8/DahinEl+8iEsMpLWOYU1c83Jnhs6eBTLU36dWxw8imqCt/1qm
+         kB5Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,26 +30,21 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Andi Kleen" <ak@linux.intel.com>,
- "David Woodhouse" <dwmw@amazon.co.uk>,
- kernel-janitors@vger.kernel.org,
- "Borislav Petkov" <bp@suse.de>,
- "Andy Lutomirski" <luto@kernel.org>,
- "Colin Ian King" <colin.king@canonical.com>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Hugh Dickins" <hughd@google.com>,
+ "Arnd Bergmann" <arnd@arndb.de>,
+ "Kees Cook" <keescook@chromium.org>
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.368865130@decadent.org.uk>
+Message-ID: <lsq.1520823814.428778762@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 090/104] x86/spectre: Fix spelling mistake:
- "vunerable"-> "vulnerable"
+Subject: [PATCH 3.2 103/104] x86: fix build warnign with 32-bit PAE
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699609906663728?=
-X-GMAIL-MSGID: =?utf-8?q?1594699609906663728?=
+X-GMAIL-THRID: =?utf-8?q?1594699608797216012?=
+X-GMAIL-MSGID: =?utf-8?q?1594699608797216012?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,34 +52,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit e698dcdfcda41efd0984de539767b4cddd235f1e upstream.
+I ran into a 4.9 build warning in randconfig testing, starting with the
+KAISER patches:
 
-Trivial fix to spelling mistake in pr_err error message text.
+arch/x86/kernel/ldt.c: In function 'alloc_ldt_struct':
+arch/x86/include/asm/pgtable_types.h:208:24: error: large integer implicitly truncated to unsigned type [-Werror=overflow]
+ #define __PAGE_KERNEL  (__PAGE_KERNEL_EXEC | _PAGE_NX)
+                        ^
+arch/x86/kernel/ldt.c:81:6: note: in expansion of macro '__PAGE_KERNEL'
+      __PAGE_KERNEL);
+      ^~~~~~~~~~~~~
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Link: https://lkml.kernel.org/r/20180130193218.9271-1-colin.king@canonical.com
+I originally ran into this last year when the patches were part of linux-next,
+and tried to work around it by using the proper 'pteval_t' types consistently,
+but that caused additional problems.
+
+This takes a much simpler approach, and makes the argument type of the dummy
+helper always 64-bit, which is wide enough for any page table layout and
+won't hurt since this call is just an empty stub anyway.
+
+Fixes: 8f0baadf2bea ("kaiser: merged update")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Kees Cook <keescook@chromium.org>
+Acked-by: Hugh Dickins <hughd@google.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/cpu/bugs.c | 2 +-
+ include/linux/kaiser.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -245,7 +245,7 @@ bool retpoline_module_ok(bool has_retpol
- 	if (spectre_v2_enabled == SPECTRE_V2_NONE || has_retpoline)
- 		return true;
- 
--	pr_err("System may be vunerable to spectre v2\n");
-+	pr_err("System may be vulnerable to spectre v2\n");
- 	spectre_v2_bad_module = true;
- 	return false;
+diff --git a/include/linux/kaiser.h b/include/linux/kaiser.h
+index 58c55b1589d0..b56c19010480 100644
+--- a/include/linux/kaiser.h
++++ b/include/linux/kaiser.h
+@@ -32,7 +32,7 @@ static inline void kaiser_init(void)
+ {
+ }
+ static inline int kaiser_add_mapping(unsigned long addr,
+-				     unsigned long size, unsigned long flags)
++				     unsigned long size, u64 flags)
+ {
+ 	return 0;
  }
