@@ -1,223 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751519AbeCLIPR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 04:15:17 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52034 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750752AbeCLIPO (ORCPT
+        id S1752117AbeCLIQL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 04:16:11 -0400
+Received: from mail-vk0-f52.google.com ([209.85.213.52]:43659 "EHLO
+        mail-vk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750752AbeCLIQI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 04:15:14 -0400
-X-Google-Smtp-Source: AG47ELsK1EnpfQGnCUxFldSQN0N7PJk2oVQhbqWGe90YikCj7QQ+a9NcjCYXyX4GCfARfzVaoiLf/A==
-From: Jason Vas Dias <jason.vas.dias@gmail.com>
-To: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, andi <andi@firstfloor.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH v4.16-rc4 1/3] x86/vdso: on Intel, VDSO should handle CLOCK_MONOTONIC_RAW
-Date: Sun, 11 Mar 2018 06:25:56 +0000
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-Message-ID: <7eqhiub5.fsf@gmail.com>
+        Mon, 12 Mar 2018 04:16:08 -0400
+X-Google-Smtp-Source: AG47ELuFyxAZxzOIjPBfDDW6JMQvgjUKbuU/Uok1xS7Ap+5JRLX/cAWJkBqp53aUPWZwSG6qehIiVg==
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1520842245.1513.5.camel@bootlin.com>
+References: <20180220044425.169493-20-acourbot@chromium.org>
+ <1520440654.1092.15.camel@bootlin.com> <6470b45d-e9dc-0a22-febc-cd18ae1092be@gmail.com>
+ <1520842245.1513.5.camel@bootlin.com>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Mon, 12 Mar 2018 17:15:44 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5A9mSP8Ufe-gn2Epa55M_NNOVaBL_cdWjdZ5PycbTvqbA@mail.gmail.com>
+Message-ID: <CAAFQd5A9mSP8Ufe-gn2Epa55M_NNOVaBL_cdWjdZ5PycbTvqbA@mail.gmail.com>
+Subject: Re: [RFCv4,19/21] media: vim2m: add request support
+To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Dmitry Osipenko <digetx@gmail.com>
+Cc: Alexandre Courbot <acourbot@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Paul, Dmitry,
 
-  Currently the VDSO does not handle
-     clock_gettime( CLOCK_MONOTONIC_RAW, &ts )
-  on Intel / AMD - it calls
-     vdso_fallback_gettime()
-  for this clock, which issues a syscall, having an unacceptably high
-  latency (minimum measurable time or time between measurements)
-  of 300-700ns on 2 2.8-3.9ghz Haswell x86_64 Family'_'Model : 06_3C
-  machines under various versions of Linux.
+On Mon, Mar 12, 2018 at 5:10 PM, Paul Kocialkowski
+<paul.kocialkowski@bootlin.com> wrote:
+> Hi,
+>
+> On Sun, 2018-03-11 at 22:42 +0300, Dmitry Osipenko wrote:
+>> Hello,
+>>
+>> On 07.03.2018 19:37, Paul Kocialkowski wrote:
+>> > Hi,
+>> >
+>> > First off, I'd like to take the occasion to say thank-you for your
+>> > work.
+>> > This is a major piece of plumbing that is required for me to add
+>> > support
+>> > for the Allwinner CedarX VPU hardware in upstream Linux. Other
+>> > drivers,
+>> > such as tegra-vde (that was recently merged in staging) are also
+>> > badly
+>> > in need of this API.
+>>
+>> Certainly it would be good to have a common UAPI. Yet I haven't got my
+>> hands on
+>> trying to implement the V4L interface for the tegra-vde driver, but
+>> I've taken a
+>> look at Cedrus driver and for now I've one question:
+>>
+>> Would it be possible (or maybe already is) to have a single IOCTL that
+>> takes input/output buffers with codec parameters, processes the
+>> request(s) and returns to userspace when everything is done? Having 5
+>> context switches for a single frame decode (like Cedrus VAAPI driver
+>> does) looks like a bit of overhead.
+>
+> The V4L2 interface exposes ioctls for differents actions and I don't
+> think there's a combined ioctl for this. The request API was introduced
+> precisely because we need to have consistency between the various ioctls
+> needed for each frame. Maybe one single (atomic) ioctl would have worked
+> too, but that's apparently not how the V4L2 API was designed.
+>
+> I don't think there is any particular overhead caused by having n ioctls
+> instead of a single one. At least that would be very surprising IMHO.
 
-  Sometimes, particularly when correlating elapsed time to performance
-  counter values,  code needs to know elapsed time from the perspective
-  of the CPU no matter how "hot" / fast or "cold" / slow it might be
-  running wrt NTP / PTP ; when code needs this, the latencies with
-  a syscall are often unacceptably high.
+Well, there is small syscall overhead, which normally shouldn't be
+very painful, although with all the speculative execution hardening,
+can't be sure of anything anymore. :)
 
-  I reported this as Bug #198161 :
-    'https://bugzilla.kernel.org/show_bug.cgi?id=198961'
-  and in previous posts with subjects matching 'CLOCK_MONOTONIC_RAW' .
-     
-  This patch handles CLOCK_MONOTONIC_RAW clock_gettime() in the VDSO ,
-  by exporting the raw clock calibration, last cycles, last xtime_nsec,
-  and last raw_sec value in the vsyscall_gtod_data during vsyscall_update() .
+Hans and Alex can correct me if I'm wrong, but I believe there is a
+more atomic-like API being planned, which would only need one IOCTL to
+do everything. However, that would be a more serious change to the
+V4L2 interfaces, so should be decoupled from Request API itself.
 
-  Now the new do_monotonic_raw() function in the vDSO has a latency of @ 24ns
-  on average, about the same as do_monotonic(), and the test program:
-   tools/testing/selftest/timers/inconsistency-check.c
-  succeeds with arguments: '-c 4 -t 120' or any arbitrary -t value.
-
-  The patch is against Linus' latest 4.16-rc5 tree,
-  current HEAD of :
-    git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-  .
-
-  The patch affects only files:
-  
-   arch/x86/include/asm/vgtod.h
-   arch/x86/entry/vdso/vclock_gettime.c
-   arch/x86/entry/vsyscall/vsyscall_gtod.c
-
-
-  This is a resend of the original patch fixing review issues -
-  the next patch will add the rdtscp() function .
-
-  The patch passes the checkpatch.pl script .
-
-  Best Regards,
-     Jason Vas Dias  .
-     
----
-diff -up linux-4.16-rc5.1/arch/x86/entry/vdso/vclock_gettime.c.4.16-rc5 linux-4.16-rc5.1/arch/x86/entry/vdso/vclock_gettime.c
---- linux-4.16-rc5.1/arch/x86/entry/vdso/vclock_gettime.c.4.16-rc5	2018-03-12 00:25:09.000000000 +0000
-+++ linux-4.16-rc5.1/arch/x86/entry/vdso/vclock_gettime.c	2018-03-12 08:12:17.110120433 +0000
-@@ -182,6 +182,18 @@ notrace static u64 vread_tsc(void)
- 	return last;
- }
- 
-+notrace static u64 vread_tsc_raw(void)
-+{
-+	u64 tsc
-+	  , last = gtod->raw_cycle_last;
-+
-+	tsc = rdtsc_ordered();
-+	if (likely(tsc >= last))
-+		return tsc;
-+	asm volatile ("");
-+	return last;
-+}
-+
- notrace static inline u64 vgetsns(int *mode)
- {
- 	u64 v;
-@@ -203,6 +215,27 @@ notrace static inline u64 vgetsns(int *m
- 	return v * gtod->mult;
- }
- 
-+notrace static inline u64 vgetsns_raw(int *mode)
-+{
-+	u64 v;
-+	cycles_t cycles;
-+
-+	if (gtod->vclock_mode == VCLOCK_TSC)
-+		cycles = vread_tsc_raw();
-+#ifdef CONFIG_PARAVIRT_CLOCK
-+	else if (gtod->vclock_mode == VCLOCK_PVCLOCK)
-+		cycles = vread_pvclock(mode);
-+#endif
-+#ifdef CONFIG_HYPERV_TSCPAGE
-+	else if (gtod->vclock_mode == VCLOCK_HVCLOCK)
-+		cycles = vread_hvclock(mode);
-+#endif
-+	else
-+		return 0;
-+	v = (cycles - gtod->raw_cycle_last) & gtod->raw_mask;
-+	return v * gtod->raw_mult;
-+}
-+
- /* Code size doesn't matter (vdso is 4k anyway) and this is faster. */
- notrace static int __always_inline do_realtime(struct timespec *ts)
- {
-@@ -246,6 +279,27 @@ notrace static int __always_inline do_mo
- 	return mode;
- }
- 
-+notrace static __always_inline int do_monotonic_raw(struct timespec *ts)
-+{
-+	unsigned long seq;
-+	u64 ns;
-+	int mode;
-+
-+	do {
-+		seq = gtod_read_begin(gtod);
-+		mode = gtod->vclock_mode;
-+		ts->tv_sec = gtod->monotonic_time_raw_sec;
-+		ns = gtod->monotonic_time_raw_nsec;
-+		ns += vgetsns_raw(&mode);
-+		ns >>= gtod->raw_shift;
-+	} while (unlikely(gtod_read_retry(gtod, seq)));
-+
-+	ts->tv_sec += __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
-+	ts->tv_nsec = ns;
-+
-+	return mode;
-+}
-+
- notrace static void do_realtime_coarse(struct timespec *ts)
- {
- 	unsigned long seq;
-@@ -277,6 +331,10 @@ notrace int __vdso_clock_gettime(clockid
- 		if (do_monotonic(ts) == VCLOCK_NONE)
- 			goto fallback;
- 		break;
-+	case CLOCK_MONOTONIC_RAW:
-+		if (do_monotonic_raw(ts) == VCLOCK_NONE)
-+			goto fallback;
-+		break;
- 	case CLOCK_REALTIME_COARSE:
- 		do_realtime_coarse(ts);
- 		break;
-diff -up linux-4.16-rc5.1/arch/x86/entry/vsyscall/vsyscall_gtod.c.4.16-rc5 linux-4.16-rc5.1/arch/x86/entry/vsyscall/vsyscall_gtod.c
---- linux-4.16-rc5.1/arch/x86/entry/vsyscall/vsyscall_gtod.c.4.16-rc5	2018-03-12 00:25:09.000000000 +0000
-+++ linux-4.16-rc5.1/arch/x86/entry/vsyscall/vsyscall_gtod.c	2018-03-12 07:58:07.974214168 +0000
-@@ -45,6 +45,11 @@ void update_vsyscall(struct timekeeper *
- 	vdata->mult		= tk->tkr_mono.mult;
- 	vdata->shift		= tk->tkr_mono.shift;
- 
-+	vdata->raw_cycle_last	= tk->tkr_raw.cycle_last;
-+	vdata->raw_mask		= tk->tkr_raw.mask;
-+	vdata->raw_mult		= tk->tkr_raw.mult;
-+	vdata->raw_shift	= tk->tkr_raw.shift;
-+
- 	vdata->wall_time_sec		= tk->xtime_sec;
- 	vdata->wall_time_snsec		= tk->tkr_mono.xtime_nsec;
- 
-@@ -74,5 +79,8 @@ void update_vsyscall(struct timekeeper *
- 		vdata->monotonic_time_coarse_sec++;
- 	}
- 
-+	vdata->monotonic_time_raw_sec  = tk->raw_sec;
-+	vdata->monotonic_time_raw_nsec = tk->tkr_raw.xtime_nsec;
-+
- 	gtod_write_end(vdata);
- }
-diff -up linux-4.16-rc5.1/arch/x86/include/asm/msr.h.4.16-rc5 linux-4.16-rc5.1/arch/x86/include/asm/msr.h
---- linux-4.16-rc5.1/arch/x86/include/asm/msr.h.4.16-rc5	2018-03-12 00:25:09.000000000 +0000
-+++ linux-4.16-rc5.1/arch/x86/include/asm/msr.h	2018-03-12 08:01:25.400289554 +0000
-@@ -218,7 +218,7 @@ static __always_inline unsigned long lon
- 	return rdtsc();
- }
- 
--/* Deprecated, keep it for a cycle for easier merging: */
-+/* Deprecated, keep it for a cycle for easier merging: */o
- #define rdtscll(now)	do { (now) = rdtsc_ordered(); } while (0)
- 
- static inline unsigned long long native_read_pmc(int counter)
-diff -up linux-4.16-rc5.1/arch/x86/include/asm/vgtod.h.4.16-rc5 linux-4.16-rc5.1/arch/x86/include/asm/vgtod.h
---- linux-4.16-rc5.1/arch/x86/include/asm/vgtod.h.4.16-rc5	2018-03-12 00:25:09.000000000 +0000
-+++ linux-4.16-rc5.1/arch/x86/include/asm/vgtod.h	2018-03-12 07:44:17.910539760 +0000
-@@ -22,6 +22,10 @@ struct vsyscall_gtod_data {
- 	u64	mask;
- 	u32	mult;
- 	u32	shift;
-+	u64	raw_cycle_last;
-+	u64	raw_mask;
-+	u32	raw_mult;
-+	u32	raw_shift;
- 
- 	/* open coded 'struct timespec' */
- 	u64		wall_time_snsec;
-@@ -32,6 +36,8 @@ struct vsyscall_gtod_data {
- 	gtod_long_t	wall_time_coarse_nsec;
- 	gtod_long_t	monotonic_time_coarse_sec;
- 	gtod_long_t	monotonic_time_coarse_nsec;
-+	gtod_long_t	monotonic_time_raw_sec;
-+	gtod_long_t	monotonic_time_raw_nsec;
- 
- 	int		tz_minuteswest;
- 	int		tz_dsttime;
----
+Best regards,
+Tomasz
