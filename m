@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752170AbeCLHDw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 03:03:52 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:37968 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751878AbeCLHDt (ORCPT
+        id S932588AbeCLHD6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 03:03:58 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:53066 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751878AbeCLHDz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 03:03:49 -0400
-X-UUID: e5b82e0c334245f6b54c610050d2bc23-20180312
+        Mon, 12 Mar 2018 03:03:55 -0400
+X-UUID: 5a42b65423b84cfea677db6b9c720863-20180312
 From: Weiyi Lu <weiyi.lu@mediatek.com>
 To: Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
@@ -18,10 +18,12 @@ CC: James Liao <jamesjj.liao@mediatek.com>,
         <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
         <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v2 0/5] update Mediatek MT2712 clock and scpsys support 
-Date: Mon, 12 Mar 2018 15:03:36 +0800
-Message-ID: <20180312070342.4335-1-weiyi.lu@mediatek.com>
+Subject: [PATCH v2 0/5] update Mediatek MT2712 clock and scpsys support
+Date: Mon, 12 Mar 2018 15:03:37 +0800
+Message-ID: <20180312070342.4335-2-weiyi.lu@mediatek.com>
 X-Mailer: git-send-email 2.12.5
+In-Reply-To: <20180312070342.4335-1-weiyi.lu@mediatek.com>
+References: <20180312070342.4335-1-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK: N
@@ -48,3 +50,6 @@ Weiyi Lu (5):
  include/dt-bindings/clock/mt2712-clk.h    | 12 +++++-
  include/dt-bindings/power/mt2712-power.h  |  3 ++
  5 files changed, 136 insertions(+), 18 deletions(-)
+
+-- 
+2.12.5
