@@ -1,90 +1,111 @@
-Return-Path: <helgaas@kernel.org>
-X-Google-Smtp-Source: AG47ELuzgWdrIceOwF/75pFRdVQxtzBqsCKPBhNtwQfp0OodUdSWWlK06qH8cACA4NxLvAXhuI6l
-ARC-Seal: i=1; a=rsa-sha256; t=1521487407; cv=none;
+Return-Path: <jthumshirn@suse.de>
+X-Google-Smtp-Source: AG47ELsx5JmfXFTqw587N6CVyBnPmfaQ+5mtFcBQw7j9rckrKK6ii8yRlaHYTQEcYoUbCr/2H2a9
+ARC-Seal: i=1; a=rsa-sha256; t=1520847687; cv=none;
         d=google.com; s=arc-20160816;
-        b=VMIORyO3DO5/pySoSB/FazqM3H8cDi6rWiRO9HYhTgzEj/1g5S1JuFw5vt3f3h1qj7
-         rR5PuHOVv6gYNDPvdUQ4SlS+Z7uy0dyZ+D9hHfzWs96dIrhVe04UR43NQgNck2gDDxsU
-         tpPn8zYxC6vrpKi8VJtfXdrP//+ILIRiBsHBWbYc7TuGw35+Ea6UW9BgaODqjugoQYjc
-         dAU89+OrBt6owigHVYkrRrUn2X2FJfMhSA+3xg0+VZXb7j3QQP93RaR3jm+e5SuYFBcL
-         OgK5kGoC1A/pNTo+NkVIo57fTs9Fg7ccJhaRMinAU2xLF/S+nKHNTJ+X4Wk7ejzuAVlJ
-         n63A==
+        b=P2R44N7AC01z4MYV5qhxnp9zGszNLAQMEn2EKy8r+3uoQK7iU3W3v2tL8ALPrhwWtq
+         2JfobvmzdF5r3pm/3i5n9X/XoBZVLqjM4caLN8QBDr0jROGLSr+a/oYZ7K/e5LoG6E37
+         zrtBjQFdbjqsiHJH57tEdlEKHhwhOkybNZGN5hhlp71Tjf0JpQIu2Dm5YDnZiscM2wne
+         JBCl0jiM6CBMtDLIw13C+Hl09eU5Wsp7wcQt2O1yFEfRmFMY+qqlXNZ2SPjkXRLIlSaY
+         fKQP+Rqa5YRdx8VonVrboqBlx0Z8SBxpRUU/NPfcfYd9Y77y7b/2laJcnE5wWt9yMwIX
+         lHMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dmarc-filter
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=bldArHm1qmQNPqBV02MHM+AUi6MeD/MsBKCB2oYj74E=;
-        b=uf5bnkwo4PnGujZoJJQrshS/6+P+2qwGK4uxvWJ1xcev41U4dJMegamDdfKs1eAsgC
-         yWvb4m/VISjnMY33P5q9MNsPoSNT0RqnIorvIjm8YwNfp4rmonOx3kknJGN9TlK6UDTf
-         Wzz54oaXHFIbvctGtXBgTaRB7kLHa9X0LhbFPKOvDKtuXobpj1JDImsN2asf5mZJkIzH
-         XRxLG8x7uT7Q9eOeZPVWY4td+ilZU/pXmieVy7z7BdQb6Uj/g/q1yWCeh0PwV+jRZzJi
-         /DSnS8hww9Su8vAVzjPvhtZGKMo88eZqcuh38Y42qQF0P1F7++b3GlSywHxp6WL8TVau
-         ArlA==
+        bh=/nll28XAZ8oU9qRbkjAzrdJ1Z6ORk+Yv69Tcsods48c=;
+        b=SpgN9bH5Km+av3x3oOe+Y480Tia7cFztcXlwe8V6k/gNwXKqvFvYu0CgTg6vwKd9Oy
+         G0oEIhBYK+bwJoa+0in2HYpsUP+x6cd/NqIVR3fn5LJcThT8B0wWUZvTGd9I2rkPx774
+         xuZL5BdtLB/XVn4ejL3/81u8OiR/0TqNnk3HJqls1C+A18r9K/APFCmEefWm/hdGgQ40
+         lx3Kz4AUl/Q0ScLhHKz0FvktOdUjpEyUnGuuTipzK3YludH56omrEDq8mEzxlpfQNzNw
+         /xOQMmZZRMkJ4WMs86BIg02c2yq+/ise9onQR2/7aExRBQj/RvJfdaYcb1O04AAwThj7
+         qMGA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
+       spf=pass (google.com: domain of jthumshirn@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jthumshirn@suse.de
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2993420685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Mon, 19 Mar 2018 14:23:25 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Greg KH <gregkh@linuxfoundation.org>,
-	Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+       spf=pass (google.com: domain of jthumshirn@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jthumshirn@suse.de
+From: Johannes Thumshirn <jthumshirn@suse.de>
+To: Greg KH <gregkh@linuxfoundation.org>,
+	Bjorn Helgaas <helgaas@kernel.org>
+Cc: Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
 	Michael Moese <mmoese@suse.de>,
 	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] MCB Update for v4.17
-Message-ID: <20180319192325.GH77194@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180312094119.5298-1-jthumshirn@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+	linux-pci@vger.kernel.org,
+	Johannes Thumshirn <jthumshirn@suse.de>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Eli Billauer <eli.billauer@gmail.com>,
+	Anatolij Gustschin <agust@denx.de>
+Subject: [PATCH v3 1/2] PCI: Add Altera vendor ID
+Date: Mon, 12 Mar 2018 10:41:18 +0100
+Message-Id: <20180312094119.5298-2-jthumshirn@suse.de>
+X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180312094119.5298-1-jthumshirn@suse.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180312094119.5298-1-jthumshirn@suse.de>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594724385482004141?=
-X-GMAIL-MSGID: =?utf-8?q?1595395180087464583?=
+X-GMAIL-THRID: =?utf-8?q?1594724385110361854?=
+X-GMAIL-MSGID: =?utf-8?q?1594724385110361854?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 12, 2018 at 10:41:17AM +0100, Johannes Thumshirn wrote:
-> Hi Greg or Bjorn,
-> 
-> here's a small mcb update for the 4.17 window. The first patch makes
-> the PCI Vendor ID of Altera generally available in pci_ids.h and
-> removes it from the two private implementations before I would have to
-> add a 3rd one.
-> 
-> The 2nd patch adds the Altera's PCI vendor ID to the mcb pci driver
-> which enables at least one carrier board. This was reported and tested
-> by Ben Turner.
-> 
-> Bjorn asked me to Cc linux-pci@ in his response, so I'm not sure if he want's
-> to merge these two patches. I'm fine either way.
+Add the Altera PCI Vendor id to pci_ids.h and remove the private
+definitions from xillybus_pcie.c and altera-cvp.c.
 
-I applied these to pci/misc for v4.17.  I don't really care which tree
-they go through, but it looks like there's no other obvious single
-place since they touch more than one driver.
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Eli Billauer <eli.billauer@gmail.com>
+Cc: Anatolij Gustschin <agust@denx.de>
+Acked-by: Eli Billauer <eli.billauer@gmail.com>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-> Changes to v2:
-> * Collected ACKs
-> * Reworded Subject of 1/2 according to Bjorn
-> 
-> Changes to v1:
-> * Removed redundant pci_ids.h include
-> 
-> 
-> Johannes Thumshirn (2):
->   PCI: Add Altera vendor ID
->   mcb: add Altera PCI ID to mcb-pci
-> 
->  drivers/char/xillybus/xillybus_pcie.c | 1 -
->  drivers/fpga/altera-cvp.c             | 2 --
->  drivers/mcb/mcb-pci.c                 | 1 +
->  include/linux/pci_ids.h               | 2 ++
->  4 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> -- 
-> 2.13.6
-> 
+---
+Changes to v1:
+- Collected ACKs
+- Reworded Subject according to Bjorn
+
+Changes to v1:
+- Remove redundant pci_ids.h include (Andy)
+---
+ drivers/char/xillybus/xillybus_pcie.c | 1 -
+ drivers/fpga/altera-cvp.c             | 2 --
+ include/linux/pci_ids.h               | 2 ++
+ 3 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/char/xillybus/xillybus_pcie.c b/drivers/char/xillybus/xillybus_pcie.c
+index dff2d1538164..05e5324f60bd 100644
+--- a/drivers/char/xillybus/xillybus_pcie.c
++++ b/drivers/char/xillybus/xillybus_pcie.c
+@@ -24,7 +24,6 @@ MODULE_LICENSE("GPL v2");
+ 
+ #define PCI_DEVICE_ID_XILLYBUS		0xebeb
+ 
+-#define PCI_VENDOR_ID_ALTERA		0x1172
+ #define PCI_VENDOR_ID_ACTEL		0x11aa
+ #define PCI_VENDOR_ID_LATTICE		0x1204
+ 
+diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+index 00e73d28077c..77b04e4b3254 100644
+--- a/drivers/fpga/altera-cvp.c
++++ b/drivers/fpga/altera-cvp.c
+@@ -384,8 +384,6 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+ 			    const struct pci_device_id *dev_id);
+ static void altera_cvp_remove(struct pci_dev *pdev);
+ 
+-#define PCI_VENDOR_ID_ALTERA	0x1172
+-
+ static struct pci_device_id altera_cvp_id_tbl[] = {
+ 	{ PCI_VDEVICE(ALTERA, PCI_ANY_ID) },
+ 	{ }
+diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+index a6b30667a331..6a96a70fb462 100644
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@ -1561,6 +1561,8 @@
+ #define PCI_DEVICE_ID_SERVERWORKS_CSB6LPC 0x0227
+ #define PCI_DEVICE_ID_SERVERWORKS_HT1100LD 0x0408
+ 
++#define PCI_VENDOR_ID_ALTERA		0x1172
++
+ #define PCI_VENDOR_ID_SBE		0x1176
+ #define PCI_DEVICE_ID_SBE_WANXL100	0x0301
+ #define PCI_DEVICE_ID_SBE_WANXL200	0x0302
+-- 
+2.13.6
