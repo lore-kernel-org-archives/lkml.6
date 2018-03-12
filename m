@@ -1,129 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752380AbeCLJkO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 05:40:14 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:55743 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751229AbeCLJkN (ORCPT
+        id S1752525AbeCLJkg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 05:40:36 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52666 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752458AbeCLJkc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:40:13 -0400
-Subject: Re: [PATCH] can: m_can: select pinctrl state in each suspend/resume
- function
-To: Bich HEMON <bich.hemon@st.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Mario Huettel <mario.huettel@gmx.net>, Faiz Abbas <faiz_abbas@ti.com>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        Oliver Hartkopp <socketcan@hartkopp.net>,
-        Franklin S Cooper Jr <fcooper@ti.com>, Arnd Bergmann <arnd@arndb.de>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1520844745-5865-1-git-send-email-bich.hemon@st.com>
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Message-ID: <1628648a-55b6-101a-795c-3d43b46c278b@pengutronix.de>
-Date: Mon, 12 Mar 2018 10:39:59 +0100
+        Mon, 12 Mar 2018 05:40:32 -0400
+X-Google-Smtp-Source: AG47ELt3zR/p1/3k5qHNvnJtVnL9zD0RVQ6KzFxc2W1dK3bahQUBLLV5o8IqUy1AI7llu01noxxY1Q==
+Subject: Re: [PATCH v1 05/19] arm: dts: mt7623: add BTIF, HSDMA and SPI-NOR
+ device nodes
+To: sean.wang@mediatek.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <cover.1519378871.git.sean.wang@mediatek.com>
+ <ca071fec200f80d894523b11c94ddde19381f936.1519378871.git.sean.wang@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <cea7b0bf-fcd9-6405-c437-d3251e7bb4bf@gmail.com>
+Date: Mon, 12 Mar 2018 10:40:28 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1520844745-5865-1-git-send-email-bich.hemon@st.com>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="VWn3ObWPZSwuHqJOok9nOvpYNzbP7K0ob"
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <ca071fec200f80d894523b11c94ddde19381f936.1519378871.git.sean.wang@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---VWn3ObWPZSwuHqJOok9nOvpYNzbP7K0ob
-Content-Type: multipart/mixed; boundary="OEPYOkZrrzZVAM1aujhOc0gWwy7B6obvp";
- protected-headers="v1"
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Bich HEMON <bich.hemon@st.com>, Wolfgang Grandegger <wg@grandegger.com>,
- Mario Huettel <mario.huettel@gmx.net>, Faiz Abbas <faiz_abbas@ti.com>,
- Quentin Schulz <quentin.schulz@free-electrons.com>,
- Oliver Hartkopp <socketcan@hartkopp.net>,
- Franklin S Cooper Jr <fcooper@ti.com>, Arnd Bergmann <arnd@arndb.de>,
- "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Message-ID: <1628648a-55b6-101a-795c-3d43b46c278b@pengutronix.de>
-Subject: Re: [PATCH] can: m_can: select pinctrl state in each suspend/resume
- function
-References: <1520844745-5865-1-git-send-email-bich.hemon@st.com>
-In-Reply-To: <1520844745-5865-1-git-send-email-bich.hemon@st.com>
 
---OEPYOkZrrzZVAM1aujhOc0gWwy7B6obvp
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: quoted-printable
 
-On 03/12/2018 09:52 AM, Bich HEMON wrote:
-> Make sure to apply the correct pin state in suspend/resume callbacks.
-> Putting pins in sleep state saves power.
->=20
-> Signed-off-by: Bich Hemon <bich.hemon@st.com>
+On 02/23/2018 11:16 AM, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> add BTIF, HSDMA and SPI-NOR device nodes and enable it on relevant boards
+
+AFAIK hsdma controller is not upstream yet.
+Please resubmit when at least the binding got merged.
+
+Thanks,
+Matthias
+
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 > ---
-
-Doesn't compile:
-
->   CHECK   /srv/work/frogger/socketcan/linux/drivers/net/can/m_can/m_can=
-=2Ec
-> /srv/work/frogger/socketcan/linux/drivers/net/can/m_can/m_can.c:1703:9:=
- error: undefined identifier 'pinctrl_pm_select_sleep_state'
-> /srv/work/frogger/socketcan/linux/drivers/net/can/m_can/m_can.c:1715:9:=
- error: undefined identifier 'pinctrl_pm_select_default_state'
-> /srv/work/frogger/socketcan/linux/drivers/net/can/m_can/m_can.c:1703:38=
-: warning: call with no type!
-> /srv/work/frogger/socketcan/linux/drivers/net/can/m_can/m_can.c:1715:40=
-: warning: call with no type!
->   CC [M]  drivers/net/can/m_can/m_can.o
-> /srv/work/frogger/socketcan/linux/drivers/net/can/m_can/m_can.c: In fun=
-ction 'm_can_suspend':
-> /srv/work/frogger/socketcan/linux/drivers/net/can/m_can/m_can.c:1703:2:=
- error: implicit declaration of function 'pinctrl_pm_select_sleep_state' =
-[-Werror=3Dimplicit-function-declaration]
->   pinctrl_pm_select_sleep_state(dev);
->   ^
-> /srv/work/frogger/socketcan/linux/drivers/net/can/m_can/m_can.c: In fun=
-ction 'm_can_resume':
-> /srv/work/frogger/socketcan/linux/drivers/net/can/m_can/m_can.c:1715:2:=
- error: implicit declaration of function 'pinctrl_pm_select_default_state=
-' [-Werror=3Dimplicit-function-declaration]
->   pinctrl_pm_select_default_state(dev);
->   ^
-
-Fixed while applying the patch.
-
-Marc
-
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
-
-
---OEPYOkZrrzZVAM1aujhOc0gWwy7B6obvp--
-
---VWn3ObWPZSwuHqJOok9nOvpYNzbP7K0ob
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAlqmSu8ACgkQk9IU1zQo
-ZfE6awf/depsl9voaLAIhRDe1M+vZX2p5BYYTtTNvc0hrzFszGJJxMCJewerNkr0
-I2WPcX6Yh0nOoRnNqf0pnHp/PXHv5slh36AucmXPpGmu1en3zJTwUt3Ge+c6YUzs
-CbVfoROHagEnKYeDtj2Gi7ZO3lgBqDt01z59mEb/owheAkN2+QthvxQ0c94cfAGc
-P/wsAMi5UVmEocq8nuy6EshuE59st+L0TJX7SOvkRcvftlA7RXpS+ZYEFrSM3vKO
-qi88EZjx+6TJdNGZDTlIq/OUId8uLXHWp8hYPbf/MmzzZOYAld2y5L/ZHhPxqE+L
-yGXirHo4SoVjAJNXtqnzKzojgAWA/w==
-=PWjX
------END PGP SIGNATURE-----
-
---VWn3ObWPZSwuHqJOok9nOvpYNzbP7K0ob--
+>  arch/arm/boot/dts/mt7623.dtsi                 | 36 ++++++++++++++++++++++++++-
+>  arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts |  6 ++++-
+>  2 files changed, 40 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
+> index 91317a1..da56c54 100644
+> --- a/arch/arm/boot/dts/mt7623.dtsi
+> +++ b/arch/arm/boot/dts/mt7623.dtsi
+> @@ -1,5 +1,5 @@
+>  /*
+> - * Copyright (c) 2017 MediaTek Inc.
+> + * Copyright (c) 2017-2018 MediaTek Inc.
+>   * Author: John Crispin <john@phrozen.org>
+>   *	   Sean Wang <sean.wang@mediatek.com>
+>   *
+> @@ -483,6 +483,18 @@
+>  		nvmem-cell-names = "calibration-data";
+>  	};
+>  
+> +	btif: serial@1100c000 {
+> +		compatible = "mediatek,mt7623-btif",
+> +			     "mediatek,mtk-btif";
+> +		reg = <0 0x1100c000 0 0x1000>;
+> +		interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&pericfg CLK_PERI_BTIF>;
+> +		clock-names = "main";
+> +		reg-shift = <2>;
+> +		reg-io-width = <4>;
+> +		status = "disabled";
+> +	};
+> +
+>  	nandc: nfi@1100d000 {
+>  		compatible = "mediatek,mt7623-nfc",
+>  			     "mediatek,mt2701-nfc";
+> @@ -508,6 +520,18 @@
+>  		status = "disabled";
+>  	};
+>  
+> +	nor_flash: spi@11014000 {
+> +		compatible = "mediatek,mt7623-nor",
+> +			     "mediatek,mt8173-nor";
+> +		reg = <0 0x11014000 0 0x1000>;
+> +		clocks = <&pericfg CLK_PERI_FLASH>,
+> +			 <&topckgen CLK_TOP_FLASH_SEL>;
+> +		clock-names = "spi", "sf";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		status = "disabled";
+> +	};
+> +
+>  	spi1: spi@11016000 {
+>  		compatible = "mediatek,mt7623-spi",
+>  			     "mediatek,mt2701-spi";
+> @@ -861,6 +885,16 @@
+>  		#reset-cells = <1>;
+>  	};
+>  
+> +	hsdma: dma-controller@1b007000 {
+> +		compatible = "mediatek,mt7623-hsdma";
+> +		reg = <0 0x1b007000 0 0x1000>;
+> +		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&ethsys CLK_ETHSYS_HSDMA>;
+> +		clock-names = "hsdma";
+> +		power-domains = <&scpsys MT2701_POWER_DOMAIN_ETH>;
+> +		#dma-cells = <1>;
+> +	};
+> +
+>  	eth: ethernet@1b100000 {
+>  		compatible = "mediatek,mt7623-eth",
+>  			     "mediatek,mt2701-eth",
+> diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> index 3efecc5..ec11e14 100644
+> --- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> +++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> @@ -1,5 +1,5 @@
+>  /*
+> - * Copyright 2017 Sean Wang <sean.wang@mediatek.com>
+> + * Copyright 2017-2018 Sean Wang <sean.wang@mediatek.com>
+>   *
+>   * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>   */
+> @@ -86,6 +86,10 @@
+>  	};
+>  };
+>  
+> +&btif {
+> +	status = "okay";
+> +};
+> +
+>  &cir {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&cir_pins_a>;
+> 
