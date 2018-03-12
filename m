@@ -1,73 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751564AbeCLWwk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 18:52:40 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:39299 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751495AbeCLWwi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 18:52:38 -0400
-X-Google-Smtp-Source: AG47ELvyP+aixKlXMP96xEMD/y9J4dgYUuJzt3jzgRmZo2BQfgtbCkjkNGybuglk1m9skucONQxFEg==
-Subject: Re: [PATCH] ARM: BCM5301X: Fix NAND ECC parameters for Linksys
- Panamera
-To: Vivek Unune <npcomplete13@gmail.com>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, Jon Mason <jonmason@broadcom.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180310171244.70299-1-npcomplete13@gmail.com>
- <CACna6rz1TeRbPq-60HkHz9A0TDn+iXtmXniE6FCiANpUmV-qrw@mail.gmail.com>
- <20180311100313.znonhesgh462rz65@osboxes>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <2ef6e4fc-cce7-372e-e35f-578fd6ada9ca@gmail.com>
-Date: Mon, 12 Mar 2018 15:52:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932267AbeCLWzH convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 18:55:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49172 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751312AbeCLWzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 18:55:06 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7BE1208FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180311100313.znonhesgh462rz65@osboxes>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+To: Thierry Reding <thierry.reding@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180312070430.GA23060@ulmo>
+Cc: Dmitry Osipenko <digetx@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
+ <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
+ <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com> <20180308144437.GJ3529@ulmo>
+ <152061678678.13890.15810434310624804730@swboyd.mtv.corp.google.com>
+ <20180312070430.GA23060@ulmo>
+Message-ID: <152089530498.147033.16290802622553476545@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 1/3] clk: tegra: Mark HCLK, SCLK and EMC as critical
+Date: Mon, 12 Mar 2018 15:55:04 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/11/2018 03:03 AM, Vivek Unune wrote:
-> Hi Rafał,
+Quoting Thierry Reding (2018-03-12 00:04:30)
+> On Fri, Mar 09, 2018 at 09:33:06AM -0800, Stephen Boyd wrote:
+> > 
+> > Are you going to send us a PR at some point?
 > 
-> On Sat, Mar 10, 2018 at 10:41:04PM +0100, Rafał Miłecki wrote:
->> On 10 March 2018 at 18:12, Vivek Unune <npcomplete13@gmail.com> wrote:
->>> Using BCH8 gives ecc errors and makes the router unsuable.
->>> Switching to BCH1 fixes these errors.
->>
->> Can you provide CFE's log messages starting with
->> "Decompressing...done" and up to the "Press Ctrl+C to stop in CFE"
->> please? I'd like to see what NAND info CFE prints there.
+> Yes, I was going to let the patches cook a little in linux-next and send
+> a PR by the end of the week. Does that sound okay?
 > 
-> See below. It does say BCH-8, however I can't get it to work.
-> 
-> CFE log:
-> 
-> Decompressing...done
-> Found a Toshiba NAND flash:
-> Total size:  128MB
-> Block size:  128KB
-> Page Size:   2048B
-> OOB Size:    64B
-> Sector size: 512B
-> Spare size:  16B
-> ECC level:   8 (8-bit)
-> Device ID: 0x98 0xf1 0x80 0x15 0xf2 0x16
-> find_devinfo: devinfo block found at 0x00180000!
-> 
-> Press Ctrl+C to stop in CFE
 
-What kind of error are you getting in Linux with BCH-8?
--- 
--- 
-Florian
+Perfect! Thanks.
