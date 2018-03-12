@@ -1,29 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932322AbeCLM1E (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 08:27:04 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45873 "EHLO
+        id S932352AbeCLM1M (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 08:27:12 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57981 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751401AbeCLM1A (ORCPT
+        with ESMTP id S1751781AbeCLM1D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 08:27:00 -0400
-Date: Mon, 12 Mar 2018 05:26:38 -0700
+        Mon, 12 Mar 2018 08:27:03 -0400
+Date: Mon, 12 Mar 2018 05:25:41 -0700
 From: tip-bot for Andy Shevchenko <tipbot@zytor.com>
-Message-ID: <tip-02428742639bc3300c8c527b054d0ec0bdf5571d@git.kernel.org>
-Cc: peterz@infradead.org, andriy.shevchenko@linux.intel.com,
-        rafael.j.wysocki@intel.com, jgross@suse.com,
-        torvalds@linux-foundation.org, hpa@zytor.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, ebiederm@xmission.com
-Reply-To: tglx@linutronix.de, hpa@zytor.com, ebiederm@xmission.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, jgross@suse.com,
-        peterz@infradead.org, andriy.shevchenko@linux.intel.com,
-        rafael.j.wysocki@intel.com, torvalds@linux-foundation.org
-In-Reply-To: <20180220180506.65523-3-andriy.shevchenko@linux.intel.com>
-References: <20180220180506.65523-3-andriy.shevchenko@linux.intel.com>
+Message-ID: <tip-50beba07a0e42ebd4454adc97515a2a2a969645b@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, ebiederm@xmission.com,
+        andriy.shevchenko@linux.intel.com, torvalds@linux-foundation.org,
+        mingo@kernel.org, hpa@zytor.com, jgross@suse.com, tglx@linutronix.de,
+        rafael.j.wysocki@intel.com, peterz@infradead.org
+Reply-To: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        ebiederm@xmission.com, andriy.shevchenko@linux.intel.com,
+        peterz@infradead.org, mingo@kernel.org, hpa@zytor.com, jgross@suse.com,
+        rafael.j.wysocki@intel.com, tglx@linutronix.de
+In-Reply-To: <20180220180506.65523-1-andriy.shevchenko@linux.intel.com>
+References: <20180220180506.65523-1-andriy.shevchenko@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/platform/intel-mid: Add special handling for ACPI
- HW reduced platforms
-Git-Commit-ID: 02428742639bc3300c8c527b054d0ec0bdf5571d
+Subject: [tip:x86/mm] ACPI, x86/boot: Split out
+ acpi_generic_reduce_hw_init() and export
+Git-Commit-ID: 50beba07a0e42ebd4454adc97515a2a2a969645b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,17 +36,19 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  02428742639bc3300c8c527b054d0ec0bdf5571d
-Gitweb:     https://git.kernel.org/tip/02428742639bc3300c8c527b054d0ec0bdf5571d
+Commit-ID:  50beba07a0e42ebd4454adc97515a2a2a969645b
+Gitweb:     https://git.kernel.org/tip/50beba07a0e42ebd4454adc97515a2a2a969645b
 Author:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-AuthorDate: Tue, 20 Feb 2018 20:05:06 +0200
+AuthorDate: Tue, 20 Feb 2018 20:05:04 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Mon, 12 Mar 2018 12:32:57 +0100
 
-x86/platform/intel-mid: Add special handling for ACPI HW reduced platforms
+ACPI, x86/boot: Split out acpi_generic_reduce_hw_init() and export
 
-When switching to ACPI HW reduced platforms we still want to initialize timers.
-Override x86_init.acpi.reduced_hw_init to achieve that.
+This is a preparation patch to allow override the hardware reduced
+initialization on ACPI enabled platforms.
+
+No functional change intended.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
@@ -57,26 +59,67 @@ Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Rafael J . Wysocki <rafael.j.wysocki@intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-acpi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180220180506.65523-3-andriy.shevchenko@linux.intel.com
+Link: http://lkml.kernel.org/r/20180220180506.65523-1-andriy.shevchenko@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/platform/intel-mid/intel-mid.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/include/asm/acpi.h |  4 ++++
+ arch/x86/kernel/acpi/boot.c | 22 +++++++++++++---------
+ 2 files changed, 17 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/platform/intel-mid/intel-mid.c b/arch/x86/platform/intel-mid/intel-mid.c
-index 2c67bae6bb53..c556f1e8936e 100644
---- a/arch/x86/platform/intel-mid/intel-mid.c
-+++ b/arch/x86/platform/intel-mid/intel-mid.c
-@@ -199,6 +199,12 @@ void __init x86_intel_mid_early_setup(void)
+diff --git a/arch/x86/include/asm/acpi.h b/arch/x86/include/asm/acpi.h
+index 6609dd7289b5..a303d7b7d763 100644
+--- a/arch/x86/include/asm/acpi.h
++++ b/arch/x86/include/asm/acpi.h
+@@ -140,6 +140,8 @@ static inline u64 acpi_arch_get_root_pointer(void)
+ 	return x86_init.acpi.get_root_pointer();
+ }
  
- 	legacy_pic = &null_legacy_pic;
- 
-+	/*
-+	 * Do nothing for now as everything needed done in
-+	 * x86_intel_mid_early_setup() below.
-+	 */
-+	x86_init.acpi.reduced_hw_early_init = x86_init_noop;
++void acpi_generic_reduced_hw_init(void);
 +
- 	pm_power_off = intel_mid_power_off;
- 	machine_ops.emergency_restart  = intel_mid_reboot;
+ #else /* !CONFIG_ACPI */
  
+ #define acpi_lapic 0
+@@ -149,6 +151,8 @@ static inline void acpi_noirq_set(void) { }
+ static inline void acpi_disable_pci(void) { }
+ static inline void disable_acpi(void) { }
+ 
++static inline void acpi_generic_reduced_hw_init(void) { }
++
+ #endif /* !CONFIG_ACPI */
+ 
+ #define ARCH_HAS_POWER_INIT	1
+diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+index 2aa92094b59d..baa084ecffdb 100644
+--- a/arch/x86/kernel/acpi/boot.c
++++ b/arch/x86/kernel/acpi/boot.c
+@@ -1376,17 +1376,21 @@ static int __init dmi_ignore_irq0_timer_override(const struct dmi_system_id *d)
+  *
+  * We initialize the Hardware-reduced ACPI model here:
+  */
++void __init acpi_generic_reduced_hw_init(void)
++{
++	/*
++	 * Override x86_init functions and bypass legacy PIC in
++	 * hardware reduced ACPI mode.
++	 */
++	x86_init.timers.timer_init	= x86_init_noop;
++	x86_init.irqs.pre_vector_init	= x86_init_noop;
++	legacy_pic			= &null_legacy_pic;
++}
++
+ static void __init acpi_reduced_hw_init(void)
+ {
+-	if (acpi_gbl_reduced_hardware) {
+-		/*
+-		 * Override x86_init functions and bypass legacy pic
+-		 * in Hardware-reduced ACPI mode
+-		 */
+-		x86_init.timers.timer_init	= x86_init_noop;
+-		x86_init.irqs.pre_vector_init	= x86_init_noop;
+-		legacy_pic			= &null_legacy_pic;
+-	}
++	if (acpi_gbl_reduced_hardware)
++		acpi_generic_reduced_hw_init();
+ }
+ 
+ /*
