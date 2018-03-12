@@ -1,91 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752186AbeCLOHa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 10:07:30 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:53094 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751964AbeCLOH2 (ORCPT
+        id S932315AbeCLOHt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 10:07:49 -0400
+Received: from mail-wr0-f179.google.com ([209.85.128.179]:40582 "EHLO
+        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751564AbeCLOHq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 10:07:28 -0400
-Subject: Re: [PATCH v9] mmc: Export host capabilities to debugfs.
-From: Harish Jenny K N <harish_kandiga@mentor.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Avri Altman <Avri.Altman@wdc.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>
-CC: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Vladimir_Zapolskiy@mentor.com" <Vladimir_Zapolskiy@mentor.com>
-References: <1520829090-3567-1-git-send-email-harish_kandiga@mentor.com>
- <1520849262.10722.582.camel@linux.intel.com>
- <DM5PR04MB10854C79897A80023EF37F76FCD30@DM5PR04MB1085.namprd04.prod.outlook.com>
- <540fef96-aa2f-e6c3-467d-bc1d021dd55b@mentor.com>
- <DM5PR04MB10859F389CA2D1F2370C02CFFCD30@DM5PR04MB1085.namprd04.prod.outlook.com>
- <329d521d-1776-43ee-2f0e-e9690c29a693@mentor.com>
- <1520859807.10722.591.camel@linux.intel.com>
- <5e038945-a09c-5c64-2152-5d2783a249ec@mentor.com>
-Message-ID: <9923a92c-f76d-ad87-a648-da212b6b39de@mentor.com>
-Date: Mon, 12 Mar 2018 19:37:12 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 12 Mar 2018 10:07:46 -0400
+X-Google-Smtp-Source: AG47ELuWjN4xkk1UWDZ8XQjK8FAar8lJkPFoxNMU4rP+IS7B9/r+/0Y6K3NSPRlU5gS/+Jm2dFGB1w==
+Date: Mon, 12 Mar 2018 14:07:42 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: JeffyChen <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 1/3] mfd: syscon: Set name of regmap_config
+Message-ID: <20180312140742.vazjujloyn5l72nu@dell>
+References: <20180306110403.14438-1-jeffy.chen@rock-chips.com>
+ <5A9EAC92.4050702@rock-chips.com>
+ <20180307102006.GA7290@sirena.org.uk>
+ <5A9FC3E0.5020600@rock-chips.com>
+ <20180307105731.GB7290@sirena.org.uk>
+ <20180307165405.ltuobrr53vko4do7@dell>
+ <20180307165738.GK7290@sirena.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <5e038945-a09c-5c64-2152-5d2783a249ec@mentor.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [137.202.0.87]
-X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
+In-Reply-To: <20180307165738.GK7290@sirena.org.uk>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 07 Mar 2018, Mark Brown wrote:
 
+> On Wed, Mar 07, 2018 at 04:54:05PM +0000, Lee Jones wrote:
+> > On Wed, 07 Mar 2018, Mark Brown wrote:
+> > > On Wed, Mar 07, 2018 at 06:50:08PM +0800, JeffyChen wrote:
+> 
+> > > Yes, like I say I think that's a good idea anyway - that sort of usage
+> > > is the reason we've got the facility to set an explicit name.
+> 
+> > Is that an Ack?
+> 
+> No, it looked like the change was only for MFD?
 
-On Monday 12 March 2018 07:04 PM, Harish Jenny K N wrote:
->
-> On Monday 12 March 2018 06:33 PM, Andy Shevchenko wrote:
->> On Mon, 2018-03-12 at 18:00 +0530, Harish Jenny K N wrote:
->>
->>
->>>>>>>> +	for_each_set_bit(bit, (const unsigned long *)&caps,
->>>>>>>> BITS_PER_LONG)
->>>>>>>> +	for_each_set_bit(bit, (const unsigned long
->>>>>>>> *)&caps2,
->>>>>>>> BITS_PER_LONG)
->>>>>>> Explicit casting is not needed anymore in both cases.
->>>>>> Also maybe use sizeof(mmc_host_capabilities) instead of
->>>>>> BITS_PER_LONG?
->>>>> You mean sizeof(caps) and not sizeof(mmc_host_capabilities) .
->>>>> Right ?
->>>> meant ARRAY_SIZE(mmc_host_capabilities)
->>> ARRAY_SIZE(mmc_host_capabilities) will be 32 and this will be my old
->>> change for which I got a comment from Andy Shevchenko asking me to
->>> replace u32 with unsigned long.
->>>
->>> This is the old comment:
->>>
->>>>> +    int size = sizeof(u32) * BITS_PER_BYTE;
->>>> This is redundant. Use BITS_PER_LONG (why's that, see below) in the
->> There is nothing about ARRAY_SIZE().
->> ARRAY_SIZE() will work quite good as well.
-> Yes. Definitely it works. I was only mentioning about changing u32 to unsigned long for caps and passing BITS_PER_LONG  as size in for_each_set_bit.
->
+Right, but you can still Review/Ack patches from other subsystems.
 
-
-Just to make it clear, I will use ARRAY_SIZE(mmc_host_capabilities) as argument in the next version of the patch.
-
-Can anyone please respond to my previous request?
-
-> Before sending new patch , I would like to inform that I have been sending this patch with the following checkpatch warning, just to keep it same as other usages of debugfs_create_file in the drivers/mmc/core/debugfs.c file.
-
-> WARNING:SYMBOLIC_PERMS: Symbolic permissions 'S_IRUSR' are not preferred. Consider using octal permissions '0400'.
-
-> Do I need to address this or keep it same as S_IRUSR ?
-
-
-
-Thanks,
-Harish Jenny K N
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
