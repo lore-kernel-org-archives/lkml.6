@@ -1,69 +1,68 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-838514-1520873619-2-4412681207007659466
+X-Cyrus-Session-Id: sloti22d1t05-515744-1520865396-2-11496711243392372771
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
   RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520873618; b=bdekeMhiY1yDNl3h6yFe2wuUQeTAWFPMuG8ri0oC+04/Rqb
-    AgqSQ2QUQOxdTDf5I6aAAZ1wLsBvyLoC/8E98uZ7VfZRZJ+im5sdACIeFtK2LGz7
-    2VVV/Ph0HPncg/sw4A8e6yLBvDa8EDyPmMoSLQtvINKtYaCeKPtDzCVETbMa08bh
-    YrXnPegIGOdHwYRx7mV23snWhYUpotwbN8E+fqDHtZLIZAteRW/gq43pcm5drast
-    iIF6iFWcJwGMijjBMUerecHSL5oQo1skzNs4beWAMi35yShCGFhnWSRQXH9gpMhl
-    QB0qSG0HpRzmMffbmPc3Yrz78pYYasEDTakWb0w==
+    t=1520865395; b=W3OzfCOoKMk8g1gvroWm3p21sw3b70sXMCwkYzR+i0hEPLs
+    giSd7fmiy+zs8aaTFhVuRLuq8BkPsJKdYgAKf+wrRieUWCiUQ/gQcf03eMLdjnf6
+    3HMmPPOBmOEvGHpacqlHj/Cu2lkIsg1KFxgbxPaKp/EUPdHMHOf7FHDnTiVlMb/l
+    uMwPS9xN1BjGs3smcPP+d2VTbqznRuOapTOYb/j6GGh0VGcaCEVmtTNvN+BsMQw2
+    poO0rqKu60ddVqQlDgCQxpV/sMy56ZI8wzau1gkSYna9Fn7DtdTXQwag5Q+WSWVS
+    mHW1pnoGlpTrVwUgtkQQeX4pLD0pnIQ+DF+TQUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1520873618; bh=C8rGVI7bGNn3pgcIygjUEXExMBocl7WBILmyfPP0EeI=; b=J
-    NLeo1Uiw0zzGcKy2Y1XXbN1kXfrZvwcTKRnzHDn9+NOwxbVVpN4gQHKDyGE64Jje
-    nKKCb0NutzsKy99OLF/WEX6aqjMJZWOkARh9k1Wd01rFXHRwrVx7XZ0u4p++/N6L
-    1Bd2WMGhMdKACV++Q9ZkAWbEDqhrN+WVR//yDGtQ2BHKBq0VRTGGuChk8bTxARiB
-    kaAWalgInclthkXg6JSA6swOixhK57rXrxWecoFprBI7h1cRefDkQixVttK7Hk4H
-    uf029vCgx8dn4hk13+LGXODnbCqV8RFQnthnx33wohY+lupluwsX+adHEwQKf6iF
-    pqPoIC+tHagOYu2FOJx4A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1520865395;
+    bh=M1sqXHrW04I1FNYSpmryuxzrrA+oTowA4WDoP6MBcsg=; b=fGtojlo2me16
+    ezLibuke2B5B0blZFNuDHoD5/e28oGN/6fB9ZQGndzJz3lcVy50AZaFNN+IEY+Q4
+    v1I2cLOIWgJEI6XJOLk/YLbtQpT9y++y4Ixkx71QagNzAifaQ8YHs43X0+beLeuC
+    Uv+DWwy22m32Q4abyqAjIDWEelbkLheQp6iwiMC4EgcTykubSazHLxFc177LRwEy
+    KcOgU8OKIEocE4OOlNJeOtnVP9uegssdoAWk4dcZIhMVXy0LGYy+lu0vnKksAsfS
+    oIC5+8fY1gd43PD8BsGC5uZaDLCLth4S6psozQsXIeiLRpiNS/1fHFDt9H239WZ1
+    2Jmqv3uvKA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=GCoX83dO;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=GCoX83dO;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932227AbeCLQxX (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 12 Mar 2018 12:53:23 -0400
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:34014 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751612AbeCLQxW (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Mon, 12 Mar 2018 12:53:22 -0400
-X-Google-Smtp-Source: AG47ELtT4kWIjWiy+hPrqbLlYvrS1/BJFCZBOTlu1yu8Q+ErLxwoxCovmASyvWqf+scJbCxJtwUpfw==
-Subject: Re: [PATCH v7 00/12] USB Type-C device-connection, mux and switch
- support
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        id S1751595AbeCLOfG (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 12 Mar 2018 10:35:06 -0400
+Received: from mga18.intel.com ([134.134.136.126]:22085 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751419AbeCLOfD (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Mon, 12 Mar 2018 10:35:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,461,1515484800";
+   d="scan'208";a="37470970"
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>
 Cc: Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy@infradead.org>,
         MyungJoo Ham <myungjoo.ham@samsung.com>,
@@ -72,196 +71,232 @@ Cc: Darren Hart <dvhart@infradead.org>,
         Guenter Roeck <linux@roeck-us.net>, Jun Li <jun.li@nxp.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-usb@vger.kernel.org
-References: <20180312143431.82396-1-heikki.krogerus@linux.intel.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <02ac8e27-9e42-63a1-2305-d333f65b16f6@redhat.com>
-Date: Mon, 12 Mar 2018 17:53:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
+Subject: [PATCH v7 08/12] xhci: Add Intel extended cap / otg phy mux handling
+Date: Mon, 12 Mar 2018 17:34:27 +0300
+Message-Id: <20180312143431.82396-9-heikki.krogerus@linux.intel.com>
+X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180312143431.82396-1-heikki.krogerus@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180312143431.82396-1-heikki.krogerus@linux.intel.com>
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+From: Hans de Goede <hdegoede@redhat.com>
 
-On 12-03-18 15:34, Heikki Krogerus wrote:
-> Hi,
-> 
-> This is version 7 of Hans' and my series introducing support for USB muxes and
-> generic device-connections. The api naming for device-connections is now made
-> according to proposal from Greg, connection.h is dropped and the prototypes are
-> now in device.h. kbuild test robot <fengguang.wu@intel.com> also found stylistic
-> problems from patches 9/12 and 10/12 which were fixed. The patch 4/12 ("usb:
-> typec: Separate the definitions for data and power roles") was added to the
-> series.
+The xHCI controller on various Intel SoCs has an extended cap mmio-range
+which contains registers to control the muxing to the xHCI (host mode)
+or the dwc3 (device mode) and vbus-detection for the otg usb-phy.
 
-Thanks.
+Having a role-sw driver included in the xHCI code (under drivers/usb/host)
+is not desirable. So this commit adds a simple handler for this extended
+capability, which creates a platform device with the caps mmio region as
+resource, this allows us to write a separate platform role-sw driver for
+the role-switch.
 
-I've given this new series a quick test run and it works for me :)
+Note this commit adds a call to the new xhci_ext_cap_init() function
+to xhci_pci_probe(), it is added here because xhci_ext_cap_init() must
+be called only once. If in the future we also want to handle ext-caps
+on non pci xHCI HCDs from xhci_ext_cap_init() a call to it should also
+be added to other bus probe paths.
 
-Regards,
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Revieved-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+---
+Changes in v4:
+-Add Andy's Reviewed-by
 
-Hans
+Changes in v2:
+-Use SPDX license header
+-Various small style cleanups / changes
+-Add Heikki's Reviewed-by
 
+Changes from some time ago when this patch was part of another patch-set:
+-Check xHCI controller PCI device-id instead of only checking for the
+ Intel Extended capability ID, as the Extended capability ID is used on
+ other model Intel xHCI controllers too
+-Add a new generic xhci_ext_cap_init() function and handle the new
+ XHCI_INTEL_CHT_USB_MUX quirk there.
+-Stop using Cherry Trail / CHT in various places as other Intel SoCs
+ (e.g. Broxton / Apollo Lake) also have this
+---
+ drivers/usb/host/Makefile        |  2 +-
+ drivers/usb/host/xhci-ext-caps.c | 90 ++++++++++++++++++++++++++++++++++++++++
+ drivers/usb/host/xhci-ext-caps.h |  2 +
+ drivers/usb/host/xhci-pci.c      |  5 +++
+ drivers/usb/host/xhci.h          |  2 +
+ 5 files changed, 100 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/usb/host/xhci-ext-caps.c
 
+diff --git a/drivers/usb/host/Makefile b/drivers/usb/host/Makefile
+index 4ede4ce12366..8a8cffe0b445 100644
+--- a/drivers/usb/host/Makefile
++++ b/drivers/usb/host/Makefile
+@@ -11,7 +11,7 @@ fhci-y += fhci-mem.o fhci-tds.o fhci-sched.o
+ 
+ fhci-$(CONFIG_FHCI_DEBUG) += fhci-dbg.o
+ 
+-xhci-hcd-y := xhci.o xhci-mem.o
++xhci-hcd-y := xhci.o xhci-mem.o xhci-ext-caps.o
+ xhci-hcd-y += xhci-ring.o xhci-hub.o xhci-dbg.o
+ xhci-hcd-y += xhci-trace.o
+ 
+diff --git a/drivers/usb/host/xhci-ext-caps.c b/drivers/usb/host/xhci-ext-caps.c
+new file mode 100644
+index 000000000000..399113f9fc5c
+--- /dev/null
++++ b/drivers/usb/host/xhci-ext-caps.c
+@@ -0,0 +1,90 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * XHCI extended capability handling
++ *
++ * Copyright (c) 2017 Hans de Goede <hdegoede@redhat.com>
++ */
++
++#include <linux/platform_device.h>
++#include "xhci.h"
++
++#define USB_SW_DRV_NAME		"intel_xhci_usb_sw"
++#define USB_SW_RESOURCE_SIZE	0x400
++
++static void xhci_intel_unregister_pdev(void *arg)
++{
++	platform_device_unregister(arg);
++}
++
++static int xhci_create_intel_xhci_sw_pdev(struct xhci_hcd *xhci, u32 cap_offset)
++{
++	struct usb_hcd *hcd = xhci_to_hcd(xhci);
++	struct device *dev = hcd->self.controller;
++	struct platform_device *pdev;
++	struct resource	res = { 0, };
++	int ret;
++
++	pdev = platform_device_alloc(USB_SW_DRV_NAME, PLATFORM_DEVID_NONE);
++	if (!pdev) {
++		xhci_err(xhci, "couldn't allocate %s platform device\n",
++			 USB_SW_DRV_NAME);
++		return -ENOMEM;
++	}
++
++	res.start = hcd->rsrc_start + cap_offset;
++	res.end	  = res.start + USB_SW_RESOURCE_SIZE - 1;
++	res.name  = USB_SW_DRV_NAME;
++	res.flags = IORESOURCE_MEM;
++
++	ret = platform_device_add_resources(pdev, &res, 1);
++	if (ret) {
++		dev_err(dev, "couldn't add resources to intel_xhci_usb_sw pdev\n");
++		platform_device_put(pdev);
++		return ret;
++	}
++
++	pdev->dev.parent = dev;
++
++	ret = platform_device_add(pdev);
++	if (ret) {
++		dev_err(dev, "couldn't register intel_xhci_usb_sw pdev\n");
++		platform_device_put(pdev);
++		return ret;
++	}
++
++	ret = devm_add_action_or_reset(dev, xhci_intel_unregister_pdev, pdev);
++	if (ret) {
++		dev_err(dev, "couldn't add unregister action for intel_xhci_usb_sw pdev\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++int xhci_ext_cap_init(struct xhci_hcd *xhci)
++{
++	void __iomem *base = &xhci->cap_regs->hc_capbase;
++	u32 offset, val;
++	int ret;
++
++	offset = xhci_find_next_ext_cap(base, 0, 0);
++
++	while (offset) {
++		val = readl(base + offset);
++
++		switch (XHCI_EXT_CAPS_ID(val)) {
++		case XHCI_EXT_CAPS_VENDOR_INTEL:
++			if (xhci->quirks & XHCI_INTEL_USB_ROLE_SW) {
++				ret = xhci_create_intel_xhci_sw_pdev(xhci,
++								     offset);
++				if (ret)
++					return ret;
++			}
++			break;
++		}
++		offset = xhci_find_next_ext_cap(base, offset, 0);
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(xhci_ext_cap_init);
+diff --git a/drivers/usb/host/xhci-ext-caps.h b/drivers/usb/host/xhci-ext-caps.h
+index 631e7cc62604..268328c20681 100644
+--- a/drivers/usb/host/xhci-ext-caps.h
++++ b/drivers/usb/host/xhci-ext-caps.h
+@@ -39,6 +39,8 @@
+ #define XHCI_EXT_CAPS_ROUTE	5
+ /* IDs 6-9 reserved */
+ #define XHCI_EXT_CAPS_DEBUG	10
++/* Vendor caps */
++#define XHCI_EXT_CAPS_VENDOR_INTEL	192
+ /* USB Legacy Support Capability - section 7.1.1 */
+ #define XHCI_HC_BIOS_OWNED	(1 << 16)
+ #define XHCI_HC_OS_OWNED	(1 << 24)
+diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+index 5262fa571a5d..fe5e3916d46f 100644
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -175,6 +175,7 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
+ 	if (pdev->vendor == PCI_VENDOR_ID_INTEL &&
+ 		 pdev->device == PCI_DEVICE_ID_INTEL_CHERRYVIEW_XHCI) {
+ 		xhci->quirks |= XHCI_SSIC_PORT_UNUSED;
++		xhci->quirks |= XHCI_INTEL_USB_ROLE_SW;
+ 	}
+ 	if (pdev->vendor == PCI_VENDOR_ID_INTEL &&
+ 	    (pdev->device == PCI_DEVICE_ID_INTEL_CHERRYVIEW_XHCI ||
+@@ -308,6 +309,10 @@ static int xhci_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 		goto dealloc_usb2_hcd;
+ 	}
+ 
++	retval = xhci_ext_cap_init(xhci);
++	if (retval)
++		goto put_usb3_hcd;
++
+ 	retval = usb_add_hcd(xhci->shared_hcd, dev->irq,
+ 			IRQF_SHARED);
+ 	if (retval)
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index e4d7d3d06a75..2845aaf921b9 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -1825,6 +1825,7 @@ struct xhci_hcd {
+ #define XHCI_U2_DISABLE_WAKE	(1 << 27)
+ #define XHCI_ASMEDIA_MODIFY_FLOWCONTROL	(1 << 28)
+ #define XHCI_HW_LPM_DISABLE	(1 << 29)
++#define XHCI_INTEL_USB_ROLE_SW	(1 << 30)
+ 
+ 	unsigned int		num_active_eps;
+ 	unsigned int		limit_active_eps;
+@@ -2020,6 +2021,7 @@ int xhci_gen_setup(struct usb_hcd *hcd, xhci_get_quirks_t get_quirks);
+ void xhci_init_driver(struct hc_driver *drv,
+ 		      const struct xhci_driver_overrides *over);
+ int xhci_disable_slot(struct xhci_hcd *xhci, u32 slot_id);
++int xhci_ext_cap_init(struct xhci_hcd *xhci);
+ 
+ int xhci_suspend(struct xhci_hcd *xhci, bool do_wakeup);
+ int xhci_resume(struct xhci_hcd *xhci, bool hibernated);
+-- 
+2.16.1
 
-
-> 
-> Check the v6 from here:
-> https://lkml.org/lkml/2018/3/2/340
-> 
-> 
-> Here is the cover-letter of v6:
-> 
-> Hi All,
-> 
-> Here is version 6 of Heikki's and my USB Type-C device-connection, mux and
-> switch support series. Versions 2 - 5 bring various small code and style
-> fixes based on review (no major changes). Version 6 is rebased on top of
-> the latest usb-next and brings one small but important code fix in
-> the devcon code.
-> 
-> Here is the original cover-letter of v1:
-> 
-> Some devices with an USB Type-C connector have a bunch of muxes
-> behind that connector which need to be controlled by the kernel (rather
-> then having them controlled by firmware as on most devices).
-> 
-> Quite a while back I submitted a patch-series to tie together these muxes
-> and the Type-C Port Manager (tcpm) code, using the then new drivers/mux
-> framework. But the way I used the mux framework went against what it was
-> designed for, so in the end that series got nowhere.
-> 
-> Heikki Krogerus from Intel, who maintains the USB TYPEC subsystem, has
-> recently been working on solving the same problem for some boards he is
-> doing hardware-enablement for.
-> 
-> Heikki has come up with a number of infrastructure patches for this.
-> The first one is a new device-connection framework. This solves the
-> problem of describing non bus device-links on x86 in what in my experience
-> with this problematic area is a really nice simple, clean and *generic*
-> way. This could for example in the near future also replace the custom
-> lookup code in the pwm subsys and the custom pwm_add_table() /
-> pwm_remove_table() functions.
-> 
-> The other 3 patches add a framework for the different type of Type-C /
-> USB "muxes".
-> 
-> Heikki and I have gone through a number of iterations of these patches
-> together and we believe these are now ready for merging. Since merging
-> infrastructure patches without users is not done and Heikki's own use-case
-> for these is not yet ready for merging, the rest of this series consists
-> of patches by me to make the Type-C connector found on some Cherry Trail
-> devices (finally) be able to actually work as an USB port and not just
-> a charge port.
-> 
-> The last patch uses the new usb-role-switch framework to also do proper
-> devcie / host switching on CHT devices with a USB micro AB connector.
-> This is also a big feature for CHT users, because before this they had
-> to do a reboot to get an OTG-host cable recognized (on some devices).
-> 
-> Part of this series is an usb-role-switch driver for the role-switch
-> found inside the xhci controller on e.g. CHT devices, this is currently
-> implemented as the generic xhci controller instantiating a platform
-> child-device for this, since this really is a separate chunk of HW
-> which happens to sit in the XHCI mmio space. This approach may not be
-> universally liked, given that in this new series the role-switch driver
-> is much smaller and does not have any external deps anymore we could
-> just integrate it into the xhci code if that is preferred.
-> 
-> About merging this series (once everything is reviewed, etc.), there are
-> quite some interdependencies in it esp. a lot of the patches depend on
-> the first patch. Luckily patches 1-10 all apply to subsystems which are
-> maintained by Greg (most to the USB subsys). Which just leaves patches
-> 11 and 12 once 1-10 are merged. Greg, can you create an immutable branch
-> for the platform/x86 and extcon maintainers to merge once this is done?
-> 
-> Regards,
-> 
-> Hans
-> 
-> 
-> Hans de Goede (7):
->    usb: typec: tcpm: Set USB role switch to device mode when configured
->      as such
->    usb: typec: tcpm: Use new Type-C switch/mux and usb-role-switch
->      functions
->    xhci: Add Intel extended cap / otg phy mux handling
->    usb: roles: Add Intel xHCI USB role switch driver
->    usb: typec: driver for Pericom PI3USB30532 Type-C cross switch
->    platform/x86: intel_cht_int33fe: Add device connections for the Type-C
->      port
->    extcon: axp288: Set USB role where necessary
-> 
-> Heikki Krogerus (4):
->    drivers: base: Unified device connection lookup
->    usb: typec: API for controlling USB Type-C Multiplexers
->    usb: common: Small class for USB role switches
->    usb: typec: Separate the definitions for data and power roles
-> 
-> Mathias Nyman (1):
->    xhci: Add option to get next extended capability in list by passing id
->      = 0
-> 
->   Documentation/ABI/testing/sysfs-class-usb_role |  21 ++
->   Documentation/driver-api/device_connection.rst |  43 ++++
->   Documentation/driver-api/usb/typec.rst         |  73 +++++-
->   MAINTAINERS                                    |  12 +
->   drivers/base/Makefile                          |   3 +-
->   drivers/base/devcon.c                          | 141 ++++++++++++
->   drivers/extcon/Kconfig                         |   3 +-
->   drivers/extcon/extcon-axp288.c                 | 176 +++++++++++++-
->   drivers/platform/x86/intel_cht_int33fe.c       |  24 ++
->   drivers/usb/Kconfig                            |   5 +
->   drivers/usb/Makefile                           |   2 +
->   drivers/usb/common/Makefile                    |   1 +
->   drivers/usb/common/roles.c                     | 305 +++++++++++++++++++++++++
->   drivers/usb/host/Makefile                      |   2 +-
->   drivers/usb/host/xhci-ext-caps.c               |  90 ++++++++
->   drivers/usb/host/xhci-ext-caps.h               |   7 +-
->   drivers/usb/host/xhci-pci.c                    |   5 +
->   drivers/usb/host/xhci.h                        |   2 +
->   drivers/usb/roles/Kconfig                      |  14 ++
->   drivers/usb/roles/Makefile                     |   1 +
->   drivers/usb/roles/intel-xhci-usb-role-switch.c | 192 ++++++++++++++++
->   drivers/usb/typec/Kconfig                      |   3 +
->   drivers/usb/typec/Makefile                     |   2 +
->   drivers/usb/typec/{typec.c => class.c}         | 124 ++++++++--
->   drivers/usb/typec/fusb302/fusb302.c            |   2 +-
->   drivers/usb/typec/mux.c                        | 191 ++++++++++++++++
->   drivers/usb/typec/mux/Kconfig                  |  10 +
->   drivers/usb/typec/mux/Makefile                 |   3 +
->   drivers/usb/typec/mux/pi3usb30532.c            | 178 +++++++++++++++
->   drivers/usb/typec/tcpm.c                       |  63 +++--
->   drivers/usb/typec/tps6598x.c                   |  26 ++-
->   drivers/usb/typec/typec_wcove.c                |   1 +
->   drivers/usb/typec/ucsi/ucsi.c                  |  13 +-
->   include/linux/device.h                         |  22 ++
->   include/linux/usb/role.h                       |  53 +++++
->   include/linux/usb/tcpm.h                       |  15 +-
->   include/linux/usb/typec.h                      |  28 ++-
->   include/linux/usb/typec_mux.h                  |  55 +++++
->   38 files changed, 1817 insertions(+), 94 deletions(-)
->   create mode 100644 Documentation/ABI/testing/sysfs-class-usb_role
->   create mode 100644 Documentation/driver-api/device_connection.rst
->   create mode 100644 drivers/base/devcon.c
->   create mode 100644 drivers/usb/common/roles.c
->   create mode 100644 drivers/usb/host/xhci-ext-caps.c
->   create mode 100644 drivers/usb/roles/Kconfig
->   create mode 100644 drivers/usb/roles/Makefile
->   create mode 100644 drivers/usb/roles/intel-xhci-usb-role-switch.c
->   rename drivers/usb/typec/{typec.c => class.c} (93%)
->   create mode 100644 drivers/usb/typec/mux.c
->   create mode 100644 drivers/usb/typec/mux/Kconfig
->   create mode 100644 drivers/usb/typec/mux/Makefile
->   create mode 100644 drivers/usb/typec/mux/pi3usb30532.c
->   create mode 100644 include/linux/usb/role.h
->   create mode 100644 include/linux/usb/typec_mux.h
-> 
