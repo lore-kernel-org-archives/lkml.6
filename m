@@ -1,124 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751822AbeCLOaK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 10:30:10 -0400
-Received: from a8-242.smtp-out.amazonses.com ([54.240.8.242]:60790 "EHLO
-        a8-242.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751255AbeCLOaH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 10:30:07 -0400
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thiebaud Weksteen <tweek@google.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
- <e7c2be5c-cf21-fc2d-efda-d9222d93ffad@redhat.com>
- <b32f335c-0d77-1749-f7fe-65f512280255@redhat.com>
- <ade378f6-c997-1d48-a30d-cceee6435fc8@redhat.com>
- <a3b5f822-f8f4-e2f5-46da-e23e13174f28@redhat.com>
- <cec36124-0950-6ad9-58a8-9bd69e63aa04@redhat.com>
- <0100016206a68850-bd5c96b3-f275-46ea-98b1-1317e02a5d6e-000000@email.amazonses.com>
- <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com>
- <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
- <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
- <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
- <CAKv+Gu-KPU+kQ0z3jJ+CcgNPq3PuqjF_CCB_2LR_5VoYaynTJw@mail.gmail.com>
-From: Jeremy Cline <jeremy@jcline.org>
-Message-ID: <010001621a9e5069-0b1a6328-97e4-4396-9438-b90f5b8c82a4-000000@email.amazonses.com>
-Date: Mon, 12 Mar 2018 14:30:05 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751997AbeCLOam (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 10:30:42 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:56318 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751361AbeCLOak (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 10:30:40 -0400
+Date: Mon, 12 Mar 2018 15:30:21 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/microcode/AMD: check microcode file sanity before
+ loading it
+Message-ID: <20180312143021.GE9431@pd.tnic>
+References: <787b0ecc-8c1a-3b5a-82e0-9840c7b7c595@maciej.szmigiero.name>
+ <20180312095336.GB9431@pd.tnic>
+ <ddf0ddc2-bc46-d61c-7080-0eca26d6bfcf@maciej.szmigiero.name>
+ <20180312130653.GC9431@pd.tnic>
+ <df1e721c-f030-68b4-f197-2592bce97bbf@maciej.szmigiero.name>
+ <20180312134853.GD9431@pd.tnic>
+ <2d60978a-522c-ff00-f245-a7e681283371@maciej.szmigiero.name>
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu-KPU+kQ0z3jJ+CcgNPq3PuqjF_CCB_2LR_5VoYaynTJw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SES-Outgoing: 2018.03.12-54.240.8.242
-Feedback-ID: 1.us-east-1.z18Isoc/FaoPOvCyJyi1mnTt8STwoRuibXVNoUcvG6g=:AmazonSES
+Content-Disposition: inline
+In-Reply-To: <2d60978a-522c-ff00-f245-a7e681283371@maciej.szmigiero.name>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/12/2018 07:08 AM, Ard Biesheuvel wrote:
-> On 10 March 2018 at 10:45, Thiebaud Weksteen <tweek@google.com> wrote:
->> On Fri, Mar 9, 2018 at 5:54 PM Jeremy Cline <jeremy@jcline.org> wrote:
->>
->>> On Fri, Mar 09, 2018 at 10:43:50AM +0000, Thiebaud Weksteen wrote:
->>>> Thanks a lot for trying out the patch!
->>>>
->>>> Please don't modify your install at this stage, I think we are hitting a
->>>> firmware bug and that would be awesome if we can fix how we are
->> handling it.
->>>> So, if we reach that stage in the function it could either be that:
->>>> * The allocation did not succeed, somehow, but the firmware still
->> returned
->>>> EFI_SUCCEED.
->>>> * The size requested is incorrect (I'm thinking something like a 1G of
->>>> log). This would be due to either a miscalculation of log_size
->> (possible)
->>>> or; the returned values of GetEventLog are not correct.
->>>> I'm sending a patch to add checks for these. Could you please apply and
->>>> retest?
->>>> Again, thanks for helping debugging this.
->>
->>> No problem, thanks for the help :)
->>
->>> With the new patch:
->>
->>> Locating the TCG2Protocol
->>> Calling GetEventLog on TCG2Protocol
->>> Log returned
->>> log_location is not empty
->>> log_size != 0
->>> log_size < 1M
->>> Allocating memory for storing the logs
->>> Returned from memory allocation
->>> Copying log to new location
->>
->>> And then it hangs. I added a couple more print statements:
->>
->>> diff --git a/drivers/firmware/efi/libstub/tpm.c
->> b/drivers/firmware/efi/libstub/tpm.c
->>> index ee3fac109078..1ab5638bc50e 100644
->>> --- a/drivers/firmware/efi/libstub/tpm.c
->>> +++ b/drivers/firmware/efi/libstub/tpm.c
->>> @@ -148,8 +148,11 @@ void
->> efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
->>>          efi_printk(sys_table_arg, "Copying log to new location\n");
->>
->>>          memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
->>> +       efi_printk(sys_table_arg, "Successfully memset log_tbl to 0\n");
->>>          log_tbl->size = log_size;
->>> +       efi_printk(sys_table_arg, "Set log_tbl->size\n");
->>>          log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
->>> +       efi_printk(sys_table_arg, "Set log_tbl-version\n");
->>>          memcpy(log_tbl->log, (void *) first_entry_addr, log_size);
->>
->>>          efi_printk(sys_table_arg, "Installing the log into the
->> configuration table\n");
->>
->>> and it's hanging at "memset(log_tbl, 0, sizeof(*log_tbl) + log_size);"
->>
->> Thanks. Well, it looks like the memory that is supposedly allocated is not
->> usable. I'm thinking this is a firmware bug.
->> Ard, would you agree on this assumption? Thoughts on how to proceed?
->>
-> 
-> I am rather puzzled why the allocate_pool() should succeed and the
-> subsequent memset() should fail. This does not look like an issue that
-> is intimately related to TPM2 support, rather an issue in the firmware
-> that happens to get tickled after the change.
-> 
-> Would you mind trying replacing EFI_LOADER_DATA with
-> EFI_BOOT_SERVICES_DATA in the allocate_pool() call?
+On Mon, Mar 12, 2018 at 03:10:47PM +0100, Maciej S. Szmigiero wrote:
+> And this current maximum was reached by CPU types added in
+> families < 15h during last 10+ years (the oldest supported CPU family in
 
-Replacing EFI_LOADER_DATA with EFI_BOOT_SERVICES_DATA still hangs at the
-memset() call.
+You're assuming that the rate of adding patches to the microcode
+container won't change. You have a crystal ball which shows you the
+future?
 
-Regards,
-Jeremy
+Ok, enough with the bullshit.
+
+Here's what I'll take as hardening patches:
+
+1. Check whether the equivalence table length is not exceeding the size
+of the whole blob. This is the only sane limit check we can do - no
+arbitrary bullshit of it'll take how many years to reach some limit.
+
+2. Add a PATCH_MAX_SIZE macro which evaluates against the max of all
+family patch sizes:
+
+#define F1XH_MPB_MAX_SIZE 2048
+#define F14H_MPB_MAX_SIZE 1824
+#define F15H_MPB_MAX_SIZE 4096
+#define F16H_MPB_MAX_SIZE 3458
+#define F17H_MPB_MAX_SIZE 3200
+
+so that future additions won't break the macro.
+
+3. Fix install_equiv_cpu_table() to return an unsigned int
+
+Make all the points above into separate patches, please, with proper
+commit messages explaining why they do what they do and test them.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
