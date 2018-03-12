@@ -1,82 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752737AbeCLKWu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 06:22:50 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:43172 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752715AbeCLKWr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 06:22:47 -0400
-X-Google-Smtp-Source: AG47ELtOoNchSplMQZiSKam45XL8jXsL4szuIei5T7f5QHmeiKYLnmDyvgeSFBa9WuNfiUS65KECPw==
-Subject: Re: [PATCH 00/11] clk: meson: second round of updates
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180219112146.21746-1-jbrunet@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Organization: Baylibre
-Message-ID: <670fffce-220b-b65e-d855-80603f1972b5@baylibre.com>
-Date: Mon, 12 Mar 2018 11:22:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180219112146.21746-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S1752645AbeCLK1o (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 06:27:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53918 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751303AbeCLK1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 06:27:43 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B930208FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+Date: Mon, 12 Mar 2018 19:27:38 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Alexei Starovoitov <ast@fb.com>, Josef Bacik <jbacik@fb.com>,
+        rostedt@goodmis.org, mingo@redhat.com, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org, ast@kernel.org,
+        kernel-team@fb.com, daniel@iogearbox.net, linux-btrfs@vger.kernel.org,
+        darrick.wong@oracle.com, Josef Bacik <josef@toxicpanda.com>,
+        Akinobu Mita <akinobu.mita@gmail.com>
+Subject: Re: [BUGFIX PATCH bpf-next] error-injection: Fix to prohibit jump
+ optimization
+Message-Id: <20180312192738.77061ec53f9437d960b437d9@kernel.org>
+In-Reply-To: <152084884886.1536.4464134247603910765.stgit@devbox>
+References: <152084884886.1536.4464134247603910765.stgit@devbox>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/02/2018 12:21, Jerome Brunet wrote:
-> This changeset applies on top of the previous updates series
-> available here [0].
+On Mon, 12 Mar 2018 19:00:49 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
+
+> Since the kprobe which was optimized by jump can not change
+> the execution path, the kprobe for error-injection must not
+> be optimized. To prohibit it, set a dummy post-handler as
+> officially stated in Documentation/kprobes.txt.
+
+Note that trace-probe based BPF is not affected, because it
+ensures the trace-probe is based on ftrace, which is not
+jump optimized.
+
+Thanks,
+
 > 
-> Most of the changes proposed here are related to the plls of meson
-> SoCs. Details can be found in each patches but, in nutshell, there
-> is :
-> * a bit of clean-up,
-> * improved pll capabilities using the frac parameter,
-> * several clocks added to model the tree more accurately.
+> Fixes: 4b1a29a7f542 ("error-injection: Support fault injection framework")
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> ---
+>  kernel/fail_function.c |   10 ++++++++++
+>  1 file changed, 10 insertions(+)
 > 
-> Beware: patch #10 depends on this core clock framework fix: [1]
-> As explained in the description on the patch, if the gates are
-> added w/o this fix, the system will crash when
-> clk_disable_unused() is called.
-> 
-> [0]: https://lkml.kernel.org/r/20180212145846.19380-1-jbrunet@baylibre.com
-> [1]: https://lkml.kernel.org/r/20180214134340.17242-5-jbrunet@baylibre.com
-> 
-> Jerome Brunet (11):
->   clk: meson: add fractional part of meson8b fixed_pll
->   clk: meson: poke pll CNTL last
->   clk: meson: remove special gp0 lock loop
->   clk: meson: improve pll driver results with frac
->   clk: meson: add gp0 frac parameter for axg and gxl
->   clk: meson: add ROUND_CLOSEST to the pll driver
->   clk: meson: axg: add hifi clock bindings
->   clk: meson: axg: add hifi pll clock
->   clk: meson: add mpll pre-divider
->   clk: meson: add fdiv clock gates
->   clk: meson: clean-up clk81 clocks
-> 
->  drivers/clk/meson/axg.c              | 184 +++++++++++++++++++++++++++++++----
->  drivers/clk/meson/axg.h              |   8 +-
->  drivers/clk/meson/clk-pll.c          | 154 ++++++++++++++++++-----------
->  drivers/clk/meson/clkc.h             |  15 +--
->  drivers/clk/meson/gxbb.c             | 141 +++++++++++++++++++++++----
->  drivers/clk/meson/gxbb.h             |  10 +-
->  drivers/clk/meson/meson8b.c          | 128 ++++++++++++++++++++----
->  drivers/clk/meson/meson8b.h          |   8 +-
->  include/dt-bindings/clock/axg-clkc.h |   1 +
->  9 files changed, 521 insertions(+), 128 deletions(-)
+> diff --git a/kernel/fail_function.c b/kernel/fail_function.c
+> index 21b0122cb39c..1d5632d8bbcc 100644
+> --- a/kernel/fail_function.c
+> +++ b/kernel/fail_function.c
+> @@ -14,6 +14,15 @@
+>  
+>  static int fei_kprobe_handler(struct kprobe *kp, struct pt_regs *regs);
+>  
+> +static void fei_post_handler(struct kprobe *kp, struct pt_regs *regs,
+> +			     unsigned long flags)
+> +{
+> +	/*
+> +	 * A dummy post handler is required to prohibit optimizing, because
+> +	 * jump optimization does not support execution path overriding.
+> +	 */
+> +}
+> +
+>  struct fei_attr {
+>  	struct list_head list;
+>  	struct kprobe kp;
+> @@ -56,6 +65,7 @@ static struct fei_attr *fei_attr_new(const char *sym, unsigned long addr)
+>  			return NULL;
+>  		}
+>  		attr->kp.pre_handler = fei_kprobe_handler;
+> +		attr->kp.post_handler = fei_post_handler;
+>  		attr->retval = adjust_error_retval(addr, 0);
+>  		INIT_LIST_HEAD(&attr->list);
+>  	}
 > 
 
-Tested on Odroid-C2 & LibreTech-CC,
 
-Applied to meson's next/drivers tree.
-
-Neil
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
