@@ -1,167 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932771AbeCLP6h (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 11:58:37 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:45577 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932621AbeCLP6D (ORCPT
+        id S932785AbeCLP6u (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 11:58:50 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:11613 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932582AbeCLP6s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 11:58:03 -0400
-X-Google-Smtp-Source: AG47ELtsBpDSpGR+6aRIJoDlj+/6rnCaX8eDIzzpILl4h/kcpIJweTMwaulsB9E0DtbqTn7CTSvBVg==
-From: codekipper@gmail.com
-To: maxime.ripard@free-electrons.com, wens@csie.org,
-        linux-sunxi@googlegroups.com
-Cc: linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com,
-        broonie@kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, be17068@iperbole.bo.it,
-        Marcus Cooper <codekipper@gmail.com>
-Subject: [PATCH v2 4/6] ASoC: sun4i-i2s: Add multi-lane functionality
-Date: Mon, 12 Mar 2018 16:57:51 +0100
-Message-Id: <20180312155753.9478-5-codekipper@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180312155753.9478-1-codekipper@gmail.com>
-References: <20180312155753.9478-1-codekipper@gmail.com>
+        Mon, 12 Mar 2018 11:58:48 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180312155846epoutp0453288b886cc316f87f43a1fbc5c30c01~bN4D8CF2q1388113881epoutp04l
+X-AuditID: b6c32a47-19fff7000000100c-37-5aa6a3b544be
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: Re: [PATCH] video: fbdev: vermilion: use 64-bit arithmetic instead
+ of 32-bit
+Date: Mon, 12 Mar 2018 16:58:38 +0100
+Message-id: <3883400.1vCYa0i6ig@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <20180207000424.GA32680@embeddedgus>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCIsWRmVeSWpSXmKPExsWy7bCmme62xcuiDGanW1z5+p7NYuWS/WwW
+        W/eoWpzo+8BqcXnXHDYHVo91B1U97ncfZ/L4vEkugDmKyyYlNSezLLVI3y6BK2P1igOMBR/Y
+        Kr5/PMrawHiKtYuRk0NCwETiyd1TbF2MXBxCAjsYJf52r2WGcL4zSjStaAWq4gCr6vquDBHf
+        wCgxfXUXC0i3kMBXRol1i+NAbDYBK4mJ7asYQWwRASOJ2TO6WUEamAUmM0q0b1vLBJIQFgiX
+        uHBvO5jNIqAqsXEdiM3BwSugKfFtthVIWFTAS2LLvnawEk4BQ4mJ91eB2bwCghI/Jt8D28ss
+        IC+xb/9UVghbR+LssXWMILskBJawSazeNY0N4jUXiSmXvjBC2MISr45vYYewpSWerdoI1dDM
+        KPFtxx5miMQERok964UgbGuJw8cvQm3gk+g4/JcdEhK8Eh1tUCUeEpv+vIdqdZRo3PWFERJC
+        LYwSN9t3sk9glJ2F5PBZSA6fheTwBYzMqxjFUguKc9NTi40KjPWKE3OLS/PS9ZLzczcxguNe
+        y30H47ZzPocYBTgYlXh4DZqXRQmxJpYVV+YeYpTgYFYS4fWfChTiTUmsrEotyo8vKs1JLT7E
+        KM3BoiTO2xrgEiUkkJ5YkpqdmlqQWgSTZeLglGpgTPzf2May/MIEIwe5jWr1l7fqztOs/aKc
+        0MdiZudQGczsO90hUfKSv1uv1I5Lzmy/U3/f9Nw8SVuEsySgt8j79fJnDAePOdrvfx257qF8
+        n8ibRLczX/b67fuuySyxrq92/53CgsxF+n+Nhf/NvchfN3tNsUuZv+O2jwl9b/61z2U8/3Xx
+        1Bu3lFiKMxINtZiLihMB0b5ZLvcCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHLMWRmVeSWpSXmKPExsVy+t9jQd2ti5dFGey8yWNx5et7NouVS/az
+        WWzdo2pxou8Dq8XlXXPYHFg91h1U9bjffZzJ4/MmuQDmKC6blNSczLLUIn27BK6M1SsOMBZ8
+        YKv4/vEoawPjKdYuRg4OCQETia7vyl2MXBxCAusYJY68v8IG4XxllDj5o4uli5GTg03ASmJi
+        +ypGEFtEwEhi9oxuVpAiZoGJjBJ3p7xlBkkIC4RLrPw6iwnEZhFQldi4bjsTyAZeAU2Jb7Ot
+        QMKiAl4SW/a1g5VwChhKTLy/igliWRujxIq5O9hAErwCghI/Jt8DW8wsIC+xb/9UVghbS2L9
+        zuNMExj5ZyEpm4WkbBaSsgWMzKsYJVMLinPTc4uNCozyUsv1ihNzi0vz0vWS83M3MQJDddth
+        rf4djI+XxB9iFOBgVOLh7WhdFiXEmlhWXJl7iFGCg1lJhNd/KlCINyWxsiq1KD++qDQntfgQ
+        ozQHi5I4L3/+sUghgfTEktTs1NSC1CKYLBMHp1QDo2/0WqaHUUXv/32V1Ilrkd6rdqMnmiM1
+        SyVd48XVg508O0wVJ/YdtPq/dvG8Tj2t85ZPgmfp7jCvCxZcJTs7dnaaS9IZw6Jc96Pe/ete
+        61p9uOp+3ObWH7+9+/hmlojNELcsY746ocErQaR9UeRUr7IDdle7j18Qjr6z70TejhsHkpvn
+        bKq7pcRSnJFoqMVcVJwIAENz+PlRAgAA
+X-CMS-MailID: 20180312155845epcas2p45ac49e920a8b708fcd5d8244a658857a
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+X-CMS-RootMailID: 20180207000429epcas3p49ce7f7528d02b9799713e8806d77847d
+X-RootMTR: 20180207000429epcas3p49ce7f7528d02b9799713e8806d77847d
+References: <CGME20180207000429epcas3p49ce7f7528d02b9799713e8806d77847d@epcas3p4.samsung.com>
+        <20180207000424.GA32680@embeddedgus>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcus Cooper <codekipper@gmail.com>
+On Tuesday, February 06, 2018 06:04:24 PM Gustavo A. R. Silva wrote:
+> Cast _pitch_ to u64 in order to give the compiler complete information
+> about the proper arithmetic to use. Notice that this variable is
+> being used in a context that expects an expression of type u64
+> (64 bits, unsigned).
+> 
+> The expression pitch * var->yres_virtual is currently being evaluated
+> using 32-bit arithmetic and the result of the operation is being stored
+> into variable mem, which is a variable of type u64. Based on that,
+> chances are there is a potential integer overflow as a result of the
+> operation.
+> 
+> Addresses-Coverity-ID: 200655 ("Unintentional integer overflow")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-The i2s block supports multi-lane i2s output however this functionality
-is only possible in earlier SoCs where the pins are exposed and for
-the i2s block used for HDMI audio on the later SoCs.
+Patch queued for 4.17, thanks.
 
-To enable this functionality, an optional property has been added to
-the bindings.
-
-Signed-off-by: Marcus Cooper <codekipper@gmail.com>
----
- .../devicetree/bindings/sound/sun4i-i2s.txt        |  3 ++
- sound/soc/sunxi/sun4i-i2s.c                        | 48 +++++++++++++++++-----
- 2 files changed, 41 insertions(+), 10 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/sound/sun4i-i2s.txt b/Documentation/devicetree/bindings/sound/sun4i-i2s.txt
-index 48addef65b8f..3f966ac61b9e 100644
---- a/Documentation/devicetree/bindings/sound/sun4i-i2s.txt
-+++ b/Documentation/devicetree/bindings/sound/sun4i-i2s.txt
-@@ -33,6 +33,9 @@ Optional properties:
- 				configured to extend the slot width to the
- 				value specified. Min 8, Max 32.
- 
-+- allwinner,playback-channels:  if this property is present then the number
-+				of available channels is extended and the
-+				outputs enabled.
- Example:
- 
- i2s0: i2s@1c22400 {
-diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index 2bd0befa02a8..436480df1844 100644
---- a/sound/soc/sunxi/sun4i-i2s.c
-+++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -27,7 +27,7 @@
- 
- #define SUN4I_I2S_CTRL_REG		0x00
- #define SUN4I_I2S_CTRL_SDO_EN_MASK		GENMASK(11, 8)
--#define SUN4I_I2S_CTRL_SDO_EN(sdo)			BIT(8 + (sdo))
-+#define SUN4I_I2S_CTRL_SDO_EN(lines)		(((1 << lines) - 1) << 8)
- #define SUN4I_I2S_CTRL_MODE_MASK		BIT(5)
- #define SUN4I_I2S_CTRL_MODE_SLAVE			(1 << 5)
- #define SUN4I_I2S_CTRL_MODE_MASTER			(0 << 5)
-@@ -394,14 +394,23 @@ static int sun4i_i2s_hw_params(struct snd_pcm_substream *substream,
- 	struct sun4i_i2s *i2s = snd_soc_dai_get_drvdata(dai);
- 	int sr, wss, channels;
- 	u32 width;
-+	int lines;
- 
- 	channels = params_channels(params);
--	if (channels != 2) {
-+	if ((channels > dai->driver->playback.channels_max) ||
-+		(channels < dai->driver->playback.channels_min)) {
- 		dev_err(dai->dev, "Unsupported number of channels: %d\n",
- 			channels);
- 		return -EINVAL;
- 	}
- 
-+	lines = (channels + 1) / 2;
-+
-+	/* Enable the required output lines */
-+	regmap_update_bits(i2s->regmap, SUN4I_I2S_CTRL_REG,
-+			   SUN4I_I2S_CTRL_SDO_EN_MASK,
-+			   SUN4I_I2S_CTRL_SDO_EN(lines));
-+
- 	if (i2s->variant->has_chcfg) {
- 		regmap_update_bits(i2s->regmap, SUN8I_I2S_CHAN_CFG_REG,
- 				   SUN8I_I2S_CHAN_CFG_TX_SLOT_NUM_MASK,
-@@ -412,8 +421,19 @@ static int sun4i_i2s_hw_params(struct snd_pcm_substream *substream,
- 	}
- 
- 	/* Map the channels for playback and capture */
--	regmap_field_write(i2s->field_txchanmap, 0x76543210);
- 	regmap_field_write(i2s->field_rxchanmap, 0x00003210);
-+	regmap_field_write(i2s->field_txchanmap, 0x10);
-+	if (i2s->variant->has_chsel_tx_chen) {
-+		if (channels > 2)
-+			regmap_write(i2s->regmap,
-+				     SUN8I_I2S_TX_CHAN_MAP_REG+4, 0x32);
-+		if (channels > 4)
-+			regmap_write(i2s->regmap,
-+				     SUN8I_I2S_TX_CHAN_MAP_REG+8, 0x54);
-+		if (channels > 6)
-+			regmap_write(i2s->regmap,
-+				     SUN8I_I2S_TX_CHAN_MAP_REG+12, 0x76);
-+	}
- 
- 	/* Configure the channels */
- 	regmap_field_write(i2s->field_txchansel,
-@@ -692,12 +712,6 @@ static int sun4i_i2s_startup(struct snd_pcm_substream *substream,
- 	regmap_update_bits(i2s->regmap, SUN4I_I2S_CTRL_REG,
- 			   SUN4I_I2S_CTRL_GL_EN, SUN4I_I2S_CTRL_GL_EN);
- 
--	/* Enable the first output line */
--	regmap_update_bits(i2s->regmap, SUN4I_I2S_CTRL_REG,
--			   SUN4I_I2S_CTRL_SDO_EN_MASK,
--			   SUN4I_I2S_CTRL_SDO_EN(0));
--
--
- 	return clk_prepare_enable(i2s->mod_clk);
- }
- 
-@@ -1073,6 +1087,7 @@ static int sun4i_i2s_init_regmap_fields(struct device *dev,
- static int sun4i_i2s_probe(struct platform_device *pdev)
- {
- 	struct sun4i_i2s *i2s;
-+	struct snd_soc_dai_driver *soc_dai;
- 	struct resource *res;
- 	void __iomem *regs;
- 	int irq, ret, val;
-@@ -1148,6 +1163,19 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
- 			i2s->slot_width = val;
- 	}
- 
-+	soc_dai = devm_kmemdup(&pdev->dev, &sun4i_i2s_dai,
-+			       sizeof(*soc_dai), GFP_KERNEL);
-+	if (!soc_dai) {
-+		ret = -ENOMEM;
-+		goto err_pm_disable;
-+	}
-+
-+	if (!of_property_read_u32(pdev->dev.of_node,
-+				  "allwinner,playback-channels", &val)) {
-+		if (val >= 2 && val <= 8)
-+			soc_dai->playback.channels_max = val;
-+	}
-+
- 	pm_runtime_enable(&pdev->dev);
- 	if (!pm_runtime_enabled(&pdev->dev)) {
- 		ret = sun4i_i2s_runtime_resume(&pdev->dev);
-@@ -1157,7 +1185,7 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
- 
- 	ret = devm_snd_soc_register_component(&pdev->dev,
- 					      &sun4i_i2s_component,
--					      &sun4i_i2s_dai, 1);
-+					      soc_dai, 1);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Could not register DAI\n");
- 		goto err_suspend;
--- 
-2.16.2
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
