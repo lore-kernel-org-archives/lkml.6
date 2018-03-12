@@ -1,171 +1,156 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2645272-1520027839-3-13419392769046642006
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8', plain='us-ascii'
-X-Attached: signature.asc
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520027838; b=T4w8G1bm/ZCDZUlG+eQSb1/w8l85UxbaBJ8/KYIVXCove/H
-    nsGV8MZ0LVGaPSyVbY/gM1ujpC3Tl8RICzU44b0cy0vsEq2dlCX72wYDMy3Rc5Aq
-    5baV5TWma89FbcekNhdEOLXXnzWU7lkCMtaIQ2Cde9XA1U8E7BK6NCmelQ4ObAnv
-    TjBp22XweKT/iXmwA7XV7rsW6+GXqVcsneKs1bjwpceudUF5SmdcHMvivAg4UQ72
-    xr/O4DoeM1xCM77yKtpL9RwhhPrSPac0iyJZCzH0X74YNwAjwE3otsF+9gBvo6WG
-    vCix4ZAfAWoWNT5JetQF5iI1zfQmje+xVWOTvug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :sender; s=arctest; t=1520027838; bh=CsVk+pTf6NoIpbq1yrGitKfpkrG
-    UBLGMCQBEEaUY+VE=; b=o+nga1g9M/LO8MYmtBZAUNXgV7thGyoBIX/TH3B6hx4
-    eHvQvklEtE72ltLjqIR9VJSTtB9TsXwGZspwj1JR4NOzihckFXREelmIw4oOm0y1
-    JriL6i44RMGip7pr6bWi9COTtnVeyGoo3W/uqqI2AJmTlOWboZOsuNF8DvcQEAoX
-    fVP3aGHVRmrlKjGNu/QgxbQtSOzlBxBaekKg8y5EvGaVkBQuwntrGucOtL03KSBG
-    KsfJyGhFg5Gjre/XMt+lU4vC8VT8n/Xa16zTvnDrpbTOtE6NWYknreCZxRSZusQp
-    yxaETsdTS/ydtHmK5PAsmqxWtQ0MdXoV8OUD6dFwAMQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2558B21725
-Authentication-Results: mail.kernel.org;
- dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org;
- spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Fri, 2 Mar 2018 21:57:02 +0000
-From: James Hogan <jhogan@kernel.org>
-To: Deepa Dinamani <deepa.kernel@gmail.com>
-Subject: Re: [PATCH v3 02/10] include: Move compat_timespec/ timeval to
- compat_time.h
-Message-ID: <20180302215702.GD4197@saruman>
-References: <20180116021818.24791-1-deepa.kernel@gmail.com>
- <20180116021818.24791-3-deepa.kernel@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20180116021818.24791-3-deepa.kernel@gmail.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: mark.rutland@arm.com, linux-mips@linux-mips.org, peterz@infradead.org,
- benh@kernel.crashing.org, heiko.carstens@de.ibm.com, paulus@samba.org,
- hpa@zytor.com, sparclinux@vger.kernel.org, devel@driverdev.osuosl.org,
- linux-s390@vger.kernel.org, y2038@lists.linaro.org, mpe@ellerman.id.au,
- deller@gmx.de, x86@kernel.org, sebott@linux.vnet.ibm.com,
- jejb@parisc-linux.org, will.deacon@arm.com, borntraeger@de.ibm.com,
- mingo@redhat.com, oprofile-list@lists.sf.net, catalin.marinas@arm.com,
- rric@kernel.org, cmetcalf@mellanox.com, arnd@arndb.de,
- oberpar@linux.vnet.ibm.com, acme@kernel.org, jwi@linux.vnet.ibm.com,
- john.stultz@linaro.org, rostedt@goodmis.org, tglx@linutronix.de,
- ubraun@linux.vnet.ibm.com, gerald.schaefer@de.ibm.com,
- linux-parisc@vger.kernel.org, gregkh@linuxfoundation.org, cohuck@redhat.com,
- linux-kernel@vger.kernel.org, ralf@linux-mips.org, hoeppner@linux.vnet.ibm.com,
- sth@linux.vnet.ibm.com, schwidefsky@de.ibm.com, linuxppc-dev@lists.ozlabs.org,
- davem@davemloft.net
-Content-Type: multipart/mixed; boundary="===============9066815376597682018=="
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Return-Path: <kernel-hardening-return-12472-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELsYTM8bZYc9bQFL7EwVguOu8VCQmyZQpQCPocvv+4wzFqzw2OGvLwQgfQOathv9Y9YsgX77
+ARC-Seal: i=1; a=rsa-sha256; t=1520875753; cv=none;
+        d=google.com; s=arc-20160816;
+        b=YPRLou/D1tin0VLAbEKlUrOFQ64tHAu39mt4bomFuQNDCsT1kRhARbdrI9OI7F9Drt
+         tBNplsd6s0PFz/cRg1rRpLt4kKOpEqlMWSlTps9YqVg0rzg+Y4PxR9PJyb/zoqMik+MY
+         3iiAH8FjNcvsZv8y4pIqxc4r/2yUb0c/dAKr5CcZOgafPJqCqZVk5yRcalyBPVtiUeLu
+         Ciw1IuXVphGjmOS35RXflTkHIRnE8gmakq+QcQiUBLKU0cLCoPB1OQcolF6tYsziQFVX
+         hiAK0twP2BGUX2rcaM/yEcf62K3Xo5dYegrPdZnckUsMFprAjRSkfXb69eRTJTWh3PWf
+         dnAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=FLm1+b/vyyx7T0YppXiRuaSuDRaimGQ6Ze+jV6YYxww=;
+        b=DYzhtErSk1wXIZJKUMyAhktO8XJ9Bdv39khC3Q7nM6g7AeDRIxLIawJXg+SjBdcDmz
+         3tR30grpazUsLIGfSA6nWcLYf/f17J29vxYBLnAULIssOBA4nvPl+CzHh0R4X1mxn8Fy
+         +V6Zd6IuElaqI/4fZIR6dZUpBca9NBj8W/sPqta8BmEqo4VXZ7MFyvWk0/Zw/5yGPfaf
+         Ig0kgcLZuWlBWaIL03MEeD9E6TfIW+9fh0xqoFQegrEMm6rw8RkJVitg3vWehHIiCKE6
+         NDVVB3t/iYTn0/3Dl+8dZkYjHSZU3jF3DAzqwGIYllkw3mFtm/RDwdeqzPXJLwhH3O/8
+         I78g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=trRpidUF;
+       spf=pass (google.com: domain of kernel-hardening-return-12472-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12472-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=trRpidUF;
+       spf=pass (google.com: domain of kernel-hardening-return-12472-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12472-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-hardening@lists.openwall.com,
+	linux-scsi@vger.kernel.org,
+	"James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	"Tobin C. Harding" <tobin@apporbit.com>,
+	Dario Ballabio <ballabio_dario@emc.com>,
+	Kees Cook <keescook@chromium.org>,
+	Salvatore Mesoraca <s.mesoraca16@gmail.com>,
+	valdis.kletnieks@vt.edu
+Subject: [PATCH v3] scsi: eata: drop VLAs in reorder()
+Date: Mon, 12 Mar 2018 18:28:34 +0100
+Message-Id: <1520875714-16903-1-git-send-email-s.mesoraca16@gmail.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594753814907865736?=
+X-GMAIL-MSGID: =?utf-8?q?1594753814907865736?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Avoid 3 VLAs[1] by using a single dinamically allocated array
+and some helper variables: we don't need 3 arrays.
 
---===============9066815376597682018==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="jL2BoiuKMElzg3CS"
-Content-Disposition: inline
+[1] https://lkml.org/lkml/2018/3/7/621
 
+Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+---
+ drivers/scsi/eata.c | 40 ++++++++++++++++++++++++++--------------
+ 1 file changed, 26 insertions(+), 14 deletions(-)
 
---jL2BoiuKMElzg3CS
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jan 15, 2018 at 06:18:10PM -0800, Deepa Dinamani wrote:
-> All the current architecture specific defines for these
-> are the same. Refactor these common defines to a common
-> header file.
->=20
-> The new common linux/compat_time.h is also useful as it
-> will eventually be used to hold all the defines that
-> are needed for compat time types that support non y2038
-> safe types. New architectures need not have to define these
-> new types as they will only use new y2038 safe syscalls.
-> This file can be deleted after y2038 when we stop supporting
-> non y2038 safe syscalls.
-
-=2E..
-
->  arch/mips/include/asm/compat.h    | 11 -----------
->  arch/mips/kernel/signal32.c       |  2 +-
-
-For MIPS:
-Acked-by: James Hogan <jhogan@kernel.org>
-
-Cheers
-James
-
---jL2BoiuKMElzg3CS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqZyK0ACgkQbAtpk944
-dnriXA//fiy/M44auOl6H3L/Sttb1xadP44YPlJKIkOi6RRm+XDNJWeIyb2dB28g
-vkHkEqeW5OX0Yz+YmbMULh8EAl6TV42LSMUcRcDNmI3GjkArQIEQ7T1E7BiwukFd
-lclSwy3Fe9HwtZdLeKQuO+C8W4pZ0rUXZeQW+8A0TvNM1zAKInEKaAGXgxS7PcMs
-7pZBbOcIGBg9sTWFPhU4N63bfMn095wDXupegwflrlB1JSTvFktFxc2E6c0JmIwm
-ij9jNw3J/lUtGaMq2ynmbJQWr+/I1EFVe740bkdKYP2Q1ZdTybWR2FnnoP+cC6kF
-hS49c68Enp1mSirYIqRidTc8YLALwUFpdheUUky1VUPSjBWee2BqZ83VrshoMvkx
-DQTuUfxvlFdnCLF6xHl0Ock5g7QTzrne9rpvqGBge3sGp25RZ1RcJYAruNJ36u+C
-9VP1Y284Sz40x76q77yLxC5rT3inAHQYO2c+ob/BnrKoSrMxfDrWYea1X1yh+x80
-6qyZomlmDEu7OREVX2dnpkIG/0j2GvhQBtjYHAHjvTkmHho80Fe/GBZhObkQjnoW
-xgm1BLteveq/IEGK1tY2MEqjNFgUjQn1/r72KrP1b7PMtmwHjkyaXljB/dEv5TI3
-tEttVw3wzqGUWmbvyj7KZcpv/BQUx/Otrqh/zGMnC30U53Lzrzw=
-=PkCk
------END PGP SIGNATURE-----
-
---jL2BoiuKMElzg3CS--
-
---===============9066815376597682018==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
-
---===============9066815376597682018==--
+diff --git a/drivers/scsi/eata.c b/drivers/scsi/eata.c
+index 6501c33..8ba44b7 100644
+--- a/drivers/scsi/eata.c
++++ b/drivers/scsi/eata.c
+@@ -2091,12 +2091,14 @@ static void sort(unsigned long sk[], unsigned int da[], unsigned int n,
+ static int reorder(struct hostdata *ha, unsigned long cursec,
+ 		   unsigned int ihdlr, unsigned int il[], unsigned int n_ready)
+ {
++	int overlap;
+ 	struct scsi_cmnd *SCpnt;
+ 	struct mscp *cpp;
+ 	unsigned int k, n;
+ 	unsigned int rev = 0, s = 1, r = 1;
+-	unsigned int input_only = 1, overlap = 0;
+-	unsigned long sl[n_ready], pl[n_ready], ll[n_ready];
++	unsigned int input_only = 1;
++	unsigned long *sl;
++	unsigned long sl_zero, sl_cur, sl_prev, ll_cur, ll_prev;
+ 	unsigned long maxsec = 0, minsec = ULONG_MAX, seek = 0, iseek = 0;
+ 	unsigned long ioseek = 0;
+ 
+@@ -2115,6 +2117,12 @@ static int reorder(struct hostdata *ha, unsigned long cursec,
+ 	if (n_ready <= 1)
+ 		return 0;
+ 
++	overlap = -ENOMEM;
++	sl = kmalloc_array(n_ready, sizeof(*sl), GFP_ATOMIC);
++	if (!sl)
++		goto out;
++	overlap = 0;
++
+ 	for (n = 0; n < n_ready; n++) {
+ 		k = il[n];
+ 		cpp = &ha->cp[k];
+@@ -2164,31 +2172,33 @@ static int reorder(struct hostdata *ha, unsigned long cursec,
+ 	if (!((rev && r) || (!rev && s)))
+ 		sort(sl, il, n_ready, rev);
+ 
++	sl_zero = sl[0];
++
+ 	if (!input_only)
+ 		for (n = 0; n < n_ready; n++) {
+ 			k = il[n];
+ 			cpp = &ha->cp[k];
+ 			SCpnt = cpp->SCpnt;
+-			ll[n] = blk_rq_sectors(SCpnt->request);
+-			pl[n] = SCpnt->serial_number;
++			ll_cur = blk_rq_sectors(SCpnt->request);
++			sl_cur = sl[n];
++			sl[n] = SCpnt->serial_number;
+ 
+-			if (!n)
+-				continue;
+-
+-			if ((sl[n] == sl[n - 1])
+-			    || (!rev && ((sl[n - 1] + ll[n - 1]) > sl[n]))
+-			    || (rev && ((sl[n] + ll[n]) > sl[n - 1])))
++			if (n && ((sl_cur == sl_prev)
++				  || (!rev && ((sl_prev + ll_prev) > sl_cur))
++				  || (rev && ((sl_cur + ll_cur) > sl_prev))))
+ 				overlap = 1;
++			ll_prev = ll_cur;
++			sl_prev = sl_cur;
+ 		}
+ 
+ 	if (overlap)
+-		sort(pl, il, n_ready, 0);
++		sort(sl, il, n_ready, 0);
+ 
+ 	if (link_statistics) {
+-		if (cursec > sl[0])
+-			iseek = cursec - sl[0];
++		if (cursec > sl_zero)
++			iseek = cursec - sl_zero;
+ 		else
+-			iseek = sl[0] - cursec;
++			iseek = sl_zero - cursec;
+ 		batchcount++;
+ 		readycount += n_ready;
+ 		seeknosort += seek / 1024;
+@@ -2225,6 +2235,8 @@ static int reorder(struct hostdata *ha, unsigned long cursec,
+ 			     YESNO(overlap), cpp->din);
+ 		}
+ #endif
++	kfree(sl);
++out:
+ 	return overlap;
+ }
+ 
+-- 
+1.9.1
