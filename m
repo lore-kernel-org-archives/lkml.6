@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751564AbeCLNPf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 09:15:35 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41770 "EHLO
+        id S932440AbeCLNSP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 09:18:15 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41650 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751345AbeCLNPc (ORCPT
+        with ESMTP id S1751180AbeCLNP2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 09:15:32 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 191E060807
+        Mon, 12 Mar 2018 09:15:28 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AC78E6081C
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
 From: Abhishek Sahu <absahu@codeaurora.org>
@@ -17,9 +17,9 @@ Cc: David Brown <david.brown@linaro.org>,
         Austin Christ <austinwc@codeaurora.org>, linux-arm-msm@vger.kernel.org,
         linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
         linux-kernel@vger.kernel.org, Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v2 04/13] i2c: qup: remove redundant variables for BAM SG count
-Date: Mon, 12 Mar 2018 18:44:53 +0530
-Message-Id: <1520860502-14886-5-git-send-email-absahu@codeaurora.org>
+Subject: [PATCH v2 03/13] i2c: qup: minor code reorganization for use_dma
+Date: Mon, 12 Mar 2018 18:44:52 +0530
+Message-Id: <1520860502-14886-4-git-send-email-absahu@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520860502-14886-1-git-send-email-absahu@codeaurora.org>
 References: <1520860502-14886-1-git-send-email-absahu@codeaurora.org>
@@ -27,181 +27,80 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The rx_nents and tx_nents are redundant. rx_buf and tx_buf can
-be used for total number of SG entries. Since rx_buf and tx_buf
-give the impression that it is buffer instead of count so rename
-it to tx_cnt and rx_cnt for giving it more meaningful variable
-name.
+1. Assigns use_dma in qup_dev structure itself which will
+   help in subsequent patches to determine the mode in IRQ handler.
+2. Does minor code reorganization for loops to reduce the
+   unnecessary comparison and assignment.
 
 Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 Reviewed-by: Austin Christ <austinwc@codeaurora.org>
 Reviewed-by: Andy Gross <andy.gross@linaro.org>
 ---
 
-* Changes from v1:
+* Changes from v1: None
 
-1. Changed rx_buf/tx_buf to tx_cnt/rx_cnt
-2. Modified commit message for the same
-
- drivers/i2c/busses/i2c-qup.c | 42 ++++++++++++++++++------------------------
- 1 file changed, 18 insertions(+), 24 deletions(-)
+ drivers/i2c/busses/i2c-qup.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
-index f6ea074..d970458 100644
+index 75e9819..f6ea074 100644
 --- a/drivers/i2c/busses/i2c-qup.c
 +++ b/drivers/i2c/busses/i2c-qup.c
-@@ -683,8 +683,8 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
- 	struct dma_async_tx_descriptor *txd, *rxd = NULL;
- 	int ret = 0, idx = 0, limit = QUP_READ_LIMIT;
- 	dma_cookie_t cookie_rx, cookie_tx;
--	u32 rx_nents = 0, tx_nents = 0, len, blocks, rem;
--	u32 i, tlen, tx_len, tx_buf = 0, rx_buf = 0, off = 0;
-+	u32 len, blocks, rem;
-+	u32 i, tlen, tx_len, tx_cnt = 0, rx_cnt = 0, off = 0;
- 	u8 *tags;
+@@ -181,6 +181,8 @@ struct qup_i2c_dev {
  
- 	while (idx < num) {
-@@ -698,9 +698,6 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
- 		rem = msg->len - (blocks - 1) * limit;
+ 	/* dma parameters */
+ 	bool			is_dma;
++	/* To check if the current transfer is using DMA */
++	bool			use_dma;
+ 	struct			dma_pool *dpool;
+ 	struct			qup_i2c_tag start_tag;
+ 	struct			qup_i2c_bam brx;
+@@ -1288,7 +1290,7 @@ static int qup_i2c_xfer_v2(struct i2c_adapter *adap,
+ 			   int num)
+ {
+ 	struct qup_i2c_dev *qup = i2c_get_adapdata(adap);
+-	int ret, len, idx = 0, use_dma = 0;
++	int ret, len, idx = 0;
  
- 		if (msg->flags & I2C_M_RD) {
--			rx_nents += (blocks * 2) + 1;
--			tx_nents += 1;
--
- 			while (qup->blk.pos < blocks) {
- 				tlen = (i == (blocks - 1)) ? rem : limit;
- 				tags = &qup->start_tag.start[off + len];
-@@ -708,14 +705,14 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
- 				qup->blk.data_len -= tlen;
+ 	qup->bus_err = 0;
+ 	qup->qup_err = 0;
+@@ -1317,13 +1319,12 @@ static int qup_i2c_xfer_v2(struct i2c_adapter *adap,
+ 			len = (msgs[idx].len > qup->out_fifo_sz) ||
+ 			      (msgs[idx].len > qup->in_fifo_sz);
  
- 				/* scratch buf to read the start and len tags */
--				ret = qup_sg_set_buf(&qup->brx.sg[rx_buf++],
-+				ret = qup_sg_set_buf(&qup->brx.sg[rx_cnt++],
- 						     &qup->brx.tag.start[0],
- 						     2, qup, DMA_FROM_DEVICE);
+-			if ((!is_vmalloc_addr(msgs[idx].buf)) && len) {
+-				use_dma = 1;
+-			 } else {
+-				use_dma = 0;
++			if (is_vmalloc_addr(msgs[idx].buf) || !len)
+ 				break;
+-			}
+ 		}
++
++		if (idx == num)
++			qup->use_dma = true;
+ 	}
  
- 				if (ret)
- 					return ret;
+ 	idx = 0;
+@@ -1347,15 +1348,17 @@ static int qup_i2c_xfer_v2(struct i2c_adapter *adap,
  
--				ret = qup_sg_set_buf(&qup->brx.sg[rx_buf++],
-+				ret = qup_sg_set_buf(&qup->brx.sg[rx_cnt++],
- 						     &msg->buf[limit * i],
- 						     tlen, qup,
- 						     DMA_FROM_DEVICE);
-@@ -725,7 +722,7 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
- 				i++;
- 				qup->blk.pos = i;
- 			}
--			ret = qup_sg_set_buf(&qup->btx.sg[tx_buf++],
-+			ret = qup_sg_set_buf(&qup->btx.sg[tx_cnt++],
- 					     &qup->start_tag.start[off],
- 					     len, qup, DMA_TO_DEVICE);
- 			if (ret)
-@@ -733,28 +730,26 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
+ 		reinit_completion(&qup->xfer);
  
- 			off += len;
- 			/* scratch buf to read the BAM EOT and FLUSH tags */
--			ret = qup_sg_set_buf(&qup->brx.sg[rx_buf++],
-+			ret = qup_sg_set_buf(&qup->brx.sg[rx_cnt++],
- 					     &qup->brx.tag.start[0],
- 					     2, qup, DMA_FROM_DEVICE);
- 			if (ret)
- 				return ret;
+-		if (use_dma) {
++		if (qup->use_dma) {
+ 			ret = qup_i2c_bam_xfer(adap, &msgs[idx], num);
++			qup->use_dma = false;
++			break;
  		} else {
--			tx_nents += (blocks * 2);
--
- 			while (qup->blk.pos < blocks) {
- 				tlen = (i == (blocks - 1)) ? rem : limit;
- 				tags = &qup->start_tag.start[off + tx_len];
- 				len = qup_i2c_set_tags(tags, qup, msg, 1);
- 				qup->blk.data_len -= tlen;
- 
--				ret = qup_sg_set_buf(&qup->btx.sg[tx_buf++],
-+				ret = qup_sg_set_buf(&qup->btx.sg[tx_cnt++],
- 						     tags, len,
- 						     qup, DMA_TO_DEVICE);
- 				if (ret)
- 					return ret;
- 
- 				tx_len += len;
--				ret = qup_sg_set_buf(&qup->btx.sg[tx_buf++],
-+				ret = qup_sg_set_buf(&qup->btx.sg[tx_cnt++],
- 						     &msg->buf[limit * i],
- 						     tlen, qup, DMA_TO_DEVICE);
- 				if (ret)
-@@ -766,26 +761,25 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
- 
- 			if (idx == (num - 1)) {
- 				len = 1;
--				if (rx_nents) {
-+				if (rx_cnt) {
- 					qup->btx.tag.start[0] =
- 							QUP_BAM_INPUT_EOT;
- 					len++;
- 				}
- 				qup->btx.tag.start[len - 1] =
- 							QUP_BAM_FLUSH_STOP;
--				ret = qup_sg_set_buf(&qup->btx.sg[tx_buf++],
-+				ret = qup_sg_set_buf(&qup->btx.sg[tx_cnt++],
- 						     &qup->btx.tag.start[0],
- 						     len, qup, DMA_TO_DEVICE);
- 				if (ret)
- 					return ret;
--				tx_nents += 1;
- 			}
+ 			if (msgs[idx].flags & I2C_M_RD)
+ 				ret = qup_i2c_read_one_v2(qup, &msgs[idx]);
+ 			else
+ 				ret = qup_i2c_write_one_v2(qup, &msgs[idx]);
  		}
- 		idx++;
- 		msg++;
- 	}
+-	} while ((idx++ < (num - 1)) && !use_dma && !ret);
++	} while ((idx++ < (num - 1)) && !ret);
  
--	txd = dmaengine_prep_slave_sg(qup->btx.dma, qup->btx.sg, tx_nents,
-+	txd = dmaengine_prep_slave_sg(qup->btx.dma, qup->btx.sg, tx_cnt,
- 				      DMA_MEM_TO_DEV,
- 				      DMA_PREP_INTERRUPT | DMA_PREP_FENCE);
- 	if (!txd) {
-@@ -794,7 +788,7 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
- 		goto desc_err;
- 	}
- 
--	if (!rx_nents) {
-+	if (!rx_cnt) {
- 		txd->callback = qup_i2c_bam_cb;
- 		txd->callback_param = qup;
- 	}
-@@ -807,9 +801,9 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
- 
- 	dma_async_issue_pending(qup->btx.dma);
- 
--	if (rx_nents) {
-+	if (rx_cnt) {
- 		rxd = dmaengine_prep_slave_sg(qup->brx.dma, qup->brx.sg,
--					      rx_nents, DMA_DEV_TO_MEM,
-+					      rx_cnt, DMA_DEV_TO_MEM,
- 					      DMA_PREP_INTERRUPT);
- 		if (!rxd) {
- 			dev_err(qup->dev, "failed to get rx desc\n");
-@@ -844,7 +838,7 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
- 			goto desc_err;
- 		}
- 
--		if (rx_nents)
-+		if (rx_cnt)
- 			writel(QUP_BAM_INPUT_EOT,
- 			       qup->base + QUP_OUT_FIFO_BASE);
- 
-@@ -862,10 +856,10 @@ static int qup_i2c_bam_do_xfer(struct qup_i2c_dev *qup, struct i2c_msg *msg,
- 	}
- 
- desc_err:
--	dma_unmap_sg(qup->dev, qup->btx.sg, tx_nents, DMA_TO_DEVICE);
-+	dma_unmap_sg(qup->dev, qup->btx.sg, tx_cnt, DMA_TO_DEVICE);
- 
--	if (rx_nents)
--		dma_unmap_sg(qup->dev, qup->brx.sg, rx_nents,
-+	if (rx_cnt)
-+		dma_unmap_sg(qup->dev, qup->brx.sg, rx_cnt,
- 			     DMA_FROM_DEVICE);
- 
- 	return ret;
+ 	if (!ret)
+ 		ret = qup_i2c_change_state(qup, QUP_RESET_STATE);
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
