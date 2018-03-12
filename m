@@ -1,113 +1,127 @@
-Return-Path: <kernel-hardening-return-12478-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELvjv6qjCwmESoTyavy5GDFQNAhN5Z9qJkIEBZ1c7IxkJ/ef1B11fuiMtRHZEtwctgU2z4nB
-ARC-Seal: i=1; a=rsa-sha256; t=1520882854; cv=none;
-        d=google.com; s=arc-20160816;
-        b=uPhjPVWX3h7D80aswCrJ5ZqtgAWrW35UMUsFE4hSzelpQJ5I1v19S5+4DYQ4wBYnu9
-         BDHGTS/13GT+/RLW84P5pPB9k+gqC4RLhNVm/GRqXd0JAaAVLiZY4sfpyqCfQEeQrSvb
-         9t3PZOwprG7hmZ0jTTzUphpl1LofyqpIOdylv0FF4ZTFUjxme1fx1ZUUYLHkw2Jw3LCw
-         Hklt6DwBSQAAdUsVtLMOTOIV36QhWPgPgjT6VQ8bme6merVZB5J1lKfNw22JdsLfiO/K
-         SA6lhHhlCEk4QcPeu7w6qnvWR6XyKqyWg3voDDuTOl16AgyG6NvrC1gyKOOcBPENyDVp
-         80UA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:references:in-reply-to:message-id:subject:cc:to:from
-         :date:delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=a7l2z6nLJR4bWvz0ndrkM1WRAWowaq/h7FvBQ6ynPVo=;
-        b=syzOGHJ0tZb+SHqJXAHrt7eexrl2LsSSqru2NYXJtxmQ59BO4enrkF4Wad0G9chpoI
-         XmYCVC6/dVLO1jXTu7JltDzQCl+a5l7EWi08zcPPTPYNyhuMbWqfoWl89ZW2TTC4cDFR
-         rIp3K01IFPbbCHsx4NnFiLLYBtAZecsYDeWqniI8apov7ON7843aqr543G7oLeGV70UH
-         MRaE6Q871mhl3v9N08JSLcV/IZjEliMylsTT3BbaBt9eA+cwl+i4/CqAfH7tXRuwEbah
-         Pg/wy4744LbQXb8dJvpSd2ey1ikbk3LACTT6ZesZ7aZP7zN51Kp4oY+GSYujE1fWqkOf
-         YHeA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12478-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12478-gregkh=linuxfoundation.org@lists.openwall.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12478-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12478-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Mon, 12 Mar 2018 20:26:44 +0100
-From: Stephen Kitt <steve@sk2.org>
-To: Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
- "axboe@kernel.dk" <axboe@kernel.dk>, "linux-scsi@vger.kernel.org"
- <linux-scsi@vger.kernel.org>, "hare@suse.com" <hare@suse.com>,
- "kernel-hardening@lists.openwall.com"
- <kernel-hardening@lists.openwall.com>, "jejb@linux.vnet.ibm.com"
- <jejb@linux.vnet.ibm.com>
-Subject: Re: [PATCH] device_handler: remove VLAs
-Message-ID: <20180312202644.5594421e@heffalump.sk2.org>
-In-Reply-To: <1520869285.3469.13.camel@wdc.com>
-References: <20180309232933.14e39858@heffalump.sk2.org>
-	<20180309223211.20473-1-steve@sk2.org>
-	<1520635688.2907.17.camel@wdc.com>
-	<20180310141422.3a8c451f@heffalump.sk2.org>
-	<1520869285.3469.13.camel@wdc.com>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-4187132-1520847583-2-9032207494449248059
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520847582; b=h/uZ+oH7cAVzY8vTC9weebBhG1fctTd1NxTcdrP97gUPYxK
+    v99Y1sQ8I50GGBxcGAcV+mPVYg5JIds07yPu5f0LgvtW1p3DgDlayTkwkYXNXg2w
+    0Fu6MgXbdkOYo+m1yxgwcELnEUu+MM6DaX24Y987ak52P7IlRKgJdis0MTL7PA9C
+    zJH0iFN4q2VCqgAajxWs3/V+DxrnptVE1FYdO3sFrQWgXvSrWLtTWl2A3i6+UJtG
+    qsys6oM4YPjIhH5G6jwS7XZFOAd8utnBXH7PPRbejmppeR64RBwSBCQ/9XwFaEm1
+    0++TID0yi6nOF9WCJUeABk8v4r/MgZsgl/6ZOLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520847582; bh=5
+    CViF79NaEzvZe8tUmnSspTMv+DctfBFzs84fxyzvzU=; b=ihGSM/RHC9Z2k4yyr
+    EnS+aFGFwvew83i8DCFNnvGUlt2/4RUuorC9vCL3CIg21pEY5Kb0/FWju3CTpMwn
+    golwfl5R3z0nQlIP6ivUfEtb1zig5oYurpDj3SQkVMJXFIVzezpu84OQYOtwwtg/
+    9BcKk5R7ZYlng0mXRxxzfDXEgI/8m4sZpmvpxPFg5KRXy1eBvkB+JQ6XA8xB2nhM
+    k7+UifD1cMVqLfnnpvAyH9N42IlagC+g+awB39AbVfmxXOwHW7aT93McHTdgT0oK
+    g+kHQMXlu2A92vjwYTIugHvQ20S7Mn8fkeml6kxTKrbRWwk3VAHCkCIrM8e6ku4Y
+    18cUw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=mU8fY7XP x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=namoaOFy;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=mU8fY7XP x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=namoaOFy;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELt3x0UFRkqAH3GN+mPwW84byv6PDrlo7QxdugTPn339RDOnQaC7INI6d4/N8kKYQ06Xu/F2pw==
+From: hariprasath.elango@gmail.com
+To: aditya.shankar@microchip.com
+Subject: [PATCHv2] staging: wilc1000: use pre-defined macro
+ is_broadcast_ether_addr
+Date: Mon, 12 Mar 2018 15:09:03 +0530
+Message-Id: <20180312093903.9147-1-hariprasath.elango@gmail.com>
+X-Mailer: git-send-email 2.10.0.GIT
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, vbabu3@visteon.com,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ hariprasath.elango@gmail.com, Ganesh Krishna <ganesh.krishna@microchip.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- boundary="Sig_/Q4hJWW478X8YOM=u9FIG7am"; protocol="application/pgp-signature"
-X-Ovh-Tracer-Id: 15314490536987086302
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtfedrleefgdduudejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594501121445271854?=
-X-GMAIL-MSGID: =?utf-8?q?1594761259965391251?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---Sig_/Q4hJWW478X8YOM=u9FIG7am
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+From: HariPrasath Elango <hariprasath.elango@gmail.com>
 
-On Mon, 12 Mar 2018 15:41:26 +0000, Bart Van Assche <Bart.VanAssche@wdc.com>
-wrote:
-> On Sat, 2018-03-10 at 14:14 +0100, Stephen Kitt wrote:
-> > The two patches I sent were supposed to be alternative solutions; see
-> > https://marc.info/?l=3Dlinux-scsi&m=3D152063671005295&w=3D2 for the
-> > introduction (I seem to have messed up the headers, so the mails didn=
-=E2=80=99t
-> > end up threaded properly). =20
->=20
-> The two patches arrived in my inbox several minutes before the cover
-> letter. In the e-mail header of the cover letter I found the following:
->=20
-> X-Greylist: delayed 1810 seconds by postgrey-1.27 at vger.kernel.org; Fri,
-> 09 Mar 2018 18:05:08 EST
->=20
-> Does this mean that the delay happened due to vger server's anti-spam
-> algorithm?
+Use the kernel pre-defined macro is_broadcast_ether_addr() instead of
+doing a memcmp here.
 
-That=E2=80=99s right, the greylisting part of its anti-spam measures.
+Signed-off-by: HariPrasath Elango <hariprasath.elango@gmail.com>
+---
+ drivers/staging/wilc1000/linux_mon.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Regards,
+diff --git a/drivers/staging/wilc1000/linux_mon.c b/drivers/staging/wilc1000/linux_mon.c
+index bbdfc7a..f93f411 100644
+--- a/drivers/staging/wilc1000/linux_mon.c
++++ b/drivers/staging/wilc1000/linux_mon.c
+@@ -27,7 +27,6 @@ static struct net_device *wilc_wfi_mon; /* global monitor netdev */
+ 
+ static u8 srcadd[6];
+ static u8 bssid[6];
+-static u8 broadcast[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+ /**
+  *  @brief      WILC_WFI_monitor_rx
+  *  @details
+@@ -193,7 +192,7 @@ static netdev_tx_t WILC_WFI_mon_xmit(struct sk_buff *skb,
+ 
+ 	skb_pull(skb, rtap_len);
+ 
+-	if (skb->data[0] == 0xc0 && (!(memcmp(broadcast, &skb->data[4], 6)))) {
++	if (skb->data[0] == 0xc0 && is_broadcast_ether_addr(&skb->data[4])) {
+ 		skb2 = dev_alloc_skb(skb->len + sizeof(struct wilc_wfi_radiotap_cb_hdr));
+ 		if (!skb2)
+ 			return -ENOMEM;
+-- 
+2.10.0.GIT
 
-Stephen
-
---Sig_/Q4hJWW478X8YOM=u9FIG7am
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEnPVX/hPLkMoq7x0ggNMC9Yhtg5wFAlqm1HQACgkQgNMC9Yht
-g5w4Pg//XsoJ53FkY+BpdO4+B9OJz3sNmy8OJi+HGqMzhLpHeTp/5JKyCQI0J+6M
-kHXrYkl76mRyYSnh4Dx/YEaq99igksN9B6mu21Y/y0ZNIveO1ItEnzux3D9K2/K0
-M1ErDbD0rbpt14dkhbY4rn7dvmsLY26mmXEqdd9Kc2hiI4BqxTyI1IOYARswrpyk
-jYHglsKtBsgUvloVAsLa7DIjuW7Fk/usA7aoZp2xJenKYVEmRbJDDvb3QOjS13eO
-SKfWS8a6+viID7GbvADcGEGy0QdWe1I69qSAhkI5zlHZGaPM/dCCJmvJxRZ8JVks
-F+Tl2obuWptRJe3muSLNg6y3XkNH18lvPRUC/AHR5wah9ZX3Hlx0gyudcztIw9FF
-Ui1BgDmUyZC9hLgoXNKGGve/U3IEXs7wVV/EpxOfqvVnpmi/d566zv8ltRjRRa4F
-f0IxclNOBEwlP0H1rEODKopdMSxTRMpvxLHDQr8ejOr6v7OkOW69UK5xIFpX8N7T
-59YK14HbjUav7cjB9JnYTcS+4f3/rsubLYKS8y+DELIGskPEGKNkaiXlQINQ/3E8
-09VegkFiaiQM1tCOvq3JXSGKnW/kUrGaAMBsAHdHJaZLjGD01i3tymcjf8eHQaTK
-cWrpE98iLC1fqoIIY2Z6HnF65PURaUepKhlrQuERwbpSPGYx/C8=
-=huhw
------END PGP SIGNATURE-----
-
---Sig_/Q4hJWW478X8YOM=u9FIG7am--
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
