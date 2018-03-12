@@ -1,111 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932331AbeCLOpJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 10:45:09 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:36401 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751255AbeCLOpH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 10:45:07 -0400
-X-Google-Smtp-Source: AG47ELtJwjPZ4YkkHvhmlO12bT2WlxBIC+Ms2TybBAQ4tY91PbBUuL46UsV0Hr6f/hUgB9rSzYxKsQ==
-Subject: Re: [RFCv4,19/21] media: vim2m: add request support
-To: Alexandre Courbot <acourbot@chromium.org>,
-        Tomasz Figa <tfiga@chromium.org>
-Cc: Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-References: <20180220044425.169493-20-acourbot@chromium.org>
- <1520440654.1092.15.camel@bootlin.com>
- <6470b45d-e9dc-0a22-febc-cd18ae1092be@gmail.com>
- <1520842245.1513.5.camel@bootlin.com>
- <CAAFQd5A9mSP8Ufe-gn2Epa55M_NNOVaBL_cdWjdZ5PycbTvqbA@mail.gmail.com>
- <CAPBb6MXYj0SHUWPRuCNewUetmxrePx1NFQfB6tw+BbPHS+Hkmg@mail.gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <c2a2e158-aa02-f16a-400e-6bde5f78cba1@gmail.com>
-Date: Mon, 12 Mar 2018 17:44:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAPBb6MXYj0SHUWPRuCNewUetmxrePx1NFQfB6tw+BbPHS+Hkmg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1751696AbeCLOqk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 10:46:40 -0400
+Received: from mga04.intel.com ([192.55.52.120]:40845 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751232AbeCLOqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 10:46:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,461,1515484800";
+   d="scan'208";a="36616885"
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org
+Cc: vincent.weaver@maine.edu, ak@linux.intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH] perf/x86/intel: Rename freerunning PEBS to large PEBS
+Date: Mon, 12 Mar 2018 10:45:37 -0400
+Message-Id: <1520865937-22910-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.4.11
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12.03.2018 15:32, Alexandre Courbot wrote:
-> On Mon, Mar 12, 2018 at 5:15 PM, Tomasz Figa <tfiga@chromium.org> wrote:
->> Hi Paul, Dmitry,
->>
->> On Mon, Mar 12, 2018 at 5:10 PM, Paul Kocialkowski
->> <paul.kocialkowski@bootlin.com> wrote:
->>> Hi,
->>>
->>> On Sun, 2018-03-11 at 22:42 +0300, Dmitry Osipenko wrote:
->>>> Hello,
->>>>
->>>> On 07.03.2018 19:37, Paul Kocialkowski wrote:
->>>>> Hi,
->>>>>
->>>>> First off, I'd like to take the occasion to say thank-you for your
->>>>> work.
->>>>> This is a major piece of plumbing that is required for me to add
->>>>> support
->>>>> for the Allwinner CedarX VPU hardware in upstream Linux. Other
->>>>> drivers,
->>>>> such as tegra-vde (that was recently merged in staging) are also
->>>>> badly
->>>>> in need of this API.
->>>>
->>>> Certainly it would be good to have a common UAPI. Yet I haven't got my
->>>> hands on
->>>> trying to implement the V4L interface for the tegra-vde driver, but
->>>> I've taken a
->>>> look at Cedrus driver and for now I've one question:
->>>>
->>>> Would it be possible (or maybe already is) to have a single IOCTL that
->>>> takes input/output buffers with codec parameters, processes the
->>>> request(s) and returns to userspace when everything is done? Having 5
->>>> context switches for a single frame decode (like Cedrus VAAPI driver
->>>> does) looks like a bit of overhead.
->>>
->>> The V4L2 interface exposes ioctls for differents actions and I don't
->>> think there's a combined ioctl for this. The request API was introduced
->>> precisely because we need to have consistency between the various ioctls
->>> needed for each frame. Maybe one single (atomic) ioctl would have worked
->>> too, but that's apparently not how the V4L2 API was designed.
->>>
->>> I don't think there is any particular overhead caused by having n ioctls
->>> instead of a single one. At least that would be very surprising IMHO.
->>
->> Well, there is small syscall overhead, which normally shouldn't be
->> very painful, although with all the speculative execution hardening,
->> can't be sure of anything anymore. :)
->>
->> Hans and Alex can correct me if I'm wrong, but I believe there is a
->> more atomic-like API being planned, which would only need one IOCTL to
->> do everything. However, that would be a more serious change to the
->> V4L2 interfaces, so should be decoupled from Request API itself.
-> 
-> Indeed, we discussed the possibility to setup and submit requests in
-> one syscall, similarly (at least in spirit) to the DRM atomic API.
-> 
-> This has only been discussed though, and as a feature to consider
-> *after* the request API is merged for codecs (as the more complex
-> camera use-cases would benefit more from it). As Tomasz mentioned, the
-> overhead of ioctls is somehow negligible compared to the workload of
-> the encoding/decoding itself, although I suppose it can still add up.
-> The main advantage I can see for this is a simpler and less
-> error-prone setup of requests for user-space.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Indeed, atomic API should be nicer from a userspace perspective and a bit more
-optimal for at least some of workloads. Would be good to have it.
+The freerunning PEBS and large PEBS are the same thing. Both of these
+names appear in the code, which brings confusion.
+
+Rename freerunning PEBS to large PEBS, which is more accurate.
+
+No functional change.
+
+Reported-by: Vince Weaver <vincent.weaver@maine.edu>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ arch/x86/events/core.c       |  2 +-
+ arch/x86/events/intel/core.c | 12 ++++++------
+ arch/x86/events/intel/ds.c   |  6 +++---
+ arch/x86/events/perf_event.h |  6 +++---
+ 4 files changed, 13 insertions(+), 13 deletions(-)
+
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 9c86e10..85d2d94 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2118,7 +2118,7 @@ static int x86_pmu_event_init(struct perf_event *event)
+ 	}
+ 
+ 	if (READ_ONCE(x86_pmu.attr_rdpmc) &&
+-	    !(event->hw.flags & PERF_X86_EVENT_FREERUNNING))
++	    !(event->hw.flags & PERF_X86_EVENT_LARGE_PEBS))
+ 		event->hw.flags |= PERF_X86_EVENT_RDPMC_ALLOWED;
+ 
+ 	return err;
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 41c68d3..26e9c18 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -2968,9 +2968,9 @@ static void intel_pebs_aliases_skl(struct perf_event *event)
+ 	return intel_pebs_aliases_precdist(event);
+ }
+ 
+-static unsigned long intel_pmu_free_running_flags(struct perf_event *event)
++static unsigned long intel_pmu_large_pebs_flags(struct perf_event *event)
+ {
+-	unsigned long flags = x86_pmu.free_running_flags;
++	unsigned long flags = x86_pmu.large_pebs_flags;
+ 
+ 	if (event->attr.use_clockid)
+ 		flags &= ~PERF_SAMPLE_TIME;
+@@ -2992,8 +2992,8 @@ static int intel_pmu_hw_config(struct perf_event *event)
+ 		if (!event->attr.freq) {
+ 			event->hw.flags |= PERF_X86_EVENT_AUTO_RELOAD;
+ 			if (!(event->attr.sample_type &
+-			      ~intel_pmu_free_running_flags(event)))
+-				event->hw.flags |= PERF_X86_EVENT_FREERUNNING;
++			      ~intel_pmu_large_pebs_flags(event)))
++				event->hw.flags |= PERF_X86_EVENT_LARGE_PEBS;
+ 		}
+ 		if (x86_pmu.pebs_aliases)
+ 			x86_pmu.pebs_aliases(event);
+@@ -3476,7 +3476,7 @@ static __initconst const struct x86_pmu core_pmu = {
+ 	.event_map		= intel_pmu_event_map,
+ 	.max_events		= ARRAY_SIZE(intel_perfmon_event_map),
+ 	.apic			= 1,
+-	.free_running_flags	= PEBS_FREERUNNING_FLAGS,
++	.large_pebs_flags	= LARGE_PEBS_FLAGS,
+ 
+ 	/*
+ 	 * Intel PMCs cannot be accessed sanely above 32-bit width,
+@@ -3519,7 +3519,7 @@ static __initconst const struct x86_pmu intel_pmu = {
+ 	.event_map		= intel_pmu_event_map,
+ 	.max_events		= ARRAY_SIZE(intel_perfmon_event_map),
+ 	.apic			= 1,
+-	.free_running_flags	= PEBS_FREERUNNING_FLAGS,
++	.large_pebs_flags	= LARGE_PEBS_FLAGS,
+ 	/*
+ 	 * Intel PMCs cannot be accessed sanely above 32 bit width,
+ 	 * so we install an artificial 1<<31 period regardless of
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index 7384402..209bf7c 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -935,7 +935,7 @@ void intel_pmu_pebs_add(struct perf_event *event)
+ 	bool needed_cb = pebs_needs_sched_cb(cpuc);
+ 
+ 	cpuc->n_pebs++;
+-	if (hwc->flags & PERF_X86_EVENT_FREERUNNING)
++	if (hwc->flags & PERF_X86_EVENT_LARGE_PEBS)
+ 		cpuc->n_large_pebs++;
+ 
+ 	pebs_update_state(needed_cb, cpuc, event->ctx->pmu);
+@@ -975,7 +975,7 @@ void intel_pmu_pebs_del(struct perf_event *event)
+ 	bool needed_cb = pebs_needs_sched_cb(cpuc);
+ 
+ 	cpuc->n_pebs--;
+-	if (hwc->flags & PERF_X86_EVENT_FREERUNNING)
++	if (hwc->flags & PERF_X86_EVENT_LARGE_PEBS)
+ 		cpuc->n_large_pebs--;
+ 
+ 	pebs_update_state(needed_cb, cpuc, event->ctx->pmu);
+@@ -1623,7 +1623,7 @@ void __init intel_ds_init(void)
+ 			x86_pmu.pebs_record_size =
+ 						sizeof(struct pebs_record_skl);
+ 			x86_pmu.drain_pebs = intel_pmu_drain_pebs_nhm;
+-			x86_pmu.free_running_flags |= PERF_SAMPLE_TIME;
++			x86_pmu.large_pebs_flags |= PERF_SAMPLE_TIME;
+ 			break;
+ 
+ 		default:
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index 9164347..9f37114 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -69,7 +69,7 @@ struct event_constraint {
+ #define PERF_X86_EVENT_RDPMC_ALLOWED	0x0100 /* grant rdpmc permission */
+ #define PERF_X86_EVENT_EXCL_ACCT	0x0200 /* accounted EXCL event */
+ #define PERF_X86_EVENT_AUTO_RELOAD	0x0400 /* use PEBS auto-reload */
+-#define PERF_X86_EVENT_FREERUNNING	0x0800 /* use freerunning PEBS */
++#define PERF_X86_EVENT_LARGE_PEBS	0x0800 /* use large PEBS */
+ 
+ 
+ struct amd_nb {
+@@ -88,7 +88,7 @@ struct amd_nb {
+  * REGS_USER can be handled for events limited to ring 3.
+  *
+  */
+-#define PEBS_FREERUNNING_FLAGS \
++#define LARGE_PEBS_FLAGS \
+ 	(PERF_SAMPLE_IP | PERF_SAMPLE_TID | PERF_SAMPLE_ADDR | \
+ 	PERF_SAMPLE_ID | PERF_SAMPLE_CPU | PERF_SAMPLE_STREAM_ID | \
+ 	PERF_SAMPLE_DATA_SRC | PERF_SAMPLE_IDENTIFIER | \
+@@ -609,7 +609,7 @@ struct x86_pmu {
+ 	struct event_constraint *pebs_constraints;
+ 	void		(*pebs_aliases)(struct perf_event *event);
+ 	int 		max_pebs_events;
+-	unsigned long	free_running_flags;
++	unsigned long	large_pebs_flags;
+ 
+ 	/*
+ 	 * Intel LBR
+-- 
+2.4.11
