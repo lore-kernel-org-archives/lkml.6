@@ -1,114 +1,252 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932274AbeCLXjL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 19:39:11 -0400
-Received: from mail-wr0-f182.google.com ([209.85.128.182]:36356 "EHLO
-        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751333AbeCLXjK (ORCPT
+        id S932308AbeCLXks (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 19:40:48 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:37367 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751333AbeCLXkq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 19:39:10 -0400
-X-Google-Smtp-Source: AG47ELty+mL5tMWo+t93LGDFMYJUe3HvO54vCkLpxveqQ6PN05K8BLQyqSVBhB6A4XwR+Curr8WtXA==
-Date: Tue, 13 Mar 2018 00:39:05 +0100
-From: Ognjen =?utf-8?B?R2FsacSH?= <smclt30p@gmail.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        ACPI mailing list <linux-acpi@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sebastian Reichel <sre@kernel.org>
-Subject: Re: linux-next on thinkpad x60: full battery is indicated as battery
- error in mate
-Message-ID: <20180312233905.ulb4zrr7dphy2l3i@thinkpad>
-References: <20180312194715.GA3992@amd>
- <20180312194944.GA3979@amd>
- <CAJZ5v0gWd7OCy+P41CFWJ1E9Tzw++Ok=YmjQwLk+iSZutBzphA@mail.gmail.com>
- <20180312223521.vzccevf6z7ik5ysf@thinkpad>
- <20180312230407.GA7612@amd>
- <CAJZ5v0irEfMxURr2c8VZ=SZhsW+MWxRd4OwDH5bS6P=R3a0REw@mail.gmail.com>
- <20180312231847.GB7612@amd>
+        Mon, 12 Mar 2018 19:40:46 -0400
+X-Google-Smtp-Source: AG47ELvH/5GuyxeWDFQu18T8OsUKIKjv+zPVAwp5kJ/EkZqq9v32XtHuZdp5kdAUSVo87tDljyiVLw==
+Date: Tue, 13 Mar 2018 00:39:52 +0100
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+To: rdunlap@infradead.org, apw@canonical.com, joe@perches.com,
+        corbet@lwn.net, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clang-format: add configuration file
+Message-ID: <20180312233952.niz2cuz7psv4fe2s@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180312231847.GB7612@amd>
-User-Agent: NeoMutt/20170609 (1.8.3)
+User-Agent: elm/2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 12:18:47AM +0100, Pavel Machek wrote:
-> Hi!
-> 
-> > >> > >> Fully charged
-> > >> > >> battery shows as empty battery with red "x" in Mate desktop. After
-> > >> > >> reboot to recent mainline problem goes away. Tooltip says "battery
-> > >> > >> waiting to charge".
-> > >> > >>
-> > >>
-> > >> For the MATE bug see:
-> > >> https://github.com/mate-desktop/mate-power-manager/pull/251
-> > >>
-> > >> The problem is in the new composite battery system in UPower, it
-> > >> "merges" two external batteries into a single one for reporting. That
-> > >> battery does not understand "Not Charging" inside the MATE Power
-> > >> Manager. The above patch fixes that in MATE.
-> > >
-> > > Ok, so problem is 91eea70e5e5ce12eb1c7cd922e561fab43e201bd.
-> > >
-> > > And now, I see that MATE should be improved.
-> > >
-> > > But what I also see is that kernel is changing its interface in a way
-> > > that (while making sense) breaks existing application. And we don't
-> > > break existing applications.
-> > >
-> > > [Now... maybe if the fix for the application is available for long
-> > > long time and noone is really looking and everyone already has new
-> > > application version, maybe ... But pull request for MATE is 9 days
-> > > old, and not even merged. So there is no way this is suitable for
-> > > 4.17.]
+clang-format is a tool to format C/C++/... code according to a set
+of rules and heuristics. Like all tools, it is not perfect nor
+covers every single case, but it is good enough to be helpful.
 
-It's not a bug in the kernel, it's a very subtle cosmetic bug in MATE.
-If you can, please test that MATE patch and report back to Github
-if it works, as I wrote that patch and they are waiting for someone with
-a ThinkPad to test the patch. If it works, it will get merged and
-everyone will be happy.
+In particular, it is useful for quickly re-formatting blocks of code,
+spotting coding style mistakes, sorting #includes, aligning variables/
+comments/macro endings, reflowing text, etc. It also serves as
+a teaching tool/guide for newcomers.
 
-This is far from "breaking applications", it's just a cosmetic bug with
-a single icon in a single application that has a simple fix.
+The tool itself has been already included in the repositories of popular
+Linux distributions for a long time. The rules in this file are intended
+for clang-format >= 4, which is easily available in most distributions.
 
-The upstream underlying UPower system reports it properly, as
-UP_DEVICE_STATE_PENDING_CHARGE, it's just that the MATE/GNOME developers did
-not handle that scenario due to poor testing and use case analysis, even
-when that state is in the UpDeviceState enumeration.
+This commit adds the configuration file that contains the rules that
+the tool uses to know how to format the code according to the kernel
+coding style. This gives us two advantages:
 
-See:
-https://upower.freedesktop.org/docs/UPower-up-types.html#UpDeviceState
+  * clang-format works out of the box with reasonable defaults;
+    avoiding that everyone has to re-do the configuration.
 
-UPower correctly returns UP_DEVICE_STATE_PENDING_CHARGE, its just that
-the MATE Power Manager discards that and assumes
-UP_DEVICE_STATE_UNKNOWN.
+  * Everyone agrees (eventually) on what is the most useful default
+    configuration for most of the kernel.
 
-> > 
-> > Right.
-> > 
-> > This basically means that we will have to defer the battery changes
-> > until user space is ready and not just upstream, but also in distro
-> > packages.
-> 
-> Yes please.
+Some of clang-format's features relevant for the kernel are:
 
-No. See below.
+  * Uses clang's tooling support behind the scenes to parse and rewrite
+    the code. It is not based on ad-hoc regexps.
 
-> 
-> Note that only 91eea70e5e5ce12eb1c7cd922e561fab43e201bd should break
-> anything, the others should be safe AFAICT?
+  * Supports reasonably well the Linux kernel coding style.
 
-Again, nothing is broken here, the kernel is *currently* broken as it
-shows that the battery state is "Unknown" and MATE assumes a broken
-kernel and returns a simple charging icon.
+  * Fast enough to be used at the press of a key.
 
-> 
-> 								Pavel
-> 
-> -- 
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+  * There are already integrations (either built-in or third-party)
+    for many common editors used by kernel developers (e.g. vim,
+    emacs, Sublime, Atom...) that allow you to format an entire file
+    or, more usefully, just your selection.
+
+  * Able to parse unified diffs -- you can, for instance, reformat
+    only the lines changed by a git commit.
+
+  * Able to reflow text comments as well.
+
+  * Widely supported and used by hundreds of developers in highly
+    complex projects and organizations (e.g. the LLVM project itself,
+    Chromium, WebKit, Google, Mozilla...). Therefore, it should be
+    supported for a long time.
+
+See more information about the tool at:
+
+    https://clang.llvm.org/docs/ClangFormat.html
+    https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Andy Whitcroft <apw@canonical.com>
+Cc: Joe Perches <joe@perches.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+---
+ .clang-format                          | 107 +++++++++++++++++++++++++++++++++
+ .gitignore                             |   1 +
+ Documentation/process/4.Coding.rst     |   6 ++
+ Documentation/process/coding-style.rst |   6 ++
+ 4 files changed, 120 insertions(+)
+ create mode 100644 .clang-format
+
+diff --git a/.clang-format b/.clang-format
+new file mode 100644
+index 000000000000..de2e083be674
+--- /dev/null
++++ b/.clang-format
+@@ -0,0 +1,107 @@
++# Intended for clang-format >= 4
++---
++AccessModifierOffset: -4
++AlignAfterOpenBracket: DontAlign
++AlignConsecutiveAssignments: false
++AlignConsecutiveDeclarations: false
++#AlignEscapedNewlines: Left # Unknown to clang-format-4.0
++AlignOperands: false
++AlignTrailingComments: true
++AllowAllParametersOfDeclarationOnNextLine: true
++AllowShortBlocksOnASingleLine: false
++AllowShortCaseLabelsOnASingleLine: false
++AllowShortFunctionsOnASingleLine: None
++AllowShortIfStatementsOnASingleLine: false
++AllowShortLoopsOnASingleLine: false
++AlwaysBreakAfterDefinitionReturnType: None
++AlwaysBreakAfterReturnType: None
++AlwaysBreakBeforeMultilineStrings: false
++AlwaysBreakTemplateDeclarations: false
++BinPackArguments: true
++BinPackParameters: true
++BraceWrapping:
++  AfterClass: false
++  AfterControlStatement: false
++  AfterEnum: true
++  AfterFunction: true
++  AfterNamespace: true
++  AfterObjCDeclaration: false
++  AfterStruct: true
++  AfterUnion: true
++  #AfterExternBlock: true # Unknown to clang-format-5.0
++  BeforeCatch: false
++  BeforeElse: false
++  IndentBraces: false
++  #SplitEmptyFunction: true # Unknown to clang-format-4.0
++  #SplitEmptyRecord: true # Unknown to clang-format-4.0
++  #SplitEmptyNamespace: true # Unknown to clang-format-4.0
++BreakBeforeBinaryOperators: All
++BreakBeforeBraces: Custom
++#BreakBeforeInheritanceComma: false # Unknown to clang-format-4.0
++BreakBeforeTernaryOperators: true
++BreakConstructorInitializersBeforeComma: false
++#BreakConstructorInitializers: BeforeComma # Unknown to clang-format-4.0
++BreakAfterJavaFieldAnnotations: false
++BreakStringLiterals: true
++ColumnLimit: 80
++CommentPragmas: '^ IWYU pragma:'
++#CompactNamespaces: false # Unknown to clang-format-4.0
++ConstructorInitializerAllOnOneLineOrOnePerLine: false
++ConstructorInitializerIndentWidth: 8
++ContinuationIndentWidth: 8
++Cpp11BracedListStyle: false
++DerivePointerAlignment: false
++DisableFormat: false
++ExperimentalAutoDetectBinPacking: false
++#FixNamespaceComments: false # Unknown to clang-format-4.0
++ForEachMacros:
++#IncludeBlocks: Preserve # Unknown to clang-format-5.0
++IncludeCategories:
++  - Regex: '.*'
++    Priority: 1
++IncludeIsMainRegex: '(Test)?$'
++IndentCaseLabels: false
++#IndentPPDirectives: None # Unknown to clang-format-5.0
++IndentWidth: 8
++IndentWrappedFunctionNames: true
++JavaScriptQuotes: Leave
++JavaScriptWrapImports: true
++KeepEmptyLinesAtTheStartOfBlocks: false
++MacroBlockBegin: ''
++MacroBlockEnd: ''
++MaxEmptyLinesToKeep: 1
++NamespaceIndentation: Inner
++#ObjCBinPackProtocolList: Auto # Unknown to clang-format-5.0
++ObjCBlockIndentWidth: 8
++ObjCSpaceAfterProperty: true
++ObjCSpaceBeforeProtocolList: true
++#PenaltyBreakAssignment: 2 # Unknown to clang-format-4.0
++PenaltyBreakBeforeFirstCallParameter: 19
++PenaltyBreakComment: 300
++PenaltyBreakFirstLessLess: 120
++PenaltyBreakString: 1000
++PenaltyExcessCharacter: 1000000
++PenaltyReturnTypeOnItsOwnLine: 60
++PointerAlignment: Right
++ReflowComments: false
++SortIncludes: true
++#SortUsingDeclarations: true # Unknown to clang-format-4.0
++SpaceAfterCStyleCast: false
++SpaceAfterTemplateKeyword: true
++SpaceBeforeAssignmentOperators: true
++#SpaceBeforeCtorInitializerColon: true # Unknown to clang-format-5.0
++#SpaceBeforeInheritanceColon: true # Unknown to clang-format-5.0
++SpaceBeforeParens: ControlStatements
++#SpaceBeforeRangeBasedForLoopColon: true # Unknown to clang-format-5.0
++SpaceInEmptyParentheses: false
++SpacesBeforeTrailingComments: 1
++SpacesInAngles: false
++SpacesInContainerLiterals: false
++SpacesInCStyleCastParentheses: false
++SpacesInParentheses: false
++SpacesInSquareBrackets: false
++Standard: Cpp03
++TabWidth: 8
++UseTab: Always
++...
++
+diff --git a/.gitignore b/.gitignore
+index 1be78fd8163b..ab5cbc1e85f6 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -81,6 +81,7 @@ modules.builtin
+ !.gitignore
+ !.mailmap
+ !.cocciconfig
++!.clang-format
+ 
+ #
+ # Generated include files
+diff --git a/Documentation/process/4.Coding.rst b/Documentation/process/4.Coding.rst
+index 26b106071364..d4bdbb17f2f5 100644
+--- a/Documentation/process/4.Coding.rst
++++ b/Documentation/process/4.Coding.rst
+@@ -58,6 +58,12 @@ can never be transgressed.  If there is a good reason to go against the
+ style (a line which becomes far less readable if split to fit within the
+ 80-column limit, for example), just do it.
+ 
++Note that you can use the clang-format tool to help you with these rules
++and to quickly re-format parts of your code automatically. It is specially
++useful for new files/code and to spot coding style mistakes. It is also
++useful to sort #includes, to align variables or comments, to reflow text
++and other similar tasks.
++
+ 
+ Abstraction layers
+ ******************
+diff --git a/Documentation/process/coding-style.rst b/Documentation/process/coding-style.rst
+index a20b44a40ec4..ceac420cd9ec 100644
+--- a/Documentation/process/coding-style.rst
++++ b/Documentation/process/coding-style.rst
+@@ -622,6 +622,12 @@ options ``-kr -i8`` (stands for ``K&R, 8 character indents``), or use
+ re-formatting you may want to take a look at the man page.  But
+ remember: ``indent`` is not a fix for bad programming.
+ 
++Note that you can also use the clang-format tool to help you with these rules
++and to quickly re-format parts of your code automatically. It is specially
++useful for new files/code and to spot coding style mistakes. It is also
++useful to sort #includes, to align variables or comments, to reflow text
++and other similar tasks.
++
+ 
+ 10) Kconfig configuration files
+ -------------------------------
+-- 
+2.14.1
