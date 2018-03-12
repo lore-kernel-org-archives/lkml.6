@@ -1,94 +1,66 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3340693-1520824114-2-3583074515316040502
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
-  MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520824112; b=dwvUbLTPfICkAsAESqbubxqduMeU4ar+rGOAIUcDyntGM+r
-    f7aZrhXNJ3kfLtcM4lNx/zqUriKPUKxb7p06hvlh8KsaftOmfBrx0nuSIefJFZRJ
-    zNMVRYeLZj86mTXPGskQQWzptDLldfsGiv2JAmQSEP79/U1KOXhba6rQn9woIZdt
-    0ZlKAx7j65zo2y3Hs0kK1ce4793EDaWGyRNwOK/LF9KPCt3U4hwQEzXxcqC4w8kT
-    8S04frkuOrIP1Qo738rJgY7ltosvIaMPeHbSreoVLHxjswnlgYIU7wXY+a/NAuqH
-    RNHXK4nTjng+EuFwfMJZ1HuAUZ13U+dAsGKRocA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=content-type:content-transfer-encoding
-    :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1520824112; bh=LyuQtZFPp1glsgxWLqM
-    3xDnDkNJL4iyM4+Nd59p2ovo=; b=YT0Z0LJnrmw5J1x/d2rJA8HB6Nzad0Rub7T
-    V32jkCdm4i0DcJuXrlz04upqG8OUKQdAryvSGDB13GkVHbpVP0r9sp/UfJCJnOpu
-    3OcvFyLRtXZKCZ3ZEKrrpvRVhp1Cgd8xDJkakmKZ57eu0w6Xkz5qvIi7lkXii66w
-    F4J62XAcbNRO+Ve9SjWpZ3zoELiU4nzYGsGoU3gK9/4qxqx9TwmAQuZLSbLUwFsj
-    FFHg1x3Pd7tNeHq4tRDvaWnjxcm+TTTNk7LGZARln557lkzmjaleuoIJKbOOkf6K
-    Ggg5IVsSUXdDvecZo8TiaIgIA0LwNipYJiHnPeeGPFGEE2/ZXZQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932462AbeCLDIE (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Mar 2018 23:08:04 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41529 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932788AbeCLDHv (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 23:07:51 -0400
+Return-Path: <ben@decadent.org.uk>
+X-Google-Smtp-Source: AG47ELuf1CoOQGf/dEqI9/ljT+uk7vmX/N0QWN+bD1wL8as6l2HX6bhbbyEnX4fKF86uADnvSna8
+ARC-Seal: i=1; a=rsa-sha256; t=1520824104; cv=none;
+        d=google.com; s=arc-20160816;
+        b=BAVW18mUbzniP9n/ygAx/rXRiWZr8S9qwnxEcGYpyLlELNAwwUg+E6kq6+wS0i9dmH
+         Sd/FcglGxw6GDzg6P0NvE2BG17sWf1lXlTEULBZUA31p9qZkO1IwOqo4ugvrM7V4QQmI
+         RwixLTNsA3WsXca5AKb2hhzK/Mx2vXIOJIQbkQuj7YOsP6ALoFSNEHpoB25FIIh+qRB9
+         oeUoktPwzmyV5QwTbpaZsWPqhfBKzs4t3i4/wyneKV/6Nlw1RtrRu5hmQNKb7eCNPSo+
+         qXuHKXzOywGvdB6PCErDRp9uU985+UUHUi7zoCmgUEMInmfwHK80e48Im5HPePrc+S0i
+         efpw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
+         :content-transfer-encoding:content-disposition
+         :arc-authentication-results;
+        bh=7DgFCwMtX92qby/LquDW+f0MPeIMYammawf9a5e+rJg=;
+        b=jh4jSV4xvBD/5TY3C6rQ/QSfHQOnhcHzM4A5Na57TFXpMGHDpSotsdrEI2o805HByL
+         qvflpcXqpr1hBkq7nplo/JZWnmf6+RpXuthMpa6SMjj6ueA+0sqJaEYfQdWitCgiebo5
+         3oN4W4Ts6yB4vvaudrI3gBHEGHXTP26fPNmPX1Y3kQBa0RDpQ+OI3G5ZhzwFOxUWcXqB
+         C/JYnV5DorEKW7OrlnIhWOk0DhIieNgN+oGYtpMdwjkjCIYUyzIiXUzFm3HEOIdu7Cii
+         9MyonAqt4pYJPMELRhTUNRCO1kVwbcPJ6ankVa653ubOlMpmtahSXlXIukw29BwKxFpD
+         SYeQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, keescook@google.com,
-        "Brian Gerst" <brgerst@gmail.com>,
-        "David Laight" <David.Laight@aculab.com>,
-        "Josh Poimboeuf" <jpoimboe@redhat.com>,
-        "Denys Vlasenko" <dvlasenk@redhat.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Juergen Gross" <jgross@suse.com>,
-        "Eduardo Valentin" <eduval@amazon.com>,
-        "Dave Hansen" <dave.hansen@linux.intel.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@kernel.org>, "Borislav Petkov" <bp@alien8.de>,
-        "Andy Lutomirski" <luto@kernel.org>,
-        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>, hughd@google.com,
-        "Greg KH" <gregkh@linuxfoundation.org>, aliguori@amazon.com,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        daniel.gruss@iaik.tugraz.at, "Will Deacon" <will.deacon@arm.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
+CC: akpm@linux-foundation.org,
+ "Arjan van de Ven" <arjan@linux.intel.com>,
+ "Rik van Riel" <riel@redhat.com>,
+ "Dave Hansen" <dave.hansen@intel.com>,
+ "Kees Cook" <keescook@google.com>,
+ "Greg Kroah-Hartman" <gregkh@linux-foundation.org>,
+ "Jiri Kosina" <jikos@kernel.org>,
+ thomas.lendacky@amd.com,
+ "David Woodhouse" <dwmw@amazon.co.uk>,
+ "Ingo Molnar" <mingo@kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Razvan Ghitulete" <rga@amazon.de>,
+ gnomes@lxorguk.ukuu.org.uk,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Andy Lutomirski" <luto@amacapital.net>,
+ "Josh Poimboeuf" <jpoimboe@redhat.com>,
+ "Tim Chen" <tim.c.chen@linux.intel.com>,
+ "Andi Kleen" <ak@linux.intel.com>,
+ "Paul Turner" <pjt@google.com>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>
 Date: Mon, 12 Mar 2018 03:06:12 +0000
-Message-ID: <lsq.1520823972.447521300@decadent.org.uk>
+Message-ID: <lsq.1520823972.527106155@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 05/76] x86/cpufeatures: Add X86_BUG_CPU_INSECURE
+Subject: [PATCH 3.16 26/76] x86/retpoline/entry: Convert entry assembler
+ indirect jumps
 In-Reply-To: <lsq.1520823971.5976735@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594699656515090382?=
+X-GMAIL-MSGID: =?utf-8?q?1594699656515090382?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -96,67 +68,117 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-commit a89f040fa34ec9cd682aed98b8f04e3c47d998bd upstream.
+commit 2641f08bb7fc63a636a2b18173221d7040a3512e upstream.
 
-Many x86 CPUs leak information to user space due to missing isolation of
-user space and kernel space page tables. There are many well documented
-ways to exploit that.
+Convert indirect jumps in core 32/64bit entry assembler code to use
+non-speculative sequences when CONFIG_RETPOLINE is enabled.
 
-The upcoming software migitation of isolating the user and kernel space
-page tables needs a misfeature flag so code can be made runtime
-conditional.
+Don't use CALL_NOSPEC in entry_SYSCALL_64_fastpath because the return
+address after the 'call' instruction must be *precisely* at the
+.Lentry_SYSCALL_64_after_fastpath label for stub_ptregs_64 to work,
+and the use of alternatives will mess that up unless we play horrid
+games to prepend with NOPs and make the variants the same length. It's
+not worth it; in the case where we ALTERNATIVE out the retpoline, the
+first instruction at __x86.indirect_thunk.rax is going to be a bare
+jmp *%rax anyway.
 
-Add the BUG bits which indicates that the CPU is affected and add a feature
-bit which indicates that the software migitation is enabled.
-
-Assume for now that _ALL_ x86 CPUs are affected by this. Exceptions can be
-made later.
-
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Laight <David.Laight@aculab.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Eduardo Valentin <eduval@amazon.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: H. Peter Anvin <hpa@zytor.com>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Arjan van de Ven <arjan@linux.intel.com>
+Cc: gnomes@lxorguk.ukuu.org.uk
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: thomas.lendacky@amd.com
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: aliguori@amazon.com
-Cc: daniel.gruss@iaik.tugraz.at
-Cc: hughd@google.com
-Cc: keescook@google.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.16: assign the first available bug number]
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Kosina <jikos@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Kees Cook <keescook@google.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linux-foundation.org>
+Cc: Paul Turner <pjt@google.com>
+Link: https://lkml.kernel.org/r/1515707194-20531-7-git-send-email-dwmw@amazon.co.uk
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Razvan Ghitulete <rga@amazon.de>
+[bwh: Backported to 3.16: adjust filenames, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -241,6 +241,7 @@
- #define X86_BUG_COMA		X86_BUG(2) /* Cyrix 6x86 coma */
- #define X86_BUG_AMD_TLB_MMATCH	X86_BUG(3) /* AMD Erratum 383 */
- #define X86_BUG_AMD_APIC_C1E	X86_BUG(4) /* AMD Erratum 400 */
-+#define X86_BUG_CPU_INSECURE	X86_BUG(5) /* CPU is insecure and needs kernel page table isolation */
+--- a/arch/x86/kernel/entry_32.S
++++ b/arch/x86/kernel/entry_32.S
+@@ -58,6 +58,7 @@
+ #include <asm/alternative-asm.h>
+ #include <asm/asm.h>
+ #include <asm/smap.h>
++#include <asm/nospec-branch.h>
  
- #if defined(__KERNEL__) && !defined(__ASSEMBLY__)
+ /* Avoid __ASSEMBLER__'ifying <linux/audit.h> just for this.  */
+ #include <linux/elf-em.h>
+@@ -308,7 +309,8 @@ ENTRY(ret_from_kernel_thread)
+ 	pushl_cfi $0x0202		# Reset kernel eflags
+ 	popfl_cfi
+ 	movl PT_EBP(%esp),%eax
+-	call *PT_EBX(%esp)
++	movl	PT_EBX(%esp), %edx
++	CALL_NOSPEC %edx
+ 	movl $0,PT_EAX(%esp)
+ 	jmp syscall_exit
+ 	CFI_ENDPROC
+@@ -1277,7 +1279,7 @@ error_code:
+ 	movl %ecx, %es
+ 	TRACE_IRQS_OFF
+ 	movl %esp,%eax			# pt_regs pointer
+-	call *%edi
++	CALL_NOSPEC %edi
+ 	jmp ret_from_exception
+ 	CFI_ENDPROC
+ END(page_fault)
+--- a/arch/x86/kernel/entry_64.S
++++ b/arch/x86/kernel/entry_64.S
+@@ -59,6 +59,7 @@
+ #include <asm/smap.h>
+ #include <asm/pgtable_types.h>
+ #include <asm/kaiser.h>
++#include <asm/nospec-branch.h>
+ #include <linux/err.h>
  
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -804,6 +804,9 @@ static void __init early_identify_cpu(st
- 		this_cpu->c_bsp_init(c);
+ /* Avoid __ASSEMBLER__'ifying <linux/audit.h> just for this.  */
+@@ -375,7 +376,7 @@ ENTRY(ret_from_fork)
+ 	subq $REST_SKIP, %rsp	# leave space for volatiles
+ 	CFI_ADJUST_CFA_OFFSET	REST_SKIP
+ 	movq %rbp, %rdi
+-	call *%rbx
++	CALL_NOSPEC %rbx
+ 	movl $0, RAX(%rsp)
+ 	RESTORE_REST
+ 	jmp int_ret_from_sys_call
+@@ -451,7 +452,12 @@ system_call_fastpath:
+ #endif
+ 	ja badsys
+ 	movq %r10,%rcx
++#ifdef CONFIG_RETPOLINE
++	movq	sys_call_table(, %rax, 8), %rax
++	call	__x86_indirect_thunk_rax
++#else
+ 	call *sys_call_table(,%rax,8)  # XXX:	 rip relative
++#endif
+ 	movq %rax,RAX-ARGOFFSET(%rsp)
+ /*
+  * Syscall return path ending with SYSRET (fast path)
+@@ -578,7 +584,12 @@ tracesys:
+ #endif
+ 	ja   int_ret_from_sys_call	/* RAX(%rsp) set to -ENOSYS above */
+ 	movq %r10,%rcx	/* fixup for C */
++#ifdef CONFIG_RETPOLINE
++	movq	sys_call_table(, %rax, 8), %rax
++	call	__x86_indirect_thunk_rax
++#else
+ 	call *sys_call_table(,%rax,8)
++#endif
+ 	movq %rax,RAX-ARGOFFSET(%rsp)
+ 	/* Use IRET because user could have changed frame */
  
- 	setup_force_cpu_cap(X86_FEATURE_ALWAYS);
-+
-+	/* Assume for now that ALL x86 CPUs are insecure */
-+	setup_force_cpu_bug(X86_BUG_CPU_INSECURE);
- }
- 
- void __init early_cpu_init(void)
