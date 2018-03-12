@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELtu7mmPG12osvp2YMj9GNdVo6GeazSA+xfoPXjP2wpdjm0FPdQwC6JPiDprFvH+KCZanZsJ
+X-Google-Smtp-Source: AG47ELvTmw9SvswBTC0kNFu+7a/TttqvIlgCVWMhjAi8cH8wE9xF/stnywPqANTrN76njVAiEU8+
 ARC-Seal: i=1; a=rsa-sha256; t=1520824060; cv=none;
         d=google.com; s=arc-20160816;
-        b=QBNI3jtbBOYeJWJTHbwQBcfTWLiUfAt5YMyTypPVOslQhuRsgxioI3J2DInmdO/jLQ
-         AUCvyXwYQQfFq6RXcMPiOGB7jvM7gYqLiKwDeZMpqOpiX4hzRyc3SzOUfyZcNZxLAHL8
-         Q7gVvr0ATU4OIWx4I6qJCGjrdrHI8aZ/iQE25ZexN5zOORhuWJerx4yy8u3X/7Mtpslg
-         nd9jP35Zbj0GupYGc/d91oq67cMAwFNqP/pcgCgOPYmSOcOwFfw8/RLl0Ru9WwyDp7Fz
-         jXjsrko32jWCninbOrpTvS+8pSRLtiO1ekSF+JSRKvMFgajxr1xqc3n+azQ2k44yk0xn
-         tv6Q==
+        b=V91mPOvgFXylDZbjFWoIGz3+u3VmjBEIn6Ghn9WLuE6QNuQMyMHz4LeqELbCiFivQW
+         NiOz0W+awAbDkLG5Cm01RHprpSlf3Te5IQC/4b2HfQj9+jeU7Pc1h6ONVgbXgEVpL8ET
+         ASidmIffsteSVB1tQYZeJ77VWSTDMZxBAsM7xmrEycUotsHXHjvLKwZL6ePU8EJQ3wNL
+         QeSeFaSm1a8cX51dS6Ic9ltx2QO58EO5M16yQNOM65sUXMOoN7DzJ4bDqvaJ/5aEtjDb
+         I3W/WPY5wuNzFc4NRO194TCPnETi1hCDueW2XlSLn4MqelImhAqnlUw2OvixMd28nW9S
+         bWsQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=38+3gxKdpbgxeeHWXYaGx/JR2iNUnGAo5EqJEWyy1O8=;
-        b=cnQccgxA4bQc6KPRwqCAQVY3M442YLnCmeIEYCkhMbcQm6B7QWs6vLzOYGg3YHqf2y
-         00jFPaikMmlc58LSQBKmifxylzLvcLNsGwMIxSrkI6VVGGoVzCetYpanfJIR/7uk6omh
-         CCbjWmVyQOc9ZibYTfGG4Ae3QawxTL6gfOuD/TKBjkHJ3NfQQBq0jf9q66/aBIiSFtRx
-         6Mt1q13GcEarFbpdiIevzWI8W/cnYAcUacxM+ZxnRf4NqMSG5qYvRdZ2z9yeP8/lL6Fs
-         wM1vLG5de3pWIeL8sRDeZv51WUs1DxoW/MuBiWdDV0iS5Xpf/ihaWmAxt/weZ91Lwtgk
-         Y2Ig==
+        bh=mavnszmK86PT2iamtOmHgfgsiO24cW1Ze8DxIqaV9pc=;
+        b=ZgLmfmcTFaOV/D9dkeqGtjxg0wjD/TTiHn6CHJcjGRdNuzVg2NnQMMPR7IIW+qJ9cf
+         lyPmpBpidanyFV2A51tLFSIlBw4FMkj4GdHDeLuEssrlPe2p/NzcWazchSDuzzwc3c/+
+         XdHMOL7BrN1wILdGuheQlg19LStpYKfSuyJhhUmwThC/ikOIaG42uC7c2bcDOpCZayuA
+         TAXMEDYVmB7oXaSPiHYLVNzz1icY53glmBsvAwkTBi+1SnIUwcme7grd13B2I0p2QCFq
+         Z9yKsf6l2YdfqCwCvRr9+aX7hKT7OFhjh8FeLjEUCRxXUu5BmAmmG4m7hcH8qIXY4cmE
+         90Ng==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,28 +30,26 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Andy Lutomirski" <luto@kernel.org>,
- "Ingo Molnar" <mingo@kernel.org>,
- kernel-janitors@vger.kernel.org,
- "Dan Carpenter" <dan.carpenter@oracle.com>,
- "Borislav Petkov" <bp@suse.de>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Peter Zijlstra" <peterz@infradead.org>,
+ "Andi Kleen" <ak@linux.intel.com>,
  "David Woodhouse" <dwmw@amazon.co.uk>,
- "KarimAllah Ahmed" <karahmed@amazon.de>
+ kernel-janitors@vger.kernel.org,
+ "Borislav Petkov" <bp@suse.de>,
+ "Andy Lutomirski" <luto@kernel.org>,
+ "Colin Ian King" <colin.king@canonical.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.143503038@decadent.org.uk>
+Message-ID: <lsq.1520823814.368865130@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 097/104] x86/spectre: Fix an error message
+Subject: [PATCH 3.2 090/104] x86/spectre: Fix spelling mistake:
+ "vunerable"-> "vulnerable"
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699610185199725?=
-X-GMAIL-MSGID: =?utf-8?q?1594699610185199725?=
+X-GMAIL-THRID: =?utf-8?q?1594699609906663728?=
+X-GMAIL-MSGID: =?utf-8?q?1594699609906663728?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,38 +57,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 9de29eac8d2189424d81c0d840cd0469aa3d41c8 upstream.
+commit e698dcdfcda41efd0984de539767b4cddd235f1e upstream.
 
-If i == ARRAY_SIZE(mitigation_options) then we accidentally print
-garbage from one space beyond the end of the mitigation_options[] array.
+Trivial fix to spelling mistake in pr_err error message text.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Borislav Petkov <bp@suse.de>
 Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: KarimAllah Ahmed <karahmed@amazon.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org
-Fixes: 9005c6834c0f ("x86/spectre: Simplify spectre_v2 command line parsing")
-Link: http://lkml.kernel.org/r/20180214071416.GA26677@mwanda
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.2: adjust context]
+Link: https://lkml.kernel.org/r/20180130193218.9271-1-colin.king@canonical.com
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
+ arch/x86/kernel/cpu/bugs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -317,8 +317,7 @@ static enum spectre_v2_mitigation_cmd __
- 		}
+@@ -245,7 +245,7 @@ bool retpoline_module_ok(bool has_retpol
+ 	if (spectre_v2_enabled == SPECTRE_V2_NONE || has_retpoline)
+ 		return true;
  
- 		if (i >= ARRAY_SIZE(mitigation_options)) {
--			pr_err("unknown option (%s). Switching to AUTO select\n",
--			       mitigation_options[i].option);
-+			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
- 			return SPECTRE_V2_CMD_AUTO;
- 		}
- 	}
+-	pr_err("System may be vunerable to spectre v2\n");
++	pr_err("System may be vulnerable to spectre v2\n");
+ 	spectre_v2_bad_module = true;
+ 	return false;
+ }
