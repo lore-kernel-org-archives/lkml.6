@@ -1,131 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752449AbeCLKVu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 06:21:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50626 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751252AbeCLKVs (ORCPT
+        id S1752625AbeCLKWE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 06:22:04 -0400
+Received: from mail-wr0-f178.google.com ([209.85.128.178]:35417 "EHLO
+        mail-wr0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752511AbeCLKWC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 06:21:48 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 93DF0607A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-X-Google-Smtp-Source: AG47ELtuQsPXfytBNMZFTRz+1MvxH8DFhNbbiMqSezmhZyUM3y1qTCp76Hj+EbNiJ5bpAPg5F/1EUekfN1O+r+NR874=
+        Mon, 12 Mar 2018 06:22:02 -0400
+X-Google-Smtp-Source: AG47ELs/v9NN2As5364JxTqzQz9McWlMIQ02ZE+BH4oIvbzjQeAv5ymNPx1hoCVWJ4NwUBbJs/JodA==
+Reply-To: monstr@monstr.eu
+Subject: Re: Bug: Microblaze stopped booting after
+ 0fa1c579349fdd90173381712ad78aa99c09d38b
+To: "Alvaro G. M." <alvaro.gamez@hazent.com>,
+        Rob Herring <robh@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180309125106.GA1644@salem.gmr.ssr.upm.es>
+ <CAL_JsqLenrLARsjHvkkL3ByuXARPShz-VAEBDE2FukJc=vD+Sg@mail.gmail.com>
+ <20180312075252.GA15895@salem.gmr.ssr.upm.es>
+From: Michal Simek <monstr@monstr.eu>
+Message-ID: <242c2823-258b-d3bb-cd0a-e4eee6b979c6@monstr.eu>
+Date: Mon, 12 Mar 2018 11:21:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <f6822915-8921-c9cc-218a-f094ac5ed032@arm.com>
-References: <20180302101050.6191-1-vivek.gautam@codeaurora.org>
- <20180302101050.6191-5-vivek.gautam@codeaurora.org> <f3011ef1-7ffe-8c2b-b9d6-3fb094789656@arm.com>
- <CAFp+6iF1oM=fmRCqSG-SxcUVvvOLet_Y0p7pmGn+=B-LdMNiww@mail.gmail.com>
- <CAFp+6iFzGYWZMLkNrN1ZJJ2xH4CxQsiU6oYboHDzL0jDwm+4VQ@mail.gmail.com> <f6822915-8921-c9cc-218a-f094ac5ed032@arm.com>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Date: Mon, 12 Mar 2018 15:51:44 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iGPWxRVUjiTW34eDoce55HZ0Y8EcKMCSyfg2RnHuX0zMw@mail.gmail.com>
-Message-ID: <CAFp+6iGPWxRVUjiTW34eDoce55HZ0Y8EcKMCSyfg2RnHuX0zMw@mail.gmail.com>
-Subject: Re: [PATCH v8 4/5] iommu/arm-smmu: Add the device_link between
- masters and smmu
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>, "robh+dt" <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
-        Rob Clark <robdclark@gmail.com>, devicetree@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>, jcrouse@codeaurora.org,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180312075252.GA15895@salem.gmr.ssr.upm.es>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="qs5TyyfJsgZ0V8t5661EJRg3kr8vPLGLp"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 9, 2018 at 6:04 PM, Robin Murphy <robin.murphy@arm.com> wrote:
-> On 09/03/18 07:11, Vivek Gautam wrote:
->>
->> On Thu, Mar 8, 2018 at 10:29 AM, Vivek Gautam
->> <vivek.gautam@codeaurora.org> wrote:
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--qs5TyyfJsgZ0V8t5661EJRg3kr8vPLGLp
+Content-Type: multipart/mixed; boundary="fyIaaO2IWtkt217vS6I1OxN265do5Dq3n";
+ protected-headers="v1"
+From: Michal Simek <monstr@monstr.eu>
+Reply-To: monstr@monstr.eu
+To: "Alvaro G. M." <alvaro.gamez@hazent.com>, Rob Herring <robh@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Message-ID: <242c2823-258b-d3bb-cd0a-e4eee6b979c6@monstr.eu>
+Subject: Re: Bug: Microblaze stopped booting after
+ 0fa1c579349fdd90173381712ad78aa99c09d38b
+References: <20180309125106.GA1644@salem.gmr.ssr.upm.es>
+ <CAL_JsqLenrLARsjHvkkL3ByuXARPShz-VAEBDE2FukJc=vD+Sg@mail.gmail.com>
+ <20180312075252.GA15895@salem.gmr.ssr.upm.es>
+In-Reply-To: <20180312075252.GA15895@salem.gmr.ssr.upm.es>
+
+--fyIaaO2IWtkt217vS6I1OxN265do5Dq3n
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
+On 12.3.2018 08:52, Alvaro G. M. wrote:
+> On Fri, Mar 09, 2018 at 01:05:11PM -0600, Rob Herring wrote:
+>> On Fri, Mar 9, 2018 at 6:51 AM, Alvaro G. M. <alvaro.gamez@hazent.com>=
+ wrote:
+>>> Hi,
 >>>
->>> On Wed, Mar 7, 2018 at 6:17 PM, Robin Murphy <robin.murphy@arm.com>
->>> wrote:
->>>>
->>>> On 02/03/18 10:10, Vivek Gautam wrote:
->>>>>
->>>>>
->>>>> From: Sricharan R <sricharan@codeaurora.org>
->>>>>
->>>>> Finally add the device link between the master device and
->>>>> smmu, so that the smmu gets runtime enabled/disabled only when the
->>>>> master needs it. This is done from add_device callback which gets
->>>>> called once when the master is added to the smmu.
->>>>>
->>>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->>>>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->>>>> ---
->>>>>    drivers/iommu/arm-smmu.c | 21 +++++++++++++++++++++
->>>>>    1 file changed, 21 insertions(+)
->>>>>
->>>>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
->>>>> index 3d6a1875431f..bb1ea82c1003 100644
->>>>> --- a/drivers/iommu/arm-smmu.c
->>>>> +++ b/drivers/iommu/arm-smmu.c
->>>>> @@ -217,6 +217,9 @@ struct arm_smmu_device {
->>>>>          /* IOMMU core code handle */
->>>>>          struct iommu_device             iommu;
->>>>> +
->>>>> +       /* runtime PM link to master */
->>>>> +       struct device_link *link;
->>>>
->>>>
->>>>
->>>> Just the one?
+>>> I've found via git bisect that 0fa1c579349fdd90173381712ad78aa99c09d3=
+8b
+>>> makes microblaze unbootable.
+>>>
+>>> I'm sorry I can't provide any console output, as nothing appears at a=
+ll,
+>>> even when setting earlyprintk (or at least I wasn't able to get anyth=
+ing
+>>> back!).
 >>
->>
->> we will either have to count all the devices that are present on the
->> iommu bus, or
->> maintain a list to which all the links can be added.
->> But to add the list, we will have to initialize a LIST_HEAD in struct
->> device_link
->> as well.
->>
->> Or, I think we don't even need to maintain a pointer to link with smmu.
->> In arm_smmu_remove_device(), we can find out the correct link, and delete
->> it.
->>
->>          list_for_each_entry(link, &dev->links.suppliers, c_node)
->>                  if (link->supplier == smmu->dev);
->>                             device_link_del(link);
->>
->> Should that be fine?
->>
->> Rafael, does the above snippet looks right to you? Context: smmu->dev
->> is the supplier, and dev is the consumer. We want to find the link,
->> and delete it.
->
->
-> Actually, looking at the existing code, it seems like device_link_add() will
-> in fact look up and return any existing link between a given supplier and
-> consumer - is that intentional API behaviour that users may rely on to avoid
-> keeping track of explicit link pointers?
-> (or conversely, might it be
-> reasonable to factor out a device_link_find() function?)
+>> Ah, looks like microblaze doesn't set CONFIG_NO_BOOTMEM and so
+>> memblock_virt_alloc() doesn't work for CONFIG_HAVE_MEMBLOCK &&
+>> !CONFIG_NO_BOOTMEM. AFAICT, microblaze doesn't really need bootmem and=
 
-Yea, that sounds better.
+>> it can be removed, but I'm still investigating. Can you try out this
+>> branch[1].
+>>
+>> Rob
+>>
+>> [1] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
+>> microblaze-fixes
+>=20
+> Hi, Rob!
+>=20
+> This branch does indeed solve the issue. My microblaze system is now
+> booting as it did before, and everything seems normal now. Thanks!
+>=20
+> Tested-by: Alvaro Gamez Machado <alvaro.gamez@hazent.com>
+>=20
 
-regards
-Vivek
+I have tested it and I can also confirm that your two patches are fixing
+issue with
 
->
-> Robin.
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+809d0e2c: 00240034 26000000 746f6f62 206d656d    4.$....&bootmem
+809d0e3c: 6f6c6c61 666f2063 33353220 62203830    alloc of 25308 b
+809d0e4c: 73657479 69616620 2164656c 00000000    ytes failed!....
+809d0e5c: 00000000 0029003c 06000000 6e72654b    ....<.).....Kern
+809d0e6c: 70206c65 63696e61 6e202d20 7320746f    el panic - not s
+
+Can you please update that second commit with reasonable description and
+send it out? I will take it via my tree and will send pull request to Lin=
+us.
+
+Thanks,
+Michal
+
+--=20
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Xilinx Microblaze
+Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
+U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
 
 
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+--fyIaaO2IWtkt217vS6I1OxN265do5Dq3n--
+
+--qs5TyyfJsgZ0V8t5661EJRg3kr8vPLGLp
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iEYEARECAAYFAlqmVMIACgkQykllyylKDCGXSgCeMZt2C0qmf47qQYyAE1cQXSVn
+jGUAoIErefelcRo9pgDnx3PMih0mh19n
+=JP6G
+-----END PGP SIGNATURE-----
+
+--qs5TyyfJsgZ0V8t5661EJRg3kr8vPLGLp--
