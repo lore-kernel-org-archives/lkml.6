@@ -1,43 +1,46 @@
-Return-Path: <linus971@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520874553; cv=none;
+Return-Path: <keescook@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520875063; cv=none;
         d=google.com; s=arc-20160816;
-        b=EsUEwb4Z5B5oDqpOiwFdhflG9FLrUL0lRWd9LKnTkIb1QLBVMY2ddaksr4JRUXyh9X
-         HcJ2kspWicPEAyV8QT2XFuY8wR4ERG9Z9NgkPhlu9iJ4Wrqviho303viYDURMQv2LltD
-         IQMF9A9ir9ynD358px2mfKul5Y+BW/j2kxj7Q2yZwja7N2yZB3grdQ1mRNDXeUXW/h3Q
-         prehj2KMXOGdkcWeXbBCtGHAc86Ftnb7zws1HURmUDVdy9gX8tFDh8TaMKFq8TfnTULM
-         TYw1y+v91gkUaswFvzVg6nM4oZPCD3/+pHzN/0EypEws6x0VlxKuxn6YsDD/Drpzbfus
-         47Sg==
+        b=cQjpEhXUGF1BXEbYdgCB1rybC4hE6pVtFnfKvlRlUNuOeuzVWsm+OjA3leAwNYH2i1
+         Tx9E/JP7YN2HAHhQjCz9jj8Vueu9iEV0/SFex5bJl5tym/i/Yk4t8ZSZKw5gfiiLoXDW
+         yeg8wLCeAA2LoEBCwfN/Q1wJ2pOw81ux31rZ9F06ktTsDUNGDjoLokSn6PUfzpWkBoeZ
+         pXGuzUgZf+eqvpEI4L3fwcTBbUaZF88ij0hDv5+3MLbduZm5YTCneqojYe0lH4e6Epzm
+         89fwFBkBhnSZRkRuh61GKqXnQJnIO0LnJQKTsdABmr9L14jsusE2BUubKaM2NFQj5oE2
+         A0SA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
          :mime-version:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=/ftXgZIAc9DsuIREBJiwUyfQ7yQc1YhLjoDOdI87e24=;
-        b=D0SCWb3zpf8W4NKMtNX7v/Z7tQUSLTDKTiLr2Om+ogVROBE8x2CAFd1XwA+PkJyR4M
-         wV6/2cSuYs7d0IpWW+g39yMw3YMqIpTi7Q67+/dHqvlCUQjlFzw0Ipr10ns/PVYOj06x
-         8nIEntGkT3GnZT0/Iux3/nh34saSHMkDPvwJ+RLbiAV35BLaZsU3CZWcAzqs1TjzQ+c3
-         L/h0pFomAXYDZj+04JFsXUXC3KTNCgM6P5GDUuglTxDte2u17SLer+XJyhhsxB2mfXnV
-         VdOHNH41hadM8A3N5W/VgfU4fj1bqUNHIoFcg00DE9GPUwcecQ34Rj/A5oPr+szWxpba
-         +bOQ==
+        bh=Go2rHmF7V1bwWo4h2/Y/TvwUySmL/5kzrxpZqEw1Oy4=;
+        b=S3O4vQsVryYf17A/KiL0Jxd4eEj+evAmLfrZNA8CIb4gm28wVyqJH7k0zONnQnA4zx
+         xThq5AOgHLHx7RQUV4iCJutnEe+1+JIG6vtRvN2qm1fnMQpCYnOZK5eMq8AN5EVwqJFp
+         cCT7k5vD8lWJ8TE4/wjWu49lGHT9r+J8a5E1ZeQdDYm8AXlc4kYe8SYLzxgB9zrsCwUv
+         89/kw0fVAxIeZNuwJJKvY0yk6Lg/Rzqm+HCMR1uClVKhavZ6Z2+fmoY7Lmf3u5EcDSZh
+         Pkyj4az9GVuuelooK8xIclRm0TVLBpEd/TEorer4H9RMZGCJq1NL+qJGNvyLSyPmp4zv
+         T9yg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=fMBXQrMk;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=Oyeq0Ij5;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=MVrMzxWQ;
+       dkim=pass header.i=@chromium.org header.s=google header.b=VqIh6iiu;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=fMBXQrMk;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=Oyeq0Ij5;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
-X-Google-Smtp-Source: AG47ELsXVaRUV7nt0orENxZIeECfu1V7wILLe6iyWbYl2x7Dse5+aFIcE6Hswo0xWigWTcTqFmmN4Q++K/8PEOBMJ2Q=
+       dkim=pass header.i=@google.com header.s=20161025 header.b=MVrMzxWQ;
+       dkim=pass header.i=@chromium.org header.s=google header.b=VqIh6iiu;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AG47ELsM0SmnyZapeYIH6N7kx4RxuM1YM9WOl8NlSfMI8yE4pdXaNcOWaN3lG3/2ORyFH60WlRmfxh6+ODOupFeo+/o=
 MIME-Version: 1.0
-Sender: linus971@gmail.com
-In-Reply-To: <CAGXu5j+4mEyhE6shkxWqY4AVQGcq2U7nzf4j_n2+CdW2t6CzqQ@mail.gmail.com>
+Sender: keescook@google.com
+In-Reply-To: <CA+55aFykZL+cSBJjBBts7ebEFfyGPdMzTmLSxKnT_29=j942dA@mail.gmail.com>
 References: <CAGXu5j+4mEyhE6shkxWqY4AVQGcq2U7nzf4j_n2+CdW2t6CzqQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 12 Mar 2018 10:09:12 -0700
-X-Google-Sender-Auth: Fg_alnkpvI2Pxx0NfFSAzqi9Xqw
-Message-ID: <CA+55aFykZL+cSBJjBBts7ebEFfyGPdMzTmLSxKnT_29=j942dA@mail.gmail.com>
+ <CA+55aFykZL+cSBJjBBts7ebEFfyGPdMzTmLSxKnT_29=j942dA@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Mon, 12 Mar 2018 10:17:41 -0700
+X-Google-Sender-Auth: cBlyptLmhQIRqN5d6siE4jaLZfg
+Message-ID: <CAGXu5jJVSG7ZuftTRGZjgKqetpmxNpeqwxAzhY8BJ4_H-oUw5w@mail.gmail.com>
 Subject: Re: Fully initialized stack usage (was Re: [PATCH RFC v9 4/7]
  x86/entry: Erase kernel stack in syscall_trace_enter())
-To: Kees Cook <keescook@chromium.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Ingo Molnar <mingo@kernel.org>, P J P <pjp@fedoraproject.org>,
 	Florian Weimer <fweimer@redhat.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
 	Steven Rostedt <rostedt@goodmis.org>, Arnd Bergmann <arnd@arndb.de>,
@@ -65,93 +68,49 @@ Cc: Ingo Molnar <mingo@kernel.org>, P J P <pjp@fedoraproject.org>,
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594750868471232540?=
-X-GMAIL-MSGID: =?utf-8?q?1594752555401908784?=
+X-GMAIL-MSGID: =?utf-8?q?1594753090540137610?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 12, 2018 at 9:42 AM, Kees Cook <keescook@chromium.org> wrote:
+On Mon, Mar 12, 2018 at 10:09 AM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Mon, Mar 12, 2018 at 9:42 AM, Kees Cook <keescook@chromium.org> wrote:
+>> - initialization _must include structure padding_. Without this, we're
+>> only solving part of the exposure. Does -finit-local-vars do this?
 >
-> On Tue, Feb 27, 2018 at 3:15 AM, P J P <ppandit@redhat.com> wrote:
->> Please see:
->>   -> https://gcc.gnu.org/ml/gcc-patches/2014-06/msg00615.html
->>
->> This experimental patch by Florian Weimer(CC'd) adds an option
->> '-finit-local-vars' to gcc(1) compiler. When a program(or kernel)
->> is built using this option, its automatic(local) variables are
->> initialised with zero(0). This could significantly reduce the kernel
->> information leakage issues.
-
-Oh, I love that patch.
-
-THAT is the kind of thing we should do. It's small, it's trivial, and
-it's done early in the parsing stage, so later stages will almost
-certainly end up optimizing things away.
-
-The only complaint I have is that the Fortran front-end already has
-(some of) that functionality, and calls it something else, and allows
-you to specify more exactly what you want to clear.
-
-Florian, are you aware of the Fortran flags?
-
-  -finit-local-zero
-  -finit-derived
-  -finit-integer=n
-  -finit-real=<zero|inf|-inf|nan|snan>
-  -finit-logical=<true|false>
-  -finit-character=n
-
-they aren't perfect for C, but some of them do make sense at least
-conceptually: things like being able to specify whether arrays and
-structures should be initialized (-finit-derived is kind of relevant)
-might make sense.
-
-In the kernel we'd likely always do it unconditionally (apart from
-optional per-function or per-declaration considerations) but I could
-easily see some other projects saying "do it for scalars but not for
-aggregate types". Because they might want the convenience, but not the
-expense.
-
-> Getting this implemented directly in the compiler would be preferred
-> over a plugin. (Prototyping may be easier in the plugin, though.)
-
-Absolutely.  I think it's better in gcc simply because I suspect a
-number of other projects might use this flag too. A plugin is rather
-cumbersome.
-
-That said, the patch is literally right at the PLUGIN_FINISH_DECL, so
-doing it as a plugin for older compiler versions, or for just testing,
-might still be useful.
-
-> Considerations:
+> Good point. It uses build_constructor() with an empty constructor, so
+> it *should* be 100% equivalent to
 >
-> - the kernel needs a way to "opt out" of this for places where later
-> functions will do the initialization. Something like
-> __attribute__((no_automatic_variable_init)) ?
+>     struct xyz var = { };
+>
+> if I understand correctly, but I'm not sure what that will do with padding.
 
-Yes, that's going to make it more palatable to some uses.
+AIUI, this does not guarantee padding initialization (yet another
+"undefined behavior"). This is why we've had to sprinkle memset(&var,
+0, sizeof(var)) in places where a structure has padding and got
+leaked. :(
 
-However, somebody who knows gcc needs to verify that it does the right
-things when inlining happens.
+I assume this may be orthogonal to -finit-local-vars, and maybe we'll
+need some -finit-padding or something. (Though, honestly, is there
+anyone that wants to get _padding_ correct, but not variable
+initialization?)
 
-And honestly, it would be better to make it per-variable, not per
-function. That would fit the structure of that patch too, I think. It
-iterates over variables anyway to generate the initialization.
+>> - Can we retain the uninitialized variable usage warning? (with an
+>> updated text; maybe "variable used without explicit initialization,
+>> using zero-initialization"?)
+>
+> I think that fundamentally goes away, because all later phases see
+> fully initialized state.
 
-> - initialization _must include structure padding_. Without this, we're
-> only solving part of the exposure. Does -finit-local-vars do this?
+I'm fine with it going away, though I share Jeff Law's observation in
+Florian's gcc thread that we lose some potentially useful warnings
+("oops, it took a while to track down this bug, since that variable
+had been zero initialized; I wish I knew that had happened", etc.) And
+when the kernel entirely depends on auto-zero-init, we could just add
+-Wno-maybe-uninitialized. *shrug*
 
-Good point. It uses build_constructor() with an empty constructor, so
-it *should* be 100% equivalent to
+-Kees
 
-    struct xyz var = { };
-
-if I understand correctly, but I'm not sure what that will do with padding.
-
-> - Can we retain the uninitialized variable usage warning? (with an
-> updated text; maybe "variable used without explicit initialization,
-> using zero-initialization"?)
-
-I think that fundamentally goes away, because all later phases see
-fully initialized state.
-
-               Linus
+-- 
+Kees Cook
+Pixel Security
