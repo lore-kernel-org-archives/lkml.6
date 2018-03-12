@@ -1,66 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751496AbeCLLSy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 07:18:54 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:46685 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750794AbeCLLSw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 07:18:52 -0400
-X-Google-Smtp-Source: AG47ELuOV4cav6dZctb7XtiT1sZT8ZMmtm9CzNaql2bn99IsmFt+6/Mc+FmjHJuTGCyKgGERQHz/5WopBAW/Y1tmOFA=
-MIME-Version: 1.0
-In-Reply-To: <20180312110122.x7srrgui6r4e7jxm@gmail.com>
-References: <20180220180506.65523-1-andriy.shevchenko@linux.intel.com>
- <CAJZ5v0g7XO2N0vCi-A95MDjgJpTS0M=ZXrSGu2fqkwSHZ79GEg@mail.gmail.com>
- <1519383078.10722.107.camel@linux.intel.com> <1520427371.10722.453.camel@linux.intel.com>
- <20180312110122.x7srrgui6r4e7jxm@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 12 Mar 2018 12:18:51 +0100
-X-Google-Sender-Auth: LrLpVcTrBLvj2x8XYgDut-wxagI
-Message-ID: <CAJZ5v0hN0SjwLhFiK_5u25CaNVeVXOF=HAd8UrBM3LEU8rgVVQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] ACPI / x86: boot: Split out acpi_generic_reduce_hw_init()
- and export
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Juergen Gross <jgross@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751443AbeCLLTI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 07:19:08 -0400
+Received: from mga09.intel.com ([134.134.136.24]:41259 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750794AbeCLLTH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 07:19:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,460,1515484800";
+   d="scan'208";a="23759459"
+From: Anshuman Gupta <anshuman.gupta@intel.com>
+To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
+        tiwai@suse.com
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, anshuman.gupta@intel.com
+Subject: [PATCH] [sound] hdac-codec runtime suspended at PM:Suspend.
+Date: Mon, 12 Mar 2018 16:47:47 +0530
+Message-Id: <1520853467-31653-1-git-send-email-anshuman.gupta@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 12:01 PM, Ingo Molnar <mingo@kernel.org> wrote:
->
-> * Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
->
->> On Fri, 2018-02-23 at 12:51 +0200, Andy Shevchenko wrote:
->> > On Tue, 2018-02-20 at 19:42 +0100, Rafael J. Wysocki wrote:
->> > > On Tue, Feb 20, 2018 at 7:05 PM, Andy Shevchenko
->> > > <andriy.shevchenko@linux.intel.com> wrote:
->> > > > This is a preparation patch to allow override the hardware reduced
->> > > > initialization on ACPI enabled platforms.
->> > > >
->> > > > No functional change intended.
->> > > >
->> > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->> > >
->> > > Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> >
->> > Thanks, Rafael!
->> >
->> > Ingo, can it be applied?
->>
->> Hmm... It seems Ingo is busy with something else.
->
-> Sorry, it all looks good to me:
->
->   Acked-by: Ingo Molnar <mingo@kernel.org>
+Keep hdac-codec to be in runtime suspended while entering to suspend.
+If hdac-codec is already in runtime suspend state skip its power down
+sequence in prepare, power up sequence in complete phase.
 
-It depends on some material in -tip AFAICS, so can you apply it, please?
+Avoid resuming hdac controller PCI device 00:1f.3 from runtime suspend
+state in case  hdac-codec already in runtime-suspend state, this is
+unnecessary and block the direct complete even for hdac controller
+PCI device 00:1f.3.
+
+This enabled direct complete path for hdac-codec and PCI device 00:1f.3.
+
+Signed-off-by: Anshuman Gupta <anshuman.gupta@intel.com>
+---
+ sound/soc/codecs/hdac_hdmi.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/sound/soc/codecs/hdac_hdmi.c b/sound/soc/codecs/hdac_hdmi.c
+index f3b4f4d..810a8a6 100644
+--- a/sound/soc/codecs/hdac_hdmi.c
++++ b/sound/soc/codecs/hdac_hdmi.c
+@@ -1852,6 +1852,8 @@ static int hdmi_codec_prepare(struct device *dev)
+ 	struct hdac_ext_device *edev = to_hda_ext_device(dev);
+ 	struct hdac_device *hdac = &edev->hdac;
+ 
++	if (pm_runtime_status_suspended(dev))
++		return 1;
+ 	pm_runtime_get_sync(&edev->hdac.dev);
+ 
+ 	/*
+@@ -1873,6 +1875,8 @@ static void hdmi_codec_complete(struct device *dev)
+ 	struct hdac_hdmi_priv *hdmi = edev->private_data;
+ 	struct hdac_device *hdac = &edev->hdac;
+ 
++	if (pm_runtime_status_suspended(dev))
++		return;
+ 	/* Power up afg */
+ 	snd_hdac_codec_read(hdac, hdac->afg, 0,	AC_VERB_SET_POWER_STATE,
+ 							AC_PWRST_D0);
+-- 
+2.7.4
