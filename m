@@ -1,106 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932440AbeCLNSP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 09:18:15 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41650 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751180AbeCLNP2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 09:15:28 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AC78E6081C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Andy Gross <andy.gross@linaro.org>, Wolfram Sang <wsa@the-dreams.de>
-Cc: David Brown <david.brown@linaro.org>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Austin Christ <austinwc@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v2 03/13] i2c: qup: minor code reorganization for use_dma
-Date: Mon, 12 Mar 2018 18:44:52 +0530
-Message-Id: <1520860502-14886-4-git-send-email-absahu@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520860502-14886-1-git-send-email-absahu@codeaurora.org>
-References: <1520860502-14886-1-git-send-email-absahu@codeaurora.org>
+        id S1751368AbeCLNWc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 09:22:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60765 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751229AbeCLNWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 09:22:31 -0400
+Subject: Re: [PATCH v4 1/3] mm/free_pcppages_bulk: update pcp->count inside
+To: Aaron Lu <aaron.lu@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Rientjes <rientjes@google.com>
+References: <20180301062845.26038-1-aaron.lu@intel.com>
+ <20180301062845.26038-2-aaron.lu@intel.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <a541716e-b55c-bb75-eab9-eb46a08d5ffa@suse.cz>
+Date: Mon, 12 Mar 2018 14:22:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180301062845.26038-2-aaron.lu@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1. Assigns use_dma in qup_dev structure itself which will
-   help in subsequent patches to determine the mode in IRQ handler.
-2. Does minor code reorganization for loops to reduce the
-   unnecessary comparison and assignment.
+On 03/01/2018 07:28 AM, Aaron Lu wrote:
+> Matthew Wilcox found that all callers of free_pcppages_bulk() currently
+> update pcp->count immediately after so it's natural to do it inside
+> free_pcppages_bulk().
+> 
+> No functionality or performance change is expected from this patch.
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Reviewed-by: Austin Christ <austinwc@codeaurora.org>
-Reviewed-by: Andy Gross <andy.gross@linaro.org>
----
+Well, it's N decrements instead of one decrement by N / assignment of
+zero. But I assume the difference is negligible anyway, right?
 
-* Changes from v1: None
+> Suggested-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
 
- drivers/i2c/busses/i2c-qup.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
-index 75e9819..f6ea074 100644
---- a/drivers/i2c/busses/i2c-qup.c
-+++ b/drivers/i2c/busses/i2c-qup.c
-@@ -181,6 +181,8 @@ struct qup_i2c_dev {
- 
- 	/* dma parameters */
- 	bool			is_dma;
-+	/* To check if the current transfer is using DMA */
-+	bool			use_dma;
- 	struct			dma_pool *dpool;
- 	struct			qup_i2c_tag start_tag;
- 	struct			qup_i2c_bam brx;
-@@ -1288,7 +1290,7 @@ static int qup_i2c_xfer_v2(struct i2c_adapter *adap,
- 			   int num)
- {
- 	struct qup_i2c_dev *qup = i2c_get_adapdata(adap);
--	int ret, len, idx = 0, use_dma = 0;
-+	int ret, len, idx = 0;
- 
- 	qup->bus_err = 0;
- 	qup->qup_err = 0;
-@@ -1317,13 +1319,12 @@ static int qup_i2c_xfer_v2(struct i2c_adapter *adap,
- 			len = (msgs[idx].len > qup->out_fifo_sz) ||
- 			      (msgs[idx].len > qup->in_fifo_sz);
- 
--			if ((!is_vmalloc_addr(msgs[idx].buf)) && len) {
--				use_dma = 1;
--			 } else {
--				use_dma = 0;
-+			if (is_vmalloc_addr(msgs[idx].buf) || !len)
- 				break;
--			}
- 		}
-+
-+		if (idx == num)
-+			qup->use_dma = true;
- 	}
- 
- 	idx = 0;
-@@ -1347,15 +1348,17 @@ static int qup_i2c_xfer_v2(struct i2c_adapter *adap,
- 
- 		reinit_completion(&qup->xfer);
- 
--		if (use_dma) {
-+		if (qup->use_dma) {
- 			ret = qup_i2c_bam_xfer(adap, &msgs[idx], num);
-+			qup->use_dma = false;
-+			break;
- 		} else {
- 			if (msgs[idx].flags & I2C_M_RD)
- 				ret = qup_i2c_read_one_v2(qup, &msgs[idx]);
- 			else
- 				ret = qup_i2c_write_one_v2(qup, &msgs[idx]);
- 		}
--	} while ((idx++ < (num - 1)) && !use_dma && !ret);
-+	} while ((idx++ < (num - 1)) && !ret);
- 
- 	if (!ret)
- 		ret = qup_i2c_change_state(qup, QUP_RESET_STATE);
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+> ---
+>  mm/page_alloc.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index cb416723538f..faa33eac1635 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -1148,6 +1148,7 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+>  			page = list_last_entry(list, struct page, lru);
+>  			/* must delete as __free_one_page list manipulates */
+>  			list_del(&page->lru);
+> +			pcp->count--;
+>  
+>  			mt = get_pcppage_migratetype(page);
+>  			/* MIGRATE_ISOLATE page should not go to pcplists */
+> @@ -2416,10 +2417,8 @@ void drain_zone_pages(struct zone *zone, struct per_cpu_pages *pcp)
+>  	local_irq_save(flags);
+>  	batch = READ_ONCE(pcp->batch);
+>  	to_drain = min(pcp->count, batch);
+> -	if (to_drain > 0) {
+> +	if (to_drain > 0)
+>  		free_pcppages_bulk(zone, to_drain, pcp);
+> -		pcp->count -= to_drain;
+> -	}
+>  	local_irq_restore(flags);
+>  }
+>  #endif
+> @@ -2441,10 +2440,8 @@ static void drain_pages_zone(unsigned int cpu, struct zone *zone)
+>  	pset = per_cpu_ptr(zone->pageset, cpu);
+>  
+>  	pcp = &pset->pcp;
+> -	if (pcp->count) {
+> +	if (pcp->count)
+>  		free_pcppages_bulk(zone, pcp->count, pcp);
+> -		pcp->count = 0;
+> -	}
+>  	local_irq_restore(flags);
+>  }
+>  
+> @@ -2668,7 +2665,6 @@ static void free_unref_page_commit(struct page *page, unsigned long pfn)
+>  	if (pcp->count >= pcp->high) {
+>  		unsigned long batch = READ_ONCE(pcp->batch);
+>  		free_pcppages_bulk(zone, batch, pcp);
+> -		pcp->count -= batch;
+>  	}
+>  }
+>  
+> 
