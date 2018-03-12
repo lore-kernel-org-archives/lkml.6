@@ -1,73 +1,214 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932433AbeCLKDs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 06:03:48 -0400
-Received: from mga18.intel.com ([134.134.136.126]:10663 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751252AbeCLKC5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 06:02:57 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,460,1515484800";
-   d="scan'208";a="37996177"
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>, Borislav Petkov <bp@suse.de>,
-        Andi Kleen <ak@linux.intel.com>, Matthew Wilcox <willy@infradead.org>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH 1/4] x86/boot/compressed/64: Make sure we have 32-bit code segment
-Date: Mon, 12 Mar 2018 13:02:43 +0300
-Message-Id: <20180312100246.89175-2-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180312100246.89175-1-kirill.shutemov@linux.intel.com>
-References: <20180312100246.89175-1-kirill.shutemov@linux.intel.com>
+        id S1752729AbeCLKEj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 06:04:39 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51902 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752709AbeCLKEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 06:04:36 -0400
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, will.deacon@arm.com, dave.martin@arm.com,
+        mark.rutland@arm.com, catalin.marinas@arm.com,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v3 2/2] arm64: Expose Arm v8.4 features
+Date: Mon, 12 Mar 2018 10:04:14 +0000
+Message-Id: <20180312100414.6809-3-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180312100414.6809-1-suzuki.poulose@arm.com>
+References: <20180312100414.6809-1-suzuki.poulose@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When kernel starts in 64-bit mode we inherit GDT from a bootloader.
-It may cause a problem if the GDT doesn't have 32-bit code segment
-where we expect it to be.
+Expose the new features introduced by Arm v8.4 extensions to
+Arm v8-A profile.
 
-Load our own GDT with known segments.
+These include :
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+ 1) Data indpendent timing of instructions. (DIT, exposed as HWCAP_DIT)
+ 2) Unaligned atomic instructions and Single-copy atomicity of loads
+    and stores. (AT, expose as HWCAP_USCAT)
+ 3) LDAPR and STLR instructions with immediate offsets (extension to
+    LRCPC, exposed as HWCAP_ILRCPC)
+ 4) Flag manipulation instructions (TS, exposed as HWCAP_FLAGM).
+
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Reviewed-by: Dave Martin <dave.martin@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/x86/boot/compressed/head_64.S | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ Documentation/arm64/cpu-feature-registers.txt | 10 ++++++++++
+ Documentation/arm64/elf_hwcaps.txt            | 16 ++++++++++++++++
+ arch/arm64/include/asm/sysreg.h               |  3 +++
+ arch/arm64/include/uapi/asm/hwcap.h           |  4 ++++
+ arch/arm64/kernel/cpufeature.c                |  7 +++++++
+ arch/arm64/kernel/cpuinfo.c                   |  4 ++++
+ 6 files changed, 44 insertions(+)
 
-diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-index c813cb004056..f0c3a2f7e528 100644
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -313,6 +313,11 @@ ENTRY(startup_64)
- 	 * first.
- 	 */
+diff --git a/Documentation/arm64/cpu-feature-registers.txt b/Documentation/arm64/cpu-feature-registers.txt
+index 22cfb86143ee..7964f03846b1 100644
+--- a/Documentation/arm64/cpu-feature-registers.txt
++++ b/Documentation/arm64/cpu-feature-registers.txt
+@@ -110,6 +110,7 @@ infrastructure:
+      x--------------------------------------------------x
+      | Name                         |  bits   | visible |
+      |--------------------------------------------------|
++     | TS                           | [55-52] |    y    |
+      |--------------------------------------------------|
+      | FHM                          | [51-48] |    y    |
+      |--------------------------------------------------|
+@@ -139,6 +140,7 @@ infrastructure:
+      x--------------------------------------------------x
+      | Name                         |  bits   | visible |
+      |--------------------------------------------------|
++     | DIT                          | [51-48] |    y    |
+      |--------------------------------------------------|
+      | SVE                          | [35-32] |    y    |
+      |--------------------------------------------------|
+@@ -191,6 +193,14 @@ infrastructure:
+      | DPB                          | [3-0]   |    y    |
+      x--------------------------------------------------x
  
-+	/* Make sure we have GDT with 32-bit code segment */
-+	leaq	gdt(%rip), %rax
-+	movq	%rax, gdt64+2(%rip)
-+	lgdt	gdt64(%rip)
++  5) ID_AA64MMFR2_EL1 - Memory model feature register 2
 +
- 	/*
- 	 * paging_prepare() sets up the trampoline and checks if we need to
- 	 * enable 5-level paging.
-@@ -547,6 +552,11 @@ no_longmode:
- #include "../../kernel/verify_cpu.S"
++     x--------------------------------------------------x
++     | Name                         |  bits   | visible |
++     |--------------------------------------------------|
++     | AT                           | [35-32] |    y    |
++     x--------------------------------------------------x
++
+ Appendix I: Example
+ ---------------------------
  
- 	.data
-+gdt64:
-+	.word	gdt_end - gdt
-+	.long	0
-+	.word	0
-+	.quad   0
- gdt:
- 	.word	gdt_end - gdt
- 	.long	gdt
+diff --git a/Documentation/arm64/elf_hwcaps.txt b/Documentation/arm64/elf_hwcaps.txt
+index 57324ee55ecc..d6aff2c5e9e2 100644
+--- a/Documentation/arm64/elf_hwcaps.txt
++++ b/Documentation/arm64/elf_hwcaps.txt
+@@ -162,3 +162,19 @@ HWCAP_SVE
+ HWCAP_ASIMDFHM
+ 
+    Functionality implied by ID_AA64ISAR0_EL1.FHM == 0b0001.
++
++HWCAP_DIT
++
++    Functionality implied by ID_AA64PFR0_EL1.DIT == 0b0001.
++
++HWCAP_USCAT
++
++    Functionality implied by ID_AA64MMFR2_EL1.AT == 0b0001.
++
++HWCAP_ILRCPC
++
++    Functionality implied by ID_AA64ISR1_EL1.LRCPC == 0b0002.
++
++HWCAP_FLAGM
++
++    Functionality implied by ID_AA64ISAR0_EL1.TS == 0b0001.
+diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+index 0e1960c59197..e7b9f154e476 100644
+--- a/arch/arm64/include/asm/sysreg.h
++++ b/arch/arm64/include/asm/sysreg.h
+@@ -490,6 +490,7 @@
+ #define SCTLR_EL1_BUILD_BUG_ON_MISSING_BITS	BUILD_BUG_ON((SCTLR_EL1_SET ^ SCTLR_EL1_CLEAR) != ~0)
+ 
+ /* id_aa64isar0 */
++#define ID_AA64ISAR0_TS_SHIFT		52
+ #define ID_AA64ISAR0_FHM_SHIFT		48
+ #define ID_AA64ISAR0_DP_SHIFT		44
+ #define ID_AA64ISAR0_SM4_SHIFT		40
+@@ -511,6 +512,7 @@
+ /* id_aa64pfr0 */
+ #define ID_AA64PFR0_CSV3_SHIFT		60
+ #define ID_AA64PFR0_CSV2_SHIFT		56
++#define ID_AA64PFR0_DIT_SHIFT		48
+ #define ID_AA64PFR0_SVE_SHIFT		32
+ #define ID_AA64PFR0_RAS_SHIFT		28
+ #define ID_AA64PFR0_GIC_SHIFT		24
+@@ -568,6 +570,7 @@
+ #define ID_AA64MMFR1_VMIDBITS_16	2
+ 
+ /* id_aa64mmfr2 */
++#define ID_AA64MMFR2_AT_SHIFT		32
+ #define ID_AA64MMFR2_LVA_SHIFT		16
+ #define ID_AA64MMFR2_IESB_SHIFT		12
+ #define ID_AA64MMFR2_LSM_SHIFT		8
+diff --git a/arch/arm64/include/uapi/asm/hwcap.h b/arch/arm64/include/uapi/asm/hwcap.h
+index f018c3deea3b..17c65c8f33cb 100644
+--- a/arch/arm64/include/uapi/asm/hwcap.h
++++ b/arch/arm64/include/uapi/asm/hwcap.h
+@@ -44,5 +44,9 @@
+ #define HWCAP_SHA512		(1 << 21)
+ #define HWCAP_SVE		(1 << 22)
+ #define HWCAP_ASIMDFHM		(1 << 23)
++#define HWCAP_DIT		(1 << 24)
++#define HWCAP_USCAT		(1 << 25)
++#define HWCAP_ILRCPC		(1 << 26)
++#define HWCAP_FLAGM		(1 << 27)
+ 
+ #endif /* _UAPI__ASM_HWCAP_H */
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index f96b3449034b..a94b3a99cca5 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -123,6 +123,7 @@ cpufeature_pan_not_uao(const struct arm64_cpu_capabilities *entry, int __unused)
+  * sync with the documentation of the CPU feature register ABI.
+  */
+ static const struct arm64_ftr_bits ftr_id_aa64isar0[] = {
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_TS_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_FHM_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_DP_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR0_SM4_SHIFT, 4, 0),
+@@ -148,6 +149,7 @@ static const struct arm64_ftr_bits ftr_id_aa64isar1[] = {
+ static const struct arm64_ftr_bits ftr_id_aa64pfr0[] = {
+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_CSV3_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_CSV2_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_DIT_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_SVE),
+ 				   FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_SVE_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_RAS_SHIFT, 4, 0),
+@@ -190,6 +192,7 @@ static const struct arm64_ftr_bits ftr_id_aa64mmfr1[] = {
+ };
+ 
+ static const struct arm64_ftr_bits ftr_id_aa64mmfr2[] = {
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR2_AT_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR2_LVA_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR2_IESB_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64MMFR2_LSM_SHIFT, 4, 0),
+@@ -1118,14 +1121,18 @@ static const struct arm64_cpu_capabilities arm64_elf_hwcaps[] = {
+ 	HWCAP_CAP(SYS_ID_AA64ISAR0_EL1, ID_AA64ISAR0_SM4_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_SM4),
+ 	HWCAP_CAP(SYS_ID_AA64ISAR0_EL1, ID_AA64ISAR0_DP_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_ASIMDDP),
+ 	HWCAP_CAP(SYS_ID_AA64ISAR0_EL1, ID_AA64ISAR0_FHM_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_ASIMDFHM),
++	HWCAP_CAP(SYS_ID_AA64ISAR0_EL1, ID_AA64ISAR0_TS_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_FLAGM),
+ 	HWCAP_CAP(SYS_ID_AA64PFR0_EL1, ID_AA64PFR0_FP_SHIFT, FTR_SIGNED, 0, CAP_HWCAP, HWCAP_FP),
+ 	HWCAP_CAP(SYS_ID_AA64PFR0_EL1, ID_AA64PFR0_FP_SHIFT, FTR_SIGNED, 1, CAP_HWCAP, HWCAP_FPHP),
+ 	HWCAP_CAP(SYS_ID_AA64PFR0_EL1, ID_AA64PFR0_ASIMD_SHIFT, FTR_SIGNED, 0, CAP_HWCAP, HWCAP_ASIMD),
+ 	HWCAP_CAP(SYS_ID_AA64PFR0_EL1, ID_AA64PFR0_ASIMD_SHIFT, FTR_SIGNED, 1, CAP_HWCAP, HWCAP_ASIMDHP),
++	HWCAP_CAP(SYS_ID_AA64PFR0_EL1, ID_AA64PFR0_DIT_SHIFT, FTR_SIGNED, 1, CAP_HWCAP, HWCAP_DIT),
+ 	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_DPB_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_DCPOP),
+ 	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_JSCVT_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_JSCVT),
+ 	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_FCMA_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_FCMA),
+ 	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_LRCPC_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_LRCPC),
++	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_LRCPC_SHIFT, FTR_UNSIGNED, 2, CAP_HWCAP, HWCAP_ILRCPC),
++	HWCAP_CAP(SYS_ID_AA64MMFR2_EL1, ID_AA64MMFR2_AT_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_USCAT),
+ #ifdef CONFIG_ARM64_SVE
+ 	HWCAP_CAP(SYS_ID_AA64PFR0_EL1, ID_AA64PFR0_SVE_SHIFT, FTR_UNSIGNED, ID_AA64PFR0_SVE, CAP_HWCAP, HWCAP_SVE),
+ #endif
+diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
+index 7f94623df8a5..e9ab7b3ed317 100644
+--- a/arch/arm64/kernel/cpuinfo.c
++++ b/arch/arm64/kernel/cpuinfo.c
+@@ -77,6 +77,10 @@ static const char *const hwcap_str[] = {
+ 	"sha512",
+ 	"sve",
+ 	"asimdfhm",
++	"dit",
++	"uscat",
++	"ilrcpc",
++	"flagm",
+ 	NULL
+ };
+ 
 -- 
-2.16.1
+2.14.3
