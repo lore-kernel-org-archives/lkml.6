@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELvmxMYYb7Ry5rSgQLRWnKOWqhHFIcH2xv8S7hjwTJzDUuc5Cy3xR9LkgXkrQKZH2kP7L3Ly
-ARC-Seal: i=1; a=rsa-sha256; t=1520824085; cv=none;
+X-Google-Smtp-Source: AG47ELstDSvMIF8sLn9au24/ebaoTwdov7EXBqZ0qp50WDoiKBa8oM9WL4y17PN87LWAcJnYSkPy
+ARC-Seal: i=1; a=rsa-sha256; t=1520824084; cv=none;
         d=google.com; s=arc-20160816;
-        b=dnufvrhAQoVf8r3S7PzHfzP3YWukf+3kxw1ZJhSUwmMw5QPUktXCyjSrFIL0CGjCNw
-         BuT+0pmiarH5D9H+2V0F9J5o03p4qV0FHbD4XZBsX2qYcSHUsHQVv82hGya7AHkfNqEB
-         1s32IdtusAZf5tue6RruwC5Bf1fmFtMbOujXVj5G5NhkvkX118AtiELkeSg1Jsm4CbIj
-         u2e4V4TvLXkPz8IRChgSNhpdmaL2DWfQJZTmsjrXDAr+eFxRkT+c2BzT3GT/mQopMngY
-         JOlac32TiK0jLiua1e8PgAi/9fd1SQU9WB1YkYa9CMzZzGGtcKG5BQ71q3HXASZtblTw
-         i2gw==
+        b=FAfMgbZc0DK7I5wztuO2GX8Jd8inmo5v0+Wxdr3gMkUpiXCLtJORfUpikLFvv+DQDs
+         ZHrs97NMKGYLm6VvRPHhkIQmro6nXFkP76EV9MtGvGalT+OVLBO6MotSLDGz2tWmPdvG
+         6NiF6zvByhDSGmF4AU7dPO+8PX8l4zQU/xpQCz/EtQK5UbgyA4bzWsdf3UqnSfnFQEz5
+         PojCykWDtlGMFrWqhIYs7nKKnv5LVbAb8TfYQvHV8Boz1i6eThvCGoINqnjSYurDWHDA
+         OdysT8bFs2KFMSelAPDL6Sxt82slsWYbfhqno+HUn12e2lAgZeP2aG0klq3SdxN4gVQe
+         oIXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=abNQd2CjSm5dSbYTmE553kVyUpLGRGmq7MhDhmp3334=;
-        b=ozlRAdWNOACB6uLaiSHRN6KI+fhNzzmaUcHPCSekH7JqlNUlw+ocCqQHRFOuzVZSO6
-         bszKzPybWe0TV31T1EIlNjbG2CCRQUBiS8JyDpg1csqAB93h98bTGKeO0iMRxt0VhIpv
-         YINWvKFwStdr5C7YIVUWPY6tREG9FAeLF09aMEXlinfEZ7CQdnnCjLyzhX+d9wx+br5n
-         vdLdzJi6VPVSV7Fj4BzzLaDv1VkyKbE14XvQwFREe3Yd1nMItkeRs7Nx6HkcHWyNO7i0
-         oenYQh7PZj2Tg6lJPbTOS+118xCYHCUocaRoqpLkeAtGEbN7TcjksnfYC9Tw5QovY4cE
-         Scsg==
+        bh=wcO9RSjLBgWhKlPFg0daAJfN6AKaexUuPkDgcIk9Rk8=;
+        b=jJs78aNA9Ph39XGlWF5VcBRBdbFBKsOwSWI7yxn37GLqeyXKfnHK7TvrXZZqcnIOIv
+         JvDXBKuBoUizlZ6h4nUVP3nSFy35XOLyqwvUTO4ys+6MkgRd0/EUwby50JpnIz2ML9My
+         oFQ0Z6NAS5/ddwGES7Uyo8495IoLOarT7TRvewYuZhE1hHpzZOI8apkxv3EZJib8pWz4
+         ADqCAdZ0e9ZRCVGeoYQl6OoR6gTP5TPet+sIrOCR7eeHu2it+MmVWnx+IwaGP5hfBNXt
+         MgloAA1GK1/GcunuBXVw7Vc+9IM+MNJhoqBmtgcv6zrzMK44Fui4NZLghRJXUFI2ybA6
+         q3bg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -30,30 +30,31 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Reviewed-by: Borislav Petkov" <bp@suse.de>,
- "Paul Turner" <pjt@google.com>,
- "Tim Chen" <tim.c.chen@linux.intel.com>,
+ "Josh Poimboeuf" <jpoimboe@redhat.com>,
+ "Peter Zijlstra" <peterz@infradead.org>,
  "Dan Williams" <dan.j.williams@intel.com>,
  "Thomas Gleixner" <tglx@linutronix.de>,
+ linux-arch@vger.kernel.org,
+ "David Woodhouse" <dwmw2@infradead.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "Ingo Molnar" <mingo@kernel.org>,
  "Borislav Petkov" <bp@alien8.de>,
- "Peter Zijlstra" <peterz@infradead.org>,
- "David Woodhouse" <dwmw@amazon.co.uk>,
- "Tom Lendacky" <thomas.lendacky@amd.com>,
- "Greg Kroah-Hartman" <gregkh@linux-foundation.org>,
- "Dave Hansen" <dave.hansen@intel.com>
+ "Arjan van de Ven" <arjan@linux.intel.com>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Will Deacon" <will.deacon@arm.com>,
+ "Andy Lutomirski" <luto@kernel.org>
 Date: Mon, 12 Mar 2018 03:06:12 +0000
-Message-ID: <lsq.1520823972.884519379@decadent.org.uk>
+Message-ID: <lsq.1520823972.229464947@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 18/76] x86/cpu/AMD: Use LFENCE_RDTSC in preference to
- MFENCE_RDTSC
+Subject: [PATCH 3.16 69/76] nospec: Kill array_index_nospec_mask_check()
 In-Reply-To: <lsq.1520823971.5976735@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699644547888395?=
-X-GMAIL-MSGID: =?utf-8?q?1594699636158530968?=
+X-GMAIL-THRID: =?utf-8?q?1594699623234297784?=
+X-GMAIL-MSGID: =?utf-8?q?1594699635056656599?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -61,78 +62,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tom Lendacky <thomas.lendacky@amd.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit 9c6a73c75864ad9fa49e5fa6513e4c4071c0e29f upstream.
+commit 1d91c1d2c80cb70e2e553845e278b87a960c04da upstream.
 
-With LFENCE now a serializing instruction, use LFENCE_RDTSC in preference
-to MFENCE_RDTSC.  However, since the kernel could be running under a
-hypervisor that does not support writing that MSR, read the MSR back and
-verify that the bit has been set successfully.  If the MSR can be read
-and the bit is set, then set the LFENCE_RDTSC feature, otherwise set the
-MFENCE_RDTSC feature.
+There are multiple problems with the dynamic sanity checking in
+array_index_nospec_mask_check():
 
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Reviewed-by: Borislav Petkov <bp@suse.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
+* It causes unnecessary overhead in the 32-bit case since integer sized
+  @index values will no longer cause the check to be compiled away like
+  in the 64-bit case.
+
+* In the 32-bit case it may trigger with user controllable input when
+  the expectation is that should only trigger during development of new
+  kernel enabling.
+
+* The macro reuses the input parameter in multiple locations which is
+  broken if someone passes an expression like 'index++' to
+  array_index_nospec().
+
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
 Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linux-foundation.org>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Paul Turner <pjt@google.com>
-Link: https://lkml.kernel.org/r/20180108220932.12580.52458.stgit@tlendack-t1.amdoffice.net
-[bwh: Backported to 3.16: adjust filename, context]
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arch@vger.kernel.org
+Link: http://lkml.kernel.org/r/151881604278.17395.6605847763178076520.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/include/uapi/asm/msr-index.h |  1 +
- arch/x86/kernel/cpu/amd.c             | 18 ++++++++++++++++--
- 2 files changed, 17 insertions(+), 2 deletions(-)
+ include/linux/nospec.h | 22 +---------------------
+ 1 file changed, 1 insertion(+), 21 deletions(-)
 
---- a/arch/x86/include/uapi/asm/msr-index.h
-+++ b/arch/x86/include/uapi/asm/msr-index.h
-@@ -225,6 +225,7 @@
- #define MSR_FAM10H_NODE_ID		0xc001100c
- #define MSR_F10H_DECFG			0xc0011029
- #define MSR_F10H_DECFG_LFENCE_SERIALIZE_BIT	1
-+#define MSR_F10H_DECFG_LFENCE_SERIALIZE		BIT_ULL(MSR_F10H_DECFG_LFENCE_SERIALIZE_BIT)
+--- a/include/linux/nospec.h
++++ b/include/linux/nospec.h
+@@ -30,26 +30,6 @@ static inline unsigned long array_index_
+ #endif
  
- /* K8 MSRs */
- #define MSR_K8_TOP_MEM1			0xc001001a
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -673,6 +673,9 @@ static void init_amd(struct cpuinfo_x86
- 		set_cpu_cap(c, X86_FEATURE_K8);
- 
- 	if (cpu_has_xmm2) {
-+		unsigned long long val;
-+		int ret;
-+
- 		/*
- 		 * A serializing LFENCE has less overhead than MFENCE, so
- 		 * use it for execution serialization.  On families which
-@@ -683,8 +686,19 @@ static void init_amd(struct cpuinfo_x86
- 		msr_set_bit(MSR_F10H_DECFG,
- 			    MSR_F10H_DECFG_LFENCE_SERIALIZE_BIT);
- 
--		/* MFENCE stops RDTSC speculation */
--		set_cpu_cap(c, X86_FEATURE_MFENCE_RDTSC);
-+		/*
-+		 * Verify that the MSR write was successful (could be running
-+		 * under a hypervisor) and only then assume that LFENCE is
-+		 * serializing.
-+		 */
-+		ret = rdmsrl_safe(MSR_F10H_DECFG, &val);
-+		if (!ret && (val & MSR_F10H_DECFG_LFENCE_SERIALIZE)) {
-+			/* A serializing LFENCE stops RDTSC speculation */
-+			set_cpu_cap(c, X86_FEATURE_LFENCE_RDTSC);
-+		} else {
-+			/* MFENCE stops RDTSC speculation */
-+			set_cpu_cap(c, X86_FEATURE_MFENCE_RDTSC);
-+		}
- 	}
- 
- #ifdef CONFIG_X86_64
+ /*
+- * Warn developers about inappropriate array_index_nospec() usage.
+- *
+- * Even if the CPU speculates past the WARN_ONCE branch, the
+- * sign bit of @index is taken into account when generating the
+- * mask.
+- *
+- * This warning is compiled out when the compiler can infer that
+- * @index and @size are less than LONG_MAX.
+- */
+-#define array_index_mask_nospec_check(index, size)				\
+-({										\
+-	if (WARN_ONCE(index > LONG_MAX || size > LONG_MAX,			\
+-	    "array_index_nospec() limited to range of [0, LONG_MAX]\n"))	\
+-		_mask = 0;							\
+-	else									\
+-		_mask = array_index_mask_nospec(index, size);			\
+-	_mask;									\
+-})
+-
+-/*
+  * array_index_nospec - sanitize an array index after a bounds check
+  *
+  * For a code sequence like:
+@@ -67,7 +47,7 @@ static inline unsigned long array_index_
+ ({									\
+ 	typeof(index) _i = (index);					\
+ 	typeof(size) _s = (size);					\
+-	unsigned long _mask = array_index_mask_nospec_check(_i, _s);	\
++	unsigned long _mask = array_index_mask_nospec(_i, _s);		\
+ 									\
+ 	BUILD_BUG_ON(sizeof(_i) > sizeof(long));			\
+ 	BUILD_BUG_ON(sizeof(_s) > sizeof(long));			\
