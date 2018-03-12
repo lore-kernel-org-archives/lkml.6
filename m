@@ -1,76 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932247AbeCLTcl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 15:32:41 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:40839 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751574AbeCLTci (ORCPT
+        id S932277AbeCLTfe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 15:35:34 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:52204 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751313AbeCLTfc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 15:32:38 -0400
-X-Google-Smtp-Source: AG47ELt8lK14eC/ztLelz9MMOxUXE+8Jk+MKps/GYgzfw3Gv3sphxyCBGmBsIusqH/eCHERaL48YWjx6QTOE4c/Zths=
-MIME-Version: 1.0
-In-Reply-To: <CAPcyv4jr53dqVTzdEQ6Ln1Qg7nWVMQSVTkf6uc+Lg6Y-xruhuw@mail.gmail.com>
-References: <152066488891.40260.14605734226832760468.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152066493247.40260.10849841915366086021.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180311112725.GC4043@hirez.programming.kicks-ass.net> <CAPcyv4jr53dqVTzdEQ6Ln1Qg7nWVMQSVTkf6uc+Lg6Y-xruhuw@mail.gmail.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Mon, 12 Mar 2018 12:32:37 -0700
-Message-ID: <CAPcyv4gsLTViqtz=v6U8i5C25bAPL01bzH2=X595t0AR2-qL9g@mail.gmail.com>
-Subject: Re: [PATCH v5 08/11] wait_bit: introduce {wait_on,wake_up}_atomic_one
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        david <david@fromorbit.com>, linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 12 Mar 2018 15:35:32 -0400
+X-Google-Smtp-Source: AG47ELtHyYXyNnogWwlIr8fEV0zecVOeEFgk8YW3F6q+r+GIRAvDohtUySmujIOvMyoIjDtHLNmgIw==
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+From: valdis.kletnieks@vt.edu
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>
+Cc: linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        netdev@vger.kernel.org
+Subject: linux-next 20180307 - UBSAN whine in lib/radix-tree.c
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1520883323_3561P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date: Mon, 12 Mar 2018 15:35:23 -0400
+Message-ID: <22378.1520883323@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 11, 2018 at 10:15 AM, Dan Williams <dan.j.williams@intel.com> wrote:
-> On Sun, Mar 11, 2018 at 4:27 AM, Peter Zijlstra <peterz@infradead.org> wrote:
->> On Fri, Mar 09, 2018 at 10:55:32PM -0800, Dan Williams wrote:
->>> Add a generic facility for awaiting an atomic_t to reach a value of 1.
->>>
->>> Page reference counts typically need to reach 0 to be considered a
->>> free / inactive page. However, ZONE_DEVICE pages allocated via
->>> devm_memremap_pages() are never 'onlined', i.e. the put_page() typically
->>> done at init time to assign pages to the page allocator is skipped.
->>>
->>> These pages will have their reference count elevated > 1 by
->>> get_user_pages() when they are under DMA. In order to coordinate DMA to
->>> these pages vs filesytem operations like hole-punch and truncate the
->>> filesystem-dax implementation needs to capture the DMA-idle event i.e.
->>> the 2 to 1 count transition).
->>>
->>> For now, this implementation does not have functional behavior change,
->>> follow-on patches will add waiters for these page-idle events.
->>
->> Argh, no no no.. That whole wait_for_atomic_t thing is a giant
->> trainwreck already and now you're making it worse still.
->>
->> Please have a look here:
->>
->>   https://lkml.kernel.org/r/20171101190644.chwhfpoz3ywxx2m7@hirez.programming.kicks-ass.net
->
-> That thread seems to be worried about the object disappearing the
-> moment it's reference count reaches a target. That isn't the case with
-> the memmap / struct page objects for ZONE_DEVICE pages. I understand
-> wait_for_atomic_one() is broken in the general case, but as far as I
-> can see it works fine specifically for ZONE_DEVICE page busy tracking,
-> just not generic object lifetime.
+--==_Exmh_1520883323_3561P
+Content-Type: text/plain; charset=us-ascii
 
-Ok, that thread is also concerned with cleaning up the
-wait_for_atomic_* pattern to also do something more idiomatic with
-wait_event(). I agree that would be better, but I'm running short of
-time to go refactor this aou for 4.17 inclusion, especially as I
-expect another couple rounds of review on this more urgent data
-corruption fix series that depends on this new api. I think the
-addition of wait_for_atomic_one() makes it clear that we need a way to
-pass a conditional expression rather than create a variant api for
-each different condition. Can you help me out with an attempt of your
-own, or at least point in a direction that you would accept for
-solving the "Except the current wait_event() doesn't do the whole key
-part that makes the hash-table 'work'."  problem that you highlighted?
+Seen in the dmesg:
+
+[    0.000000] ================================================================================
+[    0.000000] UBSAN: Undefined behaviour in lib/radix-tree.c:123:14
+[    0.000000] member access within null pointer of type 'const struct radix_tree_node'
+[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G                T 4.16.0-rc4-next-20180307-dirty #559
+[    0.000000] Hardware name: Dell Inc. Latitude E6530/07Y85M, BIOS A20 05/08/2017
+[    0.000000] Call Trace:
+[    0.000000]  dump_stack+0x83/0xca
+[    0.000000]  ubsan_epilogue+0xd/0x3a
+[    0.000000]  handle_null_ptr_deref+0x85/0x90
+[    0.000000]  __ubsan_handle_type_mismatch_v1+0x5e/0x70
+[    0.000000]  __radix_tree_replace+0x1e4/0x1f0
+[    0.000000]  radix_tree_iter_replace+0x25/0x50
+[    0.000000]  idr_alloc_u32+0x166/0x1f0
+[    0.000000]  idr_alloc+0x7e/0xd0
+[    0.000000]  worker_pool_assign_id+0x61/0xd0
+[    0.000000]  ? mutex_lock_nested+0x1b/0x20
+[    0.000000]  workqueue_init_early+0x58a/0xc3f
+[    0.000000]  start_kernel+0x4f7/0x809
+[    0.000000]  x86_64_start_reservations+0x40/0x61
+[    0.000000]  x86_64_start_kernel+0x7b/0x9e
+[    0.000000]  secondary_startup_64+0xa5/0xb0
+[    0.000000] ================================================================================
+
+not sure why a null 'parent' value got passed to get_slot_offset() in the first place, but it sounds
+like something is missing an 'if (NULL)' test...
+
+--==_Exmh_1520883323_3561P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.8.0 04/21/2017
+
+iQEVAwUBWqbWe40DS38y7CIcAQIKVAgApf8tgcWmqWY2ryW9qObWSS7xUbj4YsVW
+gYnnLTdGWaqSJIy/ko+XQuzn5UUrykPULez9Nxrbmguiz+DLTFdEFQlzYbPramPk
+0xK8rKyBe9GzCZCzULz4iFp0tWteqi228RhO9Yr3LtDkl6qE3i2vSWxSiqemjvn3
+msK+zMnjjgbuJW5rRdmuZ3D7W0rOaz7HNtR23AfewPMQCk83tlVw8m+HU9TrNKii
+8jF5PR5zdlY1HsP8Cln/YIvnZlYNvWfDHTDDHb/psfHRUWgKqOVti/Ahdr1ro9hO
+xe89gNS9PISA0HI9E3JkjDkPvv2HEtVoCtMkkNaVOM2EZ/oG5UtcNg==
+=ObxP
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1520883323_3561P--
