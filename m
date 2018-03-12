@@ -1,170 +1,304 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932279AbeCLPFw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 11:05:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41553 "EHLO mx2.suse.de"
+        id S1752007AbeCLPGX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 11:06:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751247AbeCLPFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 11:05:51 -0400
-Subject: Re: [PATCH v4 3/3 update] mm/free_pcppages_bulk: prefetch buddy while
- not holding lock
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Aaron Lu <aaron.lu@intel.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
-        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Rientjes <rientjes@google.com>
-References: <20180301062845.26038-1-aaron.lu@intel.com>
- <20180301062845.26038-4-aaron.lu@intel.com>
- <20180301160950.b561d6b8b561217bad511229@linux-foundation.org>
- <20180302082756.GC6356@intel.com> <20180309082431.GB30868@intel.com>
- <20180309135832.988ab6d3d986658d531a79ef@linux-foundation.org>
-From: Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <8818156a-f4a9-ac8a-7179-e0b5e4225e38@suse.cz>
-Date: Mon, 12 Mar 2018 16:05:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751252AbeCLPGV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 11:06:21 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4ADA205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Mon, 12 Mar 2018 12:06:13 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+Subject: Re: [PATCH] perf stat: Add support for s390 transaction counters
+Message-ID: <20180312150613.GA23720@kernel.org>
+References: <20180312103807.45069-1-tmricht@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180309135832.988ab6d3d986658d531a79ef@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180312103807.45069-1-tmricht@linux.vnet.ibm.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/09/2018 10:58 PM, Andrew Morton wrote:
->>
->> When a page is freed back to the global pool, its buddy will be checked
->> to see if it's possible to do a merge. This requires accessing buddy's
->> page structure and that access could take a long time if it's cache cold.
->>
->> This patch adds a prefetch to the to-be-freed page's buddy outside of
->> zone->lock in hope of accessing buddy's page structure later under
->> zone->lock will be faster. Since we *always* do buddy merging and check
->> an order-0 page's buddy to try to merge it when it goes into the main
->> allocator, the cacheline will always come in, i.e. the prefetched data
->> will never be unused.
->>
->> Normally, the number of to-be-freed pages(i.e. count) equals to
->> pcp->batch (default=31 and has an upper limit of (PAGE_SHIFT * 8)=96 on
->> x86_64) but in the case of pcp's pages getting all drained, it will be
->> pcp->count which has an upper limit of pcp->high. pcp->high, although
->> has a default value of 186 (pcp->batch=31 * 6), can be changed by user
->> through /proc/sys/vm/percpu_pagelist_fraction and there is no software
->> upper limit so could be large, like several thousand. For this reason,
->> only the last pcp->batch number of page's buddy structure is prefetched
->> to avoid excessive prefetching. pcp-batch is used because:
->> 1 most often, count == pcp->batch;
->> 2 it has an upper limit itself so we won't prefetch excessively.
->>
->> Considering the possible large value of pcp->high, it also makes
->> sense to free the last added page first for cache hot's reason.
->> That's where the change of list_add_tail() to list_add() comes in
->> as we will free them from head to tail one by one.
->>
->> In the meantime, there are two concerns:
->> 1 the prefetch could potentially evict existing cachelines, especially
->>   for L1D cache since it is not huge;
->> 2 there is some additional instruction overhead, namely calculating
->>   buddy pfn twice.
->>
->> For 1, it's hard to say, this microbenchmark though shows good result but
->> the actual benefit of this patch will be workload/CPU dependant;
->> For 2, since the calculation is a XOR on two local variables, it's expected
->> in many cases that cycles spent will be offset by reduced memory latency
->> later. This is especially true for NUMA machines where multiple CPUs are
->> contending on zone->lock and the most time consuming part under zone->lock
->> is the wait of 'struct page' cacheline of the to-be-freed pages and their
->> buddies.
->>
->> Test with will-it-scale/page_fault1 full load:
->>
->> kernel      Broadwell(2S)  Skylake(2S)   Broadwell(4S)  Skylake(4S)
->> v4.16-rc2+  9034215        7971818       13667135       15677465
->> patch2/3    9536374 +5.6%  8314710 +4.3% 14070408 +3.0% 16675866 +6.4%
->> this patch 10180856 +6.8%  8506369 +2.3% 14756865 +4.9% 17325324 +3.9%
->> Note: this patch's performance improvement percent is against patch2/3.
->>
->> (Changelog stolen from Dave Hansen and Mel Gorman's comments at
->> http://lkml.kernel.org/r/148a42d8-8306-2f2f-7f7c-86bc118f8ccd@intel.com)
->>
->> Link: http://lkml.kernel.org/r/20180301062845.26038-4-aaron.lu@intel.com
->>
->> ...
->>
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -1141,6 +1141,9 @@ static void free_pcppages_bulk(struct zone *zone, int count,
->>  			batch_free = count;
->>  
->>  		do {
->> +			unsigned long pfn, buddy_pfn;
->> +			struct page *buddy;
->> +
->>  			page = list_last_entry(list, struct page, lru);
->>  			/* must delete to avoid corrupting pcp list */
->>  			list_del(&page->lru);
->> @@ -1149,7 +1152,23 @@ static void free_pcppages_bulk(struct zone *zone, int count,
->>  			if (bulkfree_pcp_prepare(page))
->>  				continue;
->>  
->> -			list_add_tail(&page->lru, &head);
->> +			list_add(&page->lru, &head);
+Em Mon, Mar 12, 2018 at 11:38:06AM +0100, Thomas Richter escreveu:
+> This patch introduces support for s390 transaction counters
+> displayed with command 'perf stat -T -- sleep 2'
 > 
-> The result here will be that free_pcppages_bulk() frees the pages in
-> the reverse order?
+> Right now there is only hard coded support for x86.
+> 
+> This patch introduces architecture specfic counter
+> tables for x86 and s390. The architecture is queried
+> and the event string for transaction counters is constructed
+> depending on the architecture and the CPU measurement
+> facility counter list.
+> 
+> Output Before:
+> [root@s35lp76 perf]# perf stat -T -- sleep 1
+> Cannot set up transaction events
+> [root@s35lp76 perf]#
+> 
+> Output after:
+> [root@s35lp76 perf]# ./perf stat -T -- sleep 1
+> 
+>  Performance counter stats for 'sleep 1':
+> 
+>    0.939985      task-clock (msec)         #    0.001 CPUs utilized
+>   2,557,145      instructions              #    0.53  insn per cycle
+>   4,785,929      cycles                    #    5.091 GHz
+>           0      cpum_cf/TX_C_TABORT_NO_SPECIAL/ #    0.000 K/sec
+>           0      cpum_cf/TX_C_TABORT_SPECIAL/ #    0.000 K/sec
+>           0      cpum_cf/TX_C_TEND/        #    0.000 K/sec
+>           0      cpum_cf/TX_NC_TABORT/     #    0.000 K/sec
+>           0      cpum_cf/TX_NC_TEND/       #    0.000 K/sec
+> 
+>   1.001934710 seconds time elapsed
+> 
+> [root@s35lp76 perf]#
+> 
+> Output on x86 is unchanged.
 
-I actually think it restores the order, compared to the previous version
-(see my earlier reply).
+Please break this patch in multiple ones, for instance, that part that
+converts the hardcoded string to a table with events, etc, should be
+done first, just for x86, then when you add the s/390 support that patch
+will have mostly + lines, i.e. will be _just_ for s/390.
 
-> I don't immediately see a downside to that.  In the (distant) past we
-> had issues when successive alloc_page() calls would return pages in
-> descending address order - that totally screwed up scatter-gather page
-> merging.  But this is the page-freeing path.  Still, something to be
-> thought about and monitored.
-> 
->> +
->> +			/*
->> +			 * We are going to put the page back to the global
->> +			 * pool, prefetch its buddy to speed up later access
->> +			 * under zone->lock. It is believed the overhead of
->> +			 * an additional test and calculating buddy_pfn here
->> +			 * can be offset by reduced memory latency later. To
->> +			 * avoid excessive prefetching due to large count, only
->> +			 * prefetch buddy for the last pcp->batch nr of pages.
->> +			 */
->> +			if (count > pcp->batch)
->> +				continue;
+I.e. the logic that discovers which events should be used instead of
+trying out of two possible sets ("full featured" and that limited one)
+is an improvement that works for x86 or any other arch where there are
+processors with different sets of transaction counters.
 
-You could also go to the locked part after pcp->batch pages and then
-return back, but maybe let's not complicate it further for corner cases :)
+See other comments below.
+ 
+> Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+> Reviewed--by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+> ---
+>  tools/perf/builtin-stat.c | 162 ++++++++++++++++++++++++++++++++++++++--------
+>  1 file changed, 135 insertions(+), 27 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index 86c8c8a9229c..75b4f1c9cd78 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -95,22 +95,8 @@ static const char *transaction_attrs = {
+>  	"task-clock,"
+>  	"{"
+>  	"instructions,"
+> -	"cycles,"
+> -	"cpu/cycles-t/,"
+> -	"cpu/tx-start/,"
+> -	"cpu/el-start/,"
+> -	"cpu/cycles-ct/"
+> -	"}"
+> -};
+> -
+> -/* More limited version when the CPU does not have all events. */
+> -static const char * transaction_limited_attrs = {
+> -	"task-clock,"
+> -	"{"
+> -	"instructions,"
+> -	"cycles,"
+> -	"cpu/cycles-t/,"
+> -	"cpu/tx-start/"
+> +	"cycles"
+> +	"%s"
+>  	"}"
+>  };
+>  
+> @@ -2149,13 +2135,123 @@ __weak void arch_topdown_group_warn(void)
+>  {
+>  }
+>  
+> +struct pmu_tx_events {			/* Define transaction counters */
+> +	const char *pmu;		/* PMU name */
+> +	const char *name;		/* Counter name */
+> +};
+> +
+> +static struct pmu_tx_events x86_tx_events[] = {/* x86 transaction counters */
+> +	{
+> +		.pmu = "cpu",
+> +		.name = "cycles-t",
+> +	},
+> +	{
+> +		.pmu = "cpu",
+> +		.name = "tx-start",
+> +	},
+> +	{
+> +		.pmu = "cpu",
+> +		.name = "el-start",
+> +	},
+> +	{
+> +		.pmu = "cpu",
+> +		.name = "cycles-ct",
+> +	},
+> +	{
+> +		.pmu = 0
+> +	}
+> +};
+> +
+> +static struct pmu_tx_events s390_tx_events[] = {/* s390 transaction counters */
+> +	{
+> +		.pmu = "cpum_cf",
+> +		.name = "TX_C_TABORT_NO_SPECIAL",
+> +	},
+> +	{
+> +		.pmu = "cpum_cf",
+> +		.name = "TX_C_TABORT_SPECIAL",
+> +	},
+> +	{
+> +		.pmu = "cpum_cf",
+> +		.name = "TX_C_TEND",
+> +	},
+> +	{
+> +		.pmu = "cpum_cf",
+> +		.name = "TX_NC_TABORT",
+> +	},
+> +	{
+> +		.pmu = "cpum_cf",
+> +		.name = "TX_NC_TEND",
+> +	},
+> +	{
+> +		.pmu = 0
+> +	}
+> +};
+> +
+> +struct arch_pmu_tx_events {
+> +	const char *archname;		/* Architecture name */
+> +	struct pmu_tx_events *tx;	/* Architecture specific counters */
+> +} arch_pmu_tx_events[] = {
+> +	{
+> +		.archname = "s390",
+> +		.tx = s390_tx_events
+> +	},
+> +	{
+> +		.archname = "x86",
+> +		.tx = x86_tx_events
+> +	},
+> +	{
+> +		.archname = 0
+> +	}
+> +};
+> +
+> +static struct pmu_tx_events *pmu_tx_find_arch(const char *name)
+> +{
+> +	struct arch_pmu_tx_events *p = arch_pmu_tx_events;
+> +
+> +	for (; p->archname; ++p)
+> +		if (!strcmp(name, p->archname))
+> +			return p->tx;
+> +	return NULL;
+> +}
+> +
+> +/* Search the list of transaction events and test if they are valid for
+> + * this PMU. The events are named cpu/cycles-t/ or cpum_cf/TX_NC_TEND/
+> + * that is the PMU name followed by the event name surrounded by slashes.
+> + *
+> + * The function returns a string which contains the tested (and existing)
+> + * PMU transaction events. The caller must free this string.
+> + *
+> + * If no PMU transaction events are found, a NULL pointer is returned.
+> + */
+> +static char *build_tx_string(const char *fmt, struct pmu_tx_events *txp)
+> +{
+> +	struct pmu_tx_events *p = txp;
+> +	char buffer[512], *result;
+> +	int rc, i = 0;
+> +
+> +	memset(buffer, 0, sizeof(buffer));
+> +	for (p = txp; p->pmu; ++p) {
+> +		if (pmu_have_event(p->pmu, p->name)) {
+> +			rc = snprintf(buffer + i, sizeof(buffer) - i, ",%s/%s/",
+> +				      p->pmu, p->name);
 
->> +			pfn = page_to_pfn(page);
->> +			buddy_pfn = __find_buddy_pfn(pfn, 0);
->> +			buddy = page + (buddy_pfn - pfn);
->> +			prefetch(buddy);
->>  		} while (--count && --batch_free && !list_empty(list));
-> 
-> This loop hurts my brain, mainly the handling of `count':
-> 
-> 	while (count) {
-> 		do {
-> 			batch_free++;
-> 		} while (list_empty(list));
-> 
-> 		/* This is the only non-empty list. Free them all. */
-> 		if (batch_free == MIGRATE_PCPTYPES)
-> 			batch_free = count;
-> 
-> 		do {
-> 		} while (--count && --batch_free && !list_empty(list));
-> 	}
-> 
-> I guess it kinda makes sense - both loops terminate on count==0.  But
-> still.  Can it be clarified?
+Please use scnprintf(), we've been using it instead of snprintf due to
+this in its man page:
 
-Yeah this is rather far from straightforward :(
+RETURN VALUE
+       The  functions snprintf() and vsnprintf() do not write more than size bytes (including the terminating null byte ('\0')).  If
+       the output was truncated due to this limit, then the return value is the number of characters (excluding the terminating null
+       byte)  which would have been written to the final string if enough space had been available.  Thus, a return value of size or
+       more means that the output was truncated.
+
+---
+
+It doesn't return the number of characters printed, but the number of
+characters that would be printed if there was space, so that you can
+check for truncation.
+
+> +			i += rc;
+> +			if (i >= (int)sizeof(buffer))
+> +				break;
+> +		}
+> +	}
+> +	if (i)			/* Transaction counters found */
+> +		return asprintf(&result, fmt, buffer) < 0 ? NULL : result;
+> +	return NULL;
+> +}
+> +
+>  /*
+>   * Add default attributes, if there were no attributes specified or
+>   * if -d/--detailed, -d -d or -d -d -d is used:
+>   */
+>  static int add_default_attributes(void)
+>  {
+> -	int err;
+> +	int err = -1;
+>  	struct perf_event_attr default_attrs0[] = {
+>  
+>    { .type = PERF_TYPE_SOFTWARE, .config = PERF_COUNT_SW_TASK_CLOCK		},
+> @@ -2274,20 +2370,32 @@ static int add_default_attributes(void)
+>  		return 0;
+>  
+>  	if (transaction_run) {
+> -		struct parse_events_error errinfo;
+> +		struct parse_events_error errinfo = { .str = NULL };
+> +		char *tx_str;
+> +		struct pmu_tx_events *tx_archp;
+>  
+> -		if (pmu_have_event("cpu", "cycles-ct") &&
+> -		    pmu_have_event("cpu", "el-start"))
+> -			err = parse_events(evsel_list, transaction_attrs,
+> -					   &errinfo);
+> -		else
+> -			err = parse_events(evsel_list,
+> -					   transaction_limited_attrs,
+> -					   &errinfo);
+> -		if (err) {
+> +		/* Find architecture transaction counter string table */
+> +		tx_archp = pmu_tx_find_arch(perf_env__arch(NULL));
+> +		if (!tx_archp) {
+> +			fprintf(stderr, "Cannot set up transaction events\n");
+> +			return -1;
+> +		}
+> +
+> +		/* Build architecture transaction counter string */
+> +		tx_str = build_tx_string(transaction_attrs, tx_archp);
+> +		if (!tx_str) {
+>  			fprintf(stderr, "Cannot set up transaction events\n");
+>  			return -1;
+>  		}
+> +
+> +		err = parse_events(evsel_list, tx_str, &errinfo);
+> +		free(tx_str);
+> +		if (err) {
+> +			fprintf(stderr, "Cannot set up transaction events:%s\n",
+> +				errinfo.str);
+
+Can't we use the parse_events_print_error() function here? Or why is it
+better to do it this way (using errinfo.str)?
+
+> +			free(errinfo.str);
+> +			return -1;
+> +		}
+>  		return 0;
+>  	}
+>  
+> -- 
+> 2.14.3
