@@ -1,221 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752389AbeCLILq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 04:11:46 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:45517 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750752AbeCLILn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 04:11:43 -0400
-Message-ID: <1520842245.1513.5.camel@bootlin.com>
-Subject: Re: [RFCv4,19/21] media: vim2m: add request support
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To: Dmitry Osipenko <digetx@gmail.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Gustavo Padovan <gustavo.padovan@collabora.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Date: Mon, 12 Mar 2018 09:10:45 +0100
-In-Reply-To: <6470b45d-e9dc-0a22-febc-cd18ae1092be@gmail.com>
-References: <20180220044425.169493-20-acourbot@chromium.org>
-         <1520440654.1092.15.camel@bootlin.com>
-         <6470b45d-e9dc-0a22-febc-cd18ae1092be@gmail.com>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-nCN24A6UFPZKFV8sAZLz"
-X-Mailer: Evolution 3.26.5 
-Mime-Version: 1.0
+        id S932575AbeCLINn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 04:13:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36174 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750752AbeCLINl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 04:13:41 -0400
+Date: Mon, 12 Mar 2018 04:08:57 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
+        Steve Grubb <sgrubb@redhat.com>, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH ghak21 V2 0/4] audit: address ANOM_LINK excess records
+Message-ID: <20180312080857.pbc5mml6fiznav35@madcap2.tricolour.ca>
+References: <cover.1520835596.git.rgb@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1520835596.git.rgb@redhat.com>
+User-Agent: NeoMutt/20171027
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-03-12 02:31, Richard Guy Briggs wrote:
+> Audit link denied events were being unexpectedly produced in a disjoint
+> way when audit was disabled, and when they were expected, there were
+> duplicate PATH records.  This patchset addresses both issues for
+> symlinks and hardlinks.
+> 
+> This was introduced with
+> 	commit b24a30a7305418ff138ff51776fc555ec57c011a
+> 	("audit: fix event coverage of AUDIT_ANOM_LINK")
+> 	commit a51d9eaa41866ab6b4b6ecad7b621f8b66ece0dc
+> 	("fs: add link restriction audit reporting")
+> 
+> Here are the resulting events:
+> 
+> symlink:
+> type=PROCTITLE msg=audit(03/12/2018 02:21:49.578:310) : proctitle=ls ./my-passwd 
+> type=PATH msg=audit(03/12/2018 02:21:49.578:310) : item=1 name=/tmp/ inode=13529 dev=00:27 mode=dir,sticky,777 ouid=root ogid=root rdev=00:00 obj=system_u:object_r:tmp_t:s0 nametype=PARENT cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 
+> type=PATH msg=audit(03/12/2018 02:21:49.578:310) : item=0 name=./my-passwd inode=17090 dev=00:27 mode=link,777 ouid=rgb ogid=rgb rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=NORMAL cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 
+> type=CWD msg=audit(03/12/2018 02:21:49.578:310) : cwd=/tmp 
+> type=SYSCALL msg=audit(03/12/2018 02:21:49.578:310) : arch=x86_64 syscall=stat success=no exit=EACCES(Permission denied) a0=0x7ffd79950dda a1=0x563f658a03c8 a2=0x563f658a03c8 a3=0x79950d00 items=2 ppid=552 pid=629 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=ls exe=/usr/bin/ls subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=(null) 
+> type=ANOM_LINK msg=audit(03/12/2018 02:21:49.578:310) : op=follow_link ppid=552 pid=629 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=ls exe=/usr/bin/ls subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 res=no 
+> ----
+> hardlink:
+> type=PROCTITLE msg=audit(03/12/2018 02:24:39.813:314) : proctitle=ln test test-ln 
+> type=PATH msg=audit(03/12/2018 02:24:39.813:314) : item=1 name=/tmp inode=13529 dev=00:27 mode=dir,sticky,777 ouid=root ogid=root rdev=00:00 obj=system_u:object_r:tmp_t:s0 nametype=PARENT cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 
+> type=PATH msg=audit(03/12/2018 02:24:39.813:314) : item=0 name=test inode=18112 dev=00:27 mode=file,700 ouid=root ogid=root rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=NORMAL cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 
+> type=CWD msg=audit(03/12/2018 02:24:39.813:314) : cwd=/tmp 
+> type=SYSCALL msg=audit(03/12/2018 02:24:39.813:314) : arch=x86_64 syscall=linkat success=no exit=EPERM(Operation not permitted) a0=0xffffff9c a1=0x7ffccba77629 a2=0xffffff9c a3=0x7ffccba7762e items=2 ppid=605 pid=638 auid=rgb uid=rgb gid=rgb euid=rgb suid=rgb fsuid=rgb egid=rgb sgid=rgb fsgid=rgb tty=pts0 ses=4 comm=ln exe=/usr/bin/ln subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=(null) 
+> type=ANOM_LINK msg=audit(03/12/2018 02:24:39.813:314) : op=linkat ppid=605 pid=638 auid=rgb uid=rgb gid=rgb euid=rgb suid=rgb fsuid=rgb egid=rgb sgid=rgb fsgid=rgb tty=pts0 ses=4 comm=ln exe=/usr/bin/ln subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 res=no 
+> 
+> See: https://github.com/linux-audit/audit-kernel/issues/21
+> See also: https://github.com/linux-audit/audit-kernel/issues/51
+> 
+> Richard Guy Briggs (4):
+>   audit: make ANOM_LINK obey audit_enabled and audit_dummy_context
+>   audit: link denied should not directly generate PATH record
+>   audit: add refused symlink to audit_names
+>   audit: add parent of refused symlink to audit_names
+> 
+>  fs/namei.c            |  5 +++--
+>  include/linux/audit.h |  9 +++++----
+>  kernel/audit.c        | 43 ++++++++++++++++++++++++++++++++-----------
+>  3 files changed, 40 insertions(+), 17 deletions(-)
+> 
+> -- 
 
---=-nCN24A6UFPZKFV8sAZLz
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Changelog:
+v2:
+- remove now supperfluous struct path * parameter from audit_log_link_denied()
+- refactor audit_log_symlink_denied() to properly free memory (pathname, filename)
 
-Hi,
+> 1.8.3.1
+> 
 
-On Sun, 2018-03-11 at 22:42 +0300, Dmitry Osipenko wrote:
-> Hello,
->=20
-> On 07.03.2018 19:37, Paul Kocialkowski wrote:
-> > Hi,
-> >=20
-> > First off, I'd like to take the occasion to say thank-you for your
-> > work.
-> > This is a major piece of plumbing that is required for me to add
-> > support
-> > for the Allwinner CedarX VPU hardware in upstream Linux. Other
-> > drivers,
-> > such as tegra-vde (that was recently merged in staging) are also
-> > badly
-> > in need of this API.
->=20
-> Certainly it would be good to have a common UAPI. Yet I haven't got my
-> hands on
-> trying to implement the V4L interface for the tegra-vde driver, but
-> I've taken a
-> look at Cedrus driver and for now I've one question:
->=20
-> Would it be possible (or maybe already is) to have a single IOCTL that
-> takes input/output buffers with codec parameters, processes the
-> request(s) and returns to userspace when everything is done? Having 5
-> context switches for a single frame decode (like Cedrus VAAPI driver
-> does) looks like a bit of overhead.
+- RGB
 
-The V4L2 interface exposes ioctls for differents actions and I don't
-think there's a combined ioctl for this. The request API was introduced
-precisely because we need to have consistency between the various ioctls
-needed for each frame. Maybe one single (atomic) ioctl would have worked
-too, but that's apparently not how the V4L2 API was designed.
-
-I don't think there is any particular overhead caused by having n ioctls
-instead of a single one. At least that would be very surprising IMHO.
-
-> > I have a few comments based on my experience integrating this
-> > request API with the Cedrus VPU driver (and the associated libva
-> > backend), that also concern the vim2m driver.
-> >=20
-> > On Tue, 2018-02-20 at 13:44 +0900, Alexandre Courbot wrote:
-> > > Set the necessary ops for supporting requests in vim2m.
-> > >=20
-> > > Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
-> > > ---
-> > >  drivers/media/platform/Kconfig |  1 +
-> > >  drivers/media/platform/vim2m.c | 75
-> > > ++++++++++++++++++++++++++++++++++
-> > >  2 files changed, 76 insertions(+)
-> > >=20
-> > > diff --git a/drivers/media/platform/Kconfig
-> > > b/drivers/media/platform/Kconfig
-> > > index 614fbef08ddc..09be0b5f9afe 100644
-> > > --- a/drivers/media/platform/Kconfig
-> > > +++ b/drivers/media/platform/Kconfig
-> >=20
-> > [...]
-> >=20
-> > > +static int vim2m_request_submit(struct media_request *req,
-> > > +				struct media_request_entity_data
-> > > *_data)
-> > > +{
-> > > +	struct v4l2_request_entity_data *data;
-> > > +
-> > > +	data =3D to_v4l2_entity_data(_data);
-> >=20
-> > We need to call v4l2_m2m_try_schedule here so that m2m scheduling
-> > can
-> > happen when only 2 buffers were queued and no other action was taken
-> > from usespace. In that scenario, m2m scheduling currently doesn't
-> > happen.
-> >=20
-> > However, this requires access to the m2m context, which is not easy
-> > to
-> > get from req or _data. I'm not sure that some container_of magic
-> > would
-> > even do the trick here.
-> >=20
-> > > +	return vb2_request_submit(data);
-> >=20
-> > vb2_request_submit does not lock the associated request mutex
-> > although
-> > it accesses the associated queued buffers list, which I believe this
-> > mutex is supposed to protect.
-> >=20
-> > We could either wrap this call with media_request_lock(req) and
-> > media_request_unlock(req) or have the lock in the function itself,
-> > which
-> > would require passing it the req pointer.
-> >=20
-> > The latter would probably be safer for future use of the function.
-> >=20
-> > > +}
-> > > +
-> > > +static const struct media_request_entity_ops
-> > > vim2m_request_entity_ops
-> > > =3D {
-> > > +	.data_alloc	=3D vim2m_entity_data_alloc,
-> > > +	.data_free	=3D v4l2_request_entity_data_free,
-> > > +	.submit		=3D vim2m_request_submit,
-> > > +};
-> > > +
-> > >  /*
-> > >   * File operations
-> > >   */
-> > > @@ -900,6 +967,9 @@ static int vim2m_open(struct file *file)
-> > >  	ctx->dev =3D dev;
-> > >  	hdl =3D &ctx->hdl;
-> > >  	v4l2_ctrl_handler_init(hdl, 4);
-> > > +	v4l2_request_entity_init(&ctx->req_entity,
-> > > &vim2m_request_entity_ops,
-> > > +				 &ctx->dev->vfd);
-> > > +	ctx->fh.entity =3D &ctx->req_entity.base;
-> > >  	v4l2_ctrl_new_std(hdl, &vim2m_ctrl_ops, V4L2_CID_HFLIP,
-> > > 0, 1,
-> > > 1, 0);
-> > >  	v4l2_ctrl_new_std(hdl, &vim2m_ctrl_ops, V4L2_CID_VFLIP,
-> > > 0, 1,
-> > > 1, 0);
-> > >  	v4l2_ctrl_new_custom(hdl, &vim2m_ctrl_trans_time_msec,
-> > > NULL);
-> > > @@ -999,6 +1069,9 @@ static int vim2m_probe(struct platform_device
-> > > *pdev)
-> > >  	if (!dev)
-> > >  		return -ENOMEM;
-> > > =20
-> > > +	v4l2_request_mgr_init(&dev->req_mgr, &dev->vfd,
-> > > +			      &v4l2_request_ops);
-> > > +
-> > >  	spin_lock_init(&dev->irqlock);
-> > > =20
-> > >  	ret =3D v4l2_device_register(&pdev->dev, &dev->v4l2_dev);
-> > > @@ -1012,6 +1085,7 @@ static int vim2m_probe(struct
-> > > platform_device
-> > > *pdev)
-> > >  	vfd =3D &dev->vfd;
-> > >  	vfd->lock =3D &dev->dev_mutex;
-> > >  	vfd->v4l2_dev =3D &dev->v4l2_dev;
-> > > +	vfd->req_mgr =3D &dev->req_mgr.base;
-> > > =20
-> > >  	ret =3D video_register_device(vfd, VFL_TYPE_GRABBER, 0);
-> > >  	if (ret) {
-> > > @@ -1054,6 +1128,7 @@ static int vim2m_remove(struct
-> > > platform_device
-> > > *pdev)
-> > >  	del_timer_sync(&dev->timer);
-> > >  	video_unregister_device(&dev->vfd);
-> > >  	v4l2_device_unregister(&dev->v4l2_dev);
-> > > +	v4l2_request_mgr_free(&dev->req_mgr);
-> > > =20
-> > >  	return 0;
-> > >  }
->=20
->=20
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
---=-nCN24A6UFPZKFV8sAZLz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlqmNgUACgkQ3cLmz3+f
-v9ERJQgAnMVWv7/K+npf2jX8Gznljiv0VN+zRdzTGbWN+EP5pKH9xLjVx0Pb+UoI
-Oo9Ltu+AI3GEckcdSxjOIwWupyDPOY0g3nzrZ8AzjLGYICsq8mNC4HlgwqtB3Hkb
-PtgkYPbP3Fis8UkuvTQHPtyPMNJQGPfGvSb8Bx8SyBgPFDsAAfCrm/ic/2kdwGQA
-zYlaTBcUdfXULOVT2uU1v5s3YGtBeRQ4qH0ogOhlBY64GJjkDcyu5sEElCCnpQ/L
-eRYqCmrjXRI/kAZrB3hpGDsEWoVYsWSXsOojqw3RCei9bP8kDfnT77Auj7HkfCRN
-EdiG6QfHnN/zXeuKGCee9CA1lhgHzw==
-=Xl00
------END PGP SIGNATURE-----
-
---=-nCN24A6UFPZKFV8sAZLz--
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
