@@ -1,177 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752695AbeCLKla (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 06:41:30 -0400
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:57985 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752407AbeCLKl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 06:41:28 -0400
-Subject: Re: Regression from efi: call get_event_log before ExitBootServices
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Thiebaud Weksteen <tweek@google.com>, Jeremy Cline <jeremy@jcline.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: hdegoede@redhat.com, Javier Martinez Canillas <javierm@redhat.com>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-References: <01000161fc0b4755-df0621f4-ab5d-479a-b425-adf98427a308-000000@email.amazonses.com>
- <e7c2be5c-cf21-fc2d-efda-d9222d93ffad@redhat.com>
- <b32f335c-0d77-1749-f7fe-65f512280255@redhat.com>
- <ade378f6-c997-1d48-a30d-cceee6435fc8@redhat.com>
- <a3b5f822-f8f4-e2f5-46da-e23e13174f28@redhat.com>
- <cec36124-0950-6ad9-58a8-9bd69e63aa04@redhat.com>
- <0100016206a68850-bd5c96b3-f275-46ea-98b1-1317e02a5d6e-000000@email.amazonses.com>
- <29c1640a-cf19-ca19-7de9-96f202edfb5a@redhat.com>
- <CA+zpnLebtbjbA-Jg+RvMOqwDE5R--9V3hTwMk95Br4vM1LgBjQ@mail.gmail.com>
- <010001620bafa06b-41525407-603e-40a9-ba11-6033b2f5dcc7-000000@email.amazonses.com>
- <CA+zpnLdmg30Beg+uUJNgBQ5gbjXuJ0uVhyzCgf6m7xbx2yARBg@mail.gmail.com>
- <f9098c326ab3070c3215901e3383a3a2d208b2ae.camel@linux.intel.com>
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-Message-ID: <f57f77fb-9637-e9f9-2f9c-3244ef652948@molgen.mpg.de>
-Date: Mon, 12 Mar 2018 11:41:25 +0100
+        id S1752625AbeCLKod (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 06:44:33 -0400
+Received: from www62.your-server.de ([213.133.104.62]:48565 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751229AbeCLKoc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 06:44:32 -0400
+Subject: Re: [BUGFIX PATCH bpf-next] error-injection: Fix to prohibit jump
+ optimization
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Alexei Starovoitov <ast@fb.com>, Josef Bacik <jbacik@fb.com>,
+        rostedt@goodmis.org, mingo@redhat.com, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org, ast@kernel.org,
+        kernel-team@fb.com, linux-btrfs@vger.kernel.org,
+        darrick.wong@oracle.com, Josef Bacik <josef@toxicpanda.com>,
+        Akinobu Mita <akinobu.mita@gmail.com>
+References: <152084884886.1536.4464134247603910765.stgit@devbox>
+ <20180312192738.77061ec53f9437d960b437d9@kernel.org>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <c5e08b3e-069c-5160-a1d2-10c2dbac229e@iogearbox.net>
+Date: Mon, 12 Mar 2018 11:44:21 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <f9098c326ab3070c3215901e3383a3a2d208b2ae.camel@linux.intel.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms020008010804020209080606"
+In-Reply-To: <20180312192738.77061ec53f9437d960b437d9@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a cryptographically signed message in MIME format.
+Hi Masami,
 
---------------ms020008010804020209080606
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+On 03/12/2018 11:27 AM, Masami Hiramatsu wrote:
+> On Mon, 12 Mar 2018 19:00:49 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+>> Since the kprobe which was optimized by jump can not change
+>> the execution path, the kprobe for error-injection must not
+>> be optimized. To prohibit it, set a dummy post-handler as
+>> officially stated in Documentation/kprobes.txt.
+> 
+> Note that trace-probe based BPF is not affected, because it
+> ensures the trace-probe is based on ftrace, which is not
+> jump optimized.
 
-Dear Jarkko,
+Thanks for the fix! I presume this should go via bpf instead of bpf-next
+tree since 4b1a29a7f542 ("error-injection: Support fault injection framework")
+is in Linus' tree as well. Unless there are objection I would rather route
+it that way so it would be for 4.16.
 
+Thanks,
+Daniel
 
-On 03/12/18 11:17, Jarkko Sakkinen wrote:
-> On Sat, 2018-03-10 at 10:45 +0000, Thiebaud Weksteen wrote:
->> On Fri, Mar 9, 2018 at 5:54 PM Jeremy Cline <jeremy@jcline.org> wrote:=
-
->>> and it's hanging at "memset(log_tbl, 0, sizeof(*log_tbl) + log_size);=
-"
+> Thanks,
+> 
 >>
->> Thanks. Well, it looks like the memory that is supposedly allocated is=
- not
->> usable. I'm thinking this is a firmware bug.
->> Ard, would you agree on this assumption? Thoughts on how to proceed?
->=20
-> Check if the BIOS is up to date?
-
-How would that help? The no regression policy demands, that Linux=20
-continues working on systems, where it worked before. So upgrading the=20
-firmware is no solution, is it? Until a solution is found, the commits=20
-should be reverted.
-
-
-Kind regards,
-
-Paul
-
-
---------------ms020008010804020209080606
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-EFowggUSMIID+qADAgECAgkA4wvV+K8l2YEwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNVBAYT
-AkRFMSswKQYDVQQKDCJULVN5c3RlbXMgRW50ZXJwcmlzZSBTZXJ2aWNlcyBHbWJIMR8wHQYD
-VQQLDBZULVN5c3RlbXMgVHJ1c3QgQ2VudGVyMSUwIwYDVQQDDBxULVRlbGVTZWMgR2xvYmFs
-Um9vdCBDbGFzcyAyMB4XDTE2MDIyMjEzMzgyMloXDTMxMDIyMjIzNTk1OVowgZUxCzAJBgNV
-BAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1dHNjaGVu
-IEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNVBAMTJERG
-Ti1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjCCASIwDQYJKoZIhvcNAQEBBQAD
-ggEPADCCAQoCggEBAMtg1/9moUHN0vqHl4pzq5lN6mc5WqFggEcVToyVsuXPztNXS43O+FZs
-FVV2B+pG/cgDRWM+cNSrVICxI5y+NyipCf8FXRgPxJiZN7Mg9mZ4F4fCnQ7MSjLnFp2uDo0p
-eQcAIFTcFV9Kltd4tjTTwXS1nem/wHdN6r1ZB+BaL2w8pQDcNb1lDY9/Mm3yWmpLYgHurDg0
-WUU2SQXaeMpqbVvAgWsRzNI8qIv4cRrKO+KA3Ra0Z3qLNupOkSk9s1FcragMvp0049ENF4N1
-xDkesJQLEvHVaY4l9Lg9K7/AjsMeO6W/VRCrKq4Xl14zzsjz9AkH4wKGMUZrAcUQDBHHWekC
-AwEAAaOCAXQwggFwMA4GA1UdDwEB/wQEAwIBBjAdBgNVHQ4EFgQUk+PYMiba1fFKpZFK4OpL
-4qIMz+EwHwYDVR0jBBgwFoAUv1kgNgB5oKAia4zV8mHSuCzLgkowEgYDVR0TAQH/BAgwBgEB
-/wIBAjAzBgNVHSAELDAqMA8GDSsGAQQBga0hgiwBAQQwDQYLKwYBBAGBrSGCLB4wCAYGZ4EM
-AQICMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9wa2kwMzM2LnRlbGVzZWMuZGUvcmwvVGVs
-ZVNlY19HbG9iYWxSb290X0NsYXNzXzIuY3JsMIGGBggrBgEFBQcBAQR6MHgwLAYIKwYBBQUH
-MAGGIGh0dHA6Ly9vY3NwMDMzNi50ZWxlc2VjLmRlL29jc3ByMEgGCCsGAQUFBzAChjxodHRw
-Oi8vcGtpMDMzNi50ZWxlc2VjLmRlL2NydC9UZWxlU2VjX0dsb2JhbFJvb3RfQ2xhc3NfMi5j
-ZXIwDQYJKoZIhvcNAQELBQADggEBAIcL/z4Cm2XIVi3WO5qYi3FP2ropqiH5Ri71sqQPrhE4
-eTizDnS6dl2e6BiClmLbTDPo3flq3zK9LExHYFV/53RrtCyD2HlrtrdNUAtmB7Xts5et6u5/
-MOaZ/SLick0+hFvu+c+Z6n/XUjkurJgARH5pO7917tALOxrN5fcPImxHhPalR6D90Bo0fa3S
-PXez7vTXTf/D6OWST1k+kEcQSrCFWMBvf/iu7QhCnh7U3xQuTY+8npTD5+32GPg8SecmqKc2
-2CzeIs2LgtjZeOJVEqM7h0S2EQvVDFKvaYwPBt/QolOLV5h7z/0HJPT8vcP9SpIClxvyt7bP
-ZYoaorVyGTkwggWNMIIEdaADAgECAgwcOtRQhH7u81j4jncwDQYJKoZIhvcNAQELBQAwgZUx
-CzAJBgNVBAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1
-dHNjaGVuIEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNV
-BAMTJERGTi1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjAeFw0xNjExMDMxNTI0
-NDhaFw0zMTAyMjIyMzU5NTlaMGoxCzAJBgNVBAYTAkRFMQ8wDQYDVQQIDAZCYXllcm4xETAP
-BgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxhbmNrLUdlc2VsbHNjaGFmdDEVMBMG
-A1UEAwwMTVBHIENBIC0gRzAyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnhx4
-59Lh4WqgOs/Md04XxU2yFtfM15ZuJV0PZP7BmqSJKLLPyqmOrADfNdJ5PIGBto2JBhtRRBHd
-G0GROOvTRHjzOga95WOTeura79T21FWwwAwa29OFnD3ZplQs6HgdwQrZWNi1WHNJxn/4mA19
-rNEBUc5urSIpZPvZi5XmlF3v3JHOlx3KWV7mUteB4pwEEfGTg4npPAJbp2o7arxQdoIq+Pu2
-OsvqhD7Rk4QeaX+EM1QS4lqd1otW4hE70h/ODPy1xffgbZiuotWQLC6nIwa65Qv6byqlIX0q
-Zuu99Vsu+r3sWYsL5SBkgecNI7fMJ5tfHrjoxfrKl/ErTAt8GQIDAQABo4ICBTCCAgEwEgYD
-VR0TAQH/BAgwBgEB/wIBATAOBgNVHQ8BAf8EBAMCAQYwKQYDVR0gBCIwIDANBgsrBgEEAYGt
-IYIsHjAPBg0rBgEEAYGtIYIsAQEEMB0GA1UdDgQWBBTEiKUH7rh7qgwTv9opdGNSG0lwFjAf
-BgNVHSMEGDAWgBST49gyJtrV8UqlkUrg6kviogzP4TCBjwYDVR0fBIGHMIGEMECgPqA8hjpo
-dHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jcmwvY2Fjcmwu
-Y3JsMECgPqA8hjpodHRwOi8vY2RwMi5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1
-Yi9jcmwvY2FjcmwuY3JsMIHdBggrBgEFBQcBAQSB0DCBzTAzBggrBgEFBQcwAYYnaHR0cDov
-L29jc3AucGNhLmRmbi5kZS9PQ1NQLVNlcnZlci9PQ1NQMEoGCCsGAQUFBzAChj5odHRwOi8v
-Y2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNy
-dDBKBggrBgEFBQcwAoY+aHR0cDovL2NkcDIucGNhLmRmbi5kZS9nbG9iYWwtcm9vdC1nMi1j
-YS9wdWIvY2FjZXJ0L2NhY2VydC5jcnQwDQYJKoZIhvcNAQELBQADggEBABLpeD5FygzqOjj+
-/lAOy20UQOGWlx0RMuPcI4nuyFT8SGmK9lD7QCg/HoaJlfU/r78ex+SEide326evlFAoJXIF
-jVyzNltDhpMKrPIDuh2N12zyn1EtagqPL6hu4pVRzcBpl/F2HCvtmMx5K4WN1L1fmHWLcSap
-dhXLvAZ9RG/B3rqyULLSNN8xHXYXpmtvG0VGJAndZ+lj+BH7uvd3nHWnXEHC2q7iQlDUqg0a
-wIqWJgdLlx1Q8Dg/sodv0m+LN0kOzGvVDRCmowBdWGhhusD+duKV66pBl+qhC+4LipariWaM
-qK5ppMQROATjYeNRvwI+nDcEXr2vDaKmdbxgDVwwggWvMIIEl6ADAgECAgweKlJIhfynPMVG
-/KIwDQYJKoZIhvcNAQELBQAwajELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJheWVybjERMA8G
-A1UEBwwITXVlbmNoZW4xIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MRUwEwYD
-VQQDDAxNUEcgQ0EgLSBHMDIwHhcNMTcxMTE0MTEzNDE2WhcNMjAxMTEzMTEzNDE2WjCBizEL
-MAkGA1UEBhMCREUxIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MTQwMgYDVQQL
-DCtNYXgtUGxhbmNrLUluc3RpdHV0IGZ1ZXIgbW9sZWt1bGFyZSBHZW5ldGlrMQ4wDAYDVQQL
-DAVNUElNRzEUMBIGA1UEAwwLUGF1bCBNZW56ZWwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
-ggEKAoIBAQDIh/UR/AX/YQ48VWWDMLTYtXjYJyhRHMc81ZHMMoaoG66lWB9MtKRTnB5lovLZ
-enTIUyPsCrMhTqV9CWzDf6v9gOTWVxHEYqrUwK5H1gx4XoK81nfV8oGV4EKuVmmikTXiztGz
-peyDmOY8o/EFNWP7YuRkY/lPQJQBeBHYq9AYIgX4StuXu83nusq4MDydygVOeZC15ts0tv3/
-6WmibmZd1OZRqxDOkoBbY3Djx6lERohs3IKS6RKiI7e90rCSy9rtidJBOvaQS9wvtOSKPx0a
-+2pAgJEVzZFjOAfBcXydXtqXhcpOi2VCyl+7+LnnTz016JJLsCBuWEcB3kP9nJYNAgMBAAGj
-ggIxMIICLTAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcD
-AgYIKwYBBQUHAwQwHQYDVR0OBBYEFHM0Mc3XjMLlhWpp4JufRELL4A/qMB8GA1UdIwQYMBaA
-FMSIpQfuuHuqDBO/2il0Y1IbSXAWMCAGA1UdEQQZMBeBFXBtZW56ZWxAbW9sZ2VuLm1wZy5k
-ZTB9BgNVHR8EdjB0MDigNqA0hjJodHRwOi8vY2RwMS5wY2EuZGZuLmRlL21wZy1nMi1jYS9w
-dWIvY3JsL2NhY3JsLmNybDA4oDagNIYyaHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzIt
-Y2EvcHViL2NybC9jYWNybC5jcmwwgc0GCCsGAQUFBwEBBIHAMIG9MDMGCCsGAQUFBzABhido
-dHRwOi8vb2NzcC5wY2EuZGZuLmRlL09DU1AtU2VydmVyL09DU1AwQgYIKwYBBQUHMAKGNmh0
-dHA6Ly9jZHAxLnBjYS5kZm4uZGUvbXBnLWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNydDBC
-BggrBgEFBQcwAoY2aHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzItY2EvcHViL2NhY2Vy
-dC9jYWNlcnQuY3J0MEAGA1UdIAQ5MDcwDwYNKwYBBAGBrSGCLAEBBDARBg8rBgEEAYGtIYIs
-AQEEAwYwEQYPKwYBBAGBrSGCLAIBBAMGMA0GCSqGSIb3DQEBCwUAA4IBAQCQs6bUDROpFO2F
-Qz2FMgrdb39VEo8P3DhmpqkaIMC5ZurGbbAL/tAR6lpe4af682nEOJ7VW86ilsIJgm1j0ueY
-aOuL8jrN4X7IF/8KdZnnNnImW3QVni6TCcc+7+ggci9JHtt0IDCj5vPJBpP/dKXLCN4M+exl
-GXYpfHgxh8gclJPY1rquhQrihCzHfKB01w9h9tWZDVMtSoy9EUJFhCXw7mYUsvBeJwZesN2B
-fndPkrXx6XWDdU3S1LyKgHlLIFtarLFm2Hb5zAUR33h+26cN6ohcGqGEEzgIG8tXS8gztEaj
-1s2RyzmKd4SXTkKR3GhkZNVWy+gM68J7jP6zzN+cMYIDmjCCA5YCAQEwejBqMQswCQYDVQQG
-EwJERTEPMA0GA1UECAwGQmF5ZXJuMREwDwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4
-LVBsYW5jay1HZXNlbGxzY2hhZnQxFTATBgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzF
-RvyiMA0GCWCGSAFlAwQCAQUAoIIB8TAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqG
-SIb3DQEJBTEPFw0xODAzMTIxMDQxMjVaMC8GCSqGSIb3DQEJBDEiBCDag29UXm3xOuGEyrDT
-EdFLzxhB7C9zvAGO+5m94dYqujBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcG
-BSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGJBgkrBgEEAYI3EAQxfDB6MGoxCzAJBgNVBAYTAkRF
-MQ8wDQYDVQQIDAZCYXllcm4xETAPBgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxh
-bmNrLUdlc2VsbHNjaGFmdDEVMBMGA1UEAwwMTVBHIENBIC0gRzAyAgweKlJIhfynPMVG/KIw
-gYsGCyqGSIb3DQEJEAILMXygejBqMQswCQYDVQQGEwJERTEPMA0GA1UECAwGQmF5ZXJuMREw
-DwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4LVBsYW5jay1HZXNlbGxzY2hhZnQxFTAT
-BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBAEiM
-2k/O/yJTpgYs5OIz0JOtQqYu0+BVkB9kEiBXYXDcbG33BSqOA08EacJQaC6zfQbs/9SWh0Bz
-w0M7WUBWWuKaE4nLO6oIN6NIhMbPcDOoJNB/tlP3zDypnCwAr1dacAs66AAeAE5ngl4qXH+b
-ZsmsmxHYncgmNUn8V5Dbi+ppS4EOJCKAUr8yPmHex/m2HvFFLoLPfzV6WvK/t0K0HOS4PiLK
-WGW1D8jfFF3O1XcI6JJsq8WYMV82G77deNGhrerE6bjbuNxdtjpDAykmVb0HT9jUSPsMXv9x
-V+o10qRf5EX0T9SVi5ZXEnY279iGCzwFeHePPnLjDLViKAusQb0AAAAAAAA=
---------------ms020008010804020209080606--
+>> Fixes: 4b1a29a7f542 ("error-injection: Support fault injection framework")
+>> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+>> ---
+>>  kernel/fail_function.c |   10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+>>
+>> diff --git a/kernel/fail_function.c b/kernel/fail_function.c
+>> index 21b0122cb39c..1d5632d8bbcc 100644
+>> --- a/kernel/fail_function.c
+>> +++ b/kernel/fail_function.c
+>> @@ -14,6 +14,15 @@
+>>  
+>>  static int fei_kprobe_handler(struct kprobe *kp, struct pt_regs *regs);
+>>  
+>> +static void fei_post_handler(struct kprobe *kp, struct pt_regs *regs,
+>> +			     unsigned long flags)
+>> +{
+>> +	/*
+>> +	 * A dummy post handler is required to prohibit optimizing, because
+>> +	 * jump optimization does not support execution path overriding.
+>> +	 */
+>> +}
+>> +
+>>  struct fei_attr {
+>>  	struct list_head list;
+>>  	struct kprobe kp;
+>> @@ -56,6 +65,7 @@ static struct fei_attr *fei_attr_new(const char *sym, unsigned long addr)
+>>  			return NULL;
+>>  		}
+>>  		attr->kp.pre_handler = fei_kprobe_handler;
+>> +		attr->kp.post_handler = fei_post_handler;
+>>  		attr->retval = adjust_error_retval(addr, 0);
+>>  		INIT_LIST_HEAD(&attr->list);
+>>  	}
+>>
+> 
+> 
