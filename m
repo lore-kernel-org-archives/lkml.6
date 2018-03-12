@@ -1,24 +1,24 @@
 Return-Path: <ben@decadent.org.uk>
-X-Google-Smtp-Source: AG47ELu98dFxKG5vntNUWJzjci2LKanfIcWCbuOe1bY5qgSmadTWaOX+cL3IaSFKLtwqW3Fhcn1S
-ARC-Seal: i=1; a=rsa-sha256; t=1520824088; cv=none;
+X-Google-Smtp-Source: AG47ELsvkRbuf+NSbxPV9TxhIh/eRRFa4uYdTwqPtx/BA7dvlcTIwOjtUharbWCesX3FuVo/Ps9m
+ARC-Seal: i=1; a=rsa-sha256; t=1520824089; cv=none;
         d=google.com; s=arc-20160816;
-        b=JIt5XMrbv2znuwcEmiJipkc1q+8+ohJkdh9tjU8NJgCsjvopI+KmJE2eNFBpCq//bT
-         jXwvNWsLFPonfx6LOWKFShXWjsUm+SDmggCzyE7+usB9G/rwIf6lvnQp9k8pr9BYP2iM
-         tjcS3fF/FKWinGIVycJ5szJbkdLtvY3uccQfoXs19LNNGn5IeKtkJIi3IahRJAjkA8Ah
-         bN64DENBs6u4TlGR7ZFlrz/doyYNnToWo5E80dQToT84lyVTZaDsvKRox18Mm7DPCtwE
-         YKpdlCddCsfviJMSsVlCKEMru9Q97VLWBFaJwMy35H+IAi08jP8SfEE4/FHBv6zMNAP3
-         vjDg==
+        b=APcsTKuQjp1nQXSqgvhoBCkBhEEYfGGGT37wYyx6Ui8M3mGlgcAaFFOvhQyPD8sCXM
+         dGAih+OoLdBpNowiE0MShrRnIkVpwU1eAo6dS8bxeXkYOECDjGE1gb2Q54NgMre8Lwsq
+         JLZb3rDezi1lseHG9S1sezpv3ATgPlsThZjWB9642Zs/j2PSDxTamkRZDrZN/U+Ox2un
+         1kOswnnyXeC8xNs6UyLJFVyBeXgDHfuieT6qmizuzgUaPjD+0KHw4Y0AM43USyLGG05Z
+         GQXe6KWFxAL8514yNYVko7zodRGfiayKY9lUb9SEUNbFDM0GAVFdQjv5KlXcmyPoOypY
+         kQ7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:subject:message-id:date:cc:to:from:mime-version
          :content-transfer-encoding:content-disposition
          :arc-authentication-results;
-        bh=F+ask+L3u2q6IebxhmaxEmOo8vY8svyQzObjFIdlDTw=;
-        b=laJf10KRY6VrEEcpuZ7uhmOXMUw2s7iHg0AR5/AAp78qEzPuess2EL52Nuk9OH/iic
-         w9I+4eZqP6j9x0/4OFb74P6VUEDD7eTjab+h1kzA9mBmLU4op5PblzfbUWjePUuRnS2f
-         9cDqyh15XdV4YJ8kVr9/cq4FgteLeBCYtTjNfdqpjg2pqK7HV3wQFhDVJLF8Y8zVICaS
-         jQtQaB7gyZCj9tzqRHcW4KpyqH4euIvtyGiEyZl9avkTCfbrOAY5rTAyO+2m4OEihKOL
-         xwZf46/Q3vJgGmlODSogllxEx2ctS2+HrvRtWk0lFWpPdLCFOV3cP4vqccKDsnPT9Taj
-         n/nA==
+        bh=XP7agJirUPpOXB/o9z35BbCfdiTdJi1D/qe5q6LIWGA=;
+        b=MYomQjpEFSj0MGQQThNxpHJ+ocM+BGVIdbztB5bw1vdD56x2wJcxTueAUimOdfGGt0
+         hfXMRsRt5payKow7o8DM3l7u9I6reR3/9Vhx3w1oYuBCKKICXUnCalzKMT9BrmaYkyuB
+         0C0A+GYdO58BqaPymvlt21tgcDOsBjKbR/1R6Kob97W5OHhj3wk7M+PJ4h47wuZZpZL+
+         Hor0ESXuwspCMJDgVe4GbiDC4Wg2TaSQL8h8S9haQXcEqfsAdKuHt4BE5jPOS3B0elMO
+         0cZ6kyTBSRBypw13Wc+L7eG7tR5Kzc7IV3La4R/HPLtKNQI7l9d39BRhkVQkzgfO9bYg
+         YppA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of ben@decadent.org.uk designates 88.96.1.126 as permitted sender) smtp.mailfrom=ben@decadent.org.uk
 Authentication-Results: mx.google.com;
@@ -29,38 +29,32 @@ Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
+CC: akpm@linux-foundation.org, ak@linux.intel.com,
+ "Kees Cook" <keescook@google.com>,
+ "Rik van Riel" <riel@redhat.com>,
+ "Andy Lutomirski" <luto@amacapital.net>,
+ "David Woodhouse" <dwmw@amazon.co.uk>,
+ gnomes@lxorguk.ukuu.org.uk,
  "Greg Kroah-Hartman" <gregkh@linux-foundation.org>,
  "Jiri Kosina" <jikos@kernel.org>,
- "Josh Poimboeuf" <jpoimboe@redhat.com>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Dave Hansen" <dave.hansen@intel.com>,
- "Razvan Ghitulete" <rga@amazon.de>,
- thomas.lendacky@amd.com,
- "Kees Cook" <keescook@google.com>,
- "Arjan van de Ven" <arjan@linux.intel.com>,
- "Andy Lutomirski" <luto@amacapital.net>,
  "Peter Zijlstra" <peterz@infradead.org>,
- gnomes@lxorguk.ukuu.org.uk,
  "Tim Chen" <tim.c.chen@linux.intel.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
  "Paul Turner" <pjt@google.com>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Andi Kleen" <ak@linux.intel.com>,
- "Rik van Riel" <riel@redhat.com>,
- "Ingo Molnar" <mingo@kernel.org>,
- "David Woodhouse" <dwmw@amazon.co.uk>
+ "Dave Hansen" <dave.hansen@intel.com>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>
 Date: Mon, 12 Mar 2018 03:03:34 +0000
-Message-ID: <lsq.1520823814.304895281@decadent.org.uk>
+Message-ID: <lsq.1520823814.109439133@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.2 060/104] x86/retpoline/entry: Convert entry assembler
- indirect jumps
+Subject: [PATCH 3.2 036/104] x86/alternatives: Add missing '\n' at end of
+ ALTERNATIVE inline asm
 In-Reply-To: <lsq.1520823814.606620518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594699656515090382?=
-X-GMAIL-MSGID: =?utf-8?q?1594699639483613240?=
+X-GMAIL-THRID: =?utf-8?q?1594699640492077160?=
+X-GMAIL-MSGID: =?utf-8?q?1594699640492077160?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -70,114 +64,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: David Woodhouse <dwmw@amazon.co.uk>
 
-commit 2641f08bb7fc63a636a2b18173221d7040a3512e upstream.
+commit b9e705ef7cfaf22db0daab91ad3cd33b0fa32eb9 upstream.
 
-Convert indirect jumps in core 32/64bit entry assembler code to use
-non-speculative sequences when CONFIG_RETPOLINE is enabled.
+Where an ALTERNATIVE is used in the middle of an inline asm block, this
+would otherwise lead to the following instruction being appended directly
+to the trailing ".popsection", and a failed compile.
 
-Don't use CALL_NOSPEC in entry_SYSCALL_64_fastpath because the return
-address after the 'call' instruction must be *precisely* at the
-.Lentry_SYSCALL_64_after_fastpath label for stub_ptregs_64 to work,
-and the use of alternatives will mess that up unless we play horrid
-games to prepend with NOPs and make the variants the same length. It's
-not worth it; in the case where we ALTERNATIVE out the retpoline, the
-first instruction at __x86.indirect_thunk.rax is going to be a bare
-jmp *%rax anyway.
-
+Fixes: 9cebed423c84 ("x86, alternative: Use .pushsection/.popsection")
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Arjan van de Ven <arjan@linux.intel.com>
 Cc: gnomes@lxorguk.ukuu.org.uk
 Cc: Rik van Riel <riel@redhat.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: thomas.lendacky@amd.com
+Cc: ak@linux.intel.com
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul Turner <pjt@google.com>
 Cc: Jiri Kosina <jikos@kernel.org>
 Cc: Andy Lutomirski <luto@amacapital.net>
 Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Kees Cook <keescook@google.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Greg Kroah-Hartman <gregkh@linux-foundation.org>
-Cc: Paul Turner <pjt@google.com>
-Link: https://lkml.kernel.org/r/1515707194-20531-7-git-send-email-dwmw@amazon.co.uk
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Razvan Ghitulete <rga@amazon.de>
-[bwh: Backported to 3.2: adjust filenames, context]
+Link: https://lkml.kernel.org/r/20180104143710.8961-8-dwmw@amazon.co.uk
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/kernel/entry_32.S
-+++ b/arch/x86/kernel/entry_32.S
-@@ -55,6 +55,7 @@
- #include <asm/irq_vectors.h>
- #include <asm/cpufeature.h>
- #include <asm/alternative-asm.h>
-+#include <asm/nospec-branch.h>
+ arch/x86/include/asm/alternative.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/arch/x86/include/asm/alternative.h
++++ b/arch/x86/include/asm/alternative.h
+@@ -123,7 +123,7 @@ static inline int alternatives_text_rese
+ 	".popsection\n"							\
+ 	".pushsection .altinstr_replacement, \"ax\"\n"			\
+ 	ALTINSTR_REPLACEMENT(newinstr, feature, 1)			\
+-	".popsection"
++	".popsection\n"
  
- /* Avoid __ASSEMBLER__'ifying <linux/audit.h> just for this.  */
- #include <linux/elf-em.h>
-@@ -1017,7 +1018,7 @@ ENTRY(kernel_thread_helper)
- 	pushl $0		# fake return address for unwinder
- 	CFI_STARTPROC
- 	movl %edi,%eax
--	call *%esi
-+	CALL_NOSPEC %esi
- 	call do_exit
- 	ud2			# padding for call trace
- 	CFI_ENDPROC
-@@ -1274,7 +1275,7 @@ error_code:
- 	movl %ecx, %es
- 	TRACE_IRQS_OFF
- 	movl %esp,%eax			# pt_regs pointer
--	call *%edi
-+	CALL_NOSPEC %edi
- 	jmp ret_from_exception
- 	CFI_ENDPROC
- END(page_fault)
---- a/arch/x86/kernel/entry_64.S
-+++ b/arch/x86/kernel/entry_64.S
-@@ -59,6 +59,7 @@
- #include <asm/alternative-asm.h>
- #include <asm/cpufeature.h>
- #include <asm/kaiser.h>
-+#include <asm/nospec-branch.h>
+ #define ALTERNATIVE_2(oldinstr, newinstr1, feature1, newinstr2, feature2)\
+ 	OLDINSTR_2(oldinstr, 1, 2)					\
+@@ -134,7 +134,7 @@ static inline int alternatives_text_rese
+ 	".pushsection .altinstr_replacement, \"ax\"\n"			\
+ 	ALTINSTR_REPLACEMENT(newinstr1, feature1, 1)			\
+ 	ALTINSTR_REPLACEMENT(newinstr2, feature2, 2)			\
+-	".popsection"
++	".popsection\n"
  
- /* Avoid __ASSEMBLER__'ifying <linux/audit.h> just for this.  */
- #include <linux/elf-em.h>
-@@ -519,7 +520,12 @@ system_call_fastpath:
- 	cmpq $__NR_syscall_max,%rax
- 	ja badsys
- 	movq %r10,%rcx
-+#ifdef CONFIG_RETPOLINE
-+	movq	sys_call_table(, %rax, 8), %rax
-+	call	__x86_indirect_thunk_rax
-+#else
- 	call *sys_call_table(,%rax,8)  # XXX:	 rip relative
-+#endif
- 	movq %rax,RAX-ARGOFFSET(%rsp)
  /*
-  * Syscall return path ending with SYSRET (fast path)
-@@ -643,7 +649,12 @@ tracesys:
- 	cmpq $__NR_syscall_max,%rax
- 	ja   int_ret_from_sys_call	/* RAX(%rsp) set to -ENOSYS above */
- 	movq %r10,%rcx	/* fixup for C */
-+#ifdef CONFIG_RETPOLINE
-+	movq	sys_call_table(, %rax, 8), %rax
-+	call	__x86_indirect_thunk_rax
-+#else
- 	call *sys_call_table(,%rax,8)
-+#endif
- 	movq %rax,RAX-ARGOFFSET(%rsp)
- 	/* Use IRET because user could have changed frame */
- 
-@@ -1219,7 +1230,7 @@ ENTRY(kernel_thread_helper)
- 	 * Here we are in the child and the registers are set as they were
- 	 * at kernel_thread() invocation in the parent.
- 	 */
--	call *%rsi
-+	CALL_NOSPEC %rsi
- 	# exit
- 	mov %eax, %edi
- 	call do_exit
+  * This must be included *after* the definition of ALTERNATIVE due to
