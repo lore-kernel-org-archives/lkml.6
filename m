@@ -1,76 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932211AbeCLMVP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 08:21:15 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41495 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751361AbeCLMVN (ORCPT
+        id S932256AbeCLMVX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 08:21:23 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:45027 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932217AbeCLMVT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 08:21:13 -0400
-Date: Mon, 12 Mar 2018 05:20:50 -0700
-From: "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
-Message-ID: <tip-1da961d72ab0cfbe8b7c26cba731dc2bb6b9494b@git.kernel.org>
-Cc: peterz@infradead.org, kai.huang@linux.intel.com,
-        thomas.lendacky@amd.com, mingo@kernel.org, dave.hansen@intel.com,
-        torvalds@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com
-Reply-To: peterz@infradead.org, kai.huang@linux.intel.com,
-        thomas.lendacky@amd.com, torvalds@linux-foundation.org,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com, mingo@kernel.org,
-        dave.hansen@intel.com, hpa@zytor.com, linux-kernel@vger.kernel.org
-In-Reply-To: <20180305162610.37510-2-kirill.shutemov@linux.intel.com>
-References: <20180305162610.37510-2-kirill.shutemov@linux.intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/cpufeatures: Add Intel Total Memory Encryption
- cpufeature
-Git-Commit-ID: 1da961d72ab0cfbe8b7c26cba731dc2bb6b9494b
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 12 Mar 2018 08:21:19 -0400
+X-Google-Smtp-Source: AG47ELs25Sw8Zb0aVlFSIIS3KVcenFVcl8hlu2cAlArzItl/82Z5M/FgurmJtpRGlE+1gbd6S52Nxw==
+Subject: Re: [RFCv4,19/21] media: vim2m: add request support
+To: Tomasz Figa <tfiga@chromium.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc: Alexandre Courbot <acourbot@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+References: <20180220044425.169493-20-acourbot@chromium.org>
+ <1520440654.1092.15.camel@bootlin.com>
+ <6470b45d-e9dc-0a22-febc-cd18ae1092be@gmail.com>
+ <1520842245.1513.5.camel@bootlin.com>
+ <CAAFQd5A9mSP8Ufe-gn2Epa55M_NNOVaBL_cdWjdZ5PycbTvqbA@mail.gmail.com>
+ <1520843103.1513.8.camel@bootlin.com>
+ <CAAFQd5BwXURe=6-Wu5MV1ak=JWrMa5Kw71HPA2i_g-3OGqYwxg@mail.gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <85a6fdc4-e01c-c6e4-d027-dea161e5b90e@gmail.com>
+Date: Mon, 12 Mar 2018 15:21:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <CAAFQd5BwXURe=6-Wu5MV1ak=JWrMa5Kw71HPA2i_g-3OGqYwxg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1da961d72ab0cfbe8b7c26cba731dc2bb6b9494b
-Gitweb:     https://git.kernel.org/tip/1da961d72ab0cfbe8b7c26cba731dc2bb6b9494b
-Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-AuthorDate: Mon, 5 Mar 2018 19:25:49 +0300
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 12 Mar 2018 12:09:53 +0100
+On 12.03.2018 11:29, Tomasz Figa wrote:
+> On Mon, Mar 12, 2018 at 5:25 PM, Paul Kocialkowski
+> <paul.kocialkowski@bootlin.com> wrote:
+>> Hi,
+>>
+>> On Mon, 2018-03-12 at 17:15 +0900, Tomasz Figa wrote:
+>>> Hi Paul, Dmitry,
+>>>
+>>> On Mon, Mar 12, 2018 at 5:10 PM, Paul Kocialkowski
+>>> <paul.kocialkowski@bootlin.com> wrote:
+>>>> Hi,
+>>>>
+>>>> On Sun, 2018-03-11 at 22:42 +0300, Dmitry Osipenko wrote:
+>>>>> Hello,
+>>>>>
+>>>>> On 07.03.2018 19:37, Paul Kocialkowski wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>> First off, I'd like to take the occasion to say thank-you for
+>>>>>> your
+>>>>>> work.
+>>>>>> This is a major piece of plumbing that is required for me to add
+>>>>>> support
+>>>>>> for the Allwinner CedarX VPU hardware in upstream Linux. Other
+>>>>>> drivers,
+>>>>>> such as tegra-vde (that was recently merged in staging) are also
+>>>>>> badly
+>>>>>> in need of this API.
+>>>>>
+>>>>> Certainly it would be good to have a common UAPI. Yet I haven't
+>>>>> got my
+>>>>> hands on
+>>>>> trying to implement the V4L interface for the tegra-vde driver,
+>>>>> but
+>>>>> I've taken a
+>>>>> look at Cedrus driver and for now I've one question:
+>>>>>
+>>>>> Would it be possible (or maybe already is) to have a single IOCTL
+>>>>> that
+>>>>> takes input/output buffers with codec parameters, processes the
+>>>>> request(s) and returns to userspace when everything is done?
+>>>>> Having 5
+>>>>> context switches for a single frame decode (like Cedrus VAAPI
+>>>>> driver
+>>>>> does) looks like a bit of overhead.
+>>>>
+>>>> The V4L2 interface exposes ioctls for differents actions and I don't
+>>>> think there's a combined ioctl for this. The request API was
+>>>> introduced
+>>>> precisely because we need to have consistency between the various
+>>>> ioctls
+>>>> needed for each frame. Maybe one single (atomic) ioctl would have
+>>>> worked
+>>>> too, but that's apparently not how the V4L2 API was designed.
+>>>>
+>>>> I don't think there is any particular overhead caused by having n
+>>>> ioctls
+>>>> instead of a single one. At least that would be very surprising
+>>>> IMHO.
+>>>
+>>> Well, there is small syscall overhead, which normally shouldn't be
+>>> very painful, although with all the speculative execution hardening,
+>>> can't be sure of anything anymore. :)
+>>
+>> Oh, my mistake then, I had it in mind that it is not really something
+>> noticeable. Hopefully, it won't be a limiting factor in our cases.
+> 
+> With typical frame rates achievable by hardware codecs, I doubt that
+> it would be a limiting factor. We're using a similar API (a WiP
+> version of pre-Request API prototype from long ago) in Chrome OS
+> already without any performance issues.
 
-x86/cpufeatures: Add Intel Total Memory Encryption cpufeature
+Thank you very much for the answers!
 
-CPUID.0x7.0x0:ECX[13] indicates whether CPU supports Intel Total Memory
-Encryption.
-
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Kai Huang <kai.huang@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180305162610.37510-2-kirill.shutemov@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/include/asm/cpufeatures.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index f41079da38c5..16898eb813f5 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -316,6 +316,7 @@
- #define X86_FEATURE_VPCLMULQDQ		(16*32+10) /* Carry-Less Multiplication Double Quadword */
- #define X86_FEATURE_AVX512_VNNI		(16*32+11) /* Vector Neural Network Instructions */
- #define X86_FEATURE_AVX512_BITALG	(16*32+12) /* Support for VPOPCNT[B,W] and VPSHUF-BITQMB instructions */
-+#define X86_FEATURE_TME			(16*32+13) /* Intel Total Memory Encryption */
- #define X86_FEATURE_AVX512_VPOPCNTDQ	(16*32+14) /* POPCNT for vectors of DW/QW */
- #define X86_FEATURE_LA57		(16*32+16) /* 5-level page tables */
- #define X86_FEATURE_RDPID		(16*32+22) /* RDPID instruction */
+The syscalls overhead is miserable in comparison to the rest of decoding, though
+I wanted to clarify whether there is a way to avoid it. Atomic API sounds like
+something that would suit well for that.
