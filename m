@@ -1,85 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751886AbeCLNtO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 09:49:14 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:54432 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751753AbeCLNtM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 09:49:12 -0400
-Date: Mon, 12 Mar 2018 14:48:53 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] x86/microcode/AMD: check microcode file sanity before
- loading it
-Message-ID: <20180312134853.GD9431@pd.tnic>
-References: <787b0ecc-8c1a-3b5a-82e0-9840c7b7c595@maciej.szmigiero.name>
- <20180312095336.GB9431@pd.tnic>
- <ddf0ddc2-bc46-d61c-7080-0eca26d6bfcf@maciej.szmigiero.name>
- <20180312130653.GC9431@pd.tnic>
- <df1e721c-f030-68b4-f197-2592bce97bbf@maciej.szmigiero.name>
+        id S1751419AbeCLNwX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 09:52:23 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:38229 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751229AbeCLNwV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 09:52:21 -0400
+X-Google-Smtp-Source: AG47ELso+whDnhskpTsF8ZL6gRkhVggtQ4kNo87XqDQlJY7WKXMncktL1FNNzaghsTZfErnN7H7e4QtCHFOmjSTDFIY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <df1e721c-f030-68b4-f197-2592bce97bbf@maciej.szmigiero.name>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <nycvar.YSQ.7.76.1803112233070.28583@knanqh.ubzr>
+References: <20180220215954.4092811-1-arnd@arndb.de> <20180220215954.4092811-2-arnd@arndb.de>
+ <nycvar.YSQ.7.76.1803112233070.28583@knanqh.ubzr>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 12 Mar 2018 14:52:20 +0100
+X-Google-Sender-Auth: VQH5_PGEQ5ARbgwAsX3FHoQs8ZY
+Message-ID: <CAK8P3a06_zke6Zy77TCX6aUS1C0aK2btvnLA7APxRykkxS6S_w@mail.gmail.com>
+Subject: Re: [PATCH 1/7] ARM: disallow combining XIP and LTO
+To: Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc: Andi Kleen <ak@linux.intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 02:32:30PM +0100, Maciej S. Szmigiero wrote:
-> "microcode_amd.bin" in linux-firmware.
+On Mon, Mar 12, 2018 at 3:40 AM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
+> On Tue, 20 Feb 2018, Arnd Bergmann wrote:
 
-That is the microcode container for all families < 0x15. And it
-*happens* to have 18 entries.
+>> Obviously we want to make the combination work, no idea why it doesn't.
+>
+> Well, it does work regardless of the noise. Here the nm output is piped
+> into sed, and the later exits early when it finds what it is looking
+> for, causing nm to complain about the broken pipe.
+>
+> Here's a patch silencing this bogus error message and fixing other minor
+> issues.
+>
+> ----- >8
+> Subject: [PATCH] ARM: deflate_xip_data.sh: minor fixes
+>
+> Send nm complaints about broken pipe (when sed exits early) to /dev/null.
+> All errors should be printed to stderr.
+> Don't trap on normal exit so the trap can return an error code.
+>
+> Signed-off-by: Nicolas Pitre <nico@linaro.org>
 
-So purely arbitrary:
+Ah, that explains it, thanks!
 
-Equivalence table (magic: AMD, type: 0, length: 288 (0x120))
-============================================================
-|  inst_cpu  |   err_msk  |   err_cmp  | eq_cpu |   res  |
-==========================================================
-| 0x00100f80 | 0x00000000 | 0x00000000 | 0x1080 | 0x0000 |
-| 0x00100f81 | 0x00000000 | 0x00000000 | 0x1081 | 0x0000 |
-| 0x00100f62 | 0x00000000 | 0x00000000 | 0x1062 | 0x0000 |
-| 0x00100f23 | 0x00000000 | 0x00000000 | 0x1022 | 0x0000 |
-| 0x00100f43 | 0x00000000 | 0x00000000 | 0x1043 | 0x0000 |
-| 0x00100f91 | 0x00000000 | 0x00000000 | 0x1081 | 0x0000 |
-| 0x00100f2a | 0x00000000 | 0x00000000 | 0x1020 | 0x0000 |
-| 0x00100f63 | 0x00000000 | 0x00000000 | 0x1043 | 0x0000 |
-| 0x00100f42 | 0x00000000 | 0x00000000 | 0x1041 | 0x0000 |
-| 0x00300f10 | 0x00000000 | 0x00000000 | 0x3010 | 0x0000 |
-| 0x00200f31 | 0x00000000 | 0x00000000 | 0x2031 | 0x0000 |
-| 0x00100f52 | 0x00000000 | 0x00000000 | 0x1041 | 0x0000 |
-| 0x00100fa0 | 0x00000000 | 0x00000000 | 0x10a0 | 0x0000 |
-| 0x00100f53 | 0x00000000 | 0x00000000 | 0x1043 | 0x0000 |
-| 0x00100f22 | 0x00000000 | 0x00000000 | 0x1022 | 0x0000 |
-| 0x00500f10 | 0x00000000 | 0x00000000 | 0x5010 | 0x0000 |
-| 0x00500f20 | 0x00000000 | 0x00000000 | 0x5020 | 0x0000 |
-| 0x00000000 | 0x00000000 | 0x00000000 | 0x0000 | 0x0000 |
+Tested-by: Arnd Bergmann <arnd@arndb.de>
 
-> There is no problem raising this value in that (future) case.
-> As I wrote previously, currently the maximum used count is 18.
-
-There is a problem because not everyone can upgrade their kernels
-like you. Distros and big deployments can't just up and update their
-kernels at a whim just because you imposed an arbitrary limit which you
-determined would be ok.
-
-> Not really, since even in the existing code CONTAINER_HDR_SZ (12) gets
-> added to this size, then the sum is cast to a (signed) int.
-> If this value is negative then the file get rejected.
-
-That is a bug in install_equiv_cpu_table() - it should return unsigned int.
-
-> It can be changed to the current maximum across sizes for particular
-
-What is the "current maximum across sizes"?
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> diff --git a/arch/arm/boot/deflate_xip_data.sh b/arch/arm/boot/deflate_xip_data.sh
+> index 1189598a25..5e7d758ebd 100755
+> --- a/arch/arm/boot/deflate_xip_data.sh
+> +++ b/arch/arm/boot/deflate_xip_data.sh
+> @@ -30,7 +30,7 @@ esac
+>
+>  sym_val() {
+>         # extract hex value for symbol in $1
+> -       local val=$($NM "$VMLINUX" | sed -n "/ $1$/{s/ .*$//p;q}")
+> +       local val=$($NM "$VMLINUX" 2>/dev/null | sed -n "/ $1\$/{s/ .*$//p;q}")
+>         [ "$val" ] || { echo "can't find $1 in $VMLINUX" 1>&2; exit 1; }
+>         # convert from hex to decimal
+>         echo $((0x$val))
+> @@ -48,12 +48,12 @@ data_end=$(($_edata_loc - $base_offset))
+>  file_end=$(stat -c "%s" "$XIPIMAGE")
+>  if [ "$file_end" != "$data_end" ]; then
+>         printf "end of xipImage doesn't match with _edata_loc (%#x vs %#x)\n" \
+> -              $(($file_end + $base_offset)) $_edata_loc 2>&1
+> +              $(($file_end + $base_offset)) $_edata_loc 1>&2
+>         exit 1;
+>  fi
+>
+>  # be ready to clean up
+> -trap 'rm -f "$XIPIMAGE.tmp"' 0 1 2 3
+> +trap 'rm -f "$XIPIMAGE.tmp"; exit 1' 1 2 3
+>
+>  # substitute the data section by a compressed version
+>  $DD if="$XIPIMAGE" count=$data_start iflag=count_bytes of="$XIPIMAGE.tmp"
