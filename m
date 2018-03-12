@@ -1,562 +1,126 @@
-Return-Path: <john.garry@huawei.com>
-X-Google-Smtp-Source: AG47ELukB30LH/fagqp84V4+zujN7kzya+h/d7E+xjULO7BOICeXVV55XIuN04ZfhHat7a+smuac
-ARC-Seal: i=1; a=rsa-sha256; t=1520333302; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Q6crsZ1F6Fjspy+yGFXrT4zy6kOLqnRqWcoKXoD8Tna34kFiEtPOKtMnT+Y6YyiOVB
-         y4EbKRWKTn0X+PbRL+HyIzBwBUcg9h5EQUmvXAR4JHXHKctRo5LcOGMSGZLGSnP+08iN
-         8m62ZIzSs0EoGbcGgcXNXy1QwUTIPfipwnqLzBJwSLhwxdpIATYrwzOEfzfaaqe7r4Cj
-         a21UwGlEeMG6diz7ihWdELipUnhE2G9ccVljvhpO8r4lgKuBINyy4E/IRTmNpkk4tWh7
-         LNzqnuD0l+yQfVrjXsxAuAeNyFBf/4121obFECG45xxVuFyqPWVjWH/Dp85BdusXBJID
-         pWuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:arc-authentication-results;
-        bh=qHMndm1BG0GbN1B03+rt7E6cJaQZk8enVqRwdeY9RyA=;
-        b=s9P3ALVA6Vt49XnGIMKa3gnPcTJr3kgy8AioxMwU1XPt4cL4ZZHbtvx1lWiHut22hd
-         lvtYg+e0JQ+qFBbNiLCiPOhIVuwq18yE+gSFohKr3nORhJbqlpBTloNDkNQWue25Kl8V
-         QxdGMwlB1/ZbfzeDKXnc4jDGGGyfLY0S16Kg7j7q93RuNe6GKIbkF1WtLBRABFCJtz15
-         ylIPyZn6pgQgU6G2Bh5SESRs7KXLy/f9jhFyAT8R/rPZEfR2pqCoCKfr+Wuj8+hLyKyM
-         zJtFVsv3ZTXiUKNss76bk46PP9FzfVjjfYAdcWqMPjYjip++NXEe5SStE5QmdZLqEA6H
-         lTvw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of john.garry@huawei.com designates 45.249.212.190 as permitted sender) smtp.mailfrom=john.garry@huawei.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of john.garry@huawei.com designates 45.249.212.190 as permitted sender) smtp.mailfrom=john.garry@huawei.com
-From: John Garry <john.garry@huawei.com>
-To: <mika.westerberg@linux.intel.com>, <rafael@kernel.org>,
-	<lorenzo.pieralisi@arm.com>, <rjw@rjwysocki.net>, <hanjun.guo@linaro.org>,
-	<robh+dt@kernel.org>, <bhelgaas@google.com>, <arnd@arndb.de>,
-	<mark.rutland@arm.com>, <olof@lixom.net>, <dann.frazier@canonical.com>,
-	<andy.shevchenko@gmail.com>, <robh@kernel.org>,
-	<andriy.shevchenko@linux.intel.com>
-CC: <joe@perches.com>, <benh@kernel.crashing.org>,
-	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linuxarm@huawei.com>, <minyard@acm.org>,
-	<devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<rdunlap@infradead.org>, <gregkh@linuxfoundation.org>,
-	<akpm@linux-foundation.org>, <frowand.list@gmail.com>, <agraf@suse.de>
-Subject: [PATCH v16 1/9] LIB: Introduce a generic PIO mapping method
-Date: Tue, 6 Mar 2018 18:47:40 +0800
-Message-ID: <1520333268-82754-2-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520333268-82754-1-git-send-email-john.garry@huawei.com>
-References: <1520333268-82754-1-git-send-email-john.garry@huawei.com>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1543765-1520897778-2-15976385963356910814
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520897777; b=sNytu9+unpUP73UTw2PQ5ALhd7yDeIRTfD7WaC0L0vT2Fac
+    3epA/oRTUwx+jjwiK4Gd4etvnQ7xZE5TCpjASdPugdGKuDM6evsS53/cuipaqiyy
+    yPYto2OQQoDtGZ87lZm3kw5Wy/b494FTFfM00MgcEMCBEAm1YkpVEednMQkl225n
+    DNx5g8cbDHXuVoApwXLKSdfPcA+oI0beGzdjYTzEFsAYGdvpasdnR0AaQVIxnAJU
+    I5Qr7AZ1gpc/DaY20n6YflEnSHucPALWVMKd6R5IqOdCIK8m8qwSP7HzPXX+8eFL
+    Tx1s8d9fHTavVtZqliKF6Kwb5w6dqKD7zUMeYEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520897777; bh=Y
+    P/QxqymplXz5FJ/XOxoFT+CilMx28WCJzB6VI8YnBg=; b=YIGI4sVwEVeDJkkF/
+    nR0WqYaJmUfidcqJv4feyOpMr7kqxUjYY8573W+76vJjWdoXqsFFmiT/dTrAoTDU
+    bgOlGTuzPAtRPsJCUE/LUHLgpbBrPy+eueJK8VmnkQaN+6vlm6ioLo2ELGWDo04c
+    PU2cCaeZY3fj0NnPpCfbgi38HsHJMdENA6b68kAWToxNli+vZYEBsnOlJCrvJurM
+    gefXarOPcZpdxKgn1Ri20XPYncYLHmJ3/7DFxu+N58/wI7If0IWk5o95rWsRY6NF
+    731RYJB7bK1/OPSVUtAcPornDqoYZH2gahV2rJxXa2HFMV5ePSHVBGVyB/7RYKYU
+    IQrwg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=canonical.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=canonical.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: Colin King <colin.king@canonical.com>
+To: Ian Abbott <abbotti@mev.co.uk>,
+ H Hartley Sweeten <hsweeten@visionengravers.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Subject: [PATCH] staging: comedi: adl_pci6208: remove redundant initialization
+ of 'val'
+Date: Mon, 12 Mar 2018 23:36:05 +0000
+Message-Id: <20180312233605.8643-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594185012292533997?=
-X-GMAIL-MSGID: =?utf-8?q?1594185012292533997?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Zhichang Yuan <yuanzhichang@hisilicon.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-In commit 41f8bba7f555 ("of/pci: Add pci_register_io_range() and
-pci_pio_to_address()"), a new I/O space management was supported. With
-that driver, the I/O ranges configured for PCI/PCIe hosts on some
-architectures can be mapped to logical PIO, converted easily between
-CPU address and the corresponding logicial PIO. Based on this, PCI
-I/O devices can be accessed in a memory read/write way through the
-unified in/out accessors.
+Variable 'val' is initialized with a value that is never read, it is
+updated with a new value again after intitialization. Remove the
+redundant initialization and move the declaration and assignment into
+the scope of the for-loop.
 
-But on some archs/platforms, there are bus hosts which access I/O
-peripherals with host-local I/O port addresses rather than memory
-addresses after memory-mapped.
+Cleans up clang warning:
+drivers/staging/comedi/drivers/adl_pci6208.c:61:15: warning: Value
+stored to 'val' during its initialization is never read
 
-To support those devices, a more generic I/O mapping method is introduced
-here. Through this patch, both the CPU addresses and the host-local port
-can be mapped into the logical PIO space with different logical/fake PIOs.
-After this, all the I/O accesses to either PCI MMIO devices or host-local
-I/O peripherals can be unified into the existing I/O accessors defined in
-asm-generic/io.h and be redirected to the right device-specific hooks
-based on the input logical PIO.
-
-Signed-off-by: Zhichang Yuan <yuanzhichang@hisilicon.com>
-Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Tested-by: dann frazier <dann.frazier@canonical.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
 ---
- include/asm-generic/io.h  |   2 +
- include/linux/logic_pio.h | 124 ++++++++++++++++++++
- lib/Kconfig               |  15 +++
- lib/Makefile              |   2 +
- lib/logic_pio.c           | 282 ++++++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 425 insertions(+)
- create mode 100644 include/linux/logic_pio.h
- create mode 100644 lib/logic_pio.c
+ drivers/staging/comedi/drivers/adl_pci6208.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
-index 7c6a39e..f76fbd6 100644
---- a/include/asm-generic/io.h
-+++ b/include/asm-generic/io.h
-@@ -351,6 +351,8 @@ static inline void writesq(volatile void __iomem *addr, const void *buffer,
- #define IO_SPACE_LIMIT 0xffff
- #endif
+diff --git a/drivers/staging/comedi/drivers/adl_pci6208.c b/drivers/staging/comedi/drivers/adl_pci6208.c
+index d39b4eabce8d..e21840e9002d 100644
+--- a/drivers/staging/comedi/drivers/adl_pci6208.c
++++ b/drivers/staging/comedi/drivers/adl_pci6208.c
+@@ -58,12 +58,11 @@ static int pci6208_ao_insn_write(struct comedi_device *dev,
+ 				 unsigned int *data)
+ {
+ 	unsigned int chan = CR_CHAN(insn->chanspec);
+-	unsigned int val = s->readback[chan];
+ 	int ret;
+ 	int i;
  
-+#include <linux/logic_pio.h>
-+
- /*
-  * {in,out}{b,w,l}() access little endian I/O. {in,out}{b,w,l}_p() can be
-  * implemented on hardware that needs an additional delay for I/O accesses to
-diff --git a/include/linux/logic_pio.h b/include/linux/logic_pio.h
-new file mode 100644
-index 0000000..8c78ff4
---- /dev/null
-+++ b/include/linux/logic_pio.h
-@@ -0,0 +1,124 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (C) 2017 Hisilicon Limited, All Rights Reserved.
-+ * Author: Gabriele Paoloni <gabriele.paoloni@huawei.com>
-+ * Author: Zhichang Yuan <yuanzhichang@hisilicon.com>
-+ *
-+ */
-+
-+#ifndef __LINUX_LOGIC_PIO_H
-+#define __LINUX_LOGIC_PIO_H
-+
-+#include <linux/fwnode.h>
-+
-+enum {
-+	LOGIC_PIO_INDIRECT,		/* Indirect IO flag */
-+	LOGIC_PIO_CPU_MMIO,		/* Memory mapped IO flag */
-+};
-+
-+struct logic_pio_hwaddr {
-+	struct list_head list;
-+	struct fwnode_handle *fwnode;
-+	resource_size_t hw_start;
-+	resource_size_t io_start;
-+	resource_size_t size; /* range size populated */
-+	unsigned long flags;
-+
-+	void *hostdata;
-+	const struct logic_pio_host_ops *ops;
-+};
-+
-+struct logic_pio_host_ops {
-+	u32 (*in)(void *hostdata, unsigned long addr, size_t dwidth);
-+	void (*out)(void *hostdata, unsigned long addr, u32 val,
-+		    size_t dwidth);
-+	u32 (*ins)(void *hostdata, unsigned long addr, void *buffer,
-+		   size_t dwidth, unsigned int count);
-+	void (*outs)(void *hostdata, unsigned long addr, const void *buffer,
-+		     size_t dwidth, unsigned int count);
-+};
-+
-+#ifdef CONFIG_INDIRECT_PIO
-+u8 logic_inb(unsigned long addr);
-+void logic_outb(u8 value, unsigned long addr);
-+void logic_outw(u16 value, unsigned long addr);
-+void logic_outl(u32 value, unsigned long addr);
-+u16 logic_inw(unsigned long addr);
-+u32 logic_inl(unsigned long addr);
-+void logic_outb(u8 value, unsigned long addr);
-+void logic_outw(u16 value, unsigned long addr);
-+void logic_outl(u32 value, unsigned long addr);
-+void logic_insb(unsigned long addr, void *buffer, unsigned int count);
-+void logic_insl(unsigned long addr, void *buffer, unsigned int count);
-+void logic_insw(unsigned long addr, void *buffer, unsigned int count);
-+void logic_outsb(unsigned long addr, const void *buffer, unsigned int count);
-+void logic_outsw(unsigned long addr, const void *buffer, unsigned int count);
-+void logic_outsl(unsigned long addr, const void *buffer, unsigned int count);
-+
-+#ifndef inb
-+#define inb logic_inb
-+#endif
-+
-+#ifndef inw
-+#define inw logic_inw
-+#endif
-+
-+#ifndef inl
-+#define inl logic_inl
-+#endif
-+
-+#ifndef outb
-+#define outb logic_outb
-+#endif
-+
-+#ifndef outw
-+#define outw logic_outw
-+#endif
-+
-+#ifndef outl
-+#define outl logic_outl
-+#endif
-+
-+#ifndef insb
-+#define insb logic_insb
-+#endif
-+
-+#ifndef insw
-+#define insw logic_insw
-+#endif
-+
-+#ifndef insl
-+#define insl logic_insl
-+#endif
-+
-+#ifndef outsb
-+#define outsb logic_outsb
-+#endif
-+
-+#ifndef outsw
-+#define outsw logic_outsw
-+#endif
-+
-+#ifndef outsl
-+#define outsl logic_outsl
-+#endif
-+
-+/*
-+ * Below we reserve 0x4000 bytes for Indirect IO as so far this library is only
-+ * used by Hisilicon LPC Host. If needed in future we may reserve a wider IO
-+ * area by redefining the macro below.
-+ */
-+#define PIO_INDIRECT_SIZE 0x4000
-+#define MMIO_UPPER_LIMIT (IO_SPACE_LIMIT - PIO_INDIRECT_SIZE)
-+#else
-+#define MMIO_UPPER_LIMIT IO_SPACE_LIMIT
-+#endif /* CONFIG_INDIRECT_PIO */
-+
-+struct logic_pio_hwaddr *find_io_range_by_fwnode(struct fwnode_handle *fwnode);
-+unsigned long logic_pio_trans_hwaddr(struct fwnode_handle *fwnode,
-+			resource_size_t hw_addr, resource_size_t size);
-+int logic_pio_register_range(struct logic_pio_hwaddr *newrange);
-+extern resource_size_t logic_pio_to_hwaddr(unsigned long pio);
-+extern unsigned long logic_pio_trans_cpuaddr(resource_size_t hw_addr);
-+
-+#endif /* __LINUX_LOGIC_PIO_H */
-diff --git a/lib/Kconfig b/lib/Kconfig
-index e960894..d9dd02c 100644
---- a/lib/Kconfig
-+++ b/lib/Kconfig
-@@ -55,6 +55,21 @@ config ARCH_USE_CMPXCHG_LOCKREF
- config ARCH_HAS_FAST_MULTIPLIER
- 	bool
+ 	for (i = 0; i < insn->n; i++) {
+-		val = data[i];
++		unsigned int val = data[i];
  
-+config INDIRECT_PIO
-+	bool "Access I/O in non-MMIO mode"
-+	depends on ARM64
-+	help
-+	  On some platforms where no separate I/O space exists, there are I/O
-+	  hosts which can not be accessed in MMIO mode. Using the logical PIO
-+	  mechanism, the host-local I/O resource can be mapped into system
-+	  logic PIO space shared with MMIO hosts, such as PCI/PCIE, then the
-+	  system can access the I/O devices with the mapped logic PIO through
-+	  I/O accessors.
-+	  This way has relatively little I/O performance cost. Please make
-+	  sure your devices really need this configure item enabled.
-+
-+	  When in doubt, say N.
-+
- config CRC_CCITT
- 	tristate "CRC-CCITT functions"
- 	help
-diff --git a/lib/Makefile b/lib/Makefile
-index 0bd50d71f..8fc0d3a 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -82,6 +82,8 @@ obj-$(CONFIG_HAS_IOMEM) += iomap_copy.o devres.o
- obj-$(CONFIG_CHECK_SIGNATURE) += check_signature.o
- obj-$(CONFIG_DEBUG_LOCKING_API_SELFTESTS) += locking-selftest.o
- 
-+obj-y += logic_pio.o
-+
- obj-$(CONFIG_GENERIC_HWEIGHT) += hweight.o
- 
- obj-$(CONFIG_BTREE) += btree.o
-diff --git a/lib/logic_pio.c b/lib/logic_pio.c
-new file mode 100644
-index 0000000..8394c2d
---- /dev/null
-+++ b/lib/logic_pio.c
-@@ -0,0 +1,282 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (C) 2017 Hisilicon Limited, All Rights Reserved.
-+ * Author: Gabriele Paoloni <gabriele.paoloni@huawei.com>
-+ * Author: Zhichang Yuan <yuanzhichang@hisilicon.com>
-+ *
-+ */
-+
-+#define pr_fmt(fmt)	"LOGIC PIO: " fmt
-+
-+#include <linux/of.h>
-+#include <linux/io.h>
-+#include <linux/logic_pio.h>
-+#include <linux/mm.h>
-+#include <linux/rculist.h>
-+#include <linux/sizes.h>
-+#include <linux/slab.h>
-+
-+/* The unique hardware address list. */
-+static LIST_HEAD(io_range_list);
-+static DEFINE_MUTEX(io_range_mutex);
-+
-+/* Consider a kernel general helper for this */
-+#define in_range(b, first, len)        ((b) >= (first) && (b) < (first) + (len))
-+
-+/**
-+ * logic_pio_register_range - register logical PIO range for a host
-+ * @new_range: pointer to the io range to be registered.
-+ *
-+ * returns 0 on success, the error code in case of failure
-+ *
-+ * Register a new io range node in the io range list.
-+ */
-+int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
-+{
-+	struct logic_pio_hwaddr *range;
-+	resource_size_t start = new_range->hw_start;
-+	resource_size_t end = new_range->hw_start + new_range->size;
-+	resource_size_t mmio_sz = 0;
-+	resource_size_t iio_sz = MMIO_UPPER_LIMIT;
-+	int ret = 0;
-+
-+	if (!new_range || !new_range->fwnode || !new_range->size)
-+		return -EINVAL;
-+
-+	mutex_lock(&io_range_mutex);
-+	list_for_each_entry_rcu(range, &io_range_list, list) {
-+		if (range->fwnode == new_range->fwnode) {
-+			/* range already there */
-+			ret = -EFAULT;
-+			goto end_register;
-+		}
-+		if (range->flags == LOGIC_PIO_CPU_MMIO &&
-+		    new_range->flags == LOGIC_PIO_CPU_MMIO) {
-+			/* for MMIO ranges we need to check for overlap */
-+			if (start >= range->hw_start + range->size ||
-+			    end < range->hw_start) {
-+				mmio_sz += range->size;
-+			} else {
-+				ret = -EFAULT;
-+				goto end_register;
-+			}
-+		} else if (range->flags == LOGIC_PIO_INDIRECT &&
-+			   new_range->flags == LOGIC_PIO_INDIRECT) {
-+			iio_sz += range->size;
-+		}
-+	}
-+
-+	/* range not registered yet, check for available space */
-+	if (new_range->flags == LOGIC_PIO_CPU_MMIO) {
-+		if (mmio_sz + new_range->size - 1 > MMIO_UPPER_LIMIT) {
-+			/* if it's too big check if 64K space can be reserved */
-+			if (mmio_sz + SZ_64K - 1 > MMIO_UPPER_LIMIT) {
-+				ret = -E2BIG;
-+				goto end_register;
-+			}
-+			new_range->size = SZ_64K;
-+			pr_warn("Requested IO range too big, new size set to 64K\n");
-+		}
-+		new_range->io_start = mmio_sz;
-+	} else if (new_range->flags == LOGIC_PIO_INDIRECT) {
-+		if (iio_sz + new_range->size - 1 > IO_SPACE_LIMIT) {
-+			ret = -E2BIG;
-+			goto end_register;
-+		}
-+		new_range->io_start = iio_sz;
-+	} else {
-+		/* invalid flag */
-+		ret = -EINVAL;
-+		goto end_register;
-+	}
-+
-+	list_add_tail_rcu(&new_range->list, &io_range_list);
-+
-+end_register:
-+	mutex_unlock(&io_range_mutex);
-+	return ret;
-+}
-+
-+/**
-+ * find_io_range_by_fwnode - find logical PIO range for given FW node
-+ * @fwnode: FW node handle associated with logical PIO range
-+ *
-+ * Returns pointer to node on success, NULL otherwise
-+ *
-+ * Traverse the io_range_list to find the registered node whose device node
-+ * and/or physical IO address match to.
-+ */
-+struct logic_pio_hwaddr *find_io_range_by_fwnode(struct fwnode_handle *fwnode)
-+{
-+	struct logic_pio_hwaddr *range;
-+
-+	list_for_each_entry_rcu(range, &io_range_list, list) {
-+		if (range->fwnode == fwnode)
-+			return range;
-+	}
-+	return NULL;
-+}
-+
-+/* Return a registered range given an input PIO token */
-+static struct logic_pio_hwaddr *find_io_range(unsigned long pio)
-+{
-+	struct logic_pio_hwaddr *range;
-+
-+	list_for_each_entry_rcu(range, &io_range_list, list) {
-+		if (in_range(pio, range->io_start, range->size))
-+			return range;
-+	}
-+	pr_err("PIO entry token invalid\n");
-+	return NULL;
-+}
-+
-+/**
-+ * logic_pio_to_hwaddr - translate logical PIO to HW address
-+ * @pio: logical PIO value
-+ *
-+ * Returns HW address if valid, ~0 otherwise
-+ *
-+ * Translate the input logical pio to the corresponding hardware address.
-+ * The input pio should be unique in the whole logical PIO space.
-+ */
-+resource_size_t logic_pio_to_hwaddr(unsigned long pio)
-+{
-+	struct logic_pio_hwaddr *range;
-+	resource_size_t hwaddr = (resource_size_t)~0;
-+
-+	range = find_io_range(pio);
-+	if (range)
-+		hwaddr = range->hw_start + pio - range->io_start;
-+
-+	return hwaddr;
-+}
-+
-+/**
-+ * logic_pio_trans_hwaddr - translate HW address to logical PIO
-+ * @fwnode: FW node reference for the host
-+ * @addr: Host-relative HW address
-+ * @size: size to translate
-+ *
-+ * Returns Logical PIO value if successful, ~0UL otherwise
-+ */
-+unsigned long
-+logic_pio_trans_hwaddr(struct fwnode_handle *fwnode, resource_size_t addr,
-+		       resource_size_t size)
-+{
-+	struct logic_pio_hwaddr *range;
-+
-+	range = find_io_range_by_fwnode(fwnode);
-+	if (!range || range->flags == LOGIC_PIO_CPU_MMIO) {
-+		pr_err("range not found or invalid\n");
-+		return ~0UL;
-+	}
-+	if (range->size < size) {
-+		pr_err("resource size %pa cannot fit in IO range size %pa\n",
-+		       &size, &range->size);
-+		return ~0UL;
-+	}
-+	return addr - range->hw_start + range->io_start;
-+}
-+
-+unsigned long
-+logic_pio_trans_cpuaddr(resource_size_t addr)
-+{
-+	struct logic_pio_hwaddr *range;
-+
-+	list_for_each_entry_rcu(range, &io_range_list, list) {
-+		if (range->flags != LOGIC_PIO_CPU_MMIO)
-+			continue;
-+		if (in_range(addr, range->hw_start, range->size))
-+			return addr - range->hw_start + range->io_start;
-+	}
-+	pr_err("addr not registered in io_range_list\n");
-+	return ~0UL;
-+}
-+
-+#if defined(CONFIG_INDIRECT_PIO) && defined(PCI_IOBASE)
-+#define BUILD_LOGIC_IO(bw, type)					\
-+type logic_in##bw(unsigned long addr)					\
-+{									\
-+	type ret = (type)~0;						\
-+									\
-+	if (addr < MMIO_UPPER_LIMIT) {					\
-+		ret = read##bw(PCI_IOBASE + addr);			\
-+	} else if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) { \
-+		struct logic_pio_hwaddr *entry = find_io_range(addr);	\
-+									\
-+		if (entry && entry->ops)				\
-+			ret = entry->ops->in(entry->hostdata,		\
-+					addr, sizeof(type));		\
-+		else							\
-+			WARN_ON_ONCE(1);				\
-+	}								\
-+	return ret;							\
-+}									\
-+									\
-+void logic_out##bw(type value, unsigned long addr)			\
-+{									\
-+	if (addr < MMIO_UPPER_LIMIT) {					\
-+		write##bw(value, PCI_IOBASE + addr);			\
-+	} else if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) {	\
-+		struct logic_pio_hwaddr *entry = find_io_range(addr);	\
-+									\
-+		if (entry && entry->ops)				\
-+			entry->ops->out(entry->hostdata,		\
-+					addr, value, sizeof(type));	\
-+		else							\
-+			WARN_ON_ONCE(1);				\
-+	}								\
-+}									\
-+									\
-+void logic_ins##bw(unsigned long addr, void *buffer,		\
-+		   unsigned int count)					\
-+{									\
-+	if (addr < MMIO_UPPER_LIMIT) {					\
-+		reads##bw(PCI_IOBASE + addr, buffer, count);		\
-+	} else if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) {	\
-+		struct logic_pio_hwaddr *entry = find_io_range(addr);	\
-+									\
-+		if (entry && entry->ops)				\
-+			entry->ops->ins(entry->hostdata,		\
-+				addr, buffer, sizeof(type), count);	\
-+		else							\
-+			WARN_ON_ONCE(1);				\
-+	}								\
-+									\
-+}									\
-+									\
-+void logic_outs##bw(unsigned long addr, const void *buffer,		\
-+		    unsigned int count)					\
-+{									\
-+	if (addr < MMIO_UPPER_LIMIT) {					\
-+		writes##bw(PCI_IOBASE + addr, buffer, count);		\
-+	} else if (addr >= MMIO_UPPER_LIMIT && addr < IO_SPACE_LIMIT) {	\
-+		struct logic_pio_hwaddr *entry = find_io_range(addr);	\
-+									\
-+		if (entry && entry->ops)				\
-+			entry->ops->outs(entry->hostdata,		\
-+				addr, buffer, sizeof(type), count);	\
-+		else							\
-+			WARN_ON_ONCE(1);				\
-+	}								\
-+}
-+
-+BUILD_LOGIC_IO(b, u8)
-+EXPORT_SYMBOL(logic_inb);
-+EXPORT_SYMBOL(logic_insb);
-+EXPORT_SYMBOL(logic_outb);
-+EXPORT_SYMBOL(logic_outsb);
-+
-+BUILD_LOGIC_IO(w, u16)
-+EXPORT_SYMBOL(logic_inw);
-+EXPORT_SYMBOL(logic_insw);
-+EXPORT_SYMBOL(logic_outw);
-+EXPORT_SYMBOL(logic_outsw);
-+
-+BUILD_LOGIC_IO(l, u32)
-+EXPORT_SYMBOL(logic_inl);
-+EXPORT_SYMBOL(logic_insl);
-+EXPORT_SYMBOL(logic_outl);
-+EXPORT_SYMBOL(logic_outsl);
-+
-+#endif /* CONFIG_INDIRECT_PIO && PCI_IOBASE */
+ 		/* D/A transfer rate is 2.2us */
+ 		ret = comedi_timeout(dev, s, insn, pci6208_ao_eoc, 0);
 -- 
-1.9.1
+2.15.1
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
