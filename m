@@ -1,69 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752677AbeCLKKh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 06:10:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37840 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752096AbeCLKKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 06:10:36 -0400
-Date: Mon, 12 Mar 2018 18:10:31 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Chao Fan <fanc.fnst@cn.fujitsu.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com,
-        keescook@chromium.org, yasu.isimatu@gmail.com,
-        indou.takao@jp.fujitsu.com, lcapitulino@redhat.com
-Subject: Re: [PATCH v9 0/5] x86/KASLR: Add parameter
- kaslr_boot_mem=nn[KMG]@ss[KMG]
-Message-ID: <20180312101031.GH18656@localhost.localdomain>
-References: <20180228105105.11487-1-fanc.fnst@cn.fujitsu.com>
- <20180312093557.gxypr66vrbftz3v3@gmail.com>
+        id S1752594AbeCLKOb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 06:14:31 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:11940 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752003AbeCLKO3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 06:14:29 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 12 Mar 2018 03:14:26 -0700
+Subject: Re: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support
+ Tegra210
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
+ <b7a25613-44b4-5e63-e8c7-91ce2b7cb56e@nvidia.com>
+ <20180309081438.GO6190@tbergstrom-lnx.Nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <50b05dda-4577-0c86-a8e5-eb7095ee1f59@nvidia.com>
+Date: Mon, 12 Mar 2018 10:14:17 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180312093557.gxypr66vrbftz3v3@gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180309081438.GO6190@tbergstrom-lnx.Nvidia.com>
+X-Originating-IP: [10.26.11.150]
+X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To UKMAIL101.nvidia.com
+ (10.26.138.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ingo,
 
-On 03/12/18 at 10:35am, Ingo Molnar wrote:
+On 09/03/18 08:14, Peter De Schrijver wrote:
+> On Thu, Mar 08, 2018 at 11:25:04PM +0000, Jon Hunter wrote:
+>>
+>> On 06/02/18 16:34, Peter De Schrijver wrote:
+>>> Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
+>>> support in this driver. Also allow for the case where the CPU voltage is
+>>> controlled directly by the DFLL rather than by a separate regulator object.
+>>>
+>>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>> ---
+>>>  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
+>>>  1 file changed, 8 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+>>> index 4353025..f8e01a8 100644
+>>> --- a/drivers/cpufreq/tegra124-cpufreq.c
+>>> +++ b/drivers/cpufreq/tegra124-cpufreq.c
+>>> @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
+>>>  {
+>>>  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+>>>  	clk_disable_unprepare(priv->dfll_clk);
+>>> -	regulator_sync_voltage(priv->vdd_cpu_reg);
+>>> +	if (priv->vdd_cpu_reg)
+>>> +		regulator_sync_voltage(priv->vdd_cpu_reg);
+>>>  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
+>>>  }
+>>>  
+>>> @@ -89,10 +90,10 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+>>>  		return -ENODEV;
+>>>  
+>>>  	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
+>>> -	if (IS_ERR(priv->vdd_cpu_reg)) {
+>>> -		ret = PTR_ERR(priv->vdd_cpu_reg);
+>>> -		goto out_put_np;
+>>> -	}
+>>> +	if (IS_ERR(priv->vdd_cpu_reg) != -EPROBE_DEFER)
+>>> +		priv->vdd_cpu_reg = NULL;
+>>> +	else
+>>> +		return -EPROBE_DEFER;
+>>
+>> I am still not sure that we should rely on the fact that the regulator
+>> is not present in DT to imply that we do not need it. I think that we
+>> should be checking if we are using I2C mode here.
+>>
 > 
-> * Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
-> 
-> > Long time no reply, rebase the patchset, change the parameter name
-> > from 'kaslr_mem' to 'kaslr_boot_mem'. There's no more code change.
-> > 
-> > ***Background:
-> > People reported that kaslr may randomly chooses some positions
-> > which are located in movable memory regions. This will break memory
-> > hotplug feature.
-> 
-> [...]
-> 
-> > ***Solutions:
-> > Introduce a new kernel parameter 'kaslr_boot_mem=nn@ss' to let users to
-> > specify the memory regions where kernel can be allowed to randomize
-> > safely.
-> 
-> Manual solutions like that are pretty suboptimal to users, aren't they?
-> 
-> In what way does memory hotplug feature 'break'? Does it crash or misbehave? Or 
-> simply does it not allow the movement of the affected memory region, while still 
-> allowing the rest to be moved?
+> The cpufreq driver doesn't know this however. Also the current approach of
+> setting the same voltage when switching to pll_x is incorrect. The CVB
+> tables when using pll_x include more margin than when using the DFLL.
 
-AFAIT, if kernel is randomized into the movable memory region, the
-affected memory region can not be hot added/removed since it has kernel
-data. Surely, the system can still work, the unaffected part still can
-be moved. Still it will cause regression on memory hotplug.
+Ah yes I see now. However, we are going to need to update the DT doc,
+because 'vdd-cpu-supply' is listed as required.
 
-Mainly we parse SRAT table to get the ranges of memory provided by
-hot-added memory devices in initmem_init(), that's very late. During boot,
-we don't know it. Chao ever posted patches to grab SRAT at decompressing
-stage, the code is very complicated and not elegant, ACPI maintainer
-NACKed that.
+Cheers
+Jon
 
-Thanks
-Baoquan
+-- 
+nvpublic
