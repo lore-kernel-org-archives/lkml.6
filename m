@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3340693-1520824344-2-7936973716758814889
+X-Cyrus-Session-Id: sloti22d1t05-3369064-1520824297-2-1909785526969375884
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enroca,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
   MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520824344; b=Ux05lyvmaDISRwNYDkJAiQDp28QJhaih1mdtHITVy2QyUXA
-    ew0XxPg4gwHotgMlWYcOjhVcwU8e5rhQdMxOH19/Of1vCwrrpjzLxBSm/nJ+RhI8
-    JNg27jzK1QYKQcyaNA6FIYkHGR8hBd96zj3NtneGFr0TQuxjeiPB3bTNmCtrNW/q
-    50dFKLeEAAmGOmJbK9Wmk2UYapOFVcY8uJltKygto67md5AAJ9vDwy7uPJOzpBRE
-    Gxlkln4QmKWUBq0GtAwDTIcAEn0nfS7pT0s0QhToEJ+EW2OqCa2FyaLTZ2HR/YNE
-    FjyTdZP9klxo0FAOYM8AaPK2TX+6wSUwaNBVCqg==
+    t=1520824295; b=VD4hkME6sx2u12KkSf9efluSsLGYoWhcy2uW/u6ic4VTqKP
+    LehdLdTkBU1R5pdAkRksst+EYfFzulDbNzn3M41vjdPDorxxhXGKbSUVJcr4MERW
+    Cn4OImY0J3hJgxBp6ZW8xjkIaKE0DNOky/beG9/bveX4sIMDQ9TDILaERzEGxccH
+    DXAlJ+l6VGH60zhFkQ/Vzbf5FlNJN5zu+KgYRnoW69wjiTJ6niZfCD1PLfUJP/fn
+    HApuUIPlC85qlu+b4OLdRskD/bX3iN/jg+YQUvYSmSzD2bBn1c78L/0lHc91FIIt
+    aCZma7yz6dixj8pAZwilOS62jToV5ImvfQaA8+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=content-type:content-transfer-encoding
     :mime-version:from:to:cc:date:message-id:subject:in-reply-to
-    :sender:list-id; s=arctest; t=1520824344; bh=dCgL7bFVGhDZn9fEKoF
-    OYb56dcBIKEz0D72nwiXbTZw=; b=S/vqv6Mn+MPu/QgkEl8lhQFzXeeXe2npDIx
-    8ecRzkhUa3OwOzrU6dBAWkv514d5IjYABnzN9RHRLE0jqNXKXmT5iOXYPsNa1G6G
-    HS1MXyHWEDmrdI0ZZ+gaQhU7VmkeeW+8Rh2uskjz0Dmg6xk+lylAi9K49ssriw1d
-    6rDKfl2XlHGw5sQY3CI9TC+I2PiOkEijOL9x3uc/d36VLYDD7bmXPPAeYWUdUYsn
-    Z1sKJ3M1NkkCHf9/Jgkl4OQNHgtOeeEZk5CIBMTNIrIHYI3AcgcnIrUrpTE1Wv16
-    JLYuxsNvDltBQj3yYi39pNycgLCCl9AAxOx6iY2ALvqV/4O6HwQ==
+    :sender:list-id; s=arctest; t=1520824295; bh=ireE8KIUEC48mSa63PX
+    VAZPeeYK+6/FJMULeWAQ6IE4=; b=akXCPRvClckJPi3LxEnpV6oVPNtUPmepZTT
+    FeAgWnP6byt4lMQDatFzm3baSLlun634Ln5JmzWXFedKgh90LQti2G7p3hlzyUbV
+    akiIZ8EW2TqOp7n8wMQraI+9AOiInCRwv9fPpF/18ZRK2ETg6tGpdLJEPIDGn27X
+    d6HrwPBEjgowd9qRogYAplKCpWIJ9XWWrpcJfPeXhNeG1ifEaZGfrrjOhXXUL54U
+    NLDHcKZSKUW8pGzQPqcm8mAe3xKpNMW69efC6gBwcM++c0UY+Zj6STJdTUadCrnJ
+    aZSx1m7jVVsCXDC9M7cxdqNtSlyfQQxEoL5dgy7gqOr0YfcqhDg==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
@@ -49,12 +49,12 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=decadent.org.uk header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932788AbeCLDLx (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Mar 2018 23:11:53 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41590 "EHLO
+        id S932907AbeCLDJA (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 11 Mar 2018 23:09:00 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41679 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932805AbeCLDHw (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 23:07:52 -0400
+        by vger.kernel.org with ESMTP id S932819AbeCLDHx (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 11 Mar 2018 23:07:53 -0400
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -62,11 +62,16 @@ MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC: akpm@linux-foundation.org,
-        "Linus Torvalds" <torvalds@linux-foundation.org>
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Borislav Petkov" <bp@alien8.de>, "Ingo Molnar" <mingo@kernel.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Peter Zijlstra" <peterz@infradead.org>
 Date: Mon, 12 Mar 2018 03:06:12 +0000
-Message-ID: <lsq.1520823972.111738999@decadent.org.uk>
+Message-ID: <lsq.1520823972.375460400@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 72/76] x86: fix SMAP in 32-bit environments
+Subject: [PATCH 3.16 42/76] x86/cpu: Change type of x86_cache_size
+ variable to unsigned int
 In-Reply-To: <lsq.1520823971.5976735@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -81,118 +86,74 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 
-commit de9e478b9d49f3a0214310d921450cf5bb4a21e6 upstream.
+commit 24dbc6000f4b9b0ef5a9daecb161f1907733765a upstream.
 
-In commit 11f1a4b9755f ("x86: reorganize SMAP handling in user space
-accesses") I changed how the stac/clac instructions were generated
-around the user space accesses, which then made it possible to do
-batched accesses efficiently for user string copies etc.
+Currently, x86_cache_size is of type int, which makes no sense as we
+will never have a valid cache size equal or less than 0. So instead of
+initializing this variable to -1, it can perfectly be initialized to 0
+and use it as an unsigned variable instead.
 
-However, in doing so, I completely spaced out, and didn't even think
-about the 32-bit case.  And nobody really even seemed to notice, because
-SMAP doesn't even exist until modern Skylake processors, and you'd have
-to be crazy to run 32-bit kernels on a modern CPU.
-
-Which brings us to Andy Lutomirski.
-
-He actually tested the 32-bit kernel on new hardware, and noticed that
-it doesn't work.  My bad.  The trivial fix is to add the required
-uaccess begin/end markers around the raw accesses in <asm/uaccess_32.h>.
-
-I feel a bit bad about this patch, just because that header file really
-should be cleaned up to avoid all the duplicated code in it, and this
-commit just expands on the problem.  But this just fixes the bug without
-any bigger cleanup surgery.
-
-Reported-and-tested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 3.16: There's no 'case 8' in __copy_to_user_inatomic()]
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Addresses-Coverity-ID: 1464429
+Link: http://lkml.kernel.org/r/20180213192208.GA26414@embeddedor.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/include/asm/uaccess_32.h
-+++ b/arch/x86/include/asm/uaccess_32.h
-@@ -48,16 +48,22 @@ __copy_to_user_inatomic(void __user *to,
+ arch/x86/include/asm/processor.h      | 2 +-
+ arch/x86/kernel/cpu/common.c          | 2 +-
+ arch/x86/kernel/cpu/microcode/intel.c | 2 +-
+ arch/x86/kernel/cpu/proc.c            | 4 ++--
+ 4 files changed, 5 insertions(+), 5 deletions(-)
+
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -107,7 +107,7 @@ struct cpuinfo_x86 {
+ 	char			x86_vendor_id[16];
+ 	char			x86_model_id[64];
+ 	/* in KB - valid for CPUS which support this call: */
+-	int			x86_cache_size;
++	unsigned int		x86_cache_size;
+ 	int			x86_cache_alignment;	/* In bytes */
+ 	int			x86_power;
+ 	unsigned long		loops_per_jiffy;
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -905,7 +905,7 @@ static void identify_cpu(struct cpuinfo_
+ 	int i;
  
- 		switch (n) {
- 		case 1:
-+			__uaccess_begin();
- 			__put_user_size(*(u8 *)from, (u8 __user *)to,
- 					1, ret, 1);
-+			__uaccess_end();
- 			return ret;
- 		case 2:
-+			__uaccess_begin();
- 			__put_user_size(*(u16 *)from, (u16 __user *)to,
- 					2, ret, 2);
-+			__uaccess_end();
- 			return ret;
- 		case 4:
-+			__uaccess_begin();
- 			__put_user_size(*(u32 *)from, (u32 __user *)to,
- 					4, ret, 4);
-+			__uaccess_end();
- 			return ret;
- 		}
- 	}
-@@ -98,13 +104,19 @@ __copy_from_user_inatomic(void *to, cons
+ 	c->loops_per_jiffy = loops_per_jiffy;
+-	c->x86_cache_size = -1;
++	c->x86_cache_size = 0;
+ 	c->x86_vendor = X86_VENDOR_UNKNOWN;
+ 	c->x86_model = c->x86_mask = 0;	/* So far unknown... */
+ 	c->x86_vendor_id[0] = '\0'; /* Unset */
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -352,7 +352,7 @@ static struct microcode_ops microcode_in
  
- 		switch (n) {
- 		case 1:
-+			__uaccess_begin();
- 			__get_user_size(*(u8 *)to, from, 1, ret, 1);
-+			__uaccess_end();
- 			return ret;
- 		case 2:
-+			__uaccess_begin();
- 			__get_user_size(*(u16 *)to, from, 2, ret, 2);
-+			__uaccess_end();
- 			return ret;
- 		case 4:
-+			__uaccess_begin();
- 			__get_user_size(*(u32 *)to, from, 4, ret, 4);
-+			__uaccess_end();
- 			return ret;
- 		}
- 	}
-@@ -142,13 +154,19 @@ __copy_from_user(void *to, const void __
+ static int __init calc_llc_size_per_core(struct cpuinfo_x86 *c)
+ {
+-	u64 llc_size = c->x86_cache_size * 1024;
++	u64 llc_size = c->x86_cache_size * 1024ULL;
  
- 		switch (n) {
- 		case 1:
-+			__uaccess_begin();
- 			__get_user_size(*(u8 *)to, from, 1, ret, 1);
-+			__uaccess_end();
- 			return ret;
- 		case 2:
-+			__uaccess_begin();
- 			__get_user_size(*(u16 *)to, from, 2, ret, 2);
-+			__uaccess_end();
- 			return ret;
- 		case 4:
-+			__uaccess_begin();
- 			__get_user_size(*(u32 *)to, from, 4, ret, 4);
-+			__uaccess_end();
- 			return ret;
- 		}
- 	}
-@@ -164,13 +182,19 @@ static __always_inline unsigned long __c
+ 	do_div(llc_size, c->x86_max_cores);
  
- 		switch (n) {
- 		case 1:
-+			__uaccess_begin();
- 			__get_user_size(*(u8 *)to, from, 1, ret, 1);
-+			__uaccess_end();
- 			return ret;
- 		case 2:
-+			__uaccess_begin();
- 			__get_user_size(*(u16 *)to, from, 2, ret, 2);
-+			__uaccess_end();
- 			return ret;
- 		case 4:
-+			__uaccess_begin();
- 			__get_user_size(*(u32 *)to, from, 4, ret, 4);
-+			__uaccess_end();
- 			return ret;
- 		}
+--- a/arch/x86/kernel/cpu/proc.c
++++ b/arch/x86/kernel/cpu/proc.c
+@@ -86,8 +86,8 @@ static int show_cpuinfo(struct seq_file
  	}
+ 
+ 	/* Cache size */
+-	if (c->x86_cache_size >= 0)
+-		seq_printf(m, "cache size\t: %d KB\n", c->x86_cache_size);
++	if (c->x86_cache_size)
++		seq_printf(m, "cache size\t: %u KB\n", c->x86_cache_size);
+ 
+ 	show_cpuinfo_core(m, c, cpu);
+ 	show_cpuinfo_misc(m, c);
