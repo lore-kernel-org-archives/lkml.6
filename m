@@ -1,87 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932674AbeCLP5m (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 12 Mar 2018 11:57:42 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49450 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932487AbeCLP5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Mar 2018 11:57:41 -0400
-Date: Mon, 12 Mar 2018 11:52:56 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH ghak21 V2 3/4] audit: add refused symlink to audit_names
-Message-ID: <20180312155256.4j7uglv7jiyppozm@madcap2.tricolour.ca>
-References: <cover.1520835596.git.rgb@redhat.com>
- <ce98e9600a8d7d0169067ae9f3e3a5ae2fb1f54a.1520835596.git.rgb@redhat.com>
- <CAHC9VhRh094wMJkiBY+iStfwMEotHMrOCWUSW23gva_ccknuqg@mail.gmail.com>
- <20180312152614.qvcxng3biug46lms@madcap2.tricolour.ca>
- <CAHC9VhR-2tQAsDHDNto7GWkSrCLWGuURexxsxDxECfY9KoVvww@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhR-2tQAsDHDNto7GWkSrCLWGuURexxsxDxECfY9KoVvww@mail.gmail.com>
-User-Agent: NeoMutt/20171027
+        id S932691AbeCLP56 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 12 Mar 2018 11:57:58 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:42128 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932425AbeCLP55 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Mar 2018 11:57:57 -0400
+X-Google-Smtp-Source: AG47ELsuZ4BguIZ7PB3scFuU5jtV4rvjMMuy5/V8HoJnzQOxYqsjvc+lhFowHh6IFIoaovTO0VZM0Q==
+From: codekipper@gmail.com
+To: maxime.ripard@free-electrons.com, wens@csie.org,
+        linux-sunxi@googlegroups.com
+Cc: linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com,
+        broonie@kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, be17068@iperbole.bo.it,
+        Marcus Cooper <codekipper@gmail.com>
+Subject: [PATCH v2 0/6] ASoC: sun4i-i2s: Updates to the driver
+Date: Mon, 12 Mar 2018 16:57:47 +0100
+Message-Id: <20180312155753.9478-1-codekipper@gmail.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-12 11:53, Paul Moore wrote:
-> On Mon, Mar 12, 2018 at 11:26 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2018-03-12 11:12, Paul Moore wrote:
-> >> On Mon, Mar 12, 2018 at 2:31 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> >> > Audit link denied events for symlinks had duplicate PATH records rather
-> >> > than just updating the existing PATH record.  Update the symlink's PATH
-> >> > record with the current dentry and inode information.
-> >> >
-> >> > See: https://github.com/linux-audit/audit-kernel/issues/21
-> >> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> >> > ---
-> >> >  fs/namei.c | 1 +
-> >> >  1 file changed, 1 insertion(+)
-> >>
-> >> Why didn't you include this in patch 4/4 like I asked during the
-> >> previous review?
-> >
-> > Please see the last comment of:
-> > https://www.redhat.com/archives/linux-audit/2018-March/msg00070.html
-> 
-> Yes, I just saw that ... I hadn't seen your replies on the v1 patches
-> until I had finished reviewing v2.  I just replied to that mail in the
-> v1 thread, but basically you need to figure out what is necessary here
-> and let us know.  If I have to figure it out it likely isn't going to
-> get done with enough soak time prior to the upcoming merge window.
+From: Marcus Cooper <codekipper@gmail.com>
 
-Steve?  I was hoping you could chime in here.
+Hi All,
 
-I'd just include it for completeness unless Steve thinks it will stand
-on its own and doesn't want the overhead.
+here is a patch series to add some improvements to the sun4i-i2s driver
+found whilst getting slave clocking and hdmi audio working on the newer
+SoCs. The original attempt had some changes related to the slave work
+but I've left them out for this release as I would still like to do some
+more investigations.
 
-> >> > diff --git a/fs/namei.c b/fs/namei.c
-> >> > index 50d2533..00f5041 100644
-> >> > --- a/fs/namei.c
-> >> > +++ b/fs/namei.c
-> >> > @@ -945,6 +945,7 @@ static inline int may_follow_link(struct nameidata *nd)
-> >> >         if (nd->flags & LOOKUP_RCU)
-> >> >                 return -ECHILD;
-> >> >
-> >> > +       audit_inode(nd->name, nd->stack[0].link.dentry, 0);
-> >> >         audit_log_link_denied("follow_link", &nd->stack[0].link);
-> >> >         return -EACCES;
-> >> >  }
-> >>
-> >> paul moore
-> >
-> > - RGB
-> 
-> paul moore
+The functionality included with the new patch set has been extended to
+cover more sample resolutions, multi-lane data output for HDMI audio
+and loopback so block testing can be made without an external codec.
 
-- RGB
+I've also moved away from using tdm to set the slot width and now use
+a dedicated property.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+This has been tested on a Pine64 using the ES9023 audio POT board
+(https://github.com/codekipper/linux-sunxi/commits/upstream)
+and HDMI audio
+(https://github.com/codekipper/linux-sunxi/commits/sunxi-wip-a64)
+
+BR,
+CK
+
+---
+v2 changes compared to v1 are:
+ - removed slave mode changes which didn't set mclk and bclk div.
+ - removed use of tdm and now use a dedicated property.
+ - fix commit message to better explain reason for sign extending
+ - add divider calculations for newer SoCs.
+ - add support for multi-lane i2s data output.
+ - add support for 20, 24 and 32 bit samples.
+ - add loopback property so blocks can be tested without a codec.
+
+---
+
+Marcus Cooper (6):
+  ASoC: sun4i-i2s: Add slot width override
+  ASoC: sun4i-i2s: Add regmap field to sign extend sample
+  ASoC: sun4i-i2s: Correct divider calculations
+  ASoC: sun4i-i2s: Add multi-lane functionality
+  ASoc: sun4i-i2s: Add 20, 24 and 32 bit support
+  ASoC: sun4i-i2s: Add support for loopback
+
+ .../devicetree/bindings/sound/sun4i-i2s.txt        |  11 ++
+ sound/soc/sunxi/sun4i-i2s.c                        | 199 ++++++++++++++++-----
+ 2 files changed, 170 insertions(+), 40 deletions(-)
+
+-- 
+2.16.2
